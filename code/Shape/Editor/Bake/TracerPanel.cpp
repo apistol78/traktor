@@ -33,7 +33,7 @@ bool TracerPanel::create(ui::Widget* parent)
 		if (processor)
 		{
 			auto status = processor->getStatus();
-			if (status.active)
+			if (status.active && status.total > 0)
 			{
 				m_staticDescription->setText(status.description);
 				m_progressBar->setProgress((status.current * 100) / status.total);

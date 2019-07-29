@@ -71,6 +71,8 @@ private:
 	float m_headAngle;
 	Vector4 m_velocity;
 	bool m_grounded;
+
+	bool step(Vector4 motion, Vector4& inoutPosition) const;
 };
 
 	}

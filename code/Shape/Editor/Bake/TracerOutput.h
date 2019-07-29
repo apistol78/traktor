@@ -31,11 +31,14 @@ class T_DLLCLASS TracerOutput : public Object
 public:
     TracerOutput(
 		const std::wstring& name,
+		int32_t priority,
         const model::Model* model,
         const Guid& lightmapId
     );
 
 	const std::wstring& getName() const { return m_name; }
+
+	int32_t getPriority() const { return m_priority; }
 
     const model::Model* getModel() const { return m_model; }
 
@@ -43,6 +46,7 @@ public:
 
 private:
 	std::wstring m_name;
+	int32_t m_priority;
 	Ref< const model::Model > m_model;
 	Guid m_lightmapId;
 };

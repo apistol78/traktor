@@ -35,12 +35,12 @@ public:
 		}
 		else if (level == 1)
 		{
-			fwprintf(stdout, L"(WARN) %ls\n", str);
+			fwprintf(stdout, L"%ls\n", str);
 			fflush(stdout);
 		}
 		else
 		{
-			fwprintf(stderr, L"(ERROR) %ls\n", str);
+			fwprintf(stderr, L"%ls\n", str);
 			fflush(stderr);
 		}
 #if defined(__IOS__)

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Core/Object.h"
+#include "Core/Ref.h"
 #include "Core/RefArray.h"
 #include "Core/Math/Color4f.h"
 

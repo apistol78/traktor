@@ -232,7 +232,7 @@ void WidgetPreviewControl::eventPaint(ui::PaintEvent* event)
 
 	render::Clear cl;
 	cl.mask = render::CfColor | render::CfDepth | render::CfStencil;
-	cl.colors[0] = Color4f(0.8f, 0.8f, 0.8f, 0.0);
+	cl.colors[0] = Color4f(1.0f, 1.0f, 1.0f, 0.0);
 	cl.depth = 1.0f;
 	cl.stencil = 0;
 
@@ -247,16 +247,16 @@ void WidgetPreviewControl::eventPaint(ui::PaintEvent* event)
 
 		// Build render context.
 		m_displayRenderer->build(uint32_t(0));
-		m_displayRendererWire->begin(uint32_t(0));
+//		m_displayRendererWire->begin(uint32_t(0));
 
 		m_moviePlayer->render(m_movieRenderer);
-		m_moviePlayer->render(m_movieRendererWire);
+//		m_moviePlayer->render(m_movieRendererWire);
 
-		m_displayRendererWire->end(uint32_t(0));
+//		m_displayRendererWire->end(uint32_t(0));
 
 		// Flush render context.
 		m_displayRenderer->render(m_renderView, 0, Vector2(0.0f, 0.0f), 1.0f);
-		m_displayRendererWire->render(m_renderView, uint32_t(0));
+//		m_displayRendererWire->render(m_renderView, uint32_t(0));
 
 		m_renderView->end();
 		m_renderView->present();

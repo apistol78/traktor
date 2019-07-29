@@ -34,9 +34,12 @@ void ComponentEntity::destroy()
 
 void ComponentEntity::setTransform(const Transform& transform)
 {
-	m_transform = transform;
-	for (auto component : m_components)
-		component->setTransform(transform);
+	if (transform != m_transform)
+	{
+		m_transform = transform;
+		for (auto component : m_components)
+			component->setTransform(transform);
+	}
 }
 
 bool ComponentEntity::getTransform(Transform& outTransform) const

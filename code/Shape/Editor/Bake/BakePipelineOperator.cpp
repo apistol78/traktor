@@ -1,9 +1,12 @@
 #include <functional>
+#include "Core/Io/Writer.h"
 #include "Core/Log/Log.h"
 #include "Core/Reflection/Reflection.h"
 #include "Core/Reflection/RfmObject.h"
 #include "Core/Reflection/RfpMemberType.h"
 #include "Core/Serialization/DeepClone.h"
+#include "Core/Serialization/DeepHash.h"
+#include "Core/Settings/PropertyInteger.h"
 #include "Core/Settings/PropertyString.h"
 #include "Database/Database.h"
 #include "Database/Instance.h"
@@ -22,10 +25,14 @@
 #include "Model/Operations/Transform.h"
 #include "Model/Operations/Triangulate.h"
 #include "Model/Operations/UnwrapUV.h"
-#include "Render/Editor/Texture/TextureOutput.h"
+#include "Render/Types.h"
+#include "Render/Editor/Texture/CubeMap.h"
+#include "Render/Editor/Texture/IrradianceProbeAsset.h"
+#include "Render/Resource/TextureResource.h"
 #include "Scene/Editor/SceneAsset.h"
 #include "Shape/Editor/Bake/BakeConfiguration.h"
 #include "Shape/Editor/Bake/BakePipelineOperator.h"
+#include "Shape/Editor/Bake/IblProbe.h"
 #include "Shape/Editor/Bake/TracerLight.h"
 #include "Shape/Editor/Bake/TracerModel.h"
 #include "Shape/Editor/Bake/TracerOutput.h"
@@ -37,6 +44,7 @@
 #include "World/Entity/ComponentEntityData.h"
 #include "World/Entity/ExternalEntityData.h"
 #include "World/Entity/LightComponentData.h"
+#include "World/Entity/ProbeComponentData.h"
 
 namespace traktor
 {
@@ -137,10 +145,12 @@ bool BakePipelineOperator::build(
 	scene::SceneAsset* inoutSceneAsset
 ) const
 {
-	// In case no tracer processor is registered we fail gracefully so
-	// scene pipeline can continue as without bake configuration.
-	if (!ms_tracerProcessor)
-		return true;
+	Ref< TracerProcessor > tracerProcessor = ms_tracerProcessor;
+
+	// In case no tracer processor is registered we create one for this build only,
+	// by doing so we can ensure trace is finished before returning.
+	if (!tracerProcessor)
+		tracerProcessor = new TracerProcessor(pipelineBuilder->getOutputDatabase());
 
 	const auto configuration = mandatory_non_null_type_cast< const BakeConfiguration* >(operatorData);
 	Guid seedId = configuration->getSeedGuid();
@@ -161,6 +171,30 @@ bool BakePipelineOperator::build(
 			if (!flattenedLayer)
 				return false;
 
+			// Calculate hash of current layer.
+			int32_t layerHash = (int32_t)DeepHash(flattenedLayer).get();
+
+			// Check if layer has already been baked, hash is written as a receipt in output database.
+			Guid existingLayerHashId = seedId.permutate();
+
+			Ref< PropertyInteger > existingLayerHash = pipelineBuilder->getOutputDatabase()->getObjectReadOnly< PropertyInteger >(existingLayerHashId);
+			if (existingLayerHash && *existingLayerHash == layerHash)
+			{
+				log::info << L"Skipping baking lightmap, already baked in output database." << Endl;
+				layers.push_back(flattenedLayer);
+				continue;
+			}
+
+			// Either hash doesn't match or no receipt exist, create new receipt.
+			Ref< db::Instance > hashInstance = pipelineBuilder->getOutputDatabase()->createInstance(
+				L"Generated/" + existingLayerHashId.format(),
+				db::CifReplaceExisting | db::CifKeepExistingGuid,
+				&existingLayerHashId
+			);
+			hashInstance->setObject(new PropertyInteger(layerHash));
+			hashInstance->commit();
+
+			// Traverse and visit all entities in layer.
 			visit(flattenedLayer, [&](world::EntityData* entityData) -> bool
 			{
 				if (auto componentEntityData = dynamic_type_cast< world::ComponentEntityData* >(entityData))
@@ -199,7 +233,7 @@ bool BakePipelineOperator::build(
 							tracerTask->addTracerLight(new TracerLight(light));
 						}
 						else if (lightComponentData->getLightType() != world::LtProbe)
-							log::warning << L"IlluminateEntityPipeline warning; unsupported light type of light \"" << entityData->getName() << L"\"." << Endl;
+							log::warning << L"BakePipelineOperator warning; unsupported light type of light \"" << entityData->getName() << L"\"." << Endl;
 
 						// Remove this light when we're tracing direct lighting.
 						if (configuration->traceDirect())
@@ -250,34 +284,67 @@ bool BakePipelineOperator::build(
 						rm->setMaterials(materials);
 
 						Guid lightmapId = seedId.permutate();
+						bool firstBake = false;
 
 						// Create a dummy, white, output texture only if no previous lightmap exist.
 						if (pipelineBuilder->getOutputDatabase()->getInstance(lightmapId) == nullptr)
 						{
-							Ref< render::TextureOutput > lightmapTextureAsset = new render::TextureOutput();
-							lightmapTextureAsset->m_textureFormat = render::TfR8G8B8A8;
-							lightmapTextureAsset->m_keepZeroAlpha = false;
-							lightmapTextureAsset->m_hasAlpha = false;
-							lightmapTextureAsset->m_ignoreAlpha = true;
-							lightmapTextureAsset->m_linearGamma = true;
-							lightmapTextureAsset->m_enableCompression = false;
-							lightmapTextureAsset->m_sharpenRadius = 0;
-							lightmapTextureAsset->m_systemTexture = true;
-							lightmapTextureAsset->m_generateMips = false;
-
-							Ref< drawing::Image > lightmapWhite = new drawing::Image(drawing::PixelFormat::getR8G8B8A8(), 1, 1);
-							lightmapWhite->setPixelUnsafe(0, 0, Color4f(1.0f, 1.0f, 1.0f, 1.0f));
-
-							pipelineBuilder->buildOutput(
-								lightmapTextureAsset,
+							// Create output instance.
+							Ref< render::TextureResource > outputResource = new render::TextureResource();
+							Ref< db::Instance > outputInstance = pipelineBuilder->getOutputDatabase()->createInstance(
 								L"Generated/" + lightmapId.format(),
-								lightmapId,
-								lightmapWhite
+								db::CifReplaceExisting,
+								&lightmapId
 							);
+							if (!outputInstance)
+							{
+								log::error << L"BakePipelineOperator failed; unable to create output instance." << Endl;
+								return false;
+							}
+
+							outputInstance->setObject(outputResource);
+
+							// Create output data stream.
+							Ref< IStream > stream = outputInstance->writeData(L"Data");
+							if (!stream)
+							{
+								log::error << L"BakePipelineOperator failed; unable to create texture data stream." << Endl;
+								outputInstance->revert();
+								return false;
+							}
+
+							Writer writer(stream);
+
+							writer << uint32_t(12);
+							writer << int32_t(1);
+							writer << int32_t(1);
+							writer << int32_t(1);
+							writer << int32_t(1);
+							writer << int32_t(render::TfR8G8B8A8);
+							writer << bool(false);
+							writer << uint8_t(render::Tt2D);
+							writer << bool(false);
+							writer << bool(false);
+
+							uint32_t c_white = 0xfffffff;
+
+							if (writer.write(&c_white, 4, 1) != 4)
+								return false;
+
+							stream->close();
+
+							if (!outputInstance->commit())
+							{
+								log::error << L"BakePipelineOperator failed; unable to commit output instance." << Endl;
+								return false;
+							}
+
+							firstBake = true;
 						}
 
 						tracerTask->addTracerOutput(new TracerOutput(
 							entityData->getName(),
+							firstBake ? 100 : 0,
 							rm,
 							lightmapId
 						));
@@ -304,6 +371,50 @@ bool BakePipelineOperator::build(
 							outputMeshId
 						));
 					}
+
+					// Get global IBL light from probe.
+					if (auto probeComponentData = componentEntityData->getComponent< world::ProbeComponentData >())
+					{
+						if (!probeComponentData->getLocal())
+						{
+							Ref< const render::IrradianceProbeAsset > irradianceAsset = pipelineBuilder->getObjectReadOnly< render::IrradianceProbeAsset >(probeComponentData->getDiffuseTexture());
+							if (irradianceAsset)
+							{
+								Ref< IStream > file = pipelineBuilder->openFile(Path(m_assetPath), irradianceAsset->getFileName().getOriginal());
+								if (!file)
+								{
+									log::error << L"Probe texture asset pipeline failed; unable to open source image \"" << irradianceAsset->getFileName().getOriginal() << L"\"" << Endl;
+									return false;
+								}
+
+								Ref< drawing::Image > assetImage = drawing::Image::load(file, irradianceAsset->getFileName().getExtension());
+								if (!assetImage)
+								{
+									log::error << L"Probe texture asset pipeline failed; unable to load source image \"" << irradianceAsset->getFileName().getOriginal() << L"\"" << Endl;
+									return false;
+								}
+
+								file->close();
+
+
+								Light light;
+								light.type = Light::LtProbe;
+								light.probe = new IblProbe(
+									new render::CubeMap(assetImage)
+								);
+								tracerTask->addTracerLight(new TracerLight(light));
+
+								// Remove probe from scene as it's contribution will be baked.
+								componentEntityData->removeComponent(probeComponentData);
+							}
+						}
+					}
+
+					//if (auto cameraComponentData = componentEntityData->getComponent< world::CameraComponentData >())
+					//{
+					//	tracerTask->addTracerOutput(new TracerCameraOutput(
+					//	));
+					//}
 
 					// Do not recurse further as we cannot make sure we know which
 					// other kinds of components own untraceable entities.
@@ -382,8 +493,8 @@ bool BakePipelineOperator::build(
 						Ref< model::Model > mergedModel = new model::Model();
 						for (int32_t i = 0; i < (int32_t)models.size(); ++i)
 						{
-							model::CleanDuplicates(0.01f).apply(*models[i]);
-							model::MergeModel(*models[i], Transform::identity(), 0.01f).apply(*mergedModel);
+							model::CleanDuplicates(0.001f).apply(*models[i]);
+							model::MergeModel(*models[i], Transform::identity(), 0.001f).apply(*mergedModel);
 						}
 
 						uint32_t channel = mergedModel->getTexCoordChannel(L"Lightmap");
@@ -408,34 +519,67 @@ bool BakePipelineOperator::build(
 						rm->setMaterials(materials);
 
 						Guid lightmapId = seedId.permutate();
+						bool firstBake = false;
 
 						// Create a dummy, white, output texture only if no previous lightmap exist.
 						if (pipelineBuilder->getOutputDatabase()->getInstance(lightmapId) == nullptr)
 						{
-							Ref< render::TextureOutput > lightmapTextureAsset = new render::TextureOutput();
-							lightmapTextureAsset->m_textureFormat = render::TfR8G8B8A8;
-							lightmapTextureAsset->m_keepZeroAlpha = false;
-							lightmapTextureAsset->m_hasAlpha = false;
-							lightmapTextureAsset->m_ignoreAlpha = true;
-							lightmapTextureAsset->m_linearGamma = true;
-							lightmapTextureAsset->m_enableCompression = false;
-							lightmapTextureAsset->m_sharpenRadius = 0;
-							lightmapTextureAsset->m_systemTexture = true;
-							lightmapTextureAsset->m_generateMips = false;
-
-							Ref< drawing::Image > lightmapWhite = new drawing::Image(drawing::PixelFormat::getR8G8B8A8(), 1, 1);
-							lightmapWhite->setPixelUnsafe(0, 0, Color4f(1.0f, 1.0f, 1.0f, 1.0f));
-
-							pipelineBuilder->buildOutput(
-								lightmapTextureAsset,
+							// Create output instance.
+							Ref< render::TextureResource > outputResource = new render::TextureResource();
+							Ref< db::Instance > outputInstance = pipelineBuilder->getOutputDatabase()->createInstance(
 								L"Generated/" + lightmapId.format(),
-								lightmapId,
-								lightmapWhite
+								db::CifReplaceExisting,
+								&lightmapId
 							);
+							if (!outputInstance)
+							{
+								log::error << L"BakePipelineOperator failed; unable to create output instance." << Endl;
+								return false;
+							}
+
+							outputInstance->setObject(outputResource);
+
+							// Create output data stream.
+							Ref< IStream > stream = outputInstance->writeData(L"Data");
+							if (!stream)
+							{
+								log::error << L"BakePipelineOperator failed; unable to create texture data stream." << Endl;
+								outputInstance->revert();
+								return false;
+							}
+
+							Writer writer(stream);
+
+							writer << uint32_t(12);
+							writer << int32_t(1);
+							writer << int32_t(1);
+							writer << int32_t(1);
+							writer << int32_t(1);
+							writer << int32_t(render::TfR8G8B8A8);
+							writer << bool(false);
+							writer << uint8_t(render::Tt2D);
+							writer << bool(false);
+							writer << bool(false);
+
+							uint32_t c_white = 0xfffffff;
+
+							if (writer.write(&c_white, 4, 1) != 4)
+								return false;
+
+							stream->close();
+
+							if (!outputInstance->commit())
+							{
+								log::error << L"BakePipelineOperator failed; unable to commit output instance." << Endl;
+								return false;
+							}
+
+							firstBake = true;
 						}
 
 						tracerTask->addTracerOutput(new TracerOutput(
 							entityData->getName(),
+							firstBake ? 100 : 0,
 							rm,
 							lightmapId
 						));
@@ -477,11 +621,17 @@ bool BakePipelineOperator::build(
 			layers.push_back(flattenedLayer);
 		}
 		else
+		{
+			// Permutate seed so we can ignore if layer inclusion flags change.
+			seedId.permutate();
+
+			// Add layer to output.
 			layers.push_back(layer);
+		}
 	}
 	inoutSceneAsset->setLayers(layers);
 
-	ms_tracerProcessor->enqueue(tracerTask);
+	tracerProcessor->enqueue(tracerTask);
 
 	// Raytrace "ground truths" of each camera.
 	// if (false)

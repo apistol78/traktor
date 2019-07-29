@@ -7,10 +7,12 @@
 #include "Core/Thread/JobManager.h"
 #include "Drawing/Image.h"
 #include "Drawing/PixelFormat.h"
+#include "Model/Operations/MergeModel.h"
 #include "Render/SH/SHEngine.h"
 #include "Render/SH/SHFunction.h"
-#include "Shape/Editor/Bake/GBuffer.h"
 #include "Shape/Editor/Bake/BakeConfiguration.h"
+#include "Shape/Editor/Bake/GBuffer.h"
+#include "Shape/Editor/Bake/IProbe.h"
 #include "Shape/Editor/Bake/Embree/RayTracerEmbree.h"
 
 namespace traktor
@@ -90,6 +92,9 @@ void RayTracerEmbree::addLight(const Light& light)
 
 void RayTracerEmbree::addModel(const model::Model* model, const Transform& transform)
 {
+	model::MergeModel(*model, transform, 0.001f).apply(m_model);
+
+	/*
 	const auto& polygons = model->getPolygons();
 
 	RTCGeometry mesh = rtcNewGeometry(m_device, RTC_GEOMETRY_TYPE_TRIANGLE);
@@ -114,10 +119,36 @@ void RayTracerEmbree::addModel(const model::Model* model, const Transform& trans
 	rtcCommitGeometry(mesh);
 	rtcAttachGeometry(m_scene, mesh);
 	rtcReleaseGeometry(mesh);
+	*/
 }
 
 void RayTracerEmbree::commit()
 {
+	const auto& polygons = m_model.getPolygons();
+
+	RTCGeometry mesh = rtcNewGeometry(m_device, RTC_GEOMETRY_TYPE_TRIANGLE);
+
+	float* vertices = (float*)rtcSetNewGeometryBuffer(mesh, RTC_BUFFER_TYPE_VERTEX, 0, RTC_FORMAT_FLOAT3, 3 * sizeof(float), m_model.getPositions().size());
+	for (const auto& position : m_model.getPositions())
+	{
+		const Vector4& p = position.xyz1();
+		*vertices++ = p.x();
+		*vertices++ = p.y();
+		*vertices++ = p.z();
+	}
+
+	uint32_t* triangles = (uint32_t*)rtcSetNewGeometryBuffer(mesh, RTC_BUFFER_TYPE_INDEX, 0, RTC_FORMAT_UINT3, 3 * sizeof(uint32_t), m_model.getPolygons().size());
+	for (const auto& polygon : m_model.getPolygons())
+	{
+		*triangles++ = m_model.getVertex(polygon.getVertex(2)).getPosition();
+		*triangles++ = m_model.getVertex(polygon.getVertex(1)).getPosition();
+		*triangles++ = m_model.getVertex(polygon.getVertex(0)).getPosition();
+	}
+
+	rtcCommitGeometry(mesh);
+	rtcAttachGeometry(m_scene, mesh);
+	rtcReleaseGeometry(mesh);
+
 	rtcCommitScene(m_scene);
 }
 
@@ -210,6 +241,9 @@ Ref< render::SHCoeffs > RayTracerEmbree::traceProbe(const Vector4& position) con
 		RTCRayHit16 T_MATH_ALIGN16 rh;
 		Vector4 direction[16];
 
+		const auto& polygons = m_model.getPolygons();
+		const auto& materials = m_model.getMaterials();
+
 		for (uint32_t i = 0; i < sampleCount; i += 16)
 		{
 			for (uint32_t j = 0; j < 16; ++j)
@@ -253,7 +287,13 @@ Ref< render::SHCoeffs > RayTracerEmbree::traceProbe(const Vector4& position) con
 					Vector4 hitNormal = Vector4(rh.hit.Ng_x[j], rh.hit.Ng_y[j], rh.hit.Ng_z[j], 0.0f).normalized();
 
 					Scalar ct = dot3(unit, direction[j]);
-					Color4f brdf = /*m_surfaces[result.index].albedo*/ Color4f(1.0f, 1.0f, 1.0f, 0.0f) / Scalar(PI);
+					if (ct < 0.0f)
+						continue;
+
+					const auto& sp = polygons[rh.hit.primID[j]];
+					const auto& sm = materials[sp.getMaterial()];
+
+					Color4f brdf = sm.getColor() * Color4f(1.0f, 1.0f, 1.0f, 0.0f) / Scalar(PI);
 					Color4f incoming = sampleAnalyticalLights(
 						random,
 						hitPosition,
@@ -285,7 +325,8 @@ Ref< drawing::Image > RayTracerEmbree::traceDirect(const GBuffer* gbuffer) const
     Ref< drawing::Image > lightmapDirect = new drawing::Image(drawing::PixelFormat::getRGBAF32(), width, height);
     lightmapDirect->clear(Color4f(0.0f, 0.0f, 0.0f, 0.0f));
 
-	const int32_t sampleCount = 16;
+	const int32_t sampleCount = 8;
+	int32_t finishedCount = 0;
 
     RefArray< Job > jobs;
     for (int32_t ty = 0; ty < height; ty += 16)
@@ -293,7 +334,6 @@ Ref< drawing::Image > RayTracerEmbree::traceDirect(const GBuffer* gbuffer) const
         for (int32_t tx = 0; tx < width; tx += 16)
         {
             auto job = JobManager::getInstance().add(makeFunctor([&, tx, ty]() {
-				RTCRayHit16 T_MATH_ALIGN16 rh;
 				Vector4 direction[16];
 
                 for (int32_t y = ty; y < ty + 16; ++y)
@@ -329,6 +369,8 @@ Ref< drawing::Image > RayTracerEmbree::traceDirect(const GBuffer* gbuffer) const
 						lightmapDirect->setPixel(x, y, direct.rgb1());
 					}
 				}
+
+				Atomic::increment(finishedCount);
             }));
             if (!job)
                return nullptr;
@@ -365,6 +407,9 @@ Ref< drawing::Image > RayTracerEmbree::traceIndirect(const GBuffer* gbuffer) con
             auto job = JobManager::getInstance().add(makeFunctor([&, tx, ty]() {
 				RTCRayHit16 T_MATH_ALIGN16 rh;
 				Vector4 direction[16];
+
+				const auto& polygons = m_model.getPolygons();
+				const auto& materials = m_model.getMaterials();
 
                 for (int32_t y = ty; y < ty + 16; ++y)
                 {
@@ -425,7 +470,10 @@ Ref< drawing::Image > RayTracerEmbree::traceIndirect(const GBuffer* gbuffer) con
 									if (ct < 0.0f)
 										ct = Scalar(0.0f);
 
-									Color4f brdf = /*m_surfaces[result.index].albedo*/ Color4f(1.0f, 1.0f, 1.0f, 0.0f) / Scalar(PI);
+									const auto& sp = polygons[rh.hit.primID[j]];
+									const auto& sm = materials[sp.getMaterial()];
+
+									Color4f brdf = sm.getColor() * Color4f(1.0f, 1.0f, 1.0f, 0.0f) / Scalar(PI);
 									Color4f incoming = sampleAnalyticalLights(
 										random,
 										hitPosition,
@@ -468,6 +516,9 @@ Ref< drawing::Image > RayTracerEmbree::traceCamera(const Transform& transform, i
 
 	const uint32_t sampleCount = alignUp(m_configuration->getIndirectSampleCount(), 16);
 	const float ratio = width / (float)height;
+
+	const auto& polygons = m_model.getPolygons();
+	const auto& materials = m_model.getMaterials();
 
 	for (int32_t y = 0; y < height; ++y)
 	{
@@ -555,7 +606,13 @@ Ref< drawing::Image > RayTracerEmbree::traceCamera(const Transform& transform, i
 					Vector4 hitNormal2 = Vector4(rh.hit.Ng_x, rh.hit.Ng_y, rh.hit.Ng_z, 0.0f).normalized();
 
 					Scalar ct = dot3(hitNormal2, traceDirection);
-					Color4f brdf = /*m_surfaces[result.index].albedo*/ Color4f(1.0f, 1.0f, 1.0f, 0.0f) / Scalar(PI);
+					if (ct <= 0.0f)
+						continue;
+
+					const auto& sp = polygons[rh.hit.primID];
+					const auto& sm = materials[sp.getMaterial()];
+
+					Color4f brdf = sm.getColor() * Color4f(1.0f, 1.0f, 1.0f, 0.0f) / Scalar(PI);
 					Color4f incoming = sampleAnalyticalLights(
 						random,
 						hitPosition,
@@ -782,6 +839,48 @@ Color4f RayTracerEmbree::sampleAnalyticalLights(
 				}
 
 				contribution += light.color * k0 * k1 * k2 * shadowAttenuate;
+			}
+			break;
+
+		case Light::LtProbe:
+			{
+				const uint32_t c_probeSampleCount = secondary ? 4 : 150;
+				StaticVector< Vector4, 150 > directions;
+
+				// Get random set of non-occluded directions.
+				for (uint32_t i = 0; i < c_probeSampleCount; ++i)
+				{
+					Vector4 direction = random.nextHemi(normal);
+
+					origin.storeAligned(&r.org_x); 
+					direction.storeAligned(&r.dir_x);
+
+					r.tnear = c_epsilonOffset;
+					r.time = 0.0f;
+					r.tfar = 1000.0f;
+
+					r.mask = 0;
+					r.id = 0;
+					r.flags = 0;
+		
+					RTCIntersectContext context;
+					rtcInitIntersectContext(&context);
+
+					rtcOccluded1(m_scene, &context, &r);
+
+					if (r.tfar >= 0.0f)
+					{
+						Scalar phi = dot3(normal, direction);
+						direction.set(3, phi);
+						directions.push_back(direction);
+					}
+				}
+
+				// Query probe of light from non-occluded directions.
+				Color4f ibl = light.probe->sample(directions, directions.size());
+
+				// Add to contribution.
+				contribution += ibl; // / Scalar(c_probeSampleCount);
 			}
 			break;
 		}

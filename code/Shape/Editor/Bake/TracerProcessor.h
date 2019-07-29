@@ -18,10 +18,10 @@ namespace traktor
 
 class Thread;
 
-    namespace editor
+    namespace db
     {
 
-class IEditor;
+class Database;
 
     }
 
@@ -43,7 +43,7 @@ public:
 		std::wstring description;
 	};
 
-    TracerProcessor(editor::IEditor* editor);
+    TracerProcessor(db::Database* outputDatabase);
 
     virtual ~TracerProcessor();
 
@@ -56,17 +56,18 @@ public:
 	Status getStatus() const;
 
 private:
-    editor::IEditor* m_editor;
+    Ref< db::Database > m_outputDatabase;
 	const TypeInfo* m_rayTracerType;
     Thread* m_thread;
     Semaphore m_lock;
     Event m_event;
     RefArray< const TracerTask > m_tasks;
-	Status m_status;
+	Ref< const TracerTask > m_activeTask;
+	mutable Status m_status;
 
     void processorThread();
 
-    bool process(const TracerTask* task);
+    bool process(const TracerTask* task) const;
 };
 
     }

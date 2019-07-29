@@ -1182,75 +1182,75 @@ void PhysicsManagerBullet::update(float simulationDeltaTime, bool issueCollision
 	m_dynamicsWorld->stepSimulation(simulationDeltaTime * m_timeScale, 0);
 
 	// Issue collision events.
-	if (issueCollisionEvents)
-	{
-		CollisionInfo info;
+	//if (issueCollisionEvents)
+	//{
+	//	CollisionInfo info;
 
-		int32_t manifoldCount = m_dispatcher->getNumManifolds();
-		for (int32_t i = 0; i < manifoldCount; ++i)
-		{
-			btPersistentManifold* manifold = m_dispatcher->getManifoldByIndexInternal(i);
-			T_ASSERT(manifold);
+	//	int32_t manifoldCount = m_dispatcher->getNumManifolds();
+	//	for (int32_t i = 0; i < manifoldCount; ++i)
+	//	{
+	//		btPersistentManifold* manifold = m_dispatcher->getManifoldByIndexInternal(i);
+	//		T_ASSERT(manifold);
 
-			// Only call to listeners when a new manifold has been created.
-			if (!manifold->m_fresh)
-				continue;
+	//		// Only call to listeners when a new manifold has been created.
+	//		if (!manifold->m_fresh)
+	//			continue;
 
-			int32_t contacts = manifold->getNumContacts();
-			if (contacts <= 0)
-				continue;
+	//		int32_t contacts = manifold->getNumContacts();
+	//		if (contacts <= 0)
+	//			continue;
 
-			const btRigidBody* body0 = reinterpret_cast< const btRigidBody* >(manifold->getBody0());
-			const btRigidBody* body1 = reinterpret_cast< const btRigidBody* >(manifold->getBody1());
+	//		const btRigidBody* body0 = reinterpret_cast< const btRigidBody* >(manifold->getBody0());
+	//		const btRigidBody* body1 = reinterpret_cast< const btRigidBody* >(manifold->getBody1());
 
-			BodyBullet* wrapperBody0 = body0 ? static_cast< BodyBullet* >(body0->getUserPointer()) : 0;
-			BodyBullet* wrapperBody1 = body1 ? static_cast< BodyBullet* >(body1->getUserPointer()) : 0;
+	//		BodyBullet* wrapperBody0 = body0 ? static_cast< BodyBullet* >(body0->getUserPointer()) : 0;
+	//		BodyBullet* wrapperBody1 = body1 ? static_cast< BodyBullet* >(body1->getUserPointer()) : 0;
 
-			info.body1 = wrapperBody0;
-			info.body2 = wrapperBody1;
-			info.contacts.resize(0);
-			info.contacts.reserve(contacts);
+	//		info.body1 = wrapperBody0;
+	//		info.body2 = wrapperBody1;
+	//		info.contacts.resize(0);
+	//		info.contacts.reserve(contacts);
 
-			int32_t material1 = wrapperBody0->getMaterial();
-			int32_t material2 = wrapperBody1->getMaterial();
+	//		int32_t material1 = wrapperBody0->getMaterial();
+	//		int32_t material2 = wrapperBody1->getMaterial();
 
-			for (int32_t j = 0; j < contacts; ++j)
-			{
-				const btManifoldPoint& pt = manifold->getContactPoint(j);
-				if (pt.getDistance() < 0.0f)
-				{
-					CollisionContact cc;
-					cc.depth = -pt.getDistance();
-					cc.normal = fromBtVector3(pt.m_normalWorldOnB, 0.0f);
-					cc.position = fromBtVector3(pt.m_positionWorldOnA, 1.0f);
-					cc.material1 = material1;
-					cc.material2 = material2;
-					info.contacts.push_back(cc);
-				}
-			}
+	//		for (int32_t j = 0; j < contacts; ++j)
+	//		{
+	//			const btManifoldPoint& pt = manifold->getContactPoint(j);
+	//			if (pt.getDistance() < 0.0f)
+	//			{
+	//				CollisionContact cc;
+	//				cc.depth = -pt.getDistance();
+	//				cc.normal = fromBtVector3(pt.m_normalWorldOnB, 0.0f);
+	//				cc.position = fromBtVector3(pt.m_positionWorldOnA, 1.0f);
+	//				cc.material1 = material1;
+	//				cc.material2 = material2;
+	//				info.contacts.push_back(cc);
+	//			}
+	//		}
 
-			if (!info.contacts.empty())
-			{
-				notifyCollisionListeners(info);
-				manifold->m_fresh = false;
+	//		if (!info.contacts.empty())
+	//		{
+	//			notifyCollisionListeners(info);
+	//			manifold->m_fresh = false;
 
-				// Only issue one new collision per update; distribute over
-				// several updates to prevent CPU overload.
-				break;
-			}
-		}
-	}
-	else
-	{
-		int32_t manifoldCount = m_dispatcher->getNumManifolds();
-		for (int32_t i = 0; i < manifoldCount; ++i)
-		{
-			btPersistentManifold* manifold = m_dispatcher->getManifoldByIndexInternal(i);
-			T_ASSERT(manifold);
+	//			// Only issue one new collision per update; distribute over
+	//			// several updates to prevent CPU overload.
+	//			break;
+	//		}
+	//	}
+	//}
+	//else
+	//{
+	//	int32_t manifoldCount = m_dispatcher->getNumManifolds();
+	//	for (int32_t i = 0; i < manifoldCount; ++i)
+	//	{
+	//		btPersistentManifold* manifold = m_dispatcher->getManifoldByIndexInternal(i);
+	//		T_ASSERT(manifold);
 
-			manifold->m_fresh = false;
-		}
-	}
+	//		manifold->m_fresh = false;
+	//	}
+	//}
 
 	m_queryCountLast = m_queryCount;
 	m_queryCount = 0;

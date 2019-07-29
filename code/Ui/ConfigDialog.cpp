@@ -1,3 +1,4 @@
+#include "Core/Misc/SafeDestroy.h"
 #include "Ui/Application.h"
 #include "Ui/Button.h"
 #include "Ui/ConfigDialog.h"
@@ -46,24 +47,9 @@ bool ConfigDialog::create(Widget* parent, const std::wstring& text, int width, i
 
 void ConfigDialog::destroy()
 {
-	if (m_apply)
-	{
-		m_apply->destroy();
-		m_apply = 0;
-	}
-
-	if (m_cancel)
-	{
-		m_cancel->destroy();
-		m_cancel = 0;
-	}
-
-	if (m_ok)
-	{
-		m_ok->destroy();
-		m_ok = 0;
-	}
-
+	safeDestroy(m_apply);
+	safeDestroy(m_cancel);
+	safeDestroy(m_ok);
 	Dialog::destroy();
 }
 

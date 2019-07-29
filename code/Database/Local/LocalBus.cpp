@@ -50,7 +50,7 @@ LocalBus::LocalBus(const std::wstring& journalFileName)
 
 LocalBus::~LocalBus()
 {
-	T_FATAL_ASSERT(m_shm == nullptr);
+	close();
 }
 
 void LocalBus::close()
