@@ -8,7 +8,7 @@ namespace traktor
 {
 
 ThreadManager::ThreadManager()
-:	m_threadBase(new Thread(0, L"Main", -1))
+:	m_threadBase(new Thread(nullptr, L"Main", -1))
 {
 }
 
@@ -16,14 +16,15 @@ ThreadManager::~ThreadManager()
 {
 	T_EXCEPTION_GUARD_BEGIN
 
-	delete m_threadBase, m_threadBase = 0;
+	delete m_threadBase;
+	m_threadBase = nullptr;
 
 	T_EXCEPTION_GUARD_END
 }
 
 ThreadManager& ThreadManager::getInstance()
 {
-	static ThreadManager* s_instance = 0;
+	static ThreadManager* s_instance = nullptr;
 	if (!s_instance)
 	{
 		s_instance = new ThreadManager();
@@ -36,13 +37,13 @@ Thread* ThreadManager::getCurrentThread()
 {
 	T_ANONYMOUS_VAR(Acquire< CriticalSection >)(m_threadsLock);
 
-	Thread* current = 0;
-	for (std::vector< Thread* >::iterator i = m_threads.begin(); i != m_threads.end(); ++i)
+	Thread* current = nullptr;
+	for (auto thread : m_threads)
 	{
-		if ((*i)->current())
+		if (thread->current())
 		{
-			T_ASSERT(current == 0);
-			current = *i;
+			current = thread;
+			break;
 		}
 	}
 
@@ -68,7 +69,7 @@ Thread* ThreadManager::create(Functor* functor, const wchar_t* const name, int h
 void ThreadManager::destroy(Thread* thread)
 {
 	T_ANONYMOUS_VAR(Acquire< CriticalSection >)(m_threadsLock);
-	std::vector< Thread* >::iterator i = std::find(m_threads.begin(), m_threads.end(), thread);
+	auto i = std::find(m_threads.begin(), m_threads.end(), thread);
 	if (i != m_threads.end())
 	{
 		m_threads.erase(i);

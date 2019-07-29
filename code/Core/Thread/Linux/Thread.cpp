@@ -30,7 +30,7 @@ void* trampoline(void* data)
 
 	pthread_cond_signal(&in->signal);
 	pthread_exit(0);
-	return 0;
+	return nullptr;
 }
 
 	}
@@ -104,7 +104,7 @@ bool Thread::wait(int timeout)
 	if (!in || !in->thread)
 		return true;
 
-	void* dummy = 0;
+	void* dummy = nullptr;
 	int rc;
 
 	if (timeout > 0)
@@ -189,10 +189,10 @@ bool Thread::stopped() const
 bool Thread::current() const
 {
 	Internal* in = reinterpret_cast< Internal* >(m_handle);
-	if (!in)
+	if (in)
+		return bool(pthread_equal(in->thread, pthread_self()) != 0);
+	else
 		return false;
-
-	return bool(pthread_equal(in->thread, pthread_self()) == 1);
 }
 
 bool Thread::finished() const
@@ -202,13 +202,22 @@ bool Thread::finished() const
 }
 
 Thread::Thread(Functor* functor, const wchar_t* const name, int hardwareCore)
-:	m_handle(0)
+:	m_handle(nullptr)
 ,	m_id(0)
 ,	m_stopped(false)
 ,	m_functor(functor)
 ,	m_name(name)
 ,	m_hardwareCore(hardwareCore)
 {
+	if (!functor)
+	{
+		// Assume is main thread, only main thread is allowed to pass null as functor.
+		Internal* in = new Internal();
+		in->thread = pthread_self();
+		in->functor = nullptr;
+		in->finished = false;
+		m_handle = in;
+	}
 }
 
 Thread::~Thread()
