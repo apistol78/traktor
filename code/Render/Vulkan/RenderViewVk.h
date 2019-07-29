@@ -126,6 +126,8 @@ public:
 	virtual bool getBackBufferContent(void* buffer) const override final;
 
 private:
+	typedef std::tuple< uint32_t, uint32_t, uint32_t, uint32_t > pipeline_key_t;
+
 	struct TargetState
 	{
 		Ref< RenderTargetSetVk > rts;
@@ -139,11 +141,9 @@ private:
 	VkDevice m_logicalDevice;
 	uint32_t m_graphicsQueueIndex;
 	uint32_t m_computeQueueIndex;
-
 #if defined(_WIN32) || defined(__LINUX__)
 	Ref< Window > m_window;
 #endif
-
 	VkSurfaceKHR m_surface;
 	uint32_t m_presentQueueIndex;
 	VkQueue m_presentQueue;
@@ -155,26 +155,19 @@ private:
 	VkDescriptorPool m_descriptorPool;
 	VkFence m_renderFence;
 	VkSemaphore m_presentCompleteSemaphore;
-
 	bool m_haveDebugMarkers;
-
 	RefArray< RenderTargetSetVk > m_primaryTargets;
-
 	std::list< RenderEvent > m_eventQueue;
 	uint32_t m_currentImageIndex;
-
 	Viewport m_viewport;
-
 	AlignedVector< TargetState > m_targetStateStack;
 	bool m_targetStateDirty;
-
 	uint32_t m_targetId;
 	VkRenderPass m_targetRenderPass;
-
-	typedef std::tuple< uint32_t, uint32_t, uint32_t, uint32_t > pipeline_key_t;
 	SmallMap< pipeline_key_t, VkPipeline > m_pipelines;
-
 	Ref< UniformBufferPoolVk > m_uniformBufferPool;
+	uint32_t m_drawCalls;
+	uint32_t m_primitiveCount;
 
 	bool create(uint32_t width, uint32_t height);
 
