@@ -25,9 +25,6 @@ render::handle_t s_handleLastWorld;
 render::handle_t s_handleLastWorldView;
 render::handle_t s_handleFogEnable;
 render::handle_t s_handleDepthEnable;
-render::handle_t s_handleLightPositionAndType;
-render::handle_t s_handleLightDirectionAndRange;
-render::handle_t s_handleLightColor;
 
 render::handle_t s_handleProbeR0_3;
 render::handle_t s_handleProbeR4_7;
@@ -52,9 +49,6 @@ void initializeHandles()
 	s_handleLastWorldView = render::getParameterHandle(L"World_LastWorldView");
 	s_handleFogEnable = render::getParameterHandle(L"World_FogEnable");
 	s_handleDepthEnable = render::getParameterHandle(L"World_DepthEnable");
-	s_handleLightPositionAndType = render::getParameterHandle(L"World_LightPositionAndType");
-	s_handleLightDirectionAndRange = render::getParameterHandle(L"World_LightDirectionAndRange");
-	s_handleLightColor = render::getParameterHandle(L"World_LightColor");
 
 	s_handleProbeR0_3 = render::getParameterHandle(L"World_ProbeR0_3");
 	s_handleProbeR4_7 = render::getParameterHandle(L"World_ProbeR4_7");
