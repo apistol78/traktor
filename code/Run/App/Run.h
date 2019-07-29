@@ -66,6 +66,8 @@ public:
 
 	bool setProperty(const std::wstring& fileName, const std::wstring& propertyName, const Any& value) const;
 
+	std::wstring resolve(const std::wstring& text);
+
 	bool loadModule(const std::wstring& moduleName);
 
 	bool loadScript(const std::wstring& fileName);

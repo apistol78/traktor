@@ -22,6 +22,7 @@
 #include "Core/System/IProcess.h"
 #include "Core/System/OS.h"
 #include "Core/System/PipeReader.h"
+#include "Core/System/ResolveEnv.h"
 #include "Core/Thread/Thread.h"
 #include "Core/Thread/ThreadManager.h"
 #include "Drawing/DrawingClassFactory.h"
@@ -356,6 +357,11 @@ bool Run::setProperty(const std::wstring& fileName, const std::wstring& property
 		return false;
 }
 
+std::wstring Run::resolve(const std::wstring& text)
+{
+	return resolveEnv(text, OS::getInstance().getEnvironment());
+}
+
 bool Run::loadModule(const std::wstring& moduleName)
 {
 	Library library;
@@ -488,6 +494,7 @@ void Run::registerRuntimeClasses(script::IScriptManager* scriptManager)
 	classRun->addMethod("getProperty", &Run_getProperty_1);
 	classRun->addMethod("getProperty", &Run_getProperty_2);
 	classRun->addMethod("setProperty", &Run::setProperty);
+	classRun->addMethod("resolve", &Run::resolve);
 	classRun->addMethod("loadModule", &Run::loadModule);
 	classRun->addMethod("loadScript", &Run::loadScript);
 	registrar.registerClass(classRun);
