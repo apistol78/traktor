@@ -141,13 +141,13 @@ bool EditorPlugin::create(ui::Widget* parent, editor::IEditorPageSite* site)
 	m_hostEnumerator = new HostEnumerator(m_editor->getSettings(), m_discoveryManager);
 
 	// Create panel.
-	Ref< ui::Container > container = new ui::Container();
-	container->create(m_parent, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%", 0, 0));
-	container->setText(L"Targets");
+	m_container = new ui::Container();
+	m_container->create(m_parent, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%", 0, 0));
+	m_container->setText(i18n::Text(L"RUNTIME_TARGETS_TITLE"));
 
 	// Create toolbar; add all targets as drop down items.
 	m_toolBar = new ui::ToolBar();
-	m_toolBar->create(container);
+	m_toolBar->create(m_container);
 	m_toolBar->setEnable(false);
 	m_toolBar->addEventHandler< ui::ToolBarButtonClickEvent >(this, &EditorPlugin::eventToolBarClick);
 
@@ -180,7 +180,7 @@ bool EditorPlugin::create(ui::Widget* parent, editor::IEditorPageSite* site)
 
 	// Create target configuration list control.
 	m_targetList = new TargetListControl();
-	m_targetList->create(container);
+	m_targetList->create(m_container);
 	m_targetList->addEventHandler< TargetBrowseEvent >(this, &EditorPlugin::eventTargetListBrowse);
 	m_targetList->addEventHandler< TargetBuildEvent >(this, &EditorPlugin::eventTargetListBuild);
 	m_targetList->addEventHandler< TargetCaptureEvent >(this, &EditorPlugin::eventTargetListShowProfiler);
@@ -189,7 +189,7 @@ bool EditorPlugin::create(ui::Widget* parent, editor::IEditorPageSite* site)
 	m_targetList->addEventHandler< TargetStopEvent >(this, &EditorPlugin::eventTargetListStop);
 	m_targetList->addEventHandler< TargetCommandEvent >(this, &EditorPlugin::eventTargetListCommand);
 
-	m_site->createAdditionalPanel(container, ui::dpi96(200), false);
+	m_site->createAdditionalPanel(m_container, ui::dpi96(200), false);
 
 	// Create threads.
 	m_threadHostEnumerator = ThreadManager::getInstance().create(makeFunctor(this, &EditorPlugin::threadHostEnumerator), L"Host enumerator");
@@ -198,8 +198,8 @@ bool EditorPlugin::create(ui::Widget* parent, editor::IEditorPageSite* site)
 	m_threadTargetActions = ThreadManager::getInstance().create(makeFunctor(this, &EditorPlugin::threadTargetActions), L"Targets");
 	m_threadTargetActions->start();
 
-	container->addEventHandler< ui::TimerEvent >(this, &EditorPlugin::eventTimer);
-	container->startTimer(30);
+	m_container->addEventHandler< ui::TimerEvent >(this, &EditorPlugin::eventTimer);
+	m_container->startTimer(30);
 
 	return true;
 }
@@ -228,8 +228,12 @@ void EditorPlugin::destroy()
 	m_targetInstances.clear();
 	m_targets.clear();
 
+	if (m_container)
+		m_site->destroyAdditionalPanel(m_container);
+
 	safeDestroy(m_targetList);
 	safeDestroy(m_toolBar);
+	safeDestroy(m_container);
 
 	m_site = nullptr;
 	m_parent = nullptr;

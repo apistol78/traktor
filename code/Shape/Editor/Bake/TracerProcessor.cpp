@@ -152,7 +152,7 @@ void TracerProcessor::waitUntilIdle()
 {
     Thread* thread = ThreadManager::getInstance().getCurrentThread();
 	while (!m_tasks.empty() || m_activeTask != nullptr)
-		thread->sleep(0);
+		thread->yield();
 }
 
 TracerProcessor::Status TracerProcessor::getStatus() const
@@ -162,8 +162,7 @@ TracerProcessor::Status TracerProcessor::getStatus() const
 
 void TracerProcessor::processorThread()
 {
-    Thread* thread = ThreadManager::getInstance().getCurrentThread();
-    while (!thread->stopped())
+    while (!m_thread->stopped())
     {
         if (!m_event.wait(100))
             continue;
