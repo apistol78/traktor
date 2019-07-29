@@ -119,7 +119,7 @@ bool isModelClosed(const model::Model* model)
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.shape.PrefabEntityPipeline", 0, PrefabEntityPipeline, world::EntityPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.shape.PrefabEntityPipeline", 1, PrefabEntityPipeline, world::EntityPipeline)
 
 PrefabEntityPipeline::PrefabEntityPipeline()
 :	m_visualMeshSnap(0.01f)
@@ -406,6 +406,7 @@ Ref< ISerializable > PrefabEntityPipeline::buildOutput(
 		log::info << L"\t" << polygonCount << L" to " << mergedModel->getPolygonCount() << L" polygon(s)" << Endl;
 
 		Ref< physics::MeshAsset > mergedMeshAsset = new physics::MeshAsset();
+		mergedMeshAsset->setMargin(0.0f);
 		mergedMeshAsset->setCalculateConvexHull(false);
 
 		pipelineBuilder->buildOutput(

@@ -81,18 +81,18 @@ bool InputServer::create(const PropertyGroup* defaultSettings, PropertyGroup* se
 
 	// Instanciate input drivers.
 	std::set< std::wstring > driverTypes = mergedSettings->getProperty< std::set< std::wstring > >(L"Input.DriverTypes");
-	for (std::set< std::wstring >::const_iterator i = driverTypes.begin(); i != driverTypes.end(); ++i)
+	for (const auto& driverType : driverTypes)
 	{
-		Ref< input::IInputDriver > driver = dynamic_type_cast< input::IInputDriver* >(TypeInfo::createInstance(i->c_str()));
+		Ref< input::IInputDriver > driver = dynamic_type_cast< input::IInputDriver* >(TypeInfo::createInstance(driverType.c_str()));
 		if (!driver)
 		{
-			log::error << L"Input server failed; unable to instantiate driver \"" << *i << L"\"" << Endl;
+			log::error << L"Input server failed; unable to instantiate driver \"" << driverType << L"\"" << Endl;
 			continue;
 		}
 
 		if (!driver->create(sysapp, syswin, input::CtKeyboard | input::CtMouse | input::CtJoystick | input::CtWheel | input::CtTouch | input::CtGaze | input::CtAcceleration | input::CtOrientation))
 		{
-			log::error << L"Input server failed; unable to create driver \"" << *i << L"\"" << Endl;
+			log::error << L"Input server failed; unable to create driver \"" << driverType << L"\"" << Endl;
 			continue;
 		}
 
@@ -138,12 +138,11 @@ bool InputServer::create(const PropertyGroup* defaultSettings, PropertyGroup* se
 		// Set global constants from configuration settings.
 		if (inputConstants)
 		{
-			const std::map< std::wstring, Ref< IPropertyValue > >& values = inputConstants->getValues();
-			for (std::map< std::wstring, Ref< IPropertyValue > >::const_iterator i = values.begin(); i != values.end(); ++i)
+			for (const auto& value : inputConstants->getValues())
 			{
 				m_inputMapping->setValue(
-					i->first,
-					PropertyFloat::get(i->second)
+					value.first,
+					PropertyFloat::get(value.second)
 				);
 			}
 		}
@@ -189,12 +188,11 @@ int32_t InputServer::reconfigure(const PropertyGroup* settings)
 			// Set global constants from configuration settings.
 			if (inputConstants)
 			{
-				const std::map< std::wstring, Ref< IPropertyValue > >& values = inputConstants->getValues();
-				for (std::map< std::wstring, Ref< IPropertyValue > >::const_iterator i = values.begin(); i != values.end(); ++i)
+				for (const auto& value : inputConstants->getValues())
 				{
 					m_inputMapping->setValue(
-						i->first,
-						PropertyFloat::get(i->second)
+						value.first,
+						PropertyFloat::get(value.second)
 					);
 				}
 			}

@@ -59,7 +59,12 @@ Aabb3 RigidBodyComponent::getBoundingBox() const
 
 void RigidBodyComponent::update(const world::UpdateParams& update)
 {
-	m_owner->setTransform(m_body->getTransform());
+	// Do not keep updating transform of non-kinematic statics or inactive bodies.
+	if (
+		!(m_body->isStatic() && !m_body->isKinematic()) &&
+		m_body->isActive()
+	)
+		m_owner->setTransform(m_body->getTransform());
 }
 
 void RigidBodyComponent::collisionListener(const physics::CollisionInfo& collisionInfo)

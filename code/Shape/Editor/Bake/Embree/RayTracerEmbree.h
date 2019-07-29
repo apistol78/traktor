@@ -1,6 +1,7 @@
 #pragma once
 
 #include <embree3/rtcore.h>
+#include "Model/Model.h"
 #include "Shape/Editor/Bake/IRayTracer.h"
 
 namespace traktor
@@ -57,6 +58,7 @@ private:
 	AlignedVector< Light > m_lights;
 	RTCDevice m_device;
 	RTCScene m_scene;
+	model::Model m_model;
     Ref< render::SHEngine > m_shEngine;
 	float m_maxDistance;
 

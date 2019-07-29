@@ -98,8 +98,8 @@ void WidgetPreviewEditor::handleDatabaseEvent(db::Database* database, const Guid
 ui::Size WidgetPreviewEditor::getPreferredSize() const
 {
 	return ui::Size(
-		ui::dpi96(640),
-		ui::dpi96(480)
+		ui::dpi96(1280),
+		ui::dpi96(720)
 	);
 }
 

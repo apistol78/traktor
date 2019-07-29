@@ -1658,6 +1658,18 @@
       <second>Trigger</second>
     </item>
     <item>
+      <first>INPUT_EDITOR_CREATE_NODE_TRAKTOR_INPUT_INDELAY</first>
+      <second>Delay</second>
+    </item>
+    <item>
+      <first>INPUT_EDITOR_CREATE_NODE_TRAKTOR_INPUT_INENVELOPE</first>
+      <second>Envelope</second>
+    </item>
+    <item>
+      <first>INPUT_EDITOR_CREATE_NODE_TRAKTOR_INPUT_INLOWPASS</first>
+      <second>Low Pass</second>
+    </item>
+    <item>
       <first>INPUT_EDITOR_DELETE_NODE</first>
       <second>Delete</second>
     </item>

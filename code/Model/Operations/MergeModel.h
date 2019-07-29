@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Core/Math/Transform.h"
 #include "Model/IModelOperation.h"
 
 // import/export mechanism.

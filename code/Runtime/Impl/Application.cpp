@@ -992,7 +992,7 @@ void Application::pollDatabase()
 
 	while (m_database->getEvent(event, remote))
 	{
-		if (const db::EvtInstanceCommitted* committed = dynamic_type_cast< const db::EvtInstanceCommitted* >(event))
+		if (auto committed = dynamic_type_cast< const db::EvtInstanceCommitted* >(event))
 			eventIds.push_back(committed->getInstanceGuid());
 	}
 
@@ -1007,12 +1007,14 @@ void Application::pollDatabase()
 		Ref< resource::IResourceManager > resourceManager = m_resourceServer->getResourceManager();
 		if (resourceManager)
 		{
-			for (std::vector< Guid >::iterator i = eventIds.begin(); i != eventIds.end(); ++i)
+			for (const auto& eventId : eventIds)
 			{
-				log::info << L"Data modified; reloading resource \"" << i->format() << L"\"..." << Endl;
-				resourceManager->reload(*i, false);
+				T_DEBUG(L"Data modified; reloading resource \"" << eventId.format() << L"\"");
+				resourceManager->reload(eventId, false);
 			}
 		}
+
+		m_environment->reconfigure();
 	}
 }
 

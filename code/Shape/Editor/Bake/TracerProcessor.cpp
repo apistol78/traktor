@@ -2,6 +2,7 @@
 #include "Core/Log/Log.h"
 #include "Core/Math/Const.h"
 #include "Core/Math/Winding3.h"
+#include "Core/Misc/String.h"
 #include "Core/Misc/TString.h"
 #include "Core/Singleton/SingletonManager.h"
 #include "Core/Thread/Acquire.h"
@@ -12,7 +13,6 @@
 #include "Drawing/Image.h"
 #include "Drawing/Filters/DilateFilter.h"
 #include "Drawing/Functions/BlendFunction.h"
-#include "Editor/IEditor.h"
 #include "Model/Model.h"
 #include "Render/Types.h"
 #include "Render/Resource/TextureResource.h"
@@ -100,11 +100,13 @@ Ref< drawing::Image > denoise(const GBuffer& gbuffer, drawing::Image* lightmap)
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.shape.TracerProcessor", TracerProcessor, Object)
 
-TracerProcessor::TracerProcessor(editor::IEditor* editor)
-:   m_editor(editor)
+TracerProcessor::TracerProcessor(db::Database* outputDatabase)
+:   m_outputDatabase(outputDatabase)
 ,   m_rayTracerType(nullptr)
 ,   m_thread(nullptr)
 {
+	T_FATAL_ASSERT(m_outputDatabase != nullptr);
+
 	m_rayTracerType = TypeInfo::find(L"traktor.shape.RayTracerEmbree"); // settings->getProperty< std::wstring >(L"BakePipelineOperator.RayTracerType", L"traktor.shape.RayTracerEmbree").c_str());
     
     m_thread = ThreadManager::getInstance().create(makeFunctor(this, &TracerProcessor::processorThread), L"Tracer");
@@ -113,8 +115,16 @@ TracerProcessor::TracerProcessor(editor::IEditor* editor)
 
 TracerProcessor::~TracerProcessor()
 {
-    ThreadManager::getInstance().destroy(m_thread);
-    m_thread = nullptr;
+	// Ensure all tasks has finished until we stop thread.
+	waitUntilIdle();
+
+	// Stop task thread.
+	if (m_thread != nullptr)
+	{
+		m_thread->stop();
+		ThreadManager::getInstance().destroy(m_thread);
+		m_thread = nullptr;
+	}
 }
 
 void TracerProcessor::enqueue(const TracerTask* task)
@@ -140,6 +150,9 @@ void TracerProcessor::cancelAll()
 
 void TracerProcessor::waitUntilIdle()
 {
+    Thread* thread = ThreadManager::getInstance().getCurrentThread();
+	while (!m_tasks.empty() || m_activeTask != nullptr)
+		thread->sleep(0);
 }
 
 TracerProcessor::Status TracerProcessor::getStatus() const
@@ -155,28 +168,27 @@ void TracerProcessor::processorThread()
         if (!m_event.wait(100))
             continue;
 
-        Ref< const TracerTask > task;
-
         {
             T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
             if (!m_tasks.empty())
             {
-                task = m_tasks.front();
+                m_activeTask = m_tasks.front();
                 m_tasks.pop_front();
             }
         }
 
-        if (task)
+        if (m_activeTask)
         {
 			m_status.active = true;
-            process(task);
+            process(m_activeTask);
 			m_status.active = false;
-            task = nullptr;
+            m_activeTask = nullptr;
         }
     }
+	cancelAll();
 }
 
-bool TracerProcessor::process(const TracerTask* task)
+bool TracerProcessor::process(const TracerTask* task) const
 {
     auto configuration = task->getConfiguration();
     T_FATAL_ASSERT(configuration != nullptr);
@@ -194,8 +206,13 @@ bool TracerProcessor::process(const TracerTask* task)
 
     rayTracer->commit();
 
+	// Get output tasks and sort them by priority.
+	auto tracerOutputs = task->getTracerOutputs();
+	tracerOutputs.sort([](const TracerOutput* lh, const TracerOutput* rh) {
+		return lh->getPriority() > rh->getPriority();
+	});
+
     // Trace each lightmap in task.
-	const auto& tracerOutputs = task->getTracerOutputs();
 	for (uint32_t i = 0; i < tracerOutputs.size(); ++i)
     {
 		auto tracerOutput = tracerOutputs[i];
@@ -205,7 +222,7 @@ bool TracerProcessor::process(const TracerTask* task)
 		// Update status.
 		m_status.current = i;
 		m_status.total = tracerOutputs.size();
-		m_status.description = tracerOutput->getName();
+		m_status.description = tracerOutput->getName() + L" (" + toString(tracerOutput->getPriority()) + L")";
 
         // Calculate output size from lumel density.
         float totalWorldArea = 0.0f;
@@ -317,7 +334,7 @@ bool TracerProcessor::process(const TracerTask* task)
 
 		// Create output instance.
 		Ref< render::TextureResource > outputResource = new render::TextureResource();
-		Ref< db::Instance > outputInstance = m_editor->getOutputDatabase()->createInstance(
+		Ref< db::Instance > outputInstance = m_outputDatabase->createInstance(
 			L"Generated/" + tracerOutput->getLightmapId().format(),
 			db::CifReplaceExisting,
 			&lightmapId

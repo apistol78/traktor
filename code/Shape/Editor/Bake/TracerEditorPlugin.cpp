@@ -1,3 +1,4 @@
+#include "Editor/IEditor.h"
 #include "Editor/IEditorPageSite.h"
 #include "Shape/Editor/Bake/BakePipelineOperator.h"
 #include "Shape/Editor/Bake/TracerEditorPlugin.h"
@@ -20,8 +21,6 @@ TracerEditorPlugin::TracerEditorPlugin(editor::IEditor* editor)
 
 bool TracerEditorPlugin::create(ui::Widget* parent, editor::IEditorPageSite* site)
 {
-    BakePipelineOperator::setTracerProcessor(new TracerProcessor(m_editor));
-
 	m_site = site;
 
 	m_tracerPanel = new TracerPanel();
@@ -40,8 +39,6 @@ void TracerEditorPlugin::destroy()
 		m_site = nullptr;
 		m_tracerPanel = nullptr;
 	}
-
-    BakePipelineOperator::setTracerProcessor(nullptr);
 }
 
 bool TracerEditorPlugin::handleCommand(const ui::Command& command, bool result)
@@ -55,10 +52,14 @@ void TracerEditorPlugin::handleDatabaseEvent(db::Database* database, const Guid&
 
 void TracerEditorPlugin::handleWorkspaceOpened()
 {
+    BakePipelineOperator::setTracerProcessor(new TracerProcessor(
+		m_editor->getOutputDatabase()
+	));
 }
 
 void TracerEditorPlugin::handleWorkspaceClosed()
 {
+	BakePipelineOperator::setTracerProcessor(nullptr);
 }
 
     }
