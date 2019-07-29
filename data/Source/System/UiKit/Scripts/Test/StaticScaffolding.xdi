@@ -10,16 +10,16 @@ local ipsum = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do e
 StaticScaffolding = StaticScaffolding or class("StaticScaffolding", Scaffolding)
 
 function StaticScaffolding:setup(frame)
-	local ct = Panel(frame, TableLayout({100,0}, {100}, 4, 4, 4, 16))
+	local ct = Panel(frame, TableLayout({100}, {100}, 16, 16, 4, 16))
 
 	Static(ct, ipsum)
-		:setTextColor(Color4f(1, 1, 1, 1))
-		:setTextSize(40)
+--		:setTextColor(Color4f(1, 1, 1, 1))
+--		:setTextSize(40)
 		:setMultiLine(true)
 		:setWordWrap(true)
 
-	PushButton(ct, "Test")
 end
+
 	]]>
 	</text>
 </object>
