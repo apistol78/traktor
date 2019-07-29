@@ -15,11 +15,13 @@ public:
 
 	virtual ~SharedMemoryLinux();
 
-	virtual Ref< IStream > read(bool exclusive);
+	virtual const void* acquireReadPointer(bool exclusive) override final;
 
-	virtual Ref< IStream > write();
+	virtual void releaseReadPointer() override final;
 
-	virtual bool clear();
+	virtual void* acquireWritePointer() override final;
+
+	virtual void releaseWritePointer() override final;
 
 private:
 	std::wstring m_name;

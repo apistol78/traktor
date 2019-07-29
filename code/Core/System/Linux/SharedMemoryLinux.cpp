@@ -3,7 +3,6 @@
 #include <unistd.h>
 #include <sys/mman.h>
 #include <sys/stat.h>
-#include "Core/Io/MemoryStream.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/MD5.h"
 #include "Core/Misc/TString.h"
@@ -46,31 +45,22 @@ SharedMemoryLinux::~SharedMemoryLinux()
 	}
 }
 
-Ref< IStream > SharedMemoryLinux::read(bool exclusive)
+const void* SharedMemoryLinux::acquireReadPointer(bool exclusive)
 {
-	if (m_ptr)
-		return new MemoryStream(m_ptr, m_size, true, false);
-	else
-		return nullptr;
+	return m_ptr;
 }
 
-Ref< IStream > SharedMemoryLinux::write()
+void SharedMemoryLinux::releaseReadPointer()
 {
-	if (m_ptr)
-		return new MemoryStream(m_ptr, m_size, false, true);
-	else
-		return nullptr;
 }
 
-bool SharedMemoryLinux::clear()
+void* SharedMemoryLinux::acquireWritePointer()
 {
-	if (m_ptr)
-	{
-		std::memset(m_ptr, 0, m_size);
-		return true;
-	}
-	else
-		return false;
+	return m_ptr;
+}
+
+void SharedMemoryLinux::releaseWritePointer()
+{
 }
 
 }
