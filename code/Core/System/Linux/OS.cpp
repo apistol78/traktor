@@ -172,8 +172,8 @@ Ref< IProcess > OS::execute(
 {
 	posix_spawn_file_actions_t* fileActions = 0;
 	char cwd[512];
-	char* envv[256];
-	char* argv[64];
+	char* envv[4096];
+	char* argv[1024];
 	int envc = 0;
 	int argc = 0;
 	int err;
@@ -188,12 +188,12 @@ Ref< IProcess > OS::execute(
 
 	// Extract executable file from command line.
 	if (resolvedCommandLine.empty())
-		return 0;
+		return nullptr;
 	if (resolvedCommandLine[0] == L'\"')
 	{
 		size_t i = resolvedCommandLine.find(L'\"', 1);
 		if (i == resolvedCommandLine.npos)
-			return 0;
+			return nullptr;
 		executable = resolvedCommandLine.substr(1, i - 1);
 		arguments = trim(resolvedCommandLine.substr(i + 1));
 	}
@@ -233,7 +233,7 @@ Ref< IProcess > OS::execute(
 				i = j + 1;
 			}
 			else
-				return 0;
+				return nullptr;
 		}
 		else
 		{
@@ -268,8 +268,8 @@ Ref< IProcess > OS::execute(
 	}
 
 	// Terminate argument and environment vectors.
-	envv[envc] = 0;
-	argv[argc] = 0;
+	envv[envc] = nullptr;
+	argv[argc] = nullptr;
 
 	// Spawned process inherit working directory from our process; thus
 	// we need to temporarily change directory.
@@ -301,8 +301,14 @@ Ref< IProcess > OS::execute(
 	// Restore our working directory before returning.
 	chdir(cwd);
 
+	// Free arguments.
+	for (char** arg = argv; *arg != nullptr; ++arg)
+		free(*arg);
+	for (char** env = envv; *env != nullptr; ++env)
+		free(*env);
+
 	if (err != 0)
-		return 0;
+		return nullptr;
 
 	return new ProcessLinux(pid, fileActions, childStdOut[0], childStdErr[0]);
 }
