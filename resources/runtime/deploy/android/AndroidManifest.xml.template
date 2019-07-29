@@ -33,7 +33,7 @@
         >
             <meta-data
                 android:name="android.app.lib_name"
-                android:value="<!-- output:print(environment:get("DEPLOY_EXECUTABLE")) --!>"
+                android:value="Application"
             />
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

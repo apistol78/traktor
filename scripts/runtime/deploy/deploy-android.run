@@ -29,45 +29,40 @@ local function generateBinary()
 		return false
 	end
 
-	local toolchain = os:getEnvironment("DEPLOY_ANDROID_TOOLCHAIN") -- "4.9"
-	local apilevel = os:getEnvironment("DEPLOY_ANDROID_APILEVEL") -- "android-27"
-	local architecture = "arch-arm"
-	local abi = "arm-linux-androideabi"
+	local apilevel = os:getEnvironment("DEPLOY_ANDROID_APILEVEL") or "29" -- "29"
+	local architecture = "aarch64" -- "arch-arm"
 
 	-- Determine tool suitable for os.
 	local host = os:getEnvironment("DEPLOY_HOST_OS")
 	if host == "win32" or host == "win64" then
 		host = "windows-x86_64"
-		if not fileSystem:exist(Path(ndk .. "/toolchains/" .. abi .. "-" .. toolchain .. "/prebuilt/" .. host)) then
+		if not fileSystem:exist(Path(ndk .. "/toolchains/llvm/prebuilt/" .. host .."/bin")) then
 			host = "windows"
 		end
+	elseif host == "linux" then
+		host = "linux-x86_64"
+		if not fileSystem:exist(Path(ndk .. "/toolchains/llvm/prebuilt/" .. host .."/bin")) then
+			host = "linux"
+		end		
 	elseif host == "osx" then
 		host = "darwin-x86_64"
-		if not fileSystem:exist(Path(ndk .. "/toolchains/" .. abi .. "-" .. toolchain .. "/prebuilt/" .. host)) then
+		if not fileSystem:exist(Path(ndk .. "/toolchains/llvm/prebuilt/" .. host .."/bin")) then
 			host = "darwin"
 		end		
 	else
-		stderr:printLn("Unsupported host OS.")
+		stderr:printLn("Unsupported host OS (" .. host .. ").")
 		return 1
 	end
 
 	-- Generate paths to NDK.
-	local toolpath = ndk .. "/toolchains/" .. abi .. "-" .. toolchain .. "/prebuilt/" .. host .."/bin"
-	local cxxpath = ndk .. "/sources/cxx-stl/llvm-libc++/libs/armeabi-v7a"
-	local syspath = ndk .. "/platforms/" .. apilevel .. "/" .. architecture
-	local cl = toolpath .. "/" .. abi .. "-gcc"
+	local toolpath = ndk .. "/toolchains/llvm/prebuilt/" .. host .."/bin"
+	local cl = toolpath .. "/" .. architecture .. "-linux-android" .. apilevel .. "-clang++"
 
 	-- Check all paths exist.
-	local ok =
-		fileSystem:exist(Path(toolpath)) and
-		fileSystem:exist(Path(cxxpath)) and
-		fileSystem:exist(Path(syspath))
-
+	local ok = fileSystem:exist(Path(toolpath))
 	if not ok then
 		stderr:printLn("Android NDK installation not valid; ensure Android NDK is properly installed and try again.")
 		stderr:printLn("[toolpath] = \"" .. toolpath .. "\"")
-		stderr:printLn("[cxxpath] = \"" .. cxxpath .. "\"")
-		stderr:printLn("[syspath] = \"" .. syspath .. "\"")
 		return false
 	end
 
@@ -79,7 +74,7 @@ local function generateBinary()
 	local debug = (os:getEnvironment("DEPLOY_DEBUG") ~= "")
 	if not debug then paths = os:getEnvironment("DEPLOY_STATIC_PATH_RELEASE"):split("\n") else paths = os:getEnvironment("DEPLOY_STATIC_PATH_DEBUG"):split("\n") end
 	 for _, p in pairs(paths) do
-		libraryPaths = libraryPaths .. "-L " .. Path(p).pathName .. " "
+		libraryPaths = libraryPaths .. " -L " .. Path(p).pathName
 	end
 
 	-- Collect libraries to link.
@@ -109,20 +104,16 @@ local function generateBinary()
 	local cmd = cl .. " -c Linkage.cpp -o Linkage.o"
 	local result = run:execute(cmd) --, nil)
 	if result ~= 0 then
-		stderr:printLn("Unable to compile file.")
+		stderr:printLn("Unable to compile Linkage.cpp")
 		return false
 	end	
 
 	-- Link files into an executable product.
 	stdout:printLn("Linking...")
-	local cmd = cl
-	cmd = cmd .. " -fPIC"
-	cmd = cmd .. " --sysroot=" .. syspath
+	local cmd = "\"" .. cl .. "\""
 	cmd = cmd .. " -shared"
-	cmd = cmd .. " -static-libstdc++"
-	cmd = cmd .. " -Wl,-soname,$(DEPLOY_EXECUTABLE)"
+	cmd = cmd .. " -Wl,-soname,Application"
 	cmd = cmd .. " -Wl,--no-undefined"
-	cmd = cmd .. " -Wl,-z,noexecstack"
 	cmd = cmd .. " -lc++"
 	cmd = cmd .. " -lc"
 	cmd = cmd .. " -lm"
@@ -132,17 +123,15 @@ local function generateBinary()
 	cmd = cmd .. " -lEGL"
 	cmd = cmd .. " -lGLESv2"
 	cmd = cmd .. " -lOpenSLES"
-	cmd = cmd .. " -L" .. cxxpath
 	cmd = cmd .. " Linkage.o"
-	cmd = cmd .. " " .. libraryPaths
-	cmd = cmd .. " " .. libraries
-	cmd = cmd .. " " .. libraries
-	cmd = cmd .. " -o lib$(DEPLOY_EXECUTABLE).so"
+	cmd = cmd .. libraryPaths
+	cmd = cmd .. libraries
+	cmd = cmd .. libraries
+	cmd = cmd .. " -o libApplication.so"
 
 	local result = run:execute(cmd)
 	if result ~= 0 then
 		stderr:printLn("Unable to build executable product.")
-		stderr:printLn(cmd)
 		return false
 	end
 
@@ -155,7 +144,7 @@ end
 
 function build(args)
 	stdout:printLn("Building asset(s)...")
-	local cmdline = tools.pipeline .. " -p -s=Pipeline"
+	local cmdline = tools.pipeline .. " -p -standalone -s=Pipeline"
 	for i = 1, args:size() - 1 do
 		cmdline = cmdline .. " " .. args:get(i)
 	end
@@ -171,9 +160,11 @@ function deploy(args)
 		return 1
 	end
 
+	local abi = "arm64-v8a"	-- armeabi-v7a
+
 	-- Create android project.
 	run:mkdir("assets")
-	run:mkdir("lib/armeabi-v7a")
+	run:mkdir("lib/" .. abi)
 	run:mkdir("res/values")
 	run:mkdir("res/drawable")
 	run:mkdir("res/drawable-hdpi")
@@ -181,8 +172,8 @@ function deploy(args)
 	run:mkdir("res/drawable-mdpi")
 	run:mkdir("res/drawable-xhdpi")
 	run:replace("Application.config", "assets/Application.config")
-	run:replace("lib$(DEPLOY_EXECUTABLE).so", "lib/armeabi-v7a/lib$(DEPLOY_EXECUTABLE).so")
-	run:replace("$(DEPLOY_ANDROID_NDK_ROOT)/sources/cxx-stl/llvm-libc++/libs/armeabi-v7a/libc++_shared.so", "lib/armeabi-v7a/libc++_shared.so")
+	run:replace("libApplication.so", "lib/" .. abi .. "/libApplication.so")
+	run:replace("$(DEPLOY_ANDROID_NDK_ROOT)/sources/cxx-stl/llvm-libc++/libs/" .. abi .. "/libc++_shared.so", "lib/" .. abi .. "/libc++_shared.so")
 	run:run("$(DEPLOY_SYSTEM_ROOT)/resources/runtime/deploy/android/AndroidManifest.xml.template", "AndroidManifest.xml")
 	run:run("$(DEPLOY_SYSTEM_ROOT)/resources/runtime/deploy/android/splash_drawable.xml.template", "res/drawable/splash_drawable.xml")
 	run:run("$(DEPLOY_SYSTEM_ROOT)/resources/runtime/deploy/android/splash_theme.xml.template", "res/values/splash_theme.xml")
@@ -190,7 +181,7 @@ function deploy(args)
 
 	-- Cleanup intermediate files.
 	run:rm("Application.config")
-	run:rm("lib$(DEPLOY_EXECUTABLE).so")
+	run:rm("libApplication.so")
 
 	-- Create icons.
 	stdout:printLn("Generating Android icon images...")
@@ -216,13 +207,28 @@ function deploy(args)
 	-- Build apk package.
 	stdout:printLn("Building Android APK package...")
 
-	local result = true	
-	result = result and (run:execute("$(DEPLOY_ANDROID_HOME)/build-tools/27.0.3/aapt.exe package -f -M AndroidManifest.xml -S res -I \"$(DEPLOY_ANDROID_HOME)/platforms/$(DEPLOY_ANDROID_APILEVEL)/android.jar\" -F \"$(DEPLOY_PROJECT_NAME).unsigned.apk\"") == 0)
-	result = result and (run:execute("$(DEPLOY_ANDROID_HOME)/build-tools/27.0.3/aapt.exe add \"$(DEPLOY_PROJECT_NAME).unsigned.apk\" lib/armeabi-v7a/lib$(DEPLOY_EXECUTABLE).so", nil) == 0)
-	result = result and (run:execute("$(DEPLOY_ANDROID_HOME)/build-tools/27.0.3/aapt.exe add \"$(DEPLOY_PROJECT_NAME).unsigned.apk\" lib/armeabi-v7a/libc++_shared.so", nil) == 0)
-	result = result and (run:execute("$(DEPLOY_ANDROID_HOME)/build-tools/27.0.3/aapt.exe add \"$(DEPLOY_PROJECT_NAME).unsigned.apk\" assets/Application.config", nil) == 0)
-	result = result and (run:execute("$(DEPLOY_ANDROID_HOME)/build-tools/27.0.3/zipalign.exe -f -p 4 \"$(DEPLOY_PROJECT_NAME).unsigned.apk\" \"$(DEPLOY_PROJECT_NAME).aligned.apk\"", nil) == 0)
-	result = result and (run:execute("$(DEPLOY_ANDROID_HOME)/build-tools/27.0.3/apksigner.bat sign --ks $(DEPLOY_SYSTEM_ROOT)/resources/runtime/deploy/android/keystore.jks --ks-key-alias androidkey --ks-pass pass:android --key-pass pass:android --out \"$(DEPLOY_PROJECT_NAME).apk\" \"$(DEPLOY_PROJECT_NAME).aligned.apk\"", nil) == 0)
+	local result = false
+	local host = os:getEnvironment("DEPLOY_HOST_OS")
+	if host == "win32" or host == "win64" then
+		result = true
+		result = result and (run:execute("$(DEPLOY_ANDROID_HOME)/build-tools/29.0.1/aapt.exe package -f -M AndroidManifest.xml -S res -I \"$(DEPLOY_ANDROID_HOME)/platforms/android-$(DEPLOY_ANDROID_APILEVEL)/android.jar\" -F \"$(DEPLOY_PROJECT_NAME).unsigned.apk\"") == 0)
+		result = result and (run:execute("$(DEPLOY_ANDROID_HOME)/build-tools/29.0.1/aapt.exe add \"$(DEPLOY_PROJECT_NAME).unsigned.apk\" lib/" .. abi .. "/libApplication.so", nil) == 0)
+		result = result and (run:execute("$(DEPLOY_ANDROID_HOME)/build-tools/29.0.1/aapt.exe add \"$(DEPLOY_PROJECT_NAME).unsigned.apk\" lib/" .. abi .. "/libc++_shared.so", nil) == 0)
+		result = result and (run:execute("$(DEPLOY_ANDROID_HOME)/build-tools/29.0.1/aapt.exe add \"$(DEPLOY_PROJECT_NAME).unsigned.apk\" assets/Application.config", nil) == 0)
+		result = result and (run:execute("$(DEPLOY_ANDROID_HOME)/build-tools/29.0.1/zipalign.exe -f -p 4 \"$(DEPLOY_PROJECT_NAME).unsigned.apk\" \"$(DEPLOY_PROJECT_NAME).aligned.apk\"", nil) == 0)
+		result = result and (run:execute("$(DEPLOY_ANDROID_HOME)/build-tools/29.0.1/apksigner.bat sign --ks $(DEPLOY_SYSTEM_ROOT)/resources/runtime/deploy/android/keystore.jks --ks-key-alias androidkey --ks-pass pass:android --key-pass pass:android --out \"$(DEPLOY_PROJECT_NAME).apk\" \"$(DEPLOY_PROJECT_NAME).aligned.apk\"", nil) == 0)
+	elseif host == "linux" or host == "osx" then
+		result = true
+		result = result and (run:execute("$(DEPLOY_ANDROID_HOME)/build-tools/29.0.1/aapt package -f -M AndroidManifest.xml -S res -I $(DEPLOY_ANDROID_HOME)/platforms/android-$(DEPLOY_ANDROID_APILEVEL)/android.jar -F $(DEPLOY_PROJECT_NAME).unsigned.apk") == 0)
+		result = result and (run:execute("$(DEPLOY_ANDROID_HOME)/build-tools/29.0.1/aapt add $(DEPLOY_PROJECT_NAME).unsigned.apk lib/" .. abi .. "/libApplication.so", nil) == 0)
+		result = result and (run:execute("$(DEPLOY_ANDROID_HOME)/build-tools/29.0.1/aapt add $(DEPLOY_PROJECT_NAME).unsigned.apk lib/" .. abi .. "/libc++_shared.so", nil) == 0)
+		result = result and (run:execute("$(DEPLOY_ANDROID_HOME)/build-tools/29.0.1/aapt add $(DEPLOY_PROJECT_NAME).unsigned.apk assets/Application.config", nil) == 0)
+		result = result and (run:execute("$(DEPLOY_ANDROID_HOME)/build-tools/29.0.1/zipalign -f -p 4 $(DEPLOY_PROJECT_NAME).unsigned.apk $(DEPLOY_PROJECT_NAME).aligned.apk", nil) == 0)
+		result = result and (run:execute("$(DEPLOY_ANDROID_HOME)/build-tools/29.0.1/apksigner sign --ks $(DEPLOY_SYSTEM_ROOT)/resources/runtime/deploy/android/keystore.jks --ks-key-alias androidkey --ks-pass pass:android --key-pass pass:android --out $(DEPLOY_PROJECT_NAME).apk $(DEPLOY_PROJECT_NAME).aligned.apk", nil) == 0)
+	else
+		stderr:printLn("Unsupported host OS (" .. host .. ").")
+		return 1
+	end
 
 	-- Cleanup intermediate files.
 	run:rm("$(DEPLOY_PROJECT_NAME).unsigned.apk")
@@ -269,21 +275,20 @@ end
 function migrate(args)
 	stdout:printLn("Migrating...")
 
-	-- Migrate database into compact database.
-	stdout:printLn("Migrating Android...")
-	if run:execute(tools.migrate .. " -p -s=Migrate") ~= 0 then
-		stderr:printLn("Failed to migrate Android database")
-		return 1
-	end
+	-- Build content database.
+	run:execute(tools.migrate .. " -p -s=Migrate")
+	if run:exitCode() ~= 0 then return run:exitCode() end
 	
 	-- Create android native binary.
 	if not generateBinary() then
 		return 1
 	end
 
+	local abi = "arm64-v8a"	-- armeabi-v7a
+
 	-- Create android project.
 	run:mkdir("assets")
-	run:mkdir("lib/armeabi-v7a")
+	run:mkdir("lib/" .. abi)
 	run:mkdir("res/values")
 	run:mkdir("res/drawable")
 	run:mkdir("res/drawable-hdpi")
@@ -292,8 +297,8 @@ function migrate(args)
 	run:mkdir("res/drawable-xhdpi")
 	run:replace("Application.config", "assets/Application.config")
 	run:replace("Content.compact", "assets/Content.compact")
-	run:replace("lib$(DEPLOY_EXECUTABLE).so", "lib/armeabi-v7a/lib$(DEPLOY_EXECUTABLE).so")
-	run:replace("$(DEPLOY_ANDROID_NDK_ROOT)/sources/cxx-stl/llvm-libc++/libs/armeabi-v7a/libc++_shared.so", "lib/armeabi-v7a/libc++_shared.so")
+	run:replace("libApplication.so", "lib/" .. abi .. "/libApplication.so")
+	run:replace("$(DEPLOY_ANDROID_NDK_ROOT)/sources/cxx-stl/llvm-libc++/libs/" .. abi .. "/libc++_shared.so", "lib/" .. abi .. "/libc++_shared.so")
 	run:run("$(DEPLOY_SYSTEM_ROOT)/resources/runtime/deploy/android/AndroidManifest.xml.template", "AndroidManifest.xml")
 	run:run("$(DEPLOY_SYSTEM_ROOT)/resources/runtime/deploy/android/splash_drawable.xml.template", "res/drawable/splash_drawable.xml")
 	run:run("$(DEPLOY_SYSTEM_ROOT)/resources/runtime/deploy/android/splash_theme.xml.template", "res/values/splash_theme.xml")
@@ -302,7 +307,7 @@ function migrate(args)
 	-- Cleanup intermediate files.
 	run:rm("Application.config")
 	run:rm("Content.compact")
-	run:rm("lib$(DEPLOY_EXECUTABLE).so")
+	run:rm("libApplication.so")
 
 	-- Create icons.
 	stdout:printLn("Generating Android icon images...")
@@ -328,14 +333,30 @@ function migrate(args)
 	-- Build apk package.
 	stdout:printLn("Building Android APK package...")
 
-	local result = true	
-	result = result and (run:execute("$(DEPLOY_ANDROID_HOME)/build-tools/27.0.3/aapt.exe package -f -M AndroidManifest.xml -S res -I \"$(DEPLOY_ANDROID_HOME)/platforms/$(DEPLOY_ANDROID_APILEVEL)/android.jar\" -F \"$(DEPLOY_PROJECT_NAME).unsigned.apk\"") == 0)
-	result = result and (run:execute("$(DEPLOY_ANDROID_HOME)/build-tools/27.0.3/aapt.exe add \"$(DEPLOY_PROJECT_NAME).unsigned.apk\" lib/armeabi-v7a/lib$(DEPLOY_EXECUTABLE).so", nil) == 0)
-	result = result and (run:execute("$(DEPLOY_ANDROID_HOME)/build-tools/27.0.3/aapt.exe add \"$(DEPLOY_PROJECT_NAME).unsigned.apk\" lib/armeabi-v7a/libc++_shared.so", nil) == 0)
-	result = result and (run:execute("$(DEPLOY_ANDROID_HOME)/build-tools/27.0.3/aapt.exe add \"$(DEPLOY_PROJECT_NAME).unsigned.apk\" assets/Application.config", nil) == 0)
-	result = result and (run:execute("$(DEPLOY_ANDROID_HOME)/build-tools/27.0.3/aapt.exe add \"$(DEPLOY_PROJECT_NAME).unsigned.apk\" assets/Content.compact", nil) == 0)
-	result = result and (run:execute("$(DEPLOY_ANDROID_HOME)/build-tools/27.0.3/zipalign.exe -f -p 4 \"$(DEPLOY_PROJECT_NAME).unsigned.apk\" \"$(DEPLOY_PROJECT_NAME).aligned.apk\"", nil) == 0)
-	result = result and (run:execute("$(DEPLOY_ANDROID_HOME)/build-tools/27.0.3/apksigner.bat sign --ks $(DEPLOY_SYSTEM_ROOT)/resources/runtime/deploy/android/keystore.jks --ks-key-alias androidkey --ks-pass pass:android --key-pass pass:android --out \"$(DEPLOY_PROJECT_NAME).apk\" \"$(DEPLOY_PROJECT_NAME).aligned.apk\"", nil) == 0)
+	local result = false
+	local host = os:getEnvironment("DEPLOY_HOST_OS")
+	if host == "win32" or host == "win64" then
+		result = true
+		result = result and (run:execute("$(DEPLOY_ANDROID_HOME)/build-tools/29.0.1/aapt.exe package -f -M AndroidManifest.xml -S res -I \"$(DEPLOY_ANDROID_HOME)/platforms/android-$(DEPLOY_ANDROID_APILEVEL)/android.jar\" -F \"$(DEPLOY_PROJECT_NAME).unsigned.apk\"") == 0)
+		result = result and (run:execute("$(DEPLOY_ANDROID_HOME)/build-tools/29.0.1/aapt.exe add \"$(DEPLOY_PROJECT_NAME).unsigned.apk\" lib/" .. abi .. "/libApplication.so", nil) == 0)
+		result = result and (run:execute("$(DEPLOY_ANDROID_HOME)/build-tools/29.0.1/aapt.exe add \"$(DEPLOY_PROJECT_NAME).unsigned.apk\" lib/" .. abi .. "/libc++_shared.so", nil) == 0)
+		result = result and (run:execute("$(DEPLOY_ANDROID_HOME)/build-tools/29.0.1/aapt.exe add \"$(DEPLOY_PROJECT_NAME).unsigned.apk\" assets/Application.config", nil) == 0)
+		result = result and (run:execute("$(DEPLOY_ANDROID_HOME)/build-tools/29.0.1/aapt.exe add \"$(DEPLOY_PROJECT_NAME).unsigned.apk\" assets/Content.compact", nil) == 0)
+		result = result and (run:execute("$(DEPLOY_ANDROID_HOME)/build-tools/29.0.1/zipalign.exe -f -p 4 \"$(DEPLOY_PROJECT_NAME).unsigned.apk\" \"$(DEPLOY_PROJECT_NAME).aligned.apk\"", nil) == 0)
+		result = result and (run:execute("$(DEPLOY_ANDROID_HOME)/build-tools/29.0.1/apksigner.bat sign --ks $(DEPLOY_SYSTEM_ROOT)/resources/runtime/deploy/android/keystore.jks --ks-key-alias androidkey --ks-pass pass:android --key-pass pass:android --out \"$(DEPLOY_PROJECT_NAME).apk\" \"$(DEPLOY_PROJECT_NAME).aligned.apk\"", nil) == 0)
+	elseif host == "linux" or host == "osx" then
+		result = true
+		result = result and (run:execute("$(DEPLOY_ANDROID_HOME)/build-tools/29.0.1/aapt package -f -M AndroidManifest.xml -S res -I $(DEPLOY_ANDROID_HOME)/platforms/android-$(DEPLOY_ANDROID_APILEVEL)/android.jar -F $(DEPLOY_PROJECT_NAME).unsigned.apk") == 0)
+		result = result and (run:execute("$(DEPLOY_ANDROID_HOME)/build-tools/29.0.1/aapt add $(DEPLOY_PROJECT_NAME).unsigned.apk lib/" .. abi .. "/libApplication.so", nil) == 0)
+		result = result and (run:execute("$(DEPLOY_ANDROID_HOME)/build-tools/29.0.1/aapt add $(DEPLOY_PROJECT_NAME).unsigned.apk lib/" .. abi .. "/libc++_shared.so", nil) == 0)
+		result = result and (run:execute("$(DEPLOY_ANDROID_HOME)/build-tools/29.0.1/aapt add $(DEPLOY_PROJECT_NAME).unsigned.apk assets/Application.config", nil) == 0)
+		result = result and (run:execute("$(DEPLOY_ANDROID_HOME)/build-tools/29.0.1/aapt add $(DEPLOY_PROJECT_NAME).unsigned.apk assets/Content.compact", nil) == 0)
+		result = result and (run:execute("$(DEPLOY_ANDROID_HOME)/build-tools/29.0.1/zipalign -f -p 4 $(DEPLOY_PROJECT_NAME).unsigned.apk $(DEPLOY_PROJECT_NAME).aligned.apk", nil) == 0)
+		result = result and (run:execute("$(DEPLOY_ANDROID_HOME)/build-tools/29.0.1/apksigner sign --ks $(DEPLOY_SYSTEM_ROOT)/resources/runtime/deploy/android/keystore.jks --ks-key-alias androidkey --ks-pass pass:android --key-pass pass:android --out $(DEPLOY_PROJECT_NAME).apk $(DEPLOY_PROJECT_NAME).aligned.apk", nil) == 0)
+	else
+		stderr:printLn("Unsupported host OS (" .. host .. ").")
+		return 1
+	end
 
 	-- Cleanup intermediate files.
 	run:rm("$(DEPLOY_PROJECT_NAME).unsigned.apk")

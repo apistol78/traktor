@@ -13,8 +13,6 @@
 						<second type="traktor.PropertyStringSet">
 							<value>
 								<item>Traktor.Ai</item>
-								<item>Traktor.Runtime</item>
-								<item>Traktor.Runtime.App</item>
 								<item>Traktor.Animation</item>
 								<item>Traktor.Core</item>
 								<item>Traktor.Database</item>
@@ -29,6 +27,8 @@
 								<item>Traktor.Physics</item>
 								<item>Traktor.Render</item>
 								<item>Traktor.Resource</item>
+								<item>Traktor.Runtime</item>
+								<item>Traktor.Runtime.App</item>
 								<item>Traktor.Scene</item>
 								<item>Traktor.Script</item>
 								<item>Traktor.Sound</item>
@@ -82,8 +82,6 @@
 								<item>libExtern.stb_vorbis.a</item>
 								<item>libExtern.zlib.a</item>
 								<item>libTraktor.Ai.a</item>
-								<item>libTraktor.Runtime.App.a</item>
-								<item>libTraktor.Runtime.a</item>
 								<item>libTraktor.Animation.a</item>
 								<item>libTraktor.Core.a</item>
 								<item>libTraktor.Database.a</item>
@@ -98,6 +96,8 @@
 								<item>libTraktor.Physics.a</item>
 								<item>libTraktor.Render.a</item>
 								<item>libTraktor.Resource.a</item>
+								<item>libTraktor.Runtime.App.a</item>
+								<item>libTraktor.Runtime.a</item>
 								<item>libTraktor.Scene.a</item>
 								<item>libTraktor.Script.a</item>
 								<item>libTraktor.Sound.a</item>
@@ -140,7 +140,6 @@
 						<second type="traktor.PropertyStringSet">
 							<value>
 								<item>Traktor.Ai</item>
-								<item>Traktor.Runtime</item>
 								<item>Traktor.Animation</item>
 								<item>Traktor.Core</item>
 								<item>Traktor.Database</item>
@@ -155,6 +154,7 @@
 								<item>Traktor.Physics</item>
 								<item>Traktor.Render</item>
 								<item>Traktor.Resource</item>
+								<item>Traktor.Runtime</item>
 								<item>Traktor.Scene</item>
 								<item>Traktor.Script</item>
 								<item>Traktor.Sound</item>
@@ -174,7 +174,6 @@
 							<value>
 								<item>Traktor.Runtime.App</item>
 								<item>libTraktor.Ai.so</item>
-								<item>libTraktor.Runtime.so</item>
 								<item>libTraktor.Animation.so</item>
 								<item>libTraktor.Core.so</item>
 								<item>libTraktor.Database.so</item>
@@ -189,6 +188,7 @@
 								<item>libTraktor.Physics.so</item>
 								<item>libTraktor.Render.so</item>
 								<item>libTraktor.Resource.so</item>
+								<item>libTraktor.Runtime.so</item>
 								<item>libTraktor.Scene.so</item>
 								<item>libTraktor.Script.so</item>
 								<item>libTraktor.Sound.so</item>
@@ -260,7 +260,6 @@
 						<second type="traktor.PropertyStringSet">
 							<value>
 								<item>Traktor.Ai</item>
-								<item>Traktor.Runtime</item>
 								<item>Traktor.Animation</item>
 								<item>Traktor.Core</item>
 								<item>Traktor.Database</item>
@@ -275,6 +274,7 @@
 								<item>Traktor.Physics</item>
 								<item>Traktor.Render</item>
 								<item>Traktor.Resource</item>
+								<item>Traktor.Runtime</item>
 								<item>Traktor.Scene</item>
 								<item>Traktor.Script</item>
 								<item>Traktor.Sound</item>
@@ -296,7 +296,6 @@
 							<value>
 								<item>Traktor.Runtime.App</item>
 								<item>libTraktor.Ai.dylib</item>
-								<item>libTraktor.Runtime.dylib</item>
 								<item>libTraktor.Animation.dylib</item>
 								<item>libTraktor.Core.dylib</item>
 								<item>libTraktor.Database.dylib</item>
@@ -311,6 +310,7 @@
 								<item>libTraktor.Physics.dylib</item>
 								<item>libTraktor.Render.dylib</item>
 								<item>libTraktor.Resource.dylib</item>
+								<item>libTraktor.Runtime.dylib</item>
 								<item>libTraktor.Scene.dylib</item>
 								<item>libTraktor.Script.dylib</item>
 								<item>libTraktor.Sound.dylib</item>
@@ -377,8 +377,6 @@
 						<second type="traktor.PropertyStringSet">
 							<value>
 								<item>Traktor.Ai</item>
-								<item>Traktor.Runtime</item>
-								<item>Traktor.Runtime.App</item>
 								<item>Traktor.Animation</item>
 								<item>Traktor.Core</item>
 								<item>Traktor.Database</item>
@@ -393,6 +391,8 @@
 								<item>Traktor.Physics</item>
 								<item>Traktor.Render</item>
 								<item>Traktor.Resource</item>
+								<item>Traktor.Runtime</item>
+								<item>Traktor.Runtime.App</item>
 								<item>Traktor.Scene</item>
 								<item>Traktor.Script</item>
 								<item>Traktor.Sound</item>
@@ -450,8 +450,6 @@
 								<item>Extern.stb_vorbis.lib</item>
 								<item>Extern.zlib.lib</item>
 								<item>Traktor.Ai.lib</item>
-								<item>Traktor.Runtime.App.lib</item>
-								<item>Traktor.Runtime.lib</item>
 								<item>Traktor.Animation.lib</item>
 								<item>Traktor.Core.lib</item>
 								<item>Traktor.Database.lib</item>
@@ -466,6 +464,8 @@
 								<item>Traktor.Physics.lib</item>
 								<item>Traktor.Render.lib</item>
 								<item>Traktor.Resource.lib</item>
+								<item>Traktor.Runtime.App.lib</item>
+								<item>Traktor.Runtime.lib</item>
 								<item>Traktor.Scene.lib</item>
 								<item>Traktor.Script.lib</item>
 								<item>Traktor.Sound.lib</item>
@@ -510,8 +510,6 @@
 						<second type="traktor.PropertyStringSet">
 							<value>
 								<item>Traktor.Ai</item>
-								<item>Traktor.Runtime</item>
-								<item>Traktor.Runtime.App</item>
 								<item>Traktor.Animation</item>
 								<item>Traktor.Core</item>
 								<item>Traktor.Database</item>
@@ -526,6 +524,8 @@
 								<item>Traktor.Physics</item>
 								<item>Traktor.Render</item>
 								<item>Traktor.Resource</item>
+								<item>Traktor.Runtime</item>
+								<item>Traktor.Runtime.App</item>
 								<item>Traktor.Scene</item>
 								<item>Traktor.Script</item>
 								<item>Traktor.Sound</item>
@@ -546,8 +546,6 @@
 						<second type="traktor.PropertyStringSet">
 							<value>
 								<item>Traktor.Ai.dll</item>
-								<item>Traktor.Runtime.App.exe</item>
-								<item>Traktor.Runtime.dll</item>
 								<item>Traktor.Animation.dll</item>
 								<item>Traktor.Core.dll</item>
 								<item>Traktor.Database.dll</item>
@@ -562,6 +560,8 @@
 								<item>Traktor.Physics.dll</item>
 								<item>Traktor.Render.dll</item>
 								<item>Traktor.Resource.dll</item>
+								<item>Traktor.Runtime.App.exe</item>
+								<item>Traktor.Runtime.dll</item>
 								<item>Traktor.Scene.dll</item>
 								<item>Traktor.Script.dll</item>
 								<item>Traktor.Sound.dll</item>
@@ -614,8 +614,6 @@
 								<item>Extern.stb_vorbis.lib</item>
 								<item>Extern.zlib.lib</item>
 								<item>Traktor.Ai.lib</item>
-								<item>Traktor.Runtime.App.lib</item>
-								<item>Traktor.Runtime.lib</item>
 								<item>Traktor.Animation.lib</item>
 								<item>Traktor.Core.lib</item>
 								<item>Traktor.Database.lib</item>
@@ -630,6 +628,8 @@
 								<item>Traktor.Physics.lib</item>
 								<item>Traktor.Render.lib</item>
 								<item>Traktor.Resource.lib</item>
+								<item>Traktor.Runtime.App.lib</item>
+								<item>Traktor.Runtime.lib</item>
 								<item>Traktor.Scene.lib</item>
 								<item>Traktor.Script.lib</item>
 								<item>Traktor.Sound.lib</item>
@@ -674,8 +674,6 @@
 						<second type="traktor.PropertyStringSet">
 							<value>
 								<item>Traktor.Ai</item>
-								<item>Traktor.Runtime</item>
-								<item>Traktor.Runtime.App</item>
 								<item>Traktor.Animation</item>
 								<item>Traktor.Core</item>
 								<item>Traktor.Database</item>
@@ -690,6 +688,8 @@
 								<item>Traktor.Physics</item>
 								<item>Traktor.Render</item>
 								<item>Traktor.Resource</item>
+								<item>Traktor.Runtime</item>
+								<item>Traktor.Runtime.App</item>
 								<item>Traktor.Scene</item>
 								<item>Traktor.Script</item>
 								<item>Traktor.Sound</item>
@@ -710,8 +710,6 @@
 						<second type="traktor.PropertyStringSet">
 							<value>
 								<item>Traktor.Ai.dll</item>
-								<item>Traktor.Runtime.App.exe</item>
-								<item>Traktor.Runtime.dll</item>
 								<item>Traktor.Animation.dll</item>
 								<item>Traktor.Core.dll</item>
 								<item>Traktor.Database.dll</item>
@@ -726,6 +724,8 @@
 								<item>Traktor.Physics.dll</item>
 								<item>Traktor.Render.dll</item>
 								<item>Traktor.Resource.dll</item>
+								<item>Traktor.Runtime.App.exe</item>
+								<item>Traktor.Runtime.dll</item>
 								<item>Traktor.Scene.dll</item>
 								<item>Traktor.Script.dll</item>
 								<item>Traktor.Sound.dll</item>
@@ -782,8 +782,6 @@
 								<item>Extern.stb_vorbis.lib</item>
 								<item>Extern.zlib.lib</item>
 								<item>Traktor.Ai.lib</item>
-								<item>Traktor.Runtime.App.lib</item>
-								<item>Traktor.Runtime.lib</item>
 								<item>Traktor.Animation.lib</item>
 								<item>Traktor.Core.lib</item>
 								<item>Traktor.Database.lib</item>
@@ -798,6 +796,8 @@
 								<item>Traktor.Physics.lib</item>
 								<item>Traktor.Render.lib</item>
 								<item>Traktor.Resource.lib</item>
+								<item>Traktor.Runtime.App.lib</item>
+								<item>Traktor.Runtime.lib</item>
 								<item>Traktor.Scene.lib</item>
 								<item>Traktor.Script.lib</item>
 								<item>Traktor.Sound.lib</item>
@@ -842,8 +842,6 @@
 						<second type="traktor.PropertyStringSet">
 							<value>
 								<item>Traktor.Ai</item>
-								<item>Traktor.Runtime</item>
-								<item>Traktor.Runtime.App</item>
 								<item>Traktor.Animation</item>
 								<item>Traktor.Core</item>
 								<item>Traktor.Database</item>
@@ -858,6 +856,8 @@
 								<item>Traktor.Physics</item>
 								<item>Traktor.Render</item>
 								<item>Traktor.Resource</item>
+								<item>Traktor.Runtime</item>
+								<item>Traktor.Runtime.App</item>
 								<item>Traktor.Scene</item>
 								<item>Traktor.Script</item>
 								<item>Traktor.Sound</item>
@@ -908,8 +908,6 @@
 								<item>Extern.recast.lib</item>
 								<item>Extern.stb_vorbis.lib</item>
 								<item>Traktor.Ai.lib</item>
-								<item>Traktor.Runtime.App.lib</item>
-								<item>Traktor.Runtime.lib</item>
 								<item>Traktor.Animation.lib</item>
 								<item>Traktor.Core.lib</item>
 								<item>Traktor.Database.lib</item>
@@ -924,6 +922,8 @@
 								<item>Traktor.Physics.lib</item>
 								<item>Traktor.Render.lib</item>
 								<item>Traktor.Resource.lib</item>
+								<item>Traktor.Runtime.App.lib</item>
+								<item>Traktor.Runtime.lib</item>
 								<item>Traktor.Scene.lib</item>
 								<item>Traktor.Script.lib</item>
 								<item>Traktor.Sound.lib</item>
@@ -966,8 +966,6 @@
 						<second type="traktor.PropertyStringSet">
 							<value>
 								<item>Traktor.Ai</item>
-								<item>Traktor.Runtime</item>
-								<item>Traktor.Runtime.App</item>
 								<item>Traktor.Animation</item>
 								<item>Traktor.Core</item>
 								<item>Traktor.Database</item>
@@ -982,6 +980,8 @@
 								<item>Traktor.Physics</item>
 								<item>Traktor.Render</item>
 								<item>Traktor.Resource</item>
+								<item>Traktor.Runtime</item>
+								<item>Traktor.Runtime.App</item>
 								<item>Traktor.Scene</item>
 								<item>Traktor.Script</item>
 								<item>Traktor.Sound</item>
@@ -1033,8 +1033,6 @@
 								<item>libExtern.recast.a</item>
 								<item>libExtern.stb_vorbis.a</item>
 								<item>libTraktor.Ai.a</item>
-								<item>libTraktor.Runtime.App.a</item>
-								<item>libTraktor.Runtime.a</item>
 								<item>libTraktor.Animation.a</item>
 								<item>libTraktor.Core.a</item>
 								<item>libTraktor.Database.a</item>
@@ -1049,6 +1047,8 @@
 								<item>libTraktor.Physics.a</item>
 								<item>libTraktor.Render.a</item>
 								<item>libTraktor.Resource.a</item>
+								<item>libTraktor.Runtime.App.a</item>
+								<item>libTraktor.Runtime.a</item>
 								<item>libTraktor.Scene.a</item>
 								<item>libTraktor.Script.a</item>
 								<item>libTraktor.Sound.a</item>
@@ -1091,8 +1091,6 @@
 						<second type="traktor.PropertyStringSet">
 							<value>
 								<item>Traktor.Ai</item>
-								<item>Traktor.Runtime</item>
-								<item>Traktor.Runtime.App</item>
 								<item>Traktor.Animation</item>
 								<item>Traktor.Core</item>
 								<item>Traktor.Database</item>
@@ -1107,6 +1105,8 @@
 								<item>Traktor.Physics</item>
 								<item>Traktor.Render</item>
 								<item>Traktor.Resource</item>
+								<item>Traktor.Runtime</item>
+								<item>Traktor.Runtime.App</item>
 								<item>Traktor.Scene</item>
 								<item>Traktor.Script</item>
 								<item>Traktor.Sound</item>
@@ -1162,8 +1162,6 @@
 								<item>libExtern.stb_vorbis.a</item>
 								<item>libExtern.zlib.a</item>
 								<item>libTraktor.Ai.a</item>
-								<item>libTraktor.Runtime.a</item>
-								<item>libTraktor.Runtime.a</item>
 								<item>libTraktor.Animation.a</item>
 								<item>libTraktor.Core.a</item>
 								<item>libTraktor.Database.a</item>
@@ -1178,6 +1176,8 @@
 								<item>libTraktor.Physics.a</item>
 								<item>libTraktor.Render.a</item>
 								<item>libTraktor.Resource.a</item>
+								<item>libTraktor.Runtime.App.a</item>
+								<item>libTraktor.Runtime.a</item>
 								<item>libTraktor.Scene.a</item>
 								<item>libTraktor.Script.a</item>
 								<item>libTraktor.Sound.a</item>

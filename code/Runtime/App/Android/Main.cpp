@@ -4,10 +4,6 @@
 #include <sys/stat.h>
 #include <dirent.h>
 #include <errno.h>
-#include "Amalgam/Game/IOnlineServer.h"
-#include "Amalgam/Game/IRenderServer.h"
-#include "Amalgam/Game/Impl/Application.h"
-#include "Amalgam/Game/Impl/Environment.h"
 #include "Core/Io/FileOutputStreamBuffer.h"
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/IStream.h"
@@ -23,6 +19,10 @@
 #include "Core/System/OS.h"
 #include "Core/System/Android/DelegateInstance.h"
 #include "Render/IRenderView.h"
+#include "Runtime/IOnlineServer.h"
+#include "Runtime/IRenderServer.h"
+#include "Runtime/Impl/Application.h"
+#include "Runtime/Impl/Environment.h"
 #include "Xml/XmlDeserializer.h"
 #include "Xml/XmlSerializer.h"
 
@@ -47,7 +47,7 @@ Ref< PropertyGroup > loadSettings(const Path& settingsFile)
 
 bool saveSettings(const PropertyGroup* settings, const Path& settingsFile)
 {
-	T_ASSERT((settings);
+	T_ASSERT(settings);
 
 	Ref< traktor::IStream > file = FileSystem::getInstance().open(settingsFile, File::FmWrite);
 	if (!file)
@@ -90,7 +90,7 @@ private:
 	SystemApplication m_sysapp;
 	Ref< const PropertyGroup > m_defaultSettings;
 	Ref< PropertyGroup > m_settings;
-	Ref< amalgam::Application > m_application;
+	Ref< runtime::Application > m_application;
 	bool m_suspended;
 };
 
@@ -133,7 +133,7 @@ bool AndroidApplication::readSettings()
 
 bool AndroidApplication::createApplication()
 {
-	m_application = new amalgam::Application();
+	m_application = new runtime::Application();
 	if (m_application->create(
 		m_defaultSettings,
 		m_settings,
@@ -204,7 +204,7 @@ void AndroidApplication::handleCommand(int32_t cmd)
 		break;
 
 	case APP_CMD_INIT_WINDOW:
-		log::debug << L"handleCommand APP_CMD_INIT_WINDOW (window: " << int32_t(m_app->window) << L")" << Endl;
+		log::debug << L"handleCommand APP_CMD_INIT_WINDOW (window: " << intptr_t(m_app->window) << L")" << Endl;
 		if (!m_application && m_app->window != 0)
 			createApplication();
 		break;
