@@ -665,7 +665,7 @@ void BinarySerializer::operator >> (const Member< ISerializable* >& m)
 
 				if (!ensure(read_primitive< uint32_t >(m_stream, typeHashOrLen)))
 				{
-					log::error << L"Unable to serialize \"" << m.getName() << L"\"; unable to read type hash" << Endl;
+					log::error << L"Unable to read \"" << m.getName() << L"\"; unable to read type hash." << Endl;
 					return;
 				}
 
@@ -676,14 +676,14 @@ void BinarySerializer::operator >> (const Member< ISerializable* >& m)
 					std::wstring typeName;
 					if (!ensure(read_string(m_stream, typeHashOrLen, typeName)))
 					{
-						log::error << L"Unable to serialize \"" << m.getName() << L"\"; unable to read type" << Endl;
+						log::error << L"Unable to read \"" << m.getName() << L"\"; unable to read type." << Endl;
 						return;
 					}
 
 					type = TypeInfo::find(typeName.c_str());
 					if (!ensure(type != 0))
 					{
-						log::error << L"Unable to serialize \"" << m.getName() << L"\"; no such type \"" << typeName << L"\"" << Endl;
+						log::error << L"Unable to read \"" << m.getName() << L"\"; no such type \"" << typeName << L"\"." << Endl;
 						return;
 					}
 
@@ -695,7 +695,7 @@ void BinarySerializer::operator >> (const Member< ISerializable* >& m)
 				object = checked_type_cast< ISerializable* >(type->createInstance());
 				if (!ensure(object != 0))
 				{
-					log::error << L"Unable to serialize \"" << m.getName() << L"\"; unable to create type \"" << type->getName() << L"\"" << Endl;
+					log::error << L"Unable to read \"" << m.getName() << L"\"; unable to create type \"" << type->getName() << L"\"." << Endl;
 					return;
 				}
 
@@ -704,7 +704,7 @@ void BinarySerializer::operator >> (const Member< ISerializable* >& m)
 				// Outer most version, mandatory and no type needed.
 				if (!ensure(read_primitive< int16_t >(m_stream, version)))
 				{
-					log::error << L"Unable to serialize \"" << m.getName() << L"\"; unable to read version" << Endl;
+					log::error << L"Unable to read \"" << m.getName() << L"\"; unable to read version." << Endl;
 					return;
 				}
 				dataVersions.insert(std::make_pair(type, version));
@@ -713,7 +713,7 @@ void BinarySerializer::operator >> (const Member< ISerializable* >& m)
 				uint16_t baseVersionCount = 0;
 				if (!ensure(read_primitive< uint16_t >(m_stream, baseVersionCount)))
 				{
-					log::error << L"Unable to serialize \"" << m.getName() << L"\"; unable to read # of base versions." << Endl;
+					log::error << L"Unable to read \"" << m.getName() << L"\"; unable to read # of base versions." << Endl;
 					return;
 				}
 
@@ -721,7 +721,7 @@ void BinarySerializer::operator >> (const Member< ISerializable* >& m)
 				{
 					if (!ensure(read_primitive< uint32_t >(m_stream, typeHashOrLen)))
 					{
-						log::error << L"Unable to serialize \"" << m.getName() << L"\"; unable to read base type hash." << Endl;
+						log::error << L"Unable to read \"" << m.getName() << L"\"; unable to read base type hash." << Endl;
 						return;
 					}
 
@@ -733,14 +733,14 @@ void BinarySerializer::operator >> (const Member< ISerializable* >& m)
 						std::wstring typeName;
 						if (!ensure(read_string(m_stream, typeHashOrLen, typeName)))
 						{
-							log::error << L"Unable to serialize \"" << m.getName() << L"\"; unable to read base type." << Endl;
+							log::error << L"Unable to read \"" << m.getName() << L"\"; unable to read base type." << Endl;
 							return;
 						}
 
 						baseType = TypeInfo::find(typeName.c_str());
 						if (!ensure(baseType != 0))
 						{
-							log::error << L"Unable to serialize \"" << m.getName() << L"\"; no such base type \"" << typeName << L"\"." << Endl;
+							log::error << L"Unable to read \"" << m.getName() << L"\"; no such base type \"" << typeName << L"\"." << Endl;
 							return;
 						}
 
@@ -750,7 +750,7 @@ void BinarySerializer::operator >> (const Member< ISerializable* >& m)
 
 					if (!ensure(read_primitive< int16_t >(m_stream, version)))
 					{
-						log::error << L"Unable to serialize \"" << m.getName() << L"\"; unable to read version of base type \"" << baseType->getName() << L"\"." << Endl;
+						log::error << L"Unable to read \"" << m.getName() << L"\"; unable to read version of base type \"" << baseType->getName() << L"\"." << Endl;
 						return;
 					}
 
@@ -766,7 +766,7 @@ void BinarySerializer::operator >> (const Member< ISerializable* >& m)
 				object = static_cast< ISerializable* >(m_readCache[hash]);
 				if (!ensure(object != 0))
 				{
-					log::error << L"Unable to serialize \"" << m.getName() << L"\"; no such reference" << Endl;
+					log::error << L"Unable to read \"" << m.getName() << L"\"; no such reference." << Endl;
 					return;
 				}
 			}
