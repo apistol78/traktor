@@ -28,7 +28,7 @@ render::handle_t s_handleShadowAtlas;
 render::handle_t s_handleDepthMap;
 render::handle_t s_handleOcclusionMap;
 render::handle_t s_handleLightCount;
-render::handle_t s_handleLights;
+render::handle_t s_handleLightSBuffer;
 
 void initializeHandles()
 {
@@ -51,7 +51,7 @@ void initializeHandles()
 	s_handleDepthMap = render::getParameterHandle(L"World_DepthMap");
 	s_handleOcclusionMap = render::getParameterHandle(L"World_OcclusionMap");
 	s_handleLightCount = render::getParameterHandle(L"World_LightCount");
-	s_handleLights = render::getParameterHandle(L"World_Lights");
+	s_handleLightSBuffer = render::getParameterHandle(L"World_LightSBuffer");
 
 	s_handlesInitialized = true;
 }
@@ -195,7 +195,7 @@ void WorldRenderPassForward::setWorldProgramParameters(render::ProgramParameters
 void WorldRenderPassForward::setLightProgramParameters(render::ProgramParameters* programParams) const
 {
 	programParams->setFloatParameter(s_handleLightCount, (float)m_lightCount);
-	programParams->setStructBufferParameter(s_handleLights, m_lightSBuffer);
+	programParams->setStructBufferParameter(s_handleLightSBuffer, m_lightSBuffer);
 }
 
 void WorldRenderPassForward::setFogProgramParameters(render::ProgramParameters* programParams) const
