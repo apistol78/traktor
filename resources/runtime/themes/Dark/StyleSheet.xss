@@ -297,18 +297,6 @@
 			<color>51, 153, 255, 255</color>
 		</item>
 
-		<!-- GradientStatic -->
-		<item>
-			<type>traktor.ui.GradientStatic</type>
-			<element>background-color-left</element>
-			<color>45, 45, 45, 255</color>
-		</item>
-		<item>
-			<type>traktor.ui.GradientStatic</type>
-			<element>background-color-right</element>
-			<color>45, 45, 45, 255</color>
-		</item>
-
 		<!-- GridView -->
 		<item>
 			<type>traktor.ui.GridView</type>

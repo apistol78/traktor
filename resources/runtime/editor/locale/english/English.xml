@@ -106,6 +106,10 @@
       <second>Targets</second>
     </item>
     <item>
+      <first>RUNTIME_TARGETS_TITLE</first>
+      <second>Targets</second>
+    </item>
+    <item>
       <first>RUNTIME_TWEAKS</first>
       <second>Tweaks</second>
     </item>
@@ -718,6 +722,10 @@
       <second>Check serializable classes</second>
     </item>
     <item>
+    	<first>EDITOR_CLEAR_CACHES</first>
+    	<second>Clear caches</second>
+    </item>
+    <item>
       <first>EDITOR_DELETE_EMPTY_GROUPS</first>
       <second>Delete empty database groups</second>
     </item>
@@ -727,7 +735,7 @@
     </item>
     <item>
       <first>EDITOR_HTTP_GET</first>
-      <second>Http GET</second>
+      <second>Http GET...</second>
     </item>
     <item>
       <first>EDITOR_HTTP_GET_SAVE_AS</first>
@@ -740,6 +748,10 @@
     <item>
       <first>EDITOR_HTTP_GET_URL_CAPTION</first>
       <second>Enter URL</second>
+    </item>
+    <item>
+      <first>EDITOR_HTTP_GET_URL_MESSAGE</first>
+      <second>Enter URL of resource to fetch</second>
     </item>
     <item>
       <first>EDITOR_NEW_WORKSPACE_NAME</first>
@@ -771,7 +783,7 @@
     </item>
     <item>
       <first>EDITOR_SEARCH_TOOL</first>
-      <second>Search in database</second>
+      <second>Search in database...</second>
     </item>
     <item>
       <first>EDITOR_SEARCH_TOOL_CASE_SENSITIVE</first>
@@ -1292,6 +1304,10 @@
     <item>
       <first>FLASH_BATCH_WIZARDTOOL_DESCRIPTION</first>
       <second>Import SWF files...</second>
+    </item>
+    <item>
+    	<first>FLASH_DEBUGGER_TOOL</first>
+    	<second>Flash debugger...</second>
     </item>
     <item>
       <first>FLASH_EDITOR_FORWARD</first>
@@ -2615,7 +2631,7 @@
     </item>
     <item>
       <first>SCRIPT_DEBUGGER_TOOL</first>
-      <second>Script debugger</second>
+      <second>Script debugger...</second>
     </item>
     <item>
       <first>SCRIPT_EDITOR_ADD_DEPENDENCY</first>
@@ -2771,7 +2787,7 @@
     </item>
     <item>
       <first>SCRIPT_PROFILER_TOOL</first>
-      <second>Script profiler</second>
+      <second>Script profiler...</second>
     </item>
     <item>
       <first>SHADERGRAPH_ALGEBRA</first>
@@ -3192,6 +3208,10 @@
     <item>
       <first>SHADERGRAPH_SCRIPT_EDIT</first>
       <second>Edit script</second>
+    </item>
+    <item>
+    	<first>SHADERGRAPH_TOUCH_ALL</first>
+    	<second>Touch all shadergraphs</second>
     </item>
     <item>
       <first>SHADERGRAPH_TRIGONOMETRY</first>

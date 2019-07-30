@@ -13,10 +13,10 @@
 #include "I18N/I18N.h"
 #include "I18N/Text.h"
 #include "Ui/Application.h"
+#include "Ui/Static.h"
 #include "Ui/TableLayout.h"
 #include "Ui/FileDialog.h"
 #include "Ui/ColorPicker/ColorDialog.h"
-#include "Ui/GradientStatic/GradientStatic.h"
 #include "Ui/PropertyList/FilePropertyItem.h"
 #include "Ui/PropertyList/BrowsePropertyItem.h"
 #include "Ui/PropertyList/ObjectPropertyItem.h"
@@ -69,8 +69,8 @@ bool PropertiesView::create(ui::Widget* parent)
 	m_propertyList->addEventHandler< ui::PropertyContentChangeEvent >(this, &PropertiesView::eventPropertyChange);
 	m_propertyList->addEventHandler< ui::SelectionChangeEvent >(this, &PropertiesView::eventPropertySelect);
 
-	m_staticHelp = new ui::GradientStatic();
-	m_staticHelp->create(this, L"", ui::WsDoubleBuffer);
+	m_staticHelp = new ui::Static();
+	m_staticHelp->create(this, L"");
 
 	updateHelp();
 	return true;

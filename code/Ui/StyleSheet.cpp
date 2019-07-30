@@ -55,9 +55,6 @@ Ref< StyleSheet > StyleSheet::createDefault()
 	ss->setColor(L"traktor.ui.TreeView", L"item-color-selected", Color4ub(255, 255, 255));
 	ss->setColor(L"traktor.ui.TreeView", L"item-background-color-selected", Color4ub(51, 153, 255));
 
-	ss->setColor(L"traktor.ui.GradientStatic", L"background-color-left", Color4ub(239, 239, 242));
-	ss->setColor(L"traktor.ui.GradientStatic", L"background-color-right", Color4ub(239, 239, 242));
-
 	ss->setColor(L"traktor.ui.GridView", L"background-color", Color4ub(255, 255, 255));
 	ss->setColor(L"traktor.ui.GridView", L"header-background-color", Color4ub(239, 239, 242));
 	ss->setColor(L"traktor.ui.GridView", L"item-color-selected", Color4ub(255, 255, 255));
