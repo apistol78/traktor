@@ -4111,15 +4111,6 @@
 					</items>
 				</item>
 				<item type="Filter">
-					<name>GradientStatic</name>
-					<items>
-						<item type="File">
-							<fileName>GradientStatic/*.*</fileName>
-							<items/>
-						</item>
-					</items>
-				</item>
-				<item type="Filter">
 					<name>StatusBar</name>
 					<items>
 						<item type="File">
