@@ -25,7 +25,7 @@ set SCE_PS3_ROOT=%TRAKTOR_HOME%\3rdp\ps3\usr\local\cell
 set SN_COMMON_PATH=%TRAKTOR_HOME%\3rdp\ps3\SN Systems\Common
 set SN_PS3_PATH=%TRAKTOR_HOME%\3rdp\ps3\SN Systems\Ps3
 set EMBREE_SDK=%TRAKTOR_HOME%\3rdp\embree-3.5.2.x64.vc14.windows
-set OIDN_SDK=%TRAKTOR_HOME%\3rdp\oidn-0.9.0.x64.vc14.windows
+set OIDN_SDK=%TRAKTOR_HOME%\3rdp\oidn-1.0.0.x64.vc14.windows
 set VULKAN_SDK=%TRAKTOR_HOME%\3rdp\vulkan\Vulkan-Headers-master-190605
 set VMA_SDK=%TRAKTOR_HOME%\3rdp\VulkanMemoryAllocator-master
 
