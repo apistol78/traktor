@@ -315,7 +315,11 @@ Ref< IProcess > OS::execute(
 
 Ref< ISharedMemory > OS::createSharedMemory(const std::wstring& name, uint32_t size) const
 {
-	return new SharedMemoryLinux(name, size);
+	Ref< SharedMemoryLinux > shm = new SharedMemoryLinux();
+	if (shm->create(name, size))
+		return shm;
+	else
+		return nullptr;
 }
 
 bool OS::setOwnProcessPriorityBias(int32_t priorityBias)
