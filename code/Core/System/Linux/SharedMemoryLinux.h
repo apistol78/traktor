@@ -11,9 +11,11 @@ class SharedMemoryLinux : public ISharedMemory
 	T_RTTI_CLASS;
 
 public:
-	SharedMemoryLinux(const std::wstring& name, uint32_t size);
+	SharedMemoryLinux();
 
 	virtual ~SharedMemoryLinux();
+
+	bool create(const std::wstring& name, uint32_t size);
 
 	virtual const void* acquireReadPointer(bool exclusive) override final;
 
