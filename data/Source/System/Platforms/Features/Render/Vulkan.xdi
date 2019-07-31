@@ -155,6 +155,76 @@
 				</value>
 			</deploy>
 		</item>
+		<item>
+			<platform>{947FBCA7-FECE-7248-AEC4-046EB01E9A31}</platform>
+			<executableFile/>
+			<deploy type="traktor.PropertyGroup">
+				<value>
+					<item>
+						<first>DEPLOY_MODULES</first>
+						<second type="traktor.PropertyStringSet">
+							<value>
+								<item>Traktor.Compress</item>
+								<item>Traktor.Core</item>
+								<item>Traktor.Render</item>
+								<item>Traktor.Render.Vulkan</item>
+								<item>Traktor.Resource</item>
+							</value>
+						</second>
+					</item>
+					<item>
+						<first>DEPLOY_SHARED</first>
+						<second type="traktor.PropertyStringSet">
+							<value/>
+						</second>
+					</item>
+					<item>
+						<first>DEPLOY_SHARED_PATH_DEBUG</first>
+						<second type="traktor.PropertyStringSet">
+							<value>
+								<item>$(TRAKTOR_HOME)/bin/latest/android/debugshared</item>
+							</value>
+						</second>
+					</item>
+					<item>
+						<first>DEPLOY_SHARED_PATH_RELEASE</first>
+						<second type="traktor.PropertyStringSet">
+							<value>
+								<item>$(TRAKTOR_HOME)/bin/latest/android/releaseshared</item>
+							</value>
+						</second>
+					</item>
+					<item>
+						<first>DEPLOY_STATIC</first>
+						<second type="traktor.PropertyStringSet">
+							<value>
+								<item>libTraktor.Compress.a</item>
+								<item>libTraktor.Core.a</item>
+								<item>libTraktor.Render.Vulkan.a</item>
+								<item>libTraktor.Render.a</item>
+								<item>libTraktor.Resource.a</item>
+							</value>
+						</second>
+					</item>
+					<item>
+						<first>DEPLOY_STATIC_PATH_DEBUG</first>
+						<second type="traktor.PropertyStringSet">
+							<value>
+								<item>$(TRAKTOR_HOME)/bin/latest/android/debugstatic</item>
+							</value>
+						</second>
+					</item>
+					<item>
+						<first>DEPLOY_STATIC_PATH_RELEASE</first>
+						<second type="traktor.PropertyStringSet">
+							<value>
+								<item>$(TRAKTOR_HOME)/bin/latest/android/releasestatic</item>
+							</value>
+						</second>
+					</item>
+				</value>
+			</deploy>
+		</item>
 	</platforms>
 	<pipelineProperties type="traktor.PropertyGroup">
 		<value>
@@ -249,15 +319,6 @@
 	<runtimeProperties type="traktor.PropertyGroup">
 		<value>
 			<item>
-				<first>Runtime.Modules</first>
-				<second type="traktor.PropertyStringSet">
-					<value>
-						<item>Traktor.Render</item>
-						<item>Traktor.Render.Vulkan</item>
-					</value>
-				</second>
-			</item>
-			<item>
 				<first>Render.Adapter</first>
 				<second type="traktor.PropertyInteger">
 					<value>-1</value>
@@ -303,6 +364,15 @@
 				<first>Render.WaitVBlanks</first>
 				<second type="traktor.PropertyInteger">
 					<value>1</value>
+				</second>
+			</item>
+			<item>
+				<first>Runtime.Modules</first>
+				<second type="traktor.PropertyStringSet">
+					<value>
+						<item>Traktor.Render</item>
+						<item>Traktor.Render.Vulkan</item>
+					</value>
 				</second>
 			</item>
 		</value>

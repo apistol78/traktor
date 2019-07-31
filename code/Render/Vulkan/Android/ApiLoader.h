@@ -83,8 +83,8 @@ extern PFN_vkCmdDispatch vkCmdDispatch;
 extern PFN_vkInvalidateMappedMemoryRanges vkInvalidateMappedMemoryRanges;
 extern PFN_vkCmdCopyBuffer vkCmdCopyBuffer;
 
-//// Win32 Vulkan extensions.
-//extern PFN_vkCreateXlibSurfaceKHR vkCreateXlibSurfaceKHR;
+// Android Vulkan extensions.
+extern PFN_vkCreateAndroidSurfaceKHR vkCreateAndroidSurfaceKHR;
 extern PFN_vkGetPhysicalDeviceSurfaceSupportKHR vkGetPhysicalDeviceSurfaceSupportKHR;
 extern PFN_vkGetPhysicalDeviceSurfaceFormatsKHR vkGetPhysicalDeviceSurfaceFormatsKHR;
 extern PFN_vkGetPhysicalDeviceSurfaceCapabilitiesKHR vkGetPhysicalDeviceSurfaceCapabilitiesKHR;
@@ -94,9 +94,9 @@ extern PFN_vkGetSwapchainImagesKHR vkGetSwapchainImagesKHR;
 extern PFN_vkAcquireNextImageKHR vkAcquireNextImageKHR;
 extern PFN_vkQueuePresentKHR vkQueuePresentKHR;
 extern PFN_vkDestroySwapchainKHR vkDestroySwapchainKHR;
-extern PFN_vkCmdDebugMarkerBeginEXT vkCmdDebugMarkerBeginEXT;
-extern PFN_vkCmdDebugMarkerEndEXT vkCmdDebugMarkerEndEXT;
-extern PFN_vkCreateDebugReportCallbackEXT vkCreateDebugReportCallbackEXT;
+// extern PFN_vkCmdDebugMarkerBeginEXT vkCmdDebugMarkerBeginEXT;
+// extern PFN_vkCmdDebugMarkerEndEXT vkCmdDebugMarkerEndEXT;
+// extern PFN_vkCreateDebugReportCallbackEXT vkCreateDebugReportCallbackEXT;
 
 bool initializeVulkanApi();
 
@@ -106,4 +106,3 @@ void finalizeVulkanApi();
 
 	}
 }
-
