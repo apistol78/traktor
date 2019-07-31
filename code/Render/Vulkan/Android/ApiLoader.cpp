@@ -99,7 +99,7 @@ PFN_vkQueuePresentKHR vkQueuePresentKHR = nullptr;
 PFN_vkDestroySwapchainKHR vkDestroySwapchainKHR = nullptr;
 // PFN_vkCmdDebugMarkerBeginEXT vkCmdDebugMarkerBeginEXT = nullptr;
 // PFN_vkCmdDebugMarkerEndEXT vkCmdDebugMarkerEndEXT = nullptr;
-// PFN_vkCreateDebugReportCallbackEXT vkCreateDebugReportCallbackEXT = nullptr;
+PFN_vkCreateDebugReportCallbackEXT vkCreateDebugReportCallbackEXT = nullptr;
 
 bool initializeVulkanApi()
 {
@@ -703,12 +703,12 @@ bool initializeVulkanExtensions(VkInstance instance)
 	// 	return false;
 	// }
 
-	// vkCreateDebugReportCallbackEXT = (PFN_vkCreateDebugReportCallbackEXT)vkGetInstanceProcAddr(instance, "vkCreateDebugReportCallbackEXT");
-	// if (vkCreateDebugReportCallbackEXT == nullptr)
-	// {
-	// 	log::error << L"Failed to resolve Vulkan entry point \"vkCreateDebugReportCallbackEXT\"." << Endl;
-	// 	return false;
-	// }
+	vkCreateDebugReportCallbackEXT = (PFN_vkCreateDebugReportCallbackEXT)vkGetInstanceProcAddr(instance, "vkCreateDebugReportCallbackEXT");
+	if (vkCreateDebugReportCallbackEXT == nullptr)
+	{
+		log::error << L"Failed to resolve Vulkan entry point \"vkCreateDebugReportCallbackEXT\"." << Endl;
+		return false;
+	}
 
 	vkCreateAndroidSurfaceKHR = (PFN_vkCreateAndroidSurfaceKHR)vkGetInstanceProcAddr(instance, "vkCreateAndroidSurfaceKHR");
 	if (vkCreateAndroidSurfaceKHR == nullptr)
