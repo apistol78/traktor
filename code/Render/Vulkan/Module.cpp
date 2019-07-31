@@ -8,7 +8,7 @@ namespace traktor
 	namespace render
 	{
 
-extern "C" void __module__Traktor_Render_Vk()
+extern "C" void __module__Traktor_Render_Vulkan()
 {
 	T_FORCE_LINK_REF(RenderSystemVk);
 }

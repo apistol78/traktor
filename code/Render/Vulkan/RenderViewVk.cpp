@@ -145,6 +145,16 @@ bool RenderViewVk::create(const RenderViewEmbeddedDesc& desc)
 		log::error << L"Failed to create Vulkan; unable to create X11 renderable surface." << Endl;
 		return false;
 	}
+#elif defined(__ANDROID__)
+	VkAndroidSurfaceCreateInfoKHR sci = {};
+	sci.sType = VK_STRUCTURE_TYPE_ANDROID_SURFACE_CREATE_INFO_KHR;
+	sci.flags = 0;
+	sci.window = *desc.syswin.window;
+	if (vkCreateAndroidSurfaceKHR(m_instance, &sci, nullptr, &m_surface) != VK_SUCCESS)
+	{
+		log::error << L"Failed to create Vulkan; unable to create Android renderable surface." << Endl;
+		return false;
+	}
 #endif
 
 	if (!create(64, 64))
@@ -333,7 +343,6 @@ bool RenderViewVk::begin(
 	const Clear* clear
 )
 {
-#if defined(_WIN32) || defined(__LINUX__)
 	// Get next target from swap chain.
     vkAcquireNextImageKHR(
 		m_logicalDevice,
@@ -343,7 +352,6 @@ bool RenderViewVk::begin(
 		VK_NULL_HANDLE,
 		&m_currentImageIndex
 	);
-#endif
 
 	// Reset descriptor pool.
 	if (vkResetDescriptorPool(m_logicalDevice, m_descriptorPool, 0) != VK_SUCCESS)
@@ -552,7 +560,6 @@ void RenderViewVk::present()
     vkWaitForFences(m_logicalDevice, 1, &m_renderFence, VK_TRUE, UINT64_MAX);
 
 	// Queue presentation of current primary target.
-#if defined(_WIN32) || defined(__LINUX__)
     VkPresentInfoKHR pi = {};
     pi.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
     pi.swapchainCount = 1;
@@ -563,7 +570,6 @@ void RenderViewVk::present()
     pi.pResults = nullptr;
 
     vkQueuePresentKHR(m_presentQueue, &pi);
-#endif
 
 	// Collect, or cycle, released buffers.
 	m_uniformBufferPool->collect();
@@ -571,6 +577,7 @@ void RenderViewVk::present()
 
 void RenderViewVk::pushMarker(const char* const marker)
 {
+#if !defined(__ANDROID__)
 	if (m_haveDebugMarkers)
 	{
 		VkDebugMarkerMarkerInfoEXT mi = {};
@@ -578,14 +585,17 @@ void RenderViewVk::pushMarker(const char* const marker)
 		mi.pMarkerName = marker;
 		vkCmdDebugMarkerBeginEXT(m_graphicsCommandBuffer, &mi);
 	}
+#endif
 }
 
 void RenderViewVk::popMarker()
 {
+#if !defined(__ANDROID__)
 	if (m_haveDebugMarkers)
 	{
 		vkCmdDebugMarkerEndEXT(m_graphicsCommandBuffer);
 	}
+#endif
 }
 
 void RenderViewVk::getStatistics(RenderViewStatistics& outStatistics) const

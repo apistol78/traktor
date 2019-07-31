@@ -42,6 +42,8 @@ const char* c_validationLayerNames[] = { "VK_LAYER_LUNARG_standard_validation", 
 const char* c_extensions[] = { "VK_KHR_surface", "VK_KHR_win32_surface", "VK_EXT_debug_report" };
 #elif defined(__LINUX__)
 const char* c_extensions[] = { "VK_KHR_surface", "VK_KHR_xlib_surface", "VK_EXT_debug_report" };
+#elif defined(__ANDROID__)
+const char* c_extensions[] = { "VK_KHR_surface", "VK_KHR_android_surface", "VK_EXT_debug_report" };
 #else
 const char* c_extensions[] = { "VK_KHR_surface", "VK_EXT_debug_report" };
 #endif
@@ -97,10 +99,11 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
 	}
 #endif
 
-#if defined(_WIN32) || defined(__LINUX__)
 	if (!initializeVulkanApi())
+	{
+		log::error << L"Unable to create Vulkan renderer; Failed to initialize Vulkan API." << Endl;
 		return false;
-#endif
+	}
 
 	// Check for available layers.
 	uint32_t layerCount = 0;
@@ -152,6 +155,7 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
 		return false;
 	}
 
+#if !defined(__ANDROID__)
 	// Setup debug port callback.
 	VkDebugReportCallbackEXT reportCallback = 0;
 
@@ -166,6 +170,7 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
 		log::error << L"Failed to create Vulkan; failed to set debug report callback." << Endl;
 		return false;
 	}
+#endif
 
 	// Select physical device.
 	uint32_t physicalDeviceCount = 0;
