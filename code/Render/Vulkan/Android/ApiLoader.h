@@ -96,7 +96,7 @@ extern PFN_vkQueuePresentKHR vkQueuePresentKHR;
 extern PFN_vkDestroySwapchainKHR vkDestroySwapchainKHR;
 // extern PFN_vkCmdDebugMarkerBeginEXT vkCmdDebugMarkerBeginEXT;
 // extern PFN_vkCmdDebugMarkerEndEXT vkCmdDebugMarkerEndEXT;
-// extern PFN_vkCreateDebugReportCallbackEXT vkCreateDebugReportCallbackEXT;
+extern PFN_vkCreateDebugReportCallbackEXT vkCreateDebugReportCallbackEXT;
 
 bool initializeVulkanApi();
 

@@ -155,7 +155,7 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
 		return false;
 	}
 
-#if !defined(__ANDROID__)
+//#if !defined(__ANDROID__)
 	// Setup debug port callback.
 	VkDebugReportCallbackEXT reportCallback = 0;
 
@@ -170,7 +170,7 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
 		log::error << L"Failed to create Vulkan; failed to set debug report callback." << Endl;
 		return false;
 	}
-#endif
+//#endif
 
 	// Select physical device.
 	uint32_t physicalDeviceCount = 0;

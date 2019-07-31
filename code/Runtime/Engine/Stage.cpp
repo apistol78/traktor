@@ -58,12 +58,12 @@ Stage::~Stage()
 
 void Stage::destroy()
 {
-	m_environment = 0;
+	m_environment = nullptr;
 
 	if (m_object)
 	{
 		const IRuntimeDispatch* methodFinalize = findRuntimeClassMethod(m_class, "finalize");
-		if (m_initialized && methodFinalize != 0)
+		if (m_initialized && methodFinalize != nullptr)
 		{
 			Any argv[] =
 			{
@@ -71,7 +71,7 @@ void Stage::destroy()
 			};
 			methodFinalize->invoke(m_object, sizeof_array(argv), argv);
 		}
-		m_object = 0;
+		m_object = nullptr;
 		m_class.clear();
 	}
 
@@ -79,14 +79,14 @@ void Stage::destroy()
 
 	m_shaderFade.clear();
 
-	for (RefArray< Layer >::iterator i = m_layers.begin(); i != m_layers.end(); ++i)
-		(*i)->destroy();
+	for (auto layer : m_layers)
+		layer->destroy();
 
 	m_layers.clear();
 
-	m_params = 0;
-	m_pendingStage = 0;
-	m_transitionStage = 0;
+	m_params = nullptr;
+	m_pendingStage = nullptr;
+	m_transitionStage = nullptr;
 }
 
 void Stage::addLayer(Layer* layer)
@@ -106,12 +106,12 @@ void Stage::removeAllLayers()
 
 Layer* Stage::getLayer(const std::wstring& name) const
 {
-	for (RefArray< Layer >::const_iterator i = m_layers.begin(); i != m_layers.end(); ++i)
+	for (auto layer : m_layers)
 	{
-		if ((*i)->getName() == name)
-			return *i;
+		if (layer->getName() == name)
+			return layer;
 	}
-	return 0;
+	return nullptr;
 }
 
 void Stage::terminate()
@@ -129,7 +129,7 @@ Any Stage::invokeScript(const std::string& fn, uint32_t argc, const Any* argv)
 	if (m_object)
 	{
 		const IRuntimeDispatch* method = findRuntimeClassMethod(m_class, fn);
-		if (method != 0)
+		if (method != nullptr)
 			return method->invoke(m_object, sizeof_array(argv), argv);
 	}
 
@@ -143,14 +143,14 @@ Ref< Stage > Stage::loadStage(const std::wstring& name, const Object* params)
 	if (i == m_transitions.end())
 	{
 		log::error << L"No transition \"" << name << L"\" found" << Endl;
-		return 0;
+		return nullptr;
 	}
 
 	Ref< StageLoader > stageLoader = StageLoader::create(m_environment, i->second, params);
 	if (stageLoader->failed())
 	{
 		log::error << L"Stage loader failed" << Endl;
-		return 0;
+		return nullptr;
 	}
 
 	return stageLoader->get();
@@ -162,7 +162,7 @@ Ref< StageLoader > Stage::loadStageAsync(const std::wstring& name, const Object*
 	if (i == m_transitions.end())
 	{
 		log::error << L"No transition \"" << name << L"\" found" << Endl;
-		return 0;
+		return nullptr;
 	}
 
 	return StageLoader::createAsync(m_environment, i->second, params);
@@ -184,8 +184,8 @@ bool Stage::update(IStateManager* stateManager, const UpdateInfo& info)
 	if (!m_pendingStage)
 	{
 		// Prepare all layers.
-		for (RefArray< Layer >::iterator i = m_layers.begin(); i != m_layers.end(); ++i)
-			T_MEASURE_STATEMENT_M((*i)->prepare(info), 1.0 / 60.0, type_name(*i));
+		for (auto layer : m_layers)
+			T_MEASURE_STATEMENT_M(layer->prepare(info), 1.0 / 60.0, type_name(layer));
 
 		// Issue script update.
 		if (validateScriptContext())
@@ -199,7 +199,7 @@ bool Stage::update(IStateManager* stateManager, const UpdateInfo& info)
 				};
 
 				const IRuntimeDispatch* methodUpdate = findRuntimeClassMethod(m_class, "update");
-				if (methodUpdate != 0)
+				if (methodUpdate != nullptr)
 				{
 					T_MEASURE_STATEMENT(methodUpdate->invoke(m_object, sizeof_array(argv), argv), 1.0 / 60.0);
 				}
@@ -207,8 +207,8 @@ bool Stage::update(IStateManager* stateManager, const UpdateInfo& info)
 		}
 
 		// Update each layer.
-		for (RefArray< Layer >::iterator i = m_layers.begin(); i != m_layers.end(); ++i)
-			T_MEASURE_STATEMENT_M((*i)->update(info), 1.0 / 60.0, type_name(*i));
+		for (auto layer : m_layers)
+			T_MEASURE_STATEMENT_M(layer->update(info), 1.0 / 60.0, type_name(layer));
 
 		// Issue script post update.
 		if (validateScriptContext())
@@ -222,7 +222,7 @@ bool Stage::update(IStateManager* stateManager, const UpdateInfo& info)
 				};
 
 				const IRuntimeDispatch* methodPostUpdate = findRuntimeClassMethod(m_class, "postUpdate");
-				if (methodPostUpdate != 0)
+				if (methodPostUpdate != nullptr)
 				{
 					T_MEASURE_STATEMENT(methodPostUpdate->invoke(m_object, sizeof_array(argv), argv), 1.0 / 60.0);
 				}
@@ -238,7 +238,7 @@ bool Stage::update(IStateManager* stateManager, const UpdateInfo& info)
 		{
 			T_MEASURE_STATEMENT(stateManager->enter(new StageState(m_environment, m_pendingStage)), 1.0 / 60.0);
 			m_transitionStage = m_pendingStage;
-			m_pendingStage = 0;
+			m_pendingStage = nullptr;
 		}
 	}
 
@@ -250,8 +250,8 @@ bool Stage::build(const UpdateInfo& info, uint32_t frame)
 {
 	T_MEASURE_BEGIN()
 
-	for (RefArray< Layer >::iterator i = m_layers.begin(); i != m_layers.end(); ++i)
-		T_MEASURE_STATEMENT((*i)->build(info, frame), 1.0 / 60.0);
+	for (auto layer : m_layers)
+		T_MEASURE_STATEMENT(layer->build(info, frame), 1.0 / 60.0);
 
 	T_MEASURE_UNTIL(1.0 / 60.0);
 	return true;
@@ -274,8 +274,8 @@ void Stage::render(uint32_t frame)
 
 void Stage::flush()
 {
-	for (RefArray< Layer >::iterator i = m_layers.begin(); i != m_layers.end(); ++i)
-		(*i)->flush();
+	for (auto layer : m_layers)
+		layer->flush();
 }
 
 void Stage::transition()
@@ -285,35 +285,35 @@ void Stage::transition()
 
 	// Transition layers; layers of same type and name has the chance
 	// to transition data, such as playing music etc.
-	for (RefArray< Layer >::iterator i = m_transitionStage->m_layers.begin(); i != m_transitionStage->m_layers.end(); ++i)
+	for (auto layer : m_transitionStage->m_layers)
 	{
-		std::wstring layerName = (*i)->getName();
+		std::wstring layerName = layer->getName();
 		if (layerName.empty())
 			continue;
 
 		Layer* currentLayer = getLayer(layerName);
-		if (currentLayer != 0 && &type_of(currentLayer) == &type_of(*i))
-			(*i)->transition(currentLayer);
+		if (currentLayer != layer && &type_of(currentLayer) == &type_of(layer))
+			layer->transition(currentLayer);
 	}
 
-	m_transitionStage = 0;
+	m_transitionStage = nullptr;
 }
 
 void Stage::preReconfigured()
 {
-	for (RefArray< Layer >::iterator i = m_layers.begin(); i != m_layers.end(); ++i)
-		(*i)->preReconfigured();
+	for (auto layer : m_layers)
+		layer->preReconfigured();
 }
 
 void Stage::postReconfigured()
 {
-	for (RefArray< Layer >::iterator i = m_layers.begin(); i != m_layers.end(); ++i)
-		(*i)->postReconfigured();
+	for (auto layer : m_layers)
+		layer->postReconfigured();
 
 	if (m_object && m_initialized)
 	{
 		const IRuntimeDispatch* methodReconfigured = findRuntimeClassMethod(m_class, "reconfigured");
-		if (methodReconfigured != 0)
+		if (methodReconfigured != nullptr)
 			methodReconfigured->invoke(m_object, 0, 0);
 	}
 }
@@ -323,23 +323,23 @@ void Stage::suspend()
 	if (m_object && m_initialized)
 	{
 		const IRuntimeDispatch* methodSuspend = findRuntimeClassMethod(m_class, "suspend");
-		if (methodSuspend != 0)
+		if (methodSuspend != nullptr)
 			methodSuspend->invoke(m_object, 0, 0);
 	}
 
-	for (RefArray< Layer >::iterator i = m_layers.begin(); i != m_layers.end(); ++i)
-		(*i)->suspend();
+	for (auto layer : m_layers)
+		layer->suspend();
 }
 
 void Stage::resume()
 {
-	for (RefArray< Layer >::iterator i = m_layers.begin(); i != m_layers.end(); ++i)
-		(*i)->resume();
+	for (auto layer : m_layers)
+		layer->resume();
 
 	if (m_object && m_initialized)
 	{
 		const IRuntimeDispatch* methodResume = findRuntimeClassMethod(m_class, "resume");
-		if (methodResume != 0)
+		if (methodResume != nullptr)
 			methodResume->invoke(m_object, 0, 0);
 	}
 }
