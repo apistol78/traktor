@@ -56,11 +56,11 @@ end
 
 function Tab:setColor(color)
 	self._color = color
-	self._separatorTop_mc.colorTransform = traktor.flash.ColorTransform(
+	self._separatorTop_mc.colorTransform = traktor.spark.ColorTransform(
 		color,
 		traktor.Color4f(0, 0, 0, 0)
 	)
-	self._separatorBottom_mc.colorTransform = traktor.flash.ColorTransform(
+	self._separatorBottom_mc.colorTransform = traktor.spark.ColorTransform(
 		color,
 		traktor.Color4f(0, 0, 0, 0)
 	)
@@ -108,7 +108,7 @@ function Tab:_addChild(child)
 	end)
 
 	if self._color ~= nil then
-		tab_mc:getMember("background_mc").colorTransform = traktor.flash.ColorTransform(
+		tab_mc:getMember("background_mc").colorTransform = traktor.spark.ColorTransform(
 			self._color,
 			traktor.Color4f(0, 0, 0, 0)
 		)
@@ -166,6 +166,7 @@ function Tab:_updateState()
 		end
 	end
 end
+
 	]]>
 	</text>
 </object>

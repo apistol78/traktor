@@ -7452,8 +7452,8 @@
 		</item>
 		<item type="Project" version="1">
 			<enable>true</enable>
-			<name>Traktor.Flash</name>
-			<sourcePath>$(TRAKTOR_HOME)/code/Flash</sourcePath>
+			<name>Traktor.Spark</name>
+			<sourcePath>$(TRAKTOR_HOME)/code/Spark</sourcePath>
 			<configurations>
 				<item type="Configuration" version="5">
 					<name>DebugShared</name>
@@ -7464,7 +7464,7 @@
 						<item>$(TRAKTOR_HOME)/3rdp/stb_rect_pack</item>
 					</includePaths>
 					<definitions>
-						<item>T_FLASH_EXPORT</item>
+						<item>T_SPARK_EXPORT</item>
 						<item>_DEBUG</item>
 					</definitions>
 					<libraryPaths/>
@@ -7478,15 +7478,15 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>Traktor.Flash.pdb</sourceFile>
+							<sourceFile>Traktor.Spark.pdb</sourceFile>
 							<targetPath>debugshared</targetPath>
 						</item>
 						<item type="AggregationItem">
-							<sourceFile>Traktor.Flash.lib</sourceFile>
+							<sourceFile>Traktor.Spark.lib</sourceFile>
 							<targetPath>debugshared</targetPath>
 						</item>
 						<item type="AggregationItem">
-							<sourceFile>Traktor.Flash.dll</sourceFile>
+							<sourceFile>Traktor.Spark.dll</sourceFile>
 							<targetPath>debugshared</targetPath>
 						</item>
 					</aggregationItems>
@@ -7501,7 +7501,7 @@
 						<item>$(TRAKTOR_HOME)/3rdp/stb_rect_pack</item>
 					</includePaths>
 					<definitions>
-						<item>T_FLASH_EXPORT</item>
+						<item>T_SPARK_EXPORT</item>
 						<item>NDEBUG</item>
 					</definitions>
 					<libraryPaths/>
@@ -7515,15 +7515,15 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>Traktor.Flash.pdb</sourceFile>
+							<sourceFile>Traktor.Spark.pdb</sourceFile>
 							<targetPath>releaseshared</targetPath>
 						</item>
 						<item type="AggregationItem">
-							<sourceFile>Traktor.Flash.lib</sourceFile>
+							<sourceFile>Traktor.Spark.lib</sourceFile>
 							<targetPath>releaseshared</targetPath>
 						</item>
 						<item type="AggregationItem">
-							<sourceFile>Traktor.Flash.dll</sourceFile>
+							<sourceFile>Traktor.Spark.dll</sourceFile>
 							<targetPath>releaseshared</targetPath>
 						</item>
 					</aggregationItems>
@@ -7552,11 +7552,11 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>Traktor.Flash.pdb</sourceFile>
+							<sourceFile>Traktor.Spark.pdb</sourceFile>
 							<targetPath>debugstatic</targetPath>
 						</item>
 						<item type="AggregationItem">
-							<sourceFile>Traktor.Flash.lib</sourceFile>
+							<sourceFile>Traktor.Spark.lib</sourceFile>
 							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -7585,11 +7585,11 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>Traktor.Flash.pdb</sourceFile>
+							<sourceFile>Traktor.Spark.pdb</sourceFile>
 							<targetPath>releasestatic</targetPath>
 						</item>
 						<item type="AggregationItem">
-							<sourceFile>Traktor.Flash.lib</sourceFile>
+							<sourceFile>Traktor.Spark.lib</sourceFile>
 							<targetPath>releasestatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -7889,8 +7889,8 @@
 		</item>
 		<item type="Project" version="1">
 			<enable>true</enable>
-			<name>Traktor.Flash.Editor</name>
-			<sourcePath>$(TRAKTOR_HOME)/code/Flash/Editor</sourcePath>
+			<name>Traktor.Spark.Editor</name>
+			<sourcePath>$(TRAKTOR_HOME)/code/Spark/Editor</sourcePath>
 			<configurations>
 				<item type="Configuration" version="5">
 					<name>DebugShared</name>
@@ -7901,7 +7901,7 @@
 						<item>$(TRAKTOR_HOME)/3rdp/stb_rect_pack</item>
 					</includePaths>
 					<definitions>
-						<item>T_FLASH_EDITOR_EXPORT</item>
+						<item>T_SPARK_EDITOR_EXPORT</item>
 						<item>_DEBUG</item>
 					</definitions>
 					<libraryPaths/>
@@ -7915,15 +7915,15 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>Traktor.Flash.Editor.pdb</sourceFile>
+							<sourceFile>Traktor.Spark.Editor.pdb</sourceFile>
 							<targetPath>debugshared</targetPath>
 						</item>
 						<item type="AggregationItem">
-							<sourceFile>Traktor.Flash.Editor.lib</sourceFile>
+							<sourceFile>Traktor.Spark.Editor.lib</sourceFile>
 							<targetPath>debugshared</targetPath>
 						</item>
 						<item type="AggregationItem">
-							<sourceFile>Traktor.Flash.Editor.dll</sourceFile>
+							<sourceFile>Traktor.Spark.Editor.dll</sourceFile>
 							<targetPath>debugshared</targetPath>
 						</item>
 					</aggregationItems>
@@ -7938,7 +7938,7 @@
 						<item>$(TRAKTOR_HOME)/3rdp/stb_rect_pack</item>
 					</includePaths>
 					<definitions>
-						<item>T_FLASH_EDITOR_EXPORT</item>
+						<item>T_SPARK_EDITOR_EXPORT</item>
 						<item>NDEBUG</item>
 					</definitions>
 					<libraryPaths/>
@@ -7952,15 +7952,15 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>Traktor.Flash.Editor.pdb</sourceFile>
+							<sourceFile>Traktor.Spark.Editor.pdb</sourceFile>
 							<targetPath>releaseshared</targetPath>
 						</item>
 						<item type="AggregationItem">
-							<sourceFile>Traktor.Flash.Editor.lib</sourceFile>
+							<sourceFile>Traktor.Spark.Editor.lib</sourceFile>
 							<targetPath>releaseshared</targetPath>
 						</item>
 						<item type="AggregationItem">
-							<sourceFile>Traktor.Flash.Editor.dll</sourceFile>
+							<sourceFile>Traktor.Spark.Editor.dll</sourceFile>
 							<targetPath>releaseshared</targetPath>
 						</item>
 					</aggregationItems>
@@ -7989,11 +7989,11 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>Traktor.Flash.Editor.pdb</sourceFile>
+							<sourceFile>Traktor.Spark.Editor.pdb</sourceFile>
 							<targetPath>debugstatic</targetPath>
 						</item>
 						<item type="AggregationItem">
-							<sourceFile>Traktor.Flash.Editor.lib</sourceFile>
+							<sourceFile>Traktor.Spark.Editor.lib</sourceFile>
 							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -8022,11 +8022,11 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>Traktor.Flash.Editor.pdb</sourceFile>
+							<sourceFile>Traktor.Spark.Editor.pdb</sourceFile>
 							<targetPath>releasestatic</targetPath>
 						</item>
 						<item type="AggregationItem">
-							<sourceFile>Traktor.Flash.Editor.lib</sourceFile>
+							<sourceFile>Traktor.Spark.Editor.lib</sourceFile>
 							<targetPath>releasestatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -18992,8 +18992,8 @@
 		</item>
 		<item type="Project" version="1">
 			<enable>false</enable>
-			<name>Traktor.Flash.Debug.App</name>
-			<sourcePath>$(TRAKTOR_HOME)/code/Flash/Editor/Debug</sourcePath>
+			<name>Traktor.Spark.Debug.App</name>
+			<sourcePath>$(TRAKTOR_HOME)/code/Spark/Editor/Debug</sourcePath>
 			<configurations>
 				<item type="Configuration" version="5">
 					<name>DebugShared</name>
@@ -19004,7 +19004,7 @@
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
 					<definitions>
-						<item>T_FLASH_DEBUG_APP_EXPORT</item>
+						<item>T_SPARK_DEBUG_APP_EXPORT</item>
 						<item>_DEBUG</item>
 					</definitions>
 					<libraryPaths/>
@@ -19018,7 +19018,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>Traktor.Flash.Debug.App.exe</sourceFile>
+							<sourceFile>Traktor.Spark.Debug.App.exe</sourceFile>
 							<targetPath>debugshared</targetPath>
 						</item>
 					</aggregationItems>
@@ -19033,7 +19033,7 @@
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
 					<definitions>
-						<item>T_FLASH_DEBUG_APP_EXPORT</item>
+						<item>T_SPARK_DEBUG_APP_EXPORT</item>
 						<item>NDEBUG</item>
 					</definitions>
 					<libraryPaths/>
@@ -19047,7 +19047,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>Traktor.Flash.Debug.App.exe</sourceFile>
+							<sourceFile>Traktor.Spark.Debug.App.exe</sourceFile>
 							<targetPath>releaseshared</targetPath>
 						</item>
 					</aggregationItems>
@@ -19076,7 +19076,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>Traktor.Flash.Debug.App.exe</sourceFile>
+							<sourceFile>Traktor.Spark.Debug.App.exe</sourceFile>
 							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -19105,7 +19105,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>Traktor.Flash.Debug.App.exe</sourceFile>
+							<sourceFile>Traktor.Spark.Debug.App.exe</sourceFile>
 							<targetPath>releasestatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -22086,8 +22086,8 @@
 		<item ref="/object/projects/item[81]/dependencies/item[13]/project"/>
 		<item type="Project" version="1">
 			<enable>true</enable>
-			<name>Traktor.Flash.Runtime</name>
-			<sourcePath>$(TRAKTOR_HOME)/code/Flash/Runtime</sourcePath>
+			<name>Traktor.Spark.Runtime</name>
+			<sourcePath>$(TRAKTOR_HOME)/code/Spark/Runtime</sourcePath>
 			<configurations>
 				<item type="Configuration" version="5">
 					<name>DebugShared</name>
@@ -22098,7 +22098,7 @@
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
 					<definitions>
-						<item>T_FLASH_RUNTIME_EXPORT</item>
+						<item>T_SPARK_RUNTIME_EXPORT</item>
 						<item>_DEBUG</item>
 					</definitions>
 					<libraryPaths/>
@@ -22112,19 +22112,19 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>Traktor.Flash.Runtime.pdb</sourceFile>
+							<sourceFile>Traktor.Spark.Runtime.pdb</sourceFile>
 							<targetPath>debugshared</targetPath>
 						</item>
 						<item type="AggregationItem">
-							<sourceFile>Traktor.Flash.Runtime.lib</sourceFile>
+							<sourceFile>Traktor.Spark.Runtime.lib</sourceFile>
 							<targetPath>debugshared</targetPath>
 						</item>
 						<item type="AggregationItem">
-							<sourceFile>Traktor.Flash.Runtime.dll</sourceFile>
+							<sourceFile>Traktor.Spark.Runtime.dll</sourceFile>
 							<targetPath>debugshared</targetPath>
 						</item>
 						<item type="AggregationItem">
-							<sourceFile>Traktor.Flash.Runtime.pdb</sourceFile>
+							<sourceFile>Traktor.Spark.Runtime.pdb</sourceFile>
 							<targetPath>debugshared</targetPath>
 						</item>
 					</aggregationItems>
@@ -22139,7 +22139,7 @@
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
 					<definitions>
-						<item>T_FLASH_RUNTIME_EXPORT</item>
+						<item>T_SPARK_RUNTIME_EXPORT</item>
 						<item>NDEBUG</item>
 					</definitions>
 					<libraryPaths/>
@@ -22153,19 +22153,19 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>Traktor.Flash.Runtime.pdb</sourceFile>
+							<sourceFile>Traktor.Spark.Runtime.pdb</sourceFile>
 							<targetPath>releaseshared</targetPath>
 						</item>
 						<item type="AggregationItem">
-							<sourceFile>Traktor.Flash.Runtime.lib</sourceFile>
+							<sourceFile>Traktor.Spark.Runtime.lib</sourceFile>
 							<targetPath>releaseshared</targetPath>
 						</item>
 						<item type="AggregationItem">
-							<sourceFile>Traktor.Flash.Runtime.dll</sourceFile>
+							<sourceFile>Traktor.Spark.Runtime.dll</sourceFile>
 							<targetPath>releaseshared</targetPath>
 						</item>
 						<item type="AggregationItem">
-							<sourceFile>Traktor.Flash.Runtime.pdb</sourceFile>
+							<sourceFile>Traktor.Spark.Runtime.pdb</sourceFile>
 							<targetPath>releaseshared</targetPath>
 						</item>
 					</aggregationItems>
@@ -22194,15 +22194,15 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>Traktor.Flash.Runtime.pdb</sourceFile>
+							<sourceFile>Traktor.Spark.Runtime.pdb</sourceFile>
 							<targetPath>debugstatic</targetPath>
 						</item>
 						<item type="AggregationItem">
-							<sourceFile>Traktor.Flash.Runtime.lib</sourceFile>
+							<sourceFile>Traktor.Spark.Runtime.lib</sourceFile>
 							<targetPath>debugstatic</targetPath>
 						</item>
 						<item type="AggregationItem">
-							<sourceFile>Traktor.Flash.Runtime.pdb</sourceFile>
+							<sourceFile>Traktor.Spark.Runtime.pdb</sourceFile>
 							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -22231,15 +22231,15 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>Traktor.Flash.Runtime.pdb</sourceFile>
+							<sourceFile>Traktor.Spark.Runtime.pdb</sourceFile>
 							<targetPath>releasestatic</targetPath>
 						</item>
 						<item type="AggregationItem">
-							<sourceFile>Traktor.Flash.Runtime.lib</sourceFile>
+							<sourceFile>Traktor.Spark.Runtime.lib</sourceFile>
 							<targetPath>releasestatic</targetPath>
 						</item>
 						<item type="AggregationItem">
-							<sourceFile>Traktor.Flash.Runtime.pdb</sourceFile>
+							<sourceFile>Traktor.Spark.Runtime.pdb</sourceFile>
 							<targetPath>releasestatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -22297,8 +22297,8 @@
 		</item>
 		<item type="Project" version="1">
 			<enable>true</enable>
-			<name>Traktor.Flash.Runtime.Editor</name>
-			<sourcePath>$(TRAKTOR_HOME)/code/Flash/Runtime/Editor</sourcePath>
+			<name>Traktor.Spark.Runtime.Editor</name>
+			<sourcePath>$(TRAKTOR_HOME)/code/Spark/Runtime/Editor</sourcePath>
 			<configurations>
 				<item type="Configuration" version="5">
 					<name>DebugShared</name>
@@ -22309,7 +22309,7 @@
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
 					<definitions>
-						<item>T_FLASH_RUNTIME_EDITOR_EXPORT</item>
+						<item>T_SPARK_RUNTIME_EDITOR_EXPORT</item>
 						<item>_DEBUG</item>
 					</definitions>
 					<libraryPaths/>
@@ -22323,19 +22323,19 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>Traktor.Flash.Runtime.Editor.pdb</sourceFile>
+							<sourceFile>Traktor.Spark.Runtime.Editor.pdb</sourceFile>
 							<targetPath>debugshared</targetPath>
 						</item>
 						<item type="AggregationItem">
-							<sourceFile>Traktor.Flash.Runtime.Editor.lib</sourceFile>
+							<sourceFile>Traktor.Spark.Runtime.Editor.lib</sourceFile>
 							<targetPath>debugshared</targetPath>
 						</item>
 						<item type="AggregationItem">
-							<sourceFile>Traktor.Flash.Runtime.Editor.dll</sourceFile>
+							<sourceFile>Traktor.Spark.Runtime.Editor.dll</sourceFile>
 							<targetPath>debugshared</targetPath>
 						</item>
 						<item type="AggregationItem">
-							<sourceFile>Traktor.Flash.Runtime.Editor.pdb</sourceFile>
+							<sourceFile>Traktor.Spark.Runtime.Editor.pdb</sourceFile>
 							<targetPath>debugshared</targetPath>
 						</item>
 					</aggregationItems>
@@ -22350,7 +22350,7 @@
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
 					<definitions>
-						<item>T_FLASH_RUNTIME_EDITOR_EXPORT</item>
+						<item>T_SPARK_RUNTIME_EDITOR_EXPORT</item>
 						<item>NDEBUG</item>
 					</definitions>
 					<libraryPaths/>
@@ -22364,19 +22364,19 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>Traktor.Flash.Runtime.Editor.pdb</sourceFile>
+							<sourceFile>Traktor.Spark.Runtime.Editor.pdb</sourceFile>
 							<targetPath>releaseshared</targetPath>
 						</item>
 						<item type="AggregationItem">
-							<sourceFile>Traktor.Flash.Runtime.Editor.lib</sourceFile>
+							<sourceFile>Traktor.Spark.Runtime.Editor.lib</sourceFile>
 							<targetPath>releaseshared</targetPath>
 						</item>
 						<item type="AggregationItem">
-							<sourceFile>Traktor.Flash.Runtime.Editor.dll</sourceFile>
+							<sourceFile>Traktor.Spark.Runtime.Editor.dll</sourceFile>
 							<targetPath>releaseshared</targetPath>
 						</item>
 						<item type="AggregationItem">
-							<sourceFile>Traktor.Flash.Runtime.Editor.pdb</sourceFile>
+							<sourceFile>Traktor.Spark.Runtime.Editor.pdb</sourceFile>
 							<targetPath>releaseshared</targetPath>
 						</item>
 					</aggregationItems>
@@ -22405,15 +22405,15 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>Traktor.Flash.Runtime.Editor.pdb</sourceFile>
+							<sourceFile>Traktor.Spark.Runtime.Editor.pdb</sourceFile>
 							<targetPath>debugstatic</targetPath>
 						</item>
 						<item type="AggregationItem">
-							<sourceFile>Traktor.Flash.Runtime.Editor.lib</sourceFile>
+							<sourceFile>Traktor.Spark.Runtime.Editor.lib</sourceFile>
 							<targetPath>debugstatic</targetPath>
 						</item>
 						<item type="AggregationItem">
-							<sourceFile>Traktor.Flash.Runtime.Editor.pdb</sourceFile>
+							<sourceFile>Traktor.Spark.Runtime.Editor.pdb</sourceFile>
 							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -22442,15 +22442,15 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>Traktor.Flash.Runtime.Editor.pdb</sourceFile>
+							<sourceFile>Traktor.Spark.Runtime.Editor.pdb</sourceFile>
 							<targetPath>releasestatic</targetPath>
 						</item>
 						<item type="AggregationItem">
-							<sourceFile>Traktor.Flash.Runtime.Editor.lib</sourceFile>
+							<sourceFile>Traktor.Spark.Runtime.Editor.lib</sourceFile>
 							<targetPath>releasestatic</targetPath>
 						</item>
 						<item type="AggregationItem">
-							<sourceFile>Traktor.Flash.Runtime.Editor.pdb</sourceFile>
+							<sourceFile>Traktor.Spark.Runtime.Editor.pdb</sourceFile>
 							<targetPath>releasestatic</targetPath>
 						</item>
 					</aggregationItems>

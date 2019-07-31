@@ -186,17 +186,17 @@ function PushButton:_updateState()
 
 	if down then
 		self._background_mc:gotoAndStop("down")
-		self._background_mc.colorTransform = traktor.flash.ColorTransform(self._downColor, cb)
+		self._background_mc.colorTransform = traktor.spark.ColorTransform(self._downColor, cb)
 	end
 
 	if up then
 		self._background_mc:gotoAndStop("up")
-		self._background_mc.colorTransform = traktor.flash.ColorTransform(self._defaultColor, cb)
+		self._background_mc.colorTransform = traktor.spark.ColorTransform(self._defaultColor, cb)
 	end
 
 	if hover then
 		self._background_mc:gotoAndStop("hover")
-		self._background_mc.colorTransform = traktor.flash.ColorTransform(self._hoverColor, cb)
+		self._background_mc.colorTransform = traktor.spark.ColorTransform(self._hoverColor, cb)
 	end
 
 	if self:isEnabled() then

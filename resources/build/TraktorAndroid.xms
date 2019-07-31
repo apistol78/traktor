@@ -2219,8 +2219,8 @@
 		</item>
 		<item type="Project" version="1">
 			<enable>true</enable>
-			<name>Traktor.Flash</name>
-			<sourcePath>$(TRAKTOR_HOME)/code/Flash</sourcePath>
+			<name>Traktor.Spark</name>
+			<sourcePath>$(TRAKTOR_HOME)/code/Spark</sourcePath>
 			<configurations>
 				<item type="Configuration" version="5">
 					<name>DebugStatic</name>
@@ -2247,7 +2247,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>libTraktor.Flash.a</sourceFile>
+							<sourceFile>libTraktor.Spark.a</sourceFile>
 							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -2278,7 +2278,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>libTraktor.Flash.a</sourceFile>
+							<sourceFile>libTraktor.Spark.a</sourceFile>
 							<targetPath>releasestatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -5780,8 +5780,8 @@
 		</item>
 		<item type="Project" version="1">
 			<enable>true</enable>
-			<name>Traktor.Flash.Runtime</name>
-			<sourcePath>$(TRAKTOR_HOME)/code/Flash/Runtime</sourcePath>
+			<name>Traktor.Spark.Runtime</name>
+			<sourcePath>$(TRAKTOR_HOME)/code/Spark/Runtime</sourcePath>
 			<configurations>
 				<item type="Configuration" version="5">
 					<name>DebugStatic</name>
@@ -5806,7 +5806,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>libTraktor.Flash.Runtime.a</sourceFile>
+							<sourceFile>libTraktor.Spark.Runtime.a</sourceFile>
 							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -5835,7 +5835,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>libTraktor.Flash.Runtime.a</sourceFile>
+							<sourceFile>libTraktor.Spark.Runtime.a</sourceFile>
 							<targetPath>releasestatic</targetPath>
 						</item>
 					</aggregationItems>

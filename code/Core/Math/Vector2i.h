@@ -1,5 +1,4 @@
-#ifndef traktor_Vector2i_H
-#define traktor_Vector2i_H
+#pragma once
 
 #include <cmath>
 #include "Core/Config.h"
@@ -68,5 +67,3 @@ public:
 #if defined(T_MATH_USE_INLINE)
 #	include "Core/Math/Std/Vector2i.inl"
 #endif
-
-#endif	// traktor_flash_Vector2i_H

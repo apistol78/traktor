@@ -31,7 +31,7 @@ function Widget.initialize(resourceManager, resourceKits)
 	Widget._focus = nil
 	Widget._eventMaskDirty = false
 	for _, rkid in ipairs(resourceKits) do
-		local rk = resourceManager:bind(traktor.flash.Movie, rkid)
+		local rk = resourceManager:bind(traktor.spark.Movie, rkid)
 		if rk == nil then return false end
 		table.insert(Widget._resourceKits, rk)
 	end
@@ -552,6 +552,7 @@ function Widget:_playSound(soundId)
 	soundPlayer:play(sound:get(), 0)
 #endif
 end
+
 	]]>
 	</text>
 </object>

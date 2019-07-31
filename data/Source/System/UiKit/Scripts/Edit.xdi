@@ -57,7 +57,7 @@ function Edit:setTextSize(size)
 end
 
 function Edit:setColor(color)
-	self._background_mc.colorTransform = traktor.flash.ColorTransform(
+	self._background_mc.colorTransform = traktor.spark.ColorTransform(
 		color,
 		traktor.Color4f(0, 0, 0, 0)
 	)
@@ -244,6 +244,7 @@ function Edit:_onKeyUp()
 		end
 	end
 end
+
 	]]>
 	</text>
 </object>

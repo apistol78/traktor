@@ -29,7 +29,7 @@ function Slider:place(x, y, width, height)
 end
 
 function Slider:setColor(color)
-	self._background_mc.colorTransform = traktor.flash.ColorTransform(
+	self._background_mc.colorTransform = traktor.spark.ColorTransform(
 		color,
 		traktor.Color4f(0, 0, 0, 0)
 	)
@@ -37,7 +37,7 @@ function Slider:setColor(color)
 end
 
 function Slider:setKnobColor(color)
-	self._knob_mc.colorTransform = traktor.flash.ColorTransform(
+	self._knob_mc.colorTransform = traktor.spark.ColorTransform(
 		color,
 		traktor.Color4f(0, 0, 0, 0)
 	)
@@ -154,6 +154,7 @@ function Slider:_onMouseMove(event)
 
 	return true
 end
+
 	]]>
 	</text>
 </object>

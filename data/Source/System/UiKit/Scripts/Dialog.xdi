@@ -36,7 +36,7 @@ function Dialog:place(x, y, width, height)
 end
 
 function Dialog:setColor(color)
-	self._background_mc.colorTransform = traktor.flash.ColorTransform(
+	self._background_mc.colorTransform = traktor.spark.ColorTransform(
 		color,
 		traktor.Color4f(0, 0, 0, 0)
 	)
@@ -44,7 +44,7 @@ function Dialog:setColor(color)
 end
 
 function Dialog:setBorderColor(color)
-	self._border_mc.colorTransform = traktor.flash.ColorTransform(
+	self._border_mc.colorTransform = traktor.spark.ColorTransform(
 		color,
 		traktor.Color4f(0, 0, 0, 0)
 	)
@@ -98,6 +98,7 @@ end
 function Dialog:_getInnerClip()
 	return self._inner_mc
 end
+
 	]]>
 	</text>
 </object>

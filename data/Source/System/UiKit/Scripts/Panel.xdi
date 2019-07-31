@@ -25,7 +25,7 @@ function Panel:place(x, y, width, height)
 end
 
 function Panel:setColor(color)
-	self._background_mc.colorTransform = traktor.flash.ColorTransform(
+	self._background_mc.colorTransform = traktor.spark.ColorTransform(
 		color,
 		traktor.Color4f(0, 0, 0, 0)
 	)
@@ -51,6 +51,7 @@ end
 function Panel:_getInnerClip()
 	return self._inner_mc
 end
+
 	]]>
 	</text>
 </object>
