@@ -1,0 +1,33 @@
+#include "Database/Instance.h"
+#include "Spark/Movie.h"
+#include "Spark/MovieResourceFactory.h"
+
+namespace traktor
+{
+	namespace spark
+	{
+
+T_IMPLEMENT_RTTI_CLASS(L"traktor.spark.MovieResourceFactory", MovieResourceFactory, resource::IResourceFactory)
+
+const TypeInfoSet MovieResourceFactory::getResourceTypes() const
+{
+	return makeTypeInfoSet< Movie >();
+}
+
+const TypeInfoSet MovieResourceFactory::getProductTypes(const TypeInfo& resourceType) const
+{
+	return makeTypeInfoSet< Movie >();
+}
+
+bool MovieResourceFactory::isCacheable(const TypeInfo& productType) const
+{
+	return true;
+}
+
+Ref< Object > MovieResourceFactory::create(resource::IResourceManager* resourceManager, const db::Database* database, const db::Instance* instance, const TypeInfo& productType, const Object* current) const
+{
+	return instance->getObject< Movie >();
+}
+
+	}
+}

@@ -56,13 +56,13 @@ function Image:setImage(image, mode)
 		-- Create image resource.
 		if isa(image, traktor.drawing.Image) then
 			self._image_mc = Widget._createEmptyResource(self)
-			self._image_mc:attachBitmap(traktor.flash.BitmapImage(image), 0)
+			self._image_mc:attachBitmap(traktor.spark.BitmapImage(image), 0)
 	
 		elseif isa(image, traktor.video.VideoTexture) then
 			self._image_mc = Widget._createEmptyResource(self)
-			self._image_mc:attachBitmap(traktor.flash.BitmapTexture(image), 0)
+			self._image_mc:attachBitmap(traktor.spark.BitmapTexture(image), 0)
 	
-		elseif isa(image, traktor.flash.Movie) then
+		elseif isa(image, traktor.spark.Movie) then
 			self._image_mc = image:createExternalMovieClipInstance(self._mc, 0)
 	
 		elseif type(image) == "string" then
@@ -99,9 +99,9 @@ end
 
 function Image:setBlend(mode)
 	if mode == Image.BLEND_ALPHA then
-		self._image_mc.blendMode = traktor.flash.CharacterInstance.SbmDefault
+		self._image_mc.blendMode = traktor.spark.CharacterInstance.SbmDefault
 	elseif mode == Image.BLEND_ADD then
-		self._image_mc.blendMode = traktor.flash.CharacterInstance.SbmAdd
+		self._image_mc.blendMode = traktor.spark.CharacterInstance.SbmAdd
 	end
 	return self
 end

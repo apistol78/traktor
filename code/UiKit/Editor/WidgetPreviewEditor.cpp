@@ -3,7 +3,7 @@
 #include "Core/Settings/PropertyBoolean.h"
 #include "Core/Settings/PropertyGroup.h"
 #include "Editor/IEditor.h"
-#include "Flash/MovieResourceFactory.h"
+#include "Spark/MovieResourceFactory.h"
 #include "Render/IRenderSystem.h"
 #include "Render/Resource/ShaderFactory.h"
 #include "Render/Resource/TextureFactory.h"
@@ -57,7 +57,7 @@ bool WidgetPreviewEditor::create(ui::Widget* parent, db::Instance* instance, ISe
 	m_resourceManager->addFactory(new render::ShaderFactory(renderSystem));
 	m_resourceManager->addFactory(new render::TextureFactory(renderSystem, 0));
 	m_resourceManager->addFactory(new script::ScriptFactory(m_scriptContext));
-	m_resourceManager->addFactory(new flash::MovieResourceFactory());
+	m_resourceManager->addFactory(new spark::MovieResourceFactory());
 	m_resourceManager->addFactory(new video::VideoFactory(renderSystem));
 
 	// Create preview control.

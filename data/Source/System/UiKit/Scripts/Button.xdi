@@ -43,7 +43,7 @@ function Button:_initialize(parent, mc, imageUp, imageDown, imageHover)
 		self._imageUp_mc = Widget._createEmptyResource(self)
 		self._imageUp_mc:attachBitmap(bm, 0)
 
-	elseif isa(imageUp, traktor.flash.Movie) then
+	elseif isa(imageUp, traktor.spark.Movie) then
 		self._imageUp_mc = image:createExternalMovieClipInstance(self._mc, 0)
 
 	elseif type(imageUp) == "string" then
@@ -64,7 +64,7 @@ function Button:_initialize(parent, mc, imageUp, imageDown, imageHover)
 			self._imageDown_mc = Widget._createEmptyResource(self)
 			self._imageDown_mc:attachBitmap(bm, 0)
 	
-		elseif isa(imageDown, traktor.flash.Movie) then
+		elseif isa(imageDown, traktor.spark.Movie) then
 			self._imageDown_mc = image:createExternalMovieClipInstance(self._mc, 0)
 	
 		elseif type(imageDown) == "string" then
@@ -88,7 +88,7 @@ function Button:_initialize(parent, mc, imageUp, imageDown, imageHover)
 			self._imageHover_mc = Widget._createEmptyResource(self)
 			self._imageHover_mc:attachBitmap(bm, 0)
 	
-		elseif isa(imageHover, traktor.flash.Movie) then
+		elseif isa(imageHover, traktor.spark.Movie) then
 			self._imageHover_mc = image:createExternalMovieClipInstance(self._mc, 0)
 	
 		elseif type(imageHover) == "string" then
@@ -173,6 +173,7 @@ function Button:_onMouseLeave()
 	self._isRolledOver = false
 	return true
 end
+
 	]]>
 	</text>
 </object>

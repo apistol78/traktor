@@ -34,7 +34,7 @@ function ProgressBar:place(x, y, width, height)
 end
 
 function ProgressBar:setBackColor(color)
-	self._back_mc.colorTransform = traktor.flash.ColorTransform(
+	self._back_mc.colorTransform = traktor.spark.ColorTransform(
 		color,
 		traktor.Color4f(0, 0, 0, 0)
 	)
@@ -42,7 +42,7 @@ function ProgressBar:setBackColor(color)
 end
 
 function ProgressBar:setFrontColor(color)
-	self._front_mc.colorTransform = traktor.flash.ColorTransform(
+	self._front_mc.colorTransform = traktor.spark.ColorTransform(
 		color,
 		traktor.Color4f(0, 0, 0, 0)
 	)
@@ -92,6 +92,7 @@ function ProgressBar:_loadStyle()
 	self:setBackColor(style.background)
 	self:setFrontColor(style.foreground)
 end
+
 	]]>
 	</text>
 </object>

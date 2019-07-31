@@ -21,7 +21,7 @@ function CheckBox:getPreferredSize()
 end
 
 function CheckBox:setColor(color)
-	self._background_mc.colorTransform = traktor.flash.ColorTransform(
+	self._background_mc.colorTransform = traktor.spark.ColorTransform(
 		color,
 		traktor.Color4f(0, 0, 0, 0)
 	)
@@ -87,6 +87,7 @@ function CheckBox:_onMouseRelease(event)
 	end
 	return true
 end
+
 	]]>
 	</text>
 </object>

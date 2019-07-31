@@ -3435,8 +3435,8 @@
 		</item>
 		<item type="Project" version="1">
 			<enable>true</enable>
-			<name>Traktor.Flash</name>
-			<sourcePath>$(TRAKTOR_HOME)/code/Flash</sourcePath>
+			<name>Traktor.Spark</name>
+			<sourcePath>$(TRAKTOR_HOME)/code/Spark</sourcePath>
 			<configurations>
 				<item type="Configuration" version="5">
 					<name>DebugShared</name>
@@ -3445,7 +3445,7 @@
 					<precompiledHeader/>
 					<includePaths/>
 					<definitions>
-						<item>T_FLASH_EXPORT</item>
+						<item>T_SPARK_EXPORT</item>
 						<item>_DEBUG</item>
 					</definitions>
 					<libraryPaths/>
@@ -3459,11 +3459,11 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>Traktor.Flash.lib</sourceFile>
+							<sourceFile>Traktor.Spark.lib</sourceFile>
 							<targetPath>debugshared</targetPath>
 						</item>
 						<item type="AggregationItem">
-							<sourceFile>Traktor.Flash.dll</sourceFile>
+							<sourceFile>Traktor.Spark.dll</sourceFile>
 							<targetPath>debugshared</targetPath>
 						</item>
 					</aggregationItems>
@@ -3476,7 +3476,7 @@
 					<precompiledHeader/>
 					<includePaths/>
 					<definitions>
-						<item>T_FLASH_EXPORT</item>
+						<item>T_SPARK_EXPORT</item>
 						<item>NDEBUG</item>
 					</definitions>
 					<libraryPaths/>
@@ -3490,11 +3490,11 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>Traktor.Flash.lib</sourceFile>
+							<sourceFile>Traktor.Spark.lib</sourceFile>
 							<targetPath>releaseshared</targetPath>
 						</item>
 						<item type="AggregationItem">
-							<sourceFile>Traktor.Flash.dll</sourceFile>
+							<sourceFile>Traktor.Spark.dll</sourceFile>
 							<targetPath>releaseshared</targetPath>
 						</item>
 					</aggregationItems>
@@ -3521,7 +3521,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>Traktor.Flash.lib</sourceFile>
+							<sourceFile>Traktor.Spark.lib</sourceFile>
 							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -3548,7 +3548,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>Traktor.Flash.lib</sourceFile>
+							<sourceFile>Traktor.Spark.lib</sourceFile>
 							<targetPath>releasestatic</targetPath>
 						</item>
 					</aggregationItems>

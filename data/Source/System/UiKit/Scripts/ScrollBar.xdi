@@ -44,7 +44,7 @@ function ScrollBar:place(x, y, width, height)
 end
 
 function ScrollBar:setColor(color)
-	self._background_mc.colorTransform = traktor.flash.ColorTransform(
+	self._background_mc.colorTransform = traktor.spark.ColorTransform(
 		color,
 		traktor.Color4f(0, 0, 0, 0)
 	)
@@ -52,7 +52,7 @@ function ScrollBar:setColor(color)
 end
 
 function ScrollBar:setKnobColor(color)
-	self._knob_mc.colorTransform = traktor.flash.ColorTransform(
+	self._knob_mc.colorTransform = traktor.spark.ColorTransform(
 		color,
 		traktor.Color4f(0, 0, 0, 0)
 	)
@@ -208,6 +208,7 @@ function ScrollBar:_onMouseMove(event)
 
 	return true
 end
+
 	]]>
 	</text>
 </object>

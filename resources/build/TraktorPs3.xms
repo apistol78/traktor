@@ -1069,8 +1069,8 @@
 		</item>
 		<item type="Project" version="1">
 			<enable>true</enable>
-			<name>Traktor.Flash</name>
-			<sourcePath>$(TRAKTOR_HOME)/code/Flash</sourcePath>
+			<name>Traktor.Spark</name>
+			<sourcePath>$(TRAKTOR_HOME)/code/Spark</sourcePath>
 			<configurations>
 				<item type="Configuration" version="5">
 					<name>DebugStatic</name>
@@ -1096,7 +1096,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>Traktor.Flash.lib</sourceFile>
+							<sourceFile>Traktor.Spark.lib</sourceFile>
 							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -1126,7 +1126,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>Traktor.Flash.lib</sourceFile>
+							<sourceFile>Traktor.Spark.lib</sourceFile>
 							<targetPath>releasestatic</targetPath>
 						</item>
 					</aggregationItems>

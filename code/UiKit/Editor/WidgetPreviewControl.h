@@ -23,7 +23,7 @@ class IEditor;
 
 	}
 
-	namespace flash
+	namespace spark
 	{
 
 class AccDisplayRenderer;
@@ -73,13 +73,13 @@ private:
 	Ref< resource::IResourceManager > m_resourceManager;
 	Ref< render::IRenderSystem > m_renderSystem;
 	Ref< render::IRenderView > m_renderView;
-	Ref< flash::AccDisplayRenderer > m_displayRenderer;
-	Ref< flash::WireDisplayRenderer > m_displayRendererWire;
-	Ref< flash::MovieRenderer > m_movieRenderer;
-	Ref< flash::MovieRenderer > m_movieRendererWire;
-	Ref< flash::MoviePlayer > m_moviePlayer;
+	Ref< spark::AccDisplayRenderer > m_displayRenderer;
+	Ref< spark::WireDisplayRenderer > m_displayRendererWire;
+	Ref< spark::MovieRenderer > m_movieRenderer;
+	Ref< spark::MovieRenderer > m_movieRendererWire;
+	Ref< spark::MoviePlayer > m_moviePlayer;
 	Ref< ui::EventSubject::IEventHandler > m_idleEventHandler;
-	Ref< flash::Movie > m_movie;
+	Ref< spark::Movie > m_movie;
 	resource::Proxy< IRuntimeClass > m_scaffoldingClass;
 	Ref< ITypedObject > m_scaffoldingObject;
 	Timer m_timer;

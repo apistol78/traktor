@@ -5,16 +5,16 @@
 #include "Core/Settings/PropertyInteger.h"
 #include "Database/Database.h"
 #include "Editor/IEditor.h"
-#include "Flash/DefaultCharacterFactory.h"
-#include "Flash/Frame.h"
-#include "Flash/Movie.h"
-#include "Flash/MoviePlayer.h"
-#include "Flash/MovieRenderer.h"
-#include "Flash/Sprite.h"
-#include "Flash/SpriteInstance.h"
-#include "Flash/Acc/AccDisplayRenderer.h"
-#include "Flash/Action/Common/Classes/AsKey.h"
-#include "Flash/Debug/WireDisplayRenderer.h"
+#include "Spark/DefaultCharacterFactory.h"
+#include "Spark/Frame.h"
+#include "Spark/Movie.h"
+#include "Spark/MoviePlayer.h"
+#include "Spark/MovieRenderer.h"
+#include "Spark/Sprite.h"
+#include "Spark/SpriteInstance.h"
+#include "Spark/Acc/AccDisplayRenderer.h"
+#include "Spark/Action/Common/Classes/AsKey.h"
+#include "Spark/Debug/WireDisplayRenderer.h"
 #include "Render/IRenderSystem.h"
 #include "Render/IRenderView.h"
 #include "Resource/ResourceManager.h"
@@ -37,23 +37,23 @@ const struct
 }
 c_askeys[] =
 {
-	{ ui::VkBackSpace, flash::AsKey::AkBackspace },
-	{ ui::VkControl, flash::AsKey::AkControl },
-	{ ui::VkDelete, flash::AsKey::AkDeleteKey },
-	{ ui::VkDown, flash::AsKey::AkDown },
-	{ ui::VkEnd, flash::AsKey::AkEnd },
-	{ ui::VkReturn, flash::AsKey::AkEnter },
-	{ ui::VkEscape, flash::AsKey::AkEscape },
-	{ ui::VkHome, flash::AsKey::AkHome },
-	{ ui::VkInsert, flash::AsKey::AkInsert },
-	{ ui::VkLeft, flash::AsKey::AkLeft },
-	{ ui::VkPageDown, flash::AsKey::AkPgDn },
-	{ ui::VkPageUp, flash::AsKey::AkPgUp },
-	{ ui::VkRight, flash::AsKey::AkRight },
-	{ ui::VkShift, flash::AsKey::AkShift },
-	{ ui::VkSpace, flash::AsKey::AkSpace },
-	{ ui::VkTab, flash::AsKey::AkTab },
-	{ ui::VkUp, flash::AsKey::AkUp }
+	{ ui::VkBackSpace, spark::AsKey::AkBackspace },
+	{ ui::VkControl, spark::AsKey::AkControl },
+	{ ui::VkDelete, spark::AsKey::AkDeleteKey },
+	{ ui::VkDown, spark::AsKey::AkDown },
+	{ ui::VkEnd, spark::AsKey::AkEnd },
+	{ ui::VkReturn, spark::AsKey::AkEnter },
+	{ ui::VkEscape, spark::AsKey::AkEscape },
+	{ ui::VkHome, spark::AsKey::AkHome },
+	{ ui::VkInsert, spark::AsKey::AkInsert },
+	{ ui::VkLeft, spark::AsKey::AkLeft },
+	{ ui::VkPageDown, spark::AsKey::AkPgDn },
+	{ ui::VkPageUp, spark::AsKey::AkPgUp },
+	{ ui::VkRight, spark::AsKey::AkRight },
+	{ ui::VkShift, spark::AsKey::AkShift },
+	{ ui::VkSpace, spark::AsKey::AkSpace },
+	{ ui::VkTab, spark::AsKey::AkTab },
+	{ ui::VkUp, spark::AsKey::AkUp }
 };
 
 int32_t translateVirtualKey(ui::VirtualKey vk)
@@ -83,11 +83,11 @@ bool WidgetPreviewControl::create(ui::Widget* parent)
 		return false;
 
 	// Create an empty flash movie.
-	Ref< flash::Sprite > movieClip = new flash::Sprite(0, 60);
-	Ref< flash::Frame > frame = new flash::Frame();
+	Ref< spark::Sprite > movieClip = new spark::Sprite(0, 60);
+	Ref< spark::Frame > frame = new spark::Frame();
 	frame->changeBackgroundColor(Color4f(0.2f, 0.2f, 0.2f, 1.0f));
 	movieClip->addFrame(frame);
-	m_movie = new flash::Movie(
+	m_movie = new spark::Movie(
 		Aabb2(Vector2(0.0f, 0.0f), Vector2(1280.0f * 20.0f, 720.0f * 20.0f)),
 		movieClip
 	);
@@ -105,7 +105,7 @@ bool WidgetPreviewControl::create(ui::Widget* parent)
 		return false;
 
 	// Create flash display renderer.
-	m_displayRenderer = new flash::AccDisplayRenderer();
+	m_displayRenderer = new spark::AccDisplayRenderer();
 	if (!m_displayRenderer->create(
 		m_resourceManager,
 		m_renderSystem,
@@ -118,7 +118,7 @@ bool WidgetPreviewControl::create(ui::Widget* parent)
 	))
 		return false;
 
-	m_displayRendererWire = new flash::WireDisplayRenderer();
+	m_displayRendererWire = new spark::WireDisplayRenderer();
 	if (!m_displayRendererWire->create(
 		m_resourceManager,
 		m_renderSystem,
@@ -130,15 +130,15 @@ bool WidgetPreviewControl::create(ui::Widget* parent)
 	}
 
 	// Create separate movie renderer for each display renderer.
-	m_movieRenderer = new flash::MovieRenderer(m_displayRenderer, nullptr);
-	m_movieRendererWire = new flash::MovieRenderer(m_displayRendererWire, nullptr);
+	m_movieRenderer = new spark::MovieRenderer(m_displayRenderer, nullptr);
+	m_movieRendererWire = new spark::MovieRenderer(m_displayRendererWire, nullptr);
 
 	// Create flash movie player.
 	int32_t width = m_renderView->getWidth();
 	int32_t height = m_renderView->getHeight();
 
-	m_moviePlayer = new flash::MoviePlayer(
-		new flash::DefaultCharacterFactory(),
+	m_moviePlayer = new spark::MoviePlayer(
+		new spark::DefaultCharacterFactory(),
 		nullptr,
 		nullptr
 	);
