@@ -124,6 +124,9 @@ bool RenderViewVk::create(const RenderViewDefaultDesc& desc)
 
 bool RenderViewVk::create(const RenderViewEmbeddedDesc& desc)
 {
+	int32_t width = 64;
+	int32_t height = 64;
+
 	// Create renderable surface.
 #if defined(_WIN32)
     VkWin32SurfaceCreateInfoKHR sci = {};
@@ -155,9 +158,12 @@ bool RenderViewVk::create(const RenderViewEmbeddedDesc& desc)
 		log::error << L"Failed to create Vulkan; unable to create Android renderable surface." << Endl;
 		return false;
 	}
+
+	width = ANativeWindow_getWidth(sci.window);
+	height = ANativeWindow_getHeight(sci.window);
 #endif
 
-	if (!create(64, 64))
+	if (!create(width, height))
 		return false;
 
 	return true;
