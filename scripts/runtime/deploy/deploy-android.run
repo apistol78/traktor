@@ -111,6 +111,9 @@ local function generateBinary()
 	-- Link files into an executable product.
 	stdout:printLn("Linking...")
 	local cmd = "\"" .. cl .. "\""
+	if debug then
+		cmd = cmd .. " -g"
+	end
 	cmd = cmd .. " -shared"
 	cmd = cmd .. " -Wl,-soname,Application"
 	cmd = cmd .. " -Wl,--no-undefined"
