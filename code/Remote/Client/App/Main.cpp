@@ -88,7 +88,7 @@ int launch(const CommandLine& cmdLine)
 		log::error << L"Unable to launch \"" << application << L"\"; server error " << int32_t(ret) << L"." << Endl;
 
 	clientSocket->close();
-	clientSocket = 0;
+	clientSocket = nullptr;
 	return 0;
 }
 
@@ -176,7 +176,7 @@ bool deployFile(const net::SocketAddressIPv4& addr, const Path& sourceFile, cons
 		log::info << L"File already up-to-date; skipped." << Endl;
 
 	fileStream->close();
-	fileStream = 0;
+	fileStream = nullptr;
 
 	log::info << L"File deployed successfully." << Endl;
 	return true;
@@ -189,10 +189,10 @@ bool deployFiles(const net::SocketAddressIPv4& addr, const Path& sourcePath, con
 	FileSystem::getInstance().find(sourcePath, files);
 	log::info << L"Found " << int32_t(files.size()) << L" file(s) matching \"" << sourcePath.getPathName() << L"\"." << Endl;
 
-	for (RefArray< File >::iterator i = files.begin(); i != files.end(); ++i)
+	for (auto file : files)
 	{
-		Path sourceFile = (*i)->getPath();
-		if ((*i)->isDirectory())
+		Path sourceFile = file->getPath();
+		if (file->isDirectory())
 		{
 			if (recursive)
 			{

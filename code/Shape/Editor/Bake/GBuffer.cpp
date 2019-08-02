@@ -106,7 +106,7 @@ bool GBuffer::create(int32_t width, int32_t height, const model::Model& model, c
 		m_data[i].material = 0;
 		m_data[i].position = Vector4(0.0f, 0.0f, 0.0f, 1.0f);
 		m_data[i].normal = Vector4(0.0f, 1.0f, 0.0f, 0.0f);
-		m_data[i].delta = Vector4(0.0f, 0.0f, 0.0f, 0.0f);
+		m_data[i].delta = Scalar(0.0f);
 	}
 
 	for (uint32_t i = 0; i < model.getPolygonCount(); ++i)
@@ -192,11 +192,16 @@ bool GBuffer::create(int32_t width, int32_t height, const model::Model& model, c
 							continue;
 					}
 
+					Vector4 ddx = ipolPositions.evaluate(bary, cpt + Vector2(1.0f, 0.0f)).xyz1() - elm.position;
+					Vector4 ddy = ipolPositions.evaluate(bary, cpt + Vector2(0.0f, 1.0f)).xyz1() - elm.position;
+					Vector4 duv = max(ddx.absolute(), ddy.absolute());
+					Scalar dpos = max(max(duv.x(), duv.y()), duv.z()) * Scalar(sqrt(2.0));
+
 					elm.polygon = i;
 					elm.material = polygon.getMaterial();
 					elm.position = ipolPositions.evaluate(bary, cpt).xyz1();
 					elm.normal = ipolNormals.evaluate(bary, cpt).xyz0().normalized();
-					elm.delta = ipolPositions.evaluate(bary, cpt + Vector2(1.0f, 1.0f)).xyz1() - elm.position;
+					elm.delta = dpos;
 				}
 			}
 		}

@@ -1,8 +1,8 @@
 #pragma once
 
-#include <map>
 #include "Core/RefArray.h"
 #include "Core/Math/Aabb3.h"
+#include "Core/Containers/SmallMap.h"
 #include "Core/Serialization/ISerializable.h"
 #include "Model/Animation.h"
 #include "Model/Types.h"
@@ -228,7 +228,7 @@ private:
 	AlignedVector< Joint > m_joints;
 	RefArray< Animation > m_animations;
 	AlignedVector< std::wstring > m_blendTargets;
-	std::map< uint32_t, AlignedVector< Vector4 > > m_blendTargetPositions;
+	SmallMap< uint32_t, AlignedVector< Vector4 > > m_blendTargetPositions;
 };
 
 	}
