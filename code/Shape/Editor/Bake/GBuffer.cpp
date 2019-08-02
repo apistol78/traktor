@@ -192,15 +192,16 @@ bool GBuffer::create(int32_t width, int32_t height, const model::Model& model, c
 							continue;
 					}
 
+					elm.polygon = i;
+					elm.material = polygon.getMaterial();
+					elm.position = ipolPositions.evaluate(bary, cpt).xyz1();
+					elm.normal = ipolNormals.evaluate(bary, cpt).xyz0().normalized();
+
 					Vector4 ddx = ipolPositions.evaluate(bary, cpt + Vector2(1.0f, 0.0f)).xyz1() - elm.position;
 					Vector4 ddy = ipolPositions.evaluate(bary, cpt + Vector2(0.0f, 1.0f)).xyz1() - elm.position;
 					Vector4 duv = max(ddx.absolute(), ddy.absolute());
 					Scalar dpos = max(max(duv.x(), duv.y()), duv.z()) * Scalar(sqrt(2.0));
 
-					elm.polygon = i;
-					elm.material = polygon.getMaterial();
-					elm.position = ipolPositions.evaluate(bary, cpt).xyz1();
-					elm.normal = ipolNormals.evaluate(bary, cpt).xyz0().normalized();
 					elm.delta = dpos;
 				}
 			}
@@ -250,6 +251,23 @@ void GBuffer::saveAsImages(const std::wstring& outputPath) const
 		}
 	}
 	image->save(outputPath + L"_Normals.png");
+
+	// Deltas.
+	image = new drawing::Image(drawing::PixelFormat::getA8R8G8B8(), m_width, m_height);
+	image->clear(Color4f(0.0f, 0.0f, 0.0f, 0.0f));
+	for (int32_t y = 0; y < m_height; ++y)
+	{
+		for (int32_t x = 0; x < m_width; ++x)
+		{
+			const Element& e = m_data[x + y * m_width];
+			if (e.polygon == model::c_InvalidIndex)
+				continue;
+
+			Scalar n = e.delta * Scalar(0.1f);
+			image->setPixel(x, y, Color4f(n, n, n, 1.0f));
+		}
+	}
+	image->save(outputPath + L"_Deltas.png");
 
 	// Polygons
 	image = new drawing::Image(drawing::PixelFormat::getA8R8G8B8(), m_width, m_height);

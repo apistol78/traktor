@@ -1,7 +1,10 @@
 #include <list>
+#include "Core/Io/FileSystem.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/CommandLine.h"
 #include "Core/Misc/SafeDestroy.h"
+#include "Core/System/OS.h"
+#include "Core/Thread/Mutex.h"
 #include "Net/Network.h"
 #include "Remote/Server/App/Server.h"
 #include "Ui/Application.h"
@@ -35,35 +38,6 @@ Mutex g_globalMutex(Guid(L"{DDB3D52F-8893-4f83-9FCD-D8A73211CC96}"));
 Ref< ui::Menu > g_popupMenu;
 Ref< ui::NotificationIcon > g_notificationIcon;
 
-void eventNotificationButtonDown(ui::MouseButtonDownEvent* event)
-{
-	const ui::MenuItem* item = g_popupMenu->showModal(nullptr, event->getPosition());
-	if (!item)
-		return;
-
-	if (item->getCommand() == L"RemoteServer.CopyScratch")
-	{
-		ui::Clipboard* clipboard = ui::Application::getInstance()->getClipboard();
-		if (clipboard)
-			clipboard->setText(g_scratchPath);
-	}
-	else if (item->getCommand() == L"RemoteServer.CleanScratch")
-	{
-		RefArray< File > files;
-		FileSystem::getInstance().find(g_scratchPath + L"/*.*", files);
-		for (RefArray< File >::const_iterator i = files.begin(); i != files.end(); ++i)
-			FileSystem::getInstance().remove((*i)->getPath());
-	}
-	else if (item->getCommand() == L"RemoteServer.BrowseScratch")
-	{
-		OS::getInstance().exploreFile(g_scratchPath);
-	}
-	else if (item->getCommand() == L"RemoteServer.Exit")
-	{
-		if (ui::MessageBox::show(L"Sure you want to exit RemoteServer?", L"Exit", ui::MbIconQuestion | ui::MbYesNo) == ui::DrYes)
-			ui::Application::getInstance()->exit(0);
-	}
-}
 #endif
 
 }
@@ -131,7 +105,34 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR szCmdLine, int)
 
 	g_notificationIcon = new ui::NotificationIcon();
 	g_notificationIcon->create(L"Traktor.Remote.Server.App 2.1.0 (" + server->getScratchPath() + L")", imageIdle);
-	g_notificationIcon->addEventHandler< ui::MouseButtonDownEvent >(&eventNotificationButtonDown);
+	g_notificationIcon->addEventHandler< ui::MouseButtonDownEvent >([&](ui::MouseButtonDownEvent* event) {
+		const ui::MenuItem* item = g_popupMenu->showModal(nullptr, event->getPosition());
+		if (!item)
+			return;
+
+		if (item->getCommand() == L"RemoteServer.CopyScratch")
+		{
+			ui::Clipboard* clipboard = ui::Application::getInstance()->getClipboard();
+			if (clipboard)
+				clipboard->setText(server->getScratchPath());
+		}
+		else if (item->getCommand() == L"RemoteServer.CleanScratch")
+		{
+			RefArray< File > files;
+			FileSystem::getInstance().find(server->getScratchPath() + L"/*.*", files);
+			for (RefArray< File >::const_iterator i = files.begin(); i != files.end(); ++i)
+				FileSystem::getInstance().remove((*i)->getPath());
+		}
+		else if (item->getCommand() == L"RemoteServer.BrowseScratch")
+		{
+			OS::getInstance().exploreFile(server->getScratchPath());
+		}
+		else if (item->getCommand() == L"RemoteServer.Exit")
+		{
+			if (ui::MessageBox::show(L"Sure you want to exit RemoteServer?", L"Exit", ui::MbIconQuestion | ui::MbYesNo) == ui::DrYes)
+				ui::Application::getInstance()->exit(0);
+		}
+	});
 #endif
 
 	log::info << L"Waiting for client(s)..." << Endl;
