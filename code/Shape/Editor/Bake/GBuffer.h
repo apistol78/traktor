@@ -25,7 +25,7 @@ public:
 		uint32_t material;
 		Vector4 position;
 		Vector4 normal;
-		Vector4 delta;
+		Scalar delta;
 	};
 
 	GBuffer();

@@ -5,7 +5,7 @@
 #include "Core/Serialization/MemberAlignedVector.h"
 #include "Core/Serialization/MemberComposite.h"
 #include "Core/Serialization/MemberRefArray.h"
-#include "Core/Serialization/MemberStl.h"
+#include "Core/Serialization/MemberSmallMap.h"
 #include "Model/ContainerHelpers.h"
 #include "Model/Model.h"
 
@@ -344,8 +344,11 @@ void Model::setBlendTargetPosition(uint32_t blendTargetIndex, uint32_t positionI
 
 const Vector4& Model::getBlendTargetPosition(uint32_t blendTargetIndex, uint32_t positionIndex) const
 {
-	std::map< uint32_t, AlignedVector< Vector4 > >::const_iterator i = m_blendTargetPositions.find(blendTargetIndex);
-	return i->second[positionIndex];
+	auto it = m_blendTargetPositions.find(blendTargetIndex);
+	if (it != m_blendTargetPositions.end())
+		return it->second[positionIndex];
+	else
+		return Vector4::origo();
 }
 
 void Model::serialize(ISerializer& s)
@@ -378,15 +381,11 @@ void Model::serialize(ISerializer& s)
 
 	s >> MemberAlignedVector< std::wstring >(L"blendTargets", m_blendTargets);
 
-	s >> MemberStlMap<
+	s >> MemberSmallMap<
 		uint32_t,
 		AlignedVector< Vector4 >,
-		MemberStlPair<
-			uint32_t,
-			AlignedVector< Vector4 >,
-			Member< uint32_t >,
-			MemberAlignedVector< Vector4 >
-		>
+		Member< uint32_t >,
+		MemberAlignedVector< Vector4 >
 	>(L"blendTargetPositions", m_blendTargetPositions);
 }
 
