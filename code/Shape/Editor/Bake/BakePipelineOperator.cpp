@@ -153,6 +153,7 @@ bool BakePipelineOperator::build(
 		tracerProcessor = new TracerProcessor(pipelineBuilder->getOutputDatabase());
 
 	const auto configuration = mandatory_non_null_type_cast< const BakeConfiguration* >(operatorData);
+	uint32_t configurationHash = DeepHash(configuration).get();
 	Guid seedId = configuration->getSeedGuid();
 
 	Ref< TracerTask > tracerTask = new TracerTask(
@@ -172,7 +173,7 @@ bool BakePipelineOperator::build(
 				return false;
 
 			// Calculate hash of current layer.
-			int32_t layerHash = (int32_t)DeepHash(flattenedLayer).get();
+			int32_t layerHash = configurationHash + (int32_t)DeepHash(flattenedLayer).get();
 
 			// Check if layer has already been baked, hash is written as a receipt in output database.
 			Guid existingLayerHashId = seedId.permutate();

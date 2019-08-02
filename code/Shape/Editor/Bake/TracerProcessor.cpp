@@ -247,8 +247,12 @@ bool TracerProcessor::process(const TracerTask* task) const
         GBuffer gbuffer;
         gbuffer.create(outputSize, outputSize, *renderModel, Transform::identity(), channel);
 
+		gbuffer.saveAsImages(tracerOutput->getName() + L"_Lightmap_Pre_");
+
         // Preprocess GBuffer.
         rayTracer->preprocess(&gbuffer);
+
+		gbuffer.saveAsImages(tracerOutput->getName() + L"_Lightmap_Post_");
 
         Ref< drawing::Image > lightmapDirect;
         Ref< drawing::Image > lightmapIndirect;

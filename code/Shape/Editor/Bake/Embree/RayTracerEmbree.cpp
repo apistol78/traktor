@@ -178,12 +178,16 @@ void RayTracerEmbree::preprocess(GBuffer* gbuffer) const
 
 				const Scalar l = elm.delta;
 				const Scalar hl = l * Scalar(0.5f);
-				const Vector4 d[] = { u, -u, v, -v };
+				//const Vector4 d[] = { u, -u, v, -v };
 
-				for (int32_t i = 0; i < 4; ++i)
+				for (int32_t i = 0; i < 16; ++i)
+				//for (int32_t i = 0; i < 4; ++i)
 				{
-					Vector4 traceOrigin = position;
-					Vector4 traceDirection = d[i];
+					float a = TWO_PI * i / 16.0f;
+					float s = sin(a), c = cos(a);
+
+					Vector4 traceOrigin = position + normal * Scalar(0.01f);
+					Vector4 traceDirection = (u * Scalar(c) + v * Scalar(s)).normalized();
 
 					rh.ray.org_x = traceOrigin.x();
 					rh.ray.org_y = traceOrigin.y();
@@ -193,7 +197,7 @@ void RayTracerEmbree::preprocess(GBuffer* gbuffer) const
 					rh.ray.dir_y = traceDirection.y();
 					rh.ray.dir_z = traceDirection.z();
 
-					rh.ray.tnear = 0.0f;
+					rh.ray.tnear = 0.01f;
 					rh.ray.time = 0.0f;
 					rh.ray.tfar = hl;
 
