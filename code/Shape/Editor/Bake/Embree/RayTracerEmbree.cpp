@@ -178,10 +178,8 @@ void RayTracerEmbree::preprocess(GBuffer* gbuffer) const
 
 				const Scalar l = elm.delta;
 				const Scalar hl = l * Scalar(0.5f);
-				//const Vector4 d[] = { u, -u, v, -v };
 
 				for (int32_t i = 0; i < 16; ++i)
-				//for (int32_t i = 0; i < 4; ++i)
 				{
 					float a = TWO_PI * i / 16.0f;
 					float s = sin(a), c = cos(a);
