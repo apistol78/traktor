@@ -11,12 +11,18 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderTargetDepthVk", RenderTargetDepthVk, ISimpleTexture)
 
-RenderTargetDepthVk::RenderTargetDepthVk(VkPhysicalDevice physicalDevice, VkDevice logicalDevice)
+RenderTargetDepthVk::RenderTargetDepthVk(
+	VkPhysicalDevice physicalDevice,
+	VkDevice logicalDevice,
+	VmaAllocator allocator
+)
 :	m_physicalDevice(physicalDevice)
 ,	m_logicalDevice(logicalDevice)
+,	m_allocator(allocator)
 ,	m_format(VK_FORMAT_UNDEFINED)
 ,	m_image(0)
-,	m_imageMemory(0)
+// ,	m_imageMemory(0)
+,	m_allocation(0)
 ,	m_imageView(0)
 ,	m_imageLayout(VK_IMAGE_LAYOUT_UNDEFINED)
 ,	m_width(0)
@@ -78,31 +84,12 @@ bool RenderTargetDepthVk::create(const RenderTargetSetCreateDesc& setDesc)
 	imageCreateInfo.pQueueFamilyIndices = nullptr;
 	imageCreateInfo.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
 	
- 	if ((result = vkCreateImage(m_logicalDevice, &imageCreateInfo, nullptr, &m_image)) != VK_SUCCESS)
-	{
-		log::error << L"RenderTargetDepthVk::create failed; vkCreateImage returned error " << getHumanResult(result) << L"." << Endl;
-		return false;
-	}
+	VmaAllocationCreateInfo aci = {};
+	aci.usage = VMA_MEMORY_USAGE_GPU_ONLY;
 
-	VkMemoryRequirements memoryRequirements = {};
-	vkGetImageMemoryRequirements(m_logicalDevice, m_image, &memoryRequirements);
-
-	VkMemoryAllocateInfo imageAllocateInfo = {};
-	imageAllocateInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
-	imageAllocateInfo.allocationSize = memoryRequirements.size;
-	imageAllocateInfo.memoryTypeIndex = getMemoryTypeIndex(m_physicalDevice, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, memoryRequirements);
-
-	if ((result = vkAllocateMemory(m_logicalDevice, &imageAllocateInfo, nullptr, &m_imageMemory)) != VK_SUCCESS)
-	{
-		log::error << L"RenderTargetDepthVk::create failed; vkAllocateMemory returned error " << getHumanResult(result) << L"." << Endl;
-		return false;
-	}
-
-	if ((result = vkBindImageMemory(m_logicalDevice, m_image, m_imageMemory, 0)) != VK_SUCCESS)
-	{
-		log::error << L"RenderTargetDepthVk::create failed; vkBindImageMemory returned error " << getHumanResult(result) << L"." << Endl;
-		return false;
-	}
+	VmaAllocation allocation;
+	if (vmaCreateImage(m_allocator, &imageCreateInfo, &aci, &m_image, &m_allocation, nullptr) != VK_SUCCESS)
+		return false;	
 
 	VkImageViewCreateInfo ivci = {};
 	ivci.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
@@ -131,11 +118,11 @@ void RenderTargetDepthVk::destroy()
 {
 	// Do not destroy image unless we have allocated memory for it;
 	// otherwise it's primary targets thus owned by swapchain.
-	if (m_imageMemory == 0)
+	if (m_allocation == 0)
 		return;
 
-	vkFreeMemory(m_logicalDevice, m_imageMemory, 0);
-	m_imageMemory = 0;
+	vmaFreeMemory(m_allocator, m_allocation);
+	m_allocation = 0;	
 
 	if (m_image != 0)
 	{

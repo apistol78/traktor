@@ -525,35 +525,24 @@ Ref< StructBuffer > RenderSystemVk::createStructBuffer(const AlignedVector< Stru
 	bci.usage = VK_BUFFER_USAGE_STORAGE_BUFFER_BIT;
 	bci.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
 
-	if (vkCreateBuffer(m_logicalDevice, &bci, nullptr, &storageBuffer) != VK_SUCCESS)
-		return nullptr;
+	VmaAllocationCreateInfo aci = {};
+	aci.usage = VMA_MEMORY_USAGE_CPU_TO_GPU; // \tbd VMA_MEMORY_USAGE_GPU_ONLY;
 
-	VkPhysicalDeviceMemoryProperties memoryProperties = {};
-	vkGetPhysicalDeviceMemoryProperties(m_physicalDevice, &memoryProperties);
+	VmaAllocation allocation;
+	if (vmaCreateBuffer(m_allocator, &bci, &aci, &storageBuffer, &allocation, nullptr) != VK_SUCCESS)
+		return nullptr;	
 
-	VkMemoryRequirements storageBufferMemoryRequirements = {};
-	vkGetBufferMemoryRequirements(m_logicalDevice, storageBuffer, &storageBufferMemoryRequirements);
-
-	VkMemoryAllocateInfo mai = {};
-	mai.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
-	mai.allocationSize = storageBufferMemoryRequirements.size;
- 	mai.memoryTypeIndex = getMemoryTypeIndex(m_physicalDevice, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, storageBufferMemoryRequirements);
-
-	VkDeviceMemory storageBufferMemory;
-	if (vkAllocateMemory(m_logicalDevice, &mai, nullptr, &storageBufferMemory) != VK_SUCCESS)
-		return nullptr;
-
-	vkBindBufferMemory(m_logicalDevice, storageBuffer, storageBufferMemory, 0);
-
-	return new StructBufferVk(bufferSize, m_logicalDevice, storageBuffer, storageBufferMemory);
+	return new StructBufferVk(bufferSize, m_allocator, allocation, storageBuffer);
 }
 
 Ref< ISimpleTexture > RenderSystemVk::createSimpleTexture(const SimpleTextureCreateDesc& desc)
 {
-	Ref< SimpleTextureVk > texture = new SimpleTextureVk();
-	if (texture->create(
+	Ref< SimpleTextureVk > texture = new SimpleTextureVk(
 		m_physicalDevice,
 		m_logicalDevice,
+		m_allocator
+	);
+	if (texture->create(
 		m_graphicsCommandPool,
 		m_graphicsQueue,
 		desc
@@ -598,6 +587,7 @@ Ref< RenderTargetSet > RenderSystemVk::createRenderTargetSet(const RenderTargetS
 	Ref< RenderTargetSetVk > renderTargetSet = new RenderTargetSetVk(
 		m_physicalDevice,
 		m_logicalDevice,
+		m_allocator,
 		m_graphicsCommandPool,
 		m_graphicsQueue
 	);

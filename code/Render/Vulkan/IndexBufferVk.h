@@ -50,7 +50,6 @@ private:
 	VmaAllocator m_allocator;
 	VmaAllocation m_allocation;
 	VkBuffer m_indexBuffer;
-	VkDeviceMemory m_indexBufferMemory;
 	bool m_locked;
 };
 

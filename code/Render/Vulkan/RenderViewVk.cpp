@@ -833,6 +833,7 @@ bool RenderViewVk::create(uint32_t width, uint32_t height)
 			m_physicalDevice,
 			m_logicalDevice,
 			0,
+			0,
 			0
 		);
 		if (!m_primaryTargets[i]->createPrimary(
