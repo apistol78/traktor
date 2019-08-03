@@ -13,6 +13,7 @@
 #	define VK_NO_PROTOTYPES
 #	include <vulkan/vulkan.h>
 #endif
+#include <vk_mem_alloc.h>
 
 #include "Render/ISimpleTexture.h"
 
@@ -32,7 +33,11 @@ class RenderTargetVk : public ISimpleTexture
 	T_RTTI_CLASS;
 
 public:
-	RenderTargetVk(VkPhysicalDevice physicalDevice, VkDevice logicalDevice);
+	RenderTargetVk(
+		VkPhysicalDevice physicalDevice,
+		VkDevice logicalDevice,
+		VmaAllocator allocator
+	);
 
 	virtual ~RenderTargetVk();
 
@@ -73,9 +78,10 @@ public:
 private:
 	VkPhysicalDevice m_physicalDevice;
 	VkDevice m_logicalDevice;
+	VmaAllocator m_allocator;
 	VkFormat m_format;
 	VkImage m_image;
-	VkDeviceMemory m_imageMemory;
+	VmaAllocation m_allocation;
 	VkImageView m_imageView;
 	VkImageLayout m_imageLayout;
 	VkAccessFlags m_accessFlags;

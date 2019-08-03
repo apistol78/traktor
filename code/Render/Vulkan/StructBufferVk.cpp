@@ -8,11 +8,17 @@ namespace traktor
 	
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.StructBufferVk", StructBufferVk, StructBuffer)
 
-StructBufferVk::StructBufferVk(uint32_t bufferSize, VkDevice device, VkBuffer storageBuffer, VkDeviceMemory storageBufferMemory)
+StructBufferVk::StructBufferVk(
+	uint32_t bufferSize,
+	VmaAllocator allocator,
+	VmaAllocation allocation,
+	VkBuffer storageBuffer
+)
 :	StructBuffer(bufferSize)
-,	m_device(device)
+,	m_allocator(allocator)
+,	m_allocation(allocation)
 ,	m_storageBuffer(storageBuffer)
-,	m_storageBufferMemory(storageBufferMemory)
+,	m_locked(false)
 {
 }
 
@@ -23,7 +29,13 @@ void StructBufferVk::destroy()
 void* StructBufferVk::lock()
 {
 	void* ptr = nullptr;
-	return (vkMapMemory(m_device, m_storageBufferMemory, 0, VK_WHOLE_SIZE, 0, &ptr) == VK_SUCCESS) ? ptr : nullptr;
+	if (vmaMapMemory(m_allocator, m_allocation, &ptr) == VK_SUCCESS)
+	{
+		m_locked = true;
+		return ptr;
+	}
+	else
+		return nullptr;
 }
 
 void* StructBufferVk::lock(uint32_t structOffset, uint32_t structCount)
@@ -33,7 +45,11 @@ void* StructBufferVk::lock(uint32_t structOffset, uint32_t structCount)
 
 void StructBufferVk::unlock()
 {
-	vkUnmapMemory(m_device, m_storageBufferMemory);
+	if (m_locked)
+	{
+		vmaUnmapMemory(m_allocator, m_allocation);
+		m_locked = false;
+	}
 }
 
 	}

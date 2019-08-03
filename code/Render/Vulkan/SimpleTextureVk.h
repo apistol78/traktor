@@ -13,6 +13,7 @@
 #	define VK_NO_PROTOTYPES
 #	include <vulkan/vulkan.h>
 #endif
+#include <vk_mem_alloc.h>
 
 #include "Render/ISimpleTexture.h"
 
@@ -31,13 +32,15 @@ class SimpleTextureVk : public ISimpleTexture
 	T_RTTI_CLASS;
 
 public:
-	SimpleTextureVk();
+	SimpleTextureVk(
+		VkPhysicalDevice physicalDevice,
+		VkDevice logicalDevice,
+		VmaAllocator allocator
+	);
 
 	virtual ~SimpleTextureVk();
 
 	bool create(
-		VkPhysicalDevice physicalDevice,
-		VkDevice device,
 		VkCommandPool commandPool,
 		VkQueue queue,
 		const SimpleTextureCreateDesc& desc
@@ -64,6 +67,10 @@ public:
 	VkImageView getVkImageView() const { return m_textureView; }
 
 private:
+	VkPhysicalDevice m_physicalDevice;
+	VkDevice m_logicalDevice;
+	VmaAllocator m_allocator;
+	VmaAllocation m_allocation;
 	VkImage m_textureImage;
 	VkImageView m_textureView;
 	int32_t m_mips;

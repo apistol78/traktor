@@ -11,8 +11,16 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.SimpleTextureVk", SimpleTextureVk, ISimpleTexture)
 
-SimpleTextureVk::SimpleTextureVk()
-:	m_textureImage(0)
+SimpleTextureVk::SimpleTextureVk(
+	VkPhysicalDevice physicalDevice,
+	VkDevice logicalDevice,
+	VmaAllocator allocator
+)
+:	m_physicalDevice(physicalDevice)
+,	m_logicalDevice(logicalDevice)
+,	m_allocator(allocator)
+,	m_allocation(0)
+,	m_textureImage(0)
 ,	m_textureView(0)
 ,	m_mips(0)
 ,	m_width(0)
@@ -26,8 +34,6 @@ SimpleTextureVk::~SimpleTextureVk()
 }
 
 bool SimpleTextureVk::create(
-	VkPhysicalDevice physicalDevice,
-	VkDevice device,
 	VkCommandPool commandPool,
 	VkQueue queue,
 	const SimpleTextureCreateDesc& desc
@@ -46,8 +52,8 @@ bool SimpleTextureVk::create(
 		VkDeviceMemory stagingBufferMemory = 0;
 
 		if (!createBuffer(
-			physicalDevice,
-			device,
+			m_physicalDevice,
+			m_logicalDevice,
 			imageSize,
 			VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
 			VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
@@ -58,14 +64,14 @@ bool SimpleTextureVk::create(
 
 		// Copy data into staging buffer.
 		uint8_t* data = nullptr;
-		vkMapMemory(device, stagingBufferMemory, 0, imageSize, 0, (void**)&data);
+		vkMapMemory(m_logicalDevice, stagingBufferMemory, 0, imageSize, 0, (void**)&data);
 		for (int32_t mip = 0; mip < desc.mipCount; ++mip)
 		{
 			uint32_t mipSize = getTextureMipPitch(desc.format, desc.width, desc.height, mip);
 			std::memcpy(data, desc.initialData[mip].data, mipSize);
 			data += mipSize;
 		}
-		vkUnmapMemory(device, stagingBufferMemory);
+		vkUnmapMemory(m_logicalDevice, stagingBufferMemory);
 
 		// Create texture image.
 		VkImageCreateInfo ici = {};
@@ -83,26 +89,13 @@ bool SimpleTextureVk::create(
 		ici.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
 		ici.samples = VK_SAMPLE_COUNT_1_BIT;
 		ici.flags = 0;
-		
-		if (vkCreateImage(device, &ici, nullptr, &m_textureImage) != VK_SUCCESS)
-			return false;
 
-		// Calculate memory requirement of texture image.
-		VkMemoryRequirements memoryRequirements;
-		vkGetImageMemoryRequirements(device, m_textureImage, &memoryRequirements);
+		VmaAllocationCreateInfo aci = {};
+		aci.usage = VMA_MEMORY_USAGE_GPU_ONLY;
 
-		// Allocate texture memory.
-		VkDeviceMemory textureImageMemory = 0;
-
-		VkMemoryAllocateInfo mai = {};
-		mai.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
-		mai.allocationSize = memoryRequirements.size;
-		mai.memoryTypeIndex = getMemoryTypeIndex(physicalDevice, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, memoryRequirements);
-
-		if (vkAllocateMemory(device, &mai, nullptr, &textureImageMemory) != VK_SUCCESS)
-			return false;
-
-		vkBindImageMemory(device, m_textureImage, textureImageMemory, 0);
+		VmaAllocation allocation;
+		if (vmaCreateImage(m_allocator, &ici, &aci, &m_textureImage, &m_allocation, nullptr) != VK_SUCCESS)
+			return false;			
 
 		// Create texture view.
 		VkImageViewCreateInfo ivci = {};
@@ -117,12 +110,12 @@ bool SimpleTextureVk::create(
 		ivci.subresourceRange.baseArrayLayer = 0;
 		ivci.subresourceRange.layerCount = 1;
 
-		if (vkCreateImageView(device, &ivci, nullptr, &m_textureView) != VK_SUCCESS)
+		if (vkCreateImageView(m_logicalDevice, &ivci, nullptr, &m_textureView) != VK_SUCCESS)
 			return false;
 
 		// Change layout of texture to be able to copy staging buffer into texture.
 		changeImageLayout(
-			device,
+			m_logicalDevice,
 			commandPool,
 			queue,
 			m_textureImage,
@@ -131,7 +124,7 @@ bool SimpleTextureVk::create(
 		);
 
 		// Copy staging buffer into texture.
-		VkCommandBuffer commandBuffer = beginSingleTimeCommands(device, commandPool);
+		VkCommandBuffer commandBuffer = beginSingleTimeCommands(m_logicalDevice, commandPool);
 
 		uint32_t offset = 0;
 		for (int32_t mip = 0; mip < desc.mipCount; ++mip)
@@ -163,11 +156,11 @@ bool SimpleTextureVk::create(
 			offset += mipSize;
 		}
 
-		endSingleTimeCommands(device, commandPool, commandBuffer, queue);
+		endSingleTimeCommands(m_logicalDevice, commandPool, commandBuffer, queue);
 
 		// Change layout of texture to optimal sampling.
 		changeImageLayout(
-			device,
+			m_logicalDevice,
 			commandPool,
 			queue,
 			m_textureImage,
@@ -176,8 +169,8 @@ bool SimpleTextureVk::create(
 		);
 
 		// Free staging buffer.
-		vkDestroyBuffer(device, stagingBuffer, 0);
-		vkFreeMemory(device, stagingBufferMemory, 0);
+		vkDestroyBuffer(m_logicalDevice, stagingBuffer, 0);
+		vkFreeMemory(m_logicalDevice, stagingBufferMemory, 0);
 	}
 
 	m_mips = desc.mipCount;
@@ -188,6 +181,17 @@ bool SimpleTextureVk::create(
 
 void SimpleTextureVk::destroy()
 {
+	if (m_allocation != 0)
+	{
+		vmaFreeMemory(m_allocator, m_allocation);
+		m_allocation = 0;
+	}
+
+	if (m_textureImage != 0)
+	{
+		vkDestroyImage(m_logicalDevice, m_textureImage, 0);
+		m_textureImage = 0;
+	}
 }
 
 ITexture* SimpleTextureVk::resolve()

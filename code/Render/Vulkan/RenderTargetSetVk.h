@@ -13,6 +13,7 @@
 #	define VK_NO_PROTOTYPES
 #	include <vulkan/vulkan.h>
 #endif
+#include <vk_mem_alloc.h>
 
 #include <tuple>
 #include "Core/RefArray.h"
@@ -40,6 +41,7 @@ public:
 	RenderTargetSetVk(
 		VkPhysicalDevice physicalDevice,
 		VkDevice logicalDevice,
+		VmaAllocator allocator,
 		VkCommandPool setupCommandPool,
 		VkQueue setupQueue
 	);
@@ -106,13 +108,12 @@ private:
 
 	VkPhysicalDevice m_physicalDevice;
 	VkDevice m_logicalDevice;
+	VmaAllocator m_allocator;
 	VkCommandPool m_setupCommandPool;
 	VkQueue m_setupQueue;
-
 	RenderTargetSetCreateDesc m_setDesc;
 	RefArray< RenderTargetVk > m_colorTargets;
 	Ref< RenderTargetDepthVk > m_depthTarget;
-	
 	SmallMap< render_pass_key_t, RenderPass > m_renderPasses;
 };
 

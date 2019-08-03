@@ -13,6 +13,7 @@
 #	define VK_NO_PROTOTYPES
 #	include <vulkan/vulkan.h>
 #endif
+#include <vk_mem_alloc.h>
 
 #include "Render/StructBuffer.h"
 
@@ -26,7 +27,12 @@ class StructBufferVk : public StructBuffer
 	T_RTTI_CLASS;
 
 public:
-	StructBufferVk(uint32_t bufferSize, VkDevice device, VkBuffer storageBuffer, VkDeviceMemory storageBufferMemory);
+	StructBufferVk(
+		uint32_t bufferSize,
+		VmaAllocator allocator,
+		VmaAllocation allocation,
+		VkBuffer storageBuffer
+	);
 
 	virtual void destroy() override final;
 
@@ -39,9 +45,10 @@ public:
 	VkBuffer getVkBuffer() const { return m_storageBuffer; }
 
 private:
-	VkDevice m_device;
+	VmaAllocator m_allocator;
+	VmaAllocation m_allocation;
 	VkBuffer m_storageBuffer;
-	VkDeviceMemory m_storageBufferMemory;
+	bool m_locked;
 };
 
 	}

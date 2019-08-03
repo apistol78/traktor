@@ -25,12 +25,14 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderTargetSetVk", RenderTargetSetVk, R
 RenderTargetSetVk::RenderTargetSetVk(
 	VkPhysicalDevice physicalDevice,
 	VkDevice logicalDevice,
+	VmaAllocator allocator,
 	VkCommandPool setupCommandPool,
 	VkQueue setupQueue
 )
 :	RenderTargetSet()
 ,	m_physicalDevice(physicalDevice)
 ,	m_logicalDevice(logicalDevice)
+,	m_allocator(allocator)
 ,	m_setupCommandPool(setupCommandPool)
 ,	m_setupQueue(setupQueue)
 {
@@ -44,11 +46,11 @@ RenderTargetSetVk::~RenderTargetSetVk()
 bool RenderTargetSetVk::createPrimary(int32_t width, int32_t height, VkFormat colorFormat, VkImage colorImage, VkFormat depthFormat, VkImage depthImage)
 {
 	m_colorTargets.resize(1);
-	m_colorTargets[0] = new RenderTargetVk(m_physicalDevice, m_logicalDevice);
+	m_colorTargets[0] = new RenderTargetVk(m_physicalDevice, m_logicalDevice, m_allocator);
 	if (!m_colorTargets[0]->createPrimary(width, height, colorFormat, colorImage))
 		return false;
 
-	m_depthTarget = new RenderTargetDepthVk(m_physicalDevice, m_logicalDevice);
+	m_depthTarget = new RenderTargetDepthVk(m_physicalDevice, m_logicalDevice, m_allocator);
 	if (!m_depthTarget->createPrimary(width, height, depthFormat, depthImage))
 		return false;
 
@@ -74,14 +76,14 @@ bool RenderTargetSetVk::create(const RenderTargetSetCreateDesc& setDesc)
 	m_colorTargets.resize(setDesc.count);
 	for (int32_t i = 0; i < setDesc.count; ++i)
 	{
-		m_colorTargets[i] = new RenderTargetVk(m_physicalDevice, m_logicalDevice);
+		m_colorTargets[i] = new RenderTargetVk(m_physicalDevice, m_logicalDevice, m_allocator);
 		if (!m_colorTargets[i]->create(setDesc, setDesc.targets[i]))
 			return false;
 	}
 
 	if (setDesc.createDepthStencil)
 	{
-		m_depthTarget = new RenderTargetDepthVk(m_physicalDevice, m_logicalDevice);
+		m_depthTarget = new RenderTargetDepthVk(m_physicalDevice, m_logicalDevice, m_allocator);
 		if (!m_depthTarget->create(setDesc))
 			return false;
 	}
