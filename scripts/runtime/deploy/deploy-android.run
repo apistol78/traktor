@@ -1,22 +1,27 @@
 import(traktor)
 import(traktor.drawing)
 
-
--- Load common script.
+--[[
+Load common script.
+]]
 if not run:loadScript("$(RUN_SCRIPT_PATH)/common/common.run") then
 	stderr:printLn("Unable to load \"common.run\"; installation broken?")
 	return 1
 end
 
-
+--[[
+Check if any device (not emulator) is connected.
+]]
 local function isDeviceConnected()
 	run:execute("$(DEPLOY_ANDROID_HOME)/platform-tools/adb get-state", nil)
 	local s = run:stdOut():trim()
 	return s == "device"
 end
 
-
-local function generateBinary()
+--[[
+Link application binary.
+]]
+local function linkApplication()
 	local sdk = os:getEnvironment("DEPLOY_ANDROID_HOME")
 	if sdk == "" then
 		stderr:printLn("Android SDK installation not valid, no SDK root path; ensure Android SDK is properly installed and try again.")
@@ -29,8 +34,11 @@ local function generateBinary()
 		return false
 	end
 
-	local apilevel = os:getEnvironment("DEPLOY_ANDROID_APILEVEL") or "29" -- "29"
+	local apilevel = os:getEnvironment("DEPLOY_ANDROID_APILEVEL")
+	if apilevel == nil or apilevel == "" then apilevel = "29" end
+
 	local architecture = "aarch64" -- "arch-arm"
+	local abi = "arm64-v8a"	-- armeabi-v7a
 
 	-- Determine tool suitable for os.
 	local host = os:getEnvironment("DEPLOY_HOST_OS")
@@ -51,12 +59,15 @@ local function generateBinary()
 		end		
 	else
 		stderr:printLn("Unsupported host OS (" .. host .. ").")
-		return 1
+		return false
 	end
 
 	-- Generate paths to NDK.
 	local toolpath = ndk .. "/toolchains/llvm/prebuilt/" .. host .."/bin"
 	local cl = toolpath .. "/" .. architecture .. "-linux-android" .. apilevel .. "-clang++"
+	if host == "windows-x86_64" then
+		cl = cl .. ".cmd"
+	end
 
 	-- Check all paths exist.
 	local ok = fileSystem:exist(Path(toolpath))
@@ -69,11 +80,13 @@ local function generateBinary()
 	stdout:printLn("Android NDK installation ok.")
 
 	-- Get library paths.
+	local debug = (os:getEnvironment("DEPLOY_DEBUG") ~= "")
+	if debug then stdout:printLn("** USING DEBUG BINARIES **") end
+
 	local libraryPaths = ""
 	local paths = ""
-	local debug = (os:getEnvironment("DEPLOY_DEBUG") ~= "")
 	if not debug then paths = os:getEnvironment("DEPLOY_STATIC_PATH_RELEASE"):split("\n") else paths = os:getEnvironment("DEPLOY_STATIC_PATH_DEBUG"):split("\n") end
-	 for _, p in pairs(paths) do
+	for _, p in pairs(paths) do
 		libraryPaths = libraryPaths .. " -L " .. Path(p).pathName
 	end
 
@@ -144,7 +157,12 @@ local function generateBinary()
 	return true
 end
 
+-------------------------------------------------------------------------------
+-------------------------------------------------------------------------------
 
+--[[
+Build assets in target output database.
+]]
 function build(args)
 	stdout:printLn("Building asset(s)...")
 	local cmdline = tools.pipeline .. " -p -standalone -s=Pipeline"
@@ -154,15 +172,21 @@ function build(args)
 	return run:execute(cmdline)
 end
 
-
+--[[
+Create application and deploy to device.
+]]
 function deploy(args)
 	stdout:printLn("Deploying...")
 
 	-- Create android native binary.
-	if not generateBinary() then
+	if not linkApplication() then
 		return 1
 	end
 
+	local apilevel = os:getEnvironment("DEPLOY_ANDROID_APILEVEL")
+	if apilevel == nil or apilevel == "" then apilevel = "29" end
+
+	local architecture = "aarch64" -- "arch-arm"
 	local abi = "arm64-v8a"	-- armeabi-v7a
 
 	-- Create android project.
@@ -214,7 +238,7 @@ function deploy(args)
 	local host = os:getEnvironment("DEPLOY_HOST_OS")
 	if host == "win32" or host == "win64" then
 		result = true
-		result = result and (run:execute("$(DEPLOY_ANDROID_HOME)/build-tools/29.0.1/aapt.exe package -f -M AndroidManifest.xml -S res -I \"$(DEPLOY_ANDROID_HOME)/platforms/android-$(DEPLOY_ANDROID_APILEVEL)/android.jar\" -F \"$(DEPLOY_PROJECT_NAME).unsigned.apk\"") == 0)
+		result = result and (run:execute("$(DEPLOY_ANDROID_HOME)/build-tools/29.0.1/aapt.exe package -f -M AndroidManifest.xml -S res -I \"$(DEPLOY_ANDROID_HOME)/platforms/android-" .. apilevel .. "/android.jar\" -F \"$(DEPLOY_PROJECT_NAME).unsigned.apk\"") == 0)
 		result = result and (run:execute("$(DEPLOY_ANDROID_HOME)/build-tools/29.0.1/aapt.exe add \"$(DEPLOY_PROJECT_NAME).unsigned.apk\" lib/" .. abi .. "/libApplication.so", nil) == 0)
 		result = result and (run:execute("$(DEPLOY_ANDROID_HOME)/build-tools/29.0.1/aapt.exe add \"$(DEPLOY_PROJECT_NAME).unsigned.apk\" lib/" .. abi .. "/libc++_shared.so", nil) == 0)
 		result = result and (run:execute("$(DEPLOY_ANDROID_HOME)/build-tools/29.0.1/aapt.exe add \"$(DEPLOY_PROJECT_NAME).unsigned.apk\" assets/Application.config", nil) == 0)
@@ -222,7 +246,7 @@ function deploy(args)
 		result = result and (run:execute("$(DEPLOY_ANDROID_HOME)/build-tools/29.0.1/apksigner.bat sign --ks $(DEPLOY_SYSTEM_ROOT)/resources/runtime/deploy/android/keystore.jks --ks-key-alias androidkey --ks-pass pass:android --key-pass pass:android --out \"$(DEPLOY_PROJECT_NAME).apk\" \"$(DEPLOY_PROJECT_NAME).aligned.apk\"", nil) == 0)
 	elseif host == "linux" or host == "osx" then
 		result = true
-		result = result and (run:execute("$(DEPLOY_ANDROID_HOME)/build-tools/29.0.1/aapt package -f -M AndroidManifest.xml -S res -I $(DEPLOY_ANDROID_HOME)/platforms/android-$(DEPLOY_ANDROID_APILEVEL)/android.jar -F $(DEPLOY_PROJECT_NAME).unsigned.apk") == 0)
+		result = result and (run:execute("$(DEPLOY_ANDROID_HOME)/build-tools/29.0.1/aapt package -f -M AndroidManifest.xml -S res -I $(DEPLOY_ANDROID_HOME)/platforms/android-" .. apilevel .. "/android.jar -F $(DEPLOY_PROJECT_NAME).unsigned.apk") == 0)
 		result = result and (run:execute("$(DEPLOY_ANDROID_HOME)/build-tools/29.0.1/aapt add $(DEPLOY_PROJECT_NAME).unsigned.apk lib/" .. abi .. "/libApplication.so", nil) == 0)
 		result = result and (run:execute("$(DEPLOY_ANDROID_HOME)/build-tools/29.0.1/aapt add $(DEPLOY_PROJECT_NAME).unsigned.apk lib/" .. abi .. "/libc++_shared.so", nil) == 0)
 		result = result and (run:execute("$(DEPLOY_ANDROID_HOME)/build-tools/29.0.1/aapt add $(DEPLOY_PROJECT_NAME).unsigned.apk assets/Application.config", nil) == 0)
@@ -232,49 +256,68 @@ function deploy(args)
 		stderr:printLn("Unsupported host OS (" .. host .. ").")
 		return 1
 	end
+	if not result then
+		stderr:printLn("Failed to generate Android APK package.")
+		return 1
+	end
 
 	-- Cleanup intermediate files.
 	run:rm("$(DEPLOY_PROJECT_NAME).unsigned.apk")
 	run:rm("$(DEPLOY_PROJECT_NAME).aligned.apk")
 
-	if not result then
-		stderr:printLn("Failed to generate Android APK package")
-		return 1
-	end
-
 	stdout:printLn("Done")
 	return 0
 end
 
-
+--[[
+Launch deployed application.
+]]
 function launch(args)
 
 	-- Ensure device is ready.
 	if not isDeviceConnected() then
 		stderr:printLn("No device ready; ensure an Android device is connected and properly configured.")
 		return 1
-	end	
-
-	-- Launch application on attached device.
-	stdout:printLn("Installing package...")
-	local result = run:execute("$(DEPLOY_ANDROID_HOME)/platform-tools/adb -d install -r \"$(DEPLOY_PROJECT_NAME).apk\"", nil)
-	if result ~= 0 then
-		stderr:printLn("Failed to install package on device; Please ensure device is attached and in developer mode (1).")
-		return 1
 	end
 
-	stdout:printLn("Launching...")
-	local result = run:execute("$(DEPLOY_ANDROID_HOME)/platform-tools/adb -d shell am start -S -n $(DEPLOY_PROJECT_IDENTIFIER)/android.app.NativeActivity", nil)
-	if result ~= 0 then
-		stderr:printLn("Failed to launch package on device; Please ensure device is attached and in developer mode (2).")
-		return 1
+	local launchVS = true
+	if not launchVS then
+		-- Launch application on attached device.
+		stdout:printLn("Installing package...")
+		local result = run:execute("$(DEPLOY_ANDROID_HOME)/platform-tools/adb -d install -r \"$(DEPLOY_PROJECT_NAME).apk\"", nil)
+		if result ~= 0 then
+			stderr:printLn("Failed to install package on device; Please ensure device is attached and in developer mode (1).")
+			return 1
+		end
+
+		stdout:printLn("Launching...")
+		local result = run:execute("$(DEPLOY_ANDROID_HOME)/platform-tools/adb -d shell am start -S -n $(DEPLOY_PROJECT_IDENTIFIER)/android.app.NativeActivity", nil)
+		if result ~= 0 then
+			stderr:printLn("Failed to launch package on device; Please ensure device is attached and in developer mode (2).")
+			return 1
+		end
+	else
+		run:mkdir("vs")
+
+		-- Generate Visual Studio solution.
+		run:run("$(DEPLOY_SYSTEM_ROOT)/resources/runtime/deploy/android/vs/project.vcxproj.template", "vs/$(DEPLOY_PROJECT_NAME).vcxproj")
+		run:run("$(DEPLOY_SYSTEM_ROOT)/resources/runtime/deploy/android/vs/project.vcxproj.user.template", "vs/$(DEPLOY_PROJECT_NAME).vcxproj.user")
+		run:run("$(DEPLOY_SYSTEM_ROOT)/resources/runtime/deploy/android/vs/solution.sln.template", "vs/$(DEPLOY_PROJECT_NAME).sln")
+
+		-- Open generated solution in Visual Studio.
+		local projectName = os:getEnvironment("DEPLOY_PROJECT_NAME")
+		if not os:openFile("vs/" .. projectName .. ".sln") then
+			stderr:printLn("Unable to open " .. projectName .. " solution.")
+		end		
 	end
-	
+
 	stdout:printLn("Done")
 	return 0
 end
 
-
+--[[
+Create a standalone package of the application.
+]]
 function migrate(args)
 	stdout:printLn("Migrating...")
 
@@ -283,7 +326,7 @@ function migrate(args)
 	if run:exitCode() ~= 0 then return run:exitCode() end
 	
 	-- Create android native binary.
-	if not generateBinary() then
+	if not linkApplication() then
 		return 1
 	end
 
@@ -387,7 +430,8 @@ function migrate(args)
 	stdout:printLn("Done")
 end
 
-
+--[[
+]]
 function main(args)
 	local action = args:get(0)
 	if action == "build" then

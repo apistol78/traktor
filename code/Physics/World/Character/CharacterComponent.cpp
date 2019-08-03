@@ -145,9 +145,11 @@ bool CharacterComponent::isGrounded() const
 
 bool CharacterComponent::step(Vector4 motion, Vector4& inoutPosition) const
 {
-	Scalar totalMotionLength = motion.normalize();
+	Scalar totalMotionLength = motion.length();
 	if (totalMotionLength <= FUZZY_EPSILON)
 		return false;
+
+	motion /= totalMotionLength;
 
 	bool anyCollision = false;
 
