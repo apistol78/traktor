@@ -5,8 +5,8 @@
 			<id>{0EC917A5-AD89-A845-9A20-61D3507ED907}</id>
 			<comment/>
 			<position>
-				<first>1462</first>
-				<second>300</second>
+				<first>1046</first>
+				<second>248</second>
 			</position>
 			<name>T_Irradiance</name>
 		</item>
@@ -14,8 +14,8 @@
 			<id>{35CCE66E-B20C-7440-875C-38A2786CE676}</id>
 			<comment/>
 			<position>
-				<first>114</first>
-				<second>318</second>
+				<first>112</first>
+				<second>316</second>
 			</position>
 			<name>T_TexCoord0</name>
 			<connectable>true</connectable>
@@ -27,7 +27,7 @@
 			<id>{09FB31BE-CCCB-4E48-86F4-D85A31137634}</id>
 			<comment/>
 			<position>
-				<first>114</first>
+				<first>112</first>
 				<second>356</second>
 			</position>
 			<name>T_TexCoord1</name>
@@ -35,24 +35,6 @@
 			<optional>false</optional>
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
-		</item>
-		<item type="traktor.render.Sampler" version="5,traktor.render.Node:1">
-			<id>{B8370A0B-8D21-864A-AEB0-1E50FD4896D8}</id>
-			<comment/>
-			<position>
-				<first>572</first>
-				<second>215</second>
-			</position>
-			<minFilter>FtLinear</minFilter>
-			<mipFilter>FtLinear</mipFilter>
-			<magFilter>FtLinear</magFilter>
-			<addressU>AdClamp</addressU>
-			<addressV>AdClamp</addressV>
-			<addressW>AdClamp</addressW>
-			<compare>CfNone</compare>
-			<mipBias>0</mipBias>
-			<ignoreMips>false</ignoreMips>
-			<useAnisotropic>false</useAnisotropic>
 		</item>
 		<item type="traktor.render.Texture" version="traktor.render.Node:1">
 			<id>{1CC4ED5D-DB80-2148-BA01-34F073E174D3}</id>
@@ -63,38 +45,17 @@ Tag_LightMap
 			</comment>
 			<position>
 				<first>256</first>
-				<second>191</second>
+				<second>189</second>
 			</position>
 			<external>{00000000-0000-0000-0000-000000000000}</external>
 			<type>PtTexture2D</type>
-		</item>
-		<item type="traktor.render.Mul" version="traktor.render.Node:1">
-			<id>{0B162EAE-C9CF-0F4F-96CE-F5C392FC26AF}</id>
-			<comment/>
-			<position>
-				<first>1017</first>
-				<second>319</second>
-			</position>
-		</item>
-		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
-			<id>{EB9DBAD1-3948-2C43-AE45-783FF1AF64AB}</id>
-			<comment>
-			<![CDATA[
-Tag_LightMapRange
-			]]>
-			</comment>
-			<position>
-				<first>721</first>
-				<second>480</second>
-			</position>
-			<value>1</value>
 		</item>
 		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{BA94814B-BB35-CD44-9EC4-AD493052CB0F}</id>
 			<comment/>
 			<position>
-				<first>1010</first>
-				<second>163</second>
+				<first>789</first>
+				<second>211</second>
 			</position>
 			<fragmentGuid>{21CA659B-13A1-4D49-8115-FBA0ACB3CF0E}</fragmentGuid>
 			<inputPins>
@@ -116,14 +77,42 @@ Tag_LightMapRange
 			<id>{FA5222EE-6E63-3A41-AAF2-C388B9A46C50}</id>
 			<comment/>
 			<position>
-				<first>114</first>
-				<second>394</second>
+				<first>112</first>
+				<second>392</second>
 			</position>
 			<name>T_ViewNormal</name>
 			<connectable>true</connectable>
 			<optional>false</optional>
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
+		</item>
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+			<id>{8E6D7FFA-0D1B-8041-879B-4FED6C7CC6A3}</id>
+			<comment/>
+			<position>
+				<first>528</first>
+				<second>227</second>
+			</position>
+			<fragmentGuid>{A2830B26-2C1F-1141-987E-332AD82EE660}</fragmentGuid>
+			<inputPins>
+				<item>
+					<id>{EBDEF8BE-3369-8449-ADF0-B56DC2E37011}</id>
+					<name>TexCoord</name>
+					<optional>false</optional>
+				</item>
+				<item>
+					<id>{3BEE6FBC-73D2-40AE-8491-667E79827E2E}</id>
+					<name>Texture</name>
+					<optional>false</optional>
+				</item>
+			</inputPins>
+			<outputPins>
+				<item>
+					<id>{1A2E1C23-7F96-4CB8-90B1-50C178F9B27F}</id>
+					<name>Output</name>
+				</item>
+			</outputPins>
+			<values/>
 		</item>
 	</nodes>
 	<edges>
@@ -133,7 +122,17 @@ Tag_LightMapRange
 				<name>Output</name>
 			</source>
 			<destination>
+				<node ref="/object/nodes/item"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
 				<node ref="/object/nodes/item[3]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[6]"/>
 				<name>Texture</name>
 			</destination>
 		</item>
@@ -143,18 +142,8 @@ Tag_LightMapRange
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[3]"/>
+				<node ref="/object/nodes/item[6]"/>
 				<name>TexCoord</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[3]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[5]"/>
-				<name>Input1</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
@@ -163,27 +152,7 @@ Tag_LightMapRange
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[5]"/>
-				<name>Input2</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[3]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[7]"/>
-				<name>Input</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[7]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item"/>
+				<node ref="/object/nodes/item[4]"/>
 				<name>Input</name>
 			</destination>
 		</item>
