@@ -53,32 +53,30 @@ bool SimpleTextureVk::create(
 
 		// Create staging buffer.
 		VkBuffer stagingBuffer = 0;
-		VkDeviceMemory stagingBufferMemory = 0;
 
-		if (!createBuffer(
-			m_physicalDevice,
-			m_logicalDevice,
-			imageSize,
-			VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
-			VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
-			stagingBuffer,
-			stagingBufferMemory
-		))
-		{
-			log::error << L"Failed to create VK simple texture; unable to create staging buffer." << Endl;
-			return false;
-		}
+		VkBufferCreateInfo bufferInfo = {};
+		bufferInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
+		bufferInfo.size = imageSize;
+		bufferInfo.usage = VK_BUFFER_USAGE_TRANSFER_SRC_BIT;
+		bufferInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
+
+		VmaAllocationCreateInfo aci = {};
+		aci.usage = VMA_MEMORY_USAGE_CPU_TO_GPU;
+
+		VmaAllocation stagingBufferAllocation;
+		if (vmaCreateBuffer(m_allocator, &bufferInfo, &aci, &stagingBuffer, &stagingBufferAllocation, nullptr) != VK_SUCCESS)
+			return nullptr;	
 
 		// Copy data into staging buffer.
 		uint8_t* data = nullptr;
-		vkMapMemory(m_logicalDevice, stagingBufferMemory, 0, imageSize, 0, (void**)&data);
+		vmaMapMemory(m_allocator, stagingBufferAllocation, (void**)&data);
 		for (int32_t mip = 0; mip < desc.mipCount; ++mip)
 		{
 			uint32_t mipSize = getTextureMipPitch(desc.format, desc.width, desc.height, mip);
 			std::memcpy(data, desc.initialData[mip].data, mipSize);
 			data += mipSize;
 		}
-		vkUnmapMemory(m_logicalDevice, stagingBufferMemory);
+		vmaUnmapMemory(m_allocator, stagingBufferAllocation);
 
 		// Create texture image.
 		VkImageCreateInfo ici = {};
@@ -97,10 +95,7 @@ bool SimpleTextureVk::create(
 		ici.samples = VK_SAMPLE_COUNT_1_BIT;
 		ici.flags = 0;
 
-		VmaAllocationCreateInfo aci = {};
 		aci.usage = VMA_MEMORY_USAGE_GPU_ONLY;
-
-		VmaAllocation allocation;
 		if (vmaCreateImage(m_allocator, &ici, &aci, &m_textureImage, &m_allocation, nullptr) != VK_SUCCESS)
 		{
 			log::error << L"Failed to create VK simple texture; unable to allocate image memory." << Endl;
@@ -183,7 +178,7 @@ bool SimpleTextureVk::create(
 
 		// Free staging buffer.
 		vkDestroyBuffer(m_logicalDevice, stagingBuffer, 0);
-		vkFreeMemory(m_logicalDevice, stagingBufferMemory, 0);
+		vmaFreeMemory(m_allocator, stagingBufferAllocation);
 	}
 
 	m_mips = desc.mipCount;
