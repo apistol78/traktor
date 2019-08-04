@@ -21,7 +21,6 @@ RenderTargetDepthVk::RenderTargetDepthVk(
 ,	m_allocator(allocator)
 ,	m_format(VK_FORMAT_UNDEFINED)
 ,	m_image(0)
-// ,	m_imageMemory(0)
 ,	m_allocation(0)
 ,	m_imageView(0)
 ,	m_imageLayout(VK_IMAGE_LAYOUT_UNDEFINED)
@@ -179,7 +178,21 @@ void RenderTargetDepthVk::prepareAsTarget(VkCommandBuffer cmdBuffer)
 	layoutTransitionBarrier.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
 	layoutTransitionBarrier.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
 	layoutTransitionBarrier.image = m_image;
-	layoutTransitionBarrier.subresourceRange = { VK_IMAGE_ASPECT_DEPTH_BIT /*| VK_IMAGE_ASPECT_STENCIL_BIT*/, 0, 1, 0, 1 };
+
+	switch (m_format)
+	{
+	case VK_FORMAT_D16_UNORM:
+		layoutTransitionBarrier.subresourceRange = { VK_IMAGE_ASPECT_DEPTH_BIT, 0, 1, 0, 1 };
+		break;
+
+	case VK_FORMAT_D24_UNORM_S8_UINT:
+		layoutTransitionBarrier.subresourceRange = { VK_IMAGE_ASPECT_DEPTH_BIT | VK_IMAGE_ASPECT_STENCIL_BIT, 0, 1, 0, 1 };
+		break;
+
+	default:
+		T_FATAL_ERROR;
+		break;
+	}
 
 	vkCmdPipelineBarrier(
 		cmdBuffer,
@@ -209,8 +222,22 @@ void RenderTargetDepthVk::prepareAsTexture(VkCommandBuffer cmdBuffer)
 	layoutTransitionBarrier.newLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
 	layoutTransitionBarrier.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
 	layoutTransitionBarrier.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
-	layoutTransitionBarrier.subresourceRange = { VK_IMAGE_ASPECT_DEPTH_BIT /*| VK_IMAGE_ASPECT_STENCIL_BIT*/, 0, 1, 0, 1 };
 	layoutTransitionBarrier.image = m_image;
+
+	switch (m_format)
+	{
+	case VK_FORMAT_D16_UNORM:
+		layoutTransitionBarrier.subresourceRange = { VK_IMAGE_ASPECT_DEPTH_BIT, 0, 1, 0, 1 };
+		break;
+
+	case VK_FORMAT_D24_UNORM_S8_UINT:
+		layoutTransitionBarrier.subresourceRange = { VK_IMAGE_ASPECT_DEPTH_BIT | VK_IMAGE_ASPECT_STENCIL_BIT, 0, 1, 0, 1 };
+		break;
+
+	default:
+		T_FATAL_ERROR;
+		break;
+	}
 
 	vkCmdPipelineBarrier(
 		cmdBuffer,

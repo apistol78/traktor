@@ -957,7 +957,13 @@ bool RenderViewVk::validatePipeline(VertexBufferVk* vb, ProgramVk* p, PrimitiveT
 		pipeline = it->second;
 	else
 	{
+		T_FATAL_ASSERT (!m_targetStateStack.empty());
+		const TargetState& ts = m_targetStateStack.back();
 		const RenderState& rs = p->getRenderState();
+
+		uint32_t colorAttachmentCount = ts.rts->getColorTargetCount();
+		if (ts.colorIndex >= 0)
+			colorAttachmentCount = 1;
 
 		VkViewport vp = {};
 		vp.width = 1;
@@ -1040,7 +1046,7 @@ bool RenderViewVk::validatePipeline(VertexBufferVk* vb, ProgramVk* p, PrimitiveT
 
 		AlignedVector< VkPipelineColorBlendAttachmentState > blendAttachments;
 
-		for (uint32_t i = 0; i < 4; ++i)
+		for (uint32_t i = 0; i < colorAttachmentCount; ++i)
 		{
 			auto& cbas = blendAttachments.push_back();
 			cbas.blendEnable = rs.blendEnable ? VK_TRUE : VK_FALSE;

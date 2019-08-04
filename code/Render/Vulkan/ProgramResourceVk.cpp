@@ -119,11 +119,13 @@ void ProgramResourceVk::SamplerDesc::serialize(ISerializer& s)
 
 void ProgramResourceVk::TextureDesc::serialize(ISerializer& s)
 {
+	s >> Member< std::wstring >(L"name", name);
 	s >> Member< uint32_t >(L"binding", binding);
 }
 
 void ProgramResourceVk::SBufferDesc::serialize(ISerializer& s)
 {
+	s >> Member< std::wstring >(L"name", name);
 	s >> Member< uint32_t >(L"binding", binding);
 }
 

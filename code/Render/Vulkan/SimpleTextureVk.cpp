@@ -1,4 +1,5 @@
 #include <cstring>
+#include "Core/Log/Log.h"
 #include "Render/Types.h"
 #include "Render/Vulkan/ApiLoader.h"
 #include "Render/Vulkan/SimpleTextureVk.h"
@@ -43,7 +44,10 @@ bool SimpleTextureVk::create(
 	{
 		const VkFormat* vkTextureFormats = desc.sRGB ? c_vkTextureFormats_sRGB : c_vkTextureFormats;
 		if (vkTextureFormats[desc.format] == VK_FORMAT_UNDEFINED)
+		{
+			log::error << L"Failed to create VK simple texture; unknown format " << int32_t(desc.format) << L", (" << (desc.sRGB ? L"sRGB" : L"linear") << L")." << Endl;
 			return false;
+		}
 
 		uint32_t imageSize = getTextureSize(desc.format, desc.width, desc.height, desc.mipCount);
 
@@ -60,7 +64,10 @@ bool SimpleTextureVk::create(
 			stagingBuffer,
 			stagingBufferMemory
 		))
+		{
+			log::error << L"Failed to create VK simple texture; unable to create staging buffer." << Endl;
 			return false;
+		}
 
 		// Copy data into staging buffer.
 		uint8_t* data = nullptr;
@@ -95,7 +102,10 @@ bool SimpleTextureVk::create(
 
 		VmaAllocation allocation;
 		if (vmaCreateImage(m_allocator, &ici, &aci, &m_textureImage, &m_allocation, nullptr) != VK_SUCCESS)
+		{
+			log::error << L"Failed to create VK simple texture; unable to allocate image memory." << Endl;
 			return false;			
+		}
 
 		// Create texture view.
 		VkImageViewCreateInfo ivci = {};
@@ -111,7 +121,10 @@ bool SimpleTextureVk::create(
 		ivci.subresourceRange.layerCount = 1;
 
 		if (vkCreateImageView(m_logicalDevice, &ivci, nullptr, &m_textureView) != VK_SUCCESS)
+		{
+			log::error << L"Failed to create VK simple texture; unable to create image view." << Endl;
 			return false;
+		}
 
 		// Change layout of texture to be able to copy staging buffer into texture.
 		changeImageLayout(

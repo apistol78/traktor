@@ -218,19 +218,30 @@ bool ProgramVk::create(VkPhysicalDevice physicalDevice, VkDevice device, const P
 	// Create textures.
 	for (const auto& resourceTexture : resource->m_textures)
 	{
+#if !defined(_DEBUG)
 		m_textures.push_back({ resourceTexture.binding });
+#else
+		m_textures.push_back({ resourceTexture.name, resourceTexture.binding });
+#endif
 	}
 
 	// Create sbuffers.
 	for (const auto& resourceSBuffer : resource->m_sbuffers)
 	{
+#if !defined(_DEBUG)
 		m_sbuffers.push_back({ resourceSBuffer.binding });
+#else
+		m_sbuffers.push_back({ resourceSBuffer.name, resourceSBuffer.binding });
+#endif
 	}
 
 	// Setup parameter mapping.
 	for (auto p : resource->m_parameters)
 	{
 		auto& pm = m_parameterMap[getParameterHandle(p.name)];
+#if defined(_DEBUG)
+		pm.name = p.name;
+#endif
 		pm.buffer = p.buffer;
 		pm.offset = p.offset;
 		pm.size = p.size;

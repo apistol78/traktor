@@ -340,6 +340,7 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 			pm.length = 0;
 
 			programResource->m_textures.push_back(ProgramResourceVk::TextureDesc(
+				texture->getName(),
 				texture->getBinding()
 			));
 		}
@@ -351,6 +352,7 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 			pm.length = 0;
 
 			programResource->m_textures.push_back(ProgramResourceVk::TextureDesc(
+				image->getName(),
 				image->getBinding()
 			));
 		}
@@ -379,6 +381,7 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 			pm.length = 0;
 
 			programResource->m_sbuffers.push_back(ProgramResourceVk::SBufferDesc(
+				storageBuffer->getName(),
 				storageBuffer->getBinding()
 			));
 		}
