@@ -1207,6 +1207,9 @@ bool emitPixelOutput(GlslContext& cx, PixelOutput* node)
 
 		auto& fpb = cx.getFragmentShader().getOutputStream(GlslShader::BtBody);
 		fpb << L"_gl_FragData_" << i << L" = " << in[i]->cast(GtFloat4) << L";" << Endl;
+
+		auto& fpo = cx.getFragmentShader().getOutputStream(GlslShader::BtOutput);
+		fpo << L"layout (location = " << i << L") out vec4 _gl_FragData_" << i << L";" << Endl;
 	}
 
 	cx.setRenderState(rs);

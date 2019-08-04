@@ -46,8 +46,8 @@ void initializeHandles()
 	s_handleFogDistanceAndDensity = render::getParameterHandle(L"World_FogDistanceAndDensity");
 	s_handleFogColor = render::getParameterHandle(L"World_FogColor");
 	s_handleShadowEnable = render::getParameterHandle(L"World_ShadowEnable");
-	s_handleShadowCascade = render::getParameterHandle(L"World_ShadowCascade");
-	s_handleShadowAtlas = render::getParameterHandle(L"World_ShadowAtlas");
+	s_handleShadowCascade = render::getParameterHandle(L"World_ShadowMapCascade");
+	s_handleShadowAtlas = render::getParameterHandle(L"World_ShadowMapAtlas");
 	s_handleDepthMap = render::getParameterHandle(L"World_DepthMap");
 	s_handleOcclusionMap = render::getParameterHandle(L"World_OcclusionMap");
 	s_handleLightCount = render::getParameterHandle(L"World_LightCount");

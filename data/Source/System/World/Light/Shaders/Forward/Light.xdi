@@ -5,7 +5,7 @@
 			<id>{0AFE123F-E38C-4DE5-9E0C-D55B5F75B1B0}</id>
 			<comment/>
 			<position>
-				<first>638</first>
+				<first>637</first>
 				<second>556</second>
 			</position>
 			<fragmentGuid>{B2786933-9C69-4442-82C8-867F4F51A748}</fragmentGuid>
@@ -53,7 +53,7 @@
 			<comment/>
 			<position>
 				<first>-212</first>
-				<second>-450</second>
+				<second>-449</second>
 			</position>
 			<name>Normal</name>
 			<connectable>true</connectable>
@@ -66,7 +66,7 @@
 			<comment/>
 			<position>
 				<first>-232</first>
-				<second>-406</second>
+				<second>-405</second>
 			</position>
 			<name>Roughness</name>
 			<connectable>true</connectable>
@@ -79,7 +79,7 @@
 			<comment/>
 			<position>
 				<first>-212</first>
-				<second>-494</second>
+				<second>-493</second>
 			</position>
 			<name>Position</name>
 			<connectable>true</connectable>
@@ -92,7 +92,7 @@
 			<comment/>
 			<position>
 				<first>-252</first>
-				<second>-362</second>
+				<second>-361</second>
 			</position>
 			<name>ViewDirection</name>
 			<connectable>true</connectable>
@@ -104,8 +104,8 @@
 			<id>{E84967EC-2203-42D7-B34C-0EFBF0E9DF16}</id>
 			<comment/>
 			<position>
-				<first>1726</first>
-				<second>-58</second>
+				<first>1725</first>
+				<second>-57</second>
 			</position>
 			<name>Diffuse</name>
 		</item>
@@ -113,7 +113,7 @@
 			<id>{3D87701E-50A8-4DE5-88E6-393DC1BAEBF2}</id>
 			<comment/>
 			<position>
-				<first>408</first>
+				<first>451</first>
 				<second>304</second>
 			</position>
 			<name>L_Color</name>
@@ -123,15 +123,15 @@
 			<id>{3D0CED40-DD8A-4DB4-BEB5-FB6730211B6F}</id>
 			<comment/>
 			<position>
-				<first>1370</first>
-				<second>762</second>
+				<first>1369</first>
+				<second>761</second>
 			</position>
 		</item>
 		<item type="traktor.render.Mul" version="traktor.render.Node:1">
 			<id>{DE877666-006F-4091-9897-5FBE883673F3}</id>
 			<comment/>
 			<position>
-				<first>1370</first>
+				<first>1369</first>
 				<second>672</second>
 			</position>
 		</item>
@@ -139,7 +139,7 @@
 			<id>{9A81B94E-B46C-4980-A588-8575486BCD0E}</id>
 			<comment/>
 			<position>
-				<first>408</first>
+				<first>435</first>
 				<second>392</second>
 			</position>
 			<name>L_Direction</name>
@@ -159,7 +159,7 @@
 			<comment/>
 			<position>
 				<first>1624</first>
-				<second>646</second>
+				<second>645</second>
 			</position>
 			<name>L_Diffuse_Directional</name>
 			<global>false</global>
@@ -169,7 +169,7 @@
 			<comment/>
 			<position>
 				<first>1624</first>
-				<second>734</second>
+				<second>733</second>
 			</position>
 			<name>L_Specular_Directional</name>
 			<global>false</global>
@@ -179,15 +179,15 @@
 			<comment/>
 			<position>
 				<first>1244</first>
-				<second>-218</second>
+				<second>-217</second>
 			</position>
 		</item>
 		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
 			<id>{BBC61810-B45E-F742-A65A-F8BD71317877}</id>
 			<comment/>
 			<position>
-				<first>962</first>
-				<second>-262</second>
+				<first>961</first>
+				<second>-261</second>
 			</position>
 			<value>0</value>
 		</item>
@@ -195,7 +195,7 @@
 			<id>{55DE6D6F-4263-A148-B39C-2383CA39A972}</id>
 			<comment/>
 			<position>
-				<first>706</first>
+				<first>705</first>
 				<second>-272</second>
 			</position>
 			<parameterName>World_LightCount</parameterName>
@@ -223,7 +223,7 @@
 			<id>{9C94C433-F01F-DF4D-A7BD-499ABCE2E572}</id>
 			<comment/>
 			<position>
-				<first>1054</first>
+				<first>1053</first>
 				<second>0</second>
 			</position>
 			<name>L_Diffuse</name>
@@ -233,7 +233,7 @@
 			<id>{AA13E4E7-E3DF-E044-A156-525D38A4E794}</id>
 			<comment/>
 			<position>
-				<first>1054</first>
+				<first>1053</first>
 				<second>92</second>
 			</position>
 			<name>L_Specular</name>
@@ -243,8 +243,8 @@
 			<id>{3BF134B1-5E93-5845-B2F4-D900DDA4BD87}</id>
 			<comment/>
 			<position>
-				<first>1602</first>
-				<second>-250</second>
+				<first>1601</first>
+				<second>-249</second>
 			</position>
 			<name>L_LightIndex</name>
 			<global>false</global>
@@ -253,8 +253,8 @@
 			<id>{E62A2052-7FAE-C743-9BCF-638CCE025434}</id>
 			<comment/>
 			<position>
-				<first>1298</first>
-				<second>38</second>
+				<first>1297</first>
+				<second>37</second>
 			</position>
 		</item>
 		<item type="traktor.render.Add" version="traktor.render.Node:1">
@@ -270,7 +270,7 @@
 			<comment/>
 			<position>
 				<first>2000</first>
-				<second>1414</second>
+				<second>1413</second>
 			</position>
 			<fragmentGuid>{B2786933-9C69-4442-82C8-867F4F51A748}</fragmentGuid>
 			<inputPins>
@@ -316,8 +316,8 @@
 			<id>{779E04C2-DD7B-7947-87E3-940C30B021CA}</id>
 			<comment/>
 			<position>
-				<first>1745</first>
-				<second>1317</second>
+				<first>1744</first>
+				<second>1316</second>
 			</position>
 			<name>L_Color</name>
 			<global>false</global>
@@ -334,7 +334,7 @@
 			<id>{2075C1B4-A8ED-D648-882A-947EDA142C19}</id>
 			<comment/>
 			<position>
-				<first>1154</first>
+				<first>1153</first>
 				<second>1548</second>
 			</position>
 		</item>
@@ -342,7 +342,7 @@
 			<id>{5C82F53E-FBF8-B243-9D3F-F96020997690}</id>
 			<comment/>
 			<position>
-				<first>1342</first>
+				<first>1341</first>
 				<second>1576</second>
 			</position>
 			<swizzle>xyz</swizzle>
@@ -351,7 +351,7 @@
 			<id>{8BFCD159-8DED-724C-864D-9845FC0AB0C8}</id>
 			<comment/>
 			<position>
-				<first>1478</first>
+				<first>1477</first>
 				<second>1612</second>
 			</position>
 		</item>
@@ -370,7 +370,7 @@
 			<comment/>
 			<position>
 				<first>1804</first>
-				<second>1687</second>
+				<second>1686</second>
 			</position>
 			<name>L_Range</name>
 			<global>false</global>
@@ -380,7 +380,7 @@
 			<comment/>
 			<position>
 				<first>2536</first>
-				<second>1526</second>
+				<second>1525</second>
 			</position>
 		</item>
 		<item type="traktor.render.Mul" version="traktor.render.Node:1">
@@ -388,15 +388,15 @@
 			<comment/>
 			<position>
 				<first>2536</first>
-				<second>1438</second>
+				<second>1437</second>
 			</position>
 		</item>
 		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
 			<id>{61EF79C1-2853-B447-8A75-04EBCBA91188}</id>
 			<comment/>
 			<position>
-				<first>2798</first>
-				<second>1494</second>
+				<first>2797</first>
+				<second>1493</second>
 			</position>
 			<name>L_Specular_Point</name>
 			<global>false</global>
@@ -405,8 +405,8 @@
 			<id>{E05CA878-60D4-D440-BC4A-2D2E570EFA5F}</id>
 			<comment/>
 			<position>
-				<first>2798</first>
-				<second>1410</second>
+				<first>2797</first>
+				<second>1409</second>
 			</position>
 			<name>L_Diffuse_Point</name>
 			<global>false</global>
@@ -415,8 +415,8 @@
 			<id>{CCD07D60-2730-334B-81BB-2B84556CB908}</id>
 			<comment/>
 			<position>
-				<first>3022</first>
-				<second>354</second>
+				<first>3021</first>
+				<second>353</second>
 			</position>
 			<branch>BrAuto</branch>
 			<cases>
@@ -429,7 +429,7 @@
 			<id>{10BD169B-9308-9848-8C35-15DC389A55C2}</id>
 			<comment/>
 			<position>
-				<first>3022</first>
+				<first>3021</first>
 				<second>-112</second>
 			</position>
 			<branch>BrAuto</branch>
@@ -444,7 +444,7 @@
 			<comment/>
 			<position>
 				<first>2768</first>
-				<second>-214</second>
+				<second>-213</second>
 			</position>
 			<name>L_Type</name>
 			<global>false</global>
@@ -473,7 +473,7 @@
 			<comment/>
 			<position>
 				<first>2768</first>
-				<second>-6</second>
+				<second>-5</second>
 			</position>
 			<name>L_Diffuse_Point</name>
 			<global>false</global>
@@ -483,7 +483,7 @@
 			<comment/>
 			<position>
 				<first>2768</first>
-				<second>246</second>
+				<second>245</second>
 			</position>
 			<name>L_Type</name>
 			<global>false</global>
@@ -493,7 +493,7 @@
 			<comment/>
 			<position>
 				<first>2744</first>
-				<second>330</second>
+				<second>329</second>
 			</position>
 			<value>0, 0, 0, 0</value>
 		</item>
@@ -502,7 +502,7 @@
 			<comment/>
 			<position>
 				<first>2720</first>
-				<second>374</second>
+				<second>373</second>
 			</position>
 			<name>L_Specular_Directional</name>
 			<global>false</global>
@@ -512,7 +512,7 @@
 			<comment/>
 			<position>
 				<first>2752</first>
-				<second>458</second>
+				<second>457</second>
 			</position>
 			<name>L_Specular_Point</name>
 			<global>false</global>
@@ -532,7 +532,7 @@
 			<comment/>
 			<position>
 				<first>3276</first>
-				<second>370</second>
+				<second>369</second>
 			</position>
 			<name>L_Specular</name>
 			<global>false</global>
@@ -566,7 +566,7 @@ Point
 			<comment/>
 			<position>
 				<first>2752</first>
-				<second>542</second>
+				<second>541</second>
 			</position>
 			<name>L_Specular_Spot</name>
 			<global>false</global>
@@ -596,7 +596,7 @@ Point
 			<comment/>
 			<position>
 				<first>968</first>
-				<second>1590</second>
+				<second>1589</second>
 			</position>
 			<name>L_ViewPosition</name>
 			<global>false</global>
@@ -605,7 +605,7 @@ Point
 			<id>{12168D4F-A13A-264E-B8EF-4366DC01F21C}</id>
 			<comment/>
 			<position>
-				<first>392</first>
+				<first>403</first>
 				<second>744</second>
 			</position>
 			<name>L_AtlasTransform</name>
@@ -615,7 +615,7 @@ Point
 			<id>{9856FB1F-52B0-FC4B-A4AA-563167C2A4F6}</id>
 			<comment/>
 			<position>
-				<first>408</first>
+				<first>419</first>
 				<second>968</second>
 			</position>
 			<name>L_ViewPosition</name>
@@ -625,7 +625,7 @@ Point
 			<id>{5A2AAAB2-2D4B-7240-AF4F-F7E4EB38201F}</id>
 			<comment/>
 			<position>
-				<first>408</first>
+				<first>419</first>
 				<second>1056</second>
 			</position>
 			<name>L_ViewToLight</name>
@@ -635,10 +635,10 @@ Point
 			<id>{E19F39E1-425F-7C40-A51F-85AB0FEAC6C0}</id>
 			<comment/>
 			<position>
-				<first>360</first>
-				<second>880</second>
+				<first>339</first>
+				<second>897</second>
 			</position>
-			<parameterName>World_ShadowCascade</parameterName>
+			<parameterName>World_ShadowMapCascade</parameterName>
 			<type>PtTexture2D</type>
 			<frequency>UfOnce</frequency>
 		</item>
@@ -728,7 +728,7 @@ Point
 			<id>{AF2C1313-8106-E040-8EBF-3794FC998916}</id>
 			<comment/>
 			<position>
-				<first>408</first>
+				<first>419</first>
 				<second>480</second>
 			</position>
 			<name>L_ViewNormal</name>
@@ -738,7 +738,7 @@ Point
 			<id>{A8A5C28B-614A-6348-9A0F-168DA3AA8217}</id>
 			<comment/>
 			<position>
-				<first>408</first>
+				<first>419</first>
 				<second>568</second>
 			</position>
 			<name>L_Roughness</name>
@@ -748,7 +748,7 @@ Point
 			<id>{4E98D890-5E0E-4640-AA9A-A705C20811D4}</id>
 			<comment/>
 			<position>
-				<first>392</first>
+				<first>403</first>
 				<second>656</second>
 			</position>
 			<name>L_ViewDirection</name>

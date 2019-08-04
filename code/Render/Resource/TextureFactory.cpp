@@ -158,7 +158,7 @@ Ref< Object > TextureFactory::create(resource::IResourceManager* resourceManager
 
 		texture = m_renderSystem->createSimpleTexture(desc);
 		if (!texture)
-			log::error << L"Unable to create 2D texture, null texture" << Endl;
+			log::error << L"Unable to create 2D texture resource; failed to create renderable texture." << Endl;
 	}
 	else if (textureType == Tt3D)	// 3D
 	{
@@ -238,7 +238,7 @@ Ref< Object > TextureFactory::create(resource::IResourceManager* resourceManager
 
 		texture = m_renderSystem->createVolumeTexture(desc);
 		if (!texture)
-			log::error << L"Unable to create 3D texture, null texture" << Endl;
+			log::error << L"Unable to create 3D texture resource; failed to create renderable texture." << Endl;
 	}
 	else if (textureType == TtCube)	// Cube
 	{
@@ -288,7 +288,7 @@ Ref< Object > TextureFactory::create(resource::IResourceManager* resourceManager
 
 		texture = m_renderSystem->createCubeTexture(desc);
 		if (!texture)
-			log::error << L"Unable to create Cube texture, null texture" << Endl;
+			log::error << L"Unable to create CUBE texture resource; failed to create renderable texture." << Endl;
 	}
 
 	stream->close();

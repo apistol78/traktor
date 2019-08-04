@@ -71,6 +71,7 @@ public:
 
 	struct TextureDesc
 	{
+		std::wstring name;
 		uint32_t binding;
 
 		TextureDesc()
@@ -78,8 +79,9 @@ public:
 		{
 		}
 
-		explicit TextureDesc(uint32_t binding_)
-		:	binding(binding_)
+		explicit TextureDesc(const std::wstring& name_, uint32_t binding_)
+		:	name(name_)
+		,	binding(binding_)
 		{
 		}
 
@@ -88,6 +90,7 @@ public:
 
 	struct SBufferDesc
 	{
+		std::wstring name;
 		uint32_t binding;
 
 		SBufferDesc()
@@ -95,8 +98,9 @@ public:
 		{
 		}
 
-		explicit SBufferDesc(uint32_t binding_)
-		:	binding(binding_)
+		explicit SBufferDesc(const std::wstring& name_, uint32_t binding_)
+		:	name(name_)
+		,	binding(binding_)
 		{
 		}
 

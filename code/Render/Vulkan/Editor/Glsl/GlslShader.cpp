@@ -143,15 +143,6 @@ std::wstring GlslShader::getGeneratedShader(const GlslLayout& layout) const
 	ss << L"#extension GL_EXT_samplerless_texture_functions : enable" << Endl;
 	ss << Endl;
 
-	if (m_shaderType == StFragment)
-	{
-		ss << L"layout (location = 0) out vec4 _gl_FragData_0;" << Endl;
-		ss << L"layout (location = 1) out vec4 _gl_FragData_1;" << Endl;
-		ss << L"layout (location = 2) out vec4 _gl_FragData_2;" << Endl;
-		ss << L"layout (location = 3) out vec4 _gl_FragData_3;" << Endl;
-		ss << Endl;
-	}
-
 	for (auto resource : layout.get())
 	{
 		if (const auto uniformBuffer = dynamic_type_cast< const GlslUniformBuffer* >(resource))
@@ -214,7 +205,10 @@ std::wstring GlslShader::getGeneratedShader(const GlslLayout& layout) const
 			ss << DecreaseIndent;
 			ss << L"};" << Endl;
 			ss << Endl;
-			ss << L"layout (std140, binding = " << storageBuffer->getBinding() << L") buffer " << storageBuffer->getName() << Endl;
+			if (m_shaderType != StCompute)
+				ss << L"layout (std140, binding = " << storageBuffer->getBinding() << L") readonly buffer " << storageBuffer->getName() << Endl;
+			else
+				ss << L"layout (std140, binding = " << storageBuffer->getBinding() << L") buffer " << storageBuffer->getName() << Endl;
 			ss << L"{" << Endl;
 			ss << IncreaseIndent;
 			ss << storageBuffer->getName() << L"_Type " << storageBuffer->getName() << L"_Data[];" << Endl;

@@ -76,6 +76,9 @@ public:
 private:
 	struct ParameterMap
 	{
+#if defined(_DEBUG)
+		std::wstring name;
+#endif
 		uint32_t buffer;	//!< Uniform buffer index.
 		uint32_t offset;	//!< Offset into uniform buffer's data.
 		uint32_t size;		//!< Number of floats.
@@ -113,12 +116,18 @@ private:
 
 	struct Texture
 	{
+#if defined(_DEBUG)
+		std::wstring name;
+#endif
 		uint32_t binding;
 		Ref< ITexture > texture;
 	};
 
 	struct SBuffer
 	{
+#if defined(_DEBUG)
+		std::wstring name;
+#endif
 		uint32_t binding;
 		Ref< StructBuffer > sbuffer;
 	};
