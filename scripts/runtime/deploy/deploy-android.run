@@ -330,6 +330,10 @@ function migrate(args)
 		return 1
 	end
 
+	local apilevel = os:getEnvironment("DEPLOY_ANDROID_APILEVEL")
+	if apilevel == nil or apilevel == "" then apilevel = "29" end
+
+	local architecture = "aarch64" -- "arch-arm"
 	local abi = "arm64-v8a"	-- armeabi-v7a
 
 	-- Create android project.
@@ -383,7 +387,7 @@ function migrate(args)
 	local host = os:getEnvironment("DEPLOY_HOST_OS")
 	if host == "win32" or host == "win64" then
 		result = true
-		result = result and (run:execute("$(DEPLOY_ANDROID_HOME)/build-tools/29.0.1/aapt.exe package -f -M AndroidManifest.xml -S res -I \"$(DEPLOY_ANDROID_HOME)/platforms/android-$(DEPLOY_ANDROID_APILEVEL)/android.jar\" -F \"$(DEPLOY_PROJECT_NAME).unsigned.apk\"") == 0)
+		result = result and (run:execute("$(DEPLOY_ANDROID_HOME)/build-tools/29.0.1/aapt.exe package -f -M AndroidManifest.xml -S res -I \"$(DEPLOY_ANDROID_HOME)/platforms/android-" .. apilevel .. "/android.jar\" -F \"$(DEPLOY_PROJECT_NAME).unsigned.apk\"") == 0)
 		result = result and (run:execute("$(DEPLOY_ANDROID_HOME)/build-tools/29.0.1/aapt.exe add \"$(DEPLOY_PROJECT_NAME).unsigned.apk\" lib/" .. abi .. "/libApplication.so", nil) == 0)
 		result = result and (run:execute("$(DEPLOY_ANDROID_HOME)/build-tools/29.0.1/aapt.exe add \"$(DEPLOY_PROJECT_NAME).unsigned.apk\" lib/" .. abi .. "/libc++_shared.so", nil) == 0)
 		result = result and (run:execute("$(DEPLOY_ANDROID_HOME)/build-tools/29.0.1/aapt.exe add \"$(DEPLOY_PROJECT_NAME).unsigned.apk\" assets/Application.config", nil) == 0)
@@ -392,7 +396,7 @@ function migrate(args)
 		result = result and (run:execute("$(DEPLOY_ANDROID_HOME)/build-tools/29.0.1/apksigner.bat sign --ks $(DEPLOY_SYSTEM_ROOT)/resources/runtime/deploy/android/keystore.jks --ks-key-alias androidkey --ks-pass pass:android --key-pass pass:android --out \"$(DEPLOY_PROJECT_NAME).apk\" \"$(DEPLOY_PROJECT_NAME).aligned.apk\"", nil) == 0)
 	elseif host == "linux" or host == "osx" then
 		result = true
-		result = result and (run:execute("$(DEPLOY_ANDROID_HOME)/build-tools/29.0.1/aapt package -f -M AndroidManifest.xml -S res -I $(DEPLOY_ANDROID_HOME)/platforms/android-$(DEPLOY_ANDROID_APILEVEL)/android.jar -F $(DEPLOY_PROJECT_NAME).unsigned.apk") == 0)
+		result = result and (run:execute("$(DEPLOY_ANDROID_HOME)/build-tools/29.0.1/aapt package -f -M AndroidManifest.xml -S res -I $(DEPLOY_ANDROID_HOME)/platforms/android-" .. apilevel .. "/android.jar -F $(DEPLOY_PROJECT_NAME).unsigned.apk") == 0)
 		result = result and (run:execute("$(DEPLOY_ANDROID_HOME)/build-tools/29.0.1/aapt add $(DEPLOY_PROJECT_NAME).unsigned.apk lib/" .. abi .. "/libApplication.so", nil) == 0)
 		result = result and (run:execute("$(DEPLOY_ANDROID_HOME)/build-tools/29.0.1/aapt add $(DEPLOY_PROJECT_NAME).unsigned.apk lib/" .. abi .. "/libc++_shared.so", nil) == 0)
 		result = result and (run:execute("$(DEPLOY_ANDROID_HOME)/build-tools/29.0.1/aapt add $(DEPLOY_PROJECT_NAME).unsigned.apk assets/Application.config", nil) == 0)
@@ -403,15 +407,14 @@ function migrate(args)
 		stderr:printLn("Unsupported host OS (" .. host .. ").")
 		return 1
 	end
+	if not result then
+		stderr:printLn("Failed to generate Android APK package.")
+		return 1
+	end
 
 	-- Cleanup intermediate files.
 	run:rm("$(DEPLOY_PROJECT_NAME).unsigned.apk")
 	run:rm("$(DEPLOY_PROJECT_NAME).aligned.apk")
-
-	if not result then
-		stderr:printLn("Failed to generate Android APK package")
-		return 1
-	end
 
 	-- Ensure device is ready.
 	if not isDeviceConnected() then
