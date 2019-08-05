@@ -33,6 +33,7 @@ extern const VkSamplerMipmapMode c_mipMapModes[];
 extern const VkSamplerAddressMode c_addressModes[];
 extern const VkFormat c_vkTextureFormats[];
 extern const VkFormat c_vkTextureFormats_sRGB[];
+extern const VkFormat c_vkVertexElementFormats[];
 
 uint32_t getMemoryTypeIndex(VkPhysicalDevice physicalDevice, VkMemoryPropertyFlags memoryFlags, const VkMemoryRequirements& memoryRequirements);
 

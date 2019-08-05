@@ -352,7 +352,6 @@ DisplayMode RenderSystemVk::getDisplayMode(uint32_t index) const
 	DEVMODE dmgl;
 	std::memset(&dmgl, 0, sizeof(dmgl));
 	dmgl.dmSize = sizeof(dmgl);
-
 	EnumDisplaySettings(nullptr, index, &dmgl);
 
 	DisplayMode dm;
@@ -372,7 +371,6 @@ DisplayMode RenderSystemVk::getCurrentDisplayMode() const
 	DEVMODE dmgl;
 	std::memset(&dmgl, 0, sizeof(dmgl));
 	dmgl.dmSize = sizeof(dmgl);
-
 	EnumDisplaySettings(nullptr, ENUM_CURRENT_SETTINGS, &dmgl);
 
 	DisplayMode dm;
@@ -396,7 +394,7 @@ DisplayMode RenderSystemVk::getCurrentDisplayMode() const
 
 float RenderSystemVk::getDisplayAspectRatio() const
 {
-	return 1.0f;
+	return 0.0f;
 }
 
 Ref< IRenderView > RenderSystemVk::createRenderView(const RenderViewDefaultDesc& desc)
@@ -451,31 +449,14 @@ Ref< VertexBuffer > RenderSystemVk::createVertexBuffer(const AlignedVector< Vert
 	vibd.stride = getVertexSize(vertexElements);
 	vibd.inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
 
-	AlignedVector< VkVertexInputAttributeDescription > vertexAttributeDescriptions;
+	AlignedVector< VkVertexInputAttributeDescription > vads;
 	for (auto ve : vertexElements)
 	{
-		const VkFormat c_formats[] =
-		{
-			VK_FORMAT_R32_SFLOAT, // DtFloat1
-			VK_FORMAT_R32G32_SFLOAT, // DtFloat2
-			VK_FORMAT_R32G32B32_SFLOAT, // DtFloat3
-			VK_FORMAT_R32G32B32A32_SFLOAT, // DtFloat4
-			VK_FORMAT_R8G8B8A8_SNORM, // DtByte4
-			VK_FORMAT_R8G8B8A8_UNORM, // DtByte4N
-			VK_FORMAT_R16G16_SNORM, // DtShort2
-			VK_FORMAT_R16G16B16A16_SNORM, // DtShort4
-			VK_FORMAT_R16G16_UNORM, // DtShort2N
-			VK_FORMAT_R16G16B16A16_UNORM, // DtShort4N
-			VK_FORMAT_R16G16_SFLOAT, // DtHalf2
-			VK_FORMAT_R16G16B16A16_SFLOAT // DtHalf4
-		};
-
-		VkVertexInputAttributeDescription vertexAttributeDescription = {};
-		vertexAttributeDescription.location = VertexAttributesVk::getLocation(ve.getDataUsage(), ve.getIndex());
-		vertexAttributeDescription.binding = 0;
-		vertexAttributeDescription.format = c_formats[ve.getDataType()];
-		vertexAttributeDescription.offset = ve.getOffset();
-		vertexAttributeDescriptions.push_back(vertexAttributeDescription);
+		auto& vad = vads.push_back();
+		vad.location = VertexAttributesVk::getLocation(ve.getDataUsage(), ve.getIndex());
+		vad.binding = 0;
+		vad.format = c_vkVertexElementFormats[ve.getDataType()];
+		vad.offset = ve.getOffset();
 	}
 
 	// Calculate hash of vertex declaration.
@@ -490,7 +471,7 @@ Ref< VertexBuffer > RenderSystemVk::createVertexBuffer(const AlignedVector< Vert
 		allocation,
 		vertexBuffer,
 		vibd,
-		vertexAttributeDescriptions,
+		vads,
 		cs.get()
 	);
 }

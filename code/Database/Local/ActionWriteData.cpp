@@ -1,6 +1,8 @@
 #include "Core/Io/DynamicMemoryStream.h"
 #include "Core/Io/FileSystem.h"
 #include "Core/Log/Log.h"
+#include "Core/Misc/SafeDestroy.h"
+#include "Core/Misc/SHA1.h"
 #include "Core/Thread/Thread.h"
 #include "Core/Thread/ThreadManager.h"
 #include "Database/Local/ActionWriteData.h"
@@ -45,6 +47,7 @@ bool ActionWriteData::execute(Context* context)
 
 	m_existingBlob = instanceMeta->haveBlob(m_dataName);
 
+	// If blob already exist then we need to open it in the file store.
 	if (m_existingBlob)
 	{
 		if (!fileStore->edit(instanceDataPath))
@@ -54,14 +57,13 @@ bool ActionWriteData::execute(Context* context)
 		}
 	}
 
-	m_dataStream->close();
-	m_dataStream = 0;
+	safeClose(m_dataStream);
 
+	// Create output, physical, stream. Retry one time if initially locked.
 	Ref< IStream > writeStream = FileSystem::getInstance().open(instanceDataPath, File::FmWrite);
 	if (!writeStream)
 	{
 		ThreadManager::getInstance().getCurrentThread()->sleep(100);
-
 		writeStream = FileSystem::getInstance().open(instanceDataPath, File::FmWrite);
 		if (!writeStream)
 		{
@@ -70,9 +72,14 @@ bool ActionWriteData::execute(Context* context)
 		}
 	}
 
+	// Calculate SHA1 hash of data while writing data.
+	SHA1 sha1;
+	sha1.begin();
+
 	int64_t dataBufferSize = int64_t(m_dataBuffer.size());
 	if (dataBufferSize > 0)
 	{
+		sha1.feed(&m_dataBuffer[0], dataBufferSize);
 		if (writeStream->write(&m_dataBuffer[0], dataBufferSize) != dataBufferSize)
 		{
 			log::error << L"Unable to write " << dataBufferSize << L" byte(s) to file \"" << instanceDataPath.getPathName() << L"\"." << Endl;
@@ -80,24 +87,27 @@ bool ActionWriteData::execute(Context* context)
 		}
 	}
 
-	writeStream->close();
-	writeStream = 0;
+	sha1.end();
 
+	safeClose(writeStream);
+
+	if (!fileStore->edit(instanceMetaPath))
+	{
+		log::error << L"Unable to open \"" << instanceMetaPath.getPathName() << L"\" for edit." << Endl;
+		return false;
+	}
+
+	instanceMeta->setBlob(m_dataName, sha1.format());
+
+	if (!writePhysicalObject(instanceMetaPath, instanceMeta, context->preferBinary()))
+	{
+		log::error << L"Unable to write instance meta \"" << instanceMetaPath.getPathName() << L"\"." << Endl;
+		return false;
+	}
+	
+	// If blob is new then we need to add it to file store.
 	if (!m_existingBlob)
 	{
-		if (!fileStore->edit(instanceMetaPath))
-		{
-			log::error << L"Unable to open \"" << instanceMetaPath.getPathName() << L"\" for edit." << Endl;
-			return false;
-		}
-
-		instanceMeta->addBlob(m_dataName);
-		if (!writePhysicalObject(instanceMetaPath, instanceMeta, context->preferBinary()))
-		{
-			log::error << L"Unable to write instance meta \"" << instanceMetaPath.getPathName() << L"\"." << Endl;
-			return false;
-		}
-
 		if (!fileStore->add(instanceDataPath))
 		{
 			log::error << L"Unable to add file \"" << instanceDataPath.getPathName() << L"\"." << Endl;

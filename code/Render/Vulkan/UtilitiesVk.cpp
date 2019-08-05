@@ -212,6 +212,22 @@ const VkFormat c_vkTextureFormats_sRGB[] =
 	VK_FORMAT_UNDEFINED
 };
 
+const VkFormat c_vkVertexElementFormats[] =
+{
+	VK_FORMAT_R32_SFLOAT, // DtFloat1
+	VK_FORMAT_R32G32_SFLOAT, // DtFloat2
+	VK_FORMAT_R32G32B32_SFLOAT, // DtFloat3
+	VK_FORMAT_R32G32B32A32_SFLOAT, // DtFloat4
+	VK_FORMAT_R8G8B8A8_SNORM, // DtByte4
+	VK_FORMAT_R8G8B8A8_UNORM, // DtByte4N
+	VK_FORMAT_R16G16_SNORM, // DtShort2
+	VK_FORMAT_R16G16B16A16_SNORM, // DtShort4
+	VK_FORMAT_R16G16_UNORM, // DtShort2N
+	VK_FORMAT_R16G16B16A16_UNORM, // DtShort4N
+	VK_FORMAT_R16G16_SFLOAT, // DtHalf2
+	VK_FORMAT_R16G16B16A16_SFLOAT // DtHalf4
+};
+
 uint32_t getMemoryTypeIndex(VkPhysicalDevice physicalDevice, VkMemoryPropertyFlags memoryFlags, const VkMemoryRequirements& memoryRequirements)
 {
 	VkPhysicalDeviceMemoryProperties memoryProperties = {};

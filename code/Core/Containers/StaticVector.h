@@ -6,7 +6,7 @@
 namespace traktor
 {
 
-/*! \brief Static vector container.
+/*! Static vector container.
  * \ingroup Core
  */
 template < typename ItemType, size_t Capacity >
@@ -268,7 +268,7 @@ public:
 			m_items[i] = value;
 	}
 
-	/*! \brief Get number of elements in vector.
+	/*! Get number of elements in vector.
 	 *
 	 * \return Number of elements.
 	 */
@@ -277,7 +277,9 @@ public:
 		return m_size;
 	}
 
-	/*! \brief Set number of elements in vector.
+	/*! Set number of elements in vector.
+	 *
+	 * \param size New number of elements.
 	 */
 	void resize(size_t size)
 	{
@@ -287,7 +289,7 @@ public:
 		m_size = size;
 	}
 
-	/*! \brief Get number of elements allocated by vector.
+	/*! Get number of elements allocated by vector.
 	 *
 	 * \return Number of allocated elements.
 	 */
@@ -296,7 +298,7 @@ public:
 		return Capacity;
 	}
 
-	/*! \brief Check if vector is empty.
+	/*! Check if vector is empty.
 	 *
 	 * \return True if vector empty.
 	 */
@@ -305,7 +307,7 @@ public:
 		return m_size == 0;
 	}
 
-	/*! \brief Check if vector is full.
+	/*! Check if vector is full.
 	 *
 	 * \return True if vector full.
 	 */
@@ -314,13 +316,13 @@ public:
 		return m_size >= Capacity;
 	}
 
-	/*! \brief Clear vector. */
+	/*! Clear vector. */
 	void clear()
 	{
 		m_size = 0;
 	}
 
-	/*! \brief Assign value to vector.
+	/*! Assign value to vector.
 	 *
 	 * \param size Size of vector.
 	 * \param value Value of each element.
@@ -333,7 +335,7 @@ public:
 			m_items[i] = value;
 	}
 
-	/*! \brief Push value onto vector.
+	/*! Push value onto vector.
 	 *
 	 * \return Item value.
 	 */
@@ -343,7 +345,7 @@ public:
 		return m_items[m_size++];
 	}
 
-	/*! \brief Push value onto vector.
+	/*! Push value onto vector.
 	 *
 	 * \param item Item value.
 	 */
@@ -353,14 +355,14 @@ public:
 		m_items[m_size++] = item;
 	}
 
-	/*! \brief Pop value from vector. */
+	/*! Pop value from vector. */
 	void pop_back()
 	{
 		T_ASSERT(m_size > 0);
 		--m_size;
 	}
 
-	/*! \brief Return reference to value first in vector.
+	/*! Return reference to value first in vector.
 	 *
 	 * \return Value reference.
 	 */
@@ -370,7 +372,7 @@ public:
 		return m_items[0];
 	}
 
-	/*! \brief Return reference to value first in vector.
+	/*! Return reference to value first in vector.
 	 *
 	 * \return Value reference.
 	 */
@@ -380,7 +382,7 @@ public:
 		return m_items[0];
 	}
 
-	/*! \brief Return reference to value last in vector.
+	/*! Return reference to value last in vector.
 	 *
 	 * \return Value reference.
 	 */
@@ -390,7 +392,7 @@ public:
 		return m_items[m_size - 1];
 	}
 
-	/*! \brief Return reference to value last in vector.
+	/*! Return reference to value last in vector.
 	 *
 	 * \return Value reference.
 	 */
@@ -400,7 +402,7 @@ public:
 		return m_items[m_size - 1];
 	}
 
-	/*! \brief Return iterator at first element.
+	/*! Return iterator at first element.
 	 *
 	 * \return Iterator.
 	 */
@@ -409,7 +411,7 @@ public:
 		return iterator(m_items);
 	}
 
-	/*! \brief Return iterator one step beyond last element.
+	/*! Return iterator one step beyond last element.
 	 *
 	 * \return Iterator.
 	 */
@@ -418,7 +420,7 @@ public:
 		return iterator(&m_items[m_size]);
 	}
 
-	/*! \brief Return constant iterator at first element.
+	/*! Return constant iterator at first element.
 	 *
 	 * \return Iterator.
 	 */
@@ -427,7 +429,7 @@ public:
 		return const_iterator(m_items);
 	}
 
-	/*! \brief Return constant iterator one step beyond last element.
+	/*! Return constant iterator one step beyond last element.
 	 *
 	 * \return Iterator.
 	 */
@@ -436,7 +438,7 @@ public:
 		return const_iterator(&m_items[m_size]);
 	}
 
-	/*! \brief Insert element into vector.
+	/*! Insert element into vector.
 	 *
 	 * \param where Iterator at element.
 	 * \param item Item value.
@@ -458,7 +460,7 @@ public:
 		return iterator(&m_items[offset]);
 	}
 
-	/*! \brief Erase element.
+	/*! Erase element.
 	 *
 	 * \param where Iterator at element.
 	 * \return New iterator at next element.
@@ -474,11 +476,29 @@ public:
 		return iterator(&m_items[offset]);
 	}
 
+	/*!
+	 */
+	ItemType* ptr()
+	{
+		return m_items;
+	}
+
+	/*!
+	 */
+	const ItemType* c_ptr() const
+	{
+		return m_items;
+	}
+
+	/*!
+	 */
 	operator ItemType* ()
 	{
 		return m_items;
 	}
 
+	/*!
+	 */
 	operator const ItemType* () const
 	{
 		return m_items;
