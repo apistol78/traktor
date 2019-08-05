@@ -46,11 +46,10 @@ bool ActionSetName::execute(Context* context)
 	m_removedMeta = fileStore->remove(oldInstanceMetaPath);
 	m_removedObject = fileStore->remove(oldInstanceObjectPath);
 
-	const std::vector< std::wstring >& blobs = instanceMeta->getBlobs();
-	for (std::vector< std::wstring >::const_iterator i = blobs.begin(); i != blobs.end(); ++i)
+	for (const auto& blob : instanceMeta->getBlobs())
 	{
-		Path oldInstanceDataPath = getInstanceDataPath(m_instancePath, *i);
-		Path newInstanceDataPath = getInstanceDataPath(m_instancePathNew, *i);
+		Path oldInstanceDataPath = getInstanceDataPath(m_instancePath, blob.name);
+		Path newInstanceDataPath = getInstanceDataPath(m_instancePathNew, blob.name);
 
 		if (!FileSystem::getInstance().copy(newInstanceDataPath, oldInstanceDataPath))
 			return false;
@@ -58,7 +57,7 @@ bool ActionSetName::execute(Context* context)
 		if (!fileStore->add(newInstanceDataPath))
 			return false;
 
-		m_removedData[*i] = fileStore->remove(oldInstanceDataPath);
+		m_removedData[blob.name] = fileStore->remove(oldInstanceDataPath);
 	}
 
 	return true;

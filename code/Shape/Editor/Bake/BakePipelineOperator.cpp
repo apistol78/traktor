@@ -397,7 +397,6 @@ bool BakePipelineOperator::build(
 
 								file->close();
 
-
 								Light light;
 								light.type = Light::LtProbe;
 								light.probe = new IblProbe(
@@ -410,6 +409,41 @@ bool BakePipelineOperator::build(
 							}
 						}
 					}
+
+					// // Terrain
+					// if (auto terrainComponentData = componentEntityData->getComponent< terrain::TerrainComponentData >())
+					// {
+					// 	const auto& terrain = terrainComponentData->getTerrain();
+
+					// 	Ref< const terrain::TerrainAsset > terrainAsset = pipelineBuilder->getObjectReadOnly< terrain::TerrainAsset >(terrain);
+					// 	if (!terrain)
+					// 		return false;
+
+					// 	Ref< db::Instance > heightfieldAssetInstance = pipelineBuilder->getSourceDatabase()->getInstance(terrainAsset->getHeightfield());
+					// 	if (!heightfieldAssetInstance)
+					// 		return false;
+
+					// 	Ref< const hf::HeightfieldAsset > heightfieldAsset = heightfieldAssetInstance->getObject< const hf::HeightfieldAsset >();
+					// 	if (!heightfieldAsset)
+					// 		return false;
+
+					// 	Ref< IStream > sourceData = heightfieldAssetInstance->readData(L"Data");
+					// 	if (!sourceData)
+					// 		return false;
+
+					// 	Ref< hf::Heightfield > heightfield = hf::HeightfieldFormat().read(
+					// 		sourceData,
+					// 		heightfieldAsset->getWorldExtent()
+					// 	);
+
+					// 	safeClose(sourceData);
+
+					// 	if (!heightfield)
+					// 		return false;
+
+					// 	// Heightfield successfully loaded; generate models from heightfield.
+
+					// }
 
 					//if (auto cameraComponentData = componentEntityData->getComponent< world::CameraComponentData >())
 					//{

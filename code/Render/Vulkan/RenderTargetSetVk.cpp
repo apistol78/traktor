@@ -1,6 +1,6 @@
 #include <cstring>
 #include <limits>
-#include "Core/Containers/AlignedVector.h"
+#include "Core/Containers/StaticVector.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Render/Types.h"
 #include "Render/Vulkan/ApiLoader.h"
@@ -94,11 +94,8 @@ bool RenderTargetSetVk::create(const RenderTargetSetCreateDesc& setDesc)
 
 void RenderTargetSetVk::destroy()
 {
-	for (auto i = m_colorTargets.begin(); i != m_colorTargets.end(); ++i)
-	{
-		if (*i)
-			(*i)->destroy();
-	}
+	for (auto colorTarget : m_colorTargets)
+		safeDestroy(colorTarget);
 	m_colorTargets.resize(0);
 	safeDestroy(m_depthTarget);
 }
@@ -115,7 +112,7 @@ int32_t RenderTargetSetVk::getHeight() const
 
 ISimpleTexture* RenderTargetSetVk::getColorTexture(int32_t index) const
 {
-	return index < int32_t(m_colorTargets.size()) ? m_colorTargets[index] : nullptr;
+	return index < (int32_t)m_colorTargets.size() ? m_colorTargets[index] : nullptr;
 }
 
 ISimpleTexture* RenderTargetSetVk::getDepthTexture() const
@@ -242,8 +239,8 @@ bool RenderTargetSetVk::read(int32_t index, void* buffer) const
 	vkUnmapMemory(m_logicalDevice, hostImageMemory);
 	
 	// Cleanup
-	vkFreeMemory(m_logicalDevice, hostImageMemory, nullptr);
-	vkDestroyImage(m_logicalDevice, hostImage, nullptr);
+	vkFreeMemory(m_logicalDevice, hostImageMemory, 0);
+	vkDestroyImage(m_logicalDevice, hostImage, 0);
 	return true;
 }
 
@@ -416,7 +413,7 @@ bool RenderTargetSetVk::prepareAsTarget(
 	if (m_depthTarget)
 		m_depthTarget->prepareAsTarget(commandBuffer);
 
-	AlignedVector< VkClearValue > clearValues;
+	StaticVector< VkClearValue, 4+1 > clearValues;
 
 	if (colorIndex >= 0)
 	{

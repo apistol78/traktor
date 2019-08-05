@@ -230,7 +230,6 @@ bool WorldRendererDeferred::create(
 	// Create "gbuffer" targets.
 	{
 		render::RenderTargetSetCreateDesc rtscd;
-
 		rtscd.count = 4;
 		rtscd.width = desc.width;
 		rtscd.height = desc.height;
@@ -239,17 +238,10 @@ bool WorldRendererDeferred::create(
 		rtscd.usingPrimaryDepthStencil = (desc.sharedDepthStencil == nullptr) ? true : false;
 		rtscd.sharedDepthStencil = desc.sharedDepthStencil;
 		rtscd.preferTiled = true;
-#if !defined(__PS3__)
 		rtscd.targets[0].format = render::TfR16F;			// Depth (R)
 		rtscd.targets[1].format = render::TfR16G16F;		// Normals (RG)
 		rtscd.targets[2].format = render::TfR11G11B10F;		// Metalness (R), Roughness (G), Specular (B)
 		rtscd.targets[3].format = render::TfR11G11B10F;		// Surface color (RGB)
-#else
-		rtscd.targets[0].format = render::TfR8G8B8A8;		// Encoded depth
-		rtscd.targets[1].format = render::TfR8G8B8A8;		// Normals (RGB), Unused (A)
-		rtscd.targets[2].format = render::TfR8G8B8A8;		// Metalness (R), Roughness (G), Unused (B), Unused (A)
-		rtscd.targets[3].format = render::TfR8G8B8A8;		// Surface color (RGB), Unused (A)
-#endif
 
 		m_gbufferTargetSet = renderSystem->createRenderTargetSet(rtscd);
 		if (!m_gbufferTargetSet)
@@ -263,7 +255,6 @@ bool WorldRendererDeferred::create(
 	if (m_motionBlurQuality > QuDisabled)
 	{
 		render::RenderTargetSetCreateDesc rtscd;
-
 		rtscd.count = 1;
 		rtscd.width = desc.width;
 		rtscd.height = desc.height;
@@ -285,7 +276,6 @@ bool WorldRendererDeferred::create(
 	// Create "color read-back" target.
 	{
 		render::RenderTargetSetCreateDesc rtscd;
-
 		rtscd.count = 1;
 		rtscd.width = previousLog2(desc.width);
 		rtscd.height = previousLog2(desc.height);
@@ -295,7 +285,11 @@ bool WorldRendererDeferred::create(
 		rtscd.preferTiled = true;
 		rtscd.ignoreStencil = true;
 		rtscd.generateMips = true;
-		rtscd.targets[0].format = render::TfR32G32B32A32F; //render::TfR11G11B10F;
+#if !defined(__ANDROID__)
+		rtscd.targets[0].format = render::TfR32G32B32A32F;
+#else
+		rtscd.targets[0].format = render::TfR11G11B10F;
+#endif
 
 		m_colorTargetSet = renderSystem->createRenderTargetSet(rtscd);
 		if (!m_colorTargetSet)
@@ -315,7 +309,10 @@ bool WorldRendererDeferred::create(
 		if (info.dedicatedMemoryTotal < 512 * 1024 * 1024)
 			maxResolution /= 2;
 
-		int32_t resolution = min< int32_t >(nearestLog2(int32_t(max< int32_t >(desc.width, desc.height) * 1.9f)), maxResolution);
+		int32_t resolution = min< int32_t >(
+			nearestLog2((max< int32_t >(desc.width, desc.height) * 190) / 100),
+			maxResolution
+		);
 		T_DEBUG(L"Using shadow map resolution " << resolution);
 
 		m_shadowProjection = new UniformShadowProjection(resolution);
@@ -378,8 +375,13 @@ bool WorldRendererDeferred::create(
 
 			// Create shadow atlas map target.
 			rtscd.count = 0;
+#if !defined(__ANDROID__)
 			rtscd.width =
 			rtscd.height = 4096;
+#else
+			rtscd.width =
+			rtscd.height = 1024;
+#endif
 			rtscd.multiSample = 0;
 			rtscd.createDepthStencil = true;
 			rtscd.usingDepthStencilAsTexture = true;
@@ -402,7 +404,6 @@ bool WorldRendererDeferred::create(
 	// Create "visual" and "intermediate" target.
 	{
 		render::RenderTargetSetCreateDesc rtscd;
-
 		rtscd.count = 1;
 		rtscd.width = desc.width;
 		rtscd.height = desc.height;
@@ -411,7 +412,11 @@ bool WorldRendererDeferred::create(
 		rtscd.usingPrimaryDepthStencil = (desc.sharedDepthStencil == nullptr) ? true : false;
 		rtscd.sharedDepthStencil = desc.sharedDepthStencil;
 		rtscd.preferTiled = true;
-		rtscd.targets[0].format = render::TfR32G32B32A32F; // render::TfR11G11B10F;
+#if !defined(__ANDROID__)
+		rtscd.targets[0].format = render::TfR32G32B32A32F;
+#else
+		rtscd.targets[0].format = render::TfR11G11B10F;
+#endif
 
 		m_visualTargetSet = renderSystem->createRenderTargetSet(rtscd);
 		if (!m_visualTargetSet)

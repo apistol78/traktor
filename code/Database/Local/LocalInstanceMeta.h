@@ -1,7 +1,8 @@
 #pragma once
 
-#include <vector>
+#include <string>
 #include "Core/Guid.h"
+#include "Core/Containers/AlignedVector.h"
 #include "Core/Serialization/ISerializable.h"
 
 namespace traktor
@@ -17,6 +18,14 @@ class LocalInstanceMeta : public ISerializable
 	T_RTTI_CLASS;
 
 public:
+	struct Blob
+	{
+		std::wstring name;
+		std::wstring hash;
+
+		void serialize(ISerializer& s);
+	};
+
 	LocalInstanceMeta();
 
 	LocalInstanceMeta(const Guid& guid, const std::wstring& primaryType);
@@ -29,20 +38,20 @@ public:
 
 	const std::wstring& getPrimaryType() const;
 
-	void addBlob(const std::wstring& blob);
+	void setBlob(const std::wstring& name, const std::wstring& hash);
 
-	void removeBlob(const std::wstring& blob);
+	void removeBlob(const std::wstring& name);
 
-	bool haveBlob(const std::wstring& blob) const;
+	bool haveBlob(const std::wstring& name) const;
 
-	const std::vector< std::wstring >& getBlobs() const;
+	const AlignedVector< Blob >& getBlobs() const;
 
 	virtual void serialize(ISerializer& s) override final;
 
 private:
 	Guid m_guid;
 	std::wstring m_primaryType;
-	std::vector< std::wstring > m_blobs;
+	AlignedVector< Blob > m_blobs;
 };
 
 	}

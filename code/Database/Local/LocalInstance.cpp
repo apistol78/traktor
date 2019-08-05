@@ -66,7 +66,7 @@ bool LocalInstance::openTransaction()
 	m_transaction = new Transaction();
 	if (!m_transaction->create(getGuid()))
 	{
-		m_transaction = 0;
+		m_transaction = nullptr;
 		return false;
 	}
 
@@ -99,7 +99,7 @@ bool LocalInstance::closeTransaction()
 		return false;
 
 	m_transaction->destroy();
-	m_transaction = 0;
+	m_transaction = nullptr;
 
 	return true;
 }
@@ -196,13 +196,13 @@ Ref< IStream > LocalInstance::readObject(const TypeInfo*& outSerializerType) con
 	}
 
 	if (!objectStream)
-		return 0;
+		return nullptr;
 
 	uint8_t head[5];
 	if (objectStream->read(head, sizeof(head)) != sizeof(head))
 	{
 		objectStream->close();
-		return 0;
+		return nullptr;
 	}
 
 	objectStream->seek(IStream::SeekSet, 0);
@@ -218,7 +218,7 @@ Ref< IStream > LocalInstance::readObject(const TypeInfo*& outSerializerType) con
 Ref< IStream > LocalInstance::writeObject(const std::wstring& primaryTypeName, const TypeInfo*& outSerializerType)
 {
 	if (!m_transaction)
-		return 0;
+		return nullptr;
 
 	if (!m_context->preferBinary())
 		outSerializerType = &type_of< xml::XmlSerializer >();
@@ -242,7 +242,10 @@ uint32_t LocalInstance::getDataNames(std::vector< std::wstring >& outDataNames) 
 	if (!instanceMeta)
 		return 0;
 
-	outDataNames = instanceMeta->getBlobs();
+	outDataNames.clear();
+	for (const auto& blob : instanceMeta->getBlobs())
+		outDataNames.push_back(blob.name);
+
 	return uint32_t(outDataNames.size());
 }
 
@@ -276,11 +279,11 @@ Ref< IStream > LocalInstance::readData(const std::wstring& dataName) const
 		RefArray< ActionWriteData > actions;
 		if (m_transaction->get< ActionWriteData >(actions) > 0)
 		{
-			for (RefArray< ActionWriteData >::const_iterator i = actions.begin(); i != actions.end(); ++i)
+			for (auto action : actions)
 			{
-				if ((*i)->getName() == dataName)
+				if (action->getName() == dataName)
 				{
-					const AlignedVector< uint8_t >& buffer = (*i)->getBuffer();
+					const AlignedVector< uint8_t >& buffer = action->getBuffer();
 					if (!buffer.empty())
 						return new MemoryStream(&buffer[0], buffer.size());
 				}
@@ -295,7 +298,7 @@ Ref< IStream > LocalInstance::readData(const std::wstring& dataName) const
 Ref< IStream > LocalInstance::writeData(const std::wstring& dataName)
 {
 	if (!m_transaction)
-		return 0;
+		return nullptr;
 
 	Ref< ActionWriteData > action = new ActionWriteData(m_instancePath, dataName);
 	m_transaction->add(action);

@@ -93,39 +93,10 @@ void RayTracerEmbree::addLight(const Light& light)
 void RayTracerEmbree::addModel(const model::Model* model, const Transform& transform)
 {
 	model::MergeModel(*model, transform, 0.001f).apply(m_model);
-
-	/*
-	const auto& polygons = model->getPolygons();
-
-	RTCGeometry mesh = rtcNewGeometry(m_device, RTC_GEOMETRY_TYPE_TRIANGLE);
-
-	float* vertices = (float*)rtcSetNewGeometryBuffer(mesh, RTC_BUFFER_TYPE_VERTEX, 0, RTC_FORMAT_FLOAT3, 3 * sizeof(float), model->getPositions().size());
-	for (const auto& position : model->getPositions())
-	{
-		Vector4 p = transform * position.xyz1();
-		*vertices++ = p.x();
-		*vertices++ = p.y();
-		*vertices++ = p.z();
-	}
-
-	uint32_t* triangles = (uint32_t*)rtcSetNewGeometryBuffer(mesh, RTC_BUFFER_TYPE_INDEX, 0, RTC_FORMAT_UINT3, 3 * sizeof(uint32_t), model->getPolygons().size());
-	for (const auto& polygon : model->getPolygons())
-	{
-		*triangles++ = model->getVertex(polygon.getVertex(2)).getPosition();
-		*triangles++ = model->getVertex(polygon.getVertex(1)).getPosition();
-		*triangles++ = model->getVertex(polygon.getVertex(0)).getPosition();
-	}
-
-	rtcCommitGeometry(mesh);
-	rtcAttachGeometry(m_scene, mesh);
-	rtcReleaseGeometry(mesh);
-	*/
 }
 
 void RayTracerEmbree::commit()
 {
-	const auto& polygons = m_model.getPolygons();
-
 	RTCGeometry mesh = rtcNewGeometry(m_device, RTC_GEOMETRY_TYPE_TRIANGLE);
 
 	float* vertices = (float*)rtcSetNewGeometryBuffer(mesh, RTC_BUFFER_TYPE_VERTEX, 0, RTC_FORMAT_FLOAT3, 3 * sizeof(float), m_model.getPositions().size());
@@ -308,7 +279,6 @@ Ref< render::SHCoeffs > RayTracerEmbree::traceProbe(const Vector4& position) con
 
 	Ref< render::SHCoeffs > shCoeffs = new render::SHCoeffs();
 	m_shEngine->generateCoefficients(&shFunction, *shCoeffs);
-
 	return shCoeffs;
 }
 
@@ -399,6 +369,7 @@ Ref< drawing::Image > RayTracerEmbree::traceIndirect(const GBuffer* gbuffer) con
 
 						for (uint32_t i = 0; i < sampleCount; i += 16)
 						{
+							// Create a batch of rays.
 							for (uint32_t j = 0; j < 16; ++j)
 							{
 								direction[j] = (elm.normal * Scalar(0.2f) + random.nextHemi(elm.normal)).normalized();
@@ -427,37 +398,36 @@ Ref< drawing::Image > RayTracerEmbree::traceIndirect(const GBuffer* gbuffer) con
 							rtcInitIntersectContext(&context);
 							rtcIntersect16(c_valid, m_scene, &context, &rh);
 
+							// Calculate indirect lighting reflected from each hit.
 							for (uint32_t j = 0; j < 16; ++j)
 							{
-								if (rh.hit.geomID[j] != RTC_INVALID_GEOMETRY_ID)
-								{
-									Scalar distance(rh.ray.tfar[j]);
-									Scalar f = attenuation(distance);
-									if (f <= 0.0f)
-										continue;
+								if (rh.hit.geomID[j] == RTC_INVALID_GEOMETRY_ID)
+									continue;
 
-									Vector4 hitPosition = (elm.position + direction[j] * distance).xyz1();
-									Vector4 hitNormal = Vector4(rh.hit.Ng_x[j], rh.hit.Ng_y[j], rh.hit.Ng_z[j], 0.0f).normalized();
+								Scalar distance(rh.ray.tfar[j]);
+								Scalar f = attenuation(distance);
+								if (f <= 0.0f)
+									continue;
 
-									if (dot3(hitNormal, direction[j]) > 0.0f)
-										continue;
+								Vector4 hitNormal = Vector4(rh.hit.Ng_x[j], rh.hit.Ng_y[j], rh.hit.Ng_z[j], 0.0f).normalized();
+								if (dot3(hitNormal, direction[j]) > 0.0f)
+									continue;
 
-									Scalar ct = dot3(elm.normal, direction[j]);
-									if (ct < 0.0f)
-										ct = Scalar(0.0f);
+								Vector4 hitPosition = (elm.position + direction[j] * distance).xyz1();
 
-									const auto& sp = polygons[rh.hit.primID[j]];
-									const auto& sm = materials[sp.getMaterial()];
+								const auto& sp = polygons[rh.hit.primID[j]];
+								const auto& sm = materials[sp.getMaterial()];
 
-									Color4f brdf = sm.getColor() * Color4f(1.0f, 1.0f, 1.0f, 0.0f) / Scalar(PI);
-									Color4f incoming = sampleAnalyticalLights(
-										random,
-										hitPosition,
-										hitNormal,
-										true
-									);
-									indirect += brdf * incoming * f * ct / p;
-								}
+								Color4f brdf = sm.getColor() * Color4f(1.0f, 1.0f, 1.0f, 0.0f) / Scalar(PI);
+								Color4f incoming = sampleAnalyticalLights(
+									random,
+									hitPosition,
+									hitNormal,
+									true
+								);
+
+								Scalar ct = dot3(elm.normal, direction[j]);
+								indirect += brdf * incoming * f * ct / p;
 							}
 						}
 

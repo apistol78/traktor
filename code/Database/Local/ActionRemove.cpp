@@ -31,10 +31,9 @@ bool ActionRemove::execute(Context* context)
 		return false;
 	}
 
-	const std::vector< std::wstring >& blobs = instanceMeta->getBlobs();
-	for (std::vector< std::wstring >::const_iterator i = blobs.begin(); i != blobs.end(); ++i)
+	for (const auto& blob : instanceMeta->getBlobs())
 	{
-		Path instanceDataPath = getInstanceDataPath(m_instancePath, *i);
+		Path instanceDataPath = getInstanceDataPath(m_instancePath, blob.name);
 		if (fileStore->remove(instanceDataPath))
 			m_renamedFiles.push_back(instanceDataPath.getPathName());
 		else
@@ -66,13 +65,11 @@ bool ActionRemove::execute(Context* context)
 bool ActionRemove::undo(Context* context)
 {
 	Ref< IFileStore > fileStore = context->getFileStore();
-
-	for (std::vector< std::wstring >::const_iterator i = m_renamedFiles.begin(); i != m_renamedFiles.end(); ++i)
+	for (const auto& renamedFile : m_renamedFiles)
 	{
-		if (!fileStore->rollback(*i))
+		if (!fileStore->rollback(renamedFile))
 			return false;
 	}
-
 	m_renamedFiles.clear();
 	return true;
 }
@@ -80,8 +77,8 @@ bool ActionRemove::undo(Context* context)
 void ActionRemove::clean(Context* context)
 {
 	Ref< IFileStore > fileStore = context->getFileStore();
-	for (std::vector< std::wstring >::const_iterator i = m_renamedFiles.begin(); i != m_renamedFiles.end(); ++i)
-		fileStore->clean(*i);
+	for (const auto& renamedFile : m_renamedFiles)
+		fileStore->clean(renamedFile);
 }
 
 bool ActionRemove::redundant(const Action* action) const

@@ -81,6 +81,8 @@ bool Server::create(const std::wstring& scratchPath, const std::wstring& keyword
 
 void Server::destroy()
 {
+	safeDestroy(m_discoveryManager);
+	safeClose(m_serverSocket);
 }
 
 bool Server::update()
