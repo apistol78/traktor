@@ -162,13 +162,12 @@ bool CubeTextureVk::lock(int32_t side, int32_t level, Lock& lock)
 	VmaAllocationCreateInfo aci = {};
 	aci.usage = VMA_MEMORY_USAGE_CPU_TO_GPU;
 
-	VmaAllocation stagingBufferAllocation;
 	if (vmaCreateBuffer(m_allocator, &bufferInfo, &aci, &m_stagingBuffer, &m_stagingBufferAllocation, nullptr) != VK_SUCCESS)
 		return false;	
 
 	// Map staging buffer.
 	uint8_t* data = nullptr;
-	vmaMapMemory(m_allocator, stagingBufferAllocation, (void**)&data);
+	vmaMapMemory(m_allocator, m_stagingBufferAllocation, (void**)&data);
 
 	lock.pitch = m_desc.side * sizeof(uint32_t);
 	lock.bits = data;

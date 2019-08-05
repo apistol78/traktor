@@ -94,8 +94,8 @@ bool RenderTargetSetVk::create(const RenderTargetSetCreateDesc& setDesc)
 
 void RenderTargetSetVk::destroy()
 {
-	for (auto colorTarget : m_colorTargets)
-		safeDestroy(colorTarget);
+	for (auto it = m_colorTargets.begin(); it != m_colorTargets.end(); ++it)
+		(*it)->destroy();
 	m_colorTargets.resize(0);
 	safeDestroy(m_depthTarget);
 }
