@@ -557,6 +557,7 @@ Ref< ICubeTexture > RenderSystemVk::createCubeTexture(const CubeTextureCreateDes
 	Ref< CubeTextureVk > texture = new CubeTextureVk(
 		m_physicalDevice,
 		m_logicalDevice,
+		m_allocator,
 		m_graphicsCommandPool,
 		m_graphicsQueue,
 		desc
