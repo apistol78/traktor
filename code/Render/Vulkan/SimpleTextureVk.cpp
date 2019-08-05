@@ -65,7 +65,7 @@ bool SimpleTextureVk::create(
 
 		VmaAllocation stagingBufferAllocation;
 		if (vmaCreateBuffer(m_allocator, &bufferInfo, &aci, &stagingBuffer, &stagingBufferAllocation, nullptr) != VK_SUCCESS)
-			return nullptr;	
+			return false;	
 
 		// Copy data into staging buffer.
 		uint8_t* data = nullptr;

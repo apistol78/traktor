@@ -13,6 +13,7 @@
 #	define VK_NO_PROTOTYPES
 #	include <vulkan/vulkan.h>
 #endif
+#include <vk_mem_alloc.h>
 
 #include "Render/ICubeTexture.h"
 #include "Render/Types.h"
@@ -35,6 +36,7 @@ public:
 	CubeTextureVk(
 		VkPhysicalDevice physicalDevice,
 		VkDevice logicalDevice,
+		VmaAllocator allocator,
 		VkCommandPool setupCommandPool,
 		VkQueue setupQueue,
 		const CubeTextureCreateDesc& desc
@@ -63,17 +65,15 @@ public:
 private:
 	VkPhysicalDevice m_physicalDevice;
 	VkDevice m_logicalDevice;
+	VmaAllocator m_allocator;
 	VkCommandPool m_setupCommandPool;
 	VkQueue m_setupQueue;
-
 	CubeTextureCreateDesc m_desc;
-
+	VmaAllocation m_textureImageAllocation;
 	VkImage m_textureImage;
-	VkDeviceMemory m_textureImageMemory;
 	VkImageView m_textureView;
-
+	VmaAllocation m_stagingBufferAllocation;
 	VkBuffer m_stagingBuffer;
-	VkDeviceMemory m_stagingBufferMemory;
 };
 
 	}

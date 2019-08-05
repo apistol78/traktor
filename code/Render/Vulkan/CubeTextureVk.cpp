@@ -1,4 +1,5 @@
 #include <cstring>
+#include "Core/Log/Log.h"
 #include "Render/Types.h"
 #include "Render/Vulkan/ApiLoader.h"
 #include "Render/Vulkan/CubeTextureVk.h"
@@ -14,20 +15,22 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.render.CubeTextureVk", CubeTextureVk, ICubeText
 CubeTextureVk::CubeTextureVk(
 	VkPhysicalDevice physicalDevice,
 	VkDevice logicalDevice,
+	VmaAllocator allocator,
 	VkCommandPool setupCommandPool,
 	VkQueue setupQueue,
 	const CubeTextureCreateDesc& desc
 )
 :	m_physicalDevice(physicalDevice)
 ,	m_logicalDevice(logicalDevice)
+,	m_allocator(allocator)
 ,	m_setupCommandPool(setupCommandPool)
 ,	m_setupQueue(setupQueue)
 ,	m_desc(desc)
+,	m_textureImageAllocation(0)
 ,	m_textureImage(0)
-,	m_textureImageMemory(0)
 ,	m_textureView(0)
+,	m_stagingBufferAllocation(0)
 ,	m_stagingBuffer(0)
-,	m_stagingBufferMemory(0)
 {
 }
 
@@ -59,23 +62,14 @@ bool CubeTextureVk::create()
 	ici.samples = VK_SAMPLE_COUNT_1_BIT;
 	ici.flags = VK_IMAGE_CREATE_CUBE_COMPATIBLE_BIT;
 	
-	if (vkCreateImage(m_logicalDevice, &ici, nullptr, &m_textureImage) != VK_SUCCESS)
-		return false;
+	VmaAllocationCreateInfo aci = {};
+	aci.usage = VMA_MEMORY_USAGE_GPU_ONLY;
 
-	// Calculate memory requirement of texture image.
-	VkMemoryRequirements memoryRequirements;
-	vkGetImageMemoryRequirements(m_logicalDevice, m_textureImage, &memoryRequirements);
-
-	// Allocate texture memory.
-	VkMemoryAllocateInfo mai = {};
-	mai.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
-	mai.allocationSize = memoryRequirements.size;
-	mai.memoryTypeIndex = getMemoryTypeIndex(m_physicalDevice, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, memoryRequirements);
-
-	if (vkAllocateMemory(m_logicalDevice, &mai, nullptr, &m_textureImageMemory) != VK_SUCCESS)
-		return false;
-
-	vkBindImageMemory(m_logicalDevice, m_textureImage, m_textureImageMemory, 0);
+	if (vmaCreateImage(m_allocator, &ici, &aci, &m_textureImage, &m_textureImageAllocation, nullptr) != VK_SUCCESS)
+	{
+		log::error << L"Failed to create VK cube texture; unable to allocate image memory." << Endl;
+		return false;			
+	}
 
 	// Create texture view.
 	VkImageViewCreateInfo ivci = {};
@@ -121,6 +115,17 @@ bool CubeTextureVk::create()
 
 void CubeTextureVk::destroy()
 {
+	if (m_textureImageAllocation != 0)
+	{
+		vmaFreeMemory(m_allocator, m_textureImageAllocation);
+		m_textureImageAllocation = 0;
+	}
+
+	if (m_textureImage != 0)
+	{
+		vkDestroyImage(m_logicalDevice, m_textureImage, 0);
+		m_textureImage = 0;
+	}
 }
 
 ITexture* CubeTextureVk::resolve()
@@ -148,27 +153,22 @@ bool CubeTextureVk::lock(int32_t side, int32_t level, Lock& lock)
 	);
 
 	// Create staging buffer.
-	if (!createBuffer(
-		m_physicalDevice,
-		m_logicalDevice,
-		lockSize,
-		VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
-		VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
-		m_stagingBuffer,
-		m_stagingBufferMemory
-	))
-		return false;
+	VkBufferCreateInfo bufferInfo = {};
+	bufferInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
+	bufferInfo.size = lockSize;
+	bufferInfo.usage = VK_BUFFER_USAGE_TRANSFER_SRC_BIT;
+	bufferInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
+
+	VmaAllocationCreateInfo aci = {};
+	aci.usage = VMA_MEMORY_USAGE_CPU_TO_GPU;
+
+	VmaAllocation stagingBufferAllocation;
+	if (vmaCreateBuffer(m_allocator, &bufferInfo, &aci, &m_stagingBuffer, &m_stagingBufferAllocation, nullptr) != VK_SUCCESS)
+		return false;	
 
 	// Map staging buffer.
 	uint8_t* data = nullptr;
-	vkMapMemory(
-		m_logicalDevice,
-		m_stagingBufferMemory,
-		0,
-		lockSize,
-		0,
-		(void**)&data
-	);
+	vmaMapMemory(m_allocator, stagingBufferAllocation, (void**)&data);
 
 	lock.pitch = m_desc.side * sizeof(uint32_t);
 	lock.bits = data;
@@ -234,11 +234,11 @@ void CubeTextureVk::unlock(int32_t side, int32_t level)
 	);
 
 	// Free staging buffer.
-	vkDestroyBuffer(m_logicalDevice, m_stagingBuffer, nullptr);
-	vkFreeMemory(m_logicalDevice, m_stagingBufferMemory, nullptr);
+	vkDestroyBuffer(m_logicalDevice, m_stagingBuffer, 0);
+	vmaFreeMemory(m_allocator, m_stagingBufferAllocation);
 
 	m_stagingBuffer = 0;
-	m_stagingBufferMemory = 0;
+	m_stagingBufferAllocation = 0;
 }
 
 	}
