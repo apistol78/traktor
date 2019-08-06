@@ -1,7 +1,6 @@
 #include "Spray/Effect.h"
 #include "Spray/EffectComponent.h"
 #include "Spray/EffectEntityRenderer.h"
-#include "Spray/EffectEntity.h"
 #include "Spray/MeshRenderer.h"
 #include "Spray/PointRenderer.h"
 #include "Spray/TrailRenderer.h"
@@ -30,10 +29,7 @@ void EffectEntityRenderer::setLodDistances(float lod1Distance, float lod2Distanc
 
 const TypeInfoSet EffectEntityRenderer::getRenderableTypes() const
 {
-	TypeInfoSet typeSet;
-	typeSet.insert< EffectComponent >();
-	typeSet.insert< EffectEntity >();
-	return typeSet;
+	return makeTypeInfoSet< EffectComponent >();
 }
 
 void EffectEntityRenderer::render(
@@ -64,35 +60,6 @@ void EffectEntityRenderer::render(
 		Plane cameraPlane(viewInverse.axisZ(), viewInverse.translation());
 
 		effectComponent->render(
-			worldRenderPass.getTechnique(),
-			cameraPosition,
-			cameraPlane,
-			m_pointRenderer,
-			m_meshRenderer,
-			m_trailRenderer
-		);
-	}
-	else if (EffectEntity* effectEntity = dynamic_type_cast< EffectEntity* >(renderable))
-	{
-		// Do we need to render anything with this technique?
-		if (!effectEntity->haveTechnique(worldRenderPass.getTechnique()))
-			return;
-
-		Aabb3 boundingBox = effectEntity->getWorldBoundingBox();
-		if (boundingBox.empty())
-			return;
-
-		// Early out of bounding sphere is outside of frustum.
-		Vector4 center = worldRenderView.getView() * boundingBox.getCenter().xyz1();
-		Scalar radius = boundingBox.getExtent().length();
-		if (worldRenderView.getCullFrustum().inside(center, radius) == Frustum::IrOutside)
-			return;
-
-		Matrix44 viewInverse = worldRenderView.getView().inverse();
-		Vector4 cameraPosition = viewInverse.translation().xyz1();
-		Plane cameraPlane(viewInverse.axisZ(), viewInverse.translation());
-
-		effectEntity->render(
 			worldRenderPass.getTechnique(),
 			cameraPosition,
 			cameraPlane,

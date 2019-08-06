@@ -81,6 +81,8 @@ public:
 
 	const AlignedVector< Vertex >& getVertices() const { return m_vertices; }
 
+	AlignedVector< Vertex >& getVertices() { return m_vertices; }
+
 	void reservePolygons(uint32_t polygonCapacity) { m_polygons.reserve(polygonCapacity); }
 
 	uint32_t addPolygon(const Polygon& polygon);

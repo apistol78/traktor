@@ -54,43 +54,41 @@ void Solution::removeProject(Project* project)
 	m_projects.remove(project);
 
 	// Remove project from any project dependencies.
-	for (RefArray< Project >::iterator i = m_projects.begin(); i != m_projects.end(); ++i)
+	for (auto project : m_projects)
 	{
-		RefArray< Dependency > dependencies = (*i)->getDependencies();
-		for (RefArray< Dependency >::iterator j = dependencies.begin(); j != dependencies.end(); )
+		RefArray< Dependency > dependencies = project->getDependencies();
+		for (auto it = dependencies.begin(); it != dependencies.end(); )
 		{
-			if (!is_a< ProjectDependency >(*j))
+			if (!is_a< ProjectDependency >(*it))
 			{
-				j++;
+				it++;
 				continue;
 			}
-
-			if (static_cast< ProjectDependency* >((*j).ptr())->getProject() == project)
-				j = dependencies.erase(j);
+			if (static_cast< ProjectDependency* >((*it).ptr())->getProject() == project)
+				it = dependencies.erase(it);
 			else
-				j++;
+				it++;
 		}
-		(*i)->setDependencies(dependencies);
+		project->setDependencies(dependencies);
 	}
 
 	// Remove project from any aggregation dependencies.
-	for (RefArray< Aggregation >::iterator i = m_aggregations.begin(); i != m_aggregations.end(); ++i)
+	for (auto aggregation : m_aggregations)
 	{
-		RefArray< Dependency > dependencies = (*i)->getDependencies();
-		for (RefArray< Dependency >::iterator j = dependencies.begin(); j != dependencies.end(); )
+		RefArray< Dependency > dependencies = aggregation->getDependencies();
+		for (auto it = dependencies.begin(); it != dependencies.end(); )
 		{
-			if (!is_a< ProjectDependency >(*j))
+			if (!is_a< ProjectDependency >(*it))
 			{
-				j++;
+				it++;
 				continue;
 			}
-
-			if (static_cast< ProjectDependency* >((*j).ptr())->getProject() == project)
-				j = dependencies.erase(j);
+			if (static_cast< ProjectDependency* >((*it).ptr())->getProject() == project)
+				it = dependencies.erase(it);
 			else
-				j++;
+				it++;
 		}
-		(*i)->setDependencies(dependencies);
+		aggregation->setDependencies(dependencies);
 	}
 }
 

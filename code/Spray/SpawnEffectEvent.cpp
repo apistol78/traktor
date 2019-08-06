@@ -1,4 +1,4 @@
-#include "Spray/EffectEntity.h"
+#include "Spray/EffectComponent.h"
 #include "Spray/SpawnEffectEvent.h"
 #include "Spray/SpawnEffectEventInstance.h"
 
@@ -26,8 +26,12 @@ SpawnEffectEvent::SpawnEffectEvent(
 
 Ref< world::IEntityEventInstance > SpawnEffectEvent::createInstance(world::IEntityEventManager* eventManager, world::Entity* sender, const Transform& Toffset) const
 {
-	Ref< EffectEntity > effect = new EffectEntity(Toffset * m_transform, m_effect, eventManager, m_soundPlayer);
-	return new SpawnEffectEventInstance(this, sender, Toffset * m_transform, effect);
+	Ref< EffectComponent > effectComponent = new EffectComponent(
+		m_effect,
+		eventManager,
+		m_soundPlayer
+	);
+	return new SpawnEffectEventInstance(this, sender, Toffset * m_transform, effectComponent);
 }
 
 	}

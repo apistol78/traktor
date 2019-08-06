@@ -42,7 +42,7 @@ int32_t InputSystem::getDeviceCount() const
 	return int32_t(m_devices.size());
 }
 
-Ref< IInputDevice > InputSystem::getDevice(int32_t index)
+IInputDevice* InputSystem::getDevice(int32_t index)
 {
 	T_ASSERT(index >= 0 && index < getDeviceCount());
 	return m_devices[index];
@@ -51,40 +51,40 @@ Ref< IInputDevice > InputSystem::getDevice(int32_t index)
 int32_t InputSystem::getDeviceCount(InputCategory category, bool connected) const
 {
 	int32_t deviceCount = 0;
-	for (RefArray< IInputDevice >::const_iterator i = m_devices.begin(); i != m_devices.end(); ++i)
+	for (auto device : m_devices)
 	{
-		if ((*i)->getCategory() == category && (!connected || (*i)->isConnected()))
+		if (device->getCategory() == category && (!connected || device->isConnected()))
 			++deviceCount;
 	}
 	return deviceCount;
 }
 
-Ref< IInputDevice > InputSystem::getDevice(InputCategory category, int32_t index, bool connected)
+IInputDevice* InputSystem::getDevice(InputCategory category, int32_t index, bool connected)
 {
-	for (RefArray< IInputDevice >::iterator i = m_devices.begin(); i != m_devices.end(); ++i)
+	for (auto device : m_devices)
 	{
-		if ((*i)->getCategory() == category && (!connected || (*i)->isConnected()))
+		if (device->getCategory() == category && (!connected || device->isConnected()))
 		{
 			if (index-- <= 0)
-				return *i;
+				return device;
 		}
 	}
-	return 0;
+	return nullptr;
 }
 
 void InputSystem::setExclusive(bool exclusive)
 {
-	for (RefArray< IInputDevice >::iterator i = m_devices.begin(); i != m_devices.end(); ++i)
-		(*i)->setExclusive(exclusive);
+	for (auto device : m_devices)
+		device->setExclusive(exclusive);
 }
 
 bool InputSystem::update()
 {
 	// Update drivers.
 	bool shouldUpdateDevices = false;
-	for (RefArray< IInputDriver >::iterator i = m_drivers.begin(); i != m_drivers.end(); ++i)
+	for (auto driver : m_drivers)
 	{
-		IInputDriver::UpdateResult result = (*i)->update();
+		IInputDriver::UpdateResult result = driver->update();
 		if (result == IInputDriver::UrDevicesChanged)
 			shouldUpdateDevices |= true;
 	}
@@ -92,8 +92,8 @@ bool InputSystem::update()
 		updateDevices();
 
 	// Read state of all ready devices.
-	for (RefArray< IInputDevice >::iterator i = m_devices.begin(); i != m_devices.end(); ++i)
-		(*i)->readState();
+	for (auto device : m_devices)
+		device->readState();
 
 	return true;
 }
@@ -101,14 +101,11 @@ bool InputSystem::update()
 void InputSystem::updateDevices()
 {
 	m_devices.resize(0);
-	for (RefArray< IInputDriver >::iterator i = m_drivers.begin(); i != m_drivers.end(); ++i)
+	for (auto driver : m_drivers)
 	{
-		IInputDriver* inputDriver = *i;
-		T_ASSERT(inputDriver);
-
-		for (int32_t j = 0; j < inputDriver->getDeviceCount(); ++j)
+		for (int32_t i = 0; i < driver->getDeviceCount(); ++i)
 		{
-			Ref< IInputDevice > inputDevice = inputDriver->getDevice(j);
+			Ref< IInputDevice > inputDevice = driver->getDevice(i);
 			T_ASSERT(inputDevice);
 
 			m_devices.push_back(inputDevice);

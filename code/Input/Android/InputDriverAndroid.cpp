@@ -16,8 +16,8 @@ namespace traktor
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.input.InputDriverAndroid", 0, InputDriverAndroid, IInputDriver)
 
 InputDriverAndroid::InputDriverAndroid()
-:	m_instance(0)
-,	m_sensorQueue(0)
+:	m_instance(nullptr)
+,	m_sensorQueue(nullptr)
 {
 }
 
@@ -26,7 +26,7 @@ InputDriverAndroid::~InputDriverAndroid()
 	if (m_instance)
 	{
 		m_instance->removeDelegate(this);
-		m_instance = 0;
+		m_instance = nullptr;
 	}
 }
 
@@ -133,7 +133,7 @@ Ref< IInputDevice > InputDriverAndroid::getDevice(int index)
 	if (index < int(m_devices.size()))
 		return m_devices[index];
 	else
-		return 0;
+		return nullptr;
 }
 
 IInputDriver::UpdateResult InputDriverAndroid::update()

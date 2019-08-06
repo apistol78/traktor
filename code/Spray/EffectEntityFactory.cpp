@@ -3,8 +3,6 @@
 #include "Spray/Effect.h"
 #include "Spray/EffectComponent.h"
 #include "Spray/EffectComponentData.h"
-#include "Spray/EffectEntity.h"
-#include "Spray/EffectEntityData.h"
 #include "Spray/EffectEntityFactory.h"
 #include "Spray/SoundEvent.h"
 #include "Spray/SoundEventData.h"
@@ -38,9 +36,7 @@ EffectEntityFactory::EffectEntityFactory(
 
 const TypeInfoSet EffectEntityFactory::getEntityTypes() const
 {
-	TypeInfoSet typeSet;
-	typeSet.insert< EffectEntityData >();
-	return typeSet;
+	return TypeInfoSet();
 }
 
 const TypeInfoSet EffectEntityFactory::getEntityEventTypes() const
@@ -60,7 +56,7 @@ const TypeInfoSet EffectEntityFactory::getEntityComponentTypes() const
 
 Ref< world::Entity > EffectEntityFactory::createEntity(const world::IEntityBuilder* builder, const world::EntityData& entityData) const
 {
-	return checked_type_cast< const EffectEntityData* >(&entityData)->createEntity(m_resourceManager, m_eventManager, m_soundPlayer);
+	return nullptr;
 }
 
 Ref< world::IEntityEvent > EffectEntityFactory::createEntityEvent(const world::IEntityBuilder* builder, const world::IEntityEventData& entityEventData) const

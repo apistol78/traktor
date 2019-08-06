@@ -34,35 +34,35 @@ Ref< EffectLayer > EffectLayerData::createEffectLayer(resource::IResourceManager
 	{
 		emitter = m_emitter->createEmitter(resourceManager, entityBuilder);
 		if (!emitter)
-			return 0;
+			return nullptr;
 	}
 
 	if (m_trail)
 	{
 		trail = m_trail->createTrail(resourceManager);
 		if (!trail)
-			return 0;
+			return nullptr;
 	}
 
 	if (m_sequence && entityBuilder)
 	{
 		sequence = m_sequence->createSequence(entityBuilder);
 		if (!sequence)
-			return 0;
+			return nullptr;
 	}
 
 	if (m_triggerEnable && entityBuilder)
 	{
 		triggerEnable = entityBuilder->create(m_triggerEnable);
 		if (!triggerEnable)
-			return 0;
+			return nullptr;
 	}
 
 	if (m_triggerDisable && entityBuilder)
 	{
 		triggerDisable = entityBuilder->create(m_triggerDisable);
 		if (triggerDisable)
-			return 0;
+			return nullptr;
 	}
 
 	return new EffectLayer(
