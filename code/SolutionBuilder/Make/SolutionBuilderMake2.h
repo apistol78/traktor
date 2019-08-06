@@ -17,7 +17,7 @@ namespace traktor
 
 class ScriptProcessor;
 
-/*! Generate solution files for Code::Blocks. */
+/*! Generate solution files for makefiles. */
 class T_DLLCLASS SolutionBuilderMake2 : public SolutionBuilder
 {
 	T_RTTI_CLASS;

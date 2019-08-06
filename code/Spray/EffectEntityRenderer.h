@@ -22,7 +22,6 @@ class IRenderSystem;
 	namespace spray
 	{
 
-class EffectEntity;
 class MeshRenderer;
 class PointRenderer;
 class TrailRenderer;

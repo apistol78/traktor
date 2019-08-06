@@ -1,8 +1,9 @@
 #include "Core/Misc/SafeDestroy.h"
-#include "Spray/EffectEntity.h"
+#include "Spray/EffectComponent.h"
 #include "Spray/SpawnEffectEvent.h"
 #include "Spray/SpawnEffectEventInstance.h"
 #include "World/IWorldRenderer.h"
+#include "World/Entity/ComponentEntity.h"
 
 namespace traktor
 {
@@ -11,11 +12,16 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.spray.SpawnEffectEventInstance", SpawnEffectEventInstance, world::IEntityEventInstance)
 
-SpawnEffectEventInstance::SpawnEffectEventInstance(const SpawnEffectEvent* spawnEffect, world::Entity* sender, const Transform& Toffset, EffectEntity* effectEntity)
+SpawnEffectEventInstance::SpawnEffectEventInstance(
+	const SpawnEffectEvent* spawnEffect,
+	world::Entity* sender,
+	const Transform& Toffset,
+	EffectComponent* effectComponent
+)
 :	m_spawnEffect(spawnEffect)
 ,	m_sender(sender)
 ,	m_Toffset(Toffset)
-,	m_effectEntity(effectEntity)
+,	m_effectComponent(effectComponent)
 {
 	Transform T;
 	if (m_sender)
@@ -25,6 +31,9 @@ SpawnEffectEventInstance::SpawnEffectEventInstance(const SpawnEffectEvent* spawn
 	}
 	else
 		T = m_Toffset;
+
+	m_effectEntity = new world::ComponentEntity();
+	m_effectEntity->setComponent(m_effectComponent);
 
 	if (m_spawnEffect->m_useRotation)
 		m_effectEntity->setTransform(T);
@@ -54,7 +63,7 @@ bool SpawnEffectEventInstance::update(const world::UpdateParams& update)
 
 	m_effectEntity->update(update);
 
-	return !m_effectEntity->isFinished();
+	return !m_effectComponent->isFinished();
 }
 
 void SpawnEffectEventInstance::build(world::IWorldRenderer* worldRenderer)
@@ -68,8 +77,8 @@ void SpawnEffectEventInstance::cancel(world::CancelType when)
 		safeDestroy(m_effectEntity);
 	else
 	{
-		if (m_effectEntity)
-			m_effectEntity->setLoopEnable(false);
+		if (m_effectComponent)
+			m_effectComponent->setLoopEnable(false);
 	}
 }
 

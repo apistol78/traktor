@@ -27,6 +27,7 @@
 #include "Editor/IPipelineSettings.h"
 #include "Heightfield/Heightfield.h"
 #include "Heightfield/HeightfieldFormat.h"
+#include "Heightfield/Editor/ConvertHeightfield.h"
 #include "Heightfield/Editor/HeightfieldAsset.h"
 #include "Mesh/MeshComponentData.h"
 #include "Mesh/Editor/MeshAsset.h"
@@ -353,100 +354,9 @@ bool NavMeshPipeline::buildOutput(
 					sourceData->close();
 					sourceData = nullptr;
 
-					int32_t size = heightfield->getSize();
-					int32_t ix0, iz0;
-					int32_t ix1, iz1;
-
-					float vistaDistance = heightfieldAsset->getVistaDistance();
-					if (vistaDistance > FUZZY_EPSILON)
-					{
-						heightfield->worldToGrid(-vistaDistance / 2.0f, -vistaDistance / 2.0f, ix0, iz0);
-						heightfield->worldToGrid( vistaDistance / 2.0f,  vistaDistance / 2.0f, ix1, iz1);
-
-						ix0 = clamp(ix0, 0, size);
-						iz0 = clamp(iz0, 0, size);
-						ix1 = clamp(ix1, 0, size);
-						iz1 = clamp(iz1, 0, size);
-					}
-					else
-					{
-						ix0 = 0;
-						iz0 = 0;
-						ix1 = size;
-						iz1 = size;
-					}
-
-					log::info << L"NavMesh terrain, using (" << ix0 << L", " << iz0 << L", " << ix1 << L", " << iz1 << L") of totally (0, 0, " << size << L", " << size << L")" << Endl;
-
-					size = max(ix1 - ix0, iz1 - iz0);
-
-					int32_t outputSize = size / m_terrainStepSize;
-
-					Ref< model::Model > navModel = new model::Model();
-
-					navModel->reservePositions(outputSize * outputSize);
-
-					model::Vertex vertex;
-					for (int32_t iz = iz0; iz < iz1; iz += m_terrainStepSize)
-					{
-						for (int32_t ix = ix0; ix < ix1; ix += m_terrainStepSize)
-						{
-							float wx, wz;
-							heightfield->gridToWorld(ix, iz, wx, wz);
-
-							uint32_t positionId = navModel->addPosition(Vector4(
-								wx,
-								heightfield->getWorldHeight(wx, wz),
-								wz,
-								1.0f
-							));
-
-							vertex.setPosition(positionId);
-							navModel->addVertex(vertex);
-						}
-					}
-
-					model::Polygon polygon;
-					for (int32_t iz = 0; iz < outputSize - 1; ++iz)
-					{
-						int32_t offset = iz * outputSize;
-						for (int32_t ix = 0; ix < outputSize - 1; ++ix)
-						{
-							float wx, wz;
-							heightfield->gridToWorld(ix0 + ix * m_terrainStepSize, iz0 + iz * m_terrainStepSize, wx, wz);
-
-							if (!heightfield->getWorldCut(wx, wz))
-								continue;
-							if (!heightfield->getWorldCut(wx + m_terrainStepSize, wz))
-								continue;
-							if (!heightfield->getWorldCut(wx + m_terrainStepSize, wz + m_terrainStepSize))
-								continue;
-							if (!heightfield->getWorldCut(wx, wz + m_terrainStepSize))
-								continue;
-
-							int32_t indices[] =
-							{
-								offset + ix,
-								offset + ix + 1,
-								offset + ix + 1 + outputSize,
-								offset + ix + outputSize
-							};
-
-							polygon.clearVertices();
-							polygon.addVertex(indices[0]);
-							polygon.addVertex(indices[1]);
-							polygon.addVertex(indices[3]);
-							navModel->addPolygon(polygon);
-
-							polygon.clearVertices();
-							polygon.addVertex(indices[1]);
-							polygon.addVertex(indices[2]);
-							polygon.addVertex(indices[3]);
-							navModel->addPolygon(polygon);
-						}
-					}
-
-					navModels.push_back(NavMeshSourceModel(navModel, Transform::identity()));
+					Ref< model::Model > navModel = hf::ConvertHeightfield().convert(heightfield, 16, heightfieldAsset->getVistaDistance());
+					if (navModel != nullptr)
+						navModels.push_back(NavMeshSourceModel(navModel, Transform::identity()));
 				}
 
 				if (auto oceanComponentData = componentEntityData->getComponent< terrain::OceanComponentData >())

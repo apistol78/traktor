@@ -21,7 +21,7 @@ namespace traktor
 class IInputDriver;
 class IInputDevice;
 
-/*! \brief Input system.
+/*! Input system.
  * \ingroup Input
  */
 class T_DLLCLASS InputSystem : public Object
@@ -39,11 +39,11 @@ public:
 
 	int32_t getDeviceCount() const;
 
-	Ref< IInputDevice > getDevice(int32_t index);
+	IInputDevice* getDevice(int32_t index);
 
 	int32_t getDeviceCount(InputCategory category, bool connected) const;
 
-	Ref< IInputDevice > getDevice(InputCategory category, int32_t index, bool connected);
+	IInputDevice* getDevice(InputCategory category, int32_t index, bool connected);
 
 	void setExclusive(bool exclusive);
 

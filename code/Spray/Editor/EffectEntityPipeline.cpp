@@ -1,6 +1,5 @@
 #include "Editor/IPipelineDepends.h"
 #include "Spray/EffectComponentData.h"
-#include "Spray/EffectEntityData.h"
 #include "Spray/SoundEventData.h"
 #include "Spray/SpawnEffectEventData.h"
 #include "Spray/Editor/EffectEntityPipeline.h"
@@ -16,7 +15,6 @@ TypeInfoSet EffectEntityPipeline::getAssetTypes() const
 {
 	TypeInfoSet typeSet;
 	typeSet.insert< EffectComponentData >();
-	typeSet.insert< EffectEntityData >();
 	typeSet.insert< SoundEventData >();
 	typeSet.insert< SpawnEffectEventData >();
 	return typeSet;
@@ -32,8 +30,6 @@ bool EffectEntityPipeline::buildDependencies(
 {
 	if (auto effectComponentData = dynamic_type_cast< const EffectComponentData* >(sourceAsset))
 		pipelineDepends->addDependency(effectComponentData->getEffect(), editor::PdfBuild | editor::PdfResource);
-	else if (auto effectEntityData = dynamic_type_cast< const EffectEntityData* >(sourceAsset))
-		pipelineDepends->addDependency(effectEntityData->getEffect(), editor::PdfBuild | editor::PdfResource);
 	else if (auto soundEventData = dynamic_type_cast< const SoundEventData* >(sourceAsset))
 		pipelineDepends->addDependency(soundEventData->m_sound, editor::PdfBuild | editor::PdfResource);
 	else if (auto spawnEventData = dynamic_type_cast< const SpawnEffectEventData* >(sourceAsset))
@@ -47,12 +43,7 @@ Ref< ISerializable > EffectEntityPipeline::buildOutput(
 	const ISerializable* sourceAsset
 ) const
 {
-	if (auto effectEntityData = dynamic_type_cast< const EffectEntityData* >(sourceAsset))
-	{
-		if (effectEntityData->getEffect().isNull())
-			return nullptr;
-	}
-	else if (auto soundEventData = dynamic_type_cast< const SoundEventData* >(sourceAsset))
+	if (auto soundEventData = dynamic_type_cast< const SoundEventData* >(sourceAsset))
 	{
 		if (soundEventData->m_sound.isNull())
 			return nullptr;

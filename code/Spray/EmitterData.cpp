@@ -34,7 +34,7 @@ EmitterData::EmitterData()
 Ref< Emitter > EmitterData::createEmitter(resource::IResourceManager* resourceManager, const world::IEntityBuilder* entityBuilder) const
 {
 	if (!m_source)
-		return 0;
+		return nullptr;
 
 	resource::Proxy< render::Shader > shader;
 	resource::Proxy< mesh::InstanceMesh > mesh;
@@ -44,16 +44,16 @@ Ref< Emitter > EmitterData::createEmitter(resource::IResourceManager* resourceMa
 		!resourceManager->bind(m_mesh, mesh) &&
 		!m_effect
 	)
-		return 0;
+		return nullptr;
 
 	Ref< const Source > source = m_source->createSource(resourceManager);
 	if (!source)
-		return 0;
+		return nullptr;
 
 	RefArray< const Modifier > modifiers;
-	for (RefArray< ModifierData >::const_iterator i = m_modifiers.begin(); i != m_modifiers.end(); ++i)
+	for (auto modifierData : m_modifiers)
 	{
-		Ref< const Modifier > modifier = (*i)->createModifier(resourceManager);
+		Ref< const Modifier > modifier = modifierData->createModifier(resourceManager);
 		if (modifier)
 			modifiers.push_back(modifier);
 	}

@@ -1,3 +1,4 @@
+#include <set>
 #include "Core/Io/Path.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/CommandLine.h"
@@ -15,7 +16,6 @@
 #include "SolutionBuilder/Eclipse/SolutionBuilderEclipse.h"
 #include "SolutionBuilder/FBuild/SolutionBuilderFBuild.h"
 #include "SolutionBuilder/GraphViz/SolutionBuilderGraphViz.h"
-#include "SolutionBuilder/Make/SolutionBuilderMake.h"
 #include "SolutionBuilder/Make/SolutionBuilderMake2.h"
 #include "SolutionBuilder/Msvc/SolutionBuilderMsvc.h"
 #include "SolutionBuilder/Xcode/SolutionBuilderXcode.h"
@@ -71,8 +71,6 @@ int main(int argc, const char** argv)
 			builder = new SolutionBuilderFBuild();
 		else if (ide == L"graphviz")
 			builder = new SolutionBuilderGraphViz();
-		else if (ide == L"make")
-			builder = new SolutionBuilderMake();
 		else if (ide == L"make2")
 			builder = new SolutionBuilderMake2();
 		else if (ide == L"msvc")

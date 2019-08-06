@@ -418,7 +418,7 @@ Ref< drawing::Image > RayTracerEmbree::traceIndirect(const GBuffer* gbuffer) con
 								const auto& sp = polygons[rh.hit.primID[j]];
 								const auto& sm = materials[sp.getMaterial()];
 
-								Color4f brdf = sm.getColor() * Color4f(1.0f, 1.0f, 1.0f, 0.0f) / Scalar(PI);
+								Color4f brdf = sm.getColor() * Scalar(sm.getEmissive() + 1.0f) * Color4f(1.0f, 1.0f, 1.0f, 0.0f) / Scalar(PI);
 								Color4f incoming = sampleAnalyticalLights(
 									random,
 									hitPosition,

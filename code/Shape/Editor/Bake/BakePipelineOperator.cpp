@@ -22,6 +22,7 @@
 #include "Model/Operations/CleanDegenerate.h"
 #include "Model/Operations/CleanDuplicates.h"
 #include "Model/Operations/MergeModel.h"
+#include "Model/Operations/NormalizeTexCoords.h"
 #include "Model/Operations/Transform.h"
 #include "Model/Operations/Triangulate.h"
 #include "Model/Operations/UnwrapUV.h"
@@ -276,6 +277,11 @@ bool BakePipelineOperator::build(
 
 						// Create tracer output.
 						Ref< model::Model > rm = DeepClone(model).create< model::Model >();
+						rm->clear(model::Model::CfColors | model::Model::CfJoints);
+						model::NormalizeTexCoords(channel, 1.0f / 128, 1.0f / 128).apply(*rm);
+						model::CleanDuplicates(0.001f).apply(*rm);
+						model::CleanDegenerate().apply(*rm);
+
 						AlignedVector< model::Material > materials = rm->getMaterials();
 						for (auto& material : materials)
 						{
@@ -441,8 +447,9 @@ bool BakePipelineOperator::build(
 					// 	if (!heightfield)
 					// 		return false;
 
-					// 	// Heightfield successfully loaded; generate models from heightfield.
-
+					// 	Ref< model::Model > model = hf::ConvertHeightfield().convert(heightfield, 16, 0.0f);
+					// 	if (!model)
+					// 		return false;
 					// }
 
 					//if (auto cameraComponentData = componentEntityData->getComponent< world::CameraComponentData >())

@@ -16,13 +16,11 @@ namespace traktor
 void collectDependencies(const Project* project, std::set< std::wstring >& outDependencies)
 {
 	outDependencies.insert(project->getName());
-
-	const RefArray< Dependency >& dependencies = project->getDependencies();
-	for (RefArray< Dependency >::const_iterator j = dependencies.begin(); j != dependencies.end(); ++j)
+	for (auto dependency : project->getDependencies())
 	{
-		if (const ProjectDependency* projectDependency = dynamic_type_cast< const ProjectDependency* >(*j))
+		if (auto projectDependency = dynamic_type_cast< const ProjectDependency* >(dependency))
 			collectDependencies(projectDependency->getProject(), outDependencies);
-		else if (const ExternalDependency* externalDependency = dynamic_type_cast< const ExternalDependency* >(*j))
+		else if (auto externalDependency = dynamic_type_cast< const ExternalDependency* >(dependency))
 			collectDependencies(externalDependency->getProject(), outDependencies);
 	}
 }
@@ -41,18 +39,14 @@ bool SolutionBuilderDependencies::create(const CommandLine& cmdLine)
 
 bool SolutionBuilderDependencies::generate(Solution* solution)
 {
-	const RefArray< Project >& projects = solution->getProjects();
-	for (RefArray< Project >::const_iterator i = projects.begin(); i != projects.end(); ++i)
+	for (auto project : solution->getProjects())
 	{
-		const Project* project = *i;
-		T_FATAL_ASSERT (project);
-
 		if (m_projectName.empty() || project->getName() == m_projectName)
 		{
 			std::set< std::wstring > dependencies;
 			collectDependencies(project, dependencies);
-			for (std::set< std::wstring >::const_iterator i = dependencies.begin(); i != dependencies.end(); ++i)
-				log::info << *i << Endl;
+			for (const auto& dependency : dependencies)
+				log::info << dependency << Endl;
 			return true;
 		}
 	}

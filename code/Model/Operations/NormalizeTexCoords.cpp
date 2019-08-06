@@ -1,0 +1,53 @@
+#include "Core/Math/Aabb2.h"
+#include "Model/Model.h"
+#include "Model/Operations/NormalizeTexCoords.h"
+
+namespace traktor
+{
+	namespace model
+	{
+
+T_IMPLEMENT_RTTI_CLASS(L"traktor.model.NormalizeTexCoords", NormalizeTexCoords, IModelOperation)
+
+NormalizeTexCoords::NormalizeTexCoords(uint32_t channel, float marginU, float marginV)
+:   m_channel(channel)
+,   m_marginU(marginU)
+,   m_marginV(marginV)
+{
+}
+
+bool NormalizeTexCoords::apply(Model& model) const
+{
+    Aabb2 bbox;
+
+    // Calculate bounding box of texcoords in given channel.
+    for (const auto& vertex : model.getVertices())
+    {
+        uint32_t texCoord = vertex.getTexCoord(m_channel);
+        if (texCoord != c_InvalidIndex)
+            bbox.contain(model.getTexCoord(texCoord));
+    }
+    if (bbox.empty())
+        return true;
+
+    // Reiterate and normalize texcoords in same channel.
+    for (auto& vertex : model.getVertices())
+    {
+        uint32_t texCoord = vertex.getTexCoord(m_channel);
+        if (texCoord == c_InvalidIndex)
+            continue;
+
+        Vector2 uv = model.getTexCoord(texCoord);
+
+        uv = (uv - bbox.mn) / (bbox.mx - bbox.mn);
+        uv = (uv + Vector2(m_marginU, m_marginV)) * Vector2(1.0f - m_marginU * 2.0f, 1.0f - m_marginV * 2.0f);
+
+        texCoord = model.addUniqueTexCoord(uv);
+        vertex.setTexCoord(m_channel, texCoord);
+    }
+
+	return true;
+}
+
+	}
+}
