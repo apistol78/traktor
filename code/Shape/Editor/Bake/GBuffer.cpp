@@ -155,6 +155,13 @@ bool GBuffer::create(int32_t width, int32_t height, const model::Model& model, c
 				texCoords.points[i2]
 			);
 
+			// Interpolate for verification of barycentrics... \tbd
+			Interpolants ipolTexCoords(
+				texCoords.points[i0],
+				texCoords.points[i1],
+				texCoords.points[i2]
+			);
+
 			Interpolants ipolPositions(
 				positions[i0],
 				positions[i1],
@@ -167,20 +174,36 @@ bool GBuffer::create(int32_t width, int32_t height, const model::Model& model, c
 				normals[i2]
 			);
 
-			for (int32_t x = 0; x < width; ++x)
+			Aabb2 bbox;
+			bbox.contain(texCoords.points[i0]);
+			bbox.contain(texCoords.points[i1]);
+			bbox.contain(texCoords.points[i2]);
+
+			int32_t sx = (int32_t)(bbox.mn.x - 4);
+			int32_t ex = (int32_t)(bbox.mx.x + 4);
+			int32_t sy = (int32_t)(bbox.mn.y - 4);
+			int32_t ey = (int32_t)(bbox.mx.y + 4);
+
+			for (int32_t x = sx; x <= ex; ++x)
 			{
-				for (int32_t y = 0; y < height; ++y)
+				for (int32_t y = sy; y <= ey; ++y)
 				{
+					if (x < 0 || x >= width || y < 0 || y >= height)
+						continue;
+
 					Vector2 cpt(x, y);
 
 					bool inside = bary.inside(cpt);
-					for (int32_t iy = -2; !inside && iy <= 2; ++iy)
+					for (int32_t iy = -4; !inside && iy <= 4; ++iy)
 					{
-						for (int32_t ix = -2; !inside && ix <= 2; ++ix)
+						for (int32_t ix = -4; !inside && ix <= 4; ++ix)
 						{
 							inside |= bary.inside(cpt + Vector2(ix / 2.0f, iy / 2.0f));
 						}
 					}
+
+					// \tbd Too narrow triangles might miss...
+
 					if (!inside)
 						continue;
 
@@ -209,6 +232,59 @@ bool GBuffer::create(int32_t width, int32_t height, const model::Model& model, c
 	}
 
 	return true;
+}
+
+void GBuffer::dilate(int32_t iterations)
+{
+	const int32_t c_offsets[][2] =
+	{
+		{  0,  0 },
+		{  0, -1 },
+		{  0,  1 },
+		{ -1,  0 },
+		{  1,  0 },
+		{ -1, -1 },
+		{  1, -1 },
+		{  1,  1 },
+		{ -1,  1 }
+	};
+
+	AlignedVector< Element > dilated(m_data.size());
+	for (int32_t i = 0; i < iterations; ++i)
+	{
+		for (uint32_t i = 0; i < m_width * m_height; ++i)
+		{
+			dilated[i].polygon = model::c_InvalidIndex;
+			dilated[i].material = 0;
+			dilated[i].position = Vector4(0.0f, 0.0f, 0.0f, 1.0f);
+			dilated[i].normal = Vector4(0.0f, 1.0f, 0.0f, 0.0f);
+			dilated[i].delta = Scalar(0.0f);
+		}
+
+		for (int32_t x = 0; x < m_width; ++x)
+		{
+			for (int32_t y = 0; y < m_height; ++y)
+			{
+				Element& dst = dilated[x + y * m_width];
+				for (int32_t j = 0; j < 9; ++j)
+				{
+					int32_t ox = x + c_offsets[j][0];
+					int32_t oy = y + c_offsets[j][1];
+					if (ox < 0 || ox >= m_width || oy < 0 || oy >= m_height)
+						continue;
+
+					const Element& src = m_data[ox + oy * m_width];
+					if (src.polygon != model::c_InvalidIndex)
+					{
+						dst = src;
+						break;
+					}
+				}
+			}
+		}
+
+		m_data.swap(dilated);
+	}
 }
 
 void GBuffer::saveAsImages(const std::wstring& outputPath) const

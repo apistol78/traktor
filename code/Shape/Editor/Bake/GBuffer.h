@@ -44,6 +44,8 @@ public:
 
 	const Aabb3& getBoundingBox() const { return m_boundingBox; }
 
+	void dilate(int32_t iterations);
+
 	void saveAsImages(const std::wstring& outputPath) const;
 
 private:

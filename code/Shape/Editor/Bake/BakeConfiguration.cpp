@@ -9,7 +9,7 @@ namespace traktor
 	namespace shape
 	{
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.shape.BakeConfiguration", 7, BakeConfiguration, ISerializable)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.shape.BakeConfiguration", 8, BakeConfiguration, ISerializable)
 
 BakeConfiguration::BakeConfiguration()
 :	m_seedGuid(Guid::create())
@@ -21,7 +21,6 @@ BakeConfiguration::BakeConfiguration()
 ,	m_pointLightShadowRadius(0.1f)
 ,	m_lumelDensity(64.0f)
 ,	m_minimumLightMapSize(128)
-,	m_enableAutoTexCoords(true)
 ,	m_enableShadowFix(false)
 ,	m_enableDilate(true)
 ,	m_enableDenoise(true)
@@ -46,8 +45,11 @@ void BakeConfiguration::serialize(ISerializer& s)
 	if (s.getVersion() >= 5)
 		s >> Member< int32_t >(L"minimumLightMapSize", m_minimumLightMapSize, AttributeRange(0));
 
-	if (s.getVersion() >= 2)
-		s >> Member< bool >(L"enableAutoTexCoords", m_enableAutoTexCoords);
+	if (s.getVersion() >= 2 && s.getVersion() < 8)
+	{
+		bool enableAutoTexCoords;
+		s >> Member< bool >(L"enableAutoTexCoords", enableAutoTexCoords);
+	}
 
 	if (s.getVersion() >= 1)
 		s >> Member< bool >(L"enableShadowFix", m_enableShadowFix);
