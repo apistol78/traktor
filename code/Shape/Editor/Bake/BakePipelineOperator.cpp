@@ -1,4 +1,5 @@
 #include <functional>
+#include "Core/Io/FileSystem.h"
 #include "Core/Io/Writer.h"
 #include "Core/Log/Log.h"
 #include "Core/Reflection/Reflection.h"
@@ -127,6 +128,7 @@ BakePipelineOperator::BakePipelineOperator()
 bool BakePipelineOperator::create(const editor::IPipelineSettings* settings)
 {
 	m_assetPath = settings->getProperty< std::wstring >(L"Pipeline.AssetPath", L"");
+	FileSystem::getInstance().makeAllDirectories(Path(L"data/Temp/Bake"));
 	return true;
 }
 
@@ -278,7 +280,7 @@ bool BakePipelineOperator::build(
 						// Create tracer output.
 						Ref< model::Model > rm = DeepClone(model).create< model::Model >();
 						rm->clear(model::Model::CfColors | model::Model::CfJoints);
-						model::NormalizeTexCoords(channel, 1.0f / 128, 1.0f / 128).apply(*rm);
+						model::NormalizeTexCoords(channel, 1.0f / 16, 1.0f / 16).apply(*rm);
 						model::CleanDuplicates(0.001f).apply(*rm);
 						model::CleanDegenerate().apply(*rm);
 
@@ -519,6 +521,10 @@ bool BakePipelineOperator::build(
 							uint32_t channel = models[i]->getTexCoordChannel(L"Lightmap");
 							if (channel != model::c_InvalidIndex)
 							{
+								// First normalize and add margin to model.
+								model::NormalizeTexCoords(channel, 1.0f / 16, 1.0f / 16).apply(*models[i]);
+
+								// Offset all texcoords into tile.
 								AlignedVector< model::Vertex > vertices = models[i]->getVertices();
 								for (auto& vertex : vertices)
 								{
@@ -543,15 +549,19 @@ bool BakePipelineOperator::build(
 
 						// Create tracer model.						
 						Ref< model::Model > tm = DeepClone(mergedModel).create< model::Model >();
-						tm->clear(model::Model::CfColors | model::Model::CfJoints);
 						model::Triangulate().apply(*tm);
 						model::CleanDuplicates(0.001f).apply(*tm);
 						model::CleanDegenerate().apply(*tm);
 						model::CalculateTangents().apply(*tm);
+						model::ModelFormat::writeAny(L"data/Temp/Bake/" + entityData->getName() + L"_Tracer.tmd", tm);
 						tracerTask->addTracerModel(new TracerModel(tm));
 
 						// Create tracer output.
 						Ref< model::Model > rm = DeepClone(mergedModel).create< model::Model >();
+						model::CleanDuplicates(0.001f).apply(*rm);
+						model::CleanDegenerate().apply(*rm);
+						model::ModelFormat::writeAny(L"data/Temp/Bake/" + entityData->getName() + L"_Visual.tmd", rm);
+
 						AlignedVector< model::Material > materials = rm->getMaterials();
 						for (auto& material : materials)
 						{
