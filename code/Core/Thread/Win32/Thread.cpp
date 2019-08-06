@@ -73,9 +73,13 @@ bool Thread::start(Priority priority)
 	//__try { RaiseException(0x406D1388, 0, sizeof(threadInfo) / sizeof(DWORD), (const ULONG_PTR*)&threadInfo); }
 	//__except (EXCEPTION_CONTINUE_EXECUTION) {}
 
-#	if defined(_XBOX)
+#if !defined(_XBOX)
+	SetThreadDescription(m_handle, m_name);
+#endif
+
+#if defined(_XBOX)
 	PIXNameThread(m_name.c_str());
-#	endif
+#endif
 
 	return resume(priority);
 }
