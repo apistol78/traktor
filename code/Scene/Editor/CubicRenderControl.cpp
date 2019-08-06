@@ -285,6 +285,7 @@ void CubicRenderControl::destroy()
 	safeDestroy(m_worldRenderer);
 	safeClose(m_renderView);
 	safeDestroy(m_renderWidget);
+	safeDestroy(m_container);
 }
 
 void CubicRenderControl::updateWorldRenderer()
