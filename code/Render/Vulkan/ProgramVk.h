@@ -33,15 +33,15 @@ class ProgramVk : public IProgram
 	T_RTTI_CLASS;
 
 public:
-	ProgramVk();
+	ProgramVk(VkPhysicalDevice physicalDevice, VkDevice logicalDevice);
 
 	virtual ~ProgramVk();
 
-	bool create(VkPhysicalDevice physicalDevice, VkDevice device, const ProgramResourceVk* resource);
+	bool create(const ProgramResourceVk* resource);
 
-	bool validateGraphics(VkDevice device, VkDescriptorPool descriptorPool, VkCommandBuffer commandBuffer, UniformBufferPoolVk* uniformBufferPool, float targetSize[2]);
+	bool validateGraphics(VkDescriptorPool descriptorPool, VkCommandBuffer commandBuffer, UniformBufferPoolVk* uniformBufferPool, float targetSize[2]);
 
-	bool validateCompute(VkDevice device, VkDescriptorPool descriptorPool, VkCommandBuffer commandBuffer, UniformBufferPoolVk* uniformBufferPool);
+	bool validateCompute(VkDescriptorPool descriptorPool, VkCommandBuffer commandBuffer, UniformBufferPoolVk* uniformBufferPool);
 
 	virtual void destroy() override final;
 
@@ -132,6 +132,8 @@ private:
 		Ref< StructBuffer > sbuffer;
 	};
 
+	VkPhysicalDevice m_physicalDevice;
+	VkDevice m_logicalDevice;
 	RenderState m_renderState;
 	VkShaderModule m_vertexShaderModule;
 	VkShaderModule m_fragmentShaderModule;

@@ -247,16 +247,10 @@ bool TracerProcessor::process(const TracerTask* task) const
         GBuffer gbuffer;
         gbuffer.create(outputSize, outputSize, *renderModel, Transform::identity(), channel);
 
-		gbuffer.saveAsImages(L"data/Temp/Bake/" + tracerOutput->getName() + L"_GBuffer_Pre_");
-
         // Preprocess GBuffer.
         rayTracer->preprocess(&gbuffer);
 
-		// Dilate gbuffer.
-		//if (configuration->getEnableDilate())
-		//	gbuffer.dilate(3);
-
-		gbuffer.saveAsImages(L"data/Temp/Bake/" + tracerOutput->getName() + L"_GBuffer_Post_");
+		gbuffer.saveAsImages(L"data/Temp/Bake/" + tracerOutput->getName() + L"_GBuffer");
 
         Ref< drawing::Image > lightmapDirect;
         Ref< drawing::Image > lightmapIndirect;
@@ -266,16 +260,6 @@ bool TracerProcessor::process(const TracerTask* task) const
 
         if (configuration->traceIndirect())
             lightmapIndirect = rayTracer->traceIndirect(&gbuffer);
-
-        //if (configuration->getEnableDilate())
-        //{
-        //    // Dilate lightmap to prevent leaking.
-        //    drawing::DilateFilter dilateFilter(3);
-        //    if (lightmapDirect)
-        //        lightmapDirect->apply(&dilateFilter);
-        //    if (lightmapIndirect)
-        //        lightmapIndirect->apply(&dilateFilter);
-        //}
 
         // Blur indirect lightmap to reduce noise from path tracing.
 #if !defined(__RPI__) && !defined(__APPLE__)

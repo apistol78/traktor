@@ -13,6 +13,11 @@
 #include "Script/ScriptChunk.h"
 #include "Script/ScriptFactory.h"
 #include "Ui/Application.h"
+#include "Ui/Container.h"
+#include "Ui/TableLayout.h"
+#include "Ui/ToolBar/ToolBar.h"
+#include "Ui/ToolBar/ToolBarButton.h"
+#include "Ui/ToolBar/ToolBarButtonClickEvent.h"
 #include "UiKit/Editor/WidgetPreviewControl.h"
 #include "UiKit/Editor/WidgetPreviewEditor.h"
 #include "UiKit/Editor/WidgetScaffolding.h"
@@ -60,9 +65,28 @@ bool WidgetPreviewEditor::create(ui::Widget* parent, db::Instance* instance, ISe
 	m_resourceManager->addFactory(new spark::MovieResourceFactory());
 	m_resourceManager->addFactory(new video::VideoFactory(renderSystem));
 
+	Ref< ui::Container > container = new ui::Container();
+	container->create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%", 0, 0));
+
+	Ref< ui::ToolBar > toolBar = new ui::ToolBar();
+	toolBar->create(container);
+	toolBar->addItem(new ui::ToolBarButton(
+		L"Debug wires",
+		ui::Command(L"UiKit.ToggleDebugWires"),
+		ui::ToolBarButton::BsText | ui::ToolBarButton::BsToggle
+	));
+	toolBar->addEventHandler< ui::ToolBarButtonClickEvent >([&](ui::ToolBarButtonClickEvent* event) {
+		if (event->getCommand() == L"UiKit.ToggleDebugWires")
+		{
+			m_previewControl->setDebugWires(
+				mandatory_non_null_type_cast< ui::ToolBarButton* >(event->getItem())->isToggled()
+			);
+		}
+	});
+
 	// Create preview control.
 	m_previewControl = new WidgetPreviewControl(m_editor, m_resourceManager, renderSystem);
-	if (!m_previewControl->create(parent))
+	if (!m_previewControl->create(container))
 		return false;
 
 	// Bind widget scaffolding.

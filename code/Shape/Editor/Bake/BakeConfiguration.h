@@ -43,8 +43,6 @@ public:
 
 	bool getEnableShadowFix() const { return m_enableShadowFix; }
 
-	bool getEnableDilate() const { return m_enableDilate; }
-
 	bool getEnableDenoise() const { return m_enableDenoise; }
 
 	float getClampShadowThreshold() const { return m_clampShadowThreshold; }
@@ -62,7 +60,6 @@ private:
 	float m_lumelDensity;
 	int32_t m_minimumLightMapSize;
 	bool m_enableShadowFix;
-	bool m_enableDilate;
 	bool m_enableDenoise;
 	float m_clampShadowThreshold;
 };

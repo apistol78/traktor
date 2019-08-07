@@ -16,7 +16,7 @@ namespace traktor
 	namespace spark
 	{
 
-/*! \brief Flash bitmap container.
+/*! \Bitmap container.
  * \ingroup Spark
  */
 class T_DLLCLASS Bitmap : public ISerializable
@@ -28,11 +28,11 @@ public:
 
 	Bitmap(uint32_t x, uint32_t y, uint32_t width, uint32_t height);
 
-	/*! \brief Set cache object.
+	/*! Set cache object.
 	*/
 	void setCacheObject(IRefCount* cacheObject) const;
 
-	/*! \brief Set cache object.
+	/*! Get cache object.
 	*/
 	IRefCount* getCacheObject() const { return m_cacheObject; }
 

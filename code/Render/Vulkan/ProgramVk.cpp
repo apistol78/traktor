@@ -56,8 +56,10 @@ bool storeIfNotEqual(const Vector4* source, int length, float* dest)
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ProgramVk", ProgramVk, IProgram)
 
-ProgramVk::ProgramVk()
-:	m_vertexShaderModule(0)
+ProgramVk::ProgramVk(VkPhysicalDevice physicalDevice, VkDevice logicalDevice)
+:	m_physicalDevice(physicalDevice)
+,	m_logicalDevice(logicalDevice)
+,	m_vertexShaderModule(0)
 ,	m_fragmentShaderModule(0)
 ,	m_computeShaderModule(0)
 ,	m_descriptorSetLayout(0)
@@ -72,7 +74,7 @@ ProgramVk::~ProgramVk()
 	destroy();
 }
 
-bool ProgramVk::create(VkPhysicalDevice physicalDevice, VkDevice device, const ProgramResourceVk* resource)
+bool ProgramVk::create(const ProgramResourceVk* resource)
 {
 	VkShaderStageFlags stageFlags;
 
@@ -86,7 +88,7 @@ bool ProgramVk::create(VkPhysicalDevice physicalDevice, VkDevice device, const P
 		vsmci.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
 		vsmci.codeSize = resource->m_vertexShader.size() * sizeof(uint32_t);
 		vsmci.pCode = &resource->m_vertexShader[0];
-		if (vkCreateShaderModule(device, &vsmci, nullptr, &m_vertexShaderModule) != VK_SUCCESS)
+		if (vkCreateShaderModule(m_logicalDevice, &vsmci, nullptr, &m_vertexShaderModule) != VK_SUCCESS)
 			return false;
 
 		// Create fragment shader module.
@@ -94,7 +96,7 @@ bool ProgramVk::create(VkPhysicalDevice physicalDevice, VkDevice device, const P
 		fsmci.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
 		fsmci.codeSize = resource->m_fragmentShader.size() * sizeof(uint32_t);
 		fsmci.pCode = &resource->m_fragmentShader[0];
-		if (vkCreateShaderModule(device, &fsmci, nullptr, &m_fragmentShaderModule) != VK_SUCCESS)
+		if (vkCreateShaderModule(m_logicalDevice, &fsmci, nullptr, &m_fragmentShaderModule) != VK_SUCCESS)
 			return false;
 
 		stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT | VK_SHADER_STAGE_VERTEX_BIT;
@@ -106,7 +108,7 @@ bool ProgramVk::create(VkPhysicalDevice physicalDevice, VkDevice device, const P
 		csmci.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
 		csmci.codeSize = resource->m_computeShader.size() * sizeof(uint32_t);
 		csmci.pCode = &resource->m_computeShader[0];
-		if (vkCreateShaderModule(device, &csmci, nullptr, &m_computeShaderModule) != VK_SUCCESS)
+		if (vkCreateShaderModule(m_logicalDevice, &csmci, nullptr, &m_computeShaderModule) != VK_SUCCESS)
 			return false;
 
 		stageFlags = VK_SHADER_STAGE_COMPUTE_BIT;
@@ -165,7 +167,7 @@ bool ProgramVk::create(VkPhysicalDevice physicalDevice, VkDevice device, const P
 	dlci.bindingCount = (uint32_t)dslb.size();
 	dlci.pBindings = dslb.c_ptr();
 
-	if (vkCreateDescriptorSetLayout(device, &dlci, nullptr, &m_descriptorSetLayout) != VK_SUCCESS)
+	if (vkCreateDescriptorSetLayout(m_logicalDevice, &dlci, nullptr, &m_descriptorSetLayout) != VK_SUCCESS)
 		return false;
 
 	// Create pipeline layout.
@@ -176,7 +178,7 @@ bool ProgramVk::create(VkPhysicalDevice physicalDevice, VkDevice device, const P
 	lci.pushConstantRangeCount = 0;
 	lci.pPushConstantRanges = nullptr;
 
-	if (vkCreatePipelineLayout(device, &lci, nullptr, &m_pipelineLayout) != VK_SUCCESS)
+	if (vkCreatePipelineLayout(m_logicalDevice, &lci, nullptr, &m_pipelineLayout) != VK_SUCCESS)
 		return false;
 
 	// Create uniform shadow buffers.
@@ -209,7 +211,7 @@ bool ProgramVk::create(VkPhysicalDevice physicalDevice, VkDevice device, const P
 		sci.borderColor = VK_BORDER_COLOR_FLOAT_TRANSPARENT_BLACK;
 		sci.unnormalizedCoordinates = VK_FALSE;
 
-		if (vkCreateSampler(device, &sci, nullptr, &sampler) != VK_SUCCESS)
+		if (vkCreateSampler(m_logicalDevice, &sci, nullptr, &sampler) != VK_SUCCESS)
 			return false;
 
 		m_samplers.push_back({ resourceSampler.binding, sampler });
@@ -250,7 +252,7 @@ bool ProgramVk::create(VkPhysicalDevice physicalDevice, VkDevice device, const P
 	return true;
 }
 
-bool ProgramVk::validateGraphics(VkDevice device, VkDescriptorPool descriptorPool, VkCommandBuffer commandBuffer, UniformBufferPoolVk* uniformBufferPool, float targetSize[2])
+bool ProgramVk::validateGraphics(VkDescriptorPool descriptorPool, VkCommandBuffer commandBuffer, UniformBufferPoolVk* uniformBufferPool, float targetSize[2])
 {
 	// Set implicit parameters.
 	setVectorParameter(
@@ -268,7 +270,7 @@ bool ProgramVk::validateGraphics(VkDevice device, VkDescriptorPool descriptorPoo
 	allocateInfo.descriptorSetCount = 1;
 	allocateInfo.pSetLayouts = &m_descriptorSetLayout;
 
-	if (vkAllocateDescriptorSets(device, &allocateInfo, &descriptorSet) != VK_SUCCESS)
+	if (vkAllocateDescriptorSets(m_logicalDevice, &allocateInfo, &descriptorSet) != VK_SUCCESS)
 		return false;
 
 	AlignedVector< VkDescriptorBufferInfo > bufferInfos;
@@ -292,7 +294,7 @@ bool ProgramVk::validateGraphics(VkDevice device, VkDescriptorPool descriptorPoo
 				return false;
 
 			uint8_t* ptr = nullptr;
-			if (vkMapMemory(device, m_uniformBuffers[i].memory, 0, m_uniformBuffers[i].size, 0, (void **)&ptr) != VK_SUCCESS)
+			if (vkMapMemory(m_logicalDevice, m_uniformBuffers[i].memory, 0, m_uniformBuffers[i].size, 0, (void **)&ptr) != VK_SUCCESS)
 				return false;
 
 			std::memcpy(
@@ -301,7 +303,7 @@ bool ProgramVk::validateGraphics(VkDevice device, VkDescriptorPool descriptorPoo
 				m_uniformBuffers[i].size
 			);
 
-			vkUnmapMemory(device, m_uniformBuffers[i].memory);
+			vkUnmapMemory(m_logicalDevice, m_uniformBuffers[i].memory);
 			m_uniformBuffers[i].dirty = false;
 		}
 
@@ -410,7 +412,7 @@ bool ProgramVk::validateGraphics(VkDevice device, VkDescriptorPool descriptorPoo
 	}
 
 	if (!writes.empty())
-		vkUpdateDescriptorSets(device, (uint32_t)writes.size(), writes.c_ptr(), 0, nullptr);
+		vkUpdateDescriptorSets(m_logicalDevice, (uint32_t)writes.size(), writes.c_ptr(), 0, nullptr);
 
 	// Push command.
 	vkCmdBindDescriptorSets(
@@ -425,7 +427,7 @@ bool ProgramVk::validateGraphics(VkDevice device, VkDescriptorPool descriptorPoo
 	return true;
 }
 
-bool ProgramVk::validateCompute(VkDevice device, VkDescriptorPool descriptorPool, VkCommandBuffer commandBuffer, UniformBufferPoolVk* uniformBufferPool)
+bool ProgramVk::validateCompute(VkDescriptorPool descriptorPool, VkCommandBuffer commandBuffer, UniformBufferPoolVk* uniformBufferPool)
 {
 	// Allocate a descriptor set for parameters.
 	VkDescriptorSet descriptorSet = 0;
@@ -437,7 +439,7 @@ bool ProgramVk::validateCompute(VkDevice device, VkDescriptorPool descriptorPool
 	allocateInfo.descriptorSetCount = 1;
 	allocateInfo.pSetLayouts = &m_descriptorSetLayout;
 
-	if (vkAllocateDescriptorSets(device, &allocateInfo, &descriptorSet) != VK_SUCCESS)
+	if (vkAllocateDescriptorSets(m_logicalDevice, &allocateInfo, &descriptorSet) != VK_SUCCESS)
 		return false;
 
 	AlignedVector< VkDescriptorBufferInfo > bufferInfos;
@@ -461,7 +463,7 @@ bool ProgramVk::validateCompute(VkDevice device, VkDescriptorPool descriptorPool
 				return false;
 
 			uint8_t* ptr = nullptr;
-			if (vkMapMemory(device, m_uniformBuffers[i].memory, 0, m_uniformBuffers[i].size, 0, (void **)&ptr) != VK_SUCCESS)
+			if (vkMapMemory(m_logicalDevice, m_uniformBuffers[i].memory, 0, m_uniformBuffers[i].size, 0, (void **)&ptr) != VK_SUCCESS)
 				return false;
 
 			std::memcpy(
@@ -470,7 +472,7 @@ bool ProgramVk::validateCompute(VkDevice device, VkDescriptorPool descriptorPool
 				m_uniformBuffers[i].size
 			);
 
-			vkUnmapMemory(device, m_uniformBuffers[i].memory);
+			vkUnmapMemory(m_logicalDevice, m_uniformBuffers[i].memory);
 			m_uniformBuffers[i].dirty = false;
 		}
 
@@ -579,7 +581,7 @@ bool ProgramVk::validateCompute(VkDevice device, VkDescriptorPool descriptorPool
 	}
 
 	if (!writes.empty())
-		vkUpdateDescriptorSets(device, (uint32_t)writes.size(), writes.c_ptr(), 0, nullptr);
+		vkUpdateDescriptorSets(m_logicalDevice, (uint32_t)writes.size(), writes.c_ptr(), 0, nullptr);
 
 	// Push command.
 	vkCmdBindDescriptorSets(
@@ -596,6 +598,34 @@ bool ProgramVk::validateCompute(VkDevice device, VkDescriptorPool descriptorPool
 
 void ProgramVk::destroy()
 {
+	if (m_vertexShaderModule != 0)
+	{
+		vkDestroyShaderModule(m_logicalDevice, m_vertexShaderModule, 0);
+		m_vertexShaderModule = 0;
+	}
+	if (m_fragmentShaderModule != 0)
+	{
+		vkDestroyShaderModule(m_logicalDevice, m_fragmentShaderModule, 0);
+		m_fragmentShaderModule = 0;
+	}
+	if (m_computeShaderModule != 0)
+	{
+		vkDestroyShaderModule(m_logicalDevice, m_computeShaderModule, 0);
+		m_computeShaderModule = 0;
+	}
+	if (m_descriptorSetLayout != 0)
+	{
+		vkDestroyDescriptorSetLayout(m_logicalDevice, m_descriptorSetLayout, 0);
+		m_descriptorSetLayout = 0;
+	}
+	if (m_pipelineLayout != 0)
+	{
+		vkDestroyPipelineLayout(m_logicalDevice, m_pipelineLayout, 0);
+		m_pipelineLayout = 0;
+	}
+	for (auto& sampler : m_samplers)
+		vkDestroySampler(m_logicalDevice, sampler.sampler, 0);
+	m_samplers.clear();
 }
 
 void ProgramVk::setFloatParameter(handle_t handle, float param)

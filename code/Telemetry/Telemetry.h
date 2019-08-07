@@ -37,7 +37,7 @@ public:
 
 	static Telemetry& getInstance();
 
-	bool create(const std::wstring& serverHost, const std::wstring& client);
+	bool create(const std::wstring& serverHost, const std::wstring& client, uint32_t sequenceNr);
 
 	void event(const std::wstring& symbol);
 
@@ -46,6 +46,8 @@ public:
 	void add(const std::wstring& id, int32_t value);
 
 	void flush();
+
+	uint32_t getLastSequenceNumber() const { return m_sequenceNr; }
 
 protected:
 	virtual void destroy() override final;
@@ -58,6 +60,7 @@ private:
 	int32_t m_queueError;
 	std::wstring m_serverHost;
 	std::wstring m_client;
+	uint32_t m_sequenceNr;
 
 	void threadProcessQueue();
 };

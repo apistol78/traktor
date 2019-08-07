@@ -12,10 +12,6 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.scene.DefaultComponentEditorFactory", DefaultCo
 const TypeInfoSet DefaultComponentEditorFactory::getComponentDataTypes() const
 {
 	return makeTypeInfoSet< world::IEntityComponentData >();
-	//	world::CameraComponentData,
-	//	world::LightComponentData,
-	//	world::VolumeComponentData
-	//>();
 }
 
 Ref< IComponentEditor > DefaultComponentEditorFactory::createComponentEditor(SceneEditorContext* context, EntityAdapter* entityAdapter, world::IEntityComponentData* componentData) const

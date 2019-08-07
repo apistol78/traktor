@@ -74,6 +74,7 @@ WidgetPreviewControl::WidgetPreviewControl(editor::IEditor* editor, resource::IR
 :	m_editor(editor)
 ,	m_resourceManager(resourceManager)
 ,	m_renderSystem(renderSystem)
+,	m_debugWires(false)
 {
 }
 
@@ -182,6 +183,11 @@ void WidgetPreviewControl::setScaffolding(const WidgetScaffolding* scaffolding)
 		m_scaffoldingClass.clear();
 }
 
+void WidgetPreviewControl::setDebugWires(bool debugWires)
+{
+	m_debugWires = debugWires;
+}
+
 void WidgetPreviewControl::eventSize(ui::SizeEvent* event)
 {
 	ui::Size sz = event->getSize();
@@ -247,16 +253,20 @@ void WidgetPreviewControl::eventPaint(ui::PaintEvent* event)
 
 		// Build render context.
 		m_displayRenderer->build(uint32_t(0));
-//		m_displayRendererWire->begin(uint32_t(0));
+		if (m_debugWires)
+			m_displayRendererWire->begin(uint32_t(0));
 
 		m_moviePlayer->render(m_movieRenderer);
-//		m_moviePlayer->render(m_movieRendererWire);
+		if (m_debugWires)
+			m_moviePlayer->render(m_movieRendererWire);
 
-//		m_displayRendererWire->end(uint32_t(0));
+		if (m_debugWires)
+			m_displayRendererWire->end(uint32_t(0));
 
 		// Flush render context.
 		m_displayRenderer->render(m_renderView, 0, Vector2(0.0f, 0.0f), 1.0f);
-//		m_displayRendererWire->render(m_renderView, uint32_t(0));
+		if (m_debugWires)
+			m_displayRendererWire->render(m_renderView, uint32_t(0));
 
 		m_renderView->end();
 		m_renderView->present();

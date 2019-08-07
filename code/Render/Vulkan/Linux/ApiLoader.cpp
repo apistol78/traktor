@@ -87,6 +87,11 @@ PFN_vkCmdDispatch vkCmdDispatch = nullptr;
 PFN_vkInvalidateMappedMemoryRanges vkInvalidateMappedMemoryRanges = nullptr;
 PFN_vkCmdCopyBuffer vkCmdCopyBuffer = nullptr;
 
+PFN_vkDestroyShaderModule vkDestroyShaderModule = nullptr;
+PFN_vkDestroyDescriptorSetLayout vkDestroyDescriptorSetLayout = nullptr;
+PFN_vkDestroyPipelineLayout vkDestroyPipelineLayout = nullptr;
+PFN_vkDestroySampler vkDestroySampler = nullptr;
+
 PFN_vkCreateXlibSurfaceKHR vkCreateXlibSurfaceKHR = nullptr;
 PFN_vkGetPhysicalDeviceSurfaceSupportKHR vkGetPhysicalDeviceSurfaceSupportKHR = nullptr;
 PFN_vkGetPhysicalDeviceSurfaceFormatsKHR vkGetPhysicalDeviceSurfaceFormatsKHR = nullptr;
@@ -620,6 +625,34 @@ bool initializeVulkanApi()
 		log::error << L"Failed to resolve Vulkan entry point \"vkCmdCopyBuffer\"." << Endl;
 		return false;
 	}
+
+	vkDestroyShaderModule = (PFN_vkDestroyShaderModule)dlsym(s_hVulkanModule, "vkDestroyShaderModule");
+	if (vkDestroyShaderModule == nullptr)
+	{
+		log::error << L"Failed to resolve Vulkan entry point \"vkDestroyShaderModule\"." << Endl;
+		return false;
+	}
+
+	vkDestroyDescriptorSetLayout = (PFN_vkDestroyDescriptorSetLayout)dlsym(s_hVulkanModule, "vkDestroyDescriptorSetLayout");
+	if (vkDestroyDescriptorSetLayout == nullptr)
+	{
+		log::error << L"Failed to resolve Vulkan entry point \"vkDestroyDescriptorSetLayout\"." << Endl;
+		return false;
+	}
+
+	vkDestroyPipelineLayout = (PFN_vkDestroyPipelineLayout)dlsym(s_hVulkanModule, "vkDestroyPipelineLayout");
+	if (vkDestroyPipelineLayout == nullptr)
+	{
+		log::error << L"Failed to resolve Vulkan entry point \"vkDestroyPipelineLayout\"." << Endl;
+		return false;
+	}
+
+	vkDestroySampler = (PFN_vkDestroySampler)dlsym(s_hVulkanModule, "vkDestroySampler");
+	if (vkDestroySampler == nullptr)
+	{
+		log::error << L"Failed to resolve Vulkan entry point \"vkDestroySampler\"." << Endl;
+		return false;
+	}			
 
 	return true;
 }

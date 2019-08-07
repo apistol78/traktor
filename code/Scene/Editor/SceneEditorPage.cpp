@@ -80,13 +80,11 @@ const Guid c_guidWhiteRoomScene(L"{473467B0-835D-EF45-B308-E3C3C5B0F226}");
 
 bool isChildEntitySelected(const EntityAdapter* entityAdapter)
 {
-	const RefArray< EntityAdapter >& children = entityAdapter->getChildren();
-	for (RefArray< EntityAdapter >::const_iterator i = children.begin(); i != children.end(); ++i)
+	for (auto child : entityAdapter->getChildren())
 	{
-		if ((*i)->isSelected())
+		if (child->isSelected())
 			return true;
-
-		if (isChildEntitySelected(*i))
+		if (isChildEntitySelected(child))
 			return true;
 	}
 	return false;
@@ -100,13 +98,12 @@ bool filterIncludeEntity(const TypeInfo& entityOrComponentType, EntityAdapter* e
 	if (is_type_of(entityOrComponentType, type_of(entityAdapter->getEntity())))
 		return true;
 
-	if (entityAdapter->getComponent(entityOrComponentType) != 0)
+	if (entityAdapter->getComponent(entityOrComponentType) != nullptr)
 		return true;
 
-	const RefArray< EntityAdapter >& children = entityAdapter->getChildren();
-	for (RefArray< EntityAdapter >::const_iterator i = children.begin(); i != children.end(); ++i)
+	for (auto child : entityAdapter->getChildren())
 	{
-		if (filterIncludeEntity(entityOrComponentType, *i))
+		if (filterIncludeEntity(entityOrComponentType, child))
 			return true;
 	}
 
@@ -121,7 +118,7 @@ SceneEditorPage::SceneEditorPage(editor::IEditor* editor, editor::IEditorPageSit
 :	m_editor(editor)
 ,	m_site(site)
 ,	m_document(document)
-,	m_entityFilterType(0)
+,	m_entityFilterType(nullptr)
 {
 }
 
@@ -408,10 +405,9 @@ bool SceneEditorPage::dropInstance(db::Instance* instance, const ui::Point& posi
 	Ref< world::EntityData > entityData;
 
 	// Check profiles if any can convert instance into an entity data.
-	const RefArray< ISceneEditorProfile >& editorProfiles = m_context->getEditorProfiles();
-	for (RefArray< ISceneEditorProfile >::const_iterator i = editorProfiles.begin(); i != editorProfiles.end(); ++i)
+	for (auto editorProfile : m_context->getEditorProfiles())
 	{
-		if ((entityData = (*i)->createEntityData(m_context, instance)) != 0)
+		if ((entityData = editorProfile->createEntityData(m_context, instance)) != nullptr)
 			break;
 	}
 
@@ -539,18 +535,18 @@ bool SceneEditorPage::handleCommand(const ui::Command& command)
 
 		// Create clipboard data with all selected entities; remove entities from scene if we're cutting.
 		Ref< EntityClipboardData > entityClipboardData = new EntityClipboardData();
-		for (RefArray< EntityAdapter >::iterator i = selectedEntities.begin(); i != selectedEntities.end(); ++i)
+		for (auto selectedEntity : selectedEntities)
 		{
-			entityClipboardData->addEntityData((*i)->getEntityData());
+			entityClipboardData->addEntityData(selectedEntity->getEntityData());
 			if (command == L"Editor.Cut")
 			{
-				Ref< EntityAdapter > parentGroup = (*i)->getParent();
+				Ref< EntityAdapter > parentGroup = selectedEntity->getParent();
 				if (parentGroup->isGroup())
 				{
-					parentGroup->removeChild(*i);
+					parentGroup->removeChild(selectedEntity);
 
 					if (m_context->getControllerEditor())
-						m_context->getControllerEditor()->entityRemoved(*i);
+						m_context->getControllerEditor()->entityRemoved(selectedEntity);
 				}
 			}
 		}
@@ -582,17 +578,17 @@ bool SceneEditorPage::handleCommand(const ui::Command& command)
 		if (!entityClipboardData)
 			return false;
 
-		const RefArray< world::EntityData >& entityData = entityClipboardData->getEntityData();
-		if (entityData.empty())
+		const RefArray< world::EntityData >& entityDatas = entityClipboardData->getEntityData();
+		if (entityDatas.empty())
 			return false;
 
 		m_context->getDocument()->push();
 
 		// Create new instances and adapters for each entity found in clipboard.
-		for (RefArray< world::EntityData >::const_iterator i = entityData.begin(); i != entityData.end(); ++i)
+		for (auto entityData : entityDatas)
 		{
 			Ref< EntityAdapter > entityAdapter = new EntityAdapter(m_context);
-			entityAdapter->prepare(*i, 0, 0);
+			entityAdapter->prepare(entityData, 0, 0);
 			parentEntity->addChild(entityAdapter);
 		}
 
@@ -610,21 +606,21 @@ bool SceneEditorPage::handleCommand(const ui::Command& command)
 		m_context->getDocument()->push();
 
 		uint32_t removedCount = 0;
-		for (RefArray< EntityAdapter >::iterator i = selectedEntities.begin(); i != selectedEntities.end(); ++i)
+		for (auto selectedEntity : selectedEntities)
 		{
-			Ref< EntityAdapter > parentGroup = (*i)->getParent();
+			Ref< EntityAdapter > parentGroup = selectedEntity->getParent();
 			if (parentGroup && parentGroup->isGroup())
 			{
-				parentGroup->removeChild(*i);
+				parentGroup->removeChild(selectedEntity);
 				removedCount++;
 
 				if (m_context->getControllerEditor())
-					m_context->getControllerEditor()->entityRemoved(*i);
+					m_context->getControllerEditor()->entityRemoved(selectedEntity);
 			}
-			else if ((*i)->isLayer())
+			else if (selectedEntity->isLayer())
 			{
 				RefArray< world::LayerEntityData > layers = m_context->getSceneAsset()->getLayers();
-				layers.remove(checked_type_cast< world::LayerEntityData*, false >((*i)->getEntityData()));
+				layers.remove(checked_type_cast< world::LayerEntityData*, false >(selectedEntity->getEntityData()));
 				m_context->getSceneAsset()->setLayers(layers);
 				removedCount++;
 			}
@@ -648,7 +644,7 @@ bool SceneEditorPage::handleCommand(const ui::Command& command)
 	else if (command == L"Scene.Editor.ResolveExternal")
 		result = resolveExternal();
 	else if (command == L"Scene.Editor.AddEntity")
-		result = addEntity(0);
+		result = addEntity(nullptr);
 	else if (command == L"Scene.Editor.AddComponentEntity")
 		result = addEntity(&type_of< world::ComponentEntityData >());
 	else if (command == L"Scene.Editor.AddGroupEntity")
@@ -715,8 +711,8 @@ bool SceneEditorPage::handleCommand(const ui::Command& command)
 		RefArray< EntityAdapter > selectedEntities;
 		m_context->getEntities(selectedEntities, SceneEditorContext::GfSelectedOnly | SceneEditorContext::GfDescendants);
 
-		for (RefArray< EntityAdapter >::iterator i = selectedEntities.begin(); i != selectedEntities.end(); ++i)
-			(*i)->setLocked(true);
+		for (auto selectedEntity : selectedEntities)
+			selectedEntity->setLocked(true);
 
 		createInstanceGrid();
 	}
@@ -725,8 +721,8 @@ bool SceneEditorPage::handleCommand(const ui::Command& command)
 		RefArray< EntityAdapter > selectedEntities;
 		m_context->getEntities(selectedEntities, SceneEditorContext::GfSelectedOnly | SceneEditorContext::GfDescendants);
 
-		for (RefArray< EntityAdapter >::iterator i = selectedEntities.begin(); i != selectedEntities.end(); ++i)
-			(*i)->setLocked(false);
+		for (auto selectedEntity : selectedEntities)
+			selectedEntity->setLocked(false);
 
 		createInstanceGrid();
 	}
@@ -735,8 +731,8 @@ bool SceneEditorPage::handleCommand(const ui::Command& command)
 		RefArray< EntityAdapter > selectedEntities;
 		m_context->getEntities(selectedEntities, SceneEditorContext::GfDescendants);
 
-		for (RefArray< EntityAdapter >::iterator i = selectedEntities.begin(); i != selectedEntities.end(); ++i)
-			(*i)->setLocked(false);
+		for (auto selectedEntity : selectedEntities)
+			selectedEntity->setLocked(false);
 
 		createInstanceGrid();
 	}
@@ -745,8 +741,8 @@ bool SceneEditorPage::handleCommand(const ui::Command& command)
 		RefArray< EntityAdapter > selectedEntities;
 		m_context->getEntities(selectedEntities, SceneEditorContext::GfSelectedOnly | SceneEditorContext::GfDescendants);
 
-		for (RefArray< EntityAdapter >::iterator i = selectedEntities.begin(); i != selectedEntities.end(); ++i)
-			(*i)->setVisible(true);
+		for (auto selectedEntity : selectedEntities)
+			selectedEntity->setVisible(true);
 
 		createInstanceGrid();
 	}
@@ -755,8 +751,8 @@ bool SceneEditorPage::handleCommand(const ui::Command& command)
 		RefArray< EntityAdapter > selectedEntities;
 		m_context->getEntities(selectedEntities, SceneEditorContext::GfDescendants);
 
-		for (RefArray< EntityAdapter >::iterator i = selectedEntities.begin(); i != selectedEntities.end(); ++i)
-			(*i)->setVisible(true);
+		for (auto selectedEntity : selectedEntities)
+			selectedEntity->setVisible(true);
 
 		createInstanceGrid();
 	}
@@ -765,8 +761,8 @@ bool SceneEditorPage::handleCommand(const ui::Command& command)
 		RefArray< EntityAdapter > selectedEntities;
 		m_context->getEntities(selectedEntities, SceneEditorContext::GfSelectedOnly | SceneEditorContext::GfDescendants);
 
-		for (RefArray< EntityAdapter >::iterator i = selectedEntities.begin(); i != selectedEntities.end(); ++i)
-			(*i)->setVisible(false);
+		for (auto selectedEntity : selectedEntities)
+			selectedEntity->setVisible(false);
 
 		createInstanceGrid();
 	}
@@ -869,16 +865,15 @@ void SceneEditorPage::createControllerEditor()
 			Ref< ISceneControllerEditor > controllerEditor;
 
 			// Create controller editor factories.
-			const RefArray< ISceneEditorProfile >& profiles = m_context->getEditorProfiles();
-			for (RefArray< ISceneEditorProfile >::const_iterator i = profiles.begin(); i != profiles.end(); ++i)
-				(*i)->createControllerEditorFactories(m_context, controllerEditorFactories);
+			for (auto profile : m_context->getEditorProfiles())
+				profile->createControllerEditorFactories(m_context, controllerEditorFactories);
 
-			for (RefArray< const ISceneControllerEditorFactory >::iterator i = controllerEditorFactories.begin(); i != controllerEditorFactories.end(); ++i)
+			for (auto controllerEditorFactory : controllerEditorFactories)
 			{
-				TypeInfoSet typeSet = (*i)->getControllerDataTypes();
+				TypeInfoSet typeSet = controllerEditorFactory->getControllerDataTypes();
 				if (typeSet.find(&type_of(controllerData)) != typeSet.end())
 				{
-					controllerEditor = (*i)->createControllerEditor(type_of(controllerData));
+					controllerEditor = controllerEditorFactory->createControllerEditor(type_of(controllerData));
 					if (controllerEditor)
 						break;
 				}
@@ -972,12 +967,11 @@ Ref< ui::GridRow > SceneEditorPage::createInstanceGridRow(EntityAdapter* entityA
 		!entityAdapter->isChildrenPrivate()
 	)
 	{
-		const RefArray< EntityAdapter >& children = entityAdapter->getChildren();
-		for (RefArray< EntityAdapter >::const_iterator i = children.begin(); i != children.end(); ++i)
+		for (auto child : entityAdapter->getChildren())
 		{
-			Ref< ui::GridRow > child = createInstanceGridRow(*i);
-			if (child)
-				row->addChild(child);
+			Ref< ui::GridRow > childRow = createInstanceGridRow(child);
+			if (childRow)
+				row->addChild(childRow);
 		}
 	}
 
@@ -987,15 +981,12 @@ Ref< ui::GridRow > SceneEditorPage::createInstanceGridRow(EntityAdapter* entityA
 void SceneEditorPage::createInstanceGrid()
 {
 	m_instanceGrid->removeAllRows();
-
-	const RefArray< EntityAdapter >& layerEntityAdapters = m_context->getLayerEntityAdapters();
-	for (RefArray< EntityAdapter >::const_iterator j = layerEntityAdapters.begin(); j != layerEntityAdapters.end(); ++j)
+	for (auto layerEntityAdapter : m_context->getLayerEntityAdapters())
 	{
-		Ref< ui::GridRow > entityRow = createInstanceGridRow(*j);
+		Ref< ui::GridRow > entityRow = createInstanceGridRow(layerEntityAdapter);
 		if (entityRow)
 			m_instanceGrid->addRow(entityRow);
 	}
-
 	m_instanceGrid->update();
 }
 
@@ -1175,7 +1166,7 @@ bool SceneEditorPage::moveToEntity()
 	if (m_context->getEntities(selectedEntities, SceneEditorContext::GfSelectedOnly | SceneEditorContext::GfDescendants) == 1)
 		m_context->moveToEntityAdapter(selectedEntities[0]);
 	else
-		m_context->moveToEntityAdapter(0);
+		m_context->moveToEntityAdapter(nullptr);
 	return true;
 }
 
@@ -1260,10 +1251,9 @@ void SceneEditorPage::eventInstanceSelect(ui::SelectionChangeEvent* event)
 	// Select only entities which is selected in the grid.
 	RefArray< ui::GridRow > selectedRows;
 	m_instanceGrid->getRows(selectedRows, ui::GridView::GfDescendants | ui::GridView::GfSelectedOnly);
-
-	for (RefArray< ui::GridRow >::iterator i = selectedRows.begin(); i != selectedRows.end(); ++i)
+	for (auto selectedRow : selectedRows)
 	{
-		EntityAdapter* entityAdapter = (*i)->getData< EntityAdapter >(L"ENTITY");
+		EntityAdapter* entityAdapter = selectedRow->getData< EntityAdapter >(L"ENTITY");
 		T_ASSERT(entityAdapter);
 
 		m_context->selectEntity(entityAdapter);

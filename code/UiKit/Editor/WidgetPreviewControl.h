@@ -67,6 +67,10 @@ public:
 
 	void setScaffolding(const WidgetScaffolding* scaffolding);
 
+	void setDebugWires(bool debugWires);
+
+	bool getDebugWires() const { return m_debugWires; }
+
 private:
 	editor::IEditor* m_editor;
 	Ref< const WidgetScaffolding > m_scaffolding;
@@ -82,6 +86,7 @@ private:
 	Ref< spark::Movie > m_movie;
 	resource::Proxy< IRuntimeClass > m_scaffoldingClass;
 	Ref< ITypedObject > m_scaffoldingObject;
+	bool m_debugWires;
 	Timer m_timer;
 
 	void eventSize(ui::SizeEvent* event);
