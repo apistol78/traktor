@@ -22,6 +22,7 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.telemetry.TelemetryClassFactory", 0, Te
 void TelemetryClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 {
 	auto classTelemetry = new AutoRuntimeClass< Telemetry >();
+	classTelemetry->addProperty("lastSequenceNumber", &Telemetry::getLastSequenceNumber);
 	classTelemetry->addStaticMethod("getInstance", &Telemetry_getInstance);
 	classTelemetry->addMethod("create", &Telemetry::create);
 	classTelemetry->addMethod("event", &Telemetry::event);

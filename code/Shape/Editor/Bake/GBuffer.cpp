@@ -1,7 +1,4 @@
-#include <algorithm>
 #include <ctime>
-#include <functional>
-#include <vector>
 #include "Core/Log/Log.h"
 #include "Core/Math/Aabb2.h"
 #include "Core/Math/Const.h"
@@ -57,13 +54,14 @@ private:
 	float m_invDenom;
 };
 
+template < typename ValueType >
 class Interpolants
 {
 public:
 	Interpolants(
-		const Vector4 v0,
-		const Vector4 v1,
-		const Vector4 v2
+		const ValueType& v0,
+		const ValueType& v1,
+		const ValueType& v2
 	)
 	:	m_v0(v0)
 	,	m_v1(v1)
@@ -71,16 +69,16 @@ public:
 	{
 	}
 
-	Vector4 evaluate(const Barycentric& bary, const Vector2& pt) const
+	ValueType evaluate(const Barycentric& bary, const Vector2& pt) const
 	{
 		Vector4 f = bary.factors(pt);
 		return m_v0 * f.x() + m_v1 * f.y() + m_v2 * f.z();
 	}
 
 private:
-	Vector4 m_v0;
-	Vector4 m_v1;
-	Vector4 m_v2;
+	ValueType m_v0;
+	ValueType m_v1;
+	ValueType m_v2;
 };
 
 		}
@@ -156,19 +154,19 @@ bool GBuffer::create(int32_t width, int32_t height, const model::Model& model, c
 			);
 
 			// Interpolate for verification of barycentrics... \tbd
-			Interpolants ipolTexCoords(
+			Interpolants< Vector2 > ipolTexCoords(
 				texCoords.points[i0],
 				texCoords.points[i1],
 				texCoords.points[i2]
 			);
 
-			Interpolants ipolPositions(
+			Interpolants< Vector4 > ipolPositions(
 				positions[i0],
 				positions[i1],
 				positions[i2]
 			);
 
-			Interpolants ipolNormals(
+			Interpolants< Vector4 > ipolNormals(
 				normals[i0],
 				normals[i1],
 				normals[i2]
@@ -194,97 +192,50 @@ bool GBuffer::create(int32_t width, int32_t height, const model::Model& model, c
 					Vector2 cpt(x, y);
 
 					bool inside = bary.inside(cpt);
-					for (int32_t iy = -4; !inside && iy <= 4; ++iy)
+					bool edge = false;
+
+					// Check if we're close to edge if winding, solves
+					// narrow triangles but also add a margin.
+					if (!inside)
 					{
-						for (int32_t ix = -4; !inside && ix <= 4; ++ix)
-						{
-							inside |= bary.inside(cpt + Vector2(ix / 2.0f, iy / 2.0f));
-						}
+						float distance = (cpt - texCoords.closest(cpt)).length();
+						if (distance < 4.0f)
+							edge = true;
 					}
 
-					// \tbd Too narrow triangles might miss...
-
-					if (!inside)
+					if (!inside && !edge)
 						continue;
 
 					Element& elm = m_data[x + y * m_width];
 
+					// Do not overwrite existing data unless we're exclusively inside triangle.
 					if (elm.polygon != model::c_InvalidIndex)
 					{
-						if (!bary.inside(cpt))
+						if (!inside)
 							continue;
 					}
+
+					// Verify barycentric coordinates.
+					Vector2 error = cpt - ipolTexCoords.evaluate(bary, cpt);
+					if (error.length() > FUZZY_EPSILON)
+						log::error << L"Evaluation offset error " << error.x << L", " << error.y << Endl;
 
 					elm.polygon = i;
 					elm.material = polygon.getMaterial();
 					elm.position = ipolPositions.evaluate(bary, cpt).xyz1();
 					elm.normal = ipolNormals.evaluate(bary, cpt).xyz0().normalized();
 
+					// Evaluate delta magnitude of position in world space per texel offset.
 					Vector4 ddx = ipolPositions.evaluate(bary, cpt + Vector2(1.0f, 0.0f)).xyz1() - elm.position;
 					Vector4 ddy = ipolPositions.evaluate(bary, cpt + Vector2(0.0f, 1.0f)).xyz1() - elm.position;
 					Vector4 duv = max(ddx.absolute(), ddy.absolute());
-					Scalar dpos = max(max(duv.x(), duv.y()), duv.z()) * Scalar(sqrt(2.0));
-
-					elm.delta = dpos;
+					elm.delta = max(max(duv.x(), duv.y()), duv.z()) * Scalar(sqrt(2.0));
 				}
 			}
 		}
 	}
 
 	return true;
-}
-
-void GBuffer::dilate(int32_t iterations)
-{
-	const int32_t c_offsets[][2] =
-	{
-		{  0,  0 },
-		{  0, -1 },
-		{  0,  1 },
-		{ -1,  0 },
-		{  1,  0 },
-		{ -1, -1 },
-		{  1, -1 },
-		{  1,  1 },
-		{ -1,  1 }
-	};
-
-	AlignedVector< Element > dilated(m_data.size());
-	for (int32_t i = 0; i < iterations; ++i)
-	{
-		for (uint32_t i = 0; i < m_width * m_height; ++i)
-		{
-			dilated[i].polygon = model::c_InvalidIndex;
-			dilated[i].material = 0;
-			dilated[i].position = Vector4(0.0f, 0.0f, 0.0f, 1.0f);
-			dilated[i].normal = Vector4(0.0f, 1.0f, 0.0f, 0.0f);
-			dilated[i].delta = Scalar(0.0f);
-		}
-
-		for (int32_t x = 0; x < m_width; ++x)
-		{
-			for (int32_t y = 0; y < m_height; ++y)
-			{
-				Element& dst = dilated[x + y * m_width];
-				for (int32_t j = 0; j < 9; ++j)
-				{
-					int32_t ox = x + c_offsets[j][0];
-					int32_t oy = y + c_offsets[j][1];
-					if (ox < 0 || ox >= m_width || oy < 0 || oy >= m_height)
-						continue;
-
-					const Element& src = m_data[ox + oy * m_width];
-					if (src.polygon != model::c_InvalidIndex)
-					{
-						dst = src;
-						break;
-					}
-				}
-			}
-		}
-
-		m_data.swap(dilated);
-	}
 }
 
 void GBuffer::saveAsImages(const std::wstring& outputPath) const

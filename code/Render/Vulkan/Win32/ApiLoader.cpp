@@ -620,6 +620,34 @@ bool initializeVulkanApi()
 		return false;
 	}
 
+	vkDestroyShaderModule = (PFN_vkDestroyShaderModule)GetProcAddress(s_hVulkanModule, "vkDestroyShaderModule");
+	if (vkDestroyShaderModule == nullptr)
+	{
+		log::error << L"Failed to resolve Vulkan entry point \"vkDestroyShaderModule\"." << Endl;
+		return false;
+	}
+
+	vkDestroyDescriptorSetLayout = (PFN_vkDestroyDescriptorSetLayout)GetProcAddress(s_hVulkanModule, "vkDestroyDescriptorSetLayout");
+	if (vkDestroyDescriptorSetLayout == nullptr)
+	{
+		log::error << L"Failed to resolve Vulkan entry point \"vkDestroyDescriptorSetLayout\"." << Endl;
+		return false;
+	}
+
+	vkDestroyPipelineLayout = (PFN_vkDestroyPipelineLayout)GetProcAddress(s_hVulkanModule, "vkDestroyPipelineLayout");
+	if (vkDestroyPipelineLayout == nullptr)
+	{
+		log::error << L"Failed to resolve Vulkan entry point \"vkDestroyPipelineLayout\"." << Endl;
+		return false;
+	}
+
+	vkDestroySampler = (PFN_vkDestroySampler)GetProcAddress(s_hVulkanModule, "vkDestroySampler");
+	if (vkDestroySampler == nullptr)
+	{
+		log::error << L"Failed to resolve Vulkan entry point \"vkDestroySampler\"." << Endl;
+		return false;
+	}			
+
 	return true;
 }
 

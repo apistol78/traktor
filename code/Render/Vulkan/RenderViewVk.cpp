@@ -463,7 +463,7 @@ void RenderViewVk::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, IP
 		(float)ts.rts->getWidth(),
 		(float)ts.rts->getHeight()
 	};
-	p->validateGraphics(m_logicalDevice, m_descriptorPool, m_graphicsCommandBuffer, m_uniformBufferPool, targetSize);
+	p->validateGraphics(m_descriptorPool, m_graphicsCommandBuffer, m_uniformBufferPool, targetSize);
 
 	const uint32_t c_primitiveMul[] = { 1, 0, 2, 2, 3 };
 	uint32_t vertexCount = primitives.count * c_primitiveMul[primitives.type];
@@ -512,7 +512,7 @@ void RenderViewVk::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, IP
 void RenderViewVk::compute(IProgram* program, const int32_t* workSize)
 {
 	ProgramVk* p = mandatory_non_null_type_cast< ProgramVk* >(program);
-	p->validateCompute(m_logicalDevice, m_descriptorPool, m_computeCommandBuffer, m_uniformBufferPool);
+	p->validateCompute(m_descriptorPool, m_computeCommandBuffer, m_uniformBufferPool);
 	vkCmdDispatch(m_computeCommandBuffer, workSize[0], workSize[1], workSize[2]);
 }
 

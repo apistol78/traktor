@@ -24,7 +24,7 @@ class Image;
 	namespace spark
 	{
 
-/*! \brief Flash bitmap container.
+/*! Image bitmap container.
  * \ingroup Spark
  */
 class T_DLLCLASS BitmapImage : public Bitmap
@@ -34,7 +34,7 @@ class T_DLLCLASS BitmapImage : public Bitmap
 public:
 	BitmapImage();
 
-	BitmapImage(const drawing::Image* image);
+	explicit BitmapImage(const drawing::Image* image);
 
 	const void* getBits() const;
 

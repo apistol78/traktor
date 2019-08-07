@@ -24,7 +24,7 @@ class ISimpleTexture;
 	namespace spark
 	{
 
-/*! \brief Flash bitmap container.
+/*! Bitmap texture container.
  * \ingroup Spark
  */
 class T_DLLCLASS BitmapTexture : public Bitmap
@@ -34,7 +34,7 @@ class T_DLLCLASS BitmapTexture : public Bitmap
 public:
 	BitmapTexture();
 
-	BitmapTexture(render::ISimpleTexture* texture);
+	explicit BitmapTexture(render::ISimpleTexture* texture);
 
 	render::ISimpleTexture* getTexture() const { return m_texture; }
 

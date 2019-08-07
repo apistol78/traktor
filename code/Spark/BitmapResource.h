@@ -16,7 +16,7 @@ namespace traktor
 	namespace spark
 	{
 
-/*! \brief Flash bitmap container.
+/*! Bitmap resource container.
  * \ingroup Spark
  */
 class T_DLLCLASS BitmapResource : public Bitmap

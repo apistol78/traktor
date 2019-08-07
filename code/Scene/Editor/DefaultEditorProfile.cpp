@@ -137,15 +137,14 @@ Ref< world::EntityData > DefaultEditorProfile::createEntityData(
 {
 	const TypeInfo* primaryType = instance->getPrimaryType();
 	if (!primaryType)
-		return 0;
+		return nullptr;
 
 	if (!is_type_of< world::EntityData >(*primaryType))
-		return 0;
+		return nullptr;
 
 	// Create external reference to entity data.
 	Ref< world::EntityData > entityData = new world::ExternalEntityData(resource::Id< world::EntityData >(instance->getGuid()));
 	entityData->setName(instance->getName());
-
 	return entityData;
 }
 

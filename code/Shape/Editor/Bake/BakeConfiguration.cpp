@@ -9,7 +9,7 @@ namespace traktor
 	namespace shape
 	{
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.shape.BakeConfiguration", 8, BakeConfiguration, ISerializable)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.shape.BakeConfiguration", 9, BakeConfiguration, ISerializable)
 
 BakeConfiguration::BakeConfiguration()
 :	m_seedGuid(Guid::create())
@@ -22,7 +22,6 @@ BakeConfiguration::BakeConfiguration()
 ,	m_lumelDensity(64.0f)
 ,	m_minimumLightMapSize(128)
 ,	m_enableShadowFix(false)
-,	m_enableDilate(true)
 ,	m_enableDenoise(true)
 ,	m_clampShadowThreshold(0.01f)
 {
@@ -54,8 +53,11 @@ void BakeConfiguration::serialize(ISerializer& s)
 	if (s.getVersion() >= 1)
 		s >> Member< bool >(L"enableShadowFix", m_enableShadowFix);
 
-	if (s.getVersion() >= 3)
-		s >> Member< bool >(L"enableDilate", m_enableDilate);
+	if (s.getVersion() >= 3 && s.getVersion() < 9)
+	{
+		bool enableDilate;
+		s >> Member< bool >(L"enableDilate", enableDilate);
+	}
 
 	if (s.getVersion() >= 4)
 		s >> Member< bool >(L"enableDenoise", m_enableDenoise);

@@ -585,8 +585,8 @@ Ref< IProgram > RenderSystemVk::createProgram(const ProgramResource* programReso
 	if (!resource)
 		return nullptr;
 
-	Ref< ProgramVk > program = new ProgramVk();
-	if (program->create(m_physicalDevice, m_logicalDevice, resource))
+	Ref< ProgramVk > program = new ProgramVk(m_physicalDevice, m_logicalDevice);
+	if (program->create(resource))
 		return program;
 	else
 		return nullptr;

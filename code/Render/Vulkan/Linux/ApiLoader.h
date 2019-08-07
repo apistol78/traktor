@@ -82,6 +82,10 @@ extern PFN_vkDestroyImage vkDestroyImage;
 extern PFN_vkCmdDispatch vkCmdDispatch;
 extern PFN_vkInvalidateMappedMemoryRanges vkInvalidateMappedMemoryRanges;
 extern PFN_vkCmdCopyBuffer vkCmdCopyBuffer;
+extern PFN_vkDestroyShaderModule vkDestroyShaderModule;
+extern PFN_vkDestroyDescriptorSetLayout vkDestroyDescriptorSetLayout;
+extern PFN_vkDestroyPipelineLayout vkDestroyPipelineLayout;
+extern PFN_vkDestroySampler vkDestroySampler;
 
 // Linux Vulkan extensions.
 extern PFN_vkCreateXlibSurfaceKHR vkCreateXlibSurfaceKHR;

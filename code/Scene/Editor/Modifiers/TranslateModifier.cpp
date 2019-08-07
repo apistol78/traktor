@@ -38,9 +38,9 @@ void TranslateModifier::selectionChanged()
 	m_context->getEntities(m_entityAdapters, SceneEditorContext::GfDefault | SceneEditorContext::GfSelectedOnly | SceneEditorContext::GfNoExternalChild);
 
 	m_baseTranslations.clear();
-	for (RefArray< EntityAdapter >::const_iterator i = m_entityAdapters.begin(); i != m_entityAdapters.end(); ++i)
+	for (auto entityAdapter : m_entityAdapters)
 	{
-		Transform T = (*i)->getTransform();
+		Transform T = entityAdapter->getTransform();
 		m_baseTranslations.push_back(T.translation());
 	}
 
@@ -48,8 +48,8 @@ void TranslateModifier::selectionChanged()
 	if (!m_baseTranslations.empty())
 	{
 		m_center = Vector4::zero();
-		for (AlignedVector< Vector4 >::const_iterator i = m_baseTranslations.begin(); i != m_baseTranslations.end(); ++i)
-			m_center += *i;
+		for (const auto& baseTranslation : m_baseTranslations)
+			m_center += baseTranslation;
 
 		m_center /= Scalar(float(m_baseTranslations.size()));
 		m_center = snap(m_center.xyz1(), 1 | 2 | 4);
