@@ -86,7 +86,6 @@ PFN_vkDestroyImage vkDestroyImage = nullptr;
 PFN_vkCmdDispatch vkCmdDispatch = nullptr;
 PFN_vkInvalidateMappedMemoryRanges vkInvalidateMappedMemoryRanges = nullptr;
 PFN_vkCmdCopyBuffer vkCmdCopyBuffer = nullptr;
-
 PFN_vkDestroyShaderModule vkDestroyShaderModule = nullptr;
 PFN_vkDestroyDescriptorSetLayout vkDestroyDescriptorSetLayout = nullptr;
 PFN_vkDestroyPipelineLayout vkDestroyPipelineLayout = nullptr;
