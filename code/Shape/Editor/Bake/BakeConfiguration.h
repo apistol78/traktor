@@ -29,8 +29,6 @@ public:
 
 	bool traceIndirect() const { return m_traceIndirect; }
 
-	bool traceDebug() const { return m_traceDebug; }
-
 	uint32_t getIndirectSampleCount() const { return m_indirectSampleCount; }
 
 	uint32_t getShadowSampleCount() const { return m_shadowSampleCount; }
@@ -53,7 +51,6 @@ private:
 	Guid m_seedGuid;
 	bool m_traceDirect;
 	bool m_traceIndirect;
-	bool m_traceDebug;
 	uint32_t m_indirectSampleCount;
 	uint32_t m_shadowSampleCount;
 	float m_pointLightShadowRadius;

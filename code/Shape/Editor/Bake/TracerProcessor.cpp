@@ -107,7 +107,9 @@ TracerProcessor::TracerProcessor(db::Database* outputDatabase)
 {
 	T_FATAL_ASSERT(m_outputDatabase != nullptr);
 
-	m_rayTracerType = TypeInfo::find(L"traktor.shape.RayTracerEmbree"); // settings->getProperty< std::wstring >(L"BakePipelineOperator.RayTracerType", L"traktor.shape.RayTracerEmbree").c_str());
+	// settings->getProperty< std::wstring >(L"BakePipelineOperator.RayTracerType", L"traktor.shape.RayTracerEmbree").c_str());
+	m_rayTracerType = TypeInfo::find(L"traktor.shape.RayTracerEmbree");
+	//m_rayTracerType = TypeInfo::find(L"traktor.shape.RayTracerLocal");
     
     m_thread = ThreadManager::getInstance().create(makeFunctor(this, &TracerProcessor::processorThread), L"Tracer");
     m_thread->start();
@@ -218,28 +220,12 @@ bool TracerProcessor::process(const TracerTask* task) const
         auto renderModel = tracerOutput->getModel();
         T_FATAL_ASSERT(renderModel != nullptr);
 
+        const int32_t outputSize = tracerOutput->getLightmapSize();
+
 		// Update status.
 		m_status.current = i;
 		m_status.total = tracerOutputs.size();
-		m_status.description = tracerOutput->getName() + L" (" + toString(tracerOutput->getPriority()) + L")";
-
-        // Calculate output size from lumel density.
-        float totalWorldArea = 0.0f;
-        for (const auto& polygon : renderModel->getPolygons())
-        {
-            Winding3 polygonWinding;
-            for (const auto index : polygon.getVertices())
-                polygonWinding.push(renderModel->getVertexPosition(index));
-            totalWorldArea += abs(polygonWinding.area());
-        }
-
-        const float totalLightMapArea = configuration->getLumelDensity() * configuration->getLumelDensity() * totalWorldArea;
-        const float size = std::sqrt(totalLightMapArea);
-        
-        const int32_t outputSize = alignUp(std::max< int32_t >(
-            configuration->getMinimumLightMapSize(),
-                (int32_t)(size + 0.5f)
-        ), 16);
+		m_status.description = tracerOutput->getName() + L" (" + toString(outputSize) + L" * " + toString(outputSize) + L")";
 
         uint32_t channel = renderModel->getTexCoordChannel(L"Lightmap");
 
@@ -260,6 +246,11 @@ bool TracerProcessor::process(const TracerTask* task) const
 
         if (configuration->traceIndirect())
             lightmapIndirect = rayTracer->traceIndirect(&gbuffer);
+
+		if (lightmapDirect)
+			lightmapDirect->save(L"data/Temp/Bake/" + tracerOutput->getName() + L"_Direct.exr");
+		if (lightmapIndirect)
+			lightmapIndirect->save(L"data/Temp/Bake/" + tracerOutput->getName() + L"_Indirect.exr");
 
         // Blur indirect lightmap to reduce noise from path tracing.
 #if !defined(__RPI__) && !defined(__APPLE__)

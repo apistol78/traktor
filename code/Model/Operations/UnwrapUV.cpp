@@ -24,7 +24,8 @@ bool UnwrapUV::apply(Model& model) const
 {
 	Atlas_Options options;
 	atlas_set_default_options(&options);
-	options.packer_options.witness.texel_area = 256.0f / (float)m_textureSize;
+	options.packer_options.witness.packing_quality = 1;
+	options.packer_options.witness.texel_area = 128.0f / (float)m_textureSize;
 	//options.packer_options.witness.conservative = true;
 
 	AlignedVector< Atlas_Input_Vertex > inputVertices;
@@ -42,23 +43,30 @@ bool UnwrapUV::apply(Model& model) const
 		aiv.position[2] = p.z();
 
 		// \tbd Using normals cause weird artifacts, should probably be face normals?
-		// const auto& n = model.getNormal(vertex.getNormal());
-		// aiv.normal[0] = n.x();
-		// aiv.normal[1] = n.y();
-		// aiv.normal[2] = n.z();
-
-		aiv.normal[0] = 0.0f;
-		aiv.normal[1] = 0.0f;
-		aiv.normal[2] = 0.0f;
-
-		aiv.uv[0] = 0.0f;
-		aiv.uv[1] = 0.0f;
-
-		if (vertex.getTexCoordCount() > 0)
+		if (vertex.getNormal() != c_InvalidIndex)
 		{
-			const auto& tc = model.getTexCoord(vertex.getTexCoord(0));
-			aiv.uv[0] = tc.x;
-			aiv.uv[1] = tc.y;
+			const auto& n = model.getNormal(vertex.getNormal());
+			aiv.normal[0] = n.x();
+			aiv.normal[1] = n.y();
+			aiv.normal[2] = n.z();
+		}
+		else
+		{
+			aiv.normal[0] = 0.0f;
+			aiv.normal[1] = 0.0f;
+			aiv.normal[2] = 0.0f;
+		}
+
+		if (vertex.getTexCoord(m_channel) != c_InvalidIndex)
+		{
+			const auto& tc = model.getTexCoord(vertex.getTexCoord(m_channel));
+			aiv.uv[0] = tc.x * m_textureSize;
+			aiv.uv[1] = tc.y * m_textureSize;
+		}
+		else
+		{
+			aiv.uv[0] = 0.0f;
+			aiv.uv[1] = 0.0f;
 		}
 
 		aiv.first_colocal = i;

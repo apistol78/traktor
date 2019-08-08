@@ -23,9 +23,9 @@ class T_DLLCLASS Quantize : public IModelOperation
 	T_RTTI_CLASS;
 
 public:
-	Quantize(float step);
+	explicit Quantize(float step);
 
-	Quantize(const Vector4& step);
+	explicit Quantize(const Vector4& step);
 
 	virtual bool apply(Model& model) const override final;
 

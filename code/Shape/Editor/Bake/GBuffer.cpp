@@ -29,14 +29,13 @@ public:
 	,	m_v1(v1)
 	,	m_v2(v2)
 	{
-		float denom = (v1.y - v2.y) * (v0.x - v2.x) + (v2.x - v1.x) * (v0.y - v2.y);
-		m_invDenom = 1.0f / denom;
+		m_denom = (v1.y - v2.y) * (v0.x - v2.x) + (v2.x - v1.x) * (v0.y - v2.y);
 	}
 
 	Vector4 factors(const Vector2& pt) const
 	{
-		float alpha = ((m_v1.y - m_v2.y) * (pt.x - m_v2.x) + (m_v2.x - m_v1.x) * (pt.y - m_v2.y)) * m_invDenom;
-		float beta = ((m_v2.y - m_v0.y) * (pt.x - m_v2.x) + (m_v0.x - m_v2.x) * (pt.y - m_v2.y)) * m_invDenom;
+		float alpha = ((m_v1.y - m_v2.y) * (pt.x - m_v2.x) + (m_v2.x - m_v1.x) * (pt.y - m_v2.y)) / m_denom;
+		float beta = ((m_v2.y - m_v0.y) * (pt.x - m_v2.x) + (m_v0.x - m_v2.x) * (pt.y - m_v2.y)) / m_denom;
 		float gamma = 1.0f - alpha - beta;
 		return Vector4(alpha, beta, gamma, 0.0f);
 	}
@@ -51,7 +50,7 @@ private:
 	Vector2 m_v0;
 	Vector2 m_v1;
 	Vector2 m_v2;
-	float m_invDenom;
+	float m_denom;
 };
 
 template < typename ValueType >
@@ -125,7 +124,7 @@ bool GBuffer::create(int32_t width, int32_t height, const model::Model& model, c
 			positions.push_back(transform * model.getPosition(positionIndex).xyz1());
 
 			uint32_t normalIndex = vertex.getNormal();
-			normals.push_back(transform * model.getNormal(normalIndex).xyz0());
+			normals.push_back((transform * model.getNormal(normalIndex).xyz0()).normalized());
 
 			uint32_t texCoordIndex = vertex.getTexCoord(texCoordChannel);
 			texCoords.points.push_back(
@@ -189,45 +188,39 @@ bool GBuffer::create(int32_t width, int32_t height, const model::Model& model, c
 					if (x < 0 || x >= width || y < 0 || y >= height)
 						continue;
 
-					Vector2 cpt(x, y);
+					Vector2 pt(x, y);
 
-					bool inside = bary.inside(cpt);
-					bool edge = false;
-
-					// Check if we're close to edge if winding, solves
-					// narrow triangles but also add a margin.
-					if (!inside)
+					float distance = std::numeric_limits< float >::max();
+					if (bary.inside(pt))
+						distance = 0.0f;
+					else
 					{
-						float distance = (cpt - texCoords.closest(cpt)).length();
-						if (distance < 4.0f)
-							edge = true;
-					}
-
-					if (!inside && !edge)
-						continue;
-
-					Element& elm = m_data[x + y * m_width];
-
-					// Do not overwrite existing data unless we're exclusively inside triangle.
-					if (elm.polygon != model::c_InvalidIndex)
-					{
-						if (!inside)
+						Vector2 cpt = texCoords.closest(pt);
+						float fd = (pt - cpt).length();
+						if (fd < 4.0f)
+							distance = fd + 1.0f;
+						else
 							continue;
 					}
 
-					// Verify barycentric coordinates.
-					Vector2 error = cpt - ipolTexCoords.evaluate(bary, cpt);
-					if (error.length() > FUZZY_EPSILON)
-						log::error << L"Evaluation offset error " << error.x << L", " << error.y << Endl;
+					Element& elm = m_data[x + y * m_width];
+
+					// Do not overwrite existing data unless we're closer to be inside triangle.
+					if (elm.polygon != model::c_InvalidIndex)
+					{
+						if (elm.distance < distance)
+							continue;
+					}
 
 					elm.polygon = i;
 					elm.material = polygon.getMaterial();
-					elm.position = ipolPositions.evaluate(bary, cpt).xyz1();
-					elm.normal = ipolNormals.evaluate(bary, cpt).xyz0().normalized();
+					elm.position = ipolPositions.evaluate(bary, pt).xyz1();
+					elm.normal = ipolNormals.evaluate(bary, pt).xyz0().normalized();
+					elm.distance = distance;
 
 					// Evaluate delta magnitude of position in world space per texel offset.
-					Vector4 ddx = ipolPositions.evaluate(bary, cpt + Vector2(1.0f, 0.0f)).xyz1() - elm.position;
-					Vector4 ddy = ipolPositions.evaluate(bary, cpt + Vector2(0.0f, 1.0f)).xyz1() - elm.position;
+					Vector4 ddx = ipolPositions.evaluate(bary, pt + Vector2(1.0f, 0.0f)).xyz1() - elm.position;
+					Vector4 ddy = ipolPositions.evaluate(bary, pt + Vector2(0.0f, 1.0f)).xyz1() - elm.position;
 					Vector4 duv = max(ddx.absolute(), ddy.absolute());
 					elm.delta = max(max(duv.x(), duv.y()), duv.z()) * Scalar(sqrt(2.0));
 				}

@@ -23,7 +23,13 @@ class T_DLLCLASS NormalizeTexCoords : public IModelOperation
 	T_RTTI_CLASS;
 
 public:
-    NormalizeTexCoords(uint32_t channel, float marginU, float marginV);
+    NormalizeTexCoords(
+		uint32_t channel,
+		float marginU,
+		float marginV,
+		float stepU,
+		float stepV
+	);
 
 	virtual bool apply(Model& model) const override final;
 
@@ -31,6 +37,8 @@ private:
     uint32_t m_channel;
     float m_marginU;
     float m_marginV;
+	float m_stepU;
+	float m_stepV;
 };
 
 	}

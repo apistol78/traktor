@@ -23,7 +23,7 @@ namespace traktor
 		{
 
 const Scalar p(1.0f / (2.0f * PI));
-const float c_epsilonOffset = 0.01f;
+const float c_epsilonOffset = 0.001f;
 const int32_t c_valid[16] = { -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1 };
 
 class WrappedSHFunction : public render::SHFunction
@@ -190,7 +190,7 @@ void RayTracerEmbree::preprocess(GBuffer* gbuffer) const
 						continue;
 
 					// Offset position.
-					position = position + traceDirection * Scalar(rh.ray.tfar) + hitNormal * Scalar(0.01f);
+					position = position + traceDirection * Scalar(rh.ray.tfar) + hitNormal * Scalar(0.02f);
 				}
 
 				elm.position = position;
@@ -372,7 +372,7 @@ Ref< drawing::Image > RayTracerEmbree::traceIndirect(const GBuffer* gbuffer) con
 							// Create a batch of rays.
 							for (uint32_t j = 0; j < 16; ++j)
 							{
-								direction[j] = (elm.normal * Scalar(0.2f) + random.nextHemi(elm.normal)).normalized();
+								direction[j] = (elm.normal * Scalar(0.1f) + random.nextHemi(elm.normal)).normalized();
 
 								rh.ray.org_x[j] = elm.position.x();
 								rh.ray.org_y[j] = elm.position.y();
