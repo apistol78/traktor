@@ -26,6 +26,7 @@ public:
 		Vector4 position;
 		Vector4 normal;
 		Scalar delta;
+		float distance;
 	};
 
 	GBuffer();
