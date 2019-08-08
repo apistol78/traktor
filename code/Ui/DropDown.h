@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <vector>
 #include "Ui/Widget.h"
 
 // import/export mechanism.
@@ -16,9 +17,7 @@ namespace traktor
 	namespace ui
 	{
 
-// class ListBox;
-
-/*! \brief Drop down control.
+/*! Drop down control.
  * \ingroup UI
  */
 class T_DLLCLASS DropDown : public Widget
@@ -26,9 +25,16 @@ class T_DLLCLASS DropDown : public Widget
 	T_RTTI_CLASS;
 
 public:
+	enum Styles
+	{
+		WsSingle = 0,
+		WsMultiple = WsUser,
+		WsDefault = WsSingle
+	};
+
 	DropDown();
 
-	bool create(Widget* parent, int style = WsNone);
+	bool create(Widget* parent, int32_t style = WsDefault);
 
 	int32_t add(const std::wstring& item, Object* data = 0);
 
@@ -50,7 +56,13 @@ public:
 
 	bool select(const std::wstring& item);
 
+	void unselect(int32_t index);
+
+	bool selected(int32_t index) const;
+
 	int32_t getSelected() const;
+
+	int32_t getSelected(std::vector< int32_t >& selected) const;
 
 	std::wstring getSelectedItem() const;
 
@@ -75,10 +87,11 @@ private:
 	{
 		std::wstring text;
 		Ref< Object > data;
+		bool selected;
 	};
 
 	std::vector< Item > m_items;
-	int32_t m_selected;
+	bool m_multiple;
 	bool m_hover;
 
 	void eventMouseTrack(MouseTrackEvent* event);

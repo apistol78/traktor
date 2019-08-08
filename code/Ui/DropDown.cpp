@@ -1,10 +1,11 @@
+#include "Core/Io/StringOutputStream.h"
 #include "Ui/Application.h"
+#include "Ui/DropDown.h"
 #include "Ui/Canvas.h"
 #include "Ui/Command.h"
 #include "Ui/Menu.h"
 #include "Ui/MenuItem.h"
 #include "Ui/StyleSheet.h"
-#include "Ui/DropDown.h"
 
 namespace traktor
 {
@@ -14,15 +15,17 @@ namespace traktor
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.DropDown", DropDown, Widget)
 
 DropDown::DropDown()
-:	m_selected(-1)
+:	m_multiple(false)
 ,	m_hover(false)
 {
 }
 
-bool DropDown::create(Widget* parent, int style)
+bool DropDown::create(Widget* parent, int32_t style)
 {
 	if (!Widget::create(parent, style))
 		return false;
+
+	m_multiple = (bool)((style & WsMultiple) != 0);
 
 	addEventHandler< MouseTrackEvent >(this, &DropDown::eventMouseTrack);
 	addEventHandler< MouseButtonDownEvent >(this, &DropDown::eventButtonDown);
@@ -44,17 +47,12 @@ bool DropDown::remove(int32_t index)
 
 	auto i = m_items.begin() + index;
 	m_items.erase(i);
-
-	if (index >= m_selected)
-		m_selected = -1;
-
 	return true;
 }
 
 void DropDown::removeAll()
 {
 	m_items.resize(0);
-	m_selected = -1;
 }
 
 int32_t DropDown::count() const
@@ -84,8 +82,26 @@ Ref< Object > DropDown::getData(int32_t index) const
 
 void DropDown::select(int32_t index)
 {
-	m_selected = index;
+	if (!m_multiple)
+	{
+		for (auto& item : m_items)
+			item.selected = false;
+	}
+	if (index >= 0)
+		m_items[index].selected = true;
 	update(nullptr, false);
+}
+
+void DropDown::unselect(int32_t index)
+{
+	if (index >= 0)
+		m_items[index].selected = false;
+	update(nullptr, false);
+}
+
+bool DropDown::selected(int32_t index) const
+{
+	return m_items[index].selected;
 }
 
 bool DropDown::select(const std::wstring& item)
@@ -104,17 +120,41 @@ bool DropDown::select(const std::wstring& item)
 
 int32_t DropDown::getSelected() const
 {
-	return m_selected;
+	for (int32_t i = 0; i < count(); ++i)
+	{
+		if (selected(i))
+			return i;
+	}
+	return -1;
+}
+
+int32_t DropDown::getSelected(std::vector< int32_t >& selected) const
+{
+	selected.resize(0);
+	for (int32_t i = 0; i < count(); ++i)
+	{
+		if (this->selected(i))
+			selected.push_back(i);
+	}
+	return (int32_t)selected.size();
 }
 
 std::wstring DropDown::getSelectedItem() const
 {
-	return getItem(m_selected);
+	int32_t s = getSelected();
+	if (s >= 0)
+		return getItem(s);
+	else
+		return L"";
 }
 
 Ref< Object > DropDown::getSelectedData() const
 {
-	return getData(m_selected);
+	int32_t s = getSelected();
+	if (s >= 0)
+		return getData(s);
+	else
+		return 0;
 }
 
 Size DropDown::getPreferedSize() const
@@ -139,13 +179,41 @@ void DropDown::eventButtonDown(MouseButtonDownEvent* event)
 
 	Menu menu;
 	for (uint32_t i = 0; i < uint32_t(m_items.size()); ++i)
-		menu.add(new MenuItem(Command(i), m_items[i].text));
+	{
+		if (!m_multiple)
+			menu.add(new MenuItem(Command(i), m_items[i].text, false, nullptr));
+		else
+		{
+			Ref< MenuItem > mi = new MenuItem(Command(i), m_items[i].text, true, nullptr);
+			mi->setChecked(m_items[i].selected);
+			menu.add(mi);
+		}
+	}
 
 	Rect rcInner = getInnerRect();
+
 	const MenuItem* selectedItem = menu.showModal(this, rcInner.getBottomLeft(), rcInner.getWidth(), 8);
-	if (selectedItem != nullptr && selectedItem->getCommand().getId() != m_selected)
+	if (!selectedItem)
+		return;
+
+	int32_t index = selectedItem->getCommand().getId();
+
+	if (!m_multiple)
 	{
-		m_selected = selectedItem->getCommand().getId();
+		if (index != getSelected())
+		{
+			select(index);
+
+			SelectionChangeEvent selectionChangeEvent(this);
+			raiseEvent(&selectionChangeEvent);
+		}
+	}
+	else
+	{
+		if (selected(index))
+			unselect(index);
+		else
+			select(index);
 
 		SelectionChangeEvent selectionChangeEvent(this);
 		raiseEvent(&selectionChangeEvent);
@@ -211,7 +279,24 @@ void DropDown::eventPaint(PaintEvent* event)
 	canvas.fillPolygon(pnts, 3);
 
 	canvas.setForeground(ss->getColor(this, isEnable() ? L"color" : L"color-disabled"));
-	canvas.drawText(rcText, getSelectedItem(), AnLeft, AnCenter);
+
+	if (!m_multiple)
+		canvas.drawText(rcText, getSelectedItem(), AnLeft, AnCenter);
+	else
+	{
+		StringOutputStream ss;
+		for (const auto& item : m_items)
+		{
+			if (item.selected)
+			{
+				if (!ss.empty())
+					ss << L", " << item.text;
+				else
+					ss << item.text;
+			}
+		}
+		canvas.drawText(rcText, ss.str(), AnLeft, AnCenter);
+	}
 }
 
 	}
