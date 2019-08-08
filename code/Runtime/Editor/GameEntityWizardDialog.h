@@ -46,8 +46,8 @@ private:
 	Ref< ui::Edit > m_editVisualMesh;
 	Ref< ui::Edit > m_editCollisionMesh;
 	Ref< ui::DropDown > m_dropPhysicsType;
-	Ref< ui::Edit > m_editCollisionGroup;
-	Ref< ui::Edit > m_editCollisionMask;
+	Ref< ui::DropDown > m_dropCollisionGroup;
+	Ref< ui::DropDown > m_dropCollisionMask;
 	Ref< ui::Edit > m_editMaterial;
 	Ref< ui::Edit > m_editFriction;
 	Ref< ui::CheckBox > m_checkBoxCreateGroup;
@@ -58,7 +58,11 @@ private:
 
 	void eventBrowseVisualMeshClick(ui::ButtonClickEvent* event);
 
+	void eventCopyVisualMeshClick(ui::ButtonClickEvent* event);
+
 	void eventBrowseCollisionMeshClick(ui::ButtonClickEvent* event);
+
+	void eventCopyCollisionMeshClick(ui::ButtonClickEvent* event);
 
 	void eventDialogClick(ui::ButtonClickEvent* event);
 };

@@ -1,4 +1,3 @@
-#include "Runtime/Editor/GameEntityWizardDialog.h"
 #include "Core/Class/IRuntimeClass.h"
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/StringOutputStream.h"
@@ -6,25 +5,29 @@
 #include "Core/Misc/String.h"
 #include "Core/Settings/PropertyGroup.h"
 #include "Core/Settings/PropertyString.h"
+#include "Database/Database.h"
 #include "Database/Group.h"
 #include "Database/Instance.h"
+#include "Database/Traverse.h"
 #include "Editor/IEditor.h"
 #include "I18N/Text.h"
 #include "Mesh/MeshComponentData.h"
 #include "Mesh/Editor/MeshAsset.h"
+#include "Physics/CollisionSpecification.h"
 #include "Physics/DynamicBodyDesc.h"
 #include "Physics/MeshShapeDesc.h"
 #include "Physics/StaticBodyDesc.h"
 #include "Physics/Editor/MeshAsset.h"
 #include "Physics/World/RigidBodyComponentData.h"
+#include "Runtime/Editor/GameEntityWizardDialog.h"
 #include "Script/Editor/Script.h"
 #include "Ui/Application.h"
+#include "Ui/DropDown.h"
 #include "Ui/CheckBox.h"
 #include "Ui/Edit.h"
 #include "Ui/FloodLayout.h"
 #include "Ui/Static.h"
 #include "Ui/TableLayout.h"
-#include "Ui/DropDown.h"
 #include "Ui/FileDialog.h"
 #include "Ui/MiniButton.h"
 #include "World/Entity/ComponentEntityData.h"
@@ -70,7 +73,7 @@ bool GameEntityWizardDialog::create(ui::Widget* parent)
 
 	// Visual mesh
 	Ref< ui::Container > containerVisualMesh = new ui::Container();
-	containerVisualMesh->create(this, ui::WsNone, new ui::TableLayout(L"*,100%,*", L"*", 0, ui::dpi96(8)));
+	containerVisualMesh->create(this, ui::WsNone, new ui::TableLayout(L"*,100%,*,*", L"*", 0, ui::dpi96(8)));
 
 	Ref< ui::Static > staticVisualMesh = new ui::Static();
 	staticVisualMesh->create(containerVisualMesh, i18n::Text(L"GAMEENTITY_WIZARD_VISUAL_MESH"));
@@ -82,9 +85,13 @@ bool GameEntityWizardDialog::create(ui::Widget* parent)
 	buttonBrowseVisualMesh->create(containerVisualMesh, L"...");
 	buttonBrowseVisualMesh->addEventHandler< ui::ButtonClickEvent >(this, &GameEntityWizardDialog::eventBrowseVisualMeshClick);
 
+	Ref< ui::MiniButton > buttonCopyVisualMesh = new ui::MiniButton();
+	buttonCopyVisualMesh->create(containerVisualMesh, L"Copy");
+	buttonCopyVisualMesh->addEventHandler< ui::ButtonClickEvent >(this, &GameEntityWizardDialog::eventCopyVisualMeshClick);
+
 	// Collision mesh
 	Ref< ui::Container > containerCollisionMesh = new ui::Container();
-	containerCollisionMesh->create(this, ui::WsNone, new ui::TableLayout(L"*,100%,*", L"*", 0, ui::dpi96(8)));
+	containerCollisionMesh->create(this, ui::WsNone, new ui::TableLayout(L"*,100%,*,*", L"*", 0, ui::dpi96(8)));
 
 	Ref< ui::Static > staticCollisionMesh = new ui::Static();
 	staticCollisionMesh->create(containerCollisionMesh, i18n::Text(L"GAMEENTITY_WIZARD_COLLISION_MESH"));
@@ -95,6 +102,10 @@ bool GameEntityWizardDialog::create(ui::Widget* parent)
 	Ref< ui::MiniButton > buttonBrowseCollisionMesh = new ui::MiniButton();
 	buttonBrowseCollisionMesh->create(containerCollisionMesh, L"...");
 	buttonBrowseCollisionMesh->addEventHandler< ui::ButtonClickEvent >(this, &GameEntityWizardDialog::eventBrowseCollisionMeshClick);
+
+	Ref< ui::MiniButton > buttonCopyCollisionMesh = new ui::MiniButton();
+	buttonCopyCollisionMesh->create(containerCollisionMesh, L"Copy");
+	buttonCopyCollisionMesh->addEventHandler< ui::ButtonClickEvent >(this, &GameEntityWizardDialog::eventCopyCollisionMeshClick);
 
 	// Physics
 	Ref< ui::Container > containerPhysics = new ui::Container();
@@ -110,17 +121,27 @@ bool GameEntityWizardDialog::create(ui::Widget* parent)
 	m_dropPhysicsType->add(i18n::Text(L"GAMEENTITY_WIZARD_PHYSICS_DYNAMIC"));
 	m_dropPhysicsType->select(0);
 
+	// Get all collision specifications in the database.
+	RefArray< db::Instance > collisionSpecificationInstances;
+	db::recursiveFindChildInstances(m_editor->getSourceDatabase()->getRootGroup(), db::FindInstanceByType(type_of< physics::CollisionSpecification >()), collisionSpecificationInstances);
+
 	Ref< ui::Static > staticCollisionGroup = new ui::Static();
 	staticCollisionGroup->create(containerPhysics, i18n::Text(L"GAMEENTITY_WIZARD_COLLISION_GROUP"));
 
-	m_editCollisionGroup = new ui::Edit();
-	m_editCollisionGroup->create(containerPhysics, L"0x00000001");
+	m_dropCollisionGroup = new ui::DropDown();
+	m_dropCollisionGroup->create(containerPhysics);
+
+	for (auto collisionSpecificationInstance : collisionSpecificationInstances)
+		m_dropCollisionGroup->add(collisionSpecificationInstance->getName(), collisionSpecificationInstance);
 
 	Ref< ui::Static > staticCollisionMask = new ui::Static();
 	staticCollisionMask->create(containerPhysics, i18n::Text(L"GAMEENTITY_WIZARD_COLLISION_MASK"));
 
-	m_editCollisionMask = new ui::Edit();
-	m_editCollisionMask->create(containerPhysics, L"0x00000001");
+	m_dropCollisionMask = new ui::DropDown();
+	m_dropCollisionMask->create(containerPhysics, ui::DropDown::WsMultiple);
+
+	for (auto collisionSpecificationInstance : collisionSpecificationInstances)
+		m_dropCollisionMask->add(collisionSpecificationInstance->getName(), collisionSpecificationInstance);
 
 	Ref< ui::Static > staticMaterial = new ui::Static();
 	staticMaterial->create(containerPhysics, i18n::Text(L"GAMEENTITY_WIZARD_MATERIAL"));
@@ -178,6 +199,15 @@ void GameEntityWizardDialog::eventBrowseVisualMeshClick(ui::ButtonClickEvent* ev
 		m_editName->setText(fileName.getFileNameNoExtension());
 }
 
+void GameEntityWizardDialog::eventCopyVisualMeshClick(ui::ButtonClickEvent* event)
+{
+	std::wstring path = m_editCollisionMesh->getText();
+	m_editVisualMesh->setText(path);
+
+	if (!m_nameEdited)
+		m_editName->setText(Path(path).getFileNameNoExtension());
+}
+
 void GameEntityWizardDialog::eventBrowseCollisionMeshClick(ui::ButtonClickEvent* event)
 {
 	ui::FileDialog fileDialog;
@@ -201,6 +231,12 @@ void GameEntityWizardDialog::eventBrowseCollisionMeshClick(ui::ButtonClickEvent*
 	);
 
 	m_editCollisionMesh->setText(fileName.getPathName());
+}
+
+void GameEntityWizardDialog::eventCopyCollisionMeshClick(ui::ButtonClickEvent* event)
+{
+	std::wstring path = m_editVisualMesh->getText();
+	m_editCollisionMesh->setText(path);
 }
 
 void GameEntityWizardDialog::eventDialogClick(ui::ButtonClickEvent* event)
@@ -258,6 +294,7 @@ void GameEntityWizardDialog::eventDialogClick(ui::ButtonClickEvent* event)
 			Ref< physics::MeshAsset > meshAsset = new physics::MeshAsset();
 			meshAsset->setFileName(collisionMesh);
 			meshAsset->setCalculateConvexHull(physics == 2);
+			meshAsset->setMargin((physics == 2) ? 0.04f : 0.0f);
 
 			// Create asset instance.
 			Ref< db::Instance > meshAssetInstance = m_group->createInstance(
@@ -281,10 +318,24 @@ void GameEntityWizardDialog::eventDialogClick(ui::ButtonClickEvent* event)
 			Ref< physics::MeshShapeDesc > meshShapeDesc = new physics::MeshShapeDesc();
 			meshShapeDesc->setMesh(resource::Id< physics::Mesh >(meshAssetInstance->getGuid()));
 
-			//m_collisionGroup.insert(resource::Id< CollisionSpecification >(Guid(L"{F9805131-50C2-504C-9421-13C99E44616C}")));
-			//m_collisionMask.insert(resource::Id< CollisionSpecification >(Guid(L"{F9805131-50C2-504C-9421-13C99E44616C}")));
-			//meshShapeDesc->setCollisionGroup(parseString< uint32_t >(m_editCollisionGroup->getText()));
-			//meshShapeDesc->setCollisionMask(parseString< uint32_t >(m_editCollisionMask->getText()));
+			auto groupInstance = m_dropCollisionGroup->getSelectedData< db::Instance >();
+			if (groupInstance)
+			{
+				std::set< resource::Id< physics::CollisionSpecification > > group;
+				group.insert(resource::Id< physics::CollisionSpecification >(groupInstance->getGuid()));
+				meshShapeDesc->setCollisionGroup(group);
+			}
+
+			std::set< resource::Id< physics::CollisionSpecification > > mask;
+			std::vector< int32_t > selectedMasks;
+			m_dropCollisionMask->getSelected(selectedMasks);
+			for (auto selectedMask : selectedMasks)
+			{
+				auto maskInstance = m_dropCollisionMask->getData< db::Instance >(selectedMask);
+				if (maskInstance)
+					mask.insert(resource::Id< physics::CollisionSpecification >(maskInstance->getGuid()));
+			}
+			meshShapeDesc->setCollisionMask(mask);
 
 			meshShapeDesc->setMaterial(parseString< int32_t >(m_editMaterial->getText()));
 

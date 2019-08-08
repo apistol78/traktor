@@ -107,8 +107,6 @@ protected:
 	virtual bool paste();
 
 private:
-	Ref< IBitmap > m_imageExpand;
-	Ref< IBitmap > m_imageCross;
 	PropertyList* m_propertyList;
 	std::wstring m_text;
 	bool m_visible;
