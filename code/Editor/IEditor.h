@@ -129,6 +129,12 @@ public:
 	/*! Build assets. */
 	virtual void buildAssets(bool rebuild) = 0;
 
+	/*! Cancel current build. */
+	virtual void buildCancel() = 0;
+
+	/*! Wait until current build has finished. */
+	virtual void buildWaitUntilFinished() = 0;
+
 	/*! Build asset dependencies.
 	 *
 	 * \param asset Source asset.

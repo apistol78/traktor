@@ -130,7 +130,7 @@ AlignedVector< uint32_t > ModelAdjacency_getEdgeIndices(ModelAdjacency* self, ui
 
         }
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.model.ModelClassFactory", ModelClassFactory, IRuntimeClassFactory)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.model.ModelClassFactory", 0, ModelClassFactory, IRuntimeClassFactory)
 
 void ModelClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 {

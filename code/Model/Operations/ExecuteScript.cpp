@@ -31,7 +31,7 @@ bool ExecuteScript::apply(Model& model) const
     if (!scriptObject)
         return false;
 
-    Any argv[] = { CastAny< Model& >::set(model) };
+    Any argv[] = { CastAny< Model* >::set(&model) };
     Any result = scriptDispatch->invoke(
         scriptObject,
         sizeof_array(argv),
