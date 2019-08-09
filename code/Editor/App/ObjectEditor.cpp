@@ -164,6 +164,16 @@ bool ObjectEditor::buildAsset(const ISerializable* sourceAsset, const std::wstri
 	return m_editor->buildAsset(sourceAsset, outputPath, outputGuid, buildParams);
 }
 
+void ObjectEditor::buildCancel()
+{
+	m_editor->buildCancel();
+}
+
+void ObjectEditor::buildWaitUntilFinished()
+{
+	m_editor->buildWaitUntilFinished();
+}
+
 Ref< IPipelineDependencySet > ObjectEditor::buildAssetDependencies(const ISerializable* asset, uint32_t recursionDepth)
 {
 	return m_editor->buildAssetDependencies(asset, recursionDepth);

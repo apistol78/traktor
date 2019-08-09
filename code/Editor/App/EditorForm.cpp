@@ -1846,41 +1846,6 @@ void EditorForm::buildAssetsThread(std::vector< Guid > assetGuids, bool rebuild)
 	log::info << L"Finished (" << hours << L":" << minutes << L":" << seconds << L")" << Endl;
 }
 
-void EditorForm::buildCancel()
-{
-	if (!m_threadBuild)
-		return;
-
-	if (!m_threadBuild->stop(0))
-	{
-		// Keep processing UI events until build has finished.
-		setEnable(false);
-		while (!m_threadBuild->wait(10))
-		{
-			ui::Application::getInstance()->process();
-		}
-		setEnable(true);
-	}
-	ThreadManager::getInstance().destroy(m_threadBuild);
-	m_threadBuild = nullptr;
-}
-
-void EditorForm::buildWaitUntilFinished()
-{
-	if (!m_threadBuild)
-		return;
-
-	// Show a dialog if processing seems to take more than N second(s).
-	ui::BackgroundWorkerDialog dialog;
-	dialog.create(this, i18n::Text(L"EDITOR_WAIT_BUILDING_TITLE"), i18n::Text(L"EDITOR_WAIT_BUILDING_MESSAGE"), false);
-	dialog.execute(m_threadBuild, new BuildStatus(m_buildStep, m_buildStepMessage));
-	dialog.destroy();
-
-	// As build thread is no longer in use we can safely release it's resources.
-	ThreadManager::getInstance().destroy(m_threadBuild);
-	m_threadBuild = nullptr;
-}
-
 void EditorForm::buildAssets(const std::vector< Guid >& assetGuids, bool rebuild)
 {
 	if (!m_workspaceSettings)
@@ -2001,6 +1966,41 @@ bool EditorForm::buildAsset(const ISerializable* sourceAsset, const std::wstring
 		pipelineCache->destroy();
 
 	return result;
+}
+
+void EditorForm::buildCancel()
+{
+	if (!m_threadBuild)
+		return;
+
+	if (!m_threadBuild->stop(0))
+	{
+		// Keep processing UI events until build has finished.
+		setEnable(false);
+		while (!m_threadBuild->wait(10))
+		{
+			ui::Application::getInstance()->process();
+		}
+		setEnable(true);
+	}
+	ThreadManager::getInstance().destroy(m_threadBuild);
+	m_threadBuild = nullptr;
+}
+
+void EditorForm::buildWaitUntilFinished()
+{
+	if (!m_threadBuild)
+		return;
+
+	// Show a dialog if processing seems to take more than N second(s).
+	ui::BackgroundWorkerDialog dialog;
+	dialog.create(this, i18n::Text(L"EDITOR_WAIT_BUILDING_TITLE"), i18n::Text(L"EDITOR_WAIT_BUILDING_MESSAGE"), false);
+	dialog.execute(m_threadBuild, new BuildStatus(m_buildStep, m_buildStepMessage));
+	dialog.destroy();
+
+	// As build thread is no longer in use we can safely release it's resources.
+	ThreadManager::getInstance().destroy(m_threadBuild);
+	m_threadBuild = nullptr;
 }
 
 Ref< IPipelineDependencySet > EditorForm::buildAssetDependencies(const ISerializable* asset, uint32_t recursionDepth)

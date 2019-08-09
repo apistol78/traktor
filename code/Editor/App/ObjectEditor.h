@@ -78,6 +78,10 @@ public:
 
 	virtual bool buildAsset(const ISerializable* sourceAsset, const std::wstring& outputPath, const Guid& outputGuid, const Object* buildParams) override final;
 
+	virtual void buildCancel() override final;
+
+	virtual void buildWaitUntilFinished() override final;
+
 	virtual Ref< IPipelineDependencySet > buildAssetDependencies(const ISerializable* asset, uint32_t recursionDepth) override final;
 
 	virtual void setStoreObject(const std::wstring& name, Object* object) override final;

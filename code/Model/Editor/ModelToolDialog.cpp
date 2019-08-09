@@ -3,6 +3,7 @@
 #include "Core/Math/Const.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Misc/String.h"
+#include "Core/Serialization/DeepClone.h"
 #include "Core/Settings/PropertyInteger.h"
 #include "Database/Instance.h"
 #include "Drawing/Image.h"
@@ -423,7 +424,10 @@ void ModelToolDialog::updateOperations(ui::TreeViewItem* itemModel)
 		const IModelOperation* operation = child->getData< IModelOperation >(L"OPERATION");
 		T_ASSERT(operation != nullptr);
 
-		model = new Model(*model);
+		// Create a mutable clone of previous operation's output.
+		model = DeepClone(model).create< Model >();
+		T_ASSERT(model != nullptr);
+
 		operation->apply(*model);
 
 		child->setData(L"MODEL", model);
@@ -566,6 +570,13 @@ void ModelToolDialog::eventModelTreeButtonDown(ui::MouseButtonDownEvent* event)
 				// Ensure script has been built as we're
 				// actually loading class through resource manager. 
 				m_editor->buildAsset(
+					scriptInstance->getGuid(),
+					false
+				);
+				m_editor->buildWaitUntilFinished();
+
+				// Ensure script resource isn't cached.
+				m_resourceManager->reload(
 					scriptInstance->getGuid(),
 					false
 				);
