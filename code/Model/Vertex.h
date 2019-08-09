@@ -1,8 +1,8 @@
 #pragma once
 
-#include "Core/Config.h"
 #include "Core/Containers/AlignedVector.h"
 #include "Core/Containers/StaticVector.h"
+#include "Core/Serialization/ISerializable.h"
 #include "Model/Types.h"
 
 // import/export mechanism.
@@ -24,8 +24,10 @@ class ISerializer;
 /*! \brief Vertex
  * \ingroup Model
  */
-class T_DLLCLASS Vertex
+class T_DLLCLASS Vertex : public ISerializable
 {
+	T_RTTI_CLASS;
+
 public:
 	Vertex();
 
@@ -69,7 +71,7 @@ public:
 
 	uint32_t getHash() const;
 
-	void serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s) override final;
 
 	bool operator == (const Vertex& r) const;
 

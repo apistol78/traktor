@@ -4,12 +4,15 @@
 #include "Core/Settings/PropertyGroup.h"
 #include "Core/Settings/PropertyString.h"
 #include "Editor/IEditor.h"
+#include "I18N/Text.h"
 #include "Model/Editor/ModelTool.h"
 #include "Model/Editor/ModelToolDialog.h"
 #include "Render/IRenderSystem.h"
 #include "Render/Resource/ShaderFactory.h"
 #include "Render/Resource/TextureFactory.h"
 #include "Resource/ResourceManager.h"
+#include "Script/IScriptManager.h"
+#include "Script/ScriptFactory.h"
 
 namespace traktor
 {
@@ -25,7 +28,7 @@ ModelTool::~ModelTool()
 
 std::wstring ModelTool::getDescription() const
 {
-	return L"Model Tool";
+	return i18n::Text(L"MODEL_TOOL_DESCRIPTION");
 }
 
 Ref< ui::IBitmap > ModelTool::getIcon() const
@@ -45,17 +48,26 @@ bool ModelTool::launch(ui::Widget* parent, editor::IEditor* editor, const Proper
 {
 	safeDestroy(m_dialog);
 
+	Ref< db::Database > database = editor->getOutputDatabase();
+	if (!database)
+		return false;
+
 	Ref< render::IRenderSystem > renderSystem = editor->getStoreObject< render::IRenderSystem >(L"RenderSystem");
 	if (!renderSystem)
 		return false;
 
-	Ref< db::Database > database = editor->getOutputDatabase();
-	if (!database)
+	Ref< script::IScriptManager > scriptManager = editor->getStoreObject< script::IScriptManager >(L"ScriptManager");
+	if (!scriptManager)
+		return false;
+
+	Ref< script::IScriptContext > scriptContext = scriptManager->createContext(false);
+	if (!scriptContext)
 		return false;
 
 	Ref< resource::IResourceManager > resourceManager = new resource::ResourceManager(database, editor->getSettings()->getProperty< bool >(L"Resource.Verbose", false));
 	resourceManager->addFactory(new render::TextureFactory(renderSystem, 0));
 	resourceManager->addFactory(new render::ShaderFactory(renderSystem));
+	resourceManager->addFactory(new script::ScriptFactory(scriptContext));
 
 	std::wstring fileName;
 	float scale = 1.0f;
@@ -66,7 +78,7 @@ bool ModelTool::launch(ui::Widget* parent, editor::IEditor* editor, const Proper
 		scale = param->getProperty< float >(L"scale", 1.0f);
 	}
 
-	m_dialog = new ModelToolDialog(resourceManager, renderSystem);
+	m_dialog = new ModelToolDialog(editor, resourceManager, renderSystem);
 	if (!m_dialog->create(parent, fileName, scale))
 	{
 		safeDestroy(m_dialog);

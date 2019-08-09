@@ -9,6 +9,8 @@ namespace traktor
 	namespace model
 	{
 
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.model.Polygon", 0, Polygon, ISerializable)
+
 Polygon::Polygon()
 :	m_material(c_InvalidIndex)
 ,	m_normal(c_InvalidIndex)

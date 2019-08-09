@@ -1549,6 +1549,8 @@ void BoxesClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classBoxedVector4->addStaticMethod("lerp", &BoxedVector4::lerp);
 	classBoxedVector4->addStaticMethod("distance3", &BoxedVector4::distance3);
 	classBoxedVector4->addStaticMethod("distance4", &BoxedVector4::distance4);
+	classBoxedVector4->addStaticMethod("minorAxis3", &BoxedVector4::minorAxis3);
+	classBoxedVector4->addStaticMethod("majorAxis3", &BoxedVector4::majorAxis3);
 	classBoxedVector4->addOperator< Vector4, const BoxedVector4* >('+', &BoxedVector4::add);
 	classBoxedVector4->addOperator< Vector4, float >('+', &BoxedVector4::add);
 	classBoxedVector4->addOperator< Vector4, const BoxedVector4* >('-', &BoxedVector4::sub);
