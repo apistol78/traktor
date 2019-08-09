@@ -1,10 +1,14 @@
+#include "Core/Class/IRuntimeClass.h"
 #include "Core/Log/Log.h"
 #include "Core/Math/Const.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Misc/String.h"
 #include "Core/Settings/PropertyInteger.h"
+#include "Database/Instance.h"
 #include "Drawing/Image.h"
 #include "Drawing/PixelFormat.h"
+#include "Editor/IEditor.h"
+#include "I18N/Text.h"
 #include "Model/Model.h"
 #include "Model/ModelAdjacency.h"
 #include "Model/ModelFormat.h"
@@ -16,6 +20,7 @@
 #include "Model/Operations/CleanDuplicates.h"
 #include "Model/Operations/Clear.h"
 #include "Model/Operations/CullDistantFaces.h"
+#include "Model/Operations/ExecuteScript.h"
 #include "Model/Operations/FlattenDoubleSided.h"
 #include "Model/Operations/Quantize.h"
 #include "Model/Operations/Reduce.h"
@@ -31,6 +36,7 @@
 #include "Render/ISimpleTexture.h"
 #include "Render/PrimitiveRenderer.h"
 #include "Resource/IResourceManager.h"
+#include "Script/Editor/Script.h"
 #include "Ui/Application.h"
 #include "Ui/Menu.h"
 #include "Ui/MenuItem.h"
@@ -96,10 +102,12 @@ void updateSkeletonTree(Model* model, ui::TreeView* treeView, ui::TreeViewItem* 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.model.ModelToolDialog", ModelToolDialog, ui::Dialog)
 
 ModelToolDialog::ModelToolDialog(
+	editor::IEditor* editor,
 	resource::IResourceManager* resourceManager,
 	render::IRenderSystem* renderSystem
 )
-:	m_resourceManager(resourceManager)
+:	m_editor(editor)
+,	m_resourceManager(resourceManager)
 ,	m_renderSystem(renderSystem)
 ,	m_cameraHead(0.0f)
 ,	m_cameraPitch(0.0f)
@@ -119,41 +127,41 @@ bool ModelToolDialog::create(ui::Widget* parent, const std::wstring& fileName, f
 
 	Ref< ui::ToolBar > toolBar = new ui::ToolBar();
 	toolBar->create(this);
-	toolBar->addItem(new ui::ToolBarButton(L"Load...", ui::Command(L"ModelTool.Load"), ui::ToolBarButton::BsText));
-	toolBar->addItem(new ui::ToolBarButton(L"Load texture...", ui::Command(L"ModelTool.LoadTexture"), ui::ToolBarButton::BsText));
+	toolBar->addItem(new ui::ToolBarButton(i18n::Text(L"MODEL_TOOL_LOAD"), ui::Command(L"ModelTool.Load"), ui::ToolBarButton::BsText));
+	toolBar->addItem(new ui::ToolBarButton(i18n::Text(L"MODEL_TOOL_LOAD_TEXTURE"), ui::Command(L"ModelTool.LoadTexture"), ui::ToolBarButton::BsText));
 	toolBar->addItem(new ui::ToolBarSeparator());
 
-	m_toolShading = new ui::ToolBarButton(L"Shading", ui::Command(L"ModelTool.ToggleShading"), ui::ToolBarButton::BsText | ui::ToolBarButton::BsToggled);
+	m_toolShading = new ui::ToolBarButton(i18n::Text(L"MODEL_TOOL_SHADING"), ui::Command(L"ModelTool.ToggleShading"), ui::ToolBarButton::BsText | ui::ToolBarButton::BsToggled);
 	toolBar->addItem(m_toolShading);
 
-	m_toolSolid = new ui::ToolBarButton(L"Solid", ui::Command(L"ModelTool.ToggleSolid"), ui::ToolBarButton::BsText | ui::ToolBarButton::BsToggled);
+	m_toolSolid = new ui::ToolBarButton(i18n::Text(L"MODEL_TOOL_SOLID"), ui::Command(L"ModelTool.ToggleSolid"), ui::ToolBarButton::BsText | ui::ToolBarButton::BsToggled);
 	toolBar->addItem(m_toolSolid);
 
-	m_toolWire = new ui::ToolBarButton(L"Wire", ui::Command(L"ModelTool.ToggleWire"), ui::ToolBarButton::BsText | ui::ToolBarButton::BsToggled);
+	m_toolWire = new ui::ToolBarButton(i18n::Text(L"MODEL_TOOL_WIRE"), ui::Command(L"ModelTool.ToggleWire"), ui::ToolBarButton::BsText | ui::ToolBarButton::BsToggled);
 	toolBar->addItem(m_toolWire);
 
-	m_toolNormals = new ui::ToolBarButton(L"Normals", ui::Command(L"ModelTool.ToggleNormals"), ui::ToolBarButton::BsText | ui::ToolBarButton::BsToggled);
+	m_toolNormals = new ui::ToolBarButton(i18n::Text(L"MODEL_TOOL_NORMALS"), ui::Command(L"ModelTool.ToggleNormals"), ui::ToolBarButton::BsText | ui::ToolBarButton::BsToggled);
 	toolBar->addItem(m_toolNormals);
 
-	m_toolVertices = new ui::ToolBarButton(L"Vertices", ui::Command(L"ModelTool.ToggleVertices"), ui::ToolBarButton::BsText | ui::ToolBarButton::BsToggled);
+	m_toolVertices = new ui::ToolBarButton(i18n::Text(L"MODEL_TOOL_VERTICES"), ui::Command(L"ModelTool.ToggleVertices"), ui::ToolBarButton::BsText | ui::ToolBarButton::BsToggled);
 	toolBar->addItem(m_toolVertices);
 
-	m_toolCull = new ui::ToolBarButton(L"Cull Backfaces", ui::Command(L"ModelTool.ToggleCullBackfaces"), ui::ToolBarButton::BsText | ui::ToolBarButton::BsToggled);
+	m_toolCull = new ui::ToolBarButton(i18n::Text(L"MODEL_TOOL_CULL_BACKFACES"), ui::Command(L"ModelTool.ToggleCullBackfaces"), ui::ToolBarButton::BsText | ui::ToolBarButton::BsToggled);
 	toolBar->addItem(m_toolCull);
 
-	m_toolNonSharedEdges = new ui::ToolBarButton(L"Non-shared Edges", ui::Command(L"ModelTool.ToggleNonSharedEdges"), ui::ToolBarButton::BsText | ui::ToolBarButton::BsToggle);
+	m_toolNonSharedEdges = new ui::ToolBarButton(i18n::Text(L"MODEL_TOOL_NON_SHARED_EDGES"), ui::Command(L"ModelTool.ToggleNonSharedEdges"), ui::ToolBarButton::BsText | ui::ToolBarButton::BsToggle);
 	toolBar->addItem(m_toolNonSharedEdges);
 
-	m_toolUV = new ui::ToolBarButton(L"UV", ui::Command(L"ModelTool.ToggleUV"), ui::ToolBarButton::BsText | ui::ToolBarButton::BsToggle);
+	m_toolUV = new ui::ToolBarButton(i18n::Text(L"MODEL_TOOL_TEXCOORDS"), ui::Command(L"ModelTool.ToggleUV"), ui::ToolBarButton::BsText | ui::ToolBarButton::BsToggle);
 	toolBar->addItem(m_toolUV);
 
-	m_toolChannel = new ui::ToolBarDropDown(ui::Command(L"ModelTool.Channel"), ui::dpi96(100), L"Channels");
+	m_toolChannel = new ui::ToolBarDropDown(ui::Command(L"ModelTool.Channel"), ui::dpi96(100), i18n::Text(L"MODEL_TOOL_TEXCOORD_CHANNELS"));
 	toolBar->addItem(m_toolChannel);
 
-	m_toolWeight = new ui::ToolBarButton(L"Weights", ui::Command(L"ModelTool.ToggleWeights"), ui::ToolBarButton::BsText | ui::ToolBarButton::BsToggle);
+	m_toolWeight = new ui::ToolBarButton(i18n::Text(L"MODEL_TOOL_WEIGHTS"), ui::Command(L"ModelTool.ToggleWeights"), ui::ToolBarButton::BsText | ui::ToolBarButton::BsToggle);
 	toolBar->addItem(m_toolWeight);
 
-	m_toolJointRest = new ui::ToolBarButton(L"Rest", ui::Command(L"ModelTool.ToggleJointRest"), ui::ToolBarButton::BsText | ui::ToolBarButton::BsToggle);
+	m_toolJointRest = new ui::ToolBarButton(i18n::Text(L"MODEL_TOOL_REST"), ui::Command(L"ModelTool.ToggleJointRest"), ui::ToolBarButton::BsText | ui::ToolBarButton::BsToggle);
 	toolBar->addItem(m_toolJointRest);
 
 	toolBar->addEventHandler< ui::ToolBarButtonClickEvent >(this, &ModelToolDialog::eventToolBarClick);
@@ -174,36 +182,36 @@ bool ModelToolDialog::create(ui::Widget* parent, const std::wstring& fileName, f
 
 	// Material tab.
 	Ref< ui::TabPage > tabPageMaterial = new ui::TabPage();
-	tabPageMaterial->create(tab, L"Materials", new ui::FloodLayout());
+	tabPageMaterial->create(tab, i18n::Text(L"MODEL_TOOL_MATERIALS"), new ui::FloodLayout());
 	tab->addPage(tabPageMaterial);
 
 	m_materialGrid = new ui::GridView();
 	m_materialGrid->create(tabPageMaterial, ui::WsDoubleBuffer | ui::GridView::WsColumnHeader);
-	m_materialGrid->addColumn(new ui::GridColumn(L"Name", ui::dpi96(100)));
-	m_materialGrid->addColumn(new ui::GridColumn(L"Diffuse Map", ui::dpi96(100)));
-	m_materialGrid->addColumn(new ui::GridColumn(L"Specular Map", ui::dpi96(100)));
-	m_materialGrid->addColumn(new ui::GridColumn(L"Roughness Map", ui::dpi96(100)));
-	m_materialGrid->addColumn(new ui::GridColumn(L"Metalness Map", ui::dpi96(100)));
-	m_materialGrid->addColumn(new ui::GridColumn(L"Transparency Map", ui::dpi96(100)));
-	m_materialGrid->addColumn(new ui::GridColumn(L"Emissive Map", ui::dpi96(100)));
-	m_materialGrid->addColumn(new ui::GridColumn(L"Reflective Map", ui::dpi96(100)));
-	m_materialGrid->addColumn(new ui::GridColumn(L"Normal Map", ui::dpi96(100)));
-	m_materialGrid->addColumn(new ui::GridColumn(L"Light Map", ui::dpi96(100)));
-	m_materialGrid->addColumn(new ui::GridColumn(L"Color", ui::dpi96(110)));
-	m_materialGrid->addColumn(new ui::GridColumn(L"Diffuse Term", ui::dpi96(100)));
-	m_materialGrid->addColumn(new ui::GridColumn(L"Specular Term", ui::dpi96(100)));
-	m_materialGrid->addColumn(new ui::GridColumn(L"Roughness", ui::dpi96(100)));
-	m_materialGrid->addColumn(new ui::GridColumn(L"Metalness", ui::dpi96(100)));
-	m_materialGrid->addColumn(new ui::GridColumn(L"Transparency", ui::dpi96(100)));
-	m_materialGrid->addColumn(new ui::GridColumn(L"Emissive", ui::dpi96(100)));
-	m_materialGrid->addColumn(new ui::GridColumn(L"Reflective", ui::dpi96(100)));
-	m_materialGrid->addColumn(new ui::GridColumn(L"Rim Light Intensity", ui::dpi96(100)));
-	m_materialGrid->addColumn(new ui::GridColumn(L"Blend Operator", ui::dpi96(100)));
-	m_materialGrid->addColumn(new ui::GridColumn(L"Double Sided", ui::dpi96(100)));
+	m_materialGrid->addColumn(new ui::GridColumn(i18n::Text(L"MODEL_TOOL_MATERIAL_NAME"), ui::dpi96(100)));
+	m_materialGrid->addColumn(new ui::GridColumn(i18n::Text(L"MODEL_TOOL_MATERIAL_DIFFUSE_MAP"), ui::dpi96(100)));
+	m_materialGrid->addColumn(new ui::GridColumn(i18n::Text(L"MODEL_TOOL_MATERIAL_SPECULAR_MAP"), ui::dpi96(100)));
+	m_materialGrid->addColumn(new ui::GridColumn(i18n::Text(L"MODEL_TOOL_MATERIAL_ROUGHNESS_MAP"), ui::dpi96(100)));
+	m_materialGrid->addColumn(new ui::GridColumn(i18n::Text(L"MODEL_TOOL_MATERIAL_METALNESS_MAP"), ui::dpi96(100)));
+	m_materialGrid->addColumn(new ui::GridColumn(i18n::Text(L"MODEL_TOOL_MATERIAL_TRANSPARENCY_MAP"), ui::dpi96(100)));
+	m_materialGrid->addColumn(new ui::GridColumn(i18n::Text(L"MODEL_TOOL_MATERIAL_EMISSIVE_MAP"), ui::dpi96(100)));
+	m_materialGrid->addColumn(new ui::GridColumn(i18n::Text(L"MODEL_TOOL_MATERIAL_REFLECTIVE_MAP"), ui::dpi96(100)));
+	m_materialGrid->addColumn(new ui::GridColumn(i18n::Text(L"MODEL_TOOL_MATERIAL_NORMAL_MAP"), ui::dpi96(100)));
+	m_materialGrid->addColumn(new ui::GridColumn(i18n::Text(L"MODEL_TOOL_MATERIAL_LIGHT_MAP"), ui::dpi96(100)));
+	m_materialGrid->addColumn(new ui::GridColumn(i18n::Text(L"MODEL_TOOL_MATERIAL_COLOR"), ui::dpi96(110)));
+	m_materialGrid->addColumn(new ui::GridColumn(i18n::Text(L"MODEL_TOOL_MATERIAL_DIFFUSE_TERM"), ui::dpi96(100)));
+	m_materialGrid->addColumn(new ui::GridColumn(i18n::Text(L"MODEL_TOOL_MATERIAL_SPECULAR_TERM"), ui::dpi96(100)));
+	m_materialGrid->addColumn(new ui::GridColumn(i18n::Text(L"MODEL_TOOL_MATERIAL_ROUGHNESS"), ui::dpi96(100)));
+	m_materialGrid->addColumn(new ui::GridColumn(i18n::Text(L"MODEL_TOOL_MATERIAL_METALNESS"), ui::dpi96(100)));
+	m_materialGrid->addColumn(new ui::GridColumn(i18n::Text(L"MODEL_TOOL_MATERIAL_TRANSPARENCY"), ui::dpi96(100)));
+	m_materialGrid->addColumn(new ui::GridColumn(i18n::Text(L"MODEL_TOOL_MATERIAL_EMISSIVE"), ui::dpi96(100)));
+	m_materialGrid->addColumn(new ui::GridColumn(i18n::Text(L"MODEL_TOOL_MATERIAL_REFLECTIVE"), ui::dpi96(100)));
+	m_materialGrid->addColumn(new ui::GridColumn(i18n::Text(L"MODEL_TOOL_MATERIAL_RIM_LIGHT"), ui::dpi96(100)));
+	m_materialGrid->addColumn(new ui::GridColumn(i18n::Text(L"MODEL_TOOL_MATERIAL_BLEND_OPERATOR"), ui::dpi96(100)));
+	m_materialGrid->addColumn(new ui::GridColumn(i18n::Text(L"MODEL_TOOL_MATERIAL_DOUBLE_SIDED"), ui::dpi96(100)));
 
 	// Skeleton tab.
 	Ref< ui::TabPage > tabPageSkeleton = new ui::TabPage();
-	tabPageSkeleton->create(tab, L"Skeleton", new ui::FloodLayout());
+	tabPageSkeleton->create(tab, i18n::Text(L"MODEL_TOOL_SKELETON"), new ui::FloodLayout());
 	tab->addPage(tabPageSkeleton);
 
 	m_skeletonTree = new ui::TreeView();
@@ -212,13 +220,13 @@ bool ModelToolDialog::create(ui::Widget* parent, const std::wstring& fileName, f
 
 	// Statistic tab.
 	Ref< ui::TabPage > tabPageStatistics = new ui::TabPage();
-	tabPageStatistics->create(tab, L"Statistics", new ui::FloodLayout());
+	tabPageStatistics->create(tab, i18n::Text(L"MODEL_TOOL_STATISTICS"), new ui::FloodLayout());
 	tab->addPage(tabPageStatistics);
 
 	m_statisticGrid = new ui::GridView();
 	m_statisticGrid->create(tabPageStatistics, ui::WsDoubleBuffer | ui::GridView::WsColumnHeader);
-	m_statisticGrid->addColumn(new ui::GridColumn(L"Name", ui::dpi96(120)));
-	m_statisticGrid->addColumn(new ui::GridColumn(L"Value", ui::dpi96(400)));
+	m_statisticGrid->addColumn(new ui::GridColumn(i18n::Text(L"MODEL_TOOL_STATISTIC_NAME"), ui::dpi96(120)));
+	m_statisticGrid->addColumn(new ui::GridColumn(i18n::Text(L"MODEL_TOOL_STATISTIC_VALUE"), ui::dpi96(400)));
 
 	tab->setActivePage(tabPageMaterial);
 
@@ -239,7 +247,8 @@ bool ModelToolDialog::create(ui::Widget* parent, const std::wstring& fileName, f
 	modelRootPopupAdd->add(new ui::MenuItem(ui::Command(L"ModelTool.Triangulate"), L"Triangulate"));
 	modelRootPopupAdd->add(new ui::MenuItem(ui::Command(L"ModelTool.Unweld"), L"Unweld"));
 	modelRootPopupAdd->add(new ui::MenuItem(ui::Command(L"ModelTool.UnwrapUV"), L"Unwrap UV"));
-	modelRootPopupAdd->add(new ui::MenuItem(ui::Command(L"ModelTool.WeldHoles"), L"Weld Holes"));
+	modelRootPopupAdd->add(new ui::MenuItem(L"-"));
+	modelRootPopupAdd->add(new ui::MenuItem(ui::Command(L"ModelTool.ExecuteScript"), L"Execute script..."));
 	m_modelRootPopup->add(modelRootPopupAdd);
 
 	m_modelRootPopup->add(new ui::MenuItem(L"-"));
@@ -455,7 +464,7 @@ void ModelToolDialog::eventModelTreeButtonDown(ui::MouseButtonDownEvent* event)
 		return;
 
 	T_ASSERT(items.front());
-	if (items.front()->getParent() == 0)
+	if (items.front()->getParent() == nullptr)
 	{
 		Ref< ui::TreeViewItem > itemModel = items.front();
 		const ui::MenuItem* selected = m_modelRootPopup->showModal(m_modelTree, event->getPosition());
@@ -546,6 +555,34 @@ void ModelToolDialog::eventModelTreeButtonDown(ui::MouseButtonDownEvent* event)
 				itemOperation->setData(L"OPERATION", new UnwrapUV(0, 1024));
 				updateOperations(itemModel);
 			}
+			else if (command == L"ModelTool.ExecuteScript")
+			{
+				auto scriptInstance = m_editor->browseInstance(
+					type_of< script::Script >()
+				);
+				if (!scriptInstance)
+					return;
+
+				// Ensure script has been built as we're
+				// actually loading class through resource manager. 
+				m_editor->buildAsset(
+					scriptInstance->getGuid(),
+					false
+				);
+
+				// Load compiled script class.
+				resource::Proxy< IRuntimeClass > scriptClass;
+				if (!m_resourceManager->bind(
+					resource::Id< IRuntimeClass >(scriptInstance->getGuid()),
+					scriptClass
+				))
+					return;
+
+				// Add operation to list.
+				Ref< ui::TreeViewItem > itemOperation = m_modelTree->createItem(itemModel, L"Execute Script", 0);
+				itemOperation->setData(L"OPERATION", new ExecuteScript(scriptClass));
+				updateOperations(itemModel);
+			}
 			else if (command == L"ModelTool.SaveAs")
 			{
 				saveModel(itemModel->getData< Model >(L"MODEL"));
@@ -553,9 +590,9 @@ void ModelToolDialog::eventModelTreeButtonDown(ui::MouseButtonDownEvent* event)
 			else if (command == L"ModelTool.Remove")
 			{
 				m_modelTree->removeItem(itemModel);
-				m_model = 0;
-				m_modelTris = 0;
-				m_modelAdjacency = 0;
+				m_model = nullptr;
+				m_modelTris = nullptr;
+				m_modelAdjacency = nullptr;
 				m_renderWidget->update();
 			}
 		}
@@ -882,29 +919,26 @@ void ModelToolDialog::eventRenderPaint(ui::PaintEvent* event)
 				m_primitiveRenderer->popDepthState();
 			}
 
-			const AlignedVector< Vertex >& vertices = m_model->getVertices();
-			const AlignedVector< Polygon >& polygons = m_model->getPolygons();
-			const AlignedVector< Vector4 >& positions = m_model->getPositions();
-			const AlignedVector< Vector4 >& normals = m_model->getNormals();
-			const AlignedVector< Vector2 >& texCoords = m_model->getTexCoords();
-			const AlignedVector< Joint >& joints = m_model->getJoints();
+			const auto& vertices = m_model->getVertices();
+			const auto& polygons = m_model->getPolygons();
+			const auto& positions = m_model->getPositions();
+			const auto& normals = m_model->getNormals();
+			const auto& texCoords = m_model->getTexCoords();
+			const auto& joints = m_model->getJoints();
 
 			// Render wire-frame.
 			if (m_toolWire->isToggled())
 			{
 				m_primitiveRenderer->pushDepthState(true, false, false);
-				for (AlignedVector< Polygon >::const_iterator i = polygons.begin(); i != polygons.end(); ++i)
+				for (const auto& polygon : polygons)
 				{
-					const AlignedVector< uint32_t >& indices = i->getVertices();
-
+					const AlignedVector< uint32_t >& indices = polygon.getVertices();
 					for (uint32_t i = 0; i < indices.size(); ++i)
 					{
 						const Vertex& vx0 = vertices[indices[i]];
 						const Vertex& vx1 = vertices[indices[(i + 1) % indices.size()]];
-
 						const Vector4& p0 = positions[vx0.getPosition()];
 						const Vector4& p1 = positions[vx1.getPosition()];
-
 						m_primitiveRenderer->drawLine(p0, p1, Color4ub(255, 255, 255, 200));
 					}
 				}
@@ -919,11 +953,10 @@ void ModelToolDialog::eventRenderPaint(ui::PaintEvent* event)
 					m_modelAdjacency = new ModelAdjacency(m_model, ModelAdjacency::MdByPosition);
 
 				m_primitiveRenderer->pushDepthState(true, false, false);
-				for (uint32_t i = 0; i < polygons.size(); ++i)
+				for (uint32_t i = 0; i < (uint32_t)polygons.size(); ++i)
 				{
-					const Polygon& polygon = polygons[i];
-					const AlignedVector< uint32_t >& indices = polygon.getVertices();
-
+					const auto& polygon = polygons[i];
+					const auto& indices = polygon.getVertices();
 					for (uint32_t j = 0; j < indices.size(); ++j)
 					{
 						uint32_t share = m_modelAdjacency->getSharedEdgeCount(i, j);
@@ -931,10 +964,8 @@ void ModelToolDialog::eventRenderPaint(ui::PaintEvent* event)
 						{
 							const Vertex& vx0 = vertices[indices[j]];
 							const Vertex& vx1 = vertices[indices[(j + 1) % indices.size()]];
-
 							const Vector4& p0 = positions[vx0.getPosition()];
 							const Vector4& p1 = positions[vx1.getPosition()];
-
 							m_primitiveRenderer->drawLine(p0, p1, Color4ub(255, 40, 40, 200));
 						}
 					}
@@ -945,13 +976,12 @@ void ModelToolDialog::eventRenderPaint(ui::PaintEvent* event)
 			if (m_toolNormals->isToggled())
 			{
 				m_primitiveRenderer->pushDepthState(true, false, false);
-				for (AlignedVector< Vertex >::const_iterator i = vertices.begin(); i != vertices.end(); ++i)
+				for (const auto& vertex : vertices)
 				{
-					if (i->getNormal() != c_InvalidIndex)
+					if (vertex.getNormal() != c_InvalidIndex)
 					{
-						const Vector4& p = positions[i->getPosition()];
-						const Vector4& n = normals[i->getNormal()];
-
+						const Vector4& p = positions[vertex.getPosition()];
+						const Vector4& n = normals[vertex.getNormal()];
 						m_primitiveRenderer->drawLine(p, p + n * Scalar(m_normalScale), Color4ub(0, 255, 0, 200));
 					}
 				}
@@ -961,9 +991,9 @@ void ModelToolDialog::eventRenderPaint(ui::PaintEvent* event)
 			if (m_toolVertices->isToggled())
 			{
 				m_primitiveRenderer->pushDepthState(true, false, false);
-				for (AlignedVector< Vector4 >::const_iterator i = positions.begin(); i != positions.end(); ++i)
+				for (const auto& position : positions)
 				{
-					m_primitiveRenderer->drawSolidPoint(*i, 2.0f, Color4ub(255, 255, 0, 200));
+					m_primitiveRenderer->drawSolidPoint(position, 2.0f, Color4ub(255, 255, 0, 200));
 				}
 				m_primitiveRenderer->popDepthState();
 			}

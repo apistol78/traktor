@@ -9,6 +9,8 @@ namespace traktor
 	namespace model
 	{
 
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.model.Joint", 0, Joint, ISerializable)
+
 Joint::Joint()
 :	m_parent(c_InvalidIndex)
 ,	m_transform(Transform::identity())

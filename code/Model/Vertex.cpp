@@ -11,6 +11,8 @@ namespace traktor
 	namespace model
 	{
 
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.model.Vertex", 0, Vertex, ISerializable)
+
 Vertex::Vertex()
 :	m_position(c_InvalidIndex)
 ,	m_color(c_InvalidIndex)

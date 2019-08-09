@@ -55,8 +55,8 @@ bool ScriptEditorPlugin::create(ui::Widget* parent, editor::IEditorPageSite* sit
 
 void ScriptEditorPlugin::destroy()
 {
-	m_editor->setStoreObject(L"ScriptDebuggerSessions", 0);
-	m_editor->setStoreObject(L"ScriptManager", 0);
+	m_editor->setStoreObject(L"ScriptDebuggerSessions", nullptr);
+	m_editor->setStoreObject(L"ScriptManager", nullptr);
 	safeDestroy(m_scriptManager);
 }
 

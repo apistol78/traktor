@@ -2,6 +2,7 @@
 
 #include <string>
 #include "Core/Math/Transform.h"
+#include "Core/Serialization/ISerializable.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -22,8 +23,10 @@ class ISerializer;
 /*! \brief Joint
  * \ingroup Model
  */
-class T_DLLCLASS Joint
+class T_DLLCLASS Joint : public ISerializable
 {
+	T_RTTI_CLASS;
+
 public:
 	Joint();
 
@@ -47,7 +50,7 @@ public:
 
 	float getLength() const;
 
-	void serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s) override final;
 
 	bool operator == (const Joint& rh) const;
 

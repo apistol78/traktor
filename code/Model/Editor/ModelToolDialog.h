@@ -6,6 +6,13 @@
 
 namespace traktor
 {
+	namespace editor
+	{
+
+class IEditor;
+
+	}
+
 	namespace render
 	{
 
@@ -49,6 +56,7 @@ class ModelToolDialog : public ui::Dialog
 
 public:
 	ModelToolDialog(
+		editor::IEditor* editor,
 		resource::IResourceManager* resourceManager,
 		render::IRenderSystem* renderSystem
 	);
@@ -58,6 +66,7 @@ public:
 	void destroy();
 
 private:
+	editor::IEditor* m_editor;
 	Ref< resource::IResourceManager > m_resourceManager;
 	Ref< render::IRenderSystem > m_renderSystem;
 	Ref< render::IRenderView > m_renderView;

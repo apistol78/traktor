@@ -238,6 +238,10 @@ public:
 
 	static float distance4(const BoxedVector4* a, const BoxedVector4* b) { return (b->m_value - a->m_value).length(); }
 
+	static int32_t minorAxis3(const BoxedVector4* a) { return traktor::minorAxis3(a->m_value); }
+
+	static int32_t majorAxis3(const BoxedVector4* a) { return traktor::majorAxis3(a->m_value); }
+
 	const Vector4& unbox() const { return m_value; }
 
 	virtual std::wstring toString() const override final;

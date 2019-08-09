@@ -214,7 +214,7 @@ void WidgetPreviewControl::eventPaint(ui::PaintEvent* event)
 			if (m_scaffoldingObject)
 			{
 				const IRuntimeDispatch* method = findRuntimeClassMethod(m_scaffoldingClass, "remove");
-				if (method != 0)
+				if (method != nullptr)
 					method->invoke(m_scaffoldingObject, 0, 0);
 			}
 
@@ -225,7 +225,7 @@ void WidgetPreviewControl::eventPaint(ui::PaintEvent* event)
 				Any::fromObject(m_resourceManager),
 				Any::fromObject(m_moviePlayer->getMovieInstance())
 			};
-			m_scaffoldingObject = createRuntimeClassInstance(m_scaffoldingClass, 0, sizeof_array(argv), argv);
+			m_scaffoldingObject = createRuntimeClassInstance(m_scaffoldingClass, nullptr, sizeof_array(argv), argv);
 		}
 		else
 			m_scaffoldingObject = 0;

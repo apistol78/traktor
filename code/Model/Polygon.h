@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Core/Config.h"
 #include "Core/Containers/AlignedVector.h"
+#include "Core/Serialization/ISerializable.h"
 #include "Model/Types.h"
 
 // import/export mechanism.
@@ -23,8 +23,10 @@ class ISerializer;
 /*! \brief Polygon
  * \ingroup Model
  */
-class T_DLLCLASS Polygon
+class T_DLLCLASS Polygon : public ISerializable
 {
+	T_RTTI_CLASS;
+
 public:
 	Polygon();
 
@@ -64,7 +66,7 @@ public:
 
 	AlignedVector< uint32_t >& getVertices();
 
-	void serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s) override final;
 
 	bool operator == (const Polygon& r) const;
 
