@@ -1,7 +1,5 @@
 #include <limits>
 #include "Core/Math/Aabb2.h"
-#include "Core/Math/Line2.h"
-#include "Core/Math/Winding2.h"
 #include "World/SMProj/TrapezoidShadowProjection.h"
 
 namespace traktor

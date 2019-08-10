@@ -2,6 +2,7 @@
 
 #include "Core/Class/Any.h"
 #include "Core/Io/OutputStream.h"
+#include "Core/Math/Scalar.h"
 #include "Core/Meta/Traits.h"
 
 namespace traktor
@@ -248,6 +249,42 @@ struct CastAny < double, false >
 	}
 	static double get(const Any& value) {
 		return double(value.getFloat());
+	}
+};
+
+template < >
+struct CastAny < Scalar, false >
+{
+	T_NO_COPY_CLASS(CastAny);
+	static OutputStream& typeName(OutputStream& ss) {
+		return ss << L"Scalar";
+	}
+	static bool accept(const Any& value) {
+		return value.isNumeric();
+	}
+	static Any set(const Scalar& value) {
+		return Any::fromFloat(float(value));
+	}
+	static Scalar get(const Any& value) {
+		return Scalar(value.getFloat());
+	}
+};
+
+template < >
+struct CastAny < const Scalar&, false >
+{
+	T_NO_COPY_CLASS(CastAny);
+	static OutputStream& typeName(OutputStream& ss) {
+		return ss << L"const Scalar&";
+	}
+	static bool accept(const Any& value) {
+		return value.isNumeric();
+	}
+	static Any set(const Scalar& value) {
+		return Any::fromFloat(float(value));
+	}
+	static Scalar get(const Any& value) {
+		return Scalar(value.getFloat());
 	}
 };
 

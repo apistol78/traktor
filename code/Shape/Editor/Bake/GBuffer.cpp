@@ -127,17 +127,17 @@ bool GBuffer::create(int32_t width, int32_t height, const model::Model& model, c
 			normals.push_back((transform * model.getNormal(normalIndex).xyz0()).normalized());
 
 			uint32_t texCoordIndex = vertex.getTexCoord(texCoordChannel);
-			texCoords.points.push_back(
+			texCoords.push(
 				model.getTexCoord(texCoordIndex) * Vector2(width, height) - Vector2(0.5f, 0.5f)
 			);
-			texBounds.contain(texCoords.points.back());
+			texBounds.contain(texCoords.get().back());
 
 			m_boundingBox.contain(positions.back());
 		}
 
 		// Triangulate winding so we can easily traverse lightmap fragments.
 		AlignedVector< Triangulator::Triangle > triangles;
-		Triangulator().freeze(texCoords.points, triangles);
+		Triangulator().freeze(texCoords.get(), triangles);
 
 		// Trace triangle interiors.
 		for (const auto& triangle : triangles)
@@ -147,16 +147,16 @@ bool GBuffer::create(int32_t width, int32_t height, const model::Model& model, c
 			size_t i2 = triangle.indices[2];
 
 			Barycentric bary(
-				texCoords.points[i0],
-				texCoords.points[i1],
-				texCoords.points[i2]
+				texCoords[i0],
+				texCoords[i1],
+				texCoords[i2]
 			);
 
 			// Interpolate for verification of barycentrics... \tbd
 			Interpolants< Vector2 > ipolTexCoords(
-				texCoords.points[i0],
-				texCoords.points[i1],
-				texCoords.points[i2]
+				texCoords[i0],
+				texCoords[i1],
+				texCoords[i2]
 			);
 
 			Interpolants< Vector4 > ipolPositions(
@@ -172,9 +172,9 @@ bool GBuffer::create(int32_t width, int32_t height, const model::Model& model, c
 			);
 
 			Aabb2 bbox;
-			bbox.contain(texCoords.points[i0]);
-			bbox.contain(texCoords.points[i1]);
-			bbox.contain(texCoords.points[i2]);
+			bbox.contain(texCoords[i0]);
+			bbox.contain(texCoords[i1]);
+			bbox.contain(texCoords[i2]);
 
 			int32_t sx = (int32_t)(bbox.mn.x - 4);
 			int32_t ex = (int32_t)(bbox.mx.x + 4);

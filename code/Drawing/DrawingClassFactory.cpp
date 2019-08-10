@@ -1,5 +1,7 @@
 #include "Core/Class/AutoRuntimeClass.h"
-#include "Core/Class/Boxes.h"
+#include "Core/Class/Boxes/BoxedAlignedVector.h"
+#include "Core/Class/Boxes/BoxedColor4f.h"
+#include "Core/Class/Boxes/BoxedMatrix33.h"
 #include "Core/Class/IRuntimeClassRegistrar.h"
 #include "Core/Io/IStream.h"
 #include "Drawing/DrawingClassFactory.h"

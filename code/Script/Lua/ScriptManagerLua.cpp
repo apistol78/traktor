@@ -1,11 +1,12 @@
 #include <cstring>
 #include "Core/Class/AutoVerify.h"
-#include "Core/Class/Boxes.h"
+#include "Core/Class/Boxes/BoxedTypeInfo.h"
 #include "Core/Class/IRuntimeClass.h"
 #include "Core/Class/IRuntimeDispatch.h"
 #include "Core/Io/DynamicMemoryStream.h"
 #include "Core/Io/Utf8Encoding.h"
 #include "Core/Log/Log.h"
+#include "Core/Math/MathUtils.h"
 #include "Core/Misc/Save.h"
 #include "Core/Misc/Split.h"
 #include "Core/Misc/String.h"
@@ -892,7 +893,7 @@ void ScriptManagerLua::collectGarbagePartial()
 
 #else
 
-	float dT = min< float >(float(s_timer.getDeltaTime()), 0.1f);
+	float dT = std::min< float >(float(s_timer.getDeltaTime()), 0.1f);
 	m_collectTargetSteps += dT * m_collectStepFrequency;
 
 	int32_t targetSteps = int32_t(m_collectTargetSteps);
@@ -929,7 +930,7 @@ void ScriptManagerLua::collectGarbagePartial()
 		float garbageProduced = (m_totalMemoryUse - m_lastMemoryUse) / dT;
 
 		// Determine collector frequency from amount of garbage per second.
-		m_collectStepFrequency = max< float >(
+		m_collectStepFrequency = std::max< float >(
 			clamp(garbageProduced / (64*1024), 1.0f, 60.0f),
 			m_collectStepFrequency
 		);
@@ -938,7 +939,7 @@ void ScriptManagerLua::collectGarbagePartial()
 	{
 		// Using less memory after this collection; slowly decrease
 		// frequency until memory start to rise again.
-		m_collectStepFrequency = max< float >(1.0f, m_collectStepFrequency - m_collectStepFrequency / 10.0f);
+		m_collectStepFrequency = std::max< float >(1.0f, m_collectStepFrequency - m_collectStepFrequency / 10.0f);
 	}
 
 	m_lastMemoryUse = m_totalMemoryUse;

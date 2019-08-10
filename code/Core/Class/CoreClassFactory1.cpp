@@ -1,7 +1,8 @@
 #include "Core/Class/AutoRuntimeClass.h"
-#include "Core/Class/Boxes.h"
-#include "Core/Class/CoreClassFactory.h"
+#include "Core/Class/CoreClassFactory1.h"
 #include "Core/Class/IRuntimeClassRegistrar.h"
+#include "Core/Class/Boxes/BoxedColor4ub.h"
+#include "Core/Class/Boxes/BoxedRefArray.h"
 #include "Core/Date/DateTime.h"
 #include "Core/Io/AnsiEncoding.h"
 #include "Core/Io/BitReader.h"
@@ -266,9 +267,9 @@ std::wstring PropertyString_get(PropertyString* self)
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.CoreClassFactory", 0, CoreClassFactory, IRuntimeClassFactory)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.CoreClassFactory1", 0, CoreClassFactory1, IRuntimeClassFactory)
 
-void CoreClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
+void CoreClassFactory1::createClasses(IRuntimeClassRegistrar* registrar) const
 {
 	auto classDateTime = new AutoRuntimeClass< DateTime >();
 	classDateTime->addConstructor();

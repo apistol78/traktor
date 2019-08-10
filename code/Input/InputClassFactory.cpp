@@ -1,5 +1,5 @@
 #include "Core/Class/AutoRuntimeClass.h"
-#include "Core/Class/Boxes.h"
+#include "Core/Class/Boxes/BoxedStdVector.h"
 #include "Core/Class/IRuntimeClassRegistrar.h"
 #include "Input/IInputDevice.h"
 #include "Input/IInputDriver.h"

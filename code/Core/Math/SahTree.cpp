@@ -49,7 +49,7 @@ void SahTree::build(const AlignedVector< Winding3 >& polygons)
 
 	for (uint32_t i = 0; i < polygons.size(); ++i)
 	{
-		const Winding3::points_t& points = polygons[i].getPoints();
+		const Winding3::points_t& points = polygons[i].get();
 		for (Winding3::points_t::const_iterator j = points.begin(); j != points.end(); ++j)
 			m_root->aabb.contain(*j);
 
@@ -276,7 +276,7 @@ void SahTree::buildNode(Node* node, int32_t depth)
 	for (auto index : node->indices)
 	{
 		const Winding3& polygon = m_polygons[index];
-		const Winding3::points_t& points = polygon.getPoints();
+		const Winding3::points_t& points = polygon.get();
 
 		std::pair< float, float > range(
 			std::numeric_limits< float >::max(),

@@ -1,6 +1,10 @@
 #include "Core/Class/AutoRuntimeClass.h"
-#include "Core/Class/Boxes.h"
-#include "Core/Class/CoreClassFactory.h"
+#include "Core/Class/BoxedClassFactory.h"
+#include "Core/Class/CoreClassFactory1.h"
+#include "Core/Class/CoreClassFactory2.h"
+#include "Core/Class/Boxes/BoxedAlignedVector.h"
+#include "Core/Class/Boxes/BoxedRefArray.h"
+#include "Core/Class/Boxes/BoxedStdVector.h"
 #include "Core/Io/BufferedStream.h"
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/StringOutputStream.h"
@@ -161,8 +165,9 @@ bool ScriptProcessor::create()
 	// Create script manager and register our classes.
 	m_scriptManager = new script::ScriptManagerLua();
 
-	BoxesClassFactory().createClasses(m_scriptManager);
-	CoreClassFactory().createClasses(m_scriptManager);
+	BoxedClassFactory().createClasses(m_scriptManager);
+	CoreClassFactory1().createClasses(m_scriptManager);
+	CoreClassFactory2().createClasses(m_scriptManager);
 
 	auto classOutput = new AutoRuntimeClass< Output >();
 	classOutput->addMethod("print", &Output::print);

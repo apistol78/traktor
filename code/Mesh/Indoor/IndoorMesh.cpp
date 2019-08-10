@@ -136,28 +136,28 @@ void IndoorMesh::findVisibleSectors(
 	SmallSet< int >& outVisibleSectors
 )
 {
-	for (AlignedVector< Portal >::const_iterator i = m_portals.begin(); i != m_portals.end(); ++i)
+	for (const auto& portal : m_portals)
 	{
-		if (i->sectorA == currentSector || i->sectorB == currentSector)
+		if (portal.sectorA == currentSector || portal.sectorB == currentSector)
 		{
-			int nextSector = (i->sectorA == currentSector) ? i->sectorB : i->sectorA;
+			int nextSector = (portal.sectorA == currentSector) ? portal.sectorB : portal.sectorA;
 			if (outVisibleSectors.find(nextSector) != outVisibleSectors.end())
 				continue;
 
 			Winding3 clipped;
-			for (Winding3::points_t::const_iterator j = i->winding.getPoints().begin(); j != i->winding.getPoints().end(); ++j)
+			for (const auto& point : portal.winding.get())
 				clipped.push(
-					view * *j
+					view * point
 				);
 
 			Plane clippedPlane;
 			if (clipped.getPlane(clippedPlane) && clippedPlane.normal().z() >= 0.0f)
 				clipped.flip();
 
-			for (AlignedVector< Plane >::const_iterator j = frustum.begin(); j != frustum.end(); ++j)
+			for (const auto& plane : frustum)
 			{
 				Winding3 front, back;
-				clipped.split(*j, front, back);
+				clipped.split(plane, front, back);
 				clipped = front;
 
 				if (clipped.size() < 3)

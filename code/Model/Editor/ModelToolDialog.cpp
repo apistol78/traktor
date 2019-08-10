@@ -232,7 +232,6 @@ bool ModelToolDialog::create(ui::Widget* parent, const std::wstring& fileName, f
 	tab->setActivePage(tabPageMaterial);
 
 	m_modelRootPopup = new ui::Menu();
-
 	Ref< ui::MenuItem > modelRootPopupAdd = new ui::MenuItem(i18n::Text(L"MODEL_TOOL_ADD_OPERATION"));
 	modelRootPopupAdd->add(new ui::MenuItem(ui::Command(L"ModelTool.Clear"), L"Clear"));
 	modelRootPopupAdd->add(new ui::MenuItem(ui::Command(L"ModelTool.CalculateTangents"), L"Calculate Tangents"));
@@ -251,13 +250,12 @@ bool ModelToolDialog::create(ui::Widget* parent, const std::wstring& fileName, f
 	modelRootPopupAdd->add(new ui::MenuItem(L"-"));
 	modelRootPopupAdd->add(new ui::MenuItem(ui::Command(L"ModelTool.ExecuteScript"), L"Execute script..."));
 	m_modelRootPopup->add(modelRootPopupAdd);
-
 	m_modelRootPopup->add(new ui::MenuItem(L"-"));
 	m_modelRootPopup->add(new ui::MenuItem(ui::Command(L"ModelTool.SaveAs"), i18n::Text(L"MODEL_TOOL_SAVE_AS")));
 	m_modelRootPopup->add(new ui::MenuItem(ui::Command(L"ModelTool.Remove"), i18n::Text(L"MODEL_TOOL_REMOVE")));
 
 	m_modelChildPopup = new ui::Menu();
-
+	m_modelChildPopup->add(new ui::MenuItem(ui::Command(L"ModelTool.Refresh"), i18n::Text(L"MODEL_TOOL_REFRESH")));
 	m_modelChildPopup->add(new ui::MenuItem(L"-"));
 	m_modelChildPopup->add(new ui::MenuItem(ui::Command(L"ModelTool.SaveAs"), i18n::Text(L"MODEL_TOOL_SAVE_AS")));
 	m_modelChildPopup->add(new ui::MenuItem(ui::Command(L"ModelTool.Remove"), i18n::Text(L"MODEL_TOOL_REMOVE")));
@@ -616,7 +614,11 @@ void ModelToolDialog::eventModelTreeButtonDown(ui::MouseButtonDownEvent* event)
 		if (selected)
 		{
 			const ui::Command& command = selected->getCommand();
-			if (command == L"ModelTool.SaveAs")
+			if (command == L"ModelTool.Refresh")
+			{
+				updateOperations(itemModel);
+			}
+			else if (command == L"ModelTool.SaveAs")
 			{
 				saveModel(itemModel->getData< Model >(L"MODEL"));
 			}

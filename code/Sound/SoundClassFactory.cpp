@@ -1,5 +1,7 @@
 #include "Core/Class/AutoRuntimeClass.h"
-#include "Core/Class/Boxes.h"
+#include "Core/Class/Boxes/BoxedRefArray.h"
+#include "Core/Class/Boxes/BoxedTransform.h"
+#include "Core/Class/Boxes/BoxedVector4.h"
 #include "Core/Class/IRuntimeClassRegistrar.h"
 #include "Sound/IFilter.h"
 #include "Sound/ISoundDriver.h"

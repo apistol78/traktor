@@ -185,5 +185,9 @@
 	    	<second>Remove</second>
 	    </item>
 
+		<item>
+			<first>MODEL_TOOL_REFRESH</first>
+			<second>Refresh</second>
+		</item>
 	</map>
 </object>

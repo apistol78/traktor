@@ -1,5 +1,6 @@
 #include "Core/Class/AutoRuntimeClass.h"
-#include "Core/Class/Boxes.h"
+#include "Core/Class/Boxes/BoxedAlignedVector.h"
+#include "Core/Class/Boxes/BoxedVector4.h"
 #include "Core/Class/IRuntimeClassRegistrar.h"
 #include "Core/Class/IRuntimeDelegate.h"
 #include "Mesh/IMeshParameterCallback.h"

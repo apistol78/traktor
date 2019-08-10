@@ -1,7 +1,7 @@
 #include "Core/Class/AutoRuntimeClass.h"
-#include "Core/Class/Boxes.h"
+#include "Core/Class/BoxedClassFactory.h"
 #include "Core/Class/CastAny.h"
-#include "Core/Class/CoreClassFactory.h"
+#include "Core/Class/CoreClassFactory1.h"
 #include "Core/Class/CoreClassFactory2.h"
 #include "Core/Class/OrderedClassRegistrar.h"
 #include "Core/Io/BufferedStream.h"
@@ -414,7 +414,8 @@ void Run::registerRuntimeClasses(script::IScriptManager* scriptManager)
 	OrderedClassRegistrar registrar;
 
 	// System classes.
-	T_FORCE_LINK_REF(CoreClassFactory);
+	T_FORCE_LINK_REF(BoxedClassFactory);
+	T_FORCE_LINK_REF(CoreClassFactory1);
 	T_FORCE_LINK_REF(CoreClassFactory2);
 	T_FORCE_LINK_REF(drawing::DrawingClassFactory);
 	T_FORCE_LINK_REF(json::JsonClassFactory);

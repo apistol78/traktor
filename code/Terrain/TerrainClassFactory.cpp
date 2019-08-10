@@ -1,5 +1,5 @@
 #include "Core/Class/AutoRuntimeClass.h"
-#include "Core/Class/Boxes.h"
+#include "Core/Class/Boxes/BoxedColor4f.h"
 #include "Core/Class/IRuntimeClassRegistrar.h"
 #include "Heightfield/Heightfield.h"
 #include "Render/ISimpleTexture.h"
