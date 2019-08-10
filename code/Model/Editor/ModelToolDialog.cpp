@@ -120,7 +120,7 @@ ModelToolDialog::ModelToolDialog(
 
 bool ModelToolDialog::create(ui::Widget* parent, const std::wstring& fileName, float scale)
 {
-	if (!ui::Dialog::create(parent, L"Model Tool", ui::dpi96(1000), ui::dpi96(800), ui::Dialog::WsDefaultResizable, new ui::TableLayout(L"100%", L"*,100%", 0, 0)))
+	if (!ui::Dialog::create(parent, i18n::Text(L"MODEL_TOOL_TITLE"), ui::dpi96(1000), ui::dpi96(800), ui::Dialog::WsDefaultResizable, new ui::TableLayout(L"100%", L"*,100%", 0, 0)))
 		return false;
 
 	setIcon(new ui::StyleBitmap(L"Editor.Icon"));
@@ -233,7 +233,7 @@ bool ModelToolDialog::create(ui::Widget* parent, const std::wstring& fileName, f
 
 	m_modelRootPopup = new ui::Menu();
 
-	Ref< ui::MenuItem > modelRootPopupAdd = new ui::MenuItem(L"Add Operation...");
+	Ref< ui::MenuItem > modelRootPopupAdd = new ui::MenuItem(i18n::Text(L"MODEL_TOOL_ADD_OPERATION"));
 	modelRootPopupAdd->add(new ui::MenuItem(ui::Command(L"ModelTool.Clear"), L"Clear"));
 	modelRootPopupAdd->add(new ui::MenuItem(ui::Command(L"ModelTool.CalculateTangents"), L"Calculate Tangents"));
 	modelRootPopupAdd->add(new ui::MenuItem(ui::Command(L"ModelTool.CleanDegenerate"), L"Clean Degenerate"));
@@ -253,14 +253,14 @@ bool ModelToolDialog::create(ui::Widget* parent, const std::wstring& fileName, f
 	m_modelRootPopup->add(modelRootPopupAdd);
 
 	m_modelRootPopup->add(new ui::MenuItem(L"-"));
-	m_modelRootPopup->add(new ui::MenuItem(ui::Command(L"ModelTool.SaveAs"), L"Save As..."));
-	m_modelRootPopup->add(new ui::MenuItem(ui::Command(L"ModelTool.Remove"), L"Remove"));
+	m_modelRootPopup->add(new ui::MenuItem(ui::Command(L"ModelTool.SaveAs"), i18n::Text(L"MODEL_TOOL_SAVE_AS")));
+	m_modelRootPopup->add(new ui::MenuItem(ui::Command(L"ModelTool.Remove"), i18n::Text(L"MODEL_TOOL_REMOVE")));
 
 	m_modelChildPopup = new ui::Menu();
 
 	m_modelChildPopup->add(new ui::MenuItem(L"-"));
-	m_modelChildPopup->add(new ui::MenuItem(ui::Command(L"ModelTool.SaveAs"), L"Save As..."));
-	m_modelChildPopup->add(new ui::MenuItem(ui::Command(L"ModelTool.Remove"), L"Remove"));
+	m_modelChildPopup->add(new ui::MenuItem(ui::Command(L"ModelTool.SaveAs"), i18n::Text(L"MODEL_TOOL_SAVE_AS")));
+	m_modelChildPopup->add(new ui::MenuItem(ui::Command(L"ModelTool.Remove"), i18n::Text(L"MODEL_TOOL_REMOVE")));
 
 	m_renderWidget = new ui::Widget();
 	m_renderWidget->create(splitter, ui::WsNone);
@@ -319,7 +319,7 @@ void ModelToolDialog::destroy()
 bool ModelToolDialog::loadModel()
 {
 	ui::FileDialog fileDialog;
-	if (!fileDialog.create(this, type_name(this), L"Load model(s)...", L"All files;*.*"))
+	if (!fileDialog.create(this, type_name(this), i18n::Text(L"MODEL_TOOL_LOAD_MODELS"), L"All files;*.*"))
 		return false;
 
 	std::vector< Path > fileNames;
