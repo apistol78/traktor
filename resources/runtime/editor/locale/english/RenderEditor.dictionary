@@ -1,0 +1,636 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.i18n.Dictionary">
+	<map>
+    <item>
+      <first>IMPORT_TEXTURE_DESCRIPTION</first>
+      <second>Texture...</second>
+    </item>
+    <item>
+      <first>IMPORT_TEXTURE_ENABLE_COMPRESSION</first>
+      <second>Enable compression</second>
+    </item>
+    <item>
+      <first>IMPORT_TEXTURE_GENERATE_MIPS</first>
+      <second>Generate mipmaps</second>
+    </item>
+    <item>
+      <first>IMPORT_TEXTURE_GENERATE_NORMALMAP</first>
+      <second>Generate normalmap</second>
+    </item>
+    <item>
+      <first>IMPORT_TEXTURE_IGNORE_ALPHA</first>
+      <second>Ignore alpha</second>
+    </item>
+    <item>
+      <first>IMPORT_TEXTURE_IS_CUBEMAP</first>
+      <second>Is cubemap</second>
+    </item>
+    <item>
+      <first>IMPORT_TEXTURE_KEEP_ZERO_ALPHA</first>
+      <second>Keep zero alpha when generating mipmaps</second>
+    </item>
+    <item>
+      <first>IMPORT_TEXTURE_LINEAR_GAMMA</first>
+      <second>Linear gamma</second>
+    </item>
+    <item>
+      <first>IMPORT_TEXTURE_SCALE_DEPTH</first>
+      <second>Scale depth</second>
+    </item>
+    <item>
+      <first>IMPORT_TEXTURE_SCALE_IMAGE</first>
+      <second>Scale image</second>
+    </item>
+    <item>
+      <first>IMPORT_TEXTURE_TITLE</first>
+      <second>Import texture</second>
+    </item>
+
+    <item>
+      <first>POSTPROCESS_EDITOR_ADD_STEP</first>
+      <second>Add step</second>
+    </item>
+    <item>
+      <first>POSTPROCESS_EDITOR_ADD_TARGET_DEFINITION</first>
+      <second>Add target</second>
+    </item>
+    <item>
+      <first>POSTPROCESS_EDITOR_ADD_TEXTURE_DEFINITION</first>
+      <second>Add texture</second>
+    </item>
+    <item>
+      <first>POSTPROCESS_EDITOR_DESCRIPTION</first>
+      <second>Description</second>
+    </item>
+    <item>
+      <first>POSTPROCESS_EDITOR_ID</first>
+      <second>Id</second>
+    </item>
+    <item>
+      <first>POSTPROCESS_EDITOR_MOVE_DOWN</first>
+      <second>Move down</second>
+    </item>
+    <item>
+      <first>POSTPROCESS_EDITOR_MOVE_UP</first>
+      <second>Move up</second>
+    </item>
+    <item>
+      <first>POSTPROCESS_EDITOR_ORDER</first>
+      <second>Order</second>
+    </item>
+    <item>
+      <first>POSTPROCESS_EDITOR_REMOVE_DEFINITION</first>
+      <second>Remove</second>
+    </item>
+    <item>
+      <first>POSTPROCESS_EDITOR_REMOVE_STEP</first>
+      <second>Remove step</second>
+    </item>
+
+    <item>
+      <first>RENDER_IMAGEPROCESS_SHADER_WIZARDTOOL_DESCRIPTION</first>
+      <second>Create image process shader...</second>
+    </item>
+    <item>
+      <first>RENDER_IMAGEPROCESS_SHADER_WIZARDTOOL_DIALOG_MESSAGE</first>
+      <second>Create image process shader</second>
+    </item>
+    <item>
+      <first>RENDER_IMAGEPROCESS_SHADER_WIZARDTOOL_DIALOG_TITLE</first>
+      <second>Image process shader</second>
+    </item>
+    <item>
+      <first>RENDER_IMAGEPROCESS_SHADER_WIZARDTOOL_NAME</first>
+      <second>Name</second>
+    </item>
+
+
+    <item>
+      <first>RESOUND_BLEND_GRAIN_TEXT</first>
+      <second>Blend</second>
+    </item>
+    <item>
+      <first>RESOUND_ENVELOPE_GRAIN_TEXT</first>
+      <second>Envelope</second>
+    </item>
+    <item>
+      <first>RESOUND_MUTE_GRAIN_TEXT</first>
+      <second>{0} ms - {1} ms</second>
+    </item>
+    <item>
+      <first>RESOUND_PLAY_GRAIN_TEXT</first>
+      <second>{0} dB - {1} dB</second>
+    </item>
+    <item>
+      <first>RESOUND_RANDOM_GRAIN_TEXT</first>
+      <second>{0} child(ren)</second>
+    </item>
+    <item>
+      <first>RESOUND_REPEAT_GRAIN_INFINITE_TEXT</first>
+      <second>Infinite</second>
+    </item>
+    <item>
+      <first>RESOUND_REPEAT_GRAIN_TEXT</first>
+      <second>{0} time(s)</second>
+    </item>
+    <item>
+      <first>RESOUND_SEQUENCE_GRAIN_TEXT</first>
+      <second>{0} child(ren)</second>
+    </item>
+    <item>
+      <first>RESOUND_SIMULTANEOUS_GRAIN_TEXT</first>
+      <second>{0} child(ren)</second>
+    </item>
+    <item>
+      <first>RESOUND_TRIGGER_GRAIN_TEXT</first>
+      <second>Trigger</second>
+    </item>
+
+    <item>
+      <first>SHADERGRAPH_ALGEBRA</first>
+      <second>Algebra</second>
+    </item>
+    <item>
+      <first>SHADERGRAPH_ALIGN_BOTTOM</first>
+      <second>Align bottom</second>
+    </item>
+    <item>
+      <first>SHADERGRAPH_ALIGN_LEFT</first>
+      <second>Align left</second>
+    </item>
+    <item>
+      <first>SHADERGRAPH_ALIGN_RIGHT</first>
+      <second>Align right</second>
+    </item>
+    <item>
+      <first>SHADERGRAPH_ALIGN_TOP</first>
+      <second>Align top</second>
+    </item>
+    <item>
+      <first>SHADERGRAPH_ARITHMETIC</first>
+      <second>Artihmetic</second>
+    </item>
+    <item>
+      <first>SHADERGRAPH_AUTO_MERGE_BRANCHES</first>
+      <second>Merge branches</second>
+    </item>
+    <item>
+      <first>SHADERGRAPH_CENTER</first>
+      <second>Center graph</second>
+    </item>
+    <item>
+      <first>SHADERGRAPH_CLEANUP_SWIZZLES</first>
+      <second>Cleanup swizzles</second>
+    </item>
+    <item>
+      <first>SHADERGRAPH_CONDITIONAL</first>
+      <second>Conditional</second>
+    </item>
+    <item>
+      <first>SHADERGRAPH_CONSTANT_FOLD</first>
+      <second>Constant fold</second>
+    </item>
+    <item>
+      <first>SHADERGRAPH_CREATE_NODE</first>
+      <second>Create node...</second>
+    </item>
+    <item>
+      <first>SHADERGRAPH_DELETE_NODE</first>
+      <second>Delete</second>
+    </item>
+    <item>
+      <first>SHADERGRAPH_EVEN_HORIZONTALLY</first>
+      <second>Even horizonally</second>
+    </item>
+    <item>
+      <first>SHADERGRAPH_EVEN_VERTICALLY</first>
+      <second>Even vertically</second>
+    </item>
+    <item>
+      <first>SHADERGRAPH_EXTERNAL_FRAGMENT_MISMATCH_MESSAGE</first>
+      <second>External node(s) mismatch; update external node(s)?</second>
+    </item>
+    <item>
+      <first>SHADERGRAPH_EXTERNAL_FRAGMENT_MISMATCH_TITLE</first>
+      <second>External mismatch</second>
+    </item>
+    <item>
+      <first>SHADERGRAPH_FIND_IN_DATABASE</first>
+      <second>Find in database</second>
+    </item>
+    <item>
+      <first>SHADERGRAPH_INSERT_INTERPOLATORS</first>
+      <second>Insert interpolators</second>
+    </item>
+    <item>
+      <first>SHADERGRAPH_MISCELLANEOUS</first>
+      <second>Miscellaneous</second>
+    </item>
+    <item>
+      <first>SHADERGRAPH_NODE_ABS</first>
+      <second>Abs</second>
+    </item>
+    <item>
+      <first>SHADERGRAPH_NODE_ADD</first>
+      <second>Add</second>
+    </item>
+    <item>
+      <first>SHADERGRAPH_NODE_ARCUSCOS</first>
+      <second>Arcus cos</second>
+    </item>
+    <item>
+      <first>SHADERGRAPH_NODE_ARCUSTAN</first>
+      <second>Arcus tan</second>
+    </item>
+    <item>
+      <first>SHADERGRAPH_NODE_BRANCH</first>
+      <second>Branch</second>
+    </item>
+    <item>
+      <first>SHADERGRAPH_NODE_CLAMP</first>
+      <second>Clamp</second>
+    </item>
+    <item>
+      <first>SHADERGRAPH_NODE_COLOR</first>
+      <second>Color</second>
+    </item>
+    <item>
+      <first>SHADERGRAPH_NODE_COMMENT</first>
+      <second>Comment</second>
+    </item>
+    <item>
+      <first>SHADERGRAPH_NODE_COMPUTEOUTPUT</first>
+      <second>Compute output</second>
+    </item>
+    <item>
+      <first>SHADERGRAPH_NODE_CONDITIONAL</first>
+      <second>Conditional</second>
+    </item>
+    <item>
+      <first>SHADERGRAPH_NODE_CONNECTED</first>
+      <second>Connected</second>
+    </item>
+    <item>
+      <first>SHADERGRAPH_NODE_COS</first>
+      <second>Cos</second>
+    </item>
+    <item>
+      <first>SHADERGRAPH_NODE_CROSS</first>
+      <second>Cross</second>
+    </item>
+    <item>
+      <first>SHADERGRAPH_NODE_DERIVATIVE</first>
+      <second>Derivative</second>
+    </item>
+    <item>
+      <first>SHADERGRAPH_NODE_DISCARD</first>
+      <second>Discard</second>
+    </item>
+    <item>
+        <first>SHADERGRAPH_NODE_DISPATCHINDEX</first>
+        <second>Dispatch index</second>
+    </item>
+    <item>
+      <first>SHADERGRAPH_NODE_DIV</first>
+      <second>Div</second>
+    </item>
+    <item>
+      <first>SHADERGRAPH_NODE_DOT</first>
+      <second>Dot</second>
+    </item>
+    <item>
+      <first>SHADERGRAPH_NODE_EXP</first>
+      <second>Exp</second>
+    </item>
+    <item>
+      <first>SHADERGRAPH_NODE_EXTERNAL</first>
+      <second>External</second>
+    </item>
+    <item>
+      <first>SHADERGRAPH_NODE_FRACTION</first>
+      <second>Fraction</second>
+    </item>
+    <item>
+      <first>SHADERGRAPH_NODE_FRAGMENTPOSITION</first>
+      <second>Fragment position</second>
+    </item>
+    <item>
+      <first>SHADERGRAPH_NODE_FRONTFACE</first>
+      <second>Front face</second>
+    </item>
+    <item>
+      <first>SHADERGRAPH_NODE_INDEXEDUNIFORM</first>
+      <second>Indexed uniform</second>
+    </item>
+    <item>
+      <first>SHADERGRAPH_NODE_INPUTPORT</first>
+      <second>Input port</second>
+    </item>
+    <item>
+      <first>SHADERGRAPH_NODE_INSTANCE</first>
+      <second>Instance</second>
+    </item>
+    <item>
+      <first>SHADERGRAPH_NODE_INTERPOLATOR</first>
+      <second>Interpolator</second>
+    </item>
+    <item>
+      <first>SHADERGRAPH_NODE_ITERATE</first>
+      <second>Iterate</second>
+    </item>
+    <item>
+      <first>SHADERGRAPH_NODE_ITERATE2</first>
+      <second>Iterate 2</second>
+    </item>
+    <item>
+      <first>SHADERGRAPH_NODE_ITERATE2D</first>
+      <second>Iterate 2D</second>
+    </item>
+    <item>
+      <first>SHADERGRAPH_NODE_LENGTH</first>
+      <second>Length</second>
+    </item>
+    <item>
+      <first>SHADERGRAPH_NODE_LERP</first>
+      <second>Lerp</second>
+    </item>
+    <item>
+      <first>SHADERGRAPH_NODE_LOG</first>
+      <second>Log</second>
+    </item>
+    <item>
+      <first>SHADERGRAPH_NODE_MATRIXIN</first>
+      <second>Matrix in</second>
+    </item>
+    <item>
+      <first>SHADERGRAPH_NODE_MATRIXOUT</first>
+      <second>Matrix out</second>
+    </item>
+    <item>
+      <first>SHADERGRAPH_NODE_MAX</first>
+      <second>Max</second>
+    </item>
+    <item>
+      <first>SHADERGRAPH_NODE_MIN</first>
+      <second>Min</second>
+    </item>
+    <item>
+      <first>SHADERGRAPH_NODE_MIXIN</first>
+      <second>Mix in</second>
+    </item>
+    <item>
+      <first>SHADERGRAPH_NODE_MIXOUT</first>
+      <second>Mix out</second>
+    </item>
+    <item>
+      <first>SHADERGRAPH_NODE_MUL</first>
+      <second>Mul</second>
+    </item>
+    <item>
+      <first>SHADERGRAPH_NODE_MULADD</first>
+      <second>Mul add</second>
+    </item>
+    <item>
+      <first>SHADERGRAPH_NODE_NEG</first>
+      <second>Neg</second>
+    </item>
+    <item>
+      <first>SHADERGRAPH_NODE_NORMALIZE</first>
+      <second>Normalize</second>
+    </item>
+    <item>
+      <first>SHADERGRAPH_NODE_OUTPUTPORT</first>
+      <second>Output port</second>
+    </item>
+    <item>
+      <first>SHADERGRAPH_NODE_PIXELOUTPUT</first>
+      <second>Pixel output</second>
+    </item>
+    <item>
+      <first>SHADERGRAPH_NODE_PLATFORM</first>
+      <second>Platform</second>
+    </item>
+    <item>
+      <first>SHADERGRAPH_NODE_POLYNOMIAL</first>
+      <second>Polynomial</second>
+    </item>
+    <item>
+      <first>SHADERGRAPH_NODE_POW</first>
+      <second>Pow</second>
+    </item>
+    <item>
+    	<first>SHADERGRAPH_NODE_READSTRUCT</first>
+    	<second>Read struct</second>
+    </item>
+    <item>
+      <first>SHADERGRAPH_NODE_RECIPSQRT</first>
+      <second>Reciprocal square root</second>
+    </item>
+    <item>
+      <first>SHADERGRAPH_NODE_REFLECT</first>
+      <second>Reflect</second>
+    </item>
+    <item>
+      <first>SHADERGRAPH_NODE_REPEAT</first>
+      <second>Repeat</second>
+    </item>
+    <item>
+      <first>SHADERGRAPH_NODE_ROUND</first>
+      <second>Round</second>
+    </item>
+    <item>
+      <first>SHADERGRAPH_NODE_SAMPLER</first>
+      <second>Sampler</second>
+    </item>
+    <item>
+      <first>SHADERGRAPH_NODE_SCALAR</first>
+      <second>Scalar</second>
+    </item>
+    <item>
+      <first>SHADERGRAPH_NODE_SCRIPT</first>
+      <second>Script</second>
+    </item>
+    <item>
+      <first>SHADERGRAPH_NODE_SIGN</first>
+      <second>Sign</second>
+    </item>
+    <item>
+      <first>SHADERGRAPH_NODE_SIN</first>
+      <second>Sin</second>
+    </item>
+    <item>
+      <first>SHADERGRAPH_NODE_SQRT</first>
+      <second>Sqrt</second>
+    </item>
+    <item>
+      <first>SHADERGRAPH_NODE_STATE</first>
+      <second>State</second>
+    </item>
+    <item>
+      <first>SHADERGRAPH_NODE_STEP</first>
+      <second>Step</second>
+    </item>
+    <item>
+    	<first>SHADERGRAPH_NODE_STRUCT</first>
+    	<second>Struct</second>
+    </item>
+    <item>
+      <first>SHADERGRAPH_NODE_SUB</first>
+      <second>Sub</second>
+    </item>
+    <item>
+      <first>SHADERGRAPH_NODE_SUM</first>
+      <second>Sum</second>
+    </item>
+    <item>
+      <first>SHADERGRAPH_NODE_SWITCH</first>
+      <second>Switch</second>
+    </item>
+    <item>
+      <first>SHADERGRAPH_NODE_SWIZZLE</first>
+      <second>Swizzle</second>
+    </item>
+    <item>
+      <first>SHADERGRAPH_NODE_TAN</first>
+      <second>Tan</second>
+    </item>
+    <item>
+      <first>SHADERGRAPH_NODE_TARGETSIZE</first>
+      <second>Target size</second>
+    </item>
+    <item>
+      <first>SHADERGRAPH_NODE_TEXTURE</first>
+      <second>Texture</second>
+    </item>
+    <item>
+      <first>SHADERGRAPH_NODE_TEXTURESIZE</first>
+      <second>Texture size</second>
+    </item>
+    <item>
+      <first>SHADERGRAPH_NODE_TRANSFORM</first>
+      <second>Transform</second>
+    </item>
+    <item>
+      <first>SHADERGRAPH_NODE_TRANSPOSE</first>
+      <second>Transpose</second>
+    </item>
+    <item>
+      <first>SHADERGRAPH_NODE_TRUNCATE</first>
+      <second>Truncate</second>
+    </item>
+    <item>
+      <first>SHADERGRAPH_NODE_TYPE</first>
+      <second>Type</second>
+    </item>
+    <item>
+      <first>SHADERGRAPH_NODE_UNIFORM</first>
+      <second>Uniform</second>
+    </item>
+    <item>
+      <first>SHADERGRAPH_NODE_VARIABLE</first>
+      <second>Variable</second>
+    </item>
+    <item>
+      <first>SHADERGRAPH_NODE_VECTOR</first>
+      <second>Vector</second>
+    </item>
+    <item>
+      <first>SHADERGRAPH_NODE_VERTEXINPUT</first>
+      <second>Vertex input</second>
+    </item>
+    <item>
+      <first>SHADERGRAPH_NODE_VERTEXOUTPUT</first>
+      <second>Vertex output</second>
+    </item>
+    <item>
+      <first>SHADERGRAPH_PERMUTATION</first>
+      <second>Permutation</second>
+    </item>
+    <item>
+      <first>SHADERGRAPH_PLATFORM_PERMUTATION</first>
+      <second>Platform permutation</second>
+    </item>
+    <item>
+      <first>SHADERGRAPH_REFEREES</first>
+      <second>Referees</second>
+    </item>
+    <item>
+      <first>SHADERGRAPH_REMOVE_UNUSED_NODES</first>
+      <second>Remove unused nodes</second>
+    </item>
+    <item>
+      <first>SHADERGRAPH_SAMPLER</first>
+      <second>Sampler</second>
+    </item>
+    <item>
+      <first>SHADERGRAPH_SCRIPT_EDIT</first>
+      <second>Edit script</second>
+    </item>
+    <item>
+    	<first>SHADERGRAPH_TOUCH_ALL</first>
+    	<second>Touch all shadergraphs</second>
+    </item>
+    <item>
+      <first>SHADERGRAPH_TRIGONOMETRY</first>
+      <second>Trigonometry</second>
+    </item>
+    <item>
+      <first>SHADERGRAPH_UPDATE_FRAGMENTS</first>
+      <second>Update fragments</second>
+    </item>
+    <item>
+      <first>SHADERGRAPH_VALUE</first>
+      <second>Value</second>
+    </item>
+    <item>
+      <first>SHADERGRAPH_VIEWER</first>
+      <second>Generated</second>
+    </item>
+    <item>
+      <first>SHADERGRAPH_VIEWER_COMPILER</first>
+      <second>Compiler</second>
+    </item>
+    <item>
+      <first>SHADERGRAPH_VIEWER_COMPUTE</first>
+      <second>Compute</second>
+    </item>
+    <item>
+      <first>SHADERGRAPH_VIEWER_PIXEL</first>
+      <second>Pixel</second>
+    </item>
+    <item>
+      <first>SHADERGRAPH_VIEWER_TECHNIQUE</first>
+      <second>Technique</second>
+    </item>
+    <item>
+      <first>SHADERGRAPH_VIEWER_VERTEX</first>
+      <second>Vertex</second>
+    </item>
+
+
+    <item>
+      <first>TEXTURE_BATCH_ADD</first>
+      <second>Add textures...</second>
+    </item>
+    <item>
+      <first>TEXTURE_BATCH_DIALOG_TITLE</first>
+      <second>Import texture batch</second>
+    </item>
+    <item>
+      <first>TEXTURE_BATCH_FILE_TITLE</first>
+      <second>Add textures</second>
+    </item>
+    <item>
+      <first>TEXTURE_BATCH_REMOVE</first>
+      <second>Remove textures</second>
+    </item>
+    <item>
+      <first>TEXTURE_BATCH_WIZARDTOOL_DESCRIPTION</first>
+      <second>Import texture batch...</second>
+    </item>
+    <item>
+      <first>TEXTURE_EDITOR_COLOR</first>
+      <second>Texture color</second>
+    </item>    
+	</map>
+</object>

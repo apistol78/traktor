@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.i18n.Dictionary">
+	<map>
+
+    <item>
+      <first>DATABASE_CATEGORY_TRAKTOR_AI_NAVMESHASSET</first>
+      <second>AI navigation meshes</second>
+    </item>
+    <item>
+      <first>DATABASE_CATEGORY_TRAKTOR_RUNTIME_FEATURE</first>
+      <second>Target features</second>
+    </item>
+    <item>
+      <first>DATABASE_CATEGORY_TRAKTOR_RUNTIME_GAMEENTITYDATA</first>
+      <second>Game entities</second>
+    </item>
+    <item>
+      <first>DATABASE_CATEGORY_TRAKTOR_RUNTIME_PLATFORM</first>
+      <second>Target platforms</second>
+    </item>
+    <item>
+      <first>DATABASE_CATEGORY_TRAKTOR_RUNTIME_STAGEDATA</first>
+      <second>Stages</second>
+    </item>
+    <item>
+      <first>DATABASE_CATEGORY_TRAKTOR_RUNTIME_TARGET</first>
+      <second>Targets</second>
+    </item>
+    <item>
+      <first>DATABASE_CATEGORY_TRAKTOR_ANIMATION_ANIMATEDMESHENTITYDATA</first>
+      <second>Animated mesh entities</second>
+    </item>
+    <item>
+      <first>DATABASE_CATEGORY_TRAKTOR_ANIMATION_ANIMATION</first>
+      <second>Animations</second>
+    </item>
+    <item>
+      <first>DATABASE_CATEGORY_TRAKTOR_ANIMATION_ANIMATIONASSET</first>
+      <second>Animation assets</second>
+    </item>
+    <item>
+      <first>DATABASE_CATEGORY_TRAKTOR_ANIMATION_SKELETON</first>
+      <second>Animation skeletons</second>
+    </item>
+    <item>
+      <first>DATABASE_CATEGORY_TRAKTOR_ANIMATION_SKELETONASSET</first>
+      <second>Skeleton assets</second>
+    </item>
+    <item>
+      <first>DATABASE_CATEGORY_TRAKTOR_ANIMATION_STATEGRAPH</first>
+      <second>Animation state graphs</second>
+    </item>
+    <item>
+      <first>DATABASE_CATEGORY_TRAKTOR_EDITOR_ASSETS</first>
+      <second>Assets</second>
+    </item>
+    <item>
+      <first>DATABASE_CATEGORY_TRAKTOR_FLASH_FLASHMOVIEASSET</first>
+      <second>Flash assets</second>
+    </item>
+    <item>
+      <first>DATABASE_CATEGORY_TRAKTOR_HF_HEIGHTFIELDASSET</first>
+      <second>Heightfield assets</second>
+    </item>
+    <item>
+      <first>DATABASE_CATEGORY_TRAKTOR_HF_MATERIALMASKASSET</first>
+      <second>Heightfield material masks</second>
+    </item>
+    <item>
+      <first>DATABASE_CATEGORY_TRAKTOR_HF_OCCLUSIONTEXTUREASSET</first>
+      <second>Heightfield occlusion textures</second>
+    </item>
+    <item>
+      <first>DATABASE_CATEGORY_TRAKTOR_I18N_DICTIONARY</first>
+      <second>Language dictionaries</second>
+    </item>
+    <item>
+      <first>DATABASE_CATEGORY_TRAKTOR_INPUT_INPUTMAPPINGASSET</first>
+      <second>Input assets</second>
+    </item>
+    <item>
+      <first>DATABASE_CATEGORY_TRAKTOR_MESH_LODMESHENTITYDATA</first>
+      <second>LOD mesh entities</second>
+    </item>
+    <item>
+      <first>DATABASE_CATEGORY_TRAKTOR_MESH_MESHASSET</first>
+      <second>Mesh assets</second>
+    </item>
+    <item>
+      <first>DATABASE_CATEGORY_TRAKTOR_MESH_MESHENTITYDATA</first>
+      <second>Mesh entities</second>
+    </item>
+    <item>
+      <first>DATABASE_CATEGORY_TRAKTOR_ONLINE_GCGAMECONFIGURATION</first>
+      <second>GameCenter provider</second>
+    </item>
+    <item>
+      <first>DATABASE_CATEGORY_TRAKTOR_ONLINE_LOCALGAMECONFIGURATION</first>
+      <second>Local provider</second>
+    </item>
+    <item>
+      <first>DATABASE_CATEGORY_TRAKTOR_ONLINE_STEAMGAMECONFIGURATION</first>
+      <second>Steam game configurations</second>
+    </item>
+    <item>
+      <first>DATABASE_CATEGORY_TRAKTOR_PHYSICS_MESHASSET</first>
+      <second>Physics meshes</second>
+    </item>
+    <item>
+      <first>DATABASE_CATEGORY_TRAKTOR_PHYSICS_RIGIDENTITYDATA</first>
+      <second>Rigid physics entities</second>
+    </item>
+    <item>
+      <first>DATABASE_CATEGORY_TRAKTOR_RENDER_BFNTEXTUREASSET</first>
+      <second>BFN texture assets</second>
+    </item>
+    <item>
+      <first>DATABASE_CATEGORY_TRAKTOR_RENDER_SHADERGRAPH</first>
+      <second>Shaders</second>
+    </item>
+    <item>
+      <first>DATABASE_CATEGORY_TRAKTOR_RENDER_TEXTUREASSET</first>
+      <second>Texture assets</second>
+    </item>
+    <item>
+      <first>DATABASE_CATEGORY_TRAKTOR_RESOURCE_RESOURCEBUNDLEASSET</first>
+      <second>Resource bundles</second>
+    </item>
+    <item>
+      <first>DATABASE_CATEGORY_TRAKTOR_SCENE_SCENEASSET</first>
+      <second>Scenes</second>
+    </item>
+    <item>
+      <first>DATABASE_CATEGORY_TRAKTOR_SCENE_SCENEPERMUTATIONASSET</first>
+      <second>Scene permutations</second>
+    </item>
+    <item>
+      <first>DATABASE_CATEGORY_TRAKTOR_SCRIPT_SCRIPT</first>
+      <second>Scripts</second>
+    </item>
+    <item>
+      <first>DATABASE_CATEGORY_TRAKTOR_SOUND_BANKASSET</first>
+      <second>Sound banks</second>
+    </item>
+    <item>
+      <first>DATABASE_CATEGORY_TRAKTOR_SOUND_SOUNDASSET</first>
+      <second>Sound assets</second>
+    </item>
+    <item>
+      <first>DATABASE_CATEGORY_TRAKTOR_SOUND_SOUNDCATEGORY</first>
+      <second>Sound categories</second>
+    </item>
+    <item>
+      <first>DATABASE_CATEGORY_TRAKTOR_SPRAY_EFFECTDATA</first>
+      <second>Effects</second>
+    </item>
+    <item>
+      <first>DATABASE_CATEGORY_TRAKTOR_SPRAY_EFFECTENTITYDATA</first>
+      <second>Effect entities</second>
+    </item>
+    <item>
+      <first>DATABASE_CATEGORY_TRAKTOR_SPRAY_POINTSETASSET</first>
+      <second>Effect pointset assets</second>
+    </item>
+    <item>
+      <first>DATABASE_CATEGORY_TRAKTOR_TERRAIN_TERRAINASSET</first>
+      <second>Terrain assets</second>
+    </item>
+    <item>
+      <first>DATABASE_CATEGORY_TRAKTOR_VIDEO_VIDEOASSET</first>
+      <second>Video assets</second>
+    </item>
+    <item>
+      <first>DATABASE_CATEGORY_TRAKTOR_WEATHER_SKYENTITYDATA</first>
+      <second>Sky entities</second>
+    </item>
+    <item>
+      <first>DATABASE_CATEGORY_TRAKTOR_WORLD_COMPONENTENTITYDATA</first>
+      <second>Component entities</second>
+    </item>
+    <item>
+      <first>DATABASE_CATEGORY_TRAKTOR_WORLD_DECALENTITYDATA</first>
+      <second>Decal entities</second>
+    </item>
+    <item>
+      <first>DATABASE_CATEGORY_TRAKTOR_WORLD_ENTITYEVENTSETDATA</first>
+      <second>Entity event sets</second>
+    </item>
+    <item>
+      <first>DATABASE_CATEGORY_TRAKTOR_WORLD_GROUPENTITYDATA</first>
+      <second>Group entities</second>
+    </item>
+    <item>
+      <first>DATABASE_CATEGORY_TRAKTOR_WORLD_POSTPROCESSSETTINGS</first>
+      <second>Post processes</second>
+    </item>
+	</map>
+</object>

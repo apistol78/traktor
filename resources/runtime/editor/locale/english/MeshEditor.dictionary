@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.i18n.Dictionary">
+	<map>
+    <item>
+      <first>IMPORT_MESH_BLEND</first>
+      <second>Blend</second>
+    </item>
+    <item>
+      <first>IMPORT_MESH_CREATE_SHADERS</first>
+      <second>Create shaders</second>
+    </item>
+    <item>
+      <first>IMPORT_MESH_DESCRIPTION</first>
+      <second>Mesh...</second>
+    </item>
+    <item>
+      <first>IMPORT_MESH_IMPORT_TEXTURES</first>
+      <second>Import textures</second>
+    </item>
+    <item>
+      <first>IMPORT_MESH_INDOOR</first>
+      <second>Indoor</second>
+    </item>
+    <item>
+      <first>IMPORT_MESH_INSTANCE</first>
+      <second>Instance</second>
+    </item>
+    <item>
+      <first>IMPORT_MESH_MATERIAL_NAME</first>
+      <second>Material</second>
+    </item>
+    <item>
+      <first>IMPORT_MESH_MATERIAL_USER</first>
+      <second>Overloaded material</second>
+    </item>
+    <item>
+      <first>IMPORT_MESH_SKINNED</first>
+      <second>Skinned</second>
+    </item>
+    <item>
+      <first>IMPORT_MESH_STATIC</first>
+      <second>Static</second>
+    </item>
+    <item>
+      <first>IMPORT_MESH_TITLE</first>
+      <second>Import mesh</second>
+    </item>
+
+    <item>
+      <first>MESHASSET_EDITOR_CENTER</first>
+      <second>Center</second>
+    </item>
+    <item>
+      <first>MESHASSET_EDITOR_BAKE_OCCLUSION</first>
+      <second>Bake occlusion</second>
+    </item>
+    <item>
+      <first>MESHASSET_EDITOR_BROWSE_SHADER</first>
+      <second>Browse shader</second>
+    </item>
+    <item>
+      <first>MESHASSET_EDITOR_BROWSE_TEMPLATE</first>
+      <second>Browse template</second>
+    </item>
+    <item>
+      <first>MESHASSET_EDITOR_BROWSE_TEXTURE</first>
+      <second>Browse texture</second>
+    </item>
+    <item>
+      <first>MESHASSET_EDITOR_CREATE_SHADER</first>
+      <second>Create shader</second>
+    </item>
+    <item>
+      <first>MESHASSET_EDITOR_CREATE_TEXTURE</first>
+      <second>Create texture</second>
+    </item>
+    <item>
+      <first>MESHASSET_EDITOR_CULL_DISTANT_FACES</first>
+      <second>Cull distant faces</second>
+    </item>
+    <item>
+      <first>MESHASSET_EDITOR_DISABLED</first>
+      <second>[ Disabled ]</second>
+    </item>
+    <item>
+      <first>MESHASSET_EDITOR_EDIT_MESH</first>
+      <second>Edit...</second>
+    </item>
+    <item>
+      <first>MESHASSET_EDITOR_ENTER_NAME</first>
+      <second>Enter name</second>
+    </item>
+    <item>
+      <first>MESHASSET_EDITOR_FILENAME</first>
+      <second>File name</second>
+    </item>
+    <item>
+      <first>MESHASSET_EDITOR_GENERATE_OCCLUDER</first>
+      <second>Generate culling occluder</second>
+    </item>
+    <item>
+      <first>MESHASSET_EDITOR_LOD_CULL_DISTANCE</first>
+      <second>Cull LOD distance</second>
+    </item>
+    <item>
+      <first>MESHASSET_EDITOR_LOD_MAX_DISTANCE</first>
+      <second>Max LOD distance</second>
+    </item>
+    <item>
+      <first>MESHASSET_EDITOR_LOD_STEPS</first>
+      <second>LOD steps ({0})</second>
+    </item>
+    <item>
+      <first>MESHASSET_EDITOR_MATERIAL</first>
+      <second>Material</second>
+    </item>
+    <item>
+      <first>MESHASSET_EDITOR_MESH_TYPE</first>
+      <second>Mesh type</second>
+    </item>
+    <item>
+      <first>MESHASSET_EDITOR_MESH_TYPE_BLEND</first>
+      <second>Blend</second>
+    </item>
+    <item>
+      <first>MESHASSET_EDITOR_MESH_TYPE_INDOOR</first>
+      <second>Indoor</second>
+    </item>
+    <item>
+      <first>MESHASSET_EDITOR_MESH_TYPE_INSTANCE</first>
+      <second>Instance</second>
+    </item>
+    <item>
+      <first>MESHASSET_EDITOR_MESH_TYPE_LOD</first>
+      <second>LOD</second>
+    </item>
+    <item>
+      <first>MESHASSET_EDITOR_MESH_TYPE_PARTITION</first>
+      <second>Partition</second>
+    </item>
+    <item>
+      <first>MESHASSET_EDITOR_MESH_TYPE_SKINNED</first>
+      <second>Skinned</second>
+    </item>
+    <item>
+      <first>MESHASSET_EDITOR_MESH_TYPE_STATIC</first>
+      <second>Static</second>
+    </item>
+    <item>
+      <first>MESHASSET_EDITOR_MESH_TYPE_STREAM</first>
+      <second>Stream</second>
+    </item>
+    <item>
+      <first>MESHASSET_EDITOR_PREVIEW_MESH</first>
+      <second>Preview...</second>
+    </item>
+    <item>
+      <first>MESHASSET_EDITOR_REMOVE_SHADER</first>
+      <second>Remove shader</second>
+    </item>
+    <item>
+      <first>MESHASSET_EDITOR_REMOVE_TEMPLATE</first>
+      <second>Remove template</second>
+    </item>
+    <item>
+      <first>MESHASSET_EDITOR_REMOVE_TEXTURE</first>
+      <second>Remove texture</second>
+    </item>
+    <item>
+      <first>MESHASSET_EDITOR_SCALE_FACTOR</first>
+      <second>Scale factor</second>
+    </item>
+    <item>
+      <first>MESHASSET_EDITOR_SHADER</first>
+      <second>Shader</second>
+    </item>
+    <item>
+      <first>MESHASSET_EDITOR_SHADER_NOT_ASSIGNED</first>
+      <second>[ Automatic shader ]</second>
+    </item>
+    <item>
+      <first>MESHASSET_EDITOR_TEMPLATE</first>
+      <second>Template</second>
+    </item>
+    <item>
+      <first>MESHASSET_EDITOR_TEMPLATE_NOT_ASSIGNED</first>
+      <second>[ Default ]</second>
+    </item>
+    <item>
+      <first>MESHASSET_EDITOR_TEXTURE_ASSET</first>
+      <second>Texture</second>
+    </item>
+    <item>
+      <first>MESHASSET_EDITOR_TEXTURE_NAME</first>
+      <second>Name</second>
+    </item>
+    <item>
+      <first>MESHASSET_EDITOR_TEXTURE_NOT_ASSIGNED</first>
+      <second>[ No texture ]</second>
+    </item>
+    <item>
+      <first>MESHASSET_EDITOR_TEXTURE_USAGE</first>
+      <second>Usage</second>
+    </item>
+    <item>
+      <first>MESHASSET_WIZARDTOOL_DESCRIPTION</first>
+      <second>Create mesh asset...</second>
+    </item>
+    <item>
+      <first>MESHASSET_WIZARDTOOL_FILE_TITLE</first>
+      <second>Select source model</second>
+    </item>
+    <item>
+      <first>MESHENTITY_WIZARDTOOL_DESCRIPTION</first>
+      <second>Create mesh entity</second>
+    </item>
+    <item>
+      <first>MESHENTITY_WIZARDTOOL_ERROR_NOT_MESH_ASSET_CAPTION</first>
+      <second>Not a mesh asset</second>
+    </item>
+    <item>
+      <first>MESHENTITY_WIZARDTOOL_ERROR_NOT_MESH_ASSET_MESSAGE</first>
+      <second>Select instance must be a mesh asset.</second>
+    </item>
+	</map>
+</object>

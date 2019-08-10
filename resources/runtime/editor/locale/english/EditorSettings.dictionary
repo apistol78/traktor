@@ -1,0 +1,313 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.i18n.Dictionary">
+  <map>
+    <item>
+      <first>EDITOR_SETTINGS_ADD_DEPENDENT_MESSAGE</first>
+      <second>Add module...</second>
+    </item>
+    <item>
+      <first>EDITOR_SETTINGS_ADD_DEPENDENT_NAME</first>
+      <second>Name</second>
+    </item>
+    <item>
+      <first>EDITOR_SETTINGS_ADD_DEPENDENT_TITLE</first>
+      <second>Add module...</second>
+    </item>
+    <item>
+      <first>EDITOR_SETTINGS_ADD_MODULE</first>
+      <second>Add module...</second>
+    </item>
+    <item>
+      <first>EDITOR_SETTINGS_ASSET_PATH</first>
+      <second>Asset path</second>
+    </item>
+    <item>
+      <first>EDITOR_SETTINGS_AUTOOPEN_RECENT_WORKSPACE</first>
+      <second>Auto-open most recently used workspace</second>
+    </item>
+    <item>
+      <first>EDITOR_SETTINGS_AUTOSAVE</first>
+      <second>Auto-save opened instances before build</second>
+    </item>
+    <item>
+      <first>EDITOR_SETTINGS_BUILD_AFTER_BROWSE_INSTANCE</first>
+      <second>Build after browe instance</second>
+    </item>
+    <item>
+      <first>EDITOR_SETTINGS_BUILD_AT_EDIT_INSTANCE</first>
+      <second>Build asset before editing</second>
+    </item>
+    <item>
+      <first>EDITOR_SETTINGS_BUILD_WHEN_ASSET_MODIFIED</first>
+      <second>Build when asset modified</second>
+    </item>
+    <item>
+      <first>EDITOR_SETTINGS_BUILD_WHEN_SOURCE_MODIFIED</first>
+      <second>Build when source modified</second>
+    </item>
+    <item>
+      <first>EDITOR_SETTINGS_COLOR</first>
+      <second>Colors</second>
+    </item>
+    <item>
+      <first>EDITOR_SETTINGS_COLOR_BACKGROUND</first>
+      <second>Background</second>
+    </item>
+    <item>
+      <first>EDITOR_SETTINGS_COLOR_BBOX_FACE_SEL</first>
+      <second>Bounding box (Selected face)</second>
+    </item>
+    <item>
+      <first>EDITOR_SETTINGS_COLOR_BBOX_WIRE</first>
+      <second>Bounding box</second>
+    </item>
+    <item>
+      <first>EDITOR_SETTINGS_COLOR_BBOX_WIRE_SEL</first>
+      <second>Bounding box (Selected)</second>
+    </item>
+    <item>
+      <first>EDITOR_SETTINGS_COLOR_BONE_WIRE</first>
+      <second>Bones</second>
+    </item>
+    <item>
+      <first>EDITOR_SETTINGS_COLOR_BONE_WIRE_SEL</first>
+      <second>Bones (Selected)</second>
+    </item>
+    <item>
+      <first>EDITOR_SETTINGS_COLOR_CAMERA_WIRE</first>
+      <second>Camera symbol</second>
+    </item>
+    <item>
+      <first>EDITOR_SETTINGS_COLOR_GRID</first>
+      <second>Grid</second>
+    </item>
+    <item>
+      <first>EDITOR_SETTINGS_COLOR_REFERENCE_EDGES</first>
+      <second>Reference edges</second>
+    </item>
+    <item>
+      <first>EDITOR_SETTINGS_COLOR_SNAP_POINTS</first>
+      <second>Snap points</second>
+    </item>
+    <item>
+      <first>EDITOR_SETTINGS_COMMAND</first>
+      <second>Command</second>
+    </item>
+    <item>
+      <first>EDITOR_SETTINGS_COMPILER_TYPE</first>
+      <second>Shader compiler</second>
+    </item>
+    <item>
+      <first>EDITOR_SETTINGS_DEPENDENT_MODULES</first>
+      <second>Modules</second>
+    </item>
+    <item>
+      <first>EDITOR_SETTINGS_DICTIONARY</first>
+      <second>Dictionary</second>
+    </item>
+    <item>
+      <first>EDITOR_SETTINGS_EDITOR_FONT</first>
+      <second>Font</second>
+    </item>
+    <item>
+      <first>EDITOR_SETTINGS_GENERAL</first>
+      <second>General</second>
+    </item>
+    <item>
+      <first>EDITOR_SETTINGS_HOME_URL</first>
+      <second>Home URL</second>
+    </item>
+    <item>
+      <first>EDITOR_SETTINGS_MODULES</first>
+      <second>Modules</second>
+    </item>
+    <item>
+      <first>EDITOR_SETTINGS_OPEN_DATABASE_AT_STARTUP</first>
+      <second>Open database at startup</second>
+    </item>
+    <item>
+      <first>EDITOR_SETTINGS_OPEN_INSTANCES_AT_STARTUP</first>
+      <second>Open instances at startup</second>
+    </item>
+    <item>
+      <first>EDITOR_SETTINGS_OPEN_LAST_PROJECT</first>
+      <second>Open last project at startup</second>
+    </item>
+    <item>
+      <first>EDITOR_SETTINGS_OUTPUT_DATABASE</first>
+      <second>Output database</second>
+    </item>
+    <item>
+      <first>EDITOR_SETTINGS_PIPELINE</first>
+      <second>Pipeline</second>
+    </item>
+    <item>
+      <first>EDITOR_SETTINGS_PIPELINE_BUILD_DISTRIBUTED</first>
+      <second>Use distributed build</second>
+    </item>
+    <item>
+      <first>EDITOR_SETTINGS_PIPELINE_BUILD_THREADS</first>
+      <second>Use multiple build threads</second>
+    </item>
+    <item>
+      <first>EDITOR_SETTINGS_PIPELINE_CACHE_READ</first>
+      <second>Read access</second>
+    </item>
+    <item>
+      <first>EDITOR_SETTINGS_PIPELINE_CACHE_WRITE</first>
+      <second>Write access</second>
+    </item>
+    <item>
+      <first>EDITOR_SETTINGS_PIPELINE_DEPENDS_THREADS</first>
+      <second>Use multiple threads for scanning dependencies</second>
+    </item>
+    <item>
+      <first>EDITOR_SETTINGS_PIPELINE_ENABLE_FILE_CACHE</first>
+      <second>Use file cache</second>
+    </item>
+    <item>
+      <first>EDITOR_SETTINGS_PIPELINE_ENABLE_MEMCACHED</first>
+      <second>Use memcached</second>
+    </item>
+    <item>
+      <first>EDITOR_SETTINGS_PIPELINE_USE_DEPENDENCY_CACHE</first>
+      <second>Use dependency cache</second>
+    </item>
+    <item>
+      <first>EDITOR_SETTINGS_PIPELINE_VERBOSE</first>
+      <second>Verbose</second>
+    </item>
+    <item>
+      <first>EDITOR_SETTINGS_PROPERTY_HELP_VISIBLE</first>
+      <second>Help section visible in property view</second>
+    </item>
+    <item>
+      <first>EDITOR_SETTINGS_SHOW_NEW_LOG_TARGETS</first>
+      <second>Show new log targets automatically</second>
+    </item>
+    <item>
+      <first>EDITOR_SETTINGS_REMOVE_MODULE</first>
+      <second>Remove module</second>
+    </item>
+    <item>
+      <first>EDITOR_SETTINGS_RENDERER</first>
+      <second>Renderer</second>
+    </item>
+    <item>
+      <first>EDITOR_SETTINGS_RENDERER_MAX_ANISOTROPY</first>
+      <second>Max anisotropy</second>
+    </item>
+    <item>
+      <first>EDITOR_SETTINGS_RENDERER_MIPBIAS</first>
+      <second>Mip-map bias</second>
+    </item>
+    <item>
+      <first>EDITOR_SETTINGS_RENDERER_MULTISAMPLE</first>
+      <second>Multisample</second>
+    </item>
+    <item>
+      <first>EDITOR_SETTINGS_RENDERER_TYPE</first>
+      <second>Renderer</second>
+    </item>
+    <item>
+    	<first>EDITOR_SETTINGS_RENDERER_SKIP_TEXTURE_MIPS</first>
+    	<second>Skip texture mips</second>
+    </item>
+    <item>
+    	<first>EDITOR_SETTINGS_RENDERER_CLAMP_TEXTURE_SIZE</first>
+    	<second>Clamp max texture size</second>
+    </item>
+    <item>
+      <first>EDITOR_SETTINGS_RESET_ALL_SHORTCUTS</first>
+      <second>Reset all shortcuts</second>
+    </item>
+    <item>
+      <first>EDITOR_SETTINGS_RESET_MODULES</first>
+      <second>Reset all modules</second>
+    </item>
+    <item>
+      <first>EDITOR_SETTINGS_SCRIPT</first>
+      <second>Script</second>
+    </item>
+    <item>
+      <first>EDITOR_SETTINGS_SCRIPT_AUTO_OPEN_DEBUGGER</first>
+      <second>Auto open debugger when target starts</second>
+    </item>
+    <item>
+      <first>EDITOR_SETTINGS_SCRIPT_AUTO_OPEN_SCRIPT</first>
+      <second>Auto open and navigate through debugged script</second>
+    </item>
+    <item>
+      <first>EDITOR_SETTINGS_SHORTCUT</first>
+      <second>Shortcut</second>
+    </item>
+    <item>
+      <first>EDITOR_SETTINGS_SHORTCUTS</first>
+      <second>Shortcuts</second>
+    </item>
+    <item>
+      <first>EDITOR_SETTINGS_SHORTCUT_NOT_ASSIGNED</first>
+      <second>(Not assigned)</second>
+    </item>
+    <item>
+      <first>EDITOR_SETTINGS_SOUND</first>
+      <second>Sound</second>
+    </item>
+    <item>
+      <first>EDITOR_SETTINGS_SOUND_BITS_PER_SAMPLE</first>
+      <second>Resolution</second>
+    </item>
+    <item>
+      <first>EDITOR_SETTINGS_SOUND_DRIVER_TYPE</first>
+      <second>Driver</second>
+    </item>
+    <item>
+      <first>EDITOR_SETTINGS_SOUND_FRAME_SAMPLES</first>
+      <second># samples per frame</second>
+    </item>
+    <item>
+      <first>EDITOR_SETTINGS_SOUND_HW_CHANNELS</first>
+      <second>Output channels</second>
+    </item>
+    <item>
+      <first>EDITOR_SETTINGS_SOUND_MIXER_FRAMES</first>
+      <second># mixer frames</second>
+    </item>
+    <item>
+      <first>EDITOR_SETTINGS_SOUND_SAMPLE_RATE</first>
+      <second>Sample rate</second>
+    </item>
+    <item>
+      <first>EDITOR_SETTINGS_SOUND_VIRTUAL_CHANNELS</first>
+      <second># virtual channels</second>
+    </item>
+    <item>
+      <first>EDITOR_SETTINGS_SOURCE_DATABASE</first>
+      <second>Source database</second>
+    </item>
+    <item>
+      <first>EDITOR_SETTINGS_STYLESHEET</first>
+      <second>Style sheet</second>
+    </item>
+    <item>
+      <first>EDITOR_SETTINGS_STYLESHEET_DARK</first>
+      <second>Dark</second>
+    </item>
+    <item>
+      <first>EDITOR_SETTINGS_STYLESHEET_LIGHT</first>
+      <second>Light</second>
+    </item>
+    <item>
+      <first>EDITOR_SETTINGS_SYSTEM_ROOT</first>
+      <second>System root</second>
+    </item>
+    <item>
+      <first>EDITOR_SETTINGS_TITLE</first>
+      <second>Settings</second>
+    </item>
+    <item>
+      <first>EDITOR_SETTINGS_VERBOSE_RESOURCE_LOADING</first>
+      <second>Verbose resource loading</second>
+    </item>
+  </map>
+</object>

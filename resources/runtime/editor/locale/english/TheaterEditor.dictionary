@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.i18n.Dictionary">
+	<map>
+   <item>
+      <first>THEATER_EDITOR_ADD_ACT</first>
+      <second>Add act</second>
+    </item>
+    <item>
+      <first>THEATER_EDITOR_CAPTURE_ENTITIES</first>
+      <second>Capture entities</second>
+    </item>
+    <item>
+      <first>THEATER_EDITOR_DELETE_SELECTED_KEY</first>
+      <second>Delete key</second>
+    </item>
+    <item>
+      <first>THEATER_EDITOR_EASE_VELOCITY</first>
+      <second>Easy velocity</second>
+    </item>
+    <item>
+      <first>THEATER_EDITOR_GOTO_NEXT_KEY</first>
+      <second>Goto next key</second>
+    </item>
+    <item>
+      <first>THEATER_EDITOR_GOTO_PREVIOUS_KEY</first>
+      <second>Goto previous key</second>
+    </item>
+    <item>
+      <first>THEATER_EDITOR_MESSAGE_REMOVE_ACT</first>
+      <second>Are you sure you want to remove selected act?</second>
+    </item>
+    <item>
+      <first>THEATER_EDITOR_REMOVE_ACT</first>
+      <second>Remove act</second>
+    </item>
+    <item>
+      <first>THEATER_EDITOR_SET_LOOKAT_ENTITY</first>
+      <second>Set look-at entity</second>
+    </item>
+    <item>
+      <first>THEATER_EDITOR_SPLIT_ACT</first>
+      <second>Split act</second>
+    </item>
+    <item>
+      <first>THEATER_EDITOR_TIME_SCALE_ACT</first>
+      <second>Scale act time</second>
+    </item>
+    <item>
+      <first>THEATER_EDITOR_TIME_SCALE_MESSAGE</first>
+      <second>Enter new duration of selected act</second>
+    </item>
+    <item>
+      <first>THEATER_EDITOR_TIME_SCALE_NEW_TIME</first>
+      <second>New time (second(s))</second>
+    </item>
+    <item>
+      <first>THEATER_EDITOR_TIME_SCALE_TITLE</first>
+      <second>Scale time</second>
+    </item>
+    <item>
+      <first>THEATER_EDITOR_TITLE_REMOVE_ACT</first>
+      <second>Remove act</second>
+    </item>
+    <item>
+      <first>THEATER_EDITOR_UNNAMED_ACT</first>
+      <second>Unnamed</second>
+    </item>
+	</map>
+</object>
