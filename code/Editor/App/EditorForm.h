@@ -268,9 +268,7 @@ private:
 
 	void loadModules();
 
-	void loadLanguageDictionary();
-
-	void loadHelpDictionary();
+	void loadLanguageDictionaries();
 
 	void checkModified();
 

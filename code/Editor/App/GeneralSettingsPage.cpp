@@ -53,7 +53,7 @@ bool GeneralSettingsPage::create(ui::Container* parent, const PropertyGroup* ori
 	staticDictionary->create(containerInner, i18n::Text(L"EDITOR_SETTINGS_DICTIONARY"));
 
 	m_editDictionary = new ui::Edit();
-	m_editDictionary->create(containerInner, settings->getProperty< std::wstring >(L"Editor.Dictionary", L"$(TRAKTOR_HOME)/resources/runtime/editor/locale/english/English.xml"));
+	m_editDictionary->create(containerInner, settings->getProperty< std::wstring >(L"Editor.Dictionary", L"$(TRAKTOR_HOME)/resources/runtime/editor/locale/english"));
 
 	Ref< ui::Static > staticStyleSheet = new ui::Static();
 	staticStyleSheet->create(containerInner, i18n::Text(L"EDITOR_SETTINGS_STYLESHEET"));

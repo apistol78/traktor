@@ -1,0 +1,718 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.i18n.Dictionary">
+	<map>
+
+    <item>
+    	<first>BROWSE_GROUP_TITLE</first>
+    	<second>Select group</second>
+    </item>
+    <item>
+      <first>BROWSE_INSTANCE_GROUPS</first>
+      <second>Database</second>
+    </item>
+    <item>
+      <first>BROWSE_INSTANCE_INSTANCES</first>
+      <second>Instances</second>
+    </item>
+    <item>
+      <first>BROWSE_INSTANCE_TITLE</first>
+      <second>Select instance</second>
+    </item>
+    <item>
+      <first>BROWSE_TYPE_CATEGORY</first>
+      <second>Category</second>
+    </item>
+    <item>
+      <first>BROWSE_TYPE_GLOBAL</first>
+      <second>Global</second>
+    </item>
+    <item>
+      <first>BROWSE_TYPE_ICON</first>
+      <second>Icon</second>
+    </item>
+    <item>
+      <first>BROWSE_TYPE_SMALL</first>
+      <second>Small</second>
+    </item>
+    <item>
+      <first>BROWSE_TYPE_TITLE</first>
+      <second>Select type</second>
+    </item>
+    <item>
+      <first>BROWSE_TYPE_TYPES</first>
+      <second>Types</second>
+    </item>
+    <item>
+      <first>BUILDING_ASSETS_MESSAGE</first>
+      <second>Building assets...</second>
+    </item>
+    <item>
+      <first>BUILDING_ASSETS_TITLE</first>
+      <second>Building</second>
+    </item>
+    <item>
+      <first>CLOSE</first>
+      <second>Close</second>
+    </item>
+    <item>
+      <first>CLOSE_ALL_BUT_THIS</first>
+      <second>Close all but this</second>
+    </item>
+    <item>
+      <first>COLOR_DIALOG_TEXT</first>
+      <second>Pick color</second>
+    </item>
+    <item>
+      <first>CONVERT_DATABASE_CONVERTING_MESSAGE</first>
+      <second>Converting database...</second>
+    </item>
+    <item>
+      <first>CONVERT_DATABASE_CONVERTING_TITLE</first>
+      <second>Converting database</second>
+    </item>
+    <item>
+      <first>CONVERT_DATABASE_DESCRIPTION</first>
+      <second>Convert database</second>
+    </item>
+    <item>
+      <first>CROP_HEIGHTFIELD_WIZARDTOOL_DESCRIPTION</first>
+      <second>Crop heightfield...</second>
+    </item>
+    <item>
+      <first>CROP_HEIGHTFIELD_WIZARDTOOL_MESSAGE</first>
+      <second>Enter crop rectangle dimensions</second>
+    </item>
+    <item>
+      <first>CROP_HEIGHTFIELD_WIZARDTOOL_TITLE</first>
+      <second>Crop heightfield</second>
+    </item>
+    <item>
+      <first>CROP_TERRAIN_WIZARDTOOL_DESCRIPTION</first>
+      <second>Crop terrain maps...</second>
+    </item>
+    <item>
+      <first>CROP_TERRAIN_WIZARDTOOL_MESSAGE</first>
+      <second>Enter crop rectangle dimensions</second>
+    </item>
+    <item>
+      <first>CROP_TERRAIN_WIZARDTOOL_TITLE</first>
+      <second>Crop terrain maps</second>
+    </item>
+    <item>
+      <first>DATABASE_BUILD</first>
+      <second>Build</second>
+    </item>
+
+    <item>
+      <first>DATABASE_CLONE</first>
+      <second>Clone</second>
+    </item>
+    <item>
+      <first>DATABASE_COPY</first>
+      <second>Copy</second>
+    </item>
+    <item>
+      <first>DATABASE_COPY_ALL</first>
+      <second>Copy all</second>
+    </item>
+    <item>
+      <first>DATABASE_COPY_INSTANCE_ID</first>
+      <second>Copy instance id</second>
+    </item>
+    <item>
+      <first>DATABASE_DEFAULT_EDIT_INSTANCE</first>
+      <second>Edit instance with default editor...</second>
+    </item>
+    <item>
+      <first>DATABASE_DELETE</first>
+      <second>Delete</second>
+    </item>
+    <item>
+      <first>DATABASE_DELETE_ARE_YOU_SURE</first>
+      <second>Are you sure you want to delete?</second>
+    </item>
+    <item>
+      <first>DATABASE_DELETE_GROUP</first>
+      <second>Delete group</second>
+    </item>
+    <item>
+      <first>DATABASE_DELETE_INSTANCE</first>
+      <second>Delete instance</second>
+    </item>
+    <item>
+      <first>DATABASE_EDIT</first>
+      <second>Edit...</second>
+    </item>
+    <item>
+      <first>DATABASE_EXPLORE</first>
+      <second>Explore...</second>
+    </item>
+    <item>
+      <first>DATABASE_FAVORITE_ENTIRE_GROUP</first>
+      <second>Favorite entire group</second>
+    </item>
+    <item>
+      <first>DATABASE_FILTER</first>
+      <second>Filter</second>
+    </item>
+    <item>
+      <first>DATABASE_FILTER_ASSETS</first>
+      <second>Filter assets</second>
+    </item>
+    <item>
+      <first>DATABASE_FILTER_DEPENDENCIES</first>
+      <second>Filter instance&apos;s dependencies</second>
+    </item>
+    <item>
+      <first>DATABASE_FILTER_SHOW_FAVORITES</first>
+      <second>Show favorites</second>
+    </item>
+    <item>
+      <first>DATABASE_FILTER_SHOW_FILTERED</first>
+      <second>Show filtered</second>
+    </item>
+    <item>
+      <first>DATABASE_FILTER_TYPE</first>
+      <second>Filter instance&apos;s type</second>
+    </item>
+    <item>
+      <first>DATABASE_IMPORT</first>
+      <second>Import</second>
+    </item>
+    <item>
+      <first>DATABASE_IMPORT_DIALOG_TITLE</first>
+      <second>Import</second>
+    </item>
+    <item>
+      <first>DATABASE_IMPORT_IMPORTING_MESSAGE</first>
+      <second>Importing...</second>
+    </item>
+    <item>
+      <first>DATABASE_IMPORT_IMPORTING_TITLE</first>
+      <second>Importing</second>
+    </item>
+    <item>
+      <first>DATABASE_INSTANCE_NAME</first>
+      <second>Name</second>
+    </item>
+    <item>
+      <first>DATABASE_INSTANCE_TYPE</first>
+      <second>Type</second>
+    </item>
+    <item>
+      <first>DATABASE_LIST_DEPENDENTS</first>
+      <second>List dependents...</second>
+    </item>
+    <item>
+      <first>DATABASE_LOADING_MESSAGE</first>
+      <second>Loading database...</second>
+    </item>
+    <item>
+      <first>DATABASE_LOADING_TITLE</first>
+      <second>Loading</second>
+    </item>
+    <item>
+      <first>DATABASE_NEW_GROUP</first>
+      <second>New group</second>
+    </item>
+    <item>
+      <first>DATABASE_NEW_GROUP_UNNAMED</first>
+      <second>Unnamed</second>
+    </item>
+    <item>
+      <first>DATABASE_NEW_INSTANCE</first>
+      <second>New instance...</second>
+    </item>
+    <item>
+      <first>DATABASE_OPEN_DIALOG_TITLE</first>
+      <second>Choose databas</second>
+    </item>
+    <item>
+      <first>DATABASE_PASTE</first>
+      <second>Paste</second>
+    </item>
+    <item>
+      <first>DATABASE_REBUILD</first>
+      <second>Rebuild</second>
+    </item>
+    <item>
+      <first>DATABASE_RENAME</first>
+      <second>Rename</second>
+    </item>
+    <item>
+      <first>DATABASE_REPLACE_INSTANCE</first>
+      <second>Replace instance</second>
+    </item>
+    <item>
+      <first>DATABASE_SHOW_EDITABLE</first>
+      <second>Show editable</second>
+    </item>
+    <item>
+      <first>DATABASE_SYSTEM</first>
+      <second>System</second>
+    </item>
+    <item>
+      <first>DATABASE_TOGGLE_AS_FAVORITE</first>
+      <second>Toggle favorite</second>
+    </item>
+    <item>
+      <first>DATABASE_TOGGLE_AS_ROOT</first>
+      <second>Toggle root</second>
+    </item>
+    <item>
+      <first>DATABASE_UNFAVORITE_ENTIRE_GROUP</first>
+      <second>Remove entire group from favorites</second>
+    </item>
+    <item>
+      <first>DATABASE_USER</first>
+      <second>User</second>
+    </item>
+    <item>
+      <first>DATABASE_VIEW_MODE</first>
+      <second>View mode</second>
+    </item>
+    <item>
+      <first>DATABASE_VIEW_MODE_CATEGORY</first>
+      <second>Category</second>
+    </item>
+    <item>
+      <first>DATABASE_VIEW_MODE_HIERARCHY</first>
+      <second>Hierarchy</second>
+    </item>
+    <item>
+      <first>DATABASE_VIEW_MODE_SPLIT</first>
+      <second>Split</second>
+    </item>
+    <item>
+      <first>DATABASE_WIZARDS</first>
+      <second>Wizards</second>
+    </item>
+
+    <item>
+      <first>EDITOR_ABOUT_TITLE</first>
+      <second>About</second>
+    </item>
+    <item>
+      <first>EDITOR_BROWSE_FILE</first>
+      <second>Choose file</second>
+    </item>
+    <item>
+      <first>EDITOR_BROWSE_WORKSPACE</first>
+      <second>Choose workspace</second>
+    </item>
+
+
+
+
+    <item>
+      <first>EDITOR_HOME</first>
+      <second>Home</second>
+    </item>   
+    
+
+    <item>
+      <first>EDITOR_NEW_WORKSPACE_NAME</first>
+      <second>Name</second>
+    </item>
+    <item>
+      <first>EDITOR_NEW_WORKSPACE_NAME_DEFAULT</first>
+      <second>Unnamed</second>
+    </item>
+    <item>
+      <first>EDITOR_NEW_WORKSPACE_PATH</first>
+      <second>Output path</second>
+    </item>
+    <item>
+      <first>EDITOR_NEW_WORKSPACE_TITLE</first>
+      <second>New workspace</second>
+    </item>
+    <item>
+      <first>EDITOR_QUICK_OPEN_COLUMN_NAME</first>
+      <second>Name</second>
+    </item>
+    <item>
+      <first>EDITOR_QUICK_OPEN_COLUMN_PATH</first>
+      <second>Path</second>
+    </item>
+    <item>
+      <first>EDITOR_QUICK_OPEN_TITLE</first>
+      <second>Quick open</second>
+    </item>
+    <item>
+      <first>EDITOR_SURE_TO_REBUILD_CAPTION</first>
+      <second>Rebuild content</second>
+    </item>
+    <item>
+      <first>EDITOR_SURE_TO_REBUILD_MESSAGE</first>
+      <second>Are you sure you want to rebuild all content?</second>
+    </item>
+
+    <item>
+      <first>EDITOR_WAIT_BUILDING_MESSAGE</first>
+      <second>Building editor resources...</second>
+    </item>
+    <item>
+      <first>EDITOR_WAIT_BUILDING_TITLE</first>
+      <second>Building resources</second>
+    </item>
+    <item>
+      <first>EDITOR_WAIT_OPENING_WORKSPACE_MESSAGE</first>
+      <second>Opening workspace...</second>
+    </item>
+    <item>
+      <first>EDITOR_WAIT_OPENING_WORKSPACE_PROGRESS_0</first>
+      <second>Workspace settings</second>
+    </item>
+    <item>
+      <first>EDITOR_WAIT_OPENING_WORKSPACE_PROGRESS_100</first>
+      <second>Workspace settings</second>
+    </item>
+    <item>
+      <first>EDITOR_WAIT_OPENING_WORKSPACE_PROGRESS_1000</first>
+      <second>Done</second>
+    </item>
+    <item>
+      <first>EDITOR_WAIT_OPENING_WORKSPACE_PROGRESS_200</first>
+      <second>Source database</second>
+    </item>
+    <item>
+      <first>EDITOR_WAIT_OPENING_WORKSPACE_PROGRESS_600</first>
+      <second>Output database</second>
+    </item>
+    <item>
+      <first>EDITOR_WAIT_OPENING_WORKSPACE_TITLE</first>
+      <second>Opening workspace</second>
+    </item>
+    <item>
+      <first>EDITOR_WORKSPACE_TITLE</first>
+      <second>Workspace</second>
+    </item>
+    <item>
+      <first>ERROR_MESSAGE_UNABLE_TO_OPEN_DATABASE</first>
+      <second>Unable to open database {0}</second>
+    </item>
+    <item>
+      <first>ERROR_MESSAGE_UNABLE_TO_SAVE_DOCUMENT</first>
+      <second>Unable to save document, possibly write-protected</second>
+    </item>
+    <item>
+      <first>ERROR_TITLE_UNABLE_TO_OPEN_DATABASE</first>
+      <second>Unable to open database</second>
+    </item>
+    <item>
+      <first>ERROR_TITLE_UNABLE_TO_SAVE_DOCUMENT</first>
+      <second>Unable to save document</second>
+    </item>
+    <item>
+      <first>LOG_CLEAR_ALL</first>
+      <second>Clear all</second>
+    </item>
+    <item>
+      <first>LOG_COPY</first>
+      <second>Copy</second>
+    </item>
+    <item>
+      <first>LOG_COPY_FILTERED</first>
+      <second>Copy filtered</second>
+    </item>
+    <item>
+      <first>LOG_VIEW_ERROR</first>
+      <second>View errors</second>
+    </item>
+    <item>
+      <first>LOG_VIEW_INFO</first>
+      <second>View information</second>
+    </item>
+    <item>
+      <first>LOG_VIEW_WARNING</first>
+      <second>View warnings</second>
+    </item>
+    <item>
+      <first>MENU_BUILD</first>
+      <second>Build</second>
+    </item>
+    <item>
+      <first>MENU_BUILD_BUILD</first>
+      <second>Build</second>
+    </item>
+    <item>
+      <first>MENU_BUILD_REBUILD</first>
+      <second>Rebuild</second>
+    </item>
+    <item>
+      <first>MENU_EDIT</first>
+      <second>Edit</second>
+    </item>
+    <item>
+      <first>MENU_EDIT_COPY</first>
+      <second>Copy</second>
+    </item>
+    <item>
+      <first>MENU_EDIT_CUT</first>
+      <second>Cut</second>
+    </item>
+    <item>
+      <first>MENU_EDIT_DELETE</first>
+      <second>Delete</second>
+    </item>
+    <item>
+      <first>MENU_EDIT_PASTE</first>
+      <second>Paste</second>
+    </item>
+    <item>
+      <first>MENU_EDIT_REDO</first>
+      <second>Redo</second>
+    </item>
+    <item>
+      <first>MENU_EDIT_SELECT_ALL</first>
+      <second>Select all</second>
+    </item>
+    <item>
+      <first>MENU_EDIT_SETTINGS</first>
+      <second>Settings...</second>
+    </item>
+    <item>
+      <first>MENU_EDIT_UNDO</first>
+      <second>Undo</second>
+    </item>
+    <item>
+      <first>MENU_EDIT_WORKSPACE</first>
+      <second>Workspace...</second>
+    </item>
+    <item>
+      <first>MENU_FILE</first>
+      <second>File</second>
+    </item>
+    <item>
+      <first>MENU_FILE_CLOSE_PROJECT</first>
+      <second>Close project</second>
+    </item>
+    <item>
+      <first>MENU_FILE_EXIT</first>
+      <second>Exit</second>
+    </item>
+    <item>
+      <first>MENU_FILE_NEW_PROJECT</first>
+      <second>New project...</second>
+    </item>
+    <item>
+      <first>MENU_FILE_NEW_WORKSPACE</first>
+      <second>New workspace...</second>
+    </item>
+    <item>
+      <first>MENU_FILE_OPEN_PROJECT</first>
+      <second>Open project...</second>
+    </item>
+    <item>
+      <first>MENU_FILE_OPEN_RECENT_WORKSPACE</first>
+      <second>Open recent workspace...</second>
+    </item>
+    <item>
+      <first>MENU_FILE_OPEN_WORKSPACE</first>
+      <second>Open workspace...</second>
+    </item>
+    <item>
+      <first>MENU_FILE_SAVE</first>
+      <second>Save...</second>
+    </item>
+    <item>
+      <first>MENU_FILE_SAVE_ALL</first>
+      <second>Save all</second>
+    </item>
+    <item>
+      <first>MENU_HELP</first>
+      <second>Help</second>
+    </item>
+    <item>
+      <first>MENU_HELP_ABOUT</first>
+      <second>About...</second>
+    </item>
+    <item>
+      <first>MENU_TOOLS</first>
+      <second>Tools</second>
+    </item>
+    <item>
+      <first>MENU_VIEW</first>
+      <second>View</second>
+    </item>
+    <item>
+      <first>MENU_VIEW_DATABASE</first>
+      <second>Database</second>
+    </item>
+    <item>
+      <first>MENU_VIEW_HEAP</first>
+      <second>Heap</second>
+    </item>
+    <item>
+      <first>MENU_VIEW_HOME</first>
+      <second>Home</second>
+    </item>
+    <item>
+      <first>MENU_VIEW_LOG</first>
+      <second>Log</second>
+    </item>
+    <item>
+      <first>MENU_VIEW_OTHER</first>
+      <second>Other windows...</second>
+    </item>
+    <item>
+      <first>MENU_VIEW_PROPERTIES</first>
+      <second>Properties</second>
+    </item>
+    <item>
+      <first>NEW_INSTANCE_CATEGORY</first>
+      <second>Category</second>
+    </item>
+    <item>
+      <first>NEW_INSTANCE_DEFAULT_NAME</first>
+      <second>Unnamed</second>
+    </item>
+    <item>
+      <first>NEW_INSTANCE_GLOBAL</first>
+      <second>Global</second>
+    </item>
+    <item>
+      <first>NEW_INSTANCE_ICON</first>
+      <second>Icon</second>
+    </item>
+    <item>
+      <first>NEW_INSTANCE_NAME</first>
+      <second>Name</second>
+    </item>
+    <item>
+      <first>NEW_INSTANCE_SMALL</first>
+      <second>Small</second>
+    </item>
+    <item>
+      <first>NEW_INSTANCE_TITLE</first>
+      <second>New instance</second>
+    </item>
+    <item>
+      <first>NEW_INSTANCE_TYPES</first>
+      <second>Types</second>
+    </item>
+    <item>
+      <first>OBJECTEDITOR_ERROR_UNABLE_TO_COMMIT_CAPTION</first>
+      <second>Unable to commit</second>
+    </item>
+    <item>
+      <first>OBJECTEDITOR_ERROR_UNABLE_TO_COMMIT_MESSAGE</first>
+      <second>Unable to commit instance, possibly write-protected!</second>
+    </item>
+    <item>
+      <first>PROPERTY_COLUMN_NAME</first>
+      <second>Name</second>
+    </item>
+    <item>
+      <first>PROPERTY_COLUMN_VALUE</first>
+      <second>Value</second>
+    </item>
+    <item>
+      <first>QUERY_MESSAGE_INSTANCES_NOT_SAVED_CLOSE_EDITOR</first>
+      <second>Instance(s) not saved, close anyway?</second>
+    </item>
+    <item>
+      <first>QUERY_MESSAGE_INSTANCE_NOT_SAVED_CLOSE_EDITOR</first>
+      <second>Instance not saved, close anyway?</second>
+    </item>
+    <item>
+      <first>QUERY_TITLE_INSTANCES_NOT_SAVED_CLOSE_EDITOR</first>
+      <second>Instance(s) not saved</second>
+    </item>
+    <item>
+      <first>QUERY_TITLE_INSTANCE_NOT_SAVED_CLOSE_EDITOR</first>
+      <second>Instance not saved</second>
+    </item>
+
+    <item>
+      <first>STATUS_BUILDING</first>
+      <second>Building assets...</second>
+    </item>
+    <item>
+      <first>STATUS_BUILDING_ASSET</first>
+      <second>{0}</second>
+    </item>
+    <item>
+      <first>STATUS_COLLECTING_DEPENDENCIES</first>
+      <second>Collecting dependencies...</second>
+    </item>
+    <item>
+      <first>STATUS_FINDING_PIPELINES</first>
+      <second>Finding pipelines...</second>
+    </item>
+    <item>
+      <first>STATUS_FINISHED</first>
+      <second>Finished</second>
+    </item>
+    <item>
+      <first>STATUS_IDLE</first>
+      <second>Ready</second>
+    </item>
+
+    <item>
+      <first>TEXT_EDIT</first>
+      <second>Edit</second>
+    </item>
+ 
+    <item>
+      <first>TITLE_BUILD</first>
+      <second>Build</second>
+    </item>
+    <item>
+      <first>TITLE_DATABASE</first>
+      <second>Database</second>
+    </item>
+    <item>
+      <first>TITLE_LOG</first>
+      <second>Log</second>
+    </item>
+    <item>
+      <first>TITLE_OUTPUT</first>
+      <second>Output</second>
+    </item>
+    <item>
+      <first>TITLE_PROPERTIES</first>
+      <second>Properties</second>
+    </item>
+    <item>
+      <first>TOOLBAR_BUILD</first>
+      <second>Build assets</second>
+    </item>
+    <item>
+      <first>TOOLBAR_CANCEL_BUILD</first>
+      <second>Cancel build</second>
+    </item>
+    <item>
+      <first>TOOLBAR_COPY</first>
+      <second>Copy</second>
+    </item>
+    <item>
+      <first>TOOLBAR_CUT</first>
+      <second>Cut</second>
+    </item>
+    <item>
+      <first>TOOLBAR_PASTE</first>
+      <second>Paste</second>
+    </item>
+    <item>
+      <first>TOOLBAR_REBUILD</first>
+      <second>Rebuild assets</second>
+    </item>
+    <item>
+      <first>TOOLBAR_REDO</first>
+      <second>Redo</second>
+    </item>
+    <item>
+      <first>TOOLBAR_SAVE</first>
+      <second>Save</second>
+    </item>
+    <item>
+      <first>TOOLBAR_UNDO</first>
+      <second>Undo</second>
+    </item>
+    <item>
+      <first>FIND_IN_DATABASE</first>
+      <second>Find in database</second>
+    </item>
+	</map>
+</object>

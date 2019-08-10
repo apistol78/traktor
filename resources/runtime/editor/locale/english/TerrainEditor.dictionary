@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.i18n.Dictionary">
+	<map>
+    <item>
+      <first>TERRAIN_EDITOR_AVERAGE_BRUSH</first>
+      <second>Average brush</second>
+    </item>
+    <item>
+      <first>TERRAIN_EDITOR_COLOR_BRUSH</first>
+      <second>Color brush</second>
+    </item>
+    <item>
+      <first>TERRAIN_EDITOR_CUT_BRUSH</first>
+      <second>Cut brush</second>
+    </item>
+    <item>
+      <first>TERRAIN_EDITOR_EDIT_TERRAIN</first>
+      <second>Edit terrain</second>
+    </item>
+    <item>
+      <first>TERRAIN_EDITOR_ELEVATE_BRUSH</first>
+      <second>Elevate brush</second>
+    </item>
+    <item>
+      <first>TERRAIN_EDITOR_EMISSIVE_BRUSH</first>
+      <second>Emissive brush</second>
+    </item>
+    <item>
+      <first>TERRAIN_EDITOR_ERODE_BRUSH</first>
+      <second>Erode brush</second>
+    </item>
+    <item>
+      <first>TERRAIN_EDITOR_FLATTEN_BRUSH</first>
+      <second>Flatten brush</second>
+    </item>
+    <item>
+      <first>TERRAIN_EDITOR_MATERIAL</first>
+      <second>Material</second>
+    </item>
+    <item>
+      <first>TERRAIN_EDITOR_MATERIAL_BRUSH</first>
+      <second>Material brush</second>
+    </item>
+    <item>
+      <first>TERRAIN_EDITOR_NOISE_BRUSH</first>
+      <second>Noise brush</second>
+    </item>
+    <item>
+      <first>TERRAIN_EDITOR_SHARP_FALLOFF</first>
+      <second>Smooth falloff</second>
+    </item>
+    <item>
+      <first>TERRAIN_EDITOR_SHARP_IMAGE</first>
+      <second>Sharp image</second>
+    </item>
+    <item>
+      <first>TERRAIN_EDITOR_SMOOTH_BRUSH</first>
+      <second>Smooth brush</second>
+    </item>
+    <item>
+      <first>TERRAIN_EDITOR_SMOOTH_FALLOFF</first>
+      <second>Smooth falloff</second>
+    </item>
+    <item>
+      <first>TERRAIN_EDITOR_SPLAT_BRUSH</first>
+      <second>Splat brush</second>
+    </item>
+    <item>
+      <first>TERRAIN_EDITOR_SYMMETRY_X</first>
+      <second>Symmetry horizontal</second>
+    </item>
+    <item>
+      <first>TERRAIN_EDITOR_SYMMETRY_Z</first>
+      <second>Symmetry vertical</second>
+    </item>
+    <item>
+      <first>TERRAIN_EDITOR_VISUALIZE</first>
+      <second>Visualize channel</second>
+    </item>
+	</map>
+</object>

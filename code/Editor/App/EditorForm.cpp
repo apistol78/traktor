@@ -482,8 +482,7 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	loadModules();
 
 	// Load dictionaries.
-	loadLanguageDictionary();
-	loadHelpDictionary();
+	loadLanguageDictionaries();
 
 	// Load recently used files dictionary.
 	m_mru = loadRecent(OS::getInstance().getWritableFolderPath() + L"/Doctor Entertainment AB/Traktor.Editor.mru");
@@ -2399,44 +2398,29 @@ void EditorForm::loadModules()
 #endif
 }
 
-void EditorForm::loadLanguageDictionary()
+void EditorForm::loadLanguageDictionaries()
 {
-	std::wstring dictionaryFile = m_mergedSettings->getProperty< std::wstring >(L"Editor.Dictionary", L"$(TRAKTOR_HOME)/resources/runtime/editor/locale/english/English.xml");
+	std::wstring dictionaryPath = m_mergedSettings->getProperty< std::wstring >(L"Editor.Dictionary", L"$(TRAKTOR_HOME)/resources/runtime/editor/locale/english");
 
-	Ref< IStream > file = FileSystem::getInstance().open(dictionaryFile, File::FmRead);
-	if (!file)
+	RefArray< File > files;
+	FileSystem::getInstance().find(dictionaryPath + L"/*.dictionary", files);
+	for (auto file : files)
 	{
-		log::warning << L"Unable to open dictionary \"" << dictionaryFile << L"\"; file missing." << Endl;
-		return;
+		Ref< IStream > s = FileSystem::getInstance().open(file->getPath(), File::FmRead);
+		if (!s)
+		{
+			log::warning << L"Unable to open dictionary \"" << file->getPath().getPathName() << L"\"; file missing." << Endl;
+			return;
+		}
+
+		Ref< i18n::Dictionary > dictionary = dynamic_type_cast< i18n::Dictionary* >(xml::XmlDeserializer(s, file->getPath().getPathName()).readObject());
+		s->close();
+
+		if (dictionary)
+			i18n::I18N::getInstance().appendDictionary(dictionary);
+		else
+			log::warning << L"Unable to load dictionary \"" << file->getPath().getPathName() << L"\"; possibly corrupted." << Endl;
 	}
-
-	Ref< i18n::Dictionary > dictionary = dynamic_type_cast< i18n::Dictionary* >(xml::XmlDeserializer(file, dictionaryFile).readObject());
-	file->close();
-
-	if (dictionary)
-		i18n::I18N::getInstance().appendDictionary(dictionary);
-	else
-		log::warning << L"Unable to load dictionary \"" << dictionaryFile << L"\"; possibly corrupted." << Endl;
-}
-
-void EditorForm::loadHelpDictionary()
-{
-	std::wstring helpFile = m_mergedSettings->getProperty< std::wstring >(L"Editor.Help");
-	if (helpFile.empty())
-		return;
-
-	Ref< IStream > file = FileSystem::getInstance().open(helpFile, File::FmRead);
-	if (!file)
-	{
-		log::warning << L"Unable to open dictionary \"" << helpFile << L"\"; file missing." << Endl;
-		return;
-	}
-
-	Ref< i18n::Dictionary > dictionary = dynamic_type_cast< i18n::Dictionary* >(xml::XmlDeserializer(file, helpFile).readObject());
-	file->close();
-
-	if (dictionary)
-		i18n::I18N::getInstance().appendDictionary(dictionary);
 }
 
 void EditorForm::checkModified()
