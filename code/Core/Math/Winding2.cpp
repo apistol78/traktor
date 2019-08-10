@@ -23,6 +23,43 @@ T_MATH_INLINE float isLeft(const Vector2& P0, const Vector2& P1, const Vector2& 
 
 	}
 
+Winding2::Winding2()
+{
+}
+
+Winding2::Winding2(uint32_t size)
+:	m_points(size)
+{
+}
+
+Winding2::Winding2(const points_t& points)
+:	m_points(points)
+{
+}
+
+Winding2::Winding2(const Vector2* points, size_t npoints)
+:	m_points(&points[0], &points[npoints])
+{
+}
+
+Winding2::Winding2(const Vector2& p1, const Vector2& p2, const Vector2& p3)
+:	m_points(3)
+{
+	m_points[0] = p1;
+	m_points[1] = p1;
+	m_points[2] = p1;
+}
+
+void Winding2::clear()
+{
+	m_points.clear();
+}
+
+void Winding2::push(const Vector2& p)
+{
+	m_points.push_back(p);
+}
+
 Winding2 Winding2::convexHull(const Vector2* pnts, int npnts)
 {
 	Winding2 hull;
@@ -33,26 +70,26 @@ Winding2 Winding2::convexHull(const Vector2* pnts, int npnts)
 		P[i] = pnts[i];
 	std::sort(P.begin(), P.end(), ChainSortPred());
 
-	hull.points.resize(2 * npnts);
+	hull.resize(2 * npnts);
 
 	int k = 0;
 	for (int i = 0; i < npnts; ++i)
 	{
-		while (k >= 2 && isLeft(hull.points[k - 2], hull.points[k - 1], P[i]) <= 0.0f)
+		while (k >= 2 && isLeft(hull[k - 2], hull[k - 1], P[i]) <= 0.0f)
 			--k;
-		hull.points[k++] = P[i];
+		hull[k++] = P[i];
 	}
 	for (int i = npnts - 2, t = k + 1; i >= 0; --i)
 	{
-		while (k >= t && isLeft(hull.points[k - 2], hull.points[k - 1], P[i]) <= 0.0f)
+		while (k >= t && isLeft(hull[k - 2], hull[k - 1], P[i]) <= 0.0f)
 			--k;
-		hull.points[k++] = P[i];
+		hull[k++] = P[i];
 	}
 
 	if (k > 0)
 		--k;
 
-	hull.points.resize(k);
+	hull.resize(k);
 	return hull;
 }
 
@@ -64,10 +101,10 @@ Winding2 Winding2::convexHull(const AlignedVector< Vector2 >& pnts)
 bool Winding2::inside(const Vector2& pnt) const
 {
 	bool c = false;
-	for (int32_t i = 0, j = int32_t(points.size()) - 1; i < int32_t(points.size()); j = i++)
+	for (int32_t i = 0, j = int32_t(m_points.size()) - 1; i < int32_t(m_points.size()); j = i++)
 	{
-		const Vector2& pi = points[i];
-		const Vector2& pj = points[j];
+		const Vector2& pi = m_points[i];
+		const Vector2& pj = m_points[j];
 		if ((((pnt.y >= pi.y) && (pnt.y < pj.y)) || ((pnt.y >= pj.y) && (pnt.y < pi.y))) && (pnt.x < (pj.x - pi.x) * (pnt.y - pi.y) / (pj.y - pi.y) + pi.x))
 			c = !c;
 	}
@@ -83,10 +120,10 @@ Vector2 Winding2::closest(const Vector2& pnt) const
 	float minD2 = std::numeric_limits< float >::max();
 	Vector2 minP(0.0f, 0.0f);
 
-	for (int32_t i = 0, j = int32_t(points.size()) - 1; i < int32_t(points.size()); j = i++)
+	for (int32_t i = 0, j = int32_t(m_points.size()) - 1; i < int32_t(m_points.size()); j = i++)
 	{
-		const Vector2& pi = points[i];
-		const Vector2& pj = points[j];
+		const Vector2& pi = m_points[i];
+		const Vector2& pj = m_points[j];
 		Line2 ln(pi, pj);
 
 		// Project point onto edge line.

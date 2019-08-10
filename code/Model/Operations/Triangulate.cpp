@@ -43,7 +43,7 @@ bool Triangulate::apply(Model& model) const
 
 			triangles.resize(0);
 			Triangulator().freeze(
-				polygonWinding.getPoints(),
+				polygonWinding.get(),
 				polygonNormal,
 				triangles
 			);

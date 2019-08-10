@@ -1,5 +1,6 @@
 #include "Core/Class/AutoRuntimeClass.h"
-#include "Core/Class/Boxes.h"
+#include "Core/Class/Boxes/BoxedGuid.h"
+#include "Core/Class/Boxes/BoxedTypeInfo.h"
 #include "Core/Class/IRuntimeClassRegistrar.h"
 #include "Resource/FileBundle.h"
 #include "Resource/IResourceFactory.h"

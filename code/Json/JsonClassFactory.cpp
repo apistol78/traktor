@@ -1,5 +1,5 @@
 #include "Core/Class/AutoRuntimeClass.h"
-#include "Core/Class/Boxes.h"
+#include "Core/Class/Boxes/BoxedRefArray.h"
 #include "Core/Class/IRuntimeClassRegistrar.h"
 #include "Json/JsonArray.h"
 #include "Json/JsonClassFactory.h"

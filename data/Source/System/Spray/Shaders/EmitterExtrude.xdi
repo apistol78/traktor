@@ -5,8 +5,8 @@
 			<id>{624004D0-5C10-F541-82AF-E650BBC0FEF7}</id>
 			<comment/>
 			<position>
-				<first>-400</first>
-				<second>614</second>
+				<first>-443</first>
+				<second>588</second>
 			</position>
 			<name>PositionAndOrientation</name>
 			<usage>DuPosition</usage>
@@ -17,8 +17,8 @@
 			<id>{C8AE733F-14CF-FB46-9BA7-7028DCF7362A}</id>
 			<comment/>
 			<position>
-				<first>242</first>
-				<second>566</second>
+				<first>259</first>
+				<second>593</second>
 			</position>
 			<parameterName>World_View</parameterName>
 			<type>PtMatrix</type>
@@ -28,8 +28,8 @@
 			<id>{614D92A9-3A50-0A4F-B39F-CA17F01A1FA9}</id>
 			<comment/>
 			<position>
-				<first>1292</first>
-				<second>454</second>
+				<first>1830</first>
+				<second>471</second>
 			</position>
 			<parameterName>World_Projection</parameterName>
 			<type>PtMatrix</type>
@@ -43,8 +43,8 @@ View position
 			]]>
 			</comment>
 			<position>
-				<first>1042</first>
-				<second>466</second>
+				<first>1580</first>
+				<second>483</second>
 			</position>
 		</item>
 		<item type="traktor.render.Transform" version="traktor.render.Node:1">
@@ -59,16 +59,16 @@ View position
 			<id>{504EA435-082A-2548-B64C-F62872C815FF}</id>
 			<comment/>
 			<position>
-				<first>1584</first>
-				<second>408</second>
+				<first>2122</first>
+				<second>425</second>
 			</position>
 		</item>
 		<item type="traktor.render.VertexOutput" version="1,traktor.render.Node:1">
 			<id>{978A6E32-208B-6947-9387-535CE769FE85}</id>
 			<comment/>
 			<position>
-				<first>1830</first>
-				<second>410</second>
+				<first>2368</first>
+				<second>427</second>
 			</position>
 			<technique/>
 		</item>
@@ -114,8 +114,8 @@ Size
 			<id>{C8B0F788-7FC2-4042-8FFA-C0F9637959A0}</id>
 			<comment/>
 			<position>
-				<first>-402</first>
-				<second>424</second>
+				<first>-452</first>
+				<second>417</second>
 			</position>
 			<name>Attributes1</name>
 			<usage>DuCustom</usage>
@@ -139,16 +139,16 @@ Alpha
 			<id>{06D86AD1-8A4F-7E44-BBD8-85F63A6F8822}</id>
 			<comment/>
 			<position>
-				<first>208</first>
-				<second>172</second>
+				<first>288</first>
+				<second>187</second>
 			</position>
 		</item>
 		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
 			<id>{49211F9C-3F8A-8B4A-B882-A1BC09FBB3E1}</id>
 			<comment/>
 			<position>
-				<first>76</first>
-				<second>214</second>
+				<first>59</first>
+				<second>226</second>
 			</position>
 			<value>0.5</value>
 		</item>
@@ -156,8 +156,8 @@ Alpha
 			<id>{4D27C0AA-91A1-4E46-9184-BA9A8E6AD837}</id>
 			<comment/>
 			<position>
-				<first>434</first>
-				<second>174</second>
+				<first>514</first>
+				<second>189</second>
 			</position>
 			<name>TexCoord</name>
 		</item>
@@ -165,8 +165,8 @@ Alpha
 			<id>{13F95CD8-AD42-9840-861F-89A6296693E1}</id>
 			<comment/>
 			<position>
-				<first>2256</first>
-				<second>738</second>
+				<first>2683</first>
+				<second>670</second>
 			</position>
 			<name>Depth</name>
 		</item>
@@ -174,8 +174,8 @@ Alpha
 			<id>{C7639751-B5D7-A942-A2F8-34BDA1C1F176}</id>
 			<comment/>
 			<position>
-				<first>1266</first>
-				<second>552</second>
+				<first>1804</first>
+				<second>569</second>
 			</position>
 			<fragmentGuid>{4F91544C-FDC4-2042-8CAA-E721B4DB04C1}</fragmentGuid>
 			<inputPins/>
@@ -191,16 +191,16 @@ Alpha
 			<id>{409C049C-79A0-9447-9212-4CA9574CC579}</id>
 			<comment/>
 			<position>
-				<first>1462</first>
-				<second>620</second>
+				<first>2001</first>
+				<second>594</second>
 			</position>
 		</item>
 		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
 			<id>{C856CA43-2ADD-6C45-A3DD-B907139E7E24}</id>
 			<comment/>
 			<position>
-				<first>1242</first>
-				<second>625</second>
+				<first>1780</first>
+				<second>642</second>
 			</position>
 			<swizzle>z</swizzle>
 		</item>
@@ -208,16 +208,16 @@ Alpha
 			<id>{1BAAF8D3-CB66-A843-9EE5-BEE42A3C85E9}</id>
 			<comment/>
 			<position>
-				<first>1702</first>
-				<second>659</second>
+				<first>2222</first>
+				<second>622</second>
 			</position>
 		</item>
 		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
 			<id>{3048AE94-855F-0647-B87D-F942517BC062}</id>
 			<comment/>
 			<position>
-				<first>1517</first>
-				<second>706</second>
+				<first>2019</first>
+				<second>680</second>
 			</position>
 			<value>2</value>
 		</item>
@@ -225,8 +225,8 @@ Alpha
 			<id>{690D407C-3650-5042-89A3-CC1DE769BA37}</id>
 			<comment/>
 			<position>
-				<first>1926</first>
-				<second>684</second>
+				<first>2434</first>
+				<second>625</second>
 			</position>
 			<min>0</min>
 			<max>1</max>
@@ -235,8 +235,8 @@ Alpha
 			<id>{F5336BB3-6B91-5040-9B2C-47CAB469B6BE}</id>
 			<comment/>
 			<position>
-				<first>-72</first>
-				<second>495</second>
+				<first>-16</first>
+				<second>491</second>
 			</position>
 			<name>Alpha</name>
 		</item>
@@ -244,8 +244,8 @@ Alpha
 			<id>{01D3032A-9D8F-8B42-A459-96FEB50D105D}</id>
 			<comment/>
 			<position>
-				<first>1277</first>
-				<second>383</second>
+				<first>1823</first>
+				<second>394</second>
 			</position>
 			<name>ViewPosition</name>
 		</item>
@@ -287,16 +287,16 @@ Velocity
 			<id>{A740838B-AF00-DD4D-8CAC-A0CFC03D7A38}</id>
 			<comment/>
 			<position>
-				<first>749</first>
-				<second>406</second>
+				<first>1190</first>
+				<second>420</second>
 			</position>
 		</item>
 		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
 			<id>{D00CA52F-E530-184C-BC98-5FAD28730DAF}</id>
 			<comment/>
 			<position>
-				<first>509</first>
-				<second>395</second>
+				<first>566</first>
+				<second>387</second>
 			</position>
 			<swizzle>x</swizzle>
 		</item>
@@ -304,8 +304,8 @@ Velocity
 			<id>{4D309428-160C-0C4C-A36A-4D45C74A0E3F}</id>
 			<comment/>
 			<position>
-				<first>635</first>
-				<second>490</second>
+				<first>1004</first>
+				<second>496</second>
 			</position>
 			<swizzle>y</swizzle>
 		</item>
@@ -313,32 +313,32 @@ Velocity
 			<id>{C8BA0091-BFA2-7848-A41C-7B5C97411E86}</id>
 			<comment/>
 			<position>
-				<first>747</first>
-				<second>487</second>
+				<first>1188</first>
+				<second>501</second>
 			</position>
 		</item>
 		<item type="traktor.render.Add" version="traktor.render.Node:1">
 			<id>{DA371164-88DD-D245-825D-0ADBD5D88192}</id>
 			<comment/>
 			<position>
-				<first>869</first>
-				<second>444</second>
+				<first>1385</first>
+				<second>456</second>
 			</position>
 		</item>
 		<item type="traktor.render.Mul" version="traktor.render.Node:1">
 			<id>{966D98FF-EA3A-724C-B5B9-3555AA2F5A47}</id>
 			<comment/>
 			<position>
-				<first>633</first>
-				<second>342</second>
+				<first>944</first>
+				<second>393</second>
 			</position>
 		</item>
 		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
 			<id>{8323596A-081A-D942-92E3-69E1CC8BF7B1}</id>
 			<comment/>
 			<position>
-				<first>528</first>
-				<second>439</second>
+				<first>728</first>
+				<second>436</second>
 			</position>
 			<value>2</value>
 		</item>
@@ -346,8 +346,8 @@ Velocity
 			<id>{66DE0739-FDE6-2845-A98C-52747826F01D}</id>
 			<comment/>
 			<position>
-				<first>448</first>
-				<second>722</second>
+				<first>497</first>
+				<second>719</second>
 			</position>
 			<value>0, 0, 1, 0</value>
 		</item>
@@ -355,15 +355,15 @@ Velocity
 			<id>{A846770B-C2C2-BA45-99CB-C825F497F8A3}</id>
 			<comment/>
 			<position>
-				<first>739</first>
-				<second>639</second>
+				<first>972</first>
+				<second>605</second>
 			</position>
 		</item>
 		<item type="traktor.render.Cross" version="traktor.render.Node:1">
 			<id>{A9186095-2BDE-9440-8B11-D71CA95071DC}</id>
 			<comment/>
 			<position>
-				<first>609</first>
+				<first>753</first>
 				<second>654</second>
 			</position>
 		</item>
@@ -380,8 +380,8 @@ Velocity
 			<id>{C14B7BD6-8D73-204D-B0F8-C441B0F1AB4E}</id>
 			<comment/>
 			<position>
-				<first>-285</first>
-				<second>756</second>
+				<first>-321</first>
+				<second>746</second>
 			</position>
 			<name>VelocityAndRandom</name>
 			<usage>DuCustom</usage>
@@ -405,8 +405,8 @@ Random
 			<id>{20377300-7F5F-164E-9BE2-0C05732EA5DC}</id>
 			<comment/>
 			<position>
-				<first>83</first>
-				<second>972</second>
+				<first>147</first>
+				<second>982</second>
 			</position>
 			<name>Age</name>
 		</item>
@@ -427,8 +427,8 @@ Age
 			<id>{624F6D8A-6DFE-0E47-BE51-AD55D9CB47A5}</id>
 			<comment/>
 			<position>
-				<first>83</first>
-				<second>911</second>
+				<first>147</first>
+				<second>921</second>
 			</position>
 			<name>Color</name>
 		</item>
@@ -449,8 +449,8 @@ Color
 			<id>{232FA4D3-73A0-FF4E-A396-F6450A001A54}</id>
 			<comment/>
 			<position>
-				<first>-223</first>
-				<second>911</second>
+				<first>-279</first>
+				<second>941</second>
 			</position>
 			<name>Attributes2</name>
 			<usage>DuCustom</usage>

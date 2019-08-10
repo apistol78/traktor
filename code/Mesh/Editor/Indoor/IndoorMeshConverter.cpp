@@ -464,36 +464,36 @@ void createSectors(
 	log::info << L"Triangulating sector polygons" << Endl;
 	log::info << IncreaseIndent;
 
-	for (AlignedVector< Sector >::iterator i = outSectors.begin(); i != outSectors.end(); ++i)
+	for (auto& sector : outSectors)
 	{
 		AlignedVector< Polygon > triangles;
-		for (AlignedVector< Polygon >::const_iterator j = i->polygons.begin(); j != i->polygons.end(); ++j)
+		for (const auto& polygon : sector.polygons)
 		{
 			Winding3 winding;
-			for (AlignedVector< size_t >::const_iterator k = j->indices.begin(); k != j->indices.end(); ++k)
-				winding.push(i->vertices[*k].position);
+			for (auto index : polygon.indices)
+				winding.push(sector.vertices[index].position);
 
 			Plane windingPlane;
 			winding.getPlane(windingPlane);
 
 			AlignedVector< Triangulator::Triangle > triangulation;
 			Triangulator().freeze(
-				winding.getPoints(),
+				winding.get(),
 				windingPlane.normal(),
 				triangulation
 			);
 
-			for (AlignedVector< Triangulator::Triangle >::const_iterator k = triangulation.begin(); k != triangulation.end(); ++k)
+			for (const auto& triangle : triangulation)
 			{
 				triangles.push_back(Polygon());
-				triangles.back().material = j->material;
-				triangles.back().indices.push_back(j->indices[k->indices[0]]);
-				triangles.back().indices.push_back(j->indices[k->indices[1]]);
-				triangles.back().indices.push_back(j->indices[k->indices[2]]);
+				triangles.back().material = polygon.material;
+				triangles.back().indices.push_back(polygon.indices[triangle.indices[0]]);
+				triangles.back().indices.push_back(polygon.indices[triangle.indices[1]]);
+				triangles.back().indices.push_back(polygon.indices[triangle.indices[2]]);
 			}
 		}
-		i->polygons = triangles;
-		log::info << L"\"" << i->name << L"\" " << uint32_t(triangles.size()) << L" triangle(s)" << Endl;
+		sector.polygons = triangles;
+		log::info << L"\"" << sector.name << L"\" " << uint32_t(triangles.size()) << L" triangle(s)" << Endl;
 	}
 
 	log::info << DecreaseIndent;
@@ -661,7 +661,7 @@ bool IndoorMeshConverter::convert(
 	for (AlignedVector< Portal >::const_iterator i = portals.begin(); i != portals.end(); ++i)
 	{
 		assetPortals.push_back(IndoorMeshResource::Portal());
-		assetPortals.back().pts = i->winding.getPoints();
+		assetPortals.back().pts = i->winding.get();
 		assetPortals.back().sectorA = i->sectors[0];
 		assetPortals.back().sectorB = i->sectors[1];
 	}

@@ -18,10 +18,8 @@ Winding3::Winding3(const points_t& points)
 }
 
 Winding3::Winding3(const Vector4* points, size_t npoints)
-:	m_points(npoints)
+:	m_points(&points[0], &points[npoints])
 {
-	for (size_t i = 0; i < npoints; ++i)
-		m_points[i] = points[i];
 }
 
 Winding3::Winding3(const Vector4& p1, const Vector4& p2, const Vector4& p3)
@@ -91,11 +89,13 @@ bool Winding3::getProjection(Winding2& outProjection, Vector4& outU, Vector4& ou
 	Vector4 u, v;
 	orthogonalFrame(plane.normal(), u, v);
 
-	outProjection.points.resize(m_points.size());
+	outProjection.resize(m_points.size());
 	for (size_t i = 0; i < m_points.size(); ++i)
 	{
-		outProjection.points[i].x = dot3(u, m_points[i]);
-		outProjection.points[i].y = dot3(v, m_points[i]);
+		outProjection[i] = Vector2(
+			dot3(u, m_points[i]),
+			dot3(v, m_points[i])
+		);
 	}
 
 	outU = u;

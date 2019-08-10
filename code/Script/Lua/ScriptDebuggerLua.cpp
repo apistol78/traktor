@@ -1,7 +1,7 @@
 #include <cstring>
 #include <map>
 #include "Core/Guid.h"
-#include "Core/Class/Boxes.h"
+#include "Core/Class/Boxed.h"
 #include "Core/Math/Format.h"
 #include "Core/Misc/String.h"
 #include "Core/Misc/TString.h"

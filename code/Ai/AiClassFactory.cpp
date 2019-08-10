@@ -3,7 +3,7 @@
 #include "Ai/NavMesh.h"
 #include "Ai/NavMeshComponent.h"
 #include "Core/Class/AutoRuntimeClass.h"
-#include "Core/Class/Boxes.h"
+#include "Core/Class/Boxes/BoxedVector4.h"
 #include "Core/Class/IRuntimeClassRegistrar.h"
 
 namespace traktor

@@ -56,14 +56,16 @@ function Frame:update()
 	assert (width > 0)
 	assert (height > 0)
 
-	local xscale = width / self._vwidth
-	local yscale = height / self._vheight
-	local scale = math.min(xscale, yscale)
+	if self._vscaleDynamic then
+		local xscale = width / self._vwidth
+		local yscale = height / self._vheight
+		self._vscale = math.min(xscale, yscale)
+	end
 
-	self._mc.xScale = scale * 100
-	self._mc.yScale = scale * 100
-
-	self:place(0, 0, width / scale, height / scale)
+	self._mc.xScale = self._vscale * 100
+	self._mc.yScale = self._vscale * 100
+	
+	self:place(0, 0, width / self._vscale, height / self._vscale)
 end
 
 -- Private
@@ -82,6 +84,17 @@ function Frame:_initialize(mc, vwidth, vheight, layout)
 
 	self._vwidth = vwidth
 	self._vheight = vheight
+
+	-- Calculate first virtual scale factor.
+	-- \\tbd This currently "freezes" output size based on inital size of screen...
+	local width = stage:getProperty("width")
+	local height = stage:getProperty("height")
+	local xscale = width / self._vwidth
+	local yscale = height / self._vheight
+	self._vscale = math.min(xscale, yscale)
+
+	-- \\tbd Determine which mode...
+	self._vscaleDynamic = false
 
 	-- Setup event source listeners.
 	self._mc:setMember("onEnterFrame", function() self:_eventEnterFrame() end)
@@ -136,6 +149,7 @@ function Frame:_eventMouseWheel(delta)
 	local pt = self:getMousePosition()
 	self:_dispatchEvent(MouseWheelEvent(pt.x, pt.y, delta))
 end
+
 	]]>
 	</text>
 </object>

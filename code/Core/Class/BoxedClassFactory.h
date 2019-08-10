@@ -13,7 +13,7 @@
 namespace traktor
 {
 
-class T_DLLCLASS CoreClassFactory : public IRuntimeClassFactory
+class T_DLLCLASS BoxedClassFactory : public IRuntimeClassFactory
 {
 	T_RTTI_CLASS;
 
@@ -22,4 +22,3 @@ public:
 };
 
 }
-
