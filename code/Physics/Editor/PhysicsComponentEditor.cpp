@@ -34,7 +34,7 @@ void PhysicsComponentEditor::drawGuide(render::PrimitiveRenderer* primitiveRende
 	Transform body1Transform0 = m_entityAdapter->getTransform0();
 	Transform body1Transform = m_entityAdapter->getTransform();
 
-	const ShapeDesc* shapeDesc = nullptr;
+	Ref< const ShapeDesc > shapeDesc;
 
 	if (const RigidBodyComponentData* rigidBodyComponent = dynamic_type_cast< const RigidBodyComponentData* >(m_componentData))
 	{
