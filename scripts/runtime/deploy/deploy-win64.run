@@ -135,7 +135,7 @@ end
 function build(args)
 	stdout:printLn("Building asset(s)...")
 	local cmdline = tools.pipeline .. " -p -s=Pipeline"
-	for i = 1, args:size() - 1 do
+	for i = 1, args.size - 1 do
 		cmdline = cmdline .. " " .. args:get(i)
 	end
 	return run:execute(cmdline)

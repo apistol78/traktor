@@ -429,6 +429,18 @@ T_MATH_INLINE Vector4 reflect(const Vector4& v, const Vector4& at)
 	return V - v;
 }
 
+T_MATH_INLINE int32_t minorAxis3(const Vector4& v)
+{
+	float T_MATH_ALIGN16 e[4];
+	v.absolute().storeAligned(e);
+	if (e[0] < e[1] && e[0] < e[2])
+		return 0;
+	else if (e[1] < e[0] && e[1] < e[2])
+		return 1;
+	else
+		return 2;
+}
+
 T_MATH_INLINE int majorAxis3(const Vector4& v)
 {
 	float T_MATH_ALIGN16 e[4];
