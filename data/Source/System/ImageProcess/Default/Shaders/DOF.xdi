@@ -5,8 +5,8 @@
 			<id>{61E3D180-FD03-094F-BFBB-4BE2B1CA2ECA}</id>
 			<comment/>
 			<position>
-				<first>1603</first>
-				<second>-69</second>
+				<first>1601</first>
+				<second>-68</second>
 			</position>
 			<technique>Default</technique>
 			<priority>
@@ -53,8 +53,8 @@
 			<id>{C4F8B588-F0CB-D441-8815-C05AE565412D}</id>
 			<comment/>
 			<position>
-				<first>1275</first>
-				<second>-99</second>
+				<first>1273</first>
+				<second>-97</second>
 			</position>
 			<from>0</from>
 			<to>7</to>
@@ -63,7 +63,7 @@
 			<id>{DAE831C3-C6D5-DB48-8F97-35F28AC16FCF}</id>
 			<comment/>
 			<position>
-				<first>993</first>
+				<first>992</first>
 				<second>-120</second>
 			</position>
 		</item>
@@ -71,8 +71,8 @@
 			<id>{EBE23EAF-AF3E-DA4B-B328-3ADE1E5BA808}</id>
 			<comment/>
 			<position>
-				<first>849</first>
-				<second>-126</second>
+				<first>848</first>
+				<second>-124</second>
 			</position>
 			<swizzle>y</swizzle>
 		</item>
@@ -80,8 +80,8 @@
 			<id>{3816B653-1194-8D48-A536-FEAF65FD6040}</id>
 			<comment/>
 			<position>
-				<first>579</first>
-				<second>-250</second>
+				<first>577</first>
+				<second>-248</second>
 			</position>
 			<parameterName>GaussianOffsetWeights</parameterName>
 			<type>PtVector</type>
@@ -92,8 +92,8 @@
 			<id>{EA2CFA97-2613-154F-B752-5F1FAF7A7072}</id>
 			<comment/>
 			<position>
-				<first>667</first>
-				<second>-91</second>
+				<first>665</first>
+				<second>-89</second>
 			</position>
 			<minFilter>FtLinear</minFilter>
 			<mipFilter>FtLinear</mipFilter>
@@ -110,8 +110,8 @@
 			<id>{478B06AA-98BD-BC40-B082-7ED2580E73CC}</id>
 			<comment/>
 			<position>
-				<first>379</first>
-				<second>-66</second>
+				<first>377</first>
+				<second>-64</second>
 			</position>
 			<parameterName>Source</parameterName>
 			<type>PtTexture2D</type>
@@ -121,7 +121,7 @@
 			<id>{2CDDA8DF-4B73-2440-93B8-C12DE0232C64}</id>
 			<comment/>
 			<position>
-				<first>375</first>
+				<first>373</first>
 				<second>-148</second>
 			</position>
 		</item>
@@ -129,23 +129,23 @@
 			<id>{0BCDCA87-28F3-9B49-9146-712142EB345F}</id>
 			<comment/>
 			<position>
-				<first>1230</first>
-				<second>-225</second>
+				<first>1228</first>
+				<second>-224</second>
 			</position>
 		</item>
 		<item type="traktor.render.Mul" version="traktor.render.Node:1">
 			<id>{74F9D262-6159-3B4C-B771-5695B413C986}</id>
 			<comment/>
 			<position>
-				<first>951</first>
-				<second>-318</second>
+				<first>949</first>
+				<second>-316</second>
 			</position>
 		</item>
 		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
 			<id>{9AB3F929-0045-4049-8989-809F5E19E214}</id>
 			<comment/>
 			<position>
-				<first>838</first>
+				<first>836</first>
 				<second>-324</second>
 			</position>
 			<swizzle>xy</swizzle>
@@ -154,8 +154,8 @@
 			<id>{0831BBB0-D112-B940-B9B6-8C43DCD3E561}</id>
 			<comment/>
 			<position>
-				<first>663</first>
-				<second>-369</second>
+				<first>661</first>
+				<second>-368</second>
 			</position>
 		</item>
 		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
@@ -163,7 +163,7 @@
 			<comment/>
 			<position>
 				<first>496</first>
-				<second>-399</second>
+				<second>-397</second>
 			</position>
 			<parameterName>Direction</parameterName>
 			<type>PtVector</type>
@@ -173,8 +173,8 @@
 			<id>{7A24F180-2B14-0541-8E27-E9AAA3C074AE}</id>
 			<comment/>
 			<position>
-				<first>507</first>
-				<second>-313</second>
+				<first>505</first>
+				<second>-312</second>
 			</position>
 			<value>1</value>
 		</item>
@@ -182,8 +182,8 @@
 			<id>{5C36A885-A488-6249-83F7-8D7C52C3DB90}</id>
 			<comment/>
 			<position>
-				<first>846</first>
-				<second>-255</second>
+				<first>844</first>
+				<second>-253</second>
 			</position>
 			<swizzle>x</swizzle>
 		</item>
@@ -199,8 +199,8 @@
 			<id>{24BB0E9C-3707-4E49-952A-84185ADD455F}</id>
 			<comment/>
 			<position>
-				<first>853</first>
-				<second>198</second>
+				<first>852</first>
+				<second>196</second>
 			</position>
 			<min>0</min>
 			<max>1</max>
@@ -209,8 +209,8 @@
 			<id>{03027B58-EAEA-1B4E-A101-6EA85A5BD429}</id>
 			<comment/>
 			<position>
-				<first>654</first>
-				<second>190</second>
+				<first>652</first>
+				<second>188</second>
 			</position>
 		</item>
 		<item type="traktor.render.External" version="2,traktor.render.Node:1">
@@ -246,7 +246,7 @@
 			<comment/>
 			<position>
 				<first>144</first>
-				<second>78</second>
+				<second>76</second>
 			</position>
 			<parameterName>Depth</parameterName>
 			<type>PtTexture2D</type>
@@ -256,7 +256,7 @@
 			<id>{933951C4-964C-D845-8AAD-4FEA702458A6}</id>
 			<comment/>
 			<position>
-				<first>93</first>
+				<first>92</first>
 				<second>-48</second>
 			</position>
 			<fragmentGuid>{6DE0FC81-3E61-0D45-81F4-8FB4B950B941}</fragmentGuid>
@@ -277,27 +277,27 @@
 			<id>{F5EB19BB-0869-AA44-8322-6469C9770520}</id>
 			<comment/>
 			<position>
-				<first>273</first>
-				<second>205</second>
+				<first>272</first>
+				<second>204</second>
 			</position>
-			<value>0.0004</value>
+			<value>0.0002</value>
 		</item>
 		<item type="traktor.render.Mul" version="traktor.render.Node:1">
 			<id>{B2DC19D7-C874-E348-BECB-06F6C696C649}</id>
 			<comment/>
 			<position>
-				<first>461</first>
-				<second>247</second>
+				<first>460</first>
+				<second>246</second>
 			</position>
 		</item>
 		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
 			<id>{FBAF99C7-616D-9848-91F5-335FA01BF8ED}</id>
 			<comment/>
 			<position>
-				<first>279</first>
+				<first>277</first>
 				<second>288</second>
 			</position>
-			<value>-10</value>
+			<value>-3</value>
 		</item>
 		<item type="traktor.render.MixIn" version="traktor.render.Node:1">
 			<id>{4154496C-BAD7-174F-8510-2F4B3FD96FCE}</id>
@@ -314,7 +314,7 @@
 				<first>402</first>
 				<second>378</second>
 			</position>
-			<value>0.01</value>
+			<value>0.004</value>
 		</item>
 		<item type="traktor.render.Mul" version="traktor.render.Node:1">
 			<id>{02FE6628-DDF6-E14D-9CAC-5ECA9C236543}</id>
