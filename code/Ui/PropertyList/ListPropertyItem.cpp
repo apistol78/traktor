@@ -108,9 +108,10 @@ void ListPropertyItem::createInPlaceControls(Widget* parent)
 	m_listBox->create(m_listForm, ListBox::WsSingle);
 	m_listBox->addEventHandler< SelectionChangeEvent >(this, &ListPropertyItem::eventSelect);
 	m_listBox->addEventHandler< FocusEvent >(this, &ListPropertyItem::eventFocus);
+	m_listBox->addEventHandler< KeyDownEvent >(this, &ListPropertyItem::eventKeyDown);
 
-	for (std::vector< std::wstring >::const_iterator i = m_items.begin(); i != m_items.end(); ++i)
-		m_listBox->add(*i);
+	for (const auto& item : m_items)
+		m_listBox->add(item);
 
 	m_listBox->select(m_selected);
 }
@@ -120,20 +121,20 @@ void ListPropertyItem::destroyInPlaceControls()
 	if (m_buttonDrop)
 	{
 		m_buttonDrop->destroy();
-		m_buttonDrop = 0;
+		m_buttonDrop = nullptr;
 	}
 
 	if (m_listBox)
 	{
 		m_selected = m_listBox->getSelected();
 		m_listBox->destroy();
-		m_listBox = 0;
+		m_listBox = nullptr;
 	}
 
 	if (m_listForm)
 	{
 		m_listForm->destroy();
-		m_listForm = 0;
+		m_listForm = nullptr;
 	}
 }
 
@@ -193,6 +194,15 @@ void ListPropertyItem::eventFocus(FocusEvent* event)
 {
 	if (event->lostFocus())
 		m_listForm->setVisible(false);
+}
+
+void ListPropertyItem::eventKeyDown(KeyDownEvent* event)
+{
+	if (event->getVirtualKey() == VkEscape)
+	{
+		m_listForm->setVisible(false);
+		event->consume();
+	}
 }
 
 	}
