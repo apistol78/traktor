@@ -31,10 +31,10 @@ class IEntityBuilder;
 	namespace physics
 	{
 
-class BodyDesc;
+class CharacterComponent;
 class CollisionSpecification;
 class PhysicsManager;
-class CharacterComponent;
+class ShapeDesc;
 
 /*! \brief
  * \ingroup Physics
@@ -46,29 +46,32 @@ class T_DLLCLASS CharacterComponentData : public world::IEntityComponentData
 public:
 	CharacterComponentData();
 
-	explicit CharacterComponentData(BodyDesc* bodyDesc);
-
 	Ref< CharacterComponent > createComponent(
 		const world::IEntityBuilder* entityBuilder,
 		resource::IResourceManager* resourceManager,
 		PhysicsManager* physicsManager
 	) const;
 
-	virtual void serialize(ISerializer& s) override final;
-
-	const BodyDesc* getBodyDesc() const { return m_bodyDesc; }
+	Ref< ShapeDesc > getShapeDesc(float epsilon) const;
 
 	const std::set< resource::Id< CollisionSpecification > >& getTraceInclude() const { return m_traceInclude; }
 
 	const std::set< resource::Id< CollisionSpecification > >& getTraceIgnore() const { return m_traceIgnore; }
 
-	float getStepHeight() const { return m_stepHeight; }
+	float getRadius() const { return m_radius; }
+
+	float getHeight() const { return m_height; }
+
+	float getStep() const { return m_step; }
+
+	virtual void serialize(ISerializer& s) override final;
 
 private:
-	Ref< BodyDesc > m_bodyDesc;
 	std::set< resource::Id< CollisionSpecification > > m_traceInclude;
 	std::set< resource::Id< CollisionSpecification > > m_traceIgnore;
-	float m_stepHeight;
+	float m_radius;
+	float m_height;
+	float m_step;
 };
 
 	}

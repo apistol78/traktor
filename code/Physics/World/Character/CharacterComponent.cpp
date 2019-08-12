@@ -15,14 +15,16 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.physics.CharacterComponent", CharacterComponent
 CharacterComponent::CharacterComponent(
 	PhysicsManager* physicsManager,
 	const CharacterComponentData* data,
-	Body* body,
+	Body* bodyWide,
+	Body* bodySlim,
 	uint32_t traceInclude,
 	uint32_t traceIgnore
 )
-:	m_owner(0)
+:	m_owner(nullptr)
 ,	m_physicsManager(physicsManager)
 ,	m_data(data)
-,	m_body(body)
+,	m_bodyWide(bodyWide)
+,	m_bodySlim(bodySlim)
 ,	m_traceInclude(traceInclude)
 ,	m_traceIgnore(traceIgnore)
 ,	m_headAngle(0.0f)
@@ -33,7 +35,8 @@ CharacterComponent::CharacterComponent(
 
 void CharacterComponent::destroy()
 {
-	safeDestroy(m_body);
+	safeDestroy(m_bodyWide);
+	safeDestroy(m_bodySlim);
 	m_owner = nullptr;
 }
 
@@ -44,15 +47,15 @@ void CharacterComponent::setOwner(world::Entity* owner)
 		Transform transform;
 		if (m_owner->getTransform(transform))
 		{
-			m_body->setTransform(transform);
-			m_body->setEnable(true);
+			m_bodyWide->setTransform(transform);
+			m_bodyWide->setEnable(true);
 		}
 	}
 }
 
 void CharacterComponent::setTransform(const Transform& transform)
 {
-	m_body->setTransform(transform);
+	m_bodyWide->setTransform(transform);
 }
 
 Aabb3 CharacterComponent::getBoundingBox() const
@@ -65,20 +68,18 @@ void CharacterComponent::update(const world::UpdateParams& update)
 	float dT = update.deltaTime;
 
 	Vector4 movement = m_velocity * Scalar(dT);
-	Vector4 position = m_body->getTransform().translation();
+	Vector4 position = m_bodyWide->getTransform().translation();
 	QueryResult result;
 
 	// Integrate gravity.
 	m_velocity += Vector4(0.0f, -9.2f, 0.0f) * Scalar(dT);
 
 	// Step up.
-	const Vector4 stepUpDir(0.0f, 1.0f, 0.0f);
-
-	Scalar stepUpLength = Scalar(m_data->getStepHeight());
+	float stepUpLength = m_data->getStep();
 	if (movement.y() > 0.0f)
 		stepUpLength += movement.y();
 
-	if (step(stepUpDir * stepUpLength, position))
+	if (stepVertical(stepUpLength, position))
 	{
 		// Head hit; cancel out up motion.
 		m_velocity *= Vector4(1.0f, 0.0f, 1.0f, 0.0f);
@@ -89,13 +90,11 @@ void CharacterComponent::update(const world::UpdateParams& update)
 	step(movementXZ, position);
 
 	// Step down, step further down to simulate falling.
-	const Vector4 stepDownDir(0.0f, -1.0f, 0.0f);
-
-	Scalar stepDownLength = Scalar(m_data->getStepHeight());
+	float stepDownLength = m_data->getStep();
 	if (movement.y() < 0.0f)
 		stepDownLength += -movement.y();
 
-	if (step(stepDownDir * stepDownLength, position))
+	if (stepVertical(-stepDownLength, position))
 	{
 		// Foot hit; cancel out up motion.
 		m_velocity *= Vector4(1.0f, 0.0f, 1.0f, 0.0f);
@@ -106,11 +105,10 @@ void CharacterComponent::update(const world::UpdateParams& update)
 
 	Quaternion rotation = Quaternion::fromEulerAngles(m_headAngle, 0.0f, 0.0f);
 
-	m_body->setTransform(Transform(
+	m_bodyWide->setTransform(Transform(
 		position,
 		rotation
 	));
-
 	if (m_owner)
 		m_owner->setTransform(Transform(
 			position,
@@ -143,6 +141,46 @@ bool CharacterComponent::isGrounded() const
 	return m_grounded;
 }
 
+bool CharacterComponent::stepVertical(float motion, Vector4& inoutPosition) const
+{
+	if (std::abs(motion) <= FUZZY_EPSILON)
+		return false;
+
+	float direction = (motion > 0.0f) ? 1.0f : -1.0f;
+	bool anyCollision = false;
+
+	Quaternion rotation = Quaternion::identity(); // Quaternion::fromEulerAngles(m_headAngle, 0.0f, 0.0f);
+	QueryResult result;
+
+	if (m_physicsManager->querySweep(
+		m_bodySlim,
+		rotation,
+		inoutPosition,
+		Vector4(0.0f, direction, 0.0f),
+		std::abs(motion),
+		physics::QueryFilter(m_traceInclude, m_traceIgnore),
+		result
+	))
+	// if (m_physicsManager->queryRay(
+	// 	inoutPosition,
+	// 	Vector4(0.0f, direction, 0.0f),
+	// 	std::abs(motion),
+	// 	physics::QueryFilter(m_traceInclude, m_traceIgnore),
+	// 	true,
+	// 	result
+	// ))
+	{
+		inoutPosition += Vector4(0.0f, motion * result.fraction, 0.0f);
+		anyCollision = true;
+	}
+	else
+	{
+		inoutPosition += Vector4(0.0f, motion, 0.0f);
+	}
+
+	return anyCollision;
+}
+
 bool CharacterComponent::step(Vector4 motion, Vector4& inoutPosition) const
 {
 	Scalar totalMotionLength = motion.length();
@@ -153,14 +191,14 @@ bool CharacterComponent::step(Vector4 motion, Vector4& inoutPosition) const
 
 	bool anyCollision = false;
 
-	Quaternion rotation = Quaternion::fromEulerAngles(m_headAngle, 0.0f, 0.0f);
+	Quaternion rotation = Quaternion::identity(); // Quaternion::fromEulerAngles(m_headAngle, 0.0f, 0.0f);
 	QueryResult result;
 
 	Scalar motionLength = totalMotionLength;
-	for (int32_t i = 0; i < 4 && motionLength > FUZZY_EPSILON; ++i)
+	for (int32_t i = 0; i < 8 && motionLength > FUZZY_EPSILON; ++i)
 	{
 		if (m_physicsManager->querySweep(
-			m_body,
+			m_bodyWide,
 			rotation,
 			inoutPosition,
 			motion,
