@@ -154,7 +154,7 @@
 				<first>1912</first>
 				<second>139</second>
 			</position>
-			<value>60</value>
+			<value>25</value>
 		</item>
 		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
 			<id>{E9D4908F-B501-8D48-BDC9-4519184C5D2A}</id>
@@ -163,7 +163,7 @@
 				<first>1907</first>
 				<second>174</second>
 			</position>
-			<value>0.2</value>
+			<value>0.7</value>
 		</item>
 		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{F9E814A5-B055-044F-BA7A-87ADEE163236}</id>
