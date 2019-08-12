@@ -20,7 +20,7 @@ class ListBox;
 class MiniButton;
 class ToolForm;
 
-/*! \brief List property item.
+/*! List property item.
  * \ingroup UI
  */
 class T_DLLCLASS ListPropertyItem : public PropertyItem
@@ -70,6 +70,8 @@ private:
 	void eventSelect(SelectionChangeEvent* event);
 
 	void eventFocus(FocusEvent* event);
+
+	void eventKeyDown(KeyDownEvent* event);
 };
 
 	}
