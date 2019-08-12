@@ -3,6 +3,7 @@
 #include <BulletCollision/CollisionDispatch/btConvexConvexAlgorithm.h>
 #include "Core/Log/Log.h"
 #include "Core/Math/Const.h"
+#include "Core/Math/Format.h"
 #include "Core/Misc/Save.h"
 #include "Core/Thread/Acquire.h"
 #include "Heightfield/Heightfield.h"
@@ -141,13 +142,16 @@ public:
 	{
 	}
 
-	Vector4 getTriangleNormal(int triangleIndex, const Vector4& hitNormal) const
+	bool getTriangleNormal(int triangleIndex, Vector4& outHitNormal) const
 	{
 		const AlignedVector< Vector4 >& normals = m_mesh->getNormals();
 		if (triangleIndex >= 0 && triangleIndex < normals.size())
-			return normals[triangleIndex];
+		{
+			outHitNormal = normals[triangleIndex];
+			return true;
+		}
 		else
-			return hitNormal;
+			return false;
 	}
 
 private:
@@ -196,7 +200,8 @@ struct ClosestConvexExcludeResultCallback : public btCollisionWorld::ClosestConv
 	{
 		T_ASSERT(convexResult.m_hitFraction <= m_closestHitFraction);
 
-		if (m_ignoreBody == static_cast< BodyBullet* >(convexResult.m_hitCollisionObject->getUserPointer()))
+		BodyBullet* body = static_cast< BodyBullet* >(convexResult.m_hitCollisionObject->getUserPointer());
+		if (m_ignoreBody == body)
 			return 1.0f;
 
 		if (m_queryFilter.ignoreClusterId != 0 && getClusterId(convexResult.m_hitCollisionObject) == m_queryFilter.ignoreClusterId)
@@ -206,6 +211,24 @@ struct ClosestConvexExcludeResultCallback : public btCollisionWorld::ClosestConv
 
 		if ((group & m_queryFilter.includeGroup) == 0 || (group & m_queryFilter.ignoreGroup) != 0)
 			return 1.0f;
+
+		// Fix up hit normal, Bullet always report "edge" normal which is incorrect sometimes.
+		if (convexResult.m_localShapeInfo)
+		{
+			const btCollisionShape* collisionShape = convexResult.m_hitCollisionObject->getCollisionShape();
+			if (collisionShape->getShapeType() == TRIANGLE_MESH_SHAPE_PROXYTYPE)
+			{
+				const btTriangleMeshShape* meshShape = reinterpret_cast< const btTriangleMeshShape* >(collisionShape);
+				const MeshProxyIndexVertexArray* meshInterface = reinterpret_cast< const MeshProxyIndexVertexArray* >(meshShape->getMeshInterface());
+
+				Vector4 triangleNormal;
+				if (meshInterface->getTriangleNormal(convexResult.m_localShapeInfo->m_triangleIndex, triangleNormal))
+				{
+					Vector4 worldNormal = body->getTransform() * triangleNormal.xyz0();
+					m_hitNormalWorld = toBtVector3(worldNormal);
+				}
+			}
+		}
 
 		return btCollisionWorld::ClosestConvexResultCallback::addSingleResult(convexResult, normalInWorldSpace);
 	}
@@ -1375,7 +1398,8 @@ bool PhysicsManagerBullet::queryRay(
 				const btTriangleMeshShape* meshShape = reinterpret_cast< const btTriangleMeshShape* >(collisionShape);
 				const MeshProxyIndexVertexArray* meshInterface = reinterpret_cast< const MeshProxyIndexVertexArray* >(meshShape->getMeshInterface());
 
-				Vector4 triangleNormal = meshInterface->getTriangleNormal(callback.m_triangleIndex, outResult.normal);
+				Vector4 triangleNormal = outResult.normal;
+				meshInterface->getTriangleNormal(callback.m_triangleIndex, triangleNormal);
 				outResult.normal = body->getTransform() * triangleNormal.xyz0();
 			}
 		}
@@ -1404,7 +1428,8 @@ bool PhysicsManagerBullet::queryRay(
 				const btTriangleMeshShape* meshShape = reinterpret_cast< const btTriangleMeshShape* >(collisionShape);
 				const MeshProxyIndexVertexArray* meshInterface = reinterpret_cast< const MeshProxyIndexVertexArray* >(meshShape->getMeshInterface());
 
-				Vector4 triangleNormal = meshInterface->getTriangleNormal(callback.m_triangleIndex, outResult.normal);
+				Vector4 triangleNormal = outResult.normal;
+				meshInterface->getTriangleNormal(callback.m_triangleIndex, triangleNormal);
 				outResult.normal = body->getTransform() * triangleNormal.xyz0();
 			}
 		}
