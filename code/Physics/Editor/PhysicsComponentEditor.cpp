@@ -45,9 +45,7 @@ void PhysicsComponentEditor::drawGuide(render::PrimitiveRenderer* primitiveRende
 
 	if (const CharacterComponentData* characterComponent = dynamic_type_cast< const CharacterComponentData* >(m_componentData))
 	{
-		auto bodyDesc = characterComponent->getBodyDesc();
-		if (bodyDesc)
-			shapeDesc = bodyDesc->getShape();
+		shapeDesc = characterComponent->getShapeDesc(0.0f);
 	}
 
 	if (const VehicleComponentData* vehicleComponent = dynamic_type_cast< const VehicleComponentData* >(m_componentData))

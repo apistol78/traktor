@@ -3,9 +3,10 @@
 #include "Core/Serialization/MemberRef.h"
 #include "Core/Serialization/MemberStl.h"
 #include "Physics/Body.h"
-#include "Physics/BodyDesc.h"
+#include "Physics/CapsuleShapeDesc.h"
 #include "Physics/CollisionSpecification.h"
 #include "Physics/PhysicsManager.h"
+#include "Physics/StaticBodyDesc.h"
 #include "Physics/World/Character/CharacterComponent.h"
 #include "Physics/World/Character/CharacterComponentData.h"
 #include "Resource/IResourceManager.h"
@@ -21,13 +22,9 @@ namespace traktor
 T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.physics.CharacterComponentData", 0, CharacterComponentData, world::IEntityComponentData)
 
 CharacterComponentData::CharacterComponentData()
-:	m_stepHeight(1.0f)
-{
-}
-
-CharacterComponentData::CharacterComponentData(BodyDesc* bodyDesc)
-:	m_bodyDesc(bodyDesc)
-,	m_stepHeight(1.0f)
+:	m_radius(1.0f)
+,	m_height(2.0f)
+,	m_step(0.5f)
 {
 }
 
@@ -37,26 +34,41 @@ Ref< CharacterComponent > CharacterComponentData::createComponent(
 	PhysicsManager* physicsManager
 ) const
 {
-	Ref< Body > body = physicsManager->createBody(resourceManager, m_bodyDesc);
-	if (!body)
+	StaticBodyDesc bodyDesc;
+
+	bodyDesc.setShape(getShapeDesc(0.0f));
+	bodyDesc.setFriction(0.0f);
+	bodyDesc.setKinematic(true);
+
+	Ref< Body > bodyWide = physicsManager->createBody(resourceManager, &bodyDesc);
+	if (!bodyWide)
 		return nullptr;
 
-	body->setEnable(false);
+	bodyDesc.setShape(getShapeDesc(0.1f));
+	bodyDesc.setFriction(0.0f);
+	bodyDesc.setKinematic(true);
+
+	Ref< Body > bodySlim = physicsManager->createBody(resourceManager, &bodyDesc);
+	if (!bodySlim)
+		return nullptr;
+
+	bodyWide->setEnable(false);
+	bodySlim->setEnable(false);
 
 	uint32_t traceInclude = 0;
 	uint32_t traceIgnore = 0;
 
-	for (std::set< resource::Id< CollisionSpecification > >::const_iterator i = m_traceInclude.begin(); i != m_traceInclude.end(); ++i)
+	for (const auto& traceIncludeIt : m_traceInclude)
 	{
 		resource::Proxy< CollisionSpecification > traceGroup;
-		if (!resourceManager->bind(*i, traceGroup))
+		if (!resourceManager->bind(traceIncludeIt, traceGroup))
 			return nullptr;
 		traceInclude |= traceGroup->getBitMask();
 	}
-	for (std::set< resource::Id< CollisionSpecification > >::const_iterator i = m_traceIgnore.begin(); i != m_traceIgnore.end(); ++i)
+	for (const auto& traceIgnoreId : m_traceIgnore)
 	{
 		resource::Proxy< CollisionSpecification > traceGroup;
-		if (!resourceManager->bind(*i, traceGroup))
+		if (!resourceManager->bind(traceIgnoreId, traceGroup))
 			return nullptr;
 		traceIgnore |= traceGroup->getBitMask();
 	}
@@ -64,18 +76,31 @@ Ref< CharacterComponent > CharacterComponentData::createComponent(
 	return new CharacterComponent(
 		physicsManager,
 		this,
-		body,
+		bodyWide,
+		bodySlim,
 		traceInclude,
 		traceIgnore
 	);
 }
 
+Ref< ShapeDesc > CharacterComponentData::getShapeDesc(float epsilon) const
+{
+	Ref< CapsuleShapeDesc > shapeDesc = new CapsuleShapeDesc();
+	shapeDesc->setLocalTransform(Transform(
+		Quaternion::fromEulerAngles(0.0f, deg2rad(90.0f), 0.0f)
+	));
+	shapeDesc->setRadius(m_radius - epsilon);
+	shapeDesc->setLength(m_height);
+	return shapeDesc;
+}
+
 void CharacterComponentData::serialize(ISerializer& s)
 {
-	s >> MemberRef< BodyDesc >(L"bodyDesc", m_bodyDesc);
 	s >> MemberStlSet< resource::Id< CollisionSpecification >, resource::Member< CollisionSpecification > >(L"traceInclude", m_traceInclude);
 	s >> MemberStlSet< resource::Id< CollisionSpecification >, resource::Member< CollisionSpecification > >(L"traceIgnore", m_traceIgnore);
-	s >> Member< float >(L"stepHeight", m_stepHeight, AttributeRange(0.0f));
+	s >> Member< float >(L"radius", m_radius, AttributeRange(0.0f));
+	s >> Member< float >(L"height", m_height, AttributeRange(0.0f));
+	s >> Member< float >(L"step", m_step, AttributeRange(0.0f));
 }
 
 	}

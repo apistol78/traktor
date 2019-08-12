@@ -36,7 +36,8 @@ public:
 	CharacterComponent(
 		PhysicsManager* physicsManager,
 		const CharacterComponentData* data,
-		Body* body,
+		Body* bodyWide,
+		Body* bodySlim,
 		uint32_t traceInclude,
 		uint32_t traceIgnore
 	);
@@ -65,12 +66,15 @@ private:
 	world::Entity* m_owner;
 	Ref< PhysicsManager > m_physicsManager;
 	Ref< const CharacterComponentData > m_data;
-	Ref< Body > m_body;
+	Ref< Body > m_bodyWide;
+	Ref< Body > m_bodySlim;
 	uint32_t m_traceInclude;
 	uint32_t m_traceIgnore;
 	float m_headAngle;
 	Vector4 m_velocity;
 	bool m_grounded;
+
+	bool stepVertical(float motion, Vector4& inoutPosition) const;
 
 	bool step(Vector4 motion, Vector4& inoutPosition) const;
 };
