@@ -20,7 +20,7 @@ class T_DLLCLASS InputAndroidClassFactory : public IRuntimeClassFactory
 	T_RTTI_CLASS;
 
 public:
-	virtual void createClasses(IRuntimeClassRegistrar* registrar) const T_OVERRIDE T_FINAL;
+	virtual void createClasses(IRuntimeClassRegistrar* registrar) const override final;
 };
 
 	}

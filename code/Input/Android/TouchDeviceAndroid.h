@@ -18,37 +18,37 @@ class TouchDeviceAndroid : public IInputDevice
 public:
 	TouchDeviceAndroid(const SystemWindow& syswin);
 
-	virtual std::wstring getName() const T_OVERRIDE T_FINAL;
+	virtual std::wstring getName() const override final;
 
-	virtual InputCategory getCategory() const T_OVERRIDE T_FINAL;
+	virtual InputCategory getCategory() const override final;
 
-	virtual bool isConnected() const T_OVERRIDE T_FINAL;
+	virtual bool isConnected() const override final;
 
-	virtual int32_t getControlCount() T_OVERRIDE T_FINAL;
+	virtual int32_t getControlCount() override final;
 
-	virtual std::wstring getControlName(int32_t control) T_OVERRIDE T_FINAL;
+	virtual std::wstring getControlName(int32_t control) override final;
 
-	virtual bool isControlAnalogue(int32_t control) const T_OVERRIDE T_FINAL;
+	virtual bool isControlAnalogue(int32_t control) const override final;
 
-	virtual bool isControlStable(int32_t control) const T_OVERRIDE T_FINAL;
+	virtual bool isControlStable(int32_t control) const override final;
 
-	virtual float getControlValue(int32_t control) T_OVERRIDE T_FINAL;
+	virtual float getControlValue(int32_t control) override final;
 
-	virtual bool getControlRange(int32_t control, float& outMin, float& outMax) const T_OVERRIDE T_FINAL;
+	virtual bool getControlRange(int32_t control, float& outMin, float& outMax) const override final;
 
-	virtual bool getDefaultControl(InputDefaultControlType controlType, bool analogue, int32_t& control) const T_OVERRIDE T_FINAL;
+	virtual bool getDefaultControl(InputDefaultControlType controlType, bool analogue, int32_t& control) const override final;
 
-	virtual bool getKeyEvent(KeyEvent& outEvent) T_OVERRIDE T_FINAL;
+	virtual bool getKeyEvent(KeyEvent& outEvent) override final;
 
-	virtual void resetState() T_OVERRIDE T_FINAL;
+	virtual void resetState() override final;
 
-	virtual void readState() T_OVERRIDE T_FINAL;
+	virtual void readState() override final;
 
-	virtual bool supportRumble() const T_OVERRIDE T_FINAL;
+	virtual bool supportRumble() const override final;
 
-	virtual void setRumble(const InputRumble& rumble) T_OVERRIDE T_FINAL;
+	virtual void setRumble(const InputRumble& rumble) override final;
 
-	virtual void setExclusive(bool exclusive) T_OVERRIDE T_FINAL;
+	virtual void setExclusive(bool exclusive) override final;
 
 private:
 	friend class InputDriverAndroid;
