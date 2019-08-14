@@ -58,11 +58,11 @@ const RefArray< IInputNode >& InputMappingAsset::getInputNodes() const
 
 void InputMappingAsset::setPosition(const Object* object, const Position& position)
 {
-	for (AlignedVector< ObjectPosition >::iterator i = m_positions.begin(); i != m_positions.end(); ++i)
+	for (auto& op : m_positions)
 	{
-		if (i->object == object)
+		if (op.object == object)
 		{
-			i->position = position;
+			op.position = position;
 			return;
 		}
 	}
@@ -75,29 +75,20 @@ void InputMappingAsset::setPosition(const Object* object, const Position& positi
 InputMappingAsset::Position InputMappingAsset::getPosition(const Object* object) const
 {
 	const static Position c_zero = { 0 };
-	for (AlignedVector< ObjectPosition >::const_iterator i = m_positions.begin(); i != m_positions.end(); ++i)
+	for (const auto& op : m_positions)
 	{
-		if (i->object == object)
-			return i->position;
+		if (op.object == object)
+			return op.position;
 	}
 	return c_zero;
 }
 
 void InputMappingAsset::serialize(ISerializer& s)
 {
-	if (s.getVersion() >= 1)
-		s >> MemberRefArray< IInputNode >(L"inputNodes", m_inputNodes);
+	T_FATAL_ASSERT(s.getVersion() >= 2);
 
-	if (s.getVersion() >= 2)
-		s >> MemberAlignedVector< ObjectPosition, MemberComposite< ObjectPosition > >(L"positions", m_positions);
-	else if (s.getVersion() >= 1)
-	{
-		std::map< Ref< const Object >, Position > positions;
-		s >> MemberStlMap< Ref< const Object >, InputMappingAsset::Position, MemberStlPair< Ref< const Object >, InputMappingAsset::Position, MemberRef< const Object >, MemberPosition > >(L"positions", positions);
-		for (std::map< Ref< const Object >, Position >::const_iterator i = positions.begin(); i != positions.end(); ++i)
-			m_positions.push_back(ObjectPosition(i->first, i->second));
-	}
-
+	s >> MemberRefArray< IInputNode >(L"inputNodes", m_inputNodes);
+	s >> MemberAlignedVector< ObjectPosition, MemberComposite< ObjectPosition > >(L"positions", m_positions);
 	s >> MemberRef< InputMappingSourceData >(L"sourceData", m_sourceData);
 	s >> MemberRef< InputMappingStateData >(L"stateData", m_stateData);
 	s >> MemberStlList< Guid >(L"dependencies", m_dependencies);

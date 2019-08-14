@@ -77,36 +77,12 @@ namespace traktor
 		namespace
 		{
 
-// This is used to ensure mapping asset have it's input node instances
-// in a set which is kept even if no references to the input node exists.
-void updateInputMappingAsset(InputMappingAsset* mappingAsset, const IInputNode* node, const std::map< const TypeInfo*, Ref< const InputNodeTraits > >& traits)
-{
-	if (!node)
-		return;
-
-	// Use traits to find child input nodes.
-	std::map< const TypeInfo*, Ref< const InputNodeTraits > >::const_iterator it = traits.find(&type_of(node));
-	T_ASSERT(it != traits.end());
-
-	const InputNodeTraits* t = it->second;
-	T_ASSERT(t);
-
-	std::map< const std::wstring, Ref< const IInputNode > > childNodes;
-	t->getInputNodes(node, childNodes);
-
-	for (std::map< const std::wstring, Ref< const IInputNode > >::const_iterator i = childNodes.begin(); i != childNodes.end(); ++i)
-		updateInputMappingAsset(mappingAsset, i->second, traits);
-
-	// Add input node to asset.
-	mappingAsset->addInputNode(const_cast< IInputNode* >(node));
-}
-
 void createInputNodes(InputMappingAsset* mappingAsset, ui::GraphControl* graph, const std::map< const TypeInfo*, Ref< const InputNodeTraits > >& traits, const IInputNode* node, ui::Pin* parentInputPin)
 {
 	if (!node)
 		return;
 
-	std::map< const TypeInfo*, Ref< const InputNodeTraits > >::const_iterator it = traits.find(&type_of(node));
+	auto it = traits.find(&type_of(node));
 	T_ASSERT(it != traits.end());
 
 	const InputNodeTraits* t = it->second;
@@ -116,13 +92,12 @@ void createInputNodes(InputMappingAsset* mappingAsset, ui::GraphControl* graph, 
 	Ref< ui::Pin > valuePin;
 
 	// Have we already created this node?
-	const RefArray< ui::Node >& nodes = graph->getNodes();
-	for (RefArray< ui::Node >::const_iterator i = nodes.begin(); i != nodes.end(); ++i)
+	for (auto nodeIt : graph->getNodes())
 	{
-		if ((*i)->getData< IInputNode >(L"DATA") == node)
+		if (nodeIt->getData< IInputNode >(L"DATA") == node)
 		{
-			graphNode = *i;
-			valuePin = (*i)->findOutputPin(L"Value");
+			graphNode = nodeIt;
+			valuePin = nodeIt->findOutputPin(L"Value");
 			T_ASSERT(valuePin);
 			break;
 		}
@@ -205,10 +180,6 @@ bool InputMappingEditor::create(ui::Container* parent)
 
 	InputMappingStateData* stateData = m_mappingAsset->getStateData();
 	T_ASSERT(stateData);
-
-	const std::map< std::wstring, Ref< InputStateData > >& sd = stateData->getStateData();
-	for (std::map< std::wstring, Ref< InputStateData > >::const_iterator i = sd.begin(); i != sd.end(); ++i)
-		updateInputMappingAsset(m_mappingAsset, i->second->getSource(), m_traits);
 
 	Ref< ui::Container > container = new ui::Container();
 	container->create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%", 0, 0));
@@ -371,9 +342,8 @@ void InputMappingEditor::updateGraphView()
 	m_graph->removeAllNodes();
 
 	// Add all input nodes first.
-	const RefArray< IInputNode >& inputNodes = m_mappingAsset->getInputNodes();
-	for (RefArray< IInputNode >::const_iterator i = inputNodes.begin(); i != inputNodes.end(); ++i)
-		createInputNodes(m_mappingAsset, m_graph, m_traits, *i, 0);
+	for (auto inputNode : m_mappingAsset->getInputNodes())
+		createInputNodes(m_mappingAsset, m_graph, m_traits, inputNode, nullptr);
 
 	// Add all output states.
 	InputMappingStateData* stateData = m_mappingAsset->getStateData();
@@ -398,13 +368,12 @@ void InputMappingEditor::updateGraphView()
 		// Create edge to input node.
 		if (i->second->getSource() != 0)
 		{
-			const RefArray< ui::Node >& nodes = m_graph->getNodes();
-			for (RefArray< ui::Node >::const_iterator j = nodes.begin(); j != nodes.end(); ++j)
+			for (auto node : m_graph->getNodes())
 			{
-				if ((*j)->getData< IInputNode >(L"DATA") == i->second->getSource())
+				if (node->getData< IInputNode >(L"DATA") == i->second->getSource())
 				{
 					m_graph->addEdge(new ui::Edge(
-						(*j)->findOutputPin(L"Value"),
+						node->findOutputPin(L"Value"),
 						inputPin
 					));
 					break;
@@ -477,17 +446,15 @@ void InputMappingEditor::eventButtonDown(ui::MouseButtonDownEvent* event)
 		RefArray< ui::Node > selectedNodes;
 		m_graph->getSelectedNodes(selectedNodes);
 
-		for (RefArray< ui::Node >::const_iterator i = selectedNodes.begin(); i != selectedNodes.end(); ++i)
+		for (auto selectedNode : selectedNodes)
 		{
-			const RefArray< ui::Pin >& outputPins = (*i)->getOutputPins();
-			for (RefArray< ui::Pin >::const_iterator j = outputPins.begin(); j != outputPins.end(); ++j)
+			for (auto outputPin : selectedNode->getOutputPins())
 			{
 				RefArray< ui::Edge > edges;
-				m_graph->getConnectedEdges(*j, edges);
+				m_graph->getConnectedEdges(outputPin, edges);
 
-				for (RefArray< ui::Edge >::const_iterator k = edges.begin(); k != edges.end(); ++k)
+				for (auto edge : edges)
 				{
-					ui::Edge* edge = *k;
 					ui::Pin* destinationPin = edge->getDestinationPin();
 					ui::Node* destinationNode = destinationPin->getNode();
 
@@ -511,16 +478,16 @@ void InputMappingEditor::eventButtonDown(ui::MouseButtonDownEvent* event)
 				}
 			}
 
-			Ref< IInputNode > sourceInputNode = (*i)->getData< IInputNode >(L"DATA");
+			Ref< IInputNode > sourceInputNode = selectedNode->getData< IInputNode >(L"DATA");
 			if (sourceInputNode)
 				m_mappingAsset->removeInputNode(sourceInputNode);
 
-			Ref< PropertyString > stateName = (*i)->getData< PropertyString >(L"NAME");
-			Ref< InputStateData > stateData = (*i)->getData< InputStateData >(L"DATA");
+			Ref< PropertyString > stateName = selectedNode->getData< PropertyString >(L"NAME");
+			Ref< InputStateData > stateData = selectedNode->getData< InputStateData >(L"DATA");
 			if (stateName && stateData)
 			{
 				std::wstring currentName = PropertyString::get(stateName);
-				m_mappingAsset->getStateData()->setStateData(currentName, 0);
+				m_mappingAsset->getStateData()->setStateData(currentName, nullptr);
 			}
 		}
 
