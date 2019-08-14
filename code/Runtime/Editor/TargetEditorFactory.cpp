@@ -11,9 +11,7 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.runtime.TargetEditorFactory", 0, Target
 
 const TypeInfoSet TargetEditorFactory::getEditableTypes() const
 {
-	TypeInfoSet typeSet;
-	typeSet.insert< Target >();
-	return typeSet;
+	return makeTypeInfoSet< Target >();
 }
 
 bool TargetEditorFactory::needOutputResources(const TypeInfo& typeInfo, std::set< Guid >& outDependencies) const

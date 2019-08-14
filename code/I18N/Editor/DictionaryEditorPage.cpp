@@ -166,10 +166,10 @@ bool DictionaryEditorPage::handleCommand(const ui::Command& command)
 		if (m_gridDictionary->getRows(selectedRows, ui::GridView::GfSelectedOnly) > 0)
 		{
 			m_document->push();
-			for (RefArray< ui::GridRow >::iterator i = selectedRows.begin(); i != selectedRows.end(); ++i)
+			for (auto selectedRow : selectedRows)
 			{
-				m_dictionary->remove((*i)->get(0)->getText());
-				m_gridDictionary->removeRow(*i);
+				m_dictionary->remove(selectedRow->get(0)->getText());
+				m_gridDictionary->removeRow(selectedRow);
 			}
 		}
 	}
@@ -190,17 +190,16 @@ void DictionaryEditorPage::updateGrid()
 	// Add all entries from dictionary.
 	if (m_dictionary)
 	{
-		const std::map< std::wstring, std::wstring >& map = m_dictionary->get();
-		for (std::map< std::wstring, std::wstring >::const_iterator i = map.begin(); i != map.end(); ++i)
+		for (const auto& map : m_dictionary->get())
 		{
 			Ref< ui::GridRow > row = new ui::GridRow();
-			row->add(new ui::GridItem(i->first));
-			row->add(new ui::GridItem(i->second));
+			row->add(new ui::GridItem(map.first));
+			row->add(new ui::GridItem(map.second));
 
 			if (m_referenceDictionary)
 			{
 				std::wstring referenceText;
-				if (m_referenceDictionary->get(i->first, referenceText))
+				if (m_referenceDictionary->get(map.first, referenceText))
 					row->add(new ui::GridItem(referenceText));
 			}
 
@@ -241,9 +240,8 @@ void DictionaryEditorPage::eventToolClick(ui::ToolBarButtonClickEvent* event)
 		if (!dictionary)
 			return;
 
-		const std::map< std::wstring, std::wstring >& kv = dictionary->get();
-		for (std::map< std::wstring, std::wstring >::const_iterator i = kv.begin(); i != kv.end(); ++i)
-			m_dictionary->set(i->first, i->second);
+		for (const auto& map : dictionary->get())
+			m_dictionary->set(map.first, map.second);
 
 		updateGrid();
 	}
@@ -297,19 +295,18 @@ void DictionaryEditorPage::eventToolClick(ui::ToolBarButtonClickEvent* event)
 			m_gridDictionary->getRows(selectedRows, ui::GridView::GfSelectedOnly);
 
 			Translator translator(fields[0].value, fields[1].value);
-
-			for (RefArray< ui::GridRow >::iterator i = selectedRows.begin(); i != selectedRows.end(); ++i)
+			for (auto selectedRow : selectedRows)
 			{
-				std::wstring source = (*i)->get(1)->getText();
+				std::wstring source = selectedRow->get(1)->getText();
 				std::wstring out;
 
 				if (translator.translate(source, out))
 				{
 					m_dictionary->set(
-						(*i)->get(0)->getText(),
+						selectedRow->get(0)->getText(),
 						out
 					);
-					(*i)->get(1)->setText(out);
+					selectedRow->get(1)->setText(out);
 				}
 			}
 
@@ -321,13 +318,12 @@ void DictionaryEditorPage::eventToolClick(ui::ToolBarButtonClickEvent* event)
 	{
 		std::set< wchar_t > uc;
 
-		const std::map< std::wstring, std::wstring >& wm = m_dictionary->get();
-		for (std::map< std::wstring, std::wstring >::const_iterator i = wm.begin(); i != wm.end(); ++i)
-			uc.insert(i->second.begin(), i->second.end());
+		for (const auto& map : m_dictionary->get())
+			uc.insert(map.second.begin(), map.second.end());
 
 		StringOutputStream ss;
-		for (std::set< wchar_t >::const_iterator i = uc.begin(); i != uc.end(); ++i)
-			ss << *i;
+		for (auto ch : uc)
+			ss << ch;
 
 		Ref< ui::Clipboard > clipboard = ui::Application::getInstance()->getClipboard();
 		if (clipboard)

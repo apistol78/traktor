@@ -3,6 +3,7 @@
 #include "Runtime/Editor/TargetManager.h"
 #include "Runtime/Target/TargetID.h"
 #include "Core/Log/Log.h"
+#include "Core/Misc/SafeDestroy.h"
 #include "Core/Misc/String.h"
 #include "Core/Serialization/BinarySerializer.h"
 #include "Editor/IEditor.h"
@@ -49,15 +50,8 @@ bool TargetManager::create()
 void TargetManager::destroy()
 {
 	m_instances.clear();
-
-	// Close server socket.
-	if (m_listenSocket)
-	{
-		m_listenSocket->close();
-		m_listenSocket = 0;
-	}
-
-	m_editor = 0;
+	safeClose(m_listenSocket);
+	m_editor = nullptr;
 }
 
 void TargetManager::addInstance(TargetInstance* targetInstance)
@@ -82,20 +76,20 @@ bool TargetManager::update()
 
 	// Update all targets; if any has been disconnected then we return true in order
 	// to update user interface.
-	for (RefArray< TargetInstance >::iterator i = m_instances.begin(); i != m_instances.end(); ++i)
+	for (auto instance : m_instances)
 	{
-		if ((*i)->update())
+		if (instance->update())
 			needUpdate |= true;
 	}
 
 	// Gather all sockets so we can wait on all simultaneously.
 	socketSet.add(m_listenSocket);
-	for (RefArray< TargetInstance >::iterator i = m_instances.begin(); i != m_instances.end(); ++i)
+	for (auto instance : m_instances)
 	{
-		RefArray< TargetConnection> connections = (*i)->getConnections();
-		for (RefArray< TargetConnection >::const_iterator j = connections.begin(); j != connections.end(); ++j)
+		RefArray< TargetConnection> connections = instance->getConnections();
+		for (auto connection : connections)
 		{
-			net::BidirectionalObjectTransport* transport = (*j)->getTransport();
+			net::BidirectionalObjectTransport* transport = connection->getTransport();
 			T_ASSERT(transport);
 
 			if (transport->getSocket())
@@ -121,27 +115,19 @@ bool TargetManager::update()
 			Ref< TargetID > targetId;
 			if (transport->recv< TargetID >(1000, targetId) == net::BidirectionalObjectTransport::RtSuccess)
 			{
-				T_ASSERT(targetId);
-
 				// Find instance with matching identifier.
-				TargetInstance* instance = 0;
-				for (RefArray< TargetInstance >::iterator i = m_instances.begin(); i != m_instances.end(); ++i)
+				auto it = std::find_if(m_instances.begin(), m_instances.end(), [&](TargetInstance* ti) {
+					return ti->getId() == targetId->getId();
+				});
+				if (it != m_instances.end())
 				{
-					if ((*i)->getId() == targetId->getId())
-					{
-						instance = *i;
-						break;
-					}
-				}
+					TargetInstance* instance = *it;
 
-				if (instance)
-				{
 					// Determine log name; if multiple running instances with same name then add number.
 					int32_t running = 0;
-					const RefArray< TargetConnection >& connections = instance->getConnections();
-					for (RefArray< TargetConnection >::const_iterator i = connections.begin(); i != connections.end(); ++i)
+					for (auto connection : instance->getConnections())
 					{
-						if ((*i)->getName() == targetId->getName())
+						if (connection->getName() == targetId->getName())
 							++running;
 					}
 

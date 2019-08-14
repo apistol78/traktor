@@ -25,8 +25,8 @@ void TargetScriptProfiler::removeListener(IListener* listener)
 
 void TargetScriptProfiler::notifyListeners(const Guid& scriptId, const std::wstring& function, uint32_t callCount, double inclusiveDuration, double exclusiveDuration)
 {
-	for (std::list< IListener* >::const_iterator i = m_listeners.begin(); i != m_listeners.end(); ++i)
-		(*i)->callMeasured(scriptId, function, callCount, inclusiveDuration, exclusiveDuration);
+	for (auto listener : m_listeners)
+		listener->callMeasured(scriptId, function, callCount, inclusiveDuration, exclusiveDuration);
 }
 
 	}

@@ -27,7 +27,7 @@ class Instance;
 
 class IResourceManager;
 
-/*! \brief Resource factory interface.
+/*! Resource factory interface.
  * \ingroup Resource
  *
  * A resource factory is responsible of creating resources from
@@ -42,7 +42,7 @@ class T_DLLCLASS IResourceFactory : public Object
 	T_RTTI_CLASS;
 
 public:
-	/*! \brief Get resource types.
+	/*! Get resource types.
 	 *
 	 * Return a set of resource types this factory
 	 * accepts.
@@ -51,7 +51,7 @@ public:
 	 */
 	virtual const TypeInfoSet getResourceTypes() const = 0;
 
-	/*! \brief Get product types from resource.
+	/*! Get product types from resource.
 	 *
 	 * Return which product types can be created from a
 	 * resource type.
@@ -61,7 +61,7 @@ public:
 	 */
 	virtual const TypeInfoSet getProductTypes(const TypeInfo& resourceType) const = 0;
 
-	/*! \brief Check if resource is cacheable.
+	/*! Check if resource is cacheable.
 	 *
 	 * A non cacheable resource are recreated for each
 	 * proxy trying to validate the resource.
@@ -71,7 +71,7 @@ public:
 	 */
 	virtual bool isCacheable(const TypeInfo& productType) const = 0;
 
-	/*! \brief Create resource from guid.
+	/*! Create resource from guid.
 	 *
 	 * Create a specified resource from a guid.
 	 * It should also fill the outDependencies with

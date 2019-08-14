@@ -242,19 +242,18 @@ void ResourceManager::reload(const Guid& guid, bool flushedOnly)
 	if (i1 != m_residentHandles.end())
 	{
 		const TypeInfo& productType = i1->second->getProductType();
-		if (!flushedOnly || i1->second->get() == 0)
+		if (!flushedOnly || i1->second->get() == nullptr)
 			load(instance, factory, productType, i1->second);
 	}
 
 	std::map< Guid, RefArray< ExclusiveResourceHandle > >::iterator i0 = m_exclusiveHandles.find(guid);
 	if (i0 != m_exclusiveHandles.end())
 	{
-		const RefArray< ExclusiveResourceHandle >& handles = i0->second;
-		for (RefArray< ExclusiveResourceHandle >::const_iterator i = handles.begin(); i != handles.end(); ++i)
+		for (auto handle : i0->second)
 		{
-			const TypeInfo& productType = (*i)->getProductType();
-			if (!flushedOnly || (*i)->get() == 0)
-				load(instance, factory, productType, *i);
+			const TypeInfo& productType = handle->getProductType();
+			if (!flushedOnly || handle->get() == nullptr)
+				load(instance, factory, productType, handle);
 		}
 	}
 }
@@ -281,16 +280,15 @@ void ResourceManager::reload(const TypeInfo& productType, bool flushedOnly)
 			continue;
 
 		// Reload all resources through factory.
-		const RefArray< ExclusiveResourceHandle >& handles = i->second;
-		for (RefArray< ExclusiveResourceHandle >::const_iterator j = handles.begin(); j != handles.end(); ++j)
+		for (auto handle : i->second)
 		{
-			const TypeInfo& handleProductType = (*j)->getProductType();
+			const TypeInfo& handleProductType = handle->getProductType();
 			if (is_type_of(productType, handleProductType))
 			{
-				if (!flushedOnly || (*j)->get() == 0)
+				if (!flushedOnly || handle->get() == nullptr)
 				{
-					(*j)->flush();
-					load(instance, factory, handleProductType, *j);
+					handle->flush();
+					load(instance, factory, handleProductType, handle);
 				}
 			}
 		}
@@ -316,7 +314,7 @@ void ResourceManager::reload(const TypeInfo& productType, bool flushedOnly)
 			if (!factory)
 				continue;
 
-			if (!flushedOnly || i->second->get() == 0)
+			if (!flushedOnly || i->second->get() == nullptr)
 			{
 				i->second->flush();
 				load(instance, factory, handleProductType, i->second);
@@ -328,39 +326,35 @@ void ResourceManager::reload(const TypeInfo& productType, bool flushedOnly)
 void ResourceManager::unload(const TypeInfo& productType)
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-
-	for (std::map< Guid, RefArray< ExclusiveResourceHandle > >::iterator i = m_exclusiveHandles.begin(); i != m_exclusiveHandles.end(); ++i)
+	for (auto pair : m_exclusiveHandles)
 	{
-		const RefArray< ExclusiveResourceHandle >& handles = i->second;
-		for (RefArray< ExclusiveResourceHandle >::const_iterator j = handles.begin(); j != handles.end(); ++j)
+		for (auto handle : pair.second)
 		{
-			if (is_type_of(productType, (*j)->getProductType()))
-				(*j)->flush();
+			if (is_type_of(productType, handle->getProductType()))
+				handle->flush();
 		}
 	}
-
-	for (std::map< Guid, Ref< ResidentResourceHandle > >::iterator i = m_residentHandles.begin(); i != m_residentHandles.end(); ++i)
+	for (auto pair : m_residentHandles)
 	{
-		if (is_type_of(productType, i->second->getProductType()))
-			i->second->flush();
+		if (is_type_of(productType, pair.second->getProductType()))
+			pair.second->flush();
 	}
 }
 
 void ResourceManager::unloadUnusedResident()
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-	for (std::map< Guid, Ref< ResidentResourceHandle > >::iterator i = m_residentHandles.begin(); i != m_residentHandles.end(); ++i)
+	for (auto pair : m_residentHandles)
 	{
-		T_ASSERT(i->second);
 		if (
-			!i->second->isPersistent() &&
-			i->second->getReferenceCount() <= 1 &&
-			i->second->get() != nullptr
+			!pair.second->isPersistent() &&
+			pair.second->getReferenceCount() <= 1 &&
+			pair.second->get() != nullptr
 		)
 		{
 			if (m_verbose)
-				log::info << L"Unloading resource \"" << i->first.format() << L"\" (" << type_name(i->second->get()) << L")." << Endl;
-			i->second->replace(nullptr);
+				log::info << L"Unloading resource \"" << pair.first.format() << L"\" (" << type_name(pair.second->get()) << L")." << Endl;
+			pair.second->replace(nullptr);
 		}
 	}
 }

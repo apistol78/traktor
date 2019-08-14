@@ -1,4 +1,5 @@
 #include "Core/Log/Log.h"
+#include "Core/Misc/SafeDestroy.h"
 #include "Core/Misc/String.h"
 #include "Database/ConnectionString.h"
 #include "Database/Remote/Client/RemoteConnection.h"
@@ -83,9 +84,7 @@ void RemoteDatabase::close()
 		if (!result || result->getStatus() != StSuccess)
 			log::warning << L"Unable to close server database." << Endl;
 
-		m_connection->destroy();
-		m_connection = 0;
-
+		safeDestroy(m_connection);
 		net::Network::finalize();
 	}
 }
@@ -93,19 +92,19 @@ void RemoteDatabase::close()
 Ref< IProviderBus > RemoteDatabase::getBus()
 {
 	if (!m_connection)
-		return 0;
+		return nullptr;
 
 	Ref< MsgHandleResult > result = m_connection->sendMessage< MsgHandleResult >(DbmGetBus());
-	return result ? new RemoteBus(m_connection, result->get()) : 0;
+	return result ? new RemoteBus(m_connection, result->get()) : nullptr;
 }
 
 Ref< IProviderGroup > RemoteDatabase::getRootGroup()
 {
 	if (!m_connection)
-		return 0;
+		return nullptr;
 
 	Ref< MsgHandleResult > result = m_connection->sendMessage< MsgHandleResult >(DbmGetRootGroup());
-	return result ? new RemoteGroup(m_connection, result->get()) : 0;
+	return result ? new RemoteGroup(m_connection, result->get()) : nullptr;
 }
 
 	}

@@ -22,7 +22,7 @@ Ref< ResourceHandle > IResourceManager_bind(IResourceManager* self, const TypeIn
 	else if (id.isString())
 		return self->bind(type, Guid(id.getWideString()));
 	else
-		return 0;
+		return nullptr;
 }
 
 void IResourceManager_reload(IResourceManager* self, const Any& guidOrType, bool flushedOnly)

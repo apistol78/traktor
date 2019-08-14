@@ -1,3 +1,4 @@
+#include "Core/Misc/SafeDestroy.h"
 #include "Core/Thread/Acquire.h"
 #include "Database/Remote/Client/RemoteConnection.h"
 #include "Net/BidirectionalObjectTransport.h"
@@ -19,13 +20,9 @@ RemoteConnection::RemoteConnection(net::TcpSocket* socket)
 void RemoteConnection::destroy()
 {
 	if (m_transport)
-		m_transport = 0;
+		m_transport = nullptr;
 
-	if (m_socket)
-	{
-		m_socket->close();
-		m_socket = 0;
-	}
+	safeClose(m_socket);
 }
 
 void RemoteConnection::setStreamServerAddr(const net::SocketAddressIPv4& streamServerAddr)
@@ -44,15 +41,15 @@ Ref< IMessage > RemoteConnection::sendMessage(const IMessage& message)
 	Ref< IMessage > reply;
 
 	if (!m_transport || !m_transport->connected())
-		return 0;
+		return nullptr;
 
 	m_transport->flush< IMessage >();
 
 	if (!m_transport->send(&message))
-		return 0;
+		return nullptr;
 
 	if (m_transport->recv(60000, reply) <= 0)
-		return 0;
+		return nullptr;
 
 	return reply;
 }

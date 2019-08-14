@@ -112,11 +112,11 @@ Ref< IStream > RemoteInstance::readObject(const TypeInfo*& outSerializerType) co
 {
 	Ref< DbmReadObjectResult > result = m_connection->sendMessage< DbmReadObjectResult >(DbmReadObject(m_handle));
 	if (!result)
-		return 0;
+		return nullptr;
 
 	outSerializerType = TypeInfo::find(result->getSerializerTypeName().c_str());
 	if (!outSerializerType)
-		return 0;
+		return nullptr;
 
 	return net::RemoteStream::connect(m_connection->getStreamServerAddr(), result->getStreamId());
 }
@@ -125,11 +125,11 @@ Ref< IStream > RemoteInstance::writeObject(const std::wstring& primaryTypeName, 
 {
 	Ref< DbmWriteObjectResult > result = m_connection->sendMessage< DbmWriteObjectResult >(DbmWriteObject(m_handle, primaryTypeName));
 	if (!result)
-		return 0;
+		return nullptr;
 
 	outSerializerType = TypeInfo::find(result->getSerializerTypeName().c_str());
 	if (!outSerializerType)
-		return 0;
+		return nullptr;
 
 	return net::RemoteStream::connect(m_connection->getStreamServerAddr(), result->getStreamId());
 }
@@ -141,7 +141,7 @@ uint32_t RemoteInstance::getDataNames(std::vector< std::wstring >& outDataNames)
 		return 0;
 
 	outDataNames = result->get();
-	return uint32_t(outDataNames.size());
+	return (uint32_t)outDataNames.size();
 }
 
 bool RemoteInstance::getDataLastWriteTime(const std::wstring& dataName, DateTime& outLastWriteTime) const
@@ -159,7 +159,7 @@ Ref< IStream > RemoteInstance::readData(const std::wstring& dataName) const
 {
 	Ref< MsgHandleResult > result = m_connection->sendMessage< MsgHandleResult >(DbmReadData(m_handle, dataName));
 	if (!result)
-		return 0;
+		return nullptr;
 
 	return net::RemoteStream::connect(m_connection->getStreamServerAddr(), result->get());
 }
@@ -168,7 +168,7 @@ Ref< IStream > RemoteInstance::writeData(const std::wstring& dataName)
 {
 	Ref< MsgHandleResult > result = m_connection->sendMessage< MsgHandleResult >(DbmWriteData(m_handle, dataName));
 	if (!result)
-		return 0;
+		return nullptr;
 
 	return net::RemoteStream::connect(m_connection->getStreamServerAddr(), result->get());
 }

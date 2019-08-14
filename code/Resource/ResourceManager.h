@@ -31,7 +31,7 @@ class ExclusiveResourceHandle;
 class ResidentResourceHandle;
 class ResourceHandle;
 
-/*! \brief Resource manager.
+/*! Resource manager.
  * \ingroup Resource
  */
 class T_DLLCLASS ResourceManager : public IResourceManager

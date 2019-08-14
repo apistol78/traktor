@@ -16,7 +16,7 @@ namespace traktor
 	namespace resource
 	{
 
-/*! \brief
+/*! Bundle of resource identifiers.
  * \ingroup Resource
  */
 class T_DLLCLASS ResourceBundle : public ISerializable

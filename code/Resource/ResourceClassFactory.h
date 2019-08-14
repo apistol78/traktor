@@ -15,7 +15,7 @@ namespace traktor
 	namespace resource
 	{
 
-/*! \brief
+/*! Resource system class factory.
  * \ingroup Resource
  */
 class T_DLLCLASS ResourceClassFactory : public IRuntimeClassFactory
