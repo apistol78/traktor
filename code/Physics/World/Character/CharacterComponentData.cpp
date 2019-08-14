@@ -44,7 +44,7 @@ Ref< CharacterComponent > CharacterComponentData::createComponent(
 	if (!bodyWide)
 		return nullptr;
 
-	bodyDesc.setShape(getShapeDesc(0.1f));
+	bodyDesc.setShape(getShapeDesc(0.2f * m_radius));
 	bodyDesc.setFriction(0.0f);
 	bodyDesc.setKinematic(true);
 
