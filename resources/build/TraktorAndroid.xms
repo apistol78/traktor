@@ -5609,6 +5609,7 @@
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 						<item>$(TRAKTOR_HOME)/3rdp/vulkan/Vulkan-Docs/src</item>
+						<item>$(TRAKTOR_HOME)/3rdp/android/native_app_glue</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
@@ -5639,6 +5640,7 @@
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 						<item>$(TRAKTOR_HOME)/3rdp/vulkan/Vulkan-Docs/src</item>
+						<item>$(TRAKTOR_HOME)/3rdp/android/native_app_glue</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>

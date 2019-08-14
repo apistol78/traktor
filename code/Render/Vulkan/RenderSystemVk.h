@@ -96,6 +96,10 @@ private:
 #if defined(__LINUX__)
 	::Display* m_display;
 #endif
+#if defined(__ANDROID__)
+	int32_t m_screenWidth;
+	int32_t m_screenHeight;
+#endif
 	VkInstance m_instance;
 	VkPhysicalDevice m_physicalDevice;
 	VkDevice m_logicalDevice;

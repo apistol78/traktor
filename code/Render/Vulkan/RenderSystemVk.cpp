@@ -1,3 +1,6 @@
+#if defined(__ANDROID__)
+#	include <android_native_app_glue.h>
+#endif
 #include <cstring>
 #include "Core/Log/Log.h"
 #include "Core/Misc/Adler32.h"
@@ -28,6 +31,8 @@
 #	include "Render/Vulkan/Win32/Window.h"
 #elif defined(__LINUX__)
 #	include "Render/Vulkan/Linux/Window.h"
+#elif defined(__ANDROID__)
+#	include "Core/System/Android/DelegateInstance.h"
 #endif
 
 namespace traktor
@@ -85,6 +90,10 @@ RenderSystemVk::RenderSystemVk()
 ,	m_setupCommandBuffer(0)
 ,	m_allocator(0)
 {
+#if defined(__ANDROID__)
+	m_screenWidth = 0;
+	m_screenHeight = 0;
+#endif
 }
 
 bool RenderSystemVk::create(const RenderSystemDesc& desc)
@@ -97,6 +106,10 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
 		log::error << L"Unable to create Vulkan renderer; Failed to open X display" << Endl;
 		return false;
 	}
+#elif defined(__ANDROID__)
+	auto app = desc.sysapp.instance->getApplication();
+	m_screenWidth = ANativeWindow_getWidth(app->window);
+	m_screenHeight = ANativeWindow_getHeight(app->window);
 #endif
 
 	if (!initializeVulkanApi())
@@ -113,6 +126,7 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
 	vkEnumerateInstanceLayerProperties(&layerCount, layersAvailable.ptr());
 
 	AlignedVector< const char* > validationLayers;
+#if defined(_DEBUG)
 	for (uint32_t i = 0; i < layerCount; ++i)
 	{
 		bool found = false;
@@ -124,6 +138,7 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
 		if (found)
 			validationLayers.push_back(strdup(layersAvailable[i].layerName));
 	}
+#endif
 
 	// Create Vulkan instance.
 	VkApplicationInfo ai = {};
@@ -384,6 +399,13 @@ DisplayMode RenderSystemVk::getCurrentDisplayMode() const
 	DisplayMode dm;
 	dm.width = DisplayWidth(m_display, screen);
 	dm.height = DisplayHeight(m_display, screen);
+	dm.refreshRate = 60;
+	dm.colorBits = 32;
+	return dm;
+#elif defined(__ANDROID__)
+	DisplayMode dm;
+	dm.width = m_screenWidth;
+	dm.height = m_screenHeight;
 	dm.refreshRate = 60;
 	dm.colorBits = 32;
 	return dm;
