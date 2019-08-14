@@ -148,27 +148,17 @@ bool CharacterComponent::stepVertical(float motion, Vector4& inoutPosition) cons
 
 	float direction = (motion > 0.0f) ? 1.0f : -1.0f;
 	bool anyCollision = false;
-
-	Quaternion rotation = Quaternion::identity(); // Quaternion::fromEulerAngles(m_headAngle, 0.0f, 0.0f);
 	QueryResult result;
 
 	if (m_physicsManager->querySweep(
 		m_bodySlim,
-		rotation,
+		Quaternion::identity(),
 		inoutPosition,
 		Vector4(0.0f, direction, 0.0f),
 		std::abs(motion),
 		physics::QueryFilter(m_traceInclude, m_traceIgnore),
 		result
 	))
-	// if (m_physicsManager->queryRay(
-	// 	inoutPosition,
-	// 	Vector4(0.0f, direction, 0.0f),
-	// 	std::abs(motion),
-	// 	physics::QueryFilter(m_traceInclude, m_traceIgnore),
-	// 	true,
-	// 	result
-	// ))
 	{
 		inoutPosition += Vector4(0.0f, motion * result.fraction, 0.0f);
 		anyCollision = true;
@@ -190,8 +180,6 @@ bool CharacterComponent::step(Vector4 motion, Vector4& inoutPosition) const
 	motion /= totalMotionLength;
 
 	bool anyCollision = false;
-
-	Quaternion rotation = Quaternion::identity(); // Quaternion::fromEulerAngles(m_headAngle, 0.0f, 0.0f);
 	QueryResult result;
 
 	Scalar motionLength = totalMotionLength;
@@ -199,7 +187,7 @@ bool CharacterComponent::step(Vector4 motion, Vector4& inoutPosition) const
 	{
 		if (m_physicsManager->querySweep(
 			m_bodyWide,
-			rotation,
+			Quaternion::identity(),
 			inoutPosition,
 			motion,
 			motionLength,
