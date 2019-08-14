@@ -15,7 +15,7 @@ namespace traktor
 	namespace resource
 	{
 
-/*! \brief Exclusive resource handle.
+/*! Exclusive resource handle.
  * \ingroup Resource
  *
  * Exclusive resource handles automatically
@@ -31,6 +31,7 @@ public:
 
 	virtual void release(void* owner) const override final;
 
+	/*! Get the type of resource, ie product type. */
 	const TypeInfo& getProductType() const { return m_resourceType; }
 
 private:

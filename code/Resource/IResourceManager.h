@@ -23,7 +23,7 @@ class IResourceFactory;
 class ResourceBundle;
 class ResourceHandle;
 
-/*! \brief Resource manager statistics.
+/*! Resource manager statistics.
  * \ingroup Resource
  */
 struct ResourceManagerStatistics
@@ -38,7 +38,7 @@ struct ResourceManagerStatistics
 	}
 };
 
-/*! \brief Resource manager interface.
+/*! Resource manager interface.
  * \ingroup Resource
  */
 class T_DLLCLASS IResourceManager : public Object
@@ -48,29 +48,29 @@ class T_DLLCLASS IResourceManager : public Object
 public:
 	virtual void destroy() = 0;
 
-	/*! \brief Add resource factory to manager.
+	/*! Add resource factory to manager.
 	 *
 	 * \param factory Resource factory.
 	 */
 	virtual void addFactory(const IResourceFactory* factory) = 0;
 
-	/*! \brief Remove resource factory from manager.
+	/*! Remove resource factory from manager.
 	 *
 	 * \param factory Resource factory.
 	 */
 	virtual void removeFactory(const IResourceFactory* factory) = 0;
 
-	/*! \brief Remove all resource factories. */
+	/*! Remove all resource factories. */
 	virtual void removeAllFactories() = 0;
 
-	/*! \brief Load all resources in bundle.
+	/*! Load all resources in bundle.
 	 *
 	 * \param bundle Resource bundle.
 	 * \return True if all resources loaded successfully.
 	 */
 	virtual bool load(const ResourceBundle* bundle) = 0;
 
-	/*! \brief Bind handle to resource identifier.
+	/*! Bind handle to resource identifier.
 	 *
 	 * \param productType Type of product.
 	 * \param guid Resource identifier.
@@ -78,37 +78,37 @@ public:
 	 */
 	virtual Ref< ResourceHandle > bind(const TypeInfo& productType, const Guid& guid) = 0;
 
-	/*! \brief Reload resource.
+	/*! Reload resource.
 	 *
 	 * \param guid Resource identifier.
 	 * \param flushedOnly Reload flushed resources only.
 	 */
 	virtual void reload(const Guid& guid, bool flushedOnly) = 0;
 
-	/*! \brief Reload all resources of given type.
+	/*! Reload all resources of given type.
 	 *
 	 * \param productType Type of product.
 	 * \param flushedOnly Reload flushed resources only.
 	 */
 	virtual void reload(const TypeInfo& productType, bool flushedOnly) = 0;
 
-	/*! \brief Unload all resources of given type.
+	/*! Unload all resources of given type.
 	 *
 	 * \param productType Type of product.
 	 */
 	virtual void unload(const TypeInfo& productType) = 0;
 
-	/*! \brief Unload externally unused, resident, resources.
+	/*! Unload externally unused, resident, resources.
 	 *
 	 * Call this when unused resources which are resident can
 	 * be unloaded.
 	 */
 	virtual void unloadUnusedResident() = 0;
 
-	/*! \brief Get statistics. */
+	/*! Get statistics. */
 	virtual void getStatistics(ResourceManagerStatistics& outStatistics) const = 0;
 
-	/*! \brief Bind handle to resource identifier.
+	/*! Bind handle to resource identifier.
 	 *
 	 * \param id Resource identifier.
 	 * \return Resource proxy.
@@ -124,10 +124,10 @@ public:
 			return false;
 
 		outProxy = Proxy< ProductType >(handle);
-		return bool(handle->get() != 0);
+		return bool(handle->get() != nullptr);
 	}
 
-	/*! \brief Bind handle to resource identifier.
+	/*! Bind handle to resource identifier.
 	 *
 	 * \param proxy Resource identifier proxy.
 	 */
@@ -141,7 +141,7 @@ public:
 			return false;
 
 		outProxy.replace(handle);
-		return bool(handle->get() != 0);
+		return bool(handle->get() != nullptr);
 	}
 };
 

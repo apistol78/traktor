@@ -19,7 +19,7 @@ namespace traktor
 	namespace resource
 	{
 
-/*! \brief Resource id serialization member.
+/*! Resource id serialization member.
  * \ingroup Resource
  */
 template < typename Class >

@@ -1,5 +1,4 @@
-#ifndef traktor_resource_ResourceCast_H
-#define traktor_resource_ResourceCast_H
+#pragma once
 
 #include "Core/Class/Any.h"
 #include "Resource/Proxy.h"
@@ -8,7 +7,7 @@
 namespace traktor
 {
 
-/*! \brief
+/*! Cast resource proxy.
  * \ingroup Resource
  */
 template < typename ResourceType >
@@ -39,7 +38,7 @@ struct CastAny < resource::Proxy< ResourceType >, false >
 	}
 };
 
-/*! \brief
+/*! Cast resource proxy.
  * \ingroup Resource
  */
 template < typename ResourceType >
@@ -71,6 +70,3 @@ struct CastAny < const resource::Proxy< ResourceType >&, false >
 };
 
 }
-
-#endif	// traktor_resource_ResourceCast_H
-

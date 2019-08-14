@@ -17,7 +17,7 @@ void ExclusiveResourceHandle::release(void* owner) const
 	// 2 -> 1 case; final external reference released, release
 	// object and tag ourself as not being in use.
 	if (getReferenceCount() == 2)
-		m_object = 0;
+		m_object = nullptr;
 
 	Object::release(owner);
 }

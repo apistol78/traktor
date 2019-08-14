@@ -9,7 +9,7 @@ namespace traktor
 	namespace resource
 	{
 
-/*! \brief Resource proxy with embedded identifier.
+/*! Resource proxy with embedded identifier.
  * \ingroup Resource
  *
  * A resource proxy is a reference wrapper with the
@@ -63,7 +63,7 @@ public:
 	{
 	}
 
-	/*! \brief Get resource id.
+	/*! Get resource id.
 	 *
 	 * \return Resource id.
 	 */
@@ -72,7 +72,7 @@ public:
 		return m_id;
 	}
 
-	/*! \brief Get resource's handle.
+	/*! Get resource's handle.
 	 *
 	 * \return Resource handle.
 	 */
@@ -81,7 +81,7 @@ public:
 		return m_handle;
 	}
 
-	/*! \brief Replace resource handle.
+	/*! Replace resource handle.
 	 *
 	 * \param handle New resource handle.
 	 */
@@ -90,36 +90,36 @@ public:
 		m_handle = handle;
 	}
 
-	/*! \brief Get resource.
+	/*! Get resource.
 	 *
 	 * \return Resource.
 	 */
 	ResourceType* getResource() const
 	{
-		return checked_type_cast< ResourceType*, true >(m_handle ? m_handle->get() : 0);
+		return checked_type_cast< ResourceType*, true >(m_handle ? m_handle->get() : nullptr);
 	}
 
-	/*! \brief Clear proxy; becoming completely unbound. */
+	/*! Clear proxy; becoming completely unbound. */
 	void clear()
 	{
-		m_handle = 0;
+		m_handle = nullptr;
 	}
 
-	/*! \brief Return true if resource has been changed. */
+	/*! Return true if resource has been changed. */
 	bool changed() const
 	{
-		return intptr_t(getResource()) != m_tag;
+		return (intptr_t)getResource() != m_tag;
 	}
 
-	/*! \brief Consume change; changed method will return false until next change. */
+	/*! Consume change; changed method will return false until next change. */
 	void consume()
 	{
-		m_tag = intptr_t(getResource());
+		m_tag = (intptr_t)getResource();
 	}
 
 	operator bool () const
 	{
-		return getResource() != 0;
+		return getResource() != nullptr;
 	}
 
 	operator ResourceType* () const

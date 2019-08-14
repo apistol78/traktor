@@ -34,8 +34,8 @@ void TargetScriptDebugger::update()
 	while (m_transport->recv< ScriptDebuggerStateChange >(0, stateChange) == net::BidirectionalObjectTransport::RtSuccess)
 	{
 		m_running = stateChange->isRunning();
-		for (std::list< IListener* >::const_iterator i = m_listeners.begin(); i != m_listeners.end(); ++i)
-			(*i)->debugeeStateChange(this);
+		for (auto listener : m_listeners)
+			listener->debugeeStateChange(this);
 	}
 }
 
@@ -78,7 +78,7 @@ bool TargetScriptDebugger::captureStackFrame(uint32_t depth, Ref< script::StackF
 	}
 
 	outStackFrame = sf->getFrame();
-	return outStackFrame != 0;
+	return outStackFrame != nullptr;
 }
 
 bool TargetScriptDebugger::captureLocals(uint32_t depth, RefArray< script::Variable >& outLocals)

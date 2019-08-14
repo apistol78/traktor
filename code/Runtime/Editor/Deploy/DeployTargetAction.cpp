@@ -115,12 +115,12 @@ bool DeployTargetAction::execute(IProgressListener* progressListener)
 	const std::list< Guid >& featureIds = m_targetConfiguration->getFeatures();
 
 	RefArray< const Feature > features;
-	for (std::list< Guid >::const_iterator i = featureIds.begin(); i != featureIds.end(); ++i)
+	for (const auto& featureId : featureIds)
 	{
-		Ref< const Feature > feature = m_database->getObjectReadOnly< Feature >(*i);
+		Ref< const Feature > feature = m_database->getObjectReadOnly< Feature >(featureId);
 		if (!feature)
 		{
-			log::warning << L"Unable to get feature \"" << i->format() << L"\"; feature skipped." << Endl;
+			log::warning << L"Unable to get feature \"" << featureId.format() << L"\"; feature skipped." << Endl;
 			continue;
 		}
 		features.push_back(feature);
@@ -129,11 +129,8 @@ bool DeployTargetAction::execute(IProgressListener* progressListener)
 	features.sort(FeaturePriorityPred());
 
 	// Insert target's features into pipeline configuration. Also generate a set of files to deploy.
-	for (RefArray< const Feature >::const_iterator i = features.begin(); i != features.end(); ++i)
+	for (auto feature : features)
 	{
-		const Feature* feature = *i;
-		T_ASSERT(feature);
-
 		Ref< const PropertyGroup > runtimeProperties = feature->getRuntimeProperties();
 		if (runtimeProperties)
 			applicationConfiguration = applicationConfiguration->merge(runtimeProperties, PropertyGroup::MmJoin);
@@ -227,35 +224,28 @@ bool DeployTargetAction::execute(IProgressListener* progressListener)
 	env->set(L"DEPLOY_EMSCRIPTEN", resolveEnv(m_globalSettings->getProperty< std::wstring >(L"Runtime.Emscripten", L"$(EMSCRIPTEN)"), 0));
 
 	// Flatten feature deploy variables.
-	const std::map< std::wstring, Ref< IPropertyValue > >& values = deploy->getValues();
-	for (std::map< std::wstring, Ref< IPropertyValue > >::const_iterator i = values.begin(); i != values.end(); ++i)
-		env->set(i->first, implodePropertyValue(i->second));
+	for (const auto& value : deploy->getValues())
+		env->set(value.first, implodePropertyValue(value.second));
 
 	// Merge tool environment variables.
 	const DeployTool& deployTool = platform->getDeployTool();
 	env->insert(deployTool.getEnvironment());
 
 	// Merge all feature environment variables.
-	for (RefArray< const Feature >::const_iterator i = features.begin(); i != features.end(); ++i)
-	{
-		const Feature* feature = *i;
-		T_ASSERT(feature);
-
+	for (auto feature : features)
 		env->insert(feature->getEnvironment());
-	}
 
 	// Merge settings environment variables.
 	Ref< PropertyGroup > settingsEnvironment = m_globalSettings->getProperty< PropertyGroup >(L"Runtime.Environment");
 	if (settingsEnvironment)
 	{
-		const std::map< std::wstring, Ref< IPropertyValue > >& values = settingsEnvironment->getValues();
-		for (std::map< std::wstring, Ref< IPropertyValue > >::const_iterator i = values.begin(); i != values.end(); ++i)
+		for (const auto pair : settingsEnvironment->getValues())
 		{
-			PropertyString* value = dynamic_type_cast< PropertyString* >(i->second);
+			PropertyString* value = dynamic_type_cast< PropertyString* >(pair.second);
 			if (value)
 			{
 				env->set(
-					i->first,
+					pair.first,
 					PropertyString::get(value)
 				);
 			}

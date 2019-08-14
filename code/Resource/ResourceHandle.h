@@ -16,7 +16,7 @@ namespace traktor
 	namespace resource
 	{
 
-/*! \brief Resource handle base class.
+/*! Resource handle base class.
  * \ingroup Resource
  */
 class T_DLLCLASS ResourceHandle : public Object
@@ -24,21 +24,21 @@ class T_DLLCLASS ResourceHandle : public Object
 	T_RTTI_CLASS;
 
 public:
-	/*! \brief Replace resource object.
+	/*! Replace resource object.
 	 *
 	 * \param object New resource object.
 	 */
 	void replace(Object* object) { m_object = object; }
 
-	/*! \brief Get resource object.
+	/*! Get resource object.
 	 *
 	 * \return Resource object.
 	 */
 	Object* get() const { return m_object; }
 
-	/*! \brief Flush resource object.
+	/*! Flush resource object.
 	 */
-	void flush() { m_object = 0; }
+	void flush() { m_object = nullptr; }
 
 protected:
 	mutable Ref< Object > m_object;

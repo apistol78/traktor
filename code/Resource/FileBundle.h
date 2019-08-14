@@ -1,5 +1,4 @@
-#ifndef traktor_resource_FileBundle_H
-#define traktor_resource_FileBundle_H
+#pragma once
 
 #include <map>
 #include "Core/Serialization/ISerializable.h"
@@ -17,8 +16,8 @@ namespace traktor
 	namespace resource
 	{
 
-/*! \brief File bundle
- *         A file bundle is a serialized instance with a collection of named data streams attached.
+/*! File bundle
+ *  A file bundle is a serialized instance with a collection of named data streams attached.
  *
  * \ingroup Resource
  */
@@ -27,6 +26,7 @@ class T_DLLCLASS FileBundle : public ISerializable
 	T_RTTI_CLASS;
 
 public:
+	/*! Lookup name of data stream from identifier. */
 	std::wstring lookup(const std::wstring& id) const;
 
 	virtual void serialize(ISerializer& s) override final;
@@ -39,6 +39,3 @@ private:
 
 	}
 }
-
-#endif	// traktor_resource_FileBundle_H
-

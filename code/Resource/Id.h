@@ -7,7 +7,7 @@ namespace traktor
 	namespace resource
 	{
 
-/*! \brief Resource identity.
+/*! Resource identity.
  * \ingroup Resource
  *
  * A resource identity is a unique identity of a

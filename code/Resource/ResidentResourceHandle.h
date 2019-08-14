@@ -15,7 +15,7 @@ namespace traktor
 	namespace resource
 	{
 
-/*! \brief Cached resource handle.
+/*! Cached resource handle.
  * \ingroup Resource
  *
  * Cached resource persist in the resource manager

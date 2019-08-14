@@ -41,10 +41,8 @@ TargetInstance::TargetInstance(const std::wstring& name, const Target* target, c
 void TargetInstance::destroy()
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_connectionsLock);
-
-	for (RefArray< TargetConnection >::iterator i = m_connections.begin(); i != m_connections.end(); ++i)
-		(*i)->destroy();
-
+	for (auto connection : m_connections)
+		connection->destroy();
 	m_connections.clear();
 }
 
@@ -111,12 +109,12 @@ int32_t TargetInstance::getBuildProgress() const
 bool TargetInstance::update()
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_connectionsLock);
-	for (RefArray< TargetConnection >::iterator i = m_connections.begin(); i != m_connections.end(); ++i)
+	for (auto connection : m_connections)
 	{
-		if (!(*i)->update())
+		if (!connection->update())
 		{
-			log::info << L"Target disconnected; connection removed" << Endl;
-			m_connections.erase(i);
+			log::info << L"Target disconnected; connection removed." << Endl;
+			m_connections.remove(connection);
 			return true;
 		}
 	}

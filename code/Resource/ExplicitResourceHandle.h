@@ -15,7 +15,7 @@ namespace traktor
 	namespace resource
 	{
 
-/*! \brief Explicit resource handle.
+/*! Explicit resource handle.
  * \ingroup Resource
  */
 class T_DLLCLASS ExplicitResourceHandle : public ResourceHandle
@@ -23,7 +23,7 @@ class T_DLLCLASS ExplicitResourceHandle : public ResourceHandle
 	T_RTTI_CLASS;
 
 public:
-	ExplicitResourceHandle(Object* object);
+	explicit ExplicitResourceHandle(Object* object);
 };
 
 	}

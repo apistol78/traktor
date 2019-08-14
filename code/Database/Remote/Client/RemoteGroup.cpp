@@ -53,13 +53,13 @@ bool RemoteGroup::remove()
 Ref< IProviderGroup > RemoteGroup::createGroup(const std::wstring& groupName)
 {
 	Ref< MsgHandleResult > result = m_connection->sendMessage< MsgHandleResult >(DbmCreateGroup(m_handle, groupName));
-	return result ? new RemoteGroup(m_connection, result->get()) : 0;
+	return result ? new RemoteGroup(m_connection, result->get()) : nullptr;
 }
 
 Ref< IProviderInstance > RemoteGroup::createInstance(const std::wstring& instanceName, const Guid& instanceGuid)
 {
 	Ref< MsgHandleResult > result = m_connection->sendMessage< MsgHandleResult >(DbmCreateInstance(m_handle, instanceName, instanceGuid));
-	return result ? new RemoteInstance(m_connection, result->get()) : 0;
+	return result ? new RemoteInstance(m_connection, result->get()) : nullptr;
 }
 
 bool RemoteGroup::getChildren(RefArray< IProviderGroup >& outChildGroups, RefArray< IProviderInstance >& outChildInstances)
@@ -68,11 +68,11 @@ bool RemoteGroup::getChildren(RefArray< IProviderGroup >& outChildGroups, RefArr
 	if (!result)
 		return false;
 
-	for (std::vector< uint32_t >::const_iterator i = result->getGroups().begin(); i != result->getGroups().end(); ++i)
-		outChildGroups.push_back(new RemoteGroup(m_connection, *i));
+	for (auto group : result->getGroups())
+		outChildGroups.push_back(new RemoteGroup(m_connection, group));
 
-	for (std::vector< uint32_t >::const_iterator i = result->getInstances().begin(); i != result->getInstances().end(); ++i)
-		outChildInstances.push_back(new RemoteInstance(m_connection, *i));
+	for (auto instance : result->getInstances())
+		outChildInstances.push_back(new RemoteInstance(m_connection, instance));
 
 	return true;
 }
