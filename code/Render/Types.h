@@ -324,8 +324,11 @@ enum TextureFormat
 	TfPVRTC2 = 41,	// 2bpp, no alpha
 	TfPVRTC3 = 42,	// 4bpp, alpha
 	TfPVRTC4 = 43,	// 2bpp, alpha
-	TfETC1 = 44
-
+	TfETC1 = 44,
+	TfASTC4x4 = 45,
+	TfASTC8x8 = 46,
+	TfASTC10x10 = 47,
+	TfASTC12x12 = 47
 	//@}
 };
 

@@ -35,6 +35,7 @@
 #include "Editor/IPipelineDepends.h"
 #include "Editor/IPipelineSettings.h"
 #include "Render/Types.h"
+#include "Render/Editor/Texture/AstcCompressor.h"
 #include "Render/Editor/Texture/DxtnCompressor.h"
 #include "Render/Editor/Texture/EtcCompressor.h"
 #include "Render/Editor/Texture/PvrtcCompressor.h"
@@ -735,6 +736,8 @@ bool TextureOutputPipeline::buildOutput(
 			compressor = new PvrtcCompressor();
 		else if (textureFormat == TfETC1)
 			compressor = new EtcCompressor();
+		else if (textureFormat == TfASTC4x4 && textureFormat <= TfASTC12x12)
+			compressor = new AstcCompressor();
 		else
 			compressor = new UnCompressor();
 
