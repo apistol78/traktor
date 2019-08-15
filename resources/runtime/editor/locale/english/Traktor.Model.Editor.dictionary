@@ -1,190 +1,186 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.i18n.Dictionary">
 	<map>
-	    <item>
-	      <first>MODEL_TOOL_DESCRIPTION</first>
-	      <second>Model inspection tool...</second>
-	    </item>
-	    <item>
-	    	<first>MODEL_TOOL_TITLE</first>
-	    	<second>Model tool</second>
-	    </item>
-	    <item>
-	    	<first>MODEL_TOOL_LOAD</first>
-	    	<second>Load...</second>
-	    </item>
-	    <item>
-	    	<first>MODEL_TOOL_LOAD_MODELS</first>
-	    	<second>Load model(s)...</second>
-	    </item>
-	    <item>
-	    	<first>MODEL_TOOL_LOAD_TEXTURE</first>
-	    	<second>Load texture...</second>
-	    </item>
-	    <item>
-	    	<first>MODEL_TOOL_SHADING</first>
-	    	<second>Shade</second>
-	    </item>
-	    <item>
-	    	<first>MODEL_TOOL_SOLID</first>
-	    	<second>Solid</second>
-	    </item>
-	    <item>
-	    	<first>MODEL_TOOL_WIRE</first>
-	    	<second>Wire</second>
-	    </item>
-	    <item>
-	    	<first>MODEL_TOOL_NORMALS</first>
-	    	<second>Normals</second>
-	    </item>
-	    <item>
-	    	<first>MODEL_TOOL_VERTICES</first>
-	    	<second>Vertices</second>
-	    </item>
-	    <item>
-	    	<first>MODEL_TOOL_CULL_BACKFACES</first>
-	    	<second>Cull</second>
-	    </item>
-	    <item>
-	    	<first>MODEL_TOOL_NON_SHARED_EDGES</first>
-	    	<second>Non-shared</second>
-	    </item>
-	    <item>
-	    	<first>MODEL_TOOL_TEXCOORDS</first>
-	    	<second>Texcoords</second>
-	    </item>
-	    <item>
-	    	<first>MODEL_TOOL_TEXCOORD_CHANNELS</first>
-	    	<second>Channels</second>
-	    </item>
-	    <item>
-	    	<first>MODEL_TOOL_WEIGHTS</first>
-	    	<second>Weights</second>
-	    </item>
-	    <item>
-	    	<first>MODEL_TOOL_REST</first>
-	    	<second>Rest</second>
-	    </item>
-	    <item>
-	    	<first>MODEL_TOOL_MATERIALS</first>
-	    	<second>Materials</second>
-	    </item>
-	    <item>
-	    	<first>MODEL_TOOL_MATERIAL_NAME</first>
-	    	<second>Name</second>
-	    </item>
-	    <item>
-	    	<first>MODEL_TOOL_MATERIAL_DIFFUSE_MAP</first>
-	    	<second>Diffuse map</second>
-	    </item>
-	    <item>
-	    	<first>MODEL_TOOL_MATERIAL_SPECULAR_MAP</first>
-	    	<second>Specular map</second>
-	    </item>
-	    <item>
-	    	<first>MODEL_TOOL_MATERIAL_ROUGHNESS_MAP</first>
-	    	<second>Roughness map</second>
-	    </item>
-	    <item>
-	    	<first>MODEL_TOOL_MATERIAL_METALNESS_MAP</first>
-	    	<second>Metalness map</second>
-	    </item>
-	    <item>
-	    	<first>MODEL_TOOL_MATERIAL_TRANSPARENCY_MAP</first>
-	    	<second>Transparency map</second>
-	    </item>
-	    <item>
-	    	<first>MODEL_TOOL_MATERIAL_EMISSIVE_MAP</first>
-	    	<second>Emissive map</second>
-	    </item>
-	    <item>
-	    	<first>MODEL_TOOL_MATERIAL_REFLECTIVE_MAP</first>
-	    	<second>Reflective map</second>
-	    </item>
-	    <item>
-	    	<first>MODEL_TOOL_MATERIAL_NORMAL_MAP</first>
-	    	<second>Normal map</second>
-	    </item>
-	    <item>
-	    	<first>MODEL_TOOL_MATERIAL_LIGHT_MAP</first>
-	    	<second>Light map</second>
-	    </item>
-	    <item>
-	    	<first>MODEL_TOOL_MATERIAL_COLOR</first>
-	    	<second>Color</second>
-	    </item>
-	    <item>
-	    	<first>MODEL_TOOL_MATERIAL_DIFFUSE_TERM</first>
-	    	<second>Diffuse term</second>
-	    </item>
-	    <item>
-	    	<first>MODEL_TOOL_MATERIAL_SPECULAR_TERM</first>
-	    	<second>Specular term</second>
-	    </item>
-	    <item>
-	    	<first>MODEL_TOOL_MATERIAL_ROUGHNESS</first>
-	    	<second>Roughness</second>
-	    </item>
-	    <item>
-	    	<first>MODEL_TOOL_MATERIAL_METALNESS</first>
-	    	<second>Metalness</second>
-	    </item>
-	    <item>
-	    	<first>MODEL_TOOL_MATERIAL_TRANSPARENCY</first>
-	    	<second>Transparency</second>
-	    </item>
-	    <item>
-	    	<first>MODEL_TOOL_MATERIAL_EMISSIVE</first>
-	    	<second>Emissive</second>
-	    </item>
-	    <item>
-	    	<first>MODEL_TOOL_MATERIAL_REFLECTIVE</first>
-	    	<second>Reflective</second>
-	    </item>
-	    <item>
-	    	<first>MODEL_TOOL_MATERIAL_RIM_LIGHT</first>
-	    	<second>Rim light</second>
-	    </item>
-	    <item>
-	    	<first>MODEL_TOOL_MATERIAL_BLEND_OPERATOR</first>
-	    	<second>Blend operator</second>
-	    </item>
-	    <item>
-	    	<first>MODEL_TOOL_MATERIAL_DOUBLE_SIDED</first>
-	    	<second>Double sided</second>
-	    </item>
-
-	    <item>
-	    	<first>MODEL_TOOL_SKELETON</first>
-	    	<second>Skeleton</second>
-	    </item>
-	    <item>
-	    	<first>MODEL_TOOL_STATISTICS</first>
-	    	<second>Statistics</second>
-	    </item>
-	    <item>
-	    	<first>MODEL_TOOL_STATISTIC_NAME</first>
-	    	<second>Name</second>
-	    </item>
-	    <item>
-	    	<first>MODEL_TOOL_STATISTIC_VALUE</first>
-	    	<second>Value</second>
-	    </item>
-
-
-	    <item>
-	    	<first>MODEL_TOOL_ADD_OPERATION</first>
-	    	<second>Add operation...</second>
-	    </item>
-	    <item>
-	    	<first>MODEL_TOOL_SAVE_AS</first>
-	    	<second>Save as...</second>
-	    </item>
-	    <item>
-	    	<first>MODEL_TOOL_REMOVE</first>
-	    	<second>Remove</second>
-	    </item>
-
+		<item>
+			<first>MODEL_TOOL_DESCRIPTION</first>
+			<second>Model inspection tool...</second>
+		</item>
+		<item>
+			<first>MODEL_TOOL_TITLE</first>
+			<second>Model tool</second>
+		</item>
+		<item>
+			<first>MODEL_TOOL_LOAD</first>
+			<second>Load...</second>
+		</item>
+		<item>
+			<first>MODEL_TOOL_LOAD_MODELS</first>
+			<second>Load model(s)...</second>
+		</item>
+		<item>
+			<first>MODEL_TOOL_LOAD_TEXTURE</first>
+			<second>Load texture...</second>
+		</item>
+		<item>
+			<first>MODEL_TOOL_SHADING</first>
+			<second>Shade</second>
+		</item>
+		<item>
+			<first>MODEL_TOOL_SOLID</first>
+			<second>Solid</second>
+		</item>
+		<item>
+			<first>MODEL_TOOL_WIRE</first>
+			<second>Wire</second>
+		</item>
+		<item>
+			<first>MODEL_TOOL_NORMALS</first>
+			<second>Normals</second>
+		</item>
+		<item>
+			<first>MODEL_TOOL_VERTICES</first>
+			<second>Vertices</second>
+		</item>
+		<item>
+			<first>MODEL_TOOL_CULL_BACKFACES</first>
+			<second>Cull</second>
+		</item>
+		<item>
+			<first>MODEL_TOOL_NON_SHARED_EDGES</first>
+			<second>Non-shared</second>
+		</item>
+		<item>
+			<first>MODEL_TOOL_TEXCOORDS</first>
+			<second>Texcoords</second>
+		</item>
+		<item>
+			<first>MODEL_TOOL_TEXCOORD_CHANNELS</first>
+			<second>Channels</second>
+		</item>
+		<item>
+			<first>MODEL_TOOL_WEIGHTS</first>
+			<second>Weights</second>
+		</item>
+		<item>
+			<first>MODEL_TOOL_REST</first>
+			<second>Rest</second>
+		</item>
+		<item>
+			<first>MODEL_TOOL_MATERIALS</first>
+			<second>Materials</second>
+		</item>
+		<item>
+			<first>MODEL_TOOL_MATERIAL_NAME</first>
+			<second>Name</second>
+		</item>
+		<item>
+			<first>MODEL_TOOL_MATERIAL_DIFFUSE_MAP</first>
+			<second>Diffuse map</second>
+		</item>
+		<item>
+			<first>MODEL_TOOL_MATERIAL_SPECULAR_MAP</first>
+			<second>Specular map</second>
+		</item>
+		<item>
+			<first>MODEL_TOOL_MATERIAL_ROUGHNESS_MAP</first>
+			<second>Roughness map</second>
+		</item>
+		<item>
+			<first>MODEL_TOOL_MATERIAL_METALNESS_MAP</first>
+			<second>Metalness map</second>
+		</item>
+		<item>
+			<first>MODEL_TOOL_MATERIAL_TRANSPARENCY_MAP</first>
+			<second>Transparency map</second>
+		</item>
+		<item>
+			<first>MODEL_TOOL_MATERIAL_EMISSIVE_MAP</first>
+			<second>Emissive map</second>
+		</item>
+		<item>
+			<first>MODEL_TOOL_MATERIAL_REFLECTIVE_MAP</first>
+			<second>Reflective map</second>
+		</item>
+		<item>
+			<first>MODEL_TOOL_MATERIAL_NORMAL_MAP</first>
+			<second>Normal map</second>
+		</item>
+		<item>
+			<first>MODEL_TOOL_MATERIAL_LIGHT_MAP</first>
+			<second>Light map</second>
+		</item>
+		<item>
+			<first>MODEL_TOOL_MATERIAL_COLOR</first>
+			<second>Color</second>
+		</item>
+		<item>
+			<first>MODEL_TOOL_MATERIAL_DIFFUSE_TERM</first>
+			<second>Diffuse term</second>
+		</item>
+		<item>
+			<first>MODEL_TOOL_MATERIAL_SPECULAR_TERM</first>
+			<second>Specular term</second>
+		</item>
+		<item>
+			<first>MODEL_TOOL_MATERIAL_ROUGHNESS</first>
+			<second>Roughness</second>
+		</item>
+		<item>
+			<first>MODEL_TOOL_MATERIAL_METALNESS</first>
+			<second>Metalness</second>
+		</item>
+		<item>
+			<first>MODEL_TOOL_MATERIAL_TRANSPARENCY</first>
+			<second>Transparency</second>
+		</item>
+		<item>
+			<first>MODEL_TOOL_MATERIAL_EMISSIVE</first>
+			<second>Emissive</second>
+		</item>
+		<item>
+			<first>MODEL_TOOL_MATERIAL_REFLECTIVE</first>
+			<second>Reflective</second>
+		</item>
+		<item>
+			<first>MODEL_TOOL_MATERIAL_RIM_LIGHT</first>
+			<second>Rim light</second>
+		</item>
+		<item>
+			<first>MODEL_TOOL_MATERIAL_BLEND_OPERATOR</first>
+			<second>Blend operator</second>
+		</item>
+		<item>
+			<first>MODEL_TOOL_MATERIAL_DOUBLE_SIDED</first>
+			<second>Double sided</second>
+		</item>
+		<item>
+			<first>MODEL_TOOL_SKELETON</first>
+			<second>Skeleton</second>
+		</item>
+		<item>
+			<first>MODEL_TOOL_STATISTICS</first>
+			<second>Statistics</second>
+		</item>
+		<item>
+			<first>MODEL_TOOL_STATISTIC_NAME</first>
+			<second>Name</second>
+		</item>
+		<item>
+			<first>MODEL_TOOL_STATISTIC_VALUE</first>
+			<second>Value</second>
+		</item>
+		<item>
+			<first>MODEL_TOOL_ADD_OPERATION</first>
+			<second>Add operation...</second>
+		</item>
+		<item>
+			<first>MODEL_TOOL_SAVE_AS</first>
+			<second>Save as...</second>
+		</item>
+		<item>
+			<first>MODEL_TOOL_REMOVE</first>
+			<second>Remove</second>
+		</item>
 		<item>
 			<first>MODEL_TOOL_REFRESH</first>
 			<second>Refresh</second>

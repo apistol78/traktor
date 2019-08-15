@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.i18n.Dictionary">
-	<map>
+  <map>
     <item>
       <first>IMPORT_MESH_BLEND</first>
       <second>Blend</second>
@@ -45,7 +45,6 @@
       <first>IMPORT_MESH_TITLE</first>
       <second>Import mesh</second>
     </item>
-
     <item>
       <first>MESHASSET_EDITOR_CENTER</first>
       <second>Center</second>
@@ -222,5 +221,5 @@
       <first>MESHENTITY_WIZARDTOOL_ERROR_NOT_MESH_ASSET_MESSAGE</first>
       <second>Select instance must be a mesh asset.</second>
     </item>
-	</map>
+  </map>
 </object>

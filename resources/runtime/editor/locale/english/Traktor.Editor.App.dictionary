@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.i18n.Dictionary">
-	<map>
-
+  <map>
     <item>
-    	<first>BROWSE_GROUP_TITLE</first>
-    	<second>Select group</second>
+      <first>BROWSE_GROUP_TITLE</first>
+      <second>Select group</second>
     </item>
     <item>
       <first>BROWSE_INSTANCE_GROUPS</first>
@@ -102,7 +101,6 @@
       <first>DATABASE_BUILD</first>
       <second>Build</second>
     </item>
-
     <item>
       <first>DATABASE_CLONE</first>
       <second>Clone</second>
@@ -287,7 +285,6 @@
       <first>DATABASE_WIZARDS</first>
       <second>Wizards</second>
     </item>
-
     <item>
       <first>EDITOR_ABOUT_TITLE</first>
       <second>About</second>
@@ -300,16 +297,10 @@
       <first>EDITOR_BROWSE_WORKSPACE</first>
       <second>Choose workspace</second>
     </item>
-
-
-
-
     <item>
       <first>EDITOR_HOME</first>
       <second>Home</second>
-    </item>   
-    
-
+    </item>
     <item>
       <first>EDITOR_NEW_WORKSPACE_NAME</first>
       <second>Name</second>
@@ -346,7 +337,6 @@
       <first>EDITOR_SURE_TO_REBUILD_MESSAGE</first>
       <second>Are you sure you want to rebuild all content?</second>
     </item>
-
     <item>
       <first>EDITOR_WAIT_BUILDING_MESSAGE</first>
       <second>Building editor resources...</second>
@@ -623,7 +613,6 @@
       <first>QUERY_TITLE_INSTANCE_NOT_SAVED_CLOSE_EDITOR</first>
       <second>Instance not saved</second>
     </item>
-
     <item>
       <first>STATUS_BUILDING</first>
       <second>Building assets...</second>
@@ -648,12 +637,10 @@
       <first>STATUS_IDLE</first>
       <second>Ready</second>
     </item>
-
     <item>
       <first>TEXT_EDIT</first>
       <second>Edit</second>
     </item>
- 
     <item>
       <first>TITLE_BUILD</first>
       <second>Build</second>
@@ -714,5 +701,5 @@
       <first>FIND_IN_DATABASE</first>
       <second>Find in database</second>
     </item>
-	</map>
+  </map>
 </object>
