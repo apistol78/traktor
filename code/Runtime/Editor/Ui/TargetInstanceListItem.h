@@ -22,7 +22,7 @@ class DropListCell;
 class HostEnumerator;
 class ProgressCell;
 
-/*! \brief
+/*! Target instance list item.
  * \ingroup Runtime
  */
 class TargetInstanceListItem : public ui::AutoWidgetCell
@@ -45,7 +45,6 @@ private:
 	Ref< ButtonCell > m_playCell;
 	Ref< ButtonCell > m_buildCell;
 	Ref< ButtonCell > m_migrateCell;
-	Ref< ButtonCell > m_browseCell;
 	RefArray< ButtonCell > m_stopCells;
 	RefArray< ButtonCell > m_captureCells;
 	RefArray< ui::ChildWidgetCell > m_editCells;

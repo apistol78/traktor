@@ -6,7 +6,6 @@
 #include "Runtime/Editor/Ui/ButtonCell.h"
 #include "Runtime/Editor/Ui/DropListCell.h"
 #include "Runtime/Editor/Ui/ProgressCell.h"
-#include "Runtime/Editor/Ui/TargetBrowseEvent.h"
 #include "Runtime/Editor/Ui/TargetBuildEvent.h"
 #include "Runtime/Editor/Ui/TargetCaptureEvent.h"
 #include "Runtime/Editor/Ui/TargetCommandEvent.h"
@@ -94,9 +93,6 @@ TargetInstanceListItem::TargetInstanceListItem(HostEnumerator* hostEnumerator, T
 
 	m_migrateCell = new ButtonCell(new ui::StyleBitmap(L"Runtime.TargetMigrate"), ui::Command());
 	m_migrateCell->addEventHandler< ui::ButtonClickEvent >(this, &TargetInstanceListItem::eventMigrateButtonClick);
-
-	m_browseCell = new ButtonCell(new ui::StyleBitmap(L"Runtime.TargetBrowse"), ui::Command());
-	m_browseCell->addEventHandler< ui::ButtonClickEvent >(this, &TargetInstanceListItem::eventBrowseButtonClick);
 }
 
 ui::Size TargetInstanceListItem::getSize() const
@@ -142,15 +138,6 @@ void TargetInstanceListItem::placeCells(ui::AutoWidget* widget, const ui::Rect& 
 	widget->placeCell(
 		m_playCell,
 		ui::Rect(
-			controlRect.right - ui::dpi96(24) * 4 - 4,
-			controlRect.top,
-			controlRect.right - ui::dpi96(24) * 3 - 4,
-			controlRect.bottom
-		)
-	);
-	widget->placeCell(
-		m_buildCell,
-		ui::Rect(
 			controlRect.right - ui::dpi96(24) * 3 - 4,
 			controlRect.top,
 			controlRect.right - ui::dpi96(24) * 2 - 4,
@@ -158,7 +145,7 @@ void TargetInstanceListItem::placeCells(ui::AutoWidget* widget, const ui::Rect& 
 		)
 	);
 	widget->placeCell(
-		m_migrateCell,
+		m_buildCell,
 		ui::Rect(
 			controlRect.right - ui::dpi96(24) * 2 - 4,
 			controlRect.top,
@@ -167,7 +154,7 @@ void TargetInstanceListItem::placeCells(ui::AutoWidget* widget, const ui::Rect& 
 		)
 	);
 	widget->placeCell(
-		m_browseCell,
+		m_migrateCell,
 		ui::Rect(
 			controlRect.right - ui::dpi96(24) * 1 - 4,
 			controlRect.top,
@@ -425,12 +412,6 @@ void TargetInstanceListItem::eventMigrateButtonClick(ui::ButtonClickEvent* event
 {
 	TargetMigrateEvent migrateEvent(this, m_instance);
 	raiseWidgetEvent(&migrateEvent);
-}
-
-void TargetInstanceListItem::eventBrowseButtonClick(ui::ButtonClickEvent* event)
-{
-	TargetBrowseEvent browseEvent(this, m_instance);
-	raiseWidgetEvent(&browseEvent);
 }
 
 void TargetInstanceListItem::eventStopButtonClick(ui::ButtonClickEvent* event)
