@@ -14,7 +14,7 @@ class Node;
 class OutputPin;
 class ShaderGraph;
 
-/*! \brief Shader graph node traits.
+/*! Shader graph node traits.
  * \ingroup Render
  *
  * Node traits define behavior of nodes
@@ -29,13 +29,15 @@ class INodeTraits : public Object
 	T_RTTI_CLASS;
 
 public:
+	/*! Get set of types the trait recognizes.
+	 */
 	virtual TypeInfoSet getNodeTypes() const = 0;
 
-	/*! \brief Return true if node is considered to be a root.
+	/*! Return true if node should be considered a root.
 	 */
 	virtual bool isRoot(const ShaderGraph* shaderGraph, const Node* node) const = 0;
 
-	/*! \brief Determine type of output pin from given types of all input pins.
+	/*! Determine type of output pin from given types of all input pins.
 	 */
 	virtual PinType getOutputPinType(
 		const ShaderGraph* shaderGraph,
@@ -44,7 +46,7 @@ public:
 		const PinType* inputPinTypes
 	) const = 0;
 
-	/*! \brief Get type of input pin.
+	/*! Get type of input pin.
 	 */
 	virtual PinType getInputPinType(
 		const ShaderGraph* shaderGraph,
@@ -54,13 +56,13 @@ public:
 		const PinType* outputPinTypes
 	) const = 0;
 
-	/*! \brief Get input pin independence group.
+	/*! Get input pin independence group.
 	 *
 	 * A independence group is defined as being a number
 	 * in which input pins can be swapped without
 	 * changing the result of the node.
 	 * For example both input pins of an Add node
-	 * can be swapped without changing the result.
+	 * can be swapped without changing the outcome.
 	 */
 	virtual int32_t getInputPinGroup(
 		const ShaderGraph* shaderGraph,
@@ -68,7 +70,9 @@ public:
 		const InputPin* inputPin
 	) const = 0;
 
-	/*! \brief Evaluate output pin from partially constant input set.
+	/*! Evaluate output pin from partially constant input set.
+	 *
+	 * \return True if output has been evaluated.
 	 */
 	virtual bool evaluatePartial(
 		const ShaderGraph* shaderGraph,
@@ -78,7 +82,9 @@ public:
 		Constant& outputConstant
 	) const = 0;
 
-	/*! \brief Evaluate rewire output pin from partially constant input set.
+	/*! Evaluate rewire output pin from partially constant input set.
+	 *
+	 * \return True if a folding output pin has been determined.
 	 */
 	virtual bool evaluatePartial(
 		const ShaderGraph* shaderGraph,
@@ -89,7 +95,9 @@ public:
 		const OutputPin*& foldOutputPin
 	) const = 0;
 
-	/*! \brief Evaluate order of output pin.
+	/*! Evaluate order of output pin.
+	 *
+	 * \return Mathematical order of output pin; constant, linear or exponential.
 	 */
 	virtual PinOrderType evaluateOrder(
 		const ShaderGraph* shaderGraph,
@@ -99,7 +107,7 @@ public:
 		bool frequentAsLinear
 	) const = 0;
 
-	/*! \brief Get node traits.
+	/*! Get node traits.
 	 */
 	static const INodeTraits* find(const Node* node);
 };

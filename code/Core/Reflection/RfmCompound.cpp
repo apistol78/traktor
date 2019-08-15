@@ -23,7 +23,7 @@ void RfmCompound::removeMember(ReflectionMember* member)
 
 uint32_t RfmCompound::getMemberCount() const
 {
-	return uint32_t(m_members.size());
+	return (uint32_t)m_members.size();
 }
 
 ReflectionMember* RfmCompound::getMember(uint32_t index) const
@@ -31,7 +31,7 @@ ReflectionMember* RfmCompound::getMember(uint32_t index) const
 	if (index < m_members.size())
 		return m_members[index];
 	else
-		return 0;
+		return nullptr;
 }
 
 const RefArray< ReflectionMember >& RfmCompound::getMembers() const
@@ -41,28 +41,28 @@ const RefArray< ReflectionMember >& RfmCompound::getMembers() const
 
 ReflectionMember* RfmCompound::findMember(const ReflectionMemberPredicate& predicate) const
 {
-	for (RefArray< ReflectionMember >::const_iterator i = m_members.begin(); i != m_members.end(); ++i)
+	for (auto member : m_members)
 	{
-		if (predicate(*i))
-			return *i;
+		if (predicate(member))
+			return member;
 	}
-	return 0;
+	return nullptr;
 }
 
 void RfmCompound::findMembers(const ReflectionMemberPredicate& predicate, RefArray< ReflectionMember >& outMembers) const
 {
-	for (RefArray< ReflectionMember >::const_iterator i = m_members.begin(); i != m_members.end(); ++i)
+	for (auto member : m_members)
 	{
-		if (predicate(*i))
-			outMembers.push_back(*i);
-		if (const RfmCompound* compoundMember = dynamic_type_cast< const RfmCompound* >(*i))
+		if (predicate(member))
+			outMembers.push_back(member);
+		if (const RfmCompound* compoundMember = dynamic_type_cast< const RfmCompound* >(member))
 			compoundMember->findMembers(predicate, outMembers);
 	}
 }
 
 bool RfmCompound::replace(const ReflectionMember* source)
 {
-	if (const RfmCompound* sourceCompound = dynamic_type_cast< const RfmCompound* >(source))
+	if (auto sourceCompound = dynamic_type_cast< const RfmCompound* >(source))
 	{
 		m_members = sourceCompound->m_members;
 		return true;

@@ -12,7 +12,6 @@
 #include "Runtime/Editor/Deploy/Platform.h"
 #include "Runtime/Editor/Deploy/Target.h"
 #include "Runtime/Editor/Deploy/TargetConfiguration.h"
-#include "Runtime/Editor/Ui/TargetBrowseEvent.h"
 #include "Runtime/Editor/Ui/TargetBuildEvent.h"
 #include "Runtime/Editor/Ui/TargetCaptureEvent.h"
 #include "Runtime/Editor/Ui/TargetCommandEvent.h"
@@ -181,7 +180,6 @@ bool EditorPlugin::create(ui::Widget* parent, editor::IEditorPageSite* site)
 	// Create target configuration list control.
 	m_targetList = new TargetListControl();
 	m_targetList->create(m_container);
-	m_targetList->addEventHandler< TargetBrowseEvent >(this, &EditorPlugin::eventTargetListBrowse);
 	m_targetList->addEventHandler< TargetBuildEvent >(this, &EditorPlugin::eventTargetListBuild);
 	m_targetList->addEventHandler< TargetCaptureEvent >(this, &EditorPlugin::eventTargetListShowProfiler);
 	m_targetList->addEventHandler< TargetMigrateEvent >(this, &EditorPlugin::eventTargetListMigrate);
@@ -478,24 +476,6 @@ void EditorPlugin::updateTargetManagers()
 			m_connectionManager->setConnectionString(remoteId, databaseCs);
 		}
 	}
-}
-
-void EditorPlugin::eventTargetListBrowse(TargetBrowseEvent* event)
-{
-	TargetInstance* targetInstance = event->getInstance();
-
-	// Get selected target host.
-	int32_t id = targetInstance->getDeployHostId();
-	if (id < 0)
-		return;
-
-	std::wstring host = m_hostEnumerator->getHost(id);
-	int32_t port = m_hostEnumerator->getHttpPort(id);
-
-	if ((event->getKeyState() & ui::KsShift) == 0)
-		m_editor->openBrowser(L"http://" + host + L":" + toString(port));
-	else
-		OS::getInstance().openFile(L"http://" + host + L":" + toString(port));
 }
 
 void EditorPlugin::eventTargetListBuild(TargetBuildEvent* event)

@@ -41,7 +41,6 @@ class ToolBarDropMenu;
 
 class HostEnumerator;
 class Target;
-class TargetBrowseEvent;
 class TargetBuildEvent;
 class TargetCaptureEvent;
 class TargetCommandEvent;
@@ -140,8 +139,6 @@ private:
 	void updateTargetManagers();
 
 	void eventToolBarClick(ui::ToolBarButtonClickEvent* event);
-
-	void eventTargetListBrowse(TargetBrowseEvent* event);
 
 	void eventTargetListBuild(TargetBuildEvent* event);
 
