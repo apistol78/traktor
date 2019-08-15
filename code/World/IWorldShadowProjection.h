@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Core/Object.h"
-#include "Core/Math/Aabb3.h"
 #include "Core/Math/Frustum.h"
 #include "Core/Math/Matrix44.h"
 
@@ -20,7 +19,6 @@ public:
 		const Vector4& lightPosition,
 		const Vector4& lightDirection,
 		const Frustum& viewFrustum,
-		const Aabb3& shadowBox,
 		float shadowFarZ,
 		bool quantizeProjection,
 		Matrix44& outLightView,

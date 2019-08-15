@@ -178,7 +178,7 @@
 			<second>Visual mesh</second>
 		</item>
 		<item>
-			<first>RUNTIME_SETTING_INHERIT_EDITOR_CACHES</first>
+			<first>RUNTIME_SETTINGS_INHERIT_EDITOR_CACHES</first>
 			<second>Inherit editor cache(s)</second>
 		</item>
 		<item>

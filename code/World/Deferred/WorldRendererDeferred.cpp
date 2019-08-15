@@ -29,8 +29,6 @@
 #include "World/Deferred/LightRendererDeferred.h"
 #include "World/Deferred/WorldRendererDeferred.h"
 #include "World/Deferred/WorldRenderPassDeferred.h"
-#include "World/SMProj/BoxShadowProjection.h"
-#include "World/SMProj/LiSPShadowProjection.h"
 #include "World/SMProj/TrapezoidShadowProjection.h"
 #include "World/SMProj/UniformShadowProjection.h"
 
@@ -1433,7 +1431,6 @@ void WorldRendererDeferred::buildLights(WorldRenderView& worldRenderView, int fr
 	Matrix44 view = worldRenderView.getView();
 	Matrix44 viewInverse = view.inverse();
 	Frustum viewFrustum = worldRenderView.getViewFrustum();
-	Aabb3 shadowBox = worldRenderView.getShadowBox();
 
 	LightShaderData* lightShaderData = (LightShaderData*)f.lightSBuffer->lock();
 	T_FATAL_ASSERT(lightShaderData != nullptr);
@@ -1488,7 +1485,6 @@ void WorldRendererDeferred::buildLights(WorldRenderView& worldRenderView, int fr
 					light.position,
 					light.direction,
 					sliceViewFrustum,
-					shadowBox,
 					m_shadowSettings.farZ,
 					m_shadowSettings.quantizeProjection,
 					shadowLightView,
@@ -1702,9 +1698,6 @@ void WorldRendererDeferred::buildLights(WorldRenderView& worldRenderView, int fr
 void WorldRendererDeferred::buildVisual(WorldRenderView& worldRenderView, int frame)
 {
 	Frame& f = m_frames[frame];
-
-	Frustum viewFrustum = worldRenderView.getViewFrustum();
-	Aabb3 shadowBox = worldRenderView.getShadowBox();
 
 	WorldRenderPassDeferred deferredColorPass(
 		ms_techniqueDeferredColor,

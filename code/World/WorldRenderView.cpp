@@ -72,11 +72,6 @@ void WorldRenderView::setViewSize(const Vector2& viewSize)
 	m_viewSize = viewSize;
 }
 
-void WorldRenderView::setShadowBox(const Aabb3& shadowBox)
-{
-	m_shadowBox = shadowBox;
-}
-
 void WorldRenderView::setTimes(float time, float deltaTime, float interval)
 {
 	m_time = time;

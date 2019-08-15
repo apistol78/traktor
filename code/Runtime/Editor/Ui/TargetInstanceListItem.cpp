@@ -117,7 +117,7 @@ void TargetInstanceListItem::placeCells(ui::AutoWidget* widget, const ui::Rect& 
 			ui::Rect(
 				controlRect.left + ui::dpi96(130),
 				controlRect.getCenter().y - ui::dpi96(10),
-				controlRect.right - ui::dpi96(24) * 4 - 12,
+				controlRect.right - ui::dpi96(24) * 3 - 12,
 				controlRect.getCenter().y + ui::dpi96(10)
 			)
 		);
@@ -129,7 +129,7 @@ void TargetInstanceListItem::placeCells(ui::AutoWidget* widget, const ui::Rect& 
 			ui::Rect(
 				controlRect.left + logoSize + 10,
 				controlRect.getCenter().y - ui::dpi96(8),
-				controlRect.right - ui::dpi96(24) * 4 - 8,
+				controlRect.right - ui::dpi96(24) * 3 - 8,
 				controlRect.getCenter().y + ui::dpi96(8)
 			)
 		);

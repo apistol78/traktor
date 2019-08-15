@@ -2,7 +2,6 @@
 
 #include "Core/Object.h"
 #include "Core/Containers/AlignedVector.h"
-#include "Core/Math/Aabb3.h"
 #include "Core/Math/Frustum.h"
 #include "Core/Math/Matrix44.h"
 #include "Core/Math/Vector2.h"
@@ -50,8 +49,6 @@ public:
 
 	void setViewSize(const Vector2& viewSize);
 
-	void setShadowBox(const Aabb3& shadowBox);
-
 	void setTimes(float time, float deltaTime, float interval);
 
 	void setEyePosition(const Vector4& eyePosition);
@@ -98,10 +95,6 @@ public:
 		return int32_t(m_lights.size());
 	}
 
-	T_FORCE_INLINE const Aabb3& getShadowBox() const {
-		return m_shadowBox;
-	}
-
 	T_FORCE_INLINE float getTime() const {
 		return m_time;
 	}
@@ -131,7 +124,6 @@ private:
 	Matrix44 m_view;
 	Vector2 m_viewSize;
 	AlignedVector< Light > m_lights;
-	Aabb3 m_shadowBox;
 	float m_time;
 	float m_deltaTime;
 	float m_interval;
