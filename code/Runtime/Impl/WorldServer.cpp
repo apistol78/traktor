@@ -103,7 +103,6 @@ WorldServer::WorldServer()
 ,	m_terrainQuality(world::QuMedium)
 ,	m_oceanQuality(world::QuMedium)
 ,	m_gamma(2.2f)
-,	m_superSample(0)
 {
 }
 
@@ -128,7 +127,6 @@ bool WorldServer::create(const PropertyGroup* defaultSettings, const PropertyGro
 	m_terrainQuality = (world::Quality)settings->getProperty< int32_t >(L"World.TerrainQuality", world::QuMedium);
 	m_oceanQuality = (world::Quality)settings->getProperty< int32_t >(L"World.OceanQuality", world::QuMedium);
 	m_gamma = settings->getProperty< float >(L"World.Gamma", 2.2f);
-	m_superSample = settings->getProperty< int32_t >(L"World.SuperSample", 0);
 
 	m_renderServer = renderServer;
 	m_resourceServer = resourceServer;
@@ -242,8 +240,7 @@ int32_t WorldServer::reconfigure(const PropertyGroup* settings)
 		particleQuality == m_particleQuality &&
 		terrainQuality == m_terrainQuality &&
 		oceanQuality == m_oceanQuality &&
-		gamma == m_gamma &&
-		superSample == m_superSample
+		gamma == m_gamma
 	)
 		return CrUnaffected;
 
@@ -267,7 +264,6 @@ int32_t WorldServer::reconfigure(const PropertyGroup* settings)
 	m_terrainQuality = terrainQuality;
 	m_oceanQuality = oceanQuality;
 	m_gamma = gamma;
-	m_superSample = superSample;
 
 	return CrAccepted;
 }
@@ -326,13 +322,12 @@ Ref< world::IWorldRenderer > WorldServer::createWorldRenderer(const world::World
 	wcd.width = m_renderServer->getWidth();
 	wcd.height = m_renderServer->getHeight();
 	wcd.multiSample = m_renderServer->getMultiSample();
-	wcd.superSample = m_superSample;
 	wcd.frameCount = m_renderServer->getThreadFrameQueueCount();
 	wcd.gamma = m_gamma;
 
 	Ref< world::IWorldRenderer > worldRenderer = dynamic_type_cast< world::IWorldRenderer* >(m_worldType->createInstance());
 	if (!worldRenderer)
-		return 0;
+		return nullptr;
 
 	if (!worldRenderer->create(
 		m_resourceServer->getResourceManager(),
