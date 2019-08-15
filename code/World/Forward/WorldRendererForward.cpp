@@ -23,8 +23,6 @@
 #include "World/WorldContext.h"
 #include "World/Forward/WorldRendererForward.h"
 #include "World/Forward/WorldRenderPassForward.h"
-#include "World/SMProj/BoxShadowProjection.h"
-#include "World/SMProj/LiSPShadowProjection.h"
 #include "World/SMProj/TrapezoidShadowProjection.h"
 #include "World/SMProj/UniformShadowProjection.h"
 
@@ -826,7 +824,6 @@ void WorldRendererForward::buildLights(WorldRenderView& worldRenderView, int fra
 	Matrix44 view = worldRenderView.getView();
 	Matrix44 viewInverse = worldRenderView.getView().inverse();
 	Frustum viewFrustum = worldRenderView.getViewFrustum();
-	Aabb3 shadowBox = worldRenderView.getShadowBox();
 
 	bool shadowsEnable = (bool)(m_shadowsQuality != QuDisabled);
 
@@ -871,7 +868,6 @@ void WorldRendererForward::buildLights(WorldRenderView& worldRenderView, int fra
 					light.position,
 					light.direction,
 					sliceViewFrustum,
-					shadowBox,
 					shadowSettings.farZ,
 					shadowSettings.quantizeProjection,
 					shadowLightView,
