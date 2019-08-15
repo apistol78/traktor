@@ -30,7 +30,7 @@ class IEnvironment;
 class IRenderServer;
 class IResourceServer;
 
-/*! \brief
+/*! World server implementation.
  * \ingroup Runtime
  */
 class WorldServer : public IWorldServer
@@ -90,7 +90,6 @@ private:
 	world::Quality m_terrainQuality;
 	world::Quality m_oceanQuality;
 	float m_gamma;
-	int32_t m_superSample;
 };
 
 	}

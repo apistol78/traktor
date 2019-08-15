@@ -47,7 +47,7 @@ class WorldEntityRenderers;
 class WorldRenderSettings;
 class WorldRenderView;
 
-/*! \brief World renderer creation description.
+/*! World renderer creation description.
  * \ingroup World
  */
 struct WorldCreateDesc
@@ -64,7 +64,6 @@ struct WorldCreateDesc
 	int32_t width;
 	int32_t height;
 	uint32_t multiSample;
-	uint32_t superSample;
 	uint32_t frameCount;
 	float gamma;
 	bool allTargetsPersistent;
@@ -83,7 +82,6 @@ struct WorldCreateDesc
 	,	width(0)
 	,	height(0)
 	,	multiSample(0)
-	,	superSample(0)
 	,	frameCount(0)
 	,	gamma(2.2f)
 	,	allTargetsPersistent(false)
@@ -92,7 +90,7 @@ struct WorldCreateDesc
 	}
 };
 
-/*! \brief World renderer.
+/*! World renderer.
  * \ingroup World
  *
  * The world renderer is a high level renderer which render
@@ -107,7 +105,7 @@ class T_DLLCLASS IWorldRenderer : public Object
 	T_RTTI_CLASS;
 
 public:
-	/*! \brief Create world renderer. */
+	/*! Create world renderer. */
 	virtual bool create(
 		resource::IResourceManager* resourceManager,
 		render::IRenderSystem* renderSystem,
@@ -115,25 +113,25 @@ public:
 		const WorldCreateDesc& desc
 	) = 0;
 
-	/*! \brief Destroy world renderer. */
+	/*! Destroy world renderer. */
 	virtual void destroy() = 0;
 
 	/*! \name Build steps. */
 	//@{
 
-	/*! \brief Begin build "render contexts".
+	/*! Begin build "render contexts".
 	 *
 	 * \return True if building begun.
 	 */
 	virtual bool beginBuild() = 0;
 
-	/*! \brief Build "render contexts".
+	/*! Build "render contexts".
 	 *
 	 * \param entity Root entity.
 	 */
 	virtual void build(Entity* entity) = 0;
 
-	/*! \brief End build "render contexts".
+	/*! End build "render contexts".
 	 *
 	 * \param worldRenderView World render view.
 	 * \param frame Multi threaded context frame.
@@ -145,7 +143,7 @@ public:
 	/*! \name Render steps. */
 	//@{
 
-	/*! \brief Begin render "render contexts".
+	/*! Begin render "render contexts".
 	 *
 	 * \param frame Multi threaded context frame.
 	 * \param clearColor Clear visual target color.
@@ -153,13 +151,13 @@ public:
 	 */
 	virtual bool beginRender(int32_t frame, const Color4f& clearColor) = 0;
 
-	/*! \brief Render "render contexts".
+	/*! Render "render contexts".
 	 *
 	 * \param frame Multi threaded context frame.
 	 */
 	virtual void render(int32_t frame) = 0;
 
-	/*! \brief End render "render contexts".
+	/*! End render "render contexts".
 	 *
 	 * \param frame Multi threaded context frame.
 	 * \param deltaTime Last frame delta time.
