@@ -2,181 +2,224 @@
 <object type="traktor.i18n.Dictionary">
 	<map>
 		<item>
-		<first>RUNTIME_LANGUAGE</first>
-		<second>Language</second>
+			<first>RUNTIME_LANGUAGE</first>
+			<second>Language</second>
 		</item>
 		<item>
-		<first>RUNTIME_LANGUAGE_CHINESE</first>
-		<second>Chinese</second>
+			<first>RUNTIME_LANGUAGE_CHINESE</first>
+			<second>Chinese</second>
 		</item>
 		<item>
-		<first>RUNTIME_LANGUAGE_CZECH</first>
-		<second>Czech</second>
+			<first>RUNTIME_LANGUAGE_CZECH</first>
+			<second>Czech</second>
 		</item>
 		<item>
-		<first>RUNTIME_LANGUAGE_DEFAULT</first>
-		<second>(Default)</second>
+			<first>RUNTIME_LANGUAGE_DEFAULT</first>
+			<second>(Default)</second>
 		</item>
 		<item>
-		<first>RUNTIME_LANGUAGE_DUTCH</first>
-		<second>Dutch</second>
+			<first>RUNTIME_LANGUAGE_DUTCH</first>
+			<second>Dutch</second>
 		</item>
 		<item>
-		<first>RUNTIME_LANGUAGE_ENGLISH</first>
-		<second>English</second>
+			<first>RUNTIME_LANGUAGE_ENGLISH</first>
+			<second>English</second>
 		</item>
 		<item>
-		<first>RUNTIME_LANGUAGE_FRENCH</first>
-		<second>French</second>
+			<first>RUNTIME_LANGUAGE_FRENCH</first>
+			<second>French</second>
 		</item>
 		<item>
-		<first>RUNTIME_LANGUAGE_GERMAN</first>
-		<second>German</second>
+			<first>RUNTIME_LANGUAGE_GERMAN</first>
+			<second>German</second>
 		</item>
 		<item>
-		<first>RUNTIME_LANGUAGE_ITALIAN</first>
-		<second>Italian</second>
+			<first>RUNTIME_LANGUAGE_ITALIAN</first>
+			<second>Italian</second>
 		</item>
 		<item>
-		<first>RUNTIME_LANGUAGE_JAPANESE</first>
-		<second>Japanese</second>
+			<first>RUNTIME_LANGUAGE_JAPANESE</first>
+			<second>Japanese</second>
 		</item>
 		<item>
-		<first>RUNTIME_LANGUAGE_KOREANA</first>
-		<second>Korean</second>
+			<first>RUNTIME_LANGUAGE_KOREANA</first>
+			<second>Korean</second>
 		</item>
 		<item>
-		<first>RUNTIME_LANGUAGE_POLISH</first>
-		<second>Polish</second>
+			<first>RUNTIME_LANGUAGE_POLISH</first>
+			<second>Polish</second>
 		</item>
 		<item>
-		<first>RUNTIME_LANGUAGE_PORTUGUESE</first>
-		<second>Portuguese</second>
+			<first>RUNTIME_LANGUAGE_PORTUGUESE</first>
+			<second>Portuguese</second>
 		</item>
 		<item>
-		<first>RUNTIME_LANGUAGE_ROMANIAN</first>
-		<second>Romanian</second>
+			<first>RUNTIME_LANGUAGE_ROMANIAN</first>
+			<second>Romanian</second>
 		</item>
 		<item>
-		<first>RUNTIME_LANGUAGE_RUSSIAN</first>
-		<second>Russian</second>
+			<first>RUNTIME_LANGUAGE_RUSSIAN</first>
+			<second>Russian</second>
 		</item>
 		<item>
-		<first>RUNTIME_LANGUAGE_SPANISH</first>
-		<second>Spanish</second>
+			<first>RUNTIME_LANGUAGE_SPANISH</first>
+			<second>Spanish</second>
 		</item>
 		<item>
-		<first>RUNTIME_LANGUAGE_SWEDISH</first>
-		<second>Swedish</second>
+			<first>RUNTIME_LANGUAGE_SWEDISH</first>
+			<second>Swedish</second>
 		</item>
 		<item>
-		<first>RUNTIME_STATE_BUILDING</first>
-		<second>Building...</second>
+			<first>RUNTIME_STATE_BUILDING</first>
+			<second>Building...</second>
 		</item>
 		<item>
-		<first>RUNTIME_STATE_DEPLOYING</first>
-		<second>Deploying...</second>
+			<first>RUNTIME_STATE_DEPLOYING</first>
+			<second>Deploying...</second>
 		</item>
 		<item>
-		<first>RUNTIME_STATE_IDLE</first>
-		<second/>
+			<first>RUNTIME_STATE_IDLE</first>
+			<second/>
 		</item>
 		<item>
-		<first>RUNTIME_STATE_LAUNCHING</first>
-		<second>Launching...</second>
+			<first>RUNTIME_STATE_LAUNCHING</first>
+			<second>Launching...</second>
 		</item>
 		<item>
-		<first>RUNTIME_STATE_MIGRATING</first>
-		<second>Migrating...</second>
+			<first>RUNTIME_STATE_MIGRATING</first>
+			<second>Migrating...</second>
 		</item>
 		<item>
-		<first>RUNTIME_STATE_PENDING</first>
-		<second>Pending...</second>
+			<first>RUNTIME_STATE_PENDING</first>
+			<second>Pending...</second>
 		</item>
 		<item>
-		<first>RUNTIME_TARGETS</first>
-		<second>Targets</second>
+			<first>RUNTIME_TARGETS</first>
+			<second>Targets</second>
 		</item>
 		<item>
-		<first>RUNTIME_TARGETS_TITLE</first>
-		<second>Targets</second>
+			<first>RUNTIME_TARGETS_TITLE</first>
+			<second>Targets</second>
 		</item>
 		<item>
-		<first>RUNTIME_TWEAKS</first>
-		<second>Tweaks</second>
+			<first>RUNTIME_TWEAKS</first>
+			<second>Tweaks</second>
 		</item>
 		<item>
-		<first>RUNTIME_TWEAKS_TOOLTIP</first>
-		<second>Runtime tweaks</second>
+			<first>RUNTIME_TWEAKS_TOOLTIP</first>
+			<second>Runtime tweaks</second>
 		</item>
-
-    <item>
-      <first>GAMEENTITY_WIZARD_COLLISION_GROUP</first>
-      <second>Collision group</second>
-    </item>
-    <item>
-      <first>GAMEENTITY_WIZARD_COLLISION_MASK</first>
-      <second>Collision mask</second>
-    </item>
-    <item>
-      <first>GAMEENTITY_WIZARD_COLLISION_MESH</first>
-      <second>Collision mesh</second>
-    </item>
-    <item>
-      <first>GAMEENTITY_WIZARD_CREATE_GROUP</first>
-      <second>Create into group entity</second>
-    </item>
-    <item>
-      <first>GAMEENTITY_WIZARD_CREATE_SCRIPT</first>
-      <second>Create script</second>
-    </item>
-    <item>
-      <first>GAMEENTITY_WIZARD_DESCRIPTION</first>
-      <second>Create game entity...</second>
-    </item>
-    <item>
-      <first>GAMEENTITY_WIZARD_DIALOG_TITLE</first>
-      <second>Create game entity</second>
-    </item>
-    <item>
-      <first>GAMEENTITY_WIZARD_ENTITY_NAME</first>
-      <second>Name</second>
-    </item>
-    <item>
-      <first>GAMEENTITY_WIZARD_FILE_TITLE</first>
-      <second>Select mesh</second>
-    </item>
-    <item>
-      <first>GAMEENTITY_WIZARD_FRICTION</first>
-      <second>Friction</second>
-    </item>
-    <item>
-      <first>GAMEENTITY_WIZARD_MATERIAL</first>
-      <second>Material</second>
-    </item>
-    <item>
-      <first>GAMEENTITY_WIZARD_PHYSICS_DYNAMIC</first>
-      <second>Dynamic - Movable and simulated</second>
-    </item>
-    <item>
-      <first>GAMEENTITY_WIZARD_PHYSICS_KINEMATIC</first>
-      <second>Kinematic - Movable</second>
-    </item>
-    <item>
-      <first>GAMEENTITY_WIZARD_PHYSICS_STATIC</first>
-      <second>Static - Non movable</second>
-    </item>
-    <item>
-      <first>GAMEENTITY_WIZARD_PHYSICS_TYPE</first>
-      <second>Type of physics</second>
-    </item>
-    <item>
-      <first>GAMEENTITY_WIZARD_UNNAMED</first>
-      <second>Unnamed</second>
-    </item>
-    <item>
-      <first>GAMEENTITY_WIZARD_VISUAL_MESH</first>
-      <second>Visual mesh</second>
-    </item>
+		<item>
+			<first>GAMEENTITY_WIZARD_COLLISION_GROUP</first>
+			<second>Collision group</second>
+		</item>
+		<item>
+			<first>GAMEENTITY_WIZARD_COLLISION_MASK</first>
+			<second>Collision mask</second>
+		</item>
+		<item>
+			<first>GAMEENTITY_WIZARD_COLLISION_MESH</first>
+			<second>Collision mesh</second>
+		</item>
+		<item>
+			<first>GAMEENTITY_WIZARD_CREATE_GROUP</first>
+			<second>Create into group entity</second>
+		</item>
+		<item>
+			<first>GAMEENTITY_WIZARD_CREATE_SCRIPT</first>
+			<second>Create script</second>
+		</item>
+		<item>
+			<first>GAMEENTITY_WIZARD_DESCRIPTION</first>
+			<second>Create game entity...</second>
+		</item>
+		<item>
+			<first>GAMEENTITY_WIZARD_DIALOG_TITLE</first>
+			<second>Create game entity</second>
+		</item>
+		<item>
+			<first>GAMEENTITY_WIZARD_ENTITY_NAME</first>
+			<second>Name</second>
+		</item>
+		<item>
+			<first>GAMEENTITY_WIZARD_FILE_TITLE</first>
+			<second>Select mesh</second>
+		</item>
+		<item>
+			<first>GAMEENTITY_WIZARD_FRICTION</first>
+			<second>Friction</second>
+		</item>
+		<item>
+			<first>GAMEENTITY_WIZARD_MATERIAL</first>
+			<second>Material</second>
+		</item>
+		<item>
+			<first>GAMEENTITY_WIZARD_PHYSICS_DYNAMIC</first>
+			<second>Dynamic - Movable and simulated</second>
+		</item>
+		<item>
+			<first>GAMEENTITY_WIZARD_PHYSICS_KINEMATIC</first>
+			<second>Kinematic - Movable</second>
+		</item>
+		<item>
+			<first>GAMEENTITY_WIZARD_PHYSICS_STATIC</first>
+			<second>Static - Non movable</second>
+		</item>
+		<item>
+			<first>GAMEENTITY_WIZARD_PHYSICS_TYPE</first>
+			<second>Type of physics</second>
+		</item>
+		<item>
+			<first>GAMEENTITY_WIZARD_UNNAMED</first>
+			<second>Unnamed</second>
+		</item>
+		<item>
+			<first>GAMEENTITY_WIZARD_VISUAL_MESH</first>
+			<second>Visual mesh</second>
+		</item>
+		<item>
+			<first>RUNTIME_SETTING_INHERIT_EDITOR_CACHES</first>
+			<second>Inherit editor cache(s)</second>
+		</item>
+		<item>
+			<first>RUNTIME_SETTINGS_HIDE_PIPELINE_CONSOLE</first>
+			<second>Hide pipeline console</second>
+		</item>
+		<item>
+			<first>RUNTIME_SETTINGS_USE_DEBUG_BINARIES</first>
+			<second>Use debug binaries</second>
+		</item>
+		<item>
+			<first>RUNTIME_SETTINGS_STATICALLY_LINK_PRODUCT</first>
+			<second>Statically link product</second>
+		</item>
+		<item>
+			<first>RUNTIME_SETTINGS_VERBOSE_RESOURCE_MANAGER</first>
+			<second>Verbose resource manager</second>
+		</item>
+		<item>
+			<first>RUNTIME_SETTINGS_ANDROID_SDK_HOME</first>
+			<second>Android SDK home</second>
+		</item>
+		<item>
+			<first>RUNTIME_SETTINGS_ANDROID_NDK_HOME</first>
+			<second>Android NDK root</second>
+		</item>
+		<item>
+			<first>RUNTIME_SETTINGS_ANDROID_TOOLCHAIN</first>
+			<second>Android Toolchain</second>
+		</item>
+		<item>
+			<first>RUNTIME_SETTINGS_ANDROID_API_LEVEL</first>
+			<second>Android API level</second>
+		</item>
+		<item>
+			<first>RUNTIME_SETTINGS_EMSCRIPTEN_SDK</first>
+			<second>Emscripten SDK</second>
+		</item>
+		<item>
+			<first>RUNTIME_SETTINGS_ENVIRONMENT</first>
+			<second>Environment</second>
+		</item>
 	</map>
 </object>

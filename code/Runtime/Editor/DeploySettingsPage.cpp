@@ -4,6 +4,7 @@
 #include "Core/Settings/PropertyGroup.h"
 #include "Core/Settings/PropertyInteger.h"
 #include "Core/Settings/PropertyString.h"
+#include "I18N/Text.h"
 #include "Ui/Application.h"
 #include "Ui/Container.h"
 #include "Ui/NumericEditValidator.h"
@@ -28,31 +29,31 @@ bool DeploySettingsPage::create(ui::Container* parent, const PropertyGroup* orig
 		return false;
 
 	m_checkInheritCache = new ui::CheckBox();
-	m_checkInheritCache->create(container, L"Inherit editor cache(s)");
+	m_checkInheritCache->create(container, i18n::Text(L"RUNTIME_SETTINGS_INHERIT_EDITOR_CACHES"));
 
 	bool inheritCache = settings->getProperty< bool >(L"Runtime.InheritCache", true);
 	m_checkInheritCache->setChecked(inheritCache);
 
 	m_checkHidePipeline = new ui::CheckBox();
-	m_checkHidePipeline->create(container, L"Hide pipeline console");
+	m_checkHidePipeline->create(container, i18n::Text(L"RUNTIME_SETTINGS_HIDE_PIPELINE_CONSOLE"));
 
 	bool hidePipeline = settings->getProperty< bool >(L"Runtime.PipelineHidden", true);
 	m_checkHidePipeline->setChecked(hidePipeline);
 
 	m_checkUseDebugBinaries = new ui::CheckBox();
-	m_checkUseDebugBinaries->create(container, L"Use debug binaries");
+	m_checkUseDebugBinaries->create(container, i18n::Text(L"RUNTIME_SETTINGS_USE_DEBUG_BINARIES"));
 
 	bool useDebugBinaries = settings->getProperty< bool >(L"Runtime.UseDebugBinaries", false);
 	m_checkUseDebugBinaries->setChecked(useDebugBinaries);
 
 	m_checkStaticallyLinked = new ui::CheckBox();
-	m_checkStaticallyLinked->create(container, L"Statically link product");
+	m_checkStaticallyLinked->create(container, i18n::Text(L"RUNTIME_SETTINGS_STATICALLY_LINK_PRODUCT"));
 
 	bool staticallyLinked = settings->getProperty< bool >(L"Runtime.StaticallyLinked", false);
 	m_checkStaticallyLinked->setChecked(staticallyLinked);
 
 	m_checkVerboseResourceManager = new ui::CheckBox();
-	m_checkVerboseResourceManager->create(container, L"Verbose resource manager");
+	m_checkVerboseResourceManager->create(container, i18n::Text(L"RUNTIME_SETTINGS_VERBOSE_RESOURCE_MANAGER"));
 
 	bool verboseResourceManager = settings->getProperty< bool >(L"Runtime.VerboseResourceManager", false);
 	m_checkVerboseResourceManager->setChecked(verboseResourceManager);
@@ -61,31 +62,31 @@ bool DeploySettingsPage::create(ui::Container* parent, const PropertyGroup* orig
 	containerAndroid->create(container, ui::WsNone, new ui::TableLayout(L"*,100%", L"*", 0, 4));
 
 	Ref< ui::Static > staticAndroidHome = new ui::Static();
-	staticAndroidHome->create(containerAndroid, L"Android SDK home");
+	staticAndroidHome->create(containerAndroid, i18n::Text(L"RUNTIME_SETTINGS_ANDROID_SDK_HOME"));
 
 	m_editAndroidHome = new ui::Edit();
 	m_editAndroidHome->create(containerAndroid, settings->getProperty< std::wstring >(L"Runtime.AndroidHome", L"$(ANDROID_HOME)"));
 
 	Ref< ui::Static > staticAndroidNdkRoot = new ui::Static();
-	staticAndroidNdkRoot->create(containerAndroid, L"Android NDK root");
+	staticAndroidNdkRoot->create(containerAndroid, i18n::Text(L"RUNTIME_SETTINGS_ANDROID_NDK_HOME"));
 
 	m_editAndroidNdkRoot = new ui::Edit();
 	m_editAndroidNdkRoot->create(containerAndroid, settings->getProperty< std::wstring >(L"Runtime.AndroidNdkRoot", L"$(ANDROID_NDK_ROOT)"));
 
 	Ref< ui::Static > staticAndroidToolchain = new ui::Static();
-	staticAndroidToolchain->create(containerAndroid, L"Android Toolchain");
+	staticAndroidToolchain->create(containerAndroid, i18n::Text(L"RUNTIME_SETTINGS_ANDROID_TOOLCHAIN"));
 
 	m_editAndroidToolchain = new ui::Edit();
 	m_editAndroidToolchain->create(containerAndroid, settings->getProperty< std::wstring >(L"Runtime.AndroidToolchain", L""));
 
 	Ref< ui::Static > staticAndroidApiLevel = new ui::Static();
-	staticAndroidApiLevel->create(containerAndroid, L"Android API level");
+	staticAndroidApiLevel->create(containerAndroid, i18n::Text(L"RUNTIME_SETTINGS_ANDROID_API_LEVEL"));
 
 	m_editAndroidApiLevel = new ui::Edit();
 	m_editAndroidApiLevel->create(containerAndroid, settings->getProperty< std::wstring >(L"Runtime.AndroidApiLevel", L""));
 
 	Ref< ui::Static > staticEmscripten = new ui::Static();
-	staticEmscripten->create(containerAndroid, L"Emscripten SDK");
+	staticEmscripten->create(containerAndroid, i18n::Text(L"RUNTIME_SETTINGS_EMSCRIPTEN_SDK"));
 
 	m_editEmscripten = new ui::Edit();
 	m_editEmscripten->create(containerAndroid, settings->getProperty< std::wstring >(L"Runtime.Emscripten", L"$(EMSCRIPTEN)"));
@@ -94,7 +95,7 @@ bool DeploySettingsPage::create(ui::Container* parent, const PropertyGroup* orig
 	containerEnvironment->create(container, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%", 0, 4));
 
 	Ref< ui::Static > staticEnvironment = new ui::Static();
-	staticEnvironment->create(containerEnvironment, L"Environment");
+	staticEnvironment->create(containerEnvironment, i18n::Text(L"RUNTIME_SETTINGS_ENVIRONMENT"));
 
 	Ref< ui::GridView > gridEnvironment = new ui::GridView();
 	gridEnvironment->create(containerEnvironment, ui::WsDoubleBuffer);
