@@ -1,3 +1,4 @@
+#include <X11/Xatom.h>
 #include <X11/Xutil.h>
 #include "Core/Timer/Timer.h"
 #include "Ui/Dialog.h"
@@ -12,6 +13,7 @@ namespace traktor
 
 DialogX11::DialogX11(Context* context, EventSubject* owner)
 :	WidgetX11Impl< IDialog >(context, owner)
+,	m_parent(0)
 ,	m_result(0)
 ,	m_modal(false)
 {
@@ -40,6 +42,14 @@ bool DialogX11::create(IWidget* parent, const std::wstring& text, int width, int
 		nullptr
 	);
 
+	// Remove chrome if no caption set.
+	if ((style & (WsSystemBox | WsMinimizeBox | WsCloseBox | WsCaption)) == 0)
+	{
+	  	Atom type = XInternAtom(m_context->getDisplay(),"_NET_WM_WINDOW_TYPE", False);
+    	Atom value = XInternAtom(m_context->getDisplay(),"_NET_WM_WINDOW_TYPE_DOCK", False);
+    	XChangeProperty(m_context->getDisplay(), window, type, XA_ATOM, 32, PropModeReplace, reinterpret_cast<unsigned char*>(&value), 1);
+	}
+
 	// Notify WM about form title.
 	if ((style & WsCaption) != 0)
 	{
@@ -59,37 +69,17 @@ bool DialogX11::create(IWidget* parent, const std::wstring& text, int width, int
 		XSetTransientForHint(m_context->getDisplay(), window, parentData->window);
 	}
 
+	// Check if we should center.
+	if ((style & Dialog::WsCenterDesktop) != 0)
+		m_parent = DefaultRootWindow(m_context->getDisplay());
+	else if (parent != nullptr)
+		m_parent = static_cast< WidgetData* >(parent->getInternalHandle())->window;
+
 	// Register "delete window" window manager message.
 	m_atomWmDeleteWindow = XInternAtom(m_context->getDisplay(), "WM_DELETE_WINDOW", False);
-
 	XSetWMProtocols(m_context->getDisplay(), window, &m_atomWmDeleteWindow, 1);
 
-	// Center dialog on parent or desktop.
-	Window parentWindow = DefaultRootWindow(m_context->getDisplay());
-	Window root;
-	int px, py;
-	unsigned int pwidth, pheight;
-	unsigned int pborder, pdepth;
-
-	if (parent != nullptr && style & Dialog::WsCenterDesktop == 0)
-	{
-		WidgetData* parentData = static_cast< WidgetData* >(parent->getInternalHandle());
-		parentWindow = parentData->window;
-	}
-
-	XGetGeometry(
-		m_context->getDisplay(),
-		parentWindow,
-		&root,
-		&px, &py,
-		&pwidth,
-		&pheight,
-		&pborder,
-		&pdepth
-	);
-
-	Rect rc(Point(px + (pwidth - width) / 2, py + (pheight - height) / 2), Size(width, height));
-
+	Rect rc(0, 0, width, height);
 	if (!WidgetX11Impl< IDialog >::create(nullptr, style, window, rc, false, true))
 		return false;
 
@@ -183,6 +173,40 @@ void DialogX11::setMinSize(const Size& minSize)
 	sh.min_width = minSize.cx;
 	sh.min_height = minSize.cy;
 	XSetWMNormalHints(m_context->getDisplay(), m_data.window, &sh);
+}
+
+void DialogX11::setVisible(bool visible)
+{
+	WidgetX11Impl< IDialog >::setVisible(visible);
+
+	// Center dialog if style has been set.
+	if (m_parent != 0)
+	{
+		Window root;
+		int px, py;
+		unsigned int pwidth, pheight;
+		unsigned int pborder, pdepth;
+
+		XGetGeometry(
+			m_context->getDisplay(),
+			m_parent,
+			&root,
+			&px, &py,
+			&pwidth,
+			&pheight,
+			&pborder,
+			&pdepth
+		);
+
+		Rect rc = getRect();
+
+		XMoveWindow(
+			m_context->getDisplay(),
+			m_data.window,
+			px + (pwidth - rc.getWidth()) / 2,
+			py + (pheight - rc.getHeight()) / 2
+		);
+	}
 }
 
 	}
