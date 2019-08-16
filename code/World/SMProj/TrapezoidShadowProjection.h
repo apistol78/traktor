@@ -1,13 +1,13 @@
 #pragma once
 
-#include "World/IWorldShadowProjection.h"
+#include "World/IShadowProjection.h"
 
 namespace traktor
 {
 	namespace world
 	{
 
-class TrapezoidShadowProjection : public IWorldShadowProjection
+class TrapezoidShadowProjection : public IShadowProjection
 {
 	T_RTTI_CLASS;
 

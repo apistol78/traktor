@@ -29,7 +29,7 @@ class StructBuffer;
 	namespace world
 	{
 
-class IWorldShadowProjection;
+class IShadowProjection;
 class WorldContext;
 class WorldEntityRenderers;
 
@@ -96,12 +96,9 @@ private:
 	{
 		FrameShadow slice[MaxSliceCount];
 		FrameShadow atlas[16];
-
 		Ref< WorldContext > depth;
 		Ref< WorldContext > visual;
-
 		Ref< render::StructBuffer > lightSBuffer;
-
 		Matrix44 projection;
 		Matrix44 view;
 		Frustum viewFrustum;
@@ -124,7 +121,6 @@ private:
 	Quality m_shadowsQuality;
 	Quality m_ambientOcclusionQuality;
 	Quality m_antiAliasQuality;
-
 	Ref< render::IRenderView > m_renderView;
 	Ref< render::RenderTargetSet > m_visualTargetSet;
 	Ref< render::RenderTargetSet > m_intermediateTargetSet;
@@ -137,7 +133,7 @@ private:
 	Ref< render::ImageProcess > m_toneMapImageProcess;
 
 	// Directional shadow map.
-	Ref< IWorldShadowProjection > m_shadowProjection;
+	Ref< IShadowProjection > m_shadowProjection;
 	Ref< render::RenderTargetSet > m_shadowCascadeTargetSet;
 
 	// Point/Spot shadow map.
