@@ -11,15 +11,13 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.shape.EntityRenderer", EntityRenderer, world::I
 
 const TypeInfoSet EntityRenderer::getRenderableTypes() const
 {
-	return makeTypeInfoSet(
-		type_of< SplineEntity >()
-	);
+	return makeTypeInfoSet< SplineEntity >();
 }
 
 void EntityRenderer::render(
 	world::WorldContext& worldContext,
 	world::WorldRenderView& worldRenderView,
-	world::IWorldRenderPass& worldRenderPass,
+	const world::IWorldRenderPass& worldRenderPass,
 	Object* renderable
 )
 {
@@ -36,7 +34,7 @@ void EntityRenderer::render(
 void EntityRenderer::flush(
 	world::WorldContext& worldContext,
 	world::WorldRenderView& worldRenderView,
-	world::IWorldRenderPass& worldRenderPass
+	const world::IWorldRenderPass& worldRenderPass
 )
 {
 }

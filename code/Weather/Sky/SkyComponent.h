@@ -62,7 +62,7 @@ public:
 	void render(
 		render::RenderContext* renderContext,
 		world::WorldRenderView& worldRenderView,
-		world::IWorldRenderPass& worldRenderPass
+		const world::IWorldRenderPass& worldRenderPass
 	);
 
 private:

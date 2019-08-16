@@ -30,7 +30,7 @@ public:
 		TerrainComponent& terrainComponent,
 		world::WorldContext& worldContext,
 		world::WorldRenderView& worldRenderView,
-		world::IWorldRenderPass& worldRenderPass
+		const world::IWorldRenderPass& worldRenderPass
 	) = 0;
 
 	virtual void updatePatches(const TerrainComponent& terrainComponent) = 0;

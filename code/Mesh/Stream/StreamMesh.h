@@ -42,7 +42,7 @@ class IWorldRenderPass;
 
 class IMeshParameterCallback;
 
-/*! \brief Stream mesh.
+/*! Stream mesh.
  */
 class T_DLLCLASS StreamMesh : public IMesh
 {
@@ -67,7 +67,7 @@ public:
 
 	void render(
 		render::RenderContext* renderContext,
-		world::IWorldRenderPass& worldRenderPass,
+		const world::IWorldRenderPass& worldRenderPass,
 		const Transform& worldTransform,
 		Instance* instance,
 		uint32_t frame,

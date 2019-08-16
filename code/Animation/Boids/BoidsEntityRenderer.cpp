@@ -18,7 +18,7 @@ const TypeInfoSet BoidsEntityRenderer::getRenderableTypes() const
 void BoidsEntityRenderer::render(
 	world::WorldContext& worldContext,
 	world::WorldRenderView& worldRenderView,
-	world::IWorldRenderPass& worldRenderPass,
+	const world::IWorldRenderPass& worldRenderPass,
 	Object* renderable
 )
 {
@@ -29,7 +29,7 @@ void BoidsEntityRenderer::render(
 void BoidsEntityRenderer::flush(
 	world::WorldContext& worldContext,
 	world::WorldRenderView& worldRenderView,
-	world::IWorldRenderPass& worldRenderPass
+	const world::IWorldRenderPass& worldRenderPass
 )
 {
 }

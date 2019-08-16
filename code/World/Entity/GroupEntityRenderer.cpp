@@ -12,29 +12,25 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.world.GroupEntityRenderer", GroupEntityRenderer
 
 const TypeInfoSet GroupEntityRenderer::getRenderableTypes() const
 {
-	TypeInfoSet typeSet;
-	typeSet.insert< GroupEntity >();
-	return typeSet;
+	return makeTypeInfoSet< GroupEntity >();
 }
 
 void GroupEntityRenderer::render(
 	WorldContext& worldContext,
 	WorldRenderView& worldRenderView,
-	IWorldRenderPass& worldRenderPass,
+	const IWorldRenderPass& worldRenderPass,
 	Object* renderable
 )
 {
 	GroupEntity* groupEntity = checked_type_cast< GroupEntity*, false >(renderable);
-
-	const RefArray< Entity >& childEntities = groupEntity->getEntities();
-	for (RefArray< Entity >::const_iterator i = childEntities.begin(); i != childEntities.end(); ++i)
-		worldContext.build(worldRenderView, worldRenderPass, *i);
+	for (auto childEntity : groupEntity->getEntities())
+		worldContext.build(worldRenderView, worldRenderPass, childEntity);
 }
 
 void GroupEntityRenderer::flush(
 	WorldContext& worldContext,
 	WorldRenderView& worldRenderView,
-	IWorldRenderPass& worldRenderPass
+	const IWorldRenderPass& worldRenderPass
 )
 {
 }

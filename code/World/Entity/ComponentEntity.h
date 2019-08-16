@@ -62,7 +62,7 @@ public:
 		return checked_type_cast< ComponentType* >(getComponent(type_of< ComponentType >()));
 	}
 
-	void render(WorldContext& worldContext, WorldRenderView& worldRenderView, IWorldRenderPass& worldRenderPass);
+	void render(WorldContext& worldContext, WorldRenderView& worldRenderView, const IWorldRenderPass& worldRenderPass);
 
 	/*! \brief Quick access to entity's transform.
 	 */

@@ -116,7 +116,7 @@ bool TerrainComponent::create(const TerrainComponentData& data)
 void TerrainComponent::render(
 	world::WorldContext& worldContext,
 	world::WorldRenderView& worldRenderView,
-	world::IWorldRenderPass& worldRenderPass,
+	const world::IWorldRenderPass& worldRenderPass,
 	float detailDistance,
 	uint32_t cacheSize,
 	bool layersEnable

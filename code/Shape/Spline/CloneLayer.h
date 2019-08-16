@@ -50,7 +50,7 @@ public:
 	virtual void render(
 		world::WorldContext& worldContext,
 		world::WorldRenderView& worldRenderView,
-		world::IWorldRenderPass& worldRenderPass
+		const world::IWorldRenderPass& worldRenderPass
 	) override final;
 
 private:

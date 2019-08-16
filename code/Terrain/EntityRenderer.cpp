@@ -52,7 +52,7 @@ const TypeInfoSet EntityRenderer::getRenderableTypes() const
 void EntityRenderer::render(
 	world::WorldContext& worldContext,
 	world::WorldRenderView& worldRenderView,
-	world::IWorldRenderPass& worldRenderPass,
+	const world::IWorldRenderPass& worldRenderPass,
 	Object* renderable
 )
 {
@@ -67,7 +67,7 @@ void EntityRenderer::render(
 void EntityRenderer::flush(
 	world::WorldContext& worldContext,
 	world::WorldRenderView& worldRenderView,
-	world::IWorldRenderPass& worldRenderPass
+	const world::IWorldRenderPass& worldRenderPass
 )
 {
 }

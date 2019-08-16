@@ -27,7 +27,7 @@ bool PartitionMesh::supportTechnique(render::handle_t technique) const
 void PartitionMesh::render(
 	render::RenderContext* renderContext,
 	world::WorldRenderView& worldRenderView,
-	world::IWorldRenderPass& worldRenderPass,
+	const world::IWorldRenderPass& worldRenderPass,
 	const Transform& worldTransform,
 	float distance,
 	const IMeshParameterCallback* parameterCallback

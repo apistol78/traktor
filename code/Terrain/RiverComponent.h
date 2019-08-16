@@ -45,7 +45,7 @@ class WorldRenderView;
 
 class RiverComponentData;
 
-/*! \brief River component.
+/*! River component.
  * \ingroup Terrain
  */
 class T_DLLCLASS RiverComponent : public world::IEntityComponent
@@ -68,7 +68,7 @@ public:
 	void render(
 		render::RenderContext* renderContext,
 		world::WorldRenderView& worldRenderView,
-		world::IWorldRenderPass& worldRenderPass
+		const world::IWorldRenderPass& worldRenderPass
 	);
 
 private:

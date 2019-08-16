@@ -74,7 +74,7 @@ void SkyComponent::update(const world::UpdateParams& update)
 void SkyComponent::render(
 	render::RenderContext* renderContext,
 	world::WorldRenderView& worldRenderView,
-	world::IWorldRenderPass& worldRenderPass
+	const world::IWorldRenderPass& worldRenderPass
 )
 {
 	worldRenderPass.setShaderTechnique(m_shader);

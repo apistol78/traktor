@@ -20,7 +20,7 @@ namespace traktor
 
 class SkinnedMesh;
 
-/*! \brief
+/*! Skinned mesh component.
  * \ingroup Mesh
  */
 class T_DLLCLASS SkinnedMeshComponent : public MeshComponent
@@ -34,7 +34,7 @@ public:
 
 	virtual Aabb3 getBoundingBox() const override final;
 
-	virtual void render(world::WorldContext& worldContext, world::WorldRenderView& worldRenderView, world::IWorldRenderPass& worldRenderPass) override final;
+	virtual void render(world::WorldContext& worldContext, world::WorldRenderView& worldRenderView, const world::IWorldRenderPass& worldRenderPass) override final;
 
 	void setJointTransforms(const AlignedVector< Matrix44 >& jointTransforms);
 

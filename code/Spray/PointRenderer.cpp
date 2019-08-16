@@ -240,7 +240,7 @@ void PointRenderer::render(
 
 void PointRenderer::flush(
 	render::RenderContext* renderContext,
-	world::IWorldRenderPass& worldRenderPass
+	const world::IWorldRenderPass& worldRenderPass
 )
 {
 	if (m_pointOffset > 0)

@@ -50,7 +50,7 @@ class WorldRenderView;
 class OceanComponentData;
 class Terrain;
 
-/*! \brief Ocean component.
+/*! Ocean component.
  * \ingroup Terrain
  */
 class T_DLLCLASS OceanComponent : public world::IEntityComponent
@@ -79,7 +79,7 @@ public:
 	void render(
 		render::RenderContext* renderContext,
 		world::WorldRenderView& worldRenderView,
-		world::IWorldRenderPass& worldRenderPass,
+		const world::IWorldRenderPass& worldRenderPass,
 		bool reflectionEnable
 	);
 

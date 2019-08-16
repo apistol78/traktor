@@ -73,7 +73,7 @@ void CloneLayer::pathChanged()
 void CloneLayer::render(
 	world::WorldContext& worldContext,
 	world::WorldRenderView& worldRenderView,
-	world::IWorldRenderPass& worldRenderPass
+	const world::IWorldRenderPass& worldRenderPass
 )
 {
 	for (auto entity : m_entities)

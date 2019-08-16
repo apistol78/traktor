@@ -18,7 +18,7 @@ namespace traktor
 
 class AutoLodMesh;
 
-/*! \brief
+/*! Automatic LOD mesh component.
  * \ingroup Mesh
  */
 class T_DLLCLASS AutoLodMeshComponent : public MeshComponent
@@ -32,7 +32,7 @@ public:
 
 	virtual Aabb3 getBoundingBox() const override final;
 
-	virtual void render(world::WorldContext& worldContext, world::WorldRenderView& worldRenderView, world::IWorldRenderPass& worldRenderPass) override final;
+	virtual void render(world::WorldContext& worldContext, world::WorldRenderView& worldRenderView, const world::IWorldRenderPass& worldRenderPass) override final;
 
 private:
 	resource::Proxy< AutoLodMesh > m_mesh;

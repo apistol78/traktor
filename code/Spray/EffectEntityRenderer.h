@@ -26,7 +26,7 @@ class MeshRenderer;
 class PointRenderer;
 class TrailRenderer;
 
-/*! \brief Effect entity renderer.
+/*! Effect entity renderer.
  * \ingroup Spray
  */
 class T_DLLCLASS EffectEntityRenderer : public world::IEntityRenderer
@@ -43,14 +43,14 @@ public:
 	virtual void render(
 		world::WorldContext& worldContext,
 		world::WorldRenderView& worldRenderView,
-		world::IWorldRenderPass& worldRenderPass,
+		const world::IWorldRenderPass& worldRenderPass,
 		Object* renderable
 	) override final;
 
 	virtual void flush(
 		world::WorldContext& worldContext,
 		world::WorldRenderView& worldRenderView,
-		world::IWorldRenderPass& worldRenderPass
+		const world::IWorldRenderPass& worldRenderPass
 	) override final;
 
 private:

@@ -44,7 +44,7 @@ class IWorldRenderPass;
 
 struct EmitterVertex;
 
-/*! \brief Particle renderer.
+/*! Particle renderer.
  * \ingroup Spray
  */
 class T_DLLCLASS PointRenderer : public Object
@@ -70,7 +70,7 @@ public:
 
 	void flush(
 		render::RenderContext* renderContext,
-		world::IWorldRenderPass& worldRenderPass
+		const world::IWorldRenderPass& worldRenderPass
 	);
 
 	void setLodDistances(float lod1Distance, float lod2Distance)

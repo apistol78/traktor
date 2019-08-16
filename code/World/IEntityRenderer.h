@@ -19,7 +19,7 @@ class IWorldRenderPass;
 class WorldContext;
 class WorldRenderView;
 
-/*! \brief Entity renderer.
+/*! Entity renderer.
  * \ingroup World
  *
  * Each renderable type should have
@@ -32,18 +32,18 @@ class T_DLLCLASS IEntityRenderer : public Object
 public:
 	virtual const TypeInfoSet getRenderableTypes() const = 0;
 
-	/*! \brief Render pass.
+	/*! Render pass.
 	 *
 	 * Render instance into render context.
 	 */
 	virtual void render(
 		WorldContext& worldContext,
 		WorldRenderView& worldRenderView,
-		IWorldRenderPass& worldRenderPass,
+		const IWorldRenderPass& worldRenderPass,
 		Object* renderable
 	) = 0;
 
-	/*! \brief Render flush.
+	/*! Render flush.
 	 *
 	 * Flush whatever queues that the entity
 	 * renderer might have used.
@@ -51,7 +51,7 @@ public:
 	virtual void flush(
 		WorldContext& worldContext,
 		WorldRenderView& worldRenderView,
-		IWorldRenderPass& worldRenderPass
+		const IWorldRenderPass& worldRenderPass
 	) = 0;
 };
 

@@ -62,7 +62,7 @@ public:
 
 	void flush(
 		render::RenderContext* renderContext,
-		world::IWorldRenderPass& worldRenderPass
+		const world::IWorldRenderPass& worldRenderPass
 	);
 
 private:

@@ -35,7 +35,7 @@ const TypeInfoSet EffectEntityRenderer::getRenderableTypes() const
 void EffectEntityRenderer::render(
 	world::WorldContext& worldContext,
 	world::WorldRenderView& worldRenderView,
-	world::IWorldRenderPass& worldRenderPass,
+	const world::IWorldRenderPass& worldRenderPass,
 	Object* renderable
 )
 {
@@ -73,7 +73,7 @@ void EffectEntityRenderer::render(
 void EffectEntityRenderer::flush(
 	world::WorldContext& worldContext,
 	world::WorldRenderView& worldRenderView,
-	world::IWorldRenderPass& worldRenderPass
+	const world::IWorldRenderPass& worldRenderPass
 )
 {
 	m_pointRenderer->flush(worldContext.getRenderContext(), worldRenderPass);

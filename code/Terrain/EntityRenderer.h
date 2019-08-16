@@ -15,7 +15,7 @@ namespace traktor
 	namespace terrain
 	{
 
-/*! \brief Terrain entity renderer.
+/*! Terrain entity renderer.
  * \ingroup Terrain
  */
 class T_DLLCLASS EntityRenderer : public world::IEntityRenderer
@@ -38,14 +38,14 @@ public:
 	virtual void render(
 		world::WorldContext& worldContext,
 		world::WorldRenderView& worldRenderView,
-		world::IWorldRenderPass& worldRenderPass,
+		const world::IWorldRenderPass& worldRenderPass,
 		Object* renderable
 	) override final;
 
 	virtual void flush(
 		world::WorldContext& worldContext,
 		world::WorldRenderView& worldRenderView,
-		world::IWorldRenderPass& worldRenderPass
+		const world::IWorldRenderPass& worldRenderPass
 	) override final;
 
 private:

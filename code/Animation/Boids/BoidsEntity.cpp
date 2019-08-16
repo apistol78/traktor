@@ -59,7 +59,7 @@ void BoidsEntity::destroy()
 void BoidsEntity::render(
 	world::WorldContext& worldContext,
 	world::WorldRenderView& worldRenderView,
-	world::IWorldRenderPass& worldRenderPass
+	const world::IWorldRenderPass& worldRenderPass
 )
 {
 	for (RefArray< world::Entity >::iterator i = m_boidEntities.begin(); i != m_boidEntities.end(); ++i)

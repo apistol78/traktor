@@ -41,7 +41,7 @@ class WorldRenderView;
 class IMeshParameterCallback;
 class IPartition;
 
-/*! \brief Partition mesh.
+/*! Partition mesh.
  */
 class T_DLLCLASS PartitionMesh : public IMesh
 {
@@ -62,7 +62,7 @@ public:
 	void render(
 		render::RenderContext* renderContext,
 		world::WorldRenderView& worldRenderView,
-		world::IWorldRenderPass& worldRenderPass,
+		const world::IWorldRenderPass& worldRenderPass,
 		const Transform& worldTransform,
 		float distance,
 		const IMeshParameterCallback* parameterCallback

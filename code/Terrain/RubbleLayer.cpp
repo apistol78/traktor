@@ -79,7 +79,7 @@ void RubbleLayer::render(
 	TerrainComponent& terrainComponent,
 	world::WorldContext& worldContext,
 	world::WorldRenderView& worldRenderView,
-	world::IWorldRenderPass& worldRenderPass
+	const world::IWorldRenderPass& worldRenderPass
 )
 {
 	const resource::Proxy< Terrain >& terrain = terrainComponent.getTerrain();

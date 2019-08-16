@@ -19,7 +19,7 @@ const TypeInfoSet LightRenderer::getRenderableTypes() const
 void LightRenderer::render(
 	WorldContext& worldContext,
 	WorldRenderView& worldRenderView,
-	IWorldRenderPass& worldRenderPass,
+	const IWorldRenderPass& worldRenderPass,
 	Object* renderable
 )
 {
@@ -48,7 +48,7 @@ void LightRenderer::render(
 void LightRenderer::flush(
 	WorldContext& worldContext,
 	WorldRenderView& worldRenderView,
-	IWorldRenderPass& worldRenderPass
+	const IWorldRenderPass& worldRenderPass
 )
 {
 }

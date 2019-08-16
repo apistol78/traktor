@@ -10,26 +10,24 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.animation.ClothEntityRenderer", ClothEntityRend
 
 const TypeInfoSet ClothEntityRenderer::getRenderableTypes() const
 {
-	TypeInfoSet typeSet;
-	typeSet.insert< ClothEntity >();
-	return typeSet;
+	return makeTypeInfoSet< ClothEntity >();
 }
 
 void ClothEntityRenderer::render(
 	world::WorldContext& worldContext,
 	world::WorldRenderView& worldRenderView,
-	world::IWorldRenderPass& worldRenderPass,
+	const world::IWorldRenderPass& worldRenderPass,
 	Object* renderable
 )
 {
-	if (ClothEntity* clothEntity = dynamic_type_cast< ClothEntity* >(renderable))
+	if (ClothEntity* clothEntity = mandatory_non_null_type_cast< ClothEntity* >(renderable))
 		clothEntity->render(worldContext, worldRenderView, worldRenderPass);
 }
 
 void ClothEntityRenderer::flush(
 	world::WorldContext& worldContext,
 	world::WorldRenderView& worldRenderView,
-	world::IWorldRenderPass& worldRenderPass
+	const world::IWorldRenderPass& worldRenderPass
 )
 {
 }

@@ -28,7 +28,7 @@ const TypeInfoSet WeatherRenderer::getRenderableTypes() const
 void WeatherRenderer::render(
 	world::WorldContext& worldContext,
 	world::WorldRenderView& worldRenderView,
-	world::IWorldRenderPass& worldRenderPass,
+	const world::IWorldRenderPass& worldRenderPass,
 	Object* renderable
 )
 {
@@ -43,7 +43,7 @@ void WeatherRenderer::render(
 void WeatherRenderer::flush(
 	world::WorldContext& worldContext,
 	world::WorldRenderView& worldRenderView,
-	world::IWorldRenderPass& worldRenderPass
+	const world::IWorldRenderPass& worldRenderPass
 )
 {
 }

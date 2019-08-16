@@ -29,7 +29,7 @@ class WorldRenderView;
 
 class IMeshParameterCallback;
 
-/*! \brief
+/*! Abstract mesh component.
  * \ingroup Mesh
  */
 class T_DLLCLASS MeshComponent : public world::IEntityComponent
@@ -47,7 +47,7 @@ public:
 
 	virtual void update(const world::UpdateParams& update) override;
 
-	virtual void render(world::WorldContext& worldContext, world::WorldRenderView& worldRenderView, world::IWorldRenderPass& worldRenderPass) = 0;
+	virtual void render(world::WorldContext& worldContext, world::WorldRenderView& worldRenderView, const world::IWorldRenderPass& worldRenderPass) = 0;
 
 	void setParameterCallback(const IMeshParameterCallback* parameterCallback) { m_parameterCallback = parameterCallback; }
 

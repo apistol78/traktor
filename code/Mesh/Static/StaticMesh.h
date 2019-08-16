@@ -38,7 +38,7 @@ class IWorldRenderPass;
 
 class IMeshParameterCallback;
 
-/*! \brief Static mesh.
+/*! Static mesh.
  *
  * A static mesh is a basic rigid mesh which at
  * all times should be placed on the GPU for

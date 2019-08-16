@@ -113,7 +113,7 @@ Aabb3 AnimatedMeshComponent::getBoundingBox() const
 	return boundingBox;
 }
 
-void AnimatedMeshComponent::render(world::WorldContext& worldContext, world::WorldRenderView& worldRenderView, world::IWorldRenderPass& worldRenderPass)
+void AnimatedMeshComponent::render(world::WorldContext& worldContext, world::WorldRenderView& worldRenderView, const world::IWorldRenderPass& worldRenderPass)
 {
 	if (!m_mesh->supportTechnique(worldRenderPass.getTechnique()))
 		return;
