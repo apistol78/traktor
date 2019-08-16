@@ -30,7 +30,7 @@ class StructBuffer;
 	namespace world
 	{
 
-class IWorldShadowProjection;
+class IShadowProjection;
 class LightRendererDeferred;
 class WorldContext;
 
@@ -82,23 +82,17 @@ private:
 	{
 		ShadowContext slice[MaxSliceCount];
 		ShadowContext atlas[16];
-
 		Ref< WorldContext > gbuffer;
 		Ref< WorldContext > irradiance;
 		Ref< WorldContext > velocity;
 		Ref< WorldContext > visual;
-
 		AlignedVector< Light > lights;
 		Ref< render::StructBuffer > lightSBuffer;
-		
 		Ref< render::StructBuffer > tileSBuffer;
-
 		Frustum viewFrustum;
-
 		Matrix44 projection;
 		Matrix44 lastView;
 		Matrix44 view;
-
 		int32_t atlasCount;
 		float time;
 
@@ -132,30 +126,24 @@ private:
 
 	WorldRenderSettings m_settings;
 	WorldRenderSettings::ShadowSettings m_shadowSettings;
-
 	Quality m_toneMapQuality;
 	Quality m_motionBlurQuality;
 	Quality m_shadowsQuality;
 	Quality m_reflectionsQuality;
 	Quality m_ambientOcclusionQuality;
 	Quality m_antiAliasQuality;
-
 	Ref< render::IRenderView > m_renderView;
-
-	Ref< IWorldShadowProjection > m_shadowProjection;
-
+	Ref< IShadowProjection > m_shadowProjection;
 	Ref< render::RenderTargetSet > m_visualTargetSet;
 	Ref< render::RenderTargetSet > m_intermediateTargetSet;
 	Ref< render::RenderTargetSet > m_gbufferTargetSet;
 	Ref< render::RenderTargetSet > m_velocityTargetSet;
 	Ref< render::RenderTargetSet > m_colorTargetSet;
-	
+	Ref< render::RenderTargetSet > m_reflectionsTargetSet;		//!< Reflections target.
 	Ref< render::RenderTargetSet > m_shadowCascadeTargetSet;	//!< Shadow map for directional lights.
 	Ref< render::RenderTargetSet > m_shadowMaskTargetSet;		//!< Screen space projected shadow mask, directional lights.
 	Ref< render::RenderTargetSet > m_shadowAtlasTargetSet;		//!< Shadow map atlas for spot and point lights.
-	
 	Ref< render::RenderContext > m_globalContext;
-	
 	Ref< render::ImageProcess > m_colorTargetCopy;
 	Ref< render::ImageProcess > m_ambientOcclusion;
 	Ref< render::ImageProcess > m_antiAlias;
@@ -165,9 +153,7 @@ private:
 	Ref< render::ImageProcess > m_motionBlurImageProcess;
 	Ref< render::ImageProcess > m_toneMapImageProcess;
 	Ref< render::ImageProcess > m_shadowMaskProject;
-
 	Ref< LightRendererDeferred > m_lightRenderer;
-
 	RefArray< Entity > m_buildEntities;
 	AlignedVector< Frame > m_frames;
 	float m_slicePositions[MaxSliceCount + 1];

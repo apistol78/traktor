@@ -5,7 +5,7 @@ namespace traktor
 	namespace world
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.world.UniformShadowProjection", UniformShadowProjection, IWorldShadowProjection)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.world.UniformShadowProjection", UniformShadowProjection, IShadowProjection)
 
 UniformShadowProjection::UniformShadowProjection(uint32_t realShadowMapSize)
 :	m_realShadowMapSize(float(realShadowMapSize))

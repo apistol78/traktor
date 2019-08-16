@@ -9,7 +9,7 @@ namespace traktor
 	namespace world
 	{
 
-class IWorldShadowProjection : public Object
+class IShadowProjection : public Object
 {
 	T_RTTI_CLASS;
 
