@@ -31,7 +31,7 @@ void WorldContext::clear()
 		m_renderContext->flush();
 }
 
-void WorldContext::build(WorldRenderView& worldRenderView, IWorldRenderPass& worldRenderPass, Object* renderable)
+void WorldContext::build(WorldRenderView& worldRenderView, const IWorldRenderPass& worldRenderPass, Object* renderable)
 {
 	if (!renderable)
 		return;
@@ -56,7 +56,7 @@ void WorldContext::build(WorldRenderView& worldRenderView, IWorldRenderPass& wor
 		renderer->render(*this, worldRenderView, worldRenderPass, renderable);
 }
 
-void WorldContext::flush(WorldRenderView& worldRenderView, IWorldRenderPass& worldRenderPass)
+void WorldContext::flush(WorldRenderView& worldRenderView, const IWorldRenderPass& worldRenderPass)
 {
 	for (auto entityRenderer : m_entityRenderers->get())
 		entityRenderer->flush(*this, worldRenderView, worldRenderPass);

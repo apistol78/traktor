@@ -69,7 +69,7 @@ public:
 	void render(
 		world::WorldContext& worldContext,
 		world::WorldRenderView& worldRenderView,
-		world::IWorldRenderPass& worldRenderPass
+		const world::IWorldRenderPass& worldRenderPass
 	);
 
 	virtual void destroy() override final;

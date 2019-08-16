@@ -46,7 +46,7 @@ public:
 		TerrainComponent& terrainComponent,
 		world::WorldContext& worldContext,
 		world::WorldRenderView& worldRenderView,
-		world::IWorldRenderPass& worldRenderPass
+		const world::IWorldRenderPass& worldRenderPass
 	) override final;
 
 	virtual void updatePatches(const TerrainComponent& terrainComponent) override final;

@@ -14,7 +14,7 @@ namespace traktor
 	namespace physics
 	{
 
-/*! \brief Physics entity renderer.
+/*! Physics entity renderer.
  * \ingroup Physics
  */
 class T_DLLCLASS EntityRenderer : public world::IEntityRenderer
@@ -27,14 +27,14 @@ public:
 	virtual void render(
 		world::WorldContext& worldContext,
 		world::WorldRenderView& worldRenderView,
-		world::IWorldRenderPass& worldRenderPass,
+		const world::IWorldRenderPass& worldRenderPass,
 		Object* renderable
 	) override final;
 
 	virtual void flush(
 		world::WorldContext& worldContext,
 		world::WorldRenderView& worldRenderView,
-		world::IWorldRenderPass& worldRenderPass
+		const world::IWorldRenderPass& worldRenderPass
 	) override final
 	{ /* Not implemented */ }
 };

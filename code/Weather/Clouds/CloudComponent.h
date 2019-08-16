@@ -80,7 +80,7 @@ public:
 	void render(
 		render::RenderContext* renderContext,
 		world::WorldRenderView& worldRenderView,
-		world::IWorldRenderPass& worldRenderPass,
+		const world::IWorldRenderPass& worldRenderPass,
 		render::PrimitiveRenderer* primitiveRenderer
 	);
 
@@ -109,7 +109,7 @@ private:
 	void renderCluster(
 		render::RenderContext* renderContext,
 		world::WorldRenderView& worldRenderView,
-		world::IWorldRenderPass& worldRenderPass,
+		const world::IWorldRenderPass& worldRenderPass,
 		render::PrimitiveRenderer* primitiveRenderer,
 		const CloudParticleCluster& cluster
 	);

@@ -10,15 +10,13 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.animation.PathEntityRenderer", PathEntityRender
 
 const TypeInfoSet PathEntityRenderer::getRenderableTypes() const
 {
-	TypeInfoSet typeSet;
-	typeSet.insert< PathEntity >();
-	return typeSet;
+	return makeTypeInfoSet< PathEntity >();
 }
 
 void PathEntityRenderer::render(
 	world::WorldContext& worldContext,
 	world::WorldRenderView& worldRenderView,
-	world::IWorldRenderPass& worldRenderPass,
+	const world::IWorldRenderPass& worldRenderPass,
 	Object* renderable
 )
 {
@@ -29,7 +27,7 @@ void PathEntityRenderer::render(
 void PathEntityRenderer::flush(
 	world::WorldContext& worldContext,
 	world::WorldRenderView& worldRenderView,
-	world::IWorldRenderPass& worldRenderPass
+	const world::IWorldRenderPass& worldRenderPass
 )
 {
 }

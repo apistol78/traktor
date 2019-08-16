@@ -17,7 +17,7 @@ namespace traktor
 	namespace mesh
 	{
 
-/*! \brief
+/*! Streaming mesh component.
  * \ingroup Mesh
  */
 class T_DLLCLASS StreamMeshComponent : public MeshComponent
@@ -31,7 +31,7 @@ public:
 
 	virtual Aabb3 getBoundingBox() const override final;
 
-	virtual void render(world::WorldContext& worldContext, world::WorldRenderView& worldRenderView, world::IWorldRenderPass& worldRenderPass) override final;
+	virtual void render(world::WorldContext& worldContext, world::WorldRenderView& worldRenderView, const world::IWorldRenderPass& worldRenderPass) override final;
 
 	uint32_t getFrameCount() const;
 

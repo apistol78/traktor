@@ -15,19 +15,17 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.mesh.InstanceMeshComponentRenderer", InstanceMe
 
 const TypeInfoSet InstanceMeshComponentRenderer::getRenderableTypes() const
 {
-	TypeInfoSet typeSet;
-	typeSet.insert< InstanceMeshComponent >();
-	return typeSet;
+	return makeTypeInfoSet< InstanceMeshComponent >();
 }
 
 void InstanceMeshComponentRenderer::render(
 	world::WorldContext& worldContext,
 	world::WorldRenderView& worldRenderView,
-	world::IWorldRenderPass& worldRenderPass,
+	const world::IWorldRenderPass& worldRenderPass,
 	Object* renderable
 )
 {
-	InstanceMeshComponent* meshComponent = checked_type_cast< InstanceMeshComponent* >(renderable);
+	InstanceMeshComponent* meshComponent = mandatory_non_null_type_cast< InstanceMeshComponent* >(renderable);
 	InstanceMesh* mesh = meshComponent->getMesh();
 
 	if (!mesh->supportTechnique(worldRenderPass.getTechnique()))
@@ -59,7 +57,7 @@ void InstanceMeshComponentRenderer::render(
 void InstanceMeshComponentRenderer::flush(
 	world::WorldContext& worldContext,
 	world::WorldRenderView& worldRenderView,
-	world::IWorldRenderPass& worldRenderPass
+	const world::IWorldRenderPass& worldRenderPass
 )
 {
 	for (SmallMap< InstanceMesh*, AlignedVector< InstanceMesh::RenderInstance > >::iterator i = m_meshInstances.begin(); i != m_meshInstances.end(); ++i)

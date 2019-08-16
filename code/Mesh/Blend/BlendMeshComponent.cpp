@@ -32,7 +32,7 @@ Aabb3 BlendMeshComponent::getBoundingBox() const
 	return m_mesh->getBoundingBox();
 }
 
-void BlendMeshComponent::render(world::WorldContext& worldContext, world::WorldRenderView& worldRenderView, world::IWorldRenderPass& worldRenderPass)
+void BlendMeshComponent::render(world::WorldContext& worldContext, world::WorldRenderView& worldRenderView, const world::IWorldRenderPass& worldRenderPass)
 {
 	if (!m_mesh->supportTechnique(worldRenderPass.getTechnique()))
 		return;

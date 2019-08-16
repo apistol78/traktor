@@ -180,7 +180,7 @@ struct ImpostorUpdateRenderBlock : public render::RenderBlock
 T_IMPLEMENT_RTTI_CLASS(L"traktor.weather.CloudComponent", CloudComponent, world::IEntityComponent)
 
 CloudComponent::CloudComponent()
-:	m_owner(0)
+:	m_owner(nullptr)
 ,	m_handleBillboardView(render::getParameterHandle(L"BillboardView"))
 ,	m_handleImpostorTarget(render::getParameterHandle(L"ImpostorTarget"))
 ,	m_timeUntilUpdate(0.0f)
@@ -316,7 +316,7 @@ void CloudComponent::update(const world::UpdateParams& update)
 void CloudComponent::render(
 	render::RenderContext* renderContext,
 	world::WorldRenderView& worldRenderView,
-	world::IWorldRenderPass& worldRenderPass,
+	const world::IWorldRenderPass& worldRenderPass,
 	render::PrimitiveRenderer* primitiveRenderer
 )
 {
@@ -326,7 +326,7 @@ void CloudComponent::render(
 void CloudComponent::renderCluster(
 	render::RenderContext* renderContext,
 	world::WorldRenderView& worldRenderView,
-	world::IWorldRenderPass& worldRenderPass,
+	const world::IWorldRenderPass& worldRenderPass,
 	render::PrimitiveRenderer* primitiveRenderer,
 	const CloudParticleCluster& cluster
 )

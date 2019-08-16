@@ -88,7 +88,7 @@ void SplineEntity::update(const world::UpdateParams& update)
 void SplineEntity::render(
 	world::WorldContext& worldContext,
 	world::WorldRenderView& worldRenderView,
-	world::IWorldRenderPass& worldRenderPass
+	const world::IWorldRenderPass& worldRenderPass
 )
 {
 	for (auto layer : m_layers)

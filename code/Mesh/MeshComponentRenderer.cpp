@@ -10,26 +10,24 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.mesh.MeshComponentRenderer", MeshComponentRende
 
 const TypeInfoSet MeshComponentRenderer::getRenderableTypes() const
 {
-	TypeInfoSet typeSet;
-	typeSet.insert< MeshComponent >();
-	return typeSet;
+	return makeTypeInfoSet< MeshComponent >();
 }
 
 void MeshComponentRenderer::render(
 	world::WorldContext& worldContext,
 	world::WorldRenderView& worldRenderView,
-	world::IWorldRenderPass& worldRenderPass,
+	const world::IWorldRenderPass& worldRenderPass,
 	Object* renderable
 )
 {
-	MeshComponent* meshComponent = checked_type_cast< MeshComponent*, false >(renderable);
+	MeshComponent* meshComponent = mandatory_non_null_type_cast< MeshComponent* >(renderable);
 	meshComponent->render(worldContext, worldRenderView, worldRenderPass);
 }
 
 void MeshComponentRenderer::flush(
 	world::WorldContext& worldContext,
 	world::WorldRenderView& worldRenderView,
-	world::IWorldRenderPass& worldRenderPass
+	const world::IWorldRenderPass& worldRenderPass
 )
 {
 }

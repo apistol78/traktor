@@ -43,9 +43,9 @@ public:
 
 	void clear();
 
-	void build(WorldRenderView& worldRenderView, IWorldRenderPass& worldRenderPass, Object* renderable);
+	void build(WorldRenderView& worldRenderView, const IWorldRenderPass& worldRenderPass, Object* renderable);
 
-	void flush(WorldRenderView& worldRenderView, IWorldRenderPass& worldRenderPass);
+	void flush(WorldRenderView& worldRenderView, const IWorldRenderPass& worldRenderPass);
 
 	render::RenderContext* getRenderContext() const { return m_renderContext; }
 

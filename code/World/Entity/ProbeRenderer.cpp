@@ -121,15 +121,13 @@ ProbeRenderer::ProbeRenderer(
 
 const TypeInfoSet ProbeRenderer::getRenderableTypes() const
 {
-	TypeInfoSet TypeInfoSet;
-	TypeInfoSet.insert(&type_of< ProbeComponent >());
-	return TypeInfoSet;
+	return makeTypeInfoSet< ProbeComponent >();
 }
 
 void ProbeRenderer::render(
 	WorldContext& worldContext,
 	WorldRenderView& worldRenderView,
-	IWorldRenderPass& worldRenderPass,
+	const IWorldRenderPass& worldRenderPass,
 	Object* renderable
 )
 {
@@ -152,7 +150,7 @@ void ProbeRenderer::render(
 void ProbeRenderer::flush(
 	WorldContext& worldContext,
 	WorldRenderView& worldRenderView,
-	IWorldRenderPass& worldRenderPass
+	const IWorldRenderPass& worldRenderPass
 )
 {
 	if (!m_probeShader)

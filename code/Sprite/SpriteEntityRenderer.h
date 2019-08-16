@@ -15,7 +15,7 @@ namespace traktor
 	namespace sprite
 	{
 
-/*! \brief
+/*! Sprite entity renderer.
  * \ingroup Sprite
  */
 class T_DLLCLASS SpriteEntityRenderer : public world::IEntityRenderer
@@ -23,20 +23,20 @@ class T_DLLCLASS SpriteEntityRenderer : public world::IEntityRenderer
 	T_RTTI_CLASS;
 
 public:
-	virtual const TypeInfoSet getEntityTypes() const T_FINAL;
+	virtual const TypeInfoSet getEntityTypes() const override final;
 
 	virtual void render(
 		world::WorldContext& worldContext,
 		world::WorldRenderView& worldRenderView,
-		world::IWorldRenderPass& worldRenderPass,
+		const world::IWorldRenderPass& worldRenderPass,
 		world::Entity* entity
-	) T_FINAL;
+	) override final;
 
 	virtual void flush(
 		world::WorldContext& worldContext,
 		world::WorldRenderView& worldRenderView,
-		world::IWorldRenderPass& worldRenderPass
-	) T_FINAL;
+		const world::IWorldRenderPass& worldRenderPass
+	) override final;
 };
 
 	}

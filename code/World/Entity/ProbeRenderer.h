@@ -36,7 +36,7 @@ class IResourceManager;
 
 class ProbeComponent;
 
-/*! \brief
+/*! Probe entity renderer.
  * \ingroup World
  */
 class T_DLLCLASS ProbeRenderer : public IEntityRenderer
@@ -54,14 +54,14 @@ public:
 	virtual void render(
 		WorldContext& worldContext,
 		WorldRenderView& worldRenderView,
-		IWorldRenderPass& worldRenderPass,
+		const IWorldRenderPass& worldRenderPass,
 		Object* renderable
 	) override final;
 
 	virtual void flush(
 		WorldContext& worldContext,
 		WorldRenderView& worldRenderView,
-		IWorldRenderPass& worldRenderPass
+		const IWorldRenderPass& worldRenderPass
 	) override final;
 
 private:

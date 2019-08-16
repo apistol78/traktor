@@ -15,7 +15,7 @@ namespace traktor
 	namespace world
 	{
 
-/*! \brief
+/*! Component entity renderer.
  * \ingroup World
  */
 class T_DLLCLASS ComponentEntityRenderer : public IEntityRenderer
@@ -28,14 +28,14 @@ public:
 	virtual void render(
 		WorldContext& worldContext,
 		WorldRenderView& worldRenderView,
-		IWorldRenderPass& worldRenderPass,
+		const IWorldRenderPass& worldRenderPass,
 		Object* renderable
 	) override final;
 
 	virtual void flush(
 		WorldContext& worldContext,
 		WorldRenderView& worldRenderView,
-		IWorldRenderPass& worldRenderPass
+		const IWorldRenderPass& worldRenderPass
 	) override final;
 };
 

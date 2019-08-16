@@ -62,7 +62,7 @@ class TerrainSurfaceCache;
 //#	define T_USE_TERRAIN_VERTEX_TEXTURE_FETCH
 //#endif
 
-/*! \brief Terrain entity.
+/*! Terrain entity.
  * \ingroup Terrain
  */
 class T_DLLCLASS TerrainComponent : public world::IEntityComponent
@@ -108,7 +108,7 @@ public:
 	void render(
 		world::WorldContext& worldContext,
 		world::WorldRenderView& worldRenderView,
-		world::IWorldRenderPass& worldRenderPass,
+		const world::IWorldRenderPass& worldRenderPass,
 		float detailDistance,
 		uint32_t cacheSize,
 		bool layersEnable

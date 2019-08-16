@@ -10,15 +10,13 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.sprite.SpriteEntityRenderer", SpriteEntityRende
 
 const TypeInfoSet SpriteEntityRenderer::getEntityTypes() const
 {
-	TypeInfoSet typeSet;
-	typeSet.insert< SpriteEntity >();
-	return typeSet;
+	return makeTypeInfoSet< SpriteEntity >();
 }
 
 void SpriteEntityRenderer::render(
 	world::WorldContext& worldContext,
 	world::WorldRenderView& worldRenderView,
-	world::IWorldRenderPass& worldRenderPass,
+	const world::IWorldRenderPass& worldRenderPass,
 	world::Entity* entity
 )
 {
@@ -27,7 +25,7 @@ void SpriteEntityRenderer::render(
 void SpriteEntityRenderer::flush(
 	world::WorldContext& worldContext,
 	world::WorldRenderView& worldRenderView,
-	world::IWorldRenderPass& worldRenderPass
+	const world::IWorldRenderPass& worldRenderPass
 )
 {
 }

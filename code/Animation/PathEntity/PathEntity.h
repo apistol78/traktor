@@ -26,7 +26,7 @@ class WorldRenderView;
 	namespace animation
 	{
 
-/*! \brief Movement path entity.
+/*! Movement path entity.
  * \ingroup Animation
  */
 class T_DLLCLASS PathEntity : public world::Entity
@@ -64,7 +64,7 @@ public:
 	void render(
 		world::WorldContext& worldContext,
 		world::WorldRenderView& worldRenderView,
-		world::IWorldRenderPass& worldRenderPass
+		const world::IWorldRenderPass& worldRenderPass
 	);
 
 	void setPath(const TransformPath& path) { m_path = path; }

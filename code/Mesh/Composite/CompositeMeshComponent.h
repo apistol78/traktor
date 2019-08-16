@@ -16,7 +16,7 @@ namespace traktor
 	namespace mesh
 	{
 
-/*! \brief
+/*! Composite mesh component.
  * \ingroup Mesh
  */
 class T_DLLCLASS CompositeMeshComponent : public MeshComponent
@@ -34,7 +34,7 @@ public:
 
 	virtual void update(const world::UpdateParams& update) override final;
 
-	virtual void render(world::WorldContext& worldContext, world::WorldRenderView& worldRenderView, world::IWorldRenderPass& worldRenderPass) override final;
+	virtual void render(world::WorldContext& worldContext, world::WorldRenderView& worldRenderView, const world::IWorldRenderPass& worldRenderPass) override final;
 
 	void removeAll();
 

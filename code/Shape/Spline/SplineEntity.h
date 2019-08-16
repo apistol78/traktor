@@ -29,7 +29,7 @@ class WorldRenderView;
 class ControlPointEntity;
 class ISplineLayer;
 
-/*! \brief
+/*! Spline entity.
  * \ingroup Shape
  */
 class T_DLLCLASS SplineEntity : public world::ComponentEntity
@@ -50,7 +50,7 @@ public:
 	void render(
 		world::WorldContext& worldContext,
 		world::WorldRenderView& worldRenderView,
-		world::IWorldRenderPass& worldRenderPass
+		const world::IWorldRenderPass& worldRenderPass
 	);
 
 	const TransformPath& getPath() const { return m_path; }

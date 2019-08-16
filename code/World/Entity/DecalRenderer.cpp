@@ -86,19 +86,17 @@ DecalRenderer::DecalRenderer(render::IRenderSystem* renderSystem)
 
 const TypeInfoSet DecalRenderer::getRenderableTypes() const
 {
-	TypeInfoSet TypeInfoSet;
-	TypeInfoSet.insert(&type_of< DecalComponent >());
-	return TypeInfoSet;
+	return makeTypeInfoSet< DecalComponent >();
 }
 
 void DecalRenderer::render(
 	WorldContext& worldContext,
 	WorldRenderView& worldRenderView,
-	IWorldRenderPass& worldRenderPass,
+	const IWorldRenderPass& worldRenderPass,
 	Object* renderable
 )
 {
-	DecalComponent* decalComponent = checked_type_cast< DecalComponent*, false >(renderable);
+	DecalComponent* decalComponent = mandatory_non_null_type_cast< DecalComponent* >(renderable);
 	const Transform& transform = decalComponent->getTransform();
 
 	float s = decalComponent->getSize();
@@ -119,7 +117,7 @@ void DecalRenderer::render(
 void DecalRenderer::flush(
 	WorldContext& worldContext,
 	WorldRenderView& worldRenderView,
-	IWorldRenderPass& worldRenderPass
+	const IWorldRenderPass& worldRenderPass
 )
 {
 	render::RenderContext* renderContext = worldContext.getRenderContext();

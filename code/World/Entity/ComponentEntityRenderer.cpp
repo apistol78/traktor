@@ -11,26 +11,24 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.world.ComponentEntityRenderer", ComponentEntity
 
 const TypeInfoSet ComponentEntityRenderer::getRenderableTypes() const
 {
-	TypeInfoSet typeSet;
-	typeSet.insert< ComponentEntity >();
-	return typeSet;
+	return makeTypeInfoSet< ComponentEntity >();
 }
 
 void ComponentEntityRenderer::render(
 	WorldContext& worldContext,
 	WorldRenderView& worldRenderView,
-	IWorldRenderPass& worldRenderPass,
+	const IWorldRenderPass& worldRenderPass,
 	Object* renderable
 )
 {
-	ComponentEntity* componentEntity = checked_type_cast< ComponentEntity*, false >(renderable);
+	ComponentEntity* componentEntity = mandatory_non_null_type_cast< ComponentEntity* >(renderable);
 	componentEntity->render(worldContext, worldRenderView, worldRenderPass);
 }
 
 void ComponentEntityRenderer::flush(
 	WorldContext& worldContext,
 	WorldRenderView& worldRenderView,
-	IWorldRenderPass& worldRenderPass
+	const IWorldRenderPass& worldRenderPass
 )
 {
 }

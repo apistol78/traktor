@@ -39,7 +39,7 @@ class IWorldRenderPass;
 	namespace spray
 	{
 
-/*! \brief Mesh particle renderer.
+/*! Mesh particle renderer.
  * \ingroup Spray
  */
 class T_DLLCLASS MeshRenderer : public Object
@@ -61,7 +61,7 @@ public:
 
 	void flush(
 		render::RenderContext* renderContext,
-		world::IWorldRenderPass& worldRenderPass
+		const world::IWorldRenderPass& worldRenderPass
 	);
 
 private:

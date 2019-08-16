@@ -184,7 +184,7 @@ void RiverComponent::update(const world::UpdateParams& update)
 void RiverComponent::render(
 	render::RenderContext* renderContext,
 	world::WorldRenderView& worldRenderView,
-	world::IWorldRenderPass& worldRenderPass
+	const world::IWorldRenderPass& worldRenderPass
 )
 {
 	worldRenderPass.setShaderTechnique(m_shader);

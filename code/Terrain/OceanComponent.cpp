@@ -221,7 +221,7 @@ void OceanComponent::update(const world::UpdateParams& update)
 void OceanComponent::render(
 	render::RenderContext* renderContext,
 	world::WorldRenderView& worldRenderView,
-	world::IWorldRenderPass& worldRenderPass,
+	const world::IWorldRenderPass& worldRenderPass,
 	bool reflectionEnable
 )
 {

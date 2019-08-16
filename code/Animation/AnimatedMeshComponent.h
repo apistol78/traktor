@@ -63,7 +63,7 @@ public:
 
 	virtual Aabb3 getBoundingBox() const override final;
 
-	virtual void render(world::WorldContext& worldContext, world::WorldRenderView& worldRenderView, world::IWorldRenderPass& worldRenderPass) override final;
+	virtual void render(world::WorldContext& worldContext, world::WorldRenderView& worldRenderView, const world::IWorldRenderPass& worldRenderPass) override final;
 
 	virtual void update(const world::UpdateParams& update) override final;
 

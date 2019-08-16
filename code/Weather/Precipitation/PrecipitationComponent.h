@@ -33,7 +33,7 @@ class WorldRenderView;
 	namespace weather
 	{
 
-/*! \brief Precipitation component.
+/*! Precipitation component.
  * \ingroup Weather
  */
 class T_DLLCLASS PrecipitationComponent : public world::IEntityComponent
@@ -59,7 +59,7 @@ public:
 
 	virtual void update(const world::UpdateParams& update) override final;
 
-	void render(world::WorldContext& worldContext, world::WorldRenderView& worldRenderView, world::IWorldRenderPass& worldRenderPass);
+	void render(world::WorldContext& worldContext, world::WorldRenderView& worldRenderView, const world::IWorldRenderPass& worldRenderPass);
 
 private:
 	resource::Proxy< mesh::StaticMesh > m_mesh;

@@ -180,7 +180,7 @@ void TrailRenderer::render(
 
 void TrailRenderer::flush(
 	render::RenderContext* renderContext,
-	world::IWorldRenderPass& worldRenderPass
+	const world::IWorldRenderPass& worldRenderPass
 )
 {
 	if (!m_vertex)

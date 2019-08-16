@@ -113,7 +113,7 @@ void PathEntity::update(const world::UpdateParams& update)
 void PathEntity::render(
 	world::WorldContext& worldContext,
 	world::WorldRenderView& worldRenderView,
-	world::IWorldRenderPass& worldRenderPass
+	const world::IWorldRenderPass& worldRenderPass
 )
 {
 	if (m_entity)

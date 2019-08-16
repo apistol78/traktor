@@ -56,7 +56,7 @@ public:
 	void render(
 		render::RenderContext* renderContext,
 		world::WorldRenderView& worldRenderView,
-		world::IWorldRenderPass& worldRenderPass,
+		const world::IWorldRenderPass& worldRenderPass,
 		const Transform& worldTransform,
 		float distance,
 		const IMeshParameterCallback* parameterCallback

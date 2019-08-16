@@ -205,7 +205,7 @@ void ExtrudeShapeLayer::pathChanged()
 void ExtrudeShapeLayer::render(
 	world::WorldContext& worldContext,
 	world::WorldRenderView& worldRenderView,
-	world::IWorldRenderPass& worldRenderPass
+	const world::IWorldRenderPass& worldRenderPass
 )
 {
 	if (!m_indexBuffer || !m_vertexBuffer)

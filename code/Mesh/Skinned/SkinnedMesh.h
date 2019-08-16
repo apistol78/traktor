@@ -58,7 +58,7 @@ public:
 
 	void render(
 		render::RenderContext* renderContext,
-		world::IWorldRenderPass& worldRenderPass,
+		const world::IWorldRenderPass& worldRenderPass,
 		const Transform& lastWorldTransform,
 		const Transform& worldTransform,
 		const AlignedVector< Vector4 >& jointTransforms,

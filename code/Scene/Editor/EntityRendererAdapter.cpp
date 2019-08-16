@@ -24,7 +24,7 @@ const TypeInfoSet EntityRendererAdapter::getRenderableTypes() const
 void EntityRendererAdapter::render(
 	world::WorldContext& worldContext,
 	world::WorldRenderView& worldRenderView,
-	world::IWorldRenderPass& worldRenderPass,
+	const world::IWorldRenderPass& worldRenderPass,
 	Object* renderable
 )
 {
@@ -44,7 +44,7 @@ void EntityRendererAdapter::render(
 void EntityRendererAdapter::flush(
 	world::WorldContext& worldContext,
 	world::WorldRenderView& worldRenderView,
-	world::IWorldRenderPass& worldRenderPass
+	const world::IWorldRenderPass& worldRenderPass
 )
 {
 	m_entityRenderer->flush(

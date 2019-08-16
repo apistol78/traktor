@@ -61,7 +61,7 @@ Ref< StreamMesh::Instance > StreamMesh::createInstance() const
 
 void StreamMesh::render(
 	render::RenderContext* renderContext,
-	world::IWorldRenderPass& worldRenderPass,
+	const world::IWorldRenderPass& worldRenderPass,
 	const Transform& worldTransform,
 	Instance* instance,
 	uint32_t frame,

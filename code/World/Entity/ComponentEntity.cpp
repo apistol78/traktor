@@ -93,7 +93,7 @@ IEntityComponent* ComponentEntity::getComponent(const TypeInfo& componentType) c
 	return nullptr;
 }
 
-void ComponentEntity::render(WorldContext& worldContext, WorldRenderView& worldRenderView, IWorldRenderPass& worldRenderPass)
+void ComponentEntity::render(WorldContext& worldContext, WorldRenderView& worldRenderView, const IWorldRenderPass& worldRenderPass)
 {
 	for (auto component : m_components)
 		worldContext.build(worldRenderView, worldRenderPass, component);

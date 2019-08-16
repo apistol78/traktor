@@ -154,7 +154,7 @@ bool ClothEntity::create(
 void ClothEntity::render(
 	world::WorldContext& worldContext,
 	world::WorldRenderView& worldRenderView,
-	world::IWorldRenderPass& worldRenderPass
+	const world::IWorldRenderPass& worldRenderPass
 )
 {
 	if (!m_shader->hasTechnique(worldRenderPass.getTechnique()))
