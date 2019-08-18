@@ -69,6 +69,10 @@
 #include "Ui/Graph/EdgeDisconnectEvent.h"
 #include "Ui/Graph/Pin.h"
 #include "Ui/Graph/SelectEvent.h"
+#include "Ui/GridView/GridColumn.h"
+#include "Ui/GridView/GridItem.h"
+#include "Ui/GridView/GridRow.h"
+#include "Ui/GridView/GridView.h"
 
 // Resources
 #include "Resources/Tools.h"
@@ -193,6 +197,18 @@ bool ShaderGraphEditorPage::create(ui::Container* parent)
 	m_shaderViewer->setVisible(m_editor->getSettings()->getProperty< bool >(L"ShaderEditor.ShaderViewVisible", true));
 	m_site->createAdditionalPanel(m_shaderViewer, ui::dpi96(400), false);
 
+	// Create variable grid.
+	m_variablesContainer = new ui::Container();
+	m_variablesContainer->create(parent, ui::WsNone, new ui::FloodLayout());
+	m_variablesContainer->setText(i18n::Text(L"SHADERGRAPH_VARIABLES"));
+	m_site->createAdditionalPanel(m_variablesContainer, ui::dpi96(400), false);
+
+	m_variablesGrid = new ui::GridView();
+	m_variablesGrid->create(m_variablesContainer, ui::WsDoubleBuffer | ui::GridView::WsColumnHeader);
+	m_variablesGrid->addColumn(new ui::GridColumn(i18n::Text(L"SHADERGRAPH_VARIABLES_NAME"), ui::dpi96(140)));
+	m_variablesGrid->addColumn(new ui::GridColumn(i18n::Text(L"SHADERGRAPH_VARIABLES_SCOPE"), ui::dpi96(80)));
+	m_variablesGrid->addColumn(new ui::GridColumn(i18n::Text(L"SHADERGRAPH_VARIABLES_N_READ"), ui::dpi96(80)));
+
 	// Build popup menu.
 	m_menuPopup = new ui::Menu();
 	Ref< ui::MenuItem > menuItemCreate = new ui::MenuItem(i18n::Text(L"SHADERGRAPH_CREATE_NODE"));
@@ -274,10 +290,14 @@ void ShaderGraphEditorPage::destroy()
 		m_site->destroyAdditionalPanel(m_dependencyPane);
 	}
 
+	if (m_variablesContainer)
+		m_site->destroyAdditionalPanel(m_variablesContainer);
+
 	m_nodeFacades.clear();
 	safeDestroy(m_editorGraph);
 	safeDestroy(m_shaderViewer);
 	safeDestroy(m_dependencyPane);
+	safeDestroy(m_variablesContainer);
 	safeDestroy(m_menuQuick);
 }
 
@@ -833,11 +853,8 @@ void ShaderGraphEditorPage::createNode(const TypeInfo* nodeType, const ui::Point
 void ShaderGraphEditorPage::refreshGraph()
 {
 	// Refresh editor nodes.
-	RefArray< ui::Node >& editorNodes = m_editorGraph->getNodes();
-	for (RefArray< ui::Node >::const_iterator i = editorNodes.begin(); i != editorNodes.end(); ++i)
+	for (auto editorNode : m_editorGraph->getNodes())
 	{
-		ui::Node* editorNode = *i;
-
 		Node* shaderNode = editorNode->getData< Node >(L"SHADERNODE");
 		INodeFacade* nodeFacade = editorNode->getData< INodeFacade >(L"FACADE");
 
@@ -856,6 +873,52 @@ void ShaderGraphEditorPage::refreshGraph()
 
 void ShaderGraphEditorPage::updateGraph()
 {
+	struct VariableInfo
+	{
+		uint32_t globalCount;
+		uint32_t localCount;
+		uint32_t readCount;
+
+		VariableInfo()
+		:	globalCount(0)
+		,	localCount(0)
+		,	readCount(0)
+		{
+		}
+	};
+	std::map< std::wstring, VariableInfo > variables;
+
+	// Update variables grid.
+	RefArray< Variable > variableNodes;
+	m_shaderGraph->findNodesOf< Variable >(variableNodes);
+	for (auto variableNode : variableNodes)
+	{
+		auto& vi = variables[variableNode->getName()];
+
+		if (variableNode->isGlobal())
+			++vi.globalCount;
+		else
+			++vi.localCount;
+
+		vi.readCount += m_shaderGraph->getDestinationCount(variableNode->getOutputPin(0));
+	}
+	m_variablesGrid->removeAllRows();
+	for (const auto& variable : variables)
+	{
+		Ref< ui::GridRow > row = new ui::GridRow();
+		row->add(new ui::GridItem(variable.first));
+
+		if (variable.second.globalCount > 0 && variable.second.localCount == 0)
+			row->add(new ui::GridItem(i18n::Text(L"SHADERGRAPH_VARIABLES_GLOBAL")));
+		else if (variable.second.globalCount == 0 && variable.second.localCount > 0)
+			row->add(new ui::GridItem(i18n::Text(L"SHADERGRAPH_VARIABLES_LOCAL")));
+		else
+			row->add(new ui::GridItem(i18n::Text(L"SHADERGRAPH_VARIABLES_SCOPE_ERROR")));
+
+		row->add(new ui::GridItem(toString(variable.second.readCount)));
+		m_variablesGrid->addRow(row);
+	}
+
 	// Validate shader graph.
 	std::vector< const Node* > errorNodes;
 	bool validationResult = ShaderGraphValidator(m_shaderGraph).validate(ShaderGraphValidator::SgtFragment, &errorNodes);

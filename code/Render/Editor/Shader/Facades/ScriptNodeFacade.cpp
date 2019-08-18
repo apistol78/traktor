@@ -75,6 +75,7 @@ private:
 			bool needCompleteRebuild = false;
 
 			// Remove input edges which are connected to pins which are no longer available.
+			std::set< std::wstring > removeInputPins;
 			for (int32_t i = 0; i < m_scriptNode->getInputPinCount(); ++i)
 			{
 				const InputPin* inputPin = m_scriptNode->getInputPin(i);
@@ -95,10 +96,14 @@ private:
 						m_shaderGraph->removeEdge(inputEdge);
 						needCompleteRebuild = true;
 					}
+					removeInputPins.insert(inputPin->getName());
 				}
 			}
+			for (const auto& pin : removeInputPins)
+				m_scriptNode->removeInputPin(pin);
 
 			// Remove output edges which are connected to pins which are no longer available.
+			std::set< std::wstring > removeOutputPins;
 			for (int32_t i = 0; i < m_scriptNode->getOutputPinCount(); ++i)
 			{
 				const OutputPin* outputPin = m_scriptNode->getOutputPin(i);
@@ -121,8 +126,11 @@ private:
 							m_shaderGraph->removeEdge(*j);
 						needCompleteRebuild = true;
 					}
+					removeOutputPins.insert(outputPin->getName());
 				}
 			}
+			for (const auto& pin : removeOutputPins)
+				m_scriptNode->removeOutputPin(pin);			
 
 			// Add new input pins.
 			for (int32_t i = 0; i < m_dialog->getInputPinCount(); ++i)

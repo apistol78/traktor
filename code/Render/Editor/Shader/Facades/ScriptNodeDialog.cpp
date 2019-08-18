@@ -26,13 +26,13 @@ namespace traktor
 
 const wchar_t* c_parameterTypes[] =
 {
-	L"Scalar",	// PtScalar
-	L"Vector",
-	L"Matrix",
-	L"Texture 2D",
-	L"Texture 3D",
-	L"Texture Cube",
-	L"Struct Buffer"
+	L"SHADERGRAPH_SCRIPT_TYPE_SCALAR",	// PtScalar
+	L"SHADERGRAPH_SCRIPT_TYPE_VECTOR",
+	L"SHADERGRAPH_SCRIPT_TYPE_MATRIX",
+	L"SHADERGRAPH_SCRIPT_TYPE_TEXTURE_2D",
+	L"SHADERGRAPH_SCRIPT_TYPE_TEXTURE_3D",
+	L"SHADERGRAPH_SCRIPT_TYPE_TEXTURE_CUBE",
+	L"SHADERGRAPH_SCRIPT_TYPE_STRUCT_BUFFER"
 };
 
 		}
@@ -65,9 +65,9 @@ bool ScriptNodeDialog::create(ui::Widget* parent)
 
 	m_inputPinList = new ui::GridView();
 	m_inputPinList->create(splitter2, ui::GridView::WsColumnHeader | ui::GridView::WsAutoEdit| ui::WsDoubleBuffer);
-	m_inputPinList->addColumn(new ui::GridColumn(L"Input", ui::dpi96(90), true));
-	m_inputPinList->addColumn(new ui::GridColumn(L"Type", ui::dpi96(70), false));
-	m_inputPinList->addColumn(new ui::GridColumn(L"Sampler", ui::dpi96(110), false));
+	m_inputPinList->addColumn(new ui::GridColumn(i18n::Text(L"SHADERGRAPH_SCRIPT_INPUT"), ui::dpi96(90), true));
+	m_inputPinList->addColumn(new ui::GridColumn(i18n::Text(L"SHADERGRAPH_SCRIPT_TYPE"), ui::dpi96(70), false));
+	m_inputPinList->addColumn(new ui::GridColumn(i18n::Text(L"SHADERGRAPH_SCRIPT_SAMPLER"), ui::dpi96(110), false));
 	m_inputPinList->addEventHandler< ui::GridRowDoubleClickEvent >(this, &ScriptNodeDialog::eventInputPinRowDoubleClick);
 	m_inputPinList->addEventHandler< ui::GridItemContentChangeEvent >(this, &ScriptNodeDialog::eventInputPinEdit);
 
@@ -76,21 +76,21 @@ bool ScriptNodeDialog::create(ui::Widget* parent)
 	{
 		Ref< ui::GridRow > row = new ui::GridRow();
 		row->add(new ui::GridItem(m_script->getInputPin(i)->getName()));
-		row->add(new ui::GridItem(c_parameterTypes[m_script->getInputPinType(i)]));
+		row->add(new ui::GridItem(i18n::Text(c_parameterTypes[m_script->getInputPinType(i)])));
 		row->add(new ui::GridItem(m_script->getInputPinSamplerId(i)));
 		m_inputPinList->addRow(row);
 	}
 
 	Ref< ui::GridRow > lastInputRow = new ui::GridRow();
-	lastInputRow->add(new ui::GridItem(L"(Add pin)"));
+	lastInputRow->add(new ui::GridItem(i18n::Text(L"SHADERGRAPH_SCRIPT_ADD_PIN")));
 	lastInputRow->add(new ui::GridItem(L""));
 	lastInputRow->add(new ui::GridItem(L""));
 	m_inputPinList->addRow(lastInputRow);
 
 	m_outputPinList = new ui::GridView();
 	m_outputPinList->create(splitter2, ui::GridView::WsColumnHeader | ui::GridView::WsAutoEdit | ui::WsDoubleBuffer);
-	m_outputPinList->addColumn(new ui::GridColumn(L"Output", ui::dpi96(90), true));
-	m_outputPinList->addColumn(new ui::GridColumn(L"Type", ui::dpi96(70), false));
+	m_outputPinList->addColumn(new ui::GridColumn(i18n::Text(L"SHADERGRAPH_SCRIPT_OUTPUT"), ui::dpi96(90), true));
+	m_outputPinList->addColumn(new ui::GridColumn(i18n::Text(L"SHADERGRAPH_SCRIPT_TYPE"), ui::dpi96(70), false));
 	m_outputPinList->addEventHandler< ui::GridRowDoubleClickEvent >(this, &ScriptNodeDialog::eventOutputPinRowDoubleClick);
 	m_outputPinList->addEventHandler< ui::GridItemContentChangeEvent >(this, &ScriptNodeDialog::eventOutputPinEdit);
 
@@ -99,12 +99,12 @@ bool ScriptNodeDialog::create(ui::Widget* parent)
 	{
 		Ref< ui::GridRow > row = new ui::GridRow();
 		row->add(new ui::GridItem(m_script->getOutputPin(i)->getName()));
-		row->add(new ui::GridItem(c_parameterTypes[m_script->getOutputPinType(i)]));
+		row->add(new ui::GridItem(i18n::Text(c_parameterTypes[m_script->getOutputPinType(i)])));
 		m_outputPinList->addRow(row);
 	}
 
 	Ref< ui::GridRow > lastOutputRow = new ui::GridRow();
-	lastOutputRow->add(new ui::GridItem(L"(Add pin)"));
+	lastOutputRow->add(new ui::GridItem(i18n::Text(L"SHADERGRAPH_SCRIPT_ADD_PIN")));
 	lastOutputRow->add(new ui::GridItem(L""));
 	m_outputPinList->addRow(lastOutputRow);
 
@@ -169,12 +169,14 @@ void ScriptNodeDialog::eventInputPinRowDoubleClick(ui::GridRowDoubleClickEvent* 
 	if (m_inputPinList->getRows().back() != row)
 		return;
 
-	row->set(0, new ui::GridItem(L"Unnamed"));
-	row->set(1, new ui::GridItem(c_parameterTypes[0]));
+	row->setEditable(true);
+	row->set(0, new ui::GridItem(i18n::Text(L"SHADERGRAPH_SCRIPT_UNNAMED")));
+	row->set(1, new ui::GridItem(i18n::Text(c_parameterTypes[0])));
 	row->set(2, new ui::GridItem(L""));
 
 	Ref< ui::GridRow > lastInputRow = new ui::GridRow();
-	lastInputRow->add(new ui::GridItem(L"(Add pin)"));
+	lastInputRow->setEditable(false);
+	lastInputRow->add(new ui::GridItem(i18n::Text(L"SHADERGRAPH_SCRIPT_ADD_PIN")));
 	lastInputRow->add(new ui::GridItem(L""));
 	lastInputRow->add(new ui::GridItem(L""));
 	m_inputPinList->addRow(lastInputRow);
@@ -183,8 +185,6 @@ void ScriptNodeDialog::eventInputPinRowDoubleClick(ui::GridRowDoubleClickEvent* 
 void ScriptNodeDialog::eventInputPinEdit(ui::GridItemContentChangeEvent* event)
 {
 	event->consume();
-	//ui::GridItem* item = event->getItem();
-	//ui::GridRow* row = item->getRow();
 }
 
 void ScriptNodeDialog::eventOutputPinRowDoubleClick(ui::GridRowDoubleClickEvent* event)
@@ -193,11 +193,13 @@ void ScriptNodeDialog::eventOutputPinRowDoubleClick(ui::GridRowDoubleClickEvent*
 	if (m_outputPinList->getRows().back() != row)
 		return;
 
-	row->set(0, new ui::GridItem(L"Unnamed"));
-	row->set(1, new ui::GridItem(c_parameterTypes[0]));
+	row->setEditable(true);
+	row->set(0, new ui::GridItem(i18n::Text(L"SHADERGRAPH_SCRIPT_UNNAMED")));
+	row->set(1, new ui::GridItem(i18n::Text(c_parameterTypes[0])));
 
 	Ref< ui::GridRow > lastOutputRow = new ui::GridRow();
-	lastOutputRow->add(new ui::GridItem(L"(Add pin)"));
+	lastOutputRow->setEditable(false);
+	lastOutputRow->add(new ui::GridItem(i18n::Text(L"SHADERGRAPH_SCRIPT_ADD_PIN")));
 	lastOutputRow->add(new ui::GridItem(L""));
 	m_outputPinList->addRow(lastOutputRow);
 }

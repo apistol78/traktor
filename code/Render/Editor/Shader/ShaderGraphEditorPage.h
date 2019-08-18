@@ -31,6 +31,7 @@ class Container;
 class EdgeConnectEvent;
 class EdgeDisconnectEvent;
 class GraphControl;
+class GridView;
 class Menu;
 class Node;
 class NodeActivateEvent;
@@ -84,6 +85,8 @@ private:
 	Ref< ui::GraphControl > m_editorGraph;
 	Ref< ShaderDependencyPane > m_dependencyPane;
 	Ref< ShaderViewer > m_shaderViewer;
+	Ref< ui::Container > m_variablesContainer;
+	Ref< ui::GridView > m_variablesGrid;
 	Ref< ui::Menu > m_menuPopup;
 	Ref< QuickMenuTool > m_menuQuick;
 	std::map< const TypeInfo*, Ref< INodeFacade > > m_nodeFacades;
