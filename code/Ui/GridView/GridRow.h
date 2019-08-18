@@ -38,6 +38,10 @@ public:
 
 	virtual ~GridRow();
 
+	void setEditable(bool editable);
+
+	bool getEditable() const { return m_editable; }
+
 	void setState(uint32_t state);
 
 	uint32_t getState() const { return m_state; }
@@ -79,6 +83,7 @@ public:
 private:
 	friend class GridView;
 
+	bool m_editable;
 	uint32_t m_state;
 	Color4ub m_background;
 	int32_t m_minimumHeight;

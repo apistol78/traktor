@@ -22,7 +22,8 @@ namespace traktor
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.GridRow", GridRow, AutoWidgetCell)
 
 GridRow::GridRow(uint32_t initialState)
-:	m_state(initialState)
+:	m_editable(true)
+,	m_state(initialState)
 ,	m_background(255, 255, 255, 0)
 ,	m_minimumHeight(0)
 ,	m_parent(0)
@@ -38,6 +39,11 @@ GridRow::~GridRow()
 		if (*i)
 			(*i)->m_row = nullptr;
 	}
+}
+
+void GridRow::setEditable(bool editable)
+{
+	m_editable = editable;
 }
 
 void GridRow::setState(uint32_t state)
@@ -218,7 +224,7 @@ void GridRow::mouseDown(MouseButtonDownEvent* event, const Point& position)
 
 	m_mouseDownPosition = position;
 
-	if (true /*m_editable*/)
+	if (m_editable)
 	{
 		if (m_editMode == 0)
 		{
