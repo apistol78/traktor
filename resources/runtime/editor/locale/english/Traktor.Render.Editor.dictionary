@@ -562,6 +562,58 @@
       <second>Edit script</second>
     </item>
     <item>
+      <first>SHADERGRAPH_SCRIPT_INPUT</first>
+      <second>Input</second>
+    </item>
+    <item>
+      <first>SHADERGRAPH_SCRIPT_OUTPUT</first>
+      <second>Output</second>
+    </item>
+    <item>
+      <first>SHADERGRAPH_SCRIPT_TYPE</first>
+      <second>Type</second>
+    </item>
+    <item>
+      <first>SHADERGRAPH_SCRIPT_SAMPLER</first>
+      <second>Sampler</second>
+    </item>
+    <item>
+      <first>SHADERGRAPH_SCRIPT_ADD_PIN</first>
+      <second>(Add pin)</second>
+    </item>
+    <item>
+      <first>SHADERGRAPH_SCRIPT_UNNAMED</first>
+      <second>Unnamed</second>
+    </item>
+    <item>
+      <first>SHADERGRAPH_SCRIPT_TYPE_SCALAR</first>
+      <second>Scalar</second>
+    </item>
+    <item>
+      <first>SHADERGRAPH_SCRIPT_TYPE_VECTOR</first>
+      <second>Vector</second>
+    </item>
+    <item>
+      <first>SHADERGRAPH_SCRIPT_TYPE_MATRIX</first>
+      <second>Matrix</second>
+    </item>
+    <item>
+      <first>SHADERGRAPH_SCRIPT_TYPE_TEXTURE_2D</first>
+      <second>Texture 2D</second>
+    </item>
+    <item>
+      <first>SHADERGRAPH_SCRIPT_TYPE_TEXTURE_3D</first>
+      <second>Texture 3D</second>
+    </item>
+    <item>
+      <first>SHADERGRAPH_SCRIPT_TYPE_TEXTURE_CUBE</first>
+      <second>Texture Cube</second>
+    </item>
+    <item>
+      <first>SHADERGRAPH_SCRIPT_TYPE_STRUCT_BUFFER</first>
+      <second>Struct Buffer</second>
+    </item>
+    <item>
       <first>SHADERGRAPH_TOUCH_ALL</first>
       <second>Touch all shadergraphs</second>
     </item>
@@ -600,6 +652,34 @@
     <item>
       <first>SHADERGRAPH_VIEWER_VERTEX</first>
       <second>Vertex</second>
+    </item>
+    <item>
+      <first>SHADERGRAPH_VARIABLES</first>
+      <second>Variables</second>
+    </item>
+    <item>
+      <first>SHADERGRAPH_VARIABLES_GLOBAL</first>
+      <second>Global</second>
+    </item>
+    <item>
+      <first>SHADERGRAPH_VARIABLES_LOCAL</first>
+      <second>Local</second>
+    </item>
+    <item>
+      <first>SHADERGRAPH_VARIABLES_NAME</first>
+      <second>Name</second>
+    </item>
+    <item>
+      <first>SHADERGRAPH_VARIABLES_SCOPE</first>
+      <second>Scope</second>
+    </item>
+    <item>
+      <first>SHADERGRAPH_VARIABLES_SCOPE_ERROR</first>
+      <second>Scope error</second>
+    </item>
+    <item>
+      <first>SHADERGRAPH_VARIABLES_N_READ</first>
+      <second># read</second>
     </item>
     <item>
       <first>TEXTURE_BATCH_ADD</first>

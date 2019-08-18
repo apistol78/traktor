@@ -1588,15 +1588,15 @@ bool emitScript(GlslContext& cx, Script* node)
 
 	const std::map< std::wstring, SamplerState >& samplers = node->getSamplers();
 
-	RefArray< GlslVariable > in(inputPinCount);
-	RefArray< GlslVariable > out(outputPinCount);
+	RefArray< GlslVariable > ins(inputPinCount);
+	RefArray< GlslVariable > outs(outputPinCount);
 
 	for (int32_t i = 0; i < outputPinCount; ++i)
 	{
 		const TypedOutputPin* outputPin = static_cast< const TypedOutputPin* >(node->getOutputPin(i));
 		T_ASSERT(outputPin);
 
-		out[i] = cx.emitOutput(
+		outs[i] = cx.emitOutput(
 			node,
 			outputPin->getName(),
 			glsl_from_parameter_type(outputPin->getType())
@@ -1605,8 +1605,8 @@ bool emitScript(GlslContext& cx, Script* node)
 
 	for (int32_t i = 0; i < inputPinCount; ++i)
 	{
-		in[i] = cx.emitInput(node->getInputPin(i));
-		if (!in[i])
+		ins[i] = cx.emitInput(node->getInputPin(i));
+		if (!ins[i])
 			return false;
 
 		if (node->getInputPinType(i) >= PtTexture2D)
@@ -1615,7 +1615,7 @@ bool emitScript(GlslContext& cx, Script* node)
 			if (samplerId.empty())
 				return false;
 
-			std::map< std::wstring, SamplerState >::const_iterator it = samplers.find(samplerId);
+			auto it = samplers.find(samplerId);
 			if (it == samplers.end())
 				return false;
 
@@ -1702,23 +1702,23 @@ bool emitScript(GlslContext& cx, Script* node)
 		int32_t ii = 0;
 		for (int32_t i = 0; i < inputPinCount; ++i)
 		{
-			if (in[i]->getType() >= GtTexture2D)
+			if (ins[i]->getType() >= GtTexture2D)
 				continue;
 
 			if (ii++ > 0)
 				fs << L", ";
 
-			fs << glsl_type_name(in[i]->getType()) << L" " << node->getInputPin(i)->getName();
+			fs << glsl_type_name(ins[i]->getType()) << L" " << node->getInputPin(i)->getName();
 		}
 
-		if (!in.empty())
+		if (!ins.empty())
 			fs << L", ";
 
 		for (int32_t i = 0; i < outputPinCount; ++i)
 		{
 			if (i > 0)
 				fs << L", ";
-			fs << L"out " << glsl_type_name(out[i]->getType()) << L" " << node->getOutputPin(i)->getName();
+			fs << L"out " << glsl_type_name(outs[i]->getType()) << L" " << node->getOutputPin(i)->getName();
 		}
 
 		fs << L")" << Endl;
@@ -1732,30 +1732,30 @@ bool emitScript(GlslContext& cx, Script* node)
 
 	// Emit script invocation.
 	for (int32_t i = 0; i < outputPinCount; ++i)
-		f << glsl_type_name(out[i]->getType()) << L" " << out[i]->getName() << L";" << Endl;
+		f << glsl_type_name(outs[i]->getType()) << L" " << outs[i]->getName() << L";" << Endl;
 
 	f << node->getName() << L"(";
 
 	int32_t ii = 0;
-	for (RefArray< GlslVariable >::const_iterator i = in.begin(); i != in.end(); ++i)
+	for (auto in : ins)
 	{
-		if ((*i)->getType() >= GtTexture2D)
+		if (in->getType() >= GtTexture2D)
 			continue;
 
 		if (ii++ > 0)
 			f << L", ";
 
-		f << (*i)->getName();
+		f << in->getName();
 	}
-
 	if (ii > 0)
 		f << L", ";
 
-	for (RefArray< GlslVariable >::const_iterator i = out.begin(); i != out.end(); ++i)
+	ii = 0;
+	for (auto out : outs)
 	{
-		if (i != out.begin())
+		if (ii++)
 			f << L", ";
-		f << (*i)->getName();
+		f << out->getName();
 	}
 
 	f << L");" << Endl;

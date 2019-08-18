@@ -1,5 +1,6 @@
 #include <algorithm>
 #include "Core/Serialization/AttributeMultiLine.h"
+#include "Core/Serialization/AttributePrivate.h"
 #include "Core/Serialization/AttributeReadOnly.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberEnum.h"
@@ -65,7 +66,7 @@ public:
 			std::wstring samplerId = m_pin->getSamplerId();
 
 			if (s.getVersion() >= 1)
-				s >> Member< Guid >(L"id", id);
+				s >> Member< Guid >(L"id", id, AttributePrivate());
 
 			s >> Member< std::wstring >(L"name", name);
 			s >> MemberEnum< ParameterType >(L"type", type, c_ParameterType_Keys);
@@ -79,7 +80,7 @@ public:
 			std::wstring samplerId = L"";
 
 			if (s.getVersion() >= 1)
-				s >> Member< Guid >(L"id", id);
+				s >> Member< Guid >(L"id", id, AttributePrivate());
 
 			s >> Member< std::wstring >(L"name", name);
 			s >> MemberEnum< ParameterType >(L"type", type, c_ParameterType_Keys);
@@ -148,7 +149,7 @@ public:
 			ParameterType type = m_pin->getType();
 
 			if (s.getVersion() >= 1)
-				s >> Member< Guid >(L"id", id);
+				s >> Member< Guid >(L"id", id, AttributePrivate());
 
 			s >> Member< std::wstring >(L"name", name);
 			s >> MemberEnum< ParameterType >(L"type", type, c_ParameterType_Keys);
@@ -160,7 +161,7 @@ public:
 			ParameterType type;
 
 			if (s.getVersion() >= 1)
-				s >> Member< Guid >(L"id", id);
+				s >> Member< Guid >(L"id", id, AttributePrivate());
 
 			s >> Member< std::wstring >(L"name", name);
 			s >> MemberEnum< ParameterType >(L"type", type, c_ParameterType_Keys);
