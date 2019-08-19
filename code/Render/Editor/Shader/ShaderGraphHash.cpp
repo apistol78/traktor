@@ -26,11 +26,9 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ShaderGraphHash", ShaderGraphHash, Objec
 uint32_t ShaderGraphHash::calculate(const Node* node)
 {
 	Ref< Node > nodeCopy = DeepClone(node).create< Node >();
-
 	nodeCopy->setId(Guid());
 	nodeCopy->setPosition(std::make_pair(0, 0));
 	nodeCopy->setComment(L"");
-
 	return DeepHash(nodeCopy).get();
 }
 
@@ -41,11 +39,11 @@ uint32_t ShaderGraphHash::calculate(const ShaderGraph* shaderGraph)
 	uint32_t hash = 0;
 
 	// Collect root nodes; assume all nodes with no output pins to be roots.
-	const RefArray< Node >& nodes = shaderGraph->getNodes();
-	for (RefArray< Node >::const_iterator i = nodes.begin(); i != nodes.end(); ++i)
+	for (auto node : shaderGraph->getNodes())
 	{
-		if ((*i)->getOutputPinCount() <= 0)
-			nodeStack.push_back(std::make_pair(*i, 0));
+		const INodeTraits* nodeTraits = INodeTraits::find(node);
+		if (nodeTraits != nullptr && nodeTraits->isRoot(shaderGraph, node))
+			nodeStack.push_back(std::make_pair(node, 0));
 	}
 
 	// Traverse graph nodes.

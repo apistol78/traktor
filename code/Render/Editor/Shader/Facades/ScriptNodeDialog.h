@@ -27,6 +27,7 @@ class SyntaxRichEdit;
 	{
 
 class Script;
+class ShaderGraph;
 
 class ScriptNodeDialog : public ui::ConfigDialog
 {
@@ -50,6 +51,13 @@ public:
 	std::wstring getOutputPinName(int32_t index) const;
 
 	ParameterType getOutputPinType(int32_t index) const;
+
+	/*! Apply modifications on script node.
+	 *
+	 * \note
+	 * Called after user has pressed Ok/Apply on dialog.
+	 */
+	bool apply(ShaderGraph* shaderGraph, Script* script, bool& outCompleteRebuild) const;
 
 private:
 	editor::IEditor* m_editor;

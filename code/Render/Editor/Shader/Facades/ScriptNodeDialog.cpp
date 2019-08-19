@@ -4,6 +4,7 @@
 #include "Editor/IEditor.h"
 #include "I18N/Text.h"
 #include "Render/Editor/Shader/Script.h"
+#include "Render/Editor/Shader/ShaderGraph.h"
 #include "Render/Editor/Shader/Facades/ScriptNodeDialog.h"
 #include "Ui/Application.h"
 #include "Ui/FloodLayout.h"
@@ -161,6 +162,120 @@ std::wstring ScriptNodeDialog::getOutputPinName(int32_t index) const
 ParameterType ScriptNodeDialog::getOutputPinType(int32_t index) const
 {
 	return PtScalar;
+}
+
+bool ScriptNodeDialog::apply(ShaderGraph* shaderGraph, Script* script, bool& outCompleteRebuild) const
+{
+	outCompleteRebuild = false;
+
+	// Update script in shader node.
+	script->setScript(getText());
+
+	// Remove input edges which are connected to pins which are no longer available.
+	std::set< std::wstring > removeInputPins;
+	for (int32_t i = 0; i < script->getInputPinCount(); ++i)
+	{
+		const InputPin* inputPin = script->getInputPin(i);
+		bool pinExist = false;
+		for (int32_t j = 0; j < getInputPinCount(); ++j)
+		{
+			if (inputPin->getName() == getInputPinName(j))
+			{
+				pinExist = true;
+				break;
+			}
+		}
+		if (!pinExist)
+		{
+			Edge* inputEdge = shaderGraph->findEdge(inputPin);
+			if (inputEdge)
+			{
+				shaderGraph->removeEdge(inputEdge);
+				outCompleteRebuild = true;
+			}
+			removeInputPins.insert(inputPin->getName());
+		}
+	}
+	for (const auto& pin : removeInputPins)
+		script->removeInputPin(pin);
+
+	// Remove output edges which are connected to pins which are no longer available.
+	std::set< std::wstring > removeOutputPins;
+	for (int32_t i = 0; i < script->getOutputPinCount(); ++i)
+	{
+		const OutputPin* outputPin = script->getOutputPin(i);
+		bool pinExist = false;
+		for (int32_t j = 0; j < getOutputPinCount(); ++j)
+		{
+			if (outputPin->getName() == getOutputPinName(j))
+			{
+				pinExist = true;
+				break;
+			}
+		}
+		if (!pinExist)
+		{
+			RefSet< Edge > outputEdges;
+			shaderGraph->findEdges(outputPin, outputEdges);
+			if (!outputEdges.empty())
+			{
+				for (auto outputEdge : outputEdges)
+					shaderGraph->removeEdge(outputEdge);
+				outCompleteRebuild = true;
+			}
+			removeOutputPins.insert(outputPin->getName());
+		}
+	}
+	for (const auto& pin : removeOutputPins)
+		script->removeOutputPin(pin);			
+
+	// Add new input pins.
+	for (int32_t i = 0; i < getInputPinCount(); ++i)
+	{
+		bool pinExist = false;
+		for (int32_t j = 0; j < script->getInputPinCount(); ++j)
+		{
+			const InputPin* inputPin = script->getInputPin(j);
+			if (inputPin->getName() == getInputPinName(i))
+			{
+				pinExist = true;
+				break;
+			}
+		}
+		if (!pinExist)
+		{
+			const Guid c_null;
+			std::wstring pinName = getInputPinName(i);
+			ParameterType pinType = getInputPinType(i);
+			script->addInputPin(c_null, pinName, pinType);
+			outCompleteRebuild = true;
+		}
+	}
+
+	// Add new output pins.
+	for (int32_t i = 0; i < getOutputPinCount(); ++i)
+	{
+		bool pinExist = false;
+		for (int32_t j = 0; j < script->getOutputPinCount(); ++j)
+		{
+			const OutputPin* outputPin = script->getOutputPin(j);
+			if (outputPin->getName() == getOutputPinName(i))
+			{
+				pinExist = true;
+				break;
+			}
+		}
+		if (!pinExist)
+		{
+			const Guid c_null;
+			std::wstring pinName = getOutputPinName(i);
+			ParameterType pinType = getOutputPinType(i);
+			script->addOutputPin(c_null, pinName, pinType);
+			outCompleteRebuild = true;
+		}
+	}
+
+	return true;
 }
 
 void ScriptNodeDialog::eventInputPinRowDoubleClick(ui::GridRowDoubleClickEvent* event)
