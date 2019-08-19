@@ -2,6 +2,7 @@
 #include "Core/Misc/String.h"
 #include "Render/Editor/Shader/NodeCategories.h"
 #include "Render/Editor/Shader/QuickMenuTool.h"
+#include "Ui/Application.h"
 #include "Ui/Edit.h"
 #include "Ui/TableLayout.h"
 #include "Ui/ListBox/ListBox.h"
@@ -30,7 +31,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.render.QuickMenuTool", QuickMenuTool, ui::Dialo
 
 bool QuickMenuTool::create(ui::Widget* parent)
 {
-	if (!ui::Dialog::create(parent, L"Quick menu", 100, 200, ui::Dialog::WsCenterParent, new ui::TableLayout(L"100%", L"*,100%", 0, 0)))
+	if (!ui::Dialog::create(parent, L"Quick menu", ui::dpi96(100), ui::dpi96(200), ui::Dialog::WsCenterParent, new ui::TableLayout(L"100%", L"*,100%", 0, 0)))
 		return false;
 
 	m_editFilter = new ui::Edit();

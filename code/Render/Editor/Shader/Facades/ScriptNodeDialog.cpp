@@ -189,11 +189,9 @@ bool ScriptNodeDialog::apply(ShaderGraph* shaderGraph, Script* script, bool& out
 		{
 			Edge* inputEdge = shaderGraph->findEdge(inputPin);
 			if (inputEdge)
-			{
 				shaderGraph->removeEdge(inputEdge);
-				outCompleteRebuild = true;
-			}
 			removeInputPins.insert(inputPin->getName());
+			outCompleteRebuild = true;
 		}
 	}
 	for (const auto& pin : removeInputPins)
@@ -221,9 +219,9 @@ bool ScriptNodeDialog::apply(ShaderGraph* shaderGraph, Script* script, bool& out
 			{
 				for (auto outputEdge : outputEdges)
 					shaderGraph->removeEdge(outputEdge);
-				outCompleteRebuild = true;
 			}
 			removeOutputPins.insert(outputPin->getName());
+			outCompleteRebuild = true;
 		}
 	}
 	for (const auto& pin : removeOutputPins)
@@ -299,6 +297,12 @@ void ScriptNodeDialog::eventInputPinRowDoubleClick(ui::GridRowDoubleClickEvent* 
 
 void ScriptNodeDialog::eventInputPinEdit(ui::GridItemContentChangeEvent* event)
 {
+	ui::GridRow* row = event->getItem()->getRow();
+
+	// In case user cleared name we remove entire row.
+	if (row->get(0)->getText().empty())
+		m_inputPinList->removeRow(row);
+
 	event->consume();
 }
 
@@ -321,6 +325,12 @@ void ScriptNodeDialog::eventOutputPinRowDoubleClick(ui::GridRowDoubleClickEvent*
 
 void ScriptNodeDialog::eventOutputPinEdit(ui::GridItemContentChangeEvent* event)
 {
+	ui::GridRow* row = event->getItem()->getRow();
+
+	// In case user cleared name we remove entire row.
+	if (row->get(0)->getText().empty())
+		m_outputPinList->removeRow(row);
+
 	event->consume();
 }
 
