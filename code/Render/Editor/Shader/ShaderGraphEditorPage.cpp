@@ -84,6 +84,21 @@ namespace traktor
 		namespace
 		{
 
+const wchar_t* c_typeNames[] =
+{
+	L"Void",
+	L"Scalar",
+	L"Vector 2",
+	L"Vector 3",
+	L"Vector 4",
+	L"Matrix",
+	L"Texture 2D",
+	L"Texture 3D",
+	L"Texture Cube",
+	L"Struct Buffer",
+	L"State"
+};
+
 class FragmentReaderAdapter : public FragmentLinker::IFragmentReader
 {
 public:
@@ -208,6 +223,7 @@ bool ShaderGraphEditorPage::create(ui::Container* parent)
 	m_variablesGrid->addColumn(new ui::GridColumn(i18n::Text(L"SHADERGRAPH_VARIABLES_NAME"), ui::dpi96(140)));
 	m_variablesGrid->addColumn(new ui::GridColumn(i18n::Text(L"SHADERGRAPH_VARIABLES_SCOPE"), ui::dpi96(80)));
 	m_variablesGrid->addColumn(new ui::GridColumn(i18n::Text(L"SHADERGRAPH_VARIABLES_N_READ"), ui::dpi96(80)));
+	m_variablesGrid->addColumn(new ui::GridColumn(i18n::Text(L"SHADERGRAPH_VARIABLES_TYPE"), ui::dpi96(80)));
 
 	// Build popup menu.
 	m_menuPopup = new ui::Menu();
@@ -877,12 +893,16 @@ void ShaderGraphEditorPage::updateGraph()
 	{
 		uint32_t globalCount;
 		uint32_t localCount;
+		uint32_t writeCount;
 		uint32_t readCount;
+		PinType type;
 
 		VariableInfo()
 		:	globalCount(0)
 		,	localCount(0)
+		,	writeCount(0)
 		,	readCount(0)
+		,	type(PntVoid)
 		{
 		}
 	};
@@ -901,6 +921,15 @@ void ShaderGraphEditorPage::updateGraph()
 			++vi.localCount;
 
 		vi.readCount += m_shaderGraph->getDestinationCount(variableNode->getOutputPin(0));
+
+		const Edge* sourceEdge = m_shaderGraph->findEdge(variableNode->getInputPin(0));
+		if (sourceEdge != nullptr)
+		{
+			++vi.writeCount;
+
+			Constant value = ShaderGraphEvaluator(m_shaderGraph).evaluate(sourceEdge->getSource());
+			vi.type = value.getType();
+		}
 	}
 	m_variablesGrid->removeAllRows();
 	for (const auto& variable : variables)
@@ -913,9 +942,13 @@ void ShaderGraphEditorPage::updateGraph()
 		else if (variable.second.globalCount == 0 && variable.second.localCount > 0)
 			row->add(new ui::GridItem(i18n::Text(L"SHADERGRAPH_VARIABLES_LOCAL")));
 		else
+		{
 			row->add(new ui::GridItem(i18n::Text(L"SHADERGRAPH_VARIABLES_SCOPE_ERROR")));
+			row->setBackground(Color4ub(255, 0, 0, 255));
+		}
 
 		row->add(new ui::GridItem(toString(variable.second.readCount)));
+		row->add(new ui::GridItem(c_typeNames[(int32_t)variable.second.type]));
 		m_variablesGrid->addRow(row);
 	}
 
