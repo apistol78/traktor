@@ -1,7 +1,5 @@
 #include "Core/Misc/SafeDestroy.h"
 #include "I18N/Text.h"
-#include "Render/Editor/Shader/InputPin.h"
-#include "Render/Editor/Shader/OutputPin.h"
 #include "Render/Editor/Shader/Script.h"
 #include "Render/Editor/Shader/ShaderGraph.h"
 #include "Render/Editor/Shader/ShaderGraphEditorPage.h"
@@ -68,115 +66,9 @@ private:
 		const ui::Command& command = event->getCommand();
 		if (command.getId() == ui::DrOk || command.getId() == ui::DrApply)
 		{
-			// Update script in shader node.
-			std::wstring script = m_dialog->getText();
-			m_scriptNode->setScript(script);
-
+			// Apply changes to script node.
 			bool needCompleteRebuild = false;
-
-			// Remove input edges which are connected to pins which are no longer available.
-			std::set< std::wstring > removeInputPins;
-			for (int32_t i = 0; i < m_scriptNode->getInputPinCount(); ++i)
-			{
-				const InputPin* inputPin = m_scriptNode->getInputPin(i);
-				bool pinExist = false;
-				for (int32_t j = 0; j < m_dialog->getInputPinCount(); ++j)
-				{
-					if (inputPin->getName() == m_dialog->getInputPinName(j))
-					{
-						pinExist = true;
-						break;
-					}
-				}
-				if (!pinExist)
-				{
-					Edge* inputEdge = m_shaderGraph->findEdge(inputPin);
-					if (inputEdge)
-					{
-						m_shaderGraph->removeEdge(inputEdge);
-						needCompleteRebuild = true;
-					}
-					removeInputPins.insert(inputPin->getName());
-				}
-			}
-			for (const auto& pin : removeInputPins)
-				m_scriptNode->removeInputPin(pin);
-
-			// Remove output edges which are connected to pins which are no longer available.
-			std::set< std::wstring > removeOutputPins;
-			for (int32_t i = 0; i < m_scriptNode->getOutputPinCount(); ++i)
-			{
-				const OutputPin* outputPin = m_scriptNode->getOutputPin(i);
-				bool pinExist = false;
-				for (int32_t j = 0; j < m_dialog->getOutputPinCount(); ++j)
-				{
-					if (outputPin->getName() == m_dialog->getOutputPinName(j))
-					{
-						pinExist = true;
-						break;
-					}
-				}
-				if (!pinExist)
-				{
-					RefSet< Edge > outputEdges;
-					m_shaderGraph->findEdges(outputPin, outputEdges);
-					if (!outputEdges.empty())
-					{
-						for (RefSet< Edge >::const_iterator j = outputEdges.begin(); j != outputEdges.end(); ++j)
-							m_shaderGraph->removeEdge(*j);
-						needCompleteRebuild = true;
-					}
-					removeOutputPins.insert(outputPin->getName());
-				}
-			}
-			for (const auto& pin : removeOutputPins)
-				m_scriptNode->removeOutputPin(pin);			
-
-			// Add new input pins.
-			for (int32_t i = 0; i < m_dialog->getInputPinCount(); ++i)
-			{
-				bool pinExist = false;
-				for (int32_t j = 0; j < m_scriptNode->getInputPinCount(); ++j)
-				{
-					const InputPin* inputPin = m_scriptNode->getInputPin(j);
-					if (inputPin->getName() == m_dialog->getInputPinName(i))
-					{
-						pinExist = true;
-						break;
-					}
-				}
-				if (!pinExist)
-				{
-					const Guid c_null;
-					std::wstring pinName = m_dialog->getInputPinName(i);
-					ParameterType pinType = m_dialog->getInputPinType(i);
-					m_scriptNode->addInputPin(c_null, pinName, pinType);
-					needCompleteRebuild = true;
-				}
-			}
-
-			// Add new output pins.
-			for (int32_t i = 0; i < m_dialog->getOutputPinCount(); ++i)
-			{
-				bool pinExist = false;
-				for (int32_t j = 0; j < m_scriptNode->getOutputPinCount(); ++j)
-				{
-					const OutputPin* outputPin = m_scriptNode->getOutputPin(j);
-					if (outputPin->getName() == m_dialog->getOutputPinName(i))
-					{
-						pinExist = true;
-						break;
-					}
-				}
-				if (!pinExist)
-				{
-					const Guid c_null;
-					std::wstring pinName = m_dialog->getOutputPinName(i);
-					ParameterType pinType = m_dialog->getOutputPinType(i);
-					m_scriptNode->addOutputPin(c_null, pinName, pinType);
-					needCompleteRebuild = true;
-				}
-			}
+			m_dialog->apply(m_shaderGraph, m_scriptNode, needCompleteRebuild);
 
 			// Call back to page to ensure entire editor graph is rebuilt.
 			if (needCompleteRebuild)
