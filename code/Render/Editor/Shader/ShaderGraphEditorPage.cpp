@@ -86,7 +86,7 @@ namespace traktor
 
 const wchar_t* c_typeNames[] =
 {
-	L"Void",
+	L"",
 	L"Scalar",
 	L"Vector 2",
 	L"Vector 3",
@@ -946,6 +946,9 @@ void ShaderGraphEditorPage::updateGraph()
 			row->add(new ui::GridItem(i18n::Text(L"SHADERGRAPH_VARIABLES_SCOPE_ERROR")));
 			row->setBackground(Color4ub(255, 0, 0, 255));
 		}
+
+		if (variable.second.readCount > 0 && variable.second.writeCount == 0)
+			row->setBackground(Color4ub(255, 0, 0, 255));
 
 		row->add(new ui::GridItem(toString(variable.second.readCount)));
 		row->add(new ui::GridItem(c_typeNames[(int32_t)variable.second.type]));

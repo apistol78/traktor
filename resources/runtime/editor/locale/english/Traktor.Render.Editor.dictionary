@@ -682,6 +682,10 @@
       <second># read</second>
     </item>
     <item>
+      <first>SHADERGRAPH_VARIABLES_TYPE</first>
+      <second>Type</second>
+    </item>
+    <item>
       <first>TEXTURE_BATCH_ADD</first>
       <second>Add textures...</second>
     </item>
