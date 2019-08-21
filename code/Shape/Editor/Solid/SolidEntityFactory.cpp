@@ -32,8 +32,7 @@ Ref< world::Entity > SolidEntityFactory::createEntity(const world::IEntityBuilde
 {
 	if (auto primitiveEntityData = dynamic_type_cast< const PrimitiveEntityData* >(&entityData))
 	{
-		Ref< PrimitiveEntity > primitiveEntity = new PrimitiveEntity(primitiveEntityData->getTransform());
-		return primitiveEntity;
+		return primitiveEntityData->createEntity();
 	}
 	else if (auto solidEntityData = dynamic_type_cast< const SolidEntityData* >(&entityData))
 	{

@@ -29,6 +29,8 @@ public:
 	virtual bool addChildEntity(scene::EntityAdapter* childEntityAdapter) const override final;
 
 	virtual bool removeChildEntity(scene::EntityAdapter* childEntityAdapter) const override final;
+
+	virtual void drawGuide(render::PrimitiveRenderer* primitiveRenderer) const override final;
 };
 
 	}
