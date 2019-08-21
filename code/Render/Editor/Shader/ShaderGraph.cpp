@@ -89,7 +89,7 @@ uint32_t ShaderGraph::findEdges(const OutputPin* outputPin, RefSet< Edge >& outE
 const OutputPin* ShaderGraph::findSourcePin(const InputPin* inputPin) const
 {
 	Edge* edge = findEdge(inputPin);
-	return edge ? edge->getSource() : 0;
+	return edge ? edge->getSource() : nullptr;
 }
 
 uint32_t ShaderGraph::findDestinationPins(const OutputPin* outputPin, std::vector< const InputPin* >& outDestinations) const

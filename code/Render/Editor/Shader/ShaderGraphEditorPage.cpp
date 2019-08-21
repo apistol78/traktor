@@ -71,6 +71,7 @@
 #include "Ui/Graph/SelectEvent.h"
 #include "Ui/GridView/GridColumn.h"
 #include "Ui/GridView/GridItem.h"
+#include "Ui/GridView/GridItemContentChangeEvent.h"
 #include "Ui/GridView/GridRow.h"
 #include "Ui/GridView/GridView.h"
 
@@ -224,6 +225,7 @@ bool ShaderGraphEditorPage::create(ui::Container* parent)
 	m_variablesGrid->addColumn(new ui::GridColumn(i18n::Text(L"SHADERGRAPH_VARIABLES_SCOPE"), ui::dpi96(80)));
 	m_variablesGrid->addColumn(new ui::GridColumn(i18n::Text(L"SHADERGRAPH_VARIABLES_N_READ"), ui::dpi96(80)));
 	m_variablesGrid->addColumn(new ui::GridColumn(i18n::Text(L"SHADERGRAPH_VARIABLES_TYPE"), ui::dpi96(80)));
+	m_variablesGrid->addEventHandler< ui::GridItemContentChangeEvent >(this, &ShaderGraphEditorPage::eventVariableEdit);
 
 	// Build popup menu.
 	m_menuPopup = new ui::Menu();
@@ -1314,6 +1316,41 @@ void ShaderGraphEditorPage::eventEdgeDisconnect(ui::EdgeDisconnectEvent* event)
 	m_shaderGraph->removeEdge(shaderEdge);
 
 	updateGraph();
+}
+
+void ShaderGraphEditorPage::eventVariableEdit(ui::GridItemContentChangeEvent* event)
+{
+	RefArray< Variable > variableNodes;
+	m_shaderGraph->findNodesOf< Variable >(variableNodes);
+
+	std::wstring renameFrom = event->getOriginalText();
+	std::wstring renameTo = event->getItem()->getText();
+
+	if (renameFrom == renameTo)
+		return;
+
+	// Check if "rename to" is a valid name, ie not empty nor collide.
+	if (renameTo.empty())
+		return;
+
+	for (auto variableNode : variableNodes)
+	{
+		std::wstring name = variableNode->getName();
+		if (name != renameFrom && name == renameTo)
+			return;
+	}
+
+	// Name is valid, rename variables.
+	m_document->push();
+	for (auto variableNode : variableNodes)
+	{
+		std::wstring name = variableNode->getName();
+		if (name == renameFrom)
+			variableNode->setName(renameTo);
+	}
+
+	updateGraph();
+	event->consume();
 }
 
 	}

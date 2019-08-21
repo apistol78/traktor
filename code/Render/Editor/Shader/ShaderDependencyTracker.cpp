@@ -20,16 +20,16 @@ void scanDependencies(Ref< ShaderDependencyTracker > tracker, db::Database* data
 {
 	RefArray< db::Instance > shaderGraphInstances;
 	db::recursiveFindChildInstances(database->getRootGroup(), db::FindInstanceByType(type_of< ShaderGraph >()), shaderGraphInstances);
-	for (RefArray< db::Instance >::const_iterator i = shaderGraphInstances.begin(); i != shaderGraphInstances.end(); ++i)
+	for (auto shaderGraphInstance : shaderGraphInstances)
 	{
-		Ref< ShaderGraph > shaderGraph = (*i)->getObject< ShaderGraph >();
+		Ref< ShaderGraph > shaderGraph = shaderGraphInstance->getObject< ShaderGraph >();
 		if (!shaderGraph)
 			continue;
 
 		RefArray< External > externalNodes;
 		shaderGraph->findNodesOf< External >(externalNodes);
-		for (RefArray< External >::const_iterator j = externalNodes.begin(); j != externalNodes.end(); ++j)
-			tracker->addDependency((*i)->getGuid(), (*j)->getFragmentGuid());
+		for (auto externalNode : externalNodes)
+			tracker->addDependency(shaderGraphInstance->getGuid(), externalNode->getFragmentGuid());
 	}
 	scanThreadActive = false;
 }
@@ -46,8 +46,8 @@ void scanDependencies(Ref< ShaderDependencyTracker > tracker, db::Database* data
 
 			RefArray< External > externalNodes;
 			shaderGraph->findNodesOf< External >(externalNodes);
-			for (RefArray< External >::const_iterator j = externalNodes.begin(); j != externalNodes.end(); ++j)
-				tracker->addDependency(shader, (*j)->getFragmentGuid());
+			for (auto externalNode : externalNodes)
+				tracker->addDependency(shader, externalNode->getFragmentGuid());
 		}
 	}
 	scanThreadActive = false;
@@ -58,7 +58,7 @@ void scanDependencies(Ref< ShaderDependencyTracker > tracker, db::Database* data
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ShaderDependencyTracker", ShaderDependencyTracker, Object)
 
 ShaderDependencyTracker::ShaderDependencyTracker()
-:	m_scanThread(0)
+:	m_scanThread(nullptr)
 ,	m_scanThreadActive(false)
 {
 }
@@ -107,16 +107,16 @@ void ShaderDependencyTracker::addListener(IListener* listener)
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 	m_listeners.push_back(listener);
-	for (std::set< Dependency >::const_iterator i = m_dependencies.begin(); i != m_dependencies.end(); ++i)
-		listener->dependencyAdded(i->from, i->to);
+	for (const auto& dependency : m_dependencies)
+		listener->dependencyAdded(dependency.from, dependency.to);
 }
 
 void ShaderDependencyTracker::removeListener(IListener* listener)
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-	std::vector< IListener* >::iterator i = std::find(m_listeners.begin(), m_listeners.end(), listener);
-	if (i != m_listeners.end())
-		m_listeners.erase(i);
+	auto it = std::find(m_listeners.begin(), m_listeners.end(), listener);
+	if (it != m_listeners.end())
+		m_listeners.erase(it);
 }
 
 void ShaderDependencyTracker::addDependency(const Guid& fromShader, const Guid& toShader)
@@ -125,8 +125,8 @@ void ShaderDependencyTracker::addDependency(const Guid& fromShader, const Guid& 
 	Dependency dependency = { fromShader, toShader };
 	if (m_dependencies.insert(dependency).second)
 	{
-		for (std::vector< IListener* >::iterator i = m_listeners.begin(); i != m_listeners.end(); ++i)
-			(*i)->dependencyAdded(fromShader, toShader);
+		for (auto listener : m_listeners)
+			listener->dependencyAdded(fromShader, toShader);
 	}
 }
 
@@ -136,8 +136,8 @@ void ShaderDependencyTracker::removeDependency(const Guid& fromShader, const Gui
 	Dependency dependency = { fromShader, toShader };
 	if (m_dependencies.erase(dependency) != 0)
 	{
-		for (std::vector< IListener* >::iterator i = m_listeners.begin(); i != m_listeners.end(); ++i)
-			(*i)->dependencyRemoved(fromShader, toShader);
+		for (auto listener : m_listeners)
+			listener->dependencyRemoved(fromShader, toShader);
 	}
 }
 
@@ -146,14 +146,13 @@ void ShaderDependencyTracker::removeDependencies(const Guid& fromShader)
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 
 	std::set< Guid > toShaders;
-	for (std::set< Dependency >::const_iterator i = m_dependencies.begin(); i != m_dependencies.end(); ++i)
+	for (const auto& dependency : m_dependencies)
 	{
-		if (i->from == fromShader)
-			toShaders.insert(i->to);
+		if (dependency.from == fromShader)
+			toShaders.insert(dependency.to);
 	}
-
-	for (std::set< Guid >::const_iterator i = toShaders.begin(); i != toShaders.end(); ++i)
-		removeDependency(fromShader, *i);
+	for (const auto& toShader : toShaders)
+		removeDependency(fromShader, toShader);
 }
 
 bool ShaderDependencyTracker::Dependency::operator < (const Dependency& rh) const
