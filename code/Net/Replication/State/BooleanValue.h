@@ -29,7 +29,7 @@ public:
 	{
 	}
 
-	BooleanValue(bool value)
+	explicit BooleanValue(bool value)
 	:	m_value(value)
 	{
 	}

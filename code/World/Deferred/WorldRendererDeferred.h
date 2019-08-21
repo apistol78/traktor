@@ -36,6 +36,14 @@ class WorldContext;
 
 /*! \brief World renderer deferred implementation.
  * \ingroup World
+ *
+ * Advanced deferred rendering path.
+ *
+ * Operation
+ * \TBD
+ *
+ * Techniques used
+ * \TBD
  */
 class T_DLLCLASS WorldRendererDeferred : public IWorldRenderer
 {

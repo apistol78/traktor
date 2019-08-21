@@ -20,7 +20,7 @@ class T_DLLCLASS BodyStateTemplate : public IValueTemplate
 	T_RTTI_CLASS;
 
 public:
-	BodyStateTemplate(const wchar_t* const tag);
+	explicit BodyStateTemplate(const wchar_t* const tag);
 
 	virtual const TypeInfo& getValueType() const override final;
 

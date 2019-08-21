@@ -20,7 +20,7 @@ class T_DLLCLASS BooleanTemplate : public IValueTemplate
 	T_RTTI_CLASS;
 
 public:
-	BooleanTemplate(const wchar_t* const tag, float threshold = 0.0f);
+	explicit BooleanTemplate(const wchar_t* const tag, float threshold = 0.0f);
 
 	virtual const TypeInfo& getValueType() const override final;
 

@@ -25,7 +25,7 @@ class T_DLLCLASS State : public Object
 public:
 	State();
 
-	State(const RefArray< const IValue >& values);
+	explicit State(const RefArray< const IValue >& values);
 
 	const RefArray< const IValue >& getValues() const { return m_values; }
 
