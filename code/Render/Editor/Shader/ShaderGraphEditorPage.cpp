@@ -220,11 +220,11 @@ bool ShaderGraphEditorPage::create(ui::Container* parent)
 	m_site->createAdditionalPanel(m_variablesContainer, ui::dpi96(400), false);
 
 	m_variablesGrid = new ui::GridView();
-	m_variablesGrid->create(m_variablesContainer, ui::WsDoubleBuffer | ui::GridView::WsColumnHeader);
-	m_variablesGrid->addColumn(new ui::GridColumn(i18n::Text(L"SHADERGRAPH_VARIABLES_NAME"), ui::dpi96(140)));
-	m_variablesGrid->addColumn(new ui::GridColumn(i18n::Text(L"SHADERGRAPH_VARIABLES_SCOPE"), ui::dpi96(80)));
-	m_variablesGrid->addColumn(new ui::GridColumn(i18n::Text(L"SHADERGRAPH_VARIABLES_N_READ"), ui::dpi96(80)));
-	m_variablesGrid->addColumn(new ui::GridColumn(i18n::Text(L"SHADERGRAPH_VARIABLES_TYPE"), ui::dpi96(80)));
+	m_variablesGrid->create(m_variablesContainer, ui::WsDoubleBuffer | ui::GridView::WsColumnHeader | ui::GridView::WsAutoEdit);
+	m_variablesGrid->addColumn(new ui::GridColumn(i18n::Text(L"SHADERGRAPH_VARIABLES_NAME"), ui::dpi96(140), true));
+	m_variablesGrid->addColumn(new ui::GridColumn(i18n::Text(L"SHADERGRAPH_VARIABLES_SCOPE"), ui::dpi96(80), false));
+	m_variablesGrid->addColumn(new ui::GridColumn(i18n::Text(L"SHADERGRAPH_VARIABLES_N_READ"), ui::dpi96(80), false));
+	m_variablesGrid->addColumn(new ui::GridColumn(i18n::Text(L"SHADERGRAPH_VARIABLES_TYPE"), ui::dpi96(80), false));
 	m_variablesGrid->addEventHandler< ui::GridItemContentChangeEvent >(this, &ShaderGraphEditorPage::eventVariableEdit);
 
 	// Build popup menu.
@@ -1349,7 +1349,9 @@ void ShaderGraphEditorPage::eventVariableEdit(ui::GridItemContentChangeEvent* ev
 			variableNode->setName(renameTo);
 	}
 
-	updateGraph();
+	refreshGraph();
+
+	m_editorGraph->update();
 	event->consume();
 }
 

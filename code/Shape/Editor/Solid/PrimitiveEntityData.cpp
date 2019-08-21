@@ -16,7 +16,7 @@ Ref< PrimitiveEntity > PrimitiveEntityData::createEntity() const
     Ref< PrimitiveEntity > entity = new PrimitiveEntity();
     
     entity->m_transform = getTransform();
-    entity->m_bspTree.build();
+    //entity->m_bspTree.build();
 
     return entity;
 }

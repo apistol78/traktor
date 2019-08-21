@@ -2,6 +2,7 @@
 #include "World/Entity/GroupEntity.h"
 #include "Shape/Editor/Solid/PrimitiveEntity.h"
 #include "Shape/Editor/Solid/PrimitiveEntityData.h"
+#include "Shape/Editor/Solid/SolidEntity.h"
 #include "Shape/Editor/Solid/SolidEntityData.h"
 #include "Shape/Editor/Solid/SolidEntityFactory.h"
 
@@ -37,14 +38,16 @@ Ref< world::Entity > SolidEntityFactory::createEntity(const world::IEntityBuilde
 	else if (auto solidEntityData = dynamic_type_cast< const SolidEntityData* >(&entityData))
 	{
 		Ref< SolidEntity > solidEntity = new SolidEntity(solidEntityData->getTransform());
-
-		for (auto primitiveData : solidEntityData->getPrimitives())
+		for (auto childEntityData : solidEntityData->getEntityData())
 		{
-			
+			Ref< PrimitiveEntity > primitiveEntity = builder->create< PrimitiveEntity >(childEntityData);
+			if (primitiveEntity)
+				solidEntity->addEntity(primitiveEntity);
 		}
-
 		return solidEntity;
 	}
+	else
+		return nullptr;
 }
 
 Ref< world::IEntityEvent > SolidEntityFactory::createEntityEvent(const world::IEntityBuilder* builder, const world::IEntityEventData& entityEventData) const

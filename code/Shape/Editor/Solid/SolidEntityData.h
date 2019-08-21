@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Core/RefArray.h"
-#include "World/EntityData.h"
+#include "World/Entity/GroupEntityData.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -22,17 +22,12 @@ class PrimitiveEntityData;
  *
  * Contain solid geometry primitives along with operation (intersection, union, difference etc).
  */
-class T_DLLCLASS SolidEntityData : public world::EntityData
+class T_DLLCLASS SolidEntityData : public world::GroupEntityData
 {
     T_RTTI_CLASS;
 
 public:
     virtual void serialize(ISerializer& s) override final;
-
-    const RefArray< PrimitiveEntityData >& getPrimitives() const { return m_primitives; }
-
-private:
-    RefArray< PrimitiveEntityData > m_primitives;
 };
 
     }

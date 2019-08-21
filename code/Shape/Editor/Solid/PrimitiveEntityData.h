@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Core/Ref.h"
-#include "Core/Container/AlignedVector.h"
+#include "Core/Containers/AlignedVector.h"
 #include "World/EntityData.h"
 
 // import/export mechanism.

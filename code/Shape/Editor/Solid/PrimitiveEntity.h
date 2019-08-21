@@ -5,12 +5,20 @@
 #include "Core/Math/Winding3.h"
 #include "World/Entity.h"
 
+// import/export mechanism.
+#undef T_DLLCLASS
+#if defined(T_SHAPE_EDITOR_EXPORT)
+#	define T_DLLCLASS T_DLLEXPORT
+#else
+#	define T_DLLCLASS T_DLLIMPORT
+#endif
+
 namespace traktor
 {
     namespace shape
     {
 
-class T_DLLCLAS PrimitiveEntity : public world::Entity
+class T_DLLCLASS PrimitiveEntity : public world::Entity
 {
     T_RTTI_CLASS;
 
@@ -20,6 +28,8 @@ public:
     virtual void setTransform(const Transform& transform) override final;
 
     virtual bool getTransform(Transform& outTransform) const override final;
+
+	virtual Aabb3 getBoundingBox() const override final;
 
     virtual void update(const world::UpdateParams& update) override final;
 
