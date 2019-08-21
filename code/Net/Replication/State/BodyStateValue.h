@@ -29,7 +29,7 @@ public:
 	{
 	}
 
-	BodyStateValue(const physics::BodyState& value)
+	explicit BodyStateValue(const physics::BodyState& value)
 	:	m_value(value)
 	{
 	}

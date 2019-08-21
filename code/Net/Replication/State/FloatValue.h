@@ -29,7 +29,7 @@ public:
 	{
 	}
 
-	FloatValue(float value)
+	explicit FloatValue(float value)
 	:	m_value(value)
 	{
 	}

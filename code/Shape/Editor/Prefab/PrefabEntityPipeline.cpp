@@ -11,9 +11,7 @@
 #include "Mesh/MeshComponentData.h"
 #include "Mesh/Editor/MeshAsset.h"
 #include "Model/Model.h"
-#include "Model/ModelAdjacency.h"
 #include "Model/ModelFormat.h"
-#include "Model/Operations/Boolean.h"
 #include "Model/Operations/CleanDegenerate.h"
 #include "Model/Operations/CleanDuplicates.h"
 #include "Model/Operations/MergeCoplanarAdjacents.h"
@@ -100,21 +98,6 @@ void collectComponentEntities(const ISerializable* object, RefArray< world::Comp
 			collectComponentEntities(objectMember->get(), outComponentEntities);
 		}
 	}
-}
-
-bool isModelClosed(const model::Model* model)
-{
-	model::ModelAdjacency adjacency(model, model::ModelAdjacency::MdByPosition);
-
-	// All edges must have exactly one neighbor in order for the mesh to be closed.
-	uint32_t edgeCount = adjacency.getEdgeCount();
-	for (uint32_t i = 0; i < edgeCount; ++i)
-	{
-		if (adjacency.getSharedEdgeCount(i) != 1)
-			return false;
-	}
-
-	return true;
 }
 
 		}
@@ -387,9 +370,6 @@ Ref< ISerializable > PrefabEntityPipeline::buildOutput(
 
 				if (m_mergeCoplanar)
 					model::MergeCoplanarAdjacents(true).apply(*partModel);
-
-				if (!isModelClosed(partModel))
-					log::warning << L"Prefab physics model \"" << meshShapeAsset->getFileName().getOriginal() << L"\" is not closed!" << Endl;
 
 				model::MergeModel(*partModel, shapeMesh.transform, m_collisionMeshSnap).apply(*mergedModel);
 

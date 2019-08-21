@@ -175,7 +175,7 @@ Ref< const State > ReplicatorProxy::getState(double time, double limit) const
 		);
 	}
 	else
-		return 0;
+		return nullptr;
 }
 
 Ref< const State > ReplicatorProxy::getFilteredState(double time, double limit, const State* currentState, float filterCoeff) const
@@ -208,16 +208,16 @@ Ref< const State > ReplicatorProxy::getFilteredState(double time, double limit, 
 			return extrapolatedState;
 	}
 	else
-		return 0;
+		return nullptr;
 }
 
 void ReplicatorProxy::resetStates()
 {
-	m_state0 = 0;
+	m_state0 = nullptr;
 	m_stateTime0 = 0.0;
-	m_stateN1 = 0;
+	m_stateN1 = nullptr;
 	m_stateTimeN1 = 0.0;
-	m_stateN2 = 0;
+	m_stateN2 = nullptr;
 	m_stateTimeN2 = 0.0;
 }
 
@@ -261,13 +261,13 @@ int32_t ReplicatorProxy::updateTxEventQueue()
 	int32_t discarded = 0;
 
 	// First send is prioritized over re-sends.
-	for (std::list< TxEvent >::iterator i = m_txEvents.begin(); i != m_txEvents.end(); ++i)
+	for (auto& txEvent : m_txEvents)
 	{
-		if (i->count <= 0)
+		if (txEvent.count <= 0)
 		{
-			m_replicator->m_topology->send(m_handle, &i->msg, RmiEvent_NetSize(i->size));
-			i->time = m_replicator->m_time0;
-			i->count = 1;
+			m_replicator->m_topology->send(m_handle, &txEvent.msg, RmiEvent_NetSize(txEvent.size));
+			txEvent.time = m_replicator->m_time0;
+			txEvent.count = 1;
 		}
 	}
 
@@ -300,16 +300,17 @@ int32_t ReplicatorProxy::updateTxEventQueue()
 
 bool ReplicatorProxy::receivedTxEventAcknowledge(const ReplicatorProxy* from, uint8_t sequence, bool inOrder)
 {
-	for (std::list< TxEvent >::iterator i = m_txEvents.begin(); i != m_txEvents.end(); ++i)
+	for (auto it = m_txEvents.begin(); it != m_txEvents.end(); ++it)
 	{
+		const auto& txEvent = *it;
 		if (
-			((inOrder && i->msg.id == RmiEvent1) || (!inOrder && i->msg.id == RmiEvent0)) &&
-			i->msg.event.sequence == sequence
+			((inOrder && txEvent.msg.id == RmiEvent1) || (!inOrder && txEvent.msg.id == RmiEvent0)) &&
+			txEvent.msg.event.sequence == sequence
 		)
 		{
-			if (i->count >= 2)
-				T_DEBUG(L"Resent event " << int32_t(i->msg.event.sequence) << L" acknowledged");
-			m_txEvents.erase(i);
+			if (txEvent.count >= 2)
+				T_DEBUG(L"Resent event " << int32_t(txEvent.msg.event.sequence) << L" acknowledged");
+			m_txEvents.erase(it);
 			return true;
 		}
 	}
@@ -359,30 +360,30 @@ bool ReplicatorProxy::dispatchRxEvents(const SmallMap< const TypeInfo*, RefArray
 	}
 
 	// Dispatch received events.
-	for (AlignedVector< RxEvent >::const_iterator i = m_rxEvents.begin(); i != m_rxEvents.end(); ++i)
+	for (const auto& rxEvent : m_rxEvents)
 	{
-		T_FATAL_ASSERT (i->eventObject);
+		T_FATAL_ASSERT (rxEvent.eventObject);
 		bool processed = false;
 		uint32_t count = 0;
 
-		SmallMap< const TypeInfo*, RefArray< IReplicatorEventListener > >::const_iterator it = eventListeners.find(&type_of(i->eventObject));
+		SmallMap< const TypeInfo*, RefArray< IReplicatorEventListener > >::const_iterator it = eventListeners.find(&type_of(rxEvent.eventObject));
 		if (it != eventListeners.end())
 		{
-			T_ANONYMOUS_VAR(Ref< const ISerializable >)(i->eventObject);
-			for (RefArray< IReplicatorEventListener >::const_iterator it2 = it->second.begin(); it2 != it->second.end(); ++it2)
+			T_ANONYMOUS_VAR(Ref< const ISerializable >)(rxEvent.eventObject);
+			for (auto listener : it->second)
 			{
-				processed |= (*it2)->notify(
+				processed |= listener->notify(
 					m_replicator,
-					net2time(i->time),
+					net2time(rxEvent.time),
 					this,
-					i->eventObject
+					rxEvent.eventObject
 				);
 				++count;
 			}
 		}
 
 		if (!processed && count > 0)
-			log::warning << m_replicator->getLogPrefix() << L"Event " << type_name(i->eventObject) << L" from " << getLogIdentifier() << L" not processed by " << count << L" listener(s); event discarded." << Endl;
+			log::warning << m_replicator->getLogPrefix() << L"Event " << type_name(rxEvent.eventObject) << L" from " << getLogIdentifier() << L" not processed by " << count << L" listener(s); event discarded." << Endl;
 	}
 
 	m_rxEvents.resize(0);
@@ -480,11 +481,11 @@ bool ReplicatorProxy::receivedState(double localTime, double stateTime, const vo
 
 void ReplicatorProxy::disconnect()
 {
-	m_replicator = 0;
+	m_replicator = nullptr;
 	m_handle = 0;
-	m_user = 0;
+	m_user = nullptr;
 	m_status = 0;
-	m_object = 0;
+	m_object = nullptr;
 	m_distance = 0.0f;
 	m_sendState = false;
 	m_issueStateListeners = false;
@@ -502,7 +503,7 @@ void ReplicatorProxy::disconnect()
 	for (uint32_t i = 0; i < sizeof_array(m_rxEventsInOrderQueue); ++i)
 	{
 		m_rxEventsInOrderQueue[i].time = 0;
-		m_rxEventsInOrderQueue[i].eventObject = 0;
+		m_rxEventsInOrderQueue[i].eventObject = nullptr;
 	}
 	m_rxEventsInOrderSequence = 0;
 	m_rxEvents.clear();
@@ -541,7 +542,7 @@ ReplicatorProxy::ReplicatorProxy(Replicator* replicator, net_handle_t handle, co
 	for (uint32_t i = 0; i < sizeof_array(m_rxEventsInOrderQueue); ++i)
 	{
 		m_rxEventsInOrderQueue[i].time = 0;
-		m_rxEventsInOrderQueue[i].eventObject = 0;
+		m_rxEventsInOrderQueue[i].eventObject = nullptr;
 	}
 }
 

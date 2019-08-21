@@ -29,7 +29,7 @@ class T_DLLCLASS FloatTemplate : public IValueTemplate
 	T_RTTI_CLASS;
 
 public:
-	FloatTemplate(const wchar_t* const tag, float threshold = std::numeric_limits< float >::max());
+	explicit FloatTemplate(const wchar_t* const tag, float threshold = std::numeric_limits< float >::max());
 
 	explicit FloatTemplate(const wchar_t* const tag, float threshold, float min, float max, FloatTemplatePrecision precision, bool cyclic);
 

@@ -12,9 +12,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.shape.PrefabEntityFactory", PrefabEntityFactory
 
 const TypeInfoSet PrefabEntityFactory::getEntityTypes() const
 {
-	TypeInfoSet typeSet;
-	typeSet.insert< PrefabEntityData >();
-	return typeSet;
+	return makeTypeInfoSet< PrefabEntityData >();
 }
 
 const TypeInfoSet PrefabEntityFactory::getEntityEventTypes() const
@@ -32,11 +30,9 @@ Ref< world::Entity > PrefabEntityFactory::createEntity(const world::IEntityBuild
 	const PrefabEntityData* prefabEntityData = checked_type_cast< const PrefabEntityData* >(&entityData);
 
 	Ref< world::GroupEntity > batchEntity = new world::GroupEntity(prefabEntityData->getTransform());
-
-	const RefArray< world::EntityData >& childEntityData = prefabEntityData->getEntityData();
-	for (RefArray< world::EntityData >::const_iterator i = childEntityData.begin(); i != childEntityData.end(); ++i)
+	for (auto childEntityData : prefabEntityData->getEntityData())
 	{
-		Ref< world::Entity > childEntity = builder->create(*i);
+		Ref< world::Entity > childEntity = builder->create(childEntityData);
 		if (childEntity)
 			batchEntity->addEntity(childEntity);
 	}
@@ -46,12 +42,12 @@ Ref< world::Entity > PrefabEntityFactory::createEntity(const world::IEntityBuild
 
 Ref< world::IEntityEvent > PrefabEntityFactory::createEntityEvent(const world::IEntityBuilder* builder, const world::IEntityEventData& entityEventData) const
 {
-	return 0;
+	return nullptr;
 }
 
 Ref< world::IEntityComponent > PrefabEntityFactory::createEntityComponent(const world::IEntityBuilder* builder, const world::IEntityComponentData& entityComponentData) const
 {
-	return 0;
+	return nullptr;
 }
 
 	}

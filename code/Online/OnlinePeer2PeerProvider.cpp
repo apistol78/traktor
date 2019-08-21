@@ -14,25 +14,6 @@ namespace traktor
 {
 	namespace online
 	{
-		namespace
-		{
-
-struct P2PUserFindPred
-{
-	const IUser* m_user;
-
-	P2PUserFindPred(const IUser* user)
-	:	m_user(user)
-	{
-	}
-
-	bool operator () (const OnlinePeer2PeerProvider::P2PUser& p2pu) const
-	{
-		return p2pu.user->getGlobalId() == m_user->getGlobalId();
-	}
-};
-
-		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.online.OnlinePeer2PeerProvider", OnlinePeer2PeerProvider, net::IPeer2PeerProvider)
 
@@ -77,7 +58,7 @@ OnlinePeer2PeerProvider::~OnlinePeer2PeerProvider()
 	if (m_thread)
 	{
 		ThreadPool::getInstance().stop(m_thread);
-		m_thread = 0;
+		m_thread = nullptr;
 	}
 }
 
@@ -89,18 +70,21 @@ bool OnlinePeer2PeerProvider::update()
 		T_MEASURE_STATEMENT(m_lobby->getParticipants(users), 0.001);
 
 		// Add new users which have entered the lobby.
-		for (RefArray< IUser >::iterator i = users.begin(); i != users.end(); ++i)
+		for (auto user : users)
 		{
-			if (std::find_if(m_users.begin(), m_users.end(), P2PUserFindPred(*i)) == m_users.end())
+			auto it = std::find_if(m_users.begin(), m_users.end(), [&](const P2PUser& u) {
+				return u.user->getGlobalId() == user->getGlobalId();
+			});
+			if (it == m_users.end())
 			{
-				(*i)->setP2PEnable(true);
+				user->setP2PEnable(true);
 
 				P2PUser p2pu;
-				p2pu.user = *i;
+				p2pu.user = user;
 				p2pu.timeout = 0;
 				m_users.push_back(p2pu);
 
-				log::info << L"[Online P2P] Peer " << (*i)->getGlobalId() << L" added." << Endl;
+				log::info << L"[Online P2P] Peer " << user->getGlobalId() << L" added." << Endl;
 			}
 		}
 
@@ -255,7 +239,10 @@ int32_t OnlinePeer2PeerProvider::recv(void* data, int32_t size, net::net_handle_
 		{
 			RxTxData& rx = m_rxQueue.front();
 
-			if (std::find_if(m_users.begin(), m_users.end(), P2PUserFindPred(rx.user)) != m_users.end())
+			auto it = std::find_if(m_users.begin(), m_users.end(), [&](const P2PUser& u) {
+				return u.user->getGlobalId() == rx.user->getGlobalId();
+			});
+			if (it != m_users.end())
 			{
 				nrecv = std::min< int32_t >(size, rx.size);
 				std::memcpy(data, rx.data, nrecv);
@@ -277,8 +264,13 @@ int32_t OnlinePeer2PeerProvider::recv(void* data, int32_t size, net::net_handle_
 			nrecv = m_sessionManager->receiveP2PData(data, size, fromUser);
 			if (nrecv <= 0)
 				return nrecv;
+			if (!fromUser)
+				return 0;
 
-			if (fromUser != 0 && std::find_if(m_users.begin(), m_users.end(), P2PUserFindPred(fromUser)) != m_users.end())
+			auto it = std::find_if(m_users.begin(), m_users.end(), [&](const P2PUser& u) {
+				return u.user->getGlobalId() == fromUser->getGlobalId();
+			});
+			if (it != m_users.end())
 				outNode = net::net_handle_t(fromUser->getGlobalId());
 			else
 			{

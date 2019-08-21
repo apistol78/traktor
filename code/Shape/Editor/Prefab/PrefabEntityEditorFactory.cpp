@@ -11,9 +11,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.shape.PrefabEntityEditorFactory", PrefabEntityE
 
 const TypeInfoSet PrefabEntityEditorFactory::getEntityDataTypes() const
 {
-	TypeInfoSet typeSet;
-	typeSet.insert< PrefabEntityData >();
-	return typeSet;
+	return makeTypeInfoSet< PrefabEntityData >();
 }
 
 Ref< scene::IEntityEditor > PrefabEntityEditorFactory::createEntityEditor(scene::SceneEditorContext* context, scene::EntityAdapter* entityAdapter) const

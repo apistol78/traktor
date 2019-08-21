@@ -171,12 +171,12 @@ bool Replicator::update()
 		msg.ping.time0 = time2net(m_time0);
 		msg.ping.status = m_status;
 
-		for (RefArray< ReplicatorProxy >::const_iterator i = m_proxies.begin(); i != m_proxies.end(); ++i)
+		for (auto proxy : m_proxies)
 		{
-			if (((*i)->m_timeUntilTxPing -= dT) <= 0.0)
+			if ((proxy->m_timeUntilTxPing -= dT) <= 0.0)
 			{
-				T_MEASURE_STATEMENT(m_topology->send((*i)->m_handle, &msg, RmiPing_NetSize()), 0.001);
-				(*i)->m_timeUntilTxPing = m_configuration.timeUntilTxPing;
+				T_MEASURE_STATEMENT(m_topology->send(proxy->m_handle, &msg, RmiPing_NetSize()), 0.001);
+				proxy->m_timeUntilTxPing = m_configuration.timeUntilTxPing;
 			}
 		}
 	}
@@ -198,19 +198,19 @@ bool Replicator::update()
 
 		if (stateDataSize > 0)
 		{
-			for (RefArray< ReplicatorProxy >::const_iterator i = m_proxies.begin(); i != m_proxies.end(); ++i)
+			for (auto proxy : m_proxies)
 			{
-				if ((*i)->m_sendState && ((*i)->m_timeUntilTxState -= dT) <= 0.0)
+				if (proxy->m_sendState && (proxy->m_timeUntilTxState -= dT) <= 0.0)
 				{
-					T_MEASURE_STATEMENT(m_topology->send((*i)->m_handle, &msg, RmiState_NetSize(stateDataSize)), 0.001);
+					T_MEASURE_STATEMENT(m_topology->send(proxy->m_handle, &msg, RmiState_NetSize(stateDataSize)), 0.001);
 
-					Vector4 direction = (*i)->m_origin.translation() - m_origin.translation();
+					Vector4 direction = proxy->m_origin.translation() - m_origin.translation();
 					Scalar distance = direction.length();
 
 					float t = clamp((distance - m_configuration.nearDistance) / (m_configuration.farDistance - m_configuration.nearDistance), 0.0f, 1.0f);
 
-					(*i)->m_distance = distance;
-					(*i)->m_timeUntilTxState = lerp(m_configuration.timeUntilTxStateNear, m_configuration.timeUntilTxStateFar, t);
+					proxy->m_distance = distance;
+					proxy->m_timeUntilTxState = lerp(m_configuration.timeUntilTxStateNear, m_configuration.timeUntilTxStateFar, t);
 				}
 			}
 		}
@@ -234,11 +234,11 @@ bool Replicator::update()
 
 		// Find proxy from which we received a message.
 		Ref< ReplicatorProxy > fromProxy;
-		for (RefArray< ReplicatorProxy >::const_iterator i = m_proxies.begin(); i != m_proxies.end(); ++i)
+		for (auto proxy : m_proxies)
 		{
-			if ((*i)->m_handle == from)
+			if (proxy->m_handle == from)
 			{
-				fromProxy = *i;
+				fromProxy = proxy;
 				break;
 			}
 		}
@@ -272,9 +272,9 @@ bool Replicator::update()
 			if (msg.ping.status != fromProxy->m_status)
 			{
 				fromProxy->m_status = msg.ping.status;
-				for (RefArray< IReplicatorStateListener >::const_iterator i = m_listeners.begin(); i != m_listeners.end(); ++i)
+				for (auto listener : m_listeners)
 				{
-					(*i)->notify(
+					listener->notify(
 						this,
 						float(m_time),
 						IReplicatorStateListener::ReStatus,
@@ -344,30 +344,30 @@ bool Replicator::update()
 	/*
 	// \note Disabled for now as it's not used by GU.
 	// Invoke listeners for each new state.
-	for (RefArray< ReplicatorProxy >::iterator i = m_proxies.begin(); i != m_proxies.end(); ++i)
+	for (auto proxy : m_proxies)
 	{
-		if ((*i)->m_issueStateListeners)
+		if proxy->m_issueStateListeners)
 		{
-			for (RefArray< IListener >::const_iterator j = m_listeners.begin(); j != m_listeners.end(); ++j)
+			for (auto listener : m_listeners)
 			{
-				T_MEASURE_STATEMENT((*j)->notify(
+				T_MEASURE_STATEMENT(listener->notify(
 					this,
 					0.0f,
 					IListener::ReState,
-					(*i),
-					(*i)->m_state0
+					proxy,
+					proxy->m_state0
 				), 0.001);
 			}
-			(*i)->m_issueStateListeners = false;
+			proxy->m_issueStateListeners = false;
 		}
 	}
 	*/
 
 	// Update proxy queues.
-	for (RefArray< ReplicatorProxy >::iterator i = m_proxies.begin(); i != m_proxies.end(); ++i)
+	for (auto proxy : m_proxies)
 	{
-		T_MEASURE_STATEMENT((*i)->updateTxEventQueue(), 0.001);
-		T_MEASURE_STATEMENT((*i)->dispatchRxEvents(m_eventListeners), 0.001);
+		T_MEASURE_STATEMENT(proxy->updateTxEventQueue(), 0.001);
+		T_MEASURE_STATEMENT(proxy->dispatchRxEvents(m_eventListeners), 0.001);
 	}
 
 	T_MEASURE_UNTIL(0.001);
@@ -432,11 +432,11 @@ bool Replicator::update()
 				log::info << getLogPrefix() << L"Time synchronized (" << (m_timeContinuousSync - m_time) * 1000.0 << L" ms)" << Endl;
 #endif
 
-				for (RefArray< ReplicatorProxy >::iterator i = m_proxies.begin(); i != m_proxies.end(); ++i)
+				for (auto proxy : m_proxies)
 				{
-					(*i)->m_stateTimeN2 += (m_timeContinuousSync - m_time);
-					(*i)->m_stateTimeN1 += (m_timeContinuousSync - m_time);
-					(*i)->m_stateTime0 += (m_timeContinuousSync - m_time);
+					proxy->m_stateTimeN2 += (m_timeContinuousSync - m_time);
+					proxy->m_stateTimeN1 += (m_timeContinuousSync - m_time);
+					proxy->m_stateTime0 += (m_timeContinuousSync - m_time);
 				}
 
 				m_time = m_timeContinuousSync;
@@ -463,20 +463,20 @@ bool Replicator::update()
 		if ((m_status & 0x80) == 0x00 || m_exceededDeltaTimeLimit > c_maxDeltaTimeCount)
 		{
 			// Not "in session"; migrate primary if anyone else is.
-			for (RefArray< ReplicatorProxy >::iterator i = m_proxies.begin(); i != m_proxies.end(); ++i)
+			for (auto proxy : m_proxies)
 			{
-				if (((*i)->getStatus() & 0x80) == 0x80)
+				if ((proxy->getStatus() & 0x80) == 0x80)
 				{
-					if ((*i)->setPrimary())
+					if (proxy->setPrimary())
 					{
 #if defined(_DEBUG)
-						log::info << getLogPrefix() << L"Migrated primary token to peer " << (*i)->getHandle() << L"." << Endl;
+						log::info << getLogPrefix() << L"Migrated primary token to peer " << proxy->getHandle() << L"." << Endl;
 #endif
 						break;
 					}
 #if defined(_DEBUG)
 					else
-						log::info << getLogPrefix() << L"Unable migrate primary token to peer " << (*i)->getHandle() << L"." << Endl;
+						log::info << getLogPrefix() << L"Unable migrate primary token to peer " << proxy->getHandle() << L"." << Endl;
 #endif
 				}
 			}
@@ -499,9 +499,9 @@ void Replicator::flush()
 	{
 		// Check if any proxy has pending, unacknowledged events pending.
 		bool pendingEvents = false;
-		for (RefArray< ReplicatorProxy >::iterator i = m_proxies.begin(); i != m_proxies.end(); ++i)
+		for (auto proxy : m_proxies)
 		{
-			if ((*i)->updateTxEventQueue())
+			if (proxy->updateTxEventQueue())
 				pendingEvents = true;
 		}
 
@@ -529,8 +529,8 @@ void Replicator::setStatus(uint8_t status)
 		// If status has changed we need to ping our
 		// fellow peers as soon as possible to let them
 		// know about our new status.
-		for (RefArray< ReplicatorProxy >::const_iterator i = m_proxies.begin(); i != m_proxies.end(); ++i)
-			(*i)->m_timeUntilTxPing = 0.0;
+		for (auto proxy : m_proxies)
+			proxy->m_timeUntilTxPing = 0.0;
 
 		m_status = status;
 	}
@@ -558,14 +558,14 @@ void Replicator::setStateTemplate(const StateTemplate* stateTemplate)
 
 void Replicator::setState(const State* state)
 {
-	// If state represent a radical change we need to send
+	// If state represent a critical change we need to send
 	// the state to fellow peers as soon as possible.
 	if (state != 0 && m_stateTemplate->critical(m_state, state))
 	{
-		for (RefArray< ReplicatorProxy >::const_iterator i = m_proxies.begin(); i != m_proxies.end(); ++i)
+		for (auto proxy : m_proxies)
 		{
-			if ((*i)->m_distance < m_configuration.furthestDistance)
-				(*i)->m_timeUntilTxState = 0.0;
+			if (proxy->m_distance < m_configuration.furthestDistance)
+				proxy->m_timeUntilTxState = 0.0;
 		}
 	}
 	m_state = state;
@@ -593,25 +593,25 @@ ReplicatorProxy* Replicator::getProxy(uint32_t index) const
 
 bool Replicator::broadcastEvent(const ISerializable* eventObject, bool inOrder)
 {
-	for (RefArray< ReplicatorProxy >::const_iterator i = m_proxies.begin(); i != m_proxies.end(); ++i)
-		(*i)->sendEvent(eventObject, inOrder);
+	for (auto proxy : m_proxies)
+		proxy->sendEvent(eventObject, inOrder);
 	return true;
 }
 
 ReplicatorProxy* Replicator::getPrimaryProxy() const
 {
-	for (RefArray< ReplicatorProxy >::const_iterator i = m_proxies.begin(); i != m_proxies.end(); ++i)
+	for (auto proxy : m_proxies)
 	{
-		if ((*i)->isPrimary())
-			return *i;
+		if (proxy->isPrimary())
+			return proxy;
 	}
-	return 0;
+	return nullptr;
 }
 
 void Replicator::resetAllLatencies()
 {
-	for (RefArray< ReplicatorProxy >::const_iterator i = m_proxies.begin(); i != m_proxies.end(); ++i)
-		(*i)->resetLatencies();
+	for (auto proxy : m_proxies)
+		proxy->resetLatencies();
 }
 
 double Replicator::getAverageLatency() const
@@ -620,11 +620,11 @@ double Replicator::getAverageLatency() const
 	if (!m_proxies.empty())
 	{
 		int32_t reliableCount = 0;
-		for (RefArray< ReplicatorProxy >::const_iterator i = m_proxies.begin(); i != m_proxies.end(); ++i)
+		for (auto proxy : m_proxies)
 		{
-			if ((*i)->isLatencyReliable())
+			if (proxy->isLatencyReliable())
 			{
-				latency += (*i)->getLatency();
+				latency += proxy->getLatency();
 				reliableCount++;
 			}
 		}
@@ -640,11 +640,11 @@ double Replicator::getAverageReverseLatency() const
 	if (!m_proxies.empty())
 	{
 		int32_t reliableCount = 0;
-		for (RefArray< ReplicatorProxy >::const_iterator i = m_proxies.begin(); i != m_proxies.end(); ++i)
+		for (auto proxy : m_proxies)
 		{
-			if ((*i)->isLatencyReliable())
+			if (proxy->isLatencyReliable())
 			{
-				latency += (*i)->getReverseLatency();
+				latency += proxy->getReverseLatency();
 				reliableCount++;
 			}
 		}
@@ -661,11 +661,11 @@ double Replicator::getBestLatency() const
 	{
 		int32_t reliableCount = 0;
 		latency = std::numeric_limits< double >::max();
-		for (RefArray< ReplicatorProxy >::const_iterator i = m_proxies.begin(); i != m_proxies.end(); ++i)
+		for (auto proxy : m_proxies)
 		{
-			if ((*i)->isLatencyReliable())
+			if (proxy->isLatencyReliable())
 			{
-				latency = std::min(latency, (*i)->getLatency());
+				latency = std::min(latency, proxy->getLatency());
 				reliableCount++;
 			}
 		}
@@ -676,17 +676,17 @@ double Replicator::getBestLatency() const
 }
 
 double Replicator::getBestReverseLatency() const
-	{
+{
 	double latency = 0.0;
 	if (!m_proxies.empty())
 	{
 		int32_t reliableCount = 0;
 		latency = std::numeric_limits< double >::max();
-		for (RefArray< ReplicatorProxy >::const_iterator i = m_proxies.begin(); i != m_proxies.end(); ++i)
+		for (auto proxy : m_proxies)
 		{
-			if ((*i)->isLatencyReliable())
+			if (proxy->isLatencyReliable())
 			{
-				latency = std::min(latency, (*i)->getReverseLatency());
+				latency = std::min(latency, proxy->getReverseLatency());
 				reliableCount++;
 			}
 		}
@@ -699,13 +699,10 @@ double Replicator::getBestReverseLatency() const
 double Replicator::getWorstLatency() const
 {
 	double latency = 0.0;
-	if (!m_proxies.empty())
+	for (auto proxy : m_proxies)
 	{
-		for (RefArray< ReplicatorProxy >::const_iterator i = m_proxies.begin(); i != m_proxies.end(); ++i)
-		{
-			if ((*i)->isLatencyReliable())
-				latency = std::max(latency, (*i)->getLatency());
-		}
+		if (proxy->isLatencyReliable())
+			latency = std::max(latency, proxy->getLatency());
 	}
 	return latency;
 }
@@ -713,13 +710,10 @@ double Replicator::getWorstLatency() const
 double Replicator::getWorstReverseLatency() const
 {
 	double latency = 0.0;
-	if (!m_proxies.empty())
+	for (auto proxy : m_proxies)
 	{
-		for (RefArray< ReplicatorProxy >::const_iterator i = m_proxies.begin(); i != m_proxies.end(); ++i)
-		{
-			if ((*i)->isLatencyReliable())
-				latency = std::max(latency, (*i)->getReverseLatency());
-		}
+		if (proxy->isLatencyReliable())
+			latency = std::max(latency, proxy->getReverseLatency());
 	}
 	return latency;
 }
@@ -753,9 +747,9 @@ bool Replicator::sendEventToPrimary(const ISerializable* eventObject, bool inOrd
 		if (it != m_eventListeners.end())
 		{
 			T_ANONYMOUS_VAR(Ref< const ISerializable >)(eventObject);
-			for (RefArray< IReplicatorEventListener >::const_iterator i = it->second.begin(); i != it->second.end(); ++i)
+			for (auto eventListener : it->second)
 			{
-				processed |= (*i)->notify(
+				processed |= eventListener->notify(
 					this,
 					float(m_time),
 					0,
@@ -819,9 +813,9 @@ bool Replicator::nodeConnected(INetworkTopology* topology, net_handle_t node)
 
 		log::info << getLogPrefix() << L"Proxy for node " << node << L" (" << name << L") created." << Endl;
 
-		for (RefArray< IReplicatorStateListener >::const_iterator i = m_listeners.begin(); i != m_listeners.end(); ++i)
+		for (auto listener : m_listeners)
 		{
-			(*i)->notify(
+			listener->notify(
 				this,
 				float(m_time),
 				IReplicatorStateListener::ReConnected,
@@ -840,26 +834,25 @@ bool Replicator::nodeConnected(INetworkTopology* topology, net_handle_t node)
 
 bool Replicator::nodeDisconnected(INetworkTopology* topology, net_handle_t node)
 {
-	for (RefArray< ReplicatorProxy >::iterator i = m_proxies.begin(); i != m_proxies.end(); ++i)
+	for (auto proxy : m_proxies)
 	{
-		if ((*i)->m_handle == node)
+		if (proxy->m_handle == node)
 		{
-			log::info << getLogPrefix() << L"Proxy for node " << node << L" (" << (*i)->getName() << L") destroyed." << Endl;
+			log::info << getLogPrefix() << L"Proxy for node " << node << L" (" << proxy->getName() << L") destroyed." << Endl;
 
-			for (RefArray< IReplicatorStateListener >::const_iterator j = m_listeners.begin(); j != m_listeners.end(); ++j)
+			for (auto listener : m_listeners)
 			{
-				(*j)->notify(
+				listener->notify(
 					this,
 					float(m_time),
 					IReplicatorStateListener::ReDisconnected,
-					*i,
+					proxy,
 					0
 				);
 			}
 
-			(*i)->disconnect();
-			m_proxies.erase(i);
-
+			proxy->disconnect();
+			m_proxies.remove(proxy);
 			break;
 		}
 	}

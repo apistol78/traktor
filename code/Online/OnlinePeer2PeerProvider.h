@@ -32,19 +32,6 @@ class T_DLLCLASS OnlinePeer2PeerProvider : public net::IPeer2PeerProvider
 	T_RTTI_CLASS;
 
 public:
-	struct P2PUser
-	{
-		Ref< IUser > user;
-		int32_t timeout;
-	};
-
-	struct RxTxData
-	{
-		Ref< IUser > user;
-		uint32_t size;
-		uint8_t data[1200];
-	};
-
 	OnlinePeer2PeerProvider(ISessionManager* sessionManager, ILobby* lobby, bool asyncTx, bool asyncRx);
 
 	virtual ~OnlinePeer2PeerProvider();
@@ -70,6 +57,19 @@ public:
 	virtual int32_t recv(void* data, int32_t size, net::net_handle_t& outNode) override final;
 
 private:
+	struct P2PUser
+	{
+		Ref< IUser > user;
+		int32_t timeout;
+	};
+
+	struct RxTxData
+	{
+		Ref< IUser > user;
+		uint32_t size;
+		uint8_t data[1200];
+	};
+	
 	Ref< ISessionManager > m_sessionManager;
 	Ref< ILobby > m_lobby;
 	Timer m_timer;
