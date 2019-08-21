@@ -319,7 +319,7 @@ void GridView::eventEditFocus(FocusEvent* event)
 
 		m_editItem->setText(newText);
 
-		GridItemContentChangeEvent changeEvent(this, m_editItem);
+		GridItemContentChangeEvent changeEvent(this, m_editItem, originalText);
 		raiseEvent(&changeEvent);
 
 		if (!changeEvent.consumed())

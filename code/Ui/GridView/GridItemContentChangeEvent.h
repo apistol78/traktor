@@ -17,7 +17,7 @@ namespace traktor
 
 class GridItem;
 
-/*! \brief
+/*! \Event when content of a grid view item changes.
  * \ingroup UI
  */
 class T_DLLCLASS GridItemContentChangeEvent : public ContentChangeEvent
@@ -25,12 +25,15 @@ class T_DLLCLASS GridItemContentChangeEvent : public ContentChangeEvent
 	T_RTTI_CLASS;
 
 public:
-	GridItemContentChangeEvent(EventSubject* sender, GridItem* item);
+	GridItemContentChangeEvent(EventSubject* sender, GridItem* item, const std::wstring& originalText);
 
 	GridItem* getItem() const;
 
+	const std::wstring& getOriginalText() const;
+
 private:
 	Ref< GridItem > m_item;
+	std::wstring m_originalText;
 };
 
 	}
