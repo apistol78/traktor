@@ -31,6 +31,7 @@ class Container;
 class EdgeConnectEvent;
 class EdgeDisconnectEvent;
 class GraphControl;
+class GridItemContentChangeEvent;
 class GridView;
 class Menu;
 class Node;
@@ -116,6 +117,8 @@ private:
 	void eventEdgeConnect(ui::EdgeConnectEvent* event);
 
 	void eventEdgeDisconnect(ui::EdgeDisconnectEvent* event);
+
+	void eventVariableEdit(ui::GridItemContentChangeEvent* event);
 };
 
 	}

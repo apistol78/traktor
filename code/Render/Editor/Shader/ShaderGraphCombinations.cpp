@@ -49,7 +49,7 @@ Ref< ShaderGraph > replaceBranch(const ShaderGraph* shaderGraph, Branch* branch,
 
 	Ref< Edge > sourceEdge = shaderGraphResult->findEdge(inputPin);
 	if (!sourceEdge)
-		return 0;
+		return nullptr;
 
 	RefSet< Edge > destinationEdges;
 	shaderGraphResult->findEdges(outputPin, destinationEdges);
@@ -66,7 +66,7 @@ Ref< ShaderGraph > replaceBranch(const ShaderGraph* shaderGraph, Branch* branch,
 
 	shaderGraphResult = ShaderGraphOptimizer(shaderGraphResult).removeUnusedBranches();
 	if (!shaderGraphResult)
-		return 0;
+		return nullptr;
 
 	return shaderGraphResult;
 }
@@ -143,9 +143,9 @@ ShaderGraphCombinations::ShaderGraphCombinations(const ShaderGraph* shaderGraph)
 	m_shaderGraph->findNodesOf< Branch >(branchNodes);
 
 	std::set< std::wstring > parameterNames;
-	for (RefArray< Branch >::iterator i = branchNodes.begin(); i != branchNodes.end(); ++i)
+	for (auto branchNode : branchNodes)
 	{
-		std::wstring name = (*i)->getParameterName();
+		std::wstring name = branchNode->getParameterName();
 		if (parameterNames.find(name) != parameterNames.end())
 			continue;
 
