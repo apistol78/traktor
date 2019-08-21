@@ -33,13 +33,15 @@ public:
 
     virtual void update(const world::UpdateParams& update) override final;
 
-    bool isDirty() const { return m_dirty; }
-
-    void resetDirty() { m_dirty = false; }
+    const Transform& getTransform() const { return m_transform; }
 
     const AlignedVector< Winding3 >& getWindings() const { return m_windings; }
 
     const BspTree& getBspTree() const { return m_bspTree; }
+
+    bool isDirty() const { return m_dirty; }
+
+    void resetDirty() { m_dirty = false; }
 
 protected:
     friend class PrimitiveEntityData;

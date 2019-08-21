@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Core/Containers/AlignedVector.h"
+#include "Core/Math/Winding3.h"
 #include "World/Entity/GroupEntity.h"
 
 // import/export mechanism.
@@ -23,6 +25,11 @@ public:
     SolidEntity(const Transform& transform = Transform::identity());
 
     virtual void update(const world::UpdateParams& update) override final;
+
+    const AlignedVector< Winding3 >& getWindings() const { return m_windings; }
+
+private:
+    AlignedVector< Winding3 > m_windings;
 };
 
     }

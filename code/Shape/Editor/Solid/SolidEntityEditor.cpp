@@ -1,4 +1,10 @@
+#include "Core/Log/Log.h"
+#include "Core/Math/Format.h"
+
+#include "Render/PrimitiveRenderer.h"
+#include "Shape/Editor/Solid/PrimitiveEntity.h"
 #include "Shape/Editor/Solid/PrimitiveEntityData.h"
+#include "Shape/Editor/Solid/SolidEntity.h"
 #include "Shape/Editor/Solid/SolidEntityData.h"
 #include "Shape/Editor/Solid/SolidEntityEditor.h"
 #include "Scene/Editor/EntityAdapter.h"
@@ -47,6 +53,52 @@ bool SolidEntityEditor::removeChildEntity(traktor::scene::EntityAdapter* childEn
 
 	solidEntityData->removeEntityData(childEntityData);
 	return true;
+}
+
+void SolidEntityEditor::drawGuide(render::PrimitiveRenderer* primitiveRenderer) const
+{
+	SolidEntity* solidEntity = mandatory_non_null_type_cast< SolidEntity* >(getEntityAdapter()->getEntity());
+
+	RefArray< PrimitiveEntity > primitiveEntities;
+	solidEntity->getEntitiesOf< PrimitiveEntity >(primitiveEntities);
+	for (auto primitiveEntity : primitiveEntities)
+	{
+		for (const auto& winding : primitiveEntity->getWindings())
+		{
+			for (uint32_t i = 0; i < winding.size(); ++i)
+			{
+				uint32_t j = (i + 1) % winding.size();
+				primitiveRenderer->drawLine(
+					primitiveEntity->getTransform() * winding[i],
+					primitiveEntity->getTransform() * winding[j],
+					Color4ub(0, 0, 255, 100)
+				);
+			}
+		}
+	}
+
+	for (const auto& winding : solidEntity->getWindings())
+	{
+		for (uint32_t i = 0; i < winding.size(); ++i)
+		{
+			uint32_t j = (i + 1) % winding.size();
+			primitiveRenderer->drawLine(
+				winding[i],
+				winding[j],
+				Color4ub(255, 255, 255, 255)
+			);
+		}
+
+		Plane pl;
+		if (winding.getPlane(pl))
+		{
+			primitiveRenderer->drawLine(
+				winding.center(),
+				winding.center() + pl.normal(),
+				Color4ub(255, 255, 0, 255)
+			);
+		}
+	}
 }
 
 	}
