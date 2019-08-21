@@ -28,6 +28,11 @@ void PrimitiveEntity::setTransform(const Transform& transform)
      return true;
  }
 
+ Aabb3 PrimitiveEntity::getBoundingBox() const
+ {
+	return Aabb3();
+ }
+
 void PrimitiveEntity::update(const world::UpdateParams& update)
 {
 }

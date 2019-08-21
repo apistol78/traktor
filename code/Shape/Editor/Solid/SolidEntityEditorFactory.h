@@ -2,12 +2,20 @@
 
 #include "Scene/Editor/IEntityEditorFactory.h"
 
+// import/export mechanism.
+#undef T_DLLCLASS
+#if defined(T_SHAPE_EDITOR_EXPORT)
+#	define T_DLLCLASS T_DLLEXPORT
+#else
+#	define T_DLLCLASS T_DLLIMPORT
+#endif
+
 namespace traktor
 {
 	namespace shape
 	{
 
-class SolidEntityEditorFactory : public scene::IEntityEditorFactory
+class T_DLLCLASS SolidEntityEditorFactory : public scene::IEntityEditorFactory
 {
 	T_RTTI_CLASS;
 
