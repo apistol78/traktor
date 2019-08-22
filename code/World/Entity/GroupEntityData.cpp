@@ -1,4 +1,5 @@
 #include <algorithm>
+#include "Core/Serialization/AttributePrivate.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberRefArray.h"
 #include "World/Entity/GroupEntityData.h"
@@ -62,7 +63,7 @@ void GroupEntityData::setTransform(const Transform& transform)
 void GroupEntityData::serialize(ISerializer& s)
 {
 	EntityData::serialize(s);
-	s >> MemberRefArray< EntityData >(L"entityData", m_entityData);
+	s >> MemberRefArray< EntityData >(L"entityData", m_entityData, AttributePrivate());
 }
 
 	}

@@ -1,3 +1,4 @@
+#include "Core/Math/Const.h"
 #include "Heightfield/Heightfield.h"
 #include "Heightfield/Editor/ConvertHeightfield.h"
 #include "Model/Model.h"

@@ -25,7 +25,7 @@ void updateEntityRendererMap(
 			entityType->findAllOf(renderableTypes);
 			for (const auto renderableType : renderableTypes)
 			{
-				//if (outEntityRendererMap[renderableType] == nullptr)
+				if (outEntityRendererMap[renderableType] == nullptr)
 					outEntityRendererMap[renderableType] = entityRenderer;
 			}
 		}
