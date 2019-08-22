@@ -151,19 +151,19 @@ int Winding3::classify(const Plane& plane) const
 	{
 		float d = plane.distance(m_points[i]);
 		if (d > FUZZY_EPSILON)
-			side[CfFront]++;
+			side[0]++;
 		else if (d < -FUZZY_EPSILON)
-			side[CfBack]++;
+			side[1]++;
 	}
 
-	if (side[CfFront] && !side[CfBack])
+	if (side[0] && !side[1])
 		return CfFront;
-	else if (!side[CfFront] && side[CfBack])
+	else if (!side[0] && side[1])
 		return CfBack;
-	else if (!side[CfFront] && !side[CfBack])
+	else if (!side[0] && !side[1])
 		return CfCoplanar;
 
-	T_ASSERT(side[CfFront] && side[CfBack]);
+	T_ASSERT(side[0] && side[1]);
 	return CfSpan;
 }
 
