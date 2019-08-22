@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Core/Containers/AlignedVector.h"
-#include "Core/Math/BspTree.h"
 #include "Core/Math/Winding3.h"
 #include "World/Entity.h"
 
@@ -37,8 +36,6 @@ public:
 
     const AlignedVector< Winding3 >& getWindings() const { return m_windings; }
 
-    const BspTree& getBspTree() const { return m_bspTree; }
-
     bool isDirty() const { return m_dirty; }
 
     void resetDirty() { m_dirty = false; }
@@ -48,7 +45,6 @@ protected:
 
     Transform m_transform;
     AlignedVector< Winding3 > m_windings;
-    BspTree m_bspTree;
     bool m_dirty;
 };
 

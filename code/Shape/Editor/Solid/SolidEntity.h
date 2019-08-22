@@ -2,6 +2,8 @@
 
 #include "Core/Containers/AlignedVector.h"
 #include "Core/Math/Winding3.h"
+#include "Render/Types.h"
+#include "Resource/Proxy.h"
 #include "World/Entity/GroupEntity.h"
 
 // import/export mechanism.
@@ -14,6 +16,25 @@
 
 namespace traktor
 {
+	namespace render
+	{
+
+class IndexBuffer;
+class IRenderSystem;
+class Shader;
+class VertexBuffer;
+
+	}
+
+    namespace world
+    {
+
+class IWorldRenderPass;
+class WorldContext;
+class WorldRenderView;
+
+    }
+
     namespace shape
     {
 
@@ -22,14 +43,30 @@ class T_DLLCLASS SolidEntity : public world::GroupEntity
     T_RTTI_CLASS;
 
 public:
-    SolidEntity(const Transform& transform = Transform::identity());
+    SolidEntity(
+		render::IRenderSystem* renderSystem,
+		const resource::Proxy< render::Shader >& shader,
+		const Transform& transform
+	);
 
     virtual void update(const world::UpdateParams& update) override final;
+
+	void render(
+		world::WorldContext& worldContext,
+		world::WorldRenderView& worldRenderView,
+		const world::IWorldRenderPass& worldRenderPass
+	);
 
     const AlignedVector< Winding3 >& getWindings() const { return m_windings; }
 
 private:
     AlignedVector< Winding3 > m_windings;
+
+	Ref< render::IRenderSystem > m_renderSystem;
+	resource::Proxy< render::Shader > m_shader;
+	Ref< render::VertexBuffer > m_vertexBuffer;
+	Ref< render::IndexBuffer > m_indexBuffer;
+	render::Primitives m_primitives;
 };
 
     }

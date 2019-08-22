@@ -11,11 +11,11 @@ bool BspTree::build(const AlignedVector< Winding3 >& polygons)
 		return false;
 
 	AlignedVector< Winding3 > mutablePolygons = polygons;
-	std::vector< uint32_t > mutablePlanes(polygons.size());
+	AlignedVector< uint32_t > mutablePlanes(polygons.size());
 
 	// Calculate polygon planes.
 	m_planes.resize(mutablePolygons.size());
-	for (uint32_t i = 0; i < uint32_t(mutablePolygons.size()); ++i)
+	for (uint32_t i = 0; i < (uint32_t)mutablePolygons.size(); ++i)
 	{
 		if (!mutablePolygons[i].getPlane(m_planes[i]))
 			return false;
@@ -25,7 +25,7 @@ bool BspTree::build(const AlignedVector< Winding3 >& polygons)
 
 	// Recursively build nodes.
 	m_root = recursiveBuild(mutablePolygons, mutablePlanes);
-	return bool(m_root != 0);
+	return bool(m_root != nullptr);
 }
 
 bool BspTree::inside(const Vector4& pt) const
@@ -40,7 +40,13 @@ bool BspTree::inside(const Winding3& w) const
 	return inside(m_root, w);
 }
 
-Ref< BspTree::BspNode > BspTree::recursiveBuild(AlignedVector< Winding3 >& polygons, std::vector< uint32_t >& planes) const
+void BspTree::clip(const Winding3& w, const std::function< void(uint32_t index, const Winding3& w, uint32_t cl, bool splitted) >& visitor) const
+{
+	T_ASSERT(m_root);
+	clip(m_root, w, false, visitor);
+}
+
+Ref< BspTree::BspNode > BspTree::recursiveBuild(AlignedVector< Winding3 >& polygons, AlignedVector< uint32_t >& planes) const
 {
 	Ref< BspNode > node = new BspNode();
 	node->plane = planes[0];
@@ -48,11 +54,11 @@ Ref< BspTree::BspNode > BspTree::recursiveBuild(AlignedVector< Winding3 >& polyg
 	const Plane& p = m_planes[node->plane];
 
 	AlignedVector< Winding3 > frontPolygons, backPolygons;
-	std::vector< uint32_t > frontPlanes, backPlanes;
+	AlignedVector< uint32_t > frontPlanes, backPlanes;
 
 	for (size_t i = 1; i < polygons.size(); ++i)
 	{
-		int cf = polygons[i].classify(p);
+		int32_t cf = polygons[i].classify(p);
 		if (cf == Winding3::CfFront || cf == Winding3::CfCoplanar)
 		{
 			frontPolygons.push_back(polygons[i]);
@@ -137,6 +143,55 @@ bool BspTree::inside(const BspNode* node, const Winding3& w) const
 	}
 
 	return result;
+}
+
+void BspTree::clip(const BspNode* node, const Winding3& w, bool splitted, const std::function< void(uint32_t index, const Winding3& w, uint32_t cl, bool splitted) >& visitor) const
+{
+	const Plane& p = m_planes[node->plane];
+
+	int32_t cf = w.classify(p);
+	if (cf == Winding3::CfCoplanar)
+	{
+		Plane polygonPlane;
+		if (w.getPlane(polygonPlane))
+			cf = dot3(p.normal(), polygonPlane.normal()) >= 0.0f ? Winding3::CfFront : Winding3::CfBack;
+		else
+			cf = Winding3::CfFront;
+	}
+
+	if (cf == Winding3::CfFront)
+	{
+		if (node->front)
+			clip(node->front, w, splitted, visitor);
+		else
+			visitor(node->plane, w, cf, splitted);
+	}
+	else if (cf == Winding3::CfBack)
+	{
+		if (node->back)
+			clip(node->back, w, splitted, visitor);
+		else
+			visitor(node->plane, w, cf, splitted);
+	}
+	else if (cf == Winding3::CfSpan)
+	{
+		Winding3 f, b;
+		w.split(p, f, b);
+		if (!f.empty())
+		{
+			if (node->front)
+				clip(node->front, f, true, visitor);
+			else
+				visitor(node->plane, f, Winding3::CfFront, true);
+		}
+		if (!b.empty())
+		{
+			if (node->back)
+				clip(node->back, b, true, visitor);
+			else
+				visitor(node->plane, b, Winding3::CfBack, true);
+		}
+	}
 }
 
 }

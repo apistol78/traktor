@@ -26,10 +26,10 @@ public:
 
 	enum Classification
 	{
-		CfFront,
-		CfBack,
-		CfCoplanar,
-		CfSpan
+		CfFront = 1,
+		CfBack = 2,
+		CfSpan = (CfFront | CfBack),
+		CfCoplanar = 4
 	};
 
 	Winding3();
