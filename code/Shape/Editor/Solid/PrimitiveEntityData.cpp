@@ -13,9 +13,7 @@ T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.shape.PrimitiveEntityData", 0, PrimitiveEn
 
 Ref< PrimitiveEntity > PrimitiveEntityData::createEntity() const
 {
-    Ref< PrimitiveEntity > entity = new PrimitiveEntity();
-    
-    entity->m_transform = getTransform();
+    Ref< PrimitiveEntity > entity = new PrimitiveEntity(getTransform());
     
     for (uint32_t i = 0; i < m_indices.size(); i += 4)
     {
@@ -27,10 +25,6 @@ Ref< PrimitiveEntity > PrimitiveEntityData::createEntity() const
         w[3] = m_vertices[m_indices[i + 0]];
     }
     
-    entity->m_bspTree.build(
-        entity->m_windings
-    );
-
     return entity;
 }
 

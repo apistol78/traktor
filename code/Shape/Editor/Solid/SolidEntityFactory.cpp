@@ -13,6 +13,12 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.shape.SolidEntityFactory", SolidEntityFactory, world::IEntityFactory)
 
+SolidEntityFactory::SolidEntityFactory(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem)
+:	m_resourceManager(resourceManager)
+,	m_renderSystem(renderSystem)
+{
+}
+
 const TypeInfoSet SolidEntityFactory::getEntityTypes() const
 {
 	return makeTypeInfoSet< PrimitiveEntityData, SolidEntityData >();
@@ -31,20 +37,9 @@ const TypeInfoSet SolidEntityFactory::getEntityComponentTypes() const
 Ref< world::Entity > SolidEntityFactory::createEntity(const world::IEntityBuilder* builder, const world::EntityData& entityData) const
 {
 	if (auto primitiveEntityData = dynamic_type_cast< const PrimitiveEntityData* >(&entityData))
-	{
 		return primitiveEntityData->createEntity();
-	}
 	else if (auto solidEntityData = dynamic_type_cast< const SolidEntityData* >(&entityData))
-	{
-		Ref< SolidEntity > solidEntity = new SolidEntity(solidEntityData->getTransform());
-		for (auto childEntityData : solidEntityData->getEntityData())
-		{
-			Ref< PrimitiveEntity > primitiveEntity = builder->create< PrimitiveEntity >(childEntityData);
-			if (primitiveEntity)
-				solidEntity->addEntity(primitiveEntity);
-		}
-		return solidEntity;
-	}
+		return solidEntityData->createEntity(builder, m_resourceManager, m_renderSystem);
 	else
 		return nullptr;
 }

@@ -1,6 +1,8 @@
 #pragma once
 
+#include "Core/Ref.h"
 #include "Core/RefArray.h"
+#include "Resource/Id.h"
 #include "World/Entity/GroupEntityData.h"
 
 // import/export mechanism.
@@ -13,10 +15,33 @@
 
 namespace traktor
 {
+	namespace render
+	{
+
+class IRenderSystem;
+class Shader;
+
+	}
+
+    namespace resource
+    {
+
+class IResourceManager;
+
+    }
+
+    namespace world
+    {
+
+class IEntityBuilder;
+
+    }
+
     namespace shape
     {
 
 class PrimitiveEntityData;
+class SolidEntity;
 
 /*! Solid geometry entity data.
  *
@@ -27,7 +52,12 @@ class T_DLLCLASS SolidEntityData : public world::GroupEntityData
     T_RTTI_CLASS;
 
 public:
+    Ref< SolidEntity > createEntity(const world::IEntityBuilder* builder, resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem) const;
+
     virtual void serialize(ISerializer& s) override final;
+
+private:
+    resource::Id< render::Shader > m_shader;
 };
 
     }

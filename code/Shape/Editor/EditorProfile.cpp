@@ -6,6 +6,7 @@
 #include "Shape/Editor/Prefab/PrefabEntityEditorFactory.h"
 #include "Shape/Editor/Solid/SolidEntityEditorFactory.h"
 #include "Shape/Editor/Solid/SolidEntityFactory.h"
+#include "Shape/Editor/Solid/SolidEntityRenderer.h"
 #include "Shape/Editor/Spline/ControlPointEntityEditorFactory.h"
 #include "Shape/Editor/Spline/SplineEntityEditorFactory.h"
 
@@ -48,7 +49,7 @@ void EditorProfile::createEntityFactories(
 ) const
 {
 	outEntityFactories.push_back(new PrefabEntityFactory());
-	outEntityFactories.push_back(new SolidEntityFactory());
+	outEntityFactories.push_back(new SolidEntityFactory(context->getResourceManager(), context->getRenderSystem()));
 	outEntityFactories.push_back(new EntityFactory(context->getResourceManager(), context->getRenderSystem()));
 }
 
@@ -60,6 +61,7 @@ void EditorProfile::createEntityRenderers(
 ) const
 {
 	outEntityRenderers.push_back(new EntityRenderer());
+	outEntityRenderers.push_back(new SolidEntityRenderer());
 }
 
 void EditorProfile::createControllerEditorFactories(

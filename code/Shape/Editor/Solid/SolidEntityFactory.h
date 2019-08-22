@@ -12,6 +12,20 @@
 
 namespace traktor
 {
+	namespace resource
+	{
+
+class IResourceManager;
+
+	}
+
+	namespace render
+	{
+
+class IRenderSystem;
+
+	}
+
 	namespace shape
 	{
 
@@ -20,6 +34,8 @@ class T_DLLCLASS SolidEntityFactory : public world::IEntityFactory
 	T_RTTI_CLASS;
 
 public:
+	SolidEntityFactory(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem);
+
 	virtual const TypeInfoSet getEntityTypes() const override final;
 
 	virtual const TypeInfoSet getEntityEventTypes() const override final;
@@ -31,6 +47,10 @@ public:
 	virtual Ref< world::IEntityEvent > createEntityEvent(const world::IEntityBuilder* builder, const world::IEntityEventData& entityEventData) const override final;
 
 	virtual Ref< world::IEntityComponent > createEntityComponent(const world::IEntityBuilder* builder, const world::IEntityComponentData& entityComponentData) const override final;
+
+private:
+	Ref< resource::IResourceManager > m_resourceManager;
+	Ref< render::IRenderSystem > m_renderSystem;
 };
 
 	}
