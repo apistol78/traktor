@@ -1031,6 +1031,14 @@
 			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Dark/Images/Scene/FilterEntity.image</value>
 		</item>		
 		<item>
+			<name>Scene.MoveUpEntity</name>
+			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Dark/Images/Scene/MoveUp.image</value>
+		</item>		
+		<item>
+			<name>Scene.MoveDownEntity</name>
+			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Dark/Images/Scene/MoveDown.image</value>
+		</item>		
+		<item>
 			<name>Scene.LayerHidden</name>
 			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Dark/Images/Scene/LayerHidden.image</value>
 		</item>
@@ -1181,6 +1189,10 @@
 		<item>
 			<name>Scene.Rotate</name>
 			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Dark/Images/Scene/Rotate.image</value>
+		</item>
+		<item>
+			<name>Scene.Scale</name>
+			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Dark/Images/Scene/Scale.image</value>
 		</item>
 		<item>
 			<name>Scene.Snap</name>
