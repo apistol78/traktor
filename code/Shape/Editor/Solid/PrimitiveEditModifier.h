@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Core/RefArray.h"
 #include "Scene/Editor/IModifier.h"
 
 namespace traktor
@@ -7,6 +8,7 @@ namespace traktor
     namespace scene
     {
 
+class EntityAdapter;
 class SceneEditorContext;
 
     }
@@ -52,6 +54,7 @@ public:
 
 private:
 	scene::SceneEditorContext* m_context;
+	RefArray< scene::EntityAdapter > m_entityAdapters;
 };
 
 	}

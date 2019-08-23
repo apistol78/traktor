@@ -4,6 +4,13 @@
 
 namespace traktor
 {
+	namespace scene
+	{
+
+class ModifierChangedEvent;
+
+	}
+
 	namespace shape
 	{
 
@@ -20,6 +27,8 @@ public:
 
 private:
 	scene::SceneEditorContext* m_context;
+
+	void eventModifierChanged(scene::ModifierChangedEvent* event);
 };
 
 	}

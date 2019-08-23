@@ -136,7 +136,7 @@ void SolidEntity::update(const world::UpdateParams& update)
         dirty |= primitiveEntity->isDirty();
         primitiveEntity->resetDirty();
     }
-    if (dirty || !m_vertexBuffer || !m_indexBuffer)
+    if (dirty)
     {
         m_windings.resize(0);
 
@@ -203,50 +203,61 @@ void SolidEntity::update(const world::UpdateParams& update)
         const uint32_t ntriangles = triangulated.size();
         const uint32_t nvertices = ntriangles * 3;
 
-        // Create vertices.
-        AlignedVector< render::VertexElement > vertexElements;
-        vertexElements.push_back(render::VertexElement(render::DuPosition, render::DtFloat3, offsetof(Vertex, position)));
-        vertexElements.push_back(render::VertexElement(render::DuNormal, render::DtFloat3, offsetof(Vertex, normal)));
-        vertexElements.push_back(render::VertexElement(render::DuCustom, render::DtFloat2, offsetof(Vertex, texCoord)));
-
-        m_vertexBuffer = m_renderSystem->createVertexBuffer(
-            vertexElements,
-            nvertices * sizeof(Vertex),
-            false
-        );
-
-        Vertex* vertex = (Vertex*)m_vertexBuffer->lock();
-        for (const auto& w : triangulated)
+        if (ntriangles > 0)
         {
-            Plane pl;
-            w.getPlane(pl);
-            Vector4 normal = pl.normal();
+            // Create vertices.
+            AlignedVector< render::VertexElement > vertexElements;
+            vertexElements.push_back(render::VertexElement(render::DuPosition, render::DtFloat3, offsetof(Vertex, position)));
+            vertexElements.push_back(render::VertexElement(render::DuNormal, render::DtFloat3, offsetof(Vertex, normal)));
+            vertexElements.push_back(render::VertexElement(render::DuCustom, render::DtFloat2, offsetof(Vertex, texCoord)));
 
-            for (int32_t i = 0; i < 3; ++i)
+            m_vertexBuffer = m_renderSystem->createVertexBuffer(
+                vertexElements,
+                nvertices * sizeof(Vertex),
+                false
+            );
+
+            Vertex* vertex = (Vertex*)m_vertexBuffer->lock();
+            for (const auto& w : triangulated)
             {
-                w[i].storeUnaligned(vertex->position);
-                normal.storeUnaligned(vertex->normal);
-                ++vertex;
+                Plane pl;
+                w.getPlane(pl);
+
+                Vector4 normal = pl.normal();
+
+                Vector4 fu, fv;
+                orthogonalFrame(normal, fu, fv);
+
+                for (int32_t i = 0; i < 3; ++i)
+                {
+                    w[i].storeUnaligned(vertex->position);
+                    normal.storeUnaligned(vertex->normal);
+
+                    vertex->texCoord[0] = dot3(fu, w[i]);
+                    vertex->texCoord[1] = dot3(fv, w[i]);
+                    
+                    ++vertex;
+                }
             }
+            m_vertexBuffer->unlock();
+
+            // Create indices.
+            m_indexBuffer = m_renderSystem->createIndexBuffer(render::ItUInt16, ntriangles * 3 * sizeof(uint16_t), false);
+
+            uint16_t* index = (uint16_t*)m_indexBuffer->lock();
+            for (uint32_t i = 0; i < ntriangles * 3; ++i)
+                *index++ = i;
+            m_indexBuffer->unlock();
+
+            // Create primitives.
+            m_primitives.setIndexed(
+                render::PtTriangles,
+                0,
+                ntriangles,
+                0,
+                nvertices - 1
+            );
         }
-        m_vertexBuffer->unlock();
-
-        // Create indices.
-        m_indexBuffer = m_renderSystem->createIndexBuffer(render::ItUInt16, ntriangles * 3 * sizeof(uint16_t), false);
-
-        uint16_t* index = (uint16_t*)m_indexBuffer->lock();
-        for (uint32_t i = 0; i < ntriangles * 3; ++i)
-            *index++ = i;
-        m_indexBuffer->unlock();
-
-        // Create primitives.
-        m_primitives.setIndexed(
-            render::PtTriangles,
-            0,
-            ntriangles,
-            0,
-            nvertices - 1
-        );
     }
 }
 

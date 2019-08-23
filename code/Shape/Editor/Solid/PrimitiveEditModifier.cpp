@@ -1,4 +1,8 @@
+#include "Render/PrimitiveRenderer.h"
+#include "Scene/Editor/EntityAdapter.h"
+#include "Scene/Editor/SceneEditorContext.h"
 #include "Shape/Editor/Solid/PrimitiveEditModifier.h"
+#include "Shape/Editor/Solid/PrimitiveEntity.h"
 
 namespace traktor
 {
@@ -14,6 +18,8 @@ PrimitiveEditModifier::PrimitiveEditModifier(scene::SceneEditorContext* context)
 
 void PrimitiveEditModifier::selectionChanged()
 {
+    m_entityAdapters.clear();
+	m_context->getEntities(m_entityAdapters, scene::SceneEditorContext::GfDefault | scene::SceneEditorContext::GfSelectedOnly | scene::SceneEditorContext::GfNoExternalChild);
 }
 
 bool PrimitiveEditModifier::cursorMoved(
@@ -58,6 +64,23 @@ void PrimitiveEditModifier::end(const scene::TransformChain& transformChain)
 
 void PrimitiveEditModifier::draw(render::PrimitiveRenderer* primitiveRenderer) const
 {
+    for (auto entityAdapter : m_entityAdapters)
+    {
+        auto primitiveEntity = dynamic_type_cast< PrimitiveEntity* >(entityAdapter->getEntity());
+        if (!primitiveEntity)
+            continue;
+
+        primitiveRenderer->pushWorld(primitiveEntity->getTransform().toMatrix44());
+
+        for (const auto& winding : primitiveEntity->getWindings())
+        {
+            primitiveRenderer->drawSolidPoint(winding.center(), 8.0f, Color4ub(255, 255, 0, 255));
+            for (const auto& vertex : winding.get())
+                primitiveRenderer->drawSolidPoint(vertex, 8.0f, Color4ub(255, 255, 0, 255));
+        }
+
+        primitiveRenderer->popWorld();
+    }
 }
 
     }
