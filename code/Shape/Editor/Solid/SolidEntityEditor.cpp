@@ -71,12 +71,13 @@ void SolidEntityEditor::drawGuide(render::PrimitiveRenderer* primitiveRenderer) 
 				primitiveRenderer->drawLine(
 					primitiveEntity->getTransform() * winding[i],
 					primitiveEntity->getTransform() * winding[j],
-					Color4ub(0, 0, 255, 100)
+					Color4ub(180, 180, 255, 100)
 				);
 			}
 		}
 	}
 
+	/*
 	for (const auto& winding : solidEntity->getWindings())
 	{
 		for (uint32_t i = 0; i < winding.size(); ++i)
@@ -88,17 +89,8 @@ void SolidEntityEditor::drawGuide(render::PrimitiveRenderer* primitiveRenderer) 
 				Color4ub(255, 255, 255, 255)
 			);
 		}
-
-		Plane pl;
-		if (winding.getPlane(pl))
-		{
-			primitiveRenderer->drawLine(
-				winding.center(),
-				winding.center() + pl.normal(),
-				Color4ub(255, 255, 0, 255)
-			);
-		}
 	}
+	*/
 }
 
 	}

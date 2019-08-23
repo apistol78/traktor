@@ -1,6 +1,10 @@
+#include "I18N/Text.h"
 #include "Scene/Editor/SceneEditorContext.h"
+#include "Scene/Editor/Events/ModifierChangedEvent.h"
 #include "Shape/Editor/Solid/PrimitiveEditModifier.h"
 #include "Shape/Editor/Solid/SolidEditorPlugin.h"
+#include "Ui/ToolBar/ToolBar.h"
+#include "Ui/ToolBar/ToolBarButton.h"
 
 namespace traktor
 {
@@ -16,6 +20,13 @@ SolidEditorPlugin::SolidEditorPlugin(scene::SceneEditorContext* context)
 
 bool SolidEditorPlugin::create(ui::Widget* parent, ui::ToolBar* toolBar)
 {
+	// int32_t image = toolBar->addImage(new ui::StyleBitmap(L"Terrain.Terrain"), 15);
+    int32_t image = 0;
+
+	auto toolToggleEditPrimitive = new ui::ToolBarButton(i18n::Text(L"SHAPE_EDITOR_EDIT_PRIMITIVE"), image + 0, ui::Command(L"Shape.Editor.EditPrimitive"), ui::ToolBarButton::BsDefaultToggle);
+    toolBar->addItem(toolToggleEditPrimitive);
+
+	m_context->addEventHandler< scene::ModifierChangedEvent >(this, &SolidEditorPlugin::eventModifierChanged);
     return true;
 }
 
@@ -29,6 +40,10 @@ bool SolidEditorPlugin::handleCommand(const ui::Command& command)
     }
     else
         return false;
+}
+
+void SolidEditorPlugin::eventModifierChanged(scene::ModifierChangedEvent* event)
+{
 }
 
     }
