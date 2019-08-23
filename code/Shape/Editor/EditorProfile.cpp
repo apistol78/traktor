@@ -4,6 +4,7 @@
 #include "Shape/Editor/EditorProfile.h"
 #include "Shape/Editor/Prefab/PrefabEntityFactory.h"
 #include "Shape/Editor/Prefab/PrefabEntityEditorFactory.h"
+#include "Shape/Editor/Solid/SolidEditorPlugin.h"
 #include "Shape/Editor/Solid/SolidEntityEditorFactory.h"
 #include "Shape/Editor/Solid/SolidEntityFactory.h"
 #include "Shape/Editor/Solid/SolidEntityRenderer.h"
@@ -21,6 +22,7 @@ void EditorProfile::getCommands(
 	std::list< ui::Command >& outCommands
 ) const
 {
+	outCommands.push_back(ui::Command(L"Shape.Editor.EditPrimitive"));
 }
 
 void EditorProfile::getGuideDrawIds(
@@ -34,6 +36,7 @@ void EditorProfile::createEditorPlugins(
 	RefArray< scene::ISceneEditorPlugin >& outEditorPlugins
 ) const
 {
+	outEditorPlugins.push_back(new SolidEditorPlugin(context));
 }
 
 void EditorProfile::createResourceFactories(
