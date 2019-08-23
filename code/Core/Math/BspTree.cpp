@@ -5,6 +5,15 @@
 namespace traktor
 {
 
+BspTree::BspTree()
+{
+}
+
+BspTree::BspTree(const AlignedVector< Winding3 >& polygons)
+{
+	build(polygons);
+}
+
 bool BspTree::build(const AlignedVector< Winding3 >& polygons)
 {
 	if (polygons.empty())

@@ -13,11 +13,13 @@ class SharedMemoryEmscripten : public ISharedMemory
 public:
 	SharedMemoryEmscripten(uint32_t size);
 
-	virtual Ref< IStream > read(bool exclusive) T_OVERRIDE T_FINAL;
+	virtual const void* acquireReadPointer(bool exclusive) override final;
 
-	virtual Ref< IStream > write() T_OVERRIDE T_FINAL;
+	virtual void releaseReadPointer() override final;
 
-	virtual bool clear() T_OVERRIDE T_FINAL;
+	virtual void* acquireWritePointer() override final;
+
+	virtual void releaseWritePointer() override final;
 
 private:
 	AutoArrayPtr< uint8_t > m_data;

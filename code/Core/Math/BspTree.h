@@ -29,6 +29,10 @@ public:
 		CmBoth = (CmFront | CmBack)
 	};
 
+	BspTree();
+
+	explicit BspTree(const AlignedVector< Winding3 >& polygons);
+
 	/*! Build BSP from a set of polygons.
 	 *
 	 * \param polygons Polygon set.

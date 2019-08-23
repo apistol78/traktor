@@ -1,6 +1,7 @@
 #include "Core/Serialization/AttributePrivate.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberAlignedVector.h"
+#include "Core/Serialization/MemberEnum.h"
 #include "Shape/Editor/Solid/PrimitiveEntity.h"
 #include "Shape/Editor/Solid/PrimitiveEntityData.h"
 
@@ -11,9 +12,14 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.shape.PrimitiveEntityData", 0, PrimitiveEntityData, world::EntityData)
 
+PrimitiveEntityData::PrimitiveEntityData()
+:   m_operation(BooleanOperation::BoUnion)
+{
+}
+
 Ref< PrimitiveEntity > PrimitiveEntityData::createEntity() const
 {
-    Ref< PrimitiveEntity > entity = new PrimitiveEntity(getTransform());
+    Ref< PrimitiveEntity > entity = new PrimitiveEntity(getTransform(), m_operation);
     
     for (uint32_t i = 0; i < m_indices.size(); i += 4)
     {
@@ -30,8 +36,17 @@ Ref< PrimitiveEntity > PrimitiveEntityData::createEntity() const
 
 void PrimitiveEntityData::serialize(ISerializer& s)
 {
+    const MemberEnum< BooleanOperation >::Key c_BooleanOperation_Keys[] =
+    {
+        { L"BoUnion", BooleanOperation::BoUnion },
+        { L"BoIntersection", BooleanOperation::BoIntersection },
+        { L"BoDifference", BooleanOperation::BoDifference },
+        { 0 }
+    };
+
     world::EntityData::serialize(s);
 
+    s >> MemberEnum< BooleanOperation >(L"operation", m_operation, c_BooleanOperation_Keys);
     s >> MemberAlignedVector< Vector4 >(L"vertices", m_vertices, AttributePrivate());
     s >> MemberAlignedVector< uint32_t >(L"indices", m_indices, AttributePrivate());
 }
