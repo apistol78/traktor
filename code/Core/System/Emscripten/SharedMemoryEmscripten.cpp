@@ -1,4 +1,3 @@
-#include "Core/Io/MemoryStream.h"
 #include "Core/System/Emscripten/SharedMemoryEmscripten.h"
 
 namespace traktor
@@ -12,19 +11,22 @@ SharedMemoryEmscripten::SharedMemoryEmscripten(uint32_t size)
 {
 }
 
-Ref< IStream > SharedMemoryEmscripten::read(bool exclusive)
+const void* SharedMemoryEmscripten::acquireReadPointer(bool exclusive)
 {
-	return new MemoryStream(m_data.ptr(), m_size, true, false);
+	return m_data.c_ptr();
 }
 
-Ref< IStream > SharedMemoryEmscripten::write()
+void SharedMemoryEmscripten::releaseReadPointer()
 {
-	return new MemoryStream(m_data.ptr(), m_size, false, true);
 }
 
-bool SharedMemoryEmscripten::clear()
+void* SharedMemoryEmscripten::acquireWritePointer()
 {
-	return false;
+	return m_data.ptr();
+}
+
+void SharedMemoryEmscripten::releaseWritePointer()
+{
 }
 
 }

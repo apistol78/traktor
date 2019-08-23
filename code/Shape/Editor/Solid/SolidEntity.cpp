@@ -12,6 +12,8 @@
 #include "World/IWorldRenderPass.h"
 #include "World/WorldContext.h"
 
+// https://github.com/evanw/csg.js/blob/master/csg.js
+
 namespace traktor
 {
     namespace shape
@@ -28,51 +30,81 @@ struct Vertex
 };
 #pragma pack()
 
-bool calculateUnion(const AlignedVector< Winding3 >& windingsA, const AlignedVector< Winding3 >& windingsB, AlignedVector< Winding3 >& outResult)
+AlignedVector< Winding3 > transform(const AlignedVector< Winding3 >& windings, const Transform& transform)
 {
-	BspTree treeA;
-	BspTree treeB;
-
-	if (!treeA.build(windingsA) || !treeB.build(windingsB))
-		return false;
-
-	// Clip all A to tree B.
-	for (const auto& wa : windingsA)
-	{
-		treeB.clip(wa, [&](uint32_t index, const Winding3& w, uint32_t cl, bool splitted)
-		{
-			if (w.size() >= 3 && cl == Winding3::CfFront)
-				outResult.push_back(w);
-		});
-	}
-
-	// Clip all B to tree A.
-	for (const auto& wb : windingsB)
-	{
-		treeA.clip(wb, [&](uint32_t index, const Winding3& w, uint32_t cl, bool splitted)
-		{
-			if (w.size() >= 3 && cl == Winding3::CfFront)
-				outResult.push_back(w);
-		});
-	}
-
-    return true;
-}
-
-void transform(const AlignedVector< Winding3 >& windings, const Transform& transform, AlignedVector< Winding3 >& outResult)
-{
-    outResult.resize(windings.size());
+    AlignedVector< Winding3 > result(windings.size());
     for (uint32_t i = 0; i < windings.size(); ++i)
     {
         const auto& sw = windings[i];
-        auto& dw = outResult[i];
+        auto& dw = result[i];
 
         dw.resize(sw.size());
         for (uint32_t j = 0; j < sw.size(); ++j)
-        {
             dw[j] = transform * sw[j].xyz1();
+    }
+    return result;
+}
+
+AlignedVector< Winding3 > invert(const AlignedVector< Winding3 >& windings)
+{
+    AlignedVector< Winding3 > result(windings.size());
+    for (uint32_t i = 0; i < windings.size(); ++i)
+    {
+        result[i] = windings[i];
+        result[i].flip();
+    }
+    return result;
+}
+
+// A | B
+AlignedVector< Winding3 > unioon(const AlignedVector< Winding3 >& windingsA, const AlignedVector< Winding3 >& windingsB)
+{
+    AlignedVector< Winding3 > result;
+
+	// Clip all A to tree B.
+    {
+        BspTree treeB(windingsB);
+        for (const auto& wa : windingsA)
+        {
+            treeB.clip(wa, [&](uint32_t index, const Winding3& w, uint32_t cl, bool splitted)
+            {
+                if (w.size() >= 3 && cl == Winding3::CfFront)
+                    result.push_back(w);
+            });
         }
     }
+
+	// Clip all B to tree A.
+    {
+        BspTree treeA(windingsA);
+        for (const auto& wb : windingsB)
+        {
+            treeA.clip(wb, [&](uint32_t index, const Winding3& w, uint32_t cl, bool splitted)
+            {
+                if (w.size() >= 3 && cl == Winding3::CfFront)
+                    result.push_back(w);
+            });
+        }
+    }
+
+    return result;
+}
+
+// A & B == ~(~A | ~B)
+AlignedVector< Winding3 > intersection(const AlignedVector< Winding3 >& windingsA, const AlignedVector< Winding3 >& windingsB)
+{
+    auto invWindingsA = invert(windingsA);
+    auto invWindingsB = invert(windingsB);
+    auto invResult = unioon(invWindingsA, invWindingsB);
+    return invert(invResult);
+}
+
+// A - B == ~(~A | B)
+AlignedVector< Winding3 > difference(const AlignedVector< Winding3 >& windingsA, const AlignedVector< Winding3 >& windingsB)
+{
+    auto invWindingsA = invert(windingsA);
+    auto invResult = unioon(invWindingsA, windingsB);
+    return invert(invResult);
 }
 
         }
@@ -104,23 +136,40 @@ void SolidEntity::update(const world::UpdateParams& update)
         dirty |= primitiveEntity->isDirty();
         primitiveEntity->resetDirty();
     }
-    if (dirty)
+    if (dirty || !m_vertexBuffer || !m_indexBuffer)
     {
         m_windings.resize(0);
 
         auto it = primitiveEntities.begin();
         if (it != primitiveEntities.end())
         {
-            transform((*it)->getWindings(), (*it)->getTransform(), m_windings);
+            m_windings = transform((*it)->getWindings(), (*it)->getTransform());
             for (++it; it != primitiveEntities.end(); ++it)
             {
-                AlignedVector< Winding3 > windings;
-                transform((*it)->getWindings(), (*it)->getTransform(), windings);
+                auto windings = transform((*it)->getWindings(), (*it)->getTransform());
+                switch ((*it)->getOperation())
+                {
+                case BooleanOperation::BoUnion:
+                    {
+                        auto result = unioon(m_windings, windings);
+                        m_windings.swap(result);
+                    }
+                    break;
 
-                AlignedVector< Winding3 > result;
-                calculateUnion(m_windings, windings, result);
+                case BooleanOperation::BoIntersection:
+                    {
+                        auto result = intersection(m_windings, windings);
+                        m_windings.swap(result);
+                    }
+                    break;
 
-                m_windings.swap(result);
+                case BooleanOperation::BoDifference:
+                    {
+                        auto result = difference(m_windings, windings);
+                        m_windings.swap(result);
+                    }
+                    break;
+                }
             }
         }
 

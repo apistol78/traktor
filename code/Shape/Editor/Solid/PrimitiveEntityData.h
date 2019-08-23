@@ -2,6 +2,7 @@
 
 #include "Core/Ref.h"
 #include "Core/Containers/AlignedVector.h"
+#include "Shape/Editor/Solid/SolidTypes.h"
 #include "World/EntityData.h"
 
 // import/export mechanism.
@@ -26,11 +27,14 @@ class T_DLLCLASS PrimitiveEntityData : public world::EntityData
     T_RTTI_CLASS;
 
 public:
+    PrimitiveEntityData();
+    
     Ref< PrimitiveEntity > createEntity() const;
 
     virtual void serialize(ISerializer& s) override;
 
 private:
+    BooleanOperation m_operation;
     AlignedVector< Vector4 > m_vertices;
     AlignedVector< uint32_t > m_indices;
 };

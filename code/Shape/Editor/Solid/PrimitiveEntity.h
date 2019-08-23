@@ -2,6 +2,7 @@
 
 #include "Core/Containers/AlignedVector.h"
 #include "Core/Math/Winding3.h"
+#include "Shape/Editor/Solid/SolidTypes.h"
 #include "World/Entity.h"
 
 // import/export mechanism.
@@ -22,7 +23,7 @@ class T_DLLCLASS PrimitiveEntity : public world::Entity
     T_RTTI_CLASS;
 
 public:
-    PrimitiveEntity(const Transform& transform = Transform::identity());
+    PrimitiveEntity(const Transform& transform, BooleanOperation operation);
 
     virtual void setTransform(const Transform& transform) override final;
 
@@ -34,6 +35,8 @@ public:
 
     const Transform& getTransform() const { return m_transform; }
 
+    BooleanOperation getOperation() const { return m_operation; }
+
     const AlignedVector< Winding3 >& getWindings() const { return m_windings; }
 
     bool isDirty() const { return m_dirty; }
@@ -44,6 +47,7 @@ protected:
     friend class PrimitiveEntityData;
 
     Transform m_transform;
+    BooleanOperation m_operation;
     AlignedVector< Winding3 > m_windings;
     bool m_dirty;
 };
