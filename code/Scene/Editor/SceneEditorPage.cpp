@@ -268,14 +268,16 @@ bool SceneEditorPage::create(ui::Container* parent)
 	m_entityToolBar->addImage(new ui::StyleBitmap(L"Scene.RemoveEntity"), 1);
 	m_entityToolBar->addImage(new ui::StyleBitmap(L"Scene.MoveToEntity"), 1);
 	m_entityToolBar->addImage(new ui::StyleBitmap(L"Scene.FilterEntity"), 1);
+	m_entityToolBar->addImage(new ui::StyleBitmap(L"Scene.MoveUpEntity"), 1);
+	m_entityToolBar->addImage(new ui::StyleBitmap(L"Scene.MoveDownEntity"), 1);
 	m_entityToolBar->addItem(new ui::ToolBarButton(i18n::Text(L"SCENE_EDITOR_REMOVE_ENTITY"), 0, ui::Command(L"Editor.Delete")));
 	m_entityToolBar->addItem(new ui::ToolBarSeparator());
 	m_entityToolBar->addItem(new ui::ToolBarButton(i18n::Text(L"SCENE_EDITOR_MOVE_TO_ENTITY"), 1, ui::Command(L"Scene.Editor.MoveToEntity")));
 	m_buttonFilterEntity = new ui::ToolBarButton(i18n::Text(L"SCENE_EDITOR_FILTER_ENTITY"), 2, ui::Command(L"Scene.Editor.FilterEntity"), ui::ToolBarButton::BsDefaultToggle);
 	m_entityToolBar->addItem(m_buttonFilterEntity);
 	m_entityToolBar->addItem(new ui::ToolBarSeparator());
-	m_entityToolBar->addItem(new ui::ToolBarButton(i18n::Text(L"SCENE_EDITOR_MOVE_UP"), 1, ui::Command(L"Scene.Editor.MoveUp")));
-	m_entityToolBar->addItem(new ui::ToolBarButton(i18n::Text(L"SCENE_EDITOR_MOVE_DOWN"), 1, ui::Command(L"Scene.Editor.MoveDown")));
+	m_entityToolBar->addItem(new ui::ToolBarButton(i18n::Text(L"SCENE_EDITOR_MOVE_UP"), 3, ui::Command(L"Scene.Editor.MoveUp")));
+	m_entityToolBar->addItem(new ui::ToolBarButton(i18n::Text(L"SCENE_EDITOR_MOVE_DOWN"), 4, ui::Command(L"Scene.Editor.MoveDown")));
 	m_entityToolBar->addEventHandler< ui::ToolBarButtonClickEvent >(this, &SceneEditorPage::eventEntityToolClick);
 
 	m_imageHidden = new ui::StyleBitmap(L"Scene.LayerHidden");

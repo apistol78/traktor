@@ -65,8 +65,8 @@ bool ScenePreviewControl::create(ui::Widget* parent, SceneEditorContext* context
 	m_toolTogglePick = new ui::ToolBarButton(i18n::Text(L"SCENE_EDITOR_TOGGLE_PICK"), 0, ui::Command(1, L"Scene.Editor.TogglePick"), ui::ToolBarButton::BsDefaultToggle);
 	m_toolToggleTranslate = new ui::ToolBarButton(i18n::Text(L"SCENE_EDITOR_TRANSLATE"), 1, ui::Command(L"Scene.Editor.Translate"), ui::ToolBarButton::BsDefaultToggle);
 	m_toolToggleRotate = new ui::ToolBarButton(i18n::Text(L"SCENE_EDITOR_ROTATE"), 2, ui::Command(L"Scene.Editor.Rotate"), ui::ToolBarButton::BsDefaultToggle);
-	m_toolToggleScale = new ui::ToolBarButton(i18n::Text(L"SCENE_EDITOR_SCALE"), 2, ui::Command(L"Scene.Editor.Scale"), ui::ToolBarButton::BsDefaultToggle);
-	m_toolToggleSnap = new ui::ToolBarButton(i18n::Text(L"SCENE_EDITOR_TOGGLE_SNAP"), 3, ui::Command(1, L"Scene.Editor.ToggleSnap"), ui::ToolBarButton::BsDefaultToggle);
+	m_toolToggleScale = new ui::ToolBarButton(i18n::Text(L"SCENE_EDITOR_SCALE"), 3, ui::Command(L"Scene.Editor.Scale"), ui::ToolBarButton::BsDefaultToggle);
+	m_toolToggleSnap = new ui::ToolBarButton(i18n::Text(L"SCENE_EDITOR_TOGGLE_SNAP"), 4, ui::Command(1, L"Scene.Editor.ToggleSnap"), ui::ToolBarButton::BsDefaultToggle);
 
 	m_toolSnapSpacing = new ui::ToolBarDropDown(ui::Command(L"Scene.Editor.SnapSpacing"), ui::dpi96(60), i18n::Text(L"SCENE_EDITOR_TOGGLE_SNAP_SPACING"));
 	m_toolSnapSpacing->add(L"None");
@@ -95,6 +95,7 @@ bool ScenePreviewControl::create(ui::Widget* parent, SceneEditorContext* context
 	m_toolBarActions->addImage(new ui::StyleBitmap(L"Scene.Pointer"), 1);
 	m_toolBarActions->addImage(new ui::StyleBitmap(L"Scene.Translate"), 1);
 	m_toolBarActions->addImage(new ui::StyleBitmap(L"Scene.Rotate"), 1);
+	m_toolBarActions->addImage(new ui::StyleBitmap(L"Scene.Scale"), 1);
 	m_toolBarActions->addImage(new ui::StyleBitmap(L"Scene.Snap"), 1);
 	m_toolBarActions->addImage(new ui::StyleBitmap(L"Scene.Play"), 1);
 	m_toolBarActions->addImage(new ui::StyleBitmap(L"Scene.Rewind"), 1);
@@ -111,13 +112,13 @@ bool ScenePreviewControl::create(ui::Widget* parent, SceneEditorContext* context
 	m_toolBarActions->addItem(m_toolToggleSnap);
 	m_toolBarActions->addItem(m_toolSnapSpacing);
 	m_toolBarActions->addItem(new ui::ToolBarSeparator());
-	m_toolBarActions->addItem(new ui::ToolBarButton(i18n::Text(L"SCENE_EDITOR_REWIND"), 5, ui::Command(L"Scene.Editor.Rewind")));
-	m_toolBarActions->addItem(new ui::ToolBarButton(i18n::Text(L"SCENE_EDITOR_PLAY"), 4, ui::Command(L"Scene.Editor.Play")));
-	m_toolBarActions->addItem(new ui::ToolBarButton(i18n::Text(L"SCENE_EDITOR_STOP"), 6, ui::Command(L"Scene.Editor.Stop")));
+	m_toolBarActions->addItem(new ui::ToolBarButton(i18n::Text(L"SCENE_EDITOR_REWIND"), 6, ui::Command(L"Scene.Editor.Rewind")));
+	m_toolBarActions->addItem(new ui::ToolBarButton(i18n::Text(L"SCENE_EDITOR_PLAY"), 5, ui::Command(L"Scene.Editor.Play")));
+	m_toolBarActions->addItem(new ui::ToolBarButton(i18n::Text(L"SCENE_EDITOR_STOP"), 7, ui::Command(L"Scene.Editor.Stop")));
 	m_toolBarActions->addItem(new ui::ToolBarSeparator());
-	m_toolBarActions->addItem(new ui::ToolBarButton(i18n::Text(L"SCENE_EDITOR_SINGLE_VIEW"), 7, ui::Command(L"Scene.Editor.SingleView")));
-	m_toolBarActions->addItem(new ui::ToolBarButton(i18n::Text(L"SCENE_EDITOR_DOUBLE_VIEW"), 8, ui::Command(L"Scene.Editor.DoubleView")));
-	m_toolBarActions->addItem(new ui::ToolBarButton(i18n::Text(L"SCENE_EDITOR_QUADRUPLE_VIEW"), 9, ui::Command(L"Scene.Editor.QuadrupleView")));
+	m_toolBarActions->addItem(new ui::ToolBarButton(i18n::Text(L"SCENE_EDITOR_SINGLE_VIEW"), 8, ui::Command(L"Scene.Editor.SingleView")));
+	m_toolBarActions->addItem(new ui::ToolBarButton(i18n::Text(L"SCENE_EDITOR_DOUBLE_VIEW"), 9, ui::Command(L"Scene.Editor.DoubleView")));
+	m_toolBarActions->addItem(new ui::ToolBarButton(i18n::Text(L"SCENE_EDITOR_QUADRUPLE_VIEW"), 10, ui::Command(L"Scene.Editor.QuadrupleView")));
 	m_toolBarActions->addEventHandler< ui::ToolBarButtonClickEvent >(this, &ScenePreviewControl::eventToolBarActionClicked);
 
 	// Let plugins create additional toolbar items.
