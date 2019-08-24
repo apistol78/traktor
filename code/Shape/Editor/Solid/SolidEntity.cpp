@@ -147,6 +147,9 @@ void SolidEntity::update(const world::UpdateParams& update)
             for (++it; it != primitiveEntities.end(); ++it)
             {
                 auto windings = transform((*it)->getWindings(), (*it)->getTransform());
+				if (windings.empty())
+					continue;
+
                 switch ((*it)->getOperation())
                 {
                 case BooleanOperation::BoUnion:
