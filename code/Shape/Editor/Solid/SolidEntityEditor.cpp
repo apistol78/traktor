@@ -57,7 +57,9 @@ bool SolidEntityEditor::removeChildEntity(traktor::scene::EntityAdapter* childEn
 
 void SolidEntityEditor::drawGuide(render::PrimitiveRenderer* primitiveRenderer) const
 {
-	SolidEntity* solidEntity = mandatory_non_null_type_cast< SolidEntity* >(getEntityAdapter()->getEntity());
+	SolidEntity* solidEntity = dynamic_type_cast< SolidEntity* >(getEntityAdapter()->getEntity());
+	if (!solidEntity)
+		return;
 
 	RefArray< PrimitiveEntity > primitiveEntities;
 	solidEntity->getEntitiesOf< PrimitiveEntity >(primitiveEntities);

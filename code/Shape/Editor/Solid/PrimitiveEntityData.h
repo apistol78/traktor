@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Core/Ref.h"
-#include "Core/Containers/AlignedVector.h"
 #include "Shape/Editor/Solid/SolidTypes.h"
 #include "World/EntityData.h"
 
@@ -18,6 +17,7 @@ namespace traktor
     namespace shape
     {
 
+class IShape;
 class PrimitiveEntity;
 
 /*!
@@ -35,8 +35,7 @@ public:
 
 private:
     BooleanOperation m_operation;
-    AlignedVector< Vector4 > m_vertices;
-    AlignedVector< uint32_t > m_indices;
+	Ref< IShape > m_shape;
 };
 
     }
