@@ -192,10 +192,10 @@ void PropertyList::removeAllPropertyItems()
 	// removed in-place control.
 	m_propertyItems.clear();
 
-	for (RefArray< PropertyItem >::iterator i = propertyItems.begin(); i != propertyItems.end(); ++i)
+	for (auto propertyItem : propertyItems)
 	{
-		(*i)->destroyInPlaceControls();
-		(*i)->setPropertyList(0);
+		propertyItem->destroyInPlaceControls();
+		propertyItem->setPropertyList(nullptr);
 	}
 }
 

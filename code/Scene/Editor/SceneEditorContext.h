@@ -235,7 +235,7 @@ public:
 
 	void addDebugTarget(const render::DebugTarget& debugTarget);
 
-	const std::vector< render::DebugTarget >& getDebugTargets() const;
+	const AlignedVector< render::DebugTarget >& getDebugTargets() const;
 
 	//@}
 
@@ -316,7 +316,7 @@ private:
 	Ref< world::IEntityEventManager > m_eventManager;
 	Ref< resource::IResourceManager > m_resourceManager;
 	Ref< render::IRenderSystem > m_renderSystem;
-	std::vector< render::DebugTarget > m_debugTargets;
+	AlignedVector< render::DebugTarget > m_debugTargets;
 	Ref< physics::PhysicsManager > m_physicsManager;
 	RefArray< ISceneEditorProfile > m_editorProfiles;
 	RefArray< ISceneEditorPlugin > m_editorPlugins;
@@ -324,7 +324,7 @@ private:
 	RefArray< const IComponentEditorFactory > m_componentEditorFactories;
 	Ref< ISceneControllerEditor > m_controllerEditor;
 	Ref< IModifier > m_modifier;
-	std::map< std::wstring, bool > m_drawGuide;
+	SmallMap< std::wstring, bool > m_drawGuide;
 	float m_guideSize;
 	bool m_pickEnable;
 	SnapMode m_snapMode;

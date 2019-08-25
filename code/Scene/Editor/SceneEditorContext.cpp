@@ -288,8 +288,8 @@ void SceneEditorContext::setDrawGuide(const std::wstring& guideId, bool shouldDr
 
 bool SceneEditorContext::shouldDrawGuide(const std::wstring& guideId) const
 {
-	std::map< std::wstring, bool >::const_iterator i = m_drawGuide.find(guideId);
-	return i != m_drawGuide.end() ? i->second : true;
+	auto it = m_drawGuide.find(guideId);
+	return it != m_drawGuide.end() ? it->second : true;
 }
 
 void SceneEditorContext::setSceneAsset(SceneAsset* sceneAsset)
@@ -687,7 +687,7 @@ uint32_t SceneEditorContext::queryFrustum(const Frustum& worldFrustum, RefArray<
 			outEntityAdapters.push_back(*i);
 	}
 
-	return outEntityAdapters.size();
+	return (uint32_t)outEntityAdapters.size();
 }
 
 void SceneEditorContext::cloneSelected()
@@ -728,7 +728,7 @@ void SceneEditorContext::addDebugTarget(const render::DebugTarget& debugTarget)
 	m_debugTargets.push_back(debugTarget);
 }
 
-const std::vector< render::DebugTarget >& SceneEditorContext::getDebugTargets() const
+const AlignedVector< render::DebugTarget >& SceneEditorContext::getDebugTargets() const
 {
 	return m_debugTargets;
 }
@@ -740,7 +740,7 @@ ISceneEditorPlugin* SceneEditorContext::getEditorPluginOf(const TypeInfo& plugin
 		if (&type_of(*i) == &pluginType)
 			return *i;
 	}
-	return 0;
+	return nullptr;
 }
 
 void SceneEditorContext::raisePreModify()

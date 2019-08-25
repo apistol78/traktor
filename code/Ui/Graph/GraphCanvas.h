@@ -1,5 +1,6 @@
 #pragma once
 
+#include <vector>
 #include "Core/Object.h"
 #include "Ui/Enums.h"
 #include "Ui/Font.h"

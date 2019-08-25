@@ -25,6 +25,13 @@ Ref< PrimitiveEntity > PrimitiveEntityData::createEntity() const
 	{
 		if (!m_shape->createWindings(entity->m_windings))
 			return nullptr;
+
+		Aabb3& boundingBox = entity->m_boundingBox;
+		for (const auto& w : entity->m_windings)
+		{
+			for (const auto& v : w.get())
+				boundingBox.contain(v);
+		}
 	}
     return entity;
 }

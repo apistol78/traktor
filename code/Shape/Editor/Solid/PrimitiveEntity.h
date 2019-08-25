@@ -49,6 +49,7 @@ protected:
     Transform m_transform;
     BooleanOperation m_operation;
     AlignedVector< Winding3 > m_windings;
+	Aabb3 m_boundingBox;
     bool m_dirty;
 };
 

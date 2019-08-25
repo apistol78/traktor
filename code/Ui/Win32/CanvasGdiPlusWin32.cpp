@@ -164,7 +164,7 @@ int32_t CanvasGdiPlusWin32::getAdvance(Window& hWnd, wchar_t ch, wchar_t next) c
 	wchar_t chs[3] = { ch, next, 0 };
 
 	Gdiplus::CharacterRange range(0, 1);
-	Gdiplus::StringFormat stringFormat(StringFormat::GenericTypographic()->Clone());
+	Gdiplus::StringFormat stringFormat(StringFormat::GenericTypographic());
 	stringFormat.SetFormatFlags(StringFormatFlagsNoWrap | StringFormatFlagsMeasureTrailingSpaces | StringFormatFlagsNoFitBlackBox);
 	stringFormat.SetTrimming(StringTrimmingNone);
 	stringFormat.SetMeasurableCharacterRanges(1, &range);
@@ -211,7 +211,7 @@ Size CanvasGdiPlusWin32::getExtent(Window& hWnd, const std::wstring& text) const
 	Gdiplus::Graphics graphics(hDC);
 	Gdiplus::Font font(hDC, hWnd.getFont());
 
-	Gdiplus::StringFormat stringFormat(StringFormat::GenericTypographic()->Clone());
+	Gdiplus::StringFormat stringFormat(StringFormat::GenericTypographic());
 	stringFormat.SetFormatFlags(StringFormatFlagsNoWrap | StringFormatFlagsMeasureTrailingSpaces);
 	stringFormat.SetTrimming(StringTrimmingNone);
 
@@ -249,7 +249,7 @@ int32_t CanvasGdiPlusWin32::getAdvance(wchar_t ch, wchar_t next) const
 	wchar_t chs[3] = { ch, next, 0 };
 
 	Gdiplus::CharacterRange range(0, 1);
-	Gdiplus::StringFormat stringFormat(StringFormat::GenericTypographic()->Clone());
+	Gdiplus::StringFormat stringFormat(StringFormat::GenericTypographic());
 	stringFormat.SetFormatFlags(StringFormatFlagsNoWrap | StringFormatFlagsMeasureTrailingSpaces | StringFormatFlagsNoFitBlackBox);
 	stringFormat.SetTrimming(StringTrimmingNone);
 	stringFormat.SetMeasurableCharacterRanges(1, &range);
@@ -286,7 +286,7 @@ Size CanvasGdiPlusWin32::getExtent(const std::wstring& text) const
 	if (!m_font.ptr())
 		m_font.reset(new Gdiplus::Font(m_hDC, m_hFont));
 
-	Gdiplus::StringFormat stringFormat(StringFormat::GenericTypographic()->Clone());
+	Gdiplus::StringFormat stringFormat(StringFormat::GenericTypographic());
 	stringFormat.SetFormatFlags(StringFormatFlagsNoWrap | StringFormatFlagsMeasureTrailingSpaces | StringFormatFlagsNoFitBlackBox);
 	stringFormat.SetTrimming(StringTrimmingNone);
 
@@ -534,7 +534,7 @@ void CanvasGdiPlusWin32::drawText(const Point& at, const std::wstring& text)
 	if (!m_font.ptr())
 		m_font.reset(new Gdiplus::Font(m_hDC, m_hFont));
 
-	Gdiplus::StringFormat stringFormat(StringFormat::GenericTypographic()->Clone());
+	Gdiplus::StringFormat stringFormat(StringFormat::GenericTypographic());
 	stringFormat.SetFormatFlags(StringFormatFlagsNoWrap | StringFormatFlagsMeasureTrailingSpaces | StringFormatFlagsNoFitBlackBox);
 	stringFormat.SetTrimming(StringTrimmingNone);
 

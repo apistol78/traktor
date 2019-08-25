@@ -1,10 +1,10 @@
 #pragma once
 
-#include <map>
-#include <vector>
 #include "Core/Object.h"
 #include "Core/Ref.h"
 #include "Core/RefArray.h"
+#include "Core/Containers/SmallMap.h"
+#include "Core/Containers/StaticVector.h"
 #include "Ui/Enums.h"
 
 #if defined(T_CXX11)
@@ -165,7 +165,7 @@ protected:
 
 private:
 	typedef RefArray< IEventHandler > EventHandlers;
-	std::map< const TypeInfo*, std::vector< EventHandlers > > m_eventHandlers;
+	SmallMap< const TypeInfo*, StaticVector< EventHandlers, 16 > > m_eventHandlers;
 };
 
 	}
