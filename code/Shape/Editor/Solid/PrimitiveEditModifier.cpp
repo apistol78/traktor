@@ -1,6 +1,8 @@
+#include "Core/Log/Log.h"
 #include "Render/PrimitiveRenderer.h"
 #include "Scene/Editor/EntityAdapter.h"
 #include "Scene/Editor/SceneEditorContext.h"
+#include "Scene/Editor/TransformChain.h"
 #include "Shape/Editor/Solid/PrimitiveEditModifier.h"
 #include "Shape/Editor/Solid/PrimitiveEntity.h"
 
@@ -39,10 +41,35 @@ bool PrimitiveEditModifier::handleCommand(const ui::Command& command)
 
 bool PrimitiveEditModifier::begin(
     const scene::TransformChain& transformChain,
+    const Vector2& cursorPosition,
+    const Vector4& worldRayOrigin,
+    const Vector4& worldRayDirection,
     int32_t mouseButton
 )
 {
     // \tbd See if we hit any primitive vertex, edge or surface.
+
+    for (auto entityAdapter : m_entityAdapters)
+    {
+        auto primitiveEntity = dynamic_type_cast< PrimitiveEntity* >(entityAdapter->getEntity());
+        if (!primitiveEntity)
+            continue;
+
+        scene::TransformChain tc = transformChain;
+        tc.pushWorld(primitiveEntity->getTransform().toMatrix44());
+
+        for (const auto& winding : primitiveEntity->getWindings())
+        {
+            Vector2 center;
+            if (transformChain.objectToScreen(winding.center(), center))
+            {
+                float distance = (center - cursorPosition).length();
+                log::info << L"Distance " << distance << Endl;
+            }
+        }
+
+        tc.popWorld();
+    }
 
     return false;
 }

@@ -274,7 +274,7 @@ void RenderControlModel::eventMouseMove(ISceneRenderControl* renderControl, ui::
 				modifier->cursorMoved(transformChain, screenPosition0, worldRayOrigin, worldRayDirection);
 				modifier->cursorMoved(transformChain, screenPosition, worldRayOrigin, worldRayDirection);
 
-				if (!modifier->begin(transformChain, m_mouseButton))
+				if (!modifier->begin(transformChain, screenPosition, worldRayOrigin, worldRayDirection, m_mouseButton))
 				{
 					m_modify = MtNothing;
 					return;

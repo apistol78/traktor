@@ -206,6 +206,9 @@ bool TranslateModifier::handleCommand(const ui::Command& command)
 
 bool TranslateModifier::begin(
 	const TransformChain& transformChain,
+	const Vector2& cursorPosition,
+	const Vector4& worldRayOrigin,
+	const Vector4& worldRayDirection,
 	int32_t mouseButton
 )
 {

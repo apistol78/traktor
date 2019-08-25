@@ -525,6 +525,9 @@ bool TerrainEditModifier::handleCommand(const ui::Command& command)
 
 bool TerrainEditModifier::begin(
 	const scene::TransformChain& transformChain,
+	const Vector2& cursorPosition,
+	const Vector4& worldRayOrigin,
+	const Vector4& worldRayDirection,
 	int32_t mouseButton
 )
 {
