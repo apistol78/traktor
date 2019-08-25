@@ -36,7 +36,7 @@ bool SolidEntityEditor::addChildEntity(traktor::scene::EntityAdapter* childEntit
 	SolidEntityData* solidEntityData = mandatory_non_null_type_cast< SolidEntityData* >(getEntityAdapter()->getEntityData());
 
 	PrimitiveEntityData* childEntityData = dynamic_type_cast< PrimitiveEntityData* >(childEntityAdapter->getEntityData());
-    if (childEntityData)
+    if (!childEntityData)
         return false;
 
 	solidEntityData->addEntityData(childEntityData);
@@ -48,7 +48,7 @@ bool SolidEntityEditor::removeChildEntity(traktor::scene::EntityAdapter* childEn
 	SolidEntityData* solidEntityData = mandatory_non_null_type_cast< SolidEntityData* >(getEntityAdapter()->getEntityData());
 
 	PrimitiveEntityData* childEntityData = dynamic_type_cast< PrimitiveEntityData* >(childEntityAdapter->getEntityData());
-    if (childEntityData)
+    if (!childEntityData)
         return false;
 
 	solidEntityData->removeEntityData(childEntityData);

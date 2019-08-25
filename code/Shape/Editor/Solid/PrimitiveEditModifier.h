@@ -36,6 +36,9 @@ public:
 
 	virtual bool begin(
 		const scene::TransformChain& transformChain,
+		const Vector2& cursorPosition,
+		const Vector4& worldRayOrigin,
+		const Vector4& worldRayDirection,
 		int32_t mouseButton
 	) override final;
 

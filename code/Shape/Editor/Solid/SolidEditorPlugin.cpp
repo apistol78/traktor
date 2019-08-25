@@ -38,6 +38,12 @@ bool SolidEditorPlugin::handleCommand(const ui::Command& command)
         m_context->setModifier(new PrimitiveEditModifier(m_context));
         return true;
     }
+    else if (command == L"Shape.Editor.AddCubePrimitive")
+    {
+    }
+    else if (command == L"Shape.Editor.AddCylinderPrimitive")
+    {
+    }
     else
         return false;
 }
