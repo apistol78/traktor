@@ -73,29 +73,39 @@ public:
 	const AlignedVector< Plane >& getPlanes() const { return m_planes; }
 
 private:
-	struct BspNode : public RefCountImpl< IRefCount >
+	struct Node
 	{
 		uint32_t plane;		//!< \note The plane index is the same index into source winding set passed into build.
-		Ref< BspNode > front;
-		Ref< BspNode > back;
+		int32_t front;
+		int32_t back;
+
+		Node()
+		:	plane(0)
+		,	front(-1)
+		,	back(-1)
+		{
+		}
 	};
 
 	AlignedVector< Plane > m_planes;
-	Ref< BspNode > m_root;
+	AlignedVector< Node > m_nodes;
+	int32_t m_root;
 
-	Ref< BspNode > recursiveBuild(AlignedVector< Winding3 >& polygons, AlignedVector< uint32_t >& planes) const;
+	int32_t recursiveBuild(AlignedVector< Winding3 >& polygons, AlignedVector< uint32_t >& planes);
 
-	bool inside(const BspNode* node, const Vector4& pt) const;
+	bool inside(int32_t node, const Vector4& pt) const;
 
-	bool inside(const BspNode* node, const Winding3& w) const;
+	bool inside(int32_t node, const Winding3& w) const;
 
-	void clip(const BspNode* node, const Winding3& w, bool splitted, const std::function< void(uint32_t index, const Winding3& w, uint32_t cl, bool splitted) >& visitor) const;
+	void clip(int32_t node, const Winding3& w, bool splitted, const std::function< void(uint32_t index, const Winding3& w, uint32_t cl, bool splitted) >& visitor) const;
 
 	template < typename PolygonType >
-	void clip(const BspNode* node, const PolygonType& polygon, uint32_t mode, AlignedVector< PolygonType >& outClipped) const
+	void clip(int32_t node, const PolygonType& polygon, uint32_t mode, AlignedVector< PolygonType >& outClipped) const
 	{
+		const Node& n = m_nodes[node];
+		const Plane& p = m_planes[n.plane];
+
 		Winding3 w = polygon.winding();
-		const Plane& p = m_planes[node->plane];
 
 		int cf = w.classify(p);
 		if (cf == Winding3::CfCoplanar)
@@ -109,15 +119,15 @@ private:
 
 		if (cf == Winding3::CfFront)
 		{
-			if (node->front)
-				clip(node->front, polygon, mode, outClipped);
+			if (n.front >= 0)
+				clip(n.front, polygon, mode, outClipped);
 			else if (polygon.valid() && (mode & CmFront) != 0)
 				outClipped.push_back(polygon);
 		}
 		else if (cf == Winding3::CfBack)
 		{
-			if (node->back)
-				clip(node->back, polygon, mode, outClipped);
+			if (n.back >= 0)
+				clip(n.back, polygon, mode, outClipped);
 			else if (polygon.valid() && (mode & CmBack) != 0)
 				outClipped.push_back(polygon);
 		}
@@ -127,15 +137,15 @@ private:
 			polygon.split(p, f, b);
 			if (f.valid())
 			{
-				if (node->front)
-					clip(node->front, f, mode, outClipped);
+				if (n.front >= 0)
+					clip(n.front, f, mode, outClipped);
 				else if ((mode & CmFront) != 0)
 					outClipped.push_back(f);
 			}
 			if (b.valid())
 			{
-				if (node->back)
-					clip(node->back, b, mode, outClipped);
+				if (n.back >= 0)
+					clip(n.back, b, mode, outClipped);
 				else if ((mode & CmBack) != 0)
 					outClipped.push_back(b);
 			}
