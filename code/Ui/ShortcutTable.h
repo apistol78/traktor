@@ -1,6 +1,7 @@
 #pragma once
 
 #include <list>
+#include <map>
 #include "Ui/Command.h"
 #include "Ui/EventSubject.h"
 

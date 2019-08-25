@@ -211,7 +211,7 @@ void DebugRenderControl::eventPaint(ui::PaintEvent* event)
 	if (!m_renderView || !m_screenRenderer)
 		return;
 
-	std::vector< render::DebugTarget > debugTargets = m_context->getDebugTargets();
+	AlignedVector< render::DebugTarget > debugTargets = m_context->getDebugTargets();
 	std::sort(debugTargets.begin(), debugTargets.end(), DebugTargetPredicate);
 
 	render::Clear cl;

@@ -13,26 +13,30 @@ void EventSubject::raiseEvent(Event* event)
 {
 	T_ANONYMOUS_VAR(Ref< EventSubject >)(this);
 
+	if (!event)
+		return;
+
 	const TypeInfo& eventType = type_of(event);
-	for (std::map< const TypeInfo*, std::vector< EventHandlers > >::iterator i = m_eventHandlers.begin(); i != m_eventHandlers.end(); ++i)
+	for (auto i = m_eventHandlers.begin(); i != m_eventHandlers.end(); ++i)
 	{
 		if (!is_type_of(*i->first, eventType))
 			continue;
 
 		// Invoke event handlers reversed as the most prioritized are at the end and they should
 		// be able to "consume" the event so it wont reach other, less prioritized, handlers.
-		std::vector< EventHandlers > eventHandlers = i->second;
-		for (std::vector< EventHandlers >::reverse_iterator it = eventHandlers.rbegin(); it != eventHandlers.rend(); ++it)
+		auto eventHandlers = i->second;
+		for (int32_t j = eventHandlers.size() - 1; j >= 0; --j)
 		{
-			for (EventHandlers::iterator j = it->begin(); j != it->end(); )
+			const auto& eventHandler = eventHandlers[j];
+			for (EventHandlers::const_iterator j = eventHandler.begin(); j != eventHandler.end(); ++j)
 			{
-				Ref< IEventHandler > eventHandler = *j++;
-				if (!eventHandler)
-					continue;
-
-				eventHandler->notify(event);
-				if (event && event->consumed())
-					break;
+				Ref< IEventHandler > eventHandler = *j;
+				if (eventHandler)
+				{
+					eventHandler->notify(event);
+					if (event->consumed())
+						break;
+				}
 			}
 		}
 	}
@@ -40,13 +44,13 @@ void EventSubject::raiseEvent(Event* event)
 
 void EventSubject::removeAllEventHandlers()
 {
-	for (std::map< const TypeInfo*, std::vector< EventHandlers > >::iterator i = m_eventHandlers.begin(); i != m_eventHandlers.end(); ++i)
+	for (auto i = m_eventHandlers.begin(); i != m_eventHandlers.end(); ++i)
 		i->second.clear();
 }
 
 void EventSubject::addEventHandler(const TypeInfo& eventType, IEventHandler* eventHandler)
 {
-	std::vector< EventHandlers >& eventHandlers = m_eventHandlers[&eventType];
+	auto& eventHandlers = m_eventHandlers[&eventType];
 	int32_t depth = 0;
 
 	// Use class hierarchy depth as handler priority.
@@ -67,8 +71,8 @@ void EventSubject::addEventHandler(const TypeInfo& eventType, IEventHandler* eve
 
 void EventSubject::removeEventHandler(const TypeInfo& eventType, IEventHandler* eventHandler)
 {
-	std::vector< EventHandlers >& eventHandlers = m_eventHandlers[&eventType];
-	for (std::vector< EventHandlers >::iterator i = eventHandlers.begin(); i != eventHandlers.end(); ++i)
+	auto& eventHandlers = m_eventHandlers[&eventType];
+	for (auto i = eventHandlers.begin(); i != eventHandlers.end(); ++i)
 		i->remove(eventHandler);
 }
 

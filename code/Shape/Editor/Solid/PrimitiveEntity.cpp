@@ -31,7 +31,7 @@ void PrimitiveEntity::setTransform(const Transform& transform)
 
  Aabb3 PrimitiveEntity::getBoundingBox() const
  {
-	return Aabb3();
+	return m_boundingBox;
  }
 
 void PrimitiveEntity::update(const world::UpdateParams& update)

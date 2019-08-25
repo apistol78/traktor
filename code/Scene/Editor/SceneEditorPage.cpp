@@ -309,11 +309,11 @@ bool SceneEditorPage::create(ui::Container* parent)
 	m_tabMisc->setText(i18n::Text(L"SCENE_EDITOR_MISC"));
 
 	// Create dependency panel.
-	Ref< ui::TabPage > tabPageDependencies = new ui::TabPage();
-	tabPageDependencies->create(m_tabMisc, i18n::Text(L"SCENE_EDITOR_DEPENDENCY_INVESTIGATOR"), new ui::FloodLayout());
+	//Ref< ui::TabPage > tabPageDependencies = new ui::TabPage();
+	//tabPageDependencies->create(m_tabMisc, i18n::Text(L"SCENE_EDITOR_DEPENDENCY_INVESTIGATOR"), new ui::FloodLayout());
 
-	m_entityDependencyPanel = new EntityDependencyInvestigator(m_context);
-	m_entityDependencyPanel->create(tabPageDependencies);
+	//m_entityDependencyPanel = new EntityDependencyInvestigator(m_context);
+	//m_entityDependencyPanel->create(tabPageDependencies);
 
 	// Create guide visibility panel.
 	Ref< ui::TabPage > tabPageGuides = new ui::TabPage();
@@ -338,9 +338,9 @@ bool SceneEditorPage::create(ui::Container* parent)
 	m_gridGuides->addEventHandler< ui::GridColumnClickEvent >(this, &SceneEditorPage::eventGuideClick);
 
 	// Add pages.
-	m_tabMisc->addPage(tabPageDependencies);
+	//m_tabMisc->addPage(tabPageDependencies);
 	m_tabMisc->addPage(tabPageGuides);
-	m_tabMisc->setActivePage(tabPageDependencies);
+	//m_tabMisc->setActivePage(tabPageDependencies);
 
 	m_site->createAdditionalPanel(m_tabMisc, ui::dpi96(300), false);
 

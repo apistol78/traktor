@@ -40,7 +40,7 @@ void TextPropertyItem::createInPlaceControls(Widget* parent)
 {
 	if (!m_multiLine)
 	{
-		T_ASSERT(!m_editor);
+		T_FATAL_ASSERT(!m_editor);
 		m_editor = new Edit();
 		m_editor->create(
 			parent,
@@ -53,7 +53,7 @@ void TextPropertyItem::createInPlaceControls(Widget* parent)
 	}
 	else
 	{
-		T_ASSERT(!m_buttonEdit);
+		T_FATAL_ASSERT(!m_buttonEdit);
 		m_buttonEdit = new MiniButton();
 		m_buttonEdit->create(parent, new ui::StyleBitmap(L"UI.SmallPen", c_ResourceSmallPen, sizeof(c_ResourceSmallPen)));
 		m_buttonEdit->addEventHandler< ButtonClickEvent >(this, &TextPropertyItem::eventClick);
@@ -65,12 +65,12 @@ void TextPropertyItem::destroyInPlaceControls()
 	if (m_editor)
 	{
 		m_editor->destroy();
-		m_editor = 0;
+		m_editor = nullptr;
 	}
 	if (m_buttonEdit)
 	{
 		m_buttonEdit->destroy();
-		m_buttonEdit = 0;
+		m_buttonEdit = nullptr;
 	}
 }
 
