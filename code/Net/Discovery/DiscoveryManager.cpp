@@ -1,4 +1,3 @@
-#include "Core/Io/DynamicMemoryStream.h"
 #include "Core/Io/MemoryStream.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/SafeDestroy.h"
@@ -275,15 +274,17 @@ void DiscoveryManager::threadMulticastListener()
 
 int32_t DiscoveryManager::sendMessage(UdpSocket* socket, const SocketAddressIPv4& address, const IDiscoveryMessage* message)
 {
-	Ref< DynamicMemoryStream > dms = new DynamicMemoryStream(false, true, T_FILE_LINE);
-	if (!BinarySerializer(dms).writeObject(message))
+	uint8_t buffer[1024];
+
+	MemoryStream ms(buffer, sizeof(buffer), false, true);
+	if (!BinarySerializer(&ms).writeObject(message))
 		return 1;
 
-	const AlignedVector< uint8_t >& buffer = dms->getBuffer();
-	if (buffer.size() >= 1024)
+	uint32_t written = ms.tell();
+	if (written >= 1024)
         return 2;
 
-	if (socket->sendTo(address, &buffer[0], uint32_t(buffer.size())) != buffer.size())
+	if (socket->sendTo(address, buffer, written) != written)
 		return 3;
 
 	return 0;
