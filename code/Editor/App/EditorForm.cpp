@@ -3047,9 +3047,9 @@ void EditorForm::threadAssetMonitor()
 
 				std::wstring assetPath = m_mergedSettings->getProperty< std::wstring >(L"Pipeline.AssetPath", L"");
 
-				for (RefArray< db::Instance >::const_iterator i = assetInstances.begin(); i != assetInstances.end(); ++i)
+				for (auto assetInstance : assetInstances)
 				{
-					Ref< Asset > asset = (*i)->getObject< Asset >();
+					Ref< Asset > asset = assetInstance->getObject< Asset >();
 					if (!asset)
 						continue;
 
@@ -3058,24 +3058,20 @@ void EditorForm::threadAssetMonitor()
 					RefArray< File > files;
 					FileSystem::getInstance().find(fileName, files);
 
-					for (RefArray< File >::const_iterator j = files.begin(); j != files.end(); ++j)
+					for (auto file : files)
 					{
-						const File* file = *j;
 						uint32_t flags = file->getFlags();
 						if ((flags & File::FfArchive) == File::FfArchive)
 						{
 							log::info << L"Source asset \"" << file->getPath().getPathName() << L"\" modified" << Endl;
 							modifiedFiles.push_back(file);
-							modifiedAssets.push_back((*i)->getGuid());
+							modifiedAssets.push_back(assetInstance->getGuid());
 						}
 					}
 				}
 
-				for (RefArray< const File >::const_iterator i = modifiedFiles.begin(); i != modifiedFiles.end(); ++i)
-				{
-					const File* file = *i;
-					FileSystem::getInstance().modify(file->getPath(), file->getFlags() & ~File::FfArchive);
-				}
+				for (auto modifiedFile : modifiedFiles)
+					FileSystem::getInstance().modify(modifiedFile->getPath(), modifiedFile->getFlags() & ~File::FfArchive);
 
 				m_lockBuild.release();
 
@@ -3085,8 +3081,8 @@ void EditorForm::threadAssetMonitor()
 					buildAssets(modifiedAssets, false);
 
 					// Notify all plugins of automatic build.
-					for (RefArray< EditorPluginSite >::const_iterator i = m_editorPluginSites.begin(); i != m_editorPluginSites.end(); ++i)
-						(*i)->handleCommand(ui::Command(L"Editor.AutoBuild"), false);
+					for (auto editorPluginSite : m_editorPluginSites)
+						editorPluginSite->handleCommand(ui::Command(L"Editor.AutoBuild"), false);
 				}
 			}
 		}

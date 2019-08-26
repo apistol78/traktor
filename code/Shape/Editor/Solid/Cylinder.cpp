@@ -73,6 +73,10 @@ bool Cylinder::createWindings(AlignedVector< Winding3 >& outWindings) const
 	return true;
 }
 
+void Cylinder::createAnchors(AlignedVector< Vector4 >& outAnchors) const
+{
+}
+
 void Cylinder::serialize(ISerializer& s)
 {
 	s >> Member< float >(L"length", m_length, AttributeRange(0.0f));

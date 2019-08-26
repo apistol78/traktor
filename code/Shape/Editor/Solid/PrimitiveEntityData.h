@@ -34,6 +34,8 @@ public:
     virtual void serialize(ISerializer& s) override;
 
 private:
+    friend class PrimitiveEditModifier;
+
     BooleanOperation m_operation;
 	Ref< IShape > m_shape;
 };

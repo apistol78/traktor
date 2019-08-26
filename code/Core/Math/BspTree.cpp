@@ -38,7 +38,7 @@ bool BspTree::build(const AlignedVector< Winding3 >& polygons)
 	m_nodes.reserve(polygons.size());
 
 	// Recursively build nodes.
-	m_root = recursiveBuild(mutablePolygons, mutablePlanes);
+	m_root = build(mutablePolygons, mutablePlanes);
 	return (bool)(m_root >= 0);
 }
 
@@ -60,7 +60,7 @@ void BspTree::clip(const Winding3& w, const std::function< void(uint32_t index, 
 	clip(m_root, w, false, visitor);
 }
 
-int32_t BspTree::recursiveBuild(AlignedVector< Winding3 >& polygons, AlignedVector< uint32_t >& planes)
+int32_t BspTree::build(AlignedVector< Winding3 >& polygons, AlignedVector< uint32_t >& planes)
 {
 	int32_t node = (int32_t)m_nodes.size();
 	Node& n = m_nodes.push_back();
@@ -91,8 +91,11 @@ int32_t BspTree::recursiveBuild(AlignedVector< Winding3 >& polygons, AlignedVect
 			Winding3 f, b;
 
 			polygons[i].split(p, f, b);
-			T_ASSERT(f.size() >= 3);
-			T_ASSERT(b.size() >= 3);
+
+			T_FATAL_ASSERT(f.size() >= 3);
+			T_FATAL_ASSERT(f.area() >= FUZZY_EPSILON);
+			T_FATAL_ASSERT(b.size() >= 3);
+			T_FATAL_ASSERT(b.area() >= FUZZY_EPSILON);
 
 			frontPolygons.push_back(f);
 			frontPlanes.push_back(planes[i]);
@@ -110,9 +113,9 @@ int32_t BspTree::recursiveBuild(AlignedVector< Winding3 >& polygons, AlignedVect
 	planes.clear();
 
 	if (!frontPolygons.empty())
-		n.front = recursiveBuild(frontPolygons, frontPlanes);
+		n.front = build(frontPolygons, frontPlanes);
 	if (!backPolygons.empty())
-		n.back = recursiveBuild(backPolygons, backPlanes);
+		n.back = build(backPolygons, backPlanes);
 
 	return node;
 }

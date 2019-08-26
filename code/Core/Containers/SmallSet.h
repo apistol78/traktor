@@ -2,6 +2,10 @@
 
 #include "Core/Containers/AlignedVector.h"
 
+#if defined(T_CXX11)
+#	include <utility>
+#endif
+
 namespace traktor
 {
 
@@ -17,6 +21,22 @@ class SmallSet
 public:
 	typedef typename AlignedVector< Key >::iterator iterator;
 	typedef typename AlignedVector< Key >::const_iterator const_iterator;
+
+	SmallSet()
+	{
+	}
+
+	SmallSet(const SmallSet& src)
+	:	m_data(src.m_data)
+	{
+	}
+
+#if defined(T_CXX11) && !defined(__PS3__)
+	SmallSet(SmallSet&& src)
+	{
+		m_data = std::move(src.m_data);
+	}
+#endif
 
 	iterator begin()
 	{
@@ -153,6 +173,14 @@ public:
 	{
 		return m_data[index];
 	}
+
+#if defined(T_CXX11) && !defined(__PS3__)
+	SmallSet& operator = (SmallSet&& src)
+	{
+		m_data = std::move(src.m_data);
+		return *this;
+	}
+#endif
 
 private:
 	AlignedVector< Key > m_data;

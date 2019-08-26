@@ -233,7 +233,7 @@ void ColorDialog::eventSliderColorSelect(ColorEvent* event)
 	color.a = m_editColor[3] ? parseString< int32_t >(m_editColor[3]->getText()) : 255;
 
 	// Just copy rgb as gradient control will reset alpha.
-	m_color = Color4f::fromColor4ub(Color4ub(color));
+	m_color = Color4f::fromColor4ub(color);
 
 	m_editColor[0]->setText(toString< int32_t >(color.r));
 	m_editColor[1]->setText(toString< int32_t >(color.g));

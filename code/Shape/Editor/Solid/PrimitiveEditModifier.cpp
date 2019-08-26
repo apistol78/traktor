@@ -3,8 +3,10 @@
 #include "Scene/Editor/EntityAdapter.h"
 #include "Scene/Editor/SceneEditorContext.h"
 #include "Scene/Editor/TransformChain.h"
+#include "Shape/Editor/Solid/IShape.h"
 #include "Shape/Editor/Solid/PrimitiveEditModifier.h"
 #include "Shape/Editor/Solid/PrimitiveEntity.h"
+#include "Shape/Editor/Solid/PrimitiveEntityData.h"
 
 namespace traktor
 {
@@ -51,24 +53,31 @@ bool PrimitiveEditModifier::begin(
 
     for (auto entityAdapter : m_entityAdapters)
     {
-        auto primitiveEntity = dynamic_type_cast< PrimitiveEntity* >(entityAdapter->getEntity());
-        if (!primitiveEntity)
+        auto primitiveEntityData = dynamic_type_cast< PrimitiveEntityData* >(entityAdapter->getEntityData());
+        if (!primitiveEntityData || !primitiveEntityData->m_shape)
             continue;
 
-        scene::TransformChain tc = transformChain;
-        tc.pushWorld(primitiveEntity->getTransform().toMatrix44());
+        AlignedVector< Vector4 > anchors;
+        primitiveEntityData->m_shape->createAnchors(anchors);
 
-        for (const auto& winding : primitiveEntity->getWindings())
-        {
-            Vector2 center;
-            if (transformChain.objectToScreen(winding.center(), center))
-            {
-                float distance = (center - cursorPosition).length();
-                log::info << L"Distance " << distance << Endl;
-            }
-        }
+        // auto primitiveEntity = dynamic_type_cast< PrimitiveEntity* >(entityAdapter->getEntity());
+        // if (!primitiveEntity)
+        //     continue;
 
-        tc.popWorld();
+        // scene::TransformChain tc = transformChain;
+        // tc.pushWorld(primitiveEntity->getTransform().toMatrix44());
+
+        // for (const auto& winding : primitiveEntity->getWindings())
+        // {
+        //     Vector2 center;
+        //     if (transformChain.objectToScreen(winding.center(), center))
+        //     {
+        //         float distance = (center - cursorPosition).length();
+        //         log::info << L"Distance " << distance << Endl;
+        //     }
+        // }
+
+        // tc.popWorld();
     }
 
     return false;
@@ -93,18 +102,17 @@ void PrimitiveEditModifier::draw(render::PrimitiveRenderer* primitiveRenderer) c
 {
     for (auto entityAdapter : m_entityAdapters)
     {
-        auto primitiveEntity = dynamic_type_cast< PrimitiveEntity* >(entityAdapter->getEntity());
-        if (!primitiveEntity)
+        auto primitiveEntityData = dynamic_type_cast< PrimitiveEntityData* >(entityAdapter->getEntityData());
+        if (!primitiveEntityData || !primitiveEntityData->m_shape)
             continue;
 
-        primitiveRenderer->pushWorld(primitiveEntity->getTransform().toMatrix44());
+        AlignedVector< Vector4 > anchors;
+        primitiveEntityData->m_shape->createAnchors(anchors);
 
-        for (const auto& winding : primitiveEntity->getWindings())
-        {
-            primitiveRenderer->drawSolidPoint(winding.center(), 8.0f, Color4ub(255, 255, 0, 255));
-            for (const auto& vertex : winding.get())
-                primitiveRenderer->drawSolidPoint(vertex, 8.0f, Color4ub(255, 255, 0, 255));
-        }
+        primitiveRenderer->pushWorld(entityAdapter->getTransform().toMatrix44());
+
+        for (const auto& anchor : anchors)
+            primitiveRenderer->drawSolidPoint(anchor, 6.0f, Color4ub(255, 255, 0, 255));
 
         primitiveRenderer->popWorld();
     }

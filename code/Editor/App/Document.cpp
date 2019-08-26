@@ -49,12 +49,12 @@ uint32_t Document::getInstanceCount() const
 
 db::Instance* Document::getInstance(uint32_t index) const
 {
-	return index < uint32_t(m_instances.size()) ? m_instances[index] : 0;
+	return index < uint32_t(m_instances.size()) ? m_instances[index] : nullptr;
 }
 
 ISerializable* Document::getObject(uint32_t index) const
 {
-	return index < uint32_t(m_objects.size()) ? m_objects[index] : 0;
+	return index < uint32_t(m_objects.size()) ? m_objects[index] : nullptr;
 }
 
 bool Document::setObject(uint32_t index, ISerializable* object)
@@ -193,8 +193,8 @@ bool Document::modified() const
 
 bool Document::close()
 {
-	for (RefArray< db::Instance >::iterator i = m_instances.begin(); i != m_instances.end(); ++i)
-		(*i)->revert();
+	for (auto instance : m_instances)
+		instance->revert();
 
 	m_instances.clear();
 	m_objects.clear();

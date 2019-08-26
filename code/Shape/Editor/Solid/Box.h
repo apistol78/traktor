@@ -24,6 +24,8 @@ public:
 
 	virtual bool createWindings(AlignedVector< Winding3 >& outWindings) const override final;
 
+	virtual void createAnchors(AlignedVector< Vector4 >& outAnchors) const override final;
+
 	virtual void serialize(ISerializer& s) override final;
 
 private:
