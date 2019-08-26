@@ -19,7 +19,7 @@ struct GatherFront
 	AlignedVector< Winding3 > windings;
 	int32_t mask;
 
-	void operator () (uint32_t index, const Winding3& w, int32_t cl, bool splitted)
+	void operator () (const Winding3& w, int32_t cl, bool splitted)
 	{
 		if (w.size() < 3)
 			return;

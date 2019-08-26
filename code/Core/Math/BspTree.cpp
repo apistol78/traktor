@@ -6,12 +6,10 @@ namespace traktor
 {
 
 BspTree::BspTree()
-:	m_root(-1)
 {
 }
 
 BspTree::BspTree(const AlignedVector< Winding3 >& polygons)
-:	m_root(-1)
 {
 	build(polygons);
 }
@@ -22,85 +20,63 @@ bool BspTree::build(const AlignedVector< Winding3 >& polygons)
 		return false;
 
 	AlignedVector< Winding3 > mutablePolygons = polygons;
-	AlignedVector< uint32_t > mutablePlanes(polygons.size());
-
-	// Calculate polygon planes.
-	m_planes.resize(mutablePolygons.size());
-	for (uint32_t i = 0; i < (uint32_t)mutablePolygons.size(); ++i)
-	{
-		if (!mutablePolygons[i].getPlane(m_planes[i]))
-			return false;
-
-		mutablePlanes[i] = i;
-	}
 
 	// Initially reserve equal amount of nodes as windings, probably more but never less.
 	m_nodes.reserve(polygons.size());
 
 	// Recursively build nodes.
-	m_root = build(mutablePolygons, mutablePlanes);
-	return (bool)(m_root >= 0);
+	int32_t root = internalBuild(mutablePolygons);
+	return (bool)(root >= 0);
 }
 
 bool BspTree::inside(const Vector4& pt) const
 {
-	T_ASSERT(m_root);
-	return inside(m_root, pt);
+	return inside(0, pt);
 }
 
 bool BspTree::inside(const Winding3& w) const
 {
-	T_ASSERT(m_root);
-	return inside(m_root, w);
+	return inside(0, w);
 }
 
-void BspTree::clip(const Winding3& w, const std::function< void(uint32_t index, const Winding3& w, uint32_t cl, bool splitted) >& visitor) const
+void BspTree::clip(const Winding3& w, const std::function< void(const Winding3& w, uint32_t cl, bool splitted) >& visitor) const
 {
-	T_ASSERT(m_root);
-	clip(m_root, w, false, visitor);
+	Plane p;
+	if (!w.getPlane(p))
+		return;
+	clip(0, w, p, false, visitor);
 }
 
-int32_t BspTree::build(AlignedVector< Winding3 >& polygons, AlignedVector< uint32_t >& planes)
+int32_t BspTree::internalBuild(AlignedVector< Winding3 >& polygons)
 {
 	int32_t node = (int32_t)m_nodes.size();
 	Node& n = m_nodes.push_back();
-
-	n.plane = planes[0];
-
-	const Plane& p = m_planes[n.plane];
+	
+	if (!polygons[0].getPlane(n.plane))
+		return -1;
 
 	AlignedVector< Winding3 > frontPolygons, backPolygons;
-	AlignedVector< uint32_t > frontPlanes, backPlanes;
-
 	for (size_t i = 1; i < polygons.size(); ++i)
 	{
-		int32_t cf = polygons[i].classify(p);
+		int32_t cf = polygons[i].classify(n.plane);
 		if (cf == Winding3::CfFront || cf == Winding3::CfCoplanar)
 		{
 			frontPolygons.push_back(polygons[i]);
-			frontPlanes.push_back(planes[i]);
 		}
 		else if (cf == Winding3::CfBack)
 		{
 			backPolygons.push_back(polygons[i]);
-			backPlanes.push_back(planes[i]);
 		}
 		else
 		{
 			T_ASSERT(cf == Winding3::CfSpan);
-			Winding3 f, b;
 
-			polygons[i].split(p, f, b);
+			Winding3& f = frontPolygons.push_back();
+			Winding3& b = backPolygons.push_back();
+			polygons[i].split(n.plane, f, b);
 
 			T_FATAL_ASSERT(f.size() >= 3);
-			T_FATAL_ASSERT(f.area() >= FUZZY_EPSILON);
 			T_FATAL_ASSERT(b.size() >= 3);
-			T_FATAL_ASSERT(b.area() >= FUZZY_EPSILON);
-
-			frontPolygons.push_back(f);
-			frontPlanes.push_back(planes[i]);
-			backPolygons.push_back(b);
-			backPlanes.push_back(planes[i]);
 		}
 	}
 
@@ -110,12 +86,11 @@ int32_t BspTree::build(AlignedVector< Winding3 >& polygons, AlignedVector< uint3
 	// Discard input windings here; not used any more and
 	// we don't want an memory explosion.
 	polygons.clear();
-	planes.clear();
 
 	if (!frontPolygons.empty())
-		n.front = build(frontPolygons, frontPlanes);
+		m_nodes[node].front = internalBuild(frontPolygons);
 	if (!backPolygons.empty())
-		n.back = build(backPolygons, backPlanes);
+		m_nodes[node].back = internalBuild(backPolygons);
 
 	return node;
 }
@@ -123,7 +98,7 @@ int32_t BspTree::build(AlignedVector< Winding3 >& polygons, AlignedVector< uint3
 bool BspTree::inside(int32_t node, const Vector4& pt) const
 {
 	const Node& n = m_nodes[node];
-	float d = m_planes[n.plane].distance(pt);
+	float d = n.plane.distance(pt);
 	if (d > FUZZY_EPSILON)
 		return (n.front >= 0) ? inside(n.front, pt) : true;
 	else if (d < -FUZZY_EPSILON)
@@ -143,7 +118,7 @@ bool BspTree::inside(int32_t node, const Winding3& w) const
 	const Node& n = m_nodes[node];
 	bool result = false;
 
-	int cf = w.classify(m_planes[n.plane]);
+	int cf = w.classify(n.plane);
 	if (cf == Winding3::CfFront || cf == Winding3::CfCoplanar)
 		result = (n.front >= 0) ? inside(n.front, w) : true;
 	else if (cf == Winding3::CfBack)
@@ -153,7 +128,7 @@ bool BspTree::inside(int32_t node, const Winding3& w) const
 		T_ASSERT(cf == Winding3::CfSpan);
 		Winding3 f, b;
 
-		w.split(m_planes[n.plane], f, b);
+		w.split(n.plane, f, b);
 		T_ASSERT(!f.empty());
 		T_ASSERT(!b.empty());
 
@@ -166,52 +141,50 @@ bool BspTree::inside(int32_t node, const Winding3& w) const
 	return result;
 }
 
-void BspTree::clip(int32_t node, const Winding3& w, bool splitted, const std::function< void(uint32_t index, const Winding3& w, uint32_t cl, bool splitted) >& visitor) const
+void BspTree::clip(int32_t node, const Winding3& w, const Plane& wp, bool splitted, const std::function< void(const Winding3& w, uint32_t cl, bool splitted) >& visitor) const
 {
 	const Node& n = m_nodes[node];
-	const Plane& p = m_planes[n.plane];
 
-	int32_t cf = w.classify(p);
+	if (std::abs(w.area()) < FUZZY_EPSILON)
+		return;
+
+	int32_t cf = w.classify(n.plane);
 	if (cf == Winding3::CfCoplanar)
-	{
-		Plane polygonPlane;
-		if (w.getPlane(polygonPlane))
-			cf = dot3(p.normal(), polygonPlane.normal()) >= 0.0f ? Winding3::CfFront : Winding3::CfBack;
-		else
-			cf = Winding3::CfFront;
-	}
+		cf = dot3(n.plane.normal(), wp.normal()) >= 0.0f ? Winding3::CfFront : Winding3::CfBack;
 
 	if (cf == Winding3::CfFront)
 	{
 		if (n.front >= 0)
-			clip(n.front, w, splitted, visitor);
+			clip(n.front, w, wp, splitted, visitor);
 		else
-			visitor(n.plane, w, cf, splitted);
+			visitor(w, Winding3::CfFront, splitted);
 	}
 	else if (cf == Winding3::CfBack)
 	{
 		if (n.back >= 0)
-			clip(n.back, w, splitted, visitor);
+			clip(n.back, w, wp, splitted, visitor);
 		else
-			visitor(n.plane, w, cf, splitted);
+			visitor(w, Winding3::CfBack, splitted);
 	}
 	else if (cf == Winding3::CfSpan)
 	{
 		Winding3 f, b;
-		w.split(p, f, b);
+		w.split(n.plane, f, b);
+		T_FATAL_ASSERT(!f.empty());
+		T_FATAL_ASSERT(!b.empty());
 		if (!f.empty())
 		{
 			if (n.front >= 0)
-				clip(n.front, f, true, visitor);
+				clip(n.front, f, wp, true, visitor);
 			else
-				visitor(n.plane, f, Winding3::CfFront, true);
+				visitor(f, Winding3::CfFront, true);
 		}
 		if (!b.empty())
 		{
 			if (n.back >= 0)
-				clip(n.back, b, true, visitor);
+				clip(n.back, b, wp, true, visitor);
 			else
-				visitor(n.plane, b, Winding3::CfBack, true);
+				visitor(b, Winding3::CfBack, true);
 		}
 	}
 }

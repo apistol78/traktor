@@ -1,3 +1,4 @@
+#include "Core/Log/Log.h"
 #include "Core/Math/BspTree.h"
 #include "Core/Math/Triangulator.h"
 #include "Core/Misc/SafeDestroy.h"
@@ -66,7 +67,7 @@ AlignedVector< Winding3 > unioon(const AlignedVector< Winding3 >& windingsA, con
         BspTree treeB(windingsB);
         for (const auto& wa : windingsA)
         {
-            treeB.clip(wa, [&](uint32_t index, const Winding3& w, uint32_t cl, bool splitted)
+            treeB.clip(wa, [&](const Winding3& w, uint32_t cl, bool splitted)
             {
                 if (w.size() >= 3 && cl == Winding3::CfFront)
                     result.push_back(w);
@@ -79,7 +80,7 @@ AlignedVector< Winding3 > unioon(const AlignedVector< Winding3 >& windingsA, con
         BspTree treeA(windingsA);
         for (const auto& wb : windingsB)
         {
-            treeA.clip(wb, [&](uint32_t index, const Winding3& w, uint32_t cl, bool splitted)
+            treeA.clip(wb, [&](const Winding3& w, uint32_t cl, bool splitted)
             {
                 if (w.size() >= 3 && cl == Winding3::CfFront)
                     result.push_back(w);
@@ -177,14 +178,20 @@ void SolidEntity::update(const world::UpdateParams& update)
         }
 
         // Triangulate all windings.
+		int32_t nerror = 0;
+
         AlignedVector< Winding3 > triangulated;
+		AlignedVector< Triangulator::Triangle > triangles;
         for (const auto& w : m_windings)
         {
             Plane pl;
             if (!w.getPlane(pl))
+			{
+				++nerror;
                 continue;
+			}
 
-            AlignedVector< Triangulator::Triangle > triangles;
+			triangles.resize(0);
             Triangulator().freeze(
                 w.get(),
                 pl.normal(),
@@ -205,6 +212,8 @@ void SolidEntity::update(const world::UpdateParams& update)
 
         const uint32_t ntriangles = triangulated.size();
         const uint32_t nvertices = ntriangles * 3;
+
+		log::info << ntriangles*3 << L" (" << nerror << L")" << Endl;
 
         if (ntriangles > 0)
         {
