@@ -36,6 +36,10 @@ bool Box::createWindings(AlignedVector< Winding3 >& outWindings) const
 	return true;
 }
 
+void Box::createAnchors(AlignedVector< Vector4 >& outAnchors) const
+{
+}
+
 void Box::serialize(ISerializer& s)
 {
 	s >> Member< Vector4 >(L"extent", m_extent);

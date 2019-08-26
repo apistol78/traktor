@@ -91,7 +91,7 @@ private:
 	AlignedVector< Node > m_nodes;
 	int32_t m_root;
 
-	int32_t recursiveBuild(AlignedVector< Winding3 >& polygons, AlignedVector< uint32_t >& planes);
+	int32_t build(AlignedVector< Winding3 >& polygons, AlignedVector< uint32_t >& planes);
 
 	bool inside(int32_t node, const Vector4& pt) const;
 

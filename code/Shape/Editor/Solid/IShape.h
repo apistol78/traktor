@@ -23,6 +23,8 @@ class T_DLLCLASS IShape : public ISerializable
 
 public:
 	virtual bool createWindings(AlignedVector< Winding3 >& outWindings) const = 0;
+
+	virtual void createAnchors(AlignedVector< Vector4 >& outAnchors) const = 0;
 };
 
 	}
