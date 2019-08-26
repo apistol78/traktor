@@ -126,7 +126,7 @@ void Winding3::split(const Plane& plane, Winding3& outFront, Winding3& outBack) 
 		Scalar da = plane.distance(a);
 		Scalar db = plane.distance(b);
 
-		if ((da < -FUZZY_EPSILON && db > FUZZY_EPSILON) || (da > FUZZY_EPSILON && db < -FUZZY_EPSILON))
+		if ((da <= -FUZZY_EPSILON && db >= FUZZY_EPSILON) || (da >= FUZZY_EPSILON && db <= -FUZZY_EPSILON))
 		{
 			Scalar k;
 			plane.segmentIntersection(a, b, k);
@@ -146,13 +146,13 @@ void Winding3::split(const Plane& plane, Winding3& outFront, Winding3& outBack) 
 
 int Winding3::classify(const Plane& plane) const
 {
-	int side[2] = { 0, 0 };
+	int32_t side[2] = { 0, 0 };
 	for (size_t i = 0; i < m_points.size(); ++i)
 	{
-		float d = plane.distance(m_points[i]);
-		if (d > FUZZY_EPSILON)
+		Scalar d = plane.distance(m_points[i]);
+		if (d >= FUZZY_EPSILON)
 			side[0]++;
-		else if (d < -FUZZY_EPSILON)
+		else if (d <= -FUZZY_EPSILON)
 			side[1]++;
 	}
 

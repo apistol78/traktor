@@ -54,7 +54,7 @@ public:
 
 	/*! Clip windings to BSP.
 	 */
-	void clip(const Winding3& w, const std::function< void(uint32_t index, const Winding3& w, uint32_t cl, bool splitted) >& visitor) const;
+	void clip(const Winding3& w, const std::function< void(const Winding3& w, uint32_t cl, bool splitted) >& visitor) const;
 
 	/*! Clip polygon to BSP.
 	 *
@@ -64,55 +64,45 @@ public:
 	template < typename PolygonType >
 	void clip(const PolygonType& polygon, uint32_t mode, AlignedVector< PolygonType >& outClipped) const
 	{
-		T_ASSERT(m_root);
-		clip< PolygonType >(m_root, polygon, mode, outClipped);
+		clip< PolygonType >(0, polygon, mode, outClipped);
 	}
-
-	/*! Get all planes.
-	 */
-	const AlignedVector< Plane >& getPlanes() const { return m_planes; }
 
 private:
 	struct Node
 	{
-		uint32_t plane;		//!< \note The plane index is the same index into source winding set passed into build.
+		Plane plane;
 		int32_t front;
 		int32_t back;
 
 		Node()
-		:	plane(0)
-		,	front(-1)
+		:	front(-1)
 		,	back(-1)
 		{
 		}
 	};
 
-	AlignedVector< Plane > m_planes;
 	AlignedVector< Node > m_nodes;
-	int32_t m_root;
 
-	int32_t build(AlignedVector< Winding3 >& polygons, AlignedVector< uint32_t >& planes);
+	int32_t internalBuild(AlignedVector< Winding3 >& polygons);
 
 	bool inside(int32_t node, const Vector4& pt) const;
 
 	bool inside(int32_t node, const Winding3& w) const;
 
-	void clip(int32_t node, const Winding3& w, bool splitted, const std::function< void(uint32_t index, const Winding3& w, uint32_t cl, bool splitted) >& visitor) const;
+	void clip(int32_t node, const Winding3& w, const Plane& wp, bool splitted, const std::function< void(const Winding3& w, uint32_t cl, bool splitted) >& visitor) const;
 
 	template < typename PolygonType >
 	void clip(int32_t node, const PolygonType& polygon, uint32_t mode, AlignedVector< PolygonType >& outClipped) const
 	{
 		const Node& n = m_nodes[node];
-		const Plane& p = m_planes[n.plane];
-
 		Winding3 w = polygon.winding();
 
-		int cf = w.classify(p);
+		int cf = w.classify(n.plane);
 		if (cf == Winding3::CfCoplanar)
 		{
 			Plane polygonPlane;
 			if (w.getPlane(polygonPlane))
-				cf = dot3(p.normal(), polygonPlane.normal()) >= 0.0f ? Winding3::CfFront : Winding3::CfBack;
+				cf = dot3(n.plane.normal(), polygonPlane.normal()) >= 0.0f ? Winding3::CfFront : Winding3::CfBack;
 			else
 				cf = Winding3::CfFront;
 		}
@@ -134,7 +124,7 @@ private:
 		else if (cf == Winding3::CfSpan)
 		{
 			PolygonType f, b;
-			polygon.split(p, f, b);
+			polygon.split(n.plane, f, b);
 			if (f.valid())
 			{
 				if (n.front >= 0)
