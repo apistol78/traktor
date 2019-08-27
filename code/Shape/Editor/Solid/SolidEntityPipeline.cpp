@@ -1,3 +1,4 @@
+#include "Core/Io/FileSystem.h"
 #include "Editor/IPipelineDepends.h"
 #include "Model/Model.h"
 #include "Model/ModelFormat.h"
@@ -13,6 +14,15 @@ namespace traktor
 	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.shape.SolidEntityPipeline", 0, SolidEntityPipeline, world::EntityPipeline)
+
+bool SolidEntityPipeline::create(const editor::IPipelineSettings* settings)
+{
+    if (!world::EntityPipeline::create(settings))
+        return false;
+
+    FileSystem::getInstance().makeAllDirectories(L"data/Temp/Solid");
+    return true;
+}
 
 TypeInfoSet SolidEntityPipeline::getAssetTypes() const
 {
