@@ -56,6 +56,8 @@ public:
 
     virtual void serialize(ISerializer& s) override final;
 
+    const resource::Id< render::Shader >& getShader() const { return m_shader; }
+
 private:
     resource::Id< render::Shader > m_shader;
 };

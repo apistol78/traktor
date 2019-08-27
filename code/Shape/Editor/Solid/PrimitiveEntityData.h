@@ -33,6 +33,10 @@ public:
 
     virtual void serialize(ISerializer& s) override;
 
+    BooleanOperation getOperation() const { return m_operation; }
+
+    const IShape* getShape() const { return m_shape; }
+
 private:
     friend class PrimitiveEditModifier;
 
