@@ -23,6 +23,8 @@ class T_DLLCLASS SolidEntityPipeline : public world::EntityPipeline
 	T_RTTI_CLASS;
 
 public:
+	virtual bool create(const editor::IPipelineSettings* settings) override final;
+	
 	virtual TypeInfoSet getAssetTypes() const override final;
 
 	virtual bool buildDependencies(
