@@ -14,6 +14,15 @@ template < typename BoxedType, int BoxesPerBlock >
 class BoxedAllocator
 {
 public:
+	virtual ~BoxedAllocator()
+	{
+		for (auto allocator : m_allocators)
+		{
+			Alloc::freeAlign(allocator->top());
+			delete allocator;
+		}
+	}
+
 	void* alloc()
 	{
 #if defined(T_BOXES_USE_MT_LOCK)
