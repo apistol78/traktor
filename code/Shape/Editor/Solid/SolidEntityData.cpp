@@ -1,4 +1,8 @@
+#include "Core/Serialization/AttributePrivate.h"
 #include "Core/Serialization/ISerializer.h"
+#include "Core/Serialization/Member.h"
+#include "Core/Serialization/MemberStl.h"
+#include "Physics/CollisionSpecification.h"
 #include "Render/Shader.h"
 #include "Resource/IResourceManager.h"
 #include "Resource/Member.h"
@@ -32,10 +36,34 @@ Ref< SolidEntity > SolidEntityData::createEntity(const world::IEntityBuilder* bu
 	return solidEntity;
 }
 
+void SolidEntityData::setCollisionGroup(const std::set< resource::Id< physics::CollisionSpecification > >& collisionGroup)
+{
+	m_collisionGroup = collisionGroup;
+}
+
+const std::set< resource::Id< physics::CollisionSpecification > >& SolidEntityData::getCollisionGroup() const
+{
+	return m_collisionGroup;
+}
+
+void SolidEntityData::setCollisionMask(const std::set< resource::Id< physics::CollisionSpecification > >& collisionMask)
+{
+	m_collisionMask = collisionMask;
+}
+
+const std::set< resource::Id< physics::CollisionSpecification > >& SolidEntityData::getCollisionMask() const
+{
+	return m_collisionMask;
+}
+
 void SolidEntityData::serialize(ISerializer& s)
 {
 	world::GroupEntityData::serialize(s);
+
+	s >> Member< Guid >(L"outputGuid", m_outputGuid, AttributePrivate());
 	s >> resource::Member< render::Shader >(L"shader", m_shader);
+    s >> MemberStlSet< resource::Id< physics::CollisionSpecification >, resource::Member< physics::CollisionSpecification > >(L"collisionGroup", m_collisionGroup);
+    s >> MemberStlSet< resource::Id< physics::CollisionSpecification >, resource::Member< physics::CollisionSpecification > >(L"collisionMask", m_collisionMask);
 }
 
     }
