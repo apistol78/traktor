@@ -19,7 +19,7 @@ AlignedVector< Winding3 > transform(const AlignedVector< Winding3 >& windings, c
 /*!
  * \ingroup Shape
  */
-AlignedVector< Winding3 > invert(const AlignedVector< Winding3 >& windings);
+// AlignedVector< Winding3 > invert(const AlignedVector< Winding3 >& windings);
 
 /*!
  * \ingroup Shape
