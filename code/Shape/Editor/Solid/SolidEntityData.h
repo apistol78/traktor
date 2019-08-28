@@ -1,5 +1,6 @@
 #pragma once
 
+#include <set>
 #include "Core/Ref.h"
 #include "Core/RefArray.h"
 #include "Resource/Id.h"
@@ -15,6 +16,13 @@
 
 namespace traktor
 {
+    namespace physics
+    {
+
+class CollisionSpecification;
+
+    }
+
 	namespace render
 	{
 
@@ -56,10 +64,23 @@ public:
 
     virtual void serialize(ISerializer& s) override final;
 
+    const Guid& getOutputGuid() const { return m_outputGuid; }
+
     const resource::Id< render::Shader >& getShader() const { return m_shader; }
 
+	void setCollisionGroup(const std::set< resource::Id< physics::CollisionSpecification > >& collisionGroup);
+
+	const std::set< resource::Id< physics::CollisionSpecification > >& getCollisionGroup() const;
+
+	void setCollisionMask(const std::set< resource::Id< physics::CollisionSpecification > >& collisionMask);
+
+	const std::set< resource::Id< physics::CollisionSpecification > >& getCollisionMask() const;
+
 private:
+    Guid m_outputGuid;
     resource::Id< render::Shader > m_shader;
+	std::set< resource::Id< physics::CollisionSpecification > > m_collisionGroup;
+	std::set< resource::Id< physics::CollisionSpecification > > m_collisionMask;
 };
 
     }
