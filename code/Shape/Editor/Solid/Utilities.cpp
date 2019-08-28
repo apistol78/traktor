@@ -1,6 +1,4 @@
 #include "Core/Math/Transform.h"
-#include "Model/Model.h"
-#include "Model/ModelFormat.h"
 #include "Shape/Editor/Solid/Utilities.h"
 
 namespace traktor
@@ -208,26 +206,6 @@ AlignedVector< Winding3 > BspNode::allPolygons() const
 	return polygons;
 }
 
-
-
-void writeModel(const BspNode* bsp, const std::wstring& name)
-{
-    Ref< model::Model > outputModel = new model::Model();
-    for (const auto& winding : bsp->allPolygons())
-    {
-        model::Polygon polygon;
-        for (const auto& vx : winding.get())
-        {
-            model::Vertex vertex;
-            vertex.setPosition(outputModel->addUniquePosition(vx));
-            polygon.addVertex(outputModel->addUniqueVertex(vertex));
-        }
-        outputModel->addUniquePolygon(polygon);
-    }
-	model::ModelFormat::writeAny(L"data/Temp/Solid/" + name + L".tmd", outputModel);
-}
-
-
         }
 
 AlignedVector< Winding3 > transform(const AlignedVector< Winding3 >& windings, const Transform& transform)
@@ -245,51 +223,10 @@ AlignedVector< Winding3 > transform(const AlignedVector< Winding3 >& windings, c
     return result;
 }
 
-// AlignedVector< Winding3 > invert(const AlignedVector< Winding3 >& windings)
-// {
-//     AlignedVector< Winding3 > result(windings.size());
-//     for (uint32_t i = 0; i < windings.size(); ++i)
-//     {
-//         result[i] = windings[i];
-//         result[i].flip();
-//     }
-//     return result;
-// }
-
 // A | B
 AlignedVector< Winding3 > unioon(const AlignedVector< Winding3 >& windingsA, const AlignedVector< Winding3 >& windingsB)
 {
-    // AlignedVector< Winding3 > result;
-
-	// // Clip all A to tree B.
-    // {
-    //     BspTree treeB(windingsB);
-    //     for (const auto& wa : windingsA)
-    //     {
-    //         treeB.clip(wa, [&](const Winding3& w, uint32_t cl, bool splitted)
-    //         {
-    //             if (w.size() >= 3 && cl == Winding3::CfFront)
-    //                 result.push_back(w);
-    //         });
-    //     }
-    // }
-
-	// // Clip all B to tree A.
-    // {
-    //     BspTree treeA(windingsA);
-    //     for (const auto& wb : windingsB)
-    //     {
-    //         treeA.clip(wb, [&](const Winding3& w, uint32_t cl, bool splitted)
-    //         {
-    //             if (w.size() >= 3 && cl == Winding3::CfFront)
-    //                 result.push_back(w);
-    //         });
-    //     }
-    // }
-
-    // return result;
-
-	BspNode A, B;
+ 	BspNode A, B;
 
 	A.build(windingsA);
 	B.build(windingsB);
@@ -306,11 +243,6 @@ AlignedVector< Winding3 > unioon(const AlignedVector< Winding3 >& windingsA, con
 // A & B == ~(~A | ~B)
 AlignedVector< Winding3 > intersection(const AlignedVector< Winding3 >& windingsA, const AlignedVector< Winding3 >& windingsB)
 {
-    // auto invWindingsA = invert(windingsA);
-    // auto invWindingsB = invert(windingsB);
-    // auto invResult = unioon(invWindingsA, invWindingsB);
-    // return invert(invResult);
-
 	BspNode A, B;
 
 	A.build(windingsA);
@@ -330,10 +262,6 @@ AlignedVector< Winding3 > intersection(const AlignedVector< Winding3 >& windings
 // A - B == ~(~A | B)
 AlignedVector< Winding3 > difference(const AlignedVector< Winding3 >& windingsA, const AlignedVector< Winding3 >& windingsB)
 {
-    // auto invWindingsA = invert(windingsA);
-    // auto invResult = unioon(invWindingsA, windingsB);
-    // return invert(invResult);
-
 	BspNode A, B;
 
 	A.build(windingsA);

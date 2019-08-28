@@ -101,18 +101,13 @@ void SolidEntity::update(const world::UpdateParams& update)
         }
 
         // Triangulate all windings.
-		int32_t nerror = 0;
-
         AlignedVector< Winding3 > triangulated;
 		AlignedVector< Triangulator::Triangle > triangles;
         for (const auto& w : m_windings)
         {
             Plane pl;
             if (!w.getPlane(pl))
-			{
-				++nerror;
                 continue;
-			}
 
 			triangles.resize(0);
             Triangulator().freeze(
@@ -135,8 +130,6 @@ void SolidEntity::update(const world::UpdateParams& update)
 
         const uint32_t ntriangles = triangulated.size();
         const uint32_t nvertices = ntriangles * 3;
-
-		log::info << ntriangles*3 << L" (" << nerror << L")" << Endl;
 
         if (ntriangles > 0)
         {
@@ -161,7 +154,21 @@ void SolidEntity::update(const world::UpdateParams& update)
                 Vector4 normal = pl.normal();
 
                 Vector4 fu, fv;
-                orthogonalFrame(normal, fu, fv);
+				switch (majorAxis3(normal))
+				{
+				case 0:
+					fu = Vector4(0.0f, 0.0f, 1.0f);
+					fv = Vector4(0.0f, 1.0f, 0.0f);
+					break;
+				case 1:
+					fu = Vector4(1.0f, 0.0f, 0.0f);
+					fv = Vector4(0.0f, 0.0f, 1.0f);
+					break;
+				case 2:
+					fu = Vector4(1.0f, 0.0f, 0.0f);
+					fv = Vector4(0.0f, 1.0f, 0.0f);
+					break;
+				}
 
                 for (int32_t i = 0; i < 3; ++i)
                 {
