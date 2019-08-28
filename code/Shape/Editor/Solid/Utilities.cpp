@@ -1,5 +1,6 @@
-// #include "Core/Math/BspTree.h"
 #include "Core/Math/Transform.h"
+#include "Model/Model.h"
+#include "Model/ModelFormat.h"
 #include "Shape/Editor/Solid/Utilities.h"
 
 namespace traktor
@@ -35,6 +36,8 @@ void split(
             outFront.push_back(),
             outBack.push_back()
         );
+		T_FATAL_ASSERT(outFront.back().size() >= 3);
+		T_FATAL_ASSERT(outBack.back().size() >= 3);
         break;
 
     case Winding3::CfCoplanar:
@@ -94,12 +97,16 @@ void BspNode::invert()
         -m_plane.normal(),
         -m_plane.distance()
     );
+
 	for (auto& polygon : m_polygons)
 		polygon.flip();
+
 	if (m_front)
 		m_front->invert();
 	if (m_back)
 		m_back->invert();
+
+	std::swap(m_front, m_back);
 }
 
 AlignedVector< Winding3 > BspNode::clip(const AlignedVector< Winding3 >& polygons) const
@@ -123,6 +130,8 @@ AlignedVector< Winding3 > BspNode::clip(const AlignedVector< Winding3 >& polygon
 		front = m_front->clip(front);
 	if (m_back)
 		back = m_back->clip(back);
+	else
+		back.resize(0);
 
 	front.insert(front.end(), back.begin(), back.end());
 	return front;
@@ -142,17 +151,26 @@ void BspNode::build(const AlignedVector< Winding3 >& polygons)
 	if (polygons.empty())
 		return;
 
+	size_t i = 0;
+
 	if (!m_front && !m_back)
-		polygons[0].getPlane(m_plane);
+	{
+		while (i < polygons.size() && !polygons[i].getPlane(m_plane))
+			++i;
+	}
+	if (i >= polygons.size())
+		return;
+
+	m_polygons.push_back(polygons[i]);
 
 	AlignedVector< Winding3 > front;
 	AlignedVector< Winding3 > back;
 
-	for (const auto& polygon : polygons)
+	for (++i; i < polygons.size(); ++i)
 	{
 		split(
 			m_plane,
-            polygon,
+            polygons[i],
 			m_polygons,	// coplanar front
 			m_polygons,	// coplanar back
 			front,	// front
@@ -176,7 +194,7 @@ void BspNode::build(const AlignedVector< Winding3 >& polygons)
 
 AlignedVector< Winding3 > BspNode::allPolygons() const
 {
-	AlignedVector< Winding3 > polygons;
+	AlignedVector< Winding3 > polygons = m_polygons;
 	if (m_front)
 	{
 		AlignedVector< Winding3 > front = m_front->allPolygons();
@@ -189,6 +207,26 @@ AlignedVector< Winding3 > BspNode::allPolygons() const
 	}
 	return polygons;
 }
+
+
+
+void writeModel(const BspNode* bsp, const std::wstring& name)
+{
+    Ref< model::Model > outputModel = new model::Model();
+    for (const auto& winding : bsp->allPolygons())
+    {
+        model::Polygon polygon;
+        for (const auto& vx : winding.get())
+        {
+            model::Vertex vertex;
+            vertex.setPosition(outputModel->addUniquePosition(vx));
+            polygon.addVertex(outputModel->addUniqueVertex(vertex));
+        }
+        outputModel->addUniquePolygon(polygon);
+    }
+	model::ModelFormat::writeAny(L"data/Temp/Solid/" + name + L".tmd", outputModel);
+}
+
 
         }
 
@@ -255,7 +293,6 @@ AlignedVector< Winding3 > unioon(const AlignedVector< Winding3 >& windingsA, con
 
 	A.build(windingsA);
 	B.build(windingsB);
-
 	A.clip(B);
 	B.clip(A);
 	B.invert();
@@ -280,11 +317,10 @@ AlignedVector< Winding3 > intersection(const AlignedVector< Winding3 >& windings
 	B.build(windingsB);
 
 	A.invert();
+	B.clip(A);
+	B.invert();
 	A.clip(B);
 	B.clip(A);
-	B.invert();
-	B.clip(A);
-	B.invert();
 	A.build(B.allPolygons());
 	A.invert();
 
@@ -302,12 +338,12 @@ AlignedVector< Winding3 > difference(const AlignedVector< Winding3 >& windingsA,
 
 	A.build(windingsA);
 	B.build(windingsB);
-
 	A.invert();
-	B.clip(A);
-	B.invert();
 	A.clip(B);
 	B.clip(A);
+	B.invert();
+	B.clip(A);
+	B.invert();
 	A.build(B.allPolygons());
 	A.invert();
 
