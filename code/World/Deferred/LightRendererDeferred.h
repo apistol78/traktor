@@ -28,7 +28,7 @@ class IResourceManager;
 	namespace world
 	{
 
-/*! \brief Light renderer.
+/*! Light renderer.
  * \ingroup World
  *
  * Render light primitives for deferred rendering
@@ -62,7 +62,8 @@ public:
 		render::ITexture* miscMap,
 		render::ITexture* colorMap,
 		render::ITexture* shadowMask,
-		render::ITexture* shadowMapAtlas
+		render::ITexture* shadowMapAtlas,
+		render::ITexture* reflectionMap
 	);
 
 	/*! \brief Render screenspace reflections. */
@@ -70,14 +71,11 @@ public:
 		render::IRenderView* renderView,
 		const Matrix44& projection,
 		const Matrix44& view,
-		const Vector4& fogDistanceAndDensity,
-		const Vector4& fogColor,
-		bool traceReflections,
+		const Matrix44& lastView,
 		render::ITexture* screenMap,
 		render::ITexture* depthMap,
 		render::ITexture* normalMap,
-		render::ITexture* miscMap,
-		render::ITexture* colorMap
+		render::ITexture* miscMap
 	);
 
 	/*! \brief Render fog. */
