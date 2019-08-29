@@ -22,7 +22,6 @@ const resource::Id< render::Shader > c_fogShader(Guid(L"{9453D74C-76C4-8748-9A5B
 
 render::handle_t s_handleTime;
 render::handle_t s_handleShadowEnable;
-render::handle_t s_handleTraceReflections;
 render::handle_t s_handleExtent;
 render::handle_t s_handleProjection;
 render::handle_t s_handleView;
@@ -43,6 +42,7 @@ render::handle_t s_handleFogColor;
 render::handle_t s_handleLightCount;
 render::handle_t s_handleShadowMask;
 render::handle_t s_handleShadowMapAtlas;
+render::handle_t s_handleReflectionMap;
 render::handle_t s_handleLightSBuffer;
 render::handle_t s_handleTileSBuffer;
 
@@ -62,7 +62,6 @@ LightRendererDeferred::LightRendererDeferred()
 {
 	s_handleTime = render::getParameterHandle(L"World_Time");
 	s_handleShadowEnable = render::getParameterHandle(L"World_ShadowEnable");
-	s_handleTraceReflections = render::getParameterHandle(L"World_TraceReflections");
 	s_handleExtent = render::getParameterHandle(L"World_Extent");
 	s_handleProjection = render::getParameterHandle(L"World_Projection");
 	s_handleView = render::getParameterHandle(L"World_View");
@@ -83,6 +82,7 @@ LightRendererDeferred::LightRendererDeferred()
 	s_handleLightCount = render::getParameterHandle(L"World_LightCount");
 	s_handleShadowMask = render::getParameterHandle(L"World_ShadowMask");
 	s_handleShadowMapAtlas = render::getParameterHandle(L"World_ShadowMapAtlas");
+	s_handleReflectionMap = render::getParameterHandle(L"World_ReflectionMap");
 	s_handleLightSBuffer = render::getParameterHandle(L"World_LightSBuffer");
 	s_handleTileSBuffer = render::getParameterHandle(L"World_TileSBuffer");
 }
@@ -142,7 +142,8 @@ void LightRendererDeferred::renderLights(
 	render::ITexture* miscMap,
 	render::ITexture* colorMap,
 	render::ITexture* shadowMask,
-	render::ITexture* shadowMapAtlas
+	render::ITexture* shadowMapAtlas,
+	render::ITexture* reflectionMap
 )
 {
 	Scalar p11 = projection.get(0, 0);
@@ -159,6 +160,7 @@ void LightRendererDeferred::renderLights(
 	m_lightShader->setTextureParameter(s_handleColorMap, colorMap);
 	m_lightShader->setTextureParameter(s_handleShadowMask, shadowMask);
 	m_lightShader->setTextureParameter(s_handleShadowMapAtlas, shadowMapAtlas);
+	m_lightShader->setTextureParameter(s_handleReflectionMap, reflectionMap);
 	m_lightShader->setStructBufferParameter(s_handleLightSBuffer, lightSBuffer);
 	m_lightShader->setStructBufferParameter(s_handleTileSBuffer, tileSBuffer);
 
@@ -169,30 +171,22 @@ void LightRendererDeferred::renderReflections(
 	render::IRenderView* renderView,
 	const Matrix44& projection,
 	const Matrix44& view,
-	const Vector4& fogDistanceAndDensity,
-	const Vector4& fogColor,
-	bool traceReflections,
 	render::ITexture* screenMap,
 	render::ITexture* depthMap,
 	render::ITexture* normalMap,
-	render::ITexture* miscMap,
-	render::ITexture* colorMap
+	render::ITexture* miscMap
 )
 {
 	Scalar p11 = projection.get(0, 0);
 	Scalar p22 = projection.get(1, 1);
 
-	m_reflectionShader->setCombination(s_handleTraceReflections, traceReflections);
 	m_reflectionShader->setMatrixParameter(s_handleProjection, projection);
 	m_reflectionShader->setMatrixParameter(s_handleViewInverse, view.inverse());
 	m_reflectionShader->setVectorParameter(s_handleMagicCoeffs, Vector4(1.0f / p11, 1.0f / p22, 0.0f, 0.0f));
-	m_reflectionShader->setVectorParameter(s_handleFogDistanceAndDensity, fogDistanceAndDensity);
-	m_reflectionShader->setVectorParameter(s_handleFogColor, fogColor);
 	m_reflectionShader->setTextureParameter(s_handleScreenMap, screenMap);
 	m_reflectionShader->setTextureParameter(s_handleDepthMap, depthMap);
 	m_reflectionShader->setTextureParameter(s_handleNormalMap, normalMap);
 	m_reflectionShader->setTextureParameter(s_handleMiscMap, miscMap);
-	m_reflectionShader->setTextureParameter(s_handleColorMap, colorMap);
 
 	m_reflectionShader->draw(renderView, m_vertexBufferQuad, 0, m_primitivesQuad);
 }

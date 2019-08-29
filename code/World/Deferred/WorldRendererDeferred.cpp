@@ -275,8 +275,8 @@ bool WorldRendererDeferred::create(
 	{
 		render::RenderTargetSetCreateDesc rtscd;
 		rtscd.count = 1;
-		rtscd.width = previousLog2(desc.width);
-		rtscd.height = previousLog2(desc.height);
+		rtscd.width = desc.width; //previousLog2(desc.width);
+		rtscd.height = desc.height; // previousLog2(desc.height);
 		rtscd.multiSample = 0;
 		rtscd.createDepthStencil = false;
 		rtscd.usingPrimaryDepthStencil = false;
@@ -293,6 +293,32 @@ bool WorldRendererDeferred::create(
 		if (!m_colorTargetSet)
 		{
 			log::error << L"Unable to create color read-back render target." << Endl;
+			return false;
+		}
+	}
+
+	// Create "reflections" target.
+	{
+		render::RenderTargetSetCreateDesc rtscd;
+		rtscd.count = 1;
+		rtscd.width = desc.width; // / 2;
+		rtscd.height = desc.height; // / 2;
+		rtscd.multiSample = 0;
+		rtscd.createDepthStencil = false;
+		rtscd.usingPrimaryDepthStencil = false;
+		rtscd.preferTiled = true;
+		rtscd.ignoreStencil = true;
+		rtscd.generateMips = false;
+#if !defined(__ANDROID__)
+		rtscd.targets[0].format = render::TfR32G32B32A32F;
+#else
+		rtscd.targets[0].format = render::TfR11G11B10F;
+#endif
+
+		m_reflectionsTargetSet = renderSystem->createRenderTargetSet(rtscd);
+		if (!m_reflectionsTargetSet)
+		{
+			log::error << L"Unable to create reflections render target." << Endl;
 			return false;
 		}
 	}
@@ -323,19 +349,22 @@ bool WorldRendererDeferred::create(
 			m_shadowsQuality = QuDisabled;
 		}
 
-		m_shadowMaskProject = new render::ImageProcess();
-		if (!m_shadowMaskProject->create(
-			shadowMaskProject,
-			postProcessTargetPool,
-			resourceManager,
-			renderSystem,
-			desc.width / m_shadowSettings.maskDenominator,
-			desc.height / m_shadowSettings.maskDenominator,
-			desc.allTargetsPersistent
-		))
+		if (m_shadowsQuality > QuDisabled)
 		{
-			log::warning << L"Unable to create shadow project process; shadows disabled." << Endl;
-			m_shadowsQuality = QuDisabled;
+			m_shadowMaskProject = new render::ImageProcess();
+			if (!m_shadowMaskProject->create(
+				shadowMaskProject,
+				postProcessTargetPool,
+				resourceManager,
+				renderSystem,
+				desc.width / m_shadowSettings.maskDenominator,
+				desc.height / m_shadowSettings.maskDenominator,
+				desc.allTargetsPersistent
+			))
+			{
+				log::warning << L"Unable to create shadow project process; shadows disabled." << Endl;
+				m_shadowsQuality = QuDisabled;
+			}
 		}
 
 		// Create shadow render targets.
@@ -1013,6 +1042,24 @@ void WorldRendererDeferred::render(int32_t frame)
 		T_RENDER_POP_MARKER(m_renderView);
 	}
 
+	// Render reflections.
+	T_RENDER_PUSH_MARKER(m_renderView, "World: Reflections");
+	if (m_renderView->begin(m_reflectionsTargetSet, nullptr))
+	{
+		m_lightRenderer->renderReflections(
+			m_renderView,
+			f.projection,
+			f.view,
+			f.lastView,
+			m_colorTargetSet->getColorTexture(0),	// \tbd using last frame copy without reprojection...
+			m_gbufferTargetSet->getColorTexture(0),	// depth
+			m_gbufferTargetSet->getColorTexture(1),	// normals
+			m_gbufferTargetSet->getColorTexture(2),	// metalness, roughness and specular
+		);
+		m_renderView->end();
+	}
+	T_RENDER_POP_MARKER(m_renderView);
+
 	// Render lighting.
 	T_RENDER_PUSH_MARKER(m_renderView, "World: Lighting");
 
@@ -1051,8 +1098,9 @@ void WorldRendererDeferred::render(int32_t frame)
 			m_gbufferTargetSet->getColorTexture(1),	// normals
 			m_gbufferTargetSet->getColorTexture(2),	// metalness/roughness
 			m_gbufferTargetSet->getColorTexture(3),	// surface color
-			m_shadowMaskTargetSet != nullptr ? m_shadowMaskTargetSet->getColorTexture(0) : nullptr,	// shadow mask
-			m_shadowAtlasTargetSet != nullptr ? m_shadowAtlasTargetSet->getDepthTexture() : nullptr	// shadow map atlas
+			m_shadowMaskTargetSet != nullptr ? m_shadowMaskTargetSet->getColorTexture(0) : nullptr,		// shadow mask
+			m_shadowAtlasTargetSet != nullptr ? m_shadowAtlasTargetSet->getDepthTexture() : nullptr,	// shadow map atlas,
+			m_reflectionsTargetSet->getColorTexture(0)
 		);
 
 		// Modulate with ambient occlusion.
@@ -1080,28 +1128,28 @@ void WorldRendererDeferred::render(int32_t frame)
 	}
 	T_RENDER_POP_MARKER(m_renderView);
 
-	 // Copy visual target into smaller copy, generate mips.
-	 T_RENDER_PUSH_MARKER(m_renderView, "World: Color read-back copy (0)");
-	 if (m_renderView->begin(m_colorTargetSet, nullptr))
-	 {
-	 	render::ImageProcessStep::Instance::RenderParams params;
-	 	params.viewFrustum = f.viewFrustum;
-	 	params.projection = f.projection;
-	 	params.deltaTime = 0.0f;
+	// Copy visual target into smaller copy, generate mips.
+	//T_RENDER_PUSH_MARKER(m_renderView, "World: Color read-back copy (0)");
+	//if (m_renderView->begin(m_colorTargetSet, nullptr))
+	//{
+	//	render::ImageProcessStep::Instance::RenderParams params;
+	//	params.viewFrustum = f.viewFrustum;
+	//	params.projection = f.projection;
+	//	params.deltaTime = 0.0f;
 
-	 	m_colorTargetCopy->render(
-	 		m_renderView,
-	 		m_visualTargetSet->getColorTexture(0),	// color
-	 		nullptr,	// depth
-	 		nullptr,	// normal
-	 		nullptr,	// velocity
-	 		nullptr,	// shadow mask
-	 		params
-	 	);
+	//	m_colorTargetCopy->render(
+	// 		m_renderView,
+	// 		m_visualTargetSet->getColorTexture(0),	// color
+	// 		nullptr,	// depth
+	// 		nullptr,	// normal
+	// 		nullptr,	// velocity
+	// 		nullptr,	// shadow mask
+	// 		params
+	//	);
 
-	 	m_renderView->end();
-	 }
-	 T_RENDER_POP_MARKER(m_renderView);
+	//	m_renderView->end();
+	//}
+	//T_RENDER_POP_MARKER(m_renderView);
 
 	// Render fog.
 	T_RENDER_PUSH_MARKER(m_renderView, "World: Fog");
@@ -1201,28 +1249,28 @@ void WorldRendererDeferred::render(int32_t frame)
 		m_renderView->end();
 	}
 
-	// // Copy color into off target.
-	// T_RENDER_PUSH_MARKER(m_renderView, "World: Color read-back copy (2)");
-	// if (m_renderView->begin(m_colorTargetSet, nullptr))
-	// {
-	// 	render::ImageProcessStep::Instance::RenderParams params;
-	// 	params.viewFrustum = f.viewFrustum;
-	// 	params.projection = f.projection;
-	// 	params.deltaTime = 0.0f;
+	// Copy color into off target.
+	T_RENDER_PUSH_MARKER(m_renderView, "World: Color read-back copy (2)");
+	if (m_renderView->begin(m_colorTargetSet, nullptr))
+	{
+		render::ImageProcessStep::Instance::RenderParams params;
+		params.viewFrustum = f.viewFrustum;
+		params.projection = f.projection;
+		params.deltaTime = 0.0f;
 
-	// 	m_colorTargetCopy->render(
-	// 		m_renderView,
-	// 		m_visualTargetSet->getColorTexture(0),	// color
-	// 		nullptr,	// depth
-	// 		nullptr,	// normal
-	// 		nullptr,	// velocity
-	// 		nullptr,	// shadow mask
-	// 		params
-	// 	);
+		m_colorTargetCopy->render(
+	 		m_renderView,
+	 		m_visualTargetSet->getColorTexture(0),	// color
+	 		nullptr,	// depth
+	 		nullptr,	// normal
+	 		nullptr,	// velocity
+	 		nullptr,	// shadow mask
+	 		params
+		);
 
-	// 	m_renderView->end();
-	// }
-	// T_RENDER_POP_MARKER(m_renderView);
+		m_renderView->end();
+	}
+	T_RENDER_POP_MARKER(m_renderView);
 
 	// Render post alpha visuals.
 	if (m_renderView->begin(m_visualTargetSet, nullptr))
@@ -1335,6 +1383,9 @@ void WorldRendererDeferred::getDebugTargets(std::vector< render::DebugTarget >& 
 
 	if (m_colorTargetSet)
 		outTargets.push_back(render::DebugTarget(L"Color read-back copy", render::DtvDefault, m_colorTargetSet->getColorTexture(0)));
+
+	if (m_reflectionsTargetSet)
+		outTargets.push_back(render::DebugTarget(L"Reflections", render::DtvDefault, m_reflectionsTargetSet->getColorTexture(0)));
 
 	if (m_shadowCascadeTargetSet)
 		outTargets.push_back(render::DebugTarget(L"Shadow map (cascade)", render::DtvShadowMap, m_shadowCascadeTargetSet->getDepthTexture()));
