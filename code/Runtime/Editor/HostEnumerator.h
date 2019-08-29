@@ -35,10 +35,6 @@ public:
 
 	const std::wstring& getHost(int32_t index) const;
 
-	int32_t getRemotePort(int32_t index) const;
-
-	int32_t getHttpPort(int32_t index) const;
-
 	const std::wstring& getDescription(int32_t index) const;
 
 	bool supportPlatform(int32_t index, const std::wstring& platform) const;
@@ -52,8 +48,6 @@ private:
 	{
 		std::wstring description;
 		std::wstring host;
-		int32_t remotePort;
-		int32_t httpPort;
 		std::vector< std::wstring > platforms;
 		bool local;
 

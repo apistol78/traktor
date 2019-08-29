@@ -23,6 +23,8 @@ class Server : public Object
     T_RTTI_CLASS;
 
 public:
+	Server();
+
     bool create(const std::wstring& scratchPath, const std::wstring& keyword, bool verbose);
 
     void destroy();
@@ -34,6 +36,7 @@ public:
 private:
     Ref< net::TcpSocket > m_serverSocket;
     Ref< net::DiscoveryManager > m_discoveryManager;
+	int32_t m_listenPort;
     std::wstring m_hostName;
     std::wstring m_scratchPath;
     std::wstring m_keyword;

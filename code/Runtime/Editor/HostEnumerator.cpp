@@ -48,16 +48,6 @@ const std::wstring& HostEnumerator::getHost(int32_t index) const
 	return m_hosts[index].host;
 }
 
-int32_t HostEnumerator::getRemotePort(int32_t index) const
-{
-	return m_hosts[index].remotePort;
-}
-
-int32_t HostEnumerator::getHttpPort(int32_t index) const
-{
-	return m_hosts[index].httpPort;
-}
-
 const std::wstring& HostEnumerator::getDescription(int32_t index) const
 {
 	return m_hosts[index].description;
@@ -109,13 +99,17 @@ void HostEnumerator::update()
 			if (!properties)
 				continue;
 
+			std::wstring host = properties->getProperty< std::wstring >(L"Host");
+			
+			size_t p = host.find(L':');
+			if (p != host.npos)
+				host = host.substr(0, p);
+
 			Host h;
 			h.description = properties->getProperty< std::wstring >(L"Description");
 			h.host = properties->getProperty< std::wstring >(L"Host");
-			h.remotePort = properties->getProperty< int32_t >(L"RemotePort");
-			h.httpPort = properties->getProperty< int32_t >(L"HttpPort");
 			h.platforms = properties->getProperty< std::vector< std::wstring > >(L"Platforms");
-			h.local = bool(itf.addr != 0 && itf.addr->getHostName() == h.host);
+			h.local = bool(itf.addr != 0 && itf.addr->getHostName() == host);
 			m_pending.push_back(h);
 		}
 
@@ -124,9 +118,7 @@ void HostEnumerator::update()
 }
 
 HostEnumerator::Host::Host()
-:	remotePort(0)
-,	httpPort(0)
-,	local(false)
+:	local(false)
 {
 }
 
