@@ -732,7 +732,7 @@ bool emitIterate2(GlslContext& cx, Iterate2* node)
 		Ref< GlslVariable > condition = cx.emitInput(node, L"Condition");
 		if (condition)
 		{
-			fs << L"if (!(bool)" << condition->cast(GtFloat) << L")" << Endl;
+			fs << L"if (int(" << condition->cast(GtFloat) << L") == 0)" << Endl;
 			fs << L"\tbreak;" << Endl;
 		}
 
