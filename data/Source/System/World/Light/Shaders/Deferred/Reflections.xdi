@@ -5,8 +5,8 @@
 			<id>{D34CB138-A5AE-FF4B-A07A-A6A3827DE1B1}</id>
 			<comment/>
 			<position>
-				<first>5512</first>
-				<second>494</second>
+				<first>5875</first>
+				<second>421</second>
 			</position>
 			<technique>Default</technique>
 			<priority>
@@ -1012,6 +1012,44 @@
 			<name>L_Iterations</name>
 			<global>false</global>
 		</item>
+		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
+			<id>{02C75321-0B78-4E6A-AA3D-7368DF04158D}</id>
+			<comment/>
+			<position>
+				<first>5320</first>
+				<second>429</second>
+			</position>
+			<name>L_Roughness</name>
+			<global>false</global>
+		</item>
+		<item type="traktor.render.Conditional" version="1,traktor.render.Node:1">
+			<id>{F494F1FA-AE93-40B8-A8B8-E2E936F31A54}</id>
+			<comment/>
+			<position>
+				<first>5592</first>
+				<second>445</second>
+			</position>
+			<branch>BrAuto</branch>
+			<operator>CoLess</operator>
+		</item>
+		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
+			<id>{B930FF31-7F83-4973-BD8C-E0752DE3FF92}</id>
+			<comment/>
+			<position>
+				<first>5310</first>
+				<second>465</second>
+			</position>
+			<value>0.2</value>
+		</item>
+		<item type="traktor.render.Color" version="1,traktor.render.Node:1">
+			<id>{D07764B6-7905-4E41-AD02-C655C3EC88FD}</id>
+			<comment/>
+			<position>
+				<first>5240</first>
+				<second>501</second>
+			</position>
+			<color>0, 0, 0, 0</color>
+		</item>
 	</nodes>
 	<edges>
 		<item type="traktor.render.Edge">
@@ -1646,16 +1684,6 @@
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[69]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item"/>
-				<name>Input</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
 				<node ref="/object/nodes/item[70]"/>
 				<name>Output</name>
 			</source>
@@ -1862,6 +1890,56 @@
 			<destination>
 				<node ref="/object/nodes/item[62]"/>
 				<name>Input2</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[86]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[87]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[88]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[87]"/>
+				<name>Reference</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[69]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[87]"/>
+				<name>CaseTrue</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[89]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[87]"/>
+				<name>CaseFalse</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[87]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item"/>
+				<name>Input</name>
 			</destination>
 		</item>
 	</edges>
