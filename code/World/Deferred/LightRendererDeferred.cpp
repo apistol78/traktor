@@ -171,6 +171,7 @@ void LightRendererDeferred::renderReflections(
 	render::IRenderView* renderView,
 	const Matrix44& projection,
 	const Matrix44& view,
+	const Matrix44& lastView,
 	render::ITexture* screenMap,
 	render::ITexture* depthMap,
 	render::ITexture* normalMap,
