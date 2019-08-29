@@ -2,6 +2,7 @@
 
 #include <string>
 #include "Core/Ref.h"
+#include "Core/RefArray.h"
 #include "Scene/Editor/IScenePipelineOperator.h"
 
 // import/export mechanism.
@@ -17,6 +18,7 @@ namespace traktor
 	namespace shape
 	{
 
+class IModelGenerator;
 class TracerProcessor;
 
 class T_DLLCLASS BakePipelineOperator : public scene::IScenePipelineOperator
@@ -45,7 +47,10 @@ public:
 
 private:
 	std::wstring m_assetPath;
+	RefArray< const IModelGenerator > m_modelGenerators;
 	static Ref< TracerProcessor > ms_tracerProcessor;	
+
+	const IModelGenerator* findModelGenerator(const TypeInfo& sourceType) const;
 };
 
 	}

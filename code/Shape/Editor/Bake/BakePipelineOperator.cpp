@@ -33,6 +33,7 @@
 #include "Render/Editor/Texture/IrradianceProbeAsset.h"
 #include "Render/Resource/TextureResource.h"
 #include "Scene/Editor/SceneAsset.h"
+#include "Shape/Editor/IModelGenerator.h"
 #include "Shape/Editor/Bake/BakeConfiguration.h"
 #include "Shape/Editor/Bake/BakePipelineOperator.h"
 #include "Shape/Editor/Bake/IblProbe.h"
@@ -251,6 +252,17 @@ BakePipelineOperator::BakePipelineOperator()
 bool BakePipelineOperator::create(const editor::IPipelineSettings* settings)
 {
 	m_assetPath = settings->getProperty< std::wstring >(L"Pipeline.AssetPath", L"");
+	
+	// Create instances of all concrete model generators.
+	TypeInfoSet modelGeneratorTypes;
+	type_of< IModelGenerator >().findAllOf(modelGeneratorTypes, false);
+	for (const auto& modelGeneratorType : modelGeneratorTypes)
+	{
+		Ref< IModelGenerator > modelGenerator = dynamic_type_cast< IModelGenerator* >(modelGeneratorType->createInstance());
+		if (modelGenerator)
+			m_modelGenerators.push_back(modelGenerator);
+	}
+	
 	FileSystem::getInstance().makeAllDirectories(Path(L"data/Temp/Bake"));
 	return true;
 }
@@ -447,41 +459,70 @@ bool BakePipelineOperator::build(
 					}
 				}
 
-				// // Terrain
-				// if (auto terrainComponentData = componentEntityData->getComponent< terrain::TerrainComponentData >())
-				// {
-				// 	const auto& terrain = terrainComponentData->getTerrain();
+				// Create model from components.
+				for (auto componentData : componentEntityData->getComponents())
+				{
+					const IModelGenerator* modelGenerator = findModelGenerator(type_of(componentData));
+					if (!modelGenerator)
+						continue;
 
-				// 	Ref< const terrain::TerrainAsset > terrainAsset = pipelineBuilder->getObjectReadOnly< terrain::TerrainAsset >(terrain);
-				// 	if (!terrain)
-				// 		return false;
+					Ref< model::Model > model = modelGenerator->createModel(componentData);
+					if (!model)
+						continue;
 
-				// 	Ref< db::Instance > heightfieldAssetInstance = pipelineBuilder->getSourceDatabase()->getInstance(terrainAsset->getHeightfield());
-				// 	if (!heightfieldAssetInstance)
-				// 		return false;
+					uint32_t channel = model->getTexCoordChannel(L"Lightmap");
+					if (channel == model::c_InvalidIndex)
+						return false;
 
-				// 	Ref< const hf::HeightfieldAsset > heightfieldAsset = heightfieldAssetInstance->getObject< const hf::HeightfieldAsset >();
-				// 	if (!heightfieldAsset)
-				// 		return false;
+					int32_t lightmapSize = calculateLightmapSize(model, configuration->getLumelDensity(), configuration->getMinimumLightMapSize());
 
-				// 	Ref< IStream > sourceData = heightfieldAssetInstance->readData(L"Data");
-				// 	if (!sourceData)
-				// 		return false;
+					model->clear(model::Model::CfColors | model::Model::CfJoints);
+					model::Transform(entityData->getTransform().toMatrix44()).apply(*model);
+					model::Triangulate().apply(*model);
+					model::CleanDuplicates(0.0f).apply(*model);
+					model::CleanDegenerate().apply(*model);
+					model::CalculateTangents().apply(*model);
+					model::UnwrapUV(channel, lightmapSize).apply(*model);
+					//model::NormalizeTexCoords(channel, 4.0f / lightmapSize, 4.0f / lightmapSize, 1.0f / lightmapSize, 1.0f / lightmapSize).apply(*model);
+					model::ModelFormat::writeAny(L"data/Temp/Bake/" + entityData->getName() + L".tmd", model);
 
-				// 	Ref< hf::Heightfield > heightfield = hf::HeightfieldFormat().read(
-				// 		sourceData,
-				// 		heightfieldAsset->getWorldExtent()
-				// 	);
+					AlignedVector< model::Material > materials = model->getMaterials();
+					for (auto& material : materials)
+					{
+						material.setBlendOperator(model::Material::BoDecal);
+						material.setLightMap(model::Material::Map(L"__Illumination__", channel, false), 1.0f);
+					}
+					model->setMaterials(materials);
 
-				// 	safeClose(sourceData);
+					// Reset transformation of entity.
+					entityData->setTransform(Transform::identity());
 
-				// 	if (!heightfield)
-				// 		return false;
+					Guid lightmapId = seedId.permutate();
+					Guid outputMeshId = seedId.permutate();
 
-				// 	Ref< model::Model > model = hf::ConvertHeightfield().convert(heightfield, 16, 0.0f);
-				// 	if (!model)
-				// 		return false;
-				// }
+					if (!addModel(model, entityData->getName(), lightmapId, lightmapSize, pipelineBuilder, tracerTask))
+						return false;
+
+					// Create output mesh asset.
+					std::map< std::wstring, Guid > materialTextures;
+					materialTextures[L"__Illumination__"] = lightmapId;
+					
+					Ref< mesh::MeshAsset > outputMeshAsset = new mesh::MeshAsset();
+					outputMeshAsset->setMeshType(mesh::MeshAsset::MtStatic);
+					outputMeshAsset->setMaterialTextures(materialTextures);
+
+					pipelineBuilder->buildOutput(
+						outputMeshAsset,
+						L"Generated/" + outputMeshId.format(),
+						outputMeshId,
+						model
+					);
+
+					// Modify component to reference our output mesh asset.
+					// meshComponentData->setMesh(resource::Id< mesh::IMesh >(
+					// 	outputMeshId
+					// ));
+				}
 
 				//if (auto cameraComponentData = componentEntityData->getComponent< world::CameraComponentData >())
 				//{
@@ -629,7 +670,75 @@ bool BakePipelineOperator::build(
 				return false;
 			}
 			else
+			{
+				const IModelGenerator* modelGenerator = findModelGenerator(type_of(entityData));
+				if (!modelGenerator)
+					return true;
+
+				Ref< model::Model > model = modelGenerator->createModel(entityData);
+				if (!model)
+					return true;
+
+				uint32_t channel = model->getTexCoordChannel(L"Lightmap");
+				if (channel == model::c_InvalidIndex)
+					return false;
+
+				int32_t lightmapSize = calculateLightmapSize(model, configuration->getLumelDensity(), configuration->getMinimumLightMapSize());
+
+				model->clear(model::Model::CfColors | model::Model::CfJoints);
+				model::Transform(entityData->getTransform().toMatrix44()).apply(*model);
+				model::Triangulate().apply(*model);
+				model::CleanDuplicates(0.0f).apply(*model);
+				model::CleanDegenerate().apply(*model);
+				model::CalculateTangents().apply(*model);
+				model::UnwrapUV(channel, lightmapSize).apply(*model);
+				//model::NormalizeTexCoords(channel, 4.0f / lightmapSize, 4.0f / lightmapSize, 1.0f / lightmapSize, 1.0f / lightmapSize).apply(*model);
+				model::ModelFormat::writeAny(L"data/Temp/Bake/" + entityData->getName() + L".tmd", model);
+
+				AlignedVector< model::Material > materials = model->getMaterials();
+				for (auto& material : materials)
+				{
+					material.setBlendOperator(model::Material::BoDecal);
+					material.setLightMap(model::Material::Map(L"__Illumination__", channel, false), 1.0f);
+				}
+				model->setMaterials(materials);
+
+				// Reset transformation of entity.
+				entityData->setTransform(Transform::identity());
+
+				Guid lightmapId = seedId.permutate();
+				Guid outputMeshId = seedId.permutate();
+
+				if (!addModel(model, entityData->getName(), lightmapId, lightmapSize, pipelineBuilder, tracerTask))
+					return false;
+
+				// Create output mesh asset.
+				std::map< std::wstring, Guid > materialTextures;
+				materialTextures[L"__Illumination__"] = lightmapId;
+				
+				Ref< mesh::MeshAsset > outputMeshAsset = new mesh::MeshAsset();
+				outputMeshAsset->setMeshType(mesh::MeshAsset::MtStatic);
+				outputMeshAsset->setMaterialTextures(materialTextures);
+
+				pipelineBuilder->buildOutput(
+					outputMeshAsset,
+					L"Generated/" + outputMeshId.format(),
+					outputMeshId,
+					model
+				);
+
+				// Create a new child entity to layer (we cannot add to prefab) which contain reference to our merged visual mesh.
+				Ref< mesh::MeshComponentData > meshComponentData = new mesh::MeshComponentData();
+				meshComponentData->setMesh(resource::Id< mesh::IMesh >(
+					outputMeshId
+				));
+
+				Ref< world::ComponentEntityData > mergedEntity = new world::ComponentEntityData();
+				mergedEntity->setComponent(meshComponentData);
+				flattenedLayer->addEntityData(mergedEntity);
+
 				return true;
+			}
 		});
 
 		layers.push_back(flattenedLayer);
@@ -700,6 +809,17 @@ void BakePipelineOperator::setTracerProcessor(TracerProcessor* tracerProcessor)
 TracerProcessor* BakePipelineOperator::getTracerProcessor()
 {
 	return ms_tracerProcessor;
+}
+
+const IModelGenerator* BakePipelineOperator::findModelGenerator(const TypeInfo& sourceType) const
+{
+	for (auto modelGenerator : m_modelGenerators)
+	{
+		auto supportedTypes = modelGenerator->getSupportedTypes();
+		if (supportedTypes.find(&sourceType) != supportedTypes.end())
+			return modelGenerator;
+	}
+	return nullptr;
 }
 
 	}
