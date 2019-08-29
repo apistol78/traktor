@@ -6,6 +6,7 @@
 #include "Core/Log/Log.h"
 #include "Core/Misc/Adler32.h"
 #include "Core/Misc/SafeDestroy.h"
+#include "Core/Misc/String.h"
 #include "Core/Settings/PropertyGroup.h"
 #include "Core/Settings/PropertyInteger.h"
 #include "Core/Settings/PropertyString.h"
@@ -26,7 +27,6 @@ namespace traktor
         namespace
         {
 
-const uint16_t c_listenPort = 50001;
 const uint8_t c_msgDeploy = 1;
 const uint8_t c_msgLaunchProcess = 2;
 const uint8_t c_errNone = 0;
@@ -37,6 +37,11 @@ const uint8_t c_errUnknown = 255;
         }
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.remote.Server", Server, Object)
+
+Server::Server()
+:	m_listenPort(0)
+{
+}
 
 bool Server::create(const std::wstring& scratchPath, const std::wstring& keyword, bool verbose)
 {
@@ -52,9 +57,9 @@ bool Server::create(const std::wstring& scratchPath, const std::wstring& keyword
 
 	// Create server socket.
 	m_serverSocket = new net::TcpSocket();
-	if (!m_serverSocket->bind(net::SocketAddressIPv4(c_listenPort)))
+	if (!m_serverSocket->bind(net::SocketAddressIPv4(0)))
 	{
-		log::error << L"Unable to bind server socket to port " << c_listenPort << Endl;
+		log::error << L"Unable to bind server socket." << Endl;
 		return false;
 	}
 
@@ -64,6 +69,8 @@ bool Server::create(const std::wstring& scratchPath, const std::wstring& keyword
 		return false;
 	}
 
+	m_listenPort = dynamic_type_cast< net::SocketAddressIPv4* >(m_serverSocket->getLocalAddress())->getPort();
+
 	// Create discovery manager.
 	int32_t mode = net::MdPublishServices;
 	if (verbose)
@@ -72,7 +79,7 @@ bool Server::create(const std::wstring& scratchPath, const std::wstring& keyword
 	m_discoveryManager = new net::DiscoveryManager();
 	if (!m_discoveryManager->create(mode))
 	{
-		log::error << L"Unable to create discovery manager" << Endl;
+		log::error << L"Unable to create discovery manager." << Endl;
 		return false;
 	}
 
@@ -121,8 +128,7 @@ bool Server::update()
 
         Ref< PropertyGroup > properties = new PropertyGroup();
         properties->setProperty< PropertyString >(L"Description", OS::getInstance().getComputerName());
-        properties->setProperty< PropertyString >(L"Host", itf.addr->getHostName());
-        properties->setProperty< PropertyInteger >(L"RemotePort", c_listenPort);
+        properties->setProperty< PropertyString >(L"Host", itf.addr->getHostName() + L":" + toString(m_listenPort));
         properties->setProperty< PropertyStringArray >(L"Platforms", platforms);
 
         if (!m_keyword.empty())

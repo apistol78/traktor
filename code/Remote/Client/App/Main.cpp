@@ -18,13 +18,24 @@ using namespace traktor;
 namespace
 {
 
-const uint16_t c_serverPort = 50001;
 const uint8_t c_msgDeploy = 1;
 const uint8_t c_msgLaunchProcess = 2;
 const uint8_t c_errNone = 0;
 const uint8_t c_errIoFailed = 1;
 const uint8_t c_errLaunchFailed = 2;
 const uint8_t c_errUnknown = 255;
+
+int32_t parseHost(std::wstring& host)
+{
+	int32_t port = 50001;
+	size_t p = host.find(L':');
+	if (p != host.npos)
+	{
+		port = parseString< int32_t >(host.substr(p + 1));
+		host = host.substr(0, p);
+	}
+	return port;
+}
 
 }
 
@@ -58,10 +69,12 @@ int launch(const CommandLine& cmdLine)
 		arguments += argument;
 	}
 
+	int32_t port = parseHost(host);
+
 	Ref< net::TcpSocket > clientSocket = new net::TcpSocket();
-	if (!clientSocket->connect(net::SocketAddressIPv4(host, c_serverPort)))
+	if (!clientSocket->connect(net::SocketAddressIPv4(host, port)))
 	{
-		log::error << L"Unable to connect to \"" << host << L"\"." << Endl;
+		log::error << L"Unable to connect to \"" << host << L":" << port << L"\"." << Endl;
 		return 1;
 	}
 
@@ -97,7 +110,7 @@ bool deployFile(const net::SocketAddressIPv4& addr, const Path& sourceFile, cons
 	Ref< net::TcpSocket > clientSocket = new net::TcpSocket();
 	if (!clientSocket->connect(addr))
 	{
-		log::info << L"Unable to connect to \"" << addr.getHostName() << L"\"." << Endl;
+		log::info << L"Unable to connect to \"" << addr.getHostName() << L":" << addr.getPort() << L"\"." << Endl;
 		return false;
 	}
 
@@ -232,7 +245,8 @@ int deploy(const CommandLine& cmdLine)
 	if (base)
 		log::info << L"Using target base \"" << targetBase.getPathName() << L"\"" << Endl;
 
-	net::SocketAddressIPv4 addr(host, c_serverPort);
+	int32_t port = parseHost(host);
+	net::SocketAddressIPv4 addr(host, port);
 
 	int32_t ret = 0;
 	for (int i = 2; i < cmdLine.getCount(); ++i)
