@@ -1,5 +1,6 @@
 #pragma once
 
+#include <string>
 #include "Ui/Events/ContentChangeEvent.h"
 
 // import/export mechanism.
