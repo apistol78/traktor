@@ -83,12 +83,20 @@ Ref< model::Model > SolidModelGenerator::createModel(const Object* source) const
     ));
     for (const auto& winding : outputWindings)
     {
+		Plane pl;
+		if (!winding.getPlane(pl))
+			continue;
+
+		uint32_t normal = outputModel->addUniqueNormal(pl.normal());
+
         model::Polygon polygon;
         polygon.setMaterial(0);
+		polygon.setNormal(normal);
         for (const auto& vx : winding.get())
         {
             model::Vertex vertex;
             vertex.setPosition(outputModel->addUniquePosition(vx));
+			vertex.setNormal(normal);
             polygon.addVertex(outputModel->addUniqueVertex(vertex));
         }
         outputModel->addUniquePolygon(polygon);

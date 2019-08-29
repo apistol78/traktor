@@ -679,7 +679,7 @@ bool BakePipelineOperator::build(
 				if (!model)
 					return true;
 
-				uint32_t channel = model->getTexCoordChannel(L"Lightmap");
+				uint32_t channel = model->addUniqueTexCoordChannel(L"Lightmap");
 				if (channel == model::c_InvalidIndex)
 					return false;
 
