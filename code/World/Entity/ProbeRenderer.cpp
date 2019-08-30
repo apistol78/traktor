@@ -31,10 +31,9 @@ struct Vertex
 render::handle_t s_handleProbeLocal;
 render::handle_t s_handleProbeVolumeCenter;
 render::handle_t s_handleProbeVolumeExtent;
-render::handle_t s_handleProbeDiffuse;
-render::handle_t s_handleProbeSpecular;
+render::handle_t s_handleProbeTexture;
+render::handle_t s_handleProbeTextureMips;
 render::handle_t s_handleProbeIntensity;
-render::handle_t s_handleProbeSpecularMips;
 render::handle_t s_handleMagicCoeffs;
 render::handle_t s_handleWorldViewInv;
 
@@ -52,10 +51,9 @@ ProbeRenderer::ProbeRenderer(
 	s_handleProbeLocal = render::getParameterHandle(L"World_ProbeLocal");
 	s_handleProbeVolumeCenter = render::getParameterHandle(L"World_ProbeVolumeCenter");
 	s_handleProbeVolumeExtent = render::getParameterHandle(L"World_ProbeVolumeExtent");
-	s_handleProbeDiffuse = render::getParameterHandle(L"World_ProbeDiffuse");
-	s_handleProbeSpecular = render::getParameterHandle(L"World_ProbeSpecular");
+	s_handleProbeTexture = render::getParameterHandle(L"World_ProbeTexture");
+	s_handleProbeTextureMips = render::getParameterHandle(L"World_ProbeTextureMips");
 	s_handleProbeIntensity = render::getParameterHandle(L"World_ProbeIntensity");
-	s_handleProbeSpecularMips = render::getParameterHandle(L"World_ProbeSpecularMips");
 	s_handleMagicCoeffs = render::getParameterHandle(L"World_MagicCoeffs");
 	s_handleWorldViewInv = render::getParameterHandle(L"World_WorldViewInv");
 
@@ -225,11 +223,10 @@ void ProbeRenderer::flush(
 		}
 
 		renderBlock->programParams->setFloatParameter(s_handleProbeIntensity, probeComponent->getIntensity());
-		renderBlock->programParams->setFloatParameter(s_handleProbeSpecularMips, probeComponent->getSpecularTexture() != nullptr ? (float)probeComponent->getSpecularTexture()->getMips() : 0.0f);
+		renderBlock->programParams->setFloatParameter(s_handleProbeTextureMips, probeComponent->getTexture() != nullptr ? (float)probeComponent->getTexture()->getMips() : 0.0f);
 		renderBlock->programParams->setVectorParameter(s_handleMagicCoeffs, magicCoeffs);
 		renderBlock->programParams->setMatrixParameter(s_handleWorldViewInv, worldViewInv);
-		renderBlock->programParams->setTextureParameter(s_handleProbeDiffuse, probeComponent->getDiffuseTexture());
-		renderBlock->programParams->setTextureParameter(s_handleProbeSpecular, probeComponent->getSpecularTexture());
+		renderBlock->programParams->setTextureParameter(s_handleProbeTexture, probeComponent->getTexture());
 
 		renderBlock->programParams->endParameters(renderContext);
 

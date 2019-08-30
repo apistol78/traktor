@@ -423,41 +423,41 @@ bool BakePipelineOperator::build(
 				}
 
 				// Get global IBL light from probe.
-				if (auto probeComponentData = componentEntityData->getComponent< world::ProbeComponentData >())
-				{
-					if (!probeComponentData->getLocal())
-					{
-						Ref< const render::IrradianceProbeAsset > irradianceAsset = pipelineBuilder->getObjectReadOnly< render::IrradianceProbeAsset >(probeComponentData->getDiffuseTexture());
-						if (irradianceAsset)
-						{
-							Ref< IStream > file = pipelineBuilder->openFile(Path(m_assetPath), irradianceAsset->getFileName().getOriginal());
-							if (!file)
-							{
-								log::error << L"Probe texture asset pipeline failed; unable to open source image \"" << irradianceAsset->getFileName().getOriginal() << L"\"" << Endl;
-								return false;
-							}
+				// if (auto probeComponentData = componentEntityData->getComponent< world::ProbeComponentData >())
+				// {
+				// 	if (!probeComponentData->getLocal())
+				// 	{
+				// 		Ref< const render::IrradianceProbeAsset > irradianceAsset = pipelineBuilder->getObjectReadOnly< render::IrradianceProbeAsset >(probeComponentData->getDiffuseTexture());
+				// 		if (irradianceAsset)
+				// 		{
+				// 			Ref< IStream > file = pipelineBuilder->openFile(Path(m_assetPath), irradianceAsset->getFileName().getOriginal());
+				// 			if (!file)
+				// 			{
+				// 				log::error << L"Probe texture asset pipeline failed; unable to open source image \"" << irradianceAsset->getFileName().getOriginal() << L"\"" << Endl;
+				// 				return false;
+				// 			}
 
-							Ref< drawing::Image > assetImage = drawing::Image::load(file, irradianceAsset->getFileName().getExtension());
-							if (!assetImage)
-							{
-								log::error << L"Probe texture asset pipeline failed; unable to load source image \"" << irradianceAsset->getFileName().getOriginal() << L"\"" << Endl;
-								return false;
-							}
+				// 			Ref< drawing::Image > assetImage = drawing::Image::load(file, irradianceAsset->getFileName().getExtension());
+				// 			if (!assetImage)
+				// 			{
+				// 				log::error << L"Probe texture asset pipeline failed; unable to load source image \"" << irradianceAsset->getFileName().getOriginal() << L"\"" << Endl;
+				// 				return false;
+				// 			}
 
-							file->close();
+				// 			file->close();
 
-							Light light;
-							light.type = Light::LtProbe;
-							light.probe = new IblProbe(
-								new render::CubeMap(assetImage)
-							);
-							tracerTask->addTracerLight(new TracerLight(light));
+				// 			Light light;
+				// 			light.type = Light::LtProbe;
+				// 			light.probe = new IblProbe(
+				// 				new render::CubeMap(assetImage)
+				// 			);
+				// 			tracerTask->addTracerLight(new TracerLight(light));
 
-							// Remove probe from scene as it's contribution will be baked.
-							componentEntityData->removeComponent(probeComponentData);
-						}
-					}
-				}
+				// 			// Remove probe from scene as it's contribution will be baked.
+				// 			componentEntityData->removeComponent(probeComponentData);
+				// 		}
+				// 	}
+				// }
 
 				// Create model from components.
 				for (auto componentData : componentEntityData->getComponents())

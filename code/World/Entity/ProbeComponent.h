@@ -25,7 +25,7 @@ class ITexture;
 
 class Entity;
 
-/*! \brief
+/*! Reflection probe component.
  * \ingroup World
  */
 class T_DLLCLASS ProbeComponent : public IEntityComponent
@@ -34,8 +34,7 @@ class T_DLLCLASS ProbeComponent : public IEntityComponent
 
 public:
 	ProbeComponent(
-		const resource::Proxy< render::ITexture >& diffuseTexture,
-		const resource::Proxy< render::ITexture >& specularTexture,
+		const resource::Proxy< render::ITexture >& texture,
 		float intensity,
 		bool local,
 		const Aabb3& volume
@@ -53,13 +52,9 @@ public:
 
 	Transform getTransform() const;
 
-	void setDiffuseTexture(const resource::Proxy< render::ITexture >& probeTexture) { m_diffuseTexture = probeTexture; }
+	void setTexture(const resource::Proxy< render::ITexture >& texture) { m_texture = texture; }
 
-	const resource::Proxy< render::ITexture >& getDiffuseTexture() const { return m_diffuseTexture; }
-
-	void setSpecularTexture(const resource::Proxy< render::ITexture >& probeTexture) { m_specularTexture = probeTexture; }
-
-	const resource::Proxy< render::ITexture >& getSpecularTexture() const { return m_specularTexture; }
+	const resource::Proxy< render::ITexture >& getTexture() const { return m_texture; }
 
 	float getIntensity() const { return m_intensity; }
 
@@ -69,8 +64,7 @@ public:
 
 private:
 	Entity* m_owner;
-	resource::Proxy< render::ITexture > m_diffuseTexture;
-	resource::Proxy< render::ITexture > m_specularTexture;
+	resource::Proxy< render::ITexture > m_texture;
 	float m_intensity;
 	bool m_local;
 	Aabb3 m_volume;

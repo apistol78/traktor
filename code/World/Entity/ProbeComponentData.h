@@ -25,7 +25,7 @@ class ITexture;
 	namespace world
 	{
 
-/*! \brief
+/*! Reflection probe component.
  * \ingroup World
  */
 class T_DLLCLASS ProbeComponentData : public IEntityComponentData
@@ -37,13 +37,9 @@ public:
 
 	virtual void serialize(ISerializer& s) override final;
 
-	void setDiffuseTexture(const resource::Id< render::ITexture >& probeTexture) { m_diffuseTexture = probeTexture; }
+	void setTexture(const resource::Id< render::ITexture >& texture) { m_texture = texture; }
 
-	const resource::Id< render::ITexture >& getDiffuseTexture() const { return m_diffuseTexture; }
-
-	void setSpecularTexture(const resource::Id< render::ITexture >& probeTexture) { m_specularTexture = probeTexture; }
-
-	const resource::Id< render::ITexture >& getSpecularTexture() const { return m_specularTexture; }
+	const resource::Id< render::ITexture >& getTexture() const { return m_texture; }
 
 	void setIntensity(float intensity) { m_intensity = intensity; }
 
@@ -58,8 +54,7 @@ public:
 	const Aabb3& getVolume() const { return m_volume; }
 
 private:
-	resource::Id< render::ITexture > m_diffuseTexture;
-	resource::Id< render::ITexture > m_specularTexture;
+	resource::Id< render::ITexture > m_texture;
 	float m_intensity;
 	bool m_local;
 	Aabb3 m_volume;
