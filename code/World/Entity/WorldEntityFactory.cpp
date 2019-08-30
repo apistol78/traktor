@@ -181,23 +181,16 @@ Ref< IEntityComponent > WorldEntityFactory::createEntityComponent(const world::I
 
 	if (const ProbeComponentData* probeComponentData = dynamic_type_cast< const ProbeComponentData* >(&entityComponentData))
 	{
-		resource::Proxy< render::ITexture > diffuseTexture;
-		resource::Proxy< render::ITexture > specularTexture;
+		resource::Proxy< render::ITexture > texture;
 
-		if (probeComponentData->getDiffuseTexture())
+		if (probeComponentData->getTexture())
 		{
-			if (!m_resourceManager->bind(probeComponentData->getDiffuseTexture(), diffuseTexture))
-				return nullptr;
-		}
-		if (probeComponentData->getSpecularTexture())
-		{
-			if (!m_resourceManager->bind(probeComponentData->getSpecularTexture(), specularTexture))
+			if (!m_resourceManager->bind(probeComponentData->getTexture(), texture))
 				return nullptr;
 		}
 
 		return new ProbeComponent(
-			diffuseTexture,
-			specularTexture,
+			texture,
 			probeComponentData->getIntensity(),
 			probeComponentData->getLocal(),
 			probeComponentData->getVolume()

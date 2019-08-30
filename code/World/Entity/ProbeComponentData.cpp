@@ -21,8 +21,7 @@ ProbeComponentData::ProbeComponentData()
 
 void ProbeComponentData::serialize(ISerializer& s)
 {
-	s >> resource::Member< render::ITexture >(L"diffuseTexture", m_diffuseTexture);
-	s >> resource::Member< render::ITexture >(L"specularTexture", m_specularTexture);
+	s >> resource::Member< render::ITexture >(L"texture", m_texture);
 	s >> Member< float >(L"intensity", m_intensity);
 	s >> Member< bool >(L"local", m_local);
 	s >> MemberAabb3(L"volume", m_volume);

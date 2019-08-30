@@ -91,6 +91,7 @@ private:
 		ShadowContext slice[MaxSliceCount];
 		ShadowContext atlas[16];
 		Ref< WorldContext > gbuffer;
+		Ref< WorldContext > reflections;
 		Ref< WorldContext > irradiance;
 		Ref< WorldContext > velocity;
 		Ref< WorldContext > visual;
@@ -110,27 +111,6 @@ private:
 		{
 		}
 	};
-
-	static render::handle_t ms_techniqueDeferredColor;
-	static render::handle_t ms_techniqueDeferredGBufferWrite;
-	static render::handle_t ms_techniqueIrradianceWrite;
-	static render::handle_t ms_techniqueVelocityWrite;
-	static render::handle_t ms_techniqueShadow;
-	static render::handle_t ms_handleTime;
-	static render::handle_t ms_handleView;
-	static render::handle_t ms_handleViewInverse;
-	static render::handle_t ms_handleProjection;
-	static render::handle_t ms_handleColorMap;
-	static render::handle_t ms_handleDepthMap;
-	static render::handle_t ms_handleLightMap;
-	static render::handle_t ms_handleNormalMap;
-	static render::handle_t ms_handleMiscMap;
-	static render::handle_t ms_handleReflectionMap;
-	static render::handle_t ms_handleFogDistanceAndDensity;
-	static render::handle_t ms_handleFogColor;
-	static render::handle_t ms_handleLightCount;
-	static render::handle_t ms_handleLightSBuffer;
-	static render::handle_t ms_handleTileSBuffer;
 
 	WorldRenderSettings m_settings;
 	WorldRenderSettings::ShadowSettings m_shadowSettings;
@@ -171,6 +151,8 @@ private:
 	bool m_includeObjectVelocity;
 
 	void buildGBuffer(WorldRenderView& worldRenderView, int frame);
+
+	void buildReflections(WorldRenderView& worldRenderView, int frame);
 
 	void buildIrradiance(WorldRenderView& worldRenderView, int frame);
 
