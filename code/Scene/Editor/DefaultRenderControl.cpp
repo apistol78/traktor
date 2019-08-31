@@ -397,7 +397,7 @@ bool DefaultRenderControl::createRenderControl(int32_t type)
 	case 9:	// Cubic
 		{
 			Ref< CubicRenderControl > renderControl = new CubicRenderControl();
-			if (!renderControl->create(m_container, m_context))
+			if (!renderControl->create(m_container, m_context, *worldRendererType))
 				return false;
 			m_renderControl = renderControl;
 		}

@@ -137,7 +137,8 @@ int32_t translateMouseButton(int32_t uimb)
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.CubicRenderControl", CubicRenderControl, ISceneRenderControl)
 
 CubicRenderControl::CubicRenderControl()
-:	m_imageProcessQuality(world::QuDisabled)
+:	m_worldRendererType(nullptr)
+,	m_imageProcessQuality(world::QuDisabled)
 ,	m_shadowQuality(world::QuDisabled)
 ,	m_reflectionsQuality(world::QuDisabled)
 ,	m_motionBlurQuality(world::QuDisabled)
@@ -150,10 +151,12 @@ CubicRenderControl::CubicRenderControl()
 {
 }
 
-bool CubicRenderControl::create(ui::Widget* parent, SceneEditorContext* context)
+bool CubicRenderControl::create(ui::Widget* parent, SceneEditorContext* context, const TypeInfo& worldRendererType)
 {
 	m_context = context;
 	T_ASSERT(m_context);
+
+	m_worldRendererType = &worldRendererType;
 
 	const PropertyGroup* settings = m_context->getEditor()->getSettings();
 	T_ASSERT(settings);
@@ -321,13 +324,7 @@ void CubicRenderControl::updateWorldRenderer()
 	const PropertyGroup* settings = m_context->getEditor()->getSettings();
 	T_ASSERT(settings);
 
-	std::wstring worldRendererTypeName = settings->getProperty< std::wstring >(L"SceneEditor.WorldRendererType", L"traktor.world.WorldRendererDeferred");
-
-	const TypeInfo* worldRendererType = TypeInfo::find(worldRendererTypeName.c_str());
-	if (!worldRendererType)
-		return;
-
-	Ref< world::IWorldRenderer > worldRenderer = dynamic_type_cast< world::IWorldRenderer* >(worldRendererType->createInstance());
+	Ref< world::IWorldRenderer > worldRenderer = dynamic_type_cast< world::IWorldRenderer* >(m_worldRendererType->createInstance());
 	if (!worldRenderer)
 		return;
 
@@ -361,6 +358,8 @@ void CubicRenderControl::updateWorldRenderer()
 
 void CubicRenderControl::setWorldRendererType(const TypeInfo& worldRendererType)
 {
+	m_worldRendererType = &worldRendererType;
+	updateWorldRenderer();
 }
 
 void CubicRenderControl::setAspect(float aspect)
