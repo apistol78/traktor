@@ -19,7 +19,6 @@ namespace traktor
 	{
 
 class ITexture;
-class SHCoeffs;
 
 	}
 
@@ -70,10 +69,6 @@ public:
 
 	float getFlickerFilter() const { return m_flickerFilter; }
 
-	void setSHCoeffs(const render::SHCoeffs* shCoeffs) { m_shCoeffs = shCoeffs; }
-
-	const render::SHCoeffs* getSHCoeffs() const { return m_shCoeffs; }
-
 private:
 	LightType m_lightType;
 	Color4f m_color;
@@ -83,7 +78,6 @@ private:
 	float m_radius;
 	float m_flickerAmount;
 	float m_flickerFilter;
-	Ref< const render::SHCoeffs > m_shCoeffs;
 };
 
 	}

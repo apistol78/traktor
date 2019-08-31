@@ -14,6 +14,7 @@ class IRenderSystem;
 class IRenderView;
 class ITexture;
 class Shader;
+class StructBuffer;
 class VertexBuffer;
 
 	}
@@ -27,6 +28,8 @@ class IResourceManager;
 
 	namespace world
 	{
+
+class IrradianceGrid;
 
 /*! Light renderer.
  * \ingroup World
@@ -43,10 +46,13 @@ public:
 
 	bool create(
 		resource::IResourceManager* resourceManager,
-		render::IRenderSystem* renderSystem
+		render::IRenderSystem* renderSystem,
+		const resource::Id< IrradianceGrid >& irradianceGrid
 	);
 
 	void destroy();
+
+	/*! */
 
 	/*! \brief Render all lights. */
 	void renderLights(
@@ -96,6 +102,8 @@ private:
 	resource::Proxy< render::Shader > m_reflectionShader;
 	resource::Proxy< render::Shader > m_fogShader;
 	Ref< render::VertexBuffer > m_vertexBufferQuad;
+	// Ref< render::StructBuffer > m_irradianceGridSBuffer;
+	resource::Proxy< IrradianceGrid > m_irradianceGrid;
 	render::Primitives m_primitivesQuad;
 };
 

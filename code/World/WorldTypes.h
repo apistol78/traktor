@@ -4,13 +4,6 @@
 
 namespace traktor
 {
-	namespace render
-	{
-
-class SHCoeffs;
-
-	}
-
 	namespace world
 	{
 
@@ -48,12 +41,7 @@ enum LightType
 	LtDirectional = 1,
 	LtPoint = 2,
 	LtSpot = 3,
-	LtProbe = 4
-};
-
-struct LightProbe
-{
-	const render::SHCoeffs* shCoeffs;
+	LtProbe = 4	/*!< \deprecated */
 };
 
 struct Light
@@ -64,7 +52,6 @@ struct Light
 	Vector4 color;
 	Scalar range;
 	Scalar radius;
-	LightProbe probe;
 	bool castShadow;
 };
 

@@ -17,7 +17,7 @@ namespace traktor
 	namespace world
 	{
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.world.LightComponentData", 8, LightComponentData, IEntityComponentData)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.world.LightComponentData", 9, LightComponentData, IEntityComponentData)
 
 LightComponentData::LightComponentData()
 :	m_lightType(LtDisabled)
@@ -96,8 +96,11 @@ void LightComponentData::serialize(ISerializer& s)
 	s >> Member< float >(L"flickerAmount", m_flickerAmount, AttributeRange(0.0f, 1.0f));
 	s >> Member< float >(L"flickerFilter", m_flickerFilter, AttributeRange(0.0f, 1.0f));
 
-	if (s.getVersion() >= 8)
-		s >> MemberRef< const render::SHCoeffs >(L"shCoeffs", m_shCoeffs);
+	if (s.getVersion() >= 8 && s.getVersion() < 9)
+	{
+		Ref< const render::SHCoeffs > shCoeffs;
+		s >> MemberRef< const render::SHCoeffs >(L"shCoeffs", shCoeffs);
+	}
 }
 
 	}

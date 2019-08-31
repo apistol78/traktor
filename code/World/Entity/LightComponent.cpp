@@ -20,8 +20,7 @@ LightComponent::LightComponent(
 	float range,
 	float radius,
 	float flickerAmount,
-	float flickerFilter,
-	const render::SHCoeffs* shCoeffs
+	float flickerFilter
 )
 :	m_owner(0)
 ,	m_lightType(lightType)
@@ -38,7 +37,6 @@ LightComponent::LightComponent(
 #else
 ,	m_random(uint32_t(clock_ce()))
 #endif
-,	m_shCoeffs(shCoeffs)
 {
 }
 

@@ -4,9 +4,11 @@
 #include "Render/IRenderSystem.h"
 #include "Render/IRenderView.h"
 #include "Render/Shader.h"
+#include "Render/StructBuffer.h"
 #include "Render/VertexBuffer.h"
 #include "Render/VertexElement.h"
 #include "Resource/IResourceManager.h"
+#include "World/IrradianceGrid.h"
 #include "World/Deferred/LightRendererDeferred.h"
 
 namespace traktor
@@ -45,13 +47,18 @@ render::handle_t s_handleShadowMapAtlas;
 render::handle_t s_handleReflectionMap;
 render::handle_t s_handleLightSBuffer;
 render::handle_t s_handleTileSBuffer;
+render::handle_t s_handleIrradianceEnable;
+render::handle_t s_handleIrradianceGridSize;
+render::handle_t s_handleIrradianceGridSBuffer;
 
 #pragma pack(1)
+
 struct LightVertex
 {
 	float pos[2];
 	float texCoord[2];
 };
+
 #pragma pack()
 
 		}
@@ -85,11 +92,15 @@ LightRendererDeferred::LightRendererDeferred()
 	s_handleReflectionMap = render::getParameterHandle(L"World_ReflectionMap");
 	s_handleLightSBuffer = render::getParameterHandle(L"World_LightSBuffer");
 	s_handleTileSBuffer = render::getParameterHandle(L"World_TileSBuffer");
+	s_handleIrradianceEnable = render::getParameterHandle(L"World_IrradianceEnable");
+	s_handleIrradianceGridSize = render::getParameterHandle(L"World_IrradianceGridSize");
+	s_handleIrradianceGridSBuffer = render::getParameterHandle(L"World_IrradianceGridSBuffer");
 }
 
 bool LightRendererDeferred::create(
 	resource::IResourceManager* resourceManager,
-	render::IRenderSystem* renderSystem
+	render::IRenderSystem* renderSystem,
+	const resource::Id< IrradianceGrid >& irradianceGrid
 )
 {
 	if (!resourceManager->bind(c_lightShader, m_lightShader))
@@ -98,7 +109,13 @@ bool LightRendererDeferred::create(
 		return false;
 	if (!resourceManager->bind(c_fogShader, m_fogShader))
 		return false;
+	if (!irradianceGrid.isNull())
+	{
+		if (!resourceManager->bind(irradianceGrid, m_irradianceGrid))
+			return false;
+	}
 
+	// Create fullscreen geometry.
 	AlignedVector< render::VertexElement > vertexElements;
 	vertexElements.push_back(render::VertexElement(render::DuPosition, render::DtFloat2, offsetof(LightVertex, pos)));
 	vertexElements.push_back(render::VertexElement(render::DuCustom, render::DtFloat2, offsetof(LightVertex, texCoord)));
@@ -107,8 +124,8 @@ bool LightRendererDeferred::create(
 	if (!m_vertexBufferQuad)
 		return false;
 
-	LightVertex* vertex = reinterpret_cast< LightVertex* >(m_vertexBufferQuad->lock());
-	T_ASSERT(vertex);
+	LightVertex* vertex = (LightVertex*)m_vertexBufferQuad->lock();
+	T_FATAL_ASSERT(vertex);
 
 	vertex[0].pos[0] = -1.0f; vertex[0].pos[1] =  1.0f; vertex[0].texCoord[0] = 0.0f; vertex[0].texCoord[1] = 0.0f;
 	vertex[1].pos[0] =  1.0f; vertex[1].pos[1] =  1.0f; vertex[1].texCoord[0] = 1.0f; vertex[1].texCoord[1] = 0.0f;
@@ -120,7 +137,6 @@ bool LightRendererDeferred::create(
 	m_vertexBufferQuad->unlock();
 
 	m_primitivesQuad.setNonIndexed(render::PtTriangles, 0, 2);
-
 	return true;
 }
 
@@ -150,6 +166,8 @@ void LightRendererDeferred::renderLights(
 	Scalar p22 = projection.get(1, 1);
 
 	m_lightShader->setCombination(s_handleShadowEnable, bool(shadowMask != nullptr && shadowMask != nullptr));
+	m_lightShader->setCombination(s_handleIrradianceEnable, bool(m_irradianceGrid));
+
 	m_lightShader->setFloatParameter(s_handleTime, time);
 	m_lightShader->setFloatParameter(s_handleLightCount, float(lightCount));
 	m_lightShader->setVectorParameter(s_handleMagicCoeffs, Vector4(1.0f / p11, 1.0f / p22, 0.0f, 0.0f));
@@ -163,6 +181,12 @@ void LightRendererDeferred::renderLights(
 	m_lightShader->setTextureParameter(s_handleReflectionMap, reflectionMap);
 	m_lightShader->setStructBufferParameter(s_handleLightSBuffer, lightSBuffer);
 	m_lightShader->setStructBufferParameter(s_handleTileSBuffer, tileSBuffer);
+
+	if (m_irradianceGrid)
+	{
+		m_lightShader->setVectorParameter(s_handleIrradianceGridSize, m_irradianceGrid->getSize());
+		m_lightShader->setStructBufferParameter(s_handleIrradianceGridSBuffer, m_irradianceGrid->getBuffer());
+	}
 
 	m_lightShader->draw(renderView, m_vertexBufferQuad, 0, m_primitivesQuad);
 }

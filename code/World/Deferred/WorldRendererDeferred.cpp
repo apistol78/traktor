@@ -80,6 +80,7 @@ render::handle_t s_handleLightSBuffer = 0;
 render::handle_t s_handleTileSBuffer = 0;
 
 #pragma pack(1)
+
 struct LightShaderData
 {
 	float typeRangeRadius[4];
@@ -756,7 +757,11 @@ bool WorldRendererDeferred::create(
 
 	// Create light primitive renderer.
 	m_lightRenderer = new LightRendererDeferred();
-	if (!m_lightRenderer->create(resourceManager, renderSystem))
+	if (!m_lightRenderer->create(
+		resourceManager,
+		renderSystem,
+		m_settings.irradianceGrid
+	))
 	{
 		log::error << L"Unable to create light primitive renderer" << Endl;
 		return false;

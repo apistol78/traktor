@@ -14,13 +14,6 @@
 
 namespace traktor
 {
-	namespace render
-	{
-
-class SHCoeffs;
-
-	}
-
 	namespace world
 	{
 
@@ -41,8 +34,7 @@ public:
 		float range,
 		float radius,
 		float flickerAmount,
-		float flickerFilter,
-		const render::SHCoeffs* shCoeffs
+		float flickerFilter
 	);
 
 	virtual void destroy() override final;
@@ -87,10 +79,6 @@ public:
 
 	float getFlickerCoeff() const { return m_flickerCoeff; }
 
-	void setSHCoeffs(const render::SHCoeffs* shCoeffs) { m_shCoeffs = shCoeffs; }
-
-	const render::SHCoeffs* getSHCoeffs() const { return m_shCoeffs; }
-
 private:
 	Entity* m_owner;
 	LightType m_lightType;
@@ -103,7 +91,6 @@ private:
 	float m_flickerValue;
 	float m_flickerCoeff;
 	Random m_random;
-	Ref< const render::SHCoeffs > m_shCoeffs;
 };
 
 	}

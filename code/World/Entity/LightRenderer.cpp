@@ -33,7 +33,6 @@ void LightRenderer::render(
 	light.color = lightComponent->getColor();
 	light.range = Scalar(lightComponent->getRange());
 	light.radius = Scalar(lightComponent->getRadius());
-	light.probe.shCoeffs = lightComponent->getSHCoeffs();
 	light.castShadow = lightComponent->getCastShadow();
 
 	if (lightComponent->getFlickerAmount() > FUZZY_EPSILON)
