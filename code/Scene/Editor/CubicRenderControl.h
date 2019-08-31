@@ -67,7 +67,7 @@ class CubicRenderControl : public ISceneRenderControl
 public:
 	CubicRenderControl();
 
-	bool create(ui::Widget* parent, SceneEditorContext* context);
+	bool create(ui::Widget* parent, SceneEditorContext* context, const TypeInfo& worldRendererType);
 
 	virtual void destroy() override final;
 
@@ -108,6 +108,7 @@ private:
 	Ref< render::VertexBuffer > m_vertexBuffer;
 	Ref< render::IndexBuffer > m_indexBuffer;
 	resource::Proxy< render::Shader > m_shader;
+	const TypeInfo* m_worldRendererType;
 	Ref< world::IWorldRenderer > m_worldRenderer;
 	world::WorldRenderView m_worldRenderView;
 	world::WorldRenderSettings m_worldRenderSettings;

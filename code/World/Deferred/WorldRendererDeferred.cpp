@@ -303,8 +303,8 @@ bool WorldRendererDeferred::create(
 	{
 		render::RenderTargetSetCreateDesc rtscd;
 		rtscd.count = 1;
-		rtscd.width = desc.width / 2;
-		rtscd.height = desc.height / 2;
+		rtscd.width = desc.width; // / 2;
+		rtscd.height = desc.height; // / 2;
 		rtscd.multiSample = 0;
 		rtscd.createDepthStencil = false;
 		rtscd.usingPrimaryDepthStencil = false;
@@ -1045,8 +1045,10 @@ void WorldRendererDeferred::render(int32_t frame)
 	}
 
 	// Render reflections.
-	T_RENDER_PUSH_MARKER(m_renderView, "World: Reflections");
-	if (m_renderView->begin(m_reflectionsTargetSet, nullptr))
+	clear.mask = render::CfColor;
+	clear.colors[0] = Color4f(0.0f, 0.0f, 0.0f, 0.0f);
+
+	if (m_renderView->begin(m_reflectionsTargetSet, &clear))
 	{
 		// Render reflection probes.
 		render::ProgramParameters reflectionsProgramParams;
@@ -1061,9 +1063,12 @@ void WorldRendererDeferred::render(int32_t frame)
 		reflectionsProgramParams.setTextureParameter(s_handleColorMap, m_gbufferTargetSet->getColorTexture(3));
 		reflectionsProgramParams.endParameters(m_globalContext);
 
+		T_RENDER_PUSH_MARKER(m_renderView, "World: Reflections (probes)");
 		f.reflections->getRenderContext()->render(m_renderView, render::RpOpaque | render::RpOverlay, &reflectionsProgramParams);
+		T_RENDER_POP_MARKER(m_renderView);
 
 		// Render screenspace reflections.
+		T_RENDER_PUSH_MARKER(m_renderView, "World: Reflections (SSR)");
 		m_lightRenderer->renderReflections(
 			m_renderView,
 			f.projection,
@@ -1074,10 +1079,10 @@ void WorldRendererDeferred::render(int32_t frame)
 			m_gbufferTargetSet->getColorTexture(1),	// normals
 			m_gbufferTargetSet->getColorTexture(2)	// metalness, roughness and specular
 		);
+		T_RENDER_POP_MARKER(m_renderView);
 
 		m_renderView->end();
 	}
-	T_RENDER_POP_MARKER(m_renderView);
 
 	// Render lighting.
 	clear.mask = render::CfColor;
