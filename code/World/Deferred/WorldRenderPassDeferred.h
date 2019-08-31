@@ -59,8 +59,6 @@ private:
 	bool m_depthEnable;
 
 	void setWorldProgramParameters(render::ProgramParameters* programParams, const Transform& lastWorld, const Transform& world) const;
-
-	void setProbeProgramParameters(render::ProgramParameters* programParams, const Transform& world, const Aabb3& bounds) const;
 };
 
 	}

@@ -34,10 +34,9 @@
 #include "Weather/WeatherRenderer.h"
 #include "World/EntityBuilder.h"
 #include "World/EntityEventManager.h"
-#include "World/EntityEventResourceFactory.h"
-#include "World/EntityResourceFactory.h"
 #include "World/IWorldRenderer.h"
 #include "World/WorldEntityRenderers.h"
+#include "World/WorldResourceFactory.h"
 #include "World/Entity/ComponentEntityRenderer.h"
 #include "World/Entity/DecalRenderer.h"
 #include "World/Entity/GroupEntityRenderer.h"
@@ -160,8 +159,7 @@ void WorldServer::createResourceFactories(IEnvironment* environment)
 
 	resourceManager->addFactory(new scene::SceneFactory(renderSystem, m_entityBuilder));
 	resourceManager->addFactory(new terrain::TerrainFactory());
-	resourceManager->addFactory(new world::EntityEventResourceFactory(m_entityBuilder));
-	resourceManager->addFactory(new world::EntityResourceFactory());
+	resourceManager->addFactory(new world::WorldResourceFactory(renderSystem, m_entityBuilder));
 }
 
 void WorldServer::createEntityFactories(IEnvironment* environment)

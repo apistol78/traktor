@@ -13,8 +13,7 @@
 #include "Sound/SoundFactory.h"
 #include "Video/VideoFactory.h"
 #include "Weather/Clouds/CloudMaskFactory.h"
-#include "World/EntityEventResourceFactory.h"
-#include "World/EntityResourceFactory.h"
+#include "World/WorldResourceFactory.h"
 
 // Entity factories
 #include "Scene/Editor/LayerEntityFactory.h"
@@ -78,8 +77,7 @@ void DefaultEditorProfile::createResourceFactories(
 	outResourceFactories.push_back(new sound::SoundFactory());
 	outResourceFactories.push_back(new video::VideoFactory(context->getRenderSystem()));
 	outResourceFactories.push_back(new weather::CloudMaskFactory());
-	outResourceFactories.push_back(new world::EntityResourceFactory());
-	//outResourceFactories.push_back(new world::EntityEventResourceFactory());
+	outResourceFactories.push_back(new world::WorldResourceFactory(context->getRenderSystem(), nullptr));
 }
 
 void DefaultEditorProfile::createEntityFactories(

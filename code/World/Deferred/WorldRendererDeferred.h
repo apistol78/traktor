@@ -34,7 +34,7 @@ class IShadowProjection;
 class LightRendererDeferred;
 class WorldContext;
 
-/*! \brief World renderer deferred implementation.
+/*! World renderer, using deferred rendering method.
  * \ingroup World
  *
  * Advanced deferred rendering path.

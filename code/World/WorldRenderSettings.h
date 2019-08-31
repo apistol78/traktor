@@ -25,7 +25,9 @@ class ImageProcessSettings;
 	namespace world
 	{
 
-/*! \brief World render settings.
+class IrradianceGrid;
+
+/*! World render settings.
  * \ingroup World
  *
  * Global render settings used by the WorldRenderer
@@ -75,6 +77,7 @@ public:
 	float fogDensityY;
 	float fogDensityZ;
 	Color4f fogColor;
+	resource::Id< IrradianceGrid > irradianceGrid;
 	resource::Id< render::ImageProcessSettings > imageProcess[QuLast];
 
 	WorldRenderSettings();

@@ -8,6 +8,7 @@
 #include "Render/ITexture.h"
 #include "Render/ImageProcess/ImageProcessSettings.h"
 #include "Resource/Member.h"
+#include "World/IrradianceGrid.h"
 #include "World/WorldRenderSettings.h"
 
 namespace traktor
@@ -46,7 +47,7 @@ const wchar_t* c_ImageProcess_elementNames[] =
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.WorldRenderSettings", 31, WorldRenderSettings, ISerializable)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.WorldRenderSettings", 32, WorldRenderSettings, ISerializable)
 
 WorldRenderSettings::WorldRenderSettings()
 :	viewNearZ(1.0f)
@@ -147,6 +148,9 @@ void WorldRenderSettings::serialize(ISerializer& s)
 		resource::Id< render::ITexture > reflectionMap;
 		s >> resource::Member< render::ITexture >(L"reflectionMap", reflectionMap);
 	}
+
+	if (s.getVersion() >= 32)
+		s >> resource::Member< IrradianceGrid >(L"irradianceGrid", irradianceGrid);
 
 	if (s.getVersion() >= 22)
 		s >> MemberStaticArray< resource::Id< render::ImageProcessSettings >, sizeof_array(imageProcess), resource::Member< render::ImageProcessSettings > >(L"imageProcess", imageProcess, c_ImageProcess_elementNames);

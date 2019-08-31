@@ -174,8 +174,7 @@ Ref< IEntityComponent > WorldEntityFactory::createEntityComponent(const world::I
 			lightComponentData->getRange(),
 			lightComponentData->getRadius(),
 			lightComponentData->getFlickerAmount(),
-			lightComponentData->getFlickerFilter(),
-			lightComponentData->getSHCoeffs()
+			lightComponentData->getFlickerFilter()
 		);
 	}
 

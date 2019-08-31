@@ -97,13 +97,14 @@ void ExtrudeShapeLayer::pathChanged()
 		return;
 
 	// Extrude shape.
+	const float c_scale = 0.1f;
 	AlignedVector< Vector2 > shape;
 	for (int32_t i = 0; i < 16; ++i)
 	{
 		float a = ((float)i / 16) * TWO_PI;
 		shape.push_back(Vector2(
-			cos(a) * 1.0f,
-			sin(a) * 1.0f
+			cos(a) * c_scale,
+			sin(a) * c_scale
 		));
 	}
 
