@@ -125,15 +125,14 @@
 					</components>
 				</item>
 				<item type="traktor.world.ComponentEntityData">
-					<name>Ambient</name>
+					<name>Reflections</name>
 					<transform>
 						<translation>0, 0, 0, 0</translation>
 						<rotation>0, 0, 0, 1</rotation>
 					</transform>
 					<components>
 						<item type="traktor.world.ProbeComponentData">
-							<diffuseTexture>{1BCA1D09-83D0-974C-B2CE-032EA1F71B1B}</diffuseTexture>
-							<specularTexture>{67B5BA16-0AA5-EC48-8279-E98FD0EE663C}</specularTexture>
+							<texture>{67B5BA16-0AA5-EC48-8279-E98FD0EE663C}</texture>
 							<intensity>1</intensity>
 							<local>false</local>
 							<volume>
