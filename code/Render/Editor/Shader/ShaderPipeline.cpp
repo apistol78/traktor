@@ -40,6 +40,10 @@
 #include "Xml/XmlDeserializer.h"
 #include "Xml/XmlSerializer.h"
 
+#if !defined(__APPLE__) && !defined(__LINUX__)
+#	define T_USE_BUILD_COMBINATION_JOBS
+#endif
+
 namespace traktor
 {
 	namespace render
@@ -54,11 +58,11 @@ uint32_t getPriority(const render::ShaderGraph* shaderGraph)
 		return 0;
 
 	uint32_t priority = 0;
-	for (RefArray< render::PixelOutput >::const_iterator i = nodes.begin(); i != nodes.end(); ++i)
+	for (auto node : nodes)
 	{
-		if ((*i)->getPriority() != 0)
-			priority |= (*i)->getPriority();
-		else if ((*i)->getRenderState().blendEnable)
+		if (node->getPriority() != 0)
+			priority |= node->getPriority();
+		else if (node->getRenderState().blendEnable)
 			priority |= RpAlphaBlend;
 	}
 
@@ -456,7 +460,9 @@ bool ShaderPipeline::buildOutput(
 	RefArray< ShaderGraphCombinations > shaderGraphCombinations;
 	std::vector< ShaderResource::Technique* > shaderResourceTechniques;
 	RefArray< BuildCombinationTask > tasks;
+#if defined(T_USE_BUILD_COMBINATION_JOBS)
 	RefArray< Job > jobs;
+#endif
 
 	// Generate shader graphs from techniques and combinations.
 	ShaderGraphTechniques techniques(shaderGraph);
@@ -465,27 +471,27 @@ bool ShaderPipeline::buildOutput(
 	if (!m_includeOnlyTechniques.empty())
 	{
 		std::set< std::wstring > keepTechniqueNames;
-		for (std::set< std::wstring >::const_iterator i = m_includeOnlyTechniques.begin(); i != m_includeOnlyTechniques.end(); ++i)
+		for (const auto& includeOnlyTechnique : m_includeOnlyTechniques)
 		{
-			WildCompare wc(*i);
-			for (std::set< std::wstring >::const_iterator j = techniqueNames.begin(); j != techniqueNames.end(); ++j)
+			WildCompare wc(includeOnlyTechnique);
+			for (const auto& techniqueName : techniqueNames)
 			{
-				if (wc.match(*j))
-					keepTechniqueNames.insert(*j);
+				if (wc.match(techniqueName))
+					keepTechniqueNames.insert(techniqueName);
 			}
 		}
 		techniqueNames = keepTechniqueNames;
 	}
 
-	for (std::set< std::wstring >::iterator i = techniqueNames.begin(); i != techniqueNames.end(); ++i)
+	for (const auto& techniqueName : techniqueNames)
 	{
 		if (ThreadManager::getInstance().getCurrentThread()->stopped())
 			break;
 
-		log::info << L"Building shader technique \"" << *i << L"\"..." << Endl;
+		log::info << L"Building shader technique \"" << techniqueName << L"\"..." << Endl;
 		log::info << IncreaseIndent;
 
-		Ref< ShaderGraph > shaderGraphTechnique = techniques.generate(*i);
+		Ref< ShaderGraph > shaderGraphTechnique = techniques.generate(techniqueName);
 		T_ASSERT(shaderGraphTechnique);
 
 		Ref< ShaderGraphCombinations > combinations = new ShaderGraphCombinations(shaderGraphTechnique);
@@ -493,31 +499,31 @@ bool ShaderPipeline::buildOutput(
 		shaderGraphCombinations.push_back(combinations);
 
 		ShaderResource::Technique* shaderResourceTechnique = new ShaderResource::Technique();
-		shaderResourceTechnique->name = *i;
+		shaderResourceTechnique->name = techniqueName;
 		shaderResourceTechnique->mask = 0;
 		shaderResourceTechniques.push_back(shaderResourceTechnique);
 
 		// Map parameter name to unique bits; also build parameter mask for this technique.
-		const std::vector< std::wstring >& parameterNames = combinations->getParameterNames();
-		for (std::vector< std::wstring >::const_iterator j = parameterNames.begin(); j != parameterNames.end(); ++j)
+		for (const auto& parameterName : combinations->getParameterNames())
 		{
-			if (shaderResource->m_parameterBits.find(*j) == shaderResource->m_parameterBits.end())
+			if (shaderResource->m_parameterBits.find(parameterName) == shaderResource->m_parameterBits.end())
 			{
-				shaderResource->m_parameterBits.insert(std::make_pair(*j, parameterBit));
+				shaderResource->m_parameterBits.insert(std::make_pair(parameterName, parameterBit));
 				parameterBit <<= 1;
 			}
-			shaderResourceTechnique->mask |= shaderResource->m_parameterBits[*j];
+			shaderResourceTechnique->mask |= shaderResource->m_parameterBits[parameterName];
 		}
 
 		// Optimize and compile all combination programs.
+#if defined(T_USE_BUILD_COMBINATION_JOBS)
 		log::info << L"Spawning " << combinationCount << L" tasks..." << Endl;
-
 		JobManager& jobManager = JobManager::getInstance();
+#endif
 		for (uint32_t combination = 0; combination < combinationCount; ++combination)
 		{
 			Ref< BuildCombinationTask > task = new BuildCombinationTask();
-			task->name = *i;
-			task->path = outputPath + L" - " + *i;
+			task->name = techniqueName;
+			task->path = outputPath + L" - " + techniqueName;
 			task->combinations = combinations;
 			task->combination = combination;
 			task->shaderResource = shaderResource;
@@ -533,7 +539,7 @@ bool ShaderPipeline::buildOutput(
 			task->result = false;
 			tasks.push_back(task);
 
-#if !defined(__APPLE__) && !defined(__LINUX__)
+#if defined(T_USE_BUILD_COMBINATION_JOBS)
 			Ref< Job > job = jobManager.add(makeFunctor(task.ptr(), &BuildCombinationTask::execute));
 			jobs.push_back(job);
 #else
@@ -544,18 +550,22 @@ bool ShaderPipeline::buildOutput(
 		log::info << DecreaseIndent;
 	}
 
+#if defined(T_USE_BUILD_COMBINATION_JOBS)
 	log::info << L"Collecting task(s)..." << Endl;
+#endif
 
 	render::IProgramCompiler::Stats stats;
 	uint32_t failed = 0;
 
 	for (size_t i = 0; i < tasks.size(); ++i)
 	{
+#if defined(T_USE_BUILD_COMBINATION_JOBS)
 		if (!jobs.empty())
 		{
 			jobs[i]->wait();
 			jobs[i] = nullptr;
 		}
+#endif
 
 		if (!tasks[i]->errorLog.empty())
 			log::error << tasks[i]->errorLog.str() << Endl;
@@ -578,10 +588,10 @@ bool ShaderPipeline::buildOutput(
 		tasks[i] = nullptr;
 	}
 
-	for (std::vector< ShaderResource::Technique* >::iterator i = shaderResourceTechniques.begin(); i != shaderResourceTechniques.end(); ++i)
+	for (auto shaderResourceTechnique : shaderResourceTechniques)
 	{
-		shaderResource->m_techniques.push_back(**i);
-		delete *i;
+		shaderResource->m_techniques.push_back(*shaderResourceTechnique);
+		delete shaderResourceTechnique;
 	}
 
 	shaderResourceTechniques.resize(0);
@@ -667,7 +677,7 @@ Ref< ISerializable > ShaderPipeline::buildOutput(
 ) const
 {
 	T_FATAL_ERROR;
-	return 0;
+	return nullptr;
 }
 
 IProgramCompiler* ShaderPipeline::getProgramCompiler() const
@@ -681,14 +691,14 @@ IProgramCompiler* ShaderPipeline::getProgramCompiler() const
 	if (!programCompilerType)
 	{
 		log::error << L"Shader pipeline; unable to find program compiler type \"" << m_programCompilerTypeName << L"\"" << Endl;
-		return 0;
+		return nullptr;
 	}
 
 	m_programCompiler = dynamic_type_cast< IProgramCompiler* >(programCompilerType->createInstance());
 	if (!m_programCompiler)
 	{
 		log::error << L"Shader pipeline; unable to instanciate program compiler \"" << m_programCompilerTypeName << L"\"" << Endl;
-		return 0;
+		return nullptr;
 	}
 
 	//if (m_editor)

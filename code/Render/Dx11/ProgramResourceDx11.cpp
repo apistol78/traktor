@@ -1,6 +1,6 @@
 #include "Core/Serialization/ISerializer.h"
+#include "Core/Serialization/MemberAlignedVector.h"
 #include "Core/Serialization/MemberStaticArray.h"
-#include "Core/Serialization/MemberStl.h"
 #include "Core/Serialization/MemberComposite.h"
 #include "Render/Dx11/Blob.h"
 #include "Render/Dx11/ProgramResourceDx11.h"
@@ -161,16 +161,16 @@ void ProgramResourceDx11::serialize(ISerializer& s)
 	s >> MemberStaticArray< CBufferDesc, 3, MemberComposite< CBufferDesc > >(L"vertexCBuffers", m_vertexCBuffers);
 	s >> MemberStaticArray< CBufferDesc, 3, MemberComposite< CBufferDesc > >(L"pixelCBuffers", m_pixelCBuffers);
 
-	s >> MemberStlVector< ResourceBindingDesc, MemberComposite< ResourceBindingDesc > >(L"vertexTextureBindings", m_vertexTextureBindings);
-	s >> MemberStlVector< ResourceBindingDesc, MemberComposite< ResourceBindingDesc > >(L"pixelTextureBindings", m_pixelTextureBindings);
+	s >> MemberAlignedVector< ResourceBindingDesc, MemberComposite< ResourceBindingDesc > >(L"vertexTextureBindings", m_vertexTextureBindings);
+	s >> MemberAlignedVector< ResourceBindingDesc, MemberComposite< ResourceBindingDesc > >(L"pixelTextureBindings", m_pixelTextureBindings);
 
-	s >> MemberStlVector< ResourceBindingDesc, MemberComposite< ResourceBindingDesc > >(L"vertexStructBufferBindings", m_vertexStructBufferBindings);
-	s >> MemberStlVector< ResourceBindingDesc, MemberComposite< ResourceBindingDesc > >(L"pixelStructBufferBindings", m_pixelStructBufferBindings);
+	s >> MemberAlignedVector< ResourceBindingDesc, MemberComposite< ResourceBindingDesc > >(L"vertexStructBufferBindings", m_vertexStructBufferBindings);
+	s >> MemberAlignedVector< ResourceBindingDesc, MemberComposite< ResourceBindingDesc > >(L"pixelStructBufferBindings", m_pixelStructBufferBindings);
 
-	s >> MemberStlVector< D3D11_SAMPLER_DESC, MemberD3D11_SAMPLER_DESC >(L"vertexSamplers", m_vertexSamplers);
-	s >> MemberStlVector< D3D11_SAMPLER_DESC, MemberD3D11_SAMPLER_DESC >(L"pixelSamplers", m_pixelSamplers);
+	s >> MemberAlignedVector< D3D11_SAMPLER_DESC, MemberD3D11_SAMPLER_DESC >(L"vertexSamplers", m_vertexSamplers);
+	s >> MemberAlignedVector< D3D11_SAMPLER_DESC, MemberD3D11_SAMPLER_DESC >(L"pixelSamplers", m_pixelSamplers);
 
-	s >> MemberStlVector< ParameterDesc, MemberComposite< ParameterDesc > >(L"parameters", m_parameters);
+	s >> MemberAlignedVector< ParameterDesc, MemberComposite< ParameterDesc > >(L"parameters", m_parameters);
 	s >> Member< uint32_t >(L"parameterScalarSize", m_parameterScalarSize);
 	s >> Member< uint32_t >(L"parameterTextureSize", m_parameterTextureSize);
 	s >> Member< uint32_t >(L"parameterStructBufferSize", m_parameterStructBufferSize);
@@ -198,7 +198,7 @@ void ProgramResourceDx11::ParameterMappingDesc::serialize(ISerializer& s)
 void ProgramResourceDx11::CBufferDesc::serialize(ISerializer& s)
 {
 	s >> Member< uint32_t >(L"size", size);
-	s >> MemberStlVector< ParameterMappingDesc, MemberComposite< ParameterMappingDesc > >(L"parameters", parameters);
+	s >> MemberAlignedVector< ParameterMappingDesc, MemberComposite< ParameterMappingDesc > >(L"parameters", parameters);
 }
 
 void ProgramResourceDx11::ResourceBindingDesc::serialize(ISerializer& s)

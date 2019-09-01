@@ -214,9 +214,22 @@ Ref< ProgramResource > ProgramCompilerDx11::compile(
 			T_ASSERT(d3dConstantBufferReflection);
 
 			d3dConstantBufferReflection->GetDesc(&dsbd);
-			T_ASSERT((dsbd.Size & 3) == 0);
+			if (dsbd.Type != D3D_CT_CBUFFER || dsbd.Size == 0)
+				continue;
 
-			resource->m_vertexCBuffers[i].size = dsbd.Size;
+			ProgramResourceDx11::CBufferDesc* vertexCBuffer = nullptr;
+			for (uint32_t j = 0; j < sizeof_array(resource->m_vertexCBuffers); ++j)
+			{
+				if (resource->m_vertexCBuffers[j].size == 0)
+				{
+					vertexCBuffer = &resource->m_vertexCBuffers[j];
+					break;
+				}
+			}
+			T_FATAL_ASSERT (vertexCBuffer != nullptr);
+
+			T_ASSERT((dsbd.Size & 3) == 0);
+			vertexCBuffer->size = dsbd.Size;
 
 			for (UINT j = 0; j < dsbd.Variables; ++j)
 			{
@@ -242,7 +255,7 @@ Ref< ProgramResource > ProgramCompilerDx11::compile(
 					uint32_t parameterOffset = alignUp(parameterScalarOffset, 4);
 					uint32_t parameterCount = dsvd.Size >> 2;
 
-					resource->m_vertexCBuffers[i].parameters.push_back(ProgramResourceDx11::ParameterMappingDesc(
+					vertexCBuffer->parameters.push_back(ProgramResourceDx11::ParameterMappingDesc(
 						dsvd.StartOffset,
 						parameterOffset,
 						parameterCount
@@ -263,7 +276,7 @@ Ref< ProgramResource > ProgramCompilerDx11::compile(
 						return nullptr;
 					}
 
-					resource->m_vertexCBuffers[i].parameters.push_back(ProgramResourceDx11::ParameterMappingDesc(
+					vertexCBuffer->parameters.push_back(ProgramResourceDx11::ParameterMappingDesc(
 						dsvd.StartOffset,
 						it->second.offset,
 						it->second.count
@@ -392,9 +405,22 @@ Ref< ProgramResource > ProgramCompilerDx11::compile(
 			T_ASSERT(d3dConstantBufferReflection);
 
 			d3dConstantBufferReflection->GetDesc(&dsbd);
-			T_ASSERT((dsbd.Size & 3) == 0);
+			if (dsbd.Type != D3D_CT_CBUFFER || dsbd.Size == 0)
+				continue;
 
-			resource->m_pixelCBuffers[i].size = dsbd.Size;
+			ProgramResourceDx11::CBufferDesc* pixelCBuffer = nullptr;
+			for (uint32_t j = 0; j < sizeof_array(resource->m_pixelCBuffers); ++j)
+			{
+				if (resource->m_pixelCBuffers[j].size == 0)
+				{
+					pixelCBuffer = &resource->m_pixelCBuffers[j];
+					break;
+				}
+			}
+			T_FATAL_ASSERT (pixelCBuffer != nullptr);
+
+			T_ASSERT((dsbd.Size & 3) == 0);
+			pixelCBuffer->size = dsbd.Size;
 
 			for (UINT j = 0; j < dsbd.Variables; ++j)
 			{
@@ -420,7 +446,7 @@ Ref< ProgramResource > ProgramCompilerDx11::compile(
 					uint32_t parameterOffset = alignUp(parameterScalarOffset, 4);
 					uint32_t parameterCount = dsvd.Size >> 2;
 
-					resource->m_pixelCBuffers[i].parameters.push_back(ProgramResourceDx11::ParameterMappingDesc(
+					pixelCBuffer->parameters.push_back(ProgramResourceDx11::ParameterMappingDesc(
 						dsvd.StartOffset,
 						parameterOffset,
 						parameterCount
@@ -438,10 +464,10 @@ Ref< ProgramResource > ProgramCompilerDx11::compile(
 					if (it->second.count != (dsvd.Size >> 2))
 					{
 						log::error << L"Mismatching parameter size \"" << name << L"\" in pixel shader." << Endl;
-						return 0;
+						return nullptr;
 					}
 
-					resource->m_pixelCBuffers[i].parameters.push_back(ProgramResourceDx11::ParameterMappingDesc(
+					pixelCBuffer->parameters.push_back(ProgramResourceDx11::ParameterMappingDesc(
 						dsvd.StartOffset,
 						it->second.offset,
 						it->second.count
