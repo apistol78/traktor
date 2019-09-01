@@ -1,8 +1,7 @@
 #pragma once
 
-#include <map>
-#include <vector>
 #include "Core/Ref.h"
+#include "Core/Containers/AlignedVector.h"
 #include "Render/Dx11/Platform.h"
 #include "Render/Resource/ProgramResource.h"
 
@@ -70,7 +69,7 @@ public:
 	struct CBufferDesc
 	{
 		uint32_t size;
-		std::vector< ParameterMappingDesc > parameters;
+		AlignedVector< ParameterMappingDesc > parameters;
 
 		CBufferDesc()
 		:	size(0)
@@ -117,16 +116,16 @@ private:
 	CBufferDesc m_vertexCBuffers[3];
 	CBufferDesc m_pixelCBuffers[3];
 
-	std::vector< ResourceBindingDesc > m_vertexTextureBindings;
-	std::vector< ResourceBindingDesc > m_pixelTextureBindings;
+	AlignedVector< ResourceBindingDesc > m_vertexTextureBindings;
+	AlignedVector< ResourceBindingDesc > m_pixelTextureBindings;
 
-	std::vector< ResourceBindingDesc > m_vertexStructBufferBindings;
-	std::vector< ResourceBindingDesc > m_pixelStructBufferBindings;
+	AlignedVector< ResourceBindingDesc > m_vertexStructBufferBindings;
+	AlignedVector< ResourceBindingDesc > m_pixelStructBufferBindings;
 
-	std::vector< D3D11_SAMPLER_DESC > m_vertexSamplers;
-	std::vector< D3D11_SAMPLER_DESC > m_pixelSamplers;
+	AlignedVector< D3D11_SAMPLER_DESC > m_vertexSamplers;
+	AlignedVector< D3D11_SAMPLER_DESC > m_pixelSamplers;
 
-	std::vector< ParameterDesc > m_parameters;
+	AlignedVector< ParameterDesc > m_parameters;
 	uint32_t m_parameterScalarSize;
 	uint32_t m_parameterTextureSize;
 	uint32_t m_parameterStructBufferSize;
