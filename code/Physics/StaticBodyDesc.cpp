@@ -16,6 +16,13 @@ StaticBodyDesc::StaticBodyDesc()
 {
 }
 
+StaticBodyDesc::StaticBodyDesc(ShapeDesc* shape)
+:	BodyDesc(shape)
+,	m_friction(0.75f)
+,	m_kinematic(false)
+{
+}
+
 void StaticBodyDesc::setFriction(float friction)
 {
 	m_friction = friction;

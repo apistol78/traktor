@@ -22,6 +22,19 @@ DynamicBodyDesc::DynamicBodyDesc()
 {
 }
 
+DynamicBodyDesc::DynamicBodyDesc(ShapeDesc* shape)
+:	BodyDesc(shape)
+,	m_mass(1.0f)
+,	m_autoDeactivate(true)
+,	m_active(true)
+,	m_linearDamping(0.0f)
+,	m_angularDamping(0.0f)
+,	m_friction(0.75f)
+,	m_linearThreshold(0.8f)
+,	m_angularThreshold(1.0f)
+{
+}
+
 void DynamicBodyDesc::setMass(float mass)
 {
 	m_mass = mass;

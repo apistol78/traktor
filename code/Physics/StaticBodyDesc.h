@@ -15,7 +15,7 @@ namespace traktor
 	namespace physics
 	{
 
-/*! \brief Static rigid body description.
+/*! Static rigid body description.
  * \ingroup Physics
  */
 class T_DLLCLASS StaticBodyDesc : public BodyDesc
@@ -24,6 +24,8 @@ class T_DLLCLASS StaticBodyDesc : public BodyDesc
 
 public:
 	StaticBodyDesc();
+
+	explicit StaticBodyDesc(ShapeDesc* shape);
 
 	void setFriction(float friction);
 
