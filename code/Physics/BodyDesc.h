@@ -26,6 +26,10 @@ class T_DLLCLASS BodyDesc : public ISerializable
 	T_RTTI_CLASS;
 
 public:
+	BodyDesc();
+
+	explicit BodyDesc(ShapeDesc* shape);
+
 	void setShape(ShapeDesc* shape);
 
 	Ref< const ShapeDesc > getShape() const;

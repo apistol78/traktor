@@ -15,6 +15,13 @@ public:
     virtual TypeInfoSet getSupportedTypes() const override final;
 
     virtual Ref< model::Model > createModel(const Object* source) const override final;
+
+    virtual Ref< Object > modifyOutput(
+        editor::IPipelineBuilder* pipelineBuilder,
+        const Object* source,
+        const Guid& lightmapId,
+        const model::Model* model
+    ) const override final;
 };
 
     }

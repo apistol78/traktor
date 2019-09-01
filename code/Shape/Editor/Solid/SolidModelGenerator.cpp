@@ -1,9 +1,17 @@
+#include "Editor/IPipelineBuilder.h"
+#include "Mesh/MeshComponentData.h"
+#include "Mesh/Editor/MeshAsset.h"
 #include "Model/Model.h"
+#include "Physics/MeshShapeDesc.h"
+#include "Physics/StaticBodyDesc.h"
+#include "Physics/Editor/MeshAsset.h"
+#include "Physics/World/RigidBodyComponentData.h"
 #include "Shape/Editor/Solid/IShape.h"
 #include "Shape/Editor/Solid/PrimitiveEntityData.h"
 #include "Shape/Editor/Solid/SolidEntityData.h"
 #include "Shape/Editor/Solid/SolidModelGenerator.h"
 #include "Shape/Editor/Solid/Utilities.h"
+#include "World/Entity/ComponentEntityData.h"
 
 namespace traktor
 {
@@ -103,6 +111,60 @@ Ref< model::Model > SolidModelGenerator::createModel(const Object* source) const
     }
 
     return outputModel;
+}
+
+Ref< Object > SolidModelGenerator::modifyOutput(
+    editor::IPipelineBuilder* pipelineBuilder,
+    const Object* source,
+    const Guid& lightmapId,
+    const model::Model* model
+) const
+{
+    const SolidEntityData* solidEntityData = mandatory_non_null_type_cast< const SolidEntityData* >(source);
+
+	Guid outputRenderMeshGuid = solidEntityData->getOutputGuid().permutation(0);
+	Guid outputCollisionShapeGuid = solidEntityData->getOutputGuid().permutation(1);
+
+	std::wstring outputRenderMeshPath = L"Generated/" + outputRenderMeshGuid.format();
+	std::wstring outputCollisionShapePath = L"Generated/" + outputCollisionShapeGuid.format();
+
+    // Build visual mesh.
+    Ref< mesh::MeshAsset > outputMeshAsset = new mesh::MeshAsset();
+    outputMeshAsset->setMeshType(mesh::MeshAsset::MtStatic);
+    outputMeshAsset->setMaterialTextures({ { L"__Illumination__", lightmapId } });
+
+    pipelineBuilder->buildOutput(
+        outputMeshAsset,
+        outputRenderMeshPath,
+        outputRenderMeshGuid,
+        model
+    );
+
+    // Build collision mesh.
+    Ref< physics::MeshAsset > physicsMeshAsset = new physics::MeshAsset();
+    physicsMeshAsset->setMargin(0.0f);
+    physicsMeshAsset->setCalculateConvexHull(false);
+
+    pipelineBuilder->buildOutput(
+        physicsMeshAsset,
+        outputCollisionShapePath,
+        outputCollisionShapeGuid,
+        model
+    );
+
+    // Replace mesh component referencing our merged physics mesh.
+    Ref< physics::MeshShapeDesc > outputShapeDesc = new physics::MeshShapeDesc();
+    outputShapeDesc->setMesh(resource::Id< physics::Mesh >(outputCollisionShapeGuid));
+    outputShapeDesc->setCollisionGroup(solidEntityData->getCollisionGroup());
+    outputShapeDesc->setCollisionMask(solidEntityData->getCollisionMask());
+
+	// Create our output entity which will replace the solid entity.
+	Ref< world::ComponentEntityData > outputEntityData = new world::ComponentEntityData();
+	outputEntityData->setName(solidEntityData->getName());
+	outputEntityData->setTransform(solidEntityData->getTransform());
+    outputEntityData->setComponent(new mesh::MeshComponentData(resource::Id< mesh::IMesh >(outputRenderMeshGuid)));
+    outputEntityData->setComponent(new physics::RigidBodyComponentData(new physics::StaticBodyDesc(outputShapeDesc)));
+    return outputEntityData;
 }
 
     }

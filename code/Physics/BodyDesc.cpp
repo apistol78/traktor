@@ -10,6 +10,15 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.physics.BodyDesc", BodyDesc, ISerializable)
 
+BodyDesc::BodyDesc()
+{
+}
+
+BodyDesc::BodyDesc(ShapeDesc* shape)
+:	m_shape(shape)
+{
+}
+
 void BodyDesc::setShape(ShapeDesc* shape)
 {
 	m_shape = shape;

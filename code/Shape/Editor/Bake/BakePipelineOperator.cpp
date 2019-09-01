@@ -16,39 +16,29 @@
 #include "Drawing/PixelFormat.h"
 #include "Editor/IPipelineBuilder.h"
 #include "Editor/IPipelineSettings.h"
-#include "Mesh/MeshComponentData.h"
-#include "Mesh/Editor/MeshAsset.h"
 #include "Model/Model.h"
 #include "Model/ModelFormat.h"
 #include "Model/Operations/CalculateTangents.h"
 #include "Model/Operations/CleanDegenerate.h"
 #include "Model/Operations/CleanDuplicates.h"
-#include "Model/Operations/MergeModel.h"
-#include "Model/Operations/NormalizeTexCoords.h"
-#include "Model/Operations/Transform.h"
 #include "Model/Operations/Triangulate.h"
 #include "Model/Operations/UnwrapUV.h"
 #include "Render/Types.h"
-#include "Render/Editor/Texture/CubeMap.h"
-#include "Render/Editor/Texture/IrradianceProbeAsset.h"
 #include "Render/Resource/TextureResource.h"
 #include "Scene/Editor/SceneAsset.h"
 #include "Shape/Editor/IModelGenerator.h"
+#include "Shape/Editor/Traverser.h"
 #include "Shape/Editor/Bake/BakeConfiguration.h"
 #include "Shape/Editor/Bake/BakePipelineOperator.h"
-#include "Shape/Editor/Bake/IblProbe.h"
 #include "Shape/Editor/Bake/TracerLight.h"
 #include "Shape/Editor/Bake/TracerModel.h"
 #include "Shape/Editor/Bake/TracerOutput.h"
 #include "Shape/Editor/Bake/TracerProcessor.h"
 #include "Shape/Editor/Bake/TracerTask.h"
-#include "Shape/Editor/Prefab/PrefabEntityData.h"
 #include "World/Editor/LayerEntityData.h"
-#include "World/Entity/CameraComponentData.h"
 #include "World/Entity/ComponentEntityData.h"
 #include "World/Entity/ExternalEntityData.h"
 #include "World/Entity/LightComponentData.h"
-#include "World/Entity/ProbeComponentData.h"
 
 namespace traktor
 {
@@ -93,31 +83,6 @@ Ref< ISerializable > resolveAllExternal(editor::IPipelineCommon* pipeline, const
 	return reflection->clone();
 }
 
-/*! Traverse data structure, visit each entity data.
- * \param object Current object in data structure.
- * \param visitor Function called for each found entity data, return true if should recurse further.
- */
-void visit(ISerializable* object, const std::function< bool(world::EntityData*) >& visitor)
-{
-	Ref< Reflection > reflection = Reflection::create(object);
-
- 	RefArray< ReflectionMember > objectMembers;
- 	reflection->findMembers(RfpMemberType(type_of< RfmObject >()), objectMembers);
-
-	for (auto member : objectMembers)
-	{
-		RfmObject* objectMember = dynamic_type_cast< RfmObject* >(member);
-
-		if (auto entityData = dynamic_type_cast< world::EntityData* >(objectMember->get()))
-		{
-			if (visitor(entityData))
-				visit(entityData, visitor);
-		}
-		else if (objectMember->get())
-			visit(objectMember->get(), visitor);
-	}
-}
-
 /*! Add light to tracer scene. */
 void addLight(const world::LightComponentData* lightComponentData, const Transform& transform, TracerTask* tracerTask)
 {
@@ -158,7 +123,12 @@ void addLight(const world::LightComponentData* lightComponentData, const Transfo
 /*! */
 bool addModel(const model::Model* model, const std::wstring& name, const Guid& lightmapId, int32_t lightmapSize, editor::IPipelineBuilder* pipelineBuilder, TracerTask* tracerTask)
 {
-	tracerTask->addTracerModel(new TracerModel(model));
+	Ref< model::Model > mutableModel = DeepClone(model).create< model::Model >();
+	if (!mutableModel)
+	{
+		log::error << L"BakePipelineOperator failed; unable to clone model." << Endl;
+		return false;
+	}
 
 	// Create output instance.
 	Ref< render::TextureResource > outputResource = new render::TextureResource();
@@ -210,10 +180,11 @@ bool addModel(const model::Model* model, const std::wstring& name, const Guid& l
 		return false;
 	}
 
+	tracerTask->addTracerModel(new TracerModel(mutableModel));
 	tracerTask->addTracerOutput(new TracerOutput(
 		name,
 		0,
-		model,
+		mutableModel,
 		lightmapId,
 		lightmapSize
 	));
@@ -339,362 +310,64 @@ bool BakePipelineOperator::build(
 		hashInstance->commit();
 
 		// Traverse and visit all entities in layer.
-		visit(flattenedLayer, [&](world::EntityData* entityData) -> bool
+		Traverser(flattenedLayer).visit([&](Ref< world::EntityData >& inoutEntityData) -> bool
 		{
-			if (auto componentEntityData = dynamic_type_cast< world::ComponentEntityData* >(entityData))
+			if (auto componentEntityData = dynamic_type_cast< world::ComponentEntityData* >(inoutEntityData))
 			{
 				if (auto lightComponentData = componentEntityData->getComponent< world::LightComponentData >())
 				{
-					addLight(lightComponentData, entityData->getTransform(), tracerTask);
+					addLight(lightComponentData, inoutEntityData->getTransform(), tracerTask);
 
 					// Remove this light when we're tracing direct lighting.
 					if (configuration->traceDirect())
 						componentEntityData->removeComponent(lightComponentData);
 				}
-
-				if (auto meshComponentData = componentEntityData->getComponent< mesh::MeshComponentData >())
-				{
-					Ref< mesh::MeshAsset > meshAsset = pipelineBuilder->getSourceDatabase()->getObjectReadOnly< mesh::MeshAsset >(
-						meshComponentData->getMesh()
-					);
-					if (!meshAsset)
-						return false;
-
-					// \tbd We should probably ignore mesh assets with custom shaders.
-
-					Ref< model::Model > model = model::ModelFormat::readAny(meshAsset->getFileName(), [&](const Path& p) {
-						return pipelineBuilder->openFile(Path(m_assetPath), p.getOriginal());
-					});
-					if (!model)
-						return false;
-
-					uint32_t channel = model->getTexCoordChannel(L"Lightmap");
-					if (channel == model::c_InvalidIndex)
-						return false;
-
-					int32_t lightmapSize = calculateLightmapSize(model, configuration->getLumelDensity(), configuration->getMinimumLightMapSize());
-
-					model->clear(model::Model::CfColors | model::Model::CfJoints);
-					model::Transform(entityData->getTransform().toMatrix44()).apply(*model);
-					model::Triangulate().apply(*model);
-					model::CleanDuplicates(0.0f).apply(*model);
-					model::CleanDegenerate().apply(*model);
-					model::CalculateTangents().apply(*model);
-					model::UnwrapUV(channel, lightmapSize).apply(*model);
-					//model::NormalizeTexCoords(channel, 4.0f / lightmapSize, 4.0f / lightmapSize, 1.0f / lightmapSize, 1.0f / lightmapSize).apply(*model);
-					model::ModelFormat::writeAny(L"data/Temp/Bake/" + entityData->getName() + L".tmd", model);
-
-					AlignedVector< model::Material > materials = model->getMaterials();
-					for (auto& material : materials)
-					{
-						material.setBlendOperator(model::Material::BoDecal);
-						material.setLightMap(model::Material::Map(L"__Illumination__", channel, false), 1.0f);
-					}
-					model->setMaterials(materials);
-
-					// Reset transformation of entity.
-					entityData->setTransform(Transform::identity());
-
-					Guid lightmapId = seedId.permutate();
-					Guid outputMeshId = seedId.permutate();
-
-					if (!addModel(model, entityData->getName(), lightmapId, lightmapSize, pipelineBuilder, tracerTask))
-						return false;
-
-					// Create output mesh asset.
-					auto materialTextures = meshAsset->getMaterialTextures();
-					materialTextures[L"__Illumination__"] = lightmapId;
-					
-					Ref< mesh::MeshAsset > outputMeshAsset = new mesh::MeshAsset();
-					outputMeshAsset->setMeshType(mesh::MeshAsset::MtStatic);
-					outputMeshAsset->setMaterialTextures(materialTextures);
-
-					pipelineBuilder->buildOutput(
-						outputMeshAsset,
-						L"Generated/" + outputMeshId.format(),
-						outputMeshId,
-						model
-					);
-
-					// Modify component to reference our output mesh asset.
-					meshComponentData->setMesh(resource::Id< mesh::IMesh >(
-						outputMeshId
-					));
-				}
-
-				// Get global IBL light from probe.
-				// if (auto probeComponentData = componentEntityData->getComponent< world::ProbeComponentData >())
-				// {
-				// 	if (!probeComponentData->getLocal())
-				// 	{
-				// 		Ref< const render::IrradianceProbeAsset > irradianceAsset = pipelineBuilder->getObjectReadOnly< render::IrradianceProbeAsset >(probeComponentData->getDiffuseTexture());
-				// 		if (irradianceAsset)
-				// 		{
-				// 			Ref< IStream > file = pipelineBuilder->openFile(Path(m_assetPath), irradianceAsset->getFileName().getOriginal());
-				// 			if (!file)
-				// 			{
-				// 				log::error << L"Probe texture asset pipeline failed; unable to open source image \"" << irradianceAsset->getFileName().getOriginal() << L"\"" << Endl;
-				// 				return false;
-				// 			}
-
-				// 			Ref< drawing::Image > assetImage = drawing::Image::load(file, irradianceAsset->getFileName().getExtension());
-				// 			if (!assetImage)
-				// 			{
-				// 				log::error << L"Probe texture asset pipeline failed; unable to load source image \"" << irradianceAsset->getFileName().getOriginal() << L"\"" << Endl;
-				// 				return false;
-				// 			}
-
-				// 			file->close();
-
-				// 			Light light;
-				// 			light.type = Light::LtProbe;
-				// 			light.probe = new IblProbe(
-				// 				new render::CubeMap(assetImage)
-				// 			);
-				// 			tracerTask->addTracerLight(new TracerLight(light));
-
-				// 			// Remove probe from scene as it's contribution will be baked.
-				// 			componentEntityData->removeComponent(probeComponentData);
-				// 		}
-				// 	}
-				// }
-
-				// Create model from components.
-				for (auto componentData : componentEntityData->getComponents())
-				{
-					const IModelGenerator* modelGenerator = findModelGenerator(type_of(componentData));
-					if (!modelGenerator)
-						continue;
-
-					Ref< model::Model > model = modelGenerator->createModel(componentData);
-					if (!model)
-						continue;
-
-					uint32_t channel = model->getTexCoordChannel(L"Lightmap");
-					if (channel == model::c_InvalidIndex)
-						return false;
-
-					int32_t lightmapSize = calculateLightmapSize(model, configuration->getLumelDensity(), configuration->getMinimumLightMapSize());
-
-					model->clear(model::Model::CfColors | model::Model::CfJoints);
-					model::Transform(entityData->getTransform().toMatrix44()).apply(*model);
-					model::Triangulate().apply(*model);
-					model::CleanDuplicates(0.0f).apply(*model);
-					model::CleanDegenerate().apply(*model);
-					model::CalculateTangents().apply(*model);
-					model::UnwrapUV(channel, lightmapSize).apply(*model);
-					//model::NormalizeTexCoords(channel, 4.0f / lightmapSize, 4.0f / lightmapSize, 1.0f / lightmapSize, 1.0f / lightmapSize).apply(*model);
-					model::ModelFormat::writeAny(L"data/Temp/Bake/" + entityData->getName() + L".tmd", model);
-
-					AlignedVector< model::Material > materials = model->getMaterials();
-					for (auto& material : materials)
-					{
-						material.setBlendOperator(model::Material::BoDecal);
-						material.setLightMap(model::Material::Map(L"__Illumination__", channel, false), 1.0f);
-					}
-					model->setMaterials(materials);
-
-					// Reset transformation of entity.
-					entityData->setTransform(Transform::identity());
-
-					Guid lightmapId = seedId.permutate();
-					Guid outputMeshId = seedId.permutate();
-
-					if (!addModel(model, entityData->getName(), lightmapId, lightmapSize, pipelineBuilder, tracerTask))
-						return false;
-
-					// Create output mesh asset.
-					std::map< std::wstring, Guid > materialTextures;
-					materialTextures[L"__Illumination__"] = lightmapId;
-					
-					Ref< mesh::MeshAsset > outputMeshAsset = new mesh::MeshAsset();
-					outputMeshAsset->setMeshType(mesh::MeshAsset::MtStatic);
-					outputMeshAsset->setMaterialTextures(materialTextures);
-
-					pipelineBuilder->buildOutput(
-						outputMeshAsset,
-						L"Generated/" + outputMeshId.format(),
-						outputMeshId,
-						model
-					);
-
-					// Modify component to reference our output mesh asset.
-					// meshComponentData->setMesh(resource::Id< mesh::IMesh >(
-					// 	outputMeshId
-					// ));
-				}
-
-				//if (auto cameraComponentData = componentEntityData->getComponent< world::CameraComponentData >())
-				//{
-				//	tracerTask->addTracerOutput(new TracerCameraOutput(
-				//	));
-				//}
-
-				// Do not recurse further as we cannot make sure we know which
-				// other kinds of components own untraceable entities.
-				return false;
-			}
-			else if (auto prefabEntityData = dynamic_type_cast< PrefabEntityData* >(entityData))
-			{
-				RefArray< model::Model > models;
-				std::map< std::wstring, Guid > materialTextures;
-
-				// We have reached a prefab; collect all models and remove all mesh components from prefab.
-				visit(prefabEntityData, [&](world::EntityData* entityData) -> bool
-				{
-					if (auto componentEntityData = dynamic_type_cast< world::ComponentEntityData* >(entityData))
-					{
-						if (auto meshComponentData = componentEntityData->getComponent< mesh::MeshComponentData >())
-						{
-							Ref< mesh::MeshAsset > meshAsset = pipelineBuilder->getSourceDatabase()->getObjectReadOnly< mesh::MeshAsset >(
-								meshComponentData->getMesh()
-							);
-							if (!meshAsset)
-								return false;
-
-							// \tbd We should probably ignore mesh assets with custom shaders.
-
-							Ref< model::Model > model = model::ModelFormat::readAny(meshAsset->getFileName(), [&](const Path& p) {
-								return pipelineBuilder->openFile(Path(m_assetPath), p.getOriginal());
-							});
-							if (!model)
-								return false;
-
-							// Transform model into world space.
-							model::Transform(entityData->getTransform().toMatrix44()).apply(*model);
-
-							model->clear(model::Model::CfColors | model::Model::CfJoints);
-							models.push_back(model);
-
-							materialTextures.insert(
-								meshAsset->getMaterialTextures().begin(),
-								meshAsset->getMaterialTextures().end()
-							);
-
-							componentEntityData->removeComponent(meshComponentData);
-						}			
-					}
-					return true;
-				});
-
-				Ref< model::Model > model = new model::Model();
-				if (!models.empty())
-				{
-					// Calculate number of UV tiles.
-					int32_t tiles = (int32_t)(std::ceil(std::sqrt(models.size())) + 0.5f);
-
-					// Offset lightmap UV into tiles.
-					for (int32_t i = 0; i < (int32_t)models.size(); ++i)
-					{
-						float tileU = (float)(i % tiles) / tiles;
-						float tileV = (float)(i / tiles) / tiles;
-
-						uint32_t channel = models[i]->getTexCoordChannel(L"Lightmap");
-						if (channel != model::c_InvalidIndex)
-						{
-							// Offset all texcoords into tile.
-							AlignedVector< model::Vertex > vertices = models[i]->getVertices();
-							for (auto& vertex : vertices)
-							{
-								Vector2 uv = models[i]->getTexCoord(vertex.getTexCoord(channel));
-								uv *= (float)(1.0f / tiles);
-								uv += Vector2(tileU, tileV);
-								vertex.setTexCoord(channel, models[i]->addUniqueTexCoord(uv));
-							}
-							models[i]->setVertices(vertices);
-						}
-					}
-
-					// Create merged model.
-					for (int32_t i = 0; i < (int32_t)models.size(); ++i)
-						model::MergeModel(*models[i], Transform::identity(), 0.001f).apply(*model);
-				}
-
-				uint32_t channel = model->getTexCoordChannel(L"Lightmap");
-				if (channel == model::c_InvalidIndex)
-					return false;
-
-				int32_t lightmapSize = calculateLightmapSize(model, configuration->getLumelDensity(), configuration->getMinimumLightMapSize());
-
-				model->clear(model::Model::CfColors | model::Model::CfJoints);
-				model::Triangulate().apply(*model);
-				model::CleanDuplicates(0.0f).apply(*model);
-				model::CleanDegenerate().apply(*model);
-				model::CalculateTangents().apply(*model);
-				model::UnwrapUV(channel, lightmapSize).apply(*model);
-				//model::NormalizeTexCoords(channel, 4.0f / lightmapSize, 4.0f / lightmapSize, 1.0f / lightmapSize, 1.0f / lightmapSize).apply(*model);
-				model::ModelFormat::writeAny(L"data/Temp/Bake/" + entityData->getName() + L".tmd", model);
-
-				AlignedVector< model::Material > materials = model->getMaterials();
-				for (auto& material : materials)
-				{
-					material.setBlendOperator(model::Material::BoDecal);
-					material.setLightMap(model::Material::Map(L"__Illumination__", channel, false), 1.0f);
-				}
-				model->setMaterials(materials);
-
-				// Reset transformation of entity.
-				entityData->setTransform(Transform::identity());
-
-				Guid lightmapId = seedId.permutate();
-				Guid outputMeshId = seedId.permutate();
-
-				if (!addModel(model, entityData->getName(), lightmapId, lightmapSize, pipelineBuilder, tracerTask))
-					return false;
-
-				// Create output mesh asset.
-				materialTextures[L"__Illumination__"] = lightmapId;
-					
-				Ref< mesh::MeshAsset > outputMeshAsset = new mesh::MeshAsset();
-				outputMeshAsset->setMeshType(mesh::MeshAsset::MtStatic);
-				outputMeshAsset->setMaterialTextures(materialTextures);
-
-				pipelineBuilder->buildOutput(
-					outputMeshAsset,
-					L"Generated/" + outputMeshId.format(),
-					outputMeshId,
-					model
-				);
-
-				// Create a new child entity to layer (we cannot add to prefab) which contain reference to our merged visual mesh.
-				Ref< mesh::MeshComponentData > meshComponentData = new mesh::MeshComponentData();
-				meshComponentData->setMesh(resource::Id< mesh::IMesh >(
-					outputMeshId
-				));
-
-				Ref< world::ComponentEntityData > mergedEntity = new world::ComponentEntityData();
-				mergedEntity->setComponent(meshComponentData);
-				flattenedLayer->addEntityData(mergedEntity);						
-
-				// As we have already taken care of prefabs's children we stop from recursing further.
-				return false;
 			}
 			else
 			{
-				const IModelGenerator* modelGenerator = findModelGenerator(type_of(entityData));
+				Guid lightmapId = seedId.permutate();
+
+				// Find model synthesizer which can generate from current entity.
+				const IModelGenerator* modelGenerator = findModelGenerator(type_of(inoutEntityData));
 				if (!modelGenerator)
 					return true;
 
-				Ref< model::Model > model = modelGenerator->createModel(entityData);
+				// Synthesize a model which we can trace.
+				Ref< model::Model > model = modelGenerator->createModel(inoutEntityData);
 				if (!model)
 					return true;
 
-				uint32_t channel = model->addUniqueTexCoordChannel(L"Lightmap");
-				if (channel == model::c_InvalidIndex)
-					return false;
-
-				int32_t lightmapSize = calculateLightmapSize(model, configuration->getLumelDensity(), configuration->getMinimumLightMapSize());
-
+				// Ensure model is fit for tracing.
 				model->clear(model::Model::CfColors | model::Model::CfJoints);
-				model::Transform(entityData->getTransform().toMatrix44()).apply(*model);
 				model::Triangulate().apply(*model);
 				model::CleanDuplicates(0.0f).apply(*model);
 				model::CleanDegenerate().apply(*model);
 				model::CalculateTangents().apply(*model);
-				model::UnwrapUV(channel, lightmapSize).apply(*model);
-				//model::NormalizeTexCoords(channel, 4.0f / lightmapSize, 4.0f / lightmapSize, 1.0f / lightmapSize, 1.0f / lightmapSize).apply(*model);
-				model::ModelFormat::writeAny(L"data/Temp/Bake/" + entityData->getName() + L".tmd", model);
 
+				// check if model already contain lightmap UV or if we need to unwrap.
+				bool shouldUnwrap = false;
+
+				uint32_t channel = model->getTexCoordChannel(L"Lightmap");
+				if (channel == model::c_InvalidIndex)
+				{
+					// No lightmap UV channel, need to add and unwrap automatically.
+					channel = model->addUniqueTexCoordChannel(L"Lightmap");
+					shouldUnwrap = true;
+				}
+
+				int32_t lightmapSize = calculateLightmapSize(
+					model,
+					configuration->getLumelDensity(),
+					configuration->getMinimumLightMapSize()
+				);
+
+				if (shouldUnwrap)
+				{
+					T_FATAL_ASSERT(channel != model::c_InvalidIndex);
+					model::UnwrapUV(channel, lightmapSize).apply(*model);
+				}
+
+				// Modify all materials to contain reference to lightmap channel.
 				AlignedVector< model::Material > materials = model->getMaterials();
 				for (auto& material : materials)
 				{
@@ -703,42 +376,30 @@ bool BakePipelineOperator::build(
 				}
 				model->setMaterials(materials);
 
-				// Reset transformation of entity.
-				entityData->setTransform(Transform::identity());
+				// Write model for debugging into temporary folder.
+				model::ModelFormat::writeAny(L"data/Temp/Bake/" + inoutEntityData->getName() + L".tmd", model);
 
-				Guid lightmapId = seedId.permutate();
-				Guid outputMeshId = seedId.permutate();
-
-				if (!addModel(model, entityData->getName(), lightmapId, lightmapSize, pipelineBuilder, tracerTask))
+				// Add model to raytracing task.
+				if (!addModel(
+					model,
+					inoutEntityData->getName(),
+					lightmapId,
+					lightmapSize,
+					pipelineBuilder,
+					tracerTask
+				))
 					return false;
 
-				// Create output mesh asset.
-				std::map< std::wstring, Guid > materialTextures;
-				materialTextures[L"__Illumination__"] = lightmapId;
-				
-				Ref< mesh::MeshAsset > outputMeshAsset = new mesh::MeshAsset();
-				outputMeshAsset->setMeshType(mesh::MeshAsset::MtStatic);
-				outputMeshAsset->setMaterialTextures(materialTextures);
-
-				pipelineBuilder->buildOutput(
-					outputMeshAsset,
-					L"Generated/" + outputMeshId.format(),
-					outputMeshId,
+				// Let model generator consume altered model and modify entity in ways
+				// which make sense for entity data.
+				inoutEntityData = checked_type_cast< world::EntityData* >(modelGenerator->modifyOutput(
+					pipelineBuilder,
+					inoutEntityData,
+					lightmapId,
 					model
-				);
-
-				// Create a new child entity to layer (we cannot add to prefab) which contain reference to our merged visual mesh.
-				Ref< mesh::MeshComponentData > meshComponentData = new mesh::MeshComponentData();
-				meshComponentData->setMesh(resource::Id< mesh::IMesh >(
-					outputMeshId
 				));
-
-				Ref< world::ComponentEntityData > mergedEntity = new world::ComponentEntityData();
-				mergedEntity->setComponent(meshComponentData);
-				flattenedLayer->addEntityData(mergedEntity);
-
-				return true;
 			}
+			return true;
 		});
 
 		layers.push_back(flattenedLayer);

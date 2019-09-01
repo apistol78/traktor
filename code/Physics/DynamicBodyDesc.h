@@ -25,6 +25,8 @@ class T_DLLCLASS DynamicBodyDesc : public BodyDesc
 public:
 	DynamicBodyDesc();
 
+	explicit DynamicBodyDesc(ShapeDesc* shape);
+
 	void setMass(float mass);
 
 	float getMass() const;
