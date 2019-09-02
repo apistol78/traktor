@@ -63,21 +63,21 @@ void SolidEntityEditor::drawGuide(render::PrimitiveRenderer* primitiveRenderer) 
 
 	RefArray< PrimitiveEntity > primitiveEntities;
 	solidEntity->getEntitiesOf< PrimitiveEntity >(primitiveEntities);
-	for (auto primitiveEntity : primitiveEntities)
-	{
-		for (const auto& winding : primitiveEntity->getWindings())
-		{
-			for (uint32_t i = 0; i < winding.size(); ++i)
-			{
-				uint32_t j = (i + 1) % winding.size();
-				primitiveRenderer->drawLine(
-					primitiveEntity->getTransform() * winding[i],
-					primitiveEntity->getTransform() * winding[j],
-					Color4ub(180, 180, 255, 100)
-				);
-			}
-		}
-	}
+	//for (auto primitiveEntity : primitiveEntities)
+	//{
+	//	for (const auto& winding : primitiveEntity->getWindings())
+	//	{
+	//		for (uint32_t i = 0; i < winding.size(); ++i)
+	//		{
+	//			uint32_t j = (i + 1) % winding.size();
+	//			primitiveRenderer->drawLine(
+	//				primitiveEntity->getTransform() * winding[i],
+	//				primitiveEntity->getTransform() * winding[j],
+	//				Color4ub(180, 180, 255, 100)
+	//			);
+	//		}
+	//	}
+	//}
 
 	/*
 	for (const auto& winding : solidEntity->getWindings())

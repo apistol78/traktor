@@ -2,6 +2,8 @@
 #include "Mesh/MeshComponentData.h"
 #include "Mesh/Editor/MeshAsset.h"
 #include "Model/Model.h"
+#include "Model/Operations/Boolean.h"
+#include "Model/Operations/Transform.h"
 #include "Physics/MeshShapeDesc.h"
 #include "Physics/StaticBodyDesc.h"
 #include "Physics/Editor/MeshAsset.h"
@@ -10,7 +12,6 @@
 #include "Shape/Editor/Solid/PrimitiveEntityData.h"
 #include "Shape/Editor/Solid/SolidEntityData.h"
 #include "Shape/Editor/Solid/SolidModelGenerator.h"
-#include "Shape/Editor/Solid/Utilities.h"
 #include "World/Entity/ComponentEntityData.h"
 
 namespace traktor
@@ -40,77 +41,74 @@ Ref< model::Model > SolidModelGenerator::createModel(const Object* source) const
         }
     }
 
-    // Merge all windings into a single group of windings.
-    AlignedVector< Winding3 > outputWindings;
+    // Merge all primitives.
+	model::Model current;
 
     auto it = primitiveEntityDatas.begin();
     if (it != primitiveEntityDatas.end())
     {
-        (*it)->getShape()->createWindings(outputWindings);
-        outputWindings = transform(outputWindings, (*it)->getTransform());
+		auto model = (*it)->getShape()->createModel();
+		if (!model)
+			return nullptr;
+
+		current = *model;
+		model::Transform((*it)->getTransform().toMatrix44()).apply(current);
 
         for (++it; it != primitiveEntityDatas.end(); ++it)
         {
-            AlignedVector< Winding3 > windings;
-            (*it)->getShape()->createWindings(windings);
-            if (windings.empty())
-                continue;
+			auto other = (*it)->getShape()->createModel();
+			if (!other)
+				continue;
 
-            windings = transform(windings, (*it)->getTransform());
+			model::Model result;
 
             switch ((*it)->getOperation())
             {
             case BooleanOperation::BoUnion:
                 {
-                    auto result = unioon(outputWindings, windings);
-                    outputWindings.swap(result);
+					model::Boolean(
+						current,
+						Transform::identity(),
+						*other,
+						(*it)->getTransform(),
+						model::Boolean::BoUnion
+					).apply(result);
                 }
                 break;
 
             case BooleanOperation::BoIntersection:
                 {
-                    auto result = intersection(outputWindings, windings);
-                    outputWindings.swap(result);
-                }
+					model::Boolean(
+						current,
+						Transform::identity(),
+						*other,
+						(*it)->getTransform(),
+						model::Boolean::BoIntersection
+					).apply(result);
+				}
                 break;
 
             case BooleanOperation::BoDifference:
                 {
-                    auto result = difference(outputWindings, windings);
-                    outputWindings.swap(result);
-                }
+					model::Boolean(
+						current,
+						Transform::identity(),
+						*other,
+						(*it)->getTransform(),
+						model::Boolean::BoDifference
+					).apply(result);
+				}
                 break;
             }
+
+			current = std::move(result);
         }
     }
 
-    // Create model from windings.
-    Ref< model::Model > outputModel = new model::Model();
-    outputModel->addMaterial(model::Material(
-        L"Default"
-    ));
-    for (const auto& winding : outputWindings)
-    {
-		Plane pl;
-		if (!winding.getPlane(pl))
-			continue;
+	//model::Triangulate().apply(current);
+	//model::CalculateTangents().apply(current);
 
-		uint32_t normal = outputModel->addUniqueNormal(pl.normal());
-
-        model::Polygon polygon;
-        polygon.setMaterial(0);
-		polygon.setNormal(normal);
-        for (const auto& vx : winding.get())
-        {
-            model::Vertex vertex;
-            vertex.setPosition(outputModel->addUniquePosition(vx));
-			vertex.setNormal(normal);
-            polygon.addVertex(outputModel->addUniqueVertex(vertex));
-        }
-        outputModel->addUniquePolygon(polygon);
-    }
-
-    return outputModel;
+    return new model::Model(current);
 }
 
 Ref< Object > SolidModelGenerator::modifyOutput(

@@ -1,6 +1,7 @@
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberEnum.h"
 #include "Core/Serialization/MemberRef.h"
+#include "Model/Model.h"
 #include "Shape/Editor/Solid/IShape.h"
 #include "Shape/Editor/Solid/PrimitiveEntity.h"
 #include "Shape/Editor/Solid/PrimitiveEntityData.h"
@@ -22,15 +23,12 @@ Ref< PrimitiveEntity > PrimitiveEntityData::createEntity() const
     Ref< PrimitiveEntity > entity = new PrimitiveEntity(getTransform(), m_operation);
 	if (m_shape)
 	{
-		if (!m_shape->createWindings(entity->m_windings))
+		Ref< const model::Model > m = m_shape->createModel();
+		if (!m)
 			return nullptr;
 
-		Aabb3& boundingBox = entity->m_boundingBox;
-		for (const auto& w : entity->m_windings)
-		{
-			for (const auto& v : w.get())
-				boundingBox.contain(v);
-		}
+		entity->m_model = m;
+		entity->m_boundingBox = m->getBoundingBox();
 	}
     return entity;
 }

@@ -1,6 +1,11 @@
 #include "Core/Log/Log.h"
 #include "Core/Math/Triangulator.h"
 #include "Core/Misc/SafeDestroy.h"
+#include "Model/Model.h"
+#include "Model/Operations/Boolean.h"
+#include "Model/Operations/CalculateTangents.h"
+#include "Model/Operations/Transform.h"
+#include "Model/Operations/Triangulate.h"
 #include "Render/IndexBuffer.h"
 #include "Render/IRenderSystem.h"
 #include "Render/Shader.h"
@@ -9,7 +14,6 @@
 #include "Render/Context/RenderContext.h"
 #include "Shape/Editor/Solid/PrimitiveEntity.h"
 #include "Shape/Editor/Solid/SolidEntity.h"
-#include "Shape/Editor/Solid/Utilities.h"
 #include "World/IWorldRenderPass.h"
 #include "World/WorldContext.h"
 
@@ -62,78 +66,81 @@ void SolidEntity::update(const world::UpdateParams& update)
     }
     if (dirty)
     {
-        m_windings.resize(0);
+		model::Model current;
 
         auto it = primitiveEntities.begin();
         if (it != primitiveEntities.end())
         {
-            m_windings = transform((*it)->getWindings(), (*it)->getTransform());
+			auto model = (*it)->getModel();
+			if (!model)
+				return;
+
+			current = *model;
+			model::Transform((*it)->getTransform().toMatrix44()).apply(current);
+
             for (++it; it != primitiveEntities.end(); ++it)
             {
-                auto windings = transform((*it)->getWindings(), (*it)->getTransform());
-				if (windings.empty())
+				auto other = (*it)->getModel();
+				if (!other)
 					continue;
+
+				model::Model result;
 
                 switch ((*it)->getOperation())
                 {
                 case BooleanOperation::BoUnion:
                     {
-                        auto result = unioon(m_windings, windings);
-                        m_windings.swap(result);
+						model::Boolean(
+							current,
+							Transform::identity(),
+							*other,
+							(*it)->getTransform(),
+							model::Boolean::BoUnion
+						).apply(result);
                     }
                     break;
 
                 case BooleanOperation::BoIntersection:
                     {
-                        auto result = intersection(m_windings, windings);
-                        m_windings.swap(result);
-                    }
+						model::Boolean(
+							current,
+							Transform::identity(),
+							*other,
+							(*it)->getTransform(),
+							model::Boolean::BoIntersection
+						).apply(result);
+					}
                     break;
 
                 case BooleanOperation::BoDifference:
                     {
-                        auto result = difference(m_windings, windings);
-                        m_windings.swap(result);
-                    }
+						model::Boolean(
+							current,
+							Transform::identity(),
+							*other,
+							(*it)->getTransform(),
+							model::Boolean::BoDifference
+						).apply(result);
+					}
                     break;
                 }
+
+				current = std::move(result);
             }
         }
 
-        // Triangulate all windings.
-        AlignedVector< Winding3 > triangulated;
-		AlignedVector< Triangulator::Triangle > triangles;
-        for (const auto& w : m_windings)
-        {
-            Plane pl;
-            if (!w.getPlane(pl))
-                continue;
-
-			triangles.resize(0);
-            Triangulator().freeze(
-                w.get(),
-                pl.normal(),
-                triangles
-            );
-            for (const auto& t : triangles)
-            {
-                auto& tw = triangulated.push_back();
-                tw.resize(3);
-                tw[0] = w[t.indices[0]];
-                tw[1] = w[t.indices[1]];
-                tw[2] = w[t.indices[2]];
-            }
-        }
+		// \tbd Merge coplanar.
+		model::Triangulate().apply(current);
+		//model::CalculateTangents().apply(current);
 
         safeDestroy(m_vertexBuffer);
         safeDestroy(m_indexBuffer);
 
-        const uint32_t ntriangles = triangulated.size();
-        const uint32_t nvertices = ntriangles * 3;
+        const uint32_t nvertices = current.getVertexCount();
+		const uint32_t nindices = current.getPolygonCount() * 3;
 
-        if (ntriangles > 0)
+        if (nvertices > 0 && nindices > 0)
         {
-            // Create vertices.
             AlignedVector< render::VertexElement > vertexElements;
             vertexElements.push_back(render::VertexElement(render::DuPosition, render::DtFloat3, offsetof(Vertex, position)));
             vertexElements.push_back(render::VertexElement(render::DuNormal, render::DtFloat3, offsetof(Vertex, normal)));
@@ -146,56 +153,39 @@ void SolidEntity::update(const world::UpdateParams& update)
             );
 
             Vertex* vertex = (Vertex*)m_vertexBuffer->lock();
-            for (const auto& w : triangulated)
+			for (const auto& v : current.getVertices())
             {
-                Plane pl;
-                w.getPlane(pl);
+				Vector4 p = current.getPosition(v.getPosition());
+				Vector4 n = (v.getNormal() != model::c_InvalidIndex) ? current.getNormal(v.getNormal()) : Vector4::zero();
+				Vector2 uv = (v.getTexCoord(0) != model::c_InvalidIndex) ? current.getTexCoord(v.getTexCoord(0)) : Vector2::zero();
 
-                Vector4 normal = pl.normal();
+				p.storeUnaligned(vertex->position);
+				n.storeUnaligned(vertex->normal);
 
-                Vector4 fu, fv;
-				switch (majorAxis3(normal))
-				{
-				case 0:
-					fu = Vector4(0.0f, 0.0f, 1.0f);
-					fv = Vector4(0.0f, 1.0f, 0.0f);
-					break;
-				case 1:
-					fu = Vector4(1.0f, 0.0f, 0.0f);
-					fv = Vector4(0.0f, 0.0f, 1.0f);
-					break;
-				case 2:
-					fu = Vector4(1.0f, 0.0f, 0.0f);
-					fv = Vector4(0.0f, 1.0f, 0.0f);
-					break;
-				}
-
-                for (int32_t i = 0; i < 3; ++i)
-                {
-                    w[i].storeUnaligned(vertex->position);
-                    normal.storeUnaligned(vertex->normal);
-
-                    vertex->texCoord[0] = dot3(fu, w[i]);
-                    vertex->texCoord[1] = dot3(fv, w[i]);
+				vertex->texCoord[0] = uv.x;
+				vertex->texCoord[1] = uv.y;
                     
-                    ++vertex;
-                }
+				++vertex;
             }
             m_vertexBuffer->unlock();
 
             // Create indices.
-            m_indexBuffer = m_renderSystem->createIndexBuffer(render::ItUInt16, ntriangles * 3 * sizeof(uint16_t), false);
+            m_indexBuffer = m_renderSystem->createIndexBuffer(render::ItUInt16, nindices * sizeof(uint16_t), false);
 
             uint16_t* index = (uint16_t*)m_indexBuffer->lock();
-            for (uint32_t i = 0; i < ntriangles * 3; ++i)
-                *index++ = i;
+			for (const auto& p : current.getPolygons())
+			{
+				*index++ = (uint16_t)p.getVertex(0);
+				*index++ = (uint16_t)p.getVertex(1);
+				*index++ = (uint16_t)p.getVertex(2);
+			}
             m_indexBuffer->unlock();
 
             // Create primitives.
             m_primitives.setIndexed(
                 render::PtTriangles,
                 0,
-                ntriangles,
+                nindices / 3,
                 0,
                 nvertices - 1
             );

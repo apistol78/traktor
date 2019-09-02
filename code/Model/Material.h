@@ -59,7 +59,9 @@ public:
 
 	Material();
 
-	Material(const std::wstring& name);
+	explicit Material(const std::wstring& name);
+
+	explicit Material(const std::wstring& name, const Color4f& color);
 
 	void setName(const std::wstring& name);
 

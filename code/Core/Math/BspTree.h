@@ -1,8 +1,8 @@
 #pragma once
 
-#include <functional>
 #include "Core/Ref.h"
 #include "Core/Containers/AlignedVector.h"
+#include "Core/Containers/StaticVector.h"
 #include "Core/Math/Winding3.h"
 
 // import/export mechanism.
@@ -16,132 +16,104 @@
 namespace traktor
 {
 
+/*! BSP vertex.
+ * \ingroup Core
+ */
+struct BspVertex
+{
+	Vector4 position;
+	Vector4 attributes[4];
+};
+
+/*! BSP polygon.
+ * \ingroup Core
+ */
+class T_DLLCLASS BspPolygon
+{
+public:
+	typedef StaticVector< BspVertex, 16 > vertices_t;
+
+	BspPolygon();
+
+	explicit BspPolygon(intptr_t index, const vertices_t& vertices);
+
+	void setIndex(intptr_t index);
+
+	void addVertex(const BspVertex& vertex);
+
+	void addVertex(
+		const Vector4& position,
+		const Vector4& attr0 = Vector4::zero(),
+		const Vector4& attr1 = Vector4::zero(),
+		const Vector4& attr2 = Vector4::zero(),
+		const Vector4& attr3 = Vector4::zero()
+	);
+
+	void setPlane(const Plane& plane);
+
+	bool calculatePlane();
+
+	void flip();
+
+	void split(const Plane& plane, AlignedVector< BspPolygon >& outCoplanarFront, AlignedVector< BspPolygon >& outCoplanarBack, AlignedVector< BspPolygon >& outFront, AlignedVector< BspPolygon >& outBack) const;
+
+	intptr_t getIndex() const { return m_index; }
+
+	const vertices_t& getVertices() const { return m_vertices; }
+
+	const Plane& getPlane() const { return m_plane; }
+
+private:
+	intptr_t m_index;
+	vertices_t m_vertices;
+	Plane m_plane;
+};
+
 /*! Binary space partitioning tree.
  * \ingroup Core
  */
-class T_DLLCLASS BspTree
+class T_DLLCLASS BspNode
 {
 public:
-	enum ClipMode
-	{
-		CmFront = 1,
-		CmBack = 2,
-		CmBoth = (CmFront | CmBack)
-	};
+	BspNode();
 
-	BspTree();
+	BspNode(const BspNode& node);
 
-	explicit BspTree(const AlignedVector< Winding3 >& polygons);
+	BspNode(BspNode&& node);
 
-	/*! Build BSP from a set of polygons.
-	 *
-	 * \param polygons Polygon set.
-	 * \return True if built successfully.
-	 */
-	bool build(const AlignedVector< Winding3 >& polygons);
+	virtual ~BspNode();
 
-	/*! Check if point is inside "solid" space.
-	 *
-	 * \return True if point inside "solid" space.
-	 */
-	bool inside(const Vector4& pt) const;
+	void invert();
 
-	/*! Check if all points of a winding is inside "solid" space.
-	 *
-	 * \return True if all points inside "solid" space.
-	 */
-	bool inside(const Winding3& w) const;
+	AlignedVector< BspPolygon > clip(const AlignedVector< BspPolygon >& polygons) const;
 
-	/*! Clip windings to BSP.
-	 */
-	void clip(const Winding3& w, const std::function< void(const Winding3& w, uint32_t cl, bool splitted) >& visitor) const;
+	void clip(const BspNode& other);
 
-	/*! Clip polygon to BSP.
-	 *
-	 * \param polygon Polygon
-	 * \param outClipped Clipped polygons.
-	 */
-	template < typename PolygonType >
-	void clip(const PolygonType& polygon, uint32_t mode, AlignedVector< PolygonType >& outClipped) const
-	{
-		T_ASSERT(m_root);
-		clip< PolygonType >(m_root, polygon, mode, outClipped);
-	}
+	void build(const AlignedVector< BspPolygon >& polygons);
 
-	/*! Get all planes.
-	 */
-	const AlignedVector< Plane >& getPlanes() const { return m_planes; }
+	//void build(const AlignedVector< Winding3 >& polygons);
+
+	AlignedVector< BspPolygon > allPolygons() const;
+
+	//AlignedVector< Winding3 > allWindings() const;
+
+	BspNode unioon(const BspNode& other) const;
+
+	BspNode intersection(const BspNode& other) const;
+
+	BspNode difference(const BspNode& other) const;
+
+	BspNode& operator = (const BspNode& node);
+
+	BspNode& operator = (BspNode&& node);
 
 private:
-	struct BspNode : public RefCountImpl< IRefCount >
-	{
-		uint32_t plane;		//!< \note The plane index is the same index into source winding set passed into build.
-		Ref< BspNode > front;
-		Ref< BspNode > back;
-	};
+	Plane m_plane;
+	AlignedVector< BspPolygon > m_polygons;
+	BspNode* m_front;
+	BspNode* m_back;
 
-	AlignedVector< Plane > m_planes;
-	Ref< BspNode > m_root;
-
-	Ref< BspNode > recursiveBuild(AlignedVector< Winding3 >& polygons, AlignedVector< uint32_t >& planes) const;
-
-	bool inside(const BspNode* node, const Vector4& pt) const;
-
-	bool inside(const BspNode* node, const Winding3& w) const;
-
-	void clip(const BspNode* node, const Winding3& w, bool splitted, const std::function< void(const Winding3& w, uint32_t cl, bool splitted) >& visitor) const;
-
-	template < typename PolygonType >
-	void clip(const BspNode* node, const PolygonType& polygon, uint32_t mode, AlignedVector< PolygonType >& outClipped) const
-	{
-		Winding3 w = polygon.winding();
-		const Plane& p = m_planes[node->plane];
-
-		int cf = w.classify(p);
-		if (cf == Winding3::CfCoplanar)
-		{
-			Plane polygonPlane;
-			if (w.getPlane(polygonPlane))
-				cf = dot3(p.normal(), polygonPlane.normal()) >= 0.0f ? Winding3::CfFront : Winding3::CfBack;
-			else
-				cf = Winding3::CfFront;
-		}
-
-		if (cf == Winding3::CfFront)
-		{
-			if (node->front)
-				clip(node->front, polygon, mode, outClipped);
-			else if (polygon.valid() && (mode & CmFront) != 0)
-				outClipped.push_back(polygon);
-		}
-		else if (cf == Winding3::CfBack)
-		{
-			if (node->back)
-				clip(node->back, polygon, mode, outClipped);
-			else if (polygon.valid() && (mode & CmBack) != 0)
-				outClipped.push_back(polygon);
-		}
-		else if (cf == Winding3::CfSpan)
-		{
-			PolygonType f, b;
-			polygon.split(p, f, b);
-			if (f.valid())
-			{
-				if (node->front)
-					clip(node->front, f, mode, outClipped);
-				else if ((mode & CmFront) != 0)
-					outClipped.push_back(f);
-			}
-			if (b.valid())
-			{
-				if (node->back)
-					clip(node->back, b, mode, outClipped);
-				else if ((mode & CmBack) != 0)
-					outClipped.push_back(b);
-			}
-		}
-	}
+	BspNode* clone() const;
 };
 
 }
-

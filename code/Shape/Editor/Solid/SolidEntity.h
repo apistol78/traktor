@@ -1,7 +1,5 @@
 #pragma once
 
-#include "Core/Containers/AlignedVector.h"
-#include "Core/Math/Winding3.h"
 #include "Render/Types.h"
 #include "Resource/Proxy.h"
 #include "World/Entity/GroupEntity.h"
@@ -57,11 +55,7 @@ public:
 		const world::IWorldRenderPass& worldRenderPass
 	);
 
-    const AlignedVector< Winding3 >& getWindings() const { return m_windings; }
-
 private:
-    AlignedVector< Winding3 > m_windings;
-
 	Ref< render::IRenderSystem > m_renderSystem;
 	resource::Proxy< render::Shader > m_shader;
 	Ref< render::VertexBuffer > m_vertexBuffer;

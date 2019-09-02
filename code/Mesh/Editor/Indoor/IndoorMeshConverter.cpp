@@ -63,7 +63,7 @@ struct Hull
 	AlignedVector< Vector4 > points;
 	AlignedVector< polygon_t > polygons;
 	AlignedVector< portal_t > portals;
-	BspTree bsp;
+	BspNode bsp;
 };
 
 void createHulls(const model::Model& model, std::map< std::wstring, Hull >& outHulls)
@@ -166,7 +166,7 @@ void createHulls(const model::Model& model, std::map< std::wstring, Hull >& outH
 			for (Hull::portal_t::const_iterator k = j->begin(); k != j->end(); ++k)
 				bw.back().push(i->second.points[k->first]);
 		}
-		i->second.bsp.build(bw);
+		//i->second.bsp.build(bw);
 	}
 }
 
@@ -209,58 +209,58 @@ struct Portal
 	int32_t sectors[2];
 };
 
-struct BspPolygon
-{
-	AlignedVector< Vertex > vertices;
-
-	Winding3 winding() const
-	{
-		Winding3 w;
-		for (AlignedVector< Vertex >::const_iterator i = vertices.begin(); i != vertices.end(); ++i)
-			w.push(i->position);
-		return w;
-	}
-
-	void split(const Plane& pl, BspPolygon& outFront, BspPolygon& outBack) const
-	{
-		for (size_t i = 0, j = vertices.size() - 1; i < vertices.size(); j = i++)
-		{
-			const Vertex& va = vertices[i];
-			const Vertex& vb = vertices[j];
-
-			float da = pl.distance(va.position);
-			float db = pl.distance(vb.position);
-
-			if ((da < -FUZZY_EPSILON && db > FUZZY_EPSILON) || (da > FUZZY_EPSILON && db < -FUZZY_EPSILON))
-			{
-				Scalar k(-1.0f);
-				pl.segmentIntersection(va.position, vb.position, k);
-				T_ASSERT(k >= 0.0f && k <= 1.0f);
-
-				Vertex v;
-				v.position = lerp(va.position, vb.position, k);
-				v.normal = lerp(va.normal, vb.normal, k);
-				v.texCoord = lerp(va.texCoord, vb.texCoord, k);
-
-				outFront.vertices.push_back(v);
-				outBack.vertices.push_back(v);
-			}
-
-			if (da >= FUZZY_EPSILON)
-				outFront.vertices.push_back(va);
-			else
-				outBack.vertices.push_back(va);
-		}
-	}
-
-	bool valid() const
-	{
-		if (vertices.size() < 3)
-			return false;
-
-		return true;
-	}
-};
+//struct BspPolygon
+//{
+//	AlignedVector< Vertex > vertices;
+//
+//	Winding3 winding() const
+//	{
+//		Winding3 w;
+//		for (AlignedVector< Vertex >::const_iterator i = vertices.begin(); i != vertices.end(); ++i)
+//			w.push(i->position);
+//		return w;
+//	}
+//
+//	void split(const Plane& pl, BspPolygon& outFront, BspPolygon& outBack) const
+//	{
+//		for (size_t i = 0, j = vertices.size() - 1; i < vertices.size(); j = i++)
+//		{
+//			const Vertex& va = vertices[i];
+//			const Vertex& vb = vertices[j];
+//
+//			float da = pl.distance(va.position);
+//			float db = pl.distance(vb.position);
+//
+//			if ((da < -FUZZY_EPSILON && db > FUZZY_EPSILON) || (da > FUZZY_EPSILON && db < -FUZZY_EPSILON))
+//			{
+//				Scalar k(-1.0f);
+//				pl.segmentIntersection(va.position, vb.position, k);
+//				T_ASSERT(k >= 0.0f && k <= 1.0f);
+//
+//				Vertex v;
+//				v.position = lerp(va.position, vb.position, k);
+//				v.normal = lerp(va.normal, vb.normal, k);
+//				v.texCoord = lerp(va.texCoord, vb.texCoord, k);
+//
+//				outFront.vertices.push_back(v);
+//				outBack.vertices.push_back(v);
+//			}
+//
+//			if (da >= FUZZY_EPSILON)
+//				outFront.vertices.push_back(va);
+//			else
+//				outBack.vertices.push_back(va);
+//		}
+//	}
+//
+//	bool valid() const
+//	{
+//		if (vertices.size() < 3)
+//			return false;
+//
+//		return true;
+//	}
+//};
 
 void createSectors(
 	const model::Model& model,
@@ -309,11 +309,11 @@ void createSectors(
 		for (AlignedVector< Polygon >::const_iterator j = polygons.begin(); j != polygons.end(); ++j)
 		{
 			BspPolygon input;
-			for (AlignedVector< size_t >::const_iterator k = j->indices.begin(); k != j->indices.end(); ++k)
-				input.vertices.push_back(vertices[*k]);
+			//for (AlignedVector< size_t >::const_iterator k = j->indices.begin(); k != j->indices.end(); ++k)
+			//	input.addVertex(vertices[*k]);
 
 			AlignedVector< BspPolygon > clipped;
-			i->second.bsp.clip< BspPolygon >(input, BspTree::CmFront, clipped);
+			//i->second.bsp.clip< BspPolygon >(input, BspTree::CmFront, clipped);
 			if (clipped.empty())
 				continue;
 
@@ -321,11 +321,11 @@ void createSectors(
 			{
 				outSectors.back().polygons.push_back(Polygon());
 				outSectors.back().polygons.back().material = j->material;
-				for (AlignedVector< Vertex >::const_iterator m = k->vertices.begin(); m != k->vertices.end(); ++m)
-				{
-					AlignedVector< Vertex >::iterator it = pushUnique(outSectors.back().vertices, *m);
-					outSectors.back().polygons.back().indices.push_back(uint32_t(std::distance(outSectors.back().vertices.begin(), it)));
-				}
+				//for (const auto& vertex : k->getWinding().get())
+				//{
+				//	AlignedVector< Vertex >::iterator it = pushUnique(outSectors.back().vertices, vertex);
+				//	outSectors.back().polygons.back().indices.push_back(uint32_t(std::distance(outSectors.back().vertices.begin(), it)));
+				//}
 			}
 		}
 

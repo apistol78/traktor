@@ -64,7 +64,7 @@ Ref< ISerializable > SolidEntityPipeline::buildOutput(
     if (!outputModel)
         return nullptr;
 
-    // model::ModelFormat::writeAny(L"data/Temp/Solid/" + solidEntityData->getName() + L".tmd", outputModel);
+    model::ModelFormat::writeAny(L"data/Temp/Solid/" + solidEntityData->getName() + L".tmd", outputModel);
 
 	Guid outputRenderMeshGuid = solidEntityData->getOutputGuid().permutation(0);
 	Guid outputCollisionShapeGuid = solidEntityData->getOutputGuid().permutation(1);

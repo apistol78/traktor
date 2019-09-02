@@ -1,7 +1,6 @@
 #pragma once
 
-#include "Core/Containers/AlignedVector.h"
-#include "Core/Math/Winding3.h"
+#include "Core/Ref.h"
 #include "Shape/Editor/Solid/SolidTypes.h"
 #include "World/Entity.h"
 
@@ -15,6 +14,13 @@
 
 namespace traktor
 {
+	namespace model
+	{
+
+class Model;
+
+	}
+
     namespace shape
     {
 
@@ -37,7 +43,7 @@ public:
 
     BooleanOperation getOperation() const { return m_operation; }
 
-    const AlignedVector< Winding3 >& getWindings() const { return m_windings; }
+    const model::Model* getModel() const { return m_model; }
 
     bool isDirty() const { return m_dirty; }
 
@@ -48,7 +54,7 @@ protected:
 
     Transform m_transform;
     BooleanOperation m_operation;
-    AlignedVector< Winding3 > m_windings;
+	Ref< const model::Model > m_model;
 	Aabb3 m_boundingBox;
     bool m_dirty;
 };

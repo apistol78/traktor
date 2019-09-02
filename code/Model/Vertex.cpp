@@ -31,6 +31,15 @@ Vertex::Vertex(uint32_t position)
 {
 }
 
+Vertex::Vertex(uint32_t position, uint32_t normal)
+:	m_position(position)
+,	m_color(c_InvalidIndex)
+,	m_normal(normal)
+,	m_tangent(c_InvalidIndex)
+,	m_binormal(c_InvalidIndex)
+{
+}
+
 void Vertex::clearTexCoords()
 {
 	m_texCoords.clear();
