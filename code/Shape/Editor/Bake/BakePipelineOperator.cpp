@@ -30,11 +30,13 @@
 #include "Shape/Editor/Traverser.h"
 #include "Shape/Editor/Bake/BakeConfiguration.h"
 #include "Shape/Editor/Bake/BakePipelineOperator.h"
+#include "Shape/Editor/Bake/TracerIrradiance.h"
 #include "Shape/Editor/Bake/TracerLight.h"
 #include "Shape/Editor/Bake/TracerModel.h"
 #include "Shape/Editor/Bake/TracerOutput.h"
 #include "Shape/Editor/Bake/TracerProcessor.h"
 #include "Shape/Editor/Bake/TracerTask.h"
+#include "World/WorldRenderSettings.h"
 #include "World/Editor/LayerEntityData.h"
 #include "World/Entity/ComponentEntityData.h"
 #include "World/Entity/ExternalEntityData.h"
@@ -405,6 +407,22 @@ bool BakePipelineOperator::build(
 		layers.push_back(flattenedLayer);
 	}
 	inoutSceneAsset->setLayers(layers);
+
+	// Create irradiance grid task.
+	Guid irradianceGridId = seedId.permutate();
+
+	tracerTask->addTracerIrradiance(new TracerIrradiance(
+		L"Irradiance",
+		irradianceGridId,
+		Aabb3(
+			Vector4(-20.0f, -10.0f, -20.0f),
+			Vector4( 20.0f,  10.0f,  20.0f)
+		)
+	));
+
+	inoutSceneAsset->getWorldRenderSettings()->irradianceGrid = resource::Id< world::IrradianceGrid >(
+		irradianceGridId
+	);
 
 	tracerProcessor->enqueue(tracerTask);
 

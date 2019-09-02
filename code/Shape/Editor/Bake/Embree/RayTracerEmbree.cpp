@@ -75,7 +75,7 @@ bool RayTracerEmbree::create(const BakeConfiguration* configuration)
 	m_scene = rtcNewScene(m_device);
 
 	m_shEngine = new render::SHEngine(3);
-	m_shEngine->generateSamplePoints(20000);
+	m_shEngine->generateSamplePoints(100);
 
     return true;
 }

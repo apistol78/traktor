@@ -28,5 +28,10 @@ void TracerTask::addTracerOutput(const TracerOutput* tracerOutput)
     m_tracerOutputs.push_back(tracerOutput);
 }
 
+void TracerTask::addTracerIrradiance(const TracerIrradiance* tracerIrradiance)
+{
+    m_tracerIrradiances.push_back(tracerIrradiance);
+}
+
     }
 }

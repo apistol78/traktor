@@ -16,14 +16,17 @@
 #include "Model/Model.h"
 #include "Render/Types.h"
 #include "Render/Resource/TextureResource.h"
+#include "Render/SH/SHCoeffs.h"
 #include "Shape/Editor/Bake/BakeConfiguration.h"
 #include "Shape/Editor/Bake/GBuffer.h"
 #include "Shape/Editor/Bake/IRayTracer.h"
+#include "Shape/Editor/Bake/TracerIrradiance.h"
 #include "Shape/Editor/Bake/TracerLight.h"
 #include "Shape/Editor/Bake/TracerModel.h"
 #include "Shape/Editor/Bake/TracerOutput.h"
 #include "Shape/Editor/Bake/TracerProcessor.h"
 #include "Shape/Editor/Bake/TracerTask.h"
+#include "World/IrradianceGridResource.h"
 
 #if !defined(__RPI__) && !defined(__APPLE__)
 #	include <OpenImageDenoise/oidn.h>
@@ -369,6 +372,92 @@ bool TracerProcessor::process(const TracerTask* task) const
 			return false;
 		}
     }
+
+	// Trace irradiance grids.
+	auto tracerIrradiances = task->getTracerIrradiances();
+	for (uint32_t i = 0; i < tracerIrradiances.size(); ++i)
+	{
+		auto tracerIrradiance = tracerIrradiances[i];
+
+		Guid irradianceGridId = tracerIrradiance->getIrradianceGridId();
+
+		// Create output instance.
+		Ref< world::IrradianceGridResource > outputResource = new world::IrradianceGridResource();
+		Ref< db::Instance > outputInstance = m_outputDatabase->createInstance(
+			L"Generated/" + tracerIrradiance->getIrradianceGridId().format(),
+			db::CifReplaceExisting,
+			&irradianceGridId
+		);
+		if (!outputInstance)
+		{
+			log::error << L"Trace failed; unable to create output instance." << Endl;
+			return false;
+		}
+
+		outputInstance->setObject(outputResource);
+
+		// Create output data stream.
+		Ref< IStream > stream = outputInstance->writeData(L"Data");
+		if (!stream)
+		{
+			log::error << L"Trace failed; unable to create texture data stream." << Endl;
+			outputInstance->revert();
+			return false;
+		}
+
+		Aabb3 boundingBox = tracerIrradiance->getBoundingBox();
+
+		Writer writer(stream);
+
+		writer << uint32_t(1);
+		writer << boundingBox.mn.x();
+		writer << boundingBox.mn.y();
+		writer << boundingBox.mn.z();
+		writer << boundingBox.mx.x();
+		writer << boundingBox.mx.y();
+		writer << boundingBox.mx.z();
+
+		for (int32_t x = 0; x < 64; ++x)
+		{
+			float fx = x / 63.0f;
+			for (int32_t y = 0; y < 16; ++y)
+			{
+				float fy = y / 15.0f;
+				for (int32_t z = 0; z < 64; ++z)
+				{
+					float fz = z / 63.0f;
+
+					m_status.description = toString(x) + L":" + toString(y) + L":" + toString(z);
+
+					Vector4 position = boundingBox.mn + (boundingBox.mx - boundingBox.mn) * Vector4(fx, fy, fz);
+
+					Ref< render::SHCoeffs > sh = rayTracer->traceProbe(position.xyz1());
+					if (!sh)
+					{
+						log::error << L"Trace failed; unable to trace irradiance probe." << Endl;
+						return false;
+					}
+					T_FATAL_ASSERT(sh->get().size() == 9);
+
+					for (int32_t i = 0; i < 9; ++i)
+					{
+						auto c = (*sh)[i];
+						writer << c.x();
+						writer << c.y();
+						writer << c.z();
+					}
+				}
+			}
+		}
+
+		stream->close();
+
+		if (!outputInstance->commit())
+		{
+			log::error << L"Trace failed; unable to commit output instance." << Endl;
+			return false;
+		}
+	}
 
     return true;
 }
