@@ -19,6 +19,7 @@ namespace traktor
     {
 
 class BakeConfiguration;
+class TracerIrradiance;
 class TracerLight;
 class TracerModel;
 class TracerOutput;
@@ -46,12 +47,17 @@ public:
 
 	const RefArray< const TracerOutput >& getTracerOutputs() const { return m_tracerOutputs; }
 
+    void addTracerIrradiance(const TracerIrradiance* tracerIrradiance);
+
+    const RefArray< const TracerIrradiance >& getTracerIrradiances() const { return m_tracerIrradiances; }
+
 private:
     Guid m_sceneId;
     Ref< const BakeConfiguration > m_configuration;
     RefArray< const TracerLight > m_tracerLights;
     RefArray< const TracerModel > m_tracerModels;
     RefArray< const TracerOutput > m_tracerOutputs;
+    RefArray< const TracerIrradiance > m_tracerIrradiances;
 };
 
     }

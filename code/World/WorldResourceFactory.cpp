@@ -1,4 +1,6 @@
 #include <cstring>
+#include "Core/Io/Reader.h"
+#include "Core/Log/Log.h"
 #include "Database/Instance.h"
 #include "Render/IRenderSystem.h"
 #include "Render/StructBuffer.h"
@@ -116,21 +118,57 @@ Ref< Object > WorldResourceFactory::create(resource::IResourceManager* resourceM
 		IrradianceGridData* grid = (IrradianceGridData*)buffer->lock();
 		T_FATAL_ASSERT(grid);
 
-		for (int32_t iy = 0; iy < 16; ++iy)
-		{
-			for (int32_t ix = 0; ix < 64; ++ix)
-			{
-				for (int32_t iz = 0; iz < 64; ++iz)
-				{
-					int32_t cell = (iy * 64 * 64) + (iz * 64) + ix;
-					
-					auto& g = grid[cell];
-					std::memset(&g, 0, sizeof(IrradianceGridData));
+		Ref< IrradianceGridResource > resource = instance->getObject< IrradianceGridResource >();
+		if (!resource)
+			return nullptr;
 
-					if ((ix + iy + iz) & 1)
-						g.shR0_3[0] = 1.0f;
-					else
-						g.shG0_3[0] = 1.0f;
+		Ref< IStream > stream = instance->readData(L"Data");
+		if (!stream)
+			return nullptr;
+
+		Reader reader(stream);
+
+		uint32_t version;
+		reader >> version;
+		if (version != 1)
+		{
+			log::error << L"Unable to read irradiance grid, unknown version " << version << Endl;
+			return nullptr;
+		}
+
+		float mn[3], mx[3];
+		reader >> mn[0];
+		reader >> mn[1];
+		reader >> mn[2];
+		reader >> mx[0];
+		reader >> mx[1];
+		reader >> mx[2];
+
+		for (int32_t x = 0; x < 64; ++x)
+		{
+			for (int32_t y = 0; y < 16; ++y)
+			{
+				for (int32_t z = 0; z < 64; ++z)
+				{
+					int32_t cell = (y * 64 * 64) + (z * 64) + x;
+
+					auto& g = grid[cell];
+
+					for (int32_t i = 0; i < 4; ++i)
+					{
+						reader >> g.shR0_3[i];
+						reader >> g.shG0_3[i];
+						reader >> g.shB0_3[i];
+					}
+					for (int32_t i = 0; i < 4; ++i)
+					{
+						reader >> g.shR4_7[i];
+						reader >> g.shG4_7[i];
+						reader >> g.shB4_7[i];
+					}
+					reader >> g.shRGB_8[0];
+					reader >> g.shRGB_8[1];
+					reader >> g.shRGB_8[2];
 				}
 			}
 		}
