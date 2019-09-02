@@ -22,7 +22,7 @@ class T_DLLCLASS Cylinder : public IShape
 public:
 	Cylinder();
 
-	virtual bool createWindings(AlignedVector< Winding3 >& outWindings) const override final;
+	virtual Ref< model::Model > createModel() const override final;
 
 	virtual void createAnchors(AlignedVector< Vector4 >& outAnchors) const override final;
 

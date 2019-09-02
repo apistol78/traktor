@@ -45,6 +45,23 @@ Material::Material(const std::wstring& name)
 {
 }
 
+Material::Material(const std::wstring& name, const Color4f& color)
+:	m_name(name)
+,	m_lightMapRange(0.0f)
+,	m_color(color)
+,	m_diffuseTerm(1.0f)
+,	m_specularTerm(1.0f)
+,	m_roughness(0.8f)
+,	m_metalness(0.0f)
+,	m_transparency(0.0f)
+,	m_emissive(0.0f)
+,	m_reflective(0.0f)
+,	m_rimLightIntensity(0.0f)
+,	m_blendOperator(BoDecal)
+,	m_doubleSided(false)
+{
+}
+
 void Material::setName(const std::wstring& name)
 {
 	m_name = name;

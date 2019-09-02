@@ -22,7 +22,7 @@ class T_DLLCLASS Box : public IShape
 public:
 	Box();
 
-	virtual bool createWindings(AlignedVector< Winding3 >& outWindings) const override final;
+	virtual Ref< model::Model > createModel() const override final;
 
 	virtual void createAnchors(AlignedVector< Vector4 >& outAnchors) const override final;
 

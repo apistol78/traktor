@@ -18,59 +18,61 @@ Cylinder::Cylinder()
 {
 }
 
-bool Cylinder::createWindings(AlignedVector< Winding3 >& outWindings) const
+Ref< model::Model > Cylinder::createModel() const
 {
-    auto& top = outWindings.push_back();
-    auto& bottom = outWindings.push_back();
+ //   auto& top = outWindings.push_back();
+ //   auto& bottom = outWindings.push_back();
 
-    for (int32_t i = 0; i < m_faces; ++i)
-    {
-        float phi1 = TWO_PI * float(i) / m_faces;
-        float phi2 = TWO_PI * float(i + 1) / m_faces;
+ //   for (int32_t i = 0; i < m_faces; ++i)
+ //   {
+ //       float phi1 = TWO_PI * float(i) / m_faces;
+ //       float phi2 = TWO_PI * float(i + 1) / m_faces;
 
-        top.push(Vector4(
-            sin(phi1) * m_radius,
-            m_length / 2.0f,
-            cos(phi1) * m_radius,
-            1.0f
-        ));
-        bottom.push(Vector4(
-            sin(phi1) * m_radius,
-            -m_length / 2.0f,
-            cos(phi1) * m_radius,
-            1.0f
-        ));
+ //       top.push(Vector4(
+ //           sin(phi1) * m_radius,
+ //           m_length / 2.0f,
+ //           cos(phi1) * m_radius,
+ //           1.0f
+ //       ));
+ //       bottom.push(Vector4(
+ //           sin(phi1) * m_radius,
+ //           -m_length / 2.0f,
+ //           cos(phi1) * m_radius,
+ //           1.0f
+ //       ));
 
-        auto& w = outWindings.push_back();
-        w.resize(4);
-        w[0] = Vector4(
-            sin(phi1) * m_radius,
-            m_length / 2.0f,
-            cos(phi1) * m_radius,
-            1.0f
-        );
-        w[1] = Vector4(
-            sin(phi2) * m_radius,
-            m_length / 2.0f,
-            cos(phi2) * m_radius,
-            1.0f
-        );
-        w[2] = Vector4(
-            sin(phi2) * m_radius,
-            -m_length / 2.0f,
-            cos(phi2) * m_radius,
-            1.0f
-        );
-        w[3] = Vector4(
-            sin(phi1) * m_radius,
-            -m_length / 2.0f,
-            cos(phi1) * m_radius,
-            1.0f
-        );
-    }
+ //       auto& w = outWindings.push_back();
+ //       w.resize(4);
+ //       w[0] = Vector4(
+ //           sin(phi1) * m_radius,
+ //           m_length / 2.0f,
+ //           cos(phi1) * m_radius,
+ //           1.0f
+ //       );
+ //       w[1] = Vector4(
+ //           sin(phi2) * m_radius,
+ //           m_length / 2.0f,
+ //           cos(phi2) * m_radius,
+ //           1.0f
+ //       );
+ //       w[2] = Vector4(
+ //           sin(phi2) * m_radius,
+ //           -m_length / 2.0f,
+ //           cos(phi2) * m_radius,
+ //           1.0f
+ //       );
+ //       w[3] = Vector4(
+ //           sin(phi1) * m_radius,
+ //           -m_length / 2.0f,
+ //           cos(phi1) * m_radius,
+ //           1.0f
+ //       );
+ //   }
 
-    top.flip();
-	return true;
+ //   top.flip();
+	//return true;
+
+	return nullptr;
 }
 
 void Cylinder::createAnchors(AlignedVector< Vector4 >& outAnchors) const

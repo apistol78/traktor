@@ -26,9 +26,9 @@ class T_DLLCLASS Boolean : public IModelOperation
 public:
 	enum BooleanOperation
 	{
-		BoAdd,
-		BoUninon,
-		DoDifference
+		BoUnion,
+		BoIntersection,
+		BoDifference
 	};
 
 	Boolean(

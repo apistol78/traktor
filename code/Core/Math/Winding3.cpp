@@ -12,6 +12,11 @@ Winding3::Winding3()
 {
 }
 
+Winding3::Winding3(uint32_t size)
+:	m_points(size)
+{
+}
+
 Winding3::Winding3(const points_t& points)
 :	m_points(points)
 {

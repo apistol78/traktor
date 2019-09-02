@@ -1,4 +1,3 @@
-#include <vector>
 #include "Core/Math/BspTree.h"
 #include "Core/Math/Const.h"
 #include "Core/Math/Winding3.h"
@@ -14,34 +13,9 @@ namespace traktor
 		namespace
 		{
 
-struct GatherFront
+Vector4 packTexCoord(const Vector2& texCoord)
 {
-	AlignedVector< Winding3 > windings;
-	int32_t mask;
-
-	void operator () (const Winding3& w, int32_t cl, bool splitted)
-	{
-		if (w.size() < 3)
-			return;
-
-		mask |= (1 << cl);
-		if (cl == Winding3::CfFront)
-			windings.push_back(w);
-	}
-};
-
-void buildWindings(const Model& model, const Transform& transform, AlignedVector< Winding3 >& outWindings)
-{
-	const AlignedVector< Polygon >& polygons = model.getPolygons();
-	outWindings.resize(polygons.size());
-	for (uint32_t i = 0; i < polygons.size(); ++i)
-	{
-		const Polygon& polygon = polygons[i];
-
-		outWindings[i] = Winding3();
-		for (uint32_t j = 0; j < polygon.getVertexCount(); ++j)
-			outWindings[i].push(transform * model.getVertexPosition(polygon.getVertex(j)).xyz1());
-	}
+	return Vector4(texCoord.x, texCoord.y, 0.0f, 0.0f);
 }
 
 		}
@@ -63,114 +37,110 @@ Boolean::Boolean(
 
 bool Boolean::apply(Model& model) const
 {
+	model.clear(Model::CfAll);
+
 	if (m_modelA.getPolygonCount() == 0)
 	{
-		MergeModel(m_modelB, m_modelTransformB, 0.01f).apply(model);
+		MergeModel(m_modelB, m_modelTransformB, 0.001f).apply(model);
 		return true;
 	}
 
 	if (m_modelB.getPolygonCount() == 0)
 	{
-		MergeModel(m_modelA, m_modelTransformA, 0.01f).apply(model);
+		MergeModel(m_modelA, m_modelTransformA, 0.001f).apply(model);
 		return true;
 	}
 
-	AlignedVector< Winding3 > windingsA;
-	AlignedVector< Winding3 > windingsB;
+	std::map< uint32_t, uint32_t > materialMap;
 
-	buildWindings(m_modelA, m_modelTransformA, windingsA);
-	buildWindings(m_modelB, m_modelTransformB, windingsB);
+	for (uint32_t i = 0; i < m_modelA.getMaterialCount(); ++i)
+		materialMap[i] = model.addUniqueMaterial(m_modelA.getMaterial(i));
 
-	BspTree treeA;
-	BspTree treeB;
+	uint32_t materialOffset = m_modelA.getMaterialCount();
 
-	if (!treeA.build(windingsA) || !treeB.build(windingsB))
-		return false;
+	for (uint32_t i = 0; i < m_modelB.getMaterialCount(); ++i)
+		materialMap[materialOffset + i] = model.addUniqueMaterial(m_modelB.getMaterial(i));
 
-	model.clear(Model::CfAll);
-
-	// Clip all A to tree B.
+	AlignedVector< BspPolygon > polygonsA;
+	for (const auto& polygon : m_modelA.getPolygons())
 	{
-		GatherFront visitor;
-		for (uint32_t i = 0; i < windingsA.size(); ++i)
+		auto& bp = polygonsA.push_back();
+		bp.setIndex(materialMap[polygon.getMaterial()]);
+		for (const auto vertex : polygon.getVertices())
 		{
-			visitor.mask = 0;
-			visitor.windings.resize(0);
-
-			treeB.clip(windingsA[i], visitor);
-
-			if (visitor.mask == ((1 << Winding3::CfFront) | (1 << Winding3::CfBack)))
-			{
-				for (uint32_t j = 0; j < visitor.windings.size(); ++j)
-				{
-					const Winding3& w = visitor.windings[j];
-
-					Polygon polygon;
-					for (uint32_t k = 0; k < w.size(); ++k)
-					{
-						Vertex vertex;
-						vertex.setPosition(model.addUniquePosition(w[k]));
-						polygon.addVertex(model.addUniqueVertex(vertex));
-					}
-					model.addPolygon(polygon);
-				}
-			}
-			else if (visitor.mask == (1 << Winding3::CfFront))
-			{
-				const Winding3& w = windingsA[i];
-
-				Polygon polygon;
-				for (uint32_t k = 0; k < w.size(); ++k)
-				{
-					Vertex vertex;
-					vertex.setPosition(model.addUniquePosition(w[k]));
-					polygon.addVertex(model.addUniqueVertex(vertex));
-				}
-				model.addPolygon(polygon);
-			}
+			const auto& vx = m_modelA.getVertex(vertex);
+			bp.addVertex(
+				m_modelTransformA * m_modelA.getPosition(vx.getPosition()),
+				m_modelTransformA * m_modelA.getNormal(vx.getNormal()),
+				packTexCoord(m_modelA.getTexCoord(vx.getTexCoord(0)))
+			);
 		}
+		if (!bp.calculatePlane())
+			polygonsA.pop_back();
 	}
 
-	// Clip all B to tree A.
+	AlignedVector< BspPolygon > polygonsB;
+	for (const auto& polygon : m_modelB.getPolygons())
 	{
-		GatherFront visitor;
-		for (uint32_t i = 0; i < windingsB.size(); ++i)
+		auto& bp = polygonsB.push_back();
+		bp.setIndex(materialMap[materialOffset + polygon.getMaterial()]);
+		for (const auto vertex : polygon.getVertices())
 		{
-			visitor.mask = 0;
-			visitor.windings.resize(0);
-
-			treeA.clip(windingsB[i], visitor);
-
-			if (visitor.mask == ((1 << Winding3::CfFront) | (1 << Winding3::CfBack)))
-			{
-				for (uint32_t j = 0; j < visitor.windings.size(); ++j)
-				{
-					const Winding3& w = visitor.windings[j];
-
-					Polygon polygon;
-					for (uint32_t k = 0; k < w.size(); ++k)
-					{
-						Vertex vertex;
-						vertex.setPosition(model.addUniquePosition(w[k]));
-						polygon.addVertex(model.addUniqueVertex(vertex));
-					}
-					model.addPolygon(polygon);
-				}
-			}
-			else if (visitor.mask == (1 << Winding3::CfFront))
-			{
-				const Winding3& w = windingsB[i];
-
-				Polygon polygon;
-				for (uint32_t k = 0; k < w.size(); ++k)
-				{
-					Vertex vertex;
-					vertex.setPosition(model.addUniquePosition(w[k]));
-					polygon.addVertex(model.addUniqueVertex(vertex));
-				}
-				model.addPolygon(polygon);
-			}
+			const auto& vx = m_modelB.getVertex(vertex);
+			bp.addVertex(
+				m_modelTransformB * m_modelB.getPosition(vx.getPosition()),
+				m_modelTransformB * m_modelB.getNormal(vx.getNormal()),
+				packTexCoord(m_modelB.getTexCoord(vx.getTexCoord(0)))
+			);
 		}
+		if (!bp.calculatePlane())
+			polygonsB.pop_back();
+	}
+
+	BspNode A;
+	A.build(polygonsA);
+
+	BspNode B;
+	B.build(polygonsB);
+
+	BspNode C;
+	switch (m_operation)
+	{
+	case BoUnion:
+		C = A.unioon(B);
+		break;
+
+	case BoIntersection:
+		C = A.intersection(B);
+		break;
+
+	case BoDifference:
+		C = A.difference(B);
+		break;
+	}
+
+	auto polygons = C.allPolygons();
+
+	model.reservePolygons((uint32_t)polygons.size());
+	for (const auto& bp : polygons)
+	{
+		uint32_t n = model.addUniqueNormal(bp.getPlane().normal());
+
+		Polygon polygon;
+		polygon.setMaterial((uint32_t)bp.getIndex());
+		polygon.setNormal(n);
+		for (const auto& p : bp.getVertices())
+		{
+			float uv[4];
+			p.attributes[1].storeUnaligned(uv);
+
+			Vertex vertex;
+			vertex.setPosition(model.addUniquePosition(p.position));
+			vertex.setNormal(n); // model.addUniqueNormal(p.attributes[0].normalized()));
+			vertex.setTexCoord(0, model.addUniqueTexCoord(Vector2(uv[0], uv[1])));
+			polygon.addVertex(model.addUniqueVertex(vertex));
+		}
+		model.addPolygon(polygon);
 	}
 
 	return true;
