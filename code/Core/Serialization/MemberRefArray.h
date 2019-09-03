@@ -18,19 +18,21 @@ public:
 	typedef RefArray< Class > value_type;
 
 	MemberRefArray(const wchar_t* const name, value_type& ref)
-	:	MemberArray(name, &m_attribute)
+	:	MemberArray(name, nullptr)
 	,	m_attribute(type_of< Class >())
 	,	m_ref(ref)
 	,	m_index(0)
 	{
+		setAttributes(&m_attribute);
 	}
 
 	MemberRefArray(const wchar_t* const name, value_type& ref, const Attribute& attributes)
-	:	MemberArray(name, &(m_attribute | attributes))
+	:	MemberArray(name, nullptr)
 	,	m_attribute(type_of< Class >())
 	,	m_ref(ref)
 	,	m_index(0)
 	{
+		setAttributes(&(m_attribute | attributes));
 	}
 
 	virtual void reserve(size_t size, size_t capacity) const override final
