@@ -2348,6 +2348,15 @@ Irradiance SH grid
 			</outputPins>
 			<values/>
 		</item>
+		<item type="traktor.render.Vector" version="traktor.render.Node:1">
+			<id>{1A4508A0-CBC6-4EC0-960F-5B771845F8E2}</id>
+			<comment/>
+			<position>
+				<first>4681</first>
+				<second>1925</second>
+			</position>
+			<value>0, 0, 0, 0</value>
+		</item>
 	</nodes>
 	<edges>
 		<item type="traktor.render.Edge">
@@ -4452,16 +4461,6 @@ Irradiance SH grid
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[206]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[199]"/>
-				<name>Input</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
 				<node ref="/object/nodes/item[207]"/>
 				<name>Output</name>
 			</source>
@@ -4528,6 +4527,16 @@ Irradiance SH grid
 			<destination>
 				<node ref="/object/nodes/item[209]"/>
 				<name>WorldPosition</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[210]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[199]"/>
+				<name>Input</name>
 			</destination>
 		</item>
 	</edges>

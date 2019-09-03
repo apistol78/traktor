@@ -102,8 +102,7 @@ private:
 	resource::Proxy< render::Shader > m_reflectionShader;
 	resource::Proxy< render::Shader > m_fogShader;
 	Ref< render::VertexBuffer > m_vertexBufferQuad;
-	// Ref< render::StructBuffer > m_irradianceGridSBuffer;
-	resource::Proxy< IrradianceGrid > m_irradianceGrid;
+	// resource::Proxy< IrradianceGrid > m_irradianceGrid;
 	render::Primitives m_primitivesQuad;
 };
 

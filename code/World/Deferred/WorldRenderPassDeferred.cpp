@@ -24,6 +24,7 @@ render::handle_t s_handleLastWorld;
 render::handle_t s_handleLastWorldView;
 render::handle_t s_handleFogEnable;
 render::handle_t s_handleDepthEnable;
+render::handle_t s_handleIrradianceEnable;
 
 void initializeHandles()
 {
@@ -40,6 +41,7 @@ void initializeHandles()
 	s_handleLastWorldView = render::getParameterHandle(L"World_LastWorldView");
 	s_handleFogEnable = render::getParameterHandle(L"World_FogEnable");
 	s_handleDepthEnable = render::getParameterHandle(L"World_DepthEnable");
+	s_handleIrradianceEnable = render::getParameterHandle(L"World_IrradianceEnable");
 
 	s_handlesInitialized = true;
 }
@@ -60,6 +62,7 @@ WorldRenderPassDeferred::WorldRenderPassDeferred(
 ,	m_passFlags(passFlags)
 ,	m_fogEnabled(fogEnabled)
 ,	m_depthEnable(depthEnable)
+,	m_irradianceEnable(false)
 {
 	initializeHandles();
 }
@@ -67,13 +70,15 @@ WorldRenderPassDeferred::WorldRenderPassDeferred(
 WorldRenderPassDeferred::WorldRenderPassDeferred(
 	render::handle_t technique,
 	const WorldRenderView& worldRenderView,
-	uint32_t passFlags
+	uint32_t passFlags,
+	bool irradianceEnable
 )
 :	m_technique(technique)
 ,	m_worldRenderView(worldRenderView)
 ,	m_passFlags(passFlags)
 ,	m_fogEnabled(false)
 ,	m_depthEnable(false)
+,	m_irradianceEnable(irradianceEnable)
 {
 	initializeHandles();
 }
@@ -100,6 +105,8 @@ void WorldRenderPassDeferred::setShaderCombination(render::Shader* shader) const
 		shader->setCombination(s_handleFogEnable, m_fogEnabled);
 		shader->setCombination(s_handleDepthEnable, m_depthEnable);
 	}
+	else if (m_technique == s_techniqueIrradianceWrite)
+		shader->setCombination(s_handleIrradianceEnable, m_irradianceEnable);
 }
 
 void WorldRenderPassDeferred::setProgramParameters(render::ProgramParameters* programParams) const

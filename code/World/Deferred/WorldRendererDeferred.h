@@ -30,6 +30,7 @@ class StructBuffer;
 	namespace world
 	{
 
+class IrradianceGrid;
 class IShadowProjection;
 class LightRendererDeferred;
 class WorldContext;
@@ -142,6 +143,7 @@ private:
 	Ref< render::ImageProcess > m_toneMapImageProcess;
 	Ref< render::ImageProcess > m_shadowMaskProject;
 	Ref< LightRendererDeferred > m_lightRenderer;
+	resource::Proxy< IrradianceGrid > m_irradianceGrid;
 	RefArray< Entity > m_buildEntities;
 	AlignedVector< Frame > m_frames;
 	float m_slicePositions[MaxSliceCount + 1];
