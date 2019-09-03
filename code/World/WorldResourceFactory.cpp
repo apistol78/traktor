@@ -115,9 +115,6 @@ Ref< Object > WorldResourceFactory::create(resource::IResourceManager* resourceM
 		if (!buffer)
 			return nullptr;
 
-		IrradianceGridData* grid = (IrradianceGridData*)buffer->lock();
-		T_FATAL_ASSERT(grid);
-
 		Ref< IrradianceGridResource > resource = instance->getObject< IrradianceGridResource >();
 		if (!resource)
 			return nullptr;
@@ -149,16 +146,16 @@ Ref< Object > WorldResourceFactory::create(resource::IResourceManager* resourceM
 		reader >> mx[1];
 		reader >> mx[2];
 
+		IrradianceGridData* grid = (IrradianceGridData*)buffer->lock();
+		T_FATAL_ASSERT(grid);
+
 		for (int32_t x = 0; x < size[0]; ++x)
 		{
 			for (int32_t y = 0; y < size[1]; ++y)
 			{
 				for (int32_t z = 0; z < size[2]; ++z)
 				{
-					int32_t cell = (y * size[0] * size[2]) + (z * size[0]) + x;
-
-					auto& g = grid[cell];
-
+					auto& g = *grid++;
 					for (int32_t i = 0; i < 4; ++i)
 					{
 						reader >> g.shR0_3[i];

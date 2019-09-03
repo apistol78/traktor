@@ -102,7 +102,9 @@ void CharacterComponentData::serialize(ISerializer& s)
 	s >> Member< float >(L"radius", m_radius, AttributeRange(0.0f));
 	s >> Member< float >(L"height", m_height, AttributeRange(0.0f));
 	s >> Member< float >(L"step", m_step, AttributeRange(0.0f));
-	s >> Member< float >(L"jumpImpulse", m_jumpImpulse, AttributeRange(0.0f));
+
+	if (s.getVersion() >= 1)
+		s >> Member< float >(L"jumpImpulse", m_jumpImpulse, AttributeRange(0.0f));
 }
 
 	}
