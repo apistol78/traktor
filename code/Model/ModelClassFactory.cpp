@@ -368,7 +368,7 @@ void ModelClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
     registrar->registerClass(classFlattenDoubleSided);
 
     auto classMergeCoplanarAdjacents = new AutoRuntimeClass< MergeCoplanarAdjacents >();
-    classMergeCoplanarAdjacents->addConstructor< bool >();
+    classMergeCoplanarAdjacents->addConstructor();
     registrar->registerClass(classMergeCoplanarAdjacents);
 
     auto classMergeModel = new AutoRuntimeClass< MergeModel >();

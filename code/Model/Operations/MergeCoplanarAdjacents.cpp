@@ -13,25 +13,12 @@ namespace traktor
 		namespace
 		{
 
-const float c_planarAngleThreshold = deg2rad(1.0f);
-const float c_vertexDistanceThreshold = 0.1f;
-
-struct NoVerticesPred
-{
-	bool operator () (const Polygon& pol) const
-	{
-		return pol.getVertexCount() == 0;
-	}
-};
+const float c_planarAngleThreshold = deg2rad(0.1f);
+const float c_vertexDistanceThreshold = 0.001f;
 
 		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.model.MergeCoplanarAdjacents", MergeCoplanarAdjacents, IModelOperation)
-
-MergeCoplanarAdjacents::MergeCoplanarAdjacents(bool allowConvexOnly)
-:	m_allowConvexOnly(allowConvexOnly)
-{
-}
 
 bool MergeCoplanarAdjacents::apply(Model& model) const
 {
@@ -76,9 +63,7 @@ bool MergeCoplanarAdjacents::apply(Model& model) const
 				uint32_t sharedEdge = sharedEdges.front();
 				uint32_t sharedPolygon = adjacency.getPolygon(sharedEdge);
 
-				// In case the source model contain internal edges or something
-				// gets broken during merging.
-				if (sharedPolygon == i)
+				if (sharedPolygon <= i)
 					continue;
 
 				float phi = acos(abs(dot3(normals[i], normals[sharedPolygon])));
@@ -118,7 +103,6 @@ bool MergeCoplanarAdjacents::apply(Model& model) const
 
 					// Remove non-silhouette vertices.
 					removeIndices.resize(0);
-
 					for (size_t i0 = 0; i0 < mergedVertices.size(); ++i0)
 					{
 						size_t i1 = (i0 + 1) % mergedVertices.size();
@@ -140,48 +124,20 @@ bool MergeCoplanarAdjacents::apply(Model& model) const
 								removeIndices.push_back(i1);
 						}
 					}
-
 					if (!removeIndices.empty())
 					{
 						std::sort(removeIndices.begin(), removeIndices.end(), std::greater< uint32_t >());
-						for (AlignedVector< uint32_t >::const_iterator it = removeIndices.begin(); it != removeIndices.end(); ++it)
-							mergedVertices.erase(mergedVertices.begin() + (size_t)*it);
-					}
-
-					// Ensure merged polygon is still convex.
-					if (m_allowConvexOnly)
-					{
-						uint32_t sign = 0;
-						for (size_t i0 = 0; i0 < mergedVertices.size() && sign != 3; ++i0)
-						{
-							size_t i1 = (i0 + 1) % mergedVertices.size();
-							size_t i2 = (i0 + 2) % mergedVertices.size();
-
-							const Vector4& v0 = model.getVertexPosition(mergedVertices[i0]);
-							const Vector4& v1 = model.getVertexPosition(mergedVertices[i1]);
-							const Vector4& v2 = model.getVertexPosition(mergedVertices[i2]);
-
-							Vector4 v0_1 = (v1 - v0).xyz0();
-							Vector4 v1_2 = (v2 - v1).xyz0();
-
-							float phi = dot3(cross(v0_1, v1_2), normals[i]);
-							if (phi < -FUZZY_EPSILON)
-								sign |= 1;
-							else if (phi > FUZZY_EPSILON)
-								sign |= 2;
-						}
-						if (sign == 3)
-							continue;
+						for (const auto removeIndex : removeIndices)
+							mergedVertices.erase(mergedVertices.begin() + (size_t)removeIndex);
 					}
 
 					// Set all vertices in left polygon and null out right polygon.
 					leftPolygon.setVertices(mergedVertices);
-					rightPolygon.setVertices(AlignedVector< uint32_t >());
+					rightPolygon.clearVertices();
 
 					// Re-build adjacency.
 					adjacency.remove(sharedPolygon);
-					adjacency.remove(i);
-					adjacency.add(i);
+					adjacency.update(i);
 
 					++merged;
 					break;
@@ -193,11 +149,13 @@ bool MergeCoplanarAdjacents::apply(Model& model) const
 	}
 
 	// Remove all polygons with no vertices.
-	AlignedVector< Polygon >::iterator it = std::remove_if(polygons.begin(), polygons.end(), NoVerticesPred());
+	AlignedVector< Polygon >::iterator it = std::remove_if(polygons.begin(), polygons.end(), [](const Polygon& pol) {
+		return pol.getVertexCount() == 0;
+	});
 	polygons.erase(it, polygons.end());
 
 	// Cleanup model from unused vertices etc.
-	if (!CleanDuplicates(0.1f).apply(model))
+	if (!CleanDuplicates(0.001f).apply(model))
 		return false;
 
 	return true;

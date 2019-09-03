@@ -369,7 +369,7 @@ Ref< ISerializable > PrefabEntityPipeline::buildOutput(
 				model::CleanDegenerate().apply(*partModel);
 
 				if (m_mergeCoplanar)
-					model::MergeCoplanarAdjacents(true).apply(*partModel);
+					model::MergeCoplanarAdjacents().apply(*partModel);
 
 				model::MergeModel(*partModel, shapeMesh.transform, m_collisionMeshSnap).apply(*mergedModel);
 
@@ -379,7 +379,7 @@ Ref< ISerializable > PrefabEntityPipeline::buildOutput(
 
 		// Collapse coplanar adjacent polygons.
 		if (m_mergeCoplanar)
-			model::MergeCoplanarAdjacents(true).apply(*mergedModel);
+			model::MergeCoplanarAdjacents().apply(*mergedModel);
 
 		log::info << L"Output physics model ('original' to 'merged'):" << Endl;
 		log::info << L"\t" << vertexCount << L" to " << mergedModel->getVertexCount() << L" vertices" << Endl;
