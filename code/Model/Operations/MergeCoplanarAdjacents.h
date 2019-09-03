@@ -23,12 +23,7 @@ class T_DLLCLASS MergeCoplanarAdjacents : public IModelOperation
 	T_RTTI_CLASS;
 
 public:
-	MergeCoplanarAdjacents(bool allowConvexOnly);
-
 	virtual bool apply(Model& model) const override final;
-
-private:
-	bool m_allowConvexOnly;
 };
 
 	}

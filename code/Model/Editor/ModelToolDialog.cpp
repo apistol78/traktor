@@ -518,7 +518,7 @@ void ModelToolDialog::eventModelTreeButtonDown(ui::MouseButtonDownEvent* event)
 			else if (command == L"ModelTool.MergeCoplanar")
 			{
 				Ref< ui::TreeViewItem > itemOperation = m_modelTree->createItem(itemModel, L"Merge Coplanar", 0);
-				itemOperation->setData(L"OPERATION", new MergeCoplanarAdjacents(true));
+				itemOperation->setData(L"OPERATION", new MergeCoplanarAdjacents());
 				updateOperations(itemModel);
 			}
 			else if (command == L"ModelTool.Quantize")

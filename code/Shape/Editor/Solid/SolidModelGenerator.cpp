@@ -3,6 +3,8 @@
 #include "Mesh/Editor/MeshAsset.h"
 #include "Model/Model.h"
 #include "Model/Operations/Boolean.h"
+#include "Model/Operations/CleanDegenerate.h"
+#include "Model/Operations/MergeCoplanarAdjacents.h"
 #include "Model/Operations/Transform.h"
 #include "Physics/MeshShapeDesc.h"
 #include "Physics/StaticBodyDesc.h"
@@ -105,8 +107,8 @@ Ref< model::Model > SolidModelGenerator::createModel(const Object* source) const
         }
     }
 
-	//model::Triangulate().apply(current);
-	//model::CalculateTangents().apply(current);
+    model::CleanDegenerate().apply(current);
+    model::MergeCoplanarAdjacents().apply(current);
 
     return new model::Model(current);
 }
