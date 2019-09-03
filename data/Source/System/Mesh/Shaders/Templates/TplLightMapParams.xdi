@@ -15,7 +15,7 @@
 			<comment/>
 			<position>
 				<first>277</first>
-				<second>213</second>
+				<second>175</second>
 			</position>
 			<name>T_TexCoord0</name>
 			<connectable>true</connectable>
@@ -28,7 +28,7 @@
 			<comment/>
 			<position>
 				<first>277</first>
-				<second>252</second>
+				<second>213</second>
 			</position>
 			<name>T_TexCoord1</name>
 			<connectable>true</connectable>
@@ -41,9 +41,22 @@
 			<comment/>
 			<position>
 				<first>277</first>
-				<second>291</second>
+				<second>289</second>
 			</position>
 			<name>T_ViewNormal</name>
+			<connectable>true</connectable>
+			<optional>false</optional>
+			<haveDefaultValue>true</haveDefaultValue>
+			<defaultValue>0</defaultValue>
+		</item>
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{D839A2B6-AA76-44F5-A8C6-A43D99EAF91E}</id>
+			<comment/>
+			<position>
+				<first>277</first>
+				<second>251</second>
+			</position>
+			<name>T_ViewPosition</name>
 			<connectable>true</connectable>
 			<optional>false</optional>
 			<haveDefaultValue>true</haveDefaultValue>

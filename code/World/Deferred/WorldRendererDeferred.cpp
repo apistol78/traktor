@@ -23,6 +23,7 @@
 #include "Resource/IResourceManager.h"
 #include "World/Entity.h"
 #include "World/IEntityRenderer.h"
+#include "World/IrradianceGrid.h"
 #include "World/WorldContext.h"
 #include "World/WorldEntityRenderers.h"
 #include "World/WorldRenderView.h"
@@ -78,6 +79,10 @@ render::handle_t s_handleFogColor = 0;
 render::handle_t s_handleLightCount = 0;
 render::handle_t s_handleLightSBuffer = 0;
 render::handle_t s_handleTileSBuffer = 0;
+render::handle_t s_handleIrradianceGridSize = 0;
+render::handle_t s_handleIrradianceGridSBuffer = 0;
+render::handle_t s_handleIrradianceGridBoundsMin = 0;
+render::handle_t s_handleIrradianceGridBoundsMax = 0;
 
 #pragma pack(1)
 
@@ -193,6 +198,10 @@ WorldRendererDeferred::WorldRendererDeferred()
 	s_handleLightCount = render::getParameterHandle(L"World_LightCount");
 	s_handleLightSBuffer = render::getParameterHandle(L"World_LightSBuffer");
 	s_handleTileSBuffer = render::getParameterHandle(L"World_TileSBuffer");
+	s_handleIrradianceGridSize = render::getParameterHandle(L"World_IrradianceGridSize");
+	s_handleIrradianceGridSBuffer = render::getParameterHandle(L"World_IrradianceGridSBuffer");
+	s_handleIrradianceGridBoundsMin = render::getParameterHandle(L"World_IrradianceGridBoundsMin");
+	s_handleIrradianceGridBoundsMax = render::getParameterHandle(L"World_IrradianceGridBoundsMax");
 }
 
 bool WorldRendererDeferred::create(
@@ -767,6 +776,13 @@ bool WorldRendererDeferred::create(
 		return false;
 	}
 
+	// Create irradiance grid.
+	if (!m_settings.irradianceGrid.isNull())
+	{
+		if (!resourceManager->bind(m_settings.irradianceGrid, m_irradianceGrid))
+			return false;
+	}
+
 	// Determine slice distances.
 	for (int32_t i = 0; i < m_shadowSettings.cascadingSlices; ++i)
 	{
@@ -809,6 +825,8 @@ void WorldRendererDeferred::destroy()
 
 	m_shadowProjection = nullptr;
 	m_renderView = nullptr;
+
+	m_irradianceGrid.clear();
 }
 
 bool WorldRendererDeferred::beginBuild()
@@ -1106,6 +1124,16 @@ void WorldRendererDeferred::render(int32_t frame)
 		irradianceProgramParams.setTextureParameter(s_handleNormalMap, m_gbufferTargetSet->getColorTexture(1));
 		irradianceProgramParams.setTextureParameter(s_handleMiscMap, m_gbufferTargetSet->getColorTexture(2));
 		irradianceProgramParams.setTextureParameter(s_handleColorMap, m_gbufferTargetSet->getColorTexture(3));
+
+		if (m_irradianceGrid)
+		{
+			const auto size = m_irradianceGrid->getSize();
+			irradianceProgramParams.setVectorParameter(s_handleIrradianceGridSize, Vector4(size[0], size[1], size[2], 0.0f));
+			irradianceProgramParams.setVectorParameter(s_handleIrradianceGridBoundsMin, m_irradianceGrid->getBoundingBox().mn);
+			irradianceProgramParams.setVectorParameter(s_handleIrradianceGridBoundsMax, m_irradianceGrid->getBoundingBox().mx);
+			irradianceProgramParams.setStructBufferParameter(s_handleIrradianceGridSBuffer, m_irradianceGrid->getBuffer());
+		}
+
 		irradianceProgramParams.endParameters(m_globalContext);
 
 		T_RENDER_PUSH_MARKER(m_renderView, "World: Irradiance");
@@ -1361,7 +1389,8 @@ void WorldRendererDeferred::buildGBuffer(WorldRenderView& worldRenderView, int f
 	WorldRenderPassDeferred gbufferPass(
 		s_techniqueDeferredGBufferWrite,
 		gbufferRenderView,
-		IWorldRenderPass::PfFirst
+		IWorldRenderPass::PfFirst,
+		false
 	);
 	for (auto entity : m_buildEntities)
 		f.gbuffer->build(gbufferRenderView, gbufferPass, entity);
@@ -1378,7 +1407,8 @@ void WorldRendererDeferred::buildReflections(WorldRenderView& worldRenderView, i
 	WorldRenderPassDeferred reflectionsPass(
 		s_techniqueReflectionWrite,
 		reflectionsRenderView,
-		IWorldRenderPass::PfNone
+		IWorldRenderPass::PfNone,
+		false
 	);
 	for (auto entity : m_buildEntities)
 		f.reflections->build(reflectionsRenderView, reflectionsPass, entity);
@@ -1395,7 +1425,8 @@ void WorldRendererDeferred::buildIrradiance(WorldRenderView& worldRenderView, in
 	WorldRenderPassDeferred irradiancePass(
 		s_techniqueIrradianceWrite,
 		irradianceRenderView,
-		IWorldRenderPass::PfNone
+		IWorldRenderPass::PfNone,
+		(bool)m_irradianceGrid
 	);
 	for (auto entity : m_buildEntities)
 		f.irradiance->build(irradianceRenderView, irradiancePass, entity);
@@ -1415,7 +1446,8 @@ void WorldRendererDeferred::buildVelocity(WorldRenderView& worldRenderView, int 
 	WorldRenderPassDeferred velocityPass(
 		s_techniqueVelocityWrite,
 		velocityRenderView,
-		IWorldRenderPass::PfNone
+		IWorldRenderPass::PfNone,
+		false
 	);
 	for (auto entity : m_buildEntities)
 		f.velocity->build(velocityRenderView, velocityPass, entity);
@@ -1507,7 +1539,8 @@ void WorldRendererDeferred::buildLights(WorldRenderView& worldRenderView, int fr
 				WorldRenderPassDeferred shadowPass(
 					s_techniqueShadow,
 					shadowRenderView,
-					IWorldRenderPass::PfNone
+					IWorldRenderPass::PfNone,
+					false
 				);
 
 				// Set viewport to current cascade.
@@ -1581,7 +1614,8 @@ void WorldRendererDeferred::buildLights(WorldRenderView& worldRenderView, int fr
 			WorldRenderPassDeferred shadowPass(
 				s_techniqueShadow,
 				shadowRenderView,
-				IWorldRenderPass::PfNone
+				IWorldRenderPass::PfNone,
+				false
 			);
 
 			// Set viewport to light atlas slot.

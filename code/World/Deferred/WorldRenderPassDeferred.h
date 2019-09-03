@@ -36,7 +36,8 @@ public:
 	WorldRenderPassDeferred(
 		render::handle_t technique,
 		const WorldRenderView& worldRenderView,
-		uint32_t passFlags
+		uint32_t passFlags,
+		bool irradianceEnable
 	);
 
 	virtual render::handle_t getTechnique() const override final;
@@ -57,6 +58,7 @@ private:
 	uint32_t m_passFlags;
 	bool m_fogEnabled;
 	bool m_depthEnable;
+	bool m_irradianceEnable;
 
 	void setWorldProgramParameters(render::ProgramParameters* programParams, const Transform& lastWorld, const Transform& world) const;
 };

@@ -14,7 +14,7 @@
 			<id>{35CCE66E-B20C-7440-875C-38A2786CE676}</id>
 			<comment/>
 			<position>
-				<first>112</first>
+				<first>111</first>
 				<second>316</second>
 			</position>
 			<name>T_TexCoord0</name>
@@ -27,8 +27,8 @@
 			<id>{09FB31BE-CCCB-4E48-86F4-D85A31137634}</id>
 			<comment/>
 			<position>
-				<first>112</first>
-				<second>356</second>
+				<first>111</first>
+				<second>355</second>
 			</position>
 			<name>T_TexCoord1</name>
 			<connectable>true</connectable>
@@ -77,8 +77,8 @@ Tag_LightMap
 			<id>{FA5222EE-6E63-3A41-AAF2-C388B9A46C50}</id>
 			<comment/>
 			<position>
-				<first>112</first>
-				<second>392</second>
+				<first>111</first>
+				<second>433</second>
 			</position>
 			<name>T_ViewNormal</name>
 			<connectable>true</connectable>
@@ -113,6 +113,19 @@ Tag_LightMap
 				</item>
 			</outputPins>
 			<values/>
+		</item>
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{B2E63A1B-54BC-401F-B8C6-7E957A0A531C}</id>
+			<comment/>
+			<position>
+				<first>111</first>
+				<second>394</second>
+			</position>
+			<name>T_ViewPosition</name>
+			<connectable>true</connectable>
+			<optional>false</optional>
+			<haveDefaultValue>true</haveDefaultValue>
+			<defaultValue>0</defaultValue>
 		</item>
 	</nodes>
 	<edges>

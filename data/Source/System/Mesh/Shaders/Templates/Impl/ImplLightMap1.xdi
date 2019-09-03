@@ -78,7 +78,7 @@ Tag_LightMap
 			<comment/>
 			<position>
 				<first>288</first>
-				<second>357</second>
+				<second>400</second>
 			</position>
 			<name>T_ViewNormal</name>
 			<connectable>true</connectable>
@@ -113,6 +113,19 @@ Tag_LightMap
 				</item>
 			</outputPins>
 			<values/>
+		</item>
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{37D87415-413C-41DC-A57C-C8FCB75354E1}</id>
+			<comment/>
+			<position>
+				<first>288</first>
+				<second>360</second>
+			</position>
+			<name>T_ViewPosition</name>
+			<connectable>true</connectable>
+			<optional>false</optional>
+			<haveDefaultValue>true</haveDefaultValue>
+			<defaultValue>0</defaultValue>
 		</item>
 	</nodes>
 	<edges>
