@@ -121,24 +121,35 @@ void CharacterComponent::setHeadAngle(float headAngle)
 	m_headAngle = headAngle;
 }
 
+void CharacterComponent::move(const Vector4& motion, bool vertical)
+{
+	if (vertical)
+		m_velocity = motion;
+	else
+		m_velocity = motion * Vector4(1.0f, 0.0f, 1.0f) + m_velocity * Vector4(0.0f, 1.0f, 0.0f);
+}
+
+bool CharacterComponent::jump()
+{
+	if (!grounded())
+		return false;
+	m_velocity += Vector4(0.0f, m_data->getJumpImpulse(), 0.0f);
+	return true;
+}
+
+bool CharacterComponent::grounded() const
+{
+	return m_grounded;
+}
+
 float CharacterComponent::getHeadAngle() const
 {
 	return m_headAngle;
 }
 
-void CharacterComponent::setVelocity(const Vector4& velocity)
-{
-	m_velocity = velocity;
-}
-
 const Vector4& CharacterComponent::getVelocity() const
 {
 	return m_velocity;
-}
-
-bool CharacterComponent::isGrounded() const
-{
-	return m_grounded;
 }
 
 bool CharacterComponent::stepVertical(float motion, Vector4& inoutPosition) const
