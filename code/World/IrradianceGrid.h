@@ -2,7 +2,7 @@
 
 #include "Core/Object.h"
 #include "Core/Ref.h"
-#include "Core/Math/Vector4.h"
+#include "Core/Math/Aabb3.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -50,14 +50,23 @@ class T_DLLCLASS IrradianceGrid : public Object
     T_RTTI_CLASS;
 
 public:
-    IrradianceGrid(const Vector4& size, render::StructBuffer* buffer);
+    typedef uint32_t gridSize_t [3];
 
-    const Vector4& getSize() const { return m_size; }
+    IrradianceGrid(
+        gridSize_t size,
+        const Aabb3& boundingBox,
+        render::StructBuffer* buffer
+    );
+
+    const gridSize_t& getSize() const { return m_size; }
+
+    const Aabb3& getBoundingBox() const { return m_boundingBox; }
 
     render::StructBuffer* getBuffer() const { return m_buffer; }
 
 private:
-    Vector4 m_size;
+    gridSize_t m_size;
+    Aabb3 m_boundingBox;
     Ref< render::StructBuffer > m_buffer;
 };
 

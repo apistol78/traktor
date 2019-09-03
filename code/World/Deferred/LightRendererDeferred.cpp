@@ -50,6 +50,8 @@ render::handle_t s_handleTileSBuffer;
 render::handle_t s_handleIrradianceEnable;
 render::handle_t s_handleIrradianceGridSize;
 render::handle_t s_handleIrradianceGridSBuffer;
+render::handle_t s_handleirradianceGridBoundsMin;
+render::handle_t s_handleirradianceGridBoundsMax;
 
 #pragma pack(1)
 
@@ -95,6 +97,8 @@ LightRendererDeferred::LightRendererDeferred()
 	s_handleIrradianceEnable = render::getParameterHandle(L"World_IrradianceEnable");
 	s_handleIrradianceGridSize = render::getParameterHandle(L"World_IrradianceGridSize");
 	s_handleIrradianceGridSBuffer = render::getParameterHandle(L"World_IrradianceGridSBuffer");
+	s_handleirradianceGridBoundsMin = render::getParameterHandle(L"World_IrradianceGridBoundsMin");
+	s_handleirradianceGridBoundsMax = render::getParameterHandle(L"World_IrradianceGridBoundsMax");
 }
 
 bool LightRendererDeferred::create(
@@ -184,7 +188,10 @@ void LightRendererDeferred::renderLights(
 
 	if (m_irradianceGrid)
 	{
-		m_lightShader->setVectorParameter(s_handleIrradianceGridSize, m_irradianceGrid->getSize());
+		const auto size = m_irradianceGrid->getSize();
+		m_lightShader->setVectorParameter(s_handleIrradianceGridSize, Vector4(size[0], size[1], size[2], 0.0f));
+		m_lightShader->setVectorParameter(s_handleirradianceGridBoundsMin, m_irradianceGrid->getBoundingBox().mn);
+		m_lightShader->setVectorParameter(s_handleirradianceGridBoundsMax, m_irradianceGrid->getBoundingBox().mx);
 		m_lightShader->setStructBufferParameter(s_handleIrradianceGridSBuffer, m_irradianceGrid->getBuffer());
 	}
 

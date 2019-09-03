@@ -29,9 +29,13 @@ public:
 
 	bool traceIndirect() const { return m_traceIndirect; }
 
+	bool traceIrradiance() const { return m_traceIrradiance; }
+
 	uint32_t getIndirectSampleCount() const { return m_indirectSampleCount; }
 
 	uint32_t getShadowSampleCount() const { return m_shadowSampleCount; }
+
+	uint32_t getIrradianceSampleCount() const { return m_irradianceSampleCount; }
 
 	float getPointLightShadowRadius() const { return m_pointLightShadowRadius; }
 
@@ -51,8 +55,10 @@ private:
 	Guid m_seedGuid;
 	bool m_traceDirect;
 	bool m_traceIndirect;
+	bool m_traceIrradiance;
 	uint32_t m_indirectSampleCount;
 	uint32_t m_shadowSampleCount;
+	uint32_t m_irradianceSampleCount;
 	float m_pointLightShadowRadius;
 	float m_lumelDensity;
 	int32_t m_minimumLightMapSize;

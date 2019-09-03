@@ -130,11 +130,16 @@ Ref< Object > WorldResourceFactory::create(resource::IResourceManager* resourceM
 
 		uint32_t version;
 		reader >> version;
-		if (version != 1)
+		if (version != 2)
 		{
 			log::error << L"Unable to read irradiance grid, unknown version " << version << Endl;
 			return nullptr;
 		}
+
+		IrradianceGrid::gridSize_t size;
+		reader >> size[0];
+		reader >> size[1];
+		reader >> size[2];
 
 		float mn[3], mx[3];
 		reader >> mn[0];
@@ -144,13 +149,13 @@ Ref< Object > WorldResourceFactory::create(resource::IResourceManager* resourceM
 		reader >> mx[1];
 		reader >> mx[2];
 
-		for (int32_t x = 0; x < 64; ++x)
+		for (int32_t x = 0; x < size[0]; ++x)
 		{
-			for (int32_t y = 0; y < 16; ++y)
+			for (int32_t y = 0; y < size[1]; ++y)
 			{
-				for (int32_t z = 0; z < 64; ++z)
+				for (int32_t z = 0; z < size[2]; ++z)
 				{
-					int32_t cell = (y * 64 * 64) + (z * 64) + x;
+					int32_t cell = (y * size[0] * size[2]) + (z * size[0]) + x;
 
 					auto& g = grid[cell];
 
@@ -176,7 +181,8 @@ Ref< Object > WorldResourceFactory::create(resource::IResourceManager* resourceM
 		buffer->unlock();
 
 		return new IrradianceGrid(
-			Vector4(64, 16, 64, 0),
+			size,
+			Aabb3(Vector4(mn[0], mn[1], mn[2]), Vector4(mx[0], mx[1], mx[2])),
 			buffer
 		);
 	}
