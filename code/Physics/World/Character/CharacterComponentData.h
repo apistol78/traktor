@@ -36,7 +36,7 @@ class CollisionSpecification;
 class PhysicsManager;
 class ShapeDesc;
 
-/*! \brief
+/*! Character component data.
  * \ingroup Physics
  */
 class T_DLLCLASS CharacterComponentData : public world::IEntityComponentData
@@ -46,6 +46,7 @@ class T_DLLCLASS CharacterComponentData : public world::IEntityComponentData
 public:
 	CharacterComponentData();
 
+	/*! Create instance of character component. */
 	Ref< CharacterComponent > createComponent(
 		const world::IEntityBuilder* entityBuilder,
 		resource::IResourceManager* resourceManager,
@@ -58,11 +59,17 @@ public:
 
 	const std::set< resource::Id< CollisionSpecification > >& getTraceIgnore() const { return m_traceIgnore; }
 
+	/*! Get character radius. */
 	float getRadius() const { return m_radius; }
 
+	/*! Get character height. */
 	float getHeight() const { return m_height; }
 
+	/*! Get character step height. */
 	float getStep() const { return m_step; }
+
+	/*! Get character jump impulse. */
+	float getJumpImpulse() const { return m_jumpImpulse; }
 
 	virtual void serialize(ISerializer& s) override final;
 
@@ -72,6 +79,7 @@ private:
 	float m_radius;
 	float m_height;
 	float m_step;
+	float m_jumpImpulse;
 };
 
 	}

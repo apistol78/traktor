@@ -25,7 +25,7 @@ class Body;
 class CharacterComponentData;
 class PhysicsManager;
 
-/*! \brief
+/*! Character component.
  * \ingroup Physics
  */
 class T_DLLCLASS CharacterComponent : public world::IEntityComponent
@@ -54,13 +54,29 @@ public:
 
 	void setHeadAngle(float headAngle);
 
+	/*! Move character.
+	 *
+	 * \param motion New velocity of character.
+	 * \param vertical If vertical velocity should be set.
+	 */
+	void move(const Vector4& motion, bool vertical);
+
+	/*! Issue character jump.
+	 *
+	 * Only issued if character is grounded using
+	 * the impulse specified in the character data.
+	 *
+	 * \return True if jump has been initiated.
+	 */
+	bool jump();
+
+	/*! Return true if character is grounded. */
+	bool grounded() const;
+
 	float getHeadAngle() const;
 
-	void setVelocity(const Vector4& velocity);
-
+	/*! Character current velocity. */
 	const Vector4& getVelocity() const;
-
-	bool isGrounded() const;
 
 private:
 	world::Entity* m_owner;
