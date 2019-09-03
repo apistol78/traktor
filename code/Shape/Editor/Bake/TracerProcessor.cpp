@@ -378,7 +378,6 @@ bool TracerProcessor::process(const TracerTask* task) const
 	for (uint32_t i = 0; i < tracerIrradiances.size(); ++i)
 	{
 		auto tracerIrradiance = tracerIrradiances[i];
-
 		Guid irradianceGridId = tracerIrradiance->getIrradianceGridId();
 
 		// Create output instance.
@@ -407,9 +406,30 @@ bool TracerProcessor::process(const TracerTask* task) const
 
 		Aabb3 boundingBox = tracerIrradiance->getBoundingBox();
 
+		// Determine bounding box from all trace models if noone is already provided.
+		if (boundingBox.empty())
+		{
+			for (auto tracerModel : task->getTracerModels())
+				boundingBox.contain(tracerModel->getModel()->getBoundingBox());
+			boundingBox.expand(Scalar(1.0f));
+		}
+
+		const Scalar c_gridPerUnit(2.0f);
+
+		Vector4 worldSize = boundingBox.getExtent() * Scalar(2.0f);
+
+		int32_t gridX = std::max((int32_t)(worldSize.x() * c_gridPerUnit + 0.5f), 2);
+		int32_t gridY = std::max((int32_t)(worldSize.y() * c_gridPerUnit + 0.5f), 2);
+		int32_t gridZ = std::max((int32_t)(worldSize.z() * c_gridPerUnit + 0.5f), 2);
+
 		Writer writer(stream);
 
-		writer << uint32_t(1);
+		writer << uint32_t(2);
+
+		writer << (uint32_t)gridX;	// width
+		writer << (uint32_t)gridY;	// height
+		writer << (uint32_t)gridZ;	// depth
+
 		writer << boundingBox.mn.x();
 		writer << boundingBox.mn.y();
 		writer << boundingBox.mn.z();
@@ -417,17 +437,20 @@ bool TracerProcessor::process(const TracerTask* task) const
 		writer << boundingBox.mx.y();
 		writer << boundingBox.mx.z();
 
-		for (int32_t x = 0; x < 64; ++x)
+		uint32_t progress = 0;
+		for (int32_t x = 0; x < gridX; ++x)
 		{
-			float fx = x / 63.0f;
-			for (int32_t y = 0; y < 16; ++y)
+			float fx = x / (float)(gridX - 1.0f);
+			for (int32_t y = 0; y < gridY; ++y)
 			{
-				float fy = y / 15.0f;
-				for (int32_t z = 0; z < 64; ++z)
+				float fy = y / (float)(gridY - 1.0f);
+				for (int32_t z = 0; z < gridZ; ++z)
 				{
-					float fz = z / 63.0f;
+					float fz = z / (float)(gridZ - 1.0f);
 
-					m_status.description = toString(x) + L":" + toString(y) + L":" + toString(z);
+					m_status.current = progress++;
+					m_status.total = gridX * gridY * gridZ;
+					m_status.description = L"Irradiance grid";
 
 					Vector4 position = boundingBox.mn + (boundingBox.mx - boundingBox.mn) * Vector4(fx, fy, fz);
 

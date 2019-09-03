@@ -409,74 +409,24 @@ bool BakePipelineOperator::build(
 	inoutSceneAsset->setLayers(layers);
 
 	// Create irradiance grid task.
-	Guid irradianceGridId = seedId.permutate();
+	if (configuration->traceIrradiance())
+	{
+		Guid irradianceGridId = seedId.permutate();
 
-	tracerTask->addTracerIrradiance(new TracerIrradiance(
-		L"Irradiance",
-		irradianceGridId,
-		Aabb3(
-			Vector4(-20.0f, -10.0f, -20.0f),
-			Vector4( 20.0f,  10.0f,  20.0f)
-		)
-	));
+		tracerTask->addTracerIrradiance(new TracerIrradiance(
+			L"Irradiance",
+			irradianceGridId,
+			Aabb3()
+		));
 
-	inoutSceneAsset->getWorldRenderSettings()->irradianceGrid = resource::Id< world::IrradianceGrid >(
-		irradianceGridId
-	);
+		// Modify scene with our generated irradiance grid resource.
+		inoutSceneAsset->getWorldRenderSettings()->irradianceGrid = resource::Id< world::IrradianceGrid >(
+			irradianceGridId
+		);
+	}
 
+	// Finally enqueue task to tracer processor.
 	tracerProcessor->enqueue(tracerTask);
-
-	// Raytrace "ground truths" of each camera.
-	// if (false)
-	// {
-	// 	for (uint32_t i = 0; i < cameraEntityDatas.size(); ++i)
-	// 	{
-	// 		auto cameraEntityData = cameraEntityDatas[i];
-	// 		T_FATAL_ASSERT(cameraEntityData != nullptr);
-
-	// 		auto cameraComponentData = cameraEntityData->getComponent< world::CameraComponentData >();
-	// 		T_FATAL_ASSERT(cameraComponentData != nullptr);
-
-	// 		if (cameraComponentData->getCameraType() != world::CtPerspective)
-	// 			continue;
-
-	// 		log::info << L"Tracing camera \"" << cameraEntityData->getName() << L"\" (" << i << L"/" << cameraEntityDatas.size() << L")..." << Endl;
-
-	// 		Ref< drawing::Image > image = rayTracer->traceCamera(cameraEntityData->getTransform(), 1280, 720, cameraComponentData->getFieldOfView());
-	// 		if (!image)
-	// 			continue;
-
-	// 		drawing::TonemapFilter tonemapFilter;
-	// 		image->apply(&tonemapFilter);
-
-	// 		drawing::GammaFilter gammaFilter(1.0f / 2.2f);
-	// 		image->apply(&gammaFilter);
-
-	// 		image->save(cameraEntityData->getName() + L"_" + toString(i) + L"_Camera.png");
-	// 	}
-	// }
-
-	// Raytrace IBL probes.
-	// for (uint32_t i = 0; i < lightEntityDatas.size(); ++i)
-	// {
-	// 	auto lightEntityData = lightEntityDatas[i];
-	// 	T_FATAL_ASSERT(lightEntityData != nullptr);
-
-	// 	auto lightComponentData = lightEntityData->getComponent< world::LightComponentData >();
-	// 	T_FATAL_ASSERT(lightComponentData != nullptr);
-
-	// 	if (lightComponentData->getLightType() != world::LtProbe)
-	// 		continue;
-
-	// 	log::info << L"Tracing SH probe \"" << lightEntityData->getName() << L"\" (" << i << L"/" << lightEntityDatas.size() << L")..." << Endl;
-
-	// 	auto position = lightEntityData->getTransform().translation().xyz1();
-
-	// 	Ref< render::SHCoeffs > shCoeffs = rayTracer->traceProbe(position);
-	// 	if (shCoeffs)
-	// 		lightComponentData->setSHCoeffs(shCoeffs);
-	// }
-
 	return true;
 }
 

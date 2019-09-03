@@ -1,3 +1,4 @@
+#include <cstring>
 #include "World/IrradianceGrid.h"
 
 namespace traktor
@@ -7,10 +8,15 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.world.IrradianceGrid", IrradianceGrid, Object)
 
-IrradianceGrid::IrradianceGrid(const Vector4& size, render::StructBuffer* buffer)
-:   m_size(size)
+IrradianceGrid::IrradianceGrid(
+    gridSize_t size,
+    const Aabb3& boundingBox,
+    render::StructBuffer* buffer
+)
+:   m_boundingBox(boundingBox)
 ,   m_buffer(buffer)
 {
+    std::memcpy(m_size, size, sizeof(gridSize_t));
 }
 
     }

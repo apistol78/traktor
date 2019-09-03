@@ -9,14 +9,16 @@ namespace traktor
 	namespace shape
 	{
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.shape.BakeConfiguration", 10, BakeConfiguration, ISerializable)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.shape.BakeConfiguration", 11, BakeConfiguration, ISerializable)
 
 BakeConfiguration::BakeConfiguration()
 :	m_seedGuid(Guid::create())
 ,	m_traceDirect(false)
 ,	m_traceIndirect(true)
+,	m_traceIrradiance(true)
 ,	m_indirectSampleCount(100)
 ,	m_shadowSampleCount(100)
+,	m_irradianceSampleCount(100)
 ,	m_pointLightShadowRadius(0.1f)
 ,	m_lumelDensity(64.0f)
 ,	m_minimumLightMapSize(128)
@@ -32,6 +34,9 @@ void BakeConfiguration::serialize(ISerializer& s)
 	s >> Member< bool >(L"traceDirect", m_traceDirect);
 	s >> Member< bool >(L"traceIndirect", m_traceIndirect);
 
+	if (s.getVersion() >= 11)
+		s >> Member< bool >(L"traceIrradiance", m_traceIrradiance);
+
 	if (s.getVersion() >= 7 && s.getVersion() < 10)
 	{
 		bool traceDebug;
@@ -40,6 +45,10 @@ void BakeConfiguration::serialize(ISerializer& s)
 
 	s >> Member< uint32_t >(L"indirectSampleCount", m_indirectSampleCount, AttributeRange(0));
 	s >> Member< uint32_t >(L"shadowSampleCount", m_shadowSampleCount, AttributeRange(0));
+
+	if (s.getVersion() >= 11)
+		s >> Member< uint32_t >(L"irradianceSampleCount", m_irradianceSampleCount, AttributeRange(0));
+
 	s >> Member< float >(L"pointLightShadowRadius", m_pointLightShadowRadius, AttributeRange(0.0f));
 	s >> Member< float >(L"lumelDensity", m_lumelDensity, AttributeRange(0.0f));
 

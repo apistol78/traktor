@@ -9,4 +9,9 @@ MemberArray::MemberArray(const wchar_t* const name, const Attribute* attributes)
 {
 }
 
+void MemberArray::setAttributes(const Attribute* attributes)
+{
+    m_attributes = attributes;
+}
+
 }
