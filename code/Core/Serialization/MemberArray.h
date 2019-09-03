@@ -18,7 +18,7 @@ class Attribute;
 class TypeInfo;
 class ISerializer;
 
-/*! \brief Array member base.
+/*! Array member base.
  * \ingroup Core
  */
 class T_DLLCLASS MemberArray
@@ -28,13 +28,13 @@ public:
 
 	virtual ~MemberArray() {}
 
-	/*! \brief Get name of member.
+	/*! Get name of member.
 	 *
 	 * \return Member's name.
 	 */
 	const wchar_t* const getName() const { return m_name; }
 
-	/*! \brief Get member attributes.
+	/*! Get member attributes.
 	 *
 	 * Get member attributes if applicable.
 	 *
@@ -42,33 +42,28 @@ public:
 	 */
 	const Attribute* getAttributes() const { return m_attributes; }
 
-	/*!
-	 * Reserve size for X number of elements.
+	/*! Reserve size for X number of elements.
+	 *
 	 * \param size Known number of elements.
 	 * \param capacity Estimated number of elements.
 	 */
 	virtual void reserve(size_t size, size_t capacity) const = 0;
 
-	/*!
-	 * Return size of the array in number of elements.
-	 */
+	/*! Return size of the array in number of elements. */
 	virtual size_t size() const = 0;
 
-	/*!
-	 * Read next element from serializer.
-	 */
+	/*! Read next element from serializer. */
 	virtual void read(ISerializer& s) const = 0;
 
-	/*!
-	 * Write next element to serializer.
-	 */
+	/*! Write next element to serializer. */
 	virtual void write(ISerializer& s) const = 0;
 
-	/*!
-	* Insert default element, used by property list
-	* to add new elements.
-	*/
+	/*! Insert default element, used by property list to add new elements. */
 	virtual bool insert() const = 0;
+
+protected:
+	/*! Set attributes member. */
+	void setAttributes(const Attribute* attributes);
 
 private:
 	const wchar_t* const m_name;
