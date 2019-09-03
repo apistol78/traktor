@@ -229,7 +229,7 @@ Ref< render::SHCoeffs > RayTracerEmbree::traceProbe(const Vector4& position) con
 				rh.ray.dir_y[j] = direction[j].y();
 				rh.ray.dir_z[j] = direction[j].z();
 
-				rh.ray.tnear[j] = c_epsilonOffset;
+				rh.ray.tnear[j] = 0.0f;
 				rh.ray.time[j] = 0.0f;
 				rh.ray.tfar[j] = m_maxDistance;
 

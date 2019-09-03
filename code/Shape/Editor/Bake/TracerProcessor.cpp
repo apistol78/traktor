@@ -404,17 +404,16 @@ bool TracerProcessor::process(const TracerTask* task) const
 			return false;
 		}
 
-		Aabb3 boundingBox = tracerIrradiance->getBoundingBox();
+		const Scalar c_gridPerUnit(2.0f);
 
 		// Determine bounding box from all trace models if noone is already provided.
+		Aabb3 boundingBox = tracerIrradiance->getBoundingBox();
 		if (boundingBox.empty())
 		{
 			for (auto tracerModel : task->getTracerModels())
 				boundingBox.contain(tracerModel->getModel()->getBoundingBox());
-			boundingBox.expand(Scalar(1.0f));
+			boundingBox.expand(c_gridPerUnit);
 		}
-
-		const Scalar c_gridPerUnit(2.0f);
 
 		Vector4 worldSize = boundingBox.getExtent() * Scalar(2.0f);
 
