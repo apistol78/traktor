@@ -90,6 +90,7 @@ Ref< model::Model > Box::createModel() const
 		pol.addVertex(vi[0]);
 		pol.addVertex(vi[1]);
 		pol.addVertex(vi[2]);
+		pol.addVertex(vi[3]);
 		m->addPolygon(pol);
 	}
 
