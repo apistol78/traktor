@@ -8,6 +8,20 @@ namespace traktor
 {
 	namespace shape
 	{
+		namespace
+		{
+
+struct BoxMaterial { const wchar_t* name; Color4f color; } c_materials[] =
+{
+	{ L"-Z", Color4f(1.0f, 0.5f, 0.5f, 1.0f) },
+	{ L"+X", Color4f(0.5f, 1.0f, 0.5f, 1.0f) },
+	{ L"+Z", Color4f(0.5f, 0.5f, 1.0f, 1.0f) },
+	{ L"-X", Color4f(0.5f, 1.0f, 1.0f, 1.0f) },
+	{ L"+Y", Color4f(1.0f, 0.5f, 1.0f, 1.0f) },
+	{ L"-Y", Color4f(1.0f, 1.0f, 0.5f, 1.0f) }
+};
+
+		}
 	
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.shape.Box", 0, Box, IShape)
 
@@ -18,27 +32,23 @@ Box::Box()
 
 Ref< model::Model > Box::createModel() const
 {
-	const Scalar two(2.0f);
-
 	Vector4 vertices[8];
-	Aabb3(-m_extent / two, m_extent / two).getExtents(vertices);
-
-	const Vector4* normals = Aabb3::getNormals();
+	Aabb3(-m_extent / Scalar(2.0f), m_extent / Scalar(2.0f)).getExtents(vertices);
 
 	Ref< model::Model > m = new model::Model();
-	
-	uint32_t materials[] =
-	{
-		m->addMaterial(model::Material(L"Roof", Color4f(1.0f, 0.5f, 0.5f, 1.0f))),
-		m->addMaterial(model::Material(L"Wall", Color4f(0.5f, 1.0f, 0.5f, 1.0f))),
-		m->addMaterial(model::Material(L"Floor", Color4f(0.5f, 0.5f, 1.0f, 1.0f)))
-	};
 
-	m->addUniqueTexCoordChannel(L"UVMap");
+	uint32_t tc = m->addUniqueTexCoordChannel(L"UVMap");
 
 	for (uint32_t i = 0; i < 6; ++i)
 	{
+		const Vector4* normals = Aabb3::getNormals();
 		const int* face = Aabb3::getFaces() + i * 4;
+
+		model::Material material;
+		material.setName(c_materials[i].name);
+		material.setColor(c_materials[i].color);
+		material.setDiffuseMap(model::Material::Map(L"Texture", tc, true));
+		uint32_t mi = m->addMaterial(material);
 
         Vector4 fu, fv;
 		switch (majorAxis3(normals[i]))
@@ -57,8 +67,8 @@ Ref< model::Model > Box::createModel() const
 			break;
 		}
 
-		uint32_t v[4];
-		uint32_t n = m->addUniqueNormal(normals[i]);
+		uint32_t vi[4];
+		uint32_t ni = m->addUniqueNormal(normals[i]);
 
 		for (int32_t j = 0; j < 4; ++j)
 		{
@@ -66,22 +76,20 @@ Ref< model::Model > Box::createModel() const
 
 			model::Vertex vx;
 			vx.setPosition(m->addUniquePosition(P));
-			vx.setNormal(n);
+			vx.setNormal(ni);
 			vx.setTexCoord(0, m->addUniqueTexCoord(Vector2(
 				dot3(fu, P),
 				dot3(fv, P)
 			)));
-			v[j] = m->addUniqueVertex(vx);
+			vi[j] = m->addUniqueVertex(vx);
 		}
 
-		uint32_t material = materials[1];
-		if (normals[i].y() > 0.5f)
-			material = materials[2];
-		else if (normals[i].y() < -0.5f)
-			material = materials[0];
-
-		model::Polygon pol(material, v[0], v[1], v[2], v[3]);
-		pol.setNormal(n);
+		model::Polygon pol;
+		pol.setMaterial(mi);
+		pol.setNormal(ni);
+		pol.addVertex(vi[0]);
+		pol.addVertex(vi[1]);
+		pol.addVertex(vi[2]);
 		m->addPolygon(pol);
 	}
 

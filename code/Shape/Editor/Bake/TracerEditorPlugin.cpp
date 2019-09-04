@@ -1,3 +1,5 @@
+#include "Core/Settings/PropertyGroup.h"
+#include "Core/Settings/PropertyString.h"
 #include "Editor/IEditor.h"
 #include "Editor/IEditorPageSite.h"
 #include "Shape/Editor/Bake/BakePipelineOperator.h"
@@ -52,7 +54,16 @@ void TracerEditorPlugin::handleDatabaseEvent(db::Database* database, const Guid&
 
 void TracerEditorPlugin::handleWorkspaceOpened()
 {
+	std::wstring tracerTypeName = m_editor->getSettings()->getProperty< std::wstring >(L"BakePipelineOperator.RayTracerType", L"traktor.shape.RayTracerEmbree");
+	if (tracerTypeName.empty())
+		return;
+
+	auto tracerType = TypeInfo::find(tracerTypeName.c_str());
+	if (!tracerType)
+		return;
+
     BakePipelineOperator::setTracerProcessor(new TracerProcessor(
+		tracerType,
 		m_editor->getOutputDatabase()
 	));
 }

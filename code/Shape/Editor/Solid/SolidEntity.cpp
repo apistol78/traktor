@@ -3,7 +3,7 @@
 #include "Core/Misc/SafeDestroy.h"
 #include "Model/Model.h"
 #include "Model/Operations/Boolean.h"
-#include "Model/Operations/CalculateTangents.h"
+#include "Model/Operations/CleanDegenerate.h"
 #include "Model/Operations/Transform.h"
 #include "Model/Operations/Triangulate.h"
 #include "Render/IndexBuffer.h"
@@ -129,9 +129,8 @@ void SolidEntity::update(const world::UpdateParams& update)
             }
         }
 
-		// \tbd Merge coplanar.
+		model::CleanDegenerate().apply(current);
 		model::Triangulate().apply(current);
-		//model::CalculateTangents().apply(current);
 
         safeDestroy(m_vertexBuffer);
         safeDestroy(m_indexBuffer);

@@ -47,6 +47,7 @@ public:
 
 private:
 	std::wstring m_assetPath;
+	const TypeInfo* m_tracerType;
 	RefArray< const IModelGenerator > m_modelGenerators;
 	static Ref< TracerProcessor > ms_tracerProcessor;	
 
