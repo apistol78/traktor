@@ -124,7 +124,7 @@ void addLight(const world::LightComponentData* lightComponentData, const Transfo
 }
 
 /*! */
-bool addModel(const model::Model* model, const std::wstring& name, const Guid& lightmapId, int32_t lightmapSize, editor::IPipelineBuilder* pipelineBuilder, TracerTask* tracerTask)
+bool addModel(const model::Model* model, const Transform& transform, const std::wstring& name, const Guid& lightmapId, int32_t lightmapSize, editor::IPipelineBuilder* pipelineBuilder, TracerTask* tracerTask)
 {
 	Ref< model::Model > mutableModel = DeepClone(model).create< model::Model >();
 	if (!mutableModel)
@@ -183,11 +183,16 @@ bool addModel(const model::Model* model, const std::wstring& name, const Guid& l
 		return false;
 	}
 
-	tracerTask->addTracerModel(new TracerModel(mutableModel));
+	tracerTask->addTracerModel(new TracerModel(
+		mutableModel,
+		transform
+	));
+
 	tracerTask->addTracerOutput(new TracerOutput(
 		name,
 		0,
 		mutableModel,
+		transform,
 		lightmapId,
 		lightmapSize
 	));
@@ -344,7 +349,7 @@ bool BakePipelineOperator::build(
 						continue;
 
 					// Synthesize a model which we can trace.
-					Ref< model::Model > model = modelGenerator->createModel(pipelineBuilder, componentData);
+					Ref< model::Model > model = modelGenerator->createModel(pipelineBuilder, m_assetPath, componentData);
 					if (!model)
 						continue;
 
@@ -395,6 +400,7 @@ bool BakePipelineOperator::build(
 					// Add model to raytracing task.
 					if (!addModel(
 						model,
+						inoutEntityData->getTransform(),
 						inoutEntityData->getName(),
 						lightmapId,
 						lightmapSize,
@@ -407,6 +413,7 @@ bool BakePipelineOperator::build(
 					// which make sense for entity data.
 					Ref< world::IEntityComponentData > replaceComponentData = checked_type_cast< world::IEntityComponentData* >(modelGenerator->modifyOutput(
 						pipelineBuilder,
+						m_assetPath,
 						componentData,
 						lightmapId,
 						model
@@ -430,7 +437,7 @@ bool BakePipelineOperator::build(
 					return true;
 
 				// Synthesize a model which we can trace.
-				Ref< model::Model > model = modelGenerator->createModel(pipelineBuilder, inoutEntityData);
+				Ref< model::Model > model = modelGenerator->createModel(pipelineBuilder, m_assetPath, inoutEntityData);
 				if (!model)
 					return true;
 
@@ -479,6 +486,7 @@ bool BakePipelineOperator::build(
 				// Add model to raytracing task.
 				if (!addModel(
 					model,
+					Transform::identity(),
 					inoutEntityData->getName(),
 					lightmapId,
 					lightmapSize,
@@ -491,6 +499,7 @@ bool BakePipelineOperator::build(
 				// which make sense for entity data.
 				inoutEntityData = checked_type_cast< world::EntityData* >(modelGenerator->modifyOutput(
 					pipelineBuilder,
+					m_assetPath,
 					inoutEntityData,
 					lightmapId,
 					model

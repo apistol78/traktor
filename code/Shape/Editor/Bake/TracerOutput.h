@@ -3,6 +3,7 @@
 #include "Core/Guid.h"
 #include "Core/Object.h"
 #include "Core/Ref.h"
+#include "Core/Math/Transform.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -33,6 +34,7 @@ public:
 		const std::wstring& name,
 		int32_t priority,
         const model::Model* model,
+		const Transform& transform,
         const Guid& lightmapId,
 		int32_t lightmapSize
     );
@@ -43,6 +45,8 @@ public:
 
     const model::Model* getModel() const { return m_model; }
 
+	const Transform& getTransform() const { return m_transform; }
+
     const Guid& getLightmapId() const { return m_lightmapId; }
 
 	int32_t getLightmapSize() const { return m_lightmapSize; }
@@ -51,6 +55,7 @@ private:
 	std::wstring m_name;
 	int32_t m_priority;
 	Ref< const model::Model > m_model;
+	Transform m_transform;
 	Guid m_lightmapId;
 	int32_t m_lightmapSize;
 };

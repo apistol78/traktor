@@ -210,7 +210,7 @@ bool TracerProcessor::process(const TracerTask* task) const
     for (auto tracerLight : task->getTracerLights())
         rayTracer->addLight(tracerLight->getLight());
     for (auto tracerModel : task->getTracerModels())
-        rayTracer->addModel(tracerModel->getModel(), Transform::identity());
+        rayTracer->addModel(tracerModel->getModel(), tracerModel->getTransform());
 
     rayTracer->commit();
 
@@ -238,7 +238,7 @@ bool TracerProcessor::process(const TracerTask* task) const
 
         // Create GBuffer of mesh's geometry.
         GBuffer gbuffer;
-        gbuffer.create(outputSize, outputSize, *renderModel, Transform::identity(), channel);
+        gbuffer.create(outputSize, outputSize, *renderModel, tracerOutput->getTransform(), channel);
 
         // Preprocess GBuffer.
         rayTracer->preprocess(&gbuffer);
