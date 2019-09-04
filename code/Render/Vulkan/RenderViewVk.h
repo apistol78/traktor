@@ -50,6 +50,7 @@ public:
 		VkInstance instance,
 		VkPhysicalDevice physicalDevice,
 		VkDevice device,
+		VmaAllocator allocator,
 		uint32_t graphicsQueueIndex,
 		uint32_t computeQueueIndex
 	);
@@ -139,6 +140,7 @@ private:
 	VkInstance m_instance;
 	VkPhysicalDevice m_physicalDevice;
 	VkDevice m_logicalDevice;
+	VmaAllocator m_allocator;
 	uint32_t m_graphicsQueueIndex;
 	uint32_t m_computeQueueIndex;
 #if defined(_WIN32) || defined(__LINUX__)

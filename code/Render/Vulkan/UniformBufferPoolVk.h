@@ -13,6 +13,7 @@
 #	define VK_NO_PROTOTYPES
 #	include <vulkan/vulkan.h>
 #endif
+#include <vk_mem_alloc.h>
 
 #include "Core/Object.h"
 #include "Core/Containers/AlignedVector.h"
@@ -29,9 +30,13 @@ class UniformBufferPoolVk : public Object
 public:
 	enum { MaxPendingFrames = 4 };
 
-	UniformBufferPoolVk(VkPhysicalDevice physicalDevice, VkDevice logicalDevice);
+	UniformBufferPoolVk(VmaAllocator allocator);
 
-	bool acquire(uint32_t size, VkBuffer& inoutBuffer, VkDeviceMemory& inoutDeviceMemory);
+	bool acquire(
+		uint32_t size,
+		VkBuffer& inoutBuffer,
+		VmaAllocation& inoutAllocation
+	);
 
 	void collect();
 
@@ -40,11 +45,10 @@ private:
 	{
 		uint32_t size;
 		VkBuffer buffer;
-		VkDeviceMemory deviceMemory;
+		VmaAllocation allocation;
 	};
 
-	VkPhysicalDevice m_physicalDevice;
-	VkDevice m_logicalDevice;
+	VmaAllocator m_allocator;
 	AlignedVector< BufferChain > m_free;
 	AlignedVector< BufferChain > m_released[MaxPendingFrames];
 	uint32_t m_counter;
