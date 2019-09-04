@@ -33,7 +33,11 @@ class ProgramVk : public IProgram
 	T_RTTI_CLASS;
 
 public:
-	ProgramVk(VkPhysicalDevice physicalDevice, VkDevice logicalDevice);
+	ProgramVk(
+		VkPhysicalDevice physicalDevice,
+		VkDevice logicalDevice,
+		VmaAllocator allocator
+	);
 
 	virtual ~ProgramVk();
 
@@ -96,13 +100,13 @@ private:
 		uint32_t size;
 		AlignedVector< float > data;
 		VkBuffer buffer;
-		VkDeviceMemory memory;
+		VmaAllocation allocation;
 		bool dirty;
 
 		UniformBuffer()
 		:	size(0)
 		,	buffer(0)
-		,	memory(0)
+		,	allocation(0)
 		,	dirty(true)
 		{
 		}
@@ -134,6 +138,7 @@ private:
 
 	VkPhysicalDevice m_physicalDevice;
 	VkDevice m_logicalDevice;
+	VmaAllocator m_allocator;
 	RenderState m_renderState;
 	VkShaderModule m_vertexShaderModule;
 	VkShaderModule m_fragmentShaderModule;

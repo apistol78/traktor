@@ -56,9 +56,14 @@ bool storeIfNotEqual(const Vector4* source, int length, float* dest)
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ProgramVk", ProgramVk, IProgram)
 
-ProgramVk::ProgramVk(VkPhysicalDevice physicalDevice, VkDevice logicalDevice)
+ProgramVk::ProgramVk(
+	VkPhysicalDevice physicalDevice,
+	VkDevice logicalDevice,
+	VmaAllocator allocator
+)
 :	m_physicalDevice(physicalDevice)
 ,	m_logicalDevice(logicalDevice)
+,	m_allocator(allocator)
 ,	m_vertexShaderModule(0)
 ,	m_fragmentShaderModule(0)
 ,	m_computeShaderModule(0)
@@ -289,12 +294,12 @@ bool ProgramVk::validateGraphics(VkDescriptorPool descriptorPool, VkCommandBuffe
 			if (!uniformBufferPool->acquire(
 				m_uniformBuffers[i].size,
 				m_uniformBuffers[i].buffer,
-				m_uniformBuffers[i].memory
+				m_uniformBuffers[i].allocation
 			))
 				return false;
 
 			uint8_t* ptr = nullptr;
-			if (vkMapMemory(m_logicalDevice, m_uniformBuffers[i].memory, 0, m_uniformBuffers[i].size, 0, (void **)&ptr) != VK_SUCCESS)
+			if (vmaMapMemory(m_allocator, m_uniformBuffers[i].allocation, (void**)&ptr) != VK_SUCCESS)
 				return false;
 
 			std::memcpy(
@@ -303,7 +308,7 @@ bool ProgramVk::validateGraphics(VkDescriptorPool descriptorPool, VkCommandBuffe
 				m_uniformBuffers[i].size
 			);
 
-			vkUnmapMemory(m_logicalDevice, m_uniformBuffers[i].memory);
+			vmaUnmapMemory(m_allocator, m_uniformBuffers[i].allocation);
 			m_uniformBuffers[i].dirty = false;
 		}
 
@@ -458,12 +463,12 @@ bool ProgramVk::validateCompute(VkDescriptorPool descriptorPool, VkCommandBuffer
 			if (!uniformBufferPool->acquire(
 				m_uniformBuffers[i].size,
 				m_uniformBuffers[i].buffer,
-				m_uniformBuffers[i].memory
+				m_uniformBuffers[i].allocation
 			))
 				return false;
 
 			uint8_t* ptr = nullptr;
-			if (vkMapMemory(m_logicalDevice, m_uniformBuffers[i].memory, 0, m_uniformBuffers[i].size, 0, (void **)&ptr) != VK_SUCCESS)
+			if (vmaMapMemory(m_allocator, m_uniformBuffers[i].allocation, (void**)&ptr) != VK_SUCCESS)
 				return false;
 
 			std::memcpy(
@@ -472,7 +477,7 @@ bool ProgramVk::validateCompute(VkDescriptorPool descriptorPool, VkCommandBuffer
 				m_uniformBuffers[i].size
 			);
 
-			vkUnmapMemory(m_logicalDevice, m_uniformBuffers[i].memory);
+			vmaUnmapMemory(m_allocator, m_uniformBuffers[i].allocation);
 			m_uniformBuffers[i].dirty = false;
 		}
 

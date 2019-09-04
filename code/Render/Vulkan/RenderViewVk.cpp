@@ -42,12 +42,14 @@ RenderViewVk::RenderViewVk(
 	VkInstance instance,
 	VkPhysicalDevice physicalDevice,
 	VkDevice logicalDevice,
+	VmaAllocator allocator,
 	uint32_t graphicsQueueIndex,
 	uint32_t computeQueueIndex
 )
 :	m_instance(instance)
 ,	m_physicalDevice(physicalDevice)
 ,	m_logicalDevice(logicalDevice)
+,	m_allocator(allocator)
 ,	m_graphicsQueueIndex(graphicsQueueIndex)
 ,	m_computeQueueIndex(computeQueueIndex)
 ,	m_surface(0)
@@ -904,7 +906,7 @@ bool RenderViewVk::create(uint32_t width, uint32_t height)
 	//}
 
 	// Create uniform buffer pool.
-	m_uniformBufferPool = new UniformBufferPoolVk(m_physicalDevice, m_logicalDevice);
+	m_uniformBufferPool = new UniformBufferPoolVk(m_allocator);
 	return true;
 }
 

@@ -425,6 +425,7 @@ Ref< IRenderView > RenderSystemVk::createRenderView(const RenderViewDefaultDesc&
 		m_instance,
 		m_physicalDevice,
 		m_logicalDevice,
+		m_allocator,
 		m_graphicsQueueIndex,
 		m_computeQueueIndex
 	);
@@ -440,6 +441,7 @@ Ref< IRenderView > RenderSystemVk::createRenderView(const RenderViewEmbeddedDesc
 		m_instance,
 		m_physicalDevice,
 		m_logicalDevice,
+		m_allocator,
 		m_graphicsQueueIndex,
 		m_computeQueueIndex
 	);
@@ -607,7 +609,11 @@ Ref< IProgram > RenderSystemVk::createProgram(const ProgramResource* programReso
 	if (!resource)
 		return nullptr;
 
-	Ref< ProgramVk > program = new ProgramVk(m_physicalDevice, m_logicalDevice);
+	Ref< ProgramVk > program = new ProgramVk(
+		m_physicalDevice,
+		m_logicalDevice,
+		m_allocator
+	);
 	if (program->create(resource))
 		return program;
 	else
