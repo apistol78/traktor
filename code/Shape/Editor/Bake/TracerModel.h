@@ -2,6 +2,7 @@
 
 #include "Core/Object.h"
 #include "Core/Ref.h"
+#include "Core/Math/Transform.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -28,12 +29,15 @@ class T_DLLCLASS TracerModel : public Object
     T_RTTI_CLASS;
 
 public:
-    TracerModel(const model::Model* model);
+    TracerModel(const model::Model* model, const Transform& transform);
 
     const model::Model* getModel() const { return m_model; }
 
+	const Transform& getTransform() const { return m_transform; }
+
 private:
     Ref< const model::Model > m_model;
+	Transform m_transform;
 };
 
     }

@@ -37,6 +37,7 @@ public:
 
     virtual Ref< model::Model > createModel(
         editor::IPipelineBuilder* pipelineBuilder,
+		const std::wstring& assetPath,
         const Object* source
     ) const = 0;
 
@@ -50,6 +51,7 @@ public:
      */
     virtual Ref< Object > modifyOutput(
         editor::IPipelineBuilder* pipelineBuilder,
+		const std::wstring& assetPath,
         const Object* source,
         const Guid& lightmapId,
         const model::Model* model

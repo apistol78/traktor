@@ -30,6 +30,7 @@ TypeInfoSet SolidModelGenerator::getSupportedTypes() const
 
 Ref< model::Model > SolidModelGenerator::createModel(
     editor::IPipelineBuilder* pipelineBuilder,
+	const std::wstring& assetPath,
     const Object* source
 ) const
 {
@@ -118,6 +119,7 @@ Ref< model::Model > SolidModelGenerator::createModel(
 
 Ref< Object > SolidModelGenerator::modifyOutput(
     editor::IPipelineBuilder* pipelineBuilder,
+	const std::wstring& assetPath,
     const Object* source,
     const Guid& lightmapId,
     const model::Model* model
