@@ -7,7 +7,7 @@ namespace traktor
     namespace shape
     {
 
-class SolidModelGenerator : public IModelGenerator
+class MeshModelGenerator : public IModelGenerator
 {
     T_RTTI_CLASS;
 

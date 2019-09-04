@@ -43,7 +43,7 @@ public:
 		std::wstring description;
 	};
 
-    TracerProcessor(db::Database* outputDatabase);
+    TracerProcessor(const TypeInfo* rayTracerType, db::Database* outputDatabase);
 
     virtual ~TracerProcessor();
 

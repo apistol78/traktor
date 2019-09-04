@@ -35,7 +35,10 @@ class IModelGenerator : public Object
 public:
     virtual TypeInfoSet getSupportedTypes() const = 0;
 
-    virtual Ref< model::Model > createModel(const Object* source) const = 0;
+    virtual Ref< model::Model > createModel(
+        editor::IPipelineBuilder* pipelineBuilder,
+        const Object* source
+    ) const = 0;
 
     /*! Prepare source object to reference lightmap.
      *

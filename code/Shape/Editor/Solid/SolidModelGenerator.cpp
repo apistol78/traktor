@@ -28,7 +28,10 @@ TypeInfoSet SolidModelGenerator::getSupportedTypes() const
     return makeTypeInfoSet< SolidEntityData >();
 }
 
-Ref< model::Model > SolidModelGenerator::createModel(const Object* source) const
+Ref< model::Model > SolidModelGenerator::createModel(
+    editor::IPipelineBuilder* pipelineBuilder,
+    const Object* source
+) const
 {
 	const SolidEntityData* solidEntityData = mandatory_non_null_type_cast< const SolidEntityData* >(source);
     

@@ -16,6 +16,7 @@
 #include "Drawing/PixelFormat.h"
 #include "Editor/IPipelineBuilder.h"
 #include "Editor/IPipelineSettings.h"
+#include "Mesh/MeshComponentData.h"
 #include "Model/Model.h"
 #include "Model/ModelFormat.h"
 #include "Model/Operations/CalculateTangents.h"
@@ -219,6 +220,7 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.shape.BakePipelineOperator", 0, BakePip
 Ref< TracerProcessor > BakePipelineOperator::ms_tracerProcessor = nullptr;
 
 BakePipelineOperator::BakePipelineOperator()
+:	m_tracerType(nullptr)
 {
 }
 
@@ -226,6 +228,14 @@ bool BakePipelineOperator::create(const editor::IPipelineSettings* settings)
 {
 	m_assetPath = settings->getProperty< std::wstring >(L"Pipeline.AssetPath", L"");
 	
+	std::wstring tracerTypeName = settings->getProperty< std::wstring >(L"BakePipelineOperator.RayTracerType", L"traktor.shape.RayTracerEmbree");
+	if (tracerTypeName.empty())
+		return false;
+
+	m_tracerType = TypeInfo::find(tracerTypeName.c_str());
+	if (!m_tracerType)
+		return false;
+
 	// Create instances of all concrete model generators.
 	TypeInfoSet modelGeneratorTypes;
 	type_of< IModelGenerator >().findAllOf(modelGeneratorTypes, false);
@@ -261,7 +271,7 @@ bool BakePipelineOperator::build(
 	// In case no tracer processor is registered we create one for this build only,
 	// by doing so we can ensure trace is finished before returning.
 	if (!tracerProcessor)
-		tracerProcessor = new TracerProcessor(pipelineBuilder->getOutputDatabase());
+		tracerProcessor = new TracerProcessor(m_tracerType, pipelineBuilder->getOutputDatabase());
 
 	const auto configuration = mandatory_non_null_type_cast< const BakeConfiguration* >(operatorData);
 	uint32_t configurationHash = DeepHash(configuration).get();
@@ -324,8 +334,93 @@ bool BakePipelineOperator::build(
 					if (configuration->traceDirect())
 						componentEntityData->removeComponent(lightComponentData);
 				}
+
+				RefArray< world::IEntityComponentData > componentDatas = componentEntityData->getComponents();
+				for (auto componentData : componentDatas)
+				{
+					// Find model synthesizer which can generate from current entity.
+					const IModelGenerator* modelGenerator = findModelGenerator(type_of(componentData));
+					if (!modelGenerator)
+						continue;
+
+					// Synthesize a model which we can trace.
+					Ref< model::Model > model = modelGenerator->createModel(pipelineBuilder, componentData);
+					if (!model)
+						continue;
+
+					Guid lightmapId = seedId.permutate();
+
+					// Ensure model is fit for tracing.
+					model->clear(model::Model::CfColors | model::Model::CfJoints);
+					model::Triangulate().apply(*model);
+					model::CleanDuplicates(0.0f).apply(*model);
+					model::CleanDegenerate().apply(*model);
+					model::CalculateTangents().apply(*model);
+
+					// check if model already contain lightmap UV or if we need to unwrap.
+					bool shouldUnwrap = false;
+
+					uint32_t channel = model->getTexCoordChannel(L"Lightmap");
+					if (channel == model::c_InvalidIndex)
+					{
+						// No lightmap UV channel, need to add and unwrap automatically.
+						channel = model->addUniqueTexCoordChannel(L"Lightmap");
+						shouldUnwrap = true;
+					}
+
+					int32_t lightmapSize = calculateLightmapSize(
+						model,
+						configuration->getLumelDensity(),
+						configuration->getMinimumLightMapSize()
+					);
+
+					if (shouldUnwrap)
+					{
+						T_FATAL_ASSERT(channel != model::c_InvalidIndex);
+						model::UnwrapUV(channel, lightmapSize).apply(*model);
+					}
+
+					// Modify all materials to contain reference to lightmap channel.
+					AlignedVector< model::Material > materials = model->getMaterials();
+					for (auto& material : materials)
+					{
+						material.setBlendOperator(model::Material::BoDecal);
+						material.setLightMap(model::Material::Map(L"__Illumination__", channel, false), 1.0f);
+					}
+					model->setMaterials(materials);
+
+					// Write model for debugging into temporary folder.
+					model::ModelFormat::writeAny(L"data/Temp/Bake/" + inoutEntityData->getName() + L".tmd", model);
+
+					// Add model to raytracing task.
+					if (!addModel(
+						model,
+						inoutEntityData->getName(),
+						lightmapId,
+						lightmapSize,
+						pipelineBuilder,
+						tracerTask
+					))
+						continue;
+
+					// Let model generator consume altered model and modify entity in ways
+					// which make sense for entity data.
+					Ref< world::IEntityComponentData > replaceComponentData = checked_type_cast< world::IEntityComponentData* >(modelGenerator->modifyOutput(
+						pipelineBuilder,
+						componentData,
+						lightmapId,
+						model
+					));
+					if (replaceComponentData == nullptr)
+						componentEntityData->removeComponent(componentData);
+					else if (replaceComponentData != componentData)
+					{
+						componentEntityData->removeComponent(componentData);
+						componentEntityData->setComponent(replaceComponentData);
+					}
+				}
 			}
-			else
+			else	// non-component entity type.
 			{
 				Guid lightmapId = seedId.permutate();
 
@@ -335,7 +430,7 @@ bool BakePipelineOperator::build(
 					return true;
 
 				// Synthesize a model which we can trace.
-				Ref< model::Model > model = modelGenerator->createModel(inoutEntityData);
+				Ref< model::Model > model = modelGenerator->createModel(pipelineBuilder, inoutEntityData);
 				if (!model)
 					return true;
 

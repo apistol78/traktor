@@ -103,17 +103,14 @@ Ref< drawing::Image > denoise(const GBuffer& gbuffer, drawing::Image* lightmap)
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.shape.TracerProcessor", TracerProcessor, Object)
 
-TracerProcessor::TracerProcessor(db::Database* outputDatabase)
+TracerProcessor::TracerProcessor(const TypeInfo* rayTracerType, db::Database* outputDatabase)
 :   m_outputDatabase(outputDatabase)
-,   m_rayTracerType(nullptr)
+,   m_rayTracerType(rayTracerType)
 ,   m_thread(nullptr)
 {
 	T_FATAL_ASSERT(m_outputDatabase != nullptr);
+	T_FATAL_ASSERT(m_rayTracerType != nullptr);
 
-	// settings->getProperty< std::wstring >(L"BakePipelineOperator.RayTracerType", L"traktor.shape.RayTracerEmbree").c_str());
-	m_rayTracerType = TypeInfo::find(L"traktor.shape.RayTracerEmbree");
-	//m_rayTracerType = TypeInfo::find(L"traktor.shape.RayTracerLocal");
-    
     m_thread = ThreadManager::getInstance().create(makeFunctor(this, &TracerProcessor::processorThread), L"Tracer");
     m_thread->start();
 }
@@ -136,14 +133,21 @@ void TracerProcessor::enqueue(const TracerTask* task)
 {
     T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
     
+	// Remove any pending task which reference the same scene.
     auto it = std::find_if(m_tasks.begin(), m_tasks.end(), [=](const TracerTask* hs) {
         return hs->getSceneId() == task->getSceneId();
     });
     if (it != m_tasks.end())
         m_tasks.erase(it);
-    
-    m_tasks.push_back(task);
 
+	// Check if currently processing task is same scene.
+	if (m_activeTask != nullptr && m_activeTask->getSceneId() == task->getSceneId())
+	{
+		// \tbd Currently processing same scene, abort and restart.
+	}
+
+	// Add our task and issue processing thread.
+    m_tasks.push_back(task);
     m_event.broadcast();
 }
 

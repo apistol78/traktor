@@ -60,7 +60,7 @@ Ref< ISerializable > SolidEntityPipeline::buildOutput(
 {
 	const SolidEntityData* solidEntityData = mandatory_non_null_type_cast< const SolidEntityData* >(sourceAsset);
     
-    Ref< model::Model > outputModel = SolidModelGenerator().createModel(solidEntityData);
+    Ref< model::Model > outputModel = SolidModelGenerator().createModel(pipelineBuilder, solidEntityData);
     if (!outputModel)
         return nullptr;
 
