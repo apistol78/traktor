@@ -678,16 +678,17 @@ struct RenderTargetSetCreateDesc
 /*! \brief Preferred debuggable target visualization method. */
 enum DebugTargetVisualize
 {
-	DtvDefault,
-	DtvUnitDepth,
-	DtvViewDepth,
-	DtvNormals,
-	DtvVelocity,
-	DtvDeferredRoughness,
-	DtvDeferredMetalness,
-	DtvDeferredSpecular,
-	DtvShadowMap,
-	DtvShadowMask
+	DtvDefault = 0,
+	DtvUnitDepth = 1,
+	DtvViewDepth = 2,
+	DtvNormals = 3,
+	DtvVelocity = 4,
+	DtvDeferredRoughness = 5,
+	DtvDeferredMetalness = 6,
+	DtvDeferredSpecular = 7,
+	DtvDeferredLightMask = 8,
+	DtvShadowMap = 9,
+	DtvShadowMask = 10
 };
 
 /*! \brief Debuggable target. */

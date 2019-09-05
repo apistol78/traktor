@@ -31,6 +31,7 @@ const wchar_t* c_visualizeTechniques[] =
 	L"Roughness",
 	L"Metalness",
 	L"Specular",
+	L"LightMask",
 	L"ShadowMap",
 	L"ShadowMask"
 };

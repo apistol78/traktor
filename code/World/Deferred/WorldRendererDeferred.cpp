@@ -250,7 +250,7 @@ bool WorldRendererDeferred::create(
 		rtscd.preferTiled = true;
 		rtscd.targets[0].format = render::TfR16F;			// Depth (R)
 		rtscd.targets[1].format = render::TfR16G16F;		// Normals (RG)
-		rtscd.targets[2].format = render::TfR11G11B10F;		// Metalness (R), Roughness (G), Specular (B)
+		rtscd.targets[2].format = render::TfR10G10B10A2;	// Metalness (R), Roughness (G), Specular (B), Light mask (A)
 		rtscd.targets[3].format = render::TfR11G11B10F;		// Surface color (RGB)
 
 		m_gbufferTargetSet = renderSystem->createRenderTargetSet(rtscd);
@@ -1107,7 +1107,7 @@ void WorldRendererDeferred::render(int32_t frame)
 		m_renderView->end();
 	}
 
-	// Render lighting.
+	// Render visuals.
 	clear.mask = render::CfColor;
 	clear.colors[0] = Color4f(0.0f, 0.0f, 0.0f, 0.0f);
 
@@ -1145,7 +1145,7 @@ void WorldRendererDeferred::render(int32_t frame)
 		m_lightRenderer->renderLights(
 			m_renderView,
 			f.time,
-			int32_t(f.lights.size()),
+			(int32_t)f.lights.size(),
 			f.projection,
 			f.view,
 			f.lightSBuffer,
@@ -1333,6 +1333,7 @@ void WorldRendererDeferred::getDebugTargets(std::vector< render::DebugTarget >& 
 		outTargets.push_back(render::DebugTarget(L"GBuffer metalness", render::DtvDeferredMetalness, m_gbufferTargetSet->getColorTexture(2)));
 		outTargets.push_back(render::DebugTarget(L"GBuffer roughness", render::DtvDeferredRoughness, m_gbufferTargetSet->getColorTexture(2)));
 		outTargets.push_back(render::DebugTarget(L"GBuffer specular", render::DtvDeferredSpecular, m_gbufferTargetSet->getColorTexture(2)));
+		outTargets.push_back(render::DebugTarget(L"GBuffer light mask", render::DtvDeferredLightMask, m_gbufferTargetSet->getColorTexture(2)));
 		outTargets.push_back(render::DebugTarget(L"GBuffer surface color", render::DtvDefault, m_gbufferTargetSet->getColorTexture(3)));
 	}
 
@@ -1493,7 +1494,12 @@ void WorldRendererDeferred::buildLights(WorldRenderView& worldRenderView, int fr
 		light.color.storeUnaligned(lightShaderData->color);
 
 		// Prepare shadows for each light, add information about shadow map into sbuffer.
-		if (castShadow && !haveCascade && light.castShadow && light.type == LtDirectional)
+		if (
+			castShadow &&
+			!haveCascade &&
+			light.castShadow &&
+			light.type == LtDirectional
+		)
 		{
 			for (int32_t slice = 0; slice < m_shadowSettings.cascadingSlices; ++slice)
 			{
