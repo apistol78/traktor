@@ -5,7 +5,7 @@
 			<id>{4E318C19-B4F1-9242-A467-D16E881C0D92}</id>
 			<comment/>
 			<position>
-				<first>-1470</first>
+				<first>-1449</first>
 				<second>96</second>
 			</position>
 			<name>SurfaceColor</name>
@@ -18,7 +18,7 @@
 			<id>{D9D1FD13-4CD0-B949-A524-3276089CD08A}</id>
 			<comment/>
 			<position>
-				<first>-1470</first>
+				<first>-1449</first>
 				<second>-30</second>
 			</position>
 			<name>ViewNormal</name>
@@ -31,7 +31,7 @@
 			<id>{86D35046-A057-024C-ADA3-9585DB3208BB}</id>
 			<comment/>
 			<position>
-				<first>-1470</first>
+				<first>-1449</first>
 				<second>12</second>
 			</position>
 			<name>ViewPosition</name>
@@ -44,7 +44,7 @@
 			<id>{86A497C0-B521-514D-8F75-464E8EDD28D8}</id>
 			<comment/>
 			<position>
-				<first>-1450</first>
+				<first>-1429</first>
 				<second>138</second>
 			</position>
 			<name>Roughness</name>
@@ -57,7 +57,7 @@
 			<id>{A5F0E607-E44E-4D43-8743-2CE73EC070EC}</id>
 			<comment/>
 			<position>
-				<first>-1430</first>
+				<first>-1429</first>
 				<second>180</second>
 			</position>
 			<name>Emissive</name>
@@ -70,7 +70,7 @@
 			<id>{3C90103C-96CA-CD4F-88BF-928235B168E7}</id>
 			<comment/>
 			<position>
-				<first>-1450</first>
+				<first>-1429</first>
 				<second>222</second>
 			</position>
 			<name>Metalness</name>
@@ -83,7 +83,7 @@
 			<id>{21B82E2F-6A92-574E-98B6-CBE4A37D9C1E}</id>
 			<comment/>
 			<position>
-				<first>-1470</first>
+				<first>-1449</first>
 				<second>54</second>
 			</position>
 			<name>ViewVelocity</name>
@@ -160,8 +160,8 @@ World_DeferredGBufferWrite
 			]]>
 			</comment>
 			<position>
-				<first>-308</first>
-				<second>-50</second>
+				<first>-299</first>
+				<second>-62</second>
 			</position>
 			<fragmentGuid>{B02CB855-C540-492F-B6E6-1ECEE2498127}</fragmentGuid>
 			<inputPins>
@@ -186,6 +186,11 @@ World_DeferredGBufferWrite
 					<optional>true</optional>
 				</item>
 				<item>
+					<id>{531DBAE0-1C9E-447D-9C9A-0CC0103523CE}</id>
+					<name>LightMask</name>
+					<optional>true</optional>
+				</item>
+				<item>
 					<id>{4F9F4253-5618-40FB-A8BF-9FBAF2E0CC39}</id>
 					<name>Metalness</name>
 					<optional>true</optional>
@@ -203,6 +208,10 @@ World_DeferredGBufferWrite
 			</inputPins>
 			<outputPins/>
 			<values>
+				<item>
+					<first>LightMask</first>
+					<second>1</second>
+				</item>
 				<item>
 					<first>Roughness</first>
 					<second>0.8</second>
@@ -244,8 +253,8 @@ Deferred / Opaque
 			]]>
 			</comment>
 			<position>
-				<first>-408</first>
-				<second>-162</second>
+				<first>-339</first>
+				<second>-214</second>
 			</position>
 		</item>
 		<item type="traktor.render.Comment" version="traktor.render.Node:1">
@@ -336,8 +345,8 @@ Opaque
 			]]>
 			</comment>
 			<position>
-				<first>-555</first>
-				<second>22</second>
+				<first>-543</first>
+				<second>-10</second>
 			</position>
 			<name>E_Opaque</name>
 			<global>false</global>
@@ -559,7 +568,7 @@ Opaque
 			<comment/>
 			<position>
 				<first>-1174</first>
-				<second>110</second>
+				<second>111</second>
 			</position>
 			<name>V_SurfaceColor</name>
 			<global>false</global>
@@ -578,8 +587,8 @@ Opaque
 			<id>{12129B30-7334-C446-8288-B79D384F2C37}</id>
 			<comment/>
 			<position>
-				<first>-571</first>
-				<second>-90</second>
+				<first>-575</first>
+				<second>-124</second>
 			</position>
 			<name>V_SurfaceColor</name>
 			<global>false</global>
@@ -589,7 +598,7 @@ Opaque
 			<comment/>
 			<position>
 				<first>-1174</first>
-				<second>158</second>
+				<second>160</second>
 			</position>
 			<name>V_Roughness</name>
 			<global>false</global>
@@ -598,8 +607,8 @@ Opaque
 			<id>{65234AE6-16E0-F243-81C6-9ECB9A494D5B}</id>
 			<comment/>
 			<position>
-				<first>-571</first>
-				<second>96</second>
+				<first>-559</first>
+				<second>104</second>
 			</position>
 			<name>V_Roughness</name>
 			<global>false</global>
@@ -619,7 +628,7 @@ Opaque
 			<comment/>
 			<position>
 				<first>-1174</first>
-				<second>206</second>
+				<second>209</second>
 			</position>
 			<name>V_Metalness</name>
 			<global>false</global>
@@ -628,8 +637,8 @@ Opaque
 			<id>{66E5E324-EF36-4544-9F03-8CCCD36CC67D}</id>
 			<comment/>
 			<position>
-				<first>-571</first>
-				<second>59</second>
+				<first>-559</first>
+				<second>66</second>
 			</position>
 			<name>V_Metalness</name>
 			<global>false</global>
@@ -648,8 +657,8 @@ Opaque
 			<id>{BCD73814-B30D-D347-B904-AC14697EB34F}</id>
 			<comment/>
 			<position>
-				<first>-571</first>
-				<second>-52</second>
+				<first>-575</first>
+				<second>-86</second>
 			</position>
 			<name>V_ViewNormal</name>
 			<global>false</global>
@@ -669,7 +678,7 @@ Opaque
 			<comment/>
 			<position>
 				<first>-1174</first>
-				<second>12</second>
+				<second>13</second>
 			</position>
 			<name>V_ViewPosition</name>
 			<global>false</global>
@@ -678,8 +687,8 @@ Opaque
 			<id>{4B79F5E0-BB20-2744-B002-A2FEF0B7CE7C}</id>
 			<comment/>
 			<position>
-				<first>-571</first>
-				<second>-15</second>
+				<first>-575</first>
+				<second>-48</second>
 			</position>
 			<name>V_ViewPosition</name>
 			<global>false</global>
@@ -709,7 +718,7 @@ Opaque
 			<comment/>
 			<position>
 				<first>-1174</first>
-				<second>60</second>
+				<second>62</second>
 			</position>
 			<name>V_ViewVelocity</name>
 			<global>false</global>
@@ -911,7 +920,7 @@ Simple / Transparent
 			<comment/>
 			<position>
 				<first>-1174</first>
-				<second>256</second>
+				<second>258</second>
 			</position>
 			<name>V_Specular</name>
 			<global>false</global>
@@ -920,7 +929,7 @@ Simple / Transparent
 			<id>{18DB5E7B-0EF6-8548-80BA-8D59FDE4CF7E}</id>
 			<comment/>
 			<position>
-				<first>-1430</first>
+				<first>-1429</first>
 				<second>264</second>
 			</position>
 			<name>Specular</name>
@@ -933,8 +942,8 @@ Simple / Transparent
 			<id>{25FD9A91-3AF5-6641-9F87-BC115E02D43C}</id>
 			<comment/>
 			<position>
-				<first>-555</first>
-				<second>134</second>
+				<first>-543</first>
+				<second>142</second>
 			</position>
 			<name>V_Specular</name>
 			<global>false</global>
@@ -1056,13 +1065,45 @@ Opaque
 			<comment>
 			<![CDATA[
 Forward / Opaque
-
 			]]>
 			</comment>
 			<position>
 				<first>368</first>
 				<second>-163</second>
 			</position>
+		</item>
+		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
+			<id>{AE9FAA4C-77D4-4A23-838C-FA3A1B72B308}</id>
+			<comment/>
+			<position>
+				<first>-559</first>
+				<second>28</second>
+			</position>
+			<name>V_LightMask</name>
+			<global>false</global>
+		</item>
+		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
+			<id>{720F93D3-D4A7-49B5-A729-DD965475FA9D}</id>
+			<comment/>
+			<position>
+				<first>-1174</first>
+				<second>307</second>
+			</position>
+			<name>V_LightMask</name>
+			<global>false</global>
+		</item>
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{9FEC41F0-44FF-4A36-A57D-0CDEEDDA7FD5}</id>
+			<comment/>
+			<position>
+				<first>-1429</first>
+				<second>306</second>
+			</position>
+			<name>LightMask</name>
+			<connectable>true</connectable>
+			<optional>true</optional>
+			<haveDefaultValue>true</haveDefaultValue>
+			<defaultValue>1</defaultValue>
 		</item>
 	</nodes>
 	<edges>
@@ -1564,6 +1605,26 @@ Forward / Opaque
 			<destination>
 				<node ref="/object/nodes/item[65]"/>
 				<name>Roughness</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[73]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[9]"/>
+				<name>LightMask</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[75]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[74]"/>
+				<name>Input</name>
 			</destination>
 		</item>
 	</edges>

@@ -161,7 +161,7 @@
 			<comment/>
 			<position>
 				<first>320</first>
-				<second>596</second>
+				<second>651</second>
 			</position>
 			<name>SurfaceColor</name>
 			<connectable>true</connectable>
@@ -182,8 +182,8 @@
 			<id>{B42C4326-75E5-D349-BA09-26F98B16B4D0}</id>
 			<comment/>
 			<position>
-				<first>534</first>
-				<second>596</second>
+				<first>535</first>
+				<second>651</second>
 			</position>
 			<swizzle>xyz</swizzle>
 		</item>
@@ -191,15 +191,15 @@
 			<id>{54DD8807-808F-3342-BF1E-6AD08820DCFB}</id>
 			<comment/>
 			<position>
-				<first>664</first>
-				<second>464</second>
+				<first>677</first>
+				<second>490</second>
 			</position>
 		</item>
 		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
 			<id>{E00555C0-78D1-7041-99AD-C032D560FDEC}</id>
 			<comment/>
 			<position>
-				<first>534</first>
+				<first>535</first>
 				<second>508</second>
 			</position>
 			<swizzle>x</swizzle>
@@ -274,7 +274,7 @@
 			<id>{0EF96363-9F6F-9E4F-876E-15937FC05263}</id>
 			<comment/>
 			<position>
-				<first>534</first>
+				<first>535</first>
 				<second>552</second>
 			</position>
 			<swizzle>x</swizzle>
@@ -283,10 +283,32 @@
 			<id>{E965B68D-2C18-1547-B41D-F4766F74530B}</id>
 			<comment/>
 			<position>
-				<first>360</first>
+				<first>340</first>
 				<second>552</second>
 			</position>
 			<name>Specular</name>
+			<connectable>true</connectable>
+			<optional>true</optional>
+			<haveDefaultValue>true</haveDefaultValue>
+			<defaultValue>1</defaultValue>
+		</item>
+		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
+			<id>{8DECCDA7-6E43-452B-9366-3699F1E40328}</id>
+			<comment/>
+			<position>
+				<first>535</first>
+				<second>594</second>
+			</position>
+			<swizzle>x</swizzle>
+		</item>
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{16B8A186-A765-4CDD-87EA-8DC07240BEEE}</id>
+			<comment/>
+			<position>
+				<first>340</first>
+				<second>594</second>
+			</position>
+			<name>LightMask</name>
 			<connectable>true</connectable>
 			<optional>true</optional>
 			<haveDefaultValue>true</haveDefaultValue>
@@ -512,6 +534,26 @@
 			<destination>
 				<node ref="/object/nodes/item[13]"/>
 				<name>Z</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[24]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[23]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[23]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[13]"/>
+				<name>W</name>
 			</destination>
 		</item>
 	</edges>
