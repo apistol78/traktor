@@ -108,11 +108,10 @@ Ref< model::Model > SolidModelGenerator::createModel(
             }
 
 			current = std::move(result);
+			model::CleanDegenerate().apply(current);
+			model::MergeCoplanarAdjacents().apply(current);
         }
     }
-
-    model::CleanDegenerate().apply(current);
-    model::MergeCoplanarAdjacents().apply(current);
 
     return new model::Model(current);
 }
