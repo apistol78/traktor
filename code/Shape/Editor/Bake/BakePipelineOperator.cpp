@@ -37,6 +37,7 @@
 #include "Shape/Editor/Bake/TracerOutput.h"
 #include "Shape/Editor/Bake/TracerProcessor.h"
 #include "Shape/Editor/Bake/TracerTask.h"
+#include "World/IrradianceGridResource.h"
 #include "World/WorldRenderSettings.h"
 #include "World/Editor/LayerEntityData.h"
 #include "World/Entity/ComponentEntityData.h"
@@ -524,6 +525,60 @@ bool BakePipelineOperator::build(
 	if (configuration->traceIrradiance())
 	{
 		Guid irradianceGridId = seedId.permutate();
+
+		// Create a black irradiance grid first.
+		Ref< world::IrradianceGridResource > outputResource = new world::IrradianceGridResource();
+		Ref< db::Instance > outputInstance = pipelineBuilder->getOutputDatabase()->createInstance(
+			L"Generated/" + irradianceGridId.format(),
+			db::CifReplaceExisting,
+			&irradianceGridId
+		);
+		if (!outputInstance)
+		{
+			log::error << L"BakePipelineOperator failed; unable to create output instance." << Endl;
+			return false;
+		}
+
+		outputInstance->setObject(outputResource);
+
+		// Create output data stream.
+		Ref< IStream > stream = outputInstance->writeData(L"Data");
+		if (!stream)
+		{
+			log::error << L"BakePipelineOperator failed; unable to create irradiance data stream." << Endl;
+			outputInstance->revert();
+			return false;
+		}
+
+		Writer writer(stream);
+
+		writer << uint32_t(2);
+
+		writer << (uint32_t)1;	// width
+		writer << (uint32_t)1;	// height
+		writer << (uint32_t)1;	// depth
+
+		writer << -10000.0f;
+		writer << -10000.0f;
+		writer << -10000.0f;
+		writer <<  10000.0f;
+		writer <<  10000.0f;
+		writer <<  10000.0f;
+
+		for (int32_t i = 0; i < 9; ++i)
+		{
+			writer << 0.0f;
+			writer << 0.0f;
+			writer << 0.0f;
+		}
+
+		stream->close();
+
+		if (!outputInstance->commit())
+		{
+			log::error << L"BakePipelineOperator failed; unable to commit output instance." << Endl;
+			return false;
+		}
 
 		tracerTask->addTracerIrradiance(new TracerIrradiance(
 			L"Irradiance",

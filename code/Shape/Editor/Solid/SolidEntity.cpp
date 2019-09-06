@@ -4,6 +4,7 @@
 #include "Model/Model.h"
 #include "Model/Operations/Boolean.h"
 #include "Model/Operations/CleanDegenerate.h"
+#include "Model/Operations/MergeCoplanarAdjacents.h"
 #include "Model/Operations/Transform.h"
 #include "Model/Operations/Triangulate.h"
 #include "Render/IndexBuffer.h"
@@ -126,10 +127,11 @@ void SolidEntity::update(const world::UpdateParams& update)
                 }
 
 				current = std::move(result);
+				model::CleanDegenerate().apply(current);
+				model::MergeCoplanarAdjacents().apply(current);
             }
         }
 
-		model::CleanDegenerate().apply(current);
 		model::Triangulate().apply(current);
 
         safeDestroy(m_vertexBuffer);

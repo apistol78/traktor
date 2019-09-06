@@ -50,8 +50,8 @@
 			<id>{41E87F6F-D99A-B34D-9B53-3940EDA30A76}</id>
 			<comment/>
 			<position>
-				<first>8584</first>
-				<second>580</second>
+				<first>9091</first>
+				<second>512</second>
 			</position>
 			<technique>Default</technique>
 			<priority>
@@ -2375,8 +2375,8 @@ Irradiance SH grid
 			<id>{7F300FE8-CD89-449D-8A2B-F0883C942D8E}</id>
 			<comment/>
 			<position>
-				<first>7050</first>
-				<second>1417</second>
+				<first>8469</first>
+				<second>479</second>
 			</position>
 			<name>L_LightMask</name>
 			<global>false</global>
@@ -2385,18 +2385,18 @@ Irradiance SH grid
 			<id>{3C91589F-62C4-4B5D-8A77-8DF736BA3033}</id>
 			<comment/>
 			<position>
-				<first>7325</first>
-				<second>1422</second>
+				<first>8830</first>
+				<second>503</second>
 			</position>
-			<branch>BrAuto</branch>
-			<operator>CoNotEqual</operator>
+			<branch>BrDynamic</branch>
+			<operator>CoGreater</operator>
 		</item>
 		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
 			<id>{97743E8D-A2A0-4845-9015-A81E07A1B471}</id>
 			<comment/>
 			<position>
-				<first>7055</first>
-				<second>1462</second>
+				<first>8639</first>
+				<second>536</second>
 			</position>
 			<value>0</value>
 		</item>
@@ -2404,10 +2404,19 @@ Irradiance SH grid
 			<id>{A168A596-8E9B-47B3-BCD6-C0DCF2069497}</id>
 			<comment/>
 			<position>
-				<first>6974</first>
-				<second>1534</second>
+				<first>8491</first>
+				<second>621</second>
 			</position>
 			<color>0, 0, 0, 0</color>
+		</item>
+		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
+			<id>{254B1C70-2905-1C4B-AE39-4D0F6D82500A}</id>
+			<comment/>
+			<position>
+				<first>8675</first>
+				<second>497</second>
+			</position>
+			<swizzle>x</swizzle>
 		</item>
 	</nodes>
 	<edges>
@@ -4343,16 +4352,6 @@ Irradiance SH grid
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[129]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[1]"/>
-				<name>Input</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
 				<node ref="/object/nodes/item[186]"/>
 				<name>Output</name>
 			</source>
@@ -4593,32 +4592,12 @@ Irradiance SH grid
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[212]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[213]"/>
-				<name>Input</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
 				<node ref="/object/nodes/item[214]"/>
 				<name>Output</name>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[213]"/>
 				<name>Reference</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[201]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[213]"/>
-				<name>CaseTrue</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
@@ -4633,11 +4612,51 @@ Irradiance SH grid
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
+				<node ref="/object/nodes/item[212]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[216]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[216]"/>
+				<name>Output</name>
+			</source>
+			<destination>
 				<node ref="/object/nodes/item[213]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[201]"/>
 				<name>Output</name>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[117]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[129]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[213]"/>
+				<name>CaseTrue</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[213]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[1]"/>
 				<name>Input</name>
 			</destination>
 		</item>

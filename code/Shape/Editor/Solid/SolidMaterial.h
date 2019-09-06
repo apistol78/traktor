@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Core/Guid.h"
-#include "Shape/Editor/Solid/IShape.h"
+#include "Core/Serialization/ISerializable.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -16,22 +16,18 @@ namespace traktor
 	namespace shape
 	{
 	
-class T_DLLCLASS Box : public IShape
+class T_DLLCLASS SolidMaterial : public ISerializable
 {
 	T_RTTI_CLASS;
 
 public:
-	Box();
-
-	virtual Ref< model::Model > createModel() const override final;
-
-	virtual void createAnchors(AlignedVector< Vector4 >& outAnchors) const override final;
-
 	virtual void serialize(ISerializer& s) override final;
 
 private:
-	Vector4 m_extent;
-	Guid m_materials[6];
+	Guid m_albedo;
+	Guid m_normal;
+	Guid m_roughness;
+	Guid m_metalness;
 };
 
 	}

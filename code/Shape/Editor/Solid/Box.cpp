@@ -1,8 +1,11 @@
 #include "Core/Math/Aabb3.h"
+#include "Core/Serialization/AttributeType.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
+#include "Core/Serialization/MemberStaticArray.h"
 #include "Model/Model.h"
 #include "Shape/Editor/Solid/Box.h"
+#include "Shape/Editor/Solid/SolidMaterial.h"
 
 namespace traktor
 {
@@ -23,7 +26,7 @@ struct BoxMaterial { const wchar_t* name; Color4f color; } c_materials[] =
 
 		}
 	
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.shape.Box", 0, Box, IShape)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.shape.Box", 1, Box, IShape)
 
 Box::Box()
 :	m_extent(1.0f, 1.0f, 1.0f)
@@ -104,6 +107,7 @@ void Box::createAnchors(AlignedVector< Vector4 >& outAnchors) const
 void Box::serialize(ISerializer& s)
 {
 	s >> Member< Vector4 >(L"extent", m_extent);
+	s >> MemberStaticArray< Guid, 6 >(L"materials", m_materials, AttributeType(type_of< SolidMaterial >()));
 }
 
 	}
