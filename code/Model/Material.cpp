@@ -1,5 +1,6 @@
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
+#include "Core/Serialization/MemberBitMask.h"
 #include "Core/Serialization/MemberComposite.h"
 #include "Core/Serialization/MemberEnum.h"
 #include "Model/Material.h"
@@ -13,7 +14,7 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.model.Material", 0, Material, PropertyG
 
 Material::Material()
 :	m_name(L"")
-,	m_lightMapRange(0.0f)
+,	m_lightMapFlags(0)
 ,	m_color(1.0f, 1.0f, 1.0f, 1.0f)
 ,	m_diffuseTerm(1.0f)
 ,	m_specularTerm(1.0f)
@@ -30,7 +31,7 @@ Material::Material()
 
 Material::Material(const std::wstring& name)
 :	m_name(name)
-,	m_lightMapRange(0.0f)
+,	m_lightMapFlags(0)
 ,	m_color(1.0f, 1.0f, 1.0f, 1.0f)
 ,	m_diffuseTerm(1.0f)
 ,	m_specularTerm(1.0f)
@@ -47,7 +48,7 @@ Material::Material(const std::wstring& name)
 
 Material::Material(const std::wstring& name, const Color4f& color)
 :	m_name(name)
-,	m_lightMapRange(0.0f)
+,	m_lightMapFlags(0)
 ,	m_color(color)
 ,	m_diffuseTerm(1.0f)
 ,	m_specularTerm(1.0f)
@@ -152,10 +153,9 @@ const Material::Map& Material::getNormalMap() const
 	return m_normalMap;
 }
 
-void Material::setLightMap(const Map& lightMap, float lightMapRange)
+void Material::setLightMap(const Map& lightMap)
 {
 	m_lightMap = lightMap;
-	m_lightMapRange = lightMapRange;
 }
 
 const Material::Map& Material::getLightMap() const
@@ -163,9 +163,14 @@ const Material::Map& Material::getLightMap() const
 	return m_lightMap;
 }
 
-float Material::getLightMapRange() const
+void Material::setLightMapFlags(uint32_t lightMapFlags)
 {
-	return m_lightMapRange;
+	m_lightMapFlags = lightMapFlags;
+}
+
+uint32_t Material::getLightMapFlags() const
+{
+	return m_lightMapFlags;
 }
 
 void Material::setColor(const Color4f& color)
@@ -289,6 +294,13 @@ void Material::serialize(ISerializer& s)
 		{ 0 }
 	};
 
+	const MemberBitMask::Bit c_LightMapFlagsBits[] =
+	{
+		{ L"LmfRadiance", LmfRadiance },
+		{ L"LmfIrradiance", LmfIrradiance },
+		{ 0 }
+	};
+
 	PropertyGroup::serialize(s);
 
 	s >> Member< std::wstring >(L"name", m_name);
@@ -301,7 +313,7 @@ void Material::serialize(ISerializer& s)
 	s >> MemberComposite< Map >(L"reflectiveMap", m_reflectiveMap);
 	s >> MemberComposite< Map >(L"normalMap", m_normalMap);
 	s >> MemberComposite< Map >(L"lightMap", m_lightMap);
-	s >> Member< float >(L"lightMapRange", m_lightMapRange);
+	s >> MemberBitMask(L"lightMapFlags", m_lightMapFlags, c_LightMapFlagsBits);
 	s >> Member< Color4f >(L"color", m_color);
 	s >> Member< float >(L"diffuseTerm", m_diffuseTerm);
 	s >> Member< float >(L"specularTerm", m_specularTerm);

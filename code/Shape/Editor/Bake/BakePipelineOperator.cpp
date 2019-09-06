@@ -390,7 +390,14 @@ bool BakePipelineOperator::build(
 					for (auto& material : materials)
 					{
 						material.setBlendOperator(model::Material::BoDecal);
-						material.setLightMap(model::Material::Map(L"__Illumination__", channel, false), 1.0f);
+						material.setLightMap(model::Material::Map(L"__Illumination__", channel, false));
+
+						uint32_t flags = 0;
+						if (configuration->traceDirect())
+							flags |= model::Material::LmfRadiance;
+						if (configuration->traceIndirect())
+							flags |= model::Material::LmfIrradiance;
+						material.setLightMapFlags(flags);					
 					}
 					model->setMaterials(materials);
 
@@ -476,7 +483,14 @@ bool BakePipelineOperator::build(
 				for (auto& material : materials)
 				{
 					material.setBlendOperator(model::Material::BoDecal);
-					material.setLightMap(model::Material::Map(L"__Illumination__", channel, false), 1.0f);
+					material.setLightMap(model::Material::Map(L"__Illumination__", channel, false));
+
+					uint32_t flags = 0;
+					if (configuration->traceDirect())
+						flags |= model::Material::LmfRadiance;
+					if (configuration->traceIndirect())
+						flags |= model::Material::LmfIrradiance;
+					material.setLightMapFlags(flags);
 				}
 				model->setMaterials(materials);
 

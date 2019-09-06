@@ -76,7 +76,7 @@ bool MergeModel::apply(Model& model) const
 		material.setEmissiveMap(mm[5]);
 		material.setReflectiveMap(mm[6]);
 		material.setNormalMap(mm[7]);
-		material.setLightMap(mm[8], 1.0f);
+		material.setLightMap(mm[8]);
 
 		materialMap[i] = model.addUniqueMaterial(material);
 	}
