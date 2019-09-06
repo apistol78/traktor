@@ -332,13 +332,7 @@ bool BakePipelineOperator::build(
 			if (auto componentEntityData = dynamic_type_cast< world::ComponentEntityData* >(inoutEntityData))
 			{
 				if (auto lightComponentData = componentEntityData->getComponent< world::LightComponentData >())
-				{
 					addLight(lightComponentData, inoutEntityData->getTransform(), tracerTask);
-
-					// Remove this light when we're tracing direct lighting.
-					if (configuration->traceDirect())
-						componentEntityData->removeComponent(lightComponentData);
-				}
 
 				RefArray< world::IEntityComponentData > componentDatas = componentEntityData->getComponents();
 				for (auto componentData : componentDatas)

@@ -456,6 +456,20 @@ void FinalRenderControl::eventPaint(ui::PaintEvent* event)
 		m_renderView->present();
 	}
 
+	// Debug world renderer targets.
+	std::vector< render::DebugTarget > debugTargets;
+	m_worldRenderer->getDebugTargets(debugTargets);
+
+	// Debug profile render targets.
+	const RefArray< ISceneEditorProfile >& profiles = m_context->getEditorProfiles();
+	for (auto profile : profiles)
+		profile->getDebugTargets(m_context, debugTargets);
+
+	// Push debug targets to context.
+	m_context->clearDebugTargets();
+	for (auto debugTarget : debugTargets)
+		m_context->addDebugTarget(debugTarget);
+
 	event->consume();
 }
 
