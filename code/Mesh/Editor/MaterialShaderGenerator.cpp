@@ -137,10 +137,9 @@ Ref< render::ShaderGraph > MaterialShaderGenerator::generate(
 
 	RefArray< render::External > externalNodes;
 	materialShaderGraph->findNodesOf< render::External >(externalNodes);
-
-	for (RefArray< render::External >::iterator i = externalNodes.begin(); i != externalNodes.end(); ++i)
+	for (auto externalNode : externalNodes)
 	{
-		const Guid& fragmentGuid = (*i)->getFragmentGuid();
+		const Guid& fragmentGuid = externalNode->getFragmentGuid();
 		T_ASSERT(fragmentGuid.isValid());
 
 		if (fragmentGuid == c_tplDiffuseParams)
@@ -148,26 +147,26 @@ Ref< render::ShaderGraph > MaterialShaderGenerator::generate(
 			if (diffuseTexture.isNull())
 			{
 				if (!vertexColor)
-					(*i)->setFragmentGuid(c_implDiffuseConst);
+					externalNode->setFragmentGuid(c_implDiffuseConst);
 				else
-					(*i)->setFragmentGuid(c_implDiffuseVertex);
+					externalNode->setFragmentGuid(c_implDiffuseVertex);
 			}
 			else
-				(*i)->setFragmentGuid(material.getDiffuseMap().channel == 0 ? c_implDiffuseMap0 : c_implDiffuseMap1);
+				externalNode->setFragmentGuid(material.getDiffuseMap().channel == 0 ? c_implDiffuseMap0 : c_implDiffuseMap1);
 		}
 		else if (fragmentGuid == c_tplEmissiveParams)
 		{
 			if (emissiveTexture.isNull())
-				(*i)->setFragmentGuid(c_implEmissiveConst);
+				externalNode->setFragmentGuid(c_implEmissiveConst);
 			else
-				(*i)->setFragmentGuid(material.getEmissiveMap().channel == 0 ? c_implEmissiveMap0 : c_implEmissiveMap1);
+				externalNode->setFragmentGuid(material.getEmissiveMap().channel == 0 ? c_implEmissiveMap0 : c_implEmissiveMap1);
 		}
 		else if (fragmentGuid == c_tplNormalParams)
 		{
 			if (normalTexture.isNull())
-				(*i)->setFragmentGuid(c_implNormalConst);
+				externalNode->setFragmentGuid(c_implNormalConst);
 			else
-				(*i)->setFragmentGuid(material.getNormalMap().channel == 0 ? c_implNormalMap0 : c_implNormalMap1);
+				externalNode->setFragmentGuid(material.getNormalMap().channel == 0 ? c_implNormalMap0 : c_implNormalMap1);
 		}
 		else if (fragmentGuid == c_tplOutput)
 		{
@@ -177,59 +176,62 @@ Ref< render::ShaderGraph > MaterialShaderGenerator::generate(
 				{
 				default:
 				case model::Material::BoDecal:
-					(*i)->setFragmentGuid(c_implOutputDecal);
+					externalNode->setFragmentGuid(c_implOutputDecal);
 					break;
+
 				case model::Material::BoAdd:
-					(*i)->setFragmentGuid(c_implOutputAdd);
+					externalNode->setFragmentGuid(c_implOutputAdd);
 					break;
+
 				case model::Material::BoMultiply:
-					(*i)->setFragmentGuid(c_implOutputMultiply);
+					externalNode->setFragmentGuid(c_implOutputMultiply);
 					break;
+
 				case model::Material::BoAlpha:
-					(*i)->setFragmentGuid(c_implOutputAlpha);
+					externalNode->setFragmentGuid(c_implOutputAlpha);
 					break;
 				}
 			}
 			else
-				(*i)->setFragmentGuid(c_implOutputLightMapDecal);
+				externalNode->setFragmentGuid(c_implOutputLightMapDecal);
 		}
 		else if (fragmentGuid == c_tplTransparencyParams)
 		{
 			if (transparencyTexture.isNull())
-				(*i)->setFragmentGuid(c_implTransparencyConst);
+				externalNode->setFragmentGuid(c_implTransparencyConst);
 			else
-				(*i)->setFragmentGuid(material.getTransparencyMap().channel == 0 ? c_implTransparencyMap0 : c_implTransparencyMap1);
+				externalNode->setFragmentGuid(material.getTransparencyMap().channel == 0 ? c_implTransparencyMap0 : c_implTransparencyMap1);
 		}
 		else if (fragmentGuid == c_tplLightMapParams)
 		{
-			if (lightMapTexture.isNull())
-				(*i)->setFragmentGuid(c_implLightMapNull);
+			if (lightMapTexture.isNull() || material.getLightMapFlags() == 0)
+				externalNode->setFragmentGuid(c_implLightMapNull);
 			else
-				(*i)->setFragmentGuid(material.getLightMap().channel == 0 ? c_implLightMap0 : c_implLightMap1);
+				externalNode->setFragmentGuid(material.getLightMap().channel == 0 ? c_implLightMap0 : c_implLightMap1);
 		}
 		else if (fragmentGuid == c_tplRoughnessParams)
 		{
 			if (roughnessTexture.isNull())
-				(*i)->setFragmentGuid(c_implRoughnessConst);
+				externalNode->setFragmentGuid(c_implRoughnessConst);
 			else
-				(*i)->setFragmentGuid(material.getRoughnessMap().channel == 0 ? c_implRoughnessMap0 : c_implRoughnessMap1);
+				externalNode->setFragmentGuid(material.getRoughnessMap().channel == 0 ? c_implRoughnessMap0 : c_implRoughnessMap1);
 		}
 		else if (fragmentGuid == c_tplSpecularParams)
 		{
 			if (specularTexture.isNull())
-				(*i)->setFragmentGuid(c_implSpecularConst);
+				externalNode->setFragmentGuid(c_implSpecularConst);
 			else
-				(*i)->setFragmentGuid(material.getSpecularMap().channel == 0 ? c_implSpecularMap0 : c_implSpecularMap1);
+				externalNode->setFragmentGuid(material.getSpecularMap().channel == 0 ? c_implSpecularMap0 : c_implSpecularMap1);
 		}
 		else if (fragmentGuid == c_tplMetalnessParams)
 		{
 			if (metalnessTexture.isNull())
-				(*i)->setFragmentGuid(c_implMetalnessConst);
+				externalNode->setFragmentGuid(c_implMetalnessConst);
 			else
-				(*i)->setFragmentGuid(material.getMetalnessMap().channel == 0 ? c_implMetalnessMap0 : c_implMetalnessMap1);
+				externalNode->setFragmentGuid(material.getMetalnessMap().channel == 0 ? c_implMetalnessMap0 : c_implMetalnessMap1);
 		}
 		else if (fragmentGuid == c_tplVertexParams)
-			(*i)->setFragmentGuid(c_implVertex);
+			externalNode->setFragmentGuid(c_implVertex);
 	}
 
 	// Resolve material shader; load all patched fragments and merge into a complete shader.
@@ -239,106 +241,113 @@ Ref< render::ShaderGraph > MaterialShaderGenerator::generate(
 		return nullptr;
 
 	// Patch constant values, such as colors, from materials into shader.
-	const RefArray< render::Node >& nodes = materialShaderGraph->getNodes();
-	for (RefArray< render::Node >::const_iterator i = nodes.begin(); i != nodes.end(); ++i)
+	for (auto node : materialShaderGraph->getNodes())
 	{
-		std::wstring comment = (*i)->getComment();
+		std::wstring comment = node->getComment();
 		if (comment == L"Tag_DiffuseColor")
 		{
-			render::Color* colorNode = checked_type_cast< render::Color* >(*i);
+			render::Color* colorNode = checked_type_cast< render::Color* >(node);
 			colorNode->setComment(L"");
 			colorNode->setColor(material.getColor());
 		}
 		else if (comment == L"Tag_DiffuseMap")
 		{
-			render::Texture* diffuseTextureNode = checked_type_cast< render::Texture* >(*i);
+			render::Texture* diffuseTextureNode = checked_type_cast< render::Texture* >(node);
 			diffuseTextureNode->setComment(L"");
 			diffuseTextureNode->setExternal(diffuseTexture);
 			propagateAnisotropic(materialShaderGraph, diffuseTextureNode, material.getDiffuseMap().anisotropic);
 		}
 		else if (comment == L"Tag_Emissive")
 		{
-			render::Scalar* emissiveNode = checked_type_cast< render::Scalar* >(*i);
+			render::Scalar* emissiveNode = checked_type_cast< render::Scalar* >(node);
 			emissiveNode->setComment(L"");
 			emissiveNode->set(material.getEmissive());
 		}
 		else if (comment == L"Tag_EmissiveMap")
 		{
-			render::Texture* emissiveTextureNode = checked_type_cast< render::Texture* >(*i);
+			render::Texture* emissiveTextureNode = checked_type_cast< render::Texture* >(node);
 			emissiveTextureNode->setComment(L"");
 			emissiveTextureNode->setExternal(emissiveTexture);
 			propagateAnisotropic(materialShaderGraph, emissiveTextureNode, material.getEmissiveMap().anisotropic);
 		}
 		else if (comment == L"Tag_NormalMap")
 		{
-			render::Texture* normalTextureNode = checked_type_cast< render::Texture* >(*i);
+			render::Texture* normalTextureNode = checked_type_cast< render::Texture* >(node);
 			normalTextureNode->setComment(L"");
 			normalTextureNode->setExternal(normalTexture);
 			propagateAnisotropic(materialShaderGraph, normalTextureNode, material.getNormalMap().anisotropic);
 		}
 		else if (comment == L"Tag_Roughness")
 		{
-			render::Scalar* roughnessNode = checked_type_cast< render::Scalar* >(*i);
+			render::Scalar* roughnessNode = checked_type_cast< render::Scalar* >(node);
 			roughnessNode->setComment(L"");
 			roughnessNode->set(material.getRoughness());
 		}
 		else if (comment == L"Tag_RoughnessMap")
 		{
-			render::Texture* roughnessTextureNode = checked_type_cast< render::Texture* >(*i);
+			render::Texture* roughnessTextureNode = checked_type_cast< render::Texture* >(node);
 			roughnessTextureNode->setComment(L"");
 			roughnessTextureNode->setExternal(roughnessTexture);
 			propagateAnisotropic(materialShaderGraph, roughnessTextureNode, material.getRoughnessMap().anisotropic);
 		}
 		else if (comment == L"Tag_Specular")
 		{
-			render::Scalar* specularNode = checked_type_cast< render::Scalar* >(*i);
+			render::Scalar* specularNode = checked_type_cast< render::Scalar* >(node);
 			specularNode->setComment(L"");
 			specularNode->set(material.getSpecularTerm());
 		}
 		else if (comment == L"Tag_SpecularMap")
 		{
-			render::Texture* specularTextureNode = checked_type_cast< render::Texture* >(*i);
+			render::Texture* specularTextureNode = checked_type_cast< render::Texture* >(node);
 			specularTextureNode->setComment(L"");
 			specularTextureNode->setExternal(specularTexture);
 			propagateAnisotropic(materialShaderGraph, specularTextureNode, material.getSpecularMap().anisotropic);
 		}
 		else if (comment == L"Tag_Metalness")
 		{
-			render::Scalar* metalnessNode = checked_type_cast< render::Scalar* >(*i);
+			render::Scalar* metalnessNode = checked_type_cast< render::Scalar* >(node);
 			metalnessNode->setComment(L"");
 			metalnessNode->set(material.getMetalness());
 		}
 		else if (comment == L"Tag_MetalnessMap")
 		{
-			render::Texture* metalnessTextureNode = checked_type_cast< render::Texture* >(*i);
+			render::Texture* metalnessTextureNode = checked_type_cast< render::Texture* >(node);
 			metalnessTextureNode->setComment(L"");
 			metalnessTextureNode->setExternal(metalnessTexture);
 			propagateAnisotropic(materialShaderGraph, metalnessTextureNode, material.getRoughnessMap().anisotropic);
 		}
 		else if (comment == L"Tag_Transparency")
 		{
-			render::Scalar* transparencyNode = checked_type_cast< render::Scalar* >(*i);
+			render::Scalar* transparencyNode = checked_type_cast< render::Scalar* >(node);
 			transparencyNode->setComment(L"");
 			transparencyNode->set(material.getTransparency());
 		}
 		else if (comment == L"Tag_TransparencyMap")
 		{
-			render::Texture* transparencyTextureNode = checked_type_cast< render::Texture* >(*i);
+			render::Texture* transparencyTextureNode = checked_type_cast< render::Texture* >(node);
 			transparencyTextureNode->setComment(L"");
 			transparencyTextureNode->setExternal(transparencyTexture);
 			propagateAnisotropic(materialShaderGraph, transparencyTextureNode, material.getTransparencyMap().anisotropic);
 		}
 		else if (comment == L"Tag_LightMap")
 		{
-			render::Texture* lightMapTextureNode = checked_type_cast< render::Texture* >(*i);
+			render::Texture* lightMapTextureNode = checked_type_cast< render::Texture* >(node);
 			lightMapTextureNode->setComment(L"");
 			lightMapTextureNode->setExternal(lightMapTexture);
 		}
-		else if (comment == L"Tag_LightMapRange")
+		else if (comment == L"Tag_LightMask")
 		{
-			render::Scalar* lightMapRangeNode = checked_type_cast< render::Scalar* >(*i);
-			lightMapRangeNode->setComment(L"");
-			lightMapRangeNode->set(material.getLightMapRange());
+			render::Scalar* lightMaskNode = checked_type_cast< render::Scalar* >(node);
+			lightMaskNode->setComment(L"");
+			lightMaskNode->set(1.0f);
+
+			// If lightmap contain baked radiance (aka direct lighting) then we
+			// need to prevent any dynamic lighting, so we clear light mask.
+			if (!lightMapTexture.isNull())
+			{
+				if ((material.getLightMapFlags() & model::Material::LmfRadiance) != 0)
+					lightMaskNode->set(0.0f);
+			}
 		}
 	}
 

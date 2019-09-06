@@ -34,6 +34,12 @@ public:
 		BoAlpha
 	};
 
+	enum LightMapFlags
+	{
+		LmfRadiance = 1,	//!< Lightmap contain radiance.
+		LmfIrradiance = 2	//!< Lightmap contain irradiance.
+	};
+
 	struct Map
 	{
 		std::wstring name;
@@ -99,11 +105,13 @@ public:
 
 	const Map& getNormalMap() const;
 
-	void setLightMap(const Map& lightMap, float lightMapRange);
+	void setLightMap(const Map& lightMap);
 
 	const Map& getLightMap() const;
 
-	float getLightMapRange() const;
+	void setLightMapFlags(uint32_t lightMapFlags);
+
+	uint32_t getLightMapFlags() const;
 
 	void setColor(const Color4f& color);
 
@@ -162,7 +170,7 @@ private:
 	Map m_reflectiveMap;
 	Map m_normalMap;
 	Map m_lightMap;
-	float m_lightMapRange;
+	uint32_t m_lightMapFlags;
 	Color4f m_color;
 	float m_diffuseTerm;
 	float m_specularTerm;
