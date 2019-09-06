@@ -35,6 +35,11 @@ World_DeferredGBufferWrite
 					<optional>true</optional>
 				</item>
 				<item>
+					<id>{16B8A186-A765-4CDD-87EA-8DC07240BEEE}</id>
+					<name>LightMask</name>
+					<optional>true</optional>
+				</item>
+				<item>
 					<id>{327CBB43-0B18-0F4A-9C61-ADEAD84B701C}</id>
 					<name>Metalness</name>
 					<optional>true</optional>
@@ -62,6 +67,10 @@ World_DeferredGBufferWrite
 					<second>1</second>
 				</item>
 				<item>
+					<first>LightMask</first>
+					<second>1</second>
+				</item>
+				<item>
 					<first>Metalness</first>
 					<second>0</second>
 				</item>
@@ -83,8 +92,8 @@ World_DeferredGBufferWrite
 			<id>{4F904B51-75A9-4D19-96EC-534FABB8BA69}</id>
 			<comment/>
 			<position>
-				<first>18</first>
-				<second>246</second>
+				<first>59</first>
+				<second>244</second>
 			</position>
 			<name>Enable</name>
 			<connectable>true</connectable>
@@ -96,8 +105,8 @@ World_DeferredGBufferWrite
 			<id>{CA2E92C9-EAA0-4545-815F-51EE96A7A409}</id>
 			<comment/>
 			<position>
-				<first>-2</first>
-				<second>334</second>
+				<first>39</first>
+				<second>373</second>
 			</position>
 			<name>Roughness</name>
 			<connectable>true</connectable>
@@ -109,7 +118,7 @@ World_DeferredGBufferWrite
 			<id>{C4793C58-4118-4914-8734-1D4FEBC4FC01}</id>
 			<comment/>
 			<position>
-				<first>-22</first>
+				<first>19</first>
 				<second>158</second>
 			</position>
 			<name>ViewNormal</name>
@@ -122,8 +131,8 @@ World_DeferredGBufferWrite
 			<id>{FA893653-9994-4A8E-BDE0-55917C5B2AF7}</id>
 			<comment/>
 			<position>
-				<first>-22</first>
-				<second>422</second>
+				<first>19</first>
+				<second>459</second>
 			</position>
 			<name>SurfaceColor</name>
 			<connectable>true</connectable>
@@ -135,8 +144,8 @@ World_DeferredGBufferWrite
 			<id>{A664B618-FCD7-408A-81C9-A3773F959224}</id>
 			<comment/>
 			<position>
-				<first>-22</first>
-				<second>202</second>
+				<first>19</first>
+				<second>201</second>
 			</position>
 			<name>ViewPosition</name>
 			<connectable>true</connectable>
@@ -148,8 +157,8 @@ World_DeferredGBufferWrite
 			<id>{4F9F4253-5618-40FB-A8BF-9FBAF2E0CC39}</id>
 			<comment/>
 			<position>
-				<first>-2</first>
-				<second>290</second>
+				<first>39</first>
+				<second>330</second>
 			</position>
 			<name>Metalness</name>
 			<connectable>true</connectable>
@@ -161,10 +170,23 @@ World_DeferredGBufferWrite
 			<id>{4C571CDA-798F-C142-867C-44B059740876}</id>
 			<comment/>
 			<position>
-				<first>18</first>
-				<second>378</second>
+				<first>39</first>
+				<second>416</second>
 			</position>
 			<name>Specular</name>
+			<connectable>true</connectable>
+			<optional>true</optional>
+			<haveDefaultValue>true</haveDefaultValue>
+			<defaultValue>1</defaultValue>
+		</item>
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{531DBAE0-1C9E-447D-9C9A-0CC0103523CE}</id>
+			<comment/>
+			<position>
+				<first>39</first>
+				<second>287</second>
+			</position>
+			<name>LightMask</name>
 			<connectable>true</connectable>
 			<optional>true</optional>
 			<haveDefaultValue>true</haveDefaultValue>
@@ -240,6 +262,16 @@ World_DeferredGBufferWrite
 			<destination>
 				<node ref="/object/nodes/item"/>
 				<name>Specular</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[8]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item"/>
+				<name>LightMask</name>
 			</destination>
 		</item>
 	</edges>

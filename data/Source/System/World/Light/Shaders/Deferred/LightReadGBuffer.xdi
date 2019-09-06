@@ -26,7 +26,7 @@
 			<id>{C1A5D7C6-4EF4-284A-A094-1327ECBED212}</id>
 			<comment/>
 			<position>
-				<first>-22</first>
+				<first>-20</first>
 				<second>737</second>
 			</position>
 			<fragmentGuid>{ED628E05-EA7F-B24F-9E38-97F53A90CCDA}</fragmentGuid>
@@ -49,7 +49,7 @@
 			<id>{9B7F2F9B-720A-964A-99AA-C33238BCC68F}</id>
 			<comment/>
 			<position>
-				<first>-29</first>
+				<first>-20</first>
 				<second>801</second>
 			</position>
 			<fragmentGuid>{B8A2B203-34E6-3543-8502-522D0F16791C}</fragmentGuid>
@@ -200,7 +200,7 @@
 			<id>{F26708F9-F91E-8E4F-9D47-3FCBAA6CE65A}</id>
 			<comment/>
 			<position>
-				<first>183</first>
+				<first>182</first>
 				<second>838</second>
 			</position>
 			<name>ViewNormal</name>
@@ -218,7 +218,7 @@
 			<id>{390927E0-37D2-4370-AC2E-667ACCFD1856}</id>
 			<comment/>
 			<position>
-				<first>-48</first>
+				<first>-36</first>
 				<second>929</second>
 			</position>
 			<fragmentGuid>{42F70BA2-042F-F74D-9FEB-2A8DA946AF95}</fragmentGuid>
@@ -250,7 +250,7 @@
 			<id>{9057D628-8B47-4B77-A7D9-6622A5ECF7DD}</id>
 			<comment/>
 			<position>
-				<first>-18</first>
+				<first>-4</first>
 				<second>673</second>
 			</position>
 			<fragmentGuid>{197F1BBB-E153-A846-90E9-23789D16EE15}</fragmentGuid>
@@ -273,10 +273,42 @@
 			<id>{011933FB-5EDC-4E0F-84A4-0352D345A548}</id>
 			<comment/>
 			<position>
-				<first>183</first>
+				<first>182</first>
 				<second>717</second>
 			</position>
 			<name>Color</name>
+		</item>
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+			<id>{120899E4-6556-4036-AE2D-24D0C8029509}</id>
+			<comment/>
+			<position>
+				<first>-36</first>
+				<second>993</second>
+			</position>
+			<fragmentGuid>{B15C7944-2A8E-44A5-BFD8-E4DC6857EBB5}</fragmentGuid>
+			<inputPins>
+				<item>
+					<id>{520ED0D2-881F-D044-B213-28592C3F0C9C}</id>
+					<name>UV</name>
+					<optional>false</optional>
+				</item>
+			</inputPins>
+			<outputPins>
+				<item>
+					<id>{66678BA7-49BD-6A4E-BF71-3A7C57F06519}</id>
+					<name>Output</name>
+				</item>
+			</outputPins>
+			<values/>
+		</item>
+		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
+			<id>{0D378538-E809-4249-B60F-4A8A080F8B8D}</id>
+			<comment/>
+			<position>
+				<first>182</first>
+				<second>1024</second>
+			</position>
+			<name>LightMask</name>
 		</item>
 	</nodes>
 	<edges>
@@ -507,6 +539,26 @@
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[21]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item"/>
+				<name>TexCoord</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[22]"/>
+				<name>UV</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[22]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[23]"/>
 				<name>Input</name>
 			</destination>
 		</item>
