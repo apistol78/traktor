@@ -48,6 +48,7 @@ SolidEntity::SolidEntity(
 :   world::GroupEntity(transform)
 ,   m_renderSystem(renderSystem)
 ,   m_shader(shader)
+,	m_dirty(true)
 {
 }
 
@@ -59,7 +60,7 @@ void SolidEntity::update(const world::UpdateParams& update)
     getEntitiesOf< PrimitiveEntity >(primitiveEntities);
 
     // Check if any child entity is dirty and if so update our preview geometry.
-    bool dirty = false;
+    bool dirty = m_dirty;
     for (auto primitiveEntity : primitiveEntities)
     {
         dirty |= primitiveEntity->isDirty();
@@ -191,6 +192,8 @@ void SolidEntity::update(const world::UpdateParams& update)
                 nvertices - 1
             );
         }
+
+		m_dirty = false;
     }
 }
 

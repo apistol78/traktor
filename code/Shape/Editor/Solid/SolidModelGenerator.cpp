@@ -1,3 +1,6 @@
+#pragma optimize( "", off )
+
+#include "Database/Database.h"
 #include "Editor/IPipelineBuilder.h"
 #include "Mesh/MeshComponentData.h"
 #include "Mesh/Editor/MeshAsset.h"
@@ -13,6 +16,7 @@
 #include "Shape/Editor/Solid/IShape.h"
 #include "Shape/Editor/Solid/PrimitiveEntityData.h"
 #include "Shape/Editor/Solid/SolidEntityData.h"
+#include "Shape/Editor/Solid/SolidMaterial.h"
 #include "Shape/Editor/Solid/SolidModelGenerator.h"
 #include "World/Entity/ComponentEntityData.h"
 
@@ -113,6 +117,8 @@ Ref< model::Model > SolidModelGenerator::createModel(
         }
     }
 
+	model::Transform(solidEntityData->getTransform().inverse().toMatrix44()).apply(current);
+
     return new model::Model(current);
 }
 
@@ -135,7 +141,29 @@ Ref< Object > SolidModelGenerator::modifyOutput(
     // Build visual mesh.
     Ref< mesh::MeshAsset > outputMeshAsset = new mesh::MeshAsset();
     outputMeshAsset->setMeshType(mesh::MeshAsset::MtStatic);
-    outputMeshAsset->setMaterialTextures({ { L"__Illumination__", lightmapId } });
+
+	std::map< std::wstring, Guid > materialTextures;
+	materialTextures[L"__Illumination__"] = lightmapId;
+	for (const auto& material : model->getMaterials())
+	{
+		Guid materialId(material.getName());
+		if (!materialId.isNotNull())
+			continue;
+
+		Ref< SolidMaterial > sm = pipelineBuilder->getSourceDatabase()->getObjectReadOnly< SolidMaterial >(materialId);
+		if (!sm)
+			continue;
+
+		if (sm->getAlbedo().isNotNull())
+			materialTextures[materialId.format() + L"_Albedo"] = sm->getAlbedo();
+		if (sm->getNormal().isNotNull())
+			materialTextures[materialId.format() + L"_Normal"] = sm->getNormal();
+		if (sm->getRoughness().isNotNull())
+			materialTextures[materialId.format() + L"_Roughness"] = sm->getRoughness();
+		if (sm->getMetalness().isNotNull())
+			materialTextures[materialId.format() + L"_Metalness"] = sm->getMetalness();
+	}
+	outputMeshAsset->setMaterialTextures(materialTextures);
 
     pipelineBuilder->buildOutput(
         outputMeshAsset,

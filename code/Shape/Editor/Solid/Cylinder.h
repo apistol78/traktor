@@ -28,10 +28,13 @@ public:
 
 	virtual void serialize(ISerializer& s) override final;
 
+	const Guid* getMaterials() const { return m_materials; }
+
 private:
 	float m_length;
     float m_radius;
     int32_t m_faces;
+	Guid m_materials[3];
 };
 
 	}

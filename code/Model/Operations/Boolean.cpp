@@ -2,7 +2,6 @@
 #include "Core/Math/Const.h"
 #include "Core/Math/Winding3.h"
 #include "Model/Model.h"
-#include "Model/ModelAdjacency.h"
 #include "Model/Operations/Boolean.h"
 #include "Model/Operations/MergeModel.h"
 
@@ -60,6 +59,9 @@ bool Boolean::apply(Model& model) const
 
 	for (uint32_t i = 0; i < m_modelB.getMaterialCount(); ++i)
 		materialMap[materialOffset + i] = model.addUniqueMaterial(m_modelB.getMaterial(i));
+
+	// \tbd Assume one shared channel.
+	model.addUniqueTexCoordChannel(L"UVMap");
 
 	AlignedVector< BspPolygon > polygonsA;
 	for (const auto& polygon : m_modelA.getPolygons())

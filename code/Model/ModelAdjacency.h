@@ -55,19 +55,19 @@ public:
 
 	/*! \brief Get edges "entering" given vertex.
 	 */
-	void getEnteringEdges(uint32_t vertexId, AlignedVector< uint32_t >& outEnteringEdges) const;
+	void getEnteringEdges(uint32_t vertexId, share_vector_t& outEnteringEdges) const;
 
 	/*! \brief Get edges "leaving" given vertex.
 	 */
-	void getLeavingEdges(uint32_t vertexId, AlignedVector< uint32_t >& outLeavingEdges) const;
+	void getLeavingEdges(uint32_t vertexId, share_vector_t& outLeavingEdges) const;
 
 	/*! \brief Get sharing edges; ie opposite edges.
 	 */
-	void getSharedEdges(uint32_t edge, AlignedVector< uint32_t >& outSharedEdges) const;
+	void getSharedEdges(uint32_t edge,share_vector_t& outSharedEdges) const;
 
 	/*! \brief Get sharing edges; ie opposite edges.
 	 */
-	void getSharedEdges(uint32_t polygon, uint32_t polygonEdge, AlignedVector< uint32_t >& outSharedEdges) const;
+	void getSharedEdges(uint32_t polygon, uint32_t polygonEdge, share_vector_t& outSharedEdges) const;
 
 	/*! \brief Count number of sharing edges.
 	 */

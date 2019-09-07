@@ -30,6 +30,7 @@
 #include "Model/Operations/Transform.h"
 #include "Model/Operations/Triangulate.h"
 #include "Model/Operations/MergeCoplanarAdjacents.h"
+#include "Model/Operations/MergeTVertices.h"
 #include "Model/Operations/Unweld.h"
 #include "Model/Operations/UnwrapUV.h"
 #include "Render/IRenderSystem.h"
@@ -241,6 +242,7 @@ bool ModelToolDialog::create(ui::Widget* parent, const std::wstring& fileName, f
 	modelRootPopupAdd->add(new ui::MenuItem(ui::Command(L"ModelTool.CullDistantFaces"), L"Cull Distant Faces"));
 	modelRootPopupAdd->add(new ui::MenuItem(ui::Command(L"ModelTool.FlattenDoubleSided"), L"Flatten Double Sided"));
 	modelRootPopupAdd->add(new ui::MenuItem(ui::Command(L"ModelTool.MergeCoplanar"), L"Merge Coplanar"));
+	modelRootPopupAdd->add(new ui::MenuItem(ui::Command(L"ModelTool.MergeTVertices"), L"Merge T-vertices"));
 	modelRootPopupAdd->add(new ui::MenuItem(ui::Command(L"ModelTool.Quantize"), L"Quantize"));
 	modelRootPopupAdd->add(new ui::MenuItem(ui::Command(L"ModelTool.Reduce"), L"Reduce"));
 	modelRootPopupAdd->add(new ui::MenuItem(ui::Command(L"ModelTool.ScaleAlongNormal"), L"Scale Along Normal"));
@@ -519,6 +521,12 @@ void ModelToolDialog::eventModelTreeButtonDown(ui::MouseButtonDownEvent* event)
 			{
 				Ref< ui::TreeViewItem > itemOperation = m_modelTree->createItem(itemModel, L"Merge Coplanar", 0);
 				itemOperation->setData(L"OPERATION", new MergeCoplanarAdjacents());
+				updateOperations(itemModel);
+			}
+			else if (command == L"ModelTool.MergeTVertices")
+			{
+				Ref< ui::TreeViewItem > itemOperation = m_modelTree->createItem(itemModel, L"Merge T-vertices", 0);
+				itemOperation->setData(L"OPERATION", new MergeTVertices());
 				updateOperations(itemModel);
 			}
 			else if (command == L"ModelTool.Quantize")

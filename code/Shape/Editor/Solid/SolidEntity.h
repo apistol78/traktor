@@ -61,6 +61,7 @@ private:
 	Ref< render::VertexBuffer > m_vertexBuffer;
 	Ref< render::IndexBuffer > m_indexBuffer;
 	render::Primitives m_primitives;
+	bool m_dirty;
 };
 
     }

@@ -105,7 +105,7 @@ uint32_t ModelAdjacency::getEdge(uint32_t polygon, uint32_t polygonEdge) const
 	return c_InvalidIndex;
 }
 
-void ModelAdjacency::getEnteringEdges(uint32_t vertexId, AlignedVector< uint32_t >& outEnteringEdges) const
+void ModelAdjacency::getEnteringEdges(uint32_t vertexId, share_vector_t& outEnteringEdges) const
 {
 	if (m_mode == MdByPosition)
 		vertexId = m_model->getVertex(vertexId).getPosition();
@@ -140,7 +140,7 @@ void ModelAdjacency::getEnteringEdges(uint32_t vertexId, AlignedVector< uint32_t
 	}
 }
 
-void ModelAdjacency::getLeavingEdges(uint32_t vertexId, AlignedVector< uint32_t >& outLeavingEdges) const
+void ModelAdjacency::getLeavingEdges(uint32_t vertexId, share_vector_t& outLeavingEdges) const
 {
 	if (m_mode == MdByPosition)
 		vertexId = m_model->getVertex(vertexId).getPosition();
@@ -175,20 +175,19 @@ void ModelAdjacency::getLeavingEdges(uint32_t vertexId, AlignedVector< uint32_t 
 	}
 }
 
-void ModelAdjacency::getSharedEdges(uint32_t edge, AlignedVector< uint32_t >& outSharedEdges) const
+void ModelAdjacency::getSharedEdges(uint32_t edge, share_vector_t& outSharedEdges) const
 {
-	const share_vector_t& share = m_edges[edge].share;
-	outSharedEdges = AlignedVector< uint32_t >(share.begin(), share.end());
+	outSharedEdges = m_edges[edge].share;
 }
 
-void ModelAdjacency::getSharedEdges(uint32_t polygon, uint32_t polygonEdge, AlignedVector< uint32_t >& outSharedEdges) const
+void ModelAdjacency::getSharedEdges(uint32_t polygon, uint32_t polygonEdge, share_vector_t& outSharedEdges) const
 {
 	outSharedEdges.resize(0);
 	for (auto edge : m_edges)
 	{
 		if (edge.polygon == polygon && edge.index == polygonEdge)
 		{
-			outSharedEdges = AlignedVector< uint32_t >(edge.share.begin(), edge.share.end());
+			outSharedEdges = edge.share;
 			break;
 		}
 	}

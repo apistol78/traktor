@@ -97,6 +97,11 @@ void Polygon::addVertex(uint32_t vertex)
 	m_vertices.push_back(vertex);
 }
 
+void Polygon::insertVertex(uint32_t index, uint32_t vertex)
+{
+	m_vertices.insert(m_vertices.begin() + (size_t)index, vertex);
+}
+
 void Polygon::setVertex(uint32_t index, uint32_t vertex)
 {
 	T_ASSERT(index < uint32_t(m_vertices.size()));
