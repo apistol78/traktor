@@ -90,30 +90,30 @@ Ref< ModelAdjacency > ModelAdjacency_ctor_3(const Model* model, int32_t mode, ui
 
 AlignedVector< uint32_t > ModelAdjacency_getEnteringEdges(ModelAdjacency* self, uint32_t vertexId)
 {
-    AlignedVector< uint32_t > edges;
+    ModelAdjacency::share_vector_t edges;
     self->getEnteringEdges(vertexId, edges);
-    return edges;
+    return AlignedVector< uint32_t >(edges.begin(), edges.end());
 }
 
 AlignedVector< uint32_t > ModelAdjacency_getLeavingEdges(ModelAdjacency* self, uint32_t vertexId)
 {
-    AlignedVector< uint32_t > edges;
+    ModelAdjacency::share_vector_t edges;
     self->getLeavingEdges(vertexId, edges);
-    return edges;
+    return AlignedVector< uint32_t >(edges.begin(), edges.end());
 }
 
 AlignedVector< uint32_t > ModelAdjacency_getSharedEdges_2(ModelAdjacency* self, uint32_t edge)
 {
-    AlignedVector< uint32_t > edges;
+    ModelAdjacency::share_vector_t edges;
     self->getSharedEdges(edge, edges);
-    return edges;
+    return AlignedVector< uint32_t >(edges.begin(), edges.end());
 }
 
 AlignedVector< uint32_t > ModelAdjacency_getSharedEdges_3(ModelAdjacency* self, uint32_t polygon, uint32_t polygonEdge)
 {
-    AlignedVector< uint32_t > edges;
+    ModelAdjacency::share_vector_t edges;
     self->getSharedEdges(polygon, polygonEdge, edges);
-    return edges;
+    return AlignedVector< uint32_t >(edges.begin(), edges.end());
 }
 
 uint32_t ModelAdjacency_getSharedEdgeCount_1(ModelAdjacency* self, uint32_t edge)

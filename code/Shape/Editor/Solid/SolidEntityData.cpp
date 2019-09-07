@@ -18,6 +18,11 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.shape.SolidEntityData", 0, SolidEntityData, world::GroupEntityData)
 
+SolidEntityData::SolidEntityData()
+:	m_outputGuid(Guid::create())
+{
+}
+
 Ref< SolidEntity > SolidEntityData::createEntity(const world::IEntityBuilder* builder, resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem) const
 {
 	resource::Proxy< render::Shader > shader;

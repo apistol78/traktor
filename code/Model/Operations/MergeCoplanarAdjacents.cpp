@@ -44,7 +44,7 @@ bool MergeCoplanarAdjacents::apply(Model& model) const
 
 	// Build model adjacency information.
 	ModelAdjacency adjacency(&model, ModelAdjacency::MdByPosition);
-	AlignedVector< uint32_t > sharedEdges;
+	ModelAdjacency::share_vector_t sharedEdges;
 	AlignedVector< uint32_t > removeIndices;
 
 	// Keep iterating until no more polygons are merged.

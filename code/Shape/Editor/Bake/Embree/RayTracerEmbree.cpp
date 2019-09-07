@@ -2,6 +2,7 @@
 #include <embree3/rtcore.h>
 #include <embree3/rtcore_ray.h>
 #include "Core/Functor/Functor.h"
+#include "Core/Log/Log.h"
 #include "Core/Math/RandomGeometry.h"
 #include "Core/Thread/Job.h"
 #include "Core/Thread/JobManager.h"
@@ -55,6 +56,56 @@ Scalar attenuation(const Scalar& distance, const Scalar& range)
 	return k0 * k1;
 }
 
+double halton(int32_t index, int32_t base)
+{
+	double f = 1, r = 0;
+	while (index > 0)
+	{
+		f = f / base;
+		r = r + f * (index % base);
+		index = index / base;
+	}
+	return r;
+}
+
+class Variance
+{
+public:
+	Variance()
+	:	m_count(0)
+	,	m_mean(0.0f)
+	,	m_meanDistSquared(0.0f)
+	{
+	}
+
+	void insert(float value)
+	{
+		m_count++;
+		float delta = value - m_mean;
+		m_mean += delta / m_count;
+		m_meanDistSquared += delta * (value - m_mean);
+	}
+
+	float get() const
+	{
+		return m_meanDistSquared / (m_count - 1);
+	}
+
+	bool stop(float accept, float confidence) const
+	{
+		double threshold = accept / confidence;
+		double standardError = sqrt(get() / m_count);
+		return standardError < m_mean * threshold;
+	}
+
+private:
+	int32_t m_count;
+	float m_mean;
+	float m_meanDistSquared;
+};
+
+const Vector4 c_luminance(0.2126f, 0.7152f, 0.0722f, 0.0f);
+
 		}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.shape.RayTracerEmbree", 0, RayTracerEmbree, IRayTracer)
@@ -79,6 +130,18 @@ bool RayTracerEmbree::create(const BakeConfiguration* configuration)
 	m_shEngine->generateSamplePoints(
 		configuration->getIrradianceSampleCount()
 	);
+
+	// Generate halton sequence.
+	const uint32_t sampleCount = alignUp(m_configuration->getIndirectSampleCount(), 16);
+
+	m_halton.resize(sampleCount);
+	for (int32_t i = 0; i < (int32_t)sampleCount; ++i)
+	{
+		m_halton[i] = Vector2(
+			(float)halton(i, 2),
+			(float)halton(i, 3)
+		);
+	}
 
     return true;
 }
@@ -215,7 +278,10 @@ Ref< render::SHCoeffs > RayTracerEmbree::traceProbe(const Vector4& position) con
 		const auto& polygons = m_model.getPolygons();
 		const auto& materials = m_model.getMaterials();
 
-		for (uint32_t i = 0; i < sampleCount; i += 16)
+		Variance variance;
+		
+		uint32_t i = 0;
+		for (; i < sampleCount; i += 16)
 		{
 			for (uint32_t j = 0; j < 16; ++j)
 			{
@@ -272,11 +338,16 @@ Ref< render::SHCoeffs > RayTracerEmbree::traceProbe(const Vector4& position) con
 						true
 					);
 					indirect += brdf * incoming * f * ct / p;
+
+					variance.insert(dot3(indirect, c_luminance));
 				}
 			}
+
+			if (variance.stop(0.05f, 1.96f))
+				break;
 		}
 
-		indirect /= Scalar(sampleCount);
+		indirect /= Scalar(i);
 		return indirect;
 	});
 
@@ -369,8 +440,10 @@ Ref< drawing::Image > RayTracerEmbree::traceIndirect(const GBuffer* gbuffer) con
 							continue;
 
 						Color4f indirect(0.0f, 0.0f, 0.0f, 0.0f);
+						Variance variance;
 
-						for (uint32_t i = 0; i < sampleCount; i += 16)
+						uint32_t i = 0;
+						for (; i < sampleCount; i += 16)
 						{
 							// Create a batch of rays.
 							for (uint32_t j = 0; j < 16; ++j)
@@ -431,11 +504,15 @@ Ref< drawing::Image > RayTracerEmbree::traceIndirect(const GBuffer* gbuffer) con
 
 								Scalar ct = dot3(elm.normal, direction[j]);
 								indirect += brdf * incoming * f * ct / p;
+
+								variance.insert(dot3(indirect, c_luminance));
 							}
+
+							if (variance.stop(0.05f, 1.96f))
+								break;
 						}
 
-						indirect /= Scalar(sampleCount);
-
+						indirect /= Scalar(i);
 						lightmapIndirect->setPixel(x, y, indirect.rgb1());
 					}
 				}

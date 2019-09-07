@@ -29,6 +29,8 @@ public:
 
 	virtual void serialize(ISerializer& s) override final;
 
+	const Guid* getMaterials() const { return m_materials; }
+
 private:
 	Vector4 m_extent;
 	Guid m_materials[6];

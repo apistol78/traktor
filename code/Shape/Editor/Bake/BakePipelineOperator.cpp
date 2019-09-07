@@ -281,7 +281,10 @@ bool BakePipelineOperator::build(
 
 	const auto configuration = mandatory_non_null_type_cast< const BakeConfiguration* >(operatorData);
 	uint32_t configurationHash = DeepHash(configuration).get();
-	Guid seedId = configuration->getSeedGuid();
+
+	Guid layerHashSeedId = configuration->getSeedGuid().permutation(0);
+	Guid lightmapSeedId = configuration->getSeedGuid().permutation(1000000);
+	Guid irradianceGridSeedId = configuration->getSeedGuid().permutation(2000000);
 
 	Ref< TracerTask > tracerTask = new TracerTask(
 		sourceInstance->getGuid(),
@@ -294,7 +297,6 @@ bool BakePipelineOperator::build(
 	{
 		if (!(layer->isInclude() && !layer->isDynamic()))
 		{
-			seedId.permutate();
 			layers.push_back(layer);
 			continue;
 		}
@@ -308,7 +310,7 @@ bool BakePipelineOperator::build(
 		int32_t layerHash = configurationHash + (int32_t)DeepHash(flattenedLayer).get();
 
 		// Check if layer has already been baked, hash is written as a receipt in output database.
-		Guid existingLayerHashId = seedId.permutate();
+		Guid existingLayerHashId = layerHashSeedId.permutate();
 
 		Ref< PropertyInteger > existingLayerHash = pipelineBuilder->getOutputDatabase()->getObjectReadOnly< PropertyInteger >(existingLayerHashId);
 		if (existingLayerHash && *existingLayerHash == layerHash)
@@ -348,7 +350,7 @@ bool BakePipelineOperator::build(
 					if (!model)
 						continue;
 
-					Guid lightmapId = seedId.permutate();
+					Guid lightmapId = lightmapSeedId.permutate();
 
 					// Ensure model is fit for tracing.
 					model->clear(model::Model::CfColors | model::Model::CfJoints);
@@ -431,7 +433,7 @@ bool BakePipelineOperator::build(
 			}
 			else	// non-component entity type.
 			{
-				Guid lightmapId = seedId.permutate();
+				Guid lightmapId = lightmapSeedId.permutate();
 
 				// Find model synthesizer which can generate from current entity.
 				const IModelGenerator* modelGenerator = findModelGenerator(type_of(inoutEntityData));
@@ -495,7 +497,7 @@ bool BakePipelineOperator::build(
 				// Add model to raytracing task.
 				if (!addModel(
 					model,
-					Transform::identity(),
+					inoutEntityData->getTransform(),
 					inoutEntityData->getName(),
 					lightmapId,
 					lightmapSize,
@@ -524,7 +526,7 @@ bool BakePipelineOperator::build(
 	// Create irradiance grid task.
 	if (configuration->traceIrradiance())
 	{
-		Guid irradianceGridId = seedId.permutate();
+		Guid irradianceGridId = irradianceGridSeedId.permutate();
 
 		// Create a black irradiance grid first.
 		Ref< world::IrradianceGridResource > outputResource = new world::IrradianceGridResource();

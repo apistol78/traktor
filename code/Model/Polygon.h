@@ -54,6 +54,9 @@ public:
 
 	void addVertex(uint32_t vertex);
 
+	/*! Insert vertex at index. */
+	void insertVertex(uint32_t index, uint32_t vertex);
+
 	void setVertex(uint32_t index, uint32_t vertex);
 
 	uint32_t getVertex(uint32_t index) const;

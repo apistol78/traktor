@@ -1,4 +1,5 @@
 #include "Core/Io/FileSystem.h"
+#include "Database/Database.h"
 #include "Editor/IPipelineBuilder.h"
 #include "Editor/IPipelineDepends.h"
 #include "Mesh/MeshComponentData.h"
@@ -9,9 +10,13 @@
 #include "Physics/StaticBodyDesc.h"
 #include "Physics/Editor/MeshAsset.h"
 #include "Physics/World/RigidBodyComponentData.h"
+#include "Shape/Editor/Solid/Box.h"
+#include "Shape/Editor/Solid/Cylinder.h"
+#include "Shape/Editor/Solid/PrimitiveEntityData.h"
 #include "Shape/Editor/Solid/SolidEntityData.h"
 #include "Shape/Editor/Solid/SolidEntityPipeline.h"
 #include "Shape/Editor/Solid/SolidModelGenerator.h"
+#include "Shape/Editor/Solid/SolidMaterial.h"
 #include "World/Entity/ComponentEntityData.h"
 
 namespace traktor
@@ -32,7 +37,13 @@ bool SolidEntityPipeline::create(const editor::IPipelineSettings* settings)
 
 TypeInfoSet SolidEntityPipeline::getAssetTypes() const
 {
-	return makeTypeInfoSet< SolidEntityData >();
+	TypeInfoSet typeInfoSet;
+	typeInfoSet.insert< PrimitiveEntityData >();
+	typeInfoSet.insert< SolidEntityData >();
+	typeInfoSet.insert< SolidMaterial >();
+	typeInfoSet.insert< Box >();
+	typeInfoSet.insert< Cylinder >();
+	return typeInfoSet;
 }
 
 bool SolidEntityPipeline::buildDependencies(
@@ -43,13 +54,47 @@ bool SolidEntityPipeline::buildDependencies(
 	const Guid& outputGuid
 ) const
 {
-	const SolidEntityData* solidEntityData = mandatory_non_null_type_cast< const SolidEntityData* >(sourceAsset);
-
 	if (!world::EntityPipeline::buildDependencies(pipelineDepends, sourceInstance, sourceAsset, outputPath, outputGuid))
 		return false;
 
-    // \tbd Add only shader for editor preview...
-    pipelineDepends->addDependency(solidEntityData->getShader(), editor::PdfResource | editor::PdfBuild);
+	if (auto primitiveEntityData = dynamic_type_cast< const PrimitiveEntityData* >(sourceAsset))
+	{
+		if (primitiveEntityData->getShape())
+			pipelineDepends->addDependency(primitiveEntityData->getShape());
+	}
+	else if (auto solidEntityData = dynamic_type_cast< const SolidEntityData* >(sourceAsset))
+	{
+		// \tbd Add only shader for editor preview...
+		pipelineDepends->addDependency(solidEntityData->getShader(), editor::PdfResource | editor::PdfBuild);
+	}
+	else if (auto solidMaterial = dynamic_type_cast< const SolidMaterial* >(sourceAsset))
+	{
+		pipelineDepends->addDependency(solidMaterial->getAlbedo(), editor::PdfResource | editor::PdfBuild);
+		pipelineDepends->addDependency(solidMaterial->getNormal(), editor::PdfResource | editor::PdfBuild);
+		pipelineDepends->addDependency(solidMaterial->getRoughness(), editor::PdfResource | editor::PdfBuild);
+		pipelineDepends->addDependency(solidMaterial->getMetalness(), editor::PdfResource | editor::PdfBuild);
+	}
+	else if (auto box = dynamic_type_cast< const Box* >(sourceAsset))
+	{
+		const Guid* materials = box->getMaterials();
+		for (uint32_t i = 0; i < 6; ++i)
+		{
+			if (materials[i].isNotNull())
+				pipelineDepends->addDependency(materials[i], editor::PdfBuild);
+		}
+	}
+	else if (auto cylinder = dynamic_type_cast< const Cylinder* >(sourceAsset))
+	{
+		const Guid* materials = cylinder->getMaterials();
+		for (uint32_t i = 0; i < 3; ++i)
+		{
+			if (materials[i].isNotNull())
+				pipelineDepends->addDependency(materials[i], editor::PdfBuild);
+		}
+	}
+	else
+		return false;
+
 	return true;
 }
 
@@ -58,67 +103,95 @@ Ref< ISerializable > SolidEntityPipeline::buildOutput(
 	const ISerializable* sourceAsset
 ) const
 {
-	const SolidEntityData* solidEntityData = mandatory_non_null_type_cast< const SolidEntityData* >(sourceAsset);
-    
-    Ref< model::Model > outputModel = SolidModelGenerator().createModel(pipelineBuilder, L"", solidEntityData);
-    if (!outputModel)
-        return nullptr;
+	if (auto solidEntityData = dynamic_type_cast< const SolidEntityData* >(sourceAsset))
+	{
+		Ref< model::Model > outputModel = SolidModelGenerator().createModel(pipelineBuilder, L"", solidEntityData);
+		if (!outputModel)
+			return nullptr;
 
-    model::ModelFormat::writeAny(L"data/Temp/Solid/" + solidEntityData->getName() + L".tmd", outputModel);
+		model::ModelFormat::writeAny(L"data/Temp/Solid/" + solidEntityData->getName() + L".tmd", outputModel);
 
-	Guid outputRenderMeshGuid = solidEntityData->getOutputGuid().permutation(0);
-	Guid outputCollisionShapeGuid = solidEntityData->getOutputGuid().permutation(1);
+		Guid outputRenderMeshGuid = solidEntityData->getOutputGuid().permutation(0);
+		Guid outputCollisionShapeGuid = solidEntityData->getOutputGuid().permutation(1);
 
-	std::wstring outputRenderMeshPath = L"Generated/" + outputRenderMeshGuid.format();
-	std::wstring outputCollisionShapePath = L"Generated/" + outputCollisionShapeGuid.format();
+		std::wstring outputRenderMeshPath = L"Generated/" + outputRenderMeshGuid.format();
+		std::wstring outputCollisionShapePath = L"Generated/" + outputCollisionShapeGuid.format();
 
-	// Create our output entity which will only contain the merged meshes.
-	Ref< world::ComponentEntityData > outputEntityData = new world::ComponentEntityData();
-	outputEntityData->setName(solidEntityData->getName());
-	outputEntityData->setTransform(solidEntityData->getTransform());
+		// Create our output entity which will only contain the merged meshes.
+		Ref< world::ComponentEntityData > outputEntityData = new world::ComponentEntityData();
+		outputEntityData->setName(solidEntityData->getName());
+		outputEntityData->setTransform(solidEntityData->getTransform());
 
-    // Build output mesh from merged model.
-    Ref< mesh::MeshAsset > visualMeshAsset = new mesh::MeshAsset();
-    visualMeshAsset->setMeshType(mesh::MeshAsset::MtStatic);
+		// Build output mesh from merged model.
+		Ref< mesh::MeshAsset > visualMeshAsset = new mesh::MeshAsset();
+		visualMeshAsset->setMeshType(mesh::MeshAsset::MtStatic);
 
-    pipelineBuilder->buildOutput(
-        visualMeshAsset,
-        outputRenderMeshPath,
-        outputRenderMeshGuid,
-        outputModel
-    );
+		std::map< std::wstring, Guid > materialTextures;
+		for (const auto& material : outputModel->getMaterials())
+		{
+			Guid materialId(material.getName());
+			if (!materialId.isNotNull())
+				continue;
 
-    // Replace mesh component referencing our merged mesh.
-    outputEntityData->setComponent(new mesh::MeshComponentData(
-        resource::Id< mesh::IMesh >(outputRenderMeshGuid)
-    ));
+			Ref< SolidMaterial > sm = pipelineBuilder->getSourceDatabase()->getObjectReadOnly< SolidMaterial >(materialId);
+			if (!sm)
+				continue;
 
-    // Build output mesh from merged model.
-    Ref< physics::MeshAsset > physicsMeshAsset = new physics::MeshAsset();
-    physicsMeshAsset->setMargin(0.0f);
-    physicsMeshAsset->setCalculateConvexHull(false);
+			if (sm->getAlbedo().isNotNull())
+				materialTextures[materialId.format() + L"_Albedo"] = sm->getAlbedo();
+			if (sm->getNormal().isNotNull())
+				materialTextures[materialId.format() + L"_Normal"] = sm->getNormal();
+			if (sm->getRoughness().isNotNull())
+				materialTextures[materialId.format() + L"_Roughness"] = sm->getRoughness();
+			if (sm->getMetalness().isNotNull())
+				materialTextures[materialId.format() + L"_Metalness"] = sm->getMetalness();
+		}
+		visualMeshAsset->setMaterialTextures(materialTextures);
 
-    pipelineBuilder->buildOutput(
-        physicsMeshAsset,
-        outputCollisionShapePath,
-        outputCollisionShapeGuid,
-        outputModel
-    );
+		pipelineBuilder->buildOutput(
+			visualMeshAsset,
+			outputRenderMeshPath,
+			outputRenderMeshGuid,
+			outputModel
+		);
 
-    // Replace mesh component referencing our merged physics mesh.
-    Ref< physics::MeshShapeDesc > outputShapeDesc = new physics::MeshShapeDesc();
-    outputShapeDesc->setMesh(resource::Id< physics::Mesh >(outputCollisionShapeGuid));
-    outputShapeDesc->setCollisionGroup(solidEntityData->getCollisionGroup());
-    outputShapeDesc->setCollisionMask(solidEntityData->getCollisionMask());
+		// Replace mesh component referencing our merged mesh.
+		outputEntityData->setComponent(new mesh::MeshComponentData(
+			resource::Id< mesh::IMesh >(outputRenderMeshGuid)
+		));
 
-    Ref< physics::StaticBodyDesc > outputBodyDesc = new physics::StaticBodyDesc();
-    outputBodyDesc->setShape(outputShapeDesc);
+		// Build output mesh from merged model.
+		Ref< physics::MeshAsset > physicsMeshAsset = new physics::MeshAsset();
+		physicsMeshAsset->setMargin(0.0f);
+		physicsMeshAsset->setCalculateConvexHull(false);
 
-    outputEntityData->setComponent(new physics::RigidBodyComponentData(
-        outputBodyDesc
-    ));
+		pipelineBuilder->buildOutput(
+			physicsMeshAsset,
+			outputCollisionShapePath,
+			outputCollisionShapeGuid,
+			outputModel
+		);
 
-    return outputEntityData;
+		// Replace mesh component referencing our merged physics mesh.
+		Ref< physics::MeshShapeDesc > outputShapeDesc = new physics::MeshShapeDesc();
+		outputShapeDesc->setMesh(resource::Id< physics::Mesh >(outputCollisionShapeGuid));
+		outputShapeDesc->setCollisionGroup(solidEntityData->getCollisionGroup());
+		outputShapeDesc->setCollisionMask(solidEntityData->getCollisionMask());
+
+		Ref< physics::StaticBodyDesc > outputBodyDesc = new physics::StaticBodyDesc();
+		outputBodyDesc->setShape(outputShapeDesc);
+
+		outputEntityData->setComponent(new physics::RigidBodyComponentData(
+			outputBodyDesc
+		));
+
+		return outputEntityData;
+	}
+	else
+		return world::EntityPipeline::buildOutput(
+			pipelineBuilder,
+			sourceAsset
+		);
 }
 
 	}

@@ -11,21 +11,7 @@ namespace traktor
 {
 	namespace shape
 	{
-		namespace
-		{
 
-struct BoxMaterial { const wchar_t* name; Color4f color; } c_materials[] =
-{
-	{ L"-Z", Color4f(1.0f, 0.5f, 0.5f, 1.0f) },
-	{ L"+X", Color4f(0.5f, 1.0f, 0.5f, 1.0f) },
-	{ L"+Z", Color4f(0.5f, 0.5f, 1.0f, 1.0f) },
-	{ L"-X", Color4f(0.5f, 1.0f, 1.0f, 1.0f) },
-	{ L"+Y", Color4f(1.0f, 0.5f, 1.0f, 1.0f) },
-	{ L"-Y", Color4f(1.0f, 1.0f, 0.5f, 1.0f) }
-};
-
-		}
-	
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.shape.Box", 1, Box, IShape)
 
 Box::Box()
@@ -48,9 +34,12 @@ Ref< model::Model > Box::createModel() const
 		const int* face = Aabb3::getFaces() + i * 4;
 
 		model::Material material;
-		material.setName(c_materials[i].name);
-		material.setColor(c_materials[i].color);
-		material.setDiffuseMap(model::Material::Map(L"Texture", tc, true));
+		material.setName(m_materials[i].format());
+		material.setColor(Color4f(1.0f, 1.0f, 1.0f, 1.0f));
+		material.setDiffuseMap(model::Material::Map(m_materials[i].format() + L"_Albedo", tc, true));
+		material.setNormalMap(model::Material::Map(m_materials[i].format() + L"_Normal", tc, true));
+		material.setRoughnessMap(model::Material::Map(m_materials[i].format() + L"_Roughness", tc, true));
+		material.setMetalnessMap(model::Material::Map(m_materials[i].format() + L"_Metalness", tc, true));
 		uint32_t mi = m->addMaterial(material);
 
         Vector4 fu, fv;
@@ -107,7 +96,8 @@ void Box::createAnchors(AlignedVector< Vector4 >& outAnchors) const
 void Box::serialize(ISerializer& s)
 {
 	s >> Member< Vector4 >(L"extent", m_extent);
-	s >> MemberStaticArray< Guid, 6 >(L"materials", m_materials, AttributeType(type_of< SolidMaterial >()));
+	if (s.getVersion() >= 1)
+		s >> MemberStaticArray< Guid, 6 >(L"materials", m_materials, AttributeType(type_of< SolidMaterial >()));
 }
 
 	}

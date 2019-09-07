@@ -1,27 +1,19 @@
 #include "Core/Math/Const.h"
 #include "Core/Serialization/AttributeRange.h"
+#include "Core/Serialization/AttributeType.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
+#include "Core/Serialization/MemberStaticArray.h"
 #include "Model/Model.h"
 #include "Shape/Editor/Solid/Cylinder.h"
+#include "Shape/Editor/Solid/SolidMaterial.h"
 
 namespace traktor
 {
 	namespace shape
 	{
-		namespace
-		{
 
-struct CylinderMaterial { const wchar_t* name; Color4f color; } c_materials[] =
-{
-	{   L"+Y", Color4f(1.0f, 0.5f, 1.0f, 1.0f) },
-	{   L"-Y", Color4f(1.0f, 1.0f, 0.5f, 1.0f) },
-	{ L"Side", Color4f(0.5f, 1.0f, 1.0f, 1.0f) },
-};
-
-		}
-
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.shape.Cylinder", 0, Cylinder, IShape)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.shape.Cylinder", 1, Cylinder, IShape)
 
 Cylinder::Cylinder()
 :	m_length(1.0f)
@@ -43,10 +35,13 @@ Ref< model::Model > Cylinder::createModel() const
 	for (int32_t i = 0; i < 3; ++i)
 	{
 		model::Material material;
-		material.setName(c_materials[i].name);
-		material.setColor(c_materials[i].color);
-		material.setDiffuseMap(model::Material::Map(L"Texture", tc, true));
-		m->addMaterial(material);
+		material.setName(m_materials[i].format());
+		material.setColor(Color4f(1.0f, 1.0f, 1.0f, 1.0f));
+		material.setDiffuseMap(model::Material::Map(m_materials[i].format() + L"_Albedo", tc, true));
+		material.setNormalMap(model::Material::Map(m_materials[i].format() + L"_Normal", tc, true));
+		material.setRoughnessMap(model::Material::Map(m_materials[i].format() + L"_Roughness", tc, true));
+		material.setMetalnessMap(model::Material::Map(m_materials[i].format() + L"_Metalness", tc, true));
+		uint32_t mi = m->addMaterial(material);
 	}
 
 	model::Polygon top;
@@ -99,22 +94,22 @@ Ref< model::Model > Cylinder::createModel() const
 			model::Vertex vx;
 			vx.setPosition(m->addUniquePosition(Vector4(x1, hl, z1, 1.0f)));
 			vx.setNormal(m->addUniqueNormal(n1));
-			vx.setTexCoord(tc, m->addUniqueTexCoord(Vector2(u1, 0.0f)));
+			vx.setTexCoord(tc, m->addUniqueTexCoord(Vector2(u1, hl)));
 			side.addVertex(m->addUniqueVertex(vx));
 
 			vx.setPosition(m->addUniquePosition(Vector4(x2, hl, z2, 1.0f)));
-			vx.setNormal(m->addUniqueNormal(n1));
-			vx.setTexCoord(tc, m->addUniqueTexCoord(Vector2(u2, 0.0f)));
+			vx.setNormal(m->addUniqueNormal(n2));
+			vx.setTexCoord(tc, m->addUniqueTexCoord(Vector2(u2, hl)));
 			side.addVertex(m->addUniqueVertex(vx));
 
 			vx.setPosition(m->addUniquePosition(Vector4(x2, -hl, z2, 1.0f)));
-			vx.setNormal(m->addUniqueNormal(n1));
-			vx.setTexCoord(tc, m->addUniqueTexCoord(Vector2(u2, 1.0f)));
+			vx.setNormal(m->addUniqueNormal(n2));
+			vx.setTexCoord(tc, m->addUniqueTexCoord(Vector2(u2, -hl)));
 			side.addVertex(m->addUniqueVertex(vx));
 
 			vx.setPosition(m->addUniquePosition(Vector4(x1, -hl, z1, 1.0f)));
 			vx.setNormal(m->addUniqueNormal(n1));
-			vx.setTexCoord(tc, m->addUniqueTexCoord(Vector2(u1, 1.0f)));
+			vx.setTexCoord(tc, m->addUniqueTexCoord(Vector2(u1, -hl)));
 			side.addVertex(m->addUniqueVertex(vx));
 
 			m->addPolygon(side);
@@ -138,6 +133,8 @@ void Cylinder::serialize(ISerializer& s)
 	s >> Member< float >(L"length", m_length, AttributeRange(0.0f));
     s >> Member< float >(L"radius", m_radius, AttributeRange(0.0f));
     s >> Member< int32_t >(L"faces", m_faces, AttributeRange(3));
+	if (s.getVersion() >= 1)
+		s >> MemberStaticArray< Guid, 3 >(L"materials", m_materials, AttributeType(type_of< SolidMaterial >()));
 }
 
 	}

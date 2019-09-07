@@ -60,6 +60,8 @@ class T_DLLCLASS SolidEntityData : public world::GroupEntityData
     T_RTTI_CLASS;
 
 public:
+	SolidEntityData();
+
     Ref< SolidEntity > createEntity(const world::IEntityBuilder* builder, resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem) const;
 
     virtual void serialize(ISerializer& s) override final;

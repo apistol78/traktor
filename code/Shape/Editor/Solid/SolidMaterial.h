@@ -21,6 +21,14 @@ class T_DLLCLASS SolidMaterial : public ISerializable
 	T_RTTI_CLASS;
 
 public:
+	const Guid& getAlbedo() const { return m_albedo; }
+
+	const Guid& getNormal() const { return m_normal; }
+
+	const Guid& getRoughness() const { return m_roughness; }
+
+	const Guid& getMetalness() const { return m_metalness; }
+
 	virtual void serialize(ISerializer& s) override final;
 
 private:

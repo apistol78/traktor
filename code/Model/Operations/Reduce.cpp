@@ -85,7 +85,7 @@ Vector4 triangleTipPoint(const Model& model, const ModelAdjacency& adjacency, ui
 	Vector4 normal = triangleNormal(model, triangleId);
 	Vector4 midPoint = triangleMidPoint(model, triangleId);
 
-	AlignedVector< uint32_t > sharedEdges;
+	ModelAdjacency::share_vector_t sharedEdges;
 	Vector4 tipPoint = Vector4::zero();
 	int32_t count = 0;
 
@@ -136,7 +136,7 @@ void triangleEdgeNeighbors(const Model& model, const ModelAdjacency& adjacency, 
 		return;
 
 	// Get edge neighbors.
-	AlignedVector< uint32_t > sharedEdges;
+	ModelAdjacency::share_vector_t sharedEdges;
 	for (uint32_t j = 0; j < 3; ++j)
 	{
 		adjacency.getSharedEdges(triangleId, j, sharedEdges);
@@ -211,7 +211,7 @@ float triangleVolumeError(const Model& model, const ModelAdjacency& adjacency, u
 	);
 
 	// Accumulate volume errors of edge sharing triangles.
-	AlignedVector< uint32_t > sharedEdges;
+	ModelAdjacency::share_vector_t sharedEdges;
 	for (uint32_t j = 0; j < 3; ++j)
 	{
 		adjacency.getSharedEdges(triangleId, j, sharedEdges);
@@ -267,7 +267,7 @@ Reduce::Reduce(float target)
 
 bool Reduce::apply(Model& model) const
 {
-	AlignedVector< uint32_t > sharedEdges;
+	ModelAdjacency::share_vector_t sharedEdges;
 
 	// Model must be triangulated.
 	Triangulate().apply(model);
