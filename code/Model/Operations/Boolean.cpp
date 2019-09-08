@@ -71,9 +71,10 @@ bool Boolean::apply(Model& model) const
 		for (const auto vertex : polygon.getVertices())
 		{
 			const auto& vx = m_modelA.getVertex(vertex);
+			Vector4 normal = m_modelA.getNormal(vx.getNormal() != c_InvalidIndex ? vx.getNormal() : polygon.getNormal());
 			bp.addVertex(
 				m_modelTransformA * m_modelA.getPosition(vx.getPosition()),
-				m_modelTransformA * m_modelA.getNormal(vx.getNormal()),
+				m_modelTransformA * normal,
 				packTexCoord(m_modelA.getTexCoord(vx.getTexCoord(0)))
 			);
 		}
@@ -89,9 +90,10 @@ bool Boolean::apply(Model& model) const
 		for (const auto vertex : polygon.getVertices())
 		{
 			const auto& vx = m_modelB.getVertex(vertex);
+			Vector4 normal = m_modelB.getNormal(vx.getNormal() != c_InvalidIndex ? vx.getNormal() : polygon.getNormal());
 			bp.addVertex(
 				m_modelTransformB * m_modelB.getPosition(vx.getPosition()),
-				m_modelTransformB * m_modelB.getNormal(vx.getNormal()),
+				m_modelTransformB * normal,
 				packTexCoord(m_modelB.getTexCoord(vx.getTexCoord(0)))
 			);
 		}
@@ -126,7 +128,8 @@ bool Boolean::apply(Model& model) const
 	model.reservePolygons((uint32_t)polygons.size());
 	for (const auto& bp : polygons)
 	{
-		uint32_t n = model.addUniqueNormal(bp.getPlane().normal());
+		Vector4 normal = bp.getPlane().normal();
+		uint32_t n = model.addUniqueNormal(normal);
 
 		Polygon polygon;
 		polygon.setMaterial((uint32_t)bp.getIndex());
@@ -136,9 +139,13 @@ bool Boolean::apply(Model& model) const
 			float uv[4];
 			p.attributes[1].storeUnaligned(uv);
 
+			Vector4 vertexNormal = p.attributes[0].normalized();
+			if (dot3(vertexNormal, normal) < 0.0f)
+				vertexNormal = -vertexNormal;
+
 			Vertex vertex;
 			vertex.setPosition(model.addUniquePosition(p.position));
-			vertex.setNormal(n); // model.addUniqueNormal(p.attributes[0].normalized()));
+			vertex.setNormal(model.addUniqueNormal(vertexNormal));
 			vertex.setTexCoord(0, model.addUniqueTexCoord(Vector2(uv[0], uv[1])));
 			polygon.addVertex(model.addUniqueVertex(vertex));
 		}

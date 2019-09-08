@@ -28,24 +28,21 @@ bool UnwrapUV::apply(Model& model) const
 	options.packer_options.witness.texel_area = 128.0f / (float)m_textureSize;
 	//options.packer_options.witness.conservative = true;
 
+	// Build input vertices to atlas generator.
 	AlignedVector< Atlas_Input_Vertex > inputVertices;
-
-	const auto& vertices = model.getVertices();
-	for (int32_t i = 0; i < int32_t(vertices.size()); ++i)
+	for (int32_t i = 0; i < (int32_t)model.getVertexCount(); ++i)
 	{
-		const auto& vertex = vertices[i];
-
 		auto& aiv = inputVertices.push_back();
 
-		const auto& p = model.getPosition(vertex.getPosition());
+		const Vertex& vertex = model.getVertex(i);
+		const Vector4& p = model.getPosition(vertex.getPosition());
 		aiv.position[0] = p.x();
 		aiv.position[1] = p.y();
 		aiv.position[2] = p.z();
 
-		// \tbd Using normals cause weird artifacts, should probably be face normals?
 		if (vertex.getNormal() != c_InvalidIndex)
 		{
-			const auto& n = model.getNormal(vertex.getNormal());
+			const Vector4& n = model.getNormal(vertex.getNormal());
 			aiv.normal[0] = n.x();
 			aiv.normal[1] = n.y();
 			aiv.normal[2] = n.z();
@@ -59,7 +56,7 @@ bool UnwrapUV::apply(Model& model) const
 
 		if (vertex.getTexCoord(m_channel) != c_InvalidIndex)
 		{
-			const auto& tc = model.getTexCoord(vertex.getTexCoord(m_channel));
+			const Vector2& tc = model.getTexCoord(vertex.getTexCoord(m_channel));
 			aiv.uv[0] = tc.x * m_textureSize;
 			aiv.uv[1] = tc.y * m_textureSize;
 		}
@@ -72,7 +69,7 @@ bool UnwrapUV::apply(Model& model) const
 		aiv.first_colocal = i;
 		for (int32_t j = 0; j < i; ++j)
 		{
-			if (vertices[j].getPosition() == vertex.getPosition())
+			if (model.getVertex(j).getPosition() == vertex.getPosition())
 			{
 				aiv.first_colocal = j;
 				break;
@@ -80,17 +77,26 @@ bool UnwrapUV::apply(Model& model) const
 		}
 	}
 
+	// Build input faces to atlas generator.
 	AlignedVector< Atlas_Input_Face > inputFaces;
-	for (const auto& pol : model.getPolygons())
-	{
-		auto& aif = inputFaces.push_back();
+	SmallMap< uint32_t, uint32_t > vertexToPolygon;
 
-		aif.vertex_index[0] = pol.getVertex(0);
-		aif.vertex_index[1] = pol.getVertex(1);
-		aif.vertex_index[2] = pol.getVertex(2);
+	for (uint32_t i = 0; i < model.getPolygonCount(); ++i)
+	{
+		const Polygon& polygon = model.getPolygon(i);
+
+		auto& aif = inputFaces.push_back();
+		aif.vertex_index[0] = polygon.getVertex(0);
+		aif.vertex_index[1] = polygon.getVertex(1);
+		aif.vertex_index[2] = polygon.getVertex(2);
 		aif.material_index = 0;
+
+		vertexToPolygon[aif.vertex_index[0]] = i;
+		vertexToPolygon[aif.vertex_index[1]] = i;
+		vertexToPolygon[aif.vertex_index[2]] = i;
 	}
 
+	// Generate UV atlas.
 	Atlas_Input_Mesh input;
     input.vertex_count = (int)inputVertices.size();
     input.vertex_array = inputVertices.ptr();
@@ -114,37 +120,37 @@ bool UnwrapUV::apply(Model& model) const
 
 	// Insert normalized texcoords into model.
 	{
-		AlignedVector< Vertex > vertices;
-		for (int32_t i = 0; i < output->vertex_count; ++i)
+		AlignedVector< Polygon > originalPolygons = model.getPolygons();
+
+		model.clear(Model::CfPolygons);
+
+		for (int32_t i = 0; i < output->index_count; i += 3)
 		{
-			const auto& aov = output->vertex_array[i];
+			Polygon polygon = originalPolygons[vertexToPolygon[
+				output->vertex_array[output->index_array[i]].xref
+			]];
 
-			Vector2 uv(aov.uv[0], aov.uv[1]);
-
-			uv -= uvbb.mn;
-			uv /= uvbb.mx - uvbb.mn;
-
-			// Snap to texel boundaries.
-			uv.x = (std::floor(uv.x * m_textureSize)) / m_textureSize;
-			uv.y = (std::floor(uv.y * m_textureSize)) / m_textureSize;
-
-			Vertex vx = model.getVertex(aov.xref);
-			vx.setTexCoord(m_channel, model.addTexCoord(uv));
-			vertices.push_back(vx);
-		}
-
-		AlignedVector< Polygon > polygons = model.getPolygons();
-		for (int32_t i = 0; i < int32_t(polygons.size()); ++i)
-		{
 			for (int32_t j = 0; j < 3; ++j)
 			{
-				T_FATAL_ASSERT(output->index_array[i * 3 + j] < vertices.size());
-				polygons[i].setVertex(j, output->index_array[i * 3 + j]);
-			}
-		}
+				int32_t index = output->index_array[i + j];
+				const auto& aov = output->vertex_array[index];
 
-		model.setVertices(vertices);
-		model.setPolygons(polygons);
+				Vertex vx = model.getVertex(aov.xref);
+
+				Vector2 uv(aov.uv[0], aov.uv[1]);
+				uv -= uvbb.mn;
+				uv /= uvbb.mx - uvbb.mn;
+
+				uv.x = (std::floor(uv.x * m_textureSize)) / m_textureSize;
+				uv.y = (std::floor(uv.y * m_textureSize)) / m_textureSize;
+
+				vx.setTexCoord(m_channel, model.addTexCoord(uv));
+
+				polygon.setVertex(j, model.addUniqueVertex(vx));
+			}
+
+			model.addPolygon(polygon);
+		}
 	}
 
 	atlas_free(output);

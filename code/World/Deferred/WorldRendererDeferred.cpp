@@ -1207,19 +1207,22 @@ void WorldRendererDeferred::render(int32_t frame)
 		f.visual->getRenderContext()->render(m_renderView, render::RpPostOpaque, &visualProgramParams);
 		T_RENDER_POP_MARKER(m_renderView);
 
-		T_RENDER_PUSH_MARKER(m_renderView, "World: Fog");
-		m_lightRenderer->renderFog(
-			m_renderView,
-			f.projection,
-			f.view,
-			m_fogDistanceAndDensity,
-			m_fogColor,
-			m_gbufferTargetSet->getColorTexture(0),
-			m_gbufferTargetSet->getColorTexture(1),
-			m_gbufferTargetSet->getColorTexture(2),
-			m_gbufferTargetSet->getColorTexture(3)
-		);
-		T_RENDER_POP_MARKER(m_renderView);
+		if (dot4(m_fogDistanceAndDensity, Vector4(0.0f, 0.0f, 1.0f, 1.0f)) > FUZZY_EPSILON)
+		{
+			T_RENDER_PUSH_MARKER(m_renderView, "World: Fog");
+			m_lightRenderer->renderFog(
+				m_renderView,
+				f.projection,
+				f.view,
+				m_fogDistanceAndDensity,
+				m_fogColor,
+				m_gbufferTargetSet->getColorTexture(0),
+				m_gbufferTargetSet->getColorTexture(1),
+				m_gbufferTargetSet->getColorTexture(2),
+				m_gbufferTargetSet->getColorTexture(3)
+			);
+			T_RENDER_POP_MARKER(m_renderView);
+		}
 
 		T_RENDER_PUSH_MARKER(m_renderView, "World: Visual alpha blend");
 		f.visual->getRenderContext()->render(m_renderView, render::RpAlphaBlend, &visualProgramParams);

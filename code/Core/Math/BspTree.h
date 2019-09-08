@@ -31,7 +31,7 @@ struct BspVertex
 class T_DLLCLASS BspPolygon
 {
 public:
-	typedef StaticVector< BspVertex, 16 > vertices_t;
+	typedef StaticVector< BspVertex, 32 > vertices_t;
 
 	BspPolygon();
 

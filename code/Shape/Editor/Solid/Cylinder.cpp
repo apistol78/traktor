@@ -31,6 +31,7 @@ Ref< model::Model > Cylinder::createModel() const
 	uint32_t nny = m->addUniqueNormal(Vector4(0.0f, -1.0f, 0.0f));
 
 	const float hl = m_length / 2.0f;
+	const float us = std::floor(m_length) + 1.0f;
 
 	for (int32_t i = 0; i < 3; ++i)
 	{
@@ -60,8 +61,8 @@ Ref< model::Model > Cylinder::createModel() const
 		float z1 = cos(phi1) * m_radius;
 		float x2 = sin(phi2) * m_radius;
 		float z2 = cos(phi2) * m_radius;
-		float u1 = float(i) / m_faces;
-		float u2 = float(i + 1) / m_faces;
+		float u1 = us * float(i) / m_faces;
+		float u2 = us * float(i + 1) / m_faces;
 
 		// Top
 		{
