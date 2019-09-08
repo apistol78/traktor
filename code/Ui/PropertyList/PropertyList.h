@@ -95,6 +95,8 @@ public:
 
 	virtual Size getPreferedSize() const override;
 
+	IBitmap* getBitmap(const wchar_t* const name, const void* defaultBitmapResource, uint32_t defaultBitmapResourceSize);
+
 private:
 	friend class PropertyItem;
 
@@ -106,6 +108,7 @@ private:
 	int m_mode;
 	bool m_columnHeader;
 	std::wstring m_columnNames[2];
+	SmallMap< std::wstring, Ref< IBitmap > > m_bitmaps;
 
 	void updateScrollBar();
 

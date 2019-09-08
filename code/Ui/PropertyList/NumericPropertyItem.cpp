@@ -75,7 +75,7 @@ void NumericPropertyItem::setLimit(double limitMin, double limitMax)
 	setLimitMax(limitMax);
 }
 
-void NumericPropertyItem::createInPlaceControls(Widget* parent)
+void NumericPropertyItem::createInPlaceControls(PropertyList* parent)
 {
 	T_ASSERT(!m_editor);
 	m_editor = new Edit();

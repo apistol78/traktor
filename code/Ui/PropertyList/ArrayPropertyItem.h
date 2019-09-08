@@ -34,7 +34,7 @@ public:
 protected:
 	virtual bool needRemoveChildButton() const override;
 
-	virtual void createInPlaceControls(Widget* parent) override;
+	virtual void createInPlaceControls(PropertyList* parent) override;
 
 	virtual void destroyInPlaceControls() override;
 
@@ -43,8 +43,6 @@ protected:
 	virtual void paintValue(Canvas& canvas, const Rect& rc) override;
 
 private:
-	Ref< IBitmap > m_imageSmallDots;
-	Ref< IBitmap > m_imageSmallPlus;
 	const TypeInfo* m_elementType;
 	bool m_readOnly;
 	Ref< MiniButton > m_buttonEdit;

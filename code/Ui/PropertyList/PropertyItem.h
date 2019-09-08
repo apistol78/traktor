@@ -82,7 +82,7 @@ protected:
 
 	virtual bool needRemoveChildButton() const;
 
-	virtual void createInPlaceControls(Widget* parent);
+	virtual void createInPlaceControls(PropertyList* parent);
 
 	virtual void destroyInPlaceControls();
 

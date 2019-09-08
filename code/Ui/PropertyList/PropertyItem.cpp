@@ -180,7 +180,7 @@ bool PropertyItem::needRemoveChildButton() const
 	return false;
 }
 
-void PropertyItem::createInPlaceControls(Widget* parent)
+void PropertyItem::createInPlaceControls(PropertyList* parent)
 {
 	if (m_parent && m_parent->needRemoveChildButton())
 	{
