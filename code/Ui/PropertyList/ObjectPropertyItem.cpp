@@ -58,7 +58,7 @@ Ref< Object > ObjectPropertyItem::getObject() const
 	return m_object;
 }
 
-void ObjectPropertyItem::createInPlaceControls(Widget* parent)
+void ObjectPropertyItem::createInPlaceControls(PropertyList* parent)
 {
 	T_ASSERT(!m_buttonEdit);
 	m_buttonEdit = new MiniButton();

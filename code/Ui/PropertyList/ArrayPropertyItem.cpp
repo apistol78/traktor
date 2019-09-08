@@ -1,7 +1,6 @@
 #include "Core/Io/StringOutputStream.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Ui/Command.h"
-#include "Ui/StyleBitmap.h"
 #include "Ui/MiniButton.h"
 #include "Ui/PropertyList/ArrayPropertyItem.h"
 #include "Ui/PropertyList/NullPropertyItem.h"
@@ -23,8 +22,6 @@ ArrayPropertyItem::ArrayPropertyItem(const std::wstring& text, const TypeInfo* e
 ,	m_elementType(elementType)
 ,	m_readOnly(readOnly)
 {
-	m_imageSmallDots = new ui::StyleBitmap(L"UI.SmallDots", c_ResourceSmallDots, sizeof(c_ResourceSmallDots));
-	m_imageSmallPlus = new ui::StyleBitmap(L"UI.SmallPlus", c_ResourceSmallPlus, sizeof(c_ResourceSmallPlus));
 }
 
 void ArrayPropertyItem::setElementType(const TypeInfo* elementType)
@@ -42,12 +39,18 @@ bool ArrayPropertyItem::needRemoveChildButton() const
 	return !m_readOnly;
 }
 
-void ArrayPropertyItem::createInPlaceControls(Widget* parent)
+void ArrayPropertyItem::createInPlaceControls(PropertyList* parent)
 {
 	if (!m_readOnly)
 	{
+		Ref< ui::IBitmap > img;
+		if (m_elementType)
+			img = parent->getBitmap(L"UI.SmallDots", c_ResourceSmallDots, sizeof(c_ResourceSmallDots));
+		else
+			img = parent->getBitmap(L"UI.SmallPlus", c_ResourceSmallPlus, sizeof(c_ResourceSmallPlus));
+
 		m_buttonEdit = new MiniButton();
-		m_buttonEdit->create(parent, m_elementType ? m_imageSmallDots : m_imageSmallPlus);
+		m_buttonEdit->create(parent, img);
 		m_buttonEdit->addEventHandler< ButtonClickEvent >(this, &ArrayPropertyItem::eventClick);
 	}
 }

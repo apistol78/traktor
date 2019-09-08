@@ -1,7 +1,6 @@
 #include "Ui/Application.h"
 #include "Ui/Canvas.h"
 #include "Ui/FloodLayout.h"
-#include "Ui/StyleBitmap.h"
 #include "Ui/ToolForm.h"
 #include "Ui/MiniButton.h"
 #include "Ui/ListBox/ListBox.h"
@@ -91,11 +90,11 @@ std::wstring ListPropertyItem::getSelectedItem() const
 	return get(m_selected);
 }
 
-void ListPropertyItem::createInPlaceControls(Widget* parent)
+void ListPropertyItem::createInPlaceControls(PropertyList* parent)
 {
 	T_ASSERT(!m_buttonDrop);
 	m_buttonDrop = new MiniButton();
-	m_buttonDrop->create(parent, new ui::StyleBitmap(L"UI.SmallDots", c_ResourceSmallDots, sizeof(c_ResourceSmallDots)));
+	m_buttonDrop->create(parent, parent->getBitmap(L"UI.SmallDots", c_ResourceSmallDots, sizeof(c_ResourceSmallDots)));
 	m_buttonDrop->addEventHandler< ButtonClickEvent >(this, &ListPropertyItem::eventDropClick);
 
 	T_ASSERT(!m_listForm);

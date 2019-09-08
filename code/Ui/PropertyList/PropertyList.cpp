@@ -3,8 +3,9 @@
 #include "Core/Misc/String.h"
 #include "Ui/Application.h"
 #include "Ui/HierarchicalState.h"
-#include "Ui/StyleSheet.h"
 #include "Ui/ScrollBar.h"
+#include "Ui/StyleBitmap.h"
+#include "Ui/StyleSheet.h"
 #include "Ui/PropertyList/PropertyItem.h"
 #include "Ui/PropertyList/PropertyList.h"
 #include "Ui/PropertyList/PropertySelectionChangeEvent.h"
@@ -376,6 +377,14 @@ Size PropertyList::getMinimumSize() const
 Size PropertyList::getPreferedSize() const
 {
 	return Size(256, 256);
+}
+
+IBitmap* PropertyList::getBitmap(const wchar_t* const name, const void* defaultBitmapResource, uint32_t defaultBitmapResourceSize)
+{
+	auto it = m_bitmaps.find(name);
+	if (it == m_bitmaps.end())
+		m_bitmaps[name] = new ui::StyleBitmap(name, defaultBitmapResource, defaultBitmapResourceSize);
+	return m_bitmaps[name];
 }
 
 void PropertyList::updateScrollBar()

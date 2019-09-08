@@ -1,7 +1,6 @@
 #include "Core/Io/StringOutputStream.h"
 #include "Ui/Command.h"
 #include "Ui/Edit.h"
-#include "Ui/StyleBitmap.h"
 #include "Ui/MiniButton.h"
 #include "Ui/PropertyList/FilePropertyItem.h"
 #include "Ui/PropertyList/PropertyList.h"
@@ -32,7 +31,7 @@ const Path& FilePropertyItem::getPath() const
 	return m_path;
 }
 
-void FilePropertyItem::createInPlaceControls(Widget* parent)
+void FilePropertyItem::createInPlaceControls(PropertyList* parent)
 {
 	T_ASSERT(!m_editor);
 	m_editor = new Edit();
@@ -46,7 +45,7 @@ void FilePropertyItem::createInPlaceControls(Widget* parent)
 
 	T_ASSERT(!m_buttonEdit);
 	m_buttonEdit = new MiniButton();
-	m_buttonEdit->create(parent, new ui::StyleBitmap(L"UI.SmallDots", c_ResourceSmallDots, sizeof(c_ResourceSmallDots)));
+	m_buttonEdit->create(parent, parent->getBitmap(L"UI.SmallDots", c_ResourceSmallDots, sizeof(c_ResourceSmallDots)));
 	m_buttonEdit->addEventHandler< ButtonClickEvent >(this, &FilePropertyItem::eventClick);
 }
 
@@ -55,12 +54,12 @@ void FilePropertyItem::destroyInPlaceControls()
 	if (m_buttonEdit)
 	{
 		m_buttonEdit->destroy();
-		m_buttonEdit = 0;
+		m_buttonEdit = nullptr;
 	}
 	if (m_editor)
 	{
 		m_editor->destroy();
-		m_editor = 0;
+		m_editor = nullptr;
 	}
 }
 

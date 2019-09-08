@@ -37,7 +37,7 @@ const Vector4& AnglesPropertyItem::getValue() const
 	return m_value;
 }
 
-void AnglesPropertyItem::createInPlaceControls(Widget* parent)
+void AnglesPropertyItem::createInPlaceControls(PropertyList* parent)
 {
 	for (int i = 0; i < 3; ++i)
 	{

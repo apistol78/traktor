@@ -50,7 +50,7 @@ public:
 	void setLimit(double limitMin, double limitMax);
 
 protected:
-	virtual void createInPlaceControls(Widget* parent) override;
+	virtual void createInPlaceControls(PropertyList* parent) override;
 
 	virtual void destroyInPlaceControls() override;
 

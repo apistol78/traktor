@@ -44,7 +44,7 @@ const VectorPropertyItem::vector_t& VectorPropertyItem::getValue() const
 	return m_value;
 }
 
-void VectorPropertyItem::createInPlaceControls(Widget* parent)
+void VectorPropertyItem::createInPlaceControls(PropertyList* parent)
 {
 	for (int32_t i = 0; i < m_dimension; ++i)
 	{

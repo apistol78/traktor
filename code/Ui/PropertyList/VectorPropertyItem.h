@@ -36,7 +36,7 @@ public:
 	const vector_t& getValue() const;
 
 protected:
-	virtual void createInPlaceControls(Widget* parent) override;
+	virtual void createInPlaceControls(PropertyList* parent) override;
 
 	virtual void destroyInPlaceControls() override;
 

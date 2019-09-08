@@ -2,7 +2,6 @@
 #include "Ui/Clipboard.h"
 #include "Ui/Command.h"
 #include "Ui/Edit.h"
-#include "Ui/StyleBitmap.h"
 #include "Ui/MiniButton.h"
 #include "Ui/PropertyList/TextPropertyItem.h"
 #include "Ui/PropertyList/PropertyList.h"
@@ -36,7 +35,7 @@ const std::wstring& TextPropertyItem::getValue() const
 	return m_value;
 }
 
-void TextPropertyItem::createInPlaceControls(Widget* parent)
+void TextPropertyItem::createInPlaceControls(PropertyList* parent)
 {
 	if (!m_multiLine)
 	{
@@ -55,7 +54,7 @@ void TextPropertyItem::createInPlaceControls(Widget* parent)
 	{
 		T_FATAL_ASSERT(!m_buttonEdit);
 		m_buttonEdit = new MiniButton();
-		m_buttonEdit->create(parent, new ui::StyleBitmap(L"UI.SmallPen", c_ResourceSmallPen, sizeof(c_ResourceSmallPen)));
+		m_buttonEdit->create(parent, parent->getBitmap(L"UI.SmallPen", c_ResourceSmallPen, sizeof(c_ResourceSmallPen)));
 		m_buttonEdit->addEventHandler< ButtonClickEvent >(this, &TextPropertyItem::eventClick);
 	}
 }
