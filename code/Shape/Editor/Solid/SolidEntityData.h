@@ -66,6 +66,8 @@ public:
 
     virtual void serialize(ISerializer& s) override final;
 
+	void setOutputGuid(const Guid& outputGuid) { m_outputGuid = outputGuid; }
+
     const Guid& getOutputGuid() const { return m_outputGuid; }
 
     const resource::Id< render::Shader >& getShader() const { return m_shader; }

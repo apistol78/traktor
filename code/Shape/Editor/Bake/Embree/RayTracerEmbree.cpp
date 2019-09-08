@@ -207,32 +207,31 @@ void RayTracerEmbree::preprocess(GBuffer* gbuffer) const
 				if (elm.polygon == model::c_InvalidIndex)
 					continue;
 
-				Vector4 position = elm.position;
+				const Scalar l = elm.delta;
+				const Scalar hl = l * Scalar(1.0f);
+
 				Vector4 normal = elm.normal;
+				Vector4 position = elm.position + normal * hl;
 
 				Vector4 u, v;
 				orthogonalFrame(normal, u, v);
-
-				const Scalar l = elm.delta;
-				const Scalar hl = l * Scalar(0.5f);
 
 				for (int32_t i = 0; i < 16; ++i)
 				{
 					float a = TWO_PI * i / 16.0f;
 					float s = sin(a), c = cos(a);
 
-					Vector4 traceOrigin = position + normal * Scalar(0.01f);
 					Vector4 traceDirection = (u * Scalar(c) + v * Scalar(s)).normalized();
 
-					rh.ray.org_x = traceOrigin.x();
-					rh.ray.org_y = traceOrigin.y();
-					rh.ray.org_z = traceOrigin.z();
+					rh.ray.org_x = position.x();
+					rh.ray.org_y = position.y();
+					rh.ray.org_z = position.z();
 
 					rh.ray.dir_x = traceDirection.x();
 					rh.ray.dir_y = traceDirection.y();
 					rh.ray.dir_z = traceDirection.z();
 
-					rh.ray.tnear = 0.01f;
+					rh.ray.tnear = 0.001f;
 					rh.ray.time = 0.0f;
 					rh.ray.tfar = hl;
 
@@ -256,7 +255,7 @@ void RayTracerEmbree::preprocess(GBuffer* gbuffer) const
 						continue;
 
 					// Offset position.
-					position = position + traceDirection * Scalar(rh.ray.tfar) + hitNormal * Scalar(0.02f);
+					position += traceDirection * Scalar(rh.ray.tfar - 0.001f) + hitNormal * Scalar(0.02f);
 				}
 
 				elm.position = position;
@@ -347,7 +346,7 @@ Ref< render::SHCoeffs > RayTracerEmbree::traceProbe(const Vector4& position) con
 				break;
 		}
 
-		indirect /= Scalar(i);
+		indirect /= Scalar(i + 16);
 		return indirect;
 	});
 
@@ -448,7 +447,7 @@ Ref< drawing::Image > RayTracerEmbree::traceIndirect(const GBuffer* gbuffer) con
 							// Create a batch of rays.
 							for (uint32_t j = 0; j < 16; ++j)
 							{
-								direction[j] = (elm.normal * Scalar(0.1f) + random.nextHemi(elm.normal)).normalized();
+								direction[j] = (elm.normal * Scalar(0.02f) + random.nextHemi(elm.normal)).normalized();
 
 								rh.ray.org_x[j] = elm.position.x();
 								rh.ray.org_y[j] = elm.position.y();
@@ -512,7 +511,7 @@ Ref< drawing::Image > RayTracerEmbree::traceIndirect(const GBuffer* gbuffer) con
 								break;
 						}
 
-						indirect /= Scalar(i);
+						indirect /= Scalar(i + 16);
 						lightmapIndirect->setPixel(x, y, indirect.rgb1());
 					}
 				}
