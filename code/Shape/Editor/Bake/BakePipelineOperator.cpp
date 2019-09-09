@@ -330,7 +330,7 @@ bool BakePipelineOperator::build(
 		hashInstance->commit();
 
 		// Traverse and visit all entities in layer.
-		Traverser(flattenedLayer).visit([&](Ref< world::EntityData >& inoutEntityData) -> bool
+		Traverser::visit(flattenedLayer, [&](Ref< world::EntityData >& inoutEntityData) -> bool
 		{
 			if (auto componentEntityData = dynamic_type_cast< world::ComponentEntityData* >(inoutEntityData))
 			{

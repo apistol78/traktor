@@ -19,6 +19,9 @@ namespace traktor
 
 class Model;
 
+/*! Model adjacency inspector.
+ * \ingroup Model
+ */
 class T_DLLCLASS ModelAdjacency : public Object
 {
 	T_RTTI_CLASS;
@@ -37,60 +40,46 @@ public:
 
 	ModelAdjacency(const Model* model, const AlignedVector< uint32_t >& polygons, Mode mode, uint32_t channel = 0);
 
-	/*! \brief Insert a new polygon into adjacency structure.
-	 */
+	/*! Insert a new polygon into adjacency structure. */
 	void add(uint32_t polygon);
 
-	/*! \brief Remove a polygon from adjacency structure.
-	 */
+	/*! Remove a polygon from adjacency structure. */
 	void remove(uint32_t polygon);
 
-	/*! \brief Update polygon in adjacency structure.
-	 */
+	/*! Update polygon in adjacency structure. */
 	void update(uint32_t polygon);
 
-	/*! \brief Return half edge from polygon edge.
-	 */
+	/*! Return half edge from polygon edge. */
 	uint32_t getEdge(uint32_t polygon, uint32_t polygonEdge) const;
 
-	/*! \brief Get edges "entering" given vertex.
-	 */
+	/*! Get edges "entering" given vertex. */
 	void getEnteringEdges(uint32_t vertexId, share_vector_t& outEnteringEdges) const;
 
-	/*! \brief Get edges "leaving" given vertex.
-	 */
+	/*! Get edges "leaving" given vertex. */
 	void getLeavingEdges(uint32_t vertexId, share_vector_t& outLeavingEdges) const;
 
-	/*! \brief Get sharing edges; ie opposite edges.
-	 */
+	/*! Get sharing edges; ie opposite edges. */
 	void getSharedEdges(uint32_t edge,share_vector_t& outSharedEdges) const;
 
-	/*! \brief Get sharing edges; ie opposite edges.
-	 */
+	/*! Get sharing edges; ie opposite edges. */
 	void getSharedEdges(uint32_t polygon, uint32_t polygonEdge, share_vector_t& outSharedEdges) const;
 
-	/*! \brief Count number of sharing edges.
-	 */
+	/*! Count number of sharing edges. */
 	uint32_t getSharedEdgeCount(uint32_t edge) const;
 
-	/*! \brief Count number of sharing edges.
-	 */
+	/*! Count number of sharing edges. */
 	uint32_t getSharedEdgeCount(uint32_t polygon, uint32_t polygonEdge) const;
 
-	/*! \brief Get polygon owning edge.
-	 */
+	/*! Get polygon owning edge. */
 	uint32_t getPolygon(uint32_t edge) const;
 
-	/*! \brief Get polygon edge number from half-edge.
-	 */
+	/*! Get polygon edge number from half-edge. */
 	uint32_t getPolygonEdge(uint32_t edge) const;
 
-	/*! \brief Get total number of half-edges.
-	 */
+	/*! Get total number of half-edges. */
 	uint32_t getEdgeCount() const;
 
-	/*! \brief Get edge matching indices.
-	 */
+	/*! Get edge matching indices. */
 	void getEdgeIndices(uint32_t edge, uint32_t& outIndex0, uint32_t& outIndex1) const;
 
 private:

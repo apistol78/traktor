@@ -14,6 +14,7 @@
 #include "Drawing/Filters/DilateFilter.h"
 #include "Drawing/Functions/BlendFunction.h"
 #include "Model/Model.h"
+#include "Model/ModelAdjacency.h"
 #include "Render/Types.h"
 #include "Render/Resource/TextureResource.h"
 #include "Render/SH/SHCoeffs.h"
@@ -98,6 +99,20 @@ Ref< drawing::Image > denoise(const GBuffer& gbuffer, drawing::Image* lightmap)
 	return output;
 }
 #endif
+
+void line(const Vector2& from, const Vector2& to, const std::function< void(const Vector2, float) >& fn)
+{
+	Vector2 ad = (to - from);
+	ad.x = std::abs(ad.x);
+	ad.y = std::abs(ad.y);
+	int32_t ln = (int32_t)(std::max(ad.x, ad.y) + 0.5f);
+	for (int32_t i = 0; i < ln; ++i)
+	{
+		float fraction = (float)i / (ln - 1.0f);
+		Vector2 position = lerp(from, to, fraction);
+		fn(position, fraction);
+	}
+}
 
         }
 
@@ -292,26 +307,108 @@ bool TracerProcessor::process(const TracerTask* task) const
         if (!lightmap)
             return false;
 
-        // Clamp shadow below threshold; to prevent tonemap to bring up noise.
-        if (configuration->getClampShadowThreshold() > FUZZY_EPSILON)
-        {
-            for (uint32_t y = 0; y < lightmap->getHeight(); ++y)
-            {
-                for (uint32_t x = 0; x < lightmap->getWidth(); ++x)
-                {
-                    Color4f lumel;
-                    lightmap->getPixelUnsafe(x, y, lumel);
+		// Filter seams.
+		if (configuration->getEnableSeamFilter())
+		{
+			model::ModelAdjacency adjacency(renderModel, model::ModelAdjacency::MdByPosition);
+			for (uint32_t i = 0; i < adjacency.getEdgeCount(); ++i)
+			{
+				// Get shared edges of this polygon's edge.
+				model::ModelAdjacency::share_vector_t shared;
+				adjacency.getSharedEdges(i, shared);
+				if (shared.size() != 1)
+					continue;
 
-                    Scalar intensity = dot3(lumel, Vector4(1.0f, 1.0f, 1.0f, 0.0f));
+				// Get attributes of this edge.
+				const model::Polygon& polygonA = renderModel->getPolygon(adjacency.getPolygon(i));
+				uint32_t Aivx0 = adjacency.getPolygonEdge(i);
+				uint32_t Aivx1 = (Aivx0 + 1) % polygonA.getVertexCount();
 
-                    intensity = (intensity - Scalar(configuration->getClampShadowThreshold())) / Scalar(1.0f - configuration->getClampShadowThreshold());
-                    if (intensity < 0.0f)
-                        intensity = Scalar(0.0f);
+				// Get attributes of shared edge.
+				const model::Polygon& polygonB = renderModel->getPolygon(adjacency.getPolygon(shared[0]));
+				uint32_t Bivx0 = adjacency.getPolygonEdge(shared[0]);
+				uint32_t Bivx1 = (Bivx0 + 1) % polygonB.getVertexCount();
 
-                    lightmap->setPixelUnsafe(x, y, lumel * intensity);
-                }
-            }
-        }
+				model::Vertex Avx0 = renderModel->getVertex(Aivx0);
+				model::Vertex Avx1 = renderModel->getVertex(Aivx1);
+				model::Vertex Bvx0 = renderModel->getVertex(Bivx0);
+				model::Vertex Bvx1 = renderModel->getVertex(Bivx1);
+
+				// Swap indices if order is reversed.
+				if (Bvx0.getPosition() == Avx1.getPosition())
+				{
+					std::swap(Bivx0, Bivx1);
+					std::swap(Bvx0, Bvx1);
+				}
+
+				// Check for lightmap seam.
+				if (
+					Avx0.getPosition() == Bvx0.getPosition() &&
+					Avx1.getPosition() == Bvx1.getPosition() &&
+					Avx0.getNormal() == Bvx0.getNormal() &&
+					Avx1.getNormal() == Bvx1.getNormal() &&
+					(
+						Avx0.getTexCoord(channel) != Bvx0.getTexCoord(channel) ||
+						Avx1.getTexCoord(channel) != Bvx1.getTexCoord(channel)
+					)
+				)
+				{
+					Vector4 Ap0 = renderModel->getPosition(Avx0.getPosition());
+					Vector4 Ap1 = renderModel->getPosition(Avx1.getPosition());
+					Vector4 An0 = renderModel->getNormal(Avx0.getNormal());
+					Vector4 An1 = renderModel->getNormal(Avx1.getNormal());
+					Vector2 Auv0 = renderModel->getTexCoord(Avx0.getTexCoord(channel));
+					Vector2 Auv1 = renderModel->getTexCoord(Avx1.getTexCoord(channel));
+
+					Vector4 Bp0 = renderModel->getPosition(Bvx0.getPosition());
+					Vector4 Bp1 = renderModel->getPosition(Bvx1.getPosition());
+					Vector4 Bn0 = renderModel->getNormal(Bvx0.getNormal());
+					Vector4 Bn1 = renderModel->getNormal(Bvx1.getNormal());
+					Vector2 Buv0 = renderModel->getTexCoord(Bvx0.getTexCoord(channel));
+					Vector2 Buv1 = renderModel->getTexCoord(Bvx1.getTexCoord(channel));
+
+					float Auvln = (Auv1 - Auv0).length();
+					float Buvln = (Buv1 - Buv0).length();
+
+					if (Auvln >= Buvln)
+					{
+						line(Auv0, Auv1, [&](const Vector2& Auv, float fraction) {
+							Vector2 Buv = lerp(Buv0, Buv1, fraction);
+
+							int32_t Ax = (int32_t)(Auv.x * (lightmap->getWidth() - 1));
+							int32_t Ay = (int32_t)(Auv.y * (lightmap->getWidth() - 1));
+							int32_t Bx = (int32_t)(Buv.x * (lightmap->getWidth() - 1));
+							int32_t By = (int32_t)(Buv.y * (lightmap->getWidth() - 1));
+
+							Color4f Aclr, Bclr;
+							if (lightmap->getPixel(Ax, Ay, Aclr) && lightmap->getPixel(Bx, By, Bclr))
+							{
+								lightmap->setPixel(Ax, Ay, Aclr * Scalar(0.75f) + Bclr * Scalar(0.25f));
+								lightmap->setPixel(Bx, By, Aclr * Scalar(0.25f) + Bclr * Scalar(0.75f));
+							}
+						});
+					}
+					else
+					{
+						line(Buv0, Buv1, [&](const Vector2& Buv, float fraction) {
+							Vector2 Auv = lerp(Auv0, Auv1, fraction);
+
+							int32_t Ax = (int32_t)(Auv.x * (lightmap->getWidth() - 1));
+							int32_t Ay = (int32_t)(Auv.y * (lightmap->getWidth() - 1));
+							int32_t Bx = (int32_t)(Buv.x * (lightmap->getWidth() - 1));
+							int32_t By = (int32_t)(Buv.y * (lightmap->getWidth() - 1));
+
+							Color4f Aclr, Bclr;
+							if (lightmap->getPixel(Ax, Ay, Aclr) && lightmap->getPixel(Bx, By, Bclr))
+							{
+								lightmap->setPixel(Ax, Ay, Aclr * Scalar(0.75f) + Bclr * Scalar(0.25f));
+								lightmap->setPixel(Bx, By, Aclr * Scalar(0.25f) + Bclr * Scalar(0.75f));
+							}
+						});
+					}
+				}
+			}
+		}
 
         // Discard alpha.
         lightmap->clearAlpha(1.0f);
@@ -319,10 +416,8 @@ bool TracerProcessor::process(const TracerTask* task) const
 		// Convert into format which our lightmap texture will be.
 		lightmap->convert(drawing::PixelFormat::getABGRF16().endianSwapped());
 
-		Guid lightmapId = tracerOutput->getLightmapId();
-
 		// Create output instance.
-		Ref< render::TextureResource > outputResource = new render::TextureResource();
+		Guid lightmapId = tracerOutput->getLightmapId();
 		Ref< db::Instance > outputInstance = m_outputDatabase->createInstance(
 			L"Generated/" + tracerOutput->getLightmapId().format(),
 			db::CifReplaceExisting,
@@ -334,6 +429,7 @@ bool TracerProcessor::process(const TracerTask* task) const
 			return false;
 		}
 
+		Ref< render::TextureResource > outputResource = new render::TextureResource();
 		outputInstance->setObject(outputResource);
 
 		// Create output data stream.
@@ -347,6 +443,7 @@ bool TracerProcessor::process(const TracerTask* task) const
 
 		Writer writer(stream);
 
+		// Write texture resource header.
 		writer << uint32_t(12);
 		writer << int32_t(lightmap->getWidth());
 		writer << int32_t(lightmap->getHeight());
@@ -358,12 +455,12 @@ bool TracerProcessor::process(const TracerTask* task) const
 		writer << bool(false);
 		writer << bool(false);
 
+		// Write texture data.
 		uint32_t dataSize = render::getTextureMipPitch(
 			render::TfR16G16B16A16F,
 			lightmap->getWidth(),
 			lightmap->getHeight()
 		);
-
 		const uint8_t* data = static_cast< const uint8_t* >(lightmap->getData());
 		if (writer.write(data, dataSize, 1) != dataSize)
 			return false;
