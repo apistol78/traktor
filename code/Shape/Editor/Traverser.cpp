@@ -9,16 +9,33 @@ namespace traktor
     namespace shape
     {
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.shape.Traverser", Traverser, Object)
-
-Traverser::Traverser(ISerializable* object)
-:   m_object(object)
+void Traverser::visit(const ISerializable* object, const std::function< bool(const world::EntityData*) >& visitor)
 {
+	Ref< Reflection > reflection = Reflection::create(object);
+
+ 	RefArray< ReflectionMember > objectMembers;
+ 	reflection->findMembers(RfpMemberType(type_of< RfmObject >()), objectMembers);
+
+	for (auto member : objectMembers)
+	{
+		RfmObject* objectMember = dynamic_type_cast< RfmObject* >(member);
+		if (!objectMember->get())
+			continue;
+
+		const world::EntityData* entityData = dynamic_type_cast< const world::EntityData* >(objectMember->get());
+		if (entityData)
+		{
+			if (visitor(entityData))
+				Traverser::visit(entityData, visitor);
+		}
+		else if (objectMember->get())
+			Traverser::visit(objectMember->get(), visitor);
+	}
 }
 
-void Traverser::visit(const std::function< bool(Ref< world::EntityData >&) >& visitor)
+void Traverser::visit(ISerializable* object, const std::function< bool(Ref< world::EntityData >&) >& visitor)
 {
-	Ref< Reflection > reflection = Reflection::create(m_object);
+	Ref< Reflection > reflection = Reflection::create(object);
 
  	RefArray< ReflectionMember > objectMembers;
  	reflection->findMembers(RfpMemberType(type_of< RfmObject >()), objectMembers);
@@ -35,7 +52,7 @@ void Traverser::visit(const std::function< bool(Ref< world::EntityData >&) >& vi
 		if (entityData)
 		{
 			if (visitor(entityData))
-				Traverser(entityData).visit(visitor);
+				Traverser::visit(entityData, visitor);
 
 			if (entityData != objectMember->get())
 			{
@@ -44,11 +61,11 @@ void Traverser::visit(const std::function< bool(Ref< world::EntityData >&) >& vi
 			}
 		}
 		else if (objectMember->get())
-			Traverser(objectMember->get()).visit(visitor);
+			Traverser::visit(objectMember->get(), visitor);
 	}
 
 	if (needToApply)
-		reflection->apply(m_object);
+		reflection->apply(object);
 }
 
     }

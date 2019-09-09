@@ -103,6 +103,7 @@ bool GBuffer::create(int32_t width, int32_t height, const model::Model& model, c
 		m_data[i].material = 0;
 		m_data[i].position = Vector4(0.0f, 0.0f, 0.0f, 1.0f);
 		m_data[i].normal = Vector4(0.0f, 1.0f, 0.0f, 0.0f);
+		m_data[i].tangent = Vector4(1.0f, 0.0f, 0.0f, 0.0f);
 		m_data[i].delta = Scalar(0.0f);
 	}
 
@@ -113,6 +114,7 @@ bool GBuffer::create(int32_t width, int32_t height, const model::Model& model, c
 		// Extract data for polygon.
 		AlignedVector< Vector4 > positions;
 		AlignedVector< Vector4 > normals;
+		AlignedVector< Vector4 > tangents;
 		Winding2 texCoords;
 		Aabb2 texBounds;
 
@@ -125,6 +127,9 @@ bool GBuffer::create(int32_t width, int32_t height, const model::Model& model, c
 
 			uint32_t normalIndex = vertex.getNormal();
 			normals.push_back((transform * model.getNormal(normalIndex).xyz0()).normalized());
+
+			uint32_t tangentIndex = vertex.getTangent();
+			tangents.push_back((transform * model.getNormal(tangentIndex).xyz0()).normalized());
 
 			uint32_t texCoordIndex = vertex.getTexCoord(texCoordChannel);
 			texCoords.push(
@@ -169,6 +174,12 @@ bool GBuffer::create(int32_t width, int32_t height, const model::Model& model, c
 				normals[i0],
 				normals[i1],
 				normals[i2]
+			);
+
+			Interpolants< Vector4 > ipolTangents(
+				tangents[i0],
+				tangents[i1],
+				tangents[i2]
 			);
 
 			Aabb2 bbox;
@@ -216,6 +227,7 @@ bool GBuffer::create(int32_t width, int32_t height, const model::Model& model, c
 					elm.material = polygon.getMaterial();
 					elm.position = ipolPositions.evaluate(bary, pt).xyz1();
 					elm.normal = ipolNormals.evaluate(bary, pt).xyz0().normalized();
+					elm.tangent = ipolTangents.evaluate(bary, pt).xyz0().normalized();
 					elm.distance = distance;
 
 					// Evaluate delta magnitude of position in world space per texel offset.

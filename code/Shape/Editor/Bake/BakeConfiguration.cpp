@@ -9,22 +9,22 @@ namespace traktor
 	namespace shape
 	{
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.shape.BakeConfiguration", 11, BakeConfiguration, ISerializable)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.shape.BakeConfiguration", 12, BakeConfiguration, ISerializable)
 
 BakeConfiguration::BakeConfiguration()
 :	m_seedGuid(Guid::create())
-,	m_traceDirect(false)
+,	m_traceDirect(true)
 ,	m_traceIndirect(true)
 ,	m_traceIrradiance(true)
 ,	m_indirectSampleCount(100)
 ,	m_shadowSampleCount(100)
 ,	m_irradianceSampleCount(100)
 ,	m_pointLightShadowRadius(0.1f)
-,	m_lumelDensity(64.0f)
+,	m_lumelDensity(32.0f)
 ,	m_minimumLightMapSize(128)
-,	m_enableShadowFix(false)
+,	m_enableShadowFix(true)
 ,	m_enableDenoise(true)
-,	m_clampShadowThreshold(0.01f)
+,	m_enableSeamFilter(true)
 {
 }
 
@@ -73,8 +73,14 @@ void BakeConfiguration::serialize(ISerializer& s)
 	if (s.getVersion() >= 4)
 		s >> Member< bool >(L"enableDenoise", m_enableDenoise);
 
-	if (s.getVersion() >= 6)
-		s >> Member< float >(L"clampShadowThreshold", m_clampShadowThreshold, AttributeRange(0.0f));
+	if (s.getVersion() >= 12)
+		s >> Member< bool >(L"enableSeamFilter", m_enableSeamFilter);
+
+	if (s.getVersion() >= 6 && s.getVersion() < 12)
+	{
+		float clampShadowThreshold;
+		s >> Member< float >(L"clampShadowThreshold", clampShadowThreshold, AttributeRange(0.0f));
+	}
 }
 
 	}

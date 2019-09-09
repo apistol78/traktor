@@ -47,7 +47,7 @@ public:
 
 	bool getEnableDenoise() const { return m_enableDenoise; }
 
-	float getClampShadowThreshold() const { return m_clampShadowThreshold; }
+	bool getEnableSeamFilter() const { return m_enableSeamFilter; }
 
 	virtual void serialize(ISerializer& s) override final;
 
@@ -64,7 +64,7 @@ private:
 	int32_t m_minimumLightMapSize;
 	bool m_enableShadowFix;
 	bool m_enableDenoise;
-	float m_clampShadowThreshold;
+	bool m_enableSeamFilter;
 };
 
 	}

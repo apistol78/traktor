@@ -1,7 +1,6 @@
 #pragma once
 
 #include <functional>
-#include "Core/Object.h"
 #include "Core/Ref.h"
 
 namespace traktor
@@ -19,17 +18,12 @@ class EntityData;
     namespace shape
     {
 
-class Traverser : public Object
+class Traverser
 {
-    T_RTTI_CLASS;
-
 public:
-    Traverser(ISerializable* object);
+    static void visit(const ISerializable* object, const std::function< bool(const world::EntityData*) >& visitor);
 
-    void visit(const std::function< bool(Ref< world::EntityData >&) >& visitor);
-
-private:
-    Ref< ISerializable > m_object;
+    static void visit(ISerializable* object, const std::function< bool(Ref< world::EntityData >&) >& visitor);
 };
 
     }
