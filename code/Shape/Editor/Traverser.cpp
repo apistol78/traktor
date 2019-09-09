@@ -29,7 +29,7 @@ void Traverser::visit(const ISerializable* object, const std::function< bool(con
 				Traverser::visit(entityData, visitor);
 		}
 		else if (objectMember->get())
-			Traverser::visit(objectMember->get(), visitor);
+			Traverser::visit((const ISerializable*)objectMember->get(), visitor);
 	}
 }
 

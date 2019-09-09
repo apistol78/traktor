@@ -106,9 +106,9 @@ void line(const Vector2& from, const Vector2& to, const std::function< void(cons
 	ad.x = std::abs(ad.x);
 	ad.y = std::abs(ad.y);
 	int32_t ln = (int32_t)(std::max(ad.x, ad.y) + 0.5f);
-	for (int32_t i = 0; i < ln; ++i)
+	for (int32_t i = 0; i <= ln; ++i)
 	{
-		float fraction = (float)i / (ln - 1.0f);
+		float fraction = (float)i / ln;
 		Vector2 position = lerp(from, to, fraction);
 		fn(position, fraction);
 	}
@@ -321,13 +321,13 @@ bool TracerProcessor::process(const TracerTask* task) const
 
 				// Get attributes of this edge.
 				const model::Polygon& polygonA = renderModel->getPolygon(adjacency.getPolygon(i));
-				uint32_t Aivx0 = adjacency.getPolygonEdge(i);
-				uint32_t Aivx1 = (Aivx0 + 1) % polygonA.getVertexCount();
+				uint32_t Aivx0 = polygonA.getVertex(adjacency.getPolygonEdge(i));
+				uint32_t Aivx1 = polygonA.getVertex((Aivx0 + 1) % polygonA.getVertexCount());
 
 				// Get attributes of shared edge.
 				const model::Polygon& polygonB = renderModel->getPolygon(adjacency.getPolygon(shared[0]));
-				uint32_t Bivx0 = adjacency.getPolygonEdge(shared[0]);
-				uint32_t Bivx1 = (Bivx0 + 1) % polygonB.getVertexCount();
+				uint32_t Bivx0 = polygonB.getVertex(adjacency.getPolygonEdge(shared[0]));
+				uint32_t Bivx1 = polygonB.getVertex((Bivx0 + 1) % polygonB.getVertexCount());
 
 				model::Vertex Avx0 = renderModel->getVertex(Aivx0);
 				model::Vertex Avx1 = renderModel->getVertex(Aivx1);
@@ -353,19 +353,21 @@ bool TracerProcessor::process(const TracerTask* task) const
 					)
 				)
 				{
+					Vector2 imageSize(lightmap->getWidth() - 1, lightmap->getHeight() - 1);
+
 					Vector4 Ap0 = renderModel->getPosition(Avx0.getPosition());
 					Vector4 Ap1 = renderModel->getPosition(Avx1.getPosition());
 					Vector4 An0 = renderModel->getNormal(Avx0.getNormal());
 					Vector4 An1 = renderModel->getNormal(Avx1.getNormal());
-					Vector2 Auv0 = renderModel->getTexCoord(Avx0.getTexCoord(channel));
-					Vector2 Auv1 = renderModel->getTexCoord(Avx1.getTexCoord(channel));
+					Vector2 Auv0 = renderModel->getTexCoord(Avx0.getTexCoord(channel)) * imageSize;
+					Vector2 Auv1 = renderModel->getTexCoord(Avx1.getTexCoord(channel)) * imageSize;
 
 					Vector4 Bp0 = renderModel->getPosition(Bvx0.getPosition());
 					Vector4 Bp1 = renderModel->getPosition(Bvx1.getPosition());
 					Vector4 Bn0 = renderModel->getNormal(Bvx0.getNormal());
 					Vector4 Bn1 = renderModel->getNormal(Bvx1.getNormal());
-					Vector2 Buv0 = renderModel->getTexCoord(Bvx0.getTexCoord(channel));
-					Vector2 Buv1 = renderModel->getTexCoord(Bvx1.getTexCoord(channel));
+					Vector2 Buv0 = renderModel->getTexCoord(Bvx0.getTexCoord(channel)) * imageSize;
+					Vector2 Buv1 = renderModel->getTexCoord(Bvx1.getTexCoord(channel)) * imageSize;
 
 					float Auvln = (Auv1 - Auv0).length();
 					float Buvln = (Buv1 - Buv0).length();
@@ -375,10 +377,10 @@ bool TracerProcessor::process(const TracerTask* task) const
 						line(Auv0, Auv1, [&](const Vector2& Auv, float fraction) {
 							Vector2 Buv = lerp(Buv0, Buv1, fraction);
 
-							int32_t Ax = (int32_t)(Auv.x * (lightmap->getWidth() - 1));
-							int32_t Ay = (int32_t)(Auv.y * (lightmap->getWidth() - 1));
-							int32_t Bx = (int32_t)(Buv.x * (lightmap->getWidth() - 1));
-							int32_t By = (int32_t)(Buv.y * (lightmap->getWidth() - 1));
+							int32_t Ax = (int32_t)(Auv.x);
+							int32_t Ay = (int32_t)(Auv.y);
+							int32_t Bx = (int32_t)(Buv.x);
+							int32_t By = (int32_t)(Buv.y);
 
 							Color4f Aclr, Bclr;
 							if (lightmap->getPixel(Ax, Ay, Aclr) && lightmap->getPixel(Bx, By, Bclr))
@@ -393,10 +395,10 @@ bool TracerProcessor::process(const TracerTask* task) const
 						line(Buv0, Buv1, [&](const Vector2& Buv, float fraction) {
 							Vector2 Auv = lerp(Auv0, Auv1, fraction);
 
-							int32_t Ax = (int32_t)(Auv.x * (lightmap->getWidth() - 1));
-							int32_t Ay = (int32_t)(Auv.y * (lightmap->getWidth() - 1));
-							int32_t Bx = (int32_t)(Buv.x * (lightmap->getWidth() - 1));
-							int32_t By = (int32_t)(Buv.y * (lightmap->getWidth() - 1));
+							int32_t Ax = (int32_t)(Auv.x);
+							int32_t Ay = (int32_t)(Auv.y);
+							int32_t Bx = (int32_t)(Buv.x);
+							int32_t By = (int32_t)(Buv.y);
 
 							Color4f Aclr, Bclr;
 							if (lightmap->getPixel(Ax, Ay, Aclr) && lightmap->getPixel(Bx, By, Bclr))
@@ -412,6 +414,8 @@ bool TracerProcessor::process(const TracerTask* task) const
 
         // Discard alpha.
         lightmap->clearAlpha(1.0f);
+
+		lightmap->save(L"data/Temp/Bake/" + tracerOutput->getName() + L".exr");
 
 		// Convert into format which our lightmap texture will be.
 		lightmap->convert(drawing::PixelFormat::getABGRF16().endianSwapped());
