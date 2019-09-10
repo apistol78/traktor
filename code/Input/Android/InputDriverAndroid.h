@@ -18,6 +18,7 @@ namespace traktor
 	namespace input
 	{
 
+class GamepadDeviceAndroid;
 class KeyboardDeviceAndroid;
 class MouseDeviceAndroid;
 class SensorDeviceAndroid;
@@ -34,17 +35,17 @@ public:
 
 	virtual ~InputDriverAndroid();
 
-	virtual bool create(const SystemApplication& sysapp, const SystemWindow& syswin, uint32_t inputCategories) T_OVERRIDE T_FINAL;
+	virtual bool create(const SystemApplication& sysapp, const SystemWindow& syswin, uint32_t inputCategories) override final;
 
-	virtual int getDeviceCount() T_OVERRIDE T_FINAL;
+	virtual int getDeviceCount() override final;
 
-	virtual Ref< IInputDevice > getDevice(int index) T_OVERRIDE T_FINAL;
+	virtual Ref< IInputDevice > getDevice(int index) override final;
 
-	virtual UpdateResult update() T_OVERRIDE T_FINAL;
+	virtual UpdateResult update() override final;
 
-	virtual void notifyHandleInput(DelegateInstance* instance, AInputEvent* event) T_OVERRIDE T_FINAL;
+	virtual void notifyHandleInput(DelegateInstance* instance, AInputEvent* event) override final;
 
-	virtual void notifyHandleEvents(DelegateInstance* instance) T_OVERRIDE T_FINAL;
+	virtual void notifyHandleEvents(DelegateInstance* instance) override final;
 
 private:
 	DelegateInstance* m_instance;
@@ -52,6 +53,7 @@ private:
 	Ref< KeyboardDeviceAndroid > m_keyboardDevice;
 	Ref< MouseDeviceAndroid > m_mouseDevice;
 	Ref< TouchDeviceAndroid > m_touchDevice;
+	Ref< GamepadDeviceAndroid > m_gamepadDevice;
 	Ref< SensorDeviceAndroid > m_accelerationDevice;
 	Ref< SensorDeviceAndroid > m_orientationDevice;
 	RefArray< IInputDevice > m_devices;

@@ -2,6 +2,7 @@
 #include <android_native_app_glue.h>
 #include "Core/Log/Log.h"
 #include "Core/Misc/TString.h"
+#include "Input/Android/GamepadDeviceAndroid.h"
 #include "Input/Android/InputDriverAndroid.h"
 #include "Input/Android/KeyboardDeviceAndroid.h"
 #include "Input/Android/MouseDeviceAndroid.h"
@@ -56,6 +57,11 @@ bool InputDriverAndroid::create(const SystemApplication& sysapp, const SystemWin
 	{
 		m_touchDevice = new TouchDeviceAndroid(syswin);
 		m_devices.push_back(m_touchDevice);
+	}
+	if (inputCategories & CtJoystick)
+	{
+		m_gamepadDevice = new GamepadDeviceAndroid(syswin);
+		m_devices.push_back(m_gamepadDevice);
 	}
 
 	if (inputCategories & (CtAcceleration | CtOrientation))
@@ -149,6 +155,8 @@ void InputDriverAndroid::notifyHandleInput(DelegateInstance* instance, AInputEve
 		m_touchDevice->handleInput(event);
 	if (m_keyboardDevice)
 		m_keyboardDevice->handleInput(event);
+	if (m_gamepadDevice)
+		m_gamepadDevice->handleInput(event);
 }
 
 void InputDriverAndroid::notifyHandleEvents(DelegateInstance* instance)
