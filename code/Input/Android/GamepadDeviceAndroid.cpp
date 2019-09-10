@@ -1,6 +1,7 @@
 #include <android/input.h>
 #include <android/native_window.h>
 #include "Core/Log/Log.h"
+#include "Core/Math/Format.h"
 #include "Core/Math/MathUtils.h"
 #include "Input/Android/GamepadDeviceAndroid.h"
 
@@ -142,11 +143,15 @@ void GamepadDeviceAndroid::readState()
 		{
 			Vector2 position(it->second.positionX, it->second.positionY);
 			Vector2 delta = position - m_thumbLeftCenter;
-			m_thumbLeftAxisX = clamp(delta.x / padRadius, -1.0f, 1.0f);
-			m_thumbLeftAxisY = clamp(delta.y / padRadius, -1.0f, 1.0f);
+			m_thumbLeftAxisX = clamp( delta.x / padRadius, -1.0f, 1.0f);
+			m_thumbLeftAxisY = clamp(-delta.y / padRadius, -1.0f, 1.0f);
 		}
 		else
+		{
 			m_thumbLeftPointerId = -1;
+			m_thumbLeftAxisX = 0.0f;
+			m_thumbLeftAxisY = 0.0f;
+		}
 	}
 	else
 	{
@@ -172,11 +177,15 @@ void GamepadDeviceAndroid::readState()
 		{
 			Vector2 position(it->second.positionX, it->second.positionY);
 			Vector2 delta = position - m_thumbRightCenter;
-			m_thumbLeftAxisX = clamp(delta.x / padRadius, -1.0f, 1.0f);
-			m_thumbLeftAxisY = clamp(delta.y / padRadius, -1.0f, 1.0f);
+			m_thumbRightAxisX = clamp( delta.x / padRadius, -1.0f, 1.0f);
+			m_thumbRightAxisY = clamp(-delta.y / padRadius, -1.0f, 1.0f);
 		}
 		else
+		{
 			m_thumbRightPointerId = -1;
+			m_thumbRightAxisX = 0.0f;
+			m_thumbRightAxisY = 0.0f;
+		}
 	}
 	else
 	{
