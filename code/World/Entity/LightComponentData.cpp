@@ -39,7 +39,6 @@ void LightComponentData::serialize(ISerializer& s)
 		{ L"LtDirectional", LtDirectional },
 		{ L"LtPoint", LtPoint },
 		{ L"LtSpot", LtSpot },
-		{ L"LtProbe", LtProbe },
 		{ 0 }
 	};
 
