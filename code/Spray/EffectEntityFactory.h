@@ -38,7 +38,7 @@ class IEntityEventManager;
 
 class IFeedbackManager;
 
-/*! \brief Effect entity factory.
+/*! Effect entity factory.
  * \ingroup Spray
  */
 class T_DLLCLASS EffectEntityFactory : public world::IEntityFactory

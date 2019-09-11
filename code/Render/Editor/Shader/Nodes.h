@@ -30,7 +30,7 @@ class Instance;
 /*! \ingroup Render */
 //@{
 
-/*! \brief Absolute value. */
+/*! Absolute value. */
 class T_DLLCLASS Abs : public ImmutableNode
 {
 	T_RTTI_CLASS;
@@ -39,7 +39,7 @@ public:
 	Abs();
 };
 
-/*! \brief Add two values. */
+/*! Add two values. */
 class T_DLLCLASS Add : public ImmutableNode
 {
 	T_RTTI_CLASS;
@@ -48,7 +48,7 @@ public:
 	Add();
 };
 
-/*! \brief Arcus cosine. */
+/*! Arcus cosine. */
 class T_DLLCLASS ArcusCos : public ImmutableNode
 {
 	T_RTTI_CLASS;
@@ -57,7 +57,7 @@ public:
 	ArcusCos();
 };
 
-/*! \brief Absolute tangent. */
+/*! Absolute tangent. */
 class T_DLLCLASS ArcusTan : public ImmutableNode
 {
 	T_RTTI_CLASS;
@@ -66,7 +66,7 @@ public:
 	ArcusTan();
 };
 
-/*! \brief Static branch permutation. */
+/*! Static branch permutation. */
 class T_DLLCLASS Branch : public ImmutableNode
 {
 	T_RTTI_CLASS;
@@ -86,7 +86,7 @@ private:
 	std::wstring m_parameterName;
 };
 
-/*! \brief Clamp value to given range. */
+/*! Clamp value to given range. */
 class T_DLLCLASS Clamp : public ImmutableNode
 {
 	T_RTTI_CLASS;
@@ -111,7 +111,7 @@ private:
 	float m_max;
 };
 
-/*! \brief Color constant. */
+/*! Color constant. */
 class T_DLLCLASS Color : public ImmutableNode
 {
 	T_RTTI_CLASS;
@@ -131,7 +131,7 @@ private:
 	traktor::Color4f m_color;
 };
 
-/*! \brief Comment node. */
+/*! Comment node. */
 class T_DLLCLASS Comment : public ImmutableNode
 {
 	T_RTTI_CLASS;
@@ -140,7 +140,7 @@ public:
 	Comment();
 };
 
-/*! \brief Compute output node. */
+/*! Compute output node. */
 class T_DLLCLASS ComputeOutput : public ImmutableNode
 {
 	T_RTTI_CLASS;
@@ -160,7 +160,7 @@ private:
 	std::wstring m_technique;
 };
 
-/*! \brief Conditional selection. */
+/*! Conditional selection. */
 class T_DLLCLASS Conditional : public ImmutableNode
 {
 	T_RTTI_CLASS;
@@ -202,7 +202,7 @@ private:
 	Operator m_operator;
 };
 
-/*! \brief Connected. */
+/*! Connected. */
 class T_DLLCLASS Connected : public ImmutableNode
 {
 	T_RTTI_CLASS;
@@ -211,7 +211,7 @@ public:
 	Connected();
 };
 
-/*! \brief Cosine. */
+/*! Cosine. */
 class T_DLLCLASS Cos : public ImmutableNode
 {
 	T_RTTI_CLASS;
@@ -220,7 +220,7 @@ public:
 	Cos();
 };
 
-/*! \brief Cross product. */
+/*! Cross product. */
 class T_DLLCLASS Cross : public ImmutableNode
 {
 	T_RTTI_CLASS;
@@ -229,7 +229,7 @@ public:
 	Cross();
 };
 
-/*! \brief Partial derivative. */
+/*! Partial derivative. */
 class T_DLLCLASS Derivative : public ImmutableNode
 {
 	T_RTTI_CLASS;
@@ -253,7 +253,7 @@ private:
 	Axis m_axis;
 };
 
-/*! \brief Discard fragment. */
+/*! Discard fragment. */
 class T_DLLCLASS Discard : public ImmutableNode
 {
 	T_RTTI_CLASS;
@@ -283,7 +283,7 @@ private:
 	Operator m_operator;
 };
 
-/*! \brief Compute dispatch index. */
+/*! Compute dispatch index. */
 class T_DLLCLASS DispatchIndex : public ImmutableNode
 {
 	T_RTTI_CLASS;
@@ -292,7 +292,7 @@ public:
 	DispatchIndex();
 };
 
-/*! \brief Divide. */
+/*! Divide. */
 class T_DLLCLASS Div : public ImmutableNode
 {
 	T_RTTI_CLASS;
@@ -301,7 +301,7 @@ public:
 	Div();
 };
 
-/*! \brief Dot product. */
+/*! Dot product. */
 class T_DLLCLASS Dot : public ImmutableNode
 {
 	T_RTTI_CLASS;
@@ -310,7 +310,7 @@ public:
 	Dot();
 };
 
-/*! \brief Exponential. */
+/*! Exponential. */
 class T_DLLCLASS Exp : public ImmutableNode
 {
 	T_RTTI_CLASS;
@@ -319,7 +319,7 @@ public:
 	Exp();
 };
 
-/*! \brief Fractional part. */
+/*! Fractional part. */
 class T_DLLCLASS Fraction : public ImmutableNode
 {
 	T_RTTI_CLASS;
@@ -328,7 +328,7 @@ public:
 	Fraction();
 };
 
-/*! \brief Fragment position. */
+/*! Fragment position. */
 class T_DLLCLASS FragmentPosition : public ImmutableNode
 {
 	T_RTTI_CLASS;
@@ -337,7 +337,7 @@ public:
 	FragmentPosition();
 };
 
-/*! \brief Emit true if primitive is seen from the front. */
+/*! Emit true if primitive is seen from the front. */
 class T_DLLCLASS FrontFace : public ImmutableNode
 {
 	T_RTTI_CLASS;
@@ -346,7 +346,7 @@ public:
 	FrontFace();
 };
 
-/*! \brief Fetch value from array uniform. */
+/*! Fetch value from array uniform. */
 class T_DLLCLASS IndexedUniform : public ImmutableNode
 {
 	T_RTTI_CLASS;
@@ -386,7 +386,7 @@ private:
 	int32_t m_length;
 };
 
-/*! \brief Fragment named input. */
+/*! Fragment named input. */
 class T_DLLCLASS InputPort : public ImmutableNode
 {
 	T_RTTI_CLASS;
@@ -428,7 +428,7 @@ private:
 	float m_defaultValue;
 };
 
-/*! \brief Instance index input. */
+/*! Instance index input. */
 class T_DLLCLASS Instance : public ImmutableNode
 {
 	T_RTTI_CLASS;
@@ -437,7 +437,7 @@ public:
 	Instance();
 };
 
-/*! \brief Interpolator, pass value from vertex to pixel shader. */
+/*! Interpolator, pass value from vertex to pixel shader. */
 class T_DLLCLASS Interpolator : public ImmutableNode
 {
 	T_RTTI_CLASS;
@@ -446,7 +446,7 @@ public:
 	Interpolator();
 };
 
-/*! \brief Iterate. */
+/*! Iterate. */
 class T_DLLCLASS Iterate : public ImmutableNode
 {
 	T_RTTI_CLASS;
@@ -471,7 +471,7 @@ private:
 	int32_t m_to;
 };
 
-/*! \brief Iterate2
+/*! Iterate2
  *
  * \tbd Replace all others, Sum, Repeat, Iterate and Iterate2d with fragments using this node.
  */
@@ -483,7 +483,7 @@ public:
 	Iterate2();
 };
 
-/*! \brief 2-D iterate. */
+/*! 2-D iterate. */
 class T_DLLCLASS Iterate2d : public ImmutableNode
 {
 	T_RTTI_CLASS;
@@ -518,7 +518,7 @@ private:
 	int32_t m_toY;
 };
 
-/*! \brief Length of geometrical vector. */
+/*! Length of geometrical vector. */
 class T_DLLCLASS Length : public ImmutableNode
 {
 	T_RTTI_CLASS;
@@ -527,7 +527,7 @@ public:
 	Length();
 };
 
-/*! \brief Linear interpolate. */
+/*! Linear interpolate. */
 class T_DLLCLASS Lerp : public ImmutableNode
 {
 	T_RTTI_CLASS;
@@ -536,7 +536,7 @@ public:
 	Lerp();
 };
 
-/*! \brief Natural logarithm. */
+/*! Natural logarithm. */
 class T_DLLCLASS Log : public ImmutableNode
 {
 	T_RTTI_CLASS;
@@ -561,7 +561,7 @@ private:
 	Base m_base;
 };
 
-/*! \brief Build matrix. */
+/*! Build matrix. */
 class T_DLLCLASS MatrixIn : public ImmutableNode
 {
 	T_RTTI_CLASS;
@@ -570,7 +570,7 @@ public:
 	MatrixIn();
 };
 
-/*! \brief Decompose matrix. */
+/*! Decompose matrix. */
 class T_DLLCLASS MatrixOut : public ImmutableNode
 {
 	T_RTTI_CLASS;
@@ -579,7 +579,7 @@ public:
 	MatrixOut();
 };
 
-/*! \brief Maximum of two values. */
+/*! Maximum of two values. */
 class T_DLLCLASS Max : public ImmutableNode
 {
 	T_RTTI_CLASS;
@@ -588,7 +588,7 @@ public:
 	Max();
 };
 
-/*! \brief Minimum of two values. */
+/*! Minimum of two values. */
 class T_DLLCLASS Min : public ImmutableNode
 {
 	T_RTTI_CLASS;
@@ -597,7 +597,7 @@ public:
 	Min();
 };
 
-/*! \brief Mix in scalars into vector. */
+/*! Mix in scalars into vector. */
 class T_DLLCLASS MixIn : public ImmutableNode
 {
 	T_RTTI_CLASS;
@@ -606,7 +606,7 @@ public:
 	MixIn();
 };
 
-/*! \brief Extract scalars from vector. */
+/*! Extract scalars from vector. */
 class T_DLLCLASS MixOut : public ImmutableNode
 {
 	T_RTTI_CLASS;
@@ -615,7 +615,7 @@ public:
 	MixOut();
 };
 
-/*! \brief Multiply. */
+/*! Multiply. */
 class T_DLLCLASS Mul : public ImmutableNode
 {
 	T_RTTI_CLASS;
@@ -624,7 +624,7 @@ public:
 	Mul();
 };
 
-/*! \brief Multiply then add. */
+/*! Multiply then add. */
 class T_DLLCLASS MulAdd : public ImmutableNode
 {
 	T_RTTI_CLASS;
@@ -633,7 +633,7 @@ public:
 	MulAdd();
 };
 
-/*! \brief Negate value. */
+/*! Negate value. */
 class T_DLLCLASS Neg : public ImmutableNode
 {
 	T_RTTI_CLASS;
@@ -642,7 +642,7 @@ public:
 	Neg();
 };
 
-/*! \brief Normalize vector. */
+/*! Normalize vector. */
 class T_DLLCLASS Normalize : public ImmutableNode
 {
 	T_RTTI_CLASS;
@@ -651,7 +651,7 @@ public:
 	Normalize();
 };
 
-/*! \brief Shader fragment named output. */
+/*! Shader fragment named output. */
 class T_DLLCLASS OutputPort : public ImmutableNode
 {
 	T_RTTI_CLASS;
@@ -671,7 +671,7 @@ private:
 	std::wstring m_name;
 };
 
-/*! \brief Evaluate polynomial. */
+/*! Evaluate polynomial. */
 class T_DLLCLASS Polynomial : public ImmutableNode
 {
 	T_RTTI_CLASS;
@@ -680,7 +680,7 @@ public:
 	Polynomial();
 };
 
-/*! \brief Raise to power. */
+/*! Raise to power. */
 class T_DLLCLASS Pow : public ImmutableNode
 {
 	T_RTTI_CLASS;
@@ -689,7 +689,7 @@ public:
 	Pow();
 };
 
-/*! \brief Pixel output. */
+/*! Pixel output. */
 class T_DLLCLASS PixelOutput : public ImmutableNode
 {
 	T_RTTI_CLASS;
@@ -729,7 +729,7 @@ private:
 	PrecisionHint m_precisionHint;
 };
 
-/*! \brief Conditional based on render platform. */
+/*! Conditional based on render platform. */
 class T_DLLCLASS Platform : public ImmutableNode
 {
 	T_RTTI_CLASS;
@@ -738,7 +738,7 @@ public:
 	Platform();
 };
 
-/*! \brief Read [indexed] element from struct buffer. */
+/*! Read [indexed] element from struct buffer. */
 class T_DLLCLASS ReadStruct : public ImmutableNode
 {
 	T_RTTI_CLASS;
@@ -758,7 +758,7 @@ private:
 	std::wstring m_name;
 };
 
-/*! \brief Reflect vector. */
+/*! Reflect vector. */
 class T_DLLCLASS Reflect : public ImmutableNode
 {
 	T_RTTI_CLASS;
@@ -767,7 +767,7 @@ public:
 	Reflect();
 };
 
-/*! \brief Reciprocal square root. */
+/*! Reciprocal square root. */
 class T_DLLCLASS RecipSqrt : public ImmutableNode
 {
 	T_RTTI_CLASS;
@@ -776,7 +776,7 @@ public:
 	RecipSqrt();
 };
 
-/*! \brief Repeat until condition. */
+/*! Repeat until condition. */
 class T_DLLCLASS Repeat : public ImmutableNode
 {
 	T_RTTI_CLASS;
@@ -785,7 +785,7 @@ public:
 	Repeat();
 };
 
-/*! \brief Round. */
+/*! Round. */
 class T_DLLCLASS Round : public ImmutableNode
 {
 	T_RTTI_CLASS;
@@ -794,7 +794,7 @@ public:
 	Round();
 };
 
-/*! \brief Texture sampler. */
+/*! Texture sampler. */
 class T_DLLCLASS Sampler : public ImmutableNode
 {
 	T_RTTI_CLASS;
@@ -814,7 +814,7 @@ private:
 	SamplerState m_state;
 };
 
-/*! \brief Scalar constant. */
+/*! Scalar constant. */
 class T_DLLCLASS Scalar : public ImmutableNode
 {
 	T_RTTI_CLASS;
@@ -834,7 +834,7 @@ private:
 	float m_value;
 };
 
-/*! \brief Sign. */
+/*! Sign. */
 class T_DLLCLASS Sign : public ImmutableNode
 {
 	T_RTTI_CLASS;
@@ -843,7 +843,7 @@ public:
 	Sign();
 };
 
-/*! \brief Sine. */
+/*! Sine. */
 class T_DLLCLASS Sin : public ImmutableNode
 {
 	T_RTTI_CLASS;
@@ -852,7 +852,7 @@ public:
 	Sin();
 };
 
-/*! \brief Square root of value. */
+/*! Square root of value. */
 class T_DLLCLASS Sqrt : public ImmutableNode
 {
 	T_RTTI_CLASS;
@@ -861,7 +861,7 @@ public:
 	Sqrt();
 };
 
-/*! \brief Output states. */
+/*! Output states. */
 class T_DLLCLASS State : public ImmutableNode
 {
 	T_RTTI_CLASS;
@@ -884,7 +884,7 @@ private:
 	RenderState m_renderState;
 };
 
-/*! \brief Step function. */
+/*! Step function. */
 class T_DLLCLASS Step : public ImmutableNode
 {
 	T_RTTI_CLASS;
@@ -893,7 +893,7 @@ public:
 	Step();
 };
 
-/*! \brief Define struct. */
+/*! Define struct. */
 class T_DLLCLASS Struct : public ImmutableNode
 {
 	T_RTTI_CLASS;
@@ -927,7 +927,7 @@ private:
 
 };
 
-/*! \brief Subtract. */
+/*! Subtract. */
 class T_DLLCLASS Sub : public ImmutableNode
 {
 	T_RTTI_CLASS;
@@ -936,7 +936,7 @@ public:
 	Sub();
 };
 
-/*! \brief Summarize function. */
+/*! Summarize function. */
 class T_DLLCLASS Sum : public ImmutableNode
 {
 	T_RTTI_CLASS;
@@ -961,7 +961,7 @@ private:
 	int32_t m_to;
 };
 
-/*! \brief Conditional switch. */
+/*! Conditional switch. */
 class T_DLLCLASS Switch : public Node
 {
 	T_RTTI_CLASS;
@@ -1001,7 +1001,7 @@ private:
 	OutputPin* m_outputPin;
 };
 
-/*! \brief Swizzle elements in a vector. */
+/*! Swizzle elements in a vector. */
 class T_DLLCLASS Swizzle : public ImmutableNode
 {
 	T_RTTI_CLASS;
@@ -1021,7 +1021,7 @@ private:
 	std::wstring m_swizzle;
 };
 
-/*! \brief Tangent. */
+/*! Tangent. */
 class T_DLLCLASS Tan : public ImmutableNode
 {
 	T_RTTI_CLASS;
@@ -1030,7 +1030,7 @@ public:
 	Tan();
 };
 
-/*! \brief Target size. */
+/*! Target size. */
 class T_DLLCLASS TargetSize : public ImmutableNode
 {
 	T_RTTI_CLASS;
@@ -1039,7 +1039,7 @@ public:
 	TargetSize();
 };
 
-/*! \brief Texture constant. */
+/*! Texture constant. */
 class T_DLLCLASS Texture : public ImmutableNode
 {
 	T_RTTI_CLASS;
@@ -1063,7 +1063,7 @@ private:
 };
 
 
-/*! \brief Texture size. */
+/*! Texture size. */
 class T_DLLCLASS TextureSize : public ImmutableNode
 {
 	T_RTTI_CLASS;
@@ -1072,7 +1072,7 @@ public:
 	TextureSize();
 };
 
-/*! \brief Transform vector by matrix. */
+/*! Transform vector by matrix. */
 class T_DLLCLASS Transform : public ImmutableNode
 {
 	T_RTTI_CLASS;
@@ -1081,7 +1081,7 @@ public:
 	Transform();
 };
 
-/*! \brief Transpose matrix. */
+/*! Transpose matrix. */
 class T_DLLCLASS Transpose : public ImmutableNode
 {
 	T_RTTI_CLASS;
@@ -1090,7 +1090,7 @@ public:
 	Transpose();
 };
 
-/*! \brief Truncate. */
+/*! Truncate. */
 class T_DLLCLASS Truncate : public ImmutableNode
 {
 	T_RTTI_CLASS;
@@ -1099,7 +1099,7 @@ public:
 	Truncate();
 };
 
-/*! \brief Type switch. */
+/*! Type switch. */
 class T_DLLCLASS Type : public ImmutableNode
 {
 	T_RTTI_CLASS;
@@ -1108,7 +1108,7 @@ public:
 	Type();
 };
 
-/*! \brief Fetch parameter value. */
+/*! Fetch parameter value. */
 class T_DLLCLASS Uniform : public ImmutableNode
 {
 	T_RTTI_CLASS;
@@ -1142,7 +1142,7 @@ private:
 	UpdateFrequency m_frequency;
 };
 
-/*! \brief Variable */
+/*! Variable */
 class T_DLLCLASS Variable : public ImmutableNode
 {
 	T_RTTI_CLASS;
@@ -1165,7 +1165,7 @@ private:
 	bool m_global;
 };
 
-/*! \brief Vector constant. */
+/*! Vector constant. */
 class T_DLLCLASS Vector : public ImmutableNode
 {
 	T_RTTI_CLASS;
@@ -1185,7 +1185,7 @@ private:
 	Vector4 m_value;
 };
 
-/*! \brief Fetch value from vertex. */
+/*! Fetch value from vertex. */
 class T_DLLCLASS VertexInput : public ImmutableNode
 {
 	T_RTTI_CLASS;
@@ -1220,7 +1220,7 @@ private:
 	int32_t m_index;
 };
 
-/*! \brief Output vertex's clip position. */
+/*! Output vertex's clip position. */
 class T_DLLCLASS VertexOutput : public ImmutableNode
 {
 	T_RTTI_CLASS;

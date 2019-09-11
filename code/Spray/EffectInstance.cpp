@@ -28,17 +28,17 @@ void EffectInstance::update(Context& context, const Transform& transform, bool e
 	}
 
 	m_boundingBox = Aabb3();
-	for (RefArray< EffectLayerInstance >::iterator i = m_layerInstances.begin(); i != m_layerInstances.end(); ++i)
+	for (auto layerInstance : m_layerInstances)
 	{
-		(*i)->update(context, transform, m_time, enable);
-		m_boundingBox.contain((*i)->getBoundingBox());
+		layerInstance->update(context, transform, m_time, enable);
+		m_boundingBox.contain(layerInstance->getBoundingBox());
 	}
 }
 
 void EffectInstance::synchronize()
 {
-	for (RefArray< EffectLayerInstance >::iterator i = m_layerInstances.begin(); i != m_layerInstances.end(); ++i)
-		(*i)->synchronize();
+	for (auto layerInstance : m_layerInstances)
+		layerInstance->synchronize();
 }
 
 void EffectInstance::render(
@@ -51,8 +51,19 @@ void EffectInstance::render(
 	const Plane& cameraPlane
 ) const
 {
-	for (RefArray< EffectLayerInstance >::const_iterator i = m_layerInstances.begin(); i != m_layerInstances.end(); ++i)
-		(*i)->render(technique, pointRenderer, meshRenderer, trailRenderer, transform, cameraPosition, cameraPlane, m_time);
+	for (auto layerInstance : m_layerInstances)
+	{
+		layerInstance->render(
+			technique,
+			pointRenderer,
+			meshRenderer,
+			trailRenderer,
+			transform,
+			cameraPosition,
+			cameraPlane,
+			m_time
+		);
+	}
 }
 
 	}

@@ -16,7 +16,7 @@ class Sound;
 	namespace spray
 	{
 
-/*! \brief
+/*! Sound event.
  * \ingroup Spray
  */
 class SoundEvent : public world::IEntityEvent

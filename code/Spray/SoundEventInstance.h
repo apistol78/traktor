@@ -25,6 +25,9 @@ class Entity;
 	namespace spray
 	{
 
+/*! Sound event instance.
+ * \ingroup Spray
+ */
 class SoundEventInstance : public world::IEntityEventInstance
 {
 	T_RTTI_CLASS;

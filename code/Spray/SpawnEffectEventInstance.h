@@ -19,6 +19,9 @@ class Entity;
 class EffectComponent;
 class SpawnEffectEvent;
 
+/*! Spawn effect event instance.
+ * \ingroup Spray
+ */
 class SpawnEffectEventInstance : public world::IEntityEventInstance
 {
 	T_RTTI_CLASS;

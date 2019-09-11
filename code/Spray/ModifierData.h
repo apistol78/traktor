@@ -25,7 +25,7 @@ class IResourceManager;
 
 class Modifier;
 
-/*! \brief Emitter modifier persistent data.
+/*! Emitter modifier persistent data.
  * \ingroup Spray
  */
 class T_DLLCLASS ModifierData : public ISerializable

@@ -1,66 +1,151 @@
-#include <sys/mman.h>
-#include <sys/types.h>
-#include <sys/stat.h>
+#include <cstring>
 #include <fcntl.h>
 #include <unistd.h>
-#include "Core/Io/MemoryStream.h"
-#include "Core/Misc/AutoPtr.h"
+#include <sys/mman.h>
+#include <sys/stat.h>
+#include "Core/Misc/MD5.h"
+#include "Core/Misc/TString.h"
 #include "Core/System/OsX/SharedMemoryOsX.h"
+#include "Core/Thread/Atomic.h"
 
 namespace traktor
 {
+	namespace
+	{
+
+#pragma pack(1)
+struct Header
+{
+	int32_t readerCount;
+	int32_t writerCount;
+};
+#pragma pack()
+
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.SharedMemoryOsX", SharedMemoryOsX, ISharedMemory)
 
-SharedMemoryOsX::SharedMemoryOsX(uint32_t size)
-:	m_size(size)
+SharedMemoryOsX::SharedMemoryOsX()
+:	m_fd(0)
+,	m_ptr(nullptr)
+,	m_size(0)
 {
-	int32_t handle = open("/tmp/traktor.shm", O_RDWR);
-	if (handle == -1)
-	{
-		handle = open("/tmp/traktor.shm", O_CREAT | O_RDWR, 0666);
-		if (handle != -1)
-		{
-			AutoArrayPtr< uint8_t > dummy(new uint8_t [1024]);
-			for (uint32_t i = 0; i < (size + 1023) / 1024; ++i)
-				::write(handle, dummy.ptr(), 1024);
-
-			close(handle);
-
-			handle = open("/tmp/traktor.shm", O_RDWR);
-		}
-	}
-
-	if (handle != -1)
-	{
-		m_buffer = mmap(0, m_size, PROT_READ | PROT_WRITE, MAP_FILE | MAP_SHARED, handle, 0);
-		close(handle);
-	}
 }
 
 SharedMemoryOsX::~SharedMemoryOsX()
 {
-	if (m_buffer)
+	if (m_ptr)
 	{
-		munmap(m_buffer, m_size);
-		m_buffer = 0;
+		munmap(m_ptr, m_size);
+		shm_unlink(wstombs(m_name).c_str());
 	}
 }
 
-Ref< IStream > SharedMemoryOsX::read(bool exclusive)
+bool SharedMemoryOsX::create(const std::wstring& name, uint32_t size)
 {
-	return new MemoryStream(m_buffer, m_size, true, false);
-}
+	bool initializeMemory = false;
 
-Ref< IStream > SharedMemoryOsX::write()
-{
-	return new MemoryStream(m_buffer, m_size, false, true);
-}
+	// Add space for header as well.
+	size += sizeof(Header);
 
-bool SharedMemoryOsX::clear()
-{
-	std::memset(m_buffer, 0, m_size);
+	// Create a digest of name, cannot use qualified paths on posix.
+	MD5 md5;
+	md5.createFromString(name);
+	m_name = std::wstring(L"/") + md5.format();
+
+	// Open shared memory object.
+	m_fd = shm_open(wstombs(m_name).c_str(), O_RDWR, S_IRUSR | S_IWUSR);
+	if (m_fd < 0)
+	{
+		// Shared memory object doesn't exist, create new.
+		m_fd = shm_open(wstombs(m_name).c_str(), O_CREAT | O_RDWR, S_IRUSR | S_IWUSR);
+		if (m_fd < 0)
+			return false;
+
+		// Set size of shared object.
+		if (ftruncate(m_fd, size) == -1)
+		{
+			shm_unlink(wstombs(m_name).c_str());
+			return false;
+		}
+
+		initializeMemory = true;
+	}
+
+	// Map into virtual memory.
+	m_ptr = mmap(nullptr, size, PROT_READ | PROT_WRITE, MAP_SHARED, m_fd, 0);
+	if (!m_ptr)
+	{
+		shm_unlink(wstombs(m_name).c_str());
+		return false;
+	}
+
+	// Initialize memory if necessary.
+	if (initializeMemory)
+		std::memset(m_ptr, 0, size);
+
+	m_size = size;
 	return true;
+}
+
+const void* SharedMemoryOsX::acquireReadPointer(bool exclusive)
+{
+	Header* header = static_cast< Header* >(m_ptr);
+	if (!header)
+		return nullptr;
+
+	// Wait until no writers so we can acquire a reader.
+	for (;;)
+	{
+		while (Atomic::compareAndSwap(header->writerCount, 0, 0) != 0)
+			sched_yield();
+
+		Atomic::increment(header->readerCount);
+
+		if (Atomic::compareAndSwap(header->writerCount, 0, 0) == 0)
+			break;
+
+		Atomic::decrement(header->readerCount);
+	}
+
+	return static_cast< void* >(header + 1);
+}
+
+void SharedMemoryOsX::releaseReadPointer()
+{
+	Header* header = static_cast< Header* >(m_ptr);
+	if (!header)
+		return;
+
+	T_FATAL_ASSERT(header->readerCount >= 1);
+	Atomic::decrement(header->readerCount);
+}
+
+void* SharedMemoryOsX::acquireWritePointer()
+{
+	Header* header = static_cast< Header* >(m_ptr);
+	if (!header)
+		return nullptr;
+
+	// Wait until no writers.
+	while (Atomic::compareAndSwap(header->writerCount, 0, 1) != 0)
+		sched_yield();
+
+	// Wait until no readers.
+	while (Atomic::compareAndSwap(header->readerCount, 0, 0) != 0)
+		sched_yield();
+
+	return static_cast< void* >(header + 1);
+}
+
+void SharedMemoryOsX::releaseWritePointer()
+{
+	Header* header = static_cast< Header* >(m_ptr);
+	if (!header)
+		return;
+
+	T_FATAL_ASSERT(header->writerCount == 1);
+	Atomic::decrement(header->writerCount);
 }
 
 }

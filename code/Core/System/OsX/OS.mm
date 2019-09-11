@@ -47,11 +47,11 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.OS", OS, Object)
 
 OS& OS::getInstance()
 {
-	static OS* s_instance = 0;
+	static OS* s_instance = nullptr;
 	if (!s_instance)
 	{
 		s_instance = new OS();
-		s_instance->addRef(0);
+		s_instance->addRef(nullptr);
 		SingletonManager::getInstance().add(s_instance);
 	}
 	return *s_instance;
@@ -375,8 +375,8 @@ Ref< IProcess > OS::execute(
 	}
 
 	// Terminate argument and environment vectors.
-	envv[envc] = 0;
-	argv[argc] = 0;
+	envv[envc] = nullptr;
+	argv[argc] = nullptr;
 	
 	// Spawned process inherit working directory from our process; thus
 	// we need to temporarily change directory.
@@ -409,18 +409,22 @@ Ref< IProcess > OS::execute(
 	chdir(cwd);
 	
 	if (err != 0)
-		return 0;
+		return nullptr;
 
 	return new ProcessOsX(pid, fileActions, childStdOut[0], childStdErr[0]);
 	
 #else
-	return 0;
+	return nullptr;
 #endif
 }
 
 Ref< ISharedMemory > OS::createSharedMemory(const std::wstring& name, uint32_t size) const
 {
-	return new SharedMemoryOsX(size);
+	Ref< SharedMemoryOsX > shm = new SharedMemoryOsX();
+	if (shm->create(name, size))
+		return shm;
+	else
+		return nullptr;	
 }
 
 bool OS::setOwnProcessPriorityBias(int32_t priorityBias)

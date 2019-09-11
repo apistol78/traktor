@@ -15,6 +15,9 @@ namespace traktor
 	namespace spray
 	{
 
+/*! PointSet persistent resource.
+ * \ingroup Spray
+ */
 class T_DLLCLASS PointSetResource : public ISerializable
 {
 	T_RTTI_CLASS;

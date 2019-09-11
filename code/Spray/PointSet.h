@@ -20,7 +20,7 @@ class IStream;
 	namespace spray
 	{
 
-/*! \brief Point set
+/*! Point set
  * \ingroup Spray
  */
 class T_DLLCLASS PointSet : public Object

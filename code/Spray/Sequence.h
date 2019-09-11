@@ -1,8 +1,8 @@
 #pragma once
 
-#include <vector>
 #include "Core/Object.h"
 #include "Core/Ref.h"
+#include "Core/Containers/AlignedVector.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -26,7 +26,7 @@ class IEntityEvent;
 
 class SequenceInstance;
 
-/*! \brief Trigger sequence.
+/*! Trigger sequence.
  * \ingroup Spray
  */
 class T_DLLCLASS Sequence : public Object
@@ -40,14 +40,14 @@ public:
 		Ref< world::IEntityEvent > event;
 	};
 
-	Sequence(const std::vector< Key >& keys);
+	explicit Sequence(const AlignedVector< Key >& keys);
 
 	Ref< SequenceInstance > createInstance() const;
 
 private:
 	friend class SequenceInstance;
 
-	std::vector< Key > m_keys;
+	AlignedVector< Key > m_keys;
 };
 
 	}

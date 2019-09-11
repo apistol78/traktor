@@ -18,7 +18,7 @@ CombinedInputSource::CombinedInputSource(const RefArray< IInputSource >& sources
 std::wstring CombinedInputSource::getDescription() const
 {
 	StringOutputStream ss;
-	for (RefArray< IInputSource >::const_iterator i = m_sources.begin(); i != m_sources.end(); ++i)
+	for (auto source : m_sources)
 	{
 		if (!ss.empty())
 		{
@@ -37,15 +37,15 @@ std::wstring CombinedInputSource::getDescription() const
 				break;
 			}
 		}
-		ss << (*i)->getDescription();
+		ss << source->getDescription();
 	}
 	return ss.str();
 }
 
 void CombinedInputSource::prepare(float T, float dT)
 {
-	for (RefArray< IInputSource >::iterator i = m_sources.begin(); i != m_sources.end(); ++i)
-		(*i)->prepare(T, dT);
+	for (auto source : m_sources)
+		source->prepare(T, dT);
 }
 
 float CombinedInputSource::read(float T, float dT)
@@ -56,17 +56,17 @@ float CombinedInputSource::read(float T, float dT)
 	{
 	case CmAny:
 		{
-			for (RefArray< IInputSource >::iterator i = m_sources.begin(); i != m_sources.end(); ++i)
-				value |= asBoolean((*i)->read(T, dT));
+			for (auto source : m_sources)
+				value |= asBoolean(source->read(T, dT));
 		}
 		break;
 
 	case CmExclusive:
 		{
 			uint32_t count = 0;
-			for (RefArray< IInputSource >::iterator i = m_sources.begin(); i != m_sources.end(); ++i)
+			for (auto source : m_sources)
 			{
-				if (asBoolean((*i)->read(T, dT)))
+				if (asBoolean(source->read(T, dT)))
 					++count;
 			}
 			value = bool(count == 1);
@@ -76,8 +76,8 @@ float CombinedInputSource::read(float T, float dT)
 	case CmAll:
 		{
 			value = true;
-			for (RefArray< IInputSource >::iterator i = m_sources.begin(); i != m_sources.end(); ++i)
-				value &= asBoolean((*i)->read(T, dT));
+			for (auto source : m_sources)
+				value &= asBoolean(source->read(T, dT));
 		}
 		break;
 	}

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Core/Config.h"
+#include "Core/Containers/SmallMap.h"
 #include "Core/Guid.h"
 #include "Core/Platform.h"
 #include "Core/Ref.h"
@@ -119,7 +120,7 @@ enum Address
 	AdBorder = 3
 };
 
-/*! \brief Render state. */
+/*! Render state. */
 struct RenderState
 {
 	CullMode cullMode;
@@ -176,7 +177,7 @@ struct RenderState
 	}
 };
 
-/*! \brief Sampler state. */
+/*! Sampler state. */
 struct SamplerState
 {
 	Filter minFilter;
@@ -205,7 +206,7 @@ struct SamplerState
 	}
 };
 
-/*! \brief Render view event types. */
+/*! Render view event types. */
 enum RenderEventType
 {
 	ReClose = 1,
@@ -215,7 +216,7 @@ enum RenderEventType
 	ReSetFullScreen = 5
 };
 
-/*! \brief Clear target flags. */
+/*! Clear target flags. */
 enum ClearFlag
 {
 	CfColor		= 1,	//!< Clear color buffer.
@@ -223,7 +224,7 @@ enum ClearFlag
 	CfStencil	= 4		//!< Clear stencil buffer.
 };
 
-/*! \brief Vertex element data usage. */
+/*! Vertex element data usage. */
 enum DataUsage
 {
 	DuPosition	= 0,	//!< Positions
@@ -234,7 +235,7 @@ enum DataUsage
 	DuCustom	= 5		//!< Custom, ex. texture coordinates etc.
 };
 
-/*! \brief Vertex element data type. */
+/*! Vertex element data type. */
 enum DataType
 {
 	DtFloat1	= 0,	//!< Single float.
@@ -251,7 +252,7 @@ enum DataType
 	DtHalf4		= 11	//!< 4 half precision floats.
 };
 
-/*! \brief Shader parameter type. */
+/*! Shader parameter type. */
 enum ParameterType
 {
 	PtScalar	= 0,	//!< Scalar parameter.
@@ -263,7 +264,7 @@ enum ParameterType
 	PtStructBuffer = 6	//!< Struct buffer parameter.
 };
 
-/*! \brief Shader parameter update frequency. */
+/*! Shader parameter update frequency. */
 enum UpdateFrequency
 {
 	UfOnce		= 0,	//!< Once per life time.
@@ -271,14 +272,14 @@ enum UpdateFrequency
 	UfDraw		= 2		//!< Per draw call.
 };
 
-/*! \brief Index type. */
+/*! Index type. */
 enum IndexType
 {
 	ItUInt16,			//!< Unsigned 16 bit indices.
 	ItUInt32			//!< Unsigned 32 bit indices.
 };
 
-/*! \brief Texture type. */
+/*! Texture type. */
 enum TextureType
 {
 	TtInvalid = 0,
@@ -287,7 +288,7 @@ enum TextureType
 	TtCube = 3
 };
 
-/*! \brief Texture data format. */
+/*! Texture data format. */
 enum TextureFormat
 {
 	TfInvalid = 0,
@@ -332,7 +333,7 @@ enum TextureFormat
 	//@}
 };
 
-/*! \brief Primitive topology type. */
+/*! Primitive topology type. */
 enum PrimitiveType
 {
 	PtPoints = 0,
@@ -342,7 +343,7 @@ enum PrimitiveType
 	PtTriangles = 4
 };
 
-/*! \brief Eye in stereoscopic rendering */
+/*! Eye in stereoscopic rendering */
 enum EyeType
 {
 	EtCyclop = 0,	//< Not using stereoscopic rendering.
@@ -350,7 +351,7 @@ enum EyeType
 	EtRight = 2
 };
 
-/*! \brief Render view event. */
+/*! Render view event. */
 struct RenderEvent
 {
 	RenderEventType type;
@@ -366,7 +367,7 @@ struct RenderEvent
 	};
 };
 
-/*! \brief Render system statistics. */
+/*! Render system statistics. */
 struct RenderSystemStatistics
 {
 	// Number of alive resources.
@@ -388,7 +389,7 @@ struct RenderSystemStatistics
 	}
 };
 
-/*! \brief Render view statistics. */
+/*! Render view statistics. */
 struct RenderViewStatistics
 {
 	// Last frame.
@@ -402,7 +403,7 @@ struct RenderViewStatistics
 	}
 };
 
-/*! \brief Render view port. */
+/*! Render view port. */
 struct Viewport
 {
 	int32_t left;
@@ -433,7 +434,7 @@ struct Viewport
 	}
 };
 
-/*! \brief Display mode structure. */
+/*! Display mode structure. */
 struct DisplayMode
 {
 	uint32_t width;
@@ -450,7 +451,7 @@ struct DisplayMode
 	}
 };
 
-/*! \brief Vendor type. */
+/*! Vendor type. */
 enum AdapterVendorType
 {
 	AvtUnknown = 0,
@@ -460,7 +461,7 @@ enum AdapterVendorType
 	AvtPowerVR = 4
 };
 
-/*! \brief Render system information. */
+/*! Render system information. */
 struct RenderSystemInformation
 {
 	AdapterVendorType vendor;
@@ -479,7 +480,7 @@ struct RenderSystemInformation
 	}
 };
 
-/*! \brief Descriptor for render system. */
+/*! Descriptor for render system. */
 struct RenderSystemDesc
 {
 	class IRenderSystem* capture;
@@ -501,7 +502,7 @@ struct RenderSystemDesc
 	}
 };
 
-/*! \brief Descriptor for render views. */
+/*! Descriptor for render views. */
 struct RenderViewDesc
 {
 	uint16_t depthBits;
@@ -518,7 +519,7 @@ struct RenderViewDesc
 	}
 };
 
-/*! \brief Descriptor for default render views. */
+/*! Descriptor for default render views. */
 struct RenderViewDefaultDesc : public RenderViewDesc
 {
 	DisplayMode displayMode;
@@ -532,7 +533,7 @@ struct RenderViewDefaultDesc : public RenderViewDesc
 	}
 };
 
-/*! \brief Descriptor for embedded render views. */
+/*! Descriptor for embedded render views. */
 struct RenderViewEmbeddedDesc : public RenderViewDesc
 {
 	SystemWindow syswin;
@@ -545,7 +546,7 @@ struct RenderViewEmbeddedDesc : public RenderViewDesc
 	}
 };
 
-/*! \brief Immutable texture data. */
+/*! Immutable texture data. */
 struct TextureInitialData
 {
 	const void* data;
@@ -560,7 +561,7 @@ struct TextureInitialData
 	}
 };
 
-/*! \brief Descriptor for simple textures. */
+/*! Descriptor for simple textures. */
 struct SimpleTextureCreateDesc
 {
 	int32_t width;
@@ -582,7 +583,7 @@ struct SimpleTextureCreateDesc
 	}
 };
 
-/*! \brief Descriptor for cube textures. */
+/*! Descriptor for cube textures. */
 struct CubeTextureCreateDesc
 {
 	int32_t side;
@@ -602,7 +603,7 @@ struct CubeTextureCreateDesc
 	}
 };
 
-/*! \brief Descriptor for volume textures. */
+/*! Descriptor for volume textures. */
 struct VolumeTextureCreateDesc
 {
 	int32_t width;
@@ -626,7 +627,7 @@ struct VolumeTextureCreateDesc
 	}
 };
 
-/*! \brief Descriptor for render target. */
+/*! Descriptor for render target. */
 struct RenderTargetCreateDesc
 {
 	TextureFormat format;	/*< Render target pixel format. */
@@ -641,7 +642,7 @@ struct RenderTargetCreateDesc
 
 class RenderTargetSet;
 
-/*! \brief Descriptor for render target sets. */
+/*! Descriptor for render target sets. */
 struct RenderTargetSetCreateDesc
 {
 	enum { MaxTargets = 8 };
@@ -675,7 +676,7 @@ struct RenderTargetSetCreateDesc
 	}
 };
 
-/*! \brief Preferred debuggable target visualization method. */
+/*! Preferred debuggable target visualization method. */
 enum DebugTargetVisualize
 {
 	DtvDefault = 0,
@@ -691,7 +692,7 @@ enum DebugTargetVisualize
 	DtvShadowMask = 10
 };
 
-/*! \brief Debuggable target. */
+/*! Debuggable target. */
 struct DebugTarget
 {
 	std::wstring name;
@@ -711,7 +712,7 @@ struct DebugTarget
 	}
 };
 
-/*! \brief Clear parameters. */
+/*! Clear parameters. */
 struct Clear
 {
 	uint32_t mask;		//!< Combination of ClearFlags.
@@ -720,7 +721,7 @@ struct Clear
 	int32_t stencil;	//!< Clear stencil value.
 };
 
-/*! \brief Draw primitives. */
+/*! Draw primitives. */
 struct Primitives
 {
 	PrimitiveType type;
@@ -765,57 +766,63 @@ struct Primitives
 	}
 };
 
-/*! \brief Shader parameter handle. */
+/*! Shader parameter handle. */
 typedef uint32_t handle_t;
 
-/*! \brief Return handle from parameter name.
+/*! Return handle from parameter name.
  *
  * \param name Parameter name.
  * \return Parameter handle.
  */
 handle_t T_DLLCLASS getParameterHandle(const std::wstring& name);
 
-/*! \brief Synthesize parameter name from index.
+/*! Get map of all currently used parameters.
+ *
+ * \param outHandles Map of all used parameters.
+ */
+void getParameterHandles(SmallMap< std::wstring, handle_t >& outHandles);
+
+/*! Synthesize parameter name from index.
  *
  * \param index Texture reference index.
  * \return Parameter name.
  */
 std::wstring T_DLLCLASS getParameterNameFromTextureReferenceIndex(int32_t index);
 
-/*! \brief Synthesize parameter handle from index.
+/*! Synthesize parameter handle from index.
  *
  * \param index Texture reference index.
  * \return Parameter handle.
  */
 handle_t T_DLLCLASS getParameterHandleFromTextureReferenceIndex(int32_t index);
 
-/*! \brief Return human readable description of data usage. */
+/*! Return human readable description of data usage. */
 std::wstring T_DLLCLASS getDataUsageName(DataUsage usage);
 
-/*! \brief Return human readable description of data type. */
+/*! Return human readable description of data type. */
 std::wstring T_DLLCLASS getDataTypeName(DataType dataType);
 
-/*! \brief Return number of elements from data type. */
+/*! Return number of elements from data type. */
 uint32_t T_DLLCLASS getDataElementCount(DataType dataType);
 
-/*! \brief Return human readable description of texture format. */
+/*! Return human readable description of texture format. */
 std::wstring T_DLLCLASS getTextureFormatName(TextureFormat format);
 
-/*! \brief Return byte size from a texture format.
+/*! Return byte size from a texture format.
  *
  * \param format Texture format.
  * \return Byte size of block.
  */
 uint32_t T_DLLCLASS getTextureBlockSize(TextureFormat format);
 
-/*! \brief Texture block denominator, i.e. block dimension (1x1 or 4x4 etc).
+/*! Texture block denominator, i.e. block dimension (1x1 or 4x4 etc).
  *
  * \param format Texture format.
  * \return Block denominator.
  */
 uint32_t T_DLLCLASS getTextureBlockDenom(TextureFormat format);
 
-/*! \brief Get texture mip size.
+/*! Get texture mip size.
  *
  * \param textureSize Size of texture in pixels.
  * \param mipLevel Mip level.
@@ -823,7 +830,7 @@ uint32_t T_DLLCLASS getTextureBlockDenom(TextureFormat format);
  */
 uint32_t T_DLLCLASS getTextureMipSize(uint32_t textureSize, uint32_t mipLevel);
 
-/*! \brief Calculate pitch in bytes from format and width.
+/*! Calculate pitch in bytes from format and width.
  *
  * \param format Texture format.
  * \param textureWidth Width of texture in pixels.
@@ -831,7 +838,7 @@ uint32_t T_DLLCLASS getTextureMipSize(uint32_t textureSize, uint32_t mipLevel);
  */
 uint32_t T_DLLCLASS getTextureRowPitch(TextureFormat format, uint32_t textureWidth);
 
-/*! \brief Calculate pitch in bytes from format and width.
+/*! Calculate pitch in bytes from format and width.
 *
 * \param format Texture format.
 * \param textureWidth Width of texture in pixels.
@@ -840,7 +847,7 @@ uint32_t T_DLLCLASS getTextureRowPitch(TextureFormat format, uint32_t textureWid
 */
 uint32_t T_DLLCLASS getTextureRowPitch(TextureFormat format, uint32_t textureWidth, uint32_t mipLevel);
 
-/*! \brief Calculate pitch in bytes from format and width, pitch of an entire mip.
+/*! Calculate pitch in bytes from format and width, pitch of an entire mip.
  *
  * \param format Texture format.
  * \param textureWidth Width of texture in pixels.
@@ -849,7 +856,7 @@ uint32_t T_DLLCLASS getTextureRowPitch(TextureFormat format, uint32_t textureWid
  */
 uint32_t T_DLLCLASS getTextureMipPitch(TextureFormat format, uint32_t textureWidth, uint32_t textureHeight);
 
-/*! \brief Calculate pitch in bytes from format and width, pitch of an entire mip.
+/*! Calculate pitch in bytes from format and width, pitch of an entire mip.
  *
  * \param format Texture format.
  * \param textureWidth Width of texture in pixels.
@@ -859,7 +866,7 @@ uint32_t T_DLLCLASS getTextureMipPitch(TextureFormat format, uint32_t textureWid
  */
 uint32_t T_DLLCLASS getTextureMipPitch(TextureFormat format, uint32_t textureWidth, uint32_t textureHeight, uint32_t mipLevel);
 
-/*! \brief Calculate texture size; assuming continious layout.
+/*! Calculate texture size; assuming continious layout.
  *
  * \param format Texture format.
  * \param textureWidth Width of texture in pixels.

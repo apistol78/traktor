@@ -50,7 +50,7 @@ bool MetaNodeTraits::isRoot(const ShaderGraph* shaderGraph, const Node* node) co
 	else if (const Variable* variableNode = dynamic_type_cast< const Variable* >(node))
 	{
 		return
-			bool(shaderGraph->findSourcePin(variableNode->getInputPin(0)) != 0) &&
+			bool(shaderGraph->findSourcePin(variableNode->getInputPin(0)) != nullptr) &&
 			bool(shaderGraph->getDestinationCount(variableNode->getOutputPin(0)) == 0);
 	}
 	else

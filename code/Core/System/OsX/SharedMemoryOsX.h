@@ -1,5 +1,6 @@
 #pragma once
 
+#include <string>
 #include "Core/System/ISharedMemory.h"
 
 namespace traktor
@@ -14,15 +15,21 @@ public:
 
 	virtual ~SharedMemoryOsX();
 
-	virtual Ref< IStream > read(bool exclusive) T_OVERRIDE T_FINAL;
+	bool create(const std::wstring& name, uint32_t size);
 
-	virtual Ref< IStream > write() T_OVERRIDE T_FINAL;
+	virtual const void* acquireReadPointer(bool exclusive) override final;
 
-	virtual bool clear() T_OVERRIDE T_FINAL;
+	virtual void releaseReadPointer() override final;
+
+	virtual void* acquireWritePointer() override final;
+
+	virtual void releaseWritePointer() override final;
 
 private:
+	std::wstring m_name;
+	int m_fd;
+	void* m_ptr;
 	uint32_t m_size;
-	void* m_buffer;
 };
 
 }

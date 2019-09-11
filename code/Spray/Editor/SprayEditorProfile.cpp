@@ -84,7 +84,7 @@ Ref< world::EntityData > SprayEditorProfile::createEntityData(
 	db::Instance* instance
 ) const
 {
-	return 0;
+	return nullptr;
 }
 
 void SprayEditorProfile::getDebugTargets(

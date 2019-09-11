@@ -41,13 +41,13 @@ void EffectComponent::destroy()
 	{
 		m_effectInstance->setLoopEnable(false);
 		m_effectInstance->synchronize();
-		m_effectInstance = 0;
+		m_effectInstance = nullptr;
 	}
 
 	m_effect.clear();
 	m_techniques.clear();
 
-	m_context.virtualSourceCallback = 0;
+	m_context.virtualSourceCallback = nullptr;
 }
 
 void EffectComponent::setOwner(world::Entity* owner)
@@ -87,10 +87,9 @@ void EffectComponent::update(const world::UpdateParams& update)
 			// as fast as possible without going through every layer each time.
 			m_techniques.clear();
 
-			const RefArray< EffectLayer >& layers = m_effect->getLayers();
-			for (RefArray< EffectLayer >::const_iterator i = layers.begin(); i != layers.end(); ++i)
+			for (auto layer : m_effect->getLayers())
 			{
-				const Emitter* emitter = (*i)->getEmitter();
+				const Emitter* emitter = layer->getEmitter();
 				if (emitter)
 				{
 					const resource::Proxy< render::Shader >& emitterShader = emitter->getShader();
@@ -102,7 +101,7 @@ void EffectComponent::update(const world::UpdateParams& update)
 						emitterMesh->getTechniques(m_techniques);
 				}
 
-				const Trail* trail = (*i)->getTrail();
+				const Trail* trail = layer->getTrail();
 				if (trail)
 				{
 					const resource::Proxy< render::Shader >& trailShader = trail->getShader();

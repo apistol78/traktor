@@ -22,7 +22,7 @@ class IEntityBuilder;
 	namespace spray
 	{
 
-/*! \brief Emitter resource factory.
+/*! Emitter resource factory.
  * \ingroup Spray
  */
 class T_DLLCLASS EffectFactory : public resource::IResourceFactory

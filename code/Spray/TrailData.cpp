@@ -24,7 +24,7 @@ Ref< Trail > TrailData::createTrail(resource::IResourceManager* resourceManager)
 {
 	resource::Proxy< render::Shader > shader;
 	if (!resourceManager->bind(m_shader, shader))
-		return 0;
+		return nullptr;
 
 	return new Trail(shader, m_width, m_age, m_lengthThreshold, m_breakThreshold);
 }

@@ -50,7 +50,7 @@ class Emitter;
 class ModifierData;
 class SourceData;
 
-/*! \brief Emitter persistent data.
+/*! Emitter persistent data.
  * \ingroup Spray
  */
 class T_DLLCLASS EmitterData : public ISerializable

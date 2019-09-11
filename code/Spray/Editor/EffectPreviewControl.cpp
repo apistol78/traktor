@@ -90,8 +90,8 @@ EffectPreviewControl::EffectPreviewControl(editor::IEditor* editor)
 
 	m_context.deltaTime = 0.0f;
 	m_context.random = RandomGeometry(c_initialRandomSeed);
-	m_context.eventManager = 0;
-	m_context.soundPlayer = 0;
+	m_context.eventManager = nullptr;
+	m_context.soundPlayer = nullptr;
 
 	m_sourceRenderers[&type_of< BoxSourceData >()] = new BoxSourceRenderer();
 	m_sourceRenderers[&type_of< ConeSourceData >()] = new ConeSourceRenderer();
@@ -158,10 +158,10 @@ bool EffectPreviewControl::create(
 
 	m_renderContext = new render::RenderContext(512 * 1024);
 
-	if ((m_soundSystem = soundSystem) != 0)
+	if ((m_soundSystem = soundSystem) != nullptr)
 	{
 		m_soundPlayer = new sound::SoundPlayer();
-		m_soundPlayer->create(m_soundSystem, 0);
+		m_soundPlayer->create(m_soundSystem, nullptr);
 	}
 
 	m_pointRenderer = new PointRenderer(renderSystem, 50.0f, 100.0f);
@@ -178,7 +178,6 @@ bool EffectPreviewControl::create(
 	m_timer.start();
 
 	m_idleEventHandler = ui::Application::getInstance()->addEventHandler< ui::IdleEvent >(this, &EffectPreviewControl::eventIdle);
-
 	return true;
 }
 
@@ -195,7 +194,7 @@ void EffectPreviewControl::destroy()
 	safeClose(m_renderView);
 
 	safeDestroy(m_soundPlayer);
-	m_soundSystem = 0;
+	m_soundSystem = nullptr;
 
 	Widget::destroy();
 }
@@ -203,22 +202,21 @@ void EffectPreviewControl::destroy()
 void EffectPreviewControl::setEffect(const EffectData* effectData, Effect* effect)
 {
 	m_effectData = effectData;
-	if ((m_effect = effect) != 0)
+	if ((m_effect = effect) != nullptr)
 		m_effectInstance = m_effect->createInstance();
 	else
-		m_effectInstance = 0;
+		m_effectInstance = nullptr;
 }
 
 uint32_t EffectPreviewControl::getEffectLayerPoints(const EffectLayer* effectLayer) const
 {
 	if (m_effectInstance)
 	{
-		const RefArray< EffectLayerInstance >& layerInstances = m_effectInstance->getLayerInstances();
-		for (RefArray< EffectLayerInstance >::const_iterator i = layerInstances.begin(); i != layerInstances.end(); ++i)
+		for (auto layerInstance : m_effectInstance->getLayerInstances())
 		{
-			if ((*i)->getLayer() == effectLayer)
+			if (layerInstance->getLayer() == effectLayer)
 			{
-				const EmitterInstance* emitterInstance = (*i)->getEmitterInstance();
+				const EmitterInstance* emitterInstance = layerInstance->getEmitterInstance();
 				if (emitterInstance)
 					return emitterInstance->getPoints().size();
 				else
@@ -285,8 +283,8 @@ void EffectPreviewControl::syncEffect()
 	Context syncContext;
 	syncContext.deltaTime = 0.0f;
 	syncContext.random = RandomGeometry(m_randomSeed);
-	syncContext.eventManager = 0;
-	syncContext.soundPlayer = 0;
+	syncContext.eventManager = nullptr;
+	syncContext.soundPlayer = nullptr;
 
 	float currentTime = m_effectInstance->getTime();
 
@@ -421,7 +419,6 @@ void EffectPreviewControl::eventMouseMove(ui::MouseMoveEvent* event)
 	}
 
 	m_lastMousePosition = event->getPosition();
-
 	update();
 }
 
@@ -445,7 +442,6 @@ void EffectPreviewControl::eventPaint(ui::PaintEvent* event)
 
 	if (!m_renderView)
 		return;
-
 	if (!m_renderView->begin(&cl))
 		return;
 

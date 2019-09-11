@@ -11,27 +11,27 @@ void DelegateInstance::addDelegate(IDelegate* delegate)
 
 void DelegateInstance::removeDelegate(IDelegate* delegate)
 {
-	std::vector< IDelegate* >::iterator i = std::find(m_delegates.begin(), m_delegates.end(), delegate);
-	if (i != m_delegates.end())
-		m_delegates.erase(i);
+	auto it = std::find(m_delegates.begin(), m_delegates.end(), delegate);
+	if (it != m_delegates.end())
+		m_delegates.erase(it);
 }
 
 void DelegateInstance::handleCommand(int32_t cmd)
 {
-	for (std::vector< IDelegate* >::iterator i = m_delegates.begin(); i != m_delegates.end(); ++i)
-		(*i)->notifyHandleCommand(this, cmd);
+	for (auto delegate : m_delegates)
+		delegate->notifyHandleCommand(this, cmd);
 }
 
 void DelegateInstance::handleInput(AInputEvent* event)
 {
-	for (std::vector< IDelegate* >::iterator i = m_delegates.begin(); i != m_delegates.end(); ++i)
-		(*i)->notifyHandleInput(this, event);
+	for (auto delegate : m_delegates)
+		delegate->notifyHandleInput(this, event);
 }
 
 void DelegateInstance::handleEvents()
 {
-	for (std::vector< IDelegate* >::iterator i = m_delegates.begin(); i != m_delegates.end(); ++i)
-		(*i)->notifyHandleEvents(this);
+	for (auto delegate : m_delegates)
+		delegate->notifyHandleEvents(this);
 }
 
 }

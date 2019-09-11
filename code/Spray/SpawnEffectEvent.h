@@ -18,7 +18,7 @@ class ISoundPlayer;
 
 class Effect;
 
-/*! \brief
+/*! Spawn effect event.
  * \ingroup Spray
  */
 class SpawnEffectEvent : public world::IEntityEvent

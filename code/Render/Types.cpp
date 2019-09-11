@@ -107,8 +107,13 @@ handle_t getParameterHandle(const std::wstring& name)
 
 	handle_t handle = m_nextUnusedHandle++;
 	m_handles.insert(std::make_pair(name, handle));
-
 	return handle;
+}
+
+void getParameterHandles(SmallMap< std::wstring, handle_t >& outHandles)
+{
+	T_ANONYMOUS_VAR(Acquire< CriticalSection >)(m_handleLock);
+	outHandles = m_handles;
 }
 
 std::wstring getParameterNameFromTextureReferenceIndex(int32_t index)

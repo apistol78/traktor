@@ -21,7 +21,7 @@ namespace traktor
 struct Context;
 class ITriggerInstance;
 
-/*! \brief Sequence instance.
+/*! Sequence instance.
  * \ingroup Spray
  */
 class T_DLLCLASS SequenceInstance : public Object

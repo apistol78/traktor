@@ -16,7 +16,7 @@ Ref< EffectComponent > EffectComponentData::createComponent(resource::IResourceM
 {
 	resource::Proxy< Effect > effect;
 	if (!resourceManager->bind(m_effect, effect))
-		return 0;
+		return nullptr;
 
 	return new EffectComponent(
 		effect,

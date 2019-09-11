@@ -34,9 +34,11 @@ EffectData::EffectData(
 Ref< Effect > EffectData::createEffect(resource::IResourceManager* resourceManager, const world::IEntityBuilder* entityBuilder) const
 {
 	RefArray< EffectLayer > effectLayers;
-	for (RefArray< EffectLayerData >::const_iterator i = m_layers.begin(); i != m_layers.end(); ++i)
+	effectLayers.reserve(m_layers.size());
+	
+	for (auto layer : m_layers)
 	{
-		Ref< EffectLayer > effectLayer = (*i)->createEffectLayer(resourceManager, entityBuilder);
+		Ref< EffectLayer > effectLayer = layer->createEffectLayer(resourceManager, entityBuilder);
 		if (effectLayer)
 			effectLayers.push_back(effectLayer);
 	}

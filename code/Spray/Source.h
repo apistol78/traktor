@@ -19,7 +19,7 @@ namespace traktor
 struct Context;
 class EmitterInstance;
 
-/*! \brief Particle source.
+/*! Particle source.
  * \ingroup Spray
  */
 class T_DLLCLASS Source : public Object

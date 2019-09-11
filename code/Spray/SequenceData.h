@@ -1,6 +1,6 @@
 #pragma once
 
-#include <vector>
+#include "Core/Containers/AlignedVector.h"
 #include "Core/Serialization/ISerializable.h"
 
 // import/export mechanism.
@@ -26,7 +26,7 @@ class IEntityEventData;
 
 class Sequence;
 
-/*! \brief Trigger sequence persistent data.
+/*! Trigger sequence persistent data.
  * \ingroup Spray
  */
 class T_DLLCLASS SequenceData : public ISerializable
@@ -46,12 +46,12 @@ public:
 
 	virtual void serialize(ISerializer& s) override final;
 
-	const std::vector< Key >& getKeys() const { return m_keys; }
+	const AlignedVector< Key >& getKeys() const { return m_keys; }
 
-	 std::vector< Key >& getKeys() { return m_keys; }
+	 AlignedVector< Key >& getKeys() { return m_keys; }
 
 private:
-	std::vector< Key > m_keys;
+	AlignedVector< Key > m_keys;
 };
 
 	}

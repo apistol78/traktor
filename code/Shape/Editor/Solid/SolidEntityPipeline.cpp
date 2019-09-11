@@ -69,10 +69,10 @@ bool SolidEntityPipeline::buildDependencies(
 	}
 	else if (auto solidMaterial = dynamic_type_cast< const SolidMaterial* >(sourceAsset))
 	{
-		pipelineDepends->addDependency(solidMaterial->getAlbedo(), editor::PdfResource | editor::PdfBuild);
-		pipelineDepends->addDependency(solidMaterial->getNormal(), editor::PdfResource | editor::PdfBuild);
-		pipelineDepends->addDependency(solidMaterial->getRoughness(), editor::PdfResource | editor::PdfBuild);
-		pipelineDepends->addDependency(solidMaterial->getMetalness(), editor::PdfResource | editor::PdfBuild);
+		pipelineDepends->addDependency(solidMaterial->getAlbedo(), editor::PdfUse);
+		pipelineDepends->addDependency(solidMaterial->getNormal(), editor::PdfUse);
+		pipelineDepends->addDependency(solidMaterial->getRoughness(), editor::PdfUse);
+		pipelineDepends->addDependency(solidMaterial->getMetalness(), editor::PdfUse);
 	}
 	else if (auto box = dynamic_type_cast< const Box* >(sourceAsset))
 	{
