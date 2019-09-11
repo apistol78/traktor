@@ -17,7 +17,7 @@ namespace traktor
 	namespace input
 	{
 
-/*! \brief Boolean combination of multiple input sources.
+/*! Boolean combination of multiple input sources.
  * \ingroup Input
  */
 class T_DLLCLASS CombinedInputSource : public IInputSource
@@ -27,9 +27,9 @@ class T_DLLCLASS CombinedInputSource : public IInputSource
 public:
 	enum CombineMode
 	{
-		CmAny,
-		CmExclusive,
-		CmAll
+		CmAny,			//!< Any source is true.
+		CmExclusive,	//!< Only one source is true.
+		CmAll			//!< All sources must be true.
 	};
 
 	CombinedInputSource(const RefArray< IInputSource >& sources, CombineMode mode);

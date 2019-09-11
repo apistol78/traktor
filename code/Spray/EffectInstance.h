@@ -27,7 +27,7 @@ class MeshRenderer;
 class PointRenderer;
 class TrailRenderer;
 
-/*! \brief
+/*! Effect instance.
  * \ingroup Spray
  */
 class T_DLLCLASS EffectInstance : public Object

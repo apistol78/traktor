@@ -22,6 +22,9 @@ class Shader;
 
 class TrailRenderer;
 
+/*! Ribbon trail instance.
+ * \ingroup Spray
+ */
 class TrailInstance : public Object
 {
 	T_RTTI_CLASS;

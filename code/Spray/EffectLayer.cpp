@@ -40,21 +40,21 @@ Ref< EffectLayerInstance > EffectLayer::createInstance() const
 	{
 		emitterInstance = m_emitter->createInstance(m_duration);
 		if (!emitterInstance)
-			return 0;
+			return nullptr;
 	}
 
 	if (m_trail)
 	{
 		trailInstance = m_trail->createInstance();
 		if (!trailInstance)
-			return 0;
+			return nullptr;
 	}
 
 	if (m_sequence)
 	{
 		sequenceInstance = m_sequence->createInstance();
 		if (!sequenceInstance)
-			return 0;
+			return nullptr;
 	}
 
 	return new EffectLayerInstance(

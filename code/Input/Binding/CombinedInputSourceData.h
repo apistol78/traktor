@@ -17,7 +17,7 @@ namespace traktor
 	namespace input
 	{
 
-/*! \brief Boolean combination of multiple input sources.
+/*! Boolean combination of multiple input sources.
  * \ingroup Input
  */
 class T_DLLCLASS CombinedInputSourceData : public IInputSourceData

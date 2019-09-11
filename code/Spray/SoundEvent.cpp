@@ -28,7 +28,7 @@ Ref< world::IEntityEventInstance > SoundEvent::createInstance(world::IEntityEven
 	if (m_soundPlayer)
 		return new SoundEventInstance(sender, Toffset, m_soundPlayer, m_sound, m_positional, m_follow, m_autoStopFar);
 	else
-		return 0;
+		return nullptr;
 }
 
 	}

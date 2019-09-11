@@ -25,7 +25,7 @@ class IResourceManager;
 
 class Source;
 
-/*! \brief Particle persistent source data.
+/*! Particle source persistent data.
  * \ingroup Spray
  */
 class T_DLLCLASS SourceData : public ISerializable

@@ -159,6 +159,20 @@ void RayTracerEmbree::addLight(const Light& light)
 void RayTracerEmbree::addModel(const model::Model* model, const Transform& transform)
 {
 	model::MergeModel(*model, transform, 0.001f).apply(m_model);
+
+	const auto& materials = model->getMaterials();
+	for (size_t i = 0; i < materials.size(); ++i)
+	{
+		const auto& diffuseMap = materials[i].getDiffuseMap();
+		if (!diffuseMap.name.empty())
+		{
+			// \tbd Read diffuse image from TextureAsset.
+		}
+		else
+		{
+			// \tbd Use a white diffuse image.
+		}
+	}
 }
 
 void RayTracerEmbree::commit()

@@ -31,7 +31,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.spray.TrailRenderer", TrailRenderer, Object)
 
 TrailRenderer::TrailRenderer(render::IRenderSystem* renderSystem)
 :	m_count(0)
-,	m_vertex(0)
+,	m_vertex(nullptr)
 {
 	s_handleTimeAndAge = render::getParameterHandle(L"TimeAndAge");
 
@@ -186,7 +186,7 @@ void TrailRenderer::flush(
 	if (!m_vertex)
 		return;
 
-	m_vertex = 0;
+	m_vertex = nullptr;
 	m_vertexBuffers[m_count]->unlock();
 
 	uint32_t offset = 0;

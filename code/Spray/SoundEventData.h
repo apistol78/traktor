@@ -23,7 +23,7 @@ class Sound;
 	namespace spray
 	{
 
-/*! \brief
+/*! Sound event persistent data.
  * \ingroup Spray
  */
 class T_DLLCLASS SoundEventData : public world::IEntityEventData

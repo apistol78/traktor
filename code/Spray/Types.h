@@ -23,7 +23,7 @@ class IEntityEventManager;
 	namespace spray
 	{
 
-/*! \brief Virtual source callback.
+/*! Virtual source callback.
  * \ingroup Spray
  */
 struct VirtualSourceCallback
@@ -40,7 +40,7 @@ struct VirtualSourceCallback
 	) = 0;
 };
 
-/*! \brief Effect context.
+/*! Effect context.
  * \ingroup Spray
  */
 struct Context
@@ -54,10 +54,10 @@ struct Context
 
 	Context()
 	:	deltaTime(0.0f)
-	,	owner(0)
-	,	eventManager(0)
-	,	soundPlayer(0)
-	,	virtualSourceCallback(0)
+	,	owner(nullptr)
+	,	eventManager(nullptr)
+	,	soundPlayer(nullptr)
+	,	virtualSourceCallback(nullptr)
 	{
 	}
 };

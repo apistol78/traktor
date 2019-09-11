@@ -42,10 +42,10 @@ Ref< IInputSource > CombinedInputSourceData::createInstance(DeviceControlManager
 	for (uint32_t i = 0; i < m_sources.size(); ++i)
 	{
 		Ref< IInputSource > source = m_sources[i]->createInstance(deviceControlManager);
-		if (!source)
-			return 0;
-
-		sources[i] = source;
+		if (source)
+			sources[i] = source;
+		else
+			return nullptr;
 	}
 	return new CombinedInputSource(sources, m_mode);
 }

@@ -28,7 +28,7 @@ class Emitter;
 class Sequence;
 class Trail;
 
-/*! \brief
+/*! Effect layer.
  * \ingroup Spray
  */
 class T_DLLCLASS EffectLayer : public Object

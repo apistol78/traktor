@@ -39,7 +39,7 @@ class MeshRenderer;
 class PointRenderer;
 class TrailRenderer;
 
-/*! \brief
+/*! Effect component instance.
  * \ingroup Spray
  */
 class T_DLLCLASS EffectComponent : public world::IEntityComponent

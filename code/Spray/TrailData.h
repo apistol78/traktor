@@ -32,6 +32,9 @@ class IResourceManager;
 
 class Trail;
 
+/*! Ribbon trail persistent data.
+ * \ingroup Spray
+ */
 class TrailData : public ISerializable
 {
 	T_RTTI_CLASS;

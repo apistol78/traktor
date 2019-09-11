@@ -8,7 +8,7 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.spray.Sequence", Sequence, Object)
 
-Sequence::Sequence(const std::vector< Key >& keys)
+Sequence::Sequence(const AlignedVector< Key >& keys)
 :	m_keys(keys)
 {
 }

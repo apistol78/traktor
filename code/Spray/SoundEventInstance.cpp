@@ -43,7 +43,7 @@ bool SoundEventInstance::update(const world::UpdateParams& update)
 {
 	if (!m_handle || !m_handle->isPlaying())
 	{
-		m_handle = 0;
+		m_handle = nullptr;
 		return false;
 	}
 
@@ -67,7 +67,7 @@ void SoundEventInstance::cancel(world::CancelType when)
 	if (m_handle)
 	{
 		m_handle->stop();
-		m_handle = 0;
+		m_handle = nullptr;
 	}
 }
 

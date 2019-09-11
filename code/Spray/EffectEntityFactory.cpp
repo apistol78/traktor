@@ -73,7 +73,7 @@ Ref< world::IEntityEvent > EffectEntityFactory::createEntityEvent(const world::I
 	{
 		resource::Proxy< sound::Sound > sound;
 		if (!m_resourceManager->bind(soundEventData->m_sound, sound))
-			return 0;
+			return nullptr;
 
 		return new SoundEvent(m_soundPlayer, sound, soundEventData->m_positional, soundEventData->m_follow, soundEventData->m_autoStopFar);
 	}
@@ -81,7 +81,7 @@ Ref< world::IEntityEvent > EffectEntityFactory::createEntityEvent(const world::I
 	{
 		resource::Proxy< Effect > effect;
 		if (!m_resourceManager->bind(spawnEventData->getEffect(), effect))
-			return 0;
+			return nullptr;
 
 		return new SpawnEffectEvent(
 			m_soundPlayer,
@@ -100,7 +100,7 @@ Ref< world::IEntityComponent > EffectEntityFactory::createEntityComponent(const 
 	if (const EffectComponentData* effectComponentData = dynamic_type_cast< const EffectComponentData* >(&entityComponentData))
 		return effectComponentData->createComponent(m_resourceManager, m_eventManager, m_soundPlayer);
 	else
-		return 0;
+		return nullptr;
 }
 
 	}

@@ -22,11 +22,11 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.OS", OS, Object)
 
 OS& OS::getInstance()
 {
-	static OS* s_instance = 0;
+	static OS* s_instance = nullptr;
 	if (!s_instance)
 	{
 		s_instance = new OS();
-		s_instance->addRef(0);
+		s_instance->addRef(nullptr);
 		SingletonManager::getInstance().add(s_instance);
 	}
 	return *s_instance;
@@ -177,12 +177,12 @@ Ref< IProcess > OS::execute(
 	bool detach
 ) const
 {
-	return 0;
+	return nullptr;
 }
 
 Ref< ISharedMemory > OS::createSharedMemory(const std::wstring& name, uint32_t size) const
 {
-	return 0;
+	return nullptr;
 }
 
 bool OS::setOwnProcessPriorityBias(int32_t priorityBias)

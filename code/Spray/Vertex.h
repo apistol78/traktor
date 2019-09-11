@@ -5,6 +5,9 @@ namespace traktor
 	namespace spray
 	{
 
+/*! Emitter vertex.
+ * \ingroup Spray
+ */
 #pragma pack(1)
 struct EmitterVertex
 {
@@ -15,6 +18,9 @@ struct EmitterVertex
 };
 #pragma pack()
 
+/*! Ribbon trail vertex.
+ * \ingroup Spray
+ */
 #pragma pack(1)
 struct TrailVertex
 {

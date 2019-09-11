@@ -40,7 +40,7 @@ class IEntityEventManager;
 class Effect;
 class EffectComponent;
 
-/*! \brief
+/*! Effect component persistent data.
  * \ingroup Spray
  */
 class T_DLLCLASS EffectComponentData : public world::IEntityComponentData

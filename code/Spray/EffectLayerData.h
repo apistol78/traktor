@@ -35,7 +35,7 @@ class EmitterData;
 class SequenceData;
 class TrailData;
 
-/*! \brief Effect layer persistent data.
+/*! Effect layer persistent data.
  * \ingroup Spray
  */
 class T_DLLCLASS EffectLayerData : public ISerializable

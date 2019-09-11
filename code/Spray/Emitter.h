@@ -36,7 +36,7 @@ class EmitterInstance;
 class Modifier;
 class Source;
 
-/*! \brief Emitter
+/*! Emitter
  * \ingroup Spray
  */
 class T_DLLCLASS Emitter : public Object

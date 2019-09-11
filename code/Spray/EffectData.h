@@ -34,7 +34,7 @@ class IEntityBuilder;
 class Effect;
 class EffectLayerData;
 
-/*! \brief Effect persistent data.
+/*! Effect persistent data.
  * \ingroup Spray
  */
 class T_DLLCLASS EffectData : public ISerializable

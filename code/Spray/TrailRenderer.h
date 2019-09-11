@@ -38,12 +38,15 @@ class IWorldRenderPass;
 
 struct TrailVertex;
 
+/*! Ribbon trail renderer.
+ * \ingroup Spray
+ */
 class T_DLLCLASS TrailRenderer : public Object
 {
 	T_RTTI_CLASS;
 
 public:
-	TrailRenderer(render::IRenderSystem* renderSystem);
+	explicit TrailRenderer(render::IRenderSystem* renderSystem);
 
 	virtual ~TrailRenderer();
 

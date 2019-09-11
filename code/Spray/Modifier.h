@@ -18,7 +18,7 @@ class SpursJobQueue;
 	namespace spray
 	{
 
-/*! \brief Emitter modifier.
+/*! Emitter modifier.
  * \ingroup Spray
  */
 class Modifier : public Object

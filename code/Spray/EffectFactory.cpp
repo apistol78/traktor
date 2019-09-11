@@ -46,22 +46,22 @@ Ref< Object > EffectFactory::create(resource::IResourceManager* resourceManager,
 		if (effectData)
 			return effectData->createEffect(resourceManager, m_entityBuilder);
 		else
-			return 0;
+			return nullptr;
 	}
 	else if (is_type_a< PointSet >(productType))
 	{
 		Ref< IStream > stream = instance->readData(L"Data");
 		if (!stream)
-			return 0;
+			return nullptr;
 
 		Ref< PointSet > pointSet = new PointSet();
 		if (!pointSet->read(stream))
-			return 0;
+			return nullptr;
 
 		return pointSet;
 	}
 	else
-		return 0;
+		return nullptr;
 }
 
 	}

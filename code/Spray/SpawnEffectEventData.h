@@ -19,7 +19,7 @@ namespace traktor
 
 class Effect;
 
-/*! \brief
+/*! Spawn effect event persistent data.
  * \ingroup Spray
  */
 class T_DLLCLASS SpawnEffectEventData : public world::IEntityEventData

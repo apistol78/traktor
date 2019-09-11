@@ -19,10 +19,9 @@ namespace traktor
 
 void buildEffectDependencies(editor::IPipelineDepends* pipelineDepends, const EffectData* effectData)
 {
-	const RefArray< EffectLayerData >& layers = effectData->getLayers();
-	for (RefArray< EffectLayerData >::const_iterator i = layers.begin(); i != layers.end(); ++i)
+	for (auto layer : effectData->getLayers())
 	{
-		const EmitterData* emitter = (*i)->getEmitter();
+		const EmitterData* emitter = layer->getEmitter();
 		if (emitter)
 		{
 			pipelineDepends->addDependency(emitter->getShader(), editor::PdfBuild | editor::PdfResource);
@@ -36,19 +35,19 @@ void buildEffectDependencies(editor::IPipelineDepends* pipelineDepends, const Ef
 				pipelineDepends->addDependency(pointSetSource->getPointSet(), editor::PdfBuild | editor::PdfResource);
 		}
 
-		const TrailData* trail = (*i)->getTrail();
+		const TrailData* trail = layer->getTrail();
 		if (trail)
 			pipelineDepends->addDependency(trail->getShader(), editor::PdfBuild | editor::PdfResource);
 
-		const SequenceData* sequence = (*i)->getSequence();
+		const SequenceData* sequence = layer->getSequence();
 		if (sequence)
 		{
-			for (std::vector< SequenceData::Key >::const_iterator i = sequence->getKeys().begin(); i != sequence->getKeys().end(); ++i)
-				pipelineDepends->addDependency(i->event);
+			for (auto key : sequence->getKeys())
+				pipelineDepends->addDependency(key.event);
 		}
 
-		pipelineDepends->addDependency((*i)->getTriggerEnable());
-		pipelineDepends->addDependency((*i)->getTriggerDisable());
+		pipelineDepends->addDependency(layer->getTriggerEnable());
+		pipelineDepends->addDependency(layer->getTriggerDisable());
 	}
 }
 
@@ -58,10 +57,10 @@ bool effectLayerPred(EffectLayerData* layerData)
 		return true;
 
 	bool haveEmitter = false;
-	if (layerData->getEmitter() != 0)
+	if (layerData->getEmitter() != nullptr)
 	{
 		if (
-			layerData->getEmitter()->getSource() != 0 &&
+			layerData->getEmitter()->getSource() != nullptr &&
 			(
 				layerData->getEmitter()->getShader() ||
 				layerData->getEmitter()->getMesh() ||
@@ -72,21 +71,21 @@ bool effectLayerPred(EffectLayerData* layerData)
 	}
 
 	bool haveTrail = false;
-	if (layerData->getTrail() != 0)
+	if (layerData->getTrail() != nullptr)
 	{
 		if (layerData->getTrail()->getShader())
 			haveTrail = true;
 	}
 
 	bool haveSequence = false;
-	if (layerData->getSequence() != 0)
+	if (layerData->getSequence() != nullptr)
 	{
 		if (!layerData->getSequence()->getKeys().empty())
 			haveSequence = true;
 	}
 
 	bool haveTrigger = false;
-	if (layerData->getTriggerEnable() != 0 || layerData->getTriggerDisable() != 0)
+	if (layerData->getTriggerEnable() != nullptr || layerData->getTriggerDisable() != nullptr)
 		haveTrigger = true;
 
 	if (haveEmitter || haveTrail || haveSequence || haveTrigger)
@@ -110,9 +109,7 @@ void EffectPipeline::destroy()
 
 TypeInfoSet EffectPipeline::getAssetTypes() const
 {
-	TypeInfoSet typeSet;
-	typeSet.insert< EffectData >();
-	return typeSet;
+	return makeTypeInfoSet< EffectData >();
 }
 
 bool EffectPipeline::buildDependencies(
@@ -145,8 +142,8 @@ bool EffectPipeline::buildOutput(
 
 	RefArray< EffectLayerData > effectLayers = effectData->getLayers();
 
-	RefArray< EffectLayerData >::iterator i = std::remove_if(effectLayers.begin(), effectLayers.end(), effectLayerPred);
-	effectLayers.erase(i, effectLayers.end());
+	auto it = std::remove_if(effectLayers.begin(), effectLayers.end(), effectLayerPred);
+	effectLayers.erase(it, effectLayers.end());
 
 	Ref< EffectData > outEffectData = new EffectData(
 		effectData->getDuration(),
@@ -173,7 +170,7 @@ Ref< ISerializable > EffectPipeline::buildOutput(
 ) const
 {
 	T_FATAL_ERROR;
-	return 0;
+	return nullptr;
 }
 
 	}

@@ -82,20 +82,19 @@ bool PointSetPipeline::buildOutput(
 	Ref< PointSet > pointSet = new PointSet();
 	if (!pointSetAsset->fromFaces())
 	{
-		const AlignedVector< model::Vertex >& vertices = model->getVertices();
-		for (AlignedVector< model::Vertex >::const_iterator i = vertices.begin(); i != vertices.end(); ++i)
+		for (const auto& vertex : model->getVertices())
 		{
 			PointSet::Point point;
 
-			point.position = model->getPosition(i->getPosition());
+			point.position = model->getPosition(vertex.getPosition());
 
-			if (i->getNormal() != model::c_InvalidIndex)
-				point.normal = model->getNormal(i->getNormal());
+			if (vertex.getNormal() != model::c_InvalidIndex)
+				point.normal = model->getNormal(vertex.getNormal());
 			else
 				point.normal = Vector4::zero();
 
-			if (i->getColor() != model::c_InvalidIndex)
-				point.color = model->getColor(i->getColor());
+			if (vertex.getColor() != model::c_InvalidIndex)
+				point.color = model->getColor(vertex.getColor());
 			else
 				point.color = Vector4::one();
 
@@ -104,31 +103,26 @@ bool PointSetPipeline::buildOutput(
 	}
 	else
 	{
-		const AlignedVector< model::Polygon >& polygons = model->getPolygons();
-		for (AlignedVector< model::Polygon >::const_iterator i = polygons.begin(); i != polygons.end(); ++i)
+		for (const auto& polygon : model->getPolygons())
 		{
-			const AlignedVector< uint32_t >& vertices = i->getVertices();
+			const AlignedVector< uint32_t >& vertices = polygon.getVertices();
 
 			PointSet::Point point;
 			point.position = Vector4::zero();
 			point.normal = Vector4::zero();
 			point.color = Vector4::zero();
 
-			for (AlignedVector< uint32_t >::const_iterator j = vertices.begin(); j != vertices.end(); ++j)
+			for (auto vi : vertices)
 			{
-				const model::Vertex& vertex = model->getVertex(*j);
-
+				const model::Vertex& vertex = model->getVertex(vi);
 				point.position += model->getPosition(vertex.getPosition());
-
 				if (vertex.getNormal() != model::c_InvalidIndex)
 					point.normal += model->getNormal(vertex.getNormal());
-
 				if (vertex.getColor() != model::c_InvalidIndex)
 					point.color += model->getColor(vertex.getColor());
 			}
 
 			Scalar norm(1.0f / vertices.size());
-
 			point.position = (point.position * norm).xyz1();
 			point.normal = (point.normal * norm).xyz0();
 			point.color = (point.color * norm).xyz1();
@@ -170,7 +164,7 @@ Ref< ISerializable > PointSetPipeline::buildOutput(
 ) const
 {
 	T_FATAL_ERROR;
-	return 0;
+	return nullptr;
 }
 
 	}
