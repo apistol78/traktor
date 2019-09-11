@@ -8,7 +8,6 @@
 #include "Render/VertexBuffer.h"
 #include "Render/VertexElement.h"
 #include "Resource/IResourceManager.h"
-// #include "World/IrradianceGrid.h"
 #include "World/Deferred/LightRendererDeferred.h"
 
 namespace traktor
@@ -47,11 +46,6 @@ render::handle_t s_handleShadowMapAtlas;
 render::handle_t s_handleReflectionMap;
 render::handle_t s_handleLightSBuffer;
 render::handle_t s_handleTileSBuffer;
-// render::handle_t s_handleIrradianceEnable;
-// render::handle_t s_handleIrradianceGridSize;
-// render::handle_t s_handleIrradianceGridSBuffer;
-// render::handle_t s_handleIrradianceGridBoundsMin;
-// render::handle_t s_handleIrradianceGridBoundsMax;
 
 #pragma pack(1)
 
@@ -94,11 +88,6 @@ LightRendererDeferred::LightRendererDeferred()
 	s_handleReflectionMap = render::getParameterHandle(L"World_ReflectionMap");
 	s_handleLightSBuffer = render::getParameterHandle(L"World_LightSBuffer");
 	s_handleTileSBuffer = render::getParameterHandle(L"World_TileSBuffer");
-	// s_handleIrradianceEnable = render::getParameterHandle(L"World_IrradianceEnable");
-	// s_handleIrradianceGridSize = render::getParameterHandle(L"World_IrradianceGridSize");
-	// s_handleIrradianceGridSBuffer = render::getParameterHandle(L"World_IrradianceGridSBuffer");
-	// s_handleIrradianceGridBoundsMin = render::getParameterHandle(L"World_IrradianceGridBoundsMin");
-	// s_handleIrradianceGridBoundsMax = render::getParameterHandle(L"World_IrradianceGridBoundsMax");
 }
 
 bool LightRendererDeferred::create(
@@ -113,11 +102,6 @@ bool LightRendererDeferred::create(
 		return false;
 	if (!resourceManager->bind(c_fogShader, m_fogShader))
 		return false;
-	// if (!irradianceGrid.isNull())
-	// {
-	// 	if (!resourceManager->bind(irradianceGrid, m_irradianceGrid))
-	// 		return false;
-	// }
 
 	// Create fullscreen geometry.
 	AlignedVector< render::VertexElement > vertexElements;
@@ -170,7 +154,6 @@ void LightRendererDeferred::renderLights(
 	Scalar p22 = projection.get(1, 1);
 
 	m_lightShader->setCombination(s_handleShadowEnable, bool(shadowMask != nullptr && shadowMask != nullptr));
-	// m_lightShader->setCombination(s_handleIrradianceEnable, bool(m_irradianceGrid));
 
 	m_lightShader->setFloatParameter(s_handleTime, time);
 	m_lightShader->setFloatParameter(s_handleLightCount, float(lightCount));
@@ -185,15 +168,6 @@ void LightRendererDeferred::renderLights(
 	m_lightShader->setTextureParameter(s_handleReflectionMap, reflectionMap);
 	m_lightShader->setStructBufferParameter(s_handleLightSBuffer, lightSBuffer);
 	m_lightShader->setStructBufferParameter(s_handleTileSBuffer, tileSBuffer);
-
-	// if (m_irradianceGrid)
-	// {
-	// 	const auto size = m_irradianceGrid->getSize();
-	// 	m_lightShader->setVectorParameter(s_handleIrradianceGridSize, Vector4(size[0], size[1], size[2], 0.0f));
-	// 	m_lightShader->setVectorParameter(s_handleIrradianceGridBoundsMin, m_irradianceGrid->getBoundingBox().mn);
-	// 	m_lightShader->setVectorParameter(s_handleIrradianceGridBoundsMax, m_irradianceGrid->getBoundingBox().mx);
-	// 	m_lightShader->setStructBufferParameter(s_handleIrradianceGridSBuffer, m_irradianceGrid->getBuffer());
-	// }
 
 	m_lightShader->draw(renderView, m_vertexBufferQuad, 0, m_primitivesQuad);
 }
