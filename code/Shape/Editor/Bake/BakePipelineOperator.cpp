@@ -25,12 +25,15 @@
 #include "Model/Operations/Triangulate.h"
 #include "Model/Operations/UnwrapUV.h"
 #include "Render/Types.h"
+#include "Render/Editor/Texture/CubeMap.h"
+#include "Render/Editor/Texture/ProbeProcessor.h"
 #include "Render/Resource/TextureResource.h"
 #include "Scene/Editor/SceneAsset.h"
 #include "Shape/Editor/IModelGenerator.h"
 #include "Shape/Editor/Traverser.h"
 #include "Shape/Editor/Bake/BakeConfiguration.h"
 #include "Shape/Editor/Bake/BakePipelineOperator.h"
+#include "Shape/Editor/Bake/IblProbe.h"
 #include "Shape/Editor/Bake/TracerIrradiance.h"
 #include "Shape/Editor/Bake/TracerLight.h"
 #include "Shape/Editor/Bake/TracerModel.h"
@@ -43,6 +46,7 @@
 #include "World/Entity/ComponentEntityData.h"
 #include "World/Entity/ExternalEntityData.h"
 #include "World/Entity/LightComponentData.h"
+#include "Weather/Sky/SkyComponentData.h"
 
 namespace traktor
 {
@@ -114,14 +118,39 @@ void addLight(const world::LightComponentData* lightComponentData, const Transfo
 		light.type = Light::LtSpot;
 		light.position = transform.translation().xyz1();
 		light.direction = -transform.axisY();
-		light.color = Color4f(lightComponentData->getColor());
 		light.color = lightComponentData->getColor() * Scalar(lightComponentData->getIntensity());
 		light.range = Scalar(lightComponentData->getRange());
 		light.radius = Scalar(lightComponentData->getRadius());
 		tracerTask->addTracerLight(new TracerLight(light));
 	}
-	else if (lightComponentData->getLightType() != world::LtProbe)
-		log::warning << L"BakePipelineOperator warning; unsupported light type of light." << Endl;
+}
+
+/*! */
+void addSky(const weather::SkyComponentData* skyComponentData, TracerTask* tracerTask)
+{
+	Ref< drawing::Image > skyImage = drawing::Image::load(L"c:/temp/VulkanTest/data/Assets/Textures/canyon1.jpg");
+	if (!skyImage)
+		return;
+
+	RefArray< render::CubeMap > skyCubeMips;
+
+	render::ProbeProcessor pp;
+	pp.create();
+	pp.radiance(skyImage, 20.0f, 1.0f, skyCubeMips);
+
+	Ref< render::CubeMap > skyCube = skyCubeMips.front(); // new render::CubeMap(skyImage);
+	if (!skyCube)
+		return;
+
+	Light light;
+	light.type = Light::LtProbe;
+	light.position = Vector4::origo();
+	light.direction = Vector4::zero();
+	light.color = Color4f(1.0f, 1.0f, 1.0f, 1.0f);
+	light.range = Scalar(1e8f);
+	light.radius = Scalar(1e8f);
+	light.probe = new IblProbe(skyCube);
+	tracerTask->addTracerLight(new TracerLight(light));
 }
 
 /*! */
@@ -336,6 +365,9 @@ bool BakePipelineOperator::build(
 			{
 				if (auto lightComponentData = componentEntityData->getComponent< world::LightComponentData >())
 					addLight(lightComponentData, inoutEntityData->getTransform(), tracerTask);
+
+				if (auto skyComponentData = componentEntityData->getComponent< weather::SkyComponentData >())
+					addSky(skyComponentData, tracerTask);
 
 				RefArray< world::IEntityComponentData > componentDatas = componentEntityData->getComponents();
 				for (auto componentData : componentDatas)

@@ -239,10 +239,6 @@ void DefaultEntityEditor::drawGuide(render::PrimitiveRenderer* primitiveRenderer
 			);
 			primitiveRenderer->popWorld();
 		}
-		else if (lightComponentData->getLightType() == world::LtProbe)
-		{
-			primitiveRenderer->drawSolidPoint(lightPosition, 8.0f, Color4ub(255, 255, 0));
-		}
 
 		primitiveRenderer->popDepthState();
 

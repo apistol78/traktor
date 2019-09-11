@@ -40,8 +40,7 @@ enum LightType
 	LtDisabled = 0,
 	LtDirectional = 1,
 	LtPoint = 2,
-	LtSpot = 3,
-	LtProbe = 4	/*!< \deprecated */
+	LtSpot = 3
 };
 
 struct Light
