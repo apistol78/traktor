@@ -1,7 +1,9 @@
+#include <limits>
 #include <functional>
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/Writer.h"
 #include "Core/Log/Log.h"
+#include "Core/Math/Range.h"
 #include "Core/Math/Winding3.h"
 #include "Core/Reflection/Reflection.h"
 #include "Core/Reflection/RfmObject.h"
@@ -26,7 +28,6 @@
 #include "Model/Operations/UnwrapUV.h"
 #include "Render/Types.h"
 #include "Render/Editor/Texture/CubeMap.h"
-#include "Render/Editor/Texture/ProbeProcessor.h"
 #include "Render/Resource/TextureResource.h"
 #include "Scene/Editor/SceneAsset.h"
 #include "Shape/Editor/IModelGenerator.h"
@@ -128,20 +129,89 @@ void addLight(const world::LightComponentData* lightComponentData, const Transfo
 /*! */
 void addSky(const weather::SkyComponentData* skyComponentData, TracerTask* tracerTask)
 {
+	const int32_t c_importanceCellSize = 4;
+	const int32_t c_minImportanceSamples = 1;
+	const int32_t c_maxImportanceSamples = 20;
+
 	Ref< drawing::Image > skyImage = drawing::Image::load(L"c:/temp/VulkanTest/data/Assets/Textures/canyon1.jpg");
 	if (!skyImage)
 		return;
 
-	RefArray< render::CubeMap > skyCubeMips;
+	// Convert cube map to equirectangular image.
+	Ref< drawing::Image > radiance = render::CubeMap(skyImage).createEquirectangular();
+	T_FATAL_ASSERT(radiance != nullptr);
 
-	render::ProbeProcessor pp;
-	pp.create();
-	pp.radiance(skyImage, 20.0f, 1.0f, skyCubeMips);
+	// Measure intensity range in radiance image.
+	Range< Scalar > range(
+		Scalar(-std::numeric_limits< float >::max()),
+		Scalar( std::numeric_limits< float >::max())
+	);
+	for (int32_t y = 0; y < radiance->getHeight(); ++y)
+	{
+		for (int32_t x = 0; x < radiance->getWidth(); ++x)
+		{
+			Color4f cl;
+			radiance->getPixelUnsafe(x, y, cl);
+			Scalar intensity = dot3(cl, Vector4(1.0f, 1.0f, 1.0f, 0.0f));
+			range.min = std::min(range.min, intensity);
+			range.max = std::max(range.max, intensity);
+		}
+	}
 
-	Ref< render::CubeMap > skyCube = skyCubeMips.front(); // new render::CubeMap(skyImage);
-	if (!skyCube)
-		return;
+	// Plot importance density/probability image.
+	Ref< drawing::Image > importance = new drawing::Image(
+		drawing::PixelFormat::getARGBF32(),
+		radiance->getWidth() / c_importanceCellSize,
+		radiance->getHeight() / c_importanceCellSize
+	);
+	int32_t totalSampleCount = 0;
+	for (int32_t y = 0; y < importance->getHeight(); ++y)
+	{
+		for (int32_t x = 0; x < importance->getWidth(); ++x)
+		{
+			// Find maximum intensity in cell.
+			Scalar maxIntensity(0.0f);
+			for (int32_t cy = 0; cy < c_importanceCellSize; ++cy)
+			{
+				for (int32_t cx = 0; cx < c_importanceCellSize; ++cx)
+				{
+					Color4f cl;
+					radiance->getPixelUnsafe(x * c_importanceCellSize + cx, y * c_importanceCellSize + cy, cl);
+					Scalar intensity = dot3(cl, Vector4(1.0f, 1.0f, 1.0f, 0.0f));
+					maxIntensity = std::max(maxIntensity, intensity);
+				}
+			}
+			
+			// Calculate importance, number of samples required in cell.
+			Scalar k = (maxIntensity - range.min) / range.delta();
+			int32_t samples = (int32_t)(c_minImportanceSamples + k * Scalar(c_maxImportanceSamples - c_minImportanceSamples));
+			importance->setPixelUnsafe(x, y, Color4f(
+				(float)samples,
+				0.0f,
+				0.0f,
+				0.0f
+			));
+			totalSampleCount += samples;
+		}
+	}
 
+	// Calculate the probability of each cell.
+	for (int32_t y = 0; y < importance->getHeight(); ++y)
+	{
+		for (int32_t x = 0; x < importance->getWidth(); ++x)
+		{
+			Color4f cl;
+			importance->getPixelUnsafe(x, y, cl);
+			cl.setGreen(cl.getRed() / Scalar(totalSampleCount));
+			cl.setRed(cl.getRed() / Scalar(c_maxImportanceSamples));
+			importance->setPixelUnsafe(x, y, cl);
+		}
+	}
+
+	radiance->save(L"data/Temp/Bake/Radiance.png");
+	importance->save(L"data/Temp/Bake/Importance.png");
+
+	// Create tracer light.
 	Light light;
 	light.type = Light::LtProbe;
 	light.position = Vector4::origo();
@@ -149,7 +219,7 @@ void addSky(const weather::SkyComponentData* skyComponentData, TracerTask* trace
 	light.color = Color4f(1.0f, 1.0f, 1.0f, 1.0f);
 	light.range = Scalar(1e8f);
 	light.radius = Scalar(1e8f);
-	light.probe = new IblProbe(skyCube);
+	light.probe = new IblProbe(radiance, importance);
 	tracerTask->addTracerLight(new TracerLight(light));
 }
 

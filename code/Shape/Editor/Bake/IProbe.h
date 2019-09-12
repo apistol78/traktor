@@ -13,15 +13,11 @@ class IProbe : public Object
 	T_RTTI_CLASS;
 
 public:
-	/*! Sample probe.
-	 *
-	 * Accumulate from all directions.
-	 *
-	 * \param direction Array of directions.
-	 * \param count Number of directions.
-	 * \return Accumulated samples.
-	 */
-	virtual Color4f sample(const Vector4* directions, uint32_t count) const = 0;
+	virtual float getDensity(const Vector4& direction) const = 0;
+
+	virtual float getProbability(const Vector4& direction) const = 0;
+
+	virtual Color4f sample(const Vector4& direction) const = 0;
 };
 	
 	}

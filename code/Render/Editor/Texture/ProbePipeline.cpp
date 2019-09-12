@@ -4,7 +4,6 @@
 #include "Core/Io/Writer.h"
 #include "Core/Log/Log.h"
 #include "Core/Math/Const.h"
-#include "Core/Math/Range.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Settings/PropertyInteger.h"
 #include "Core/Settings/PropertyString.h"
@@ -30,33 +29,6 @@ namespace traktor
 {
 	namespace render
 	{
-		namespace
-		{
-
-Range< Scalar > measureDynamicRange(const CubeMap* cubeMap)
-{
-	Scalar mn( std::numeric_limits< float >::max());
-	Scalar mx(-std::numeric_limits< float >::max());
-	for (int32_t side = 0; side < 6; ++side)
-	{
-		const drawing::Image* mip = cubeMap->getSide(side);
-		for (int32_t y = 0; y < mip->getHeight(); ++y)
-		{
-			for (int32_t x = 0; x < mip->getWidth(); ++x)
-			{
-				Color4f c;
-				mip->getPixelUnsafe(x, y, c);
-				Scalar a = Vector4(c).shuffle< 0, 1, 2, 0 >().max();
-				mn = min(mn, a);
-				mx = max(mx, a);
-			}
-		}
-	}
-	T_ASSERT(mn <= mx);
-	return Range< Scalar >(mn, mx);
-}
-
-		}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ProbePipeline", 1, ProbePipeline, editor::DefaultPipeline)
 
@@ -166,11 +138,13 @@ bool ProbePipeline::buildOutput(
 		file->close();
 	}
 
+	Ref< CubeMap > assetCube = new CubeMap(assetImage);
+
 	RefArray< CubeMap > cubeMips;
 
 	if (const IrradianceProbeAsset* irradianceAsset = dynamic_type_cast< const IrradianceProbeAsset* >(asset))
 	{
-		if (!m_processor->irradiance(assetImage, irradianceAsset->getFactor(), 256, cubeMips))
+		if (!m_processor->irradiance(assetCube, cubeMips))
 			return false;
 
 		const Scalar nf(1.0f / PI);
@@ -186,7 +160,7 @@ bool ProbePipeline::buildOutput(
 	}
 	else if (const RadianceProbeAsset* radianceAsset = dynamic_type_cast< const RadianceProbeAsset* >(asset))
 	{
-		if (!m_processor->radiance(assetImage, radianceAsset->getGlossScale(), radianceAsset->getGlossBias(), cubeMips))
+		if (!m_processor->radiance(assetCube, radianceAsset->getSolidAngle(), cubeMips))
 			return false;
 	}
 
@@ -195,16 +169,6 @@ bool ProbePipeline::buildOutput(
 
 	const uint32_t sideSize = cubeMips.front()->getSize();
 	const uint32_t mipCount = uint32_t(cubeMips.size());
-
-	//// Measure probe mips.
-	//log::info << L"Probe dynamic range (per mip)" << Endl;
-	//log::info << IncreaseIndent;
-	//for (uint32_t i = 0; i < mipCount; ++i)
-	//{
-	//	auto r = measureDynamicRange(cubeMips[i]);
-	//	log::info << i << L". " << r.delta() << L" (min " << r.min << L", max " << r.max << L")" << Endl;
-	//}
-	//log::info << DecreaseIndent;
 
 	// Create output instance.
 	Ref< TextureResource > outputResource = new TextureResource();

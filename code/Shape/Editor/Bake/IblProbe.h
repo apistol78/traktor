@@ -5,10 +5,10 @@
 
 namespace traktor
 {
-	namespace render
+	namespace drawing
 	{
 
-class CubeMap;
+class Image;
 
 	}
 
@@ -20,12 +20,17 @@ class IblProbe : public IProbe
 	T_RTTI_CLASS;
 
 public:
-	explicit IblProbe(const render::CubeMap* cubeMap);
+	explicit IblProbe(const drawing::Image* radiance, const drawing::Image* importance);
 
-	virtual Color4f sample(const Vector4* directions, uint32_t count) const override final;
+	virtual float getDensity(const Vector4& direction) const override final;
+
+	virtual float getProbability(const Vector4& direction) const override final;
+
+	virtual Color4f sample(const Vector4& direction) const override final;
 
 private:
-	Ref< const render::CubeMap > m_cubeMap;
+	Ref< const drawing::Image > m_radiance;
+	Ref< const drawing::Image > m_importance;
 };
 	
 	}
