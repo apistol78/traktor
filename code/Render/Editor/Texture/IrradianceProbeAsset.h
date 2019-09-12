@@ -18,16 +18,6 @@ namespace traktor
 class T_DLLCLASS IrradianceProbeAsset : public editor::Asset
 {
 	T_RTTI_CLASS;
-
-public:
-	IrradianceProbeAsset();
-
-	float getFactor() const { return m_factor; }
-
-	virtual void serialize(ISerializer& s) override final;
-
-private:
-	float m_factor;
 };
 
 	}

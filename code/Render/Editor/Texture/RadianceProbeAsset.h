@@ -22,15 +22,12 @@ class T_DLLCLASS RadianceProbeAsset : public editor::Asset
 public:
 	RadianceProbeAsset();
 
-	int32_t getGlossScale() const { return m_glossScale; }
-
-	int32_t getGlossBias() const { return m_glossBias; }
+	float getSolidAngle() const { return m_solidAngle; }
 
 	virtual void serialize(ISerializer& s) override final;
 
 private:
-	int32_t m_glossScale;
-	int32_t m_glossBias;
+	float m_solidAngle;
 };
 
 	}

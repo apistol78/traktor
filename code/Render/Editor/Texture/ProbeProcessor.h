@@ -20,18 +20,14 @@ struct ClContext;
 
 namespace traktor
 {
-	namespace drawing
-	{
-
-class Image;
-
-	}
-
 	namespace render
 	{
 
 class CubeMap;
 
+/*! Probe filtering processor.
+ * \ingroup Render
+ */
 class T_DLLCLASS ProbeProcessor : public Object
 {
 	T_RTTI_CLASS;
@@ -45,9 +41,20 @@ public:
 
 	void destroy();
 
-	bool radiance(const drawing::Image* image, int32_t glossScale, int32_t glossBias, RefArray< CubeMap >& outCubeMips) const;
+	/*! Filter input cube IBL into radiance cube maps.
+	 *
+	 * \param input Input IBL cube map.
+	 * \param solidAngle Solid angle in radians from center of filtering cone.
+	 * \param outRadiance Mip chain of radiance cubes.
+	 */
+	bool radiance(const CubeMap* input, float solidAngle, RefArray< CubeMap >& outRadiance) const;
 
-	bool irradiance(const drawing::Image* image, float factor, int32_t faceSize, RefArray< CubeMap >& outCubeMips) const;
+	/*! Filter input cube IBL into irradiance cube maps.
+	 *
+	 * \param input Input IBL cube maps.
+	 * \param outIrradiance Mip chain of irradiance cubes.
+	 */
+	bool irradiance(const CubeMap* input, RefArray< CubeMap >& outIrradiance) const;
 
 private:
 	cmft::ClContext* m_clContext;

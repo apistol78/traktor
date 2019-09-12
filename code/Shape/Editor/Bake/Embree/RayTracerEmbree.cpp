@@ -883,43 +883,36 @@ Color4f RayTracerEmbree::sampleAnalyticalLights(
 
 		case Light::LtProbe:
 			{
-				const uint32_t c_probeSampleCount = secondary ? 4 : 150;
-				StaticVector< Vector4, 150 > directions;
-
-				// Get random set of non-occluded directions.
-				for (uint32_t i = 0; i < c_probeSampleCount; ++i)
+				Color4f ibl(0.0f, 0.0f, 0.0f, 0.0f);
+				for (int32_t i = 0; i < 16; ++i)
 				{
 					Vector4 direction = random.nextHemi(normal);
 
 					origin.storeAligned(&r.org_x); 
 					direction.storeAligned(&r.dir_x);
-
 					r.tnear = c_epsilonOffset;
 					r.time = 0.0f;
-					r.tfar = 1000.0f;
-
+					r.tfar = 100.0f;
 					r.mask = 0;
 					r.id = 0;
 					r.flags = 0;
 		
 					RTCIntersectContext context;
 					rtcInitIntersectContext(&context);
-
 					rtcOccluded1(m_scene, &context, &r);
+					if (r.tfar < 0.0f)
+						continue;
 
-					if (r.tfar >= 0.0f)
+					int32_t density = (int32_t)(1.0f + light.probe->getDensity(direction) * 20.0f);
+					float probability = light.probe->getProbability(direction);
+
+					for (int32_t j = 0; j < density; ++j)
 					{
-						Scalar phi = dot3(normal, direction);
-						direction.set(3, phi);
-						directions.push_back(direction);
+						Vector4 sampleDirection = lerp(direction, random.nextHemi(direction), Scalar(0.2f)).normalized();
+						ibl += light.probe->sample(sampleDirection) * Scalar(probability);
 					}
 				}
-
-				// Query probe of light from non-occluded directions.
-				Color4f ibl = light.probe->sample(directions, directions.size());
-
-				// Add to contribution.
-				contribution += ibl; // / Scalar(c_probeSampleCount);
+				contribution += ibl;
 			}
 			break;
 		}

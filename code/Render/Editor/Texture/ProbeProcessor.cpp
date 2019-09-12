@@ -48,13 +48,11 @@ void ProbeProcessor::destroy()
 	}
 }
 
-bool ProbeProcessor::radiance(const drawing::Image* cubeImage, int32_t glossScale, int32_t glossBias, RefArray< CubeMap >& outCubeMips) const
+bool ProbeProcessor::radiance(const CubeMap* input, float solidAngle, RefArray< CubeMap >& outRadiance) const
 {
 	// Convert image into 32-bit float point format.
-	Ref< drawing::Image > hdrImage = cubeImage->clone();
+	Ref< drawing::Image > hdrImage = input->createCrossImage()->clone();
 	hdrImage->convert(drawing::PixelFormat::getRGBAF32());
-
-	// Discard alpha channel.
 	hdrImage->clearAlpha(0.0f);
 
 	// Convert into cmft image.
@@ -69,27 +67,8 @@ bool ProbeProcessor::radiance(const drawing::Image* cubeImage, int32_t glossScal
 
 	cmft::Image image;
 	cmft::imageCopy(image, tmp);
-
-	if (cmft::imageIsCubeCross(image, true))
-		cmft::imageCubemapFromCross(image);
-	else if (cmft::imageIsLatLong(image))
-		imageCubemapFromLatLong(image);
-	else if (cmft::imageIsHStrip(image))
-		cmft::imageCubemapFromStrip(image);
-	else if (cmft::imageIsVStrip(image))
-		cmft::imageCubemapFromStrip(image);
-	else if (cmft::imageIsOctant(image))
-		cmft::imageCubemapFromOctant(image);
-	else
-	{
-		log::error << L"Probe processor failed; Image is not cubemap(6 faces), cubecross(ratio 3:4 or 4:3), latlong(ratio 2:1), hstrip(ratio 6:1), vstrip(ration 1:6)" << Endl;
-		return false;
-	}
-
+	cmft::imageCubemapFromCross(image);
 	T_FATAL_ASSERT(image.m_width == image.m_height);
-
-	if (image.m_width > 512)
-		cmft::imageResize(image, 512);
 
 	uint32_t mipCount = (uint32_t)log2(image.m_width) + 1;
 	T_ASSERT(mipCount >= 1);
@@ -101,8 +80,8 @@ bool ProbeProcessor::radiance(const drawing::Image* cubeImage, int32_t glossScal
 		(cmft::LightingModel::Enum)cmft::LightingModel::Phong, //Brdf,
 		false,
 		(uint8_t)mipCount,
-		glossScale,
-		glossBias,
+		20.0f, //glossScale,
+		1.0f, //glossBias,
 		(cmft::EdgeFixup::Enum)0,
 		255,
 		m_clContext
@@ -112,7 +91,7 @@ bool ProbeProcessor::radiance(const drawing::Image* cubeImage, int32_t glossScal
 	uint32_t offsets[CUBE_FACE_NUM][MAX_MIP_NUM] = { 0 };
 	cmft::imageGetMipOffsets(offsets, image);
 
-	outCubeMips.resize(mipCount);
+	outRadiance.resize(mipCount);
 	for (uint32_t i = 0; i < mipCount; ++i)
 	{
 		uint32_t mipSize = sideSize >> i;
@@ -126,7 +105,7 @@ bool ProbeProcessor::radiance(const drawing::Image* cubeImage, int32_t glossScal
 				cubeMip->getSide(side)->getDataSize()
 			);
 		}
-		outCubeMips[i] = cubeMip;
+		outRadiance[i] = cubeMip;
 	}
 
 	// Cleanup.
@@ -134,18 +113,12 @@ bool ProbeProcessor::radiance(const drawing::Image* cubeImage, int32_t glossScal
 	return true;
 }
 
-bool ProbeProcessor::irradiance(const drawing::Image* cubeImage, float factor, int32_t faceSize, RefArray< CubeMap >& outCubeMips) const
+bool ProbeProcessor::irradiance(const CubeMap* input, RefArray< CubeMap >& outIrradiance) const
 {
 	// Convert image into 32-bit float point format.
-	Ref< drawing::Image > hdrImage = cubeImage->clone();
+	Ref< drawing::Image > hdrImage = input->createCrossImage()->clone();
 	hdrImage->convert(drawing::PixelFormat::getRGBAF32());
-
-	// Discard alpha channel.
 	hdrImage->clearAlpha(0.0f);
-
-	// Scale image by factor.
-	drawing::TransformFilter tf(Color4f(factor, factor, factor, factor), Color4f(0.0f, 0.0f, 0.0f, 0.0f));
-	hdrImage->apply(&tf);
 
 	// Convert into cmft image.
 	cmft::Image tmp;
@@ -159,31 +132,12 @@ bool ProbeProcessor::irradiance(const drawing::Image* cubeImage, float factor, i
 
 	cmft::Image image;
 	cmft::imageCopy(image, tmp);
-
-	if (cmft::imageIsCubeCross(image, true))
-		cmft::imageCubemapFromCross(image);
-	else if (cmft::imageIsLatLong(image))
-		imageCubemapFromLatLong(image);
-	else if (cmft::imageIsHStrip(image))
-		cmft::imageCubemapFromStrip(image);
-	else if (cmft::imageIsVStrip(image))
-		cmft::imageCubemapFromStrip(image);
-	else if (cmft::imageIsOctant(image))
-		cmft::imageCubemapFromOctant(image);
-	else
-	{
-		log::error << L"Probe processor failed; Image is not cubemap(6 faces), cubecross(ratio 3:4 or 4:3), latlong(ratio 2:1), hstrip(ratio 6:1), vstrip(ration 1:6)" << Endl;
-		return false;
-	}
-
-	T_FATAL_ASSERT (image.m_width == image.m_height);
-
-	if (image.m_width > 512)
-		cmft::imageResize(image, 512);
+	cmft::imageCubemapFromCross(image);
+	T_FATAL_ASSERT(image.m_width == image.m_height);
 
 	cmft::imageIrradianceFilterSh(
 		image,
-		faceSize
+		input->getSize()
 	);
 
 	uint32_t sideSize = image.m_width;
@@ -192,7 +146,7 @@ bool ProbeProcessor::irradiance(const drawing::Image* cubeImage, float factor, i
 	uint32_t offsets[CUBE_FACE_NUM][MAX_MIP_NUM] = { 0 };
 	cmft::imageGetMipOffsets(offsets, image);
 
-	outCubeMips.resize(mipCount);
+	outIrradiance.resize(mipCount);
 	for (uint32_t i = 0; i < mipCount; ++i)
 	{
 		uint32_t mipSize = sideSize >> i;
@@ -206,7 +160,7 @@ bool ProbeProcessor::irradiance(const drawing::Image* cubeImage, float factor, i
 				cubeMip->getSide(side)->getDataSize()
 			);
 		}
-		outCubeMips[i] = cubeMip;
+		outIrradiance[i] = cubeMip;
 	}
 
 	// Cleanup.
