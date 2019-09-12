@@ -13,6 +13,7 @@
 #include "Core/Misc/Adler32.h"
 #include "Core/Misc/Align.h"
 #include "Core/Misc/Split.h"
+#include "Core/Misc/String.h"
 #include "Render/Editor/Shader/Nodes.h"
 #include "Render/Editor/Shader/ShaderGraph.h"
 
@@ -203,7 +204,11 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 		bool vertexResult = vertexShader->parse(&c_defaultTBuiltInResource, 100, false, (EShMessages)(EShMsgVulkanRules | EShMsgSpvRules));
 
 		if (vertexShader->getInfoLog())
-			log::info << mbstows(vertexShader->getInfoLog()) << Endl;
+		{
+			std::wstring info = trim(mbstows(vertexShader->getInfoLog()));
+			if (!info.empty())
+				log::info << info << Endl;
+		}
 
 #if defined(_DEBUG)
 		if (vertexShader->getInfoDebugLog())
@@ -226,7 +231,11 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 		bool fragmentResult = fragmentShader->parse(&c_defaultTBuiltInResource, 100, false, (EShMessages)(EShMsgVulkanRules | EShMsgSpvRules));
 
 		if (fragmentShader->getInfoLog())
-			log::info << mbstows(fragmentShader->getInfoLog()) << Endl;
+		{
+			std::wstring info = trim(mbstows(fragmentShader->getInfoLog()));
+			if (!info.empty())
+				log::info << info << Endl;
+		}
 
 #if defined(_DEBUG)
 		if (fragmentShader->getInfoDebugLog())
@@ -253,17 +262,21 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 		computeShader->setStrings(&computeShaderText, 1);
 		computeShader->setEntryPoint("main");
 
-		bool vertexResult = computeShader->parse(&c_defaultTBuiltInResource, 100, false, (EShMessages)(EShMsgVulkanRules | EShMsgSpvRules));
+		bool computeResult = computeShader->parse(&c_defaultTBuiltInResource, 100, false, (EShMessages)(EShMsgVulkanRules | EShMsgSpvRules));
 
 		if (computeShader->getInfoLog())
-			log::info << mbstows(computeShader->getInfoLog()) << Endl;
+		{
+			std::wstring info = trim(mbstows(computeShader->getInfoLog()));
+			if (!info.empty())
+				log::info << info << Endl;
+		}
 
 #if defined(_DEBUG)
 		if (computeShader->getInfoDebugLog())
 			log::info << mbstows(computeShader->getInfoDebugLog()) << Endl;
 #endif
 
-		if (!vertexResult)
+		if (!computeResult)
 		{
 			log::error << L"Failed to compile shader; Failed to parse compute shader." << Endl;
 			return nullptr;
