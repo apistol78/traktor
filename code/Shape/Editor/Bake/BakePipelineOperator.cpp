@@ -16,6 +16,7 @@
 #include "Database/Instance.h"
 #include "Drawing/Image.h"
 #include "Drawing/PixelFormat.h"
+#include "Drawing/Filters/ScaleFilter.h"
 #include "Editor/IPipelineBuilder.h"
 #include "Editor/IPipelineSettings.h"
 #include "Mesh/MeshComponentData.h"
@@ -129,7 +130,7 @@ void addLight(const world::LightComponentData* lightComponentData, const Transfo
 /*! */
 void addSky(const weather::SkyComponentData* skyComponentData, TracerTask* tracerTask)
 {
-	const int32_t c_importanceCellSize = 4;
+	const int32_t c_importanceCellSize = 16;
 	const int32_t c_minImportanceSamples = 1;
 	const int32_t c_maxImportanceSamples = 20;
 
@@ -137,14 +138,23 @@ void addSky(const weather::SkyComponentData* skyComponentData, TracerTask* trace
 	if (!skyImage)
 		return;
 
+	// Ensure source image is a multiple of cell size.
+	drawing::ScaleFilter scaleFilter(
+		alignUp(skyImage->getWidth(), c_importanceCellSize),
+		alignUp(skyImage->getHeight(), c_importanceCellSize),
+		drawing::ScaleFilter::MnAverage,
+		drawing::ScaleFilter::MgLinear
+	);
+	skyImage->apply(&scaleFilter);
+
 	// Convert cube map to equirectangular image.
 	Ref< drawing::Image > radiance = render::CubeMap(skyImage).createEquirectangular();
 	T_FATAL_ASSERT(radiance != nullptr);
 
 	// Measure intensity range in radiance image.
 	Range< Scalar > range(
-		Scalar(-std::numeric_limits< float >::max()),
-		Scalar( std::numeric_limits< float >::max())
+		Scalar( std::numeric_limits< float >::max()),
+		Scalar(-std::numeric_limits< float >::max())
 	);
 	for (int32_t y = 0; y < radiance->getHeight(); ++y)
 	{
@@ -202,11 +212,17 @@ void addSky(const weather::SkyComponentData* skyComponentData, TracerTask* trace
 		{
 			Color4f cl;
 			importance->getPixelUnsafe(x, y, cl);
-			cl.setGreen(cl.getRed() / Scalar(totalSampleCount));
-			cl.setRed(cl.getRed() / Scalar(c_maxImportanceSamples));
+			
+			float samples = cl.getRed();
+			cl.setRed(Scalar(samples / c_maxImportanceSamples));
+			cl.setGreen(Scalar(importance->getWidth() * importance->getHeight() * samples / totalSampleCount));
+
 			importance->setPixelUnsafe(x, y, cl);
 		}
 	}
+
+	radiance->clearAlpha(1.0);
+	importance->clearAlpha(1.0f);
 
 	radiance->save(L"data/Temp/Bake/Radiance.png");
 	importance->save(L"data/Temp/Bake/Importance.png");
@@ -234,53 +250,56 @@ bool addModel(const model::Model* model, const Transform& transform, const std::
 	}
 
 	// Create output instance.
-	Ref< render::TextureResource > outputResource = new render::TextureResource();
-	Ref< db::Instance > outputInstance = pipelineBuilder->getOutputDatabase()->createInstance(
-		L"Generated/" + lightmapId.format(),
-		db::CifReplaceExisting,
-		&lightmapId
-	);
-	if (!outputInstance)
+	if (pipelineBuilder->getOutputDatabase()->getInstance(lightmapId) == nullptr)
 	{
-		log::error << L"BakePipelineOperator failed; unable to create output instance." << Endl;
-		return false;
-	}
+		Ref< render::TextureResource > outputResource = new render::TextureResource();
+		Ref< db::Instance > outputInstance = pipelineBuilder->getOutputDatabase()->createInstance(
+			L"Generated/" + lightmapId.format(),
+			db::CifReplaceExisting,
+			&lightmapId
+		);
+		if (!outputInstance)
+		{
+			log::error << L"BakePipelineOperator failed; unable to create output instance." << Endl;
+			return false;
+		}
 
-	outputInstance->setObject(outputResource);
+		outputInstance->setObject(outputResource);
 
-	// Create output data stream.
-	Ref< IStream > stream = outputInstance->writeData(L"Data");
-	if (!stream)
-	{
-		log::error << L"BakePipelineOperator failed; unable to create texture data stream." << Endl;
-		outputInstance->revert();
-		return false;
-	}
+		// Create output data stream.
+		Ref< IStream > stream = outputInstance->writeData(L"Data");
+		if (!stream)
+		{
+			log::error << L"BakePipelineOperator failed; unable to create texture data stream." << Endl;
+			outputInstance->revert();
+			return false;
+		}
 
-	Writer writer(stream);
+		Writer writer(stream);
 
-	writer << uint32_t(12);
-	writer << int32_t(1);
-	writer << int32_t(1);
-	writer << int32_t(1);
-	writer << int32_t(1);
-	writer << int32_t(render::TfR8G8B8A8);
-	writer << bool(false);
-	writer << uint8_t(render::Tt2D);
-	writer << bool(false);
-	writer << bool(false);
+		writer << uint32_t(12);
+		writer << int32_t(1);
+		writer << int32_t(1);
+		writer << int32_t(1);
+		writer << int32_t(1);
+		writer << int32_t(render::TfR8G8B8A8);
+		writer << bool(false);
+		writer << uint8_t(render::Tt2D);
+		writer << bool(false);
+		writer << bool(false);
 
-	uint32_t c_white = 0xfffffff;
+		uint32_t c_white = 0xfffffff;
 
-	if (writer.write(&c_white, 4, 1) != 4)
-		return false;
+		if (writer.write(&c_white, 4, 1) != 4)
+			return false;
 
-	stream->close();
+		stream->close();
 
-	if (!outputInstance->commit())
-	{
-		log::error << L"BakePipelineOperator failed; unable to commit output instance." << Endl;
-		return false;
+		if (!outputInstance->commit())
+		{
+			log::error << L"BakePipelineOperator failed; unable to commit output instance." << Endl;
+			return false;
+		}
 	}
 
 	tracerTask->addTracerModel(new TracerModel(
@@ -631,57 +650,57 @@ bool BakePipelineOperator::build(
 		Guid irradianceGridId = irradianceGridSeedId.permutate();
 
 		// Create a black irradiance grid first.
-		Ref< world::IrradianceGridResource > outputResource = new world::IrradianceGridResource();
-		Ref< db::Instance > outputInstance = pipelineBuilder->getOutputDatabase()->createInstance(
-			L"Generated/" + irradianceGridId.format(),
-			db::CifReplaceExisting,
-			&irradianceGridId
-		);
-		if (!outputInstance)
+		if (pipelineBuilder->getOutputDatabase()->getInstance(irradianceGridId) == nullptr)
 		{
-			log::error << L"BakePipelineOperator failed; unable to create output instance." << Endl;
-			return false;
-		}
+			Ref< world::IrradianceGridResource > outputResource = new world::IrradianceGridResource();
+			Ref< db::Instance > outputInstance = pipelineBuilder->getOutputDatabase()->createInstance(
+				L"Generated/" + irradianceGridId.format(),
+				db::CifReplaceExisting,
+				&irradianceGridId
+			);
+			if (!outputInstance)
+			{
+				log::error << L"BakePipelineOperator failed; unable to create output instance." << Endl;
+				return false;
+			}
 
-		outputInstance->setObject(outputResource);
+			outputInstance->setObject(outputResource);
 
-		// Create output data stream.
-		Ref< IStream > stream = outputInstance->writeData(L"Data");
-		if (!stream)
-		{
-			log::error << L"BakePipelineOperator failed; unable to create irradiance data stream." << Endl;
-			outputInstance->revert();
-			return false;
-		}
+			// Create output data stream.
+			Ref< IStream > stream = outputInstance->writeData(L"Data");
+			if (!stream)
+			{
+				log::error << L"BakePipelineOperator failed; unable to create irradiance data stream." << Endl;
+				outputInstance->revert();
+				return false;
+			}
 
-		Writer writer(stream);
+			Writer writer(stream);
+			writer << uint32_t(2);
+			writer << (uint32_t)1;	// width
+			writer << (uint32_t)1;	// height
+			writer << (uint32_t)1;	// depth
+			writer << -10000.0f;
+			writer << -10000.0f;
+			writer << -10000.0f;
+			writer <<  10000.0f;
+			writer <<  10000.0f;
+			writer <<  10000.0f;
 
-		writer << uint32_t(2);
+			for (int32_t i = 0; i < 9; ++i)
+			{
+				writer << 0.0f;
+				writer << 0.0f;
+				writer << 0.0f;
+			}
 
-		writer << (uint32_t)1;	// width
-		writer << (uint32_t)1;	// height
-		writer << (uint32_t)1;	// depth
+			stream->close();
 
-		writer << -10000.0f;
-		writer << -10000.0f;
-		writer << -10000.0f;
-		writer <<  10000.0f;
-		writer <<  10000.0f;
-		writer <<  10000.0f;
-
-		for (int32_t i = 0; i < 9; ++i)
-		{
-			writer << 0.0f;
-			writer << 0.0f;
-			writer << 0.0f;
-		}
-
-		stream->close();
-
-		if (!outputInstance->commit())
-		{
-			log::error << L"BakePipelineOperator failed; unable to commit output instance." << Endl;
-			return false;
+			if (!outputInstance->commit())
+			{
+				log::error << L"BakePipelineOperator failed; unable to commit output instance." << Endl;
+				return false;
+			}
 		}
 
 		tracerTask->addTracerIrradiance(new TracerIrradiance(

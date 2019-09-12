@@ -1,25 +1,14 @@
+//#pragma optimize( "", off )
+
 #include "Core/Math/MathUtils.h"
 #include "Drawing/Image.h"
 #include "Drawing/Filters/MirrorFilter.h"
 #include "Render/Editor/Texture/CubeMap.h"
 
-#include "Core/Math/Vector2.h"
-
 namespace traktor
 {
 	namespace render
 	{
-		namespace
-		{
-
-Vector2 toEquirectangular(const Vector4& direction)
-{
-	float theta = std::acos(direction.y());
-	float phi = std::atan2(direction.z(), direction.x());
-	return Vector2(phi, theta);
-}
-
-		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.CubeMap", CubeMap, Object)
 
@@ -176,17 +165,11 @@ Ref< drawing::Image > CubeMap::createEquirectangular() const
 		for (int32_t x = 0; x < output->getWidth(); ++x)
 		{
 			float fx = (float)x / (output->getWidth() - 1);
-
 			float phi = fx * TWO_PI;
 			float theta = fy * PI;
-
 			float dx = sin(phi) * sin(theta);
 			float dy = cos(theta);
 			float dz = cos(phi) * sin(theta);
-
-			Vector2 v = toEquirectangular(vector4(dx, dy, dz));
-			T_FATAL_ASSERT (std::abs(v.x - phi) <= 0.001f);
-			T_FATAL_ASSERT (std::abs(v.y - theta) <= 0.001f);
 
 			Color4f c = get(Vector4(dx, dy, dz));
 			output->setPixel(x, y, c);

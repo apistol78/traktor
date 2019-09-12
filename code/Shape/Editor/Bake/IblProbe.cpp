@@ -9,11 +9,10 @@ namespace traktor
 		namespace
 		{
 
-// \tbd Need to verify to CubeMap.cpp
 Vector2 toEquirectangular(const Vector4& direction)
 {
 	float theta = std::acos(direction.y());
-	float phi = std::atan2(direction.z(), direction.x());
+	float phi = std::atan2(-direction.x(), -direction.z()) + PI;
 	return Vector2(phi, theta);
 }
 
@@ -34,8 +33,10 @@ float IblProbe::getDensity(const Vector4& direction) const
 	float x = e.x / TWO_PI;
 	float y = e.y / PI;
 
-	int32_t u = (int32_t)(x * m_importance->getWidth());
-	int32_t v = (int32_t)(y * m_importance->getHeight());
+	int32_t w = m_importance->getWidth();
+	int32_t h = m_importance->getHeight();
+	int32_t u = (int32_t)(x * (w - 1));
+	int32_t v = (int32_t)(y * (h - 1));
 
 	Color4f cl;
 	m_importance->getPixel(u, v, cl);
@@ -49,8 +50,10 @@ float IblProbe::getProbability(const Vector4& direction) const
 	float x = e.x / TWO_PI;
 	float y = e.y / PI;
 
-	int32_t u = (int32_t)(x * m_importance->getWidth());
-	int32_t v = (int32_t)(y * m_importance->getHeight());
+	int32_t w = m_importance->getWidth();
+	int32_t h = m_importance->getHeight();
+	int32_t u = (int32_t)(x * (w - 1));
+	int32_t v = (int32_t)(y * (h - 1));
 
 	Color4f cl;
 	m_importance->getPixel(u, v, cl);
@@ -63,9 +66,11 @@ Color4f IblProbe::sample(const Vector4& direction) const
 
 	float x = e.x / TWO_PI;
 	float y = e.y / PI;
-
-	int32_t u = (int32_t)(x * m_radiance->getWidth());
-	int32_t v = (int32_t)(y * m_radiance->getHeight());
+	
+	int32_t w = m_radiance->getWidth();
+	int32_t h = m_radiance->getHeight();
+	int32_t u = (int32_t)(x * (w - 1));
+	int32_t v = (int32_t)(y * (h - 1));
 
 	Color4f cl;
 	m_radiance->getPixel(u, v, cl);
