@@ -5,6 +5,7 @@
 #include "Core/Log/Log.h"
 #include "Core/Math/Range.h"
 #include "Core/Math/Winding3.h"
+#include "Core/Misc/SafeDestroy.h"
 #include "Core/Reflection/Reflection.h"
 #include "Core/Reflection/RfmObject.h"
 #include "Core/Reflection/RfpMemberType.h"
@@ -28,7 +29,10 @@
 #include "Model/Operations/Triangulate.h"
 #include "Model/Operations/UnwrapUV.h"
 #include "Render/Types.h"
+#include "Render/Editor/Shader/Nodes.h"
+#include "Render/Editor/Shader/ShaderGraph.h"
 #include "Render/Editor/Texture/CubeMap.h"
+#include "Render/Editor/Texture/TextureAsset.h"
 #include "Render/Resource/TextureResource.h"
 #include "Scene/Editor/SceneAsset.h"
 #include "Shape/Editor/IModelGenerator.h"
@@ -128,15 +132,46 @@ void addLight(const world::LightComponentData* lightComponentData, const Transfo
 }
 
 /*! */
-void addSky(const weather::SkyComponentData* skyComponentData, TracerTask* tracerTask)
+void addSky(
+	editor::IPipelineBuilder* pipelineBuilder,
+	const std::wstring& assetPath,
+	const weather::SkyComponentData* skyComponentData,
+	TracerTask* tracerTask
+)
 {
 	const int32_t c_importanceCellSize = 16;
 	const int32_t c_minImportanceSamples = 1;
 	const int32_t c_maxImportanceSamples = 20;
 
-	Ref< drawing::Image > skyImage = drawing::Image::load(L"c:/temp/VulkanTest/data/Assets/Textures/canyon1.jpg");
+	// Extract reference to sky image from shader.
+	Ref< const render::ShaderGraph > shader = pipelineBuilder->getObjectReadOnly< render::ShaderGraph >(
+		skyComponentData->getShader()
+	);
+	if (!shader)
+		return;
+
+	RefArray< render::Texture > textureNodes;
+	shader->findNodesOf< render::Texture >(textureNodes);
+	auto it = std::find_if(textureNodes.begin(), textureNodes.end(), [&](render::Texture* textureNode) {
+		return textureNode->getComment() == L"Tag_Sky";
+	});
+	if (it == textureNodes.end())
+		return;
+
+	const auto& textureId = (*it)->getExternal();
+	Ref< const render::TextureAsset > textureAsset = pipelineBuilder->getObjectReadOnly< render::TextureAsset >(textureId);
+	if (!textureAsset)
+		return;
+
+	Ref< IStream > file = pipelineBuilder->openFile(Path(assetPath), textureAsset->getFileName().getOriginal());
+	if (!file)
+		return;
+
+	Ref< drawing::Image > skyImage = drawing::Image::load(file, textureAsset->getFileName().getExtension());
 	if (!skyImage)
 		return;
+
+	safeClose(file);
 
 	// Ensure source image is a multiple of cell size.
 	drawing::ScaleFilter scaleFilter(
@@ -221,6 +256,7 @@ void addSky(const weather::SkyComponentData* skyComponentData, TracerTask* trace
 		}
 	}
 
+	// Discard alpha channels as they are not used.
 	radiance->clearAlpha(1.0);
 	importance->clearAlpha(1.0f);
 
@@ -276,7 +312,6 @@ bool addModel(const model::Model* model, const Transform& transform, const std::
 		}
 
 		Writer writer(stream);
-
 		writer << uint32_t(12);
 		writer << int32_t(1);
 		writer << int32_t(1);
@@ -456,7 +491,7 @@ bool BakePipelineOperator::build(
 					addLight(lightComponentData, inoutEntityData->getTransform(), tracerTask);
 
 				if (auto skyComponentData = componentEntityData->getComponent< weather::SkyComponentData >())
-					addSky(skyComponentData, tracerTask);
+					addSky(pipelineBuilder, m_assetPath, skyComponentData, tracerTask);
 
 				RefArray< world::IEntityComponentData > componentDatas = componentEntityData->getComponents();
 				for (auto componentData : componentDatas)
