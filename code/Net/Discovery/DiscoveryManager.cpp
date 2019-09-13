@@ -296,7 +296,7 @@ Ref< IDiscoveryMessage > DiscoveryManager::recvMessage(UdpSocket* socket, Socket
 
 	int32_t nrecv = socket->recvFrom(buffer, sizeof(buffer), fromAddress);
 	if (nrecv <= 0)
-		return 0;
+		return nullptr;
 
 	MemoryStream ms(buffer, nrecv, true, false);
 	return BinarySerializer(&ms).readObject< IDiscoveryMessage >();

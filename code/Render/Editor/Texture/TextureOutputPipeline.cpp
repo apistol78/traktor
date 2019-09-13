@@ -29,6 +29,7 @@
 #include "Drawing/Filters/PremultiplyAlphaFilter.h"
 #include "Drawing/Filters/ScaleFilter.h"
 #include "Drawing/Filters/SharpenFilter.h"
+#include "Drawing/Filters/SphereMapFilter.h"
 #include "Drawing/Filters/SwizzleFilter.h"
 #include "Drawing/Filters/TransformFilter.h"
 #include "Editor/IPipelineBuilder.h"
@@ -39,7 +40,6 @@
 #include "Render/Editor/Texture/DxtnCompressor.h"
 #include "Render/Editor/Texture/EtcCompressor.h"
 #include "Render/Editor/Texture/PvrtcCompressor.h"
-#include "Render/Editor/Texture/SphereMapFilter.h"
 #include "Render/Editor/Texture/TextureOutput.h"
 #include "Render/Editor/Texture/TextureOutputPipeline.h"
 #include "Render/Editor/Texture/UnCompressor.h"
@@ -415,7 +415,7 @@ bool TextureOutputPipeline::buildOutput(
 	if (textureOutput->m_textureType == TtCube && textureOutput->m_generateSphereMap)
 	{
 		log::info << L"Generating sphere map..." << Endl;
-		SphereMapFilter sphereMapFilter;
+		drawing::SphereMapFilter sphereMapFilter;
 		image->apply(&sphereMapFilter);
 	}
 

@@ -29,6 +29,7 @@
 #include "Drawing/Filters/ScaleFilter.h"
 #include "Drawing/Filters/SeparateAlphaFilter.h"
 #include "Drawing/Filters/SharpenFilter.h"
+#include "Drawing/Filters/SphereMapFilter.h"
 #include "Drawing/Filters/SwizzleFilter.h"
 #include "Drawing/Filters/TonemapFilter.h"
 #include "Drawing/Filters/TransformFilter.h"
@@ -399,6 +400,10 @@ void DrawingClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	auto classSharpenFilter = new AutoRuntimeClass< SharpenFilter >();
 	classSharpenFilter->addConstructor< int, float >();
 	registrar->registerClass(classSharpenFilter);
+
+	auto classSphereMapFilter = new AutoRuntimeClass< SphereMapFilter >();
+	classSphereMapFilter->addConstructor();
+	registrar->registerClass(classSphereMapFilter);
 
 	auto classSwizzleFilter = new AutoRuntimeClass< SwizzleFilter >();
 	classSwizzleFilter->addConstructor< const std::wstring& >();
