@@ -483,7 +483,7 @@ bool BakePipelineOperator::build(
 		hashInstance->commit();
 
 		// Traverse and visit all entities in layer.
-		Traverser::visit(flattenedLayer, [&](Ref< world::EntityData >& inoutEntityData) -> bool
+		Traverser::visit(flattenedLayer, [&](Ref< world::EntityData >& inoutEntityData) -> Traverser::VisitorResult
 		{
 			if (auto componentEntityData = dynamic_type_cast< world::ComponentEntityData* >(inoutEntityData))
 			{
@@ -594,12 +594,12 @@ bool BakePipelineOperator::build(
 				// Find model synthesizer which can generate from current entity.
 				const IModelGenerator* modelGenerator = findModelGenerator(type_of(inoutEntityData));
 				if (!modelGenerator)
-					return true;
+					return Traverser::VrContinue;
 
 				// Synthesize a model which we can trace.
 				Ref< model::Model > model = modelGenerator->createModel(pipelineBuilder, m_assetPath, inoutEntityData);
 				if (!model)
-					return true;
+					return Traverser::VrFailed;
 
 				// Ensure model is fit for tracing.
 				model->clear(model::Model::CfColors | model::Model::CfJoints);
@@ -660,7 +660,7 @@ bool BakePipelineOperator::build(
 					pipelineBuilder,
 					tracerTask
 				))
-					return false;
+					return Traverser::VrFailed;
 
 				// Let model generator consume altered model and modify entity in ways
 				// which make sense for entity data.
@@ -672,7 +672,7 @@ bool BakePipelineOperator::build(
 					model
 				));
 			}
-			return true;
+			return Traverser::VrContinue;
 		});
 
 		layers.push_back(flattenedLayer);

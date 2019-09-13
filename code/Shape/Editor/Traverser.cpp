@@ -9,7 +9,7 @@ namespace traktor
     namespace shape
     {
 
-void Traverser::visit(const ISerializable* object, const std::function< bool(const world::EntityData*) >& visitor)
+void Traverser::visit(const ISerializable* object, const std::function< VisitorResult(const world::EntityData*) >& visitor)
 {
 	Ref< Reflection > reflection = Reflection::create(object);
 
@@ -25,15 +25,18 @@ void Traverser::visit(const ISerializable* object, const std::function< bool(con
 		const world::EntityData* entityData = dynamic_type_cast< const world::EntityData* >(objectMember->get());
 		if (entityData)
 		{
-			if (visitor(entityData))
+			VisitorResult result = visitor(entityData);
+			if (result == VrContinue)
 				Traverser::visit(entityData, visitor);
+			else if (result == VrFailed)
+				break;
 		}
 		else if (objectMember->get())
 			Traverser::visit((const ISerializable*)objectMember->get(), visitor);
 	}
 }
 
-void Traverser::visit(ISerializable* object, const std::function< bool(Ref< world::EntityData >&) >& visitor)
+void Traverser::visit(ISerializable* object, const std::function< VisitorResult(Ref< world::EntityData >&) >& visitor)
 {
 	Ref< Reflection > reflection = Reflection::create(object);
 
@@ -51,8 +54,11 @@ void Traverser::visit(ISerializable* object, const std::function< bool(Ref< worl
 		Ref< world::EntityData > entityData = dynamic_type_cast< world::EntityData* >(objectMember->get());
 		if (entityData)
 		{
-			if (visitor(entityData))
+			VisitorResult result = visitor(entityData);
+			if (result == VrContinue)
 				Traverser::visit(entityData, visitor);
+			else if (result == VrFailed)
+				break;
 
 			if (entityData != objectMember->get())
 			{

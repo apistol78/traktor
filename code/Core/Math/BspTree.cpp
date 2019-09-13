@@ -259,14 +259,6 @@ void BspNode::build(const AlignedVector< BspPolygon >& polygons)
 	}
 }
 
-//void BspNode::build(const AlignedVector< Winding3 >& windings)
-//{
-//	AlignedVector< BspPolygon > polygons(windings.size());
-//	for (size_t i = 0; i < windings.size(); ++i)
-//		polygons[i] = BspPolygon((int32_t)i, windings[i]);
-//	build(polygons);
-//}
-
 AlignedVector< BspPolygon > BspNode::allPolygons() const
 {
 	AlignedVector< BspPolygon > polygons = m_polygons;
@@ -282,24 +274,6 @@ AlignedVector< BspPolygon > BspNode::allPolygons() const
 	}
 	return polygons;
 }
-
-//AlignedVector< Winding3 > BspNode::allWindings() const
-//{
-//	AlignedVector< Winding3 > windings(m_polygons.size());
-//	for (size_t i = 0; i < m_polygons.size(); ++i)
-//		windings[i] = m_polygons[i].getWinding();
-//	if (m_front)
-//	{
-//		AlignedVector< Winding3 > front = m_front->allWindings();
-//		windings.insert(windings.end(), front.begin(), front.end());
-//	}
-//	if (m_back)
-//	{
-//		AlignedVector< Winding3 > back = m_back->allWindings();
-//		windings.insert(windings.end(), back.begin(), back.end());
-//	}
-//	return windings;
-//}
 
 BspNode BspNode::unioon(const BspNode& other) const
 {

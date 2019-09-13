@@ -39,7 +39,7 @@ Ref< model::Model > PrefabModelGenerator::createModel(
     std::map< std::wstring, Guid > materialTextures;
 
     // Collect all models and remove all mesh components from prefab.
-    Traverser::visit(prefabEntityData, [&](const world::EntityData* inoutEntityData) -> bool
+    Traverser::visit(prefabEntityData, [&](const world::EntityData* inoutEntityData) -> Traverser::VisitorResult
     {
         if (auto componentEntityData = dynamic_type_cast< const world::ComponentEntityData* >(inoutEntityData))
         {
@@ -49,7 +49,7 @@ Ref< model::Model > PrefabModelGenerator::createModel(
                     meshComponentData->getMesh()
                 );
                 if (!meshAsset)
-                    return false;
+                    return Traverser::VrFailed;
 
                 // \tbd We should probably ignore mesh assets with custom shaders.
 
@@ -57,7 +57,7 @@ Ref< model::Model > PrefabModelGenerator::createModel(
                     return pipelineBuilder->openFile(Path(assetPath), p.getOriginal());
                 });
                 if (!model)
-                    return false;
+                    return Traverser::VrFailed;
 
                 // Transform model into world space.
                 model::Transform(inoutEntityData->getTransform().toMatrix44()).apply(*model);
@@ -73,7 +73,7 @@ Ref< model::Model > PrefabModelGenerator::createModel(
                 //componentEntityData->removeComponent(meshComponentData);
             }			
         }
-        return true;
+        return Traverser::VrContinue;
     });
 
     Ref< model::Model > outputModel = new model::Model();

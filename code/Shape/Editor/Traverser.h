@@ -21,9 +21,16 @@ class EntityData;
 class Traverser
 {
 public:
-    static void visit(const ISerializable* object, const std::function< bool(const world::EntityData*) >& visitor);
+    enum VisitorResult
+    {
+        VrContinue,
+        VrSkip,
+        VrFailed
+    };
 
-    static void visit(ISerializable* object, const std::function< bool(Ref< world::EntityData >&) >& visitor);
+    static void visit(const ISerializable* object, const std::function< VisitorResult(const world::EntityData*) >& visitor);
+
+    static void visit(ISerializable* object, const std::function< VisitorResult(Ref< world::EntityData >&) >& visitor);
 };
 
     }

@@ -91,11 +91,7 @@ public:
 
 	void build(const AlignedVector< BspPolygon >& polygons);
 
-	//void build(const AlignedVector< Winding3 >& polygons);
-
 	AlignedVector< BspPolygon > allPolygons() const;
-
-	//AlignedVector< Winding3 > allWindings() const;
 
 	BspNode unioon(const BspNode& other) const;
 
