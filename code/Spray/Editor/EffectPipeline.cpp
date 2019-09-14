@@ -166,7 +166,9 @@ bool EffectPipeline::buildOutput(
 
 Ref< ISerializable > EffectPipeline::buildOutput(
 	editor::IPipelineBuilder* pipelineBuilder,
-	const ISerializable* sourceAsset
+	const db::Instance* sourceInstance,
+	const ISerializable* sourceAsset,
+	const Object* buildParams
 ) const
 {
 	T_FATAL_ERROR;

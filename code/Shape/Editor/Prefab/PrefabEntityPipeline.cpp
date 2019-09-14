@@ -117,7 +117,6 @@ bool PrefabEntityPipeline::create(const editor::IPipelineSettings* settings)
 	m_visualMeshSnap = settings->getProperty< float >(L"PrefabPipeline.VisualMeshSnap", 0.01f);
 	m_collisionMeshSnap = settings->getProperty< float >(L"PrefabPipeline.CollisionMeshSnap", 0.01f);
 	m_mergeCoplanar = settings->getProperty< bool >(L"PrefabPipeline.MergeCoplanar", true);
-	m_usedGuids.clear();
 	return true;
 }
 
@@ -126,46 +125,11 @@ TypeInfoSet PrefabEntityPipeline::getAssetTypes() const
 	return makeTypeInfoSet< PrefabEntityData >();
 }
 
-bool PrefabEntityPipeline::buildDependencies(
-	editor::IPipelineDepends* pipelineDepends,
-	const db::Instance* sourceInstance,
-	const ISerializable* sourceAsset,
-	const std::wstring& outputPath,
-	const Guid& outputGuid
-) const
-{
-	const PrefabEntityData* sourcePrefabEntityData = mandatory_non_null_type_cast< const PrefabEntityData* >(sourceAsset);
-	
-	// Get output guids so we can verify integrity early.
-	Guid outputRenderMeshGuid = sourcePrefabEntityData->getOutputGuid(0);
-	Guid outputCollisionShapeGuid = sourcePrefabEntityData->getOutputGuid(1);
-
-	if (m_usedGuids.find(outputRenderMeshGuid) != m_usedGuids.end())
-	{
-		log::error << L"PrefabEntityPipeline failed; Output guid 0 of prefab \"" << sourcePrefabEntityData->getName() << L"\" already used." << Endl;
-		return false;
-	}
-	m_usedGuids.insert(outputRenderMeshGuid);
-
-	if (m_usedGuids.find(outputCollisionShapeGuid) != m_usedGuids.end())
-	{
-		log::error << L"PrefabEntityPipeline failed; Output guid 1 of prefab \"" << sourcePrefabEntityData->getName() << L"\" already used." << Endl;
-		return false;
-	}
-	m_usedGuids.insert(outputCollisionShapeGuid);
-
-	return world::EntityPipeline::buildDependencies(
-		pipelineDepends,
-		sourceInstance,
-		sourceAsset,
-		outputPath,
-		outputGuid
-	);
-}
-
 Ref< ISerializable > PrefabEntityPipeline::buildOutput(
 	editor::IPipelineBuilder* pipelineBuilder,
-	const ISerializable* sourceAsset
+	const db::Instance* sourceInstance,
+	const ISerializable* sourceAsset,
+	const Object* buildParams
 ) const
 {
 	Ref< PrefabEntityData > prefabEntityData = checked_type_cast< PrefabEntityData* >(resolveAllExternal(pipelineBuilder, sourceAsset));
@@ -175,8 +139,8 @@ Ref< ISerializable > PrefabEntityPipeline::buildOutput(
 		return nullptr;
 	}
 
-	Guid outputRenderMeshGuid = prefabEntityData->getOutputGuid(0);
-	Guid outputCollisionShapeGuid = prefabEntityData->getOutputGuid(1);
+	Guid outputRenderMeshGuid = pipelineBuilder->synthesizeOutputGuid(1);
+	Guid outputCollisionShapeGuid = pipelineBuilder->synthesizeOutputGuid(1);
 
 	std::wstring outputRenderMeshPath = L"Generated/" + outputRenderMeshGuid.format();
 	std::wstring outputCollisionShapePath = L"Generated/" + outputCollisionShapeGuid.format();
@@ -321,6 +285,7 @@ Ref< ISerializable > PrefabEntityPipeline::buildOutput(
 		mergedMeshAsset->setMaterialTextures(mergedMaterialTextures);
 
 		pipelineBuilder->buildOutput(
+			sourceInstance,
 			mergedMeshAsset,
 			outputRenderMeshPath,
 			outputRenderMeshGuid,
@@ -390,6 +355,7 @@ Ref< ISerializable > PrefabEntityPipeline::buildOutput(
 		mergedMeshAsset->setCalculateConvexHull(false);
 
 		pipelineBuilder->buildOutput(
+			sourceInstance,
 			mergedMeshAsset,
 			outputCollisionShapePath,
 			outputCollisionShapeGuid,

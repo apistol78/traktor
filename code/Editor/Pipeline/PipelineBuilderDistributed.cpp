@@ -206,16 +206,22 @@ bool PipelineBuilderDistributed::build(const IPipelineDependencySet* dependencyS
 	return m_failed == 0;
 }
 
-Ref< ISerializable > PipelineBuilderDistributed::buildOutput(const ISerializable* sourceAsset)
+Ref< ISerializable > PipelineBuilderDistributed::buildOutput(const db::Instance* sourceInstance, const ISerializable* sourceAsset, const Object* buildParams)
 {
 	T_FATAL_ERROR;
 	return nullptr;
 }
 
-bool PipelineBuilderDistributed::buildOutput(const ISerializable* sourceAsset, const std::wstring& outputPath, const Guid& outputGuid, const Object* buildParams)
+bool PipelineBuilderDistributed::buildOutput(const db::Instance* sourceInstance, const ISerializable* sourceAsset, const std::wstring& outputPath, const Guid& outputGuid, const Object* buildParams)
 {
 	T_FATAL_ERROR;
 	return false;
+}
+
+Guid PipelineBuilderDistributed::synthesizeOutputGuid(uint32_t iterations)
+{
+	T_FATAL_ERROR;
+	return Guid();
 }
 
 Ref< ISerializable > PipelineBuilderDistributed::getBuildProduct(const ISerializable* sourceAsset)

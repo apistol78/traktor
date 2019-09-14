@@ -58,7 +58,9 @@ bool TheaterControllerPipeline::buildOutput(
 
 Ref< ISerializable > TheaterControllerPipeline::buildOutput(
 	editor::IPipelineBuilder* pipelineBuilder,
-	const ISerializable* sourceAsset
+	const db::Instance* sourceInstance,
+	const ISerializable* sourceAsset,
+	const Object* buildParams
 ) const
 {
 	const TheaterControllerData* sourceControllerData = checked_type_cast< const TheaterControllerData*, false >(sourceAsset);

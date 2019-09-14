@@ -209,7 +209,7 @@ bool MeshPipeline::buildOutput(
 	editor::IPipelineBuilder* pipelineBuilder,
 	const editor::IPipelineDependencySet* dependencySet,
 	const editor::PipelineDependency* dependency,
-	const db::Instance* /*sourceInstance*/,
+	const db::Instance* sourceInstance,
 	const ISerializable* sourceAsset,
 	uint32_t /*sourceAssetHash*/,
 	const std::wstring& outputPath,
@@ -598,6 +598,7 @@ bool MeshPipeline::buildOutput(
 	// Build material shader.
 	std::wstring materialPath = Path(outputPath).getPathOnly() + L"/" + outputGuid.format() + L"/Shader";
 	if (!pipelineBuilder->buildOutput(
+		sourceInstance,
 		materialShaderGraph,
 		materialPath,
 		materialGuid
@@ -712,11 +713,13 @@ bool MeshPipeline::buildOutput(
 
 Ref< ISerializable > MeshPipeline::buildOutput(
 	editor::IPipelineBuilder* pipelineBuilder,
-	const ISerializable* sourceAsset
+	const db::Instance* sourceInstance,
+	const ISerializable* sourceAsset,
+	const Object* buildParams
 ) const
 {
 	T_FATAL_ERROR;
-	return 0;
+	return nullptr;
 }
 
 render::IProgramCompiler* MeshPipeline::getProgramCompiler() const
@@ -730,14 +733,14 @@ render::IProgramCompiler* MeshPipeline::getProgramCompiler() const
 	if (!programCompilerType)
 	{
 		log::error << L"Mesh pipeline; unable to find program compiler type \"" << m_programCompilerTypeName << L"\"" << Endl;
-		return 0;
+		return nullptr;
 	}
 
 	m_programCompiler = dynamic_type_cast< render::IProgramCompiler* >(programCompilerType->createInstance());
 	if (!m_programCompiler)
 	{
 		log::error << L"Mesh pipeline; unable to instanciate program compiler \"" << m_programCompilerTypeName << L"\"" << Endl;
-		return 0;
+		return nullptr;
 	}
 
 	return m_programCompiler;

@@ -1910,63 +1910,6 @@ void EditorForm::buildAssets(bool rebuild)
 	buildAssets(assetGuids, rebuild);
 }
 
-bool EditorForm::buildAsset(const ISerializable* sourceAsset, const std::wstring& outputPath, const Guid& outputGuid, const Object* buildParams)
-{
-	bool verbose = m_mergedSettings->getProperty< bool >(L"Pipeline.Verbose", false);
-
-	// Create cache if enabled.
-	Ref< editor::IPipelineCache > pipelineCache;
-	if (m_mergedSettings->getProperty< bool >(L"Pipeline.MemCached", false))
-	{
-		pipelineCache = new editor::MemCachedPipelineCache();
-		if (!pipelineCache->create(m_mergedSettings))
-		{
-			traktor::log::warning << L"Unable to create pipeline memcached cache; cache disabled" << Endl;
-			pipelineCache = nullptr;
-		}
-	}
-	if (m_mergedSettings->getProperty< bool >(L"Pipeline.FileCache", false))
-	{
-		pipelineCache = new editor::FilePipelineCache();
-		if (!pipelineCache->create(m_mergedSettings))
-		{
-			traktor::log::warning << L"Unable to create pipeline file cache; cache disabled" << Endl;
-			pipelineCache = nullptr;
-		}
-	}
-
-	std::wstring cachePath = m_mergedSettings->getProperty< std::wstring >(L"Pipeline.CachePath");
-
-	// Create pipeline factory.
-	PipelineFactory pipelineFactory(m_mergedSettings);
-	PipelineDependencySet dependencySet;
-	PipelineInstanceCache instanceCache(m_sourceDatabase, cachePath);
-
-	Ref< IPipelineBuilder > pipelineBuilder = new PipelineBuilder(
-		&pipelineFactory,
-		m_sourceDatabase,
-		m_outputDatabase,
-		pipelineCache,
-		m_pipelineDb,
-		&instanceCache,
-		this,
-		m_mergedSettings->getProperty< bool >(L"Pipeline.BuildThreads", true),
-		verbose
-	);
-
-	bool result = pipelineBuilder->buildOutput(
-		sourceAsset,
-		outputPath,
-		outputGuid,
-		buildParams
-	);
-
-	if (pipelineCache)
-		pipelineCache->destroy();
-
-	return result;
-}
-
 void EditorForm::buildCancel()
 {
 	if (!m_threadBuild)

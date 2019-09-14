@@ -143,8 +143,6 @@ public:
 
 	virtual void buildAssets(bool rebuild) override final;
 
-	virtual bool buildAsset(const ISerializable* sourceAsset, const std::wstring& outputPath, const Guid& outputGuid, const Object* buildParams) override final;
-
 	virtual void buildCancel() override final;
 
 	virtual void buildWaitUntilFinished() override final;

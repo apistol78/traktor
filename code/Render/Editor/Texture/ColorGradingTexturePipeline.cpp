@@ -77,6 +77,7 @@ bool ColorGradingTexturePipeline::buildOutput(
 	output->m_systemTexture = true;
 
 	return pipelineBuilder->buildOutput(
+		sourceInstance,
 		output,
 		outputPath,
 		outputGuid,

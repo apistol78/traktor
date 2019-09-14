@@ -132,8 +132,8 @@ Ref< Object > SolidModelGenerator::modifyOutput(
 {
     const SolidEntityData* solidEntityData = mandatory_non_null_type_cast< const SolidEntityData* >(source);
 
-	Guid outputRenderMeshGuid = solidEntityData->getOutputGuid().permutation(0);
-	Guid outputCollisionShapeGuid = solidEntityData->getOutputGuid().permutation(1);
+	Guid outputRenderMeshGuid = pipelineBuilder->synthesizeOutputGuid(1);
+	Guid outputCollisionShapeGuid = pipelineBuilder->synthesizeOutputGuid(1);
 
 	std::wstring outputRenderMeshPath = L"Generated/" + outputRenderMeshGuid.format();
 	std::wstring outputCollisionShapePath = L"Generated/" + outputCollisionShapeGuid.format();
@@ -166,6 +166,7 @@ Ref< Object > SolidModelGenerator::modifyOutput(
 	outputMeshAsset->setMaterialTextures(materialTextures);
 
     pipelineBuilder->buildOutput(
+		nullptr,
         outputMeshAsset,
         outputRenderMeshPath,
         outputRenderMeshGuid,
@@ -178,6 +179,7 @@ Ref< Object > SolidModelGenerator::modifyOutput(
     physicsMeshAsset->setCalculateConvexHull(false);
 
     pipelineBuilder->buildOutput(
+		nullptr,
         physicsMeshAsset,
         outputCollisionShapePath,
         outputCollisionShapeGuid,

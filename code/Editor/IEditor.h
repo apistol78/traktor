@@ -123,9 +123,6 @@ public:
 	/*! Build asset. */
 	virtual void buildAsset(const Guid& assetGuid, bool rebuild) = 0;
 
-	/*! Build asset. */
-	virtual bool buildAsset(const ISerializable* sourceAsset, const std::wstring& outputPath, const Guid& outputGuid, const Object* buildParams = nullptr) = 0;
-
 	/*! Build assets. */
 	virtual void buildAssets(bool rebuild) = 0;
 

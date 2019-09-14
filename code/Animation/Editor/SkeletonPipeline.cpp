@@ -119,11 +119,13 @@ bool SkeletonPipeline::buildOutput(
 
 Ref< ISerializable > SkeletonPipeline::buildOutput(
 	editor::IPipelineBuilder* pipelineBuilder,
-	const ISerializable* sourceAsset
+	const db::Instance* sourceInstance,
+	const ISerializable* sourceAsset,
+	const Object* buildParams
 ) const
 {
 	T_FATAL_ERROR;
-	return 0;
+	return nullptr;
 }
 
 	}

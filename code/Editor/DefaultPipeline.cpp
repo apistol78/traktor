@@ -26,9 +26,7 @@ void DefaultPipeline::destroy()
 
 TypeInfoSet DefaultPipeline::getAssetTypes() const
 {
-	TypeInfoSet typeSet;
-	typeSet.insert< Object >();
-	return typeSet;
+	return makeTypeInfoSet< Object >();
 }
 
 bool DefaultPipeline::buildDependencies(
@@ -51,7 +49,7 @@ bool DefaultPipeline::buildDependencies(
 		Ref< const RfmObject > objectMember = checked_type_cast< RfmObject*, false >(objectMembers.front());
 		objectMembers.pop_front();
 
-		if (objectMember->get() != 0 && objectMember->get() != sourceAsset)
+		if (objectMember->get() != nullptr && objectMember->get() != sourceAsset)
 			pipelineDepends->addDependency(objectMember->get());
 	}
 
@@ -91,11 +89,13 @@ bool DefaultPipeline::buildOutput(
 
 Ref< ISerializable > DefaultPipeline::buildOutput(
 	IPipelineBuilder* pipelineBuilder,
-	const ISerializable* sourceAsset
+	const db::Instance* sourceInstance,
+	const ISerializable* sourceAsset,
+	const Object* buildParams
 ) const
 {
 	T_FATAL_ERROR;
-	return 0;
+	return nullptr;
 }
 
 	}

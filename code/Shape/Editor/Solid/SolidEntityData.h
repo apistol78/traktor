@@ -60,15 +60,9 @@ class T_DLLCLASS SolidEntityData : public world::GroupEntityData
     T_RTTI_CLASS;
 
 public:
-	SolidEntityData();
-
     Ref< SolidEntity > createEntity(const world::IEntityBuilder* builder, resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem) const;
 
     virtual void serialize(ISerializer& s) override final;
-
-	void setOutputGuid(const Guid& outputGuid) { m_outputGuid = outputGuid; }
-
-    const Guid& getOutputGuid() const { return m_outputGuid; }
 
     const resource::Id< render::Shader >& getShader() const { return m_shader; }
 
@@ -81,7 +75,6 @@ public:
 	const std::set< resource::Id< physics::CollisionSpecification > >& getCollisionMask() const;
 
 private:
-    Guid m_outputGuid;
     resource::Id< render::Shader > m_shader;
 	std::set< resource::Id< physics::CollisionSpecification > > m_collisionGroup;
 	std::set< resource::Id< physics::CollisionSpecification > > m_collisionMask;

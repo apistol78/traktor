@@ -96,7 +96,7 @@ bool EntityPipeline::buildOutput(
 	uint32_t reason
 ) const
 {
-	Ref< ISerializable > outputAsset = pipelineBuilder->buildOutput(sourceAsset);
+	Ref< ISerializable > outputAsset = pipelineBuilder->buildOutput(sourceInstance, sourceAsset, buildParams);
 	if (!outputAsset)
 		return false;
 
@@ -114,12 +114,14 @@ bool EntityPipeline::buildOutput(
 
 Ref< ISerializable > EntityPipeline::buildOutput(
 	editor::IPipelineBuilder* pipelineBuilder,
-	const ISerializable* sourceAsset
+	const db::Instance* sourceInstance,
+	const ISerializable* sourceAsset,
+	const Object* buildParams
 ) const
 {
 	Ref< Reflection > reflection = Reflection::create(sourceAsset);
 	if (!reflection)
-		return 0;
+		return nullptr;
 
 	RefArray< ReflectionMember > objectMembers;
 	reflection->findMembers(RfpMemberType(type_of< RfmObject >()), objectMembers);
@@ -131,15 +133,15 @@ Ref< ISerializable > EntityPipeline::buildOutput(
 
 		if (const EntityData* entityData = dynamic_type_cast< const EntityData* >(objectMember->get()))
 		{
-			objectMember->set(pipelineBuilder->buildOutput(entityData));
+			objectMember->set(pipelineBuilder->buildOutput(sourceInstance, entityData));
 		}
 		else if (const IEntityComponentData* entityComponentData = dynamic_type_cast< const IEntityComponentData* >(objectMember->get()))
 		{
-			objectMember->set(pipelineBuilder->buildOutput(entityComponentData));
+			objectMember->set(pipelineBuilder->buildOutput(sourceInstance, entityComponentData));
 		}
 		else if (const IEntityEventData* entityEventData = dynamic_type_cast< const IEntityEventData* >(objectMember->get()))
 		{
-			objectMember->set(pipelineBuilder->buildOutput(entityEventData));
+			objectMember->set(pipelineBuilder->buildOutput(sourceInstance, entityEventData));
 		}
 		else if (objectMember->get())
 		{

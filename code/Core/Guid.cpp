@@ -156,10 +156,10 @@ bool Guid::isNotNull() const
 	return isValid() && !isNull();
 }
 
-Guid Guid::permutate()
+Guid Guid::permutate(uint32_t iterations)
 {
 	Guid current = *this;
-	reinterpret_cast< uint64_t& >(m_data[8]) += 1;
+	reinterpret_cast< uint64_t& >(m_data[8]) += iterations;
 	return current;
 }
 

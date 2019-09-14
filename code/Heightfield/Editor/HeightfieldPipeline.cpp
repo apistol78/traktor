@@ -31,9 +31,7 @@ void HeightfieldPipeline::destroy()
 
 TypeInfoSet HeightfieldPipeline::getAssetTypes() const
 {
-	TypeInfoSet typeSet;
-	typeSet.insert< HeightfieldAsset >();
-	return typeSet;
+	return makeTypeInfoSet< HeightfieldAsset >();
 }
 
 bool HeightfieldPipeline::buildDependencies(
@@ -76,11 +74,11 @@ bool HeightfieldPipeline::buildOutput(
 	if (!heightfield)
 	{
 		log::error << L"Heightfield pipeline failed; unable to read heights" << Endl;
-		return 0;
+		return nullptr;
 	}
 
 	sourceData->close();
-	sourceData = 0;
+	sourceData = nullptr;
 
 	// Create height field resource.
 	Ref< HeightfieldResource > resource = new HeightfieldResource();
@@ -107,7 +105,7 @@ bool HeightfieldPipeline::buildOutput(
 	HeightfieldFormat().write(outputData, heightfield);
 
 	outputData->close();
-	outputData = 0;
+	outputData = nullptr;
 
 	resource->m_worldExtent = heightfieldAsset->getWorldExtent();
 
@@ -118,11 +116,13 @@ bool HeightfieldPipeline::buildOutput(
 
 Ref< ISerializable > HeightfieldPipeline::buildOutput(
 	editor::IPipelineBuilder* pipelineBuilder,
-	const ISerializable* sourceAsset
+	const db::Instance* sourceInstance,
+	const ISerializable* sourceAsset,
+	const Object* buildParams
 ) const
 {
 	T_FATAL_ERROR;
-	return 0;
+	return nullptr;
 }
 
 	}

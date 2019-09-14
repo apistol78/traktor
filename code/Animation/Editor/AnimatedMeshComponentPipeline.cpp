@@ -65,7 +65,9 @@ bool AnimatedMeshComponentPipeline::buildOutput(
 
 Ref< ISerializable > AnimatedMeshComponentPipeline::buildOutput(
 	editor::IPipelineBuilder* pipelineBuilder,
-	const ISerializable* sourceAsset
+	const db::Instance* sourceInstance,
+	const ISerializable* sourceAsset,
+	const Object* buildParams
 ) const
 {
 	return DeepClone(sourceAsset).create();

@@ -27,7 +27,7 @@ class Instance;
 
 class IPipeline;
 
-/*! \brief Pipeline dependency interface.
+/*! Pipeline dependency interface.
  * \ingroup Editor
  */
 class T_DLLCLASS IPipelineDepends : public IPipelineCommon
@@ -35,12 +35,12 @@ class T_DLLCLASS IPipelineDepends : public IPipelineCommon
 	T_RTTI_CLASS;
 
 public:
-	/*! \brief Add dependency to source asset; will not produce any output. */
+	/*! Add dependency to source asset; will not produce any output. */
 	virtual void addDependency(
 		const ISerializable* sourceAsset
 	) = 0;
 
-	/*! \brief Add dependency to source asset. */
+	/*! Add dependency to source asset. */
 	virtual void addDependency(
 		const ISerializable* sourceAsset,
 		const std::wstring& outputPath,
@@ -48,32 +48,33 @@ public:
 		uint32_t flags
 	) = 0;
 
-	/*! \brief Add dependency to source asset. */
+	/*! Add dependency to source asset. */
 	virtual void addDependency(
 		db::Instance* sourceAssetInstance,
 		uint32_t flags
 	) = 0;
 
-	/*! \brief Add dependency to source asset. */
+	/*! Add dependency to source asset. */
 	virtual void addDependency(
 		const Guid& sourceAssetGuid,
 		uint32_t flags
 	) = 0;
 
-	/*! \brief Add dependency to physical file. */
+	/*! Add dependency to physical file. */
 	virtual void addDependency(
 		const Path& basePath,
 		const std::wstring& fileName
 	) = 0;
 
-	/*! \brief Add dependency to pipeline which consume source assets of specified type. */
+	/*! Add dependency to pipeline which consume source assets of specified type. */
 	virtual void addDependency(
 		const TypeInfo& sourceAssetType
 	) = 0;
 
-	/*! \brief Wait until all dependency processing is complete before returning. */
+	/*! Wait until all dependency processing is complete before returning. */
 	virtual bool waitUntilFinished() = 0;
 
+	/*! Add dependency to pipeline which consume source assets of specified type. */
 	template < typename T >
 	void addDependency()
 	{

@@ -1,4 +1,3 @@
-#include "Core/Serialization/AttributePrivate.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
 #include "Core/Serialization/MemberStl.h"
@@ -17,11 +16,6 @@ namespace traktor
     {
 
 T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.shape.SolidEntityData", 0, SolidEntityData, world::GroupEntityData)
-
-SolidEntityData::SolidEntityData()
-:	m_outputGuid(Guid::create())
-{
-}
 
 Ref< SolidEntity > SolidEntityData::createEntity(const world::IEntityBuilder* builder, resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem) const
 {
@@ -65,7 +59,6 @@ void SolidEntityData::serialize(ISerializer& s)
 {
 	world::GroupEntityData::serialize(s);
 
-	s >> Member< Guid >(L"outputGuid", m_outputGuid, AttributePrivate());
 	s >> resource::Member< render::Shader >(L"shader", m_shader);
     s >> MemberStlSet< resource::Id< physics::CollisionSpecification >, resource::Member< physics::CollisionSpecification > >(L"collisionGroup", m_collisionGroup);
     s >> MemberStlSet< resource::Id< physics::CollisionSpecification >, resource::Member< physics::CollisionSpecification > >(L"collisionMask", m_collisionMask);

@@ -234,7 +234,7 @@ bool NavMeshPipeline::buildOutput(
 		return false;
 	}
 
-	sourceData = pipelineBuilder->buildOutput(sourceData);
+	sourceData = pipelineBuilder->buildOutput(sourceInstance, sourceData);
 	if (!sourceData)
 	{
 		log::error << L"NavMesh pipeline failed; unable to pipeline source data" << Endl;

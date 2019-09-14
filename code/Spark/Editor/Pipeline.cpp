@@ -377,6 +377,7 @@ bool Pipeline::buildOutput(
 
 			std::wstring bitmapOutputPath = traktor::Path(outputPath).getPathOnly() + L"/Textures/" + bitmapOutputGuid.format();
 			if (!pipelineBuilder->buildOutput(
+				sourceInstance,
 				output,
 				bitmapOutputPath,
 				bitmapOutputGuid,
@@ -462,6 +463,7 @@ bool Pipeline::buildOutput(
 
 		std::wstring bitmapOutputPath = traktor::Path(outputPath).getPathOnly() + L"/Textures/" + bitmapOutputGuid.format();
 		if (!pipelineBuilder->buildOutput(
+			sourceInstance,
 			output,
 			bitmapOutputPath,
 			bitmapOutputGuid,
@@ -503,11 +505,13 @@ bool Pipeline::buildOutput(
 
 Ref< ISerializable > Pipeline::buildOutput(
 	editor::IPipelineBuilder* pipelineBuilder,
-	const ISerializable* sourceAsset
+	const db::Instance* sourceInstance,
+	const ISerializable* sourceAsset,
+	const Object* buildParams
 ) const
 {
 	T_FATAL_ERROR;
-	return 0;
+	return nullptr;
 }
 
 	}

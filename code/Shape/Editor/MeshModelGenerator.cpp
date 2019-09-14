@@ -72,6 +72,7 @@ Ref< Object > MeshModelGenerator::modifyOutput(
     outputMeshAsset->setMaterialTextures(materialTextures);
 
     pipelineBuilder->buildOutput(
+		nullptr,
         outputMeshAsset,
         outputRenderMeshPath,
         outputRenderMeshGuid,
