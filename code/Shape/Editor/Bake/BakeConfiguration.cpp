@@ -9,11 +9,10 @@ namespace traktor
 	namespace shape
 	{
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.shape.BakeConfiguration", 12, BakeConfiguration, ISerializable)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.shape.BakeConfiguration", 13, BakeConfiguration, ISerializable)
 
 BakeConfiguration::BakeConfiguration()
-:	m_seedGuid(Guid::create())
-,	m_traceDirect(true)
+:	m_traceDirect(true)
 ,	m_traceIndirect(true)
 ,	m_traceIrradiance(true)
 ,	m_indirectSampleCount(100)
@@ -30,7 +29,12 @@ BakeConfiguration::BakeConfiguration()
 
 void BakeConfiguration::serialize(ISerializer& s)
 {
-	s >> Member< Guid >(L"seedGuid", m_seedGuid, AttributePrivate());
+	if (s.getVersion() < 13)
+	{
+		Guid seedGuid;
+		s >> Member< Guid >(L"seedGuid", seedGuid, AttributePrivate());
+	}
+
 	s >> Member< bool >(L"traceDirect", m_traceDirect);
 	s >> Member< bool >(L"traceIndirect", m_traceIndirect);
 

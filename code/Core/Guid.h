@@ -64,7 +64,7 @@ public:
 	/*! Permutate this guid.
 	 * \return Current guid before permutation.
 	 */
-	Guid permutate();
+	Guid permutate(uint32_t iterations = 1);
 
 	/*! Generate a permutation of this guid in N iterations. */
 	Guid permutation(uint32_t iterations) const;

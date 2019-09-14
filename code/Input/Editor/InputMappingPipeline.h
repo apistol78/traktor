@@ -1,5 +1,4 @@
-#ifndef traktor_input_InputMappingPipeline_H
-#define traktor_input_InputMappingPipeline_H
+#pragma once
 
 #include "Editor/IPipeline.h"
 
@@ -48,11 +47,13 @@ public:
 		uint32_t reason
 	) const override final;
 
-	virtual Ref< ISerializable > buildOutput(editor::IPipelineBuilder* pipelineBuilder, const ISerializable* sourceAsset) const override final;
+	virtual Ref< ISerializable > buildOutput(
+		editor::IPipelineBuilder* pipelineBuilder,
+		const db::Instance* sourceInstance,
+		const ISerializable* sourceAsset,
+		const Object* buildParams
+	) const override final;
 };
 
 	}
 }
-
-#endif	// traktor_input_InputMappingPipeline_H
-

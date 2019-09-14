@@ -91,6 +91,7 @@ bool SequenceTexturePipeline::buildOutput(
 
 		Ref< TextureOutput > output = new TextureOutput(asset->m_output);
 		if (!pipelineBuilder->buildOutput(
+			sourceInstance,
 			output,
 			frameOutputPath,
 			frameOutputGuid,

@@ -34,7 +34,7 @@ class IPipelineDependencySet;
 class IPipelineDepends;
 class PipelineDependency;
 
-/*! \brief Source asset pipeline.
+/*! Source asset pipeline.
  * \ingroup Editor
  */
 class T_DLLCLASS IPipeline : public Object
@@ -42,20 +42,20 @@ class T_DLLCLASS IPipeline : public Object
 	T_RTTI_CLASS;
 
 public:
-	/*! \brief Create pipeline.
+	/*! Create pipeline.
 	 *
 	 * \param settings Pipeline settings.
 	 * \return True if pipeline created successfully.
 	 */
 	virtual bool create(const IPipelineSettings* settings) = 0;
 
-	/*! \brief Destroy pipeline. */
+	/*! Destroy pipeline. */
 	virtual void destroy() = 0;
 
-	/*! \brief Get pipeline asset types. */
+	/*! Get pipeline asset types. */
 	virtual TypeInfoSet getAssetTypes() const = 0;
 
-	/*! \brief Build dependencies from source asset.
+	/*! Build dependencies from source asset.
 	 *
 	 * \param pipelineDepends Pipeline dependency walker.
 	 * \param sourceInstance Source asset database instance; might be null if asset doesn't originate from database.
@@ -72,7 +72,7 @@ public:
 		const Guid& outputGuid
 	) const = 0;
 
-	/*! \brief Build output asset.
+	/*! Build output asset.
 	 *
 	 * \param pipelineBuilder Pipeline builder.
 	 * \param dependencySet Dependency set.
@@ -82,7 +82,7 @@ public:
 	 * \param sourceAssetHash Source asset hash key.
 	 * \param outputPath Output path in database.
 	 * \param outputGuid Output instance guid.
-	 * \param buildParams Parameters which is passed from another pipeline during build.
+	 * \param buildParams Optional parameters which is passed from another pipeline during build.
 	 * \param reason Reason as why this asset needs to be rebuilt \sa PipelineBuildReason
 	 * \return True if successful.
 	 */
@@ -99,17 +99,20 @@ public:
 		uint32_t reason
 	) const = 0;
 
-	/*! \brief Build output instance.
+	/*! Build output instance.
 	 *
 	 * Build output instance from source asset.
 	 *
 	 * \param pipelineBuilder Pipeline builder.
 	 * \param sourceAsset Source asset object.
+	 * \param buildParams Optional parameters which is passed from another pipeline during build.
 	 * \return Output instance.
 	 */
 	virtual Ref< ISerializable > buildOutput(
 		IPipelineBuilder* pipelineBuilder,
-		const ISerializable* sourceAsset
+		const db::Instance* sourceInstance,
+		const ISerializable* sourceAsset,
+		const Object* buildParams
 	) const = 0;
 };
 

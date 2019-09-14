@@ -435,9 +435,9 @@ bool BakePipelineOperator::build(
 	const auto configuration = mandatory_non_null_type_cast< const BakeConfiguration* >(operatorData);
 	uint32_t configurationHash = DeepHash(configuration).get();
 
-	Guid layerHashSeedId = configuration->getSeedGuid().permutation(0);
-	Guid lightmapSeedId = configuration->getSeedGuid().permutation(1000000);
-	Guid irradianceGridSeedId = configuration->getSeedGuid().permutation(2000000);
+	Guid layerHashSeedId = pipelineBuilder->synthesizeOutputGuid(100000);
+	Guid lightmapSeedId = pipelineBuilder->synthesizeOutputGuid(100000);
+	Guid irradianceGridSeedId = pipelineBuilder->synthesizeOutputGuid(100000);
 
 	Ref< TracerTask > tracerTask = new TracerTask(
 		sourceInstance->getGuid(),

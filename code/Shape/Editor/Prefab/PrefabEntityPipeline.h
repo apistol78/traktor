@@ -1,6 +1,5 @@
 #pragma once
 
-#include <set>
 #include "World/Editor/EntityPipeline.h"
 
 // import/export mechanism.
@@ -27,17 +26,11 @@ public:
 
 	virtual TypeInfoSet getAssetTypes() const override final;
 
-	virtual bool buildDependencies(
-		editor::IPipelineDepends* pipelineDepends,
-		const db::Instance* sourceInstance,
-		const ISerializable* sourceAsset,
-		const std::wstring& outputPath,
-		const Guid& outputGuid
-	) const override final;
-
 	virtual Ref< ISerializable > buildOutput(
 		editor::IPipelineBuilder* pipelineBuilder,
-		const ISerializable* sourceAsset
+		const db::Instance* sourceInstance,
+		const ISerializable* sourceAsset,
+		const Object* buildParams
 	) const override final;
 
 private:
@@ -45,7 +38,6 @@ private:
 	float m_visualMeshSnap;
 	float m_collisionMeshSnap;
 	bool m_mergeCoplanar;
-	mutable std::set< Guid > m_usedGuids;
 };
 
 	}

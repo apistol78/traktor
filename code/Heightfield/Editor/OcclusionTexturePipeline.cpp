@@ -498,6 +498,7 @@ bool OcclusionTexturePipeline::buildOutput(
 	output->m_linearGamma = true;
 
 	return pipelineBuilder->buildOutput(
+		sourceInstance,
 		output,
 		outputPath,
 		outputGuid,

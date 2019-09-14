@@ -52,10 +52,10 @@ bool PipelineBuilderWrapper::build(const editor::IPipelineDependencySet* depende
 	return false;
 }
 
-Ref< ISerializable > PipelineBuilderWrapper::buildOutput(const ISerializable* sourceAsset)
+Ref< ISerializable > PipelineBuilderWrapper::buildOutput(const db::Instance* sourceInstance, const ISerializable* sourceAsset, const Object* buildParams)
 {
 	if (!sourceAsset)
-		return 0;
+		return nullptr;
 
 	uint32_t sourceHash = DeepHash(sourceAsset).get();
 
@@ -81,14 +81,14 @@ Ref< ISerializable > PipelineBuilderWrapper::buildOutput(const ISerializable* so
 	uint32_t pipelineHash;
 
 	if (!m_pipelineFactory->findPipelineType(type_of(sourceAsset), pipelineType, pipelineHash))
-		return 0;
+		return nullptr;
 
 	Ref< editor::IPipeline > pipeline = m_pipelineFactory->findPipeline(*pipelineType);
 	T_ASSERT(pipeline);
 
-	Ref< ISerializable > product = pipeline->buildOutput(this, sourceAsset);
+	Ref< ISerializable > product = pipeline->buildOutput(this, sourceInstance, sourceAsset, buildParams);
 	if (!product)
-		return 0;
+		return nullptr;
 
 	{
 		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_builtCacheLock);
@@ -102,13 +102,13 @@ Ref< ISerializable > PipelineBuilderWrapper::buildOutput(const ISerializable* so
 	return product;
 }
 
-bool PipelineBuilderWrapper::buildOutput(const ISerializable* sourceAsset, const std::wstring& outputPath, const Guid& outputGuid, const Object* buildParams)
+bool PipelineBuilderWrapper::buildOutput(const db::Instance* sourceInstance, const ISerializable* sourceAsset, const std::wstring& outputPath, const Guid& outputGuid, const Object* buildParams)
 {
 	const TypeInfo* pipelineType;
 	uint32_t pipelineHash;
 
 	if (!m_pipelineFactory->findPipelineType(type_of(sourceAsset), pipelineType, pipelineHash))
-		return 0;
+		return nullptr;
 
 	Ref< editor::IPipeline > pipeline = m_pipelineFactory->findPipeline(*pipelineType);
 	T_ASSERT(pipeline);
@@ -117,7 +117,7 @@ bool PipelineBuilderWrapper::buildOutput(const ISerializable* sourceAsset, const
 		this,
 		0,
 		0,
-		0,
+		sourceInstance,
 		sourceAsset,
 		0,
 		outputPath,
@@ -130,10 +130,16 @@ bool PipelineBuilderWrapper::buildOutput(const ISerializable* sourceAsset, const
 	return true;
 }
 
+Guid PipelineBuilderWrapper::synthesizeOutputGuid(uint32_t iterations)
+{
+	T_FATAL_ERROR;
+	return Guid();
+}
+
 Ref< ISerializable > PipelineBuilderWrapper::getBuildProduct(const ISerializable* sourceAsset)
 {
 	if (!sourceAsset)
-		return 0;
+		return nullptr;
 
 	uint32_t sourceHash = DeepHash(sourceAsset).get();
 
@@ -155,7 +161,7 @@ Ref< ISerializable > PipelineBuilderWrapper::getBuildProduct(const ISerializable
 		}
 	}
 
-	return 0;
+	return nullptr;
 }
 
 Ref< db::Instance > PipelineBuilderWrapper::createOutputInstance(const std::wstring& instancePath, const Guid& instanceGuid)
@@ -166,7 +172,7 @@ Ref< db::Instance > PipelineBuilderWrapper::createOutputInstance(const std::wstr
 	if (instanceGuid.isNull() || !instanceGuid.isValid())
 	{
 		log::error << L"Invalid guid for output instance" << Endl;
-		return 0;
+		return nullptr;
 	}
 
 	instance = m_outputDatabase->getInstance(instanceGuid);
@@ -195,7 +201,7 @@ Ref< db::Instance > PipelineBuilderWrapper::createOutputInstance(const std::wstr
 	if (instance)
 		return instance;
 	else
-		return 0;
+		return nullptr;
 }
 
 Ref< db::Database > PipelineBuilderWrapper::getOutputDatabase() const
@@ -221,18 +227,18 @@ Ref< IStream > PipelineBuilderWrapper::openFile(const Path& basePath, const std:
 
 	editor::AgentOpenFile agentOpenFile(basePath, fileName);
 	if (!m_transport->send(&agentOpenFile))
-		return 0;
+		return nullptr;
 
 	Ref< editor::AgentStream > agentStream;
 	if (m_transport->recv< editor::AgentStream >(60000, agentStream) <= 0)
-		return 0;
+		return nullptr;
 
 	Ref< IStream > stream = net::RemoteStream::connect(
 		net::SocketAddressIPv4(m_host, m_streamServerPort),
 		agentStream->getPublicId()
 	);
 	if (!stream)
-		return 0;
+		return nullptr;
 
 	return new BufferedStream(stream);
 }
@@ -240,13 +246,13 @@ Ref< IStream > PipelineBuilderWrapper::openFile(const Path& basePath, const std:
 Ref< IStream > PipelineBuilderWrapper::createTemporaryFile(const std::wstring& fileName)
 {
 	T_FATAL_ERROR;
-	return 0;
+	return nullptr;
 }
 
 Ref< IStream > PipelineBuilderWrapper::openTemporaryFile(const std::wstring& fileName)
 {
 	T_FATAL_ERROR;
-	return 0;
+	return nullptr;
 }
 
 }

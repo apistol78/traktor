@@ -1,7 +1,6 @@
 #include "Core/Serialization/AttributePrivate.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberRefArray.h"
-#include "Core/Serialization/MemberStaticArray.h"
 #include "Shape/Editor/Prefab/PrefabEntityData.h"
 #include "World/EntityData.h"
 
@@ -15,8 +14,6 @@ T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.shape.PrefabEntityData", 0, PrefabEntityDa
 PrefabEntityData::PrefabEntityData()
 :	m_partitionMesh(false)
 {
-	m_outputGuid[0] = Guid::create();
-	m_outputGuid[1] = Guid::create();
 }
 
 void PrefabEntityData::addEntityData(world::EntityData* entityData)
@@ -52,7 +49,6 @@ void PrefabEntityData::serialize(ISerializer& s)
 {
 	world::EntityData::serialize(s);
 
-	s >> MemberStaticArray< Guid, 2 >(L"outputGuid", m_outputGuid, AttributePrivate());
 	s >> MemberRefArray< world::EntityData >(L"entityData", m_entityData);
 	s >> Member< bool >(L"partitionMesh", m_partitionMesh);
 }

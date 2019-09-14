@@ -54,9 +54,7 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.BfnTexturePipeline", 4, BfnTextu
 
 TypeInfoSet BfnTexturePipeline::getAssetTypes() const
 {
-	TypeInfoSet typeSet;
-	typeSet.insert< BfnTextureAsset >();
-	return typeSet;
+	return makeTypeInfoSet< BfnTextureAsset >();
 }
 
 bool BfnTexturePipeline::buildDependencies(
@@ -154,10 +152,11 @@ bool BfnTexturePipeline::buildOutput(
 	if (!image || !output)
 	{
 		log::error << L"Unable to generate BFN texture; invalid option(s)" << Endl;
-		return 0;
+		return nullptr;
 	}
 
 	return pipelineBuilder->buildOutput(
+		sourceInstance,
 		output,
 		outputPath,
 		outputGuid,

@@ -34,14 +34,11 @@ public:
 
 	virtual void setTransform(const Transform& transform) override final;
 
-	const Guid& getOutputGuid(int32_t index) const { return m_outputGuid[index]; }
-
 	const RefArray< world::EntityData >& getEntityData() const { return m_entityData; }
 
 	bool partitionMesh() const { return m_partitionMesh; }
 
 private:
-	Guid m_outputGuid[2];
 	RefArray< world::EntityData > m_entityData;
 	bool m_partitionMesh;
 };

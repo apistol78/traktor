@@ -40,7 +40,9 @@ bool EffectEntityPipeline::buildDependencies(
 
 Ref< ISerializable > EffectEntityPipeline::buildOutput(
 	editor::IPipelineBuilder* pipelineBuilder,
-	const ISerializable* sourceAsset
+	const db::Instance* sourceInstance,
+	const ISerializable* sourceAsset,
+	const Object* buildParams
 ) const
 {
 	if (auto soundEventData = dynamic_type_cast< const SoundEventData* >(sourceAsset))
@@ -54,7 +56,7 @@ Ref< ISerializable > EffectEntityPipeline::buildOutput(
 			return nullptr;
 	}
 
-	return world::EntityPipeline::buildOutput(pipelineBuilder, sourceAsset);
+	return world::EntityPipeline::buildOutput(pipelineBuilder, sourceInstance, sourceAsset, buildParams);
 }
 
 	}

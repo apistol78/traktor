@@ -61,7 +61,7 @@ bool InputMappingPipeline::buildOutput(
 	uint32_t reason
 ) const
 {
-	Ref< InputMappingResource > mappingResource = checked_type_cast< InputMappingResource*, true >(buildOutput(pipelineBuilder, sourceAsset));
+	Ref< InputMappingResource > mappingResource = checked_type_cast< InputMappingResource*, true >(buildOutput(pipelineBuilder, sourceInstance, sourceAsset, buildParams));
 	if (!mappingResource)
 		return false;
 
@@ -82,7 +82,12 @@ bool InputMappingPipeline::buildOutput(
 	return true;
 }
 
-Ref< ISerializable > InputMappingPipeline::buildOutput(editor::IPipelineBuilder* pipelineBuilder, const ISerializable* sourceAsset) const
+Ref< ISerializable > InputMappingPipeline::buildOutput(
+	editor::IPipelineBuilder* pipelineBuilder,
+	const db::Instance* sourceInstance,
+	const ISerializable* sourceAsset,
+	const Object* buildParams
+) const
 {
 	const InputMappingAsset* inputAsset = checked_type_cast< const InputMappingAsset*, false >(sourceAsset);
 
@@ -97,7 +102,7 @@ Ref< ISerializable > InputMappingPipeline::buildOutput(editor::IPipelineBuilder*
 		if (!mergeInputAsset)
 		{
 			log::error << L"Input mapping pipeline failed; unable to read dependent input asset \"" << i->format() << L"\"" << Endl;
-			return 0;
+			return nullptr;
 		}
 
 		if (mergeInputAsset->getSourceData())

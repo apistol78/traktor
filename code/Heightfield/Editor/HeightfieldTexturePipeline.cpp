@@ -112,9 +112,7 @@ bool HeightfieldTexturePipeline::create(const editor::IPipelineSettings* setting
 
 TypeInfoSet HeightfieldTexturePipeline::getAssetTypes() const
 {
-	TypeInfoSet typeSet;
-	typeSet.insert< HeightfieldTextureAsset >();
-	return typeSet;
+	return makeTypeInfoSet< HeightfieldTextureAsset >();
 }
 
 bool HeightfieldTexturePipeline::buildDependencies(
@@ -237,6 +235,7 @@ bool HeightfieldTexturePipeline::buildOutput(
 		output->m_sharpenRadius = 0;
 
 		return pipelineBuilder->buildOutput(
+			sourceInstance,
 			output,
 			outputPath,
 			outputGuid,
@@ -282,6 +281,7 @@ bool HeightfieldTexturePipeline::buildOutput(
 		output->m_sharpenRadius = 0;
 
 		return pipelineBuilder->buildOutput(
+			sourceInstance,
 			output,
 			outputPath,
 			outputGuid,
@@ -323,6 +323,7 @@ bool HeightfieldTexturePipeline::buildOutput(
 		output->m_sharpenRadius = 0;
 
 		return pipelineBuilder->buildOutput(
+			sourceInstance,
 			output,
 			outputPath,
 			outputGuid,
@@ -413,6 +414,7 @@ bool HeightfieldTexturePipeline::buildOutput(
 		output->m_sharpenRadius = 0;
 
 		return pipelineBuilder->buildOutput(
+			sourceInstance,
 			output,
 			outputPath,
 			outputGuid,

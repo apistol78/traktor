@@ -23,8 +23,6 @@ class T_DLLCLASS BakeConfiguration : public ISerializable
 public:
 	BakeConfiguration();
 
-	const Guid& getSeedGuid() const { return m_seedGuid; }
-
 	bool traceDirect() const { return m_traceDirect; }
 
 	bool traceIndirect() const { return m_traceIndirect; }
@@ -52,7 +50,6 @@ public:
 	virtual void serialize(ISerializer& s) override final;
 
 private:
-	Guid m_seedGuid;
 	bool m_traceDirect;
 	bool m_traceIndirect;
 	bool m_traceIrradiance;

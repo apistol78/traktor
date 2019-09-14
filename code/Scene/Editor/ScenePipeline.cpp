@@ -152,7 +152,7 @@ bool ScenePipeline::buildOutput(
 			log::info << L"Building layer \"" << layer->getName() << L"\"..." << Endl;
 			for (const auto& assetEntityData : layer->getEntityData())
 			{
-				Ref< world::EntityData > outputEntityData = checked_type_cast< world::EntityData*, true >(pipelineBuilder->buildOutput(assetEntityData));
+				Ref< world::EntityData > outputEntityData = checked_type_cast< world::EntityData*, true >(pipelineBuilder->buildOutput(sourceInstance, assetEntityData));
 				if (outputEntityData)
 					groupEntityData->addEntityData(outputEntityData);
 			}
@@ -162,7 +162,7 @@ bool ScenePipeline::buildOutput(
 	}
 
 	// Build controller data.
-	Ref< ISceneControllerData > controllerData = checked_type_cast< ISceneControllerData*, true >(pipelineBuilder->buildOutput(sceneAsset->getControllerData()));
+	Ref< ISceneControllerData > controllerData = checked_type_cast< ISceneControllerData*, true >(pipelineBuilder->buildOutput(sourceInstance, sceneAsset->getControllerData()));
 
 	// Create output scene resource.
 	Ref< SceneResource > sceneResource = new SceneResource();
@@ -216,7 +216,9 @@ bool ScenePipeline::buildOutput(
 
 Ref< ISerializable > ScenePipeline::buildOutput(
 	editor::IPipelineBuilder* pipelineBuilder,
-	const ISerializable* sourceAsset
+	const db::Instance* sourceInstance,
+	const ISerializable* sourceAsset,
+	const Object* buildParams
 ) const
 {
 	return DeepClone(sourceAsset).create< SceneAsset >();

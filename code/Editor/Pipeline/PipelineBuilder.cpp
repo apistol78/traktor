@@ -34,6 +34,8 @@ namespace traktor
 		namespace
 		{
 
+const Guid c_synthesisSeedGuid(L"{59CFF56A-2A77-4218-AA06-69019B52B9B1}");
+
 class LogTargetFilter : public ILogTarget
 {
 public:
@@ -273,13 +275,13 @@ bool PipelineBuilder::build(const IPipelineDependencySet* dependencySet, bool re
 		log::info << L"Dispatching builds..." << Endl;
 
 	m_progress = 0;
-	m_progressEnd = m_workSet.size();
+	m_progressEnd = (int32_t)m_workSet.size();
 	m_succeeded = dependencyCount - m_progressEnd;
 	m_succeededBuilt = 0;
 	m_failed = 0;
 	m_cacheHit = 0;
 	m_cacheMiss = 0;
-	m_cacheVoid = 0;
+	m_cacheVoid = 0;	// No hash on source asset will result in a void.
 
 	if (!m_workSet.empty())
 	{
@@ -342,7 +344,7 @@ bool PipelineBuilder::build(const IPipelineDependencySet* dependencySet, bool re
 	return m_failed == 0;
 }
 
-Ref< ISerializable > PipelineBuilder::buildOutput(const ISerializable* sourceAsset)
+Ref< ISerializable > PipelineBuilder::buildOutput(const db::Instance* sourceInstance, const ISerializable* sourceAsset, const Object* buildParams)
 {
 	if (!sourceAsset)
 		return nullptr;
@@ -376,7 +378,7 @@ Ref< ISerializable > PipelineBuilder::buildOutput(const ISerializable* sourceAss
 	Ref< IPipeline > pipeline = m_pipelineFactory->findPipeline(*pipelineType);
 	T_ASSERT(pipeline);
 
-	Ref< ISerializable > product = pipeline->buildOutput(this, sourceAsset);
+	Ref< ISerializable > product = pipeline->buildOutput(this, sourceInstance, sourceAsset, buildParams);
 	if (!product)
 		return nullptr;
 
@@ -392,7 +394,7 @@ Ref< ISerializable > PipelineBuilder::buildOutput(const ISerializable* sourceAss
 	return product;
 }
 
-bool PipelineBuilder::buildOutput(const ISerializable* sourceAsset, const std::wstring& outputPath, const Guid& outputGuid, const Object* buildParams)
+bool PipelineBuilder::buildOutput(const db::Instance* sourceInstance, const ISerializable* sourceAsset, const std::wstring& outputPath, const Guid& outputGuid, const Object* buildParams)
 {
 	const TypeInfo* pipelineType;
 	uint32_t pipelineHash;
@@ -464,7 +466,7 @@ bool PipelineBuilder::buildOutput(const ISerializable* sourceAsset, const std::w
 		this,
 		nullptr,
 		nullptr,
-		nullptr,
+		sourceInstance,
 		sourceAsset,
 		0,
 		outputPath,
@@ -507,6 +509,13 @@ bool PipelineBuilder::buildOutput(const ISerializable* sourceAsset, const std::w
 	m_buildInstances.set(previousBuiltInstances);
 
 	return result;
+}
+
+Guid PipelineBuilder::synthesizeOutputGuid(uint32_t iterations)
+{
+	Guid* synthesisGuid = (Guid*)m_synthesisGuid.get();
+	T_ASSERT(synthesisGuid != nullptr);
+	return synthesisGuid->permutate(iterations);
 }
 
 Ref< ISerializable > PipelineBuilder::getBuildProduct(const ISerializable* sourceAsset)
@@ -600,7 +609,7 @@ Ref< const ISerializable > PipelineBuilder::getObjectReadOnly(const Guid& instan
 	if (instanceGuid.isNotNull())
 		return m_instanceCache->getObjectReadOnly(instanceGuid);
 	else
-		return 0;
+		return nullptr;
 }
 
 Ref< IStream > PipelineBuilder::openFile(const Path& basePath, const std::wstring& fileName)
@@ -680,6 +689,10 @@ IPipelineBuilder::BuildResult PipelineBuilder::performBuild(const IPipelineDepen
 	// need them to update the cache.
 	RefArray< db::Instance > builtInstances;
 	m_buildInstances.set(&builtInstances);
+
+	// Use guid of output as a basis for synthesis.
+	Guid synthesis = dependency->outputGuid.permutation(c_synthesisSeedGuid);
+	m_synthesisGuid.set(&synthesis);
 
 	LogTargetFilter infoTarget(log::info.getLocalTarget(), !m_verbose);
 	LogTargetFilter warningTarget(log::warning.getLocalTarget(), false);

@@ -1,4 +1,5 @@
 #include "Core/Io/FileSystem.h"
+#include "Core/Log/Log.h"
 #include "Database/Database.h"
 #include "Editor/IPipelineBuilder.h"
 #include "Editor/IPipelineDepends.h"
@@ -69,10 +70,10 @@ bool SolidEntityPipeline::buildDependencies(
 	}
 	else if (auto solidMaterial = dynamic_type_cast< const SolidMaterial* >(sourceAsset))
 	{
-		pipelineDepends->addDependency(solidMaterial->getAlbedo(), editor::PdfUse);
-		pipelineDepends->addDependency(solidMaterial->getNormal(), editor::PdfUse);
-		pipelineDepends->addDependency(solidMaterial->getRoughness(), editor::PdfUse);
-		pipelineDepends->addDependency(solidMaterial->getMetalness(), editor::PdfUse);
+		pipelineDepends->addDependency(solidMaterial->getAlbedo(), editor::PdfResource | editor::PdfBuild);
+		pipelineDepends->addDependency(solidMaterial->getNormal(), editor::PdfResource | editor::PdfBuild);
+		pipelineDepends->addDependency(solidMaterial->getRoughness(), editor::PdfResource | editor::PdfBuild);
+		pipelineDepends->addDependency(solidMaterial->getMetalness(), editor::PdfResource | editor::PdfBuild);
 	}
 	else if (auto box = dynamic_type_cast< const Box* >(sourceAsset))
 	{
@@ -100,7 +101,9 @@ bool SolidEntityPipeline::buildDependencies(
 
 Ref< ISerializable > SolidEntityPipeline::buildOutput(
 	editor::IPipelineBuilder* pipelineBuilder,
-	const ISerializable* sourceAsset
+	const db::Instance* sourceInstance,
+	const ISerializable* sourceAsset,
+	const Object* buildParams
 ) const
 {
 	if (auto solidEntityData = dynamic_type_cast< const SolidEntityData* >(sourceAsset))
@@ -111,8 +114,8 @@ Ref< ISerializable > SolidEntityPipeline::buildOutput(
 
 		model::ModelFormat::writeAny(L"data/Temp/Solid/" + solidEntityData->getName() + L".tmd", outputModel);
 
-		Guid outputRenderMeshGuid = solidEntityData->getOutputGuid().permutation(0);
-		Guid outputCollisionShapeGuid = solidEntityData->getOutputGuid().permutation(1);
+		Guid outputRenderMeshGuid = pipelineBuilder->synthesizeOutputGuid(1);
+		Guid outputCollisionShapeGuid = pipelineBuilder->synthesizeOutputGuid(1);
 
 		std::wstring outputRenderMeshPath = L"Generated/" + outputRenderMeshGuid.format();
 		std::wstring outputCollisionShapePath = L"Generated/" + outputCollisionShapeGuid.format();
@@ -149,6 +152,7 @@ Ref< ISerializable > SolidEntityPipeline::buildOutput(
 		visualMeshAsset->setMaterialTextures(materialTextures);
 
 		pipelineBuilder->buildOutput(
+			sourceInstance,
 			visualMeshAsset,
 			outputRenderMeshPath,
 			outputRenderMeshGuid,
@@ -166,6 +170,7 @@ Ref< ISerializable > SolidEntityPipeline::buildOutput(
 		physicsMeshAsset->setCalculateConvexHull(false);
 
 		pipelineBuilder->buildOutput(
+			sourceInstance,
 			physicsMeshAsset,
 			outputCollisionShapePath,
 			outputCollisionShapeGuid,
@@ -190,7 +195,9 @@ Ref< ISerializable > SolidEntityPipeline::buildOutput(
 	else
 		return world::EntityPipeline::buildOutput(
 			pipelineBuilder,
-			sourceAsset
+			sourceInstance,
+			sourceAsset,
+			buildParams
 		);
 }
 

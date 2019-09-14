@@ -159,11 +159,6 @@ void ObjectEditor::buildAssets(bool rebuild)
 	m_editor->buildAssets(rebuild);
 }
 
-bool ObjectEditor::buildAsset(const ISerializable* sourceAsset, const std::wstring& outputPath, const Guid& outputGuid, const Object* buildParams)
-{
-	return m_editor->buildAsset(sourceAsset, outputPath, outputGuid, buildParams);
-}
-
 void ObjectEditor::buildCancel()
 {
 	m_editor->buildCancel();

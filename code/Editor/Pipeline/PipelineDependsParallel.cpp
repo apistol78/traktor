@@ -365,7 +365,7 @@ void PipelineDependsParallel::updateDependencyHashes(
 			{
 				uint8_t buffer[4096];
 				Adler32 a32;
-				int32_t r;
+				int64_t r;
 
 				a32.begin();
 				while ((r = dataStream->read(buffer, sizeof(buffer))) > 0)
@@ -412,7 +412,7 @@ void PipelineDependsParallel::updateDependencyHashes(
 		{
 			uint8_t buffer[4096];
 			Adler32 a32;
-			int32_t r;
+			int64_t r;
 
 			a32.begin();
 			while ((r = fileStream->read(buffer, sizeof(buffer))) > 0)
