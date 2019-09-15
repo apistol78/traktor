@@ -108,7 +108,7 @@ bool PipelineBuilderWrapper::buildOutput(const db::Instance* sourceInstance, con
 	uint32_t pipelineHash;
 
 	if (!m_pipelineFactory->findPipelineType(type_of(sourceAsset), pipelineType, pipelineHash))
-		return nullptr;
+		return false;
 
 	Ref< editor::IPipeline > pipeline = m_pipelineFactory->findPipeline(*pipelineType);
 	T_ASSERT(pipeline);

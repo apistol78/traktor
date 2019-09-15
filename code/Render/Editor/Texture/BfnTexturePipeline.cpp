@@ -152,7 +152,7 @@ bool BfnTexturePipeline::buildOutput(
 	if (!image || !output)
 	{
 		log::error << L"Unable to generate BFN texture; invalid option(s)" << Endl;
-		return nullptr;
+		return false;
 	}
 
 	return pipelineBuilder->buildOutput(
