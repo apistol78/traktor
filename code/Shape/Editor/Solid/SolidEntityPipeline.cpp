@@ -16,7 +16,7 @@
 #include "Shape/Editor/Solid/PrimitiveEntityData.h"
 #include "Shape/Editor/Solid/SolidEntityData.h"
 #include "Shape/Editor/Solid/SolidEntityPipeline.h"
-#include "Shape/Editor/Solid/SolidModelGenerator.h"
+#include "Shape/Editor/Solid/SolidEntityReplicator.h"
 #include "Shape/Editor/Solid/SolidMaterial.h"
 #include "World/Entity/ComponentEntityData.h"
 
@@ -108,7 +108,7 @@ Ref< ISerializable > SolidEntityPipeline::buildOutput(
 {
 	if (auto solidEntityData = dynamic_type_cast< const SolidEntityData* >(sourceAsset))
 	{
-		Ref< model::Model > outputModel = SolidModelGenerator().createModel(pipelineBuilder, L"", solidEntityData);
+		Ref< model::Model > outputModel = SolidEntityReplicator().createModel(pipelineBuilder, L"", solidEntityData);
 		if (!outputModel)
 			return nullptr;
 
@@ -129,27 +129,27 @@ Ref< ISerializable > SolidEntityPipeline::buildOutput(
 		Ref< mesh::MeshAsset > visualMeshAsset = new mesh::MeshAsset();
 		visualMeshAsset->setMeshType(mesh::MeshAsset::MtStatic);
 
-		std::map< std::wstring, Guid > materialTextures;
-		for (const auto& material : outputModel->getMaterials())
-		{
-			Guid materialId(material.getName());
-			if (!materialId.isNotNull())
-				continue;
+		// std::map< std::wstring, Guid > materialTextures;
+		// for (const auto& material : outputModel->getMaterials())
+		// {
+		// 	Guid materialId(material.getName());
+		// 	if (!materialId.isNotNull())
+		// 		continue;
 
-			Ref< SolidMaterial > sm = pipelineBuilder->getSourceDatabase()->getObjectReadOnly< SolidMaterial >(materialId);
-			if (!sm)
-				continue;
+		// 	Ref< SolidMaterial > sm = pipelineBuilder->getSourceDatabase()->getObjectReadOnly< SolidMaterial >(materialId);
+		// 	if (!sm)
+		// 		continue;
 
-			if (sm->getAlbedo().isNotNull())
-				materialTextures[materialId.format() + L"_Albedo"] = sm->getAlbedo();
-			if (sm->getNormal().isNotNull())
-				materialTextures[materialId.format() + L"_Normal"] = sm->getNormal();
-			if (sm->getRoughness().isNotNull())
-				materialTextures[materialId.format() + L"_Roughness"] = sm->getRoughness();
-			if (sm->getMetalness().isNotNull())
-				materialTextures[materialId.format() + L"_Metalness"] = sm->getMetalness();
-		}
-		visualMeshAsset->setMaterialTextures(materialTextures);
+		// 	if (sm->getAlbedo().isNotNull())
+		// 		materialTextures[materialId.format() + L"_Albedo"] = sm->getAlbedo();
+		// 	if (sm->getNormal().isNotNull())
+		// 		materialTextures[materialId.format() + L"_Normal"] = sm->getNormal();
+		// 	if (sm->getRoughness().isNotNull())
+		// 		materialTextures[materialId.format() + L"_Roughness"] = sm->getRoughness();
+		// 	if (sm->getMetalness().isNotNull())
+		// 		materialTextures[materialId.format() + L"_Metalness"] = sm->getMetalness();
+		// }
+		// visualMeshAsset->setMaterialTextures(materialTextures);
 
 		pipelineBuilder->buildOutput(
 			sourceInstance,

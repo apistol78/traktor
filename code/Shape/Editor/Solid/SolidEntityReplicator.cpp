@@ -1,5 +1,3 @@
-#pragma optimize( "", off )
-
 #include "Database/Database.h"
 #include "Editor/IPipelineBuilder.h"
 #include "Mesh/MeshComponentData.h"
@@ -17,7 +15,7 @@
 #include "Shape/Editor/Solid/PrimitiveEntityData.h"
 #include "Shape/Editor/Solid/SolidEntityData.h"
 #include "Shape/Editor/Solid/SolidMaterial.h"
-#include "Shape/Editor/Solid/SolidModelGenerator.h"
+#include "Shape/Editor/Solid/SolidEntityReplicator.h"
 #include "World/Entity/ComponentEntityData.h"
 
 namespace traktor
@@ -25,14 +23,14 @@ namespace traktor
     namespace shape
     {
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.shape.SolidModelGenerator", 0, SolidModelGenerator, IModelGenerator)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.shape.SolidEntityReplicator", 0, SolidEntityReplicator, scene::IEntityReplicator)
 
-TypeInfoSet SolidModelGenerator::getSupportedTypes() const
+TypeInfoSet SolidEntityReplicator::getSupportedTypes() const
 {
     return makeTypeInfoSet< SolidEntityData >();
 }
 
-Ref< model::Model > SolidModelGenerator::createModel(
+Ref< model::Model > SolidEntityReplicator::createModel(
     editor::IPipelineBuilder* pipelineBuilder,
 	const std::wstring& assetPath,
     const Object* source
@@ -122,11 +120,10 @@ Ref< model::Model > SolidModelGenerator::createModel(
     return new model::Model(current);
 }
 
-Ref< Object > SolidModelGenerator::modifyOutput(
+Ref< Object > SolidEntityReplicator::modifyOutput(
     editor::IPipelineBuilder* pipelineBuilder,
 	const std::wstring& assetPath,
     const Object* source,
-    const Guid& lightmapId,
     const model::Model* model
 ) const
 {
@@ -142,28 +139,28 @@ Ref< Object > SolidModelGenerator::modifyOutput(
     Ref< mesh::MeshAsset > outputMeshAsset = new mesh::MeshAsset();
     outputMeshAsset->setMeshType(mesh::MeshAsset::MtStatic);
 
-	std::map< std::wstring, Guid > materialTextures;
-	materialTextures[L"__Illumination__"] = lightmapId;
-	for (const auto& material : model->getMaterials())
-	{
-		Guid materialId(material.getName());
-		if (!materialId.isNotNull())
-			continue;
+	// std::map< std::wstring, Guid > materialTextures;
+	// materialTextures[L"__Illumination__"] = lightmapId;
+	// for (const auto& material : model->getMaterials())
+	// {
+	// 	Guid materialId(material.getName());
+	// 	if (!materialId.isNotNull())
+	// 		continue;
 
-		Ref< SolidMaterial > sm = pipelineBuilder->getSourceDatabase()->getObjectReadOnly< SolidMaterial >(materialId);
-		if (!sm)
-			continue;
+	// 	Ref< SolidMaterial > sm = pipelineBuilder->getSourceDatabase()->getObjectReadOnly< SolidMaterial >(materialId);
+	// 	if (!sm)
+	// 		continue;
 
-		if (sm->getAlbedo().isNotNull())
-			materialTextures[materialId.format() + L"_Albedo"] = sm->getAlbedo();
-		if (sm->getNormal().isNotNull())
-			materialTextures[materialId.format() + L"_Normal"] = sm->getNormal();
-		if (sm->getRoughness().isNotNull())
-			materialTextures[materialId.format() + L"_Roughness"] = sm->getRoughness();
-		if (sm->getMetalness().isNotNull())
-			materialTextures[materialId.format() + L"_Metalness"] = sm->getMetalness();
-	}
-	outputMeshAsset->setMaterialTextures(materialTextures);
+	// 	if (sm->getAlbedo().isNotNull())
+	// 		materialTextures[materialId.format() + L"_Albedo"] = sm->getAlbedo();
+	// 	if (sm->getNormal().isNotNull())
+	// 		materialTextures[materialId.format() + L"_Normal"] = sm->getNormal();
+	// 	if (sm->getRoughness().isNotNull())
+	// 		materialTextures[materialId.format() + L"_Roughness"] = sm->getRoughness();
+	// 	if (sm->getMetalness().isNotNull())
+	// 		materialTextures[materialId.format() + L"_Metalness"] = sm->getMetalness();
+	// }
+	// outputMeshAsset->setMaterialTextures(materialTextures);
 
     pipelineBuilder->buildOutput(
 		nullptr,

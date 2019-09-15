@@ -2,6 +2,7 @@
 
 #include <string>
 #include "Core/Config.h"
+#include "Core/Guid.h"
 #include "Core/Settings/PropertyGroup.h"
 #include "Core/Math/Color4f.h"
 
@@ -45,6 +46,7 @@ public:
 		std::wstring name;
 		uint32_t channel;
 		bool anisotropic;
+		Guid texture;
 
 		Map()
 		:	name(L"")
@@ -53,10 +55,11 @@ public:
 		{
 		}
 
-		Map(const std::wstring& name_, uint32_t channel_, bool anisotropic_)
+		Map(const std::wstring& name_, uint32_t channel_, bool anisotropic_ = true, const Guid& texture_ = Guid())
 		:	name(name_)
 		,	channel(channel_)
 		,	anisotropic(anisotropic_)
+		,	texture(texture_)
 		{
 		}
 
