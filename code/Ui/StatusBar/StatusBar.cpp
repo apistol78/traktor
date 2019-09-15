@@ -66,8 +66,8 @@ void StatusBar::eventSize(SizeEvent* event)
 		Rect rc = getInnerRect();
 		Size preferedSize = child->getPreferedSize();
 
-		rc.top += dpi96(2);
-		rc.bottom -= dpi96(2);
+		rc.top += dpi96(3);
+		rc.bottom -= dpi96(3);
 		rc.right -= dpi96(20);
 		rc.left = rc.right - preferedSize.cx;
 

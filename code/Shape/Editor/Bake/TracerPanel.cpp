@@ -26,14 +26,8 @@ bool TracerPanel::create(ui::Widget* parent)
 	m_progressBar = new ui::ProgressBar();
 	m_progressBar->create(this, ui::WsDoubleBuffer, 0, 100);
 
-	Ref< ui::Container > container = new ui::Container();
-	container->create(this, ui::WsNone, new ui::TableLayout(L"100%,*", L"*", 0, 0));
-
 	m_staticDescription = new ui::Static();
-	m_staticDescription->create(container, i18n::Text(L"SHAPE_EDITOR_TRACER_IDLE"));
-
-	Ref< ui::Button > buttonPause = new ui::Button();
-	buttonPause->create(container, L"Run", ui::Button::WsToggle);
+	m_staticDescription->create(this, i18n::Text(L"SHAPE_EDITOR_TRACER_IDLE"));
 
 	addEventHandler< ui::TimerEvent >([&](ui::TimerEvent* event) {
 		auto processor = BakePipelineOperator::getTracerProcessor();
