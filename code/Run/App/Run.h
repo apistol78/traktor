@@ -72,6 +72,8 @@ public:
 
 	bool loadScript(const std::wstring& fileName);
 
+	std::wstring evaluate(const std::wstring& fileName);
+
 	static void registerRuntimeClasses(script::IScriptManager* scriptManager);
 
 private:

@@ -409,6 +409,79 @@ bool Run::loadScript(const std::wstring& fileName)
 	return m_scriptContext->load(blob);
 }
 
+std::wstring Run::evaluate(const std::wstring& fileName)
+{
+	StringOutputStream ss;
+
+	// Read entire script into memory.
+	Path pathName(fileName);
+	if (pathName.isRelative() && !cwd().empty())
+		pathName = cwd() + L"/" + pathName.getPathName();
+
+	Ref< IStream > file = FileSystem::getInstance().open(pathName, File::FmRead);
+	if (!file)
+	{
+		log::error << L"Unable to open file \"" << pathName.getPathName() << L"\"; no such file." << Endl;
+		return L"";
+	}
+
+	Utf8Encoding encoding;
+	BufferedStream stream(file);
+	StringReader reader(&stream, &encoding);
+
+	std::wstring tmp;
+	while (reader.readLine(tmp) >= 0)
+		ss << tmp << Endl;
+
+	safeClose(file);
+
+	std::wstring text = ss.str();
+	ss.reset();
+
+	// Create template script function and load into context.
+	Ref< ProduceOutput > o = new ProduceOutput();
+
+	ss << L"function __evaluate__(output)" << Endl;
+	size_t offset = 0;
+	for (;;)
+	{
+		size_t s = text.find(L"<!--", offset);
+		if (s == text.npos)
+			break;
+
+		size_t e = text.find(L"--!>", s);
+		if (e == text.npos)
+		{
+			log::error << L"Template syntax error; missing end." << Endl;
+			return L"";
+		}
+
+		int32_t id = o->addSection(text.substr(offset, s - offset));
+		ss << L"\toutput:printSection(" << id << L")" << Endl;
+		ss << text.substr(s + 5, e - s - 5) << Endl;
+
+		offset = e + 4;
+	}
+	int32_t id = o->addSection(text.substr(offset));
+	ss << L"\toutput:printSection(" << id << L")" << Endl;
+	ss << L"end" << Endl;
+
+	Ref< script::IScriptBlob > scriptBlob = m_scriptManager->compile(fileName, ss.str(), nullptr);
+	if (!scriptBlob)
+	{
+		log::error << L"Unable to compile script." << Endl;
+		return L"";
+	}
+
+	m_scriptContext->load(scriptBlob);
+
+	// Execute function and return result.
+	Any argv[] = { Any::fromObject(o) };
+	m_scriptContext->executeFunction("__evaluate__", sizeof_array(argv), argv);
+
+	return o->getProduct();
+}
+
 void Run::registerRuntimeClasses(script::IScriptManager* scriptManager)
 {
 	OrderedClassRegistrar registrar;
@@ -498,6 +571,7 @@ void Run::registerRuntimeClasses(script::IScriptManager* scriptManager)
 	classRun->addMethod("resolve", &Run::resolve);
 	classRun->addMethod("loadModule", &Run::loadModule);
 	classRun->addMethod("loadScript", &Run::loadScript);
+	classRun->addMethod("evaluate", &Run::evaluate);
 	registrar.registerClass(classRun);
 
 	// Register all classes to script manager; in class hierarchy order.
