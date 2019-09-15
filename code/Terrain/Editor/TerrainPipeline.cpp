@@ -118,9 +118,7 @@ bool TerrainPipeline::create(const editor::IPipelineSettings* settings)
 
 TypeInfoSet TerrainPipeline::getAssetTypes() const
 {
-	TypeInfoSet typeSet;
-	typeSet.insert< TerrainAsset >();
-	return typeSet;
+	return makeTypeInfoSet< TerrainAsset >();
 }
 
 bool TerrainPipeline::buildDependencies(
@@ -226,7 +224,7 @@ bool TerrainPipeline::buildOutput(
 	}
 
 	sourceData->close();
-	sourceData = 0;
+	sourceData = nullptr;
 
 	// Check if heightfield have cuts.
 	uint32_t cutsCount = 0;
@@ -269,7 +267,7 @@ bool TerrainPipeline::buildOutput(
 		}
 
 		file->close();
-		file = 0;
+		file = nullptr;
 
 		log::info << L"Terrain color map size " << colorImage->getWidth() << L" * " << colorImage->getHeight() << Endl;
 
@@ -281,7 +279,7 @@ bool TerrainPipeline::buildOutput(
 		colorTexture->m_hasAlpha = true;
 		colorTexture->m_linearGamma = true;
 		colorTexture->m_systemTexture = true;
-		pipelineBuilder->buildOutput(colorTexture, outputPath + L"/Colors", colorMapGuid, colorImage);
+		pipelineBuilder->buildOutput(sourceInstance, colorTexture, outputPath + L"/Colors", colorMapGuid, colorImage);
 	}
 
 	// Create splat texture.
@@ -301,7 +299,7 @@ bool TerrainPipeline::buildOutput(
 		}
 
 		file->close();
-		file = 0;
+		file = nullptr;
 
 		log::info << L"Terrain splat map size " << splatImage->getWidth() << L" * " << splatImage->getHeight() << Endl;
 
@@ -311,7 +309,7 @@ bool TerrainPipeline::buildOutput(
 		splatTexture->m_hasAlpha = true;
 		splatTexture->m_linearGamma = true;
 		splatTexture->m_systemTexture = true;
-		pipelineBuilder->buildOutput(splatTexture, outputPath + L"/Splat", splatMapGuid, splatImage);
+		pipelineBuilder->buildOutput(sourceInstance, splatTexture, outputPath + L"/Splat", splatMapGuid, splatImage);
 	}
 	else
 	{
@@ -325,14 +323,14 @@ bool TerrainPipeline::buildOutput(
 		splatTexture->m_hasAlpha = true;
 		splatTexture->m_linearGamma = true;
 		splatTexture->m_enableCompression = false;
-		pipelineBuilder->buildOutput(splatTexture, outputPath + L"/Splat", splatMapGuid, splatImage);
+		pipelineBuilder->buildOutput(sourceInstance, splatTexture, outputPath + L"/Splat", splatMapGuid, splatImage);
 	}
 
 	// Read surface shader and prepare with proper input and output ports.
 	Ref< const render::ShaderGraph > assetSurfaceShader = pipelineBuilder->getObjectReadOnly< render::ShaderGraph >(terrainAsset->getSurfaceShader());
 	if (!assetSurfaceShader)
 	{
-		log::error << L"Terrain pipeline failed; unable to get terrain template shader" << Endl;
+		log::error << L"Terrain pipeline failed; unable to get terrain template shader." << Endl;
 		return false;
 	}
 
@@ -397,6 +395,7 @@ bool TerrainPipeline::buildOutput(
 	std::wstring shaderPath = Path(outputPath).getPathOnly() + L"/" + outputGuid.format();
 
 	if (!pipelineBuilder->buildOutput(
+		sourceInstance,
 		terrainCoarseShader,
 		shaderPath + L"/Coarse",
 		terrainCoarseShaderGuid
@@ -407,6 +406,7 @@ bool TerrainPipeline::buildOutput(
 	}
 
 	if (!pipelineBuilder->buildOutput(
+		sourceInstance,
 		terrainDetailShader,
 		shaderPath + L"/Detail",
 		terrainDetailShaderGuid
@@ -417,6 +417,7 @@ bool TerrainPipeline::buildOutput(
 	}
 
 	if (!pipelineBuilder->buildOutput(
+		sourceInstance,
 		surfaceShader,
 		shaderPath + L"/Surface",
 		surfaceShaderGuid
@@ -448,7 +449,7 @@ bool TerrainPipeline::buildOutput(
 	Ref< db::Instance > outputInstance = pipelineBuilder->createOutputInstance(outputPath, outputGuid);
 	if (!outputInstance)
 	{
-		log::error << L"Unable to create output instance" << Endl;
+		log::error << L"Terrain pipeline failed; unable to create output instance." << Endl;
 		return false;
 	}
 
@@ -456,7 +457,7 @@ bool TerrainPipeline::buildOutput(
 
 	if (!outputInstance->commit())
 	{
-		log::error << L"Unable to commit output instance" << Endl;
+		log::error << L"Terrain pipeline failed; unable to commit output instance." << Endl;
 		return false;
 	}
 

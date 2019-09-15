@@ -74,7 +74,7 @@ bool HeightfieldPipeline::buildOutput(
 	if (!heightfield)
 	{
 		log::error << L"Heightfield pipeline failed; unable to read heights" << Endl;
-		return nullptr;
+		return false;
 	}
 
 	sourceData->close();
