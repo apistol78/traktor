@@ -332,6 +332,7 @@ void Material::Map::serialize(ISerializer& s)
 	s >> Member< std::wstring >(L"name", name);
 	s >> Member< uint32_t >(L"channel", channel);
 	s >> Member< bool >(L"anisotropic", anisotropic);
+	s >> Member< Guid >(L"texture", texture);
 }
 
 	}

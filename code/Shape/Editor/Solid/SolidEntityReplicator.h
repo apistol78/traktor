@@ -1,13 +1,21 @@
 #pragma once
 
-#include "Shape/Editor/IModelGenerator.h"
+#include "Scene/Editor/IEntityReplicator.h"
+
+// import/export mechanism.
+#undef T_DLLCLASS
+#if defined(T_SHAPE_EDITOR_EXPORT)
+#	define T_DLLCLASS T_DLLEXPORT
+#else
+#	define T_DLLCLASS T_DLLIMPORT
+#endif
 
 namespace traktor
 {
     namespace shape
     {
 
-class SolidModelGenerator : public IModelGenerator
+class T_DLLCLASS SolidEntityReplicator : public scene::IEntityReplicator
 {
     T_RTTI_CLASS;
 
@@ -24,7 +32,6 @@ public:
         editor::IPipelineBuilder* pipelineBuilder,
 		const std::wstring& assetPath,
         const Object* source,
-        const Guid& lightmapId,
         const model::Model* model
     ) const override final;
 };

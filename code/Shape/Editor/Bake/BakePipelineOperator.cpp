@@ -34,8 +34,8 @@
 #include "Render/Editor/Texture/CubeMap.h"
 #include "Render/Editor/Texture/TextureAsset.h"
 #include "Render/Resource/TextureResource.h"
+#include "Scene/Editor/IEntityReplicator.h"
 #include "Scene/Editor/SceneAsset.h"
-#include "Shape/Editor/IModelGenerator.h"
 #include "Shape/Editor/Traverser.h"
 #include "Shape/Editor/Bake/BakeConfiguration.h"
 #include "Shape/Editor/Bake/BakePipelineOperator.h"
@@ -396,13 +396,13 @@ bool BakePipelineOperator::create(const editor::IPipelineSettings* settings)
 		return false;
 
 	// Create instances of all concrete model generators.
-	TypeInfoSet modelGeneratorTypes;
-	type_of< IModelGenerator >().findAllOf(modelGeneratorTypes, false);
-	for (const auto& modelGeneratorType : modelGeneratorTypes)
+	TypeInfoSet entityReplicatorTypes;
+	type_of< scene::IEntityReplicator >().findAllOf(entityReplicatorTypes, false);
+	for (const auto& entityReplicatorType : entityReplicatorTypes)
 	{
-		Ref< IModelGenerator > modelGenerator = dynamic_type_cast< IModelGenerator* >(modelGeneratorType->createInstance());
-		if (modelGenerator)
-			m_modelGenerators.push_back(modelGenerator);
+		Ref< scene::IEntityReplicator > entityReplicator = dynamic_type_cast< scene::IEntityReplicator* >(entityReplicatorType->createInstance());
+		if (entityReplicator)
+			m_entityReplicators.push_back(entityReplicator);
 	}
 	
 	FileSystem::getInstance().makeAllDirectories(Path(L"data/Temp/Bake"));
@@ -497,12 +497,12 @@ bool BakePipelineOperator::build(
 				for (auto componentData : componentDatas)
 				{
 					// Find model synthesizer which can generate from current entity.
-					const IModelGenerator* modelGenerator = findModelGenerator(type_of(componentData));
-					if (!modelGenerator)
+					const scene::IEntityReplicator* entityReplicator = findEntityReplicator(type_of(componentData));
+					if (!entityReplicator)
 						continue;
 
 					// Synthesize a model which we can trace.
-					Ref< model::Model > model = modelGenerator->createModel(pipelineBuilder, m_assetPath, componentData);
+					Ref< model::Model > model = entityReplicator->createModel(pipelineBuilder, m_assetPath, componentData);
 					if (!model)
 						continue;
 
@@ -543,7 +543,7 @@ bool BakePipelineOperator::build(
 					for (auto& material : materials)
 					{
 						material.setBlendOperator(model::Material::BoDecal);
-						material.setLightMap(model::Material::Map(L"__Illumination__", channel, false));
+						material.setLightMap(model::Material::Map(L"__Illumination__", channel, false, lightmapId));
 
 						uint32_t flags = 0;
 						if (configuration->traceDirect())
@@ -571,11 +571,11 @@ bool BakePipelineOperator::build(
 
 					// Let model generator consume altered model and modify entity in ways
 					// which make sense for entity data.
-					Ref< world::IEntityComponentData > replaceComponentData = checked_type_cast< world::IEntityComponentData* >(modelGenerator->modifyOutput(
+					Ref< world::IEntityComponentData > replaceComponentData = checked_type_cast< world::IEntityComponentData* >(entityReplicator->modifyOutput(
 						pipelineBuilder,
 						m_assetPath,
 						componentData,
-						lightmapId,
+						// lightmapId,
 						model
 					));
 					if (replaceComponentData == nullptr)
@@ -592,12 +592,12 @@ bool BakePipelineOperator::build(
 				Guid lightmapId = lightmapSeedId.permutate();
 
 				// Find model synthesizer which can generate from current entity.
-				const IModelGenerator* modelGenerator = findModelGenerator(type_of(inoutEntityData));
-				if (!modelGenerator)
+				const scene::IEntityReplicator* entityReplicator = findEntityReplicator(type_of(inoutEntityData));
+				if (!entityReplicator)
 					return Traverser::VrContinue;
 
 				// Synthesize a model which we can trace.
-				Ref< model::Model > model = modelGenerator->createModel(pipelineBuilder, m_assetPath, inoutEntityData);
+				Ref< model::Model > model = entityReplicator->createModel(pipelineBuilder, m_assetPath, inoutEntityData);
 				if (!model)
 					return Traverser::VrFailed;
 
@@ -636,7 +636,7 @@ bool BakePipelineOperator::build(
 				for (auto& material : materials)
 				{
 					material.setBlendOperator(model::Material::BoDecal);
-					material.setLightMap(model::Material::Map(L"__Illumination__", channel, false));
+					material.setLightMap(model::Material::Map(L"__Illumination__", channel, false, lightmapId));
 
 					uint32_t flags = 0;
 					if (configuration->traceDirect())
@@ -664,11 +664,11 @@ bool BakePipelineOperator::build(
 
 				// Let model generator consume altered model and modify entity in ways
 				// which make sense for entity data.
-				inoutEntityData = checked_type_cast< world::EntityData* >(modelGenerator->modifyOutput(
+				inoutEntityData = checked_type_cast< world::EntityData* >(entityReplicator->modifyOutput(
 					pipelineBuilder,
 					m_assetPath,
 					inoutEntityData,
-					lightmapId,
+					// lightmapId,
 					model
 				));
 			}
@@ -765,13 +765,13 @@ TracerProcessor* BakePipelineOperator::getTracerProcessor()
 	return ms_tracerProcessor;
 }
 
-const IModelGenerator* BakePipelineOperator::findModelGenerator(const TypeInfo& sourceType) const
+const scene::IEntityReplicator* BakePipelineOperator::findEntityReplicator(const TypeInfo& sourceType) const
 {
-	for (auto modelGenerator : m_modelGenerators)
+	for (auto entityReplicator : m_entityReplicators)
 	{
-		auto supportedTypes = modelGenerator->getSupportedTypes();
+		auto supportedTypes = entityReplicator->getSupportedTypes();
 		if (supportedTypes.find(&sourceType) != supportedTypes.end())
-			return modelGenerator;
+			return entityReplicator;
 	}
 	return nullptr;
 }

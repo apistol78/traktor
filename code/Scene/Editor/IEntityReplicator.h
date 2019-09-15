@@ -3,11 +3,16 @@
 #include "Core/Object.h"
 #include "Core/Ref.h"
 
+// import/export mechanism.
+#undef T_DLLCLASS
+#if defined(T_SCENE_EDITOR_EXPORT)
+#	define T_DLLCLASS T_DLLEXPORT
+#else
+#	define T_DLLCLASS T_DLLIMPORT
+#endif
+
 namespace traktor
 {
-
-class Guid;
-
     namespace editor
     {
 
@@ -22,38 +27,44 @@ class Model;
 
     }
 
-    namespace shape
+    namespace scene
     {
 
-/*! Generate model from source object, such as mesh, terrain, spline, solid etc.
- * \ingroup Shape
+/*! Generate model from source entity or component data, such as mesh, terrain, spline, solid etc.
+ * \ingroup Scene
  */
-class IModelGenerator : public Object
+class T_DLLCLASS IEntityReplicator : public Object
 {
     T_RTTI_CLASS;
 
 public:
     virtual TypeInfoSet getSupportedTypes() const = 0;
 
+    /*! Create model replica from entity or component data.
+     *
+     * \param pipelineBuilder Pipeline builder.
+     * \param assetPath Asset path.
+     * \param source Source object, entity or component data.
+     * \return Model replica of entity or component.
+     */
     virtual Ref< model::Model > createModel(
         editor::IPipelineBuilder* pipelineBuilder,
 		const std::wstring& assetPath,
         const Object* source
     ) const = 0;
 
-    /*! Prepare source object to reference lightmap.
+    /*! Modify entity or component to use attributes from model.
      *
      * \param pipelineBuilder Pipeline builder.
+     * \param assetPath Asset path.
      * \param source Source object, entity data.
-     * \param lightmapId Lightmap which has been created onto model.
      * \param model Model which has been used in tracing, created from createModel method.
-     * \return Replacement object if necessary, will be replaced in output scene.
+     * \return Replacement entity/component data if necessary, will be replaced in output scene.
      */
     virtual Ref< Object > modifyOutput(
         editor::IPipelineBuilder* pipelineBuilder,
 		const std::wstring& assetPath,
         const Object* source,
-        const Guid& lightmapId,
         const model::Model* model
     ) const = 0;
 };

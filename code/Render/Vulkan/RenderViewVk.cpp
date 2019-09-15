@@ -360,6 +360,8 @@ bool RenderViewVk::begin(
 		VK_NULL_HANDLE,
 		&m_currentImageIndex
 	);
+	if (m_currentImageIndex >= m_primaryTargets.size())
+		return false;
 
 	// Reset descriptor pool.
 	if (vkResetDescriptorPool(m_logicalDevice, m_descriptorPool, 0) != VK_SUCCESS)

@@ -82,12 +82,6 @@ private:
 	Ref< db::Database > m_database;
 };
 
-Guid lookupTexture(const std::map< std::wstring, Guid >& textures, const std::wstring& name)
-{
-	std::map< std::wstring, Guid >::const_iterator i = textures.find(name);
-	return i != textures.end() ? i->second : Guid();
-}
-
 void propagateAnisotropic(render::ShaderGraph* shaderGraph, render::Texture* textureNode, bool anisotropic)
 {
 	std::vector< const render::InputPin* > destinationPins;
@@ -112,7 +106,6 @@ Ref< render::ShaderGraph > MaterialShaderGenerator::generate(
 	db::Database* database,
 	const model::Material& material,
 	const Guid& materialTemplate,
-	const std::map< std::wstring, Guid >& textures,
 	bool vertexColor
 ) const
 {
@@ -126,14 +119,14 @@ Ref< render::ShaderGraph > MaterialShaderGenerator::generate(
 		return nullptr;
 
 	// Patch material template shader with concrete implementations of value fetching fragments.
-	Guid diffuseTexture = lookupTexture(textures, material.getDiffuseMap().name);
-	Guid roughnessTexture = lookupTexture(textures, material.getRoughnessMap().name);
-	Guid specularTexture = lookupTexture(textures, material.getSpecularMap().name);
-	Guid metalnessTexture = lookupTexture(textures, material.getMetalnessMap().name);
-	Guid transparencyTexture = lookupTexture(textures, material.getTransparencyMap().name);
-	Guid emissiveTexture = lookupTexture(textures, material.getEmissiveMap().name);
-	Guid normalTexture = lookupTexture(textures, material.getNormalMap().name);
-	Guid lightMapTexture = lookupTexture(textures, material.getLightMap().name);
+	const Guid& diffuseTexture = material.getDiffuseMap().texture;
+	const Guid& roughnessTexture = material.getRoughnessMap().texture;
+	const Guid& specularTexture = material.getSpecularMap().texture;
+	const Guid& metalnessTexture = material.getMetalnessMap().texture;
+	const Guid& transparencyTexture = material.getTransparencyMap().texture;
+	const Guid& emissiveTexture = material.getEmissiveMap().texture;
+	const Guid& normalTexture = material.getNormalMap().texture;
+	const Guid& lightMapTexture = material.getLightMap().texture;
 
 	RefArray< render::External > externalNodes;
 	materialShaderGraph->findNodesOf< render::External >(externalNodes);

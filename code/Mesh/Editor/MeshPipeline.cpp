@@ -303,8 +303,44 @@ bool MeshPipeline::buildOutput(
 			return false;
 		}
 
-		for (AlignedVector< model::Material >::const_iterator j = modelMaterials.begin(); j != modelMaterials.end(); ++j)
-			materials[j->getName()] = *j;
+		// Merge materials, set textures specified in MeshAsset into material maps.
+		for (const auto& modelMaterial : modelMaterials)
+		{
+			const auto& name = modelMaterial.getName();
+
+			auto& m = materials[name];
+			m = modelMaterial;
+
+			model::Material::Map maps[] =
+			{
+				m.getDiffuseMap(),
+				m.getSpecularMap(),
+				m.getRoughnessMap(),
+				m.getMetalnessMap(),
+				m.getTransparencyMap(),
+				m.getEmissiveMap(),
+				m.getReflectiveMap(),
+				m.getNormalMap(),
+				m.getLightMap()
+			};
+			
+			for (auto& map : maps)
+			{
+				auto it = materialTextures.find(map.name);
+				if (it != materialTextures.end())
+					map.texture = it->second;
+			}
+
+			m.setDiffuseMap(maps[0]);
+			m.setSpecularMap(maps[1]);
+			m.setRoughnessMap(maps[2]);
+			m.setMetalnessMap(maps[3]);
+			m.setTransparencyMap(maps[4]);
+			m.setEmissiveMap(maps[5]);
+			m.setReflectiveMap(maps[6]);
+			m.setNormalMap(maps[7]);
+			m.setLightMap(maps[8]);
+		}
 
 		boundingBox.contain(model->getBoundingBox());
 		polygonCount += model->getPolygonCount();
@@ -367,7 +403,7 @@ bool MeshPipeline::buildOutput(
 				pipelineBuilder->getSourceDatabase(),
 				i->second,
 				materialTemplate,
-				materialTextures,
+				// materialTextures,
 				vertexColor
 			);
 			if (!materialShaderGraph)

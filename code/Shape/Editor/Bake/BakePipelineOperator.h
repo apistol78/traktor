@@ -15,10 +15,16 @@
 
 namespace traktor
 {
+	namespace scene
+	{
+
+class IEntityReplicator;
+
+	}
+
 	namespace shape
 	{
 
-class IModelGenerator;
 class TracerProcessor;
 
 class T_DLLCLASS BakePipelineOperator : public scene::IScenePipelineOperator
@@ -48,10 +54,10 @@ public:
 private:
 	std::wstring m_assetPath;
 	const TypeInfo* m_tracerType;
-	RefArray< const IModelGenerator > m_modelGenerators;
+	RefArray< const scene::IEntityReplicator > m_entityReplicators;
 	static Ref< TracerProcessor > ms_tracerProcessor;	
 
-	const IModelGenerator* findModelGenerator(const TypeInfo& sourceType) const;
+	const scene::IEntityReplicator* findEntityReplicator(const TypeInfo& sourceType) const;
 };
 
 	}

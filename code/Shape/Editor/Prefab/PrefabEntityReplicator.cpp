@@ -12,7 +12,7 @@
 #include "Physics/World/RigidBodyComponentData.h"
 #include "Shape/Editor/Traverser.h"
 #include "Shape/Editor/Prefab/PrefabEntityData.h"
-#include "Shape/Editor/Prefab/PrefabModelGenerator.h"
+#include "Shape/Editor/Prefab/PrefabEntityReplicator.h"
 #include "World/Entity/ComponentEntityData.h"
 
 namespace traktor
@@ -20,14 +20,14 @@ namespace traktor
     namespace shape
     {
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.shape.PrefabModelGenerator", 0, PrefabModelGenerator, IModelGenerator)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.shape.PrefabEntityReplicator", 0, PrefabEntityReplicator, scene::IEntityReplicator)
 
-TypeInfoSet PrefabModelGenerator::getSupportedTypes() const
+TypeInfoSet PrefabEntityReplicator::getSupportedTypes() const
 {
     return makeTypeInfoSet< PrefabEntityData >();
 }
 
-Ref< model::Model > PrefabModelGenerator::createModel(
+Ref< model::Model > PrefabEntityReplicator::createModel(
     editor::IPipelineBuilder* pipelineBuilder,
     const std::wstring& assetPath,
     const Object* source
@@ -112,11 +112,10 @@ Ref< model::Model > PrefabModelGenerator::createModel(
     return outputModel;
 }
 
-Ref< Object > PrefabModelGenerator::modifyOutput(
+Ref< Object > PrefabEntityReplicator::modifyOutput(
     editor::IPipelineBuilder* pipelineBuilder,
     const std::wstring& assetPath,
     const Object* source,
-    const Guid& lightmapId,
     const model::Model* model
 ) const
 {

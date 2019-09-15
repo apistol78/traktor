@@ -540,11 +540,12 @@ void MeshAssetEditor::createMaterialShader()
 	if (it2 != materialTemplates.end())
 		materialTemplate = it2->second;
 
+	// \tbd Use textures specified in MeshAsset.
+
 	Ref< render::ShaderGraph > materialShader = MaterialShaderGenerator().generate(
 		m_editor->getSourceDatabase(),
 		*it,
 		materialTemplate,
-		m_asset->getMaterialTextures(),
 		haveVertexColors(*m_model)
 	);
 	if (materialShader)
