@@ -289,13 +289,6 @@ bool MeshPipeline::buildOutput(
 			model::Transform(translate(-boundingBox.getCenter())).apply(*model);
 		}
 
-		if (asset->getCullDistantFaces())
-		{
-			log::info << L"Culling distant faces..." << Endl;
-			const Aabb3 viewerRegion(Vector4(-40.0f, -40.0f, -40.0f), Vector4(40.0f, 40.0f, 40.0f));
-			model::CullDistantFaces(viewerRegion).apply(*model);
-		}
-
 		const AlignedVector< model::Material >& modelMaterials = model->getMaterials();
 		if (model->getMaterials().empty())
 		{

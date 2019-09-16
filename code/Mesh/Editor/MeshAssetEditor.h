@@ -74,7 +74,6 @@ private:
 	Ref< ui::Container > m_containerMaterials;
 	Ref< ui::DropDown > m_dropMeshType;
 	Ref< ui::CheckBox > m_checkCenter;
-	Ref< ui::CheckBox > m_checkCullDistantFaces;
 	Ref< ui::Static > m_staticLodSteps;
 	Ref< ui::Slider > m_sliderLodSteps;
 	Ref< ui::Edit > m_editLodMaxDistance;
