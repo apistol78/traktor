@@ -342,8 +342,8 @@
       <second>Camera</second>
     </item>
     <item>
-      <first>SCENE_EDITOR_VIEW_CUBIC</first>
-      <second>Cube</second>
+      <first>SCENE_EDITOR_VIEW_PROBE</first>
+      <second>Probe</second>
     </item>
     <item>
       <first>SCENE_EDITOR_VIEW_FINAL</first>

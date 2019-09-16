@@ -128,29 +128,6 @@ Ref< ISerializable > SolidEntityPipeline::buildOutput(
 		// Build output mesh from merged model.
 		Ref< mesh::MeshAsset > visualMeshAsset = new mesh::MeshAsset();
 		visualMeshAsset->setMeshType(mesh::MeshAsset::MtStatic);
-
-		// std::map< std::wstring, Guid > materialTextures;
-		// for (const auto& material : outputModel->getMaterials())
-		// {
-		// 	Guid materialId(material.getName());
-		// 	if (!materialId.isNotNull())
-		// 		continue;
-
-		// 	Ref< SolidMaterial > sm = pipelineBuilder->getSourceDatabase()->getObjectReadOnly< SolidMaterial >(materialId);
-		// 	if (!sm)
-		// 		continue;
-
-		// 	if (sm->getAlbedo().isNotNull())
-		// 		materialTextures[materialId.format() + L"_Albedo"] = sm->getAlbedo();
-		// 	if (sm->getNormal().isNotNull())
-		// 		materialTextures[materialId.format() + L"_Normal"] = sm->getNormal();
-		// 	if (sm->getRoughness().isNotNull())
-		// 		materialTextures[materialId.format() + L"_Roughness"] = sm->getRoughness();
-		// 	if (sm->getMetalness().isNotNull())
-		// 		materialTextures[materialId.format() + L"_Metalness"] = sm->getMetalness();
-		// }
-		// visualMeshAsset->setMaterialTextures(materialTextures);
-
 		pipelineBuilder->buildOutput(
 			sourceInstance,
 			visualMeshAsset,
@@ -168,7 +145,6 @@ Ref< ISerializable > SolidEntityPipeline::buildOutput(
 		Ref< physics::MeshAsset > physicsMeshAsset = new physics::MeshAsset();
 		physicsMeshAsset->setMargin(0.0f);
 		physicsMeshAsset->setCalculateConvexHull(false);
-
 		pipelineBuilder->buildOutput(
 			sourceInstance,
 			physicsMeshAsset,

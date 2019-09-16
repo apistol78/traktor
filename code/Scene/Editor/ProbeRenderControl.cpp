@@ -45,7 +45,7 @@
 #include "Scene/Editor/ISceneControllerEditor.h"
 #include "Scene/Editor/ISceneEditorProfile.h"
 #include "Scene/Editor/IEntityEditor.h"
-#include "Scene/Editor/CubicRenderControl.h"
+#include "Scene/Editor/ProbeRenderControl.h"
 #include "Scene/Editor/ProbeLayerAttribute.h"
 #include "Scene/Editor/SceneEditorContext.h"
 #include "Scene/Editor/TransformChain.h"
@@ -134,9 +134,9 @@ int32_t translateMouseButton(int32_t uimb)
 
 		}
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.render.CubicRenderControl", CubicRenderControl, ISceneRenderControl)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ProbeRenderControl", ProbeRenderControl, ISceneRenderControl)
 
-CubicRenderControl::CubicRenderControl()
+ProbeRenderControl::ProbeRenderControl()
 :	m_worldRendererType(nullptr)
 ,	m_imageProcessQuality(world::QuDisabled)
 ,	m_shadowQuality(world::QuDisabled)
@@ -151,7 +151,7 @@ CubicRenderControl::CubicRenderControl()
 {
 }
 
-bool CubicRenderControl::create(ui::Widget* parent, SceneEditorContext* context, const TypeInfo& worldRendererType)
+bool ProbeRenderControl::create(ui::Widget* parent, SceneEditorContext* context, const TypeInfo& worldRendererType)
 {
 	m_context = context;
 	T_ASSERT(m_context);
@@ -181,7 +181,7 @@ bool CubicRenderControl::create(ui::Widget* parent, SceneEditorContext* context,
 	m_sliderIntensity->create(containerIntensity);
 	m_sliderIntensity->setRange(1, 100);
 	m_sliderIntensity->setValue(100);
-	m_sliderIntensity->addEventHandler< ui::ContentChangeEvent >(this, &CubicRenderControl::eventSliderIntensityChange);
+	m_sliderIntensity->addEventHandler< ui::ContentChangeEvent >(this, &ProbeRenderControl::eventSliderIntensityChange);
 
 	m_staticIntensity = new ui::Static();
 	m_staticIntensity->create(containerIntensity, L"100%");
@@ -191,11 +191,11 @@ bool CubicRenderControl::create(ui::Widget* parent, SceneEditorContext* context,
 	m_colorControl = new ui::ColorControl();
 	m_colorControl->create(m_toolBar, ui::WsBorder);
 	m_colorControl->setColor(Color4ub(128, 128, 128, 255));
-	m_colorControl->addEventHandler< ui::MouseButtonUpEvent >(this, &CubicRenderControl::eventColorClick);
+	m_colorControl->addEventHandler< ui::MouseButtonUpEvent >(this, &ProbeRenderControl::eventColorClick);
 
 	m_toolBar->addItem(new ui::ToolBarEmbed(m_colorControl, 32));
 
-	m_toolBar->addEventHandler< ui::ToolBarButtonClickEvent >(this, &CubicRenderControl::eventToolClick);
+	m_toolBar->addEventHandler< ui::ToolBarButtonClickEvent >(this, &ProbeRenderControl::eventToolClick);
 
 	m_renderWidget = new ui::Widget();
 	if (!m_renderWidget->create(m_container))
@@ -271,11 +271,11 @@ bool CubicRenderControl::create(ui::Widget* parent, SceneEditorContext* context,
 	if (!m_context->getResourceManager()->bind(c_idProbeTexturePreview, m_shader))
 		return false;
 
-	m_renderWidget->addEventHandler< ui::MouseButtonDownEvent >(this, &CubicRenderControl::eventButtonDown);
-	m_renderWidget->addEventHandler< ui::MouseButtonUpEvent >(this, &CubicRenderControl::eventButtonUp);
-	m_renderWidget->addEventHandler< ui::MouseMoveEvent >(this, &CubicRenderControl::eventMouseMove);
-	m_renderWidget->addEventHandler< ui::SizeEvent >(this, &CubicRenderControl::eventSize);
-	m_renderWidget->addEventHandler< ui::PaintEvent >(this, &CubicRenderControl::eventPaint);
+	m_renderWidget->addEventHandler< ui::MouseButtonDownEvent >(this, &ProbeRenderControl::eventButtonDown);
+	m_renderWidget->addEventHandler< ui::MouseButtonUpEvent >(this, &ProbeRenderControl::eventButtonUp);
+	m_renderWidget->addEventHandler< ui::MouseMoveEvent >(this, &ProbeRenderControl::eventMouseMove);
+	m_renderWidget->addEventHandler< ui::SizeEvent >(this, &ProbeRenderControl::eventSize);
+	m_renderWidget->addEventHandler< ui::PaintEvent >(this, &ProbeRenderControl::eventPaint);
 
 	updateWorldRenderer();
 
@@ -283,7 +283,7 @@ bool CubicRenderControl::create(ui::Widget* parent, SceneEditorContext* context,
 	return true;
 }
 
-void CubicRenderControl::destroy()
+void ProbeRenderControl::destroy()
 {
 	safeDestroy(m_worldRenderer);
 	safeClose(m_renderView);
@@ -291,7 +291,7 @@ void CubicRenderControl::destroy()
 	safeDestroy(m_container);
 }
 
-void CubicRenderControl::updateWorldRenderer()
+void ProbeRenderControl::updateWorldRenderer()
 {
 	safeDestroy(m_worldRenderer);
 
@@ -356,17 +356,17 @@ void CubicRenderControl::updateWorldRenderer()
 	}
 }
 
-void CubicRenderControl::setWorldRendererType(const TypeInfo& worldRendererType)
+void ProbeRenderControl::setWorldRendererType(const TypeInfo& worldRendererType)
 {
 	m_worldRendererType = &worldRendererType;
 	updateWorldRenderer();
 }
 
-void CubicRenderControl::setAspect(float aspect)
+void ProbeRenderControl::setAspect(float aspect)
 {
 }
 
-void CubicRenderControl::setQuality(world::Quality imageProcessQuality, world::Quality shadowQuality, world::Quality reflectionsQuality, world::Quality motionBlurQuality, world::Quality ambientOcclusionQuality, world::Quality antiAliasQuality)
+void ProbeRenderControl::setQuality(world::Quality imageProcessQuality, world::Quality shadowQuality, world::Quality reflectionsQuality, world::Quality motionBlurQuality, world::Quality ambientOcclusionQuality, world::Quality antiAliasQuality)
 {
 	m_imageProcessQuality = imageProcessQuality;
 	m_shadowQuality = shadowQuality;
@@ -377,7 +377,7 @@ void CubicRenderControl::setQuality(world::Quality imageProcessQuality, world::Q
 	updateWorldRenderer();
 }
 
-bool CubicRenderControl::handleCommand(const ui::Command& command)
+bool ProbeRenderControl::handleCommand(const ui::Command& command)
 {
 	if (command == L"Scene.Editor.CaptureAtOrigo")
 	{
@@ -493,35 +493,35 @@ bool CubicRenderControl::handleCommand(const ui::Command& command)
 	return true;
 }
 
-void CubicRenderControl::update()
+void ProbeRenderControl::update()
 {
 	m_renderWidget->update(nullptr, false);
 }
 
-bool CubicRenderControl::calculateRay(const ui::Point& position, Vector4& outWorldRayOrigin, Vector4& outWorldRayDirection) const
+bool ProbeRenderControl::calculateRay(const ui::Point& position, Vector4& outWorldRayOrigin, Vector4& outWorldRayDirection) const
 {
 	return false;
 }
 
-bool CubicRenderControl::calculateFrustum(const ui::Rect& rc, Frustum& outWorldFrustum) const
+bool ProbeRenderControl::calculateFrustum(const ui::Rect& rc, Frustum& outWorldFrustum) const
 {
 	return false;
 }
 
-bool CubicRenderControl::hitTest(const ui::Point& position) const
+bool ProbeRenderControl::hitTest(const ui::Point& position) const
 {
 	return m_renderWidget->hitTest(position);
 }
 
-void CubicRenderControl::moveCamera(MoveCameraMode mode, const Vector4& mouseDelta, const Vector4& viewDelta)
+void ProbeRenderControl::moveCamera(MoveCameraMode mode, const Vector4& mouseDelta, const Vector4& viewDelta)
 {
 }
 
-void CubicRenderControl::showSelectionRectangle(const ui::Rect& rect)
+void ProbeRenderControl::showSelectionRectangle(const ui::Rect& rect)
 {
 }
 
-void CubicRenderControl::capture(const Vector4& pivot)
+void ProbeRenderControl::capture(const Vector4& pivot)
 {
 	Ref< scene::Scene > sceneInstance = m_context->getScene();
 	if (!sceneInstance || !m_renderView)
@@ -675,14 +675,14 @@ void CubicRenderControl::capture(const Vector4& pivot)
 	}
 }
 
-void CubicRenderControl::eventSliderIntensityChange(ui::ContentChangeEvent* event)
+void ProbeRenderControl::eventSliderIntensityChange(ui::ContentChangeEvent* event)
 {
 	int32_t value = m_sliderIntensity->getValue();
 	m_staticIntensity->setText(toString(value) + L"%");
 	m_staticIntensity->update();
 }
 
-void CubicRenderControl::eventColorClick(ui::MouseButtonUpEvent* event)
+void ProbeRenderControl::eventColorClick(ui::MouseButtonUpEvent* event)
 {
 	ui::ColorDialog colorDialog;
 	colorDialog.create(
@@ -699,12 +699,12 @@ void CubicRenderControl::eventColorClick(ui::MouseButtonUpEvent* event)
 	colorDialog.destroy();
 }
 
-void CubicRenderControl::eventToolClick(ui::ToolBarButtonClickEvent* event)
+void ProbeRenderControl::eventToolClick(ui::ToolBarButtonClickEvent* event)
 {
 	handleCommand(event->getCommand());
 }
 
-void CubicRenderControl::eventButtonDown(ui::MouseButtonDownEvent* event)
+void ProbeRenderControl::eventButtonDown(ui::MouseButtonDownEvent* event)
 {
 	m_mousePosition0 =
 	m_mousePosition = event->getPosition();
@@ -715,7 +715,7 @@ void CubicRenderControl::eventButtonDown(ui::MouseButtonDownEvent* event)
 	m_renderWidget->update();
 }
 
-void CubicRenderControl::eventButtonUp(ui::MouseButtonUpEvent* event)
+void ProbeRenderControl::eventButtonUp(ui::MouseButtonUpEvent* event)
 {
 	m_mousePosition0 =
 	m_mousePosition = ui::Point(0, 0);
@@ -727,7 +727,7 @@ void CubicRenderControl::eventButtonUp(ui::MouseButtonUpEvent* event)
 	m_renderWidget->update();
 }
 
-void CubicRenderControl::eventMouseMove(ui::MouseMoveEvent* event)
+void ProbeRenderControl::eventMouseMove(ui::MouseMoveEvent* event)
 {
 	if (!m_renderWidget->hasCapture())
 		return;
@@ -751,7 +751,7 @@ void CubicRenderControl::eventMouseMove(ui::MouseMoveEvent* event)
 	m_mousePosition = mousePosition;
 }
 
-void CubicRenderControl::eventSize(ui::SizeEvent* event)
+void ProbeRenderControl::eventSize(ui::SizeEvent* event)
 {
 	if (!m_renderView || !m_renderWidget->isVisible(true))
 		return;
@@ -768,7 +768,7 @@ void CubicRenderControl::eventSize(ui::SizeEvent* event)
 	m_dirtySize = sz;
 }
 
-void CubicRenderControl::eventPaint(ui::PaintEvent* event)
+void ProbeRenderControl::eventPaint(ui::PaintEvent* event)
 {
 	if (!m_renderView)
 		return;

@@ -15,13 +15,6 @@
 
 namespace traktor
 {
-	namespace scene
-	{
-
-class IEntityReplicator;
-
-	}
-
 	namespace shape
 	{
 
@@ -54,10 +47,7 @@ public:
 private:
 	std::wstring m_assetPath;
 	const TypeInfo* m_tracerType;
-	RefArray< const scene::IEntityReplicator > m_entityReplicators;
 	static Ref< TracerProcessor > ms_tracerProcessor;	
-
-	const scene::IEntityReplicator* findEntityReplicator(const TypeInfo& sourceType) const;
 };
 
 	}

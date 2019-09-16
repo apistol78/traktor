@@ -69,31 +69,9 @@ Ref< HttpClientResult > net_HttpClient_post_3(HttpClient* self, const Url& url, 
 	return self->post(url, content);
 }
 
-std::wstring net_HttpRequest_getMethod(HttpRequest* self)
+int32_t net_HttpRequest_getMethod(HttpRequest* self)
 {
-	switch (self->getMethod())
-	{
-	case HttpRequest::MtGet:
-		return L"GET";
-	case HttpRequest::MtHead:
-		return L"HEAD";
-	case HttpRequest::MtPost:
-		return L"POST";
-	case HttpRequest::MtPut:
-		return L"PUT";
-	case HttpRequest::MtDelete:
-		return L"DELETE";
-	case HttpRequest::MtTrace:
-		return L"TRACE";
-	case HttpRequest::MtOptions:
-		return L"OPTIONS";
-	case HttpRequest::MtConnect:
-		return L"CONNECT";
-	case HttpRequest::MtPatch:
-		return L"PATCH";
-	default:
-		return L"";
-	}
+	return (int32_t)self->getMethod();
 }
 
 bool net_HttpServer_create(HttpServer* self, int32_t port)
@@ -407,6 +385,16 @@ void NetClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	registrar->registerClass(classHttpResponse);
 
 	auto classHttpRequest = new AutoRuntimeClass< HttpRequest >();
+	classHttpRequest->addConstant("MtUnknown", CastAny< int32_t >::set(HttpRequest::MtUnknown));
+	classHttpRequest->addConstant("MtGet", CastAny< int32_t >::set(HttpRequest::MtGet));
+	classHttpRequest->addConstant("MtHead", CastAny< int32_t >::set(HttpRequest::MtHead));
+	classHttpRequest->addConstant("MtPost", CastAny< int32_t >::set(HttpRequest::MtPost));
+	classHttpRequest->addConstant("MtPut", CastAny< int32_t >::set(HttpRequest::MtPut));
+	classHttpRequest->addConstant("MtDelete", CastAny< int32_t >::set(HttpRequest::MtDelete));
+	classHttpRequest->addConstant("MtTrace", CastAny< int32_t >::set(HttpRequest::MtTrace));
+	classHttpRequest->addConstant("MtOptions", CastAny< int32_t >::set(HttpRequest::MtOptions));
+	classHttpRequest->addConstant("MtConnect", CastAny< int32_t >::set(HttpRequest::MtConnect));
+	classHttpRequest->addConstant("MtPatch", CastAny< int32_t >::set(HttpRequest::MtPatch));
 	classHttpRequest->addProperty("method", &net_HttpRequest_getMethod);
 	classHttpRequest->addProperty("resource", &HttpRequest::getResource);
 	classHttpRequest->addMethod("hasValue", &HttpRequest::hasValue);

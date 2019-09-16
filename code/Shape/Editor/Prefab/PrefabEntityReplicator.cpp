@@ -10,7 +10,7 @@
 #include "Physics/StaticBodyDesc.h"
 #include "Physics/Editor/MeshAsset.h"
 #include "Physics/World/RigidBodyComponentData.h"
-#include "Shape/Editor/Traverser.h"
+#include "Scene/Editor/Traverser.h"
 #include "Shape/Editor/Prefab/PrefabEntityData.h"
 #include "Shape/Editor/Prefab/PrefabEntityReplicator.h"
 #include "World/Entity/ComponentEntityData.h"
@@ -39,7 +39,7 @@ Ref< model::Model > PrefabEntityReplicator::createModel(
     std::map< std::wstring, Guid > materialTextures;
 
     // Collect all models and remove all mesh components from prefab.
-    Traverser::visit(prefabEntityData, [&](const world::EntityData* inoutEntityData) -> Traverser::VisitorResult
+    scene::Traverser::visit(prefabEntityData, [&](const world::EntityData* inoutEntityData) -> scene::Traverser::VisitorResult
     {
         if (auto componentEntityData = dynamic_type_cast< const world::ComponentEntityData* >(inoutEntityData))
         {
@@ -49,7 +49,7 @@ Ref< model::Model > PrefabEntityReplicator::createModel(
                     meshComponentData->getMesh()
                 );
                 if (!meshAsset)
-                    return Traverser::VrFailed;
+                    return scene::Traverser::VrFailed;
 
                 // \tbd We should probably ignore mesh assets with custom shaders.
 
@@ -57,7 +57,7 @@ Ref< model::Model > PrefabEntityReplicator::createModel(
                     return pipelineBuilder->openFile(Path(assetPath), p.getOriginal());
                 });
                 if (!model)
-                    return Traverser::VrFailed;
+                    return scene::Traverser::VrFailed;
 
                 // Transform model into world space.
                 model::Transform(inoutEntityData->getTransform().toMatrix44()).apply(*model);
@@ -73,7 +73,7 @@ Ref< model::Model > PrefabEntityReplicator::createModel(
                 //componentEntityData->removeComponent(meshComponentData);
             }			
         }
-        return Traverser::VrContinue;
+        return scene::Traverser::VrContinue;
     });
 
     Ref< model::Model > outputModel = new model::Model();

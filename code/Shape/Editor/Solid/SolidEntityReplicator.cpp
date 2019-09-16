@@ -138,30 +138,6 @@ Ref< Object > SolidEntityReplicator::modifyOutput(
     // Build visual mesh.
     Ref< mesh::MeshAsset > outputMeshAsset = new mesh::MeshAsset();
     outputMeshAsset->setMeshType(mesh::MeshAsset::MtStatic);
-
-	// std::map< std::wstring, Guid > materialTextures;
-	// materialTextures[L"__Illumination__"] = lightmapId;
-	// for (const auto& material : model->getMaterials())
-	// {
-	// 	Guid materialId(material.getName());
-	// 	if (!materialId.isNotNull())
-	// 		continue;
-
-	// 	Ref< SolidMaterial > sm = pipelineBuilder->getSourceDatabase()->getObjectReadOnly< SolidMaterial >(materialId);
-	// 	if (!sm)
-	// 		continue;
-
-	// 	if (sm->getAlbedo().isNotNull())
-	// 		materialTextures[materialId.format() + L"_Albedo"] = sm->getAlbedo();
-	// 	if (sm->getNormal().isNotNull())
-	// 		materialTextures[materialId.format() + L"_Normal"] = sm->getNormal();
-	// 	if (sm->getRoughness().isNotNull())
-	// 		materialTextures[materialId.format() + L"_Roughness"] = sm->getRoughness();
-	// 	if (sm->getMetalness().isNotNull())
-	// 		materialTextures[materialId.format() + L"_Metalness"] = sm->getMetalness();
-	// }
-	// outputMeshAsset->setMaterialTextures(materialTextures);
-
     pipelineBuilder->buildOutput(
 		nullptr,
         outputMeshAsset,
@@ -174,7 +150,6 @@ Ref< Object > SolidEntityReplicator::modifyOutput(
     Ref< physics::MeshAsset > physicsMeshAsset = new physics::MeshAsset();
     physicsMeshAsset->setMargin(0.0f);
     physicsMeshAsset->setCalculateConvexHull(false);
-
     pipelineBuilder->buildOutput(
 		nullptr,
         physicsMeshAsset,

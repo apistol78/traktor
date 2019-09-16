@@ -60,12 +60,12 @@ class Entity;
 
 class SceneEditorContext;
 
-class CubicRenderControl : public ISceneRenderControl
+class ProbeRenderControl : public ISceneRenderControl
 {
 	T_RTTI_CLASS;
 
 public:
-	CubicRenderControl();
+	ProbeRenderControl();
 
 	bool create(ui::Widget* parent, SceneEditorContext* context, const TypeInfo& worldRendererType);
 

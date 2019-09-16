@@ -58,15 +58,11 @@ Ref< Object > MeshEntityReplicator::modifyOutput(
 	if (!meshAsset)
 		return nullptr;
 
-	Guid outputRenderMeshGuid = Guid(meshComponentData->getMesh()).permutation(1);
+	Guid outputRenderMeshGuid = pipelineBuilder->synthesizeOutputGuid(1);
 	std::wstring outputRenderMeshPath = L"Generated/" + outputRenderMeshGuid.format();
 
-	auto materialTextures = meshAsset->getMaterialTextures();
-	// materialTextures[L"__Illumination__"] = lightmapId;
-
     Ref< MeshAsset > outputMeshAsset = new MeshAsset();
-    outputMeshAsset->setMeshType(MeshAsset::MtStatic);
-    outputMeshAsset->setMaterialTextures(materialTextures);
+    outputMeshAsset->setMeshType(meshAsset->getMeshType());
 
     pipelineBuilder->buildOutput(
 		nullptr,
