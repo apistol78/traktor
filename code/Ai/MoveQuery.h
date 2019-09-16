@@ -36,9 +36,10 @@ public:
 	 *
 	 * \param currentPosition Current entity position.
 	 * \param outMoveToPosition Desired move to position to advance on movement query.
+	 * \param nodeDistanceThreshold Distance threshold until current position is determined to be at intermediate positions.
 	 * \return True if successfully determined "move to" position.
 	 */
-	bool update(const Vector4& currentPosition, Vector4& outMoveToPosition);
+	bool update(const Vector4& currentPosition, Vector4& outMoveToPosition, float nodeDistanceThreshold);
 
 private:
 	friend class NavMesh;

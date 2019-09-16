@@ -27,13 +27,13 @@ MoveQuery::~MoveQuery()
 	delete m_filter;
 }
 
-bool MoveQuery::update(const Vector4& currentPosition, Vector4& outMoveToPosition)
+bool MoveQuery::update(const Vector4& currentPosition, Vector4& outMoveToPosition, float nodeDistanceThreshold)
 {
 	while (m_steerIndex < m_steerPath.size())
 	{
 		const Vector4& steerTo = m_steerPath[m_steerIndex];
 		Scalar d = ((steerTo - currentPosition) * Vector4(1.0f, 0.0f, 1.0f)).length();
-		if (d > 7.5f)
+		if (d >= nodeDistanceThreshold)
 		{
 			outMoveToPosition = steerTo;
 			return true;
