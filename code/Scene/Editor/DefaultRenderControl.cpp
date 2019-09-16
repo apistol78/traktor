@@ -8,12 +8,12 @@
 #include "I18N/Text.h"
 #include "Scene/Editor/Camera.h"
 #include "Scene/Editor/CameraRenderControl.h"
-#include "Scene/Editor/CubicRenderControl.h"
 #include "Scene/Editor/DebugRenderControl.h"
 #include "Scene/Editor/DefaultRenderControl.h"
 #include "Scene/Editor/FinalRenderControl.h"
 #include "Scene/Editor/OrthogonalRenderControl.h"
 #include "Scene/Editor/PerspectiveRenderControl.h"
+#include "Scene/Editor/ProbeRenderControl.h"
 #include "Scene/Editor/SceneEditorContext.h"
 #include "Ui/Application.h"
 #include "Ui/Container.h"
@@ -91,7 +91,7 @@ bool DefaultRenderControl::create(ui::Widget* parent, SceneEditorContext* contex
 	m_toolView->add(i18n::Text(L"SCENE_EDITOR_VIEW_RIGHT"));
 	m_toolView->add(i18n::Text(L"SCENE_EDITOR_VIEW_DEBUG"));
 	m_toolView->add(i18n::Text(L"SCENE_EDITOR_VIEW_CAMERA"));
-	m_toolView->add(i18n::Text(L"SCENE_EDITOR_VIEW_CUBIC"));
+	m_toolView->add(i18n::Text(L"SCENE_EDITOR_VIEW_PROBE"));
 	m_toolView->add(i18n::Text(L"SCENE_EDITOR_VIEW_FINAL"));
 	m_toolView->select(viewType);
 
@@ -394,9 +394,9 @@ bool DefaultRenderControl::createRenderControl(int32_t type)
 		}
 		break;
 
-	case 9:	// Cubic
+	case 9:	// Probe
 		{
-			Ref< CubicRenderControl > renderControl = new CubicRenderControl();
+			Ref< ProbeRenderControl > renderControl = new ProbeRenderControl();
 			if (!renderControl->create(m_container, m_context, *worldRendererType))
 				return false;
 			m_renderControl = renderControl;

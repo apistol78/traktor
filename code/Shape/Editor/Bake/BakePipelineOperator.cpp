@@ -36,7 +36,7 @@
 #include "Render/Resource/TextureResource.h"
 #include "Scene/Editor/IEntityReplicator.h"
 #include "Scene/Editor/SceneAsset.h"
-#include "Shape/Editor/Traverser.h"
+#include "Scene/Editor/Traverser.h"
 #include "Shape/Editor/Bake/BakeConfiguration.h"
 #include "Shape/Editor/Bake/BakePipelineOperator.h"
 #include "Shape/Editor/Bake/IblProbe.h"
@@ -394,16 +394,6 @@ bool BakePipelineOperator::create(const editor::IPipelineSettings* settings)
 	m_tracerType = TypeInfo::find(tracerTypeName.c_str());
 	if (!m_tracerType)
 		return false;
-
-	// Create instances of all concrete model generators.
-	TypeInfoSet entityReplicatorTypes;
-	type_of< scene::IEntityReplicator >().findAllOf(entityReplicatorTypes, false);
-	for (const auto& entityReplicatorType : entityReplicatorTypes)
-	{
-		Ref< scene::IEntityReplicator > entityReplicator = dynamic_type_cast< scene::IEntityReplicator* >(entityReplicatorType->createInstance());
-		if (entityReplicator)
-			m_entityReplicators.push_back(entityReplicator);
-	}
 	
 	FileSystem::getInstance().makeAllDirectories(Path(L"data/Temp/Bake"));
 	return true;
@@ -483,7 +473,7 @@ bool BakePipelineOperator::build(
 		hashInstance->commit();
 
 		// Traverse and visit all entities in layer.
-		Traverser::visit(flattenedLayer, [&](Ref< world::EntityData >& inoutEntityData) -> Traverser::VisitorResult
+		scene::Traverser::visit(flattenedLayer, [&](Ref< world::EntityData >& inoutEntityData) -> scene::Traverser::VisitorResult
 		{
 			if (auto componentEntityData = dynamic_type_cast< world::ComponentEntityData* >(inoutEntityData))
 			{
@@ -497,7 +487,7 @@ bool BakePipelineOperator::build(
 				for (auto componentData : componentDatas)
 				{
 					// Find model synthesizer which can generate from current entity.
-					const scene::IEntityReplicator* entityReplicator = findEntityReplicator(type_of(componentData));
+					Ref< const scene::IEntityReplicator > entityReplicator = scene::IEntityReplicator::createEntityReplicator(type_of(componentData));
 					if (!entityReplicator)
 						continue;
 
@@ -543,7 +533,7 @@ bool BakePipelineOperator::build(
 					for (auto& material : materials)
 					{
 						material.setBlendOperator(model::Material::BoDecal);
-						material.setLightMap(model::Material::Map(L"__Illumination__", channel, false, lightmapId));
+						material.setLightMap(model::Material::Map(L"Lightmap", channel, false, lightmapId));
 
 						uint32_t flags = 0;
 						if (configuration->traceDirect())
@@ -592,14 +582,14 @@ bool BakePipelineOperator::build(
 				Guid lightmapId = lightmapSeedId.permutate();
 
 				// Find model synthesizer which can generate from current entity.
-				const scene::IEntityReplicator* entityReplicator = findEntityReplicator(type_of(inoutEntityData));
+				Ref< const scene::IEntityReplicator > entityReplicator = scene::IEntityReplicator::createEntityReplicator(type_of(inoutEntityData));
 				if (!entityReplicator)
-					return Traverser::VrContinue;
+					return scene::Traverser::VrContinue;
 
 				// Synthesize a model which we can trace.
 				Ref< model::Model > model = entityReplicator->createModel(pipelineBuilder, m_assetPath, inoutEntityData);
 				if (!model)
-					return Traverser::VrFailed;
+					return scene::Traverser::VrFailed;
 
 				// Ensure model is fit for tracing.
 				model->clear(model::Model::CfColors | model::Model::CfJoints);
@@ -636,7 +626,7 @@ bool BakePipelineOperator::build(
 				for (auto& material : materials)
 				{
 					material.setBlendOperator(model::Material::BoDecal);
-					material.setLightMap(model::Material::Map(L"__Illumination__", channel, false, lightmapId));
+					material.setLightMap(model::Material::Map(L"Lightmap", channel, false, lightmapId));
 
 					uint32_t flags = 0;
 					if (configuration->traceDirect())
@@ -660,7 +650,7 @@ bool BakePipelineOperator::build(
 					pipelineBuilder,
 					tracerTask
 				))
-					return Traverser::VrFailed;
+					return scene::Traverser::VrFailed;
 
 				// Let model generator consume altered model and modify entity in ways
 				// which make sense for entity data.
@@ -672,7 +662,7 @@ bool BakePipelineOperator::build(
 					model
 				));
 			}
-			return Traverser::VrContinue;
+			return scene::Traverser::VrContinue;
 		});
 
 		layers.push_back(flattenedLayer);
@@ -763,17 +753,6 @@ void BakePipelineOperator::setTracerProcessor(TracerProcessor* tracerProcessor)
 TracerProcessor* BakePipelineOperator::getTracerProcessor()
 {
 	return ms_tracerProcessor;
-}
-
-const scene::IEntityReplicator* BakePipelineOperator::findEntityReplicator(const TypeInfo& sourceType) const
-{
-	for (auto entityReplicator : m_entityReplicators)
-	{
-		auto supportedTypes = entityReplicator->getSupportedTypes();
-		if (supportedTypes.find(&sourceType) != supportedTypes.end())
-			return entityReplicator;
-	}
-	return nullptr;
 }
 
 	}

@@ -156,10 +156,6 @@ bool MeshAssetEditor::create(ui::Widget* parent, db::Instance* instance, ISerial
 	if (!m_checkCenter->create(containerLeft, i18n::Text(L"MESHASSET_EDITOR_CENTER")))
 		return false;
 
-	m_checkCullDistantFaces = new ui::CheckBox();
-	if (!m_checkCullDistantFaces->create(containerLeft, i18n::Text(L"MESHASSET_EDITOR_CULL_DISTANT_FACES")))
-		return false;
-
 	Ref< ui::Container > containerRight = new ui::Container();
 	containerRight->create(containerOptions, ui::WsNone, new ui::TableLayout(L"*,*", L"*", 0, 4));
 
@@ -249,7 +245,6 @@ void MeshAssetEditor::apply()
 	m_asset->setFileName(m_editFileName->getText());
 	m_asset->setMeshType(MeshAsset::MeshType(m_dropMeshType->getSelected()));
 	m_asset->setCenter(m_checkCenter->isChecked());
-	m_asset->setCullDistantFaces(m_checkCullDistantFaces->isChecked());
 	m_asset->setLodSteps(m_sliderLodSteps->getValue());
 	m_asset->setLodMaxDistance(parseString< float >(m_editLodMaxDistance->getText()));
 	m_asset->setLodCullDistance(parseString< float >(m_editLodCullDistance->getText()));
@@ -331,7 +326,6 @@ void MeshAssetEditor::updateFile()
 	m_editFileName->setText(assetRelPath.getPathName());
 	m_dropMeshType->select(m_asset->getMeshType());
 	m_checkCenter->setChecked(m_asset->getCenter());
-	m_checkCullDistantFaces->setChecked(m_asset->getCullDistantFaces());
 
 	m_staticLodSteps->setText(i18n::Format(L"MESHASSET_EDITOR_LOD_STEPS", m_asset->getLodSteps()));
 

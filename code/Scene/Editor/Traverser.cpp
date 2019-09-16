@@ -1,12 +1,12 @@
 #include "Core/Reflection/Reflection.h"
 #include "Core/Reflection/RfmObject.h"
 #include "Core/Reflection/RfpMemberType.h"
-#include "Shape/Editor/Traverser.h"
+#include "Scene/Editor/Traverser.h"
 #include "World/EntityData.h"
 
 namespace traktor
 {
-    namespace shape
+    namespace scene
     {
 
 void Traverser::visit(const ISerializable* object, const std::function< VisitorResult(const world::EntityData*) >& visitor)

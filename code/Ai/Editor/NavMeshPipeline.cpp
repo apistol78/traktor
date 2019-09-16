@@ -6,7 +6,6 @@
 #include "Ai/NavMeshResource.h"
 #include "Ai/Editor/NavMeshAsset.h"
 #include "Ai/Editor/NavMeshPipeline.h"
-#include "Animation/AnimatedMeshComponentData.h"
 #include "Core/Io/IStream.h"
 #include "Core/Io/Writer.h"
 #include "Core/Log/Log.h"
@@ -20,24 +19,16 @@
 #include "Core/Settings/PropertyBoolean.h"
 #include "Core/Settings/PropertyInteger.h"
 #include "Core/Settings/PropertyString.h"
-#include "Database/Database.h"
 #include "Database/Instance.h"
 #include "Editor/IPipelineBuilder.h"
 #include "Editor/IPipelineDepends.h"
 #include "Editor/IPipelineSettings.h"
-#include "Heightfield/Heightfield.h"
-#include "Heightfield/HeightfieldFormat.h"
-#include "Heightfield/Editor/ConvertHeightfield.h"
-#include "Heightfield/Editor/HeightfieldAsset.h"
-#include "Mesh/MeshComponentData.h"
-#include "Mesh/Editor/MeshAsset.h"
 #include "Model/Model.h"
 #include "Model/ModelFormat.h"
-#include "Model/Operations/MergeModel.h"
 #include "Model/Operations/Triangulate.h"
+#include "Scene/Editor/IEntityReplicator.h"
+#include "Scene/Editor/Traverser.h"
 #include "Terrain/OceanComponentData.h"
-#include "Terrain/TerrainComponentData.h"
-#include "Terrain/Editor/TerrainAsset.h"
 #include "World/Editor/LayerEntityData.h"
 #include "World/Entity/ComponentEntityData.h"
 #include "World/Entity/ExternalEntityData.h"
@@ -126,48 +117,6 @@ Ref< ISerializable > resolveAllExternal(PipelineType* pipeline, const ISerializa
 	return reflection->clone();
 }
 
-void collectNavigationEntities(const ISerializable* object, RefArray< world::EntityData >& outEntityData)
-{
-	Ref< Reflection > reflection = Reflection::create(object);
-
-	RefArray< ReflectionMember > objectMembers;
-	reflection->findMembers(RfpMemberType(type_of< RfmObject >()), objectMembers);
-
-	while (!objectMembers.empty())
-	{
-		Ref< RfmObject > objectMember = checked_type_cast< RfmObject*, false >(objectMembers.front());
-		objectMembers.pop_front();
-
-		if (world::ComponentEntityData* componentEntityData = dynamic_type_cast< world::ComponentEntityData* >(objectMember->get()))
-		{
-			if (
-				componentEntityData->getComponent< terrain::TerrainComponentData >() != nullptr ||
-				componentEntityData->getComponent< terrain::OceanComponentData >() != nullptr ||
-				componentEntityData->getComponent< mesh::MeshComponentData >() != nullptr ||
-				componentEntityData->getComponent< animation::AnimatedMeshComponentData >() != nullptr
-			)
-				outEntityData.push_back(componentEntityData);
-		}
-		else if (world::LayerEntityData* layerEntityData = dynamic_type_cast< world::LayerEntityData* >(objectMember->get()))
-		{
-			if (layerEntityData->isDynamic() || !layerEntityData->isInclude())
-				continue;
-
-			collectNavigationEntities(
-				objectMember->get(),
-				outEntityData
-			);
-		}
-		else if (world::EntityData* entityData = dynamic_type_cast< world::EntityData* >(objectMember->get()))
-		{
-			collectNavigationEntities(
-				objectMember->get(),
-				outEntityData
-			);
-		}
-	}
-}
-
 		}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.ai.NavMeshPipeline", 13, NavMeshPipeline, editor::DefaultPipeline)
@@ -243,130 +192,62 @@ bool NavMeshPipeline::buildOutput(
 
 	sourceData = resolveAllExternal(pipelineBuilder, sourceData);
 
-	RefArray< world::EntityData > entityDatas;
-	collectNavigationEntities(sourceData, entityDatas);
-
-	log::info << L"Found " << int32_t(entityDatas.size()) << L" entity(s)" << Endl;
-
 	AlignedVector< NavMeshSourceModel > navModels;
-
 	float oceanHeight = -std::numeric_limits< float >::max();
 	bool oceanClip = false;
 
-	// Load all mesh models, translate and triangulate em.
+	scene::Traverser::visit(sourceData, [&](const world::EntityData* entityData) -> scene::Traverser::VisitorResult
 	{
-		log::info << L"Loading/generating source models..." << Endl;
+		Ref< model::Model > model;
 
-		std::map< std::wstring, Ref< const model::Model > > modelCache;
-		for (auto entityData : entityDatas)
+		if (auto layerEntityData = dynamic_type_cast< const world::LayerEntityData* >(entityData))
 		{
-			if (auto componentEntityData = dynamic_type_cast< const world::ComponentEntityData* >(entityData))
-			{
-				if (auto meshComponentData = componentEntityData->getComponent< mesh::MeshComponentData >())
-				{
-					const resource::Id< mesh::IMesh >& mesh = meshComponentData->getMesh();
-
-					Ref< const mesh::MeshAsset > meshAsset = pipelineBuilder->getObjectReadOnly< mesh::MeshAsset >(mesh);
-					if (!meshAsset)
-						continue;
-
-					auto j = modelCache.find(meshAsset->getFileName().getOriginal());
-					if (j != modelCache.end())
-					{
-						navModels.push_back(NavMeshSourceModel(j->second, entityData->getTransform()));
-					}
-					else
-					{
-						Ref< model::Model > meshModel = model::ModelFormat::readAny(meshAsset->getFileName(), [&](const Path& p) {
-							return pipelineBuilder->openFile(Path(m_assetPath), p.getOriginal());
-						});
-						if (!meshModel)
-						{
-							log::warning << L"Unable to read model \"" << meshAsset->getFileName().getOriginal() << L"\"" << Endl;
-							continue;
-						}
-
-						model::Triangulate().apply(*meshModel);
-
-						modelCache[meshAsset->getFileName().getOriginal()] = meshModel;
-						navModels.push_back(NavMeshSourceModel(meshModel, entityData->getTransform()));
-					}
-				}
-
-				if (auto animatedMeshComponentData = componentEntityData->getComponent< animation::AnimatedMeshComponentData >())
-				{
-					const resource::Id< mesh::SkinnedMesh >& mesh = animatedMeshComponentData->getMesh();
-
-					Ref< const mesh::MeshAsset > meshAsset = pipelineBuilder->getObjectReadOnly< mesh::MeshAsset >(mesh);
-					if (!meshAsset)
-						continue;
-
-					auto j = modelCache.find(meshAsset->getFileName().getOriginal());
-					if (j != modelCache.end())
-					{
-						navModels.push_back(NavMeshSourceModel(j->second, entityData->getTransform()));
-					}
-					else
-					{
-						Ref< model::Model > meshModel = model::ModelFormat::readAny(meshAsset->getFileName(), [&](const Path& p) {
-							return pipelineBuilder->openFile(Path(m_assetPath), p.getOriginal());
-						});
-						if (!meshModel)
-						{
-							log::warning << L"Unable to read model \"" << meshAsset->getFileName().getOriginal() << L"\"" << Endl;
-							continue;
-						}
-
-						model::Triangulate().apply(*meshModel);
-
-						modelCache[meshAsset->getFileName().getOriginal()] = meshModel;
-						navModels.push_back(NavMeshSourceModel(meshModel, entityData->getTransform()));
-					}
-				}
-
-				if (auto terrainComponentData = componentEntityData->getComponent< terrain::TerrainComponentData >())
-				{
-					const resource::Id< terrain::Terrain >& terrain = terrainComponentData->getTerrain();
-
-					Ref< const terrain::TerrainAsset > terrainAsset = pipelineBuilder->getObjectReadOnly< terrain::TerrainAsset >(terrain);
-					if (!terrain)
-						continue;
-
-					Ref< db::Instance > heightfieldAssetInstance = pipelineBuilder->getSourceDatabase()->getInstance(terrainAsset->getHeightfield());
-					if (!heightfieldAssetInstance)
-						continue;
-
-					Ref< const hf::HeightfieldAsset > heightfieldAsset = heightfieldAssetInstance->getObject< const hf::HeightfieldAsset >();
-					if (!heightfieldAsset)
-						continue;
-
-					Ref< IStream > sourceData = heightfieldAssetInstance->readData(L"Data");
-					if (!sourceData)
-						continue;
-
-					Ref< hf::Heightfield > heightfield = hf::HeightfieldFormat().read(
-						sourceData,
-						heightfieldAsset->getWorldExtent()
-					);
-					if (!heightfield)
-						continue;
-
-					sourceData->close();
-					sourceData = nullptr;
-
-					Ref< model::Model > navModel = hf::ConvertHeightfield().convert(heightfield, 16, heightfieldAsset->getVistaDistance());
-					if (navModel != nullptr)
-						navModels.push_back(NavMeshSourceModel(navModel, Transform::identity()));
-				}
-
-				if (auto oceanComponentData = componentEntityData->getComponent< terrain::OceanComponentData >())
-				{
-					oceanHeight = max< float >(oceanHeight, componentEntityData->getTransform().translation().y());
-					oceanClip = true;
-				}
-			}
+			if (layerEntityData->isDynamic() || !layerEntityData->isInclude())
+				return scene::Traverser::VrSkip;
 		}
-	}
+		else if (auto componentEntityData = dynamic_type_cast< const world::ComponentEntityData* >(entityData))
+		{
+			RefArray< world::IEntityComponentData > componentDatas = componentEntityData->getComponents();
+			for (auto componentData : componentDatas)
+			{
+				// Find model synthesizer which can generate from current entity.
+				Ref< const scene::IEntityReplicator > entityReplicator = scene::IEntityReplicator::createEntityReplicator(type_of(componentData));
+				if (!entityReplicator)
+					continue;
+
+				// Synthesize a model which we can use for generating navmesh.
+				model = entityReplicator->createModel(pipelineBuilder, m_assetPath, componentData);
+			}
+
+			// Explicitly check for ocean component, need to discard everything below ocean level.
+			if (auto oceanComponentData = componentEntityData->getComponent< terrain::OceanComponentData >())
+			{
+				oceanHeight = max< float >(oceanHeight, componentEntityData->getTransform().translation().y());
+				oceanClip = true;
+			}			
+		}
+		else
+		{
+			// Find model synthesizer which can generate from current entity.
+			Ref< const scene::IEntityReplicator > entityReplicator = scene::IEntityReplicator::createEntityReplicator(type_of(entityData));
+			if (!entityReplicator)
+				return scene::Traverser::VrContinue;
+
+			// Synthesize a model which we can use for generating navmesh.
+			model = entityReplicator->createModel(pipelineBuilder, m_assetPath, entityData);
+		}
+
+		if (model)
+		{
+			model::Triangulate().apply(*model);
+			navModels.push_back(NavMeshSourceModel(
+				model,
+				entityData->getTransform()
+			));
+		}
+
+		return scene::Traverser::VrContinue;
+	});
 
 	// Calculate aabb and count.
 	Aabb3 navModelsAabb;

@@ -67,6 +67,9 @@ public:
         const Object* source,
         const model::Model* model
     ) const = 0;
+
+    /*! Create replicator implementation from data type. */
+    static Ref< const IEntityReplicator > createEntityReplicator(const TypeInfo& dataType);
 };
 
     }
