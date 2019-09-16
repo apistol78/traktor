@@ -13,10 +13,10 @@ namespace traktor
 		namespace
 		{
 
-Ref< BoxedVector4 > MoveQuery_update(MoveQuery* self, const Vector4& currentPosition)
+Ref< BoxedVector4 > MoveQuery_update(MoveQuery* self, const Vector4& currentPosition, float nodeDistanceThreshold)
 {
 	Vector4 moveToPosition;
-	if (self->update(currentPosition, moveToPosition))
+	if (self->update(currentPosition, moveToPosition, nodeDistanceThreshold))
 		return new BoxedVector4(moveToPosition);
 	else
 		return nullptr;
