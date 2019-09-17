@@ -125,7 +125,7 @@ private:
 	float m_meanDistSquared;
 };
 
-const Vector4 c_luminance(0.2126f, 0.7152f, 0.0722f, 0.0f);
+const Vector4 c_luminance(2.126f, 7.152f, 0.722f, 0.0f);
 
 		}
 
@@ -141,7 +141,7 @@ RayTracerEmbree::RayTracerEmbree()
 bool RayTracerEmbree::create(const BakeConfiguration* configuration)
 {
 	m_configuration = configuration;
-    m_maxDistance = 1000.0f;
+    m_maxDistance = 100.0f;
 
 	m_device = rtcNewDevice(nullptr);
 	m_scene = rtcNewScene(m_device);
@@ -153,7 +153,7 @@ bool RayTracerEmbree::create(const BakeConfiguration* configuration)
 	);
 
 	// Generate halton sequence.
-	uint32_t sampleCount = 250;
+	uint32_t sampleCount = 500;
 	sampleCount = std::max(sampleCount, m_configuration->getIndirectSampleCount() + 16);
 	sampleCount = std::max(sampleCount, m_configuration->getShadowSampleCount() + 16);
 	sampleCount = std::max(sampleCount, m_configuration->getIrradianceSampleCount() + 16);
@@ -374,9 +374,10 @@ Ref< render::SHCoeffs > RayTracerEmbree::traceProbe(const Vector4& position) con
 						hitNormal,
 						true
 					);
-					indirect += brdf * incoming * f * ct / p;
+					Color4f ind = brdf * incoming * f * ct / p;
 
-					variance.insert(dot3(indirect, c_luminance));
+					variance.insert(dot3(ind, c_luminance));
+					indirect += ind;
 				}
 			}
 
@@ -540,11 +541,12 @@ Ref< drawing::Image > RayTracerEmbree::traceIndirect(const GBuffer* gbuffer) con
 								);
 
 								Scalar ct = dot3(elm.normal, direction[j]);
-								indirect += brdf * incoming * f * ct / p;
+								Color4f ind = brdf * incoming * f * ct / p;
 
-								variance.insert(dot3(indirect, c_luminance));
+								variance.insert(dot3(ind, c_luminance));
+								indirect += ind;
 							}
-
+							
 							if (variance.stop(0.05f, 1.96f))
 								break;
 						}
@@ -908,7 +910,10 @@ Color4f RayTracerEmbree::sampleAnalyticalLights(
 		case Light::LtProbe:
 			{
 				Color4f ibl(0.0f, 0.0f, 0.0f, 0.0f);
-				for (int32_t i = 0; i < 200; ++i)
+				Variance variance;
+
+				int32_t i = 0;
+				for (; i < 500; ++i)
 				{
 					Vector4 direction = haltonDirection(normal, m_halton[i], random);
 
@@ -927,9 +932,14 @@ Color4f RayTracerEmbree::sampleAnalyticalLights(
 					if (r.tfar < 0.0f)
 						continue;
 
-					ibl += light.probe->sample(direction);
+					Color4f ind = light.probe->sample(direction);
+					ibl += ind;
+
+					variance.insert(dot3(ind, c_luminance));
+					if (variance.stop(0.05f, 1.96f))
+						break;
 				}
-				contribution += ibl / Scalar(200.0f);
+				contribution += ibl / Scalar(i + 1);
 			}
 			break;
 		}
