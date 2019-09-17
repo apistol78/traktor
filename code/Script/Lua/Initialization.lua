@@ -6,11 +6,15 @@
 -------------------------------------------------------------------------------
 -------------------------------------------------------------------------------
 
+local ID_VOID = 0
+local ID_CLASS = 1
+local ID_INSTANCE = 2
+
 -- Return true if table is a class.
 function isclass(t)
 	local tp = rawget(t, "__type")
 	if tp ~= nil then
-		return tp == "class"
+		return tp == ID_CLASS
 	else
 		return false
 	end
@@ -20,7 +24,7 @@ end
 function isinstance(t)
 	local tp = rawget(t, "__type")
 	if tp ~= nil then
-		return tp == "instance"
+		return tp == ID_INSTANCE
 	else
 		return false
 	end
@@ -69,8 +73,8 @@ function class(name, super)
 	end
 
 	-- Ensure these are written after "flatten".
-	cl.__name = "[" .. name .. "]"
-	cl.__type = "class"
+	-- cl.__name = "[" .. name .. "]"
+	cl.__type = ID_CLASS
 	cl.__super = super
 
 	setmetatable(cl, {
@@ -81,8 +85,8 @@ function class(name, super)
 			if alloc ~= nil then o = alloc(...) else o = {} end
 
 			-- Setup object.
-			o.__name = "[" .. name .. " instance]"
-			o.__type = "instance"
+			-- o.__name = "[" .. name .. " instance]"
+			o.__type = ID_INSTANCE
 			setmetatable(o, cl)
 
 			-- Invoke constructor.
