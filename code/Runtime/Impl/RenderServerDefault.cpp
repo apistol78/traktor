@@ -249,8 +249,16 @@ bool RenderServerDefault::create(const PropertyGroup* defaultSettings, PropertyG
 	else
 	{
 		int32_t defaultDenominator = settings->getProperty< int32_t >(L"Render.DisplayMode.Window/DefaultDenominator", 2);
-		m_renderViewDesc.displayMode.width = settings->getProperty< int32_t >(L"Render.DisplayMode.Window/Width", m_originalDisplayMode.width / defaultDenominator);
-		m_renderViewDesc.displayMode.height = settings->getProperty< int32_t >(L"Render.DisplayMode.Window/Height", m_originalDisplayMode.height / defaultDenominator);
+		int32_t defaultWidth = m_originalDisplayMode.width / defaultDenominator;
+		int32_t defaultHeight = m_originalDisplayMode.height / defaultDenominator;
+
+		// Clamp width if display is wider than 16:10.
+		float ratio = float(defaultWidth) / defaultHeight;
+		if (ratio > 16.0f / 10.0f)
+			defaultWidth = (defaultHeight * 16) / 10;
+
+		m_renderViewDesc.displayMode.width = settings->getProperty< int32_t >(L"Render.DisplayMode.Window/Width", defaultWidth);
+		m_renderViewDesc.displayMode.height = settings->getProperty< int32_t >(L"Render.DisplayMode.Window/Height", defaultHeight);
 	}
 
 	m_renderViewDesc.displayMode.colorBits = 24;
