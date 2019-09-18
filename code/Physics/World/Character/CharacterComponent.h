@@ -54,6 +54,8 @@ public:
 
 	void setHeadAngle(float headAngle);
 
+	float getHeadAngle() const;
+
 	/*! Move character.
 	 *
 	 * \param motion New velocity of character.
@@ -72,8 +74,6 @@ public:
 
 	/*! Return true if character is grounded. */
 	bool grounded() const;
-
-	float getHeadAngle() const;
 
 	/*! Character current velocity. */
 	const Vector4& getVelocity() const;
