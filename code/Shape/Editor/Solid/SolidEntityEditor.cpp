@@ -1,6 +1,5 @@
-#include "Core/Log/Log.h"
-#include "Core/Math/Format.h"
-
+#include "Core/Math/Winding3.h"
+#include "Model/Model.h"
 #include "Render/PrimitiveRenderer.h"
 #include "Shape/Editor/Solid/PrimitiveEntity.h"
 #include "Shape/Editor/Solid/PrimitiveEntityData.h"
@@ -61,38 +60,39 @@ void SolidEntityEditor::drawGuide(render::PrimitiveRenderer* primitiveRenderer) 
 	if (!solidEntity)
 		return;
 
+	Winding3 winding;
+
 	RefArray< PrimitiveEntity > primitiveEntities;
 	solidEntity->getEntitiesOf< PrimitiveEntity >(primitiveEntities);
-	//for (auto primitiveEntity : primitiveEntities)
-	//{
-	//	for (const auto& winding : primitiveEntity->getWindings())
-	//	{
-	//		for (uint32_t i = 0; i < winding.size(); ++i)
-	//		{
-	//			uint32_t j = (i + 1) % winding.size();
-	//			primitiveRenderer->drawLine(
-	//				primitiveEntity->getTransform() * winding[i],
-	//				primitiveEntity->getTransform() * winding[j],
-	//				Color4ub(180, 180, 255, 100)
-	//			);
-	//		}
-	//	}
-	//}
-
-	/*
-	for (const auto& winding : solidEntity->getWindings())
+	for (auto primitiveEntity : primitiveEntities)
 	{
-		for (uint32_t i = 0; i < winding.size(); ++i)
+		const model::Model* model = primitiveEntity->getModel();
+		if (!model)
+			continue;
+
+		const auto& vertices = model->getVertices();
+		const auto& positions = model->getPositions();
+
+		for (const auto& polygon : model->getPolygons())
 		{
-			uint32_t j = (i + 1) % winding.size();
-			primitiveRenderer->drawLine(
-				winding[i],
-				winding[j],
-				Color4ub(255, 255, 255, 255)
-			);
+			winding.clear();
+			for (uint32_t i = 0; i < polygon.getVertexCount(); ++i)
+			{
+				const auto& vertex = vertices[polygon.getVertex(i)];
+				const auto& position = positions[vertex.getPosition()];
+				winding.push(position);
+			}
+			for (uint32_t i = 0; i < winding.size(); ++i)
+			{
+				uint32_t j = (i + 1) % winding.size();
+				primitiveRenderer->drawLine(
+					primitiveEntity->getTransform() * winding[i],
+					primitiveEntity->getTransform() * winding[j],
+					Color4ub(180, 180, 255, 100)
+				);
+			}			
 		}
 	}
-	*/
 }
 
 	}

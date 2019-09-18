@@ -121,6 +121,11 @@ void CharacterComponent::setHeadAngle(float headAngle)
 	m_headAngle = headAngle;
 }
 
+float CharacterComponent::getHeadAngle() const
+{
+	return m_headAngle;
+}
+
 void CharacterComponent::move(const Vector4& motion, bool vertical)
 {
 	if (vertical)
@@ -140,11 +145,6 @@ bool CharacterComponent::jump()
 bool CharacterComponent::grounded() const
 {
 	return m_grounded;
-}
-
-float CharacterComponent::getHeadAngle() const
-{
-	return m_headAngle;
 }
 
 const Vector4& CharacterComponent::getVelocity() const
