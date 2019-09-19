@@ -152,11 +152,13 @@ BspNode::BspNode(BspNode&& node)
 ,   m_back(nullptr)
 {
 	m_plane = node.m_plane;
+#if !defined(_PS3)
 	m_polygons = std::move(node.m_polygons);
-
+#else
+	m_polygons = node.m_polygons;
+#endif
 	m_front = node.m_front;
 	node.m_front = nullptr;
-
 	m_back = node.m_back;
 	node.m_back = nullptr;
 }
@@ -347,7 +349,11 @@ BspNode& BspNode::operator = (const BspNode& node)
 BspNode& BspNode::operator = (BspNode&& node)
 {
 	m_plane = node.m_plane;
+#if !defined(_PS3)
 	m_polygons = std::move(node.m_polygons);
+#else
+	m_polygons = node.m_polygons;
+#endif
 	m_front = node.m_front;
 	node.m_front = nullptr;
 	m_back = node.m_back;
