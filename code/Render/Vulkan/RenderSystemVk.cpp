@@ -126,7 +126,7 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
 	vkEnumerateInstanceLayerProperties(&layerCount, layersAvailable.ptr());
 
 	AlignedVector< const char* > validationLayers;
-#if defined(_DEBUG)
+//#if defined(_DEBUG)
 	for (uint32_t i = 0; i < layerCount; ++i)
 	{
 		bool found = false;
@@ -138,7 +138,7 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
 		if (found)
 			validationLayers.push_back(strdup(layersAvailable[i].layerName));
 	}
-#endif
+//#endif
 
 	// Create Vulkan instance.
 	VkApplicationInfo ai = {};

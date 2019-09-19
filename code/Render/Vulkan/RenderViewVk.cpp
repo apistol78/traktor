@@ -353,7 +353,8 @@ bool RenderViewVk::begin(
 {
 	// Ensure all primary targets are "discarded", cannot
 	// keep target layouts from previous frames.
-	m_primaryTargets->discard();
+	for (auto primaryTarget : m_primaryTargets)
+		primaryTarget->discard();
 
 	// Get next target from swap chain.
     vkAcquireNextImageKHR(
