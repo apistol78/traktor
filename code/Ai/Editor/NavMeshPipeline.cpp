@@ -150,11 +150,8 @@ bool NavMeshPipeline::buildDependencies(
 	const Guid& outputGuid
 ) const
 {
-	const NavMeshAsset* asset = checked_type_cast< const NavMeshAsset*, false >(sourceAsset);
-
-	if (!m_build)
-		pipelineDepends->addDependency(asset->m_source, editor::PdfUse);
-
+	const NavMeshAsset* asset = mandatory_non_null_type_cast< const NavMeshAsset* >(sourceAsset);
+	pipelineDepends->addDependency(asset->m_source, editor::PdfUse);
 	return true;
 }
 
@@ -171,7 +168,7 @@ bool NavMeshPipeline::buildOutput(
 	uint32_t reason
 ) const
 {
-	const NavMeshAsset* asset = checked_type_cast< const NavMeshAsset*, false >(sourceAsset);
+	const NavMeshAsset* asset = mandatory_non_null_type_cast< const NavMeshAsset* >(sourceAsset);
 
 	if (!m_build)
 		return true;
