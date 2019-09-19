@@ -57,27 +57,22 @@ bool PrimitiveEditModifier::begin(
         if (!primitiveEntityData || !primitiveEntityData->m_shape)
             continue;
 
+        scene::TransformChain tc = transformChain;
+        tc.pushWorld(entityAdapter->getTransform().toMatrix44());
+
         AlignedVector< Vector4 > anchors;
         primitiveEntityData->m_shape->createAnchors(anchors);
+        for (uint32_t i = 0; i < anchors.size(); ++i)
+        {
+            Vector2 sa;
+            if (!transformChain.objectToScreen(anchors[i], sa))
+                continue;
 
-        // auto primitiveEntity = dynamic_type_cast< PrimitiveEntity* >(entityAdapter->getEntity());
-        // if (!primitiveEntity)
-        //     continue;
+            float distance = (sa - cursorPosition).length();
+            log::info << i << L". distance " << distance << Endl;
+        }
 
-        // scene::TransformChain tc = transformChain;
-        // tc.pushWorld(primitiveEntity->getTransform().toMatrix44());
-
-        // for (const auto& winding : primitiveEntity->getWindings())
-        // {
-        //     Vector2 center;
-        //     if (transformChain.objectToScreen(winding.center(), center))
-        //     {
-        //         float distance = (center - cursorPosition).length();
-        //         log::info << L"Distance " << distance << Endl;
-        //     }
-        // }
-
-        // tc.popWorld();
+        tc.popWorld();
     }
 
     return false;

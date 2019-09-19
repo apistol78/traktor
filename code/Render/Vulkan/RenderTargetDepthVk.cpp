@@ -252,5 +252,10 @@ void RenderTargetDepthVk::prepareAsTexture(VkCommandBuffer cmdBuffer)
 	m_imageLayout = layoutTransitionBarrier.newLayout;
 }
 
+void RenderTargetDepthVk::discard()
+{
+	m_imageLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+}
+
 	}
 }
