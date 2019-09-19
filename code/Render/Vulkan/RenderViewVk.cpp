@@ -351,6 +351,10 @@ bool RenderViewVk::begin(
 	const Clear* clear
 )
 {
+	// Ensure all primary targets are "discarded", cannot
+	// keep target layouts from previous frames.
+	m_primaryTargets->discard();
+
 	// Get next target from swap chain.
     vkAcquireNextImageKHR(
 		m_logicalDevice,

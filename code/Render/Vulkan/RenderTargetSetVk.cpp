@@ -122,6 +122,11 @@ ISimpleTexture* RenderTargetSetVk::getDepthTexture() const
 
 void RenderTargetSetVk::discard()
 {
+	for (auto colorTarget : m_colorTargets)
+		colorTarget->discard();
+
+	if (m_depthTarget)
+		m_depthTarget->discard();
 }
 
 bool RenderTargetSetVk::isContentValid() const

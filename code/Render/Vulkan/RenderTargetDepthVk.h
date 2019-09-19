@@ -64,6 +64,8 @@ public:
 
 	void prepareAsTexture(VkCommandBuffer cmdBuffer);
 
+	void discard();
+
 	VkFormat getVkFormat() const { return m_format; }
 
 	VkImage getVkImage() const { return m_image; }
