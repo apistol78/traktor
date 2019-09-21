@@ -4,6 +4,12 @@
 
 namespace traktor
 {
+	namespace
+	{
+	
+const float c_thickness = 0.001f;
+
+	}
 
 BspPolygon::BspPolygon()
 :	m_index(0)
@@ -59,9 +65,9 @@ int32_t BspPolygon::classify(const Plane& plane) const
 	for (size_t i = 0; i < m_vertices.size(); ++i)
 	{
 		Scalar d = plane.distance(m_vertices[i].position);
-		if (d >= FUZZY_EPSILON)
+		if (d > c_thickness)
 			side[0]++;
-		else if (d <= -FUZZY_EPSILON)
+		else if (d < -c_thickness)
 			side[1]++;
 	}
 	if (side[0] && !side[1])
@@ -107,11 +113,13 @@ void BspPolygon::split(const Plane& plane, AlignedVector< BspPolygon >& outCopla
 			Scalar da = plane.distance(a.position);
 			Scalar db = plane.distance(b.position);
 
-			if ((da <= -FUZZY_EPSILON && db >= FUZZY_EPSILON) || (da >= FUZZY_EPSILON && db <= -FUZZY_EPSILON))
+			if (
+				(da < -c_thickness && db > -c_thickness) ||
+				(da >  c_thickness && db <  c_thickness)
+			)
 			{
 				Scalar k;
 				plane.segmentIntersection(a.position, b.position, k);
-				T_ASSERT(k >= 0.0f && k <= 1.0f);
 
 				BspVertex p;
 				p.position = lerp(a.position, b.position, k);
@@ -124,16 +132,22 @@ void BspPolygon::split(const Plane& plane, AlignedVector< BspPolygon >& outCopla
 				bp.addVertex(p);
 			}
 
-			if (da >= -FUZZY_EPSILON)
+			if (da >= c_thickness)
 				fp.addVertex(a);
-			if (da <= FUZZY_EPSILON)
+			if (da <= -c_thickness)
 				bp.addVertex(a);
 		}
 
 		if (fp.getVertices().size() < 3)
+		{
+			bp = *this;
 			outFront.pop_back();
+		}
 		if (bp.getVertices().size() < 3)
+		{
+			fp = *this;
 			outBack.pop_back();
+		}
 	}
 }
 
@@ -392,12 +406,16 @@ BspNode& BspNode::operator = (const BspNode& node)
 
 BspNode& BspNode::operator = (BspNode&& node)
 {
+	delete m_front;
+	delete m_back;
+
 	m_plane = node.m_plane;
 #if !defined(_PS3)
 	m_polygons = std::move(node.m_polygons);
 #else
 	m_polygons = node.m_polygons;
 #endif
+
 	m_front = node.m_front;
 	node.m_front = nullptr;
 	m_back = node.m_back;
