@@ -17,7 +17,7 @@ namespace traktor
 template <
 	typename ClassType
 >
-struct Unknown : public IRuntimeDispatch
+struct Unknown final : public IRuntimeDispatch
 {
 	T_NO_COPY_CLASS(Unknown);
 

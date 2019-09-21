@@ -28,7 +28,7 @@ namespace traktor
  * time.
  */
 template < typename ClassType >
-class AutoRuntimeClass : public RuntimeClass
+class AutoRuntimeClass final : public RuntimeClass
 {
 public:
 	T_NO_COPY_CLASS(AutoRuntimeClass);

@@ -19,7 +19,7 @@ template <
 	typename ReturnType,
 	typename Argument1Type
 >
-struct Operator : public IRuntimeDispatch
+struct Operator final : public IRuntimeDispatch
 {
 	T_NO_COPY_CLASS(Operator);
 

@@ -102,24 +102,24 @@ bool Boolean::apply(Model& model) const
 	}
 
 	BspNode A;
-	A.build(polygonsA);
+	A.build(polygonsA, false);
 
 	BspNode B;
-	B.build(polygonsB);
+	B.build(polygonsB, false);
 
 	BspNode C;
 	switch (m_operation)
 	{
 	case BoUnion:
-		C = A.unioon(B);
+		C = A.unioon(B, false);
 		break;
 
 	case BoIntersection:
-		C = A.intersection(B);
+		C = A.intersection(B, false);
 		break;
 
 	case BoDifference:
-		C = A.difference(B);
+		C = A.difference(B, false);
 		break;
 	}
 
