@@ -2,8 +2,8 @@
 #include "Core/Io/StringOutputStream.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Misc/String.h"
-#include "Scene/Editor/DebugRenderControl.h"
 #include "Scene/Editor/SceneEditorContext.h"
+#include "Scene/Editor/RenderControls/DebugRenderControl.h"
 #include "Render/IRenderSystem.h"
 #include "Render/IRenderView.h"
 #include "Render/ScreenRenderer.h"
@@ -277,8 +277,8 @@ void DebugRenderControl::eventPaint(ui::PaintEvent* event)
 
 			ui::Size ext = canvas.getFontMetric().getExtent(debugTargets[i].name);
 
-			int32_t x = innerSize.cx * (ox * 0.5f + 0.5f);
-			int32_t y = innerSize.cy * (0.5f - oy * 0.5f) - ext.cy;
+			int32_t x = int32_t(innerSize.cx * (ox * 0.5f + 0.5f));
+			int32_t y = int32_t(innerSize.cy * (0.5f - oy * 0.5f) - ext.cy);
 
 			StringOutputStream ss;
 			ss << debugTargets[i].name;
