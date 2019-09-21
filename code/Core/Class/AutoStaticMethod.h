@@ -18,7 +18,7 @@ template <
 	typename ClassType,
 	typename ReturnType
 >
-struct StaticMethod_0 : public IRuntimeDispatch
+struct StaticMethod_0 final : public IRuntimeDispatch
 {
 	T_NO_COPY_CLASS(StaticMethod_0);
 
@@ -46,7 +46,7 @@ struct StaticMethod_0 : public IRuntimeDispatch
 template <
 	typename ClassType
 >
-struct StaticMethod_0 < ClassType, void > : public IRuntimeDispatch
+struct StaticMethod_0 < ClassType, void > final : public IRuntimeDispatch
 {
 	T_NO_COPY_CLASS(StaticMethod_0);
 
@@ -76,7 +76,7 @@ template <
 	typename ReturnType,
 	typename Argument1Type
 >
-struct StaticMethod_1 : public IRuntimeDispatch
+struct StaticMethod_1 final : public IRuntimeDispatch
 {
 	T_NO_COPY_CLASS(StaticMethod_1);
 
@@ -110,7 +110,7 @@ template <
 	typename ClassType,
 	typename Argument1Type
 >
-struct StaticMethod_1 < ClassType, void, Argument1Type > : public IRuntimeDispatch
+struct StaticMethod_1 < ClassType, void, Argument1Type > final : public IRuntimeDispatch
 {
 	T_NO_COPY_CLASS(StaticMethod_1);
 
@@ -146,7 +146,7 @@ template <
 	typename Argument1Type,
 	typename Argument2Type
 >
-struct StaticMethod_2 : public IRuntimeDispatch
+struct StaticMethod_2 final : public IRuntimeDispatch
 {
 	T_NO_COPY_CLASS(StaticMethod_2);
 
@@ -183,7 +183,7 @@ template <
 	typename Argument1Type,
 	typename Argument2Type
 >
-struct StaticMethod_2 < ClassType, void, Argument1Type, Argument2Type > : public IRuntimeDispatch
+struct StaticMethod_2 < ClassType, void, Argument1Type, Argument2Type > final : public IRuntimeDispatch
 {
 	T_NO_COPY_CLASS(StaticMethod_2);
 
@@ -222,7 +222,7 @@ template <
 	typename Argument2Type,
 	typename Argument3Type
 >
-struct StaticMethod_3 : public IRuntimeDispatch
+struct StaticMethod_3 final : public IRuntimeDispatch
 {
 	T_NO_COPY_CLASS(StaticMethod_3);
 
@@ -262,7 +262,7 @@ template <
 	typename Argument2Type,
 	typename Argument3Type
 >
-struct StaticMethod_3 < ClassType, void, Argument1Type, Argument2Type, Argument3Type > : public IRuntimeDispatch
+struct StaticMethod_3 < ClassType, void, Argument1Type, Argument2Type, Argument3Type > final : public IRuntimeDispatch
 {
 	T_NO_COPY_CLASS(StaticMethod_3);
 
@@ -304,7 +304,7 @@ template <
 	typename Argument3Type,
 	typename Argument4Type
 >
-struct StaticMethod_4 : public IRuntimeDispatch
+struct StaticMethod_4 final : public IRuntimeDispatch
 {
 	T_NO_COPY_CLASS(StaticMethod_4);
 
@@ -347,7 +347,7 @@ template <
 	typename Argument3Type,
 	typename Argument4Type
 >
-struct StaticMethod_4 < ClassType, void, Argument1Type, Argument2Type, Argument3Type, Argument4Type > : public IRuntimeDispatch
+struct StaticMethod_4 < ClassType, void, Argument1Type, Argument2Type, Argument3Type, Argument4Type > final : public IRuntimeDispatch
 {
 	T_NO_COPY_CLASS(StaticMethod_4);
 
@@ -392,7 +392,7 @@ template <
 	typename Argument4Type,
 	typename Argument5Type
 >
-struct StaticMethod_5 : public IRuntimeDispatch
+struct StaticMethod_5 final : public IRuntimeDispatch
 {
 	T_NO_COPY_CLASS(StaticMethod_5);
 
@@ -438,7 +438,7 @@ template <
 	typename Argument4Type,
 	typename Argument5Type
 >
-struct StaticMethod_5 < ClassType, void, Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type > : public IRuntimeDispatch
+struct StaticMethod_5 < ClassType, void, Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type > final : public IRuntimeDispatch
 {
 	T_NO_COPY_CLASS(StaticMethod_5);
 
@@ -486,7 +486,7 @@ template <
 	typename Argument5Type,
 	typename Argument6Type
 >
-struct StaticMethod_6 : public IRuntimeDispatch
+struct StaticMethod_6 final : public IRuntimeDispatch
 {
 	T_NO_COPY_CLASS(StaticMethod_6);
 
@@ -535,7 +535,7 @@ template <
 	typename Argument5Type,
 	typename Argument6Type
 >
-struct StaticMethod_6 < ClassType, void, Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, Argument6Type > : public IRuntimeDispatch
+struct StaticMethod_6 < ClassType, void, Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, Argument6Type > final : public IRuntimeDispatch
 {
 	T_NO_COPY_CLASS(StaticMethod_6);
 
@@ -586,7 +586,7 @@ template <
 	typename Argument6Type,
 	typename Argument7Type
 >
-struct StaticMethod_7 : public IRuntimeDispatch
+struct StaticMethod_7 final : public IRuntimeDispatch
 {
 	T_NO_COPY_CLASS(StaticMethod_7);
 
@@ -638,7 +638,7 @@ template <
 	typename Argument6Type,
 	typename Argument7Type
 >
-struct StaticMethod_7 < ClassType, void, Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, Argument6Type, Argument7Type > : public IRuntimeDispatch
+struct StaticMethod_7 < ClassType, void, Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, Argument6Type, Argument7Type > final : public IRuntimeDispatch
 {
 	T_NO_COPY_CLASS(StaticMethod_7);
 

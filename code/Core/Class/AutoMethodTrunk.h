@@ -18,7 +18,7 @@ template <
 	typename ClassType,
 	typename ReturnType
 >
-struct MethodTrunk_0 : public IRuntimeDispatch
+struct MethodTrunk_0 final : public IRuntimeDispatch
 {
 	T_NO_COPY_CLASS(MethodTrunk_0);
 
@@ -46,7 +46,7 @@ struct MethodTrunk_0 : public IRuntimeDispatch
 template <
 	typename ClassType
 >
-struct MethodTrunk_0< ClassType, void > : public IRuntimeDispatch
+struct MethodTrunk_0< ClassType, void > final : public IRuntimeDispatch
 {
 	T_NO_COPY_CLASS(MethodTrunk_0);
 
@@ -77,7 +77,7 @@ template <
 	typename ReturnType,
 	typename Argument1Type
 >
-struct MethodTrunk_1 : public IRuntimeDispatch
+struct MethodTrunk_1 final : public IRuntimeDispatch
 {
 	T_NO_COPY_CLASS(MethodTrunk_1);
 
@@ -112,7 +112,7 @@ template <
 	typename ClassType,
 	typename Argument1Type
 >
-struct MethodTrunk_1 < ClassType, void, Argument1Type > : public IRuntimeDispatch
+struct MethodTrunk_1 < ClassType, void, Argument1Type > final : public IRuntimeDispatch
 {
 	T_NO_COPY_CLASS(MethodTrunk_1);
 
@@ -149,7 +149,7 @@ template <
 	typename Argument1Type,
 	typename Argument2Type
 >
-struct MethodTrunk_2 : public IRuntimeDispatch
+struct MethodTrunk_2 final : public IRuntimeDispatch
 {
 	T_NO_COPY_CLASS(MethodTrunk_2);
 
@@ -187,7 +187,7 @@ template <
 	typename Argument1Type,
 	typename Argument2Type
 >
-struct MethodTrunk_2 < ClassType, void, Argument1Type, Argument2Type > : public IRuntimeDispatch
+struct MethodTrunk_2 < ClassType, void, Argument1Type, Argument2Type > final : public IRuntimeDispatch
 {
 	T_NO_COPY_CLASS(MethodTrunk_2);
 
@@ -227,7 +227,7 @@ template <
 	typename Argument2Type,
 	typename Argument3Type
 >
-struct MethodTrunk_3 : public IRuntimeDispatch
+struct MethodTrunk_3 final : public IRuntimeDispatch
 {
 	T_NO_COPY_CLASS(MethodTrunk_3);
 
@@ -268,7 +268,7 @@ template <
 	typename Argument2Type,
 	typename Argument3Type
 >
-struct MethodTrunk_3 < ClassType, void, Argument1Type, Argument2Type, Argument3Type > : public IRuntimeDispatch
+struct MethodTrunk_3 < ClassType, void, Argument1Type, Argument2Type, Argument3Type > final : public IRuntimeDispatch
 {
 	T_NO_COPY_CLASS(MethodTrunk_3);
 
@@ -311,7 +311,7 @@ template <
 	typename Argument3Type,
 	typename Argument4Type
 >
-struct MethodTrunk_4 : public IRuntimeDispatch
+struct MethodTrunk_4 final : public IRuntimeDispatch
 {
 	T_NO_COPY_CLASS(MethodTrunk_4);
 
@@ -355,7 +355,7 @@ template <
 	typename Argument3Type,
 	typename Argument4Type
 >
-struct MethodTrunk_4 < ClassType, void, Argument1Type, Argument2Type, Argument3Type, Argument4Type > : public IRuntimeDispatch
+struct MethodTrunk_4 < ClassType, void, Argument1Type, Argument2Type, Argument3Type, Argument4Type > final : public IRuntimeDispatch
 {
 	T_NO_COPY_CLASS(MethodTrunk_4);
 
@@ -401,7 +401,7 @@ template <
 	typename Argument4Type,
 	typename Argument5Type
 >
-struct MethodTrunk_5 : public IRuntimeDispatch
+struct MethodTrunk_5 final : public IRuntimeDispatch
 {
 	T_NO_COPY_CLASS(MethodTrunk_5);
 
@@ -448,7 +448,7 @@ template <
 	typename Argument4Type,
 	typename Argument5Type
 >
-struct MethodTrunk_5 < ClassType, void, Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type > : public IRuntimeDispatch
+struct MethodTrunk_5 < ClassType, void, Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type > final : public IRuntimeDispatch
 {
 	T_NO_COPY_CLASS(MethodTrunk_5);
 
@@ -497,7 +497,7 @@ template <
 	typename Argument5Type,
 	typename Argument6Type
 >
-struct MethodTrunk_6 : public IRuntimeDispatch
+struct MethodTrunk_6 final : public IRuntimeDispatch
 {
 	T_NO_COPY_CLASS(MethodTrunk_6);
 
@@ -547,7 +547,7 @@ template <
 	typename Argument5Type,
 	typename Argument6Type
 >
-struct MethodTrunk_6 < ClassType, void, Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, Argument6Type > : public IRuntimeDispatch
+struct MethodTrunk_6 < ClassType, void, Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, Argument6Type > final : public IRuntimeDispatch
 {
 	T_NO_COPY_CLASS(MethodTrunk_6);
 
@@ -599,7 +599,7 @@ template <
 	typename Argument6Type,
 	typename Argument7Type
 >
-struct MethodTrunk_7 : public IRuntimeDispatch
+struct MethodTrunk_7 final : public IRuntimeDispatch
 {
 	T_NO_COPY_CLASS(MethodTrunk_7);
 
@@ -652,7 +652,7 @@ template <
 	typename Argument6Type,
 	typename Argument7Type
 >
-struct MethodTrunk_7 < ClassType, void, Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, Argument6Type, Argument7Type > : public IRuntimeDispatch
+struct MethodTrunk_7 < ClassType, void, Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, Argument6Type, Argument7Type > final : public IRuntimeDispatch
 {
 	T_NO_COPY_CLASS(MethodTrunk_7);
 
@@ -707,7 +707,7 @@ template <
 	typename Argument7Type,
 	typename Argument8Type
 >
-struct MethodTrunk_8 : public IRuntimeDispatch
+struct MethodTrunk_8 final : public IRuntimeDispatch
 {
 	T_NO_COPY_CLASS(MethodTrunk_8);
 
@@ -763,7 +763,7 @@ template <
 	typename Argument7Type,
 	typename Argument8Type
 >
-struct MethodTrunk_8 < ClassType, void, Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, Argument6Type, Argument7Type, Argument8Type > : public IRuntimeDispatch
+struct MethodTrunk_8 < ClassType, void, Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, Argument6Type, Argument7Type, Argument8Type > final : public IRuntimeDispatch
 {
 	T_NO_COPY_CLASS(MethodTrunk_8);
 

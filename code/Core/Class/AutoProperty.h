@@ -18,7 +18,7 @@ template <
 	typename ClassType,
 	typename ValueType
 >
-struct PropertySet : public IRuntimeDispatch
+struct PropertySet final : public IRuntimeDispatch
 {
 	T_NO_COPY_CLASS(PropertySet);
 
@@ -53,7 +53,7 @@ template <
 	typename ValueType,
 	bool Const
 >
-struct PropertyGet : public IRuntimeDispatch
+struct PropertyGet final : public IRuntimeDispatch
 {
 	T_NO_COPY_CLASS(PropertyGet);
 
@@ -84,7 +84,7 @@ template <
 	typename ClassType,
 	typename ValueType
 >
-struct FnPropertySet : public IRuntimeDispatch
+struct FnPropertySet final : public IRuntimeDispatch
 {
 	T_NO_COPY_CLASS(FnPropertySet);
 
@@ -119,7 +119,7 @@ template <
 	typename ClassType,
 	typename ValueType
 >
-struct FnPropertyGet : public IRuntimeDispatch
+struct FnPropertyGet final : public IRuntimeDispatch
 {
 	T_NO_COPY_CLASS(FnPropertyGet);
 

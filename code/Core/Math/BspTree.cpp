@@ -53,7 +53,7 @@ void BspPolygon::flip()
     );
 }
 
-void BspPolygon::split(const Plane& plane, AlignedVector< BspPolygon >& outCoplanarFront, AlignedVector< BspPolygon >& outCoplanarBack, AlignedVector< BspPolygon >& outFront, AlignedVector< BspPolygon >& outBack) const
+int32_t BspPolygon::classify(const Plane& plane) const
 {
 	int32_t side[2] = { 0, 0 };
 	for (size_t i = 0; i < m_vertices.size(); ++i)
@@ -64,28 +64,32 @@ void BspPolygon::split(const Plane& plane, AlignedVector< BspPolygon >& outCopla
 		else if (d <= -FUZZY_EPSILON)
 			side[1]++;
 	}
-
 	if (side[0] && !side[1])
-	{
-		// front
-		outFront.push_back(*this);
-	}
+		return ClFront;
 	else if (!side[0] && side[1])
-	{
-		// back
-		outBack.push_back(*this);
-	}
+		return ClBack;
 	else if (!side[0] && !side[1])
+		return ClCoplanar;
+	else
+		return ClSpan;
+}
+
+void BspPolygon::split(const Plane& plane, AlignedVector< BspPolygon >& outCoplanarFront, AlignedVector< BspPolygon >& outCoplanarBack, AlignedVector< BspPolygon >& outFront, AlignedVector< BspPolygon >& outBack) const
+{
+	int32_t cl = classify(plane);
+	if (cl == ClFront)
+		outFront.push_back(*this);
+	else if (cl == ClBack)
+		outBack.push_back(*this);
+	else if (cl == ClCoplanar)
 	{
-		// coplanar
 		if (dot3(m_plane.normal(), plane.normal()) >= 0.0f)
 			outCoplanarFront.push_back(*this);
 		else
 			outCoplanarBack.push_back(*this);
 	}
-	else
+	else	// ClSpan
 	{
-		// span
 		BspPolygon& fp = outFront.push_back();
 		BspPolygon& bp = outBack.push_back();
 
@@ -125,6 +129,11 @@ void BspPolygon::split(const Plane& plane, AlignedVector< BspPolygon >& outCopla
 			if (da <= FUZZY_EPSILON)
 				bp.addVertex(a);
 		}
+
+		if (fp.getVertices().size() < 3)
+			outFront.pop_back();
+		if (bp.getVertices().size() < 3)
+			outBack.pop_back();
 	}
 }
 
@@ -223,21 +232,56 @@ void BspNode::clip(const BspNode& other)
 		m_back->clip(other);	
 }
 
-void BspNode::build(const AlignedVector< BspPolygon >& polygons)
+void BspNode::build(const AlignedVector< BspPolygon >& polygons, bool fast)
 {
 	if (polygons.empty())
 		return;
 
-	if (!m_front && !m_back)
-		m_plane = polygons[0].getPlane();
+	size_t index = std::numeric_limits< size_t >::max();
 
-	m_polygons.push_back(polygons[0]);
+	if (!m_front && !m_back)
+	{
+		if (!fast)
+		{
+			int32_t minSpan = std::numeric_limits< int32_t >::max();
+			size_t minSpanIndex = 0;
+
+			while (minSpan > 0 && index < polygons.size())
+			{
+				Plane plane = polygons[index].getPlane();
+
+				int32_t span = 0;
+				for (size_t i = 0; i < polygons.size(); ++i)
+				{
+					if (i == index)
+						continue;
+					if (polygons[i].classify(plane) == BspPolygon::ClSpan)
+						++span;
+				}
+
+				if (span < minSpan)
+				{
+					minSpan = span;
+					minSpanIndex = index;
+				}
+			}
+
+			index = minSpanIndex;
+		}
+		else
+			index = 0;
+
+		m_plane = polygons[index].getPlane();
+		m_polygons.push_back(polygons[index]);
+	}
 
 	AlignedVector< BspPolygon > front;
 	AlignedVector< BspPolygon > back;
 
-	for (size_t i = 1; i < polygons.size(); ++i)
+	for (size_t i = 0; i < polygons.size(); ++i)
 	{
+		if (i == index)
+			continue;
 		polygons[i].split(
 			m_plane,
 			m_polygons,	// coplanar front
@@ -251,13 +295,13 @@ void BspNode::build(const AlignedVector< BspPolygon >& polygons)
 	{
 		if (!m_front)
 			m_front = new BspNode();
-		m_front->build(front);
+		m_front->build(front, fast);
 	}
 	if (!back.empty())
 	{
 		if (!m_back)
 			m_back = new BspNode();
-		m_back->build(back);
+		m_back->build(back, fast);
 	}
 }
 
@@ -277,7 +321,7 @@ AlignedVector< BspPolygon > BspNode::allPolygons() const
 	return polygons;
 }
 
-BspNode BspNode::unioon(const BspNode& other) const
+BspNode BspNode::unioon(const BspNode& other, bool fast) const
 {
 	BspNode A = *this;
 	BspNode B = other;
@@ -288,12 +332,12 @@ BspNode BspNode::unioon(const BspNode& other) const
 	B.invert();
 	B.clip(A);
 	B.invert();
-	A.build(B.allPolygons());
+	A.build(B.allPolygons(), fast);
 
 	return A;
 }
 
-BspNode BspNode::intersection(const BspNode& other) const
+BspNode BspNode::intersection(const BspNode& other, bool fast) const
 {
 	BspNode A = *this;
 	BspNode B = other;
@@ -304,13 +348,13 @@ BspNode BspNode::intersection(const BspNode& other) const
 	B.invert();
 	A.clip(B);
 	B.clip(A);
-	A.build(B.allPolygons());
+	A.build(B.allPolygons(), fast);
 	A.invert();
 
 	return A;
 }
 
-BspNode BspNode::difference(const BspNode& other) const
+BspNode BspNode::difference(const BspNode& other, bool fast) const
 {
 	BspNode A = *this;
 	BspNode B = other;
@@ -322,7 +366,7 @@ BspNode BspNode::difference(const BspNode& other) const
 	B.invert();
 	B.clip(A);
 	B.invert();
-	A.build(B.allPolygons());
+	A.build(B.allPolygons(), fast);
 	A.invert();
 
 	return A;

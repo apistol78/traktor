@@ -31,6 +31,14 @@ struct BspVertex
 class T_DLLCLASS BspPolygon
 {
 public:
+	enum Classification
+	{
+		ClFront = 1,
+		ClBack = 2,
+		ClSpan = 3,
+		ClCoplanar = 4
+	};
+
 	typedef StaticVector< BspVertex, 32 > vertices_t;
 
 	BspPolygon();
@@ -54,6 +62,8 @@ public:
 	bool calculatePlane();
 
 	void flip();
+
+	int32_t classify(const Plane& plane) const;
 
 	void split(const Plane& plane, AlignedVector< BspPolygon >& outCoplanarFront, AlignedVector< BspPolygon >& outCoplanarBack, AlignedVector< BspPolygon >& outFront, AlignedVector< BspPolygon >& outBack) const;
 
@@ -89,15 +99,15 @@ public:
 
 	void clip(const BspNode& other);
 
-	void build(const AlignedVector< BspPolygon >& polygons);
+	void build(const AlignedVector< BspPolygon >& polygons, bool fast);
 
 	AlignedVector< BspPolygon > allPolygons() const;
 
-	BspNode unioon(const BspNode& other) const;
+	BspNode unioon(const BspNode& other, bool fast) const;
 
-	BspNode intersection(const BspNode& other) const;
+	BspNode intersection(const BspNode& other, bool fast) const;
 
-	BspNode difference(const BspNode& other) const;
+	BspNode difference(const BspNode& other, bool fast) const;
 
 	BspNode& operator = (const BspNode& node);
 
