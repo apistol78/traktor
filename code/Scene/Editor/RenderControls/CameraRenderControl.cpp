@@ -27,10 +27,10 @@
 #include "Scene/Editor/ISceneControllerEditor.h"
 #include "Scene/Editor/ISceneEditorProfile.h"
 #include "Scene/Editor/IEntityEditor.h"
-#include "Scene/Editor/CameraRenderControl.h"
 #include "Scene/Editor/SceneEditorContext.h"
 #include "Scene/Editor/TransformChain.h"
 #include "Scene/Editor/Events/FrameEvent.h"
+#include "Scene/Editor/RenderControls/CameraRenderControl.h"
 #include "Ui/Command.h"
 #include "Ui/Container.h"
 #include "Ui/FloodLayout.h"
@@ -341,8 +341,8 @@ void CameraRenderControl::eventPaint(ui::PaintEvent* event)
 		ui::Size sz = m_renderWidget->getInnerRect().getSize();
 
 		m_worldRenderView.setPerspective(
-			sz.cx,
-			sz.cy,
+			float(sz.cx),
+			float(sz.cy),
 			float(sz.cx) / sz.cy,
 			cameraComponent->getFieldOfView(),
 			worldRenderSettings->viewNearZ,

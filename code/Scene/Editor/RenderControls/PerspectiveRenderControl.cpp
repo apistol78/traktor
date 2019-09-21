@@ -27,10 +27,10 @@
 #include "Scene/Editor/ISceneControllerEditor.h"
 #include "Scene/Editor/ISceneEditorProfile.h"
 #include "Scene/Editor/IEntityEditor.h"
-#include "Scene/Editor/PerspectiveRenderControl.h"
 #include "Scene/Editor/SceneEditorContext.h"
 #include "Scene/Editor/TransformChain.h"
 #include "Scene/Editor/Events/FrameEvent.h"
+#include "Scene/Editor/RenderControls/PerspectiveRenderControl.h"
 #include "Ui/Application.h"
 #include "Ui/Command.h"
 #include "Ui/Container.h"
@@ -490,8 +490,8 @@ void PerspectiveRenderControl::eventPaint(ui::PaintEvent* event)
 
 	// Update world render view.
 	m_worldRenderView.setPerspective(
-		sz.cx,
-		sz.cy,
+		float(sz.cx),
+		float(sz.cy),
 		float(sz.cx) / sz.cy,
 		deg2rad(m_fieldOfView),
 		worldRenderSettings->viewNearZ,

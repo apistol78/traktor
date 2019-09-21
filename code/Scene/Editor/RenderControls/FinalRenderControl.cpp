@@ -13,14 +13,13 @@
 #include "Render/ImageProcess/ImageProcess.h"
 #include "Resource/IResourceManager.h"
 #include "Scene/Scene.h"
-//#include "Scene/SceneFactory.h"
 #include "Scene/Editor/Camera.h"
 #include "Scene/Editor/ISceneEditorProfile.h"
-#include "Scene/Editor/FinalRenderControl.h"
 #include "Scene/Editor/SceneAsset.h"
 #include "Scene/Editor/SceneEditorContext.h"
 #include "Scene/Editor/TransformChain.h"
 #include "Scene/Editor/Events/FrameEvent.h"
+#include "Scene/Editor/RenderControls/FinalRenderControl.h"
 #include "Ui/Application.h"
 #include "Ui/Command.h"
 #include "Ui/Container.h"
@@ -29,7 +28,6 @@
 #include "Ui/AspectLayout.h"
 #include "Ui/Itf/IWidget.h"
 #include "World/Entity.h"
-//#include "World/EntityBuilder.h"
 #include "World/IEntityEventManager.h"
 #include "World/IWorldRenderer.h"
 #include "World/WorldEntityRenderers.h"
@@ -415,8 +413,8 @@ void FinalRenderControl::eventPaint(ui::PaintEvent* event)
 
 	// Update world render view.
 	m_worldRenderView.setPerspective(
-		sz.cx,
-		sz.cy,
+		float(sz.cx),
+		float(sz.cy),
 		float(sz.cx) / sz.cy,
 		deg2rad(m_fieldOfView),
 		worldRenderSettings->viewNearZ,
