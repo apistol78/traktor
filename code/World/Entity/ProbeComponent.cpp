@@ -9,7 +9,7 @@ namespace traktor
 T_IMPLEMENT_RTTI_CLASS(L"traktor.world.ProbeComponent", ProbeComponent, IEntityComponent)
 
 ProbeComponent::ProbeComponent(
-	const resource::Proxy< render::ITexture >& texture,
+	const resource::Proxy< render::ICubeTexture >& texture,
 	float intensity,
 	bool local,
 	const Aabb3& volume
@@ -19,6 +19,7 @@ ProbeComponent::ProbeComponent(
 ,	m_intensity(intensity)
 ,	m_local(local)
 ,	m_volume(volume)
+,	m_dirty(true)
 {
 }
 
@@ -29,6 +30,7 @@ void ProbeComponent::destroy()
 void ProbeComponent::setOwner(Entity* owner)
 {
 	m_owner = owner;
+	m_dirty = true;
 }
 
 void ProbeComponent::update(const UpdateParams& update)
@@ -37,6 +39,7 @@ void ProbeComponent::update(const UpdateParams& update)
 
 void ProbeComponent::setTransform(const Transform& transform)
 {
+	m_dirty = true;
 }
 
 Aabb3 ProbeComponent::getBoundingBox() const

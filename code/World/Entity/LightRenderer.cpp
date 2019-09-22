@@ -47,7 +47,8 @@ void LightRenderer::render(
 void LightRenderer::flush(
 	WorldContext& worldContext,
 	WorldRenderView& worldRenderView,
-	const IWorldRenderPass& worldRenderPass
+	const IWorldRenderPass& worldRenderPass,
+	Entity* rootEntity
 )
 {
 }

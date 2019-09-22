@@ -220,7 +220,6 @@ void PerspectiveRenderControl::updateWorldRenderer()
 	if (worldRenderer->create(
 		m_context->getResourceManager(),
 		m_context->getRenderSystem(),
-		m_renderView,
 		wcd
 	))
 	{
@@ -519,10 +518,9 @@ void PerspectiveRenderControl::eventPaint(ui::PaintEvent* event)
 		if (sceneInstance)
 		{
 			// Build frame from scene entities.
-			m_worldRenderer->beginBuild();
-			m_worldRenderer->build(sceneInstance->getRootEntity());
-			m_context->getEntityEventManager()->build(m_worldRenderer);
-			m_worldRenderer->endBuild(m_worldRenderView, 0);
+			m_worldRenderer->attach(sceneInstance->getRootEntity());
+			m_context->getEntityEventManager()->attach(m_worldRenderer);
+			m_worldRenderer->build(m_worldRenderView, 0);
 
 			// Set post process parameters from scene instance.
 			render::ImageProcess* postProcess = m_worldRenderer->getVisualImageProcess();
@@ -533,9 +531,9 @@ void PerspectiveRenderControl::eventPaint(ui::PaintEvent* event)
 			}
 		}
 
-		m_worldRenderer->beginRender(0, Color4f(colorClear[0], colorClear[1], colorClear[2], colorClear[3]));
-		m_worldRenderer->render(0);
-		m_worldRenderer->endRender(0, deltaTime);
+		m_worldRenderer->beginRender(m_renderView, 0, Color4f(colorClear[0], colorClear[1], colorClear[2], colorClear[3]));
+		m_worldRenderer->render(m_renderView, 0);
+		m_worldRenderer->endRender(m_renderView, 0, deltaTime);
 
 		// Render wire guides.
 		m_primitiveRenderer->begin(0, projection);

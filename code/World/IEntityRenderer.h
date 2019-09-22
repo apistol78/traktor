@@ -15,6 +15,7 @@ namespace traktor
 	namespace world
 	{
 
+class Entity;
 class IWorldRenderPass;
 class WorldContext;
 class WorldRenderView;
@@ -51,7 +52,8 @@ public:
 	virtual void flush(
 		WorldContext& worldContext,
 		WorldRenderView& worldRenderView,
-		const IWorldRenderPass& worldRenderPass
+		const IWorldRenderPass& worldRenderPass,
+		Entity* rootEntity
 	) = 0;
 };
 

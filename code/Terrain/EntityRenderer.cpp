@@ -67,7 +67,8 @@ void EntityRenderer::render(
 void EntityRenderer::flush(
 	world::WorldContext& worldContext,
 	world::WorldRenderView& worldRenderView,
-	const world::IWorldRenderPass& worldRenderPass
+	const world::IWorldRenderPass& worldRenderPass,
+	world::Entity* rootEntity
 )
 {
 }

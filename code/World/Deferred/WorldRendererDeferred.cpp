@@ -30,6 +30,7 @@
 #include "World/Deferred/LightRendererDeferred.h"
 #include "World/Deferred/WorldRendererDeferred.h"
 #include "World/Deferred/WorldRenderPassDeferred.h"
+#include "World/Entity/GroupEntity.h"
 #include "World/SMProj/TrapezoidShadowProjection.h"
 #include "World/SMProj/UniformShadowProjection.h"
 
@@ -207,12 +208,9 @@ WorldRendererDeferred::WorldRendererDeferred()
 bool WorldRendererDeferred::create(
 	resource::IResourceManager* resourceManager,
 	render::IRenderSystem* renderSystem,
-	render::IRenderView* renderView,
 	const WorldCreateDesc& desc
 )
 {
-	m_renderView = renderView;
-
 	m_settings = *desc.worldRenderSettings;
 	m_toneMapQuality = desc.toneMapQuality;
 	m_motionBlurQuality = desc.motionBlurQuality;
@@ -310,6 +308,7 @@ bool WorldRendererDeferred::create(
 	}
 
 	// Create "reflections" target.
+	if (m_reflectionsQuality > QuDisabled)
 	{
 		render::RenderTargetSetCreateDesc rtscd;
 		rtscd.count = 1;
@@ -582,7 +581,10 @@ bool WorldRendererDeferred::create(
 	}
 
 	// Create gamma correction processing.
-	if (m_settings.linearLighting)
+	if (
+		m_settings.linearLighting &&
+		std::abs(desc.gamma - 1.0f) > FUZZY_EPSILON
+	)
 	{
 		resource::Proxy< render::ImageProcessSettings > gammaCorrection;
 		if (!resourceManager->bind(c_gammaCorrection, gammaCorrection))
@@ -723,7 +725,7 @@ bool WorldRendererDeferred::create(
 		}
 
 		frame.gbuffer = new WorldContext(desc.entityRenderers);
-		frame.reflections = new WorldContext(desc.entityRenderers);
+		frame.reflections = (m_reflectionsQuality > QuDisabled) ? new WorldContext(desc.entityRenderers) : nullptr;
 		frame.irradiance = new WorldContext(desc.entityRenderers);
 		frame.velocity = (m_motionBlurQuality > QuDisabled) ? new WorldContext(desc.entityRenderers) : nullptr;
 		frame.visual = new WorldContext(desc.entityRenderers);
@@ -792,6 +794,7 @@ bool WorldRendererDeferred::create(
 	}
 	m_slicePositions[m_shadowSettings.cascadingSlices] = m_shadowSettings.farZ;
 
+	m_rootEntity = new GroupEntity();
 	m_count = 0;
 	return true;
 }
@@ -799,7 +802,6 @@ bool WorldRendererDeferred::create(
 void WorldRendererDeferred::destroy()
 {
 	m_frames.clear();
-	m_buildEntities.clear();
 
 	safeDestroy(m_lightRenderer);
 	safeDestroy(m_toneMapImageProcess);
@@ -824,29 +826,25 @@ void WorldRendererDeferred::destroy()
 	safeDestroy(m_visualTargetSet);
 
 	m_shadowProjection = nullptr;
-	m_renderView = nullptr;
 
 	m_irradianceGrid.clear();
 }
 
-bool WorldRendererDeferred::beginBuild()
+void WorldRendererDeferred::attach(Entity* entity)
 {
-	return true;
+	m_rootEntity->addEntity(entity);
 }
 
-void WorldRendererDeferred::build(Entity* entity)
-{
-	m_buildEntities.push_back(entity);
-}
-
-void WorldRendererDeferred::endBuild(WorldRenderView& worldRenderView, int frame)
+void WorldRendererDeferred::build(WorldRenderView& worldRenderView, int32_t frame)
 {
 	Frame& f = m_frames[frame];
 
 	// Flush previous frame.
 	f.gbuffer->clear();
-	f.reflections->clear();
-	f.irradiance->clear();
+	if (f.reflections)
+		f.reflections->clear();
+	if (f.irradiance)
+		f.irradiance->clear();
 
 	for (int32_t i = 0; i < m_shadowSettings.cascadingSlices; ++i)
 	{
@@ -876,7 +874,7 @@ void WorldRendererDeferred::endBuild(WorldRenderView& worldRenderView, int frame
 	f.view = worldRenderView.getView();
 	f.viewFrustum = worldRenderView.getViewFrustum();
 
-	// Build gbuffer context.
+	// Build gbuffer context, also gather lights in world render view.
 	buildGBuffer(worldRenderView, frame);
 
 	// Build reflections context.
@@ -892,19 +890,18 @@ void WorldRendererDeferred::endBuild(WorldRenderView& worldRenderView, int frame
 	buildLights(worldRenderView, frame);
 
 	// Build visual context.
-	worldRenderView.resetLights();
 	buildVisual(worldRenderView, frame);
 
-	m_buildEntities.resize(0);
+	m_rootEntity->removeAllEntities();
 	m_count++;
 }
 
-bool WorldRendererDeferred::beginRender(int32_t frame, const Color4f& clearColor)
+bool WorldRendererDeferred::beginRender(render::IRenderView* renderView, int32_t frame, const Color4f& clearColor)
 {
 	return true;
 }
 
-void WorldRendererDeferred::render(int32_t frame)
+void WorldRendererDeferred::render(render::IRenderView* renderView, int32_t frame)
 {
 	Frame& f = m_frames[frame];
 	render::Clear clear;
@@ -928,13 +925,13 @@ void WorldRendererDeferred::render(int32_t frame)
 		clear.colors[3] = Color4f(0.0f, 0.0f, 0.0f, 0.0f);	// surface
 		clear.depth = 1.0f;
 
-		T_RENDER_PUSH_MARKER(m_renderView, "World: GBuffer");
-		if (m_renderView->begin(m_gbufferTargetSet, &clear))
+		T_RENDER_PUSH_MARKER(renderView, "World: GBuffer");
+		if (renderView->begin(m_gbufferTargetSet, &clear))
 		{
-			f.gbuffer->getRenderContext()->render(m_renderView, render::RpOpaque, &gbufferProgramParams);
-			m_renderView->end();
+			f.gbuffer->getRenderContext()->render(renderView, render::RpOpaque, &gbufferProgramParams);
+			renderView->end();
 		}
-		T_RENDER_POP_MARKER(m_renderView);
+		T_RENDER_POP_MARKER(renderView);
 	}
 
 	// Render velocity.
@@ -951,8 +948,8 @@ void WorldRendererDeferred::render(int32_t frame)
 		clear.mask = render::CfColor;
 		clear.colors[0] = Color4f(0.0f, 0.0f, 0.0f, 0.0f);
 
-		T_RENDER_PUSH_MARKER(m_renderView, "World: Velocity");
-		if (m_renderView->begin(m_velocityTargetSet, &clear))
+		T_RENDER_PUSH_MARKER(renderView, "World: Velocity");
+		if (renderView->begin(m_velocityTargetSet, &clear))
 		{
 			// Prime velocity with camera motion only.
 			if (m_motionBlurPrimeImageProcess)
@@ -965,7 +962,7 @@ void WorldRendererDeferred::render(int32_t frame)
 				params.deltaTime = 0.0f;
 
 				m_motionBlurPrimeImageProcess->render(
-					m_renderView,
+					renderView,
 					nullptr,	// color
 					m_gbufferTargetSet->getColorTexture(0),	// depth
 					nullptr,	// normal
@@ -975,10 +972,10 @@ void WorldRendererDeferred::render(int32_t frame)
 				);
 			}
 
-			f.velocity->getRenderContext()->render(m_renderView, render::RpOpaque, &velocityProgramParams);
-			m_renderView->end();
+			f.velocity->getRenderContext()->render(renderView, render::RpOpaque, &velocityProgramParams);
+			renderView->end();
 		}
-		T_RENDER_POP_MARKER(m_renderView);
+		T_RENDER_POP_MARKER(renderView);
 	}
 
 	// Render shadow maps.
@@ -990,8 +987,8 @@ void WorldRendererDeferred::render(int32_t frame)
 			clear.mask = render::CfDepth;
 			clear.depth = 1.0f;
 
-			T_RENDER_PUSH_MARKER(m_renderView, "World: Cascade shadow map");
-			if (m_renderView->begin(m_shadowCascadeTargetSet, &clear))
+			T_RENDER_PUSH_MARKER(renderView, "World: Cascade shadow map");
+			if (renderView->begin(m_shadowCascadeTargetSet, &clear))
 			{
 				render::ProgramParameters shadowProgramParams;
 				shadowProgramParams.beginParameters(m_globalContext);
@@ -1001,17 +998,17 @@ void WorldRendererDeferred::render(int32_t frame)
 				shadowProgramParams.setMatrixParameter(s_handleProjection, f.slice[i].shadowLightProjection);
 				shadowProgramParams.endParameters(m_globalContext);
 
-				f.slice[i].shadow->getRenderContext()->render(m_renderView, render::RpSetup | render::RpOpaque, &shadowProgramParams);
+				f.slice[i].shadow->getRenderContext()->render(renderView, render::RpSetup | render::RpOpaque, &shadowProgramParams);
 
-				m_renderView->end();
+				renderView->end();
 			}
-			T_RENDER_POP_MARKER(m_renderView);
+			T_RENDER_POP_MARKER(renderView);
 
 			clear.mask = render::CfColor;
 			clear.colors[0] = Color4f(1.0f, 1.0f, 1.0f, 1.0f);
 
-			T_RENDER_PUSH_MARKER(m_renderView, "World: Cascade shadow mask project");
-			if (m_renderView->begin(m_shadowMaskTargetSet, (i == 0) ? &clear : nullptr))
+			T_RENDER_PUSH_MARKER(renderView, "World: Cascade shadow mask project");
+			if (renderView->begin(m_shadowMaskTargetSet, (i == 0) ? &clear : nullptr))
 			{
 				Scalar zn(max(m_slicePositions[i], m_settings.viewNearZ));
 				Scalar zf(min(m_slicePositions[i + 1], m_shadowSettings.farZ));
@@ -1029,7 +1026,7 @@ void WorldRendererDeferred::render(int32_t frame)
 				params.deltaTime = 0.0f;
 
 				m_shadowMaskProject->render(
-					m_renderView,
+					renderView,
 					m_shadowCascadeTargetSet->getDepthTexture(),	// color
 					m_gbufferTargetSet->getColorTexture(0),	// depth
 					m_gbufferTargetSet->getColorTexture(1),	// normal
@@ -1038,17 +1035,17 @@ void WorldRendererDeferred::render(int32_t frame)
 					params
 				);
 
-				m_renderView->end();
+				renderView->end();
 			}
-			T_RENDER_POP_MARKER(m_renderView);
+			T_RENDER_POP_MARKER(renderView);
 		}
 
 		// Spot/point shadow atlas.
 		clear.mask = render::CfDepth;
 		clear.depth = 1.0f;
 
-		T_RENDER_PUSH_MARKER(m_renderView, "World: Shadow map (atlas)");
-		if (m_renderView->begin(m_shadowAtlasTargetSet, &clear))
+		T_RENDER_PUSH_MARKER(renderView, "World: Shadow map (atlas)");
+		if (renderView->begin(m_shadowAtlasTargetSet, &clear))
 		{
 			for (int32_t i = 0; i < f.atlasCount; ++i)
 			{
@@ -1060,58 +1057,61 @@ void WorldRendererDeferred::render(int32_t frame)
 				shadowProgramParams.setMatrixParameter(s_handleProjection, f.atlas[i].shadowLightProjection);
 				shadowProgramParams.endParameters(m_globalContext);
 
-				f.atlas[i].shadow->getRenderContext()->render(m_renderView, render::RpSetup | render::RpOpaque, &shadowProgramParams);
+				f.atlas[i].shadow->getRenderContext()->render(renderView, render::RpSetup | render::RpOpaque, &shadowProgramParams);
 			}
-			m_renderView->end();
+			renderView->end();
 		}
-		T_RENDER_POP_MARKER(m_renderView);
+		T_RENDER_POP_MARKER(renderView);
 	}
 
 	// Render reflections.
-	clear.mask = render::CfColor;
-	clear.colors[0] = Color4f(0.0f, 0.0f, 0.0f, 0.0f);
-
-	if (m_renderView->begin(m_reflectionsTargetSet, &clear))
+	if (m_reflectionsQuality > QuDisabled)
 	{
-		// Render reflection probes.
-		render::ProgramParameters reflectionsProgramParams;
-		reflectionsProgramParams.beginParameters(m_globalContext);
-		reflectionsProgramParams.setFloatParameter(s_handleTime, f.time);
-		reflectionsProgramParams.setMatrixParameter(s_handleView, f.view);
-		reflectionsProgramParams.setMatrixParameter(s_handleViewInverse, f.view.inverse());
-		reflectionsProgramParams.setMatrixParameter(s_handleProjection, f.projection);
-		reflectionsProgramParams.setTextureParameter(s_handleDepthMap, m_gbufferTargetSet->getColorTexture(0));
-		reflectionsProgramParams.setTextureParameter(s_handleNormalMap, m_gbufferTargetSet->getColorTexture(1));
-		reflectionsProgramParams.setTextureParameter(s_handleMiscMap, m_gbufferTargetSet->getColorTexture(2));
-		reflectionsProgramParams.setTextureParameter(s_handleColorMap, m_gbufferTargetSet->getColorTexture(3));
-		reflectionsProgramParams.endParameters(m_globalContext);
+		clear.mask = render::CfColor;
+		clear.colors[0] = Color4f(0.0f, 0.0f, 0.0f, 0.0f);
 
-		T_RENDER_PUSH_MARKER(m_renderView, "World: Reflections (probes)");
-		f.reflections->getRenderContext()->render(m_renderView, render::RpOpaque | render::RpOverlay, &reflectionsProgramParams);
-		T_RENDER_POP_MARKER(m_renderView);
+		if (renderView->begin(m_reflectionsTargetSet, &clear))
+		{
+			// Render reflection probes.
+			render::ProgramParameters reflectionsProgramParams;
+			reflectionsProgramParams.beginParameters(m_globalContext);
+			reflectionsProgramParams.setFloatParameter(s_handleTime, f.time);
+			reflectionsProgramParams.setMatrixParameter(s_handleView, f.view);
+			reflectionsProgramParams.setMatrixParameter(s_handleViewInverse, f.view.inverse());
+			reflectionsProgramParams.setMatrixParameter(s_handleProjection, f.projection);
+			reflectionsProgramParams.setTextureParameter(s_handleDepthMap, m_gbufferTargetSet->getColorTexture(0));
+			reflectionsProgramParams.setTextureParameter(s_handleNormalMap, m_gbufferTargetSet->getColorTexture(1));
+			reflectionsProgramParams.setTextureParameter(s_handleMiscMap, m_gbufferTargetSet->getColorTexture(2));
+			reflectionsProgramParams.setTextureParameter(s_handleColorMap, m_gbufferTargetSet->getColorTexture(3));
+			reflectionsProgramParams.endParameters(m_globalContext);
 
-		// Render screenspace reflections.
-		T_RENDER_PUSH_MARKER(m_renderView, "World: Reflections (SSR)");
-		m_lightRenderer->renderReflections(
-			m_renderView,
-			f.projection,
-			f.view,
-			f.lastView,
-			m_colorTargetSet->getColorTexture(0),	// \tbd using last frame copy without reprojection...
-			m_gbufferTargetSet->getColorTexture(0),	// depth
-			m_gbufferTargetSet->getColorTexture(1),	// normals
-			m_gbufferTargetSet->getColorTexture(2)	// metalness, roughness and specular
-		);
-		T_RENDER_POP_MARKER(m_renderView);
+			T_RENDER_PUSH_MARKER(renderView, "World: Reflections (probes)");
+			f.reflections->getRenderContext()->render(renderView, render::RpOpaque | render::RpOverlay, &reflectionsProgramParams);
+			T_RENDER_POP_MARKER(renderView);
 
-		m_renderView->end();
+			// Render screenspace reflections.
+			T_RENDER_PUSH_MARKER(renderView, "World: Reflections (SSR)");
+			m_lightRenderer->renderReflections(
+				renderView,
+				f.projection,
+				f.view,
+				f.lastView,
+				m_colorTargetSet->getColorTexture(0),	// \tbd using last frame copy without reprojection...
+				m_gbufferTargetSet->getColorTexture(0),	// depth
+				m_gbufferTargetSet->getColorTexture(1),	// normals
+				m_gbufferTargetSet->getColorTexture(2)	// metalness, roughness and specular
+			);
+			T_RENDER_POP_MARKER(renderView);
+
+			renderView->end();
+		}
 	}
 
 	// Render visuals.
 	clear.mask = render::CfColor;
 	clear.colors[0] = Color4f(0.0f, 0.0f, 0.0f, 0.0f);
 
-	if (m_renderView->begin(m_visualTargetSet, &clear))
+	if (renderView->begin(m_visualTargetSet, &clear))
 	{
 		// Pre-baked indirect lighting.
 		render::ProgramParameters irradianceProgramParams;
@@ -1128,7 +1128,7 @@ void WorldRendererDeferred::render(int32_t frame)
 		if (m_irradianceGrid)
 		{
 			const auto size = m_irradianceGrid->getSize();
-			irradianceProgramParams.setVectorParameter(s_handleIrradianceGridSize, Vector4(size[0], size[1], size[2], 0.0f));
+			irradianceProgramParams.setVectorParameter(s_handleIrradianceGridSize, Vector4((float)size[0], (float)size[1], (float)size[2], 0.0f));
 			irradianceProgramParams.setVectorParameter(s_handleIrradianceGridBoundsMin, m_irradianceGrid->getBoundingBox().mn);
 			irradianceProgramParams.setVectorParameter(s_handleIrradianceGridBoundsMax, m_irradianceGrid->getBoundingBox().mx);
 			irradianceProgramParams.setStructBufferParameter(s_handleIrradianceGridSBuffer, m_irradianceGrid->getBuffer());
@@ -1136,14 +1136,14 @@ void WorldRendererDeferred::render(int32_t frame)
 
 		irradianceProgramParams.endParameters(m_globalContext);
 
-		T_RENDER_PUSH_MARKER(m_renderView, "World: Irradiance");
-		f.irradiance->getRenderContext()->render(m_renderView, render::RpOpaque | render::RpOverlay, &irradianceProgramParams);
-		T_RENDER_POP_MARKER(m_renderView);
+		T_RENDER_PUSH_MARKER(renderView, "World: Irradiance");
+		f.irradiance->getRenderContext()->render(renderView, render::RpOpaque | render::RpOverlay, &irradianceProgramParams);
+		T_RENDER_POP_MARKER(renderView);
 
 		// Add analytical lights.
-		T_RENDER_PUSH_MARKER(m_renderView, "World: Analytical lighting");
+		T_RENDER_PUSH_MARKER(renderView, "World: Analytical lighting");
 		m_lightRenderer->renderLights(
-			m_renderView,
+			renderView,
 			f.time,
 			(int32_t)f.lights.size(),
 			f.projection,
@@ -1156,9 +1156,9 @@ void WorldRendererDeferred::render(int32_t frame)
 			m_gbufferTargetSet->getColorTexture(3),	// surface color
 			m_shadowMaskTargetSet != nullptr ? m_shadowMaskTargetSet->getColorTexture(0) : nullptr,		// shadow mask
 			m_shadowAtlasTargetSet != nullptr ? m_shadowAtlasTargetSet->getDepthTexture() : nullptr,	// shadow map atlas,
-			m_reflectionsTargetSet->getColorTexture(0)
+			m_reflectionsTargetSet != nullptr ? m_reflectionsTargetSet->getColorTexture(0) : nullptr	// reflection map
 		);
-		T_RENDER_POP_MARKER(m_renderView);
+		T_RENDER_POP_MARKER(renderView);
 
 		// Modulate with ambient occlusion.
 		if (m_ambientOcclusion)
@@ -1170,9 +1170,9 @@ void WorldRendererDeferred::render(int32_t frame)
 			params.projection = f.projection;
 			params.deltaTime = 0.0f;
 
-			T_RENDER_PUSH_MARKER(m_renderView, "World: Ambient occlusion");
+			T_RENDER_PUSH_MARKER(renderView, "World: Ambient occlusion");
 			m_ambientOcclusion->render(
-				m_renderView,
+				renderView,
 				nullptr,	// color
 				m_gbufferTargetSet->getColorTexture(0),	// depth
 				m_gbufferTargetSet->getColorTexture(1),	// normal
@@ -1180,7 +1180,7 @@ void WorldRendererDeferred::render(int32_t frame)
 				nullptr,	// shadow mask
 				params
 			);
-			T_RENDER_POP_MARKER(m_renderView);
+			T_RENDER_POP_MARKER(renderView);
 		}
 
 		render::ProgramParameters visualProgramParams;
@@ -1199,19 +1199,19 @@ void WorldRendererDeferred::render(int32_t frame)
 		visualProgramParams.setStructBufferParameter(s_handleTileSBuffer, f.tileSBuffer);
 		visualProgramParams.endParameters(m_globalContext);
 
-		T_RENDER_PUSH_MARKER(m_renderView, "World: Visual opaque");
-		f.visual->getRenderContext()->render(m_renderView, render::RpSetup | render::RpOpaque, &visualProgramParams);
-		T_RENDER_POP_MARKER(m_renderView);
+		T_RENDER_PUSH_MARKER(renderView, "World: Visual opaque");
+		f.visual->getRenderContext()->render(renderView, render::RpSetup | render::RpOpaque, &visualProgramParams);
+		T_RENDER_POP_MARKER(renderView);
 
-		T_RENDER_PUSH_MARKER(m_renderView, "World: Visual post opaque");
-		f.visual->getRenderContext()->render(m_renderView, render::RpPostOpaque, &visualProgramParams);
-		T_RENDER_POP_MARKER(m_renderView);
+		T_RENDER_PUSH_MARKER(renderView, "World: Visual post opaque");
+		f.visual->getRenderContext()->render(renderView, render::RpPostOpaque, &visualProgramParams);
+		T_RENDER_POP_MARKER(renderView);
 
 		if (dot4(m_fogDistanceAndDensity, Vector4(0.0f, 0.0f, 1.0f, 1.0f)) > FUZZY_EPSILON)
 		{
-			T_RENDER_PUSH_MARKER(m_renderView, "World: Fog");
+			T_RENDER_PUSH_MARKER(renderView, "World: Fog");
 			m_lightRenderer->renderFog(
-				m_renderView,
+				renderView,
 				f.projection,
 				f.view,
 				m_fogDistanceAndDensity,
@@ -1221,23 +1221,23 @@ void WorldRendererDeferred::render(int32_t frame)
 				m_gbufferTargetSet->getColorTexture(2),
 				m_gbufferTargetSet->getColorTexture(3)
 			);
-			T_RENDER_POP_MARKER(m_renderView);
+			T_RENDER_POP_MARKER(renderView);
 		}
 
-		T_RENDER_PUSH_MARKER(m_renderView, "World: Visual alpha blend");
-		f.visual->getRenderContext()->render(m_renderView, render::RpAlphaBlend, &visualProgramParams);
-		T_RENDER_POP_MARKER(m_renderView);
+		T_RENDER_PUSH_MARKER(renderView, "World: Visual alpha blend");
+		f.visual->getRenderContext()->render(renderView, render::RpAlphaBlend, &visualProgramParams);
+		T_RENDER_POP_MARKER(renderView);
 
-		T_RENDER_PUSH_MARKER(m_renderView, "World: Visual post alpha blend");
-		f.visual->getRenderContext()->render(m_renderView, render::RpPostAlphaBlend | render::RpOverlay, &visualProgramParams);
-		T_RENDER_POP_MARKER(m_renderView);
+		T_RENDER_PUSH_MARKER(renderView, "World: Visual post alpha blend");
+		f.visual->getRenderContext()->render(renderView, render::RpPostAlphaBlend | render::RpOverlay, &visualProgramParams);
+		T_RENDER_POP_MARKER(renderView);
 
-		m_renderView->end();
+		renderView->end();
 	}
 
 	// Copy color into off target, generate mips.
-	T_RENDER_PUSH_MARKER(m_renderView, "World: Color read-back copy");
-	if (m_renderView->begin(m_colorTargetSet, nullptr))
+	T_RENDER_PUSH_MARKER(renderView, "World: Color read-back copy");
+	if (renderView->begin(m_colorTargetSet, nullptr))
 	{
 		render::ImageProcessStep::Instance::RenderParams params;
 		params.viewFrustum = f.viewFrustum;
@@ -1245,7 +1245,7 @@ void WorldRendererDeferred::render(int32_t frame)
 		params.deltaTime = 0.0f;
 
 		m_colorTargetCopy->render(
-	 		m_renderView,
+	 		renderView,
 	 		m_visualTargetSet->getColorTexture(0),	// color
 	 		nullptr,	// depth
 	 		nullptr,	// normal
@@ -1254,14 +1254,14 @@ void WorldRendererDeferred::render(int32_t frame)
 	 		params
 		);
 
-		m_renderView->end();
+		renderView->end();
 	}
-	T_RENDER_POP_MARKER(m_renderView);
+	T_RENDER_POP_MARKER(renderView);
 
 	m_globalContext->flush();
 }
 
-void WorldRendererDeferred::endRender(int32_t frame, float deltaTime)
+void WorldRendererDeferred::endRender(render::IRenderView* renderView, int32_t frame, float deltaTime)
 {
 	Frame& f = m_frames[frame];
 
@@ -1290,14 +1290,14 @@ void WorldRendererDeferred::endRender(int32_t frame, float deltaTime)
 
 	for (size_t i = 0; i < processes.size(); ++i)
 	{
-		T_RENDER_PUSH_MARKER(m_renderView, "World: Post process");
+		T_RENDER_PUSH_MARKER(renderView, "World: Post process");
 
 		bool haveNext = bool((i + 1) < processes.size());
 		if (haveNext)
-			m_renderView->begin(outputTargetSet, nullptr);
+			renderView->begin(outputTargetSet, nullptr);
 
 		processes[i]->render(
-			m_renderView,
+			renderView,
 			sourceTargetSet->getColorTexture(0),	// color
 			m_gbufferTargetSet->getColorTexture(0),	// depth
 			m_gbufferTargetSet->getColorTexture(1),	// normal
@@ -1308,11 +1308,11 @@ void WorldRendererDeferred::endRender(int32_t frame, float deltaTime)
 
 		if (haveNext)
 		{
-			m_renderView->end();
+			renderView->end();
 			std::swap(sourceTargetSet, outputTargetSet);
 		}
 
-		T_RENDER_POP_MARKER(m_renderView);
+		T_RENDER_POP_MARKER(renderView);
 	}
 }
 
@@ -1383,26 +1383,27 @@ void WorldRendererDeferred::getDebugTargets(std::vector< render::DebugTarget >& 
 		m_toneMapImageProcess->getDebugTargets(outTargets);
 }
 
-void WorldRendererDeferred::buildGBuffer(WorldRenderView& worldRenderView, int frame)
+void WorldRendererDeferred::buildGBuffer(WorldRenderView& worldRenderView, int32_t frame)
 {
 	Frame& f = m_frames[frame];
 
-	WorldRenderView gbufferRenderView = worldRenderView;
-	gbufferRenderView.resetLights();
+	worldRenderView.resetLights();
 
 	WorldRenderPassDeferred gbufferPass(
 		s_techniqueDeferredGBufferWrite,
-		gbufferRenderView,
+		worldRenderView,
 		IWorldRenderPass::PfFirst,
 		false
 	);
-	for (auto entity : m_buildEntities)
-		f.gbuffer->build(gbufferRenderView, gbufferPass, entity);
-	f.gbuffer->flush(gbufferRenderView, gbufferPass);
+	f.gbuffer->build(worldRenderView, gbufferPass, m_rootEntity);
+	f.gbuffer->flush(worldRenderView, gbufferPass, m_rootEntity);
 }
 
-void WorldRendererDeferred::buildReflections(WorldRenderView& worldRenderView, int frame)
+void WorldRendererDeferred::buildReflections(const WorldRenderView& worldRenderView, int32_t frame)
 {
+	if (m_reflectionsQuality == QuDisabled)
+		return;
+
 	Frame& f = m_frames[frame];
 
 	WorldRenderView reflectionsRenderView = worldRenderView;
@@ -1414,12 +1415,11 @@ void WorldRendererDeferred::buildReflections(WorldRenderView& worldRenderView, i
 		IWorldRenderPass::PfNone,
 		false
 	);
-	for (auto entity : m_buildEntities)
-		f.reflections->build(reflectionsRenderView, reflectionsPass, entity);
-	f.reflections->flush(reflectionsRenderView, reflectionsPass);
+	f.reflections->build(reflectionsRenderView, reflectionsPass, m_rootEntity);
+	f.reflections->flush(reflectionsRenderView, reflectionsPass, m_rootEntity);
 }
 
-void WorldRendererDeferred::buildIrradiance(WorldRenderView& worldRenderView, int frame)
+void WorldRendererDeferred::buildIrradiance(const WorldRenderView& worldRenderView, int32_t frame)
 {
 	Frame& f = m_frames[frame];
 
@@ -1432,12 +1432,11 @@ void WorldRendererDeferred::buildIrradiance(WorldRenderView& worldRenderView, in
 		IWorldRenderPass::PfNone,
 		(bool)m_irradianceGrid
 	);
-	for (auto entity : m_buildEntities)
-		f.irradiance->build(irradianceRenderView, irradiancePass, entity);
-	f.irradiance->flush(irradianceRenderView, irradiancePass);
+	f.irradiance->build(irradianceRenderView, irradiancePass, m_rootEntity);
+	f.irradiance->flush(irradianceRenderView, irradiancePass, m_rootEntity);
 }
 
-void WorldRendererDeferred::buildVelocity(WorldRenderView& worldRenderView, int frame)
+void WorldRendererDeferred::buildVelocity(const WorldRenderView& worldRenderView, int32_t frame)
 {
 	if (m_motionBlurQuality == QuDisabled)
 		return;
@@ -1453,12 +1452,11 @@ void WorldRendererDeferred::buildVelocity(WorldRenderView& worldRenderView, int 
 		IWorldRenderPass::PfNone,
 		false
 	);
-	for (auto entity : m_buildEntities)
-		f.velocity->build(velocityRenderView, velocityPass, entity);
-	f.velocity->flush(velocityRenderView, velocityPass);
+	f.velocity->build(velocityRenderView, velocityPass, m_rootEntity);
+	f.velocity->flush(velocityRenderView, velocityPass, m_rootEntity);
 }
 
-void WorldRendererDeferred::buildLights(WorldRenderView& worldRenderView, int frame)
+void WorldRendererDeferred::buildLights(const WorldRenderView& worldRenderView, int32_t frame)
 {
 	Frame& f = m_frames[frame];
 
@@ -1564,9 +1562,8 @@ void WorldRendererDeferred::buildLights(WorldRenderView& worldRenderView, int fr
 				);
 				f.slice[slice].shadow->getRenderContext()->draw(render::RpSetup, svrb);	
 
-				for (auto entity : m_buildEntities)
-					f.slice[slice].shadow->build(shadowRenderView, shadowPass, entity);
-				f.slice[slice].shadow->flush(shadowRenderView, shadowPass);
+				f.slice[slice].shadow->build(shadowRenderView, shadowPass, m_rootEntity);
+				f.slice[slice].shadow->flush(shadowRenderView, shadowPass, m_rootEntity);
 
 				f.slice[slice].shadowLightView = shadowLightView;
 				f.slice[slice].shadowLightProjection = shadowLightProjection;
@@ -1639,9 +1636,8 @@ void WorldRendererDeferred::buildLights(WorldRenderView& worldRenderView, int fr
 			);
 			f.atlas[atlasIndex].shadow->getRenderContext()->draw(render::RpSetup, svrb);	
 
-			for (auto entity : m_buildEntities)
-				f.atlas[atlasIndex].shadow->build(shadowRenderView, shadowPass, entity);
-			f.atlas[atlasIndex].shadow->flush(shadowRenderView, shadowPass);
+			f.atlas[atlasIndex].shadow->build(shadowRenderView, shadowPass, m_rootEntity);
+			f.atlas[atlasIndex].shadow->flush(shadowRenderView, shadowPass, m_rootEntity);
 
 			f.atlas[atlasIndex].shadowLightView = shadowLightView;
 			f.atlas[atlasIndex].shadowLightProjection = shadowLightProjection;
@@ -1736,20 +1732,22 @@ void WorldRendererDeferred::buildLights(WorldRenderView& worldRenderView, int fr
 	f.atlasCount = atlasIndex;
 }
 
-void WorldRendererDeferred::buildVisual(WorldRenderView& worldRenderView, int frame)
+void WorldRendererDeferred::buildVisual(const WorldRenderView& worldRenderView, int32_t frame)
 {
 	Frame& f = m_frames[frame];
 
+	WorldRenderView visualRenderView = worldRenderView;
+	visualRenderView.resetLights();
+
 	WorldRenderPassDeferred deferredColorPass(
 		s_techniqueDeferredColor,
-		worldRenderView,
+		visualRenderView,
 		IWorldRenderPass::PfLast,
 		m_settings.fog,
 		m_gbufferTargetSet->getColorTexture(0) != nullptr
 	);
-	for (auto entity : m_buildEntities)
-		f.visual->build(worldRenderView, deferredColorPass, entity);
-	f.visual->flush(worldRenderView, deferredColorPass);
+	f.visual->build(visualRenderView, deferredColorPass, m_rootEntity);
+	f.visual->flush(visualRenderView, deferredColorPass, m_rootEntity);
 }
 
 	}

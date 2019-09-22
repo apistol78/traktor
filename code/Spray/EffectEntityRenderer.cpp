@@ -73,7 +73,8 @@ void EffectEntityRenderer::render(
 void EffectEntityRenderer::flush(
 	world::WorldContext& worldContext,
 	world::WorldRenderView& worldRenderView,
-	const world::IWorldRenderPass& worldRenderPass
+	const world::IWorldRenderPass& worldRenderPass,
+	world::Entity* rootEntity
 )
 {
 	m_pointRenderer->flush(worldContext.getRenderContext(), worldRenderPass);

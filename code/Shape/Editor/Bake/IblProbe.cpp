@@ -1,3 +1,4 @@
+#include "Core/Math/Const.h"
 #include "Core/Math/Vector2.h"
 #include "Drawing/Image.h"
 #include "Shape/Editor/Bake/IblProbe.h"

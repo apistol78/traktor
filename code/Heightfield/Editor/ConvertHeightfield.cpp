@@ -55,12 +55,12 @@ Ref< model::Model > ConvertHeightfield::convert(const Heightfield* heightfield, 
     model->reserveVertices(outputSize * outputSize);
 
 	model::Vertex vertex;
-    for (int32_t iz = iz0; iz < iz1; iz += step)
+	for (int32_t iz = 0; iz < outputSize; ++iz)
     {
-        for (int32_t ix = ix0; ix < ix1; ix += step)
+		for (int32_t ix = 0; ix < outputSize; ++ix)
         {
 			float wx, wz;
-			heightfield->gridToWorld(ix, iz, wx, wz);
+			heightfield->gridToWorld(ix0 + ix * step, iz0 + iz * step, wx, wz);
 
 			uint32_t positionId = model->addPosition(Vector4(
 				wx,
@@ -70,8 +70,8 @@ Ref< model::Model > ConvertHeightfield::convert(const Heightfield* heightfield, 
 			));
 
 			uint32_t texCoordId = model->addTexCoord(Vector2(
-				float(ix) / (size - 1),
-				float(iz) / (size - 1)
+				float(ix) / (outputSize - 1),
+				float(iz) / (outputSize - 1)
 			));
 
 			vertex.setPosition(positionId);

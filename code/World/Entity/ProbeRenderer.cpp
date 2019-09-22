@@ -1,3 +1,4 @@
+#include "Render/ICubeTexture.h"
 #include "Render/IndexBuffer.h"
 #include "Render/IRenderSystem.h"
 #include "Render/Shader.h"
@@ -9,8 +10,11 @@
 #include "World/IWorldRenderPass.h"
 #include "World/WorldContext.h"
 #include "World/WorldRenderView.h"
+#include "World/Entity/ProbeCapturer.h"
 #include "World/Entity/ProbeComponent.h"
 #include "World/Entity/ProbeRenderer.h"
+
+#include "World/Entity/GroupEntity.h"
 
 namespace traktor
 {
@@ -37,6 +41,29 @@ render::handle_t s_handleProbeIntensity;
 render::handle_t s_handleMagicCoeffs;
 render::handle_t s_handleWorldViewInv;
 
+class ProbeCaptureRenderBlock : public render::RenderBlock
+{
+public:
+	ProbeCapturer* probeCapturer;
+
+	virtual void render(render::IRenderView* renderView, const render::ProgramParameters* globalParameters) const override final
+	{
+		probeCapturer->render(renderView);
+	}
+};
+
+class ProbeCaptureTransferBlock : public render::RenderBlock
+{
+public:
+	ProbeCapturer* probeCapturer;
+	Ref< render::ICubeTexture > texture;
+
+	virtual void render(render::IRenderView* renderView, const render::ProgramParameters* globalParameters) const override final
+	{
+		probeCapturer->transfer(texture);
+	}
+};
+
 		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.world.ProbeRenderer", ProbeRenderer, IEntityRenderer)
@@ -46,6 +73,9 @@ ProbeRenderer::ProbeRenderer(
 	render::IRenderSystem* renderSystem
 )
 {
+	m_probeCapturer = new ProbeCapturer(resourceManager, renderSystem);
+	m_probeCapturer->create();
+
 	resourceManager->bind(c_probeShader, m_probeShader);
 
 	s_handleProbeLocal = render::getParameterHandle(L"World_ProbeLocal");
@@ -148,14 +178,64 @@ void ProbeRenderer::render(
 void ProbeRenderer::flush(
 	WorldContext& worldContext,
 	WorldRenderView& worldRenderView,
-	const IWorldRenderPass& worldRenderPass
+	const IWorldRenderPass& worldRenderPass,
+	Entity* rootEntity
 )
 {
-	if (!m_probeShader)
-		return;
-
 	render::RenderContext* renderContext = worldContext.getRenderContext();
 	T_ASSERT(renderContext);
+
+	// Render captures.
+	if ((worldRenderPass.getPassFlags() & world::IWorldRenderPass::PfFirst) != 0)
+	{
+		static bool recursive = false;
+		if (!recursive)
+		{
+			recursive = true;
+
+		if (!m_capture)
+		{
+			for (auto probeComponent : m_probeComponents)
+			{
+				if (probeComponent->getDirty())
+				{
+					m_capture = probeComponent;
+					break;
+				}
+			}
+			if (m_capture)
+			{
+				// Build probe context.
+				m_probeCapturer->build(
+					worldContext.getEntityRenderers(),
+					rootEntity,
+					m_capture->getTransform().translation().xyz1()
+				);
+
+				// Chain probe render as render block.
+				auto renderBlock = worldContext.getRenderContext()->alloc< ProbeCaptureRenderBlock >();
+				renderBlock->probeCapturer = m_probeCapturer;
+				renderContext->draw(render::RpOpaque, renderBlock);
+			}
+		}
+		else
+		{
+			// Copy targets into probe textures.
+			auto renderBlock = worldContext.getRenderContext()->alloc< ProbeCaptureTransferBlock >();
+			renderBlock->probeCapturer = m_probeCapturer;
+			renderBlock->texture = m_capture->getTexture();
+			renderContext->draw(render::RpOpaque, renderBlock);
+
+			m_capture->setDirty(false);
+			m_capture = nullptr;
+		}
+
+			recursive = false;
+		}
+	}
+
+	if (!m_probeShader)
+		return;
 
 	const Matrix44& projection = worldRenderView.getProjection();
 	const Matrix44& view = worldRenderView.getView();

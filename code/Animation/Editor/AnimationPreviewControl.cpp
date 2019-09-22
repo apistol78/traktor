@@ -217,7 +217,6 @@ void AnimationPreviewControl::updateWorldRenderer()
 	if (worldRenderer->create(
 		m_resourceManager,
 		m_renderSystem,
-		m_renderView,
 		wcd
 	))
 	{
@@ -356,14 +355,13 @@ void AnimationPreviewControl::eventPaint(ui::PaintEvent* event)
 		m_worldRenderView.resetLights();
 		m_worldRenderView.addLight(light);
 
-		m_worldRenderer->beginBuild();
-		m_worldRenderer->build(m_entity);
-		m_worldRenderer->endBuild(m_worldRenderView, 0);
+		m_worldRenderer->attach(m_entity);
+		m_worldRenderer->build(m_worldRenderView, 0);
 	}
 
-	m_worldRenderer->beginRender(0, clearColor);
-	m_worldRenderer->render(0);
-	m_worldRenderer->endRender(0, deltaTime);
+	m_worldRenderer->beginRender(m_renderView, 0, clearColor);
+	m_worldRenderer->render(m_renderView, 0);
+	m_worldRenderer->endRender(m_renderView, 0, deltaTime);
 
 	if (m_primitiveRenderer->begin(0, projectionTransform))
 	{

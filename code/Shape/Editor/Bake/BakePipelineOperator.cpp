@@ -355,7 +355,7 @@ bool addModel(const model::Model* model, const Transform& transform, const std::
 }
 
 /*! */
-int32_t calculateLightmapSize(const model::Model* model, float lumelDensity, int32_t minimumSize)
+int32_t calculateLightmapSize(const model::Model* model, float lumelDensity, int32_t minimumSize, int32_t maximumSize)
 {
 	float totalWorldArea = 0.0f;
 	for (const auto& polygon : model->getPolygons())
@@ -367,9 +367,12 @@ int32_t calculateLightmapSize(const model::Model* model, float lumelDensity, int
 	}
 
 	const float totalLightMapArea = lumelDensity * lumelDensity * totalWorldArea;
-	const float size = std::sqrt(totalLightMapArea);
+	int32_t size = (int32_t)(std::sqrt(totalLightMapArea) + 0.5f);
         
-	return alignUp(std::max< int32_t >(minimumSize, (int32_t)(size + 0.5f)), 16);
+	size = std::max< int32_t >(minimumSize, size);
+	size = std::min< int32_t >(maximumSize, size);
+
+	return alignUp(size, 16);
 }
 
 		}
@@ -519,7 +522,8 @@ bool BakePipelineOperator::build(
 					int32_t lightmapSize = calculateLightmapSize(
 						model,
 						configuration->getLumelDensity(),
-						configuration->getMinimumLightMapSize()
+						configuration->getMinimumLightMapSize(),
+						configuration->getMaximumLightMapSize()
 					);
 
 					if (shouldUnwrap)
@@ -612,7 +616,8 @@ bool BakePipelineOperator::build(
 				int32_t lightmapSize = calculateLightmapSize(
 					model,
 					configuration->getLumelDensity(),
-					configuration->getMinimumLightMapSize()
+					configuration->getMinimumLightMapSize(),
+					configuration->getMaximumLightMapSize()
 				);
 
 				if (shouldUnwrap)
@@ -658,7 +663,6 @@ bool BakePipelineOperator::build(
 					pipelineBuilder,
 					m_assetPath,
 					inoutEntityData,
-					// lightmapId,
 					model
 				));
 			}

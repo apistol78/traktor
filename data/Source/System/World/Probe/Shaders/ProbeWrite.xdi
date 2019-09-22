@@ -370,8 +370,8 @@
 			<id>{44B1BEEC-9F81-1343-8A38-FD6634799785}</id>
 			<comment/>
 			<position>
-				<first>1691</first>
-				<second>1381</second>
+				<first>2087</first>
+				<second>1379</second>
 			</position>
 			<technique>World_ReflectionWrite</technique>
 			<priority>
@@ -383,10 +383,10 @@
 				<overlay>false</overlay>
 			</priority>
 			<cullMode>CmClockWise</cullMode>
-			<blendEnable>false</blendEnable>
+			<blendEnable>true</blendEnable>
 			<blendColorOperation>BoAdd</blendColorOperation>
-			<blendColorSource>BfOne</blendColorSource>
-			<blendColorDestination>BfOne</blendColorDestination>
+			<blendColorSource>BfSourceAlpha</blendColorSource>
+			<blendColorDestination>BfOneMinusSourceAlpha</blendColorDestination>
 			<blendAlphaOperation>BoAdd</blendAlphaOperation>
 			<blendAlphaSource>BfOne</blendAlphaSource>
 			<blendAlphaDestination>BfOne</blendAlphaDestination>
@@ -396,7 +396,7 @@
 				<blue>true</blue>
 				<alpha>true</alpha>
 			</colorWriteMask>
-			<depthEnable>false</depthEnable>
+			<depthEnable>true</depthEnable>
 			<depthWriteEnable>false</depthWriteEnable>
 			<depthFunction>CfLessEqual</depthFunction>
 			<alphaTestEnable>false</alphaTestEnable>
@@ -546,8 +546,8 @@
 			<id>{320E5364-D7F2-EE4D-AF4C-34AF57F0D93D}</id>
 			<comment/>
 			<position>
-				<first>1096</first>
-				<second>1428</second>
+				<first>1518</first>
+				<second>1426</second>
 			</position>
 			<color>0, 0, 0, 0</color>
 		</item>
@@ -555,8 +555,8 @@
 			<id>{9F665B15-EDF8-D443-8336-37A06826228E}</id>
 			<comment/>
 			<position>
-				<first>1152</first>
-				<second>1392</second>
+				<first>1548</first>
+				<second>1390</second>
 			</position>
 			<value>0.55</value>
 		</item>
@@ -564,8 +564,8 @@
 			<id>{0242E377-F79B-484D-9591-788006FEF248}</id>
 			<comment/>
 			<position>
-				<first>1434</first>
-				<second>1372</second>
+				<first>1830</first>
+				<second>1370</second>
 			</position>
 			<branch>BrAuto</branch>
 			<operator>CoLess</operator>
@@ -574,8 +574,8 @@
 			<id>{A321C85E-CA45-DF4D-A888-A5540121FB07}</id>
 			<comment/>
 			<position>
-				<first>1162</first>
-				<second>1356</second>
+				<first>1558</first>
+				<second>1354</second>
 			</position>
 			<name>L_Roughness</name>
 			<global>false</global>
@@ -589,6 +589,42 @@
 			</position>
 			<name>L_Roughness</name>
 			<global>false</global>
+		</item>
+		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
+			<id>{1E70E9F1-22D5-7947-9F19-0EC009CD2B6B}</id>
+			<comment/>
+			<position>
+				<first>1140</first>
+				<second>1625</second>
+			</position>
+			<name>V_Blend</name>
+			<global>false</global>
+		</item>
+		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
+			<id>{C3FF33E1-7DA4-AD47-87AB-E56928720EA1}</id>
+			<comment/>
+			<position>
+				<first>1338</first>
+				<second>1599</second>
+			</position>
+			<swizzle>000x</swizzle>
+		</item>
+		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
+			<id>{062E3993-D2C6-EB4D-A18B-D2F6B9648AF2}</id>
+			<comment/>
+			<position>
+				<first>1336</first>
+				<second>1550</second>
+			</position>
+			<swizzle>xyz0</swizzle>
+		</item>
+		<item type="traktor.render.Add" version="traktor.render.Node:1">
+			<id>{E7193D44-FF54-154B-B33E-85CDCDA1B854}</id>
+			<comment/>
+			<position>
+				<first>1500</first>
+				<second>1540</second>
+			</position>
 		</item>
 	</nodes>
 	<edges>
@@ -1114,16 +1150,6 @@
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[34]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[51]"/>
-				<name>CaseTrue</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
 				<node ref="/object/nodes/item[51]"/>
 				<name>Output</name>
 			</source>
@@ -1140,6 +1166,56 @@
 			<destination>
 				<node ref="/object/nodes/item[53]"/>
 				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[54]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[55]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[55]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[57]"/>
+				<name>Input2</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[56]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[57]"/>
+				<name>Input1</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[34]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[56]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[57]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[51]"/>
+				<name>CaseTrue</name>
 			</destination>
 		</item>
 	</edges>

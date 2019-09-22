@@ -45,7 +45,7 @@ public:
 
 	virtual bool update(const world::UpdateParams& update) override final;
 
-	virtual void build(world::IWorldRenderer* worldRenderer) override final;
+	virtual void attach(world::IWorldRenderer* worldRenderer) override final;
 
 	virtual void cancel(world::CancelType when) override final;
 

@@ -9,7 +9,7 @@ namespace traktor
 	namespace shape
 	{
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.shape.BakeConfiguration", 13, BakeConfiguration, ISerializable)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.shape.BakeConfiguration", 14, BakeConfiguration, ISerializable)
 
 BakeConfiguration::BakeConfiguration()
 :	m_traceDirect(true)
@@ -21,6 +21,7 @@ BakeConfiguration::BakeConfiguration()
 ,	m_pointLightShadowRadius(0.1f)
 ,	m_lumelDensity(32.0f)
 ,	m_minimumLightMapSize(128)
+,	m_maximumLightMapSize(1024)
 ,	m_enableShadowFix(true)
 ,	m_enableDenoise(true)
 ,	m_enableSeamFilter(true)
@@ -58,6 +59,8 @@ void BakeConfiguration::serialize(ISerializer& s)
 
 	if (s.getVersion() >= 5)
 		s >> Member< int32_t >(L"minimumLightMapSize", m_minimumLightMapSize, AttributeRange(0));
+	if (s.getVersion() >= 14)
+		s >> Member< int32_t >(L"maximumLightMapSize", m_maximumLightMapSize, AttributeRange(0));
 
 	if (s.getVersion() >= 2 && s.getVersion() < 8)
 	{

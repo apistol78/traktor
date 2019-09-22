@@ -15,7 +15,7 @@ namespace traktor
 	namespace animation
 	{
 
-/*! \brief Boids entity renderer.
+/*! Boids entity renderer.
  * \ingroup Animation
  */
 class T_DLLCLASS BoidsEntityRenderer : public world::IEntityRenderer
@@ -35,7 +35,8 @@ public:
 	virtual void flush(
 		world::WorldContext& worldContext,
 		world::WorldRenderView& worldRenderView,
-		const world::IWorldRenderPass& worldRenderPass
+		const world::IWorldRenderPass& worldRenderPass,
+		world::Entity* rootEntity
 	) override final;
 };
 

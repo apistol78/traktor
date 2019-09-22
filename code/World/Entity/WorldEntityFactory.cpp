@@ -1,4 +1,5 @@
-#include "Render/ITexture.h"
+#include "Render/ICubeTexture.h"
+#include "Render/IRenderSystem.h"
 #include "Render/Shader.h"
 #include "Resource/IResourceManager.h"
 #include "World/IEntityBuilder.h"
@@ -31,8 +32,9 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.world.WorldEntityFactory", WorldEntityFactory, IEntityFactory)
 
-WorldEntityFactory::WorldEntityFactory(resource::IResourceManager* resourceManager, bool editor)
+WorldEntityFactory::WorldEntityFactory(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem, bool editor)
 :	m_resourceManager(resourceManager)
+,	m_renderSystem(renderSystem)
 ,	m_editor(editor)
 {
 }
@@ -180,13 +182,25 @@ Ref< IEntityComponent > WorldEntityFactory::createEntityComponent(const world::I
 
 	if (const ProbeComponentData* probeComponentData = dynamic_type_cast< const ProbeComponentData* >(&entityComponentData))
 	{
-		resource::Proxy< render::ITexture > texture;
+		resource::Proxy< render::ICubeTexture > texture;
 
-		if (probeComponentData->getTexture())
-		{
-			if (!m_resourceManager->bind(probeComponentData->getTexture(), texture))
-				return nullptr;
-		}
+		//if (probeComponentData->getTexture())
+		//{
+		//	if (!m_resourceManager->bind(probeComponentData->getTexture(), texture))
+		//		return nullptr;
+		//}
+
+		// Create reflection texture.
+		render::CubeTextureCreateDesc ctcd;
+		ctcd.side = 128; //c_faceSize;
+		ctcd.mipCount = 1;
+		ctcd.format = render::TfR32G32B32A32F;
+		ctcd.sRGB = false;
+		ctcd.immutable = false;
+
+		texture = resource::Proxy< render::ICubeTexture >(m_renderSystem->createCubeTexture(ctcd));
+		if (!texture)
+			return nullptr;
 
 		return new ProbeComponent(
 			texture,

@@ -35,7 +35,7 @@ public:
 
 	virtual void update(const UpdateParams& update) override final;
 
-	virtual void build(IWorldRenderer* worldRenderer) override final;
+	virtual void attach(IWorldRenderer* worldRenderer) override final;
 
 	virtual void cancelAll(CancelType when) override final;
 

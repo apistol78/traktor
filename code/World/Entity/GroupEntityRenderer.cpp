@@ -30,7 +30,8 @@ void GroupEntityRenderer::render(
 void GroupEntityRenderer::flush(
 	WorldContext& worldContext,
 	WorldRenderView& worldRenderView,
-	const IWorldRenderPass& worldRenderPass
+	const IWorldRenderPass& worldRenderPass,
+	Entity* rootEntity
 )
 {
 }

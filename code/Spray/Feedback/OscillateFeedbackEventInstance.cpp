@@ -53,7 +53,7 @@ bool OscillateFeedbackEventInstance::update(const world::UpdateParams& update)
 	return !finished;
 }
 
-void OscillateFeedbackEventInstance::build(world::IWorldRenderer* worldRenderer)
+void OscillateFeedbackEventInstance::attach(world::IWorldRenderer* worldRenderer)
 {
 }
 

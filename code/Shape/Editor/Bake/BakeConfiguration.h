@@ -41,6 +41,8 @@ public:
 
 	int32_t getMinimumLightMapSize() const { return m_minimumLightMapSize; }
 
+	int32_t getMaximumLightMapSize() const { return m_maximumLightMapSize; }
+
 	bool getEnableShadowFix() const { return m_enableShadowFix; }
 
 	bool getEnableDenoise() const { return m_enableDenoise; }
@@ -59,6 +61,7 @@ private:
 	float m_pointLightShadowRadius;
 	float m_lumelDensity;
 	int32_t m_minimumLightMapSize;
+	int32_t m_maximumLightMapSize;
 	bool m_enableShadowFix;
 	bool m_enableDenoise;
 	bool m_enableSeamFilter;

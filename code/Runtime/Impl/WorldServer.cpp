@@ -178,7 +178,7 @@ void WorldServer::createEntityFactories(IEnvironment* environment)
 	m_entityBuilder->addFactory(new spray::EffectEntityFactory(resourceManager, m_eventManager, soundPlayer, m_feedbackManager));
 	m_entityBuilder->addFactory(new terrain::EntityFactory(resourceManager, renderSystem));
 	m_entityBuilder->addFactory(new weather::WeatherFactory(resourceManager, renderSystem));
-	m_entityBuilder->addFactory(new world::WorldEntityFactory(resourceManager, false));
+	m_entityBuilder->addFactory(new world::WorldEntityFactory(resourceManager, renderSystem, false));
 }
 
 void WorldServer::createEntityRenderers(IEnvironment* environment)
@@ -188,7 +188,7 @@ void WorldServer::createEntityRenderers(IEnvironment* environment)
 
 	float sprayLod1Distance = c_sprayLodDistances[m_particleQuality][0];
 	float sprayLod2Distance = c_sprayLodDistances[m_particleQuality][1];
-	m_effectEntityRenderer = new spray::EffectEntityRenderer(m_renderServer->getRenderSystem(), sprayLod1Distance, sprayLod2Distance);
+	m_effectEntityRenderer = new spray::EffectEntityRenderer(renderSystem, sprayLod1Distance, sprayLod2Distance);
 
 	m_terrainEntityRenderer = new terrain::EntityRenderer(
 		c_terrainDetailDistances[m_terrainQuality],
@@ -198,7 +198,7 @@ void WorldServer::createEntityRenderers(IEnvironment* environment)
 	);
 
 	m_entityRenderers->add(new world::ComponentEntityRenderer());
-	m_entityRenderers->add(new world::DecalRenderer(m_renderServer->getRenderSystem()));
+	m_entityRenderers->add(new world::DecalRenderer(renderSystem));
 	m_entityRenderers->add(new world::GroupEntityRenderer());
 	m_entityRenderers->add(new world::LightRenderer());
 	m_entityRenderers->add(new world::ProbeRenderer(resourceManager, renderSystem));
@@ -330,7 +330,6 @@ Ref< world::IWorldRenderer > WorldServer::createWorldRenderer(const world::World
 	if (!worldRenderer->create(
 		m_resourceServer->getResourceManager(),
 		m_renderServer->getRenderSystem(),
-		m_renderServer->getRenderView(),
 		wcd
 	))
 		return nullptr;

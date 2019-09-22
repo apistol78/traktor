@@ -301,16 +301,13 @@ void WorldLayer::build(const UpdateInfo& info, uint32_t frame)
 		);
 	}
 
-	if (m_worldRenderer->beginBuild())
-	{
-		m_worldRenderer->build(m_renderGroup);
+	m_worldRenderer->attach(m_renderGroup);
 
-		world::IEntityEventManager* eventManager = m_environment->getWorld()->getEntityEventManager();
-		if (eventManager)
-			eventManager->build(m_worldRenderer);
+	world::IEntityEventManager* eventManager = m_environment->getWorld()->getEntityEventManager();
+	if (eventManager)
+		eventManager->attach(m_worldRenderer);
 
-		m_worldRenderer->endBuild(m_worldRenderView, frame);
-	}
+	m_worldRenderer->build(m_worldRenderView, frame);
 
 	m_deltaTime = info.getFrameDeltaTime();
 }
@@ -321,7 +318,9 @@ void WorldLayer::render(uint32_t frame)
 	if (!m_worldRenderer || !m_scene)
 		return;
 
-	if (m_worldRenderer->beginRender(frame, c_clearColor))
+	render::IRenderView* renderView = m_environment->getRender()->getRenderView();
+
+	if (m_worldRenderer->beginRender(renderView, frame, c_clearColor))
 	{
 		// Bind per-scene post processing parameters.
 		render::ImageProcess* postProcess = m_worldRenderer->getVisualImageProcess();
@@ -332,8 +331,8 @@ void WorldLayer::render(uint32_t frame)
 		}
 
 		// Render world.
-		m_worldRenderer->render(frame);
-		m_worldRenderer->endRender(frame, m_deltaTime);
+		m_worldRenderer->render(renderView, frame);
+		m_worldRenderer->endRender(renderView, frame, m_deltaTime);
 	}
 }
 

@@ -117,7 +117,8 @@ void DecalRenderer::render(
 void DecalRenderer::flush(
 	WorldContext& worldContext,
 	WorldRenderView& worldRenderView,
-	const IWorldRenderPass& worldRenderPass
+	const IWorldRenderPass& worldRenderPass,
+	Entity* rootEntity
 )
 {
 	render::RenderContext* renderContext = worldContext.getRenderContext();

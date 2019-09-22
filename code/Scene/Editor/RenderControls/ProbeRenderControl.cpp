@@ -348,7 +348,6 @@ void ProbeRenderControl::updateWorldRenderer()
 	if (worldRenderer->create(
 		m_context->getResourceManager(),
 		m_context->getRenderSystem(),
-		m_renderView,
 		wcd
 	))
 	{
@@ -593,10 +592,9 @@ void ProbeRenderControl::capture(const Vector4& pivot)
 				if (sceneInstance)
 				{
 					// Build frame from scene entities.
-					m_worldRenderer->beginBuild();
-					m_worldRenderer->build(sceneInstance->getRootEntity());
-					m_context->getEntityEventManager()->build(m_worldRenderer);
-					m_worldRenderer->endBuild(m_worldRenderView, 0);
+					m_worldRenderer->attach(sceneInstance->getRootEntity());
+					m_context->getEntityEventManager()->attach(m_worldRenderer);
+					m_worldRenderer->build(m_worldRenderView, 0);
 
 					// Set post process parameters from scene instance.
 					render::ImageProcess* postProcess = m_worldRenderer->getVisualImageProcess();
@@ -607,9 +605,9 @@ void ProbeRenderControl::capture(const Vector4& pivot)
 					}
 				}
 
-				m_worldRenderer->beginRender(0, cl.colors[0]);
-				m_worldRenderer->render(0);
-				m_worldRenderer->endRender(0, 1.0f / 60.0f);
+				m_worldRenderer->beginRender(m_renderView, 0, cl.colors[0]);
+				m_worldRenderer->render(m_renderView, 0);
+				m_worldRenderer->endRender(m_renderView, 0, 1.0f / 60.0f);
 
 				m_renderView->end();
 			}

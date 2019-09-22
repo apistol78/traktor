@@ -31,7 +31,7 @@ class IWorldRenderPass;
 class WorldEntityRenderers;
 class WorldRenderView;
 
-/*! \brief World render thread context.
+/*! World render thread context.
  * \ingroup World
  */
 class T_DLLCLASS WorldContext : public Object
@@ -39,13 +39,15 @@ class T_DLLCLASS WorldContext : public Object
 	T_RTTI_CLASS;
 
 public:
-	WorldContext(WorldEntityRenderers* entityRenderers);
+	explicit WorldContext(WorldEntityRenderers* entityRenderers);
 
 	void clear();
 
 	void build(WorldRenderView& worldRenderView, const IWorldRenderPass& worldRenderPass, Object* renderable);
 
-	void flush(WorldRenderView& worldRenderView, const IWorldRenderPass& worldRenderPass);
+	void flush(WorldRenderView& worldRenderView, const IWorldRenderPass& worldRenderPass, Entity* rootEntity);
+
+	WorldEntityRenderers* getEntityRenderers() const { return m_entityRenderers; }
 
 	render::RenderContext* getRenderContext() const { return m_renderContext; }
 

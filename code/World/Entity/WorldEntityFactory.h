@@ -12,6 +12,13 @@
 
 namespace traktor
 {
+	namespace render
+	{
+	
+class IRenderSystem;
+
+	}
+
 	namespace resource
 	{
 
@@ -30,7 +37,7 @@ class T_DLLCLASS WorldEntityFactory : public IEntityFactory
 	T_RTTI_CLASS;
 
 public:
-	WorldEntityFactory(resource::IResourceManager* resourceManager, bool editor);
+	WorldEntityFactory(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem, bool editor);
 
 	virtual const TypeInfoSet getEntityTypes() const override final;
 
@@ -46,6 +53,7 @@ public:
 
 private:
 	mutable Ref< resource::IResourceManager > m_resourceManager;
+	Ref< render::IRenderSystem > m_renderSystem;
 	bool m_editor;
 };
 

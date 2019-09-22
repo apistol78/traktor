@@ -16,7 +16,7 @@ namespace traktor
 	namespace render
 	{
 
-class ITexture;
+class ICubeTexture;
 
 	}
 
@@ -34,7 +34,7 @@ class T_DLLCLASS ProbeComponent : public IEntityComponent
 
 public:
 	ProbeComponent(
-		const resource::Proxy< render::ITexture >& texture,
+		const resource::Proxy< render::ICubeTexture >& texture,
 		float intensity,
 		bool local,
 		const Aabb3& volume
@@ -52,9 +52,9 @@ public:
 
 	Transform getTransform() const;
 
-	void setTexture(const resource::Proxy< render::ITexture >& texture) { m_texture = texture; }
+	void setTexture(const resource::Proxy< render::ICubeTexture >& texture) { m_texture = texture; }
 
-	const resource::Proxy< render::ITexture >& getTexture() const { return m_texture; }
+	const resource::Proxy< render::ICubeTexture >& getTexture() const { return m_texture; }
 
 	float getIntensity() const { return m_intensity; }
 
@@ -62,12 +62,17 @@ public:
 
 	const Aabb3& getVolume() const { return m_volume; }
 
+	void setDirty(bool dirty) { m_dirty = dirty; }
+
+	bool getDirty() const { return m_dirty; }
+
 private:
 	Entity* m_owner;
-	resource::Proxy< render::ITexture > m_texture;
+	resource::Proxy< render::ICubeTexture > m_texture;
 	float m_intensity;
 	bool m_local;
 	Aabb3 m_volume;
+	bool m_dirty;
 };
 
 	}
