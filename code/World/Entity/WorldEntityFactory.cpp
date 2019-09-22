@@ -192,7 +192,7 @@ Ref< IEntityComponent > WorldEntityFactory::createEntityComponent(const world::I
 
 		// Create reflection texture.
 		render::CubeTextureCreateDesc ctcd;
-		ctcd.side = 128; //c_faceSize;
+		ctcd.side = 512; //c_faceSize;
 		ctcd.mipCount = 1;
 		ctcd.format = render::TfR32G32B32A32F;
 		ctcd.sRGB = false;

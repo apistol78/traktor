@@ -240,5 +240,10 @@ void CubeTextureVk::unlock(int32_t side, int32_t level)
 	m_stagingBufferAllocation = 0;
 }
 
+bool CubeTextureVk::copy(int32_t side, int32_t level, const ISimpleTexture* sourceTexture)
+{
+	return false;
+}
+
 	}
 }

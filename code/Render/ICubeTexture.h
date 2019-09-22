@@ -15,6 +15,8 @@ namespace traktor
 	namespace render
 	{
 
+class ISimpleTexture;
+
 /*! \brief Cube texture.
  * \ingroup Render
  */
@@ -52,6 +54,17 @@ public:
 	 * \param level Mip level.
 	 */
 	virtual void unlock(int32_t side, int32_t level) = 0;
+
+	/*! Copy entire texture.
+	 *
+	 * Size, mips and format of source texture must match
+	 * those of this cube texture.
+	 *
+	 * \param side Cube side.
+	 * \param level Mip level.
+	 * \param sourceTexture Source texture to copy.
+	 */
+	virtual bool copy(int32_t side, int32_t level, const ISimpleTexture* sourceTexture) = 0;
 };
 
 	}

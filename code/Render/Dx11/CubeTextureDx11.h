@@ -37,6 +37,8 @@ public:
 
 	virtual void unlock(int32_t side, int32_t level) override final;
 
+	virtual bool copy(int32_t side, int32_t level, const ISimpleTexture* sourceTexture) override final;
+
 	ID3D11ShaderResourceView* getD3D11TextureResourceView() const;
 
 private:

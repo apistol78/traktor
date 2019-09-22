@@ -14,8 +14,6 @@
 #include "World/Entity/ProbeComponent.h"
 #include "World/Entity/ProbeRenderer.h"
 
-#include "World/Entity/GroupEntity.h"
-
 namespace traktor
 {
 	namespace world
@@ -44,23 +42,14 @@ render::handle_t s_handleWorldViewInv;
 class ProbeCaptureRenderBlock : public render::RenderBlock
 {
 public:
-	ProbeCapturer* probeCapturer;
-
-	virtual void render(render::IRenderView* renderView, const render::ProgramParameters* globalParameters) const override final
-	{
-		probeCapturer->render(renderView);
-	}
-};
-
-class ProbeCaptureTransferBlock : public render::RenderBlock
-{
-public:
-	ProbeCapturer* probeCapturer;
+	ProbeCapturer* capturer;
 	Ref< render::ICubeTexture > texture;
+	int32_t face;
 
 	virtual void render(render::IRenderView* renderView, const render::ProgramParameters* globalParameters) const override final
 	{
-		probeCapturer->transfer(texture);
+		capturer->render(renderView, face);
+		capturer->transfer(texture, face);
 	}
 };
 
@@ -72,6 +61,7 @@ ProbeRenderer::ProbeRenderer(
 	resource::IResourceManager* resourceManager,
 	render::IRenderSystem* renderSystem
 )
+:	m_captureFace(0)
 {
 	m_probeCapturer = new ProbeCapturer(resourceManager, renderSystem);
 	m_probeCapturer->create();
@@ -200,34 +190,38 @@ void ProbeRenderer::flush(
 				if (probeComponent->getDirty())
 				{
 					m_capture = probeComponent;
+					m_captureFace = 0;
 					break;
 				}
 			}
-			if (m_capture)
+		}
+
+		if (m_capture)
+		{
+			if (m_captureFace < 6)
 			{
 				// Build probe context.
 				m_probeCapturer->build(
 					worldContext.getEntityRenderers(),
 					rootEntity,
-					m_capture->getTransform().translation().xyz1()
+					m_capture->getTransform().translation().xyz1(),
+					m_captureFace
 				);
 
 				// Chain probe render as render block.
 				auto renderBlock = worldContext.getRenderContext()->alloc< ProbeCaptureRenderBlock >();
-				renderBlock->probeCapturer = m_probeCapturer;
+				renderBlock->capturer = m_probeCapturer;
+				renderBlock->texture = m_capture->getTexture();
+				renderBlock->face = m_captureFace;
 				renderContext->draw(render::RpOpaque, renderBlock);
-			}
-		}
-		else
-		{
-			// Copy targets into probe textures.
-			auto renderBlock = worldContext.getRenderContext()->alloc< ProbeCaptureTransferBlock >();
-			renderBlock->probeCapturer = m_probeCapturer;
-			renderBlock->texture = m_capture->getTexture();
-			renderContext->draw(render::RpOpaque, renderBlock);
 
-			m_capture->setDirty(false);
-			m_capture = nullptr;
+				m_captureFace++;
+			}
+			else
+			{
+				m_capture->setDirty(false);
+				m_capture = nullptr;
+			}
 		}
 
 			recursive = false;
