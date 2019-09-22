@@ -40,6 +40,8 @@ public:
 
 	virtual void unlock(int32_t side, int32_t level) override final;
 
+	virtual bool copy(int32_t side, int32_t level, const ISimpleTexture* sourceTexture) override final;
+
 	// ITextureBinding
 
 	virtual void bindTexture(GLuint textureUnit) const override final;

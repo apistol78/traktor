@@ -68,5 +68,16 @@ void CubeTextureCapture::unlock(int32_t side, int32_t level)
 	m_locked[1] = -1;
 }
 
+bool CubeTextureCapture::copy(int32_t side, int32_t level, const ISimpleTexture* sourceTexture)
+{
+	T_CAPTURE_ASSERT (m_texture, L"Cube texture destroyed.");
+	T_CAPTURE_ASSERT (side >= 0, L"Invalid side index.");
+	T_CAPTURE_ASSERT (sourceTexture, L"Cannot copy null texture.");
+	if (m_texture)
+		return m_texture->copy(side, level, sourceTexture);
+	else
+		return false;
+}
+
 	}
 }

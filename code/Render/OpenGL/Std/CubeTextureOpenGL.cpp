@@ -187,6 +187,11 @@ void CubeTextureOpenGL::unlock(int32_t side, int32_t level)
 	));
 }
 
+bool CubeTextureOpenGL::copy(int32_t side, int32_t level, const ISimpleTexture* sourceTexture)
+{
+	return false;
+}
+
 void CubeTextureOpenGL::bindTexture(GLuint textureUnit) const
 {
 	T_OGL_SAFE(glActiveTexture(GL_TEXTURE0 + textureUnit));

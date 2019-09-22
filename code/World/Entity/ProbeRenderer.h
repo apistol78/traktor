@@ -73,6 +73,7 @@ private:
 	Ref< render::IndexBuffer > m_indexBuffer;
 	RefArray< ProbeComponent > m_probeComponents;
 	Ref< ProbeComponent > m_capture;
+	int32_t m_captureFace;
 };
 
 	}

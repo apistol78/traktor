@@ -40,12 +40,13 @@ public:
 	void build(
 		WorldEntityRenderers* entityRenderers,
 		Entity* rootEntity,
-		const Vector4& pivot
+		const Vector4& pivot,
+		int32_t face
 	);
 
-	void render(render::IRenderView* renderView);
+	void render(render::IRenderView* renderView, int32_t face);
 
-	void transfer(render::ICubeTexture* probeTexture);
+	void transfer(render::ICubeTexture* probeTexture, int32_t face);
 
 private:
 	Ref< resource::IResourceManager > m_resourceManager;
