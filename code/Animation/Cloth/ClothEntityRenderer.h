@@ -15,7 +15,7 @@ namespace traktor
 	namespace animation
 	{
 
-/*! \brief Cloth entity renderer.
+/*! Cloth entity renderer.
  * \ingroup Animation
  */
 class T_DLLCLASS ClothEntityRenderer : public world::IEntityRenderer
@@ -35,7 +35,8 @@ public:
 	virtual void flush(
 		world::WorldContext& worldContext,
 		world::WorldRenderView& worldRenderView,
-		const world::IWorldRenderPass& worldRenderPass
+		const world::IWorldRenderPass& worldRenderPass,
+		world::Entity* rootEntity
 	) override final;
 };
 

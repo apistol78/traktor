@@ -57,11 +57,11 @@ void EntityEventManager::update(const UpdateParams& update)
 	}
 }
 
-void EntityEventManager::build(IWorldRenderer* worldRenderer)
+void EntityEventManager::attach(IWorldRenderer* worldRenderer)
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 	for (RefArray< IEntityEventInstance >::iterator i = m_eventInstances.begin(); i != m_eventInstances.end(); ++i)
-		(*i)->build(worldRenderer);
+		(*i)->attach(worldRenderer);
 }
 
 void EntityEventManager::cancelAll(CancelType when)

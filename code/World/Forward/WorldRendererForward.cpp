@@ -21,6 +21,7 @@
 #include "World/WorldRenderView.h"
 #include "World/WorldEntityRenderers.h"
 #include "World/WorldContext.h"
+#include "World/Entity/GroupEntity.h"
 #include "World/Forward/WorldRendererForward.h"
 #include "World/Forward/WorldRenderPassForward.h"
 #include "World/SMProj/TrapezoidShadowProjection.h"
@@ -96,12 +97,9 @@ WorldRendererForward::WorldRendererForward()
 bool WorldRendererForward::create(
 	resource::IResourceManager* resourceManager,
 	render::IRenderSystem* renderSystem,
-	render::IRenderView* renderView,
 	const WorldCreateDesc& desc
 )
 {
-	m_renderView = renderView;
-
 	// Store settings.
 	m_settings = *desc.worldRenderSettings;
 	m_toneMapQuality = desc.toneMapQuality;
@@ -468,6 +466,7 @@ bool WorldRendererForward::create(
 	}
 	m_slicePositions[shadowSettings.cascadingSlices] = shadowSettings.farZ;
 
+	m_rootEntity = new GroupEntity();
 	m_count = 0;
 	return true;
 }
@@ -495,22 +494,14 @@ void WorldRendererForward::destroy()
 	safeDestroy(m_shadowAtlasTargetSet);
 	safeDestroy(m_gbufferTargetSet);
 	safeDestroy(m_visualTargetSet);
-
-	m_renderView = nullptr;
 }
 
-bool WorldRendererForward::beginBuild()
+void WorldRendererForward::attach(Entity* entity)
 {
-	m_buildEntities.clear();
-	return true;
+	m_rootEntity->addEntity(entity);
 }
 
-void WorldRendererForward::build(Entity* entity)
-{
-	m_buildEntities.push_back(entity);
-}
-
-void WorldRendererForward::endBuild(WorldRenderView& worldRenderView, int frame)
+void WorldRendererForward::build(WorldRenderView& worldRenderView, int32_t frame)
 {
 	Frame& f = m_frames[frame];
 
@@ -560,9 +551,10 @@ void WorldRendererForward::endBuild(WorldRenderView& worldRenderView, int frame)
 	buildVisual(worldRenderView, frame);
 
 	m_count++;
+	m_rootEntity->removeAllEntities();
 }
 
-bool WorldRendererForward::beginRender(int32_t frame, const Color4f& clearColor)
+bool WorldRendererForward::beginRender(render::IRenderView* renderView, int32_t frame, const Color4f& clearColor)
 {
 	// If we don't have a visual target set then we cannot clear.
 	if (!m_visualTargetSet)
@@ -573,13 +565,13 @@ bool WorldRendererForward::beginRender(int32_t frame, const Color4f& clearColor)
 	clear.colors[0] = clearColor;
 	clear.depth = 1.0f;
 
-	if (!m_renderView->begin(m_visualTargetSet, 0, &clear))
+	if (!renderView->begin(m_visualTargetSet, 0, &clear))
 		return false;
 
 	return true;
 }
 
-void WorldRendererForward::render(int32_t frame)
+void WorldRendererForward::render(render::IRenderView* renderView, int32_t frame)
 {
 	Frame& f = m_frames[frame];
 	render::Clear clear;
@@ -593,7 +585,7 @@ void WorldRendererForward::render(int32_t frame)
 
 	// Render gbuffer.
 	{
-		T_RENDER_PUSH_MARKER(m_renderView, "World: GBuffer");
+		T_RENDER_PUSH_MARKER(renderView, "World: GBuffer");
 
 		const float clearZ = f.viewFrustum.getFarZ();
 
@@ -603,19 +595,19 @@ void WorldRendererForward::render(int32_t frame)
 		clear.colors[2] = Color4f(1.0f, 1.0f, 1.0f, 1.0f);	// ao
 		clear.depth = 1.0f;
 
-		if (m_renderView->begin(m_gbufferTargetSet, &clear))
+		if (renderView->begin(m_gbufferTargetSet, &clear))
 		{
-			f.depth->getRenderContext()->render(m_renderView, render::RpOpaque, &defaultProgramParams);
-			m_renderView->end();
+			f.depth->getRenderContext()->render(renderView, render::RpOpaque, &defaultProgramParams);
+			renderView->end();
 		}
-		T_RENDER_POP_MARKER(m_renderView);
+		T_RENDER_POP_MARKER(renderView);
 	}
 
 	// Render gbuffer ambient occlusion.
 	if (m_ambientOcclusion)
 	{
-		T_RENDER_PUSH_MARKER(m_renderView, "World: GBuffer AO");
-		if (m_renderView->begin(m_gbufferTargetSet, 2, nullptr))
+		T_RENDER_PUSH_MARKER(renderView, "World: GBuffer AO");
+		if (renderView->begin(m_gbufferTargetSet, 2, nullptr))
 		{
 			render::ImageProcessStep::Instance::RenderParams params;
 			params.viewFrustum = f.viewFrustum;
@@ -624,7 +616,7 @@ void WorldRendererForward::render(int32_t frame)
 			params.deltaTime = 0.0f;
 
 			m_ambientOcclusion->render(
-				m_renderView,
+				renderView,
 				nullptr,	// color
 				m_gbufferTargetSet->getColorTexture(0),	// depth
 				m_gbufferTargetSet->getColorTexture(1),	// normal
@@ -632,21 +624,21 @@ void WorldRendererForward::render(int32_t frame)
 				nullptr,	// shadow mask
 				params
 			);
-			m_renderView->end();
+			renderView->end();
 		}
-		T_RENDER_POP_MARKER(m_renderView);
+		T_RENDER_POP_MARKER(renderView);
 	}
 
 	// Render shadow map.
 	if (f.haveShadows)
 	{
 		// Shadow atlas.
-		T_RENDER_PUSH_MARKER(m_renderView, "World: Shadow map, atlas");
+		T_RENDER_PUSH_MARKER(renderView, "World: Shadow map, atlas");
 
 		clear.mask = render::CfDepth;
 		clear.depth = 1.0f;
 
-		if (m_renderView->begin(m_shadowAtlasTargetSet, &clear))
+		if (renderView->begin(m_shadowAtlasTargetSet, &clear))
 		{
 			for (int32_t i = 0; i < 16; ++i)
 			{
@@ -658,19 +650,19 @@ void WorldRendererForward::render(int32_t frame)
 				shadowProgramParams.setMatrixParameter(s_handleProjection, f.atlas[i].shadowLightProjection);
 				shadowProgramParams.endParameters(m_globalContext);
 
-				f.atlas[i].shadow->getRenderContext()->render(m_renderView, render::RpSetup | render::RpOpaque, &shadowProgramParams);
+				f.atlas[i].shadow->getRenderContext()->render(renderView, render::RpSetup | render::RpOpaque, &shadowProgramParams);
 			}
-			m_renderView->end();
+			renderView->end();
 		}
-		T_RENDER_POP_MARKER(m_renderView);
+		T_RENDER_POP_MARKER(renderView);
 
 		// Directional shadow cascades.
-		T_RENDER_PUSH_MARKER(m_renderView, "World: Shadow map, cascades");
+		T_RENDER_PUSH_MARKER(renderView, "World: Shadow map, cascades");
 
 		clear.mask = render::CfDepth;
 		clear.depth = 1.0f;
 
-		if (m_renderView->begin(m_shadowCascadeTargetSet, &clear))
+		if (renderView->begin(m_shadowCascadeTargetSet, &clear))
 		{
 			for (int32_t i = 0; i < m_settings.shadowSettings[m_shadowsQuality].cascadingSlices; ++i)
 			{
@@ -682,30 +674,30 @@ void WorldRendererForward::render(int32_t frame)
 				shadowProgramParams.setMatrixParameter(s_handleProjection, f.slice[i].shadowLightProjection);
 				shadowProgramParams.endParameters(m_globalContext);
 
-				f.slice[i].shadow->getRenderContext()->render(m_renderView, render::RpSetup | render::RpOpaque, &shadowProgramParams);
+				f.slice[i].shadow->getRenderContext()->render(renderView, render::RpSetup | render::RpOpaque, &shadowProgramParams);
 			}
-			m_renderView->end();
+			renderView->end();
 		}
-		T_RENDER_POP_MARKER(m_renderView);
+		T_RENDER_POP_MARKER(renderView);
 	}
 
 	// Render visuals.
 	{
-		T_RENDER_PUSH_MARKER(m_renderView, "World: Visual");
-		f.visual->getRenderContext()->render(m_renderView, render::RpAll, &defaultProgramParams);
-		T_RENDER_POP_MARKER(m_renderView);
+		T_RENDER_PUSH_MARKER(renderView, "World: Visual");
+		f.visual->getRenderContext()->render(renderView, render::RpAll, &defaultProgramParams);
+		T_RENDER_POP_MARKER(renderView);
 	}
 
 	m_globalContext->flush();
 }
 
-void WorldRendererForward::endRender(int32_t frame, float deltaTime)
+void WorldRendererForward::endRender(render::IRenderView* renderView, int32_t frame, float deltaTime)
 {
 	Frame& f = m_frames[frame];
 
 	if (m_visualTargetSet)
 	{
-		m_renderView->end();
+		renderView->end();
 
 		render::ImageProcessStep::Instance::RenderParams params;
 		params.viewFrustum = f.viewFrustum;
@@ -729,14 +721,14 @@ void WorldRendererForward::endRender(int32_t frame, float deltaTime)
 
 		for (size_t i = 0; i < processes.size(); ++i)
 		{
-			T_RENDER_PUSH_MARKER(m_renderView, "World: Post process");
+			T_RENDER_PUSH_MARKER(renderView, "World: Post process");
 
 			bool haveNext = bool((i + 1) < processes.size());
 			if (haveNext)
-				m_renderView->begin(outputTargetSet, nullptr);
+				renderView->begin(outputTargetSet, nullptr);
 
 			processes[i]->render(
-				m_renderView,
+				renderView,
 				sourceTargetSet->getColorTexture(0),	// color
 				m_gbufferTargetSet->getColorTexture(0),	// depth
 				m_gbufferTargetSet->getColorTexture(1),	// normal
@@ -747,11 +739,11 @@ void WorldRendererForward::endRender(int32_t frame, float deltaTime)
 
 			if (haveNext)
 			{
-				m_renderView->end();
+				renderView->end();
 				std::swap(sourceTargetSet, outputTargetSet);
 			}
 
-			T_RENDER_POP_MARKER(m_renderView);
+			T_RENDER_POP_MARKER(renderView);
 		}
 	}
 }
@@ -798,7 +790,7 @@ void WorldRendererForward::getDebugTargets(std::vector< render::DebugTarget >& o
 		m_toneMapImageProcess->getDebugTargets(outTargets);
 }
 
-void WorldRendererForward::buildGBuffer(WorldRenderView& worldRenderView, int frame)
+void WorldRendererForward::buildGBuffer(WorldRenderView& worldRenderView, int32_t frame)
 {
 	Frame& f = m_frames[frame];
 
@@ -810,14 +802,13 @@ void WorldRendererForward::buildGBuffer(WorldRenderView& worldRenderView, int fr
 		nullptr,
 		nullptr
 	);
-	for (auto entity : m_buildEntities)
-		f.depth->build(worldRenderView, pass, entity);
-	f.depth->flush(worldRenderView, pass);
+	f.depth->build(worldRenderView, pass, m_rootEntity);
+	f.depth->flush(worldRenderView, pass, m_rootEntity);
 
 	f.haveDepth = true;
 }
 
-void WorldRendererForward::buildLights(WorldRenderView& worldRenderView, int frame)
+void WorldRendererForward::buildLights(WorldRenderView& worldRenderView, int32_t frame)
 {
 	Frame& f = m_frames[frame];
 
@@ -909,9 +900,8 @@ void WorldRendererForward::buildLights(WorldRenderView& worldRenderView, int fra
 				);
 				f.slice[slice].shadow->getRenderContext()->draw(render::RpSetup, svrb);	
 
-				for (auto entity : m_buildEntities)
-					f.slice[slice].shadow->build(shadowRenderView, shadowPass, entity);
-				f.slice[slice].shadow->flush(shadowRenderView, shadowPass);
+				f.slice[slice].shadow->build(shadowRenderView, shadowPass, m_rootEntity);
+				f.slice[slice].shadow->flush(shadowRenderView, shadowPass, m_rootEntity);
 
 				f.slice[slice].shadowLightView = shadowLightView;
 				f.slice[slice].shadowLightProjection = shadowLightProjection;
@@ -995,9 +985,8 @@ void WorldRendererForward::buildLights(WorldRenderView& worldRenderView, int fra
 			);
 			f.atlas[atlasIndex].shadow->getRenderContext()->draw(render::RpSetup, svrb);	
 
-			for (auto entity : m_buildEntities)
-				f.atlas[atlasIndex].shadow->build(shadowRenderView, shadowPass, entity);
-			f.atlas[atlasIndex].shadow->flush(shadowRenderView, shadowPass);
+			f.atlas[atlasIndex].shadow->build(shadowRenderView, shadowPass, m_rootEntity);
+			f.atlas[atlasIndex].shadow->flush(shadowRenderView, shadowPass, m_rootEntity);
 
 			f.atlas[atlasIndex].shadowLightView = shadowLightView;
 			f.atlas[atlasIndex].shadowLightProjection = shadowLightProjection;
@@ -1038,7 +1027,7 @@ void WorldRendererForward::buildLights(WorldRenderView& worldRenderView, int fra
 	worldRenderView.resetLights();
 }
 
-void WorldRendererForward::buildVisual(WorldRenderView& worldRenderView, int frame)
+void WorldRendererForward::buildVisual(WorldRenderView& worldRenderView, int32_t frame)
 {
 	Frame& f = m_frames[frame];
 
@@ -1062,9 +1051,8 @@ void WorldRendererForward::buildVisual(WorldRenderView& worldRenderView, int fra
 		shadowsEnable ? m_shadowCascadeTargetSet->getDepthTexture() : nullptr,
 		shadowsEnable ? m_shadowAtlasTargetSet->getDepthTexture() : nullptr
 	);
-	for (auto entity : m_buildEntities)
-		f.visual->build(worldRenderView, defaultPass, entity);
-	f.visual->flush(worldRenderView, defaultPass);
+	f.visual->build(worldRenderView, defaultPass, m_rootEntity);
+	f.visual->flush(worldRenderView, defaultPass, m_rootEntity);
 
 	f.projection = worldRenderView.getProjection();
 	f.view = worldRenderView.getView();

@@ -1,3 +1,4 @@
+#include "Core/Log/Log.h"
 #include "Core/Math/BspTree.h"
 #include "Core/Math/Const.h"
 #include "Core/Math/Winding3.h"
@@ -81,6 +82,8 @@ bool Boolean::apply(Model& model) const
 		if (!bp.calculatePlane())
 			polygonsA.pop_back();
 	}
+	if (polygonsA.size() != m_modelA.getPolygonCount())
+		log::error << L"Unable to generate " << (m_modelA.getPolygonCount() - polygonsA.size()) << L" planes; polygons in model A skipped." << Endl;
 
 	AlignedVector< BspPolygon > polygonsB;
 	for (const auto& polygon : m_modelB.getPolygons())
@@ -100,26 +103,30 @@ bool Boolean::apply(Model& model) const
 		if (!bp.calculatePlane())
 			polygonsB.pop_back();
 	}
+	if (polygonsB.size() != m_modelB.getPolygonCount())
+		log::error << L"Unable to generate " << (m_modelB.getPolygonCount() - polygonsB.size()) << L" planes; polygons in model B skipped." << Endl;
+
+	const bool fast = true;
 
 	BspNode A;
-	A.build(polygonsA, false);
+	A.build(polygonsA, fast);
 
 	BspNode B;
-	B.build(polygonsB, false);
+	B.build(polygonsB, fast);
 
 	BspNode C;
 	switch (m_operation)
 	{
 	case BoUnion:
-		C = A.unioon(B, false);
+		C = A.unioon(B, fast);
 		break;
 
 	case BoIntersection:
-		C = A.intersection(B, false);
+		C = A.intersection(B, fast);
 		break;
 
 	case BoDifference:
-		C = A.difference(B, false);
+		C = A.difference(B, fast);
 		break;
 	}
 

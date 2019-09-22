@@ -28,7 +28,7 @@ class T_DLLCLASS IEntityEventInstance : public Object
 public:
 	virtual bool update(const UpdateParams& update) = 0;
 
-	virtual void build(IWorldRenderer* worldRenderer) = 0;
+	virtual void attach(IWorldRenderer* worldRenderer) = 0;
 
 	virtual void cancel(CancelType when) = 0;
 };

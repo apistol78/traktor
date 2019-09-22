@@ -34,6 +34,7 @@ class IResourceManager;
 	namespace world
 	{
 
+class ProbeCapturer;
 class ProbeComponent;
 
 /*! Probe entity renderer.
@@ -61,14 +62,17 @@ public:
 	virtual void flush(
 		WorldContext& worldContext,
 		WorldRenderView& worldRenderView,
-		const IWorldRenderPass& worldRenderPass
+		const IWorldRenderPass& worldRenderPass,
+		Entity* rootEntity
 	) override final;
 
 private:
+	Ref< ProbeCapturer > m_probeCapturer;
 	resource::Proxy< render::Shader > m_probeShader;
 	Ref< render::VertexBuffer > m_vertexBuffer;
 	Ref< render::IndexBuffer > m_indexBuffer;
 	RefArray< ProbeComponent > m_probeComponents;
+	Ref< ProbeComponent > m_capture;
 };
 
 	}

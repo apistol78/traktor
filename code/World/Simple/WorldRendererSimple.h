@@ -15,10 +15,11 @@ namespace traktor
 	namespace world
 	{
 
+class GroupEntity;
 class WorldContext;
 class WorldEntityRenderers;
 
-/*! \brief World renderer implementation.
+/*! World renderer implementation.
  * \ingroup World
  *
  * Simple world renderer, no support for
@@ -37,23 +38,20 @@ public:
 	virtual bool create(
 		resource::IResourceManager* resourceManager,
 		render::IRenderSystem* renderSystem,
-		render::IRenderView* renderView,
 		const WorldCreateDesc& desc
 	) override final;
 
 	virtual void destroy() override final;
 
-	virtual bool beginBuild() override final;
+	virtual void attach(Entity* entity) override final;
 
-	virtual void build(Entity* entity) override final;
+	virtual void build(WorldRenderView& worldRenderView, int32_t frame) override final;
 
-	virtual void endBuild(WorldRenderView& worldRenderView, int frame) override final;
+	virtual bool beginRender(render::IRenderView* renderView, int32_t frame, const Color4f& clearColor) override final;
 
-	virtual bool beginRender(int32_t frame, const Color4f& clearColor) override final;
+	virtual void render(render::IRenderView* renderView, int32_t frame) override final;
 
-	virtual void render(int32_t frame) override final;
-
-	virtual void endRender(int32_t frame, float deltaTime) override final;
+	virtual void endRender(render::IRenderView* renderView, int32_t frame, float deltaTime) override final;
 
 	virtual render::ImageProcess* getVisualImageProcess() override final;
 
@@ -74,10 +72,9 @@ private:
 		}
 	};
 
-	Ref< render::IRenderView > m_renderView;
 	Ref< render::RenderContext > m_globalContext;
-	RefArray< Entity > m_buildEntities;
 	AlignedVector< Frame > m_frames;
+	Ref< GroupEntity > m_rootEntity;
 };
 
 	}

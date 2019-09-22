@@ -18,7 +18,7 @@ namespace traktor
 	namespace render
 	{
 
-class ITexture;
+class ICubeTexture;
 
 	}
 
@@ -37,9 +37,9 @@ public:
 
 	virtual void serialize(ISerializer& s) override final;
 
-	void setTexture(const resource::Id< render::ITexture >& texture) { m_texture = texture; }
+	void setTexture(const resource::Id< render::ICubeTexture >& texture) { m_texture = texture; }
 
-	const resource::Id< render::ITexture >& getTexture() const { return m_texture; }
+	const resource::Id< render::ICubeTexture >& getTexture() const { return m_texture; }
 
 	void setIntensity(float intensity) { m_intensity = intensity; }
 
@@ -54,7 +54,7 @@ public:
 	const Aabb3& getVolume() const { return m_volume; }
 
 private:
-	resource::Id< render::ITexture > m_texture;
+	resource::Id< render::ICubeTexture > m_texture;
 	float m_intensity;
 	bool m_local;
 	Aabb3 m_volume;

@@ -109,7 +109,6 @@ public:
 	virtual bool create(
 		resource::IResourceManager* resourceManager,
 		render::IRenderSystem* renderSystem,
-		render::IRenderView* renderView,
 		const WorldCreateDesc& desc
 	) = 0;
 
@@ -119,24 +118,19 @@ public:
 	/*! \name Build steps. */
 	//@{
 
-	/*! Begin build "render contexts".
+	/*! Attach entity to build. 
 	 *
-	 * \return True if building begun.
+	 * \param entity Entity to attach to build.
 	 */
-	virtual bool beginBuild() = 0;
+	virtual void attach(Entity* entity) = 0;
 
 	/*! Build "render contexts".
 	 *
-	 * \param entity Root entity.
-	 */
-	virtual void build(Entity* entity) = 0;
-
-	/*! End build "render contexts".
-	 *
 	 * \param worldRenderView World render view.
 	 * \param frame Multi threaded context frame.
+	 * \param entity Root entity.
 	 */
-	virtual void endBuild(WorldRenderView& worldRenderView, int frame) = 0;
+	virtual void build(WorldRenderView& worldRenderView, int32_t frame) = 0;
 
 	//@}
 
@@ -149,20 +143,20 @@ public:
 	 * \param clearColor Clear visual target color.
 	 * \return True if rendering begun.
 	 */
-	virtual bool beginRender(int32_t frame, const Color4f& clearColor) = 0;
+	virtual bool beginRender(render::IRenderView* renderView, int32_t frame, const Color4f& clearColor) = 0;
 
 	/*! Render "render contexts".
 	 *
 	 * \param frame Multi threaded context frame.
 	 */
-	virtual void render(int32_t frame) = 0;
+	virtual void render(render::IRenderView* renderView, int32_t frame) = 0;
 
 	/*! End render "render contexts".
 	 *
 	 * \param frame Multi threaded context frame.
 	 * \param deltaTime Last frame delta time.
 	 */
-	virtual void endRender(int32_t frame, float deltaTime) = 0;
+	virtual void endRender(render::IRenderView* renderView, int32_t frame, float deltaTime) = 0;
 
 	//@}
 

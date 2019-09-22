@@ -57,7 +57,7 @@ Ref< model::Model > TerrainEntityReplicator::createModel(
 
     safeClose(sourceData);
 
-    return hf::ConvertHeightfield().convert(heightfield, 16, heightfieldAsset->getVistaDistance());
+    return hf::ConvertHeightfield().convert(heightfield, 64, heightfieldAsset->getVistaDistance());
 }
 
 Ref< Object > TerrainEntityReplicator::modifyOutput(
@@ -67,7 +67,7 @@ Ref< Object > TerrainEntityReplicator::modifyOutput(
     const model::Model* model
 ) const
 {
-    return nullptr;
+    return const_cast< Object* >(source);
 }
 
     }

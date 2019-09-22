@@ -689,6 +689,7 @@
 						<item>World_IrradianceWrite</item>
 						<item>World_ShadowWrite</item>
 						<item>World_VelocityWrite</item>
+						<item>World_ReflectionWrite</item>
 					</value>
 				</second>
 			</item>

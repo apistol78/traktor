@@ -197,7 +197,6 @@ void FinalRenderControl::updateWorldRenderer()
 	if (worldRenderer->create(
 		m_context->getResourceManager(),
 		m_context->getRenderSystem(),
-		m_renderView,
 		wcd
 	))
 	{
@@ -425,19 +424,18 @@ void FinalRenderControl::eventPaint(ui::PaintEvent* event)
 	Matrix44 projection = getProjectionTransform();
 	Matrix44 view = getViewTransform();
 
+	// Build world.
+	m_worldRenderView.setTimes(scaledTime, deltaTime, 1.0f);
+	m_worldRenderView.setView(m_worldRenderView.getView(), view);
+
+	// Build frame from scene entities.
+	m_worldRenderer->attach(m_sceneInstance->getRootEntity());
+	m_context->getEntityEventManager()->attach(m_worldRenderer);
+	m_worldRenderer->build(m_worldRenderView, 0);
+
 	// Render world.
 	if (m_renderView->begin(nullptr))
 	{
-		// Render entities.
-		m_worldRenderView.setTimes(scaledTime, deltaTime, 1.0f);
-		m_worldRenderView.setView(m_worldRenderView.getView(), view);
-
-		// Build frame from scene entities.
-		m_worldRenderer->beginBuild();
-		m_worldRenderer->build(m_sceneInstance->getRootEntity());
-		m_context->getEntityEventManager()->build(m_worldRenderer);
-		m_worldRenderer->endBuild(m_worldRenderView, 0);
-
 		// Set post process parameters from scene instance.
 		render::ImageProcess* postProcess = m_worldRenderer->getVisualImageProcess();
 		if (postProcess)
@@ -446,9 +444,9 @@ void FinalRenderControl::eventPaint(ui::PaintEvent* event)
 				postProcess->setTextureParameter(imageProcessParam.first, imageProcessParam.second);
 		}
 
-		m_worldRenderer->beginRender(0, Color4f(colorClear[0], colorClear[1], colorClear[2], colorClear[3]));
-		m_worldRenderer->render(0);
-		m_worldRenderer->endRender(0, deltaTime);
+		m_worldRenderer->beginRender(m_renderView, 0, Color4f(colorClear[0], colorClear[1], colorClear[2], colorClear[3]));
+		m_worldRenderer->render(m_renderView, 0);
+		m_worldRenderer->endRender(m_renderView, 0, deltaTime);
 
 		m_renderView->end();
 		m_renderView->present();

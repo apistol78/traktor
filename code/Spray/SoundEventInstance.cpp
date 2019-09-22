@@ -58,7 +58,7 @@ bool SoundEventInstance::update(const world::UpdateParams& update)
 	return true;
 }
 
-void SoundEventInstance::build(world::IWorldRenderer* worldRenderer)
+void SoundEventInstance::attach(world::IWorldRenderer* worldRenderer)
 {
 }
 

@@ -1,5 +1,4 @@
-//#pragma optimize( "", off )
-
+#include "Core/Math/Const.h"
 #include "Core/Math/MathUtils.h"
 #include "Drawing/Image.h"
 #include "Drawing/Filters/MirrorFilter.h"

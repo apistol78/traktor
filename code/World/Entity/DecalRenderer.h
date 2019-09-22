@@ -49,7 +49,8 @@ public:
 	virtual void flush(
 		WorldContext& worldContext,
 		WorldRenderView& worldRenderView,
-		const IWorldRenderPass& worldRenderPass
+		const IWorldRenderPass& worldRenderPass,
+		Entity* rootEntity
 	) override final;
 
 private:

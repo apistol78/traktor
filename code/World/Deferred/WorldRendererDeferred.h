@@ -30,6 +30,7 @@ class StructBuffer;
 	namespace world
 	{
 
+class GroupEntity;
 class IrradianceGrid;
 class IShadowProjection;
 class LightRendererDeferred;
@@ -56,23 +57,20 @@ public:
 	virtual bool create(
 		resource::IResourceManager* resourceManager,
 		render::IRenderSystem* renderSystem,
-		render::IRenderView* renderView,
 		const WorldCreateDesc& desc
 	) override final;
 
 	virtual void destroy() override final;
 
-	virtual bool beginBuild() override final;
+	virtual void attach(Entity* entity) override final;
 
-	virtual void build(Entity* entity) override final;
+	virtual void build(WorldRenderView& worldRenderView, int32_t frame) override final;
 
-	virtual void endBuild(WorldRenderView& worldRenderView, int frame) override final;
+	virtual bool beginRender(render::IRenderView* renderView, int32_t frame, const Color4f& clearColor) override final;
 
-	virtual bool beginRender(int32_t frame, const Color4f& clearColor) override final;
+	virtual void render(render::IRenderView* renderView, int32_t frame) override final;
 
-	virtual void render(int32_t frame) override final;
-
-	virtual void endRender(int32_t frame, float deltaTime) override final;
+	virtual void endRender(render::IRenderView* renderView, int32_t frame, float deltaTime) override final;
 
 	virtual render::ImageProcess* getVisualImageProcess() override final;
 
@@ -121,7 +119,6 @@ private:
 	Quality m_reflectionsQuality;
 	Quality m_ambientOcclusionQuality;
 	Quality m_antiAliasQuality;
-	Ref< render::IRenderView > m_renderView;
 	Ref< IShadowProjection > m_shadowProjection;
 	Ref< render::RenderTargetSet > m_visualTargetSet;
 	Ref< render::RenderTargetSet > m_intermediateTargetSet;
@@ -144,7 +141,7 @@ private:
 	Ref< render::ImageProcess > m_shadowMaskProject;
 	Ref< LightRendererDeferred > m_lightRenderer;
 	resource::Proxy< IrradianceGrid > m_irradianceGrid;
-	RefArray< Entity > m_buildEntities;
+	Ref< GroupEntity > m_rootEntity;
 	AlignedVector< Frame > m_frames;
 	float m_slicePositions[MaxSliceCount + 1];
 	uint32_t m_count;
@@ -152,17 +149,17 @@ private:
 	Vector4 m_fogColor;
 	bool m_includeObjectVelocity;
 
-	void buildGBuffer(WorldRenderView& worldRenderView, int frame);
+	void buildGBuffer(WorldRenderView& worldRenderView, int32_t frame);
 
-	void buildReflections(WorldRenderView& worldRenderView, int frame);
+	void buildReflections(const WorldRenderView& worldRenderView, int32_t frame);
 
-	void buildIrradiance(WorldRenderView& worldRenderView, int frame);
+	void buildIrradiance(const WorldRenderView& worldRenderView, int32_t frame);
 
-	void buildVelocity(WorldRenderView& worldRenderView, int frame);
+	void buildVelocity(const WorldRenderView& worldRenderView, int32_t frame);
 
-	void buildLights(WorldRenderView& worldRenderView, int frame);
+	void buildLights(const WorldRenderView& worldRenderView, int32_t frame);
 
-	void buildVisual(WorldRenderView& worldRenderView, int frame);
+	void buildVisual(const WorldRenderView& worldRenderView, int32_t frame);
 };
 
 	}

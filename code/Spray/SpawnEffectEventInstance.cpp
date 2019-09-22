@@ -66,9 +66,9 @@ bool SpawnEffectEventInstance::update(const world::UpdateParams& update)
 	return !m_effectComponent->isFinished();
 }
 
-void SpawnEffectEventInstance::build(world::IWorldRenderer* worldRenderer)
+void SpawnEffectEventInstance::attach(world::IWorldRenderer* worldRenderer)
 {
-	worldRenderer->build(m_effectEntity);
+	worldRenderer->attach(m_effectEntity);
 }
 
 void SpawnEffectEventInstance::cancel(world::CancelType when)

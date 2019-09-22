@@ -39,7 +39,7 @@ public:
 
 	virtual void update(const UpdateParams& update) = 0;
 
-	virtual void build(IWorldRenderer* worldRenderer) = 0;
+	virtual void attach(IWorldRenderer* worldRenderer) = 0;
 
 	virtual void cancelAll(CancelType when) = 0;
 };

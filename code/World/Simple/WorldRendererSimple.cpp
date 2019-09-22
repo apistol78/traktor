@@ -6,6 +6,7 @@
 #include "World/WorldRenderView.h"
 #include "World/WorldEntityRenderers.h"
 #include "World/WorldContext.h"
+#include "World/Entity/GroupEntity.h"
 #include "World/Simple/WorldRendererSimple.h"
 #include "World/Simple/WorldRenderPassSimple.h"
 
@@ -41,17 +42,16 @@ WorldRendererSimple::WorldRendererSimple()
 bool WorldRendererSimple::create(
 	resource::IResourceManager* resourceManager,
 	render::IRenderSystem* renderSystem,
-	render::IRenderView* renderView,
 	const WorldCreateDesc& desc
 )
 {
-	m_renderView = renderView;
-
 	m_frames.resize(desc.frameCount);
 	for (auto& frame : m_frames)
 		frame.visual = new WorldContext(desc.entityRenderers);
 
 	m_globalContext = new render::RenderContext(16 * 1024);
+	
+	m_rootEntity = new GroupEntity();
 	return true;
 }
 
@@ -59,22 +59,14 @@ void WorldRendererSimple::destroy()
 {
 	for (auto& frame : m_frames)
 		frame.visual = nullptr;
-
-	m_renderView = nullptr;
 }
 
-bool WorldRendererSimple::beginBuild()
+void WorldRendererSimple::attach(Entity* entity)
 {
-	m_buildEntities.clear();
-	return true;
+	m_rootEntity->addEntity(entity);
 }
 
-void WorldRendererSimple::build(Entity* entity)
-{
-	m_buildEntities.push_back(entity);
-}
-
-void WorldRendererSimple::endBuild(WorldRenderView& worldRenderView, int frame)
+void WorldRendererSimple::build(WorldRenderView& worldRenderView, int32_t frame)
 {
 	Frame& f = m_frames[frame];
 
@@ -93,23 +85,24 @@ void WorldRendererSimple::endBuild(WorldRenderView& worldRenderView, int frame)
 		s_techniqueSimpleColor,
 		worldRenderView.getView()
 	);
-	for (auto entity : m_buildEntities)
-		f.visual->build(worldRenderView, defaultPass, entity);
-	f.visual->flush(worldRenderView, defaultPass);
+	f.visual->build(worldRenderView, defaultPass, m_rootEntity);
+	f.visual->flush(worldRenderView, defaultPass, m_rootEntity);
 
 	// Store some global values.
 	f.projection = worldRenderView.getProjection();
 	f.view = worldRenderView.getView();
 	f.viewFrustum = worldRenderView.getViewFrustum();
 	f.time = worldRenderView.getTime();
+
+	m_rootEntity->removeAllEntities();
 }
 
-bool WorldRendererSimple::beginRender(int32_t frame, const Color4f& clearColor)
+bool WorldRendererSimple::beginRender(render::IRenderView* renderView, int32_t frame, const Color4f& clearColor)
 {
 	return true;
 }
 
-void WorldRendererSimple::render(int32_t frame)
+void WorldRendererSimple::render(render::IRenderView* renderView, int32_t frame)
 {
 	Frame& f = m_frames[frame];
 
@@ -119,12 +112,12 @@ void WorldRendererSimple::render(int32_t frame)
 	defaultProgramParams.setMatrixParameter(s_handleProjection, f.projection);
 	defaultProgramParams.endParameters(m_globalContext);
 
-	f.visual->getRenderContext()->render(m_renderView, render::RpAll, &defaultProgramParams);
+	f.visual->getRenderContext()->render(renderView, render::RpAll, &defaultProgramParams);
 
 	m_globalContext->flush();
 }
 
-void WorldRendererSimple::endRender(int32_t frame, float deltaTime)
+void WorldRendererSimple::endRender(render::IRenderView* renderView, int32_t frame, float deltaTime)
 {
 	Frame& f = m_frames[frame];
 }

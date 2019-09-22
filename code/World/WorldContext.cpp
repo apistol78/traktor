@@ -56,10 +56,10 @@ void WorldContext::build(WorldRenderView& worldRenderView, const IWorldRenderPas
 		renderer->render(*this, worldRenderView, worldRenderPass, renderable);
 }
 
-void WorldContext::flush(WorldRenderView& worldRenderView, const IWorldRenderPass& worldRenderPass)
+void WorldContext::flush(WorldRenderView& worldRenderView, const IWorldRenderPass& worldRenderPass, Entity* rootEntity)
 {
 	for (auto entityRenderer : m_entityRenderers->get())
-		entityRenderer->flush(*this, worldRenderView, worldRenderPass);
+		entityRenderer->flush(*this, worldRenderView, worldRenderPass, rootEntity);
 }
 
 	}

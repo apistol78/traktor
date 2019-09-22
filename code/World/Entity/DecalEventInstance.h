@@ -22,7 +22,7 @@ public:
 
 	virtual bool update(const UpdateParams& update) override final;
 
-	virtual void build(IWorldRenderer* worldRenderer) override final;
+	virtual void attach(IWorldRenderer* worldRenderer) override final;
 
 	virtual void cancel(CancelType when) override final;
 
