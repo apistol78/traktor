@@ -139,6 +139,49 @@ ShaderGraphStatic::ShaderGraphStatic(const ShaderGraph* shaderGraph)
 	m_shaderGraph = shaderGraph;
 }
 
+Ref< ShaderGraph > ShaderGraphStatic::getPlatformPermutation(const std::wstring& platform) const
+{
+	Ref< ShaderGraph > shaderGraph = DeepClone(m_shaderGraph).create< ShaderGraph >();
+
+	RefArray< Platform > nodes;
+	shaderGraph->findNodesOf< Platform >(nodes);
+
+	for (const auto node : nodes)
+	{
+		const InputPin* inputPin = node->findInputPin(platform);
+		T_ASSERT(inputPin);
+
+		Ref< Edge > sourceEdge = shaderGraph->findEdge(inputPin);
+		if (!sourceEdge)
+		{
+			inputPin = node->findInputPin(L"Other");
+			T_ASSERT(inputPin);
+
+			sourceEdge = shaderGraph->findEdge(inputPin);
+			if (!sourceEdge)
+				return nullptr;
+		}
+
+		const OutputPin* outputPin = node->findOutputPin(L"Output");
+		T_ASSERT(outputPin);
+
+		RefSet< Edge > destinationEdges;
+		shaderGraph->findEdges(outputPin, destinationEdges);
+
+		shaderGraph->removeEdge(sourceEdge);
+		for (const auto destinationEdge : destinationEdges)
+		{
+			shaderGraph->removeEdge(destinationEdge);
+			shaderGraph->addEdge(new Edge(
+				sourceEdge->getSource(),
+				destinationEdge->getDestination()
+			));
+		}
+	}
+
+	return shaderGraph;
+}
+
 Ref< ShaderGraph > ShaderGraphStatic::getRendererPermutation(const std::wstring& renderer) const
 {
 	Ref< ShaderGraph > shaderGraph = DeepClone(m_shaderGraph).create< ShaderGraph >();

@@ -35,6 +35,7 @@ TypeInfoSet MetaNodeTraits::getNodeTypes() const
 	typeSet.insert< External >();
 	typeSet.insert< InputPort >();
 	typeSet.insert< OutputPort >();
+	typeSet.insert< Platform >();
 	typeSet.insert< Renderer >();
 	typeSet.insert< Type >();
 	typeSet.insert< Variable >();

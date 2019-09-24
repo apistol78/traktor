@@ -67,6 +67,7 @@ private:
 	Ref< IProgramHints > m_programHints;
 	std::set< std::wstring > m_includeOnlyTechniques;
 	Ref< const PropertyGroup > m_compilerSettings;
+	std::wstring m_platform;
 	bool m_frequentUniformsAsLinear;
 	int32_t m_optimize;
 	bool m_validate;

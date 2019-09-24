@@ -671,6 +671,15 @@ private:
 	std::wstring m_name;
 };
 
+/*! Platform conditional. */
+class T_DLLCLASS Platform : public ImmutableNode
+{
+	T_RTTI_CLASS;
+
+public:
+	Platform();
+};
+
 /*! Evaluate polynomial. */
 class T_DLLCLASS Polynomial : public ImmutableNode
 {

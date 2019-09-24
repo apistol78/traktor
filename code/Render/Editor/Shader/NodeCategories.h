@@ -62,6 +62,7 @@ const NodeCategory c_nodeCategories[] =
 	{ type_of< Neg >(), L"SHADERGRAPH_ARITHMETIC", L"Negate number" },
 	{ type_of< Normalize >(), L"SHADERGRAPH_ALGEBRA", L"Normalize vector" },
 	{ type_of< OutputPort >(), L"SHADERGRAPH_VALUE", L"Output connection port from shader fragment" },
+	{ type_of< Platform >(), L"SHADERGRAPH_CONDITIONAL", L"Select path based on type of platform" },
 	{ type_of< Polynomial >(), L"SHADERGRAPH_ARITHMETIC", L"Evaluate a polynomial" },
 	{ type_of< Pow >(), L"SHADERGRAPH_ARITHMETIC", L"Power of function" },
 	{ type_of< PixelOutput >(), L"SHADERGRAPH_VALUE", L"Pixel shader output" },

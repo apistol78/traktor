@@ -402,6 +402,10 @@
       <second>Pixel output</second>
     </item>
     <item>
+      <first>SHADERGRAPH_NODE_PLATFORM</first>
+      <second>Platform</second>
+    </item>
+    <item>
       <first>SHADERGRAPH_NODE_RENDERER</first>
       <second>Renderer</second>
     </item>

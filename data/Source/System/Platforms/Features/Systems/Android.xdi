@@ -90,6 +90,12 @@
 				</second>
 			</item>
 			<item>
+				<first>ShaderPipeline.Platform</first>
+				<second type="traktor.PropertyString">
+					<value>Android</value>
+				</second>
+			</item>
+			<item>
 				<first>TerrainPipeline.SuppressDetailShader</first>
 				<second type="traktor.PropertyBoolean">
 					<value>false</value>

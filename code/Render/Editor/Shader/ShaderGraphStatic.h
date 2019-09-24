@@ -34,6 +34,9 @@ public:
 
 	ShaderGraphStatic(const ShaderGraph* shaderGraph);
 
+	/*! \brief Get permutation of shader graph for given platform. */
+	Ref< ShaderGraph > getPlatformPermutation(const std::wstring& platform) const;
+
 	/*! \brief Get permutation of shader graph for given renderer. */
 	Ref< ShaderGraph > getRendererPermutation(const std::wstring& renderer) const;
 

@@ -13,7 +13,11 @@ namespace traktor
 		namespace
 		{
 		
+#if !defined(__ANDROID__)
 const int32_t c_faceSize = 512;
+#else
+const int32_t c_faceSize = 128;
+#endif
 
 		}
 	

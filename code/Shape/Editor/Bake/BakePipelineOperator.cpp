@@ -746,6 +746,15 @@ bool BakePipelineOperator::build(
 
 	// Finally enqueue task to tracer processor.
 	tracerProcessor->enqueue(tracerTask);
+
+	// If we're not running with an external processor then we need to wait.
+	if (!ms_tracerProcessor)
+	{
+		log::info << L"Waiting for lightmap baking to complete..." << Endl;
+		tracerProcessor->waitUntilIdle();
+		tracerProcessor = nullptr;
+	}
+
 	return true;
 }
 
