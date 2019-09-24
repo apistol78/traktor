@@ -355,7 +355,7 @@ ENTRY
 			<type>PtVector</type>
 			<frequency>UfDraw</frequency>
 		</item>
-		<item type="traktor.render.Platform" version="traktor.render.Node:1">
+		<item type="traktor.render.Renderer" version="traktor.render.Node:1">
 			<id>{25696E52-B9C7-E244-B30D-95A1BFBDF24B}</id>
 			<comment/>
 			<position>

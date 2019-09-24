@@ -281,7 +281,7 @@ ProgramCompilerPs3::~ProgramCompilerPs3()
 {
 }
 
-const wchar_t* ProgramCompilerPs3::getPlatformSignature() const
+const wchar_t* ProgramCompilerPs3::getRendererSignature() const
 {
 	return L"GCM";
 }

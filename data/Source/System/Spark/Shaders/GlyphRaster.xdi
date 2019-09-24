@@ -118,7 +118,7 @@
 				<second>447</second>
 			</position>
 		</item>
-		<item type="traktor.render.Platform" version="traktor.render.Node:1">
+		<item type="traktor.render.Renderer" version="traktor.render.Node:1">
 			<id>{4C766524-D88F-0847-9AA2-2B63FE4EB2BC}</id>
 			<comment/>
 			<position>

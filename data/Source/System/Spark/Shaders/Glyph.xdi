@@ -513,7 +513,7 @@
 			<registerCount>48</registerCount>
 			<precisionHint>PhLow</precisionHint>
 		</item>
-		<item type="traktor.render.Platform" version="traktor.render.Node:1">
+		<item type="traktor.render.Renderer" version="traktor.render.Node:1">
 			<id>{B68DC9A4-1EB6-9047-A770-F0CFF4DBC471}</id>
 			<comment/>
 			<position>
@@ -521,7 +521,7 @@
 				<second>-2431</second>
 			</position>
 		</item>
-		<item type="traktor.render.Platform" version="traktor.render.Node:1">
+		<item type="traktor.render.Renderer" version="traktor.render.Node:1">
 			<id>{5B5C860D-862E-B14E-B999-97B2E73DF2B7}</id>
 			<comment/>
 			<position>

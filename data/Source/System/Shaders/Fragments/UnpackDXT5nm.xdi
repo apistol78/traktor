@@ -129,7 +129,7 @@ http://developer.nvidia.com/object/real-time-normal-map-dxt-compression.html
 				<second>287</second>
 			</position>
 		</item>
-		<item type="traktor.render.Platform" version="traktor.render.Node:1">
+		<item type="traktor.render.Renderer" version="traktor.render.Node:1">
 			<id>{D7DCD55F-4743-304D-ADA2-F8912E51081B}</id>
 			<comment/>
 			<position>

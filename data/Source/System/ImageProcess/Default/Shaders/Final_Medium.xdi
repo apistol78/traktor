@@ -455,7 +455,7 @@
 			</outputPins>
 			<values/>
 		</item>
-		<item type="traktor.render.Platform" version="traktor.render.Node:1">
+		<item type="traktor.render.Renderer" version="traktor.render.Node:1">
 			<id>{01EEA22B-7F46-5441-9CD7-A0ED7B17E48D}</id>
 			<comment/>
 			<position>

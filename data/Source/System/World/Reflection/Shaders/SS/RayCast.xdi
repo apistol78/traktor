@@ -218,7 +218,7 @@ ENTRY
 			]]>
 			</script>
 		</item>
-		<item type="traktor.render.Platform" version="traktor.render.Node:1">
+		<item type="traktor.render.Renderer" version="traktor.render.Node:1">
 			<id>{78891114-5C05-7B47-9C2B-B1F0ACB98B71}</id>
 			<comment/>
 			<position>

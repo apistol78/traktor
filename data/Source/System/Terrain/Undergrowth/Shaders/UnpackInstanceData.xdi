@@ -103,7 +103,7 @@
 			</position>
 			<swizzle>y</swizzle>
 		</item>
-		<item type="traktor.render.Platform" version="traktor.render.Node:1">
+		<item type="traktor.render.Renderer" version="traktor.render.Node:1">
 			<id>{760EEE13-6EF1-6B48-A8A6-22C2F37950EF}</id>
 			<comment/>
 			<position>
@@ -111,7 +111,7 @@
 				<second>102</second>
 			</position>
 		</item>
-		<item type="traktor.render.Platform" version="traktor.render.Node:1">
+		<item type="traktor.render.Renderer" version="traktor.render.Node:1">
 			<id>{DF829D1D-4748-1B42-8AC8-35D99E1A10A6}</id>
 			<comment/>
 			<position>

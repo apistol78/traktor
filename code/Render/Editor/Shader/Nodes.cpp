@@ -1440,23 +1440,25 @@ void PixelOutput::serialize(ISerializer& s)
 
 /*---------------------------------------------------------------------------*/
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Platform", 0, Platform, ImmutableNode)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Polynomial", 0, Polynomial, ImmutableNode)
 
-const ImmutableNode::InputPinDesc c_Platform_i[] =
+const ImmutableNode::InputPinDesc c_Polynomial_i[] = { { L"X", false }, { L"Coefficients", false }, { 0 } };
+const ImmutableNode::OutputPinDesc c_Polynomial_o[] = { { L"Output" }, { 0 } };
+
+Polynomial::Polynomial()
+:	ImmutableNode(c_Polynomial_i, c_Polynomial_o)
 {
-	{ L"DX11", true },
-	{ L"OpenGL", true },
-	{ L"OpenGL ES2", true },
-	{ L"Vulkan", true },
-	{ L"GCM", true },
-	{ L"GNM", true },
-	{ L"Other", false },
-	{ 0 }
-};
-const ImmutableNode::OutputPinDesc c_Platform_o[] = { { L"Output" }, { 0 } };
+}
 
-Platform::Platform()
-:	ImmutableNode(c_Platform_i, c_Platform_o)
+/*---------------------------------------------------------------------------*/
+
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Pow", 0, Pow, ImmutableNode)
+
+const ImmutableNode::InputPinDesc c_Pow_i[] = { { L"Exponent", false }, { L"Input", false }, { 0 } };
+const ImmutableNode::OutputPinDesc c_Pow_o[] = { { L"Output" }, { 0 } };
+
+Pow::Pow()
+:	ImmutableNode(c_Pow_i, c_Pow_o)
 {
 }
 
@@ -1496,25 +1498,35 @@ void ReadStruct::serialize(ISerializer& s)
 
 /*---------------------------------------------------------------------------*/
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Polynomial", 0, Polynomial, ImmutableNode)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.RecipSqrt", 0, RecipSqrt, ImmutableNode)
 
-const ImmutableNode::InputPinDesc c_Polynomial_i[] = { { L"X", false }, { L"Coefficients", false }, { 0 } };
-const ImmutableNode::OutputPinDesc c_Polynomial_o[] = { { L"Output" }, { 0 } };
+const ImmutableNode::InputPinDesc c_RecipSqrt_i[] = { { L"Input", false }, { 0 } };
+const ImmutableNode::OutputPinDesc c_RecipSqrt_o[] = { { L"Output" }, { 0 } };
 
-Polynomial::Polynomial()
-:	ImmutableNode(c_Polynomial_i, c_Polynomial_o)
+RecipSqrt::RecipSqrt()
+:	ImmutableNode(c_RecipSqrt_i, c_RecipSqrt_o)
 {
 }
 
 /*---------------------------------------------------------------------------*/
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Pow", 0, Pow, ImmutableNode)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Renderer", 0, Renderer, ImmutableNode)
 
-const ImmutableNode::InputPinDesc c_Pow_i[] = { { L"Exponent", false }, { L"Input", false }, { 0 } };
-const ImmutableNode::OutputPinDesc c_Pow_o[] = { { L"Output" }, { 0 } };
+const ImmutableNode::InputPinDesc c_Renderer_i[] =
+{
+	{ L"DX11", true },
+	{ L"OpenGL", true },
+	{ L"OpenGL ES2", true },
+	{ L"Vulkan", true },
+	{ L"GCM", true },
+	{ L"GNM", true },
+	{ L"Other", false },
+	{ 0 }
+};
+const ImmutableNode::OutputPinDesc c_Renderer_o[] = { { L"Output" }, { 0 } };
 
-Pow::Pow()
-:	ImmutableNode(c_Pow_i, c_Pow_o)
+Renderer::Renderer()
+:	ImmutableNode(c_Renderer_i, c_Renderer_o)
 {
 }
 
@@ -1527,18 +1539,6 @@ const ImmutableNode::OutputPinDesc c_Reflect_o[] = { { L"Output" }, { 0 } };
 
 Reflect::Reflect()
 :	ImmutableNode(c_Reflect_i, c_Reflect_o)
-{
-}
-
-/*---------------------------------------------------------------------------*/
-
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.RecipSqrt", 0, RecipSqrt, ImmutableNode)
-
-const ImmutableNode::InputPinDesc c_RecipSqrt_i[] = { { L"Input", false }, { 0 } };
-const ImmutableNode::OutputPinDesc c_RecipSqrt_o[] = { { L"Output" }, { 0 } };
-
-RecipSqrt::RecipSqrt()
-:	ImmutableNode(c_RecipSqrt_i, c_RecipSqrt_o)
 {
 }
 

@@ -1046,7 +1046,7 @@ read-back color buffer.
 			<stencilReference>0</stencilReference>
 			<stencilMask>2147483648</stencilMask>
 		</item>
-		<item type="traktor.render.Platform" version="traktor.render.Node:1">
+		<item type="traktor.render.Renderer" version="traktor.render.Node:1">
 			<id>{00E67BDE-B160-FD41-ACFF-09298D89C554}</id>
 			<comment/>
 			<position>
@@ -1258,7 +1258,7 @@ read-back color buffer.
 			</position>
 			<color>0, 137, 255, 185</color>
 		</item>
-		<item type="traktor.render.Platform" version="traktor.render.Node:1">
+		<item type="traktor.render.Renderer" version="traktor.render.Node:1">
 			<id>{C95D72ED-2C07-6D46-AB01-94C697191DC0}</id>
 			<comment/>
 			<position>

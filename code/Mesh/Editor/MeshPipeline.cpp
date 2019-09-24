@@ -440,14 +440,14 @@ bool MeshPipeline::buildOutput(
 			return false;
 		}
 
-		// Extract platform permutation.
-		const wchar_t* platformSignature = programCompiler->getPlatformSignature();
-		T_ASSERT(platformSignature);
+		// Extract renderer permutation.
+		const wchar_t* rendererSignature = programCompiler->getRendererSignature();
+		T_ASSERT(rendererSignature);
 
-		materialShaderGraph = render::ShaderGraphStatic(materialShaderGraph).getPlatformPermutation(platformSignature);
+		materialShaderGraph = render::ShaderGraphStatic(materialShaderGraph).getRendererPermutation(rendererSignature);
 		if (!materialShaderGraph)
 		{
-			log::error << L"MeshPipeline failed; unable to get platform permutation." << Endl;
+			log::error << L"MeshPipeline failed; unable to get renderer permutation." << Endl;
 			return false;
 		}
 

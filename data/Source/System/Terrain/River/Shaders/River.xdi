@@ -675,7 +675,7 @@
 			<ignoreMips>false</ignoreMips>
 			<useAnisotropic>false</useAnisotropic>
 		</item>
-		<item type="traktor.render.Platform" version="traktor.render.Node:1">
+		<item type="traktor.render.Renderer" version="traktor.render.Node:1">
 			<id>{BDD2EBA2-D01E-E044-A5B5-2BAF707A38DD}</id>
 			<comment/>
 			<position>

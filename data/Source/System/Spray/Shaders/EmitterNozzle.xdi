@@ -550,7 +550,7 @@ Age
 				<second>887</second>
 			</position>
 		</item>
-		<item type="traktor.render.Platform" version="traktor.render.Node:1">
+		<item type="traktor.render.Renderer" version="traktor.render.Node:1">
 			<id>{56B3B141-5D2C-014D-AF2A-73C3C29C0744}</id>
 			<comment/>
 			<position>

@@ -729,15 +729,6 @@ private:
 	PrecisionHint m_precisionHint;
 };
 
-/*! Conditional based on render platform. */
-class T_DLLCLASS Platform : public ImmutableNode
-{
-	T_RTTI_CLASS;
-
-public:
-	Platform();
-};
-
 /*! Read [indexed] element from struct buffer. */
 class T_DLLCLASS ReadStruct : public ImmutableNode
 {
@@ -758,6 +749,15 @@ private:
 	std::wstring m_name;
 };
 
+/*! Reciprocal square root. */
+class T_DLLCLASS RecipSqrt : public ImmutableNode
+{
+	T_RTTI_CLASS;
+
+public:
+	RecipSqrt();
+};
+
 /*! Reflect vector. */
 class T_DLLCLASS Reflect : public ImmutableNode
 {
@@ -767,13 +767,13 @@ public:
 	Reflect();
 };
 
-/*! Reciprocal square root. */
-class T_DLLCLASS RecipSqrt : public ImmutableNode
+/*! Conditional based on renderer. */
+class T_DLLCLASS Renderer : public ImmutableNode
 {
 	T_RTTI_CLASS;
 
 public:
-	RecipSqrt();
+	Renderer();
 };
 
 /*! Repeat until condition. */
