@@ -59,7 +59,7 @@ AccGradientCache::AccGradientCache(render::IRenderSystem* renderSystem)
 	desc.mipCount = 1;
 	desc.format = render::TfR8G8B8A8;
 	desc.immutable = false;
-	m_gradientsTexture = resource::Proxy< render::ISimpleTexture >(m_renderSystem->createSimpleTexture(desc));
+	m_gradientsTexture = resource::Proxy< render::ISimpleTexture >(m_renderSystem->createSimpleTexture(desc, T_FILE_LINE_W));
 	T_FATAL_ASSERT (m_gradientsTexture);
 
 	m_gradientsData.reset(new uint8_t [c_gradientsWidth * c_gradientsHeight * 4]);

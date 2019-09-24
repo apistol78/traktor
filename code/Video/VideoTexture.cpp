@@ -46,7 +46,7 @@ bool VideoTexture::create(render::IRenderSystem* renderSystem, IVideoDecoder* de
 
 	for (uint32_t i = 0; i < sizeof_array(m_textures); ++i)
 	{
-		m_textures[i] = renderSystem->createSimpleTexture(desc);
+		m_textures[i] = renderSystem->createSimpleTexture(desc, T_FILE_LINE_W);
 		if (!m_textures[i])
 			return false;
 	}

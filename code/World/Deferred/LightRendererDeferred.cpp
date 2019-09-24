@@ -23,6 +23,7 @@ const resource::Id< render::Shader > c_fogShader(Guid(L"{9453D74C-76C4-8748-9A5B
 
 render::handle_t s_handleTime;
 render::handle_t s_handleShadowEnable;
+render::handle_t s_handleReflectionsEnable;
 render::handle_t s_handleExtent;
 render::handle_t s_handleProjection;
 render::handle_t s_handleView;
@@ -65,6 +66,7 @@ LightRendererDeferred::LightRendererDeferred()
 {
 	s_handleTime = render::getParameterHandle(L"World_Time");
 	s_handleShadowEnable = render::getParameterHandle(L"World_ShadowEnable");
+	s_handleReflectionsEnable = render::getParameterHandle(L"World_ReflectionsEnable");
 	s_handleExtent = render::getParameterHandle(L"World_Extent");
 	s_handleProjection = render::getParameterHandle(L"World_Projection");
 	s_handleView = render::getParameterHandle(L"World_View");
@@ -154,6 +156,7 @@ void LightRendererDeferred::renderLights(
 	Scalar p22 = projection.get(1, 1);
 
 	m_lightShader->setCombination(s_handleShadowEnable, bool(shadowMask != nullptr && shadowMask != nullptr));
+	m_lightShader->setCombination(s_handleReflectionsEnable, bool(reflectionMap != nullptr));
 
 	m_lightShader->setFloatParameter(s_handleTime, time);
 	m_lightShader->setFloatParameter(s_handleLightCount, float(lightCount));

@@ -1,13 +1,16 @@
 #include "Core/Log/Log.h"
 #include "Core/Misc/AutoPtr.h"
 #include "Core/Misc/SafeDestroy.h"
+#include "Core/Misc/String.h"
 #include "Render/Vulkan/ApiLoader.h"
+#include "Render/Vulkan/CubeTextureVk.h"
 #include "Render/Vulkan/IndexBufferVk.h"
 #include "Render/Vulkan/ProgramVk.h"
 #include "Render/Vulkan/RenderTargetDepthVk.h"
 #include "Render/Vulkan/RenderTargetVk.h"
 #include "Render/Vulkan/RenderTargetSetVk.h"
 #include "Render/Vulkan/RenderViewVk.h"
+#include "Render/Vulkan/SimpleTextureVk.h"
 #include "Render/Vulkan/UniformBufferPoolVk.h"
 #include "Render/Vulkan/UtilitiesVk.h"
 #include "Render/Vulkan/VertexBufferVk.h"
@@ -525,6 +528,197 @@ void RenderViewVk::compute(IProgram* program, const int32_t* workSize)
 	vkCmdDispatch(m_computeCommandBuffer, workSize[0], workSize[1], workSize[2]);
 }
 
+bool RenderViewVk::copy(ITexture* destinationTexture, int32_t destinationSide, int32_t destinationLevel, ITexture* sourceTexture, int32_t sourceSide, int32_t sourceLevel)
+{
+	VkImage sourceImage = 0;
+	VkImageLayout sourceImageLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+
+	VkImage destinationImage = 0;
+	VkImageLayout destinationImageLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+
+	VkImageCopy region = {};
+	region.srcSubresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+	region.srcSubresource.mipLevel = sourceLevel;
+	region.srcSubresource.baseArrayLayer = 0;
+	region.srcSubresource.layerCount = 1;
+	region.srcOffset = { 0, 0, 0 };
+	region.dstSubresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+	region.dstSubresource.mipLevel = destinationLevel;
+	region.dstSubresource.baseArrayLayer = 0;
+	region.dstSubresource.layerCount = 1;
+	region.dstOffset = { 0, 0, 0 };
+	region.extent = { 0, 0, 1 };
+
+	if (auto sourceRenderTarget = dynamic_type_cast< RenderTargetVk* >(sourceTexture))
+	{
+		sourceImage = sourceRenderTarget->getVkImage();
+		sourceImageLayout = sourceRenderTarget->getVkImageLayout();
+		region.extent.width = getTextureMipSize(sourceRenderTarget->getWidth(), sourceLevel);
+		region.extent.height = getTextureMipSize(sourceRenderTarget->getHeight(), sourceLevel);
+	}
+	else if (auto sourceSimpleTexture = dynamic_type_cast< SimpleTextureVk* >(sourceTexture))
+	{
+		sourceImage = sourceSimpleTexture->getVkImage();
+		sourceImageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+		region.extent.width = getTextureMipSize(sourceSimpleTexture->getWidth(), sourceLevel);
+		region.extent.height = getTextureMipSize(sourceSimpleTexture->getHeight(), sourceLevel);
+	}
+	else if (auto sourceCubeTexture = dynamic_type_cast< CubeTextureVk* >(sourceTexture))
+	{
+		sourceImage = sourceCubeTexture->getVkImage();
+		sourceImageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+		region.srcSubresource.baseArrayLayer = sourceSide;
+		region.extent.width = getTextureMipSize(sourceCubeTexture->getSide(), sourceLevel);
+		region.extent.height = getTextureMipSize(sourceCubeTexture->getSide(), sourceLevel);
+	}
+	else
+		return false;
+
+	if (auto destinationRenderTarget = dynamic_type_cast< RenderTargetVk* >(destinationTexture))
+	{
+		destinationImage = destinationRenderTarget->getVkImage();
+		destinationImageLayout = destinationRenderTarget->getVkImageLayout();
+	}
+	else if (auto destinationSimpleTexture = dynamic_type_cast< SimpleTextureVk* >(destinationTexture))
+	{
+		destinationImage = destinationSimpleTexture->getVkImage();
+		destinationImageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+	}
+	else if (auto destinationCubeTexture = dynamic_type_cast< CubeTextureVk* >(destinationTexture))
+	{
+		destinationImage = destinationCubeTexture->getVkImage();
+		destinationImageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+		region.dstSubresource.baseArrayLayer = destinationSide;
+	}
+	else
+		return false;
+
+	// Source texture layout.
+	{
+		VkImageMemoryBarrier imb = {};
+		imb.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
+		imb.oldLayout = sourceImageLayout;
+		imb.newLayout = VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL;
+		imb.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+		imb.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+		imb.image = sourceImage;
+		imb.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+		imb.subresourceRange.baseMipLevel = sourceLevel;
+		imb.subresourceRange.levelCount = 1;
+		imb.subresourceRange.baseArrayLayer = region.srcSubresource.baseArrayLayer;
+		imb.subresourceRange.layerCount = 1;
+		imb.srcAccessMask = 0;
+		imb.dstAccessMask = 0;
+
+		vkCmdPipelineBarrier(
+			m_graphicsCommandBuffer,
+			VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
+			VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
+			0,
+			0, nullptr,
+			0, nullptr,
+			1, &imb
+		);
+	}
+
+	// Destination texture layout.
+	{
+		VkImageMemoryBarrier imb = {};
+		imb.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
+		imb.oldLayout = destinationImageLayout;
+		imb.newLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
+		imb.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+		imb.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+		imb.image = destinationImage;
+		imb.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+		imb.subresourceRange.baseMipLevel = destinationLevel;
+		imb.subresourceRange.levelCount = 1;
+		imb.subresourceRange.baseArrayLayer = region.dstSubresource.baseArrayLayer;
+		imb.subresourceRange.layerCount = 1;
+		imb.srcAccessMask = 0;
+		imb.dstAccessMask = 0;
+
+		vkCmdPipelineBarrier(
+			m_graphicsCommandBuffer,
+			VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
+			VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
+			0,
+			0, nullptr,
+			0, nullptr,
+			1, &imb
+		);
+	}
+
+	// Perform texture image copy.
+	vkCmdCopyImage(
+		m_graphicsCommandBuffer,
+		sourceImage,
+		VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,
+		destinationImage,
+		VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
+		1,
+		&region
+	);
+
+	// Source texture layout.
+	{
+		VkImageMemoryBarrier imb = {};
+		imb.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
+		imb.oldLayout = VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL;
+		imb.newLayout = sourceImageLayout;
+		imb.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+		imb.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+		imb.image = sourceImage;
+		imb.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+		imb.subresourceRange.baseMipLevel = sourceLevel;
+		imb.subresourceRange.levelCount = 1;
+		imb.subresourceRange.baseArrayLayer = region.srcSubresource.baseArrayLayer;
+		imb.subresourceRange.layerCount = 1;
+		imb.srcAccessMask = 0;
+		imb.dstAccessMask = 0;
+
+		vkCmdPipelineBarrier(
+			m_graphicsCommandBuffer,
+			VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
+			VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
+			0,
+			0, nullptr,
+			0, nullptr,
+			1, &imb
+		);
+	}
+
+	// Destination texture layout.
+	{
+		VkImageMemoryBarrier imb = {};
+		imb.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
+		imb.oldLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
+		imb.newLayout = destinationImageLayout;
+		imb.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+		imb.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+		imb.image = destinationImage;
+		imb.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+		imb.subresourceRange.baseMipLevel = destinationLevel;
+		imb.subresourceRange.levelCount = 1;
+		imb.subresourceRange.baseArrayLayer = region.dstSubresource.baseArrayLayer;
+		imb.subresourceRange.layerCount = 1;
+		imb.srcAccessMask = 0;
+		imb.dstAccessMask = 0;
+
+		vkCmdPipelineBarrier(
+			m_graphicsCommandBuffer,
+			VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
+			VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
+			0,
+			0, nullptr,
+			0, nullptr,
+			1, &imb
+		);
+	}
+
+	return true;
+}
+
 void RenderViewVk::end()
 {
 	validateTargetState();
@@ -545,6 +739,27 @@ void RenderViewVk::end()
 	// Pop previous render pass from stack.
 	m_targetStateStack.pop_back();
 	m_targetStateDirty = true;
+}
+
+void RenderViewVk::flush()
+{
+	// End recording command buffer.
+	vkEndCommandBuffer(m_graphicsCommandBuffer);
+
+	// Wait until GPU has finished rendering all commands.
+	VkSubmitInfo si = {};
+	si.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+	si.commandBufferCount = 1;
+	si.pCommandBuffers = &m_graphicsCommandBuffer;
+
+    vkQueueSubmit(m_presentQueue, 1, &si, VK_NULL_HANDLE);
+	vkQueueWaitIdle(m_presentQueue);
+
+	// Restart recording command buffer.
+	VkCommandBufferBeginInfo beginInfo = {};
+	beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+	beginInfo.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
+	vkBeginCommandBuffer(m_graphicsCommandBuffer, &beginInfo);
 }
 
 void RenderViewVk::present()
@@ -592,25 +807,25 @@ void RenderViewVk::present()
 
 void RenderViewVk::pushMarker(const char* const marker)
 {
-#if !defined(__ANDROID__)
-	if (m_haveDebugMarkers)
-	{
-		VkDebugMarkerMarkerInfoEXT mi = {};
-		mi.sType = VK_STRUCTURE_TYPE_DEBUG_MARKER_MARKER_INFO_EXT;
-		mi.pMarkerName = marker;
-		vkCmdDebugMarkerBeginEXT(m_graphicsCommandBuffer, &mi);
-	}
-#endif
+//#if !defined(__ANDROID__)
+//	if (m_haveDebugMarkers)
+//	{
+//		VkDebugMarkerMarkerInfoEXT mi = {};
+//		mi.sType = VK_STRUCTURE_TYPE_DEBUG_MARKER_MARKER_INFO_EXT;
+//		mi.pMarkerName = marker;
+//		vkCmdDebugMarkerBeginEXT(m_graphicsCommandBuffer, &mi);
+//	}
+//#endif
 }
 
 void RenderViewVk::popMarker()
 {
-#if !defined(__ANDROID__)
-	if (m_haveDebugMarkers)
-	{
-		vkCmdDebugMarkerEndEXT(m_graphicsCommandBuffer);
-	}
-#endif
+//#if !defined(__ANDROID__)
+//	if (m_haveDebugMarkers)
+//	{
+//		vkCmdDebugMarkerEndEXT(m_graphicsCommandBuffer);
+//	}
+//#endif
 }
 
 void RenderViewVk::getStatistics(RenderViewStatistics& outStatistics) const
@@ -851,7 +1066,8 @@ bool RenderViewVk::create(uint32_t width, uint32_t height)
 			colorFormat,
 			presentImages[i],
 			VK_FORMAT_D24_UNORM_S8_UINT,
-			depthImage
+			depthImage,
+			(L"Primary " + toString(i)).c_str()
 		))
 			return false;
 	}

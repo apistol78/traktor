@@ -119,7 +119,7 @@ Ref< StructBuffer > RenderSystemCapture::createStructBuffer(const AlignedVector<
 	return nullptr; // new StructBufferCapture(structBuffer, bufferSize, structSize);	
 }
 
-Ref< ISimpleTexture > RenderSystemCapture::createSimpleTexture(const SimpleTextureCreateDesc& desc)
+Ref< ISimpleTexture > RenderSystemCapture::createSimpleTexture(const SimpleTextureCreateDesc& desc, const wchar_t* const tag)
 {
 	T_CAPTURE_ASSERT(desc.width > 0, L"Invalid texture width.");
 	T_CAPTURE_ASSERT(desc.height > 0, L"Invalid texture height.");
@@ -134,14 +134,14 @@ Ref< ISimpleTexture > RenderSystemCapture::createSimpleTexture(const SimpleTextu
 		}
 	}
 
-	Ref< ISimpleTexture > texture = m_renderSystem->createSimpleTexture(desc);
+	Ref< ISimpleTexture > texture = m_renderSystem->createSimpleTexture(desc, tag);
 	if (!texture)
 		return nullptr;
 
 	return new SimpleTextureCapture(texture);
 }
 
-Ref< ICubeTexture > RenderSystemCapture::createCubeTexture(const CubeTextureCreateDesc& desc)
+Ref< ICubeTexture > RenderSystemCapture::createCubeTexture(const CubeTextureCreateDesc& desc, const wchar_t* const tag)
 {
 	T_CAPTURE_ASSERT(desc.side > 0, L"Invalid cube texture size.");
 	T_CAPTURE_ASSERT(desc.mipCount >= 1, L"Invalid number of mips.");
@@ -155,14 +155,14 @@ Ref< ICubeTexture > RenderSystemCapture::createCubeTexture(const CubeTextureCrea
 		}
 	}
 
-	Ref< ICubeTexture > texture = m_renderSystem->createCubeTexture(desc);
+	Ref< ICubeTexture > texture = m_renderSystem->createCubeTexture(desc, tag);
 	if (!texture)
 		return nullptr;
 
 	return new CubeTextureCapture(texture);
 }
 
-Ref< IVolumeTexture > RenderSystemCapture::createVolumeTexture(const VolumeTextureCreateDesc& desc)
+Ref< IVolumeTexture > RenderSystemCapture::createVolumeTexture(const VolumeTextureCreateDesc& desc, const wchar_t* const tag)
 {
 	T_CAPTURE_ASSERT(desc.width > 0, L"Invalid volume texture width.");
 	T_CAPTURE_ASSERT(desc.height > 0, L"Invalid volume texture height.");
@@ -178,14 +178,14 @@ Ref< IVolumeTexture > RenderSystemCapture::createVolumeTexture(const VolumeTextu
 		}
 	}
 
-	Ref< IVolumeTexture > texture = m_renderSystem->createVolumeTexture(desc);
+	Ref< IVolumeTexture > texture = m_renderSystem->createVolumeTexture(desc, tag);
 	if (!texture)
 		return nullptr;
 
 	return new VolumeTextureCapture(texture);
 }
 
-Ref< RenderTargetSet > RenderSystemCapture::createRenderTargetSet(const RenderTargetSetCreateDesc& desc)
+Ref< RenderTargetSet > RenderSystemCapture::createRenderTargetSet(const RenderTargetSetCreateDesc& desc, const wchar_t* const tag)
 {
 	T_CAPTURE_ASSERT(desc.count >= 0, L"Negative number of targets.");
 	T_CAPTURE_ASSERT(desc.count <= 4, L"Too many targets.");
@@ -212,7 +212,7 @@ Ref< RenderTargetSet > RenderSystemCapture::createRenderTargetSet(const RenderTa
 		T_CAPTURE_ASSERT(desc.sharedDepthStencil == nullptr, L"Invalid values in create desc.");
 	}
 
-	Ref< RenderTargetSet > renderTargetSet = m_renderSystem->createRenderTargetSet(desc);
+	Ref< RenderTargetSet > renderTargetSet = m_renderSystem->createRenderTargetSet(desc, tag);
 	if (!renderTargetSet)
 		return nullptr;
 

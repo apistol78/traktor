@@ -271,7 +271,7 @@ void SparkLayer::prepare(const runtime::UpdateInfo& info)
 		desc.generateMips = false;
 		desc.targets[0].format = render::TfR8G8B8A8;
 		desc.targets[0].sRGB = false;
-		m_imageTargetSet = renderSystem->createRenderTargetSet(desc);
+		m_imageTargetSet = renderSystem->createRenderTargetSet(desc, T_FILE_LINE_W);
 	}
 }
 

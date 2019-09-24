@@ -37,7 +37,8 @@ public:
 		const resource::Proxy< render::ICubeTexture >& texture,
 		float intensity,
 		bool local,
-		const Aabb3& volume
+		const Aabb3& volume,
+		bool dirty
 	);
 
 	virtual void destroy() override final;

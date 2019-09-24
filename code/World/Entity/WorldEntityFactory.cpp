@@ -183,30 +183,35 @@ Ref< IEntityComponent > WorldEntityFactory::createEntityComponent(const world::I
 	if (const ProbeComponentData* probeComponentData = dynamic_type_cast< const ProbeComponentData* >(&entityComponentData))
 	{
 		resource::Proxy< render::ICubeTexture > texture;
+		bool dirty = false;
 
-		//if (probeComponentData->getTexture())
-		//{
-		//	if (!m_resourceManager->bind(probeComponentData->getTexture(), texture))
-		//		return nullptr;
-		//}
+		if (probeComponentData->getTexture())
+		{
+			if (!m_resourceManager->bind(probeComponentData->getTexture(), texture))
+				return nullptr;
+		}
+		else
+		{
+			render::CubeTextureCreateDesc ctcd;
+			ctcd.side = 512; //c_faceSize;
+			ctcd.mipCount = 1;
+			ctcd.format = render::TfR11G11B10F;
+			ctcd.sRGB = false;
+			ctcd.immutable = false;
 
-		// Create reflection texture.
-		render::CubeTextureCreateDesc ctcd;
-		ctcd.side = 512; //c_faceSize;
-		ctcd.mipCount = 1;
-		ctcd.format = render::TfR32G32B32A32F;
-		ctcd.sRGB = false;
-		ctcd.immutable = false;
+			texture = resource::Proxy< render::ICubeTexture >(m_renderSystem->createCubeTexture(ctcd, T_FILE_LINE_W));
+			if (!texture)
+				return nullptr;
 
-		texture = resource::Proxy< render::ICubeTexture >(m_renderSystem->createCubeTexture(ctcd));
-		if (!texture)
-			return nullptr;
+			dirty = true;
+		}
 
 		return new ProbeComponent(
 			texture,
 			probeComponentData->getIntensity(),
 			probeComponentData->getLocal(),
-			probeComponentData->getVolume()
+			probeComponentData->getVolume(),
+			dirty
 		);
 	}
 

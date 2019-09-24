@@ -184,7 +184,7 @@ Ref< AccBitmapRect > AccTextureCache::getBitmapTexture(const Bitmap& bitmap)
 			desc.format = render::TfR8G8B8A8;
 			desc.immutable = false;
 
-			texture = resource::Proxy< render::ISimpleTexture >(m_renderSystem->createSimpleTexture(desc));
+			texture = resource::Proxy< render::ISimpleTexture >(m_renderSystem->createSimpleTexture(desc, T_FILE_LINE_W));
 		}
 
 		if (!texture)

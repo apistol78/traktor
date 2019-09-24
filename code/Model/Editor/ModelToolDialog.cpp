@@ -375,7 +375,7 @@ bool ModelToolDialog::loadTexture()
 	stcd.initialData[0].data = image->getData();
 	stcd.initialData[0].pitch = image->getWidth() * 4;
 
-	m_texturePreview = m_renderSystem->createSimpleTexture(stcd);
+	m_texturePreview = m_renderSystem->createSimpleTexture(stcd, T_FILE_LINE_W);
 
 	return (bool)(m_texturePreview != nullptr);
 }

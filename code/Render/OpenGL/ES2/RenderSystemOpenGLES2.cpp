@@ -190,7 +190,7 @@ Ref< StructBuffer > RenderSystemOpenGLES2::createStructBuffer(const AlignedVecto
 	return nullptr;
 }
 
-Ref< ISimpleTexture > RenderSystemOpenGLES2::createSimpleTexture(const SimpleTextureCreateDesc& desc)
+Ref< ISimpleTexture > RenderSystemOpenGLES2::createSimpleTexture(const SimpleTextureCreateDesc& desc, const wchar_t* const tag)
 {
 	T_ANONYMOUS_VAR(ContextOpenGLES2::Scope)(m_context);
 	Ref< SimpleTextureOpenGLES2 > texture = new SimpleTextureOpenGLES2(m_context);
@@ -200,7 +200,7 @@ Ref< ISimpleTexture > RenderSystemOpenGLES2::createSimpleTexture(const SimpleTex
 		return nullptr;
 }
 
-Ref< ICubeTexture > RenderSystemOpenGLES2::createCubeTexture(const CubeTextureCreateDesc& desc)
+Ref< ICubeTexture > RenderSystemOpenGLES2::createCubeTexture(const CubeTextureCreateDesc& desc, const wchar_t* const tag)
 {
 	T_ANONYMOUS_VAR(ContextOpenGLES2::Scope)(m_context);
 	Ref< CubeTextureOpenGLES2 > texture = new CubeTextureOpenGLES2(m_context);
@@ -210,7 +210,7 @@ Ref< ICubeTexture > RenderSystemOpenGLES2::createCubeTexture(const CubeTextureCr
 		return nullptr;
 }
 
-Ref< IVolumeTexture > RenderSystemOpenGLES2::createVolumeTexture(const VolumeTextureCreateDesc& desc)
+Ref< IVolumeTexture > RenderSystemOpenGLES2::createVolumeTexture(const VolumeTextureCreateDesc& desc, const wchar_t* const tag)
 {
 	T_ANONYMOUS_VAR(ContextOpenGLES2::Scope)(m_context);
 	Ref< VolumeTextureOpenGLES2 > texture = new VolumeTextureOpenGLES2(m_context);
@@ -220,7 +220,7 @@ Ref< IVolumeTexture > RenderSystemOpenGLES2::createVolumeTexture(const VolumeTex
 		return nullptr;
 }
 
-Ref< RenderTargetSet > RenderSystemOpenGLES2::createRenderTargetSet(const RenderTargetSetCreateDesc& desc)
+Ref< RenderTargetSet > RenderSystemOpenGLES2::createRenderTargetSet(const RenderTargetSetCreateDesc& desc, const wchar_t* const tag)
 {
 	T_ANONYMOUS_VAR(ContextOpenGLES2::Scope)(m_context);
 	Ref< RenderTargetSetOpenGLES2 > renderTargetSet = new RenderTargetSetOpenGLES2(m_context);

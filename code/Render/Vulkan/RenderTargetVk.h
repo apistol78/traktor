@@ -41,9 +41,9 @@ public:
 
 	virtual ~RenderTargetVk();
 
-	bool createPrimary(int32_t width, int32_t height, VkFormat format, VkImage image);
+	bool createPrimary(int32_t width, int32_t height, VkFormat format, VkImage image, const wchar_t* const tag);
 
-	bool create(const RenderTargetSetCreateDesc& setDesc, const RenderTargetCreateDesc& desc);
+	bool create(const RenderTargetSetCreateDesc& setDesc, const RenderTargetCreateDesc& desc, const wchar_t* const tag);
 
 	virtual void destroy() override final;
 
@@ -76,6 +76,8 @@ public:
 	VkImage getVkImage() const { return m_image; }
 
 	VkImageView getVkImageView() const { return m_imageView; }
+
+	VkImageLayout getVkImageLayout() const { return m_imageLayout; }
 
 private:
 	VkPhysicalDevice m_physicalDevice;

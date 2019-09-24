@@ -40,7 +40,8 @@ public:
 		VkDevice device,
 		VkCommandPool commandPool,
 		VkQueue queue,
-		const VolumeTextureCreateDesc& desc
+		const VolumeTextureCreateDesc& desc,
+		const wchar_t* const tag
 	);
 
 	virtual void destroy() override final;

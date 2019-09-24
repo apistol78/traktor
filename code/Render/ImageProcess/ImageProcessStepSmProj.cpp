@@ -66,7 +66,7 @@ Ref< ISimpleTexture > createRandomRotationTexture(IRenderSystem* renderSystem)
 	desc.initialData[0].pitch = 128 * 4;
 	desc.initialData[0].slicePitch = 0;
 
-	return renderSystem->createSimpleTexture(desc);
+	return renderSystem->createSimpleTexture(desc, T_FILE_LINE_W);
 }
 
 		}

@@ -1,4 +1,5 @@
 #include "Core/Log/Log.h"
+#include "Core/Misc/TString.h"
 #include "Render/Types.h"
 #include "Render/Vulkan/ApiLoader.h"
 #include "Render/Vulkan/RenderTargetVk.h"
@@ -35,7 +36,7 @@ RenderTargetVk::~RenderTargetVk()
 	destroy();
 }
 
-bool RenderTargetVk::createPrimary(int32_t width, int32_t height, VkFormat format, VkImage image)
+bool RenderTargetVk::createPrimary(int32_t width, int32_t height, VkFormat format, VkImage image, const wchar_t* const tag)
 {
 	VkImageViewCreateInfo ivci = {};
 	ivci.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
@@ -60,10 +61,17 @@ bool RenderTargetVk::createPrimary(int32_t width, int32_t height, VkFormat forma
 	m_width = width;
 	m_height = height;
 
+	// Set debug name of texture.
+	VkDebugUtilsObjectNameInfoEXT ni = {};
+	ni.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_OBJECT_NAME_INFO_EXT;
+	ni.objectType = VK_OBJECT_TYPE_IMAGE;
+	ni.objectHandle = (uint64_t)m_image;
+	ni.pObjectName = tag ? wstombs(tag).c_str() : "RenderTargetVk";
+	vkSetDebugUtilsObjectNameEXT(m_logicalDevice, &ni);
 	return true;
 }
 
-bool RenderTargetVk::create(const RenderTargetSetCreateDesc& setDesc, const RenderTargetCreateDesc& desc)
+bool RenderTargetVk::create(const RenderTargetSetCreateDesc& setDesc, const RenderTargetCreateDesc& desc, const wchar_t* const tag)
 {
 	VkResult result;
 
@@ -110,6 +118,14 @@ bool RenderTargetVk::create(const RenderTargetSetCreateDesc& setDesc, const Rend
 	m_format = imageCreateInfo.format;
 	m_width = setDesc.width;
 	m_height = setDesc.height;
+
+	// Set debug name of texture.
+	VkDebugUtilsObjectNameInfoEXT ni = {};
+	ni.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_OBJECT_NAME_INFO_EXT;
+	ni.objectType = VK_OBJECT_TYPE_IMAGE;
+	ni.objectHandle = (uint64_t)m_image;
+	ni.pObjectName = tag ? wstombs(tag).c_str() : "RenderTargetVk";
+	vkSetDebugUtilsObjectNameEXT(m_logicalDevice, &ni);
 	return true;
 }
 

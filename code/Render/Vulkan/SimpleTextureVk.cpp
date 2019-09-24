@@ -1,5 +1,6 @@
 #include <cstring>
 #include "Core/Log/Log.h"
+#include "Core/Misc/TString.h"
 #include "Render/Types.h"
 #include "Render/Vulkan/ApiLoader.h"
 #include "Render/Vulkan/SimpleTextureVk.h"
@@ -37,7 +38,8 @@ SimpleTextureVk::~SimpleTextureVk()
 bool SimpleTextureVk::create(
 	VkCommandPool commandPool,
 	VkQueue queue,
-	const SimpleTextureCreateDesc& desc
+	const SimpleTextureCreateDesc& desc,
+	const wchar_t* const tag
 )
 {
 	if (desc.immutable)
@@ -106,6 +108,14 @@ bool SimpleTextureVk::create(
 			return false;			
 		}
 
+		// Set debug name of texture.
+		VkDebugUtilsObjectNameInfoEXT ni = {};
+		ni.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_OBJECT_NAME_INFO_EXT;
+		ni.objectType = VK_OBJECT_TYPE_IMAGE;
+		ni.objectHandle = (uint64_t)m_textureImage;
+		ni.pObjectName = tag ? wstombs(tag).c_str() : "SimpleTextureVk";
+		vkSetDebugUtilsObjectNameEXT(m_logicalDevice, &ni);
+
 		// Create texture view.
 		VkImageViewCreateInfo ivci = {};
 		ivci.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
@@ -132,7 +142,9 @@ bool SimpleTextureVk::create(
 			queue,
 			m_textureImage,
 			VK_IMAGE_LAYOUT_UNDEFINED,
-			VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL
+			VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
+			0,
+			desc.mipCount
 		);
 
 		// Copy staging buffer into texture.
@@ -177,7 +189,9 @@ bool SimpleTextureVk::create(
 			queue,
 			m_textureImage,
 			VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
-			VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL
+			VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
+			0,
+			desc.mipCount
 		);
 
 		// Free staging buffer.

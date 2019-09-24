@@ -43,15 +43,15 @@ RenderTargetSetVk::~RenderTargetSetVk()
 	destroy();
 }
 
-bool RenderTargetSetVk::createPrimary(int32_t width, int32_t height, VkFormat colorFormat, VkImage colorImage, VkFormat depthFormat, VkImage depthImage)
+bool RenderTargetSetVk::createPrimary(int32_t width, int32_t height, VkFormat colorFormat, VkImage colorImage, VkFormat depthFormat, VkImage depthImage, const wchar_t* const tag)
 {
 	m_colorTargets.resize(1);
 	m_colorTargets[0] = new RenderTargetVk(m_physicalDevice, m_logicalDevice, m_allocator);
-	if (!m_colorTargets[0]->createPrimary(width, height, colorFormat, colorImage))
+	if (!m_colorTargets[0]->createPrimary(width, height, colorFormat, colorImage, tag))
 		return false;
 
 	m_depthTarget = new RenderTargetDepthVk(m_physicalDevice, m_logicalDevice, m_allocator);
-	if (!m_depthTarget->createPrimary(width, height, depthFormat, depthImage))
+	if (!m_depthTarget->createPrimary(width, height, depthFormat, depthImage, tag))
 		return false;
 
 	m_setDesc.count = 1;
@@ -71,20 +71,20 @@ bool RenderTargetSetVk::createPrimary(int32_t width, int32_t height, VkFormat co
 	return true;
 }
 
-bool RenderTargetSetVk::create(const RenderTargetSetCreateDesc& setDesc)
+bool RenderTargetSetVk::create(const RenderTargetSetCreateDesc& setDesc, const wchar_t* const tag)
 {
 	m_colorTargets.resize(setDesc.count);
 	for (int32_t i = 0; i < setDesc.count; ++i)
 	{
 		m_colorTargets[i] = new RenderTargetVk(m_physicalDevice, m_logicalDevice, m_allocator);
-		if (!m_colorTargets[i]->create(setDesc, setDesc.targets[i]))
+		if (!m_colorTargets[i]->create(setDesc, setDesc.targets[i], tag))
 			return false;
 	}
 
 	if (setDesc.createDepthStencil)
 	{
 		m_depthTarget = new RenderTargetDepthVk(m_physicalDevice, m_logicalDevice, m_allocator);
-		if (!m_depthTarget->create(setDesc))
+		if (!m_depthTarget->create(setDesc, tag))
 			return false;
 	}
 
@@ -179,7 +179,9 @@ bool RenderTargetSetVk::read(int32_t index, void* buffer) const
 		m_setupQueue,
 		hostImage,
 		VK_IMAGE_LAYOUT_UNDEFINED,
-		VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL
+		VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
+		0,
+		1
 	);
 
 	// Convert target for optimal read.
@@ -216,7 +218,9 @@ bool RenderTargetSetVk::read(int32_t index, void* buffer) const
 		m_setupQueue,
 		hostImage,
 		VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
-		VK_IMAGE_LAYOUT_GENERAL
+		VK_IMAGE_LAYOUT_GENERAL,
+		0,
+		1
 	);
 
 	// Get information about image.

@@ -1,8 +1,10 @@
 #include <cstring>
 #include "Core/Log/Log.h"
+#include "Core/Misc/TString.h"
 #include "Render/Types.h"
 #include "Render/Vulkan/ApiLoader.h"
 #include "Render/Vulkan/CubeTextureVk.h"
+#include "Render/Vulkan/RenderTargetVk.h"
 #include "Render/Vulkan/UtilitiesVk.h"
 
 namespace traktor
@@ -39,7 +41,7 @@ CubeTextureVk::~CubeTextureVk()
 	destroy();
 }
 
-bool CubeTextureVk::create()
+bool CubeTextureVk::create(const wchar_t* const tag)
 {
 	const VkFormat* vkTextureFormats = m_desc.sRGB ? c_vkTextureFormats_sRGB : c_vkTextureFormats;
 	if (vkTextureFormats[m_desc.format] == VK_FORMAT_UNDEFINED)
@@ -56,7 +58,7 @@ bool CubeTextureVk::create()
 	ici.arrayLayers = 6;
 	ici.format = vkTextureFormats[m_desc.format];
 	ici.tiling = VK_IMAGE_TILING_OPTIMAL;
-	ici.initialLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
+	ici.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
 	ici.usage = VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT;
 	ici.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
 	ici.samples = VK_SAMPLE_COUNT_1_BIT;
@@ -70,6 +72,14 @@ bool CubeTextureVk::create()
 		log::error << L"Failed to create VK cube texture; unable to allocate image memory." << Endl;
 		return false;			
 	}
+
+	// Set debug name of texture.
+	VkDebugUtilsObjectNameInfoEXT ni = {};
+	ni.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_OBJECT_NAME_INFO_EXT;
+	ni.objectType = VK_OBJECT_TYPE_IMAGE;
+	ni.objectHandle = (uint64_t)m_textureImage;
+	ni.pObjectName = tag ? wstombs(tag).c_str() : "CubeTextureVk";
+	vkSetDebugUtilsObjectNameEXT(m_logicalDevice, &ni);
 
 	// Create texture view.
 	VkImageViewCreateInfo ivci = {};
@@ -110,6 +120,7 @@ bool CubeTextureVk::create()
 			}
 		}
 	}
+
 	return true;
 }
 
@@ -183,7 +194,9 @@ void CubeTextureVk::unlock(int32_t side, int32_t level)
 		m_setupQueue,
 		m_textureImage,
 		VK_IMAGE_LAYOUT_UNDEFINED,
-		VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL
+		VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
+		level,
+		1
 	);
 
 	// Copy staging buffer into texture.
@@ -193,7 +206,6 @@ void CubeTextureVk::unlock(int32_t side, int32_t level)
 	);
 
 	uint32_t mipSide = getTextureMipSize(m_desc.side, level);
-	uint32_t mipSize = getTextureMipPitch(m_desc.format, m_desc.side, m_desc.side, level);
 
 	VkBufferImageCopy region = {};
 	region.bufferOffset = 0;
@@ -229,7 +241,9 @@ void CubeTextureVk::unlock(int32_t side, int32_t level)
 		m_setupQueue,
 		m_textureImage,
 		VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
-		VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL
+		VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
+		level,
+		1
 	);
 
 	// Free staging buffer.
@@ -238,11 +252,6 @@ void CubeTextureVk::unlock(int32_t side, int32_t level)
 
 	m_stagingBuffer = 0;
 	m_stagingBufferAllocation = 0;
-}
-
-bool CubeTextureVk::copy(int32_t side, int32_t level, const ISimpleTexture* sourceTexture)
-{
-	return false;
 }
 
 	}

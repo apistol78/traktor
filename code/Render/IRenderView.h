@@ -40,7 +40,7 @@ class IProgram;
 #	define T_RENDER_POP_MARKER(renderView)
 #endif
 
-/*! \brief Render view.
+/*! Render view.
  * \ingroup Render
  */
 class T_DLLCLASS IRenderView : public Object
@@ -51,7 +51,7 @@ public:
 	/*! \name View management. */
 	//@{
 
-	/*! \brief Get next system event.
+	/*! Get next system event.
 	 *
 	 * When using non-embedded render view this must
 	 * be called frequently in order to handle OS
@@ -98,7 +98,7 @@ public:
 	/*! \name Rendering methods. */
 	//@{
 
-	/*! \brief Begin rendering to back buffer.
+	/*! Begin rendering to back buffer.
 	 *
 	 * \param clear Optional clear parameters.
 	 * \return True if successful.
@@ -107,7 +107,7 @@ public:
 		const Clear* clear
 	) = 0;
 
-	/*! \brief Begin rendering to all render targets in set.
+	/*! Begin rendering to all render targets in set.
 	 *
 	 * \param renderTargetSet Set of render targets.
 	 * \param clear Optional clear parameters.
@@ -118,7 +118,7 @@ public:
 		const Clear* clear
 	) = 0;
 
-	/*! \brief Begin rendering to a render target set.
+	/*! Begin rendering to a render target set.
 	 *
 	 * \param renderTargetSet Set of render targets.
 	 * \param renderTarget Index of render target in set.
@@ -131,7 +131,7 @@ public:
 		const Clear* clear
 	) = 0;
 
-	/*! \brief Draw primitives.
+	/*! Draw primitives.
 	 *
 	 * \param vertexBuffer Vertex buffer containing geometry.
 	 * \param indexBuffer Index buffer to be used; null if no indices should be used.
@@ -140,7 +140,7 @@ public:
 	 */
 	virtual void draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, IProgram* program, const Primitives& primitives) = 0;
 
-	/*! \brief Draw primitives using instancing.
+	/*! Draw primitives using instancing.
 	 *
 	 * \param vertexBuffer Vertex buffer containing geometry.
 	 * \param indexBuffer Index buffer to be used; null if no indices should be used.
@@ -150,31 +150,45 @@ public:
 	 */
 	virtual void draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, IProgram* program, const Primitives& primitives, uint32_t instanceCount) = 0;
 
-	/*! \brief Enqueue compute task.
+	/*! Enqueue compute task.
 	 *
 	 * \param workSize Work size, 3 dimensional size.
 	 */
 	virtual void compute(IProgram* program, const int32_t* workSize) = 0;
 
-	/*! \brief End rendering. */
+	/*! Copy texture.
+	 *
+	 * \param destinationTexture Destination texture.
+	 * \param destinationSide Destination cube side if cube map.
+	 * \param destinationLevel Destination mip level.
+	 * \param sourceTexture Source texture.
+	 * \param sourceSide Source cube side if cube map.
+	 * \param sourceLevel Source mip level.
+	 */
+	virtual bool copy(ITexture* destinationTexture, int32_t destinationSide, int32_t destinationLevel, ITexture* sourceTexture, int32_t sourceSide, int32_t sourceLevel) = 0;
+
+	/*! End rendering. */
 	virtual void end() = 0;
 
-	/*! \brief Swap back and front buffers. */
+	/*! Flush all queues and wait for rendering to complete. */
+	virtual void flush() = 0;
+
+	/*! Swap back and front buffers. */
 	virtual void present() = 0;
 
 	/*! \name Statistics. */
 	//@{
 
-	/*! \brief Write push debug marker to command buffer. */
+	/*! Write push debug marker to command buffer. */
 	virtual void pushMarker(const char* const marker) = 0;
 
-	/*! \brief Write pop debug marker to command buffer. */
+	/*! Write pop debug marker to command buffer. */
 	virtual void popMarker() = 0;
 
-	/*! \brief Get render view statistics. */
+	/*! Get render view statistics. */
 	virtual void getStatistics(RenderViewStatistics& outStatistics) const = 0;
 
-	/*! \brief Get backbuffer content. */
+	/*! Get backbuffer content. */
 	virtual bool getBackBufferContent(void* buffer) const = 0;
 
 	//@}

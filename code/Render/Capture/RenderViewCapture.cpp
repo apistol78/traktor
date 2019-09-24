@@ -314,10 +314,24 @@ void RenderViewCapture::compute(IProgram* program, const int32_t* workSize)
 	m_renderView->compute(programCapture->m_program, workSize);
 }
 
+bool RenderViewCapture::copy(ITexture* destinationTexture, int32_t destinationSide, int32_t destinationLevel, ITexture* sourceTexture, int32_t sourceSide, int32_t sourceLevel)
+{
+	T_CAPTURE_ASSERT (m_targetDepth >= 1, L"Cannot copy outside of begin/end.");
+	T_CAPTURE_ASSERT (destinationTexture, L"Invalid destination texture.");
+	T_CAPTURE_ASSERT (sourceTexture, L"Invalid destination texture.");
+
+	return m_renderView->copy(destinationTexture, destinationSide, destinationLevel, sourceTexture, sourceSide, sourceLevel);
+}
+
 void RenderViewCapture::end()
 {
 	T_CAPTURE_ASSERT (m_targetDepth >= 1, L"Cannot end without begin.");
 	m_renderView->end();
+}
+
+void RenderViewCapture::flush()
+{
+	m_renderView->flush();
 }
 
 void RenderViewCapture::present()

@@ -73,13 +73,13 @@ public:
 
 	virtual Ref< StructBuffer > createStructBuffer(const AlignedVector< StructElement >& structElements, uint32_t bufferSize) override final;
 
-	virtual Ref< ISimpleTexture > createSimpleTexture(const SimpleTextureCreateDesc& desc) override final;
+	virtual Ref< ISimpleTexture > createSimpleTexture(const SimpleTextureCreateDesc& desc, const wchar_t* const tag) override final;
 
-	virtual Ref< ICubeTexture > createCubeTexture(const CubeTextureCreateDesc& desc) override final;
+	virtual Ref< ICubeTexture > createCubeTexture(const CubeTextureCreateDesc& desc, const wchar_t* const tag) override final;
 
-	virtual Ref< IVolumeTexture > createVolumeTexture(const VolumeTextureCreateDesc& desc) override final;
+	virtual Ref< IVolumeTexture > createVolumeTexture(const VolumeTextureCreateDesc& desc, const wchar_t* const tag) override final;
 
-	virtual Ref< RenderTargetSet > createRenderTargetSet(const RenderTargetSetCreateDesc& desc) override final;
+	virtual Ref< RenderTargetSet > createRenderTargetSet(const RenderTargetSetCreateDesc& desc, const wchar_t* const tag) override final;
 
 	virtual Ref< IProgram > createProgram(const ProgramResource* programResource, const wchar_t* const tag) override final;
 
@@ -103,12 +103,12 @@ private:
 	VkInstance m_instance;
 	VkPhysicalDevice m_physicalDevice;
 	VkDevice m_logicalDevice;
+	VkDebugUtilsMessengerEXT m_debugMessenger;
 	uint32_t m_graphicsQueueIndex;
 	uint32_t m_computeQueueIndex;
 	VkQueue m_graphicsQueue;
 	VkQueue m_computeQueue;
 	VkCommandPool m_graphicsCommandPool;
-	VkCommandBuffer m_setupCommandBuffer;
 	VmaAllocator m_allocator;
 };
 

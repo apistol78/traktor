@@ -261,7 +261,7 @@ bool CloudComponent::create(
 		targetDesc.usingPrimaryDepthStencil = false;
 		targetDesc.targets[0].format = render::TfR8G8B8A8;
 
-		m_impostorTargets[i] = renderSystem->createRenderTargetSet(targetDesc);
+		m_impostorTargets[i] = renderSystem->createRenderTargetSet(targetDesc, T_FILE_LINE_W);
 		if (!m_impostorTargets[i])
 			return false;
 	}

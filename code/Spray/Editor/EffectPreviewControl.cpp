@@ -147,7 +147,7 @@ bool EffectPreviewControl::create(
 		rtscd.targets[0].format = render::TfR32F;
 		rtscd.targets[0].sRGB = false;
 
-		m_depthTexture = renderSystem->createRenderTargetSet(rtscd);
+		m_depthTexture = renderSystem->createRenderTargetSet(rtscd, T_FILE_LINE_W);
 		if (!m_depthTexture)
 			return false;
 	}
@@ -352,7 +352,7 @@ void EffectPreviewControl::updateRenderer()
 	rtscd.targets[0].format = render::TfR32F;
 	rtscd.targets[0].sRGB = false;
 
-	m_depthTexture = m_renderSystem->createRenderTargetSet(rtscd);
+	m_depthTexture = m_renderSystem->createRenderTargetSet(rtscd, T_FILE_LINE_W);
 
 	// Re-create post processing.
 	if (m_postProcessSettings)
@@ -372,7 +372,7 @@ void EffectPreviewControl::updateRenderer()
 		desc.generateMips = false;
 		desc.targets[0].format = render::TfR11G11B10F;
 		desc.targets[0].sRGB = false;
-		m_postTargetSet = m_renderSystem->createRenderTargetSet(desc);
+		m_postTargetSet = m_renderSystem->createRenderTargetSet(desc, T_FILE_LINE_W);
 	}
 }
 

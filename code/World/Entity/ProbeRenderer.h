@@ -74,6 +74,7 @@ private:
 	RefArray< ProbeComponent > m_probeComponents;
 	Ref< ProbeComponent > m_capture;
 	int32_t m_captureFace;
+	bool m_capturePending;
 };
 
 	}

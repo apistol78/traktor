@@ -79,7 +79,7 @@ ProgramVk::~ProgramVk()
 	destroy();
 }
 
-bool ProgramVk::create(const ProgramResourceVk* resource)
+bool ProgramVk::create(const ProgramResourceVk* resource, const wchar_t* const tag)
 {
 	VkShaderStageFlags stageFlags;
 
