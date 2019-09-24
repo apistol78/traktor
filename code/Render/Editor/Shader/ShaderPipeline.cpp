@@ -309,6 +309,7 @@ bool ShaderPipeline::create(const editor::IPipelineSettings* settings)
 {
 	m_programCompilerTypeName = settings->getProperty< std::wstring >(L"ShaderPipeline.ProgramCompiler");
 	m_compilerSettings = settings->getProperty< PropertyGroup >(L"ShaderPipeline.ProgramCompilerSettings");
+	m_platform = settings->getProperty< std::wstring >(L"ShaderPipeline.Platform", L"");
 	m_includeOnlyTechniques = settings->getProperty< std::set< std::wstring > >(L"ShaderPipeline.IncludeOnlyTechniques");
 	m_frequentUniformsAsLinear = settings->getProperty< bool >(L"ShaderPipeline.FrequentUniformsAsLinear", m_frequentUniformsAsLinear);
 	m_optimize = settings->getProperty< int32_t >(L"ShaderPipeline.Optimize", m_optimize);
@@ -316,8 +317,6 @@ bool ShaderPipeline::create(const editor::IPipelineSettings* settings)
 	m_debugCompleteGraphs = settings->getProperty< bool >(L"ShaderPipeline.DebugCompleteGraphs", false);
 	m_debugPath = settings->getProperty< std::wstring >(L"ShaderPipeline.DebugPath", L"");
 	m_editor = settings->getProperty< bool >(L"Pipeline.TargetEditor", false);
-
-	T_DEBUG(L"Using optimization level " << m_optimize << (m_validate ? L" with validation" : L" without validation"));
 	return true;
 }
 
@@ -345,14 +344,22 @@ bool ShaderPipeline::buildDependencies(
 	if (!programCompiler)
 		return false;
 
-	// Extract renderer permutation.
-	const wchar_t* rendererSignature = programCompiler->getRendererSignature();
+	std::wstring rendererSignature = programCompiler->getRendererSignature();
 	T_ASSERT(rendererSignature);
 
+	// Extract platform permutation.
+	shaderGraph = ShaderGraphStatic(shaderGraph).getPlatformPermutation(m_platform);
+	if (!shaderGraph)
+	{
+		log::error << L"ShaderPipeline failed; unable to get platform \"" << m_platform << L"\" permutation." << Endl;
+		return false;
+	}
+
+	// Extract renderer permutation.
 	shaderGraph = ShaderGraphStatic(shaderGraph).getRendererPermutation(rendererSignature);
 	if (!shaderGraph)
 	{
-		log::error << L"ShaderPipeline failed; unable to get renderer permutation." << Endl;
+		log::error << L"ShaderPipeline failed; unable to get renderer \"" << rendererSignature << L"\" permutation." << Endl;
 		return false;
 	}
 
@@ -402,6 +409,9 @@ bool ShaderPipeline::buildOutput(
 	if (!programCompiler)
 		return false;
 
+	std::wstring rendererSignature = programCompiler->getRendererSignature();
+	T_ASSERT(rendererSignature);
+
 	Ref< ShaderResource > shaderResource = new ShaderResource();
 	uint32_t parameterBit = 1;
 
@@ -438,14 +448,19 @@ bool ShaderPipeline::buildOutput(
 		return false;
 	}
 
-	// Extract renderer permutation.
-	const wchar_t* rendererSignature = programCompiler->getRendererSignature();
-	T_ASSERT(rendererSignature);
+	// Extract platform permutation.
+	shaderGraph = ShaderGraphStatic(shaderGraph).getPlatformPermutation(m_platform);
+	if (!shaderGraph)
+	{
+		log::error << L"ShaderPipeline failed; unable to get platform \"" << m_platform << L"\" permutation." << Endl;
+		return false;
+	}
 
+	// Extract renderer permutation.
 	shaderGraph = ShaderGraphStatic(shaderGraph).getRendererPermutation(rendererSignature);
 	if (!shaderGraph)
 	{
-		log::error << L"ShaderPipeline failed; unable to get renderer permutation." << Endl;
+		log::error << L"ShaderPipeline failed; unable to get renderer \"" << rendererSignature << L"\" permutation." << Endl;
 		return false;
 	}
 

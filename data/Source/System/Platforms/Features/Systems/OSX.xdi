@@ -89,6 +89,12 @@
 					</value>
 				</second>
 			</item>
+			<item>
+				<first>ShaderPipeline.Platform</first>
+				<second type="traktor.PropertyString">
+					<value>macOS</value>
+				</second>
+			</item>
 		</value>
 	</pipelineProperties>
 	<migrateProperties type="traktor.PropertyGroup">

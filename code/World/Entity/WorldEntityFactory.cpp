@@ -193,7 +193,11 @@ Ref< IEntityComponent > WorldEntityFactory::createEntityComponent(const world::I
 		else
 		{
 			render::CubeTextureCreateDesc ctcd;
-			ctcd.side = 512; //c_faceSize;
+#if !defined(__ANDROID__)
+			ctcd.side = 512;
+#else
+			ctcd.side = 128;
+#endif
 			ctcd.mipCount = 1;
 			ctcd.format = render::TfR11G11B10F;
 			ctcd.sRGB = false;

@@ -312,8 +312,13 @@ bool WorldRendererDeferred::create(
 	{
 		render::RenderTargetSetCreateDesc rtscd;
 		rtscd.count = 1;
-		rtscd.width = desc.width; // / 2;
-		rtscd.height = desc.height; // / 2;
+#if !defined(__ANDROID__)
+		rtscd.width = desc.width;
+		rtscd.height = desc.height;
+#else
+		rtscd.width = desc.width / 2;
+		rtscd.height = desc.height / 2;
+#endif
 		rtscd.multiSample = 0;
 		rtscd.createDepthStencil = false;
 		rtscd.usingPrimaryDepthStencil = false;

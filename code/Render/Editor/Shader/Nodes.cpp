@@ -1327,6 +1327,30 @@ void OutputPort::serialize(ISerializer& s)
 	ImmutableNode::serialize(s);
 	s >> Member< std::wstring >(L"name", m_name);
 }
+/*---------------------------------------------------------------------------*/
+
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Platform", 0, Platform, ImmutableNode)
+
+const ImmutableNode::InputPinDesc c_Platform_i[] =
+{
+	{ L"Android", true },
+	{ L"Emscripten", true },
+	{ L"iOS", true },
+	{ L"Linux", true },
+	{ L"macOS", true },
+	{ L"PS3", true },
+	{ L"PS4", true },
+	{ L"RaspberryPI", true },
+	{ L"Windows", true },
+	{ L"Other", false },
+	{ 0 }
+};
+const ImmutableNode::OutputPinDesc c_Platform_o[] = { { L"Output" }, { 0 } };
+
+Platform::Platform()
+:	ImmutableNode(c_Platform_i, c_Platform_o)
+{
+}
 
 /*---------------------------------------------------------------------------*/
 

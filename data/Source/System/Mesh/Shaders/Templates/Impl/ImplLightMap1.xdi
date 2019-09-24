@@ -1,15 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph">
 	<nodes>
-		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
-			<id>{35F8CE8E-3757-C447-B519-ED109802E37E}</id>
-			<comment/>
-			<position>
-				<first>1180</first>
-				<second>201</second>
-			</position>
-			<name>T_Irradiance</name>
-		</item>
 		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
 			<id>{0D5451A5-501F-D049-9924-E43ABBC4580E}</id>
 			<comment/>
@@ -36,43 +27,6 @@
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.Texture" version="traktor.render.Node:1">
-			<id>{09A4CF58-CEC6-9D45-ABA0-AAE5E78C645D}</id>
-			<comment>
-			<![CDATA[
-Tag_LightMap
-			]]>
-			</comment>
-			<position>
-				<first>445</first>
-				<second>180</second>
-			</position>
-			<external>{00000000-0000-0000-0000-000000000000}</external>
-			<type>PtTexture2D</type>
-		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
-			<id>{7B70C65D-1D18-7F45-A031-89EC63AC4A8D}</id>
-			<comment/>
-			<position>
-				<first>927</first>
-				<second>197</second>
-			</position>
-			<fragmentGuid>{21CA659B-13A1-4D49-8115-FBA0ACB3CF0E}</fragmentGuid>
-			<inputPins>
-				<item>
-					<id>{A5384FAC-5CFF-4641-868B-B4C27EE7F4E7}</id>
-					<name>Input</name>
-					<optional>false</optional>
-				</item>
-			</inputPins>
-			<outputPins>
-				<item>
-					<id>{8AF87759-86E6-694A-92BB-159E518E1E26}</id>
-					<name>Output</name>
-				</item>
-			</outputPins>
-			<values/>
-		</item>
 		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
 			<id>{714E8184-C603-5540-AF9B-74DC8D68942A}</id>
 			<comment/>
@@ -86,12 +40,33 @@ Tag_LightMap
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
-			<id>{5C5FAE16-98DE-B549-927E-95C9520BF286}</id>
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{37D87415-413C-41DC-A57C-C8FCB75354E1}</id>
 			<comment/>
 			<position>
-				<first>671</first>
-				<second>185</second>
+				<first>288</first>
+				<second>360</second>
+			</position>
+			<name>T_ViewPosition</name>
+			<connectable>true</connectable>
+			<optional>false</optional>
+			<haveDefaultValue>true</haveDefaultValue>
+			<defaultValue>0</defaultValue>
+		</item>
+		<item type="traktor.render.Platform" version="traktor.render.Node:1">
+			<id>{E1D113D8-32FB-F645-AD09-D13912552507}</id>
+			<comment/>
+			<position>
+				<first>1222</first>
+				<second>-29</second>
+			</position>
+		</item>
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+			<id>{1CC049EE-210F-044C-89CB-D280283BF2DD}</id>
+			<comment/>
+			<position>
+				<first>698</first>
+				<second>193</second>
 			</position>
 			<fragmentGuid>{A2830B26-2C1F-1141-987E-332AD82EE660}</fragmentGuid>
 			<inputPins>
@@ -114,49 +89,100 @@ Tag_LightMap
 			</outputPins>
 			<values/>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
-			<id>{37D87415-413C-41DC-A57C-C8FCB75354E1}</id>
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+			<id>{CED04ABC-06D4-6740-A7A2-012F63D91CE8}</id>
 			<comment/>
 			<position>
-				<first>288</first>
-				<second>360</second>
+				<first>969</first>
+				<second>35</second>
 			</position>
-			<name>T_ViewPosition</name>
-			<connectable>true</connectable>
-			<optional>false</optional>
-			<haveDefaultValue>true</haveDefaultValue>
-			<defaultValue>0</defaultValue>
+			<fragmentGuid>{21CA659B-13A1-4D49-8115-FBA0ACB3CF0E}</fragmentGuid>
+			<inputPins>
+				<item>
+					<id>{A5384FAC-5CFF-4641-868B-B4C27EE7F4E7}</id>
+					<name>Input</name>
+					<optional>false</optional>
+				</item>
+			</inputPins>
+			<outputPins>
+				<item>
+					<id>{8AF87759-86E6-694A-92BB-159E518E1E26}</id>
+					<name>Output</name>
+				</item>
+			</outputPins>
+			<values/>
+		</item>
+		<item type="traktor.render.Texture" version="traktor.render.Node:1">
+			<id>{255E1931-3999-D641-9CDB-29F4289A7C54}</id>
+			<comment>
+			<![CDATA[
+Tag_LightMap
+			]]>
+			</comment>
+			<position>
+				<first>426</first>
+				<second>155</second>
+			</position>
+			<external>{00000000-0000-0000-0000-000000000000}</external>
+			<type>PtTexture2D</type>
+		</item>
+		<item type="traktor.render.Sampler" version="5,traktor.render.Node:1">
+			<id>{8864FAC9-E3CB-3A4B-B70A-2ACFFD9EA700}</id>
+			<comment/>
+			<position>
+				<first>702</first>
+				<second>43</second>
+			</position>
+			<minFilter>FtLinear</minFilter>
+			<mipFilter>FtLinear</mipFilter>
+			<magFilter>FtLinear</magFilter>
+			<addressU>AdWrap</addressU>
+			<addressV>AdWrap</addressV>
+			<addressW>AdWrap</addressW>
+			<compare>CfNone</compare>
+			<mipBias>0</mipBias>
+			<ignoreMips>false</ignoreMips>
+			<useAnisotropic>false</useAnisotropic>
+		</item>
+		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
+			<id>{E1E6F531-64F2-574F-8E00-56D79A92C3CB}</id>
+			<comment/>
+			<position>
+				<first>1554</first>
+				<second>37</second>
+			</position>
+			<name>T_Irradiance</name>
 		</item>
 	</nodes>
 	<edges>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[4]"/>
+				<node ref="/object/nodes/item[7]"/>
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item"/>
-				<name>Input</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[3]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[6]"/>
+				<node ref="/object/nodes/item[5]"/>
 				<name>Texture</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[2]"/>
+				<node ref="/object/nodes/item[4]"/>
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[6]"/>
-				<name>TexCoord</name>
+				<node ref="/object/nodes/item[9]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[5]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[4]"/>
+				<name>Other</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
@@ -166,7 +192,87 @@ Tag_LightMap
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[4]"/>
+				<name>Android</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[6]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[4]"/>
+				<name>iOS</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[6]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[4]"/>
+				<name>RaspberryPI</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[6]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[4]"/>
+				<name>Emscripten</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[6]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[4]"/>
+				<name>PS3</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[7]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[8]"/>
+				<name>Texture</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[8]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[6]"/>
 				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[1]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[5]"/>
+				<name>TexCoord</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[1]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[8]"/>
+				<name>TexCoord</name>
 			</destination>
 		</item>
 	</edges>

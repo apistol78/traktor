@@ -351,8 +351,20 @@ void ShaderViewer::jobReflect(Ref< ShaderGraph > shaderGraph, Ref< const IProgra
 	}
 
 	// Get platform shader permutation.
+	shaderGraph = ShaderGraphStatic(shaderGraph).getPlatformPermutation(L"Other");
+	if (!shaderGraph)
+	{
+		log::error << L"ShaderPipeline failed; unable to create platform permutation." << Endl;
+		return;
+	}
+
+	// Get renderer shader permutation.
 	shaderGraph = ShaderGraphStatic(shaderGraph).getRendererPermutation(rendererSignature);
-	T_ASSERT(shaderGraph);
+	if (!shaderGraph)
+	{
+		log::error << L"ShaderPipeline failed; unable to create renderer permutation." << Endl;
+		return;
+	}
 
 	// Remove unused branches from shader graph.
 	shaderGraph = ShaderGraphOptimizer(shaderGraph).removeUnusedBranches();
