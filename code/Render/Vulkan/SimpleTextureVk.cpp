@@ -108,6 +108,7 @@ bool SimpleTextureVk::create(
 			return false;			
 		}
 
+#if !defined(__ANDROID__)
 		// Set debug name of texture.
 		VkDebugUtilsObjectNameInfoEXT ni = {};
 		ni.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_OBJECT_NAME_INFO_EXT;
@@ -115,6 +116,7 @@ bool SimpleTextureVk::create(
 		ni.objectHandle = (uint64_t)m_textureImage;
 		ni.pObjectName = tag ? wstombs(tag).c_str() : "SimpleTextureVk";
 		vkSetDebugUtilsObjectNameEXT(m_logicalDevice, &ni);
+#endif
 
 		// Create texture view.
 		VkImageViewCreateInfo ivci = {};

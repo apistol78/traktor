@@ -89,6 +89,7 @@ bool VolumeTextureVk::create(
 		if (vkCreateImage(device, &ici, nullptr, &m_textureImage) != VK_SUCCESS)
 			return false;
 
+#if !defined(__ANDROID__)
 		// Set debug name of texture.
 		VkDebugUtilsObjectNameInfoEXT ni = {};
 		ni.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_OBJECT_NAME_INFO_EXT;
@@ -96,6 +97,7 @@ bool VolumeTextureVk::create(
 		ni.objectHandle = (uint64_t)m_textureImage;
 		ni.pObjectName = tag ? wstombs(tag).c_str() : "VolumeTextureVk";
 		vkSetDebugUtilsObjectNameEXT(device, &ni);
+#endif
 
 		// Calculate memory requirement of texture image.
 		VkMemoryRequirements memoryRequirements;

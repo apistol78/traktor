@@ -57,6 +57,7 @@ bool RenderTargetDepthVk::createPrimary(int32_t width, int32_t height, VkFormat 
 	m_width = width;
 	m_height = height;
 
+#if !defined(__ANDROID__)
 	// Set debug name of texture.
 	VkDebugUtilsObjectNameInfoEXT ni = {};
 	ni.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_OBJECT_NAME_INFO_EXT;
@@ -64,6 +65,7 @@ bool RenderTargetDepthVk::createPrimary(int32_t width, int32_t height, VkFormat 
 	ni.objectHandle = (uint64_t)m_image;
 	ni.pObjectName = tag ? wstombs(tag).c_str() : "RenderTargetVk";
 	vkSetDebugUtilsObjectNameEXT(m_logicalDevice, &ni);
+#endif
 	return true;
 }
 
@@ -118,6 +120,7 @@ bool RenderTargetDepthVk::create(const RenderTargetSetCreateDesc& setDesc, const
 	m_width = setDesc.width;
 	m_height = setDesc.height;
 
+#if !defined(__ANDROID__)
 	// Set debug name of texture.
 	VkDebugUtilsObjectNameInfoEXT ni = {};
 	ni.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_OBJECT_NAME_INFO_EXT;
@@ -125,6 +128,7 @@ bool RenderTargetDepthVk::create(const RenderTargetSetCreateDesc& setDesc, const
 	ni.objectHandle = (uint64_t)m_image;
 	ni.pObjectName = tag ? wstombs(tag).c_str() : "RenderTargetDepthVk";
 	vkSetDebugUtilsObjectNameEXT(m_logicalDevice, &ni);
+#endif
 	return true;
 }
 
