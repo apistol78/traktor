@@ -1,6 +1,7 @@
 #include "Render/ICubeTexture.h"
 #include "Render/IndexBuffer.h"
 #include "Render/IRenderSystem.h"
+#include "Render/IRenderView.h"
 #include "Render/Shader.h"
 #include "Render/VertexBuffer.h"
 #include "Render/VertexElement.h"
@@ -45,11 +46,12 @@ public:
 	ProbeCapturer* capturer;
 	Ref< render::ICubeTexture > texture;
 	int32_t face;
+	bool* pending;
 
 	virtual void render(render::IRenderView* renderView, const render::ProgramParameters* globalParameters) const override final
 	{
-		capturer->render(renderView, face);
-		capturer->transfer(texture, face);
+		capturer->render(renderView, texture, face);
+		*pending = false;
 	}
 };
 
@@ -191,6 +193,7 @@ void ProbeRenderer::flush(
 				{
 					m_capture = probeComponent;
 					m_captureFace = 0;
+					m_capturePending = false;
 					break;
 				}
 			}
@@ -200,22 +203,27 @@ void ProbeRenderer::flush(
 		{
 			if (m_captureFace < 6)
 			{
-				// Build probe context.
-				m_probeCapturer->build(
-					worldContext.getEntityRenderers(),
-					rootEntity,
-					m_capture->getTransform().translation().xyz1(),
-					m_captureFace
-				);
+				if (!m_capturePending)
+				{
+					// Build probe context.
+					m_probeCapturer->build(
+						worldContext.getEntityRenderers(),
+						rootEntity,
+						m_capture->getTransform().translation().xyz1(),
+						m_captureFace
+					);
 
-				// Chain probe render as render block.
-				auto renderBlock = worldContext.getRenderContext()->alloc< ProbeCaptureRenderBlock >();
-				renderBlock->capturer = m_probeCapturer;
-				renderBlock->texture = m_capture->getTexture();
-				renderBlock->face = m_captureFace;
-				renderContext->draw(render::RpOpaque, renderBlock);
+					// Chain probe render as render block.
+					auto renderBlock = worldContext.getRenderContext()->alloc< ProbeCaptureRenderBlock >();
+					renderBlock->capturer = m_probeCapturer;
+					renderBlock->texture = m_capture->getTexture();
+					renderBlock->face = m_captureFace;
+					renderBlock->pending = &m_capturePending;
+					renderContext->draw(render::RpOpaque, renderBlock);
 
-				m_captureFace++;
+					m_capturePending = true;
+					m_captureFace++;
+				}
 			}
 			else
 			{

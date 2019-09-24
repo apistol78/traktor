@@ -722,6 +722,11 @@ void RenderViewOpenGLES2::compute(IProgram* program, const int32_t* workSize)
 {
 }
 
+bool RenderViewOpenGLES2::copy(ITexture* destinationTexture, int32_t destinationSide, int32_t destinationLevel, ITexture* sourceTexture, int32_t sourceSide, int32_t sourceLevel)
+{
+	return false;
+}
+
 void RenderViewOpenGLES2::end()
 {
 	if (m_renderTargetStack.empty())
@@ -764,6 +769,10 @@ void RenderViewOpenGLES2::end()
 			m_viewport.farZ
 		));
 	}
+}
+
+void RenderViewOpenGLES2::flush()
+{
 }
 
 void RenderViewOpenGLES2::present()

@@ -40,9 +40,9 @@ public:
 
 	virtual ~RenderTargetDepthVk();
 
-	bool createPrimary(int32_t width, int32_t height, VkFormat format, VkImage image);
+	bool createPrimary(int32_t width, int32_t height, VkFormat format, VkImage image, const wchar_t* const tag);
 
-	bool create(const RenderTargetSetCreateDesc& setDesc);
+	bool create(const RenderTargetSetCreateDesc& setDesc, const wchar_t* const tag);
 
 	virtual void destroy() override final;
 

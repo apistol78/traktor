@@ -249,11 +249,6 @@ void CubeTextureOpenGLES2::unlock(int32_t side, int32_t level)
 {
 }
 
-bool CubeTextureOpenGLES2::copy(int32_t side, int32_t level, const ISimpleTexture* sourceTexture)
-{
-	return false;
-}
-
 void CubeTextureOpenGLES2::bindSampler(GLuint unit, const SamplerStateOpenGL& samplerState, GLint locationTexture)
 {
 	T_OGL_SAFE(glActiveTexture(GL_TEXTURE0 + unit));

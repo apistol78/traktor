@@ -236,7 +236,7 @@ bool ProbeRenderControl::create(ui::Widget* parent, SceneEditorContext* context,
 	rtscd.targets[5].format = render::TfR32G32B32A32F;
 	rtscd.targets[5].sRGB = false;
 
-	m_renderTargetSet = m_context->getRenderSystem()->createRenderTargetSet(rtscd);
+	m_renderTargetSet = m_context->getRenderSystem()->createRenderTargetSet(rtscd, T_FILE_LINE_W);
 	if (!m_renderTargetSet)
 		return false;
 
@@ -247,7 +247,7 @@ bool ProbeRenderControl::create(ui::Widget* parent, SceneEditorContext* context,
 	ctcd.sRGB = false;
 	ctcd.immutable = false;
 
-	m_cubeMapTexture = m_context->getRenderSystem()->createCubeTexture(ctcd);
+	m_cubeMapTexture = m_context->getRenderSystem()->createCubeTexture(ctcd, T_FILE_LINE_W);
 	if (!m_cubeMapTexture)
 		return false;
 

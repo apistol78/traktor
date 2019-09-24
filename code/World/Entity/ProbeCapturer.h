@@ -44,9 +44,7 @@ public:
 		int32_t face
 	);
 
-	void render(render::IRenderView* renderView, int32_t face);
-
-	void transfer(render::ICubeTexture* probeTexture, int32_t face);
+	void render(render::IRenderView* renderView, render::ICubeTexture* probeTexture, int32_t face);
 
 private:
 	Ref< resource::IResourceManager > m_resourceManager;

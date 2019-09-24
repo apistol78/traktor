@@ -130,16 +130,16 @@ public:
 	virtual Ref< StructBuffer > createStructBuffer(const AlignedVector< StructElement >& structElements, uint32_t bufferSize) = 0;
 
 	/*! \brief Create simple, 2d, texture. */
-	virtual Ref< ISimpleTexture > createSimpleTexture(const SimpleTextureCreateDesc& desc) = 0;
+	virtual Ref< ISimpleTexture > createSimpleTexture(const SimpleTextureCreateDesc& desc, const wchar_t* const tag) = 0;
 
 	/*! \brief Create cube texture. */
-	virtual Ref< ICubeTexture > createCubeTexture(const CubeTextureCreateDesc& desc) = 0;
+	virtual Ref< ICubeTexture > createCubeTexture(const CubeTextureCreateDesc& desc, const wchar_t* const tag) = 0;
 
 	/*! \brief Create volume texture. */
-	virtual Ref< IVolumeTexture > createVolumeTexture(const VolumeTextureCreateDesc& desc) = 0;
+	virtual Ref< IVolumeTexture > createVolumeTexture(const VolumeTextureCreateDesc& desc, const wchar_t* const tag) = 0;
 
 	/*! \brief Create render target set. */
-	virtual Ref< RenderTargetSet > createRenderTargetSet(const RenderTargetSetCreateDesc& desc) = 0;
+	virtual Ref< RenderTargetSet > createRenderTargetSet(const RenderTargetSetCreateDesc& desc, const wchar_t* const tag) = 0;
 
 	/*! \brief Create program from program resource.
 	 *

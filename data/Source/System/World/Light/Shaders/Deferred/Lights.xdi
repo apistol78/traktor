@@ -1404,8 +1404,8 @@ Directional
 			<id>{9C7B6AED-EB02-D44E-A4E0-C064DD0B116E}</id>
 			<comment/>
 			<position>
-				<first>7004</first>
-				<second>1592</second>
+				<first>6948</first>
+				<second>1684</second>
 			</position>
 			<name>L_Specular_Total</name>
 			<global>false</global>
@@ -1414,8 +1414,8 @@ Directional
 			<id>{08904B51-3220-454D-BEF5-10239DCF8B51}</id>
 			<comment/>
 			<position>
-				<first>7313</first>
-				<second>1398</second>
+				<first>7081</first>
+				<second>1409</second>
 			</position>
 			<name>L_Diffuse_Total</name>
 			<global>false</global>
@@ -2133,32 +2133,32 @@ Directional
 			<id>{B62498AB-4647-6540-A258-E15E343B0D90}</id>
 			<comment/>
 			<position>
-				<first>6236</first>
-				<second>1730</second>
+				<first>5751</first>
+				<second>1810</second>
 			</position>
 		</item>
 		<item type="traktor.render.TargetSize" version="traktor.render.Node:1">
 			<id>{8723DD29-F61D-414D-99E8-18EF89A504B9}</id>
 			<comment/>
 			<position>
-				<first>6038</first>
-				<second>1778</second>
+				<first>5553</first>
+				<second>1858</second>
 			</position>
 		</item>
 		<item type="traktor.render.FragmentPosition" version="traktor.render.Node:1">
 			<id>{BC04753A-E064-444C-82D4-C9C917EB65E6}</id>
 			<comment/>
 			<position>
-				<first>5986</first>
-				<second>1734</second>
+				<first>5501</first>
+				<second>1814</second>
 			</position>
 		</item>
 		<item type="traktor.render.Sampler" version="5,traktor.render.Node:1">
 			<id>{2E0F394B-FAE7-B848-9BFB-44DAF52795E7}</id>
 			<comment/>
 			<position>
-				<first>6512</first>
-				<second>1684</second>
+				<first>6027</first>
+				<second>1764</second>
 			</position>
 			<minFilter>FtLinear</minFilter>
 			<mipFilter>FtLinear</mipFilter>
@@ -2175,8 +2175,8 @@ Directional
 			<id>{2F962D12-917E-E34A-9693-70683A88B6D2}</id>
 			<comment/>
 			<position>
-				<first>6208</first>
-				<second>1685</second>
+				<first>5723</first>
+				<second>1765</second>
 			</position>
 			<parameterName>World_ReflectionMap</parameterName>
 			<type>PtTexture2D</type>
@@ -2186,180 +2186,9 @@ Directional
 			<id>{BC1582DC-5A5D-F347-8685-1ED14D2FF1B4}</id>
 			<comment/>
 			<position>
-				<first>6778</first>
-				<second>1609</second>
+				<first>6722</first>
+				<second>1701</second>
 			</position>
-		</item>
-		<item type="traktor.render.Comment" version="traktor.render.Node:1">
-			<id>{8DCCEE41-EBC1-4621-9D8B-4A44BC511FE5}</id>
-			<comment>
-			<![CDATA[
-Irradiance SH grid
-			]]>
-			</comment>
-			<position>
-				<first>4423</first>
-				<second>1815</second>
-			</position>
-		</item>
-		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
-			<id>{5B318839-5ACF-46B5-A548-5F5FA756CFEC}</id>
-			<comment/>
-			<position>
-				<first>3596</first>
-				<second>1932</second>
-			</position>
-			<parameterName>World_ViewInverse</parameterName>
-			<type>PtMatrix</type>
-			<frequency>UfFrame</frequency>
-		</item>
-		<item type="traktor.render.Transform" version="traktor.render.Node:1">
-			<id>{747B1ADA-0FB9-4ADD-A680-A66F0C01DAF2}</id>
-			<comment/>
-			<position>
-				<first>3890</first>
-				<second>1874</second>
-			</position>
-		</item>
-		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
-			<id>{BD16454E-7415-4C7E-B54F-B572F3386E20}</id>
-			<comment/>
-			<position>
-				<first>3540</first>
-				<second>1829</second>
-			</position>
-			<name>L_ViewNormal</name>
-			<global>false</global>
-		</item>
-		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
-			<id>{229A84AE-7EB8-4C69-B46B-A96544153A9C}</id>
-			<comment/>
-			<position>
-				<first>4952</first>
-				<second>2002</second>
-			</position>
-			<name>L_Diffuse_Irradiance</name>
-			<global>false</global>
-		</item>
-		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
-			<id>{5BA59C3F-98C4-4E5A-BF77-453201C02DCA}</id>
-			<comment/>
-			<position>
-				<first>6354</first>
-				<second>1435</second>
-			</position>
-			<name>L_Diffuse_Irradiance</name>
-			<global>false</global>
-		</item>
-		<item type="traktor.render.Add" version="traktor.render.Node:1">
-			<id>{CB797BFE-451A-4E7F-AE44-C6C1EB95A0FB}</id>
-			<comment/>
-			<position>
-				<first>6560</first>
-				<second>1372</second>
-			</position>
-		</item>
-		<item type="traktor.render.Transform" version="traktor.render.Node:1">
-			<id>{1E363CE4-ABEE-4E68-8E4E-751E10A33271}</id>
-			<comment/>
-			<position>
-				<first>3910</first>
-				<second>2057</second>
-			</position>
-		</item>
-		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
-			<id>{0569F9EB-3BCD-4E18-BAC3-7AA9239A1C85}</id>
-			<comment/>
-			<position>
-				<first>3616</first>
-				<second>2115</second>
-			</position>
-			<parameterName>World_ViewInverse</parameterName>
-			<type>PtMatrix</type>
-			<frequency>UfFrame</frequency>
-		</item>
-		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
-			<id>{C3DB44C4-63EA-4170-9ADB-552222D4767A}</id>
-			<comment/>
-			<position>
-				<first>3541</first>
-				<second>2027</second>
-			</position>
-			<name>L_ViewPosition</name>
-			<global>false</global>
-		</item>
-		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
-			<id>{4B551AF1-C31B-4507-99A1-AF0D258CF1F3}</id>
-			<comment/>
-			<position>
-				<first>3743</first>
-				<second>2042</second>
-			</position>
-			<swizzle>xyz1</swizzle>
-		</item>
-		<item type="traktor.render.Branch" version="traktor.render.Node:1">
-			<id>{181284F7-BC61-4843-BCC0-5C825639C281}</id>
-			<comment/>
-			<position>
-				<first>4648</first>
-				<second>2004</second>
-			</position>
-			<parameterName>World_IrradianceEnable</parameterName>
-		</item>
-		<item type="traktor.render.Vector" version="traktor.render.Node:1">
-			<id>{DDB7130D-C381-4804-9073-69B97C2EB142}</id>
-			<comment/>
-			<position>
-				<first>4363</first>
-				<second>2100</second>
-			</position>
-			<value>0, 0, 0, 0</value>
-		</item>
-		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
-			<id>{017A041E-3B08-416A-B45D-9675CFCB26C4}</id>
-			<comment/>
-			<position>
-				<first>3736</first>
-				<second>1844</second>
-			</position>
-			<swizzle>xyz</swizzle>
-		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
-			<id>{20090D12-05D6-4935-ADAF-BFE114EA2716}</id>
-			<comment/>
-			<position>
-				<first>4303</first>
-				<second>1956</second>
-			</position>
-			<fragmentGuid>{ADFB49ED-56BB-4981-8121-E9154AB0B2D4}</fragmentGuid>
-			<inputPins>
-				<item>
-					<id>{DE98332B-0513-442C-B08C-234969B7C79F}</id>
-					<name>WorldNormal</name>
-					<optional>false</optional>
-				</item>
-				<item>
-					<id>{A30C6A23-2170-447A-A127-17A60A09574F}</id>
-					<name>WorldPosition</name>
-					<optional>false</optional>
-				</item>
-			</inputPins>
-			<outputPins>
-				<item>
-					<id>{08532144-809B-4726-A819-F8E3F9CF7515}</id>
-					<name>Output</name>
-				</item>
-			</outputPins>
-			<values/>
-		</item>
-		<item type="traktor.render.Vector" version="traktor.render.Node:1">
-			<id>{1A4508A0-CBC6-4EC0-960F-5B771845F8E2}</id>
-			<comment/>
-			<position>
-				<first>4681</first>
-				<second>1925</second>
-			</position>
-			<value>0, 0, 0, 0</value>
 		</item>
 		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
 			<id>{62E74B44-5D21-4E66-A800-2A24046599E3}</id>
@@ -2375,8 +2204,8 @@ Irradiance SH grid
 			<id>{7F300FE8-CD89-449D-8A2B-F0883C942D8E}</id>
 			<comment/>
 			<position>
-				<first>6665</first>
-				<second>1299</second>
+				<first>6433</first>
+				<second>1310</second>
 			</position>
 			<name>L_LightMask</name>
 			<global>false</global>
@@ -2385,8 +2214,8 @@ Irradiance SH grid
 			<id>{3C91589F-62C4-4B5D-8A77-8DF736BA3033}</id>
 			<comment/>
 			<position>
-				<first>7026</first>
-				<second>1323</second>
+				<first>6794</first>
+				<second>1334</second>
 			</position>
 			<branch>BrDynamic</branch>
 			<operator>CoGreater</operator>
@@ -2395,8 +2224,8 @@ Irradiance SH grid
 			<id>{97743E8D-A2A0-4845-9015-A81E07A1B471}</id>
 			<comment/>
 			<position>
-				<first>6835</first>
-				<second>1356</second>
+				<first>6603</first>
+				<second>1367</second>
 			</position>
 			<value>0</value>
 		</item>
@@ -2404,8 +2233,8 @@ Irradiance SH grid
 			<id>{A168A596-8E9B-47B3-BCD6-C0DCF2069497}</id>
 			<comment/>
 			<position>
-				<first>6681</first>
-				<second>1458</second>
+				<first>6449</first>
+				<second>1469</second>
 			</position>
 			<color>0, 0, 0, 0</color>
 		</item>
@@ -2413,8 +2242,8 @@ Irradiance SH grid
 			<id>{254B1C70-2905-1C4B-AE39-4D0F6D82500A}</id>
 			<comment/>
 			<position>
-				<first>6871</first>
-				<second>1317</second>
+				<first>6639</first>
+				<second>1328</second>
 			</position>
 			<swizzle>x</swizzle>
 		</item>
@@ -2428,6 +2257,24 @@ Irradiance SH grid
 			<parameterName>World_LightCount</parameterName>
 			<type>PtScalar</type>
 			<frequency>UfFrame</frequency>
+		</item>
+		<item type="traktor.render.Branch" version="traktor.render.Node:1">
+			<id>{C7A3043E-583A-9B4F-9A12-13993781D2CE}</id>
+			<comment/>
+			<position>
+				<first>6336</first>
+				<second>1805</second>
+			</position>
+			<parameterName>World_ReflectionsEnable</parameterName>
+		</item>
+		<item type="traktor.render.Color" version="1,traktor.render.Node:1">
+			<id>{2FACF507-522D-6147-A54B-A9FE5269B296}</id>
+			<comment/>
+			<position>
+				<first>6047</first>
+				<second>1929</second>
+			</position>
+			<color>0, 0, 0, 0</color>
 		</item>
 	</nodes>
 	<edges>
@@ -4433,82 +4280,12 @@ Irradiance SH grid
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[192]"/>
-				<name>Output</name>
+				<node ref="/object/nodes/item"/>
+				<name>LightMask</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[194]"/>
-				<name>Input2</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[196]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[197]"/>
-				<name>Transform</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[200]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[201]"/>
-				<name>Input2</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[32]"/>
-				<name>Output0</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[201]"/>
-				<name>Input1</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[203]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[202]"/>
-				<name>Transform</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[204]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[205]"/>
+				<node ref="/object/nodes/item[195]"/>
 				<name>Input</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[205]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[202]"/>
-				<name>Input</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[207]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[206]"/>
-				<name>False</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
@@ -4517,113 +4294,43 @@ Irradiance SH grid
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[208]"/>
-				<name>Input</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[208]"/>
-				<name>Output</name>
-			</source>
-			<destination>
 				<node ref="/object/nodes/item[197]"/>
-				<name>Input</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[197]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[209]"/>
-				<name>WorldNormal</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[209]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[206]"/>
-				<name>True</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[202]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[209]"/>
-				<name>WorldPosition</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[210]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[199]"/>
-				<name>Input</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item"/>
-				<name>LightMask</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[211]"/>
-				<name>Input</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[214]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[213]"/>
 				<name>Reference</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[215]"/>
+				<node ref="/object/nodes/item[199]"/>
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[213]"/>
+				<node ref="/object/nodes/item[197]"/>
 				<name>CaseFalse</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[212]"/>
+				<node ref="/object/nodes/item[196]"/>
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[216]"/>
+				<node ref="/object/nodes/item[200]"/>
 				<name>Input</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[216]"/>
+				<node ref="/object/nodes/item[200]"/>
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[213]"/>
+				<node ref="/object/nodes/item[197]"/>
 				<name>Input</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[217]"/>
+				<node ref="/object/nodes/item[201]"/>
 				<name>Output</name>
 			</source>
 			<destination>
@@ -4653,22 +4360,52 @@ Irradiance SH grid
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[201]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[213]"/>
-				<name>CaseTrue</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[213]"/>
+				<node ref="/object/nodes/item[197]"/>
 				<name>Output</name>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[117]"/>
 				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[32]"/>
+				<name>Output0</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[197]"/>
+				<name>CaseTrue</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[192]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[202]"/>
+				<name>True</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[202]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[194]"/>
+				<name>Input2</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[203]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[202]"/>
+				<name>False</name>
 			</destination>
 		</item>
 	</edges>

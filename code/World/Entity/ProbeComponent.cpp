@@ -12,14 +12,15 @@ ProbeComponent::ProbeComponent(
 	const resource::Proxy< render::ICubeTexture >& texture,
 	float intensity,
 	bool local,
-	const Aabb3& volume
+	const Aabb3& volume,
+	bool dirty
 )
 :	m_owner(nullptr)
 ,	m_texture(texture)
 ,	m_intensity(intensity)
 ,	m_local(local)
 ,	m_volume(volume)
-,	m_dirty(true)
+,	m_dirty(dirty)
 {
 }
 

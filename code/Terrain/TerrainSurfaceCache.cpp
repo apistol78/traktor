@@ -120,7 +120,7 @@ bool TerrainSurfaceCache::create(resource::IResourceManager* resourceManager, re
 	desc.usingPrimaryDepthStencil = false;
 	desc.targets[0].format = render::TfR8G8B8A8;
 
-	m_pool = renderSystem->createRenderTargetSet(desc);
+	m_pool = renderSystem->createRenderTargetSet(desc, T_FILE_LINE_W);
 	if (!m_pool)
 		return false;
 
@@ -132,7 +132,7 @@ bool TerrainSurfaceCache::create(resource::IResourceManager* resourceManager, re
 	desc.usingPrimaryDepthStencil = false;
 	desc.targets[0].format = render::TfR8G8B8A8;
 
-	m_base = renderSystem->createRenderTargetSet(desc);
+	m_base = renderSystem->createRenderTargetSet(desc, T_FILE_LINE_W);
 	if (!m_base)
 		return false;
 

@@ -1,4 +1,5 @@
 #include <cstring>
+#include "Core/Misc/TString.h"
 #include "Render/Types.h"
 #include "Render/Vulkan/ApiLoader.h"
 #include "Render/Vulkan/UtilitiesVk.h"
@@ -30,7 +31,8 @@ bool VolumeTextureVk::create(
 	VkDevice device,
 	VkCommandPool commandPool,
 	VkQueue queue,
-	const VolumeTextureCreateDesc& desc
+	const VolumeTextureCreateDesc& desc,
+	const wchar_t* const tag
 )
 {
 	if (desc.immutable)
@@ -87,6 +89,14 @@ bool VolumeTextureVk::create(
 		if (vkCreateImage(device, &ici, nullptr, &m_textureImage) != VK_SUCCESS)
 			return false;
 
+		// Set debug name of texture.
+		VkDebugUtilsObjectNameInfoEXT ni = {};
+		ni.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_OBJECT_NAME_INFO_EXT;
+		ni.objectType = VK_OBJECT_TYPE_IMAGE;
+		ni.objectHandle = (uint64_t)m_textureImage;
+		ni.pObjectName = tag ? wstombs(tag).c_str() : "VolumeTextureVk";
+		vkSetDebugUtilsObjectNameEXT(device, &ni);
+
 		// Calculate memory requirement of texture image.
 		VkMemoryRequirements memoryRequirements;
 		vkGetImageMemoryRequirements(device, m_textureImage, &memoryRequirements);
@@ -127,7 +137,9 @@ bool VolumeTextureVk::create(
 			queue,
 			m_textureImage,
 			VK_IMAGE_LAYOUT_UNDEFINED,
-			VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL
+			VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
+			0,
+			1
 		);
 
 		// Copy staging buffer into texture.
@@ -172,7 +184,9 @@ bool VolumeTextureVk::create(
 			queue,
 			m_textureImage,
 			VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
-			VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL
+			VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
+			0,
+			1
 		);
 
 		// Free staging buffer.

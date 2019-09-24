@@ -44,7 +44,7 @@ public:
 
 	virtual ~CubeTextureVk();
 
-	bool create();
+	bool create(const wchar_t* const tag);
 
 	virtual void destroy() override final;
 
@@ -57,8 +57,6 @@ public:
 	virtual bool lock(int32_t side, int32_t level, Lock& lock) override final;
 
 	virtual void unlock(int32_t side, int32_t level) override final;
-
-	virtual bool copy(int32_t side, int32_t level, const ISimpleTexture* sourceTexture) override final;
 
 	VkImage getVkImage() const { return m_textureImage; }
 

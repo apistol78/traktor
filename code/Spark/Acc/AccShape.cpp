@@ -253,7 +253,7 @@ bool AccShape::createFromTriangles(
 			stcd.sRGB = false;
 			stcd.immutable = false;
 
-			Ref< render::ISimpleTexture > lineTexture = m_renderSystem->createSimpleTexture(stcd);
+			Ref< render::ISimpleTexture > lineTexture = m_renderSystem->createSimpleTexture(stcd, T_FILE_LINE_W);
 			if (!lineTexture)
 				return false;
 

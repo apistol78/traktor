@@ -784,7 +784,7 @@ Ref< StructBuffer > RenderSystemOpenGL::createStructBuffer(const AlignedVector< 
 #endif
 }
 
-Ref< ISimpleTexture > RenderSystemOpenGL::createSimpleTexture(const SimpleTextureCreateDesc& desc)
+Ref< ISimpleTexture > RenderSystemOpenGL::createSimpleTexture(const SimpleTextureCreateDesc& desc, const wchar_t* const tag)
 {
 	T_ANONYMOUS_VAR(ContextOpenGL::Scope)(m_resourceContext);
 
@@ -795,7 +795,7 @@ Ref< ISimpleTexture > RenderSystemOpenGL::createSimpleTexture(const SimpleTextur
 	return texture;
 }
 
-Ref< ICubeTexture > RenderSystemOpenGL::createCubeTexture(const CubeTextureCreateDesc& desc)
+Ref< ICubeTexture > RenderSystemOpenGL::createCubeTexture(const CubeTextureCreateDesc& desc, const wchar_t* const tag)
 {
 	T_ANONYMOUS_VAR(ContextOpenGL::Scope)(m_resourceContext);
 
@@ -806,7 +806,7 @@ Ref< ICubeTexture > RenderSystemOpenGL::createCubeTexture(const CubeTextureCreat
 	return texture;
 }
 
-Ref< IVolumeTexture > RenderSystemOpenGL::createVolumeTexture(const VolumeTextureCreateDesc& desc)
+Ref< IVolumeTexture > RenderSystemOpenGL::createVolumeTexture(const VolumeTextureCreateDesc& desc, const wchar_t* const tag)
 {
 	T_ANONYMOUS_VAR(ContextOpenGL::Scope)(m_resourceContext);
 
@@ -817,7 +817,7 @@ Ref< IVolumeTexture > RenderSystemOpenGL::createVolumeTexture(const VolumeTextur
 	return texture;
 }
 
-Ref< RenderTargetSet > RenderSystemOpenGL::createRenderTargetSet(const RenderTargetSetCreateDesc& desc)
+Ref< RenderTargetSet > RenderSystemOpenGL::createRenderTargetSet(const RenderTargetSetCreateDesc& desc, const wchar_t* const tag)
 {
 	T_ANONYMOUS_VAR(ContextOpenGL::Scope)(m_resourceContext);
 

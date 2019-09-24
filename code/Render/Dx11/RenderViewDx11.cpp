@@ -927,6 +927,38 @@ void RenderViewDx11::compute(IProgram* program, const int32_t* workSize)
 {
 }
 
+bool RenderViewDx11::copy(ITexture* destinationTexture, int32_t destinationSide, int32_t destinationLevel, ITexture* sourceTexture, int32_t sourceSide, int32_t sourceLevel)
+{
+	//if (!destinationTexture || sourceTexture)
+	//	return false;
+
+	//ID3D11Texture2D* d3dDestinationTexture = (ID3D11Texture2D*)destinationTexture->getInternalHandle();
+	//ID3D11Texture2D* d3dSourceTexture = (ID3D11Texture2D*)sourceTexture->getInternalHandle();
+	//if (!d3dDestinationTexture || !d3dSourceTexture)
+	//	return false;
+
+	//D3D11_BOX sr;
+	//sr.left = 0;
+	//sr.right = m_side >> level;
+	//sr.top = 0;
+	//sr.bottom = m_side >> level;
+	//sr.front = 0;
+	//sr.back = 1;
+
+	//m_context->getD3DDeviceContext()->CopySubresourceRegion(
+	//	d3dDestinationTexture,
+	//	D3D11CalcSubresource(destinationLevel, destinationSide, m_mipCount),
+	//	0,
+	//	0,
+	//	0,
+	//	d3dSourceTexture,
+	//	level,
+	//	&sr
+	//);
+
+	return true;
+}
+
 void RenderViewDx11::end()
 {
 	T_ASSERT(!m_renderStateStack.empty());
@@ -948,6 +980,10 @@ void RenderViewDx11::end()
 		m_targetsDirty = true;
 	else
 		m_targetsDirty = false;
+}
+
+void RenderViewDx11::flush()
+{
 }
 
 void RenderViewDx11::present()

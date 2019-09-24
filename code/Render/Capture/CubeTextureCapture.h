@@ -30,8 +30,6 @@ public:
 
 	virtual void unlock(int32_t side, int32_t level) override final;
 
-	virtual bool copy(int32_t side, int32_t level, const ISimpleTexture* sourceTexture) override final;
-
 	ICubeTexture* getTexture() const { return m_texture; }
 
 private:

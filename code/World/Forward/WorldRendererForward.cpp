@@ -129,7 +129,7 @@ bool WorldRendererForward::create(
 		rtscd.targets[1].format = render::TfR16G16F;	// Normals (RG)
 		rtscd.targets[2].format = render::TfR8;			// Ambient occlusion (R)
 
-		m_gbufferTargetSet = renderSystem->createRenderTargetSet(rtscd);
+		m_gbufferTargetSet = renderSystem->createRenderTargetSet(rtscd, T_FILE_LINE_W);
 		if (!m_gbufferTargetSet)
 		{
 			log::error << L"Unable to create depth render target." << Endl;
@@ -154,7 +154,7 @@ bool WorldRendererForward::create(
 		rtscd.usingPrimaryDepthStencil = false;
 		rtscd.ignoreStencil = true;
 		rtscd.preferTiled = true;
-		if ((m_shadowCascadeTargetSet = renderSystem->createRenderTargetSet(rtscd)) == nullptr)
+		if ((m_shadowCascadeTargetSet = renderSystem->createRenderTargetSet(rtscd, T_FILE_LINE_W)) == nullptr)
 			m_shadowsQuality = QuDisabled;
 
 		// Create shadow atlas map target.
@@ -167,7 +167,7 @@ bool WorldRendererForward::create(
 		rtscd.usingPrimaryDepthStencil = false;
 		rtscd.ignoreStencil = true;
 		rtscd.preferTiled = true;
-		if ((m_shadowAtlasTargetSet = renderSystem->createRenderTargetSet(rtscd)) == nullptr)
+		if ((m_shadowAtlasTargetSet = renderSystem->createRenderTargetSet(rtscd, T_FILE_LINE_W)) == nullptr)
 			m_shadowsQuality = QuDisabled;
 
 		// Ensure targets are destroyed if something went wrong in setup.
@@ -399,11 +399,11 @@ bool WorldRendererForward::create(
 		else
 			rtscd.targets[0].format = render::TfR8G8B8A8;
 
-		m_visualTargetSet = renderSystem->createRenderTargetSet(rtscd);
+		m_visualTargetSet = renderSystem->createRenderTargetSet(rtscd, T_FILE_LINE_W);
 		if (!m_visualTargetSet)
 			return false;
 
-		m_intermediateTargetSet = renderSystem->createRenderTargetSet(rtscd);
+		m_intermediateTargetSet = renderSystem->createRenderTargetSet(rtscd, T_FILE_LINE_W);
 		if (!m_intermediateTargetSet)
 			return false;
 	}

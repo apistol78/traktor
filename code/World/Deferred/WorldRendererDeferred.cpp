@@ -251,7 +251,7 @@ bool WorldRendererDeferred::create(
 		rtscd.targets[2].format = render::TfR10G10B10A2;	// Metalness (R), Roughness (G), Specular (B), Light mask (A)
 		rtscd.targets[3].format = render::TfR11G11B10F;		// Surface color (RGB)
 
-		m_gbufferTargetSet = renderSystem->createRenderTargetSet(rtscd);
+		m_gbufferTargetSet = renderSystem->createRenderTargetSet(rtscd, T_FILE_LINE_W);
 		if (!m_gbufferTargetSet)
 		{
 			log::error << L"Unable to create depth render target." << Endl;
@@ -273,7 +273,7 @@ bool WorldRendererDeferred::create(
 		rtscd.preferTiled = true;
 		rtscd.targets[0].format = render::TfR16G16F;
 
-		m_velocityTargetSet = renderSystem->createRenderTargetSet(rtscd);
+		m_velocityTargetSet = renderSystem->createRenderTargetSet(rtscd, T_FILE_LINE_W);
 		if (!m_velocityTargetSet)
 		{
 			log::error << L"Unable to create velocity render target; motion blur disabled." << Endl;
@@ -299,7 +299,7 @@ bool WorldRendererDeferred::create(
 		rtscd.targets[0].format = render::TfR11G11B10F;
 #endif
 
-		m_colorTargetSet = renderSystem->createRenderTargetSet(rtscd);
+		m_colorTargetSet = renderSystem->createRenderTargetSet(rtscd, T_FILE_LINE_W);
 		if (!m_colorTargetSet)
 		{
 			log::error << L"Unable to create color read-back render target." << Endl;
@@ -326,7 +326,7 @@ bool WorldRendererDeferred::create(
 		rtscd.targets[0].format = render::TfR11G11B10F;
 #endif
 
-		m_reflectionsTargetSet = renderSystem->createRenderTargetSet(rtscd);
+		m_reflectionsTargetSet = renderSystem->createRenderTargetSet(rtscd, T_FILE_LINE_W);
 		if (!m_reflectionsTargetSet)
 		{
 			log::error << L"Unable to create reflections render target." << Endl;
@@ -393,7 +393,7 @@ bool WorldRendererDeferred::create(
 			rtscd.usingPrimaryDepthStencil = false;
 			rtscd.ignoreStencil = true;
 			rtscd.preferTiled = true;
-			if ((m_shadowCascadeTargetSet = renderSystem->createRenderTargetSet(rtscd)) == nullptr)
+			if ((m_shadowCascadeTargetSet = renderSystem->createRenderTargetSet(rtscd, T_FILE_LINE_W)) == nullptr)
 				m_shadowsQuality = QuDisabled;
 
 			// Create shadow screen mask map target.
@@ -408,7 +408,7 @@ bool WorldRendererDeferred::create(
 			rtscd.preferTiled = true;
 			rtscd.targets[0].format = render::TfR8;
 			rtscd.targets[0].sRGB = false;
-			if ((m_shadowMaskTargetSet = renderSystem->createRenderTargetSet(rtscd)) == nullptr)
+			if ((m_shadowMaskTargetSet = renderSystem->createRenderTargetSet(rtscd, T_FILE_LINE_W)) == nullptr)
 				m_shadowsQuality = QuDisabled;
 
 			// Create shadow atlas map target.
@@ -426,7 +426,7 @@ bool WorldRendererDeferred::create(
 			rtscd.usingPrimaryDepthStencil = false;
 			rtscd.ignoreStencil = true;
 			rtscd.preferTiled = true;
-			if ((m_shadowAtlasTargetSet = renderSystem->createRenderTargetSet(rtscd)) == nullptr)
+			if ((m_shadowAtlasTargetSet = renderSystem->createRenderTargetSet(rtscd, T_FILE_LINE_W)) == nullptr)
 				m_shadowsQuality = QuDisabled;
 		}
 
@@ -456,11 +456,11 @@ bool WorldRendererDeferred::create(
 		rtscd.targets[0].format = render::TfR11G11B10F;
 #endif
 
-		m_visualTargetSet = renderSystem->createRenderTargetSet(rtscd);
+		m_visualTargetSet = renderSystem->createRenderTargetSet(rtscd, T_FILE_LINE_W);
 		if (!m_visualTargetSet)
 			return false;
 
-		m_intermediateTargetSet = renderSystem->createRenderTargetSet(rtscd);
+		m_intermediateTargetSet = renderSystem->createRenderTargetSet(rtscd, T_FILE_LINE_W);
 		if (!m_intermediateTargetSet)
 			return false;
 	}
@@ -1090,18 +1090,21 @@ void WorldRendererDeferred::render(render::IRenderView* renderView, int32_t fram
 			T_RENDER_POP_MARKER(renderView);
 
 			// Render screenspace reflections.
-			T_RENDER_PUSH_MARKER(renderView, "World: Reflections (SSR)");
-			m_lightRenderer->renderReflections(
-				renderView,
-				f.projection,
-				f.view,
-				f.lastView,
-				m_colorTargetSet->getColorTexture(0),	// \tbd using last frame copy without reprojection...
-				m_gbufferTargetSet->getColorTexture(0),	// depth
-				m_gbufferTargetSet->getColorTexture(1),	// normals
-				m_gbufferTargetSet->getColorTexture(2)	// metalness, roughness and specular
-			);
-			T_RENDER_POP_MARKER(renderView);
+			if (m_reflectionsQuality >= QuHigh)
+			{
+				T_RENDER_PUSH_MARKER(renderView, "World: Reflections (SSR)");
+				m_lightRenderer->renderReflections(
+					renderView,
+					f.projection,
+					f.view,
+					f.lastView,
+					m_colorTargetSet->getColorTexture(0),	// \tbd using last frame copy without reprojection...
+					m_gbufferTargetSet->getColorTexture(0),	// depth
+					m_gbufferTargetSet->getColorTexture(1),	// normals
+					m_gbufferTargetSet->getColorTexture(2)	// metalness, roughness and specular
+				);
+				T_RENDER_POP_MARKER(renderView);
+			}
 
 			renderView->end();
 		}

@@ -706,6 +706,11 @@ void RenderViewOpenGL::compute(IProgram* program, const int32_t* workSize)
 #endif
 }
 
+bool RenderViewOpenGL::copy(ITexture* destinationTexture, int32_t destinationSide, int32_t destinationLevel, ITexture* sourceTexture, int32_t sourceSide, int32_t sourceLevel)
+{
+	return false;
+}
+
 void RenderViewOpenGL::end()
 {
 	T_ASSERT(!m_targetStack.empty());
@@ -733,6 +738,10 @@ void RenderViewOpenGL::end()
 	}
 
 	ts.rts->setContentValid(true);
+}
+
+void RenderViewOpenGL::flush()
+{
 }
 
 void RenderViewOpenGL::present()

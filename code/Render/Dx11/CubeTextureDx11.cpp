@@ -159,34 +159,6 @@ void CubeTextureDx11::unlock(int32_t side, int32_t level)
 	);
 }
 
-bool CubeTextureDx11::copy(int32_t side, int32_t level, const ISimpleTexture* sourceTexture)
-{
-	ID3D11Texture2D* d3dSourceTexture = (ID3D11Texture2D*)const_cast< ISimpleTexture* >(sourceTexture)->getInternalHandle();
-	if (!d3dSourceTexture)
-		return false;
-
-	D3D11_BOX sr;
-	sr.left = 0;
-	sr.right = m_side >> level;
-	sr.top = 0;
-	sr.bottom = m_side >> level;
-	sr.front = 0;
-	sr.back = 1;
-
-	m_context->getD3DDeviceContext()->CopySubresourceRegion(
-		m_d3dTexture,
-		D3D11CalcSubresource(level, side, m_mipCount),
-		0,
-		0,
-		0,
-		d3dSourceTexture,
-		level,
-		&sr
-	);
-
-	return true;
-}
-
 ID3D11ShaderResourceView* CubeTextureDx11::getD3D11TextureResourceView() const
 {
 	return m_d3dTextureResourceView;

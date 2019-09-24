@@ -59,7 +59,7 @@ ImageProcessTargetPool::ImageProcessTargetPool(IRenderSystem* renderSystem)
 
 RenderTargetSet* ImageProcessTargetPool::acquireTarget(const RenderTargetSetCreateDesc& rtscd)
 {
-	Pool* pool = 0;
+	Pool* pool = nullptr;
 
 	// Find or add new pool.
 	AlignedVector< Pool >::iterator it = std::find_if(m_pool.begin(), m_pool.end(), FindPoolPred(rtscd));
@@ -81,7 +81,7 @@ RenderTargetSet* ImageProcessTargetPool::acquireTarget(const RenderTargetSetCrea
 	}
 	else
 	{
-		Ref< RenderTargetSet > rts = m_renderSystem->createRenderTargetSet(rtscd);
+		Ref< RenderTargetSet > rts = m_renderSystem->createRenderTargetSet(rtscd, T_FILE_LINE_W);
 		if (rts)
 			pool->acquired.push_back(rts);
 		return rts;

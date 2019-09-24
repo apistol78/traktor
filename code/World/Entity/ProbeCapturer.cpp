@@ -38,10 +38,10 @@ bool ProbeCapturer::create()
 	rtscd.preferTiled = false;
 	rtscd.ignoreStencil = true;
 	rtscd.generateMips = false;
-	rtscd.targets[0].format = render::TfR32G32B32A32F;
+	rtscd.targets[0].format = render::TfR11G11B10F;
 	rtscd.targets[0].sRGB = false;
 
-	m_renderTargetSet = m_renderSystem->createRenderTargetSet(rtscd);
+	m_renderTargetSet = m_renderSystem->createRenderTargetSet(rtscd, T_FILE_LINE_W);
 	if (!m_renderTargetSet)
 		return false;
 
@@ -140,12 +140,12 @@ void ProbeCapturer::build(
 	m_worldRenderer->build(worldRenderView, 0);
 }
 
-void ProbeCapturer::render(render::IRenderView* renderView, int32_t /*face*/)
+void ProbeCapturer::render(render::IRenderView* renderView, render::ICubeTexture* probeTexture, int32_t face)
 {
 	T_RENDER_PUSH_MARKER(renderView, "Probe Capture");
 
 	render::Clear clear = { 0 };
-	clear.mask = render::CfColor | render::CfDepth | render::CfStencil;
+	clear.mask = render::CfColor | render::CfDepth;
 	clear.colors[0] = Color4f(0.0f, 0.0f, 0.0f, 0.0f);
 	clear.depth = 1.0f;
 	clear.stencil = 0;
@@ -158,12 +158,16 @@ void ProbeCapturer::render(render::IRenderView* renderView, int32_t /*face*/)
 		renderView->end();
 	}
 
-	T_RENDER_POP_MARKER(renderView);
-}
+	renderView->copy(
+		probeTexture,
+		face,
+		0,
+		m_renderTargetSet->getColorTexture(0),
+		0,
+		0
+	);
 
-void ProbeCapturer::transfer(render::ICubeTexture* probeTexture, int32_t face)
-{
-	probeTexture->copy(face, 0, m_renderTargetSet->getColorTexture(0));
+	T_RENDER_POP_MARKER(renderView);
 }
 
 	}

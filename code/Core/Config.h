@@ -179,6 +179,9 @@ typedef unsigned __int64 uint64_t;
 #	define T_FILE_LINE_2(x) #x
 #	define T_FILE_LINE_1(x) T_FILE_LINE_2(x)
 #	define T_FILE_LINE __FILE__ "(" T_FILE_LINE_1(__LINE__) ")"
+#	define T_FILE_LINE_W_2(x) L##x
+#	define T_FILE_LINE_W_1(x) T_FILE_LINE_W_2(x)
+#	define T_FILE_LINE_W T_FILE_LINE_W_1(T_FILE_LINE)
 #endif
 
 // Include assert helper.

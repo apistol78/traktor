@@ -43,7 +43,7 @@ VkCommandBuffer beginSingleTimeCommands(VkDevice device, VkCommandPool commandPo
 
 void endSingleTimeCommands(VkDevice device, VkCommandPool commandPool, VkCommandBuffer commandBuffer, VkQueue queue);
 
-bool changeImageLayout(VkDevice device, VkCommandPool commandPool, VkQueue queue, VkImage image, VkImageLayout oldLayout, VkImageLayout newLayout);
+bool changeImageLayout(VkDevice device, VkCommandPool commandPool, VkQueue queue, VkImage image, VkImageLayout oldLayout, VkImageLayout newLayout, int32_t mipLevel, int32_t mipCount);
 
 const wchar_t* getHumanResult(VkResult result);
 

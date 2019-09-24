@@ -73,11 +73,11 @@ Ref< Object > TextureFactory::create(resource::IResourceManager* resourceManager
 
 	Ref< TextureResource > resource = instance->getObject< TextureResource >();
 	if (!resource)
-		return 0;
+		return nullptr;
 
 	Ref< IStream > stream = instance->readData(L"Data");
 	if (!stream)
-		return 0;
+		return nullptr;
 
 	Reader reader(stream);
 
@@ -86,7 +86,7 @@ Ref< Object > TextureFactory::create(resource::IResourceManager* resourceManager
 	if (version != 12)
 	{
 		log::error << L"Unable to read texture, unknown version " << version << Endl;
-		return 0;
+		return nullptr;
 	}
 
 	int32_t imageWidth, imageHeight, imageDepth, mipCount, texelFormat;
@@ -156,7 +156,7 @@ Ref< Object > TextureFactory::create(resource::IResourceManager* resourceManager
 			}
 		}
 
-		texture = m_renderSystem->createSimpleTexture(desc);
+		texture = m_renderSystem->createSimpleTexture(desc, instance->getName().c_str());
 		if (!texture)
 			log::error << L"Unable to create 2D texture resource; failed to create renderable texture." << Endl;
 	}
@@ -236,7 +236,7 @@ Ref< Object > TextureFactory::create(resource::IResourceManager* resourceManager
 			}
 		}
 
-		texture = m_renderSystem->createVolumeTexture(desc);
+		texture = m_renderSystem->createVolumeTexture(desc, instance->getName().c_str());
 		if (!texture)
 			log::error << L"Unable to create 3D texture resource; failed to create renderable texture." << Endl;
 	}
@@ -245,7 +245,7 @@ Ref< Object > TextureFactory::create(resource::IResourceManager* resourceManager
 		if (imageWidth != imageHeight)
 		{
 			log::error << L"Unable to create texture, width and height must be identical on cube textures" << Endl;
-			return 0;
+			return nullptr;
 		}
 
 		CubeTextureCreateDesc desc;
@@ -286,7 +286,7 @@ Ref< Object > TextureFactory::create(resource::IResourceManager* resourceManager
 			}
 		}
 
-		texture = m_renderSystem->createCubeTexture(desc);
+		texture = m_renderSystem->createCubeTexture(desc, instance->getName().c_str());
 		if (!texture)
 			log::error << L"Unable to create CUBE texture resource; failed to create renderable texture." << Endl;
 	}

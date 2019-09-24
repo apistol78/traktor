@@ -513,7 +513,7 @@ Ref< StructBuffer > RenderSystemDx11::createStructBuffer(const AlignedVector< St
 	return StructBufferDx11::create(m_context, structElements, bufferSize);
 }
 
-Ref< ISimpleTexture > RenderSystemDx11::createSimpleTexture(const SimpleTextureCreateDesc& desc)
+Ref< ISimpleTexture > RenderSystemDx11::createSimpleTexture(const SimpleTextureCreateDesc& desc, const wchar_t* const tag)
 {
 	T_ANONYMOUS_VAR(ConditionalAcquire< Semaphore >)(m_context->getLock(), m_resourceCreateLock);
 	Ref< SimpleTextureDx11 > texture = new SimpleTextureDx11(m_context);
@@ -523,7 +523,7 @@ Ref< ISimpleTexture > RenderSystemDx11::createSimpleTexture(const SimpleTextureC
 		return nullptr;
 }
 
-Ref< ICubeTexture > RenderSystemDx11::createCubeTexture(const CubeTextureCreateDesc& desc)
+Ref< ICubeTexture > RenderSystemDx11::createCubeTexture(const CubeTextureCreateDesc& desc, const wchar_t* const tag)
 {
 	T_ANONYMOUS_VAR(ConditionalAcquire< Semaphore >)(m_context->getLock(), m_resourceCreateLock);
 	Ref< CubeTextureDx11 > texture = new CubeTextureDx11(m_context);
@@ -533,7 +533,7 @@ Ref< ICubeTexture > RenderSystemDx11::createCubeTexture(const CubeTextureCreateD
 		return nullptr;
 }
 
-Ref< IVolumeTexture > RenderSystemDx11::createVolumeTexture(const VolumeTextureCreateDesc& desc)
+Ref< IVolumeTexture > RenderSystemDx11::createVolumeTexture(const VolumeTextureCreateDesc& desc, const wchar_t* const tag)
 {
 	T_ANONYMOUS_VAR(ConditionalAcquire< Semaphore >)(m_context->getLock(), m_resourceCreateLock);
 	Ref< VolumeTextureDx11 > texture = new VolumeTextureDx11(m_context);
@@ -543,7 +543,7 @@ Ref< IVolumeTexture > RenderSystemDx11::createVolumeTexture(const VolumeTextureC
 		return nullptr;
 }
 
-Ref< RenderTargetSet > RenderSystemDx11::createRenderTargetSet(const RenderTargetSetCreateDesc& desc)
+Ref< RenderTargetSet > RenderSystemDx11::createRenderTargetSet(const RenderTargetSetCreateDesc& desc, const wchar_t* const tag)
 {
 	T_ANONYMOUS_VAR(ConditionalAcquire< Semaphore >)(m_context->getLock(), m_resourceCreateLock);
 	Ref< RenderTargetSetDx11 > renderTargetSet = new RenderTargetSetDx11(m_context);

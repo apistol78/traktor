@@ -43,7 +43,8 @@ public:
 	bool create(
 		VkCommandPool commandPool,
 		VkQueue queue,
-		const SimpleTextureCreateDesc& desc
+		const SimpleTextureCreateDesc& desc,
+		const wchar_t* const tag
 	);
 
 	virtual void destroy() override final;

@@ -101,9 +101,8 @@ PFN_vkGetSwapchainImagesKHR vkGetSwapchainImagesKHR = nullptr;
 PFN_vkAcquireNextImageKHR vkAcquireNextImageKHR = nullptr;
 PFN_vkQueuePresentKHR vkQueuePresentKHR = nullptr;
 PFN_vkDestroySwapchainKHR vkDestroySwapchainKHR = nullptr;
-// PFN_vkCmdDebugMarkerBeginEXT vkCmdDebugMarkerBeginEXT = nullptr;
-// PFN_vkCmdDebugMarkerEndEXT vkCmdDebugMarkerEndEXT = nullptr;
-PFN_vkCreateDebugReportCallbackEXT vkCreateDebugReportCallbackEXT = nullptr;
+PFN_vkCreateDebugUtilsMessengerEXT vkCreateDebugUtilsMessengerEXT = nullptr;
+PFN_vkSetDebugUtilsObjectNameEXT vkSetDebugUtilsObjectNameEXT = nullptr;
 
 bool initializeVulkanApi()
 {
@@ -721,31 +720,24 @@ bool initializeVulkanExtensions(VkInstance instance)
 		return false;
 	}
 
-	// vkCmdDebugMarkerBeginEXT = (PFN_vkCmdDebugMarkerBeginEXT)vkGetInstanceProcAddr(instance, "vkCmdDebugMarkerBeginEXT");
-	// if (vkCmdDebugMarkerBeginEXT == nullptr)
-	// {
-	// 	log::error << L"Failed to resolve Vulkan entry point \"vkCmdDebugMarkerBeginEXT\"." << Endl;
-	// 	return false;
-	// }
-
-	// vkCmdDebugMarkerEndEXT = (PFN_vkCmdDebugMarkerEndEXT)vkGetInstanceProcAddr(instance, "vkCmdDebugMarkerEndEXT");
-	// if (vkCmdDebugMarkerEndEXT == nullptr)
-	// {
-	// 	log::error << L"Failed to resolve Vulkan entry point \"vkCmdDebugMarkerEndEXT\"." << Endl;
-	// 	return false;
-	// }
-
-	vkCreateDebugReportCallbackEXT = (PFN_vkCreateDebugReportCallbackEXT)vkGetInstanceProcAddr(instance, "vkCreateDebugReportCallbackEXT");
-	if (vkCreateDebugReportCallbackEXT == nullptr)
-	{
-		log::error << L"Failed to resolve Vulkan entry point \"vkCreateDebugReportCallbackEXT\"." << Endl;
-		return false;
-	}
-
 	vkCreateAndroidSurfaceKHR = (PFN_vkCreateAndroidSurfaceKHR)vkGetInstanceProcAddr(instance, "vkCreateAndroidSurfaceKHR");
 	if (vkCreateAndroidSurfaceKHR == nullptr)
 	{
 		log::error << L"Failed to resolve Vulkan extension entry point \"vkCreateAndroidSurfaceKHR\"." << Endl;
+		return false;
+	}
+
+	vkCreateDebugUtilsMessengerEXT = (PFN_vkCreateDebugUtilsMessengerEXT)vkGetInstanceProcAddr(instance, "vkCreateDebugUtilsMessengerEXT");
+	if (vkCreateDebugUtilsMessengerEXT == nullptr)
+	{
+		log::error << L"Failed to resolve Vulkan entry point \"vkCreateDebugUtilsMessengerEXT\"." << Endl;
+		return false;
+	}
+
+	vkSetDebugUtilsObjectNameEXT = (PFN_vkSetDebugUtilsObjectNameEXT)vkGetInstanceProcAddr(instance, "vkSetDebugUtilsObjectNameEXT");
+	if (vkSetDebugUtilsObjectNameEXT == nullptr)
+	{
+		log::error << L"Failed to resolve Vulkan entry point \"vkSetDebugUtilsObjectNameEXT\"." << Endl;
 		return false;
 	}
 

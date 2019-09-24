@@ -41,7 +41,7 @@ public:
 
 	virtual ~ProgramVk();
 
-	bool create(const ProgramResourceVk* resource);
+	bool create(const ProgramResourceVk* resource, const wchar_t* const tag);
 
 	bool validateGraphics(VkDescriptorPool descriptorPool, VkCommandBuffer commandBuffer, UniformBufferPoolVk* uniformBufferPool, float targetSize[2]);
 

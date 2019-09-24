@@ -44,29 +44,25 @@ namespace traktor
 
 const char* c_validationLayerNames[] = { "VK_LAYER_LUNARG_standard_validation", nullptr };
 #if defined(_WIN32)
-const char* c_extensions[] = { "VK_KHR_surface", "VK_KHR_win32_surface", "VK_EXT_debug_report" };
+const char* c_extensions[] = { "VK_KHR_surface", "VK_KHR_win32_surface", "VK_EXT_debug_utils" };
 #elif defined(__LINUX__)
-const char* c_extensions[] = { "VK_KHR_surface", "VK_KHR_xlib_surface", "VK_EXT_debug_report" };
+const char* c_extensions[] = { "VK_KHR_surface", "VK_KHR_xlib_surface", "VK_EXT_debug_utils" };
 #elif defined(__ANDROID__)
-const char* c_extensions[] = { "VK_KHR_surface", "VK_KHR_android_surface", "VK_EXT_debug_report" };
+const char* c_extensions[] = { "VK_KHR_surface", "VK_KHR_android_surface", "VK_EXT_debug_utils" };
 #else
-const char* c_extensions[] = { "VK_KHR_surface", "VK_EXT_debug_report" };
+const char* c_extensions[] = { "VK_KHR_surface", "VK_EXT_debug_utils" };
 #endif
 const char* c_deviceExtensions[] = { "VK_KHR_swapchain" };
 
 VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(
-	VkDebugReportFlagsEXT flags,
-	VkDebugReportObjectTypeEXT objectType,
-	uint64_t object,
-	size_t location,
-	int32_t messageCode,
-	const char* pLayerPrefix,
-	const char* pMessage,
+	VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity,
+	VkDebugUtilsMessageTypeFlagsEXT messageType,
+	const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData,
 	void* pUserData
 )
 {
-	if (pMessage)
-		log::info << mbstows(pMessage) << Endl;
+	if (pCallbackData && pCallbackData->pMessage)
+		log::info << mbstows(pCallbackData->pMessage) << Endl;
 	return VK_FALSE;
 }
 		}
@@ -82,12 +78,12 @@ RenderSystemVk::RenderSystemVk()
 #endif
 ,	m_physicalDevice(0)
 ,	m_logicalDevice(0)
+,	m_debugMessenger(0)
 ,	m_graphicsQueueIndex(~0)
 ,	m_computeQueueIndex(~0)
 ,	m_graphicsQueue(0)
 ,	m_computeQueue(0)
 ,	m_graphicsCommandPool(0)
-,	m_setupCommandBuffer(0)
 ,	m_allocator(0)
 {
 #if defined(__ANDROID__)
@@ -126,7 +122,7 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
 	vkEnumerateInstanceLayerProperties(&layerCount, layersAvailable.ptr());
 
 	AlignedVector< const char* > validationLayers;
-#if defined(_DEBUG)
+//#if defined(_DEBUG)
 	for (uint32_t i = 0; i < layerCount; ++i)
 	{
 		bool found = false;
@@ -138,7 +134,7 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
 		if (found)
 			validationLayers.push_back(strdup(layersAvailable[i].layerName));
 	}
-#endif
+//#endif
 
 	// Create Vulkan instance.
 	VkApplicationInfo ai = {};
@@ -172,15 +168,13 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
 
 //#if !defined(__ANDROID__)
 	// Setup debug port callback.
-	VkDebugReportCallbackEXT reportCallback = 0;
+	VkDebugUtilsMessengerCreateInfoEXT dumci = {};
+	dumci.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT;
+	dumci.messageSeverity = /*VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT | */VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT;
+	dumci.messageType = /*VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT | */VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT /*| VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT*/;
+	dumci.pfnUserCallback = debugCallback;
 
-	VkDebugReportCallbackCreateInfoEXT drcci = {};
-	drcci.sType = VK_STRUCTURE_TYPE_DEBUG_REPORT_CALLBACK_CREATE_INFO_EXT;
-    drcci.flags = VK_DEBUG_REPORT_ERROR_BIT_EXT | VK_DEBUG_REPORT_WARNING_BIT_EXT; // | VK_DEBUG_REPORT_PERFORMANCE_WARNING_BIT_EXT | VK_DEBUG_REPORT_INFORMATION_BIT_EXT | VK_DEBUG_REPORT_DEBUG_BIT_EXT;
-    drcci.pfnCallback = debugCallback;
-    drcci.pUserData = (void*)this;
-
-	if ((result = vkCreateDebugReportCallbackEXT(m_instance, &drcci, nullptr, &reportCallback)) != VK_SUCCESS)
+	if ((result = vkCreateDebugUtilsMessengerEXT(m_instance, &dumci, nullptr, &m_debugMessenger)) != VK_SUCCESS)
 	{
 		log::error << L"Failed to create Vulkan; failed to set debug report callback." << Endl;
 		return false;
@@ -270,19 +264,6 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
 	if (vkCreateCommandPool(m_logicalDevice, &cpci, 0, &m_graphicsCommandPool) != VK_SUCCESS)
 	{
 		log::error << L"Failed to create Vulkan; unable to create graphics command pool." << Endl;
-		return false;
-	}
-
-	// Create "setup" command buffer from pool.
-	VkCommandBufferAllocateInfo cbai = {};
-	cbai.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
-	cbai.commandPool = m_graphicsCommandPool;
-	cbai.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
-	cbai.commandBufferCount = 1;
-
-	if (vkAllocateCommandBuffers(m_logicalDevice, &cbai, &m_setupCommandBuffer) != VK_SUCCESS)
-	{
-		log::error << L"Failed to create Vulkan; failed to allocate setup command buffer." << Endl;
 		return false;
 	}
 
@@ -540,7 +521,7 @@ Ref< StructBuffer > RenderSystemVk::createStructBuffer(const AlignedVector< Stru
 	return new StructBufferVk(bufferSize, m_allocator, allocation, storageBuffer);
 }
 
-Ref< ISimpleTexture > RenderSystemVk::createSimpleTexture(const SimpleTextureCreateDesc& desc)
+Ref< ISimpleTexture > RenderSystemVk::createSimpleTexture(const SimpleTextureCreateDesc& desc, const wchar_t* const tag)
 {
 	Ref< SimpleTextureVk > texture = new SimpleTextureVk(
 		m_physicalDevice,
@@ -550,14 +531,15 @@ Ref< ISimpleTexture > RenderSystemVk::createSimpleTexture(const SimpleTextureCre
 	if (texture->create(
 		m_graphicsCommandPool,
 		m_graphicsQueue,
-		desc
+		desc,
+		tag
 	))
 		return texture;
 	else
 		return nullptr;
 }
 
-Ref< ICubeTexture > RenderSystemVk::createCubeTexture(const CubeTextureCreateDesc& desc)
+Ref< ICubeTexture > RenderSystemVk::createCubeTexture(const CubeTextureCreateDesc& desc, const wchar_t* const tag)
 {
 	Ref< CubeTextureVk > texture = new CubeTextureVk(
 		m_physicalDevice,
@@ -567,13 +549,13 @@ Ref< ICubeTexture > RenderSystemVk::createCubeTexture(const CubeTextureCreateDes
 		m_graphicsQueue,
 		desc
 	);
-	if (texture->create())
+	if (texture->create(tag))
 		return texture;
 	else
 		return nullptr;
 }
 
-Ref< IVolumeTexture > RenderSystemVk::createVolumeTexture(const VolumeTextureCreateDesc& desc)
+Ref< IVolumeTexture > RenderSystemVk::createVolumeTexture(const VolumeTextureCreateDesc& desc, const wchar_t* const tag)
 {
 	Ref< VolumeTextureVk > texture = new VolumeTextureVk();
 	if (texture->create(
@@ -581,14 +563,15 @@ Ref< IVolumeTexture > RenderSystemVk::createVolumeTexture(const VolumeTextureCre
 		m_logicalDevice,
 		m_graphicsCommandPool,
 		m_graphicsQueue,
-		desc
+		desc,
+		tag
 	))
 		return texture;
 	else
 		return nullptr;
 }
 
-Ref< RenderTargetSet > RenderSystemVk::createRenderTargetSet(const RenderTargetSetCreateDesc& desc)
+Ref< RenderTargetSet > RenderSystemVk::createRenderTargetSet(const RenderTargetSetCreateDesc& desc, const wchar_t* const tag)
 {
 	Ref< RenderTargetSetVk > renderTargetSet = new RenderTargetSetVk(
 		m_physicalDevice,
@@ -597,7 +580,7 @@ Ref< RenderTargetSet > RenderSystemVk::createRenderTargetSet(const RenderTargetS
 		m_graphicsCommandPool,
 		m_graphicsQueue
 	);
-	if (renderTargetSet->create(desc))
+	if (renderTargetSet->create(desc, tag))
 		return renderTargetSet;
 	else
 		return nullptr;
@@ -614,7 +597,7 @@ Ref< IProgram > RenderSystemVk::createProgram(const ProgramResource* programReso
 		m_logicalDevice,
 		m_allocator
 	);
-	if (program->create(resource))
+	if (program->create(resource, tag))
 		return program;
 	else
 		return nullptr;

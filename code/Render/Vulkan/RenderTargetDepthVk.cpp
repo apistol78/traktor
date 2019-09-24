@@ -1,4 +1,5 @@
 #include "Core/Log/Log.h"
+#include "Core/Misc/TString.h"
 #include "Render/Types.h"
 #include "Render/Vulkan/ApiLoader.h"
 #include "Render/Vulkan/RenderTargetDepthVk.h"
@@ -34,7 +35,7 @@ RenderTargetDepthVk::~RenderTargetDepthVk()
 	destroy();
 }
 
-bool RenderTargetDepthVk::createPrimary(int32_t width, int32_t height, VkFormat format, VkImage image)
+bool RenderTargetDepthVk::createPrimary(int32_t width, int32_t height, VkFormat format, VkImage image, const wchar_t* const tag)
 {
 	VkImageViewCreateInfo ivci = {};
 	ivci.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
@@ -56,10 +57,17 @@ bool RenderTargetDepthVk::createPrimary(int32_t width, int32_t height, VkFormat 
 	m_width = width;
 	m_height = height;
 
+	// Set debug name of texture.
+	VkDebugUtilsObjectNameInfoEXT ni = {};
+	ni.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_OBJECT_NAME_INFO_EXT;
+	ni.objectType = VK_OBJECT_TYPE_IMAGE;
+	ni.objectHandle = (uint64_t)m_image;
+	ni.pObjectName = tag ? wstombs(tag).c_str() : "RenderTargetVk";
+	vkSetDebugUtilsObjectNameEXT(m_logicalDevice, &ni);
 	return true;
 }
 
-bool RenderTargetDepthVk::create(const RenderTargetSetCreateDesc& setDesc)
+bool RenderTargetDepthVk::create(const RenderTargetSetCreateDesc& setDesc, const wchar_t* const tag)
 {
 	VkResult result;
 
@@ -86,7 +94,6 @@ bool RenderTargetDepthVk::create(const RenderTargetSetCreateDesc& setDesc)
 	VmaAllocationCreateInfo aci = {};
 	aci.usage = VMA_MEMORY_USAGE_GPU_ONLY;
 
-	VmaAllocation allocation;
 	if (vmaCreateImage(m_allocator, &imageCreateInfo, &aci, &m_image, &m_allocation, nullptr) != VK_SUCCESS)
 		return false;	
 
@@ -110,6 +117,14 @@ bool RenderTargetDepthVk::create(const RenderTargetSetCreateDesc& setDesc)
 	m_format = imageCreateInfo.format;
 	m_width = setDesc.width;
 	m_height = setDesc.height;
+
+	// Set debug name of texture.
+	VkDebugUtilsObjectNameInfoEXT ni = {};
+	ni.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_OBJECT_NAME_INFO_EXT;
+	ni.objectType = VK_OBJECT_TYPE_IMAGE;
+	ni.objectHandle = (uint64_t)m_image;
+	ni.pObjectName = tag ? wstombs(tag).c_str() : "RenderTargetDepthVk";
+	vkSetDebugUtilsObjectNameEXT(m_logicalDevice, &ni);
 	return true;
 }
 

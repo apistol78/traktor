@@ -297,7 +297,7 @@ void TerrainEditModifier::selectionChanged()
 	desc.sRGB = false;
 	desc.immutable = false;
 
-	m_splatMap = m_context->getRenderSystem()->createSimpleTexture(desc);
+	m_splatMap = m_context->getRenderSystem()->createSimpleTexture(desc, T_FILE_LINE_W);
 	if (m_splatMap)
 	{
 		// Transfer splats to texture.
@@ -356,7 +356,7 @@ void TerrainEditModifier::selectionChanged()
 	desc.sRGB = false;
 	desc.immutable = false;
 
-	m_colorMap = m_context->getRenderSystem()->createSimpleTexture(desc);
+	m_colorMap = m_context->getRenderSystem()->createSimpleTexture(desc, T_FILE_LINE_W);
 	if (m_colorMap)
 	{
 		// Transfer colors to texture.
@@ -397,7 +397,7 @@ void TerrainEditModifier::selectionChanged()
 	desc.sRGB = false;
 	desc.immutable = false;
 
-	m_normalMap = m_context->getRenderSystem()->createSimpleTexture(desc);
+	m_normalMap = m_context->getRenderSystem()->createSimpleTexture(desc, T_FILE_LINE_W);
 	if (m_normalMap)
 	{
 		// Transfer normals to texture.
@@ -430,7 +430,7 @@ void TerrainEditModifier::selectionChanged()
 	desc.sRGB = false;
 	desc.immutable = false;
 
-	m_cutMap = m_context->getRenderSystem()->createSimpleTexture(desc);
+	m_cutMap = m_context->getRenderSystem()->createSimpleTexture(desc, T_FILE_LINE_W);
 	if (m_cutMap)
 	{
 		// Transfer cuts to texture.
@@ -463,7 +463,7 @@ void TerrainEditModifier::selectionChanged()
 	desc.sRGB = false;
 	desc.immutable = false;
 
-	m_materialMap = m_context->getRenderSystem()->createSimpleTexture(desc);
+	m_materialMap = m_context->getRenderSystem()->createSimpleTexture(desc, T_FILE_LINE_W);
 	if (m_materialMap)
 	{
 		// Transfer material mask to texture.

@@ -31,7 +31,7 @@ Ref< ImageProcessStep::Instance > ImageProcessStepSsao::create(
 {
 	resource::Proxy< Shader > shader;
 	if (!resourceManager->bind(m_shader, shader))
-		return 0;
+		return nullptr;
 
 	std::vector< InstanceSsao::Source > sources(m_sources.size());
 	for (uint32_t i = 0; i < m_sources.size(); ++i)
@@ -83,9 +83,9 @@ Ref< ImageProcessStep::Instance > ImageProcessStepSsao::create(
 	desc.initialData[0].pitch = 256 * 4;
 	desc.initialData[0].slicePitch = 0;
 
-	Ref< ISimpleTexture > randomNormals = renderSystem->createSimpleTexture(desc);
+	Ref< ISimpleTexture > randomNormals = renderSystem->createSimpleTexture(desc, T_FILE_LINE_W);
 	if (!randomNormals)
-		return 0;
+		return nullptr;
 
 	for (uint32_t y = 0; y < 256; ++y)
 	{
@@ -112,9 +112,9 @@ Ref< ImageProcessStep::Instance > ImageProcessStepSsao::create(
 	desc.initialData[0].pitch = 256 * 4;
 	desc.initialData[0].slicePitch = 0;
 
-	Ref< ISimpleTexture > randomRotations = renderSystem->createSimpleTexture(desc);
+	Ref< ISimpleTexture > randomRotations = renderSystem->createSimpleTexture(desc, T_FILE_LINE_W);
 	if (!randomRotations)
-		return 0;
+		return nullptr;
 
 	return new InstanceSsao(this, sources, offsets, directions, shader, randomNormals, randomRotations);
 }
