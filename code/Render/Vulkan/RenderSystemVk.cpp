@@ -48,7 +48,7 @@ const char* c_extensions[] = { "VK_KHR_surface", "VK_KHR_win32_surface", "VK_EXT
 #elif defined(__LINUX__)
 const char* c_extensions[] = { "VK_KHR_surface", "VK_KHR_xlib_surface", "VK_EXT_debug_utils" };
 #elif defined(__ANDROID__)
-const char* c_extensions[] = { "VK_KHR_surface", "VK_KHR_android_surface", "VK_EXT_debug_utils" };
+const char* c_extensions[] = { "VK_KHR_surface", "VK_KHR_android_surface" };
 #else
 const char* c_extensions[] = { "VK_KHR_surface", "VK_EXT_debug_utils" };
 #endif
@@ -166,7 +166,7 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
 		return false;
 	}
 
-//#if !defined(__ANDROID__)
+#if !defined(__ANDROID__)
 	// Setup debug port callback.
 	VkDebugUtilsMessengerCreateInfoEXT dumci = {};
 	dumci.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT;
@@ -179,7 +179,7 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
 		log::error << L"Failed to create Vulkan; failed to set debug report callback." << Endl;
 		return false;
 	}
-//#endif
+#endif
 
 	// Select physical device.
 	uint32_t physicalDeviceCount = 0;

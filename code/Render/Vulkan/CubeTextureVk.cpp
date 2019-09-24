@@ -74,12 +74,14 @@ bool CubeTextureVk::create(const wchar_t* const tag)
 	}
 
 	// Set debug name of texture.
+#if !defined(__ANDROID__)
 	VkDebugUtilsObjectNameInfoEXT ni = {};
 	ni.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_OBJECT_NAME_INFO_EXT;
 	ni.objectType = VK_OBJECT_TYPE_IMAGE;
 	ni.objectHandle = (uint64_t)m_textureImage;
 	ni.pObjectName = tag ? wstombs(tag).c_str() : "CubeTextureVk";
 	vkSetDebugUtilsObjectNameEXT(m_logicalDevice, &ni);
+#endif
 
 	// Create texture view.
 	VkImageViewCreateInfo ivci = {};
