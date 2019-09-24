@@ -154,7 +154,7 @@ ProgramCompilerOpenGL::ProgramCompilerOpenGL()
 #endif
 }
 
-const wchar_t* ProgramCompilerOpenGL::getPlatformSignature() const
+const wchar_t* ProgramCompilerOpenGL::getRendererSignature() const
 {
 	return L"OpenGL";
 }

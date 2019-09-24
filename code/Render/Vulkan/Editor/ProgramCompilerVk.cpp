@@ -158,7 +158,7 @@ ProgramCompilerVk::ProgramCompilerVk()
 	}
 }
 
-const wchar_t* ProgramCompilerVk::getPlatformSignature() const
+const wchar_t* ProgramCompilerVk::getRendererSignature() const
 {
 	return L"Vulkan";
 }

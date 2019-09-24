@@ -142,7 +142,7 @@ ENTRY
 			</position>
 			<swizzle>xy</swizzle>
 		</item>
-		<item type="traktor.render.Platform" version="traktor.render.Node:1">
+		<item type="traktor.render.Renderer" version="traktor.render.Node:1">
 			<id>{EE85CA73-45C0-5C4B-9F49-410BBAD29ADE}</id>
 			<comment/>
 			<position>
@@ -150,7 +150,7 @@ ENTRY
 				<second>-144</second>
 			</position>
 		</item>
-		<item type="traktor.render.Platform" version="traktor.render.Node:1">
+		<item type="traktor.render.Renderer" version="traktor.render.Node:1">
 			<id>{981C6FA6-866E-F449-8D7A-23F4809A5453}</id>
 			<comment/>
 			<position>

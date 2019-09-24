@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph">
 	<nodes>
-		<item type="traktor.render.Platform" version="traktor.render.Node:1">
+		<item type="traktor.render.Renderer" version="traktor.render.Node:1">
 			<id>{562AB98F-26C1-6644-92EF-8DA2262C1C21}</id>
 			<comment/>
 			<position>

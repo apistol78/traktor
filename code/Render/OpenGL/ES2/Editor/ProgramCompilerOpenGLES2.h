@@ -23,7 +23,7 @@ class T_DLLCLASS ProgramCompilerOpenGLES2 : public IProgramCompiler
 	T_RTTI_CLASS;
 
 public:
-	virtual const wchar_t* getPlatformSignature() const override final;
+	virtual const wchar_t* getRendererSignature() const override final;
 
 	virtual Ref< ProgramResource > compile(
 		const ShaderGraph* shaderGraph,

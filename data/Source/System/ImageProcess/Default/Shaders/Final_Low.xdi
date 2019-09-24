@@ -296,7 +296,7 @@
 			<type>PtTexture3D</type>
 			<frequency>UfOnce</frequency>
 		</item>
-		<item type="traktor.render.Platform" version="traktor.render.Node:1">
+		<item type="traktor.render.Renderer" version="traktor.render.Node:1">
 			<id>{6CC8557B-E6A2-6242-A326-FCAE208E12C8}</id>
 			<comment/>
 			<position>

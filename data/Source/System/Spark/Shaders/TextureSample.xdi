@@ -157,7 +157,7 @@
 			</position>
 			<value>32</value>
 		</item>
-		<item type="traktor.render.Platform" version="traktor.render.Node:1">
+		<item type="traktor.render.Renderer" version="traktor.render.Node:1">
 			<id>{9A520D74-4C45-5C46-A5BC-3ACA5EC12F55}</id>
 			<comment/>
 			<position>

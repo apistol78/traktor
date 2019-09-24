@@ -193,7 +193,7 @@
 				</item>
 			</values>
 		</item>
-		<item type="traktor.render.Platform" version="traktor.render.Node:1">
+		<item type="traktor.render.Renderer" version="traktor.render.Node:1">
 			<id>{ED75344B-362C-454F-A905-F41219500D74}</id>
 			<comment/>
 			<position>

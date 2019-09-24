@@ -178,16 +178,15 @@ bool ShaderGraphEditorPage::create(ui::Container* parent)
 	m_toolBar->addItem(new ui::ToolBarButton(i18n::Text(L"SHADERGRAPH_RESOLVE_EXTERNALS"), 13, ui::Command(L"ShaderGraph.Editor.ResolveExternals")));
 	m_toolBar->addItem(new ui::ToolBarSeparator());
 
-	m_toolPlatform = new ui::ToolBarDropDown(ui::Command(), ui::dpi96(80), i18n::Text(L"SHADERGRAPH_PLATFORM_PERMUTATION"));
-	m_toolPlatform->add(L"DX9");
-	m_toolPlatform->add(L"DX9 Xbox360");
+	m_toolPlatform = new ui::ToolBarDropDown(ui::Command(), ui::dpi96(80), i18n::Text(L"SHADERGRAPH_RENDERER_PERMUTATION"));
 	m_toolPlatform->add(L"DX11");
 	m_toolPlatform->add(L"OpenGL");
 	m_toolPlatform->add(L"OpenGL ES2");
+	m_toolPlatform->add(L"Vulkan");
 	m_toolPlatform->add(L"GCM");
-	m_toolPlatform->add(L"Software");
+	m_toolPlatform->add(L"GNM");
 	m_toolBar->addItem(m_toolPlatform);
-	m_toolBar->addItem(new ui::ToolBarButton(i18n::Text(L"SHADERGRAPH_PLATFORM_PERMUTATION"), 10, ui::Command(L"ShaderGraph.Editor.PlatformPermutation")));
+	m_toolBar->addItem(new ui::ToolBarButton(i18n::Text(L"SHADERGRAPH_RENDERER_PERMUTATION"), 10, ui::Command(L"ShaderGraph.Editor.RendererPermutation")));
 
 	m_toolBar->addEventHandler< ui::ToolBarButtonClickEvent >(this, &ShaderGraphEditorPage::eventToolClick);
 
@@ -689,12 +688,12 @@ bool ShaderGraphEditorPage::handleCommand(const ui::Command& command)
 		else
 			log::error << L"Fragment linker failed." << Endl;
 	}
-	else if (command == L"ShaderGraph.Editor.PlatformPermutation")
+	else if (command == L"ShaderGraph.Editor.RendererPermutation")
 	{
 		m_document->push();
 
-		std::wstring platformSignature = m_toolPlatform->getSelectedItem();
-		m_shaderGraph = ShaderGraphStatic(m_shaderGraph).getPlatformPermutation(platformSignature);
+		std::wstring rendererSignature = m_toolPlatform->getSelectedItem();
+		m_shaderGraph = ShaderGraphStatic(m_shaderGraph).getRendererPermutation(rendererSignature);
 		T_ASSERT(m_shaderGraph);
 
 		m_document->setObject(0, m_shaderGraph);

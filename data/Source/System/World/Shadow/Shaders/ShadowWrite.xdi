@@ -99,7 +99,7 @@
 			</position>
 			<value>0</value>
 		</item>
-		<item type="traktor.render.Platform" version="traktor.render.Node:1">
+		<item type="traktor.render.Renderer" version="traktor.render.Node:1">
 			<id>{141ECFEF-D681-C34A-A3AA-305EF40810BF}</id>
 			<comment/>
 			<position>

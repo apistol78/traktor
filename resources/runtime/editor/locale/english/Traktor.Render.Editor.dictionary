@@ -402,8 +402,8 @@
       <second>Pixel output</second>
     </item>
     <item>
-      <first>SHADERGRAPH_NODE_PLATFORM</first>
-      <second>Platform</second>
+      <first>SHADERGRAPH_NODE_RENDERER</first>
+      <second>Renderer</second>
     </item>
     <item>
       <first>SHADERGRAPH_NODE_POLYNOMIAL</first>
@@ -542,8 +542,8 @@
       <second>Permutation</second>
     </item>
     <item>
-      <first>SHADERGRAPH_PLATFORM_PERMUTATION</first>
-      <second>Platform permutation</second>
+      <first>SHADERGRAPH_RENDERER_PERMUTATION</first>
+      <second>Renderer permutation</second>
     </item>
     <item>
       <first>SHADERGRAPH_REFEREES</first>

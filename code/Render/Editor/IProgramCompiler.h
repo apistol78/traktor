@@ -49,11 +49,11 @@ public:
 		}
 	};
 
-	/*! \brief Get platform signature.
+	/*! \brief Get renderer signature.
 	 *
-	 * \return Platform signature.
+	 * \return Renderer signature.
 	 */
-	virtual const wchar_t* getPlatformSignature() const = 0;
+	virtual const wchar_t* getRendererSignature() const = 0;
 
 	/*! \brief Compile program.
 	 *

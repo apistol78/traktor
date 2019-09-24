@@ -112,9 +112,9 @@ bool ShaderViewer::create(ui::Widget* parent)
 			continue;
 
 		if (programCompilerTypeName == programCompilerType->getName())
-			compilerIndex = m_dropCompiler->add(compiler->getPlatformSignature(), compiler);
+			compilerIndex = m_dropCompiler->add(compiler->getRendererSignature(), compiler);
 		else
-			m_dropCompiler->add(compiler->getPlatformSignature(), compiler);
+			m_dropCompiler->add(compiler->getRendererSignature(), compiler);
 	}
 	m_dropCompiler->select(compilerIndex);
 
@@ -317,9 +317,9 @@ void ShaderViewer::jobReflect(Ref< ShaderGraph > shaderGraph, Ref< const IProgra
 
 	m_reflectedTechniques.clear();
 
-	// Extract platform permutation.
-	const wchar_t* platformSignature = compiler->getPlatformSignature();
-	T_ASSERT(platformSignature);
+	// Extract renderer permutation.
+	const wchar_t* rendererSignature = compiler->getRendererSignature();
+	T_ASSERT(rendererSignature);
 
 	// Resolve all local variables.
 	shaderGraph = ShaderGraphStatic(shaderGraph).getVariableResolved(ShaderGraphStatic::VrtLocal);
@@ -351,7 +351,7 @@ void ShaderViewer::jobReflect(Ref< ShaderGraph > shaderGraph, Ref< const IProgra
 	}
 
 	// Get platform shader permutation.
-	shaderGraph = ShaderGraphStatic(shaderGraph).getPlatformPermutation(platformSignature);
+	shaderGraph = ShaderGraphStatic(shaderGraph).getRendererPermutation(rendererSignature);
 	T_ASSERT(shaderGraph);
 
 	// Remove unused branches from shader graph.

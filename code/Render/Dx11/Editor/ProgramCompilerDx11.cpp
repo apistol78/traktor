@@ -88,7 +88,7 @@ ProgramCompilerDx11::ProgramCompilerDx11()
 	}
 }
 
-const wchar_t* ProgramCompilerDx11::getPlatformSignature() const
+const wchar_t* ProgramCompilerDx11::getRendererSignature() const
 {
 	return L"DX11";
 }

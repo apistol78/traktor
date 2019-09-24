@@ -25,7 +25,7 @@ class T_DLLCLASS ProgramCompilerDx11 : public IProgramCompiler
 public:
 	ProgramCompilerDx11();
 
-	virtual const wchar_t* getPlatformSignature() const override final;
+	virtual const wchar_t* getRendererSignature() const override final;
 
 	virtual Ref< ProgramResource > compile(
 		const ShaderGraph* shaderGraph,

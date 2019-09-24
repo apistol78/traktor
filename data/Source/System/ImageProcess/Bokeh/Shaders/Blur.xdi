@@ -205,7 +205,7 @@
 			<from>0</from>
 			<to>12</to>
 		</item>
-		<item type="traktor.render.Platform" version="traktor.render.Node:1">
+		<item type="traktor.render.Renderer" version="traktor.render.Node:1">
 			<id>{12DFE9CB-D52B-974E-A02C-DF1FA79E5B76}</id>
 			<comment/>
 			<position>

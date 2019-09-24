@@ -345,14 +345,14 @@ bool ShaderPipeline::buildDependencies(
 	if (!programCompiler)
 		return false;
 
-	// Extract platform permutation.
-	const wchar_t* platformSignature = programCompiler->getPlatformSignature();
-	T_ASSERT(platformSignature);
+	// Extract renderer permutation.
+	const wchar_t* rendererSignature = programCompiler->getRendererSignature();
+	T_ASSERT(rendererSignature);
 
-	shaderGraph = ShaderGraphStatic(shaderGraph).getPlatformPermutation(platformSignature);
+	shaderGraph = ShaderGraphStatic(shaderGraph).getRendererPermutation(rendererSignature);
 	if (!shaderGraph)
 	{
-		log::error << L"ShaderPipeline failed; unable to get platform permutation" << Endl;
+		log::error << L"ShaderPipeline failed; unable to get renderer permutation." << Endl;
 		return false;
 	}
 
@@ -438,14 +438,14 @@ bool ShaderPipeline::buildOutput(
 		return false;
 	}
 
-	// Extract platform permutation.
-	const wchar_t* platformSignature = programCompiler->getPlatformSignature();
-	T_ASSERT(platformSignature);
+	// Extract renderer permutation.
+	const wchar_t* rendererSignature = programCompiler->getRendererSignature();
+	T_ASSERT(rendererSignature);
 
-	shaderGraph = ShaderGraphStatic(shaderGraph).getPlatformPermutation(platformSignature);
+	shaderGraph = ShaderGraphStatic(shaderGraph).getRendererPermutation(rendererSignature);
 	if (!shaderGraph)
 	{
-		log::error << L"ShaderPipeline failed; unable to get platform permutation." << Endl;
+		log::error << L"ShaderPipeline failed; unable to get renderer permutation." << Endl;
 		return false;
 	}
 

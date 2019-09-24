@@ -15,9 +15,9 @@ ProgramCompilerCapture::ProgramCompilerCapture(IProgramCompiler* compiler)
 {
 }
 
-const wchar_t* ProgramCompilerCapture::getPlatformSignature() const
+const wchar_t* ProgramCompilerCapture::getRendererSignature() const
 {
-	return m_compiler->getPlatformSignature();
+	return m_compiler->getRendererSignature();
 }
 
 Ref< ProgramResource > ProgramCompilerCapture::compile(

@@ -12,7 +12,7 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ProgramCompilerOpenGLES2", 0, ProgramCompilerOpenGLES2, IProgramCompiler)
 
-const wchar_t* ProgramCompilerOpenGLES2::getPlatformSignature() const
+const wchar_t* ProgramCompilerOpenGLES2::getRendererSignature() const
 {
 	return L"OpenGL ES2";
 }
