@@ -727,27 +727,6 @@ bool initializeVulkanExtensions(VkInstance instance)
 		return false;
 	}
 
-	vkCmdDebugMarkerBeginEXT = (PFN_vkCmdDebugMarkerBeginEXT)vkGetInstanceProcAddr(instance, "vkCmdDebugMarkerBeginEXT");
-	if (vkCmdDebugMarkerBeginEXT == nullptr)
-	{
-		log::error << L"Failed to resolve Vulkan entry point \"vkCmdDebugMarkerBeginEXT\"." << Endl;
-		return false;
-	}
-
-	vkCmdDebugMarkerEndEXT = (PFN_vkCmdDebugMarkerEndEXT)vkGetInstanceProcAddr(instance, "vkCmdDebugMarkerEndEXT");
-	if (vkCmdDebugMarkerEndEXT == nullptr)
-	{
-		log::error << L"Failed to resolve Vulkan entry point \"vkCmdDebugMarkerEndEXT\"." << Endl;
-		return false;
-	}
-
-	vkCreateDebugReportCallbackEXT = (PFN_vkCreateDebugReportCallbackEXT)vkGetInstanceProcAddr(instance, "vkCreateDebugReportCallbackEXT");
-	if (vkCreateDebugReportCallbackEXT == nullptr)
-	{
-		log::error << L"Failed to resolve Vulkan entry point \"vkCreateDebugReportCallbackEXT\"." << Endl;
-		return false;
-	}
-
 	vkCreateDebugUtilsMessengerEXT = (PFN_vkCreateDebugUtilsMessengerEXT)vkGetInstanceProcAddr(instance, "vkCreateDebugUtilsMessengerEXT");
 	if (vkCreateDebugUtilsMessengerEXT == nullptr)
 	{
