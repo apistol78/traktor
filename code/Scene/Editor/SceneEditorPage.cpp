@@ -65,6 +65,7 @@
 #include "World/EntityBuilder.h"
 #include "World/EntityEventManager.h"
 #include "World/IEntityComponent.h"
+#include "World/IEntityComponentData.h"
 #include "World/WorldRenderSettings.h"
 #include "World/Editor/LayerEntityData.h"
 #include "World/Entity/ComponentEntityData.h"
@@ -1080,14 +1081,31 @@ bool SceneEditorPage::addEntity(const TypeInfo* entityType)
 	Ref< world::EntityData > entityData = checked_type_cast< world::EntityData* >(entityType->createInstance());
 	T_ASSERT(entityData);
 
+	// If we're adding a component entity then browse for first component data also.
+	if (auto componentEntityData = dynamic_type_cast< world::ComponentEntityData* >(entityData))
+	{
+		const TypeInfo* componentType = m_context->getEditor()->browseType(makeTypeInfoSet< world::IEntityComponentData >(), false, true);
+		if (componentType)
+		{
+			Ref< world::IEntityComponentData > componentData = dynamic_type_cast< world::IEntityComponentData* >(componentType->createInstance());
+			if (componentData)
+				componentEntityData->setComponent(componentData);
+		}
+	}
+
 	m_context->getDocument()->push();
 
 	Ref< EntityAdapter > entityAdapter = new EntityAdapter(m_context);
 	entityAdapter->prepare(entityData, nullptr, 0);
 	parentGroupAdapter->addChild(entityAdapter);
 
+	// Select new entity.
+	m_context->selectAllEntities(false);
+	m_context->selectEntity(entityAdapter);
+
 	updateScene();
 	createInstanceGrid();
+	updatePropertyObject();
 
 	return true;
 }
