@@ -15,7 +15,7 @@
     </item>
     <item>
       <first>SCENE_EDITOR_ADD_COMPONENT_ENTITY</first>
-      <second>Add component entity</second>
+      <second>Add component entity...</second>
     </item>
     <item>
       <first>SCENE_EDITOR_ADD_GROUP_ENTITY</first>
