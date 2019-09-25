@@ -718,8 +718,8 @@ void ModelToolDialog::eventModelTreeSelect(ui::SelectionChangeEvent* event)
 			addStatistic(L"# colors", toString(m_model->getColorCount()));
 			addStatistic(L"# normals", toString(m_model->getNormalCount()));
 			addStatistic(L"# texcoords", toString(m_model->getTexCoords().size()));
-			addStatistic(L"# texture channels", toString(m_model->getTexCoordChannels().size()));
 
+			addStatistic(L"# texture channels", toString(m_model->getTexCoordChannels().size()));
 			for (size_t i = 0; i < m_model->getTexCoordChannels().size(); ++i)
 			{
 				const auto& channel = m_model->getTexCoordChannels()[i];
@@ -727,7 +727,14 @@ void ModelToolDialog::eventModelTreeSelect(ui::SelectionChangeEvent* event)
 			}
 
 			addStatistic(L"# joints", toString(m_model->getJointCount()));
+
 			addStatistic(L"# animations ", toString(m_model->getAnimationCount()));
+			for (size_t i = 0; i < m_model->getAnimationCount(); ++i)
+			{
+				const auto animation = m_model->getAnimation(i);
+				addStatistic(L"  " + toString(i), animation->getName());
+			}
+
 			addStatistic(L"# blend targets", toString(m_model->getBlendTargetCount()));
 		}
 

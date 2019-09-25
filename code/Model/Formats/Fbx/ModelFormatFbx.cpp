@@ -215,7 +215,6 @@ Ref< Model > ModelFormatFbx::read(const Path& filePath, const std::function< Ref
 
 	Ref< Model > model = new Model();
 	AlignedVector< std::string > channels;
-
 	bool result = true;
 
 	// Convert skeleton and animations.
@@ -229,27 +228,25 @@ Ref< Model > ModelFormatFbx::read(const Path& filePath, const std::function< Ref
 
 		for(int32_t i = 0; i < importer->GetAnimStackCount(); i++)
 		{
-			FbxTakeInfo* takeInfo = importer->GetTakeInfo(i);
-			if (!takeInfo)
-				return nullptr;
+			FbxAnimStack* animStack = s_scene->GetSrcObject< FbxAnimStack >(i);
+			if (!animStack)
+				continue;
 
-			s_scene->SetTakeInfo(*takeInfo);
+			s_scene->SetCurrentAnimationStack(animStack);
 
-			std::wstring takeName = mbstows((const char*)takeInfo->mName);
-
+			std::wstring takeName = mbstows(animStack->GetName());
 			size_t p = takeName.find(L'|');
 			if (p != std::wstring::npos)
 				takeName = takeName.substr(p + 1);
 
-			FbxTime start = takeInfo->mLocalTimeSpan.GetStart();
-			FbxTime end = takeInfo->mLocalTimeSpan.GetStop();
+			FbxTime start = animStack->LocalStart;
+			FbxTime end = animStack->LocalStop;
 
 			int32_t startFrame = start.GetFrameCount(FbxTime::eFrames30);
 			int32_t endFrame = end.GetFrameCount(FbxTime::eFrames30);
 
 			Ref< Animation > anim = new Animation();
 			anim->setName(takeName);
-
 			for (int32_t frame = startFrame; frame <= endFrame; ++frame)
 			{
 				FbxTime time;
@@ -261,7 +258,6 @@ Ref< Model > ModelFormatFbx::read(const Path& filePath, const std::function< Ref
 
 				anim->insertKeyFrame(frame / 30.0f, pose);
 			}
-
 			model->addAnimation(anim);
 		}
 	}
