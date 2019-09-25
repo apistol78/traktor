@@ -33,6 +33,7 @@ Ref< Model > ModelFormatObj::read(const Path& filePath, const std::function< Ref
 
 	BufferedStream bs(stream);
 	StringReader sr(&bs, new AnsiEncoding());
+	AlignedVector< float > fvalues;
 	std::wstring str;
 
 	Ref< Model > md = new Model();
@@ -46,37 +47,37 @@ Ref< Model > ModelFormatObj::read(const Path& filePath, const std::function< Ref
 
 		if (startsWith< std::wstring >(str, L"v "))
 		{
-			AlignedVector< float > values;
-			if (Split< std::wstring, float >::any(str.substr(2), L" \t", values) >= 3)
+			fvalues.resize(0);
+			if (Split< std::wstring, float >::any(str.substr(2), L" \t", fvalues) >= 3)
 			{
 				md->addPosition(Vector4(
-					-values[0],
-					values[1],
-					values[2],
+					-fvalues[0],
+					fvalues[1],
+					fvalues[2],
 					1.0f
 				));
 			}
 		}
 		else if (startsWith< std::wstring >(str, L"vt "))
 		{
-			AlignedVector< float > values;
-			if (Split< std::wstring, float >::any(str.substr(2), L" \t", values) >= 2)
+			fvalues.resize(0);
+			if (Split< std::wstring, float >::any(str.substr(2), L" \t", fvalues) >= 2)
 			{
 				md->addTexCoord(Vector2(
-					values[0],
-					1.0f - values[1]
+					fvalues[0],
+					1.0f - fvalues[1]
 				));
 			}
 		}
 		else if (startsWith< std::wstring >(str, L"vn "))
 		{
-			AlignedVector< float > values;
-			if (Split< std::wstring, float >::any(str.substr(2), L" \t", values) >= 3)
+			fvalues.resize(0);
+			if (Split< std::wstring, float >::any(str.substr(2), L" \t", fvalues) >= 3)
 			{
 				md->addNormal(Vector4(
-					-values[0],
-					values[1],
-					values[2],
+					-fvalues[0],
+					fvalues[1],
+					fvalues[2],
 					0.0f
 				));
 			}
@@ -145,40 +146,35 @@ bool ModelFormatObj::write(IStream* stream, const Model* model) const
 	s << L"#	             Vertex list" << Endl;
 	s << Endl;
 
-	const AlignedVector< Vector4 >& positions = model->getPositions();
-	for (AlignedVector< Vector4 >::const_iterator i = positions.begin(); i != positions.end(); ++i)
-		s << L"v " << i->x() << L" " << i->y() << L" " << i->z() << Endl;
+	for (auto position : model->getPositions())
+		s << L"v " << position.x() << L" " << position.y() << L" " << position.z() << Endl;
 
-	const AlignedVector< Vector2 >& texCoords = model->getTexCoords();
-	for (AlignedVector< Vector2 >::const_iterator i = texCoords.begin(); i != texCoords.end(); ++i)
-		s << L"vt " << i->x << L" " << (1.0f - i->y) << Endl;
+	for (auto texCoord : model->getTexCoords())
+		s << L"vt " << texCoord.x << L" " << (1.0f - texCoord.y) << Endl;
 
-	const AlignedVector< Vector4 >& normals = model->getNormals();
-	for (AlignedVector< Vector4 >::const_iterator i = normals.begin(); i != normals.end(); ++i)
-		s << L"vn " << i->x() << L" " << i->y() << L" " << i->z() << Endl;
+	for (auto normal : model->getNormals())
+		s << L"vn " << normal.x() << L" " << normal.y() << L" " << normal.z() << Endl;
 
 	s << Endl;
 	s << L"#	    Point/Line/Face list" << Endl;
 	s << Endl;
 
-	const AlignedVector< Material >& materials = model->getMaterials();
+	const auto& materials = model->getMaterials();
 	if (!materials.empty())
 	{
-		const AlignedVector< Polygon >& polygons = model->getPolygons();
 		for (uint32_t material = 0; material < uint32_t(materials.size()); ++material)
 		{
 			s << L"usemtl " << materials[material].getName() << Endl;
-			for (AlignedVector< Polygon >::const_iterator i = polygons.begin(); i != polygons.end(); ++i)
+			for (const auto& polygon : model->getPolygons())
 			{
-				if (i->getMaterial() != material)
+				if (polygon.getMaterial() != material)
 					continue;
 
-				const AlignedVector< uint32_t >& vertices = i->getVertices();
-
 				s << L"f";
-				for (AlignedVector< uint32_t >::const_reverse_iterator j = vertices.rbegin(); j != vertices.rend(); ++j)
+				const auto& vertices = polygon.getVertices();
+				for (auto it = vertices.rbegin(); it != vertices.rend(); ++it)
 				{
-					const Vertex& vertex = model->getVertex(*j);
+					const Vertex& vertex = model->getVertex(*it);
 
 					s << L" " << vertex.getPosition() + 1;
 					if (vertex.getTexCoord(1) != c_InvalidIndex)
@@ -200,15 +196,13 @@ bool ModelFormatObj::write(IStream* stream, const Model* model) const
 	}
 	else
 	{
-		const AlignedVector< Polygon >& polygons = model->getPolygons();
-		for (AlignedVector< Polygon >::const_iterator i = polygons.begin(); i != polygons.end(); ++i)
+		for (const auto& polygon : model->getPolygons())
 		{
-			const AlignedVector< uint32_t >& vertices = i->getVertices();
-
 			s << L"f";
-			for (AlignedVector< uint32_t >::const_reverse_iterator j = vertices.rbegin(); j != vertices.rend(); ++j)
+			const auto& vertices = polygon.getVertices();
+			for (auto it = vertices.rbegin(); it != vertices.rend(); ++it)
 			{
-				const Vertex& vertex = model->getVertex(*j);
+				const Vertex& vertex = model->getVertex(*it);
 
 				s << L" " << vertex.getPosition() + 1;
 				if (vertex.getTexCoord(0) != c_InvalidIndex)
