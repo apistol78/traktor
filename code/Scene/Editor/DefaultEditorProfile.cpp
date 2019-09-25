@@ -3,6 +3,7 @@
 #include "Scene/Editor/SceneEditorContext.h"
 #include "Core/Serialization/ISerializable.h"
 #include "Ui/Command.h"
+#include "World/Deferred/WorldRendererDeferred.h"
 #include "World/Entity/ExternalEntityData.h"
 
 // Resource factories
@@ -99,7 +100,7 @@ void DefaultEditorProfile::createEntityRenderers(
 {
 	outEntityRenderers.push_back(new world::ComponentEntityRenderer());
 	outEntityRenderers.push_back(new world::DecalRenderer(context->getRenderSystem()));
-	outEntityRenderers.push_back(new world::ProbeRenderer(context->getResourceManager(), context->getRenderSystem()));
+	outEntityRenderers.push_back(new world::ProbeRenderer(context->getResourceManager(), context->getRenderSystem(), type_of< world::WorldRendererDeferred >()));
 	outEntityRenderers.push_back(new world::LightRenderer());
 	outEntityRenderers.push_back(new world::GroupEntityRenderer());
 	outEntityRenderers.push_back(new weather::WeatherRenderer(primitiveRenderer));
