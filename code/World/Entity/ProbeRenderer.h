@@ -47,7 +47,8 @@ class T_DLLCLASS ProbeRenderer : public IEntityRenderer
 public:
 	ProbeRenderer(
 		resource::IResourceManager* resourceManager,
-		render::IRenderSystem* renderSystem
+		render::IRenderSystem* renderSystem,
+		const TypeInfo& worldRendererType
 	);
 
 	virtual const TypeInfoSet getRenderableTypes() const override final;

@@ -23,9 +23,10 @@ const int32_t c_faceSize = 128;
 	
 T_IMPLEMENT_RTTI_CLASS(L"traktor.world.ProbeCapturer", ProbeCapturer, Object)
 
-ProbeCapturer::ProbeCapturer(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem)
+ProbeCapturer::ProbeCapturer(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem, const TypeInfo& worldRendererType)
 :	m_resourceManager(resourceManager)
 ,	m_renderSystem(renderSystem)
+,	m_worldRendererType(worldRendererType)
 {
 }
 
@@ -63,7 +64,7 @@ void ProbeCapturer::build(
 	// Lazy create world renderer, need to access entity renderers.
 	if (!m_worldRenderer)
 	{
-		m_worldRenderer = new WorldRendererDeferred();
+		m_worldRenderer = mandatory_non_null_type_cast< world::IWorldRenderer* >(m_worldRendererType.createInstance());
 
 		world::WorldRenderSettings wrs;
 		wrs.viewNearZ = 0.01f;

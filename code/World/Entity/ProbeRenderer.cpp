@@ -61,11 +61,12 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.world.ProbeRenderer", ProbeRenderer, IEntityRen
 
 ProbeRenderer::ProbeRenderer(
 	resource::IResourceManager* resourceManager,
-	render::IRenderSystem* renderSystem
+	render::IRenderSystem* renderSystem,
+	const TypeInfo& worldRendererType
 )
 :	m_captureFace(0)
 {
-	m_probeCapturer = new ProbeCapturer(resourceManager, renderSystem);
+	m_probeCapturer = new ProbeCapturer(resourceManager, renderSystem, worldRendererType);
 	m_probeCapturer->create();
 
 	resourceManager->bind(c_probeShader, m_probeShader);
