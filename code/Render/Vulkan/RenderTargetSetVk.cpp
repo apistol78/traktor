@@ -87,6 +87,10 @@ bool RenderTargetSetVk::create(const RenderTargetSetCreateDesc& setDesc, const w
 		if (!m_depthTarget->create(setDesc, tag))
 			return false;
 	}
+	else if (setDesc.sharedDepthStencil != nullptr)
+	{
+		m_depthTarget = static_cast< RenderTargetSetVk* >(setDesc.sharedDepthStencil)->getDepthTargetVk();
+	}
 
 	m_setDesc = setDesc;
 	return true;
@@ -94,10 +98,19 @@ bool RenderTargetSetVk::create(const RenderTargetSetCreateDesc& setDesc, const w
 
 void RenderTargetSetVk::destroy()
 {
-	for (auto it = m_colorTargets.begin(); it != m_colorTargets.end(); ++it)
-		(*it)->destroy();
+	// Destroy color target textures.
+	for (auto colorTarget : m_colorTargets)
+	{
+		if (colorTarget)
+			colorTarget->destroy();
+	}
 	m_colorTargets.resize(0);
-	safeDestroy(m_depthTarget);
+
+	// Only destroy depth target texture if not being shared, else just release reference.
+	if (!m_setDesc.sharedDepthStencil)
+		safeDestroy(m_depthTarget);
+	else
+		m_depthTarget = nullptr;
 }
 
 int32_t RenderTargetSetVk::getWidth() const
