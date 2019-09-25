@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<object type="traktor.db.LocalInstanceMeta">
-	<guid>{1BCA1D09-83D0-974C-B2CE-032EA1F71B1B}</guid>
-	<primaryType>traktor.render.IrradianceProbeAsset</primaryType>
-	<blobs/>
-</object>

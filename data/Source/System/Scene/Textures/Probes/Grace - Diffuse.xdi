@@ -1,4 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<object type="traktor.render.IrradianceProbeAsset">
-	<fileName>$(TRAKTOR_HOME)/data/Assets/System/Textures/Probe - Grace.exr</fileName>
-</object>

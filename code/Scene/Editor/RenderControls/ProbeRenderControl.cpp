@@ -32,8 +32,6 @@
 #include "Render/VertexBuffer.h"
 #include "Render/VertexElement.h"
 #include "Render/Editor/Texture/CubeMap.h"
-#include "Render/Editor/Texture/IrradianceProbeAsset.h"
-#include "Render/Editor/Texture/RadianceProbeAsset.h"
 #include "Render/ImageProcess/ImageProcess.h"
 #include "Resource/IResourceManager.h"
 #include "Scene/Scene.h"
@@ -172,7 +170,6 @@ bool ProbeRenderControl::create(ui::Widget* parent, SceneEditorContext* context,
 	m_toolBar->addItem(new ui::ToolBarButton(L"Capture at origo", ui::Command(L"Scene.Editor.CaptureAtOrigo"), ui::ToolBarButton::BsText));
 	m_toolBar->addItem(new ui::ToolBarButton(L"Capture at selected", ui::Command(L"Scene.Editor.CaptureAtSelected"), ui::ToolBarButton::BsText));
 	m_toolBar->addItem(new ui::ToolBarButton(L"Save cubemap...", ui::Command(L"Scene.Editor.SaveCubeMap"), ui::ToolBarButton::BsText));
-	m_toolBar->addItem(new ui::ToolBarButton(L"Update probe...", ui::Command(L"Scene.Editor.UpdateProbe"), ui::ToolBarButton::BsText));
 	
 	Ref< ui::Container > containerIntensity = new ui::Container();
 	containerIntensity->create(m_toolBar, ui::WsNone, new ui::TableLayout(L"100,40", L"24", 2, 2));
@@ -437,54 +434,6 @@ bool ProbeRenderControl::handleCommand(const ui::Command& command)
 			log::info << L"Cube map saved successfully as \"" << fileName.getPathName() << L"\"." << Endl;
 		else
 			log::error << L"Unable to save cube map \"" << fileName.getPathName() << L"\"." << Endl;
-	}
-	else if (command == L"Scene.Editor.UpdateProbe")
-	{
-		editor::TypeBrowseFilter filter(makeTypeInfoSet<
-			render::IrradianceProbeAsset,
-			render::RadianceProbeAsset
-		>());
-		Ref< db::Instance > probeAssetInstance = m_context->getEditor()->browseInstance(&filter);
-		if (!probeAssetInstance)
-			return true;
-
-		if (!probeAssetInstance->checkout())
-			return true;
-
-		Ref< IStream > dataStream = probeAssetInstance->writeData(L"Data");
-		if (!dataStream)
-		{
-			probeAssetInstance->revert();
-			return true;
-		}
-
-		Ref< drawing::Image > cm = new drawing::Image(drawing::PixelFormat::getRGBAF32(), 6 * c_saveFaceSize, c_saveFaceSize);
-		for (int32_t i = 0; i < 6; ++i)
-		{
-			Ref< drawing::Image > faceImage = m_cubeImages[i]->clone();
-
-			drawing::ScaleFilter scaleFilter(c_saveFaceSize, c_saveFaceSize, drawing::ScaleFilter::MnAverage, drawing::ScaleFilter::MgLinear);
-			faceImage->apply(&scaleFilter);
-
-			drawing::TransformFilter transformFilter(Color4f(2.0f, 2.0f, 2.0f, 1.0f), Color4f(0.0f, 0.0f, 0.0f, 0.0f));
-			faceImage->apply(&transformFilter);
-
-			drawing::GammaFilter gammaFilter(2.2f);
-			faceImage->apply(&gammaFilter);
-
-			cm->copy(faceImage, i * c_saveFaceSize, 0, 0, 0, c_saveFaceSize, c_saveFaceSize);
-		}
-		if (!cm->save(dataStream, L"tri"))
-		{
-			probeAssetInstance->revert();
-			return true;
-		}
-
-		probeAssetInstance->commit();
-
-		m_context->getEditor()->buildAsset(probeAssetInstance->getGuid(), false);
-
-		log::info << L"Probe \"" << probeAssetInstance->getGuid().format() << L"\" updated successfully." << Endl;
 	}
 	else
 		return false;
