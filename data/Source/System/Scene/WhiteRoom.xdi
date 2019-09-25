@@ -126,12 +126,12 @@
 				<item type="traktor.world.ComponentEntityData">
 					<name>Reflections</name>
 					<transform>
-						<translation>0, 0, 0, 0</translation>
+						<translation>0, 10, 0, 0</translation>
 						<rotation>0, 0, 0, 1</rotation>
 					</transform>
 					<components>
 						<item type="traktor.world.ProbeComponentData">
-							<texture>{67B5BA16-0AA5-EC48-8279-E98FD0EE663C}</texture>
+							<texture>{00000000-0000-0000-0000-000000000000}</texture>
 							<intensity>1</intensity>
 							<local>false</local>
 							<volume>
