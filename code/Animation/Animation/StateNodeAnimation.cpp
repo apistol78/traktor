@@ -55,7 +55,8 @@ void StateNodeAnimation::evaluate(
 	float time = context.getTime();
 	int32_t indexHint = context.getIndexHint();
 
-	m_animation->getPose(time, m_linearInterpolation, indexHint, outPose);
+	if (m_animation)
+		m_animation->getPose(time, m_linearInterpolation, indexHint, outPose);
 
 	context.setIndexHint(indexHint);
 }
