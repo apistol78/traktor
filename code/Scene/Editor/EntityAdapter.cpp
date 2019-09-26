@@ -437,8 +437,8 @@ void EntityAdapter::drawGuides(render::PrimitiveRenderer* primitiveRenderer) con
 	if (m_entityEditor)
 		m_entityEditor->drawGuide(primitiveRenderer);
 
-	for (RefArray< IComponentEditor >::const_iterator i = m_componentEditors.begin(); i != m_componentEditors.end(); ++i)
-		(*i)->drawGuide(primitiveRenderer);
+	for (auto componentEditor : m_componentEditors)
+		componentEditor->drawGuide(primitiveRenderer);
 }
 
 	}

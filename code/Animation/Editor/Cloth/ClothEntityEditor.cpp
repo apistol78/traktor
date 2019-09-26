@@ -33,7 +33,7 @@ void ClothEntityEditor::drawGuide(render::PrimitiveRenderer* primitiveRenderer) 
 {
 	if (getContext()->shouldDrawGuide(L"Animation.Cloth"))
 	{
-		Ref< ClothEntity > clothEntity = checked_type_cast< ClothEntity* >(getEntityAdapter()->getEntity());
+		ClothEntity* clothEntity = checked_type_cast< ClothEntity* >(getEntityAdapter()->getEntity());
 
 		Aabb3 boundingBox = clothEntity->getBoundingBox();
 		Transform transform;
@@ -44,24 +44,23 @@ void ClothEntityEditor::drawGuide(render::PrimitiveRenderer* primitiveRenderer) 
 
 		if (getEntityAdapter()->isSelected())
 		{
-			const AlignedVector< ClothEntity::Node >& nodes = clothEntity->getNodes();
-			const AlignedVector< ClothEntity::Edge >& edges = clothEntity->getEdges();
+			const auto& nodes = clothEntity->getNodes();
 
-			for (AlignedVector< ClothEntity::Edge >::const_iterator i = edges.begin(); i != edges.end(); ++i)
+			for (const auto& edge : clothEntity->getEdges())
 			{
 				primitiveRenderer->drawLine(
-					nodes[i->index[0]].position[0],
-					nodes[i->index[1]].position[0],
+					nodes[edge.index[0]].position[0],
+					nodes[edge.index[1]].position[0],
 					Color4ub(255, 255, 255)
 				);
 			}
 
-			for (AlignedVector< ClothEntity::Node >::const_iterator i = nodes.begin(); i != nodes.end(); ++i)
+			for (const auto& node : nodes)
 			{
-				if (i->invMass <= Scalar(FUZZY_EPSILON))
+				if (node.invMass <= Scalar(FUZZY_EPSILON))
 				{
 					primitiveRenderer->drawSolidAabb(
-						i->position[0],
+						node.position[0],
 						Vector4(0.1f, 0.05f, 0.05f, 0.05f),
 						Color4ub(255, 0, 255, 128)
 					);

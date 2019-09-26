@@ -51,7 +51,6 @@ private:
 	Ref< ui::CheckBox > m_checkInvertPanY;
 	Ref< ui::CheckBox > m_checkBuildWhenDrop;
 	Ref< ui::CheckBox > m_checkBuildNavMesh;
-	Ref< ui::CheckBox > m_checkBuildLighting;
 	Ref< ui::CheckBox > m_checkBuildOcclusion;
 
 	void updateValues();

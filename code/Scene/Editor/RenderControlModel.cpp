@@ -144,12 +144,12 @@ void RenderControlModel::eventButtonUp(ISceneRenderControl* renderControl, ui::W
 					context->selectAllEntities(false);
 
 				// Remove selection if ctrl is begin held.
-				for (RefArray< EntityAdapter >::iterator i = intersectingEntities.begin(); i != intersectingEntities.end(); ++i)
+				for (auto intersectingEntity : intersectingEntities)
 				{
 					if ((event->getKeyState() & ui::KsControl) == 0)
-						context->selectEntity(*i, true);
+						context->selectEntity(intersectingEntity, true);
 					else
-						context->selectEntity(*i, false);
+						context->selectEntity(intersectingEntity, false);
 				}
 
 				context->raiseSelect();

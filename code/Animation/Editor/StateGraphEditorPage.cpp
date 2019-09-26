@@ -177,15 +177,12 @@ bool StateGraphEditorPage::handleCommand(const ui::Command& command)
 	else if (command == L"Editor.PropertiesChanged")
 	{
 		// Refresh editor nodes.
-		RefArray< ui::Node >& editorNodes = m_editorGraph->getNodes();
-		for (RefArray< ui::Node >::const_iterator i = editorNodes.begin(); i != editorNodes.end(); ++i)
+		for (auto node : m_editorGraph->getNodes())
 		{
-			Ref< ui::Node > node = *i;
-
-			Ref< StateNode > state = node->getData< StateNode >(L"STATE");
+			StateNode* state = node->getData< StateNode >(L"STATE");
 			node->setTitle(state->getName());
 
-			const std::pair< int, int >& position = state->getPosition();
+			const auto& position = state->getPosition();
 			node->setPosition(ui::Point(
 				position.first,
 				position.second
@@ -314,75 +311,69 @@ bool StateGraphEditorPage::handleCommand(const ui::Command& command)
 		RefArray< ui::Edge > edges;
 		m_editorGraph->getConnectedEdges(nodes, false, edges);
 
-		for (RefArray< ui::Edge >::iterator i = edges.begin(); i != edges.end(); ++i)
+		for (auto edge : edges)
 		{
-			Ref< ui::Edge > edge = *i;
-			Ref< Transition > transition = edge->getData< Transition >(L"TRANSITION");
-
-			m_editorGraph->removeEdge(edge);
+			Transition* transition = edge->getData< Transition >(L"TRANSITION");
 			m_stateGraph->removeTransition(transition);
+			m_editorGraph->removeEdge(edge);
 		}
 
 		// Then remove all states.
-		for (RefArray< ui::Node >::iterator i = nodes.begin(); i != nodes.end(); ++i)
+		for (auto node : nodes)
 		{
-			Ref< ui::Node > node = *i;
-			Ref< StateNode > state = node->getData< StateNode >(L"STATE");
-
-			m_editorGraph->removeNode(node);
+			StateNode* state = node->getData< StateNode >(L"STATE");
 			m_stateGraph->removeState(state);
+			m_editorGraph->removeNode(node);
 		}
 
 		bindStateNodes();
 		updateGraph();
 		updatePreviewConditions();
 	}
-	//else if (command == L"Editor.Undo")
-	//{
-	//	// Restore last saved step.
-	//	if (m_undoStack->canUndo())
-	//	{
-	//		Ref< ShaderGraph > shaderGraph = dynamic_type_cast< ShaderGraph* >(m_undoStack->undo(m_shaderGraph));
-	//		T_ASSERT(shaderGraph);
+	else if (command == L"Editor.Undo")
+	{
+		if (m_document->undo())
+		{
+			Ref< StateGraph > stateGraph = m_document->getObject< StateGraph >(0);
+			T_ASSERT(stateGraph);
 
-	//		m_shaderGraph = shaderGraph;
+			m_stateGraph = stateGraph;
 
-	//		m_editorGraph->removeAllEdges();
-	//		m_editorGraph->removeAllNodes();
+			m_editorGraph->removeAllEdges();
+			m_editorGraph->removeAllNodes();
 
-	//		createEditorNodes(
-	//			m_shaderGraph->getNodes(),
-	//			m_shaderGraph->getEdges()
-	//		);
+			createEditorNodes(
+				m_stateGraph->getStates(),
+				m_stateGraph->getTransitions()
+			);
 
-	//		updateGraph();
+			bindStateNodes();
+			updateGraph();
+			updatePreviewConditions();
+		}
+	}
+	else if (command == L"Editor.Redo")
+	{
+		if (m_document->redo())
+		{
+			Ref< StateGraph > stateGraph = m_document->getObject< StateGraph >(0);
+			T_ASSERT(stateGraph);
 
-	//		m_editor->setPropertyObject(0);
-	//	}
-	//}
-	//else if (command == L"Editor.Redo")
-	//{
-	//	// Redo last undone step.
-	//	if (m_undoStack->canRedo())
-	//	{
-	//		Ref< ShaderGraph > shaderGraph = dynamic_type_cast< ShaderGraph* >(m_undoStack->redo(m_shaderGraph));
-	//		T_ASSERT(shaderGraph);
+			m_stateGraph = stateGraph;
 
-	//		m_shaderGraph = shaderGraph;
+			m_editorGraph->removeAllEdges();
+			m_editorGraph->removeAllNodes();
 
-	//		m_editorGraph->removeAllEdges();
-	//		m_editorGraph->removeAllNodes();
+			createEditorNodes(
+				m_stateGraph->getStates(),
+				m_stateGraph->getTransitions()
+			);
 
-	//		createEditorNodes(
-	//			m_shaderGraph->getNodes(),
-	//			m_shaderGraph->getEdges()
-	//		);
-
-	//		updateGraph();
-
-	//		m_editor->setPropertyObject(0);
-	//	}
-	//}
+			bindStateNodes();
+			updateGraph();
+			updatePreviewConditions();
+		}
+	}
 	else if (command == L"StateGraph.Editor.SetRoot")
 	{
 		RefArray< ui::Node > selectedNodes;
@@ -393,10 +384,12 @@ bool StateGraphEditorPage::handleCommand(const ui::Command& command)
 
 			m_stateGraph->setRootState(state);
 
-			//// Update color to show which node is root.
-			//const RefArray< ui::Node >& nodes = m_editorGraph->getNodes();
-			//for (RefArray< ui::Node >::const_iterator i = nodes.begin(); i != nodes.end(); ++i)
-			//	(*i)->setColor(*i == selectedNodes.front() ? Color4ub(128, 255, 128) : Color4ub(255, 255, 255));
+			// Update color to show which node is root.
+			for (auto node : m_editorGraph->getNodes())
+				node->setShape(new ui::DefaultNodeShape(
+					m_editorGraph,
+					node == selectedNodes.front() ? ui::DefaultNodeShape::StDefault : ui::DefaultNodeShape::StExternal
+				));
 		}
 	}
 	else if (command == L"StateGraph.Editor.AlignLeft")
@@ -449,7 +442,6 @@ bool StateGraphEditorPage::handleCommand(const ui::Command& command)
 		return false;
 
 	m_editorGraph->update();
-
 	return true;
 }
 
@@ -459,56 +451,52 @@ void StateGraphEditorPage::handleDatabaseEvent(db::Database* database, const Gui
 
 void StateGraphEditorPage::bindStateNodes()
 {
-	T_ASSERT(m_stateGraph);
-
-	const RefArray< StateNode >& states = m_stateGraph->getStates();
-	for (RefArray< StateNode >::const_iterator i = states.begin(); i != states.end(); ++i)
-		(*i)->bind(m_previewControl->getResourceManager());
+	for (auto state : m_stateGraph->getStates())
+		state->bind(m_previewControl->getResourceManager());
 }
 
 void StateGraphEditorPage::createEditorNodes(const RefArray< StateNode >& states, const RefArray< Transition >& transitions)
 {
-	std::map< Ref< StateNode >, Ref< ui::Node > > nodeMap;
+	std::map< const StateNode*, ui::Node* > nodeMap;
 
 	// Create editor nodes for each state.
-	for (RefArray< StateNode >::const_iterator i = states.begin(); i != states.end(); ++i)
+	for (auto state : states)
 	{
-		Ref< StateNode > state = *i;
 		Ref< ui::Node > node = createEditorNode(state);
 		m_editorGraph->addNode(node);
 		nodeMap[state] = node;
 	}
 
 	// Create editor edges for each transition.
-	for (RefArray< Transition >::const_iterator i = transitions.begin(); i != transitions.end(); ++i)
+	for (auto transition : transitions)
 	{
-		Ref< Transition > transition = *i;
+		StateNode* from = transition->from();
+		StateNode* to = transition->to();
 
-		Ref< StateNode > from = transition->from();
-		Ref< StateNode > to = transition->to();
-
-		Ref< ui::Node > fromNode = nodeMap[from];
-		Ref< ui::Node > toNode = nodeMap[to];
+		ui::Node* fromNode = nodeMap[from];
+		ui::Node* toNode = nodeMap[to];
 
 		if (!fromNode || !toNode)
 			continue;
 
-		Ref< ui::Pin > fromPin = fromNode->findOutputPin(L"Leave");
+		ui::Pin* fromPin = fromNode->findOutputPin(L"Leave");
 		T_ASSERT(fromPin);
 
-		Ref< ui::Pin > toPin = toNode->findInputPin(L"Enter");
+		ui::Pin* toPin = toNode->findInputPin(L"Enter");
 		T_ASSERT(toPin);
 
 		Ref< ui::Edge > transitionEdge = new ui::Edge(fromPin, toPin);
 		transitionEdge->setData(L"TRANSITION", transition);
-
 		m_editorGraph->addEdge(transitionEdge);
 	}
 }
 
 Ref< ui::Node > StateGraphEditorPage::createEditorNode(StateNode* state)
 {
-	Ref< ui::INodeShape > shape = new ui::DefaultNodeShape(m_editorGraph, ui::DefaultNodeShape::StDefault);
+	Ref< ui::INodeShape > shape = new ui::DefaultNodeShape(
+		m_editorGraph,
+		m_stateGraph->getRootState() == state ? ui::DefaultNodeShape::StDefault : ui::DefaultNodeShape::StExternal
+	);
 
 	Ref< ui::Node > node = new ui::Node(
 		state->getName(),
@@ -519,9 +507,7 @@ Ref< ui::Node > StateGraphEditorPage::createEditorNode(StateNode* state)
 		),
 		shape
 	);
-	//node->setColor(m_stateGraph->getRootState() == state ? Color4ub(128, 255, 128) : Color4ub(255, 255, 255));
 	node->setData(L"STATE", state);
-
 	node->createInputPin(L"Enter", true);
 	node->createOutputPin(L"Leave");
 
@@ -551,10 +537,9 @@ void StateGraphEditorPage::updatePreviewConditions()
 	std::map< std::wstring, bool > conditions;
 
 	// Collect all condition variables.
-	const RefArray< Transition >& transitions = m_stateGraph->getTransitions();
-	for (RefArray< Transition >::const_iterator i = transitions.begin(); i != transitions.end(); ++i)
+	for (auto transition : m_stateGraph->getTransitions())
 	{
-		std::wstring c = (*i)->getCondition();
+		std::wstring c = transition->getCondition();
 		if (!c.empty())
 		{
 			if (c[0] == L'!')
@@ -577,7 +562,7 @@ void StateGraphEditorPage::updatePreviewConditions()
 		m_previewConditions->getFirstChild()->destroy();
 
 	// Recreate checkboxes.
-	for (std::map< std::wstring, bool >::const_iterator i = conditions.begin(); i != conditions.end(); ++i)
+	for (auto i = conditions.begin(); i != conditions.end(); ++i)
 	{
 		Ref< ui::CheckBox > cb = new ui::CheckBox();
 		cb->create(m_previewConditions, i->first, i->second);
@@ -611,9 +596,7 @@ void StateGraphEditorPage::eventButtonDown(ui::MouseButtonDownEvent* event)
 	const ui::Command& command = selected->getCommand();
 
 	if (command == L"StateGraph.Editor.Create")
-	{
 		createState(event->getPosition() - m_editorGraph->getOffset());
-	}
 	else
 		handleCommand(command);
 }
@@ -625,7 +608,7 @@ void StateGraphEditorPage::eventSelect(ui::SelectionChangeEvent* event)
 
 	if (m_editorGraph->getSelectedNodes(nodes) == 1)
 	{
-		Ref< StateNode > state = nodes[0]->getData< StateNode >(L"STATE");
+		StateNode* state = nodes[0]->getData< StateNode >(L"STATE");
 		T_ASSERT(state);
 
 		m_site->setPropertyObject(state);
@@ -633,7 +616,7 @@ void StateGraphEditorPage::eventSelect(ui::SelectionChangeEvent* event)
 	}
 	else if (m_editorGraph->getSelectedEdges(edges) == 1)
 	{
-		Ref< Transition > transition = edges[0]->getData< Transition >(L"TRANSITION");
+		Transition* transition = edges[0]->getData< Transition >(L"TRANSITION");
 		T_ASSERT(transition);
 
 		m_site->setPropertyObject(transition);
@@ -648,11 +631,11 @@ void StateGraphEditorPage::eventSelect(ui::SelectionChangeEvent* event)
 
 void StateGraphEditorPage::eventNodeMoved(ui::NodeMovedEvent* event)
 {
-	Ref< ui::Node > node = event->getNode();
+	ui::Node* node = event->getNode();
 	T_ASSERT(node);
 
 	// Get state from editor node.
-	Ref< StateNode > state = node->getData< StateNode >(L"STATE");
+	StateNode* state = node->getData< StateNode >(L"STATE");
 	T_ASSERT(state);
 
 	ui::Point position = node->getPosition();
@@ -671,18 +654,18 @@ void StateGraphEditorPage::eventNodeMoved(ui::NodeMovedEvent* event)
 
 void StateGraphEditorPage::eventEdgeConnect(ui::EdgeConnectEvent* event)
 {
-	Ref< ui::Edge > edge = event->getEdge();
+	ui::Edge* edge = event->getEdge();
 
-	Ref< ui::Pin > leavePin = edge->getSourcePin();
+	ui::Pin* leavePin = edge->getSourcePin();
 	T_ASSERT(leavePin);
 
-	Ref< ui::Pin > enterPin = edge->getDestinationPin();
+	ui::Pin* enterPin = edge->getDestinationPin();
 	T_ASSERT(enterPin);
 
-	Ref< StateNode > leaveState = leavePin->getNode()->getData< StateNode >(L"STATE");
+	StateNode* leaveState = leavePin->getNode()->getData< StateNode >(L"STATE");
 	T_ASSERT(leaveState);
 
-	Ref< StateNode > enterState = enterPin->getNode()->getData< StateNode >(L"STATE");
+	StateNode* enterState = enterPin->getNode()->getData< StateNode >(L"STATE");
 	T_ASSERT(enterState);
 
 	Ref< Transition > transition = new Transition(leaveState, enterState);
@@ -698,7 +681,7 @@ void StateGraphEditorPage::eventEdgeDisconnect(ui::EdgeDisconnectEvent* event)
 {
 	Ref< ui::Edge > edge = event->getEdge();
 
-	Ref< Transition > transition = checked_type_cast< Transition* >(edge->getData(L"TRANSITION"));
+	Transition* transition = checked_type_cast< Transition* >(edge->getData(L"TRANSITION"));
 	m_stateGraph->removeTransition(transition);
 
 	updateGraph();
