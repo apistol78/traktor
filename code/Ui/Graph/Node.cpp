@@ -118,6 +118,17 @@ bool Node::isSelected() const
 	return m_selected;
 }
 
+void Node::setShape(INodeShape* shape)
+{
+	m_shape = shape;
+	m_size = m_shape->calculateSize(this);
+}
+
+INodeShape* Node::getShape() const
+{
+	return m_shape;
+}
+
 Ref< Pin > Node::createInputPin(const std::wstring& name, bool mandatory)
 {
 	return createInputPin(name, name, mandatory);

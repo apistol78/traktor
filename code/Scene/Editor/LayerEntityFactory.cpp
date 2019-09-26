@@ -30,13 +30,11 @@ const TypeInfoSet LayerEntityFactory::getEntityComponentTypes() const
 Ref< world::Entity > LayerEntityFactory::createEntity(const world::IEntityBuilder* builder, const world::EntityData& entityData) const
 {
 	const world::LayerEntityData* layerData = checked_type_cast< const world::LayerEntityData*, false >(&entityData);
-
 	Ref< world::GroupEntity > groupEntity = new world::GroupEntity(layerData->getTransform());
 
-	const RefArray< world::EntityData >& childEntityData = layerData->getEntityData();
-	for (RefArray< world::EntityData >::const_iterator i = childEntityData.begin(); i != childEntityData.end(); ++i)
+	for (auto childEntityData : layerData->getEntityData())
 	{
-		Ref< world::Entity > childEntity = builder->create(*i);
+		Ref< world::Entity > childEntity = builder->create(childEntityData);
 		if (childEntity)
 			groupEntity->addEntity(childEntity);
 	}

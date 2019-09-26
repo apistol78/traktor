@@ -29,6 +29,7 @@ void EditorProfile::getGuideDrawIds(
 	std::set< std::wstring >& outIds
 ) const
 {
+	outIds.insert(L"Shape.Solids");
 }
 
 void EditorProfile::createEditorPlugins(

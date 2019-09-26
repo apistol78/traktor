@@ -83,9 +83,9 @@ void SceneEditorPageFactory::getCommands(std::list< ui::Command >& outCommands) 
 	// Add profile commands.
 	TypeInfoSet profileTypes;
 	type_of< ISceneEditorProfile >().findAllOf(profileTypes);
-	for (TypeInfoSet::const_iterator i = profileTypes.begin(); i != profileTypes.end(); ++i)
+	for (auto profileType : profileTypes)
 	{
-		Ref< ISceneEditorProfile > profile = dynamic_type_cast< ISceneEditorProfile* >((*i)->createInstance());
+		Ref< ISceneEditorProfile > profile = dynamic_type_cast< ISceneEditorProfile* >(profileType->createInstance());
 		if (profile)
 			profile->getCommands(outCommands);
 	}

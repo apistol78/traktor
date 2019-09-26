@@ -26,8 +26,8 @@
 #include "Ui/Itf/IWidget.h"
 #include "World/WorldEntityRenderers.h"
 #include "World/WorldRenderSettings.h"
+#include "World/Deferred/WorldRendererDeferred.h"
 #include "World/Entity/ComponentEntity.h"
-#include "World/Forward/WorldRendererForward.h"
 
 namespace traktor
 {
@@ -109,12 +109,7 @@ void AnimationPreviewControl::destroy()
 
 	safeDestroy(m_primitiveRenderer);
 	safeDestroy(m_resourceManager);
-
-	if (m_renderView)
-	{
-		m_renderView->close();
-		m_renderView = 0;
-	}
+	safeClose(m_renderView);
 
 	Widget::destroy();
 }
@@ -146,7 +141,7 @@ void AnimationPreviewControl::updateSettings()
 
 void AnimationPreviewControl::updatePreview()
 {
-	m_entity = 0;
+	m_entity = nullptr;
 
 	if (!m_mesh)
 		return;
@@ -156,20 +151,20 @@ void AnimationPreviewControl::updatePreview()
 	{
 		jointRemap.resize(m_skeleton->getJointCount());
 
-		const std::map< std::wstring, int32_t >& jointMap = m_mesh->getJointMap();
+		const auto& jointMap = m_mesh->getJointMap();
 		for (uint32_t i = 0; i < m_skeleton->getJointCount(); ++i)
 		{
 			const Joint* joint = m_skeleton->getJoint(i);
 			T_ASSERT(joint);
 
-			std::map< std::wstring, int32_t >::const_iterator j = jointMap.find(joint->getName());
-			if (j == jointMap.end())
+			auto it = jointMap.find(joint->getName());
+			if (it == jointMap.end())
 			{
 				jointRemap[i] = -1;
 				continue;
 			}
 
-			jointRemap[i] = j->second;
+			jointRemap[i] = it->second;
 		}
 	}
 
@@ -213,7 +208,7 @@ void AnimationPreviewControl::updateWorldRenderer()
 	wcd.height = sz.cy;
 	wcd.frameCount = 1;
 
-	Ref< world::IWorldRenderer > worldRenderer = new world::WorldRendererForward();
+	Ref< world::IWorldRenderer > worldRenderer = new world::WorldRendererDeferred();
 	if (worldRenderer->create(
 		m_resourceManager,
 		m_renderSystem,

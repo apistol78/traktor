@@ -33,7 +33,8 @@ void AnimationEditorProfile::getGuideDrawIds(
 {
 	outIds.insert(L"Animation.Cloth");
 	outIds.insert(L"Animation.Path");
-	outIds.insert(L"Animation.Skeleton");
+	outIds.insert(L"Animation.Skeleton.Bind");
+	outIds.insert(L"Animation.Skeleton.Pose");
 }
 
 void AnimationEditorProfile::createEditorPlugins(

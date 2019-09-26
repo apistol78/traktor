@@ -1,12 +1,13 @@
 #include "Core/Math/Winding3.h"
 #include "Model/Model.h"
 #include "Render/PrimitiveRenderer.h"
+#include "Scene/Editor/SceneEditorContext.h"
+#include "Scene/Editor/EntityAdapter.h"
 #include "Shape/Editor/Solid/PrimitiveEntity.h"
 #include "Shape/Editor/Solid/PrimitiveEntityData.h"
 #include "Shape/Editor/Solid/SolidEntity.h"
 #include "Shape/Editor/Solid/SolidEntityData.h"
 #include "Shape/Editor/Solid/SolidEntityEditor.h"
-#include "Scene/Editor/EntityAdapter.h"
 
 namespace traktor
 {
@@ -60,37 +61,41 @@ void SolidEntityEditor::drawGuide(render::PrimitiveRenderer* primitiveRenderer) 
 	if (!solidEntity)
 		return;
 
-	Winding3 winding;
-
-	RefArray< PrimitiveEntity > primitiveEntities;
-	solidEntity->getEntitiesOf< PrimitiveEntity >(primitiveEntities);
-	for (auto primitiveEntity : primitiveEntities)
+	if (getContext()->shouldDrawGuide(L"Shape.Solids"))
 	{
-		const model::Model* model = primitiveEntity->getModel();
-		if (!model)
-			continue;
+		Winding3 winding;
 
-		const auto& vertices = model->getVertices();
-		const auto& positions = model->getPositions();
+		RefArray< PrimitiveEntity > primitiveEntities;
+		solidEntity->getEntitiesOf< PrimitiveEntity >(primitiveEntities);
 
-		for (const auto& polygon : model->getPolygons())
+		for (auto primitiveEntity : primitiveEntities)
 		{
-			winding.clear();
-			for (uint32_t i = 0; i < polygon.getVertexCount(); ++i)
+			const model::Model* model = primitiveEntity->getModel();
+			if (!model)
+				continue;
+
+			const auto& vertices = model->getVertices();
+			const auto& positions = model->getPositions();
+
+			for (const auto& polygon : model->getPolygons())
 			{
-				const auto& vertex = vertices[polygon.getVertex(i)];
-				const auto& position = positions[vertex.getPosition()];
-				winding.push(position);
+				winding.clear();
+				for (uint32_t i = 0; i < polygon.getVertexCount(); ++i)
+				{
+					const auto& vertex = vertices[polygon.getVertex(i)];
+					const auto& position = positions[vertex.getPosition()];
+					winding.push(position);
+				}
+				for (uint32_t i = 0; i < winding.size(); ++i)
+				{
+					uint32_t j = (i + 1) % winding.size();
+					primitiveRenderer->drawLine(
+						primitiveEntity->getTransform() * winding[i],
+						primitiveEntity->getTransform() * winding[j],
+						Color4ub(180, 180, 255, 100)
+					);
+				}			
 			}
-			for (uint32_t i = 0; i < winding.size(); ++i)
-			{
-				uint32_t j = (i + 1) % winding.size();
-				primitiveRenderer->drawLine(
-					primitiveEntity->getTransform() * winding[i],
-					primitiveEntity->getTransform() * winding[j],
-					Color4ub(180, 180, 255, 100)
-				);
-			}			
 		}
 	}
 }

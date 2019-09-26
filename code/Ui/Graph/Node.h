@@ -68,6 +68,10 @@ public:
 
 	bool isSelected() const;
 
+	void setShape(INodeShape* shape);
+
+	INodeShape* getShape() const;
+
 	Ref< Pin > createInputPin(const std::wstring& name, bool mandatory);
 
 	Ref< Pin > createInputPin(const std::wstring& name, const std::wstring& label, bool mandatory);

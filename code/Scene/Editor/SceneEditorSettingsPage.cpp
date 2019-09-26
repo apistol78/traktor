@@ -86,10 +86,6 @@ bool SceneEditorSettingsPage::create(ui::Container* parent, const PropertyGroup*
 	m_checkBuildNavMesh->create(m_container, i18n::Text(L"SCENE_EDITOR_SETTINGS_BUILD_NAVMESH"));
 	m_checkBuildNavMesh->setChecked(settings->getProperty< bool >(L"NavMeshPipeline.Build", true));
 
-	m_checkBuildLighting = new ui::CheckBox();
-	m_checkBuildLighting->create(m_container, i18n::Text(L"SCENE_EDITOR_SETTINGS_BUILD_LIGHTING"));
-	m_checkBuildLighting->setChecked(settings->getProperty< bool >(L"IlluminatePipeline.Build", true));
-
 	m_checkBuildOcclusion = new ui::CheckBox();
 	m_checkBuildOcclusion->create(m_container, i18n::Text(L"SCENE_EDITOR_SETTINGS_BUILD_OCCLUSION"));
 	m_checkBuildOcclusion->setChecked(settings->getProperty< bool >(L"OcclusionPipeline.Build", true));
@@ -100,10 +96,9 @@ bool SceneEditorSettingsPage::create(ui::Container* parent, const PropertyGroup*
 
 	TypeInfoSet worldRendererTypes;
 	type_of< world::IWorldRenderer >().findAllOf(worldRendererTypes, false);
-
-	for (TypeInfoSet::const_iterator i = worldRendererTypes.begin(); i != worldRendererTypes.end(); ++i)
+	for (auto worldRendererType : worldRendererTypes)
 	{
-		std::wstring name = (*i)->getName();
+		std::wstring name = worldRendererType->getName();
 		int32_t index = m_dropWorldRenderer->add(name);
 		if (name == worldRendererTypeName)
 			m_dropWorldRenderer->select(index);
@@ -126,7 +121,6 @@ bool SceneEditorSettingsPage::apply(PropertyGroup* settings)
 	settings->setProperty< PropertyBoolean >(L"SceneEditor.InvertPanY", m_checkInvertPanY->isChecked());
 	settings->setProperty< PropertyBoolean >(L"SceneEditor.BuildWhenDrop", m_checkBuildWhenDrop->isChecked());
 	settings->setProperty< PropertyBoolean >(L"NavMeshPipeline.Build", m_checkBuildNavMesh->isChecked());
-	settings->setProperty< PropertyBoolean >(L"IlluminatePipeline.Build", m_checkBuildLighting->isChecked());
 	settings->setProperty< PropertyBoolean >(L"OcclusionPipeline.Build", m_checkBuildOcclusion->isChecked());
 	return true;
 }

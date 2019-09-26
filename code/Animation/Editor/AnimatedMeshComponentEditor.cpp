@@ -27,7 +27,10 @@ void AnimatedMeshComponentEditor::drawGuide(render::PrimitiveRenderer* primitive
 	const AnimatedMeshComponentData* animatedMeshComponentData = checked_type_cast< const AnimatedMeshComponentData* >(m_componentData);
 	const AnimatedMeshComponent* animatedMeshComponent = dynamic_type_cast< const AnimatedMeshComponent* >(m_entityAdapter->getComponent< AnimatedMeshComponent >());
 
-	if (m_context->shouldDrawGuide(L"Animation.Skeleton"))
+	if (
+		m_context->shouldDrawGuide(L"Animation.Skeleton.Bind") ||
+		m_context->shouldDrawGuide(L"Animation.Skeleton.Pose")
+	)
 	{
 		primitiveRenderer->pushWorld(m_entityAdapter->getTransform().toMatrix44());
 		primitiveRenderer->pushDepthState(false, false, false);
@@ -36,52 +39,56 @@ void AnimatedMeshComponentEditor::drawGuide(render::PrimitiveRenderer* primitive
 		{
 			const resource::Proxy< Skeleton >& skeleton = animatedMeshComponent->getSkeleton();
 
-#if 0
-			// Draw bind skeleton.
-			const auto& jointTransforms = animatedEntity->getJointTransforms();
-			if (jointTransforms.size() == skeleton->getJointCount())
+			if (m_context->shouldDrawGuide(L"Animation.Skeleton.Bind"))
 			{
-				const Color4ub color(0, 255, 0, 255);
-				for (uint32_t i = 0; i < skeleton->getJointCount(); ++i)
+				// Draw bind skeleton.
+				const auto& jointTransforms = animatedMeshComponent->getJointTransforms();
+				if (jointTransforms.size() == skeleton->getJointCount())
 				{
-					const Joint* joint = skeleton->getJoint(i);
-					primitiveRenderer->drawWireFrame(jointTransforms[i].toMatrix44(), joint->getRadius() * 4.0f);
-					if (joint->getParent() >= 0)
+					const Color4ub color(0, 255, 0, 255);
+					for (uint32_t i = 0; i < skeleton->getJointCount(); ++i)
 					{
-						const Joint* parent = skeleton->getJoint(joint->getParent());
-						T_ASSERT(parent != nullptr);
+						const Joint* joint = skeleton->getJoint(i);
+						primitiveRenderer->drawWireFrame(jointTransforms[i].toMatrix44(), joint->getRadius() * 4.0f);
+						if (joint->getParent() >= 0)
+						{
+							const Joint* parent = skeleton->getJoint(joint->getParent());
+							T_ASSERT(parent != nullptr);
 
-						primitiveRenderer->drawLine(
-							jointTransforms[joint->getParent()].translation(),
-							jointTransforms[i].translation(),
-							2.0f,
-							color
-						);
+							primitiveRenderer->drawLine(
+								jointTransforms[joint->getParent()].translation(),
+								jointTransforms[i].translation(),
+								2.0f,
+								color
+							);
+						}
 					}
 				}
 			}
-#endif
 
-			// Draw current pose.
-			AlignedVector< Transform > poseTransforms = animatedMeshComponent->getPoseTransforms();
-			if (poseTransforms.size() == skeleton->getJointCount())
+			if (m_context->shouldDrawGuide(L"Animation.Skeleton.Pose"))
 			{
-				const Color4ub color(255, 255, 0, 255);
-				for (uint32_t i = 0; i < skeleton->getJointCount(); ++i)
+				// Draw current pose.
+				AlignedVector< Transform > poseTransforms = animatedMeshComponent->getPoseTransforms();
+				if (poseTransforms.size() == skeleton->getJointCount())
 				{
-					const Joint* joint = skeleton->getJoint(i);
-					primitiveRenderer->drawWireFrame(poseTransforms[i].toMatrix44(), joint->getRadius() * 4.0f);
-					if (joint->getParent() >= 0)
+					const Color4ub color(255, 255, 0, 255);
+					for (uint32_t i = 0; i < skeleton->getJointCount(); ++i)
 					{
-						const Joint* parent = skeleton->getJoint(joint->getParent());
-						T_ASSERT(parent != nullptr);
+						const Joint* joint = skeleton->getJoint(i);
+						primitiveRenderer->drawWireFrame(poseTransforms[i].toMatrix44(), joint->getRadius() * 4.0f);
+						if (joint->getParent() >= 0)
+						{
+							const Joint* parent = skeleton->getJoint(joint->getParent());
+							T_ASSERT(parent != nullptr);
 
-						primitiveRenderer->drawLine(
-							poseTransforms[joint->getParent()].translation(),
-							poseTransforms[i].translation(),
-							2.0f,
-							color
-						);
+							primitiveRenderer->drawLine(
+								poseTransforms[joint->getParent()].translation(),
+								poseTransforms[i].translation(),
+								2.0f,
+								color
+							);
+						}
 					}
 				}
 			}
