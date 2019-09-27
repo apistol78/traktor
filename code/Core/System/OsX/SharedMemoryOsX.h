@@ -11,7 +11,7 @@ class SharedMemoryOsX : public ISharedMemory
 	T_RTTI_CLASS;
 
 public:
-	SharedMemoryOsX(uint32_t size);
+	SharedMemoryOsX();
 
 	virtual ~SharedMemoryOsX();
 

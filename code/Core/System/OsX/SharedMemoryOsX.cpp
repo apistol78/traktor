@@ -1,5 +1,6 @@
 #include <cstring>
 #include <fcntl.h>
+#include <sched.h>
 #include <unistd.h>
 #include <sys/mman.h>
 #include <sys/stat.h>
@@ -51,7 +52,7 @@ bool SharedMemoryOsX::create(const std::wstring& name, uint32_t size)
 	// Create a digest of name, cannot use qualified paths on posix.
 	MD5 md5;
 	md5.createFromString(name);
-	m_name = std::wstring(L"/") + md5.format();
+	m_name = std::wstring(L"/tmp/") + md5.format();
 
 	// Open shared memory object.
 	m_fd = shm_open(wstombs(m_name).c_str(), O_RDWR, S_IRUSR | S_IWUSR);

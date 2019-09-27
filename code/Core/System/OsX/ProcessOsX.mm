@@ -4,7 +4,7 @@
 #include <sys/ioctl.h>
 #include "Core/Io/IStream.h"
 #include "Core/Log/Log.h"
-#include "Core/System/Osx/ProcessOsX.h"
+#include "Core/System/OsX/ProcessOsX.h"
 
 namespace traktor
 {
