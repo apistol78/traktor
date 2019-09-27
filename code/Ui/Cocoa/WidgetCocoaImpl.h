@@ -284,7 +284,9 @@ public:
 
 	virtual bool hitTest(const Point& pt) const override
 	{
-		return false;
+		Point cpt = screenToClient(pt);
+		Rect rcInner = getInnerRect();
+		return rcInner.inside(cpt);
 	}
 
 	virtual void setChildRects(const std::vector< IWidgetRect >& childRects) override

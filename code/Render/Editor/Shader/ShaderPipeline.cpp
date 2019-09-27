@@ -345,7 +345,6 @@ bool ShaderPipeline::buildDependencies(
 		return false;
 
 	std::wstring rendererSignature = programCompiler->getRendererSignature();
-	T_ASSERT(rendererSignature);
 
 	// Extract platform permutation.
 	shaderGraph = ShaderGraphStatic(shaderGraph).getPlatformPermutation(m_platform);
@@ -410,7 +409,6 @@ bool ShaderPipeline::buildOutput(
 		return false;
 
 	std::wstring rendererSignature = programCompiler->getRendererSignature();
-	T_ASSERT(rendererSignature);
 
 	Ref< ShaderResource > shaderResource = new ShaderResource();
 	uint32_t parameterBit = 1;
