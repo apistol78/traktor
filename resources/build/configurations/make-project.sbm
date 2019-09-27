@@ -133,54 +133,58 @@ local function collectDependencies(
 			local externalSolution = dependency.solution
 			local externalProject = dependency.project
 			local externalConfig = externalProject:getConfiguration(configuration.name)
+			if externalConfig ~= nil then
 
-			-- Add path to library.
-			if externalConfig.consumerLibraryPath ~= "" then
-				local aggregateOutputPath = Path(externalSolution.aggregateOutputPath)
-				local consumerLibraryPath = Path(externalConfig.consumerLibraryPath)
+				-- Add path to library.
+				if externalConfig.consumerLibraryPath ~= "" then
+					local aggregateOutputPath = Path(externalSolution.aggregateOutputPath)
+					local consumerLibraryPath = Path(externalConfig.consumerLibraryPath)
 
-				local consumerRelPath = fileSystem:getRelativePath(
-					aggregateOutputPath:concat(consumerLibraryPath),
-					projectPath
-				)
+					local consumerRelPath = fileSystem:getRelativePath(
+						aggregateOutputPath:concat(consumerLibraryPath),
+						projectPath
+					)
 
-				if consumerRelPath ~= nil then
-					insertLast(outLibraryPaths, consumerRelPath.pathName)
-				end
-			else
-				local externalRelPath = fileSystem:getRelativePath(
-					Path(externalSolution.rootPath .. "/" .. configuration.name),
-					projectPath
-				)
-				if externalRelPath ~= nil then
-					insertLast(outLibraryPaths, externalRelPath.pathName)
-				end
-			end
-
-			-- Add library.
-			if externalProject.enable then
-				insertLast(outLibraries, externalProject.name)
-			end
-
-			-- Recurse with child dependencies.
-			if externalConfig.targetFormat == "StaticLibrary" then
-				collectDependencies(
-					externalSolution,
-					externalProject,
-					externalConfig,
-					outIncludePaths,
-					outLibraries,
-					outLibrariesExternal,
-					outLibraryPaths
-				)
-			else
-				-- Only add include paths when dealing with shared library dependencies.
-				for _, includePath in pairs(externalConfig.includePaths) do
-					local ip = Path(includePath).pathName
-					if ip ~= "" then
-						insertLast(outIncludePaths, ip)
+					if consumerRelPath ~= nil then
+						insertLast(outLibraryPaths, consumerRelPath.pathName)
+					end
+				else
+					local externalRelPath = fileSystem:getRelativePath(
+						Path(externalSolution.rootPath .. "/" .. configuration.name),
+						projectPath
+					)
+					if externalRelPath ~= nil then
+						insertLast(outLibraryPaths, externalRelPath.pathName)
 					end
 				end
+
+				-- Add library.
+				if externalProject.enable then
+					insertLast(outLibraries, externalProject.name)
+				end
+
+				-- Recurse with child dependencies.
+				if externalConfig.targetFormat == "StaticLibrary" then
+					collectDependencies(
+						externalSolution,
+						externalProject,
+						externalConfig,
+						outIncludePaths,
+						outLibraries,
+						outLibrariesExternal,
+						outLibraryPaths
+					)
+				else
+					-- Only add include paths when dealing with shared library dependencies.
+					for _, includePath in pairs(externalConfig.includePaths) do
+						local ip = Path(includePath).pathName
+						if ip ~= "" then
+							insertLast(outIncludePaths, ip)
+						end
+					end
+				end
+			else
+				print("No such configuration \"" .. configuration.name .. "\" in external project \"" .. externalProject.name .. "\"; dependency skipped.")
 			end
 		end
 	end
