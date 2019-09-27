@@ -26,8 +26,12 @@
 #include "Ui/Itf/IWidget.h"
 #include "World/WorldEntityRenderers.h"
 #include "World/WorldRenderSettings.h"
-#include "World/Deferred/WorldRendererDeferred.h"
 #include "World/Entity/ComponentEntity.h"
+#include "World/Entity/ComponentEntityRenderer.h"
+#include "World/Entity/GroupEntityRenderer.h"
+#include "World/Entity/LightComponent.h"
+#include "World/Entity/LightRenderer.h"
+#include "World/Forward/WorldRendererForward.h"
 
 namespace traktor
 {
@@ -195,6 +199,9 @@ void AnimationPreviewControl::updateWorldRenderer()
 		return;
 
 	Ref< world::WorldEntityRenderers > worldEntityRenderers = new world::WorldEntityRenderers();
+	worldEntityRenderers->add(new world::ComponentEntityRenderer());
+	worldEntityRenderers->add(new world::GroupEntityRenderer());
+	worldEntityRenderers->add(new world::LightRenderer());
 	worldEntityRenderers->add(new mesh::MeshComponentRenderer());
 
 	world::WorldRenderSettings wrs;
@@ -208,7 +215,7 @@ void AnimationPreviewControl::updateWorldRenderer()
 	wcd.height = sz.cy;
 	wcd.frameCount = 1;
 
-	Ref< world::IWorldRenderer > worldRenderer = new world::WorldRendererDeferred();
+	Ref< world::IWorldRenderer > worldRenderer = new world::WorldRendererForward();
 	if (worldRenderer->create(
 		m_resourceManager,
 		m_renderSystem,
@@ -338,18 +345,21 @@ void AnimationPreviewControl::eventPaint(ui::PaintEvent* event)
 		up.alternateTime = scaledTime;
 		m_entity->update(up);
 
-		world::Light light;
-		light.type = world::LtDirectional;
-		light.position = Vector4::origo();
-		light.direction = Vector4(0.0f, 1.0f, 0.0f);
-		light.color = Vector4(1.0f, 1.0f, 1.0f);
-		light.range = Scalar(0.0f);
-		light.radius = Scalar(0.0f);
-		light.castShadow = false;
+		world::LightComponent lightComponent(
+			world::LtDirectional,
+			Color4f(1.0f, 1.0f, 1.0f, 1.0f),
+			false,
+			1000.0f,
+			0.0f,
+			0.0f,
+			0.0f
+		);
 
-		m_worldRenderView.resetLights();
-		m_worldRenderView.addLight(light);
+		world::ComponentEntity lightEntity;
+		lightEntity.setComponent(&lightComponent);
+		lightEntity.update(up);
 
+		m_worldRenderer->attach(&lightEntity);
 		m_worldRenderer->attach(m_entity);
 		m_worldRenderer->build(m_worldRenderView, 0);
 	}
@@ -367,13 +377,13 @@ void AnimationPreviewControl::eventPaint(ui::PaintEvent* event)
 			m_primitiveRenderer->drawLine(
 				Vector4(float(x), 0.0f, -10.0f, 1.0f),
 				Vector4(float(x), 0.0f, 10.0f, 1.0f),
-				(x == 0) ? 2.0f : 0.0f,
+				(x == 0) ? 1.0f : 0.0f,
 				m_colorGrid
 			);
 			m_primitiveRenderer->drawLine(
 				Vector4(-10.0f, 0.0f, float(x), 1.0f),
 				Vector4(10.0f, 0.0f, float(x), 1.0f),
-				(x == 0) ? 2.0f : 0.0f,
+				(x == 0) ? 1.0f : 0.0f,
 				m_colorGrid
 			);
 		}
