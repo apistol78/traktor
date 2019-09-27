@@ -852,7 +852,7 @@ void SolutionForm::eventTreeButtonDown(ui::MouseButtonDownEvent* event)
 			{
 				Ref< AggregationItem > item = new AggregationItem();
 				item->setSourceFile(L"*.*");
-				item->setTargetPath(L"");
+				item->setTargetPath(toLower(configuration->getName()));
 				configuration->addAggregationItem(item);
 
 				createTreeAggregationItemItem(selectedItem, project, configuration, item);
