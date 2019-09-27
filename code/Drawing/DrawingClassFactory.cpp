@@ -2,6 +2,7 @@
 #include "Core/Class/Boxes/BoxedAlignedVector.h"
 #include "Core/Class/Boxes/BoxedColor4f.h"
 #include "Core/Class/Boxes/BoxedMatrix33.h"
+#include "Core/Class/Boxes/BoxedVector2.h"
 #include "Core/Class/IRuntimeClassRegistrar.h"
 #include "Core/Io/IStream.h"
 #include "Drawing/DrawingClassFactory.h"
@@ -217,34 +218,24 @@ int32_t Raster_defineRadialGradientStyle(Raster* self, const Matrix33& gradientM
 	return self->defineRadialGradientStyle(gradientMatrix, cs);
 }
 
-void Raster_moveTo(Raster* self, float x, float y)
+void Raster_quadricTo_4(Raster* self, const Vector2& p, const Vector2& c)
 {
-	self->moveTo(x, y);
+	self->quadricTo(p, c);
 }
 
-void Raster_lineTo(Raster* self, float x, float y)
+void Raster_quadricTo_2(Raster* self, const Vector2& p)
 {
-	self->lineTo(x, y);
+	self->quadricTo(p);
 }
 
-void Raster_quadricTo_4(Raster* self, float x1, float y1, float x, float y)
+void Raster_cubicTo_6(Raster* self, const Vector2& p1, const Vector2& p2, const Vector2& c)
 {
-	self->quadricTo(x1, y1, x, y);
+	self->cubicTo(p1, p2, c);
 }
 
-void Raster_quadricTo_2(Raster* self, float x, float y)
+void Raster_cubicTo_4(Raster* self, const Vector2& p2, const Vector2& c)
 {
-	self->quadricTo(x, y);
-}
-
-void Raster_cubicTo_6(Raster* self, float x1, float y1, float x2, float y2, float x, float y)
-{
-	self->cubicTo(x1, y1, x2, y2, x, y);
-}
-
-void Raster_cubicTo_4(Raster* self, float x2, float y2, float x, float y)
-{
-	self->cubicTo(x2, y2, x, y);
+	self->cubicTo(p2, c);
 }
 
 void Raster_fill(Raster* self, int32_t style0, int32_t style1, int32_t fillRule)
@@ -453,8 +444,10 @@ void DrawingClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classRaster->addMethod("defineRadialGradientStyle", &Raster_defineRadialGradientStyle);
 	classRaster->addMethod("defineImageStyle", &Raster::defineImageStyle);
 	classRaster->addMethod("clear", &Raster::clear);
-	classRaster->addMethod("moveTo", &Raster_moveTo);
-	classRaster->addMethod("lineTo", &Raster_lineTo);
+	classRaster->addMethod< void, const Vector2& >("moveTo", &Raster::moveTo);
+	classRaster->addMethod< void, float, float >("moveTo", &Raster::moveTo);
+	classRaster->addMethod< void, const Vector2& >("lineTo", &Raster::lineTo);
+	classRaster->addMethod< void, float, float >("lineTo", &Raster::lineTo);
 	classRaster->addMethod("quadricTo", &Raster_quadricTo_4);
 	classRaster->addMethod("quadricTo", &Raster_quadricTo_2);
 	classRaster->addMethod("cubicTo", &Raster_cubicTo_6);

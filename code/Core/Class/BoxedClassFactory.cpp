@@ -7,6 +7,8 @@
 #include "Core/Class/Boxes/BoxedAabb2.h"
 #include "Core/Class/Boxes/BoxedAabb3.h"
 #include "Core/Class/Boxes/BoxedAlignedVector.h"
+#include "Core/Class/Boxes/BoxedBezier2nd.h"
+#include "Core/Class/Boxes/BoxedBezier3rd.h"
 #include "Core/Class/Boxes/BoxedColor4f.h"
 #include "Core/Class/Boxes/BoxedColor4ub.h"
 #include "Core/Class/Boxes/BoxedFrustum.h"
@@ -74,18 +76,47 @@ void BoxedClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	auto classBoxedAlignedVector = new AutoRuntimeClass< BoxedAlignedVector >();
 	classBoxedAlignedVector->addConstructor();
 	classBoxedAlignedVector->addConstructor< uint32_t >();
+	classBoxedAlignedVector->addProperty("size", &BoxedAlignedVector::size);
+	classBoxedAlignedVector->addProperty("empty", &BoxedAlignedVector::empty);
+	classBoxedAlignedVector->addProperty("front", &BoxedAlignedVector::front);
+	classBoxedAlignedVector->addProperty("back", &BoxedAlignedVector::back);
 	classBoxedAlignedVector->addMethod("reserve", &BoxedAlignedVector::reserve);
 	classBoxedAlignedVector->addMethod("resize", &BoxedAlignedVector::resize);
 	classBoxedAlignedVector->addMethod("clear", &BoxedAlignedVector::clear);
-	classBoxedAlignedVector->addMethod("size", &BoxedAlignedVector::size);
-	classBoxedAlignedVector->addMethod("empty", &BoxedAlignedVector::empty);
 	classBoxedAlignedVector->addMethod("push_back", &BoxedAlignedVector::push_back);
 	classBoxedAlignedVector->addMethod("pop_back", &BoxedAlignedVector::pop_back);
-	classBoxedAlignedVector->addMethod("front", &BoxedAlignedVector::front);
-	classBoxedAlignedVector->addMethod("back", &BoxedAlignedVector::back);
 	classBoxedAlignedVector->addMethod("set", &BoxedAlignedVector::set);
 	classBoxedAlignedVector->addMethod("get", &BoxedAlignedVector::get);
 	registrar->registerClass(classBoxedAlignedVector);
+
+	auto classBoxedBezier2nd = new AutoRuntimeClass< BoxedBezier2nd >();
+	classBoxedBezier2nd->addConstructor();
+	classBoxedBezier2nd->addConstructor< const BoxedVector2*, const BoxedVector2*, const BoxedVector2* >();
+	classBoxedBezier2nd->addProperty("cp0", &BoxedBezier2nd::cp0);
+	classBoxedBezier2nd->addProperty("cp1", &BoxedBezier2nd::cp1);
+	classBoxedBezier2nd->addProperty("cp2", &BoxedBezier2nd::cp2);
+	classBoxedBezier2nd->addMethod("evaluate", &BoxedBezier2nd::evaluate);
+	classBoxedBezier2nd->addMethod("tangent", &BoxedBezier2nd::tangent);
+	classBoxedBezier2nd->addMethod("getLocalMinMaxY", &BoxedBezier2nd::getLocalMinMaxY);
+	classBoxedBezier2nd->addMethod("getLocalMinMaxX", &BoxedBezier2nd::getLocalMinMaxX);
+	classBoxedBezier2nd->addMethod("split", &BoxedBezier2nd::split);
+	classBoxedBezier2nd->addMethod("toBezier3rd", &BoxedBezier2nd::toBezier3rd);
+	registrar->registerClass(classBoxedBezier2nd);
+
+	auto classBoxedBezier3rd = new AutoRuntimeClass< BoxedBezier3rd >();
+	classBoxedBezier3rd->addConstructor();
+	classBoxedBezier3rd->addConstructor< const BoxedVector2*, const BoxedVector2*, const BoxedVector2*, const BoxedVector2* >();
+	classBoxedBezier3rd->addProperty("cp0", &BoxedBezier3rd::cp0);
+	classBoxedBezier3rd->addProperty("cp1", &BoxedBezier3rd::cp1);
+	classBoxedBezier3rd->addProperty("cp2", &BoxedBezier3rd::cp2);
+	classBoxedBezier3rd->addProperty("cp3", &BoxedBezier3rd::cp3);
+	classBoxedBezier3rd->addProperty("flatness", &BoxedBezier3rd::flatness);
+	classBoxedBezier3rd->addMethod("evaluate", &BoxedBezier3rd::evaluate);
+	classBoxedBezier3rd->addMethod("tangent", &BoxedBezier3rd::tangent);
+	classBoxedBezier3rd->addMethod("isFlat", &BoxedBezier3rd::isFlat);
+	classBoxedBezier3rd->addMethod("split", &BoxedBezier3rd::split);
+	classBoxedBezier3rd->addMethod("approximate", &BoxedBezier3rd::approximate);
+	registrar->registerClass(classBoxedBezier3rd);
 
 	auto classBoxedColor4f = new AutoRuntimeClass< BoxedColor4f >();
 	classBoxedColor4f->addConstructor();
@@ -261,26 +292,27 @@ void BoxedClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classBoxedRefArray->addConstructor();
 	classBoxedRefArray->addConstructor< const RefArray< Object >& >();
 	classBoxedRefArray->addProperty("size", &BoxedRefArray::size);
+	classBoxedRefArray->addProperty("empty", &BoxedRefArray::empty);
+	classBoxedRefArray->addProperty("front", &BoxedRefArray::front);
+	classBoxedRefArray->addProperty("back", &BoxedRefArray::back);
 	classBoxedRefArray->addMethod("set", &BoxedRefArray::set);
 	classBoxedRefArray->addMethod("get", &BoxedRefArray::get);
 	classBoxedRefArray->addMethod("push_back", &BoxedRefArray::push_back);
 	classBoxedRefArray->addMethod("pop_back", &BoxedRefArray::pop_back);
-	classBoxedRefArray->addMethod("front", &BoxedRefArray::front);
-	classBoxedRefArray->addMethod("back", &BoxedRefArray::back);
 	registrar->registerClass(classBoxedRefArray);
 
 	auto classBoxedStdVector = new AutoRuntimeClass< BoxedStdVector >();
 	classBoxedStdVector->addConstructor();
 	classBoxedStdVector->addConstructor< uint32_t >();
 	classBoxedStdVector->addProperty("size", &BoxedStdVector::size);
+	classBoxedStdVector->addProperty("empty", &BoxedStdVector::empty);
+	classBoxedStdVector->addProperty("front", &BoxedStdVector::front);
+	classBoxedStdVector->addProperty("back", &BoxedStdVector::back);
 	classBoxedStdVector->addMethod("reserve", &BoxedStdVector::reserve);
 	classBoxedStdVector->addMethod("resize", &BoxedStdVector::resize);
 	classBoxedStdVector->addMethod("clear", &BoxedStdVector::clear);
-	classBoxedStdVector->addMethod("empty", &BoxedStdVector::empty);
 	classBoxedStdVector->addMethod("push_back", &BoxedStdVector::push_back);
 	classBoxedStdVector->addMethod("pop_back", &BoxedStdVector::pop_back);
-	classBoxedStdVector->addMethod("front", &BoxedStdVector::front);
-	classBoxedStdVector->addMethod("back", &BoxedStdVector::back);
 	classBoxedStdVector->addMethod("set", &BoxedStdVector::set);
 	classBoxedStdVector->addMethod("get", &BoxedStdVector::get);
 	registrar->registerClass(classBoxedStdVector);

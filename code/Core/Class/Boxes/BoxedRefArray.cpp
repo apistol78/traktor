@@ -22,6 +22,11 @@ int32_t BoxedRefArray::size() const
 	return int32_t(m_arr.size());
 }
 
+bool BoxedRefArray::empty() const
+{
+	return m_arr.empty();
+}
+
 void BoxedRefArray::set(int32_t index, ITypedObject* object)
 {
 	if (index >= 0 && index < int32_t(m_arr.size()))
