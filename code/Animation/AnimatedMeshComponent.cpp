@@ -351,7 +351,7 @@ void AnimatedMeshComponent::updatePoseController(int32_t index, float deltaTime)
 	bool updateController = false;
 
 	// Calculate pose transforms and skinning transforms.
-	if (m_poseController)
+	if (m_skeleton && m_poseController)
 	{
 		m_poseTransforms.resize(0);
 
