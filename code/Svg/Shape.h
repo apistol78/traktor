@@ -1,0 +1,53 @@
+#pragma once
+
+#include "Core/Object.h"
+#include "Core/Ref.h"
+#include "Core/RefArray.h"
+#include "Core/Math/Matrix33.h"
+
+// import/export mechanism.
+#undef T_DLLCLASS
+#if defined(T_SVG_EXPORT)
+#	define T_DLLCLASS T_DLLEXPORT
+#else
+#	define T_DLLCLASS T_DLLIMPORT
+#endif
+
+namespace traktor
+{
+	namespace svg
+	{
+
+class IShapeVisitor;
+class Style;
+
+/*! SVG shape.
+ * \ingroup SVG
+ */
+class T_DLLCLASS Shape : public Object
+{
+	T_RTTI_CLASS;
+
+public:
+	Shape();
+
+	void setStyle(const Style* style);
+
+	const Style* getStyle() const;
+
+	void setTransform(const Matrix33& transform);
+
+	const Matrix33& getTransform() const;
+
+	void addChild(Shape* shape);
+
+	virtual void visit(IShapeVisitor* shapeVisitor);
+
+private:
+	Ref< const Style > m_style;
+	Matrix33 m_transform;
+	RefArray< Shape > m_children;
+};
+
+	}
+}

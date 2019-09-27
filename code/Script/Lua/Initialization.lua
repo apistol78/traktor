@@ -132,7 +132,7 @@ function class(name, super)
 				return nil
 			end
 		end
-		tbl.__size = tbl:size()
+		tbl.__size = tbl.size
 		return itr, tbl, -1
 	end
 

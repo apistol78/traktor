@@ -35,6 +35,8 @@ public:
 
 	int32_t size() const;
 
+	bool empty() const;
+
 	void set(int32_t index, ITypedObject* object);
 
 	ITypedObject* get(int32_t index);
