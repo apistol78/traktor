@@ -198,7 +198,7 @@ Ref< IEntityComponent > WorldEntityFactory::createEntityComponent(const world::I
 #else
 			ctcd.side = 128;
 #endif
-			ctcd.mipCount = 1;
+			ctcd.mipCount = log2(ctcd.side ) + 1;
 			ctcd.format = render::TfR11G11B10F;
 			ctcd.sRGB = false;
 			ctcd.immutable = false;

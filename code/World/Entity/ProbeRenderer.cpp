@@ -13,6 +13,7 @@
 #include "World/WorldRenderView.h"
 #include "World/Entity/ProbeCapturer.h"
 #include "World/Entity/ProbeComponent.h"
+#include "World/Entity/ProbeFilterer.h"
 #include "World/Entity/ProbeRenderer.h"
 
 namespace traktor
@@ -55,6 +56,18 @@ public:
 	}
 };
 
+class ProbeDownSampleRenderBlock : public render::RenderBlock
+{
+public:
+	ProbeFilterer* filterer;
+	Ref< render::ICubeTexture > texture;
+
+	virtual void render(render::IRenderView* renderView, const render::ProgramParameters* globalParameters) const override final
+	{
+		filterer->render(renderView, texture);
+	}
+};
+
 		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.world.ProbeRenderer", ProbeRenderer, IEntityRenderer)
@@ -68,6 +81,9 @@ ProbeRenderer::ProbeRenderer(
 {
 	m_probeCapturer = new ProbeCapturer(resourceManager, renderSystem, worldRendererType);
 	m_probeCapturer->create();
+
+	m_probeFilterer = new ProbeFilterer(resourceManager, renderSystem);
+	m_probeFilterer->create();
 
 	resourceManager->bind(c_probeShader, m_probeShader);
 
@@ -228,6 +244,12 @@ void ProbeRenderer::flush(
 			}
 			else
 			{
+				// Filter rest of mips.
+				auto renderBlock = worldContext.getRenderContext()->alloc< ProbeDownSampleRenderBlock >();
+				renderBlock->filterer = m_probeFilterer;
+				renderBlock->texture = m_capture->getTexture();
+				renderContext->draw(render::RpOpaque, renderBlock);
+
 				m_capture->setDirty(false);
 				m_capture = nullptr;
 			}
