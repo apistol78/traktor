@@ -36,6 +36,7 @@ class IResourceManager;
 
 class ProbeCapturer;
 class ProbeComponent;
+class ProbeFilterer;
 
 /*! Probe entity renderer.
  * \ingroup World
@@ -69,6 +70,7 @@ public:
 
 private:
 	Ref< ProbeCapturer > m_probeCapturer;
+	Ref< ProbeFilterer > m_probeFilterer;
 	resource::Proxy< render::Shader > m_probeShader;
 	Ref< render::VertexBuffer > m_vertexBuffer;
 	Ref< render::IndexBuffer > m_indexBuffer;
