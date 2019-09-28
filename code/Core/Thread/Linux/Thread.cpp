@@ -5,6 +5,7 @@
 #include <sys/time.h>
 #include "Core/Misc/TString.h"
 #include "Core/Thread/Thread.h"
+#include "Core/Thread/Linux/Utilities.h"
 #include "Core/Functor/Functor.h"
 
 namespace traktor
@@ -15,20 +16,12 @@ namespace traktor
 struct Internal
 {
 	pthread_t thread;
-	pthread_mutex_t mutex;
-	pthread_cond_t signal;
-	Functor* functor;
-	bool finished;
 };
 
 void* trampoline(void* data)
 {
-	Internal* in = reinterpret_cast< Internal* >(data);
-
-	(in->functor->operator())();
-	in->finished = true;
-
-	pthread_cond_signal(&in->signal);
+	Functor* functor = reinterpret_cast< Functor* >(data);
+	(functor->operator())();
 	pthread_exit(0);
 	return nullptr;
 }
@@ -43,11 +36,6 @@ bool Thread::start(Priority priority)
 
 	Internal* in = new Internal();
 	in->thread = 0;
-	in->functor = m_functor;
-	in->finished = false;
-
-	pthread_mutex_init(&in->mutex, NULL);
-	pthread_cond_init(&in->signal, NULL);
 
 	pthread_attr_init(&attr);
 	pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_JOINABLE);
@@ -82,7 +70,7 @@ bool Thread::start(Priority priority)
 		&in->thread,
 		&attr,
 		trampoline,
-		(void*)in
+		(void*)m_functor
 	);
 
 	pthread_attr_destroy(&attr);
@@ -109,42 +97,32 @@ bool Thread::wait(int timeout)
 
 	if (timeout > 0)
 	{
-		pthread_mutex_lock(&in->mutex);
-
-		timeval now;
 		timespec ts;
 
-		gettimeofday(&now, 0);
-		ts.tv_sec = now.tv_sec + timeout / 1000;
-		ts.tv_nsec = (now.tv_usec + (timeout % 1000) * 1000) * 1000;
-		ts.tv_sec += ts.tv_nsec / 1000000000;
-		ts.tv_nsec = ts.tv_nsec % 1000000000;
+		clock_gettime(CLOCK_REALTIME, &ts);
+		addMilliSecToTimeSpec(&ts, timeout);
 
-		for (rc = 0; rc == 0 && !in->finished; )
-		{
-			rc = pthread_cond_timedwait(
-				&in->signal,
-				&in->mutex,
-				&ts
-			);
-		}
-
-		pthread_mutex_unlock(&in->mutex);
-		if (!in->finished)
+		void* retval = nullptr;
+		rc = pthread_timedjoin_np(in->thread, &retval, &ts);
+		if (rc != 0)
 			return false;
 	}
 	else if (timeout == 0)
 	{
-		if (!in->finished)
+		void* retval = nullptr;
+		rc = pthread_tryjoin_np(in->thread, &retval);
+		if (rc != 0)
 			return false;
 	}
-
-	rc = pthread_join(
-		in->thread,
-		&dummy
-	);
-	if (rc != 0)
-		return false;
+	else
+	{
+		rc = pthread_join(
+			in->thread,
+			&dummy
+		);
+		if (rc != 0)
+			return false;
+	}
 
 	in->thread = 0;
 	return true;
@@ -189,7 +167,7 @@ bool Thread::stopped() const
 bool Thread::current() const
 {
 	Internal* in = reinterpret_cast< Internal* >(m_handle);
-	if (in)
+	if (in && in->thread != 0)
 		return bool(pthread_equal(in->thread, pthread_self()) != 0);
 	else
 		return false;
@@ -197,8 +175,7 @@ bool Thread::current() const
 
 bool Thread::finished() const
 {
-	Internal* in = reinterpret_cast< Internal* >(m_handle);
-	return in ? in->finished : true;
+	return const_cast< Thread* >(this)->wait(0);
 }
 
 Thread::Thread(Functor* functor, const wchar_t* const name, int hardwareCore)
@@ -214,8 +191,6 @@ Thread::Thread(Functor* functor, const wchar_t* const name, int hardwareCore)
 		// Assume is main thread, only main thread is allowed to pass null as functor.
 		Internal* in = new Internal();
 		in->thread = pthread_self();
-		in->functor = nullptr;
-		in->finished = false;
 		m_handle = in;
 	}
 }

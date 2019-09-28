@@ -4,6 +4,7 @@
 #include <unistd.h>
 #include <time.h>
 #include "Core/Thread/Event.h"
+#include "Core/Thread/Linux/Utilities.h"
 
 namespace traktor
 {
@@ -43,7 +44,10 @@ Event::~Event()
 void Event::pulse(int count)
 {
 	Internal* in = static_cast< Internal* >(m_handle);
-	pthread_mutex_lock(&in->mutex);
+	int rc;
+
+	rc = pthread_mutex_lock(&in->mutex);
+	T_FATAL_ASSERT (rc == 0);
 
 	in->signal += count;
 	pthread_cond_broadcast(&in->cond);
@@ -54,7 +58,10 @@ void Event::pulse(int count)
 void Event::broadcast()
 {
 	Internal* in = static_cast< Internal* >(m_handle);
-	pthread_mutex_lock(&in->mutex);
+	int rc;
+
+	rc = pthread_mutex_lock(&in->mutex);
+	T_FATAL_ASSERT (rc == 0);
 
 	in->signal = c_broadcast;
 	pthread_cond_broadcast(&in->cond);
@@ -65,7 +72,10 @@ void Event::broadcast()
 void Event::reset()
 {
 	Internal* in = static_cast< Internal* >(m_handle);
-	pthread_mutex_lock(&in->mutex);
+	int rc;
+	
+	rc = pthread_mutex_lock(&in->mutex);
+	T_FATAL_ASSERT (rc == 0);
 
 	in->signal = 0;
 
@@ -75,9 +85,10 @@ void Event::reset()
 bool Event::wait(int timeout)
 {
 	Internal* in = static_cast< Internal* >(m_handle);
-	int rc = 0;
+	int rc;
 
-	pthread_mutex_lock(&in->mutex);
+	rc = pthread_mutex_lock(&in->mutex);
+	T_FATAL_ASSERT (rc == 0);
 
 	if (in->signal == 0)
 	{
@@ -85,14 +96,10 @@ bool Event::wait(int timeout)
 
 		if (timeout >= 0)
 		{
-			timeval now;
 			timespec ts;
 
-			gettimeofday(&now, 0);
-			ts.tv_sec = now.tv_sec + timeout / 1000;
-			ts.tv_nsec = (now.tv_usec + (timeout % 1000) * 1000) * 1000;
-			ts.tv_sec += ts.tv_nsec / 1000000000;
-			ts.tv_nsec = ts.tv_nsec % 1000000000;
+			clock_gettime(CLOCK_REALTIME, &ts);
+			addMilliSecToTimeSpec(&ts, timeout);
 
 			while (in->signal == 0 && rc == 0)
 				rc = pthread_cond_timedwait(&in->cond, &in->mutex, &ts);
@@ -115,7 +122,6 @@ bool Event::wait(int timeout)
 	}
 
 	pthread_mutex_unlock(&in->mutex);
-
 	return bool(rc == 0);
 }
 
