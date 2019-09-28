@@ -33,7 +33,7 @@ bool JobQueue::create(uint32_t workerThreads, Thread::Priority priority)
 			m_workerThreads[i]->start(priority);
 		else
 		{
-			m_workerThreads[i] = 0;
+			m_workerThreads[i] = nullptr;
 			return false;
 		}
 	}
@@ -42,10 +42,8 @@ bool JobQueue::create(uint32_t workerThreads, Thread::Priority priority)
 
 void JobQueue::destroy()
 {
-#if !defined(__LINUX__)
 	for (uint32_t i = 0; i < uint32_t(m_workerThreads.size()); ++i)
 		m_workerThreads[i]->stop(0);
-#endif
 
 	for (uint32_t i = 0; i < uint32_t(m_workerThreads.size()); ++i)
 	{
@@ -138,8 +136,8 @@ void JobQueue::threadWorker()
 
 				job->m_finished = true;
 				job->m_stopped = true;
-				job->m_functor = 0;
-				job = 0;
+				job->m_functor = nullptr;
+				job = nullptr;
 
 				Atomic::decrement(m_running);
 				m_jobFinishedEvent.broadcast();
