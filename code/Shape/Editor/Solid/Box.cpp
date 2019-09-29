@@ -36,6 +36,7 @@ Ref< model::Model > Box::createModel() const
 		model::Material material;
 		material.setName(m_materials[i].format());
 		material.setColor(Color4f(1.0f, 1.0f, 1.0f, 1.0f));
+		material.setRoughness(1.0f);
 		// material.setDiffuseMap(model::Material::Map(m_materials[i].format() + L"_Albedo", tc, true));
 		// material.setNormalMap(model::Material::Map(m_materials[i].format() + L"_Normal", tc, true));
 		// material.setRoughnessMap(model::Material::Map(m_materials[i].format() + L"_Roughness", tc, true));

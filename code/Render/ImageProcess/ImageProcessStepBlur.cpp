@@ -83,7 +83,7 @@ Ref< ImageProcessStepBlur::Instance > ImageProcessStepBlur::create(
 			totalWeight += weight;
 
 			gaussianOffsetWeights[i].set(
-				i - m_taps / 2.0f,
+				i - (m_taps - 1.0f)/ 2.0f,
 				weight,
 				0.0f,
 				0.0f
@@ -104,7 +104,7 @@ Ref< ImageProcessStepBlur::Instance > ImageProcessStepBlur::create(
 			totalWeight += weight;
 
 			gaussianOffsetWeights[i].set(
-				i - m_taps / 2.0f,
+				i - (m_taps - 1.0f) / 2.0f,
 				weight,
 				0.0f,
 				0.0f
@@ -116,7 +116,7 @@ Ref< ImageProcessStepBlur::Instance > ImageProcessStepBlur::create(
 		for (int i = 0; i < m_taps; ++i)
 		{
 			gaussianOffsetWeights[i].set(
-				i - m_taps / 2.0f,
+				i - (m_taps - 1.0f) / 2.0f,
 				1.0f,
 				0.0f,
 				0.0f

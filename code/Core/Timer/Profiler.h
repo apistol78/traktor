@@ -70,7 +70,7 @@ public:
 
 		void flush();
 
-		virtual void reportProfilerEvents(double currentTime, const AlignedVector< Event >& events) T_OVERRIDE T_FINAL;
+		virtual void reportProfilerEvents(double currentTime, const AlignedVector< Event >& events) override final;
 
 	private:
 		Ref< OutputStream > m_output;
@@ -97,7 +97,7 @@ public:
 	double getTime() const;
 
 protected:
-	virtual void destroy() T_OVERRIDE T_FINAL;
+	virtual void destroy() override final;
 
 private:
 	struct ThreadEvents
