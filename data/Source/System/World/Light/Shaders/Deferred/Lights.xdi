@@ -550,7 +550,7 @@
 				<first>3104</first>
 				<second>1184</second>
 			</position>
-			<value>0.0001</value>
+			<value>0.0008</value>
 		</item>
 		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{0B0450C1-5C54-FD43-8CC2-8355E167593C}</id>
