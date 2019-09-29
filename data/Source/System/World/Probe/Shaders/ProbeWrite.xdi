@@ -341,8 +341,8 @@
 			<id>{44B1BEEC-9F81-1343-8A38-FD6634799785}</id>
 			<comment/>
 			<position>
-				<first>2125</first>
-				<second>1420</second>
+				<first>2196</first>
+				<second>1415</second>
 			</position>
 			<technique>World_ReflectionWrite</technique>
 			<priority>
@@ -517,8 +517,8 @@
 			<id>{320E5364-D7F2-EE4D-AF4C-34AF57F0D93D}</id>
 			<comment/>
 			<position>
-				<first>1569</first>
-				<second>1392</second>
+				<first>1549</first>
+				<second>1465</second>
 			</position>
 			<color>0, 0, 0, 0</color>
 		</item>
@@ -526,17 +526,17 @@
 			<id>{9F665B15-EDF8-D443-8336-37A06826228E}</id>
 			<comment/>
 			<position>
-				<first>1599</first>
-				<second>1356</second>
+				<first>1579</first>
+				<second>1429</second>
 			</position>
-			<value>0.55</value>
+			<value>0.8</value>
 		</item>
 		<item type="traktor.render.Conditional" version="1,traktor.render.Node:1">
 			<id>{0242E377-F79B-484D-9591-788006FEF248}</id>
 			<comment/>
 			<position>
-				<first>1881</first>
-				<second>1336</second>
+				<first>1861</first>
+				<second>1409</second>
 			</position>
 			<branch>BrAuto</branch>
 			<operator>CoLess</operator>
@@ -545,8 +545,8 @@
 			<id>{A321C85E-CA45-DF4D-A888-A5540121FB07}</id>
 			<comment/>
 			<position>
-				<first>1609</first>
-				<second>1320</second>
+				<first>1589</first>
+				<second>1393</second>
 			</position>
 			<name>L_Roughness</name>
 			<global>false</global>
@@ -1353,16 +1353,6 @@
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[22]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[29]"/>
-				<name>Mip</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
 				<node ref="/object/nodes/item[49]"/>
 				<name>Output</name>
 			</source>
@@ -1803,12 +1793,22 @@
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[54]"/>
+				<node ref="/object/nodes/item[48]"/>
 				<name>Output</name>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[32]"/>
 				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[22]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[29]"/>
+				<name>Mip</name>
 			</destination>
 		</item>
 	</edges>

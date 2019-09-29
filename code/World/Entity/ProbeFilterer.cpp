@@ -1,3 +1,4 @@
+#include "Core/Math/Random.h"
 #include "Render/ICubeTexture.h"
 #include "Render/IRenderSystem.h"
 #include "Render/IRenderView.h"
@@ -19,8 +20,44 @@ const int32_t c_faceSize = 512;
 #else
 const int32_t c_faceSize = 128;
 #endif
+const int32_t c_sampleCount = 1000;
 
 const resource::Id< render::Shader > c_idFilterShader(Guid(L"{D9CC2267-0BDF-4A19-A970-856112821734}"));
+
+double halton(int32_t index, int32_t base)
+{
+	double f = 1, r = 0;
+	while (index > 0)
+	{
+		f = f / base;
+		r = r + f * (index % base);
+		index = index / base;
+	}
+	return r;
+}
+
+Vector4 sampleDirectionZ(float roughness, const Vector2& h, Random& rnd)
+{
+	double rx = clamp< float >(h.x + rnd.nextDouble() * 0.1f - 0.05f, 0.0f, 1.0f);
+	double ry = clamp< float >(h.y + rnd.nextDouble() * 0.1f - 0.05f, 0.0f, 1.0f);
+
+	float a = roughness * roughness;
+	float phi = 2.0f * PI * rx;
+	float cosTheta = std::sqrt((1.0f - ry) / (1.0f + (a * a - 1.0f) * ry));
+	float sinTheta = std::sqrt(1.0f - cosTheta * cosTheta);
+
+	Vector4 v(
+		sinTheta * std::cos(phi),
+		sinTheta * std::sin(phi),
+		cosTheta,
+		0.0f
+	);
+
+	if (v.z() < 0.0f)
+		v = -v;
+
+	return v;
+}
 
         }
 
@@ -65,54 +102,99 @@ bool ProbeFilterer::create()
             return false;
     }
 
+	m_halton.resize(c_sampleCount);
+	for (int32_t i = 0; i < c_sampleCount; ++i)
+	{
+		m_halton[i] = Vector2(
+			(float)halton(i, 2),
+			(float)halton(i, 3)
+		);
+	}
+
     return true;
 }
 
 void ProbeFilterer::render(render::IRenderView* renderView, render::ICubeTexture* probeTexture)
 {
+	AlignedVector< Vector4 > sampleDirections(c_sampleCount);
+	Vector4 corners[4];
+	Vector4 tangent;
+	Random random;
+
     const int32_t mipCount = log2(c_faceSize) + 1;
 
 	render::Clear clear = { 0 };
 	clear.mask = render::CfColor;
 	clear.colors[0] = Color4f(0.0f, 0.0f, 0.0f, 0.0f);
     
-    m_filterShader->setTextureParameter(L"World_ProbeTexture", probeTexture);
-
-    for (int32_t side = 0; side < 6; ++side)
+    for (int32_t mip = 1; mip < mipCount; ++mip)
     {
-        Vector4 corners[4];
+		float roughness = (float)mip / mipCount;
 
-        switch (side)
-        {
-        case 0:
-        case 1:
-            corners[1].set(side == 0 ? 1.0f : -1.0f, -1.0f, -1.0f, 0.0f);
-            corners[0].set(side == 0 ? 1.0f : -1.0f,  1.0f, -1.0f, 0.0f);
-            corners[3].set(side == 0 ? 1.0f : -1.0f, -1.0f,  1.0f, 0.0f);
-            corners[2].set(side == 0 ? 1.0f : -1.0f,  1.0f,  1.0f, 0.0f);
-            break;
+		for (int32_t i = 0; i < c_sampleCount; ++i)
+		{
+			const Vector4 c_unit(0.0f, 0.0f, 1.0f);
+			sampleDirections[i] = sampleDirectionZ(roughness, m_halton[i], random);
+		}
 
-        case 2:
-        case 3:
-            corners[0].set(-1.0f, side == 2 ? 1.0f : -1.0f, -1.0f, 0.0f);
-            corners[1].set( 1.0f, side == 2 ? 1.0f : -1.0f, -1.0f, 0.0f);
-            corners[2].set(-1.0f, side == 2 ? 1.0f : -1.0f,  1.0f, 0.0f);
-            corners[3].set( 1.0f, side == 2 ? 1.0f : -1.0f,  1.0f, 0.0f);
-            break;
+		for (int32_t side = 0; side < 6; ++side)
+		{
+			switch (side)
+			{
+			case 0:
+				corners[0].set( 1.0f,  1.0f,  1.0f, 0.0f);
+				corners[1].set( 1.0f,  1.0f, -1.0f, 0.0f);
+				corners[2].set( 1.0f, -1.0f,  1.0f, 0.0f);
+				corners[3].set( 1.0f, -1.0f, -1.0f, 0.0f);
+				tangent.set(0.0f, 0.0f, -1.0f);
+				break;
 
-        case 4:
-        case 5:
-            corners[0].set(-1.0f, -1.0f, side == 4 ? 1.0f : -1.0f, 0.0f);
-            corners[1].set( 1.0f, -1.0f, side == 4 ? 1.0f : -1.0f, 0.0f);
-            corners[2].set(-1.0f,  1.0f, side == 4 ? 1.0f : -1.0f, 0.0f);
-            corners[3].set( 1.0f,  1.0f, side == 4 ? 1.0f : -1.0f, 0.0f);
-            break;
-        }
+			case 1:
+				corners[0].set(-1.0f,  1.0f, -1.0f, 0.0f);
+				corners[1].set(-1.0f,  1.0f,  1.0f, 0.0f);
+				corners[2].set(-1.0f, -1.0f, -1.0f, 0.0f);
+				corners[3].set(-1.0f, -1.0f,  1.0f, 0.0f);
+				tangent.set(0.0f, 0.0f, 1.0f);
+				break;
 
-        m_filterShader->setVectorArrayParameter(L"World_FilterCorners", corners, sizeof_array(corners));
+			case 2:
+				corners[0].set(-1.0f,  1.0f, -1.0f, 0.0f);
+				corners[1].set( 1.0f,  1.0f, -1.0f, 0.0f);
+				corners[2].set(-1.0f,  1.0f,  1.0f, 0.0f);
+				corners[3].set( 1.0f,  1.0f,  1.0f, 0.0f);
+				tangent.set(-1.0f, 0.0f, 0.0f);
+				break;
 
-        for (int32_t mip = 1; mip < mipCount; ++mip)
-        {
+			case 3:
+				corners[0].set(-1.0f, -1.0f,  1.0f, 0.0f);
+				corners[1].set( 1.0f, -1.0f,  1.0f, 0.0f);
+				corners[2].set(-1.0f, -1.0f, -1.0f, 0.0f);
+				corners[3].set( 1.0f, -1.0f, -1.0f, 0.0f);
+				tangent.set(1.0f, 0.0f, 0.0f);
+				break;
+
+			case 4:
+				corners[0].set(-1.0f,  1.0f,  1.0f, 0.0f);
+				corners[1].set( 1.0f,  1.0f,  1.0f, 0.0f);
+				corners[2].set(-1.0f, -1.0f,  1.0f, 0.0f);
+				corners[3].set( 1.0f, -1.0f,  1.0f, 0.0f);
+				tangent.set(0.0f, -1.0f, 0.0f);
+				break;
+
+			case 5:
+				corners[0].set( 1.0f,  1.0f, -1.0f, 0.0f);
+				corners[1].set(-1.0f,  1.0f, -1.0f, 0.0f);
+				corners[2].set( 1.0f, -1.0f, -1.0f, 0.0f);
+				corners[3].set(-1.0f, -1.0f, -1.0f, 0.0f);
+				tangent.set(0.0f, 1.0f, 0.0f);
+				break;
+			}
+
+			m_filterShader->setTextureParameter(L"World_ProbeTexture", probeTexture);
+			m_filterShader->setVectorParameter(L"World_ProbeSampleTangent", tangent);
+			m_filterShader->setVectorArrayParameter(L"World_ProbeSampleDirections", sampleDirections.c_ptr(), sampleDirections.size());
+			m_filterShader->setVectorArrayParameter(L"World_ProbeFilterCorners", corners, sizeof_array(corners));
+
             renderView->begin(m_renderTargetSets[mip], &clear);
             m_screenRenderer->draw(renderView, m_filterShader);
             renderView->end();
