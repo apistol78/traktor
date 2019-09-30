@@ -78,6 +78,7 @@ private:
 	Ref< ProbeComponent > m_capture;
 	int32_t m_captureFace;
 	bool m_capturePending;
+	bool m_capturing;
 };
 
 	}

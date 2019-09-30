@@ -52,6 +52,11 @@ public:
 	virtual void render(render::IRenderView* renderView, const render::ProgramParameters* globalParameters) const override final
 	{
 		capturer->render(renderView, texture, face);
+		
+		// Need to flush renderer as we need to reuse sbuffers for lights
+		// in world renderer, sbuffers are being queued in driver.
+		renderView->flush();
+
 		*pending = false;
 	}
 };
@@ -61,10 +66,12 @@ class ProbeDownSampleRenderBlock : public render::RenderBlock
 public:
 	ProbeFilterer* filterer;
 	Ref< render::ICubeTexture > texture;
+	bool* pending;
 
 	virtual void render(render::IRenderView* renderView, const render::ProgramParameters* globalParameters) const override final
 	{
 		filterer->render(renderView, texture);
+		*pending = false;
 	}
 };
 
@@ -78,6 +85,8 @@ ProbeRenderer::ProbeRenderer(
 	const TypeInfo& worldRendererType
 )
 :	m_captureFace(0)
+,	m_capturePending(false)
+,	m_capturing(false)
 {
 	m_probeCapturer = new ProbeCapturer(resourceManager, renderSystem, worldRendererType);
 	m_probeCapturer->create();
@@ -191,36 +200,40 @@ void ProbeRenderer::flush(
 	Entity* rootEntity
 )
 {
+	// Ignore recursive calls to flush.
+	if (m_capturing)
+		return;
+
 	render::RenderContext* renderContext = worldContext.getRenderContext();
 	T_ASSERT(renderContext);
 
 	// Render captures.
 	if ((worldRenderPass.getPassFlags() & world::IWorldRenderPass::PfFirst) != 0)
 	{
-		static bool recursive = false;
-		if (!recursive)
+		if (!m_capturing)
 		{
-			recursive = true;
+			m_capturing = true;
 
-		if (!m_capture)
-		{
-			for (auto probeComponent : m_probeComponents)
+			// Get dirty probe which needs to be updated.
+			if (!m_capture)
 			{
-				if (probeComponent->getDirty())
+				for (auto probeComponent : m_probeComponents)
 				{
-					m_capture = probeComponent;
-					m_captureFace = 0;
-					m_capturePending = false;
-					break;
+					if (probeComponent->getDirty())
+					{
+						m_capture = probeComponent;
+						m_captureFace = 0;
+						m_capturePending = false;
+						break;
+					}
 				}
 			}
-		}
 
-		if (m_capture)
-		{
-			if (m_captureFace < 6)
+			// Progress updating probe, ensure last captured side is finished before progressing.
+			// Note the possible added latency if multiple queued frames are being used due to threaded rendering.
+			if (m_capture && !m_capturePending)
 			{
-				if (!m_capturePending)
+				if (m_captureFace < 6)
 				{
 					// Build probe context.
 					m_probeCapturer->build(
@@ -241,21 +254,27 @@ void ProbeRenderer::flush(
 					m_capturePending = true;
 					m_captureFace++;
 				}
-			}
-			else
-			{
-				// Filter rest of mips.
-				auto renderBlock = worldContext.getRenderContext()->alloc< ProbeDownSampleRenderBlock >();
-				renderBlock->filterer = m_probeFilterer;
-				renderBlock->texture = m_capture->getTexture();
-				renderContext->draw(render::RpOpaque, renderBlock);
+				else if (m_captureFace == 6)
+				{
+					// Filter rest of mips.
+					auto renderBlock = worldContext.getRenderContext()->alloc< ProbeDownSampleRenderBlock >();
+					renderBlock->filterer = m_probeFilterer;
+					renderBlock->texture = m_capture->getTexture();
+					renderBlock->pending = &m_capturePending;
+					renderContext->draw(render::RpOpaque, renderBlock);
 
-				m_capture->setDirty(false);
-				m_capture = nullptr;
+					m_capturePending = true;
+					m_captureFace++;
+				}
+				else
+				{
+					// Probe capture is finished.
+					m_capture->setDirty(false);
+					m_capture = nullptr;
+				}
 			}
-		}
 
-			recursive = false;
+			m_capturing = false;
 		}
 	}
 
@@ -271,6 +290,9 @@ void ProbeRenderer::flush(
 
 	for (auto probeComponent : m_probeComponents)
 	{
+		if (probeComponent->getDirty())
+			continue;
+
 		render::Shader* shader = m_probeShader;
 		T_ASSERT(shader);
 

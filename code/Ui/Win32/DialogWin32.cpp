@@ -143,12 +143,9 @@ int DialogWin32::showModal()
 		}
 	}
 
+	// Enable parent window.
 	if (hParentWnd)
-	{
-		// Enable parent window.
 		EnableWindow(hParentWnd, TRUE);
-		SetWindowPos(hParentWnd, HWND_TOP, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_SHOWWINDOW);
-	}
 
 	return m_result;
 }

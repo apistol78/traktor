@@ -23,7 +23,7 @@ void threadPoolDispatcher(
 	while (alive)
 	{
 		T_ASSERT(functorWork);
-		(*functorWork)(); functorWork = 0;
+		(*functorWork)(); functorWork = nullptr;
 
 		Atomic::exchange(busy, 0);
 		eventFinishedWork.broadcast();
@@ -37,7 +37,7 @@ void threadPoolDispatcher(
 
 ThreadPool& ThreadPool::getInstance()
 {
-	static ThreadPool* s_instance = 0;
+	static ThreadPool* s_instance = nullptr;
 	if (!s_instance)
 	{
 		s_instance = new ThreadPool();
@@ -96,7 +96,7 @@ bool ThreadPool::spawn(Functor* functor, Thread*& outThread, Thread::Priority pr
 	if (!worker.threadWorker->start(priority))
 	{
 		m_workerThreads.pop_back();
-		outThread = 0;
+		outThread = nullptr;
 		return false;
 	}
 
@@ -111,8 +111,8 @@ bool ThreadPool::join(Thread* thread)
 		Worker& worker = m_workerThreads[i];
 		if (worker.threadWorker == thread)
 		{
-			if (worker.busy != 0)
-				worker.eventFinishedWork.wait();
+			while (worker.busy != 0)
+				worker.eventFinishedWork.wait(100);
 			worker.threadWorker->resume(Thread::Normal);
 			return true;
 		}
