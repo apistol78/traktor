@@ -4,6 +4,7 @@
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
 #include "Core/Serialization/MemberStaticArray.h"
+#include "Database/Database.h"
 #include "Model/Model.h"
 #include "Shape/Editor/Solid/Cylinder.h"
 #include "Shape/Editor/Solid/SolidMaterial.h"
@@ -22,7 +23,7 @@ Cylinder::Cylinder()
 {
 }
 
-Ref< model::Model > Cylinder::createModel() const
+Ref< model::Model > Cylinder::createModel(db::Database* database) const
 {
 	Ref< model::Model > m = new model::Model();
 
@@ -39,10 +40,40 @@ Ref< model::Model > Cylinder::createModel() const
 		material.setName(m_materials[i].format());
 		material.setColor(Color4f(1.0f, 1.0f, 1.0f, 1.0f));
 		material.setRoughness(1.0f);
-		// material.setDiffuseMap(model::Material::Map(m_materials[i].format() + L"_Albedo", tc, true));
-		// material.setNormalMap(model::Material::Map(m_materials[i].format() + L"_Normal", tc, true));
-		// material.setRoughnessMap(model::Material::Map(m_materials[i].format() + L"_Roughness", tc, true));
-		// material.setMetalnessMap(model::Material::Map(m_materials[i].format() + L"_Metalness", tc, true));
+
+		Ref< SolidMaterial > sm = database->getObjectReadOnly< SolidMaterial >(m_materials[i]);
+		if (sm)
+		{
+			if (sm->getAlbedo().isValid())
+				material.setDiffuseMap(model::Material::Map(
+					L"Albedo",
+					tc,
+					true,
+					sm->getAlbedo()
+				));
+			if (sm->getNormal().isValid())
+				material.setNormalMap(model::Material::Map(
+					L"Normal",
+					tc,
+					true,
+					sm->getNormal()
+				));
+			if (sm->getRoughness().isValid())
+				material.setRoughnessMap(model::Material::Map(
+					L"Roughness",
+					tc,
+					true,
+					sm->getRoughness()
+				));
+			if (sm->getMetalness().isValid())
+				material.setMetalnessMap(model::Material::Map(
+					L"Metalness",
+					tc,
+					true,
+					sm->getMetalness()
+				));
+		}
+
 		uint32_t mi = m->addMaterial(material);
 	}
 

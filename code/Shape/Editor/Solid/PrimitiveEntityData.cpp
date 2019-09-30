@@ -18,12 +18,12 @@ PrimitiveEntityData::PrimitiveEntityData()
 {
 }
 
-Ref< PrimitiveEntity > PrimitiveEntityData::createEntity() const
+Ref< PrimitiveEntity > PrimitiveEntityData::createEntity(db::Database* database) const
 {
     Ref< PrimitiveEntity > entity = new PrimitiveEntity(getTransform(), m_operation);
 	if (m_shape)
 	{
-		Ref< const model::Model > m = m_shape->createModel();
+		Ref< const model::Model > m = m_shape->createModel(database);
 		if (!m)
 			return nullptr;
 
