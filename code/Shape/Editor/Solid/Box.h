@@ -23,7 +23,7 @@ class T_DLLCLASS Box : public IShape
 public:
 	Box();
 
-	virtual Ref< model::Model > createModel() const override final;
+	virtual Ref< model::Model > createModel(db::Database* database) const override final;
 
 	virtual void createAnchors(AlignedVector< Vector4 >& outAnchors) const override final;
 

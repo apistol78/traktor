@@ -1,4 +1,5 @@
 #include <cstring>
+#include <functional>
 #include <list>
 #include "Core/Io/IStream.h"
 #include "Core/Log/Log.h"
@@ -13,6 +14,9 @@
 #include "Editor/IPipelineBuilder.h"
 #include "Editor/IPipelineDepends.h"
 #include "Editor/IPipelineSettings.h"
+#include "Render/Shader.h"
+#include "Render/Editor/Texture/TextureOutput.h"
+#include "Resource/Id.h"
 #include "Spark/BitmapImage.h"
 #include "Spark/BitmapResource.h"
 #include "Spark/Font.h"
@@ -27,9 +31,10 @@
 #include "Spark/Editor/EmptyMovieAsset.h"
 #include "Spark/Editor/MovieAsset.h"
 #include "Spark/Editor/Pipeline.h"
-#include "Render/Shader.h"
-#include "Render/Editor/Texture/TextureOutput.h"
-#include "Resource/Id.h"
+#include "Svg/IShapeVisitor.h"
+#include "Svg/Parser.h"
+#include "Svg/PathShape.h"
+#include "Xml/Document.h"
 
 namespace traktor
 {
@@ -51,6 +56,33 @@ struct AtlasBucket
 {
 	Ref< Packer > packer;
 	std::list< AtlasBitmap > bitmaps;
+};
+
+class ShapeVisitor : public svg::IShapeVisitor
+{
+public:
+	ShapeVisitor(
+		const std::function< void(svg::Shape*) >& enter,
+		const std::function< void(svg::Shape*) >& leave
+	)
+	:	m_enter(enter)
+	,	m_leave(leave)
+	{
+	}
+
+	virtual void enter(svg::Shape* shape) override final
+	{
+		m_enter(shape);
+	}
+
+	virtual void leave(svg::Shape* shape) override final
+	{
+		m_leave(shape);
+	}
+
+private:
+	std::function< void(svg::Shape*) > m_enter;
+	std::function< void(svg::Shape*) > m_leave;
 };
 
 		}
@@ -124,45 +156,99 @@ bool Pipeline::buildOutput(
 		Ref< IStream > sourceStream = pipelineBuilder->openFile(traktor::Path(m_assetPath), movieAsset->getFileName().getOriginal());
 		if (!sourceStream)
 		{
-			log::error << L"Failed to import Flash; unable to open file \"" << movieAsset->getFileName().getOriginal() << L"\"" << Endl;
+			log::error << L"Failed to import Spark movie; unable to open file \"" << movieAsset->getFileName().getOriginal() << L"\"" << Endl;
 			return false;
 		}
 
-		// Try to load image and embedd into a movie first, if extension
-		// not supported then this fail quickly.
-		Ref< drawing::Image > image = drawing::Image::load(sourceStream, movieAsset->getFileName().getExtension());
-		if (image)
-		{
-			// Create a single frame and place shape.
-			Ref< Frame > frame = new Frame();
-
-			Frame::PlaceObject p;
-			p.hasFlags = Frame::PfHasCharacterId;
-			p.depth = 1;
-			p.characterId = 1;
-			frame->placeObject(p);
-
-			// Create sprite and add frame.
-			Ref< Sprite > sprite = new Sprite();
-			sprite->addFrame(frame);
-
-			// Create quad shape and fill with bitmap.
-			Ref< Shape > shape = new Shape();
-			shape->create(1, image->getWidth() * 20, image->getHeight() * 20);
-
-			// Setup dictionary.
-			movie = new Movie(Aabb2(Vector2(0.0f, 0.0f), Vector2(image->getWidth() * 20.0f, image->getHeight() * 20.0f)), sprite);
-			movie->defineBitmap(1, new BitmapImage(image));
-			movie->defineCharacter(1, shape);
-		}
-		else
+		std::wstring extension = toLower(movieAsset->getFileName().getExtension());
+		if (extension == L"swf")
 		{
 			Ref< SwfReader > swf = new SwfReader(sourceStream);
 			movie = MovieFactory(movieAsset->m_includeAS).createMovie(swf);
 			if (!movie)
 			{
-				log::error << L"Failed to import Flash; unable to parse SWF" << Endl;
+				log::error << L"Failed to import Spark movie; unable to parse SWF." << Endl;
 				return false;
+			}
+		}
+		else if (extension == L"svg")
+		{
+			xml::Document xd;
+			if (!xd.loadFromStream(sourceStream))
+			{
+				log::error << L"Failed to import Spark movie; unable to read SVG." << Endl;
+				return false;
+			}
+
+			Ref< svg::Shape > shape = svg::Parser().parse(&xd);
+			if (!shape)
+			{
+				log::error << L"Failed to import Spark movie; unable to parse SVG." << Endl;
+				return false;
+			}
+
+			ShapeVisitor visitor(
+				[&](svg::Shape* svg) {
+
+					if (const auto ps = dynamic_type_cast< svg::PathShape* >(svg))
+					{
+						spark::Path path;
+
+						const auto& p = ps->getPath();
+						for (const auto& sp : p.getSubPaths())
+						{
+							switch (sp.type)
+							{
+							case svg::SptLinear:
+								path.moveTo(0, 0, Path::CmAbsolute);
+								path.lineTo(0, 0, Path::CmAbsolute);
+								break;
+
+							case svg::SptQuadric:
+								break;
+
+							case svg::SptCubic:
+								{
+									// Since Spark doesn't support cubic paths we need to approximate with quadratic.
+								}
+								break;
+							}
+						}
+					}
+					// Ref< Shape > shape = new Shape();
+					// shape->create(1, image->getWidth() * 20, image->getHeight() * 20);
+				},
+				[&](svg::Shape*) {
+				}
+			);
+			shape->visit(&visitor);
+		}
+		else
+		{
+			Ref< drawing::Image > image = drawing::Image::load(sourceStream, movieAsset->getFileName().getExtension());
+			if (image)
+			{
+				// Create a single frame and place shape.
+				Ref< Frame > frame = new Frame();
+
+				Frame::PlaceObject p;
+				p.hasFlags = Frame::PfHasCharacterId;
+				p.depth = 1;
+				p.characterId = 1;
+				frame->placeObject(p);
+
+				// Create sprite and add frame.
+				Ref< Sprite > sprite = new Sprite();
+				sprite->addFrame(frame);
+
+				// Create quad shape and fill with bitmap.
+				Ref< Shape > shape = new Shape();
+				shape->create(1, image->getWidth() * 20, image->getHeight() * 20);
+
+				// Setup dictionary.
+				movie = new Movie(Aabb2(Vector2(0.0f, 0.0f), Vector2(image->getWidth() * 20.0f, image->getHeight() * 20.0f)), sprite);
+				movie->defineBitmap(1, new BitmapImage(image));
+				movie->defineCharacter(1, shape);
 			}
 		}
 
@@ -190,7 +276,7 @@ bool Pipeline::buildOutput(
 	}
 
 	// Show some information about the Flash.
-	log::info << L"SWF successfully loaded," << Endl;
+	log::info << L"Spark movie successfully loaded," << Endl;
 	log::info << IncreaseIndent;
 	log::info << movie->getFonts().size() << L" font(s)" << Endl;
 	log::info << movie->getBitmaps().size() << L" bitmap(s)" << Endl;
@@ -204,7 +290,7 @@ bool Pipeline::buildOutput(
 		movie = Optimizer().merge(movie);
 		if (!movie)
 		{
-			log::error << L"Failed to import Flash; failed to optimize static SWF" << Endl;
+			log::error << L"Failed to import Spark movie; failed to optimize static movie." << Endl;
 			return false;
 		}
 	}
@@ -340,7 +426,7 @@ bool Pipeline::buildOutput(
 			}
 
 #if defined(_DEBUG)
-			atlasImage->save(L"FlashBitmapAtlas" + toString(count) + L".png");
+			atlasImage->save(L"SparkBitmapAtlas" + toString(count) + L".png");
 #endif
 
 			Guid bitmapOutputGuid = outputGuid.permutation(count++);
@@ -426,7 +512,7 @@ bool Pipeline::buildOutput(
 		);
 
 #if defined(_DEBUG)
-		bitmapImage->save(L"FlashBitmap" + toString(count) + L".png");
+		bitmapImage->save(L"SparkBitmap" + toString(count) + L".png");
 #endif
 
 		Guid bitmapOutputGuid = outputGuid.permutation(count++);
@@ -488,7 +574,7 @@ bool Pipeline::buildOutput(
 	);
 	if (!instance)
 	{
-		log::error << L"Failed to import Flash; unable to create instance" << Endl;
+		log::error << L"Failed to import Spark movie; unable to create instance." << Endl;
 		return false;
 	}
 
@@ -496,7 +582,7 @@ bool Pipeline::buildOutput(
 
 	if (!instance->commit())
 	{
-		log::info << L"Failed to import Flash; unable to commit instance" << Endl;
+		log::info << L"Failed to import Spark movie; unable to commit instance." << Endl;
 		return false;
 	}
 

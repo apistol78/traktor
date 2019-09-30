@@ -12,6 +12,13 @@
 
 namespace traktor
 {
+	namespace db
+	{
+
+class Database;
+
+	}
+
 	namespace resource
 	{
 
@@ -34,7 +41,11 @@ class T_DLLCLASS SolidEntityFactory : public world::IEntityFactory
 	T_RTTI_CLASS;
 
 public:
-	SolidEntityFactory(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem);
+	SolidEntityFactory(
+		db::Database* database,
+		resource::IResourceManager* resourceManager,
+		render::IRenderSystem* renderSystem
+	);
 
 	virtual const TypeInfoSet getEntityTypes() const override final;
 
@@ -49,6 +60,7 @@ public:
 	virtual Ref< world::IEntityComponent > createEntityComponent(const world::IEntityBuilder* builder, const world::IEntityComponentData& entityComponentData) const override final;
 
 private:
+	Ref< db::Database > m_database;
 	Ref< resource::IResourceManager > m_resourceManager;
 	Ref< render::IRenderSystem > m_renderSystem;
 };

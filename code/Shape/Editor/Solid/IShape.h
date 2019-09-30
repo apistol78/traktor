@@ -15,6 +15,13 @@
 
 namespace traktor
 {
+	namespace db
+	{
+
+class Database;
+
+	}
+
 	namespace model
 	{
 	
@@ -30,7 +37,7 @@ class T_DLLCLASS IShape : public ISerializable
 	T_RTTI_CLASS;
 
 public:
-	virtual Ref< model::Model > createModel() const = 0;
+	virtual Ref< model::Model > createModel(db::Database* database) const = 0;
 
 	virtual void createAnchors(AlignedVector< Vector4 >& outAnchors) const = 0;
 };

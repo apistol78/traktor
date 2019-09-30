@@ -55,7 +55,9 @@ Ref< model::Model > SolidEntityReplicator::createModel(
     auto it = primitiveEntityDatas.begin();
     if (it != primitiveEntityDatas.end())
     {
-		auto model = (*it)->getShape()->createModel();
+		auto model = (*it)->getShape()->createModel(
+            pipelineBuilder->getSourceDatabase()
+        );
 		if (!model)
 			return nullptr;
 
@@ -64,7 +66,9 @@ Ref< model::Model > SolidEntityReplicator::createModel(
 
         for (++it; it != primitiveEntityDatas.end(); ++it)
         {
-			auto other = (*it)->getShape()->createModel();
+			auto other = (*it)->getShape()->createModel(
+                pipelineBuilder->getSourceDatabase()
+            );
 			if (!other)
 				continue;
 
