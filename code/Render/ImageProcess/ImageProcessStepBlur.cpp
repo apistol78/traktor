@@ -44,7 +44,7 @@ Ref< ImageProcessStepBlur::Instance > ImageProcessStepBlur::create(
 {
 	resource::Proxy< Shader > shader;
 	if (!resourceManager->bind(m_shader, shader))
-		return 0;
+		return nullptr;
 
 	std::vector< InstanceBlur::Source > sources(m_sources.size());
 	for (uint32_t i = 0; i < m_sources.size(); ++i)

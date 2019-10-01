@@ -260,8 +260,8 @@ void addSky(
 	radiance->clearAlpha(1.0);
 	importance->clearAlpha(1.0f);
 
-	radiance->save(L"data/Temp/Bake/Radiance.png");
-	importance->save(L"data/Temp/Bake/Importance.png");
+	// radiance->save(L"data/Temp/Bake/Radiance.png");
+	// importance->save(L"data/Temp/Bake/Importance.png");
 
 	// Create tracer light.
 	Light light;
@@ -549,7 +549,7 @@ bool BakePipelineOperator::build(
 					model->setMaterials(materials);
 
 					// Write model for debugging into temporary folder.
-					model::ModelFormat::writeAny(L"data/Temp/Bake/" + inoutEntityData->getName() + L".tmd", model);
+					// model::ModelFormat::writeAny(L"data/Temp/Bake/" + inoutEntityData->getName() + L".tmd", model);
 
 					// Add model to raytracing task.
 					if (!addModel(
@@ -643,7 +643,7 @@ bool BakePipelineOperator::build(
 				model->setMaterials(materials);
 
 				// Write model for debugging into temporary folder.
-				model::ModelFormat::writeAny(L"data/Temp/Bake/" + inoutEntityData->getName() + L".tmd", model);
+				// model::ModelFormat::writeAny(L"data/Temp/Bake/" + inoutEntityData->getName() + L".tmd", model);
 
 				// Add model to raytracing task.
 				if (!addModel(

@@ -15,6 +15,9 @@ namespace traktor
 	namespace shape
 	{
 
+/*!
+ * \ingroup Shape
+ */
 class T_DLLCLASS SolidEntityEditor : public scene::DefaultEntityEditor
 {
 	T_RTTI_CLASS;

@@ -22,11 +22,11 @@ end
 -- Gather all configurations.
 local availConfigurations = {}
 local projects = solution:getProjects()
-for i = 0, projects:size() - 1 do
+for i = 0, projects.size - 1 do
 	local project = projects:get(i)
 	if project:getEnable() then
 		local configurations = project:getConfigurations()
-		for j = 0, configurations:size() - 1 do
+		for j = 0, configurations.size - 1 do
 			local configuration = configurations:get(j)
 			availConfigurations[configuration:getName()] = true
 		end
@@ -47,11 +47,11 @@ else
 	output:print("all :")
 end
 local projects = solution:getProjects()
-for i = 0, projects:size() - 1 do
+for i = 0, projects.size - 1 do
 	local project = projects:get(i)
 	if project:getEnable() then
 		local configurations = project:getConfigurations()
-		for j = 0, configurations:size() - 1 do
+		for j = 0, configurations.size - 1 do
 			local configuration = configurations:get(j)
 			local productName = PRODUCTNAME(solution, project, configuration)
 			output:printLn(" \\")
@@ -72,7 +72,7 @@ for c, _ in pairs(availConfigurations) do
 		output:print(c .. " :")
 	end
 	local projects = solution:getProjects()
-	for i = 0, projects:size() - 1 do
+	for i = 0, projects.size - 1 do
 		local project = projects:get(i)
 		if project:getEnable() then
 			local configuration = project:getConfiguration(c)
@@ -90,11 +90,11 @@ end
 
 -- Create targets for each project.
 local projects = solution:getProjects()
-for i = 0, projects:size() - 1 do
+for i = 0, projects.size - 1 do
 	local project = projects:get(i)
 	if project:getEnable() then
 		local configurations = project:getConfigurations()
-		for j = 0, configurations:size() - 1 do
+		for j = 0, configurations.size - 1 do
 			local configuration = configurations:get(j)
 			local productName = PRODUCTNAME(solution, project, configuration)
 
@@ -107,7 +107,7 @@ for i = 0, projects:size() - 1 do
 			end
 
 			local dependencies = project:getDependencies()
-			for k = 0, dependencies:size() - 1 do
+			for k = 0, dependencies.size - 1 do
 				local dependency = dependencies:get(k)
 				if isa(dependency, ProjectDependency) then
 					local localProject = dependency:getProject()
@@ -135,7 +135,7 @@ else
 	output:printLn("clean :")
 end
 local projects = solution:getProjects()
-for i = 0, projects:size() - 1 do
+for i = 0, projects.size - 1 do
 	local project = projects:get(i)
 	if project:getEnable() then
 		if dialect == "nmake" then
@@ -154,7 +154,7 @@ else
 	output:printLn("install :")
 end
 local projects = solution:getProjects()
-for i = 0, projects:size() - 1 do
+for i = 0, projects.size - 1 do
 	local project = projects:get(i)
 	if project:getEnable() then
 		if dialect == "nmake" then

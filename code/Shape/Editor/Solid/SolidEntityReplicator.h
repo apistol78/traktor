@@ -15,6 +15,9 @@ namespace traktor
     namespace shape
     {
 
+/*!
+ * \ingroup Shape
+ */
 class T_DLLCLASS SolidEntityReplicator : public scene::IEntityReplicator
 {
     T_RTTI_CLASS;

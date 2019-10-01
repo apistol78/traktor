@@ -14,6 +14,9 @@ class ModifierChangedEvent;
 	namespace shape
 	{
 
+/*! Solid scene editor plugin.
+ * \ingroup Shape
+ */
 class SolidEditorPlugin : public scene::ISceneEditorPlugin
 {
 	T_RTTI_CLASS;

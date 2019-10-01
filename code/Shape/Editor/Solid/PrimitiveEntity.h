@@ -24,6 +24,9 @@ class Model;
     namespace shape
     {
 
+/*! Primitive entity.
+ * \ingroup Shape
+ */
 class T_DLLCLASS PrimitiveEntity : public world::Entity
 {
     T_RTTI_CLASS;

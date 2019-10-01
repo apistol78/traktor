@@ -15,6 +15,9 @@ namespace traktor
 	namespace shape
 	{
 	
+/*! Cylinder shape.
+ * \ingroup Shape
+ */
 class T_DLLCLASS Cylinder : public IShape
 {
 	T_RTTI_CLASS;

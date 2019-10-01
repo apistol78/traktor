@@ -100,6 +100,61 @@ Ref< drawing::Image > denoise(const GBuffer& gbuffer, drawing::Image* lightmap)
 }
 #endif
 
+void encodeRGBM(drawing::Image* image)
+{
+	const float c_multiplierRange = 16.0f;
+
+	Color4f cl;
+	for (int32_t y = 0; y < image->getHeight(); ++y)
+	{
+		for (int32_t x = 0; x < image->getWidth(); ++x)
+		{
+			image->getPixelUnsafe(x, y, cl);
+
+			// Normalize all channels from our valid range into 0-1.
+			cl /= Scalar(c_multiplierRange);
+
+			float r = clamp< float >(cl.getRed(), 0.0f, 1.0f);
+			float g = clamp< float >(cl.getGreen(), 0.0f, 1.0f);
+			float b = clamp< float >(cl.getBlue(), 0.0f, 1.0f);
+			float M = max(r, max(g, b));
+
+			float bestError = std::numeric_limits< float >::max();
+			int32_t bestM = M;
+
+			int32_t iM = (int32_t)std::ceil(M * 255.0f);
+			for (int32_t m = std::max(iM - 16, 0); m <= std::min(iM + 16, 255); ++m)
+			{
+				float Mchk = float(m) / 255.0f;
+
+				int32_t R = (int32_t)std::ceil(255.0f * clamp(r / Mchk, 0.0f, 1.0f));
+				int32_t G = (int32_t)std::ceil(255.0f * clamp(g / Mchk, 0.0f, 1.0f));
+				int32_t B = (int32_t)std::ceil(255.0f * clamp(b / Mchk, 0.0f, 1.0f));
+
+				float dr = ((float)R / 255.0f) * Mchk;
+				float dg = ((float)G / 255.0f) * Mchk;
+				float db = ((float)B / 255.0f) * Mchk;
+
+				float error = (r - dr) * (r - dr) + (g - dg) * (g - dg) + (b - db) * (b - db);
+				if (error < bestError)
+				{
+					bestError = error;
+					bestM = M;
+				}
+			}
+
+			cl.set(
+				r / bestM,
+				g / bestM,
+				b / bestM,
+				bestM
+			);
+
+			image->setPixel(x, y, cl);
+		}
+	}
+}
+
 void line(const Vector2& from, const Vector2& to, const std::function< void(const Vector2, float) >& fn)
 {
 	Vector2 ad = (to - from);
@@ -269,10 +324,10 @@ bool TracerProcessor::process(const TracerTask* task) const
         if (configuration->traceIndirect())
             lightmapIndirect = rayTracer->traceIndirect(&gbuffer);
 
-		if (lightmapDirect)
-			lightmapDirect->save(L"data/Temp/Bake/" + tracerOutput->getName() + L"_Direct.exr");
-		if (lightmapIndirect)
-			lightmapIndirect->save(L"data/Temp/Bake/" + tracerOutput->getName() + L"_Indirect.exr");
+		// if (lightmapDirect)
+		// 	lightmapDirect->save(L"data/Temp/Bake/" + tracerOutput->getName() + L"_Direct.exr");
+		// if (lightmapIndirect)
+		// 	lightmapIndirect->save(L"data/Temp/Bake/" + tracerOutput->getName() + L"_Indirect.exr");
 
         // Blur indirect lightmap to reduce noise from path tracing.
 #if !defined(__RPI__) && !defined(__APPLE__)
@@ -415,10 +470,16 @@ bool TracerProcessor::process(const TracerTask* task) const
         // Discard alpha.
         lightmap->clearAlpha(1.0f);
 
-		lightmap->save(L"data/Temp/Bake/" + tracerOutput->getName() + L".exr");
+		// lightmap->save(L"data/Temp/Bake/" + tracerOutput->getName() + L".exr");
 
 		// Convert into format which our lightmap texture will be.
-		lightmap->convert(drawing::PixelFormat::getABGRF16().endianSwapped());
+		if (true)
+		{
+			encodeRGBM(lightmap);
+			lightmap->convert(drawing::PixelFormat::getR8G8B8A8().endianSwapped());
+		}
+		else
+			lightmap->convert(drawing::PixelFormat::getABGRF16().endianSwapped());
 
 		// Create output instance.
 		Guid lightmapId = tracerOutput->getLightmapId();
@@ -453,7 +514,7 @@ bool TracerProcessor::process(const TracerTask* task) const
 		writer << int32_t(lightmap->getHeight());
 		writer << int32_t(1);
 		writer << int32_t(1);
-		writer << int32_t(render::TfR16G16B16A16F);
+		writer << int32_t(render::TfR8G8B8A8); // int32_t(render::TfR16G16B16A16F);
 		writer << bool(false);
 		writer << uint8_t(render::Tt2D);
 		writer << bool(false);

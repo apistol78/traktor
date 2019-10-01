@@ -5,7 +5,7 @@ function main(args)
 	local fs = FileSystem.getInstance()
 
 	-- Ensure all arguments are available.
-	if args:size() < 3 then
+	if args.size < 3 then
 		stdout:printLn("BinaryInclude : Usage BinaryInclude.run <input> <output> <symbol>")
 		return 1
 	end

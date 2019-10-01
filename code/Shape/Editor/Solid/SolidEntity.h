@@ -36,6 +36,9 @@ class WorldRenderView;
     namespace shape
     {
 
+/*! Solid entity.
+ * \ingroup Shape
+ */
 class T_DLLCLASS SolidEntity : public world::GroupEntity
 {
     T_RTTI_CLASS;
