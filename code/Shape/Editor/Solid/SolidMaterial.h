@@ -16,6 +16,9 @@ namespace traktor
 	namespace shape
 	{
 	
+/*!
+ * \ingroup Shape
+ */
 class T_DLLCLASS SolidMaterial : public ISerializable
 {
 	T_RTTI_CLASS;

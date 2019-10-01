@@ -36,6 +36,9 @@ class IRenderSystem;
 	namespace shape
 	{
 
+/*!
+ * \ingroup Shape
+ */
 class T_DLLCLASS SolidEntityFactory : public world::IEntityFactory
 {
 	T_RTTI_CLASS;

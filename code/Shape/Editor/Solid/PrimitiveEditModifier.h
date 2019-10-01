@@ -16,6 +16,9 @@ class SceneEditorContext;
 	namespace shape
 	{
 
+/*! Primitive editor modifier.
+ * \ingroup Shape
+ */
 class PrimitiveEditModifier : public scene::IModifier
 {
 	T_RTTI_CLASS;

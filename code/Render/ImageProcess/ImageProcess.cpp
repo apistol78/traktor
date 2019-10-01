@@ -1,4 +1,5 @@
 #include "Core/Log/Log.h"
+#include "Core/Misc/SafeDestroy.h"
 #include "Core/Thread/Acquire.h"
 #include "Render/IRenderSystem.h"
 #include "Render/IRenderView.h"
@@ -55,29 +56,27 @@ bool ImageProcess::create(
 	if (!m_screenRenderer->create(renderSystem))
 		return false;
 
-	m_targetPool = (targetPool != 0) ? targetPool : new ImageProcessTargetPool(renderSystem);
+	m_targetPool = (targetPool != nullptr) ? targetPool : new ImageProcessTargetPool(renderSystem);
 	m_requireHighRange = settings->requireHighRange();
 	m_allTargetsPersistent = allTargetsPersistent;
 
-	const RefArray< ImageProcessDefine >& definitions = settings->getDefinitions();
-	for (RefArray< ImageProcessDefine >::const_iterator i = definitions.begin(); i != definitions.end(); ++i)
+	for (auto definition : settings->getDefinitions())
 	{
-		if (!(*i)->define(this, resourceManager, renderSystem, width, height))
+		if (!definition->define(this, resourceManager, renderSystem, width, height))
 		{
-			log::error << L"Unable to create post processing definition " << uint32_t(std::distance(definitions.begin(), i)) << Endl;
+			log::error << L"Unable to create post processing definition." << Endl;
 			return false;
 		}
 	}
 
-	const RefArray< ImageProcessStep >& steps = settings->getSteps();
-	for (RefArray< ImageProcessStep >::const_iterator i = steps.begin(); i != steps.end(); ++i)
+	for (auto step : settings->getSteps())
 	{
-		Ref< ImageProcessStep::Instance > instance = (*i)->create(resourceManager, renderSystem, width, height);
+		Ref< ImageProcessStep::Instance > instance = step->create(resourceManager, renderSystem, width, height);
 		if (instance)
 			m_instances.push_back(instance);
 		else
 		{
-			log::error << L"Unable to create post processing step " << uint32_t(std::distance(steps.begin(), i)) << Endl;
+			log::error << L"Unable to create post processing step." << Endl;
 			return false;
 		}
 	}
@@ -87,19 +86,15 @@ bool ImageProcess::create(
 
 void ImageProcess::destroy()
 {
-	for (RefArray< ImageProcessStep::Instance >::const_iterator i = m_instances.begin(); i != m_instances.end(); ++i)
-		(*i)->destroy();
+	for (auto instance : m_instances)
+		instance->destroy();
 
 	m_instances.resize(0);
 
 	m_targets.clear();
-	m_targetPool = 0;
+	m_targetPool = nullptr;
 
-	if (m_screenRenderer)
-	{
-		m_screenRenderer->destroy();
-		m_screenRenderer = 0;
-	}
+	safeDestroy(m_screenRenderer);
 }
 
 bool ImageProcess::render(
@@ -156,9 +151,9 @@ bool ImageProcess::render(
 	}
 
 	// Execute each post processing step in sequence.
-	for (RefArray< ImageProcessStep::Instance >::const_iterator i = m_instances.begin(); i != m_instances.end(); ++i)
+	for (auto instance : m_instances)
 	{
-		(*i)->render(
+		instance->render(
 			this,
 			renderView,
 			m_screenRenderer,

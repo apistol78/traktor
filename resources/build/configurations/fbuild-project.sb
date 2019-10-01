@@ -29,7 +29,7 @@ end
 
 local function collectLocalBuildDependencies(project, configuration, outBuildDependencies)
 	local dependencies = project:getDependencies()
-	for i = 0, dependencies:size() - 1 do
+	for i = 0, dependencies.size - 1 do
 		local dep = dependencies:get(i)
 		if isa(dep, ProjectDependency) then
 			local localProject = dep:getProject()
@@ -56,7 +56,7 @@ local function collectDependencies(
 )
 	-- Add include paths.
 	local includePaths = configuration:getIncludePaths()
-	for i = 0, includePaths:size() - 1 do
+	for i = 0, includePaths.size - 1 do
 		local ip = Path(includePaths:get(i)).pathName
 		if ip ~= "" then
 			insertLast(outIncludePaths, ip)
@@ -65,13 +65,13 @@ local function collectDependencies(
 
 	-- Add external libraries, ex precompiled libraries etc.
 	local libraries = configuration:getLibraries()
-	for i = 0, libraries:size() - 1 do
+	for i = 0, libraries.size - 1 do
 		insertLast(outLibrariesExternal, libraries:get(i))
 	end
 
 	-- Add library paths.
 	local libraryPaths = configuration:getLibraryPaths()
-	for i = 0, libraryPaths:size() - 1 do
+	for i = 0, libraryPaths.size - 1 do
 		local libraryAbsPath = fileSystem:getAbsolutePath(Path(libraryPaths:get(i)))
 		local lp = libraryAbsPath.pathName
 		if lp ~= "" then
@@ -81,7 +81,7 @@ local function collectDependencies(
 
 	-- Recurse with dependencies.
 	local dependencies = project:getDependencies()
-	for i = 0, dependencies:size() - 1 do
+	for i = 0, dependencies.size - 1 do
 		local dep = dependencies:get(i)
 		if isa(dep, ProjectDependency) then
 			local localSolution = solution
@@ -108,7 +108,7 @@ local function collectDependencies(
 
 					-- Only add include paths when dealing with shared library dependencies.
 					local includePaths = localConfig:getIncludePaths()
-					for j = 0, includePaths:size() - 1 do
+					for j = 0, includePaths.size - 1 do
 						local ip = Path(includePaths:get(j)).pathName
 						if ip ~= "" then
 							insertLast(outIncludePaths, ip)
@@ -157,7 +157,7 @@ local function collectDependencies(
 			else
 				-- Only add include paths when dealing with shared library dependencies.
 				local includePaths = externalConfig:getIncludePaths()
-				for j = 0, includePaths:size() - 1 do
+				for j = 0, includePaths.size - 1 do
 					local ip = Path(includePaths:get(j)).pathName
 					if ip ~= "" then
 						insertLast(outIncludePaths, ip)
@@ -171,13 +171,13 @@ end
 
 local function collectFiles(project, projectOrFilter, pred)
 	local items = projectOrFilter:getItems()
-	for i = 0, items:size() - 1 do
+	for i = 0, items.size - 1 do
 		local item = items:get(i)
 		if isa(item, Filter) then
 			collectFiles(project, item, pred)
 		else
 			local files = item:getSystemFiles(project:getSourcePath())
-			for i = 0, files:size() - 1 do
+			for i = 0, files.size - 1 do
 				local file = files:get(i)
 --				if os ~= "windows" then
 --					file = Path(files:get(i):getPathNameNoVolume())
@@ -200,7 +200,7 @@ local externalLibraries = {}
 local libraryPaths = {}
 local buildDependencies = {}
 
-for i = 0, configurations:size() - 1 do
+for i = 0, configurations.size - 1 do
 	
 	includePaths[i] = {}
 	libraries[i] = {}
@@ -277,7 +277,7 @@ local inc = fileSystem:getAbsolutePath(Path(OS.getInstance():getEnvironment("FBU
 
 -- Include build scripts for local dependencies.
 local dependencies = project:getDependencies()
-for i = 0, dependencies:size() - 1 do
+for i = 0, dependencies.size - 1 do
 	local dep = dependencies:get(i)
 	if isa(dep, ProjectDependency) then
 		local localSolution = solution
@@ -292,7 +292,7 @@ end
 
 -- Build rules for each configuration.
 local configurations = project:getConfigurations()
-for i = 0, configurations:size() - 1 do
+for i = 0, configurations.size - 1 do
 	local configuration = configurations:get(i)
 	local profile = configuration:getTargetProfile()
 	local format = configuration:getTargetFormat()
@@ -324,7 +324,7 @@ for i = 0, configurations:size() - 1 do
 	end
 
 	local definitions = configuration:getDefinitions()
-	for j = 0, definitions:size() - 1 do
+	for j = 0, definitions.size - 1 do
 		local definition = definitions:get(j)
 		local def0 = string.sub(definition, 1, 1)
 		if not (def0 == "'" or def0 == "`") then
@@ -645,7 +645,7 @@ Executable('<?-- output:print(project:getName() .. "/" .. configuration:getName(
 	end
 
 	local aggregationItems = configuration:getAggregationItems()
-	for j = 0, aggregationItems:size() - 1 do
+	for j = 0, aggregationItems.size - 1 do
 		local aggregationItem = aggregationItems:get(j)
 
 		local aggregateOutputPath = Path(solution:getAggregateOutputPath())
@@ -673,7 +673,7 @@ Alias('<?-- output:print(project:getName() .. "/" .. configuration:getName()) --
 	{
 		'<?-- output:print(project:getName() .. "/" .. configuration:getName() .. "/Product") --?>',
 <?--
-	for j = 0, aggregationItems:size() - 1 do
+	for j = 0, aggregationItems.size - 1 do
 --?>		'<?-- output:print(project:getName() .. "/" .. configuration:getName() .. "/Aggregate/" .. j) --?>',
 <?--
 	end

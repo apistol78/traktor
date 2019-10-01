@@ -27,7 +27,8 @@ class Database;
 class IShape;
 class PrimitiveEntity;
 
-/*!
+/*! Primitive entity data.
+ * \ingroup Shape
  */
 class T_DLLCLASS PrimitiveEntityData : public world::EntityData
 {

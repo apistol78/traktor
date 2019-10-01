@@ -8,7 +8,7 @@ import(traktor)
 
 local function traverse(base, path, outputPath, rules)
 	local fa = FileSystem.getInstance():find(path.pathName .. "/*.*")
-	for i = 0, fa:size() - 1 do
+	for i = 0, fa.size - 1 do
 		local f = fa:get(i)
 		local p = f.path
 		local fn = p.fileName
@@ -86,7 +86,7 @@ function main(args)
 	-- Get all rules from template.
 	local rules = {}
 	local xrules = doc:get("/template/rules/rule")
-	for i = 0, xrules:size() - 1 do
+	for i = 0, xrules.size - 1 do
 		local xrule = xrules:get(i)
 		assert (xrule ~= nil)
 

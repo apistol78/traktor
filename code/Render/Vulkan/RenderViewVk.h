@@ -172,6 +172,7 @@ private:
 	VkRenderPass m_targetRenderPass;
 	SmallMap< pipeline_key_t, VkPipeline > m_pipelines;
 	Ref< UniformBufferPoolVk > m_uniformBufferPool;
+	bool m_cursorVisible;
 	uint32_t m_drawCalls;
 	uint32_t m_primitiveCount;
 

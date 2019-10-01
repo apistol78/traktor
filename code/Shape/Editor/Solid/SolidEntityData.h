@@ -52,6 +52,7 @@ class PrimitiveEntityData;
 class SolidEntity;
 
 /*! Solid geometry entity data.
+ * \ingroup Shape
  *
  * Contain solid geometry primitives along with operation (intersection, union, difference etc).
  */

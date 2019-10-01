@@ -70,6 +70,7 @@ RenderViewVk::RenderViewVk(
 ,	m_targetStateDirty(false)
 ,	m_targetId(0)
 ,	m_targetRenderPass(0)
+,	m_cursorVisible(true)
 ,	m_drawCalls(0)
 ,	m_primitiveCount(0)
 {
@@ -92,10 +93,9 @@ bool RenderViewVk::create(const RenderViewDefaultDesc& desc)
 	}
 	m_window->setTitle(!desc.title.empty() ? desc.title.c_str() : L"Traktor - Vulkan Renderer");
 	m_window->show();
-#endif
-#if defined(_WIN32)
-	if (m_window)
-		m_window->addListener(this);
+#	if defined(_WIN32)
+	m_window->addListener(this);
+#	endif
 #endif
 
 	// Create renderable surface.
@@ -256,12 +256,18 @@ bool RenderViewVk::reset(int32_t width, int32_t height)
 
 int RenderViewVk::getWidth() const
 {
-	return m_primaryTargets.front()->getWidth();
+	if (!m_primaryTargets.empty())
+		return m_primaryTargets.front()->getWidth();
+	else
+		return 0;
 }
 
 int RenderViewVk::getHeight() const
 {
-	return m_primaryTargets.front()->getHeight();
+	if (!m_primaryTargets.empty())
+		return m_primaryTargets.front()->getHeight();
+	else
+		return 0;
 }
 
 bool RenderViewVk::isActive() const
@@ -291,15 +297,17 @@ bool RenderViewVk::isFullScreen() const
 
 void RenderViewVk::showCursor()
 {
+	m_cursorVisible = true;
 }
 
 void RenderViewVk::hideCursor()
 {
+	m_cursorVisible = false;
 }
 
 bool RenderViewVk::isCursorVisible() const
 {
-	return false;
+	return m_cursorVisible;
 }
 
 bool RenderViewVk::setGamma(float gamma)
@@ -1362,20 +1370,14 @@ bool RenderViewVk::windowListenerEvent(Window* window, UINT message, WPARAM wPar
 		if (width <= 0 || height <= 0)
 			return false;
 
-		//DXGI_SWAP_CHAIN_DESC dxscd;
-		//std::memset(&dxscd, 0, sizeof(dxscd));
-
-		//if (m_dxgiSwapChain)
-		//	m_dxgiSwapChain->GetDesc(&dxscd);
-
-		//if (m_dxgiSwapChain == 0 || width != dxscd.BufferDesc.Width || height != dxscd.BufferDesc.Height)
-		//{
-		//	RenderEvent evt;
-		//	evt.type = ReResize;
-		//	evt.resize.width = width;
-		//	evt.resize.height = height;
-		//	m_eventQueue.push_back(evt);
-		//}
+		if (width != getWidth() || height != getHeight())
+		{
+			RenderEvent evt;
+			evt.type = ReResize;
+			evt.resize.width = width;
+			evt.resize.height = height;
+			m_eventQueue.push_back(evt);
+		}
 	}
 	else if (message == WM_SIZING)
 	{
@@ -1421,9 +1423,9 @@ bool RenderViewVk::windowListenerEvent(Window* window, UINT message, WPARAM wPar
 	}
 	else if (message == WM_SETCURSOR)
 	{
-		//if (!m_cursorVisible)
-		//	SetCursor(NULL);
-		//else
+		if (!m_cursorVisible)
+			SetCursor(NULL);
+		else
 			return false;
 	}
 	else

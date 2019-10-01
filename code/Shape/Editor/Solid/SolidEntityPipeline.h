@@ -15,7 +15,7 @@ namespace traktor
 	namespace shape
 	{
 
-/*! \brief
+/*!
  * \ingroup Shape
  */
 class T_DLLCLASS SolidEntityPipeline : public world::EntityPipeline

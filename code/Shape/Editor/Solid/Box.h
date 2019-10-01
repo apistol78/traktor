@@ -15,7 +15,10 @@ namespace traktor
 {
 	namespace shape
 	{
-	
+
+/*! Box shape.
+ * \ingroup Shape
+ */
 class T_DLLCLASS Box : public IShape
 {
 	T_RTTI_CLASS;

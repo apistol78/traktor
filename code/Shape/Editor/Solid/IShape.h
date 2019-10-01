@@ -32,6 +32,9 @@ class Model;
 	namespace shape
 	{
 	
+/*! Shape interface.
+ * \ingroup Shape
+ */
 class T_DLLCLASS IShape : public ISerializable
 {
 	T_RTTI_CLASS;
