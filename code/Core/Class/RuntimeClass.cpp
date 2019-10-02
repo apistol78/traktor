@@ -112,17 +112,17 @@ void RuntimeClass::addConstructor(uint32_t argc, IRuntimeDispatch* constructor)
 
 void RuntimeClass::addMethod(const char* const methodName, uint32_t argc, IRuntimeDispatch* method)
 {
-	for (typename AlignedVector< MethodInfo >::iterator i = m_methods.begin(); i != m_methods.end(); ++i)
+	for (auto& methodInfo : m_methods)
 	{
-		if (i->name == methodName)
+		if (methodInfo.name == methodName)
 		{
-			if (!is_a< PolymorphicDispatch >(i->dispatch))
+			if (!is_a< PolymorphicDispatch >(methodInfo.dispatch))
 			{
 				Ref< PolymorphicDispatch > pd = new PolymorphicDispatch();
-				pd->set(i->argc, i->dispatch);
-				i->dispatch = pd;
+				pd->set(methodInfo.argc, methodInfo.dispatch);
+				methodInfo.dispatch = pd;
 			}
-			mandatory_non_null_type_cast< PolymorphicDispatch* >(i->dispatch)->set(argc, method);
+			mandatory_non_null_type_cast< PolymorphicDispatch* >(methodInfo.dispatch)->set(argc, method);
 			return;
 		}
 	}
@@ -135,17 +135,17 @@ void RuntimeClass::addMethod(const char* const methodName, uint32_t argc, IRunti
 
 void RuntimeClass::addStaticMethod(const char* const methodName, uint32_t argc, IRuntimeDispatch* method)
 {
-	for (typename AlignedVector< MethodInfo >::iterator i = m_staticMethods.begin(); i != m_staticMethods.end(); ++i)
+	for (auto& methodInfo : m_staticMethods)
 	{
-		if (i->name == methodName)
+		if (methodInfo.name == methodName)
 		{
-			if (!is_a< PolymorphicDispatch >(i->dispatch))
+			if (!is_a< PolymorphicDispatch >(methodInfo.dispatch))
 			{
 				Ref< PolymorphicDispatch > pd = new PolymorphicDispatch();
-				pd->set(i->argc, i->dispatch);
-				i->dispatch = pd;
+				pd->set(methodInfo.argc, methodInfo.dispatch);
+				methodInfo.dispatch = pd;
 			}
-			mandatory_non_null_type_cast< PolymorphicDispatch* >(i->dispatch)->set(argc, method);
+			mandatory_non_null_type_cast< PolymorphicDispatch* >(methodInfo.dispatch)->set(argc, method);
 			return;
 		}
 	}
@@ -158,12 +158,12 @@ void RuntimeClass::addStaticMethod(const char* const methodName, uint32_t argc, 
 
 void RuntimeClass::addProperty(const char* const propertyName, const std::wstring& signature, IRuntimeDispatch* setter, IRuntimeDispatch* getter)
 {
-	for (typename AlignedVector< PropertyInfo >::iterator i = m_properties.begin(); i != m_properties.end(); ++i)
+	for (auto& propertyInfo : m_properties)
 	{
-		if (i->name == propertyName)
+		if (propertyInfo.name == propertyName)
 		{
-			i->setter = setter;
-			i->getter = getter;
+			propertyInfo.setter = setter;
+			propertyInfo.getter = getter;
 			return;
 		}
 	}

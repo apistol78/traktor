@@ -71,6 +71,12 @@ public:
 	/*! Get character jump impulse. */
 	float getJumpImpulse() const { return m_jumpImpulse; }
 
+	/*! Get character max velocity. */
+	float getMaxVelocity() const { return m_maxVelocity; }
+
+	/*! Get velocity damping coefficient. */
+	float getVelocityDamping() const { return m_velocityDamping; }
+
 	virtual void serialize(ISerializer& s) override final;
 
 private:
@@ -80,6 +86,8 @@ private:
 	float m_height;
 	float m_step;
 	float m_jumpImpulse;
+	float m_maxVelocity;
+	float m_velocityDamping;
 };
 
 	}

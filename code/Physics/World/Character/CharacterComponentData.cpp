@@ -19,13 +19,15 @@ namespace traktor
 	namespace physics
 	{
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.physics.CharacterComponentData", 1, CharacterComponentData, world::IEntityComponentData)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.physics.CharacterComponentData", 2, CharacterComponentData, world::IEntityComponentData)
 
 CharacterComponentData::CharacterComponentData()
 :	m_radius(1.0f)
 ,	m_height(2.0f)
 ,	m_step(0.5f)
 ,	m_jumpImpulse(1.0f)
+,	m_maxVelocity(2.0f)
+,	m_velocityDamping(1.0f)
 {
 }
 
@@ -105,6 +107,12 @@ void CharacterComponentData::serialize(ISerializer& s)
 
 	if (s.getVersion() >= 1)
 		s >> Member< float >(L"jumpImpulse", m_jumpImpulse, AttributeRange(0.0f));
+
+	if (s.getVersion() >= 2)
+	{
+		s >> Member< float >(L"maxVelocity", m_maxVelocity, AttributeRange(0.0f));
+		s >> Member< float >(L"velocityDamping", m_velocityDamping, AttributeRange(0.0f));
+	}
 }
 
 	}

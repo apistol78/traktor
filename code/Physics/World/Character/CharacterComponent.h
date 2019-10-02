@@ -56,6 +56,18 @@ public:
 
 	float getHeadAngle() const;
 
+	/*! Dead stop.
+	 */
+	void stop();
+
+	/*! Clear accumulated impulses.
+	 *
+	 * Impulses are automatically cleared after
+	 * each update, this method is only for
+	 * filtering "pending" impulses within update.
+	 */
+	void clear();
+
 	/*! Move character.
 	 *
 	 * \param motion New velocity of character.
@@ -88,6 +100,7 @@ private:
 	uint32_t m_traceIgnore;
 	float m_headAngle;
 	Vector4 m_velocity;
+	Vector4 m_impulse;
 	bool m_grounded;
 
 	bool stepVertical(float motion, Vector4& inoutPosition) const;

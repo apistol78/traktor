@@ -82,29 +82,27 @@ Ref< StyleSheet > StyleSheet::createDefault()
 
 Color4ub StyleSheet::getColor(const Object* widget, const wchar_t* const element) const
 {
-	for (std::vector< Group >::const_reverse_iterator i = m_groups.rbegin(); i != m_groups.rend(); ++i)
+	for (auto it = m_groups.rbegin(); it != m_groups.rend(); ++it)
 	{
-		if (i->element != element)
+		if (it->element != element)
 			continue;
 
-		const TypeInfo* type = TypeInfo::find(i->type.c_str());
+		const TypeInfo* type = TypeInfo::find(it->type.c_str());
 		if (!type)
 			continue;
 
 		if (is_type_of(*type, type_of(widget)))
-			return i->color;
+			return it->color;
 	}
 	return Color4ub(255, 255, 255);
 }
 
 std::wstring StyleSheet::getValue(const wchar_t* const name) const
 {
-	for (std::vector< Value >::const_iterator i = m_values.begin(); i != m_values.end(); ++i)
+	for (const auto& value : m_values)
 	{
-		if (i->name != name)
-			continue;
-
-		return i->value;
+		if (value.name == name)
+			return value.value;
 	}
 	return L"";
 }
