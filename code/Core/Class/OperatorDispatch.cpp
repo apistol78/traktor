@@ -18,9 +18,9 @@ void OperatorDispatch::signature(OutputStream& ss) const
 Any OperatorDispatch::invoke(ITypedObject* self, uint32_t argc, const Any* argv) const
 {
 	Any result;
-	for (RefArray< const IRuntimeDispatch >::const_iterator i = m_dispatches.begin(); i != m_dispatches.end(); ++i)
+	for (auto dispatch : m_dispatches)
 	{
-		result = (*i)->invoke(self, argc, argv);
+		result = dispatch->invoke(self, argc, argv);
 		if (!result.isVoid())
 			break;
 	}

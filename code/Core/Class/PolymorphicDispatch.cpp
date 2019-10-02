@@ -17,13 +17,13 @@ void PolymorphicDispatch::set(uint32_t argc, const IRuntimeDispatch* dispatch)
 void PolymorphicDispatch::signature(OutputStream& ss) const
 {
 	bool first = true;
-	for (RefArray< const IRuntimeDispatch >::const_iterator i = m_dispatches.begin(); i != m_dispatches.end(); ++i)
+	for (auto dispatch : m_dispatches)
 	{
-		if (*i)
+		if (dispatch)
 		{
 			if (!first)
 				ss << L";";
-			(*i)->signature(ss);
+			dispatch->signature(ss);
 			first = false;
 		}
 	}

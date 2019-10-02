@@ -9,6 +9,13 @@ namespace traktor
 {
 	namespace physics
 	{
+		namespace
+		{
+
+const Vector4 c_101(1.0f, 0.0f, 1.0f);
+const Vector4 c_010(0.0f, 1.0f, 0.0f);
+
+		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.physics.CharacterComponent", CharacterComponent, world::IEntityComponent)
 
@@ -29,6 +36,7 @@ CharacterComponent::CharacterComponent(
 ,	m_traceIgnore(traceIgnore)
 ,	m_headAngle(0.0f)
 ,	m_velocity(Vector4::zero())
+,	m_impulse(Vector4::zero())
 ,	m_grounded(false)
 {
 }
@@ -65,14 +73,26 @@ Aabb3 CharacterComponent::getBoundingBox() const
 
 void CharacterComponent::update(const world::UpdateParams& update)
 {
-	float dT = update.deltaTime;
-
-	Vector4 movement = m_velocity * Scalar(dT);
+	Scalar dT(update.deltaTime);
+	Vector4 movement = m_velocity * dT;
 	Vector4 position = m_bodyWide->getTransform().translation();
 	QueryResult result;
 
-	// Integrate gravity.
-	m_velocity += Vector4(0.0f, -9.2f, 0.0f) * Scalar(dT);
+	// Add user impulses.
+	m_velocity += m_impulse;
+	m_impulse = Vector4::zero();
+	
+	// Clamp X/Z velocity.
+	Scalar maxVelocity(m_data->getMaxVelocity());
+	Scalar currentVelocity = (m_velocity * c_101).length();
+	if (currentVelocity > maxVelocity)
+		m_velocity *= (c_101 * maxVelocity / currentVelocity + c_010);
+
+	// Damp velocity.
+	m_velocity -= m_velocity.normalized() * Scalar(m_data->getVelocityDamping()) * dT;
+
+	// Add gravity.
+	m_velocity += Vector4(0.0f, -9.2f, 0.0f) * dT;
 
 	// Step up.
 	float stepUpLength = m_data->getStep();
@@ -82,11 +102,11 @@ void CharacterComponent::update(const world::UpdateParams& update)
 	if (stepVertical(stepUpLength, position))
 	{
 		// Head hit; cancel out up motion.
-		m_velocity *= Vector4(1.0f, 0.0f, 1.0f, 0.0f);
+		m_velocity *= c_101;
 	}
 
 	// Step forward.
-	Vector4 movementXZ = movement * Vector4(1.0f, 0.0f, 1.0f);
+	Vector4 movementXZ = movement * c_101;
 	step(movementXZ, position);
 
 	// Step down, step further down to simulate falling.
@@ -97,7 +117,7 @@ void CharacterComponent::update(const world::UpdateParams& update)
 	if (stepVertical(-stepDownLength, position))
 	{
 		// Foot hit; cancel out up motion.
-		m_velocity *= Vector4(1.0f, 0.0f, 1.0f, 0.0f);
+		m_velocity *= c_101;
 		m_grounded = true;
 	}
 	else
@@ -126,20 +146,33 @@ float CharacterComponent::getHeadAngle() const
 	return m_headAngle;
 }
 
+void CharacterComponent::stop()
+{
+	m_velocity = Vector4::zero();
+}
+
+void CharacterComponent::clear()
+{
+	m_impulse = Vector4::zero();
+}
+
 void CharacterComponent::move(const Vector4& motion, bool vertical)
 {
 	if (vertical)
-		m_velocity = motion;
+		m_impulse += motion;
 	else
-		m_velocity = motion * Vector4(1.0f, 0.0f, 1.0f) + m_velocity * Vector4(0.0f, 1.0f, 0.0f);
+		m_impulse += motion * c_101;
 }
 
 bool CharacterComponent::jump()
 {
-	if (!grounded())
+	if (grounded())
+	{
+		m_impulse += Scalar(m_data->getJumpImpulse()) * c_010;
+		return true;
+	}
+	else
 		return false;
-	m_velocity += Vector4(0.0f, m_data->getJumpImpulse(), 0.0f);
-	return true;
 }
 
 bool CharacterComponent::grounded() const

@@ -1,4 +1,5 @@
 #include "Core/Math/MathUtils.h"
+#include "Core/Misc/SafeDestroy.h"
 #include "Ui/Application.h"
 #include "Ui/Dock.h"
 #include "Ui/DockPane.h"
@@ -87,11 +88,7 @@ bool Dock::create(Widget* parent)
 
 void Dock::destroy()
 {
-	if (m_hint)
-	{
-		m_hint->destroy();
-		m_hint = 0;
-	}
+	safeDestroy(m_hint);
 	ui::Widget::destroy();
 }
 
@@ -131,7 +128,7 @@ void Dock::eventButtonDown(MouseButtonDownEvent* event)
 	Point position = event->getPosition();
 	Ref< DockPane > pane;
 
-	if ((pane = m_pane->getPaneFromPosition(position)) != 0)
+	if ((pane = m_pane->getPaneFromPosition(position)) != nullptr)
 	{
 		if (pane->hitGripperClose(position))
 		{
@@ -147,7 +144,7 @@ void Dock::eventButtonDown(MouseButtonDownEvent* event)
 		return;
 	}
 
-	if ((pane = m_pane->getSplitterFromPosition(position)) != 0)
+	if ((pane = m_pane->getSplitterFromPosition(position)) != nullptr)
 	{
 		if (pane->hitSplitter(position))
 		{
@@ -287,8 +284,8 @@ void Dock::eventFormMove(MoveEvent* event)
 	else
 	{
 		m_hint->hide();
-		m_hintDockPane = 0;
-		m_hintDockForm = 0;
+		m_hintDockPane = nullptr;
+		m_hintDockForm = nullptr;
 	}
 }
 
@@ -300,8 +297,8 @@ void Dock::eventFormNcButtonUp(NcMouseButtonUpEvent* event)
 	if (m_hint)
 	{
 		m_hint->hide();
-		m_hintDockPane = 0;
-		m_hintDockForm = 0;
+		m_hintDockPane = nullptr;
+		m_hintDockForm = nullptr;
 	}
 
 	Ref< DockPane > pane = m_pane->getPaneFromPosition(position);
@@ -315,7 +312,7 @@ void Dock::eventFormNcButtonUp(NcMouseButtonUpEvent* event)
 			widget->setParent(this);
 
 		form->destroy();
-		form = 0;
+		form = nullptr;
 
 		// Calculate docking direction.
 		int dx = position.x - pane->m_rect.getCenter().x;
@@ -356,7 +353,7 @@ void Dock::eventHintButtonUp(MouseButtonUpEvent* event)
 		widget->setParent(this);
 
 	m_hintDockForm->destroy();
-	m_hintDockForm = 0;
+	m_hintDockForm = nullptr;
 
 	// Calculate docking direction.
 	DockPane::Direction direction;
