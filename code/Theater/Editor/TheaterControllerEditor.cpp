@@ -831,7 +831,7 @@ void TheaterControllerEditor::eventSequencerKeyMove(ui::KeyMoveEvent* event)
 	ui::Tick* tick = dynamic_type_cast< ui::Tick* >(event->getKey());
 	if (tick)
 	{
-		TransformPathKeyWrapper* keyWrapper = static_cast< TransformPathKeyWrapper* >(tick->getData(L"KEY").ptr());
+		TransformPathKeyWrapper* keyWrapper = static_cast< TransformPathKeyWrapper* >(tick->getData(L"KEY"));
 		T_ASSERT(keyWrapper);
 
 		keyWrapper->m_key.T = tick->getTime() / 1000.0f;

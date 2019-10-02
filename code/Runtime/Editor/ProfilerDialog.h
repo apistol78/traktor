@@ -1,5 +1,6 @@
 #pragma once
 
+#include <map>
 #include "Runtime/Editor/TargetConnection.h"
 #include "Ui/Dialog.h"
 
