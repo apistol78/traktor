@@ -1,6 +1,5 @@
 #pragma once
 
-#include <map>
 #include <string>
 #include "Core/Object.h"
 #include "Core/Ref.h"
@@ -18,7 +17,7 @@ namespace traktor
 	namespace ui
 	{
 
-/*! \brief Associate container.
+/*! Associate container.
  * \ingroup UI
  *
  * Each UI widget is derived from this container to make it
@@ -27,27 +26,31 @@ namespace traktor
 class T_DLLCLASS Associative
 {
 public:
+	Associative();
+
 	virtual ~Associative();
 
-	/*! \brief Remove all objects. */
+	/*! Remove all objects. */
 	void removeAllData();
 
-	/*! \brief Set named object. */
+	/*! Set named object. */
 	void setData(const std::wstring& key, Object* data);
 
-	/*! \brief Get named object. */
-	Ref< Object > getData(const std::wstring& key) const;
+	/*! Get named object. */
+	Object* getData(const std::wstring& key) const;
 
-	/*! \brief Get named object, ensure proper type. */
+	/*! Get named object, ensure proper type. */
 	template < typename DataType >
-	Ref< DataType > getData(const std::wstring& key) const
+	DataType* getData(const std::wstring& key) const
 	{
-		Ref< Object > data = getData(key);
+		Object* data = getData(key);
 		return dynamic_type_cast< DataType* >(data);
 	}
 
 private:
-	std::map< std::wstring, Ref< Object > > m_data;
+	class Impl;
+
+	Impl* m_impl;
 };
 
 	}

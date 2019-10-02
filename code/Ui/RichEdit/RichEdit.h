@@ -2,6 +2,7 @@
 
 #include <functional>
 #include <list>
+#include <map>
 #include "Ui/Widget.h"
 
 // import/export mechanism.

@@ -1,3 +1,4 @@
+#include <map>
 #include "Ui/Associative.h"
 
 namespace traktor
@@ -5,32 +6,61 @@ namespace traktor
 	namespace ui
 	{
 
+class Associative::Impl
+{
+public:
+	void setData(const std::wstring& key, Object* data)
+	{
+		if (data)
+			m_data[key] = data;
+		else
+		{
+			auto it = m_data.find(key);
+			if (it != m_data.end())
+				m_data.erase(it);
+		}
+	}
+
+	Object* getData(const std::wstring& key) const
+	{
+		auto it = m_data.find(key);
+		return (it != m_data.end()) ? it->second.ptr() : nullptr;
+	}
+
+private:
+	std::map< std::wstring, Ref< Object > > m_data;
+};
+
+Associative::Associative()
+:	m_impl(nullptr)
+{
+}
+
 Associative::~Associative()
 {
+	delete m_impl;
 }
 
 void Associative::removeAllData()
 {
-	m_data.clear();
+	delete m_impl;
+	m_impl = nullptr;
 }
 
 void Associative::setData(const std::wstring& key, Object* data)
 {
-	if (data)
-		m_data[key] = data;
-	else
-	{
-		// Remove entry from map instead of just setting it to null.
-		std::map< std::wstring, Ref< Object > >::iterator i = m_data.find(key);
-		if (i != m_data.end())
-			m_data.erase(i);
-	}
+	if (!m_impl)
+		m_impl = new Impl();
+
+	m_impl->setData(key, data);
 }
 
-Ref< Object > Associative::getData(const std::wstring& key) const
+Object* Associative::getData(const std::wstring& key) const
 {
-	std::map< std::wstring, Ref< Object > >::const_iterator i = m_data.find(key);
-	return (i != m_data.end()) ? i->second.ptr() : 0;
+	if (m_impl)
+		return m_impl->getData(key);
+	else
+		return nullptr;
 }
 
 	}

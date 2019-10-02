@@ -1,6 +1,7 @@
 #pragma once
 
 #include <list>
+#include <map>
 #include "Core/Thread/Semaphore.h"
 #include "Ui/Widget.h"
 

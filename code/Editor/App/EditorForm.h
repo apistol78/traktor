@@ -1,6 +1,7 @@
 #pragma once
 
 #include <list>
+#include <map>
 #include "Core/Guid.h"
 #include "Core/Io/Path.h"
 #include "Core/Library/Library.h"
