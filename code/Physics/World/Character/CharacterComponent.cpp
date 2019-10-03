@@ -80,7 +80,6 @@ void CharacterComponent::update(const world::UpdateParams& update)
 
 	// Add user impulses.
 	m_velocity += m_impulse;
-	m_impulse = Vector4::zero();
 	
 	// Clamp X/Z velocity.
 	Scalar maxVelocity(m_data->getMaxVelocity());
@@ -88,11 +87,20 @@ void CharacterComponent::update(const world::UpdateParams& update)
 	if (currentVelocity > maxVelocity)
 		m_velocity *= (c_101 * maxVelocity / currentVelocity + c_010);
 
-	// Damp velocity.
-	m_velocity -= m_velocity.normalized() * Scalar(m_data->getVelocityDamping()) * dT;
+	// Damp velocity; only when no user input.
+	if (m_impulse.length() < FUZZY_EPSILON)
+	{
+		if (currentVelocity > FUZZY_EPSILON)
+			m_velocity -= ((m_velocity * c_101) / currentVelocity) * Scalar(m_data->getVelocityDamping()) * dT;
+		else
+			m_velocity *= c_010;
+	}
 
 	// Add gravity.
 	m_velocity += Vector4(0.0f, -9.2f, 0.0f) * dT;
+
+	// Reset user impulses.
+	m_impulse = Vector4::zero();
 
 	// Step up.
 	float stepUpLength = m_data->getStep();
