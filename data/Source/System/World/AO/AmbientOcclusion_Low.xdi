@@ -2,37 +2,23 @@
 <object type="traktor.render.ImageProcessSettings" version="1">
 	<requireHighRange>true</requireHighRange>
 	<definitions>
-		<item type="traktor.render.ImageProcessDefineTarget" version="4">
-			<id>SsaoFlip</id>
+		<item type="traktor.render.ImageProcessDefineTarget" version="5">
+			<id>Ssao</id>
 			<width>0</width>
 			<height>0</height>
-			<screenWidthDenom>4</screenWidthDenom>
-			<screenHeightDenom>4</screenHeightDenom>
+			<screenWidthDenom>1</screenWidthDenom>
+			<screenHeightDenom>1</screenHeightDenom>
 			<maxWidth>0</maxWidth>
 			<maxHeight>0</maxHeight>
 			<format>TfR8</format>
 			<depthStencil>false</depthStencil>
 			<preferTiled>true</preferTiled>
+			<generateMips>false</generateMips>
 			<multiSample>0</multiSample>
 			<clearColor>0, 0, 0, 0</clearColor>
 			<persistent>true</persistent>
 		</item>
-		<item type="traktor.render.ImageProcessDefineTarget" version="4">
-			<id>SsaoFlop</id>
-			<width>0</width>
-			<height>0</height>
-			<screenWidthDenom>4</screenWidthDenom>
-			<screenHeightDenom>4</screenHeightDenom>
-			<maxWidth>0</maxWidth>
-			<maxHeight>0</maxHeight>
-			<format>TfR8</format>
-			<depthStencil>false</depthStencil>
-			<preferTiled>true</preferTiled>
-			<multiSample>0</multiSample>
-			<clearColor>0, 0, 0, 0</clearColor>
-			<persistent>true</persistent>
-		</item>
-		<item type="traktor.render.ImageProcessDefineTarget" version="4">
+		<item type="traktor.render.ImageProcessDefineTarget" version="5">
 			<id>SsaoBlur1</id>
 			<width>0</width>
 			<height>0</height>
@@ -43,11 +29,12 @@
 			<format>TfR8</format>
 			<depthStencil>false</depthStencil>
 			<preferTiled>true</preferTiled>
+			<generateMips>false</generateMips>
 			<multiSample>0</multiSample>
 			<clearColor>0, 0, 0, 0</clearColor>
 			<persistent>false</persistent>
 		</item>
-		<item type="traktor.render.ImageProcessDefineTarget" version="4">
+		<item type="traktor.render.ImageProcessDefineTarget" version="5">
 			<id>SsaoBlur2</id>
 			<width>0</width>
 			<height>0</height>
@@ -58,6 +45,7 @@
 			<format>TfR8</format>
 			<depthStencil>false</depthStencil>
 			<preferTiled>true</preferTiled>
+			<generateMips>false</generateMips>
 			<multiSample>0</multiSample>
 			<clearColor>0, 0, 0, 0</clearColor>
 			<persistent>false</persistent>
@@ -65,10 +53,10 @@
 	</definitions>
 	<steps>
 		<item type="traktor.render.ImageProcessStepSetTarget">
-			<target>SsaoFlip</target>
+			<target>Ssao</target>
 		</item>
 		<item type="traktor.render.ImageProcessStepSsao" version="2">
-			<shader>{868B48AA-AC86-F64F-9934-671F2BE9DD80}</shader>
+			<shader>{C4F79F8D-43EF-6D43-993E-6A3B83F60B0B}</shader>
 			<sources>
 				<item>
 					<param>Depth</param>
@@ -80,25 +68,6 @@
 				</item>
 			</sources>
 		</item>
-		<item type="traktor.render.ImageProcessStepTemporal">
-			<shader>{417A5E0A-7FEB-7745-B655-7E708F641024}</shader>
-			<sources>
-				<item>
-					<param>Source</param>
-					<source>SsaoFlop</source>
-					<index>0</index>
-				</item>
-				<item>
-					<param>Depth</param>
-					<source>InputDepth</source>
-					<index>0</index>
-				</item>
-			</sources>
-		</item>
-		<item type="traktor.render.ImageProcessStepSwapTargets">
-			<destination>SsaoFlop</destination>
-			<source>SsaoFlip</source>
-		</item>
 		<item type="traktor.render.ImageProcessStepSetTarget">
 			<target>SsaoBlur1</target>
 		</item>
@@ -107,15 +76,15 @@
 			<sources>
 				<item>
 					<param>Source</param>
-					<source>SsaoFlop</source>
+					<source>Ssao</source>
 				</item>
 				<item>
 					<param>Depth</param>
 					<source>InputDepth</source>
 				</item>
 			</sources>
-			<direction>2, 0, 0, 0</direction>
-			<taps>8</taps>
+			<direction>3, 0, 0, 0</direction>
+			<taps>16</taps>
 			<blurType>BtGaussian</blurType>
 		</item>
 		<item type="traktor.render.ImageProcessStepSetTarget">
@@ -133,8 +102,8 @@
 					<source>InputDepth</source>
 				</item>
 			</sources>
-			<direction>0, 2, 0, 0</direction>
-			<taps>8</taps>
+			<direction>0, 3, 0, 0</direction>
+			<taps>16</taps>
 			<blurType>BtGaussian</blurType>
 		</item>
 		<item type="traktor.render.ImageProcessStepSetTarget">

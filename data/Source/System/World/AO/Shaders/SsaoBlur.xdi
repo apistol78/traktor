@@ -5,8 +5,8 @@
 			<id>{CB827020-C9E9-8341-A2DA-59F6C191FC3B}</id>
 			<comment/>
 			<position>
-				<first>2419</first>
-				<second>743</second>
+				<first>2744</first>
+				<second>765</second>
 			</position>
 			<technique>Default</technique>
 			<priority>
@@ -53,8 +53,8 @@
 			<id>{9FDE1CCE-1ECF-A74A-B563-D0FBFFC394CD}</id>
 			<comment/>
 			<position>
-				<first>2303</first>
-				<second>779</second>
+				<first>2628</first>
+				<second>801</second>
 			</position>
 			<swizzle>x</swizzle>
 		</item>
@@ -62,11 +62,11 @@
 			<id>{49399D4C-121C-0149-939E-BD9CCB7CDDF0}</id>
 			<comment/>
 			<position>
-				<first>2171</first>
-				<second>727</second>
+				<first>2418</first>
+				<second>732</second>
 			</position>
 			<from>0</from>
-			<to>7</to>
+			<to>15</to>
 		</item>
 		<item type="traktor.render.Mul" version="traktor.render.Node:1">
 			<id>{526B6C89-1455-BF42-AB79-D79C7CA4F5EF}</id>
@@ -129,8 +129,8 @@ Sample shadow
 			<id>{870C1C05-0610-CA4F-B6A6-32AC3138FAD4}</id>
 			<comment/>
 			<position>
-				<first>1603</first>
-				<second>851</second>
+				<first>1435</first>
+				<second>950</second>
 			</position>
 			<swizzle>x</swizzle>
 		</item>
@@ -138,28 +138,28 @@ Sample shadow
 			<id>{EAC1DFC8-9722-2C46-B12B-1CC4B554B641}</id>
 			<comment/>
 			<position>
-				<first>1381</first>
+				<first>1380</first>
 				<second>825</second>
 			</position>
 			<parameterName>GaussianOffsetWeights</parameterName>
 			<type>PtVector</type>
-			<frequency>UfFrame</frequency>
-			<length>8</length>
+			<frequency>UfOnce</frequency>
+			<length>16</length>
 		</item>
 		<item type="traktor.render.Div" version="traktor.render.Node:1">
 			<id>{4EAF9BA9-05E9-A748-98E0-3C445B0183C2}</id>
 			<comment/>
 			<position>
-				<first>193</first>
-				<second>822</second>
+				<first>153</first>
+				<second>803</second>
 			</position>
 		</item>
 		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
 			<id>{909005C3-BE16-C640-86B0-CB5C531E4E8E}</id>
 			<comment/>
 			<position>
-				<first>24</first>
-				<second>823</second>
+				<first>-16</first>
+				<second>804</second>
 			</position>
 			<parameterName>Direction</parameterName>
 			<type>PtVector</type>
@@ -169,8 +169,8 @@ Sample shadow
 			<id>{E0C609D2-A9DA-E043-BBF5-33E23BFF7F9D}</id>
 			<comment/>
 			<position>
-				<first>33</first>
-				<second>875</second>
+				<first>-7</first>
+				<second>856</second>
 			</position>
 		</item>
 		<item type="traktor.render.External" version="2,traktor.render.Node:1">
@@ -231,8 +231,8 @@ Shadow; adjusted for msaa.
 			<id>{701E5D4E-158E-B64A-ACF5-AD3355CF88D9}</id>
 			<comment/>
 			<position>
-				<first>1314</first>
-				<second>363</second>
+				<first>1467</first>
+				<second>365</second>
 			</position>
 			<min>0</min>
 			<max>1</max>
@@ -241,8 +241,8 @@ Shadow; adjusted for msaa.
 			<id>{995B0070-AFCB-1D4F-AA67-75FB87AECD18}</id>
 			<comment/>
 			<position>
-				<first>1170</first>
-				<second>362</second>
+				<first>1239</first>
+				<second>356</second>
 			</position>
 		</item>
 		<item type="traktor.render.Abs" version="traktor.render.Node:1">
@@ -257,16 +257,16 @@ Shadow; adjusted for msaa.
 			<id>{E5DC8A04-E9B4-944A-BE0A-B08F9B456555}</id>
 			<comment/>
 			<position>
-				<first>860</first>
-				<second>323</second>
+				<first>791</first>
+				<second>316</second>
 			</position>
 		</item>
 		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{7158DA6C-A463-7B4B-83E6-73507F9C2061}</id>
 			<comment/>
 			<position>
-				<first>645</first>
-				<second>229</second>
+				<first>504</first>
+				<second>263</second>
 			</position>
 			<fragmentGuid>{D2B23342-5AF7-3C4E-A593-48394F75EA06}</fragmentGuid>
 			<inputPins>
@@ -293,8 +293,8 @@ Shadow; adjusted for msaa.
 			<id>{156DFF5C-6EDC-B147-9201-EFE7E142A193}</id>
 			<comment/>
 			<position>
-				<first>458</first>
-				<second>269</second>
+				<first>318</first>
+				<second>319</second>
 			</position>
 			<parameterName>Depth</parameterName>
 			<type>PtTexture2D</type>
@@ -304,8 +304,8 @@ Shadow; adjusted for msaa.
 			<id>{ABC1AF51-E44B-284E-A89A-07FBD8D4D75E}</id>
 			<comment/>
 			<position>
-				<first>645</first>
-				<second>332</second>
+				<first>504</first>
+				<second>366</second>
 			</position>
 			<fragmentGuid>{D2B23342-5AF7-3C4E-A593-48394F75EA06}</fragmentGuid>
 			<inputPins>
@@ -332,8 +332,8 @@ Shadow; adjusted for msaa.
 			<id>{A87235C6-4CAC-474B-936F-AC380BCFFA48}</id>
 			<comment/>
 			<position>
-				<first>1053</first>
-				<second>418</second>
+				<first>1040</first>
+				<second>412</second>
 			</position>
 			<value>0.2</value>
 		</item>
@@ -341,8 +341,8 @@ Shadow; adjusted for msaa.
 			<id>{C72C5C23-4886-EF42-9291-C9D63BB0661E}</id>
 			<comment/>
 			<position>
-				<first>1604</first>
-				<second>883</second>
+				<first>1436</first>
+				<second>982</second>
 			</position>
 			<swizzle>y</swizzle>
 		</item>
@@ -350,8 +350,8 @@ Shadow; adjusted for msaa.
 			<id>{AB2DBEAC-26BB-1F46-9613-B9E11480F1BC}</id>
 			<comment/>
 			<position>
-				<first>2093</first>
-				<second>751</second>
+				<first>2252</first>
+				<second>744</second>
 			</position>
 			<swizzle>x</swizzle>
 		</item>
