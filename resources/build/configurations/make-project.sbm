@@ -618,7 +618,7 @@ for i, configuration in pairs(configurations) do
 			end
 		end
 
-		output:printLn("\t@$(BINARY_INCLUDE) " .. inputFile .. " $@ c_Resource" .. file.fileNameNoExtension)
+		output:printLn("\t-@$(BINARY_INCLUDE) " .. inputFile .. " $@ c_Resource" .. file.fileNameNoExtension)
 		output:printLn("")
 	end
 end
