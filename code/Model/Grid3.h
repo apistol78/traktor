@@ -1,7 +1,7 @@
 #pragma once
 
 #include <map>
-#include "Core/Containers/AlignedVector.h"
+#include "Core/Containers/SmallSet.h"
 #include "Core/Math/Vector4.h"
 
 namespace traktor
@@ -9,7 +9,7 @@ namespace traktor
 	namespace model
 	{
 
-/*! \brief Default accessor of position from value.
+/*! Default accessor of position from value.
  * \ingroup Model
  */
 template < typename ValueType >
@@ -18,7 +18,7 @@ struct DefaultPositionAccessor3
 	static Vector4 get(const ValueType& v) { return v; }
 };
 
-/*! \brief Default hash function.
+/*! Default hash function.
  * \ingroup Model
  */
 struct DefaultHashFunction3
@@ -36,7 +36,7 @@ struct DefaultHashFunction3
 	}
 };
 
-/*! \brief 3-dimensional grid container.
+/*! 3-dimensional grid container.
  * \ingroup Model
  */
 template
@@ -50,7 +50,7 @@ class Grid3
 public:
 	static const uint32_t InvalidIndex = ~0U;
 
-	Grid3(float cellSize)
+	explicit Grid3(float cellSize)
 	:	m_cellSize(cellSize)
 	{
 	}
@@ -71,10 +71,7 @@ public:
 			int32_t z = int32_t(std::floor(p.z()));
 
 			uint32_t hash = HashFunction::get(x, y, z);
-			AlignedVector< uint32_t >& indices = m_indices[hash];
-			AlignedVector< uint32_t >::iterator it = std::find(indices.begin(), indices.end(), index);
-			if (it != indices.end())
-				indices.erase(it);
+			m_indices[hash].erase(index);
 		}
 
 		// Add index to new cell.
@@ -86,7 +83,7 @@ public:
 			int32_t z = int32_t(std::floor(p.z()));
 
 			uint32_t hash = HashFunction::get(x, y, z);
-			m_indices[hash].push_back(index);
+			m_indices[hash].insert(index);
 		}
 
 		// Modify value.
@@ -116,16 +113,16 @@ public:
 				{
 					uint32_t hash = HashFunction::get(ix, iy, iz);
 
-					std::map< uint32_t, AlignedVector< uint32_t > >::const_iterator i = m_indices.find(hash);
+					std::map< uint32_t, SmallSet< uint32_t > >::const_iterator i = m_indices.find(hash);
 					if (i == m_indices.end())
 						continue;
 
-					const AlignedVector< uint32_t >& indices = i->second;
-					for (AlignedVector< uint32_t >::const_iterator j = indices.begin(); j != indices.end(); ++j)
+					const SmallSet< uint32_t >& indices = i->second;
+					for (auto index : indices)
 					{
-						Vector4 pv = PositionAccessor::get(m_values[*j]);
+						Vector4 pv = PositionAccessor::get(m_values[index]);
 						if ((pv - p).length2() <= distance * distance)
-							return *j;
+							return index;
 					}
 				}
 			}
@@ -143,13 +140,10 @@ public:
 		int32_t z = int32_t(std::floor(p.z()));
 
 		uint32_t hash = HashFunction::get(x, y, z);
-		AlignedVector< uint32_t >& indices = m_indices[hash];
-
 		uint32_t id = uint32_t(m_values.size());
+
 		m_values.push_back(v);
-
-		indices.push_back(id);
-
+		m_indices[hash].insert(id);
 		return id;
 	}
 
@@ -167,7 +161,7 @@ public:
 			int32_t z = int32_t(std::floor(p.z()));
 
 			uint32_t hash = HashFunction::get(x, y, z);
-			m_indices[hash].push_back(i);
+			m_indices[hash].insert(i);
 		}
 	}
 
@@ -194,7 +188,7 @@ public:
 
 private:
 	Scalar m_cellSize;
-	std::map< uint32_t, AlignedVector< uint32_t > > m_indices;
+	std::map< uint32_t, SmallSet< uint32_t > > m_indices;
 	AlignedVector< ValueType > m_values;
 };
 
