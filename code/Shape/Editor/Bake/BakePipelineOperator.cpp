@@ -11,6 +11,7 @@
 #include "Core/Reflection/RfpMemberType.h"
 #include "Core/Serialization/DeepClone.h"
 #include "Core/Serialization/DeepHash.h"
+#include "Core/Settings/PropertyBoolean.h"
 #include "Core/Settings/PropertyInteger.h"
 #include "Core/Settings/PropertyString.h"
 #include "Database/Database.h"
@@ -383,6 +384,7 @@ Ref< TracerProcessor > BakePipelineOperator::ms_tracerProcessor = nullptr;
 
 BakePipelineOperator::BakePipelineOperator()
 :	m_tracerType(nullptr)
+,	m_editor(false)
 {
 }
 
@@ -397,6 +399,8 @@ bool BakePipelineOperator::create(const editor::IPipelineSettings* settings)
 	m_tracerType = TypeInfo::find(tracerTypeName.c_str());
 	if (!m_tracerType)
 		return false;
+
+	m_editor = settings->getProperty< bool >(L"Pipeline.TargetEditor", false);
 	
 	FileSystem::getInstance().makeAllDirectories(Path(L"data/Temp/Bake"));
 	return true;
@@ -452,28 +456,31 @@ bool BakePipelineOperator::build(
 		if (!flattenedLayer)
 			return false;
 
-		// Calculate hash of current layer.
+		// Calculate hash of current layer along with hash of trace configuration.
 		int32_t layerHash = configurationHash + (int32_t)DeepHash(flattenedLayer).get();
 
 		// Check if layer has already been baked, hash is written as a receipt in output database.
+		Guid existingLayerId = layerHashSeedId.permutate();
 		Guid existingLayerHashId = layerHashSeedId.permutate();
 
-		Ref< PropertyInteger > existingLayerHash = pipelineBuilder->getOutputDatabase()->getObjectReadOnly< PropertyInteger >(existingLayerHashId);
-		if (existingLayerHash && *existingLayerHash == layerHash)
+		if (m_editor)
 		{
-			log::info << L"Skipping baking lightmap, already baked in output database." << Endl;
-			layers.push_back(flattenedLayer);
-			continue;
+			Ref< PropertyInteger > existingLayerHash = pipelineBuilder->getOutputDatabase()->getObjectReadOnly< PropertyInteger >(existingLayerHashId);
+			if (
+				existingLayerHash &&
+				*existingLayerHash == layerHash
+			)
+			{
+				// Read flattened layer from output as we need the modified layer from last bake.
+				Ref< world::LayerEntityData > existingLayer = pipelineBuilder->getOutputDatabase()->getObjectReadOnly< world::LayerEntityData >(existingLayerId);
+				if (existingLayer)
+				{
+					log::info << L"Skipping baking lightmap, already baked in output database." << Endl;
+					layers.push_back(existingLayer);
+					continue;
+				}
+			}
 		}
-
-		// Either hash doesn't match or no receipt exist, create new receipt.
-		Ref< db::Instance > hashInstance = pipelineBuilder->getOutputDatabase()->createInstance(
-			L"Generated/" + existingLayerHashId.format(),
-			db::CifReplaceExisting | db::CifKeepExistingGuid,
-			&existingLayerHashId
-		);
-		hashInstance->setObject(new PropertyInteger(layerHash));
-		hashInstance->commit();
 
 		// Traverse and visit all entities in layer.
 		scene::Traverser::visit(flattenedLayer, [&](Ref< world::EntityData >& inoutEntityData) -> scene::Traverser::VisitorResult
@@ -669,6 +676,27 @@ bool BakePipelineOperator::build(
 			return scene::Traverser::VrContinue;
 		});
 
+		if (m_editor)
+		{
+			// Write baked layer and hash.
+			Ref< db::Instance > hashInstance = pipelineBuilder->getOutputDatabase()->createInstance(
+				L"Generated/" + existingLayerHashId.format(),
+				db::CifReplaceExisting,
+				&existingLayerHashId
+			);
+			hashInstance->setObject(new PropertyInteger(layerHash));
+			hashInstance->commit();
+
+			Ref< db::Instance > layerInstance = pipelineBuilder->getOutputDatabase()->createInstance(
+				L"Generated/" + existingLayerId.format(),
+				db::CifReplaceExisting,
+				&existingLayerId
+			);
+			layerInstance->setObject(flattenedLayer);
+			layerInstance->commit();
+		}
+
+		// Replace with modified layer in output scene.
 		layers.push_back(flattenedLayer);
 	}
 	inoutSceneAsset->setLayers(layers);
