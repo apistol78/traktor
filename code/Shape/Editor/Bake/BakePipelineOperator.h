@@ -45,9 +45,11 @@ public:
 	static TracerProcessor* getTracerProcessor();
 
 private:
+	static Ref< TracerProcessor > ms_tracerProcessor;
+
 	std::wstring m_assetPath;
 	const TypeInfo* m_tracerType;
-	static Ref< TracerProcessor > ms_tracerProcessor;	
+	bool m_editor;
 };
 
 	}
