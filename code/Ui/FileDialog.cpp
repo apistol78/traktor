@@ -103,7 +103,7 @@ int32_t FileDialog::showModal(Path& outPath)
 	if (!path.empty())
 		m_currentPath = path;
 	else if (!outPath.empty())
-		m_currentPath = outPath;
+		m_currentPath = outPath.getPathName();
 	else
 		m_currentPath = FileSystem::getInstance().getCurrentVolumeAndDirectory();
 
