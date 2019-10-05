@@ -473,7 +473,7 @@ bool TracerProcessor::process(const TracerTask* task) const
 		// lightmap->save(L"data/Temp/Bake/" + tracerOutput->getName() + L".exr");
 
 		// Convert into format which our lightmap texture will be.
-		if (true)
+		if (false)
 		{
 			encodeRGBM(lightmap);
 			lightmap->convert(drawing::PixelFormat::getR8G8B8A8().endianSwapped());
@@ -514,7 +514,7 @@ bool TracerProcessor::process(const TracerTask* task) const
 		writer << int32_t(lightmap->getHeight());
 		writer << int32_t(1);
 		writer << int32_t(1);
-		writer << int32_t(render::TfR8G8B8A8); // int32_t(render::TfR16G16B16A16F);
+		writer << /*int32_t(render::TfR8G8B8A8);*/ int32_t(render::TfR16G16B16A16F);
 		writer << bool(false);
 		writer << uint8_t(render::Tt2D);
 		writer << bool(false);
@@ -522,7 +522,7 @@ bool TracerProcessor::process(const TracerTask* task) const
 
 		// Write texture data.
 		uint32_t dataSize = render::getTextureMipPitch(
-			render::TfR16G16B16A16F,
+			/*render::TfR8G8B8A8,*/ render::TfR16G16B16A16F,
 			lightmap->getWidth(),
 			lightmap->getHeight()
 		);
