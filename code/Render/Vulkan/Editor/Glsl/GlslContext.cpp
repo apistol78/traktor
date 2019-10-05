@@ -147,14 +147,6 @@ GlslVariable* GlslContext::emitOutput(Node* node, const std::wstring& outputPinN
 	return out;
 }
 
-//void GlslContext::emitOutput(Node* node, const std::wstring& outputPinName, GlslVariable* variable)
-//{
-//	const OutputPin* outputPin = node->findOutputPin(outputPinName);
-//	T_ASSERT(outputPin);
-//
-//	m_currentShader->associateVariable(outputPin, variable);
-//}
-
 void GlslContext::findNonDependentOutputs(Node* node, const std::wstring& inputPinName, const AlignedVector< const OutputPin* >& dependentOutputPins, AlignedVector< const OutputPin* >& outOutputPins) const
 {
 	getNonDependentOutputs(m_shaderGraph, node->findInputPin(inputPinName), dependentOutputPins, outOutputPins);
