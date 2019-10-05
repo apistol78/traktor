@@ -50,8 +50,8 @@
       <second>Center</second>
     </item>
     <item>
-      <first>MESHASSET_EDITOR_BAKE_OCCLUSION</first>
-      <second>Bake occlusion</second>
+      <first>MESHASSET_EDITOR_RENORMALIZE</first>
+      <second>Re-normalize</second>
     </item>
     <item>
       <first>MESHASSET_EDITOR_BROWSE_SHADER</first>

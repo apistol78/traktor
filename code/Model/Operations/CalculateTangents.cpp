@@ -60,6 +60,11 @@ bool findBaseIndex(const Model& model, const Polygon& polygon, uint32_t& outBase
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.model.CalculateTangents", CalculateTangents, IModelOperation)
 
+CalculateTangents::CalculateTangents(bool replace)
+:	m_replace(replace)
+{
+}
+
 bool CalculateTangents::apply(Model& model) const
 {
 	const AlignedVector< Polygon >& polygons = model.getPolygons();
@@ -222,11 +227,11 @@ bool CalculateTangents::apply(Model& model) const
 		const TangentBase& tb = vertexTangentBases[i];
 
 		Vertex vertex = model.getVertex(i);
-		if (vertex.getNormal() == c_InvalidIndex)
+		if (m_replace || vertex.getNormal() == c_InvalidIndex)
 			vertex.setNormal(model.addUniqueNormal(tb.normal));
-		if (vertex.getTangent() == c_InvalidIndex)
+		if (m_replace || vertex.getTangent() == c_InvalidIndex)
 			vertex.setTangent(model.addUniqueNormal(tb.tangent));
-		if (vertex.getBinormal() == c_InvalidIndex)
+		if (m_replace || vertex.getBinormal() == c_InvalidIndex)
 			vertex.setBinormal(model.addUniqueNormal(tb.binormal));
 
 		model.setVertex(i, vertex);

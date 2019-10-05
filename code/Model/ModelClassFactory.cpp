@@ -344,7 +344,7 @@ void ModelClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
     registrar->registerClass(classCalculateConvexHull);
 
     auto classCalculateTangents = new AutoRuntimeClass< CalculateTangents >();
-    classCalculateTangents->addConstructor();
+    classCalculateTangents->addConstructor< bool >();
     registrar->registerClass(classCalculateTangents);
 
     auto classCleanDegenerate = new AutoRuntimeClass< CleanDegenerate >();

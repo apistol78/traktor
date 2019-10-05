@@ -60,7 +60,7 @@ bool InstanceMeshConverter::convert(
 	model::SortCacheCoherency().apply(model);
 
 	log::info << L"Calculating tangent bases..." << Endl;
-	model::CalculateTangents().apply(model);
+	model::CalculateTangents(false).apply(model);
 
 	log::info << L"Flatten materials..." << Endl;
 	model::FlattenDoubleSided().apply(model);

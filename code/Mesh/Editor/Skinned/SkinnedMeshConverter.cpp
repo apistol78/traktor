@@ -64,7 +64,7 @@ bool SkinnedMeshConverter::convert(
 	model::SortCacheCoherency().apply(model);
 
 	log::info << L"Calculating tangent bases..." << Endl;
-	model::CalculateTangents().apply(model);
+	model::CalculateTangents(false).apply(model);
 
 	log::info << L"Sorting materials..." << Endl;
 	model::SortProjectedArea(false).apply(model);
