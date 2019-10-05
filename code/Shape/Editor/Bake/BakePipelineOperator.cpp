@@ -513,7 +513,7 @@ bool BakePipelineOperator::build(
 					model::Triangulate().apply(*model);
 					model::CleanDuplicates(0.0f).apply(*model);
 					model::CleanDegenerate().apply(*model);
-					model::CalculateTangents().apply(*model);
+					model::CalculateTangents(false).apply(*model);
 
 					// check if model already contain lightmap UV or if we need to unwrap.
 					bool shouldUnwrap = false;
@@ -607,7 +607,7 @@ bool BakePipelineOperator::build(
 				model::Triangulate().apply(*model);
 				model::CleanDuplicates(0.0f).apply(*model);
 				model::CleanDegenerate().apply(*model);
-				model::CalculateTangents().apply(*model);
+				model::CalculateTangents(false).apply(*model);
 
 				// check if model already contain lightmap UV or if we need to unwrap.
 				bool shouldUnwrap = false;

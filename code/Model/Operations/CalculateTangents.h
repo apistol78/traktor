@@ -15,7 +15,7 @@ namespace traktor
 	namespace model
 	{
 
-/*! \brief
+/*!
  * \ingroup Model
  */
 class T_DLLCLASS CalculateTangents : public IModelOperation
@@ -23,7 +23,12 @@ class T_DLLCLASS CalculateTangents : public IModelOperation
 	T_RTTI_CLASS;
 
 public:
+	explicit CalculateTangents(bool replace);
+
 	virtual bool apply(Model& model) const override final;
+
+private:
+	bool m_replace;
 };
 
 	}

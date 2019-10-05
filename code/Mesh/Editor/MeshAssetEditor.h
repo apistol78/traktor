@@ -73,6 +73,7 @@ private:
 	Ref< ui::Edit > m_editFileName;
 	Ref< ui::Container > m_containerMaterials;
 	Ref< ui::DropDown > m_dropMeshType;
+	Ref< ui::CheckBox > m_checkRenormalize;
 	Ref< ui::CheckBox > m_checkCenter;
 	Ref< ui::Static > m_staticLodSteps;
 	Ref< ui::Slider > m_sliderLodSteps;

@@ -71,6 +71,12 @@ public:
 	/*! Get scale factor. */
 	float getScaleFactor() const { return m_scaleFactor; }
 
+	/*! Set if new normals should be calculated. */
+	void setRenormalize(bool renormalize) { m_renormalize = renormalize; }
+
+	/*! Check if new normals should be calculated. */
+	bool getRenormalize() const { return m_renormalize; }
+
 	/*! Set if model should be centered around origo before converted. */
 	void setCenter(bool center) { m_center = center; }
 
@@ -101,6 +107,7 @@ private:
 	std::map< std::wstring, Guid > m_materialShaders;
 	std::map< std::wstring, Guid > m_materialTextures;
 	float m_scaleFactor;
+	bool m_renormalize;
 	bool m_center;
 	int32_t m_lodSteps;
 	float m_lodMaxDistance;

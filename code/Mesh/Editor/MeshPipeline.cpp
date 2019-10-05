@@ -30,6 +30,7 @@
 #include "Mesh/Editor/Stream/StreamMeshConverter.h"
 #include "Model/Model.h"
 #include "Model/ModelFormat.h"
+#include "Model/Operations/CalculateTangents.h"
 #include "Model/Operations/CullDistantFaces.h"
 #include "Model/Operations/Transform.h"
 #include "Render/Editor/IProgramCompiler.h"
@@ -282,9 +283,11 @@ bool MeshPipeline::buildOutput(
 		// Scale model according to scale factor in asset.
 		model::Transform(scale(asset->getScaleFactor(), asset->getScaleFactor(), asset->getScaleFactor())).apply(*model);
 
+		if (asset->getRenormalize())
+			model::CalculateTangents(true).apply(*model);
+
 		if (asset->getCenter())
 		{
-			log::info << L"Re-center model..." << Endl;
 			Aabb3 boundingBox = model->getBoundingBox();
 			model::Transform(translate(-boundingBox.getCenter())).apply(*model);
 		}
@@ -708,7 +711,7 @@ bool MeshPipeline::buildOutput(
 		return false;
 	}
 
-	int32_t dataSize = stream->tell();
+	int64_t dataSize = stream->tell();
 
 	// Convert mesh asset.
 	if (!converter->convert(
