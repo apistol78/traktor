@@ -152,6 +152,10 @@ bool MeshAssetEditor::create(ui::Widget* parent, db::Instance* instance, ISerial
 	Ref< ui::Container > containerLeft = new ui::Container();
 	containerLeft->create(containerOptions, ui::WsNone, new ui::TableLayout(L"*", L"*", 0, 4));
 
+	m_checkRenormalize = new ui::CheckBox();
+	if (!m_checkRenormalize->create(containerLeft, i18n::Text(L"MESHASSET_EDITOR_RENORMALIZE")))
+		return false;
+
 	m_checkCenter = new ui::CheckBox();
 	if (!m_checkCenter->create(containerLeft, i18n::Text(L"MESHASSET_EDITOR_CENTER")))
 		return false;
@@ -244,6 +248,7 @@ void MeshAssetEditor::apply()
 {
 	m_asset->setFileName(m_editFileName->getText());
 	m_asset->setMeshType(MeshAsset::MeshType(m_dropMeshType->getSelected()));
+	m_asset->setRenormalize(m_checkRenormalize->isChecked());
 	m_asset->setCenter(m_checkCenter->isChecked());
 	m_asset->setLodSteps(m_sliderLodSteps->getValue());
 	m_asset->setLodMaxDistance(parseString< float >(m_editLodMaxDistance->getText()));
@@ -325,6 +330,7 @@ void MeshAssetEditor::updateFile()
 
 	m_editFileName->setText(assetRelPath.getPathName());
 	m_dropMeshType->select(m_asset->getMeshType());
+	m_checkRenormalize->setChecked(m_asset->getRenormalize());
 	m_checkCenter->setChecked(m_asset->getCenter());
 
 	m_staticLodSteps->setText(i18n::Format(L"MESHASSET_EDITOR_LOD_STEPS", m_asset->getLodSteps()));
@@ -631,12 +637,13 @@ void MeshAssetEditor::eventBrowseClick(ui::ButtonClickEvent* event)
 	if (!fileDialog.create(m_editFileName, type_name(this), i18n::Text(L"EDITOR_BROWSE_FILE"), L"All files (*.*);*.*"))
 		return;
 
-	Path path = m_editFileName->getText();
+	Path assetPath = FileSystem::getInstance().getAbsolutePath(m_assetPath);
+	Path path = assetPath + Path(m_editFileName->getText());
+
 	if (fileDialog.showModal(path) == ui::DrOk)
 	{
 		// Try get path relative to asset path.
 		Path relPath;
-		Path assetPath = FileSystem::getInstance().getAbsolutePath(m_assetPath);
 		if (FileSystem::getInstance().getRelativePath(path, assetPath, relPath))
 			path = relPath;
 
