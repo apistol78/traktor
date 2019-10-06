@@ -122,7 +122,7 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
 	vkEnumerateInstanceLayerProperties(&layerCount, layersAvailable.ptr());
 
 	AlignedVector< const char* > validationLayers;
-//#if defined(_DEBUG)
+#if defined(_DEBUG)
 	for (uint32_t i = 0; i < layerCount; ++i)
 	{
 		bool found = false;
@@ -134,7 +134,7 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
 		if (found)
 			validationLayers.push_back(strdup(layersAvailable[i].layerName));
 	}
-//#endif
+#endif
 
 	// Create Vulkan instance.
 	VkApplicationInfo ai = {};
@@ -167,6 +167,7 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
 	}
 
 #if !defined(__ANDROID__)
+#	if 0
 	// Setup debug port callback.
 	VkDebugUtilsMessengerCreateInfoEXT dumci = {};
 	dumci.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT;
@@ -179,6 +180,7 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
 		log::error << L"Failed to create Vulkan; failed to set debug report callback." << Endl;
 		return false;
 	}
+#	endif
 #endif
 
 	// Select physical device.
