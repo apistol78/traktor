@@ -55,7 +55,6 @@ private:
 	};
 
 	const BakeConfiguration* m_configuration;
-	AlignedVector< Vector2 > m_halton;
 	AlignedVector< Light > m_lights;
 	RTCDevice m_device;
 	RTCScene m_scene;

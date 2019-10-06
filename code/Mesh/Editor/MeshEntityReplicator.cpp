@@ -63,6 +63,7 @@ Ref< Object > MeshEntityReplicator::modifyOutput(
 
     Ref< MeshAsset > outputMeshAsset = new MeshAsset();
     outputMeshAsset->setMeshType(meshAsset->getMeshType());
+	outputMeshAsset->setMaterialTextures(meshAsset->getMaterialTextures());
 
     pipelineBuilder->buildOutput(
 		nullptr,
