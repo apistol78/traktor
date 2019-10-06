@@ -337,7 +337,11 @@ bool PipelineBuilder::build(const IPipelineDependencySet* dependencySet, bool re
 
 	// Log results.
 	if (!ThreadManager::getInstance().getCurrentThread()->stopped())
+	{
 		log::info << L"Build finished; " << m_succeeded << L" succeeded (" << m_succeededBuilt << L" built), " << m_failed << L" failed." << Endl;
+		for (auto duration : m_buildDurations)
+			log::info << (int32_t)(duration.second * 1000) << L" ms in " << duration.first->getName() << Endl;
+	}
 	else
 		log::info << L"Build finished; aborted." << Endl;
 
@@ -495,6 +499,11 @@ bool PipelineBuilder::buildOutput(const db::Instance* sourceInstance, const ISer
 				log::info << L"\"" << builtInstance->getPath() << L"\" " << builtInstance->getGuid().format() << Endl;
 
 			log::info << DecreaseIndent;
+		}
+
+		{
+			T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_buildDurationsLock);
+			m_buildDurations[&type_of(pipeline)] += buildTime;
 		}
 	}
 
@@ -750,6 +759,11 @@ IPipelineBuilder::BuildResult PipelineBuilder::performBuild(const IPipelineDepen
 		}
 
 		m_pipelineDb->setDependency(dependency->outputGuid, currentDependencyHash);
+
+		{
+			T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_buildDurationsLock);
+			m_buildDurations[&type_of(pipeline)] += buildTime;
+		}
 	}
 
 	log::info << DecreaseIndent;
