@@ -16,7 +16,7 @@
 namespace traktor
 {
 
-class JobQueue;
+class Job;
 
 	namespace editor
 	{
@@ -87,7 +87,7 @@ public:
 	virtual Ref< IStream > openTemporaryFile(const std::wstring& fileName) override final;
 
 private:
-	Ref< JobQueue > m_jobQueue;
+	RefArray< Job > m_jobs;
 	Ref< PipelineFactory > m_pipelineFactory;
 	Ref< db::Database > m_sourceDatabase;
 	Ref< IPipelineDependencySet > m_dependencySet;
