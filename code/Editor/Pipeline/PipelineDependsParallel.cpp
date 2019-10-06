@@ -11,6 +11,7 @@
 #include "Core/Serialization/ISerializable.h"
 #include "Core/System/OS.h"
 #include "Core/Thread/Acquire.h"
+#include "Core/Thread/Job.h"
 #include "Core/Thread/JobManager.h"
 #include "Core/Thread/Thread.h"
 #include "Core/Thread/ThreadManager.h"
@@ -65,16 +66,11 @@ PipelineDependsParallel::PipelineDependsParallel(
 ,	m_pipelineDb(pipelineDb)
 ,	m_instanceCache(instanceCache)
 {
-	m_jobQueue = new JobQueue();
-	m_jobQueue->create(
-		OS::getInstance().getCPUCoreCount(),
-		Thread::Above
-	);
 }
 
 PipelineDependsParallel::~PipelineDependsParallel()
 {
-	safeDestroy(m_jobQueue);
+	T_FATAL_ASSERT(m_jobs.empty());
 }
 
 void PipelineDependsParallel::addDependency(const ISerializable* sourceAsset)
@@ -115,7 +111,9 @@ void PipelineDependsParallel::addDependency(const ISerializable* sourceAsset, co
 
 	Ref< PipelineDependency > parentDependency = reinterpret_cast< PipelineDependency* >(m_currentDependency.get());
 
-	m_jobQueue->add(makeFunctor(this, &PipelineDependsParallel::jobAddDependency, parentDependency, Ref< const ISerializable >(sourceAsset), outputPath, outputGuid, flags));
+	Ref< Job > job = JobManager::getInstance().add(makeFunctor(this, &PipelineDependsParallel::jobAddDependency, parentDependency, Ref< const ISerializable >(sourceAsset), outputPath, outputGuid, flags));
+	if (job)
+		m_jobs.push_back(job);
 }
 
 void PipelineDependsParallel::addDependency(db::Instance* sourceAssetInstance, uint32_t flags)
@@ -128,7 +126,9 @@ void PipelineDependsParallel::addDependency(db::Instance* sourceAssetInstance, u
 
 	Ref< PipelineDependency > parentDependency = reinterpret_cast< PipelineDependency* >(m_currentDependency.get());
 
-	m_jobQueue->add(makeFunctor(this, &PipelineDependsParallel::jobAddDependency, parentDependency, Ref< db::Instance >(sourceAssetInstance), flags));
+	Ref< Job > job = JobManager::getInstance().add(makeFunctor(this, &PipelineDependsParallel::jobAddDependency, parentDependency, Ref< db::Instance >(sourceAssetInstance), flags));
+	if (job)
+		m_jobs.push_back(job);
 }
 
 void PipelineDependsParallel::addDependency(const Guid& sourceAssetGuid, uint32_t flags)
@@ -141,7 +141,9 @@ void PipelineDependsParallel::addDependency(const Guid& sourceAssetGuid, uint32_
 
 	Ref< PipelineDependency > parentDependency = reinterpret_cast< PipelineDependency* >(m_currentDependency.get());
 
-	m_jobQueue->add(makeFunctor(this, &PipelineDependsParallel::jobAddDependency, parentDependency, sourceAssetGuid, flags));
+	Ref< Job > job = JobManager::getInstance().add(makeFunctor(this, &PipelineDependsParallel::jobAddDependency, parentDependency, sourceAssetGuid, flags));
+	if (job)
+		m_jobs.push_back(job);
 }
 
 void PipelineDependsParallel::addDependency(
@@ -195,7 +197,14 @@ void PipelineDependsParallel::addDependency(
 
 bool PipelineDependsParallel::waitUntilFinished()
 {
-	return m_jobQueue->wait();
+	while (!m_jobs.empty())
+	{
+		if (!m_jobs.back()->wait())
+			return false;
+
+		m_jobs.pop_back();
+	}
+	return true;
 }
 
 Ref< db::Database > PipelineDependsParallel::getSourceDatabase() const
