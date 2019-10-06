@@ -56,25 +56,23 @@ Scalar attenuation(const Scalar& distance, const Scalar& range)
 	return k0 * k1;
 }
 
-double halton(int32_t index, int32_t base)
-{
-	double f = 1, r = 0;
-	while (index > 0)
-	{
-		f = f / base;
-		r = r + f * (index % base);
-		index = index / base;
-	}
-	return r;
-}
+Vector2 hammersley(uint32_t i, uint32_t numSamples)
+{  
+	uint32_t b = i;
+	b = (b << 16u) | (b >> 16u);
+	b = ((b & 0x55555555u) << 1u) | ((b & 0xAAAAAAAAu) >> 1u);
+	b = ((b & 0x33333333u) << 2u) | ((b & 0xCCCCCCCCu) >> 2u);
+	b = ((b & 0x0F0F0F0Fu) << 4u) | ((b & 0xF0F0F0F0u) >> 4u);
+	b = ((b & 0x00FF00FFu) << 8u) | ((b & 0xFF00FF00u) >> 8u);
+    float radicalInverseVDC = (float)(b * 2.3283064365386963e-10);
+    return Vector2((float)i / numSamples, radicalInverseVDC);
+} 
 
-
-Vector4 haltonDirection(const Vector4& direction, const Vector2& h, Random& rnd)
+Vector4 hammersleyUniformSphere(const Vector4& direction, uint32_t b, uint32_t numSamples)
 {
-	double rx = rnd.nextDouble() * 0.1f - 0.05f;
-	double ry = rnd.nextDouble() * 0.1f - 0.05f;
-	double z = 2.0 * (h.x + rx) - 1.0;
-	double t = 2.0 * PI * (h.y + ry);
+	Vector2 h = hammersley(b, numSamples);
+	double z = 2.0 * h.x - 1.0;
+	double t = 2.0 * PI * h.y;
 	double w = std::sqrt(1.0 - z * z);
 	double x = w * std::cos(t);
 	double y = w * std::sin(t);
@@ -87,6 +85,39 @@ Vector4 haltonDirection(const Vector4& direction, const Vector2& h, Random& rnd)
 	if (dot3(v, direction.xyz0()) < 0.0f)
 		v = -v;
 	return v;
+}
+
+
+Vector4 hammersleyUniformSphere(const Vector4& direction, uint32_t b, uint32_t numSamples, Random& rnd)
+{
+	Vector2 h = hammersley(b, numSamples);
+	double rx = rnd.nextDouble() * 0.1 - 0.05;
+	double ry = rnd.nextDouble() * 0.1 - 0.05;
+	double z = 2.0 * clamp< double >(h.x + rx, 0.0, 1.0) - 1.0;
+	double t = 2.0 * PI * clamp< double >(h.y + ry, 0.0, 1.0);
+	double w = std::sqrt(1.0 - z * z);
+	double x = w * std::cos(t);
+	double y = w * std::sin(t);
+	Vector4 v(
+		float(x),
+		float(y),
+		float(z),
+		0.0f
+	);
+	if (dot3(v, direction.xyz0()) < 0.0f)
+		v = -v;
+	return v;
+}
+
+Vector4 hammersleyUniformCone(const Vector4& direction, uint32_t b, uint32_t numSamples, float radius)
+{
+	Vector2 h = hammersley(b, numSamples);
+
+	double z = lerp(std::cos(radius), 1.0, (double)h.x);
+	double x = std::sqrt(1.0 - z * z) * std::cos(h.y * TWO_PI);
+	double y = std::sqrt(1.0 - z * z) * std::sin(h.y * TWO_PI);
+
+	return Quaternion(Vector4(0.0f, 0.0f, 1.0f), direction).normalized() * Vector4(x, y, z);
 }
 
 class Variance
@@ -151,21 +182,6 @@ bool RayTracerEmbree::create(const BakeConfiguration* configuration)
 	m_shEngine->generateSamplePoints(
 		configuration->getIrradianceSampleCount()
 	);
-
-	// Generate halton sequence.
-	uint32_t sampleCount = 500;
-	sampleCount = std::max(sampleCount, m_configuration->getIndirectSampleCount() + 16);
-	sampleCount = std::max(sampleCount, m_configuration->getShadowSampleCount() + 16);
-	sampleCount = std::max(sampleCount, m_configuration->getIrradianceSampleCount() + 16);
-
-	m_halton.resize(sampleCount);
-	for (int32_t i = 0; i < (int32_t)sampleCount; ++i)
-	{
-		m_halton[i] = Vector2(
-			(float)halton(i, 2),
-			(float)halton(i, 3)
-		);
-	}
 
     return true;
 }
@@ -322,7 +338,7 @@ Ref< render::SHCoeffs > RayTracerEmbree::traceProbe(const Vector4& position) con
 		{
 			for (uint32_t j = 0; j < 16; ++j)
 			{
-				direction[j] = haltonDirection(unit, m_halton[i + j], random);
+				direction[j] = hammersleyUniformSphere(unit, i + j, sampleCount, random);
 
 				rh.ray.org_x[j] = position.x();
 				rh.ray.org_y[j] = position.y();
@@ -486,7 +502,7 @@ Ref< drawing::Image > RayTracerEmbree::traceIndirect(const GBuffer* gbuffer) con
 							// Create a batch of rays.
 							for (uint32_t j = 0; j < 16; ++j)
 							{
-								direction[j] = (elm.normal * Scalar(0.02f) + haltonDirection(elm.normal, m_halton[i + j], random)).normalized();
+								direction[j] = (elm.normal * Scalar(0.02f) + hammersleyUniformSphere(elm.normal, i + j, sampleCount, random)).normalized();
 
 								rh.ray.org_x[j] = elm.position.x();
 								rh.ray.org_y[j] = elm.position.y();
@@ -910,12 +926,12 @@ Color4f RayTracerEmbree::sampleAnalyticalLights(
 		case Light::LtProbe:
 			{
 				Color4f ibl(0.0f, 0.0f, 0.0f, 0.0f);
-				Variance variance;
+				int32_t samples = secondary ? 50 : 200;
+				int32_t n = 0;
 
-				int32_t i = 0;
-				for (; i < 500; ++i)
+				for (int32_t i = 0; i < samples; ++i)
 				{
-					Vector4 direction = haltonDirection(normal, m_halton[i], random);
+					Vector4 direction = hammersleyUniformSphere(normal, i, samples, random);
 
 					origin.storeAligned(&r.org_x); 
 					direction.storeAligned(&r.dir_x);
@@ -932,14 +948,23 @@ Color4f RayTracerEmbree::sampleAnalyticalLights(
 					if (r.tfar < 0.0f)
 						continue;
 
-					Color4f ind = light.probe->sample(direction);
-					ibl += ind;
+					ibl += light.probe->sample(direction) * dot3(direction, normal);
+					n++;
 
-					variance.insert(dot3(ind, c_luminance));
-					if (variance.stop(0.05f, 1.96f))
-						break;
+					if (!secondary)
+					{
+						int32_t density = (int32_t)(light.probe->getDensity(direction) * 20.0f);
+						for (int32_t j = 0; j < density; ++j)
+						{
+							Vector4 sub = hammersleyUniformCone(direction, j, density, deg2rad(4.0f));
+							ibl += light.probe->sample(sub) * dot3(sub, normal);
+							n++;
+						}
+					}
 				}
-				contribution += ibl / Scalar(i + 1);
+
+				if (n > 0)
+					contribution += ibl * Scalar(PI) / Scalar(n);
 			}
 			break;
 		}
