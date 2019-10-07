@@ -166,6 +166,15 @@ bool RenderViewVk::create(const RenderViewEmbeddedDesc& desc)
 
 	width = ANativeWindow_getWidth(sci.window);
 	height = ANativeWindow_getHeight(sci.window);
+#elif defined(__APPLE__)
+	VkMacOSSurfaceCreateInfoMVK sci = {};
+	sci.sType = VK_STRUCTURE_TYPE_MACOS_SURFACE_CREATE_INFO_MVK;
+	sci.pView = desc.syswin.view;
+    if (vkCreateMacOSSurfaceMVK(m_instance, &sci, nullptr, &m_surface) != VK_SUCCESS)
+	{
+		log::error << L"Failed to create Vulkan; unable to create macOS renderable surface." << Endl;
+		return false;
+	}
 #endif
 
 	if (!create(width, height))
@@ -272,7 +281,7 @@ int RenderViewVk::getHeight() const
 
 bool RenderViewVk::isActive() const
 {
-#if defined(_WIN32) || defined(__ANDROID__)
+#if defined(_WIN32) || defined(__ANDROID__) || defined(__APPLE__)
 	return true;
 #else
 	return m_window->isActive();
@@ -288,7 +297,7 @@ bool RenderViewVk::isFullScreen() const
 {
 #if defined(_WIN32)
 	return m_window->haveFullScreenStyle();
-#elif defined(__ANDROID__)
+#elif defined(__ANDROID__) || defined(__APPLE__)
 	return true;
 #else
 	return m_window->isFullScreen();

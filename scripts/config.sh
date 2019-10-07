@@ -18,6 +18,7 @@ export EXPAT_SDK=$TRAKTOR_HOME/3rdp/libexpat-R_2_2_5/expat
 export ZLIB_SDK=$TRAKTOR_HOME/3rdp/zlib-1.2.11
 export P4_SDK=$TRAKTOR_HOME/3rdp/p4api-2018.1.1660568
 export RPI_SYSROOT=$TRAKTOR_HOME/3rdp/raspberry-sysroot
+export VULKAN_SDK=$TRAKTOR_HOME/3rdp/vulkan/Vulkan-Headers-master-190605
 export VMA_SDK=$TRAKTOR_HOME/3rdp/VulkanMemoryAllocator-master
 export ASTC_SDK=$TRAKTOR_HOME/3rdp/astc-encoder-master-190814
 

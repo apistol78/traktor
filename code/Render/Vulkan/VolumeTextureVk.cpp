@@ -89,7 +89,7 @@ bool VolumeTextureVk::create(
 		if (vkCreateImage(device, &ici, nullptr, &m_textureImage) != VK_SUCCESS)
 			return false;
 
-#if !defined(__ANDROID__)
+#if !defined(__ANDROID__) && !defined(__APPLE__)
 		// Set debug name of texture.
 		VkDebugUtilsObjectNameInfoEXT ni = {};
 		ni.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_OBJECT_NAME_INFO_EXT;

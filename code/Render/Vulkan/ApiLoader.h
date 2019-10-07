@@ -4,5 +4,7 @@
 #	include "Render/Vulkan/Linux/ApiLoader.h"
 #elif defined(__ANDROID__)
 #	include "Render/Vulkan/Android/ApiLoader.h"
+#elif defined(__APPLE__)
+#	include "Render/Vulkan/macOS/ApiLoader.h"
 #endif
 
