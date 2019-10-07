@@ -18,7 +18,7 @@ namespace traktor
 
 class ListBoxItem;
 
-/*! \brief List box control.
+/*! List box control.
  * \ingroup UI
  */
 class T_DLLCLASS ListBox : public AutoWidget
@@ -93,6 +93,8 @@ private:
 	RefArray< ListBoxItem > m_items;
 
 	void eventButtonDown(MouseButtonDownEvent* event);
+
+	void eventKeyDown(KeyDownEvent* event);
 
 	virtual void layoutCells(const Rect& rc) override;
 };
