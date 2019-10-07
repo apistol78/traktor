@@ -34,6 +34,7 @@ bool ListBox::create(Widget* parent, int32_t style)
 		return false;
 
 	addEventHandler< MouseButtonDownEvent >(this, &ListBox::eventButtonDown);
+	addEventHandler< KeyDownEvent >(this, &ListBox::eventKeyDown);
 
 	m_style = style;
 	m_lastHitIndex = -1;
@@ -78,12 +79,12 @@ void ListBox::removeAll()
 
 int32_t ListBox::count() const
 {
-	return int32_t(m_items.size());
+	return (int32_t)m_items.size();
 }
 
 void ListBox::setItem(int32_t index, const std::wstring& item)
 {
-	if (index >= 0 && index < int32_t(m_items.size()))
+	if (index >= 0 && index < (int32_t)m_items.size())
 	{
 		m_items[index]->setText(item);
 		requestUpdate();
@@ -92,13 +93,13 @@ void ListBox::setItem(int32_t index, const std::wstring& item)
 
 void ListBox::setData(int32_t index, Object* data)
 {
-	if (index >= 0 && index < int32_t(m_items.size()))
+	if (index >= 0 && index < (int32_t)m_items.size())
 		m_items[index]->setData(L"DATA", data);
 }
 
 std::wstring ListBox::getItem(int32_t index) const
 {
-	if (index >= 0 && index < int32_t(m_items.size()))
+	if (index >= 0 && index < (int32_t)m_items.size())
 		return m_items[index]->getText();
 	else
 		return L"";
@@ -106,21 +107,21 @@ std::wstring ListBox::getItem(int32_t index) const
 
 Ref< Object > ListBox::getData(int32_t index) const
 {
-	if (index >= 0 && index < int32_t(m_items.size()))
+	if (index >= 0 && index < (int32_t)m_items.size())
 		return m_items[index]->getData(L"DATA");
 	else
-		return 0;
+		return nullptr;
 }
 
 void ListBox::select(int32_t index)
 {
-	if (index >= 0 && index < int32_t(m_items.size()))
+	if (index >= 0 && index < (int32_t)m_items.size())
 		m_items[index]->setSelected(true);
 }
 
 bool ListBox::selected(int32_t index) const
 {
-	if (index >= 0 && index < int32_t(m_items.size()))
+	if (index >= 0 && index < (int32_t)m_items.size())
 		return m_items[index]->isSelected();
 	else
 		return false;
@@ -129,7 +130,7 @@ bool ListBox::selected(int32_t index) const
 int32_t ListBox::getSelected(std::vector< int32_t >& selected) const
 {
 	selected.resize(0);
-	for (int32_t i = 0; i < int32_t(m_items.size()); ++i)
+	for (int32_t i = 0; i < (int32_t)m_items.size(); ++i)
 	{
 		if (m_items[i]->isSelected())
 			selected.push_back(i);
@@ -139,7 +140,7 @@ int32_t ListBox::getSelected(std::vector< int32_t >& selected) const
 
 int32_t ListBox::getSelected() const
 {
-	for (int32_t i = 0; i < int32_t(m_items.size()); ++i)
+	for (int32_t i = 0; i < (int32_t)m_items.size(); ++i)
 	{
 		if (m_items[i]->isSelected())
 			return i;
@@ -162,7 +163,7 @@ Ref< Object > ListBox::getSelectedData() const
 	if (index >= 0)
 		return m_items[index]->getData(L"DATA");
 	else
-		return 0;
+		return nullptr;
 }
 
 int32_t ListBox::getItemHeight()
@@ -172,7 +173,7 @@ int32_t ListBox::getItemHeight()
 
 Rect ListBox::getItemRect(int32_t index) const
 {
-	if (index >= 0 && index < int32_t(m_items.size()))
+	if (index >= 0 && index < (int32_t)m_items.size())
 		return getCellRect(m_items[index]);
 	else
 		return Rect();
@@ -186,7 +187,7 @@ void ListBox::eventButtonDown(MouseButtonDownEvent* event)
 	Ref< ListBoxItem > hitItem = dynamic_type_cast< ListBoxItem* >(hitTest(event->getPosition()));
 
 	int32_t hitIndex = -1;
-	for (int32_t i = 0; i < int32_t(m_items.size()); ++i)
+	for (int32_t i = 0; i < (int32_t)m_items.size(); ++i)
 	{
 		if (hitItem == m_items[i])
 		{
@@ -218,23 +219,51 @@ void ListBox::eventButtonDown(MouseButtonDownEvent* event)
 		}
 		else
 		{
-			for (RefArray< ListBoxItem >::iterator i = m_items.begin(); i != m_items.end(); ++i)
-				modified |= (*i)->setSelected(hitItem == *i);
+			for (auto item : m_items)
+				modified |= item->setSelected(hitItem == item);
 		}
 	}
 	else
 	{
-		for (RefArray< ListBoxItem >::iterator i = m_items.begin(); i != m_items.end(); ++i)
-			modified |= (*i)->setSelected(hitItem == *i);
+		for (auto item : m_items)
+			modified |= item->setSelected(hitItem == item);
 	}
 
 	if (modified)
 	{
 		SelectionChangeEvent selectionChangeEvent(this);
-		this->raiseEvent(&selectionChangeEvent);
+		raiseEvent(&selectionChangeEvent);
 	}
 
 	m_lastHitIndex = hitIndex;
+}
+
+void ListBox::eventKeyDown(KeyDownEvent* event)
+{
+	int32_t index = getSelected();
+	switch (event->getVirtualKey())
+	{
+	case VkUp:
+		if (index > 0)
+			index--;
+		break;
+
+	case VkDown:
+		if (index < count() - 1)
+			index++;
+		break;
+
+	default:
+		break;
+	}
+	if (index != getSelected())
+	{
+		for (int32_t i = 0; i < (int32_t)m_items.size(); ++i)
+			m_items[i]->setSelected(i == index);
+
+		SelectionChangeEvent selectionChangeEvent(this);
+		raiseEvent(&selectionChangeEvent);
+	}
 }
 
 void ListBox::layoutCells(const Rect& rc)

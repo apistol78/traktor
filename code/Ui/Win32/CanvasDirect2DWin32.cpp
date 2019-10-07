@@ -445,6 +445,12 @@ void CanvasDirect2DWin32::drawPixel(int x, int y, const Color4ub& c)
 
 void CanvasDirect2DWin32::drawLine(int x1, int y1, int x2, int y2)
 {
+	bool needAntiAlias (bool)(x1 != x2 && y1 != y2);
+	if (needAntiAlias)
+		m_d2dRenderTarget->SetAntialiasMode(D2D1_ANTIALIAS_MODE_PER_PRIMITIVE);
+	else
+		m_d2dRenderTarget->SetAntialiasMode(D2D1_ANTIALIAS_MODE_ALIASED);
+
 	m_d2dRenderTarget->DrawLine(
 		D2D1::Point2F(x1, y1),
 		D2D1::Point2F(x2, y2),
@@ -485,28 +491,34 @@ void CanvasDirect2DWin32::drawLines(const Point* pnts, int npnts)
 	d2dGeometrySink->EndFigure(D2D1_FIGURE_END_OPEN);
 	d2dGeometrySink->Close();
 
+	m_d2dRenderTarget->SetAntialiasMode(D2D1_ANTIALIAS_MODE_PER_PRIMITIVE);
 	m_d2dRenderTarget->DrawGeometry(
 		d2dPathGeometry,
 		m_d2dForegroundBrush,
 		m_strokeWidth
 	);
+	m_d2dRenderTarget->SetAntialiasMode(D2D1_ANTIALIAS_MODE_ALIASED);
 }
 
 void CanvasDirect2DWin32::fillCircle(int x, int y, float radius)
 {
+	m_d2dRenderTarget->SetAntialiasMode(D2D1_ANTIALIAS_MODE_PER_PRIMITIVE);
 	m_d2dRenderTarget->FillEllipse(
 		D2D1::Ellipse(D2D1::Point2F(x, y), radius, radius),
 		m_d2dBackgroundBrush
 	);
+	m_d2dRenderTarget->SetAntialiasMode(D2D1_ANTIALIAS_MODE_ALIASED);
 }
 
 void CanvasDirect2DWin32::drawCircle(int x, int y, float radius)
 {
+	m_d2dRenderTarget->SetAntialiasMode(D2D1_ANTIALIAS_MODE_PER_PRIMITIVE);
 	m_d2dRenderTarget->DrawEllipse(
 		D2D1::Ellipse(D2D1::Point2F(x, y), radius, radius),
 		m_d2dForegroundBrush,
 		m_strokeWidth
 	);
+	m_d2dRenderTarget->SetAntialiasMode(D2D1_ANTIALIAS_MODE_ALIASED);
 }
 
 void CanvasDirect2DWin32::drawEllipticArc(int x, int y, int w, int h, float start, float end)
@@ -638,11 +650,13 @@ void CanvasDirect2DWin32::drawPolygon(const Point* pnts, int npnts)
 	d2dGeometrySink->EndFigure(D2D1_FIGURE_END_CLOSED);
 	d2dGeometrySink->Close();
 
+	m_d2dRenderTarget->SetAntialiasMode(D2D1_ANTIALIAS_MODE_PER_PRIMITIVE);
 	m_d2dRenderTarget->DrawGeometry(
 		d2dPathGeometry,
 		m_d2dForegroundBrush,
 		m_strokeWidth
 	);
+	m_d2dRenderTarget->SetAntialiasMode(D2D1_ANTIALIAS_MODE_ALIASED);
 }
 
 void CanvasDirect2DWin32::fillPolygon(const Point* pnts, int npnts)
@@ -677,10 +691,12 @@ void CanvasDirect2DWin32::fillPolygon(const Point* pnts, int npnts)
 	d2dGeometrySink->EndFigure(D2D1_FIGURE_END_CLOSED);
 	d2dGeometrySink->Close();
 
+	m_d2dRenderTarget->SetAntialiasMode(D2D1_ANTIALIAS_MODE_PER_PRIMITIVE);
 	m_d2dRenderTarget->FillGeometry(
 		d2dPathGeometry,
 		m_d2dBackgroundBrush
 	);
+	m_d2dRenderTarget->SetAntialiasMode(D2D1_ANTIALIAS_MODE_ALIASED);
 }
 
 void CanvasDirect2DWin32::drawBitmap(const Point& dstAt, const Point& srcAt, const Size& size, ISystemBitmap* bitmap, uint32_t blendMode)
