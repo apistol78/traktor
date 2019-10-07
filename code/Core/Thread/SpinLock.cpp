@@ -1,5 +1,7 @@
 #include "Core/Thread/Atomic.h"
 #include "Core/Thread/SpinLock.h"
+#include "Core/Thread/Thread.h"
+#include "Core/Thread/ThreadManager.h"
 #include "Core/Timer/Timer.h"
 
 namespace traktor
@@ -23,12 +25,14 @@ SpinLock::~SpinLock()
 
 bool SpinLock::wait(int32_t timeout)
 {
+	Thread* thread = ThreadManager::getInstance().getCurrentThread();
 	if (timeout <= 0)
 	{
 		for (;;)
 		{
 			if (Atomic::compareAndSwap(m_lock, 0, 1) == 0)
 				break;
+			thread->yield();
 		}
 	}
 	else
@@ -40,6 +44,7 @@ bool SpinLock::wait(int32_t timeout)
 				break;
 			if (s_timer.getElapsedTime() >= time)
 				return false;
+			thread->yield();
 		}
 	}
 	return true;

@@ -4,7 +4,8 @@
 #include <unistd.h>
 #include <sys/mman.h>
 #include <sys/stat.h>
-#include "Core/Misc/MD5.h"
+#include "Core/Misc/Adler32.h"
+#include "Core/Misc/String.h"
 #include "Core/Misc/TString.h"
 #include "Core/System/OsX/SharedMemoryOsX.h"
 #include "Core/Thread/Atomic.h"
@@ -50,9 +51,11 @@ bool SharedMemoryOsX::create(const std::wstring& name, uint32_t size)
 	size += sizeof(Header);
 
 	// Create a digest of name, cannot use qualified paths on posix.
-	MD5 md5;
-	md5.createFromString(name);
-	m_name = std::wstring(L"/tmp/") + md5.format();
+	Adler32 cs;
+	cs.begin();
+	cs.feed(name);
+	cs.end();
+	m_name = std::wstring(L"/t") + toString(cs.get());
 
 	// Open shared memory object.
 	m_fd = shm_open(wstombs(m_name).c_str(), O_RDWR, S_IRUSR | S_IWUSR);

@@ -179,6 +179,9 @@ std::wstring GlslShader::getGeneratedShader(const GlslLayout& layout) const
 			case GtTextureCube:
 				ss << L"layout(set = 0, binding = " << texture->getBinding() << L") uniform textureCube " << texture->getName() << L";" << Endl;
 				break;
+
+			default:
+				break;
 			}
 			ss << Endl;
 		}
