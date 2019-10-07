@@ -4,6 +4,7 @@
 #include "Core/Functor/Functor.h"
 #include "Core/Log/Log.h"
 #include "Core/Math/RandomGeometry.h"
+#include "Core/Math/Variance.h"
 #include "Core/Thread/Job.h"
 #include "Core/Thread/JobManager.h"
 #include "Drawing/Image.h"
@@ -119,42 +120,6 @@ Vector4 hammersleyUniformCone(const Vector4& direction, uint32_t b, uint32_t num
 
 	return Quaternion(Vector4(0.0f, 0.0f, 1.0f), direction).normalized() * Vector4(x, y, z);
 }
-
-class Variance
-{
-public:
-	Variance()
-	:	m_count(0)
-	,	m_mean(0.0f)
-	,	m_meanDistSquared(0.0f)
-	{
-	}
-
-	void insert(float value)
-	{
-		m_count++;
-		float delta = value - m_mean;
-		m_mean += delta / m_count;
-		m_meanDistSquared += delta * (value - m_mean);
-	}
-
-	float get() const
-	{
-		return m_meanDistSquared / (m_count - 1);
-	}
-
-	bool stop(float accept, float confidence) const
-	{
-		double threshold = accept / confidence;
-		double standardError = sqrt(get() / m_count);
-		return standardError < m_mean * threshold;
-	}
-
-private:
-	int32_t m_count;
-	float m_mean;
-	float m_meanDistSquared;
-};
 
 const Vector4 c_luminance(2.126f, 7.152f, 0.722f, 0.0f);
 
