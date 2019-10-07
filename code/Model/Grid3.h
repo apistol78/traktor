@@ -1,6 +1,6 @@
 #pragma once
 
-#include <map>
+#include "Core/Containers/SmallMap.h"
 #include "Core/Containers/SmallSet.h"
 #include "Core/Math/Vector4.h"
 
@@ -113,11 +113,11 @@ public:
 				{
 					uint32_t hash = HashFunction::get(ix, iy, iz);
 
-					std::map< uint32_t, SmallSet< uint32_t > >::const_iterator i = m_indices.find(hash);
-					if (i == m_indices.end())
+					auto it = m_indices.find(hash);
+					if (it == m_indices.end())
 						continue;
 
-					const SmallSet< uint32_t >& indices = i->second;
+					const SmallSet< uint32_t >& indices = it->second;
 					for (auto index : indices)
 					{
 						Vector4 pv = PositionAccessor::get(m_values[index]);
@@ -188,7 +188,7 @@ public:
 
 private:
 	Scalar m_cellSize;
-	std::map< uint32_t, SmallSet< uint32_t > > m_indices;
+	SmallMap< uint32_t, SmallSet< uint32_t > > m_indices;
 	AlignedVector< ValueType > m_values;
 };
 

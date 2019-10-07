@@ -110,7 +110,7 @@ Ref< Model > ModelFormatObj::read(const Path& filePath, const std::function< Ref
 		}
 		else if (startsWith< std::wstring >(str, L"usemtl ") || startsWith< std::wstring >(str, L"g "))
 		{
-			materialId = ~0U;
+			materialId = c_InvalidIndex;
 
 			std::wstring materialName = str.substr(7);
 			const AlignedVector< Material >& materials = md->getMaterials();
@@ -123,7 +123,7 @@ Ref< Model > ModelFormatObj::read(const Path& filePath, const std::function< Ref
 				}
 			}
 
-			if (materialId == ~0UL)
+			if (materialId == c_InvalidIndex)
 			{
 				Material material;
 				material.setName(str.substr(7));
