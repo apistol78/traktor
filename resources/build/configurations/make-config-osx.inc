@@ -48,4 +48,4 @@ LINK=ccache $(TOOLCHAIN_BIN)/clang++ $(CC_FLAGS_COMMON)
 LINK_FLAG_OUTPUT=-o 
 LINK_LIBS=
 
-BINARY_INCLUDE=$(TRAKTOR_HOME)/bin/osx/BinaryInclude
+BINARY_INCLUDE=$(TRAKTOR_HOME)/bin/osx/releasestatic/Traktor.Run.App $(TRAKTOR_HOME)/scripts/binaryinclude/BinaryInclude.run
