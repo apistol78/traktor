@@ -66,7 +66,8 @@ private:
         RandomGeometry& random,
         const Vector4& origin,
         const Vector4& normal,
-		bool secondary
+		bool secondary,
+        bool onlyProbes
     ) const;
 };
 
