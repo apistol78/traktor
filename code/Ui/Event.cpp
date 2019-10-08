@@ -14,7 +14,9 @@ Event::Event(EventSubject* sender)
 ,	m_keyState(WsNone)
 ,	m_consumed(false)
 {
-	m_keyState = Application::getInstance()->getEventLoop()->getAsyncKeyState();
+	auto application = Application::getInstance();
+	if (application != nullptr && application->getEventLoop() != nullptr)
+		m_keyState = application->getEventLoop()->getAsyncKeyState();
 }
 
 EventSubject* Event::getSender() const
