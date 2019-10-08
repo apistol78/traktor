@@ -130,7 +130,7 @@ void FormCocoa::setVisible(bool visible)
 
 bool FormCocoa::isVisible() const
 {
-	return false;
+	return true;
 }
 
 void FormCocoa::setEnable(bool enable)

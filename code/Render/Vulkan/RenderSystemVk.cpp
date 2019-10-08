@@ -50,7 +50,7 @@ const char* c_extensions[] = { "VK_KHR_surface", "VK_KHR_xlib_surface", "VK_EXT_
 #elif defined(__ANDROID__)
 const char* c_extensions[] = { "VK_KHR_surface", "VK_KHR_android_surface" };
 #elif defined(__APPLE__)
-const char* c_extensions[] = { "VK_KHR_surface", "VK_MVK_macos_surface" };
+const char* c_extensions[] = { "VK_KHR_surface", "VK_MVK_macos_surface", "VK_EXT_debug_utils" };
 #else
 const char* c_extensions[] = { "VK_KHR_surface", "VK_EXT_debug_utils" };
 #endif
@@ -124,7 +124,7 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
 	vkEnumerateInstanceLayerProperties(&layerCount, layersAvailable.ptr());
 
 	AlignedVector< const char* > validationLayers;
-#if defined(_DEBUG)
+//#if defined(_DEBUG)
 	for (uint32_t i = 0; i < layerCount; ++i)
 	{
 		bool found = false;
@@ -136,7 +136,7 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
 		if (found)
 			validationLayers.push_back(strdup(layersAvailable[i].layerName));
 	}
-#endif
+//#endif
 
 	// Create Vulkan instance.
 	VkApplicationInfo ai = {};
@@ -169,7 +169,7 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
 	}
 
 #if !defined(__ANDROID__)
-#	if 0
+#	if 1
 	// Setup debug port callback.
 	VkDebugUtilsMessengerCreateInfoEXT dumci = {};
 	dumci.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT;
