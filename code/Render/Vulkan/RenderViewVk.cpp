@@ -15,6 +15,10 @@
 #include "Render/Vulkan/UtilitiesVk.h"
 #include "Render/Vulkan/VertexBufferVk.h"
 
+#if defined(__APPLE__)
+#	include "Render/Vulkan/macOS/Metal.h"
+#endif
+
 namespace traktor
 {
 	namespace render
@@ -129,6 +133,7 @@ bool RenderViewVk::create(const RenderViewDefaultDesc& desc)
 
 bool RenderViewVk::create(const RenderViewEmbeddedDesc& desc)
 {
+	VkResult result;
 	int32_t width = 64;
 	int32_t height = 64;
 
@@ -138,9 +143,9 @@ bool RenderViewVk::create(const RenderViewEmbeddedDesc& desc)
     sci.sType = VK_STRUCTURE_TYPE_WIN32_SURFACE_CREATE_INFO_KHR;
     sci.hinstance = GetModuleHandle(nullptr);
     sci.hwnd = desc.syswin.hWnd;
-    if (vkCreateWin32SurfaceKHR(m_instance, &sci, nullptr, &m_surface) != VK_SUCCESS)
+    if ((result = vkCreateWin32SurfaceKHR(m_instance, &sci, nullptr, &m_surface)) != VK_SUCCESS)
 	{
-		log::error << L"Failed to create Vulkan; unable to create Win32 renderable surface." << Endl;
+		log::error << L"Failed to create Vulkan; unable to create Win32 renderable surface (" << getHumanResult(result) << L")." << Endl;
 		return false;
 	}
 #elif defined(__LINUX__)
@@ -148,9 +153,9 @@ bool RenderViewVk::create(const RenderViewEmbeddedDesc& desc)
 	sci.sType = VK_STRUCTURE_TYPE_XLIB_SURFACE_CREATE_INFO_KHR;
 	sci.dpy = (::Display*)desc.syswin.display;
 	sci.window = desc.syswin.window;
-    if (vkCreateXlibSurfaceKHR(m_instance, &sci, nullptr, &m_surface) != VK_SUCCESS)
+    if ((result = vkCreateXlibSurfaceKHR(m_instance, &sci, nullptr, &m_surface)) != VK_SUCCESS)
 	{
-		log::error << L"Failed to create Vulkan; unable to create X11 renderable surface." << Endl;
+		log::error << L"Failed to create Vulkan; unable to create X11 renderable surface (" << getHumanResult(result) << L")." << Endl;
 		return false;
 	}
 #elif defined(__ANDROID__)
@@ -158,21 +163,25 @@ bool RenderViewVk::create(const RenderViewEmbeddedDesc& desc)
 	sci.sType = VK_STRUCTURE_TYPE_ANDROID_SURFACE_CREATE_INFO_KHR;
 	sci.flags = 0;
 	sci.window = *desc.syswin.window;
-	if (vkCreateAndroidSurfaceKHR(m_instance, &sci, nullptr, &m_surface) != VK_SUCCESS)
+	if ((result = vkCreateAndroidSurfaceKHR(m_instance, &sci, nullptr, &m_surface)) != VK_SUCCESS)
 	{
-		log::error << L"Failed to create Vulkan; unable to create Android renderable surface." << Endl;
+		log::error << L"Failed to create Vulkan; unable to create Android renderable surface (" << getHumanResult(result) << L")." << Endl;
 		return false;
 	}
 
 	width = ANativeWindow_getWidth(sci.window);
 	height = ANativeWindow_getHeight(sci.window);
 #elif defined(__APPLE__)
+
+	// Attach Metal layer to provided view.
+	attachMetalLayer(desc.syswin.view);
+
 	VkMacOSSurfaceCreateInfoMVK sci = {};
 	sci.sType = VK_STRUCTURE_TYPE_MACOS_SURFACE_CREATE_INFO_MVK;
 	sci.pView = desc.syswin.view;
-    if (vkCreateMacOSSurfaceMVK(m_instance, &sci, nullptr, &m_surface) != VK_SUCCESS)
+    if ((result = vkCreateMacOSSurfaceMVK(m_instance, &sci, nullptr, &m_surface)) != VK_SUCCESS)
 	{
-		log::error << L"Failed to create Vulkan; unable to create macOS renderable surface." << Endl;
+		log::error << L"Failed to create Vulkan; unable to create macOS renderable surface (" << getHumanResult(result) << L")." << Endl;
 		return false;
 	}
 #endif

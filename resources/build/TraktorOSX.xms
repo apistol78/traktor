@@ -2725,24 +2725,6 @@
 											</items>
 										</item>
 										<item type="Filter">
-											<name>Layer</name>
-											<items>
-												<item type="File">
-													<fileName>Layer/*.*</fileName>
-													<items/>
-												</item>
-												<item type="Filter">
-													<name>Resources</name>
-													<items>
-														<item type="File">
-															<fileName>Layer/Resources/*.*</fileName>
-															<items/>
-														</item>
-													</items>
-												</item>
-											</items>
-										</item>
-										<item type="Filter">
 											<name>PropertyList</name>
 											<items>
 												<item type="File">
@@ -17430,7 +17412,10 @@
 						<item>_DEBUG</item>
 					</definitions>
 					<libraryPaths/>
-					<libraries/>
+					<libraries>
+						<item>QuartzCore.framework</item>
+						<item>Cocoa.framework</item>
+					</libraries>
 					<warningLevel>WlCompilerDefault</warningLevel>
 					<additionalCompilerOptions/>
 					<additionalLinkerOptions/>
@@ -17460,7 +17445,10 @@
 						<item>NDEBUG</item>
 					</definitions>
 					<libraryPaths/>
-					<libraries/>
+					<libraries>
+						<item>QuartzCore.framework</item>
+						<item>Cocoa.framework</item>
+					</libraries>
 					<warningLevel>WlCompilerDefault</warningLevel>
 					<additionalCompilerOptions/>
 					<additionalLinkerOptions/>
@@ -17490,7 +17478,10 @@
 						<item>_DEBUG</item>
 					</definitions>
 					<libraryPaths/>
-					<libraries/>
+					<libraries>
+						<item>QuartzCore.framework</item>
+						<item>Cocoa.framework</item>
+					</libraries>
 					<warningLevel>WlCompilerDefault</warningLevel>
 					<additionalCompilerOptions/>
 					<additionalLinkerOptions/>
@@ -17520,7 +17511,10 @@
 						<item>NDEBUG</item>
 					</definitions>
 					<libraryPaths/>
-					<libraries/>
+					<libraries>
+						<item>QuartzCore.framework</item>
+						<item>Cocoa.framework</item>
+					</libraries>
 					<warningLevel>WlCompilerDefault</warningLevel>
 					<additionalCompilerOptions/>
 					<additionalLinkerOptions/>

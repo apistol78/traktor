@@ -22,7 +22,7 @@ public:
 	GlslResource* get(const std::wstring& name);
 
 	template < typename T >
-	T* get(int32_t binding) { return dynamic_type_cast< T* >(get(binding)); }
+	T* get(int32_t binding) { return checked_type_cast< T* >(get(binding)); }
 
 	const RefArray< GlslResource >& get() const { return m_resources; }
 
