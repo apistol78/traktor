@@ -243,6 +243,8 @@ Rect ToolFormCocoa::getInnerRect() const
 {
 	NSView* contentView = [m_window contentView];
 	NSRect contentFrame = [contentView frame];
+	contentFrame.size.width -= 1;
+	contentFrame.size.height -= 1;
 	return fromNSRect(contentFrame);
 }
 

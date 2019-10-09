@@ -62,6 +62,8 @@ Ref< File > NativeVolume::get(const Path& path)
 		flags |= File::FfDirectory;
 	if (!(sb.st_mode & S_IWUSR))
 		flags |= File::FfReadOnly;
+	if (path.getFileName().front() == L'.')
+		flags |= File::FfHidden;
 
 	return new File(
 		path,
@@ -100,23 +102,23 @@ int NativeVolume::find(const Path& mask, RefArray< File >& out)
 	{
 		if (maskCompare.match(mbstows(dp->d_name)))
 		{
-			int flags = 0;
-			int size = 0;
-
 			if (dp->d_type == DT_DIR)
 			{
-				flags = File::FfDirectory;
+				out.push_back(new File(
+					maskPath + mbstows(dp->d_name),
+					0,
+					File::FfDirectory | (dp->d_name[0] == '.' ? File::FfHidden : 0)
+				));
 			}
 			else	// Assumes it's a normal file.
 			{
-				flags = File::FfNormal;
+				Path filePath = maskPath + mbstows(dp->d_name);
+				Ref< File > file = get(filePath);
+				if (file)
+					out.push_back(file);
+				else
+					log::warning << L"Unable to stat file \"" << filePath.getPathName() << L"\"" << Endl;
 			}
-
-			out.push_back(new File(
-				maskPath + mbstows(dp->d_name),
-				size,
-				flags
-			));
 		}
 	}
 	closedir(dirp);

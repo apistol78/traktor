@@ -291,10 +291,10 @@ public:
 
 	virtual void setChildRects(const std::vector< IWidgetRect >& childRects) override
 	{
-		for (std::vector< IWidgetRect >::const_iterator i = childRects.begin(); i != childRects.end(); ++i)
+		for (const auto& childRect : childRects)
 		{
-			if (i->widget)
-				i->widget->setRect(i->rect);
+			if (childRect.widget)
+				childRect.widget->setRect(childRect.rect);
 		}
 	}
 
@@ -346,17 +346,8 @@ public:
 
 	virtual int32_t getAdvance(wchar_t ch, wchar_t next) const override
 	{
-/*
-		NSFont* font = [m_control font];
-		if (!font)
-			font = [NSFont controlContentFontOfSize: 11];
-
-		uint8_t uc[IEncoding::MaxEncodingSize + 1] = { 0 };
-		int32_t nuc = Utf8Encoding().translate(&ch, 1, uc);
-		if (nuc <= 0)
-			return 0;
-*/
-		return 0;
+		wchar_t s[] = { ch, 0 };
+		return getExtent(s).cx;
 	}
 
 	virtual int32_t getLineSpacing() const override
