@@ -35,7 +35,7 @@ struct SortRowPredicateLexical
 	{
 		const GridItem* item1 = row1->get(columnIndex);
 		const GridItem* item2 = row2->get(columnIndex);
-		int32_t cmp = item1->getText().compare(item2->getText());
+		int32_t cmp = compareIgnoreCase(item1->getText(), item2->getText());
 		if (cmp < 0)
 			return !ascending;
 		else
@@ -174,7 +174,7 @@ GridRow* GridView::getRow(int32_t index)
 	if (index >= 0 && index < int32_t(m_rows.size()))
 		return m_rows[index];
 	else
-		return 0;
+		return nullptr;
 }
 
 const RefArray< GridRow >& GridView::getRows() const
@@ -227,15 +227,15 @@ GridRow* GridView::getSelectedRow() const
 	if (getRows(selectedRows, GfDescendants | GfSelectedOnly) == 1)
 		return selectedRows[0];
 	else
-		return 0;
+		return nullptr;
 }
 
 void GridView::selectAll()
 {
 	RefArray< GridRow > rows;
 	getRows(rows, GfDescendants);
-	for (RefArray< GridRow >::const_iterator i = rows.begin(); i != rows.end(); ++i)
-		(*i)->setState((*i)->getState() | GridRow::RsSelected);
+	for (auto row : rows)
+		row->setState(row->getState() | GridRow::RsSelected);
 	requestUpdate();
 }
 
@@ -243,8 +243,8 @@ void GridView::deselectAll()
 {
 	RefArray< GridRow > rows;
 	getRows(rows, GfDescendants);
-	for (RefArray< GridRow >::const_iterator i = rows.begin(); i != rows.end(); ++i)
-		(*i)->setState((*i)->getState() & ~GridRow::RsSelected);
+	for (auto row : rows)
+		row->setState(row->getState() & ~GridRow::RsSelected);
 	requestUpdate();
 }
 
@@ -267,7 +267,6 @@ void GridView::layoutCells(const Rect& rc)
 	RefArray< GridRow > rows;
 	getRows(rows, GfDescendants | GfExpandedOnly);
 
-#if !defined(__APPLE__)
 	if (m_sortColumnIndex >= 0)
 	{
 		if (m_sortMode == SmLexical)
@@ -281,16 +280,13 @@ void GridView::layoutCells(const Rect& rc)
 			rows.sort(sortPredicate);
 		}
 	}
-#endif
 
 	Rect rcRow(rcLayout.left, rcLayout.top, rcLayout.right, rcLayout.top);
-	for (RefArray< GridRow >::iterator i = rows.begin(); i != rows.end(); ++i)
+	for (auto row : rows)
 	{
-		int32_t rowHeight = (*i)->getHeight();
-
+		int32_t rowHeight = row->getHeight();
 		rcRow.bottom = rcRow.top + rowHeight;
-		placeCell(*i, rcRow);
-
+		placeCell(row, rcRow);
 		rcRow.top = rcRow.bottom;
 	}
 }
@@ -357,8 +353,8 @@ void GridView::eventButtonDown(MouseButtonDownEvent* event)
 	{
 		RefArray< GridRow > rows;
 		getRows(rows, GfDescendants);
-		for (RefArray< GridRow >::iterator i = rows.begin(); i != rows.end(); ++i)
-			(*i)->setState((*i)->getState() & ~GridRow::RsSelected);
+		for (auto row : rows)
+			row->setState(row->getState() & ~GridRow::RsSelected);
 	}
 
 	// Check for row click; move selection.
@@ -397,7 +393,7 @@ void GridView::eventButtonDown(MouseButtonDownEvent* event)
 	else
 	{
 		// Nothing hit.
-		m_clickRow = 0;
+		m_clickRow = nullptr;
 		m_clickColumn = -1;
 	}
 
@@ -415,7 +411,7 @@ void GridView::eventButtonUp(MouseButtonUpEvent* event)
 		return;
 
 	AutoWidgetCell* cell = hitTest(position);
-	if (cell != 0 && is_a< GridRow >(cell))
+	if (cell != nullptr && is_a< GridRow >(cell))
 	{
 		// If still same column index then user clicked on column.
 		if (m_clickColumn != -1 && m_clickColumn == getColumnIndex(position.x))
@@ -435,7 +431,7 @@ void GridView::eventDoubleClick(MouseDoubleClickEvent* event)
 		return;
 
 	AutoWidgetCell* cell = hitTest(position);
-	if (cell != 0 && is_a< GridRow >(cell))
+	if (cell != nullptr && is_a< GridRow >(cell))
 	{
 		GridRowDoubleClickEvent rowDoubleClick(
 			this,
