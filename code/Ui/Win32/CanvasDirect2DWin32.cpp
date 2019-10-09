@@ -445,7 +445,7 @@ void CanvasDirect2DWin32::drawPixel(int x, int y, const Color4ub& c)
 
 void CanvasDirect2DWin32::drawLine(int x1, int y1, int x2, int y2)
 {
-	bool needAntiAlias (bool)(x1 != x2 && y1 != y2);
+	bool needAntiAlias = (bool)(x1 != x2 && y1 != y2);
 	if (needAntiAlias)
 		m_d2dRenderTarget->SetAntialiasMode(D2D1_ANTIALIAS_MODE_PER_PRIMITIVE);
 	else
