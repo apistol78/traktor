@@ -29,7 +29,7 @@
 #include "Shape/Editor/Bake/TracerTask.h"
 #include "World/IrradianceGridResource.h"
 
-#if !defined(__RPI__) && !defined(__APPLE__)
+#if !defined(__RPI__)
 #	include <OpenImageDenoise/oidn.h>
 #endif
 
@@ -40,7 +40,7 @@ namespace traktor
         namespace
         {
 
-#if !defined(__RPI__) && !defined(__APPLE__)
+#if !defined(__RPI__)
 Ref< drawing::Image > denoise(const GBuffer& gbuffer, drawing::Image* lightmap)
 {
 	int32_t width = lightmap->getWidth();
@@ -330,7 +330,7 @@ bool TracerProcessor::process(const TracerTask* task) const
 		// 	lightmapIndirect->save(L"data/Temp/Bake/" + tracerOutput->getName() + L"_Indirect.exr");
 
         // Blur indirect lightmap to reduce noise from path tracing.
-#if !defined(__RPI__) && !defined(__APPLE__)
+#if !defined(__RPI__)
         if (configuration->getEnableDenoise())
         {
             if (lightmapDirect)

@@ -27,7 +27,7 @@ if [[ `uname -s` == Linux* ]]; then
 	export EMBREE_SDK=$TRAKTOR_HOME/3rdp/embree-3.5.2.x86_64.linux
 	export OIDN_SDK=$TRAKTOR_HOME/3rdp/oidn-1.0.0.x86_64.linux
 elif [[ `uname -s` == Darwin* ]]; then
-	export EMBREE_SDK=
+	export EMBREE_SDK=$TRAKTOR_HOME/3rdp/embree-3.6.1.x86_64.macosx
 	export OIDN_SDK=$TRAKTOR_HOME/3rdp/oidn-1.0.0.x86_64.macos
 fi
 
