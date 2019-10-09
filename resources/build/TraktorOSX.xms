@@ -16624,6 +16624,15 @@
 							<fileName>Bake/*.*</fileName>
 							<items/>
 						</item>
+						<item type="Filter">
+							<name>Embree</name>
+							<items>
+								<item type="File">
+									<fileName>Bake/Embree/*.*</fileName>
+									<items/>
+								</item>
+							</items>
+						</item>
 					</items>
 				</item>
 				<item type="Filter">
@@ -16893,6 +16902,18 @@
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
 					<project ref="/object/projects/item[1]/dependencies/item[7]/project/dependencies/item[7]/project"/>
+				</item>
+				<item type="ExternalDependency" version="3">
+					<inheritIncludePaths>true</inheritIncludePaths>
+					<link>LnkNo</link>
+					<solutionFileName>ExternOSX.xms</solutionFileName>
+					<projectName>Extern.embree</projectName>
+				</item>
+				<item type="ExternalDependency" version="3">
+					<inheritIncludePaths>true</inheritIncludePaths>
+					<link>LnkNo</link>
+					<solutionFileName>ExternOSX.xms</solutionFileName>
+					<projectName>Extern.oidn</projectName>
 				</item>
 			</dependencies>
 		</item>
