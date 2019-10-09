@@ -225,6 +225,80 @@
 				</value>
 			</deploy>
 		</item>
+		<item>
+			<platform>{13FF3E12-076E-274E-B347-8F323ECD53A7}</platform>
+			<executableFile/>
+			<deploy type="traktor.PropertyGroup">
+				<value>
+					<item>
+						<first>DEPLOY_MODULES</first>
+						<second type="traktor.PropertyStringSet">
+							<value>
+								<item>Traktor.Compress</item>
+								<item>Traktor.Core</item>
+								<item>Traktor.Render</item>
+								<item>Traktor.Render.Vulkan</item>
+								<item>Traktor.Resource</item>
+							</value>
+						</second>
+					</item>
+					<item>
+						<first>DEPLOY_SHARED</first>
+						<second type="traktor.PropertyStringSet">
+							<value>
+								<item>Metal.framework</item>
+							</value>
+						</second>
+					</item>
+					<item>
+						<first>DEPLOY_SHARED_PATH_DEBUG</first>
+						<second type="traktor.PropertyStringSet">
+							<value>
+								<item>$(TRAKTOR_HOME)/bin/latest/ios/debugshared</item>
+							</value>
+						</second>
+					</item>
+					<item>
+						<first>DEPLOY_SHARED_PATH_RELEASE</first>
+						<second type="traktor.PropertyStringSet">
+							<value>
+								<item>$(TRAKTOR_HOME)/bin/latest/ios/releaseshared</item>
+							</value>
+						</second>
+					</item>
+					<item>
+						<first>DEPLOY_STATIC</first>
+						<second type="traktor.PropertyStringSet">
+							<value>
+								<item>Metal.framework</item>
+								<item>libMoltenVK.a</item>
+								<item>libTraktor.Compress.a</item>
+								<item>libTraktor.Core.a</item>
+								<item>libTraktor.Render.Vulkan.a</item>
+								<item>libTraktor.Render.a</item>
+								<item>libTraktor.Resource.a</item>
+							</value>
+						</second>
+					</item>
+					<item>
+						<first>DEPLOY_STATIC_PATH_DEBUG</first>
+						<second type="traktor.PropertyStringSet">
+							<value>
+								<item>$(TRAKTOR_HOME)/bin/latest/ios/debugstatic</item>
+							</value>
+						</second>
+					</item>
+					<item>
+						<first>DEPLOY_STATIC_PATH_RELEASE</first>
+						<second type="traktor.PropertyStringSet">
+							<value>
+								<item>$(TRAKTOR_HOME)/bin/latest/ios/releasestatic</item>
+							</value>
+						</second>
+					</item>
+				</value>
+			</deploy>
+		</item>
 	</platforms>
 	<pipelineProperties type="traktor.PropertyGroup">
 		<value>

@@ -45,7 +45,10 @@
 					<item>
 						<first>DEPLOY_SHARED</first>
 						<second type="traktor.PropertyStringSet">
-							<value/>
+							<value>
+								<item>QuartzCore.framework</item>
+								<item>UIKit.framework</item>
+							</value>
 						</second>
 					</item>
 					<item>
@@ -68,6 +71,8 @@
 						<first>DEPLOY_STATIC</first>
 						<second type="traktor.PropertyStringSet">
 							<value>
+								<item>QuartzCore.framework</item>
+								<item>UIKit.framework</item>
 								<item>libExtern.agg.a</item>
 								<item>libExtern.detour.a</item>
 								<item>libExtern.expat.a</item>

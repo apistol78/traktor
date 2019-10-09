@@ -202,16 +202,6 @@ Tag_LightMap
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[4]"/>
-				<name>iOS</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[6]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[4]"/>
 				<name>RaspberryPI</name>
 			</destination>
 		</item>
