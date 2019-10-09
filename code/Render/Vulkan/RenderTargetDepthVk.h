@@ -18,7 +18,7 @@
 #	include <vulkan/vulkan.h>
 #elif defined(__IOS__)
 #	define VK_USE_PLATFORM_IOS_MVK
-#	define VK_NO_PROTOTYPES
+//#	define VK_NO_PROTOTYPES
 #	include <vulkan/vulkan.h>
 #endif
 #include <vk_mem_alloc.h>

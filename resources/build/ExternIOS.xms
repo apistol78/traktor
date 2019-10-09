@@ -2760,6 +2760,7 @@
 					<definitions>
 						<item>__IOS__</item>
 						<item>_DEBUG</item>
+						<item>PNG_ARM_NEON_OPT=0</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -2790,6 +2791,7 @@
 					<definitions>
 						<item>__IOS__</item>
 						<item>NDEBUG</item>
+						<item>PNG_ARM_NEON_OPT=0</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -3670,52 +3672,6 @@
 			<name>Extern.VulkanMemoryAllocator</name>
 			<sourcePath>$(VMA_SDK)</sourcePath>
 			<configurations>
-				<item type="Configuration" version="5">
-					<name>DebugShared</name>
-					<targetFormat>TfSharedLibrary</targetFormat>
-					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(VMA_SDK)/src</item>
-					</includePaths>
-					<definitions>
-						<item>_DEBUG</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<warningLevel>WlCompilerDefault</warningLevel>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-					<debugExecutable/>
-					<debugArguments/>
-					<debugEnvironment/>
-					<debugWorkingDirectory/>
-					<aggregationItems/>
-					<consumerLibraryPath/>
-				</item>
-				<item type="Configuration" version="5">
-					<name>ReleaseShared</name>
-					<targetFormat>TfSharedLibrary</targetFormat>
-					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(VMA_SDK)/src</item>
-					</includePaths>
-					<definitions>
-						<item>NDEBUG</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<warningLevel>WlCompilerDefault</warningLevel>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-					<debugExecutable/>
-					<debugArguments/>
-					<debugEnvironment/>
-					<debugWorkingDirectory/>
-					<aggregationItems/>
-					<consumerLibraryPath/>
-				</item>
 				<item type="Configuration" version="5">
 					<name>DebugStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>

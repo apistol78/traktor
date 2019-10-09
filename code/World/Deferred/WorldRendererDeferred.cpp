@@ -293,7 +293,7 @@ bool WorldRendererDeferred::create(
 		rtscd.preferTiled = true;
 		rtscd.ignoreStencil = true;
 		rtscd.generateMips = true;
-#if !defined(__ANDROID__)
+#if !defined(__ANDROID__) && !defined(__IOS__)
 		rtscd.targets[0].format = render::TfR16G16B16A16F;
 #else
 		rtscd.targets[0].format = render::TfR11G11B10F;
@@ -325,7 +325,7 @@ bool WorldRendererDeferred::create(
 		rtscd.preferTiled = true;
 		rtscd.ignoreStencil = true;
 		rtscd.generateMips = false;
-#if !defined(__ANDROID__)
+#if !defined(__ANDROID__) && !defined(__IOS__)
 		rtscd.targets[0].format = render::TfR16G16B16A16F;
 #else
 		rtscd.targets[0].format = render::TfR11G11B10F;
@@ -418,7 +418,7 @@ bool WorldRendererDeferred::create(
 
 			// Create shadow atlas map target.
 			rtscd.count = 0;
-#if !defined(__ANDROID__)
+#if !defined(__ANDROID__) && !defined(__IOS__)
 			rtscd.width =
 			rtscd.height = 4096;
 #else
@@ -455,7 +455,7 @@ bool WorldRendererDeferred::create(
 		rtscd.usingPrimaryDepthStencil = (desc.sharedDepthStencil == nullptr) ? true : false;
 		rtscd.sharedDepthStencil = desc.sharedDepthStencil;
 		rtscd.preferTiled = true;
-#if !defined(__ANDROID__)
+#if !defined(__ANDROID__) && !defined(__IOS__)
 		rtscd.targets[0].format = render::TfR32G32B32A32F;
 #else
 		rtscd.targets[0].format = render::TfR11G11B10F;

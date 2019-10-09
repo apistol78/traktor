@@ -1,14 +1,14 @@
 #pragma once
 
 #define VK_USE_PLATFORM_IOS_MVK
-#define VK_NO_PROTOTYPES
+//#define VK_NO_PROTOTYPES
 #include <vulkan/vulkan.h>
 
 namespace traktor
 {
 	namespace render
 	{
-
+/*
 extern PFN_vkCreateInstance vkCreateInstance;
 extern PFN_vkEnumerateInstanceLayerProperties vkEnumerateInstanceLayerProperties;
 extern PFN_vkEnumerateInstanceExtensionProperties vkEnumerateInstanceExtensionProperties;
@@ -100,7 +100,7 @@ extern PFN_vkQueuePresentKHR vkQueuePresentKHR;
 extern PFN_vkDestroySwapchainKHR vkDestroySwapchainKHR;
 extern PFN_vkCreateDebugUtilsMessengerEXT vkCreateDebugUtilsMessengerEXT;
 extern PFN_vkSetDebugUtilsObjectNameEXT vkSetDebugUtilsObjectNameEXT;
-
+*/
 bool initializeVulkanApi();
 
 bool initializeVulkanExtensions(VkInstance instance);

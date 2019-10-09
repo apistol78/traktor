@@ -12,7 +12,7 @@ namespace traktor
 void* s_hVulkanModule = nullptr;
 
 		}
-
+/*
 PFN_vkCreateInstance vkCreateInstance = nullptr;
 PFN_vkEnumerateInstanceLayerProperties vkEnumerateInstanceLayerProperties = nullptr;
 PFN_vkEnumerateInstanceExtensionProperties vkEnumerateInstanceExtensionProperties = nullptr;
@@ -90,7 +90,8 @@ PFN_vkDestroyShaderModule vkDestroyShaderModule = nullptr;
 PFN_vkDestroyDescriptorSetLayout vkDestroyDescriptorSetLayout = nullptr;
 PFN_vkDestroyPipelineLayout vkDestroyPipelineLayout = nullptr;
 PFN_vkDestroySampler vkDestroySampler = nullptr;
-
+*/
+/*
 PFN_vkCreateIOSSurfaceMVK vkCreateIOSSurfaceMVK = nullptr;
 PFN_vkGetPhysicalDeviceSurfaceSupportKHR vkGetPhysicalDeviceSurfaceSupportKHR = nullptr;
 PFN_vkGetPhysicalDeviceSurfaceFormatsKHR vkGetPhysicalDeviceSurfaceFormatsKHR = nullptr;
@@ -103,9 +104,10 @@ PFN_vkQueuePresentKHR vkQueuePresentKHR = nullptr;
 PFN_vkDestroySwapchainKHR vkDestroySwapchainKHR = nullptr;
 PFN_vkCreateDebugUtilsMessengerEXT vkCreateDebugUtilsMessengerEXT = nullptr;
 PFN_vkSetDebugUtilsObjectNameEXT vkSetDebugUtilsObjectNameEXT = nullptr;
-
+*/
 bool initializeVulkanApi()
 {
+	/*
 	s_hVulkanModule = dlopen("@executable_path/libMoltenVK.dylib", RTLD_LAZY | RTLD_GLOBAL);
 	if (s_hVulkanModule == nullptr)
 		s_hVulkanModule = dlopen("libMoltenVK.dylib", RTLD_LAZY | RTLD_GLOBAL);
@@ -652,13 +654,15 @@ bool initializeVulkanApi()
 	{
 		log::error << L"Failed to resolve Vulkan entry point \"vkDestroySampler\"." << Endl;
 		return false;
-	}			
+	}
+	*/
 
 	return true;
 }
 
 bool initializeVulkanExtensions(VkInstance instance)
 {
+	/*
 	vkCreateIOSSurfaceMVK = (PFN_vkCreateIOSSurfaceMVK)vkGetInstanceProcAddr(instance, "vkCreateIOSSurfaceMVK");
 	if (vkCreateIOSSurfaceMVK == nullptr)
 	{
@@ -742,7 +746,7 @@ bool initializeVulkanExtensions(VkInstance instance)
 		log::error << L"Failed to resolve Vulkan entry point \"vkSetDebugUtilsObjectNameEXT\"." << Endl;
 		return false;
 	}
-	
+	*/
 	return true;
 }
 
