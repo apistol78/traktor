@@ -5,7 +5,7 @@ XCODE_PATH=$(shell xcode-select --print-path)
 TOOLCHAIN_BIN=$(XCODE_PATH)/Toolchains/XcodeDefault.xctoolchain/usr/bin
 SDK_SYSROOT=$(shell ls -d -1 $(XCODE_PATH)/Platforms/iPhoneOS.platform/Developer/SDKs/** | head -1)
 SDK_SYSROOT_EMULATOR=$(shell ls -d -1 $(XCODE_PATH)/Platforms/iPhoneSimulator.platform/Developer/SDKs/** | head -1)
-IPHONE_OS_MIN_VERSION=7.1
+IPHONE_OS_MIN_VERSION=13.0
 
 # Build tools.
 
@@ -172,4 +172,4 @@ LINK_FLAG_OUTPUT=-o
 LINK_LIBS=
 
 # Binary include
-BINARY_INCLUDE=$(TRAKTOR_HOME)/bin/osx/BinaryInclude
+BINARY_INCLUDE=$(TRAKTOR_HOME)/bin/osx/releasestatic/Traktor.Run.App $(TRAKTOR_HOME)/scripts/binaryinclude/BinaryInclude.run
