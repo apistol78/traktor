@@ -1,5 +1,5 @@
 #import "Runtime/App/iOS/AppViewController.h"
-#import "Runtime/App/iOS/EAGLView.h"
+#import "Runtime/App/iOS/AppView.h"
 
 #include "Core/Log/Log.h"
 
@@ -7,7 +7,7 @@ using namespace traktor;
 
 @interface AppViewController ()
 {
-	EAGLView* glView;
+	AppView* glView;
 }
 
 @end
@@ -16,7 +16,7 @@ using namespace traktor;
 
 - (void) loadView
 {
-	glView = [[EAGLView alloc] initWithFrame: [[UIScreen mainScreen] bounds]];
+	glView = [[AppView alloc] initWithFrame: [[UIScreen mainScreen] bounds]];
 	self.view = glView;
 }
 

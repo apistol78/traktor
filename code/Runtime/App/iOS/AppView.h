@@ -12,7 +12,7 @@ class Thread;
 
 }
 
-@interface EAGLView : UIView
+@interface AppView : UIView
 
 - (BOOL) createApplication;
 

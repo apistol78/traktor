@@ -15,7 +15,7 @@
 #include "Render/Vulkan/UtilitiesVk.h"
 #include "Render/Vulkan/VertexBufferVk.h"
 
-#if defined(__APPLE__)
+#if defined(__MACOS__)
 #	include "Render/Vulkan/macOS/Metal.h"
 #endif
 
@@ -171,7 +171,7 @@ bool RenderViewVk::create(const RenderViewEmbeddedDesc& desc)
 
 	width = ANativeWindow_getWidth(sci.window);
 	height = ANativeWindow_getHeight(sci.window);
-#elif defined(__APPLE__)
+#elif defined(__MACOS__)
 
 	// Attach Metal layer to provided view.
 	attachMetalLayer(desc.syswin.view);
@@ -182,6 +182,15 @@ bool RenderViewVk::create(const RenderViewEmbeddedDesc& desc)
     if ((result = vkCreateMacOSSurfaceMVK(m_instance, &sci, nullptr, &m_surface)) != VK_SUCCESS)
 	{
 		log::error << L"Failed to create Vulkan; unable to create macOS renderable surface (" << getHumanResult(result) << L")." << Endl;
+		return false;
+	}
+#elif defined(__IOS__)
+	VkIOSSurfaceCreateInfoMVK sci = {};
+	sci.sType = VK_STRUCTURE_TYPE_IOS_SURFACE_CREATE_INFO_MVK;
+	sci.pView = desc.syswin.view;
+    if ((result = vkCreateIOSSurfaceMVK(m_instance, &sci, nullptr, &m_surface)) != VK_SUCCESS)
+	{
+		log::error << L"Failed to create Vulkan; unable to create iOS renderable surface (" << getHumanResult(result) << L")." << Endl;
 		return false;
 	}
 #endif
@@ -290,7 +299,7 @@ int RenderViewVk::getHeight() const
 
 bool RenderViewVk::isActive() const
 {
-#if defined(_WIN32) || defined(__ANDROID__) || defined(__APPLE__)
+#if defined(_WIN32) || defined(__ANDROID__) || defined(__MACOS__) || defined(__IOS__)
 	return true;
 #else
 	return m_window->isActive();
@@ -306,7 +315,7 @@ bool RenderViewVk::isFullScreen() const
 {
 #if defined(_WIN32)
 	return m_window->haveFullScreenStyle();
-#elif defined(__ANDROID__) || defined(__APPLE__)
+#elif defined(__ANDROID__) || defined(__MACOS__) || defined(__IOS__)
 	return true;
 #else
 	return m_window->isFullScreen();

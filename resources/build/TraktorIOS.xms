@@ -713,15 +713,6 @@
 											</items>
 										</item>
 										<item type="Filter">
-											<name>Shader</name>
-											<items>
-												<item type="File">
-													<fileName>Shader/*.*</fileName>
-													<items/>
-												</item>
-											</items>
-										</item>
-										<item type="Filter">
 											<name>ImageProcess</name>
 											<items>
 												<item type="File">
@@ -4012,24 +4003,6 @@
 					</items>
 				</item>
 				<item type="Filter">
-					<name>Layer</name>
-					<items>
-						<item type="File">
-							<fileName>Layer/*.*</fileName>
-							<items/>
-						</item>
-						<item type="Filter">
-							<name>Resources</name>
-							<items>
-								<item type="File">
-									<fileName>Layer/Resources/*.*</fileName>
-									<items/>
-								</item>
-							</items>
-						</item>
-					</items>
-				</item>
-				<item type="Filter">
 					<name>PropertyList</name>
 					<items>
 						<item type="File">
@@ -4062,15 +4035,6 @@
 									<items/>
 								</item>
 							</items>
-						</item>
-					</items>
-				</item>
-				<item type="Filter">
-					<name>Tab</name>
-					<items>
-						<item type="File">
-							<fileName>Tab/*.*</fileName>
-							<items/>
 						</item>
 					</items>
 				</item>
@@ -5686,15 +5650,6 @@
 					<fileName>*.*</fileName>
 					<items/>
 				</item>
-				<item type="Filter">
-					<name>Resources</name>
-					<items>
-						<item type="File">
-							<fileName>$(TRAKTOR_HOME)/res/Amalgam/Error.png</fileName>
-							<items/>
-						</item>
-					</items>
-				</item>
 			</items>
 			<dependencies>
 				<item type="ProjectDependency" version="3">
@@ -5958,6 +5913,110 @@
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
 					<project ref="/object/projects/item/dependencies/item[1]/project/dependencies/item[3]/project/dependencies/item[1]/project"/>
+				</item>
+			</dependencies>
+		</item>
+		<item type="Project" version="1">
+			<enable>true</enable>
+			<name>Traktor.Render.Vulkan</name>
+			<sourcePath>$(TRAKTOR_HOME)/code/Render/Vulkan</sourcePath>
+			<configurations>
+				<item type="Configuration" version="5">
+					<name>DebugStatic</name>
+					<targetFormat>TfStaticLibrary</targetFormat>
+					<targetProfile>TpDebug</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+						<item>$(VULKAN_SDK)/include</item>
+					</includePaths>
+					<definitions>
+						<item>T_STATIC</item>
+						<item>_DEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries>
+						<item>QuartzCore.framework</item>
+					</libraries>
+					<warningLevel>WlCompilerDefault</warningLevel>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
+					<debugExecutable/>
+					<debugArguments/>
+					<debugEnvironment/>
+					<debugWorkingDirectory/>
+					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>libTraktor.Render.Vulkan.a</sourceFile>
+							<targetPath>debugstatic</targetPath>
+						</item>
+					</aggregationItems>
+					<consumerLibraryPath>debugstatic</consumerLibraryPath>
+				</item>
+				<item type="Configuration" version="5">
+					<name>ReleaseStatic</name>
+					<targetFormat>TfStaticLibrary</targetFormat>
+					<targetProfile>TpRelease</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+						<item>$(VULKAN_SDK)/include</item>
+					</includePaths>
+					<definitions>
+						<item>T_STATIC</item>
+						<item>NDEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries>
+						<item>QuartzCore.framework</item>
+					</libraries>
+					<warningLevel>WlCompilerDefault</warningLevel>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
+					<debugExecutable/>
+					<debugArguments/>
+					<debugEnvironment/>
+					<debugWorkingDirectory/>
+					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>libTraktor.Render.Vulkan.a</sourceFile>
+							<targetPath>releasestatic</targetPath>
+						</item>
+					</aggregationItems>
+					<consumerLibraryPath>releasestatic</consumerLibraryPath>
+				</item>
+			</configurations>
+			<items>
+				<item type="File">
+					<fileName>*.*</fileName>
+					<items/>
+				</item>
+				<item type="Filter">
+					<name>iOS</name>
+					<items>
+						<item type="File">
+							<fileName>iOS/*.*</fileName>
+							<items/>
+						</item>
+					</items>
+				</item>
+			</items>
+			<dependencies>
+				<item type="ProjectDependency" version="3">
+					<inheritIncludePaths>true</inheritIncludePaths>
+					<link>LnkYes</link>
+					<project ref="/object/projects/item/dependencies/item/project"/>
+				</item>
+				<item type="ProjectDependency" version="3">
+					<inheritIncludePaths>true</inheritIncludePaths>
+					<link>LnkYes</link>
+					<project ref="/object/projects/item/dependencies/item[1]/project/dependencies/item[1]/project"/>
+				</item>
+				<item type="ExternalDependency" version="3">
+					<inheritIncludePaths>true</inheritIncludePaths>
+					<link>LnkNo</link>
+					<solutionFileName>ExternIOS.xms</solutionFileName>
+					<projectName>Extern.VulkanMemoryAllocator</projectName>
 				</item>
 			</dependencies>
 		</item>

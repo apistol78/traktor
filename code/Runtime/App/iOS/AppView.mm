@@ -1,7 +1,7 @@
 #include <algorithm>
 #include <dispatch/dispatch.h>
 
-#import "Runtime/App/iOS/EAGLView.h"
+#import "Runtime/App/iOS/AppView.h"
 
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/IStream.h"
@@ -36,7 +36,7 @@ Ref< PropertyGroup > loadSettings(const Path& settingsPath)
 bool g_animation = false;
 bool g_suspend[2] = { false, true };
 
-void updateApplicationThread(Ref< PropertyGroup > defaultSettings, EAGLView* view)
+void updateApplicationThread(Ref< PropertyGroup > defaultSettings, AppView* view)
 {
 	Thread* currentThread = ThreadManager::getInstance().getCurrentThread();
 	SystemApplication sysapp;
@@ -86,7 +86,7 @@ void updateApplicationThread(Ref< PropertyGroup > defaultSettings, EAGLView* vie
 
 }
 
-@interface EAGLView ()
+@interface AppView ()
 {
 @private
 	traktor::Thread* m_thread;
@@ -94,11 +94,11 @@ void updateApplicationThread(Ref< PropertyGroup > defaultSettings, EAGLView* vie
 
 @end
 
-@implementation EAGLView
+@implementation AppView
 
 + (Class) layerClass
 {
-    return [CAEAGLLayer class];
+    return [CAMetalLayer class];
 }
 
 - (BOOL) createApplication
@@ -126,15 +126,15 @@ void updateApplicationThread(Ref< PropertyGroup > defaultSettings, EAGLView* vie
 
 		self.contentScaleFactor = scale;
 
-		CAEAGLLayer* eaglLayer = (CAEAGLLayer*)self.layer;
-		if (eaglLayer)
-			eaglLayer.contentsScale = scale;
+		CAMetalLayer* metalLayer = (CAMetalLayer*)self.layer;
+		if (metalLayer)
+			metalLayer.contentsScale = scale;
 	}
 
 	// Create application thread; it will first start loading resources
 	// before settling on frequent updating application.
 	m_thread = ThreadManager::getInstance().create(
-		makeStaticFunctor< Ref< PropertyGroup >, EAGLView* >(updateApplicationThread, defaultSettings, self),
+		makeStaticFunctor< Ref< PropertyGroup >, AppView* >(updateApplicationThread, defaultSettings, self),
 		L"Application update thread"
 	);
 	if (!m_thread)
