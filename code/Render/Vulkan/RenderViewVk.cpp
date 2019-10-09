@@ -17,6 +17,8 @@
 
 #if defined(__MACOS__)
 #	include "Render/Vulkan/macOS/Metal.h"
+#elif defined(__IOS__)
+#	include "Render/Vulkan/iOS/Utilities.h"
 #endif
 
 namespace traktor
@@ -193,6 +195,9 @@ bool RenderViewVk::create(const RenderViewEmbeddedDesc& desc)
 		log::error << L"Failed to create Vulkan; unable to create iOS renderable surface (" << getHumanResult(result) << L")." << Endl;
 		return false;
 	}
+
+	width = getViewWidth(desc.syswin.view);
+	height = getViewHeight(desc.syswin.view);
 #endif
 
 	if (!create(width, height))
@@ -1053,7 +1058,11 @@ bool RenderViewVk::create(uint32_t width, uint32_t height)
 	VkImageCreateInfo ici = {};
 	ici.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
 	ici.imageType = VK_IMAGE_TYPE_2D;
+#if defined(__IOS__)
+	ici.format = VK_FORMAT_D32_SFLOAT_S8_UINT;
+#else
 	ici.format = VK_FORMAT_D24_UNORM_S8_UINT;
+#endif
 	ici.extent = { width, height, 1 };
 	ici.mipLevels = 1;
 	ici.arrayLayers = 1;
@@ -1100,7 +1109,11 @@ bool RenderViewVk::create(uint32_t width, uint32_t height)
 			height,
 			colorFormat,
 			presentImages[i],
-			VK_FORMAT_D24_UNORM_S8_UINT,
+#if defined(__IOS__)
+            VK_FORMAT_D32_SFLOAT_S8_UINT,
+#else
+            VK_FORMAT_D24_UNORM_S8_UINT,
+#endif
 			depthImage,
 			(L"Primary " + toString(i)).c_str()
 		))
