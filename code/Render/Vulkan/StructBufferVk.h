@@ -1,29 +1,7 @@
 #pragma once
 
-#if defined(_WIN32)
-#	define VK_USE_PLATFORM_WIN32_KHR
-#	define VK_NO_PROTOTYPES
-#	include <vulkan/vulkan.h>
-#elif defined(__LINUX__)
-#	define VK_USE_PLATFORM_LINUX_KHR
-#	define VK_NO_PROTOTYPES
-#	include <vulkan/vulkan.h>
-#elif defined(__ANDROID__)
-#	define VK_USE_PLATFORM_ANDROID_KHR
-#	define VK_NO_PROTOTYPES
-#	include <vulkan/vulkan.h>
-#elif defined(__MACOS__)
-#	define VK_USE_PLATFORM_MACOS_MVK
-#	define VK_NO_PROTOTYPES
-#	include <vulkan/vulkan.h>
-#elif defined(__IOS__)
-#	define VK_USE_PLATFORM_IOS_MVK
-//#	define VK_NO_PROTOTYPES
-#	include <vulkan/vulkan.h>
-#endif
-#include <vk_mem_alloc.h>
-
 #include "Render/StructBuffer.h"
+#include "Render/Vulkan/ApiHeader.h"
 
 namespace traktor
 {
