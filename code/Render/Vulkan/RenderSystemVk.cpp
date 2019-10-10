@@ -27,12 +27,15 @@
 #include "Render/Vulkan/VertexBufferVk.h"
 #include "Render/Vulkan/VolumeTextureVk.h"
 #include "Render/Vulkan/Editor/Glsl/GlslType.h"
+
 #if defined(_WIN32)
 #	include "Render/Vulkan/Win32/Window.h"
 #elif defined(__LINUX__)
 #	include "Render/Vulkan/Linux/Window.h"
 #elif defined(__ANDROID__)
 #	include "Core/System/Android/DelegateInstance.h"
+#elif defined(__IOS__)
+#	include "Render/Vulkan/iOS/Utilities.h"
 #endif
 
 namespace traktor
@@ -391,6 +394,13 @@ DisplayMode RenderSystemVk::getCurrentDisplayMode() const
 	DisplayMode dm;
 	dm.width = m_screenWidth;
 	dm.height = m_screenHeight;
+	dm.refreshRate = 60;
+	dm.colorBits = 32;
+	return dm;
+#elif defined(__IOS__)
+	DisplayMode dm;
+	dm.width = getScreenWidth();
+	dm.height = getScreenHeight();
 	dm.refreshRate = 60;
 	dm.colorBits = 32;
 	return dm;

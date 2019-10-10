@@ -112,7 +112,7 @@ void updateApplicationThread(Ref< PropertyGroup > defaultSettings, AppView* view
 	}
 
 	// "Activate" retina display if application want's to use it.
-	if (defaultSettings->getProperty< bool >(L"Amalgam.SupportRetina", false))
+	if (defaultSettings->getProperty< bool >(L"Runtime.SupportRetina", false))
 	{
 		// Adjust scale as we want full resolution of a retina display.
 		float scale = 1.0f;
