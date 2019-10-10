@@ -171,7 +171,7 @@
 			<item>
 				<first>World.AntiAliasQuality</first>
 				<second type="traktor.PropertyInteger">
-					<value>1</value>
+					<value>0</value>
 				</second>
 			</item>
 			<item>
