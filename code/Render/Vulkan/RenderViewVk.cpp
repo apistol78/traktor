@@ -13,7 +13,7 @@
 #include "Render/Vulkan/SimpleTextureVk.h"
 #include "Render/Vulkan/UniformBufferPoolVk.h"
 #include "Render/Vulkan/UtilitiesVk.h"
-#include "Render/Vulkan/VertexBufferVk.h"
+#include "Render/Vulkan/VertexBufferDynamicVk.h"
 
 #if defined(__MACOS__)
 #	include "Render/Vulkan/macOS/Metal.h"
@@ -504,7 +504,7 @@ void RenderViewVk::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, IP
 {
 	TargetState& ts = m_targetStateStack.back();
 
-	VertexBufferVk* vb = mandatory_non_null_type_cast< VertexBufferVk* >(vertexBuffer);
+	VertexBufferDynamicVk* vb = mandatory_non_null_type_cast< VertexBufferDynamicVk* >(vertexBuffer);
 	ProgramVk* p = mandatory_non_null_type_cast< ProgramVk* >(program);
 
 	validateTargetState();
@@ -1215,7 +1215,7 @@ void RenderViewVk::validateTargetState()
 	m_targetStateDirty = false;
 }
 
-bool RenderViewVk::validatePipeline(VertexBufferVk* vb, ProgramVk* p, PrimitiveType pt)
+bool RenderViewVk::validatePipeline(VertexBufferDynamicVk* vb, ProgramVk* p, PrimitiveType pt)
 {
 	uint32_t primitiveId = (uint32_t)pt;
 	uint32_t declHash = vb->getHash();

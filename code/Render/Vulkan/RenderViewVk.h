@@ -19,7 +19,7 @@ namespace traktor
 class ProgramVk;
 class RenderTargetSetVk;
 class UniformBufferPoolVk;
-class VertexBufferVk;
+class VertexBufferDynamicVk;
 
 /*!
  * \ingroup Vulkan
@@ -167,7 +167,7 @@ private:
 
 	void validateTargetState();
 
-	bool validatePipeline(VertexBufferVk* vb, ProgramVk* p, PrimitiveType pt);
+	bool validatePipeline(VertexBufferDynamicVk* vb, ProgramVk* p, PrimitiveType pt);
 
 #if defined(_WIN32)
 	// \name IWindowListener implementation.

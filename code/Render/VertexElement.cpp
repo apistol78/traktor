@@ -64,7 +64,7 @@ AlignedVector< VertexElement >::const_iterator findVertexElement(
 	uint32_t index
 )
 {
-	for (const auto& i = vertexElements.begin(); i != vertexElements.end(); ++i)
+	for (auto i = vertexElements.begin(); i != vertexElements.end(); ++i)
 	{
 		if (i->getDataUsage() == usage && i->getIndex() == index)
 			return i;

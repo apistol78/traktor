@@ -1,14 +1,14 @@
 #include "Render/Vulkan/ApiLoader.h"
-#include "Render/Vulkan/VertexBufferVk.h"
+#include "Render/Vulkan/VertexBufferDynamicVk.h"
 
 namespace traktor
 {
 	namespace render
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.render.VertexBufferVk", VertexBufferVk, VertexBuffer)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.render.VertexBufferDynamicVk", VertexBufferDynamicVk, VertexBuffer)
 
-VertexBufferVk::VertexBufferVk(
+VertexBufferDynamicVk::VertexBufferDynamicVk(
 	uint32_t bufferSize,
 	VmaAllocator allocator,
 	VmaAllocation allocation,
@@ -28,11 +28,11 @@ VertexBufferVk::VertexBufferVk(
 {
 }
 
-void VertexBufferVk::destroy()
+void VertexBufferDynamicVk::destroy()
 {
 }
 
-void* VertexBufferVk::lock()
+void* VertexBufferDynamicVk::lock()
 {
 	void* ptr = nullptr;
 	if (vmaMapMemory(m_allocator, m_allocation, &ptr) == VK_SUCCESS)
@@ -44,12 +44,12 @@ void* VertexBufferVk::lock()
 		return nullptr;
 }
 
-void* VertexBufferVk::lock(uint32_t vertexOffset, uint32_t vertexCount)
+void* VertexBufferDynamicVk::lock(uint32_t vertexOffset, uint32_t vertexCount)
 {
 	return nullptr;
 }
 
-void VertexBufferVk::unlock()
+void VertexBufferDynamicVk::unlock()
 {
 	if (m_locked)
 	{

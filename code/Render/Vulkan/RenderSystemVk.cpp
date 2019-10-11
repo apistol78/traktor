@@ -24,7 +24,7 @@
 #include "Render/Vulkan/TimeQueryVk.h"
 #include "Render/Vulkan/UtilitiesVk.h"
 #include "Render/Vulkan/VertexAttributesVk.h"
-#include "Render/Vulkan/VertexBufferVk.h"
+#include "Render/Vulkan/VertexBufferDynamicVk.h"
 #include "Render/Vulkan/VolumeTextureVk.h"
 #include "Render/Vulkan/Editor/Glsl/GlslType.h"
 
@@ -484,7 +484,7 @@ Ref< VertexBuffer > RenderSystemVk::createVertexBuffer(const AlignedVector< Vert
 	cs.feed(vertexElements.c_ptr(), vertexElements.size() * sizeof(VertexElement));
 	cs.end();
 
-	return new VertexBufferVk(
+	return new VertexBufferDynamicVk(
 		bufferSize,
 		m_allocator,
 		allocation,

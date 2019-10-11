@@ -12,12 +12,12 @@ namespace traktor
 /*!
  * \ingroup Vulkan
  */
-class VertexBufferVk : public VertexBuffer
+class VertexBufferDynamicVk : public VertexBuffer
 {
 	T_RTTI_CLASS;
 
 public:
-	VertexBufferVk(
+	VertexBufferDynamicVk(
 		uint32_t bufferSize,
 		VmaAllocator allocator,
 		VmaAllocation allocation,
