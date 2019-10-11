@@ -1,5 +1,6 @@
 @echo off
 
+:: Source environment configuration.
 call %~dp0config.bat
 
 :: Launch drone.
