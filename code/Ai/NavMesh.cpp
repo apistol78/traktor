@@ -1,9 +1,13 @@
 #include <DetourNavMeshQuery.h>
 #include "Ai/MoveQuery.h"
+#include "Ai/MoveQueryResult.h"
 #include "Ai/NavMesh.h"
+#include "Core/Functor/Functor.h"
 #include "Core/Log/Log.h"
 #include "Core/Math/Random.h"
 #include "Core/Misc/AutoPtr.h"
+#include "Core/Thread/Job.h"
+#include "Core/Thread/JobManager.h"
 
 namespace traktor
 {
@@ -29,102 +33,117 @@ NavMesh::~NavMesh()
 	dtFreeNavMesh(m_navMesh);
 }
 
-Ref< MoveQuery > NavMesh::createMoveQuery(const Vector4& startPosition, const Vector4& endPosition)
+Ref< MoveQueryResult > NavMesh::createMoveQuery(const Vector4& startPosition, const Vector4& endPosition)
 {
-	dtNavMeshQuery* navQuery = dtAllocNavMeshQuery();
-	if (!navQuery)
-		return nullptr;
+	Ref< MoveQueryResult > result = new MoveQueryResult();
+	JobManager::getInstance().add(makeFunctor([=](){
+		T_ANONYMOUS_VAR(Ref< NavMesh >)(this);
 
-	dtStatus status = navQuery->init(m_navMesh, 2048);
-	if (dtStatusFailed(status))
-		return nullptr;
+		dtNavMeshQuery* navQuery = dtAllocNavMeshQuery();
+		if (!navQuery)
+		{
+			result->fail();
+			return;
+		}
 
-	float T_MATH_ALIGN16 startPos[4];
-	float T_MATH_ALIGN16 endPos[4];
-	startPosition.storeAligned(startPos);
-	endPosition.storeAligned(endPos);
+		dtStatus status = navQuery->init(m_navMesh, 2048);
+		if (dtStatusFailed(status))
+		{
+			result->fail();
+			return;
+		}
 
-	Ref< MoveQuery > outputQuery = new MoveQuery();
-	outputQuery->m_navQuery = navQuery;
+		float T_MATH_ALIGN16 startPos[4];
+		float T_MATH_ALIGN16 endPos[4];
+		startPosition.storeAligned(startPos);
+		endPosition.storeAligned(endPos);
 
-	dtPolyRef startRef, endRef;
-	float T_MATH_ALIGN16 startPosN[4];
-	float T_MATH_ALIGN16 endPosN[4];
+		Ref< MoveQuery > outputQuery = new MoveQuery();
+		outputQuery->m_navQuery = navQuery;
 
-	status = outputQuery->m_navQuery->findNearestPoly(
-		startPos,
-		c_searchExtents,
-		outputQuery->m_filter,
-		&startRef,
-		startPosN
-	);
-	if (dtStatusFailed(status))
-	{
-		log::error << L"NavQuery; Unable to find start reference, status "; FormatHex(log::error, status, 8); log::error << Endl;
-		return nullptr;
-	}
+		dtPolyRef startRef, endRef;
+		float T_MATH_ALIGN16 startPosN[4];
+		float T_MATH_ALIGN16 endPosN[4];
 
-	status = outputQuery->m_navQuery->findNearestPoly(
-		endPos,
-		c_searchExtents,
-		outputQuery->m_filter,
-		&endRef,
-		endPosN
-	);
-	if (dtStatusFailed(status))
-	{
-		log::error << L"NavQuery; Unable to find end reference, status "; FormatHex(log::error, status, 8); log::error << Endl;
-		return nullptr;
-	}
+		status = outputQuery->m_navQuery->findNearestPoly(
+			startPos,
+			c_searchExtents,
+			outputQuery->m_filter,
+			&startRef,
+			startPosN
+		);
+		if (dtStatusFailed(status))
+		{
+			result->fail();
+			return;
+		}
 
-	outputQuery->m_startPosition = Vector4::loadAligned(startPosN).xyz1();
-	outputQuery->m_endPosition = Vector4::loadAligned(endPosN).xyz1();
+		status = outputQuery->m_navQuery->findNearestPoly(
+			endPos,
+			c_searchExtents,
+			outputQuery->m_filter,
+			&endRef,
+			endPosN
+		);
+		if (dtStatusFailed(status))
+		{
+			result->fail();
+			return;
+		}
 
-	status = outputQuery->m_navQuery->findPath(
-		startRef,
-		endRef,
-		startPosN,
-		endPosN,
-		outputQuery->m_filter,
-		outputQuery->m_path,
-		&outputQuery->m_pathCount,
-		sizeof_array(outputQuery->m_path)
-	);
-	if (dtStatusFailed(status) || outputQuery->m_pathCount <= 0)
-	{
-		// Failed to create navmesh path; most probably no valid route exists.
-		// Create a short-cut path to move navigation entity back on track.
-		outputQuery->m_steerPath.push_back(outputQuery->m_endPosition);
-		return outputQuery;
-	}
+		outputQuery->m_startPosition = Vector4::loadAligned(startPosN).xyz1();
+		outputQuery->m_endPosition = Vector4::loadAligned(endPosN).xyz1();
 
-	float steerPath[256 * 3 + 1];
-	int32_t steerPathCount = 0;
+		status = outputQuery->m_navQuery->findPath(
+			startRef,
+			endRef,
+			startPosN,
+			endPosN,
+			outputQuery->m_filter,
+			outputQuery->m_path,
+			&outputQuery->m_pathCount,
+			sizeof_array(outputQuery->m_path)
+		);
+		if (dtStatusFailed(status) || outputQuery->m_pathCount <= 0)
+		{
+			// Failed to create navmesh path; most probably no valid route exists.
+			// Create a short-cut path to move navigation entity back on track.
+			outputQuery->m_steerPath.push_back(outputQuery->m_endPosition);
+			result->succeed(outputQuery);
+			return;
+		}
 
-	status = outputQuery->m_navQuery->findStraightPath(
-		startPosN,
-		endPosN,
-		outputQuery->m_path,
-		outputQuery->m_pathCount,
-		steerPath,
-		nullptr,
-		nullptr,
-		&steerPathCount,
-		256
-	);
-	if (dtStatusFailed(status) || steerPathCount <= 0)
-	{
-		// Failed to create navmesh path; most probably no valid route exists.
-		// Create a short-cut path to move navigation entity back on track.
-		outputQuery->m_steerPath.push_back(outputQuery->m_endPosition);
-		return outputQuery;
-	}
+		float steerPath[256 * 3 + 1];
+		int32_t steerPathCount = 0;
 
-	outputQuery->m_steerPath.reserve(steerPathCount);
-	for (int32_t i = 0; i < steerPathCount; ++i)
-		outputQuery->m_steerPath.push_back(Vector4::loadUnaligned(&steerPath[i * 3]).xyz1());
+		status = outputQuery->m_navQuery->findStraightPath(
+			startPosN,
+			endPosN,
+			outputQuery->m_path,
+			outputQuery->m_pathCount,
+			steerPath,
+			nullptr,
+			nullptr,
+			&steerPathCount,
+			256
+		);
+		if (dtStatusFailed(status) || steerPathCount <= 0)
+		{
+			// Failed to create navmesh path; most probably no valid route exists.
+			// Create a short-cut path to move navigation entity back on track.
+			outputQuery->m_steerPath.push_back(outputQuery->m_endPosition);
+			result->succeed(outputQuery);
+			return;
+		}
 
-	return outputQuery;
+		outputQuery->m_steerPath.reserve(steerPathCount);
+		for (int32_t i = 0; i < steerPathCount; ++i)
+			outputQuery->m_steerPath.push_back(Vector4::loadUnaligned(&steerPath[i * 3]).xyz1());
+
+		result->succeed(outputQuery);
+		return;
+	}));
+	return result;
 }
 
 bool NavMesh::findClosestPoint(const Vector4& searchFrom, Vector4& outPoint) const

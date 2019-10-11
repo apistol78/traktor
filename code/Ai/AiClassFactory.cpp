@@ -1,5 +1,6 @@
 #include "Ai/AiClassFactory.h"
 #include "Ai/MoveQuery.h"
+#include "Ai/MoveQueryResult.h"
 #include "Ai/NavMesh.h"
 #include "Ai/NavMeshComponent.h"
 #include "Core/Class/AutoRuntimeClass.h"
@@ -63,6 +64,10 @@ void AiClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	auto classMoveQuery = new AutoRuntimeClass< MoveQuery >();
 	classMoveQuery->addMethod("update", &MoveQuery_update);
 	registrar->registerClass(classMoveQuery);
+
+	auto classMoveQueryResult = new AutoRuntimeClass< MoveQueryResult >();
+	classMoveQueryResult->addMethod("get", &MoveQueryResult::get);
+	registrar->registerClass(classMoveQueryResult);
 
 	auto classNavMesh = new AutoRuntimeClass< NavMesh >();
 	classNavMesh->addMethod("createMoveQuery", &NavMesh::createMoveQuery);

@@ -18,7 +18,7 @@
 namespace traktor
 {
 
-/*! \brief Deferred result.
+/*! Deferred result.
  *
  * As some operations are expected
  * to take considerable time this
@@ -96,7 +96,7 @@ public:
 
 	Result();
 
-	Result(bool succeed);
+	explicit Result(bool succeed);
 
 	void succeed();
 

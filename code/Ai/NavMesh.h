@@ -20,9 +20,9 @@ namespace traktor
 	namespace ai
 	{
 
-class MoveQuery;
+class MoveQueryResult;
 
-/*! \brief Navigation mesh.
+/*! Navigation mesh.
  * \ingroup AI
  */
 class T_DLLCLASS NavMesh : public Object
@@ -32,15 +32,20 @@ class T_DLLCLASS NavMesh : public Object
 public:
 	virtual ~NavMesh();
 
-	/*! \brief Create a movement query from start to end position.
+	/*! Create a movement query from start to end position.
+	 *
+	 * Since calculating a movement query is really expensive
+	 * we need to be able to amortize this call, thus
+	 * it will return a "deferred result" which
+	 * will become ready sometime in the future.
 	 *
 	 * \param startPosition Start of movement.
 	 * \param endPosition End of movement.
-	 * \return Movement query.
+	 * \return Movement query async result.
 	 */
-	Ref< MoveQuery > createMoveQuery(const Vector4& startPosition, const Vector4& endPosition);
+	Ref< MoveQueryResult > createMoveQuery(const Vector4& startPosition, const Vector4& endPosition);
 
-	/*! \brief Find closest point on navigation mesh.
+	/*! Find closest point on navigation mesh.
 	 *
 	 * \param searchFrom Search from point.
 	 * \param outPoint Closest point on navigation mesh.
@@ -48,14 +53,14 @@ public:
 	 */
 	bool findClosestPoint(const Vector4& searchFrom, Vector4& outPoint) const;
 
-	/*! \brief Find a random point which is guaranteed to be on navigation mesh.
+	/*! Find a random point which is guaranteed to be on navigation mesh.
 	 *
 	 * \param outPoint Random point on navigation mesh.
 	 * \return True if random point found.
 	 */
 	bool findRandomPoint(Vector4& outPoint) const;
 
-	/*! \brief Find a random point inside a sphere which is also guaranteed to be on navigation mesh.
+	/*! Find a random point inside a sphere which is also guaranteed to be on navigation mesh.
 	 *
 	 * \param center Center of search sphere.
 	 * \param radius Radius of search sphere.
