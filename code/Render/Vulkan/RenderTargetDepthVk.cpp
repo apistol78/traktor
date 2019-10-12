@@ -205,6 +205,7 @@ void RenderTargetDepthVk::prepareAsTarget(VkCommandBuffer cmdBuffer)
 	switch (m_format)
 	{
 	case VK_FORMAT_D16_UNORM:
+    case VK_FORMAT_D32_SFLOAT:
 		layoutTransitionBarrier.subresourceRange = { VK_IMAGE_ASPECT_DEPTH_BIT, 0, 1, 0, 1 };
 		break;
 
