@@ -362,12 +362,17 @@ if #architectures > 0 then
 	for i, configuration in pairs(configurations) do
 		local profile = configuration.targetProfile
 		local format = configuration.targetFormat
+		local productName = PRODUCTNAME(solution, project, configuration)
 
 		output:printLn(".PHONY: " .. configuration.name)
-		output:print(configuration.name .. " :")
+		output:printLn(configuration.name .. " : \\")
+		output:printLn("\t../" .. configuration.name .. "/" .. productName)
+		output:printLn("")
+
+		output:print("../" .. configuration.name .. "/" .. productName .. " :")
 		for _, a in ipairs(architectures) do
 			output:printLn(" \\")
-			output:print("\t" .. configuration.name .. "_" .. a)
+			output:print("\t../" .. configuration.name .. "_" .. a .. "/" .. productName)
 		end
 		output:printLn("")
 
@@ -382,8 +387,6 @@ if #architectures > 0 then
 		end
 
 		if format == "StaticLibrary" then
-			local productName = PRODUCTNAME(solution, project, configuration)
-
 			printWithColor(Color.Cyan, "Merging architectures into " .. configuration.name .. "/" .. productName)
 
 			local ws = ""
@@ -447,7 +450,13 @@ if #architectures > 0 then
 			output:printLn("")
 			output:printLn("")
 
+			output:printLn(".PHONY: " .. configuration.name .. "_" .. a)
 			output:printLn(configuration.name .. "_" .. a .. " : \\")
+			output:printLn("\t../" .. configuration.name .. "_" .. a .. "/" .. PRODUCTNAME(solution, project, configuration))
+
+			output:printLn("")
+
+			output:printLn("../" .. configuration.name .. "_" .. a .. "/" .. PRODUCTNAME(solution, project, configuration) .. " : \\")
 			output:printLn("\t$(" .. configuration.name .. "_" .. a .. "_OBJS) \\")
 			output:printLn("\t$(" .. configuration.name .. "_" .. a .. "_PROJECTS)")
 

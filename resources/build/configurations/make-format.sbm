@@ -113,27 +113,6 @@ function CC(solution, project, configuration, architecture, filePath, outputPath
 	end
 end
 
-function LINK_OUTPUT(solution, project, configuration, architecture)
-	local productName
-	if format == "StaticLibrary" then
-		productName = string.format(staticLibraryFile, project.name)
-	elseif format == "SharedLibrary" then
-		productName = string.format(sharedLibraryFile, project.name)
-	elseif format == "Executable" then
-		productName = string.format(executableFile, project.name)
-	elseif format == "ExecutableConsole" then
-		productName = string.format(executableFile, project.name)
-	end	
-	assert(productName ~= nil)
-
-	local ao = ""
-	if architecture ~= nil then
-		ao = "_" .. architecture
-	end
-		
-	return "../" .. configuration.name .. ao .. "/" .. productName
-end
-
 function LINK(solution, project, configuration, architecture, sourcePath, sourceFiles, libraryPaths, libraries, externalLibraries, definitionFile, output)
 	local profile = configuration.targetProfile
 	local format = configuration.targetFormat
