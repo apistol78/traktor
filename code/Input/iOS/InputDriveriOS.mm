@@ -1,8 +1,8 @@
 #include "Core/Log/Log.h"
+#include "Input/iOS/GamepadDeviceiOS.h"
 #include "Input/iOS/InputDriveriOS.h"
-#include "Input/iOS/InputDeviceTouch.h"
-#include "Input/iOS/InputDeviceTouchGamepad.h"
-#include "Input/iOS/InputDeviceTouchMouse.h"
+#include "Input/iOS/TouchDeviceiOS.h"
+#include "Input/iOS/MouseDeviceiOS.h"
 
 namespace traktor
 {
@@ -31,9 +31,9 @@ public:
 	virtual void touchesCancelled(NSSet* touches, UIEvent* event);
 
 private:
-	Ref< InputDeviceTouch > m_deviceTouch;
-	Ref< InputDeviceTouchGamepad > m_deviceGamepad;
-	Ref< InputDeviceTouchMouse > m_deviceMouse;
+	Ref< TouchDeviceiOS > m_deviceTouch;
+	Ref< GamepadDeviceiOS > m_deviceGamepad;
+	Ref< MouseDeviceiOS > m_deviceMouse;
 };
 
 bool InputDriveriOSImpl::create(void* nativeWindowHandle)
@@ -41,15 +41,15 @@ bool InputDriveriOSImpl::create(void* nativeWindowHandle)
 	UIView* view = (UIView*)nativeWindowHandle;
 	CGRect frame = [view frame];
 
-	m_deviceTouch = new InputDeviceTouch();
+	m_deviceTouch = new TouchDeviceiOS();
 	if (!m_deviceTouch->create(nativeWindowHandle))
 		return false;
 
-	m_deviceGamepad = new InputDeviceTouchGamepad();
+	m_deviceGamepad = new GamepadDeviceiOS();
 	if (!m_deviceGamepad->create(nativeWindowHandle))
 		return false;
 
-	m_deviceMouse = new InputDeviceTouchMouse();
+	m_deviceMouse = new MouseDeviceiOS();
 	if (!m_deviceMouse->create(nativeWindowHandle))
 		return false;
 

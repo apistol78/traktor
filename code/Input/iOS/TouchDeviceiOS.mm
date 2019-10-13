@@ -2,7 +2,7 @@
 
 #include "Core/Log/Log.h"
 #include "Core/Math/MathUtils.h"
-#include "Input/iOS/InputDeviceTouch.h"
+#include "Input/iOS/TouchDeviceiOS.h"
 
 namespace traktor
 {
@@ -32,9 +32,9 @@ c_touchControlMap[] =
 
 		}
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.input.InputDeviceTouch", InputDeviceTouch, IInputDevice)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.input.TouchDeviceiOS", TouchDeviceiOS, IInputDevice)
 
-InputDeviceTouch::InputDeviceTouch()
+TouchDeviceiOS::TouchDeviceiOS()
 :	m_landscape(false)
 ,	m_width(0.0f)
 ,	m_height(0.0f)
@@ -42,7 +42,7 @@ InputDeviceTouch::InputDeviceTouch()
 	resetState();
 }
 
-bool InputDeviceTouch::create(void* nativeWindowHandle)
+bool TouchDeviceiOS::create(void* nativeWindowHandle)
 {
 	UIView* view = (UIView*)nativeWindowHandle;
 	CGRect frame = [view frame];
@@ -56,42 +56,42 @@ bool InputDeviceTouch::create(void* nativeWindowHandle)
 	return true;
 }
 
-std::wstring InputDeviceTouch::getName() const
+std::wstring TouchDeviceiOS::getName() const
 {
 	return L"Touch";
 }
 
-InputCategory InputDeviceTouch::getCategory() const
+InputCategory TouchDeviceiOS::getCategory() const
 {
 	return CtTouch;
 }
 
-bool InputDeviceTouch::isConnected() const
+bool TouchDeviceiOS::isConnected() const
 {
 	return true;
 }
 
-int32_t InputDeviceTouch::getControlCount()
+int32_t TouchDeviceiOS::getControlCount()
 {
 	return sizeof_array(c_touchControlMap);
 }
 
-std::wstring InputDeviceTouch::getControlName(int32_t control)
+std::wstring TouchDeviceiOS::getControlName(int32_t control)
 {
 	return c_touchControlMap[control].name;
 }
 
-bool InputDeviceTouch::isControlAnalogue(int32_t control) const
+bool TouchDeviceiOS::isControlAnalogue(int32_t control) const
 {
 	return c_touchControlMap[control].analogue;
 }
 
-bool InputDeviceTouch::isControlStable(int32_t control) const
+bool TouchDeviceiOS::isControlStable(int32_t control) const
 {
 	return false;
 }
 
-float InputDeviceTouch::getControlValue(int32_t control)
+float TouchDeviceiOS::getControlValue(int32_t control)
 {
 	const TouchControlMap& mc = c_touchControlMap[control];
 	if (mc.controlType == DtPositionX)
@@ -116,7 +116,7 @@ float InputDeviceTouch::getControlValue(int32_t control)
 		return 0.0f;
 }
 
-bool InputDeviceTouch::getControlRange(int32_t control, float& outMin, float& outMax) const
+bool TouchDeviceiOS::getControlRange(int32_t control, float& outMin, float& outMax) const
 {
 	const TouchControlMap& tc = c_touchControlMap[control];
 	if (tc.controlType == DtPositionX || tc.controlType == DtPositionX2 || tc.controlType == DtPositionX3)
@@ -135,7 +135,7 @@ bool InputDeviceTouch::getControlRange(int32_t control, float& outMin, float& ou
 		return false;
 }
 
-bool InputDeviceTouch::getDefaultControl(InputDefaultControlType controlType, bool analogue, int32_t& control) const
+bool TouchDeviceiOS::getDefaultControl(InputDefaultControlType controlType, bool analogue, int32_t& control) const
 {
 	for (int32_t i = 0; i < sizeof_array(c_touchControlMap); ++i)
 	{
@@ -149,12 +149,12 @@ bool InputDeviceTouch::getDefaultControl(InputDefaultControlType controlType, bo
 	return false;
 }
 
-bool InputDeviceTouch::getKeyEvent(KeyEvent& outEvent)
+bool TouchDeviceiOS::getKeyEvent(KeyEvent& outEvent)
 {
 	return false;
 }
 
-void InputDeviceTouch::resetState()
+void TouchDeviceiOS::resetState()
 {
 	for (int32_t i = 0; i < 3; ++i)
 	{
@@ -165,26 +165,26 @@ void InputDeviceTouch::resetState()
 	m_touch.clear();
 }
 
-void InputDeviceTouch::readState()
+void TouchDeviceiOS::readState()
 {
 	UIInterfaceOrientation orientation = [UIApplication sharedApplication].statusBarOrientation;
 	m_landscape = UIInterfaceOrientationIsLandscape(orientation);
 }
 
-bool InputDeviceTouch::supportRumble() const
+bool TouchDeviceiOS::supportRumble() const
 {
 	return false;
 }
 
-void InputDeviceTouch::setRumble(const InputRumble& rumble)
+void TouchDeviceiOS::setRumble(const InputRumble& rumble)
 {
 }
 
-void InputDeviceTouch::setExclusive(bool exclusive)
+void TouchDeviceiOS::setExclusive(bool exclusive)
 {
 }
 
-void InputDeviceTouch::touchesBegan(NSSet* touches, UIEvent* event)
+void TouchDeviceiOS::touchesBegan(NSSet* touches, UIEvent* event)
 {
 	m_fingers = 0;
 
@@ -210,7 +210,7 @@ void InputDeviceTouch::touchesBegan(NSSet* touches, UIEvent* event)
 	}
 }
 
-void InputDeviceTouch::touchesMoved(NSSet* touches, UIEvent* event)
+void TouchDeviceiOS::touchesMoved(NSSet* touches, UIEvent* event)
 {
 	for (UITouch* touch in [event allTouches])
 	{
@@ -245,7 +245,7 @@ void InputDeviceTouch::touchesMoved(NSSet* touches, UIEvent* event)
 	}
 }
 
-void InputDeviceTouch::touchesEnded(NSSet* touches, UIEvent* event)
+void TouchDeviceiOS::touchesEnded(NSSet* touches, UIEvent* event)
 {
 	for (UITouch* touch in [event allTouches])
 	{
@@ -273,7 +273,7 @@ void InputDeviceTouch::touchesEnded(NSSet* touches, UIEvent* event)
 	m_fingers = 0;
 }
 
-void InputDeviceTouch::touchesCancelled(NSSet* touches, UIEvent* event)
+void TouchDeviceiOS::touchesCancelled(NSSet* touches, UIEvent* event)
 {
 }
 
