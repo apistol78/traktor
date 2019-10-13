@@ -30,6 +30,11 @@ inline float lerp(float a, float b, float c)
 	return a * (1.0f - c) + b * c;
 }
 
+inline double lerp(double a, double b, double c)
+{
+	return a * (1.0 - c) + b * c;
+}
+
 //@}
 
 }

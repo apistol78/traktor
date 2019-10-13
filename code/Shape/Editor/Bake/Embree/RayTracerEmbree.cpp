@@ -3,6 +3,7 @@
 #include <embree3/rtcore_ray.h>
 #include "Core/Functor/Functor.h"
 #include "Core/Log/Log.h"
+#include "Core/Math/Float.h"
 #include "Core/Math/RandomGeometry.h"
 #include "Core/Math/Variance.h"
 #include "Core/Thread/Job.h"
@@ -114,7 +115,7 @@ Vector4 hammersleyUniformCone(const Vector4& direction, uint32_t b, uint32_t num
 {
 	Vector2 h = hammersley(b, numSamples);
 
-	double z = lerp(std::cos(radius), 1.0, (double)h.x);
+	double z = lerp((double)std::cos(radius), 1.0, (double)h.x);
 	double x = std::sqrt(1.0 - z * z) * std::cos(h.y * TWO_PI);
 	double y = std::sqrt(1.0 - z * z) * std::sin(h.y * TWO_PI);
 
