@@ -37,6 +37,8 @@ bool Thread::start(Priority priority)
 	Internal* in = new Internal();
 	in->thread = 0;
 
+	m_handle = in;
+
 	pthread_attr_init(&attr);
 	pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_JOINABLE);
 	pthread_attr_setinheritsched(&attr, PTHREAD_EXPLICIT_SCHED);
@@ -76,12 +78,12 @@ bool Thread::start(Priority priority)
 	pthread_attr_destroy(&attr);
 
 	if (rc == 0)
-	{
 		pthread_setname_np(in->thread, wstombs(m_name).c_str());
-		m_handle = in;
-	}
 	else
+	{
+		m_handle = nullptr;
 		delete in;
+	}
 
 	return bool(rc == 0);
 }

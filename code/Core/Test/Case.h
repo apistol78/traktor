@@ -1,0 +1,122 @@
+#pragma once
+
+#include <string>
+#include "Core/Object.h"
+#include "Core/Io/StringOutputStream.h"
+#include "Core/Misc/TString.h"
+
+// import/export mechanism.
+#undef T_DLLCLASS
+#if defined(T_CORE_EXPORT)
+#	define T_DLLCLASS T_DLLEXPORT
+#else
+#	define T_DLLCLASS T_DLLIMPORT
+#endif
+
+namespace traktor
+{
+	namespace test
+	{
+
+/*! Unit test case.
+ * \ingroup Core
+ */
+class T_DLLCLASS Case : public Object
+{
+	T_RTTI_CLASS;
+
+public:
+	Case();
+
+	virtual ~Case() {}
+
+	bool execute();
+
+protected:
+	virtual void run() = 0;
+
+	void succeeded(const std::wstring& message);
+
+	void failed(const std::wstring& message);
+
+private:
+	bool m_failed;
+};
+
+#define CASE_ASSERT(condition) \
+	{ \
+		StringOutputStream ss; \
+		if (!(condition)) \
+		{ \
+			ss << T_FILE_LINE_W << L" \"" << mbstows(#condition) << L"\" failed"; \
+			failed(ss.str()); \
+		} \
+		else \
+		{ \
+			ss << T_FILE_LINE_W << L" \"" << mbstows(#condition) << L"\" succeeded"; \
+			succeeded(ss.str()); \
+		} \
+	}
+
+#define CASE_ASSERT_EQUAL(expr1, expr2) \
+	{ \
+		StringOutputStream ss; \
+		if ((expr1) != (expr2)) \
+		{ \
+			ss << T_FILE_LINE_W << L" \"" << mbstows(#expr1) << L"\" failed, not equal to " << mbstows(#expr2); \
+			failed(ss.str()); \
+		} \
+		else \
+		{ \
+			ss << T_FILE_LINE_W << L" \"" << mbstows(#expr1) << L"\" succeeded"; \
+			succeeded(ss.str()); \
+		} \
+	}
+
+#define CASE_ASSERT_NOT_EQUAL(expr1, expr2) \
+	{ \
+		StringOutputStream ss; \
+		if ((expr1) == (expr2)) \
+		{ \
+			ss << T_FILE_LINE_W << L" \"" << mbstows(#expr1) << L"\" failed, not equal to " << mbstows(#expr2); \
+			failed(ss.str()); \
+		} \
+		else \
+		{ \
+			ss << T_FILE_LINE_W << L" \"" << mbstows(#expr1) << L"\" succeeded"; \
+			succeeded(ss.str()); \
+		} \
+	}
+
+#define CASE_ASSERT_COMPARE(expr1, expr2, compare) \
+	{ \
+		StringOutputStream ss; \
+		if (!compare((expr1), (expr2))) \
+		{ \
+			ss << T_FILE_LINE_W << L" \"" << mbstows(#expr1) << L"\" failed, compared to " << mbstows(#expr2); \
+			failed(ss.str()); \
+		} \
+		else \
+		{ \
+			ss << T_FILE_LINE_W << L" \"" << mbstows(#expr1) << L"\" succeeded"; \
+			succeeded(ss.str()); \
+		} \
+	}
+
+#define CASE_ASSERT_COMPARE_NOT(expr1, expr2, compare) \
+	{ \
+		StringOutputStream ss; \
+		if (compare((expr1), (expr2))) \
+		{ \
+			ss << T_FILE_LINE_W << L" \"" << mbstows(#expr1) << L"\" failed, (not) compared to " << mbstows(#expr2); \
+			failed(ss.str()); \
+		} \
+		else \
+		{ \
+			ss << T_FILE_LINE_W << L" \"" << mbstows(#expr1) << L"\" succeeded"; \
+			succeeded(ss.str()); \
+		} \
+	}
+
+	}
+}
