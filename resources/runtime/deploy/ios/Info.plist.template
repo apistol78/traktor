@@ -59,5 +59,7 @@ local productName = environment:get("DEPLOY_EXECUTABLE"):gsub("[.,;:-]", "_")
         	output:printLn("\t\t<string>UIInterfaceOrientationPortrait</string>")
         end
 --!>	</array>
+	<key>UIRequiresFullScreen</key>
+	<true/>
 </dict>
 </plist>
