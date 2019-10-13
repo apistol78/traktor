@@ -81,7 +81,7 @@ bool SolidEntityPipeline::buildDependencies(
 		for (uint32_t i = 0; i < 6; ++i)
 		{
 			if (materials[i].isNotNull())
-				pipelineDepends->addDependency(materials[i], editor::PdfBuild);
+				pipelineDepends->addDependency(materials[i], editor::PdfUse);
 		}
 	}
 	else if (auto cylinder = dynamic_type_cast< const Cylinder* >(sourceAsset))
