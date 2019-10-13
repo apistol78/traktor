@@ -2,21 +2,20 @@
 
 #include "Core/Log/Log.h"
 #include "Core/Math/MathUtils.h"
-#include "Input/iOS/InputDeviceTouchGamepad.h"
+#include "Input/iOS/GamepadDeviceiOS.h"
 
 namespace traktor
 {
 	namespace input
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.input.InputDeviceTouchGamepad", InputDeviceTouchGamepad, IInputDevice)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.input.GamepadDeviceiOS", GamepadDeviceiOS, IInputDevice)
 
-InputDeviceTouchGamepad::InputDeviceTouchGamepad()
-:	m_landscape(false)
+GamepadDeviceiOS::GamepadDeviceiOS()
 {
 }
 
-bool InputDeviceTouchGamepad::create(void* nativeWindowHandle)
+bool GamepadDeviceiOS::create(void* nativeWindowHandle)
 {
 	UIView* view = (UIView*)nativeWindowHandle;
 	CGRect frame = [view frame];
@@ -28,63 +27,50 @@ bool InputDeviceTouchGamepad::create(void* nativeWindowHandle)
 	m_pivots[1] = CGPointMake(cx, cy);
 	m_pivots[2] = CGPointMake(cx, cy + 30.0f);
 
-	UIInterfaceOrientation orientation = [UIApplication sharedApplication].statusBarOrientation;
-	m_landscape = UIInterfaceOrientationIsLandscape(orientation);
-
-	if (!m_landscape)
-	{
-		m_controls[0] = &m_leftButton;
-		m_controls[1] = &m_rightButton;
-		m_controls[2] = &m_rightPad;
-		m_controls[3] = &m_leftPad;
-	}
-	else
-	{
-		m_controls[0] = &m_rightButton;
-		m_controls[1] = &m_rightPad;
-		m_controls[2] = &m_leftPad;
-		m_controls[3] = &m_leftButton;
-	}
+	m_controls[0] = &m_leftButton;
+	m_controls[1] = &m_rightButton;
+	m_controls[2] = &m_rightPad;
+	m_controls[3] = &m_leftPad;
 
 	return true;
 }
 
-std::wstring InputDeviceTouchGamepad::getName() const
+std::wstring GamepadDeviceiOS::getName() const
 {
 	return L"Touch";
 }
 
-InputCategory InputDeviceTouchGamepad::getCategory() const
+InputCategory GamepadDeviceiOS::getCategory() const
 {
 	return CtJoystick;
 }
 
-bool InputDeviceTouchGamepad::isConnected() const
+bool GamepadDeviceiOS::isConnected() const
 {
 	return true;
 }
 
-int32_t InputDeviceTouchGamepad::getControlCount()
+int32_t GamepadDeviceiOS::getControlCount()
 {
 	return 0;
 }
 
-std::wstring InputDeviceTouchGamepad::getControlName(int32_t control)
+std::wstring GamepadDeviceiOS::getControlName(int32_t control)
 {
 	return L"";
 }
 
-bool InputDeviceTouchGamepad::isControlAnalogue(int32_t control) const
+bool GamepadDeviceiOS::isControlAnalogue(int32_t control) const
 {
 	return true;
 }
 
-bool InputDeviceTouchGamepad::isControlStable(int32_t control) const
+bool GamepadDeviceiOS::isControlStable(int32_t control) const
 {
 	return true;
 }
 
-float InputDeviceTouchGamepad::getControlValue(int32_t control)
+float GamepadDeviceiOS::getControlValue(int32_t control)
 {
 	if (control == -1)
 		return m_leftPad.axisX;
@@ -106,12 +92,12 @@ float InputDeviceTouchGamepad::getControlValue(int32_t control)
 		return 0.0f;
 }
 
-bool InputDeviceTouchGamepad::getControlRange(int32_t control, float& outMin, float& outMax) const
+bool GamepadDeviceiOS::getControlRange(int32_t control, float& outMin, float& outMax) const
 {
 	return false;
 }
 
-bool InputDeviceTouchGamepad::getDefaultControl(InputDefaultControlType controlType, bool analogue, int32_t& control) const
+bool GamepadDeviceiOS::getDefaultControl(InputDefaultControlType controlType, bool analogue, int32_t& control) const
 {
 	control = 0;
 
@@ -164,33 +150,33 @@ bool InputDeviceTouchGamepad::getDefaultControl(InputDefaultControlType controlT
 	return control != 0;
 }
 
-bool InputDeviceTouchGamepad::getKeyEvent(KeyEvent& outEvent)
+bool GamepadDeviceiOS::getKeyEvent(KeyEvent& outEvent)
 {
 	return false;
 }
 
-void InputDeviceTouchGamepad::resetState()
+void GamepadDeviceiOS::resetState()
 {
 }
 
-void InputDeviceTouchGamepad::readState()
+void GamepadDeviceiOS::readState()
 {
 }
 
-bool InputDeviceTouchGamepad::supportRumble() const
+bool GamepadDeviceiOS::supportRumble() const
 {
 	return false;
 }
 
-void InputDeviceTouchGamepad::setRumble(const InputRumble& rumble)
+void GamepadDeviceiOS::setRumble(const InputRumble& rumble)
 {
 }
 
-void InputDeviceTouchGamepad::setExclusive(bool exclusive)
+void GamepadDeviceiOS::setExclusive(bool exclusive)
 {
 }
 
-void InputDeviceTouchGamepad::touchesBegan(NSSet* touches, UIEvent* event)
+void GamepadDeviceiOS::touchesBegan(NSSet* touches, UIEvent* event)
 {
 	for (UITouch* touch in touches)
 	{
@@ -220,7 +206,7 @@ void InputDeviceTouchGamepad::touchesBegan(NSSet* touches, UIEvent* event)
 	}
 }
 
-void InputDeviceTouchGamepad::touchesMoved(NSSet* touches, UIEvent* event)
+void GamepadDeviceiOS::touchesMoved(NSSet* touches, UIEvent* event)
 {
 	for (UITouch* touch in touches)
 	{
@@ -230,7 +216,7 @@ void InputDeviceTouchGamepad::touchesMoved(NSSet* touches, UIEvent* event)
 	}
 }
 
-void InputDeviceTouchGamepad::touchesEnded(NSSet* touches, UIEvent* event)
+void GamepadDeviceiOS::touchesEnded(NSSet* touches, UIEvent* event)
 {
 	for (UITouch* touch in touches)
 	{
@@ -240,7 +226,7 @@ void InputDeviceTouchGamepad::touchesEnded(NSSet* touches, UIEvent* event)
 	}
 }
 
-void InputDeviceTouchGamepad::touchesCancelled(NSSet* touches, UIEvent* event)
+void GamepadDeviceiOS::touchesCancelled(NSSet* touches, UIEvent* event)
 {
 	for (UITouch* touch in touches)
 	{
@@ -250,26 +236,23 @@ void InputDeviceTouchGamepad::touchesCancelled(NSSet* touches, UIEvent* event)
 	}
 }
 
-void InputDeviceTouchGamepad::Pad::begin(UITouch* touch)
+void GamepadDeviceiOS::Pad::begin(UITouch* touch)
 {
 	origin = [touch locationInView: nil];
 }
 
-void InputDeviceTouchGamepad::Pad::end(UITouch* touch)
+void GamepadDeviceiOS::Pad::end(UITouch* touch)
 {
 	axisX =
 	axisY = 0.0f;
 }
 
-void InputDeviceTouchGamepad::Pad::move(InputDeviceTouchGamepad* device, UITouch* touch)
+void GamepadDeviceiOS::Pad::move(GamepadDeviceiOS* device, UITouch* touch)
 {
 	CGPoint location = [touch locationInView: nil];
 
 	float offsetX = location.x - origin.x;
 	float offsetY = location.y - origin.y;
-
-	if (device->m_landscape)
-		std::swap(offsetX, offsetY);
 
 	const float c_deadZone = 8.0f;
 
@@ -283,21 +266,21 @@ void InputDeviceTouchGamepad::Pad::move(InputDeviceTouchGamepad* device, UITouch
 	else
 		offsetY = 0.0f;
 
-	axisX = -clamp(offsetX / 30.0f, -1.0f, 1.0f);
+	axisX =  clamp(offsetX / 30.0f, -1.0f, 1.0f);
 	axisY = -clamp(offsetY / 30.0f, -1.0f, 1.0f);
 }
 
-void InputDeviceTouchGamepad::Button::begin(UITouch* touch)
+void GamepadDeviceiOS::Button::begin(UITouch* touch)
 {
 	value = 1.0f;
 }
 
-void InputDeviceTouchGamepad::Button::end(UITouch* touch)
+void GamepadDeviceiOS::Button::end(UITouch* touch)
 {
 	value = 0.0f;
 }
 
-void InputDeviceTouchGamepad::Button::move(InputDeviceTouchGamepad* device, UITouch* touch)
+void GamepadDeviceiOS::Button::move(GamepadDeviceiOS* device, UITouch* touch)
 {
 }
 

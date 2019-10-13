@@ -25,13 +25,13 @@ class T_DLLCLASS InputDriveriOS : public IInputDriver
 public:
 	InputDriveriOS();
 
-	virtual bool create(const SystemApplication& sysapp, const SystemWindow& syswin, uint32_t inputCategories) T_OVERRIDE T_FINAL;
+	virtual bool create(const SystemApplication& sysapp, const SystemWindow& syswin, uint32_t inputCategories) override final;
 
-	virtual int getDeviceCount() T_OVERRIDE T_FINAL;
+	virtual int getDeviceCount() override final;
 
-	virtual Ref< IInputDevice > getDevice(int index) T_OVERRIDE T_FINAL;
+	virtual Ref< IInputDevice > getDevice(int index) override final;
 
-	virtual UpdateResult update() T_OVERRIDE T_FINAL;
+	virtual UpdateResult update() override final;
 
 private:
 	Ref< InputDriveriOSImpl > m_impl;

@@ -2,7 +2,7 @@
 
 #include "Core/Log/Log.h"
 #include "Core/Math/MathUtils.h"
-#include "Input/iOS/InputDeviceTouchMouse.h"
+#include "Input/iOS/MouseDeviceiOS.h"
 
 namespace traktor
 {
@@ -26,9 +26,9 @@ c_mouseControlMap[] =
 
 		}
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.input.InputDeviceTouchMouse", InputDeviceTouchMouse, IInputDevice)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.input.MouseDeviceiOS", MouseDeviceiOS, IInputDevice)
 
-InputDeviceTouchMouse::InputDeviceTouchMouse()
+MouseDeviceiOS::MouseDeviceiOS()
 :	m_landscape(false)
 ,	m_width(0.0f)
 ,	m_height(0.0f)
@@ -38,7 +38,7 @@ InputDeviceTouchMouse::InputDeviceTouchMouse()
 {
 }
 
-bool InputDeviceTouchMouse::create(void* nativeWindowHandle)
+bool MouseDeviceiOS::create(void* nativeWindowHandle)
 {
 	UIView* view = (UIView*)nativeWindowHandle;
 	CGRect frame = [view frame];
@@ -52,42 +52,42 @@ bool InputDeviceTouchMouse::create(void* nativeWindowHandle)
 	return true;
 }
 
-std::wstring InputDeviceTouchMouse::getName() const
+std::wstring MouseDeviceiOS::getName() const
 {
 	return L"Touch Mouse";
 }
 
-InputCategory InputDeviceTouchMouse::getCategory() const
+InputCategory MouseDeviceiOS::getCategory() const
 {
 	return CtMouse;
 }
 
-bool InputDeviceTouchMouse::isConnected() const
+bool MouseDeviceiOS::isConnected() const
 {
 	return true;
 }
 
-int32_t InputDeviceTouchMouse::getControlCount()
+int32_t MouseDeviceiOS::getControlCount()
 {
 	return sizeof_array(c_mouseControlMap);
 }
 
-std::wstring InputDeviceTouchMouse::getControlName(int32_t control)
+std::wstring MouseDeviceiOS::getControlName(int32_t control)
 {
 	return c_mouseControlMap[control].name;
 }
 
-bool InputDeviceTouchMouse::isControlAnalogue(int32_t control) const
+bool MouseDeviceiOS::isControlAnalogue(int32_t control) const
 {
 	return c_mouseControlMap[control].analogue;
 }
 
-bool InputDeviceTouchMouse::isControlStable(int32_t control) const
+bool MouseDeviceiOS::isControlStable(int32_t control) const
 {
 	return false;
 }
 
-float InputDeviceTouchMouse::getControlValue(int32_t control)
+float MouseDeviceiOS::getControlValue(int32_t control)
 {
 	const MouseControlMap& mc = c_mouseControlMap[control];
 	if (mc.controlType == DtPositionX)
@@ -100,7 +100,7 @@ float InputDeviceTouchMouse::getControlValue(int32_t control)
 		return 0.0f;
 }
 
-bool InputDeviceTouchMouse::getControlRange(int32_t control, float& outMin, float& outMax) const
+bool MouseDeviceiOS::getControlRange(int32_t control, float& outMin, float& outMax) const
 {
 	const MouseControlMap& mc = c_mouseControlMap[control];
 	if (mc.controlType == DtPositionX)
@@ -119,7 +119,7 @@ bool InputDeviceTouchMouse::getControlRange(int32_t control, float& outMin, floa
 		return false;
 }
 
-bool InputDeviceTouchMouse::getDefaultControl(InputDefaultControlType controlType, bool analogue, int32_t& control) const
+bool MouseDeviceiOS::getDefaultControl(InputDefaultControlType controlType, bool analogue, int32_t& control) const
 {
 	for (int32_t i = 0; i < sizeof_array(c_mouseControlMap); ++i)
 	{
@@ -133,38 +133,38 @@ bool InputDeviceTouchMouse::getDefaultControl(InputDefaultControlType controlTyp
 	return false;
 }
 
-bool InputDeviceTouchMouse::getKeyEvent(KeyEvent& outEvent)
+bool MouseDeviceiOS::getKeyEvent(KeyEvent& outEvent)
 {
 	return false;
 }
 
-void InputDeviceTouchMouse::resetState()
+void MouseDeviceiOS::resetState()
 {
 	m_positionX = 0.0f;
 	m_positionY = 0.0f;
 	m_button = false;
 }
 
-void InputDeviceTouchMouse::readState()
+void MouseDeviceiOS::readState()
 {
 	UIInterfaceOrientation orientation = [UIApplication sharedApplication].statusBarOrientation;
 	m_landscape = UIInterfaceOrientationIsLandscape(orientation);
 }
 
-bool InputDeviceTouchMouse::supportRumble() const
+bool MouseDeviceiOS::supportRumble() const
 {
 	return false;
 }
 
-void InputDeviceTouchMouse::setRumble(const InputRumble& rumble)
+void MouseDeviceiOS::setRumble(const InputRumble& rumble)
 {
 }
 
-void InputDeviceTouchMouse::setExclusive(bool exclusive)
+void MouseDeviceiOS::setExclusive(bool exclusive)
 {
 }
 
-void InputDeviceTouchMouse::touchesBegan(NSSet* touches, UIEvent* event)
+void MouseDeviceiOS::touchesBegan(NSSet* touches, UIEvent* event)
 {
 	for (UITouch* touch in touches)
 	{
@@ -185,7 +185,7 @@ void InputDeviceTouchMouse::touchesBegan(NSSet* touches, UIEvent* event)
 	}
 }
 
-void InputDeviceTouchMouse::touchesMoved(NSSet* touches, UIEvent* event)
+void MouseDeviceiOS::touchesMoved(NSSet* touches, UIEvent* event)
 {
 	for (UITouch* touch in touches)
 	{
@@ -204,7 +204,7 @@ void InputDeviceTouchMouse::touchesMoved(NSSet* touches, UIEvent* event)
 	}
 }
 
-void InputDeviceTouchMouse::touchesEnded(NSSet* touches, UIEvent* event)
+void MouseDeviceiOS::touchesEnded(NSSet* touches, UIEvent* event)
 {
 	for (UITouch* touch in touches)
 	{
@@ -225,7 +225,7 @@ void InputDeviceTouchMouse::touchesEnded(NSSet* touches, UIEvent* event)
 	}
 }
 
-void InputDeviceTouchMouse::touchesCancelled(NSSet* touches, UIEvent* event)
+void MouseDeviceiOS::touchesCancelled(NSSet* touches, UIEvent* event)
 {
 	m_button = false;
 }
