@@ -56,6 +56,9 @@ bool InputDriveriOSImpl::create(void* nativeWindowHandle)
 	UITouchView* touchView = [[UITouchView alloc] initWithFrame: frame];
 	[touchView setCallback: this];
 
+	touchView.multipleTouchEnabled = YES;
+	touchView.exclusiveTouch = YES;
+
 	[view addSubview: touchView];
 	return true;
 }
