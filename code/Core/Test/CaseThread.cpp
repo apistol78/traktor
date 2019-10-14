@@ -114,7 +114,7 @@ void CaseThread::run()
 		for (int32_t i = 0; i < 16; ++i)
 			threads[i]->start();
 
-		ThreadManager::getInstance().getCurrentThread()->sleep(3000);
+		ThreadManager::getInstance().getCurrentThread()->sleep(1000);
 
 		// Wait until all threads has finished.
 		for (int32_t i = 0; i < 16; ++i)

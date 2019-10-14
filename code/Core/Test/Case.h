@@ -26,11 +26,16 @@ class T_DLLCLASS Case : public Object
 	T_RTTI_CLASS;
 
 public:
+	struct IReport
+	{
+		virtual void report(bool succeeded, const std::wstring& message) const = 0;
+	};
+
 	Case();
 
 	virtual ~Case() {}
 
-	bool execute();
+	bool execute(const IReport& report);
 
 protected:
 	virtual void run() = 0;
@@ -40,6 +45,7 @@ protected:
 	void failed(const std::wstring& message);
 
 private:
+	const IReport* m_report;
 	bool m_failed;
 };
 

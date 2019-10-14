@@ -1,27 +1,34 @@
 import(traktor)
 
+local function report(succeeded, message)
+	if not succeeded then
+		stdout:printLn(message)
+	end
+end
+
 function main()
 	if traktor.test.Case == nil then
 		stderr:printLn("Traktor.Core not compiled with tests; unable to execute any tests.")
 		return 1
 	end
 
-	local caseTypes = traktor.TypeInfo.findAllOf(traktor.test.Case, false)
-	stdout:printLn("Found " .. caseTypes.size .. " case(s).")
+	local result = 0
 
+	local caseTypes = traktor.TypeInfo.findAllOf(traktor.test.Case, false)
 	for _, caseType in pairs(caseTypes) do
 		local case = caseType:createInstance()
 		if case ~= nil then
-			stdout:printLn("-------------------------- " .. caseType.name .. " --------------------------")
-			if not case:execute() then
-				stderr:printLn("FAILED")
-				return 1
+			if case:execute(report) then
+				stdout:printLn(caseType.name .. " [OK]")
+			else
+				stderr:printLn(caseType.name .. " [FAILED]")
+				result = result + 1
 			end
 		else
 			stderr:printLn("Unable to instantiate case \"" .. caseType.name .. "\".")
-			return 1
+			result = result + 1
 		end
 	end
-	stdout:printLn("All cases succeeded.")
-	return 0
+
+	return result
 end

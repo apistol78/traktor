@@ -1,9 +1,7 @@
 #pragma once
 
-#include "Core/Containers/StaticVector.h"
 #include "Core/Singleton/ISingleton.h"
 #include "Core/Thread/Event.h"
-#include "Core/Thread/Semaphore.h"
 #include "Core/Thread/Thread.h"
 
 // import/export mechanism.
@@ -39,7 +37,7 @@ protected:
 private:
 	struct Worker
 	{
-		Thread* threadWorker;
+		Thread* thread;
 		Event eventAttachWork;
 		Event eventFinishedWork;
 		Ref< Functor > functorWork;
@@ -47,17 +45,14 @@ private:
 		int32_t busy;
 
 		Worker()
-		:	threadWorker(0)
+		:	thread(nullptr)
 		,	alive(1)
 		,	busy(0)
 		{
 		}
 	};
 
-	friend class StaticVector< Worker, 32 >;
-
-	Semaphore m_lock;
-	StaticVector< Worker, 32 > m_workerThreads;
+	Worker m_workerThreads[32];
 };
 
 }
