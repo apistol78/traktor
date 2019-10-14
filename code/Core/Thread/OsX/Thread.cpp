@@ -154,11 +154,13 @@ bool Thread::pause()
 
 bool Thread::resume()
 {
+	m_stopped = false;
 	return true;
 }
 
 bool Thread::resume(Priority priority)
 {
+	m_stopped = false;
 	return true;
 }
 

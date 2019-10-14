@@ -131,14 +131,14 @@ bool Thread::stop(int timeout)
 
 bool Thread::pause()
 {
-	T_ASSERT (0);
-	return false;
+	m_stopped = false;
+	return true;
 }
 
 bool Thread::resume()
 {
-	T_ASSERT (0);
-	return false;
+	m_stopped = false;
+	return true;
 }
 
 void Thread::sleep(int duration)

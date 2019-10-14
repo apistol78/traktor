@@ -164,14 +164,14 @@ bool Thread::pause()
 
 bool Thread::resume()
 {
-	T_ASSERT (0);
-	return false;
+	m_stopped = false;
+	return true;
 }
 
 bool Thread::resume(Priority priority)
 {
-	T_ASSERT (0);
-	return false;
+	m_stopped = false;
+	return true;
 }
 
 void Thread::sleep(int32_t duration)

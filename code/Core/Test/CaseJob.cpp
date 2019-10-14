@@ -26,6 +26,7 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.test.CaseJob", 0, CaseJob, Case)
 
 void CaseJob::run()
 {
+	// Fork all jobs.
 	{
 		g_job = 0;
 
@@ -38,6 +39,7 @@ void CaseJob::run()
 		CASE_ASSERT_EQUAL(g_job, 1000);
 	}
 
+	// Add job on by on and wait.
 	{
 		g_job = 0;
 
@@ -48,7 +50,6 @@ void CaseJob::run()
 
 		CASE_ASSERT_EQUAL(g_job, 1000);
 	}
-
 }
 
 	}
