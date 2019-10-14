@@ -114,7 +114,10 @@ void PipelineDependsParallel::addDependency(const ISerializable* sourceAsset, co
 
 	Ref< Job > job = JobManager::getInstance().add(makeFunctor(this, &PipelineDependsParallel::jobAddDependency, parentDependency, Ref< const ISerializable >(sourceAsset), outputPath, outputGuid, flags));
 	if (job)
+	{
+		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_jobsLock);
 		m_jobs.push_back(job);
+	}
 }
 
 void PipelineDependsParallel::addDependency(db::Instance* sourceAssetInstance, uint32_t flags)
@@ -129,7 +132,10 @@ void PipelineDependsParallel::addDependency(db::Instance* sourceAssetInstance, u
 
 	Ref< Job > job = JobManager::getInstance().add(makeFunctor(this, &PipelineDependsParallel::jobAddDependency, parentDependency, Ref< db::Instance >(sourceAssetInstance), flags));
 	if (job)
+	{
+		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_jobsLock);
 		m_jobs.push_back(job);
+	}
 }
 
 void PipelineDependsParallel::addDependency(const Guid& sourceAssetGuid, uint32_t flags)
@@ -144,7 +150,10 @@ void PipelineDependsParallel::addDependency(const Guid& sourceAssetGuid, uint32_
 
 	Ref< Job > job = JobManager::getInstance().add(makeFunctor(this, &PipelineDependsParallel::jobAddDependency, parentDependency, sourceAssetGuid, flags));
 	if (job)
+	{
+		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_jobsLock);
 		m_jobs.push_back(job);
+	}
 }
 
 void PipelineDependsParallel::addDependency(
@@ -198,12 +207,18 @@ void PipelineDependsParallel::addDependency(
 
 bool PipelineDependsParallel::waitUntilFinished()
 {
-	while (!m_jobs.empty())
+	Ref< Job > job;
+	for (;;)
 	{
-		if (!m_jobs.back()->wait())
-			return false;
-
-		m_jobs.pop_back();
+		{
+			T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_jobsLock);
+			if (m_jobs.empty())
+				break;
+			job = m_jobs.back();
+			m_jobs.pop_back();
+		}
+		if (job)
+			job->wait();
 	}
 	return true;
 }

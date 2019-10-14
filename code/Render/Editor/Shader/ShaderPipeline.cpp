@@ -40,9 +40,9 @@
 #include "Xml/XmlDeserializer.h"
 #include "Xml/XmlSerializer.h"
 
-#if !defined(__APPLE__) && !defined(__LINUX__)
-#	define T_USE_BUILD_COMBINATION_JOBS
-#endif
+//#if !defined(__APPLE__) && !defined(__LINUX__)
+//#	define T_USE_BUILD_COMBINATION_JOBS
+//#endif
 
 namespace traktor
 {
@@ -112,7 +112,6 @@ struct BuildCombinationTask : public Object
 	int optimize;
 	bool validate;
 	bool result;
-
 	StringOutputStream errorLog;
 
 	void execute()
