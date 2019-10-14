@@ -216,10 +216,7 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 #endif
 
 		if (!vertexResult)
-		{
-			log::error << L"Failed to compile shader; Failed to parse vertex shader." << Endl;
 			return nullptr;
-		}
 
 		program->addShader(vertexShader);
 
@@ -243,10 +240,7 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 #endif
 
 		if (!fragmentResult)
-		{
-			log::error << L"Failed to compile shader; Failed to parse fragment shader." << Endl;
 			return nullptr;
-		}
 
 		program->addShader(fragmentShader);
 	}
@@ -277,10 +271,7 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 #endif
 
 		if (!computeResult)
-		{
-			log::error << L"Failed to compile shader; Failed to parse compute shader." << Endl;
 			return nullptr;
-		}
 
 		program->addShader(computeShader);
 	}
@@ -292,10 +283,7 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 
 	// Link program shaders.
 	if (!program->link(EShMsgDefault))
-	{
-		log::error << L"Failed to compile shader; Program link failed." << Endl;
 		return nullptr;
-	}
 
 	Ref< ProgramResourceVk > programResource = new ProgramResourceVk();
 

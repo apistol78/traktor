@@ -95,6 +95,7 @@ private:
 	Ref< IPipelineInstanceCache > m_instanceCache;
 	ThreadLocal m_currentDependency;
 	ReaderWriterLock m_readCacheLock;
+	Semaphore m_jobsLock;
 	Semaphore m_dependencySetLock;
 
 	Ref< PipelineDependency > findOrCreateDependency(

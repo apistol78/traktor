@@ -115,7 +115,8 @@ void GlslShader::pushOutputStream(BlockType blockType, StringOutputStream* outpu
 
 void GlslShader::popOutputStream(BlockType blockType)
 {
-	m_outputStreams[int(blockType)].pop_back();
+	if (!m_outputStreams[int(blockType)].empty())
+		m_outputStreams[int(blockType)].pop_back();
 }
 
 StringOutputStream& GlslShader::getOutputStream(BlockType blockType)
