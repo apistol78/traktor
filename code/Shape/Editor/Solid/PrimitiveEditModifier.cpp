@@ -1,12 +1,18 @@
 #include "Core/Log/Log.h"
+#include "Core/Math/Triangulator.h"
+#include "Core/Math/Winding3.h"
+#include "Database/Instance.h"
+#include "Editor/IEditor.h"
+#include "Model/Model.h"
 #include "Render/PrimitiveRenderer.h"
 #include "Scene/Editor/EntityAdapter.h"
 #include "Scene/Editor/SceneEditorContext.h"
-#include "Scene/Editor/TransformChain.h"
 #include "Shape/Editor/Solid/IShape.h"
 #include "Shape/Editor/Solid/PrimitiveEditModifier.h"
 #include "Shape/Editor/Solid/PrimitiveEntity.h"
 #include "Shape/Editor/Solid/PrimitiveEntityData.h"
+#include "Shape/Editor/Solid/SolidMaterial.h"
+#include "Ui/Command.h"
 
 namespace traktor
 {
@@ -38,7 +44,28 @@ bool PrimitiveEditModifier::cursorMoved(
 
 bool PrimitiveEditModifier::handleCommand(const ui::Command& command)
 {
-    return false;
+    if (command == L"Shape.Editor.BrowseMaterial")
+    {
+        Ref< db::Instance > materialInstance = m_context->getEditor()->browseInstance(type_of< SolidMaterial >());
+        if (materialInstance)
+        {
+            for (auto entityAdapter : m_entityAdapters)
+            {
+                auto primitiveEntity = dynamic_type_cast< PrimitiveEntity* >(entityAdapter->getEntity());
+                if (!primitiveEntity || primitiveEntity->getSelectedMaterial() == model::c_InvalidIndex)
+                    continue;
+
+                auto primitiveEntityData = mandatory_non_null_type_cast< PrimitiveEntityData* >(entityAdapter->getEntityData());
+                primitiveEntityData->setMaterial(
+                    primitiveEntity->getSelectedMaterial(),
+                    materialInstance->getGuid()
+                );
+            }
+        }
+        return true;
+    }
+    else
+        return false;
 }
 
 bool PrimitiveEditModifier::begin(
@@ -49,30 +76,41 @@ bool PrimitiveEditModifier::begin(
     int32_t mouseButton
 )
 {
-    // \tbd See if we hit any primitive vertex, edge or surface.
-
     for (auto entityAdapter : m_entityAdapters)
     {
-        auto primitiveEntityData = dynamic_type_cast< PrimitiveEntityData* >(entityAdapter->getEntityData());
-        if (!primitiveEntityData || !primitiveEntityData->m_shape)
+        auto primitiveEntity = dynamic_type_cast< PrimitiveEntity* >(entityAdapter->getEntity());
+        if (!primitiveEntity)
             continue;
 
-        scene::TransformChain tc = transformChain;
-        tc.pushWorld(entityAdapter->getTransform().toMatrix44());
+        const model::Model* model = primitiveEntity->getModel();
+        if (!model)
+            continue;
 
-        AlignedVector< Vector4 > anchors;
-        primitiveEntityData->m_shape->createAnchors(anchors);
-        for (uint32_t i = 0; i < anchors.size(); ++i)
+        Transform transform = entityAdapter->getTransform();
+
+        Scalar minK(std::numeric_limits< float >::max());
+        uint32_t minMaterial = model::c_InvalidIndex;
+
+        for (uint32_t i = 0; i < model->getPolygonCount(); ++i)
         {
-            Vector2 sa;
-            if (!transformChain.objectToScreen(anchors[i], sa))
-                continue;
+            const model::Polygon& polygon = model->getPolygon(i);
+            
+            Winding3 w;
+            for (uint32_t j = 0; j < polygon.getVertexCount(); ++j)
+                w.push(transform * model->getVertexPosition(polygon.getVertex(j)));
 
-            float distance = (sa - cursorPosition).length();
-            log::info << i << L". distance " << distance << Endl;
+            Scalar k;
+            if (w.rayIntersection(worldRayOrigin, worldRayDirection, k))
+            {
+                if (k < minK)
+                {
+                    minMaterial = polygon.getMaterial();
+                    minK = k;
+                }
+            }
         }
 
-        tc.popWorld();
+        primitiveEntity->setSelectedMaterial(minMaterial);
     }
 
     return false;
@@ -97,19 +135,51 @@ void PrimitiveEditModifier::draw(render::PrimitiveRenderer* primitiveRenderer) c
 {
     for (auto entityAdapter : m_entityAdapters)
     {
-        auto primitiveEntityData = dynamic_type_cast< PrimitiveEntityData* >(entityAdapter->getEntityData());
-        if (!primitiveEntityData || !primitiveEntityData->m_shape)
+        auto primitiveEntity = dynamic_type_cast< PrimitiveEntity* >(entityAdapter->getEntity());
+        if (!primitiveEntity)
             continue;
 
-        AlignedVector< Vector4 > anchors;
-        primitiveEntityData->m_shape->createAnchors(anchors);
+        uint32_t selected = primitiveEntity->getSelectedMaterial();
+        if (selected == model::c_InvalidIndex)
+            continue;
 
-        primitiveRenderer->pushWorld(entityAdapter->getTransform().toMatrix44());
+        const model::Model* model = primitiveEntity->getModel();
+        if (!model)
+            continue;
 
-        for (const auto& anchor : anchors)
-            primitiveRenderer->drawSolidPoint(anchor, 6.0f, Color4ub(255, 255, 0, 255));
+        for (uint32_t i = 0; i < model->getPolygonCount(); ++i)
+        {
+            const model::Polygon& polygon = model->getPolygon(i);
+            if (polygon.getMaterial() != selected)
+                continue;
 
-        primitiveRenderer->popWorld();
+            Winding3 w;
+            for (uint32_t j = 0; j < polygon.getVertexCount(); ++j)
+                w.push(model->getVertexPosition(polygon.getVertex(j)));
+
+            Plane wp;
+            if (!w.getPlane(wp))
+                continue;
+
+            AlignedVector< Triangulator::Triangle > triangles;
+            Triangulator().freeze(
+                w.get(),
+                wp.normal(),
+                triangles
+            );
+
+            primitiveRenderer->pushWorld(entityAdapter->getTransform().toMatrix44());
+            for (const auto& triangle : triangles)
+            {
+                primitiveRenderer->drawSolidTriangle(
+                    w[triangle.indices[0]],
+                    w[triangle.indices[1]],
+                    w[triangle.indices[2]],
+                    Color4ub(80, 120, 255, 120)
+                );
+            }
+            primitiveRenderer->popWorld();
+        }
     }
 }
 

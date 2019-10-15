@@ -48,6 +48,10 @@ public:
 
     const model::Model* getModel() const { return m_model; }
 
+    void setSelectedMaterial(uint32_t selectedMaterial) { m_selectedMaterial = selectedMaterial; }
+
+    uint32_t getSelectedMaterial() const { return m_selectedMaterial; }
+
     bool isDirty() const { return m_dirty; }
 
     void resetDirty() { m_dirty = false; }
@@ -59,6 +63,7 @@ protected:
     BooleanOperation m_operation;
 	Ref< const model::Model > m_model;
 	Aabb3 m_boundingBox;
+    uint32_t m_selectedMaterial;
     bool m_dirty;
 };
 

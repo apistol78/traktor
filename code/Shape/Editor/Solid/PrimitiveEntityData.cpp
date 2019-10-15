@@ -1,6 +1,7 @@
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberEnum.h"
 #include "Core/Serialization/MemberRef.h"
+#include "Core/Serialization/MemberSmallMap.h"
 #include "Model/Model.h"
 #include "Shape/Editor/Solid/IShape.h"
 #include "Shape/Editor/Solid/PrimitiveEntity.h"
@@ -11,7 +12,7 @@ namespace traktor
     namespace shape
     {
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.shape.PrimitiveEntityData", 0, PrimitiveEntityData, world::EntityData)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.shape.PrimitiveEntityData", 1, PrimitiveEntityData, world::EntityData)
 
 PrimitiveEntityData::PrimitiveEntityData()
 :   m_operation(BooleanOperation::BoUnion)
@@ -33,6 +34,14 @@ Ref< PrimitiveEntity > PrimitiveEntityData::createEntity(db::Database* database)
     return entity;
 }
 
+void PrimitiveEntityData::setMaterial(int32_t face, const Guid& material)
+{
+    if (material.isNotNull())
+        m_materials[face] = material;
+    else
+        m_materials.remove(face);
+}
+
 void PrimitiveEntityData::serialize(ISerializer& s)
 {
     const MemberEnum< BooleanOperation >::Key c_BooleanOperation_Keys[] =
@@ -47,6 +56,9 @@ void PrimitiveEntityData::serialize(ISerializer& s)
 
     s >> MemberEnum< BooleanOperation >(L"operation", m_operation, c_BooleanOperation_Keys);
 	s >> MemberRef< IShape >(L"shape", m_shape);
+
+    if (s.getVersion< PrimitiveEntityData >() >= 1)
+        s >> MemberSmallMap< int32_t, Guid >(L"materials", m_materials);
 }
 
     }
