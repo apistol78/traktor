@@ -4,7 +4,6 @@
 #include "Core/Singleton/SingletonManager.h"
 #include "Core/Thread/Acquire.h"
 #include "Core/Thread/Atomic.h"
-#include "Core/Thread/Event.h"
 #include "Core/Thread/Job.h"
 #include "Core/Thread/SpinLock.h"
 #include "Core/Thread/Thread.h"
@@ -36,9 +35,7 @@ public:
 		void* ptr = m_blockAllocator.alloc();
 		if (!ptr)
 			T_FATAL_ERROR;
-#if defined(_DEBUG)
 		m_count++;
-#endif
 		return ptr;
 	}
 
@@ -50,31 +47,25 @@ public:
 		T_ANONYMOUS_VAR(Acquire< SpinLock >)(m_allocatorLock);
 		bool result = m_blockAllocator.free(ptr);
 		T_ASSERT_M (result, L"Invalid pointer");
-#if defined(_DEBUG)
 		m_count--;
-#endif
 	}
 
 protected:
 	virtual void destroy() { delete this; }
 
 private:
-	enum { MaxJobCount = 128*1024 };
+	enum { MaxJobCount = 128 * 1024 };
 	enum { MaxJobSize = sizeof(Job) };
 
 	void* m_block;
 	BlockAllocator m_blockAllocator;
 	SpinLock m_allocatorLock;
-#if defined(_DEBUG)
 	int32_t m_count;
-#endif
 
 	JobHeap()
 	:	m_block(Alloc::acquireAlign(MaxJobCount * MaxJobSize, 16, T_FILE_LINE))
 	,	m_blockAllocator(m_block, MaxJobCount, MaxJobSize)
-#if defined(_DEBUG)
 	,	m_count(0)
-#endif
 	{
 	}
 
@@ -89,27 +80,24 @@ private:
 
 bool Job::wait(int32_t timeout)
 {
-	Thread* currentThread = ThreadManager::getInstance().getCurrentThread();
-	while (
-		!m_finished &&
-		!currentThread->stopped() &&
-		m_functor != 0
-	)
+	Thread* current = ThreadManager::getInstance().getCurrentThread();
+	while (!current->stopped())
 	{
-		if (!m_jobFinishedEvent.wait(timeout >= 0 ? timeout : 100))
-		{
-			if (timeout >= 0)
-				return m_finished;
-		}
-		// A job has been finished; check if it this
-		// and in such case return true.
+		if (m_finished != 0)
+			break;
+		current->yield();
 	}
-	return true;
+	return (bool)(m_finished != 0);
+}
+
+void Job::stop()
+{
+	Atomic::exchange(m_finished, 1);
 }
 
 bool Job::stopped() const
 {
-	if (m_stopped || m_finished)
+	if (m_finished != 0)
 		return true;
 	else
 		return ThreadManager::getInstance().getCurrentThread()->stopped();
@@ -125,11 +113,9 @@ void Job::operator delete (void* ptr)
 	JobHeap::getInstance().free(ptr);
 }
 
-Job::Job(Functor* functor, Event& jobFinishedEvent)
+Job::Job(Functor* functor)
 :	m_functor(functor)
-,	m_jobFinishedEvent(jobFinishedEvent)
-,	m_finished(false)
-,	m_stopped(false)
+,	m_finished(0)
 {
 }
 

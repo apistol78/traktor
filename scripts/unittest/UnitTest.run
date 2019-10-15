@@ -6,7 +6,8 @@ local function report(succeeded, message)
 	end
 end
 
-function main()
+function main(args)
+	-- Ensure we have unittest support built in.
 	if traktor.test.Case == nil then
 		stderr:printLn("Traktor.Core not compiled with tests; unable to execute any tests.")
 		return 1
@@ -16,17 +17,31 @@ function main()
 
 	local caseTypes = traktor.TypeInfo.findAllOf(traktor.test.Case, false)
 	for _, caseType in pairs(caseTypes) do
-		local case = caseType:createInstance()
-		if case ~= nil then
-			if case:execute(report) then
-				stdout:printLn(caseType.name .. " [OK]")
+		local include = true
+
+		-- Check filter if case should be included in suite.
+		if not args.empty then
+			include = false
+			for _, filter in pairs(args) do
+				if filter == caseType.name then
+					include = true
+				end
+			end
+		end
+
+		if include then
+			local case = caseType:createInstance()
+			if case ~= nil then
+				if case:execute(report) then
+					stdout:printLn(caseType.name .. " [OK]")
+				else
+					stderr:printLn(caseType.name .. " [FAILED]")
+					result = result + 1
+				end
 			else
-				stderr:printLn(caseType.name .. " [FAILED]")
+				stderr:printLn("Unable to instantiate case \"" .. caseType.name .. "\".")
 				result = result + 1
 			end
-		else
-			stderr:printLn("Unable to instantiate case \"" .. caseType.name .. "\".")
-			result = result + 1
 		end
 	end
 

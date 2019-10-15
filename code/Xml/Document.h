@@ -2,6 +2,7 @@
 
 #include <string>
 #include "Core/Object.h"
+#include "Core/Ref.h"
 #include "Core/RefArray.h"
 #include "Core/Io/IStream.h"
 #include "Core/Io/Path.h"

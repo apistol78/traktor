@@ -1,13 +1,17 @@
 #include <cstring>
-#include "UnitTest/CaseXmlPullParser.h"
 #include "Core/Io/MemoryStream.h"
 #include "Core/Log/Log.h"
 #include "Xml/XmlPullParser.h"
+#include "Xml/Test/CaseXmlPullParser.h"
 
 namespace traktor
 {
-	namespace
+	namespace xml
 	{
+		namespace test
+		{
+			namespace
+			{
 
 const char c_validXml[] =
 {
@@ -20,7 +24,9 @@ const char c_validXml[] =
 	"</root>"
 };
 
-	}
+			}
+
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.xml.test.CaseXmlPullParser", 0, CaseXmlPullParser, traktor::test::Case)
 
 void CaseXmlPullParser::run()
 {
@@ -32,7 +38,6 @@ void CaseXmlPullParser::run()
 
 	CASE_ASSERT_EQUAL(parser.next(), xml::XmlPullParser::EtStartElement);
 	CASE_ASSERT_EQUAL(parser.getEvent().value, L"root");
-	log::info << parser.getEvent().value << Endl;
 
 	CASE_ASSERT_EQUAL(parser.next(), xml::XmlPullParser::EtStartElement);
 	CASE_ASSERT_EQUAL(parser.getEvent().value, L"child1");
@@ -68,4 +73,6 @@ void CaseXmlPullParser::run()
 	CASE_ASSERT_EQUAL(parser.next(), xml::XmlPullParser::EtEndDocument);
 }
 
+		}
+	}
 }

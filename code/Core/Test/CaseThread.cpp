@@ -1,4 +1,5 @@
 #include "Core/Test/CaseThread.h"
+#include "Core/Thread/Signal.h"
 #include "Core/Thread/ThreadManager.h"
 #include "Core/Thread/Thread.h"
 #include "Core/Thread/Event.h"
@@ -11,8 +12,20 @@ namespace traktor
 		namespace
 		{
 
+Signal g_signal1;
+Signal g_signal2;
 Event g_event;
 int32_t g_got;
+
+void threadSignal()
+{
+	g_signal1.wait();
+	Atomic::increment(g_got);
+	g_signal2.wait();
+	Atomic::increment(g_got);
+	g_signal1.wait();
+	Atomic::increment(g_got);
+}
 
 void threadEvent()
 {
@@ -54,6 +67,49 @@ void CaseThread::run()
 		Thread* threads[16] = { 0 };
 		g_got = 0;
 
+		g_signal1.set();
+
+		// Create and start all test threads.
+		for (int32_t i = 0; i < 16; ++i)
+			threads[i] = ThreadManager::getInstance().create(makeStaticFunctor(threadSignal), L"Signal test");
+		for (int32_t i = 0; i < 16; ++i)
+			threads[i]->start();
+
+		ThreadManager::getInstance().getCurrentThread()->sleep(200);
+
+		g_signal1.reset();
+
+		CASE_ASSERT_EQUAL(g_got, 16);
+
+		g_signal2.set();
+		ThreadManager::getInstance().getCurrentThread()->sleep(200);
+
+		CASE_ASSERT_EQUAL(g_got, 32);
+
+		g_signal1.set();
+		ThreadManager::getInstance().getCurrentThread()->sleep(200);
+
+		CASE_ASSERT_EQUAL(g_got, 48);
+
+		int32_t finished = 0;
+		for (int32_t i = 0; i < 16; ++i)
+		{
+			if (threads[i]->finished())
+				finished++;
+		}
+
+		CASE_ASSERT_EQUAL(finished, 16);
+
+		// Cleanup all threads.
+		for (int32_t i = 0; i < 16; ++i)
+			ThreadManager::getInstance().destroy(threads[i]);		
+	}
+
+	// Test events.
+	{
+		Thread* threads[16] = { 0 };
+		g_got = 0;
+
 		// Create and start all test threads.
 		for (int32_t i = 0; i < 16; ++i)
 			threads[i] = ThreadManager::getInstance().create(makeStaticFunctor(threadEvent), L"Event test");
@@ -64,7 +120,7 @@ void CaseThread::run()
 		ThreadManager::getInstance().getCurrentThread()->sleep(100);
 
 		// Pulse event.
-		g_event.pulse();
+		g_event.pulse(2);
 
 		// Wait a bit further to ensure thread got pulse have time to shut down.
 		ThreadManager::getInstance().getCurrentThread()->sleep(100);
@@ -78,8 +134,8 @@ void CaseThread::run()
 		}
 
 		// Ensure only one thread got woken by the pulse.
-		CASE_ASSERT_EQUAL(finished, 1);
-		CASE_ASSERT_EQUAL(g_got, 1);
+		CASE_ASSERT_EQUAL(finished, 2);
+		CASE_ASSERT_EQUAL(g_got, 2);
 
 		// Broadcast event.
 		g_event.broadcast();

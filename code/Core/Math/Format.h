@@ -1,12 +1,22 @@
 #pragma once
 
 #include "Core/Io/OutputStream.h"
+#include "Core/Math/Matrix44.h"
+#include "Core/Math/Quaternion.h"
 #include "Core/Math/Vector2.h"
 #include "Core/Math/Vector4.h"
-#include "Core/Math/Quaternion.h"
 
 namespace traktor
 {
+
+	/*! \brief Format helper of Matrix44 instances.
+	 * \ingroup Core
+	 */
+	inline OutputStream& operator << (OutputStream& os, const Matrix44& v)
+	{
+		os << L"(Matrix44)";
+		return os;
+	}
 
 	/*! \brief Format helper of Vector2 instances.
 	 * \ingroup Core
