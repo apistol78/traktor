@@ -12,6 +12,7 @@ namespace traktor
 T_IMPLEMENT_RTTI_CLASS(L"traktor.input.GamepadDeviceiOS", GamepadDeviceiOS, IInputDevice)
 
 GamepadDeviceiOS::GamepadDeviceiOS()
+:	m_radius(0.0f)
 {
 }
 
@@ -23,21 +24,22 @@ bool GamepadDeviceiOS::create(void* nativeWindowHandle)
 	float cx = frame.origin.x + frame.size.width / 2.0f;
 	float cy = frame.origin.y + frame.size.height / 2.0f;
 
-	m_pivots[0] = CGPointMake(cx, cy - 30.0f);
-	m_pivots[1] = CGPointMake(cx, cy);
-	m_pivots[2] = CGPointMake(cx, cy + 30.0f);
+	float slabW = frame.size.width / 2.0f;
+	float slabH = frame.size.height / 2.0f;
+	m_radius = std::min(slabW, slabH / 2.0f;
+
+	m_pivot = CGPointMake(cx, cy);
 
 	m_controls[0] = &m_leftButton;
 	m_controls[1] = &m_rightButton;
 	m_controls[2] = &m_rightPad;
 	m_controls[3] = &m_leftPad;
-
 	return true;
 }
 
 std::wstring GamepadDeviceiOS::getName() const
 {
-	return L"Touch";
+	return L"Gamepad";
 }
 
 InputCategory GamepadDeviceiOS::getCategory() const
@@ -183,16 +185,16 @@ void GamepadDeviceiOS::touchesBegan(NSSet* touches, UIEvent* event)
 		CGPoint location = [touch locationInView: nil];
 		IControl* control = 0;
 
-		if (location.y < m_pivots[0].y)
+		if (location.y < m_pivot.y)
 		{
-			if (location.x < m_pivots[0].x)
+			if (location.x < m_pivot.x)
 				control = m_controls[0];
 			else
 				control = m_controls[1];
 		}
 		else
 		{
-			if (location.x < m_pivots[0].x)
+			if (location.x < m_pivot.x)
 				control = m_controls[3];
 			else
 				control = m_controls[2];
@@ -266,8 +268,8 @@ void GamepadDeviceiOS::Pad::move(GamepadDeviceiOS* device, UITouch* touch)
 	else
 		offsetY = 0.0f;
 
-	axisX =  clamp(offsetX / 30.0f, -1.0f, 1.0f);
-	axisY = -clamp(offsetY / 30.0f, -1.0f, 1.0f);
+	axisX =  clamp(offsetX / m_radius, -1.0f, 1.0f);
+	axisY = -clamp(offsetY / m_radius, -1.0f, 1.0f);
 }
 
 void GamepadDeviceiOS::Button::begin(UITouch* touch)

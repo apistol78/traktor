@@ -108,7 +108,8 @@ private:
 		virtual void move(GamepadDeviceiOS* device, UITouch* touch);
 	};
 
-	CGPoint m_pivots[3];
+	CGPoint m_pivot;
+	float m_radius;
 	Pad m_leftPad;
 	Pad m_rightPad;
 	Button m_leftButton;
