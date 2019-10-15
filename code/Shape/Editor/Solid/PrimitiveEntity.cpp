@@ -1,3 +1,4 @@
+#include "Model/Model.h"
 #include "Shape/Editor/Solid/PrimitiveEntity.h"
 
 namespace traktor
@@ -10,6 +11,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.shape.PrimitiveEntity", PrimitiveEntity, world:
 PrimitiveEntity::PrimitiveEntity(const Transform& transform, BooleanOperation operation)
 :   m_transform(transform)
 ,   m_operation(operation)
+,   m_selectedMaterial(model::c_InvalidIndex)
 ,   m_dirty(true)
 {
 }

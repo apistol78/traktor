@@ -1,19 +1,17 @@
 #include "Core/Math/Aabb3.h"
-#include "Core/Serialization/AttributeType.h"
+#include "Core/Misc/String.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
 #include "Core/Serialization/MemberStaticArray.h"
-#include "Database/Database.h"
 #include "Model/Model.h"
 #include "Shape/Editor/Solid/Box.h"
-#include "Shape/Editor/Solid/SolidMaterial.h"
 
 namespace traktor
 {
 	namespace shape
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.shape.Box", 1, Box, IShape)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.shape.Box", 2, Box, IShape)
 
 Box::Box()
 :	m_extent(1.0f, 1.0f, 1.0f)
@@ -35,43 +33,10 @@ Ref< model::Model > Box::createModel(db::Database* database) const
 		const int* face = Aabb3::getFaces() + i * 4;
 
 		model::Material material;
-		material.setName(m_materials[i].format());
+		material.setName(L"M_Box_" + toString(i));
 		material.setColor(Color4f(1.0f, 1.0f, 1.0f, 1.0f));
 		material.setRoughness(1.0f);
 
-		Ref< SolidMaterial > sm = database->getObjectReadOnly< SolidMaterial >(m_materials[i]);
-		if (sm)
-		{
-			if (sm->getAlbedo().isValid())
-				material.setDiffuseMap(model::Material::Map(
-					L"Albedo",
-					tc,
-					true,
-					sm->getAlbedo()
-				));
-			if (sm->getNormal().isValid())
-				material.setNormalMap(model::Material::Map(
-					L"Normal",
-					tc,
-					true,
-					sm->getNormal()
-				));
-			if (sm->getRoughness().isValid())
-				material.setRoughnessMap(model::Material::Map(
-					L"Roughness",
-					tc,
-					true,
-					sm->getRoughness()
-				));
-			if (sm->getMetalness().isValid())
-				material.setMetalnessMap(model::Material::Map(
-					L"Metalness",
-					tc,
-					true,
-					sm->getMetalness()
-				));
-		}
-		
 		uint32_t mi = m->addMaterial(material);
 
         Vector4 fu, fv;
@@ -128,8 +93,11 @@ void Box::createAnchors(AlignedVector< Vector4 >& outAnchors) const
 void Box::serialize(ISerializer& s)
 {
 	s >> Member< Vector4 >(L"extent", m_extent);
-	if (s.getVersion() >= 1)
-		s >> MemberStaticArray< Guid, 6 >(L"materials", m_materials, AttributeType(type_of< SolidMaterial >()));
+	if (s.getVersion() >= 1 && s.getVersion() < 2)
+	{
+		Guid materials[6];
+		s >> MemberStaticArray< Guid, 6 >(L"materials", materials);
+	}
 }
 
 	}

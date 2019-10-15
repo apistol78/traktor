@@ -23,6 +23,7 @@ void EditorProfile::getCommands(
 ) const
 {
 	outCommands.push_back(ui::Command(L"Shape.Editor.EditPrimitive"));
+	outCommands.push_back(ui::Command(L"Shape.Editor.BrowseMaterial"));
 }
 
 void EditorProfile::getGuideDrawIds(

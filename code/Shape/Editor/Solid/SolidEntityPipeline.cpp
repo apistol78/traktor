@@ -11,8 +11,6 @@
 #include "Physics/StaticBodyDesc.h"
 #include "Physics/Editor/MeshAsset.h"
 #include "Physics/World/RigidBodyComponentData.h"
-#include "Shape/Editor/Solid/Box.h"
-#include "Shape/Editor/Solid/Cylinder.h"
 #include "Shape/Editor/Solid/PrimitiveEntityData.h"
 #include "Shape/Editor/Solid/SolidEntityData.h"
 #include "Shape/Editor/Solid/SolidEntityPipeline.h"
@@ -42,8 +40,6 @@ TypeInfoSet SolidEntityPipeline::getAssetTypes() const
 	typeInfoSet.insert< PrimitiveEntityData >();
 	typeInfoSet.insert< SolidEntityData >();
 	typeInfoSet.insert< SolidMaterial >();
-	typeInfoSet.insert< Box >();
-	typeInfoSet.insert< Cylinder >();
 	return typeInfoSet;
 }
 
@@ -60,8 +56,9 @@ bool SolidEntityPipeline::buildDependencies(
 
 	if (auto primitiveEntityData = dynamic_type_cast< const PrimitiveEntityData* >(sourceAsset))
 	{
-		if (primitiveEntityData->getShape())
-			pipelineDepends->addDependency(primitiveEntityData->getShape());
+		const auto& materials = primitiveEntityData->getMaterials();
+		for (const auto& pair : materials)
+			pipelineDepends->addDependency(pair.second, editor::PdfUse);
 	}
 	else if (auto solidEntityData = dynamic_type_cast< const SolidEntityData* >(sourceAsset))
 	{
@@ -74,24 +71,6 @@ bool SolidEntityPipeline::buildDependencies(
 		pipelineDepends->addDependency(solidMaterial->getNormal(), editor::PdfResource | editor::PdfBuild);
 		pipelineDepends->addDependency(solidMaterial->getRoughness(), editor::PdfResource | editor::PdfBuild);
 		pipelineDepends->addDependency(solidMaterial->getMetalness(), editor::PdfResource | editor::PdfBuild);
-	}
-	else if (auto box = dynamic_type_cast< const Box* >(sourceAsset))
-	{
-		const Guid* materials = box->getMaterials();
-		for (uint32_t i = 0; i < 6; ++i)
-		{
-			if (materials[i].isNotNull())
-				pipelineDepends->addDependency(materials[i], editor::PdfUse);
-		}
-	}
-	else if (auto cylinder = dynamic_type_cast< const Cylinder* >(sourceAsset))
-	{
-		const Guid* materials = cylinder->getMaterials();
-		for (uint32_t i = 0; i < 3; ++i)
-		{
-			if (materials[i].isNotNull())
-				pipelineDepends->addDependency(materials[i], editor::PdfBuild);
-		}
 	}
 	else
 		return false;

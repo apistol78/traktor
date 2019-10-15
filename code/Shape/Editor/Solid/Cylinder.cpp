@@ -1,20 +1,18 @@
 #include "Core/Math/Const.h"
+#include "Core/Misc/String.h"
 #include "Core/Serialization/AttributeRange.h"
-#include "Core/Serialization/AttributeType.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
 #include "Core/Serialization/MemberStaticArray.h"
-#include "Database/Database.h"
 #include "Model/Model.h"
 #include "Shape/Editor/Solid/Cylinder.h"
-#include "Shape/Editor/Solid/SolidMaterial.h"
 
 namespace traktor
 {
 	namespace shape
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.shape.Cylinder", 1, Cylinder, IShape)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.shape.Cylinder", 2, Cylinder, IShape)
 
 Cylinder::Cylinder()
 :	m_length(1.0f)
@@ -37,44 +35,10 @@ Ref< model::Model > Cylinder::createModel(db::Database* database) const
 	for (int32_t i = 0; i < 3; ++i)
 	{
 		model::Material material;
-		material.setName(m_materials[i].format());
+		material.setName(L"M_Cylinder_" + toString(i));
 		material.setColor(Color4f(1.0f, 1.0f, 1.0f, 1.0f));
 		material.setRoughness(1.0f);
-
-		Ref< SolidMaterial > sm = database->getObjectReadOnly< SolidMaterial >(m_materials[i]);
-		if (sm)
-		{
-			if (sm->getAlbedo().isValid())
-				material.setDiffuseMap(model::Material::Map(
-					L"Albedo",
-					tc,
-					true,
-					sm->getAlbedo()
-				));
-			if (sm->getNormal().isValid())
-				material.setNormalMap(model::Material::Map(
-					L"Normal",
-					tc,
-					true,
-					sm->getNormal()
-				));
-			if (sm->getRoughness().isValid())
-				material.setRoughnessMap(model::Material::Map(
-					L"Roughness",
-					tc,
-					true,
-					sm->getRoughness()
-				));
-			if (sm->getMetalness().isValid())
-				material.setMetalnessMap(model::Material::Map(
-					L"Metalness",
-					tc,
-					true,
-					sm->getMetalness()
-				));
-		}
-
-		uint32_t mi = m->addMaterial(material);
+		m->addMaterial(material);
 	}
 
 	model::Polygon top;
@@ -166,8 +130,11 @@ void Cylinder::serialize(ISerializer& s)
 	s >> Member< float >(L"length", m_length, AttributeRange(0.0f));
     s >> Member< float >(L"radius", m_radius, AttributeRange(0.0f));
     s >> Member< int32_t >(L"faces", m_faces, AttributeRange(3));
-	if (s.getVersion() >= 1)
-		s >> MemberStaticArray< Guid, 3 >(L"materials", m_materials, AttributeType(type_of< SolidMaterial >()));
+	if (s.getVersion() >= 1 && s.getVersion() < 2)
+	{
+		Guid materials[3];
+		s >> MemberStaticArray< Guid, 3 >(L"materials", materials);
+	}
 }
 
 	}

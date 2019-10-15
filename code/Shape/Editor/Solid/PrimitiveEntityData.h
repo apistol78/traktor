@@ -1,6 +1,8 @@
 #pragma once
 
+#include "Core/Guid.h"
 #include "Core/Ref.h"
+#include "Core/Containers/SmallMap.h"
 #include "Shape/Editor/Solid/SolidTypes.h"
 #include "World/EntityData.h"
 
@@ -39,17 +41,22 @@ public:
     
     Ref< PrimitiveEntity > createEntity(db::Database* database) const;
 
+    void setMaterial(int32_t face, const Guid& material);
+
     virtual void serialize(ISerializer& s) override;
 
     BooleanOperation getOperation() const { return m_operation; }
 
     const IShape* getShape() const { return m_shape; }
 
+    const SmallMap< int32_t, Guid >& getMaterials() const { return m_materials; }
+
 private:
     friend class PrimitiveEditModifier;
 
     BooleanOperation m_operation;
 	Ref< IShape > m_shape;
+    SmallMap< int32_t, Guid > m_materials;
 };
 
     }
