@@ -4,7 +4,9 @@
 #include <unistd.h>
 #include <sys/time.h>
 #include "Core/Misc/TString.h"
+#include "Core/Thread/Atomic.h"
 #include "Core/Thread/Thread.h"
+#include "Core/Thread/OsX/Utilities.h"
 #include "Core/Functor/Functor.h"
 
 namespace traktor
@@ -17,24 +19,16 @@ struct Internal
 	pthread_t thread;
 	pthread_mutex_t mutex;
 	pthread_cond_t signal;
-#if defined(_DEBUG)
-	char name[256];
-#endif
 	Functor* functor;
-	bool finished;
+	int32_t finished;
 };
 
 void* trampoline(void* data)
 {
 	Internal* in = reinterpret_cast< Internal* >(data);
 
-#if defined(_DEBUG)
-	if (in->name)
-		pthread_setname_np(in->name);
-#endif
-
 	(in->functor->operator())();
-	in->finished = true;
+	Atomic::exchange(in->finished, 1);
 
 	pthread_cond_signal(&in->signal);
 	return 0;
@@ -48,10 +42,12 @@ bool Thread::start(Priority priority)
 	sched_param param;
 	int rc;
 
-	Internal* in = reinterpret_cast< Internal* >(m_handle);
-	T_ASSERT (in);
+	Internal* in = new Internal();
+	in->thread = 0;
+	in->functor = m_functor;
+	in->finished = 0;
 
-	in->finished = false;
+	m_handle = in;
 
 	pthread_mutex_init(&in->mutex, NULL);
 	pthread_cond_init(&in->signal, NULL);
@@ -59,8 +55,6 @@ bool Thread::start(Priority priority)
 	pthread_attr_init(&attr);
 	pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_JOINABLE);
 	pthread_attr_setinheritsched(&attr, PTHREAD_EXPLICIT_SCHED);
-
-	// By default OSX/iOS allocate only 512kb for secondary threads.
 	pthread_attr_setstacksize(&attr, 2 * 1024 * 1024);
 
 	std::memset(&param, 0, sizeof(param));
@@ -96,6 +90,13 @@ bool Thread::start(Priority priority)
 	);
 
 	pthread_attr_destroy(&attr);
+
+	if (rc != 0)
+	{
+		m_handle = nullptr;
+		delete in;
+	}
+
 	return bool(rc == 0);
 }
 
@@ -103,23 +104,18 @@ bool Thread::wait(int timeout)
 {
 	Internal* in = reinterpret_cast< Internal* >(m_handle);
 
-	int status = 0;
-	int rc = 0;
+	if (in->finished)
+		return true;
 
 	if (timeout >= 0)
 	{
-		pthread_mutex_lock(&in->mutex);
-
-		timeval now;
 		timespec ts;
 
-		gettimeofday(&now, 0);
-		ts.tv_sec = now.tv_sec + timeout / 1000;
-		ts.tv_nsec = (now.tv_usec + (timeout % 1000) * 1000) * 1000;
-		ts.tv_sec += ts.tv_nsec / 1000000000;
-		ts.tv_nsec = ts.tv_nsec % 1000000000;
+		clock_gettime(CLOCK_REALTIME, &ts);
+		addMilliSecToTimeSpec(&ts, timeout);
 
-		for (rc = 0; rc == 0 && !in->finished; )
+		pthread_mutex_lock(&in->mutex);
+		for (int rc = 0; rc == 0 && in->finished == 0; )
 		{
 			rc = pthread_cond_timedwait(
 				&in->signal,
@@ -127,17 +123,17 @@ bool Thread::wait(int timeout)
 				&ts
 			);
 		}
-
+		bool finished = (bool)(in->finished != 0);
 		pthread_mutex_unlock(&in->mutex);
-		if (!in->finished)
+
+		if (!finished)
 			return false;
 	}
 
-	rc = pthread_join(
+	int rc = pthread_join(
 		in->thread,
 		0
 	);
-
 	return bool(rc == 0);
 }
 
@@ -182,30 +178,33 @@ bool Thread::stopped() const
 bool Thread::current() const
 {
 	Internal* in = reinterpret_cast< Internal* >(m_handle);
-	return bool(pthread_equal(in->thread, pthread_self()) == 1);
+	if (in && in->thread != 0)
+		return bool(pthread_equal(in->thread, pthread_self()) != 0);
+	else
+		return false;
 }
 
 bool Thread::finished() const
 {
-	Internal* in = reinterpret_cast< Internal* >(m_handle);
-	return in->finished;
+	return const_cast< Thread* >(this)->wait(0);
 }
 
 Thread::Thread(Functor* functor, const wchar_t* const name, int32_t hardwareCore)
-:	m_handle(0)
+:	m_handle(nullptr)
 ,	m_id(0)
 ,	m_stopped(false)
 ,	m_functor(functor)
 ,	m_name(name)
 ,	m_hardwareCore(hardwareCore)
 {
-	Internal* in = new Internal();
-#if defined(_DEBUG)
-	std::strcpy(in->name, name ? wstombs(name).c_str() : "Unnamed");
-#endif
-	in->functor = m_functor;
-	in->finished = false;
-	m_handle = in;
+	if (!functor)
+	{
+		// Assume is main thread, only main thread is allowed to pass null as functor.
+		Internal* in = new Internal();
+		in->thread = pthread_self();
+		in->functor = nullptr;
+		m_handle = in;
+	}
 }
 
 Thread::~Thread()

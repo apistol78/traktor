@@ -1,3 +1,4 @@
+#undef __MACOS__
 #include <cstdlib>
 #include <ogg/ogg.h>
 #include <vorbis/vorbisenc.h>

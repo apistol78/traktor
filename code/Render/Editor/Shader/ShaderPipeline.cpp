@@ -13,6 +13,7 @@
 #include "Core/Settings/PropertyInteger.h"
 #include "Core/Settings/PropertyString.h"
 #include "Core/Settings/PropertyStringSet.h"
+#include "Core/Thread/Acquire.h"
 #include "Core/Thread/Job.h"
 #include "Core/Thread/JobManager.h"
 #include "Core/Thread/Thread.h"

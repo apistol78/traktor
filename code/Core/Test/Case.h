@@ -3,6 +3,7 @@
 #include <string>
 #include "Core/Object.h"
 #include "Core/Io/StringOutputStream.h"
+#include "Core/Math/Format.h"
 #include "Core/Misc/TString.h"
 
 // import/export mechanism.
@@ -54,12 +55,12 @@ private:
 		StringOutputStream ss; \
 		if (!(condition)) \
 		{ \
-			ss << T_FILE_LINE_W << L" \"" << mbstows(#condition) << L"\" failed"; \
+			ss << T_FILE_LINE_W << L" \"" << mbstows(#condition) << L"\" failed."; \
 			failed(ss.str()); \
 		} \
 		else \
 		{ \
-			ss << T_FILE_LINE_W << L" \"" << mbstows(#condition) << L"\" succeeded"; \
+			ss << T_FILE_LINE_W << L" \"" << mbstows(#condition) << L"\" succeeded."; \
 			succeeded(ss.str()); \
 		} \
 	}
@@ -67,14 +68,16 @@ private:
 #define CASE_ASSERT_EQUAL(expr1, expr2) \
 	{ \
 		StringOutputStream ss; \
-		if ((expr1) != (expr2)) \
+		auto r1 = (expr1); \
+		auto r2 = (expr2); \
+		if (r1 != r2) \
 		{ \
-			ss << T_FILE_LINE_W << L" \"" << mbstows(#expr1) << L"\" failed, not equal to " << mbstows(#expr2); \
+			ss << T_FILE_LINE_W << L" \"" << mbstows(#expr1) << L"\" failed, " << r1 << L" should be equal to " << r2 << L"."; \
 			failed(ss.str()); \
 		} \
 		else \
 		{ \
-			ss << T_FILE_LINE_W << L" \"" << mbstows(#expr1) << L"\" succeeded"; \
+			ss << T_FILE_LINE_W << L" \"" << mbstows(#expr1) << L"\" succeeded, result was as expected " << r1 << L"."; \
 			succeeded(ss.str()); \
 		} \
 	}

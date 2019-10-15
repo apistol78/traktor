@@ -14,10 +14,9 @@
 namespace traktor
 {
 
-class Event;
 class Functor;
 
-/*! \brief Job handle object.
+/*! Job handle object.
  * \ingroup Core
  */
 class T_DLLCLASS Job
@@ -27,28 +26,21 @@ class T_DLLCLASS Job
 public:
 	virtual bool wait(int32_t timeout = -1) override final;
 
-	bool stopped() const;
+	void stop();
 
-	void stop() { m_stopped = true; }
+	bool stopped() const;
 
 	void* operator new (size_t size);
 
 	void operator delete (void* ptr);
 
-	static void join(Ref< Job >& job)
-	{
-		if (job) { job->wait(); job = 0; }
-	}
-
 private:
 	friend class JobQueue;
 
 	Ref< Functor > m_functor;
-	Event& m_jobFinishedEvent;
-	volatile bool m_finished;
-	volatile bool m_stopped;
+	uint32_t m_finished;
 
-	Job(Functor* functor, Event& jobFinishedEvent);
+	explicit Job(Functor* functor);
 };
 
 }

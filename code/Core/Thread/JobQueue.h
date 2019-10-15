@@ -1,10 +1,11 @@
 #pragma once
 
-#include <vector>
 #include "Core/Object.h"
 #include "Core/RefArray.h"
-#include "Core/Containers/ThreadsafeFifo.h"
+#include "Core/Containers/AlignedVector.h"
 #include "Core/Thread/Event.h"
+#include "Core/Thread/Mutex.h"
+#include "Core/Thread/Signal.h"
 #include "Core/Thread/Thread.h"
 
 // import/export mechanism.
@@ -69,18 +70,13 @@ public:
 	/*! \brief Stop all worker threads. */
 	void stop();
 
-	/*! \brief Number of pending jobs. */
-	int32_t getPendingCount() const;
-
-	/*! \brief Number of running jobs. */
-	int32_t getRunningCount() const;
-
 private:
-	std::vector< Thread* > m_workerThreads;
-	ThreadsafeFifo< Ref< Job > > m_jobQueue;
+	AlignedVector< Thread* > m_workerThreads;
+	RefArray< Job > m_jobQueue;
+	Mutex m_jobQueueLock;
 	Event m_jobQueuedEvent;
 	Event m_jobFinishedEvent;
-	int32_t m_running;
+	int32_t m_pending;
 
 	void threadWorker();
 };
