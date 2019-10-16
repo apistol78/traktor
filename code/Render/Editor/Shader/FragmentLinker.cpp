@@ -180,15 +180,21 @@ Ref< ShaderGraph > FragmentLinker::resolve(const ShaderGraph* shaderGraph, bool 
 			{
 				const OutputPin* externalOutputPin = findExternalOutputPin(externalNode, outputPort);
 
-				std::vector< const InputPin* > externalDestinationPins;
-				mutableShaderGraph->findDestinationPins(externalOutputPin, externalDestinationPins);
+				RefSet< Edge > externalDestinationEdges;
+				mutableShaderGraph->findEdges(externalOutputPin, externalDestinationEdges);
 
-				if (externalOutputPin && !externalDestinationPins.empty())
+				if (externalOutputPin && !externalDestinationEdges.empty())
 				{
 					Ref< PortConnector > connector = new PortConnector();
 					mutableShaderGraph->addNode(connector);
-					for (auto externalDestinationPin : externalDestinationPins)
-						mutableShaderGraph->addEdge(new Edge(connector->getOutputPin(0), externalDestinationPin));
+					for (auto externalDestinationEdge : externalDestinationEdges)
+					{
+						mutableShaderGraph->removeEdge(externalDestinationEdge);
+						mutableShaderGraph->addEdge(new Edge(
+							connector->getOutputPin(0),
+							externalDestinationEdge->getDestination()
+						));
+					}
 					destinationPin = connector->getInputPin(0);
 				}
 			}

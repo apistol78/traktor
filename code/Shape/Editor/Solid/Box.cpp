@@ -18,7 +18,7 @@ Box::Box()
 {
 }
 
-Ref< model::Model > Box::createModel(db::Database* database) const
+Ref< model::Model > Box::createModel() const
 {
 	Vector4 vertices[8];
 	Aabb3(-m_extent / Scalar(2.0f), m_extent / Scalar(2.0f)).getExtents(vertices);

@@ -16,13 +16,6 @@
 
 namespace traktor
 {
-    namespace db
-    {
-
-class Database;
-
-    }
-
     namespace shape
     {
 
@@ -39,7 +32,7 @@ class T_DLLCLASS PrimitiveEntityData : public world::EntityData
 public:
     PrimitiveEntityData();
     
-    Ref< PrimitiveEntity > createEntity(db::Database* database) const;
+    Ref< PrimitiveEntity > createEntity() const;
 
     void setMaterial(int32_t face, const Guid& material);
 

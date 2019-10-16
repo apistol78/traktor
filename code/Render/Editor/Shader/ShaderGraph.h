@@ -3,6 +3,7 @@
 #include <vector>
 #include "Core/RefArray.h"
 #include "Core/RefSet.h"
+#include "Core/Containers/SmallMap.h"
 #include "Core/Serialization/ISerializable.h"
 
 // import/export mechanism.
@@ -159,6 +160,12 @@ public:
 private:
 	RefArray< Node > m_nodes;
 	RefArray< Edge > m_edges;
+	SmallMap< const InputPin*, Edge* > m_inputPinToEdge;
+	SmallMap< const OutputPin*, uint32_t > m_outputPinDestinationCount;
+
+	void updateInputPinToEdge();
+
+	void updateOutputPinDestinationCount();
 };
 
 	}

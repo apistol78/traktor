@@ -18,7 +18,7 @@ namespace traktor
 class InputPin;
 class OutputPin;
 
-/*! \brief Shader graph edge.
+/*! Shader graph edge.
  * \ingroup Render
  */
 class T_DLLCLASS Edge : public ISerializable
@@ -30,11 +30,11 @@ public:
 
 	void setSource(const OutputPin* source);
 
-	const OutputPin* getSource() const;
+	const OutputPin* getSource() const { return m_source; }
 
 	void setDestination(const InputPin* destination);
 
-	const InputPin* getDestination() const;
+	const InputPin* getDestination() const { return m_destination; }
 
 	virtual void serialize(ISerializer& s) override final;
 

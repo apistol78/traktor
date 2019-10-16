@@ -1788,7 +1788,7 @@ void EditorForm::buildAssetsThread(std::vector< Guid > assetGuids, bool rebuild)
 	if (verbose)
 	{
 		double elapsedDependencies = timerBuild.getElapsedTime();
-		log::info << L"Collected " << dependencySet.size() << L" dependencies in " << elapsedDependencies << L" second(s)." << Endl;
+		log::info << L"Collected " << dependencySet.size() << L" dependencies from " << assetGuids.size() << L" root(s) in " << elapsedDependencies << L" second(s)." << Endl;
 	}
 
 	m_buildView->beginBuild();
@@ -2090,8 +2090,6 @@ void EditorForm::saveCurrentDocument()
 		{
 			m_statusBar->setText(L"Document saved successfully");
 			log::info << L"Document saved successfully" << Endl;
-
-			buildAssetsForOpenedEditors();
 		}
 		else
 		{

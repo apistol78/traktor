@@ -21,7 +21,7 @@ Cylinder::Cylinder()
 {
 }
 
-Ref< model::Model > Cylinder::createModel(db::Database* database) const
+Ref< model::Model > Cylinder::createModel() const
 {
 	Ref< model::Model > m = new model::Model();
 

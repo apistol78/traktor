@@ -127,15 +127,18 @@ Ref< ShaderGraph > ShaderGraphOptimizer::mergeBranches() const
 		return shaderGraph;
 
 	// Calculate node hashes.
-	std::map< const Node*, uint32_t > hash;
-	for (RefArray< Node >::const_iterator i = nodes.begin(); i != nodes.end(); ++i)
-		hash[*i] = ShaderGraphHash::calculate(*i);
+	SmallMap< const Node*, uint32_t > hash;
+	for (auto node : nodes)
+		hash[node] = ShaderGraphHash::calculate(node);
 
 	// Merge single output nodes.
 	for (uint32_t i = 0; i < uint32_t(nodes.size() - 1); ++i)
 	{
 		if (nodes[i]->getInputPinCount() != 0 || nodes[i]->getOutputPinCount() != 1)
 			continue;
+
+		const TypeInfo* type0 = &type_of(nodes[i]);
+		const uint32_t hash0 = hash[nodes[i]];
 
 		for (uint32_t j = i + 1; j < uint32_t(nodes.size()); )
 		{
@@ -145,7 +148,7 @@ Ref< ShaderGraph > ShaderGraphOptimizer::mergeBranches() const
 				continue;
 			}
 
-			if (&type_of(nodes[i]) != &type_of(nodes[j]) || hash[nodes[i]] != hash[nodes[j]])
+			if (type0 != &type_of(nodes[j]) || hash0 != hash[nodes[j]])
 			{
 				++j;
 				continue;
@@ -182,25 +185,28 @@ Ref< ShaderGraph > ShaderGraphOptimizer::mergeBranches() const
 		bool merged = false;
 
 		// Merge nodes; build array of nodes to remove.
-		for (uint32_t i = 0; i < uint32_t(nodes.size() - 1); ++i)
+		for (uint32_t i = 0; i < (uint32_t)(nodes.size() - 1); ++i)
 		{
-			for (uint32_t j = i + 1; j < uint32_t(nodes.size()); )
+			const TypeInfo* type0 = &type_of(nodes[i]);
+			const uint32_t hash0 = hash[nodes[i]];
+			const int32_t inputPinCount = nodes[i]->getInputPinCount();
+
+			for (uint32_t j = i + 1; j < (uint32_t)(nodes.size()); )
 			{
-				if (&type_of(nodes[i]) != &type_of(nodes[j]) || hash[nodes[i]] != hash[nodes[j]])
+				if (type0 != &type_of(nodes[j]) || hash0 != hash[nodes[j]])
 				{
 					++j;
 					continue;
 				}
 
-				int inputPinCount = nodes[i]->getInputPinCount();
 				T_ASSERT(inputPinCount == nodes[j]->getInputPinCount());
 
-				int outputPinCount = nodes[i]->getOutputPinCount();
+				int32_t outputPinCount = nodes[i]->getOutputPinCount();
 				T_ASSERT(outputPinCount == nodes[j]->getOutputPinCount());
 
 				// Are both nodes wired to same input nodes?
 				bool wiredIdentical = true;
-				for (int k = 0; k < inputPinCount; ++k)
+				for (int32_t k = 0; k < inputPinCount; ++k)
 				{
 					const OutputPin* sourcePin1 = shaderGraph->findSourcePin(nodes[i]->getInputPin(k));
 					const OutputPin* sourcePin2 = shaderGraph->findSourcePin(nodes[j]->getInputPin(k));
@@ -217,7 +223,7 @@ Ref< ShaderGraph > ShaderGraphOptimizer::mergeBranches() const
 				}
 
 				// Identically wired nodes found; rewire output edges.
-				for (int k = 0; k < outputPinCount; ++k)
+				for (int32_t k = 0; k < outputPinCount; ++k)
 				{
 					RefSet< Edge > edges;
 					shaderGraph->findEdges(nodes[j]->getOutputPin(k), edges);
@@ -233,7 +239,7 @@ Ref< ShaderGraph > ShaderGraphOptimizer::mergeBranches() const
 				}
 
 				// Remove input edges.
-				for (int k = 0; k < inputPinCount; ++k)
+				for (int32_t k = 0; k < inputPinCount; ++k)
 				{
 					Ref< Edge > edge = shaderGraph->findEdge(nodes[j]->getInputPin(k));
 					if (edge)
