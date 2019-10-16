@@ -4,7 +4,6 @@
 #include "Core/Log/Log.h"
 #include "Core/Misc/String.h"
 #include "Core/Misc/TString.h"
-#include "Core/Timer/Measure.h"
 #include "Core/Timer/Timer.h"
 #include "Net/Replication/Peer2PeerTopology.h"
 
@@ -243,13 +242,9 @@ bool Peer2PeerTopology::update(double dT)
 	P2PMessage msg;
 	int32_t updateRouting = 0;
 
-	T_MEASURE_BEGIN();
-
 	// Update provider first.
 	if (!m_provider->update())
 		return false;
-
-	T_MEASURE_UNTIL(0.002);
 
 	// Get peers from provider.
 	int32_t providerPeerCount = m_provider->getPeerCount();
@@ -260,8 +255,6 @@ bool Peer2PeerTopology::update(double dT)
 		if (m_providerPeers[i] == 0)
 			log::error << L"Provider peer handle " << i << L" null." << Endl;
 	}
-
-	T_MEASURE_UNTIL(0.00025);
 
 	// Add new peers.
 	for (int32_t i = 0; i < providerPeerCount; ++i)
@@ -276,8 +269,6 @@ bool Peer2PeerTopology::update(double dT)
 			updateRouting = 1;
 		}
 	}
-
-	T_MEASURE_UNTIL(0.00025);
 
 	int32_t myIndex = indexOf(m_provider->getLocalHandle());
 	Peer& myPeer = m_peers[myIndex];
@@ -305,7 +296,7 @@ bool Peer2PeerTopology::update(double dT)
 				log::info << getLogPrefix() << L"Peer " << m_peers[i].handle << L" disconnected (no provider)." << Endl;
 
 				if (m_callback)
-					T_MEASURE_STATEMENT(m_callback->nodeDisconnected(this, peer.handle), 0.001);
+					m_callback->nodeDisconnected(this, peer.handle);
 
 				peer.established = false;
 			}
@@ -315,8 +306,6 @@ bool Peer2PeerTopology::update(double dT)
 		else
 			++i;
 	}
-
-	T_MEASURE_UNTIL(0.00025);
 
 	double time = m_timer.getElapsedTime();
 
@@ -405,8 +394,6 @@ bool Peer2PeerTopology::update(double dT)
 		break;
 	}
 
-	T_MEASURE_UNTIL(0.001);
-
 	// Check if any peer doesn't respond to "I am".
 	for (int32_t i = 0; i < int32_t(m_peers.size()); ++i)
 	{
@@ -437,8 +424,6 @@ bool Peer2PeerTopology::update(double dT)
 		}
 	}
 
-	T_MEASURE_UNTIL(0.001);
-
 	// If I am alone then clear every other peer.
 	if (myPeer.connections.empty())
 	{
@@ -455,8 +440,6 @@ bool Peer2PeerTopology::update(double dT)
 		}
 		myPeer.sentIAm = 0;
 	}
-
-	T_MEASURE_UNTIL(0.0001);
 
 	// Non two-way connected peers.
 	for (int32_t i = 0; i < int32_t(m_peers.size()); ++i)
@@ -495,8 +478,6 @@ bool Peer2PeerTopology::update(double dT)
 		}
 	}
 
-	T_MEASURE_UNTIL(0.0001);
-
 	// Propagate connections to my neighbor peers.
 	int32_t errors = 0;
 	for (int32_t i = 0; i < int32_t(m_peers.size()); ++i)
@@ -531,8 +512,6 @@ bool Peer2PeerTopology::update(double dT)
 	if (errors > 0)
 		log::warning << getLogPrefix() << L"Unable to propagate " << errors << L" connection mask(s)." << Endl;
 
-	T_MEASURE_UNTIL(0.001);
-
 	// Receive messages.
 	{
 		net_handle_t from;
@@ -544,7 +523,7 @@ bool Peer2PeerTopology::update(double dT)
 		{
 			from = 0;
 
-			T_MEASURE_STATEMENT(nrecv = m_provider->recv(&msg, MaxDataSize, from), 0.001);
+			nrecv = m_provider->recv(&msg, MaxDataSize, from);
 			if (nrecv <= 0)
 				break;
 			if (from == 0)
@@ -554,7 +533,7 @@ bool Peer2PeerTopology::update(double dT)
 			{
 				reply.id = MsgIAm_1;
 				reply.iam.sequence = msg.iam.sequence;
-				T_MEASURE_STATEMENT(m_provider->send(from, &reply, MsgIAm_NetSize()), 0.001);
+				m_provider->send(from, &reply, MsgIAm_NetSize());
 			}
 			else if (msg.id == MsgIAm_1)
 			{
@@ -641,8 +620,7 @@ bool Peer2PeerTopology::update(double dT)
 					if (targetIndex >= 0 && m_peers[targetIndex].send != 0)
 					{
 						T_ASSERT(targetIndex != myIndex);
-						bool result;
-						T_MEASURE_STATEMENT(result = m_provider->send(m_peers[targetIndex].send, &msg, nrecv), 0.001);
+						bool result = m_provider->send(m_peers[targetIndex].send, &msg, nrecv);
 						if (!result)
 							log::info << getLogPrefix() << L"Unable to relay message to peer " << msg.relay.target << L" through " << m_peers[targetIndex].send << L"; message discarded." << Endl;
 					}
@@ -650,8 +628,6 @@ bool Peer2PeerTopology::update(double dT)
 			}
 		}
 	}
-
-	T_MEASURE_UNTIL(0.010);
 
 #if defined(_DEBUG)
 	// Update local routing information.
@@ -682,7 +658,7 @@ bool Peer2PeerTopology::update(double dT)
 					log::info << getLogPrefix() << L"Peer " << m_peers[i].handle << L" connected (found route) [" << updateRouting << L"]." << Endl;
 
 					if (m_callback)
-						T_MEASURE_STATEMENT(m_callback->nodeConnected(this, m_peers[i].handle), 0.001);
+						m_callback->nodeConnected(this, m_peers[i].handle);
 
 					m_peers[i].established = true;
 				}
@@ -694,7 +670,7 @@ bool Peer2PeerTopology::update(double dT)
 					log::info << getLogPrefix() << L"Peer " << m_peers[i].handle << L" disconnected (no route) [" << updateRouting << L"]." << Endl;
 
 					if (m_callback)
-						T_MEASURE_STATEMENT(m_callback->nodeDisconnected(this, m_peers[i].handle), 0.001);
+						m_callback->nodeDisconnected(this, m_peers[i].handle);
 
 					m_peers[i].established = false;
 				}
@@ -710,14 +686,13 @@ bool Peer2PeerTopology::update(double dT)
 				log::info << getLogPrefix() << L"Peer " << m_peers[i].handle << L" connected (local)." << Endl;
 
 				if (m_callback)
-					T_MEASURE_STATEMENT(m_callback->nodeConnected(this, m_peers[i].handle), 0.001);
+					m_callback->nodeConnected(this, m_peers[i].handle);
 
 				m_peers[i].established = true;
 			}
 		}
 	}
 
-	T_MEASURE_UNTIL(0.001);
 	return true;
 }
 

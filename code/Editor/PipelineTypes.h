@@ -7,7 +7,7 @@ namespace traktor
 	namespace editor
 	{
 
-/*! \brief Pipeline dependency flags.
+/*! Pipeline dependency flags.
  * \ingroup Editor
  */
 enum PipelineDependencyFlags
@@ -18,7 +18,7 @@ enum PipelineDependencyFlags
 	PdfFailed = 8		//!< Failed dependency.
 };
 
-/*! \brief Pipeline build reasons.
+/*! Pipeline build reasons.
  * \ingroup Editor
  */
 enum PipelineBuildReason
@@ -31,15 +31,15 @@ enum PipelineBuildReason
 	PbrForced = 16,				/*!< Forced build issued, must build even if output is up-to-date. */
 };
 
-/*! \brief
+/*! Pipeline dependency hash.
  * \ingroup Editor
  */
 struct PipelineDependencyHash
 {
-	uint32_t pipelineHash;
-	uint32_t sourceAssetHash;
-	uint32_t sourceDataHash;
-	uint32_t filesHash;
+	uint32_t pipelineHash;		/*!< Hash of pipeline version and settings. */
+	uint32_t sourceAssetHash;	/*!< Hash of source instances. */
+	uint32_t sourceDataHash;	/*!< Hash of source instance data streams. */
+	uint32_t filesHash;			/*!< Hash of external files. */
 
 	PipelineDependencyHash()
 	:	pipelineHash(0)
@@ -50,14 +50,19 @@ struct PipelineDependencyHash
 	}
 };
 
-/*! \brief
+/*! Pipeline file hash.
  * \ingroup Editor
+ *
+ * A file hash is the hash of a file's content along
+ * with it's last modified time.
+ * This permits the pipeline to use already calculated
+ * hashes of external files from the pipeline database.
  */
 struct PipelineFileHash
 {
-	uint64_t size;
-	DateTime lastWriteTime;
-	uint32_t hash;
+	uint64_t size;			/*!< Size of file. */
+	DateTime lastWriteTime;	/*!< Last write time of file. */
+	uint32_t hash;			/*!< Hash of file's content. */
 
 	PipelineFileHash()
 	:	size(0)

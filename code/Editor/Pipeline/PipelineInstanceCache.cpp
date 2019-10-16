@@ -49,13 +49,13 @@ Ref< const ISerializable > PipelineInstanceCache::getObjectReadOnly(const Guid& 
 	Ref< db::Instance > instance = m_database->getInstance(instanceGuid);
 	if (!instance)
 	{
-		log::error << L"PipelineInstanceCache::getObjectReadOnly failed; No such instance in database " << instanceGuid.format() << Endl;
-		return 0;
+		log::error << L"PipelineInstanceCache::getObjectReadOnly failed; No such instance in database " << instanceGuid.format() << L"." << Endl;
+		return nullptr;
 	}
 	if (!instance->getLastModifyDate(lastModifyDate))
 	{
-		log::error << L"PipelineInstanceCache::getObjectReadOnly failed; Unable to get \"last modification data\" of instance " << instanceGuid.format() << Endl;
-		return 0;
+		log::error << L"PipelineInstanceCache::getObjectReadOnly failed; Unable to get \"last modification data\" of instance " << instanceGuid.format() << L"." << Endl;
+		return nullptr;
 	}
 
 	// Generate cached instance filename.
@@ -87,15 +87,15 @@ Ref< const ISerializable > PipelineInstanceCache::getObjectReadOnly(const Guid& 
 		}
 
 		bufferedStream.close();
-		stream = 0;
+		stream = nullptr;
 	}
 
 	// Either the instance isn't cached yet or not up-to-date; read from database and write a shadow copy in cache.
 	Ref< ISerializable > object = instance->getObject();
 	if (!object)
 	{
-		log::error << L"PipelineInstanceCache::getObjectReadOnly failed; Unable to read instance " << instanceGuid.format() << Endl;
-		return 0;
+		log::error << L"PipelineInstanceCache::getObjectReadOnly failed; Unable to read instance " << instanceGuid.format() << L"." << Endl;
+		return nullptr;
 	}
 
 	uint32_t hash = DeepHash(object).get();
@@ -114,7 +114,7 @@ Ref< const ISerializable > PipelineInstanceCache::getObjectReadOnly(const Guid& 
 		BinarySerializer(&bufferedStream).writeObject(object);
 
 		bufferedStream.close();
-		stream = 0;
+		stream = nullptr;
 	}
 
 	return object;

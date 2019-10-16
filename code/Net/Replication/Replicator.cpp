@@ -1,5 +1,3 @@
-//#define T_ENABLE_MEASURE
-
 #include <cstring>
 #include "Core/Io/MemoryStream.h"
 #include "Core/Log/Log.h"
@@ -10,7 +8,6 @@
 #include "Core/Serialization/DeepHash.h"
 #include "Core/Thread/ThreadManager.h"
 #include "Core/Thread/Thread.h"
-#include "Core/Timer/Measure.h"
 #include "Net/Replication/IReplicatorEventListener.h"
 #include "Net/Replication/IReplicatorStateListener.h"
 #include "Net/Replication/Replicator.h"
@@ -134,8 +131,6 @@ void Replicator::removeAllEventListeners()
 
 bool Replicator::update()
 {
-	T_MEASURE_BEGIN();
-
 	RMessage msg;
 	RMessage reply;
 	net_handle_t from;
@@ -162,8 +157,6 @@ bool Replicator::update()
 	if (!m_topology->update(dT))
 		return false;
 
-	T_MEASURE_UNTIL(0.01);
-
 	// Send ping to proxies.
 	{
 		msg.id = RmiPing;
@@ -175,13 +168,11 @@ bool Replicator::update()
 		{
 			if ((proxy->m_timeUntilTxPing -= dT) <= 0.0)
 			{
-				T_MEASURE_STATEMENT(m_topology->send(proxy->m_handle, &msg, RmiPing_NetSize()), 0.001);
+				m_topology->send(proxy->m_handle, &msg, RmiPing_NetSize());
 				proxy->m_timeUntilTxPing = m_configuration.timeUntilTxPing;
 			}
 		}
 	}
-
-	T_MEASURE_UNTIL(0.002);
 
 	// Send our state to proxies.
 	if (m_sendState && m_stateTemplate && m_state)
@@ -190,11 +181,11 @@ bool Replicator::update()
 		msg.time = time2net(m_time);
 
 		uint32_t stateDataSize = 0;
-		T_MEASURE_STATEMENT(stateDataSize = m_stateTemplate->pack(
+		stateDataSize = m_stateTemplate->pack(
 			m_state,
 			msg.state.data,
 			RmiState_MaxStateSize()
-		), 0.001);
+		);
 
 		if (stateDataSize > 0)
 		{
@@ -202,7 +193,7 @@ bool Replicator::update()
 			{
 				if (proxy->m_sendState && (proxy->m_timeUntilTxState -= dT) <= 0.0)
 				{
-					T_MEASURE_STATEMENT(m_topology->send(proxy->m_handle, &msg, RmiState_NetSize(stateDataSize)), 0.001);
+					m_topology->send(proxy->m_handle, &msg, RmiState_NetSize(stateDataSize));
 
 					Vector4 direction = proxy->m_origin.translation() - m_origin.translation();
 					Scalar distance = direction.length();
@@ -216,8 +207,6 @@ bool Replicator::update()
 		}
 	}
 
-	T_MEASURE_UNTIL(0.002);
-
 	double timeOffset = 0.0;
 	bool timeOffsetReceived = false;
 
@@ -227,8 +216,7 @@ bool Replicator::update()
 		from = 0;
 
 		// Poll message from topology.
-		int32_t nrecv = 0;
-		T_MEASURE_STATEMENT(nrecv = m_topology->recv(&msg, sizeof(msg), from), 0.001);
+		int32_t nrecv = m_topology->recv(&msg, sizeof(msg), from);
 		if (nrecv <= 0)
 			break;
 
@@ -291,7 +279,7 @@ bool Replicator::update()
 			reply.pong.latency = time2net(fromProxy->getLatency());
 			reply.pong.latencySpread = time2net(fromProxy->getLatencySpread());
 
-			T_MEASURE_STATEMENT(m_topology->send(fromProxy->m_handle, &reply, RmiPong_NetSize()), 0.001);
+			m_topology->send(fromProxy->m_handle, &reply, RmiPong_NetSize());
 		}
 		else if (msg.id == RmiPong)
 		{
@@ -300,12 +288,11 @@ bool Replicator::update()
 			double latencyReverse = net2time(msg.pong.latency);
 			double latencyReverseSpread = net2time(msg.pong.latencySpread);
 
-			T_MEASURE_STATEMENT(fromProxy->updateLatency(m_time0, net2time(msg.pong.rtime0), roundTrip, latencyReverse, latencyReverseSpread), 0.001);
+			fromProxy->updateLatency(m_time0, net2time(msg.pong.rtime0), roundTrip, latencyReverse, latencyReverseSpread);
 		}
 		else if (msg.id == RmiState)
 		{
-			bool received;
-			T_MEASURE_STATEMENT(received = fromProxy->receivedState(m_time, net2time(msg.time), msg.state.data, RmiState_StateSize(nrecv)), 0.001);
+			bool received = fromProxy->receivedState(m_time, net2time(msg.time), msg.state.data, RmiState_StateSize(nrecv));
 			if (received)
 				fromProxy->m_issueStateListeners = true;
 		}
@@ -313,8 +300,7 @@ bool Replicator::update()
 		{
 			// Unwrap event object.
 			MemoryStream ms(msg.event.data, RmiEvent_EventSize(nrecv), true, false);
-			Ref< ISerializable > eventObject;
-			T_MEASURE_STATEMENT(eventObject = CompactSerializer(&ms, &m_eventTypes[0], uint32_t(m_eventTypes.size())).readObject< ISerializable >(), 0.001);
+			Ref< ISerializable > eventObject = CompactSerializer(&ms, &m_eventTypes[0], uint32_t(m_eventTypes.size())).readObject< ISerializable >();
 
 			if (eventObject && ms.tell() == RmiEvent_EventSize(nrecv))
 			{
@@ -324,7 +310,7 @@ bool Replicator::update()
 					reply.id = (msg.id == RmiEvent0) ? RmiEvent0Ack : RmiEvent1Ack;
 					reply.time = time2net(m_time);
 					reply.eventAck.sequence = msg.event.sequence;
-					T_MEASURE_STATEMENT(m_topology->send(fromProxy->m_handle, &reply, RmiEventAck_NetSize()), 0.001);
+					m_topology->send(fromProxy->m_handle, &reply, RmiEventAck_NetSize());
 				}
 				else
 					log::error << getLogPrefix() << L"Unable to enqueue event object." << Endl;
@@ -335,11 +321,9 @@ bool Replicator::update()
 		else if (msg.id == RmiEvent0Ack || msg.id == RmiEvent1Ack)
 		{
 			// Received an event acknowledge; discard event from queue.
-			T_MEASURE_STATEMENT(fromProxy->receivedTxEventAcknowledge(fromProxy, msg.eventAck.sequence, msg.id == RmiEvent1Ack), 0.001);
+			fromProxy->receivedTxEventAcknowledge(fromProxy, msg.eventAck.sequence, msg.id == RmiEvent1Ack);
 		}
 	}
-
-	T_MEASURE_UNTIL(0.004);
 
 	/*
 	// \note Disabled for now as it's not used by GU.
@@ -350,13 +334,13 @@ bool Replicator::update()
 		{
 			for (auto listener : m_listeners)
 			{
-				T_MEASURE_STATEMENT(listener->notify(
+				listener->notify(
 					this,
 					0.0f,
 					IListener::ReState,
 					proxy,
 					proxy->m_state0
-				), 0.001);
+				);
 			}
 			proxy->m_issueStateListeners = false;
 		}
@@ -366,11 +350,9 @@ bool Replicator::update()
 	// Update proxy queues.
 	for (auto proxy : m_proxies)
 	{
-		T_MEASURE_STATEMENT(proxy->updateTxEventQueue(), 0.001);
-		T_MEASURE_STATEMENT(proxy->dispatchRxEvents(m_eventListeners), 0.001);
+		proxy->updateTxEventQueue();
+		proxy->dispatchRxEvents(m_eventListeners);
 	}
-
-	T_MEASURE_UNTIL(0.001);
 
 	if (m_timeSynchronization && timeOffsetReceived)
 	{
@@ -445,8 +427,6 @@ bool Replicator::update()
 		}
 	}
 
-	T_MEASURE_UNTIL(0.001);
-
 	// Migrate primary peer token to most suitable.
 	if (isPrimary())
 	{
@@ -482,8 +462,6 @@ bool Replicator::update()
 			}
 		}
 	}
-
-	T_MEASURE_UNTIL(0.001);
 
 	m_time += dT;
 	m_timeContinuousSync += dT;

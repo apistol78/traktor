@@ -4,7 +4,6 @@
 #include "Core/Misc/String.h"
 #include "Core/Thread/Thread.h"
 #include "Core/Thread/ThreadPool.h"
-#include "Core/Timer/Measure.h"
 #include "Online/ILobby.h"
 #include "Online/ISessionManager.h"
 #include "Online/IUser.h"
@@ -67,7 +66,7 @@ bool OnlinePeer2PeerProvider::update()
 	if (m_timer.getElapsedTime() >= m_whenUpdate)
 	{
 		RefArray< IUser > users;
-		T_MEASURE_STATEMENT(m_lobby->getParticipants(users), 0.001);
+		m_lobby->getParticipants(users);
 
 		// Add new users which have entered the lobby.
 		for (auto user : users)
@@ -120,7 +119,7 @@ bool OnlinePeer2PeerProvider::update()
 		}
 
 		// Cache primary handle.
-		T_MEASURE_STATEMENT(m_primaryHandle = net::net_handle_t(m_lobby->getOwner()->getGlobalId()), 0.0005);
+		m_primaryHandle = net::net_handle_t(m_lobby->getOwner()->getGlobalId());
 		m_whenUpdate = m_timer.getElapsedTime() + 0.2;
 	}
 	return true;
@@ -148,9 +147,9 @@ std::wstring OnlinePeer2PeerProvider::getPeerName(int32_t index) const
 {
 	std::wstring name;
 	if (index <= 0)
-		T_MEASURE_STATEMENT(m_sessionManager->getUser()->getName(name), 0.001)
+		m_sessionManager->getUser()->getName(name);
 	else
-		T_MEASURE_STATEMENT(m_users[index - 1].user->getName(name), 0.001)
+		m_users[index - 1].user->getName(name);
 	return name;
 }
 

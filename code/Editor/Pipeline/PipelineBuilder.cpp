@@ -272,7 +272,7 @@ bool PipelineBuilder::build(const IPipelineDependencySet* dependencySet, bool re
 	T_DEBUG(L"Pipeline build; analyzed build reasons in " << int32_t(timer.getDeltaTime() * 1000) << L" ms");
 
 	if (m_verbose)
-		log::info << L"Dispatching builds..." << Endl;
+		log::info << L"Dispatching " << (int32_t)m_workSet.size() << L" build(s)..." << Endl;
 
 	m_progress = 0;
 	m_progressEnd = (int32_t)m_workSet.size();
@@ -329,16 +329,14 @@ bool PipelineBuilder::build(const IPipelineDependencySet* dependencySet, bool re
 		}
 	}
 
-	T_DEBUG(L"Pipeline build; total " << int32_t(timer.getElapsedTime() * 1000) << L" ms");
-
 	// Log cache performance.
 	if (m_cache)
-		log::info << L"Pipeline cache; " << m_cacheHit << L" hit(s), " << m_cacheMiss << L" miss(es), " << m_cacheVoid << L" void(s)." << Endl;
+		log::info << L"Pipeline cache; " << m_cacheHit << L" hit(s), " << m_cacheMiss << L" miss(es), " << m_cacheVoid << L" uncachable(s)." << Endl;
 
 	// Log results.
 	if (!ThreadManager::getInstance().getCurrentThread()->stopped())
 	{
-		log::info << L"Build finished; " << m_succeeded << L" succeeded (" << m_succeededBuilt << L" built), " << m_failed << L" failed." << Endl;
+		log::info << L"Build finished in " << (int32_t)(timer.getElapsedTime() * 1000) << L" ms; " << m_succeeded << L" succeeded (" << m_succeededBuilt << L" built), " << m_failed << L" failed." << Endl;
 		for (auto duration : m_buildDurations)
 			log::info << (int32_t)(duration.second * 1000) << L" ms in " << duration.first->getName() << Endl;
 	}

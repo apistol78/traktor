@@ -24,12 +24,12 @@ class IConnection;
 	namespace editor
 	{
 
-class T_DLLCLASS PipelineDb : public IPipelineDb
+class T_DLLCLASS PipelineDbSql : public IPipelineDb
 {
 	T_RTTI_CLASS;
 
 public:
-	PipelineDb();
+	PipelineDbSql();
 
 	virtual bool open(const std::wstring& connectionString) override final;
 

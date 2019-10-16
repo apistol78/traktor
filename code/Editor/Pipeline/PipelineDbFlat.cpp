@@ -80,16 +80,16 @@ bool PipelineDbFlat::open(const std::wstring& connectionString)
 		return false;
 	}
 
-	for (std::vector< std::wstring >::const_iterator i = pairs.begin(); i != pairs.end(); ++i)
+	for (const auto& pair : pairs)
 	{
-		size_t p = i->find(L'=');
-		if (p == 0 || p == i->npos)
+		size_t p = pair.find(L'=');
+		if (p == 0 || p == pair.npos)
 		{
 			log::error << L"Unable to open pipeline db; incorrect connection string." << Endl;
 			return false;
 		}
 
-		cs[trim(i->substr(0, p))] = i->substr(p + 1);
+		cs[trim(pair.substr(0, p))] = pair.substr(p + 1);
 	}
 
 	m_file = cs[L"fileName"];
@@ -136,7 +136,7 @@ bool PipelineDbFlat::open(const std::wstring& connectionString)
 	}
 
 	f->close();
-	f = 0;
+	f = nullptr;
 
 	return true;
 }
@@ -186,7 +186,7 @@ void PipelineDbFlat::endTransaction()
 			>(L"files", m_files);
 
 			bs.close();
-			f = 0;
+			f = nullptr;
 
 			m_changes = 0;
 		}
@@ -206,7 +206,7 @@ void PipelineDbFlat::setDependency(const Guid& guid, const PipelineDependencyHas
 bool PipelineDbFlat::getDependency(const Guid& guid, PipelineDependencyHash& outHash) const
 {
 	T_ANONYMOUS_VAR(ReaderWriterLock::AcquireReader)(m_lock);
-	std::map< Guid, PipelineDependencyHash >::const_iterator it = m_dependencies.find(guid);
+	auto it = m_dependencies.find(guid);
 	if (it == m_dependencies.end())
 		return false;
 	outHash = it->second;
@@ -225,7 +225,7 @@ bool PipelineDbFlat::getFile(const Path& path, PipelineFileHash& outFile)
 {
 	T_ANONYMOUS_VAR(ReaderWriterLock::AcquireReader)(m_lock);
 
-	std::map< std::wstring, PipelineFileHash >::const_iterator it = m_files.find(path.getPathName());
+	auto it = m_files.find(path.getPathName());
 	if (it == m_files.end())
 		return false;
 
