@@ -1,3 +1,4 @@
+#include "Core/Serialization/AttributePrivate.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberEnum.h"
 #include "Core/Serialization/MemberRef.h"
@@ -19,12 +20,12 @@ PrimitiveEntityData::PrimitiveEntityData()
 {
 }
 
-Ref< PrimitiveEntity > PrimitiveEntityData::createEntity(db::Database* database) const
+Ref< PrimitiveEntity > PrimitiveEntityData::createEntity() const
 {
     Ref< PrimitiveEntity > entity = new PrimitiveEntity(getTransform(), m_operation);
 	if (m_shape)
 	{
-		Ref< const model::Model > m = m_shape->createModel(database);
+		Ref< const model::Model > m = m_shape->createModel();
 		if (!m)
 			return nullptr;
 
@@ -58,7 +59,7 @@ void PrimitiveEntityData::serialize(ISerializer& s)
 	s >> MemberRef< IShape >(L"shape", m_shape);
 
     if (s.getVersion< PrimitiveEntityData >() >= 1)
-        s >> MemberSmallMap< int32_t, Guid >(L"materials", m_materials);
+        s >> MemberSmallMap< int32_t, Guid >(L"materials", m_materials, AttributePrivate());
 }
 
     }

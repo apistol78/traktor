@@ -108,13 +108,6 @@ Ref< Object > WorldResourceFactory::create(resource::IResourceManager* resourceM
 		layout.push_back(render::StructElement(render::DtFloat4, offsetof(IrradianceGridData, shRGB_8)));
 		T_FATAL_ASSERT(sizeof(IrradianceGridData) == render::getStructSize(layout));
 
-		Ref< render::StructBuffer > buffer = m_renderSystem->createStructBuffer(
-			layout,
-			render::getStructSize(layout) * 64 * 16 * 64
-		);
-		if (!buffer)
-			return nullptr;
-
 		Ref< IrradianceGridResource > resource = instance->getObject< IrradianceGridResource >();
 		if (!resource)
 			return nullptr;
@@ -145,6 +138,13 @@ Ref< Object > WorldResourceFactory::create(resource::IResourceManager* resourceM
 		reader >> mx[0];
 		reader >> mx[1];
 		reader >> mx[2];
+
+		Ref< render::StructBuffer > buffer = m_renderSystem->createStructBuffer(
+			layout,
+			render::getStructSize(layout) * size[0] * size[1] * size[2]
+		);
+		if (!buffer)
+			return nullptr;
 
 		IrradianceGridData* grid = (IrradianceGridData*)buffer->lock();
 		T_FATAL_ASSERT(grid);

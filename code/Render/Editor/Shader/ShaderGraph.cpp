@@ -22,6 +22,8 @@ ShaderGraph::ShaderGraph(const RefArray< Node >& nodes, const RefArray< Edge >& 
 :	m_nodes(nodes)
 ,	m_edges(edges)
 {
+	updateInputPinToEdge();
+	updateOutputPinDestinationCount();
 }
 
 ShaderGraph::~ShaderGraph()
@@ -41,18 +43,30 @@ void ShaderGraph::removeNode(Node* node)
 
 void ShaderGraph::addEdge(Edge* edge)
 {
+	T_ASSERT(std::find(m_edges.begin(), m_edges.end(), edge) == m_edges.end());
 	m_edges.push_back(edge);
+
+	T_ASSERT(m_inputPinToEdge.find(edge->getDestination()) == m_inputPinToEdge.end());
+	m_inputPinToEdge[edge->getDestination()] = edge;
+	m_outputPinDestinationCount[edge->getSource()]++;
 }
 
 void ShaderGraph::removeEdge(Edge* edge)
 {
-	m_edges.remove(edge);
+	if (m_edges.remove(edge))
+	{
+		T_ASSERT(m_inputPinToEdge.find(edge->getDestination()) != m_inputPinToEdge.end());
+		m_inputPinToEdge.remove(edge->getDestination());
+		m_outputPinDestinationCount[edge->getSource()]--;
+	}
 }
 
 void ShaderGraph::removeAll()
 {
 	m_edges.resize(0);
 	m_nodes.resize(0);
+	m_inputPinToEdge.clear();
+	m_outputPinDestinationCount.clear();
 }
 
 size_t ShaderGraph::findNodesOf(const TypeInfo& nodeType, RefArray< Node >& outNodes) const
@@ -67,12 +81,8 @@ size_t ShaderGraph::findNodesOf(const TypeInfo& nodeType, RefArray< Node >& outN
 
 Edge* ShaderGraph::findEdge(const InputPin* inputPin) const
 {
-	for (auto edge : m_edges)
-	{
-		if (edge->getDestination() == inputPin)
-			return edge;
-	}
-	return nullptr;
+	auto it = m_inputPinToEdge.find(inputPin);
+	return it != m_inputPinToEdge.end() ? it->second : nullptr;
 }
 
 uint32_t ShaderGraph::findEdges(const OutputPin* outputPin, RefSet< Edge >& outEdges) const
@@ -105,13 +115,8 @@ uint32_t ShaderGraph::findDestinationPins(const OutputPin* outputPin, std::vecto
 
 uint32_t ShaderGraph::getDestinationCount(const OutputPin* outputPin) const
 {
-	uint32_t count = 0;
-	for (auto edge : m_edges)
-	{
-		if (edge->getSource() == outputPin)
-			++count;
-	}
-	return count;
+	auto it = m_outputPinDestinationCount.find(outputPin);
+	return it != m_outputPinDestinationCount.end() ? it->second : 0;
 }
 
 void ShaderGraph::detach(const Node* node)
@@ -153,6 +158,26 @@ void ShaderGraph::serialize(ISerializer& s)
 {
 	s >> MemberRefArray< Node >(L"nodes", m_nodes);
 	s >> MemberRefArray< Edge >(L"edges", m_edges);
+
+	if (s.getDirection() == ISerializer::SdRead)
+	{
+		updateInputPinToEdge();
+		updateOutputPinDestinationCount();
+	}
+}
+
+void ShaderGraph::updateInputPinToEdge()
+{
+	m_inputPinToEdge.clear();
+	for (auto edge : m_edges)
+		m_inputPinToEdge[edge->getDestination()] = edge;
+}
+
+void ShaderGraph::updateOutputPinDestinationCount()
+{
+	m_outputPinDestinationCount.clear();
+	for (auto edge : m_edges)
+		m_outputPinDestinationCount[edge->getSource()]++;
 }
 
 	}

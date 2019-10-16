@@ -271,7 +271,7 @@ bool PipelineBuilder::build(const IPipelineDependencySet* dependencySet, bool re
 
 	T_DEBUG(L"Pipeline build; analyzed build reasons in " << int32_t(timer.getDeltaTime() * 1000) << L" ms");
 
-	if (m_verbose)
+	if (m_verbose && !m_workSet.empty())
 		log::info << L"Dispatching " << (int32_t)m_workSet.size() << L" build(s)..." << Endl;
 
 	m_progress = 0;

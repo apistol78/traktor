@@ -80,19 +80,9 @@ void Edge::setSource(const OutputPin* source)
 	m_source = source;
 }
 
-const OutputPin* Edge::getSource() const
-{
-	return m_source;
-}
-
 void Edge::setDestination(const InputPin* destination)
 {
 	m_destination = destination;
-}
-
-const InputPin* Edge::getDestination() const
-{
-	return m_destination;
 }
 
 void Edge::serialize(ISerializer& s)

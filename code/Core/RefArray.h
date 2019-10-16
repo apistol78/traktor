@@ -499,11 +499,16 @@ public:
 	}
 
 	/*! \brief Remove first element from array by value. */
-	void remove(value_type item)
+	bool remove(value_type item)
 	{
 		iterator i = std::find(begin(), end(), item);
 		if (i != end())
+		{
 			erase(i);
+			return true;
+		}
+		else
+			return false;
 	}
 
 	/*! \brief Erase range of elements from array. */
