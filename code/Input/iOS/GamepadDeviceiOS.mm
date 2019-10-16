@@ -26,7 +26,7 @@ bool GamepadDeviceiOS::create(void* nativeWindowHandle)
 
 	float slabW = frame.size.width / 2.0f;
 	float slabH = frame.size.height / 2.0f;
-	m_radius = std::min(slabW, slabH / 2.0f;
+	m_radius = std::min(slabW, slabH) / 2.0f;
 
 	m_pivot = CGPointMake(cx, cy);
 
@@ -268,8 +268,8 @@ void GamepadDeviceiOS::Pad::move(GamepadDeviceiOS* device, UITouch* touch)
 	else
 		offsetY = 0.0f;
 
-	axisX =  clamp(offsetX / m_radius, -1.0f, 1.0f);
-	axisY = -clamp(offsetY / m_radius, -1.0f, 1.0f);
+	axisX =  clamp(offsetX / device->m_radius, -1.0f, 1.0f);
+	axisY = -clamp(offsetY / device->m_radius, -1.0f, 1.0f);
 }
 
 void GamepadDeviceiOS::Button::begin(UITouch* touch)
