@@ -1778,8 +1778,8 @@ void EditorForm::buildAssetsThread(std::vector< Guid > assetGuids, bool rebuild)
 
 	m_pipelineDb->beginTransaction();
 
-	for (std::vector< Guid >::const_iterator i = assetGuids.begin(); i != assetGuids.end(); ++i)
-		pipelineDepends->addDependency(*i, editor::PdfBuild);
+	for (const auto& assetGuid : assetGuids)
+		pipelineDepends->addDependency(assetGuid, editor::PdfBuild);
 
 	log::info << DecreaseIndent;
 
@@ -1788,7 +1788,7 @@ void EditorForm::buildAssetsThread(std::vector< Guid > assetGuids, bool rebuild)
 	if (verbose)
 	{
 		double elapsedDependencies = timerBuild.getElapsedTime();
-		log::info << L"Collected " << dependencySet.size() << L" dependencies in " << elapsedDependencies << L" second(s)" << Endl;
+		log::info << L"Collected " << dependencySet.size() << L" dependencies in " << elapsedDependencies << L" second(s)." << Endl;
 	}
 
 	m_buildView->beginBuild();
@@ -1900,9 +1900,8 @@ void EditorForm::buildAssets(bool rebuild)
 	log::info << IncreaseIndent;
 
 	std::vector< Guid > assetGuids;
-	std::vector< std::wstring > rootInstances = m_workspaceSettings->getProperty< std::vector< std::wstring > >(L"Editor.RootInstances");
-	for (std::vector< std::wstring >::const_iterator i = rootInstances.begin(); i != rootInstances.end(); ++i)
-		assetGuids.push_back(Guid(*i));
+	for (const auto& rootInstance : m_workspaceSettings->getProperty< std::vector< std::wstring > >(L"Editor.RootInstances"))
+		assetGuids.push_back(Guid(rootInstance));
 
 	log::info << DecreaseIndent;
 

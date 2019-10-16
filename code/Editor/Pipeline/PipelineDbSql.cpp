@@ -1,7 +1,7 @@
 #include "Core/Log/Log.h"
 #include "Core/Misc/Adler32.h"
 #include "Core/Thread/Acquire.h"
-#include "Editor/Pipeline/PipelineDb.h"
+#include "Editor/Pipeline/PipelineDbSql.h"
 #include "Sql/IResultSet.h"
 #include "Sql/Sqlite3/ConnectionSqlite3.h"
 
@@ -25,14 +25,14 @@ int32_t hash(const std::wstring& s)
 
 		}
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.editor.PipelineDb", PipelineDb, IPipelineDb)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.editor.PipelineDbSql", PipelineDbSql, IPipelineDb)
 
-PipelineDb::PipelineDb()
+PipelineDbSql::PipelineDbSql()
 :	m_transaction(false)
 {
 }
 
-bool PipelineDb::open(const std::wstring& connectionString)
+bool PipelineDbSql::open(const std::wstring& connectionString)
 {
 	Ref< sql::ConnectionSqlite3 > connection = new sql::ConnectionSqlite3();
 	if (!connection->connect(connectionString))
@@ -101,22 +101,22 @@ bool PipelineDb::open(const std::wstring& connectionString)
 	return true;
 }
 
-void PipelineDb::close()
+void PipelineDbSql::close()
 {
 	if (m_connection)
 	{
 		m_connection->disconnect();
-		m_connection = 0;
+		m_connection = nullptr;
 	}
 }
 
-void PipelineDb::beginTransaction()
+void PipelineDbSql::beginTransaction()
 {
 	T_ANONYMOUS_VAR(ReaderWriterLock::AcquireWriter)(m_lock);
 	m_transaction = false;
 }
 
-void PipelineDb::endTransaction()
+void PipelineDbSql::endTransaction()
 {
 	T_ANONYMOUS_VAR(ReaderWriterLock::AcquireWriter)(m_lock);
 	if (m_transaction)
@@ -126,7 +126,7 @@ void PipelineDb::endTransaction()
 	}
 }
 
-void PipelineDb::setDependency(const Guid& guid, const PipelineDependencyHash& hash)
+void PipelineDbSql::setDependency(const Guid& guid, const PipelineDependencyHash& hash)
 {
 	T_ANONYMOUS_VAR(ReaderWriterLock::AcquireWriter)(m_lock);
 
@@ -152,7 +152,7 @@ void PipelineDb::setDependency(const Guid& guid, const PipelineDependencyHash& h
 		log::warning << L"Unable to update pipeline hash in database" << Endl;
 }
 
-bool PipelineDb::getDependency(const Guid& guid, PipelineDependencyHash& outHash) const
+bool PipelineDbSql::getDependency(const Guid& guid, PipelineDependencyHash& outHash) const
 {
 	T_ANONYMOUS_VAR(ReaderWriterLock::AcquireReader)(m_lock);
 
@@ -173,7 +173,7 @@ bool PipelineDb::getDependency(const Guid& guid, PipelineDependencyHash& outHash
 	return true;
 }
 
-void PipelineDb::setFile(const Path& path, const PipelineFileHash& file)
+void PipelineDbSql::setFile(const Path& path, const PipelineFileHash& file)
 {
 	T_ANONYMOUS_VAR(ReaderWriterLock::AcquireWriter)(m_lock);
 
@@ -202,7 +202,7 @@ void PipelineDb::setFile(const Path& path, const PipelineFileHash& file)
 		log::error << L"Unable to update pipeline file hash in database" << Endl;
 }
 
-bool PipelineDb::getFile(const Path& path, PipelineFileHash& outFile)
+bool PipelineDbSql::getFile(const Path& path, PipelineFileHash& outFile)
 {
 	T_ANONYMOUS_VAR(ReaderWriterLock::AcquireReader)(m_lock);
 

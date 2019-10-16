@@ -17,9 +17,6 @@
 #include "Render/Shader.h"
 #include "Resource/IResourceManager.h"
 
-//#define T_ENABLE_MEASURE
-#include "Core/Timer/Measure.h"
-
 namespace traktor
 {
 	namespace runtime
@@ -176,8 +173,6 @@ bool Stage::gotoStage(Stage* stage)
 
 bool Stage::update(IStateManager* stateManager, const UpdateInfo& info)
 {
-	T_MEASURE_BEGIN()
-
 	if (!m_running)
 		return false;
 
@@ -185,7 +180,7 @@ bool Stage::update(IStateManager* stateManager, const UpdateInfo& info)
 	{
 		// Prepare all layers.
 		for (auto layer : m_layers)
-			T_MEASURE_STATEMENT_M(layer->prepare(info), 1.0 / 60.0, type_name(layer));
+			layer->prepare(info);
 
 		// Issue script update.
 		if (validateScriptContext())
@@ -200,15 +195,13 @@ bool Stage::update(IStateManager* stateManager, const UpdateInfo& info)
 
 				const IRuntimeDispatch* methodUpdate = findRuntimeClassMethod(m_class, "update");
 				if (methodUpdate != nullptr)
-				{
-					T_MEASURE_STATEMENT(methodUpdate->invoke(m_object, sizeof_array(argv), argv), 1.0 / 60.0);
-				}
+					methodUpdate->invoke(m_object, sizeof_array(argv), argv);
 			}
 		}
 
 		// Update each layer.
 		for (auto layer : m_layers)
-			T_MEASURE_STATEMENT_M(layer->update(info), 1.0 / 60.0, type_name(layer));
+			layer->update(info);
 
 		// Issue script post update.
 		if (validateScriptContext())
@@ -223,9 +216,7 @@ bool Stage::update(IStateManager* stateManager, const UpdateInfo& info)
 
 				const IRuntimeDispatch* methodPostUpdate = findRuntimeClassMethod(m_class, "postUpdate");
 				if (methodPostUpdate != nullptr)
-				{
-					T_MEASURE_STATEMENT(methodPostUpdate->invoke(m_object, sizeof_array(argv), argv), 1.0 / 60.0);
-				}
+					methodPostUpdate->invoke(m_object, sizeof_array(argv), argv);
 			}
 		}
 
@@ -236,24 +227,19 @@ bool Stage::update(IStateManager* stateManager, const UpdateInfo& info)
 		m_fade += info.getSimulationDeltaTime() * m_fadeRate;
 		if (m_fade > 1.0f)
 		{
-			T_MEASURE_STATEMENT(stateManager->enter(new StageState(m_environment, m_pendingStage)), 1.0 / 60.0);
+			stateManager->enter(new StageState(m_environment, m_pendingStage));
 			m_transitionStage = m_pendingStage;
 			m_pendingStage = nullptr;
 		}
 	}
 
-	T_MEASURE_UNTIL(1.0 / 60.0);
 	return true;
 }
 
 bool Stage::build(const UpdateInfo& info, uint32_t frame)
 {
-	T_MEASURE_BEGIN()
-
 	for (auto layer : m_layers)
-		T_MEASURE_STATEMENT(layer->build(info, frame), 1.0 / 60.0);
-
-	T_MEASURE_UNTIL(1.0 / 60.0);
+		layer->build(info, frame);
 	return true;
 }
 
@@ -349,11 +335,9 @@ bool Stage::validateScriptContext()
 	if (!m_class)
 		return false;
 
-	T_PROFILER_SCOPE(L"Script validate");
-	T_MEASURE_BEGIN()
-
 	if (!m_initialized)
 	{
+		T_PROFILER_SCOPE(L"Script validate");
 		if (m_class)
 		{
 			// Call script constructor.
@@ -367,7 +351,6 @@ bool Stage::validateScriptContext()
 		m_initialized = true;
 	}
 
-	T_MEASURE_UNTIL(1.0 / 60.0);
 	return true;
 }
 

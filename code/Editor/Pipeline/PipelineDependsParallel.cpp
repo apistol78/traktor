@@ -365,15 +365,14 @@ void PipelineDependsParallel::updateDependencyHashes(
 	{
 		std::vector< std::wstring > dataNames;
 		sourceInstance->getDataNames(dataNames);
-
-		for (std::vector< std::wstring >::const_iterator i = dataNames.begin(); i != dataNames.end(); ++i)
+		for (const auto& dataName : dataNames)
 		{
 			if (m_pipelineDb)
 			{
-				haveLastWriteTime = sourceInstance->getDataLastWriteTime(*i, lastWriteTime);
+				haveLastWriteTime = sourceInstance->getDataLastWriteTime(dataName, lastWriteTime);
 				if (haveLastWriteTime)
 				{
-					fauxDataPath = sourceInstance->getGuid().format() + L"/" + *i;
+					fauxDataPath = sourceInstance->getGuid().format() + L"/" + dataName;
 					if (m_pipelineDb->getFile(fauxDataPath, fileHash))
 					{
 						if (fileHash.lastWriteTime == lastWriteTime)
@@ -385,7 +384,7 @@ void PipelineDependsParallel::updateDependencyHashes(
 				}
 			}
 
-			Ref< IStream > dataStream = sourceInstance->readData(*i);
+			Ref< IStream > dataStream = sourceInstance->readData(dataName);
 			if (dataStream)
 			{
 				uint8_t buffer[4096];
@@ -408,23 +407,24 @@ void PipelineDependsParallel::updateDependencyHashes(
 				}
 			}
 			else
-				log::error << L"Unable to open data stream \"" << *i << L"\"; hash inconsistent." << Endl;
+				log::error << L"Unable to open data stream \"" << dataName << L"\"; hash inconsistent." << Endl;
 		}
 	}
 
 	// Calculate external file hashes.
 	dependency->filesHash = 0;
-	for (PipelineDependency::external_files_t::iterator i = dependency->files.begin(); i != dependency->files.end(); ++i)
+	for (const auto& dependencyFile : dependency->files)
 	{
 		if (m_pipelineDb)
 		{
-			Ref< File > file = FileSystem::getInstance().get(i->filePath);
+			Ref< File > file = FileSystem::getInstance().get(dependencyFile.filePath);
 			if (file)
 			{
-				if (m_pipelineDb->getFile(i->filePath, fileHash))
+				if (m_pipelineDb->getFile(dependencyFile.filePath, fileHash))
 				{
 					if (fileHash.lastWriteTime == file->getLastWriteTime())
 					{
+						T_FATAL_ASSERT(fileHash.size == file->getSize());
 						dependency->filesHash += fileHash.hash;
 						continue;
 					}
@@ -432,7 +432,7 @@ void PipelineDependsParallel::updateDependencyHashes(
 			}
 		}
 
-		Ref< IStream > fileStream = FileSystem::getInstance().open(i->filePath, File::FmRead);
+		Ref< IStream > fileStream = FileSystem::getInstance().open(dependencyFile.filePath, File::FmRead);
 		if (fileStream)
 		{
 			uint8_t buffer[4096];
@@ -449,18 +449,18 @@ void PipelineDependsParallel::updateDependencyHashes(
 
 			if (m_pipelineDb)
 			{
-				Ref< File > file = FileSystem::getInstance().get(i->filePath);
+				Ref< File > file = FileSystem::getInstance().get(dependencyFile.filePath);
 				if (file)
 				{
 					fileHash.size = file->getSize();
 					fileHash.lastWriteTime = file->getLastWriteTime();
 					fileHash.hash = a32.get();
-					m_pipelineDb->setFile(i->filePath, fileHash);
+					m_pipelineDb->setFile(dependencyFile.filePath, fileHash);
 				}
 			}
 		}
 		else
-			log::error << L"Unable to open file stream \"" << i->filePath.getPathName() << L"\"; hash inconsistent." << Endl;
+			log::error << L"Unable to open file stream \"" << dependencyFile.filePath.getPathName() << L"\"; hash inconsistent." << Endl;
 	}
 }
 
