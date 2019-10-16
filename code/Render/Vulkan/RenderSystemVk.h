@@ -80,7 +80,7 @@ private:
 	Ref< Window > m_window;
 #endif
 #if defined(__LINUX__)
-	::Display* m_display;
+	void* m_display;
 #endif
 #if defined(__ANDROID__)
 	int32_t m_screenWidth;
