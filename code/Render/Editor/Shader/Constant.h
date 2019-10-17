@@ -7,41 +7,64 @@ namespace traktor
 	namespace render
 	{
 
+/*! Evaluation SIMD constant.
+ * \ingroup Render
+ *
+ * Primarily used when evaluating shader graphs during
+ * constant folding optimization pass.
+ */
 class Constant
 {
 public:
 	Constant();
 
-	Constant(PinType type);
+	explicit Constant(PinType type);
 
 	explicit Constant(float x);
 
 	explicit Constant(float x, float y, float z, float w);
 
+	/*! Cast constant into desired type.
+	 *
+	 * \param type Cast to type.
+	 * \return Constant of type.
+	 */
 	Constant cast(PinType type) const;
 
+	/*! Get type of constant. */
 	PinType getType() const;
 
+	/*! Get width of scalar constant. */
 	int32_t getWidth() const;
 
+	/*! Set channel as variant. */
 	void setVariant(int32_t index);
 
+	/*! Set constant value into channel. */
 	void setValue(int32_t index, float value);
 
+	/*! Get constant value from channel. */
 	float getValue(int32_t index) const;
 
+	/*! Check if all channels is constant. */
 	bool isAllConst() const;
 
+	/*! Check if any channel is constant. */
 	bool isAnyConst() const;
 
+	/*! Check if value in channel is constant. */
 	bool isConst(int32_t index) const;
 
+	/*! Check if all channels constain zero. */
 	bool isAllZero() const;
 
+	/*! Check if channel is zero. */
 	bool isZero(int32_t index) const;
 
+	/*! Check if all channels constain one. */
 	bool isAllOne() const;
 
+	/*! Check if channel is one. */
 	bool isOne(int32_t index) const;
 
 	bool operator == (const Constant& rh) const;

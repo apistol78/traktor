@@ -1,7 +1,7 @@
 #pragma once
 
-#include <map>
 #include "Core/Object.h"
+#include "Core/Containers/SmallMap.h"
 #include "Render/Editor/Shader/PinType.h"
 
 // import/export mechanism.
@@ -21,7 +21,7 @@ class ShaderGraph;
 class Node;
 class OutputPin;
 
-/*! \brief Evaluate algorithmic order of a shader graph node.
+/*! Evaluate algorithmic order of a shader graph node.
  * \ingroup Render
  */
 class T_DLLCLASS ShaderGraphOrderEvaluator : public Object
@@ -41,7 +41,7 @@ public:
 private:
 	Ref< const ShaderGraph > m_shaderGraph;
 	bool m_frequentUniformsAsLinear;
-	mutable std::map< const OutputPin*, PinOrderType > m_evaluated;
+	mutable SmallMap< const OutputPin*, PinOrderType > m_evaluated;
 };
 
 	}

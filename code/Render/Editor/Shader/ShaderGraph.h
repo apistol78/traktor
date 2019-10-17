@@ -1,6 +1,5 @@
 #pragma once
 
-#include <vector>
 #include "Core/RefArray.h"
 #include "Core/RefSet.h"
 #include "Core/Containers/SmallMap.h"
@@ -120,7 +119,7 @@ public:
 	 * \param outDestinations Connected input pins.
 	 * \return Number of connected input pins.
 	 */
-	uint32_t findDestinationPins(const OutputPin* outputPin, std::vector< const InputPin* >& outDestinations) const;
+	uint32_t findDestinationPins(const OutputPin* outputPin, AlignedVector< const InputPin* >& outDestinations) const;
 
 	/*! \brief Get number of destination pins connected to an output pin.
 	 *

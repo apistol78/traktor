@@ -20,15 +20,22 @@ namespace traktor
 class ShaderGraph;
 class OutputPin;
 
-/*! \brief Evaluate constant value of shader graph pins.
+/*! Evaluate constant value of shader graph pins.
  * \ingroup Render
+ *
+ * Currently only usable for debugging help in editor as it's
+ * not especially reliable and will fail to evaluate in
+ * many situations.
+ *
+ * It's more designed to be resilient to incorrect
+ * shader graphs than for reliable results.
  */
 class T_DLLCLASS ShaderGraphEvaluator : public Object
 {
 	T_RTTI_CLASS;
 
 public:
-	ShaderGraphEvaluator(const ShaderGraph* shaderGraph);
+	explicit ShaderGraphEvaluator(const ShaderGraph* shaderGraph);
 
 	Constant evaluate(const OutputPin* outputPin) const;
 

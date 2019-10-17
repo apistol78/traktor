@@ -23,7 +23,7 @@ class Node;
 class OutputPin;
 class ShaderGraph;
 
-/*! \brief Shader graph pin type propagation.
+/*! Shader graph pin type propagation.
  * \ingroup Render
  *
  * Pin types are determined through propagating
@@ -36,7 +36,7 @@ class T_DLLCLASS ShaderGraphTypePropagation : public Object
 	T_RTTI_CLASS;
 
 public:
-	ShaderGraphTypePropagation(const ShaderGraph* shaderGraph);
+	explicit ShaderGraphTypePropagation(const ShaderGraph* shaderGraph);
 
 	PinType evaluate(const InputPin* inputPin) const;
 

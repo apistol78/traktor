@@ -227,7 +227,7 @@ Ref< ShaderGraph > FragmentLinker::resolve(const ShaderGraph* shaderGraph, bool 
 	{
 		const OutputPin* sourcePin = mutableShaderGraph->findSourcePin(connector->getInputPin(0));
 
-		std::vector< const InputPin* > destinationPins;
+		AlignedVector< const InputPin* > destinationPins;
 		mutableShaderGraph->findDestinationPins(connector->getOutputPin(0), destinationPins);
 
 		mutableShaderGraph->detach(connector);

@@ -33,9 +33,9 @@ PinOrderType ShaderGraphOrderEvaluator::evaluate(const Node* node, const std::ws
 
 PinOrderType ShaderGraphOrderEvaluator::evaluate(const OutputPin* outputPin) const
 {
-	std::map< const OutputPin*, PinOrderType >::iterator i = m_evaluated.find(outputPin);
-	if (i != m_evaluated.end())
-		return i->second;
+	auto it = m_evaluated.find(outputPin);
+	if (it != m_evaluated.end())
+		return it->second;
 
 	// Initialize entry to prevent infinite recursion; if we
 	// detect recursion we assume high order.
@@ -72,7 +72,7 @@ PinOrderType ShaderGraphOrderEvaluator::evaluate(const OutputPin* outputPin) con
 			m_shaderGraph,
 			node,
 			outputPin,
-			inputPinCount > 0 ? inputPinOrders : 0,
+			inputPinCount > 0 ? inputPinOrders : nullptr,
 			m_frequentUniformsAsLinear
 		);
 	}
