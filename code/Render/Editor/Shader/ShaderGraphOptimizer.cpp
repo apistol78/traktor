@@ -94,20 +94,16 @@ ShaderGraphOptimizer::ShaderGraphOptimizer(const ShaderGraph* shaderGraph)
 Ref< ShaderGraph > ShaderGraphOptimizer::removeUnusedBranches() const
 {
 	RefArray< Node > roots;
-
-	// Collect root nodes; assume all nodes with no output pins to be roots.
-	const RefArray< Node >& nodes = m_shaderGraph->getNodes();
-	for (RefArray< Node >::const_iterator i = nodes.begin(); i != nodes.end(); ++i)
+	for (auto node : m_shaderGraph->getNodes())
 	{
-		const INodeTraits* nodeTraits = INodeTraits::find(*i);
-		if (nodeTraits && nodeTraits->isRoot(m_shaderGraph, *i))
-			roots.push_back(*i);
+		const INodeTraits* nodeTraits = INodeTraits::find(node);
+		if (nodeTraits && nodeTraits->isRoot(m_shaderGraph, node))
+			roots.push_back(node);
 	}
 
 	CopyVisitor visitor;
 	visitor.m_shaderGraph = new ShaderGraph();
 	ShaderGraphTraverse(m_shaderGraph, roots).preorder(visitor);
-
 	return visitor.m_shaderGraph;
 }
 
@@ -280,13 +276,13 @@ Ref< ShaderGraph > ShaderGraphOptimizer::insertInterpolators(bool frequentUnifor
 		insertInterpolators(shaderGraph, *i);
 
 #if defined(_DEBUG)
-	T_DEBUG(L"Inserted " << m_insertedCount << L" interpolator(s)");
-	T_DEBUG(L"  " << int32_t(m_visited.size()) << L" visited node(s)");
-	T_DEBUG(L"  " << int32_t(m_shaderGraph->getNodes().size()) << L" original node(s)");
-	for (RefArray< Node >::const_iterator i = m_shaderGraph->getNodes().begin(); i != m_shaderGraph->getNodes().end(); ++i)
+	T_DEBUG(L"Inserted " << m_insertedCount << L" interpolator(s).");
+	T_DEBUG(L"  " << int32_t(m_visited.size()) << L" visited node(s).");
+	T_DEBUG(L"  " << int32_t(m_shaderGraph->getNodes().size()) << L" original node(s).");
+	for (auto node : m_shaderGraph->getNodes())
 	{
-		if (m_visited.find(*i) == m_visited.end())
-			T_DEBUG(L"     " << type_name(*i) << L" \"" << (*i)->getInformation() << L"\" not visited");
+		if (m_visited.find(node) == m_visited.end())
+			T_DEBUG(L"     " << type_name(node) << L" \"" << node->getInformation() << L"\" not visited.");
 	}
 #endif
 
@@ -340,7 +336,7 @@ void ShaderGraphOptimizer::insertInterpolators(ShaderGraph* shaderGraph, Node* n
 				T_ASSERT(edge);
 
 				shaderGraph->removeEdge(edge);
-				edge = 0;
+				edge = nullptr;
 
 				// If this output pin already connected to an interpolator node then we reuse it.
 				RefSet< Edge > outputEdges;

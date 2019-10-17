@@ -45,13 +45,6 @@ struct EvaluateVisitor
 			}
 		}
 
-		// Convert constants into same widths.
-		PinType intoPinType = PntVoid;
-		for (int32_t i = 0; i < inputPinCount; ++i)
-			intoPinType = std::max(inputConstants[i].getType(), intoPinType);
-		for (int32_t i = 0; i < inputPinCount; ++i)
-			inputConstants[i] = inputConstants[i].cast(intoPinType);
-
 		// Evaluate output constants from input set.
 		int32_t outputPinCount = node->getOutputPinCount();
 		for (int32_t i = 0; i < outputPinCount; ++i)

@@ -59,6 +59,7 @@ Constant Constant::cast(PinType type) const
 	Constant out(type);
 	if (m_type == PntScalar1)
 	{
+		// Widen target type from single scalar.
 		for (int32_t i = 0; i < getPinTypeWidth(type); ++i)
 		{
 			out.m_const[i] = m_const[0];
@@ -67,6 +68,7 @@ Constant Constant::cast(PinType type) const
 	}
 	else
 	{
+		// Copy as many channels we can, pad with zeros if necessary.
 		int32_t width = getPinTypeWidth(std::min(type, m_type));
 		for (int32_t i = 0; i < width; ++i)
 		{

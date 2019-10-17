@@ -102,7 +102,7 @@ const OutputPin* ShaderGraph::findSourcePin(const InputPin* inputPin) const
 	return edge ? edge->getSource() : nullptr;
 }
 
-uint32_t ShaderGraph::findDestinationPins(const OutputPin* outputPin, std::vector< const InputPin* >& outDestinations) const
+uint32_t ShaderGraph::findDestinationPins(const OutputPin* outputPin, AlignedVector< const InputPin* >& outDestinations) const
 {
 	outDestinations.resize(0);
 	for (auto edge : m_edges)
