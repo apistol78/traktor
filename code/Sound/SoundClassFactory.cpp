@@ -161,8 +161,8 @@ void SoundClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 
 	auto classISoundPlayer = new AutoRuntimeClass< ISoundPlayer >();
 	classISoundPlayer->addProperty("listenerTransform", &ISoundPlayer::setListenerTransform, &ISoundPlayer::getListenerTransform);
-	classISoundPlayer->addMethod("play", &ISoundPlayer::play);
-	classISoundPlayer->addMethod("play3d", &ISoundPlayer::play3d);
+	classISoundPlayer->addMethod< Ref< ISoundHandle >, const Sound*, uint32_t >("play", &ISoundPlayer::play);
+	classISoundPlayer->addMethod< Ref< ISoundHandle >, const Sound*, const Vector4&, uint32_t, bool >("play", &ISoundPlayer::play);
 	registrar->registerClass(classISoundPlayer);
 
 	auto classBankBuffer = new AutoRuntimeClass< BankBuffer >();

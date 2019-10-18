@@ -20,7 +20,7 @@ namespace traktor
 class ISoundHandle;
 class Sound;
 
-/*! \brief High-level sound player.
+/*! High-level sound player.
  * \ingroup Sound
  */
 class T_DLLCLASS ISoundPlayer : public Object
@@ -36,7 +36,7 @@ public:
 
 	/*! \brief Play positional sound.
 	 */
-	virtual Ref< ISoundHandle > play3d(const Sound* sound, const Vector4& position, uint32_t priority, bool autoStopFar) = 0;
+	virtual Ref< ISoundHandle > play(const Sound* sound, const Vector4& position, uint32_t priority, bool autoStopFar) = 0;
 
 	/*! \brief Set listener transform.
 	 */

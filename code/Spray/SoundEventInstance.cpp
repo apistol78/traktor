@@ -33,7 +33,7 @@ SoundEventInstance::SoundEventInstance(
 		Transform T = Transform::identity();
 		if (m_sender)
 			m_sender->getTransform(T);
-		m_handle = m_soundPlayer->play3d(m_sound, (T * m_Toffset).translation(), 16, m_autoStopFar);
+		m_handle = m_soundPlayer->play(m_sound, (T * m_Toffset).translation(), 16, m_autoStopFar);
 	}
 	else
 		m_handle = m_soundPlayer->play(m_sound, 16);

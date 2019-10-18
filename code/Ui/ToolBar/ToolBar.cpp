@@ -29,10 +29,11 @@ ToolBar::ToolBar()
 ,	m_imageWidth(dpi96(16))
 ,	m_imageHeight(dpi96(16))
 ,	m_imageCount(0)
+,	m_offsetX(0)
 {
 }
 
-bool ToolBar::create(Widget* parent, int style)
+bool ToolBar::create(Widget* parent, int32_t style)
 {
 	if (!Widget::create(parent, WsDoubleBuffer))
 		return false;
@@ -41,6 +42,7 @@ bool ToolBar::create(Widget* parent, int style)
 	addEventHandler< MouseMoveEvent >(this, &ToolBar::eventMouseMove);
 	addEventHandler< MouseButtonDownEvent >(this, &ToolBar::eventButtonDown);
 	addEventHandler< MouseButtonUpEvent >(this, &ToolBar::eventButtonUp);
+	addEventHandler< MouseWheelEvent >(this, &ToolBar::eventWheel);
 	addEventHandler< PaintEvent >(this, &ToolBar::eventPaint);
 
 	m_toolTip = new ToolTip();
@@ -126,37 +128,37 @@ Ref< ToolBarItem > ToolBar::getItem(const Point& at)
 {
 	Rect rc = getInnerRect();
 
-	int x = dpi96(c_marginWidth);
-	int y = dpi96(c_marginHeight);
+	int32_t x = dpi96(c_marginWidth) + m_offsetX;
+	int32_t y = dpi96(c_marginHeight);
 
-	for (RefArray< ToolBarItem >::iterator i = m_items.begin(); i != m_items.end(); ++i)
+	for (auto item : m_items)
 	{
-		Size size = (*i)->getSize(this, m_imageWidth, m_imageHeight);
+		Size size = item->getSize(this, m_imageWidth, m_imageHeight);
 
 		// Calculate item rectangle.
-		int offset = (rc.getHeight() - dpi96(c_marginHeight * 2) - size.cy) / 2;
+		int32_t offset = (rc.getHeight() - dpi96(c_marginHeight * 2) - size.cy) / 2;
 		Rect rc(
 			Point(x, y + offset),
 			size
 		);
 
 		if (rc.inside(at))
-			return *i;
+			return item;
 
 		x += size.cx + c_itemPad;
 	}
 
-	return 0;
+	return nullptr;
 }
 
 Size ToolBar::getPreferedSize() const
 {
-	int width = getParent()->getInnerRect().getWidth();
-	int height = 0;
+	int32_t width = getParent()->getInnerRect().getWidth();
+	int32_t height = 0;
 
-	for (RefArray< ToolBarItem >::const_iterator i = m_items.begin(); i != m_items.end(); ++i)
+	for (auto item : m_items)
 	{
-		Size size = (*i)->getSize(this, m_imageWidth, m_imageHeight);
+		Size size = item->getSize(this, m_imageWidth, m_imageHeight);
 		height = std::max(height, size.cy);
 	}
 
@@ -238,6 +240,12 @@ void ToolBar::eventButtonUp(MouseButtonUpEvent* event)
 	}
 }
 
+void ToolBar::eventWheel(MouseWheelEvent* event)
+{
+	m_offsetX += event->getRotation();
+	update();
+}
+
 void ToolBar::eventPaint(PaintEvent* event)
 {
 	Canvas& canvas = event->getCanvas();
@@ -248,30 +256,22 @@ void ToolBar::eventPaint(PaintEvent* event)
 	canvas.setBackground(ss->getColor(this, L"background-color"));
 	canvas.fillRect(Rect(rc.left, rc.top, rc.right, rc.bottom));
 
-	/*
-	if (m_style & WsUnderline)
-	{
-		canvas.setForeground(getSystemColor(ScButtonShadow));
-		canvas.drawLine(rc.left, rc.bottom - 1, rc.right, rc.bottom - 1);
-	}
-	*/
+	int32_t x = rc.left + dpi96(c_marginWidth) + m_offsetX;
+	int32_t y = rc.top + dpi96(c_marginHeight);
 
-	int x = rc.left + dpi96(c_marginWidth);
-	int y = rc.top + dpi96(c_marginHeight);
-
-	for (RefArray< ToolBarItem >::iterator i = m_items.begin(); i != m_items.end(); ++i)
+	for (auto item : m_items)
 	{
-		Size size = (*i)->getSize(this, m_imageWidth, m_imageHeight);
+		Size size = item->getSize(this, m_imageWidth, m_imageHeight);
 
 		// Calculate top-left position of item, center vertically.
-		int offset = (rc.getHeight() - dpi96(c_marginHeight) * 2 - size.cy) / 2;
+		int32_t offset = (rc.getHeight() - dpi96(c_marginHeight) * 2 - size.cy) / 2;
 		Point at(x, y + offset);
 
-		(*i)->paint(
+		item->paint(
 			this,
 			canvas,
 			at,
-			(isEnable() && (*i)->isEnable()) ? m_imageEnabled : m_imageDisabled,
+			(isEnable() && item->isEnable()) ? m_imageEnabled : m_imageDisabled,
 			m_imageWidth,
 			m_imageHeight
 		);

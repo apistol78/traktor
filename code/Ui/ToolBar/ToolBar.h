@@ -22,7 +22,7 @@ class ToolBarItem;
 class ToolTip;
 class ToolTipEvent;
 
-/*! \brief Tool bar control.
+/*! Tool bar control.
  * \ingroup UI
  */
 class T_DLLCLASS ToolBar : public Widget
@@ -30,14 +30,9 @@ class T_DLLCLASS ToolBar : public Widget
 	T_RTTI_CLASS;
 
 public:
-	enum WidgetStyles
-	{
-		WsUnderline = (WsUser)
-	};
-
 	ToolBar();
 
-	bool create(Widget* parent, int style = WsNone);
+	bool create(Widget* parent, int32_t style = WsNone);
 
 	virtual void destroy() override;
 
@@ -55,7 +50,7 @@ public:
 
 private:
 	Ref< ToolTip > m_toolTip;
-	int m_style;
+	int32_t m_style;
 	Ref< IBitmap > m_imageEnabled;
 	Ref< IBitmap > m_imageDisabled;
 	uint32_t m_imageWidth;
@@ -63,6 +58,7 @@ private:
 	uint32_t m_imageCount;
 	RefArray< ToolBarItem > m_items;
 	Ref< ToolBarItem > m_trackItem;
+	int32_t m_offsetX;
 
 	void eventMouseTrack(MouseTrackEvent* event);
 
@@ -71,6 +67,8 @@ private:
 	void eventButtonDown(MouseButtonDownEvent* event);
 
 	void eventButtonUp(MouseButtonUpEvent* event);
+
+	void eventWheel(MouseWheelEvent* event);
 
 	void eventPaint(PaintEvent* event);
 

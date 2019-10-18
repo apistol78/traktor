@@ -16,7 +16,7 @@ namespace traktor
 	namespace runtime
 	{
 
-/*! \brief Reconfigure event.
+/*! Reconfigure event.
  * \ingroup Runtime
  *
  * Applications are notified with this
@@ -27,7 +27,7 @@ class T_DLLCLASS ReconfigureEvent : public Object
 	T_RTTI_CLASS;
 
 public:
-	ReconfigureEvent(bool finished, int32_t result);
+	explicit ReconfigureEvent(bool finished, int32_t result);
 
 	bool isFinished() const;
 

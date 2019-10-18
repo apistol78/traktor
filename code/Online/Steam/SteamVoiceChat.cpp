@@ -21,7 +21,7 @@ SteamVoiceChat::SteamVoiceChat(SteamSessionManager* sessionManager)
 :	m_sessionManager(sessionManager)
 ,	m_voiceBuffer((uint8_t*)Alloc::acquireAlign(c_voiceBufferSize, 16, T_FILE_LINE))
 ,	m_voiceDecompressBuffer((uint8_t*)Alloc::acquireAlign(c_voiceDecompressBufferSize, 16, T_FILE_LINE))
-,	m_callback(0)
+,	m_callback(nullptr)
 ,	m_transmitting(false)
 {
 }
@@ -34,12 +34,12 @@ void SteamVoiceChat::setCallback(IVoiceChatCallback* callback)
 void SteamVoiceChat::setAudience(const std::vector< uint64_t >& audienceHandles)
 {
 	// Close channels of old audience members.
-	for (std::vector< uint64_t >::const_iterator i = m_audienceHandles.begin(); i != m_audienceHandles.end(); ++i)
+	for (auto audienceHandle : m_audienceHandles)
 	{
-		if (std::find(audienceHandles.begin(), audienceHandles.end(), *i) == audienceHandles.end())
+		if (std::find(audienceHandles.begin(), audienceHandles.end(), audienceHandle) == audienceHandles.end())
 		{
-			log::info << L"[Steam Voice] Closing voice channel to " << *i << Endl;
-			SteamNetworking()->CloseP2PChannelWithUser(uint64(*i), c_voiceP2PChannel);
+			log::info << L"[Steam Voice] Closing voice channel to " << audienceHandle << L"." << Endl;
+			SteamNetworking()->CloseP2PChannelWithUser((uint64)audienceHandle, c_voiceP2PChannel);
 		}
 	}
 
@@ -87,13 +87,11 @@ void SteamVoiceChat::update()
 		);
 		if (result == k_EVoiceResultOK && voiceBufferRead > 0)
 		{
-			T_DEBUG(L"Sending voice to " << int32_t(m_audienceHandles.size()) << L" user(s)");
-
 			// Transmit recorded data to all listening users.
-			for (std::vector< uint64_t >::const_iterator i = m_audienceHandles.begin(); i != m_audienceHandles.end(); ++i)
+			for (auto audienceHandle : m_audienceHandles)
 			{
 				SteamNetworking()->SendP2PPacket(
-					uint64(*i),
+					(uint64)audienceHandle,
 					m_voiceBuffer.c_ptr(),
 					voiceBufferRead,
 					k_EP2PSendUnreliableNoDelay,

@@ -21,8 +21,8 @@ void ToolBarItemGroup::removeItem(ToolBarItem* item)
 
 void ToolBarItemGroup::setEnable(bool enable)
 {
-	for (RefArray< ToolBarItem >::iterator i = m_items.begin(); i != m_items.end(); ++i)
-		(*i)->setEnable(enable);
+	for (auto item : m_items)
+		item->setEnable(enable);
 }
 
 	}

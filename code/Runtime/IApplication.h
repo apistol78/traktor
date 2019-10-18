@@ -19,7 +19,7 @@ namespace traktor
 class IEnvironment;
 class IStateManager;
 
-/*! \brief Runtime application.
+/*! Runtime application.
  * \ingroup Runtime
  *
  * This interface represent the running
@@ -34,13 +34,13 @@ public:
 	 *
 	 * \return Runtime environment.
 	 */
-	virtual Ref< IEnvironment > getEnvironment() = 0;
+	virtual IEnvironment* getEnvironment() = 0;
 
 	/*! \brief Get state manager.
 	 *
 	 * \return State manager.
 	 */
-	virtual Ref< IStateManager > getStateManager() = 0;
+	virtual IStateManager* getStateManager() = 0;
 };
 
 	}

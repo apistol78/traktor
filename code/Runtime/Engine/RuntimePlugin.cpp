@@ -33,14 +33,14 @@ Ref< IState > RuntimePlugin::createInitialState(IEnvironment* environment)
 	Ref< StageData > stageData = environment->getDatabase()->getObjectReadOnly< StageData >(startupGuid);
 	if (!stageData)
 	{
-		log::error << L"Unable to read startup stage; startup failed" << Endl;
+		log::error << L"Unable to read startup stage, \"" << startupGuid.format() << L"\"; startup failed." << Endl;
 		return nullptr;
 	}
 
 	Ref< Stage > stage = stageData->createInstance(environment, nullptr);
 	if (!stage)
 	{
-		log::error << L"Unable to create startup stage; startup failed" << Endl;
+		log::error << L"Unable to create startup stage, \"" << startupGuid.format() << L"\"; startup failed." << Endl;
 		return nullptr;
 	}
 

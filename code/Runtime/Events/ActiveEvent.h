@@ -15,7 +15,7 @@ namespace traktor
 	namespace runtime
 	{
 
-/*! \brief Application active events.
+/*! Application active events.
  * \ingroup Runtime
  *
  * Applications are notified with this
@@ -26,7 +26,7 @@ class T_DLLCLASS ActiveEvent : public Object
 	T_RTTI_CLASS;
 
 public:
-	ActiveEvent(bool activated);
+	explicit ActiveEvent(bool activated);
 
 	bool becameActivated() const;
 

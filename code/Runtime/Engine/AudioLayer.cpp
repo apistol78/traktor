@@ -83,13 +83,12 @@ void AudioLayer::setParameter(const std::wstring& parameterName, float value)
 
 void AudioLayer::tweenParameter(const std::wstring& parameterName, float fromValue, float toValue, float duration)
 {
-	Tween tween;
+	Tween& tween = m_tweens.push_back();
 	tween.parameter = sound::getParameterHandle(parameterName);
 	tween.fromValue = fromValue;
 	tween.toValue = toValue;
 	tween.duration = duration;
 	tween.time = 0.0f;
-	m_tweens.push_back(tween);
 }
 
 void AudioLayer::transition(Layer* fromLayer)
@@ -103,7 +102,7 @@ void AudioLayer::transition(Layer* fromLayer)
 	{
 		m_handle = fromAudioLayer->m_handle;
 		m_tweens = fromAudioLayer->m_tweens;
-		fromAudioLayer->m_handle = 0;
+		fromAudioLayer->m_handle = nullptr;
 		fromAudioLayer->m_tweens.clear();
 	}
 }
