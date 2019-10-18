@@ -977,12 +977,12 @@ void Application::resume()
 	}
 }
 
-Ref< IEnvironment > Application::getEnvironment()
+IEnvironment* Application::getEnvironment()
 {
 	return m_environment;
 }
 
-Ref< IStateManager > Application::getStateManager()
+IStateManager* Application::getStateManager()
 {
 	return m_stateManager;
 }

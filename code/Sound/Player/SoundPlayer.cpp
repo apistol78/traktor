@@ -56,24 +56,24 @@ void SoundPlayer::destroy()
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 
-	for (AlignedVector< Channel >::iterator i = m_channels.begin(); i != m_channels.end(); ++i)
+	for (auto& channel : m_channels)
 	{
-		if (i->handle)
+		if (channel.handle)
 		{
-			i->handle->stop();
-			i->handle = 0;
+			channel.handle->stop();
+			channel.handle = nullptr;
 		}
 	}
 
 	m_channels.clear();
-	m_surroundEnvironment = 0;
-	m_soundSystem = 0;
+	m_surroundEnvironment = nullptr;
+	m_soundSystem = nullptr;
 }
 
 Ref< ISoundHandle > SoundPlayer::play(const Sound* sound, uint32_t priority)
 {
 	if (!sound)
-		return 0;
+		return nullptr;
 
 	{
 		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
@@ -81,25 +81,25 @@ Ref< ISoundHandle > SoundPlayer::play(const Sound* sound, uint32_t priority)
 		float time = float(m_timer.getElapsedTime());
 
 		// First check if this sound already has been recently played.
-		for (AlignedVector< Channel >::iterator i = m_channels.begin(); i != m_channels.end(); ++i)
+		for (const auto& channel : m_channels)
 		{
-			if (i->sound == sound && i->time + c_recentTimeOffset >= time)
-				return 0;
+			if (channel.sound == sound && channel.time + c_recentTimeOffset >= time)
+				return nullptr;
 		}
 
 		// First try to associate sound with non-playing channel.
-		for (AlignedVector< Channel >::iterator i = m_channels.begin(); i != m_channels.end(); ++i)
+		for (auto& channel : m_channels)
 		{
-			if (!i->soundChannel->isPlaying())
+			if (!channel.soundChannel->isPlaying())
 			{
-				if (i->handle)
-					i->handle->detach();
+				if (channel.handle)
+					channel.handle->detach();
 
-				i->position = Vector4::zero();
-				i->surroundFilter = 0;
-				i->lowPassFilter = 0;
-				i->sound = sound;
-				i->soundChannel->play(
+				channel.position = Vector4::zero();
+				channel.surroundFilter = nullptr;
+				channel.lowPassFilter = nullptr;
+				channel.sound = sound;
+				channel.soundChannel->play(
 					sound->getBuffer(),
 					sound->getCategory(),
 					sound->getGain(),
@@ -108,31 +108,31 @@ Ref< ISoundHandle > SoundPlayer::play(const Sound* sound, uint32_t priority)
 					false,
 					0
 				);
-				i->soundChannel->setFilter(0);
-				i->soundChannel->setVolume(1.0f);
-				i->priority = priority;
-				i->fadeOff = -1.0f;
-				i->time = time;
-				i->autoStopFar = false;
-				i->handle = new SoundHandle(i->soundChannel, i->position, i->fadeOff);
+				channel.soundChannel->setFilter(0);
+				channel.soundChannel->setVolume(1.0f);
+				channel.priority = priority;
+				channel.fadeOff = -1.0f;
+				channel.time = time;
+				channel.autoStopFar = false;
+				channel.handle = new SoundHandle(channel.soundChannel, channel.position, channel.fadeOff);
 
-				return i->handle;
+				return channel.handle;
 			}
 		}
 
 		// Then try to associate sound with lesser priority channel.
-		for (AlignedVector< Channel >::iterator i = m_channels.begin(); i != m_channels.end(); ++i)
+		for (auto& channel : m_channels)
 		{
-			if (priority >= i->priority)
+			if (priority >= channel.priority)
 			{
-				if (i->handle)
-					i->handle->detach();
+				if (channel.handle)
+					channel.handle->detach();
 
-				i->position = Vector4::zero();
-				i->surroundFilter = 0;
-				i->lowPassFilter = 0;
-				i->sound = sound;
-				i->soundChannel->play(
+				channel.position = Vector4::zero();
+				channel.surroundFilter = nullptr;
+				channel.lowPassFilter = nullptr;
+				channel.sound = sound;
+				channel.soundChannel->play(
 					sound->getBuffer(),
 					sound->getCategory(),
 					sound->getGain(),
@@ -141,26 +141,26 @@ Ref< ISoundHandle > SoundPlayer::play(const Sound* sound, uint32_t priority)
 					false,
 					0
 				);
-				i->soundChannel->setFilter(0);
-				i->soundChannel->setVolume(1.0f);
-				i->priority = priority;
-				i->fadeOff = -1.0f;
-				i->time = time;
-				i->autoStopFar = false;
-				i->handle = new SoundHandle(i->soundChannel, i->position, i->fadeOff);
+				channel.soundChannel->setFilter(0);
+				channel.soundChannel->setVolume(1.0f);
+				channel.priority = priority;
+				channel.fadeOff = -1.0f;
+				channel.time = time;
+				channel.autoStopFar = false;
+				channel.handle = new SoundHandle(channel.soundChannel, channel.position, channel.fadeOff);
 
-				return i->handle;
+				return channel.handle;
 			}
 		}
 	}
 
-	return 0;
+	return nullptr;
 }
 
-Ref< ISoundHandle > SoundPlayer::play3d(const Sound* sound, const Vector4& position, uint32_t priority, bool autoStopFar)
+Ref< ISoundHandle > SoundPlayer::play(const Sound* sound, const Vector4& position, uint32_t priority, bool autoStopFar)
 {
 	if (!sound)
-		return 0;
+		return nullptr;
 
 	if (!m_surroundEnvironment)
 		return play(sound, priority);
@@ -176,7 +176,7 @@ Ref< ISoundHandle > SoundPlayer::play3d(const Sound* sound, const Vector4& posit
 	// Calculate distance from listener.
 	Scalar distance = (position - listenerPosition).xyz0().length();
 	if (autoStopFar && distance > maxDistance)
-		return 0;
+		return nullptr;
 
 	float k0 = distance / maxDistance;
 	float k1 = (distance - m_surroundEnvironment->getInnerRadius()) / (maxDistance - m_surroundEnvironment->getInnerRadius());
@@ -198,29 +198,29 @@ Ref< ISoundHandle > SoundPlayer::play3d(const Sound* sound, const Vector4& posit
 		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 
 		// First check if this sound already has been recently played.
-		for (AlignedVector< Channel >::iterator i = m_channels.begin(); i != m_channels.end(); ++i)
+		for (const auto& channel : m_channels)
 		{
-			if (i->sound == sound && i->time + c_recentTimeOffset >= time)
-				return 0;
+			if (channel.sound == sound && channel.time + c_recentTimeOffset >= time)
+				return nullptr;
 		}
 
 		// First try to associate sound with non-playing channel (or far away).
-		for (AlignedVector< Channel >::iterator i = m_channels.begin(); i != m_channels.end(); ++i)
+		for (auto& channel : m_channels)
 		{
-			Scalar channelDistance = (i->position - listenerPosition).xyz0().length();
+			Scalar channelDistance = (channel.position - listenerPosition).xyz0().length();
 			if (
-				!i->soundChannel->isPlaying() ||
-				(i->position.w() > 0.5f && channelDistance > m_surroundEnvironment->getMaxDistance())
+				!channel.soundChannel->isPlaying() ||
+				(channel.position.w() > 0.5f && channelDistance > m_surroundEnvironment->getMaxDistance())
 			)
 			{
-				if (i->handle)
-					i->handle->detach();
+				if (channel.handle)
+					channel.handle->detach();
 
-				i->position = position.xyz1();
-				i->surroundFilter = surroundFilter;
-				i->lowPassFilter = lowPassFilter;
-				i->sound = sound;
-				i->soundChannel->play(
+				channel.position = position.xyz1();
+				channel.surroundFilter = surroundFilter;
+				channel.lowPassFilter = lowPassFilter;
+				channel.sound = sound;
+				channel.soundChannel->play(
 					sound->getBuffer(),
 					sound->getCategory(),
 					sound->getGain(),
@@ -229,31 +229,31 @@ Ref< ISoundHandle > SoundPlayer::play3d(const Sound* sound, const Vector4& posit
 					false,
 					0
 				);
-				i->soundChannel->setFilter(groupFilter);
-				i->soundChannel->setVolume(1.0f);
-				i->priority = priority;
-				i->fadeOff = -1.0f;
-				i->time = time;
-				i->autoStopFar = autoStopFar;
-				i->handle = new SoundHandle(i->soundChannel, i->position, i->fadeOff);
+				channel.soundChannel->setFilter(groupFilter);
+				channel.soundChannel->setVolume(1.0f);
+				channel.priority = priority;
+				channel.fadeOff = -1.0f;
+				channel.time = time;
+				channel.autoStopFar = autoStopFar;
+				channel.handle = new SoundHandle(channel.soundChannel, channel.position, channel.fadeOff);
 
-				return i->handle;
+				return channel.handle;
 			}
 		}
 
 		// Then try to associate sound with lesser priority channel.
-		for (AlignedVector< Channel >::iterator i = m_channels.begin(); i != m_channels.end(); ++i)
+		for (auto& channel : m_channels)
 		{
-			if (priority > i->priority)
+			if (priority > channel.priority)
 			{
-				if (i->handle)
-					i->handle->detach();
+				if (channel.handle)
+					channel.handle->detach();
 
-				i->position = position.xyz1();
-				i->surroundFilter = surroundFilter;
-				i->lowPassFilter = lowPassFilter;
-				i->sound = sound;
-				i->soundChannel->play(
+				channel.position = position.xyz1();
+				channel.surroundFilter = surroundFilter;
+				channel.lowPassFilter = lowPassFilter;
+				channel.sound = sound;
+				channel.soundChannel->play(
 					sound->getBuffer(),
 					sound->getCategory(),
 					sound->getGain(),
@@ -262,36 +262,36 @@ Ref< ISoundHandle > SoundPlayer::play3d(const Sound* sound, const Vector4& posit
 					false,
 					0
 				);
-				i->soundChannel->setFilter(groupFilter);
-				i->soundChannel->setVolume(1.0f);
-				i->priority = priority;
-				i->fadeOff = -1.0f;
-				i->time = time;
-				i->autoStopFar = autoStopFar;
-				i->handle = new SoundHandle(i->soundChannel, i->position, i->fadeOff);
+				channel.soundChannel->setFilter(groupFilter);
+				channel.soundChannel->setVolume(1.0f);
+				channel.priority = priority;
+				channel.fadeOff = -1.0f;
+				channel.time = time;
+				channel.autoStopFar = autoStopFar;
+				channel.handle = new SoundHandle(channel.soundChannel, channel.position, channel.fadeOff);
 
-				return i->handle;
+				return channel.handle;
 			}
 		}
 
 		// Then try to associate sound with similar priority channel but further away.
-		for (AlignedVector< Channel >::iterator i = m_channels.begin(); i != m_channels.end(); ++i)
+		for (auto& channel : m_channels)
 		{
-			Scalar channelDistance = (i->position - listenerPosition).xyz0().length();
+			Scalar channelDistance = (channel.position - listenerPosition).xyz0().length();
 			if (
-				priority == i->priority &&
-				i->position.w() > 0.5f &&
+				priority == channel.priority &&
+				channel.position.w() > 0.5f &&
 				distance < channelDistance
 			)
 			{
-				if (i->handle)
-					i->handle->detach();
+				if (channel.handle)
+					channel.handle->detach();
 
-				i->position = position.xyz1();
-				i->surroundFilter = surroundFilter;
-				i->lowPassFilter = lowPassFilter;
-				i->sound = sound;
-				i->soundChannel->play(
+				channel.position = position.xyz1();
+				channel.surroundFilter = surroundFilter;
+				channel.lowPassFilter = lowPassFilter;
+				channel.sound = sound;
+				channel.soundChannel->play(
 					sound->getBuffer(),
 					sound->getCategory(),
 					sound->getGain(),
@@ -300,20 +300,20 @@ Ref< ISoundHandle > SoundPlayer::play3d(const Sound* sound, const Vector4& posit
 					false,
 					0
 				);
-				i->soundChannel->setFilter(groupFilter);
-				i->soundChannel->setVolume(1.0f);
-				i->priority = priority;
-				i->fadeOff = -1.0f;
-				i->time = time;
-				i->autoStopFar = autoStopFar;
-				i->handle = new SoundHandle(i->soundChannel, i->position, i->fadeOff);
+				channel.soundChannel->setFilter(groupFilter);
+				channel.soundChannel->setVolume(1.0f);
+				channel.priority = priority;
+				channel.fadeOff = -1.0f;
+				channel.time = time;
+				channel.autoStopFar = autoStopFar;
+				channel.handle = new SoundHandle(channel.soundChannel, channel.position, channel.fadeOff);
 
-				return i->handle;
+				return channel.handle;
 			}
 		}
 	}
 
-	return 0;
+	return nullptr;
 }
 
 void SoundPlayer::setListenerTransform(const Transform& listenerTransform)
@@ -341,27 +341,27 @@ void SoundPlayer::update(float dT)
 		Vector4 listenerPosition = m_surroundEnvironment->getListenerTransform().translation().xyz1();
 
 		// Update surround and low pass filters on playing 3d sounds.
-		for (AlignedVector< Channel >::iterator i = m_channels.begin(); i != m_channels.end(); ++i)
+		for (auto& channel : m_channels)
 		{
 			// Skip non-playing or non-positional sounds.
-			if (!i->soundChannel->isPlaying() || i->position.w() < 0.5f)
+			if (!channel.soundChannel->isPlaying() || channel.position.w() < 0.5f)
 				continue;
 
-			float maxDistance = i->sound->getRange();
+			float maxDistance = channel.sound->getRange();
 			if (maxDistance <= m_surroundEnvironment->getInnerRadius())
 				maxDistance = m_surroundEnvironment->getMaxDistance();
 
 			// Calculate distance from listener; automatically stop sounds which has moved outside max listener distance.
-			Scalar distance = (i->position - listenerPosition).xyz0().length();
-			if (i->autoStopFar && distance > maxDistance)
+			Scalar distance = (channel.position - listenerPosition).xyz0().length();
+			if (channel.autoStopFar && distance > maxDistance)
 			{
-				if (i->handle)
-					i->handle->detach();
+				if (channel.handle)
+					channel.handle->detach();
 
-				i->position = Vector4::zero();
-				i->sound = 0;
-				i->soundChannel->setFilter(0);
-				i->soundChannel->stop();
+				channel.position = Vector4::zero();
+				channel.sound = nullptr;
+				channel.soundChannel->setFilter(0);
+				channel.soundChannel->stop();
 				continue;
 			}
 
@@ -369,35 +369,35 @@ void SoundPlayer::update(float dT)
 			float k0 = clamp< float >(distance / maxDistance, 0.0f, 1.0f);
 
 			// Set filter parameters.
-			if (i->surroundFilter)
-				i->surroundFilter->setSpeakerPosition(i->position);
-			if (i->lowPassFilter)
+			if (channel.surroundFilter)
+				channel.surroundFilter->setSpeakerPosition(channel.position);
+			if (channel.lowPassFilter)
 			{
 				float cutOff = lerp(c_nearCutOff, c_farCutOff, std::sqrt(k0));
-				i->lowPassFilter->setCutOff(cutOff);
+				channel.lowPassFilter->setCutOff(cutOff);
 			}
 
 			// Set automatic sound parameters.
-			i->soundChannel->setParameter(s_handleDistance, k0);
-			i->soundChannel->setParameter(s_handleVelocity, 0.0f);
+			channel.soundChannel->setParameter(s_handleDistance, k0);
+			channel.soundChannel->setParameter(s_handleVelocity, 0.0f);
 
 			// Disable repeat if no-one else then me have a reference to the handle.
-			if (!i->handle || i->handle->getReferenceCount() <= 1)
-				i->soundChannel->disableRepeat();
+			if (!channel.handle || channel.handle->getReferenceCount() <= 1)
+				channel.soundChannel->disableRepeat();
 		}
 	}
 
 	// Update fade-off channels.
-	for (AlignedVector< Channel >::iterator i = m_channels.begin(); i != m_channels.end(); ++i)
+	for (auto& channel : m_channels)
 	{
-		if (!i->soundChannel->isPlaying() || i->fadeOff <= 0.0f)
+		if (!channel.soundChannel->isPlaying() || channel.fadeOff <= 0.0f)
 			continue;
 
-		i->fadeOff -= std::min(dT, 1.0f / 60.0f);
-		if (i->fadeOff > 0.0f)
-			i->soundChannel->setVolume(i->fadeOff);
+		channel.fadeOff -= std::min(dT, 1.0f / 60.0f);
+		if (channel.fadeOff > 0.0f)
+			channel.soundChannel->setVolume(channel.fadeOff);
 		else
-			i->soundChannel->stop();
+			channel.soundChannel->stop();
 	}
 }
 

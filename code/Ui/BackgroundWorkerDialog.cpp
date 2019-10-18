@@ -84,9 +84,9 @@ void BackgroundWorkerDialog::eventTimer(TimerEvent* event)
 {
 	// Check if we're are finished.
 	bool finished = true;
-	for (std::vector< IWaitable* >::const_iterator i = m_waitables.begin(); i != m_waitables.end(); ++i)
+	for (auto waitable : m_waitables)
 	{
-		if (!(*i)->wait(0))
+		if (!waitable->wait(0))
 		{
 			finished = false;
 			break;

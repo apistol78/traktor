@@ -54,7 +54,7 @@ class IState;
 class StateManager;
 class TargetManagerConnection;
 
-/*! \brief Runtime application implementation.
+/*! Runtime application implementation.
  * \ingroup Runtime
  */
 class T_DLLCLASS Application : public IApplication
@@ -79,9 +79,9 @@ public:
 
 	void resume();
 
-	virtual Ref< IEnvironment > getEnvironment() override final;
+	virtual IEnvironment* getEnvironment() override final;
 
-	virtual Ref< IStateManager > getStateManager() override final;
+	virtual IStateManager* getStateManager() override final;
 
 private:
 	Ref< PropertyGroup > m_settings;

@@ -41,7 +41,7 @@ public:
 
 	virtual Ref< ISoundHandle > play(const Sound* sound, uint32_t priority) override final;
 
-	virtual Ref< ISoundHandle > play3d(const Sound* sound, const Vector4& position, uint32_t priority, bool autoStopFar) override final;
+	virtual Ref< ISoundHandle > play(const Sound* sound, const Vector4& position, uint32_t priority, bool autoStopFar) override final;
 
 	virtual void setListenerTransform(const Transform& listenerTransform) override final;
 
