@@ -26,7 +26,9 @@ class T_DLLCLASS Edge : public ISerializable
 	T_RTTI_CLASS;
 
 public:
-	Edge(const OutputPin* source = 0, const InputPin* destination = 0);
+	Edge();
+
+	explicit Edge(const OutputPin* source, const InputPin* destination);
 
 	void setSource(const OutputPin* source);
 

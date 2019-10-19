@@ -77,12 +77,16 @@ PinType MathNodeTraits::getOutputPinType(
 		outputPinType = PntScalar1;
 	else
 	{
+		// Conservativly use max pin type, even if any input pin is "void" since
+		// there exists loops in the graph from Iterator nodes.
 		uint32_t inputPinCount = node->getInputPinCount();
 		for (uint32_t i = 0; i < inputPinCount; ++i)
+		{
 			outputPinType = std::max< PinType >(
 				outputPinType,
 				inputPinTypes[i]
 			);
+		}
 	}
 	return outputPinType;
 }

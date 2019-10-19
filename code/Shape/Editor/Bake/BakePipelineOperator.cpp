@@ -419,7 +419,8 @@ bool BakePipelineOperator::build(
 	editor::IPipelineBuilder* pipelineBuilder,
 	const ISerializable* operatorData,
 	const db::Instance* sourceInstance,
-	scene::SceneAsset* inoutSceneAsset
+	scene::SceneAsset* inoutSceneAsset,
+	bool rebuild
 ) const
 {
 	Ref< TracerProcessor > tracerProcessor = ms_tracerProcessor;
@@ -463,7 +464,7 @@ bool BakePipelineOperator::build(
 		Guid existingLayerId = layerHashSeedId.permutate();
 		Guid existingLayerHashId = layerHashSeedId.permutate();
 
-		if (m_editor)
+		if (m_editor && !rebuild)
 		{
 			Ref< PropertyInteger > existingLayerHash = pipelineBuilder->getOutputDatabase()->getObjectReadOnly< PropertyInteger >(existingLayerHashId);
 			if (

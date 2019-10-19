@@ -168,6 +168,8 @@ bool ShaderGraphEditorPage::create(ui::Container* parent)
 	m_toolBar->addItem(new ui::ToolBarButton(i18n::Text(L"SHADERGRAPH_EVEN_VERTICALLY"), 4, ui::Command(L"ShaderGraph.Editor.EvenSpaceVertically")));
 	m_toolBar->addItem(new ui::ToolBarButton(i18n::Text(L"SHADERGRAPH_EVEN_HORIZONTALLY"), 5, ui::Command(L"ShaderGraph.Editor.EventSpaceHorizontally")));
 	m_toolBar->addItem(new ui::ToolBarSeparator());
+	m_toolBar->addItem(new ui::ToolBarButton(i18n::Text(L"SHADERGRAPH_EVALUATE_CONNECTED"), 13, ui::Command(L"ShaderGraph.Editor.EvaluateConnected")));
+	m_toolBar->addItem(new ui::ToolBarButton(i18n::Text(L"SHADERGRAPH_EVALUATE_TYPE"), 13, ui::Command(L"ShaderGraph.Editor.EvaluateType")));
 	m_toolBar->addItem(new ui::ToolBarButton(i18n::Text(L"SHADERGRAPH_REMOVE_UNUSED_NODES"), 8, ui::Command(L"ShaderGraph.Editor.RemoveUnusedNodes")));
 	m_toolBar->addItem(new ui::ToolBarButton(i18n::Text(L"SHADERGRAPH_AUTO_MERGE_BRANCHES"), 9, ui::Command(L"ShaderGraph.Editor.AutoMergeBranches")));
 	m_toolBar->addItem(new ui::ToolBarButton(i18n::Text(L"SHADERGRAPH_UPDATE_FRAGMENTS"), 10, ui::Command(L"ShaderGraph.Editor.UpdateFragments")));
@@ -176,17 +178,39 @@ bool ShaderGraphEditorPage::create(ui::Container* parent)
 	m_toolBar->addItem(new ui::ToolBarButton(i18n::Text(L"SHADERGRAPH_INSERT_INTERPOLATORS"), 13, ui::Command(L"ShaderGraph.Editor.InsertInterpolators")));
 	m_toolBar->addItem(new ui::ToolBarButton(i18n::Text(L"SHADERGRAPH_RESOLVE_VARIABLES"), 13, ui::Command(L"ShaderGraph.Editor.ResolveVariables")));
 	m_toolBar->addItem(new ui::ToolBarButton(i18n::Text(L"SHADERGRAPH_RESOLVE_EXTERNALS"), 13, ui::Command(L"ShaderGraph.Editor.ResolveExternals")));
+
 	m_toolBar->addItem(new ui::ToolBarSeparator());
 
-	m_toolPlatform = new ui::ToolBarDropDown(ui::Command(), ui::dpi96(80), i18n::Text(L"SHADERGRAPH_RENDERER_PERMUTATION"));
-	m_toolPlatform->add(L"DX11");
-	m_toolPlatform->add(L"OpenGL");
-	m_toolPlatform->add(L"OpenGL ES2");
-	m_toolPlatform->add(L"Vulkan");
-	m_toolPlatform->add(L"GCM");
-	m_toolPlatform->add(L"GNM");
+	m_toolPlatform = new ui::ToolBarDropDown(ui::Command(), ui::dpi96(100), i18n::Text(L"SHADERGRAPH_PLATFORM_PERMUTATION"));
+	m_toolPlatform->add(L"Android");
+	m_toolPlatform->add(L"Emscripten");
+	m_toolPlatform->add(L"iOS");
+	m_toolPlatform->add(L"Linux");
+	m_toolPlatform->add(L"macOS");
+	m_toolPlatform->add(L"PS3");
+	m_toolPlatform->add(L"PS4");
+	m_toolPlatform->add(L"RaspberryPI");
+	m_toolPlatform->add(L"Windows");
 	m_toolBar->addItem(m_toolPlatform);
+	m_toolBar->addItem(new ui::ToolBarButton(i18n::Text(L"SHADERGRAPH_PLATFORM_PERMUTATION"), 10, ui::Command(L"ShaderGraph.Editor.PlatformPermutation")));
+
+	m_toolBar->addItem(new ui::ToolBarSeparator());
+
+	m_toolRenderer = new ui::ToolBarDropDown(ui::Command(), ui::dpi96(100), i18n::Text(L"SHADERGRAPH_RENDERER_PERMUTATION"));
+	m_toolRenderer->add(L"DX11");
+	m_toolRenderer->add(L"OpenGL");
+	m_toolRenderer->add(L"OpenGL ES2");
+	m_toolRenderer->add(L"Vulkan");
+	m_toolRenderer->add(L"GCM");
+	m_toolRenderer->add(L"GNM");
+	m_toolBar->addItem(m_toolRenderer);
 	m_toolBar->addItem(new ui::ToolBarButton(i18n::Text(L"SHADERGRAPH_RENDERER_PERMUTATION"), 10, ui::Command(L"ShaderGraph.Editor.RendererPermutation")));
+
+	m_toolBar->addItem(new ui::ToolBarSeparator());
+
+	m_toolTechniques = new ui::ToolBarDropDown(ui::Command(), ui::dpi96(200), i18n::Text(L"SHADERGRAPH_RENDERER_TECHNIQUE"));
+	m_toolBar->addItem(m_toolTechniques);
+	m_toolBar->addItem(new ui::ToolBarButton(i18n::Text(L"SHADERGRAPH_RENDERER_TECHNIQUE"), 10, ui::Command(L"ShaderGraph.Editor.Technique")));
 
 	m_toolBar->addEventHandler< ui::ToolBarButtonClickEvent >(this, &ShaderGraphEditorPage::eventToolClick);
 
@@ -578,6 +602,28 @@ bool ShaderGraphEditorPage::handleCommand(const ui::Command& command)
 		m_document->push();
 		m_editorGraph->evenSpace(ui::GraphControl::EsHorizontally);
 	}
+	else if (command == L"ShaderGraph.Editor.EvaluateConnected")
+	{
+		m_document->push();
+
+		m_shaderGraph = ShaderGraphStatic(m_shaderGraph).getConnectedPermutation();
+		T_ASSERT(m_shaderGraph);
+
+		m_document->setObject(0, m_shaderGraph);
+
+		createEditorGraph();
+	}
+	else if (command == L"ShaderGraph.Editor.EvaluateType")
+	{
+		m_document->push();
+
+		m_shaderGraph = ShaderGraphStatic(m_shaderGraph).getTypePermutation();
+		T_ASSERT(m_shaderGraph);
+
+		m_document->setObject(0, m_shaderGraph);
+
+		createEditorGraph();
+	}
 	else if (command == L"ShaderGraph.Editor.RemoveUnusedNodes")
 	{
 		m_document->push();
@@ -688,12 +734,36 @@ bool ShaderGraphEditorPage::handleCommand(const ui::Command& command)
 		else
 			log::error << L"Fragment linker failed." << Endl;
 	}
+	else if (command == L"ShaderGraph.Editor.PlatformPermutation")
+	{
+		m_document->push();
+
+		std::wstring platformSignature = m_toolPlatform->getSelectedItem();
+		m_shaderGraph = ShaderGraphStatic(m_shaderGraph).getPlatformPermutation(platformSignature);
+		T_ASSERT(m_shaderGraph);
+
+		m_document->setObject(0, m_shaderGraph);
+
+		createEditorGraph();
+	}
 	else if (command == L"ShaderGraph.Editor.RendererPermutation")
 	{
 		m_document->push();
 
-		std::wstring rendererSignature = m_toolPlatform->getSelectedItem();
+		std::wstring rendererSignature = m_toolRenderer->getSelectedItem();
 		m_shaderGraph = ShaderGraphStatic(m_shaderGraph).getRendererPermutation(rendererSignature);
+		T_ASSERT(m_shaderGraph);
+
+		m_document->setObject(0, m_shaderGraph);
+
+		createEditorGraph();
+	}
+	else if (command == L"ShaderGraph.Editor.Technique")
+	{
+		m_document->push();
+
+		std::wstring technique = m_toolTechniques->getSelectedItem();
+		m_shaderGraph = ShaderGraphTechniques(m_shaderGraph).generate(technique);
 		T_ASSERT(m_shaderGraph);
 
 		m_document->setObject(0, m_shaderGraph);
@@ -909,6 +979,11 @@ void ShaderGraphEditorPage::updateGraph()
 	};
 	std::map< std::wstring, VariableInfo > variables;
 
+	// Extract techniques.
+	m_toolTechniques->removeAll();
+	for (const auto& technique : ShaderGraphTechniques(m_shaderGraph).getNames())
+		m_toolTechniques->add(technique);
+
 	// Update variables grid.
 	RefArray< Variable > variableNodes;
 	m_shaderGraph->findNodesOf< Variable >(variableNodes);
@@ -948,7 +1023,7 @@ void ShaderGraphEditorPage::updateGraph()
 			row->setBackground(Color4ub(255, 0, 0, 255));
 		}
 
-		if (variable.second.readCount > 0 && variable.second.writeCount == 0)
+		if (variable.second.readCount > 0 && variable.second.writeCount == 0 && variable.second.localCount > 0)
 			row->setBackground(Color4ub(255, 0, 0, 255));
 
 		row->add(new ui::GridItem(toString(variable.second.readCount)));

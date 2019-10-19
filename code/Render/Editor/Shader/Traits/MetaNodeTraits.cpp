@@ -66,12 +66,51 @@ PinType MetaNodeTraits::getOutputPinType(
 ) const
 {
 	PinType outputPinType = PntVoid;
-	uint32_t inputPinCount = node->getInputPinCount();
-	for (uint32_t i = 0; i < inputPinCount; ++i)
-		outputPinType = std::max< PinType >(
-			outputPinType,
-			inputPinTypes[i]
-		);
+	if (is_a< Branch >(node) || is_a< Connected >(node) || is_a< Platform >(node) || is_a< Renderer >(node))
+	{
+		uint32_t inputPinCount = node->getInputPinCount();
+		for (uint32_t i = 0; i < inputPinCount; ++i)
+			outputPinType = std::max< PinType >(
+				outputPinType,
+				inputPinTypes[i]
+			);
+	}
+	else if (is_a< Type >(node))
+	{
+		switch (inputPinTypes[0])
+		{
+		default:
+		case PntVoid:
+			break;
+
+		case PntScalar1:
+			outputPinType = inputPinTypes[1];
+			break;
+
+		case PntScalar2:
+		case PntScalar3:
+		case PntScalar4:
+			outputPinType = inputPinTypes[2];
+			break;
+
+		case PntMatrix:
+			outputPinType = inputPinTypes[3];
+			break;
+
+		case PntTexture2D:
+		case PntTexture3D:
+		case PntTextureCube:
+			outputPinType = inputPinTypes[4];
+			break;
+
+		case PntStructBuffer:
+			break;
+
+		case PntState:
+			outputPinType = inputPinTypes[5];
+			break;
+		}
+	}
 	return outputPinType;
 }
 

@@ -361,11 +361,11 @@ bool MeshPipeline::buildOutput(
 	int32_t jointCount = models[0]->getJointCount();
 	bool vertexColor = haveVertexColors(*models[0]);
 
-	for (std::map< std::wstring, model::Material >::const_iterator i = materials.begin(); i != materials.end(); ++i)
+	for (const auto& materialPair : materials)
 	{
 		Ref< const render::ShaderGraph > materialShaderGraph;
 
-		std::map< std::wstring, Guid >::const_iterator it = materialShaders.find(i->first);
+		auto it = materialShaders.find(materialPair.first);
 		if (
 			m_enableCustomShaders &&
 			it != materialShaders.end()
@@ -373,14 +373,14 @@ bool MeshPipeline::buildOutput(
 		{
 			if (it->second.isNull())
 			{
-				log::info << L"Material \"" << i->first << L"\" disabled; skipped." << Endl;
+				log::info << L"Material \"" << materialPair.first << L"\" disabled; skipped." << Endl;
 				continue;
 			}
 
 			materialShaderGraph = pipelineBuilder->getObjectReadOnly< render::ShaderGraph >(it->second);
 			if (!materialShaderGraph)
 			{
-				log::error << L"Mesh pipeline failed; unable to read material shader \"" << i->first << L"\"." << Endl;
+				log::error << L"Mesh pipeline failed; unable to read material shader \"" << materialPair.first << L"\"." << Endl;
 				return false;
 			}
 		}
@@ -390,21 +390,20 @@ bool MeshPipeline::buildOutput(
 
 			if (m_enableCustomTemplates)
 			{
-				std::map< std::wstring, Guid >::const_iterator it = materialTemplates.find(i->first);
+				auto it = materialTemplates.find(materialPair.first);
 				if (it != materialTemplates.end())
 					materialTemplate = it->second;
 			}
 
 			materialShaderGraph = generator.generate(
 				pipelineBuilder->getSourceDatabase(),
-				i->second,
+				materialPair.second,
 				materialTemplate,
-				// materialTextures,
 				vertexColor
 			);
 			if (!materialShaderGraph)
 			{
-				log::error << L"Mesh pipeline failed; unable to generate material shader \"" << i->first << L"\"." << Endl;
+				log::error << L"Mesh pipeline failed; unable to generate material shader \"" << materialPair.first << L"\"." << Endl;
 				return false;
 			}
 		}
@@ -431,7 +430,7 @@ bool MeshPipeline::buildOutput(
 		materialShaderGraph = render::FragmentLinker(fragmentReader).resolve(materialShaderGraph, true);
 		if (!materialShaderGraph)
 		{
-			log::error << L"MeshPipeline failed; unable to link shader fragments, material shader \"" << i->first << L"\"." << Endl;
+			log::error << L"MeshPipeline failed; unable to link shader fragments, material shader \"" << materialPair.first << L"\"." << Endl;
 			return false;
 		}
 
@@ -458,7 +457,7 @@ bool MeshPipeline::buildOutput(
 		materialShaderGraph = render::ShaderGraphStatic(materialShaderGraph).getConnectedPermutation();
 		if (!materialShaderGraph)
 		{
-			log::error << L"MeshPipeline failed; unable to freeze connected conditionals, material shader \"" << i->first << L"\"." << Endl;
+			log::error << L"MeshPipeline failed; unable to freeze connected conditionals, material shader \"" << materialPair.first << L"\"." << Endl;
 			return false;
 		}
 
@@ -466,7 +465,7 @@ bool MeshPipeline::buildOutput(
 		materialShaderGraph = render::ShaderGraphStatic(materialShaderGraph).getTypePermutation();
 		if (!materialShaderGraph)
 		{
-			log::error << L"MeshPipeline failed; unable to freeze types, material shader \"" << i->first << L"\"." << Endl;
+			log::error << L"MeshPipeline failed; unable to freeze types, material shader \"" << materialPair.first << L"\"." << Endl;
 			return false;
 		}
 
@@ -474,15 +473,14 @@ bool MeshPipeline::buildOutput(
 		materialShaderGraph = render::ShaderGraphOptimizer(materialShaderGraph).mergeBranches();
 		if (!materialShaderGraph)
 		{
-			log::error << L"MeshPipeline failed; unable to merge branches, material shader \"" << i->first << L"\"." << Endl;
+			log::error << L"MeshPipeline failed; unable to merge branches, material shader \"" << materialPair.first << L"\"." << Endl;
 			return false;
 		}
 
 		// Update bone count from model.
-		const RefArray< render::Node >& nodes = materialShaderGraph->getNodes();
-		for (RefArray< render::Node >::const_iterator j = nodes.begin(); j != nodes.end(); ++j)
+		for (auto node : materialShaderGraph->getNodes())
 		{
-			if (render::IndexedUniform* indexedUniform = dynamic_type_cast< render::IndexedUniform* >(*j))
+			if (render::IndexedUniform* indexedUniform = dynamic_type_cast< render::IndexedUniform* >(node))
 			{
 				if (indexedUniform->getParameterName() == L"Joints")
 				{
@@ -507,41 +505,49 @@ bool MeshPipeline::buildOutput(
 		if (!m_includeOnlyTechniques.empty())
 		{
 			std::set< std::wstring > keepTechniqueNames;
-			for (std::set< std::wstring >::const_iterator i = m_includeOnlyTechniques.begin(); i != m_includeOnlyTechniques.end(); ++i)
+			for (const auto& includeOnlyTechniques : m_includeOnlyTechniques)
 			{
-				WildCompare wc(*i);
-				for (std::set< std::wstring >::const_iterator j = materialTechniqueNames.begin(); j != materialTechniqueNames.end(); ++j)
+				WildCompare wc(includeOnlyTechniques);
+				for (const auto& materialTechniqueName : materialTechniqueNames)
 				{
-					if (wc.match(*j))
-						keepTechniqueNames.insert(*j);
+					if (wc.match(materialTechniqueName))
+						keepTechniqueNames.insert(materialTechniqueName);
 				}
 			}
 			materialTechniqueNames = keepTechniqueNames;
 		}
 
-		for (std::set< std::wstring >::iterator j = materialTechniqueNames.begin(); j != materialTechniqueNames.end(); ++j)
+		for (const auto& materialTechniqueName : materialTechniqueNames)
 		{
-			Ref< render::ShaderGraph > materialTechniqueShaderGraph = render::ShaderGraphTechniques(materialShaderGraph).generate(*j);
+			Ref< render::ShaderGraph > materialTechniqueShaderGraph = render::ShaderGraphTechniques(materialShaderGraph).generate(materialTechniqueName);
 
 			uint32_t hash = render::ShaderGraphHash::calculate(materialTechniqueShaderGraph);
 			materialTechniqueShaderGraphs[hash] = materialTechniqueShaderGraph;
 
 			MeshMaterialTechnique mt;
-			mt.worldTechnique = *j;
+			mt.worldTechnique = materialTechniqueName;
 			mt.shaderTechnique = L"M" + toString(hash);
 			mt.hash = hash;
 
-			materialTechniqueMap[i->first].push_back(mt);
+			materialTechniqueMap[materialPair.first].push_back(mt);
+
+#if 0
+			// Write out materials for debugging in source database.
+			Ref< db::Instance > instance = pipelineBuilder->getSourceDatabase()->createInstance(L"Debug/Mesh/" + outputPath + L"/" + materialPair.first + L"/" + materialTechniqueName, db::CifReplaceExisting);
+			if (instance)
+			{
+				instance->setObject(materialTechniqueShaderGraph);
+				instance->commit();
+			}
+#endif
 		}
 
 		// Build vertex declaration from shader vertex inputs.
 		RefArray< render::VertexInput > vertexInputNodes;
 		materialShaderGraph->findNodesOf< render::VertexInput >(vertexInputNodes);
-		for (RefArray< render::VertexInput >::iterator j = vertexInputNodes.begin(); j != vertexInputNodes.end(); ++j)
+		for (auto vertexInputNode : vertexInputNodes)
 		{
-			bool elementDeclared = false;
-
-			render::DataType elementDataType = (*j)->getDataType();
+			render::DataType elementDataType = vertexInputNode->getDataType();
 			if (m_promoteHalf)
 			{
 				if (elementDataType == render::DtHalf2)
@@ -551,27 +557,27 @@ bool MeshPipeline::buildOutput(
 			}
 
 			// Is it already added to vertex declaration?
-			for (AlignedVector< render::VertexElement >::iterator k = vertexElements.begin(); k != vertexElements.end(); ++k)
+			bool elementDeclared = false;
+			for (const auto& vertexElement : vertexElements)
 			{
 				if (
-					(*j)->getDataUsage() == k->getDataUsage() &&
-					(*j)->getIndex() == k->getIndex()
+					vertexInputNode->getDataUsage() == vertexElement.getDataUsage() &&
+					vertexInputNode->getIndex() == vertexElement.getIndex()
 				)
 				{
-					if (elementDataType != k->getDataType())
-						log::warning << L"Identical vertex input usage but different types (" << render::getDataTypeName(elementDataType) << L" and " << render::getDataTypeName(k->getDataType()) << L")" << Endl;
+					if (elementDataType != vertexElement.getDataType())
+						log::warning << L"Identical vertex input usage but different types (" << render::getDataTypeName(elementDataType) << L" and " << render::getDataTypeName(vertexElement.getDataType()) << L")" << Endl;
 					elementDeclared = true;
 					break;
 				}
 			}
-
 			if (!elementDeclared)
 			{
 				render::VertexElement element(
-					(*j)->getDataUsage(),
+					vertexInputNode->getDataUsage(),
 					elementDataType,
 					vertexElementOffset,
-					(*j)->getIndex()
+					vertexInputNode->getIndex()
 				);
 				vertexElements.push_back(element);
 				vertexElementOffset += element.getSize();
