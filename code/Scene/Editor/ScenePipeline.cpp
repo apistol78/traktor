@@ -131,12 +131,13 @@ bool ScenePipeline::buildOutput(
 	T_FATAL_ASSERT (sceneAsset != nullptr);
 
 	// Execute operations on scene.
+	bool rebuild = (bool)((reason & editor::PbrForced) != 0);
 	for (const auto op : sceneAsset->getOperationData())
 	{
 		const IScenePipelineOperator* spo = findOperator(type_of(op));
 		if (!spo)
 			return false;
-		if (!spo->build(pipelineBuilder, op, sourceInstance, sceneAsset))
+		if (!spo->build(pipelineBuilder, op, sourceInstance, sceneAsset, rebuild))
 			return false;
 	}
 

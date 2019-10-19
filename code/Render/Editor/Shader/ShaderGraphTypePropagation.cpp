@@ -45,6 +45,8 @@ ShaderGraphTypePropagation::ShaderGraphTypePropagation(const ShaderGraph* shader
 				{
 					if (!inputPin->isOptional())
 						log::warning << L"Mandatory input pin \"" << inputPin->getName() << L"\" of node " << node->getId().format() << L" (" << type_name(node) << L") not connected." << Endl;
+
+					inputPinTypes[i] = PntVoid;
 					continue;
 				}
 

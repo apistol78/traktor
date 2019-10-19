@@ -37,7 +37,8 @@ public:
 		editor::IPipelineBuilder* pipelineBuilder,
 		const ISerializable* operatorData,
 		const db::Instance* sourceInstance,
-		scene::SceneAsset* inoutSceneAsset
+		scene::SceneAsset* inoutSceneAsset,
+		bool rebuild
 	) const override final;
 
 	static void setTracerProcessor(TracerProcessor* tracerProcessor);

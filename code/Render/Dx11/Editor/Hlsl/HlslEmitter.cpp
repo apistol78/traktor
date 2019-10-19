@@ -580,6 +580,12 @@ bool emitIterate2(HlslContext& cx, Iterate2* node)
 	StringOutputStream& f = cx.getShader().getOutputStream(HlslShader::BtBody);
 	std::wstring inputNames[4];
 
+	// Range inputs.
+	Ref< HlslVariable > from = cx.emitInput(node, L"From");
+	Ref< HlslVariable > to = cx.emitInput(node, L"To");
+	if (!from || !to)
+		return false;
+
 	// Create iterator variable.
 	Ref< HlslVariable > N = cx.emitOutput(node, L"N", HtFloat);
 	T_ASSERT(N);
@@ -693,11 +699,6 @@ bool emitIterate2(HlslContext& cx, Iterate2* node)
 	}
 
 	// Write outer for-loop statement.
-	Ref< HlslVariable > from = cx.emitInput(node, L"From");
-	Ref< HlslVariable > to = cx.emitInput(node, L"To");
-	if (!from || !to)
-		return false;
-
 	f << L"for (int " << N->getName() << L" = (int)" << from->cast(HtFloat) << L"; " << N->getName() << L" <= (int)" << to->cast(HtFloat) << L"; ++" << N->getName() << L")" << Endl;
 	f << L"{" << Endl;
 	f << IncreaseIndent;

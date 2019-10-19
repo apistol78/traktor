@@ -69,19 +69,29 @@ private:
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Edge", 0, Edge, ISerializable)
 
+Edge::Edge()
+:	m_source(nullptr)
+,	m_destination(nullptr)
+{
+}
+
 Edge::Edge(const OutputPin* source, const InputPin* destination)
 :	m_source(source)
 ,	m_destination(destination)
 {
+	T_ASSERT(source != nullptr);
+	T_ASSERT(destination != nullptr);
 }
 
 void Edge::setSource(const OutputPin* source)
 {
+	T_ASSERT(source != nullptr);
 	m_source = source;
 }
 
 void Edge::setDestination(const InputPin* destination)
 {
+	T_ASSERT(destination != nullptr);
 	m_destination = destination;
 }
 

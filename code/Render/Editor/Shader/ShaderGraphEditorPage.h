@@ -83,6 +83,8 @@ private:
 	Ref< ShaderGraph > m_shaderGraph;
 	Ref< ui::ToolBar > m_toolBar;
 	Ref< ui::ToolBarDropDown > m_toolPlatform;
+	Ref< ui::ToolBarDropDown > m_toolRenderer;
+	Ref< ui::ToolBarDropDown > m_toolTechniques;
 	Ref< ui::GraphControl > m_editorGraph;
 	Ref< ShaderDependencyPane > m_dependencyPane;
 	Ref< ShaderViewer > m_shaderViewer;

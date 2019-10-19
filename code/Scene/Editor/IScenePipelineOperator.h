@@ -53,7 +53,8 @@ public:
 		editor::IPipelineBuilder* pipelineBuilder,
 		const ISerializable* operatorData,
 		const db::Instance* sourceInstance,
-		SceneAsset* inoutSceneAsset
+		SceneAsset* inoutSceneAsset,
+		bool rebuild
 	) const = 0;
 };
 

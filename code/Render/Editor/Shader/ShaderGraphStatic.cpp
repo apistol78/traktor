@@ -661,10 +661,15 @@ Ref< ShaderGraph > ShaderGraphStatic::cleanupRedundantSwizzles() const
 
 		// Replace input edge with edge from left's source.
 		shaderGraph->removeEdge(sourceEdge);
-		shaderGraph->addEdge(new Edge(
-			shaderGraph->findSourcePin(swizzleLeftNode->getInputPin(0)),
-			swizzleRightNode->getInputPin(0)
-		));
+
+		const OutputPin* sourcePin = shaderGraph->findSourcePin(swizzleLeftNode->getInputPin(0));
+		if (sourcePin != nullptr)
+		{
+			shaderGraph->addEdge(new Edge(
+				sourcePin,
+				swizzleRightNode->getInputPin(0)
+			));
+		}
 
 		T_ASSERT(ShaderGraphValidator(shaderGraph).validateIntegrity());
 
