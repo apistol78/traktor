@@ -9,6 +9,8 @@
 #	endif
 #endif
 
+#include "Core/Io/BitReader.h"
+#include "Core/Io/MemoryStream.h"
 #include "Core/Math/Half.h"
 #include "Core/Math/MathUtils.h"
 #include "Drawing/PixelFormat.h"
@@ -545,37 +547,22 @@ void PixelFormat::convert(
 			}
 			else	// getColorBits() > 32
 			{
-				for (tmp = i = 0; i < uint32_t(getRedBits()); ++i)
-				{
-					uint32_t o = i + getRedShift();
-					if ((src[o >> 3] & (1 << (o & 7))) != 0)
-						tmp |= 1 << (i + 8 - getRedBits());
-				}
-				clr[0] = tmp / 255.0f;
+				int32_t bits[] = { m_redBits, m_greenBits, m_blueBits, m_alphaBits };
+				int32_t shft[] = { m_redShift, m_greenShift, m_blueShift, m_alphaShift };
 
-				for (tmp = i = 0; i < uint32_t(getGreenBits()); ++i)
+				for (int32_t i = 0; i < 4; ++i)
 				{
-					uint32_t o = i + getGreenShift();
-					if ((src[o >> 3] & (1 << (o & 7))) != 0)
-						tmp |= 1 << (i + 8 - getGreenBits());
+					if (bits[i] > 0)
+					{
+						MemoryStream ms(src, m_byteSize);
+						BitReader br(&ms);
+						br.skip(shft[i]);
+						int32_t v = br.readUnsigned(bits[i]);
+						clr[i] = (float)v / ((1 << bits[i]) - 1);
+					}
+					else
+						clr[i] = 0.0f;
 				}
-				clr[1] = tmp / 255.0f;
-
-				for (tmp = i = 0; i < uint32_t(getBlueBits()); ++i)
-				{
-					uint32_t o = i + getBlueShift();
-					if ((src[o >> 3] & (1 << (o & 7))) != 0)
-						tmp |= 1 << (i + 8 - getBlueBits());
-				}
-				clr[2] = tmp / 255.0f;
-
-				for (tmp = i = 0; i < uint32_t(getAlphaBits()); ++i)
-				{
-					uint32_t o = i + getAlphaShift();
-					if ((src[o >> 3] & (1 << (o & 7))) != 0)
-						tmp |= 1 << (i + 8 - getAlphaBits());
-				}
-				clr[3] = tmp / 255.0f;
 			}
 
 			// rgba => dst
@@ -1055,6 +1042,8 @@ const PixelFormat PixelFormat::ms_pfA8R8G8B8(32, 0x00ff0000, 0x0000ff00, 0x00000
 const PixelFormat PixelFormat::ms_pfA8B8G8R8(32, 0x000000ff, 0x0000ff00, 0x00ff0000, 0xff000000, false, false);
 const PixelFormat PixelFormat::ms_pfR8G8B8A8(32, 0xff000000, 0x00ff0000, 0x0000ff00, 0x000000ff, false, false);
 const PixelFormat PixelFormat::ms_pfB8G8R8A8(32, 0x0000ff00, 0x00ff0000, 0xff000000, 0x000000ff, false, false);
+const PixelFormat PixelFormat::ms_pfR16G16B16(48, 16, 0, 16, 16, 16, 32, 0, 0, false, false);
+const PixelFormat PixelFormat::ms_pfA16R16G16B16(64, 16, 16, 16, 32, 16, 48, 16, 0, false, false);
 const PixelFormat PixelFormat::ms_pfR16F(16, 16, 0, 0, 0, 0, 0, 0, 0, false, true);
 const PixelFormat PixelFormat::ms_pfR32F(32, 32, 0, 0, 0, 0, 0, 0, 0, false, true);
 const PixelFormat PixelFormat::ms_pfARGBF16(64, 16, 16, 16, 32, 16, 48, 16, 0, false, true);
