@@ -1,4 +1,3 @@
-#include <vector>
 #include "Drawing/Config.h"
 #if defined(DRAWING_INCLUDE_EXR)
 
@@ -85,10 +84,10 @@ Ref< Image > ImageFormatExr::read(IStream* stream)
 	Imf::InputFile file(is);
 
 	Imath::Box2i dw = file.header().dataWindow();
-	int sizex = dw.max.x - dw.min.x + 1;
-	int sizey = dw.max.y - dw.min.y + 1;
+	int32_t sizex = dw.max.x - dw.min.x + 1;
+	int32_t sizey = dw.max.y - dw.min.y + 1;
 
-	std::vector< half > rgb(4 * sizex * sizey);
+	AlignedVector< half > rgb(4 * sizex * sizey);
 
 	Imf::FrameBuffer frameBuffer;
 	frameBuffer.insert("R", Imf::Slice(Imf::HALF, (char *)&rgb[0], 4 * sizeof(half), sizex * 4 * sizeof(half), 1, 1, 0.0f));
@@ -107,9 +106,9 @@ Ref< Image > ImageFormatExr::read(IStream* stream)
 	const half* s = &rgb[0];
 	float* d = static_cast< float* >(image->getData());
 
-	for(int y = 0; y < sizey; ++y)
+	for (int32_t y = 0; y < sizey; ++y)
 	{
-		for(int x = 0; x < sizex; ++x)
+		for (int32_t x = 0; x < sizex; ++x)
 		{
 			*d++ = *s++;
 			*d++ = *s++;
@@ -138,14 +137,14 @@ bool ImageFormatExr::write(IStream* stream, Image* image)
 	header.channels().insert("A", Imf::Channel(Imf::HALF));
 	header.compression() = Imf::Compression();
 
-	std::vector< half > rgb(4 * clone->getWidth() * clone->getHeight());
+	AlignedVector< half > rgb(4 * clone->getWidth() * clone->getHeight());
 
 	const float* s = static_cast< const float* >(image->getData());
 	half* d = &rgb[0];
 
-	for(int y = 0; y < clone->getHeight(); ++y)
+	for (int32_t y = 0; y < clone->getHeight(); ++y)
 	{
-		for(int x = 0; x < clone->getWidth(); ++x)
+		for (int32_t x = 0; x < clone->getWidth(); ++x)
 		{
 			*d++ = *s++;
 			*d++ = *s++;

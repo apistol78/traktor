@@ -62,21 +62,21 @@ Ref< Image > ImageFormatPng::read(IStream* stream)
 
 	png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
 	if (png_ptr == 0)
-		return 0;
+		return nullptr;
 
 	png_set_error_fn(png_ptr, 0, t_user_error, t_user_warning);
 
 	if (setjmp(png_jmpbuf(png_ptr)))
 	{
 		png_destroy_read_struct(&png_ptr, NULL, NULL);
-		return 0;
+		return nullptr;
 	}
 
 	info_ptr = png_create_info_struct(png_ptr);
 	if (info_ptr == 0)
 	{
 		png_destroy_read_struct(&png_ptr, NULL, NULL);
-		return 0;
+		return nullptr;
 	}
 
 	png_set_read_fn(png_ptr, (void *)stream, t_user_read);
@@ -84,7 +84,11 @@ Ref< Image > ImageFormatPng::read(IStream* stream)
 	png_read_png(
 		png_ptr,
 		info_ptr,
-		PNG_TRANSFORM_STRIP_16 | PNG_TRANSFORM_PACKING | PNG_TRANSFORM_BGR,
+#if defined(T_LITTLE_ENDIAN)
+		PNG_TRANSFORM_PACKING | PNG_TRANSFORM_BGR,
+#else
+		PNG_TRANSFORM_PACKING | PNG_TRANSFORM_BGR | PNG_TRANSFORM_PACKSWAP,
+#endif
 		NULL
 	);
 
@@ -93,24 +97,34 @@ Ref< Image > ImageFormatPng::read(IStream* stream)
 	double gamma = 0.0;
 	png_get_gAMA(png_ptr, info_ptr, &gamma);
 
-	if (bit_depth == 8 && (color_type == PNG_COLOR_TYPE_RGB || color_type == PNG_COLOR_TYPE_RGB_ALPHA))
+	if (color_type == PNG_COLOR_TYPE_RGB || color_type == PNG_COLOR_TYPE_RGB_ALPHA)
 	{
 		PixelFormat pixelFormat;
-#if defined(T_LITTLE_ENDIAN)
-		if (color_type == PNG_COLOR_TYPE_RGB)
-			pixelFormat = PixelFormat::getR8G8B8();
-		else
-			pixelFormat = PixelFormat::getA8R8G8B8();
-#else
-		if (color_type == PNG_COLOR_TYPE_RGB)
-			pixelFormat = PixelFormat::getR8G8B8();
-		else
-			pixelFormat = PixelFormat::getR8G8B8A8();
-#endif
+
+		switch (bit_depth)
+		{
+		case 8:
+			if (color_type == PNG_COLOR_TYPE_RGB)
+				pixelFormat = PixelFormat::getR8G8B8();
+			else
+				pixelFormat = PixelFormat::getA8R8G8B8();
+			break;
+
+		case 16:
+			if (color_type == PNG_COLOR_TYPE_RGB)
+				pixelFormat = PixelFormat::getR16G16B16();
+			else
+				pixelFormat = PixelFormat::getA16R16G16B16();
+			break;
+
+		default:
+			png_destroy_read_struct(&png_ptr, &info_ptr, NULL);
+			return nullptr;
+		}
 
 		image = new Image(pixelFormat, uint32_t(width), uint32_t(height));
 
-		char* data = (char *)image->getData();
+		uint8_t* data = (uint8_t *)image->getData();
 		const void** rows = (const void **)png_get_rows(png_ptr, info_ptr);
 		for (uint32_t i = 0; i < height; ++i)
 		{

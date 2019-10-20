@@ -14,6 +14,7 @@
 #if defined(DRAWING_INCLUDE_GIF)
 #	include "Drawing/Formats/ImageFormatGif.h"
 #endif
+#include "Drawing/Formats/ImageFormatHdr.h"
 #if defined(DRAWING_INCLUDE_EXR)
 #	include "Drawing/Formats/ImageFormatExr.h"
 #endif
@@ -50,6 +51,8 @@ Ref< IImageFormat > IImageFormat::determineFormat(const std::wstring& extension)
 	else if (compareIgnoreCase< std::wstring >(extension, L"gif") == 0)
 		imageFormat = new ImageFormatGif();
 #endif
+	else if (compareIgnoreCase< std::wstring >(extension, L"hdr") == 0)
+		imageFormat = new ImageFormatHdr();
 #if defined(DRAWING_INCLUDE_EXR)
 	else if (compareIgnoreCase< std::wstring >(extension, L"exr") == 0)
 		imageFormat = new ImageFormatExr();
