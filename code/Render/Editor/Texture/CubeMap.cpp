@@ -21,20 +21,27 @@ CubeMap::CubeMap(int32_t size, const drawing::PixelFormat& pixelFormat)
 	}
 }
 
-CubeMap::CubeMap(const drawing::Image* cubeMap)
-:	m_size(0)
+CubeMap::CubeMap(const Ref< drawing::Image > sides[6])
 {
-	int32_t width = cubeMap->getWidth();
-	int32_t height = cubeMap->getHeight();
+	for (int32_t i = 0; i < 6; ++i)
+		m_side[i] = sides[i];
+
+	m_size = sides[0]->getWidth();
+}
+
+Ref< CubeMap > CubeMap::createFromCrossImage(const drawing::Image* image)
+{
+	int32_t width = image->getWidth();
+	int32_t height = image->getHeight();
 
 	int32_t layout = 0;
-	m_size = height;
+	int32_t size = height;
 
 	if (height == width / 6)
 	{
 		// [+x][-x][+y][-y][+z][-z]
 		layout = 0;
-		m_size = height;
+		size = height;
 	}
 	else if (height / 3 == width / 4)
 	{
@@ -42,7 +49,7 @@ CubeMap::CubeMap(const drawing::Image* cubeMap)
 		// [-x][+z][+x][-z]
 		// [  ][-y][  ][  ]
 		layout = 1;
-		m_size = height / 3;
+		size = height / 3;
 	}
 	else if (height / 4 == width / 3)
 	{
@@ -51,15 +58,16 @@ CubeMap::CubeMap(const drawing::Image* cubeMap)
 		// [  ][-y][  ]
 		// [  ][-z][  ]
 		layout = 2;
-		m_size = height / 4;
+		size = height / 4;
 	}
 
-	for (int side = 0; side < 6; ++side)
+	Ref< drawing::Image > images[6];
+	for (int32_t side = 0; side < 6; ++side)
 	{
-		m_side[side] = new drawing::Image(cubeMap->getPixelFormat(), m_size, m_size);
+		images[side] = new drawing::Image(image->getPixelFormat(), size, size);
 
 		if (layout == 0)
-			m_side[side]->copy(cubeMap, side * m_size, 0, m_size, m_size);
+			images[side]->copy(image, side * size, 0, size, size);
 		else if (layout == 1)
 		{
 			const int32_t c_sideOffsets[][2] =
@@ -71,12 +79,12 @@ CubeMap::CubeMap(const drawing::Image* cubeMap)
 				{ 1, 1 },
 				{ 3, 1 }
 			};
-			m_side[side]->copy(
-				cubeMap,
-				c_sideOffsets[side][0] * m_size,
-				c_sideOffsets[side][1] * m_size,
-				m_size,
-				m_size
+			images[side]->copy(
+				image,
+				c_sideOffsets[side][0] * size,
+				c_sideOffsets[side][1] * size,
+				size,
+				size
 			);
 		}
 		else if (layout == 2)
@@ -90,29 +98,125 @@ CubeMap::CubeMap(const drawing::Image* cubeMap)
 				{ 1, 1 },
 				{ 1, 3 }
 			};
-			m_side[side]->copy(
-				cubeMap,
-				c_sideOffsets[side][0] * m_size,
-				c_sideOffsets[side][1] * m_size,
-				m_size,
-				m_size
+			images[side]->copy(
+				image,
+				c_sideOffsets[side][0] * size,
+				c_sideOffsets[side][1] * size,
+				size,
+				size
 			);
 			if (side == 5)
 			{
 				// Flip -Z as it's defined up-side down in this layout.
 				drawing::MirrorFilter filter(true, true);
-				m_side[side]->apply(&filter);
+				images[side]->apply(&filter);
 			}
 		}
 	}
+
+	return new CubeMap(images);
 }
 
-CubeMap::CubeMap(const Ref< drawing::Image > sides[6])
+Ref< CubeMap > CubeMap::createFromEquirectangularImage(const drawing::Image* image)
 {
-	for (int32_t i = 0; i < 6; ++i)
-		m_side[i] = sides[i];
+	int32_t width = image->getWidth();
+	int32_t height = image->getHeight();
+	int32_t size = height;
 
-	m_size = sides[0]->getWidth();
+	Ref< CubeMap > cubeMap = new CubeMap(size, image->getPixelFormat());	
+
+    const float an = std::sin(PI / 4.0f);
+    const float ak = std::cos(PI / 4.0f);
+
+	const float c_faceTransform[6][2] = 
+	{ 
+		{ 0.0f, 0.0f },
+		{ PI, 0.0f },
+		{ 0.0f, -PI / 2.0f },
+		{ 0.0f, PI / 2.0f },
+		{ -PI / 2.0f, 0.0f },
+		{ PI / 2.0f, 0.0f }
+	};
+
+	for (int32_t side = 0; side < 6; ++side)
+	{
+    	const float ftu = c_faceTransform[side][0];
+    	const float ftv = c_faceTransform[side][1];
+
+		for (int32_t y = 0; y < size; ++y)
+		{
+			for (int32_t x = 0; x < size; ++x)
+			{
+				float nx = 2.0f * ((float)x / (float)size - 0.5f);
+				float ny = 2.0f * ((float)y / (float)size - 0.5f);
+
+				nx *= an; 
+				ny *= an; 
+
+				float u, v;
+				if (ftv == 0.0f)
+				{
+					u = std::atan2(nx, ak);
+					v = std::atan2(ny * std::cos(u), ak);
+					u += ftu; 
+				}
+				else if(ftv > 0.0f)
+				{ 
+					float d = std::sqrt(nx * nx + ny * ny);
+					v = PI / 2 - std::atan2(d, ak);
+					u = std::atan2(ny, nx);
+				}
+				else
+				{
+					float d = std::sqrt(nx * nx + ny * ny);
+					v = -PI / 2 + std::atan2(d, ak);
+					u = std::atan2(-ny, nx);
+				}
+
+				u = u / (PI); 
+				v = v / (PI / 2.0f);
+
+				while (v < -1.0f)
+				{
+					v += 2.0f;
+					u += 1.0f;
+				} 
+				while (v > 1.0f)
+				{
+					v -= 2.0f;
+					u += 1.0f;
+				} 
+
+				while (u < -1.0f)
+					u += 2.0f;
+				while (u > 1.0f)
+					u -= 2;
+
+				u = u / 2.0f + 0.5f;
+				v = v / 2.0f + 0.5f;
+
+				u = u * (width - 1);
+				v = v * (height - 1);
+
+				Color4f cl;
+				image->getPixel((int32_t)u, (int32_t)v, cl);
+				cubeMap->getSide(side)->setPixel(x, y, cl);
+			}
+		}
+	}
+
+	return cubeMap;
+}
+
+Ref< CubeMap > CubeMap::createFromImage(const drawing::Image* image)
+{
+	int32_t width = image->getWidth();
+	int32_t height = image->getHeight();
+	
+	if (width / 4 == height || width / 2 == height)
+		return CubeMap::createFromEquirectangularImage(image);
+	else
+		return CubeMap::createFromCrossImage(image);
 }
 
 Ref< drawing::Image > CubeMap::createCrossImage() const

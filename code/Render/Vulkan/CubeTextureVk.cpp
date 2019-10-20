@@ -189,6 +189,8 @@ bool CubeTextureVk::lock(int32_t side, int32_t level, Lock& lock)
 
 void CubeTextureVk::unlock(int32_t side, int32_t level)
 {
+	vmaUnmapMemory(m_allocator, m_stagingBufferAllocation);
+
 	// Change layout of texture to be able to copy staging buffer into texture.
 	changeImageLayout(
 		m_logicalDevice,
