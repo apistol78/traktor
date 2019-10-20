@@ -36,9 +36,16 @@ class T_DLLCLASS CubeMap : public Object
 public:
 	explicit CubeMap(int32_t size, const drawing::PixelFormat& pixelFormat);
 
-	explicit CubeMap(const drawing::Image* cubeMap);
-
 	explicit CubeMap(const Ref< drawing::Image > sides[6]);
+
+	/*! Create cubemap from "cross" image. */
+	static Ref< CubeMap > createFromCrossImage(const drawing::Image* image);
+
+	/*! Create cubemap from "equirectangular" image. */
+	static Ref< CubeMap > createFromEquirectangularImage(const drawing::Image* image);
+
+	/*! Create cubemap from image, trying to be clever about rearrangement. */
+	static Ref< CubeMap > createFromImage(const drawing::Image* image);
 
 	/*! Create flatten "cross" image. */
 	Ref< drawing::Image > createCrossImage() const;

@@ -37,6 +37,7 @@
 #include "Editor/IPipelineSettings.h"
 #include "Render/Types.h"
 #include "Render/Editor/Texture/AstcCompressor.h"
+#include "Render/Editor/Texture/CubeMap.h"
 #include "Render/Editor/Texture/DxtnCompressor.h"
 #include "Render/Editor/Texture/EtcCompressor.h"
 #include "Render/Editor/Texture/PvrtcCompressor.h"
@@ -833,37 +834,14 @@ bool TextureOutputPipeline::buildOutput(
 	}
 	else if (textureOutput->m_textureType == TtCube)
 	{
-		uint32_t layout = 0;
-		uint32_t sideSize = height;
-
-		if (height == width / 6)
+		Ref< CubeMap > cubeMap = CubeMap::createFromImage(image);
+		if (!cubeMap)
 		{
-			// [+x][-x][+y][-y][+z][-z]
-			layout = 0;
-			sideSize = height;
-		}
-		else if (height / 3 == width / 4)
-		{
-			// [  ][+y][  ][  ]
-			// [-x][+z][+x][-z]
-			// [  ][-y][  ][  ]
-			layout = 1;
-			sideSize = height / 3;
-		}
-		else if (height / 4 == width / 3)
-		{
-			// [  ][+y][  ]
-			// [-x][+z][+x]
-			// [  ][-y][  ]
-			// [  ][-z][  ]
-			layout = 2;
-			sideSize = height / 4;
-		}
-		else
-		{
-			log::error << L"Cube map must have either a 6:1, 4:3 or 3:4 width/height ratio" << Endl;
+			log::error << L"Unable to convert image into cubemap; unknown layout." << Endl;
 			return false;
 		}
+
+		int32_t sideSize = cubeMap->getSize();
 
 		mipCount = textureOutput->m_generateMips ? log2(sideSize) + 1 : 1;
 		T_ASSERT(mipCount >= 1);
@@ -894,63 +872,16 @@ bool TextureOutputPipeline::buildOutput(
 
 		Writer writerData(streamData);
 
-		for (int side = 0; side < 6; ++side)
+		for (int32_t side = 0; side < 6; ++side)
 		{
-			Ref< drawing::Image > sideImage = new drawing::Image(image->getPixelFormat(), sideSize, sideSize);
-
-			if (layout == 0)
-				sideImage->copy(image, side * sideSize, 0, sideSize, sideSize);
-			else if (layout == 1)
-			{
-				const int32_t c_sideOffsets[][2] =
-				{
-					{ 2, 1 },
-					{ 0, 1 },
-					{ 1, 0 },
-					{ 1, 2 },
-					{ 1, 1 },
-					{ 3, 1 }
-				};
-				sideImage->copy(
-					image,
-					c_sideOffsets[side][0] * sideSize,
-					c_sideOffsets[side][1] * sideSize,
-					sideSize,
-					sideSize
-				);
-			}
-			else if (layout == 2)
-			{
-				const int32_t c_sideOffsets[][2] =
-				{
-					{ 2, 1 },
-					{ 0, 1 },
-					{ 1, 0 },
-					{ 1, 2 },
-					{ 1, 1 },
-					{ 1, 3 }
-				};
-				sideImage->copy(
-					image,
-					c_sideOffsets[side][0] * sideSize,
-					c_sideOffsets[side][1] * sideSize,
-					sideSize,
-					sideSize
-				);
-				if (side == 5)
-				{
-					// Flip -Z as it's defined up-side down in this layout.
-					drawing::MirrorFilter filter(true, true);
-					sideImage->apply(&filter);
-				}
-			}
+			Ref< drawing::Image > sideImage = cubeMap->getSide(side);
 
 			RefArray< drawing::Image > mipImages(mipCount);
 
 			// Generate each mip level.
-			for (int i = 0; i < mipCount; ++i)
+			for (int32_t i = 0; i < mipCount; ++i)
 			{
-				int mipSize = sideSize >> i;
+				int32_t mipSize = sideSize >> i;
 
 				drawing::ScaleFilter mipScaleFilter(
 					mipSize,
@@ -986,7 +917,7 @@ bool TextureOutputPipeline::buildOutput(
 
 	if (!outputInstance->commit())
 	{
-		log::error << L"Unable to commit output instance" << Endl;
+		log::error << L"Unable to commit output instance." << Endl;
 		return false;
 	}
 
