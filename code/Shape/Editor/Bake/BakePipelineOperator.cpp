@@ -428,7 +428,7 @@ bool BakePipelineOperator::build(
 	// In case no tracer processor is registered we create one for this build only,
 	// by doing so we can ensure trace is finished before returning.
 	if (!tracerProcessor)
-		tracerProcessor = new TracerProcessor(m_tracerType, pipelineBuilder->getOutputDatabase());
+		tracerProcessor = new TracerProcessor(m_tracerType, pipelineBuilder->getOutputDatabase(), false);
 
 	const auto configuration = mandatory_non_null_type_cast< const BakeConfiguration* >(operatorData);
 	uint32_t configurationHash = DeepHash(configuration).get();

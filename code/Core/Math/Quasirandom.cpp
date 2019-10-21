@@ -1,0 +1,62 @@
+#include "Core/Math/Quasirandom.h"
+#include "Core/Math/Quaternion.h"
+#include "Core/Math/Random.h"
+
+namespace traktor
+{
+
+Vector2 Quasirandom::hammersley(uint32_t i, uint32_t numSamples)
+{
+	uint32_t b = i;
+	b = (b << 16u) | (b >> 16u);
+	b = ((b & 0x55555555u) << 1u) | ((b & 0xAAAAAAAAu) >> 1u);
+	b = ((b & 0x33333333u) << 2u) | ((b & 0xCCCCCCCCu) >> 2u);
+	b = ((b & 0x0F0F0F0Fu) << 4u) | ((b & 0xF0F0F0F0u) >> 4u);
+	b = ((b & 0x00FF00FFu) << 8u) | ((b & 0xFF00FF00u) >> 8u);
+    float radicalInverseVDC = (float)(b * 2.3283064365386963e-10);
+    return Vector2((float)i / numSamples, radicalInverseVDC);
+}
+
+Vector2 Quasirandom::hammersley(uint32_t i, uint32_t numSamples, Random& rnd)
+{
+	float rx = (float)(rnd.nextDouble() * 0.1 - 0.05);
+	float ry = (float)(rnd.nextDouble() * 0.1 - 0.05);
+    return hammersley(i, numSamples) + Vector2(rx, ry);
+}
+
+Vector4 Quasirandom::uniformHemiSphere(const Vector2& uv, const Vector4& direction)
+{
+	double z = 2.0 * uv.x - 1.0;
+	double t = 2.0 * PI * uv.y;
+	double w = std::sqrt(1.0 - z * z);
+	double x = w * std::cos(t);
+	double y = w * std::sin(t);
+	Vector4 v(
+		float(x),
+		float(y),
+		float(z),
+		0.0f
+	);
+	if (dot3(v, direction.xyz0()) < 0.0f)
+		v = -v;
+	return v;
+}
+
+Vector4 Quasirandom::uniformCone(const Vector2& uv, const Vector4& direction, float radius)
+{
+	double phi = (uv.x * 2.0f - 1.0f) * PI;
+	double theta = uv.y * radius;
+
+	Scalar sinPhi(std::sin(phi));
+	Scalar cosPhi(std::cos(phi));
+	Scalar sinTheta(std::sin(theta));
+	Scalar cosTheta(std::cos(theta));
+
+	Vector4 u, v;
+	orthogonalFrame(direction, u, v);
+
+	Vector4 r = sinTheta * (cosPhi * u + sinPhi * v) + cosTheta * direction;
+	return r.xyz0().normalized();
+}
+
+}

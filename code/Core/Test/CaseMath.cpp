@@ -1,14 +1,18 @@
 #include <cmath>
-#include "Core/Test/CaseMath.h"
-#include "Core/Test/MathCompare.h"
+#include <functional>
+#include "Core/Log/Log.h"
 #include "Core/Math/Const.h"
 #include "Core/Math/Frustum.h"
 #include "Core/Math/Line2.h"
 #include "Core/Math/Matrix44.h"
 #include "Core/Math/Plane.h"
+#include "Core/Math/Quasirandom.h"
 #include "Core/Math/Quaternion.h"
+#include "Core/Math/RandomGeometry.h"
 #include "Core/Math/Vector2.h"
 #include "Core/Math/Vector4.h"
+#include "Core/Test/CaseMath.h"
+#include "Core/Test/MathCompare.h"
 
 namespace traktor
 {
@@ -205,6 +209,74 @@ void CaseMath::run()
 				CASE_ASSERT(dot3(viewFrustum.planes[4].normal(), tileFrustum.planes[4].normal()) > 0.0f);
 				CASE_ASSERT(dot3(viewFrustum.planes[5].normal(), tileFrustum.planes[5].normal()) > 0.0f);
 			}
+		}
+	}
+
+	// Check quasirandom.
+	for (int32_t i = 0; i < 1000; ++i)
+	{
+		Vector2 uv = Quasirandom::hammersley(i, 1000);
+		CASE_ASSERT(uv.x >= 0.0f);
+		CASE_ASSERT(uv.x <= 1.0f);
+		CASE_ASSERT(uv.y >= 0.0f);
+		CASE_ASSERT(uv.y <= 1.0f);
+	}
+
+	RandomGeometry rnd;
+	for (int32_t i = 0; i < 1000; ++i)
+	{
+		Vector4 direction = rnd.nextUnit();
+		for (int32_t j = 0; j < 1000; ++j)
+		{
+			Vector2 uv = Quasirandom::hammersley(j, 1000);
+			Vector4 rdir = Quasirandom::uniformHemiSphere(uv, direction);
+
+			float ln = rdir.length();
+			CASE_ASSERT(ln >= 0.0f);
+			CASE_ASSERT(ln <= 1.0f + FUZZY_EPSILON);
+
+			float phi = dot3(rdir, direction);
+			CASE_ASSERT_COMPARE(phi, 0.0f, std::greater_equal< float >());
+			CASE_ASSERT_COMPARE(phi, 1.0f, std::less_equal< float >());
+		}
+		for (int32_t j = 0; j < 1000; ++j)
+		{
+			Vector2 uv = Quasirandom::hammersley(j, 1000);
+			Vector4 rdir = Quasirandom::uniformCone(uv, direction, deg2rad(15.0f));
+			
+			float ln = rdir.length();
+			CASE_ASSERT(ln >= 0.0f);
+			CASE_ASSERT(ln <= 1.0f + FUZZY_EPSILON);
+			
+			float phi = dot3(rdir, direction);
+			CASE_ASSERT_COMPARE(phi, 0.0f, std::greater_equal< float >());
+			CASE_ASSERT_COMPARE(phi, 1.0f + FUZZY_EPSILON, std::less_equal< float >());
+		}
+		for (int32_t j = 0; j < 1000; ++j)
+		{
+			Vector2 uv = Quasirandom::hammersley(j, 1000);
+			Vector4 rdir = Quasirandom::uniformCone(uv, direction, deg2rad(25.0f));
+			
+			float ln = rdir.length();
+			CASE_ASSERT(ln >= 0.0f);
+			CASE_ASSERT(ln <= 1.0f + FUZZY_EPSILON);
+			
+			float phi = dot3(rdir, direction);
+			CASE_ASSERT_COMPARE(phi, 0.0f, std::greater_equal< float >());
+			CASE_ASSERT_COMPARE(phi, 1.0f + FUZZY_EPSILON, std::less_equal< float >());
+		}
+		for (int32_t j = 0; j < 1000; ++j)
+		{
+			Vector2 uv = Quasirandom::hammersley(j, 1000);
+			Vector4 rdir = Quasirandom::uniformCone(uv, direction, deg2rad(45.0f));
+			
+			float ln = rdir.length();
+			CASE_ASSERT(ln >= 0.0f);
+			CASE_ASSERT(ln <= 1.0f + FUZZY_EPSILON);
+			
+			float phi = dot3(rdir, direction);
+			CASE_ASSERT_COMPARE(phi, 0.0f, std::greater_equal< float >());
+			CASE_ASSERT_COMPARE(phi, 1.0f + FUZZY_EPSILON, std::less_equal< float >());
 		}
 	}
 }
