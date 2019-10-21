@@ -40,9 +40,9 @@ namespace traktor
         namespace
         {
 
-#if !defined(__RPI__)
 Ref< drawing::Image > denoise(const GBuffer& gbuffer, drawing::Image* lightmap)
 {
+#if !defined(__RPI__)
 	int32_t width = lightmap->getWidth();
 	int32_t height = lightmap->getHeight();
 
@@ -97,8 +97,10 @@ Ref< drawing::Image > denoise(const GBuffer& gbuffer, drawing::Image* lightmap)
 	oidnReleaseFilter(filter);
 	oidnReleaseDevice(device);	
 	return output;
-}
+#else
+	return image;
 #endif
+}
 
 void encodeRGBM(drawing::Image* image)
 {
@@ -155,6 +157,66 @@ void encodeRGBM(drawing::Image* image)
 	}
 }
 
+bool writeTexture(db::Database* outputDatabase, const Guid& lightmapId, const drawing::Image* lightmap)
+{
+	// Convert image to match texture format.
+	Ref< drawing::Image > lightmapFormat = lightmap->clone();
+	if (false)
+		lightmapFormat->convert(drawing::PixelFormat::getR8G8B8A8().endianSwapped());
+	else
+		lightmapFormat->convert(drawing::PixelFormat::getABGRF16().endianSwapped());
+
+	Ref< db::Instance > outputInstance = outputDatabase->createInstance(
+		L"Generated/" + lightmapId.format(),
+		db::CifReplaceExisting,
+		&lightmapId
+	);
+	if (!outputInstance)
+		return false;
+
+	Ref< render::TextureResource > outputResource = new render::TextureResource();
+	outputInstance->setObject(outputResource);
+
+	// Create output data stream.
+	Ref< IStream > stream = outputInstance->writeData(L"Data");
+	if (!stream)
+	{
+		outputInstance->revert();
+		return false;
+	}
+
+	Writer writer(stream);
+
+	// Write texture resource header.
+	writer << uint32_t(12);
+	writer << int32_t(lightmapFormat->getWidth());
+	writer << int32_t(lightmapFormat->getHeight());
+	writer << int32_t(1);
+	writer << int32_t(1);
+	writer << /*int32_t(render::TfR8G8B8A8);*/ int32_t(render::TfR16G16B16A16F);
+	writer << bool(false);
+	writer << uint8_t(render::Tt2D);
+	writer << bool(false);
+	writer << bool(false);
+
+	// Write texture data.
+	uint32_t dataSize = render::getTextureMipPitch(
+		/*render::TfR8G8B8A8,*/ render::TfR16G16B16A16F,
+		lightmapFormat->getWidth(),
+		lightmapFormat->getHeight()
+	);
+	const uint8_t* data = static_cast< const uint8_t* >(lightmapFormat->getData());
+	if (writer.write(data, dataSize, 1) != dataSize)
+		return false;
+
+	stream->close();
+
+	if (!outputInstance->commit())
+		return false;
+	
+	return true;
+}
+
 void line(const Vector2& from, const Vector2& to, const std::function< void(const Vector2, float) >& fn)
 {
 	Vector2 ad = (to - from);
@@ -173,9 +235,10 @@ void line(const Vector2& from, const Vector2& to, const std::function< void(cons
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.shape.TracerProcessor", TracerProcessor, Object)
 
-TracerProcessor::TracerProcessor(const TypeInfo* rayTracerType, db::Database* outputDatabase)
+TracerProcessor::TracerProcessor(const TypeInfo* rayTracerType, db::Database* outputDatabase, bool preview)
 :   m_outputDatabase(outputDatabase)
 ,   m_rayTracerType(rayTracerType)
+,	m_preview(preview)
 ,   m_thread(nullptr)
 {
 	T_FATAL_ASSERT(m_outputDatabase != nullptr);
@@ -313,24 +376,28 @@ bool TracerProcessor::process(const TracerTask* task) const
         // Preprocess GBuffer.
         rayTracer->preprocess(&gbuffer);
 
-		gbuffer.saveAsImages(L"data/Temp/Bake/" + tracerOutput->getName() + L"_GBuffer");
-
         Ref< drawing::Image > lightmapDirect;
         Ref< drawing::Image > lightmapIndirect;
 
         if (configuration->traceDirect())
+		{
             lightmapDirect = rayTracer->traceDirect(&gbuffer);
+
+			// Create preview output instance.
+			if (m_preview)
+			{
+				writeTexture(
+					m_outputDatabase,
+					tracerOutput->getLightmapId(),
+					lightmapDirect
+				);
+			}
+		}
 
         if (configuration->traceIndirect())
             lightmapIndirect = rayTracer->traceIndirect(&gbuffer);
 
-		// if (lightmapDirect)
-		// 	lightmapDirect->save(L"data/Temp/Bake/" + tracerOutput->getName() + L"_Direct.exr");
-		// if (lightmapIndirect)
-		// 	lightmapIndirect->save(L"data/Temp/Bake/" + tracerOutput->getName() + L"_Indirect.exr");
-
         // Blur indirect lightmap to reduce noise from path tracing.
-#if !defined(__RPI__)
         if (configuration->getEnableDenoise())
         {
             if (lightmapDirect)
@@ -338,7 +405,6 @@ bool TracerProcessor::process(const TracerTask* task) const
             if (lightmapIndirect)
                 lightmapIndirect = denoise(gbuffer, lightmapIndirect);
         }
-#endif
 
         // Merge direct and indirect lightmaps.
         Ref< drawing::Image > lightmap;
@@ -361,6 +427,16 @@ bool TracerProcessor::process(const TracerTask* task) const
 
         if (!lightmap)
             return false;
+
+		// Create preview output instance.
+		if (m_preview)
+		{
+			writeTexture(
+				m_outputDatabase,
+				tracerOutput->getLightmapId(),
+				lightmap
+			);
+		}
 
 		// Filter seams.
 		if (configuration->getEnableSeamFilter())
@@ -470,71 +546,18 @@ bool TracerProcessor::process(const TracerTask* task) const
         // Discard alpha.
         lightmap->clearAlpha(1.0f);
 
-		// lightmap->save(L"data/Temp/Bake/" + tracerOutput->getName() + L".exr");
-
-		// Convert into format which our lightmap texture will be.
+		// Encode texture into RGBM.
 		if (false)
-		{
 			encodeRGBM(lightmap);
-			lightmap->convert(drawing::PixelFormat::getR8G8B8A8().endianSwapped());
-		}
-		else
-			lightmap->convert(drawing::PixelFormat::getABGRF16().endianSwapped());
 
-		// Create output instance.
-		Guid lightmapId = tracerOutput->getLightmapId();
-		Ref< db::Instance > outputInstance = m_outputDatabase->createInstance(
-			L"Generated/" + tracerOutput->getLightmapId().format(),
-			db::CifReplaceExisting,
-			&lightmapId
-		);
-		if (!outputInstance)
+		// Create final output instance.
+		if (!writeTexture(
+			m_outputDatabase,
+			tracerOutput->getLightmapId(),
+			lightmap
+		))
 		{
-			log::error << L"Trace failed; unable to create output instance." << Endl;
-			return false;
-		}
-
-		Ref< render::TextureResource > outputResource = new render::TextureResource();
-		outputInstance->setObject(outputResource);
-
-		// Create output data stream.
-		Ref< IStream > stream = outputInstance->writeData(L"Data");
-		if (!stream)
-		{
-			log::error << L"Trace failed; unable to create texture data stream." << Endl;
-			outputInstance->revert();
-			return false;
-		}
-
-		Writer writer(stream);
-
-		// Write texture resource header.
-		writer << uint32_t(12);
-		writer << int32_t(lightmap->getWidth());
-		writer << int32_t(lightmap->getHeight());
-		writer << int32_t(1);
-		writer << int32_t(1);
-		writer << /*int32_t(render::TfR8G8B8A8);*/ int32_t(render::TfR16G16B16A16F);
-		writer << bool(false);
-		writer << uint8_t(render::Tt2D);
-		writer << bool(false);
-		writer << bool(false);
-
-		// Write texture data.
-		uint32_t dataSize = render::getTextureMipPitch(
-			/*render::TfR8G8B8A8,*/ render::TfR16G16B16A16F,
-			lightmap->getWidth(),
-			lightmap->getHeight()
-		);
-		const uint8_t* data = static_cast< const uint8_t* >(lightmap->getData());
-		if (writer.write(data, dataSize, 1) != dataSize)
-			return false;
-
-		stream->close();
-
-		if (!outputInstance->commit())
-		{
-			log::error << L"Trace failed; unable to commit output instance." << Endl;
+			log::error << L"Trace failed; unable to create output lightmap texture." << Endl;
 			return false;
 		}
     }

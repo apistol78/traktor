@@ -46,12 +46,79 @@
 #include "Render/Editor/Texture/UnCompressor.h"
 #include "Render/Resource/TextureResource.h"
 
+// Enable scaling texture mips as job tasks;
+// but since each task must scale from highest mip the
+// net result might be that it takes longer time to complete.
+// #define T_USE_MIP_SCALE_TASKS
+
 namespace traktor
 {
 	namespace render
 	{
 		namespace
 		{
+
+float estimateAlphaCoverage(const drawing::Image* image, float alphaCoverageRef)
+{
+	float alphaCoverage = 0.0f;
+	for (int32_t y = 0; y < image->getHeight(); ++y)
+	{
+		for (int32_t x = 0; x < image->getWidth(); ++x)
+		{
+			Color4f color;
+			image->getPixelUnsafe(x, y, color);
+			alphaCoverage += (color.getAlpha() > alphaCoverageRef) ? 1.0f : 0.0f;
+		}
+	}
+	alphaCoverage /= float(image->getWidth() * image->getHeight());
+	return alphaCoverage;
+}
+
+void adjustAlphaCoverage(drawing::Image* image, float alphaCoverageRef, float alphaCoverageDesired)
+{
+	float alphaRefMin = 0.0f;
+	float alphaRefMax = 1.0f;
+	float alphaRefMid = 0.5f;
+
+	for (int32_t i = 0; i < 10; ++i)
+	{
+		float alphaCoverageMip = 0.0f;
+
+		for (int32_t y = 0; y < image->getHeight(); ++y)
+		{
+			for (int32_t x = 0; x < image->getWidth(); ++x)
+			{
+				Color4f color;
+				image->getPixelUnsafe(x, y, color);
+				alphaCoverageMip += (color.getAlpha() > alphaRefMid) ? 1.0f : 0.0f;
+			}
+		}
+
+		alphaCoverageMip /= float(image->getWidth() * image->getHeight());
+
+		if (alphaCoverageMip > alphaCoverageDesired + FUZZY_EPSILON)
+			alphaRefMin = alphaRefMid;
+		else if (alphaCoverageMip < alphaCoverageDesired - FUZZY_EPSILON)
+			alphaRefMax = alphaRefMid;
+		else
+			break;
+
+		alphaRefMid = (alphaRefMin + alphaRefMax) / 2.0f;
+	}
+
+	float alphaScale = alphaCoverageRef / alphaRefMid;
+
+	for (int32_t y = 0; y < image->getHeight(); ++y)
+	{
+		for (int32_t x = 0; x < image->getWidth(); ++x)
+		{
+			Color4f color;
+			image->getPixelUnsafe(x, y, color);
+			color.setAlpha(clamp(color.getAlpha() * Scalar(alphaScale), Scalar(0.0f), Scalar(1.0f)));
+			image->setPixelUnsafe(x, y, color);
+		}
+	}
+}
 
 struct ScaleTextureTask : public Object
 {
@@ -63,52 +130,8 @@ struct ScaleTextureTask : public Object
 	void execute()
 	{
 		image->apply(filter);
-
 		if (alphaCoverageDesired > 0.0f)
-		{
-			float alphaRefMin = 0.0f;
-			float alphaRefMax = 1.0f;
-			float alphaRefMid = 0.5f;
-
-			for (int32_t i = 0; i < 10; ++i)
-			{
-				float alphaCoverageMip = 0.0f;
-
-				for (int32_t y = 0; y < image->getHeight(); ++y)
-				{
-					for (int32_t x = 0; x < image->getWidth(); ++x)
-					{
-						Color4f color;
-						image->getPixelUnsafe(x, y, color);
-						alphaCoverageMip += (color.getAlpha() > alphaRefMid) ? 1.0f : 0.0f;
-					}
-				}
-
-				alphaCoverageMip /= float(image->getWidth() * image->getHeight());
-
-				if (alphaCoverageMip > alphaCoverageDesired + FUZZY_EPSILON)
-					alphaRefMin = alphaRefMid;
-				else if (alphaCoverageMip < alphaCoverageDesired - FUZZY_EPSILON)
-					alphaRefMax = alphaRefMid;
-				else
-					break;
-
-				alphaRefMid = (alphaRefMin + alphaRefMax) / 2.0f;
-			}
-
-			float alphaScale = alphaCoverageRef / alphaRefMid;
-
-			for (int32_t y = 0; y < image->getHeight(); ++y)
-			{
-				for (int32_t x = 0; x < image->getWidth(); ++x)
-				{
-					Color4f color;
-					image->getPixelUnsafe(x, y, color);
-					color.setAlpha(clamp(color.getAlpha() * Scalar(alphaScale), Scalar(0.0f), Scalar(1.0f)));
-					image->setPixelUnsafe(x, y, color);
-				}
-			}
-		}
+			adjustAlphaCoverage(image, alphaCoverageRef, alphaCoverageDesired);
 	}
 };
 
@@ -606,34 +629,26 @@ bool TextureOutputPipeline::buildOutput(
 
 		Writer writerData(streamData);
 
+		// Estimate alpha coverage if required.
+		float alphaCoverage = -1.0f;
+		if (textureOutput->m_preserveAlphaCoverage)
+		{
+			alphaCoverage = estimateAlphaCoverage(image, textureOutput->m_alphaCoverageReference);
+			log::info << L"Estimated alpha coverage " << toString(alphaCoverage * 100.0f, 2) << L"%" << Endl;
+		}
+
+		if (mipCount > 0)
+			log::info << L"Generating " << mipCount << L" mip(s)..." << Endl;
+
 		RefArray< drawing::Image > mipImages(mipCount);
 
 		// Generate each mip level.
+#if defined(T_USE_MIP_SCALE_TASKS)
 		{
 			RefArray< ScaleTextureTask > tasks(mipCount);
 			RefArray< Job > jobs(mipCount);
 
-			// Estimate alpha coverage if desired.
-			float alphaCoverage = -1.0f;
-			if (textureOutput->m_preserveAlphaCoverage)
-			{
-				alphaCoverage = 0.0f;
-				for (int32_t y = 0; y < image->getHeight(); ++y)
-				{
-					for (int32_t x = 0; x < image->getWidth(); ++x)
-					{
-						Color4f color;
-						image->getPixelUnsafe(x, y, color);
-						alphaCoverage += (color.getAlpha() > textureOutput->m_alphaCoverageReference) ? 1.0f : 0.0f;
-					}
-				}
-				alphaCoverage /= float(image->getWidth() * image->getHeight());
-				log::info << L"Estimated alpha coverage " << toString(alphaCoverage * 100.0f, 2) << L"%" << Endl;
-			}
-
 			// Create task for each mip level.
-			if (mipCount > 0)
-				log::info << L"Generating " << mipCount << L" mip(s)..." << Endl;
 			for (int32_t i = 0; i < mipCount; ++i)
 			{
 				if (ThreadManager::getInstance().getCurrentThread()->stopped())
@@ -718,7 +733,7 @@ bool TextureOutputPipeline::buildOutput(
 						mipImages[i] = tasks[i]->image;
 						T_ASSERT(mipImages[i]);
 
-						tasks[i] = 0;
+						tasks[i] = nullptr;
 					}
 				}
 			}
@@ -729,7 +744,52 @@ bool TextureOutputPipeline::buildOutput(
 				return false;
 			}
 		}
+#else
+		mipImages[0] = image;
+		for (int32_t i = 1; i < mipCount; ++i)
+		{
+			int32_t mipWidth = std::max(width >> i, 1);
+			int32_t mipHeight = std::max(height >> i, 1);
 
+			// Clone previous mip image.
+			Ref< drawing::Image > mipImage = mipImages[i - 1]->clone();
+
+			// Scale image to desired mip size.
+			drawing::ScaleFilter scaleFilter(
+				mipWidth,
+				mipHeight,
+				drawing::ScaleFilter::MnAverage,
+				drawing::ScaleFilter::MgLinear,
+				textureOutput->m_keepZeroAlpha
+			);
+			mipImage->apply(&scaleFilter);
+
+			// Adjust alpha from coverage.
+			if (alphaCoverage > 0.0f)
+				adjustAlphaCoverage(image, textureOutput->m_alphaCoverageReference, alphaCoverage);
+
+			// Apply sharpen filter.
+			if (!isNormalMap && textureOutput->m_sharpenRadius > 0)
+			{
+				drawing::SharpenFilter sharpenFilter(
+					textureOutput->m_sharpenRadius,
+					textureOutput->m_sharpenStrength * (float(i) / (mipCount - 1))
+				);
+				mipImage->apply(&sharpenFilter);
+			}
+
+			// Ensure each pixel is renormalized after scaling.
+			if (isNormalMap)
+			{
+				drawing::NormalizeFilter normalizeFilter;
+				mipImage->apply(&normalizeFilter);
+			}
+
+			mipImages[i] = mipImage;
+		}
+#endif
+
+		// Create compressor and use it to write mips to instance.
 		Ref< ICompressor > compressor;
 		if (textureFormat >= TfDXT1 && textureFormat <= TfDXT5)
 			compressor = new DxtnCompressor();
@@ -878,8 +938,9 @@ bool TextureOutputPipeline::buildOutput(
 
 			RefArray< drawing::Image > mipImages(mipCount);
 
-			// Generate each mip level.
-			for (int32_t i = 0; i < mipCount; ++i)
+			// Generate mip levels.
+			mipImages[0] = sideImage;
+			for (int32_t i = 1; i < mipCount; ++i)
 			{
 				int32_t mipSize = sideSize >> i;
 

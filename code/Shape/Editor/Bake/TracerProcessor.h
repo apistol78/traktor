@@ -43,7 +43,7 @@ public:
 		std::wstring description;
 	};
 
-    TracerProcessor(const TypeInfo* rayTracerType, db::Database* outputDatabase);
+    TracerProcessor(const TypeInfo* rayTracerType, db::Database* outputDatabase, bool preview);
 
     virtual ~TracerProcessor();
 
@@ -58,6 +58,7 @@ public:
 private:
     Ref< db::Database > m_outputDatabase;
 	const TypeInfo* m_rayTracerType;
+    bool m_preview;
     Thread* m_thread;
     Semaphore m_lock;
     Event m_event;

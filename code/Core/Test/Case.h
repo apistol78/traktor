@@ -100,9 +100,11 @@ private:
 #define CASE_ASSERT_COMPARE(expr1, expr2, compare) \
 	{ \
 		StringOutputStream ss; \
-		if (!compare((expr1), (expr2))) \
+		auto r1 = (expr1); \
+		auto r2 = (expr2); \
+		if (!compare(r1, r2)) \
 		{ \
-			ss << T_FILE_LINE_W << L" \"" << mbstows(#expr1) << L"\" failed, compared to " << mbstows(#expr2); \
+			ss << T_FILE_LINE_W << L" \"" << mbstows(#expr1) << L"\" failed, not equal to " << mbstows(#expr2); \
 			failed(ss.str()); \
 		} \
 		else \

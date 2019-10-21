@@ -4,6 +4,7 @@
 #include "Core/Functor/Functor.h"
 #include "Core/Log/Log.h"
 #include "Core/Math/Float.h"
+#include "Core/Math/Quasirandom.h"
 #include "Core/Math/RandomGeometry.h"
 #include "Core/Math/Variance.h"
 #include "Core/Thread/Job.h"
@@ -56,70 +57,6 @@ Scalar attenuation(const Scalar& distance, const Scalar& range)
 	Scalar k0 = clamp(Scalar(1.0f) / (distance * distance), Scalar(0.0f), Scalar(1.0f));
 	Scalar k1 = clamp(Scalar(1.0f) - (distance / range), Scalar(0.0f), Scalar(1.0f));
 	return k0 * k1;
-}
-
-Vector2 hammersley(uint32_t i, uint32_t numSamples)
-{  
-	uint32_t b = i;
-	b = (b << 16u) | (b >> 16u);
-	b = ((b & 0x55555555u) << 1u) | ((b & 0xAAAAAAAAu) >> 1u);
-	b = ((b & 0x33333333u) << 2u) | ((b & 0xCCCCCCCCu) >> 2u);
-	b = ((b & 0x0F0F0F0Fu) << 4u) | ((b & 0xF0F0F0F0u) >> 4u);
-	b = ((b & 0x00FF00FFu) << 8u) | ((b & 0xFF00FF00u) >> 8u);
-    float radicalInverseVDC = (float)(b * 2.3283064365386963e-10);
-    return Vector2((float)i / numSamples, radicalInverseVDC);
-} 
-
-Vector4 hammersleyUniformSphere(const Vector4& direction, uint32_t b, uint32_t numSamples)
-{
-	Vector2 h = hammersley(b, numSamples);
-	double z = 2.0 * h.x - 1.0;
-	double t = 2.0 * PI * h.y;
-	double w = std::sqrt(1.0 - z * z);
-	double x = w * std::cos(t);
-	double y = w * std::sin(t);
-	Vector4 v(
-		float(x),
-		float(y),
-		float(z),
-		0.0f
-	);
-	if (dot3(v, direction.xyz0()) < 0.0f)
-		v = -v;
-	return v;
-}
-
-
-Vector4 hammersleyUniformSphere(const Vector4& direction, uint32_t b, uint32_t numSamples, Random& rnd)
-{
-	Vector2 h = hammersley(b, numSamples);
-	double rx = rnd.nextDouble() * 0.1 - 0.05;
-	double ry = rnd.nextDouble() * 0.1 - 0.05;
-	double z = 2.0 * clamp< double >(h.x + rx, 0.0, 1.0) - 1.0;
-	double t = 2.0 * PI * clamp< double >(h.y + ry, 0.0, 1.0);
-	double w = std::sqrt(1.0 - z * z);
-	double x = w * std::cos(t);
-	double y = w * std::sin(t);
-	Vector4 v(
-		float(x),
-		float(y),
-		float(z),
-		0.0f
-	);
-	if (dot3(v, direction.xyz0()) < 0.0f)
-		v = -v;
-	return v;
-}
-
-Vector4 hammersleyUniformCone(const Vector4& direction, uint32_t b, uint32_t numSamples, float radius)
-{
-	Vector2 h = hammersley(b, numSamples);
-
-	double z = lerp((double)std::cos(radius), 1.0, (double)h.x);
-	double x = std::sqrt(1.0 - z * z) * std::cos(h.y * TWO_PI);
-	double y = std::sqrt(1.0 - z * z) * std::sin(h.y * TWO_PI);
-
-	return Quaternion(Vector4(0.0f, 0.0f, 1.0f), direction).normalized() * Vector4(x, y, z);
 }
 
 const Vector4 c_luminance(2.126f, 7.152f, 0.722f, 0.0f);
@@ -297,7 +234,8 @@ Ref< render::SHCoeffs > RayTracerEmbree::traceProbe(const Vector4& position) con
 		// Calculate direct light from probes.
 		for (uint32_t i = 0; i < sampleCount; ++i)
 		{
-			Vector4 direction = hammersleyUniformSphere(unit, i, sampleCount, random);
+			Vector2 uv = Quasirandom::hammersley(i, sampleCount, random);
+			Vector4 direction = Quasirandom::uniformHemiSphere(uv, unit);
 			Color4f incoming = sampleAnalyticalLights(
 				random,
 				position,
@@ -316,7 +254,8 @@ Ref< render::SHCoeffs > RayTracerEmbree::traceProbe(const Vector4& position) con
 		{
 			for (uint32_t j = 0; j < 16; ++j)
 			{
-				direction[j] = hammersleyUniformSphere(unit, i + j, sampleCount, random);
+				Vector2 uv = Quasirandom::hammersley(i + j, sampleCount, random);
+				direction[j] = Quasirandom::uniformHemiSphere(uv, unit);
 
 				rh.ray.org_x[j] = position.x();
 				rh.ray.org_y[j] = position.y();
@@ -478,7 +417,13 @@ Ref< drawing::Image > RayTracerEmbree::traceIndirect(const GBuffer* gbuffer) con
 							// Create a batch of rays.
 							for (uint32_t j = 0; j < 16; ++j)
 							{
-								direction[j] = (elm.normal * Scalar(0.02f) + hammersleyUniformSphere(elm.normal, i + j, sampleCount, random)).normalized();
+								Vector2 uv = Quasirandom::hammersley(i + j, sampleCount, random);
+								direction[j] = Quasirandom::uniformHemiSphere(uv, elm.normal);
+
+								// Add some slight bias toward normal direction since
+								// samples in the periferial doesn't contribute much
+								// due to cosine factor.
+								direction[j] = direction[j] + (elm.normal * Scalar(0.02f)).normalized();
 
 								rh.ray.org_x[j] = elm.position.x();
 								rh.ray.org_y[j] = elm.position.y();
@@ -902,7 +847,8 @@ Color4f RayTracerEmbree::sampleAnalyticalLights(
 
 				for (int32_t i = 0; i < samples; ++i)
 				{
-					Vector4 direction = hammersleyUniformSphere(normal, i, samples, random);
+					Vector2 uv = Quasirandom::hammersley(i, samples, random);
+					Vector4 direction = Quasirandom::uniformHemiSphere(uv, normal);
 
 					origin.storeAligned(&r.org_x); 
 					direction.storeAligned(&r.dir_x);
@@ -927,7 +873,8 @@ Color4f RayTracerEmbree::sampleAnalyticalLights(
 						int32_t density = (int32_t)(light.probe->getDensity(direction) * 20.0f);
 						for (int32_t j = 0; j < density; ++j)
 						{
-							Vector4 sub = hammersleyUniformCone(direction, j, density, deg2rad(4.0f));
+							Vector2 uv = Quasirandom::hammersley(j, density, random);
+							Vector4 sub = Quasirandom::uniformCone(uv, direction, deg2rad(4.0f));
 							ibl += light.probe->sample(sub) * dot3(sub, normal);
 							n++;
 						}
