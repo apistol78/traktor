@@ -14,14 +14,15 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.drawing.ConvolutionFilter", ConvolutionFilter, 
 ConvolutionFilter::ConvolutionFilter(int32_t size)
 :	m_size(size)
 {
-	m_matrix.resize(size * size, 0.0f);
+	m_matrix.resize(size * size, Scalar(0.0f));
 }
 
 ConvolutionFilter::ConvolutionFilter(const float* matrix, int32_t size)
 :	m_size(size)
 {
 	m_matrix.resize(size * size);
-	std::memcpy(&m_matrix[0], matrix, size * size * sizeof(float));
+	for (uint32_t i = 0; i < size * size; ++i)
+		m_matrix[i] = Scalar(matrix[i]);
 }
 
 Ref< ConvolutionFilter > ConvolutionFilter::createGaussianBlur3()
@@ -57,7 +58,7 @@ Ref< ConvolutionFilter > ConvolutionFilter::createGaussianBlur(int32_t radius)
 		for (int32_t y = -radius; y <= radius; ++y)
 		{
 			float g = std::exp(-(x * x + y * y) / (2.0f * sigma * sigma)) / (2.0f * PI * sigma * sigma);
-			filter->m_matrix[(x + radius) + (y + radius) * filter->m_size] = g;
+			filter->m_matrix[(x + radius) + (y + radius) * filter->m_size] = Scalar(g);
 		}
 	}
 	return filter;
@@ -77,25 +78,26 @@ Ref< ConvolutionFilter > ConvolutionFilter::createEmboss()
 void ConvolutionFilter::apply(Image* image) const
 {
 	Ref< Image > final = image->clone(false);
+	Color4f acc;
 	Color4f in;
+	Scalar norm;
 
 	int32_t hs = m_size / 2;
-
 	for (int32_t y = 0; y < image->getHeight(); ++y)
 	{
 		for (int32_t x = 0; x < image->getWidth(); ++x)
 		{
-			Color4f acc;
-			float norm = 0;
+			acc.set(0.0f, 0.0f, 0.0f, 0.0f);
+			norm = Scalar(0.0f);
 
-			const float* kernel = &m_matrix[0];
+			const Scalar* kernel = &m_matrix[0];
 			for (int32_t r = -hs; r <= hs; ++r)
 			{
 				for (int32_t c = -hs; c <= hs; ++c)
 				{
 					if (image->getPixel(x + c, y + r, in))
 					{
-						acc += in * Scalar(*kernel);
+						acc += in * (*kernel);
 						norm += *kernel;
 					}
 					++kernel;
@@ -103,7 +105,7 @@ void ConvolutionFilter::apply(Image* image) const
 			}
 
 			if (norm)
-				acc /= Scalar(norm);
+				acc /= norm;
 
 			final->setPixelUnsafe(x, y, acc);
 		}
