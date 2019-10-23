@@ -1,6 +1,6 @@
 #pragma once
 
-#include <vector>
+#include "Core/Containers/AlignedVector.h"
 #include "Core/Math/Matrix33.h"
 #include "Drawing/IImageFilter.h"
 
@@ -41,7 +41,7 @@ protected:
 	virtual void apply(Image* image) const override final;
 
 private:
-	std::vector< float > m_matrix;
+	AlignedVector< Scalar > m_matrix;
 	int32_t m_size;
 };
 
