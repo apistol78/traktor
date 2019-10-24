@@ -184,7 +184,7 @@ void addSky(
 	skyImage->apply(&scaleFilter);
 
 	// Convert cube map to equirectangular image.
-	Ref< drawing::Image > radiance = render::CubeMap::createFromCrossImage(skyImage)->createEquirectangular();
+	Ref< drawing::Image > radiance = render::CubeMap::createFromImage(skyImage)->createEquirectangular();
 	T_FATAL_ASSERT(radiance != nullptr);
 
 	// Measure intensity range in radiance image.
