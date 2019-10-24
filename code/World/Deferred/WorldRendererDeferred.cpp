@@ -926,7 +926,7 @@ void WorldRendererDeferred::render(render::IRenderView* renderView, int32_t fram
 		clear.mask = render::CfColor | render::CfDepth;
 		clear.colors[0] = Color4f(clearZ, clearZ, clearZ, clearZ);	// depth
 		clear.colors[1] = Color4f(0.0f, 0.0f, 1.0f, 0.0f);	// normal
-		clear.colors[2] = Color4f(0.0f, 0.0f, 0.0f, 1.0f);	// misc
+		clear.colors[2] = Color4f(0.0f, 1.0f, 0.0f, 1.0f);	// misc
 		clear.colors[3] = Color4f(0.0f, 0.0f, 0.0f, 0.0f);	// surface
 		clear.depth = 1.0f;
 
