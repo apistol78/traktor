@@ -4,10 +4,11 @@
 #include "Core/Serialization/Member.h"
 #include "Resource/IResourceManager.h"
 #include "Render/IRenderSystem.h"
-#include "Render/VertexElement.h"
-#include "Render/VertexBuffer.h"
+#include "Render/ITexture.h"
 #include "Render/IndexBuffer.h"
 #include "Render/Shader.h"
+#include "Render/VertexBuffer.h"
+#include "Render/VertexElement.h"
 #include "Resource/Member.h"
 #include "Weather/Sky/SkyComponent.h"
 #include "Weather/Sky/SkyComponentData.h"
@@ -19,18 +20,22 @@ namespace traktor
 		namespace
 		{
 
-const int c_longitudes = 16;
-const int c_latitudes = 24;
-const int c_vertexCount = (c_longitudes + 1) * c_latitudes;
-const int c_triangleCount = ((c_latitudes - 1) * ((c_longitudes + 1) * 2));
-const int c_indexCount = c_triangleCount * 3;
+const Guid c_defaultShader(L"{4CF929EB-3A8B-C340-AA0A-0C5C80625BF1}");
+const Guid c_defaultTexture(L"{93E6996B-8903-4AD0-811A-C8C03C8E38C6}");
+const int32_t c_longitudes = 16;
+const int32_t c_latitudes = 24;
+const int32_t c_vertexCount = (c_longitudes + 1) * c_latitudes;
+const int32_t c_triangleCount = ((c_latitudes - 1) * ((c_longitudes + 1) * 2));
+const int32_t c_indexCount = c_triangleCount * 3;
 
 		}
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.weather.SkyComponentData", 1, SkyComponentData, world::IEntityComponentData)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.weather.SkyComponentData", 2, SkyComponentData, world::IEntityComponentData)
 
 SkyComponentData::SkyComponentData()
 :	m_offset(0.0f)
+,	m_shader(c_defaultShader)
+,	m_texture(c_defaultTexture)
 {
 }
 
@@ -38,7 +43,14 @@ Ref< SkyComponent > SkyComponentData::createComponent(resource::IResourceManager
 {
 	resource::Proxy< render::Shader > shader;
 	if (!resourceManager->bind(m_shader, shader))
-		return 0;
+		return nullptr;
+		
+	resource::Proxy< render::ITexture > texture;
+	if (m_texture.isValid())
+	{
+		if (!resourceManager->bind(m_texture, texture))
+			return nullptr;
+	}
 
 	AlignedVector< render::VertexElement > vertexElements;
 	vertexElements.push_back(render::VertexElement(render::DuPosition, render::DtFloat2, 0));
@@ -49,15 +61,16 @@ Ref< SkyComponent > SkyComponentData::createComponent(resource::IResourceManager
 		false
 	);
 	if (!vertexBuffer)
-		return 0;
+		return nullptr;
 
 	float* vertex = static_cast< float* >(vertexBuffer->lock());
-	T_ASSERT_M (vertex, L"Unable to lock vertex buffer");
+	if (!vertex)
+		return nullptr;
 
-	for (int i = 0; i < c_latitudes; ++i)
+	for (int32_t i = 0; i < c_latitudes; ++i)
 	{
 		float phi = float(i) / (c_latitudes - 1);
-		for (int j = 0; j <= c_longitudes; ++j)
+		for (int32_t j = 0; j <= c_longitudes; ++j)
 		{
 			float theta = float(j) / c_longitudes;
 			*vertex++ = phi;
@@ -73,15 +86,16 @@ Ref< SkyComponent > SkyComponentData::createComponent(resource::IResourceManager
 		false
 	);
 	if (!indexBuffer)
-		return 0;
+		return nullptr;
 
 	uint16_t* index = static_cast< uint16_t* >(indexBuffer->lock());
-	T_ASSERT_M (index, L"Unable to lock index buffer");
+	if (!index)
+		return nullptr;
 
-	for (int k = 0; k < c_latitudes - 1; ++k)
+	for (int32_t k = 0; k < c_latitudes - 1; ++k)
 	{
-		int o = k * (c_longitudes + 1);
-		for (int i = 0, j = c_longitudes; i <= c_longitudes; j = i, ++i)
+		int32_t o = k * (c_longitudes + 1);
+		for (int32_t i = 0, j = c_longitudes; i <= c_longitudes; j = i, ++i)
 		{
 			*index++ = o + i;
 			*index++ = o + i + c_longitudes + 1;
@@ -107,6 +121,7 @@ Ref< SkyComponent > SkyComponentData::createComponent(resource::IResourceManager
 		indexBuffer,
 		primitives,
 		shader,
+		texture,
 		m_offset
 	);
 }
@@ -114,6 +129,9 @@ Ref< SkyComponent > SkyComponentData::createComponent(resource::IResourceManager
 void SkyComponentData::serialize(ISerializer& s)
 {
 	s >> resource::Member< render::Shader >(L"shader", m_shader);
+
+	if (s.getVersion< SkyComponentData >() >= 2)
+		s >> resource::Member< render::ITexture >(L"texture", m_texture);
 
 	if (s.getVersion< SkyComponentData >() < 1)
 	{
