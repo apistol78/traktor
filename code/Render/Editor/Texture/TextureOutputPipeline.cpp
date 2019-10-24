@@ -502,6 +502,7 @@ bool TextureOutputPipeline::buildOutput(
 	if (isNormalMap)
 		sRGB = false;
 
+#if defined(T_USE_MIP_SCALE_TASKS)
 	Ref< drawing::ChainFilter > mipFilters;
 
 	// Swizzle channels to prepare for DXT5nm compression.
@@ -525,6 +526,7 @@ bool TextureOutputPipeline::buildOutput(
 
 		isNormalMap = true;
 	}
+#endif
 
 	// Rescale image.
 	if (textureOutput->m_scaleImage)
@@ -728,7 +730,7 @@ bool TextureOutputPipeline::buildOutput(
 					if (!mipImages[i])
 					{
 						jobs[i]->wait();
-						jobs[i] = 0;
+						jobs[i] = nullptr;
 
 						mipImages[i] = tasks[i]->image;
 						T_ASSERT(mipImages[i]);
@@ -745,47 +747,74 @@ bool TextureOutputPipeline::buildOutput(
 			}
 		}
 #else
-		mipImages[0] = image;
-		for (int32_t i = 1; i < mipCount; ++i)
+		if (
+			m_compressionMethod == CmDXTn &&
+			textureOutput->m_enableNormalMapCompression
+		)
+			isNormalMap = true;
+
+		for (int32_t i = 0; i < mipCount; ++i)
 		{
 			int32_t mipWidth = std::max(width >> i, 1);
 			int32_t mipHeight = std::max(height >> i, 1);
 
 			// Clone previous mip image.
-			Ref< drawing::Image > mipImage = mipImages[i - 1]->clone();
+			mipImages[i] = i > 0 ? mipImages[i - 1]->clone() : image->clone();
 
 			// Scale image to desired mip size.
-			drawing::ScaleFilter scaleFilter(
-				mipWidth,
-				mipHeight,
-				drawing::ScaleFilter::MnAverage,
-				drawing::ScaleFilter::MgLinear,
-				textureOutput->m_keepZeroAlpha
-			);
-			mipImage->apply(&scaleFilter);
+			if (mipWidth != image->getWidth() || mipHeight != image->getHeight())
+			{
+				drawing::ScaleFilter scaleFilter(
+					mipWidth,
+					mipHeight,
+					drawing::ScaleFilter::MnAverage,
+					drawing::ScaleFilter::MgLinear,
+					textureOutput->m_keepZeroAlpha
+				);
+				mipImages[i]->apply(&scaleFilter);
+			}
+		}
 
-			// Adjust alpha from coverage.
-			if (alphaCoverage > 0.0f)
-				adjustAlphaCoverage(image, textureOutput->m_alphaCoverageReference, alphaCoverage);
+		// Adjust alpha from coverage.
+		if (alphaCoverage > 0.0f)
+		{
+			for (auto mipImage : mipImages)
+				adjustAlphaCoverage(mipImage, textureOutput->m_alphaCoverageReference, alphaCoverage);
+		}
 
-			// Apply sharpen filter.
-			if (!isNormalMap && textureOutput->m_sharpenRadius > 0)
+		// Ensure each pixel is renormalized after scaling.
+		if (isNormalMap)
+		{
+			for (auto mipImage : mipImages)
+			{
+				drawing::NormalizeFilter normalizeFilter;
+				mipImage->apply(&normalizeFilter);
+
+				if (
+					m_compressionMethod == CmDXTn &&
+					textureOutput->m_enableNormalMapCompression
+				)
+				{
+					drawing::TransformFilter transformFilter(Color4f(-1.0f, 1.0f, 1.0f, 1.0f), Color4f(1.0f, 0.0f, 0.0f, 0.0f));
+					mipImage->apply(&transformFilter);
+
+					drawing::SwizzleFilter swizzleFilter(textureOutput->m_ignoreAlpha ? L"0g0r" : L"ag0r");
+					mipImage->apply(&swizzleFilter);
+				}
+			}
+		}
+
+		// Apply sharpen filter.
+		if (!isNormalMap && textureOutput->m_sharpenRadius > 0)
+		{
+			for (int32_t i = 1; i < (int32_t)mipImages.size(); ++i)
 			{
 				drawing::SharpenFilter sharpenFilter(
 					textureOutput->m_sharpenRadius,
 					textureOutput->m_sharpenStrength * (float(i) / (mipCount - 1))
 				);
-				mipImage->apply(&sharpenFilter);
+				mipImages[i]->apply(&sharpenFilter);
 			}
-
-			// Ensure each pixel is renormalized after scaling.
-			if (isNormalMap)
-			{
-				drawing::NormalizeFilter normalizeFilter;
-				mipImage->apply(&normalizeFilter);
-			}
-
-			mipImages[i] = mipImage;
 		}
 #endif
 
