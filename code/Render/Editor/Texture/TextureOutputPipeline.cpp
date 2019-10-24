@@ -968,8 +968,7 @@ bool TextureOutputPipeline::buildOutput(
 			RefArray< drawing::Image > mipImages(mipCount);
 
 			// Generate mip levels.
-			mipImages[0] = sideImage;
-			for (int32_t i = 1; i < mipCount; ++i)
+			for (int32_t i = 0; i < mipCount; ++i)
 			{
 				int32_t mipSize = sideSize >> i;
 

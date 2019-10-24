@@ -24,6 +24,7 @@ class IResourceManager;
 	{
 
 class IRenderSystem;
+class ITexture;
 class Shader;
 
 	}
@@ -46,8 +47,11 @@ public:
 
 	const resource::Id< render::Shader >& getShader() const { return m_shader; }
 
+	const resource::Id< render::ITexture >& getTexture() const { return m_texture; }
+
 private:
 	resource::Id< render::Shader > m_shader;
+	resource::Id< render::ITexture > m_texture;
 	float m_offset;
 };
 

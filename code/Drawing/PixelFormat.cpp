@@ -97,7 +97,7 @@ void pack_4(void* T_RESTRICT p, uint32_t v)
 void pack_fp(void* T_RESTRICT p, float v, uint32_t nbits)
 {
 	if (nbits == 16)
-		*(half_t* T_RESTRICT)p = floatToHalf(v);
+		*(half_t* T_RESTRICT)p = floatToHalf(traktor::clamp(v, -65504.0f, 65504.0f));
 	else if (nbits == 32)
 		*(float* T_RESTRICT)p = v;
 }
@@ -171,7 +171,7 @@ void pack_4(void* T_RESTRICT p, uint32_t v)
 void pack_fp(void* T_RESTRICT p, float v, uint32_t nbits)
 {
 	if (nbits == 16)
-		*(half_t* T_RESTRICT)p = floatToHalf(v);
+		*(half_t* T_RESTRICT)p = floatToHalf(traktor::clamp(v, -65504.0f, 65504.0f));
 	else if (nbits == 32)
 		*(float* T_RESTRICT)p = v;
 }

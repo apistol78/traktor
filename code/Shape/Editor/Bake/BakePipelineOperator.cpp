@@ -144,22 +144,10 @@ void addSky(
 	const int32_t c_minImportanceSamples = 1;
 	const int32_t c_maxImportanceSamples = 20;
 
-	// Extract reference to sky image from shader.
-	Ref< const render::ShaderGraph > shader = pipelineBuilder->getObjectReadOnly< render::ShaderGraph >(
-		skyComponentData->getShader()
-	);
-	if (!shader)
+	const auto& textureId = skyComponentData->getTexture();
+	if (textureId.isNull())
 		return;
 
-	RefArray< render::Texture > textureNodes;
-	shader->findNodesOf< render::Texture >(textureNodes);
-	auto it = std::find_if(textureNodes.begin(), textureNodes.end(), [&](render::Texture* textureNode) {
-		return textureNode->getComment() == L"Tag_Sky";
-	});
-	if (it == textureNodes.end())
-		return;
-
-	const auto& textureId = (*it)->getExternal();
 	Ref< const render::TextureAsset > textureAsset = pipelineBuilder->getObjectReadOnly< render::TextureAsset >(textureId);
 	if (!textureAsset)
 		return;

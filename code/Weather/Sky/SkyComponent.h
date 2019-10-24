@@ -44,6 +44,7 @@ public:
 		render::IndexBuffer* indexBuffer,
 		const render::Primitives& primitives,
 		const resource::Proxy< render::Shader >& shader,
+		const resource::Proxy< render::ITexture >& texture,
 		float offset
 	);
 
@@ -70,6 +71,7 @@ private:
 	Ref< render::IndexBuffer > m_indexBuffer;
 	render::Primitives m_primitives;
 	resource::Proxy< render::Shader > m_shader;
+	resource::Proxy< render::ITexture > m_texture;
 	Transform m_transform;
 	float m_offset;
 };
