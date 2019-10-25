@@ -101,30 +101,12 @@
 			<type>DtFloat3</type>
 			<index>0</index>
 		</item>
-		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
-			<id>{389C19B6-D0F5-4CED-B8C4-A6C44232A9D2}</id>
-			<comment/>
-			<position>
-				<first>1083</first>
-				<second>183</second>
-			</position>
-			<value>0</value>
-		</item>
-		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
-			<id>{04BAEBE5-B31D-485F-8FFF-C8AB0D37C276}</id>
-			<comment/>
-			<position>
-				<first>1070</first>
-				<second>228</second>
-			</position>
-			<value>1</value>
-		</item>
 		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{9E5F384E-EF15-6346-9AFE-1A42D921DF8A}</id>
 			<comment/>
 			<position>
-				<first>1486</first>
-				<second>67</second>
+				<first>1456</first>
+				<second>-108</second>
 			</position>
 			<fragmentGuid>{A99D362F-D713-471B-A2A9-EF57C0C21145}</fragmentGuid>
 			<inputPins>
@@ -146,11 +128,6 @@
 				<item>
 					<id>{8471E6CB-0CA4-44FA-BA9A-C6FA85A0516A}</id>
 					<name>Irradiance</name>
-					<optional>true</optional>
-				</item>
-				<item>
-					<id>{9FEC41F0-44FF-4A36-A57D-0CDEEDDA7FD5}</id>
-					<name>LightMask</name>
 					<optional>true</optional>
 				</item>
 				<item>
@@ -183,10 +160,6 @@
 				<item>
 					<first>Emissive</first>
 					<second>0</second>
-				</item>
-				<item>
-					<first>LightMask</first>
-					<second>1</second>
 				</item>
 				<item>
 					<first>Metalness</first>
@@ -318,22 +291,22 @@
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[5]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[7]"/>
-				<name>Metalness</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
 				<node ref="/object/nodes/item[6]"/>
 				<name>Output</name>
 			</source>
 			<destination>
+				<node ref="/object/nodes/item[8]"/>
+				<name>Texture</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
 				<node ref="/object/nodes/item[7]"/>
-				<name>Roughness</name>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[8]"/>
+				<name>TexCoord</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
@@ -342,27 +315,7 @@
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[10]"/>
-				<name>Texture</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[9]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[10]"/>
-				<name>TexCoord</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[10]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[7]"/>
+				<node ref="/object/nodes/item[5]"/>
 				<name>SurfaceColor</name>
 			</destination>
 		</item>
@@ -372,7 +325,7 @@
 				<name>ViewNormal</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[11]"/>
+				<node ref="/object/nodes/item[9]"/>
 				<name>ViewNormal</name>
 			</destination>
 		</item>
@@ -382,7 +335,7 @@
 				<name>ViewPosition</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[11]"/>
+				<node ref="/object/nodes/item[9]"/>
 				<name>ViewPosition</name>
 			</destination>
 		</item>
@@ -392,7 +345,7 @@
 				<name>ClipVelocity</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[11]"/>
+				<node ref="/object/nodes/item[9]"/>
 				<name>ViewVelocity</name>
 			</destination>
 		</item>

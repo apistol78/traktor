@@ -93,8 +93,8 @@
 			<id>{5F4F73BB-BCC2-446B-BECC-4F93C59E4134}</id>
 			<comment/>
 			<position>
-				<first>427</first>
-				<second>248</second>
+				<first>463</first>
+				<second>281</second>
 			</position>
 			<color>0.862745, 0.905882, 1, 0</color>
 		</item>
@@ -114,8 +114,8 @@
 			<id>{AEBC7357-819A-47ED-AE14-CF70970E48B7}</id>
 			<comment/>
 			<position>
-				<first>472</first>
-				<second>387</second>
+				<first>491</first>
+				<second>363</second>
 			</position>
 			<name>Where</name>
 			<usage>DuCustom</usage>
@@ -126,8 +126,8 @@
 			<id>{CA4ED710-9D91-493D-BDDE-DA31E4EB74C9}</id>
 			<comment/>
 			<position>
-				<first>850</first>
-				<second>309</second>
+				<first>845</first>
+				<second>292</second>
 			</position>
 		</item>
 		<item type="traktor.render.Color" version="1,traktor.render.Node:1">
@@ -139,30 +139,12 @@
 			</position>
 			<color>0.988235, 0.988235, 0.988235, 0</color>
 		</item>
-		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
-			<id>{389C19B6-D0F5-4CED-B8C4-A6C44232A9D2}</id>
-			<comment/>
-			<position>
-				<first>856</first>
-				<second>453</second>
-			</position>
-			<value>0</value>
-		</item>
-		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
-			<id>{04BAEBE5-B31D-485F-8FFF-C8AB0D37C276}</id>
-			<comment/>
-			<position>
-				<first>843</first>
-				<second>498</second>
-			</position>
-			<value>0.7</value>
-		</item>
 		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{9E5F384E-EF15-6346-9AFE-1A42D921DF8A}</id>
 			<comment/>
 			<position>
-				<first>1200</first>
-				<second>340</second>
+				<first>1165</first>
+				<second>331</second>
 			</position>
 			<fragmentGuid>{A99D362F-D713-471B-A2A9-EF57C0C21145}</fragmentGuid>
 			<inputPins>
@@ -184,11 +166,6 @@
 				<item>
 					<id>{8471E6CB-0CA4-44FA-BA9A-C6FA85A0516A}</id>
 					<name>Irradiance</name>
-					<optional>true</optional>
-				</item>
-				<item>
-					<id>{9FEC41F0-44FF-4A36-A57D-0CDEEDDA7FD5}</id>
-					<name>LightMask</name>
 					<optional>true</optional>
 				</item>
 				<item>
@@ -221,10 +198,6 @@
 				<item>
 					<first>Emissive</first>
 					<second>0</second>
-				</item>
-				<item>
-					<first>LightMask</first>
-					<second>1</second>
 				</item>
 				<item>
 					<first>Metalness</first>
@@ -346,31 +319,11 @@
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[9]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[11]"/>
-				<name>Metalness</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[10]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[11]"/>
-				<name>Roughness</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
 				<node ref="/object/nodes/item[7]"/>
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[11]"/>
+				<node ref="/object/nodes/item[9]"/>
 				<name>SurfaceColor</name>
 			</destination>
 		</item>
@@ -380,7 +333,7 @@
 				<name>ViewNormal</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[12]"/>
+				<node ref="/object/nodes/item[10]"/>
 				<name>ViewNormal</name>
 			</destination>
 		</item>
@@ -390,7 +343,7 @@
 				<name>ViewPosition</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[12]"/>
+				<node ref="/object/nodes/item[10]"/>
 				<name>ViewPosition</name>
 			</destination>
 		</item>
@@ -400,7 +353,7 @@
 				<name>ClipVelocity</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[12]"/>
+				<node ref="/object/nodes/item[10]"/>
 				<name>ViewVelocity</name>
 			</destination>
 		</item>

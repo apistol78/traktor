@@ -1,3 +1,5 @@
+#pragma optimize( "", off )
+
 #include <limits>
 #include <functional>
 #include "Core/Io/FileSystem.h"
@@ -98,9 +100,22 @@ Ref< ISerializable > resolveAllExternal(editor::IPipelineCommon* pipeline, const
 	return reflection->clone();
 }
 
-/*! Add light to tracer scene. */
-void addLight(const world::LightComponentData* lightComponentData, const Transform& transform, TracerTask* tracerTask)
+/*! Add light to tracer scene.
+ * \return True if light should be removed from scene (fully baked).
+ */
+bool addLight(const world::LightComponentData* lightComponentData, const Transform& transform, TracerTask* tracerTask)
 {
+	uint8_t mask = 0;
+
+	auto bakeMode = lightComponentData->getBakeMode();
+	if (bakeMode == world::LightComponentData::LbmIndirect)
+		mask = Light::LmIndirect;
+	else if (bakeMode == world::LightComponentData::LbmAll)
+		mask = Light::LmDirect | Light::LmIndirect;
+
+	if (!mask)
+		return false;
+
 	Light light;
 	if (lightComponentData->getLightType() == world::LtDirectional)
 	{
@@ -109,6 +124,7 @@ void addLight(const world::LightComponentData* lightComponentData, const Transfo
 		light.direction = -transform.axisY();
 		light.color = lightComponentData->getColor() * Scalar(lightComponentData->getIntensity());
 		light.range = Scalar(0.0f);
+		light.mask = mask;
 		tracerTask->addTracerLight(new TracerLight(light));
 	}
 	else if (lightComponentData->getLightType() == world::LtPoint)
@@ -118,6 +134,7 @@ void addLight(const world::LightComponentData* lightComponentData, const Transfo
 		light.direction = Vector4::zero();
 		light.color = lightComponentData->getColor() * Scalar(lightComponentData->getIntensity());
 		light.range = Scalar(lightComponentData->getRange());
+		light.mask = mask;
 		tracerTask->addTracerLight(new TracerLight(light));
 	}
 	else if (lightComponentData->getLightType() == world::LtSpot)
@@ -128,8 +145,11 @@ void addLight(const world::LightComponentData* lightComponentData, const Transfo
 		light.color = lightComponentData->getColor() * Scalar(lightComponentData->getIntensity());
 		light.range = Scalar(lightComponentData->getRange());
 		light.radius = Scalar(lightComponentData->getRadius());
+		light.mask = mask;
 		tracerTask->addTracerLight(new TracerLight(light));
 	}
+
+	return (bool)(bakeMode == world::LightComponentData::LbmAll);
 }
 
 /*! */
@@ -477,7 +497,10 @@ bool BakePipelineOperator::build(
 			if (auto componentEntityData = dynamic_type_cast< world::ComponentEntityData* >(inoutEntityData))
 			{
 				if (auto lightComponentData = componentEntityData->getComponent< world::LightComponentData >())
-					addLight(lightComponentData, inoutEntityData->getTransform(), tracerTask);
+				{
+					if (addLight(lightComponentData, inoutEntityData->getTransform(), tracerTask))
+						componentEntityData->removeComponent(lightComponentData);
+				}
 
 				if (auto skyComponentData = componentEntityData->getComponent< weather::SkyComponentData >())
 					addSky(pipelineBuilder, m_assetPath, skyComponentData, tracerTask);
@@ -535,12 +558,12 @@ bool BakePipelineOperator::build(
 						material.setBlendOperator(model::Material::BoDecal);
 						material.setLightMap(model::Material::Map(L"Lightmap", channel, false, lightmapId));
 
-						uint32_t flags = 0;
-						if (configuration->traceDirect())
-							flags |= model::Material::LmfRadiance;
-						if (configuration->traceIndirect())
-							flags |= model::Material::LmfIrradiance;
-						material.setLightMapFlags(flags);					
+						//uint32_t flags = 0;
+						//if (configuration->traceDirect())
+						//	flags |= model::Material::LmfRadiance;
+						//if (configuration->traceIndirect())
+						//	flags |= model::Material::LmfIrradiance;
+						//material.setLightMapFlags(flags);					
 					}
 					model->setMaterials(materials);
 
@@ -628,12 +651,12 @@ bool BakePipelineOperator::build(
 					material.setBlendOperator(model::Material::BoDecal);
 					material.setLightMap(model::Material::Map(L"Lightmap", channel, false, lightmapId));
 
-					uint32_t flags = 0;
-					if (configuration->traceDirect())
-						flags |= model::Material::LmfRadiance;
-					if (configuration->traceIndirect())
-						flags |= model::Material::LmfIrradiance;
-					material.setLightMapFlags(flags);
+					//uint32_t flags = 0;
+					//if (configuration->traceDirect())
+					//	flags |= model::Material::LmfRadiance;
+					//if (configuration->traceIndirect())
+					//	flags |= model::Material::LmfIrradiance;
+					//material.setLightMapFlags(flags);
 				}
 				model->setMaterials(materials);
 
@@ -690,7 +713,6 @@ bool BakePipelineOperator::build(
 	inoutSceneAsset->setLayers(layers);
 
 	// Create irradiance grid task.
-	if (configuration->traceIrradiance())
 	{
 		Guid irradianceGridId = irradianceGridSeedId.permutate();
 

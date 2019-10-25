@@ -6,7 +6,7 @@
 			<comment/>
 			<position>
 				<first>1137</first>
-				<second>543</second>
+				<second>522</second>
 			</position>
 			<name>T_Roughness</name>
 			<connectable>true</connectable>
@@ -19,7 +19,7 @@
 			<comment/>
 			<position>
 				<first>1137</first>
-				<second>588</second>
+				<second>575</second>
 			</position>
 			<name>T_Transparency</name>
 			<connectable>true</connectable>
@@ -32,7 +32,7 @@
 			<comment/>
 			<position>
 				<first>1157</first>
-				<second>498</second>
+				<second>469</second>
 			</position>
 			<name>T_Metalness</name>
 			<connectable>true</connectable>
@@ -45,7 +45,7 @@
 			<comment/>
 			<position>
 				<first>1157</first>
-				<second>355</second>
+				<second>363</second>
 			</position>
 			<name>T_Emissive</name>
 			<connectable>true</connectable>
@@ -71,7 +71,7 @@
 			<comment/>
 			<position>
 				<first>1157</first>
-				<second>400</second>
+				<second>416</second>
 			</position>
 			<name>T_Irradiance</name>
 			<connectable>true</connectable>
@@ -109,11 +109,6 @@
 					<optional>true</optional>
 				</item>
 				<item>
-					<id>{9FEC41F0-44FF-4A36-A57D-0CDEEDDA7FD5}</id>
-					<name>LightMask</name>
-					<optional>true</optional>
-				</item>
-				<item>
 					<id>{3C90103C-96CA-CD4F-88BF-928235B168E7}</id>
 					<name>Metalness</name>
 					<optional>true</optional>
@@ -145,10 +140,6 @@
 					<second>0</second>
 				</item>
 				<item>
-					<first>LightMask</first>
-					<second>1</second>
-				</item>
-				<item>
 					<first>Metalness</first>
 					<second>0</second>
 				</item>
@@ -171,26 +162,13 @@
 			<comment/>
 			<position>
 				<first>1157</first>
-				<second>633</second>
+				<second>628</second>
 			</position>
 			<name>T_Specular</name>
 			<connectable>true</connectable>
 			<optional>true</optional>
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
-		</item>
-		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
-			<id>{25042953-CF84-4FAF-8ECC-57E54753FB43}</id>
-			<comment>
-			<![CDATA[
-Tag_LightMask
-			]]>
-			</comment>
-			<position>
-				<first>1217</first>
-				<second>453</second>
-			</position>
-			<value>1</value>
 		</item>
 	</nodes>
 	<edges>
@@ -252,16 +230,6 @@ Tag_LightMask
 			<destination>
 				<node ref="/object/nodes/item[6]"/>
 				<name>Specular</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[8]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[6]"/>
-				<name>LightMask</name>
 			</destination>
 		</item>
 	</edges>

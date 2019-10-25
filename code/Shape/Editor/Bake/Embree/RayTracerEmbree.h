@@ -46,8 +46,6 @@ public:
 
     virtual Ref< drawing::Image > traceIndirect(const GBuffer* gbuffer) const override final;
 
-    virtual Ref< drawing::Image > traceCamera(const Transform& transform, int32_t width, int32_t height, float fov) const override final;
-
 private:
 	struct Surface
 	{
@@ -66,8 +64,8 @@ private:
         RandomGeometry& random,
         const Vector4& origin,
         const Vector4& normal,
-		bool secondary,
-        bool onlyProbes
+		uint8_t mask,
+		bool bounce
     ) const;
 };
 

@@ -35,12 +35,6 @@ public:
 		BoAlpha
 	};
 
-	enum LightMapFlags
-	{
-		LmfRadiance = 1,	//!< Lightmap contain radiance.
-		LmfIrradiance = 2	//!< Lightmap contain irradiance.
-	};
-
 	struct Map
 	{
 		std::wstring name;
@@ -111,10 +105,6 @@ public:
 	void setLightMap(const Map& lightMap);
 
 	const Map& getLightMap() const;
-
-	void setLightMapFlags(uint32_t lightMapFlags);
-
-	uint32_t getLightMapFlags() const;
 
 	void setColor(const Color4f& color);
 

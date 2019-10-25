@@ -197,7 +197,7 @@ Ref< render::ShaderGraph > MaterialShaderGenerator::generate(
 		}
 		else if (fragmentGuid == c_tplLightMapParams)
 		{
-			if (lightMapTexture.isNull() || material.getLightMapFlags() == 0)
+			if (lightMapTexture.isNull())
 				externalNode->setFragmentGuid(c_implLightMapNull);
 			else
 				externalNode->setFragmentGuid(material.getLightMap().channel == 0 ? c_implLightMap0 : c_implLightMap1);
@@ -327,20 +327,6 @@ Ref< render::ShaderGraph > MaterialShaderGenerator::generate(
 			render::Texture* lightMapTextureNode = checked_type_cast< render::Texture* >(node);
 			lightMapTextureNode->setComment(L"");
 			lightMapTextureNode->setExternal(lightMapTexture);
-		}
-		else if (comment == L"Tag_LightMask")
-		{
-			render::Scalar* lightMaskNode = checked_type_cast< render::Scalar* >(node);
-			lightMaskNode->setComment(L"");
-			lightMaskNode->set(1.0f);
-
-			// If lightmap contain baked radiance (aka direct lighting) then we
-			// need to prevent any dynamic lighting, so we clear light mask.
-			if (!lightMapTexture.isNull())
-			{
-				if ((material.getLightMapFlags() & model::Material::LmfRadiance) != 0)
-					lightMaskNode->set(0.0f);
-			}
 		}
 	}
 

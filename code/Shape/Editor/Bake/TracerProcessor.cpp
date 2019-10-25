@@ -376,26 +376,21 @@ bool TracerProcessor::process(const TracerTask* task) const
         // Preprocess GBuffer.
         rayTracer->preprocess(&gbuffer);
 
-        Ref< drawing::Image > lightmapDirect;
-        Ref< drawing::Image > lightmapIndirect;
+		// Trace direct lighting.
+        Ref< drawing::Image > lightmapDirect = rayTracer->traceDirect(&gbuffer);
 
-        if (configuration->traceDirect())
+		// Create preview output instance.
+		if (m_preview)
 		{
-            lightmapDirect = rayTracer->traceDirect(&gbuffer);
-
-			// Create preview output instance.
-			if (m_preview)
-			{
-				writeTexture(
-					m_outputDatabase,
-					tracerOutput->getLightmapId(),
-					lightmapDirect
-				);
-			}
+			writeTexture(
+				m_outputDatabase,
+				tracerOutput->getLightmapId(),
+				lightmapDirect
+			);
 		}
 
-        if (configuration->traceIndirect())
-            lightmapIndirect = rayTracer->traceIndirect(&gbuffer);
+		// Trace indirect lighting.
+		Ref< drawing::Image > lightmapIndirect = rayTracer->traceIndirect(&gbuffer);
 
         // Blur indirect lightmap to reduce noise from path tracing.
         if (configuration->getEnableDenoise())
@@ -407,26 +402,14 @@ bool TracerProcessor::process(const TracerTask* task) const
         }
 
         // Merge direct and indirect lightmaps.
-        Ref< drawing::Image > lightmap;
-        if (lightmapDirect && lightmapIndirect)
-        {
-            lightmap = lightmapDirect;
-            lightmap->copy(lightmapIndirect, 0, 0, outputSize, outputSize, drawing::BlendFunction(
-                drawing::BlendFunction::BfOne,
-                drawing::BlendFunction::BfOne,
-                drawing::BlendFunction::BoAdd
-            ));
-        }
-        else if (lightmapDirect)
-            lightmap = lightmapDirect;
-        else if (lightmapIndirect)
-            lightmap = lightmapIndirect;
-
+        Ref< drawing::Image > lightmap = lightmapDirect;
+        lightmap->copy(lightmapIndirect, 0, 0, outputSize, outputSize, drawing::BlendFunction(
+            drawing::BlendFunction::BfOne,
+            drawing::BlendFunction::BfOne,
+            drawing::BlendFunction::BoAdd
+        ));
         lightmapDirect = nullptr;
         lightmapIndirect = nullptr;
-
-        if (!lightmap)
-            return false;
 
 		// Create preview output instance.
 		if (m_preview)
@@ -593,7 +576,7 @@ bool TracerProcessor::process(const TracerTask* task) const
 			return false;
 		}
 
-		const Scalar c_gridPerUnit(2.0f);
+		const Scalar gridDensity(configuration->getIrradianceGridDensity());
 
 		// Determine bounding box from all trace models if noone is already provided.
 		Aabb3 boundingBox = tracerIrradiance->getBoundingBox();
@@ -601,14 +584,14 @@ bool TracerProcessor::process(const TracerTask* task) const
 		{
 			for (auto tracerModel : task->getTracerModels())
 				boundingBox.contain(tracerModel->getModel()->getBoundingBox());
-			boundingBox.expand(c_gridPerUnit);
+			boundingBox.expand(gridDensity);
 		}
 
 		Vector4 worldSize = boundingBox.getExtent() * Scalar(2.0f);
 
-		int32_t gridX = std::max((int32_t)(worldSize.x() * c_gridPerUnit + 0.5f), 2);
-		int32_t gridY = std::max((int32_t)(worldSize.y() * c_gridPerUnit + 0.5f), 2);
-		int32_t gridZ = std::max((int32_t)(worldSize.z() * c_gridPerUnit + 0.5f), 2);
+		int32_t gridX = std::max((int32_t)(worldSize.x() * gridDensity + 0.5f), 2);
+		int32_t gridY = std::max((int32_t)(worldSize.y() * gridDensity + 0.5f), 2);
+		int32_t gridZ = std::max((int32_t)(worldSize.z() * gridDensity + 0.5f), 2);
 
 		Writer writer(stream);
 
