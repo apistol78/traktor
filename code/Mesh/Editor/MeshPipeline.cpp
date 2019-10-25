@@ -585,7 +585,7 @@ bool MeshPipeline::buildOutput(
 		}
 	}
 
-#if defined(_DEBUG)
+#if 0
 	// Dump information about mesh.
 	log::info << polygonCount << L" polygon(s)" << Endl;
 	log::info << L"Bounding box (" << boundingBox.mn << L")-(" << boundingBox.mx << L")" << Endl;
@@ -615,22 +615,19 @@ bool MeshPipeline::buildOutput(
 	{
 		Ref< render::ShaderGraph > materialTechniqueShaderGraph = DeepClone(i->second).create< render::ShaderGraph >();
 
-		const RefArray< render::Edge >& edges = materialTechniqueShaderGraph->getEdges();
-		const RefArray< render::Node >& nodes = materialTechniqueShaderGraph->getNodes();
-
 		std::wstring techniqueName = L"M" + toString(i->first);
-		for (RefArray< render::Node >::const_iterator j = nodes.begin(); j != nodes.end(); ++j)
+		for (auto node : materialTechniqueShaderGraph->getNodes())
 		{
-			if (render::VertexOutput* vertexOutputNode = dynamic_type_cast< render::VertexOutput* >(*j))
+			if (auto vertexOutputNode = dynamic_type_cast< render::VertexOutput* >(node))
 				vertexOutputNode->setTechnique(techniqueName);
-			if (render::PixelOutput* pixelOutputNode = dynamic_type_cast< render::PixelOutput* >(*j))
+			if (auto pixelOutputNode = dynamic_type_cast< render::PixelOutput* >(node))
 				pixelOutputNode->setTechnique(techniqueName);
 		}
 
-		for (RefArray< render::Node >::const_iterator j = nodes.begin(); j != nodes.end(); ++j)
-			materialShaderGraph->addNode(*j);
-		for (RefArray< render::Edge >::const_iterator j = edges.begin(); j != edges.end(); ++j)
-			materialShaderGraph->addEdge(*j);
+		for (auto node : materialTechniqueShaderGraph->getNodes())
+			materialShaderGraph->addNode(node);
+		for (auto edge : materialTechniqueShaderGraph->getEdges())
+			materialShaderGraph->addEdge(edge);
 	}
 
 	// Build material shader.

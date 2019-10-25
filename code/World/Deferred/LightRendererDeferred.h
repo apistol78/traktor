@@ -29,8 +29,6 @@ class IResourceManager;
 	namespace world
 	{
 
-class IrradianceGrid;
-
 /*! Light renderer.
  * \ingroup World
  *
@@ -46,8 +44,7 @@ public:
 
 	bool create(
 		resource::IResourceManager* resourceManager,
-		render::IRenderSystem* renderSystem,
-		const resource::Id< IrradianceGrid >& irradianceGrid
+		render::IRenderSystem* renderSystem
 	);
 
 	void destroy();
@@ -102,7 +99,6 @@ private:
 	resource::Proxy< render::Shader > m_reflectionShader;
 	resource::Proxy< render::Shader > m_fogShader;
 	Ref< render::VertexBuffer > m_vertexBufferQuad;
-	// resource::Proxy< IrradianceGrid > m_irradianceGrid;
 	render::Primitives m_primitivesQuad;
 };
 

@@ -565,7 +565,6 @@ bool BakePipelineOperator::build(
 						pipelineBuilder,
 						m_assetPath,
 						componentData,
-						// lightmapId,
 						model
 					));
 					if (replaceComponentData == nullptr)
