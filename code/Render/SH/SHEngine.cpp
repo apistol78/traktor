@@ -3,6 +3,7 @@
 #include "Core/Math/Const.h"
 #include "Core/Math/Float.h"
 #include "Core/Math/MathUtils.h"
+#include "Core/Math/Quasirandom.h"
 #include "Core/Math/RandomGeometry.h"
 #include "Core/Thread/JobManager.h"
 #include "Render/SH/SHEngine.h"
@@ -118,17 +119,16 @@ void SHEngine::generateSamplePoints(uint32_t count)
 	{
 		for (uint32_t j = 0; j < sqrtCount; ++j)
 		{
-			double x = (i + rg.nextDouble()) / double(sqrtCount);
-			double y = (j + rg.nextDouble()) / double(sqrtCount);
-
-			double phi = 2.0 * acosf(sqrtf(1.0 - x));
-			double theta = 2.0 * PI * y;
-
 			uint32_t o = i + j * sqrtCount;
 
+			Vector2 uv = Quasirandom::hammersley(o, count);
+
+			float phi = 2.0f * std::acos(std::sqrt(1.0f - uv.x));
+			float theta = 2.0f * PI * uv.y;
+
 			m_samplePoints[o].unit = polarToCartesian(phi, theta);
-			m_samplePoints[o].phi = float(phi);
-			m_samplePoints[o].theta = float(theta);
+			m_samplePoints[o].phi = phi;
+			m_samplePoints[o].theta = theta;
 			m_samplePoints[o].coefficients.resize(m_coefficientCount);
 
 			for (int32_t l = 0; l < int32_t(m_bandCount); ++l)
@@ -149,17 +149,18 @@ void SHEngine::generateCoefficients(SHFunction* function, SHCoeffs& outResult)
 	const double weight = 4.0 * PI;
 
 	outResult.resize(m_coefficientCount);
-/*
+#if 1
 	uint32_t sc = uint32_t(m_samplePoints.size() >> 2);
 
 	RefArray< Functor > jobs(4);
 	jobs[0] = makeFunctor(this, &SHEngine::generateCoefficientsJob, function, 0 * sc, 1 * sc, &outResult);
 	jobs[1] = makeFunctor(this, &SHEngine::generateCoefficientsJob, function, 1 * sc, 2 * sc, &outResult);
 	jobs[2] = makeFunctor(this, &SHEngine::generateCoefficientsJob, function, 2 * sc, 3 * sc, &outResult);
-	jobs[3] = makeFunctor(this, &SHEngine::generateCoefficientsJob, function, 3 * sc, 4 * sc, &outResult);
+	jobs[3] = makeFunctor(this, &SHEngine::generateCoefficientsJob, function, 3 * sc, (uint32_t)m_samplePoints.size(), &outResult);
 	JobManager::getInstance().fork(jobs);
-*/
+#else
 	generateCoefficientsJob(function, 0, m_samplePoints.size(), &outResult);
+#endif
 
 	Scalar factor(float(weight / m_samplePoints.size()));
 	for (uint32_t i = 0; i < m_coefficientCount; ++i)
@@ -228,15 +229,9 @@ void SHEngine::generateCoefficientsJob(SHFunction* function, uint32_t start, uin
 	{
 		float phi = m_samplePoints[i].phi;
 		float theta = m_samplePoints[i].theta;
-
 		Vector4 fs = function->evaluate(phi, theta, m_samplePoints[i].unit);
-		// T_ASSERT(!isNanOrInfinite(fs));
-		
 		for (uint32_t n = 0; n < m_coefficientCount; ++n)
-		{
 			(*outResult)[n] += fs * m_samplePoints[i].coefficients[n];
-			// T_ASSERT(!isNanOrInfinite((*outResult)[n]));
-		}
 	}
 }
 
