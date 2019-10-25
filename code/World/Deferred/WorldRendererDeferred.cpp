@@ -775,8 +775,7 @@ bool WorldRendererDeferred::create(
 	m_lightRenderer = new LightRendererDeferred();
 	if (!m_lightRenderer->create(
 		resourceManager,
-		renderSystem,
-		m_settings.irradianceGrid
+		renderSystem
 	))
 	{
 		log::error << L"Unable to create light primitive renderer" << Endl;

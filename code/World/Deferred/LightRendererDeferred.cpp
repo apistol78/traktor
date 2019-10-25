@@ -94,8 +94,7 @@ LightRendererDeferred::LightRendererDeferred()
 
 bool LightRendererDeferred::create(
 	resource::IResourceManager* resourceManager,
-	render::IRenderSystem* renderSystem,
-	const resource::Id< IrradianceGrid >& irradianceGrid
+	render::IRenderSystem* renderSystem
 )
 {
 	if (!resourceManager->bind(c_lightShader, m_lightShader))
