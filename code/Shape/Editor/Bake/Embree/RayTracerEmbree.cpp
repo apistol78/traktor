@@ -231,21 +231,21 @@ Ref< render::SHCoeffs > RayTracerEmbree::traceProbe(const Vector4& position) con
 		const auto& polygons = m_model.getPolygons();
 		const auto& materials = m_model.getMaterials();
 
-		// Calculate direct light from probes.
-		for (uint32_t i = 0; i < sampleCount; ++i)
-		{
-			Vector2 uv = Quasirandom::hammersley(i, sampleCount, random);
-			Vector4 direction = Quasirandom::uniformHemiSphere(uv, unit);
-			Color4f incoming = sampleAnalyticalLights(
-				random,
-				position,
-				direction,
-				true,
-				true
-			);
-			direct += incoming * dot3(unit, direction);
-		}
-		direct /= Scalar(sampleCount);
+		//// Calculate direct light from probes.
+		//for (uint32_t i = 0; i < sampleCount; ++i)
+		//{
+		//	Vector2 uv = Quasirandom::hammersley(i, sampleCount, random);
+		//	Vector4 direction = Quasirandom::uniformHemiSphere(uv, unit);
+		//	Color4f incoming = sampleAnalyticalLights(
+		//		random,
+		//		position,
+		//		direction,
+		//		Light::LmDirect,
+		//		false
+		//	);
+		//	direct += incoming * dot3(unit, direction);
+		//}
+		//direct /= Scalar(sampleCount);
 
 		// Calculate indirect light.
 		Variance variance;
@@ -301,7 +301,7 @@ Ref< render::SHCoeffs > RayTracerEmbree::traceProbe(const Vector4& position) con
 						random,
 						hitPosition,
 						hitNormal,
-						true,
+						Light::LmIndirect,
 						false
 					);
 					Color4f ind = brdf * incoming * f * ct / p;
@@ -354,7 +354,7 @@ Ref< drawing::Image > RayTracerEmbree::traceDirect(const GBuffer* gbuffer) const
 							random,
 							elm.position,
 							elm.normal,
-							false,
+							Light::LmDirect,
 							false
 						);
 						lightmapDirect->setPixel(x, y, direct.rgb1());
@@ -470,7 +470,7 @@ Ref< drawing::Image > RayTracerEmbree::traceIndirect(const GBuffer* gbuffer) con
 									random,
 									hitPosition,
 									hitNormal,
-									true,
+									Light::LmIndirect,
 									false
 								);
 
@@ -505,145 +505,27 @@ Ref< drawing::Image > RayTracerEmbree::traceIndirect(const GBuffer* gbuffer) con
     return lightmapIndirect;
 }
 
-Ref< drawing::Image > RayTracerEmbree::traceCamera(const Transform& transform, int32_t width, int32_t height, float fov) const
-{
-	Ref< drawing::Image > image = new drawing::Image(drawing::PixelFormat::getRGBAF32(), width, height);
-	image->clear(Color4f(0.0f, 0.0f, 0.0f, 1.0f));
-
-	RandomGeometry random;
-	RTCRayHit T_MATH_ALIGN16 rh;
-
-	const uint32_t sampleCount = alignUp(m_configuration->getIndirectSampleCount(), 16);
-	const float ratio = width / (float)height;
-
-	const auto& polygons = m_model.getPolygons();
-	const auto& materials = m_model.getMaterials();
-
-	for (int32_t y = 0; y < height; ++y)
-	{
-		for (int32_t x = 0; x < width; ++x)
-		{
-			float fx = (2.0f * ((x + 0.5f) / width) - 1.0f) * std::tan(fov / 2.0f) * ratio; 
-			float fy = (1.0f - 2.0f * ((y + 0.5f) / height)) * std::tan(fov / 2.0f);
-
-			Vector4 traceOrigin = transform.translation().xyz1();
-			Vector4 traceDirection = (transform * Vector4(fx, fy, 1.0f, 0.0f)).normalized();
-
-			rh.ray.org_x = traceOrigin.x();
-			rh.ray.org_y = traceOrigin.y();
-			rh.ray.org_z = traceOrigin.z();
-			rh.ray.dir_x = traceDirection.x();
-			rh.ray.dir_y = traceDirection.y();
-			rh.ray.dir_z = traceDirection.z();
-			rh.ray.tnear = 0.0f;
-			rh.ray.time = 0.0f;
-			rh.ray.tfar = 1000.0f;
-			rh.ray.mask = 0;
-			rh.ray.id = 0;
-			rh.ray.flags = 0;
-			rh.hit.geomID = RTC_INVALID_GEOMETRY_ID;
-			rh.hit.instID[0] = RTC_INVALID_GEOMETRY_ID;
-
-			RTCIntersectContext context;
-			rtcInitIntersectContext(&context);
-			rtcIntersect1(m_scene, &context, &rh);				
-
-			if (rh.hit.geomID == RTC_INVALID_GEOMETRY_ID)
-				continue;
-
-			Scalar hitDistance(rh.ray.tfar);
-			Vector4 hitPosition = (traceOrigin + traceDirection * hitDistance).xyz1();
-			Vector4 hitNormal = Vector4(rh.hit.Ng_x, rh.hit.Ng_y, rh.hit.Ng_z, 0.0f).normalized();
-
-			Color4f direct = sampleAnalyticalLights(
-				random,
-				hitPosition,
-				hitNormal,
-				false,
-				false
-			);
-
-			Color4f indirect(0.0f, 0.0f, 0.0f, 0.0f);
-			for (uint32_t i = 0; i < sampleCount; i += 16)
-            {
-				Vector4 traceDirection = random.nextHemi(hitNormal);
-
-				rh.ray.org_x = hitPosition.x();
-				rh.ray.org_y = hitPosition.y();
-				rh.ray.org_z = hitPosition.z();
-				rh.ray.dir_x = traceDirection.x();
-				rh.ray.dir_y = traceDirection.y();
-				rh.ray.dir_z = traceDirection.z();
-				rh.ray.tnear = c_epsilonOffset;
-				rh.ray.time = 0.0f;
-				rh.ray.tfar = m_maxDistance;
-				rh.ray.mask = 0;
-				rh.ray.id = 0;
-				rh.ray.flags = 0;
-				rh.hit.geomID = RTC_INVALID_GEOMETRY_ID;
-				rh.hit.instID[0] = RTC_INVALID_GEOMETRY_ID;
-
-				RTCIntersectContext context;
-				rtcInitIntersectContext(&context);
-				rtcIntersect1(m_scene, &context, &rh);					
-
-				if (rh.hit.geomID != RTC_INVALID_GEOMETRY_ID)
-				{
-					Scalar distance(rh.ray.tfar);
-					Scalar f = attenuation(distance);
-					if (f <= 0.0f)
-						continue;
-
-					Vector4 hitPosition2 = (hitPosition + traceDirection * distance).xyz1();
-					Vector4 hitNormal2 = Vector4(rh.hit.Ng_x, rh.hit.Ng_y, rh.hit.Ng_z, 0.0f).normalized();
-
-					Scalar ct = dot3(hitNormal2, traceDirection);
-					if (ct <= 0.0f)
-						continue;
-
-					const auto& sp = polygons[rh.hit.primID];
-					const auto& sm = materials[sp.getMaterial()];
-
-					Color4f brdf = sm.getColor() * Color4f(1.0f, 1.0f, 1.0f, 0.0f) / Scalar(PI);
-					Color4f incoming = sampleAnalyticalLights(
-						random,
-						hitPosition,
-						hitNormal,
-						true,
-						false
-					);
-					indirect += brdf * incoming * f * ct / p;
-				}
-            }
-
-            indirect /= Scalar(m_configuration->getIndirectSampleCount());
-
-			image->setPixelUnsafe(x, y, (direct + indirect).rgb1());
-		}
-	}
-
-	return image;
-}
-
 Color4f RayTracerEmbree::sampleAnalyticalLights(
     RandomGeometry& random,
     const Vector4& origin,
     const Vector4& normal,
-	bool secondary,
-	bool onlyProbes
+	uint8_t mask,
+	bool bounce
  ) const
 {
-	const uint32_t shadowSampleCount = !secondary ? m_configuration->getShadowSampleCount() : (m_configuration->getShadowSampleCount() > 0 ? 1 : 0);
-    const float shadowRadius = !secondary ? m_configuration->getPointLightShadowRadius() : 0.0f;
+	const uint32_t shadowSampleCount = !bounce ? m_configuration->getShadowSampleCount() : (m_configuration->getShadowSampleCount() > 0 ? 1 : 0);
+    const float shadowRadius = !bounce ? m_configuration->getPointLightShadowRadius() : 0.0f;
 	RTCRay T_MATH_ALIGN16 r;
 
 	Color4f contribution(0.0f, 0.0f, 0.0f, 0.0f);
 	for (const auto& light : m_lights)
 	{
+		if ((light.mask & mask) == 0)
+			continue;
+
 		switch (light.type)
 		{
 		case Light::LtDirectional:
-			if (!onlyProbes)
 			{
 				Scalar phi = dot3(normal, -light.direction);
 				if (phi <= 0.0f)
@@ -701,7 +583,6 @@ Color4f RayTracerEmbree::sampleAnalyticalLights(
 			break;
 
 		case Light::LtPoint:
-			if (!onlyProbes)
 			{
 				Vector4 lightDirection = (light.position - origin).xyz0();
 				Scalar lightDistance = lightDirection.normalize();
@@ -768,7 +649,6 @@ Color4f RayTracerEmbree::sampleAnalyticalLights(
 			break;
 
 		case Light::LtSpot:
-			if (!onlyProbes)
 			{
 				Vector4 lightToPoint = (origin - light.position).xyz0();
 				Scalar lightDistance = lightToPoint.normalize();
@@ -842,7 +722,7 @@ Color4f RayTracerEmbree::sampleAnalyticalLights(
 		case Light::LtProbe:
 			{
 				Color4f ibl(0.0f, 0.0f, 0.0f, 0.0f);
-				int32_t samples = secondary ? 50 : 200;
+				int32_t samples = bounce ? 50 : 200;
 				int32_t n = 0;
 
 				for (int32_t i = 0; i < samples; ++i)
@@ -868,7 +748,7 @@ Color4f RayTracerEmbree::sampleAnalyticalLights(
 					ibl += light.probe->sample(direction) * dot3(direction, normal);
 					n++;
 
-					if (!secondary)
+					if (!bounce)
 					{
 						int32_t density = (int32_t)(light.probe->getDensity(direction) * 20.0f);
 						for (int32_t j = 0; j < density; ++j)

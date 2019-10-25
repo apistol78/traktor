@@ -246,10 +246,10 @@ bool WorldRendererDeferred::create(
 		rtscd.usingPrimaryDepthStencil = (desc.sharedDepthStencil == nullptr) ? true : false;
 		rtscd.sharedDepthStencil = desc.sharedDepthStencil;
 		rtscd.preferTiled = true;
-		rtscd.targets[0].format = render::TfR16F;			// Depth (R)
-		rtscd.targets[1].format = render::TfR16G16F;		// Normals (RG)
-		rtscd.targets[2].format = render::TfR10G10B10A2;	// Metalness (R), Roughness (G), Specular (B), Light mask (A)
-		rtscd.targets[3].format = render::TfR11G11B10F;		// Surface color (RGB)
+		rtscd.targets[0].format = render::TfR16F;		// Depth (R)
+		rtscd.targets[1].format = render::TfR16G16F;	// Normals (RG)
+		rtscd.targets[2].format = render::TfR11G11B10F;	// Metalness (R), Roughness (G), Specular (B)
+		rtscd.targets[3].format = render::TfR11G11B10F;	// Surface color (RGB)
 
 		m_gbufferTargetSet = renderSystem->createRenderTargetSet(rtscd, T_FILE_LINE_W);
 		if (!m_gbufferTargetSet)
@@ -1343,7 +1343,6 @@ void WorldRendererDeferred::getDebugTargets(std::vector< render::DebugTarget >& 
 		outTargets.push_back(render::DebugTarget(L"GBuffer metalness", render::DtvDeferredMetalness, m_gbufferTargetSet->getColorTexture(2)));
 		outTargets.push_back(render::DebugTarget(L"GBuffer roughness", render::DtvDeferredRoughness, m_gbufferTargetSet->getColorTexture(2)));
 		outTargets.push_back(render::DebugTarget(L"GBuffer specular", render::DtvDeferredSpecular, m_gbufferTargetSet->getColorTexture(2)));
-		outTargets.push_back(render::DebugTarget(L"GBuffer light mask", render::DtvDeferredLightMask, m_gbufferTargetSet->getColorTexture(2)));
 		outTargets.push_back(render::DebugTarget(L"GBuffer surface color", render::DtvDefault, m_gbufferTargetSet->getColorTexture(3)));
 	}
 

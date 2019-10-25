@@ -264,28 +264,6 @@
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>1</defaultValue>
 		</item>
-		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
-			<id>{8DECCDA7-6E43-452B-9366-3699F1E40328}</id>
-			<comment/>
-			<position>
-				<first>535</first>
-				<second>594</second>
-			</position>
-			<swizzle>x</swizzle>
-		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
-			<id>{16B8A186-A765-4CDD-87EA-8DC07240BEEE}</id>
-			<comment/>
-			<position>
-				<first>340</first>
-				<second>594</second>
-			</position>
-			<name>LightMask</name>
-			<connectable>true</connectable>
-			<optional>true</optional>
-			<haveDefaultValue>true</haveDefaultValue>
-			<defaultValue>1</defaultValue>
-		</item>
 	</nodes>
 	<edges>
 		<item type="traktor.render.Edge">
@@ -476,26 +454,6 @@
 			<destination>
 				<node ref="/object/nodes/item[10]"/>
 				<name>Z</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[21]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[20]"/>
-				<name>Input</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[20]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[10]"/>
-				<name>W</name>
 			</destination>
 		</item>
 	</edges>

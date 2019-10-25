@@ -33,6 +33,13 @@ class T_DLLCLASS LightComponentData : public IEntityComponentData
 	T_RTTI_CLASS;
 
 public:
+	enum LightBakeMode
+	{
+		LbmDisabled,	//!< Not used in baking, light is dynamic.
+		LbmIndirect,	//!< Indirect light is baked, direct light is dynamic.
+		LbmAll			//!< All lighting, direct and indirect, are baked and this light is not dynamic.
+	};
+
 	LightComponentData();
 
 	virtual void serialize(ISerializer& s) override final;
@@ -69,6 +76,8 @@ public:
 
 	float getFlickerFilter() const { return m_flickerFilter; }
 
+	LightBakeMode getBakeMode() const { return m_bakeMode; }
+
 private:
 	LightType m_lightType;
 	Color4f m_color;
@@ -78,6 +87,7 @@ private:
 	float m_radius;
 	float m_flickerAmount;
 	float m_flickerFilter;
+	LightBakeMode m_bakeMode;
 };
 
 	}

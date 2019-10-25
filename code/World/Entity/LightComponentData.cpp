@@ -17,7 +17,7 @@ namespace traktor
 	namespace world
 	{
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.world.LightComponentData", 9, LightComponentData, IEntityComponentData)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.world.LightComponentData", 10, LightComponentData, IEntityComponentData)
 
 LightComponentData::LightComponentData()
 :	m_lightType(LtDisabled)
@@ -28,6 +28,7 @@ LightComponentData::LightComponentData()
 ,	m_radius(HALF_PI)
 ,	m_flickerAmount(0.0f)
 ,	m_flickerFilter(0.0f)
+,	m_bakeMode(LbmIndirect)
 {
 }
 
@@ -44,7 +45,7 @@ void LightComponentData::serialize(ISerializer& s)
 
 	s >> MemberEnum< LightType >(L"lightType", m_lightType, c_LightType_Keys);
 
-	if (s.getVersion() >= 5)
+	if (s.getVersion< LightComponentData >() >= 5)
 	{
 		s >> Member< Color4f >(L"color", m_color);
 	}
@@ -61,20 +62,20 @@ void LightComponentData::serialize(ISerializer& s)
 		m_color = Color4f(sunColor);
 	}
 
-	if (s.getVersion() >= 7)
+	if (s.getVersion< LightComponentData >() >= 7)
 		s >> Member< float >(L"intensity", m_intensity, AttributeRange(0.0f) | AttributeUnit(AuLumens));
 
-	if (s.getVersion() >= 1 && s.getVersion() < 8)
+	if (s.getVersion< LightComponentData >() >= 1 && s.getVersion< LightComponentData >() < 8)
 	{
 		resource::Id< render::ITexture > probeDiffuseTexture;
 		resource::Id< render::ITexture > probeSpecularTexture;
-		if (s.getVersion() >= 3)
+		if (s.getVersion< LightComponentData >() >= 3)
 		{
 			s >> resource::Member< render::ITexture >(L"probeDiffuseTexture", probeDiffuseTexture);
-			if (s.getVersion() >= 4)
+			if (s.getVersion< LightComponentData >() >= 4)
 				s >> resource::Member< render::ITexture >(L"probeSpecularTexture", probeSpecularTexture);
 		}
-		else if (s.getVersion() >= 2)
+		else if (s.getVersion< LightComponentData >() >= 2)
 		{
 			s >> resource::Member< render::ITexture >(L"probeDiffuseTexture", probeDiffuseTexture);
 			s >> resource::Member< render::ITexture >(L"probeSpecularTexture", probeSpecularTexture);
@@ -83,7 +84,7 @@ void LightComponentData::serialize(ISerializer& s)
 			s >> resource::Member< render::ITexture >(L"probeTexture", probeDiffuseTexture);
 	}
 
-	if (s.getVersion() < 6)
+	if (s.getVersion< LightComponentData >() < 6)
 	{
 		resource::Id< render::ITexture > cloudShadowTexture;
 		s >> resource::Member< render::ITexture >(L"cloudShadowTexture", cloudShadowTexture);
@@ -95,10 +96,22 @@ void LightComponentData::serialize(ISerializer& s)
 	s >> Member< float >(L"flickerAmount", m_flickerAmount, AttributeRange(0.0f, 1.0f));
 	s >> Member< float >(L"flickerFilter", m_flickerFilter, AttributeRange(0.0f, 1.0f));
 
-	if (s.getVersion() >= 8 && s.getVersion() < 9)
+	if (s.getVersion< LightComponentData >() >= 8 && s.getVersion< LightComponentData >() < 9)
 	{
 		Ref< const render::SHCoeffs > shCoeffs;
 		s >> MemberRef< const render::SHCoeffs >(L"shCoeffs", shCoeffs);
+	}
+
+	if (s.getVersion< LightComponentData >() >= 10)
+	{
+		const MemberEnum< LightBakeMode >::Key c_LightBakeMode_Keys[] =
+		{
+			{ L"LbmDisabled", LbmDisabled },
+			{ L"LbmIndirect", LbmIndirect },
+			{ L"LbmAll", LbmAll },
+			{ 0 }
+		};
+		s >> MemberEnum< LightBakeMode >(L"bakeMode", m_bakeMode, c_LightBakeMode_Keys);
 	}
 }
 

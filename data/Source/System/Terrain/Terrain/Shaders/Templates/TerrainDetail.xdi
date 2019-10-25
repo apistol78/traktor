@@ -819,11 +819,6 @@ Generated texture from surface cache.
 					<optional>true</optional>
 				</item>
 				<item>
-					<id>{9FEC41F0-44FF-4A36-A57D-0CDEEDDA7FD5}</id>
-					<name>LightMask</name>
-					<optional>true</optional>
-				</item>
-				<item>
 					<id>{3C90103C-96CA-CD4F-88BF-928235B168E7}</id>
 					<name>Metalness</name>
 					<optional>true</optional>
@@ -853,10 +848,6 @@ Generated texture from surface cache.
 				<item>
 					<first>Emissive</first>
 					<second>0</second>
-				</item>
-				<item>
-					<first>LightMask</first>
-					<second>1</second>
 				</item>
 				<item>
 					<first>Metalness</first>

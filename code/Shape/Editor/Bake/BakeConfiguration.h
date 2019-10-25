@@ -23,12 +23,6 @@ class T_DLLCLASS BakeConfiguration : public ISerializable
 public:
 	BakeConfiguration();
 
-	bool traceDirect() const { return m_traceDirect; }
-
-	bool traceIndirect() const { return m_traceIndirect; }
-
-	bool traceIrradiance() const { return m_traceIrradiance; }
-
 	uint32_t getIndirectSampleCount() const { return m_indirectSampleCount; }
 
 	uint32_t getShadowSampleCount() const { return m_shadowSampleCount; }
@@ -38,6 +32,8 @@ public:
 	float getPointLightShadowRadius() const { return m_pointLightShadowRadius; }
 
 	float getLumelDensity() const { return m_lumelDensity; }
+
+	float getIrradianceGridDensity() const { return m_irradianceGridDensity; }
 
 	int32_t getMinimumLightMapSize() const { return m_minimumLightMapSize; }
 
@@ -52,14 +48,12 @@ public:
 	virtual void serialize(ISerializer& s) override final;
 
 private:
-	bool m_traceDirect;
-	bool m_traceIndirect;
-	bool m_traceIrradiance;
 	uint32_t m_indirectSampleCount;
 	uint32_t m_shadowSampleCount;
 	uint32_t m_irradianceSampleCount;
 	float m_pointLightShadowRadius;
 	float m_lumelDensity;
+	float m_irradianceGridDensity;
 	int32_t m_minimumLightMapSize;
 	int32_t m_maximumLightMapSize;
 	bool m_enableShadowFix;

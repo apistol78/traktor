@@ -43,6 +43,12 @@ struct Light
 		LtProbe = 3
 	};
 
+	enum LightMask
+	{
+		LmDirect = 0x01,
+		LmIndirect = 0x02
+	};
+
 	LightType type;
 	Vector4 position;
 	Vector4 direction;
@@ -51,6 +57,7 @@ struct Light
 	Scalar radius;
 	Ref< IProbe > probe;
 	int32_t surface;
+	uint8_t mask;
 
 	Light()
 	:	type(LtDirectional)
@@ -60,6 +67,7 @@ struct Light
 	,	range(0.0f)
 	,	radius(0.0f)
 	,	surface(0)
+	,	mask(0)
 	{
 	}
 };
