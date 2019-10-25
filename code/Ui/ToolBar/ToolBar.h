@@ -60,6 +60,8 @@ private:
 	Ref< ToolBarItem > m_trackItem;
 	int32_t m_offsetX;
 
+	void clampOffset();
+
 	void eventMouseTrack(MouseTrackEvent* event);
 
 	void eventMouseMove(MouseMoveEvent* event);
@@ -71,6 +73,8 @@ private:
 	void eventWheel(MouseWheelEvent* event);
 
 	void eventPaint(PaintEvent* event);
+
+	void eventSize(SizeEvent* event);
 
 	void eventShowTip(ToolTipEvent* event);
 };

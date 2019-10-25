@@ -44,6 +44,7 @@ bool ToolBar::create(Widget* parent, int32_t style)
 	addEventHandler< MouseButtonUpEvent >(this, &ToolBar::eventButtonUp);
 	addEventHandler< MouseWheelEvent >(this, &ToolBar::eventWheel);
 	addEventHandler< PaintEvent >(this, &ToolBar::eventPaint);
+	addEventHandler< SizeEvent >(this, &ToolBar::eventSize);
 
 	m_toolTip = new ToolTip();
 	m_toolTip->create(this);
@@ -153,16 +154,33 @@ Ref< ToolBarItem > ToolBar::getItem(const Point& at)
 
 Size ToolBar::getPreferedSize() const
 {
-	int32_t width = getParent()->getInnerRect().getWidth();
+	int32_t width = 0;
 	int32_t height = 0;
 
 	for (auto item : m_items)
 	{
 		Size size = item->getSize(this, m_imageWidth, m_imageHeight);
+		width += size.cx + c_itemPad;
 		height = std::max(height, size.cy);
 	}
 
-	return Size(width, height + dpi96(c_marginHeight * 2 + 1));
+	return Size(width + dpi96(c_marginWidth * 2), height + dpi96(c_marginHeight * 2 + 1));
+}
+
+void ToolBar::clampOffset()
+{
+	if (m_offsetX > 0)
+		m_offsetX = 0;
+
+	int32_t clientWidth = getInnerRect().getSize().cx;
+	int32_t preferedWidth = getPreferedSize().cx;
+	if (preferedWidth > clientWidth)
+	{
+		int32_t over = preferedWidth - clientWidth;
+		m_offsetX = std::max(m_offsetX, -over);
+	}
+	else
+		m_offsetX = 0;
 }
 
 void ToolBar::eventMouseTrack(MouseTrackEvent* event)
@@ -242,7 +260,8 @@ void ToolBar::eventButtonUp(MouseButtonUpEvent* event)
 
 void ToolBar::eventWheel(MouseWheelEvent* event)
 {
-	m_offsetX += event->getRotation();
+	m_offsetX += event->getRotation() * dpi96(32);
+	clampOffset();
 	update();
 }
 
@@ -280,6 +299,11 @@ void ToolBar::eventPaint(PaintEvent* event)
 	}
 
 	event->consume();
+}
+
+void ToolBar::eventSize(SizeEvent* event)
+{
+	clampOffset();
 }
 
 void ToolBar::eventShowTip(ToolTipEvent* event)
