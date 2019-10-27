@@ -24,6 +24,8 @@ class Model;
     namespace shape
     {
 
+class PrimitiveEntityData;
+
 /*! Primitive entity.
  * \ingroup Shape
  */
@@ -32,7 +34,7 @@ class T_DLLCLASS PrimitiveEntity : public world::Entity
     T_RTTI_CLASS;
 
 public:
-    PrimitiveEntity(const Transform& transform, BooleanOperation operation);
+    PrimitiveEntity(const PrimitiveEntityData* data, const Transform& transform);
 
     virtual void setTransform(const Transform& transform) override final;
 
@@ -42,9 +44,9 @@ public:
 
     virtual void update(const world::UpdateParams& update) override final;
 
-    const Transform& getTransform() const { return m_transform; }
+	const PrimitiveEntityData* getData() const { return m_data; }
 
-    BooleanOperation getOperation() const { return m_operation; }
+    const Transform& getTransform() const { return m_transform; }
 
     const model::Model* getModel() const { return m_model; }
 
@@ -59,8 +61,8 @@ public:
 protected:
     friend class PrimitiveEntityData;
 
+	Ref< const PrimitiveEntityData > m_data;
     Transform m_transform;
-    BooleanOperation m_operation;
 	Ref< const model::Model > m_model;
 	Aabb3 m_boundingBox;
     uint32_t m_selectedMaterial;
