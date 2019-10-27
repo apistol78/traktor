@@ -227,6 +227,14 @@ bool TextureOutputPipeline::buildOutput(
 	TextureFormat textureFormat;
 	bool needAlpha;
 
+	// Check if linear space is explicit in image.
+	if (image->getImageInfo() != nullptr && image->getImageInfo()->getGamma() >= 0.001f)
+	{
+		bool explicitLinear = (bool)(std::abs(image->getImageInfo()->getGamma() - 1.0f) < 0.001f);
+		if (explicitLinear != textureOutput->m_linearGamma)
+			log::warning << L"Image linear gamma mismatch; image is " << (explicitLinear ? L"linear" : L"non-linear") << L", while asset declare as " << (textureOutput->m_linearGamma ? L"linear" : L"non-linear") << L"." << Endl;
+	}
+
 	// Use explicit texture format if specified.
 	if (textureOutput->m_textureFormat != TfInvalid)
 	{
