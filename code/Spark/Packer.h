@@ -1,5 +1,4 @@
-#ifndef traktor_flash_Packer_H
-#define traktor_flash_Packer_H
+#pragma once
 
 #include "Core/Object.h"
 
@@ -41,6 +40,3 @@ private:
 
 	}
 }
-
-#endif	// traktor_flash_Packer_H
-

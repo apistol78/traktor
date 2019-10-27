@@ -1,5 +1,4 @@
-#ifndef traktor_flash_ICharacterFactory_H
-#define traktor_flash_ICharacterFactory_H
+#pragma once
 
 #include "Core/Object.h"
 #include "Core/Ref.h"
@@ -53,6 +52,3 @@ public:
 
 	}
 }
-
-#endif	// traktor_flash_ICharacterFactory_H
-
