@@ -14,6 +14,7 @@
 #include "Render/VertexElement.h"
 #include "Render/Context/RenderContext.h"
 #include "Shape/Editor/Solid/PrimitiveEntity.h"
+#include "Shape/Editor/Solid/PrimitiveEntityData.h"
 #include "Shape/Editor/Solid/SolidEntity.h"
 #include "World/IWorldRenderPass.h"
 #include "World/WorldContext.h"
@@ -88,7 +89,7 @@ void SolidEntity::update(const world::UpdateParams& update)
 
 				model::Model result;
 
-                switch ((*it)->getOperation())
+                switch ((*it)->getData()->getOperation())
                 {
                 case BooleanOperation::BoUnion:
                     {
@@ -171,26 +172,41 @@ void SolidEntity::update(const world::UpdateParams& update)
             }
             m_vertexBuffer->unlock();
 
-            // Create indices.
+            // Create indices and material batches.
             m_indexBuffer = m_renderSystem->createIndexBuffer(render::ItUInt16, nindices * sizeof(uint16_t), false);
-
             uint16_t* index = (uint16_t*)m_indexBuffer->lock();
-			for (const auto& p : current.getPolygons())
-			{
-				*index++ = (uint16_t)p.getVertex(0);
-				*index++ = (uint16_t)p.getVertex(1);
-				*index++ = (uint16_t)p.getVertex(2);
-			}
-            m_indexBuffer->unlock();
 
-            // Create primitives.
-            m_primitives.setIndexed(
-                render::PtTriangles,
-                0,
-                nindices / 3,
-                0,
-                nvertices - 1
-            );
+			uint32_t offset = 0;
+			for (uint32_t i = 0; i < current.getMaterialCount(); ++i)
+			{
+				uint32_t count = 0;
+				for (const auto& p : current.getPolygons())
+				{
+					if (p.getMaterial() == i)
+					{
+						*index++ = (uint16_t)p.getVertex(0);
+						*index++ = (uint16_t)p.getVertex(1);
+						*index++ = (uint16_t)p.getVertex(2);
+						++count;
+					}
+				}
+
+				if (!count)
+					continue;
+
+				auto& batch = m_batches.push_back();
+				batch.primitives.setIndexed(
+					render::PtTriangles,
+					offset,
+					count,
+					0,
+					nvertices - 1
+				);
+
+				offset += count * 3;
+			}
+
+            m_indexBuffer->unlock();
         }
 
 		m_dirty = false;
@@ -215,24 +231,27 @@ void SolidEntity::render(
 
 	auto renderContext = worldContext.getRenderContext();
 
-	render::SimpleRenderBlock* renderBlock = renderContext->alloc< render::SimpleRenderBlock >("Solid");
+	for (const auto& batch : m_batches)
+	{
+		render::SimpleRenderBlock* renderBlock = renderContext->alloc< render::SimpleRenderBlock >("Solid");
 
-	renderBlock->distance = std::numeric_limits< float >::max();
-	renderBlock->program = program;
-	renderBlock->indexBuffer = m_indexBuffer;
-	renderBlock->vertexBuffer = m_vertexBuffer;
-	renderBlock->primitives = m_primitives;
+		renderBlock->distance = std::numeric_limits< float >::max();
+		renderBlock->program = program;
+		renderBlock->indexBuffer = m_indexBuffer;
+		renderBlock->vertexBuffer = m_vertexBuffer;
+		renderBlock->primitives = batch.primitives;
 
-	renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
-	renderBlock->programParams->beginParameters(renderContext);
+		renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
+		renderBlock->programParams->beginParameters(renderContext);
 
-	worldRenderPass.setProgramParameters(
-		renderBlock->programParams
-	);
+		worldRenderPass.setProgramParameters(
+			renderBlock->programParams
+		);
 
-	renderBlock->programParams->endParameters(renderContext);
+		renderBlock->programParams->endParameters(renderContext);
 
-	renderContext->draw(m_shader->getCurrentPriority(), renderBlock);
+		renderContext->draw(m_shader->getCurrentPriority(), renderBlock);
+	}
 }
 
     }

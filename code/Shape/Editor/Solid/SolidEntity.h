@@ -59,11 +59,16 @@ public:
 	);
 
 private:
+	struct MaterialBatch
+	{
+		render::Primitives primitives;
+	};
+
 	Ref< render::IRenderSystem > m_renderSystem;
 	resource::Proxy< render::Shader > m_shader;
 	Ref< render::VertexBuffer > m_vertexBuffer;
 	Ref< render::IndexBuffer > m_indexBuffer;
-	render::Primitives m_primitives;
+	AlignedVector< MaterialBatch > m_batches;
 	bool m_dirty;
 };
 

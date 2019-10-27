@@ -8,9 +8,9 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.shape.PrimitiveEntity", PrimitiveEntity, world::Entity)
 
-PrimitiveEntity::PrimitiveEntity(const Transform& transform, BooleanOperation operation)
-:   m_transform(transform)
-,   m_operation(operation)
+PrimitiveEntity::PrimitiveEntity(const PrimitiveEntityData* data, const Transform& transform)
+:	m_data(data)
+,   m_transform(transform)
 ,   m_selectedMaterial(model::c_InvalidIndex)
 ,   m_dirty(true)
 {

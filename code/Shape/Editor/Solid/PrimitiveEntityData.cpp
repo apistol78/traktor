@@ -22,7 +22,7 @@ PrimitiveEntityData::PrimitiveEntityData()
 
 Ref< PrimitiveEntity > PrimitiveEntityData::createEntity() const
 {
-    Ref< PrimitiveEntity > entity = new PrimitiveEntity(getTransform(), m_operation);
+    Ref< PrimitiveEntity > entity = new PrimitiveEntity(this, getTransform());
 	if (m_shape)
 	{
 		Ref< const model::Model > m = m_shape->createModel();
