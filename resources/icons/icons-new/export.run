@@ -435,11 +435,12 @@ local outputs =
 		}
 	},
 	{
+		source = "Terrain.svg",
 		name = "Terrain",
 		path = "../../runtime/themes/%s/Images/Terrain",
 		resources =
 		{
-			{ name = "Terrain", column = 0, row = 15, width = 15, height = 1 },
+			{ name = "Terrain", column = 0, row = 0, width = 17, height = 1 },
 		}
 	},
 	{
@@ -504,8 +505,8 @@ local dpis =
 
 -- -j -i Dark
 local function export(input, x, y, width, height, dpi, output)
-	local inkscape = "/usr/bin/inkscape"
-	--local inkscape = "\"c:/program files/inkscape/inkscape.exe\""
+	--local inkscape = "/usr/bin/inkscape"
+	local inkscape = "\"c:/program files/inkscape/inkscape.exe\""
 	local cmd = inkscape .. " --without-gui --export-png=" .. output .. " --export-area=" .. x .. ":" .. -y .. ":" .. (x + width) .. ":" .. -y + height .. " --export-dpi=" .. dpi .. " " .. input
 	stdout:printLn(cmd)
 	local result = run:execute(cmd) --, nil)
@@ -546,7 +547,7 @@ function main(argv)
 						stdout:printLn("Exporting @ dpi " .. dpi .. "...")
 
 						-- Faux export DPI to export as 16x16 at baseline (if base isn't set).
-						local xdpi = (90 / 2) * (dpi / 96) * (base / 16)
+						local xdpi = (96 / 2) * (dpi / 96) * (base / 16)
 						export(source, o.column * 32, o.row * 32, o.width * 32, o.height * 32, xdpi, dpi .. ".png")
 
 						-- Get file size of output.
