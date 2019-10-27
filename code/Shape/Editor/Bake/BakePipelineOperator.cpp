@@ -1,5 +1,3 @@
-#pragma optimize( "", off )
-
 #include <limits>
 #include <functional>
 #include "Core/Io/FileSystem.h"
@@ -281,6 +279,7 @@ void addSky(
 	light.range = Scalar(1e8f);
 	light.radius = Scalar(1e8f);
 	light.probe = new IblProbe(radiance, importance);
+	light.mask = Light::LmDirect | Light::LmIndirect;
 	tracerTask->addTracerLight(new TracerLight(light));
 }
 
@@ -409,7 +408,8 @@ bool BakePipelineOperator::create(const editor::IPipelineSettings* settings)
 		return false;
 
 	m_editor = settings->getProperty< bool >(L"Pipeline.TargetEditor", false);
-	
+
+	// Create output path for debugging data.
 	FileSystem::getInstance().makeAllDirectories(Path(L"data/Temp/Bake"));
 	return true;
 }
@@ -527,17 +527,7 @@ bool BakePipelineOperator::build(
 					model::CleanDegenerate().apply(*model);
 					model::CalculateTangents(false).apply(*model);
 
-					// check if model already contain lightmap UV or if we need to unwrap.
-					bool shouldUnwrap = false;
-
-					uint32_t channel = model->getTexCoordChannel(L"Lightmap");
-					if (channel == model::c_InvalidIndex)
-					{
-						// No lightmap UV channel, need to add and unwrap automatically.
-						channel = model->addUniqueTexCoordChannel(L"Lightmap");
-						shouldUnwrap = true;
-					}
-
+					// Calculate size of lightmap from geometry.
 					int32_t lightmapSize = calculateLightmapSize(
 						model,
 						configuration->getLumelDensity(),
@@ -545,9 +535,12 @@ bool BakePipelineOperator::build(
 						configuration->getMaximumLightMapSize()
 					);
 
-					if (shouldUnwrap)
+					// Check if model already contain lightmap UV or if we need to unwrap.
+					uint32_t channel = model->getTexCoordChannel(L"Lightmap");
+					if (channel == model::c_InvalidIndex)
 					{
-						T_FATAL_ASSERT(channel != model::c_InvalidIndex);
+						// No lightmap UV channel, need to add and unwrap automatically.
+						channel = model->addUniqueTexCoordChannel(L"Lightmap");
 						model::UnwrapUV(channel, lightmapSize).apply(*model);
 					}
 
@@ -557,18 +550,11 @@ bool BakePipelineOperator::build(
 					{
 						material.setBlendOperator(model::Material::BoDecal);
 						material.setLightMap(model::Material::Map(L"Lightmap", channel, false, lightmapId));
-
-						//uint32_t flags = 0;
-						//if (configuration->traceDirect())
-						//	flags |= model::Material::LmfRadiance;
-						//if (configuration->traceIndirect())
-						//	flags |= model::Material::LmfIrradiance;
-						//material.setLightMapFlags(flags);					
 					}
 					model->setMaterials(materials);
 
 					// Write model for debugging into temporary folder.
-					// model::ModelFormat::writeAny(L"data/Temp/Bake/" + inoutEntityData->getName() + L".tmd", model);
+					model::ModelFormat::writeAny(L"data/Temp/Bake/" + inoutEntityData->getName() + L".tmd", model);
 
 					// Add model to raytracing task.
 					if (!addModel(
@@ -620,17 +606,7 @@ bool BakePipelineOperator::build(
 				model::CleanDegenerate().apply(*model);
 				model::CalculateTangents(false).apply(*model);
 
-				// check if model already contain lightmap UV or if we need to unwrap.
-				bool shouldUnwrap = false;
-
-				uint32_t channel = model->getTexCoordChannel(L"Lightmap");
-				if (channel == model::c_InvalidIndex)
-				{
-					// No lightmap UV channel, need to add and unwrap automatically.
-					channel = model->addUniqueTexCoordChannel(L"Lightmap");
-					shouldUnwrap = true;
-				}
-
+				// Calculate size of lightmap from geometry.
 				int32_t lightmapSize = calculateLightmapSize(
 					model,
 					configuration->getLumelDensity(),
@@ -638,9 +614,12 @@ bool BakePipelineOperator::build(
 					configuration->getMaximumLightMapSize()
 				);
 
-				if (shouldUnwrap)
+				// Check if model already contain lightmap UV or if we need to unwrap.
+				uint32_t channel = model->getTexCoordChannel(L"Lightmap");
+				if (channel == model::c_InvalidIndex)
 				{
-					T_FATAL_ASSERT(channel != model::c_InvalidIndex);
+					// No lightmap UV channel, need to add and unwrap automatically.
+					channel = model->addUniqueTexCoordChannel(L"Lightmap");
 					model::UnwrapUV(channel, lightmapSize).apply(*model);
 				}
 
@@ -650,18 +629,11 @@ bool BakePipelineOperator::build(
 				{
 					material.setBlendOperator(model::Material::BoDecal);
 					material.setLightMap(model::Material::Map(L"Lightmap", channel, false, lightmapId));
-
-					//uint32_t flags = 0;
-					//if (configuration->traceDirect())
-					//	flags |= model::Material::LmfRadiance;
-					//if (configuration->traceIndirect())
-					//	flags |= model::Material::LmfIrradiance;
-					//material.setLightMapFlags(flags);
 				}
 				model->setMaterials(materials);
 
 				// Write model for debugging into temporary folder.
-				// model::ModelFormat::writeAny(L"data/Temp/Bake/" + inoutEntityData->getName() + L".tmd", model);
+				model::ModelFormat::writeAny(L"data/Temp/Bake/" + inoutEntityData->getName() + L".tmd", model);
 
 				// Add model to raytracing task.
 				if (!addModel(

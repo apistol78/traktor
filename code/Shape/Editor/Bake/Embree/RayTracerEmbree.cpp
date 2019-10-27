@@ -231,21 +231,21 @@ Ref< render::SHCoeffs > RayTracerEmbree::traceProbe(const Vector4& position) con
 		const auto& polygons = m_model.getPolygons();
 		const auto& materials = m_model.getMaterials();
 
-		//// Calculate direct light from probes.
-		//for (uint32_t i = 0; i < sampleCount; ++i)
-		//{
-		//	Vector2 uv = Quasirandom::hammersley(i, sampleCount, random);
-		//	Vector4 direction = Quasirandom::uniformHemiSphere(uv, unit);
-		//	Color4f incoming = sampleAnalyticalLights(
-		//		random,
-		//		position,
-		//		direction,
-		//		Light::LmDirect,
-		//		false
-		//	);
-		//	direct += incoming * dot3(unit, direction);
-		//}
-		//direct /= Scalar(sampleCount);
+		// Calculate direct light from probes.
+		for (uint32_t i = 0; i < sampleCount; ++i)
+		{
+			Vector2 uv = Quasirandom::hammersley(i, sampleCount, random);
+			Vector4 direction = Quasirandom::uniformHemiSphere(uv, unit);
+			Color4f incoming = sampleAnalyticalLights(
+				random,
+				position,
+				direction,
+				Light::LmDirect,
+				false
+			);
+			direct += incoming * dot3(unit, direction);
+		}
+		direct /= Scalar(sampleCount);
 
 		// Calculate indirect light.
 		Variance variance;
@@ -420,11 +420,6 @@ Ref< drawing::Image > RayTracerEmbree::traceIndirect(const GBuffer* gbuffer) con
 								Vector2 uv = Quasirandom::hammersley(i + j, sampleCount, random);
 								direction[j] = Quasirandom::uniformHemiSphere(uv, elm.normal);
 
-								// Add some slight bias toward normal direction since
-								// samples in the periferial doesn't contribute much
-								// due to cosine factor.
-								direction[j] = direction[j] + (elm.normal * Scalar(0.02f)).normalized();
-
 								rh.ray.org_x[j] = elm.position.x();
 								rh.ray.org_y[j] = elm.position.y();
 								rh.ray.org_z[j] = elm.position.z();
@@ -433,7 +428,7 @@ Ref< drawing::Image > RayTracerEmbree::traceIndirect(const GBuffer* gbuffer) con
 								rh.ray.dir_z[j] = direction[j].z();
 								rh.ray.tnear[j] = c_epsilonOffset;
 								rh.ray.time[j] = 0.0f;
-								rh.ray.tfar[j] = m_maxDistance;
+								rh.ray.tfar[j] = 10.0f; // Based of falloff model.
 								rh.ray.mask[j] = 0;
 								rh.ray.id[j] = 0;
 								rh.ray.flags[j] = 0;
