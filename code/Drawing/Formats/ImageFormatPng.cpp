@@ -97,53 +97,61 @@ Ref< Image > ImageFormatPng::read(IStream* stream)
 	double gamma = 0.0;
 	png_get_gAMA(png_ptr, info_ptr, &gamma);
 
-	if (color_type == PNG_COLOR_TYPE_RGB || color_type == PNG_COLOR_TYPE_RGB_ALPHA)
+	PixelFormat pixelFormat(0, 0, 0, 0, 0, false, false);
+	switch (color_type)
 	{
-		PixelFormat pixelFormat;
+	case PNG_COLOR_TYPE_GRAY:
+		if (bit_depth == 8)
+			pixelFormat = PixelFormat::getR8();
+		else if (bit_depth == 16)
+			pixelFormat = PixelFormat::getR16();
+		break;
 
-		switch (bit_depth)
-		{
-		case 8:
-			if (color_type == PNG_COLOR_TYPE_RGB)
-				pixelFormat = PixelFormat::getR8G8B8();
-			else
-				pixelFormat = PixelFormat::getA8R8G8B8();
-			break;
+	case PNG_COLOR_TYPE_RGB:
+		if (bit_depth == 8)
+			pixelFormat = PixelFormat::getR8G8B8();
+		else if (bit_depth == 16)
+			pixelFormat = PixelFormat::getR16G16B16();
+		break;
 
-		case 16:
-			if (color_type == PNG_COLOR_TYPE_RGB)
-				pixelFormat = PixelFormat::getR16G16B16();
-			else
-				pixelFormat = PixelFormat::getA16R16G16B16();
-			break;
+	case PNG_COLOR_TYPE_RGB_ALPHA:
+		if (bit_depth == 8)
+			pixelFormat = PixelFormat::getA8R8G8B8();
+		else if (bit_depth == 16)
+			pixelFormat = PixelFormat::getA16R16G16B16();
+		break;
 
-		default:
-			png_destroy_read_struct(&png_ptr, &info_ptr, NULL);
-			return nullptr;
-		}
-
-		image = new Image(pixelFormat, uint32_t(width), uint32_t(height));
-
-		uint8_t* data = (uint8_t *)image->getData();
-		const void** rows = (const void **)png_get_rows(png_ptr, info_ptr);
-		for (uint32_t i = 0; i < height; ++i)
-		{
-			int rowsize = image->getPixelFormat().getByteSize() * uint32_t(width);
-			std::memcpy(
-				data,
-				rows[i],
-				rowsize
-			);
-			data += rowsize;
-		}
-
-		Ref< ImageInfo > imageInfo = new ImageInfo();
-		imageInfo->setAuthor(L"Unknown");
-		imageInfo->setCopyright(L"Unknown");
-		imageInfo->setFormat(L"PNG");
-		imageInfo->setGamma(float(gamma));
-		image->setImageInfo(imageInfo);
+	default:
+		break;
 	}
+
+	if (pixelFormat.getByteSize() == 0)
+	{
+		png_destroy_read_struct(&png_ptr, NULL, NULL);
+		return nullptr;
+	}
+
+	image = new Image(pixelFormat, uint32_t(width), uint32_t(height));
+
+	uint8_t* data = (uint8_t *)image->getData();
+	const void** rows = (const void **)png_get_rows(png_ptr, info_ptr);
+	for (uint32_t i = 0; i < height; ++i)
+	{
+		int rowsize = image->getPixelFormat().getByteSize() * uint32_t(width);
+		std::memcpy(
+			data,
+			rows[i],
+			rowsize
+		);
+		data += rowsize;
+	}
+
+	Ref< ImageInfo > imageInfo = new ImageInfo();
+	imageInfo->setAuthor(L"Unknown");
+	imageInfo->setCopyright(L"Unknown");
+	imageInfo->setFormat(L"PNG");
+	imageInfo->setGamma((float)gamma);
+	image->setImageInfo(imageInfo);
 
 	png_destroy_read_struct(&png_ptr, &info_ptr, NULL);
 	return image;
