@@ -98,7 +98,7 @@ Ref< drawing::Image > denoise(const GBuffer& gbuffer, drawing::Image* lightmap)
 	oidnReleaseDevice(device);	
 	return output;
 #else
-	return image;
+	return lightmap;
 #endif
 }
 
