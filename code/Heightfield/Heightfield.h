@@ -18,6 +18,9 @@ namespace traktor
 	namespace hf
 	{
 
+/*!
+ * \ingroup Heightfield
+ */
 class T_DLLCLASS Heightfield : public Object
 {
 	T_RTTI_CLASS;

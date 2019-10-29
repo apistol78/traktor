@@ -324,180 +324,111 @@ Ref< render::SHCoeffs > RayTracerEmbree::traceProbe(const Vector4& position) con
 	return shCoeffs;
 }
 
-Ref< drawing::Image > RayTracerEmbree::traceDirect(const GBuffer* gbuffer) const
+void RayTracerEmbree::traceLightmap(const GBuffer* gbuffer, drawing::Image* lightmap, const int32_t region[4]) const
 {
+	const uint32_t indirectSampleCount = alignUp(m_configuration->getIndirectSampleCount(), 16);
+	RTCRayHit16 T_MATH_ALIGN16 rh;
 	RandomGeometry random;
+	Vector4 direction[16];
 
-    int32_t width = gbuffer->getWidth();
-    int32_t height = gbuffer->getHeight();
+	const auto& polygons = m_model.getPolygons();
+	const auto& materials = m_model.getMaterials();
 
-    Ref< drawing::Image > lightmapDirect = new drawing::Image(drawing::PixelFormat::getRGBAF32(), width, height);
-    lightmapDirect->clear(Color4f(0.0f, 0.0f, 0.0f, 0.0f));
+	for (int32_t y = region[1]; y < region[3]; ++y)
+	{
+		for (int32_t x = region[0]; x < region[2]; ++x)
+		{
+			const auto& elm = gbuffer->get(x, y);
+			if (elm.polygon == model::c_InvalidIndex)
+				continue;
 
-    RefArray< Job > jobs;
-    for (int32_t ty = 0; ty < height; ty += 16)
-    {
-        for (int32_t tx = 0; tx < width; tx += 16)
-        {
-            auto job = JobManager::getInstance().add(makeFunctor([&, tx, ty]() {
-				Vector4 direction[16];
+			// Trace direct illumination.
+			Color4f direct = sampleAnalyticalLights(
+				random,
+				elm.position,
+				elm.normal,
+				Light::LmDirect,
+				false
+			);
 
-                for (int32_t y = ty; y < ty + 16; ++y)
-                {
-                    for (int32_t x = tx; x < tx + 16; ++x)
-                    {
-						const auto& elm = gbuffer->get(x, y);
-						if (elm.polygon == model::c_InvalidIndex)
-							continue;
+			// Trace indirect illumination.
+			Color4f indirect(0.0f, 0.0f, 0.0f, 0.0f);
+			Variance variance;
+			uint32_t i;
 
-						Color4f direct = sampleAnalyticalLights(
-							random,
-							elm.position,
-							elm.normal,
-							Light::LmDirect,
-							false
-						);
-						lightmapDirect->setPixel(x, y, direct.rgb1());
-					}
+			for (i = 0; i < indirectSampleCount; i += 16)
+			{
+				// Create a batch of rays.
+				for (uint32_t j = 0; j < 16; ++j)
+				{
+					Vector2 uv = Quasirandom::hammersley(i + j, indirectSampleCount, random);
+					direction[j] = Quasirandom::uniformHemiSphere(uv, elm.normal);
+
+					rh.ray.org_x[j] = elm.position.x();
+					rh.ray.org_y[j] = elm.position.y();
+					rh.ray.org_z[j] = elm.position.z();
+					rh.ray.dir_x[j] = direction[j].x();
+					rh.ray.dir_y[j] = direction[j].y();
+					rh.ray.dir_z[j] = direction[j].z();
+					rh.ray.tnear[j] = c_epsilonOffset;
+					rh.ray.time[j] = 0.0f;
+					rh.ray.tfar[j] = 10.0f; // Based of falloff model.
+					rh.ray.mask[j] = 0;
+					rh.ray.id[j] = 0;
+					rh.ray.flags[j] = 0;
+					rh.hit.geomID[j] = RTC_INVALID_GEOMETRY_ID;
+					rh.hit.instID[0][j] = RTC_INVALID_GEOMETRY_ID;
 				}
-            }));
-            if (!job)
-               return nullptr;
 
-            jobs.push_back(job);
-		}
-	}
-    while (!jobs.empty())
-    {
-        jobs.back()->wait();
-        jobs.pop_back();
-    }
+				RTCIntersectContext context;
+				rtcInitIntersectContext(&context);
+				rtcIntersect16(c_valid, m_scene, &context, &rh);
 
-    return lightmapDirect;
-}
+				// Calculate indirect lighting reflected from each hit.
+				for (uint32_t j = 0; j < 16; ++j)
+				{
+					if (rh.hit.geomID[j] == RTC_INVALID_GEOMETRY_ID)
+						continue;
 
-Ref< drawing::Image > RayTracerEmbree::traceIndirect(const GBuffer* gbuffer) const
-{
-	RandomGeometry random;
+					Scalar distance(rh.ray.tfar[j]);
+					Scalar f = attenuation(distance);
+					if (f <= 0.0f)
+						continue;
 
-    int32_t width = gbuffer->getWidth();
-    int32_t height = gbuffer->getHeight();
+					Vector4 hitNormal = Vector4(rh.hit.Ng_x[j], rh.hit.Ng_y[j], rh.hit.Ng_z[j], 0.0f).normalized();
+					if (dot3(hitNormal, direction[j]) > 0.0f)
+						continue;
 
-    Ref< drawing::Image > lightmapIndirect = new drawing::Image(drawing::PixelFormat::getRGBAF32(), width, height);
-    lightmapIndirect->clear(Color4f(0.0f, 0.0f, 0.0f, 0.0f));
+					Vector4 hitPosition = (elm.position + direction[j] * distance).xyz1();
 
-	const uint32_t sampleCount = alignUp(m_configuration->getIndirectSampleCount(), 16);
+					const auto& sp = polygons[rh.hit.primID[j]];
+					const auto& sm = materials[sp.getMaterial()];
 
-    RefArray< Job > jobs;
-    for (int32_t ty = 0; ty < height; ty += 16)
-    {
-        for (int32_t tx = 0; tx < width; tx += 16)
-        {
-            auto job = JobManager::getInstance().add(makeFunctor([&, tx, ty]() {
-				RTCRayHit16 T_MATH_ALIGN16 rh;
-				Vector4 direction[16];
+					Color4f brdf = sm.getColor() * Scalar(sm.getEmissive() + 1.0f) * Color4f(1.0f, 1.0f, 1.0f, 0.0f) / Scalar(PI);
+					Color4f incoming = sampleAnalyticalLights(
+						random,
+						hitPosition,
+						hitNormal,
+						Light::LmIndirect,
+						false
+					);
 
-				const auto& polygons = m_model.getPolygons();
-				const auto& materials = m_model.getMaterials();
+					Scalar ct = dot3(elm.normal, direction[j]);
+					Color4f ind = brdf * incoming * f * ct / p;
 
-                for (int32_t y = ty; y < ty + 16; ++y)
-                {
-                    for (int32_t x = tx; x < tx + 16; ++x)
-                    {
-						const auto& elm = gbuffer->get(x, y);
-						if (elm.polygon == model::c_InvalidIndex)
-							continue;
-
-						Color4f indirect(0.0f, 0.0f, 0.0f, 0.0f);
-						Variance variance;
-
-						uint32_t i = 0;
-						for (; i < sampleCount; i += 16)
-						{
-							// Create a batch of rays.
-							for (uint32_t j = 0; j < 16; ++j)
-							{
-								Vector2 uv = Quasirandom::hammersley(i + j, sampleCount, random);
-								direction[j] = Quasirandom::uniformHemiSphere(uv, elm.normal);
-
-								rh.ray.org_x[j] = elm.position.x();
-								rh.ray.org_y[j] = elm.position.y();
-								rh.ray.org_z[j] = elm.position.z();
-								rh.ray.dir_x[j] = direction[j].x();
-								rh.ray.dir_y[j] = direction[j].y();
-								rh.ray.dir_z[j] = direction[j].z();
-								rh.ray.tnear[j] = c_epsilonOffset;
-								rh.ray.time[j] = 0.0f;
-								rh.ray.tfar[j] = 10.0f; // Based of falloff model.
-								rh.ray.mask[j] = 0;
-								rh.ray.id[j] = 0;
-								rh.ray.flags[j] = 0;
-								rh.hit.geomID[j] = RTC_INVALID_GEOMETRY_ID;
-								rh.hit.instID[0][j] = RTC_INVALID_GEOMETRY_ID;
-							}
-
-							RTCIntersectContext context;
-							rtcInitIntersectContext(&context);
-							rtcIntersect16(c_valid, m_scene, &context, &rh);
-
-							// Calculate indirect lighting reflected from each hit.
-							for (uint32_t j = 0; j < 16; ++j)
-							{
-								if (rh.hit.geomID[j] == RTC_INVALID_GEOMETRY_ID)
-									continue;
-
-								Scalar distance(rh.ray.tfar[j]);
-								Scalar f = attenuation(distance);
-								if (f <= 0.0f)
-									continue;
-
-								Vector4 hitNormal = Vector4(rh.hit.Ng_x[j], rh.hit.Ng_y[j], rh.hit.Ng_z[j], 0.0f).normalized();
-								if (dot3(hitNormal, direction[j]) > 0.0f)
-									continue;
-
-								Vector4 hitPosition = (elm.position + direction[j] * distance).xyz1();
-
-								const auto& sp = polygons[rh.hit.primID[j]];
-								const auto& sm = materials[sp.getMaterial()];
-
-								Color4f brdf = sm.getColor() * Scalar(sm.getEmissive() + 1.0f) * Color4f(1.0f, 1.0f, 1.0f, 0.0f) / Scalar(PI);
-								Color4f incoming = sampleAnalyticalLights(
-									random,
-									hitPosition,
-									hitNormal,
-									Light::LmIndirect,
-									false
-								);
-
-								Scalar ct = dot3(elm.normal, direction[j]);
-								Color4f ind = brdf * incoming * f * ct / p;
-
-								variance.insert(dot3(ind, c_luminance));
-								indirect += ind;
-							}
-							
-							if (variance.stop(0.05f, 1.96f))
-								break;
-						}
-
-						indirect /= Scalar(i + 16);
-						lightmapIndirect->setPixel(x, y, indirect.rgb1());
-					}
+					variance.insert(dot3(ind, c_luminance));
+					indirect += ind;
 				}
-            }));
-            if (!job)
-               return nullptr;
+				
+				if (variance.stop(0.05f, 1.96f))
+					break;
+			}
+			indirect /= Scalar(i + 16);
 
-            jobs.push_back(job);
+			// Set output in lightmap.
+			lightmap->setPixel(x, y, (direct + indirect).rgb1());
 		}
-	}
-    while (!jobs.empty())
-    {
-        jobs.back()->wait();
-        jobs.pop_back();
-    }
-
-    return lightmapIndirect;
+	}	
 }
 
 Color4f RayTracerEmbree::sampleAnalyticalLights(

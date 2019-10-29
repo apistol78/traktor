@@ -17,6 +17,9 @@ namespace traktor
 	namespace hf
 	{
 
+/*!
+ * \ingroup Heightfield
+ */
 class T_DLLCLASS HeightfieldResource : public ISerializable
 {
 	T_RTTI_CLASS;

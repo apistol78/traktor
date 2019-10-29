@@ -15,6 +15,9 @@ namespace traktor
 	namespace hf
 	{
 
+/*!
+ * \ingroup Heightfield
+ */
 class T_DLLCLASS HeightfieldFactory : public resource::IResourceFactory
 {
 	T_RTTI_CLASS;

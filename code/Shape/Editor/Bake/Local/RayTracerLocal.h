@@ -32,9 +32,7 @@ public:
 
     virtual Ref< render::SHCoeffs > traceProbe(const Vector4& position) const override final;
 
-    virtual Ref< drawing::Image > traceDirect(const GBuffer* gbuffer) const override final;
-
-    virtual Ref< drawing::Image > traceIndirect(const GBuffer* gbuffer) const override final;
+    virtual void traceLightmap(const GBuffer* gbuffer, drawing::Image* lightmap, const int32_t region[4]) const override final;
 
 private:
 	struct Surface

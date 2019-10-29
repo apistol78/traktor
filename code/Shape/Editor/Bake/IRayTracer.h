@@ -66,9 +66,7 @@ public:
 
     virtual Ref< render::SHCoeffs > traceProbe(const Vector4& position) const = 0;
 
-    virtual Ref< drawing::Image > traceDirect(const GBuffer* gbuffer) const = 0;
-
-    virtual Ref< drawing::Image > traceIndirect(const GBuffer* gbuffer) const = 0;
+    virtual void traceLightmap(const GBuffer* gbuffer, drawing::Image* lightmap, const int32_t region[4]) const = 0;
 };
 
     }

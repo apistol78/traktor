@@ -19,6 +19,9 @@ namespace traktor
 
 class Heightfield;
 
+/*!
+ * \ingroup Heightfield
+ */
 class T_DLLCLASS HeightfieldFormat : public Object
 {
 	T_RTTI_CLASS;

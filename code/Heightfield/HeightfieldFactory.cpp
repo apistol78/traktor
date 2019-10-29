@@ -1,6 +1,4 @@
-//#include <limits>
 #include "Core/Io/IStream.h"
-//#include "Core/Io/Reader.h"
 #include "Database/Instance.h"
 #include "Heightfield/Heightfield.h"
 #include "Heightfield/HeightfieldFactory.h"
