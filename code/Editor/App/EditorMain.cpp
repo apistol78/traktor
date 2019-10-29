@@ -11,6 +11,7 @@
 #include "Core/Io/Utf8Encoding.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/CommandLine.h"
+#include "Core/Misc/SafeDestroy.h"
 #include "Core/Misc/Split.h"
 #include "Core/System/OS.h"
 #include "Core/Thread/Thread.h"
@@ -21,13 +22,13 @@
 #include "Ui/Application.h"
 
 #if defined(_WIN32)
-#	include <Ui/Win32/WidgetFactoryWin32.h>
+#	include "Ui/Win32/WidgetFactoryWin32.h"
 typedef traktor::ui::WidgetFactoryWin32 WidgetFactoryImpl;
 #elif defined(__APPLE__)
-#	include <Ui/Cocoa/WidgetFactoryCocoa.h>
+#	include "Ui/Cocoa/WidgetFactoryCocoa.h"
 typedef traktor::ui::WidgetFactoryCocoa WidgetFactoryImpl;
 #elif defined(__LINUX__) || defined(__RPI__)
-#	include <Ui/X11/WidgetFactoryX11.h>
+#	include "Ui/X11/WidgetFactoryX11.h"
 typedef traktor::ui::WidgetFactoryX11 WidgetFactoryImpl;
 #endif
 
@@ -45,10 +46,8 @@ extern "C"
 }
 #endif
 
-
 namespace
 {
-
 
 class LogStreamTarget : public ILogTarget
 {
@@ -78,7 +77,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR szCmdLine, int)
 {
 	wchar_t file[MAX_PATH] = L"";
 	GetModuleFileName(NULL, file, sizeof_array(file));
-
 	CommandLine cmdLine(file, mbstows(szCmdLine));
 #endif
 
@@ -149,19 +147,18 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR szCmdLine, int)
 	}
 #endif
 
-#if defined(__APPLE__)
-	// Log some relevant environment variables to ease debugging.
-	std::wstring check;
-
-	OS::getInstance().getEnvironment(L"BUNDLE_PATH", check);
-	log::info << L"BUNDLE_PATH = \"" << check << L"\"" << Endl;
-
-	OS::getInstance().getEnvironment(L"TRAKTOR_HOME", check);
-	log::info << L"TRAKTOR_HOME = \"" << check << L"\"" << Endl;
-
-	OS::getInstance().getEnvironment(L"DYLD_LIBRARY_PATH", check);
-	log::info << L"DYLD_LIBRARY_PATH = \"" << check << L"\"" << Endl;
+	// Check if environment is already set, else set to current working directory.
+	std::wstring home;
+	if (!OS::getInstance().getEnvironment(L"TRAKTOR_HOME", home))
+	{
+		Path cwd = FileSystem::getInstance().getCurrentVolumeAndDirectory();
+#if !defined(_WIN32)
+		home = cwd.getPathNameNoExtension();
+#else
+		home = cwd.getPathName();
 #endif
+		OS::getInstance().setEnvironment(L"TRAKTOR_HOME", home);
+	}
 
 #if defined(__LINUX__) || defined(__RPI__)
 	std::wstring writableFolder = OS::getInstance().getWritableFolderPath() + L"/Doctor Entertainment AB";
@@ -181,7 +178,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR szCmdLine, int)
 		Ref< editor::Splash > splash = new editor::Splash();
 		splash->create();
 
-		for (int i = 0; i < 10; ++i)
+		for (int32_t i = 0; i < 10; ++i)
 			ui::Application::getInstance()->process();
 #endif
 
@@ -202,7 +199,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR szCmdLine, int)
 	}
 	catch (...)
 	{
-		traktor::log::error << L"Unhandled exception, application terminated" << Endl;
+		traktor::log::error << L"Unhandled exception, application terminated." << Endl;
 	}
 
 	net::Network::finalize();
@@ -210,11 +207,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR szCmdLine, int)
 	ui::Application::getInstance()->finalize();
 
 #if !defined(_DEBUG)
-	if (logFile)
-	{
-		logFile->close();
-		logFile = nullptr;
-	}
+	safeClose(logFile);
 #endif
 
 #if 0

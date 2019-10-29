@@ -35,10 +35,10 @@
 
 namespace traktor
 {
-    namespace shape
-    {
-        namespace
-        {
+	namespace shape
+	{
+		namespace
+		{
 
 Ref< drawing::Image > denoise(const GBuffer& gbuffer, drawing::Image* lightmap)
 {
@@ -48,24 +48,24 @@ Ref< drawing::Image > denoise(const GBuffer& gbuffer, drawing::Image* lightmap)
 
 	lightmap->convert(drawing::PixelFormat::getRGBAF32());
 
-	Ref< drawing::Image > albedo = new drawing::Image(
+	drawing::Image albedo(
 		drawing::PixelFormat::getRGBAF32(),
-		lightmap->getWidth(),
-		lightmap->getHeight()
+		width,
+		height
 	);
-	albedo->clear(Color4f(1, 1, 1, 1));
+	albedo.clear(Color4f(1, 1, 1, 1));
 
-	Ref< drawing::Image > normals = new drawing::Image(
+	drawing::Image normals(
 		drawing::PixelFormat::getRGBAF32(),
-		lightmap->getWidth(),
-		lightmap->getHeight()
+		width,
+		height
 	);
 	for (int32_t y = 0; y < height; ++y)
 	{
 		for (int32_t x = 0; x < width; ++x)
 		{
 			const auto elm = gbuffer.get(x, y);
-			normals->setPixel(x, y, Color4f(elm.normal));
+			normals.setPixel(x, y, Color4f(elm.normal));
 		}
 	}
 
@@ -80,8 +80,8 @@ Ref< drawing::Image > denoise(const GBuffer& gbuffer, drawing::Image* lightmap)
 
 	OIDNFilter filter = oidnNewFilter(device, "RT"); // generic ray tracing filter
 	oidnSetSharedFilterImage(filter, "color",  lightmap->getData(), OIDN_FORMAT_FLOAT3, width, height, 0, 4 * sizeof(float), 0);
-	oidnSetSharedFilterImage(filter, "albedo", albedo->getData(), OIDN_FORMAT_FLOAT3, width, height, 0, 4 * sizeof(float), 0); // optional
-	oidnSetSharedFilterImage(filter, "normal", normals->getData(), OIDN_FORMAT_FLOAT3, width, height, 0, 4 * sizeof(float), 0); // optional
+	oidnSetSharedFilterImage(filter, "albedo", albedo.getData(), OIDN_FORMAT_FLOAT3, width, height, 0, 4 * sizeof(float), 0); // optional
+	oidnSetSharedFilterImage(filter, "normal", normals.getData(), OIDN_FORMAT_FLOAT3, width, height, 0, 4 * sizeof(float), 0); // optional
 	oidnSetSharedFilterImage(filter, "output", output->getData(), OIDN_FORMAT_FLOAT3, width, height, 0, 4 * sizeof(float), 0);
 	oidnSetFilter1b(filter, "hdr", true); // image is HDR
 	oidnCommitFilter(filter);
@@ -231,7 +231,7 @@ void line(const Vector2& from, const Vector2& to, const std::function< void(cons
 	}
 }
 
-        }
+		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.shape.TracerProcessor", TracerProcessor, Object)
 
@@ -244,8 +244,8 @@ TracerProcessor::TracerProcessor(const TypeInfo* rayTracerType, db::Database* ou
 	T_FATAL_ASSERT(m_outputDatabase != nullptr);
 	T_FATAL_ASSERT(m_rayTracerType != nullptr);
 
-    m_thread = ThreadManager::getInstance().create(makeFunctor(this, &TracerProcessor::processorThread), L"Tracer");
-    m_thread->start();
+	m_thread = ThreadManager::getInstance().create(makeFunctor(this, &TracerProcessor::processorThread), L"Tracer");
+	m_thread->start();
 }
 
 TracerProcessor::~TracerProcessor()
@@ -264,14 +264,14 @@ TracerProcessor::~TracerProcessor()
 
 void TracerProcessor::enqueue(const TracerTask* task)
 {
-    T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-    
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+	
 	// Remove any pending task which reference the same scene.
-    auto it = std::find_if(m_tasks.begin(), m_tasks.end(), [=](const TracerTask* hs) {
-        return hs->getSceneId() == task->getSceneId();
-    });
-    if (it != m_tasks.end())
-        m_tasks.erase(it);
+	auto it = std::find_if(m_tasks.begin(), m_tasks.end(), [=](const TracerTask* hs) {
+		return hs->getSceneId() == task->getSceneId();
+	});
+	if (it != m_tasks.end())
+		m_tasks.erase(it);
 
 	// Check if currently processing task is same scene.
 	if (m_activeTask != nullptr && m_activeTask->getSceneId() == task->getSceneId())
@@ -280,19 +280,19 @@ void TracerProcessor::enqueue(const TracerTask* task)
 	}
 
 	// Add our task and issue processing thread.
-    m_tasks.push_back(task);
-    m_event.broadcast();
+	m_tasks.push_back(task);
+	m_event.broadcast();
 }
 
 void TracerProcessor::cancelAll()
 {
-    T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-    m_tasks.clear();
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+	m_tasks.clear();
 }
 
 void TracerProcessor::waitUntilIdle()
 {
-    Thread* thread = ThreadManager::getInstance().getCurrentThread();
+	Thread* thread = ThreadManager::getInstance().getCurrentThread();
 	while (!m_tasks.empty() || m_activeTask != nullptr)
 		thread->yield();
 }
@@ -304,48 +304,48 @@ TracerProcessor::Status TracerProcessor::getStatus() const
 
 void TracerProcessor::processorThread()
 {
-    while (!m_thread->stopped())
-    {
-        if (!m_event.wait(100))
-            continue;
+	while (!m_thread->stopped())
+	{
+		if (!m_event.wait(100))
+			continue;
 
-        {
-            T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-            if (!m_tasks.empty())
-            {
-                m_activeTask = m_tasks.front();
-                m_tasks.pop_front();
-            }
-        }
+		{
+			T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+			if (!m_tasks.empty())
+			{
+				m_activeTask = m_tasks.front();
+				m_tasks.pop_front();
+			}
+		}
 
-        if (m_activeTask)
-        {
+		if (m_activeTask)
+		{
 			m_status.active = true;
-            process(m_activeTask);
+			process(m_activeTask);
 			m_status.active = false;
-            m_activeTask = nullptr;
-        }
-    }
+			m_activeTask = nullptr;
+		}
+	}
 	cancelAll();
 }
 
 bool TracerProcessor::process(const TracerTask* task) const
 {
-    auto configuration = task->getConfiguration();
-    T_FATAL_ASSERT(configuration != nullptr);
+	auto configuration = task->getConfiguration();
+	T_FATAL_ASSERT(configuration != nullptr);
 
    	// Create raytracer implementation.
 	Ref< IRayTracer > rayTracer = checked_type_cast< IRayTracer* >(m_rayTracerType->createInstance());
 	if (!rayTracer->create(configuration))
 		return false;
 
-    // Setup raytracer scene.
-    for (auto tracerLight : task->getTracerLights())
-        rayTracer->addLight(tracerLight->getLight());
-    for (auto tracerModel : task->getTracerModels())
-        rayTracer->addModel(tracerModel->getModel(), tracerModel->getTransform());
+	// Setup raytracer scene.
+	for (auto tracerLight : task->getTracerLights())
+		rayTracer->addLight(tracerLight->getLight());
+	for (auto tracerModel : task->getTracerModels())
+		rayTracer->addModel(tracerModel->getModel(), tracerModel->getTransform());
 
-    rayTracer->commit();
+	rayTracer->commit();
 
 	// Get output tasks and sort them by priority.
 	auto tracerOutputs = task->getTracerOutputs();
@@ -353,63 +353,49 @@ bool TracerProcessor::process(const TracerTask* task) const
 		return lh->getPriority() > rh->getPriority();
 	});
 
-    // Trace each lightmap in task.
+	// Trace each lightmap in task.
 	for (uint32_t i = 0; i < tracerOutputs.size(); ++i)
-    {
+	{
 		auto tracerOutput = tracerOutputs[i];
-        auto renderModel = tracerOutput->getModel();
-        T_FATAL_ASSERT(renderModel != nullptr);
+		auto renderModel = tracerOutput->getModel();
+		T_FATAL_ASSERT(renderModel != nullptr);
 
-        const int32_t outputSize = tracerOutput->getLightmapSize();
+		const int32_t width = tracerOutput->getLightmapSize();
+		const int32_t height = width;
+		const uint32_t channel = renderModel->getTexCoordChannel(L"Lightmap");
 
 		// Update status.
 		m_status.current = i;
 		m_status.total = tracerOutputs.size();
-		m_status.description = tracerOutput->getName() + L" (" + toString(outputSize) + L" * " + toString(outputSize) + L")";
+		m_status.description = tracerOutput->getName() + L" (" + toString(width) + L" * " + toString(height) + L") ...";
 
-        uint32_t channel = renderModel->getTexCoordChannel(L"Lightmap");
+		// Create GBuffer of mesh's geometry.
+		GBuffer gbuffer;
+		gbuffer.create(width, height, *renderModel, tracerOutput->getTransform(), channel);
 
-        // Create GBuffer of mesh's geometry.
-        GBuffer gbuffer;
-        gbuffer.create(outputSize, outputSize, *renderModel, tracerOutput->getTransform(), channel);
+		// Preprocess GBuffer.
+		rayTracer->preprocess(&gbuffer);
 
-        // Preprocess GBuffer.
-        rayTracer->preprocess(&gbuffer);
+		// Trace lightmap.
+		Ref< drawing::Image > lightmap = new drawing::Image(
+			drawing::PixelFormat::getRGBAF32(),
+			width,
+			height
+		);
+		lightmap->clear(Color4f(0.0f, 0.0f, 0.0f, 0.0f));
 
-		// Trace direct lighting.
-        Ref< drawing::Image > lightmapDirect = rayTracer->traceDirect(&gbuffer);
-
-		// Create preview output instance.
-		if (m_preview)
+		for (int32_t ty = 0; ty < height; ty += 16)
 		{
-			writeTexture(
-				m_outputDatabase,
-				tracerOutput->getLightmapId(),
-				lightmapDirect
-			);
+			for (int32_t tx = 0; tx < width; tx += 16)
+			{
+				int32_t region[] = { tx, ty, tx + 16, ty + 16 };
+				rayTracer->traceLightmap(&gbuffer, lightmap, region);
+			}
 		}
 
-		// Trace indirect lighting.
-		Ref< drawing::Image > lightmapIndirect = rayTracer->traceIndirect(&gbuffer);
-
-        // Blur indirect lightmap to reduce noise from path tracing.
-        if (configuration->getEnableDenoise())
-        {
-            if (lightmapDirect)
-                lightmapDirect = denoise(gbuffer, lightmapDirect);
-            if (lightmapIndirect)
-                lightmapIndirect = denoise(gbuffer, lightmapIndirect);
-        }
-
-        // Merge direct and indirect lightmaps.
-        Ref< drawing::Image > lightmap = lightmapDirect;
-        lightmap->copy(lightmapIndirect, 0, 0, outputSize, outputSize, drawing::BlendFunction(
-            drawing::BlendFunction::BfOne,
-            drawing::BlendFunction::BfOne,
-            drawing::BlendFunction::BoAdd
-        ));
-        lightmapDirect = nullptr;
-        lightmapIndirect = nullptr;
+		// Blur lightmap to reduce noise from path tracing.
+		if (configuration->getEnableDenoise())
+			lightmap = denoise(gbuffer, lightmap);
 
 		// Create preview output instance.
 		if (m_preview)
@@ -526,8 +512,8 @@ bool TracerProcessor::process(const TracerTask* task) const
 			}
 		}
 
-        // Discard alpha.
-        lightmap->clearAlpha(1.0f);
+		// Discard alpha.
+		lightmap->clearAlpha(1.0f);
 
 		// Encode texture into RGBM.
 		if (false)
@@ -543,7 +529,7 @@ bool TracerProcessor::process(const TracerTask* task) const
 			log::error << L"Trace failed; unable to create output lightmap texture." << Endl;
 			return false;
 		}
-    }
+	}
 
 	// Trace irradiance grids.
 	auto tracerIrradiances = task->getTracerIrradiances();
@@ -653,8 +639,8 @@ bool TracerProcessor::process(const TracerTask* task) const
 		}
 	}
 
-    return true;
+	return true;
 }
 
-    }
+	}
 }

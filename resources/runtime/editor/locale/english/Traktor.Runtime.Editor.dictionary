@@ -221,5 +221,33 @@
 			<first>RUNTIME_SETTINGS_ENVIRONMENT</first>
 			<second>Environment</second>
 		</item>
+		<item>
+			<first>RUNTIME_FEATURE</first>
+			<second>Feature</second>
+		</item>
+		<item>
+			<first>RUNTIME_FEATURE_DESCRIPTION</first>
+			<second>Description</second>
+		</item>
+		<item>
+			<first>RUNTIME_FEATURE_PRIORITY</first>
+			<second>Priority</second>
+		</item>
+		<item>
+			<first>RUNTIME_FEATURE_ADD</first>
+			<second>Add...</second>
+		</item>
+		<item>
+			<first>RUNTIME_FEATURE_REMOVE</first>
+			<second>Remove</second>
+		</item>
+		<item>
+			<first>RUNTIME_FEATURE_PLATFORM</first>
+			<second>Platform</second>
+		</item>
+		<item>
+			<first>RUNTIME_FEATURE_EXECUTABLE</first>
+			<second>Executable</second>
+		</item>
 	</map>
 </object>

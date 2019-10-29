@@ -5,7 +5,7 @@
 #include "Database/Database.h"
 #include "Database/Instance.h"
 #include "Editor/IEditor.h"
-//#include "I18N/Text.h"
+#include "I18N/Text.h"
 #include "Runtime/Editor/FeatureEditor.h"
 #include "Runtime/Editor/Deploy/Platform.h"
 #include "Ui/Application.h"
@@ -45,10 +45,10 @@ bool FeatureEditor::create(ui::Widget* parent, db::Instance* instance, ISerializ
 	container->create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%", f, f));
 
 	Ref< ui::Panel > containerName = new ui::Panel();
-	containerName->create(container, L"Feature", new ui::TableLayout(L"*,100%", L"*", 2 * f, f));
+	containerName->create(container, i18n::Text(L"RUNTIME_FEATURE"), new ui::TableLayout(L"*,100%", L"*", 2 * f, f));
 
 	Ref< ui::Static > staticName = new ui::Static();
-	staticName->create(containerName, L"Description");
+	staticName->create(containerName, i18n::Text(L"RUNTIME_FEATURE_DESCRIPTION"));
 
 	m_editName = new ui::Edit();
 	m_editName->create(containerName, m_feature->getDescription());
@@ -57,7 +57,7 @@ bool FeatureEditor::create(ui::Widget* parent, db::Instance* instance, ISerializ
 	});
 
 	Ref< ui::Static > staticPriority = new ui::Static();
-	staticPriority->create(containerName, L"Priority");
+	staticPriority->create(containerName, i18n::Text(L"RUNTIME_FEATURE_PRIORITY"));
 
 	m_editPriority = new ui::Edit();
 	m_editPriority->create(containerName, toString(m_feature->getPriority()), ui::WsNone, new ui::NumericEditValidator(false));
@@ -92,7 +92,7 @@ bool FeatureEditor::create(ui::Widget* parent, db::Instance* instance, ISerializ
 	containerPlatformsAddRemove->create(containerPlatforms, ui::WsNone, new ui::TableLayout(L"*,*", L"*", 0, f));
 
 	Ref< ui::Button > buttonAdd = new ui::Button();
-	buttonAdd->create(containerPlatformsAddRemove, L"Add...");
+	buttonAdd->create(containerPlatformsAddRemove, i18n::Text(L"RUNTIME_FEATURE_ADD"));
 	buttonAdd->addEventHandler< ui::ButtonClickEvent >([&](ui::ButtonClickEvent* event) {
 		Ref< db::Instance > platformInstance = m_editor->browseInstance(type_of< Platform >());
 		if (platformInstance)
@@ -106,7 +106,7 @@ bool FeatureEditor::create(ui::Widget* parent, db::Instance* instance, ISerializ
 	});
 
 	Ref< ui::Button > buttonRemove = new ui::Button();
-	buttonRemove->create(containerPlatformsAddRemove, L"Remove");
+	buttonRemove->create(containerPlatformsAddRemove, i18n::Text(L"RUNTIME_FEATURE_REMOVE"));
 	buttonRemove->addEventHandler< ui::ButtonClickEvent >([&](ui::ButtonClickEvent* event) {
 		int32_t index = m_listPlatforms->getSelected();
 		if (index >= 0)
@@ -120,13 +120,13 @@ bool FeatureEditor::create(ui::Widget* parent, db::Instance* instance, ISerializ
 	});
 
 	Ref< ui::Panel > containerEdit = new ui::Panel();
-	containerEdit->create(splitterInner, L"Platform", new ui::TableLayout(L"100%", L"*,100%", 2 * f, f));
+	containerEdit->create(splitterInner, i18n::Text(L"RUNTIME_FEATURE_PLATFORM"), new ui::TableLayout(L"100%", L"*,100%", 2 * f, f));
 
 	Ref< ui::Container > containerExecutable = new ui::Container();
 	containerExecutable->create(containerEdit, ui::WsNone, new ui::TableLayout(L"*,100%", L"*", 0, f));
 
 	Ref< ui::Static > staticExecutable = new ui::Static();
-	staticExecutable->create(containerExecutable, L"Executable");
+	staticExecutable->create(containerExecutable, i18n::Text(L"RUNTIME_FEATURE_EXECUTABLE"));
 
 	m_editExecutable = new ui::Edit();
 	m_editExecutable->create(containerExecutable, L"");

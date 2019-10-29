@@ -186,6 +186,11 @@ Ref< render::SHCoeffs > RayTracerLocal::traceProbe(const Vector4& position) cons
 	return nullptr;
 }
 
+void RayTracerLocal::traceLightmap(const GBuffer* gbuffer, drawing::Image* lightmap, const int32_t region[4]) const
+{
+}
+
+/*
 Ref< drawing::Image > RayTracerLocal::traceDirect(const GBuffer* gbuffer) const
 {
     int32_t width = gbuffer->getWidth();
@@ -316,7 +321,7 @@ Ref< drawing::Image > RayTracerLocal::traceIndirect(const GBuffer* gbuffer) cons
 
     return lightmapIndirect;
 }
-
+*/
 void RayTracerLocal::cullLights(const GBuffer* gbuffer, AlignedVector< Light >& outLights) const
 {
 	for (auto light : m_lights)
