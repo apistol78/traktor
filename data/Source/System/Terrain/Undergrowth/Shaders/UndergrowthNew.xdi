@@ -737,8 +737,8 @@ Surface modulated
 			<id>{6D3FBFB2-BFA0-B34F-8F38-D0A00C6EF359}</id>
 			<comment/>
 			<position>
-				<first>64</first>
-				<second>1284</second>
+				<first>-67</first>
+				<second>1292</second>
 			</position>
 			<name>NormalMap</name>
 			<connectable>true</connectable>
@@ -811,69 +811,9 @@ Surface modulated
 			<id>{08E5EE0E-1C86-DC45-8878-1AF24942F4F6}</id>
 			<comment/>
 			<position>
-				<first>508</first>
+				<first>509</first>
 				<second>1297</second>
 			</position>
-		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
-			<id>{038F81E8-0805-B647-BCE9-BC0A4F3250D3}</id>
-			<comment/>
-			<position>
-				<first>300</first>
-				<second>1214</second>
-			</position>
-			<fragmentGuid>{036D3453-15CB-164C-85AF-C08268AED664}</fragmentGuid>
-			<inputPins>
-				<item>
-					<id>{3B4670EB-F2F6-3149-A660-70780B6F5F88}</id>
-					<name>TexCoord</name>
-					<optional>false</optional>
-				</item>
-				<item>
-					<id>{B7A805D3-8C98-3947-91C3-EEDA4E8F04D8}</id>
-					<name>Texture</name>
-					<optional>false</optional>
-				</item>
-				<item>
-					<id>{EA8728D2-5DD0-6C4F-A619-A00E15DAE507}</id>
-					<name>Binormal</name>
-					<optional>true</optional>
-				</item>
-				<item>
-					<id>{798A79B3-87DC-244A-8893-F0079983A4B1}</id>
-					<name>Normal</name>
-					<optional>true</optional>
-				</item>
-				<item>
-					<id>{E3FAEDAD-4391-1E40-9321-8E25D1D6E6DB}</id>
-					<name>Tangent</name>
-					<optional>true</optional>
-				</item>
-			</inputPins>
-			<outputPins>
-				<item>
-					<id>{3AFF3C86-6D4D-5D4D-BF7D-56E769F65F7B}</id>
-					<name>Alpha</name>
-				</item>
-				<item>
-					<id>{9F9F54FB-F1C4-884A-BFB0-BD2D94D07B79}</id>
-					<name>Output</name>
-				</item>
-			</outputPins>
-			<values>
-				<item>
-					<first>Binormal</first>
-					<second>0</second>
-				</item>
-				<item>
-					<first>Normal</first>
-					<second>0</second>
-				</item>
-				<item>
-					<first>Tangent</first>
-					<second>0</second>
-				</item>
-			</values>
 		</item>
 		<item type="traktor.render.Transform" version="traktor.render.Node:1">
 			<id>{98C87A31-D650-1D40-8AAB-C82A0A39F37A}</id>
@@ -986,6 +926,53 @@ Surface modulated
 					<second>0.8</second>
 				</item>
 			</values>
+		</item>
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+			<id>{D3ABB0A2-4747-1942-AB99-52D52DF6DDA2}</id>
+			<comment/>
+			<position>
+				<first>265</first>
+				<second>1165</second>
+			</position>
+			<fragmentGuid>{036D3453-15CB-164C-85AF-C08268AED664}</fragmentGuid>
+			<inputPins>
+				<item>
+					<id>{3B4670EB-F2F6-3149-A660-70780B6F5F88}</id>
+					<name>TexCoord</name>
+					<optional>false</optional>
+				</item>
+				<item>
+					<id>{B7A805D3-8C98-3947-91C3-EEDA4E8F04D8}</id>
+					<name>Texture</name>
+					<optional>false</optional>
+				</item>
+				<item>
+					<id>{EA8728D2-5DD0-6C4F-A619-A00E15DAE507}</id>
+					<name>Binormal</name>
+					<optional>true</optional>
+				</item>
+				<item>
+					<id>{798A79B3-87DC-244A-8893-F0079983A4B1}</id>
+					<name>Normal</name>
+					<optional>true</optional>
+				</item>
+				<item>
+					<id>{E3FAEDAD-4391-1E40-9321-8E25D1D6E6DB}</id>
+					<name>Tangent</name>
+					<optional>true</optional>
+				</item>
+			</inputPins>
+			<outputPins>
+				<item>
+					<id>{3AFF3C86-6D4D-5D4D-BF7D-56E769F65F7B}</id>
+					<name>Alpha</name>
+				</item>
+				<item>
+					<id>{9F9F54FB-F1C4-884A-BFB0-BD2D94D07B79}</id>
+					<name>Output</name>
+				</item>
+			</outputPins>
+			<values/>
 		</item>
 	</nodes>
 	<edges>
@@ -1885,36 +1872,6 @@ Surface modulated
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[79]"/>
-				<name>Input</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[21]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[80]"/>
-				<name>TexCoord</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[73]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[80]"/>
-				<name>Texture</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[81]"/>
-				<name>Output</name>
-			</source>
-			<destination>
 				<node ref="/object/nodes/item[76]"/>
 				<name>Input2</name>
 			</destination>
@@ -1925,7 +1882,7 @@ Surface modulated
 				<name>Normal</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[81]"/>
+				<node ref="/object/nodes/item[80]"/>
 				<name>Input</name>
 			</destination>
 		</item>
@@ -1935,13 +1892,13 @@ Surface modulated
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[81]"/>
+				<node ref="/object/nodes/item[80]"/>
 				<name>Transform</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[82]"/>
+				<node ref="/object/nodes/item[81]"/>
 				<name>Output</name>
 			</source>
 			<destination>
@@ -1951,7 +1908,7 @@ Surface modulated
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[81]"/>
+				<node ref="/object/nodes/item[80]"/>
 				<name>Output</name>
 			</source>
 			<destination>
@@ -1971,7 +1928,7 @@ Surface modulated
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[81]"/>
+				<node ref="/object/nodes/item[80]"/>
 				<name>Output</name>
 			</source>
 			<destination>
@@ -1985,23 +1942,23 @@ Surface modulated
 				<name>Output</name>
 			</source>
 			<destination>
+				<node ref="/object/nodes/item[82]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
 				<node ref="/object/nodes/item[83]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[84]"/>
 				<name>Input</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
 				<node ref="/object/nodes/item[84]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[85]"/>
-				<name>Input</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[85]"/>
 				<name>Output</name>
 			</source>
 			<destination>
@@ -2015,7 +1972,7 @@ Surface modulated
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[86]"/>
+				<node ref="/object/nodes/item[85]"/>
 				<name>SurfaceColor</name>
 			</destination>
 		</item>
@@ -2025,17 +1982,17 @@ Surface modulated
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[86]"/>
+				<node ref="/object/nodes/item[85]"/>
 				<name>ViewNormal</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[83]"/>
+				<node ref="/object/nodes/item[82]"/>
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[86]"/>
+				<node ref="/object/nodes/item[85]"/>
 				<name>ViewPosition</name>
 			</destination>
 		</item>
@@ -2045,7 +2002,7 @@ Surface modulated
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[86]"/>
+				<node ref="/object/nodes/item[85]"/>
 				<name>Alpha</name>
 			</destination>
 		</item>
@@ -2077,6 +2034,36 @@ Surface modulated
 			<destination>
 				<node ref="/object/nodes/item[65]"/>
 				<name>Input1</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[73]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[86]"/>
+				<name>Texture</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[21]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[86]"/>
+				<name>TexCoord</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[86]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[79]"/>
+				<name>Input</name>
 			</destination>
 		</item>
 	</edges>
