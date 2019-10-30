@@ -37,10 +37,6 @@ public:
 
 	bool getCompressed() const { return m_compressed; }
 
-	float getPresence() const { return m_presence; }
-
-	float getPresenceRate() const { return m_presenceRate; }
-
 	float getGain() const { return m_gain; }
 
 private:
@@ -50,8 +46,6 @@ private:
 	bool m_stream;
 	bool m_preload;
 	bool m_compressed;
-	float m_presence;
-	float m_presenceRate;
 	float m_gain;
 };
 

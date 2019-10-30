@@ -27,7 +27,7 @@ void SoundRenderer::play(const Sound* sound)
 {
 	if (m_soundPlayer)
 	{
-		Ref< sound::Sound > snd = new sound::Sound(new SoundBuffer(sound), 0, 1.0f, 0.0f, 1.0f, 0.0f);
+		Ref< sound::Sound > snd = new sound::Sound(new SoundBuffer(sound), 0, 1.0f, 0.0f);
 		m_soundPlayer->play(snd, 0);
 	}
 }

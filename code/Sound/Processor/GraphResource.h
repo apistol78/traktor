@@ -30,8 +30,6 @@ public:
 	GraphResource(
 		const std::wstring& category,
 		float gain,
-		float presence,
-		float presenceRate,
 		float range,
 		const Graph* graph
 	);
@@ -45,8 +43,6 @@ public:
 private:
 	std::wstring m_category;
 	float m_gain;
-	float m_presence;
-	float m_presenceRate;
 	float m_range;
 	Ref< const Graph > m_graph;
 };

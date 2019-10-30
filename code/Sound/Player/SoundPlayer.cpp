@@ -103,8 +103,6 @@ Ref< ISoundHandle > SoundPlayer::play(const Sound* sound, uint32_t priority)
 					sound->getBuffer(),
 					sound->getCategory(),
 					sound->getGain(),
-					sound->getPresence(),
-					sound->getPresenceRate(),
 					false,
 					0
 				);
@@ -136,8 +134,6 @@ Ref< ISoundHandle > SoundPlayer::play(const Sound* sound, uint32_t priority)
 					sound->getBuffer(),
 					sound->getCategory(),
 					sound->getGain(),
-					sound->getPresence(),
-					sound->getPresenceRate(),
 					false,
 					0
 				);
@@ -181,11 +177,6 @@ Ref< ISoundHandle > SoundPlayer::play(const Sound* sound, const Vector4& positio
 	float k0 = distance / maxDistance;
 	float k1 = (distance - m_surroundEnvironment->getInnerRadius()) / (maxDistance - m_surroundEnvironment->getInnerRadius());
 
-	// Calculate presence; further sounds have less presence.
-	// As long as the sound originate inside inner radius then
-	// original presence is kept.
-	float presence = lerp(sound->getPresence(), 0.0f, clamp(k1, 0.0f, 1.0f));
-
 	// Surround filter.
 	Ref< SurroundFilter > surroundFilter = new SurroundFilter(m_surroundEnvironment, position.xyz1(), maxDistance);
 
@@ -224,8 +215,6 @@ Ref< ISoundHandle > SoundPlayer::play(const Sound* sound, const Vector4& positio
 					sound->getBuffer(),
 					sound->getCategory(),
 					sound->getGain(),
-					presence,
-					sound->getPresenceRate(),
 					false,
 					0
 				);
@@ -257,8 +246,6 @@ Ref< ISoundHandle > SoundPlayer::play(const Sound* sound, const Vector4& positio
 					sound->getBuffer(),
 					sound->getCategory(),
 					sound->getGain(),
-					presence,
-					sound->getPresenceRate(),
 					false,
 					0
 				);
@@ -295,8 +282,6 @@ Ref< ISoundHandle > SoundPlayer::play(const Sound* sound, const Vector4& positio
 					sound->getBuffer(),
 					sound->getCategory(),
 					sound->getGain(),
-					presence,
-					sound->getPresenceRate(),
 					false,
 					0
 				);

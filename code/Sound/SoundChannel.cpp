@@ -121,8 +121,6 @@ void SoundChannel::stop()
 	ss.cursor = 0;
 	ss.category = 0;
 	ss.volume = 0.0f;
-	ss.presence = 0.0f;
-	ss.presenceRate = 0.0f;
 	ss.repeat = false;
 	ss.repeatFrom = 0;
 
@@ -153,8 +151,6 @@ bool SoundChannel::play(
 	const ISoundBuffer* buffer,
 	handle_t category,
 	float gain,
-	float presence,
-	float presenceRate,
 	bool repeat,
 	uint32_t repeatFrom
 )
@@ -172,8 +168,6 @@ bool SoundChannel::play(
 	ss.cursor = cursor;
 	ss.category = category;
 	ss.volume = decibelToLinear(gain);
-	ss.presence = presence;
-	ss.presenceRate = presenceRate;
 	ss.repeat = repeat;
 	ss.repeatFrom = repeatFrom;
 
@@ -181,15 +175,10 @@ bool SoundChannel::play(
 	m_playing = true;
 
 	m_stateSound.endWrite();
-
 	return true;
 }
 
-bool SoundChannel::getBlock(
-	const ISoundMixer* mixer,
-	SoundBlock& outBlock,
-	SoundBlockMeta& outBlockMeta
-)
+bool SoundChannel::getBlock(const ISoundMixer* mixer, SoundBlock& outBlock)
 {
 	StateSound& ss = m_stateSound.read();
 
@@ -343,14 +332,7 @@ bool SoundChannel::getBlock(
 	for (uint32_t i = 0; i < SbcMaxChannelCount; ++i)
 		outBlock.samples[i] = m_outputSamples[i];
 
-	outBlockMeta.category = ss.category;
-	outBlockMeta.presence = ss.presence;
-	outBlockMeta.presenceRate = ss.presenceRate;
-
-	// Only return presence once; sound system manage duck recovery automatically.
-	ss.presence = 0.0f;
-	ss.presenceRate = 0.0f;
-
+	outBlock.category = ss.category;
 	return true;
 }
 

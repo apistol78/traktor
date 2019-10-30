@@ -163,7 +163,7 @@ void SoundAssetEditor::eventToolBarClick(ui::ToolBarButtonClickEvent* event)
 		return;
 	}
 
-	m_soundChannel->play(buffer, 0, m_asset->getGain(), m_asset->getPresence(), m_asset->getPresenceRate(), false, 0);
+	m_soundChannel->play(buffer, 0, m_asset->getGain(), false, 0);
 }
 
 void SoundAssetEditor::eventPropertyCommand(ui::PropertyCommandEvent* event)

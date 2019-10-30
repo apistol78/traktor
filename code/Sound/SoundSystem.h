@@ -105,7 +105,7 @@ public:
 	 * \param channelId Virtual channel identifier.
 	 * \return Virtual sound channel.
 	 */
-	Ref< SoundChannel > getChannel(uint32_t channelId);
+	SoundChannel* getChannel(uint32_t channelId);
 
 	/*! \brief Get current mixer time.
 	 *
@@ -129,7 +129,6 @@ private:
 	Thread* m_threadMixer;
 	RefArray< SoundChannel > m_channels;
 	AlignedVector< SoundBlock > m_requestBlocks;
-	AlignedVector< SoundBlockMeta > m_requestBlockMeta;
 
 	// \name Submission queue
 	// \{
@@ -143,7 +142,6 @@ private:
 
 	float* m_samplesData;
 	CircularVector< float*, 4 > m_samplesBlocks;
-	AlignedVector< float > m_duck[2];
 
 	// \}
 

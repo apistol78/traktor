@@ -83,8 +83,6 @@ bool SongPipeline::buildOutput(
 	bool categorized = false;
 	std::wstring configurationId;
 	float gain = 0.0f;
-	float presence = songAsset->m_presence;
-	float presenceRate = songAsset->m_presenceRate;
 	float range = 0.0f;
 
 	Ref< const SoundCategory > category = pipelineBuilder->getObjectReadOnly< SoundCategory >(songAsset->m_category);
@@ -96,23 +94,14 @@ bool SongPipeline::buildOutput(
 	{
 		categorized = true;
 		gain += category->getGain();
-
-		if (presence <= FUZZY_EPSILON)
-		{
-			presence = category->getPresence();
-			presenceRate = category->getPresenceRate();
-		}
-
 		range = std::max(range, category->getRange());
-
 		category = pipelineBuilder->getObjectReadOnly< SoundCategory >(category->getParent());
 	}
 
 	if (categorized)
 	{
 		log::info << L"Category gain " << gain << L" dB" << Endl;
-		log::info << L"Category presence " << presence << L", rate " << int32_t(presenceRate * 100.0f) << L" d%" << Endl;
-		log::info << L"Category range " << range << Endl;
+		log::info << L"         range " << range << Endl;
 	}
 	else
 		log::warning << L"Uncategorized sound \"" << sourceInstance->getName() << L"\"" << Endl;
@@ -121,8 +110,6 @@ bool SongPipeline::buildOutput(
 		songAsset->m_patterns,
 		configurationId,
 		gain,
-		presence,
-		presenceRate,
 		range,
 		songAsset->m_bpm
 	);

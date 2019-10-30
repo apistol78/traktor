@@ -28,7 +28,7 @@ class T_DLLCLASS BankResource : public ISoundResource
 public:
 	BankResource();
 
-	BankResource(const RefArray< IGrainData >& grains, const std::wstring& category, float gain, float presence, float presenceRate, float range);
+	BankResource(const RefArray< IGrainData >& grains, const std::wstring& category, float gain, float range);
 
 	virtual Ref< Sound > createSound(resource::IResourceManager* resourceManager, const db::Instance* resourceInstance) const override final;
 
@@ -40,8 +40,6 @@ private:
 	RefArray< IGrainData > m_grains;
 	std::wstring m_category;
 	float m_gain;
-	float m_presence;
-	float m_presenceRate;
 	float m_range;
 };
 

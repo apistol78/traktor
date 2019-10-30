@@ -74,8 +74,6 @@ bool GraphPipeline::buildOutput(
 	bool categorized = false;
 	std::wstring configurationId;
 	float gain = 0.0f;
-	float presence = graphAsset->getPresence();
-	float presenceRate = graphAsset->getPresenceRate();
 	float range = 0.0f;
 
 	Ref< const SoundCategory > category = pipelineBuilder->getObjectReadOnly< SoundCategory >(graphAsset->getCategory());
@@ -87,23 +85,14 @@ bool GraphPipeline::buildOutput(
 	{
 		categorized = true;
 		gain += category->getGain();
-
-		if (presence <= FUZZY_EPSILON)
-		{
-			presence = category->getPresence();
-			presenceRate = category->getPresenceRate();
-		}
-
 		range = std::max(range, category->getRange());
-
 		category = pipelineBuilder->getObjectReadOnly< SoundCategory >(category->getParent());
 	}
 
 	if (categorized)
 	{
 		log::info << L"Category gain " << gain << L" dB" << Endl;
-		log::info << L"Category presence " << presence << L", rate " << int32_t(presenceRate * 100.0f) << L" d%" << Endl;
-		log::info << L"Category range " << range << Endl;
+		log::info << L"         range " << range << Endl;
 	}
 	else
 		log::warning << L"Uncategorized sound \"" << sourceInstance->getName() << L"\"" << Endl;
@@ -118,8 +107,6 @@ bool GraphPipeline::buildOutput(
 	Ref< GraphResource > graphResource = new GraphResource(
 		configurationId,
 		gain,
-		presence,
-		presenceRate,
 		range,
 		graph
 	);

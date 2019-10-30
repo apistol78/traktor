@@ -14,22 +14,18 @@ namespace traktor
 	namespace sound
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.BankResource", 6, BankResource, ISoundResource)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.BankResource", 7, BankResource, ISoundResource)
 
 BankResource::BankResource()
 :	m_gain(0.0f)
-,	m_presence(0.0f)
-,	m_presenceRate(1.0f)
 ,	m_range(0.0f)
 {
 }
 
-BankResource::BankResource(const RefArray< IGrainData >& grains, const std::wstring& category, float gain, float presence, float presenceRate, float range)
+BankResource::BankResource(const RefArray< IGrainData >& grains, const std::wstring& category, float gain, float range)
 :	m_grains(grains)
 ,	m_category(category)
 ,	m_gain(gain)
-,	m_presence(presence)
-,	m_presenceRate(presenceRate)
 ,	m_range(range)
 {
 }
@@ -44,27 +40,23 @@ Ref< Sound > BankResource::createSound(resource::IResourceManager* resourceManag
 	{
 		grains[i] = grainFactory.createInstance(m_grains[i]);
 		if (!grains[i])
-			return 0;
+			return nullptr;
 	}
 
 	return new Sound(
 		new BankBuffer(grains),
 		getParameterHandle(m_category),
 		m_gain,
-		m_presence,
-		m_presenceRate,
 		m_range
 	);
 }
 
 void BankResource::serialize(ISerializer& s)
 {
-	T_FATAL_ASSERT (s.getVersion() >= 6);
+	T_FATAL_ASSERT (s.getVersion() >= 7);
 	s >> MemberRefArray< IGrainData >(L"grains", m_grains);
 	s >> Member< std::wstring >(L"category", m_category);
 	s >> Member< float >(L"gain", m_gain);
-	s >> Member< float >(L"presence", m_presence);
-	s >> Member< float >(L"presenceRate", m_presenceRate);
 	s >> Member< float >(L"range", m_range);
 }
 

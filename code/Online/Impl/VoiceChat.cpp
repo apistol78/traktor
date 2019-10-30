@@ -283,8 +283,6 @@ void VoiceChat::onVoiceReceived(uint64_t fromUserHandle, const int16_t* samples,
 					i->soundBuffer,
 					m_category,
 					1.0f,
-					0.0f,
-					1.0f,
 					0.0f
 				);
 				i->soundHandle = m_soundPlayer->play(soundVoice, 0);
@@ -309,8 +307,6 @@ void VoiceChat::onVoiceReceived(uint64_t fromUserHandle, const int16_t* samples,
 	Ref< sound::Sound > soundVoice = new sound::Sound(
 		t.soundBuffer,
 		m_category,
-		1.0f,
-		0.0f,
 		1.0f,
 		0.0f
 	);
