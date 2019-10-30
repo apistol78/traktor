@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Core/Containers/AlignedVector.h"
+#include <vector>
 #include "Core/Memory/Alloc.h"
 #include "Core/Memory/BlockAllocator.h"
 
@@ -63,7 +63,7 @@ private:
 #if defined(T_BOXES_USE_MT_LOCK)
 	SpinLock m_lock;
 #endif
-	AlignedVector< BlockAllocator* > m_allocators;
+	std::vector< BlockAllocator* > m_allocators;
 };
 
 }
