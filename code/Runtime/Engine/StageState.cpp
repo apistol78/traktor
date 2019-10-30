@@ -71,26 +71,26 @@ void StageState::flush()
 
 bool StageState::take(const Object* event)
 {
-	if (const ReconfigureEvent* reconfigureEvent = dynamic_type_cast< const ReconfigureEvent* >(event))
+	if (auto reconfigureEvent = dynamic_type_cast< const ReconfigureEvent* >(event))
 	{
 		if (!reconfigureEvent->isFinished())
 			m_stage->preReconfigured();
 		else
 			m_stage->postReconfigured();
 	}
-	else if (const ActiveEvent* activeEvent = dynamic_type_cast< const ActiveEvent* >(event))
+	else if (auto activeEvent = dynamic_type_cast< const ActiveEvent* >(event))
 	{
 		if (activeEvent->becameActivated())
 			m_stage->resume();
 		else
 			m_stage->suspend();
 	}
-	else if (const CommandEvent* commandEvent = dynamic_type_cast< const CommandEvent* >(event))
+	else if (auto commandEvent = dynamic_type_cast< const CommandEvent* >(event))
 	{
 		m_stage->invokeScript(
 			wstombs(commandEvent->getFunction()),
 			0,
-			0
+			nullptr
 		);
 	}
 	return true;

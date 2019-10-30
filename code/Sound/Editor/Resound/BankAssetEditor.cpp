@@ -91,7 +91,7 @@ public:
 	virtual Ref< IGrain > createInstance(const IGrainData* grainData) override
 	{
 		if (!grainData)
-			return 0;
+			return nullptr;
 
 		Ref< IGrain > grain = GrainFactory::createInstance(grainData);
 		m_instances.insert(std::make_pair(grainData, grain.ptr()));
@@ -188,10 +188,10 @@ bool BankAssetEditor::create(ui::Widget* parent, db::Instance* instance, ISerial
 	{
 		m_soundChannel = m_soundSystem->getChannel(0);
 		if (!m_soundChannel)
-			m_soundSystem = 0;
+			m_soundSystem = nullptr;
 	}
 	if (!m_soundSystem)
-		log::warning << L"Unable to create preview sound system; preview unavailable" << Endl;
+		log::warning << L"Unable to create preview sound system; preview unavailable." << Endl;
 
 	m_resourceManager = new resource::ResourceManager(m_editor->getOutputDatabase(), m_editor->getSettings()->getProperty< bool >(L"Resource.Verbose", false));
 	m_resourceManager->addFactory(new SoundFactory());
@@ -206,13 +206,13 @@ void BankAssetEditor::destroy()
 	if (m_soundChannel)
 	{
 		m_soundChannel->stop();
-		m_soundChannel = 0;
+		m_soundChannel = nullptr;
 	}
 
 	if (m_resourceManager)
-		m_resourceManager = 0;
+		m_resourceManager = nullptr;
 
-	m_soundSystem = 0;
+	m_soundSystem = nullptr;
 }
 
 void BankAssetEditor::apply()
@@ -319,16 +319,16 @@ bool BankAssetEditor::handleCommand(const ui::Command& command)
 			if (!grains.empty())
 			{
 				m_bankBuffer = new BankBuffer(grains);
-				m_soundChannel->play(m_bankBuffer, 0, 1.0f, 0.0f, 1.0f, false, 0);
+				m_soundChannel->play(m_bankBuffer, 0, 1.0f, false, 0);
 
-				for (RefArray< ui::Slider >::const_iterator i = m_sliderParameters.begin(); i != m_sliderParameters.end(); ++i)
+				for (auto sliderParameter : m_sliderParameters)
 				{
-					const HandleWrapper* id = (*i)->getData< HandleWrapper >(L"ID");
+					const HandleWrapper* id = sliderParameter->getData< HandleWrapper >(L"ID");
 					T_ASSERT(id);
 
 					m_soundChannel->setParameter(
 						id->get(),
-						(*i)->getValue() / 100.0f
+						sliderParameter->getValue() / 100.0f
 					);
 				}
 			}
@@ -339,9 +339,8 @@ bool BankAssetEditor::handleCommand(const ui::Command& command)
 		{
 			m_soundChannel->stop();
 
-			const RefArray< BankControlGrain >& grainCells = m_bankControl->getGrains();
-			for (RefArray< BankControlGrain >::const_iterator i = grainCells.begin(); i != grainCells.end(); ++i)
-				(*i)->setActive(false);
+			for (auto graincell : m_bankControl->getGrains())
+				graincell->setActive(false);
 			m_bankControl->update();
 
 			m_toolBarItemPlay->setToggled(false);
@@ -367,25 +366,25 @@ ui::Size BankAssetEditor::getPreferredSize() const
 
 void BankAssetEditor::updateBankControl(BankControlGrain* parent, const RefArray< IGrainData >& grains)
 {
-	for (RefArray< IGrainData >::const_iterator i = grains.begin(); i != grains.end(); ++i)
+	for (auto grain : grains)
 	{
-		if (!(*i))
+		if (!grain)
 			continue;
 
-		IGrainFacade* grainFacade = m_grainFacades[&type_of(*i)];
+		IGrainFacade* grainFacade = m_grainFacades[&type_of(grain)];
 		if (!grainFacade)
 			continue;
 
 		Ref< BankControlGrain > item = new BankControlGrain(
 			parent,
-			*i,
-			grainFacade->getText(*i),
-			grainFacade->getImage(*i)
+			grain,
+			grainFacade->getText(grain),
+			grainFacade->getImage(grain)
 		);
 		m_bankControl->add(item);
 
 		RefArray< IGrainData > childGrains;
-		if (grainFacade->getChildren(*i, childGrains))
+		if (grainFacade->getChildren(grain, childGrains))
 			updateBankControl(item, childGrains);
 	}
 }
@@ -431,20 +430,20 @@ void BankAssetEditor::updateProperties()
 		m_containerParameters->getLastChild()->destroy();
 
 	// Create slider for each dynamic property.
-	for (std::set< std::wstring >::const_iterator i = properties.begin(); i != properties.end(); ++i)
+	for (const auto& property : properties)
 	{
-		if (i->empty())
+		if (property.empty())
 			continue;
 
 		Ref< ui::Static > staticParameter = new ui::Static();
-		staticParameter->create(m_containerParameters, *i);
+		staticParameter->create(m_containerParameters, property);
 
 		Ref< ui::Slider > sliderParameter = new ui::Slider();
 		sliderParameter->create(m_containerParameters);
 		sliderParameter->setRange(0, 100);
 		sliderParameter->addEventHandler< ui::ContentChangeEvent >(this, &BankAssetEditor::eventParameterChange);
 		sliderParameter->setData(L"ID", new HandleWrapper(
-			getParameterHandle(*i)
+			getParameterHandle(property)
 		));
 
 		m_sliderParameters.push_back(sliderParameter);
@@ -553,7 +552,7 @@ void BankAssetEditor::eventTimer(ui::TimerEvent* event)
 		else
 		{
 			T_ASSERT(m_bankBuffer);
-			m_soundChannel->play(m_bankBuffer, 0, 1.0f, 0.0f, 1.0f, false, 0);
+			m_soundChannel->play(m_bankBuffer, 0, 1.0f, false, 0);
 
 			for (RefArray< ui::Slider >::const_iterator i = m_sliderParameters.begin(); i != m_sliderParameters.end(); ++i)
 			{
@@ -576,25 +575,24 @@ void BankAssetEditor::eventTimer(ui::TimerEvent* event)
 			RefArray< const IGrain > activeGrains;
 			m_bankBuffer->getActiveGrains(cursor, activeGrains);
 
-			const RefArray< BankControlGrain >& grainCells = m_bankControl->getGrains();
-			for (RefArray< BankControlGrain >::const_iterator i = grainCells.begin(); i != grainCells.end(); ++i)
+			for (auto grainCell : m_bankControl->getGrains())
 			{
-				const IGrainData* grainData = (*i)->getGrain();
+				const IGrainData* grainData = grainCell->getGrain();
 				const IGrain* grain = m_grainInstances[grainData];
 
 				bool isActive = false;
 				if (grain)
 				{
-					for (RefArray< const IGrain >::const_iterator j = activeGrains.begin(); j != activeGrains.end(); ++j)
+					for (auto activeGrain : activeGrains)
 					{
-						if (*j == grain)
+						if (activeGrain == grain)
 						{
 							isActive = true;
 							break;
 						}
 					}
 				}
-				(*i)->setActive(isActive);
+				grainCell->setActive(isActive);
 			}
 
 			m_bankControl->update();

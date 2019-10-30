@@ -54,12 +54,10 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.SoundClassFactory", 0, SoundClass
 void SoundClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 {
 	auto classSound = new AutoRuntimeClass< Sound >();
-	classSound->addConstructor< ISoundBuffer*, handle_t, float, float, float, float >();
+	classSound->addConstructor< ISoundBuffer*, handle_t, float, float >();
 	classSound->addProperty("buffer", &Sound::getBuffer);
 	classSound->addProperty("category", &Sound::getCategory);
 	classSound->addProperty("gain", &Sound::getGain);
-	classSound->addProperty("presence", &Sound::getPresence);
-	classSound->addProperty("presenceRate", &Sound::getPresenceRate);
 	classSound->addProperty("range", &Sound::getRange);
 	registrar->registerClass(classSound);
 

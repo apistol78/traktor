@@ -68,8 +68,6 @@ public:
 	 * \param buffer Sound buffer.
 	 * \param category Sound category.
 	 * \param gain Sound gain in dB.
-	 * \param presence Sound presence.
-	 * \param presenceRate Sound presence recover rate.
 	 * \param repeat If sound is repeating.
 	 * \param repeatFrom Skip number of samples before repeat.
 	 * \return True if sound is playing successfully.
@@ -78,8 +76,6 @@ public:
 		const ISoundBuffer* buffer,
 		handle_t category,
 		float gain,
-		float presence,
-		float presenceRate,
 		bool repeat,
 		uint32_t repeatFrom
 	);
@@ -94,11 +90,7 @@ public:
 	ISoundBufferCursor* getCursor();
 
 	/*! \brief Get next mixed and prepared sound block. */
-	bool getBlock(
-		const ISoundMixer* mixer,
-		SoundBlock& outBlock,
-		SoundBlockMeta& outBlockMeta
-	);
+	bool getBlock(const ISoundMixer* mixer, SoundBlock& outBlock);
 
 private:
 	friend class SoundSystem;
@@ -115,16 +107,12 @@ private:
 		Ref< ISoundBufferCursor > cursor;
 		handle_t category;
 		float volume;
-		float presence;
-		float presenceRate;
 		bool repeat;
 		uint32_t repeatFrom;
 
 		StateSound()
 		:	category(0)
 		,	volume(1.0f)
-		,	presence(0.0f)
-		,	presenceRate(1.0f)
 		,	repeat(false)
 		,	repeatFrom(0)
 		{

@@ -140,8 +140,6 @@ bool BankPipeline::buildOutput(
 	bool categorized = false;
 	std::wstring configurationId;
 	float gain = 0.0f;
-	float presence = bankAsset->m_presence;
-	float presenceRate = bankAsset->m_presenceRate;
 	float range = 0.0f;
 
 	Ref< const SoundCategory > category = pipelineBuilder->getObjectReadOnly< SoundCategory >(bankAsset->m_category);
@@ -153,23 +151,14 @@ bool BankPipeline::buildOutput(
 	{
 		categorized = true;
 		gain += category->getGain();
-
-		if (presence <= FUZZY_EPSILON)
-		{
-			presence = category->getPresence();
-			presenceRate = category->getPresenceRate();
-		}
-
 		range = max(range, category->getRange());
-
 		category = pipelineBuilder->getObjectReadOnly< SoundCategory >(category->getParent());
 	}
 
 	if (categorized)
 	{
 		log::info << L"Category gain " << gain << L" dB" << Endl;
-		log::info << L"Category presence " << presence << L", rate " << int32_t(presenceRate * 100.0f) << L" d%" << Endl;
-		log::info << L"Category range " << range << Endl;
+		log::info << L"         range " << range << Endl;
 	}
 	else
 		log::warning << L"Uncategorized sound \"" << sourceInstance->getName() << L"\"" << Endl;
@@ -178,8 +167,6 @@ bool BankPipeline::buildOutput(
 		bankAsset->m_grains,
 		configurationId,
 		gain,
-		presence,
-		presenceRate,
 		range
 	);
 

@@ -129,8 +129,6 @@ bool SongBuffer::getBlock(ISoundBufferCursor* cursor, const ISoundMixer* mixer, 
 							p->getSound()->getBuffer(),
 							0,
 							0.0f,
-							0.0f,
-							0.0f,
 							key->play->getRepeatLength() > 0,
 							key->play->getRepeatFrom()
 						);
@@ -152,10 +150,8 @@ bool SongBuffer::getBlock(ISoundBufferCursor* cursor, const ISoundMixer* mixer, 
 				if (!ch->isPlaying())
 					continue;
 
-				SoundBlock soundBlock = { { 0 }, 0, 0, 0 };
-				SoundBlockMeta soundBlockMeta = { 0 };
-
-				if (ch->getBlock(mixer, soundBlock, soundBlockMeta))
+				SoundBlock soundBlock = { 0 };
+				if (ch->getBlock(mixer, soundBlock))
 				{
 					outBlock.sampleRate = max(outBlock.sampleRate, soundBlock.sampleRate);
 					outBlock.samplesCount = max(outBlock.samplesCount, soundBlock.samplesCount);

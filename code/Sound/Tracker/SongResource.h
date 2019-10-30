@@ -29,8 +29,6 @@ public:
 		const RefArray< const PatternData >& patterns,
 		const std::wstring& category,
 		float gain,
-		float presence,
-		float presenceRate,
 		float range,
 		int32_t bpm
 	);
@@ -43,8 +41,6 @@ private:
 	RefArray< const PatternData > m_patterns;
 	std::wstring m_category;
 	float m_gain;
-	float m_presence;
-	float m_presenceRate;
 	float m_range;
 	int32_t m_bpm;
 };

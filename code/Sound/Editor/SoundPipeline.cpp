@@ -54,7 +54,7 @@ bool isMute(const SoundBlock& soundBlock, uint32_t& outMuteOffset)
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.SoundPipeline", 32, SoundPipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.SoundPipeline", 33, SoundPipeline, editor::IPipeline)
 
 SoundPipeline::SoundPipeline()
 {
@@ -72,9 +72,7 @@ void SoundPipeline::destroy()
 
 TypeInfoSet SoundPipeline::getAssetTypes() const
 {
-	TypeInfoSet typeSet;
-	typeSet.insert< SoundAsset >();
-	return typeSet;
+	return makeTypeInfoSet< SoundAsset >();
 }
 
 bool SoundPipeline::buildDependencies(
@@ -85,7 +83,7 @@ bool SoundPipeline::buildDependencies(
 	const Guid& outputGuid
 ) const
 {
-	Ref< const SoundAsset > soundAsset = checked_type_cast< const SoundAsset* >(sourceAsset);
+	const SoundAsset* soundAsset = checked_type_cast< const SoundAsset* >(sourceAsset);
 	pipelineDepends->addDependency(Path(m_assetPath), soundAsset->getFileName().getOriginal());
 
 	Ref< const SoundCategory > category = pipelineDepends->getObjectReadOnly< SoundCategory >(soundAsset->m_category);
@@ -117,7 +115,7 @@ bool SoundPipeline::buildOutput(
 	uint32_t reason
 ) const
 {
-	Ref< const SoundAsset > soundAsset = checked_type_cast< const SoundAsset* >(sourceAsset);
+	const SoundAsset* soundAsset = checked_type_cast< const SoundAsset* >(sourceAsset);
 
 	Ref< IStreamDecoder > decoder;
 	if (compareIgnoreCase< std::wstring >(soundAsset->getFileName().getExtension(), L"wav") == 0)
@@ -146,8 +144,6 @@ bool SoundPipeline::buildOutput(
 	bool categorized = false;
 	std::wstring configurationId;
 	float gain = soundAsset->m_gain;
-	float presence = soundAsset->m_presence;
-	float presenceRate = soundAsset->m_presenceRate;
 	float range = 0.0f;
 
 	Ref< const SoundCategory > category = pipelineBuilder->getObjectReadOnly< SoundCategory >(soundAsset->m_category);
@@ -159,15 +155,7 @@ bool SoundPipeline::buildOutput(
 	{
 		categorized = true;
 		gain += category->getGain();
-
-		if (presence <= FUZZY_EPSILON)
-		{
-			presence = category->getPresence();
-			presenceRate = category->getPresenceRate();
-		}
-
 		range = max(range, category->getRange());
-
 		category = pipelineBuilder->getObjectReadOnly< SoundCategory >(category->getParent());
 	}
 
@@ -175,7 +163,6 @@ bool SoundPipeline::buildOutput(
 		log::warning << L"Uncategorized sound \"" << sourceInstance->getName() << L"\"" << Endl;
 
 	log::info << L"Final gain " << gain << L" dB" << Endl;
-	log::info << L"      presence " << presence << L", rate " << int32_t(presenceRate * 100.0f) << L" d%" << Endl;
 	log::info << L"      range " << range << Endl;
 
 	if (soundAsset->m_stream)
@@ -185,8 +172,6 @@ bool SoundPipeline::buildOutput(
 		resource->m_decoderType = &type_of(decoder);
 		resource->m_category = configurationId;
 		resource->m_gain = gain;
-		resource->m_presence = presence;
-		resource->m_presenceRate = presenceRate;
 		resource->m_range = range;
 		resource->m_preload = soundAsset->m_preload;
 
@@ -351,8 +336,6 @@ bool SoundPipeline::buildOutput(
 		resource->m_samplesCount = samplesCount;
 		resource->m_channelsCount = maxChannel;
 		resource->m_gain = gain;
-		resource->m_presence = presence;
-		resource->m_presenceRate = presenceRate;
 		resource->m_range = range;
 
 		if (soundAsset->getCompressed())

@@ -99,8 +99,8 @@ struct SoundSystemCreateDesc
 	SoundSystemCreateDesc()
 	:	channels(0)
 	{
-		for (int i = 0; i < SbcMaxChannelCount; ++i)
-			for (int j = 0; j < SbcMaxChannelCount; ++j)
+		for (int32_t i = 0; i < SbcMaxChannelCount; ++i)
+			for (int32_t j = 0; j < SbcMaxChannelCount; ++j)
 				cm[i][j] = (i == j) ? 1.0f : 0.0f;
 	}
 };
@@ -112,14 +112,7 @@ struct SoundBlock
 	uint32_t samplesCount;				//!< Number of samples.
 	uint32_t sampleRate;				//!< Samples per second.
 	uint32_t maxChannel;				//!< Last channel used, everyone above is considered mute.
-};
-
-/*! \brief Block meta. */
-struct SoundBlockMeta
-{
 	handle_t category;
-	float presence;
-	float presenceRate;
 };
 
 /*! \brief Return handle from parameter name.

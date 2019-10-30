@@ -117,13 +117,9 @@ bool SoundSystem::create(const SoundSystemCreateDesc& desc)
 		);
 	}
 
-	m_requestBlocks.resize(desc.channels);
-	m_requestBlockMeta.resize(desc.channels);
-
 	// Set play parameters.
+	m_requestBlocks.resize(desc.channels);
 	m_time = 0.0;
-	m_duck[0].resize(desc.channels, 1.0f);
-	m_duck[1].resize(desc.channels, 1.0f);
 
 	// Start thread.
 	m_threadMixer->start(Thread::Above);
@@ -144,17 +140,17 @@ void SoundSystem::destroy()
 	{
 		m_threadMixer->stop();
 		ThreadManager::getInstance().destroy(m_threadMixer);
-		m_threadMixer = 0;
+		m_threadMixer = nullptr;
 	}
 
 	// Free mixer and memory resources.
-	m_mixer = 0;
+	m_mixer = nullptr;
 	safeDestroy(m_driver);
 
 	if (m_samplesData)
 	{
 		Alloc::freeAlign(m_samplesData);
-		m_samplesData = 0;
+		m_samplesData = nullptr;
 	}
 }
 
@@ -162,7 +158,7 @@ bool SoundSystem::reset(ISoundDriver* driver)
 {
 	// Tear down current driver and threads.
 	suspend();
-	m_driver = 0;
+	m_driver = nullptr;
 
 	// Create new driver and mixer.
 	if (!driver || !driver->create(m_desc.sysapp, m_desc.driverDesc, m_mixer))
@@ -189,14 +185,14 @@ void SoundSystem::suspend()
 	{
 		m_threadMixer->stop();
 		ThreadManager::getInstance().destroy(m_threadMixer);
-		m_threadMixer = 0;
+		m_threadMixer = nullptr;
 	}
 
 	// Destroy driver; but keep pointer to driver, as we will re-create it.
 	if (m_driver)
 		m_driver->destroy();
 
-	m_mixer = 0;
+	m_mixer = nullptr;
 	m_suspended = true;
 }
 
@@ -206,7 +202,7 @@ void SoundSystem::resume()
 	if (!m_suspended)
 		return;
 
-	T_ASSERT(m_threadMixer == 0);
+	T_ASSERT(m_threadMixer == nullptr);
 
 	if (!m_driver)
 		return;
@@ -264,12 +260,12 @@ void SoundSystem::setCombineMatrix(float cm[SbcMaxChannelCount][SbcMaxChannelCou
 	std::memcpy(m_desc.cm, cm, sizeof(float) * SbcMaxChannelCount * SbcMaxChannelCount);
 }
 
-Ref< SoundChannel > SoundSystem::getChannel(uint32_t channelId)
+SoundChannel* SoundSystem::getChannel(uint32_t channelId)
 {
 	if (channelId < m_channels.size())
 		return m_channels[channelId];
 	else
-		return 0;
+		return nullptr;
 }
 
 double SoundSystem::getTime() const
@@ -286,7 +282,6 @@ void SoundSystem::threadMixer()
 {
 	SoundBlock frameBlock;
 	Timer timerMixer;
-	float presence[64];
 	uint32_t channelsCount;
 
 	timerMixer.start();
@@ -296,7 +291,6 @@ void SoundSystem::threadMixer()
 		double deltaTime = timerMixer.getDeltaTime();
 
 		// Read blocks from channels.
-		float maxPresence = 1.0f;
 		m_channelsLock.wait();
 		{
 			channelsCount = uint32_t(m_channels.size());
@@ -304,20 +298,8 @@ void SoundSystem::threadMixer()
 			{
 				m_requestBlocks[i].samplesCount = m_desc.driverDesc.frameSamples;
 				m_requestBlocks[i].maxChannel = 0;
-
-				m_requestBlockMeta[i].category = 0;
-				m_requestBlockMeta[i].presence = 0.0f;
-				m_requestBlockMeta[i].presenceRate = 0.0f;
-
-				m_channels[i]->getBlock(m_mixer, m_requestBlocks[i], m_requestBlockMeta[i]);
-
-				if (m_requestBlockMeta[i].presence > 0.0f)
-				{
-					presence[i] = 1.0f + m_requestBlockMeta[i].presence;
-					maxPresence = max(maxPresence, presence[i]);
-				}
-				else
-					presence[i] = 1.0f;
+				m_requestBlocks[i].category = 0;
+				m_channels[i]->getBlock(m_mixer, m_requestBlocks[i]);
 			}
 		}
 		m_channelsLock.release();
@@ -334,23 +316,6 @@ void SoundSystem::threadMixer()
 		frameBlock.sampleRate = m_desc.driverDesc.sampleRate;
 		frameBlock.maxChannel = m_desc.driverDesc.hwChannels;
 
-		for (uint32_t i = 0; i < m_duck[0].size(); ++i)
-		{
-			if (m_requestBlockMeta[i].presence > 0.0f)
-			{
-				m_duck[0][i] = presence[i] / maxPresence;
-				m_duck[0][i] *= m_duck[0][i];
-
-				if (m_duck[1][i] > m_duck[0][i])
-					m_duck[1][i] = m_duck[0][i];
-				else
-				{
-					float presenceRate = m_requestBlockMeta[i].presenceRate;
-					m_duck[1][i] = min(m_duck[1][i] + float(deltaTime * presenceRate), 1.0f);
-				}
-			}
-		}
-
 		m_mixer->synchronize();
 
 		// Final combine channels into hardware channels using "combine matrix".
@@ -362,8 +327,8 @@ void SoundSystem::threadMixer()
 			T_ASSERT(m_requestBlocks[i].sampleRate == m_desc.driverDesc.sampleRate);
 			T_ASSERT(m_requestBlocks[i].samplesCount == m_desc.driverDesc.frameSamples);
 
-			float categoryVolume = getVolume(m_requestBlockMeta[i].category);
-			float duck = m_volume * categoryVolume * (m_duck[1][i] * 0.5f + 0.5f);
+			float categoryVolume = getVolume(m_requestBlocks[i].category);
+			float finalVolume = m_volume * categoryVolume;
 
 			for (uint32_t k = 0; k < m_requestBlocks[i].maxChannel; ++k)
 			{
@@ -372,7 +337,7 @@ void SoundSystem::threadMixer()
 
 				for (uint32_t j = 0; j < m_desc.driverDesc.hwChannels; ++j)
 				{
-					float strength = m_desc.cm[j][k] * duck;
+					float strength = m_desc.cm[j][k] * finalVolume;
 					if (abs(strength) >= FUZZY_EPSILON)
 					{
 						m_mixer->addMulConst(

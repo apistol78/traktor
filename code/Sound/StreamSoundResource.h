@@ -35,8 +35,6 @@ private:
 	const TypeInfo* m_decoderType;
 	std::wstring m_category;
 	float m_gain;
-	float m_presence;
-	float m_presenceRate;
 	float m_range;
 	bool m_preload;
 };

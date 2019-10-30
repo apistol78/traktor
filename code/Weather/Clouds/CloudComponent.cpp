@@ -285,8 +285,8 @@ bool CloudComponent::create(
 
 void CloudComponent::destroy()
 {
-	for (RefArray< render::RenderTargetSet >::iterator i = m_impostorTargets.begin(); i != m_impostorTargets.end(); ++i)
-		i->destroy();
+	for (auto impostorTarget : m_impostorTargets)
+		impostorTarget->destroy();
 	m_impostorTargets.clear();
 
 	safeDestroy(m_vertexBuffer);
@@ -388,16 +388,16 @@ void CloudComponent::renderCluster(
 		// Sample opacity from mask.
 		if (m_mask)
 		{
-			for (AlignedVector< CloudParticle >::iterator i = particles.begin(); i != particles.end(); ++i)
+			for (auto& particle : particles)
 			{
-				Vector4 position = i->position / m_particleData.getSize();
+				Vector4 position = particle.position / m_particleData.getSize();
 
 				int32_t x = int32_t((position.x() * 0.5f + 0.5f) * m_mask->getSize());
 				int32_t z = int32_t((position.z() * 0.5f + 0.5f) * m_mask->getSize());
 
 				CloudMask::Sample sample = m_mask->getSample(x, z);
-				i->opacity = sample.opacity / 255.0f;
-				i->radius = i->maxRadius * sample.size / 255.0f;
+				particle.opacity = sample.opacity / 255.0f;
+				particle.radius = particle.maxRadius * sample.size / 255.0f;
 			}
 		}
 
@@ -439,13 +439,13 @@ void CloudComponent::renderCluster(
 				clusterProjection;
 
 			// Gather cloud particles in current slice.
-			std::vector< const CloudParticle* > sliceParticles;
-			for (AlignedVector< CloudParticle >::const_iterator i = particles.begin(); i != particles.end(); ++i)
+			AlignedVector< const CloudParticle* > sliceParticles;
+			for (const auto& particle : particles)
 			{
 				const float c_threshold = 0.1f;
-				float z = (worldView * i->position).z();
+				float z = (worldView * particle.position).z();
 				if (z >= sliceNearZ - c_threshold && z < sliceFarZ + c_threshold)
-					sliceParticles.push_back(&(*i));
+					sliceParticles.push_back(&particle);
 			}
 
 			Vector4 haloColor = colorAsVector4(m_particleData.getHaloColor());

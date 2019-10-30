@@ -31,8 +31,6 @@ public:
 		ISoundBuffer* buffer,
 		handle_t category,
 		float gain,
-		float presence,
-		float presenceRate,
 		float range
 	);
 
@@ -42,18 +40,12 @@ public:
 
 	float getGain() const { return m_gain; }
 
-	float getPresence() const { return m_presence; }
-
-	float getPresenceRate() const { return m_presenceRate; }
-
 	float getRange() const { return m_range; }
 
 private:
 	Ref< ISoundBuffer > m_buffer;
 	handle_t m_category;
 	float m_gain;
-	float m_presence;
-	float m_presenceRate;
 	float m_range;
 };
 

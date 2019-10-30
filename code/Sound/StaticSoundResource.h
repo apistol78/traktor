@@ -38,8 +38,6 @@ private:
 	uint32_t m_samplesCount;
 	uint32_t m_channelsCount;
 	float m_gain;
-	float m_presence;
-	float m_presenceRate;
 	float m_range;
 	const TypeInfo* m_decoderType;
 };
