@@ -70,7 +70,11 @@ public:
 
 	virtual void compute(IProgram* program, const int32_t* workSize) override final;
 
+	virtual bool copy(ITexture* destinationTexture, int32_t destinationSide, int32_t destinationLevel, ITexture* sourceTexture, int32_t sourceSide, int32_t sourceLevel) override final;
+
 	virtual void end() override final;
+
+	virtual void flush() override final;
 
 	virtual void present() override final;
 

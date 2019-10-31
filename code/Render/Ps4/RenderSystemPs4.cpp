@@ -104,7 +104,7 @@ void RenderSystemPs4::destroy()
 	if (m_context)
 	{
 		m_context->deleteResources();
-		m_context = 0;
+		m_context = nullptr;
 	}
 }
 
@@ -146,16 +146,15 @@ float RenderSystemPs4::getDisplayAspectRatio() const
 Ref< IRenderView > RenderSystemPs4::createRenderView(const RenderViewDefaultDesc& desc)
 {
 	Ref< RenderViewPs4 > renderView = new RenderViewPs4(m_context);
-
-	if (!renderView->reset(desc))
-		return 0;
-
-	return renderView;
+	if (renderView->reset(desc))
+		return renderView;
+	else
+		return nullptr;
 }
 
 Ref< IRenderView > RenderSystemPs4::createRenderView(const RenderViewEmbeddedDesc& desc)
 {
-	return 0;
+	return nullptr;
 }
 
 Ref< VertexBuffer > RenderSystemPs4::createVertexBuffer(const AlignedVector< VertexElement >& vertexElements, uint32_t bufferSize, bool dynamic)
@@ -179,51 +178,51 @@ Ref< StructBuffer > RenderSystemPs4::createStructBuffer(const AlignedVector< Str
 	return nullptr;
 }
 
-Ref< ISimpleTexture > RenderSystemPs4::createSimpleTexture(const SimpleTextureCreateDesc& desc)
+Ref< ISimpleTexture > RenderSystemPs4::createSimpleTexture(const SimpleTextureCreateDesc& desc, const wchar_t* const tag)
 {
 	Ref< SimpleTexturePs4 > texture = new SimpleTexturePs4(m_context);
 	if (texture->create(desc))
 		return texture;
 	else
-		return 0;
+		return nullptr;
 }
 
-Ref< ICubeTexture > RenderSystemPs4::createCubeTexture(const CubeTextureCreateDesc& desc)
+Ref< ICubeTexture > RenderSystemPs4::createCubeTexture(const CubeTextureCreateDesc& desc, const wchar_t* const tag)
 {
 	Ref< CubeTexturePs4 > texture = new CubeTexturePs4(m_context);
 	if (texture->create(desc))
 		return texture;
 	else
-		return 0;
+		return nullptr;
 }
 
-Ref< IVolumeTexture > RenderSystemPs4::createVolumeTexture(const VolumeTextureCreateDesc& desc)
+Ref< IVolumeTexture > RenderSystemPs4::createVolumeTexture(const VolumeTextureCreateDesc& desc, const wchar_t* const tag)
 {
 	Ref< VolumeTexturePs4 > texture = new VolumeTexturePs4(m_context);
 	if (texture->create(desc))
 		return texture;
 	else
-		return 0;
+		return nullptr;
 }
 
-Ref< RenderTargetSet > RenderSystemPs4::createRenderTargetSet(const RenderTargetSetCreateDesc& desc)
+Ref< RenderTargetSet > RenderSystemPs4::createRenderTargetSet(const RenderTargetSetCreateDesc& desc, const wchar_t* const tag)
 {
 	Ref< RenderTargetSetPs4 > renderTargetSet = new RenderTargetSetPs4(m_context);
 	if (renderTargetSet->create(desc))
 		return renderTargetSet;
 	else
-		return 0;
+		return nullptr;
 }
 
 Ref< IProgram > RenderSystemPs4::createProgram(const ProgramResource* programResource, const wchar_t* const tag)
 {
 	Ref< const ProgramResourcePs4 > resource = dynamic_type_cast< const ProgramResourcePs4* >(programResource);
 	if (!resource)
-		return 0;
+		return nullptr;
 
 	Ref< ProgramPs4 > program = new ProgramPs4(m_context);
 	if (!program->create(resource))
-		return 0;
+		return nullptr;
 
 	return program;
 }
@@ -234,7 +233,7 @@ Ref< ITimeQuery > RenderSystemPs4::createTimeQuery() const
 	if (timeQuery->create())
 		return timeQuery;
 	else
-		return 0;
+		return nullptr;
 }
 
 void RenderSystemPs4::purge()

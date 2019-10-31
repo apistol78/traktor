@@ -261,7 +261,16 @@ void RenderViewPs4::compute(IProgram* program, const int32_t* workSize)
 {
 }
 
+bool RenderViewPs4::copy(ITexture* destinationTexture, int32_t destinationSide, int32_t destinationLevel, ITexture* sourceTexture, int32_t sourceSide, int32_t sourceLevel)
+{
+	return false;
+}
+
 void RenderViewPs4::end()
+{
+}
+
+void RenderViewPs4::flush()
 {
 }
 
