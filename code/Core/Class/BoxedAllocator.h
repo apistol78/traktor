@@ -3,6 +3,7 @@
 #include <vector>
 #include "Core/Memory/Alloc.h"
 #include "Core/Memory/BlockAllocator.h"
+#include "Core/Misc/Align.h"
 
 namespace traktor
 {
