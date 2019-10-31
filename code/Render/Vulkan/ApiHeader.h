@@ -12,7 +12,7 @@
 #	define VK_USE_PLATFORM_ANDROID_KHR
 #	define VK_NO_PROTOTYPES
 #	include <vulkan/vulkan.h>
-#elif defined(__MACOS__)
+#elif defined(__MAC__)
 #	define VK_USE_PLATFORM_MACOS_MVK
 #	define VK_NO_PROTOTYPES
 #	include <vulkan/vulkan.h>

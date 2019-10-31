@@ -52,7 +52,7 @@ const char* c_extensions[] = { "VK_KHR_surface", "VK_KHR_win32_surface", "VK_EXT
 const char* c_extensions[] = { "VK_KHR_surface", "VK_KHR_xlib_surface", "VK_EXT_debug_utils" };
 #elif defined(__ANDROID__)
 const char* c_extensions[] = { "VK_KHR_surface", "VK_KHR_android_surface" };
-#elif defined(__MACOS__)
+#elif defined(__MAC__)
 const char* c_extensions[] = { "VK_KHR_surface", "VK_MVK_macos_surface", "VK_EXT_debug_utils" };
 #else
 const char* c_extensions[] = { "VK_KHR_surface", "VK_EXT_debug_utils" };

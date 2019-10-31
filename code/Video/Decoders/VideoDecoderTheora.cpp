@@ -1,4 +1,3 @@
-#undef __MACOS__
 #include <cstring>
 #include <theora/theoradec.h>
 #include "Core/Io/IStream.h"
