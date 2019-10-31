@@ -375,8 +375,8 @@ Ref< Shape > Parser::parsePath(xml::Element* elm)
 			++i;
 		}
 
-		bool relative = (cmd != toupper(cmd));
-		switch (toupper(cmd))
+		bool relative = (cmd != std::toupper(cmd));
+		switch (std::toupper(cmd))
 		{
 		case L'M':	// Move to
 			{
