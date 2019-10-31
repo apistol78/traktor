@@ -1,3 +1,4 @@
+#include <cstdio>
 #include <cstring>
 #include "Core/Io/Reader.h"
 #include "Core/Log/Log.h"
@@ -182,7 +183,7 @@ Ref< Image > ImageFormatHdr::read(IStream* stream)
 	}
 
 	int32_t w, h;
-	if (!sscanf(reso, "-Y %d +X %d", &h, &w))
+	if (!std::sscanf(reso, "-Y %d +X %d", &h, &w))
 		return nullptr;
 
 	Ref< Image > image = new Image(PixelFormat::getRGBAF32(), w, h);
