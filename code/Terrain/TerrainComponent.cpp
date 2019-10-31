@@ -1,6 +1,7 @@
 #include <algorithm>
 #include <limits>
 #include "Core/Math/Float.h"
+#include "Core/Math/MathUtils.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Heightfield/Heightfield.h"
 #include "Render/IndexBuffer.h"
@@ -595,14 +596,19 @@ void TerrainComponent::update(const world::UpdateParams& update)
 		layer->update(update);
 }
 
-bool TerrainComponent::updatePatches()
+bool TerrainComponent::updatePatches(const uint32_t* region)
 {
 	uint32_t patchDim = m_terrain->getPatchDim();
 	uint32_t heightfieldSize = m_heightfield->getSize();
 
-	for (uint32_t pz = 0; pz < m_patchCount; ++pz)
+	uint32_t mnx = region ? max< uint32_t >(region[0], 0) : 0;
+	uint32_t mnz = region ? max< uint32_t >(region[1], 0) : 0;
+	uint32_t mxx = region ? min< uint32_t >(region[2] + 1, m_patchCount) : m_patchCount;
+	uint32_t mxz = region ? min< uint32_t >(region[3] + 1, m_patchCount) : m_patchCount;
+
+	for (uint32_t pz = mnz; pz < mxz; ++pz)
 	{
-		for (uint32_t px = 0; px < m_patchCount; ++px)
+		for (uint32_t px = mnx; px < mxx; ++px)
 		{
 			uint32_t patchId = px + pz * m_patchCount;
 
@@ -734,7 +740,7 @@ bool TerrainComponent::createPatches()
 		}
 	}
 
-	updatePatches();
+	updatePatches(nullptr);
 
 	AlignedVector< uint32_t > indices;
 	for (uint32_t lod = 0; lod < LodCount; ++lod)

@@ -41,10 +41,14 @@ bool Edit::create(Widget* parent, const std::wstring& text, int style, const Edi
 	addEventHandler< MouseTrackEvent >(this, &Edit::eventMouseTrack);
 	addEventHandler< MouseButtonDownEvent >(this, &Edit::eventButtonDown);
 	addEventHandler< MouseDoubleClickEvent >(this, &Edit::eventDoubleClick);
-	addEventHandler< KeyDownEvent >(this, &Edit::eventKeyDown);
-	addEventHandler< KeyEvent >(this, &Edit::eventKey);
 	addEventHandler< PaintEvent >(this, &Edit::eventPaint);
 	addEventHandler< TimerEvent >(this, &Edit::eventTimer);
+
+	if (!m_readOnly)
+	{
+		addEventHandler< KeyDownEvent >(this, &Edit::eventKeyDown);
+		addEventHandler< KeyEvent >(this, &Edit::eventKey);
+	}
 
 	setText(text);
 	return true;

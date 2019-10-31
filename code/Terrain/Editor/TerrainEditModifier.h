@@ -137,6 +137,8 @@ private:
 	int32_t m_material;
 	TerrainComponent::VisualizeMode m_visualizeMode;
 	Vector4 m_center;
+	uint32_t m_updateRegion[4];
+	bool m_applied;
 };
 
 	}

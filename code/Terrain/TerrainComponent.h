@@ -179,7 +179,7 @@ private:
 	render::handle_t m_handleCutEnable;
 	render::handle_t m_handleColorEnable;
 
-	bool updatePatches();
+	bool updatePatches(const uint32_t* region);
 
 	bool createPatches();
 };

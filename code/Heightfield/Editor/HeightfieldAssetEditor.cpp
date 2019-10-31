@@ -1,5 +1,6 @@
 #include "Core/Io/IStream.h"
 #include "Core/Log/Log.h"
+#include "Core/Misc/SafeDestroy.h"
 #include "Core/Misc/String.h"
 #include "Database/Instance.h"
 #include "Drawing/Image.h"
@@ -14,6 +15,7 @@
 #include "Ui/Container.h"
 #include "Ui/Edit.h"
 #include "Ui/Image.h"
+#include "Ui/InputDialog.h"
 #include "Ui/NumericEditValidator.h"
 #include "Ui/Static.h"
 #include "Ui/TableLayout.h"
@@ -77,17 +79,17 @@ bool HeightfieldAssetEditor::create(ui::Widget* parent, db::Instance* instance, 
 	if (!m_heightfield)
 	{
 		log::error << L"Heightfield asset editor failed; unable to read heights." << Endl;
-		return 0;
+		return false;
 	}
 
 	sourceData->close();
-	sourceData = 0;
+	sourceData = nullptr;
 
-	Ref< ui::Container > containerInner = new ui::Container();
-	containerInner->create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"*,*,100%", 4, 4));
+	m_container = new ui::Container();
+	m_container->create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"*,*,100%", 4, 4));
 
 	Ref< ui::Container > containerFields = new ui::Container();
-	containerFields->create(containerInner, ui::WsNone, new ui::TableLayout(L"*,*,*", L"*", 0, 4));
+	containerFields->create(m_container, ui::WsNone, new ui::TableLayout(L"*,*,*", L"*", 0, 4));
 
 	Ref< ui::Static > staticExtent = new ui::Static();
 	staticExtent->create(containerFields, i18n::Text(L"HEIGHTFIELD_ASSET_EXTENT"));
@@ -120,13 +122,13 @@ bool HeightfieldAssetEditor::create(ui::Widget* parent, db::Instance* instance, 
 	staticSize->create(containerFields, i18n::Text(L"HEIGHTFIELD_ASSET_SIZE"));
 
 	m_editSize = new ui::Edit();
-	m_editSize->create(containerFields, toString(m_heightfield->getSize()), ui::Edit::WsReadOnly, new ui::NumericEditValidator(false, 1.0f));
+	m_editSize->create(containerFields, toString(m_heightfield->getSize()), ui::Edit::WsReadOnly); //, new ui::NumericEditValidator(false, 1.0f));
 
 	Ref< ui::Static > staticSizeUnit = new ui::Static();
 	staticSizeUnit->create(containerFields, i18n::Text(L"HEIGHTFIELD_ASSET_SIZE_UNIT"));
 
 	Ref< ui::ToolBar > toolBar = new ui::ToolBar();
-	toolBar->create(containerInner);
+	toolBar->create(m_container);
 	toolBar->addItem(new ui::ToolBarButton(L"Import...", ui::Command(L"HeightfieldAssetEditor.Import")));
 	toolBar->addItem(new ui::ToolBarButton(L"Export...", ui::Command(L"HeightfieldAssetEditor.Export")));
 	toolBar->addItem(new ui::ToolBarSeparator());
@@ -137,7 +139,7 @@ bool HeightfieldAssetEditor::create(ui::Widget* parent, db::Instance* instance, 
 
 	m_imagePreview = new ui::Image();
 	m_imagePreview->create(
-		containerInner,
+		m_container,
 		new ui::Bitmap(generatePreviewImage(m_heightfield)),
 		ui::WsDoubleBuffer | ui::Image::WsScaleKeepAspect
 	);
@@ -147,8 +149,9 @@ bool HeightfieldAssetEditor::create(ui::Widget* parent, db::Instance* instance, 
 
 void HeightfieldAssetEditor::destroy()
 {
-	m_instance = 0;
-	m_asset = 0;
+	safeDestroy(m_container);
+	m_instance = nullptr;
+	m_asset = nullptr;
 }
 
 void HeightfieldAssetEditor::apply()
@@ -182,6 +185,76 @@ bool HeightfieldAssetEditor::handleCommand(const ui::Command& command)
 			}
 		}
 		updatePreviewImage();
+		return true;
+	}
+	else if (command == L"HeightfieldAssetEditor.Resize")
+	{
+		return true;
+	}
+	else if (command == L"HeightfieldAssetEditor.Crop")
+	{
+		ui::InputDialog::Field fields[] =
+		{
+			ui::InputDialog::Field(L"Left", L"0", new ui::NumericEditValidator(false)),
+			ui::InputDialog::Field(L"Top", L"0", new ui::NumericEditValidator(false)),
+			ui::InputDialog::Field(L"Size", toString(m_heightfield->getSize()), new ui::NumericEditValidator(false, 1))
+		};
+
+		ui::InputDialog inputDialog;
+		inputDialog.create(
+			m_container,
+			i18n::Text(L"CROP_HEIGHTFIELD_WIZARDTOOL_TITLE"),
+			i18n::Text(L"CROP_HEIGHTFIELD_WIZARDTOOL_MESSAGE"),
+			fields,
+			sizeof_array(fields)
+		);
+
+		if (inputDialog.showModal() == ui::DrCancel)
+		{
+			inputDialog.destroy();
+			return false;
+		}
+
+		int32_t x = parseString< int32_t >(fields[0].value);
+		int32_t y = parseString< int32_t >(fields[1].value);
+		int32_t size = parseString< int32_t >(fields[2].value);
+
+		inputDialog.destroy();
+
+		if (size <= 0)
+		{
+			log::error << L"Invalid size; must at least be greater or equal to one." << Endl;
+			return false;
+		}
+
+		Ref< Heightfield > cropped = new Heightfield(
+			size,
+			m_heightfield->getWorldExtent() // * Vector4(factor, 1.0f, factor)
+		);
+
+		for (int32_t iy = 0; iy < size; ++iy)
+		{
+			for (int32_t ix = 0; ix < size; ++ix)
+			{
+				int32_t sx = ix + x;
+				int32_t sy = iy + y;
+
+				sx = clamp(sx, 0, m_heightfield->getSize() - 1);
+				sy = clamp(sy, 0, m_heightfield->getSize() - 1);
+
+				float h = m_heightfield->getGridHeightNearest(sx, sy);
+				bool c = m_heightfield->getGridCut(sx, sy);
+
+				cropped->setGridHeight(ix, iy, h);
+				cropped->setGridCut(ix, iy, c);
+			}
+		}
+
+		m_heightfield = cropped;
+
+		m_editSize->setText(toString(m_heightfield->getSize()));
+		updatePreviewImage();
+
 		return true;
 	}
 	else

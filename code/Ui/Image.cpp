@@ -1,5 +1,7 @@
-#include "Ui/Image.h"
+#include "Ui/Application.h"
 #include "Ui/Bitmap.h"
+#include "Ui/Image.h"
+#include "Ui/StyleSheet.h"
 
 namespace traktor
 {
@@ -102,35 +104,60 @@ bool Image::scaling() const
 
 void Image::eventPaint(PaintEvent* event)
 {
-	if (m_image)
-	{
-		Canvas& canvas = event->getCanvas();
+	if (!m_image)
+		return;
 
-		if (m_transparent)
+	const StyleSheet* ss = Application::getInstance()->getStyleSheet();
+	Canvas& canvas = event->getCanvas();
+
+	Size imageSize = m_image->getSize();
+	Size clientSize = getInnerRect().getSize();
+	Size drawSize = clientSize;
+
+	if (m_transparent || m_keepAspect)
+	{
+		canvas.setBackground(ss->getColor(this, L"background-color"));
+		canvas.fillRect(getInnerRect());
+	}
+
+	if (!m_scale)
+	{
+		canvas.drawBitmap(
+			Point(0, 0),
+			Point(0, 0),
+			imageSize,
+			m_image,
+			m_transparent ? BmAlpha : BmNone
+		);
+	}
+	else
+	{
+		Point offset(0, 0);
+
+		if (m_keepAspect)
 		{
-			canvas.fillRect(
-				getInnerRect()
-			);
+			float imageAspect = (float)imageSize.cx / imageSize.cy;
+			float drawAspect = (float)drawSize.cx / drawSize.cy;
+			if (drawAspect > imageAspect)
+				drawSize.cx = (int32_t)(drawSize.cy * imageAspect);
+			else
+				drawSize.cy = (int32_t)(drawSize.cx / imageAspect);
+
+			offset.x = (clientSize.cx - drawSize.cx) / 2;
+			offset.y = (clientSize.cy - drawSize.cy) / 2;
 		}
 
-		if (!m_scale)
-			canvas.drawBitmap(
-				Point(0, 0),
-				Point(0, 0),
-				m_image->getSize(),
-				m_image,
-				m_transparent ? BmAlpha : BmNone
-			);
-		else
-			canvas.drawBitmap(
-				Point(0, 0),
-				getInnerRect().getSize(),
-				Point(0, 0),
-				m_image->getSize(),
-				m_image,
-				m_transparent ? BmAlpha : BmNone
-			);
+		canvas.drawBitmap(
+			offset,
+			drawSize,
+			Point(0, 0),
+			imageSize,
+			m_image,
+			m_transparent ? BmAlpha : BmNone
+		);
 	}
+	
+	event->consume();
 }
 
 	}
