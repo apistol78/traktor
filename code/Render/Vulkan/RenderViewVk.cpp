@@ -15,7 +15,7 @@
 #include "Render/Vulkan/UtilitiesVk.h"
 #include "Render/Vulkan/VertexBufferDynamicVk.h"
 
-#if defined(__MACOS__)
+#if defined(__MAC__)
 #	include "Render/Vulkan/macOS/Metal.h"
 #elif defined(__IOS__)
 #	include "Render/Vulkan/iOS/Utilities.h"
@@ -173,7 +173,7 @@ bool RenderViewVk::create(const RenderViewEmbeddedDesc& desc)
 
 	width = ANativeWindow_getWidth(sci.window);
 	height = ANativeWindow_getHeight(sci.window);
-#elif defined(__MACOS__)
+#elif defined(__MACO__MAC__S__)
 
 	// Attach Metal layer to provided view.
 	attachMetalLayer(desc.syswin.view);
@@ -304,7 +304,7 @@ int RenderViewVk::getHeight() const
 
 bool RenderViewVk::isActive() const
 {
-#if defined(_WIN32) || defined(__ANDROID__) || defined(__MACOS__) || defined(__IOS__)
+#if defined(_WIN32) || defined(__ANDROID__) || defined(__MAC__) || defined(__IOS__)
 	return true;
 #else
 	return m_window->isActive();
@@ -320,7 +320,7 @@ bool RenderViewVk::isFullScreen() const
 {
 #if defined(_WIN32)
 	return m_window->haveFullScreenStyle();
-#elif defined(__ANDROID__) || defined(__MACOS__) || defined(__IOS__)
+#elif defined(__ANDROID__) || defined(__MAC__) || defined(__IOS__)
 	return true;
 #else
 	return m_window->isFullScreen();
