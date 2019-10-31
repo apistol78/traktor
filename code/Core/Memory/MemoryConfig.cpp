@@ -48,7 +48,7 @@ IAllocator* getAllocator()
 
 		s_allocator->addRef(nullptr);
 
-#if !defined(_PS3) && !defined(__IOS__)
+#if !defined(_PS3) && !defined(__MAC__) && !defined(__IOS__)
 		std::atexit(destroyAllocator);
 #endif
 	}
