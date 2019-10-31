@@ -1,4 +1,5 @@
 #include "Core/Math/Const.h"
+#include "Core/Math/Log2.h"
 #include "Core/Math/Random.h"
 #include "Render/ICubeTexture.h"
 #include "Render/IRenderSystem.h"
