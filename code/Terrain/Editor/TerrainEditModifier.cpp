@@ -211,6 +211,7 @@ TerrainEditModifier::TerrainEditModifier(scene::SceneEditorContext* context)
 ,	m_color(Color4f(0.5f, 0.5f, 0.5f, 1.0f))
 ,	m_material(0)
 ,	m_center(Vector4::zero())
+,	m_applied(false)
 {
 }
 
@@ -552,6 +553,12 @@ bool TerrainEditModifier::begin(
 		m_material
 	);
 
+	m_updateRegion[0] =
+	m_updateRegion[1] =
+	m_updateRegion[2] =
+	m_updateRegion[3] = 0;
+	m_applied = false;
+
 	return true;
 }
 
@@ -565,6 +572,10 @@ void TerrainEditModifier::apply(
 )
 {
 	if (!m_terrainComponent || m_center.w() <= FUZZY_EPSILON)
+		return;
+
+	Terrain* terrain = m_terrainComponent->getTerrain();
+	if (!terrain)
 		return;
 
 	Scalar distance;
@@ -587,7 +598,6 @@ void TerrainEditModifier::apply(
 	visitor.brush = m_spatialBrush;
 	line_dda(gx0, gz0, gx1, gz1, visitor);
 
-	m_terrainComponent->updatePatches();
 	m_center = center;
 
 	int32_t size = m_heightfield->getSize();
@@ -602,8 +612,8 @@ void TerrainEditModifier::apply(
 		float worldRadius = m_context->getGuideSize();
 		int32_t gridRadius = int32_t(size * worldRadius / m_heightfield->getWorldExtent().x());
 
-		mnx = min(std::floor(gx0) - gridRadius, std::floor(gx1) - gridRadius), mxx = max(std::ceil(gx0) + gridRadius, std::ceil(gx1) + gridRadius);
-		mnz = min(std::floor(gz0) - gridRadius, std::floor(gz1) - gridRadius), mxz = max(std::ceil(gz0) + gridRadius, std::ceil(gz1) + gridRadius);
+		mnx = (int32_t)min(std::floor(gx0) - gridRadius, std::floor(gx1) - gridRadius), mxx = (int32_t)max(std::ceil(gx0) + gridRadius, std::ceil(gx1) + gridRadius);
+		mnz = (int32_t)min(std::floor(gz0) - gridRadius, std::floor(gz1) - gridRadius), mxz = (int32_t)max(std::ceil(gz0) + gridRadius, std::ceil(gz1) + gridRadius);
 
 		mnx = clamp(mnx, 0, size - 1);
 		mxx = clamp(mxx, 0, size - 1);
@@ -611,32 +621,26 @@ void TerrainEditModifier::apply(
 		mxz = clamp(mxz, 0, size - 1);
 	}
 
-	// Update patch lod metrics if heights has been modified.
-	if ((m_brushMode & IBrush::MdHeight) != 0)
+	uint32_t pmnx = gridToPatch(m_heightfield, terrain->getPatchDim(), terrain->getDetailSkip(), mnx);
+	uint32_t pmxx = gridToPatch(m_heightfield, terrain->getPatchDim(), terrain->getDetailSkip(), mxx);
+	uint32_t pmnz = gridToPatch(m_heightfield, terrain->getPatchDim(), terrain->getDetailSkip(), mnz);
+	uint32_t pmxz = gridToPatch(m_heightfield, terrain->getPatchDim(), terrain->getDetailSkip(), mxz);
+
+	uint32_t region[] = { pmnx, pmnz, pmxx, pmxz };
+	m_terrainComponent->updatePatches(region);
+
+	// Track entire updated region.
+	if (m_applied)
 	{
-		Terrain* terrain = m_terrainComponent->getTerrain();
-		if (terrain)
-		{
-			std::vector< Terrain::Patch >& patches = terrain->editPatches();
-
-			uint32_t heightfieldSize = m_heightfield->getSize();
-			uint32_t patchCount = heightfieldSize / (terrain->getPatchDim() * terrain->getDetailSkip());
-
-			uint32_t pmnx = gridToPatch(m_heightfield, terrain->getPatchDim(), terrain->getDetailSkip(), mnx);
-			uint32_t pmxx = gridToPatch(m_heightfield, terrain->getPatchDim(), terrain->getDetailSkip(), mxx);
-			uint32_t pmnz = gridToPatch(m_heightfield, terrain->getPatchDim(), terrain->getDetailSkip(), mnz);
-			uint32_t pmxz = gridToPatch(m_heightfield, terrain->getPatchDim(), terrain->getDetailSkip(), mxz);
-
-			for (uint32_t pz = pmnz; pz <= pmxz; ++pz)
-			{
-				for (uint32_t px = pmnx; px <= pmxx; ++px)
-				{
-					Terrain::Patch& patch = patches[px + pz * patchCount];
-					calculatePatchMinMaxHeight(m_heightfield, px, pz, terrain->getPatchDim(), terrain->getDetailSkip(), patch.height);
-					calculatePatchErrorMetrics(m_heightfield, 4, px, pz, terrain->getPatchDim(), terrain->getDetailSkip(), patch.error);
-				}
-			}
-		}
+		m_updateRegion[0] = min(m_updateRegion[0], region[0]);
+		m_updateRegion[1] = min(m_updateRegion[1], region[1]);
+		m_updateRegion[2] = max(m_updateRegion[2], region[2]);
+		m_updateRegion[3] = max(m_updateRegion[3], region[3]);
+	}
+	else
+	{
+		for (int32_t i = 0; i < 4; ++i)
+			m_updateRegion[i] = region[i];
 	}
 
 	// Update splats.
@@ -766,6 +770,8 @@ void TerrainEditModifier::apply(
 		// Replace material mask map in resource with our texture.
 		m_terrainComponent->m_terrain->m_materialMap = resource::Proxy< render::ISimpleTexture >(m_materialMap);
 	}
+
+	m_applied = true;
 }
 
 void TerrainEditModifier::end(const scene::TransformChain& transformChain)
@@ -776,6 +782,31 @@ void TerrainEditModifier::end(const scene::TransformChain& transformChain)
 	int32_t gx, gz;
 	m_heightfield->worldToGrid(m_center.x(), m_center.z(), gx, gz);
 	m_spatialBrush->end(gx, gz);
+
+	// Update patch lod metrics if heights has been modified.
+	if (
+		(m_brushMode & IBrush::MdHeight) != 0 &&
+		m_applied
+	)
+	{
+		Terrain* terrain = m_terrainComponent->getTerrain();
+		T_ASSERT(terrain);
+
+		std::vector< Terrain::Patch >& patches = terrain->editPatches();
+
+		uint32_t heightfieldSize = m_heightfield->getSize();
+		uint32_t patchCount = heightfieldSize / (terrain->getPatchDim() * terrain->getDetailSkip());
+
+		for (uint32_t pz = m_updateRegion[1]; pz <= m_updateRegion[3]; ++pz)
+		{
+			for (uint32_t px = m_updateRegion[0]; px <= m_updateRegion[2]; ++px)
+			{
+				Terrain::Patch& patch = patches[px + pz * patchCount];
+				calculatePatchMinMaxHeight(m_heightfield, px, pz, terrain->getPatchDim(), terrain->getDetailSkip(), patch.height);
+				calculatePatchErrorMetrics(m_heightfield, 4, px, pz, terrain->getPatchDim(), terrain->getDetailSkip(), patch.error);
+			}
+		}
+	}
 
 	// Write modifications to splats.
 	if (

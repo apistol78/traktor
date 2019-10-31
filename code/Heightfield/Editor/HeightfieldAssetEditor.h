@@ -16,6 +16,7 @@ class IEditor;
 	namespace ui
 	{
 
+class Container;
 class Edit;
 class Image;
 class ToolBarButtonClickEvent;
@@ -52,6 +53,7 @@ private:
 	Ref< db::Instance > m_instance;
 	Ref< HeightfieldAsset > m_asset;
 	Ref< Heightfield > m_heightfield;
+	Ref< ui::Container > m_container;
 	Ref< ui::Edit > m_editExtent[3];
 	Ref< ui::Edit > m_editVista;
 	Ref< ui::Edit > m_editSize;
