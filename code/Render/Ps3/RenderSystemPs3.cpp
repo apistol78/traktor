@@ -244,12 +244,12 @@ Ref< IRenderView > RenderSystemPs3::createRenderView(const RenderViewDefaultDesc
 	if (renderView->create(desc))
 		return renderView;
 	else
-		return 0;
+		return nullptr;
 }
 
 Ref< IRenderView > RenderSystemPs3::createRenderView(const RenderViewEmbeddedDesc& desc)
 {
-	return 0;
+	return nullptr;
 }
 
 Ref< VertexBuffer > RenderSystemPs3::createVertexBuffer(const AlignedVector< VertexElement >& vertexElements, uint32_t bufferSize, bool dynamic)
@@ -258,7 +258,7 @@ Ref< VertexBuffer > RenderSystemPs3::createVertexBuffer(const AlignedVector< Ver
 	if (vbo)
 		return new VertexBufferPs3(vertexElements, vbo, bufferSize, m_counterVertexBuffers);
 	else
-		return 0;
+		return nullptr;
 }
 
 Ref< IndexBuffer > RenderSystemPs3::createIndexBuffer(IndexType indexType, uint32_t bufferSize, bool dynamic)
@@ -267,7 +267,7 @@ Ref< IndexBuffer > RenderSystemPs3::createIndexBuffer(IndexType indexType, uint3
 	if (ibo)
 		return new IndexBufferPs3(ibo, indexType, bufferSize, m_counterIndexBuffers);
 	else
-		return 0;
+		return nullptr;
 }
 
 Ref< StructBuffer > RenderSystemPs3::createStructBuffer(const AlignedVector< StructElement >& structElements, uint32_t bufferSize)
@@ -275,41 +275,41 @@ Ref< StructBuffer > RenderSystemPs3::createStructBuffer(const AlignedVector< Str
 	return nullptr;
 }
 
-Ref< ISimpleTexture > RenderSystemPs3::createSimpleTexture(const SimpleTextureCreateDesc& desc)
+Ref< ISimpleTexture > RenderSystemPs3::createSimpleTexture(const SimpleTextureCreateDesc& desc, const wchar_t* const tag)
 {
 	Ref< SimpleTexturePs3 > texture = new SimpleTexturePs3(m_counterSimpleTextures);
 	if (texture->create(m_memoryHeapLocal, desc))
 		return texture;
 	else
-		return 0;
+		return nullptr;
 }
 
-Ref< ICubeTexture > RenderSystemPs3::createCubeTexture(const CubeTextureCreateDesc& desc)
+Ref< ICubeTexture > RenderSystemPs3::createCubeTexture(const CubeTextureCreateDesc& desc, const wchar_t* const tag)
 {
 	Ref< CubeTexturePs3 > texture = new CubeTexturePs3(m_counterSimpleTextures);
 	if (texture->create(m_memoryHeapLocal, desc))
 		return texture;
 	else
-		return 0;
+		return nullptr;
 }
 
-Ref< IVolumeTexture > RenderSystemPs3::createVolumeTexture(const VolumeTextureCreateDesc& desc)
+Ref< IVolumeTexture > RenderSystemPs3::createVolumeTexture(const VolumeTextureCreateDesc& desc, const wchar_t* const tag)
 {
 	Ref< VolumeTexturePs3 > texture = new VolumeTexturePs3(m_counterSimpleTextures);
 	if (texture->create(m_memoryHeapLocal, desc))
 		return texture;
 	else
-		return 0;
+		return nullptr;
 }
 
-Ref< RenderTargetSet > RenderSystemPs3::createRenderTargetSet(const RenderTargetSetCreateDesc& desc)
+Ref< RenderTargetSet > RenderSystemPs3::createRenderTargetSet(const RenderTargetSetCreateDesc& desc, const wchar_t* const tag)
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 	Ref< RenderTargetSetPs3 > renderTargetSet = new RenderTargetSetPs3(m_tileArea, m_zcullArea, m_counterRenderTargetSets);
 	if (renderTargetSet->create(m_memoryHeapLocal, desc))
 		return renderTargetSet;
 	else
-		return 0;
+		return nullptr;
 }
 
 Ref< IProgram > RenderSystemPs3::createProgram(const ProgramResource* programResource, const wchar_t* const tag)
@@ -318,18 +318,18 @@ Ref< IProgram > RenderSystemPs3::createProgram(const ProgramResource* programRes
 
 	Ref< const ProgramResourcePs3 > resource = dynamic_type_cast< const ProgramResourcePs3* >(programResource);
 	if (!resource)
-		return 0;
+		return nullptr;
 
 	Ref< ProgramPs3 > program = new ProgramPs3(m_counterPrograms);
 	if (!program->create(m_memoryHeapLocal, m_memoryHeapMain, resource))
-		return 0;
+		return nullptr;
 
 	return program;
 }
 
 Ref< ITimeQuery > RenderSystemPs3::createTimeQuery() const
 {
-	return 0;
+	return nullptr;
 }
 
 void RenderSystemPs3::purge()

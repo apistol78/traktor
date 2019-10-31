@@ -56,13 +56,13 @@ public:
 
 	virtual Ref< StructBuffer > createStructBuffer(const AlignedVector< StructElement >& structElements, uint32_t bufferSize) override final;
 
-	virtual Ref< ISimpleTexture > createSimpleTexture(const SimpleTextureCreateDesc& desc);
+	virtual Ref< ISimpleTexture > createSimpleTexture(const SimpleTextureCreateDesc& desc, const wchar_t* const tag);
 
-	virtual Ref< ICubeTexture > createCubeTexture(const CubeTextureCreateDesc& desc);
+	virtual Ref< ICubeTexture > createCubeTexture(const CubeTextureCreateDesc& desc, const wchar_t* const tag);
 
-	virtual Ref< IVolumeTexture > createVolumeTexture(const VolumeTextureCreateDesc& desc);
+	virtual Ref< IVolumeTexture > createVolumeTexture(const VolumeTextureCreateDesc& desc, const wchar_t* const tag);
 
-	virtual Ref< RenderTargetSet > createRenderTargetSet(const RenderTargetSetCreateDesc& desc);
+	virtual Ref< RenderTargetSet > createRenderTargetSet(const RenderTargetSetCreateDesc& desc, const wchar_t* const tag);
 
 	virtual Ref< IProgram > createProgram(const ProgramResource* programResource, const wchar_t* const tag);
 

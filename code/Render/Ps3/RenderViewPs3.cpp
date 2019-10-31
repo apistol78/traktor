@@ -875,6 +875,11 @@ void RenderViewPs3::compute(IProgram* program, const int32_t* workSize)
 {
 }
 
+bool RenderViewPs3::copy(ITexture* destinationTexture, int32_t destinationSide, int32_t destinationLevel, ITexture* sourceTexture, int32_t sourceSide, int32_t sourceLevel)
+{
+	return false;
+}
+
 void RenderViewPs3::end()
 {
 	T_ASSERT (!m_renderTargetStack.empty());
@@ -900,6 +905,11 @@ void RenderViewPs3::end()
 		T_GCM_CALL(cellGcmSetReport)(gCellGcmCurrentContext, CELL_GCM_ZCULL_STATS1, c_reportZCullStats1);
 	}
 #endif
+}
+
+void RenderViewPs3::flush()
+{
+	cellGcmFlush(gCellGcmCurrentContext);
 }
 
 void RenderViewPs3::present()
