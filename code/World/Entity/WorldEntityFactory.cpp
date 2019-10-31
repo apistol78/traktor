@@ -1,3 +1,4 @@
+#include "Core/Math/Log2.h"
 #include "Render/ICubeTexture.h"
 #include "Render/IRenderSystem.h"
 #include "Render/Shader.h"
