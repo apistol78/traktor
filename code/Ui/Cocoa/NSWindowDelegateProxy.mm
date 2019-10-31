@@ -5,7 +5,14 @@
 - (id) init
 {
 	if ((self = [super init]) != nil)
-		m_eventsCallback = 0;
+		m_eventsCallback = nullptr;
+	return self;
+}
+
+- (id) initWithCallback: (traktor::ui::INSWindowEventsCallback*)eventsCallback
+{
+	if ((self = [super init]) != nil)
+		m_eventsCallback = eventsCallback;
 	return self;
 }
 

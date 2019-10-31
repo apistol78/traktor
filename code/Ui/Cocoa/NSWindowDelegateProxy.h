@@ -32,6 +32,8 @@ struct INSWindowEventsCallback
 
 - (id) init;
 
+- (id) initWithCallback: (traktor::ui::INSWindowEventsCallback*)eventsCallback;
+
 - (void) setCallback: (traktor::ui::INSWindowEventsCallback*)eventsCallback;
 
 - (void) windowDidMove: (NSNotification*)notification;
