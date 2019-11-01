@@ -38,20 +38,30 @@ namespace traktor
 Ref< drawing::Image > generatePreviewImage(const Heightfield* hf)
 {
 	Ref< drawing::Image > img = new drawing::Image(drawing::PixelFormat::getR8G8B8(), hf->getSize(), hf->getSize());
-
-	const Color4f c_colorValley(0.0f, 0.0f, 0.0f, 1.0f);
-	const Color4f c_colorPeak(1.0f, 1.0f, 1.0f, 1.0f);
-
 	for (int32_t y = 0; y < hf->getSize(); ++y)
 	{
 		for (int32_t x = 0; x < hf->getSize(); ++x)
 		{
-			float h = hf->getGridHeightNearest(x, y);
-			Color4f c = c_colorValley * Scalar(1.0f - h) + c_colorPeak * Scalar(h);
+			float h = 1.0f - hf->getGridHeightNearest(x, y);
+
+			uint8_t rgb[3] = { 0, 0, 0 };
+			if (h <= 0.5f)
+			{
+				h *= 2.0f;
+				rgb[0] = (uint8_t)(255 * (1.0f - h) + 0.5f);
+				rgb[1] = (uint8_t)(255 * h + 0.5f);
+			}
+			else
+			{
+				h = h * 2.0f - 1.0f;
+				rgb[1] = (uint8_t)(255 * (1.0f - h) + 0.5f);
+				rgb[2] = (uint8_t)(255 * h + 0.5f);
+			}
+
+			Color4f c = Color4f::fromColor4ub(Color4ub(rgb[0], rgb[1], rgb[2], 255));
 			img->setPixel(x, y, c);
 		}
 	}
-
 	return img;
 }
 
