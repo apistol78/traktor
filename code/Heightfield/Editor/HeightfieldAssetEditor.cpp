@@ -1,3 +1,4 @@
+#include "Core/Io/FileSystem.h"
 #include "Core/Io/IStream.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/SafeDestroy.h"
@@ -7,13 +8,16 @@
 #include "Drawing/PixelFormat.h"
 #include "Heightfield/Heightfield.h"
 #include "Heightfield/HeightfieldFormat.h"
+#include "Heightfield/Editor/ConvertHeightfield.h"
 #include "Heightfield/Editor/HeightfieldAsset.h"
 #include "Heightfield/Editor/HeightfieldAssetEditor.h"
 #include "I18N/Text.h"
+#include "Model/ModelFormat.h"
 #include "Ui/Application.h"
 #include "Ui/Bitmap.h"
 #include "Ui/Container.h"
 #include "Ui/Edit.h"
+#include "Ui/FileDialog.h"
 #include "Ui/Image.h"
 #include "Ui/InputDialog.h"
 #include "Ui/NumericEditValidator.h"
@@ -122,7 +126,7 @@ bool HeightfieldAssetEditor::create(ui::Widget* parent, db::Instance* instance, 
 	staticSize->create(containerFields, i18n::Text(L"HEIGHTFIELD_ASSET_SIZE"));
 
 	m_editSize = new ui::Edit();
-	m_editSize->create(containerFields, toString(m_heightfield->getSize()), ui::Edit::WsReadOnly); //, new ui::NumericEditValidator(false, 1.0f));
+	m_editSize->create(containerFields, toString(m_heightfield->getSize()), ui::Edit::WsReadOnly);
 
 	Ref< ui::Static > staticSizeUnit = new ui::Static();
 	staticSizeUnit->create(containerFields, i18n::Text(L"HEIGHTFIELD_ASSET_SIZE_UNIT"));
@@ -131,6 +135,7 @@ bool HeightfieldAssetEditor::create(ui::Widget* parent, db::Instance* instance, 
 	toolBar->create(m_container);
 	toolBar->addItem(new ui::ToolBarButton(L"Import...", ui::Command(L"HeightfieldAssetEditor.Import")));
 	toolBar->addItem(new ui::ToolBarButton(L"Export...", ui::Command(L"HeightfieldAssetEditor.Export")));
+	toolBar->addItem(new ui::ToolBarButton(L"Export as mesh...", ui::Command(L"HeightfieldAssetEditor.ExportAsMesh")));
 	toolBar->addItem(new ui::ToolBarSeparator());
 	toolBar->addItem(new ui::ToolBarButton(L"Clear...", ui::Command(L"HeightfieldAssetEditor.Clear")));
 	toolBar->addItem(new ui::ToolBarButton(L"Resize...", ui::Command(L"HeightfieldAssetEditor.Resize")));
@@ -149,7 +154,6 @@ bool HeightfieldAssetEditor::create(ui::Widget* parent, db::Instance* instance, 
 
 void HeightfieldAssetEditor::destroy()
 {
-	safeDestroy(m_container);
 	m_instance = nullptr;
 	m_asset = nullptr;
 }
@@ -173,7 +177,53 @@ void HeightfieldAssetEditor::apply()
 
 bool HeightfieldAssetEditor::handleCommand(const ui::Command& command)
 {
-	if (command == L"HeightfieldAssetEditor.Clear")
+	if (command == L"HeightfieldAssetEditor.Export")
+	{
+		Path fileName;
+
+		ui::FileDialog saveAsDialog;
+		saveAsDialog.create(m_container, type_name(this), i18n::Text(L"EXPORT_HEIGHTFIELD_WIZARDTOOL_FILE_TITLE"), L"All files;*.*", true);
+		if (saveAsDialog.showModal(fileName) != ui::DrOk)
+		{
+			saveAsDialog.destroy();
+			return false;
+		}
+
+		saveAsDialog.destroy();
+
+		Ref< IStream > file = FileSystem::getInstance().open(fileName, File::FmWrite);
+		if (!file)
+			return false;
+
+		file->write(
+			m_heightfield->getHeights(),
+			m_heightfield->getSize() * m_heightfield->getSize() * sizeof(height_t)
+		);
+
+		file->close();
+		return true;
+	}
+	else if (command == L"HeightfieldAssetEditor.ExportAsMesh")
+	{
+		Path fileName;
+
+		ui::FileDialog saveAsDialog;
+		saveAsDialog.create(m_container, type_name(this), i18n::Text(L"EXPORT_HEIGHTFIELD_AS_MESH_WIZARDTOOL_FILE_TITLE"), L"All files;*.*", true);
+		if (saveAsDialog.showModal(fileName) != ui::DrOk)
+		{
+			saveAsDialog.destroy();
+			return false;
+		}
+
+		saveAsDialog.destroy();
+
+		Ref< model::Model > model = ConvertHeightfield().convert(m_heightfield, 16, 0.0f);
+		if (!model)
+			return false;
+
+		return model::ModelFormat::writeAny(fileName, model);		
+	}
+	else if (command == L"HeightfieldAssetEditor.Clear")
 	{
 		int32_t size = m_heightfield->getSize();
 		for (int32_t z = 0; z < size; ++z)
@@ -279,6 +329,7 @@ void HeightfieldAssetEditor::updatePreviewImage()
 		new ui::Bitmap(generatePreviewImage(m_heightfield)),
 		false
 	);
+	m_container->update();
 }
 
 void HeightfieldAssetEditor::eventToolBar(ui::ToolBarButtonClickEvent* event)
