@@ -30,8 +30,6 @@ public:
 
 	virtual Ref< IBrush > clone() const override final;
 
-	virtual bool contained() const override final { return true; }
-
 private:
 	Ref< drawing::Image > m_splatImage;
 	int32_t m_radius;

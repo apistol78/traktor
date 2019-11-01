@@ -232,9 +232,6 @@ void ExtrudeShapeLayer::render(
 	renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
 	renderBlock->programParams->beginParameters(renderContext);
 
-	// \tbd Need special attention to SH probes;
-	// 1. split extruded shape in multiple parts and calculate start/stop SH coefficients
-	//    along path in order to blend lighting...
 	worldRenderPass.setProgramParameters(
 		renderBlock->programParams
 	);

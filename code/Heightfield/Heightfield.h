@@ -63,6 +63,8 @@ public:
 
 	float worldToUnit(float worldY) const;
 
+	Vector4 normalAt(float gridX, float gridZ) const;
+
 	bool queryRay(const Vector4& worldRayOrigin, const Vector4& worldRayDirection, Scalar& outDistance) const;
 
 	int32_t getSize() const { return m_size; }
