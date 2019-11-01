@@ -198,6 +198,57 @@ float Heightfield::worldToUnit(float worldY) const
 	return (worldY + wexy * 0.5f) / wexy;
 }
 
+Vector4 Heightfield::normalAt(float gridX, float gridZ) const
+{
+	const float c_distance = 0.5f;
+	const float directions[][2] =
+	{
+		{ -c_distance, -c_distance },
+		{        0.0f, -c_distance },
+		{  c_distance, -c_distance },
+		{  c_distance,        0.0f },
+		{  c_distance,  c_distance },
+		{        0.0f,        0.0f },
+		{ -c_distance,  c_distance },
+		{ -c_distance,        0.0f }
+	};
+
+	float h0 = getGridHeightBilinear(gridX, gridZ);
+
+	float h[sizeof_array(directions)];
+	for (uint32_t i = 0; i < sizeof_array(directions); ++i)
+		h[i] = getGridHeightBilinear(gridX + directions[i][0], gridZ + directions[i][1]);
+
+	const Vector4& worldExtent = getWorldExtent();
+	float sx = worldExtent.x() / getSize();
+	float sy = worldExtent.y();
+	float sz = worldExtent.z() / getSize();
+
+	Vector4 N = Vector4::zero();
+
+	for (uint32_t i = 0; i < sizeof_array(directions); ++i)
+	{
+		uint32_t j = (i + 1) % sizeof_array(directions);
+
+		float dx1 = directions[i][0] * sx;
+		float dy1 = (h[i] - h0) * sy;
+		float dz1 = directions[i][1] * sz;
+
+		float dx2 = directions[j][0] * sx;
+		float dy2 = (h[j] - h0) * sy;
+		float dz2 = directions[j][1] * sz;
+
+		Vector4 n = cross(
+			Vector4(dx2, dy2, dz2),
+			Vector4(dx1, dy1, dz1)
+		);
+
+		N += n;
+	}
+
+	return N.normalized();
+}
+
 bool Heightfield::queryRay(const Vector4& worldRayOrigin, const Vector4& worldRayDirection, Scalar& outDistance) const
 {
 	const int32_t c_cellSize = 64;

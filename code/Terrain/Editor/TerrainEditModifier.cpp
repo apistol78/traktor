@@ -28,7 +28,6 @@
 #include "Terrain/Editor/CutBrush.h"
 #include "Terrain/Editor/ElevateBrush.h"
 #include "Terrain/Editor/EmissiveBrush.h"
-#include "Terrain/Editor/ErodeBrush.h"
 #include "Terrain/Editor/FlattenBrush.h"
 #include "Terrain/Editor/ImageFallOff.h"
 #include "Terrain/Editor/MaterialBrush.h"
@@ -48,57 +47,6 @@ namespace traktor
 	{
 		namespace
 		{
-
-Vector4 normalAt(const hf::Heightfield* heightfield, int32_t u, int32_t v)
-{
-	const float c_distance = 0.5f;
-	const float directions[][2] =
-	{
-		{ -c_distance, -c_distance },
-		{        0.0f, -c_distance },
-		{  c_distance, -c_distance },
-		{  c_distance,        0.0f },
-		{  c_distance,  c_distance },
-		{        0.0f,        0.0f },
-		{ -c_distance,  c_distance },
-		{ -c_distance,        0.0f }
-	};
-
-	float h0 = heightfield->getGridHeightNearest(u, v);
-
-	float h[sizeof_array(directions)];
-	for (uint32_t i = 0; i < sizeof_array(directions); ++i)
-		h[i] = heightfield->getGridHeightBilinear(u + directions[i][0], v + directions[i][1]);
-
-	const Vector4& worldExtent = heightfield->getWorldExtent();
-	float sx = worldExtent.x() / heightfield->getSize();
-	float sy = worldExtent.y();
-	float sz = worldExtent.z() / heightfield->getSize();
-
-	Vector4 N = Vector4::zero();
-
-	for (uint32_t i = 0; i < sizeof_array(directions); ++i)
-	{
-		uint32_t j = (i + 1) % sizeof_array(directions);
-
-		float dx1 = directions[i][0] * sx;
-		float dy1 = (h[i] - h0) * sy;
-		float dz1 = directions[i][1] * sz;
-
-		float dx2 = directions[j][0] * sx;
-		float dy2 = (h[j] - h0) * sy;
-		float dz2 = directions[j][1] * sz;
-
-		Vector4 n = cross(
-			Vector4(dx2, dy2, dz2),
-			Vector4(dx1, dy1, dz1)
-		);
-
-		N += n;
-	}
-
-	return N.normalized();
-}
 
 template < typename Visitor >
 void line_dda(float x0, float y0, float x1, float y1, Visitor& visitor)
@@ -378,7 +326,7 @@ void TerrainEditModifier::selectionChanged()
 	{
 		for (int32_t u = 0; u < size; ++u)
 		{
-			Vector4 normal = normalAt(m_heightfield, u, v) * Vector4(0.5f, 0.5f, 0.5f, 0.0f) + Vector4(0.5f, 0.5f, 0.5f, 0.0f);
+			Vector4 normal = m_heightfield->normalAt((float)u, (float)v) * Vector4(0.5f, 0.5f, 0.5f, 0.0f) + Vector4(0.5f, 0.5f, 0.5f, 0.0f);
 			uint8_t nx = uint8_t(normal.x() * 255);
 			uint8_t ny = uint8_t(normal.y() * 255);
 			uint8_t nz = uint8_t(normal.z() * 255);
@@ -602,24 +550,19 @@ void TerrainEditModifier::apply(
 
 	int32_t size = m_heightfield->getSize();
 
-	// Calculate region which needs to be updated; only
-	// applies to "contained" brushes.
-	int32_t mnx = 0, mxx = size - 1;
-	int32_t mnz = 0, mxz = size - 1;
+	// Calculate region which needs to be updated.
+	float worldRadius = m_context->getGuideSize();
+	int32_t gridRadius = int32_t(size * worldRadius / m_heightfield->getWorldExtent().x());
 
-	if (m_spatialBrush->contained())
-	{
-		float worldRadius = m_context->getGuideSize();
-		int32_t gridRadius = int32_t(size * worldRadius / m_heightfield->getWorldExtent().x());
+	int32_t mnx = (int32_t)min(std::floor(gx0) - gridRadius, std::floor(gx1) - gridRadius);
+	int32_t mxx = (int32_t)max(std::ceil(gx0) + gridRadius, std::ceil(gx1) + gridRadius);
+	int32_t mnz = (int32_t)min(std::floor(gz0) - gridRadius, std::floor(gz1) - gridRadius);
+	int32_t mxz = (int32_t)max(std::ceil(gz0) + gridRadius, std::ceil(gz1) + gridRadius);
 
-		mnx = (int32_t)min(std::floor(gx0) - gridRadius, std::floor(gx1) - gridRadius), mxx = (int32_t)max(std::ceil(gx0) + gridRadius, std::ceil(gx1) + gridRadius);
-		mnz = (int32_t)min(std::floor(gz0) - gridRadius, std::floor(gz1) - gridRadius), mxz = (int32_t)max(std::ceil(gz0) + gridRadius, std::ceil(gz1) + gridRadius);
-
-		mnx = clamp(mnx, 0, size - 1);
-		mxx = clamp(mxx, 0, size - 1);
-		mnz = clamp(mnz, 0, size - 1);
-		mxz = clamp(mxz, 0, size - 1);
-	}
+	mnx = clamp(mnx, 0, size - 1);
+	mxx = clamp(mxx, 0, size - 1);
+	mnz = clamp(mnz, 0, size - 1);
+	mxz = clamp(mxz, 0, size - 1);
 
 	uint32_t pmnx = gridToPatch(m_heightfield, terrain->getPatchDim(), terrain->getDetailSkip(), mnx);
 	uint32_t pmxx = gridToPatch(m_heightfield, terrain->getPatchDim(), terrain->getDetailSkip(), mxx);
@@ -686,7 +629,7 @@ void TerrainEditModifier::apply(
 		{
 			for (int32_t u = mnx; u <= mxx; ++u)
 			{
-				Vector4 normal = normalAt(m_heightfield, u, v) * Vector4(0.5f, 0.5f, 0.5f, 0.0f) + Vector4(0.5f, 0.5f, 0.5f, 0.0f);
+				Vector4 normal = m_heightfield->normalAt((float)u, (float)v) * Vector4(0.5f, 0.5f, 0.5f, 0.0f) + Vector4(0.5f, 0.5f, 0.5f, 0.0f);
 				uint8_t nx = uint8_t(normal.x() * 255);
 				uint8_t ny = uint8_t(normal.y() * 255);
 				uint8_t nz = uint8_t(normal.z() * 255);
@@ -984,8 +927,6 @@ void TerrainEditModifier::setBrush(const TypeInfo& brushType)
 		m_drawBrush = new SplatBrush(m_splatImage);
 	else if (is_type_a< NoiseBrush >(brushType))
 		m_drawBrush = new NoiseBrush(m_heightfield);
-	else if (is_type_a< ErodeBrush >(brushType))
-		m_drawBrush = new ErodeBrush(m_heightfield);
 	else if (is_type_a< SmoothBrush >(brushType))
 		m_drawBrush = new SmoothBrush(m_heightfield);
 	else if (is_type_a< MaterialBrush >(brushType))
