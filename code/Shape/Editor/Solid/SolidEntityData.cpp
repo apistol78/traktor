@@ -14,8 +14,24 @@ namespace traktor
 {
     namespace shape
     {
+		namespace
+		{
+		
+const resource::Id< render::Shader > c_defaultShader(Guid(L"{F01DE7F1-64CE-4613-9A17-899B44D5414E}"));
+const resource::Id< physics::CollisionSpecification > c_defaultCollision(Guid(L"{F9805131-50C2-504C-9421-13C99E44616C}"));
+const resource::Id< physics::CollisionSpecification > c_interactableCollision(Guid(L"{09CB1141-1924-3349-934A-CEB9728D7A61}"));
+
+		}
 
 T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.shape.SolidEntityData", 0, SolidEntityData, world::GroupEntityData)
+
+SolidEntityData::SolidEntityData()
+:	m_shader(c_defaultShader)
+{
+	m_collisionGroup.insert(c_defaultCollision);
+	m_collisionMask.insert(c_defaultCollision);
+	m_collisionMask.insert(c_interactableCollision);
+}
 
 Ref< SolidEntity > SolidEntityData::createEntity(const world::IEntityBuilder* builder, resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem) const
 {
