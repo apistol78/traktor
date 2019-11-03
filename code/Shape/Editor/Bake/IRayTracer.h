@@ -34,8 +34,9 @@ class SHCoeffs;
     {
 
 struct Light;
-class GBuffer;
 class BakeConfiguration;
+class GBuffer;
+class IProbe;
 
 /*! \brief Ray tracer interface.
  * \ingroup Illuminate
@@ -48,6 +49,8 @@ public:
     virtual bool create(const BakeConfiguration* configuration) = 0;
 
     virtual void destroy() = 0;
+
+	virtual void addEnvironment(const IProbe* environment) = 0;
 
     virtual void addLight(const Light& light) = 0;
 

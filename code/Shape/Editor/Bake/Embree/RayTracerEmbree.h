@@ -32,6 +32,8 @@ public:
 
     virtual void destroy() override final;
 
+	virtual void addEnvironment(const IProbe* environment) override final;
+
     virtual void addLight(const Light& light) override final;
 
     virtual void addModel(const model::Model* model, const Transform& transform) override final;
@@ -51,6 +53,7 @@ private:
 	};
 
 	const BakeConfiguration* m_configuration;
+	Ref< const IProbe > m_environment;
 	AlignedVector< Light > m_lights;
 	RTCDevice m_device;
 	RTCScene m_scene;
@@ -58,8 +61,13 @@ private:
     Ref< render::SHEngine > m_shEngine;
 	float m_maxDistance;
 
-    Color4f trace(
-    ) const;
+	Color4f tracePath(
+		const Vector4& origin,
+		const Vector4& normal,
+		const Vector4& direction,
+		RandomGeometry& random,
+		int32_t depth
+	) const;
 
 	Color4f sampleAnalyticalLights(
         RandomGeometry& random,

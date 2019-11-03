@@ -69,6 +69,10 @@ void RayTracerLocal::destroy()
 {
 }
 
+void RayTracerLocal::addEnvironment(const IProbe* environment)
+{
+}
+
 void RayTracerLocal::addLight(const Light& light)
 {
     m_lights.push_back(light);
@@ -342,13 +346,6 @@ void RayTracerLocal::cullLights(const GBuffer* gbuffer, AlignedVector< Light >& 
 			break;
 
 		case Light::LtSpot:
-			{
-				if (gbuffer->getBoundingBox().queryIntersectionSphere(light.position, light.range))
-					outLights.push_back(light);
-			}
-			break;
-
-		case Light::LtProbe:
 			{
 				if (gbuffer->getBoundingBox().queryIntersectionSphere(light.position, light.range))
 					outLights.push_back(light);

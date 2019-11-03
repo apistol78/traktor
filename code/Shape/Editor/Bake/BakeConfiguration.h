@@ -23,7 +23,7 @@ class T_DLLCLASS BakeConfiguration : public ISerializable
 public:
 	BakeConfiguration();
 
-	uint32_t getIndirectSampleCount() const { return m_indirectSampleCount; }
+	uint32_t getSampleCount() const { return m_sampleCount; }
 
 	uint32_t getShadowSampleCount() const { return m_shadowSampleCount; }
 
@@ -48,7 +48,7 @@ public:
 	virtual void serialize(ISerializer& s) override final;
 
 private:
-	uint32_t m_indirectSampleCount;
+	uint32_t m_sampleCount;
 	uint32_t m_shadowSampleCount;
 	uint32_t m_irradianceSampleCount;
 	float m_pointLightShadowRadius;

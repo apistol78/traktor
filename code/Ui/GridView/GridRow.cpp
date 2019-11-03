@@ -34,10 +34,10 @@ GridRow::GridRow(uint32_t initialState)
 
 GridRow::~GridRow()
 {
-	for (RefArray< GridItem >::iterator i = m_items.begin(); i != m_items.end(); ++i)
+	for (auto item : m_items)
 	{
-		if (*i)
-			(*i)->m_row = nullptr;
+		if (item)
+			item->m_row = nullptr;
 	}
 }
 
