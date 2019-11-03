@@ -20,8 +20,8 @@ namespace traktor
 		namespace
 		{
 
-const Guid c_defaultShader(L"{4CF929EB-3A8B-C340-AA0A-0C5C80625BF1}");
-const Guid c_defaultTexture(L"{93E6996B-8903-4AD0-811A-C8C03C8E38C6}");
+const resource::Id< render::Shader > c_defaultShader(Guid(L"{4CF929EB-3A8B-C340-AA0A-0C5C80625BF1}"));
+const resource::Id< render::ITexture > c_defaultTexture(Guid(L"{93E6996B-8903-4AD0-811A-C8C03C8E38C6}"));
 const int32_t c_longitudes = 16;
 const int32_t c_latitudes = 24;
 const int32_t c_vertexCount = (c_longitudes + 1) * c_latitudes;
