@@ -232,7 +232,7 @@ bool SceneEditorPage::create(ui::Container* parent)
 	}
 
 	m_statusBar = new ui::StatusBar();
-	m_statusBar->create(m_editPanel);
+	m_statusBar->create(m_editPanel, ui::WsDoubleBuffer);
 
 	// Create entity panel.
 	m_entityPanel = new ui::Container();

@@ -1,3 +1,4 @@
+#include <numeric>
 #include "Core/Io/Writer.h"
 #include "Core/Log/Log.h"
 #include "Core/Math/Const.h"
@@ -6,6 +7,8 @@
 #include "Core/Misc/TString.h"
 #include "Core/Singleton/SingletonManager.h"
 #include "Core/Thread/Acquire.h"
+#include "Core/Thread/Job.h"
+#include "Core/Thread/JobManager.h"
 #include "Core/Thread/Thread.h"
 #include "Core/Thread/ThreadManager.h"
 #include "Database/Database.h"
@@ -21,6 +24,7 @@
 #include "Shape/Editor/Bake/BakeConfiguration.h"
 #include "Shape/Editor/Bake/GBuffer.h"
 #include "Shape/Editor/Bake/IRayTracer.h"
+#include "Shape/Editor/Bake/TracerEnvironment.h"
 #include "Shape/Editor/Bake/TracerIrradiance.h"
 #include "Shape/Editor/Bake/TracerLight.h"
 #include "Shape/Editor/Bake/TracerModel.h"
@@ -207,7 +211,10 @@ bool writeTexture(db::Database* outputDatabase, const Guid& lightmapId, const dr
 	);
 	const uint8_t* data = static_cast< const uint8_t* >(lightmapFormat->getData());
 	if (writer.write(data, dataSize, 1) != dataSize)
+	{
+		outputInstance->revert();
 		return false;
+	}
 
 	stream->close();
 
@@ -340,6 +347,8 @@ bool TracerProcessor::process(const TracerTask* task) const
 		return false;
 
 	// Setup raytracer scene.
+	for (auto tracerEnvironment : task->getTracerEnvironments())
+		rayTracer->addEnvironment(tracerEnvironment->getEnvironment());
 	for (auto tracerLight : task->getTracerLights())
 		rayTracer->addLight(tracerLight->getLight());
 	for (auto tracerModel : task->getTracerModels())
@@ -353,6 +362,12 @@ bool TracerProcessor::process(const TracerTask* task) const
 		return lh->getPriority() > rh->getPriority();
 	});
 
+	// Calculate total progress.
+	m_status.total = std::accumulate(tracerOutputs.begin(), tracerOutputs.end(), (int32_t)0, [](int32_t acc, const TracerOutput* iter) {
+		return acc + (iter->getLightmapSize() / 16) * (iter->getLightmapSize() / 16);
+	});
+	m_status.current = 0;
+
 	// Trace each lightmap in task.
 	for (uint32_t i = 0; i < tracerOutputs.size(); ++i)
 	{
@@ -365,9 +380,7 @@ bool TracerProcessor::process(const TracerTask* task) const
 		const uint32_t channel = renderModel->getTexCoordChannel(L"Lightmap");
 
 		// Update status.
-		m_status.current = i;
-		m_status.total = tracerOutputs.size();
-		m_status.description = tracerOutput->getName() + L" (" + toString(width) + L" * " + toString(height) + L") ...";
+		m_status.description = tracerOutput->getName() + L"...";
 
 		// Create GBuffer of mesh's geometry.
 		GBuffer gbuffer;
@@ -384,28 +397,38 @@ bool TracerProcessor::process(const TracerTask* task) const
 		);
 		lightmap->clear(Color4f(0.0f, 0.0f, 0.0f, 0.0f));
 
+		RefArray< Job > jobs;
 		for (int32_t ty = 0; ty < height; ty += 16)
 		{
-			for (int32_t tx = 0; tx < width; tx += 16)
-			{
-				int32_t region[] = { tx, ty, tx + 16, ty + 16 };
-				rayTracer->traceLightmap(&gbuffer, lightmap, region);
-			}
+			Ref< Job > job = JobManager::getInstance().add(makeFunctor([&, ty](){
+				for (int32_t tx = 0; tx < width; tx += 16)
+				{
+					int32_t region[] = { tx, ty, tx + 16, ty + 16 };
+					rayTracer->traceLightmap(&gbuffer, lightmap, region);
+					++m_status.current;
+				}
+			}));
+			jobs.push_back(job);
+		}
+		while (!jobs.empty())
+		{
+			jobs.back()->wait();
+			jobs.pop_back();
 		}
 
 		// Blur lightmap to reduce noise from path tracing.
 		if (configuration->getEnableDenoise())
 			lightmap = denoise(gbuffer, lightmap);
 
-		// Create preview output instance.
-		if (m_preview)
-		{
-			writeTexture(
-				m_outputDatabase,
-				tracerOutput->getLightmapId(),
-				lightmap
-			);
-		}
+		//// Create preview output instance.
+		//if (m_preview)
+		//{
+		//	writeTexture(
+		//		m_outputDatabase,
+		//		tracerOutput->getLightmapId(),
+		//		lightmap
+		//	);
+		//}
 
 		// Filter seams.
 		if (configuration->getEnableSeamFilter())

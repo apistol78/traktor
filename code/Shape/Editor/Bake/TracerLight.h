@@ -21,7 +21,7 @@ class T_DLLCLASS TracerLight : public Object
     T_RTTI_CLASS;
 
 public:
-    TracerLight(const Light& light);
+    explicit TracerLight(const Light& light);
 
     const Light& getLight() const { return m_light; }
 

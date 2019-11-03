@@ -13,6 +13,11 @@ TracerTask::TracerTask(const Guid& sceneId, const BakeConfiguration* configurati
 {
 }
 
+void TracerTask::addTracerEnvironment(const TracerEnvironment* tracerEnvironment)
+{
+	m_tracerEnvironments.push_back(tracerEnvironment);
+}
+
 void TracerTask::addTracerLight(const TracerLight* tracerLight)
 {
     m_tracerLights.push_back(tracerLight);

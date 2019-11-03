@@ -270,6 +270,10 @@ bool convertMaterials(Model& outModel, std::map< int32_t, int32_t >& outMaterial
 			mm.setSpecularTerm(0.0f);
 		}
 
+		// \hack to enable emissive materials from Blender.
+		if (startsWith< std::wstring >(mm.getName(), L"EM_"))
+			mm.setEmissive(1.0f);
+
 		outMaterialMap[i] = outModel.addUniqueMaterial(mm);
 	}
 

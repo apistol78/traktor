@@ -39,8 +39,7 @@ struct Light
 	{
 		LtDirectional = 0,
 		LtPoint = 1,
-		LtSpot = 2,
-		LtProbe = 3
+		LtSpot = 2
 	};
 
 	enum LightMask
@@ -55,7 +54,6 @@ struct Light
 	Color4f color;
 	Scalar range;
 	Scalar radius;
-	Ref< IProbe > probe;
 	int32_t surface;
 	uint8_t mask;
 

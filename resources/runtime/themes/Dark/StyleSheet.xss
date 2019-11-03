@@ -369,11 +369,6 @@
 		</item>
 		<item>
 			<type>traktor.ui.ProfileControl</type>
-			<element>background-color</element>
-			<color>120, 120, 120, 255</color>
-		</item>
-		<item>
-			<type>traktor.ui.ProfileControl</type>
 			<element>grid-color</element>
 			<color>128, 128, 128, 255</color>
 		</item>

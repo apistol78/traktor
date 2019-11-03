@@ -41,6 +41,7 @@
 #include "Shape/Editor/Bake/BakeConfiguration.h"
 #include "Shape/Editor/Bake/BakePipelineOperator.h"
 #include "Shape/Editor/Bake/IblProbe.h"
+#include "Shape/Editor/Bake/TracerEnvironment.h"
 #include "Shape/Editor/Bake/TracerIrradiance.h"
 #include "Shape/Editor/Bake/TracerLight.h"
 #include "Shape/Editor/Bake/TracerModel.h"
@@ -270,17 +271,8 @@ void addSky(
 	// radiance->save(L"data/Temp/Bake/Radiance.png");
 	// importance->save(L"data/Temp/Bake/Importance.png");
 
-	// Create tracer light.
-	Light light;
-	light.type = Light::LtProbe;
-	light.position = Vector4::origo();
-	light.direction = Vector4::zero();
-	light.color = Color4f(1.0f, 1.0f, 1.0f, 1.0f);
-	light.range = Scalar(1e8f);
-	light.radius = Scalar(1e8f);
-	light.probe = new IblProbe(radiance, importance);
-	light.mask = Light::LmDirect | Light::LmIndirect;
-	tracerTask->addTracerLight(new TracerLight(light));
+	// Create tracer environment.
+	tracerTask->addTracerEnvironment(new TracerEnvironment(new IblProbe(radiance, importance)));
 }
 
 /*! */

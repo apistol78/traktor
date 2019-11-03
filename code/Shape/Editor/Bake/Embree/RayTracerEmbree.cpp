@@ -4,6 +4,7 @@
 #include "Core/Functor/Functor.h"
 #include "Core/Log/Log.h"
 #include "Core/Math/Float.h"
+#include "Core/Math/Matrix44.h"
 #include "Core/Math/Quasirandom.h"
 #include "Core/Math/RandomGeometry.h"
 #include "Core/Math/Variance.h"
@@ -59,6 +60,35 @@ Scalar attenuation(const Scalar& distance, const Scalar& range)
 	return k0 * k1;
 }
 
+Vector4 lambertianDirection(const Vector2& uv, const Vector4& direction)
+{
+	// Calculate random direction, with Gaussian probability distribution.
+	float sin2_theta = uv.x;
+	float cos2_theta = 1.0f - sin2_theta;
+	float sin_theta = std::sqrt(sin2_theta);
+	float cos_theta = std::sqrt(cos2_theta);
+	float orientation = uv.y * TWO_PI;
+	Vector4 dir(sin_theta * std::cos(orientation), cos_theta, sin_theta * std::sin(orientation), 0.0f);
+
+	Vector4 u, v;
+	orthogonalFrame(direction, u, v);
+	return (Matrix44(u, v, direction, Vector4::zero()) * dir).xyz0().normalized();
+}
+
+void constructRay(const Vector4& position, const Vector4& direction, float far, RTCRayHit& outRayHit)
+{
+	position.storeAligned(&outRayHit.ray.org_x);
+	direction.storeAligned(&outRayHit.ray.dir_x);
+	outRayHit.ray.tnear = 0.001f;
+	outRayHit.ray.time = 0.0f;
+	outRayHit.ray.tfar = far;
+	outRayHit.ray.mask = 0;
+	outRayHit.ray.id = 0;
+	outRayHit.ray.flags = 0;
+	outRayHit.hit.geomID = RTC_INVALID_GEOMETRY_ID;
+	outRayHit.hit.instID[0] = RTC_INVALID_GEOMETRY_ID;
+}
+
 const Vector4 c_luminance(2.126f, 7.152f, 0.722f, 0.0f);
 
 		}
@@ -92,6 +122,11 @@ bool RayTracerEmbree::create(const BakeConfiguration* configuration)
 void RayTracerEmbree::destroy()
 {
 	m_shEngine = nullptr;
+}
+
+void RayTracerEmbree::addEnvironment(const IProbe* environment)
+{
+	m_environment = environment;
 }
 
 void RayTracerEmbree::addLight(const Light& light)
@@ -179,21 +214,7 @@ void RayTracerEmbree::preprocess(GBuffer* gbuffer) const
 					float s = sin(a), c = cos(a);
 
 					Vector4 traceDirection = (u * Scalar(c) + v * Scalar(s)).normalized();
-
-					rh.ray.org_x = position.x();
-					rh.ray.org_y = position.y();
-					rh.ray.org_z = position.z();
-					rh.ray.dir_x = traceDirection.x();
-					rh.ray.dir_y = traceDirection.y();
-					rh.ray.dir_z = traceDirection.z();
-					rh.ray.tnear = 0.001f;
-					rh.ray.time = 0.0f;
-					rh.ray.tfar = hl;
-					rh.ray.mask = 0;
-					rh.ray.id = 0;
-					rh.ray.flags = 0;
-					rh.hit.geomID = RTC_INVALID_GEOMETRY_ID;
-					rh.hit.instID[0] = RTC_INVALID_GEOMETRY_ID;
+					constructRay(position, traceDirection, hl, rh);
 
 					RTCIntersectContext context;
 					rtcInitIntersectContext(&context);
@@ -219,7 +240,7 @@ void RayTracerEmbree::preprocess(GBuffer* gbuffer) const
 
 Ref< render::SHCoeffs > RayTracerEmbree::traceProbe(const Vector4& position) const
 {
-	const uint32_t sampleCount = alignUp(m_configuration->getIndirectSampleCount(), 16);
+	const uint32_t sampleCount = alignUp(m_configuration->getSampleCount(), 16);
 	RandomGeometry random;
 
 	WrappedSHFunction shFunction([&] (const Vector4& unit) -> Vector4 {
@@ -326,10 +347,9 @@ Ref< render::SHCoeffs > RayTracerEmbree::traceProbe(const Vector4& position) con
 
 void RayTracerEmbree::traceLightmap(const GBuffer* gbuffer, drawing::Image* lightmap, const int32_t region[4]) const
 {
-	const uint32_t indirectSampleCount = alignUp(m_configuration->getIndirectSampleCount(), 16);
-	RTCRayHit16 T_MATH_ALIGN16 rh;
 	RandomGeometry random;
-	Vector4 direction[16];
+
+	const int32_t sampleCount = m_configuration->getSampleCount();
 
 	const auto& polygons = m_model.getPolygons();
 	const auto& materials = m_model.getMaterials();
@@ -342,7 +362,12 @@ void RayTracerEmbree::traceLightmap(const GBuffer* gbuffer, drawing::Image* ligh
 			if (elm.polygon == model::c_InvalidIndex)
 				continue;
 
-			// Trace direct illumination.
+			const auto& originPolygon = polygons[elm.polygon];
+			const auto& originMaterial = materials[originPolygon.getMaterial()];
+
+			Color4f emittance = originMaterial.getColor() * Scalar(originMaterial.getEmissive());
+
+			// Trace direct analytical illumination.
 			Color4f direct = sampleAnalyticalLights(
 				random,
 				elm.position,
@@ -351,84 +376,86 @@ void RayTracerEmbree::traceLightmap(const GBuffer* gbuffer, drawing::Image* ligh
 				false
 			);
 
-			// Trace indirect illumination.
-			Color4f indirect(0.0f, 0.0f, 0.0f, 0.0f);
-			Variance variance;
-			uint32_t i;
-
-			for (i = 0; i < indirectSampleCount; i += 16)
+			// Trace IBL and indirect illumination.
+			Color4f incoming(0.0f, 0.0f, 0.0f, 0.0f);
+			for (int32_t i = 0; i < sampleCount; ++i)
 			{
-				// Create a batch of rays.
-				for (uint32_t j = 0; j < 16; ++j)
-				{
-					Vector2 uv = Quasirandom::hammersley(i + j, indirectSampleCount, random);
-					direction[j] = Quasirandom::uniformHemiSphere(uv, elm.normal);
-
-					rh.ray.org_x[j] = elm.position.x();
-					rh.ray.org_y[j] = elm.position.y();
-					rh.ray.org_z[j] = elm.position.z();
-					rh.ray.dir_x[j] = direction[j].x();
-					rh.ray.dir_y[j] = direction[j].y();
-					rh.ray.dir_z[j] = direction[j].z();
-					rh.ray.tnear[j] = c_epsilonOffset;
-					rh.ray.time[j] = 0.0f;
-					rh.ray.tfar[j] = 10.0f; // Based of falloff model.
-					rh.ray.mask[j] = 0;
-					rh.ray.id[j] = 0;
-					rh.ray.flags[j] = 0;
-					rh.hit.geomID[j] = RTC_INVALID_GEOMETRY_ID;
-					rh.hit.instID[0][j] = RTC_INVALID_GEOMETRY_ID;
-				}
-
-				RTCIntersectContext context;
-				rtcInitIntersectContext(&context);
-				rtcIntersect16(c_valid, m_scene, &context, &rh);
-
-				// Calculate indirect lighting reflected from each hit.
-				for (uint32_t j = 0; j < 16; ++j)
-				{
-					if (rh.hit.geomID[j] == RTC_INVALID_GEOMETRY_ID)
-						continue;
-
-					Scalar distance(rh.ray.tfar[j]);
-					Scalar f = attenuation(distance);
-					if (f <= 0.0f)
-						continue;
-
-					Vector4 hitNormal = Vector4(rh.hit.Ng_x[j], rh.hit.Ng_y[j], rh.hit.Ng_z[j], 0.0f).normalized();
-					if (dot3(hitNormal, direction[j]) > 0.0f)
-						continue;
-
-					Vector4 hitPosition = (elm.position + direction[j] * distance).xyz1();
-
-					const auto& sp = polygons[rh.hit.primID[j]];
-					const auto& sm = materials[sp.getMaterial()];
-
-					Color4f brdf = sm.getColor() * Scalar(sm.getEmissive() + 1.0f) * Color4f(1.0f, 1.0f, 1.0f, 0.0f) / Scalar(PI);
-					Color4f incoming = sampleAnalyticalLights(
-						random,
-						hitPosition,
-						hitNormal,
-						Light::LmIndirect,
-						false
-					);
-
-					Scalar ct = dot3(elm.normal, direction[j]);
-					Color4f ind = brdf * incoming * f * ct / p;
-
-					variance.insert(dot3(ind, c_luminance));
-					indirect += ind;
-				}
-				
-				if (variance.stop(0.05f, 1.96f))
-					break;
+				Vector2 uv = Quasirandom::hammersley(i, sampleCount, random);
+				Vector4 direction = Quasirandom::uniformHemiSphere(uv, elm.normal);		
+			
+				incoming += tracePath(
+					elm.position,
+					elm.normal,
+					direction,
+					random,
+					0
+				);
 			}
-			indirect /= Scalar(i + 16);
+			incoming /= Scalar(sampleCount);
 
-			// Set output in lightmap.
-			lightmap->setPixel(x, y, (direct + indirect).rgb1());
+			lightmap->setPixel(x, y, (emittance + direct + incoming).rgb1());
 		}
 	}	
+}
+
+Color4f RayTracerEmbree::tracePath(
+	const Vector4& origin,
+	const Vector4& normal,
+	const Vector4& direction,
+	RandomGeometry& random,
+	int32_t depth
+) const
+{
+	if (depth >= 2)
+	{
+		// Nothing hit, sample sky if available else it's all black.
+		if (m_environment)
+			return m_environment->sample(direction);
+		else
+			return Color4f(0.0f, 0.0f, 0.0f, 0.0f);
+	}
+
+	RTCRayHit T_MATH_ALIGN16 rh;
+	constructRay(origin, direction, 100.0f, rh);
+
+	RTCIntersectContext context;
+	rtcInitIntersectContext(&context);
+	rtcIntersect1(m_scene, &context, &rh);
+
+	if (rh.hit.geomID == RTC_INVALID_GEOMETRY_ID)
+	{
+		// Nothing hit, sample sky if available else it's all black.
+		if (m_environment)
+			return m_environment->sample(direction);
+		else
+			return Color4f(0.0f, 0.0f, 0.0f, 0.0f);
+	}
+
+	const auto& polygons = m_model.getPolygons();
+	const auto& materials = m_model.getMaterials();
+
+	const auto& hitPolygon = polygons[rh.hit.primID];
+	const auto& hitMaterial = materials[hitPolygon.getMaterial()];
+
+	Color4f emittance = hitMaterial.getColor() * Scalar(hitMaterial.getEmissive());
+
+	Vector4 hitNormal = Vector4::loadUnaligned(&rh.hit.Ng_x).xyz0().normalized();
+	Vector4 newOrigin = (origin + direction * Scalar(rh.ray.tfar)).xyz1();
+
+	Vector2 rnd(random.nextFloat(), random.nextFloat());
+	Vector4 newDirection = lambertianDirection(rnd, hitNormal);
+
+	Color4f direct = sampleAnalyticalLights(
+		random,
+		newOrigin,
+		hitNormal,
+		Light::LmIndirect,
+		true
+	);
+	Color4f incoming = tracePath(newOrigin, hitNormal, newDirection, random, depth + 1);
+	Color4f reflectance = hitMaterial.getColor();
+
+	return emittance + (direct + incoming) * reflectance;
 }
 
 Color4f RayTracerEmbree::sampleAnalyticalLights(
@@ -642,53 +669,6 @@ Color4f RayTracerEmbree::sampleAnalyticalLights(
 				}
 
 				contribution += light.color * k0 * k1 * k2 * shadowAttenuate;
-			}
-			break;
-
-		case Light::LtProbe:
-			{
-				Color4f ibl(0.0f, 0.0f, 0.0f, 0.0f);
-				int32_t samples = bounce ? 50 : 200;
-				int32_t n = 0;
-
-				for (int32_t i = 0; i < samples; ++i)
-				{
-					Vector2 uv = Quasirandom::hammersley(i, samples, random);
-					Vector4 direction = Quasirandom::uniformHemiSphere(uv, normal);
-
-					origin.storeAligned(&r.org_x); 
-					direction.storeAligned(&r.dir_x);
-					r.tnear = c_epsilonOffset;
-					r.time = 0.0f;
-					r.tfar = 100.0f;
-					r.mask = 0;
-					r.id = 0;
-					r.flags = 0;
-		
-					RTCIntersectContext context;
-					rtcInitIntersectContext(&context);
-					rtcOccluded1(m_scene, &context, &r);
-					if (r.tfar < 0.0f)
-						continue;
-
-					ibl += light.probe->sample(direction) * dot3(direction, normal);
-					n++;
-
-					if (!bounce)
-					{
-						int32_t density = (int32_t)(light.probe->getDensity(direction) * 20.0f);
-						for (int32_t j = 0; j < density; ++j)
-						{
-							Vector2 uv = Quasirandom::hammersley(j, density, random);
-							Vector4 sub = Quasirandom::uniformCone(uv, direction, deg2rad(4.0f));
-							ibl += light.probe->sample(sub) * dot3(sub, normal);
-							n++;
-						}
-					}
-				}
-
-				if (n > 0)
-					contribution += ibl * Scalar(PI) / Scalar(n);
 			}
 			break;
 		}

@@ -19,6 +19,11 @@
 		</item>
 		<item>
 			<type>traktor.ui.Widget</type>
+			<element>background-color-hover</element>
+			<color>249, 249, 255, 255</color>
+		</item>		
+		<item>
+			<type>traktor.ui.Widget</type>
 			<element>background-color-disabled</element>
 			<color>230, 230, 235, 255</color>
 		</item>
@@ -26,6 +31,38 @@
 			<type>traktor.ui.Widget</type>
 			<element>border-color</element>
 			<color>160, 160, 160, 255</color>
+		</item>
+		<item>
+			<type>traktor.ui.Widget</type>
+			<element>border-color-disabled</element>
+			<color>200, 200, 220, 255</color>
+		</item>
+
+		<!-- DropDown -->
+		<item>
+			<type>traktor.ui.DropDown</type>
+			<element>background-color</element>
+			<color>239, 239, 242, 255</color>
+		</item>
+		<item>
+			<type>traktor.ui.DropDown</type>
+			<element>background-color-hover</element>
+			<color>249, 249, 255, 255</color>
+		</item>
+		<item>
+			<type>traktor.ui.DropDown</type>
+			<element>color-hover</element>
+			<color>70, 70, 74, 255</color>
+		</item>		
+		<item>
+			<type>traktor.ui.DropDown</type>
+			<element>background-color-button</element>
+			<color>239, 239, 242, 255</color>
+		</item>
+		<item>
+			<type>traktor.ui.DropDown</type>
+			<element>color-arrow</element>
+			<color>153, 153, 153, 255</color>
 		</item>
 
 		<!-- MenuShell -->
@@ -57,17 +94,22 @@
 			<color>30, 30, 30, 255</color>
 		</item>
 
-		<!-- Slider -->
+		<!-- Button -->
 		<item>
-			<type>traktor.ui.Slider</type>
-			<element>color</element>
-			<color>160, 160, 160, 255</color>
+			<type>traktor.ui.Button</type>
+			<element>background-color</element>
+			<color>239, 239, 242, 255</color>
 		</item>
 		<item>
-			<type>traktor.ui.Slider</type>
-			<element>knob-color</element>
-			<color>160, 160, 160, 255</color>
-		</item>	
+			<type>traktor.ui.Button</type>
+			<element>background-color-pushed</element>
+			<color>229, 229, 232, 255</color>
+		</item>		
+		<item>
+			<type>traktor.ui.Button</type>
+			<element>color</element>
+			<color>30, 30, 30, 255</color>
+		</item>		
 
 		<!-- ListBox -->
 		<item>
@@ -84,9 +126,19 @@
 		</item>
 		<item>
 			<type>traktor.ui.Edit</type>
+			<element>background-color-hover</element>
+			<color>42, 42, 42, 255</color>
+		</item>			
+		<item>
+			<type>traktor.ui.Edit</type>
 			<element>background-color-disabled</element>
 			<color>239, 239, 242, 255</color>
 		</item>
+		<item>
+			<type>traktor.ui.Edit</type>
+			<element>background-color-selection</element>
+			<color>255, 255, 255, 255</color>
+		</item>		
 		<item>
 			<type>traktor.ui.Edit</type>
 			<element>border-color</element>
@@ -145,6 +197,28 @@
 			<type>traktor.ui.Tab</type>
 			<element>tab-color-inactive</element>
 			<color>30, 30, 30, 255</color>
+		</item>
+
+		<!-- Panel -->
+		<item>
+			<type>traktor.ui.Panel</type>
+			<element>caption-background-color-focus</element>
+			<color>0, 122, 204, 255</color>
+		</item>
+		<item>
+			<type>traktor.ui.Panel</type>
+			<element>caption-background-color-no-focus</element>
+			<color>0, 122, 204, 255</color>
+		</item>
+		<item>
+			<type>traktor.ui.Panel</type>
+			<element>caption-color-focus</element>
+			<color>255, 255, 255, 255</color>
+		</item>
+		<item>
+			<type>traktor.ui.Panel</type>
+			<element>caption-color-no-focus</element>
+			<color>208, 208, 208, 255</color>
 		</item>
 
 		<!-- BackgroundWorkerDialog -->

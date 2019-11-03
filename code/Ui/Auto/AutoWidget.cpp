@@ -345,7 +345,7 @@ void AutoWidget::eventButtonDown(MouseButtonDownEvent* event)
 		}
 	}
 	else
-		m_focusCell = 0;
+		m_focusCell = nullptr;
 
 	update();
 }
