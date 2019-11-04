@@ -243,101 +243,27 @@ Ref< render::SHCoeffs > RayTracerEmbree::traceProbe(const Vector4& position) con
 	const uint32_t sampleCount = alignUp(m_configuration->getSampleCount(), 16);
 	RandomGeometry random;
 
+	const auto& polygons = m_model.getPolygons();
+	const auto& materials = m_model.getMaterials();
+
 	WrappedSHFunction shFunction([&] (const Vector4& unit) -> Vector4 {
-		Color4f direct(0.0f, 0.0f, 0.0f, 0.0f);
-		Color4f indirect(0.0f, 0.0f, 0.0f, 0.0f);
-		RTCRayHit16 T_MATH_ALIGN16 rh;
-		Vector4 direction[16];
-
-		const auto& polygons = m_model.getPolygons();
-		const auto& materials = m_model.getMaterials();
-
-		// Calculate direct light from probes.
+		Color4f color(0.0f, 0.0f, 0.0f, 0.0f);
 		for (uint32_t i = 0; i < sampleCount; ++i)
 		{
 			Vector2 uv = Quasirandom::hammersley(i, sampleCount, random);
 			Vector4 direction = Quasirandom::uniformHemiSphere(uv, unit);
-			Color4f incoming = sampleAnalyticalLights(
-				random,
+
+			Color4f incoming = tracePath(
 				position,
 				direction,
-				Light::LmDirect,
-				false
+				random,
+				0
 			);
-			direct += incoming * dot3(unit, direction);
+
+			color += incoming /* * dot3(unit, direction) */;
 		}
-		direct /= Scalar(sampleCount);
-
-		// Calculate indirect light.
-		Variance variance;
-		uint32_t i = 0;
-		for (; i < sampleCount; i += 16)
-		{
-			for (uint32_t j = 0; j < 16; ++j)
-			{
-				Vector2 uv = Quasirandom::hammersley(i + j, sampleCount, random);
-				direction[j] = Quasirandom::uniformHemiSphere(uv, unit);
-
-				rh.ray.org_x[j] = position.x();
-				rh.ray.org_y[j] = position.y();
-				rh.ray.org_z[j] = position.z();
-				rh.ray.dir_x[j] = direction[j].x();
-				rh.ray.dir_y[j] = direction[j].y();
-				rh.ray.dir_z[j] = direction[j].z();
-				rh.ray.tnear[j] = 0.0f;
-				rh.ray.time[j] = 0.0f;
-				rh.ray.tfar[j] = m_maxDistance;
-				rh.ray.mask[j] = 0;
-				rh.ray.id[j] = 0;
-				rh.ray.flags[j] = 0;
-				rh.hit.geomID[j] = RTC_INVALID_GEOMETRY_ID;
-				rh.hit.instID[0][j] = RTC_INVALID_GEOMETRY_ID;
-			}
-
-			RTCIntersectContext context;
-			rtcInitIntersectContext(&context);
-			rtcIntersect16(c_valid, m_scene, &context, &rh);
-
-			for (uint32_t j = 0; j < 16; ++j)
-			{
-				if (rh.hit.geomID[j] != RTC_INVALID_GEOMETRY_ID)
-				{
-					Scalar distance(rh.ray.tfar[j]);
-					Scalar f = attenuation(distance);
-					if (f <= 0.0f)
-						continue;
-
-					Vector4 hitPosition = (position + direction[j] * distance).xyz1();
-					Vector4 hitNormal = Vector4(rh.hit.Ng_x[j], rh.hit.Ng_y[j], rh.hit.Ng_z[j], 0.0f).normalized();
-
-					Scalar ct = dot3(unit, direction[j]);
-					if (ct < 0.0f)
-						continue;
-
-					const auto& sp = polygons[rh.hit.primID[j]];
-					const auto& sm = materials[sp.getMaterial()];
-
-					Color4f brdf = sm.getColor() * Color4f(1.0f, 1.0f, 1.0f, 0.0f) / Scalar(PI);
-					Color4f incoming = sampleAnalyticalLights(
-						random,
-						hitPosition,
-						hitNormal,
-						Light::LmIndirect,
-						false
-					);
-					Color4f ind = brdf * incoming * f * ct / p;
-
-					variance.insert(dot3(ind, c_luminance));
-					indirect += ind;
-				}
-			}
-
-			if (variance.stop(0.05f, 1.96f))
-				break;
-		}
-		indirect /= Scalar(i + 16);
-
-		return direct + indirect;
+		color /= Scalar(sampleCount);
+		return color;
 	});
 
 	Ref< render::SHCoeffs > shCoeffs = new render::SHCoeffs();
@@ -385,7 +311,6 @@ void RayTracerEmbree::traceLightmap(const GBuffer* gbuffer, drawing::Image* ligh
 			
 				incoming += tracePath(
 					elm.position,
-					elm.normal,
 					direction,
 					random,
 					0
@@ -400,7 +325,6 @@ void RayTracerEmbree::traceLightmap(const GBuffer* gbuffer, drawing::Image* ligh
 
 Color4f RayTracerEmbree::tracePath(
 	const Vector4& origin,
-	const Vector4& normal,
 	const Vector4& direction,
 	RandomGeometry& random,
 	int32_t depth
@@ -452,7 +376,7 @@ Color4f RayTracerEmbree::tracePath(
 		Light::LmIndirect,
 		true
 	);
-	Color4f incoming = tracePath(newOrigin, hitNormal, newDirection, random, depth + 1);
+	Color4f incoming = tracePath(newOrigin, newDirection, random, depth + 1);
 	Color4f reflectance = hitMaterial.getColor();
 
 	return emittance + (direct + incoming) * reflectance;
