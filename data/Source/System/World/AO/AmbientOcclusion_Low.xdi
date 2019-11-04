@@ -6,8 +6,8 @@
 			<id>Ssao</id>
 			<width>0</width>
 			<height>0</height>
-			<screenWidthDenom>1</screenWidthDenom>
-			<screenHeightDenom>1</screenHeightDenom>
+			<screenWidthDenom>2</screenWidthDenom>
+			<screenHeightDenom>2</screenHeightDenom>
 			<maxWidth>0</maxWidth>
 			<maxHeight>0</maxHeight>
 			<format>TfR8</format>
@@ -22,8 +22,8 @@
 			<id>SsaoBlur1</id>
 			<width>0</width>
 			<height>0</height>
-			<screenWidthDenom>1</screenWidthDenom>
-			<screenHeightDenom>1</screenHeightDenom>
+			<screenWidthDenom>2</screenWidthDenom>
+			<screenHeightDenom>2</screenHeightDenom>
 			<maxWidth>0</maxWidth>
 			<maxHeight>0</maxHeight>
 			<format>TfR8</format>
@@ -38,8 +38,8 @@
 			<id>SsaoBlur2</id>
 			<width>0</width>
 			<height>0</height>
-			<screenWidthDenom>1</screenWidthDenom>
-			<screenHeightDenom>1</screenHeightDenom>
+			<screenWidthDenom>2</screenWidthDenom>
+			<screenHeightDenom>2</screenHeightDenom>
 			<maxWidth>0</maxWidth>
 			<maxHeight>0</maxHeight>
 			<format>TfR8</format>

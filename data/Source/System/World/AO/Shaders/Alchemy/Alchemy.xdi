@@ -181,7 +181,7 @@ Normal in view space.
 				<first>-151</first>
 				<second>-1081</second>
 			</position>
-			<value>0.8</value>
+			<value>0.5</value>
 		</item>
 		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
 			<id>{CE3F65A1-DE6C-9C42-B898-4A0B0E4F0661}</id>
@@ -487,7 +487,7 @@ Heaveside
 				<first>-162</first>
 				<second>-977</second>
 			</position>
-			<value>-0.001</value>
+			<value>-0.01</value>
 		</item>
 		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
 			<id>{5EBCD85E-AA7A-F542-931D-AB015ED301CE}</id>
