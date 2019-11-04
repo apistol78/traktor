@@ -1,6 +1,5 @@
 #pragma once
 
-#include <vector>
 #include "Ui/Associative.h"
 #include "Ui/Canvas.h"
 #include "Ui/Enums.h"
@@ -122,13 +121,13 @@ public:
 
 	bool hitTest(const Point& pt) const;
 
-	/*! \brief Update multiple children widgets.
+	/*! Update multiple children widgets.
 	 *
 	 * Use this method when updating multiple children positions or sizes
 	 * as it's a lot quicker and results in less flicker than moving one
 	 * at a time.
 	 */
-	void setChildRects(const std::vector< WidgetRect >& childRects);
+	void setChildRects(const WidgetRect* childRects, uint32_t count);
 
 	virtual Size getMinimumSize() const;
 

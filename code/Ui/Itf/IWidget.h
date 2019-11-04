@@ -1,7 +1,6 @@
 #pragma once
 
 #include <string>
-#include <vector>
 #include "Core/Config.h"
 #include "Core/Platform.h"
 #include "Ui/Enums.h"
@@ -90,7 +89,7 @@ public:
 
 	virtual bool hitTest(const Point& pt) const = 0;
 
-	virtual void setChildRects(const std::vector< IWidgetRect >& childRects) = 0;
+	virtual void setChildRects(const IWidgetRect* childRects, uint32_t count) = 0;
 
 	virtual Size getMinimumSize() const = 0;
 

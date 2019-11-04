@@ -147,8 +147,7 @@ void GraphControl::addNode(Node* node)
 
 void GraphControl::removeNode(Node* node)
 {
-	RefArray< Node >::iterator i = std::find(m_nodes.begin(), m_nodes.end(), node);
-	m_nodes.erase(i);
+	m_nodes.remove(node);
 }
 
 void GraphControl::removeAllNodes()
@@ -169,14 +168,14 @@ const RefArray< Node >& GraphControl::getNodes() const
 
 void GraphControl::selectAllNodes()
 {
-	for (RefArray< Node >::iterator i = m_nodes.begin(); i != m_nodes.end(); ++i)
-		(*i)->setSelected(true);
+	for (auto node : m_nodes)
+		node->setSelected(true);
 }
 
 void GraphControl::deselectAllNodes()
 {
-	for (RefArray< Node >::iterator i = m_nodes.begin(); i != m_nodes.end(); ++i)
-		(*i)->setSelected(false);
+	for (auto node : m_nodes)
+		node->setSelected(false);
 }
 
 void GraphControl::addEdge(Edge* edge)
@@ -186,8 +185,7 @@ void GraphControl::addEdge(Edge* edge)
 
 void GraphControl::removeEdge(Edge* edge)
 {
-	RefArray< Edge >::iterator i = std::find(m_edges.begin(), m_edges.end(), edge);
-	m_edges.erase(i);
+	m_edges.remove(edge);
 }
 
 void GraphControl::removeAllEdges()
@@ -207,86 +205,90 @@ const RefArray< Edge >& GraphControl::getEdges() const
 
 int GraphControl::getSelectedNodes(RefArray< Node >& out) const
 {
-	for (RefArray< Node >::const_iterator i = m_nodes.begin(); i != m_nodes.end(); ++i)
+	out.resize(0);
+	for (auto node : m_nodes)
 	{
-		if ((*i)->isSelected())
-			out.push_back(*i);
+		if (node->isSelected())
+			out.push_back(node);
 	}
-	return int(out.size());
+	return (int)out.size();
 }
 
 int GraphControl::getSelectedEdges(RefArray< Edge >& out) const
 {
-	for (RefArray< Edge >::const_iterator i = m_edges.begin(); i != m_edges.end(); ++i)
+	out.resize(0);
+	for (auto edge : m_edges)
 	{
-		if ((*i)->isSelected())
-			out.push_back(*i);
+		if (edge->isSelected())
+			out.push_back(edge);
 	}
-	return int(out.size());
+	return (int)out.size();
 }
 
 int GraphControl::getConnectedEdges(const Pin* pin, RefArray< Edge >& outEdges) const
 {
-	for (RefArray< Edge >::const_iterator i = m_edges.begin(); i != m_edges.end(); ++i)
+	outEdges.resize(0);
+	for (auto edge : m_edges)
 	{
-		if ((*i)->getSourcePin() == pin || (*i)->getDestinationPin() == pin)
-			outEdges.push_back(*i);
+		if (edge->getSourcePin() == pin || edge->getDestinationPin() == pin)
+			outEdges.push_back(edge);
 	}
-	return int(outEdges.size());
+	return (int)outEdges.size();
 }
 
 int GraphControl::getConnectedEdges(const Node* node, RefArray< Edge >& outEdges) const
 {
-	for (RefArray< Edge >::const_iterator i = m_edges.begin(); i != m_edges.end(); ++i)
+	outEdges.resize(0);
+	for (auto edge : m_edges)
 	{
-		if ((*i)->getSourcePin()->getNode() == node || (*i)->getDestinationPin()->getNode() == node)
-			outEdges.push_back(*i);
+		if (edge->getSourcePin()->getNode() == node || edge->getDestinationPin()->getNode() == node)
+			outEdges.push_back(edge);
 	}
-	return int(outEdges.size());
+	return (int)outEdges.size();
 }
 
 int GraphControl::getConnectedEdges(const RefArray< Node >& nodes, bool inclusive, RefArray< Edge >& outEdges) const
 {
-	for (RefArray< Edge >::const_iterator i = m_edges.begin(); i != m_edges.end(); ++i)
+	outEdges.resize(0);
+	for (auto edge : m_edges)
 	{
-		bool n1 = bool(std::find(nodes.begin(), nodes.end(), (*i)->getSourcePin()->getNode()) != nodes.end());
-		bool n2 = bool(std::find(nodes.begin(), nodes.end(), (*i)->getDestinationPin()->getNode()) != nodes.end());
-
+		bool n1 = bool(std::find(nodes.begin(), nodes.end(), edge->getSourcePin()->getNode()) != nodes.end());
+		bool n2 = bool(std::find(nodes.begin(), nodes.end(), edge->getDestinationPin()->getNode()) != nodes.end());
 		if ((inclusive && (n1 && n2)) || (!inclusive && (n1 || n2)))
-			outEdges.push_back(*i);
+			outEdges.push_back(edge);
 	}
-	return int(outEdges.size());
+	return (int)outEdges.size();
 }
 
 Node* GraphControl::getNodeAt(const Point& p) const
 {
-	for (RefArray< Node >::const_iterator i = m_nodes.begin(); i != m_nodes.end(); ++i)
+	for (auto node : m_nodes)
 	{
-		if ((*i)->hit(p))
-			return (*i);
+		if (node->hit(p))
+			return node;
 	}
 	return nullptr;
 }
 
 Edge* GraphControl::getEdgeAt(const Point& p) const
 {
-	for (RefArray< Edge >::const_iterator i = m_edges.begin(); i != m_edges.end(); ++i)
+	for (auto edge : m_edges)
 	{
-		if ((*i)->hit(m_paintSettings, p))
-			return (*i);
+		if (edge->hit(m_paintSettings, p))
+			return edge;
 	}
-	return 0;
+	return nullptr;
 }
 
 Pin* GraphControl::getPinAt(const Point& p) const
 {
-	for (RefArray< Node >::const_iterator i = m_nodes.begin(); i != m_nodes.end(); ++i)
+	for (auto node : m_nodes)
 	{
-		Pin* pin = (*i)->getPinAt(p - m_offset);
+		Pin* pin = node->getPinAt(p - m_offset);
 		if (pin)
 			return pin;
 	}
-	return 0;
+	return nullptr;
 }
 
 void GraphControl::setPaintSettings(const PaintSettings* paintSettings)
@@ -322,9 +324,9 @@ void GraphControl::center()
 		-std::numeric_limits< int >::max(),
 		-std::numeric_limits< int >::max()
 	);
-	for (RefArray< Node >::iterator i = m_nodes.begin(); i != m_nodes.end(); ++i)
+	for (auto node : m_nodes)
 	{
-		Rect rc = (*i)->calculateRect();
+		Rect rc = node->calculateRect();
 		bounds.left = std::min(bounds.left, rc.left);
 		bounds.right = std::max(bounds.right, rc.right);
 		bounds.top = std::min(bounds.top, rc.top);
@@ -346,18 +348,18 @@ void GraphControl::alignNodes(Alignment align)
 		-std::numeric_limits< int >::max(),
 		-std::numeric_limits< int >::max()
 	);
-	for (RefArray< Node >::iterator i = nodes.begin(); i != nodes.end(); ++i)
+	for (auto node : m_nodes)
 	{
-		Rect rc = (*i)->calculateRect();
+		Rect rc = node->calculateRect();
 		bounds.left = std::min(bounds.left, rc.left);
 		bounds.right = std::max(bounds.right, rc.right);
 		bounds.top = std::min(bounds.top, rc.top);
 		bounds.bottom = std::max(bounds.bottom, rc.bottom);
 	}
 
-	for (RefArray< Node >::iterator i = nodes.begin(); i != nodes.end(); ++i)
+	for (auto node : m_nodes)
 	{
-		Rect rc = (*i)->calculateRect();
+		Rect rc = node->calculateRect();
 		Point pt = rc.getTopLeft();
 
 		switch (align)
@@ -379,11 +381,10 @@ void GraphControl::alignNodes(Alignment align)
 			break;
 		}
 
-		if (pt != (*i)->getPosition())
+		if (pt != node->getPosition())
 		{
-			(*i)->setPosition(pt);
-
-			NodeMovedEvent event(this, *i);
+			node->setPosition(pt);
+			NodeMovedEvent event(this, node);
 			raiseEvent(&event);
 		}
 	}
@@ -408,9 +409,9 @@ void GraphControl::evenSpace(EvenSpace space)
 
 	int totalWidth = 0, totalHeight = 0;
 
-	for (RefArray< Node >::iterator i = nodes.begin(); i != nodes.end(); ++i)
+	for (auto node : m_nodes)
 	{
-		Rect rc = (*i)->calculateRect();
+		Rect rc = node->calculateRect();
 
 		bounds.left = std::min(bounds.left, rc.left);
 		bounds.right = std::max(bounds.right, rc.right);
@@ -426,9 +427,9 @@ void GraphControl::evenSpace(EvenSpace space)
 
 	int x = bounds.left, y = bounds.top;
 
-	for (RefArray< Node >::iterator i = nodes.begin(); i != nodes.end(); ++i)
+	for (auto node : m_nodes)
 	{
-		Rect rc = (*i)->calculateRect();
+		Rect rc = node->calculateRect();
 		Point pt = rc.getTopLeft();
 
 		switch (space)
@@ -442,11 +443,10 @@ void GraphControl::evenSpace(EvenSpace space)
 			break;
 		}
 
-		if (pt != (*i)->getPosition())
+		if (pt != node->getPosition())
 		{
-			(*i)->setPosition(pt);
-
-			NodeMovedEvent event(this, *i);
+			node->setPosition(pt);
+			NodeMovedEvent event(this, node);
 			raiseEvent(&event);
 		}
 
@@ -514,7 +514,6 @@ bool GraphControl::endSelectModification()
 
 	SelectEvent selectEvent(this, nodeSelectChanged, edgeSelectChanged);
 	raiseEvent(&selectEvent);
-
 	return true;
 }
 
@@ -562,27 +561,26 @@ void GraphControl::eventMouseDown(MouseButtonDownEvent* event)
 			if (!(event->getKeyState() & KsShift))
 			{
 				// Deselect all other nodes.
-				for (RefArray< Node >::iterator i = m_nodes.begin(); i != m_nodes.end(); ++i)
+				for (auto node : m_nodes)
 				{
-					if ((*i) != m_selectedNode)
-						(*i)->setSelected(false);
+					if (node != m_selectedNode)
+						node->setSelected(false);
 				}
 			}
 			m_selectedNode->setSelected(true);
 
 			// Update edge selection states.
-			for (RefArray< Edge >::iterator i = m_edges.begin(); i != m_edges.end(); ++i)
+			for (auto edge : m_edges)
 			{
 				bool selected =
-					(*i)->getSourcePin()->getNode()->isSelected() ||
-					(*i)->getDestinationPin()->getNode()->isSelected();
+					edge->getSourcePin()->getNode()->isSelected() ||
+					edge->getDestinationPin()->getNode()->isSelected();
 
-				(*i)->setSelected(selected);
+				edge->setSelected(selected);
 			}
 
 			// Move selected node last in list to ensure it's drawn last.
-			RefArray< Node >::iterator i = std::find(m_nodes.begin(), m_nodes.end(), m_selectedNode);
-			m_nodes.erase(i);
+			m_nodes.remove(m_selectedNode);
 			m_nodes.push_back(m_selectedNode);
 		}
 
@@ -601,18 +599,16 @@ void GraphControl::eventMouseDown(MouseButtonDownEvent* event)
 					if (m_mode != MdConnectEdge)
 					{
 						// See if we can find an existing edge connected to this input.
-						for (RefArray< Edge >::iterator i = m_edges.begin(); i != m_edges.end(); ++i)
+						for (auto edge : m_edges)
 						{
-							Ref< Edge > edge = *i;
 							if (edge->getDestinationPin() != pin)
 								continue;
 
 							m_selectedPin = edge->getSourcePin();
-							m_edges.erase(i);
+							m_edges.remove(edge);
 
 							EdgeDisconnectEvent edgeDisconnectEvent(this, edge);
 							raiseEvent(&edgeDisconnectEvent);
-
 							break;
 						}
 					}
@@ -669,15 +665,15 @@ void GraphControl::eventMouseDown(MouseButtonDownEvent* event)
 			if (!(event->getKeyState() & KsShift))
 			{
 				// Deselect all other edges.
-				for (RefArray< Edge >::iterator i = m_edges.begin(); i != m_edges.end(); ++i)
+				for (auto edge : m_edges)
 				{
-					if ((*i) != m_selectedEdge)
-						(*i)->setSelected(false);
+					if (edge != m_selectedEdge)
+						edge->setSelected(false);
 				}
 
 				// Deselect all nodes.
-				for (RefArray< Node >::iterator i = m_nodes.begin(); i != m_nodes.end(); ++i)
-					(*i)->setSelected(false);
+				for (auto node : m_nodes)
+					node->setSelected(false);
 			}
 			m_selectedEdge->setSelected(true);
 		}
@@ -699,8 +695,8 @@ void GraphControl::eventMouseDown(MouseButtonDownEvent* event)
 			beginSelectModification();
 
 			// Deselect all nodes and start drawing selection marker.
-			for (RefArray< Node >::iterator i = m_nodes.begin(); i != m_nodes.end(); ++i)
-				(*i)->setSelected(false);
+			for (auto node : m_nodes)
+				node->setSelected(false);
 
 			if (endSelectModification())
 				update();
@@ -747,7 +743,6 @@ void GraphControl::eventMouseUp(MouseButtonUpEvent* event)
 							m_selectedPin,
 							targetPin
 						);
-
 						EdgeConnectEvent event(this, edge);
 						raiseEvent(&event);
 					}
@@ -774,22 +769,22 @@ void GraphControl::eventMouseUp(MouseButtonUpEvent* event)
 
 			beginSelectModification();
 
-			Rect selection = Rect(tl, br);
-			for(RefArray< Node >::iterator i = m_nodes.begin(); i != m_nodes.end(); ++i)
+			Rect selection(tl, br);
+			for (auto node : m_nodes)
 			{
-				Rect rect = (*i)->calculateRect().offset(m_offset);
+				Rect rect = node->calculateRect().offset(m_offset);
 				if (selection.intersect(rect))
-					(*i)->setSelected(true);
+					node->setSelected(true);
 			}
 
 			// Update edge selection states.
-			for (RefArray< Edge >::iterator i = m_edges.begin(); i != m_edges.end(); ++i)
+			for (auto edge : m_edges)
 			{
 				bool selected =
-					(*i)->getSourcePin()->getNode()->isSelected() ||
-					(*i)->getDestinationPin()->getNode()->isSelected();
+					edge->getSourcePin()->getNode()->isSelected() ||
+					edge->getDestinationPin()->getNode()->isSelected();
 
-				(*i)->setSelected(selected);
+				edge->setSelected(selected);
 			}
 
 			endSelectModification();
@@ -826,13 +821,13 @@ void GraphControl::eventMouseMove(MouseMoveEvent* event)
 	else if (m_moveSelected)
 	{
 		Size offset = event->getPosition() / m_scale - m_moveOrigin;
-		for (RefArray< Node >::iterator i = m_nodes.begin(); i != m_nodes.end(); ++i)
+		for (auto node : m_nodes)
 		{
-			if (!(*i)->isSelected())
+			if (!node->isSelected())
 				continue;
 
-			Point position = (*i)->getPosition();
-			(*i)->setPosition(position + offset);
+			Point position = node->getPosition();
+			node->setPosition(position + offset);
 		}
 
 		m_moveOrigin = event->getPosition() / m_scale;
@@ -936,10 +931,10 @@ void GraphControl::eventPaint(PaintEvent* event)
 	// Draw arrow hints.
 	canvas.setBackground(m_paintSettings->getNodeShadow());
 	Point center = rc.getCenter();
-	unsigned arrowsDrawn = 0;
-	for (RefArray< Node >::iterator i = m_nodes.begin(); i != m_nodes.end(); ++i)
+	uint32_t arrowsDrawn = 0;
+	for (auto node : m_nodes)
 	{
-		Rect rcNode = (*i)->calculateRect().offset(m_offset);
+		Rect rcNode = node->calculateRect().offset(m_offset);
 		if ((arrowsDrawn & 1) == 0 && rcNode.left < rc.left)
 		{
 			Point p(rc.left + 16, center.y);

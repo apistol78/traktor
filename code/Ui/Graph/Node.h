@@ -38,7 +38,7 @@ class T_DLLCLASS Node
 	T_RTTI_CLASS;
 
 public:
-	Node(const std::wstring& title, const std::wstring& info, const Point& position, INodeShape* shape);
+	Node(const std::wstring& title, const std::wstring& info, const Point& position, const INodeShape* shape);
 
 	void setTitle(const std::wstring& title);
 
@@ -68,9 +68,9 @@ public:
 
 	bool isSelected() const;
 
-	void setShape(INodeShape* shape);
+	void setShape(const INodeShape* shape);
 
-	INodeShape* getShape() const;
+	const INodeShape* getShape() const;
 
 	Ref< Pin > createInputPin(const std::wstring& name, bool mandatory);
 
@@ -109,7 +109,7 @@ private:
 	bool m_selected;
 	RefArray< Pin > m_inputPins;
 	RefArray< Pin > m_outputPins;
-	Ref< INodeShape > m_shape;
+	Ref< const INodeShape > m_shape;
 
 	void updateSize();
 };

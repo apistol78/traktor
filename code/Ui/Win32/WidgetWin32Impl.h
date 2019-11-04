@@ -358,21 +358,21 @@ public:
 		return bool(WindowFromPoint(pnt) == m_hWnd);
 	}
 
-	virtual void setChildRects(const std::vector< IWidgetRect >& childRects) override
+	virtual void setChildRects(const IWidgetRect* childRects, uint32_t count) override
 	{
-		HDWP hdwp = BeginDeferWindowPos(int(childRects.size()));
+		HDWP hdwp = BeginDeferWindowPos((int)count);
 		if (hdwp)
 		{
-			for (std::vector< IWidgetRect >::const_iterator i = childRects.begin(); i != childRects.end(); ++i)
+			for (uint32_t i = 0; i < count; ++i)
 			{
 				hdwp = DeferWindowPos(
 					hdwp,
-					(HWND)i->widget->getInternalHandle(),
+					(HWND)childRects[i].widget->getInternalHandle(),
 					NULL,
-					i->rect.left,
-					i->rect.top,
-					i->rect.getWidth(),
-					i->rect.getHeight(),
+					childRects[i].rect.left,
+					childRects[i].rect.top,
+					childRects[i].rect.getWidth(),
+					childRects[i].rect.getHeight(),
 					SWP_NOZORDER | SWP_NOACTIVATE
 				);
 				if (!hdwp)
@@ -386,15 +386,15 @@ public:
 		}
 
 		// If we reach this point there has been an error in the deferred stuff, fall back on old style.
-		for (std::vector< IWidgetRect >::const_iterator i = childRects.begin(); i != childRects.end(); ++i)
+		for (uint32_t i = 0; i < count; ++i)
 		{
 			SetWindowPos(
-				(HWND)i->widget->getInternalHandle(),
+				(HWND)childRects[i].widget->getInternalHandle(),
 				NULL,
-				i->rect.left,
-				i->rect.top,
-				i->rect.getWidth(),
-				i->rect.getHeight(),
+				childRects[i].rect.left,
+				childRects[i].rect.top,
+				childRects[i].rect.getWidth(),
+				childRects[i].rect.getHeight(),
 				SWP_NOZORDER | SWP_NOACTIVATE
 			);
 		}

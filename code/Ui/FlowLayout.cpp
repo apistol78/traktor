@@ -42,7 +42,7 @@ void FlowLayout::update(Widget* widget)
 {
 	std::vector< WidgetRect > widgetRects;
 	calculateRects(widget, widgetRects);
-	widget->setChildRects(widgetRects);
+	widget->setChildRects(&widgetRects[0], widgetRects.size());
 }
 
 void FlowLayout::calculateRects(Widget* widget, std::vector< WidgetRect >& outRects)

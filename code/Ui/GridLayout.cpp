@@ -49,7 +49,7 @@ void GridLayout::update(Widget* widget)
 		i++;
 	}
 
-	widget->setChildRects(widgetRects);
+	widget->setChildRects(&widgetRects[0], widgetRects.size());
 }
 
 	}

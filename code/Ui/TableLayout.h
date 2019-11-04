@@ -18,7 +18,7 @@ namespace traktor
 	namespace ui
 	{
 
-/*! \brief Table layout.
+/*! Table layout.
  * \ingroup UI
  */
 class T_DLLCLASS TableLayout : public Layout
@@ -35,8 +35,8 @@ public:
 private:
 	Size m_margin;
 	Size m_pad;
-	std::vector< int > m_cdef;
-	std::vector< int > m_rdef;
+	std::vector< int32_t > m_cdef;
+	std::vector< int32_t > m_rdef;
 };
 
 	}

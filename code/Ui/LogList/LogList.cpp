@@ -197,7 +197,7 @@ void LogList::eventPaint(PaintEvent* event)
 	advanceCount = std::min(advanceCount, int32_t(m_logFiltered.size()));
 	std::advance(i, advanceCount);
 
-	for (; i != m_logFiltered.end(); ++i)
+	for (; i != m_logFiltered.end() && rc.top < inner.bottom; ++i)
 	{
 		uint32_t threadIndex = m_threadIndices[i->threadId];
 

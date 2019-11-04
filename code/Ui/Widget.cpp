@@ -12,8 +12,8 @@ namespace traktor
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.Widget", Widget, EventSubject)
 
 Widget::Widget()
-:	m_widget(0)
-,	m_parent(0)
+:	m_widget(nullptr)
+,	m_parent(nullptr)
 ,	m_halign(AnLeft)
 ,	m_valign(AnTop)
 {
@@ -291,18 +291,19 @@ bool Widget::hitTest(const Point& pt) const
 	return m_widget->hitTest(pt);
 }
 
-void Widget::setChildRects(const std::vector< WidgetRect >& childRects)
+void Widget::setChildRects(const WidgetRect* childRects, uint32_t count)
 {
 	T_ASSERT(m_widget);
-	if (!childRects.empty())
+	StaticVector< IWidgetRect, 32 > internalChildRects;
+	for (uint32_t i = 0; i < count; i += 32)
 	{
-		std::vector< IWidgetRect > internalChildRects(childRects.size());
-		for (uint32_t i = 0; i < childRects.size(); ++i)
+		uint32_t slice = std::min< uint32_t >(count - i, 32);
+		for (uint32_t j = 0; j < slice; ++j)
 		{
-			internalChildRects[i].widget = childRects[i].widget->getIWidget();
-			internalChildRects[i].rect = childRects[i].rect;
+			internalChildRects[j].widget = childRects[i + j].widget->getIWidget();
+			internalChildRects[j].rect = childRects[i + j].rect;
 		}
-		m_widget->setChildRects(internalChildRects);
+		m_widget->setChildRects(internalChildRects.c_ptr(), slice);
 	}
 }
 
@@ -355,8 +356,8 @@ void Widget::link(Widget* parent)
 	{
 		m_parent = parent;
 		m_previousSibling = parent->m_lastChild;
-		m_nextSibling = 0;
-		if (parent->m_lastChild != 0)
+		m_nextSibling = nullptr;
+		if (parent->m_lastChild != nullptr)
 			parent->m_lastChild->m_nextSibling = this;
 		else
 			parent->m_firstChild = this;
@@ -390,9 +391,9 @@ void Widget::unlink()
 		m_parent->raiseEvent(&childEvent);
 	}
 
-	m_parent = 0;
-	m_nextSibling = 0;
-	m_previousSibling = 0;
+	m_parent = nullptr;
+	m_nextSibling = nullptr;
+	m_previousSibling = nullptr;
 }
 
 void Widget::setParent(Widget* parent)
@@ -404,7 +405,7 @@ void Widget::setParent(Widget* parent)
 		link(parent);
 	}
 	else
-		m_widget->setParent(0);
+		m_widget->setParent(nullptr);
 }
 
 Widget* Widget::getParent() const

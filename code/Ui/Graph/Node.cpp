@@ -11,7 +11,7 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.Node", Node, Object)
 
-Node::Node(const std::wstring& title, const std::wstring& info, const Point& position, INodeShape* shape)
+Node::Node(const std::wstring& title, const std::wstring& info, const Point& position, const INodeShape* shape)
 :	m_title(title)
 ,	m_info(info)
 ,	m_state(0)
@@ -118,13 +118,13 @@ bool Node::isSelected() const
 	return m_selected;
 }
 
-void Node::setShape(INodeShape* shape)
+void Node::setShape(const INodeShape* shape)
 {
 	m_shape = shape;
 	m_size = m_shape->calculateSize(this);
 }
 
-INodeShape* Node::getShape() const
+const INodeShape* Node::getShape() const
 {
 	return m_shape;
 }

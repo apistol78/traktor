@@ -1,34 +1,34 @@
 #include <algorithm>
 #include <numeric>
 #include <functional>
+#include "Core/Containers/StaticVector.h"
+#include "Core/Misc/Split.h"
 #include "Ui/TableLayout.h"
 #include "Ui/Container.h"
 #include "Ui/Rect.h"
-#include "Core/Misc/Split.h"
 
 namespace traktor
 {
 	namespace ui
 	{
+		namespace
+		{
 
-namespace
-{
+typedef StaticVector< Widget*, 8 * 8 > childrenVector_t;
+typedef StaticVector< int32_t, 8 > dimensionVector_t;
 
-void parseDefinition(const std::wstring& def, std::vector< int >& out)
+void parseDefinition(const std::wstring& def, std::vector< int32_t >& out)
 {
 	std::vector< std::wstring > tmp;
-
 	if (!Split< std::wstring >::any(def, L",;", tmp))
 		return;
-
-	for (std::vector< std::wstring >::iterator i = tmp.begin(); i != tmp.end(); ++i)
+	for (const auto& str : tmp)
 	{
-		std::wstring str = *i;
 		if (str == L"*")
 			out.push_back(0);
 		else
 		{
-			int n = abs(atoi(wstombs(str).c_str()));
+			int32_t n = abs(atoi(wstombs(str).c_str()));
 			if (*(str.end() - 1) == '%')
 				out.push_back(-n);
 			else
@@ -39,28 +39,28 @@ void parseDefinition(const std::wstring& def, std::vector< int >& out)
 
 void calculate(
 	const Size& avail,
-	const std::vector< int >& cdef,
-	const std::vector< int >& rdef,
-	const std::vector< Widget* >& children,
-	std::vector< int >& w,
-	std::vector< int >& h
+	const std::vector< int32_t >& cdef,
+	const std::vector< int32_t >& rdef,
+	const childrenVector_t& children,
+	dimensionVector_t& w,
+	dimensionVector_t& h
 )
 {
-	int nc = int(cdef.size());
-	int nr = int((children.size() + nc - 1) / std::max(nc, 1));
+	int32_t nc = (int32_t)cdef.size();
+	int32_t nr = (int32_t)((children.size() + nc - 1) / std::max(nc, 1));
 
 	w.resize(nc);
-	for (int c = 0; c < nc; ++c)
+	for (int32_t c = 0; c < nc; ++c)
 	{
 		if (cdef[c] == 0)
 		{
 			// Find widest child in this column.
 			w[c] = 0;
-			for (int r = 0; r < nr; ++r)
+			for (int32_t r = 0; r < nr; ++r)
 			{
-				int i = c + r * nc;
-				if (i < int(children.size()))
-					w[c] = std::max< int >(w[c], children[i]->getPreferedSize().cx);
+				int32_t i = c + r * nc;
+				if (i < (int32_t)children.size())
+					w[c] = std::max< int32_t >(w[c], children[i]->getPreferedSize().cx);
 			}
 		}
 		else
@@ -71,8 +71,8 @@ void calculate(
 	}
 
 	// Calculate occupied width by either child prefered size or absolute size.
-	int wt = 0;
-	int wrt = 0;
+	int32_t wt = 0;
+	int32_t wrt = 0;
 	for (int c = 0; c < nc; ++c)
 	{
 		if (w[c] > 0)
@@ -90,17 +90,17 @@ void calculate(
 	}
 
 	h.resize(nr);
-	for (int r = 0; r < nr; ++r)
+	for (int32_t r = 0; r < nr; ++r)
 	{
 		if (rdef[r % rdef.size()] == 0)
 		{
 			// Find highest child in this row.
 			h[r] = 0;
-			for (int c = 0; c < nc; ++c)
+			for (int32_t c = 0; c < nc; ++c)
 			{
-				int i = c + r * nc;
-				if (i < int(children.size()))
-					h[r] = std::max< int >(h[r], children[i]->getPreferedSize().cy);
+				int32_t i = c + r * nc;
+				if (i < (int32_t)children.size())
+					h[r] = std::max< int32_t >(h[r], children[i]->getPreferedSize().cy);
 			}
 		}
 		else
@@ -111,9 +111,9 @@ void calculate(
 	}
 
 	// Calculate occupied height by either child prefered size or absolute size.
-	int ht = 0;
-	int hrt = 0;
-	for (int r = 0; r < nr; ++r)
+	int32_t ht = 0;
+	int32_t hrt = 0;
+	for (int32_t r = 0; r < nr; ++r)
 	{
 		if (h[r] > 0)
 			ht += h[r];
@@ -123,14 +123,14 @@ void calculate(
 
 	// Fix relative heights.
 	ht = std::max(avail.cy - ht, 0);
-	for (int r = 0; r < nr; ++r)
+	for (int32_t r = 0; r < nr; ++r)
 	{
 		if (h[r] < 0)
 			h[r] = (ht * -h[r]) / hrt;
 	}
 }
 
-}
+		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.TableLayout", TableLayout, Layout)
 
@@ -148,8 +148,8 @@ bool TableLayout::fit(Widget* widget, const Size& bounds, Size& result)
 
 	result = Size(0, 0);
 
-	std::vector< Widget* > children;
-	for (Widget* child = widget->getFirstChild(); child != 0; child = child->getNextSibling())
+	childrenVector_t children;
+	for (Widget* child = widget->getFirstChild(); child != nullptr; child = child->getNextSibling())
 	{
 		if (child->acceptLayout())
 			children.push_back(child);
@@ -157,15 +157,15 @@ bool TableLayout::fit(Widget* widget, const Size& bounds, Size& result)
 	if (children.size() <= 0)
 		return false;
 
-	int nc = int(m_cdef.size());
-	int nr = int((children.size() + nc - 1) / std::max(nc, 1));
+	int32_t nc = (int32_t)m_cdef.size();
+	int32_t nr = (int32_t)((children.size() + nc - 1) / std::max(nc, 1));
 
-	std::vector< int > w;
-	std::vector< int > h;
+	dimensionVector_t w;
+	dimensionVector_t h;
 	calculate(bounds, m_cdef, m_rdef, children, w, h);
 
 	Point tl = inner.getTopLeft() + m_margin;
-	for (int32_t i = 0; i < int32_t(children.size()); ++i)
+	for (int32_t i = 0; i < (int32_t)children.size(); ++i)
 	{
 		int32_t c = i % std::max(nc, 1);
 		int32_t r = i / std::max(nc, 1);
@@ -199,8 +199,8 @@ void TableLayout::update(Widget* widget)
 {
 	Rect inner = widget->getInnerRect();
 
-	std::vector< Widget* > children;
-	for (Widget* child = widget->getFirstChild(); child != 0; child = child->getNextSibling())
+	childrenVector_t children;
+	for (Widget* child = widget->getFirstChild(); child != nullptr; child = child->getNextSibling())
 	{
 		if (child->acceptLayout())
 			children.push_back(child);
@@ -208,19 +208,19 @@ void TableLayout::update(Widget* widget)
 	if (children.size() <= 0)
 		return;
 
-	int nc = int(m_cdef.size());
-	int nr = int((children.size() + nc - 1) / std::max(nc, 1));
+	int32_t nc = (int32_t)m_cdef.size();
+	int32_t nr = (int32_t)((children.size() + nc - 1) / std::max(nc, 1));
 
 	Size avail = inner.getSize() - m_margin - m_margin - Size(m_pad.cx * (nc - 1), m_pad.cy * (nr - 1));
 
-	std::vector< int > w;
-	std::vector< int > h;
+	dimensionVector_t w;
+	dimensionVector_t h;
 	calculate(avail, m_cdef, m_rdef, children, w, h);
 
-	std::vector< WidgetRect > rects(children.size());
+	StaticVector< WidgetRect, 16 > rects(children.size());
 
 	Point tl = inner.getTopLeft() + m_margin;
-	for (int32_t i = 0; i < int32_t(children.size()); ++i)
+	for (int32_t i = 0; i < (int32_t)children.size(); ++i)
 	{
 		int32_t c = i % std::max(nc, 1);
 		int32_t r = i / std::max(nc, 1);
@@ -277,7 +277,7 @@ void TableLayout::update(Widget* widget)
 		}
 	}
 
-	widget->setChildRects(rects);
+	widget->setChildRects(rects.c_ptr(), rects.size());
 }
 
 	}

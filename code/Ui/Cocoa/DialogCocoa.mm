@@ -272,12 +272,12 @@ bool DialogCocoa::hitTest(const Point& pt) const
 	return false;
 }
 
-void DialogCocoa::setChildRects(const std::vector< IWidgetRect >& childRects)
+void DialogCocoa::setChildRects(const IWidgetRect* childRects, uint32_t count)
 {
-	for (std::vector< IWidgetRect >::const_iterator i = childRects.begin(); i != childRects.end(); ++i)
+	for (uint32_t i = 0; i < count; ++i)
 	{
-		if (i->widget)
-			i->widget->setRect(i->rect);
+		if (childRects[i].widget)
+			childRects[i].widget->setRect(childRects[i].rect);
 	}
 }
 

@@ -94,7 +94,7 @@ public:
 
 	virtual bool hitTest(const Point& pt) const override;
 
-	virtual void setChildRects(const std::vector< IWidgetRect >& childRects) override;
+	virtual void setChildRects(const IWidgetRect* childRects, uint32_t count) override;
 
 	virtual Size getMinimumSize() const override;
 

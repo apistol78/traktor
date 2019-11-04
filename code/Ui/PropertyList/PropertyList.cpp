@@ -437,7 +437,7 @@ void PropertyList::placeItems()
 	}
 
 	// Move all children at once.
-	setChildRects(childRects);
+	setChildRects(&childRects[0], childRects.size());
 }
 
 void PropertyList::eventScroll(ScrollEvent* event)
@@ -679,7 +679,7 @@ void PropertyList::eventPaint(PaintEvent* event)
 		rcItem = rcItem.offset(0, dpi96(c_propertyItemHeight));
 		++i;
 	}
-	while (i != propertyItems.end())
+	while (rcItem.top < rcInner.bottom && i != propertyItems.end())
 	{
 		Rect rcText(rcItem.left, rcItem.top, rcItem.left + m_separator, rcItem.bottom);
 		Rect rcValue(rcItem.left + m_separator + 1, rcItem.top, rcItem.right, rcItem.bottom);
