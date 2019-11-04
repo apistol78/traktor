@@ -14,8 +14,8 @@ namespace traktor
 		namespace
 		{
 
-typedef StaticVector< Widget*, 8 * 8 > childrenVector_t;
-typedef StaticVector< int32_t, 8 > dimensionVector_t;
+typedef StaticVector< Widget*, 16 * 16 > childrenVector_t;
+typedef StaticVector< int32_t, 16 > dimensionVector_t;
 
 void parseDefinition(const std::wstring& def, std::vector< int32_t >& out)
 {
