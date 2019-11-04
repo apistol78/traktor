@@ -24,123 +24,123 @@ public:
 
 	// IForm implementation
 
-	virtual bool create(IWidget* parent, const std::wstring& text, int width, int height, int style) T_OVERRIDE;
+	virtual bool create(IWidget* parent, const std::wstring& text, int width, int height, int style) override final;
 
-	virtual void setIcon(ISystemBitmap* icon) T_OVERRIDE;
+	virtual void setIcon(ISystemBitmap* icon) override final;
 
-	virtual void maximize() T_OVERRIDE;
+	virtual void maximize() override final;
 
-	virtual void minimize() T_OVERRIDE;
+	virtual void minimize() override final;
 
-	virtual void restore() T_OVERRIDE;
+	virtual void restore() override final;
 
-	virtual bool isMaximized() const T_OVERRIDE;
+	virtual bool isMaximized() const override final;
 
-	virtual bool isMinimized() const T_OVERRIDE;
+	virtual bool isMinimized() const override final;
 
-	virtual void hideProgress() T_OVERRIDE;
+	virtual void hideProgress() override final;
 
-	virtual void showProgress(int32_t current, int32_t total) T_OVERRIDE;
+	virtual void showProgress(int32_t current, int32_t total) override final;
 
 	// IWidget implementation
 
-	virtual void destroy() T_OVERRIDE;
+	virtual void destroy() override final;
 
-	virtual void setParent(IWidget* parent) T_OVERRIDE;
+	virtual void setParent(IWidget* parent) override final;
 
-	virtual void setText(const std::wstring& text) T_OVERRIDE;
+	virtual void setText(const std::wstring& text) override final;
 
-	virtual std::wstring getText() const T_OVERRIDE;
+	virtual std::wstring getText() const override final;
 
-	virtual void setForeground() T_OVERRIDE;
+	virtual void setForeground() override final;
 
-	virtual bool isForeground() const T_OVERRIDE;
+	virtual bool isForeground() const override final;
 
-	virtual void setVisible(bool visible) T_OVERRIDE;
+	virtual void setVisible(bool visible) override final;
 
-	virtual bool isVisible() const T_OVERRIDE;
+	virtual bool isVisible() const override final;
 
-	virtual void setEnable(bool enable) T_OVERRIDE;
+	virtual void setEnable(bool enable) override final;
 
-	virtual bool isEnable() const T_OVERRIDE;
+	virtual bool isEnable() const override final;
 
-	virtual bool hasFocus() const T_OVERRIDE;
+	virtual bool hasFocus() const override final;
 
-	virtual void setFocus() T_OVERRIDE;
+	virtual void setFocus() override final;
 
-	virtual bool hasCapture() const T_OVERRIDE;
+	virtual bool hasCapture() const override final;
 
-	virtual void setCapture() T_OVERRIDE;
+	virtual void setCapture() override final;
 
-	virtual void releaseCapture() T_OVERRIDE;
+	virtual void releaseCapture() override final;
 
-	virtual void startTimer(int interval, int id) T_OVERRIDE;
+	virtual void startTimer(int interval, int id) override final;
 
-	virtual void stopTimer(int id) T_OVERRIDE;
+	virtual void stopTimer(int id) override final;
 
-	virtual void setRect(const Rect& rect) T_OVERRIDE;
+	virtual void setRect(const Rect& rect) override final;
 
-	virtual Rect getRect() const T_OVERRIDE;
+	virtual Rect getRect() const override final;
 
-	virtual Rect getInnerRect() const T_OVERRIDE;
+	virtual Rect getInnerRect() const override final;
 
-	virtual Rect getNormalRect() const T_OVERRIDE;
+	virtual Rect getNormalRect() const override final;
 
-	virtual void setFont(const Font& font) T_OVERRIDE;
+	virtual void setFont(const Font& font) override final;
 
-	virtual Font getFont() const T_OVERRIDE;
+	virtual Font getFont() const override final;
 
-	virtual const IFontMetric* getFontMetric() const T_OVERRIDE;
+	virtual const IFontMetric* getFontMetric() const override final;
 
-	virtual void setCursor(Cursor cursor) T_OVERRIDE;
+	virtual void setCursor(Cursor cursor) override final;
 
-	virtual Point getMousePosition(bool relative) const T_OVERRIDE;
+	virtual Point getMousePosition(bool relative) const override final;
 
-	virtual Point screenToClient(const Point& pt) const T_OVERRIDE;
+	virtual Point screenToClient(const Point& pt) const override final;
 
-	virtual Point clientToScreen(const Point& pt) const T_OVERRIDE;
+	virtual Point clientToScreen(const Point& pt) const override final;
 
-	virtual bool hitTest(const Point& pt) const T_OVERRIDE;
+	virtual bool hitTest(const Point& pt) const override final;
 
-	virtual void setChildRects(const std::vector< IWidgetRect >& childRects) T_OVERRIDE;
+	virtual void setChildRects(const IWidgetRect* childRects, uint32_t count) override final;
 
-	virtual Size getMinimumSize() const T_OVERRIDE;
+	virtual Size getMinimumSize() const override final;
 
-	virtual Size getPreferedSize() const T_OVERRIDE;
+	virtual Size getPreferedSize() const override final;
 
-	virtual Size getMaximumSize() const T_OVERRIDE;
+	virtual Size getMaximumSize() const override final;
 
-	virtual void update(const Rect* rc, bool immediate) T_OVERRIDE;
+	virtual void update(const Rect* rc, bool immediate) override final;
 
-	virtual void* getInternalHandle() T_OVERRIDE;
+	virtual void* getInternalHandle() override final;
 
-	virtual SystemWindow getSystemWindow() T_OVERRIDE;
+	virtual SystemWindow getSystemWindow() override final;
 
 	// IFontMetric
 
-	virtual void getAscentAndDescent(int32_t& outAscent, int32_t& outDescent) const T_OVERRIDE T_FINAL;
+	virtual void getAscentAndDescent(int32_t& outAscent, int32_t& outDescent) const override final T_FINAL;
 
-	virtual int32_t getAdvance(wchar_t ch, wchar_t next) const T_OVERRIDE T_FINAL;
+	virtual int32_t getAdvance(wchar_t ch, wchar_t next) const override final T_FINAL;
 
-	virtual int32_t getLineSpacing() const T_OVERRIDE T_FINAL;
+	virtual int32_t getLineSpacing() const override final T_FINAL;
 
-	virtual Size getExtent(const std::wstring& text) const T_OVERRIDE T_FINAL;
+	virtual Size getExtent(const std::wstring& text) const override final T_FINAL;
 
 	// INSWindowEventsCallback
 
-	virtual void event_windowDidMove() T_OVERRIDE;
+	virtual void event_windowDidMove() override final;
 
-	virtual void event_windowDidResize() T_OVERRIDE;
+	virtual void event_windowDidResize() override final;
 
-	virtual bool event_windowShouldClose() T_OVERRIDE;
+	virtual bool event_windowShouldClose() override final;
 
-	virtual void event_windowDidBecomeKey() T_OVERRIDE;
+	virtual void event_windowDidBecomeKey() override final;
 
-	virtual void event_windowDidResignKey() T_OVERRIDE;
+	virtual void event_windowDidResignKey() override final;
 
-	virtual void event_windowDidBecomeMain() T_OVERRIDE;
+	virtual void event_windowDidBecomeMain() override final;
 
-	virtual void event_windowDidResignMain() T_OVERRIDE;
+	virtual void event_windowDidResignMain() override final;
 
 private:
 	EventSubject* m_owner;

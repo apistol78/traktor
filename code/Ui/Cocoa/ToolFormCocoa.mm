@@ -298,12 +298,12 @@ bool ToolFormCocoa::hitTest(const Point& pt) const
 	return false;
 }
 
-void ToolFormCocoa::setChildRects(const std::vector< IWidgetRect >& childRects)
+void ToolFormCocoa::setChildRects(const IWidgetRect* childRects, uint32_t count)
 {
-	for (const auto& childRect : childRects)
+	for (uint32_t i = 0; i < count; ++i)
 	{
-		if (childRect.widget)
-			childRect.widget->setRect(childRect.rect);
+		if (childRects[i].widget)
+			childRects[i].widget->setRect(childRects[i].rect);
 	}
 }
 

@@ -364,13 +364,26 @@ void CanvasGdiPlusWin32::drawLine(int x1, int y1, int x2, int y2)
 
 void CanvasGdiPlusWin32::drawLines(const Point* pnts, int npnts)
 {
-	std::vector< Gdiplus::Point > points(npnts);
-	for (int i = 0; i < npnts; ++i)
+	if (npnts <= 32)
 	{
-		points[i].X = pnts[i].x;
-		points[i].Y = pnts[i].y;
+		StaticVector< Gdiplus::Point, 32 > points(npnts);
+		for (int i = 0; i < npnts; ++i)
+		{
+			points[i].X = pnts[i].x;
+			points[i].Y = pnts[i].y;
+		}
+		m_graphics->DrawLines(&m_pen, &points[0], (INT)points.size());
 	}
-	m_graphics->DrawLines(&m_pen, &points[0], (INT)points.size());
+	else
+	{
+		std::vector< Gdiplus::Point > points(npnts);
+		for (int i = 0; i < npnts; ++i)
+		{
+			points[i].X = pnts[i].x;
+			points[i].Y = pnts[i].y;
+		}
+		m_graphics->DrawLines(&m_pen, &points[0], (INT)points.size());
+	}
 }
 
 void CanvasGdiPlusWin32::fillCircle(int x, int y, float radius)
@@ -445,24 +458,50 @@ void CanvasGdiPlusWin32::drawRoundRect(const Rect& rc, int radius)
 
 void CanvasGdiPlusWin32::drawPolygon(const Point* pnts, int count)
 {
-	std::vector< Gdiplus::Point > points(count);
-	for (int i = 0; i < count; ++i)
+	if (count <= 32)
 	{
-		points[i].X = pnts[i].x;
-		points[i].Y = pnts[i].y;
+		StaticVector< Gdiplus::Point, 32 > points(count);
+		for (int i = 0; i < count; ++i)
+		{
+			points[i].X = pnts[i].x;
+			points[i].Y = pnts[i].y;
+		}
+		m_graphics->DrawPolygon(&m_pen, &points[0], (INT)points.size());
 	}
-	m_graphics->DrawPolygon(&m_pen, &points[0], (INT)points.size());
+	else
+	{
+		std::vector< Gdiplus::Point > points(count);
+		for (int i = 0; i < count; ++i)
+		{
+			points[i].X = pnts[i].x;
+			points[i].Y = pnts[i].y;
+		}
+		m_graphics->DrawPolygon(&m_pen, &points[0], (INT)points.size());
+	}
 }
 
 void CanvasGdiPlusWin32::fillPolygon(const Point* pnts, int count)
 {
-	std::vector< Gdiplus::Point > points(count);
-	for (int i = 0; i < count; ++i)
+	if (count <= 32)
 	{
-		points[i].X = pnts[i].x;
-		points[i].Y = pnts[i].y;
+		StaticVector< Gdiplus::Point, 32 > points(count);
+		for (int i = 0; i < count; ++i)
+		{
+			points[i].X = pnts[i].x;
+			points[i].Y = pnts[i].y;
+		}
+		m_graphics->FillPolygon(&m_brush, &points[0], (INT)points.size());
 	}
-	m_graphics->FillPolygon(&m_brush, &points[0], (INT)points.size());
+	else
+	{
+		std::vector< Gdiplus::Point > points(count);
+		for (int i = 0; i < count; ++i)
+		{
+			points[i].X = pnts[i].x;
+			points[i].Y = pnts[i].y;
+		}
+		m_graphics->FillPolygon(&m_brush, &points[0], (INT)points.size());
+	}	
 }
 
 void CanvasGdiPlusWin32::drawBitmap(const Point& dstAt, const Point& srcAt, const Size& size, ISystemBitmap* bitmap, uint32_t blendMode)

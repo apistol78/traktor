@@ -112,7 +112,7 @@ void Dock::update(const Rect* rc, bool immediate)
 	m_pane->update(innerRect, widgetRects);
 
 	// Update child widgets.
-	setChildRects(widgetRects);
+	setChildRects(&widgetRects[0], widgetRects.size());
 
 	// Continue updating widget.
 	Widget::update(rc, immediate);
