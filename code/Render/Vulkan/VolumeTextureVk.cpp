@@ -141,7 +141,9 @@ bool VolumeTextureVk::create(
 			VK_IMAGE_LAYOUT_UNDEFINED,
 			VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
 			0,
-			1
+			1,
+			0,
+			desc.depth
 		);
 
 		// Copy staging buffer into texture.
@@ -188,7 +190,9 @@ bool VolumeTextureVk::create(
 			VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
 			VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
 			0,
-			1
+			1,
+			0,
+			desc.depth
 		);
 
 		// Free staging buffer.

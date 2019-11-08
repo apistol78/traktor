@@ -1,3 +1,5 @@
+#pragma optimize( "", off )
+
 #include <cstring>
 #include <limits>
 #include "Core/Math/Matrix44.h"
@@ -218,6 +220,16 @@ bool ProgramVk::create(const ProgramResourceVk* resource, const wchar_t* const t
 
 		if (vkCreateSampler(m_logicalDevice, &sci, nullptr, &sampler) != VK_SUCCESS)
 			return false;
+
+#if !defined(__ANDROID__) && !defined(__APPLE__)
+		// Set debug name of sampler.
+		VkDebugUtilsObjectNameInfoEXT ni = {};
+		ni.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_OBJECT_NAME_INFO_EXT;
+		ni.objectType = VK_OBJECT_TYPE_SAMPLER;
+		ni.objectHandle = (uint64_t)sampler;
+		ni.pObjectName = "Sampler";
+		vkSetDebugUtilsObjectNameEXT(m_logicalDevice, &ni);
+#endif
 
 		m_samplers.push_back({ resourceSampler.binding, sampler });
 	}

@@ -313,7 +313,18 @@ void endSingleTimeCommands(VkDevice device, VkCommandPool commandPool, VkCommand
 	vkFreeCommandBuffers(device, commandPool, 1, &commandBuffer);
 }
 
-bool changeImageLayout(VkDevice device, VkCommandPool commandPool, VkQueue queue, VkImage image, VkImageLayout oldLayout, VkImageLayout newLayout, int32_t mipLevel, int32_t mipCount)
+bool changeImageLayout(
+	VkDevice device,
+	VkCommandPool commandPool,
+	VkQueue queue,
+	VkImage image,
+	VkImageLayout oldLayout,
+	VkImageLayout newLayout,
+	int32_t mipLevel,
+	int32_t mipCount,
+	int32_t layer,
+	int32_t layerCount
+)
 {
 	auto commandBuffer = beginSingleTimeCommands(device, commandPool);
 
@@ -327,8 +338,8 @@ bool changeImageLayout(VkDevice device, VkCommandPool commandPool, VkQueue queue
 	imb.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
 	imb.subresourceRange.baseMipLevel = mipLevel;
 	imb.subresourceRange.levelCount = mipCount;
-	imb.subresourceRange.baseArrayLayer = 0;
-	imb.subresourceRange.layerCount = 1;
+	imb.subresourceRange.baseArrayLayer = layer;
+	imb.subresourceRange.layerCount = layerCount;
 	imb.srcAccessMask = 0;
 	imb.dstAccessMask = 0;
 

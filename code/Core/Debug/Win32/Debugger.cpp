@@ -119,7 +119,7 @@ void Debugger::assertionFailed(const char* const expression, const char* const f
 
 bool Debugger::isDebuggerAttached() const
 {
-	return false;
+	return IsDebuggerPresent() != FALSE;
 }
 
 void Debugger::breakDebugger()

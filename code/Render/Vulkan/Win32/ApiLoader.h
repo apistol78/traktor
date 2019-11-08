@@ -86,6 +86,8 @@ extern PFN_vkDestroyShaderModule vkDestroyShaderModule;
 extern PFN_vkDestroyDescriptorSetLayout vkDestroyDescriptorSetLayout;
 extern PFN_vkDestroyPipelineLayout vkDestroyPipelineLayout;
 extern PFN_vkDestroySampler vkDestroySampler;
+extern PFN_vkDestroyCommandPool vkDestroyCommandPool;
+extern PFN_vkDestroyDescriptorPool vkDestroyDescriptorPool;
 
 // Win32 Vulkan extensions.
 extern PFN_vkCreateWin32SurfaceKHR vkCreateWin32SurfaceKHR;

@@ -14,9 +14,9 @@ class UniformBufferPoolVk : public Object
 	T_RTTI_CLASS;
 
 public:
-	enum { MaxPendingFrames = 4 };
+	enum { MaxPendingFrames = 8 };
 
-	UniformBufferPoolVk(VmaAllocator allocator);
+	UniformBufferPoolVk(VkDevice logicalDevice, VmaAllocator allocator);
 
 	bool acquire(
 		uint32_t size,
@@ -34,6 +34,7 @@ private:
 		VmaAllocation allocation;
 	};
 
+	VkDevice m_logicalDevice;
 	VmaAllocator m_allocator;
 	AlignedVector< BufferChain > m_free;
 	AlignedVector< BufferChain > m_released[MaxPendingFrames];

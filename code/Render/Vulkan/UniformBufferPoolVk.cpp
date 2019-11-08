@@ -10,8 +10,9 @@ namespace traktor
 	
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.UniformBufferPoolVk", UniformBufferPoolVk, Object)
 
-UniformBufferPoolVk::UniformBufferPoolVk(VmaAllocator allocator)
-:	m_allocator(allocator)
+UniformBufferPoolVk::UniformBufferPoolVk(VkDevice logicalDevice, VmaAllocator allocator)
+:	m_logicalDevice(logicalDevice)
+,	m_allocator(allocator)
 ,	m_counter(0)
 {
 }
@@ -54,7 +55,17 @@ bool UniformBufferPoolVk::acquire(
 		aci.usage = VMA_MEMORY_USAGE_CPU_TO_GPU;
 
 		if (vmaCreateBuffer(m_allocator, &bci, &aci, &inoutBuffer, &inoutAllocation, nullptr) != VK_SUCCESS)
-			return false;	
+			return false;
+
+#if !defined(__ANDROID__) && !defined(__APPLE__)
+		// Set debug name of uniform buffer.
+		VkDebugUtilsObjectNameInfoEXT ni = {};
+		ni.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_OBJECT_NAME_INFO_EXT;
+		ni.objectType = VK_OBJECT_TYPE_BUFFER;
+		ni.objectHandle = (uint64_t)inoutBuffer;
+		ni.pObjectName = "Uniform buffer";
+		vkSetDebugUtilsObjectNameEXT(m_logicalDevice, &ni);
+#endif
 	}
 
 	return true;

@@ -146,7 +146,9 @@ bool SimpleTextureVk::create(
 			VK_IMAGE_LAYOUT_UNDEFINED,
 			VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
 			0,
-			desc.mipCount
+			desc.mipCount,
+			0,
+			1
 		);
 
 		// Copy staging buffer into texture.
@@ -193,7 +195,9 @@ bool SimpleTextureVk::create(
 			VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
 			VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
 			0,
-			desc.mipCount
+			desc.mipCount,
+			0,
+			1
 		);
 
 		// Free staging buffer.
