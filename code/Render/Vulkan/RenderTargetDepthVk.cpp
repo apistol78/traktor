@@ -15,11 +15,15 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderTargetDepthVk", RenderTargetDepthV
 RenderTargetDepthVk::RenderTargetDepthVk(
 	VkPhysicalDevice physicalDevice,
 	VkDevice logicalDevice,
-	VmaAllocator allocator
+	VmaAllocator allocator,
+	VkCommandPool setupCommandPool,
+	VkQueue setupQueue
 )
 :	m_physicalDevice(physicalDevice)
 ,	m_logicalDevice(logicalDevice)
 ,	m_allocator(allocator)
+,	m_setupCommandPool(setupCommandPool)
+,	m_setupQueue(setupQueue)
 ,	m_format(VK_FORMAT_UNDEFINED)
 ,	m_image(0)
 ,	m_allocation(0)
@@ -66,6 +70,22 @@ bool RenderTargetDepthVk::createPrimary(int32_t width, int32_t height, VkFormat 
 	ni.pObjectName = tag ? wstombs(tag).c_str() : "RenderTargetVk";
 	vkSetDebugUtilsObjectNameEXT(m_logicalDevice, &ni);
 #endif
+
+	// Prepare for target.
+	VkCommandBuffer commandBuffer = beginSingleTimeCommands(
+		m_logicalDevice,
+		m_setupCommandPool
+	);
+
+	prepareAsTarget(commandBuffer);
+
+	endSingleTimeCommands(
+		m_logicalDevice,
+		m_setupCommandPool,
+		commandBuffer,
+		m_setupQueue
+	);
+
 	return true;
 }
 
@@ -85,9 +105,9 @@ bool RenderTargetDepthVk::create(const RenderTargetSetCreateDesc& setDesc, const
 	imageCreateInfo.samples = VK_SAMPLE_COUNT_1_BIT;
 	imageCreateInfo.tiling = VK_IMAGE_TILING_OPTIMAL;
 	if (setDesc.usingDepthStencilAsTexture)
-		imageCreateInfo.usage = VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT;
+		imageCreateInfo.usage = VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT;
 	else
-		imageCreateInfo.usage = VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT;
+		imageCreateInfo.usage = VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT;
 	imageCreateInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
 	imageCreateInfo.queueFamilyIndexCount = 0;
 	imageCreateInfo.pQueueFamilyIndices = nullptr;
@@ -116,6 +136,56 @@ bool RenderTargetDepthVk::create(const RenderTargetSetCreateDesc& setDesc, const
 		return false;
 	}
 
+	if (setDesc.usingDepthStencilAsTexture)
+	{
+		// Initially clear render target to a known state.
+		changeImageLayout(
+			m_logicalDevice,
+			m_setupCommandPool,
+			m_setupQueue,
+			m_image,
+			VK_IMAGE_LAYOUT_UNDEFINED,
+			VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
+			0,
+			1,
+			0,
+			1,
+			VK_IMAGE_ASPECT_DEPTH_BIT
+		);
+
+		VkCommandBuffer commandBuffer = beginSingleTimeCommands(
+			m_logicalDevice,
+			m_setupCommandPool
+		);
+
+		VkClearDepthStencilValue cdsv = { 0 };
+		cdsv.depth = 0.0f;
+		cdsv.stencil = 0;
+
+		VkImageSubresourceRange isr = {};
+		isr.aspectMask = VK_IMAGE_ASPECT_DEPTH_BIT;
+		isr.baseMipLevel = 0;
+		isr.levelCount = 1;
+		isr.baseArrayLayer = 0;
+		isr.layerCount = 1;
+
+		vkCmdClearDepthStencilImage(
+			commandBuffer,
+			m_image,
+			VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
+			&cdsv,
+			1,
+			&isr
+		);
+
+		endSingleTimeCommands(
+			m_logicalDevice,
+			m_setupCommandPool,
+			commandBuffer,
+			m_setupQueue
+		);
+	}
+
 	m_format = imageCreateInfo.format;
 	m_width = setDesc.width;
 	m_height = setDesc.height;
@@ -129,6 +199,22 @@ bool RenderTargetDepthVk::create(const RenderTargetSetCreateDesc& setDesc, const
 	ni.pObjectName = tag ? wstombs(tag).c_str() : "RenderTargetDepthVk";
 	vkSetDebugUtilsObjectNameEXT(m_logicalDevice, &ni);
 #endif
+
+	// Prepare for target.
+	VkCommandBuffer commandBuffer = beginSingleTimeCommands(
+		m_logicalDevice,
+		m_setupCommandPool
+	);
+
+	prepareAsTarget(commandBuffer);
+
+	endSingleTimeCommands(
+		m_logicalDevice,
+		m_setupCommandPool,
+		commandBuffer,
+		m_setupQueue
+	);
+
 	return true;
 }
 

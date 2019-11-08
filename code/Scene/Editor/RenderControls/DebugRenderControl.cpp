@@ -228,6 +228,9 @@ void DebugRenderControl::eventPaint(ui::PaintEvent* event)
 
 			for (uint32_t i = 0; i < debugTargets.size(); ++i)
 			{
+				if (!debugTargets[i].texture)
+					continue;
+
 				float ox =  float(i % size) * 2.2f;
 				float oy = -float(i / size) * 2.2f;
 
@@ -261,6 +264,9 @@ void DebugRenderControl::eventPaint(ui::PaintEvent* event)
 		int32_t size = int32_t(std::sqrt(float(debugTargets.size())) + 0.5f);
 		for (uint32_t i = 0; i < debugTargets.size(); ++i)
 		{
+			if (!debugTargets[i].texture)
+				continue;
+
 			float ox =  float(i % size) * 2.2f;
 			float oy = -float(i / size) * 2.2f;
 

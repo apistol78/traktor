@@ -125,7 +125,7 @@ bool VolumeTextureVk::create(
 		ivci.components = { VK_COMPONENT_SWIZZLE_R, VK_COMPONENT_SWIZZLE_G, VK_COMPONENT_SWIZZLE_B, VK_COMPONENT_SWIZZLE_A };
 		ivci.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
 		ivci.subresourceRange.baseMipLevel = 0;
-		ivci.subresourceRange.levelCount = 1;
+		ivci.subresourceRange.levelCount = desc.mipCount;
 		ivci.subresourceRange.baseArrayLayer = 0;
 		ivci.subresourceRange.layerCount = 1;
 
@@ -143,15 +143,16 @@ bool VolumeTextureVk::create(
 			0,
 			1,
 			0,
-			desc.depth
+			1,
+			VK_IMAGE_ASPECT_COLOR_BIT
 		);
-
-		// Copy staging buffer into texture.
-		VkCommandBuffer commandBuffer = beginSingleTimeCommands(device, commandPool);
 
 		uint32_t offset = 0;
 		for (int32_t slice = 0; slice < desc.depth; ++slice)
 		{
+			// Copy staging buffer into texture.
+			VkCommandBuffer commandBuffer = beginSingleTimeCommands(device, commandPool);
+
 			uint32_t mipWidth = getTextureMipSize(desc.width, 0);
 			uint32_t mipHeight = getTextureMipSize(desc.height, 0);
 			uint32_t mipSize = getTextureMipPitch(desc.format, desc.width, desc.height, 0);
@@ -176,10 +177,9 @@ bool VolumeTextureVk::create(
 				&region
 			);
 
+			endSingleTimeCommands(device, commandPool, commandBuffer, queue);
 			offset += mipSize;
 		}
-
-		endSingleTimeCommands(device, commandPool, commandBuffer, queue);
 
 		// Change layout of texture to optimal sampling.
 		changeImageLayout(
@@ -192,7 +192,8 @@ bool VolumeTextureVk::create(
 			0,
 			1,
 			0,
-			desc.depth
+			1,
+			VK_IMAGE_ASPECT_COLOR_BIT
 		);
 
 		// Free staging buffer.

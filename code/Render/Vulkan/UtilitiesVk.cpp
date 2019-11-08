@@ -323,7 +323,8 @@ bool changeImageLayout(
 	int32_t mipLevel,
 	int32_t mipCount,
 	int32_t layer,
-	int32_t layerCount
+	int32_t layerCount,
+	uint32_t aspect
 )
 {
 	auto commandBuffer = beginSingleTimeCommands(device, commandPool);
@@ -335,7 +336,7 @@ bool changeImageLayout(
 	imb.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
 	imb.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
 	imb.image = image;
-	imb.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+	imb.subresourceRange.aspectMask = aspect; //VK_IMAGE_ASPECT_COLOR_BIT;
 	imb.subresourceRange.baseMipLevel = mipLevel;
 	imb.subresourceRange.levelCount = mipCount;
 	imb.subresourceRange.baseArrayLayer = layer;

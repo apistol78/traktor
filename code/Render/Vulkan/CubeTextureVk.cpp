@@ -224,7 +224,8 @@ void CubeTextureVk::unlock(int32_t side, int32_t level)
 		level,
 		1,
 		side,
-		1
+		1,
+		VK_IMAGE_ASPECT_COLOR_BIT
 	);
 
 	// Copy staging buffer into texture.
@@ -273,7 +274,8 @@ void CubeTextureVk::unlock(int32_t side, int32_t level)
 		level,
 		1,
 		side,
-		1
+		1,
+		VK_IMAGE_ASPECT_COLOR_BIT
 	);
 
 	// Free staging buffer.

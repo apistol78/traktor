@@ -148,7 +148,8 @@ bool SimpleTextureVk::create(
 			0,
 			desc.mipCount,
 			0,
-			1
+			1,
+			VK_IMAGE_ASPECT_COLOR_BIT
 		);
 
 		// Copy staging buffer into texture.
@@ -197,7 +198,8 @@ bool SimpleTextureVk::create(
 			0,
 			desc.mipCount,
 			0,
-			1
+			1,
+			VK_IMAGE_ASPECT_COLOR_BIT
 		);
 
 		// Free staging buffer.
