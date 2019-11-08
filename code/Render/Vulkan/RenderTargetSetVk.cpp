@@ -46,11 +46,11 @@ RenderTargetSetVk::~RenderTargetSetVk()
 bool RenderTargetSetVk::createPrimary(int32_t width, int32_t height, VkFormat colorFormat, VkImage colorImage, VkFormat depthFormat, VkImage depthImage, const wchar_t* const tag)
 {
 	m_colorTargets.resize(1);
-	m_colorTargets[0] = new RenderTargetVk(m_physicalDevice, m_logicalDevice, m_allocator);
+	m_colorTargets[0] = new RenderTargetVk(m_physicalDevice, m_logicalDevice, m_allocator, m_setupCommandPool, m_setupQueue);
 	if (!m_colorTargets[0]->createPrimary(width, height, colorFormat, colorImage, tag))
 		return false;
 
-	m_depthTarget = new RenderTargetDepthVk(m_physicalDevice, m_logicalDevice, m_allocator);
+	m_depthTarget = new RenderTargetDepthVk(m_physicalDevice, m_logicalDevice, m_allocator, m_setupCommandPool, m_setupQueue);
 	if (!m_depthTarget->createPrimary(width, height, depthFormat, depthImage, tag))
 		return false;
 
@@ -76,14 +76,14 @@ bool RenderTargetSetVk::create(const RenderTargetSetCreateDesc& setDesc, const w
 	m_colorTargets.resize(setDesc.count);
 	for (int32_t i = 0; i < setDesc.count; ++i)
 	{
-		m_colorTargets[i] = new RenderTargetVk(m_physicalDevice, m_logicalDevice, m_allocator);
+		m_colorTargets[i] = new RenderTargetVk(m_physicalDevice, m_logicalDevice, m_allocator, m_setupCommandPool, m_setupQueue);
 		if (!m_colorTargets[i]->create(setDesc, setDesc.targets[i], tag))
 			return false;
 	}
 
 	if (setDesc.createDepthStencil)
 	{
-		m_depthTarget = new RenderTargetDepthVk(m_physicalDevice, m_logicalDevice, m_allocator);
+		m_depthTarget = new RenderTargetDepthVk(m_physicalDevice, m_logicalDevice, m_allocator, m_setupCommandPool, m_setupQueue);
 		if (!m_depthTarget->create(setDesc, tag))
 			return false;
 	}
@@ -196,7 +196,8 @@ bool RenderTargetSetVk::read(int32_t index, void* buffer) const
 		0,
 		1,
 		0,
-		1
+		1,
+		VK_IMAGE_ASPECT_COLOR_BIT
 	);
 
 	// Convert target for optimal read.
@@ -237,7 +238,8 @@ bool RenderTargetSetVk::read(int32_t index, void* buffer) const
 		0,
 		1,
 		0,
-		1
+		1,
+		VK_IMAGE_ASPECT_COLOR_BIT
 	);
 
 	// Get information about image.

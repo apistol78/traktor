@@ -21,7 +21,9 @@ public:
 	RenderTargetDepthVk(
 		VkPhysicalDevice physicalDevice,
 		VkDevice logicalDevice,
-		VmaAllocator allocator
+		VmaAllocator allocator,
+		VkCommandPool setupCommandPool,
+		VkQueue setupQueue
 	);
 
 	virtual ~RenderTargetDepthVk();
@@ -62,6 +64,8 @@ private:
 	VkPhysicalDevice m_physicalDevice;
 	VkDevice m_logicalDevice;
 	VmaAllocator m_allocator;
+	VkCommandPool m_setupCommandPool;
+	VkQueue m_setupQueue;
 	VkFormat m_format;
 	VkImage m_image;
 	VmaAllocation m_allocation;

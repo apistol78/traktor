@@ -40,7 +40,8 @@ bool changeImageLayout(
 	int32_t mipLevel,
 	int32_t mipCount,
 	int32_t layer,
-	int32_t layerCount
+	int32_t layerCount,
+	uint32_t aspect
 );
 
 const wchar_t* getHumanResult(VkResult result);
