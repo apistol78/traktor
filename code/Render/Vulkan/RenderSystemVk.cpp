@@ -38,6 +38,8 @@
 #	include "Render/Vulkan/iOS/Utilities.h"
 #endif
 
+#define T_ENABLE_VALIDATION 1
+
 namespace traktor
 {
 	namespace render
@@ -45,7 +47,7 @@ namespace traktor
 		namespace
 		{
 
-const char* c_validationLayerNames[] = { "VK_LAYER_LUNARG_standard_validation", nullptr };
+const char* c_validationLayerNames[] = { "VK_LAYER_KHRONOS_validation", nullptr };
 #if defined(_WIN32)
 const char* c_extensions[] = { "VK_KHR_surface", "VK_KHR_win32_surface", "VK_EXT_debug_utils" };
 #elif defined(__LINUX__)
@@ -127,7 +129,7 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
 	vkEnumerateInstanceLayerProperties(&layerCount, layersAvailable.ptr());
 
 	AlignedVector< const char* > validationLayers;
-#if defined(_DEBUG)
+#if T_ENABLE_VALIDATION
 	for (uint32_t i = 0; i < layerCount; ++i)
 	{
 		bool found = false;
@@ -172,7 +174,7 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
 	}
 
 #if !defined(__ANDROID__)
-#	if 0
+#	if T_ENABLE_VALIDATION
 	// Setup debug port callback.
 	VkDebugUtilsMessengerCreateInfoEXT dumci = {};
 	dumci.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT;
