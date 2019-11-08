@@ -437,7 +437,8 @@ void PropertyList::placeItems()
 	}
 
 	// Move all children at once.
-	setChildRects(&childRects[0], childRects.size());
+	if (!childRects.empty())
+		setChildRects(&childRects[0], childRects.size());
 }
 
 void PropertyList::eventScroll(ScrollEvent* event)

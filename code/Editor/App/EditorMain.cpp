@@ -92,6 +92,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR szCmdLine, int)
 
 	Ref< traktor::IStream > logFile;
 #if !defined(_DEBUG)
+	if (!Debugger::getInstance().isDebuggerAttached())
 	{
 		RefArray< File > logs;
 		FileSystem::getInstance().find(L"Editor_*.log", logs);

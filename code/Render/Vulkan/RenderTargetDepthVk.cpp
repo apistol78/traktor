@@ -76,11 +76,7 @@ bool RenderTargetDepthVk::create(const RenderTargetSetCreateDesc& setDesc, const
 	VkImageCreateInfo imageCreateInfo = {};
 	imageCreateInfo.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
 	imageCreateInfo.imageType = VK_IMAGE_TYPE_2D;
-#if defined(__IOS__)
 	imageCreateInfo.format = VK_FORMAT_D32_SFLOAT;
-#else
-	imageCreateInfo.format = VK_FORMAT_D16_UNORM; // VK_FORMAT_D24_UNORM_S8_UINT;
-#endif
 	imageCreateInfo.extent.width = setDesc.width;
 	imageCreateInfo.extent.height = setDesc.height;
 	imageCreateInfo.extent.depth = 1;

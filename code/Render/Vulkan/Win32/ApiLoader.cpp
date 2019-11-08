@@ -89,6 +89,8 @@ PFN_vkDestroyShaderModule vkDestroyShaderModule = nullptr;
 PFN_vkDestroyDescriptorSetLayout vkDestroyDescriptorSetLayout = nullptr;
 PFN_vkDestroyPipelineLayout vkDestroyPipelineLayout = nullptr;
 PFN_vkDestroySampler vkDestroySampler = nullptr;
+PFN_vkDestroyCommandPool vkDestroyCommandPool = nullptr;
+PFN_vkDestroyDescriptorPool vkDestroyDescriptorPool = nullptr;
 
 PFN_vkCreateWin32SurfaceKHR vkCreateWin32SurfaceKHR = nullptr;
 PFN_vkGetPhysicalDeviceSurfaceSupportKHR vkGetPhysicalDeviceSurfaceSupportKHR = nullptr;
@@ -650,6 +652,20 @@ bool initializeVulkanApi()
 		log::error << L"Failed to resolve Vulkan entry point \"vkDestroySampler\"." << Endl;
 		return false;
 	}			
+
+	vkDestroyCommandPool = (PFN_vkDestroyCommandPool)GetProcAddress(s_hVulkanModule, "vkDestroyCommandPool");
+	if (vkDestroyCommandPool == nullptr)
+	{
+		log::error << L"Failed to resolve Vulkan entry point \"vkDestroyCommandPool\"." << Endl;
+		return false;
+	}
+
+	vkDestroyDescriptorPool = (PFN_vkDestroyDescriptorPool)GetProcAddress(s_hVulkanModule, "vkDestroyDescriptorPool");
+	if (vkDestroyDescriptorPool == nullptr)
+	{
+		log::error << L"Failed to resolve Vulkan entry point \"vkDestroyDescriptorPool\"." << Endl;
+		return false;
+	}
 
 	return true;
 }

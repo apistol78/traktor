@@ -122,6 +122,28 @@ bool CubeTextureVk::create(const wchar_t* const tag)
 			}
 		}
 	}
+	else
+	{
+		ITexture::Lock lock;
+		for (int32_t side = 0; side < 6; ++side)
+		{
+			for (int32_t mip = 0; mip < m_desc.mipCount; ++mip)
+			{
+				uint32_t mipSize = getTextureMipPitch(m_desc.format, m_desc.side, m_desc.side, mip);
+
+				if (!this->lock(side, mip, lock))
+					return false;
+
+				std::memset(
+					lock.bits,
+					0,
+					mipSize
+				);
+
+				unlock(side, mip);
+			}
+		}	
+	}
 
 	return true;
 }
@@ -200,6 +222,8 @@ void CubeTextureVk::unlock(int32_t side, int32_t level)
 		VK_IMAGE_LAYOUT_UNDEFINED,
 		VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
 		level,
+		1,
+		side,
 		1
 	);
 
@@ -247,6 +271,8 @@ void CubeTextureVk::unlock(int32_t side, int32_t level)
 		VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
 		VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
 		level,
+		1,
+		side,
 		1
 	);
 

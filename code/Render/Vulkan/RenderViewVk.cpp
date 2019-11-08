@@ -150,6 +150,12 @@ bool RenderViewVk::create(const RenderViewEmbeddedDesc& desc)
 		log::error << L"Failed to create Vulkan; unable to create Win32 renderable surface (" << getHumanResult(result) << L")." << Endl;
 		return false;
 	}
+
+	RECT rc;
+	GetClientRect(desc.syswin.hWnd, &rc);
+	width = (int32_t)(rc.right - rc.left);
+	height = (int32_t)(rc.bottom - rc.top);
+
 #elif defined(__LINUX__)
 	VkXlibSurfaceCreateInfoKHR sci = {};
 	sci.sType = VK_STRUCTURE_TYPE_XLIB_SURFACE_CREATE_INFO_KHR;
@@ -268,6 +274,17 @@ bool RenderViewVk::reset(int32_t width, int32_t height)
 {
 	vkDeviceWaitIdle(m_logicalDevice);
 
+	// Destroy sync primitives.
+	vkDestroySemaphore(m_logicalDevice, m_presentCompleteSemaphore, nullptr);
+	m_presentCompleteSemaphore = 0;
+
+	vkDestroyFence(m_logicalDevice, m_renderFence, nullptr);
+	m_renderFence = 0;
+
+	// Destroy descriptor pool.
+	vkDestroyDescriptorPool(m_logicalDevice, m_descriptorPool, nullptr);
+	m_descriptorPool = 0;
+
 	// Destroy primary targets.
 	for (auto primaryTarget : m_primaryTargets)
 		primaryTarget->destroy();
@@ -278,6 +295,30 @@ bool RenderViewVk::reset(int32_t width, int32_t height)
 	{
 		vkDestroySwapchainKHR(m_logicalDevice, m_swapChain, 0);	
 		m_swapChain = 0;
+	}
+
+	// Free command buffers.
+	if (m_computeCommandBuffer != 0)
+	{
+		vkFreeCommandBuffers(m_logicalDevice, m_computeCommandPool, 1, &m_computeCommandBuffer);
+		m_computeCommandBuffer = 0;
+	}
+	if (m_graphicsCommandBuffer != 0)
+	{
+		vkFreeCommandBuffers(m_logicalDevice, m_graphicsCommandPool, 1, &m_graphicsCommandBuffer);
+		m_graphicsCommandBuffer = 0;
+	}
+
+	// Free command pools.
+	if (m_computeCommandPool != 0)
+	{
+		vkDestroyCommandPool(m_logicalDevice, m_computeCommandPool, nullptr);
+		m_computeCommandPool = 0;
+	}
+	if (m_graphicsCommandPool != 0)
+	{
+		vkDestroyCommandPool(m_logicalDevice, m_graphicsCommandPool, nullptr);
+		m_graphicsCommandPool = 0;
 	}
 
 	if (create(width, height))
@@ -394,6 +435,11 @@ bool RenderViewVk::begin(
 	const Clear* clear
 )
 {
+	// Might reach here with a non-created instance, pending reset, so
+	// we need to make sure we have an instance first.
+	if (m_primaryTargets.empty())
+		return false;
+
 	// Ensure all primary targets are "discarded", cannot
 	// keep target layouts from previous frames.
 	for (auto primaryTarget : m_primaryTargets)
@@ -805,12 +851,18 @@ void RenderViewVk::flush()
 void RenderViewVk::present()
 {
 	T_FATAL_ASSERT (m_targetStateStack.empty());
+	VkResult result;
 
 	// Prepare primary color for presentation.
 	m_primaryTargets[m_currentImageIndex]->getColorTargetVk(0)->prepareForPresentation(m_graphicsCommandBuffer);
 
 	// End recording command buffer.
-	vkEndCommandBuffer(m_graphicsCommandBuffer);
+	result = vkEndCommandBuffer(m_graphicsCommandBuffer);
+	if (result != VK_SUCCESS)
+	{
+		log::warning << L"Vulkan error reported, \"" << getHumanResult(result) << L"\"; need to reset renderer." << Endl;
+		return;
+	}
 
 	// Wait until GPU has finished rendering all commands.
     VkPipelineStageFlags waitStageMash = { VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT };
@@ -839,7 +891,12 @@ void RenderViewVk::present()
     pi.pWaitSemaphores = nullptr;
     pi.pResults = nullptr;
 
-    vkQueuePresentKHR(m_presentQueue, &pi);
+    result = vkQueuePresentKHR(m_presentQueue, &pi);
+	if (result != VK_SUCCESS)
+	{
+		log::warning << L"Vulkan error reported, \"" << getHumanResult(result) << L"\"; need to reset renderer." << Endl;
+		return;
+	}
 
 	// Collect, or cycle, released buffers.
 	m_uniformBufferPool->collect();
@@ -881,6 +938,10 @@ bool RenderViewVk::getBackBufferContent(void* buffer) const
 
 bool RenderViewVk::create(uint32_t width, uint32_t height)
 {
+	// Do not fail if requested size, assume it will get reset later.
+	if (width == 0 && height == 0)
+		return true;
+
 	// Find present queue.
 	uint32_t queueFamilyCount = 0;
 	vkGetPhysicalDeviceQueueFamilyProperties(m_physicalDevice, &queueFamilyCount, 0);
@@ -1058,11 +1119,7 @@ bool RenderViewVk::create(uint32_t width, uint32_t height)
 	VkImageCreateInfo ici = {};
 	ici.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
 	ici.imageType = VK_IMAGE_TYPE_2D;
-#if defined(__IOS__)
 	ici.format = VK_FORMAT_D32_SFLOAT_S8_UINT;
-#else
-	ici.format = VK_FORMAT_D24_UNORM_S8_UINT;
-#endif
 	ici.extent = { width, height, 1 };
 	ici.mipLevels = 1;
 	ici.arrayLayers = 1;
@@ -1109,11 +1166,7 @@ bool RenderViewVk::create(uint32_t width, uint32_t height)
 			height,
 			colorFormat,
 			presentImages[i],
-#if defined(__IOS__)
             VK_FORMAT_D32_SFLOAT_S8_UINT,
-#else
-            VK_FORMAT_D24_UNORM_S8_UINT,
-#endif
 			depthImage,
 			(L"Primary " + toString(i)).c_str()
 		))
@@ -1177,7 +1230,7 @@ bool RenderViewVk::create(uint32_t width, uint32_t height)
 	//}
 
 	// Create uniform buffer pool.
-	m_uniformBufferPool = new UniformBufferPoolVk(m_allocator);
+	m_uniformBufferPool = new UniformBufferPoolVk(m_logicalDevice, m_allocator);
 	return true;
 }
 

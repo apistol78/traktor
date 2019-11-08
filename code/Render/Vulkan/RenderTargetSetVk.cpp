@@ -194,6 +194,8 @@ bool RenderTargetSetVk::read(int32_t index, void* buffer) const
 		VK_IMAGE_LAYOUT_UNDEFINED,
 		VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
 		0,
+		1,
+		0,
 		1
 	);
 
@@ -232,6 +234,8 @@ bool RenderTargetSetVk::read(int32_t index, void* buffer) const
 		hostImage,
 		VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
 		VK_IMAGE_LAYOUT_GENERAL,
+		0,
+		1,
 		0,
 		1
 	);
