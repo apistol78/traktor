@@ -90,6 +90,10 @@ PFN_vkDestroyShaderModule vkDestroyShaderModule = nullptr;
 PFN_vkDestroyDescriptorSetLayout vkDestroyDescriptorSetLayout = nullptr;
 PFN_vkDestroyPipelineLayout vkDestroyPipelineLayout = nullptr;
 PFN_vkDestroySampler vkDestroySampler = nullptr;
+PFN_vkDestroyCommandPool vkDestroyCommandPool = nullptr;
+PFN_vkDestroyDescriptorPool vkDestroyDescriptorPool = nullptr;
+PFN_vkCmdClearColorImage vkCmdClearColorImage = nullptr;
+PFN_vkCmdClearDepthStencilImage vkCmdClearDepthStencilImage = nullptr;
 
 PFN_vkCreateXlibSurfaceKHR vkCreateXlibSurfaceKHR = nullptr;
 PFN_vkGetPhysicalDeviceSurfaceSupportKHR vkGetPhysicalDeviceSurfaceSupportKHR = nullptr;
@@ -651,6 +655,34 @@ bool initializeVulkanApi()
 		log::error << L"Failed to resolve Vulkan entry point \"vkDestroySampler\"." << Endl;
 		return false;
 	}			
+
+	vkDestroyCommandPool = (PFN_vkDestroyCommandPool)dlsym(s_hVulkanModule, "vkDestroyCommandPool");
+	if (vkDestroyCommandPool == nullptr)
+	{
+		log::error << L"Failed to resolve Vulkan entry point \"vkDestroyCommandPool\"." << Endl;
+		return false;
+	}
+
+	vkDestroyDescriptorPool = (PFN_vkDestroyDescriptorPool)dlsym(s_hVulkanModule, "vkDestroyDescriptorPool");
+	if (vkDestroyDescriptorPool == nullptr)
+	{
+		log::error << L"Failed to resolve Vulkan entry point \"vkDestroyDescriptorPool\"." << Endl;
+		return false;
+	}
+
+	vkCmdClearColorImage = (PFN_vkCmdClearColorImage)dlsym(s_hVulkanModule, "vkCmdClearColorImage");
+	if (vkCmdClearColorImage == nullptr)
+	{
+		log::error << L"Failed to resolve Vulkan entry point \"vkCmdClearColorImage\"." << Endl;
+		return false;
+	}
+
+	vkCmdClearDepthStencilImage = (PFN_vkCmdClearDepthStencilImage)dlsym(s_hVulkanModule, "vkCmdClearDepthStencilImage");
+	if (vkCmdClearDepthStencilImage == nullptr)
+	{
+		log::error << L"Failed to resolve Vulkan entry point \"vkCmdClearDepthStencilImage\"." << Endl;
+		return false;
+	}
 
 	return true;
 }
