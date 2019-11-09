@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<object type="traktor.mesh.MeshAsset" version="12">
-	<fileName>Objects/Cube/Cube.lwo</fileName>
+<object type="traktor.mesh.MeshAsset" version="16">
+	<fileName>Objects/Cube/Cube.fbx</fileName>
 	<meshType>MtStatic</meshType>
 	<materialTemplates/>
 	<materialShaders/>
 	<materialTextures/>
 	<scaleFactor>1</scaleFactor>
-	<bakeOcclusion>false</bakeOcclusion>
-	<cullDistantFaces>false</cullDistantFaces>
+	<renormalize>false</renormalize>
+	<center>false</center>
 	<lodSteps>8</lodSteps>
 	<lodMaxDistance>100</lodMaxDistance>
 	<lodCullDistance>200</lodCullDistance>
