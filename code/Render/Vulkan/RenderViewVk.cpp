@@ -239,51 +239,34 @@ bool RenderViewVk::nextEvent(RenderEvent& outEvent)
 
 void RenderViewVk::close()
 {
- //   vkDestroySemaphore(m_logicalDevice, m_presentCompleteSemaphore, nullptr);
-	//vkDestroyFence(m_logicalDevice, m_renderFence, nullptr);	
-}
-
-bool RenderViewVk::reset(const RenderViewDefaultDesc& desc)
-{
-#if defined(_WIN32) || defined(__LINUX__)
-	// Cannot reset embedded view.
-	if (!m_window)
-		return false;
-
-#	if defined(_WIN32)
-	m_window->removeListener(this);
-#	endif
-
-	m_window->setTitle(!desc.title.empty() ? desc.title.c_str() : L"Traktor - Vulkan Renderer");
-
-#	if defined(_WIN32)
-	m_window->addListener(this);
-#	endif
-#endif
-
-	if (!reset(
-		desc.displayMode.width,
-		desc.displayMode.height
-	))
-		return false;
-
-	return true;
-}
-
-bool RenderViewVk::reset(int32_t width, int32_t height)
-{
 	vkDeviceWaitIdle(m_logicalDevice);
 
-	// Destroy sync primitives.
-	vkDestroySemaphore(m_logicalDevice, m_presentCompleteSemaphore, nullptr);
-	m_presentCompleteSemaphore = 0;
+	// Ensure event queue doesn't contain stale events.
+	m_eventQueue.clear();
 
-	vkDestroyFence(m_logicalDevice, m_renderFence, nullptr);
-	m_renderFence = 0;
+	// Destroy sync primitives.
+	if (m_presentCompleteSemaphore != 0)
+	{
+		vkDestroySemaphore(m_logicalDevice, m_presentCompleteSemaphore, nullptr);
+		m_presentCompleteSemaphore = 0;
+	}
+
+	if (m_renderFence != 0)
+	{
+		vkDestroyFence(m_logicalDevice, m_renderFence, nullptr);
+		m_renderFence = 0;
+	}
 
 	// Destroy descriptor pool.
-	vkDestroyDescriptorPool(m_logicalDevice, m_descriptorPool, nullptr);
-	m_descriptorPool = 0;
+	if (m_descriptorPool != 0)
+	{
+		vkDestroyDescriptorPool(m_logicalDevice, m_descriptorPool, nullptr);
+		m_descriptorPool = 0;
+	}
+
+	for (auto& pipeline : m_pipelines)
+		vkDestroyPipeline(m_logicalDevice, pipeline.second, nullptr);
+	m_pipelines.clear();
 
 	// Destroy primary targets.
 	for (auto primaryTarget : m_primaryTargets)
@@ -320,7 +303,38 @@ bool RenderViewVk::reset(int32_t width, int32_t height)
 		vkDestroyCommandPool(m_logicalDevice, m_graphicsCommandPool, nullptr);
 		m_graphicsCommandPool = 0;
 	}
+}
 
+bool RenderViewVk::reset(const RenderViewDefaultDesc& desc)
+{
+#if defined(_WIN32) || defined(__LINUX__)
+	// Cannot reset embedded view.
+	if (!m_window)
+		return false;
+
+#	if defined(_WIN32)
+	m_window->removeListener(this);
+#	endif
+
+	m_window->setTitle(!desc.title.empty() ? desc.title.c_str() : L"Traktor - Vulkan Renderer");
+
+#	if defined(_WIN32)
+	m_window->addListener(this);
+#	endif
+#endif
+
+	if (!reset(
+		desc.displayMode.width,
+		desc.displayMode.height
+	))
+		return false;
+
+	return true;
+}
+
+bool RenderViewVk::reset(int32_t width, int32_t height)
+{
+	close();
 	if (create(width, height))
 		return true;
 	else
@@ -861,6 +875,11 @@ void RenderViewVk::present()
 	if (result != VK_SUCCESS)
 	{
 		log::warning << L"Vulkan error reported, \"" << getHumanResult(result) << L"\"; need to reset renderer." << Endl;
+		
+		// Issue an event in order to reset view.
+		RenderEvent evt;
+		evt.type = ReLost;
+		m_eventQueue.push_back(evt);
 		return;
 	}
 
@@ -895,6 +914,11 @@ void RenderViewVk::present()
 	if (result != VK_SUCCESS)
 	{
 		log::warning << L"Vulkan error reported, \"" << getHumanResult(result) << L"\"; need to reset renderer." << Endl;
+
+		// Issue an event in order to reset view.
+		RenderEvent evt;
+		evt.type = ReLost;
+		m_eventQueue.push_back(evt);
 		return;
 	}
 
