@@ -38,7 +38,7 @@
 #	include "Render/Vulkan/iOS/Utilities.h"
 #endif
 
-#define T_ENABLE_VALIDATION 1
+#define T_ENABLE_VALIDATION 0
 
 namespace traktor
 {

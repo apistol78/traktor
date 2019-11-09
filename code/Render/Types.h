@@ -213,7 +213,8 @@ enum RenderEventType
 	ReResize = 2,
 	ReToggleFullScreen = 3,
 	ReSetWindowed = 4,
-	ReSetFullScreen = 5
+	ReSetFullScreen = 5,
+	ReLost = 6
 };
 
 /*! Clear target flags. */

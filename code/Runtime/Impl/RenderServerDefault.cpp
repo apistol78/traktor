@@ -495,6 +495,12 @@ RenderServer::UpdateResult RenderServerDefault::update(PropertyGroup* settings)
 				return UrReconfigure;
 			}
 		}
+		else if (evt.type == render::ReLost)
+		{
+			m_renderViewDesc.displayMode.width = 0;
+			m_renderViewDesc.displayMode.height = 0;
+			return UrReconfigure;
+		}
 	}
 
 #endif
