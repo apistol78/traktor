@@ -5104,6 +5104,876 @@
 											<link>LnkYes</link>
 											<project ref="/object/projects/item[1]/dependencies/item[3]/project/dependencies/item[1]/project"/>
 										</item>
+										<item type="ProjectDependency" version="3">
+											<inheritIncludePaths>true</inheritIncludePaths>
+											<link>LnkYes</link>
+											<project ref="/object/projects/item[1]/dependencies/item[3]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
+										</item>
+										<item type="ProjectDependency" version="3">
+											<inheritIncludePaths>true</inheritIncludePaths>
+											<link>LnkYes</link>
+											<project ref="/object/projects/item/dependencies/item[1]/project/dependencies/item[1]/project"/>
+										</item>
+										<item type="ProjectDependency" version="3">
+											<inheritIncludePaths>true</inheritIncludePaths>
+											<link>LnkYes</link>
+											<project type="Project" version="1">
+												<enable>true</enable>
+												<name>Traktor.Render.Editor</name>
+												<sourcePath>$(TRAKTOR_HOME)/code/Render/Editor</sourcePath>
+												<configurations>
+													<item type="Configuration" version="5">
+														<name>DebugShared</name>
+														<targetFormat>TfSharedLibrary</targetFormat>
+														<targetProfile>TpDebug</targetProfile>
+														<precompiledHeader/>
+														<includePaths>
+															<item>$(TRAKTOR_HOME)/code</item>
+															<item>$(TRAKTOR_HOME)/3rdp/squish-1.10</item>
+															<item>$(TRAKTOR_HOME)/3rdp/stb_dxt</item>
+															<item>$(TRAKTOR_HOME)/3rdp/rg_etc1_v104</item>
+														</includePaths>
+														<definitions>
+															<item>T_RENDER_EDITOR_EXPORT</item>
+															<item>_DEBUG</item>
+														</definitions>
+														<libraryPaths/>
+														<libraries/>
+														<warningLevel>WlCompilerDefault</warningLevel>
+														<additionalCompilerOptions/>
+														<additionalLinkerOptions/>
+														<debugExecutable/>
+														<debugArguments/>
+														<debugEnvironment/>
+														<debugWorkingDirectory/>
+														<aggregationItems>
+															<item type="AggregationItem">
+																<sourceFile>libTraktor.Render.Editor.dylib</sourceFile>
+																<targetPath>debugshared</targetPath>
+															</item>
+														</aggregationItems>
+														<consumerLibraryPath>debugshared</consumerLibraryPath>
+													</item>
+													<item type="Configuration" version="5">
+														<name>ReleaseShared</name>
+														<targetFormat>TfSharedLibrary</targetFormat>
+														<targetProfile>TpRelease</targetProfile>
+														<precompiledHeader/>
+														<includePaths>
+															<item>$(TRAKTOR_HOME)/code</item>
+															<item>$(TRAKTOR_HOME)/3rdp/squish-1.10</item>
+															<item>$(TRAKTOR_HOME)/3rdp/stb_dxt</item>
+															<item>$(TRAKTOR_HOME)/3rdp/rg_etc1_v104</item>
+														</includePaths>
+														<definitions>
+															<item>T_RENDER_EDITOR_EXPORT</item>
+															<item>NDEBUG</item>
+														</definitions>
+														<libraryPaths/>
+														<libraries/>
+														<warningLevel>WlCompilerDefault</warningLevel>
+														<additionalCompilerOptions/>
+														<additionalLinkerOptions/>
+														<debugExecutable/>
+														<debugArguments/>
+														<debugEnvironment/>
+														<debugWorkingDirectory/>
+														<aggregationItems>
+															<item type="AggregationItem">
+																<sourceFile>libTraktor.Render.Editor.dylib</sourceFile>
+																<targetPath>releaseshared</targetPath>
+															</item>
+														</aggregationItems>
+														<consumerLibraryPath>releaseshared</consumerLibraryPath>
+													</item>
+													<item type="Configuration" version="5">
+														<name>DebugStatic</name>
+														<targetFormat>TfStaticLibrary</targetFormat>
+														<targetProfile>TpDebug</targetProfile>
+														<precompiledHeader/>
+														<includePaths>
+															<item>$(TRAKTOR_HOME)/code</item>
+															<item>$(TRAKTOR_HOME)/3rdp/squish-1.10</item>
+															<item>$(TRAKTOR_HOME)/3rdp/stb_dxt</item>
+															<item>$(TRAKTOR_HOME)/3rdp/rg_etc1_v104</item>
+														</includePaths>
+														<definitions>
+															<item>T_STATIC</item>
+															<item>_DEBUG</item>
+														</definitions>
+														<libraryPaths/>
+														<libraries/>
+														<warningLevel>WlCompilerDefault</warningLevel>
+														<additionalCompilerOptions/>
+														<additionalLinkerOptions/>
+														<debugExecutable/>
+														<debugArguments/>
+														<debugEnvironment/>
+														<debugWorkingDirectory/>
+														<aggregationItems>
+															<item type="AggregationItem">
+																<sourceFile>libTraktor.Render.Editor.a</sourceFile>
+																<targetPath>debugstatic</targetPath>
+															</item>
+														</aggregationItems>
+														<consumerLibraryPath>debugstatic</consumerLibraryPath>
+													</item>
+													<item type="Configuration" version="5">
+														<name>ReleaseStatic</name>
+														<targetFormat>TfStaticLibrary</targetFormat>
+														<targetProfile>TpRelease</targetProfile>
+														<precompiledHeader/>
+														<includePaths>
+															<item>$(TRAKTOR_HOME)/code</item>
+															<item>$(TRAKTOR_HOME)/3rdp/squish-1.10</item>
+															<item>$(TRAKTOR_HOME)/3rdp/stb_dxt</item>
+															<item>$(TRAKTOR_HOME)/3rdp/rg_etc1_v104</item>
+														</includePaths>
+														<definitions>
+															<item>T_STATIC</item>
+															<item>NDEBUG</item>
+														</definitions>
+														<libraryPaths/>
+														<libraries/>
+														<warningLevel>WlCompilerDefault</warningLevel>
+														<additionalCompilerOptions/>
+														<additionalLinkerOptions/>
+														<debugExecutable/>
+														<debugArguments/>
+														<debugEnvironment/>
+														<debugWorkingDirectory/>
+														<aggregationItems>
+															<item type="AggregationItem">
+																<sourceFile>libTraktor.Render.Editor.a</sourceFile>
+																<targetPath>releasestatic</targetPath>
+															</item>
+														</aggregationItems>
+														<consumerLibraryPath>releasestatic</consumerLibraryPath>
+													</item>
+												</configurations>
+												<items>
+													<item type="File">
+														<fileName>*.*</fileName>
+														<items/>
+													</item>
+													<item type="Filter">
+														<name>Shader</name>
+														<items>
+															<item type="File">
+																<fileName>Shader/*.*</fileName>
+																<items/>
+															</item>
+															<item type="Filter">
+																<name>Traits</name>
+																<items>
+																	<item type="File">
+																		<fileName>Shader/Traits/*.*</fileName>
+																		<items/>
+																	</item>
+																</items>
+															</item>
+															<item type="Filter">
+																<name>Facades</name>
+																<items>
+																	<item type="File">
+																		<fileName>Shader/Facades/*.*</fileName>
+																		<items/>
+																	</item>
+																</items>
+															</item>
+															<item type="Filter">
+																<name>Resources</name>
+																<items>
+																	<item type="File">
+																		<fileName>Shader/Resources/*.*</fileName>
+																		<items/>
+																	</item>
+																</items>
+															</item>
+														</items>
+													</item>
+													<item type="Filter">
+														<name>Texture</name>
+														<items>
+															<item type="File">
+																<fileName>Texture/*.*</fileName>
+																<items/>
+															</item>
+															<item type="Filter">
+																<name>Resources</name>
+																<items>
+																	<item type="File">
+																		<fileName>Texture/Resources/*.*</fileName>
+																		<items/>
+																	</item>
+																</items>
+															</item>
+														</items>
+													</item>
+													<item type="Filter">
+														<name>ImageProcess</name>
+														<items>
+															<item type="File">
+																<fileName>ImageProcess/*.*</fileName>
+																<items/>
+															</item>
+														</items>
+													</item>
+													<item type="Filter">
+														<name>SH</name>
+														<items>
+															<item type="File">
+																<fileName>SH/*.*</fileName>
+																<items/>
+															</item>
+														</items>
+													</item>
+												</items>
+												<dependencies>
+													<item type="ProjectDependency" version="3">
+														<inheritIncludePaths>true</inheritIncludePaths>
+														<link>LnkYes</link>
+														<project ref="/object/projects/item/dependencies/item/project"/>
+													</item>
+													<item type="ProjectDependency" version="3">
+														<inheritIncludePaths>true</inheritIncludePaths>
+														<link>LnkYes</link>
+														<project ref="/object/projects/item/dependencies/item[1]/project/dependencies/item[1]/project"/>
+													</item>
+													<item type="ProjectDependency" version="3">
+														<inheritIncludePaths>true</inheritIncludePaths>
+														<link>LnkYes</link>
+														<project ref="/object/projects/item[1]/dependencies/item[3]/project"/>
+													</item>
+													<item type="ProjectDependency" version="3">
+														<inheritIncludePaths>true</inheritIncludePaths>
+														<link>LnkYes</link>
+														<project ref="/object/projects/item[1]/dependencies/item[3]/project/dependencies/item[1]/project"/>
+													</item>
+													<item type="ProjectDependency" version="3">
+														<inheritIncludePaths>true</inheritIncludePaths>
+														<link>LnkYes</link>
+														<project ref="/object/projects/item[1]/dependencies/item[3]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
+													</item>
+													<item type="ProjectDependency" version="3">
+														<inheritIncludePaths>true</inheritIncludePaths>
+														<link>LnkYes</link>
+														<project ref="/object/projects/item/dependencies/item[1]/project/dependencies/item[3]/project"/>
+													</item>
+													<item type="ProjectDependency" version="3">
+														<inheritIncludePaths>true</inheritIncludePaths>
+														<link>LnkYes</link>
+														<project type="Project" version="1">
+															<enable>true</enable>
+															<name>Traktor.Model</name>
+															<sourcePath>$(TRAKTOR_HOME)/code/Model</sourcePath>
+															<configurations>
+																<item type="Configuration" version="5">
+																	<name>DebugShared</name>
+																	<targetFormat>TfSharedLibrary</targetFormat>
+																	<targetProfile>TpDebug</targetProfile>
+																	<precompiledHeader/>
+																	<includePaths>
+																		<item>$(TRAKTOR_HOME)/code</item>
+																		<item>$(TRAKTOR_HOME)/3rdp/lwobject</item>
+																		<item>$(FBX_SDK)/include</item>
+																		<item>$(TRAKTOR_HOME)/3rdp/stb_rect_pack</item>
+																	</includePaths>
+																	<definitions>
+																		<item>T_MODEL_EXPORT</item>
+																		<item>_DEBUG</item>
+																		<item>FBXSDK_NEW_API</item>
+																	</definitions>
+																	<libraryPaths>
+																		<item>$(FBX_SDK)/lib/clang/debug</item>
+																	</libraryPaths>
+																	<libraries>
+																		<item>fbxsdk</item>
+																		<item>CoreServices.framework</item>
+																		<item>iconv</item>
+																		<item>SystemConfiguration.framework</item>
+																	</libraries>
+																	<warningLevel>WlCompilerDefault</warningLevel>
+																	<additionalCompilerOptions/>
+																	<additionalLinkerOptions/>
+																	<debugExecutable/>
+																	<debugArguments/>
+																	<debugEnvironment/>
+																	<debugWorkingDirectory/>
+																	<aggregationItems>
+																		<item type="AggregationItem">
+																			<sourceFile>libTraktor.Model.dylib</sourceFile>
+																			<targetPath>debugshared</targetPath>
+																		</item>
+																		<item type="AggregationItem">
+																			<sourceFile>$(FBX_SDK)/lib/clang/debug/*.dylib</sourceFile>
+																			<targetPath>debugshared</targetPath>
+																		</item>
+																	</aggregationItems>
+																	<consumerLibraryPath>debugshared</consumerLibraryPath>
+																</item>
+																<item type="Configuration" version="5">
+																	<name>ReleaseShared</name>
+																	<targetFormat>TfSharedLibrary</targetFormat>
+																	<targetProfile>TpRelease</targetProfile>
+																	<precompiledHeader/>
+																	<includePaths>
+																		<item>$(TRAKTOR_HOME)/code</item>
+																		<item>$(TRAKTOR_HOME)/3rdp/lwobject</item>
+																		<item>$(FBX_SDK)/include</item>
+																		<item>$(TRAKTOR_HOME)/3rdp/stb_rect_pack</item>
+																	</includePaths>
+																	<definitions>
+																		<item>T_MODEL_EXPORT</item>
+																		<item>NDEBUG</item>
+																		<item>FBXSDK_NEW_API</item>
+																	</definitions>
+																	<libraryPaths>
+																		<item>$(FBX_SDK)/lib/clang/release</item>
+																	</libraryPaths>
+																	<libraries>
+																		<item>fbxsdk</item>
+																		<item>CoreServices.framework</item>
+																		<item>iconv</item>
+																		<item>SystemConfiguration.framework</item>
+																	</libraries>
+																	<warningLevel>WlCompilerDefault</warningLevel>
+																	<additionalCompilerOptions/>
+																	<additionalLinkerOptions/>
+																	<debugExecutable/>
+																	<debugArguments/>
+																	<debugEnvironment/>
+																	<debugWorkingDirectory/>
+																	<aggregationItems>
+																		<item type="AggregationItem">
+																			<sourceFile>libTraktor.Model.dylib</sourceFile>
+																			<targetPath>releaseshared</targetPath>
+																		</item>
+																		<item type="AggregationItem">
+																			<sourceFile>$(FBX_SDK)/lib/clang/release/*.dylib</sourceFile>
+																			<targetPath>releaseshared</targetPath>
+																		</item>
+																	</aggregationItems>
+																	<consumerLibraryPath>releaseshared</consumerLibraryPath>
+																</item>
+																<item type="Configuration" version="5">
+																	<name>DebugStatic</name>
+																	<targetFormat>TfStaticLibrary</targetFormat>
+																	<targetProfile>TpDebug</targetProfile>
+																	<precompiledHeader/>
+																	<includePaths>
+																		<item>$(TRAKTOR_HOME)/code</item>
+																		<item>$(TRAKTOR_HOME)/3rdp/lwobject</item>
+																		<item>$(FBX_SDK)/include</item>
+																		<item>$(TRAKTOR_HOME)/3rdp/stb_rect_pack</item>
+																	</includePaths>
+																	<definitions>
+																		<item>T_STATIC</item>
+																		<item>_DEBUG</item>
+																		<item>FBXSDK_NEW_API</item>
+																	</definitions>
+																	<libraryPaths>
+																		<item>$(FBX_SDK)/lib/clang/debug</item>
+																	</libraryPaths>
+																	<libraries>
+																		<item>fbxsdk</item>
+																		<item>CoreServices.framework</item>
+																		<item>iconv</item>
+																		<item>SystemConfiguration.framework</item>
+																	</libraries>
+																	<warningLevel>WlCompilerDefault</warningLevel>
+																	<additionalCompilerOptions/>
+																	<additionalLinkerOptions/>
+																	<debugExecutable/>
+																	<debugArguments/>
+																	<debugEnvironment/>
+																	<debugWorkingDirectory/>
+																	<aggregationItems>
+																		<item type="AggregationItem">
+																			<sourceFile>libTraktor.Model.a</sourceFile>
+																			<targetPath>debugstatic</targetPath>
+																		</item>
+																		<item type="AggregationItem">
+																			<sourceFile>$(FBX_SDK)/lib/clang/debug/*.dylib</sourceFile>
+																			<targetPath>debugstatic</targetPath>
+																		</item>
+																	</aggregationItems>
+																	<consumerLibraryPath>debugstatic</consumerLibraryPath>
+																</item>
+																<item type="Configuration" version="5">
+																	<name>ReleaseStatic</name>
+																	<targetFormat>TfStaticLibrary</targetFormat>
+																	<targetProfile>TpRelease</targetProfile>
+																	<precompiledHeader/>
+																	<includePaths>
+																		<item>$(TRAKTOR_HOME)/code</item>
+																		<item>$(TRAKTOR_HOME)/3rdp/lwobject</item>
+																		<item>$(FBX_SDK)/include</item>
+																		<item>$(TRAKTOR_HOME)/3rdp/stb_rect_pack</item>
+																	</includePaths>
+																	<definitions>
+																		<item>T_STATIC</item>
+																		<item>NDEBUG</item>
+																		<item>FBXSDK_NEW_API</item>
+																	</definitions>
+																	<libraryPaths>
+																		<item>$(FBX_SDK)/lib/clang/release</item>
+																	</libraryPaths>
+																	<libraries>
+																		<item>fbxsdk</item>
+																		<item>CoreServices.framework</item>
+																		<item>iconv</item>
+																		<item>SystemConfiguration.framework</item>
+																	</libraries>
+																	<warningLevel>WlCompilerDefault</warningLevel>
+																	<additionalCompilerOptions/>
+																	<additionalLinkerOptions/>
+																	<debugExecutable/>
+																	<debugArguments/>
+																	<debugEnvironment/>
+																	<debugWorkingDirectory/>
+																	<aggregationItems>
+																		<item type="AggregationItem">
+																			<sourceFile>libTraktor.Model.a</sourceFile>
+																			<targetPath>releasestatic</targetPath>
+																		</item>
+																		<item type="AggregationItem">
+																			<sourceFile>$(FBX_SDK)/lib/clang/release/*.dylib</sourceFile>
+																			<targetPath>releasestatic</targetPath>
+																		</item>
+																	</aggregationItems>
+																	<consumerLibraryPath>releasestatic</consumerLibraryPath>
+																</item>
+															</configurations>
+															<items>
+																<item type="File">
+																	<fileName>*.*</fileName>
+																	<items/>
+																</item>
+																<item type="Filter">
+																	<name>Formats</name>
+																	<items>
+																		<item type="File">
+																			<fileName>Formats/*.*</fileName>
+																			<items/>
+																		</item>
+																		<item type="Filter">
+																			<name>Fbx</name>
+																			<items>
+																				<item type="File">
+																					<fileName>Formats/Fbx/*.*</fileName>
+																					<items/>
+																				</item>
+																			</items>
+																		</item>
+																		<item type="Filter">
+																			<name>Gltf</name>
+																			<items>
+																				<item type="File">
+																					<fileName>Formats/Gltf/*.*</fileName>
+																					<items/>
+																				</item>
+																			</items>
+																		</item>
+																		<item type="Filter">
+																			<name>Lwo</name>
+																			<items>
+																				<item type="File">
+																					<fileName>Formats/Lwo/*.*</fileName>
+																					<items/>
+																				</item>
+																			</items>
+																		</item>
+																		<item type="Filter">
+																			<name>Obj</name>
+																			<items>
+																				<item type="File">
+																					<fileName>Formats/Obj/*.*</fileName>
+																					<items/>
+																				</item>
+																			</items>
+																		</item>
+																		<item type="Filter">
+																			<name>Tmd</name>
+																			<items>
+																				<item type="File">
+																					<fileName>Formats/Tmd/*.*</fileName>
+																					<items/>
+																				</item>
+																			</items>
+																		</item>
+																	</items>
+																</item>
+																<item type="Filter">
+																	<name>Operations</name>
+																	<items>
+																		<item type="File">
+																			<fileName>Operations/*.*</fileName>
+																			<items/>
+																		</item>
+																	</items>
+																</item>
+															</items>
+															<dependencies>
+																<item type="ProjectDependency" version="3">
+																	<inheritIncludePaths>true</inheritIncludePaths>
+																	<link>LnkYes</link>
+																	<project ref="/object/projects/item/dependencies/item/project"/>
+																</item>
+																<item type="ExternalDependency" version="3">
+																	<inheritIncludePaths>true</inheritIncludePaths>
+																	<link>LnkYes</link>
+																	<solutionFileName>ExternOSX.xms</solutionFileName>
+																	<projectName>Extern.lwObject</projectName>
+																</item>
+																<item type="ProjectDependency" version="3">
+																	<inheritIncludePaths>true</inheritIncludePaths>
+																	<link>LnkYes</link>
+																	<project ref="/object/projects/item/dependencies/item[1]/project/dependencies/item[3]/project/dependencies/item[1]/project"/>
+																</item>
+																<item type="ProjectDependency" version="3">
+																	<inheritIncludePaths>true</inheritIncludePaths>
+																	<link>LnkYes</link>
+																	<project ref="/object/projects/item[1]/dependencies/item[3]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
+																</item>
+																<item type="ExternalDependency" version="3">
+																	<inheritIncludePaths>true</inheritIncludePaths>
+																	<link>LnkYes</link>
+																	<solutionFileName>ExternOSX.xms</solutionFileName>
+																	<projectName>Extern.thekla_atlas</projectName>
+																</item>
+																<item type="ProjectDependency" version="3">
+																	<inheritIncludePaths>true</inheritIncludePaths>
+																	<link>LnkYes</link>
+																	<project type="Project" version="1">
+																		<enable>true</enable>
+																		<name>Traktor.Json</name>
+																		<sourcePath>$(TRAKTOR_HOME)/code/Json</sourcePath>
+																		<configurations>
+																			<item type="Configuration" version="5">
+																				<name>DebugShared</name>
+																				<targetFormat>TfSharedLibrary</targetFormat>
+																				<targetProfile>TpDebug</targetProfile>
+																				<precompiledHeader/>
+																				<includePaths>
+																					<item>$(TRAKTOR_HOME)/code</item>
+																					<item>$(TRAKTOR_HOME)/3rdp/rapidjson/include</item>
+																				</includePaths>
+																				<definitions>
+																					<item>T_JSON_EXPORT</item>
+																					<item>_DEBUG</item>
+																				</definitions>
+																				<libraryPaths/>
+																				<libraries/>
+																				<warningLevel>WlCompilerDefault</warningLevel>
+																				<additionalCompilerOptions/>
+																				<additionalLinkerOptions/>
+																				<debugExecutable/>
+																				<debugArguments/>
+																				<debugEnvironment/>
+																				<debugWorkingDirectory/>
+																				<aggregationItems>
+																					<item type="AggregationItem">
+																						<sourceFile>libTraktor.Json.dylib</sourceFile>
+																						<targetPath>debugshared</targetPath>
+																					</item>
+																				</aggregationItems>
+																				<consumerLibraryPath>debugshared</consumerLibraryPath>
+																			</item>
+																			<item type="Configuration" version="5">
+																				<name>ReleaseShared</name>
+																				<targetFormat>TfSharedLibrary</targetFormat>
+																				<targetProfile>TpRelease</targetProfile>
+																				<precompiledHeader/>
+																				<includePaths>
+																					<item>$(TRAKTOR_HOME)/code</item>
+																					<item>$(TRAKTOR_HOME)/3rdp/rapidjson/include</item>
+																				</includePaths>
+																				<definitions>
+																					<item>T_JSON_EXPORT</item>
+																					<item>NDEBUG</item>
+																				</definitions>
+																				<libraryPaths/>
+																				<libraries/>
+																				<warningLevel>WlCompilerDefault</warningLevel>
+																				<additionalCompilerOptions/>
+																				<additionalLinkerOptions/>
+																				<debugExecutable/>
+																				<debugArguments/>
+																				<debugEnvironment/>
+																				<debugWorkingDirectory/>
+																				<aggregationItems>
+																					<item type="AggregationItem">
+																						<sourceFile>libTraktor.Json.dylib</sourceFile>
+																						<targetPath>releaseshared</targetPath>
+																					</item>
+																				</aggregationItems>
+																				<consumerLibraryPath>releaseshared</consumerLibraryPath>
+																			</item>
+																			<item type="Configuration" version="5">
+																				<name>DebugStatic</name>
+																				<targetFormat>TfStaticLibrary</targetFormat>
+																				<targetProfile>TpDebug</targetProfile>
+																				<precompiledHeader/>
+																				<includePaths>
+																					<item>$(TRAKTOR_HOME)/code</item>
+																					<item>$(TRAKTOR_HOME)/3rdp/rapidjson/include</item>
+																				</includePaths>
+																				<definitions>
+																					<item>T_STATIC</item>
+																					<item>_DEBUG</item>
+																				</definitions>
+																				<libraryPaths/>
+																				<libraries/>
+																				<warningLevel>WlCompilerDefault</warningLevel>
+																				<additionalCompilerOptions/>
+																				<additionalLinkerOptions/>
+																				<debugExecutable/>
+																				<debugArguments/>
+																				<debugEnvironment/>
+																				<debugWorkingDirectory/>
+																				<aggregationItems>
+																					<item type="AggregationItem">
+																						<sourceFile>libTraktor.Json.a</sourceFile>
+																						<targetPath>debugstatic</targetPath>
+																					</item>
+																				</aggregationItems>
+																				<consumerLibraryPath>debugstatic</consumerLibraryPath>
+																			</item>
+																			<item type="Configuration" version="5">
+																				<name>ReleaseStatic</name>
+																				<targetFormat>TfStaticLibrary</targetFormat>
+																				<targetProfile>TpRelease</targetProfile>
+																				<precompiledHeader/>
+																				<includePaths>
+																					<item>$(TRAKTOR_HOME)/code</item>
+																					<item>$(TRAKTOR_HOME)/3rdp/rapidjson/include</item>
+																				</includePaths>
+																				<definitions>
+																					<item>T_STATIC</item>
+																					<item>NDEBUG</item>
+																				</definitions>
+																				<libraryPaths/>
+																				<libraries/>
+																				<warningLevel>WlCompilerDefault</warningLevel>
+																				<additionalCompilerOptions/>
+																				<additionalLinkerOptions/>
+																				<debugExecutable/>
+																				<debugArguments/>
+																				<debugEnvironment/>
+																				<debugWorkingDirectory/>
+																				<aggregationItems>
+																					<item type="AggregationItem">
+																						<sourceFile>libTraktor.Json.a</sourceFile>
+																						<targetPath>releasestatic</targetPath>
+																					</item>
+																				</aggregationItems>
+																				<consumerLibraryPath>releasestatic</consumerLibraryPath>
+																			</item>
+																		</configurations>
+																		<items>
+																			<item type="File">
+																				<fileName>*.*</fileName>
+																				<items/>
+																			</item>
+																		</items>
+																		<dependencies>
+																			<item type="ProjectDependency" version="3">
+																				<inheritIncludePaths>true</inheritIncludePaths>
+																				<link>LnkYes</link>
+																				<project ref="/object/projects/item/dependencies/item/project"/>
+																			</item>
+																		</dependencies>
+																	</project>
+																</item>
+															</dependencies>
+														</project>
+													</item>
+													<item type="ProjectDependency" version="3">
+														<inheritIncludePaths>true</inheritIncludePaths>
+														<link>LnkYes</link>
+														<project ref="/object/projects/item[1]/dependencies/item[6]/project"/>
+													</item>
+													<item type="ExternalDependency" version="3">
+														<inheritIncludePaths>true</inheritIncludePaths>
+														<link>LnkYes</link>
+														<solutionFileName>ExternOSX.xms</solutionFileName>
+														<projectName>Extern.squish-1.10</projectName>
+													</item>
+													<item type="ProjectDependency" version="3">
+														<inheritIncludePaths>true</inheritIncludePaths>
+														<link>LnkYes</link>
+														<project ref="/object/projects/item/dependencies/item[1]/project/dependencies/item[3]/project/dependencies/item[1]/project"/>
+													</item>
+													<item type="ProjectDependency" version="3">
+														<inheritIncludePaths>true</inheritIncludePaths>
+														<link>LnkYes</link>
+														<project ref="/object/projects/item/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[2]/project"/>
+													</item>
+													<item type="ExternalDependency" version="3">
+														<inheritIncludePaths>true</inheritIncludePaths>
+														<link>LnkYes</link>
+														<solutionFileName>ExternOSX.xms</solutionFileName>
+														<projectName>Extern.rg_etc1</projectName>
+													</item>
+													<item type="ProjectDependency" version="3">
+														<inheritIncludePaths>true</inheritIncludePaths>
+														<link>LnkYes</link>
+														<project type="Project" version="1">
+															<enable>true</enable>
+															<name>Traktor.Render.Capture</name>
+															<sourcePath>$(TRAKTOR_HOME)/code/Render/Capture</sourcePath>
+															<configurations>
+																<item type="Configuration" version="5">
+																	<name>DebugShared</name>
+																	<targetFormat>TfSharedLibrary</targetFormat>
+																	<targetProfile>TpDebug</targetProfile>
+																	<precompiledHeader/>
+																	<includePaths>
+																		<item>$(TRAKTOR_HOME)/code</item>
+																	</includePaths>
+																	<definitions>
+																		<item>T_RENDER_CAPTURE_EXPORT</item>
+																		<item>_DEBUG</item>
+																	</definitions>
+																	<libraryPaths/>
+																	<libraries/>
+																	<warningLevel>WlCompilerDefault</warningLevel>
+																	<additionalCompilerOptions/>
+																	<additionalLinkerOptions/>
+																	<debugExecutable/>
+																	<debugArguments/>
+																	<debugEnvironment/>
+																	<debugWorkingDirectory/>
+																	<aggregationItems>
+																		<item type="AggregationItem">
+																			<sourceFile>libTraktor.Render.Capture.dylib</sourceFile>
+																			<targetPath>debugshared</targetPath>
+																		</item>
+																	</aggregationItems>
+																	<consumerLibraryPath>debugshared</consumerLibraryPath>
+																</item>
+																<item type="Configuration" version="5">
+																	<name>ReleaseShared</name>
+																	<targetFormat>TfSharedLibrary</targetFormat>
+																	<targetProfile>TpRelease</targetProfile>
+																	<precompiledHeader/>
+																	<includePaths>
+																		<item>$(TRAKTOR_HOME)/code</item>
+																	</includePaths>
+																	<definitions>
+																		<item>T_RENDER_CAPTURE_EXPORT</item>
+																		<item>NDEBUG</item>
+																	</definitions>
+																	<libraryPaths/>
+																	<libraries/>
+																	<warningLevel>WlCompilerDefault</warningLevel>
+																	<additionalCompilerOptions/>
+																	<additionalLinkerOptions/>
+																	<debugExecutable/>
+																	<debugArguments/>
+																	<debugEnvironment/>
+																	<debugWorkingDirectory/>
+																	<aggregationItems>
+																		<item type="AggregationItem">
+																			<sourceFile>libTraktor.Render.Capture.dylib</sourceFile>
+																			<targetPath>releaseshared</targetPath>
+																		</item>
+																	</aggregationItems>
+																	<consumerLibraryPath>releaseshared</consumerLibraryPath>
+																</item>
+																<item type="Configuration" version="5">
+																	<name>DebugStatic</name>
+																	<targetFormat>TfStaticLibrary</targetFormat>
+																	<targetProfile>TpDebug</targetProfile>
+																	<precompiledHeader/>
+																	<includePaths>
+																		<item>$(TRAKTOR_HOME)/code</item>
+																	</includePaths>
+																	<definitions>
+																		<item>T_STATIC</item>
+																		<item>_DEBUG</item>
+																	</definitions>
+																	<libraryPaths/>
+																	<libraries/>
+																	<warningLevel>WlCompilerDefault</warningLevel>
+																	<additionalCompilerOptions/>
+																	<additionalLinkerOptions/>
+																	<debugExecutable/>
+																	<debugArguments/>
+																	<debugEnvironment/>
+																	<debugWorkingDirectory/>
+																	<aggregationItems>
+																		<item type="AggregationItem">
+																			<sourceFile>libTraktor.Render.Capture.a</sourceFile>
+																			<targetPath>debugstatic</targetPath>
+																		</item>
+																	</aggregationItems>
+																	<consumerLibraryPath>debugstatic</consumerLibraryPath>
+																</item>
+																<item type="Configuration" version="5">
+																	<name>ReleaseStatic</name>
+																	<targetFormat>TfStaticLibrary</targetFormat>
+																	<targetProfile>TpRelease</targetProfile>
+																	<precompiledHeader/>
+																	<includePaths>
+																		<item>$(TRAKTOR_HOME)/code</item>
+																	</includePaths>
+																	<definitions>
+																		<item>T_STATIC</item>
+																		<item>NDEBUG</item>
+																	</definitions>
+																	<libraryPaths/>
+																	<libraries/>
+																	<warningLevel>WlCompilerDefault</warningLevel>
+																	<additionalCompilerOptions/>
+																	<additionalLinkerOptions/>
+																	<debugExecutable/>
+																	<debugArguments/>
+																	<debugEnvironment/>
+																	<debugWorkingDirectory/>
+																	<aggregationItems>
+																		<item type="AggregationItem">
+																			<sourceFile>libTraktor.Render.Capture.a</sourceFile>
+																			<targetPath>releasestatic</targetPath>
+																		</item>
+																	</aggregationItems>
+																	<consumerLibraryPath>releasestatic</consumerLibraryPath>
+																</item>
+															</configurations>
+															<items>
+																<item type="File">
+																	<fileName>*.*</fileName>
+																	<items/>
+																</item>
+															</items>
+															<dependencies>
+																<item type="ProjectDependency" version="3">
+																	<inheritIncludePaths>true</inheritIncludePaths>
+																	<link>LnkYes</link>
+																	<project ref="/object/projects/item/dependencies/item/project"/>
+																</item>
+																<item type="ProjectDependency" version="3">
+																	<inheritIncludePaths>true</inheritIncludePaths>
+																	<link>LnkYes</link>
+																	<project ref="/object/projects/item[1]/dependencies/item[3]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
+																</item>
+																<item type="ProjectDependency" version="3">
+																	<inheritIncludePaths>true</inheritIncludePaths>
+																	<link>LnkYes</link>
+																	<project ref="/object/projects/item/dependencies/item[1]/project/dependencies/item[1]/project"/>
+																</item>
+															</dependencies>
+														</project>
+													</item>
+													<item type="ProjectDependency" version="3">
+														<inheritIncludePaths>true</inheritIncludePaths>
+														<link>LnkYes</link>
+														<project ref="/object/projects/item/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
+													</item>
+												</dependencies>
+											</project>
+										</item>
 									</dependencies>
 								</project>
 							</item>
@@ -5511,862 +6381,7 @@
 							<item type="ProjectDependency" version="3">
 								<inheritIncludePaths>true</inheritIncludePaths>
 								<link>LnkYes</link>
-								<project type="Project" version="1">
-									<enable>true</enable>
-									<name>Traktor.Render.Editor</name>
-									<sourcePath>$(TRAKTOR_HOME)/code/Render/Editor</sourcePath>
-									<configurations>
-										<item type="Configuration" version="5">
-											<name>DebugShared</name>
-											<targetFormat>TfSharedLibrary</targetFormat>
-											<targetProfile>TpDebug</targetProfile>
-											<precompiledHeader/>
-											<includePaths>
-												<item>$(TRAKTOR_HOME)/code</item>
-												<item>$(TRAKTOR_HOME)/3rdp/squish-1.10</item>
-												<item>$(TRAKTOR_HOME)/3rdp/stb_dxt</item>
-												<item>$(TRAKTOR_HOME)/3rdp/rg_etc1_v104</item>
-											</includePaths>
-											<definitions>
-												<item>T_RENDER_EDITOR_EXPORT</item>
-												<item>_DEBUG</item>
-											</definitions>
-											<libraryPaths/>
-											<libraries/>
-											<warningLevel>WlCompilerDefault</warningLevel>
-											<additionalCompilerOptions/>
-											<additionalLinkerOptions/>
-											<debugExecutable/>
-											<debugArguments/>
-											<debugEnvironment/>
-											<debugWorkingDirectory/>
-											<aggregationItems>
-												<item type="AggregationItem">
-													<sourceFile>libTraktor.Render.Editor.dylib</sourceFile>
-													<targetPath>debugshared</targetPath>
-												</item>
-											</aggregationItems>
-											<consumerLibraryPath>debugshared</consumerLibraryPath>
-										</item>
-										<item type="Configuration" version="5">
-											<name>ReleaseShared</name>
-											<targetFormat>TfSharedLibrary</targetFormat>
-											<targetProfile>TpRelease</targetProfile>
-											<precompiledHeader/>
-											<includePaths>
-												<item>$(TRAKTOR_HOME)/code</item>
-												<item>$(TRAKTOR_HOME)/3rdp/squish-1.10</item>
-												<item>$(TRAKTOR_HOME)/3rdp/stb_dxt</item>
-												<item>$(TRAKTOR_HOME)/3rdp/rg_etc1_v104</item>
-											</includePaths>
-											<definitions>
-												<item>T_RENDER_EDITOR_EXPORT</item>
-												<item>NDEBUG</item>
-											</definitions>
-											<libraryPaths/>
-											<libraries/>
-											<warningLevel>WlCompilerDefault</warningLevel>
-											<additionalCompilerOptions/>
-											<additionalLinkerOptions/>
-											<debugExecutable/>
-											<debugArguments/>
-											<debugEnvironment/>
-											<debugWorkingDirectory/>
-											<aggregationItems>
-												<item type="AggregationItem">
-													<sourceFile>libTraktor.Render.Editor.dylib</sourceFile>
-													<targetPath>releaseshared</targetPath>
-												</item>
-											</aggregationItems>
-											<consumerLibraryPath>releaseshared</consumerLibraryPath>
-										</item>
-										<item type="Configuration" version="5">
-											<name>DebugStatic</name>
-											<targetFormat>TfStaticLibrary</targetFormat>
-											<targetProfile>TpDebug</targetProfile>
-											<precompiledHeader/>
-											<includePaths>
-												<item>$(TRAKTOR_HOME)/code</item>
-												<item>$(TRAKTOR_HOME)/3rdp/squish-1.10</item>
-												<item>$(TRAKTOR_HOME)/3rdp/stb_dxt</item>
-												<item>$(TRAKTOR_HOME)/3rdp/rg_etc1_v104</item>
-											</includePaths>
-											<definitions>
-												<item>T_STATIC</item>
-												<item>_DEBUG</item>
-											</definitions>
-											<libraryPaths/>
-											<libraries/>
-											<warningLevel>WlCompilerDefault</warningLevel>
-											<additionalCompilerOptions/>
-											<additionalLinkerOptions/>
-											<debugExecutable/>
-											<debugArguments/>
-											<debugEnvironment/>
-											<debugWorkingDirectory/>
-											<aggregationItems>
-												<item type="AggregationItem">
-													<sourceFile>libTraktor.Render.Editor.a</sourceFile>
-													<targetPath>debugstatic</targetPath>
-												</item>
-											</aggregationItems>
-											<consumerLibraryPath>debugstatic</consumerLibraryPath>
-										</item>
-										<item type="Configuration" version="5">
-											<name>ReleaseStatic</name>
-											<targetFormat>TfStaticLibrary</targetFormat>
-											<targetProfile>TpRelease</targetProfile>
-											<precompiledHeader/>
-											<includePaths>
-												<item>$(TRAKTOR_HOME)/code</item>
-												<item>$(TRAKTOR_HOME)/3rdp/squish-1.10</item>
-												<item>$(TRAKTOR_HOME)/3rdp/stb_dxt</item>
-												<item>$(TRAKTOR_HOME)/3rdp/rg_etc1_v104</item>
-											</includePaths>
-											<definitions>
-												<item>T_STATIC</item>
-												<item>NDEBUG</item>
-											</definitions>
-											<libraryPaths/>
-											<libraries/>
-											<warningLevel>WlCompilerDefault</warningLevel>
-											<additionalCompilerOptions/>
-											<additionalLinkerOptions/>
-											<debugExecutable/>
-											<debugArguments/>
-											<debugEnvironment/>
-											<debugWorkingDirectory/>
-											<aggregationItems>
-												<item type="AggregationItem">
-													<sourceFile>libTraktor.Render.Editor.a</sourceFile>
-													<targetPath>releasestatic</targetPath>
-												</item>
-											</aggregationItems>
-											<consumerLibraryPath>releasestatic</consumerLibraryPath>
-										</item>
-									</configurations>
-									<items>
-										<item type="File">
-											<fileName>*.*</fileName>
-											<items/>
-										</item>
-										<item type="Filter">
-											<name>Shader</name>
-											<items>
-												<item type="File">
-													<fileName>Shader/*.*</fileName>
-													<items/>
-												</item>
-												<item type="Filter">
-													<name>Traits</name>
-													<items>
-														<item type="File">
-															<fileName>Shader/Traits/*.*</fileName>
-															<items/>
-														</item>
-													</items>
-												</item>
-												<item type="Filter">
-													<name>Facades</name>
-													<items>
-														<item type="File">
-															<fileName>Shader/Facades/*.*</fileName>
-															<items/>
-														</item>
-													</items>
-												</item>
-												<item type="Filter">
-													<name>Resources</name>
-													<items>
-														<item type="File">
-															<fileName>Shader/Resources/*.*</fileName>
-															<items/>
-														</item>
-													</items>
-												</item>
-											</items>
-										</item>
-										<item type="Filter">
-											<name>Texture</name>
-											<items>
-												<item type="File">
-													<fileName>Texture/*.*</fileName>
-													<items/>
-												</item>
-												<item type="Filter">
-													<name>Resources</name>
-													<items>
-														<item type="File">
-															<fileName>Texture/Resources/*.*</fileName>
-															<items/>
-														</item>
-													</items>
-												</item>
-											</items>
-										</item>
-										<item type="Filter">
-											<name>ImageProcess</name>
-											<items>
-												<item type="File">
-													<fileName>ImageProcess/*.*</fileName>
-													<items/>
-												</item>
-											</items>
-										</item>
-										<item type="Filter">
-											<name>SH</name>
-											<items>
-												<item type="File">
-													<fileName>SH/*.*</fileName>
-													<items/>
-												</item>
-											</items>
-										</item>
-									</items>
-									<dependencies>
-										<item type="ProjectDependency" version="3">
-											<inheritIncludePaths>true</inheritIncludePaths>
-											<link>LnkYes</link>
-											<project ref="/object/projects/item/dependencies/item/project"/>
-										</item>
-										<item type="ProjectDependency" version="3">
-											<inheritIncludePaths>true</inheritIncludePaths>
-											<link>LnkYes</link>
-											<project ref="/object/projects/item/dependencies/item[1]/project/dependencies/item[1]/project"/>
-										</item>
-										<item type="ProjectDependency" version="3">
-											<inheritIncludePaths>true</inheritIncludePaths>
-											<link>LnkYes</link>
-											<project ref="/object/projects/item[1]/dependencies/item[3]/project"/>
-										</item>
-										<item type="ProjectDependency" version="3">
-											<inheritIncludePaths>true</inheritIncludePaths>
-											<link>LnkYes</link>
-											<project ref="/object/projects/item[1]/dependencies/item[3]/project/dependencies/item[1]/project"/>
-										</item>
-										<item type="ProjectDependency" version="3">
-											<inheritIncludePaths>true</inheritIncludePaths>
-											<link>LnkYes</link>
-											<project ref="/object/projects/item[1]/dependencies/item[3]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
-										</item>
-										<item type="ProjectDependency" version="3">
-											<inheritIncludePaths>true</inheritIncludePaths>
-											<link>LnkYes</link>
-											<project ref="/object/projects/item/dependencies/item[1]/project/dependencies/item[3]/project"/>
-										</item>
-										<item type="ProjectDependency" version="3">
-											<inheritIncludePaths>true</inheritIncludePaths>
-											<link>LnkYes</link>
-											<project type="Project" version="1">
-												<enable>true</enable>
-												<name>Traktor.Model</name>
-												<sourcePath>$(TRAKTOR_HOME)/code/Model</sourcePath>
-												<configurations>
-													<item type="Configuration" version="5">
-														<name>DebugShared</name>
-														<targetFormat>TfSharedLibrary</targetFormat>
-														<targetProfile>TpDebug</targetProfile>
-														<precompiledHeader/>
-														<includePaths>
-															<item>$(TRAKTOR_HOME)/code</item>
-															<item>$(TRAKTOR_HOME)/3rdp/lwobject</item>
-															<item>$(FBX_SDK)/include</item>
-															<item>$(TRAKTOR_HOME)/3rdp/stb_rect_pack</item>
-														</includePaths>
-														<definitions>
-															<item>T_MODEL_EXPORT</item>
-															<item>_DEBUG</item>
-															<item>FBXSDK_NEW_API</item>
-														</definitions>
-														<libraryPaths>
-															<item>$(FBX_SDK)/lib/clang/debug</item>
-														</libraryPaths>
-														<libraries>
-															<item>fbxsdk</item>
-															<item>CoreServices.framework</item>
-															<item>iconv</item>
-															<item>SystemConfiguration.framework</item>
-														</libraries>
-														<warningLevel>WlCompilerDefault</warningLevel>
-														<additionalCompilerOptions/>
-														<additionalLinkerOptions/>
-														<debugExecutable/>
-														<debugArguments/>
-														<debugEnvironment/>
-														<debugWorkingDirectory/>
-														<aggregationItems>
-															<item type="AggregationItem">
-																<sourceFile>libTraktor.Model.dylib</sourceFile>
-																<targetPath>debugshared</targetPath>
-															</item>
-															<item type="AggregationItem">
-																<sourceFile>$(FBX_SDK)/lib/clang/debug/*.dylib</sourceFile>
-																<targetPath>debugshared</targetPath>
-															</item>
-														</aggregationItems>
-														<consumerLibraryPath>debugshared</consumerLibraryPath>
-													</item>
-													<item type="Configuration" version="5">
-														<name>ReleaseShared</name>
-														<targetFormat>TfSharedLibrary</targetFormat>
-														<targetProfile>TpRelease</targetProfile>
-														<precompiledHeader/>
-														<includePaths>
-															<item>$(TRAKTOR_HOME)/code</item>
-															<item>$(TRAKTOR_HOME)/3rdp/lwobject</item>
-															<item>$(FBX_SDK)/include</item>
-															<item>$(TRAKTOR_HOME)/3rdp/stb_rect_pack</item>
-														</includePaths>
-														<definitions>
-															<item>T_MODEL_EXPORT</item>
-															<item>NDEBUG</item>
-															<item>FBXSDK_NEW_API</item>
-														</definitions>
-														<libraryPaths>
-															<item>$(FBX_SDK)/lib/clang/release</item>
-														</libraryPaths>
-														<libraries>
-															<item>fbxsdk</item>
-															<item>CoreServices.framework</item>
-															<item>iconv</item>
-															<item>SystemConfiguration.framework</item>
-														</libraries>
-														<warningLevel>WlCompilerDefault</warningLevel>
-														<additionalCompilerOptions/>
-														<additionalLinkerOptions/>
-														<debugExecutable/>
-														<debugArguments/>
-														<debugEnvironment/>
-														<debugWorkingDirectory/>
-														<aggregationItems>
-															<item type="AggregationItem">
-																<sourceFile>libTraktor.Model.dylib</sourceFile>
-																<targetPath>releaseshared</targetPath>
-															</item>
-															<item type="AggregationItem">
-																<sourceFile>$(FBX_SDK)/lib/clang/release/*.dylib</sourceFile>
-																<targetPath>releaseshared</targetPath>
-															</item>
-														</aggregationItems>
-														<consumerLibraryPath>releaseshared</consumerLibraryPath>
-													</item>
-													<item type="Configuration" version="5">
-														<name>DebugStatic</name>
-														<targetFormat>TfStaticLibrary</targetFormat>
-														<targetProfile>TpDebug</targetProfile>
-														<precompiledHeader/>
-														<includePaths>
-															<item>$(TRAKTOR_HOME)/code</item>
-															<item>$(TRAKTOR_HOME)/3rdp/lwobject</item>
-															<item>$(FBX_SDK)/include</item>
-															<item>$(TRAKTOR_HOME)/3rdp/stb_rect_pack</item>
-														</includePaths>
-														<definitions>
-															<item>T_STATIC</item>
-															<item>_DEBUG</item>
-															<item>FBXSDK_NEW_API</item>
-														</definitions>
-														<libraryPaths>
-															<item>$(FBX_SDK)/lib/clang/debug</item>
-														</libraryPaths>
-														<libraries>
-															<item>fbxsdk</item>
-															<item>CoreServices.framework</item>
-															<item>iconv</item>
-															<item>SystemConfiguration.framework</item>
-														</libraries>
-														<warningLevel>WlCompilerDefault</warningLevel>
-														<additionalCompilerOptions/>
-														<additionalLinkerOptions/>
-														<debugExecutable/>
-														<debugArguments/>
-														<debugEnvironment/>
-														<debugWorkingDirectory/>
-														<aggregationItems>
-															<item type="AggregationItem">
-																<sourceFile>libTraktor.Model.a</sourceFile>
-																<targetPath>debugstatic</targetPath>
-															</item>
-															<item type="AggregationItem">
-																<sourceFile>$(FBX_SDK)/lib/clang/debug/*.dylib</sourceFile>
-																<targetPath>debugstatic</targetPath>
-															</item>
-														</aggregationItems>
-														<consumerLibraryPath>debugstatic</consumerLibraryPath>
-													</item>
-													<item type="Configuration" version="5">
-														<name>ReleaseStatic</name>
-														<targetFormat>TfStaticLibrary</targetFormat>
-														<targetProfile>TpRelease</targetProfile>
-														<precompiledHeader/>
-														<includePaths>
-															<item>$(TRAKTOR_HOME)/code</item>
-															<item>$(TRAKTOR_HOME)/3rdp/lwobject</item>
-															<item>$(FBX_SDK)/include</item>
-															<item>$(TRAKTOR_HOME)/3rdp/stb_rect_pack</item>
-														</includePaths>
-														<definitions>
-															<item>T_STATIC</item>
-															<item>NDEBUG</item>
-															<item>FBXSDK_NEW_API</item>
-														</definitions>
-														<libraryPaths>
-															<item>$(FBX_SDK)/lib/clang/release</item>
-														</libraryPaths>
-														<libraries>
-															<item>fbxsdk</item>
-															<item>CoreServices.framework</item>
-															<item>iconv</item>
-															<item>SystemConfiguration.framework</item>
-														</libraries>
-														<warningLevel>WlCompilerDefault</warningLevel>
-														<additionalCompilerOptions/>
-														<additionalLinkerOptions/>
-														<debugExecutable/>
-														<debugArguments/>
-														<debugEnvironment/>
-														<debugWorkingDirectory/>
-														<aggregationItems>
-															<item type="AggregationItem">
-																<sourceFile>libTraktor.Model.a</sourceFile>
-																<targetPath>releasestatic</targetPath>
-															</item>
-															<item type="AggregationItem">
-																<sourceFile>$(FBX_SDK)/lib/clang/release/*.dylib</sourceFile>
-																<targetPath>releasestatic</targetPath>
-															</item>
-														</aggregationItems>
-														<consumerLibraryPath>releasestatic</consumerLibraryPath>
-													</item>
-												</configurations>
-												<items>
-													<item type="File">
-														<fileName>*.*</fileName>
-														<items/>
-													</item>
-													<item type="Filter">
-														<name>Formats</name>
-														<items>
-															<item type="File">
-																<fileName>Formats/*.*</fileName>
-																<items/>
-															</item>
-															<item type="Filter">
-																<name>Fbx</name>
-																<items>
-																	<item type="File">
-																		<fileName>Formats/Fbx/*.*</fileName>
-																		<items/>
-																	</item>
-																</items>
-															</item>
-															<item type="Filter">
-																<name>Gltf</name>
-																<items>
-																	<item type="File">
-																		<fileName>Formats/Gltf/*.*</fileName>
-																		<items/>
-																	</item>
-																</items>
-															</item>
-															<item type="Filter">
-																<name>Lwo</name>
-																<items>
-																	<item type="File">
-																		<fileName>Formats/Lwo/*.*</fileName>
-																		<items/>
-																	</item>
-																</items>
-															</item>
-															<item type="Filter">
-																<name>Obj</name>
-																<items>
-																	<item type="File">
-																		<fileName>Formats/Obj/*.*</fileName>
-																		<items/>
-																	</item>
-																</items>
-															</item>
-															<item type="Filter">
-																<name>Tmd</name>
-																<items>
-																	<item type="File">
-																		<fileName>Formats/Tmd/*.*</fileName>
-																		<items/>
-																	</item>
-																</items>
-															</item>
-														</items>
-													</item>
-													<item type="Filter">
-														<name>Operations</name>
-														<items>
-															<item type="File">
-																<fileName>Operations/*.*</fileName>
-																<items/>
-															</item>
-														</items>
-													</item>
-												</items>
-												<dependencies>
-													<item type="ProjectDependency" version="3">
-														<inheritIncludePaths>true</inheritIncludePaths>
-														<link>LnkYes</link>
-														<project ref="/object/projects/item/dependencies/item/project"/>
-													</item>
-													<item type="ExternalDependency" version="3">
-														<inheritIncludePaths>true</inheritIncludePaths>
-														<link>LnkYes</link>
-														<solutionFileName>ExternOSX.xms</solutionFileName>
-														<projectName>Extern.lwObject</projectName>
-													</item>
-													<item type="ProjectDependency" version="3">
-														<inheritIncludePaths>true</inheritIncludePaths>
-														<link>LnkYes</link>
-														<project ref="/object/projects/item/dependencies/item[1]/project/dependencies/item[3]/project/dependencies/item[1]/project"/>
-													</item>
-													<item type="ProjectDependency" version="3">
-														<inheritIncludePaths>true</inheritIncludePaths>
-														<link>LnkYes</link>
-														<project ref="/object/projects/item[1]/dependencies/item[3]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
-													</item>
-													<item type="ExternalDependency" version="3">
-														<inheritIncludePaths>true</inheritIncludePaths>
-														<link>LnkYes</link>
-														<solutionFileName>ExternOSX.xms</solutionFileName>
-														<projectName>Extern.thekla_atlas</projectName>
-													</item>
-													<item type="ProjectDependency" version="3">
-														<inheritIncludePaths>true</inheritIncludePaths>
-														<link>LnkYes</link>
-														<project type="Project" version="1">
-															<enable>true</enable>
-															<name>Traktor.Json</name>
-															<sourcePath>$(TRAKTOR_HOME)/code/Json</sourcePath>
-															<configurations>
-																<item type="Configuration" version="5">
-																	<name>DebugShared</name>
-																	<targetFormat>TfSharedLibrary</targetFormat>
-																	<targetProfile>TpDebug</targetProfile>
-																	<precompiledHeader/>
-																	<includePaths>
-																		<item>$(TRAKTOR_HOME)/code</item>
-																		<item>$(TRAKTOR_HOME)/3rdp/rapidjson/include</item>
-																	</includePaths>
-																	<definitions>
-																		<item>T_JSON_EXPORT</item>
-																		<item>_DEBUG</item>
-																	</definitions>
-																	<libraryPaths/>
-																	<libraries/>
-																	<warningLevel>WlCompilerDefault</warningLevel>
-																	<additionalCompilerOptions/>
-																	<additionalLinkerOptions/>
-																	<debugExecutable/>
-																	<debugArguments/>
-																	<debugEnvironment/>
-																	<debugWorkingDirectory/>
-																	<aggregationItems>
-																		<item type="AggregationItem">
-																			<sourceFile>libTraktor.Json.dylib</sourceFile>
-																			<targetPath>debugshared</targetPath>
-																		</item>
-																	</aggregationItems>
-																	<consumerLibraryPath>debugshared</consumerLibraryPath>
-																</item>
-																<item type="Configuration" version="5">
-																	<name>ReleaseShared</name>
-																	<targetFormat>TfSharedLibrary</targetFormat>
-																	<targetProfile>TpRelease</targetProfile>
-																	<precompiledHeader/>
-																	<includePaths>
-																		<item>$(TRAKTOR_HOME)/code</item>
-																		<item>$(TRAKTOR_HOME)/3rdp/rapidjson/include</item>
-																	</includePaths>
-																	<definitions>
-																		<item>T_JSON_EXPORT</item>
-																		<item>NDEBUG</item>
-																	</definitions>
-																	<libraryPaths/>
-																	<libraries/>
-																	<warningLevel>WlCompilerDefault</warningLevel>
-																	<additionalCompilerOptions/>
-																	<additionalLinkerOptions/>
-																	<debugExecutable/>
-																	<debugArguments/>
-																	<debugEnvironment/>
-																	<debugWorkingDirectory/>
-																	<aggregationItems>
-																		<item type="AggregationItem">
-																			<sourceFile>libTraktor.Json.dylib</sourceFile>
-																			<targetPath>releaseshared</targetPath>
-																		</item>
-																	</aggregationItems>
-																	<consumerLibraryPath>releaseshared</consumerLibraryPath>
-																</item>
-																<item type="Configuration" version="5">
-																	<name>DebugStatic</name>
-																	<targetFormat>TfStaticLibrary</targetFormat>
-																	<targetProfile>TpDebug</targetProfile>
-																	<precompiledHeader/>
-																	<includePaths>
-																		<item>$(TRAKTOR_HOME)/code</item>
-																		<item>$(TRAKTOR_HOME)/3rdp/rapidjson/include</item>
-																	</includePaths>
-																	<definitions>
-																		<item>T_STATIC</item>
-																		<item>_DEBUG</item>
-																	</definitions>
-																	<libraryPaths/>
-																	<libraries/>
-																	<warningLevel>WlCompilerDefault</warningLevel>
-																	<additionalCompilerOptions/>
-																	<additionalLinkerOptions/>
-																	<debugExecutable/>
-																	<debugArguments/>
-																	<debugEnvironment/>
-																	<debugWorkingDirectory/>
-																	<aggregationItems>
-																		<item type="AggregationItem">
-																			<sourceFile>libTraktor.Json.a</sourceFile>
-																			<targetPath>debugstatic</targetPath>
-																		</item>
-																	</aggregationItems>
-																	<consumerLibraryPath>debugstatic</consumerLibraryPath>
-																</item>
-																<item type="Configuration" version="5">
-																	<name>ReleaseStatic</name>
-																	<targetFormat>TfStaticLibrary</targetFormat>
-																	<targetProfile>TpRelease</targetProfile>
-																	<precompiledHeader/>
-																	<includePaths>
-																		<item>$(TRAKTOR_HOME)/code</item>
-																		<item>$(TRAKTOR_HOME)/3rdp/rapidjson/include</item>
-																	</includePaths>
-																	<definitions>
-																		<item>T_STATIC</item>
-																		<item>NDEBUG</item>
-																	</definitions>
-																	<libraryPaths/>
-																	<libraries/>
-																	<warningLevel>WlCompilerDefault</warningLevel>
-																	<additionalCompilerOptions/>
-																	<additionalLinkerOptions/>
-																	<debugExecutable/>
-																	<debugArguments/>
-																	<debugEnvironment/>
-																	<debugWorkingDirectory/>
-																	<aggregationItems>
-																		<item type="AggregationItem">
-																			<sourceFile>libTraktor.Json.a</sourceFile>
-																			<targetPath>releasestatic</targetPath>
-																		</item>
-																	</aggregationItems>
-																	<consumerLibraryPath>releasestatic</consumerLibraryPath>
-																</item>
-															</configurations>
-															<items>
-																<item type="File">
-																	<fileName>*.*</fileName>
-																	<items/>
-																</item>
-															</items>
-															<dependencies>
-																<item type="ProjectDependency" version="3">
-																	<inheritIncludePaths>true</inheritIncludePaths>
-																	<link>LnkYes</link>
-																	<project ref="/object/projects/item/dependencies/item/project"/>
-																</item>
-															</dependencies>
-														</project>
-													</item>
-												</dependencies>
-											</project>
-										</item>
-										<item type="ProjectDependency" version="3">
-											<inheritIncludePaths>true</inheritIncludePaths>
-											<link>LnkYes</link>
-											<project ref="/object/projects/item[1]/dependencies/item[6]/project"/>
-										</item>
-										<item type="ExternalDependency" version="3">
-											<inheritIncludePaths>true</inheritIncludePaths>
-											<link>LnkYes</link>
-											<solutionFileName>ExternOSX.xms</solutionFileName>
-											<projectName>Extern.squish-1.10</projectName>
-										</item>
-										<item type="ProjectDependency" version="3">
-											<inheritIncludePaths>true</inheritIncludePaths>
-											<link>LnkYes</link>
-											<project ref="/object/projects/item/dependencies/item[1]/project/dependencies/item[3]/project/dependencies/item[1]/project"/>
-										</item>
-										<item type="ProjectDependency" version="3">
-											<inheritIncludePaths>true</inheritIncludePaths>
-											<link>LnkYes</link>
-											<project ref="/object/projects/item/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[2]/project"/>
-										</item>
-										<item type="ExternalDependency" version="3">
-											<inheritIncludePaths>true</inheritIncludePaths>
-											<link>LnkYes</link>
-											<solutionFileName>ExternOSX.xms</solutionFileName>
-											<projectName>Extern.rg_etc1</projectName>
-										</item>
-										<item type="ProjectDependency" version="3">
-											<inheritIncludePaths>true</inheritIncludePaths>
-											<link>LnkYes</link>
-											<project type="Project" version="1">
-												<enable>true</enable>
-												<name>Traktor.Render.Capture</name>
-												<sourcePath>$(TRAKTOR_HOME)/code/Render/Capture</sourcePath>
-												<configurations>
-													<item type="Configuration" version="5">
-														<name>DebugShared</name>
-														<targetFormat>TfSharedLibrary</targetFormat>
-														<targetProfile>TpDebug</targetProfile>
-														<precompiledHeader/>
-														<includePaths>
-															<item>$(TRAKTOR_HOME)/code</item>
-														</includePaths>
-														<definitions>
-															<item>T_RENDER_CAPTURE_EXPORT</item>
-															<item>_DEBUG</item>
-														</definitions>
-														<libraryPaths/>
-														<libraries/>
-														<warningLevel>WlCompilerDefault</warningLevel>
-														<additionalCompilerOptions/>
-														<additionalLinkerOptions/>
-														<debugExecutable/>
-														<debugArguments/>
-														<debugEnvironment/>
-														<debugWorkingDirectory/>
-														<aggregationItems>
-															<item type="AggregationItem">
-																<sourceFile>libTraktor.Render.Capture.dylib</sourceFile>
-																<targetPath>debugshared</targetPath>
-															</item>
-														</aggregationItems>
-														<consumerLibraryPath>debugshared</consumerLibraryPath>
-													</item>
-													<item type="Configuration" version="5">
-														<name>ReleaseShared</name>
-														<targetFormat>TfSharedLibrary</targetFormat>
-														<targetProfile>TpRelease</targetProfile>
-														<precompiledHeader/>
-														<includePaths>
-															<item>$(TRAKTOR_HOME)/code</item>
-														</includePaths>
-														<definitions>
-															<item>T_RENDER_CAPTURE_EXPORT</item>
-															<item>NDEBUG</item>
-														</definitions>
-														<libraryPaths/>
-														<libraries/>
-														<warningLevel>WlCompilerDefault</warningLevel>
-														<additionalCompilerOptions/>
-														<additionalLinkerOptions/>
-														<debugExecutable/>
-														<debugArguments/>
-														<debugEnvironment/>
-														<debugWorkingDirectory/>
-														<aggregationItems>
-															<item type="AggregationItem">
-																<sourceFile>libTraktor.Render.Capture.dylib</sourceFile>
-																<targetPath>releaseshared</targetPath>
-															</item>
-														</aggregationItems>
-														<consumerLibraryPath>releaseshared</consumerLibraryPath>
-													</item>
-													<item type="Configuration" version="5">
-														<name>DebugStatic</name>
-														<targetFormat>TfStaticLibrary</targetFormat>
-														<targetProfile>TpDebug</targetProfile>
-														<precompiledHeader/>
-														<includePaths>
-															<item>$(TRAKTOR_HOME)/code</item>
-														</includePaths>
-														<definitions>
-															<item>T_STATIC</item>
-															<item>_DEBUG</item>
-														</definitions>
-														<libraryPaths/>
-														<libraries/>
-														<warningLevel>WlCompilerDefault</warningLevel>
-														<additionalCompilerOptions/>
-														<additionalLinkerOptions/>
-														<debugExecutable/>
-														<debugArguments/>
-														<debugEnvironment/>
-														<debugWorkingDirectory/>
-														<aggregationItems>
-															<item type="AggregationItem">
-																<sourceFile>libTraktor.Render.Capture.a</sourceFile>
-																<targetPath>debugstatic</targetPath>
-															</item>
-														</aggregationItems>
-														<consumerLibraryPath>debugstatic</consumerLibraryPath>
-													</item>
-													<item type="Configuration" version="5">
-														<name>ReleaseStatic</name>
-														<targetFormat>TfStaticLibrary</targetFormat>
-														<targetProfile>TpRelease</targetProfile>
-														<precompiledHeader/>
-														<includePaths>
-															<item>$(TRAKTOR_HOME)/code</item>
-														</includePaths>
-														<definitions>
-															<item>T_STATIC</item>
-															<item>NDEBUG</item>
-														</definitions>
-														<libraryPaths/>
-														<libraries/>
-														<warningLevel>WlCompilerDefault</warningLevel>
-														<additionalCompilerOptions/>
-														<additionalLinkerOptions/>
-														<debugExecutable/>
-														<debugArguments/>
-														<debugEnvironment/>
-														<debugWorkingDirectory/>
-														<aggregationItems>
-															<item type="AggregationItem">
-																<sourceFile>libTraktor.Render.Capture.a</sourceFile>
-																<targetPath>releasestatic</targetPath>
-															</item>
-														</aggregationItems>
-														<consumerLibraryPath>releasestatic</consumerLibraryPath>
-													</item>
-												</configurations>
-												<items>
-													<item type="File">
-														<fileName>*.*</fileName>
-														<items/>
-													</item>
-												</items>
-												<dependencies>
-													<item type="ProjectDependency" version="3">
-														<inheritIncludePaths>true</inheritIncludePaths>
-														<link>LnkYes</link>
-														<project ref="/object/projects/item/dependencies/item/project"/>
-													</item>
-													<item type="ProjectDependency" version="3">
-														<inheritIncludePaths>true</inheritIncludePaths>
-														<link>LnkYes</link>
-														<project ref="/object/projects/item[1]/dependencies/item[3]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
-													</item>
-													<item type="ProjectDependency" version="3">
-														<inheritIncludePaths>true</inheritIncludePaths>
-														<link>LnkYes</link>
-														<project ref="/object/projects/item/dependencies/item[1]/project/dependencies/item[1]/project"/>
-													</item>
-												</dependencies>
-											</project>
-										</item>
-										<item type="ProjectDependency" version="3">
-											<inheritIncludePaths>true</inheritIncludePaths>
-											<link>LnkYes</link>
-											<project ref="/object/projects/item/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
-										</item>
-									</dependencies>
-								</project>
+								<project ref="/object/projects/item[1]/dependencies/item[7]/project/dependencies/item[12]/project/dependencies/item[7]/project"/>
 							</item>
 						</dependencies>
 					</project>
@@ -6628,7 +6643,7 @@
 							<item type="ProjectDependency" version="3">
 								<inheritIncludePaths>true</inheritIncludePaths>
 								<link>LnkYes</link>
-								<project ref="/object/projects/item[1]/dependencies/item[7]/project/dependencies/item[15]/project/dependencies/item[6]/project"/>
+								<project ref="/object/projects/item[1]/dependencies/item[7]/project/dependencies/item[12]/project/dependencies/item[7]/project/dependencies/item[6]/project"/>
 							</item>
 							<item type="ProjectDependency" version="3">
 								<inheritIncludePaths>true</inheritIncludePaths>
@@ -6643,7 +6658,7 @@
 							<item type="ProjectDependency" version="3">
 								<inheritIncludePaths>true</inheritIncludePaths>
 								<link>LnkYes</link>
-								<project ref="/object/projects/item[1]/dependencies/item[7]/project/dependencies/item[15]/project"/>
+								<project ref="/object/projects/item[1]/dependencies/item[7]/project/dependencies/item[12]/project/dependencies/item[7]/project"/>
 							</item>
 							<item type="ProjectDependency" version="3">
 								<inheritIncludePaths>true</inheritIncludePaths>
@@ -6671,7 +6686,7 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[1]/dependencies/item[7]/project/dependencies/item[15]/project/dependencies/item[6]/project"/>
+					<project ref="/object/projects/item[1]/dependencies/item[7]/project/dependencies/item[12]/project/dependencies/item[7]/project/dependencies/item[6]/project"/>
 				</item>
 			</dependencies>
 		</item>
@@ -8176,7 +8191,7 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[1]/dependencies/item[7]/project/dependencies/item[15]/project"/>
+					<project ref="/object/projects/item[1]/dependencies/item[7]/project/dependencies/item[12]/project/dependencies/item[7]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
@@ -8640,7 +8655,7 @@
 		</item>
 		<item ref="/object/projects/item/dependencies/item[2]/project"/>
 		<item ref="/object/projects/item[1]/dependencies/item[13]/project"/>
-		<item ref="/object/projects/item[1]/dependencies/item[7]/project/dependencies/item[15]/project/dependencies/item[6]/project"/>
+		<item ref="/object/projects/item[1]/dependencies/item[7]/project/dependencies/item[12]/project/dependencies/item[7]/project/dependencies/item[6]/project"/>
 		<item ref="/object/projects/item[1]/dependencies/item[3]/project/dependencies/item[3]/project"/>
 		<item ref="/object/projects/item/dependencies/item[5]/project"/>
 		<item type="Project" version="1">
@@ -8965,7 +8980,7 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[1]/dependencies/item[7]/project/dependencies/item[15]/project/dependencies/item[6]/project"/>
+					<project ref="/object/projects/item[1]/dependencies/item[7]/project/dependencies/item[12]/project/dependencies/item[7]/project/dependencies/item[6]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
@@ -9164,7 +9179,7 @@
 			</dependencies>
 		</item>
 		<item ref="/object/projects/item/dependencies/item[1]/project/dependencies/item[1]/project"/>
-		<item ref="/object/projects/item[1]/dependencies/item[7]/project/dependencies/item[15]/project"/>
+		<item ref="/object/projects/item[1]/dependencies/item[7]/project/dependencies/item[12]/project/dependencies/item[7]/project"/>
 		<item type="Project" version="1">
 			<enable>true</enable>
 			<name>Traktor.Render.OpenGL</name>
@@ -10344,7 +10359,7 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[1]/dependencies/item[7]/project/dependencies/item[15]/project/dependencies/item[6]/project"/>
+					<project ref="/object/projects/item[1]/dependencies/item[7]/project/dependencies/item[12]/project/dependencies/item[7]/project/dependencies/item[6]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
@@ -10892,7 +10907,7 @@
 							<item type="ProjectDependency" version="3">
 								<inheritIncludePaths>true</inheritIncludePaths>
 								<link>LnkYes</link>
-								<project ref="/object/projects/item[1]/dependencies/item[7]/project/dependencies/item[15]/project"/>
+								<project ref="/object/projects/item[1]/dependencies/item[7]/project/dependencies/item[12]/project/dependencies/item[7]/project"/>
 							</item>
 							<item type="ProjectDependency" version="3">
 								<inheritIncludePaths>true</inheritIncludePaths>
@@ -10907,7 +10922,7 @@
 							<item type="ProjectDependency" version="3">
 								<inheritIncludePaths>true</inheritIncludePaths>
 								<link>LnkYes</link>
-								<project ref="/object/projects/item[1]/dependencies/item[7]/project/dependencies/item[15]/project/dependencies/item[6]/project"/>
+								<project ref="/object/projects/item[1]/dependencies/item[7]/project/dependencies/item[12]/project/dependencies/item[7]/project/dependencies/item[6]/project"/>
 							</item>
 							<item type="ProjectDependency" version="3">
 								<inheritIncludePaths>true</inheritIncludePaths>
@@ -10935,7 +10950,7 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[1]/dependencies/item[7]/project/dependencies/item[15]/project"/>
+					<project ref="/object/projects/item[1]/dependencies/item[7]/project/dependencies/item[12]/project/dependencies/item[7]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
@@ -11447,7 +11462,7 @@
 		<item ref="/object/projects/item[1]/dependencies/item[7]/project/dependencies/item[12]/project"/>
 		<item ref="/object/projects/item/dependencies/item[1]/project/dependencies/item[3]/project/dependencies/item[1]/project"/>
 		<item ref="/object/projects/item/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[2]/project"/>
-		<item ref="/object/projects/item[1]/dependencies/item[7]/project/dependencies/item[15]/project/dependencies/item[12]/project"/>
+		<item ref="/object/projects/item[1]/dependencies/item[7]/project/dependencies/item[12]/project/dependencies/item[7]/project/dependencies/item[12]/project"/>
 		<item type="Project" version="1">
 			<enable>false</enable>
 			<name>Traktor.Render.OpenGL.ES2</name>
@@ -13305,7 +13320,7 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[1]/dependencies/item[7]/project/dependencies/item[15]/project/dependencies/item[6]/project"/>
+					<project ref="/object/projects/item[1]/dependencies/item[7]/project/dependencies/item[12]/project/dependencies/item[7]/project/dependencies/item[6]/project"/>
 				</item>
 			</dependencies>
 		</item>
@@ -14137,7 +14152,7 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[1]/dependencies/item[7]/project/dependencies/item[15]/project/dependencies/item[6]/project"/>
+					<project ref="/object/projects/item[1]/dependencies/item[7]/project/dependencies/item[12]/project/dependencies/item[7]/project/dependencies/item[6]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
@@ -14829,7 +14844,7 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[1]/dependencies/item[7]/project/dependencies/item[15]/project/dependencies/item[6]/project/dependencies/item[5]/project"/>
+					<project ref="/object/projects/item[1]/dependencies/item[7]/project/dependencies/item[12]/project/dependencies/item[7]/project/dependencies/item[6]/project/dependencies/item[5]/project"/>
 				</item>
 			</dependencies>
 		</item>
@@ -14988,7 +15003,7 @@
 				</item>
 			</dependencies>
 		</item>
-		<item ref="/object/projects/item[1]/dependencies/item[7]/project/dependencies/item[15]/project/dependencies/item[6]/project/dependencies/item[5]/project"/>
+		<item ref="/object/projects/item[1]/dependencies/item[7]/project/dependencies/item[12]/project/dependencies/item[7]/project/dependencies/item[6]/project/dependencies/item[5]/project"/>
 		<item type="Project" version="1">
 			<enable>true</enable>
 			<name>Traktor.Remote.Client.App</name>
@@ -16325,7 +16340,7 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[1]/dependencies/item[7]/project/dependencies/item[15]/project"/>
+					<project ref="/object/projects/item[1]/dependencies/item[7]/project/dependencies/item[12]/project/dependencies/item[7]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
@@ -16540,7 +16555,7 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[1]/dependencies/item[7]/project/dependencies/item[15]/project/dependencies/item[6]/project"/>
+					<project ref="/object/projects/item[1]/dependencies/item[7]/project/dependencies/item[12]/project/dependencies/item[7]/project/dependencies/item[6]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
@@ -16565,7 +16580,7 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[1]/dependencies/item[7]/project/dependencies/item[15]/project"/>
+					<project ref="/object/projects/item[1]/dependencies/item[7]/project/dependencies/item[12]/project/dependencies/item[7]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
@@ -16905,7 +16920,7 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[1]/dependencies/item[7]/project/dependencies/item[15]/project/dependencies/item[6]/project"/>
+					<project ref="/object/projects/item[1]/dependencies/item[7]/project/dependencies/item[12]/project/dependencies/item[7]/project/dependencies/item[6]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
@@ -17585,7 +17600,7 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[1]/dependencies/item[7]/project/dependencies/item[15]/project"/>
+					<project ref="/object/projects/item[1]/dependencies/item[7]/project/dependencies/item[12]/project/dependencies/item[7]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>

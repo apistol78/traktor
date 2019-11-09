@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Core/Containers/AlignedVector.h"
-#include "Core/Math/Vector2.h"
+//#include "Core/Containers/AlignedVector.h"
+//#include "Core/Math/Vector2.h"
 #include "Core/Object.h"
 #include "Core/Ref.h"
 #include "Core/RefArray.h"
@@ -47,7 +47,7 @@ private:
     resource::Proxy< render::Shader > m_filterShader;
     Ref< render::ScreenRenderer > m_screenRenderer;
     RefArray< render::RenderTargetSet > m_renderTargetSets;
-	AlignedVector< Vector2 > m_halton;
+	//AlignedVector< Vector2 > m_halton;
 };
 
     }

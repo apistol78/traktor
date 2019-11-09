@@ -531,6 +531,16 @@
 			</position>
 			<swizzle>x</swizzle>
 		</item>
+		<item type="traktor.render.Clamp" version="traktor.render.Node:1">
+			<id>{2B64EE68-852D-2E47-846B-A410279AC835}</id>
+			<comment/>
+			<position>
+				<first>1463</first>
+				<second>42</second>
+			</position>
+			<min>0</min>
+			<max>200</max>
+		</item>
 	</nodes>
 	<edges>
 		<item type="traktor.render.Edge">
@@ -965,16 +975,6 @@
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[1]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[45]"/>
-				<name>Input2</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
 				<node ref="/object/nodes/item[45]"/>
 				<name>Output</name>
 			</source>
@@ -1080,6 +1080,26 @@
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[20]"/>
+				<name>Input2</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[1]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[51]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[51]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[45]"/>
 				<name>Input2</name>
 			</destination>
 		</item>

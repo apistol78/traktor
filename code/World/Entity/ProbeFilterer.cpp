@@ -1,5 +1,7 @@
 #include "Core/Math/Const.h"
+#include "Core/Math/Float.h"
 #include "Core/Math/Log2.h"
+#include "Core/Math/Quasirandom.h"
 #include "Core/Math/Random.h"
 #include "Render/ICubeTexture.h"
 #include "Render/IRenderSystem.h"
@@ -25,41 +27,6 @@ const int32_t c_faceSize = 128;
 const int32_t c_sampleCount = 1000;
 
 const resource::Id< render::Shader > c_idFilterShader(Guid(L"{D9CC2267-0BDF-4A19-A970-856112821734}"));
-
-double halton(int32_t index, int32_t base)
-{
-	double f = 1, r = 0;
-	while (index > 0)
-	{
-		f = f / base;
-		r = r + f * (index % base);
-		index = index / base;
-	}
-	return r;
-}
-
-Vector4 sampleDirectionZ(float roughness, const Vector2& h, Random& rnd)
-{
-	double rx = clamp< float >(h.x + rnd.nextDouble() * 0.1f - 0.05f, 0.0f, 1.0f);
-	double ry = clamp< float >(h.y + rnd.nextDouble() * 0.1f - 0.05f, 0.0f, 1.0f);
-
-	float a = roughness * roughness;
-	float phi = 2.0f * PI * rx;
-	float cosTheta = std::sqrt((1.0f - ry) / (1.0f + (a * a - 1.0f) * ry));
-	float sinTheta = std::sqrt(1.0f - cosTheta * cosTheta);
-
-	Vector4 v(
-		sinTheta * std::cos(phi),
-		sinTheta * std::sin(phi),
-		cosTheta,
-		0.0f
-	);
-
-	if (v.z() < 0.0f)
-		v = -v;
-
-	return v;
-}
 
         }
 
@@ -104,14 +71,14 @@ bool ProbeFilterer::create()
             return false;
     }
 
-	m_halton.resize(c_sampleCount);
-	for (int32_t i = 0; i < c_sampleCount; ++i)
-	{
-		m_halton[i] = Vector2(
-			(float)halton(i, 2),
-			(float)halton(i, 3)
-		);
-	}
+	//m_halton.resize(c_sampleCount);
+	//for (int32_t i = 0; i < c_sampleCount; ++i)
+	//{
+	//	m_halton[i] = Vector2(
+	//		(float)halton(i, 2),
+	//		(float)halton(i, 3)
+	//	);
+	//}
 
     return true;
 }
@@ -136,7 +103,8 @@ void ProbeFilterer::render(render::IRenderView* renderView, render::ICubeTexture
 		for (int32_t i = 0; i < c_sampleCount; ++i)
 		{
 			const Vector4 c_unit(0.0f, 0.0f, 1.0f);
-			sampleDirections[i] = sampleDirectionZ(roughness, m_halton[i], random);
+			Vector2 uv = Quasirandom::hammersley(i, c_sampleCount);
+			sampleDirections[i] = Quasirandom::uniformCone(uv, c_unit, lerp(0.0f, HALF_PI, roughness));
 		}
 
 		for (int32_t side = 0; side < 6; ++side)
@@ -194,7 +162,7 @@ void ProbeFilterer::render(render::IRenderView* renderView, render::ICubeTexture
 
 			m_filterShader->setTextureParameter(L"World_ProbeTexture", probeTexture);
 			m_filterShader->setVectorParameter(L"World_ProbeSampleTangent", tangent);
-			m_filterShader->setVectorArrayParameter(L"World_ProbeSampleDirections", sampleDirections.c_ptr(), sampleDirections.size());
+			m_filterShader->setVectorArrayParameter(L"World_ProbeSampleDirections", sampleDirections.c_ptr(), (int32_t)sampleDirections.size());
 			m_filterShader->setVectorArrayParameter(L"World_ProbeFilterCorners", corners, sizeof_array(corners));
 
             renderView->begin(m_renderTargetSets[mip], &clear);
