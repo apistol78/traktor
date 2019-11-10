@@ -2,7 +2,7 @@
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
 #include "Core/Serialization/MemberRef.h"
-#include "Core/Serialization/MemberStl.h"
+#include "Core/Serialization/MemberSmallMap.h"
 #include "Core/Settings/PropertyGroup.h"
 
 namespace traktor
@@ -14,7 +14,7 @@ PropertyGroup::PropertyGroup()
 {
 }
 
-PropertyGroup::PropertyGroup(const std::map< std::wstring, Ref< IPropertyValue > >& value)
+PropertyGroup::PropertyGroup(const SmallMap< std::wstring, Ref< IPropertyValue > >& value)
 :	m_value(value)
 {
 }
@@ -32,14 +32,14 @@ void PropertyGroup::setProperty(const std::wstring& propertyName, IPropertyValue
 		if (value)
 			m_value[propertyName] = value;
 		else
-			m_value.erase(propertyName);
+			m_value.remove(propertyName);
 	}
 	else
 	{
 		std::wstring groupName = propertyName.substr(0, pos);
 		Ref< PropertyGroup > group;
 
-		std::map< std::wstring, Ref< IPropertyValue > >::const_iterator it = m_value.find(groupName);
+		auto it = m_value.find(groupName);
 		if (it != m_value.end())
 		{
 			group = dynamic_type_cast< PropertyGroup* >(it->second);
@@ -61,20 +61,20 @@ IPropertyValue* PropertyGroup::getProperty(const std::wstring& propertyName)
 	size_t pos = propertyName.find(L'/');
 	if (pos == propertyName.npos)
 	{
-		std::map< std::wstring, Ref< IPropertyValue > >::const_iterator it = m_value.find(propertyName);
+		auto it = m_value.find(propertyName);
 		return it != m_value.end() ? it->second.ptr() : 0;
 	}
 	else
 	{
 		std::wstring groupName = propertyName.substr(0, pos);
 
-		std::map< std::wstring, Ref< IPropertyValue > >::const_iterator it = m_value.find(groupName);
+		auto it = m_value.find(groupName);
 		if (it == m_value.end())
-			return 0;
+			return nullptr;
 
 		PropertyGroup* group = dynamic_type_cast< PropertyGroup* >(it->second);
 		if (!group)
-			return 0;
+			return nullptr;
 
 		return group->getProperty(propertyName.substr(pos + 1));
 	}
@@ -85,20 +85,20 @@ const IPropertyValue* PropertyGroup::getProperty(const std::wstring& propertyNam
 	size_t pos = propertyName.find(L'/');
 	if (pos == propertyName.npos)
 	{
-		std::map< std::wstring, Ref< IPropertyValue > >::const_iterator it = m_value.find(propertyName);
-		return it != m_value.end() ? it->second.ptr() : 0;
+		auto it = m_value.find(propertyName);
+		return it != m_value.end() ? it->second.ptr() : nullptr;
 	}
 	else
 	{
 		std::wstring groupName = propertyName.substr(0, pos);
 
-		std::map< std::wstring, Ref< IPropertyValue > >::const_iterator it = m_value.find(groupName);
+		auto it = m_value.find(groupName);
 		if (it == m_value.end())
-			return 0;
+			return nullptr;
 
 		PropertyGroup* group = dynamic_type_cast< PropertyGroup* >(it->second);
 		if (!group)
-			return 0;
+			return nullptr;
 
 		return group->getProperty(propertyName.substr(pos + 1));
 	}
@@ -106,13 +106,13 @@ const IPropertyValue* PropertyGroup::getProperty(const std::wstring& propertyNam
 
 Ref< PropertyGroup > PropertyGroup::merge(const PropertyGroup* rightGroup, MergeMode mode) const
 {
-	const std::map< std::wstring, Ref< IPropertyValue > >& leftValues = getValues();
-	const std::map< std::wstring, Ref< IPropertyValue > >& rightValues = rightGroup->getValues();
+	const auto& leftValues = getValues();
+	const auto& rightValues = rightGroup->getValues();
 
 	Ref< PropertyGroup > mergedGroup = new PropertyGroup();
 
 	// Insert values from left group.
-	for (std::map< std::wstring, Ref< IPropertyValue > >::const_iterator i = leftValues.begin(); i != leftValues.end(); ++i)
+	for (auto i = leftValues.begin(); i != leftValues.end(); ++i)
 	{
 		if (!i->second || rightValues.find(i->first) != rightValues.end())
 			continue;
@@ -121,9 +121,9 @@ Ref< PropertyGroup > PropertyGroup::merge(const PropertyGroup* rightGroup, Merge
 	}
 
 	// Insert values from right group.
-	for (std::map< std::wstring, Ref< IPropertyValue > >::const_iterator i = rightValues.begin(); i != rightValues.end(); ++i)
+	for (auto i = rightValues.begin(); i != rightValues.end(); ++i)
 	{
-		std::map< std::wstring, Ref< IPropertyValue > >::const_iterator it = leftValues.find(i->first);
+		auto it = leftValues.find(i->first);
 		if (mode == MmJoin && it != leftValues.end() && it->second)
 			mergedGroup->setProperty(i->first, it->second->join(i->second));
 		else if (i->second)
@@ -135,14 +135,14 @@ Ref< PropertyGroup > PropertyGroup::merge(const PropertyGroup* rightGroup, Merge
 
 Ref< PropertyGroup > PropertyGroup::difference(const PropertyGroup* rightGroup) const
 {
-	const std::map< std::wstring, Ref< IPropertyValue > >& leftValues = getValues();
-	const std::map< std::wstring, Ref< IPropertyValue > >& rightValues = rightGroup->getValues();
+	const auto& leftValues = getValues();
+	const auto& rightValues = rightGroup->getValues();
 
 	Ref< PropertyGroup > diffGroup = new PropertyGroup();
 
-	for (std::map< std::wstring, Ref< IPropertyValue > >::const_iterator il = leftValues.begin(); il != leftValues.end(); ++il)
+	for (auto il = leftValues.begin(); il != leftValues.end(); ++il)
 	{
-		std::map< std::wstring, Ref< IPropertyValue > >::const_iterator ir = rightValues.find(il->first);
+		auto ir = rightValues.find(il->first);
 		if (ir != rightValues.end())
 		{
 			// Ensure both left and right values aren't nil.
@@ -178,12 +178,12 @@ Ref< PropertyGroup > PropertyGroup::difference(const PropertyGroup* rightGroup) 
 	}
 
 	// Add all right values which isn't present in left group.
-	for (std::map< std::wstring, Ref< IPropertyValue > >::const_iterator ir = rightValues.begin(); ir != rightValues.end(); ++ir)
+	for (auto ir = rightValues.begin(); ir != rightValues.end(); ++ir)
 	{
 		if (!ir->second)
 			continue;
 
-		std::map< std::wstring, Ref< IPropertyValue > >::const_iterator il = leftValues.find(ir->first);
+		auto il = leftValues.find(ir->first);
 		if (il == leftValues.end())
 			diffGroup->setProperty(ir->first, ir->second->clone());
 	}
@@ -193,15 +193,11 @@ Ref< PropertyGroup > PropertyGroup::difference(const PropertyGroup* rightGroup) 
 
 void PropertyGroup::serialize(ISerializer& s)
 {
-	s >> MemberStlMap<
+	s >> MemberSmallMap<
 		std::wstring,
 		Ref< IPropertyValue >,
-		MemberStlPair<
-			std::wstring,
-			Ref< IPropertyValue >,
-			Member< std::wstring >,
-			MemberRef< IPropertyValue >
-		>
+		Member< std::wstring >,
+		MemberRef< IPropertyValue >
 	>(L"value", m_value);
 }
 
@@ -215,8 +211,8 @@ Ref< IPropertyValue > PropertyGroup::join(const IPropertyValue* right) const
 
 Ref< IPropertyValue > PropertyGroup::clone() const
 {
-	std::map< std::wstring, Ref< IPropertyValue > > value;
-	for (std::map< std::wstring, Ref< IPropertyValue > >::const_iterator i = m_value.begin(); i != m_value.end(); ++i)
+	SmallMap< std::wstring, Ref< IPropertyValue > > value;
+	for (auto i = m_value.begin(); i != m_value.end(); ++i)
 	{
 		if (!i->second)
 			continue;

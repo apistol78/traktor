@@ -1,6 +1,7 @@
 #if defined(T_USE_DIRECT2D)
 
 #include <limits>
+#include "Core/Thread/Atomic.h"
 #include "Ui/Application.h"
 #include "Ui/Win32/BitmapWin32.h"
 #include "Ui/Win32/CanvasDirect2DWin32.h"
@@ -17,6 +18,7 @@ namespace traktor
 
 ComRef< ID2D1Factory > s_d2dFactory;
 ComRef< IDWriteFactory > s_dwFactory;
+int32_t s_instanceCount = 0;
 
 		}
 
@@ -27,6 +29,8 @@ CanvasDirect2DWin32::CanvasDirect2DWin32()
 ,	m_underline(false)
 ,	m_clip(false)
 {
+	Atomic::increment(s_instanceCount);
+
 	m_gradientStops[0].color = D2D1::ColorF(0.0f, 0.0f, 0.0f, 1.0f);
 	m_gradientStops[0].position = 0.0f;
 	m_gradientStops[1].color = D2D1::ColorF(1.0f, 1.0f, 1.0f, 1.0f);
@@ -35,6 +39,7 @@ CanvasDirect2DWin32::CanvasDirect2DWin32()
 
 CanvasDirect2DWin32::~CanvasDirect2DWin32()
 {
+	Atomic::decrement(s_instanceCount);
 }
 
 bool CanvasDirect2DWin32::beginPaint(Window& hWnd, bool doubleBuffer, HDC hDC)
@@ -793,9 +798,9 @@ ID2D1Bitmap* CanvasDirect2DWin32::getCachedBitmap(const ISystemBitmap* bm)
 {
 	const BitmapWin32* bmw32 = reinterpret_cast< const BitmapWin32* >(bm);
 
-	std::map< int32_t, ComRef< ID2D1Bitmap > >::const_iterator i = m_d2dBitmaps.find(bmw32->getTag());
-	if (i != m_d2dBitmaps.end())
-		return i->second;
+	auto it = m_d2dBitmaps.find(bmw32->getTag());
+	if (it != m_d2dBitmaps.end())
+		return it->second;
 
 	Size size = bmw32->getSize();
 
@@ -815,9 +820,7 @@ ID2D1Bitmap* CanvasDirect2DWin32::getCachedBitmap(const ISystemBitmap* bm)
 	D2D1_BITMAP_PROPERTIES bitmapProps = D2D1::BitmapProperties(pixelFormat);
 
 	ComRef< ID2D1Bitmap > d2dBitmap;
-	HRESULT hr;
-
-	hr = m_d2dRenderTarget->CreateBitmap(
+	HRESULT hr = m_d2dRenderTarget->CreateBitmap(
 		D2D1::SizeU(size.cx, size.cy),
 		bits.c_ptr(),
 		size.cx * 4,
@@ -825,7 +828,7 @@ ID2D1Bitmap* CanvasDirect2DWin32::getCachedBitmap(const ISystemBitmap* bm)
 		&d2dBitmap.getAssign()
 	);
 	if (FAILED(hr))
-		return 0;
+		return nullptr;
 
 	m_d2dBitmaps[bmw32->getTag()] = d2dBitmap;
 	return d2dBitmap;

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Core/Containers/AlignedVector.h"
+#include "Core/Misc/AutoPtr.h"
 #include "Resource/Proxy.h"
 #include "World/IWorldRenderer.h"
 #include "World/WorldRenderSettings.h"
@@ -142,7 +143,8 @@ private:
 	Ref< LightRendererDeferred > m_lightRenderer;
 	resource::Proxy< IrradianceGrid > m_irradianceGrid;
 	Ref< GroupEntity > m_rootEntity;
-	AlignedVector< Frame > m_frames;
+	AutoArrayPtr< Frame > m_frames;
+	uint32_t m_frameCount;
 	float m_slicePositions[MaxSliceCount + 1];
 	uint32_t m_count;
 	Vector4 m_fogDistanceAndDensity;

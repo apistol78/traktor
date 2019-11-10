@@ -2,9 +2,9 @@
 
 #if defined(T_USE_DIRECT2D)
 
-#include <map>
 #include <d2d1.h>
 #include <dwrite.h>
+#include "Core/Containers/SmallMap.h"
 #include "Core/Misc/ComRef.h"
 #include "Ui/Win32/CanvasWin32.h"
 
@@ -113,7 +113,7 @@ private:
 	ComRef< IDWriteTextFormat > m_dwTextFormat;
 	ComRef< IDWriteFont > m_dwFont;
 	DWRITE_FONT_METRICS m_fontMetrics;
-	std::map< int32_t, ComRef< ID2D1Bitmap > > m_d2dBitmaps;
+	SmallMap< int32_t, ComRef< ID2D1Bitmap > > m_d2dBitmaps;
 	float m_strokeWidth;
 	bool m_underline;
 	bool m_clip;

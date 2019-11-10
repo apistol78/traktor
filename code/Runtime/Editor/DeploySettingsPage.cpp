@@ -105,8 +105,8 @@ bool DeploySettingsPage::create(ui::Container* parent, const PropertyGroup* orig
 	Ref< PropertyGroup > settingsEnvironment = settings->getProperty< PropertyGroup >(L"Runtime.Environment");
 	if (settingsEnvironment)
 	{
-		const std::map< std::wstring, Ref< IPropertyValue > >& values = settingsEnvironment->getValues();
-		for (std::map< std::wstring, Ref< IPropertyValue > >::const_iterator i = values.begin(); i != values.end(); ++i)
+		const auto& values = settingsEnvironment->getValues();
+		for (auto i = values.begin(); i != values.end(); ++i)
 		{
 			PropertyString* value = dynamic_type_cast< PropertyString* >(i->second);
 			if (value)

@@ -1148,8 +1148,8 @@ int32_t DatabaseView::getIconIndex(const TypeInfo* instanceType) const
 {
 	int32_t iconIndex = 2;
 
-	const std::map< std::wstring, Ref< IPropertyValue > >& icons = m_iconsGroup->getValues();
-	for (std::map< std::wstring, Ref< IPropertyValue > >::const_iterator i = icons.begin(); i != icons.end(); ++i)
+	const auto& icons = m_iconsGroup->getValues();
+	for (auto i = icons.begin(); i != icons.end(); ++i)
 	{
 		const TypeInfo* iconType = TypeInfo::find(i->first.c_str());
 		if (iconType && is_type_of(*iconType, *instanceType))

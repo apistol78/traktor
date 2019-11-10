@@ -9,9 +9,9 @@
 #include <commctrl.h>
 #include <shlobj.h>
 #include <tchar.h>
-#include <map>
 #include "Core/Object.h"
 #include "Core/Ref.h"
+#include "Core/Containers/SmallMap.h"
 #include "Ui/Win32/SmartHandle.h"
 
 namespace traktor
@@ -111,7 +111,7 @@ private:
 	HWND m_hWnd;
 	SmartFont m_hFont;
 	WNDPROC m_originalWndProc;
-	std::map< UINT, Ref< IMessageHandler > > m_messageHandlers;
+	SmallMap< UINT, Ref< IMessageHandler > > m_messageHandlers;
 
 	static LRESULT invokeMessageHandlers(HWND hWnd, DWORD dwIndex, UINT message, WPARAM wParam, LPARAM lParam, bool& pass);
 

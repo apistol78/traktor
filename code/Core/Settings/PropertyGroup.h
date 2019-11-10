@@ -1,7 +1,7 @@
 #pragma once
 
-#include <map>
 #include <string>
+#include "Core/Containers/SmallMap.h"
 #include "Core/Settings/IPropertyValue.h"
 
 // import/export mechanism.
@@ -33,7 +33,7 @@ public:
 
 	PropertyGroup();
 
-	PropertyGroup(const std::map< std::wstring, Ref< IPropertyValue > >& value);
+	PropertyGroup(const SmallMap< std::wstring, Ref< IPropertyValue > >& value);
 
 	static value_type_t get(const IPropertyValue* value);
 
@@ -78,7 +78,7 @@ public:
 
 	virtual void serialize(ISerializer& s) override;
 
-	const std::map< std::wstring, Ref< IPropertyValue > >& getValues() const { return m_value; }
+	const SmallMap< std::wstring, Ref< IPropertyValue > >& getValues() const { return m_value; }
 
 protected:
 	virtual Ref< IPropertyValue > join(const IPropertyValue* rightGroup) const override final;
@@ -86,7 +86,7 @@ protected:
 	virtual Ref< IPropertyValue > clone() const override final;
 
 private:
-	std::map< std::wstring, Ref< IPropertyValue > > m_value;
+	SmallMap< std::wstring, Ref< IPropertyValue > > m_value;
 };
 
 /*!
