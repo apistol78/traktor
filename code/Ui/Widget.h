@@ -29,10 +29,10 @@ class IWidget;
  */
 struct WidgetRect
 {
-	Ref< class Widget > widget;
+	class Widget* widget;
 	Rect rect;
 
-	WidgetRect(class Widget* widget_ = 0, const Rect& rect_ = Rect())
+	WidgetRect(class Widget* widget_ = nullptr, const Rect& rect_ = Rect())
 	:	widget(widget_)
 	,	rect(rect_)
 	{

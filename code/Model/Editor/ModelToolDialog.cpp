@@ -707,7 +707,7 @@ void ModelToolDialog::eventModelTreeSelect(ui::SelectionChangeEvent* event)
 			addStatistic(L"# vertices", toString(m_model->getVertexCount()));
 			addStatistic(L"# polygons", toString(m_model->getPolygonCount()));
 
-			std::map< uint32_t, uint32_t > polSizes;
+			SmallMap< uint32_t, uint32_t > polSizes;
 			for (const auto& pol : m_model->getPolygons())
 				polSizes[pol.getVertexCount()]++;
 

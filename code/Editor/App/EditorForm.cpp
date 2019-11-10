@@ -1187,10 +1187,10 @@ bool EditorForm::openEditor(db::Instance* instance)
 		Ref< PropertyGroup > iconsGroup = m_mergedSettings->getProperty< PropertyGroup >(L"Editor.Icons");
 		T_ASSERT(iconsGroup);
 
-		const std::map< std::wstring, Ref< IPropertyValue > >& icons = iconsGroup->getValues();
+		const auto& icons = iconsGroup->getValues();
 
-		int iconIndex = 2;
-		for (std::map< std::wstring, Ref< IPropertyValue > >::const_iterator i = icons.begin(); i != icons.end(); ++i)
+		int32_t iconIndex = 2;
+		for (auto i = icons.begin(); i != icons.end(); ++i)
 		{
 			const TypeInfo* iconType = TypeInfo::find(i->first.c_str());
 			if (iconType && is_type_of(*iconType, type_of(object)))

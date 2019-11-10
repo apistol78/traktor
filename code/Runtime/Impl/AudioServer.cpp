@@ -92,8 +92,8 @@ bool AudioServer::create(const PropertyGroup* settings, const SystemApplication&
 	Ref< const PropertyGroup > volumes = settings->getProperty< PropertyGroup >(L"Audio.Volumes");
 	if (volumes)
 	{
-		const std::map< std::wstring, Ref< IPropertyValue > >& cv = volumes->getValues();
-		for (std::map< std::wstring, Ref< IPropertyValue > >::const_iterator i = cv.begin(); i != cv.end(); ++i)
+		const auto& cv = volumes->getValues();
+		for (auto i = cv.begin(); i != cv.end(); ++i)
 		{
 			const std::wstring& category = i->first;
 			float volume = PropertyFloat::get(i->second);
@@ -228,8 +228,8 @@ int32_t AudioServer::reconfigure(const PropertyGroup* settings)
 	Ref< const PropertyGroup > volumes = settings->getProperty< PropertyGroup >(L"Audio.Volumes");
 	if (volumes)
 	{
-		const std::map< std::wstring, Ref< IPropertyValue > >& cv = volumes->getValues();
-		for (std::map< std::wstring, Ref< IPropertyValue > >::const_iterator i = cv.begin(); i != cv.end(); ++i)
+		const auto& cv = volumes->getValues();
+		for (auto i = cv.begin(); i != cv.end(); ++i)
 		{
 			const std::wstring& category = i->first;
 			float volume = PropertyFloat::get(i->second);

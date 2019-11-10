@@ -51,7 +51,7 @@ bool Boolean::apply(Model& model) const
 		return true;
 	}
 
-	std::map< uint32_t, uint32_t > materialMap;
+	SmallMap< uint32_t, uint32_t > materialMap;
 
 	for (uint32_t i = 0; i < m_modelA.getMaterialCount(); ++i)
 		materialMap[i] = model.addUniqueMaterial(m_modelA.getMaterial(i));

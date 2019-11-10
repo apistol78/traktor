@@ -256,8 +256,8 @@ bool BuildTargetAction::execute(IProgressListener* progressListener)
 	env->set(L"DEPLOY_EMSCRIPTEN", resolveEnv(m_globalSettings->getProperty< std::wstring >(L"Runtime.Emscripten", L"$(EMSCRIPTEN)"), 0));
 
 	// Flatten feature deploy variables.
-	const std::map< std::wstring, Ref< IPropertyValue > >& values = deploy->getValues();
-	for (std::map< std::wstring, Ref< IPropertyValue > >::const_iterator i = values.begin(); i != values.end(); ++i)
+	const auto& values = deploy->getValues();
+	for (auto i = values.begin(); i != values.end(); ++i)
 		env->set(i->first, implodePropertyValue(i->second));
 
 	// Merge tool environment variables.
@@ -265,13 +265,8 @@ bool BuildTargetAction::execute(IProgressListener* progressListener)
 	env->insert(deployTool.getEnvironment());
 
 	// Merge all feature environment variables.
-	for (RefArray< const Feature >::const_iterator i = features.begin(); i != features.end(); ++i)
-	{
-		const Feature* feature = *i;
-		T_ASSERT(feature);
-
+	for (auto feature : features)
 		env->insert(feature->getEnvironment());
-	}
 
 	StringOutputStream ss;
 	ss << deployTool.getExecutable() << L" build";
@@ -292,14 +287,10 @@ bool BuildTargetAction::execute(IProgressListener* progressListener)
 	if (onlineConfig.isValid() && !onlineConfig.isNull())
 		ss << L" " << onlineConfig.format();
 
-	for (RefArray< const Feature >::const_iterator i = features.begin(); i != features.end(); ++i)
+	for (auto feature : features)
 	{
-		const Feature* feature = *i;
-		T_ASSERT(feature);
-
-		const std::list< Guid >& dependencies = feature->getDependencies();
-		for (std::list< Guid >::const_iterator i = dependencies.begin(); i != dependencies.end(); ++i)
-			ss << L" " << i->format();
+		for (const auto& dependency : feature->getDependencies())
+			ss << L" " << dependency.format();
 	}
 
 	if (m_standAlone)

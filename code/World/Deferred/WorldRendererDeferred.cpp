@@ -172,6 +172,7 @@ WorldRendererDeferred::WorldRendererDeferred()
 ,	m_shadowsQuality(QuDisabled)
 ,	m_ambientOcclusionQuality(QuDisabled)
 ,	m_antiAliasQuality(QuDisabled)
+,	m_frameCount(0)
 ,	m_count(0)
 ,	m_includeObjectVelocity(false)
 {
@@ -219,7 +220,10 @@ bool WorldRendererDeferred::create(
 	m_reflectionsQuality = desc.reflectionsQuality;
 	m_ambientOcclusionQuality = desc.ambientOcclusionQuality;
 	m_antiAliasQuality = desc.antiAliasQuality;
-	m_frames.resize(desc.frameCount);
+
+	// Allocate frames.
+	m_frames.reset(new Frame [desc.frameCount]);
+	m_frameCount = desc.frameCount;
 
 	m_includeObjectVelocity = bool(desc.motionBlurQuality >= QuHigh);
 
@@ -718,8 +722,10 @@ bool WorldRendererDeferred::create(
 	}
 
 	// Allocate contexts.
-	for (auto& frame : m_frames)
+	for (uint32_t f = 0; f < m_frameCount; ++f)
 	{
+		auto& frame = m_frames[f];
+
 		if (m_shadowsQuality > QuDisabled)
 		{
 			for (int32_t i = 0; i < m_shadowSettings.cascadingSlices; ++i)
@@ -805,7 +811,7 @@ bool WorldRendererDeferred::create(
 
 void WorldRendererDeferred::destroy()
 {
-	m_frames.clear();
+	m_frames.release();
 
 	safeDestroy(m_lightRenderer);
 	safeDestroy(m_toneMapImageProcess);

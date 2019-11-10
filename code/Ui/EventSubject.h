@@ -82,7 +82,7 @@ public:
 		}
 
 	private:
-		Ref< ClassType > m_target;
+		ClassType* m_target;
 		method_t m_method;
 	};
 

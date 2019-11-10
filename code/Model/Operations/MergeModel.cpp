@@ -38,8 +38,8 @@ MergeModel::MergeModel(const Model& sourceModel, const Transform& sourceTransfor
 
 bool MergeModel::apply(Model& model) const
 {
-	std::map< uint32_t, uint32_t > materialMap;
-	std::map< uint32_t, uint32_t > channelMap;
+	SmallMap< uint32_t, uint32_t > materialMap;
+	SmallMap< uint32_t, uint32_t > channelMap;
 
 	// Merge texture channels.
 	for (uint32_t i = 0; i < m_sourceModel.getTexCoordChannels().size(); ++i)

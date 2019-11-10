@@ -284,8 +284,8 @@ void InputServer::update(float deltaTime, bool renderViewActive)
 					Ref< const PropertyGroup > inputConstants = m_settings->getProperty< PropertyGroup >(L"Input.Constants");
 					if (inputConstants)
 					{
-						const std::map< std::wstring, Ref< IPropertyValue > >& values = inputConstants->getValues();
-						for (std::map< std::wstring, Ref< IPropertyValue > >::const_iterator i = values.begin(); i != values.end(); ++i)
+						const auto& values = inputConstants->getValues();
+						for (auto i = values.begin(); i != values.end(); ++i)
 						{
 							m_inputMapping->setValue(
 								i->first,
@@ -339,8 +339,8 @@ void InputServer::update(float deltaTime, bool renderViewActive)
 				Ref< const PropertyGroup > inputConstants = m_settings->getProperty< PropertyGroup >(L"Input.Constants");
 				if (inputConstants)
 				{
-					const std::map< std::wstring, Ref< IPropertyValue > >& values = inputConstants->getValues();
-					for (std::map< std::wstring, Ref< IPropertyValue > >::const_iterator i = values.begin(); i != values.end(); ++i)
+					const auto& values = inputConstants->getValues();
+					for (auto i = values.begin(); i != values.end(); ++i)
 					{
 						m_inputMapping->setValue(
 							i->first,
@@ -483,8 +483,8 @@ bool InputServer::resetInputSource(const std::wstring& sourceId)
 		Ref< const PropertyGroup > inputConstants = m_settings->getProperty< PropertyGroup >(L"Input.Constants");
 		if (inputConstants)
 		{
-			const std::map< std::wstring, Ref< IPropertyValue > >& values = inputConstants->getValues();
-			for (std::map< std::wstring, Ref< IPropertyValue > >::const_iterator i = values.begin(); i != values.end(); ++i)
+			const auto& values = inputConstants->getValues();
+			for (auto i = values.begin(); i != values.end(); ++i)
 			{
 				m_inputMapping->setValue(
 					i->first,
@@ -494,7 +494,7 @@ bool InputServer::resetInputSource(const std::wstring& sourceId)
 		}
 	}
 	else
-		m_inputMapping = 0;
+		m_inputMapping = nullptr;
 
 	return true;
 }
@@ -538,8 +538,8 @@ void InputServer::revert()
 		Ref< const PropertyGroup > inputConstants = m_settings->getProperty< PropertyGroup >(L"Input.Constants");
 		if (inputConstants)
 		{
-			const std::map< std::wstring, Ref< IPropertyValue > >& values = inputConstants->getValues();
-			for (std::map< std::wstring, Ref< IPropertyValue > >::const_iterator i = values.begin(); i != values.end(); ++i)
+			const auto& values = inputConstants->getValues();
+			for (auto i = values.begin(); i != values.end(); ++i)
 			{
 				m_inputMapping->setValue(
 					i->first,
@@ -549,7 +549,7 @@ void InputServer::revert()
 		}
 	}
 	else
-		m_inputMapping = 0;
+		m_inputMapping = nullptr;
 }
 
 input::InputSystem* InputServer::getInputSystem()
