@@ -144,7 +144,7 @@ bool ScenePreviewControl::create(ui::Widget* parent, SceneEditorContext* context
 	updateEditState();
 
 	addEventHandler< ui::TimerEvent >(this, &ScenePreviewControl::eventTimer);
-	startTimer(1000 / 60);
+	startTimer(1000 / 10);
 
 	m_timer.start();
 	return true;
@@ -546,7 +546,7 @@ void ScenePreviewControl::eventRedraw(RedrawEvent* event)
 
 void ScenePreviewControl::eventTimer(ui::TimerEvent* event)
 {
-	eventRedraw(0);
+	update();
 }
 
 	}

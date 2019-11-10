@@ -3,7 +3,6 @@
 #include "Core/Io/Writer.h"
 #include "Core/Log/Log.h"
 #include "Core/Math/Quasirandom.h"
-#include "Core/Math/RandomGeometry.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Settings/PropertyString.h"
 #include "Database/Instance.h"
@@ -99,8 +98,6 @@ bool IrradianceGridPipeline::buildOutput(
 	Ref< render::CubeMap > cubeMap = render::CubeMap::createFromImage(skyImage);
 	if (!cubeMap)
 		return false;
-
-	RandomGeometry random;
 
 	WrappedSHFunction shFunction([&] (const Vector4& unit) -> Vector4 {
 		return cubeMap->get(unit);
