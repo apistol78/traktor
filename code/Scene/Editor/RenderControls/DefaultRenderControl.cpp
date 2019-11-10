@@ -14,7 +14,6 @@
 #include "Scene/Editor/RenderControls/FinalRenderControl.h"
 #include "Scene/Editor/RenderControls/OrthogonalRenderControl.h"
 #include "Scene/Editor/RenderControls/PerspectiveRenderControl.h"
-#include "Scene/Editor/RenderControls/ProbeRenderControl.h"
 #include "Ui/Application.h"
 #include "Ui/Container.h"
 #include "Ui/Menu.h"
@@ -91,7 +90,6 @@ bool DefaultRenderControl::create(ui::Widget* parent, SceneEditorContext* contex
 	m_toolView->add(i18n::Text(L"SCENE_EDITOR_VIEW_RIGHT"));
 	m_toolView->add(i18n::Text(L"SCENE_EDITOR_VIEW_DEBUG"));
 	m_toolView->add(i18n::Text(L"SCENE_EDITOR_VIEW_CAMERA"));
-	m_toolView->add(i18n::Text(L"SCENE_EDITOR_VIEW_PROBE"));
 	m_toolView->add(i18n::Text(L"SCENE_EDITOR_VIEW_FINAL"));
 	m_toolView->select(viewType);
 
@@ -394,16 +392,7 @@ bool DefaultRenderControl::createRenderControl(int32_t type)
 		}
 		break;
 
-	case 9:	// Probe
-		{
-			Ref< ProbeRenderControl > renderControl = new ProbeRenderControl();
-			if (!renderControl->create(m_container, m_context, *worldRendererType))
-				return false;
-			m_renderControl = renderControl;
-		}
-		break;
-
-	case 10: // Final
+	case 9: // Final
 		{
 			Ref< FinalRenderControl > renderControl = new FinalRenderControl();
 			if (!renderControl->create(m_container, m_context, m_cameraId))
