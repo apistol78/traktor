@@ -1,9 +1,9 @@
-#include "Drawing/Formats/ImageFormatBmp.h"
+#include "Core/Io/Reader.h"
+#include "Core/Log/Log.h"
 #include "Drawing/Image.h"
 #include "Drawing/ImageInfo.h"
 #include "Drawing/PixelFormat.h"
-#include "Core/Io/Reader.h"
-#include "Core/Log/Log.h"
+#include "Drawing/Formats/ImageFormatBmp.h"
 
 namespace traktor
 {

@@ -2,6 +2,7 @@
 #include "Drawing/Config.h"
 #include "Drawing/IImageFormat.h"
 #include "Drawing/Formats/ImageFormatBmp.h"
+#include "Drawing/Formats/ImageFormatDds.h"
 #if defined(DRAWING_INCLUDE_ICO)
 #	include "Drawing/Formats/ImageFormatIco.h"
 #endif
@@ -35,6 +36,8 @@ Ref< IImageFormat > IImageFormat::determineFormat(const std::wstring& extension)
 
 	if (compareIgnoreCase< std::wstring >(extension, L"bmp") == 0)
 		imageFormat = new ImageFormatBmp();
+	else if (compareIgnoreCase< std::wstring >(extension, L"dds") == 0)
+		imageFormat = new ImageFormatDds();
 #if defined(DRAWING_INCLUDE_ICO)
 	else if (compareIgnoreCase< std::wstring >(extension, L"ico") == 0)
 		imageFormat = new ImageFormatIco();

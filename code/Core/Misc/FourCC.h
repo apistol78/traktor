@@ -41,7 +41,7 @@ public:
 	inline explicit FourCC(const char* str);
 
 	/*! \brief Format into string. */
-	inline std::string format() const;
+	inline std::wstring format() const;
 
 	/*! \brief Equal operator.
 	 *
@@ -91,20 +91,20 @@ inline FourCC::FourCC(uint32_t fcc)
 
 inline FourCC::FourCC(const char* str)
 {
-	m_fcc = (str[0] << 24) | (str[1] << 16) | (str[2] << 8) | (str[3]);
+	m_fcc = (str[3] << 24) | (str[2] << 16) | (str[1] << 8) | (str[0]);
 }
 
-std::string FourCC::format() const
+std::wstring FourCC::format() const
 {
-	char str[] =
+	wchar_t str[] =
 	{
-		(m_fcc >> 24) & 0xff,
-		(m_fcc >> 16) & 0xff,
-		(m_fcc >> 8) & 0xff,
-		(m_fcc) & 0xff,
+		(wchar_t)((m_fcc) & 0xff),
+		(wchar_t)((m_fcc >> 8) & 0xff),
+		(wchar_t)((m_fcc >> 16) & 0xff),
+		(wchar_t)((m_fcc >> 24) & 0xff),
 		0
 	};
-	return std::string(str);
+	return std::wstring(str);
 }
 
 inline bool FourCC::operator == (const FourCC& fcc) const

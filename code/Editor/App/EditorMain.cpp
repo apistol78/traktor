@@ -191,7 +191,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR szCmdLine, int)
 		if (editorForm->create(cmdLine))
 		{
 #if !defined(_DEBUG)
-			safeDestroy(splash);
+			if (splash)
+				splash->hide();
 #endif
 
 			ui::Application::getInstance()->execute();
