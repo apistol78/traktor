@@ -1,8 +1,9 @@
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberAabb.h"
+#include "Core/Serialization/MemberAlignedVector.h"
 #include "Core/Serialization/MemberRef.h"
+#include "Core/Serialization/MemberSmallMap.h"
 #include "Core/Serialization/MemberStaticArray.h"
-#include "Core/Serialization/MemberStl.h"
 #include "Mesh/Partition/OctreeNodeData.h"
 
 namespace traktor
@@ -12,22 +13,32 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.mesh.OctreeNodeData", 0, OctreeNodeData, ISerializable)
 
+void OctreeNodeData::setBoundingBox(const Aabb3& boundingBox)
+{
+	m_boundingBox = boundingBox;
+}
+
+void OctreeNodeData::addPartIndex(uint8_t worldTechniqueId, uint32_t partIndex)
+{
+	m_partIndices[worldTechniqueId].push_back(partIndex);
+}
+
+void OctreeNodeData::setChild(int32_t index, const OctreeNodeData* child)
+{
+	m_children[index] = child;
+}
+
 void OctreeNodeData::serialize(ISerializer& s)
 {
 	s >> MemberAabb3(L"boundingBox", m_boundingBox);
-	s >> MemberStlMap
+	s >> MemberSmallMap
 		<
 			uint8_t,
-			std::vector< uint32_t >,
-			MemberStlPair
-			<
-				uint8_t,
-				std::vector< uint32_t >,
-				Member< uint8_t >,
-				MemberStlVector< uint32_t >
-			>
+			AlignedVector< uint32_t >,
+			Member< uint8_t >,
+			MemberAlignedVector< uint32_t >
 		>(L"partIndices", m_partIndices);
-	s >> MemberStaticArray< Ref< OctreeNodeData >, 8, MemberRef< OctreeNodeData > >(L"children", m_children);
+	s >> MemberStaticArray< Ref< const OctreeNodeData >, 8, MemberRef< const OctreeNodeData > >(L"children", m_children);
 }
 
 	}

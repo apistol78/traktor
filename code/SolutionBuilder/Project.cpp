@@ -6,9 +6,6 @@
 #include "SolutionBuilder/Configuration.h"
 #include "SolutionBuilder/Dependency.h"
 
-// Remove this when we have converted all solutions.
-#include "SolutionBuilder/ProjectDependency.h"
-
 namespace traktor
 {
 	namespace sb

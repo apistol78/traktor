@@ -178,7 +178,7 @@ Ref< OctreeNodeTemplate > buildOctreeTemplate(
 		}
 	}
 	if (boundingBox.empty())
-		return 0;
+		return nullptr;
 
 	Ref< OctreeNodeTemplate > node = new OctreeNodeTemplate();
 	node->boundingBox = boundingBox;
@@ -255,11 +255,10 @@ Ref< OctreeNodeData > createOctreeParts(
 )
 {
 	std::map< std::wstring, AlignedVector< IndexRange > > techniqueRanges;
-
-	uint32_t indexSize = useLargeIndices ? sizeof(uint32_t) : sizeof(uint16_t);
+	const uint32_t indexSize = useLargeIndices ? sizeof(uint32_t) : sizeof(uint16_t);
 
 	Ref< OctreeNodeData > node = new OctreeNodeData();
-	node->m_boundingBox = nodeTemplate->boundingBox;
+	node->setBoundingBox(nodeTemplate->boundingBox);
 
 	for (std::map< std::wstring, std::list< MeshMaterialTechnique > >::const_iterator i = materialTechniqueMap.begin(); i != materialTechniqueMap.end(); ++i)
 	{
@@ -270,14 +269,13 @@ Ref< OctreeNodeData > createOctreeParts(
 		range.minIndex = std::numeric_limits< int32_t >::max();
 		range.maxIndex = -std::numeric_limits< int32_t >::max();
 
-		for (AlignedVector< uint32_t >::const_iterator j = nodeTemplate->polygonIds.begin(); j != nodeTemplate->polygonIds.end(); ++j)
+		for (auto polygonId : nodeTemplate->polygonIds)
 		{
-			const model::Polygon& polygon = model.getPolygon(*j);
-
+			const model::Polygon& polygon = model.getPolygon(polygonId);
 			if (model.getMaterial(polygon.getMaterial()).getName() != i->first)
 				continue;
 
-			for (int k = 0; k < 3; ++k)
+			for (int32_t k = 0; k < 3; ++k)
 			{
 				if (useLargeIndices)
 					*(uint32_t*)index = polygon.getVertex(k);
@@ -295,9 +293,9 @@ Ref< OctreeNodeData > createOctreeParts(
 		if (range.offsetLast <= range.offsetFirst)
 			continue;
 
-		for (std::list< MeshMaterialTechnique >::const_iterator j = i->second.begin(); j != i->second.end(); ++j)
+		for (const auto& mmt : i->second)
 		{
-			std::wstring technique = j->worldTechnique + L"/" + j->shaderTechnique;
+			std::wstring technique = mmt.worldTechnique + L"/" + mmt.shaderTechnique;
 			range.mergeInto(techniqueRanges[technique]);
 		}
 	}
@@ -307,7 +305,7 @@ Ref< OctreeNodeData > createOctreeParts(
 		std::wstring worldTechnique, shaderTechnique;
 		split(i->first, L'/', worldTechnique, shaderTechnique);
 
-		for (AlignedVector< IndexRange >::const_iterator j = i->second.begin(); j != i->second.end(); ++j)
+		for (const auto& ir : i->second)
 		{
 			PartitionMeshResource::Part partitionPart;
 			partitionPart.shaderTechnique = shaderTechnique;
@@ -317,8 +315,8 @@ Ref< OctreeNodeData > createOctreeParts(
 			for (uint32_t k = 0; k < uint32_t(renderParts.size()); ++k)
 			{
 				if (
-					renderParts[k].primitives.offset == j->offsetFirst &&
-					renderParts[k].primitives.count == (j->offsetLast - j->offsetFirst) / 3
+					renderParts[k].primitives.offset == ir.offsetFirst &&
+					renderParts[k].primitives.count == (ir.offsetLast - ir.offsetFirst) / 3
 				)
 				{
 					partitionPart.meshPart = k;
@@ -331,15 +329,15 @@ Ref< OctreeNodeData > createOctreeParts(
 				render::Mesh::Part renderPart;
 				renderPart.primitives.setIndexed(
 					render::PtTriangles,
-					j->offsetFirst,
-					(j->offsetLast - j->offsetFirst) / 3,
-					j->minIndex,
-					j->maxIndex
+					ir.offsetFirst,
+					(ir.offsetLast - ir.offsetFirst) / 3,
+					ir.minIndex,
+					ir.maxIndex
 				);
 				renderParts.push_back(renderPart);
 			}
 
-			AlignedVector< std::wstring >::iterator it = std::find(worldTechniques.begin(), worldTechniques.end(), worldTechnique);
+			auto it = std::find(worldTechniques.begin(), worldTechniques.end(), worldTechnique);
 			uint8_t worldTechniqueId;
 
 			if (it == worldTechniques.end())
@@ -350,7 +348,7 @@ Ref< OctreeNodeData > createOctreeParts(
 			else
 				worldTechniqueId = uint8_t(std::distance(worldTechniques.begin(), it));
 
-			node->m_partIndices[worldTechniqueId].push_back(partitionParts.size());
+			node->addPartIndex(worldTechniqueId, (uint32_t)partitionParts.size());
 			partitionParts.push_back(partitionPart);
 		}
 	}
@@ -359,7 +357,7 @@ Ref< OctreeNodeData > createOctreeParts(
 	{
 		if (nodeTemplate->children[i])
 		{
-			node->m_children[i] = createOctreeParts(
+			node->setChild(i, createOctreeParts(
 				model,
 				nodeTemplate->children[i],
 				materialTechniqueMap,
@@ -369,7 +367,7 @@ Ref< OctreeNodeData > createOctreeParts(
 				renderParts,
 				partitionParts,
 				worldTechniques
-			);
+			));
 		}
 	}
 

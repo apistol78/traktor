@@ -1,5 +1,3 @@
-#pragma optimize( "", off )
-
 #include "Core/Math/Float.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Physics/Body.h"
@@ -117,6 +115,7 @@ float VehicleComponent::getEngineThrottle() const
 
 void VehicleComponent::updateSteering(float dT)
 {
+	// Update steer angle, aiming for target angle.
 	if (m_steerAngle < m_steerAngleTarget)
 	{
 		float dA = min(m_steerAngleTarget - m_steerAngle, m_data->getSteerAngleVelocity() * dT);
@@ -128,12 +127,15 @@ void VehicleComponent::updateSteering(float dT)
 		m_steerAngle -= dA;
 	}
 
+	// Update wheel direction from steering.
+	Vector4 direction(std::sin(m_steerAngle), 0.0f, std::cos(m_steerAngle), 0.0f);
+	Vector4 directionPerp(std::cos(m_steerAngle), 0.0f, -std::sin(m_steerAngle), 0.0f);
 	for (auto wheel : m_wheels)
 	{
 		if (wheel->data->getSteer())
 		{
-			wheel->direction = Vector4(std::sin(m_steerAngle), 0.0f, std::cos(m_steerAngle), 0.0f);
-			wheel->directionPerp = Vector4(std::cos(m_steerAngle), 0.0f, -std::sin(m_steerAngle), 0.0f);
+			wheel->direction = direction;
+			wheel->directionPerp = directionPerp;
 		}
 	}
 }
@@ -158,6 +160,7 @@ void VehicleComponent::updateSuspension(float dT)
 		const float c_suspensionTraceRadius = 0.25f;
 		float contactFudge = 0.0f;
 
+		// Trace wheel contact.
 		if (m_physicsManager->querySweep(
 			anchorW,
 			axisW,

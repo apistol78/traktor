@@ -1,6 +1,5 @@
 #pragma once
 
-#include <vector>
 #include "Core/Containers/AlignedVector.h"
 #include "Core/Math/Aabb3.h"
 #include "Core/Math/Matrix44.h"
@@ -75,7 +74,7 @@ private:
 	Ref< render::Mesh > m_mesh;
 	AlignedVector< Part > m_parts;
 	Ref< IPartition > m_partition;
-	std::vector< uint32_t > m_partIndices;
+	AlignedVector< uint32_t > m_partIndices;
 #if defined(_DEBUG)
 	std::string m_name;
 #endif

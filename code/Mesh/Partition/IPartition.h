@@ -1,7 +1,7 @@
 #pragma once
 
-#include <vector>
 #include "Core/Object.h"
+#include "Core/Containers/AlignedVector.h"
 #include "Core/Math/Frustum.h"
 #include "Core/Math/Matrix44.h"
 #include "Render/Types.h"
@@ -19,6 +19,9 @@ namespace traktor
 	namespace mesh
 	{
 
+/*!
+ * \ingroup Mesh
+ */
 class IPartition : public Object
 {
 	T_RTTI_CLASS;
@@ -28,7 +31,7 @@ public:
 		const Frustum& frustum,
 		const Matrix44& worldView,
 		render::handle_t worldTechnique,
-		std::vector< uint32_t >& outPartIndices
+		AlignedVector< uint32_t >& outPartIndices
 	) const = 0;
 };
 

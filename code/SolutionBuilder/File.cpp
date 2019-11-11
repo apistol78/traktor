@@ -30,9 +30,8 @@ void File::getSystemFiles(const Path& sourcePath, std::set< Path >& outFiles) co
 	FileSystem::getInstance().find(path, files);
 
 	RefArray< traktor::File > directories;
-	for (RefArray< traktor::File >::iterator i = files.begin(); i != files.end(); ++i)
+	for (auto file : files)
 	{
-		traktor::File* file = *i;
 		if (file->isDirectory() && file->getPath().getFileName() != L"." && file->getPath().getFileName() != L"..")
 			directories.push_back(file);
 		else if (!file->isDirectory())

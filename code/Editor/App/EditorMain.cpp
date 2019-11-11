@@ -176,18 +176,22 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR szCmdLine, int)
 	try
 	{
 #if !defined(_DEBUG)
-		Ref< editor::Splash > splash = new editor::Splash();
-		splash->create();
+		Ref< editor::Splash > splash;
+		if (!cmdLine.hasOption(L"no-splash"))
+		{
+			splash = new editor::Splash();
+			splash->create();
 
-		for (int32_t i = 0; i < 10; ++i)
-			ui::Application::getInstance()->process();
+			for (int32_t i = 0; i < 10; ++i)
+				ui::Application::getInstance()->process();
+		}
 #endif
 
 		Ref< editor::EditorForm > editorForm = new editor::EditorForm();
 		if (editorForm->create(cmdLine))
 		{
 #if !defined(_DEBUG)
-			splash->hide();
+			safeDestroy(splash);
 #endif
 
 			ui::Application::getInstance()->execute();
@@ -195,7 +199,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR szCmdLine, int)
 		}
 
 #if !defined(_DEBUG)
-		splash->destroy();
+		safeDestroy(splash);
 #endif
 	}
 	catch (...)

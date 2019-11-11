@@ -6,7 +6,6 @@
 #include "Core/System/ISharedMemory.h"
 #include "Core/System/OS.h"
 #include "Database/IEvent.h"
-#include "Database/Local/EventJournal.h"
 #include "Database/Local/LocalBus.h"
 
 namespace traktor

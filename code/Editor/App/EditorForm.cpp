@@ -432,15 +432,6 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	// Default configuration file.
 	m_settingsPath = Path(L"$(TRAKTOR_HOME)/resources/runtime/configurations/Traktor.Editor.config");
 
-#if defined(__APPLE__)
-	/*
-	// Load configuration from bundle resources.
-	bool forceConsole = cmdLine.hasOption(L"console");
-	if (!forceConsole)
-		m_settingsPath = Path(L"$(BUNDLE_PATH)/Contents/Resources//resources/runtime/configurations/Traktor.Editor.config");
-	*/
-#endif
-
 	// Overridden configuration file.
 	if (cmdLine.hasOption('c', L"configuration"))
 		m_settingsPath = Path(cmdLine.getOption('c', L"configuration").getString());
@@ -714,9 +705,9 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	}
 
 	// Create editor plugins.
-	for (RefArray< IEditorPluginFactory >::iterator i = m_editorPluginFactories.begin(); i != m_editorPluginFactories.end(); ++i)
+	for (auto editorPluginFactory : m_editorPluginFactories)
 	{
-		Ref< IEditorPlugin > editorPlugin = (*i)->createEditorPlugin(this);
+		Ref< IEditorPlugin > editorPlugin = editorPluginFactory->createEditorPlugin(this);
 		if (!editorPlugin)
 			continue;
 

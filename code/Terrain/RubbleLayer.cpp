@@ -99,34 +99,33 @@ void RubbleLayer::render(
 		if ((eye - m_eye).length() >= m_clusterSize / 2.0f)
 		{
 			m_eye = eye;
-
-			for (AlignedVector< Cluster >::iterator i = m_clusters.begin(); i != m_clusters.end(); ++i)
+			for (auto& cluster : m_clusters)
 			{
-				i->distance = (i->center - eye).length();
+				cluster.distance = (cluster.center - eye).length();
 
-				bool visible = i->visible;
-
-				i->visible = (viewFrustum.inside(view * i->center, Scalar(m_clusterSize)) != Frustum::IrOutside);
-				if (!i->visible)
+				bool visible = cluster.visible;
+				cluster.visible = (bool)(viewFrustum.inside(view * cluster.center, Scalar(m_clusterSize)) != Frustum::IrOutside);
+				if (!cluster.visible)
+					continue;
+				if (cluster.visible && visible)
 					continue;
 
-				if (i->visible && visible)
-					continue;
-
-				RandomGeometry random(int32_t(i->center.x() * 919.0f + i->center.z() * 463.0f));
-				for (int32_t j = i->from; j < i->to; ++j)
+				// Use cluster center as random seed.
+				RandomGeometry random(
+					(int32_t)(cluster.center.x() * 919.0f + cluster.center.z() * 463.0f)
+				);
+				for (int32_t j = cluster.from; j < cluster.to; ++j)
 				{
 					float dx = (random.nextFloat() * 2.0f - 1.0f) * m_clusterSize;
 					float dz = (random.nextFloat() * 2.0f - 1.0f) * m_clusterSize;
 
-					float px = i->center.x() + dx;
-					float pz = i->center.z() + dz;
-
+					float px = cluster.center.x() + dx;
+					float pz = cluster.center.z() + dz;
 					float py = terrain->getHeightfield()->getWorldHeight(px, pz);
 
 					m_instances[j].position = Vector4(px, py, pz, 0.0f);
 					m_instances[j].rotation = Quaternion::fromEulerAngles(random.nextFloat() * TWO_PI, (random.nextFloat() * 2.0f - 1.0f) * deg2rad(10.0f), 0.0f);
-					m_instances[j].scale = random.nextFloat() * i->scale + (1.0f - i->scale);
+					m_instances[j].scale = random.nextFloat() * cluster.scale + (1.0f - cluster.scale);
 				}
 			}
 		}
@@ -145,12 +144,12 @@ void RubbleLayer::render(
 	extraParameters->setFloatParameter(s_handleMaxDistance, m_spreadDistance + m_clusterSize);
 	extraParameters->endParameters(renderContext);
 
-	for (AlignedVector< Cluster >::const_iterator i = m_clusters.begin(); i != m_clusters.end(); ++i)
+	for (const auto& cluster : m_clusters)
 	{
-		if (!i->visible)
+		if (!cluster.visible)
 			continue;
 
-		int32_t count = i->to - i->from;
+		int32_t count = cluster.to - cluster.from;
 		for (int32_t j = 0; j < count; )
 		{
 			int32_t batch = std::min< int32_t >(count - j, mesh::InstanceMesh::MaxInstanceCount);
@@ -158,13 +157,13 @@ void RubbleLayer::render(
 			m_instanceData.resize(batch);
 			for (int32_t k = 0; k < batch; ++k, ++j)
 			{
-				m_instances[j + i->from].position.storeAligned( m_instanceData[k].data.translation );
-				m_instances[j + i->from].rotation.e.storeAligned( m_instanceData[k].data.rotation );
-				m_instanceData[k].data.scale = m_instances[j + i->from].scale;
-				m_instanceData[k].distance = i->distance;
+				m_instances[j + cluster.from].position.storeAligned( m_instanceData[k].data.translation );
+				m_instances[j + cluster.from].rotation.e.storeAligned( m_instanceData[k].data.rotation );
+				m_instanceData[k].data.scale = m_instances[j + cluster.from].scale;
+				m_instanceData[k].distance = cluster.distance;
 			}
 
-			i->rubbleDef->mesh->render(
+			cluster.rubbleDef->mesh->render(
 				renderContext,
 				worldRenderPass,
 				m_instanceData,
@@ -179,14 +178,14 @@ void RubbleLayer::updatePatches(const TerrainComponent& terrainComponent)
 	m_instances.resize(0);
 	m_clusters.resize(0);
 
-	const resource::Proxy< Terrain >& terrain = terrainComponent.getTerrain();
-	const resource::Proxy< hf::Heightfield >& heightfield = terrain->getHeightfield();
+	const auto& terrain = terrainComponent.getTerrain();
+	const auto& heightfield = terrain->getHeightfield();
 
 	// Get set of materials which have undergrowth.
 	StaticVector< uint8_t, 16 > um(16, 0);
 	uint8_t maxMaterialIndex = 0;
-	for (std::vector< RubbleMesh >::const_iterator i = m_rubble.begin(); i != m_rubble.end(); ++i)
-		um[i->material] = ++maxMaterialIndex;
+	for (const auto& rubble : m_rubble)
+		um[rubble.material] = ++maxMaterialIndex;
 
 	int32_t size = heightfield->getSize();
 	Vector4 extentPerGrid = heightfield->getWorldExtent() / Scalar(float(size));
@@ -201,7 +200,6 @@ void RubbleLayer::updatePatches(const TerrainComponent& terrainComponent)
 		{
 			StaticVector< int32_t, 16 > cm(16, 0);
 			int32_t totalDensity = 0;
-
 			for (int32_t cz = 0; cz < 16; ++cz)
 			{
 				for (int32_t cx = 0; cx < 16; ++cx)
@@ -215,13 +213,11 @@ void RubbleLayer::updatePatches(const TerrainComponent& terrainComponent)
 					}
 				}
 			}
-
 			if (totalDensity <= 0)
 				continue;
 
 			float wx, wz;
 			heightfield->gridToWorld(x + 8, z + 8, wx, wz);
-
 			float wy = heightfield->getWorldHeight(wx, wz);
 
 			for (uint32_t i = 0; i < maxMaterialIndex; ++i)
@@ -229,36 +225,34 @@ void RubbleLayer::updatePatches(const TerrainComponent& terrainComponent)
 				if (cm[i] <= 0)
 					continue;
 
-				for (std::vector< RubbleMesh >::iterator j = m_rubble.begin(); j != m_rubble.end(); ++j)
+				for (auto& rubble : m_rubble)
 				{
-					if (um[j->material] == i + 1)
+					if (um[rubble.material] != i + 1)
+						continue;
+
+					int32_t densityFactor = cm[i];
+					int32_t density = (rubble.density * densityFactor) / (16 * 16);
+					if (density <= 4)
+						continue;
+
+					int32_t from = int32_t(m_instances.size());
+					for (int32_t k = 0; k < density; ++k)
 					{
-						int32_t densityFactor = cm[i];
-
-						int32_t density = (j->density * densityFactor) / (16 * 16);
-						if (density <= 4)
-							continue;
-
-						int32_t from = int32_t(m_instances.size());
-						for (int32_t k = 0; k < density; ++k)
-						{
-							Instance instance;
-							instance.position = Vector4::zero();
-							instance.rotation = Quaternion::identity();
-							instance.scale = 0.0f;
-							m_instances.push_back(instance);
-						}
-						int32_t to = int32_t(m_instances.size());
-
-						Cluster c;
-						c.rubbleDef = &(*j);
-						c.center = Vector4(wx, wy, wz, 1.0f);
-						c.distance = std::numeric_limits< float >::max();
-						c.visible = false;
-						c.from = from;
-						c.to = to;
-						m_clusters.push_back(c);
+						Instance instance;
+						instance.position = Vector4::zero();
+						instance.rotation = Quaternion::identity();
+						instance.scale = 0.0f;
+						m_instances.push_back(instance);
 					}
+					int32_t to = int32_t(m_instances.size());
+
+					Cluster& c = m_clusters.push_back();
+					c.rubbleDef = &rubble;
+					c.center = Vector4(wx, wy, wz, 1.0f);
+					c.distance = std::numeric_limits< float >::max();
+					c.visible = false;
+					c.from = from;
+					c.to = to;
 				}
 			}
 		}

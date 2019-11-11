@@ -31,7 +31,7 @@ private:
 	friend class PartitionMeshConverter;
 
 	AlignedVector< std::wstring > m_worldTechniques;
-	Ref< OctreeNodeData > m_nodeData;
+	Ref< const OctreeNodeData > m_nodeData;
 };
 
 	}

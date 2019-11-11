@@ -1,6 +1,6 @@
 #pragma once
 
-#include <vector>
+#include "Core/Containers/AlignedVector.h"
 #include "Resource/Id.h"
 #include "Terrain/ITerrainLayerData.h"
 
@@ -56,7 +56,7 @@ private:
 	};
 
 	float m_spreadDistance;
-	std::vector< RubbleMesh > m_rubble;
+	AlignedVector< RubbleMesh > m_rubble;
 };
 
 	}
