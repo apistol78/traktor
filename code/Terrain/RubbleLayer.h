@@ -78,7 +78,7 @@ private:
 		int32_t to;
 	};
 
-	std::vector< RubbleMesh > m_rubble;
+	AlignedVector< RubbleMesh > m_rubble;
 	AlignedVector< Instance > m_instances;
 	AlignedVector< Cluster > m_clusters;
 	float m_spreadDistance;

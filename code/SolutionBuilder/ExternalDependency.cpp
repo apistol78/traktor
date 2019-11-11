@@ -64,16 +64,14 @@ bool ExternalDependency::resolve(const Path& referringSolutionPath, SolutionLoad
 		return false;
 	}
 
-	const RefArray< Project >& projects = m_solution->getProjects();
-	for (RefArray< Project >::const_iterator i = projects.begin(); i != projects.end(); ++i)
+	for (auto project : m_solution->getProjects())
 	{
-		if ((*i)->getName() == m_projectName)
+		if (project->getName() == m_projectName)
 		{
-			m_project = *i;
+			m_project = project;
 			break;
 		}
 	}
-
 	if (!m_project)
 	{
 		log::error << L"Unable to resolve external dependency \"" << m_projectName << L"\"; no such project in solution \"" << solutionFileName.getPathName() << L"\"" << Endl;
@@ -81,12 +79,10 @@ bool ExternalDependency::resolve(const Path& referringSolutionPath, SolutionLoad
 	}
 
 	// Resolve other external dependencies from this dependency.
-	RefArray< Dependency > originalDependencies = m_project->getDependencies();
 	RefArray< Dependency > resolvedDependencies;
-
-	for (RefArray< Dependency >::const_iterator i = originalDependencies.begin(); i != originalDependencies.end(); ++i)
+	for (auto dependency : m_project->getDependencies())
 	{
-		if (ProjectDependency* projectDependency = dynamic_type_cast< ProjectDependency* >(*i))
+		if (auto projectDependency = dynamic_type_cast< ProjectDependency* >(dependency))
 		{
 			Ref< ExternalDependency > externalDependency = new ExternalDependency(
 				m_solutionFileName,
@@ -97,7 +93,7 @@ bool ExternalDependency::resolve(const Path& referringSolutionPath, SolutionLoad
 			else
 				return false;
 		}
-		else if (ExternalDependency* externalDependency = dynamic_type_cast< ExternalDependency* >(*i))
+		else if (auto externalDependency = dynamic_type_cast< ExternalDependency* >(dependency))
 		{
 			if (externalDependency->resolve(solutionFileName, solutionLoader))
 				resolvedDependencies.push_back(externalDependency);
@@ -108,7 +104,6 @@ bool ExternalDependency::resolve(const Path& referringSolutionPath, SolutionLoad
 
 	// Replace dependencies with resolved dependencies.
 	m_project->setDependencies(resolvedDependencies);
-
 	return true;
 }
 

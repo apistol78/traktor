@@ -692,8 +692,7 @@ void PerspectiveRenderControl::eventPaint(ui::PaintEvent* event)
 	m_worldRenderer->getDebugTargets(debugTargets);
 
 	// Debug profile render targets.
-	const RefArray< ISceneEditorProfile >& profiles = m_context->getEditorProfiles();
-	for (auto profile : profiles)
+	for (auto profile : m_context->getEditorProfiles())
 		profile->getDebugTargets(m_context, debugTargets);
 
 	// Push debug targets to context.

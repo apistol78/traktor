@@ -18,8 +18,8 @@ bool SolutionBuilderMsvcGenericTool::generate(GeneratorContext& context, Solutio
 	os << IncreaseIndent;
 	os << L"Name=\"" << m_toolName << L"\"" << Endl;
 
-	for (std::map< std::wstring, std::wstring >::const_iterator i = m_staticOptions.begin(); i != m_staticOptions.end(); ++i)
-		os << i->first << L"=\"" << context.format(i->second) << L"\"" << Endl;
+	for (const auto& it : m_staticOptions)
+		os << it.first << L"=\"" << context.format(it.second) << L"\"" << Endl;
 
 	os << DecreaseIndent;
 	os << L"/>" << Endl;

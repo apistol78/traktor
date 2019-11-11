@@ -16,11 +16,11 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.terrain.TerrainEntityPipeline", 0, Terr
 
 TypeInfoSet TerrainEntityPipeline::getAssetTypes() const
 {
-	TypeInfoSet typeSet;
-	typeSet.insert< OceanComponentData >();
-	typeSet.insert< RiverComponentData >();
-	typeSet.insert< TerrainComponentData >();
-	return typeSet;
+	return makeTypeInfoSet<
+		OceanComponentData,
+		RiverComponentData,
+		TerrainComponentData
+	>();
 }
 
 bool TerrainEntityPipeline::buildDependencies(
@@ -44,21 +44,16 @@ bool TerrainEntityPipeline::buildDependencies(
 	else if (const TerrainComponentData* terrainComponentData = dynamic_type_cast< const TerrainComponentData* >(sourceAsset))
 	{
 		pipelineDepends->addDependency(terrainComponentData->getTerrain(), editor::PdfBuild | editor::PdfResource);
-
-		const RefArray< ITerrainLayerData >& layers = terrainComponentData->getLayers();
-		for (RefArray< ITerrainLayerData >::const_iterator i = layers.begin(); i != layers.end(); ++i)
+		for (auto layer : terrainComponentData->getLayers())
 		{
-			if (const UndergrowthLayerData* undergrowthLayerData = dynamic_type_cast< const UndergrowthLayerData* >(*i))
+			if (const UndergrowthLayerData* undergrowthLayerData = dynamic_type_cast< const UndergrowthLayerData* >(layer))
 			{
 				pipelineDepends->addDependency(undergrowthLayerData->m_shader, editor::PdfBuild | editor::PdfResource);
 			}
-			else if (const RubbleLayerData* rubbleLayerData = dynamic_type_cast< const RubbleLayerData* >(*i))
+			else if (const RubbleLayerData* rubbleLayerData = dynamic_type_cast< const RubbleLayerData* >(layer))
 			{
-				for (std::vector< RubbleLayerData::RubbleMesh >::const_iterator i = rubbleLayerData->m_rubble.begin(); i != rubbleLayerData->m_rubble.end(); ++i)
-				{
-					const Guid meshId = i->mesh;
-					pipelineDepends->addDependency(meshId, editor::PdfBuild | editor::PdfResource);
-				}
+				for (const auto& rubble : rubbleLayerData->m_rubble)
+					pipelineDepends->addDependency(rubble.mesh, editor::PdfBuild | editor::PdfResource);
 			}
 		}
 	}

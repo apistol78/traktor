@@ -28,21 +28,20 @@ bool SolutionBuilderMsvcConfiguration::generate(
 	os << L"<Configuration" << Endl;
 	os << IncreaseIndent;
 
-	for (std::map< std::wstring, std::wstring >::const_iterator i = m_staticOptions.begin(); i != m_staticOptions.end(); ++i)
-		os << i->first << L"=\"" << context.format(i->second) << L"\"" << Endl;
+	for (const auto& it : m_staticOptions)
+		os << it.first << L"=\"" << context.format(it.second) << L"\"" << Endl;
 
 	os << L">" << Endl;
 
-	const RefArray< SolutionBuilderMsvcTool >& tools = m_tools[int(configuration->getTargetProfile())];
-	for (RefArray< SolutionBuilderMsvcTool >::const_iterator i = tools.begin(); i != tools.end(); ++i)
+	const auto& tools = m_tools[int(configuration->getTargetProfile())];
+	for (auto tool : tools)
 	{
-		if (!(*i)->generate(context, solution, project, configuration, os))
+		if (!tool->generate(context, solution, project, configuration, os))
 			return false;
 	}
 
 	os << DecreaseIndent;
 	os << L"</Configuration>" << Endl;
-
 	return true;
 }
 

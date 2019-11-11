@@ -1,8 +1,8 @@
 #include "Core/Serialization/AttributeRange.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
+#include "Core/Serialization/MemberAlignedVector.h"
 #include "Core/Serialization/MemberComposite.h"
-#include "Core/Serialization/MemberStl.h"
 #include "Mesh/Instance/InstanceMesh.h"
 #include "Resource/Member.h"
 #include "Terrain/RubbleLayer.h"
@@ -30,7 +30,7 @@ Ref< ITerrainLayer > RubbleLayerData::createLayerInstance(
 	if (layer->create(resourceManager, renderSystem, *this, terrainComponent))
 		return layer;
 	else
-		return 0;
+		return nullptr;
 }
 
 void RubbleLayerData::serialize(ISerializer& s)
@@ -38,7 +38,7 @@ void RubbleLayerData::serialize(ISerializer& s)
 	T_ASSERT(s.getVersion() >= 1);
 
 	s >> Member< float >(L"spreadDistance", m_spreadDistance);
-	s >> MemberStlVector< RubbleMesh, MemberComposite< RubbleMesh > >(L"rubble", m_rubble);
+	s >> MemberAlignedVector< RubbleMesh, MemberComposite< RubbleMesh > >(L"rubble", m_rubble);
 }
 
 RubbleLayerData::RubbleMesh::RubbleMesh()

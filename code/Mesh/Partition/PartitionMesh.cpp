@@ -49,9 +49,9 @@ void PartitionMesh::render(
 		return;
 
 	const AlignedVector< render::Mesh::Part >& meshParts = m_mesh->getParts();
-	for (std::vector< uint32_t >::const_iterator i = m_partIndices.begin(); i != m_partIndices.end(); ++i)
+	for (auto partIndex : m_partIndices)
 	{
-		const Part& part = m_parts[*i];
+		const Part& part = m_parts[partIndex];
 
 		m_shader->setTechnique(part.shaderTechnique);
 		worldRenderPass.setShaderCombination(m_shader);

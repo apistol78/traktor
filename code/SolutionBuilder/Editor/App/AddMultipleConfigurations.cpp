@@ -16,10 +16,9 @@ namespace traktor
 
 bool hasConfiguration(const Project* project, const std::wstring& configurationName)
 {
-	const RefArray< Configuration >& configurations = project->getConfigurations();
-	for (RefArray< Configuration >::const_iterator i = configurations.begin(); i != configurations.end(); ++i)
+	for (auto configuration : project->getConfigurations())
 	{
-		if ((*i)->getName() == configurationName)
+		if (configuration->getName() == configurationName)
 			return true;
 	}
 	return false;
@@ -49,32 +48,31 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.sb.AddMultipleConfigurations", AddMultipleConfi
 
 bool AddMultipleConfigurations::execute(ui::Widget* parent, Solution* solution)
 {
-	const RefArray< Project >& projects = solution->getProjects();
-	for (RefArray< Project >::const_iterator i = projects.begin(); i != projects.end(); ++i)
+	for (auto project : solution->getProjects())
 	{
-		if (!hasConfiguration(*i, L"DebugShared"))
+		if (!hasConfiguration(project, L"DebugShared"))
 		{
 			Ref< Configuration > configuration = new Configuration();
 			configuration->setName(L"DebugShared");
 			configuration->setTargetFormat(Configuration::TfSharedLibrary);
 			configuration->setTargetProfile(Configuration::TpDebug);
 			configuration->addIncludePath(L"$(TRAKTOR_HOME)/code");
-			configuration->addDefinition(buildExportDefinition((*i)->getName()));
+			configuration->addDefinition(buildExportDefinition(project->getName()));
 			configuration->addDefinition(L"_DEBUG");
-			(*i)->addConfiguration(configuration);
+			project->addConfiguration(configuration);
 		}
-		if (!hasConfiguration(*i, L"ReleaseShared"))
+		if (!hasConfiguration(project, L"ReleaseShared"))
 		{
 			Ref< Configuration > configuration = new Configuration();
 			configuration->setName(L"ReleaseShared");
 			configuration->setTargetFormat(Configuration::TfSharedLibrary);
 			configuration->setTargetProfile(Configuration::TpRelease);
 			configuration->addIncludePath(L"$(TRAKTOR_HOME)/code");
-			configuration->addDefinition(buildExportDefinition((*i)->getName()));
+			configuration->addDefinition(buildExportDefinition(project->getName()));
 			configuration->addDefinition(L"NDEBUG");
-			(*i)->addConfiguration(configuration);
+			project->addConfiguration(configuration);
 		}
-		if (!hasConfiguration(*i, L"DebugStatic"))
+		if (!hasConfiguration(project, L"DebugStatic"))
 		{
 			Ref< Configuration > configuration = new Configuration();
 			configuration->setName(L"DebugStatic");
@@ -83,9 +81,9 @@ bool AddMultipleConfigurations::execute(ui::Widget* parent, Solution* solution)
 			configuration->addIncludePath(L"$(TRAKTOR_HOME)/code");
 			configuration->addDefinition(L"T_STATIC");
 			configuration->addDefinition(L"_DEBUG");
-			(*i)->addConfiguration(configuration);
+			project->addConfiguration(configuration);
 		}
-		if (!hasConfiguration(*i, L"ReleaseStatic"))
+		if (!hasConfiguration(project, L"ReleaseStatic"))
 		{
 			Ref< Configuration > configuration = new Configuration();
 			configuration->setName(L"ReleaseStatic");
@@ -94,7 +92,7 @@ bool AddMultipleConfigurations::execute(ui::Widget* parent, Solution* solution)
 			configuration->addIncludePath(L"$(TRAKTOR_HOME)/code");
 			configuration->addDefinition(L"T_STATIC");
 			configuration->addDefinition(L"NDEBUG");
-			(*i)->addConfiguration(configuration);
+			project->addConfiguration(configuration);
 		}
 	}
 	return true;

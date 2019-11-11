@@ -15,7 +15,7 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.mesh.OctreePartitionData", 0, OctreePar
 
 Ref< IPartition > OctreePartitionData::createPartition() const
 {
-	std::vector< render::handle_t > worldTechniques(m_worldTechniques.size());
+	AlignedVector< render::handle_t > worldTechniques(m_worldTechniques.size());
 	for (uint32_t i = 0; i < m_worldTechniques.size(); ++i)
 		worldTechniques[i] = render::getParameterHandle(m_worldTechniques[i]);
 	return new OctreePartition(new OctreeNode(m_nodeData), worldTechniques);
@@ -24,7 +24,7 @@ Ref< IPartition > OctreePartitionData::createPartition() const
 void OctreePartitionData::serialize(ISerializer& s)
 {
 	s >> MemberAlignedVector< std::wstring >(L"worldTechniques", m_worldTechniques);
-	s >> MemberRef< OctreeNodeData >(L"nodeData", m_nodeData);
+	s >> MemberRef< const OctreeNodeData >(L"nodeData", m_nodeData);
 }
 
 	}

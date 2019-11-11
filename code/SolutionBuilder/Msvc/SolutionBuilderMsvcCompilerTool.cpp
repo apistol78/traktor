@@ -27,7 +27,7 @@ bool SolutionBuilderMsvcCompilerTool::generate(GeneratorContext& context, Soluti
 
 	// Additional options.
 	os << L"AdditionalOptions=\"";
-	std::map< std::wstring, std::wstring >::const_iterator i0 = m_staticOptions.find(L"AdditionalOptions");
+	auto i0 = m_staticOptions.find(L"AdditionalOptions");
 	if (i0 != m_staticOptions.end())
 	{
 		os << i0->second;
@@ -41,13 +41,13 @@ bool SolutionBuilderMsvcCompilerTool::generate(GeneratorContext& context, Soluti
 
 	// Include directories.
 	os << L"AdditionalIncludeDirectories=\"";
-	for (std::vector< std::wstring >::const_iterator i = configuration->getIncludePaths().begin(); i != configuration->getIncludePaths().end(); ++i)
+	for (const auto& includePath : configuration->getIncludePaths())
 	{
-		std::wstring includePath = context.getProjectRelativePath(*i, m_resolvePaths);
-		os << includePath << L";";
+		std::wstring includePathRel = context.getProjectRelativePath(includePath, m_resolvePaths);
+		os << includePathRel << L";";
 	}
 
-	std::map< std::wstring, std::wstring >::const_iterator i1 = m_staticOptions.find(L"AdditionalIncludeDirectories");
+	auto i1 = m_staticOptions.find(L"AdditionalIncludeDirectories");
 	if (i1 != m_staticOptions.end())
 		os << context.format(i1->second) << L";";
 
@@ -55,8 +55,8 @@ bool SolutionBuilderMsvcCompilerTool::generate(GeneratorContext& context, Soluti
 
 	// Preprocessor definitions.
 	os << L"PreprocessorDefinitions=\"";
-	for (std::vector< std::wstring >::const_iterator i = configuration->getDefinitions().begin(); i != configuration->getDefinitions().end(); ++i)
-		os << *i << L";";
+	for (const auto& definition : configuration->getDefinitions())
+		os << definition << L";";
 
 	switch (configuration->getTargetFormat())
 	{
@@ -72,7 +72,7 @@ bool SolutionBuilderMsvcCompilerTool::generate(GeneratorContext& context, Soluti
         break;
 	}
 
-	std::map< std::wstring, std::wstring >::const_iterator i2 = m_staticOptions.find(L"PreprocessorDefinitions");
+	auto i2 = m_staticOptions.find(L"PreprocessorDefinitions");
 	if (i2 != m_staticOptions.end())
 		os << context.format(i2->second) << L";";
 
@@ -91,15 +91,15 @@ bool SolutionBuilderMsvcCompilerTool::generate(GeneratorContext& context, Soluti
 	}
 
 	// Static options.
-	for (std::map< std::wstring, std::wstring >::const_iterator i = m_staticOptions.begin(); i != m_staticOptions.end(); ++i)
+	for (const auto& it : m_staticOptions)
 	{
 		if (
-			i->first == L"AdditionalOptions" ||
-			i->first == L"AdditionalIncludeDirectories" ||
-			i->first == L"PreprocessorDefinitions"
+			it.first == L"AdditionalOptions" ||
+			it.first == L"AdditionalIncludeDirectories" ||
+			it.first == L"PreprocessorDefinitions"
 		)
 			continue;
-		os << i->first << L"=\"" << context.format(i->second) << L"\"" << Endl;
+		os << it.first << L"=\"" << context.format(it.second) << L"\"" << Endl;
 	}
 
 	os << DecreaseIndent;

@@ -1,8 +1,7 @@
 #pragma once
 
-#include <map>
-#include <vector>
 #include "Core/Object.h"
+#include "Core/Containers/AlignedVector.h"
 #include "Core/Math/Aabb3.h"
 #include "Render/Types.h"
 
@@ -25,22 +24,25 @@ class Matrix44;
 
 class OctreeNodeData;
 
+/*!
+ * \ingroup Mesh
+ */
 class T_DLLCLASS OctreeNode : public Object
 {
 	T_RTTI_CLASS;
 
 public:
-	OctreeNode(const OctreeNodeData* nodeData);
+	explicit OctreeNode(const OctreeNodeData* nodeData);
 
 	void traverse(
 		const Frustum& frustumObject,
 		uint8_t worldTechniqueId,
-		std::vector< uint32_t >& outPartIndices
+		AlignedVector< uint32_t >& outPartIndices
 	) const;
 
 private:
 	Aabb3 m_boundingBox;
-	std::vector< std::vector< uint32_t > > m_partIndices;
+	AlignedVector< AlignedVector< uint32_t > > m_partIndices;
 	Ref< OctreeNode > m_children[8];
 	bool m_leaf;
 };

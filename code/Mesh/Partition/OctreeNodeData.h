@@ -16,17 +16,28 @@ namespace traktor
 	namespace mesh
 	{
 
+/*!
+ * \ingroup Mesh
+ */
 class T_DLLCLASS OctreeNodeData : public ISerializable
 {
 	T_RTTI_CLASS;
 
 public:
+	void setBoundingBox(const Aabb3& boundingBox);
+
+	void addPartIndex(uint8_t worldTechniqueId, uint32_t partIndex);
+
+	void setChild(int32_t index, const OctreeNodeData* child);
+
 	virtual void serialize(ISerializer& s) override final;
 
-//private:
+private:
+	friend class OctreeNode;
+
 	Aabb3 m_boundingBox;
-	std::map< uint8_t, std::vector< uint32_t > > m_partIndices;
-	Ref< OctreeNodeData > m_children[8];
+	SmallMap< uint8_t, AlignedVector< uint32_t > > m_partIndices;
+	Ref< const OctreeNodeData > m_children[8];
 };
 
 	}
