@@ -11,9 +11,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.theater.TheaterControllerEditorFactory", Theate
 
 const TypeInfoSet TheaterControllerEditorFactory::getControllerDataTypes() const
 {
-	TypeInfoSet typeSet;
-	typeSet.insert< TheaterControllerData >();
-	return typeSet;
+	return makeTypeInfoSet< TheaterControllerData >();
 }
 
 Ref< scene::ISceneControllerEditor > TheaterControllerEditorFactory::createControllerEditor(const TypeInfo& controllerDataType) const

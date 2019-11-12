@@ -6,7 +6,6 @@
 #include "Editor/App/BrowseGroupDialog.h"
 #include "I18N/Text.h"
 #include "Ui/Application.h"
-#include "Ui/FloodLayout.h"
 #include "Ui/HierarchicalState.h"
 #include "Ui/Static.h"
 #include "Ui/StyleBitmap.h"

@@ -1,52 +1,17 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <Core/Io/FileSystem.h>
 #include <Core/Io/IStream.h>
 #include <Core/Io/StringReader.h>
 #include <Core/Io/StringOutputStream.h>
 #include <Core/Io/Utf8Encoding.h>
-
 #include <Ui/Application.h>
-#include <Ui/FloodLayout.h>
 #include <Ui/Form.h>
 #include <Ui/TableLayout.h>
 #include <Ui/Custom/Splitter.h>
 #include <Ui/Custom/RichEdit/RichEdit.h>
-
-//#include <Ui/Button.h>
-//#include <Ui/CheckBox.h>
-//#include <Ui/DropDown.h>
 #include <Ui/FileDialog.h>
-//#include <Ui/ListBox.h>
-//#include <Ui/ListView.h>
-//#include <Ui/MenuBar.h>
-//#include <Ui/MenuItem.h>
-//#include <Ui/MessageBox.h>
-//#include <Ui/ScrollBar.h>
-//#include <Ui/Static.h>
-//#include <Ui/ToolForm.h>
-//#include <Ui/TreeView.h>
-//#include <Ui/TreeViewItem.h>
-//#include <Ui/Container.h>
-//#include <Ui/Events/CommandEvent.h>
-//#include <Ui/Custom/MiniButton.h>
-//#include <Ui/Custom/Splitter.h>
 #include <Ui/Custom/ToolBar/ToolBar.h>
 #include <Ui/Custom/ToolBar/ToolBarButton.h>
 #include <Ui/Custom/ToolBar/ToolBarButtonClickEvent.h>
-
-//#include <Ui/Custom/GridView/GridView.h>
-//#include <Ui/Custom/GridView/GridColumn.h>
-//#include <Ui/Custom/GridView/GridRow.h>
-//#include <Ui/Custom/GridView/GridItem.h>
-//#include <Ui/Custom/Sequencer/SequencerControl.h>
-//#include <Ui/Custom/Sequencer/Sequence.h>
-//#include <Ui/Custom/Sequencer/Range.h>
-//#include <Core/Log/Log.h>
 
 #if defined(_WIN32)
 #	include <Ui/Win32/EventLoopWin32.h>
