@@ -1,6 +1,5 @@
 #include "Core/Io/FileSystem.h"
 #include "Core/Serialization/ISerializer.h"
-#include "Core/Serialization/MemberAggregate.h"
 #include "Core/Serialization/MemberStl.h"
 #include "Core/Misc/String.h"
 #include "Editor/App/MRU.h"
@@ -37,9 +36,9 @@ void MRU::usedFile(const Path& filePath)
 	std::wstring fullPath = FileSystem::getInstance().getAbsolutePath(filePath).getPathName();
 
 	// Remove existing entry; we will re-add below as most recent.
-	std::vector< std::wstring >::iterator i = std::find_if(m_filePaths.begin(), m_filePaths.end(), IgnoreCasePredicate(fullPath));
-	if (i != m_filePaths.end())
-		m_filePaths.erase(i);
+	auto it = std::find_if(m_filePaths.begin(), m_filePaths.end(), IgnoreCasePredicate(fullPath));
+	if (it != m_filePaths.end())
+		m_filePaths.erase(it);
 
 	m_filePaths.insert(m_filePaths.begin(), fullPath);
 	if (m_filePaths.size() > 8)
@@ -48,8 +47,8 @@ void MRU::usedFile(const Path& filePath)
 
 bool MRU::getUsedFiles(std::vector< Path >& outFilePaths) const
 {
-	for (std::vector< std::wstring >::const_iterator i = m_filePaths.begin(); i != m_filePaths.end(); ++i)
-		outFilePaths.push_back(Path(*i));
+	for (const auto& filePath : m_filePaths)
+		outFilePaths.push_back(Path(filePath));
 	return true;
 }
 

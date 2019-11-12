@@ -1,5 +1,6 @@
 #include "Core/Log/Log.h"
 #include "Core/Math/Float.h"
+#include "Core/Misc/SafeDestroy.h"
 #include "Core/Misc/String.h"
 #include "I18N/Text.h"
 #include "Render/PrimitiveRenderer.h"
@@ -157,16 +158,8 @@ bool TheaterControllerEditor::create(scene::SceneEditorContext* context, ui::Con
 
 void TheaterControllerEditor::destroy()
 {
-	if (m_trackSequencer)
-	{
-		m_trackSequencer->destroy();
-		m_trackSequencer = 0;
-	}
-	if (m_toolBar)
-	{
-		m_toolBar->destroy();
-		m_toolBar = 0;
-	}
+	safeDestroy(m_trackSequencer);
+	safeDestroy(m_toolBar);
 }
 
 void TheaterControllerEditor::entityRemoved(scene::EntityAdapter* entityAdapter)
@@ -175,15 +168,15 @@ void TheaterControllerEditor::entityRemoved(scene::EntityAdapter* entityAdapter)
 	Ref< TheaterControllerData > controllerData = mandatory_non_null_type_cast< TheaterControllerData* >(sceneAsset->getControllerData());
 
 	RefArray< ActData >& acts = controllerData->getActs();
-	for (RefArray< ActData >::iterator i = acts.begin(); i != acts.end(); ++i)
+	for (auto act : acts)
 	{
-		RefArray< TrackData >& tracks = (*i)->getTracks();
-		for (RefArray< TrackData >::iterator i = tracks.begin(); i != tracks.end(); )
+		RefArray< TrackData >& tracks = act->getTracks();
+		for (auto it = tracks.begin(); it != tracks.end(); )
 		{
-			if ((*i)->getEntityData() == entityAdapter->getEntityData())
-				i = tracks.erase(i);
+			if ((*it)->getEntityData() == entityAdapter->getEntityData())
+				it = tracks.erase(it);
 			else
-				++i;
+				++it;
 		}
 	}
 
@@ -277,20 +270,19 @@ void TheaterControllerEditor::draw(render::PrimitiveRenderer* primitiveRenderer)
 	float cursorTime = float(cursorTick / 1000.0f);
 	float duration = act->getDuration();
 
-	const RefArray< TrackData >& tracks = act->getTracks();
-	for (RefArray< TrackData >::const_iterator i = tracks.begin(); i != tracks.end(); ++i)
+	for (auto track : act->getTracks())
 	{
 		Color4ub pathColor(180, 180, 80, 120);
-		for (RefArray< ui::SequenceItem >::const_iterator j = items.begin(); j != items.end(); ++j)
+		for (auto item : items)
 		{
-			if ((*j)->getData(L"TRACK") == *i)
+			if (item->getData(L"TRACK") == track)
 			{
 				pathColor = Color4ub(255, 255, 0, 200);
 				break;
 			}
 		}
 
-		const TransformPath& path = (*i)->getPath();
+		const TransformPath& path = track->getPath();
 		int32_t steps = int32_t(duration) * 10;
 
 		TransformPath::Key F0 = path.evaluate(0.0f, duration);
@@ -320,11 +312,10 @@ void TheaterControllerEditor::draw(render::PrimitiveRenderer* primitiveRenderer)
 			);
 		}
 
-		const AlignedVector< TransformPath::Key >& keys = path.getKeys();
-		for (AlignedVector< TransformPath::Key >::const_iterator i = keys.begin(); i != keys.end(); ++i)
+		for (const auto& key : path.getKeys())
 		{
 			primitiveRenderer->drawSolidPoint(
-				i->position,
+				key.position,
 				8.0f,
 				pathColor
 			);
@@ -350,12 +341,12 @@ void TheaterControllerEditor::updateView()
 		selected = int32_t(acts.size()) - 1;
 
 	m_listActs->removeAll();
-	for (RefArray< ActData >::iterator i = acts.begin(); i != acts.end(); ++i)
+	for (auto act : acts)
 	{
-		std::wstring actName = (*i)->getName();
+		std::wstring actName = act->getName();
 		if (actName.empty())
 			actName = i18n::Text(L"THEATER_EDITOR_UNNAMED_ACT");
-		m_listActs->add(actName, *i);
+		m_listActs->add(actName, act);
 	}
 
 	m_listActs->select(selected);
@@ -364,22 +355,16 @@ void TheaterControllerEditor::updateView()
 
 	if (selected >= 0)
 	{
-		RefArray< TrackData >& tracks = acts[selected]->getTracks();
-		for (RefArray< TrackData >::iterator i = tracks.begin(); i != tracks.end(); ++i)
+		for (auto track : acts[selected]->getTracks())
 		{
-			Ref< ui::Sequence > trackSequence = new ui::Sequence((*i)->getEntityData()->getName());
-			trackSequence->setData(L"TRACK", *i);
+			Ref< ui::Sequence > trackSequence = new ui::Sequence(track->getEntityData()->getName());
+			trackSequence->setData(L"TRACK", track);
 
-			TransformPath& path = (*i)->getPath();
-			AlignedVector< TransformPath::Key >& keys = path.getKeys();
-
-			for (AlignedVector< TransformPath::Key >::iterator j = keys.begin(); j != keys.end(); ++j)
+			for (auto& key : track->getPath().getKeys())
 			{
-				int32_t tickTime = int32_t(j->T * 1000.0f);
-
+				int32_t tickTime = int32_t(key.T * 1000.0f);
 				Ref< ui::Tick > tick = new ui::Tick(tickTime, true);
-				tick->setData(L"KEY", new TransformPathKeyWrapper(*j));
-
+				tick->setData(L"KEY", new TransformPathKeyWrapper(key));
 				trackSequence->addKey(tick);
 			}
 
@@ -417,18 +402,18 @@ void TheaterControllerEditor::captureEntities()
 	float time = m_context->getTime() - m_timeOffset;
 
 	RefArray< TrackData >& tracks = act->getTracks();
-	for (RefArray< scene::EntityAdapter >::iterator i = selectedEntities.begin(); i != selectedEntities.end(); ++i)
+	for (auto selectedEntity : selectedEntities)
 	{
-		Transform transform = (*i)->getTransform();
+		Transform transform = selectedEntity->getTransform();
 
-		Ref< world::EntityData > entityData = (*i)->getEntityData();
+		Ref< world::EntityData > entityData = selectedEntity->getEntityData();
 		T_ASSERT(entityData);
 
 		Ref< TrackData > instanceTrackData;
 
-		RefArray< TrackData >::iterator j = std::find_if(tracks.begin(), tracks.end(), FindTrackData(entityData));
-		if (j != tracks.end())
-			instanceTrackData = *j;
+		auto it = std::find_if(tracks.begin(), tracks.end(), FindTrackData(entityData));
+		if (it != tracks.end())
+			instanceTrackData = *it;
 		else
 		{
 			instanceTrackData = new TrackData();
@@ -440,14 +425,14 @@ void TheaterControllerEditor::captureEntities()
 		TransformPath& pathData = instanceTrackData->getPath();
 
 		int32_t cki = pathData.getClosestKey(time);
-		TransformPath::Key* closestKey = (cki >= 0) ? &pathData[cki] : 0;
+		TransformPath::Key* closestKey = (cki >= 0) ? &pathData[cki] : nullptr;
 
 		if (closestKey && abs(closestKey->T - time) < c_clampKeyDistance)
 		{
 			closestKey->position = transform.translation();
 			closestKey->orientation = transform.rotation().toEulerAngles();
 
-			// Ensure orientation are "logially" fixed up to previous key.
+			// Ensure orientation are "logically" fixed up to previous key.
 			if (cki > 0)
 			{
 				pathData[cki].orientation = fixupOrientation(
@@ -464,7 +449,7 @@ void TheaterControllerEditor::captureEntities()
 			key.orientation = transform.rotation().toEulerAngles();
 			size_t at = pathData.insert(key);
 
-			// Ensure orientation are "logially" fixed up to previous key.
+			// Ensure orientation are "logically" fixed up to previous key.
 			if (at > 0)
 			{
 				pathData[at].orientation = fixupOrientation(
@@ -482,10 +467,9 @@ void TheaterControllerEditor::deleteSelectedKey()
 {
 	RefArray< ui::SequenceItem > sequenceItems;
 	m_trackSequencer->getSequenceItems(sequenceItems, ui::SequencerControl::GfSelectedOnly | ui::SequencerControl::GfDescendants);
-
-	for (RefArray< ui::SequenceItem >::iterator i = sequenceItems.begin(); i != sequenceItems.end(); ++i)
+	for (auto sequenceItem : sequenceItems)
 	{
-		ui::Sequence* selectedSequence = checked_type_cast< ui::Sequence*, false >(*i);
+		ui::Sequence* selectedSequence = checked_type_cast< ui::Sequence*, false >(sequenceItem);
 		ui::Tick* selectedTick = checked_type_cast< ui::Tick*, true >(selectedSequence->getSelectedKey());
 		if (!selectedTick)
 			continue;
@@ -525,16 +509,16 @@ void TheaterControllerEditor::setLookAtEntity()
 	if (selectedEntities.size() > 1)
 		return;
 
-	for (RefArray< ui::SequenceItem >::iterator i = sequenceItems.begin(); i != sequenceItems.end(); ++i)
+	for (auto sequenceItem : sequenceItems)
 	{
-		ui::Sequence* selectedSequence = checked_type_cast< ui::Sequence*, false >(*i);
+		ui::Sequence* selectedSequence = checked_type_cast< ui::Sequence*, false >(sequenceItem);
 		Ref< TrackData > trackData = selectedSequence->getData< TrackData >(L"TRACK");
 		T_ASSERT(trackData);
 
 		if (!selectedEntities.empty())
 			trackData->setLookAtEntityData(selectedEntities[0]->getEntityData());
 		else
-			trackData->setLookAtEntityData(0);
+			trackData->setLookAtEntityData(nullptr);
 	}
 
 	m_context->buildController();
@@ -547,10 +531,9 @@ void TheaterControllerEditor::easeVelocity()
 
 	RefArray< ui::SequenceItem > sequenceItems;
 	m_trackSequencer->getSequenceItems(sequenceItems, ui::SequencerControl::GfSelectedOnly | ui::SequencerControl::GfDescendants);
-
-	for (RefArray< ui::SequenceItem >::iterator i = sequenceItems.begin(); i != sequenceItems.end(); ++i)
+	for (auto sequenceItem : sequenceItems)
 	{
-		ui::Sequence* selectedSequence = checked_type_cast< ui::Sequence*, false >(*i);
+		ui::Sequence* selectedSequence = checked_type_cast< ui::Sequence*, false >(sequenceItem);
 		Ref< TrackData > trackData = selectedSequence->getData< TrackData >(L"TRACK");
 		T_ASSERT(trackData);
 
@@ -609,10 +592,9 @@ void TheaterControllerEditor::gotoPreviousKey()
 	float time = m_context->getTime() - m_timeOffset;
 	float previousTime = 0.0f;
 
-	const RefArray< TrackData >& tracks = act->getTracks();
-	for (RefArray< TrackData >::const_iterator i = tracks.begin(); i != tracks.end(); ++i)
+	for (auto track : act->getTracks())
 	{
-		TransformPath& path = (*i)->getPath();
+		TransformPath& path = track->getPath();
 		int32_t pki = path.getClosestPreviousKey(time);
 		if (pki >= 0)
 		{
@@ -647,10 +629,9 @@ void TheaterControllerEditor::gotoNextKey()
 	float time = m_context->getTime() - m_timeOffset;
 	float nextTime = act->getDuration();
 
-	const RefArray< TrackData >& tracks = act->getTracks();
-	for (RefArray< TrackData >::const_iterator i = tracks.begin(); i != tracks.end(); ++i)
+	for (auto track : act->getTracks())
 	{
-		TransformPath& path = (*i)->getPath();
+		TransformPath& path = track->getPath();
 		int32_t nki = path.getClosestNextKey(time);
 		if (nki >= 0)
 		{
@@ -755,18 +736,13 @@ void TheaterControllerEditor::timeScaleAct()
 		float toDuration = parseString< float >(fields[0].value);
 		float f = toDuration / fromDuration;
 
-		RefArray< TrackData >& t = act->getTracks();
-		for (RefArray< TrackData >::iterator i = t.begin(); i != t.end(); ++i)
+		for (auto track : act->getTracks())
 		{
-			(*i)->setLoopStart((*i)->getLoopStart() * f);
-			(*i)->setLoopEnd((*i)->getLoopEnd() * f);
-			(*i)->setTimeOffset((*i)->getTimeOffset() * f);
-
-			TransformPath& tp = (*i)->getPath();
-
-			AlignedVector< TransformPath::Key >& k = tp.getKeys();
-			for (AlignedVector< TransformPath::Key >::iterator j = k.begin(); j != k.end(); ++j)
-				j->T *= f;
+			track->setLoopStart(track->getLoopStart() * f);
+			track->setLoopEnd(track->getLoopEnd() * f);
+			track->setTimeOffset(track->getTimeOffset() * f);
+			for (auto& key : track->getPath().getKeys())
+				key.T *= f;
 		}
 
 		act->setDuration(toDuration);

@@ -89,13 +89,13 @@ Ref< ISerializable > TheaterControllerPipeline::buildOutput(
 
 			if (!entityData && sourceTracks[j]->getEntityData())
 			{
-				log::error << L"Theater pipeline failed; unable to get product of entity data" << Endl;
-				return 0;
+				log::error << L"Theater pipeline failed; unable to get product of entity data." << Endl;
+				return nullptr;
 			}
 			if (!lookAtEntityData && sourceTracks[j]->getLookAtEntityData())
 			{
-				log::error << L"Theater pipeline failed; unable to get product of entity data" << Endl;
-				return 0;
+				log::error << L"Theater pipeline failed; unable to get product of entity data." << Endl;
+				return nullptr;
 			}
 
 			tracks[j] = new TrackData(*sourceTracks[j]);

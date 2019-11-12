@@ -276,7 +276,6 @@ bool PublishWizardTool::launch(ui::Widget* parent, editor::IEditor* editor, db::
 		fileStream = nullptr;
 	}
 
-
 	publishDialog.destroy();
 
 	log::info << L"Published successfully." << Endl;
