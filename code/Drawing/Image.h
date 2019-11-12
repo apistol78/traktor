@@ -26,7 +26,7 @@ class Palette;
 class IImageFilter;
 class ITransferFunction;
 
-/*! \brief Image class.
+/*! Image class.
  * \ingroup Drawing
  *
  * Support for basic drawing operations as well as loading and saving
@@ -49,13 +49,13 @@ public:
 
 	virtual ~Image();
 
-	/*! \brief Create a clone of the image.
+	/*! Create a clone of the image.
 	 *
 	 * \param includeData Clone image pixels.
 	 */
 	Ref< Image > clone(bool includeData = true) const;
 
-	/*! \brief Copy sub-rectangle of a source image into this image.
+	/*! Copy sub-rectangle of a source image into this image.
 	 *
 	 * \param src Source image.
 	 * \param x Source left coordinate.
@@ -65,7 +65,7 @@ public:
 	 */
 	void copy(const Image* src, int32_t x, int32_t y, int32_t width, int32_t height);
 
-	/*! \brief Copy sub-rectangle of a source image into this image.
+	/*! Copy sub-rectangle of a source image into this image.
 	 *
 	 * \param src Source image.
 	 * \param dx Destination left coordinate.
@@ -77,7 +77,7 @@ public:
 	 */
 	void copy(const Image* src, int32_t dx, int32_t dy, int32_t x, int32_t y, int32_t width, int32_t height);
 
-	/*! \brief Copy sub-rectangle of a source image into this image.
+	/*! Copy sub-rectangle of a source image into this image.
 	 *
 	 * \param src Source image.
 	 * \param x Source left coordinate.
@@ -87,7 +87,7 @@ public:
 	 */
 	void copy(const Image* src, int32_t x, int32_t y, int32_t width, int32_t height, const ITransferFunction& tf);
 
-	/*! \brief Copy sub-rectangle of a source image into this image.
+	/*! Copy sub-rectangle of a source image into this image.
 	 *
 	 * \param src Source image.
 	 * \param dx Destination left coordinate.
@@ -99,94 +99,94 @@ public:
 	 */
 	void copy(const Image* src, int32_t dx, int32_t dy, int32_t x, int32_t y, int32_t width, int32_t height, const ITransferFunction& tf);
 
-	/*! \brief Clear entire image. */
+	/*! Clear entire image. */
 	void clear(const Color4f& color);
 
-	/*! \brief Clear only alpha. */
+	/*! Clear only alpha. */
 	void clearAlpha(float alpha);
 
-	/*! \brief Get single pixel. */
+	/*! Get single pixel. */
 	bool getPixel(int32_t x, int32_t y, Color4f& outColor) const;
 
-	/*! \brief Set single pixel. */
+	/*! Set single pixel. */
 	bool setPixel(int32_t x, int32_t y, const Color4f& color);
 
-	/*! \brief Alpha blend single pixel. */
+	/*! Alpha blend single pixel. */
 	bool setPixelAlphaBlend(int32_t x, int32_t y, const Color4f& color);
 
-	/*! \brief Get single pixel, no boundary check. */
+	/*! Get single pixel, no boundary check. */
 	void getPixelUnsafe(int32_t x, int32_t y, Color4f& outColor) const;
 
-	/*! \brief Set single pixel, no boundary check. */
+	/*! Set single pixel, no boundary check. */
 	void setPixelUnsafe(int32_t x, int32_t y, const Color4f& color);
 
-	/*! \brief Alpha blend single pixel, no boundary check. */
+	/*! Alpha blend single pixel, no boundary check. */
 	void setPixelAlphaBlendUnsafe(int32_t x, int32_t y, const Color4f& color);
 
-	/*! \brief Get span of pixels, no boundary checks. */
+	/*! Get span of pixels, no boundary checks. */
 	void getSpanUnsafe(int32_t y, Color4f* outSpan) const;
 
-	/*! \brief Set span of pixels, no boundary checks. */
+	/*! Set span of pixels, no boundary checks. */
 	void setSpanUnsafe(int32_t y, const Color4f* span);
 
-	/*! \brief Get vertical span of pixels, no boundary checks. */
+	/*! Get vertical span of pixels, no boundary checks. */
 	void getVerticalSpanUnsafe(int32_t x, Color4f* outSpan) const;
 
-	/*! \brief Set vertical span of pixels, no boundary checks. */
+	/*! Set vertical span of pixels, no boundary checks. */
 	void setVerticalSpanUnsafe(int32_t x, const Color4f* span);
 
-	/*! \brief Apply filter on entire image. */
+	/*! Apply filter on entire image. */
 	void apply(const IImageFilter* imageFilter);
 
-	/*! \brief Convert format of image. */
+	/*! Convert format of image. */
 	void convert(const PixelFormat& intoPixelFormat, Palette* intoPalette = 0);
 
-	/*! \brief Swap content of source image. */
+	/*! Swap content of source image. */
 	void swap(Image* source);
 
-	/*! \brief Load image from file. */
+	/*! Load image from file. */
 	static Ref< Image > load(const Path& fileName);
 
-	/*! \brief Load image from stream. */
+	/*! Load image from stream. */
 	static Ref< Image > load(IStream* stream, const std::wstring& extension);
 
-	/*! \brief Load image from resource. */
+	/*! Load image from resource. */
 	static Ref< Image > load(const void* resource, uint32_t size, const std::wstring& extension);
 
-	/*! \brief Save image as file. */
+	/*! Save image as file. */
 	bool save(const Path& fileName);
 
-	/*! \brief Save image into stream. */
+	/*! Save image into stream. */
 	bool save(IStream* stream, const std::wstring& extension);
 
-	/*! \brief Get current image format. */
+	/*! Get current image format. */
 	const PixelFormat& getPixelFormat() const;
 
-	/*! \brief Get width of image. */
+	/*! Get width of image. */
 	int32_t getWidth() const;
 
-	/*! \brief Get height of image. */
+	/*! Get height of image. */
 	int32_t getHeight() const;
 
-	/*! \brief Get image palette. */
+	/*! Get image palette. */
 	Ref< Palette > getPalette() const;
 
-	/*! \brief Get read-only pointer to image data. */
+	/*! Get read-only pointer to image data. */
 	const void* getData() const;
 
-	/*! \brief Get pointer to image data. */
+	/*! Get pointer to image data. */
 	void* getData();
 
-	/*! \brief Get size of data in bytes. */
+	/*! Get size of data in bytes. */
 	size_t getDataSize() const;
 
-	/*! \brief Attach image meta data. */
+	/*! Attach image meta data. */
 	void setImageInfo(ImageInfo* imageInfo);
 
-	/*! \brief Get image meta data. */
+	/*! Get image meta data. */
 	Ref< ImageInfo > getImageInfo() const;
 
-	/*! \brief Copy image. */
+	/*! Copy image. */
 	Image& operator = (const Image& src);
 
 private:

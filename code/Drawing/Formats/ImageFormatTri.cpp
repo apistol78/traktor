@@ -18,12 +18,12 @@ Ref< Image > ImageFormatTri::read(IStream* stream)
 	uint32_t magic;
 	reader >> magic;
 	if (magic != 'TRIF')
-		return 0;
+		return nullptr;
 
 	uint8_t version;
 	reader >> version;
 	if (version != 1)
-		return 0;
+		return nullptr;
 
 	int32_t width, height;
 	reader >> width;
@@ -73,20 +73,18 @@ Ref< Image > ImageFormatTri::read(IStream* stream)
 
 	Ref< Image > image = new Image(pf, width, height);
 
-	reader.read(
-		image->getData(),
-		width * height * pf.getByteSize()
-	);
+	int64_t dataSize = image->getDataSize();
+	if (reader.read(image->getData(), dataSize) != dataSize)
+		return nullptr;
 
 	return image;
 }
 
 bool ImageFormatTri::write(IStream* stream, Image* image)
 {
-	Writer writer(stream);
-
 	const PixelFormat& pf = image->getPixelFormat();
 
+	Writer writer(stream);
 	writer << uint32_t('TRIF');
 	writer << uint8_t(1);
 	writer << image->getWidth();
@@ -104,10 +102,9 @@ bool ImageFormatTri::write(IStream* stream, Image* image)
 	writer << pf.getAlphaBits();
 	writer << pf.getAlphaShift();
 
-	writer.write(
-		image->getData(),
-		image->getWidth() * image->getHeight() * pf.getByteSize()
-	);
+	int64_t dataSize = image->getDataSize();
+	if (writer.write(image->getData(), dataSize) != dataSize)
+		return false;
 
 	return true;
 }
