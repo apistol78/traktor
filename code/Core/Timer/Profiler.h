@@ -63,12 +63,12 @@ public:
 	 *
 	 * Format of JSON is Chromium tracer compatible.
 	 */
-	class JSONReportListener : public RefCountImpl< IReportListener >
+	class T_DLLCLASS JSONReportListener : public RefCountImpl< IReportListener >
 	{
 	public:
 		JSONReportListener(OutputStream* output);
 
-		void flush();
+		virtual ~JSONReportListener();
 
 		virtual void reportProfilerEvents(double currentTime, const AlignedVector< Event >& events) override final;
 
@@ -97,6 +97,8 @@ public:
 	double getTime() const;
 
 protected:
+	Profiler();
+
 	virtual void destroy() override final;
 
 private:

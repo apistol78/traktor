@@ -95,6 +95,11 @@ double Profiler::getTime() const
 	return m_timer.getElapsedTime();
 }
 
+Profiler::Profiler()
+{
+	m_timer.start();
+}
+
 void Profiler::destroy()
 {
 	{
@@ -124,7 +129,7 @@ Profiler::JSONReportListener::JSONReportListener(OutputStream* output)
 	*m_output << IncreaseIndent;
 }
 
-void Profiler::JSONReportListener::flush()
+Profiler::JSONReportListener::~JSONReportListener()
 {
 	*m_output << DecreaseIndent;
 	*m_output << L"]" << Endl;
@@ -139,7 +144,7 @@ void Profiler::JSONReportListener::reportProfilerEvents(double currentTime, cons
 		*m_output << L"\"cat\": \"MAIN\"," << Endl;
 		*m_output << L"\"pid\": 0," << Endl;
 		*m_output << L"\"tid\": " << event.threadId << L"," << Endl;
-		*m_output << L"\"ts\": " << int64_t(event.start * 1000.0) << L"," << Endl;
+		*m_output << L"\"ts\": " << int64_t(event.start * 1000000.0) << L"," << Endl;
 		*m_output << L"\"ph\": \"B\"," << Endl;
 		*m_output << L"\"name\": \"" << event.name << L"\"," << Endl;
 		*m_output << L"\"args\": {}" << Endl;
@@ -150,7 +155,7 @@ void Profiler::JSONReportListener::reportProfilerEvents(double currentTime, cons
 		*m_output << L"\"cat\": \"MAIN\"," << Endl;
 		*m_output << L"\"pid\": 0," << Endl;
 		*m_output << L"\"tid\": " << event.threadId << L"," << Endl;
-		*m_output << L"\"ts\": " << int64_t(event.end * 1000.0) << L"," << Endl;
+		*m_output << L"\"ts\": " << int64_t(event.end * 1000000.0) << L"," << Endl;
 		*m_output << L"\"ph\": \"E\"," << Endl;
 		*m_output << L"\"name\": \"" << event.name << L"\"," << Endl;
 		*m_output << L"\"args\": {}" << Endl;

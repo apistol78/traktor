@@ -11,6 +11,7 @@
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/StreamCopy.h"
 #include "Core/Io/StringReader.h"
+#include "Core/Io/Utf8Encoding.h"
 #include "Core/Io/Utf16Encoding.h"
 #include "Core/Io/Utf32Encoding.h"
 #include "Core/Serialization/DeepClone.h"
