@@ -370,7 +370,7 @@ bool convertMesh(
 				}
 			}
 
-			polygon.addVertex(outModel.addUniqueVertex(vertex));
+			polygon.addVertex(outModel.addVertex(vertex));
 		}
 
 		outModel.addPolygon(polygon);
