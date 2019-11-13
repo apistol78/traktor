@@ -122,9 +122,8 @@ bool ScenePreviewControl::create(ui::Widget* parent, SceneEditorContext* context
 	m_toolBarActions->addEventHandler< ui::ToolBarButtonClickEvent >(this, &ScenePreviewControl::eventToolBarActionClicked);
 
 	// Let plugins create additional toolbar items.
-	const RefArray< ISceneEditorPlugin >& editorPlugins = context->getEditorPlugins();
-	for (RefArray< ISceneEditorPlugin >::const_iterator i = editorPlugins.begin(); i != editorPlugins.end(); ++i)
-		(*i)->create(this, m_toolBarActions);
+	for (auto editorPlugin : context->getEditorPlugins())
+		editorPlugin->create(this, m_toolBarActions);
 
 	m_context = context;
 	m_context->addEventHandler< ModifierChangedEvent >(this, &ScenePreviewControl::eventModifierChanged);
@@ -174,15 +173,15 @@ void ScenePreviewControl::destroy()
 	if (m_toolBarActions)
 	{
 		m_toolBarActions->destroy();
-		m_toolBarActions = 0;
+		m_toolBarActions = nullptr;
 	}
 	Widget::destroy();
 }
 
 void ScenePreviewControl::updateWorldRenderer()
 {
-	for (RefArray< ISceneRenderControl >::iterator i = m_renderControls.begin(); i != m_renderControls.end(); ++i)
-		(*i)->updateWorldRenderer();
+	for (auto renderControl : m_renderControls)
+		renderControl->updateWorldRenderer();
 }
 
 bool ScenePreviewControl::handleCommand(const ui::Command& command)
@@ -264,10 +263,9 @@ bool ScenePreviewControl::handleCommand(const ui::Command& command)
 		result = false;
 
 		// Propagate command to plug-ins.
-		const RefArray< ISceneEditorPlugin >& editorPlugins = m_context->getEditorPlugins();
-		for (RefArray< ISceneEditorPlugin >::const_iterator i = editorPlugins.begin(); i != editorPlugins.end(); ++i)
+		for (auto editorPlugin : m_context->getEditorPlugins())
 		{
-			result = (*i)->handleCommand(command);
+			result = editorPlugin->handleCommand(command);
 			if (result)
 				break;
 		}
@@ -275,9 +273,9 @@ bool ScenePreviewControl::handleCommand(const ui::Command& command)
 		// Propagate command to active render control.
 		if (!result)
 		{
-			for (RefArray< ISceneRenderControl >::iterator i = m_renderControls.begin(); i != m_renderControls.end(); ++i)
+			for (auto renderControl : m_renderControls)
 			{
-				result = (*i)->handleCommand(command);
+				result = renderControl->handleCommand(command);
 				if (result)
 					break;
 			}
@@ -296,10 +294,9 @@ bool ScenePreviewControl::handleCommand(const ui::Command& command)
 		{
 			RefArray< EntityAdapter > entities;
 			m_context->getEntities(entities, SceneEditorContext::GfDescendants);
-
-			for (RefArray< EntityAdapter >::iterator i = entities.begin(); i != entities.end(); ++i)
+			for (auto entity : entities)
 			{
-				Ref< IEntityEditor > entityEditor = (*i)->getEntityEditor();
+				Ref< IEntityEditor > entityEditor = entity->getEntityEditor();
 				if (entityEditor)
 					entityEditor->handleCommand(command);
 			}
@@ -309,10 +306,9 @@ bool ScenePreviewControl::handleCommand(const ui::Command& command)
 		{
 			RefArray< EntityAdapter > entities;
 			m_context->getEntities(entities, SceneEditorContext::GfSelectedOnly | SceneEditorContext::GfDescendants);
-
-			for (RefArray< EntityAdapter >::iterator i = entities.begin(); i != entities.end(); ++i)
+			for (auto entity : entities)
 			{
-				Ref< IEntityEditor > entityEditor = (*i)->getEntityEditor();
+				Ref< IEntityEditor > entityEditor = entity->getEntityEditor();
 				if (entityEditor)
 				{
 					result = entityEditor->handleCommand(command);
@@ -331,13 +327,12 @@ bool ScenePreviewControl::handleCommand(const ui::Command& command)
 
 bool ScenePreviewControl::getViewIndex(const ui::Point& position, uint32_t& outIndex) const
 {
-	for (RefArray< ISceneRenderControl >::const_iterator i = m_renderControls.begin(); i != m_renderControls.end(); ++i)
+	outIndex = 0;
+	for (auto renderControl : m_renderControls)
 	{
-		if ((*i)->hitTest(position))
-		{
-			outIndex = std::distance(m_renderControls.begin(), i);
+		if (renderControl->hitTest(position))
 			return true;
-		}
+		outIndex++;
 	}
 	return false;
 }
@@ -349,8 +344,8 @@ ui::Size ScenePreviewControl::getPreferedSize() const
 
 bool ScenePreviewControl::updateRenderControls()
 {
-	for (RefArray< ISceneRenderControl >::iterator i = m_renderControls.begin(); i != m_renderControls.end(); ++i)
-		(*i)->destroy();
+	for (auto renderControl : m_renderControls)
+		renderControl->destroy();
 
 	m_renderControls.resize(0);
 
@@ -376,7 +371,7 @@ bool ScenePreviewControl::updateRenderControls()
 		doubleSplitter->create(this, true, 50, true);
 
 		m_renderControls.resize(2);
-		for (int i = 0; i < 2; ++i)
+		for (int32_t i = 0; i < 2; ++i)
 		{
 			Ref< DefaultRenderControl > renderControl = new DefaultRenderControl();
 			if (!renderControl->create(
@@ -398,7 +393,7 @@ bool ScenePreviewControl::updateRenderControls()
 		quadSplitter->create(this, ui::Point(50, 50), true);
 
 		m_renderControls.resize(4);
-		for (int i = 0; i < 4; ++i)
+		for (int32_t i = 0; i < 4; ++i)
 		{
 			Ref< DefaultRenderControl > renderControl = new DefaultRenderControl();
 			if (!renderControl->create(
@@ -521,8 +516,8 @@ void ScenePreviewControl::eventRedraw(RedrawEvent* event)
 		}
 
 		// Issue updates on render controls.
-		for (RefArray< ISceneRenderControl >::iterator i = m_renderControls.begin(); i != m_renderControls.end(); ++i)
-			(*i)->update();
+		for (auto renderControl : m_renderControls)
+			renderControl->update();
 
 		// Update modifiers as selected entity might have moved.
 		if (m_lastTime != scaledTime)
@@ -539,14 +534,12 @@ void ScenePreviewControl::eventRedraw(RedrawEvent* event)
 
 		// Update context time.
 		m_context->setTime(scaledTime + scaledDeltaTime);
-
-		//event->requestMore();
 	}
 }
 
 void ScenePreviewControl::eventTimer(ui::TimerEvent* event)
 {
-	update();
+	m_context->raiseRedraw();
 }
 
 	}
