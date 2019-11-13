@@ -3,7 +3,6 @@
 #include <iomanip>
 #include "Core/Misc/SHA1.h"
 #include "Core/Misc/TString.h"
-#include "Core/Log/Log.h"
 
 namespace traktor
 {

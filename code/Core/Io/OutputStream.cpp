@@ -3,7 +3,6 @@
 #include "Core/Io/OutputStream.h"
 #include "Core/Math/Float.h"
 #include "Core/Math/MathUtils.h"
-#include "Core/Thread/Acquire.h"
 
 namespace traktor
 {

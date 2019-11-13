@@ -6,8 +6,6 @@
 #include "Core/Memory/MemoryConfig.h"
 #include "Core/Misc/String.h"
 #include "Core/Misc/TString.h"
-#include "Core/Singleton/ISingleton.h"
-#include "Core/Singleton/SingletonManager.h"
 
 namespace traktor
 {

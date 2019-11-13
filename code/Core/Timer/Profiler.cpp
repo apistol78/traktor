@@ -1,6 +1,4 @@
-#include "Core/Log/Log.h"
 #include "Core/Memory/Alloc.h"
-#include "Core/Misc/SafeDestroy.h"
 #include "Core/Misc/String.h"
 #include "Core/Singleton/SingletonManager.h"
 #include "Core/Thread/Acquire.h"
@@ -21,11 +19,11 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.Profiler", Profiler, Object)
 
 Profiler& Profiler::getInstance()
 {
-	static Profiler* s_instance = 0;
+	static Profiler* s_instance = nullptr;
 	if (!s_instance)
 	{
 		s_instance = new Profiler();
-		s_instance->addRef(0);
+		s_instance->addRef(nullptr);
 		SingletonManager::getInstance().add(s_instance);
 	}
 	return *s_instance;
@@ -110,10 +108,10 @@ void Profiler::destroy()
 			m_events.clear();
 		}
 
-		m_listener = 0;
+		m_listener = nullptr;
 
-		for (AlignedVector< ThreadEvents* >::iterator i = m_threadEvents.begin(); i != m_threadEvents.end(); ++i)
-			delete *i;
+		for (auto threadEvent : m_threadEvents)
+			delete threadEvent;
 
 		m_threadEvents.clear();
 	}
@@ -135,16 +133,16 @@ void Profiler::JSONReportListener::flush()
 
 void Profiler::JSONReportListener::reportProfilerEvents(double currentTime, const AlignedVector< Profiler::Event >& events)
 {
-	for (AlignedVector< Profiler::Event >::const_iterator i = events.begin(); i != events.end(); )
+	for (const auto& event : events)
 	{
 		*m_output << L"{" << Endl;
 		*m_output << IncreaseIndent;
 		*m_output << L"\"cat\": \"MAIN\"," << Endl;
 		*m_output << L"\"pid\": 0," << Endl;
-		*m_output << L"\"tid\": " << i->threadId << L"," << Endl;
-		*m_output << L"\"ts\": " << int64_t(i->start * 1000.0) << L"," << Endl;
+		*m_output << L"\"tid\": " << event.threadId << L"," << Endl;
+		*m_output << L"\"ts\": " << int64_t(event.start * 1000.0) << L"," << Endl;
 		*m_output << L"\"ph\": \"B\"," << Endl;
-		*m_output << L"\"name\": \"" << i->name << L"\"," << Endl;
+		*m_output << L"\"name\": \"" << event.name << L"\"," << Endl;
 		*m_output << L"\"args\": {}" << Endl;
 		*m_output << DecreaseIndent;
 		*m_output << L"}," << Endl;
@@ -152,10 +150,10 @@ void Profiler::JSONReportListener::reportProfilerEvents(double currentTime, cons
 		*m_output << IncreaseIndent;
 		*m_output << L"\"cat\": \"MAIN\"," << Endl;
 		*m_output << L"\"pid\": 0," << Endl;
-		*m_output << L"\"tid\": " << i->threadId << L"," << Endl;
-		*m_output << L"\"ts\": " << int64_t(i->end * 1000.0) << L"," << Endl;
+		*m_output << L"\"tid\": " << event.threadId << L"," << Endl;
+		*m_output << L"\"ts\": " << int64_t(event.end * 1000.0) << L"," << Endl;
 		*m_output << L"\"ph\": \"E\"," << Endl;
-		*m_output << L"\"name\": \"" << i->name << L"\"," << Endl;
+		*m_output << L"\"name\": \"" << event.name << L"\"," << Endl;
 		*m_output << L"\"args\": {}" << Endl;
 		*m_output << DecreaseIndent;
 		*m_output << L"}," << Endl;

@@ -4,7 +4,6 @@
 #include "Core/Memory/Alloc.h"
 #include "Core/Memory/BlockAllocator.h"
 #include "Core/Thread/Acquire.h"
-#include "Core/Thread/Atomic.h"
 #include "Core/Thread/Semaphore.h"
 #include "Core/Thread/ThreadManager.h"
 

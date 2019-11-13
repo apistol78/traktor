@@ -1,4 +1,3 @@
-#include "Core/Log/Log.h"
 #include "Core/Serialization/Member.h"
 #include "Core/Serialization/Serializer.h"
 
@@ -16,11 +15,11 @@ Serializer::Serializer()
 Ref< ISerializable > Serializer::readObject()
 {
 	if (getDirection() != SdRead)
-		return 0;
+		return nullptr;
 
 	Ref< ISerializable > object;
 	*this >> Member< ISerializable* >(L"object", object);
-	return !m_failure ? object : 0;
+	return !m_failure ? object : nullptr;
 }
 
 bool Serializer::writeObject(const ISerializable* o)
@@ -58,7 +57,7 @@ void Serializer::serialize(ISerializable* inner)
 		return;
 
 	dataVersionMap_t dataVersions;
-	for (const TypeInfo* ti = &type_of(inner); ti != 0; ti = ti->getSuper())
+	for (const TypeInfo* ti = &type_of(inner); ti != nullptr; ti = ti->getSuper())
 		dataVersions.insert(std::make_pair(
 			ti,
 			ti->getVersion()

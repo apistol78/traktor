@@ -1,5 +1,4 @@
 #include "Core/Functor/Functor.h"
-#include "Core/Log/Log.h"
 #include "Core/Singleton/SingletonManager.h"
 #include "Core/Thread/Atomic.h"
 #include "Core/Thread/Thread.h"
