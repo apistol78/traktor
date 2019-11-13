@@ -1,6 +1,4 @@
 #include "Core/Serialization/AttributeRange.h"
-#include "Core/Serialization/ISerializer.h"
-#include "Core/Serialization/Member.h"
 #include "Render/Shader.h"
 #include "Resource/Member.h"
 #include "World/Entity/DecalComponentData.h"

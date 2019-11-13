@@ -1,6 +1,5 @@
 #include <algorithm>
 #include "Core/Serialization/AttributePrivate.h"
-#include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberRefArray.h"
 #include "World/Entity/GroupEntityData.h"
 

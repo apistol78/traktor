@@ -1,4 +1,3 @@
-#include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberRefArray.h"
 #include "World/IEntityComponentData.h"
 #include "World/Entity/ComponentEntityData.h"

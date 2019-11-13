@@ -1,5 +1,3 @@
-#include "Core/Serialization/AttributeType.h"
-#include "Core/Serialization/ISerializer.h"
 #include "Resource/Member.h"
 #include "World/Entity/ExternalEntityData.h"
 

@@ -1,5 +1,4 @@
 #include "Core/Serialization/ISerializer.h"
-#include "Core/Serialization/Member.h"
 #include "Core/Serialization/MemberAabb.h"
 #include "Render/ICubeTexture.h"
 #include "Resource/Member.h"

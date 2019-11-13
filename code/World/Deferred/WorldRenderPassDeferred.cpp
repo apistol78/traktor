@@ -1,6 +1,4 @@
-#include "Core/Math/Ray3.h"
 #include "Render/Shader.h"
-#include "Render/Types.h"
 #include "Render/Context/ProgramParameters.h"
 #include "World/WorldRenderView.h"
 #include "World/Deferred/WorldRenderPassDeferred.h"

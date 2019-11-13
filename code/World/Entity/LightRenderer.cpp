@@ -1,5 +1,4 @@
 #include <limits>
-#include "Render/ITexture.h"
 #include "World/WorldRenderView.h"
 #include "World/Entity/LightComponent.h"
 #include "World/Entity/LightRenderer.h"

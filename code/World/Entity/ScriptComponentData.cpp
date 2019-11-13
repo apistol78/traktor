@@ -1,5 +1,4 @@
 #include "Core/Class/IRuntimeClass.h"
-#include "Core/Serialization/ISerializer.h"
 #include "Resource/IResourceManager.h"
 #include "Resource/Member.h"
 #include "World/Entity/ScriptComponent.h"
