@@ -54,8 +54,7 @@ bool LogList::create(Widget* parent, int style, const ISymbolLookup* lookup)
 
 	m_lookup = lookup;
 
-	startTimer(100, 0);
-
+	startTimer(100);
 	return true;
 }
 

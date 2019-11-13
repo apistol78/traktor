@@ -1,6 +1,5 @@
 #pragma once
 
-#include <map>
 #include "Core/Misc/TString.h"
 #include "Core/Misc/AutoPtr.h"
 #include "Ui/Application.h"
@@ -44,6 +43,7 @@ public:
 	,	m_hCursor(NULL)
 	,	m_ownCursor(false)
 	,	m_tracking(false)
+	,	m_interval(-1)
 	{
 	}
 
@@ -54,6 +54,7 @@ public:
 
 	virtual void destroy() override
 	{
+		KillTimer(m_hWnd, 1000);
 		delete this;
 	}
 
@@ -141,20 +142,16 @@ public:
 			ReleaseCapture();
 	}
 
-	virtual void startTimer(int interval, int id) override
+	virtual void startTimer(int interval) override
 	{
-		SetTimer(m_hWnd, 1000 + id, interval, NULL);
-		m_timers[id] = interval;
+		SetTimer(m_hWnd, 1000, interval, NULL);
+		m_interval = interval;
 	}
 
-	virtual void stopTimer(int id) override
+	virtual void stopTimer() override
 	{
-		std::map< uint32_t, uint32_t >::iterator i = m_timers.find(id);
-		if (i != m_timers.end())
-		{
-			KillTimer(m_hWnd, 1000 + id);
-			m_timers.erase(i);
-		}
+		KillTimer(m_hWnd, 1000);
+		m_interval = -1;
 	}
 
 	virtual void setRect(const Rect& rect) override
@@ -473,7 +470,7 @@ protected:
 	HCURSOR m_hCursor;
 	bool m_ownCursor;
 	bool m_tracking;
-	std::map< uint32_t, uint32_t > m_timers;
+	int32_t m_interval;
 
 	static
 	void getNativeStyles(int style, UINT& nativeStyle, UINT& nativeStyleEx)
@@ -804,11 +801,10 @@ protected:
 	LRESULT eventTimer(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, bool& outPass)
 	{
 		if (!IsWindowEnabled(m_hWnd))
-			return TRUE;
+			return 0;
 
 		// Disable all timers until event is processed.
-		for (std::map< uint32_t, uint32_t >::iterator i = m_timers.begin(); i != m_timers.end(); ++i)
-			KillTimer(m_hWnd, i->first + 1000);
+		KillTimer(m_hWnd, 1000);
 
 		TimerEvent c(m_owner, uint32_t(wParam));
 		m_owner->raiseEvent(&c);
@@ -816,10 +812,10 @@ protected:
 			outPass = true;
 
 		// Restart all timers again.
-		for (std::map< uint32_t, uint32_t >::iterator i = m_timers.begin(); i != m_timers.end(); ++i)
-			SetTimer(m_hWnd, i->first + 1000, i->second, NULL);
+		if (m_interval > 0)
+			SetTimer(m_hWnd, 1000, m_interval, NULL);
 
-		return TRUE;
+		return 0;
 	}
 
 	LRESULT eventDropFiles(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, bool& outPass)
