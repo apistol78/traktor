@@ -1,9 +1,6 @@
 #include <cmath>
 #include "Core/Functor/Functor.h"
-#include "Core/Log/Log.h"
-#include "Core/Thread/Atomic.h"
 #include "Core/Thread/JobManager.h"
-#include "Core/Timer/Timer.h"
 #include "Core/Test/CaseJob.h"
 
 namespace traktor

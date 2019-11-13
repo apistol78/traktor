@@ -1,6 +1,4 @@
 #include <algorithm>
-#include "Core/Object.h"
-#include "Core/Ref.h"
 #include "Core/RefArray.h"
 #include "Core/Test/CaseRef.h"
 

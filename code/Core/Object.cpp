@@ -1,7 +1,5 @@
 #include "Core/IObjectRefDebugger.h"
 #include "Core/Object.h"
-#include "Core/Memory/IAllocator.h"
-#include "Core/Memory/MemoryConfig.h"
 
 namespace traktor
 {

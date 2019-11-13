@@ -1,4 +1,3 @@
-#include "Core/Thread/Atomic.h"
 #if defined(_DEBUG)
 #	if defined(_WIN32)
 #		include "Core/Thread/Win32/Atomic.inl"

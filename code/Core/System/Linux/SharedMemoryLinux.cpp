@@ -6,7 +6,6 @@
 #include "Core/Misc/MD5.h"
 #include "Core/Misc/TString.h"
 #include "Core/System/Linux/SharedMemoryLinux.h"
-#include "Core/Thread/Atomic.h"
 
 namespace traktor
 {

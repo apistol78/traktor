@@ -1,8 +1,6 @@
 #include "Core/Test/CaseQuaternion.h"
 #include "Core/Test/MathCompare.h"
-#include "Core/Math/Format.h"
 #include "Core/Math/RandomGeometry.h"
-#include "Core/Log/Log.h"
 
 namespace traktor
 {

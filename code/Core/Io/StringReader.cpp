@@ -1,5 +1,4 @@
 #include <cstring>
-#include "Core/Containers/AlignedVector.h"
 #include "Core/Io/IStream.h"
 #include "Core/Io/StringReader.h"
 

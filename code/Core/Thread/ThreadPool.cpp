@@ -1,7 +1,4 @@
-#include "Core/Functor/Functor.h"
 #include "Core/Singleton/SingletonManager.h"
-#include "Core/Thread/Atomic.h"
-#include "Core/Thread/Thread.h"
 #include "Core/Thread/ThreadManager.h"
 #include "Core/Thread/ThreadPool.h"
 

@@ -1,4 +1,3 @@
-#include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberRefArray.h"
 #include "Core/Settings/PropertyArray.h"
 

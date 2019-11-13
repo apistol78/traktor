@@ -1,16 +1,9 @@
 #include <cmath>
 #include <functional>
-#include "Core/Log/Log.h"
-#include "Core/Math/Const.h"
 #include "Core/Math/Frustum.h"
 #include "Core/Math/Line2.h"
-#include "Core/Math/Matrix44.h"
-#include "Core/Math/Plane.h"
 #include "Core/Math/Quasirandom.h"
-#include "Core/Math/Quaternion.h"
 #include "Core/Math/RandomGeometry.h"
-#include "Core/Math/Vector2.h"
-#include "Core/Math/Vector4.h"
 #include "Core/Test/CaseMath.h"
 #include "Core/Test/MathCompare.h"
 

@@ -1,7 +1,5 @@
 #include <limits>
-#include "Core/Log/Log.h"
 #include "Core/Math/BspTree.h"
-#include "Core/Math/Const.h"
 
 namespace traktor
 {

@@ -1,7 +1,5 @@
 #include <numeric>
 #include "Core/Math/Const.h"
-#include "Core/Math/Float.h"
-#include "Core/Math/Vector2.h"
 #include "Core/Math/Winding2.h"
 #include "Core/Math/Winding3.h"
 

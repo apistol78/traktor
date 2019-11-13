@@ -1,4 +1,3 @@
-#include "Core/Rtti/TypeInfo.h"
 
 #if defined(T_STATIC)
 #	include "Core/Class/BoxedClassFactory.h"

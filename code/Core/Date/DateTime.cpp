@@ -2,7 +2,6 @@
 #include <cstring>
 #include "Core/Date/DateTime.h"
 #include "Core/Serialization/ISerializer.h"
-#include "Core/Serialization/Member.h"
 
 namespace traktor
 {

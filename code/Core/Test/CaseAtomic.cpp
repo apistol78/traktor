@@ -1,5 +1,4 @@
 #include "Core/Test/CaseAtomic.h"
-#include "Core/Thread/Atomic.h"
 
 namespace traktor
 {

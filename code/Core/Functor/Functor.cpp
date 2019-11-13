@@ -1,5 +1,3 @@
-#include "Core/Functor/Functor.h"
-#include "Core/Singleton/ISingleton.h"
 #include "Core/Singleton/SingletonManager.h"
 #include "Core/Memory/Alloc.h"
 #include "Core/Memory/BlockAllocator.h"

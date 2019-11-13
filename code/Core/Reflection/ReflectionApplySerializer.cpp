@@ -4,7 +4,6 @@
 #include "Core/Reflection/RfmObject.h"
 #include "Core/Reflection/RfmPrimitive.h"
 #include "Core/Serialization/MemberArray.h"
-#include "Core/Serialization/MemberComplex.h"
 #include "Core/Serialization/MemberEnum.h"
 
 namespace traktor

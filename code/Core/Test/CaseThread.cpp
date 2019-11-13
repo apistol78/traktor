@@ -3,7 +3,6 @@
 #include "Core/Thread/ThreadManager.h"
 #include "Core/Thread/Thread.h"
 #include "Core/Thread/Event.h"
-#include "Core/Thread/Atomic.h"
 
 namespace traktor
 {

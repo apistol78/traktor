@@ -2,7 +2,6 @@
 #include <limits>
 #include "Core/Math/Aabb2.h"
 #include "Core/Math/Const.h"
-#include "Core/Math/MathUtils.h"
 
 namespace traktor
 {

@@ -1,6 +1,5 @@
 #include "Core/Serialization/DeepHash.h"
 #include "Core/Serialization/ISerializer.h"
-#include "Core/Serialization/Member.h"
 #include "Core/Serialization/MemberRef.h"
 #include "Core/Serialization/MemberSmallMap.h"
 #include "Core/Settings/PropertyGroup.h"

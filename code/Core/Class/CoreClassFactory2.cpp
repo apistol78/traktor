@@ -5,7 +5,6 @@
 #include "Core/Misc/Adler32.h"
 #include "Core/Misc/Base64.h"
 #include "Core/Misc/HashStream.h"
-#include "Core/Misc/IHash.h"
 #include "Core/Misc/MD5.h"
 #include "Core/Misc/SHA1.h"
 #include "Core/Timer/Timer.h"
