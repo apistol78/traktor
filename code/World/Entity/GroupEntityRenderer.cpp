@@ -1,5 +1,4 @@
 #include "World/WorldContext.h"
-#include "World/WorldRenderView.h"
 #include "World/Entity/GroupEntity.h"
 #include "World/Entity/GroupEntityRenderer.h"
 

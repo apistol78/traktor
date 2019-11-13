@@ -1,6 +1,5 @@
 #include "Core/Math/Const.h"
 #include "Core/Math/Float.h"
-#include "Core/Math/Log2.h"
 #include "Core/Math/Quasirandom.h"
 #include "Core/Math/Random.h"
 #include "Render/ICubeTexture.h"

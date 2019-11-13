@@ -3,7 +3,6 @@
 #include "Render/Shader.h"
 #include "Render/VertexBuffer.h"
 #include "Render/VertexElement.h"
-#include "Render/Context/RenderBlock.h"
 #include "Render/Context/RenderContext.h"
 #include "World/IWorldRenderPass.h"
 #include "World/WorldContext.h"

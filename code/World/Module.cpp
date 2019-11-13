@@ -1,5 +1,3 @@
-#include "Core/Rtti/TypeInfo.h"
-
 #if defined(T_STATIC)
 #	include "World/WorldClassFactory.h"
 #	include "World/Deferred/WorldRendererDeferred.h"
@@ -21,5 +19,4 @@ extern "C" void __module__Traktor_World()
 
 	}
 }
-
 #endif

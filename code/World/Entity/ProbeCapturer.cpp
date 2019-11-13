@@ -4,7 +4,6 @@
 #include "Render/RenderTargetSet.h"
 #include "World/Deferred/WorldRendererDeferred.h"
 #include "World/Entity/ProbeCapturer.h"
-#include "World/Forward/WorldRendererForward.h"
 
 namespace traktor
 {

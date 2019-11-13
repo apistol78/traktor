@@ -1,4 +1,3 @@
-#include "World/WorldContext.h"
 #include "World/Entity/ComponentEntity.h"
 #include "World/Entity/ComponentEntityRenderer.h"
 

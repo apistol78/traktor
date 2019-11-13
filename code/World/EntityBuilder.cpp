@@ -1,7 +1,6 @@
 #include <limits>
 #include "Core/Log/Log.h"
 #include "Core/Thread/Acquire.h"
-#include "World/Entity.h"
 #include "World/EntityBuilder.h"
 #include "World/EntityData.h"
 #include "World/IEntityComponentData.h"

@@ -1,6 +1,5 @@
 #include "World/IEntityComponent.h"
 #include "World/WorldContext.h"
-#include "World/WorldRenderView.h"
 #include "World/Entity/ComponentEntity.h"
 
 namespace traktor

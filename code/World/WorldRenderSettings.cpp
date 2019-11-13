@@ -1,7 +1,5 @@
 #include "Core/Serialization/AttributeHdr.h"
 #include "Core/Serialization/AttributeRange.h"
-#include "Core/Serialization/ISerializer.h"
-#include "Core/Serialization/Member.h"
 #include "Core/Serialization/MemberComposite.h"
 #include "Core/Serialization/MemberEnum.h"
 #include "Core/Serialization/MemberStaticArray.h"

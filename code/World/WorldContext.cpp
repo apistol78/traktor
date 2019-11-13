@@ -1,5 +1,4 @@
 #include "Render/Context/RenderContext.h"
-#include "World/Entity.h"
 #include "World/IEntityRenderer.h"
 #include "World/WorldContext.h"
 #include "World/WorldEntityRenderers.h"
