@@ -1,6 +1,7 @@
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
+#include <fcntl.h>
 #include <limits.h>
 #include <spawn.h>
 #include <unistd.h>
@@ -275,15 +276,25 @@ Ref< IProcess > OS::execute(
 	// Redirect standard IO.
 	if (redirect)
 	{
-		pipe(childStdOut);
-		pipe(childStdErr);
+		if (!mute)
+		{
+			pipe(childStdOut);
+			pipe(childStdErr);
 
-		fileActions = new posix_spawn_file_actions_t;
-		posix_spawn_file_actions_init(fileActions);
-		posix_spawn_file_actions_adddup2(fileActions, childStdOut[1], STDOUT_FILENO);
-		posix_spawn_file_actions_addclose(fileActions, childStdOut[0]);
-		posix_spawn_file_actions_adddup2(fileActions, childStdErr[1], STDERR_FILENO);
-		posix_spawn_file_actions_addclose(fileActions, childStdErr[0]);
+			fileActions = new posix_spawn_file_actions_t;
+			posix_spawn_file_actions_init(fileActions);
+			posix_spawn_file_actions_adddup2(fileActions, childStdOut[1], STDOUT_FILENO);
+			posix_spawn_file_actions_addclose(fileActions, childStdOut[0]);
+			posix_spawn_file_actions_adddup2(fileActions, childStdErr[1], STDERR_FILENO);
+			posix_spawn_file_actions_addclose(fileActions, childStdErr[0]);
+		}
+		else
+		{
+			fileActions = new posix_spawn_file_actions_t;
+			posix_spawn_file_actions_init(fileActions);
+			posix_spawn_file_actions_addopen(fileActions, STDOUT_FILENO, "/dev/null", O_RDONLY, 0);
+			posix_spawn_file_actions_addopen(fileActions, STDERR_FILENO, "/dev/null", O_RDONLY, 0);
+		}
 
 		// Spawn process.
 		err = posix_spawn(&pid, argv[0], fileActions, 0, argv, envv);
