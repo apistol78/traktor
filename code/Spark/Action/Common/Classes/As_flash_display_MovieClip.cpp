@@ -1,4 +1,3 @@
-#include "Spark/Action/ActionFunctionNative.h"
 #include "Spark/Action/Common/Classes/As_flash_display_MovieClip.h"
 
 namespace traktor

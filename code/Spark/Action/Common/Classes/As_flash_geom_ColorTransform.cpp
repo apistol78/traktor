@@ -1,7 +1,6 @@
 #include "Spark/ColorTransform.h"
 #include "Spark/Action/ActionFunctionNative.h"
 #include "Spark/Action/Common/Classes/As_flash_geom_ColorTransform.h"
-#include "Spark/Action/Common/Classes/AsObject.h"
 
 namespace traktor
 {

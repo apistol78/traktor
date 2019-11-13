@@ -1,4 +1,3 @@
-#include "Spark/Action/ActionContext.h"
 #include "Spark/Action/ActionFunctionNative.h"
 #include "Spark/Action/Common/Point.h"
 #include "Spark/Action/Common/Rectangle.h"

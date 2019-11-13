@@ -1,4 +1,3 @@
-#include "Spark/Action/ActionValue.h"
 #include "Spark/Action/Common/Boolean.h"
 
 namespace traktor

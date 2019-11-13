@@ -1,6 +1,4 @@
 #include <algorithm>
-#include "Core/Misc/Align.h"
-#include "Core/Misc/AutoPtr.h"
 #include "Spark/Sound.h"
 #include "Spark/Sound/SoundBuffer.h"
 

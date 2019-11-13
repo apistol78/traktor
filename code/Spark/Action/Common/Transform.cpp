@@ -1,4 +1,3 @@
-#include "Spark/ColorTransform.h"
 #include "Spark/CharacterInstance.h"
 #include "Spark/Action/Common/Transform.h"
 

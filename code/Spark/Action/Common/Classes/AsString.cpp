@@ -1,5 +1,4 @@
 #include <limits>
-#include "Core/Io/StringOutputStream.h"
 #include "Core/Misc/String.h"
 #include "Core/Misc/Split.h"
 #include "Spark/Action/ActionFunctionNative.h"

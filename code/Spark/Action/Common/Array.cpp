@@ -1,5 +1,4 @@
 #include <cctype>
-#include "Core/Log/Log.h"
 #include "Core/Misc/String.h"
 #include "Spark/Action/Common/Array.h"
 

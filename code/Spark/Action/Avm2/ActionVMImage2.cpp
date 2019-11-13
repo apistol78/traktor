@@ -1,8 +1,5 @@
 #include "Core/RefArray.h"
-#include "Core/Log/Log.h"
 #include "Core/Misc/StringSplit.h"
-#include "Core/Misc/TString.h"
-#include "Spark/Action/ActionContext.h"
 #include "Spark/Action/ActionFrame.h"
 #include "Spark/Action/ActionFunction.h"
 #include "Spark/Action/Avm2/ActionOpcodes.h"

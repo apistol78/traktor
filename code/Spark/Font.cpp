@@ -1,5 +1,4 @@
 #include "Core/Serialization/ISerializer.h"
-#include "Core/Serialization/Member.h"
 #include "Core/Serialization/MemberAabb.h"
 #include "Core/Serialization/MemberAlignedVector.h"
 #include "Core/Serialization/MemberEnum.h"
@@ -7,7 +6,6 @@
 #include "Core/Serialization/MemberSmallMap.h"
 #include "Spark/Font.h"
 #include "Spark/Shape.h"
-#include "Spark/SwfMembers.h"
 
 namespace traktor
 {

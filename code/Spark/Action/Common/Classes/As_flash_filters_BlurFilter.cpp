@@ -1,4 +1,3 @@
-#include "Spark/Action/ActionContext.h"
 #include "Spark/Action/ActionFunctionNative.h"
 #include "Spark/Action/Common/BlurFilter.h"
 #include "Spark/Action/Common/Classes/As_flash_filters_BlurFilter.h"

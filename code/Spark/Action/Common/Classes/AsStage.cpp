@@ -1,8 +1,6 @@
-#include "Core/Log/Log.h"
 #include "Core/Math/Const.h"
 #include "Core/Misc/String.h"
 #include "Spark/Movie.h"
-#include "Spark/SpriteInstance.h"
 #include "Spark/Action/ActionContext.h"
 #include "Spark/Action/ActionFunctionNative.h"
 #include "Spark/Action/Common/Classes/AsStage.h"

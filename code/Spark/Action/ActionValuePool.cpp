@@ -1,4 +1,3 @@
-#include "Spark/Action/ActionValue.h"
 #include "Spark/Action/ActionValuePool.h"
 
 namespace traktor

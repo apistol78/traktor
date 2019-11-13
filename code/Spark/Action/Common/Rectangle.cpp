@@ -1,6 +1,5 @@
 #include "Core/Io/StringOutputStream.h"
 #include "Spark/Action/ActionContext.h"
-#include "Spark/Action/ActionValue.h"
 #include "Spark/Action/Common/Point.h"
 #include "Spark/Action/Common/Rectangle.h"
 

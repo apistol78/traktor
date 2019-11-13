@@ -1,4 +1,3 @@
-#include "Spark/Action/ActionValue.h"
 #include "Spark/Action/Common/Number.h"
 
 namespace traktor

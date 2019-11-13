@@ -1,6 +1,5 @@
 #include <algorithm>
 #include "Spark/Action/ActionContext.h"
-#include "Spark/Action/ActionFrame.h"
 #include "Spark/Action/ActionFunctionNative.h"
 #include "Spark/Action/Common/Classes/AsMouse.h"
 

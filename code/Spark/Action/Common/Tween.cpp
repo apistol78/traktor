@@ -1,4 +1,3 @@
-#include "Core/Log/Log.h"
 #include "Core/Math/MathUtils.h"
 #include "Spark/Action/ActionContext.h"
 #include "Spark/Action/ActionFunctionNative.h"
