@@ -1,4 +1,3 @@
-#include "Core/Log/Log.h"
 #include "Spark/Action/ActionFunctionNative.h"
 #include "Spark/Action/Common/Classes/AsLocalConnection.h"
 

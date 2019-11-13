@@ -1,4 +1,3 @@
-#include "Spark/Action/Common/Array.h"
 #include "Spark/Action/Common/XMLNode.h"
 
 namespace traktor

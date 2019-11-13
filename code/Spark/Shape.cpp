@@ -1,9 +1,6 @@
 #include <algorithm>
-#include "Core/Log/Log.h"
 #include "Core/Math/Bezier2nd.h"
-#include "Core/Math/Const.h"
 #include "Core/Serialization/ISerializer.h"
-#include "Core/Serialization/Member.h"
 #include "Core/Serialization/MemberAabb.h"
 #include "Core/Serialization/MemberAlignedVector.h"
 #include "Core/Serialization/MemberComposite.h"
@@ -11,8 +8,6 @@
 #include "Core/Serialization/MemberStl.h"
 #include "Spark/Shape.h"
 #include "Spark/ShapeInstance.h"
-#include "Spark/Path.h"
-#include "Spark/SwfMembers.h"
 #include "Spark/Triangulator.h"
 
 namespace traktor

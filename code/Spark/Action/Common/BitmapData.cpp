@@ -2,7 +2,6 @@
 #include "Drawing/Filters/BlurFilter.h"
 #include "Spark/MovieRenderer.h"
 #include "Spark/SpriteInstance.h"
-#include "Spark/Action/ActionValue.h"
 #include "Spark/Action/Common/BitmapData.h"
 #include "Spark/Action/Common/BlurFilter.h"
 #include "Spark/Action/Common/Rectangle.h"

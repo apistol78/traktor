@@ -1,5 +1,4 @@
 #include "Core/Serialization/ISerializer.h"
-#include "Core/Serialization/Member.h"
 #include "Spark/BitmapResource.h"
 
 namespace traktor

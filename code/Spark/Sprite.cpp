@@ -1,7 +1,5 @@
-#include "Core/Log/Log.h"
 #include "Core/Misc/String.h"
 #include "Core/Serialization/ISerializer.h"
-#include "Core/Serialization/Member.h"
 #include "Core/Serialization/MemberAabb.h"
 #include "Core/Serialization/MemberRefArray.h"
 #include "Spark/Dictionary.h"
@@ -10,7 +8,6 @@
 #include "Spark/SpriteInstance.h"
 #include "Spark/Action/ActionContext.h"
 #include "Spark/Action/ActionFunction.h"
-#include "Spark/Action/ActionValueArray.h"
 #include "Spark/Action/IActionVMImage.h"
 
 namespace traktor

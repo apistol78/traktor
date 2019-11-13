@@ -1,11 +1,9 @@
-#include "Core/Log/Log.h"
 #include "Spark/Action/ActionContext.h"
 #include "Spark/Action/ActionFrame.h"
 #include "Spark/Action/ActionSuper.h"
 #include "Spark/Action/IActionVMImage.h"
 #include "Spark/Action/Avm1/ActionFunction1.h"
 #include "Spark/Action/Common/Array.h"
-#include "Spark/Action/Common/Classes/AsFunction.h"
 
 namespace traktor
 {

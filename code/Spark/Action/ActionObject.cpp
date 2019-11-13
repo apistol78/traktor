@@ -1,14 +1,8 @@
-#include "Core/RefArray.h"
-#include "Core/Log/Log.h"
 #include "Core/Misc/StringSplit.h"
-#include "Core/Thread/Acquire.h"
 #include "Spark/Action/ActionClass.h"
 #include "Spark/Action/ActionContext.h"
-#include "Spark/Action/ActionFunction.h"
-#include "Spark/Action/ActionObject.h"
 #include "Spark/Action/ActionObjectRelay.h"
 #include "Spark/Action/ActionSuper.h"
-#include "Spark/Action/ActionValueArray.h"
 
 namespace traktor
 {

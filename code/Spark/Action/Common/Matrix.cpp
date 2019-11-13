@@ -1,5 +1,4 @@
 #include "Core/Io/StringOutputStream.h"
-#include "Spark/Action/ActionValue.h"
 #include "Spark/Action/Common/Matrix.h"
 
 namespace traktor

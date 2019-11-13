@@ -1,7 +1,5 @@
-#include "Core/Io/BitReader.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/AutoPtr.h"
-#include "Core/Misc/Endian.h"
 #include "Core/Misc/TString.h"
 #include "Spark/SwfReader.h"
 #include "Spark/Action/Avm2/AbcFile.h"

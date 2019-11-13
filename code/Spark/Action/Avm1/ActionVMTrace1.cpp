@@ -1,8 +1,6 @@
 #include <map>
-#include "Core/Log/Log.h"
 #include "Core/Misc/String.h"
 #include "Spark/Action/ActionFrame.h"
-#include "Spark/Action/ActionFunction.h"
 #include "Spark/Action/ActionObjectRelay.h"
 #include "Spark/Action/ActionSuper.h"
 #include "Spark/Action/Avm1/ActionOperations.h"

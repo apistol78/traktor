@@ -1,6 +1,5 @@
 #include <cmath>
 #include <ctime>
-#include "Spark/Action/ActionContext.h"
 #include "Spark/Action/ActionFunctionNative.h"
 #include "Spark/Action/Common/Classes/AsMath.h"
 

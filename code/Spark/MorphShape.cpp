@@ -1,14 +1,10 @@
 #include <algorithm>
-#include "Core/Log/Log.h"
 #include "Core/Serialization/ISerializer.h"
-#include "Core/Serialization/Member.h"
 #include "Core/Serialization/MemberAabb.h"
 #include "Core/Serialization/MemberAlignedVector.h"
 #include "Core/Serialization/MemberComposite.h"
 #include "Spark/MorphShape.h"
 #include "Spark/MorphShapeInstance.h"
-#include "Spark/Path.h"
-#include "Spark/SwfMembers.h"
 
 namespace traktor
 {
