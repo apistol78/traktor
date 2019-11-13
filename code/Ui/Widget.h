@@ -109,9 +109,9 @@ public:
 
 	void releaseCapture();
 
-	void startTimer(int interval, int id = -1);
+	void startTimer(int interval);
 
-	void stopTimer(int id = -1);
+	void stopTimer();
 
 	Point getMousePosition(bool relative = true) const;
 

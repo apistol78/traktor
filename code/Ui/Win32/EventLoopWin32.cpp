@@ -89,11 +89,9 @@ bool EventLoopWin32::process(EventSubject* owner)
 
 int32_t EventLoopWin32::execute(EventSubject* owner)
 {
-	bool m_idle = false;
-	MSG msg;
-
 	while (!m_terminate)
 	{
+		MSG msg = { 0 };
 		if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
 		{
 			bool dispatch = !preTranslateMessage(owner, msg);
@@ -102,18 +100,13 @@ int32_t EventLoopWin32::execute(EventSubject* owner)
 				TranslateMessage(&msg);
 				DispatchMessage(&msg);
 			}
-
-			m_idle = false;
 			continue;
 		}
 
-		if (!m_idle)
-		{
-			IdleEvent idleEvent(owner);
-			owner->raiseEvent(&idleEvent);
-			if (!idleEvent.requestedMore())
-				WaitMessage();
-		}
+		IdleEvent idleEvent(owner);
+		owner->raiseEvent(&idleEvent);
+		if (!idleEvent.requestedMore())
+			WaitMessage();
 	}
 
 	return m_exitCode;

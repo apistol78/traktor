@@ -61,9 +61,9 @@ public:
 
 	virtual void releaseCapture() = 0;
 
-	virtual void startTimer(int interval, int id) = 0;
+	virtual void startTimer(int interval) = 0;
 
-	virtual void stopTimer(int id) = 0;
+	virtual void stopTimer() = 0;
 
 	virtual void setRect(const Rect& rect) = 0;
 
