@@ -1,5 +1,6 @@
 #include <cstring>
 #include "Core/Class/Any.h"
+#include "Core/Io/Utf8Encoding.h"
 #include "Core/Misc/String.h"
 #include "Core/Misc/TString.h"
 
