@@ -6,6 +6,7 @@
 #elif defined(__LINUX__)
 #	include <uuid/uuid.h>
 #endif
+#include "Core/Platform.h"
 #include "Core/Guid.h"
 #include "Core/Io/StringOutputStream.h"
 
