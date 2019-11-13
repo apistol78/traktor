@@ -1,4 +1,3 @@
-#include "Core/Thread/Atomic.h"
 #include "Core/Thread/SpinLock.h"
 #include "Core/Thread/Thread.h"
 #include "Core/Thread/ThreadManager.h"

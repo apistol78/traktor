@@ -1,10 +1,7 @@
 #include <cstdlib>
 #include <numeric>
-#include "Core/Io/Path.h"
-#include "Core/Io/StringOutputStream.h"
 #include "Core/Misc/String.h"
 #include "Core/Misc/StringSplit.h"
-#include "Core/Misc/TString.h"
 #include "Core/System/OS.h"
 
 namespace traktor

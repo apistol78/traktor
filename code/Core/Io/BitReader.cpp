@@ -1,7 +1,6 @@
 #include <algorithm>
 #include "Core/Io/BitReader.h"
 #include "Core/Io/IStream.h"
-#include "Core/Misc/Endian.h"
 
 namespace traktor
 {

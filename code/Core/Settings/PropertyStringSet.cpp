@@ -1,4 +1,3 @@
-#include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberStl.h"
 #include "Core/Settings/PropertyStringSet.h"
 

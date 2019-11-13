@@ -1,4 +1,3 @@
-#include "Core/Log/Log.h"
 #include "Core/Test/CaseMatrix44.h"
 #include "Core/Test/MathCompare.h"
 

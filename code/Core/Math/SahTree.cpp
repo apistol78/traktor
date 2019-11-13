@@ -1,9 +1,7 @@
 #include <limits>
 #include <stack>
-#include "Core/Log/Log.h"
 #include "Core/Math/Const.h"
 #include "Core/Math/SahTree.h"
-#include "Core/Memory/Alloc.h"
 
 namespace traktor
 {

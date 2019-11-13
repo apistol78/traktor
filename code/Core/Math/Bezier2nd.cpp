@@ -2,7 +2,6 @@
 #include "Core/Math/Bezier2nd.h"
 #include "Core/Math/Bezier3rd.h"
 #include "Core/Math/Const.h"
-#include "Core/Math/MathUtils.h"
 
 namespace traktor
 {

@@ -1,7 +1,6 @@
 #if defined(__LINUX__) || defined(__APPLE__)
 #	include <execinfo.h>
 #endif
-#include "Core/Platform.h"
 #include "Core/Debug/CallStack.h"
 
 namespace traktor

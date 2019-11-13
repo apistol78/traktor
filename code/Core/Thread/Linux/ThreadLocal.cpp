@@ -1,5 +1,4 @@
 #include <pthread.h>
-#include "Core/Platform.h"
 #include "Core/Thread/ThreadLocal.h"
 
 namespace traktor

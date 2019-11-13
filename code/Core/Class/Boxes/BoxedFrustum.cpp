@@ -1,7 +1,6 @@
 #include "Core/Class/BoxedAllocator.h"
 #include "Core/Class/Boxes/BoxedAabb3.h"
 #include "Core/Class/Boxes/BoxedFrustum.h"
-#include "Core/Class/Boxes/BoxedVector4.h"
 
 namespace traktor
 {

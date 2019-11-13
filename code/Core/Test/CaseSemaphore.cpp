@@ -1,8 +1,3 @@
-#include "Core/Functor/Functor.h"
-#include "Core/Log/Log.h"
-#include "Core/Thread/Atomic.h"
-#include "Core/Thread/Mutex.h"
-#include "Core/Thread/Semaphore.h"
 #include "Core/Thread/Thread.h"
 #include "Core/Thread/ThreadManager.h"
 #include "Core/Test/CaseSemaphore.h"

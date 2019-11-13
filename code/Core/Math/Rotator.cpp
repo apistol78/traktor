@@ -1,6 +1,5 @@
 #include "Core/Math/Rotator.h"
 #include "Core/Serialization/ISerializer.h"
-#include "Core/Serialization/Member.h"
 
 namespace traktor
 {

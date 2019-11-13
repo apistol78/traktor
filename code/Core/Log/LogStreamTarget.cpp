@@ -1,4 +1,3 @@
-#include "Core/Io/OutputStream.h"
 #include "Core/Log/LogStreamTarget.h"
 
 namespace traktor

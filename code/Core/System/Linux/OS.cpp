@@ -8,14 +8,10 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <pwd.h>
-#include "Core/Io/Path.h"
-#include "Core/Log/Log.h"
 #include "Core/Misc/String.h"
-#include "Core/Misc/StringSplit.h"
 #include "Core/Misc/TString.h"
 #include "Core/Singleton/SingletonManager.h"
 #include "Core/System/Environment.h"
-#include "Core/System/OS.h"
 #include "Core/System/ResolveEnv.h"
 #include "Core/System/Linux/ProcessLinux.h"
 #include "Core/System/Linux/SharedMemoryLinux.h"

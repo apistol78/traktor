@@ -9,7 +9,6 @@
 #include "Core/Io/Linux/NativeVolume.h"
 #include "Core/Io/Linux/NativeStream.h"
 #include "Core/Log/Log.h"
-#include "Core/Misc/String.h"
 #include "Core/Misc/TString.h"
 #include "Core/Misc/WildCompare.h"
 

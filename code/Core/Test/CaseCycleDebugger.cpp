@@ -1,5 +1,4 @@
 #include "Core/CycleRefDebugger.h"
-#include "Core/RefArray.h"
 #include "Core/Test/CaseCycleDebugger.h"
 
 namespace traktor

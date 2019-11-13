@@ -1,6 +1,4 @@
 #include <limits>
-#include "Core/Log/Log.h"
-#include "Core/Math/Hermite.h"
 #include "Core/Math/Float.h"
 #include "Core/Math/TcbSpline.h"
 #include "Core/Math/TransformPath.h"
@@ -8,7 +6,6 @@
 #include "Core/Serialization/AttributePoint.h"
 #include "Core/Serialization/AttributeRange.h"
 #include "Core/Serialization/ISerializer.h"
-#include "Core/Serialization/Member.h"
 #include "Core/Serialization/MemberAlignedVector.h"
 #include "Core/Serialization/MemberComposite.h"
 

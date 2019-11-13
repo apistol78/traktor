@@ -1,5 +1,4 @@
 #include <cmath>
-#include "Core/Io/IOutputStreamBuffer.h"
 #include "Core/Io/OutputStream.h"
 #include "Core/Math/Float.h"
 #include "Core/Math/MathUtils.h"

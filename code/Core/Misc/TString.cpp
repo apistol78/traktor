@@ -1,5 +1,7 @@
 #include <algorithm>
-#include "Core/Io/IEncoding.h"
+#if !defined(__ANDROID__) && defined(__LINUX__)
+#	include "Core/Io/IEncoding.h"
+#endif
 #include "Core/Misc/TString.h"
 
 namespace traktor

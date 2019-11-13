@@ -1,4 +1,3 @@
-#include "Core/Serialization/Member.h"
 #include "Core/Serialization/Serializer.h"
 
 namespace traktor
