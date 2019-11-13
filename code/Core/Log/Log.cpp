@@ -2,8 +2,10 @@
 #	include <android/log.h>
 #endif
 #include <cstdio>
+#include "Core/Platform.h"
 #include "Core/Log/Log.h"
 #include "Core/Io/StringOutputStream.h"
+#include "Core/Misc/TString.h"
 #include "Core/Thread/Acquire.h"
 #include "Core/Thread/Thread.h"
 #include "Core/Thread/ThreadLocal.h"
