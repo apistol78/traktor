@@ -1,4 +1,3 @@
-#include "Core/Misc/SafeDestroy.h"
 #include "Core/Thread/JobManager.h"
 #include "Core/Thread/ThreadManager.h"
 #include "Core/System/OS.h"
