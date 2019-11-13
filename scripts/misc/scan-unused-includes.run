@@ -1,0 +1,134 @@
+import(traktor)
+import(traktor.run)
+
+local BASE = "$(TRAKTOR_HOME)/code/Spark"
+local BUILDDIR = "$(TRAKTOR_HOME)/build/linux/Traktor.Spark"
+
+local function compile(path, config)
+    local rel = FileSystem.getInstance():getRelativePath(
+        path,
+        Path(BASE)
+    )
+
+    local p = OS.getInstance():execute(
+        "/usr/bin/make " .. config .. "/" .. rel.pathNameNoExtension .. ".o",
+        BUILDDIR,
+        nil,
+        true,
+        true,
+        false
+    )
+    if p == nil then
+        stderr:printLn("Unable to invocate compilation; is project generated?")
+        return false
+    end
+
+    if not p:wait(10000) then
+        stderr:printLn("Unable to invocate compilation; process wait timed out.")
+        return false
+    end
+    
+    return p.exitCode == 0
+end
+
+local function have(t, v)
+    for _, iv in ipairs(t) do  
+        if iv == v then return true end
+    end
+    return false
+end
+
+local function writeSource(path, txt, skip)
+    local f = FileSystem.getInstance():open(path, File.FmWrite)
+    if f == nil then return false end
+    local s = StreamOutput(f, Utf8Encoding())
+    for n, ln in ipairs(txt) do
+        if not have(skip, n) then
+            s:printLn(ln)
+        end
+    end
+    f:close()
+    run:sleep(100)  -- wait a bit for IO inconsistensies.
+    return true
+end
+
+local function scan(path)
+    local f = FileSystem.getInstance():get(path)
+    if f == nil then return end
+    if f.readOnly then
+        return
+    end
+
+    local txt = {}
+    local f = FileSystem.getInstance():open(path, File.FmRead)
+    if f == nil then return end
+    local r = StringReader(f, Utf8Encoding())
+    while true do
+        local ln = r:readLine()
+        if ln == nil then break end
+        table.insert(txt, ln)
+    end
+    f:close()
+
+    local remove = {}
+
+    stdout:printLn("Analyzing \"" .. path.pathName .. "\"...")
+    for n, ln in ipairs(txt) do
+        local ip = ln:match("#include \"(.+)\"")
+        if ip ~= nil then
+            -- Keep including header from source/header pair.
+            if Path(BASE .. "/" .. ip).pathNameNoExtension ~= path.pathNameNoExtension then
+                local result = true
+                result = result and writeSource(path, txt, { n })
+                result = result and compile(path, "DebugShared")
+                if result then
+                    table.insert(remove, n)
+                end
+            end
+        end
+    end
+
+    -- Write source without includes.
+    writeSource(path, txt, remove)
+
+    -- Ensure source still successfully compiles in all configurations, also
+    -- since we're removing all includes there might be situations where
+    -- dependent headers cause compile fail.
+    local result = true
+    result = result and compile(path, "DebugStatic")
+    result = result and compile(path, "DebugShared")
+    result = result and compile(path, "ReleaseStatic")
+    result = result and compile(path, "ReleaseShared")
+    if result then
+        if #remove > 0 then    
+            stdout:printLn("Removed " .. #remove .. " include(s) from \"" .. path.pathName .. "\"")
+        end
+    else
+        writeSource(path, txt, {})
+    end
+end
+
+local function traverse(path)
+	local fa = FileSystem.getInstance():find(path.pathName .. "/*.*")
+	for i = 0, fa.size - 1 do
+		local f = fa:get(i)
+		local p = f.path
+		local fn = p.fileName
+		local pn = p.pathName
+
+		if f.directory then
+			if fn ~= "." and fn ~= ".." then
+				traverse(p)
+			end
+		else
+			local x = p.extension:lower()
+			if x == "cpp" then
+				scan(p)
+			end
+		end
+	end
+end
+
+function main(args)
+    traverse(Path(BASE))
+end
