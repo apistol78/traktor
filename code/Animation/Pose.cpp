@@ -1,6 +1,4 @@
 #include "Animation/Pose.h"
-#include "Core/Serialization/AttributeAngles.h"
-#include "Core/Serialization/AttributeDirection.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberAlignedVector.h"
 #include "Core/Serialization/MemberComposite.h"

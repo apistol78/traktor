@@ -38,15 +38,15 @@ public:
 
 	const Range< float >& getSuspensionLength() const { return m_suspensionLength; }
 
-	float getSuspensionSpringCoeff() const { return m_suspensionSpringCoeff; }
+	float getSuspensionSpring() const { return m_suspensionSpring; }
 
-	float getSuspensionDampingCoeff() const { return m_suspensionDampingCoeff; }
+	float getSuspensionDamping() const { return m_suspensionDamping; }
 
-	float getRollingFrictionCoeff() const { return m_rollingFrictionCoeff; }
+	float getRollingFriction() const { return m_rollingFriction; }
 
-	float getSideFrictionCoeff() const { return m_sideFrictionCoeff; }
+	float getSideFriction() const { return m_sideFriction; }
 
-	float getSlipCornerForceCoeff() const { return m_slipCornerForceCoeff; }
+	float getSlipCornerForce() const { return m_slipCornerForce; }
 
 	virtual void serialize(ISerializer& s);
 
@@ -57,11 +57,11 @@ private:
 	Vector4 m_anchor;
 	Vector4 m_axis;
 	Range< float > m_suspensionLength;
-	float m_suspensionSpringCoeff;
-	float m_suspensionDampingCoeff;
-	float m_rollingFrictionCoeff;
-	float m_sideFrictionCoeff;
-	float m_slipCornerForceCoeff;
+	float m_suspensionSpring;
+	float m_suspensionDamping;
+	float m_rollingFriction;
+	float m_sideFriction;
+	float m_slipCornerForce;
 };
 
 	}

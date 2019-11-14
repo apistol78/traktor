@@ -70,11 +70,11 @@ public:
 
 	float getFudgeDistance() const { return m_fudgeDistance; }
 
-	float getSwayBarForceCoeff() const { return m_swayBarForceCoeff; }
+	float getSwayBarForce() const { return m_swayBarForce; }
 
 	float getMaxVelocity() const { return m_maxVelocity; }
 
-	float getEngineForceCoeff() const { return m_engineForceCoeff; }
+	float getEngineForce() const { return m_engineForce; }
 
 private:
 	Ref< const BodyDesc > m_bodyDesc;
@@ -83,9 +83,9 @@ private:
 	std::set< resource::Id< CollisionSpecification > > m_traceIgnore;
 	float m_steerAngleVelocity;
 	float m_fudgeDistance;
-	float m_swayBarForceCoeff;
+	float m_swayBarForce;
 	float m_maxVelocity;
-	float m_engineForceCoeff;
+	float m_engineForce;
 };
 
 	}

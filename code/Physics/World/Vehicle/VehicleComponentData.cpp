@@ -1,3 +1,4 @@
+#include "Core/Serialization/AttributeUnit.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberRef.h"
 #include "Core/Serialization/MemberRefArray.h"
@@ -25,9 +26,9 @@ T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.physics.VehicleComponentData", 0, VehicleC
 VehicleComponentData::VehicleComponentData()
 :	m_steerAngleVelocity(deg2rad(150.0f))
 ,	m_fudgeDistance(0.2f)
-,	m_swayBarForceCoeff(0.15f)
+,	m_swayBarForce(0.15f)
 ,	m_maxVelocity(30.0f)
-,	m_engineForceCoeff(140.0f)
+,	m_engineForce(140.0f)
 {
 }
 
@@ -35,9 +36,9 @@ VehicleComponentData::VehicleComponentData(const BodyDesc* bodyDesc)
 :	m_bodyDesc(bodyDesc)
 ,	m_steerAngleVelocity(deg2rad(150.0f))
 ,	m_fudgeDistance(0.2f)
-,	m_swayBarForceCoeff(0.15f)
+,	m_swayBarForce(0.15f)
 ,	m_maxVelocity(30.0f)
-,	m_engineForceCoeff(140.0f)
+,	m_engineForce(140.0f)
 {
 }
 
@@ -91,11 +92,11 @@ void VehicleComponentData::serialize(ISerializer& s)
 	s >> MemberRefArray< const WheelData >(L"wheels", m_wheels);
 	s >> MemberStlSet< resource::Id< CollisionSpecification >, resource::Member< CollisionSpecification > >(L"traceInclude", m_traceInclude);
 	s >> MemberStlSet< resource::Id< CollisionSpecification >, resource::Member< CollisionSpecification > >(L"traceIgnore", m_traceIgnore);
-	s >> Member< float >(L"steerAngleVelocity", m_steerAngleVelocity);
-	s >> Member< float >(L"fudgeDistance", m_fudgeDistance);
-	s >> Member< float >(L"swayBarForceCoeff", m_swayBarForceCoeff);
-	s >> Member< float >(L"maxVelocity", m_maxVelocity);
-	s >> Member< float >(L"engineForceCoeff", m_engineForceCoeff);
+	s >> Member< float >(L"steerAngleVelocity", m_steerAngleVelocity, AttributeUnit(AuDegrees, true));
+	s >> Member< float >(L"fudgeDistance", m_fudgeDistance, AttributeUnit(AuMetres));
+	s >> Member< float >(L"swayBarForce", m_swayBarForce);
+	s >> Member< float >(L"maxVelocity", m_maxVelocity, AttributeUnit(AuMetres, true));
+	s >> Member< float >(L"engineForce", m_engineForce);
 }
 
 	}
