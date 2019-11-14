@@ -1,6 +1,7 @@
 #include "Core/Log/Log.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Ui/Application.h"
+#include "Ui/StyleSheet.h"
 #include "Ui/Widget.h"
 #include "Ui/Itf/IUserWidget.h"
 
@@ -45,6 +46,14 @@ bool Widget::create(Widget* parent, int style)
 	}
 
 	link(parent);
+
+	const StyleSheet* ss = Application::getInstance()->getStyleSheet();
+	std::wstring fontName = ss->getValue(L"font-name");
+	if (!fontName.empty())
+	{
+		int32_t fontSize = getFont().getSize();
+		setFont(Font(fontName, fontSize));
+	}
 
 	return true;
 }
@@ -255,16 +264,16 @@ void Widget::releaseCapture()
 	m_widget->releaseCapture();
 }
 
-void Widget::startTimer(int interval, int id)
+void Widget::startTimer(int interval)
 {
 	T_ASSERT(m_widget);
-	m_widget->startTimer(interval, id);
+	m_widget->startTimer(interval);
 }
 
-void Widget::stopTimer(int id)
+void Widget::stopTimer()
 {
 	T_ASSERT(m_widget);
-	m_widget->stopTimer(id);
+	m_widget->stopTimer();
 }
 
 Point Widget::getMousePosition(bool relative) const
