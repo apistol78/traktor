@@ -52,6 +52,8 @@ public:
 
 	float getSteerAngle() const;
 
+	float getSteerAngleFiltered() const;
+
 	void setEngineThrottle(float engineThrottle);
 
 	float getEngineThrottle() const;

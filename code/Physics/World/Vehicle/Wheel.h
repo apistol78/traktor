@@ -38,6 +38,26 @@ public:
 	Vector4 contactVelocity;
 
 	Wheel(const WheelData* data);
+
+	const WheelData* getData() const { return data; }
+
+	float getAngle() const { return angle; }
+
+	float getVelocity() const { return velocity; }
+
+	const Vector4& getDirection() const { return direction; }
+
+	const Vector4& getDirectionPerp() const { return directionPerp; }
+
+	float getSuspensionLength() const { return suspensionFilteredLength; }
+
+	bool getContact() const { return contact; }
+
+	const Vector4& getContactPosition() const { return contactPosition; }
+
+	const Vector4& getContactNormal() const { return contactNormal; }
+
+	const Vector4& getContactVelocity() const { return contactVelocity; }
 };
 
 	}

@@ -103,6 +103,11 @@ float VehicleComponent::getSteerAngle() const
 	return m_steerAngleTarget;
 }
 
+float VehicleComponent::getSteerAngleFiltered() const
+{
+	return m_steerAngle;
+}
+
 void VehicleComponent::setEngineThrottle(float engineThrottle)
 {
 	m_engineThrottle = engineThrottle;
@@ -157,16 +162,24 @@ void VehicleComponent::updateSuspension(float dT)
 		Vector4 anchorW = bodyT * data->getAnchor().xyz1();
 		Vector4 axisW = bodyT * -data->getAxis().xyz0().normalized();
 
-		const float c_suspensionTraceRadius = 0.25f;
+		//const float c_suspensionTraceRadius = 0.25f;
 		float contactFudge = 0.0f;
 
 		// Trace wheel contact.
-		if (m_physicsManager->querySweep(
+		//if (m_physicsManager->querySweep(
+		//	anchorW,
+		//	axisW,
+		//	data->getSuspensionLength().max + data->getRadius() + m_data->getFudgeDistance(),
+		//	c_suspensionTraceRadius,
+		//	physics::QueryFilter(m_traceInclude, m_traceIgnore),
+		//	result
+		//))
+		if (m_physicsManager->queryRay(
 			anchorW,
 			axisW,
 			data->getSuspensionLength().max + data->getRadius() + m_data->getFudgeDistance(),
-			c_suspensionTraceRadius,
 			physics::QueryFilter(m_traceInclude, m_traceIgnore),
+			false,
 			result
 		))
 		{
@@ -195,8 +208,8 @@ void VehicleComponent::updateSuspension(float dT)
 			// Suspension forces.
 			float t = 1.0f - (suspensionLength - data->getSuspensionLength().min) / (data->getSuspensionLength().max - data->getSuspensionLength().min);
 
-			float springForce = clamp(t * data->getSuspensionSpringCoeff(), -c_maxSuspensionForce, c_maxSuspensionForce);
-			float dampingForce = clamp(suspensionVelocity * data->getSuspensionDampingCoeff(), -c_maxDampingForce, c_maxDampingForce);
+			float springForce = clamp(t * data->getSuspensionSpring(), -c_maxSuspensionForce, c_maxSuspensionForce);
+			float dampingForce = clamp(suspensionVelocity * data->getSuspensionDamping(), -c_maxDampingForce, c_maxDampingForce);
 
 			// Apply forces.
 			m_body->addForceAt(
@@ -208,7 +221,7 @@ void VehicleComponent::updateSuspension(float dT)
 			// Apply sway-bar force on the opposite side.
 			m_body->addForceAt(
 				bodyT * (data->getAnchor() * Vector4(-1.0f, 1.0f, 1.0f, 1.0f)),
-				normal * -Scalar((springForce + dampingForce) * m_data->getSwayBarForceCoeff()),
+				normal * -Scalar((springForce + dampingForce) * m_data->getSwayBarForce()),
 				false
 			);
 
@@ -248,7 +261,7 @@ void VehicleComponent::updateSuspension(float dT)
 	}
 }
 
-void VehicleComponent::updateFriction(float /*dT*/)
+void VehicleComponent::updateFriction(float dT)
 {
 	Transform bodyT = m_body->getTransform();
 	Transform bodyTinv = bodyT.inverse();
@@ -268,7 +281,7 @@ void VehicleComponent::updateFriction(float /*dT*/)
 	//totalGrip /= float(m_wheels.size());
 	//float frictionPower = std::pow(clamp(totalGrip, 0.0f, 1.0f), 4.0f);
 
-	float massPerWheel = m_totalMass / m_wheels.size();
+	Scalar massPerWheel = Scalar(m_totalMass / m_wheels.size());
 
 	for (auto wheel : m_wheels)
 	{
@@ -292,34 +305,57 @@ void VehicleComponent::updateFriction(float /*dT*/)
 		Scalar forwardVelocity = dot3(directionW, wheel->contactVelocity);
 		Scalar sideVelocity = dot3(directionPerpW, wheel->contactVelocity);
 
-		//sideVelocity = clamp(
-		//	sideVelocity,
-		//	Scalar(-2.0f),
-		//	Scalar(2.0f)
-		//);
+		Scalar forwardVelocityFactor = clamp(abs(forwardVelocity) / Scalar(m_data->getMaxVelocity()), Scalar(0.0f), Scalar(1.0f));
+		Scalar sideVelocityFactor = clamp(abs(sideVelocity) / Scalar(m_data->getMaxVelocity()), Scalar(0.0f), Scalar(1.0f));
 
-		//Scalar gripCoeff = lerp(Scalar(c_slowGripCoeff), Scalar(c_fastGripCoeff), clamp(abs(forwardVelocity) / Scalar(m_data->getMaxVelocity()), Scalar(0.0f), Scalar(1.0f)));
-		//Scalar grip = dot3(axis, (*i)->contactNormal) * Scalar((*i)->contactFudge) * gripCoeff;
+		// Calculate grip factor of this wheel.
+		Scalar gripCoeff = lerp(
+			Scalar(c_slowGripCoeff),
+			Scalar(c_fastGripCoeff),
+			forwardVelocityFactor
+		);
+		Scalar grip = clamp(
+			dot3(axis, wheel->contactNormal) * Scalar(wheel->contactFudge) * gripCoeff,
+			Scalar(0.0f),
+			Scalar(1.0f)
+		);
 
-		Scalar grip(0.01f);
-
-		m_body->addImpulse(
+		m_body->addForceAt(
 			wheel->contactPosition,
-			directionPerpW * -sideVelocity * Scalar(massPerWheel * grip/* * frictionPower*/),
+			directionPerpW * -sideVelocity * grip * Scalar(data->getSideFriction()),
 			false
 		);
 
-		rollingFriction += forwardVelocity * Scalar(data->getRollingFrictionCoeff()) * grip;
+		// Calculate slip force.
+		Scalar velocity = wheel->contactVelocity.length();
+		if (velocity > FUZZY_EPSILON)
+		{
+			Scalar slipAngle = sideVelocity / velocity;
+
+			// Approximate cornering force, cornering force increase with velocity.
+			Scalar slipCornerForceCoeff = sideVelocityFactor * Scalar(data->getSlipCornerForce());
+			Scalar corneringForce = -slipAngle * slipCornerForceCoeff * grip;
+			if (abs(corneringForce) <= FUZZY_EPSILON)
+				continue;
+
+			m_body->addForceAt(
+				wheel->contactPosition,
+				directionPerpW * corneringForce,
+				false
+			);
+		}
+
+		rollingFriction += forwardVelocity * Scalar(data->getRollingFriction()) * grip;
 	}
 
-	//if (abs(rollingFriction) > FUZZY_EPSILON)
-	//{
-	//	m_body->addForceAt(
-	//		Vector4::origo(),
-	//		Vector4(0.0f, 0.0f, -rollingFriction, 0.0f),
-	//		true
-	//	);
-	//}
+	if (abs(rollingFriction) > FUZZY_EPSILON)
+	{
+		m_body->addForceAt(
+			Vector4::origo(),
+			Vector4(0.0f, 0.0f, -rollingFriction, 0.0f),
+			true
+		);
+	}
 
 	//// Help keep vehicle stationary if almost standstill.
 	//if (!m_airBorn)
@@ -340,15 +376,15 @@ void VehicleComponent::updateFriction(float /*dT*/)
 	//	}
 	//}
 
-	//// Apply some rotational damping to prevent oscillation from suspension forces.
-	//if (!m_airBorn && abs(m_steerAngle) < FUZZY_EPSILON)
-	//{
-	//	const float damping = 0.45f;
-	//	Scalar headVelocity = dot3(m_body->getAngularVelocity(), bodyT.axisY());
-	//	Matrix33 inertiaInv = m_body->getInertiaTensorInverseWorld();
-	//	Vector4 C = Vector4(0.0f, -headVelocity * Scalar(damping), 0.0f);
-	//	m_body->addAngularImpulse(inertiaInv.inverse() * (bodyT * C), false);
-	//}
+	// Apply some rotational damping to prevent oscillation from suspension forces.
+	if (!m_airBorn && abs(m_steerAngle) < FUZZY_EPSILON)
+	{
+		const float damping = 0.45f;
+		Scalar headVelocity = dot3(m_body->getAngularVelocity(), bodyT.axisY());
+		Matrix33 inertiaInv = m_body->getInertiaTensorInverseWorld();
+		Vector4 C = Vector4(0.0f, -headVelocity * Scalar(damping), 0.0f);
+		m_body->addAngularImpulse(inertiaInv.inverse() * (bodyT * C), false);
+	}
 }
 
 void VehicleComponent::updateEngine(float /*dT*/)
@@ -357,7 +393,7 @@ void VehicleComponent::updateEngine(float /*dT*/)
 	Transform bodyTinv = bodyT.inverse();
 
 	Scalar forwardVelocity = dot3(m_body->getLinearVelocity(), bodyT.axisZ());
-	Scalar engineForce = Scalar(m_engineThrottle * m_data->getEngineForceCoeff()) * (Scalar(1.0f) - clamp(abs(forwardVelocity) / Scalar(m_data->getMaxVelocity()), Scalar(0.0f), Scalar(1.0f)));
+	Scalar engineForce = Scalar(m_engineThrottle * m_data->getEngineForce()) * (Scalar(1.0f) - clamp(abs(forwardVelocity) / Scalar(m_data->getMaxVelocity()), Scalar(0.0f), Scalar(1.0f)));
 
 	for (auto wheel : m_wheels)
 	{

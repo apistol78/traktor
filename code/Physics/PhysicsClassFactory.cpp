@@ -18,6 +18,8 @@
 #include "Physics/World/RigidEntity.h"
 #include "Physics/World/Character/CharacterComponent.h"
 #include "Physics/World/Vehicle/VehicleComponent.h"
+#include "Physics/World/Vehicle/Wheel.h"
+#include "Physics/World/Vehicle/WheelData.h"
 
 namespace traktor
 {
@@ -192,17 +194,17 @@ private:
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.physics.BodyState", BodyStateWrapper, Object)
 
-Ref< QueryResultWrapper > PhysicsManager_queryPoint(PhysicsManager* this_, const Vector4& at, float margin)
+Ref< QueryResultWrapper > PhysicsManager_queryPoint(PhysicsManager* self, const Vector4& at, float margin)
 {
 	QueryResult result;
-	if (this_->queryPoint(at, margin, result))
+	if (self->queryPoint(at, margin, result))
 		return new QueryResultWrapper(result);
 	else
 		return 0;
 }
 
 Ref< QueryResultWrapper > PhysicsManager_queryRay(
-	PhysicsManager* this_,
+	PhysicsManager* self,
 	const Vector4& at,
 	const Vector4& direction,
 	float maxLength,
@@ -211,14 +213,14 @@ Ref< QueryResultWrapper > PhysicsManager_queryRay(
 )
 {
 	QueryResult result;
-	if (this_->queryRay(at, direction, maxLength, *queryFilter, ignoreBackFace, result))
+	if (self->queryRay(at, direction, maxLength, *queryFilter, ignoreBackFace, result))
 		return new QueryResultWrapper(result);
 	else
 		return 0;
 }
 
 bool PhysicsManager_queryShadowRay(
-	PhysicsManager* this_,
+	PhysicsManager* self,
 	const Vector4& at,
 	const Vector4& direction,
 	float maxLength,
@@ -226,11 +228,11 @@ bool PhysicsManager_queryShadowRay(
 	uint32_t queryTypes
 )
 {
-	return this_->queryShadowRay(at, direction, maxLength, *queryFilter, queryTypes);
+	return self->queryShadowRay(at, direction, maxLength, *queryFilter, queryTypes);
 }
 
 RefArray< Body > PhysicsManager_querySphere(
-	PhysicsManager* this_,
+	PhysicsManager* self,
 	const Vector4& at,
 	float radius,
 	const QueryFilterWrapper* queryFilter,
@@ -238,12 +240,12 @@ RefArray< Body > PhysicsManager_querySphere(
 )
 {
 	RefArray< Body > bodies;
-	this_->querySphere(at, radius, *queryFilter, queryTypes, bodies);
+	self->querySphere(at, radius, *queryFilter, queryTypes, bodies);
 	return bodies;
 }
 
 Ref< QueryResultWrapper > PhysicsManager_querySweep_1(
-	PhysicsManager* this_,
+	PhysicsManager* self,
 	const Vector4& at,
 	const Vector4& direction,
 	float maxLength,
@@ -252,14 +254,14 @@ Ref< QueryResultWrapper > PhysicsManager_querySweep_1(
 )
 {
 	QueryResult result;
-	if (this_->querySweep(at, direction, maxLength, radius, *queryFilter, result))
+	if (self->querySweep(at, direction, maxLength, radius, *queryFilter, result))
 		return new QueryResultWrapper(result);
 	else
 		return 0;
 }
 
 Ref< QueryResultWrapper > PhysicsManager_querySweep_2(
-	PhysicsManager* this_,
+	PhysicsManager* self,
 	const Body* body,
 	const Quaternion& orientation,
 	const Vector4& at,
@@ -269,23 +271,23 @@ Ref< QueryResultWrapper > PhysicsManager_querySweep_2(
 )
 {
 	QueryResult result;
-	if (this_->querySweep(body, orientation, at, direction, maxLength, *queryFilter, result))
+	if (self->querySweep(body, orientation, at, direction, maxLength, *queryFilter, result))
 		return new QueryResultWrapper(result);
 	else
 		return 0;
 }
 
-bool Body_setState(Body* this_, const BodyStateWrapper* state)
+bool Body_setState(Body* self, const BodyStateWrapper* state)
 {
 	if (state)
-		return this_->setState(*state);
+		return self->setState(*state);
 	else
 		return false;
 }
 
-Ref< BodyStateWrapper > Body_getState(Body* this_)
+Ref< BodyStateWrapper > Body_getState(Body* self)
 {
-	return new BodyStateWrapper(this_->getState());
+	return new BodyStateWrapper(self->getState());
 }
 
 		}
@@ -400,9 +402,32 @@ void PhysicsClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classRigidBodyComponent->addProperty("body", &RigidBodyComponent::getBody);
 	registrar->registerClass(classRigidBodyComponent);
 
+	auto classWheelData = new AutoRuntimeClass< WheelData >();
+	classWheelData->addProperty("steer", &WheelData::getSteer);
+	classWheelData->addProperty("drive", &WheelData::getDrive);
+	classWheelData->addProperty("radius", &WheelData::getRadius);
+	classWheelData->addProperty("anchor", &WheelData::getAnchor);
+	classWheelData->addProperty("axis", &WheelData::getAxis);
+	registrar->registerClass(classWheelData);
+
+	auto classWheel = new AutoRuntimeClass< Wheel >();
+	classWheel->addProperty("data", &Wheel::getData);
+	classWheel->addProperty("angle", &Wheel::getAngle);
+	classWheel->addProperty("velocity", &Wheel::getVelocity);
+	classWheel->addProperty("direction", &Wheel::getDirection);
+	classWheel->addProperty("directionPerp", &Wheel::getDirectionPerp);
+	classWheel->addProperty("suspensionLength", &Wheel::getSuspensionLength);
+	classWheel->addProperty("contact", &Wheel::getContact);
+	classWheel->addProperty("contactPosition", &Wheel::getContactPosition);
+	classWheel->addProperty("contactNormal", &Wheel::getContactNormal);
+	classWheel->addProperty("contactVelocity", &Wheel::getContactVelocity);
+	registrar->registerClass(classWheel);
+
 	auto classVehicleComponent = new AutoRuntimeClass< VehicleComponent >();
 	classVehicleComponent->addProperty("steerAngle", &VehicleComponent::setSteerAngle, &VehicleComponent::getSteerAngle);
+	classVehicleComponent->addProperty("steerAngleFiltered", &VehicleComponent::getSteerAngleFiltered);
 	classVehicleComponent->addProperty("engineThrottle", &VehicleComponent::setEngineThrottle, &VehicleComponent::getEngineThrottle);
+	classVehicleComponent->addProperty("wheels", &VehicleComponent::getWheels);
 	registrar->registerClass(classVehicleComponent);
 
 	auto classCollisionContact = new AutoRuntimeClass< CollisionContactWrapper >();

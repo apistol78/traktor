@@ -24,34 +24,43 @@ namespace traktor
 		namespace
 		{
 
-Transform animation_AnimatedMeshComponent_getJointTransform(AnimatedMeshComponent* this_, const std::wstring& boneName)
+Transform AnimatedMeshComponent_getJointTransform(AnimatedMeshComponent* self, const std::wstring& jointName)
 {
 	Transform transform;
-	this_->getJointTransform(
-		render::getParameterHandle(boneName),
+	self->getJointTransform(
+		render::getParameterHandle(jointName),
 		transform
 	);
 	return transform;
 }
 
-Transform animation_AnimatedMeshComponent_getPoseTransform(AnimatedMeshComponent* this_, const std::wstring& boneName)
+Transform AnimatedMeshComponent_getPoseTransform(AnimatedMeshComponent* self, const std::wstring& jointName)
 {
 	Transform transform;
-	this_->getPoseTransform(
-		render::getParameterHandle(boneName),
+	self->getPoseTransform(
+		render::getParameterHandle(jointName),
 		transform
 	);
 	return transform;
 }
 
-Transform animation_AnimatedMeshComponent_getSkinTransform(AnimatedMeshComponent* this_, const std::wstring& boneName)
+Transform AnimatedMeshComponent_getSkinTransform(AnimatedMeshComponent* self, const std::wstring& jointName)
 {
 	Transform transform;
-	this_->getSkinTransform(
-		render::getParameterHandle(boneName),
+	self->getSkinTransform(
+		render::getParameterHandle(jointName),
 		transform
 	);
 	return transform;
+}
+
+void AnimatedMeshComponent_setPoseTransform(AnimatedMeshComponent* self, const std::wstring& jointName, const Transform& transform, bool inclusive)
+{
+	self->setPoseTransform(
+		render::getParameterHandle(jointName),
+		transform,
+		inclusive
+	);
 }
 
 void animation_PathEntity_setTimeMode(PathEntity* self, const std::wstring& timeMode)
@@ -116,10 +125,10 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.animation.AnimationClassFactory", 0, An
 void AnimationClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 {
 	auto classAnimatedMeshComponent = new AutoRuntimeClass< AnimatedMeshComponent >();
-	classAnimatedMeshComponent->addMethod("getJointTransform", &animation_AnimatedMeshComponent_getJointTransform);
-	classAnimatedMeshComponent->addMethod("getPoseTransform", &animation_AnimatedMeshComponent_getPoseTransform);
-	classAnimatedMeshComponent->addMethod("getSkinTransform", &animation_AnimatedMeshComponent_getSkinTransform);
-	classAnimatedMeshComponent->addMethod("setPoseTransform", &AnimatedMeshComponent::setPoseTransform);
+	classAnimatedMeshComponent->addMethod("getJointTransform", &AnimatedMeshComponent_getJointTransform);
+	classAnimatedMeshComponent->addMethod("getPoseTransform", &AnimatedMeshComponent_getPoseTransform);
+	classAnimatedMeshComponent->addMethod("getSkinTransform", &AnimatedMeshComponent_getSkinTransform);
+	classAnimatedMeshComponent->addMethod("setPoseTransform", &AnimatedMeshComponent_setPoseTransform);
 	classAnimatedMeshComponent->addMethod("setPoseController", &AnimatedMeshComponent::setPoseController);
 	classAnimatedMeshComponent->addMethod("getPoseController", &AnimatedMeshComponent::getPoseController);
 	registrar->registerClass(classAnimatedMeshComponent);

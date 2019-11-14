@@ -1,5 +1,4 @@
 #include "Core/Math/Const.h"
-#include "Core/Serialization/AttributeAngles.h"
 #include "Core/Serialization/AttributeRange.h"
 #include "Core/Serialization/AttributeUnit.h"
 #include "Core/Serialization/ISerializer.h"
@@ -90,7 +89,7 @@ void LightComponentData::serialize(ISerializer& s)
 
 	s >> Member< bool >(L"castShadow", m_castShadow);
 	s >> Member< float >(L"range", m_range, AttributeUnit(AuMetres));
-	s >> Member< float >(L"radius", m_radius, AttributeUnit(AuRadians) | AttributeAngles());
+	s >> Member< float >(L"radius", m_radius, AttributeUnit(AuDegrees));
 	s >> Member< float >(L"flickerAmount", m_flickerAmount, AttributeRange(0.0f, 1.0f));
 	s >> Member< float >(L"flickerFilter", m_flickerFilter, AttributeRange(0.0f, 1.0f));
 

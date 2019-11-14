@@ -16,10 +16,14 @@ namespace traktor
 enum UnitType
 {
 	UtUndefined,
+	AuSeconds,
 	AuMetres,
 	AuRadians,
 	AuDegrees,
-	AuLumens
+	AuLumens,
+	AuDecibel,
+	AuNewton,
+	AuKilograms
 };
 
 /*! \brief Member numeric range attribute.
@@ -30,12 +34,15 @@ class T_DLLCLASS AttributeUnit : public Attribute
 	T_RTTI_CLASS;
 
 public:
-	AttributeUnit(UnitType unit);
+	AttributeUnit(UnitType unit, bool perSecond = false);
 
 	UnitType getUnit() const;
 
+	bool getPerSecond() const;
+
 private:
 	UnitType m_unit;
+	bool m_perSecond;
 };
 
 }

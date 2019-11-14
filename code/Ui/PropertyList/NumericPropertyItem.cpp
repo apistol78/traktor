@@ -173,6 +173,14 @@ void NumericPropertyItem::paintValue(Canvas& canvas, const Rect& rc)
 	{
 		if (m_representation == RpAngle)
 			ss << rad2deg(value) << L"\xb0";
+		else if (m_representation == RpAnglesPerSecond)
+			ss << rad2deg(value) << L" \xb0/s";
+		else if (m_representation == RpMetres)
+			ss << value << L" m";
+		else if (m_representation == RpMetresPerSecond)
+			ss << value << L" m/s";
+		else if (m_representation == RpKilograms)
+			ss << value << L" kg";
 		else
 			ss << value;
 	}
@@ -246,7 +254,7 @@ void NumericPropertyItem::eventEditFocus(FocusEvent* event)
 		else
 		{
 			ss >> m_value;
-			if (m_representation == RpAngle)
+			if (m_representation == RpAngle || m_representation == RpAnglesPerSecond)
 				m_value = deg2rad(m_value);
 		}
 

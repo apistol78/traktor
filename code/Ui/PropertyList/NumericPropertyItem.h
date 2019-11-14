@@ -30,7 +30,11 @@ public:
 	{
 		RpNormal,
 		RpDecibel,
-		RpAngle
+		RpAngle,
+		RpAnglesPerSecond,
+		RpMetres,
+		RpMetresPerSecond,
+		RpKilograms
 	};
 
 	NumericPropertyItem(const std::wstring& text, double value, double limitMin, double limitMax, bool floatPoint, bool hex, Representation representation);

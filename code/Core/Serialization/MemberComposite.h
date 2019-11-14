@@ -5,7 +5,7 @@
 namespace traktor
 {
 
-/*! \brief Composite member.
+/*! Composite member.
  * \ingroup Core
  */
 template < typename Class, bool Compound = true >
@@ -16,6 +16,12 @@ public:
 
 	MemberComposite(const wchar_t* const name, value_type& ref)
 	:	MemberComplex(name, Compound)
+	,	m_ref(ref)
+	{
+	}
+
+	MemberComposite(const wchar_t* const name, value_type& ref, const Attribute& attributes)
+	:	MemberComplex(name, Compound, attributes)
 	,	m_ref(ref)
 	{
 	}

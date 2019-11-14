@@ -2,9 +2,9 @@
 #include "Core/Math/Float.h"
 #include "Core/Math/TcbSpline.h"
 #include "Core/Math/TransformPath.h"
-#include "Core/Serialization/AttributeAngles.h"
 #include "Core/Serialization/AttributePoint.h"
 #include "Core/Serialization/AttributeRange.h"
+#include "Core/Serialization/AttributeUnit.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberAlignedVector.h"
 #include "Core/Serialization/MemberComposite.h"
@@ -28,7 +28,7 @@ public:
 	virtual void serialize(ISerializer& s) const override final
 	{
 		s >> Member< Vector4 >(L"position", m_refPosition, AttributePoint());
-		s >> Member< Vector4 >(L"orientation", m_refOrientation, AttributeAngles());
+		s >> Member< Vector4 >(L"orientation", m_refOrientation, AttributeUnit(AuDegrees));
 	}
 
 private:

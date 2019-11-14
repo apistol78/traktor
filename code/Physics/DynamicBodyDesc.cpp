@@ -1,5 +1,6 @@
 #include "Physics/DynamicBodyDesc.h"
 #include "Core/Serialization/AttributeRange.h"
+#include "Core/Serialization/AttributeUnit.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
 
@@ -121,7 +122,7 @@ void DynamicBodyDesc::serialize(ISerializer& s)
 
 	BodyDesc::serialize(s);
 
-	s >> Member< float >(L"mass", m_mass, AttributeRange(0.0f));
+	s >> Member< float >(L"mass", m_mass, AttributeRange(0.0f) | AttributeUnit(AuKilograms));
 	s >> Member< bool >(L"autoDeactivate", m_autoDeactivate);
 	s >> Member< bool >(L"active", m_active);
 	s >> Member< float >(L"linearDamping", m_linearDamping, AttributeRange(0.0f, 1.0f));
@@ -130,8 +131,8 @@ void DynamicBodyDesc::serialize(ISerializer& s)
 
 	if (s.getVersion() >= 5)
 	{
-		s >> Member< float >(L"linearThreshold", m_linearThreshold, AttributeRange(0.0f));
-		s >> Member< float >(L"angularThreshold", m_angularThreshold, AttributeRange(0.0f));
+		s >> Member< float >(L"linearThreshold", m_linearThreshold, AttributeRange(0.0f) | AttributeUnit(AuMetres, true));
+		s >> Member< float >(L"angularThreshold", m_angularThreshold, AttributeRange(0.0f) | AttributeUnit(AuMetres, true));
 	}
 }
 

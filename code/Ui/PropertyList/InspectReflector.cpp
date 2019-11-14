@@ -2,8 +2,6 @@
 #include <sstream>
 #include "Core/Io/StringOutputStream.h"
 #include "Core/Misc/Split.h"
-#include "Core/Serialization/AttributeAngles.h"
-#include "Core/Serialization/AttributeDecibel.h"
 #include "Core/Serialization/AttributeDirection.h"
 #include "Core/Serialization/AttributeHdr.h"
 #include "Core/Serialization/AttributeHex.h"
@@ -13,6 +11,7 @@
 #include "Core/Serialization/AttributeRange.h"
 #include "Core/Serialization/AttributeReadOnly.h"
 #include "Core/Serialization/AttributeType.h"
+#include "Core/Serialization/AttributeUnit.h"
 #include "Core/Serialization/MemberArray.h"
 #include "Core/Serialization/MemberComplex.h"
 #include "Core/Serialization/MemberEnum.h"
@@ -73,6 +72,24 @@ const AttributeType* findAttribute(const MemberType& m)
 {
 	const Attribute* attributes = m.getAttributes();
 	return attributes ? attributes->find< AttributeType >() : nullptr;
+}
+
+template < typename MemberType >
+NumericPropertyItem::Representation findRepresentation(const MemberType& m)
+{
+	const AttributeUnit* unit = findAttribute< AttributeUnit >(m);
+	if (unit)
+	{
+		if (unit->getUnit() == AuMetres)
+			return unit->getPerSecond() ? NumericPropertyItem::RpMetresPerSecond : NumericPropertyItem::RpMetres;
+		else if (unit->getUnit() == AuDegrees)
+			return unit->getPerSecond() ? NumericPropertyItem::RpAnglesPerSecond : NumericPropertyItem::RpAngle;
+		else if (unit->getUnit() == AuDecibel)
+			return NumericPropertyItem::RpDecibel;
+		else if (unit->getUnit() == AuKilograms)
+			return NumericPropertyItem::RpKilograms;
+	}
+	return NumericPropertyItem::RpNormal;
 }
 
 		}
@@ -346,12 +363,6 @@ void InspectReflector::operator >> (const Member< float >& m)
 		max = range->getMax();
 	}
 
-	NumericPropertyItem::Representation representation = NumericPropertyItem::RpNormal;
-	if (findAttribute< AttributeDecibel >(m) != nullptr)
-		representation = NumericPropertyItem::RpDecibel;
-	if (findAttribute< AttributeAngles >(m) != nullptr)
-		representation = NumericPropertyItem::RpAngle;
-
 	addPropertyItem(
 		new NumericPropertyItem(
 			stylizeMemberName(m.getName()),
@@ -360,7 +371,7 @@ void InspectReflector::operator >> (const Member< float >& m)
 			max,
 			true,
 			false,
-			representation
+			findRepresentation(m)
 		),
 		memberPrivate
 	);
@@ -380,12 +391,6 @@ void InspectReflector::operator >> (const Member< double >& m)
 		max = range->getMax();
 	}
 
-	NumericPropertyItem::Representation representation = NumericPropertyItem::RpNormal;
-	if (findAttribute< AttributeDecibel >(m) != nullptr)
-		representation = NumericPropertyItem::RpDecibel;
-	if (findAttribute< AttributeAngles >(m) != nullptr)
-		representation = NumericPropertyItem::RpAngle;
-
 	addPropertyItem(
 		new NumericPropertyItem(
 			stylizeMemberName(m.getName()),
@@ -394,7 +399,7 @@ void InspectReflector::operator >> (const Member< double >& m)
 			max,
 			true,
 			false,
-			representation
+			findRepresentation(m)
 		),
 		memberPrivate
 	);
@@ -485,12 +490,6 @@ void InspectReflector::operator >> (const Member< Scalar >& m)
 		max = range->getMax();
 	}
 
-	NumericPropertyItem::Representation representation = NumericPropertyItem::RpNormal;
-	if (findAttribute< AttributeDecibel >(m) != nullptr)
-		representation = NumericPropertyItem::RpDecibel;
-	if (findAttribute< AttributeAngles >(m) != nullptr)
-		representation = NumericPropertyItem::RpAngle;
-
 	Scalar& v = m;
 	addPropertyItem(
 		new NumericPropertyItem(
@@ -500,7 +499,7 @@ void InspectReflector::operator >> (const Member< Scalar >& m)
 			max,
 			true,
 			false,
-			representation
+			findRepresentation(m)
 		),
 		memberPrivate
 	);
@@ -542,8 +541,8 @@ void InspectReflector::operator >> (const Member< Vector4 >& m)
 		return;
 	}
 
-	const AttributeAngles* angles = findAttribute< AttributeAngles >(m);
-	if (angles)
+	const AttributeUnit* unit = findAttribute< AttributeUnit >(m);
+	if (unit != nullptr && unit->getUnit() == AuDegrees)
 	{
 		addPropertyItem(
 			new AnglesPropertyItem(stylizeMemberName(m.getName()), *m),
