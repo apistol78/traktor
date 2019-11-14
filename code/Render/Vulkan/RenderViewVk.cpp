@@ -1090,6 +1090,7 @@ bool RenderViewVk::create(uint32_t width, uint32_t height)
 	vkGetPhysicalDeviceSurfacePresentModesKHR(m_physicalDevice, m_surface, &presentModeCount, presentModes.ptr());
 
 	VkPresentModeKHR presentationMode = VK_PRESENT_MODE_FIFO_KHR;   // always supported.
+#if 0	// Other present modes might not be vsync;ed.
 	for (uint32_t i = 0; i < presentModeCount; ++i)
 	{
 		if (presentModes[i] == VK_PRESENT_MODE_MAILBOX_KHR)
@@ -1098,6 +1099,7 @@ bool RenderViewVk::create(uint32_t width, uint32_t height)
 			break;
 		}
 	}
+#endif
 
 	// Create swap chain.
 	VkSwapchainCreateInfoKHR scci = {};
