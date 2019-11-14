@@ -39,6 +39,7 @@ public:
 	,	m_xic(0)
 	,	m_surface(nullptr)
 	,	m_cairo(nullptr)
+	,	m_timer(-1)
 	,	m_lastMousePress(0)
 	,	m_lastMouseButton(0)
 	,	m_pendingExposure(false)
@@ -47,7 +48,7 @@ public:
 
 	virtual ~WidgetX11Impl()
 	{
-		T_FATAL_ASSERT(m_timers.empty());
+		T_FATAL_ASSERT(m_timer < 0);
 		T_FATAL_ASSERT(m_surface == nullptr);
 		T_FATAL_ASSERT(m_cairo == nullptr);
 		T_FATAL_ASSERT(m_data.grabbed == false);
@@ -55,10 +56,7 @@ public:
 
 	virtual void destroy() override
 	{
-		for (auto it : m_timers)
-			Timers::getInstance().unbind(it.second);
-		m_timers.clear();
-
+		stopTimer();
 		releaseCapture();
 
 		if (hasFocus())
@@ -195,23 +193,23 @@ public:
 			m_context->ungrab(&m_data);
 	}
 
-	virtual void startTimer(int interval, int id) override
+	virtual void startTimer(int interval) override
 	{
-		m_timers[id] = Timers::getInstance().bind(interval, [=](int32_t){
+		stopTimer();
+		m_timer = Timers::getInstance().bind(interval, [=](int32_t){
 			if (!isVisible())
 				return;
-			TimerEvent timerEvent(m_owner, id);
+			TimerEvent timerEvent(m_owner, 0);
 			m_owner->raiseEvent(&timerEvent);
 		});
 	}
 
-	virtual void stopTimer(int id) override
+	virtual void stopTimer() override
 	{
-		auto it = m_timers.find(id);
-		if (it != m_timers.end())
+		if (m_timer >= 0)
 		{
-			Timers::getInstance().unbind(it->second);
-			m_timers.erase(it);
+			Timers::getInstance().unbind(m_timer);
+			m_timer = -1;
 		}
 	}
 
@@ -458,7 +456,7 @@ protected:
 	cairo_t* m_cairo;
 
 	std::wstring m_text;
-	std::map< int32_t, int32_t > m_timers;
+	int32_t m_timer;
 
 	int32_t m_lastMousePress;
 	int32_t m_lastMouseButton;
