@@ -15,7 +15,7 @@ namespace traktor
 	namespace animation
 	{
 
-/*! \brief IK pose evaluation controller data.
+/*! IK pose evaluation controller data.
  * \ingroup Animation
  */
 class T_DLLCLASS IKPoseControllerData : public IPoseControllerData
@@ -30,14 +30,14 @@ public:
 		physics::PhysicsManager* physicsManager,
 		const Skeleton* skeleton,
 		const Transform& worldTransform
-	) override final;
+	) const override final;
 
 	virtual void serialize(ISerializer& s) override final;
 
-	IPoseControllerData* getNeutralPoseController() const { return m_neutralPoseController; }
+	const IPoseControllerData* getNeutralPoseController() const { return m_neutralPoseController; }
 
 private:
-	Ref< IPoseControllerData > m_neutralPoseController;
+	Ref< const IPoseControllerData > m_neutralPoseController;
 	uint32_t m_solverIterations;
 };
 

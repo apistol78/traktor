@@ -1,5 +1,6 @@
 #include "Core/Serialization/AttributeHdr.h"
 #include "Core/Serialization/AttributeRange.h"
+#include "Core/Serialization/AttributeUnit.h"
 #include "Core/Serialization/MemberComposite.h"
 #include "Core/Serialization/MemberEnum.h"
 #include "Core/Serialization/MemberStaticArray.h"
@@ -65,8 +66,8 @@ void WorldRenderSettings::serialize(ISerializer& s)
 {
 	T_ASSERT(s.getVersion() >= 17);
 
-	s >> Member< float >(L"viewNearZ", viewNearZ, AttributeRange(0.0f));
-	s >> Member< float >(L"viewFarZ", viewFarZ, AttributeRange(0.0f));
+	s >> Member< float >(L"viewNearZ", viewNearZ, AttributeRange(0.0f) | AttributeUnit(AuMetres));
+	s >> Member< float >(L"viewFarZ", viewFarZ, AttributeRange(0.0f) | AttributeUnit(AuMetres));
 	s >> Member< bool >(L"linearLighting", linearLighting);
 
 	if (s.getVersion() >= 28)
@@ -126,10 +127,10 @@ void WorldRenderSettings::serialize(ISerializer& s)
 
 	if (s.getVersion() >= 21)
 	{
-		s >> Member< float >(L"fogDistanceY", fogDistanceY);
-		s >> Member< float >(L"fogDistanceZ", fogDistanceZ, AttributeRange(0.0f));
-		s >> Member< float >(L"fogDensityY", fogDensityY, AttributeRange(0.0f, 1.0f));
-		s >> Member< float >(L"fogDensityZ", fogDensityZ, AttributeRange(0.0f, 1.0f));
+		s >> Member< float >(L"fogDistanceY", fogDistanceY, AttributeUnit(AuMetres));
+		s >> Member< float >(L"fogDistanceZ", fogDistanceZ, AttributeRange(0.0f) | AttributeUnit(AuMetres));
+		s >> Member< float >(L"fogDensityY", fogDensityY, AttributeRange(0.0f, 1.0f) | AttributeUnit(AuMetres));
+		s >> Member< float >(L"fogDensityZ", fogDensityZ, AttributeRange(0.0f, 1.0f) | AttributeUnit(AuMetres));
 	}
 
 	if (s.getVersion() >= 26)
@@ -181,7 +182,7 @@ void WorldRenderSettings::ShadowSettings::serialize(ISerializer& s)
 	if (s.getVersion() >= 18)
 		s >> MemberEnum< ShadowProjection >(L"projection", projection, c_ShadowProjection_Keys);
 
-	s >> Member< float >(L"farZ", farZ, AttributeRange(0.0f));
+	s >> Member< float >(L"farZ", farZ, AttributeRange(0.0f) | AttributeUnit(AuMetres));
 	s >> Member< int32_t >(L"resolution", resolution, AttributeRange(1));
 	s >> Member< float >(L"bias", bias, AttributeRange(0.0f, 8.0f));
 	s >> Member< float >(L"biasCoeff", biasCoeff, AttributeRange(0.0f, 8.0f));

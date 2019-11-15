@@ -23,10 +23,19 @@ class PhysicsManager;
 
 	}
 
+	namespace resource
+	{
+
+class IResourceManager;
+
+	}
+
 	namespace animation
 	{
 
-/*! \brief Rag doll pose evaluation controller.
+class RagDollPoseControllerData;
+
+/*! Rag doll pose evaluation controller.
  * \ingroup Animation
  */
 class T_DLLCLASS RagDollPoseController : public IPoseController
@@ -38,31 +47,20 @@ public:
 
 	virtual ~RagDollPoseController();
 
-	/*! \brief Create rag-doll pose controller.
+	/*! Create rag-doll pose controller.
 	 *
 	 * \param initiallyDisabled If limbs should be initially disabled.
 	 * \param fixateBones Fixate parent bones in world space.
 	 */
 	bool create(
+		resource::IResourceManager* resourceManager,
 		physics::PhysicsManager* physicsManager,
+		const RagDollPoseControllerData* data,
 		const Skeleton* skeleton,
 		const Transform& worldTransform,
-		const AlignedVector< Transform >& boneTransforms,
+		const AlignedVector< Transform >& jointTransforms,
 		const AlignedVector< Velocity >& velocities,
-		uint32_t collisionGroup,
-		uint32_t collisionMask,
-		bool autoDeactivate,
-		bool enabled,
-		bool fixateBones,
-		float limbMass,
-		float linearDamping,
-		float angularDamping,
-		float linearThreshold,
-		float angularThreshold,
-		IPoseController* trackPoseController,
-		float trackLinearTension,
-		float trackAngularTension,
-		float trackDuration
+		IPoseController* trackPoseController
 	);
 
 	virtual void destroy() override final;
@@ -97,6 +95,7 @@ private:
 	RefArray< physics::Body > m_limbs;
 	RefArray< physics::Joint > m_joints;
 	Transform m_worldTransform;
+	AlignedVector< Transform > m_deltaTransforms;
 	bool m_enable;
 };
 

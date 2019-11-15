@@ -25,15 +25,15 @@ Transform Pose::getJointTransform(uint32_t jointIndex) const
 uint32_t Pose::getMaxIndex() const
 {
 	uint32_t maxIndex =  0;
-	for (AlignedVector< Joint >::const_iterator i = m_joints.begin(); i != m_joints.end(); ++i)
-		maxIndex = max(maxIndex, i->index);
+	for (const auto& joint : m_joints)
+		maxIndex = max(maxIndex, joint.index);
 	return maxIndex;
 }
 
 void Pose::getIndexMask(BitSet& outIndices) const
 {
-	for (AlignedVector< Joint >::const_iterator i = m_joints.begin(); i != m_joints.end(); ++i)
-		outIndices.set(i->index);
+	for (const auto& joint : m_joints)
+		outIndices.set(joint.index);
 }
 
 const Pose::Joint* Pose::getJoint(uint32_t jointIndex) const

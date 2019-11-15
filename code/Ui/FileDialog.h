@@ -39,7 +39,7 @@ public:
 		bool save = false
 	);
 
-	void destroy();
+	virtual void destroy() override;
 
 	int32_t showModal(Path& outPath);
 

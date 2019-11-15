@@ -34,7 +34,7 @@ class PhysicsManager;
 class IPoseController;
 class Skeleton;
 
-/*! \brief Pose evaluation controller data.
+/*! Pose evaluation controller data.
  * \ingroup Animation
  */
 class T_DLLCLASS IPoseControllerData : public ISerializable
@@ -47,7 +47,7 @@ public:
 		physics::PhysicsManager* physicsManager,
 		const Skeleton* skeleton,
 		const Transform& worldTransform
-	) = 0;
+	) const = 0;
 };
 
 	}

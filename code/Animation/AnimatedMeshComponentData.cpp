@@ -4,9 +4,9 @@
 #include "Animation/Joint.h"
 #include "Animation/Skeleton.h"
 #include "Core/Serialization/ISerializer.h"
+#include "Core/Serialization/MemberAlignedVector.h"
 #include "Core/Serialization/MemberComposite.h"
 #include "Core/Serialization/MemberRef.h"
-#include "Core/Serialization/MemberStl.h"
 #include "Mesh/Skinned/SkinnedMesh.h"
 #include "Resource/IResourceManager.h"
 #include "Resource/Member.h"
@@ -46,7 +46,7 @@ Ref< AnimatedMeshComponent > AnimatedMeshComponentData::createComponent(resource
 			Transform::identity()
 		);
 
-	std::vector< int32_t > jointRemap(skeleton->getJointCount());
+	AlignedVector< int32_t > jointRemap(skeleton->getJointCount());
 	const std::map< std::wstring, int32_t >& jointMap = mesh->getJointMap();
 	for (uint32_t i = 0; i < skeleton->getJointCount(); ++i)
 	{
@@ -60,7 +60,7 @@ Ref< AnimatedMeshComponent > AnimatedMeshComponentData::createComponent(resource
 		jointRemap[i] = j->second;
 	}
 
-	std::vector< AnimatedMeshComponent::Binding > bindings;
+	AlignedVector< AnimatedMeshComponent::Binding > bindings;
 	for (size_t i = 0; i < m_bindings.size(); ++i)
 	{
 		Ref< world::Entity > entity = entityBuilder->create(m_bindings[i].entityData);
@@ -90,17 +90,17 @@ void AnimatedMeshComponentData::serialize(ISerializer& s)
 {
 	s >> resource::Member< mesh::SkinnedMesh >(L"mesh", m_mesh);
 	s >> resource::Member< Skeleton >(L"skeleton", m_skeleton);
-	s >> MemberRef< IPoseControllerData >(L"poseController", m_poseController);
+	s >> MemberRef< const IPoseControllerData >(L"poseController", m_poseController);
 	s >> Member< bool >(L"normalizePose", m_normalizePose);
 	s >> Member< bool >(L"normalizeTransform", m_normalizeTransform);
 	s >> Member< bool >(L"screenSpaceCulling", m_screenSpaceCulling);
-	s >> MemberStlVector< Binding, MemberComposite< Binding > >(L"bindings", m_bindings);
+	s >> MemberAlignedVector< Binding, MemberComposite< Binding > >(L"bindings", m_bindings);
 }
 
 void AnimatedMeshComponentData::Binding::serialize(ISerializer& s)
 {
 	s >> Member< std::wstring >(L"jointName", jointName);
-	s >> MemberRef< world::EntityData >(L"entityData", entityData);
+	s >> MemberRef< const world::EntityData >(L"entityData", entityData);
 }
 
 	}

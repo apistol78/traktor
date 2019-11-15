@@ -27,12 +27,12 @@ StatePoseControllerData::StatePoseControllerData()
 {
 }
 
-Ref< IPoseController > StatePoseControllerData::createInstance(resource::IResourceManager* resourceManager, physics::PhysicsManager* physicsManager, const Skeleton* skeleton, const Transform& worldTransform)
+Ref< IPoseController > StatePoseControllerData::createInstance(resource::IResourceManager* resourceManager, physics::PhysicsManager* physicsManager, const Skeleton* skeleton, const Transform& worldTransform) const
 {
 	// Load state graph through resource manager.
 	resource::Proxy< StateGraph > stateGraph;
 	if (!resourceManager->bind(m_stateGraph, stateGraph))
-		return 0;
+		return nullptr;
 
 	Ref< StatePoseController > poseController = new StatePoseController(stateGraph);
 
@@ -58,9 +58,9 @@ Ref< IPoseController > StatePoseControllerData::createInstance(resource::IResour
 
 void StatePoseControllerData::serialize(ISerializer& s)
 {
+	T_FATAL_ASSERT(s.getVersion< StatePoseControllerData >() >= 1);
 	s >> resource::Member< StateGraph >(L"stateGraph", m_stateGraph);
-	if (s.getVersion() >= 1)
-		s >> MemberComposite< Range< float > >(L"randomTimeOffset", m_randomTimeOffset);
+	s >> MemberComposite< Range< float > >(L"randomTimeOffset", m_randomTimeOffset);
 }
 
 	}

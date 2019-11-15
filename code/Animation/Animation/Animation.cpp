@@ -55,10 +55,10 @@ struct KeyPoseAccessor
 			if (!indices(i))
 				continue;
 
-			const auto t0 = v0.getJointTransform(i);
-			const auto t1 = v1.getJointTransform(i);
-			const auto t2 = v2.getJointTransform(i);
-			const auto t3 = v3.getJointTransform(i);
+			const auto& t0 = v0.getJointTransform(i);
+			const auto& t1 = v1.getJointTransform(i);
+			const auto& t2 = v2.getJointTransform(i);
+			const auto& t3 = v3.getJointTransform(i);
 
 			pose.setJointTransform(
 				i,

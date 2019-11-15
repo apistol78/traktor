@@ -1,6 +1,7 @@
 #include "Animation/Joint.h"
 #include "Animation/Skeleton.h"
 #include "Animation/RagDoll/RagDollPoseController.h"
+#include "Animation/RagDoll/RagDollPoseControllerData.h"
 #include "Core/Math/Const.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Physics/BallJointDesc.h"
@@ -31,25 +32,14 @@ RagDollPoseController::~RagDollPoseController()
 }
 
 bool RagDollPoseController::create(
+	resource::IResourceManager* resourceManager,
 	physics::PhysicsManager* physicsManager,
+	const RagDollPoseControllerData* data,
 	const Skeleton* skeleton,
 	const Transform& worldTransform,
 	const AlignedVector< Transform >& jointTransforms,
 	const AlignedVector< Velocity >& velocities,
-	uint32_t collisionGroup,
-	uint32_t collisionMask,
-	bool autoDeactivate,
-	bool enabled,
-	bool fixateBones,
-	float limbMass,
-	float linearDamping,
-	float angularDamping,
-	float linearThreshold,
-	float angularThreshold,
-	IPoseController* trackPoseController,
-	float trackLinearTension,
-	float trackAngularTension,
-	float trackDuration
+	IPoseController* trackPoseController
 )
 {
 	if (!physicsManager)
@@ -60,7 +50,7 @@ bool RagDollPoseController::create(
 	// Evaluate initial poses with tracking controller.
 	if (trackPoseController)
 	{
-		bool updateController;
+		bool updateController = false;
 		trackPoseController->evaluate(
 			0.0f,
 			worldTransform,
@@ -71,149 +61,124 @@ bool RagDollPoseController::create(
 		);
 	}
 
-	for (uint32_t i = 0; i < skeleton->getJointCount(); ++i)
+	const uint32_t jointCount = skeleton->getJointCount();
+
+	// Create limb dynamic bodies.
+	for (uint32_t i = 0; i < jointCount; ++i)
 	{
 		Joint* joint = skeleton->getJoint(i);
 		T_ASSERT(joint);
 
-		if (joint->getParent() < 0)
+		const int32_t parent = joint->getParent();
+		if (parent < 0)
 			continue;
 
-		Vector4 start = limbTransforms[joint->getParent()].translation();
+		Vector4 start = limbTransforms[parent].translation();
 		Vector4 end = limbTransforms[i].translation();
+		Scalar length = (end - start).length();
 
-		float length = (end - start).length();
-		if (length > joint->getRadius() * 2.0f)
+		if (length < joint->getRadius() * 2.0f)
 		{
-			Vector4 centerOfMass = (start + end) * Scalar(0.5f);
-
-			physics::CapsuleShapeDesc shapeDesc;
-			//shapeDesc.setCollisionGroup(collisionGroup);
-			//shapeDesc.setCollisionMask(collisionMask);
-			shapeDesc.setRadius(joint->getRadius());
-			shapeDesc.setLength(length);
-
-			physics::DynamicBodyDesc bodyDesc;
-			bodyDesc.setShape(&shapeDesc);
-			bodyDesc.setMass(limbMass);
-			bodyDesc.setAutoDeactivate(autoDeactivate);
-			bodyDesc.setActive(true);
-			bodyDesc.setLinearDamping(linearDamping);
-			bodyDesc.setAngularDamping(angularDamping);
-			bodyDesc.setLinearThreshold(linearThreshold);
-			bodyDesc.setAngularThreshold(angularThreshold);
-
-			Ref< physics::Body > limb = physicsManager->createBody(0, &bodyDesc);
-			if (!limb)
-				return false;
-
-			limb->setTransform(worldTransform * limbTransforms[i] * Transform(centerOfMass));
-
-			// Set initial velocities.
-			if (!velocities.empty())
-			{
-				limb->setLinearVelocity(velocities[i].linear);
-				limb->setAngularVelocity(velocities[i].angular);
-			}
-
-			m_limbs.push_back(limb);
+			m_limbs.push_back(nullptr);
+			continue;
 		}
-		else
-			m_limbs.push_back(0);
+
+		Vector4 centerOfMass = (start + end) * Scalar(0.5f);
+
+		physics::CapsuleShapeDesc shapeDesc;
+		shapeDesc.setCollisionGroup(data->m_collisionGroup);
+		shapeDesc.setCollisionMask(data->m_collisionMask);
+		shapeDesc.setRadius(joint->getRadius());
+		shapeDesc.setLength(length);
+
+		physics::DynamicBodyDesc bodyDesc;
+		bodyDesc.setShape(&shapeDesc);
+		bodyDesc.setMass(data->m_limbMass);
+		bodyDesc.setAutoDeactivate(data->m_autoDeactivate);
+		bodyDesc.setActive(true);
+		bodyDesc.setLinearDamping(data->m_linearDamping);
+		bodyDesc.setAngularDamping(data->m_angularDamping);
+		bodyDesc.setLinearThreshold(data->m_linearThreshold);
+		bodyDesc.setAngularThreshold(data->m_angularThreshold);
+
+		Ref< physics::Body > limb = physicsManager->createBody(resourceManager, &bodyDesc, T_FILE_LINE_W);
+		if (!limb)
+			return false;
+
+		Vector4 axisZ = (end - start).normalized();
+		Vector4 axisX, axisY;
+		orthogonalFrame(axisZ, axisX, axisY);
+
+		Transform limbTransform(Matrix44(
+			axisX,
+			axisY,
+			axisZ,
+			centerOfMass
+		));
+
+		limb->setTransform(worldTransform * limbTransform);
+		if (!velocities.empty())
+		{
+			limb->setLinearVelocity(velocities[i].linear);
+			limb->setAngularVelocity(velocities[i].angular);
+		}
+
+		m_limbs.push_back(limb);
+		m_deltaTransforms.push_back(limbTransform.inverse() * limbTransforms[i]);
 	}
 
-	for (uint32_t i = 0; i < skeleton->getJointCount(); ++i)
-	{
-		Ref< physics::Joint > limbJoint;
+	// for (uint32_t i = 0; i < jointCount; ++i)
+	// {
+	// 	Joint* joint = skeleton->getJoint(i);
+	// 	T_ASSERT(joint);
 
-		Joint* joint = skeleton->getJoint(i);
-		T_ASSERT(joint);
+	// 	Ref< physics::Joint > limbJoint;
 
-		const Vector4 anchor = limbTransforms[i].translation().xyz1();
-		const Vector4 twistAxis = limbTransforms[i].axisZ();
-		const Vector4 coneAxis = limbTransforms[i].axisX();
+	// 	const Vector4 anchor = limbTransforms[i].translation().xyz1();
 
-		int32_t parentIndex = joint->getParent();
-		if (parentIndex < 0 || !m_limbs[parentIndex])
-		{
-			if (!m_limbs[i])
-				continue;
+	// 	int32_t parentIndex = joint->getParent();
+	// 	if (parentIndex < 0 || !m_limbs[parentIndex])
+	// 	{
+	// 		if (!m_limbs[i])
+	// 			continue;
 
-			if (fixateBones)
-			{
-				//if (joint->getEnableLimits())
-				//{
-				//	Ref< physics::ConeTwistJointDesc > jointDesc = new physics::ConeTwistJointDesc();
-				//	jointDesc->setAnchor(anchor);
-				//	jointDesc->setConeAxis(coneAxis);
-				//	jointDesc->setTwistAxis(twistAxis);
-				//	jointDesc->setConeAngles(joint->getConeLimit().x, joint->getConeLimit().y);
-				//	jointDesc->setTwistAngle(joint->getTwistLimit());
+	// 		if (data->m_fixateJoints)
+	// 		{
+	// 			Ref< physics::BallJointDesc > jointDesc = new physics::BallJointDesc();
+	// 			jointDesc->setAnchor(anchor);
 
-				//	limbJoint = physicsManager->createJoint(
-				//		jointDesc,
-				//		worldTransform,
-				//		m_limbs[i],
-				//		0
-				//	);
-				//}
-				//else
-				{
-					Ref< physics::BallJointDesc > jointDesc = new physics::BallJointDesc();
-					jointDesc->setAnchor(anchor);
+	// 			limbJoint = physicsManager->createJoint(
+	// 				jointDesc,
+	// 				worldTransform,
+	// 				m_limbs[i],
+	// 				nullptr
+	// 			);
+	// 		}
+	// 	}
+	// 	else
+	// 	{
+	// 		Ref< physics::BallJointDesc > jointDesc = new physics::BallJointDesc();
+	// 		jointDesc->setAnchor(anchor);
 
-					limbJoint = physicsManager->createJoint(
-						jointDesc,
-						worldTransform,
-						m_limbs[i],
-						0
-					);
-				}
-			}
-		}
-		else
-		{
-			//if (joint->getEnableLimits())
-			//{
-			//	Ref< physics::ConeTwistJointDesc > jointDesc = new physics::ConeTwistJointDesc();
-			//	jointDesc->setAnchor(anchor);
-			//	jointDesc->setConeAxis(coneAxis);
-			//	jointDesc->setTwistAxis(twistAxis);
-			//	jointDesc->setConeAngles(joint->getConeLimit().x, joint->getConeLimit().y);
-			//	jointDesc->setTwistAngle(joint->getTwistLimit());
+	// 		limbJoint = physicsManager->createJoint(
+	// 			jointDesc,
+	// 			worldTransform,
+	// 			m_limbs[parentIndex],
+	// 			m_limbs[i]
+	// 		);
+	// 	}
 
-			//	limbJoint = physicsManager->createJoint(
-			//		jointDesc,
-			//		worldTransform,
-			//		m_limbs[parentIndex],
-			//		m_limbs[i]
-			//	);
-			//}
-			//else
-			{
-				Ref< physics::BallJointDesc > jointDesc = new physics::BallJointDesc();
-				jointDesc->setAnchor(anchor);
-
-				limbJoint = physicsManager->createJoint(
-					jointDesc,
-					worldTransform,
-					m_limbs[parentIndex],
-					m_limbs[i]
-				);
-			}
-		}
-
-		m_joints.push_back(limbJoint);
-	}
+	// 	m_joints.push_back(limbJoint);
+	// }
 
 	m_worldTransform = worldTransform;
 
 	m_trackPoseController = trackPoseController;
-	m_trackLinearTension = Scalar(trackLinearTension);
-	m_trackAngularTension = Scalar(trackAngularTension);
-	m_trackDuration = trackDuration;
+	m_trackLinearTension = Scalar(data->m_trackLinearTension);
+	m_trackAngularTension = Scalar(data->m_trackAngularTension);
+	m_trackDuration = data->m_trackDuration;
 
-	setEnable(enabled);
+	setEnable(data->m_enabled);
 	return true;
 }
 
@@ -221,17 +186,10 @@ void RagDollPoseController::destroy()
 {
 	safeDestroy(m_trackPoseController);
 
-	for (RefArray< physics::Joint >::iterator i = m_joints.begin(); i != m_joints.end(); ++i)
-	{
-		if (*i)
-			(*i)->destroy();
-	}
-
-	for (RefArray< physics::Body >::iterator i = m_limbs.begin(); i != m_limbs.end(); ++i)
-	{
-		if (*i)
-			(*i)->destroy();
-	}
+	for (auto joint : m_joints)
+		safeDestroy(joint);
+	for (auto limb : m_limbs)
+		safeDestroy(limb);
 
 	m_limbs.resize(0);
 	m_joints.resize(0);
@@ -243,12 +201,12 @@ void RagDollPoseController::setTransform(const Transform& transform)
 	Transform deltaTransform = transform * m_worldTransform.inverse();
 
 	// Update all limbs with delta transform.
-	for (RefArray< physics::Body >::iterator i = m_limbs.begin(); i != m_limbs.end(); ++i)
+	for (auto limb : m_limbs)
 	{
-		if (*i)
+		if (limb)
 		{
-			Transform limbTransform = (*i)->getTransform();
-			(*i)->setTransform(deltaTransform * limbTransform);
+			Transform limbTransform = limb->getTransform();
+			limb->setTransform(deltaTransform * limbTransform);
 		}
 	}
 
@@ -268,102 +226,101 @@ bool RagDollPoseController::evaluate(
 	bool& outUpdateController
 )
 {
-	//T_ASSERT(jointTransforms.size() == m_limbs.size());
+	T_ASSERT(jointTransforms.size() == m_limbs.size());
 
-	//// Update tracking pose controller.
-	//if (m_trackPoseController)
-	//{
-	//	if (m_trackDuration > 0.0f)
-	//	{
-	//		m_trackDuration -= deltaTime;
-	//		if (m_trackDuration <= 0.0f)
-	//			m_trackPoseController = 0;
-	//	}
-	//	if (m_trackPoseController)
-	//		m_trackPoseController->evaluate(
-	//			deltaTime,
-	//			worldTransform,
-	//			skeleton,
-	//			jointTransforms,
-	//			outPoseTransforms,
-	//			outUpdateController
-	//		);
-	//}
+	// Update tracking pose controller.
+	if (m_trackPoseController)
+	{
+		if (m_trackDuration > 0.0f)
+		{
+			m_trackDuration -= deltaTime;
+			if (m_trackDuration <= 0.0f)
+				m_trackPoseController = nullptr;
+		}
+		if (m_trackPoseController)
+			m_trackPoseController->evaluate(
+				deltaTime,
+				worldTransform,
+				skeleton,
+				jointTransforms,
+				outPoseTransforms,
+				outUpdateController
+			);
+	}
 
-	//Transform worldTransformInv = worldTransform.inverse();
-	//uint32_t limbCount = uint32_t(m_limbs.size());
-	//
-	//outPoseTransforms.resize(limbCount);
-	//for (uint32_t i = 0; i < limbCount; ++i)
-	//{
-	//	if (!m_limbs[i])
-	//		continue;
+	const Transform worldTransformInv = worldTransform.inverse();
+	const uint32_t jointCount = skeleton->getJointCount();
 
-	//	const Bone* bone = skeleton->getBone(i);
-	//	T_ASSERT(bone);
+	outPoseTransforms.resize(jointCount);
 
-	//	Transform boneP(Vector4(0.0f, 0.0f, bone->getLength(), 1.0f));
-	//	Transform halfBoneN(Vector4(0.0f, 0.0f, -bone->getLength() * 0.5f, 1.0f));
-	//
-	//	if (m_trackPoseController)
-	//	{
-	//		const Scalar c_maxTension(10.0f);
+	// Build pose transforms from limb bodies.
+	for (uint32_t i = 0; i < jointCount; ++i)
+	{
+		Joint* joint = skeleton->getJoint(i);
+		T_ASSERT(joint);
 
-	//		Transform trackT = worldTransform * outPoseTransforms[i];
-	//		Transform limbT = m_limbs[i]->getTransform() * Transform(halfBoneN);
+		if (!m_limbs[i])
+			continue;
 
-	//		{
-	//			Vector4 Tl = (limbT).translation().xyz1();
-	//			Vector4 Tt = (trackT).translation().xyz1();
+		// if (m_trackPoseController)
+		// {
+		// 	const Scalar c_maxTension(10.0f);
 
-	//			Vector4 Fl = Tt - Tl;
-	//			Vector4 Vl = m_limbs[i]->getVelocityAt(Tl, false);
+		// 	Transform trackT = worldTransform * outPoseTransforms[i];
+		// 	Transform limbT = m_limbs[i]->getTransform() * Transform(halfBoneN);
 
-	//			Scalar damping = Scalar(1.0f) - dot3(Fl, Vl);
-	//			Scalar tension = min(m_trackLinearTension * damping * Scalar(deltaTime), c_maxTension);
+		// 	{
+		// 		Vector4 Tl = (limbT).translation().xyz1();
+		// 		Vector4 Tt = (trackT).translation().xyz1();
 
-	//			m_limbs[i]->addForceAt(
-	//				Tl,
-	//				Fl * tension,
-	//				false
-	//			);
-	//		}
+		// 		Vector4 Fl = Tt - Tl;
+		// 		Vector4 Vl = m_limbs[i]->getVelocityAt(Tl, false);
 
-	//		{
-	//			Vector4 Tl = (limbT * boneP).translation().xyz1();
-	//			Vector4 Tt = (trackT * boneP).translation().xyz1();
+		// 		Scalar damping = Scalar(1.0f) - dot3(Fl, Vl);
+		// 		Scalar tension = min(m_trackLinearTension * damping * Scalar(deltaTime), c_maxTension);
 
-	//			Vector4 Fl = Tt - Tl;
-	//			Vector4 Vl = m_limbs[i]->getVelocityAt(Tl, false);
+		// 		m_limbs[i]->addForceAt(
+		// 			Tl,
+		// 			Fl * tension,
+		// 			false
+		// 		);
+		// 	}
 
-	//			Scalar damping = Scalar(1.0f) - dot3(Fl, Vl);
-	//			Scalar tension = min(m_trackLinearTension * damping * Scalar(deltaTime), c_maxTension);
+		// 	{
+		// 		Vector4 Tl = (limbT * boneP).translation().xyz1();
+		// 		Vector4 Tt = (trackT * boneP).translation().xyz1();
 
-	//			m_limbs[i]->addForceAt(
-	//				Tl,
-	//				Fl * tension,
-	//				false
-	//			);
-	//		}
+		// 		Vector4 Fl = Tt - Tl;
+		// 		Vector4 Vl = m_limbs[i]->getVelocityAt(Tl, false);
 
-	//		if (abs(dot3(limbT.axisX(), trackT.axisX())) < 1.0f - FUZZY_EPSILON)
-	//		{
-	//			Vector4 vR = cross(limbT.axisX(), trackT.axisX());
-	//			Scalar lnR = vR.length();
-	//			if (lnR > FUZZY_EPSILON)
-	//			{
-	//				Scalar m = Scalar(1.0f) - abs(dot3(trackT.axisX(), limbT.axisX()));
-	//				m_limbs[i]->addTorque((m * vR * m_trackAngularTension * Scalar(deltaTime)) / lnR, false);
-	//			}
-	//		}
-	//	}
+		// 		Scalar damping = Scalar(1.0f) - dot3(Fl, Vl);
+		// 		Scalar tension = min(m_trackLinearTension * damping * Scalar(deltaTime), c_maxTension);
 
-	//	outPoseTransforms[i] = worldTransformInv * m_limbs[i]->getTransform() * Transform(halfBoneN);
-	//}
+		// 		m_limbs[i]->addForceAt(
+		// 			Tl,
+		// 			Fl * tension,
+		// 			false
+		// 		);
+		// 	}
 
-	//m_worldTransform = worldTransform;
+		// 	if (abs(dot3(limbT.axisX(), trackT.axisX())) < 1.0f - FUZZY_EPSILON)
+		// 	{
+		// 		Vector4 vR = cross(limbT.axisX(), trackT.axisX());
+		// 		Scalar lnR = vR.length();
+		// 		if (lnR > FUZZY_EPSILON)
+		// 		{
+		// 			Scalar m = Scalar(1.0f) - abs(dot3(trackT.axisX(), limbT.axisX()));
+		// 			m_limbs[i]->addTorque((m * vR * m_trackAngularTension * Scalar(deltaTime)) / lnR, false);
+		// 		}
+		// 	}
+		// }
 
-	//outUpdateController = true;
+		outPoseTransforms[i] = worldTransformInv * m_limbs[i]->getTransform() * m_deltaTransforms[i];
+	}
+
+	m_worldTransform = worldTransform;
+
+	outUpdateController = true;
 	return true;
 }
 
@@ -379,21 +336,10 @@ void RagDollPoseController::setEnable(bool enable)
 	if (enable == m_enable)
 		return;
 
-	if (enable)
+	for (auto limb : m_limbs)
 	{
-		for (RefArray< physics::Body >::iterator i = m_limbs.begin(); i != m_limbs.end(); ++i)
-		{
-			if (*i)
-				(*i)->setEnable(true);
-		}
-	}
-	else
-	{
-		for (RefArray< physics::Body >::iterator i = m_limbs.begin(); i != m_limbs.end(); ++i)
-		{
-			if (*i)
-				(*i)->setEnable(false);
-		}
+		if (limb)
+			limb->setEnable(enable);
 	}
 
 	m_enable = enable;

@@ -1,6 +1,5 @@
 #pragma once
 
-#include <vector>
 #include "Animation/Pose.h"
 #include "Core/Containers/AlignedVector.h"
 #include "Core/Thread/Job.h"
@@ -50,8 +49,8 @@ public:
 		const resource::Proxy< mesh::SkinnedMesh >& mesh,
 		const resource::Proxy< Skeleton >& skeleton,
 		IPoseController* poseController,
-		const std::vector< int32_t >& jointRemap,
-		const std::vector< Binding >& bindings,
+		const AlignedVector< int32_t >& jointRemap,
+		const AlignedVector< Binding >& bindings,
 		bool normalizePose,
 		bool normalizeTransform,
 		bool screenSpaceCulling
@@ -100,8 +99,8 @@ private:
 	resource::Proxy< mesh::SkinnedMesh > m_mesh;
 	resource::Proxy< Skeleton > m_skeleton;
 	Ref< IPoseController > m_poseController;
-	std::vector< int32_t > m_jointRemap;
-	std::vector< Binding > m_bindings;
+	AlignedVector< int32_t > m_jointRemap;
+	AlignedVector< Binding > m_bindings;
 	bool m_normalizePose;
 	bool m_normalizeTransform;
 	AlignedVector< Transform > m_jointTransforms;

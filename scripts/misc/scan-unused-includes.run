@@ -1,8 +1,8 @@
 import(traktor)
 import(traktor.run)
 
-local BASE = "$(TRAKTOR_HOME)/code/Spark"
-local BUILDDIR = "$(TRAKTOR_HOME)/build/linux/Traktor.Spark"
+local BASE = "$(TRAKTOR_HOME)/code/Scene/Editor"
+local BUILDDIR = "$(TRAKTOR_HOME)/build/linux/Traktor.Scene.Editor"
 
 local function compile(path, config)
     local rel = FileSystem.getInstance():getRelativePath(

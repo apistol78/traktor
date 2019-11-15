@@ -82,12 +82,14 @@ NumericPropertyItem::Representation findRepresentation(const MemberType& m)
 	{
 		if (unit->getUnit() == AuMetres)
 			return unit->getPerSecond() ? NumericPropertyItem::RpMetresPerSecond : NumericPropertyItem::RpMetres;
-		else if (unit->getUnit() == AuDegrees)
+		else if (unit->getUnit() == AuRadians)
 			return unit->getPerSecond() ? NumericPropertyItem::RpAnglesPerSecond : NumericPropertyItem::RpAngle;
 		else if (unit->getUnit() == AuDecibel)
 			return NumericPropertyItem::RpDecibel;
 		else if (unit->getUnit() == AuKilograms)
 			return NumericPropertyItem::RpKilograms;
+		else if (unit->getUnit() == AuPercent)
+			return NumericPropertyItem::RpPercent;
 	}
 	return NumericPropertyItem::RpNormal;
 }

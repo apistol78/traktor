@@ -1,6 +1,7 @@
 #include <algorithm>
 #include <sstream>
 #include "Core/Math/Const.h"
+#include "Core/Misc/SafeDestroy.h"
 #include "Core/Misc/String.h"
 #include "Ui/Application.h"
 #include "Ui/Clipboard.h"
@@ -18,7 +19,7 @@ namespace traktor
 
 double trunc(double value)
 {
-	return double(long(value));
+	return (double)((long)value);
 }
 
 		}
@@ -83,7 +84,7 @@ void NumericPropertyItem::createInPlaceControls(PropertyList* parent)
 		parent,
 		L"",
 		WsWantAllInput,
-		m_hex ? 0 : new NumericEditValidator(
+		m_hex ? nullptr : new NumericEditValidator(
 			m_floatPoint,
 			m_limitMin,
 			m_limitMax
@@ -96,11 +97,7 @@ void NumericPropertyItem::createInPlaceControls(PropertyList* parent)
 
 void NumericPropertyItem::destroyInPlaceControls()
 {
-	if (m_editor)
-	{
-		m_editor->destroy();
-		m_editor = 0;
-	}
+	safeDestroy(m_editor);
 }
 
 void NumericPropertyItem::resizeInPlaceControls(const Rect& rc, std::vector< WidgetRect >& outChildRects)
@@ -125,6 +122,8 @@ void NumericPropertyItem::mouseButtonDown(MouseButtonDownEvent* event)
 		{
 			if (m_representation == RpAngle)
 				ss << rad2deg(value);
+			else if (m_representation == RpPercent)
+				ss << (value * 100.0f);
 			else
 				ss << value;
 		}
@@ -172,7 +171,7 @@ void NumericPropertyItem::paintValue(Canvas& canvas, const Rect& rc)
 	else
 	{
 		if (m_representation == RpAngle)
-			ss << rad2deg(value) << L"\xb0";
+			ss << rad2deg(value) << L" \xb0";
 		else if (m_representation == RpAnglesPerSecond)
 			ss << rad2deg(value) << L" \xb0/s";
 		else if (m_representation == RpMetres)
@@ -181,6 +180,8 @@ void NumericPropertyItem::paintValue(Canvas& canvas, const Rect& rc)
 			ss << value << L" m/s";
 		else if (m_representation == RpKilograms)
 			ss << value << L" kg";
+		else if (m_representation == RpPercent)
+			ss << (value * 100.0f) << L" %";
 		else
 			ss << value;
 	}
@@ -256,6 +257,8 @@ void NumericPropertyItem::eventEditFocus(FocusEvent* event)
 			ss >> m_value;
 			if (m_representation == RpAngle || m_representation == RpAnglesPerSecond)
 				m_value = deg2rad(m_value);
+			else if (m_representation == RpPercent)
+				m_value = m_value / 100.0f;
 		}
 
 		m_editor->setVisible(false);
@@ -279,8 +282,10 @@ void NumericPropertyItem::eventEditKeyDownEvent(KeyDownEvent* event)
 		else
 		{
 			ss >> m_value;
-			if (m_representation == RpDecibel)
+			if (m_representation == RpAngle || m_representation == RpAnglesPerSecond)
 				m_value = deg2rad(m_value);
+			else if (m_representation == RpPercent)
+				m_value = m_value / 100.0f;
 		}
 
 		m_editor->setVisible(false);

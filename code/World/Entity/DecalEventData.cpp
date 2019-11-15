@@ -1,4 +1,5 @@
 #include "Core/Serialization/AttributeRange.h"
+#include "Core/Serialization/AttributeUnit.h"
 #include "Render/Shader.h"
 #include "Resource/Member.h"
 #include "World/Entity/DecalEventData.h"
@@ -20,10 +21,10 @@ DecalEventData::DecalEventData()
 
 void DecalEventData::serialize(ISerializer& s)
 {
-	s >> Member< float >(L"size", m_size, AttributeRange(0.0f));
-	s >> Member< float >(L"thickness", m_thickness, AttributeRange(0.0f));
-	s >> Member< float >(L"alpha", m_alpha, AttributeRange(0.0f));
-	s >> Member< float >(L"cullDistance", m_cullDistance, AttributeRange(0.0f));
+	s >> Member< float >(L"size", m_size, AttributeRange(0.0f) | AttributeUnit(AuMetres));
+	s >> Member< float >(L"thickness", m_thickness, AttributeRange(0.0f) | AttributeUnit(AuMetres));
+	s >> Member< float >(L"alpha", m_alpha, AttributeRange(0.0f) | AttributeUnit(AuPercent));
+	s >> Member< float >(L"cullDistance", m_cullDistance, AttributeRange(0.0f) | AttributeUnit(AuMetres));
 	s >> resource::Member< render::Shader >(L"shader", m_shader);
 }
 

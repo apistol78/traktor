@@ -36,8 +36,8 @@ AnimatedMeshComponent::AnimatedMeshComponent(
 	const resource::Proxy< mesh::SkinnedMesh >& mesh,
 	const resource::Proxy< Skeleton >& skeleton,
 	IPoseController* poseController,
-	const std::vector< int32_t >& jointRemap,
-	const std::vector< Binding >& bindings,
+	const AlignedVector< int32_t >& jointRemap,
+	const AlignedVector< Binding >& bindings,
 	bool normalizePose,
 	bool normalizeTransform,
 	bool screenSpaceCulling
@@ -323,11 +323,8 @@ bool AnimatedMeshComponent::setPoseTransform(render::handle_t jointName, const T
 	{
 		Transform delta = transform * m_jointTransforms[index].inverse();
 
-		std::vector< uint32_t > children;
-		children.reserve(m_jointTransforms.size());
-
+		AlignedVector< uint32_t > children;
 		m_skeleton->findChildren(index, children);
-
 		for (auto child : children)
 			m_poseTransforms[child] = delta * m_jointTransforms[child];
 	}

@@ -20,10 +20,9 @@ Ref< IPoseController > IKPoseControllerData::createInstance(
 	physics::PhysicsManager* physicsManager,
 	const Skeleton* skeleton,
 	const Transform& worldTransform
-)
+) const
 {
 	Ref< IPoseController > neutralPoseController;
-
 	if (m_neutralPoseController)
 	{
 		neutralPoseController = m_neutralPoseController->createInstance(
@@ -33,16 +32,14 @@ Ref< IPoseController > IKPoseControllerData::createInstance(
 			worldTransform
 		);
 		if (!neutralPoseController)
-			return 0;
+			return nullptr;
 	}
-
-	Ref< IKPoseController > poseController = new IKPoseController(physicsManager, neutralPoseController, m_solverIterations);
-	return poseController;
+	return new IKPoseController(neutralPoseController, m_solverIterations);
 }
 
 void IKPoseControllerData::serialize(ISerializer& s)
 {
-	s >> MemberRef< IPoseControllerData >(L"neutralPoseController", m_neutralPoseController);
+	s >> MemberRef< const IPoseControllerData >(L"neutralPoseController", m_neutralPoseController);
 	s >> Member< uint32_t >(L"solverIterations", m_solverIterations);
 }
 

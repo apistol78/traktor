@@ -23,7 +23,8 @@ enum UnitType
 	AuLumens,
 	AuDecibel,
 	AuNewton,
-	AuKilograms
+	AuKilograms,
+	AuPercent
 };
 
 /*! \brief Member numeric range attribute.

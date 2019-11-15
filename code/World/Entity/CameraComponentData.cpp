@@ -69,7 +69,7 @@ void CameraComponentData::serialize(ISerializer& s)
 	};
 
 	s >> MemberEnum< CameraType >(L"type", m_type, kCameraType);
-	s >> Member< float >(L"fov", m_fov, AttributeUnit(AuDegrees));
+	s >> Member< float >(L"fov", m_fov, AttributeUnit(AuRadians));
 	s >> Member< float >(L"width", m_width);
 	s >> Member< float >(L"height", m_height);
 }

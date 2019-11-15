@@ -150,7 +150,7 @@ void AnimationPreviewControl::updatePreview()
 	if (!m_mesh)
 		return;
 
-	std::vector< int32_t > jointRemap;
+	AlignedVector< int32_t > jointRemap;
 	if (m_skeleton)
 	{
 		jointRemap.resize(m_skeleton->getJointCount());
@@ -172,7 +172,7 @@ void AnimationPreviewControl::updatePreview()
 		}
 	}
 
-	std::vector< AnimatedMeshComponent::Binding > noBindings;
+	AlignedVector< AnimatedMeshComponent::Binding > noBindings;
 
 	Ref< AnimatedMeshComponent > meshComponent = new AnimatedMeshComponent(
 		Transform::identity(),

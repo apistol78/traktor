@@ -12,18 +12,10 @@
 
 namespace traktor
 {
-	namespace physics
-	{
-
-class PhysicsManager;
-class Body;
-
-	}
-
 	namespace animation
 	{
 
-/*! \brief IK pose evaluation controller.
+/*! IK pose evaluation controller.
  * \ingroup Animation
  */
 class T_DLLCLASS IKPoseController : public IPoseController
@@ -31,11 +23,9 @@ class T_DLLCLASS IKPoseController : public IPoseController
 	T_RTTI_CLASS;
 
 public:
-	IKPoseController(physics::PhysicsManager* physicsManager, IPoseController* poseController, uint32_t solverIterations);
+	IKPoseController(IPoseController* poseController, uint32_t solverIterations);
 
 	virtual ~IKPoseController();
-
-	void setIgnoreBody(physics::Body* ignoreBody);
 
 	virtual void destroy() override final;
 
@@ -55,13 +45,11 @@ public:
 		AlignedVector< Velocity >& outVelocities
 	) override final;
 
-	inline Ref< IPoseController > getNeutralPoseController() const { return m_poseController; }
+	IPoseController* getNeutralPoseController() const { return m_poseController; }
 
 private:
-	Ref< physics::PhysicsManager > m_physicsManager;
 	Ref< IPoseController > m_poseController;
 	uint32_t m_solverIterations;
-	Ref< physics::Body > m_ignoreBody;
 };
 
 	}

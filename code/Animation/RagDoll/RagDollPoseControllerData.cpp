@@ -1,22 +1,31 @@
 #include "Animation/SkeletonUtils.h"
 #include "Animation/RagDoll/RagDollPoseController.h"
 #include "Animation/RagDoll/RagDollPoseControllerData.h"
+#include "Core/Serialization/AttributeUnit.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberRef.h"
+#include "Core/Serialization/MemberStl.h"
+#include "Physics/CollisionSpecification.h"
+#include "Resource/Member.h"
 
 namespace traktor
 {
 	namespace animation
 	{
+		namespace
+		{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.animation.RagDollPoseControllerData", 4, RagDollPoseControllerData, IPoseControllerData)
+const resource::Id< physics::CollisionSpecification > c_defaultCollision(Guid(L"{F9805131-50C2-504C-9421-13C99E44616C}"));
+const resource::Id< physics::CollisionSpecification > c_interactableCollision(Guid(L"{09CB1141-1924-3349-934A-CEB9728D7A61}"));
+
+		}
+
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.animation.RagDollPoseControllerData", 5, RagDollPoseControllerData, IPoseControllerData)
 
 RagDollPoseControllerData::RagDollPoseControllerData()
-:	m_collisionGroup(1)
-,	m_collisionMask(~0U)
-,	m_autoDeactivate(true)
+:	m_autoDeactivate(true)
 ,	m_enabled(true)
-,	m_fixateBones(false)
+,	m_fixateJoints(false)
 ,	m_limbMass(1.0f)
 ,	m_linearDamping(0.1f)
 ,	m_angularDamping(0.1f)
@@ -26,6 +35,9 @@ RagDollPoseControllerData::RagDollPoseControllerData()
 ,	m_trackAngularTension(0.0f)
 ,	m_trackDuration(0.0f)
 {
+	m_collisionGroup.insert(c_defaultCollision);
+	m_collisionMask.insert(c_defaultCollision);
+	m_collisionMask.insert(c_interactableCollision);
 }
 
 Ref< IPoseController > RagDollPoseControllerData::createInstance(
@@ -33,7 +45,7 @@ Ref< IPoseController > RagDollPoseControllerData::createInstance(
 	physics::PhysicsManager* physicsManager,
 	const Skeleton* skeleton,
 	const Transform& worldTransform
-)
+) const
 {
 	Ref< IPoseController > trackPoseController;
 
@@ -52,12 +64,12 @@ Ref< IPoseController > RagDollPoseControllerData::createInstance(
 			worldTransform
 		);
 		if (!trackPoseController)
-			return 0;
+			return nullptr;
 
 		trackPoseController->estimateVelocities(skeleton, velocities);
 	}
 
-	for (uint32_t i = uint32_t(velocities.size()); i < uint32_t(jointTransforms.size()); ++i)
+	for (uint32_t i = (uint32_t)velocities.size(); i < (uint32_t)jointTransforms.size(); ++i)
 	{
 		IPoseController::Velocity velocity;
 		velocity.linear =
@@ -67,58 +79,38 @@ Ref< IPoseController > RagDollPoseControllerData::createInstance(
 
 	Ref< RagDollPoseController > poseController = new RagDollPoseController();
 	if (!poseController->create(
+		resourceManager,
 		physicsManager,
+		this,
 		skeleton,
 		worldTransform,
 		jointTransforms,
 		velocities,
-		m_collisionGroup,
-		m_collisionMask,
-		m_autoDeactivate,
-		m_enabled,
-		m_fixateBones,
-		m_limbMass,
-		m_linearDamping,
-		m_angularDamping,
-		m_linearThreshold,
-		m_angularThreshold,
-		trackPoseController,
-		m_trackLinearTension,
-		m_trackAngularTension,
-		m_trackDuration
+		trackPoseController
 	))
-		return 0;
+		return nullptr;
 
 	return poseController;
 }
 
 void RagDollPoseControllerData::serialize(ISerializer& s)
 {
-	if (s.getVersion() >= 1)
-	{
-		s >> Member< uint32_t >(L"collisionGroup", m_collisionGroup);
-		s >> Member< bool >(L"autoDeactivate", m_autoDeactivate);
-		s >> Member< bool >(L"enabled", m_enabled);
-		s >> Member< bool >(L"fixateBones", m_fixateBones);
-		s >> Member< float >(L"limbMass", m_limbMass);
-		s >> Member< float >(L"linearDamping", m_linearDamping);
-		s >> Member< float >(L"angularDamping", m_angularDamping);
-	}
-	if (s.getVersion() >= 4)
-	{
-		s >> Member< float >(L"linearThreshold", m_linearThreshold);
-		s >> Member< float >(L"angularThreshold", m_angularThreshold);
-	}
-	if (s.getVersion() >= 2)
-	{
-		s >> MemberRef< IPoseControllerData >(L"trackPoseController", m_trackPoseController);
-		s >> Member< float >(L"trackLinearTension", m_trackLinearTension);
-		s >> Member< float >(L"trackAngularTension", m_trackAngularTension);
-	}
-	if (s.getVersion() >= 3)
-	{
-		s >> Member< float >(L"trackDuration", m_trackDuration);
-	}
+	T_FATAL_ASSERT(s.getVersion< RagDollPoseControllerData >() >= 5);
+
+	s >> MemberStlSet< resource::Id< physics::CollisionSpecification >, resource::Member< physics::CollisionSpecification > >(L"collisionGroup", m_collisionGroup);
+	s >> MemberStlSet< resource::Id< physics::CollisionSpecification >, resource::Member< physics::CollisionSpecification > >(L"collisionMask", m_collisionMask);
+	s >> Member< bool >(L"autoDeactivate", m_autoDeactivate);
+	s >> Member< bool >(L"enabled", m_enabled);
+	s >> Member< bool >(L"fixateJoints", m_fixateJoints);
+	s >> Member< float >(L"limbMass", m_limbMass, AttributeUnit(AuKilograms));
+	s >> Member< float >(L"linearDamping", m_linearDamping, AttributeUnit(AuPercent));
+	s >> Member< float >(L"angularDamping", m_angularDamping, AttributeUnit(AuPercent));
+	s >> Member< float >(L"linearThreshold", m_linearThreshold, AttributeUnit(AuMetres, true));
+	s >> Member< float >(L"angularThreshold", m_angularThreshold, AttributeUnit(AuMetres, true));
+	s >> MemberRef< const IPoseControllerData >(L"trackPoseController", m_trackPoseController);
+	s >> Member< float >(L"trackLinearTension", m_trackLinearTension);
+	s >> Member< float >(L"trackAngularTension", m_trackAngularTension);
+	s >> Member< float >(L"trackDuration", m_trackDuration, AttributeUnit(AuSeconds));
 }
 
 	}

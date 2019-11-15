@@ -1,6 +1,8 @@
 #pragma once
 
+#include <set>
 #include "Animation/IPoseControllerData.h"
+#include "Resource/Id.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -12,10 +14,17 @@
 
 namespace traktor
 {
+	namespace physics
+	{
+
+class CollisionSpecification;
+
+	}
+
 	namespace animation
 	{
 
-/*! \brief Pose evaluation controller data.
+/*! Ragdoll pose evaluation controller data.
  * \ingroup Animation
  */
 class T_DLLCLASS RagDollPoseControllerData : public IPoseControllerData
@@ -30,24 +39,26 @@ public:
 		physics::PhysicsManager* physicsManager,
 		const Skeleton* skeleton,
 		const Transform& worldTransform
-	) override final;
+	) const override final;
 
 	virtual void serialize(ISerializer& s) override final;
 
-	IPoseControllerData* getTrackPoseController() const { return m_trackPoseController; }
+	const IPoseControllerData* getTrackPoseController() const { return m_trackPoseController; }
 
 private:
-	uint32_t m_collisionGroup;
-	uint32_t m_collisionMask;
+	friend class RagDollPoseController;
+
+	std::set< resource::Id< physics::CollisionSpecification > > m_collisionGroup;
+	std::set< resource::Id< physics::CollisionSpecification > > m_collisionMask;
 	bool m_autoDeactivate;
 	bool m_enabled;
-	bool m_fixateBones;
+	bool m_fixateJoints;
 	float m_limbMass;
 	float m_linearDamping;
 	float m_angularDamping;
 	float m_linearThreshold;
 	float m_angularThreshold;
-	Ref< IPoseControllerData > m_trackPoseController;
+	Ref< const IPoseControllerData > m_trackPoseController;
 	float m_trackLinearTension;
 	float m_trackAngularTension;
 	float m_trackDuration;
