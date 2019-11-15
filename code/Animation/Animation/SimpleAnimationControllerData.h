@@ -18,7 +18,7 @@ namespace traktor
 
 class Animation;
 
-/*! \brief
+/*! Simple animation pose controller data.
  * \ingroup Animation
  */
 class T_DLLCLASS SimpleAnimationControllerData : public IPoseControllerData
@@ -33,7 +33,7 @@ public:
 		physics::PhysicsManager* physicsManager,
 		const Skeleton* skeleton,
 		const Transform& worldTransform
-	) override final;
+	) const override final;
 
 	virtual void serialize(ISerializer& s) override final;
 

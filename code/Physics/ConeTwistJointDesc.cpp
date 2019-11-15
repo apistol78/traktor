@@ -3,6 +3,7 @@
 #include "Core/Serialization/AttributeDirection.h"
 #include "Core/Serialization/AttributePoint.h"
 #include "Core/Serialization/AttributeRange.h"
+#include "Core/Serialization/AttributeUnit.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
 
@@ -54,9 +55,9 @@ void ConeTwistJointDesc::serialize(ISerializer& s)
 	s >> Member< Vector4 >(L"anchor", m_anchor, AttributePoint());
 	s >> Member< Vector4 >(L"coneAxis", m_coneAxis, AttributeDirection());
 	s >> Member< Vector4 >(L"twistAxis", m_twistAxis, AttributeDirection());
-	s >> Member< float >(L"coneAngle1", m_coneAngle1, AttributeRange(-PI, PI));
-	s >> Member< float >(L"coneAngle2", m_coneAngle2, AttributeRange(-PI, PI));
-	s >> Member< float >(L"twistAngle", m_twistAngle, AttributeRange(-PI, PI));
+	s >> Member< float >(L"coneAngle1", m_coneAngle1, AttributeRange(-PI, PI) | AttributeUnit(AuRadians));
+	s >> Member< float >(L"coneAngle2", m_coneAngle2, AttributeRange(-PI, PI) | AttributeUnit(AuRadians));
+	s >> Member< float >(L"twistAngle", m_twistAngle, AttributeRange(-PI, PI) | AttributeUnit(AuRadians));
 }
 
 	}

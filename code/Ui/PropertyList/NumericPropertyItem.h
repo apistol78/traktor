@@ -34,7 +34,8 @@ public:
 		RpAnglesPerSecond,
 		RpMetres,
 		RpMetresPerSecond,
-		RpKilograms
+		RpKilograms,
+		RpPercent
 	};
 
 	NumericPropertyItem(const std::wstring& text, double value, double limitMin, double limitMax, bool floatPoint, bool hex, Representation representation);

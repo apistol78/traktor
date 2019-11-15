@@ -134,19 +134,16 @@ void AnimationClassFactory::createClasses(IRuntimeClassRegistrar* registrar) con
 	registrar->registerClass(classAnimatedMeshComponent);
 
 	auto classPoseController = new AutoRuntimeClass< IPoseController >();
-	classPoseController->addMethod("setTransform", &IPoseController::setTransform);
 	registrar->registerClass(classPoseController);
 
 	auto classIKPoseController = new AutoRuntimeClass< IKPoseController >();
-	classIKPoseController->addConstructor< physics::PhysicsManager*, IPoseController*, uint32_t >();
-	classIKPoseController->addMethod("setIgnoreBody", &IKPoseController::setIgnoreBody);
-	classIKPoseController->addMethod("getNeutralPoseController", &IKPoseController::getNeutralPoseController);
+	classIKPoseController->addConstructor< IPoseController*, uint32_t >();
+	classIKPoseController->addProperty("neutralPoseController", &IKPoseController::getNeutralPoseController);
 	registrar->registerClass(classIKPoseController);
 
 	auto classRagDollPoseController = new AutoRuntimeClass< RagDollPoseController >();
-	classRagDollPoseController->addMethod("setEnable", &RagDollPoseController::setEnable);
-	classRagDollPoseController->addMethod("isEnable", &RagDollPoseController::isEnable);
-	classRagDollPoseController->addMethod("getLimbs", &RagDollPoseController::getLimbs);
+	classRagDollPoseController->addProperty("enable", &RagDollPoseController::setEnable, &RagDollPoseController::isEnable);
+	classRagDollPoseController->addProperty("limbs", &RagDollPoseController::getLimbs);
 	registrar->registerClass(classRagDollPoseController);
 
 	auto classStatePoseController = new AutoRuntimeClass< StatePoseController >();

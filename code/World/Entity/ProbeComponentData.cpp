@@ -1,3 +1,4 @@
+#include "Core/Serialization/AttributeUnit.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberAabb.h"
 #include "Render/ICubeTexture.h"
@@ -21,7 +22,7 @@ ProbeComponentData::ProbeComponentData()
 void ProbeComponentData::serialize(ISerializer& s)
 {
 	s >> resource::Member< render::ICubeTexture >(L"texture", m_texture);
-	s >> Member< float >(L"intensity", m_intensity);
+	s >> Member< float >(L"intensity", m_intensity, AttributeUnit(AuPercent));
 	s >> Member< bool >(L"local", m_local);
 	s >> MemberAabb3(L"volume", m_volume);
 }

@@ -19,7 +19,7 @@ namespace traktor
 
 class StateGraph;
 
-/*! \brief Animation evaluation controller data.
+/*! Animation evaluation controller data.
  * \ingroup Animation
  */
 class T_DLLCLASS StatePoseControllerData : public IPoseControllerData
@@ -34,7 +34,7 @@ public:
 		physics::PhysicsManager* physicsManager,
 		const Skeleton* skeleton,
 		const Transform& worldTransform
-	) override final;
+	) const override final;
 
 	virtual void serialize(ISerializer& s) override final;
 

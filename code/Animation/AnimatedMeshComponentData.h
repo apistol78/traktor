@@ -1,7 +1,7 @@
 #pragma once
 
-#include <vector>
 #include "Core/Ref.h"
+#include "Core/Containers/AlignedVector.h"
 #include "Resource/Id.h"
 #include "World/IEntityComponentData.h"
 
@@ -62,7 +62,7 @@ public:
 	struct Binding
 	{
 		std::wstring jointName;
-		Ref< world::EntityData > entityData;
+		Ref< const world::EntityData > entityData;
 
 		void serialize(ISerializer& s);
 	};
@@ -77,20 +77,19 @@ public:
 
 	const resource::Id< Skeleton >& getSkeleton() const { return m_skeleton; }
 
-	IPoseControllerData* getPoseControllerData() const { return m_poseController; }
+	const IPoseControllerData* getPoseControllerData() const { return m_poseController; }
 
-	const std::vector< Binding >& getBindings() const { return m_bindings; }
+	const AlignedVector< Binding >& getBindings() const { return m_bindings; }
 
 private:
 	resource::Id< mesh::SkinnedMesh > m_mesh;
 	resource::Id< Skeleton > m_skeleton;
-	Ref< IPoseControllerData > m_poseController;
+	Ref< const IPoseControllerData > m_poseController;
 	bool m_normalizePose;
 	bool m_normalizeTransform;
 	bool m_screenSpaceCulling;
-	std::vector< Binding > m_bindings;
+	AlignedVector< Binding > m_bindings;
 };
 
 	}
 }
-

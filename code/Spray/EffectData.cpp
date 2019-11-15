@@ -1,3 +1,4 @@
+#include "Core/Serialization/AttributeUnit.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberRefArray.h"
 #include "Spray/Effect.h"
@@ -58,9 +59,9 @@ void EffectData::addLayer(EffectLayerData* layer)
 
 void EffectData::serialize(ISerializer& s)
 {
-	s >> Member< float >(L"duration", m_duration);
-	s >> Member< float >(L"loopStart", m_loopStart);
-	s >> Member< float >(L"loopEnd", m_loopEnd);
+	s >> Member< float >(L"duration", m_duration, AttributeUnit(AuSeconds));
+	s >> Member< float >(L"loopStart", m_loopStart, AttributeUnit(AuSeconds));
+	s >> Member< float >(L"loopEnd", m_loopEnd, AttributeUnit(AuSeconds));
 	s >> MemberRefArray< EffectLayerData >(L"layers", m_layers);
 }
 

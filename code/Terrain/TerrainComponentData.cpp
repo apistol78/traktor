@@ -1,3 +1,4 @@
+#include "Core/Serialization/AttributeUnit.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberRefArray.h"
 #include "Resource/Member.h"
@@ -25,10 +26,10 @@ TerrainComponentData::TerrainComponentData()
 void TerrainComponentData::serialize(ISerializer& s)
 {
 	s >> resource::Member< Terrain >(L"terrain", m_terrain);
-	s >> Member< float >(L"patchLodDistance", m_patchLodDistance);
+	s >> Member< float >(L"patchLodDistance", m_patchLodDistance, AttributeUnit(AuMetres));
 	s >> Member< float >(L"patchLodBias", m_patchLodBias);
 	s >> Member< float >(L"patchLodExponent", m_patchLodExponent);
-	s >> Member< float >(L"surfaceLodDistance", m_surfaceLodDistance);
+	s >> Member< float >(L"surfaceLodDistance", m_surfaceLodDistance, AttributeUnit(AuMetres));
 	s >> Member< float >(L"surfaceLodBias", m_surfaceLodBias);
 	s >> Member< float >(L"surfaceLodExponent", m_surfaceLodExponent);
 	s >> MemberRefArray< ITerrainLayerData >(L"layers", m_layers);

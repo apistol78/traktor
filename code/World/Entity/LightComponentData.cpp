@@ -89,9 +89,9 @@ void LightComponentData::serialize(ISerializer& s)
 
 	s >> Member< bool >(L"castShadow", m_castShadow);
 	s >> Member< float >(L"range", m_range, AttributeUnit(AuMetres));
-	s >> Member< float >(L"radius", m_radius, AttributeUnit(AuDegrees));
-	s >> Member< float >(L"flickerAmount", m_flickerAmount, AttributeRange(0.0f, 1.0f));
-	s >> Member< float >(L"flickerFilter", m_flickerFilter, AttributeRange(0.0f, 1.0f));
+	s >> Member< float >(L"radius", m_radius, AttributeUnit(AuRadians));
+	s >> Member< float >(L"flickerAmount", m_flickerAmount, AttributeRange(0.0f, 1.0f) | AttributeUnit(AuPercent));
+	s >> Member< float >(L"flickerFilter", m_flickerFilter, AttributeRange(0.0f, 1.0f) | AttributeUnit(AuPercent));
 
 	if (s.getVersion< LightComponentData >() >= 8 && s.getVersion< LightComponentData >() < 9)
 	{

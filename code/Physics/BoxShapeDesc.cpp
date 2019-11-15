@@ -1,6 +1,7 @@
 #include "Physics/BoxShapeDesc.h"
 #include "Core/Serialization/AttributeDirection.h"
 #include "Core/Serialization/AttributeRange.h"
+#include "Core/Serialization/AttributeUnit.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
 
@@ -42,7 +43,7 @@ void BoxShapeDesc::serialize(ISerializer& s)
 	ShapeDesc::serialize(s);
 	s >> Member< Vector4 >(L"extent", m_extent, AttributeDirection());
 	if (s.getVersion() >= 6)
-		s >> Member< float >(L"margin", m_margin, AttributeRange(0.0f));
+		s >> Member< float >(L"margin", m_margin, AttributeRange(0.0f) | AttributeUnit(AuMetres));
 }
 
 	}

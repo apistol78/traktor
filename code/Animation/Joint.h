@@ -18,7 +18,7 @@ namespace traktor
 	namespace animation
 	{
 
-/*! \brief Skeleton bone.
+/*! Skeleton bone.
  * \ingroup Animation
  */
 class T_DLLCLASS Joint : public ISerializable
@@ -28,31 +28,31 @@ class T_DLLCLASS Joint : public ISerializable
 public:
 	Joint();
 
-	/*! \brief Set parent joint index.
+	/*! Set parent joint index.
 	 *
 	 * \param parent New parent index.
 	 */
 	void setParent(int32_t parent) { m_parent = parent; }
 
-	/*! \brief Get parent joint index.
+	/*! Get parent joint index.
 	 *
 	 * \return Parent index.
 	 */
 	int32_t getParent() const { return m_parent; }
 
-	/*! \brief Set joint name.
+	/*! Set joint name.
 	 *
 	 * \param name New joint name.
 	 */
 	void setName(const std::wstring& name) { m_name = name; }
 
-	/*! \brief Get joint name.
+	/*! Get joint name.
 	 *
 	 * \return Name of joint.
 	 */
 	const std::wstring& getName() const { return m_name; }
 
-	/*! \brief Set joint transform.
+	/*! Set joint transform.
 	 *
 	 * Joint transform is relative to parent space.
 	 *
@@ -60,7 +60,7 @@ public:
 	 */
 	void setTransform(const Transform& transform) { m_transform = transform; }
 
-	/*! \brief Get joint transform.
+	/*! Get joint transform.
 	 *
 	 * Joint transform is relative to parent space.
 	 *
@@ -68,13 +68,13 @@ public:
 	 */
 	const Transform& getTransform() const { return m_transform; }
 
-	/*! \brief Set joint radius.
+	/*! Set joint radius.
 	 *
 	 * \param radius New joint radius.
 	 */
 	void setRadius(float radius) { m_radius = radius; }
 
-	/*! \brief Get joint radius.
+	/*! Get joint radius.
 	 *
 	 * \return Joint radius.
 	 */

@@ -1,3 +1,4 @@
+#include "Core/Serialization/AttributeUnit.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberRef.h"
 #include "Core/Serialization/MemberRefArray.h"
@@ -82,37 +83,22 @@ Ref< Emitter > EmitterData::createEmitter(resource::IResourceManager* resourceMa
 
 void EmitterData::serialize(ISerializer& s)
 {
+	T_FATAL_ASSERT (s.getVersion< EmitterData >() >= 7);
+
 	s >> MemberRef< SourceData >(L"source", m_source);
 	s >> MemberRefArray< ModifierData >(L"modifiers", m_modifiers);
 	s >> resource::Member< render::Shader >(L"shader", m_shader);
-
-	if (s.getVersion() >= 3)
-		s >> resource::Member< mesh::InstanceMesh >(L"mesh", m_mesh);
-
-	if (s.getVersion() >= 6)
-		s >> MemberRef< EffectData >(L"effect", m_effect);
-
-	s >> Member< float >(L"middleAge", m_middleAge);
-	s >> Member< float >(L"cullNearDistance", m_cullNearDistance);
-
-	if (s.getVersion() >= 5)
-		s >> Member< float >(L"cullMeshDistance", m_cullMeshDistance);
-
-	s >> Member< float >(L"fadeNearRange", m_fadeNearRange);
-
-	if (s.getVersion() >= 7)
-		s >> Member< float >(L"viewOffset", m_viewOffset);
-
-	s >> Member< float >(L"warmUp", m_warmUp);
-
-	if (s.getVersion() >= 1)
-		s >> Member< bool >(L"sort", m_sort);
-
-	if (s.getVersion() >= 2)
-		s >> Member< bool >(L"worldSpace", m_worldSpace);
-
-	if (s.getVersion() >= 4)
-		s >> Member< bool >(L"meshOrientationFromVelocity", m_meshOrientationFromVelocity);
+	s >> resource::Member< mesh::InstanceMesh >(L"mesh", m_mesh);
+	s >> MemberRef< EffectData >(L"effect", m_effect);
+	s >> Member< float >(L"middleAge", m_middleAge, AttributeUnit(AuSeconds));
+	s >> Member< float >(L"cullNearDistance", m_cullNearDistance, AttributeUnit(AuMetres));
+	s >> Member< float >(L"cullMeshDistance", m_cullMeshDistance);
+	s >> Member< float >(L"fadeNearRange", m_fadeNearRange, AttributeUnit(AuMetres));
+	s >> Member< float >(L"viewOffset", m_viewOffset, AttributeUnit(AuMetres));
+	s >> Member< float >(L"warmUp", m_warmUp, AttributeUnit(AuSeconds));
+	s >> Member< bool >(L"sort", m_sort);
+	s >> Member< bool >(L"worldSpace", m_worldSpace);
+	s >> Member< bool >(L"meshOrientationFromVelocity", m_meshOrientationFromVelocity);
 }
 
 	}

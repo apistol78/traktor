@@ -17,13 +17,13 @@ SimpleAnimationControllerData::SimpleAnimationControllerData()
 {
 }
 
-Ref< IPoseController > SimpleAnimationControllerData::createInstance(resource::IResourceManager* resourceManager, physics::PhysicsManager* physicsManager, const Skeleton* skeleton, const Transform& worldTransform)
+Ref< IPoseController > SimpleAnimationControllerData::createInstance(resource::IResourceManager* resourceManager, physics::PhysicsManager* physicsManager, const Skeleton* skeleton, const Transform& worldTransform) const
 {
 	resource::Proxy< Animation > animation;
 	if (resourceManager->bind(m_animation, animation))
 		return new SimpleAnimationController(animation, m_linearInterpolation);
 	else
-		return 0;
+		return nullptr;
 }
 
 void SimpleAnimationControllerData::serialize(ISerializer& s)

@@ -1,4 +1,3 @@
-#include <algorithm>
 #include "Animation/Animation/StateGraph.h"
 #include "Animation/Animation/StateNode.h"
 #include "Animation/Animation/Transition.h"
@@ -20,8 +19,7 @@ void StateGraph::addState(StateNode* state)
 
 void StateGraph::removeState(StateNode* state)
 {
-	RefArray< StateNode >::iterator i = std::find(m_states.begin(), m_states.end(), state);
-	m_states.erase(i);
+	m_states.remove(state);
 }
 
 const RefArray< StateNode >& StateGraph::getStates() const
@@ -36,8 +34,7 @@ void StateGraph::addTransition(Transition* transition)
 
 void StateGraph::removeTransition(Transition* transition)
 {
-	RefArray< Transition >::iterator i = std::find(m_transitions.begin(), m_transitions.end(), transition);
-	m_transitions.erase(i);
+	m_transitions.remove(transition);
 }
 
 const RefArray< Transition >& StateGraph::getTransitions() const
