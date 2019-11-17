@@ -219,6 +219,7 @@ bool ModelToolDialog::create(ui::Widget* parent, const std::wstring& fileName, f
 	m_skeletonTree = new ui::TreeView();
 	m_skeletonTree->create(tabPageSkeleton, ui::WsDoubleBuffer);
 	m_skeletonTree->addImage(new ui::StyleBitmap(L"Animation.Bones"), 2);
+	m_skeletonTree->addEventHandler< ui::SelectionChangeEvent >(this, &ModelToolDialog::eventSkeletonSelect);
 
 	// Statistic tab.
 	Ref< ui::TabPage > tabPageStatistics = new ui::TabPage();
@@ -1034,7 +1035,7 @@ void ModelToolDialog::eventRenderPaint(ui::PaintEvent* event)
 
 				for (uint32_t i = 0; i < joints.size(); ++i)
 				{
-					const auto colorRest = (i == weightJoint) ? Color4ub(80, 255, 80, 255) : Color4ub(120, 255, 120, 255);
+					const auto colorRest = (i == weightJoint) ? Color4ub(80, 80, 255, 255) : Color4ub(120, 255, 120, 255);
 
 					childJointIds.resize(0);
 					m_modelTris->findChildJoints(i, childJointIds);
@@ -1172,6 +1173,11 @@ void ModelToolDialog::eventRenderPaint(ui::PaintEvent* event)
 	m_renderView->present();
 
 	event->consume();
+}
+
+void ModelToolDialog::eventSkeletonSelect(ui::SelectionChangeEvent* event)
+{
+	m_renderWidget->update();
 }
 
 	}

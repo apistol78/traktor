@@ -17,6 +17,12 @@ namespace traktor
 {
 	namespace animation
 	{
+		namespace
+		{
+		
+uint32_t s_clusterId = 10000;
+
+		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.animation.RagDollPoseController", RagDollPoseController, IPoseController)
 
@@ -37,7 +43,7 @@ bool RagDollPoseController::create(
 	const RagDollPoseControllerData* data,
 	const Skeleton* skeleton,
 	const Transform& worldTransform,
-	const AlignedVector< Transform >& jointTransforms,
+	const AlignedVector< Transform >& jointTransformsImmutable,
 	const AlignedVector< Velocity >& velocities,
 	IPoseController* trackPoseController
 )
@@ -45,7 +51,7 @@ bool RagDollPoseController::create(
 	if (!physicsManager)
 		return false;
 
-	AlignedVector< Transform > limbTransforms = jointTransforms;
+	AlignedVector< Transform > jointTransforms = jointTransformsImmutable;
 
 	// Evaluate initial poses with tracking controller.
 	if (trackPoseController)
@@ -55,8 +61,8 @@ bool RagDollPoseController::create(
 			0.0f,
 			worldTransform,
 			skeleton,
+			jointTransformsImmutable,
 			jointTransforms,
-			limbTransforms,
 			updateController
 		);
 	}
@@ -71,12 +77,15 @@ bool RagDollPoseController::create(
 
 		const int32_t parent = joint->getParent();
 		if (parent < 0)
+		{
+			m_limbs.push_back(nullptr);
 			continue;
+		}
 
-		Vector4 start = limbTransforms[parent].translation();
-		Vector4 end = limbTransforms[i].translation();
+		Vector4 start = jointTransforms[parent].translation();
+		Vector4 end = jointTransforms[i].translation();
+
 		Scalar length = (end - start).length();
-
 		if (length < joint->getRadius() * 2.0f)
 		{
 			m_limbs.push_back(nullptr);
@@ -122,54 +131,69 @@ bool RagDollPoseController::create(
 			limb->setLinearVelocity(velocities[i].linear);
 			limb->setAngularVelocity(velocities[i].angular);
 		}
+		limb->setClusterId(s_clusterId);
 
 		m_limbs.push_back(limb);
-		m_deltaTransforms.push_back(limbTransform.inverse() * limbTransforms[i]);
+	}
+	T_FATAL_ASSERT(m_limbs.size() == jointCount);
+
+	// Associate limbs for roots.
+	m_deltaLimbs.resize(jointCount);
+	for (uint32_t i = 0; i < jointCount; ++i)
+	{
+		Joint* joint = skeleton->getJoint(i);
+		T_ASSERT(joint);
+
+		const int32_t parent = joint->getParent();
+		if (parent >= 0)
+		{
+			m_deltaLimbs[i] = m_limbs[i];
+			if (m_deltaLimbs[parent] == nullptr)
+				m_deltaLimbs[parent] = m_limbs[i];
+		}
 	}
 
-	// for (uint32_t i = 0; i < jointCount; ++i)
-	// {
-	// 	Joint* joint = skeleton->getJoint(i);
-	// 	T_ASSERT(joint);
+	// Calculate delta transforms.
+	m_deltaTransforms.resize(jointCount);
+	for (uint32_t i = 0; i < jointCount; ++i)
+	{
+		Transform limbTransform = worldTransform.inverse() * m_deltaLimbs[i]->getTransform();
+		m_deltaTransforms[i] = jointTransforms[i] * limbTransform.inverse();
+	}
 
-	// 	Ref< physics::Joint > limbJoint;
+	// Create joint constraints.
+	for (uint32_t i = 0; i < jointCount; ++i)
+	{
+		if (!m_limbs[i])
+			continue;
 
-	// 	const Vector4 anchor = limbTransforms[i].translation().xyz1();
+		Joint* joint = skeleton->getJoint(i);
+		T_ASSERT(joint);
 
-	// 	int32_t parentIndex = joint->getParent();
-	// 	if (parentIndex < 0 || !m_limbs[parentIndex])
-	// 	{
-	// 		if (!m_limbs[i])
-	// 			continue;
+		const Vector4 anchor = jointTransforms[i].translation().xyz1();
 
-	// 		if (data->m_fixateJoints)
-	// 		{
-	// 			Ref< physics::BallJointDesc > jointDesc = new physics::BallJointDesc();
-	// 			jointDesc->setAnchor(anchor);
+		AlignedVector< uint32_t > children;
+		skeleton->findChildren(i, children);
+		for (uint32_t child : children)
+		{
+			if (!m_limbs[child])
+				continue;
 
-	// 			limbJoint = physicsManager->createJoint(
-	// 				jointDesc,
-	// 				worldTransform,
-	// 				m_limbs[i],
-	// 				nullptr
-	// 			);
-	// 		}
-	// 	}
-	// 	else
-	// 	{
-	// 		Ref< physics::BallJointDesc > jointDesc = new physics::BallJointDesc();
-	// 		jointDesc->setAnchor(anchor);
+			Ref< physics::BallJointDesc > jointDesc = new physics::BallJointDesc();
+			jointDesc->setAnchor(anchor);
 
-	// 		limbJoint = physicsManager->createJoint(
-	// 			jointDesc,
-	// 			worldTransform,
-	// 			m_limbs[parentIndex],
-	// 			m_limbs[i]
-	// 		);
-	// 	}
+			Ref< physics::Joint > limbJoint = physicsManager->createJoint(
+				jointDesc,
+				worldTransform,
+				m_limbs[i],
+				m_limbs[child]
+			);
+			if (!limbJoint)
+				return false;
 
-	// 	m_joints.push_back(limbJoint);
-	// }
+			m_joints.push_back(limbJoint);
+		}
+	}
 
 	m_worldTransform = worldTransform;
 
@@ -179,6 +203,8 @@ bool RagDollPoseController::create(
 	m_trackDuration = data->m_trackDuration;
 
 	setEnable(data->m_enabled);
+
+	s_clusterId++;
 	return true;
 }
 
@@ -187,12 +213,21 @@ void RagDollPoseController::destroy()
 	safeDestroy(m_trackPoseController);
 
 	for (auto joint : m_joints)
-		safeDestroy(joint);
-	for (auto limb : m_limbs)
-		safeDestroy(limb);
-
-	m_limbs.resize(0);
+	{
+		if (joint)
+			joint->destroy();
+	}
 	m_joints.resize(0);
+
+	for (auto limb : m_limbs)
+	{
+		if (limb)
+			limb->destroy();
+	}
+	m_limbs.resize(0);
+
+	m_deltaLimbs.resize(0);
+	m_deltaTransforms.resize(0);
 }
 
 void RagDollPoseController::setTransform(const Transform& transform)
@@ -259,9 +294,6 @@ bool RagDollPoseController::evaluate(
 		Joint* joint = skeleton->getJoint(i);
 		T_ASSERT(joint);
 
-		if (!m_limbs[i])
-			continue;
-
 		// if (m_trackPoseController)
 		// {
 		// 	const Scalar c_maxTension(10.0f);
@@ -315,7 +347,8 @@ bool RagDollPoseController::evaluate(
 		// 	}
 		// }
 
-		outPoseTransforms[i] = worldTransformInv * m_limbs[i]->getTransform() * m_deltaTransforms[i];
+		Transform limbTransform = worldTransformInv * m_deltaLimbs[i]->getTransform();
+		outPoseTransforms[i] = limbTransform * m_deltaTransforms[i];
 	}
 
 	m_worldTransform = worldTransform;

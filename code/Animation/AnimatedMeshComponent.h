@@ -87,7 +87,7 @@ public:
 	void setPoseController(IPoseController* poseController) { m_poseController = poseController; }
 
 	/*! Get pose evaluation controller. */
-	const Ref< IPoseController >& getPoseController() const { return m_poseController; }
+	IPoseController* getPoseController() const { return m_poseController; }
 
 	/*! Get all joint base transforms. */
 	const AlignedVector< Transform >& getJointTransforms() const { return m_jointTransforms; }

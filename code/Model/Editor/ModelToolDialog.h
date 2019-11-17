@@ -128,6 +128,8 @@ private:
 	void eventRenderSize(ui::SizeEvent* event);
 
 	void eventRenderPaint(ui::PaintEvent* event);
+
+	void eventSkeletonSelect(ui::SelectionChangeEvent* event);
 };
 
 	}
