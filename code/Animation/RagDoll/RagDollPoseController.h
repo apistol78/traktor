@@ -95,7 +95,10 @@ private:
 	RefArray< physics::Body > m_limbs;
 	RefArray< physics::Joint > m_joints;
 	Transform m_worldTransform;
+
+	RefArray< physics::Body > m_deltaLimbs;
 	AlignedVector< Transform > m_deltaTransforms;
+
 	bool m_enable;
 };
 

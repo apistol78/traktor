@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Physics/Editor/PhysicsRenderer.h"
 #include "Scene/Editor/DefaultComponentEditor.h"
 
 // import/export mechanism.
@@ -15,7 +16,7 @@ namespace traktor
 	namespace animation
 	{
 
-/*! \brief
+/*! Animation mesh component editor.
  * \ingroup Animation
  */
 class T_DLLCLASS AnimatedMeshComponentEditor : public scene::DefaultComponentEditor
@@ -26,6 +27,9 @@ public:
 	AnimatedMeshComponentEditor(scene::SceneEditorContext* context, scene::EntityAdapter* entityAdapter, world::IEntityComponentData* componentData);
 
 	virtual void drawGuide(render::PrimitiveRenderer* primitiveRenderer) const override final;
+
+private:
+	physics::PhysicsRenderer m_physicsRenderer;
 };
 
 	}

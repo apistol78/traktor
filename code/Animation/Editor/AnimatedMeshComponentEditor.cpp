@@ -5,6 +5,9 @@
 #include "Animation/SkeletonUtils.h"
 #include "Animation/IPoseController.h"
 #include "Animation/Joint.h"
+#include "Animation/RagDoll/RagDollPoseController.h"
+#include "Physics/Body.h"
+#include "Physics/CapsuleShapeDesc.h"
 #include "Render/PrimitiveRenderer.h"
 #include "Scene/Editor/EntityAdapter.h"
 #include "Scene/Editor/SceneEditorContext.h"
@@ -32,12 +35,60 @@ void AnimatedMeshComponentEditor::drawGuide(render::PrimitiveRenderer* primitive
 		m_context->shouldDrawGuide(L"Animation.Skeleton.Pose")
 	)
 	{
-		primitiveRenderer->pushWorld(m_entityAdapter->getTransform().toMatrix44());
-		primitiveRenderer->pushDepthState(false, false, false);
-
 		if (animatedMeshComponent)
 		{
 			const resource::Proxy< Skeleton >& skeleton = animatedMeshComponent->getSkeleton();
+			const auto& jointTransforms = animatedMeshComponent->getJointTransforms();
+
+			// Draw pose controllers.
+			primitiveRenderer->pushWorld(Matrix44::identity()); //m_entityAdapter->getTransform().toMatrix44());
+			primitiveRenderer->pushDepthState(false, false, false);
+
+			if (auto ragDollPoseController = dynamic_type_cast< const RagDollPoseController* >(animatedMeshComponent->getPoseController()))
+			{
+				const auto& limbs = ragDollPoseController->getLimbs();
+
+				for (uint32_t i = 0; i < skeleton->getJointCount(); ++i)
+				{
+					const Joint* joint = skeleton->getJoint(i);
+					T_ASSERT(joint);
+
+					const int32_t parent = joint->getParent();
+					if (parent < 0)
+						continue;
+
+					Vector4 start = jointTransforms[parent].translation();
+					Vector4 end = jointTransforms[i].translation();
+					Scalar length = (end - start).length();
+
+					if (length < joint->getRadius() * 2.0f)
+						continue;
+
+					if (!limbs[i])
+						continue;
+
+					Transform limbTransform = limbs[i]->getTransform();
+
+					physics::CapsuleShapeDesc shapeDesc;
+					shapeDesc.setRadius(joint->getRadius());
+					shapeDesc.setLength(length);
+
+					m_physicsRenderer.draw(
+						m_context->getResourceManager(),
+						primitiveRenderer,
+						limbTransform,
+						limbTransform,
+						&shapeDesc
+					);
+				}
+			}
+
+			primitiveRenderer->popDepthState();
+			primitiveRenderer->popWorld();
+
+
+			primitiveRenderer->pushWorld(m_entityAdapter->getTransform().toMatrix44());
+			primitiveRenderer->pushDepthState(false, false, false);
 
 			if (m_context->shouldDrawGuide(L"Animation.Skeleton.Bind"))
 			{
@@ -89,13 +140,23 @@ void AnimatedMeshComponentEditor::drawGuide(render::PrimitiveRenderer* primitive
 								color
 							);
 						}
+
+						primitiveRenderer->pushWorld(Matrix44::identity());
+						primitiveRenderer->drawText(
+							m_entityAdapter->getTransform() * poseTransforms[i].translation().xyz1(),
+							0.4f,
+							0.4f,
+							joint->getName(),
+							Color4ub(255, 255, 255, 255)
+						);
+						primitiveRenderer->popWorld();
 					}
 				}
 			}
-		}
 
-		primitiveRenderer->popDepthState();
-		primitiveRenderer->popWorld();
+			primitiveRenderer->popDepthState();
+			primitiveRenderer->popWorld();
+		}
 	}
 
 	scene::DefaultComponentEditor::drawGuide(primitiveRenderer);
