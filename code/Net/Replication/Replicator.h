@@ -31,6 +31,19 @@ class ReplicatorProxy;
 class State;
 class StateTemplate;
 
+/*! Network replicator.
+ * \ingroup Net
+ *
+ * Replicator manages a node network of peers and synchronization
+ * of state between all nodes.
+ *
+ * Each peer is able to send data messages to any other peer.
+ *
+ * In order to make synchronization of state reliable
+ * the replicator initially perform a time synchronization step
+ * which tries to keep time as "equal" as possible between
+ * all peers.
+ */
 class T_DLLCLASS Replicator
 :	public Object
 ,	public INetworkTopology::INetworkCallback
@@ -64,40 +77,54 @@ public:
 
 	virtual ~Replicator();
 
-	/*! \brief
+	/*! Create replicator.
+	 *
+	 * \param topology Network topology implementation.
+	 * \param configuration Replicator configuration.
+	 * \return True if successful.
 	 */
 	bool create(INetworkTopology* topology, const Configuration& configuration);
 
-	/*! \brief
-	 */
+	/*! Destroy replicator. */
 	void destroy();
 
-	/*! \brief
+	/*! Replace replicator configuration.
+	 * 
+	 * \param configuration Replicator configuration.
 	 */
 	void setConfiguration(const Configuration& configuration);
 
-	/*! \brief
+	/*! Get replicator's current configuration.
+	 *
+	 * \return Replicator current configuration.
 	 */
 	const Configuration& getConfiguration() const;
 
-	/*! \brief
-	 */
+	/*! Remove all event types. */
 	void removeAllEventTypes();
 
-	/*! \brief
+	/*! Register an event type.
+	 *
+	 * All peers must register same set of types in the
+	 * same order.
+	 *
+	 * \param eventType Type of event.
 	 */
 	void addEventType(const TypeInfo& eventType);
 
-	/*! \brief
+	/*! Add replicator state listener.
+	 *
+	 * \param listener Replicator state listener.
 	 */
 	IReplicatorStateListener* addListener(IReplicatorStateListener* listener);
 
-	/*! \brief
+	/*! Remove replicator state listener.
+	 *
+	 * \param listener Replicator state listener.
 	 */
 	void removeListener(IReplicatorStateListener* listener);
 
-	/*! \brief
-	 */
+	/*! Remove all replicator state listener. */
 	void removeAllListeners();
 
 	/*! \brief
@@ -112,7 +139,10 @@ public:
 	 */
 	void removeAllEventListeners();
 
-	/*! \brief
+	/*! Update replicator.
+	 *
+	 * Perform all tasks required to maintain
+	 * a synchronzied peer network.
 	 *
 	 * \return True if still connected.
 	 */
@@ -122,11 +152,15 @@ public:
 	 */
 	void flush();
 
-	/*! \brief Get our name.
+	/*! Get our name.
+	 *
+	 * \return Our name.
 	 */
 	const std::wstring& getName() const;
 
-	/*! \brief Set our status.
+	/*! Set our status.
+	 *
+	 * \param New status.
 	 */
 	void setStatus(uint8_t status);
 
@@ -134,14 +168,18 @@ public:
 	 */
 	uint8_t getStatus() const;
 
-	/*! \brief
+	/*! Check if caller is considered as primary peer.
+	 *
+	 * \return True if caller is primary peer.
 	 */
 	bool isPrimary() const;
 
-	/*! \brief Set our origin.
+	/*! Set our origin.
 	 *
 	 * Origin is used to determine which frequency
 	 * of transmission to use to each peer.
+	 *
+	 * \param origin World origin of caller peer.
 	 */
 	void setOrigin(const Transform& origin);
 
@@ -149,7 +187,7 @@ public:
 	 */
 	void setStateTemplate(const StateTemplate* stateTemplate);
 
-	/*! \brief Set our replication state.
+	/*! Set our replication state.
 	 *
 	 * Each peer have multiple ghost states which mirrors
 	 * each peer real state.
@@ -226,7 +264,9 @@ public:
 	 */
 	double getTimeVariance() const;
 
-	/*! \brief Get time synchronization flag.
+	/*! Check if time synchronization is complete.
+	 *
+	 * \return True if time is synchronized.
 	 */
 	bool isTimeSynchronized() const;
 

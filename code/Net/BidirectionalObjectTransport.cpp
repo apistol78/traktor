@@ -21,8 +21,8 @@ BidirectionalObjectTransport::BidirectionalObjectTransport(TcpSocket* socket)
 
 BidirectionalObjectTransport::~BidirectionalObjectTransport()
 {
-	for (std::vector< uint8_t* >::iterator i = m_buffers.begin(); i != m_buffers.end(); ++i)
-		delete[] *i;
+	for (auto buffer : m_buffers)
+		delete[] buffer;
 }
 
 void BidirectionalObjectTransport::close()
@@ -53,9 +53,9 @@ BidirectionalObjectTransport::Result BidirectionalObjectTransport::recv(const Ty
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 
 	// Check queue if any object of given type has already been received.
-	for (TypeInfoSet::const_iterator i = objectTypes.begin(); i != objectTypes.end(); ++i)
+	for (const auto& objectType : objectTypes)
 	{
-		RefArray< ISerializable >& typeInQueue = m_inQueue[*i];
+		RefArray< ISerializable >& typeInQueue = m_inQueue[objectType];
 		if (!typeInQueue.empty())
 		{
 			outObject = typeInQueue.front();
@@ -87,13 +87,13 @@ BidirectionalObjectTransport::Result BidirectionalObjectTransport::recv(const Ty
 
 			if (!object)
 			{
-				m_socket = 0;
+				m_socket = nullptr;
 				break;
 			}
 
-			for (TypeInfoSet::const_iterator i = objectTypes.begin(); i != objectTypes.end(); ++i)
+			for (const auto& objectType : objectTypes)
 			{
-				if (is_type_of(*(*i), type_of(object)))
+				if (is_type_of(*objectType, type_of(object)))
 				{
 					outObject = object;
 					return RtSuccess;

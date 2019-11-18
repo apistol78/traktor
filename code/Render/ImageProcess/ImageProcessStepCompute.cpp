@@ -26,7 +26,7 @@ Ref< ImageProcessStep::Instance > ImageProcessStepCompute::create(
 {
 	resource::Proxy< Shader > shader;
 	if (!resourceManager->bind(m_shader, shader))
-		return 0;
+		return nullptr;
 
 	std::vector< InstanceCompute::Source > sources(m_sources.size());
 	for (uint32_t i = 0; i < m_sources.size(); ++i)
@@ -82,11 +82,11 @@ void ImageProcessStepCompute::InstanceCompute::render(
 	m_shader->setFloatParameter(m_handleTime, m_time);
 	m_shader->setFloatParameter(m_handleDeltaTime, params.deltaTime);
 
-	for (std::vector< Source >::const_iterator i = m_sources.begin(); i != m_sources.end(); ++i)
+	for (const auto& source : m_sources)
 	{
-		ISimpleTexture* source = imageProcess->getTarget(i->source);
-		if (source)
-			m_shader->setTextureParameter(i->param, source);
+		ISimpleTexture* texture = imageProcess->getTarget(source.source);
+		if (texture)
+			m_shader->setTextureParameter(source.param, texture);
 	}
 
 	renderView->compute(m_shader->getCurrentProgram(), m_step->m_workSize);
