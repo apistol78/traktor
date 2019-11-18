@@ -335,6 +335,11 @@ bool RenderViewVk::reset(const RenderViewDefaultDesc& desc)
 bool RenderViewVk::reset(int32_t width, int32_t height)
 {
 	close();
+
+#if defined(_WIN32)
+	m_window->setWindowedStyle(width, height);
+#endif
+
 	if (create(width, height))
 		return true;
 	else
@@ -898,7 +903,17 @@ void RenderViewVk::present()
 
 	vkResetFences(m_logicalDevice, 1, &m_renderFence);
     vkQueueSubmit(m_presentQueue, 1, &si, m_renderFence);
-    vkWaitForFences(m_logicalDevice, 1, &m_renderFence, VK_TRUE, UINT64_MAX);
+    result = vkWaitForFences(m_logicalDevice, 1, &m_renderFence, VK_TRUE, 1 * 1000ull * 1000ull * 1000ull);
+	if (result != VK_SUCCESS)
+	{
+		log::warning << L"Vulkan error reported, \"" << getHumanResult(result) << L"\"; need to reset renderer." << Endl;
+		
+		// Issue an event in order to reset view.
+		RenderEvent evt;
+		evt.type = ReLost;
+		m_eventQueue.push_back(evt);
+		return;
+	}
 
 	// Queue presentation of current primary target.
     VkPresentInfoKHR pi = {};
