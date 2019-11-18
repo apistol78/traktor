@@ -23,12 +23,12 @@ void JsonObject::push(JsonMember* member)
 
 JsonMember* JsonObject::getMember(const std::wstring& name) const
 {
-	for (RefArray< JsonMember >::const_iterator i = m_members.begin(); i != m_members.end(); ++i)
+	for (auto member : m_members)
 	{
-		if ((*i)->getName() == name)
-			return *i;
+		if (member->getName() == name)
+			return member;
 	}
-	return 0;
+	return nullptr;
 }
 
 void JsonObject::setMemberValue(const std::wstring& name, const Any& value)
@@ -79,12 +79,12 @@ bool JsonObject::write(OutputStream& os) const
 	os << L"{" << Endl;
 	os << IncreaseIndent;
 
-	for (RefArray< JsonMember >::const_iterator i = m_members.begin(); i != m_members.end(); ++i)
+	for (auto it = m_members.begin(); it != m_members.end(); ++it)
 	{
-		if (i != m_members.begin())
+		if (it != m_members.begin())
 			os << L"," << Endl;
 
-		if (!(*i)->write(os))
+		if (!(*it)->write(os))
 			return false;
 	}
 	if (!m_members.empty())

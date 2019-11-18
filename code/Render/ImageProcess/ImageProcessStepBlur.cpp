@@ -243,14 +243,14 @@ void ImageProcessStepBlur::InstanceBlur::render(
 {
 	imageProcess->prepareShader(m_shader);
 
-	for (std::vector< Source >::const_iterator i = m_sources.begin(); i != m_sources.end(); ++i)
+	for (const auto& source : m_sources)
 	{
-		ISimpleTexture* source = imageProcess->getTarget(i->source);
-		if (source)
-			m_shader->setTextureParameter(i->param, source);
+		ISimpleTexture* texture = imageProcess->getTarget(source.source);
+		if (texture)
+			m_shader->setTextureParameter(source.param, texture);
 	}
 
-	m_shader->setVectorArrayParameter(m_handleGaussianOffsetWeights, &m_gaussianOffsetWeights[0], uint32_t(m_gaussianOffsetWeights.size()));
+	m_shader->setVectorArrayParameter(m_handleGaussianOffsetWeights, &m_gaussianOffsetWeights[0], (uint32_t)m_gaussianOffsetWeights.size());
 	m_shader->setVectorParameter(m_handleDirection, m_direction * Scalar(0.5f));
 	m_shader->setFloatParameter(m_handleViewFar, params.viewFrustum.getFarZ());
 	m_shader->setVectorParameter(m_handleNoiseOffset, Vector4(

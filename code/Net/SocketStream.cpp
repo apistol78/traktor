@@ -1,5 +1,6 @@
 #include <algorithm>
 #include <sstream>
+#include "Core/Misc/SafeDestroy.h"
 #include "Net/SocketStream.h"
 #include "Net/Socket.h"
 
@@ -21,21 +22,17 @@ SocketStream::SocketStream(Socket* socket, bool readAllowed, bool writeAllowed, 
 
 void SocketStream::close()
 {
-	if (m_socket)
-	{
-		m_socket->close();
-		m_socket = 0;
-	}
+	safeClose(m_socket);
 }
 
 bool SocketStream::canRead() const
 {
-	return bool(m_socket != 0) && m_readAllowed;
+	return bool(m_socket != nullptr) && m_readAllowed;
 }
 
 bool SocketStream::canWrite() const
 {
-	return bool(m_socket != 0) && m_writeAllowed;
+	return bool(m_socket != nullptr) && m_writeAllowed;
 }
 
 bool SocketStream::canSeek() const

@@ -13,6 +13,13 @@
 namespace traktor
 {
 
+/*! Interval transform.
+ * \ingroup Core
+ *
+ * Interval transform which makes it easier to
+ * maintain timing independent animations from
+ * discrete transformation updates.
+ */
 class T_MATH_ALIGN16 T_DLLCLASS IntervalTransform
 {
 public:

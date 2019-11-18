@@ -17,13 +17,13 @@ Ref< ImageProcessStep::Instance > ImageProcessStepChain::create(
 ) const
 {
 	RefArray< Instance > instances;
-	for (RefArray< ImageProcessStep >::const_iterator i = m_steps.begin(); i != m_steps.end(); ++i)
+	for (auto step : m_steps)
 	{
-		Ref< ImageProcessStep::Instance > instance = (*i)->create(resourceManager, renderSystem, width, height);
+		Ref< ImageProcessStep::Instance > instance = step->create(resourceManager, renderSystem, width, height);
 		if (instance)
 			instances.push_back(instance);
 		else
-			return 0;
+			return nullptr;
 	}
 	return new InstanceChain(instances);
 }
@@ -42,8 +42,9 @@ ImageProcessStepChain::InstanceChain::InstanceChain(const RefArray< Instance >& 
 
 void ImageProcessStepChain::InstanceChain::destroy()
 {
-	for (RefArray< Instance >::iterator i = m_instances.begin(); i != m_instances.end(); ++i)
-		(*i)->destroy();
+	for (auto instance : m_instances)
+		instance->destroy();
+	m_instances.clear();
 }
 
 void ImageProcessStepChain::InstanceChain::render(
@@ -53,9 +54,9 @@ void ImageProcessStepChain::InstanceChain::render(
 	const RenderParams& params
 )
 {
-	for (RefArray< Instance >::iterator i = m_instances.begin(); i != m_instances.end(); ++i)
+	for (auto instance : m_instances)
 	{
-		(*i)->render(
+		instance->render(
 			imageProcess,
 			renderView,
 			screenRenderer,
