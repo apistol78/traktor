@@ -2,8 +2,11 @@
 #include "Render/IRenderSystem.h"
 #include "Render/IRenderView.h"
 #include "Render/RenderTargetSet.h"
+#include "World/IEntityRenderer.h"
+#include "World/WorldEntityRenderers.h"
 #include "World/Deferred/WorldRendererDeferred.h"
 #include "World/Entity/ProbeCapturer.h"
+#include "World/Entity/ProbeComponent.h"
 
 namespace traktor
 {
@@ -13,7 +16,7 @@ namespace traktor
 		{
 		
 #if !defined(__ANDROID__)
-const int32_t c_faceSize = 512;
+const int32_t c_faceSize = 1024;
 #else
 const int32_t c_faceSize = 128;
 #endif
@@ -63,6 +66,16 @@ void ProbeCapturer::build(
 	// Lazy create world renderer, need to access entity renderers.
 	if (!m_worldRenderer)
 	{
+		// Create a clone of world renderer without support to render probes.
+		// This prevents nasty cyclic references of entity renderers.
+		Ref< WorldEntityRenderers > probeEntityRenderers = new WorldEntityRenderers();
+		for (auto er : entityRenderers->get())
+		{
+			const TypeInfoSet renderableTypes = er->getRenderableTypes();
+			if (renderableTypes.find(&type_of< ProbeComponent >()) == renderableTypes.end())
+				probeEntityRenderers->add(er);
+		}
+
 		m_worldRenderer = mandatory_non_null_type_cast< world::IWorldRenderer* >(m_worldRendererType.createInstance());
 
 		world::WorldRenderSettings wrs;
@@ -74,7 +87,7 @@ void ProbeCapturer::build(
 
 		world::WorldCreateDesc wcd;
 		wcd.worldRenderSettings = &wrs;
-		wcd.entityRenderers = entityRenderers;
+		wcd.entityRenderers = probeEntityRenderers;
 		wcd.toneMapQuality = world::QuDisabled;
 		wcd.motionBlurQuality = world::QuDisabled;
 		wcd.reflectionsQuality = world::QuDisabled;
