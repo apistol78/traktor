@@ -2948,7 +2948,7 @@ void EditorForm::eventTimer(ui::TimerEvent* /*event*/)
 	if (!building)
 	{
 		m_buildProgress->setVisible(false);
-		m_statusBar->setText(i18n::Text(L"STATUS_IDLE"));
+		m_statusBar->setText((std::wstring)i18n::Text(L"STATUS_IDLE") + std::wstring(L" (") + toString(Alloc::allocated() / 1024) + L" KiB allocated)");
 	}
 	else
 		m_buildProgress->setVisible(true);

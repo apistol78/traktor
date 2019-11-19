@@ -113,13 +113,19 @@ std::vector< std::wstring > Instance_getDataNames(Instance* self)
 	return dataNames;
 }
 
+template < typename Class >
+Ref< Class > ref_new()
+{
+	return new Class();
+}
+
 		}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.db.DatabaseClassFactory", 0, DatabaseClassFactory, IRuntimeClassFactory)
 
 void DatabaseClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 {
-	auto classDatabase = new AutoRuntimeClass< Database >();
+	auto classDatabase = ref_new< AutoRuntimeClass< Database > >();
 	classDatabase->addProperty("rootGroup", &Database::getRootGroup);
 	classDatabase->addMethod("close", &Database::close);
 	classDatabase->addMethod("getGroup", &Database::getGroup);

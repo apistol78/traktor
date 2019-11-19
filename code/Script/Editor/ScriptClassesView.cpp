@@ -29,6 +29,7 @@ public:
 
 	virtual void registerClass(IRuntimeClass* runtimeClass)
 	{
+		T_ANONYMOUS_VAR(Ref< IRuntimeClass >)(runtimeClass);
 		StringOutputStream ss;
 
 		std::vector< std::wstring > qname;
@@ -166,7 +167,7 @@ bool ScriptClassesView::create(ui::Widget* parent)
 
 	m_treeClasses = new ui::TreeView();
 	m_treeClasses->create(this, ui::WsDoubleBuffer);
-
+	
 	CollectClassRegistrar registrar(m_treeClasses);
 
 	TypeInfoSet runtimeClassFactoryTypes;

@@ -30,7 +30,7 @@ void DroneToolGroup::getMenuItems(RefArray< ui::MenuItem >& outItems)
 	{
 		RefArray< ui::MenuItem > menuItems;
 		tool->getMenuItems(menuItems);
-		for (auto menuItem : menuitems)
+		for (auto menuItem : menuItems)
 			menuItem->add(menuItem);
 	}
 

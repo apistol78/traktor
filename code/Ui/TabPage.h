@@ -33,12 +33,12 @@ public:
 
 	bool isActive() const;
 
-	Tab* getTab();
+	Tab* getTab() const;
 
 	int32_t getImageIndex() const;
 
 private:
-	Ref< Tab > m_tab;
+	Tab* m_tab;
 	int32_t m_imageIndex;
 };
 
