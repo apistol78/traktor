@@ -61,6 +61,8 @@ void ToolBar::destroy()
 
 uint32_t ToolBar::addImage(IBitmap* image, uint32_t imageCount)
 {
+	T_ANONYMOUS_VAR(Ref< IBitmap >)(image);
+
 	T_ASSERT(image);
 	T_ASSERT(imageCount > 0);
 
