@@ -1,3 +1,4 @@
+#include "Core/Serialization/AttributeUnit.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberRef.h"
 #include "Shape/Spline/CloneLayer.h"
@@ -30,7 +31,7 @@ Ref< ISplineLayer > CloneLayerData::createLayer(SplineEntity* owner, const world
 void CloneLayerData::serialize(ISerializer& s)
 {
 	s >> MemberRef< world::EntityData >(L"entity", m_entity);
-	s >> Member< float >(L"distance", m_distance);
+	s >> Member< float >(L"distance", m_distance, AttributeUnit(AuMetres));
 }
 
 	}

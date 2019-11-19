@@ -66,7 +66,7 @@ bool DroneToolShortcut::execute(ui::Widget* parent, const ui::MenuItem* menuItem
 		false,
 		false
 	);
-	return process != 0;
+	return process != nullptr;
 }
 
 void DroneToolShortcut::serialize(ISerializer& s)

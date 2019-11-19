@@ -23,7 +23,7 @@ SkinnedMeshComponent::SkinnedMeshComponent(const resource::Proxy< SkinnedMesh >&
 ,	m_mesh(mesh)
 ,	m_count(0)
 {
-	const std::map< std::wstring, int >& jointMap = m_mesh->getJointMap();
+	const auto& jointMap = m_mesh->getJointMap();
 	m_jointTransforms[0].resize(jointMap.size() * 2, Vector4::origo());
 	m_jointTransforms[1].resize(jointMap.size() * 2, Vector4::origo());
 
@@ -84,7 +84,7 @@ void SkinnedMeshComponent::setJointTransforms(const AlignedVector< Matrix44 >& j
 {
 	AlignedVector< Vector4 >& jointTransforms = m_jointTransforms[m_count];
 
-	const std::map< std::wstring, int >& jointMap = m_mesh->getJointMap();
+	const auto& jointMap = m_mesh->getJointMap();
 	jointTransforms.resize(jointMap.size() * 2, Vector4::origo());
 
 	uint32_t size = uint32_t(jointTransforms_.size());

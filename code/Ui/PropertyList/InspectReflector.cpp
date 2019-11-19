@@ -90,6 +90,8 @@ NumericPropertyItem::Representation findRepresentation(const MemberType& m)
 			return NumericPropertyItem::RpKilograms;
 		else if (unit->getUnit() == AuPercent)
 			return NumericPropertyItem::RpPercent;
+		else if (unit->getUnit() == AuHertz)
+			return NumericPropertyItem::RpHerz;
 	}
 	return NumericPropertyItem::RpNormal;
 }

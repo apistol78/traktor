@@ -1,8 +1,8 @@
 #pragma once
 
 #include <list>
-#include <map>
 #include "Core/Guid.h"
+#include "Core/Containers/SmallMap.h"
 #include "Mesh/IMeshResource.h"
 #include "Resource/Id.h"
 
@@ -56,8 +56,8 @@ private:
 	typedef std::list< Part > parts_t;
 
 	resource::Id< render::Shader > m_shader;
-	std::map< std::wstring, parts_t > m_parts;
-	std::map< std::wstring, int32_t > m_jointMap;
+	SmallMap< std::wstring, parts_t > m_parts;
+	SmallMap< std::wstring, int32_t > m_jointMap;
 };
 
 	}

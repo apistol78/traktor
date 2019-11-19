@@ -182,6 +182,8 @@ void NumericPropertyItem::paintValue(Canvas& canvas, const Rect& rc)
 			ss << value << L" kg";
 		else if (m_representation == RpPercent)
 			ss << (value * 100.0f) << L" %";
+		else if (m_representation == RpHerz)
+			ss << value << L" Hz";
 		else
 			ss << value;
 	}
