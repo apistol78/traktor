@@ -35,6 +35,7 @@ bool ScreenRenderer::create(IRenderSystem* renderSystem)
 	AlignedVector< VertexElement > vertexElements;
 	vertexElements.push_back(VertexElement(DuPosition, DtFloat2, offsetof(ScreenVertex, pos)));
 	vertexElements.push_back(VertexElement(DuCustom, DtFloat2, offsetof(ScreenVertex, texCoord)));
+	T_FATAL_ASSERT(getVertexSize(vertexElements) == sizeof(ScreenVertex));
 
 	m_vertexBuffer = renderSystem->createVertexBuffer(vertexElements, 6 * sizeof(ScreenVertex), false);
 	if (!m_vertexBuffer)

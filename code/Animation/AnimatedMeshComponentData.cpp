@@ -47,17 +47,17 @@ Ref< AnimatedMeshComponent > AnimatedMeshComponentData::createComponent(resource
 		);
 
 	AlignedVector< int32_t > jointRemap(skeleton->getJointCount());
-	const std::map< std::wstring, int32_t >& jointMap = mesh->getJointMap();
+	const auto& jointMap = mesh->getJointMap();
 	for (uint32_t i = 0; i < skeleton->getJointCount(); ++i)
 	{
 		const Joint* joint = skeleton->getJoint(i);
-		std::map< std::wstring, int32_t >::const_iterator j = jointMap.find(joint->getName());
-		if (j == jointMap.end())
+		auto it = jointMap.find(joint->getName());
+		if (it == jointMap.end())
 		{
 			jointRemap[i] = -1;
 			continue;
 		}
-		jointRemap[i] = j->second;
+		jointRemap[i] = it->second;
 	}
 
 	AlignedVector< AnimatedMeshComponent::Binding > bindings;

@@ -15,7 +15,7 @@ namespace traktor
 	namespace render
 	{
 
-/*! \brief Render target set.
+/*! Render target set.
  * \ingroup Render
  *
  * The content valid flag is automatically reset when
@@ -27,28 +27,28 @@ class T_DLLCLASS RenderTargetSet : public Object
 	T_RTTI_CLASS;
 
 public:
-	/*! \brief Destroy render targets.h */
+	/*! Destroy render targets.h */
 	virtual void destroy() = 0;
 
-	/*! \brief Get width of render targets. */
+	/*! Get width of render targets. */
 	virtual int32_t getWidth() const = 0;
 
-	/*! \brief Get height of render targets. */
+	/*! Get height of render targets. */
 	virtual int32_t getHeight() const = 0;
 
-	/*! \brief Get color target texture. */
+	/*! Get color target texture. */
 	virtual ISimpleTexture* getColorTexture(int32_t index) const = 0;
 
-	/*! \brief Get depth target texture. */
+	/*! Get depth target texture. */
 	virtual ISimpleTexture* getDepthTexture() const = 0;
 
-	/*! \brief Discard target content. */
+	/*! Discard target content. */
 	virtual void discard() = 0;
 
-	/*! \brief Check if target content is valid. */
+	/*! Check if target content is valid. */
 	virtual bool isContentValid() const = 0;
 
-	/*! \brief Read back color target into system memory.
+	/*! Read back color target into system memory.
 	 *
 	 * \note
 	 * This is a very slow operation and is only

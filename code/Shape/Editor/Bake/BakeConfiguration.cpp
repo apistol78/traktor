@@ -1,5 +1,6 @@
 #include "Core/Serialization/AttributePrivate.h"
 #include "Core/Serialization/AttributeRange.h"
+#include "Core/Serialization/AttributeUnit.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
 #include "Shape/Editor/Bake/BakeConfiguration.h"
@@ -61,7 +62,7 @@ void BakeConfiguration::serialize(ISerializer& s)
 	if (s.getVersion< BakeConfiguration >() >= 11)
 		s >> Member< uint32_t >(L"irradianceSampleCount", m_irradianceSampleCount, AttributeRange(0));
 
-	s >> Member< float >(L"pointLightShadowRadius", m_pointLightShadowRadius, AttributeRange(0.0f));
+	s >> Member< float >(L"pointLightShadowRadius", m_pointLightShadowRadius, AttributeRange(0.0f) | AttributeUnit(AuMetres));
 	s >> Member< float >(L"lumelDensity", m_lumelDensity, AttributeRange(0.0f));
 
 	if (s.getVersion< BakeConfiguration >() >= 16)

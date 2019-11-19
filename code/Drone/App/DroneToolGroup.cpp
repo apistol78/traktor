@@ -26,13 +26,12 @@ void DroneToolGroup::getMenuItems(RefArray< ui::MenuItem >& outItems)
 	Ref< ui::MenuItem > menuItem = new ui::MenuItem(m_title);
 	menuItem->setData(L"TOOL", this);
 
-	for (RefArray< DroneTool >::iterator i = m_tools.begin(); i != m_tools.end(); ++i)
+	for (auto tool : m_tools)
 	{
 		RefArray< ui::MenuItem > menuItems;
-		(*i)->getMenuItems(menuItems);
-
-		for (RefArray< ui::MenuItem >::iterator j = menuItems.begin(); j != menuItems.end(); ++j)
-			menuItem->add(*j);
+		tool->getMenuItems(menuItems);
+		for (auto menuItem : menuitems)
+			menuItem->add(menuItem);
 	}
 
 	outItems.push_back(menuItem);

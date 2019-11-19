@@ -44,15 +44,15 @@ void SkinnedMesh::render(
 	const IMeshParameterCallback* parameterCallback
 )
 {
-	SmallMap< render::handle_t, std::vector< Part > >::const_iterator it = m_parts.find(worldRenderPass.getTechnique());
+	auto it = m_parts.find(worldRenderPass.getTechnique());
 	T_ASSERT(it != m_parts.end());
 
 	const Aabb3& boundingBox = getBoundingBox();
 
 	const AlignedVector< render::Mesh::Part >& meshParts = m_mesh->getParts();
-	for (std::vector< Part >::const_iterator i = it->second.begin(); i != it->second.end(); ++i)
+	for (const auto& part : it->second)
 	{
-		m_shader->setTechnique(i->shaderTechnique);
+		m_shader->setTechnique(part.shaderTechnique);
 		worldRenderPass.setShaderCombination(m_shader);
 
 		if (parameterCallback)
@@ -72,7 +72,7 @@ void SkinnedMesh::render(
 		renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
 		renderBlock->indexBuffer = m_mesh->getIndexBuffer();
 		renderBlock->vertexBuffer = m_mesh->getVertexBuffer();
-		renderBlock->primitives = meshParts[i->meshPart].primitives;
+		renderBlock->primitives = meshParts[part.meshPart].primitives;
 
 		renderBlock->programParams->beginParameters(renderContext);
 		worldRenderPass.setProgramParameters(
@@ -84,7 +84,7 @@ void SkinnedMesh::render(
 		if (parameterCallback)
 			parameterCallback->setParameters(renderBlock->programParams);
 		if (!jointTransforms.empty())
-			renderBlock->programParams->setVectorArrayParameter(s_handleJoints, &jointTransforms[0], int(jointTransforms.size()));
+			renderBlock->programParams->setVectorArrayParameter(s_handleJoints, jointTransforms.c_ptr(), (int)jointTransforms.size());
 		renderBlock->programParams->endParameters(renderContext);
 
 		renderContext->draw(
@@ -99,7 +99,7 @@ int32_t SkinnedMesh::getJointCount() const
 	return m_jointCount;
 }
 
-const std::map< std::wstring, int >& SkinnedMesh::getJointMap() const
+const SmallMap< std::wstring, int >& SkinnedMesh::getJointMap() const
 {
 	return m_jointMap;
 }

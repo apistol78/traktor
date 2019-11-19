@@ -1,7 +1,5 @@
 #pragma once
 
-#include <map>
-#include <vector>
 #include "Core/Containers/SmallMap.h"
 #include "Core/Math/Aabb3.h"
 #include "Mesh/IMesh.h"
@@ -68,7 +66,7 @@ public:
 
 	int32_t getJointCount() const;
 
-	const std::map< std::wstring, int32_t >& getJointMap() const;
+	const SmallMap< std::wstring, int32_t >& getJointMap() const;
 
 private:
 	friend class SkinnedMeshResource;
@@ -81,8 +79,8 @@ private:
 
 	resource::Proxy< render::Shader > m_shader;
 	Ref< render::Mesh > m_mesh;
-	SmallMap< render::handle_t, std::vector< Part > > m_parts;
-	std::map< std::wstring, int32_t > m_jointMap;
+	SmallMap< render::handle_t, AlignedVector< Part > > m_parts;
+	SmallMap< std::wstring, int32_t > m_jointMap;
 	int32_t m_jointCount;
 #if defined(_DEBUG)
 	std::string m_name;

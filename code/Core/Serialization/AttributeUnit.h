@@ -24,7 +24,9 @@ enum UnitType
 	AuDecibel,
 	AuNewton,
 	AuKilograms,
-	AuPercent
+	AuPercent,
+	AuPixels,
+	AuHertz
 };
 
 /*! \brief Member numeric range attribute.

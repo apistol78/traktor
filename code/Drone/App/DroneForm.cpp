@@ -29,7 +29,7 @@ Ref< ui::StyleSheet > loadStyleSheet(const Path& pathName)
 	if (file)
 		return xml::XmlDeserializer(file, pathName.getPathName()).readObject< ui::StyleSheet >();
 	else
-		return 0;
+		return nullptr;
 }
 
 		}
@@ -76,14 +76,12 @@ bool DroneForm::create(const CommandLine& cmdLine)
 
 	m_menuTools = new ui::Menu();
 
-	const RefArray< DroneTool >& tools = m_settings->getTools();
-	for (RefArray< DroneTool >::const_iterator i = tools.begin(); i != tools.end(); ++i)
+	for (auto tool : m_settings->getTools())
 	{
 		RefArray< ui::MenuItem > menuItems;
-		(*i)->getMenuItems(menuItems);
-
-		for (RefArray< ui::MenuItem >::iterator i = menuItems.begin(); i != menuItems.end(); ++i)
-			m_menuTools->add(*i);
+		tool->getMenuItems(menuItems);
+		for (auto menuItem : menuItems)
+			m_menuTools->add(menuItem);
 	}
 
 	m_menuTools->add(new ui::MenuItem(L"-"));
@@ -94,7 +92,6 @@ bool DroneForm::create(const CommandLine& cmdLine)
 	m_notificationIcon->addEventHandler< ui::MouseButtonDownEvent >(this, &DroneForm::eventNotificationButtonDown);
 
 	m_toolExecuting = false;
-
 	return true;
 }
 
