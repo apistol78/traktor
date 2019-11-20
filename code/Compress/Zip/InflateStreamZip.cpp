@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <cstring>
 #include <zlib.h>
 #include "Compress/Zip/InflateStreamZip.h"

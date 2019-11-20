@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <limits>
 #include "Core/Math/Aabb2.h"
 #include "World/SMProj/TrapezoidShadowProjection.h"

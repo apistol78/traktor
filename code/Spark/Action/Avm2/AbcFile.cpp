@@ -1,3 +1,4 @@
+#include <algorithm>
 #include "Core/Log/Log.h"
 #include "Core/Misc/AutoPtr.h"
 #include "Core/Misc/TString.h"

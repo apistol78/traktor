@@ -1,3 +1,4 @@
+#include <algorithm>
 #include "Core/Log/Log.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberComposite.h"

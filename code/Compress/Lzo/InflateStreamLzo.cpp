@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <cstring>
 #include <minilzo.h>
 #include "Compress/Lzo/InflateStreamLzo.h"

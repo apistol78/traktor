@@ -145,7 +145,7 @@ void AsMath::Math_round(CallArgs& ca)
 	float x = ca.args[0].getFloat();
 	float f = (float)std::abs(x);
 
-	f = int32_t(f + 0.5f);
+	f = (float)std::floor(f + 0.5f);
 	if (x < 0)
 		f = -f;
 

@@ -1,3 +1,4 @@
+#include <algorithm>
 #include "Core/Io/StringOutputStream.h"
 #include "Core/Math/Format.h"
 #include "Core/Serialization/AttributeHdr.h"

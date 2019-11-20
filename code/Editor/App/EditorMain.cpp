@@ -85,7 +85,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR szCmdLine, int)
 	XInitThreads();
 #endif
 
-#if 0
+#if defined(_DEBUG)
 	CycleRefDebugger cycleDebugger;
 	Object::setReferenceDebugger(&cycleDebugger);
 #endif
