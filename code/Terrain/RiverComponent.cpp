@@ -1,3 +1,4 @@
+#include <algorithm>
 #include "Core/Math/Hermite.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Render/IndexBuffer.h"

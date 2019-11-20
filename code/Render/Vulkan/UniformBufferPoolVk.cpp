@@ -1,3 +1,4 @@
+#include <algorithm>
 #include "Core/Log/Log.h"
 #include "Render/Vulkan/ApiLoader.h"
 #include "Render/Vulkan/UniformBufferPoolVk.h"

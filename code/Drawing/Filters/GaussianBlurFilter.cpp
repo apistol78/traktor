@@ -1,3 +1,4 @@
+#include <algorithm>
 #include "Core/Containers/AlignedVector.h"
 #include "Core/Math/Const.h"
 #include "Drawing/Image.h"
