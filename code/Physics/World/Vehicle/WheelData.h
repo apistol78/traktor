@@ -48,7 +48,7 @@ public:
 
 	float getSlipCornerForce() const { return m_slipCornerForce; }
 
-	virtual void serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s) override final;
 
 private:
 	bool m_steer;

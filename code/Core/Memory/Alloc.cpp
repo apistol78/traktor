@@ -25,7 +25,6 @@ const uint32_t c_magic = 'LIVE';
 #endif
 int32_t s_count = 0;
 int32_t s_allocated = 0;
-int32_t s_peek = 0;
 
 	}
 
@@ -45,14 +44,7 @@ void* Alloc::acquire(size_t size, const char* tag)
 	block->size = size;
 
 	Atomic::increment(s_count);
-
-	// If allocated exceed peek than replace peek value.
-	int32_t a = Atomic::add(s_allocated, int32_t(size + sizeof(Block)));
-	int32_t p;
-	Atomic::exchange(p, s_peek);
-	if (a > p)
-		Atomic::exchange(s_peek, a);
-
+	Atomic::add(s_allocated, int32_t(size + sizeof(Block)));
 	return block + 1;
 }
 
@@ -106,16 +98,9 @@ size_t Alloc::count()
 
 size_t Alloc::allocated()
 {
-	int32_t p, a;
-
-	// Read peek and allocated values.
-	Atomic::exchange(p, s_peek);
+	int32_t a = 0;
 	Atomic::exchange(a, s_allocated);
-
-	// Reset peek value.
-	Atomic::exchange(s_peek, 0);
-
-	return size_t(p > a ? p : a);
+	return (size_t)a;
 }
 
 }

@@ -1,6 +1,5 @@
 #pragma once
 
-#include <algorithm>
 #include <iterator>
 #include "Core/Config.h"
 #include "Core/Memory/IAllocator.h"
@@ -644,10 +643,10 @@ public:
 	{
 		if (capacity > m_capacity)
 		{
-			size_t capacityAlignment = std::min< size_t >(
-				std::max< size_t >(m_capacity, MinCapacity),
-				MaxCapacityAlignment
-			);
+			size_t capacityAlignment = (m_capacity > MinCapacity ? m_capacity : MinCapacity);
+			if (capacityAlignment > MaxCapacityAlignment)
+				capacityAlignment = MaxCapacityAlignment;
+
 			size_t newCapacity = alignUp(capacity, capacityAlignment);
 			ItemType* data = reinterpret_cast< ItemType* >(getAllocator()->alloc(newCapacity * sizeof(ItemType), Alignment, T_FILE_LINE));
 			if (m_data)
@@ -697,9 +696,9 @@ public:
 	/*! \brief Swap vector content. */
 	void swap(AlignedVector< ItemType >& rh)
 	{
-		std::swap(m_data, rh.m_data);
-		std::swap(m_size, rh.m_size);
-		std::swap(m_capacity, rh.m_capacity);
+		{ auto tmp = m_data; m_data = rh.m_data; rh.m_data = tmp; }
+		{ auto tmp = m_size; m_size = rh.m_size; rh.m_size = tmp; }
+		{ auto tmp = m_capacity; m_capacity = rh.m_capacity; rh.m_capacity = tmp; }
 	}
 
 	/*! \brief Get pointer to first element in vector.

@@ -53,15 +53,26 @@ private:
 #define CASE_ASSERT(condition) \
 	{ \
 		StringOutputStream ss; \
-		if (!(condition)) \
+		int64_t allocPre = (int64_t)Alloc::allocated(); \
+		bool result = false; { result = (bool)(condition); } \
+		int64_t allocPost = (int64_t)Alloc::allocated(); \
+		if (allocPre == allocPost) \
 		{ \
-			ss << T_FILE_LINE_W << L" \"" << mbstows(#condition) << L"\" failed."; \
-			failed(ss.str()); \
+			if (result) \
+			{ \
+				ss << T_FILE_LINE_W << L" \"" << mbstows(#condition) << L"\" succeeded."; \
+				succeeded(ss.str()); \
+			} \
+			else \
+			{ \
+				ss << T_FILE_LINE_W << L" \"" << mbstows(#condition) << L"\" failed."; \
+				failed(ss.str()); \
+			} \
 		} \
 		else \
 		{ \
-			ss << T_FILE_LINE_W << L" \"" << mbstows(#condition) << L"\" succeeded."; \
-			succeeded(ss.str()); \
+			ss << T_FILE_LINE_W << L" \"" << mbstows(#condition) << L"\" failed; " << (int64_t)(allocPost - allocPre) << L" memory allocation mismatch."; \
+			failed(ss.str()); \
 		} \
 	}
 

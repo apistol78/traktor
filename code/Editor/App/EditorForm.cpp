@@ -654,7 +654,7 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	// Create status bar.
 	m_statusBar = new ui::StatusBar();
 	m_statusBar->create(this);
-	m_statusBar->setText(i18n::Text(L"STATUS_IDLE"));
+	m_statusBar->setText(i18n::Format(L"STATUS_IDLE", (Alloc::allocated() + 1023) / 1024));
 
 	m_buildProgress = new ui::ProgressBar();
 	m_buildProgress->create(m_statusBar);
@@ -2948,7 +2948,7 @@ void EditorForm::eventTimer(ui::TimerEvent* /*event*/)
 	if (!building)
 	{
 		m_buildProgress->setVisible(false);
-		m_statusBar->setText((std::wstring)i18n::Text(L"STATUS_IDLE") + std::wstring(L" (") + toString(Alloc::allocated() / 1024) + L" KiB allocated)");
+		m_statusBar->setText(i18n::Format(L"STATUS_IDLE", (Alloc::allocated() + 1023) / 1024));
 	}
 	else
 		m_buildProgress->setVisible(true);
