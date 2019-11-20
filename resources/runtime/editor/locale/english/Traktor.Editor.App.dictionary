@@ -635,7 +635,7 @@
 		</item>
 		<item>
 			<first>STATUS_IDLE</first>
-			<second>Ready</second>
+			<second>Ready ({0} KiB allocated)</second>
 		</item>
 		<item>
 			<first>TEXT_EDIT</first>

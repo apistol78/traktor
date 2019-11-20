@@ -48,7 +48,10 @@ void CaseClone::run()
 		Ref< Clone_Derived > src = new Clone_Derived();
 
 		DynamicMemoryStream wms(false, true);
-		bool written = BinarySerializer(&wms).writeObject(src);
+		bool written = false;
+		{
+			written = BinarySerializer(&wms).writeObject(src);
+		}
 		CASE_ASSERT (written);
 
 		DynamicMemoryStream rms(wms.getBuffer(), true, false);

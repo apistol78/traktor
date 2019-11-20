@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <limits>
 #include "Core/Math/BspTree.h"
 
