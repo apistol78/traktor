@@ -337,7 +337,8 @@ bool RenderViewVk::reset(int32_t width, int32_t height)
 	close();
 
 #if defined(_WIN32)
-	m_window->setWindowedStyle(width, height);
+	if (m_window)
+		m_window->setWindowedStyle(width, height);
 #endif
 
 	if (create(width, height))
