@@ -18,7 +18,7 @@ namespace traktor
 
 class EventSubject;
 
-/*! \brief Event base class.
+/*! Event base class.
  * \ingroup UI
  *
  * All UI events must be derived from this class
@@ -33,7 +33,7 @@ class T_DLLCLASS Event : public Object
 	T_RTTI_CLASS;
 
 public:
-	Event(EventSubject* sender);
+	explicit Event(EventSubject* sender);
 
 	EventSubject* getSender() const;
 

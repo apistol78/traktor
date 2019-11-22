@@ -17,7 +17,7 @@ namespace traktor
 typedef StaticVector< Widget*, 16 * 16 > childrenVector_t;
 typedef StaticVector< int32_t, 16 > dimensionVector_t;
 
-void parseDefinition(const std::wstring& def, std::vector< int32_t >& out)
+void parseDefinition(const std::wstring& def, AlignedVector< int32_t >& out)
 {
 	std::vector< std::wstring > tmp;
 	if (!Split< std::wstring >::any(def, L",;", tmp))
@@ -39,8 +39,8 @@ void parseDefinition(const std::wstring& def, std::vector< int32_t >& out)
 
 void calculate(
 	const Size& avail,
-	const std::vector< int32_t >& cdef,
-	const std::vector< int32_t >& rdef,
+	const AlignedVector< int32_t >& cdef,
+	const AlignedVector< int32_t >& rdef,
 	const childrenVector_t& children,
 	dimensionVector_t& w,
 	dimensionVector_t& h
