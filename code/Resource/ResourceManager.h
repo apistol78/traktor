@@ -1,8 +1,8 @@
 #pragma once
 
-#include <map>
-#include <vector>
+#include <utility>
 #include "Core/RefArray.h"
+#include "Core/Containers/SmallMap.h"
 #include "Core/Thread/Semaphore.h"
 #include "Resource/IResourceManager.h"
 
@@ -67,9 +67,9 @@ public:
 
 private:
 	Ref< db::Database > m_database;
-	std::vector< std::pair< const TypeInfo*, Ref< const IResourceFactory > > > m_resourceFactories;
-	std::map< Guid, Ref< ResidentResourceHandle > > m_residentHandles;
-	std::map< Guid, RefArray< ExclusiveResourceHandle > > m_exclusiveHandles;
+	AlignedVector< std::pair< const TypeInfo*, Ref< const IResourceFactory > > > m_resourceFactories;
+	SmallMap< Guid, Ref< ResidentResourceHandle > > m_residentHandles;
+	SmallMap< Guid, RefArray< ExclusiveResourceHandle > > m_exclusiveHandles;
 	mutable Semaphore m_lock;
 	bool m_verbose;
 
