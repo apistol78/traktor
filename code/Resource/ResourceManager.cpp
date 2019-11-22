@@ -69,18 +69,13 @@ void ResourceManager::removeAllFactories()
 bool ResourceManager::load(const ResourceBundle* bundle)
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-
-	const std::vector< std::pair< const TypeInfo*, Guid > >& resources = bundle->get();
-	for (std::vector< std::pair< const TypeInfo*, Guid > >::const_iterator i = resources.begin(); i != resources.end(); ++i)
+	for (const auto& resource : bundle->get())
 	{
-		if (m_verbose)
-			log::info << L"Preloading " << int32_t(1 + std::distance(resources.begin(), i)) << L" / " << int32_t(resources.size()) << L" " << i->first->getName() << (bundle->persistent() ? L" <persistent> " : L"") << L"..." << Endl;
-
 		// Get resource instance from database.
-		Ref< db::Instance > instance = m_database->getInstance(i->second);
+		Ref< db::Instance > instance = m_database->getInstance(resource.second);
 		if (!instance)
 		{
-			log::error << L"Unable to preload resource " << i->second.format() << L"; no such instance." << Endl;
+			log::error << L"Unable to preload resource " << resource.second.format() << L"; no such instance." << Endl;
 			return false;
 		}
 
@@ -88,7 +83,7 @@ bool ResourceManager::load(const ResourceBundle* bundle)
 		const TypeInfo* resourceType = instance->getPrimaryType();
 		if (!resourceType)
 		{
-			log::error << L"Unable to preload resource " << i->second.format() << L"; unable to read resource type." << Endl;
+			log::error << L"Unable to preload resource " << resource.second.format() << L"; unable to read resource type." << Endl;
 			return false;
 		}
 
@@ -96,7 +91,7 @@ bool ResourceManager::load(const ResourceBundle* bundle)
 		const IResourceFactory* factory = findFactory(*resourceType);
 		if (!factory)
 		{
-			log::error << L"Unable to preload resource " << i->second.format() << L"; no factory for specified resource type \"" << resourceType->getName() << L"\"." << Endl;
+			log::error << L"Unable to preload resource " << resource.second.format() << L"; no factory for specified resource type \"" << resourceType->getName() << L"\"." << Endl;
 			return false;
 		}
 
@@ -104,18 +99,18 @@ bool ResourceManager::load(const ResourceBundle* bundle)
 		TypeInfoSet productTypes = factory->getProductTypes(*resourceType);
 		if (productTypes.size() != 1)
 		{
-			log::warning << L"Unable to preload resource " << i->second.format() << L"; unable to determine product type, skipped." << Endl;
+			log::warning << L"Unable to preload resource " << resource.second.format() << L"; unable to determine product type, skipped." << Endl;
 			continue;
 		}
 
-		bool cacheable = factory->isCacheable(*i->first);
+		bool cacheable = factory->isCacheable(*resource.first);
 		if (!cacheable)
 		{
-			log::warning << L"Unable to preload resource " << i->second.format() << L"; resource non cacheable, skipped." << Endl;
+			log::warning << L"Unable to preload resource " << resource.second.format() << L"; resource non cacheable, skipped." << Endl;
 			continue;
 		}
 
-		Ref< ResidentResourceHandle >& residentHandle = m_residentHandles[i->second];
+		Ref< ResidentResourceHandle >& residentHandle = m_residentHandles[resource.second];
 		if (residentHandle == nullptr || residentHandle->get() == nullptr)
 		{
 			const TypeInfo& productType = *(*productTypes.begin());
@@ -126,7 +121,7 @@ bool ResourceManager::load(const ResourceBundle* bundle)
 			load(instance, factory, productType, residentHandle);
 			if (!residentHandle->get())
 			{
-				log::error << L"Unable to preload resource " << i->second.format() << L"; skipped." << Endl;
+				log::error << L"Unable to preload resource " << resource.second.format() << L"; skipped." << Endl;
 				continue;
 			}
 		}
@@ -238,7 +233,7 @@ void ResourceManager::reload(const Guid& guid, bool flushedOnly)
 	if (!factory)
 		return;
 
-	std::map< Guid, Ref< ResidentResourceHandle > >::iterator i1 = m_residentHandles.find(guid);
+	auto i1 = m_residentHandles.find(guid);
 	if (i1 != m_residentHandles.end())
 	{
 		const TypeInfo& productType = i1->second->getProductType();
@@ -246,7 +241,7 @@ void ResourceManager::reload(const Guid& guid, bool flushedOnly)
 			load(instance, factory, productType, i1->second);
 	}
 
-	std::map< Guid, RefArray< ExclusiveResourceHandle > >::iterator i0 = m_exclusiveHandles.find(guid);
+	auto i0 = m_exclusiveHandles.find(guid);
 	if (i0 != m_exclusiveHandles.end())
 	{
 		for (auto handle : i0->second)
@@ -262,7 +257,7 @@ void ResourceManager::reload(const TypeInfo& productType, bool flushedOnly)
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 
-	for (std::map< Guid, RefArray< ExclusiveResourceHandle > >::iterator i = m_exclusiveHandles.begin(); i != m_exclusiveHandles.end(); ++i)
+	for (auto i = m_exclusiveHandles.begin(); i != m_exclusiveHandles.end(); ++i)
 	{
 		// Get resource instance from database.
 		Ref< db::Instance > instance = m_database->getInstance(i->first);
@@ -294,7 +289,7 @@ void ResourceManager::reload(const TypeInfo& productType, bool flushedOnly)
 		}
 	}
 
-	for (std::map< Guid, Ref< ResidentResourceHandle > >::iterator i = m_residentHandles.begin(); i != m_residentHandles.end(); ++i)
+	for (auto i = m_residentHandles.begin(); i != m_residentHandles.end(); ++i)
 	{
 		const TypeInfo& handleProductType = i->second->getProductType();
 		if (is_type_of(productType, handleProductType))
@@ -365,14 +360,14 @@ void ResourceManager::getStatistics(ResourceManagerStatistics& outStatistics) co
 		return;
 
 	outStatistics.residentCount = 0;
-	for (std::map< Guid, Ref< ResidentResourceHandle > >::const_iterator i = m_residentHandles.begin(); i != m_residentHandles.end(); ++i)
+	for (auto i = m_residentHandles.begin(); i != m_residentHandles.end(); ++i)
 	{
 		if (i->second->get() != nullptr)
 			++outStatistics.residentCount;
 	}
 
 	outStatistics.exclusiveCount = 0;
-	for (std::map< Guid, RefArray< ExclusiveResourceHandle > >::const_iterator i = m_exclusiveHandles.begin(); i != m_exclusiveHandles.end(); ++i)
+	for (auto i = m_exclusiveHandles.begin(); i != m_exclusiveHandles.end(); ++i)
 	{
 		for (RefArray< ExclusiveResourceHandle >::const_iterator j = i->second.begin(); j != i->second.end(); ++j)
 		{
@@ -386,7 +381,7 @@ void ResourceManager::getStatistics(ResourceManagerStatistics& outStatistics) co
 
 const IResourceFactory* ResourceManager::findFactory(const TypeInfo& resourceType) const
 {
-	for (std::vector< std::pair< const TypeInfo*, Ref< const IResourceFactory > > >::const_iterator i = m_resourceFactories.begin(); i != m_resourceFactories.end(); ++i)
+	for (auto i = m_resourceFactories.begin(); i != m_resourceFactories.end(); ++i)
 	{
 		if (is_type_of(*i->first, resourceType))
 			return i->second;
