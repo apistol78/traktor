@@ -1,3 +1,6 @@
+#include "Core/Misc/String.h"
+#include "Ui/Application.h"
+#include "Ui/Clipboard.h"
 #include "Ui/StyleBitmap.h"
 #include "Ui/PropertyList/CheckPropertyItem.h"
 #include "Ui/PropertyList/PropertyList.h"
@@ -49,6 +52,25 @@ void CheckPropertyItem::paintValue(Canvas& canvas, const Rect& rc)
 		image->getSize(),
 		image
 	);
+}
+
+bool CheckPropertyItem::copy()
+{
+	Clipboard* clipboard = Application::getInstance()->getClipboard();
+	if (clipboard)
+		return clipboard->setText(m_checked ? L"true" : L"false");
+	else
+		return false;	
+}
+
+bool CheckPropertyItem::paste()
+{
+	Clipboard* clipboard = Application::getInstance()->getClipboard();
+	if (!clipboard)
+		return false;
+
+	m_checked = (bool)(compareIgnoreCase< std::wstring >(clipboard->getText(), L"true") == 0);
+	return true;
 }
 
 	}

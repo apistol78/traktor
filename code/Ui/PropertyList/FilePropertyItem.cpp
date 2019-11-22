@@ -1,4 +1,6 @@
 #include "Core/Io/StringOutputStream.h"
+#include "Ui/Application.h"
+#include "Ui/Clipboard.h"
 #include "Ui/Command.h"
 #include "Ui/Edit.h"
 #include "Ui/MiniButton.h"
@@ -98,6 +100,35 @@ void FilePropertyItem::mouseButtonDown(MouseButtonDownEvent* event)
 void FilePropertyItem::paintValue(Canvas& canvas, const Rect& rc)
 {
 	canvas.drawText(rc.inflate(-2, 0), m_path.getOriginal(), AnLeft, AnCenter);
+}
+
+bool FilePropertyItem::copy()
+{
+	if (!m_editor->isVisible(false))
+	{
+		Clipboard* clipboard = Application::getInstance()->getClipboard();
+		if (clipboard)
+			return clipboard->setText(m_path.getOriginal());
+		else
+			return false;
+	}
+	else
+		return false;
+}
+
+bool FilePropertyItem::paste()
+{
+	if (!m_editor->isVisible(false))
+	{
+		Clipboard* clipboard = Application::getInstance()->getClipboard();
+		if (!clipboard)
+			return false;
+
+		m_path = Path(clipboard->getText());
+		return true;
+	}
+	else
+		return false;
 }
 
 void FilePropertyItem::eventEditFocus(FocusEvent* event)

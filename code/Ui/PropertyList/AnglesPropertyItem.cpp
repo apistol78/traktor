@@ -1,8 +1,10 @@
 #include <cstring>
 #include <limits>
 #include "Core/Math/Const.h"
+#include "Core/Misc/Split.h"
 #include "Core/Misc/String.h"
 #include "Ui/Application.h"
+#include "Ui/Clipboard.h"
 #include "Ui/Edit.h"
 #include "Ui/NumericEditValidator.h"
 #include "Ui/PropertyList/PropertyList.h"
@@ -129,6 +131,56 @@ void AnglesPropertyItem::paintValue(Canvas& canvas, const Rect& rc)
 			AnCenter
 		);
 	}
+}
+
+bool AnglesPropertyItem::copy()
+{
+	if (isEditing())
+		return false;
+
+	Clipboard* clipboard = Application::getInstance()->getClipboard();
+	if (!clipboard)
+		return false;
+
+	StringOutputStream ss;
+	for (int32_t i = 0; i < 3; ++i)
+	{
+		if (i > 0)
+			ss << L",";
+		ss << rad2deg(m_value[i]);
+	}
+	return clipboard->setText(ss.str());
+}
+
+bool AnglesPropertyItem::paste()
+{
+	if (isEditing())
+		return false;
+
+	Clipboard* clipboard = Application::getInstance()->getClipboard();
+	if (!clipboard)
+		return false;
+
+	std::vector< float > values;
+	Split< std::wstring, float >::any(clipboard->getText(), L",", values, true);
+	if (values.size() >= 3)
+	{
+		for (int i = 0; i < 3; ++i)
+			m_value[i] = Scalar(deg2rad(values[i]));
+		return true;
+	}
+	else
+		return false;
+}
+
+bool AnglesPropertyItem::isEditing() const
+{
+	for (int32_t i = 0; i < 3; ++i)
+	{
+		if (m_editors[i] && m_editors[i]->isVisible(false))
+			return true;
+	}
+	return false;
 }
 
 void AnglesPropertyItem::eventEditFocus(FocusEvent* event)

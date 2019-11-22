@@ -34,6 +34,10 @@ protected:
 
 	virtual void paintValue(Canvas& canvas, const Rect& rc) override;
 
+	virtual bool copy() override;
+
+	virtual bool paste() override;
+
 private:
 	Ref< IBitmap > m_imageUnchecked;
 	Ref< IBitmap > m_imageChecked;
