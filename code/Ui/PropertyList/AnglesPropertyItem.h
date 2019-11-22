@@ -43,9 +43,15 @@ protected:
 
 	virtual void paintValue(Canvas& canvas, const Rect& rc) override;
 
+	virtual bool copy() override;
+
+	virtual bool paste() override;
+
 private:
 	Ref< Edit > m_editors[3];
 	Vector4 m_value;
+
+	bool isEditing() const;
 
 	void eventEditFocus(FocusEvent* event);
 };

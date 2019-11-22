@@ -32,6 +32,8 @@ public:
 protected:
 	virtual void paintValue(Canvas& canvas, const Rect& rc) override;
 
+	virtual bool copy() override;
+
 private:
 	std::wstring m_value;
 };

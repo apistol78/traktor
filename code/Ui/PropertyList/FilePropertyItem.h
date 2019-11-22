@@ -44,6 +44,10 @@ protected:
 
 	virtual void paintValue(Canvas& canvas, const Rect& rc) override;
 
+	virtual bool copy() override;
+
+	virtual bool paste() override;
+
 private:
 	Ref< Edit > m_editor;
 	Ref< MiniButton > m_buttonEdit;

@@ -1,3 +1,5 @@
+#include "Ui/Application.h"
+#include "Ui/Clipboard.h"
 #include "Ui/PropertyList/PropertyList.h"
 #include "Ui/PropertyList/StaticPropertyItem.h"
 
@@ -27,6 +29,15 @@ const std::wstring& StaticPropertyItem::getValue() const
 void StaticPropertyItem::paintValue(Canvas& canvas, const Rect& rc)
 {
 	canvas.drawText(rc.inflate(-2, 0), m_value, AnLeft, AnCenter);
+}
+
+bool StaticPropertyItem::copy()
+{
+	Clipboard* clipboard = Application::getInstance()->getClipboard();
+	if (clipboard)
+		return clipboard->setText(m_value);
+	else
+		return false;
 }
 
 	}
