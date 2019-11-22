@@ -1,7 +1,7 @@
 #pragma once
 
 #include <string>
-#include <vector>
+#include "Core/Containers/AlignedVector.h"
 #include "Ui/Layout.h"
 #include "Ui/Size.h"
 
@@ -35,8 +35,8 @@ public:
 private:
 	Size m_margin;
 	Size m_pad;
-	std::vector< int32_t > m_cdef;
-	std::vector< int32_t > m_rdef;
+	AlignedVector< int32_t > m_cdef;
+	AlignedVector< int32_t > m_rdef;
 };
 
 	}

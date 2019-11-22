@@ -16,7 +16,7 @@ namespace traktor
 	namespace ui
 	{
 
-/*! \brief Font
+/*! Font abstraction.
  * \ingroup UI
  *
  * Font size is expressed in "device independent pixels" (DIP) size which is defined
@@ -31,7 +31,7 @@ public:
 
 	Font(const Font& font);
 
-	Font(const std::wstring& face, int32_t size, bool bold = false, bool italic = false, bool underline = false);
+	explicit Font(const std::wstring& face, int32_t size, bool bold = false, bool italic = false, bool underline = false);
 
 	void setFace(const std::wstring& face);
 
@@ -66,7 +66,7 @@ public:
 private:
 	struct FontParameters
 	{
-		int size;
+		int32_t size;
 		bool bold;
 		bool italic;
 		bool underline;

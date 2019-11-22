@@ -19,7 +19,7 @@ namespace traktor
 
 class IFontMetric;
 
-/*! \brief
+/*! Font metrics.
  * \ingroup UI
  */
 class T_DLLCLASS FontMetric : public Object
@@ -29,22 +29,22 @@ class T_DLLCLASS FontMetric : public Object
 public:
 	explicit FontMetric(const IFontMetric* metric);
 
-	/*! \brief Distance from top to base line. */
+	/*! Distance from top to base line. */
 	int32_t getAscent() const;
 
-	/*! \brief Distance from base line to bottom. */
+	/*! Distance from base line to bottom. */
 	int32_t getDescent() const;
 
-	/*! \brief Distance from top to bottom. */
+	/*! Distance from top to bottom. */
 	int32_t getHeight() const;
 
-	/*! \brief Advancement to next character. */
+	/*! Advancement to next character. */
 	int32_t getAdvance(wchar_t ch, wchar_t next) const;
 
-	/*! \brief Line spacing. */
+	/*! Line spacing. */
 	int32_t getLineSpacing() const;
 
-	/*! \brief Extent of text. */
+	/*! Extent of text. */
 	Size getExtent(const std::wstring& text) const;
 
 private:
