@@ -1,5 +1,6 @@
 #pragma once
 
+#include <string>
 #include "Spark/Action/ActionObjectRelay.h"
 
 // import/export mechanism.
