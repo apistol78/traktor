@@ -468,7 +468,7 @@ void Edit::eventPaint(PaintEvent* event)
 {
 	const StyleSheet* ss = Application::getInstance()->getStyleSheet();
 	Canvas& canvas = event->getCanvas();
-	FontMetric fm = getFontMetric();
+	FontMetric fm = canvas.getFontMetric();
 	Rect rcInner = getInnerRect();
 
 	bool hover = isEnable() && m_hover;
