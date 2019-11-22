@@ -163,74 +163,88 @@ void CanvasDirect2DWin32::endPaint(Window& hWnd)
 
 void CanvasDirect2DWin32::getAscentAndDescent(Window& hWnd, int32_t& outAscent, int32_t& outDescent) const
 {
-	outAscent = 0;
-	outDescent = 0;
-
-	LOGFONT lf;
-	if (!GetObject(hWnd.getFont(), sizeof(lf), &lf))
-		return;
-
-	int32_t logical = 0;
-	if (lf.lfHeight >= 0)
+	if (m_hDC == NULL)
 	{
-		TEXTMETRIC tm = { 0 };
-		HDC hDC = GetDC(hWnd);
-		GetTextMetrics(hDC, &tm);
-		ReleaseDC(hWnd, hDC);
-		logical = lf.lfHeight - tm.tmInternalLeading;
+		outAscent = 0;
+		outDescent = 0;
+
+		LOGFONT lf;
+		if (!GetObject(hWnd.getFont(), sizeof(lf), &lf))
+			return;
+
+		int32_t logical = 0;
+		if (lf.lfHeight >= 0)
+		{
+			TEXTMETRIC tm = { 0 };
+			HDC hDC = GetDC(hWnd);
+			GetTextMetrics(hDC, &tm);
+			ReleaseDC(hWnd, hDC);
+			logical = lf.lfHeight - tm.tmInternalLeading;
+		}
+		else
+			logical = -lf.lfHeight;
+
+		float inches = float(logical) / getSystemDPI();
+		float dip = inches * 96.0f;
+
+		ComRef< IDWriteTextFormat > dwTextFormat;
+		s_dwFactory->CreateTextFormat(
+			lf.lfFaceName,
+			NULL,
+			bool(lf.lfWeight == FW_BOLD) ? DWRITE_FONT_WEIGHT_BOLD : DWRITE_FONT_WEIGHT_NORMAL,
+			bool(lf.lfItalic == TRUE) ? DWRITE_FONT_STYLE_ITALIC : DWRITE_FONT_STYLE_NORMAL,
+			DWRITE_FONT_STRETCH_NORMAL,
+			int32_t(dip + 0.5f) * getSystemDPI() / 96.0f,
+			L"",
+			&dwTextFormat.getAssign()
+		);
+		if (!dwTextFormat)
+			return;
+
+		dwTextFormat->SetWordWrapping(DWRITE_WORD_WRAPPING_NO_WRAP);
+
+		ComRef< IDWriteFontCollection > collection;
+		dwTextFormat->GetFontCollection(&collection.getAssign());
+
+		UINT32 findex;
+		BOOL exists;
+		collection->FindFamilyName(lf.lfFaceName, &findex, &exists);
+		T_FATAL_ASSERT(exists);
+
+		ComRef< IDWriteFontFamily > ffamily;
+		collection->GetFontFamily(findex, &ffamily.getAssign());
+		T_FATAL_ASSERT(ffamily != nullptr);
+
+		ComRef< IDWriteFont > dwFont;
+		ffamily->GetFirstMatchingFont(
+			dwTextFormat->GetFontWeight(),
+			dwTextFormat->GetFontStretch(),
+			dwTextFormat->GetFontStyle(),
+			&dwFont.getAssign()
+		);
+
+		DWRITE_FONT_METRICS fontMetrics;
+		dwFont->GetMetrics(&fontMetrics);
+
+		outAscent = dwTextFormat->GetFontSize() * fontMetrics.ascent / fontMetrics.designUnitsPerEm;
+		outDescent = dwTextFormat->GetFontSize() * fontMetrics.descent / fontMetrics.designUnitsPerEm;
 	}
-	else
-		logical = -lf.lfHeight;
-
-	float inches = float(logical) / getSystemDPI();
-	float dip = inches * 96.0f;
-
-	ComRef< IDWriteTextFormat > dwTextFormat;
-	s_dwFactory->CreateTextFormat(
-		lf.lfFaceName,
-		NULL,
-		bool(lf.lfWeight == FW_BOLD) ? DWRITE_FONT_WEIGHT_BOLD : DWRITE_FONT_WEIGHT_NORMAL,
-		bool(lf.lfItalic == TRUE) ? DWRITE_FONT_STYLE_ITALIC : DWRITE_FONT_STYLE_NORMAL,
-		DWRITE_FONT_STRETCH_NORMAL,
-		int32_t(dip + 0.5f) * getSystemDPI() / 96.0f,
-		L"",
-		&dwTextFormat.getAssign()
-	);
-	if (!dwTextFormat)
-		return;
-
-	dwTextFormat->SetWordWrapping(DWRITE_WORD_WRAPPING_NO_WRAP);
-
-	ComRef< IDWriteFontCollection > collection;
-	dwTextFormat->GetFontCollection(&collection.getAssign());
-
-	UINT32 findex;
-	BOOL exists;
-	collection->FindFamilyName(lf.lfFaceName, &findex, &exists);
-	T_FATAL_ASSERT(exists);
-
-	ComRef< IDWriteFontFamily > ffamily;
-	collection->GetFontFamily(findex, &ffamily.getAssign());
-	T_FATAL_ASSERT(ffamily != nullptr);
-
-	ComRef< IDWriteFont > dwFont;
-	ffamily->GetFirstMatchingFont(
-		dwTextFormat->GetFontWeight(),
-		dwTextFormat->GetFontStretch(),
-		dwTextFormat->GetFontStyle(),
-		&dwFont.getAssign()
-	);
-
-	DWRITE_FONT_METRICS fontMetrics;
-	dwFont->GetMetrics(&fontMetrics);
-
-	outAscent = dwTextFormat->GetFontSize() * fontMetrics.ascent / fontMetrics.designUnitsPerEm;
-	outDescent = dwTextFormat->GetFontSize() * fontMetrics.descent / fontMetrics.designUnitsPerEm;
+	else	// Inside begin/end thus use current paint context.
+	{
+		return getAscentAndDescent(outAscent, outDescent);
+	}
 }
 
 int32_t CanvasDirect2DWin32::getAdvance(Window& hWnd, wchar_t ch, wchar_t next) const
 {
-	return getExtent(hWnd, std::wstring(1, ch)).cx;
+	if (m_hDC == NULL)
+	{
+		return getExtent(hWnd, std::wstring(1, ch)).cx;
+	}
+	else	// Inside begin/end thus use current paint context.
+	{
+		return getAdvance(ch, next);
+	}
 }
 
 int32_t CanvasDirect2DWin32::getLineSpacing(Window& hWnd) const
@@ -240,60 +254,67 @@ int32_t CanvasDirect2DWin32::getLineSpacing(Window& hWnd) const
 
 Size CanvasDirect2DWin32::getExtent(Window& hWnd, const std::wstring& text) const
 {
-	LOGFONT lf;
-	if (!GetObject(hWnd.getFont(), sizeof(lf), &lf))
-		return Size(0, 0);
-
-	int32_t logical = 0;
-	if (lf.lfHeight >= 0)
+	if (m_hDC == NULL)
 	{
-		TEXTMETRIC tm = { 0 };
-		HDC hDC = GetDC(hWnd);
-		GetTextMetrics(hDC, &tm);
-		ReleaseDC(hWnd, hDC);
-		logical = lf.lfHeight - tm.tmInternalLeading;
+		LOGFONT lf;
+		if (!GetObject(hWnd.getFont(), sizeof(lf), &lf))
+			return Size(0, 0);
+
+		int32_t logical = 0;
+		if (lf.lfHeight >= 0)
+		{
+			TEXTMETRIC tm = { 0 };
+			HDC hDC = GetDC(hWnd);
+			GetTextMetrics(hDC, &tm);
+			ReleaseDC(hWnd, hDC);
+			logical = lf.lfHeight - tm.tmInternalLeading;
+		}
+		else
+			logical = -lf.lfHeight;
+
+		float inches = float(logical) / getSystemDPI();
+		float dip = inches * 96.0f;
+
+		ComRef< IDWriteTextFormat > dwTextFormat;
+		s_dwFactory->CreateTextFormat(
+			lf.lfFaceName,
+			NULL,
+			bool(lf.lfWeight == FW_BOLD) ? DWRITE_FONT_WEIGHT_BOLD : DWRITE_FONT_WEIGHT_NORMAL,
+			bool(lf.lfItalic == TRUE) ? DWRITE_FONT_STYLE_ITALIC : DWRITE_FONT_STYLE_NORMAL,
+			DWRITE_FONT_STRETCH_NORMAL,
+			int32_t(dip + 0.5f) * getSystemDPI() / 96.0f,
+			L"",
+			&dwTextFormat.getAssign()
+		);
+		if (!dwTextFormat)
+			return Size(0, 0);
+
+		dwTextFormat->SetWordWrapping(DWRITE_WORD_WRAPPING_NO_WRAP);
+
+		ComRef< IDWriteTextLayout > dwLayout;
+		s_dwFactory->CreateTextLayout(
+			text.c_str(),
+			text.length(),
+			dwTextFormat,
+			std::numeric_limits< FLOAT >::max(),
+			std::numeric_limits< FLOAT >::max(),
+			&dwLayout.getAssign()
+		);
+		if (!dwLayout)
+			return Size(0, 0);
+
+		DWRITE_TEXT_METRICS dwtm;
+		dwLayout->GetMetrics(&dwtm);
+
+		return Size(
+			dwtm.widthIncludingTrailingWhitespace,
+			dwtm.height
+		);
 	}
-	else
-		logical = -lf.lfHeight;
-
-	float inches = float(logical) / getSystemDPI();
-	float dip = inches * 96.0f;
-
-	ComRef< IDWriteTextFormat > dwTextFormat;
-	s_dwFactory->CreateTextFormat(
-		lf.lfFaceName,
-		NULL,
-		bool(lf.lfWeight == FW_BOLD) ? DWRITE_FONT_WEIGHT_BOLD : DWRITE_FONT_WEIGHT_NORMAL,
-		bool(lf.lfItalic == TRUE) ? DWRITE_FONT_STYLE_ITALIC : DWRITE_FONT_STYLE_NORMAL,
-		DWRITE_FONT_STRETCH_NORMAL,
-		int32_t(dip + 0.5f) * getSystemDPI() / 96.0f,
-		L"",
-		&dwTextFormat.getAssign()
-	);
-	if (!dwTextFormat)
-		return Size(0, 0);
-
-	dwTextFormat->SetWordWrapping(DWRITE_WORD_WRAPPING_NO_WRAP);
-
-	ComRef< IDWriteTextLayout > dwLayout;
-	s_dwFactory->CreateTextLayout(
-		text.c_str(),
-		text.length(),
-		dwTextFormat,
-		std::numeric_limits< FLOAT >::max(),
-		std::numeric_limits< FLOAT >::max(),
-		&dwLayout.getAssign()
-	);
-	if (!dwLayout)
-		return Size(0, 0);
-
-	DWRITE_TEXT_METRICS dwtm;
-	dwLayout->GetMetrics(&dwtm);
-
-	return Size(
-		dwtm.widthIncludingTrailingWhitespace,
-		dwtm.height
-	);
+	else	// Inside begin/end thus use current paint context.
+	{
+		return getExtent(text);
+	}
 }
 
 void CanvasDirect2DWin32::getAscentAndDescent(int32_t& outAscent, int32_t& outDescent) const
