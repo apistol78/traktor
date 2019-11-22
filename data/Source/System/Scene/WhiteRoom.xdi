@@ -73,7 +73,7 @@
 		<fogDensityY>0</fogDensityY>
 		<fogDensityZ>0</fogDensityZ>
 		<fogColor>1, 1, 1, 1</fogColor>
-		<irradianceGrid>{FD86AE60-E6D1-134F-9FA6-75E2A738B86B}</irradianceGrid>
+		<irradianceGrid>{6CBAE4B1-7E14-FC44-8F46-4F39D9A6DE84}</irradianceGrid>
 		<imageProcess>
 			<disabled>{E7BBD0E4-7F19-ED40-B561-AAECE3D186F5}</disabled>
 			<low>{9866EA1B-72EF-E94E-93B7-12C0A5D56C12}</low>
@@ -100,7 +100,7 @@
 					<components>
 						<item type="traktor.weather.SkyComponentData" version="2">
 							<shader>{4CF929EB-3A8B-C340-AA0A-0C5C80625BF1}</shader>
-							<texture>{93E6996B-8903-4AD0-811A-C8C03C8E38C6}</texture>
+							<texture>{6B82B195-D88E-7845-BDC3-AF813E924CE1}</texture>
 							<offset>0</offset>
 						</item>
 					</components>
