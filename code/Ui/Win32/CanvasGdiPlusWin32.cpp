@@ -92,6 +92,7 @@ bool CanvasGdiPlusWin32::beginPaint(Window& hWnd, bool doubleBuffer, HDC hDC)
 	}
 
 	m_hFont = hWnd.getFont();
+	m_font.reset(new Gdiplus::Font(m_hDC, m_hFont));
 
 	T_ASSERT(m_graphics.ptr());
 
