@@ -159,12 +159,12 @@ Ref< HierarchicalState > TreeView::captureState() const
 
 	RefArray< TreeViewItem > items;
 	getItems(items, GfDescendants);
-	for (RefArray< TreeViewItem >::iterator i = items.begin(); i != items.end(); ++i)
+	for (auto item : items)
 	{
 		state->addState(
-			(*i)->getPath(),
-			(*i)->isExpanded(),
-			(*i)->isSelected()
+			item->getPath(),
+			item->isExpanded(),
+			item->isSelected()
 		);
 	}
 
@@ -175,19 +175,19 @@ void TreeView::applyState(const HierarchicalState* state)
 {
 	RefArray< TreeViewItem > items;
 	getItems(items, GfDescendants);
-	for (RefArray< TreeViewItem >::iterator i = items.begin(); i != items.end(); ++i)
+	for (auto item : items)
 	{
-		std::wstring path = (*i)->getPath();
+		std::wstring path = item->getPath();
 
 		if (state->getExpanded(path))
-			(*i)->expand();
+			item->expand();
 		else
-			(*i)->collapse();
+			item->collapse();
 
 		if (state->getSelected(path))
-			(*i)->select();
+			item->select();
 		else
-			(*i)->unselect();
+			item->unselect();
 	}
 }
 
@@ -199,13 +199,13 @@ void TreeView::layoutCells(const Rect& rc)
 	getItems(items, GfDescendants | GfExpandedOnly);
 
 	int32_t maxWidth = rc.right - rc.left;
-	for (RefArray< TreeViewItem >::iterator i = items.begin(); i != items.end(); ++i)
-		maxWidth = std::max(maxWidth, rc.left + (*i)->calculateWidth());
+	for (auto item : items)
+		maxWidth = std::max(maxWidth, rc.left + item->calculateWidth());
 
 	Rect rcRow(rc.left, rc.top, rc.left + maxWidth, rc.top + height);
-	for (RefArray< TreeViewItem >::iterator i = items.begin(); i != items.end(); ++i)
+	for (auto item : items)
 	{
-		placeCell(*i, rcRow);
+		placeCell(item, rcRow);
 		rcRow = rcRow.offset(0, height);
 	}
 
@@ -300,11 +300,13 @@ void TreeView::eventKeyDown(KeyDownEvent* event)
 	if (current < 0)
 		return;
 
+	bool recursive = (bool)((event->getKeyState() & KsShift) != 0);
+
 	switch (event->getVirtualKey())
 	{
 	case VkLeft:
 		if (items[current]->isExpanded())
-			items[current]->collapse();
+			items[current]->collapse(recursive);
 		else if (items[current]->getParent() != 0)
 			items[current]->getParent()->select();
 		break;
@@ -313,7 +315,7 @@ void TreeView::eventKeyDown(KeyDownEvent* event)
 		if (items[current]->hasChildren())
 		{
 			if (items[current]->isCollapsed())
-				items[current]->expand();
+				items[current]->expand(recursive);
 			else
 				items[current + 1]->select();
 		}
