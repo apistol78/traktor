@@ -193,7 +193,7 @@ Ref< IEntityComponent > WorldEntityFactory::createEntityComponent(const world::I
 		{
 			render::CubeTextureCreateDesc ctcd;
 #if !defined(__ANDROID__)
-			ctcd.side = 512;
+			ctcd.side = 1024;
 #else
 			ctcd.side = 128;
 #endif

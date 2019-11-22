@@ -80,7 +80,7 @@ void ProbeCapturer::build(
 
 		world::WorldRenderSettings wrs;
 		wrs.viewNearZ = 0.01f;
-		wrs.viewFarZ = 100.0f;
+		wrs.viewFarZ = 12000.0f;
 		wrs.linearLighting = true;
 		wrs.exposureBias = 1.0f;
 		wrs.fog = false;
@@ -148,7 +148,7 @@ void ProbeCapturer::build(
 		1.0f,
 		deg2rad(90.0f),
 		0.01f,
-		100.0f
+		12000.0f
 	);
 	worldRenderView.setTimes(0.0f, 1.0f / 60.0f, 0.0f);
 	worldRenderView.setView(view, view);

@@ -19,7 +19,7 @@ namespace traktor
         {
 
 #if !defined(__ANDROID__)
-const int32_t c_faceSize = 512;
+const int32_t c_faceSize = 1024;
 #else
 const int32_t c_faceSize = 128;
 #endif
@@ -69,15 +69,6 @@ bool ProbeFilterer::create()
         if (!m_renderTargetSets[mip])
             return false;
     }
-
-	//m_halton.resize(c_sampleCount);
-	//for (int32_t i = 0; i < c_sampleCount; ++i)
-	//{
-	//	m_halton[i] = Vector2(
-	//		(float)halton(i, 2),
-	//		(float)halton(i, 3)
-	//	);
-	//}
 
     return true;
 }
