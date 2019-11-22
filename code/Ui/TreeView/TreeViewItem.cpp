@@ -111,7 +111,7 @@ bool TreeViewItem::isExpanded() const
 	return m_expanded;
 }
 
-void TreeViewItem::expand()
+void TreeViewItem::expand(bool recursive)
 {
 	if (!m_expanded)
 	{
@@ -120,6 +120,11 @@ void TreeViewItem::expand()
 		TreeViewItemStateChangeEvent stateChangeEvent(m_view, this);
 		m_view->raiseEvent(&stateChangeEvent);
 	}
+	if (recursive)
+	{
+		for (auto child : m_children)
+			child->expand(true);
+	}
 }
 
 bool TreeViewItem::isCollapsed() const
@@ -127,7 +132,7 @@ bool TreeViewItem::isCollapsed() const
 	return !m_expanded;
 }
 
-void TreeViewItem::collapse()
+void TreeViewItem::collapse(bool recursive)
 {
 	if (m_expanded)
 	{
@@ -135,6 +140,11 @@ void TreeViewItem::collapse()
 
 		TreeViewItemStateChangeEvent stateChangeEvent(m_view, this);
 		m_view->raiseEvent(&stateChangeEvent);
+	}
+	if (recursive)
+	{
+		for (auto child : m_children)
+			child->collapse(true);
 	}
 }
 

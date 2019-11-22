@@ -53,11 +53,11 @@ public:
 
 	bool isExpanded() const;
 
-	void expand();
+	void expand(bool recursive = false);
 
 	bool isCollapsed() const;
 
-	void collapse();
+	void collapse(bool recursive = false);
 
 	bool isEnabled() const;
 
