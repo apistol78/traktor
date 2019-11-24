@@ -36,15 +36,15 @@ IAllocator* getAllocator()
 		s_stdAllocator = allocConstruct< StdAllocator >();
 		s_stdAllocator->addRef(nullptr);
 
-#if defined(__IOS__) || defined(__ANDROID__) || defined(_PS3) || defined(__EMSCRIPTEN__) || defined(__APPLE__)
+//#if defined(__IOS__) || defined(__ANDROID__) || defined(_PS3) || defined(__EMSCRIPTEN__) || defined(__APPLE__)
 		s_allocator = s_stdAllocator;
-#elif !defined(_DEBUG)
-		s_allocator = allocConstruct< FastAllocator >(s_stdAllocator);
-#else
-		//s_allocator = allocConstruct< TrackAllocator >(s_stdAllocator);
-		//s_allocator = allocConstruct< DebugAllocator >(s_stdAllocator);
-		s_allocator = s_stdAllocator;
-#endif
+//#elif !defined(_DEBUG)
+//		s_allocator = allocConstruct< FastAllocator >(s_stdAllocator);
+//#else
+//		//s_allocator = allocConstruct< TrackAllocator >(s_stdAllocator);
+//		//s_allocator = allocConstruct< DebugAllocator >(s_stdAllocator);
+//		s_allocator = s_stdAllocator;
+//#endif
 
 		s_allocator->addRef(nullptr);
 
