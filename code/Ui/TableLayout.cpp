@@ -14,8 +14,8 @@ namespace traktor
 		namespace
 		{
 
-typedef StaticVector< Widget*, 16 * 16 > childrenVector_t;
-typedef StaticVector< int32_t, 16 > dimensionVector_t;
+typedef StaticVector< Widget*, 32 * 32 > childrenVector_t;
+typedef StaticVector< int32_t, 32 > dimensionVector_t;
 
 void parseDefinition(const std::wstring& def, AlignedVector< int32_t >& out)
 {
@@ -217,7 +217,7 @@ void TableLayout::update(Widget* widget)
 	dimensionVector_t h;
 	calculate(avail, m_cdef, m_rdef, children, w, h);
 
-	StaticVector< WidgetRect, 16 > rects(children.size());
+	StaticVector< WidgetRect, 32 > rects(children.size());
 
 	Point tl = inner.getTopLeft() + m_margin;
 	for (int32_t i = 0; i < (int32_t)children.size(); ++i)
