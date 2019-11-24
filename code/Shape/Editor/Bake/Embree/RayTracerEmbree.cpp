@@ -136,48 +136,34 @@ void RayTracerEmbree::addLight(const Light& light)
 
 void RayTracerEmbree::addModel(const model::Model* model, const Transform& transform)
 {
-	model::MergeModel(*model, transform, 0.001f).apply(m_model);
-
-	const auto& materials = model->getMaterials();
-	for (size_t i = 0; i < materials.size(); ++i)
-	{
-		const auto& diffuseMap = materials[i].getDiffuseMap();
-		if (!diffuseMap.name.empty())
-		{
-			// \tbd Read diffuse image from TextureAsset.
-		}
-		else
-		{
-			// \tbd Use a white diffuse image.
-		}
-	}
-}
-
-void RayTracerEmbree::commit()
-{
 	RTCGeometry mesh = rtcNewGeometry(m_device, RTC_GEOMETRY_TYPE_TRIANGLE);
 
-	float* vertices = (float*)rtcSetNewGeometryBuffer(mesh, RTC_BUFFER_TYPE_VERTEX, 0, RTC_FORMAT_FLOAT3, 3 * sizeof(float), m_model.getPositions().size());
-	for (const auto& position : m_model.getPositions())
+	float* vertices = (float*)rtcSetNewGeometryBuffer(mesh, RTC_BUFFER_TYPE_VERTEX, 0, RTC_FORMAT_FLOAT3, 3 * sizeof(float), model->getPositions().size());
+	for (const auto& position : model->getPositions())
 	{
-		const Vector4& p = position.xyz1();
+		Vector4 p = transform * position.xyz1();
 		*vertices++ = p.x();
 		*vertices++ = p.y();
 		*vertices++ = p.z();
 	}
 
-	uint32_t* triangles = (uint32_t*)rtcSetNewGeometryBuffer(mesh, RTC_BUFFER_TYPE_INDEX, 0, RTC_FORMAT_UINT3, 3 * sizeof(uint32_t), m_model.getPolygons().size());
-	for (const auto& polygon : m_model.getPolygons())
+	uint32_t* triangles = (uint32_t*)rtcSetNewGeometryBuffer(mesh, RTC_BUFFER_TYPE_INDEX, 0, RTC_FORMAT_UINT3, 3 * sizeof(uint32_t), model->getPolygons().size());
+	for (const auto& polygon : model->getPolygons())
 	{
-		*triangles++ = m_model.getVertex(polygon.getVertex(2)).getPosition();
-		*triangles++ = m_model.getVertex(polygon.getVertex(1)).getPosition();
-		*triangles++ = m_model.getVertex(polygon.getVertex(0)).getPosition();
+		*triangles++ = model->getVertex(polygon.getVertex(2)).getPosition();
+		*triangles++ = model->getVertex(polygon.getVertex(1)).getPosition();
+		*triangles++ = model->getVertex(polygon.getVertex(0)).getPosition();
 	}
 
 	rtcCommitGeometry(mesh);
 	rtcAttachGeometry(m_scene, mesh);
 	rtcReleaseGeometry(mesh);
 
+	m_models.push_back(model);
+}
+
+void RayTracerEmbree::commit()
+{
 	rtcCommitScene(m_scene);
 }
 
@@ -243,8 +229,8 @@ Ref< render::SHCoeffs > RayTracerEmbree::traceProbe(const Vector4& position) con
 	const uint32_t sampleCount = alignUp(m_configuration->getSampleCount(), 16);
 	RandomGeometry random;
 
-	const auto& polygons = m_model.getPolygons();
-	const auto& materials = m_model.getMaterials();
+	//const auto& polygons = m_model.getPolygons();
+	//const auto& materials = m_model.getMaterials();
 
 	WrappedSHFunction shFunction([&] (const Vector4& unit) -> Vector4 {
 		Color4f color(0.0f, 0.0f, 0.0f, 0.0f);
@@ -271,14 +257,14 @@ Ref< render::SHCoeffs > RayTracerEmbree::traceProbe(const Vector4& position) con
 	return shCoeffs;
 }
 
-void RayTracerEmbree::traceLightmap(const GBuffer* gbuffer, drawing::Image* lightmap, const int32_t region[4]) const
+void RayTracerEmbree::traceLightmap(const model::Model* model, const GBuffer* gbuffer, drawing::Image* lightmap, const int32_t region[4]) const
 {
 	RandomGeometry random;
 
 	const int32_t sampleCount = m_configuration->getSampleCount();
 
-	const auto& polygons = m_model.getPolygons();
-	const auto& materials = m_model.getMaterials();
+	const auto& polygons = model->getPolygons();
+	const auto& materials = model->getMaterials();
 
 	for (int32_t y = region[1]; y < region[3]; ++y)
 	{
@@ -355,8 +341,8 @@ Color4f RayTracerEmbree::tracePath(
 			return Color4f(0.0f, 0.0f, 0.0f, 0.0f);
 	}
 
-	const auto& polygons = m_model.getPolygons();
-	const auto& materials = m_model.getMaterials();
+	const auto& polygons = m_models[rh.hit.geomID]->getPolygons();
+	const auto& materials = m_models[rh.hit.geomID]->getMaterials();
 
 	const auto& hitPolygon = polygons[rh.hit.primID];
 	const auto& hitMaterial = materials[hitPolygon.getMaterial()];

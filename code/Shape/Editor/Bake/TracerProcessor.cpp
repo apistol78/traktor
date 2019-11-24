@@ -341,6 +341,9 @@ bool TracerProcessor::process(const TracerTask* task) const
 	auto configuration = task->getConfiguration();
 	T_FATAL_ASSERT(configuration != nullptr);
 
+	// Update status.
+	m_status.description = L"Preparing...";
+
    	// Create raytracer implementation.
 	Ref< IRayTracer > rayTracer = checked_type_cast< IRayTracer* >(m_rayTracerType->createInstance());
 	if (!rayTracer->create(configuration))
@@ -404,7 +407,7 @@ bool TracerProcessor::process(const TracerTask* task) const
 				for (int32_t tx = 0; tx < width; tx += 16)
 				{
 					int32_t region[] = { tx, ty, tx + 16, ty + 16 };
-					rayTracer->traceLightmap(&gbuffer, lightmap, region);
+					rayTracer->traceLightmap(renderModel, &gbuffer, lightmap, region);
 					++m_status.current;
 				}
 			}));
