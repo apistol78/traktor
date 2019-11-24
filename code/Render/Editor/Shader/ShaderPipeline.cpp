@@ -41,9 +41,7 @@
 #include "Xml/XmlDeserializer.h"
 #include "Xml/XmlSerializer.h"
 
-//#if !defined(__APPLE__) && !defined(__LINUX__)
-//#	define T_USE_BUILD_COMBINATION_JOBS
-//#endif
+#define T_USE_BUILD_COMBINATION_JOBS
 
 namespace traktor
 {
