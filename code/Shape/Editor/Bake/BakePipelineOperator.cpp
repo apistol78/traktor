@@ -194,11 +194,7 @@ void addSky(
 	Ref< drawing::Image > radiance = render::CubeMap::createFromImage(skyImage)->createEquirectangular();
 	T_FATAL_ASSERT(radiance != nullptr);
 
-	// Measure intensity range in radiance image.
-	Range< Scalar > range(
-		Scalar( std::numeric_limits< float >::max()),
-		Scalar(-std::numeric_limits< float >::max())
-	);
+	// Clamp intensity in radiance image, to reduce chance of sample "speeks".
 	for (int32_t y = 0; y < radiance->getHeight(); ++y)
 	{
 		for (int32_t x = 0; x < radiance->getWidth(); ++x)
@@ -206,73 +202,19 @@ void addSky(
 			Color4f cl;
 			radiance->getPixelUnsafe(x, y, cl);
 			Scalar intensity = dot3(cl, Vector4(1.0f, 1.0f, 1.0f, 0.0f));
-			range.min = std::min(range.min, intensity);
-			range.max = std::max(range.max, intensity);
-		}
-	}
-
-	// Plot importance density/probability image.
-	Ref< drawing::Image > importance = new drawing::Image(
-		drawing::PixelFormat::getARGBF32(),
-		radiance->getWidth() / c_importanceCellSize,
-		radiance->getHeight() / c_importanceCellSize
-	);
-	int32_t totalSampleCount = 0;
-	for (int32_t y = 0; y < importance->getHeight(); ++y)
-	{
-		for (int32_t x = 0; x < importance->getWidth(); ++x)
-		{
-			// Find maximum intensity in cell.
-			Scalar maxIntensity(0.0f);
-			for (int32_t cy = 0; cy < c_importanceCellSize; ++cy)
+			if (intensity > 200.0f)
 			{
-				for (int32_t cx = 0; cx < c_importanceCellSize; ++cx)
-				{
-					Color4f cl;
-					radiance->getPixelUnsafe(x * c_importanceCellSize + cx, y * c_importanceCellSize + cy, cl);
-					Scalar intensity = dot3(cl, Vector4(1.0f, 1.0f, 1.0f, 0.0f));
-					maxIntensity = std::max(maxIntensity, intensity);
-				}
+				cl *= Scalar(200.0f / intensity);
+				radiance->setPixelUnsafe(x, y, cl);
 			}
-			
-			// Calculate importance, number of samples required in cell.
-			Scalar k = (maxIntensity - range.min) / range.delta();
-			int32_t samples = (int32_t)(c_minImportanceSamples + k * Scalar(c_maxImportanceSamples - c_minImportanceSamples));
-			importance->setPixelUnsafe(x, y, Color4f(
-				(float)samples,
-				0.0f,
-				0.0f,
-				0.0f
-			));
-			totalSampleCount += samples;
-		}
-	}
-
-	// Calculate the probability of each cell.
-	for (int32_t y = 0; y < importance->getHeight(); ++y)
-	{
-		for (int32_t x = 0; x < importance->getWidth(); ++x)
-		{
-			Color4f cl;
-			importance->getPixelUnsafe(x, y, cl);
-			
-			float samples = cl.getRed();
-			cl.setRed(Scalar(samples / c_maxImportanceSamples));
-			cl.setGreen(Scalar(importance->getWidth() * importance->getHeight() * samples / totalSampleCount));
-
-			importance->setPixelUnsafe(x, y, cl);
 		}
 	}
 
 	// Discard alpha channels as they are not used.
 	radiance->clearAlpha(1.0);
-	importance->clearAlpha(1.0f);
-
-	// radiance->save(L"data/Temp/Bake/Radiance.png");
-	// importance->save(L"data/Temp/Bake/Importance.png");
 
 	// Create tracer environment.
-	tracerTask->addTracerEnvironment(new TracerEnvironment(new IblProbe(radiance, importance)));
+	tracerTask->addTracerEnvironment(new TracerEnvironment(new IblProbe(radiance)));
 }
 
 /*! */
