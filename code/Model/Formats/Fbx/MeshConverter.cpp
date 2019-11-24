@@ -13,12 +13,14 @@ namespace traktor
 		namespace
 		{
 
-FbxMatrix getGeometricTransform(const FbxNode* fbxNode)
+Matrix44 normalize(const Matrix44& m)
 {
-	FbxVector4 t = fbxNode->GetGeometricTranslation(FbxNode::eSourcePivot);
-	FbxVector4 r = fbxNode->GetGeometricRotation(FbxNode::eSourcePivot);
-	FbxVector4 s = fbxNode->GetGeometricScaling(FbxNode::eSourcePivot);
-	return FbxMatrix(t, r, s);
+	return Matrix44(
+		m.axisX().normalized(),
+		m.axisY().normalized(),
+		m.axisZ().normalized(),
+		m.translation()
+	);
 }
 
 uint32_t uvChannel(Model& outModel, const std::string& uvSet)
@@ -57,6 +59,7 @@ bool convertMesh(
 
 	Matrix44 Mnode = convertMatrix(nodeTransform);
 	Matrix44 Mglobal = axisTransform * Mnode;
+	Matrix44 MglobalN = normalize(Mglobal);
 
 	// Convert vertex positions.
 	FbxVector4* controlPoints = mesh->GetControlPoints();
@@ -287,7 +290,7 @@ bool convertMesh(
 						case FbxLayerElement::eDirect:
 							{
 								FbxVector4 n = layerNormals->GetDirectArray().GetAt(vertexId);
-								Vector4 normal = Mglobal * convertNormal(n);
+								Vector4 normal = MglobalN * convertNormal(n);
 								vertex.setNormal(outModel.addUniqueNormal(normal.normalized()));
 							}
 							break;
@@ -296,7 +299,7 @@ bool convertMesh(
 							{
 								int32_t id = layerNormals->GetIndexArray().GetAt(vertexId);
 								FbxVector4 n = layerNormals->GetDirectArray().GetAt(id);
-								Vector4 normal = Mglobal * convertNormal(n);
+								Vector4 normal = MglobalN * convertNormal(n);
 								vertex.setNormal(outModel.addUniqueNormal(normal.normalized()));
 							}
 							break;
@@ -318,7 +321,7 @@ bool convertMesh(
 						case FbxLayerElement::eDirect:
 							{
 								FbxVector4 t = layerTangents->GetDirectArray().GetAt(vertexId);
-								Vector4 tangent = Mglobal * convertNormal(t);
+								Vector4 tangent = MglobalN * convertNormal(t);
 								vertex.setTangent(outModel.addUniqueNormal(tangent.normalized()));
 							}
 							break;
@@ -327,7 +330,7 @@ bool convertMesh(
 							{
 								int32_t id = layerTangents->GetIndexArray().GetAt(vertexId);
 								FbxVector4 t = layerTangents->GetDirectArray().GetAt(id);
-								Vector4 tangent = Mglobal * convertNormal(t);
+								Vector4 tangent = MglobalN * convertNormal(t);
 								vertex.setTangent(outModel.addUniqueNormal(tangent.normalized()));
 							}
 							break;
@@ -349,7 +352,7 @@ bool convertMesh(
 						case FbxLayerElement::eDirect:
 							{
 								FbxVector4 b = layerBinormals->GetDirectArray().GetAt(vertexId);
-								Vector4 binormal = Mglobal * convertNormal(b);
+								Vector4 binormal = MglobalN * convertNormal(b);
 								vertex.setBinormal(outModel.addUniqueNormal(binormal.normalized()));
 							}
 							break;
@@ -358,7 +361,7 @@ bool convertMesh(
 							{
 								int32_t id = layerBinormals->GetIndexArray().GetAt(vertexId);
 								FbxVector4 b = layerBinormals->GetDirectArray().GetAt(id);
-								Vector4 binormal = Mglobal * convertNormal(b);
+								Vector4 binormal = MglobalN * convertNormal(b);
 								vertex.setBinormal(outModel.addUniqueNormal(binormal.normalized()));
 							}
 							break;
