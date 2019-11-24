@@ -44,7 +44,7 @@ public:
 
     virtual Ref< render::SHCoeffs > traceProbe(const Vector4& position) const override final;
 
-    virtual void traceLightmap(const GBuffer* gbuffer, drawing::Image* lightmap, const int32_t region[4]) const override final;
+    virtual void traceLightmap(const model::Model* model, const GBuffer* gbuffer, drawing::Image* lightmap, const int32_t region[4]) const override final;
 
 private:
 	struct Surface
@@ -57,7 +57,7 @@ private:
 	AlignedVector< Light > m_lights;
 	RTCDevice m_device;
 	RTCScene m_scene;
-	model::Model m_model;
+	RefArray< const model::Model > m_models;
     Ref< render::SHEngine > m_shEngine;
 	float m_maxDistance;
 
