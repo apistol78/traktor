@@ -57,5 +57,9 @@ bool SortCacheCoherency::apply(Model& model) const
 	return true;
 }
 
+void SortCacheCoherency::serialize(ISerializer& s)
+{
+}
+
 	}
 }

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Core/Object.h"
+#include "Core/Serialization/ISerializable.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -17,10 +17,10 @@ namespace traktor
 
 class Model;
 
-/*! \brief
+/*!
  * \ingroup Model
  */
-class T_DLLCLASS IModelOperation : public Object
+class T_DLLCLASS IModelOperation : public ISerializable
 {
 	T_RTTI_CLASS;
 

@@ -38,5 +38,9 @@ bool CleanDegenerate::apply(Model& model) const
 	return true;
 }
 
+void CleanDegenerate::serialize(ISerializer& s)
+{
+}
+
 	}
 }

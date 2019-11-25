@@ -41,5 +41,9 @@ bool ExecuteScript::apply(Model& model) const
     return CastAny< bool >::get(result);
 }
 
+void ExecuteScript::serialize(ISerializer& s)
+{
+}
+
 	}
 }

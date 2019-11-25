@@ -15,7 +15,7 @@ namespace traktor
 	namespace model
 	{
 
-/*! \brief
+/*!
  * \ingroup Model
  */
 class T_DLLCLASS ScaleAlongNormal : public IModelOperation
@@ -23,9 +23,11 @@ class T_DLLCLASS ScaleAlongNormal : public IModelOperation
 	T_RTTI_CLASS;
 
 public:
-	ScaleAlongNormal(float distance);
+	explicit ScaleAlongNormal(float distance);
 
 	virtual bool apply(Model& model) const override final;
+
+	virtual void serialize(ISerializer& s) override final;
 
 private:
 	float m_distance;

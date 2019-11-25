@@ -15,7 +15,7 @@ namespace traktor
 	namespace model
 	{
 
-/*! \brief
+/*!
  * \ingroup Model
  */
 class T_DLLCLASS SortProjectedArea : public IModelOperation
@@ -23,9 +23,11 @@ class T_DLLCLASS SortProjectedArea : public IModelOperation
 	T_RTTI_CLASS;
 
 public:
-	SortProjectedArea(bool insideOut);
+	explicit SortProjectedArea(bool insideOut);
 
 	virtual bool apply(Model& model) const override final;
+
+	virtual void serialize(ISerializer& s) override final;
 
 private:
 	bool m_insideOut;

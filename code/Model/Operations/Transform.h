@@ -16,7 +16,7 @@ namespace traktor
 	namespace model
 	{
 
-/*! \brief
+/*!
  * \ingroup Model
  */
 class T_DLLCLASS Transform : public IModelOperation
@@ -24,9 +24,11 @@ class T_DLLCLASS Transform : public IModelOperation
 	T_RTTI_CLASS;
 
 public:
-	Transform(const Matrix44& tf);
+	explicit Transform(const Matrix44& tf);
 
 	virtual bool apply(Model& model) const override final;
+
+	virtual void serialize(ISerializer& s) override final;
 
 private:
 	Matrix44 m_transform;

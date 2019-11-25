@@ -2,6 +2,8 @@
 
 #include <SimplygonSDKLoader.h>
 #include "Core/Io/Path.h"
+#include "Core/Serialization/ISerializer.h"
+#include "Core/Serialization/Member.h"
 #include "Model/Model.h"
 #include "Model/Operations/CalculateTangents.h"
 #include "Model/Operations/ReduceSimplygon.h"
@@ -202,6 +204,11 @@ bool ReduceSimplygon::apply(Model& model) const
 
 	SimplygonSDK::Deinitialize();
 	return true;
+}
+
+void ReduceSimplygon::serialize(ISerializer& s)
+{
+	s >> Member< float >(L"target", m_target);
 }
 
 	}

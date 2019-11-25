@@ -161,5 +161,9 @@ bool MergeCoplanarAdjacents::apply(Model& model) const
 	return true;
 }
 
+void MergeCoplanarAdjacents::serialize(ISerializer& s)
+{
+}
+
 	}
 }

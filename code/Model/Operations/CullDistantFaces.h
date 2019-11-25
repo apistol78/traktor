@@ -16,7 +16,7 @@ namespace traktor
 	namespace model
 	{
 
-/*! \brief
+/*!
  * \ingroup Model
  */
 class T_DLLCLASS CullDistantFaces : public IModelOperation
@@ -24,9 +24,11 @@ class T_DLLCLASS CullDistantFaces : public IModelOperation
 	T_RTTI_CLASS;
 
 public:
-	CullDistantFaces(const Aabb3& viewerRegion);
+	explicit CullDistantFaces(const Aabb3& viewerRegion);
 
 	virtual bool apply(Model& model) const override final;
+
+	virtual void serialize(ISerializer& s) override final;
 
 private:
 	Aabb3 m_viewerRegion;

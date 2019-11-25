@@ -1,4 +1,6 @@
 #include "Core/Math/Const.h"
+#include "Core/Serialization/ISerializer.h"
+#include "Core/Serialization/Member.h"
 #include "Model/Model.h"
 #include "Model/Operations/Quantize.h"
 
@@ -35,6 +37,11 @@ bool Quantize::apply(Model& model) const
 	}
 	model.setPositions(positions);
 	return true;
+}
+
+void Quantize::serialize(ISerializer& s)
+{
+	s >> Member< Vector4 >(L"step", m_step);
 }
 
 	}

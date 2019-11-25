@@ -15,7 +15,7 @@ namespace traktor
 	namespace model
 	{
 
-/*! \brief
+/*!
  * \ingroup Model
  */
 class T_DLLCLASS CleanDuplicates : public IModelOperation
@@ -23,9 +23,11 @@ class T_DLLCLASS CleanDuplicates : public IModelOperation
 	T_RTTI_CLASS;
 
 public:
-	CleanDuplicates(float positionDistance);
+	explicit CleanDuplicates(float positionDistance);
 
 	virtual bool apply(Model& model) const override final;
+
+	virtual void serialize(ISerializer& s) override final;
 
 private:
 	float m_positionDistance;
