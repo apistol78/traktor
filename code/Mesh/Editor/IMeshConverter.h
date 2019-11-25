@@ -15,6 +15,7 @@ class IStream;
 	namespace model
 	{
 
+class IModelOperation;
 class Model;
 
 	}
@@ -29,6 +30,8 @@ class IMeshConverter : public Object
 {
 public:
 	virtual Ref< IMeshResource > createResource() const = 0;
+
+	virtual bool getOperations(const MeshAsset* meshAsset, RefArray< const model::IModelOperation >& outOperations) const = 0;
 
 	virtual bool convert(
 		const MeshAsset* meshAsset,

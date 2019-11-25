@@ -12,6 +12,8 @@ class IndoorMeshConverter : public IMeshConverter
 public:
 	virtual Ref< IMeshResource > createResource() const override final;
 
+	virtual bool getOperations(const MeshAsset* meshAsset, RefArray< const model::IModelOperation >& outOperations) const override final;
+
 	virtual bool convert(
 		const MeshAsset* meshAsset,
 		const RefArray< model::Model >& models,

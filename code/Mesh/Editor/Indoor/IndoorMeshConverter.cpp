@@ -522,6 +522,11 @@ Ref< IMeshResource > IndoorMeshConverter::createResource() const
 	return new IndoorMeshResource();
 }
 
+bool IndoorMeshConverter::getOperations(const MeshAsset* meshAsset, RefArray< const model::IModelOperation >& outOperations) const
+{
+	return true;
+}
+
 bool IndoorMeshConverter::convert(
 	const MeshAsset* meshAsset,
 	const RefArray< model::Model >& models,

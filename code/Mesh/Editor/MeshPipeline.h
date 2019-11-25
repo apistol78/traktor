@@ -69,6 +69,7 @@ public:
 
 private:
 	std::wstring m_assetPath;
+	std::wstring m_modelCachePath;
 	bool m_promoteHalf;
 	bool m_enableCustomShaders;
 	bool m_enableCustomTemplates;

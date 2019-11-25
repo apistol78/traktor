@@ -36,10 +36,10 @@ ModelCache::ModelCache(const Path& cachePath, const std::function< Ref< IStream 
 
 Ref< Model > ModelCache::get(const Path& fileName)
 {
-	return get(fileName, RefArray< IModelOperation >());
+	return get(fileName, RefArray< const IModelOperation >());
 }
 
-Ref< Model > ModelCache::get(const Path& fileName, const RefArray< IModelOperation >& operations)
+Ref< Model > ModelCache::get(const Path& fileName, const RefArray< const IModelOperation >& operations)
 {
 	// Get information about source file.
 	Ref< File > file = FileSystem::getInstance().get(fileName);
