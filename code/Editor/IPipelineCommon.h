@@ -15,6 +15,7 @@
 namespace traktor
 {
 
+class File;
 class ISerializable;
 class IStream;
 class Path;
@@ -29,7 +30,7 @@ class Database;
 	namespace editor
 	{
 
-/*! \brief Pipeline common interface.
+/*! \Pipeline common interface.
  * \ingroup Editor
  */
 class T_DLLCLASS IPipelineCommon : public Object
@@ -40,6 +41,8 @@ public:
 	virtual Ref< db::Database > getSourceDatabase() const = 0;
 
 	virtual Ref< const ISerializable > getObjectReadOnly(const Guid& instanceGuid) = 0;
+
+	virtual Ref< File > getFile(const Path& basePath, const std::wstring& fileName) = 0;
 
 	virtual Ref< IStream > openFile(const Path& basePath, const std::wstring& fileName) = 0;
 

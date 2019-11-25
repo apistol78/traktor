@@ -23,7 +23,7 @@ class PipelineAgentsManager;
 class PipelineDependency;
 class PipelineFactory;
 
-/*! \brief Distributed pipeline builder.
+/*! Distributed pipeline builder.
  * \ingroup Editor
  */
 class T_DLLCLASS PipelineBuilderDistributed : public IPipelineBuilder
@@ -55,6 +55,8 @@ public:
 	virtual Ref< db::Database > getSourceDatabase() const override final;
 
 	virtual Ref< const ISerializable > getObjectReadOnly(const Guid& instanceGuid) override final;
+
+	virtual Ref< File > getFile(const Path& basePath, const std::wstring& fileName) override final;
 
 	virtual Ref< IStream > openFile(const Path& basePath, const std::wstring& fileName) override final;
 

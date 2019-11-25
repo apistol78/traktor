@@ -22,7 +22,7 @@ class IPipelineDependencySet;
 class IPipelineInstanceCache;
 class PipelineFactory;
 
-/*! \brief Incremental pipeline dependency walker.
+/*! Incremental pipeline dependency walker.
  * \ingroup Editor
  */
 class T_DLLCLASS PipelineDependsIncremental : public IPipelineDepends
@@ -74,6 +74,8 @@ public:
 	virtual Ref< db::Database > getSourceDatabase() const override final;
 
 	virtual Ref< const ISerializable > getObjectReadOnly(const Guid& instanceGuid) override final;
+
+	virtual Ref< File > getFile(const Path& basePath, const std::wstring& fileName) override final;
 
 	virtual Ref< IStream > openFile(const Path& basePath, const std::wstring& fileName) override final;
 

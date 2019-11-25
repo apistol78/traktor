@@ -207,6 +207,11 @@ bool BuildTargetAction::execute(IProgressListener* progressListener)
 	assetPath = FileSystem::getInstance().getAbsolutePath(assetPath);
 	pipelineConfiguration->setProperty< PropertyString >(L"Pipeline.AssetPath", assetPath.getPathName());
 
+	// Set model cache path.
+	Path modelCachePath = m_globalSettings->getProperty< std::wstring >(L"Pipeline.ModelCachePath");
+	modelCachePath = FileSystem::getInstance().getAbsolutePath(modelCachePath);
+	pipelineConfiguration->setProperty< PropertyString >(L"Pipeline.ModelCachePath", modelCachePath.getPathName());
+
 	// Insert mesh pipeline's material templates.
 	const IPropertyValue* materialTemplates = m_globalSettings->getProperty(L"MeshPipeline.MaterialTemplates");
 	if (materialTemplates)

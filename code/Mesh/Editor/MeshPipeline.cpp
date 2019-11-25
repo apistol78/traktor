@@ -318,6 +318,9 @@ bool MeshPipeline::buildOutput(
 		model::ModelCache modelCache(
 			m_modelCachePath,
 			[&](const Path& p) {
+				return pipelineBuilder->getFile(Path(m_assetPath), p.getOriginal());
+			},
+			[&](const Path& p) {
 				return pipelineBuilder->openFile(Path(m_assetPath), p.getOriginal());
 			}
 		);

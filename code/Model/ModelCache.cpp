@@ -28,8 +28,13 @@ uint32_t hash(const std::wstring& text)
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.model.ModelCache", ModelCache, Object)
 
-ModelCache::ModelCache(const Path& cachePath, const std::function< Ref< IStream >(const Path&) >& openStream)
+ModelCache::ModelCache(
+	const Path& cachePath,
+	const std::function< Ref< File >(const Path&) >& getFile,
+	const std::function< Ref< IStream >(const Path&) >& openStream
+)
 :	m_cachePath(cachePath)
+,	m_getFile(getFile)
 ,	m_openStream(openStream)
 {
 }
@@ -42,7 +47,7 @@ Ref< Model > ModelCache::get(const Path& fileName)
 Ref< Model > ModelCache::get(const Path& fileName, const RefArray< const IModelOperation >& operations)
 {
 	// Get information about source file.
-	Ref< File > file = FileSystem::getInstance().get(fileName);
+	Ref< File > file = m_getFile(fileName);
 	if (!file)
 		return nullptr;
 
@@ -57,7 +62,7 @@ Ref< Model > ModelCache::get(const Path& fileName, const RefArray< const IModelO
 	uint32_t operationHash = cs.get();
 
 	// Generate file name of cached model.
-	Path cachedFileName = m_cachePath + L"/" + toString(fileNameHash) + L"/" + toString(operationHash) + L".tmd";
+	Path cachedFileName = m_cachePath.getPathName() + L"/" + toString(fileNameHash) + L"/" + toString(operationHash) + L".tmd";
 
 	// Check if cached file exist and if it's time stamp match source file's.
 	Ref< File > cachedFile = FileSystem::getInstance().get(cachedFileName);

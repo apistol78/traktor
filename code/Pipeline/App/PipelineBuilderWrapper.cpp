@@ -219,6 +219,12 @@ Ref< const ISerializable > PipelineBuilderWrapper::getObjectReadOnly(const Guid&
 	return m_objectCache->get(instanceGuid);
 }
 
+Ref< File > PipelineBuilderWrapper::getFile(const Path& basePath, const std::wstring& fileName)
+{
+	T_FATAL_ERROR;
+	return nullptr;
+}
+
 Ref< IStream > PipelineBuilderWrapper::openFile(const Path& basePath, const std::wstring& fileName)
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_openFileLock);
