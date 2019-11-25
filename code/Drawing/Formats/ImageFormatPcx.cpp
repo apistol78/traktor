@@ -70,7 +70,7 @@ Ref< Image > ImageFormatPcx::read(IStream* stream)
 	if (hdr.bitsPerPixel != 8 || hdr.planes != 1)
 	{
 		log::error << L"Unsupported PCX file, must be 8 bits per pixel and a single plane" << Endl;
-		return 0;
+		return nullptr;
 	}
 
 	Ref< Palette > palette = new Palette();
@@ -92,7 +92,7 @@ Ref< Image > ImageFormatPcx::read(IStream* stream)
 			if (stream->read(&c, sizeof(uint8_t)) != sizeof(uint8_t))
 			{
 				log::error << L"Unexpected end of stream" << Endl;
-				return 0;
+				return nullptr;
 			}
 			if ((c & 0xc0) == 0xc0)
 			{
@@ -100,7 +100,7 @@ Ref< Image > ImageFormatPcx::read(IStream* stream)
 				if (stream->read(&value, sizeof(uint8_t)) != sizeof(uint8_t))
 				{
 					log::error << L"Unexpected end of stream" << Endl;
-					return 0;
+					return nullptr;
 				}
 			}
 			else
@@ -138,6 +138,7 @@ Ref< Image > ImageFormatPcx::read(IStream* stream)
 	imageInfo->setAuthor(L"Unknown");
 	imageInfo->setCopyright(L"Unknown");
 	imageInfo->setFormat(L"PCX");
+	imageInfo->setGamma(2.2f);
 	image->setImageInfo(imageInfo);
 
 	return image;

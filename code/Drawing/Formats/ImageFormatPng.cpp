@@ -94,7 +94,7 @@ Ref< Image > ImageFormatPng::read(IStream* stream)
 
 	png_get_IHDR(png_ptr, info_ptr, &width, &height, &bit_depth, &color_type, NULL, NULL, NULL);
 
-	double gamma = 0.0;
+	double gamma = 2.2;
 	png_get_gAMA(png_ptr, info_ptr, &gamma);
 
 	PixelFormat pixelFormat(0, 0, 0, 0, 0, false, false);

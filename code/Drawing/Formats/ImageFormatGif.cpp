@@ -150,14 +150,14 @@ Ref< Image > ImageFormatGif::read(IStream* stream)
 
 	char signature[6];
 	if (stream->read(signature, sizeof(signature)) != sizeof(signature))
-		return 0;
+		return nullptr;
 
 	if (std::string(signature, &signature[6]) != "GIF87a" && std::string(signature, &signature[6]) != "GIF89a")
-		return 0;
+		return nullptr;
 
 	LogicalScreenDesc lsd;
 	if (stream->read(&lsd, sizeof(lsd)) != sizeof(lsd))
-		return 0;
+		return nullptr;
 
 	int bpp = (lsd.packedFields & 0x07) + 1;
 
@@ -199,7 +199,7 @@ Ref< Image > ImageFormatGif::read(IStream* stream)
 
 		unsigned char type;
 		if (stream->read(&type, sizeof(type)) != sizeof(type))
-			return 0;
+			return nullptr;
 
 		if (type == 0x21)	// Extension block
 		{
@@ -211,7 +211,7 @@ Ref< Image > ImageFormatGif::read(IStream* stream)
 				{
 					GraphicControlExt gce;
 					if (stream->read(&gce, sizeof(gce)) != sizeof(gce))
-						return 0;
+						return nullptr;
 
 					char dummy;
 					stream->read(&dummy, sizeof(dummy));
@@ -222,7 +222,7 @@ Ref< Image > ImageFormatGif::read(IStream* stream)
 				{
 					unsigned char blockSize;
 					if (stream->read(&blockSize, sizeof(blockSize)) != sizeof(blockSize))
-						return 0;
+						return nullptr;
 
 					for (int i = 0; i < blockSize; ++i)
 					{
@@ -237,7 +237,7 @@ Ref< Image > ImageFormatGif::read(IStream* stream)
 		{
 			IdTag id;
 			if (stream->read(&id, sizeof(id)) != sizeof(id))
-				return 0;
+				return nullptr;
 
 			if (id.packedFields & 0x80)	// Local palette
 			{
@@ -246,7 +246,7 @@ Ref< Image > ImageFormatGif::read(IStream* stream)
 				{
 					PaletteEntry pe;
 					if (stream->read(&pe, sizeof(PaletteEntry)) != sizeof(PaletteEntry))
-						return 0;
+						return nullptr;
 					palette->set(i,
 						Color4f(
 							pe.r / 255.0f,
@@ -259,9 +259,9 @@ Ref< Image > ImageFormatGif::read(IStream* stream)
 
 			uint8_t initialCodeSize;
 			if (stream->read(&initialCodeSize, sizeof(initialCodeSize)) != sizeof(initialCodeSize))
-				return 0;
+				return nullptr;
 			if (initialCodeSize < 2 || initialCodeSize > 9)
-				return 0;
+				return nullptr;
 
 			std::vector< uint8_t > compressed;
 			for (;;)
@@ -269,7 +269,7 @@ Ref< Image > ImageFormatGif::read(IStream* stream)
 				uint8_t blockSize;
 
 				if (stream->read(&blockSize, sizeof(blockSize)) != sizeof(blockSize))
-					return 0;
+					return nullptr;
 
 				if (!blockSize)
 					break;
@@ -278,7 +278,7 @@ Ref< Image > ImageFormatGif::read(IStream* stream)
 				compressed.resize(end + blockSize);
 
 				if (stream->read(&compressed[end], blockSize) != blockSize)
-					return 0;
+					return nullptr;
 			}
 
 			std::vector< uint8_t > decompressed;
@@ -321,6 +321,13 @@ Ref< Image > ImageFormatGif::read(IStream* stream)
 			log::warning << L"Unknown GIF block " << type << Endl;
 		}
 	}
+
+	Ref< ImageInfo > imageInfo = new ImageInfo();
+	imageInfo->setAuthor(L"Unknown");
+	imageInfo->setCopyright(L"Unknown");
+	imageInfo->setFormat(L"GIF");
+	imageInfo->setGamma(2.2f);
+	image->setImageInfo(imageInfo);
 
 	return image;
 }
