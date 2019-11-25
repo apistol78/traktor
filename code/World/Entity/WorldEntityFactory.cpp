@@ -93,16 +93,16 @@ Ref< Entity > WorldEntityFactory::createEntity(const IEntityBuilder* builder, co
 
 	if (const GroupEntityData* groupData = dynamic_type_cast< const GroupEntityData* >(&entityData))
 	{
-		Ref< GroupEntity > groupEntity = new GroupEntity(groupData->getTransform());
-
-		const RefArray< EntityData >& groupChildEntityData = groupData->getEntityData();
-		for (RefArray< EntityData >::const_iterator i = groupChildEntityData.begin(); i != groupChildEntityData.end(); ++i)
+		Ref< GroupEntity > groupEntity = new GroupEntity(
+			groupData->getTransform(),
+			groupData->getMask()
+		);
+		for (auto entityData : groupData->getEntityData())
 		{
-			Ref< Entity > childEntity = builder->create(*i);
+			Ref< Entity > childEntity = builder->create(entityData);
 			if (childEntity)
 				groupEntity->addEntity(childEntity);
 		}
-
 		return groupEntity;
 	}
 

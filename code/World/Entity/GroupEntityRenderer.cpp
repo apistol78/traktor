@@ -9,6 +9,11 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.world.GroupEntityRenderer", GroupEntityRenderer, IEntityRenderer)
 
+GroupEntityRenderer::GroupEntityRenderer(uint32_t filter)
+:	m_filter(filter)
+{
+}
+
 const TypeInfoSet GroupEntityRenderer::getRenderableTypes() const
 {
 	return makeTypeInfoSet< GroupEntity >();
@@ -22,8 +27,11 @@ void GroupEntityRenderer::render(
 )
 {
 	GroupEntity* groupEntity = checked_type_cast< GroupEntity*, false >(renderable);
-	for (auto childEntity : groupEntity->getEntities())
-		worldContext.build(worldRenderView, worldRenderPass, childEntity);
+	if ((groupEntity->getMask() & m_filter) != 0)
+	{
+		for (auto childEntity : groupEntity->getEntities())
+			worldContext.build(worldRenderView, worldRenderPass, childEntity);
+	}
 }
 
 void GroupEntityRenderer::flush(
