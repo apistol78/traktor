@@ -200,7 +200,7 @@ void AnimationPreviewControl::updateWorldRenderer()
 
 	Ref< world::WorldEntityRenderers > worldEntityRenderers = new world::WorldEntityRenderers();
 	worldEntityRenderers->add(new world::ComponentEntityRenderer());
-	worldEntityRenderers->add(new world::GroupEntityRenderer());
+	worldEntityRenderers->add(new world::GroupEntityRenderer(world::EmAll));
 	worldEntityRenderers->add(new world::LightRenderer());
 	worldEntityRenderers->add(new mesh::MeshComponentRenderer());
 

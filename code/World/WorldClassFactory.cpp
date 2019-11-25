@@ -210,7 +210,8 @@ void WorldClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	registrar->registerClass(classEntity);
 
 	auto classGroupEntity = new AutoRuntimeClass< GroupEntity >();
-	classGroupEntity->addConstructor< const Transform& >();
+	classGroupEntity->addConstructor();
+	classGroupEntity->addConstructor< const Transform&, uint32_t >();
 	classGroupEntity->addMethod("addEntity", &GroupEntity::addEntity);
 	classGroupEntity->addMethod("removeEntity", &GroupEntity::removeEntity);
 	classGroupEntity->addMethod("removeAllEntities", &GroupEntity::removeAllEntities);

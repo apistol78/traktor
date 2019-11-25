@@ -102,7 +102,7 @@ void DefaultEditorProfile::createEntityRenderers(
 	outEntityRenderers.push_back(new world::DecalRenderer(context->getRenderSystem()));
 	outEntityRenderers.push_back(new world::ProbeRenderer(context->getResourceManager(), context->getRenderSystem(), type_of< world::WorldRendererDeferred >()));
 	outEntityRenderers.push_back(new world::LightRenderer());
-	outEntityRenderers.push_back(new world::GroupEntityRenderer());
+	outEntityRenderers.push_back(new world::GroupEntityRenderer(world::EmAll));
 	outEntityRenderers.push_back(new weather::WeatherRenderer(primitiveRenderer));
 }
 

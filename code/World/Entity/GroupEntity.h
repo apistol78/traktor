@@ -16,7 +16,7 @@ namespace traktor
 	namespace world
 	{
 
-/*! \brief Group of entities.
+/*! Group of entities.
  * \ingroup World
  */
 class T_DLLCLASS GroupEntity : public Entity
@@ -24,11 +24,17 @@ class T_DLLCLASS GroupEntity : public Entity
 	T_RTTI_CLASS;
 
 public:
-	GroupEntity(const Transform& transform = Transform::identity());
+	GroupEntity();
+
+	GroupEntity(const Transform& transform, uint32_t mask);
 
 	virtual ~GroupEntity();
 
 	virtual void destroy() override;
+
+	void setMask(uint32_t mask);
+
+	uint32_t getMask() const { return m_mask; }
 
 	void addEntity(Entity* entity);
 
@@ -65,6 +71,7 @@ public:
 
 private:
 	Transform m_transform;
+	uint32_t m_mask;
 	RefArray< Entity > m_entities;
 	bool m_update;
 	RefArray< Entity > m_deferred[2];

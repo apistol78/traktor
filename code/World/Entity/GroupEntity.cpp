@@ -9,8 +9,16 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.world.GroupEntity", GroupEntity, Entity)
 
-GroupEntity::GroupEntity(const Transform& transform)
+GroupEntity::GroupEntity()
+:	m_transform(Transform::identity())
+,	m_mask(EmAll)
+,	m_update(false)
+{
+}
+
+GroupEntity::GroupEntity(const Transform& transform, uint32_t mask)
 :	m_transform(transform)
+,	m_mask(mask)
 ,	m_update(false)
 {
 }
@@ -29,6 +37,11 @@ void GroupEntity::destroy()
 			entity->destroy();
 	}
 	m_entities.resize(0);
+}
+
+void GroupEntity::setMask(uint32_t mask)
+{
+	m_mask = mask;
 }
 
 void GroupEntity::addEntity(Entity* entity)

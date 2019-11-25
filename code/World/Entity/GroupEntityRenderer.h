@@ -23,6 +23,8 @@ class T_DLLCLASS GroupEntityRenderer : public IEntityRenderer
 	T_RTTI_CLASS;
 
 public:
+	explicit GroupEntityRenderer(uint32_t filter);
+
 	virtual const TypeInfoSet getRenderableTypes() const override final;
 
 	virtual void render(
@@ -38,6 +40,9 @@ public:
 		const IWorldRenderPass& worldRenderPass,
 		Entity* rootEntity
 	) override final;
+
+private:
+	uint32_t m_filter;
 };
 
 	}

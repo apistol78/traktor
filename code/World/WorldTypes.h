@@ -43,6 +43,13 @@ enum LightType
 	LtSpot = 3
 };
 
+enum EntityMask
+{
+	EmStatic = 1,
+	EmDynamic = 2,
+	EmAll = (EmStatic | EmDynamic)
+};
+
 struct Light
 {
 	LightType type;

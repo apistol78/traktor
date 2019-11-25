@@ -199,7 +199,7 @@ void WorldServer::createEntityRenderers(IEnvironment* environment)
 
 	m_entityRenderers->add(new world::ComponentEntityRenderer());
 	m_entityRenderers->add(new world::DecalRenderer(renderSystem));
-	m_entityRenderers->add(new world::GroupEntityRenderer());
+	m_entityRenderers->add(new world::GroupEntityRenderer(world::EmAll));
 	m_entityRenderers->add(new world::LightRenderer());
 	m_entityRenderers->add(new world::ProbeRenderer(resourceManager, renderSystem, *m_worldType));
 	m_entityRenderers->add(new mesh::MeshComponentRenderer());
