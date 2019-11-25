@@ -268,23 +268,29 @@ Ref< const ISerializable > PipelineDependsIncremental::getObjectReadOnly(const G
 		return 0;
 }
 
+Ref< File > PipelineDependsIncremental::getFile(const Path& basePath, const std::wstring& fileName)
+{
+	Path filePath = FileSystem::getInstance().getAbsolutePath(basePath + Path(fileName));
+	return FileSystem::getInstance().get(filePath);
+}
+
 Ref< IStream > PipelineDependsIncremental::openFile(const Path& basePath, const std::wstring& fileName)
 {
 	Path filePath = FileSystem::getInstance().getAbsolutePath(basePath + Path(fileName));
 	Ref< IStream > fileStream = FileSystem::getInstance().open(filePath, File::FmRead);
-	return fileStream ? new BufferedStream(fileStream) : 0;
+	return fileStream ? new BufferedStream(fileStream) : nullptr;
 }
 
 Ref< IStream > PipelineDependsIncremental::createTemporaryFile(const std::wstring& fileName)
 {
 	Ref< IStream > fileStream = FileSystem::getInstance().open(L"data/temp/" + fileName, File::FmWrite);
-	return fileStream ? new BufferedStream(fileStream) : 0;
+	return fileStream ? new BufferedStream(fileStream) : nullptr;
 }
 
 Ref< IStream > PipelineDependsIncremental::openTemporaryFile(const std::wstring& fileName)
 {
 	Ref< IStream > fileStream = FileSystem::getInstance().open(L"data/temp/" + fileName, File::FmRead);
-	return fileStream ? new BufferedStream(fileStream) : 0;
+	return fileStream ? new BufferedStream(fileStream) : nullptr;
 }
 
 void PipelineDependsIncremental::addUniqueDependency(

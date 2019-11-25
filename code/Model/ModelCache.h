@@ -31,7 +31,11 @@ class T_DLLCLASS ModelCache : public Object
     T_RTTI_CLASS;
 
 public:
-    ModelCache(const Path& cachePath, const std::function< Ref< IStream >(const Path&) >& openStream);
+    ModelCache(
+		const Path& cachePath,
+		const std::function< Ref< File >(const Path&) >& getFile,
+		const std::function< Ref< IStream >(const Path&) >& openStream
+	);
 
     /*! Get model without any operations. */
     Ref< Model > get(const Path& fileName);
@@ -47,6 +51,7 @@ public:
 
 private:
     Path m_cachePath;
+	std::function< Ref< File >(const Path&) > m_getFile;
     std::function< Ref< IStream >(const Path&) > m_openStream;
 };
 

@@ -81,6 +81,16 @@ bool ClearCachesTool::launch(ui::Widget* parent, IEditor* editor, const Property
         }
 	}
 
+	{
+        std::wstring cachePath = editor->getSettings()->getProperty< std::wstring >(L"Pipeline.ModelCachePath");
+        log::info << L"Clearing model cache \"" << cachePath << L"\"..." << Endl;
+        if (!clearDirectory(cachePath))
+        {
+            log::error << L"Failed to clear path \"" << cachePath << L"\"." << Endl;
+            return false;
+        }
+	}
+
     {
         std::wstring connectionString = editor->getSettings()->getProperty< std::wstring >(L"Pipeline.Db");
 

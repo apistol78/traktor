@@ -233,26 +233,32 @@ Ref< const ISerializable > PipelineDependsParallel::getObjectReadOnly(const Guid
 	if (instanceGuid.isNotNull())
 		return m_instanceCache->getObjectReadOnly(instanceGuid);
 	else
-		return 0;
+		return nullptr;
+}
+
+Ref< File > PipelineDependsParallel::getFile(const Path& basePath, const std::wstring& fileName)
+{
+	Path filePath = FileSystem::getInstance().getAbsolutePath(basePath + Path(fileName));
+	return FileSystem::getInstance().get(filePath);
 }
 
 Ref< IStream > PipelineDependsParallel::openFile(const Path& basePath, const std::wstring& fileName)
 {
 	Path filePath = FileSystem::getInstance().getAbsolutePath(basePath + Path(fileName));
 	Ref< IStream > fileStream = FileSystem::getInstance().open(filePath, File::FmRead);
-	return fileStream ? new BufferedStream(fileStream) : 0;
+	return fileStream ? new BufferedStream(fileStream) : nullptr;
 }
 
 Ref< IStream > PipelineDependsParallel::createTemporaryFile(const std::wstring& fileName)
 {
 	Ref< IStream > fileStream = FileSystem::getInstance().open(L"data/temp/" + fileName, File::FmWrite);
-	return fileStream ? new BufferedStream(fileStream) : 0;
+	return fileStream ? new BufferedStream(fileStream) : nullptr;
 }
 
 Ref< IStream > PipelineDependsParallel::openTemporaryFile(const std::wstring& fileName)
 {
 	Ref< IStream > fileStream = FileSystem::getInstance().open(L"data/temp/" + fileName, File::FmRead);
-	return fileStream ? new BufferedStream(fileStream) : 0;
+	return fileStream ? new BufferedStream(fileStream) : nullptr;
 }
 
 Ref< PipelineDependency > PipelineDependsParallel::findOrCreateDependency(
