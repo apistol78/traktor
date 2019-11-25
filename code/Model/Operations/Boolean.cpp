@@ -162,5 +162,9 @@ bool Boolean::apply(Model& model) const
 	return true;
 }
 
+void Boolean::serialize(ISerializer& s)
+{
+}
+
 	}
 }

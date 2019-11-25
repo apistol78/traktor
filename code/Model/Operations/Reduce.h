@@ -15,7 +15,7 @@ namespace traktor
 	namespace model
 	{
 
-/*! \brief
+/*!
  * \ingroup Model
  */
 class T_DLLCLASS Reduce : public IModelOperation
@@ -23,9 +23,11 @@ class T_DLLCLASS Reduce : public IModelOperation
 	T_RTTI_CLASS;
 
 public:
-	Reduce(float target);
+	explicit Reduce(float target);
 
 	virtual bool apply(Model& model) const override final;
+
+	virtual void serialize(ISerializer& s) override final;
 
 private:
 	float m_target;

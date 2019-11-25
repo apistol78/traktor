@@ -27,9 +27,11 @@ class T_DLLCLASS ExecuteScript : public IModelOperation
 	T_RTTI_CLASS;
 
 public:
-    ExecuteScript(const IRuntimeClass* scriptClass);
+    explicit ExecuteScript(const IRuntimeClass* scriptClass);
 
 	virtual bool apply(Model& model) const override final;
+
+	virtual void serialize(ISerializer& s) override final;
 
 private:
 	Ref< const IRuntimeClass > m_scriptClass;

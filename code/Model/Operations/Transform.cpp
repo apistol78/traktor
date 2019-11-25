@@ -1,4 +1,6 @@
 #include "Core/Serialization/DeepClone.h"
+#include "Core/Serialization/ISerializer.h"
+#include "Core/Serialization/Member.h"
 #include "Model/Model.h"
 #include "Model/Pose.h"
 #include "Model/Operations/Transform.h"
@@ -61,6 +63,11 @@ bool Transform::apply(Model& model) const
 	}
 
 	return true;
+}
+
+void Transform::serialize(ISerializer& s)
+{
+	s >> Member< Matrix44 >(L"transform", m_transform);
 }
 
 	}

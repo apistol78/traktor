@@ -17,7 +17,7 @@ namespace traktor
 
 #if defined(T_USE_SIMPLYGON_SDK)
 
-/*! \brief
+/*!
  * \ingroup Model
  */
 class T_DLLCLASS ReduceSimplygon : public IModelOperation
@@ -25,9 +25,11 @@ class T_DLLCLASS ReduceSimplygon : public IModelOperation
 	T_RTTI_CLASS;
 
 public:
-	ReduceSimplygon(float target);
+	explicit ReduceSimplygon(float target);
 
 	virtual bool apply(Model& model) const override final;
+
+	virtual void serialize(ISerializer& s) override final;
 
 private:
 	float m_target;

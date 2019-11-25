@@ -15,7 +15,7 @@ namespace traktor
 	namespace model
 	{
 
-/*! \brief
+/*!
  * \ingroup Model
  */
 class T_DLLCLASS Clear : public IModelOperation
@@ -23,9 +23,11 @@ class T_DLLCLASS Clear : public IModelOperation
 	T_RTTI_CLASS;
 
 public:
-	Clear(uint32_t clearFlags);
+	explicit Clear(uint32_t clearFlags);
 
 	virtual bool apply(Model& model) const override final;
+
+	virtual void serialize(ISerializer& s) override final;
 
 private:
 	uint32_t m_clearFlags;

@@ -40,5 +40,9 @@ bool FlattenDoubleSided::apply(Model& model) const
 	return true;
 }
 
+void FlattenDoubleSided::serialize(ISerializer& s)
+{
+}
+
 	}
 }

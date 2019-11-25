@@ -1,4 +1,5 @@
-#include "Core/Log/Log.h"
+#include "Core/Serialization/ISerializer.h"
+#include "Core/Serialization/MemberAabb.h"
 #include "Core/Math/Winding3.h"
 #include "Model/Model.h"
 #include "Model/Operations/CullDistantFaces.h"
@@ -67,9 +68,12 @@ bool CullDistantFaces::apply(Model& model) const
 			++i;
 	}
 	model.setPolygons(polygons);
-
-	log::info << L"Culled " << uint32_t(originalCount - polygons.size()) << L" polygon(s)" << Endl;
 	return true;
+}
+
+void CullDistantFaces::serialize(ISerializer& s)
+{
+	s >> MemberAabb3(L"viewerRegion", m_viewerRegion);
 }
 
 	}

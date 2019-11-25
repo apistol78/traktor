@@ -2,6 +2,8 @@
 #include <thekla/thekla_atlas.h>
 #include "Core/Log/Log.h"
 #include "Core/Math/Aabb2.h"
+#include "Core/Serialization/ISerializer.h"
+#include "Core/Serialization/Member.h"
 #include "Model/Model.h"
 #include "Model/Operations/UnwrapUV.h"
 
@@ -155,6 +157,12 @@ bool UnwrapUV::apply(Model& model) const
 
 	atlas_free(output);
 	return true;
+}
+
+void UnwrapUV::serialize(ISerializer& s)
+{
+	s >> Member< int32_t >(L"channel", m_channel);
+	s >> Member< uint32_t >(L"textureSize", m_textureSize);
 }
 
 	}

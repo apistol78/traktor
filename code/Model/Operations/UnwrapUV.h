@@ -15,7 +15,7 @@ namespace traktor
 	namespace model
 	{
 
-/*! \brief
+/*!
  * \ingroup Model
  */
 class T_DLLCLASS UnwrapUV : public IModelOperation
@@ -26,6 +26,8 @@ public:
 	UnwrapUV(int32_t channel, uint32_t textureSize);
 
 	virtual bool apply(Model& model) const override final;
+
+	virtual void serialize(ISerializer& s) override final;
 
 private:
 	int32_t m_channel;

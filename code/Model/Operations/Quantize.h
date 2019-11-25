@@ -15,7 +15,7 @@ namespace traktor
 	namespace model
 	{
 
-/*! \brief
+/*!
  * \ingroup Model
  */
 class T_DLLCLASS Quantize : public IModelOperation
@@ -28,6 +28,8 @@ public:
 	explicit Quantize(const Vector4& step);
 
 	virtual bool apply(Model& model) const override final;
+
+	virtual void serialize(ISerializer& s) override final;
 
 private:
 	Vector4 m_step;

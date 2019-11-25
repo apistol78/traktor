@@ -15,7 +15,7 @@ namespace traktor
 	namespace model
 	{
 
-/*! \brief
+/*!
  * \ingroup Model
  */
 class T_DLLCLASS FlattenDoubleSided : public IModelOperation
@@ -24,6 +24,8 @@ class T_DLLCLASS FlattenDoubleSided : public IModelOperation
 
 public:
 	virtual bool apply(Model& model) const override final;
+
+	virtual void serialize(ISerializer& s) override final;
 };
 
 	}

@@ -16,7 +16,7 @@ namespace traktor
 	namespace model
 	{
 
-/*! \brief
+/*!
  * \ingroup Model
  */
 class T_DLLCLASS MergeModel : public IModelOperation
@@ -27,6 +27,8 @@ public:
 	MergeModel(const Model& sourceModel, const Transform& sourceTransform, float positionDistance);
 
 	virtual bool apply(Model& model) const override final;
+
+	virtual void serialize(ISerializer& s) override final;
 
 private:
 	const Model& m_sourceModel;

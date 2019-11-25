@@ -276,5 +276,9 @@ bool MergeModel::apply(Model& model) const
 	return true;
 }
 
+void MergeModel::serialize(ISerializer& s)
+{
+}
+
 	}
 }
