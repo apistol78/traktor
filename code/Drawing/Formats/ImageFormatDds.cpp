@@ -339,6 +339,7 @@ Ref< Image > ImageFormatDds::read(IStream* stream)
 	imageInfo->setAuthor(L"Unknown");
 	imageInfo->setCopyright(L"Unknown");
 	imageInfo->setFormat(L"DDS");
+	imageInfo->setGamma(2.2f);
 	image->setImageInfo(imageInfo);
 
 	return image;

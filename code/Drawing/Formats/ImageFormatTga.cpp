@@ -55,7 +55,7 @@ Ref< Image > ImageFormatTga::read(IStream* stream)
 	reader >> header.descriptor;
 
 	if (header.imagetype != 2 && header.imagetype != 3)
-		return 0;
+		return nullptr;
 
 	stream->seek(IStream::SeekCurrent, header.identsize);
 
@@ -77,7 +77,7 @@ Ref< Image > ImageFormatTga::read(IStream* stream)
 		pf = PixelFormat(32, 0x00ff0000, 0x0000ff00, 0x000000ff, ((1 << (header.descriptor & 0x0f)) - 1) << 24, false, false);
 		break;
 	default:
-		return 0;
+		return nullptr;
 	}
 
 	image = new Image(pf, header.width, header.height);
@@ -106,6 +106,7 @@ Ref< Image > ImageFormatTga::read(IStream* stream)
 	imageInfo->setAuthor(L"Unknown");
 	imageInfo->setCopyright(L"Unknown");
 	imageInfo->setFormat(L"TGA");
+	imageInfo->setGamma(2.2f);
 	image->setImageInfo(imageInfo);
 
 	return image;

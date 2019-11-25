@@ -164,15 +164,15 @@ Ref< Image > ImageFormatJpegImpl::readJpegImage(IStream* stream)
 	{
 		jpeg_read_header(&m_cinfo, TRUE);
 		if (s_errorOccured)
-			return 0;
+			return nullptr;
 	}
 
 	if (m_cinfo.global_state != /*DSTATE_READY*/202)
-		return 0;
+		return nullptr;
 
 	jpeg_start_decompress(&m_cinfo);
 	if (s_errorOccured)
-		return 0;
+		return nullptr;
 
 	PixelFormat pixelFormat;
 	if (m_cinfo.output_components == 4)
@@ -188,7 +188,7 @@ Ref< Image > ImageFormatJpegImpl::readJpegImage(IStream* stream)
 	else
 	{
 		log::error << L"Unsupported number of components, must be either 3 or 4" << Endl;
-		return 0;
+		return nullptr;
 	}
 
 	Ref< Image > image = new Image(
@@ -212,6 +212,7 @@ Ref< Image > ImageFormatJpegImpl::readJpegImage(IStream* stream)
 	imageInfo->setAuthor(L"Unknown");
 	imageInfo->setCopyright(L"Unknown");
 	imageInfo->setFormat(L"JPEG");
+	imageInfo->setGamma(2.2f);
 	image->setImageInfo(imageInfo);
 
 	jpeg_finish_decompress(&m_cinfo);

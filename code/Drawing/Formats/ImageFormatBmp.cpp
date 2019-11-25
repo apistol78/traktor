@@ -62,7 +62,7 @@ Ref< Image > ImageFormatBmp::read(IStream* stream)
 	if (bmfh.bfType[0] != 'B' || bmfh.bfType[1] != 'M')
 	{
 		log::error << L"Invalid BMP file header" << Endl;
-		return 0;
+		return nullptr;
 	}
 
 	reader >> bmih.biSize;
@@ -80,7 +80,7 @@ Ref< Image > ImageFormatBmp::read(IStream* stream)
 	if (bmih.biCompression != 0)
 	{
 		log::error << L"Invalid BMP, only BI_RGB supported" << Endl;
-		return 0;
+		return nullptr;
 	}
 
 	// Get pixel format.
@@ -101,7 +101,7 @@ Ref< Image > ImageFormatBmp::read(IStream* stream)
 
 	default:
 		log::error << L"Unsupported BMP, must be at least 16 bit color depth (not " << bmih.biBitCount << L")" << Endl;
-		return 0;
+		return nullptr;
 	}
 
 	Ref< Image > image = new Image(pf, bmih.biWidth, bmih.biHeight);
@@ -126,6 +126,7 @@ Ref< Image > ImageFormatBmp::read(IStream* stream)
 	imageInfo->setAuthor(L"Unknown");
 	imageInfo->setCopyright(L"Unknown");
 	imageInfo->setFormat(L"BMP");
+	imageInfo->setGamma(2.2f);
 	image->setImageInfo(imageInfo);
 
 	return image;

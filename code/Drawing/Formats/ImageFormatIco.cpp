@@ -28,7 +28,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.drawing.ImageFormatIco", ImageFormatIco, IImage
 
 Ref< Image > ImageFormatIco::read(IStream* stream)
 {
-	return 0;
+	return nullptr;
 }
 
 bool ImageFormatIco::write(IStream* stream, Image* image)

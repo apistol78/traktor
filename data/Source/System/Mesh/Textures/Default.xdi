@@ -20,7 +20,7 @@
 	<enableCompression>true</enableCompression>
 	<enableNormalMapCompression>false</enableNormalMapCompression>
 	<inverseNormalMapY>false</inverseNormalMapY>
-	<linearGamma>true</linearGamma>
+	<linearGamma>false</linearGamma>
 	<generateSphereMap>false</generateSphereMap>
 	<preserveAlphaCoverage>false</preserveAlphaCoverage>
 	<alphaCoverageReference>0.5</alphaCoverageReference>
