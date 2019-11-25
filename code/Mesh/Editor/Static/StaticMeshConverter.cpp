@@ -29,6 +29,16 @@ Ref< IMeshResource > StaticMeshConverter::createResource() const
 	return new StaticMeshResource();
 }
 
+bool StaticMeshConverter::getOperations(const MeshAsset* meshAsset, RefArray< const model::IModelOperation >& outOperations) const
+{
+	outOperations.push_back(new model::Triangulate());
+	outOperations.push_back(new model::SortCacheCoherency());
+	outOperations.push_back(new model::CalculateTangents(false));
+	outOperations.push_back(new model::SortProjectedArea(false));
+	outOperations.push_back(new model::FlattenDoubleSided());
+	return true;
+}
+
 bool StaticMeshConverter::convert(
 	const MeshAsset* meshAsset,
 	const RefArray< model::Model >& models,
@@ -40,29 +50,10 @@ bool StaticMeshConverter::convert(
 	IStream* meshResourceStream
 ) const
 {
-	// Create a copy of the first source model and triangulate it.
+	// Create a copy of the first source model.
 	model::Model model = *models[0];
 
-	log::info << L"Triangulating model..." << Endl;
-	model::Triangulate().apply(model);
-
-	log::info << L"Sorting indices..." << Endl;
-	model::SortCacheCoherency().apply(model);
-
-	log::info << L"Calculating tangent bases..." << Endl;
-	model::CalculateTangents(false).apply(model);
-
-	log::info << L"Sorting materials..." << Endl;
-	model::SortProjectedArea(false).apply(model);
-
-	log::info << L"Flatten materials..." << Endl;
-	model::FlattenDoubleSided().apply(model);
-
-	//---------------------------------------
 	// Create render mesh.
-
-	log::info << L"Creating render mesh..." << Endl;
-
 	uint32_t vertexSize = render::getVertexSize(vertexElements);
 	T_ASSERT(vertexSize > 0);
 

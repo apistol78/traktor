@@ -29,6 +29,7 @@
 #include "Mesh/Editor/Static/StaticMeshConverter.h"
 #include "Mesh/Editor/Stream/StreamMeshConverter.h"
 #include "Model/Model.h"
+#include "Model/ModelCache.h"
 #include "Model/ModelFormat.h"
 #include "Model/Operations/CalculateTangents.h"
 #include "Model/Operations/CullDistantFaces.h"
@@ -122,7 +123,7 @@ Guid getVertexShaderGuid(MeshAsset::MeshType meshType)
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.mesh.MeshPipeline", 29, MeshPipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.mesh.MeshPipeline", 30, MeshPipeline, editor::IPipeline)
 
 MeshPipeline::MeshPipeline()
 :	m_promoteHalf(false)
@@ -135,6 +136,7 @@ MeshPipeline::MeshPipeline()
 bool MeshPipeline::create(const editor::IPipelineSettings* settings)
 {
 	m_assetPath = settings->getProperty< std::wstring >(L"Pipeline.AssetPath", L"");
+	m_modelCachePath = settings->getProperty< std::wstring >(L"Pipeline.ModelCachePath", L"");
 	m_promoteHalf = settings->getProperty< bool >(L"MeshPipeline.PromoteHalf", false);
 	m_enableCustomShaders = settings->getProperty< bool >(L"MeshPipeline.EnableCustomShaders", true);
 	m_enableCustomTemplates = settings->getProperty< bool >(L"MeshPipeline.EnableCustomTemplates", true);
@@ -146,14 +148,12 @@ bool MeshPipeline::create(const editor::IPipelineSettings* settings)
 
 void MeshPipeline::destroy()
 {
-	m_programCompiler = 0;
+	m_programCompiler = nullptr;
 }
 
 TypeInfoSet MeshPipeline::getAssetTypes() const
 {
-	TypeInfoSet typeSet;
-	typeSet.insert< MeshAsset >();
-	return typeSet;
+	return makeTypeInfoSet< MeshAsset >();
 }
 
 bool MeshPipeline::buildDependencies(
@@ -233,6 +233,64 @@ bool MeshPipeline::buildOutput(
 	auto& materialShaders = asset->getMaterialShaders();
 	auto& materialTextures = asset->getMaterialTextures();
 
+	// Create mesh converter.
+	Ref< IMeshConverter > converter;
+	switch (asset->getMeshType())
+	{
+	case MeshAsset::MtBlend:
+		converter = new BlendMeshConverter();
+		break;
+
+	case MeshAsset::MtIndoor:
+		converter = new IndoorMeshConverter();
+		break;
+
+	case MeshAsset::MtInstance:
+		converter = new InstanceMeshConverter();
+		break;
+
+	case MeshAsset::MtLod:
+		converter = new AutoLodMeshConverter();
+		break;
+
+	case MeshAsset::MtPartition:
+		converter = new PartitionMeshConverter();
+		break;
+
+	case MeshAsset::MtSkinned:
+		converter = new SkinnedMeshConverter();
+		break;
+
+	case MeshAsset::MtStatic:
+		converter = new StaticMeshConverter();
+		break;
+
+	case MeshAsset::MtStream:
+		converter = new StreamMeshConverter();
+		break;
+
+	default:
+		log::error << L"Mesh pipeline failed; unknown mesh asset type." << Endl;
+		return false;
+	}
+
+	// Create list of model operations we need to perform on model before converting it.
+	RefArray< const model::IModelOperation > operations;
+	if (!converter->getOperations(asset, operations))
+	{
+		log::error << L"Mesh pipeline failed; unable to create model operations." << Endl;
+		return false;
+	}
+
+	// Scale model according to scale factor in asset.
+	operations.push_back(new model::Transform(
+		scale(asset->getScaleFactor(), asset->getScaleFactor(), asset->getScaleFactor())
+	));
+
+	// Recalculate normals regardless if already exist in model.
+	if (asset->getRenormalize())
+		operations.push_back(new model::CalculateTangents(true));
+
 	// We allow models to be passed as build parameters in case models
 	// are procedurally generated.
 	if (buildParams)
@@ -247,24 +305,33 @@ bool MeshPipeline::buildOutput(
 			return false;
 		}
 
+		for (auto operation : operations)
+			operation->apply(*model);
+
 		models.push_back(model);
 	}
 	else
 	{
-		// Import source model(s); merge all materials into a single list (duplicates will be overridden).
 		log::info << L"Loading model \"" << asset->getFileName().getFileName() << L"\"..." << Endl;
-		Ref< model::Model > model = model::ModelFormat::readAny(asset->getFileName(), [&](const Path& p) {
-			return pipelineBuilder->openFile(Path(m_assetPath), p.getOriginal());
-		});
+
+		// Load and prepare models through model cache.
+		model::ModelCache modelCache(
+			m_modelCachePath,
+			[&](const Path& p) {
+				return pipelineBuilder->openFile(Path(m_assetPath), p.getOriginal());
+			}
+		);
+
+		Ref< model::Model > model = modelCache.get(asset->getFileName(), operations);
 		if (!model)
 		{
-			log::error << L"Mesh pipeline failed; unable to read source model (" << asset->getFileName().getOriginal() << L")" << Endl;
+			log::error << L"Mesh pipeline failed; unable to read source model (" << asset->getFileName().getOriginal() << L")." << Endl;
 			return false;
 		}
 
 		if (model->getPolygonCount() == 0)
 		{
-			log::error << L"Mesh pipeline failed; no polygons in source model (" << asset->getFileName().getOriginal() << L")" << Endl;
+			log::error << L"Mesh pipeline failed; no polygons in source model (" << asset->getFileName().getOriginal() << L")." << Endl;
 			return false;
 		}
 
@@ -280,12 +347,6 @@ bool MeshPipeline::buildOutput(
 	// Merge all materials into a single list (duplicates will be overridden).
 	for (auto model : models)
 	{
-		// Scale model according to scale factor in asset.
-		model::Transform(scale(asset->getScaleFactor(), asset->getScaleFactor(), asset->getScaleFactor())).apply(*model);
-
-		if (asset->getRenormalize())
-			model::CalculateTangents(true).apply(*model);
-
 		if (asset->getCenter())
 		{
 			Aabb3 boundingBox = model->getBoundingBox();
@@ -640,47 +701,6 @@ bool MeshPipeline::buildOutput(
 	))
 	{
 		log::error << L"Mesh pipeline failed; unable to build material shader" << Endl;
-		return false;
-	}
-
-	// Create mesh converter.
-	Ref< IMeshConverter > converter;
-	switch (asset->getMeshType())
-	{
-	case MeshAsset::MtBlend:
-		converter = new BlendMeshConverter();
-		break;
-
-	case MeshAsset::MtIndoor:
-		converter = new IndoorMeshConverter();
-		break;
-
-	case MeshAsset::MtInstance:
-		converter = new InstanceMeshConverter();
-		break;
-
-	case MeshAsset::MtLod:
-		converter = new AutoLodMeshConverter();
-		break;
-
-	case MeshAsset::MtPartition:
-		converter = new PartitionMeshConverter();
-		break;
-
-	case MeshAsset::MtSkinned:
-		converter = new SkinnedMeshConverter();
-		break;
-
-	case MeshAsset::MtStatic:
-		converter = new StaticMeshConverter();
-		break;
-
-	case MeshAsset::MtStream:
-		converter = new StreamMeshConverter();
-		break;
-
-	default:
-		log::error << L"Mesh pipeline failed; unknown mesh asset type" << Endl;
 		return false;
 	}
 

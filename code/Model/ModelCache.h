@@ -37,7 +37,7 @@ public:
     Ref< Model > get(const Path& fileName);
 
     /*! Get model with applied operations. */
-    Ref< Model > get(const Path& fileName, const RefArray< IModelOperation >& operations);
+    Ref< Model > get(const Path& fileName, const RefArray< const IModelOperation >& operations);
 
     /*! Get model with user key. */
     Ref< Model > get(const Path& fileName, uint32_t user);

@@ -18,6 +18,11 @@ Ref< IMeshResource > AutoLodMeshConverter::createResource() const
 	return new AutoLodMeshResource();
 }
 
+bool AutoLodMeshConverter::getOperations(const MeshAsset* meshAsset, RefArray< const model::IModelOperation >& outOperations) const
+{
+	return StaticMeshConverter().getOperations(meshAsset, outOperations);
+}
+
 bool AutoLodMeshConverter::convert(
 	const MeshAsset* meshAsset,
 	const RefArray< model::Model >& models,
