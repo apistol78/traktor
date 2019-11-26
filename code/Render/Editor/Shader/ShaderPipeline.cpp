@@ -29,6 +29,7 @@
 #include "Render/Editor/Shader/External.h"
 #include "Render/Editor/Shader/FragmentLinker.h"
 #include "Render/Editor/Shader/Nodes.h"
+#include "Render/Editor/Shader/ProgramCache.h"
 #include "Render/Editor/Shader/ShaderGraph.h"
 #include "Render/Editor/Shader/ShaderPipeline.h"
 #include "Render/Editor/Shader/ShaderGraphCombinations.h"
@@ -104,7 +105,7 @@ struct BuildCombinationTask : public Object
 	ShaderResource* shaderResource;
 	ShaderResource::Technique* shaderResourceTechnique;
 	ShaderResource::Combination* shaderResourceCombination;
-	render::IProgramCompiler* programCompiler;
+	ProgramCache* programCache;
 	const PropertyGroup* compilerSettings;
 	render::IProgramCompiler::Stats stats;
 	bool frequentUniformsAsLinear;
@@ -265,13 +266,13 @@ struct BuildCombinationTask : public Object
 		}
 
 		// Compile shader program.
-		Ref< ProgramResource > programResource = programCompiler->compile(
+		Ref< ProgramResource > programResource = programCache->get(
 			programGraph,
-			compilerSettings,
-			path,
-			optimize,
-			validate,
-			&stats
+			compilerSettings
+			// path,
+			// optimize,
+			// validate,
+			// &stats
 		);
 		if (!programResource)
 		{
@@ -306,6 +307,7 @@ ShaderPipeline::ShaderPipeline()
 bool ShaderPipeline::create(const editor::IPipelineSettings* settings)
 {
 	m_programCompilerTypeName = settings->getProperty< std::wstring >(L"ShaderPipeline.ProgramCompiler");
+	m_programCachePath = settings->getProperty< std::wstring >(L"ShaderPipeline.ProgramCachePath");
 	m_compilerSettings = settings->getProperty< PropertyGroup >(L"ShaderPipeline.ProgramCompilerSettings");
 	m_platform = settings->getProperty< std::wstring >(L"ShaderPipeline.Platform", L"");
 	m_includeOnlyTechniques = settings->getProperty< std::set< std::wstring > >(L"ShaderPipeline.IncludeOnlyTechniques");
@@ -322,6 +324,7 @@ void ShaderPipeline::destroy()
 {
 	m_programHints = nullptr;
 	m_programCompiler = nullptr;
+	m_programCache = nullptr;
 }
 
 TypeInfoSet ShaderPipeline::getAssetTypes() const
@@ -402,9 +405,14 @@ bool ShaderPipeline::buildOutput(
 ) const
 {
 	Ref< const ShaderGraph > shaderGraph = mandatory_non_null_type_cast< const ShaderGraph* >(sourceAsset);
+
+	// Get program compiler and cache; lazily created in case no program needs to be compiled.
 	Ref< IProgramCompiler > programCompiler = getProgramCompiler();
 	if (!programCompiler)
 		return false;
+
+	Ref< ProgramCache > programCache = getProgramCache();
+	T_ASSERT(programCache);
 
 	std::wstring rendererSignature = programCompiler->getRendererSignature();
 
@@ -542,7 +550,7 @@ bool ShaderPipeline::buildOutput(
 			task->shaderResourceCombination = new ShaderResource::Combination;
 			task->shaderResourceCombination->mask = 0;
 			task->shaderResourceCombination->value = 0;
-			task->programCompiler = programCompiler;
+			task->programCache = programCache;
 			task->compilerSettings = m_compilerSettings;
 			task->frequentUniformsAsLinear = m_frequentUniformsAsLinear;
 			task->optimize = m_optimize;
@@ -718,6 +726,25 @@ IProgramCompiler* ShaderPipeline::getProgramCompiler() const
 	//	m_programCompiler = new ProgramCompilerCapture(m_programCompiler);
 
 	return m_programCompiler;
+}
+
+ProgramCache* ShaderPipeline::getProgramCache() const
+{
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_programCompilerLock);
+
+	if (m_programCache)
+		return m_programCache;
+
+	IProgramCompiler* programCompiler = getProgramCompiler();
+	if (!programCompiler)
+		return nullptr;
+
+	m_programCache = new ProgramCache(
+		m_programCachePath,
+		programCompiler
+	);
+
+	return m_programCache;
 }
 
 	}
