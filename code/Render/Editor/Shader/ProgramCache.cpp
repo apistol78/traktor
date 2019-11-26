@@ -3,6 +3,8 @@
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Misc/String.h"
 #include "Core/Serialization/BinarySerializer.h"
+#include "Core/Serialization/DeepHash.h"
+#include "Core/Settings/PropertyGroup.h"
 #include "Render/Resource/ProgramResource.h"
 #include "Render/Editor/IProgramCompiler.h"
 #include "Render/Editor/Shader/ProgramCache.h"
@@ -34,8 +36,11 @@ Ref< ProgramResource > ProgramCache::get(
 	// Calculate hash of shader graph.
 	uint32_t shaderGraphHash = ShaderGraphHash::calculate(shaderGraph);
 
+	// Calculate hash of settings.
+	uint32_t settingsHash = DeepHash(settings).get();
+
 	// Generate file name of cached program.
-	Path cachedFileName = m_cachePath.getPathName() + L"/" + type_name(m_compiler) + L"/" + toString(shaderGraphHash) + L".bin";
+	Path cachedFileName = m_cachePath.getPathName() + L"/" + type_name(m_compiler) + L"/" + toString(shaderGraphHash) + L"_" + toString(settingsHash) + L".bin";
 
 	// Try to read pre-compiled resource from cache.
 	if ((f = FileSystem::getInstance().open(cachedFileName, File::FmRead)) != nullptr)
