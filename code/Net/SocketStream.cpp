@@ -78,23 +78,36 @@ int64_t SocketStream::read(void* block, int64_t nbytes)
 	if (!m_socket)
 		return -1;
 
-	if (m_timeout >= 0)
+	int64_t nread = 0;
+	while (nread < nbytes)
 	{
-		int32_t result = m_socket->select(true, false, false, m_timeout);
-		if (result == 0)
-			return 0;
-		else if (result < 0)
-			return -1;
+		if (m_timeout >= 0)
+		{
+			if (m_socket->select(true, false, false, m_timeout) <= 0)
+			{
+				if (nread <= 0)
+					nread = -1;
+				break;
+			}
+		}
+
+		int32_t nrecv = int32_t(std::min< int64_t >(nbytes - nread, 65536));
+		int32_t result = m_socket->recv((char*)block + nread, nrecv);
+		if (result <= 0)
+		{
+			if (nread <= 0)
+				nread = result;
+			break;
+		}
+
+		nread += result;
 	}
 
-	int32_t result = m_socket->recv(block, nbytes);
-	if (result == 0)
-		return 0;
-	else if (result < 0)
-		return -1;
+	if (nread > 0)
+		m_offset += nread;
 
-	m_offset += result;
-	return result;
+	T_ASSERT(nread <= nbytes);
+	return nread;
 }
 
 int64_t SocketStream::write(const void* block, int64_t nbytes)
@@ -104,23 +117,35 @@ int64_t SocketStream::write(const void* block, int64_t nbytes)
 	if (!m_socket)
 		return -1;
 
-	if (m_timeout >= 0)
+	int64_t nwritten = 0;
+	while (nwritten < nbytes)
 	{
-		int32_t result = m_socket->select(false, true, false, m_timeout);
-		if (result == 0)
-			return 0;
-		else if (result < 0)
-			return -1;
+		if (m_timeout >= 0)
+		{
+			if (m_socket->select(false, true, false, m_timeout) <= 0)
+			{
+				if (nwritten <= 0)
+					nwritten = -1;
+				break;
+			}
+		}
+
+		int32_t nsend = int32_t(std::min< int64_t >(nbytes - nwritten, 65536));
+		int32_t result = m_socket->send((char*)block + nwritten, nsend);
+		if (result < 0)
+		{
+			if (nwritten <= 0)
+				nwritten = result;
+			break;
+		}
+
+		nwritten += result;
 	}
 
-	int32_t result = m_socket->send(block, nbytes);
-	if (result == 0)
-		return 0;
-	else if (result < 0)
-		return -1;
+	m_offset += nwritten;
 
-	m_offset += result;
-	return result;
+	T_ASSERT(nwritten <= nbytes);
+	return nwritten;
 }
 
 void SocketStream::flush()

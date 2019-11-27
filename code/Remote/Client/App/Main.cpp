@@ -80,6 +80,8 @@ int launch(const CommandLine& cmdLine)
 
 	log::info << L"Successfully connected to \"" << host << L"\"." << Endl;
 
+	clientSocket->setNoDelay(true);
+
 	net::SocketStream clientStream(clientSocket, true, true, 5000);
 	Writer writer(&clientStream);
 	Reader reader(&clientStream);
@@ -113,6 +115,8 @@ bool deployFile(const net::SocketAddressIPv4& addr, const Path& sourceFile, cons
 		log::info << L"Unable to connect to \"" << addr.getHostName() << L":" << addr.getPort() << L"\"." << Endl;
 		return false;
 	}
+
+	clientSocket->setNoDelay(true);
 
 	net::SocketStream clientStream(clientSocket, true, true, 5000);
 
