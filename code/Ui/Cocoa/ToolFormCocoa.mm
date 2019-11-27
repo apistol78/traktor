@@ -18,6 +18,7 @@ namespace traktor
 ToolFormCocoa::ToolFormCocoa(EventSubject* owner)
 :	m_owner(owner)
 ,	m_parent(nullptr)
+,	m_timer(nullptr)
 {
 }
 
@@ -101,10 +102,7 @@ void ToolFormCocoa::destroy()
 	}
 
 	// Release all timers.
-	for (auto timer : m_timers)
-		[timer.second invalidate];
-
-	m_timers.clear();
+	stopTimer();
 
 	// Release objects.
 	if (m_window)
@@ -191,8 +189,10 @@ void ToolFormCocoa::releaseCapture()
 	log::info << mbstows(T_FILE_LINE) << L": releaseCapture NI" << Endl;
 }
 
-void ToolFormCocoa::startTimer(int interval, int id)
+void ToolFormCocoa::startTimer(int interval)
 {
+	stopTimer();
+
 	ITargetProxyCallback* targetCallback = new TargetProxyCallbackImpl< ToolFormCocoa >(
 		this,
 		&ToolFormCocoa::callbackTimer,
@@ -214,16 +214,15 @@ void ToolFormCocoa::startTimer(int interval, int id)
 	[[NSRunLoop currentRunLoop] addTimer: timer forMode: NSDefaultRunLoopMode];
 	[[NSRunLoop currentRunLoop] addTimer: timer forMode: NSModalPanelRunLoopMode];
 
-	m_timers[id] = timer;
+	m_timer = timer;
 }
 
-void ToolFormCocoa::stopTimer(int id)
+void ToolFormCocoa::stopTimer()
 {
-	auto it = m_timers.find(id);
-	if (it != m_timers.end())
+	if (m_timer)
 	{
-		[it->second invalidate];
-		m_timers.erase(it);
+		[m_timer invalidate];
+		m_timer = nullptr;
 	}
 }
 

@@ -1,4 +1,5 @@
 #import <Everyplay/Everyplay.h>
+
 #include "Core/Log/Log.h"
 #include "Core/Settings/PropertyGroup.h"
 #include "Core/Settings/PropertyInteger.h"
@@ -139,8 +140,8 @@ void GcVideoSharingEveryplay::endCapture(const PropertyGroup* metaData)
 		[[[Everyplay sharedInstance] capture] stopRecording];
 		if (metaData)
 		{
-			const std::map< std::wstring, Ref< IPropertyValue > >& values = metaData->getValues();
-			for (std::map< std::wstring, Ref< IPropertyValue > >::const_iterator i = values.begin(); i != values.end(); ++i)
+			const auto& values = metaData->getValues();
+			for (auto i = values.begin(); i != values.end(); ++i)
 			{
 				NSString* key = makeNSString(i->first);
 				if (!key)

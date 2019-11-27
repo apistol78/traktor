@@ -3,7 +3,6 @@
 #import <Cocoa/Cocoa.h>
 #import "Ui/Cocoa/NSWindowDelegateProxy.h"
 
-#include <map>
 #include "Ui/Itf/IFontMetric.h"
 #include "Ui/Itf/IForm.h"
 
@@ -74,9 +73,9 @@ public:
 
 	virtual void releaseCapture() override final;
 
-	virtual void startTimer(int interval, int id) override final;
+	virtual void startTimer(int interval) override final;
 
-	virtual void stopTimer(int id) override final;
+	virtual void stopTimer() override final;
 
 	virtual void setRect(const Rect& rect) override final;
 
@@ -118,13 +117,13 @@ public:
 
 	// IFontMetric
 
-	virtual void getAscentAndDescent(int32_t& outAscent, int32_t& outDescent) const override final T_FINAL;
+	virtual void getAscentAndDescent(int32_t& outAscent, int32_t& outDescent) const override final;
 
-	virtual int32_t getAdvance(wchar_t ch, wchar_t next) const override final T_FINAL;
+	virtual int32_t getAdvance(wchar_t ch, wchar_t next) const override final;
 
-	virtual int32_t getLineSpacing() const override final T_FINAL;
+	virtual int32_t getLineSpacing() const override final;
 
-	virtual Size getExtent(const std::wstring& text) const override final T_FINAL;
+	virtual Size getExtent(const std::wstring& text) const override final;
 
 	// INSWindowEventsCallback
 
@@ -145,7 +144,7 @@ public:
 private:
 	EventSubject* m_owner;
 	NSWindow* m_window;
-	std::map< int, NSTimer* > m_timers;
+	NSTimer* m_timer;
 
 	void callbackTimer(void* controlId);
 };

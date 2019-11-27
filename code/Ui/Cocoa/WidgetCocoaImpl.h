@@ -2,7 +2,6 @@
 
 #import <Cocoa/Cocoa.h>
 
-#include <map>
 #include "Core/Log/Log.h"
 #include "Ui/EventSubject.h"
 #include "Ui/Cocoa/UtilitiesCocoa.h"
@@ -32,6 +31,7 @@ public:
 	:	m_owner(owner)
 	,	m_control(nullptr)
 	,	m_notificationProxy(nullptr)
+	,	m_timer(nullptr)
 	,	m_haveFocus(false)
 	,	m_tracking(false)
 	{
@@ -50,10 +50,11 @@ public:
 		}
 
 		// Release all timers.
-		for (std::map< int, NSTimer* >::iterator i = m_timers.begin(); i != m_timers.end(); ++i)
-			[i->second invalidate];
-
-		m_timers.clear();
+		if (m_timer)
+		{
+			[m_timer invalidate];
+			m_timer = nullptr;
+		}
 
 		// Remove widget from parent.
 		NSView* view = m_control;
@@ -156,8 +157,10 @@ public:
 		m_tracking = false;
 	}
 
-	virtual void startTimer(int interval, int id) override
+	virtual void startTimer(int interval) override
 	{
+		stopTimer();
+
 		ITargetProxyCallback* targetCallback = new TargetProxyCallbackImpl< class_t >(
 			this,
 			&class_t::callbackTimer,
@@ -179,16 +182,15 @@ public:
 		[[NSRunLoop currentRunLoop] addTimer: timer forMode: NSDefaultRunLoopMode];
 		[[NSRunLoop currentRunLoop] addTimer: timer forMode: NSModalPanelRunLoopMode];
 
-		m_timers[id] = timer;
+		m_timer = timer;
 	}
 
-	virtual void stopTimer(int id) override
+	virtual void stopTimer() override
 	{
-		auto it = m_timers.find(id);
-		if (it != m_timers.end())
+		if (m_timer)
 		{
-			[it->second invalidate];
-			m_timers.erase(it);
+			[m_timer invalidate];
+			m_timer = nullptr;
 		}
 	}
 
@@ -375,7 +377,7 @@ protected:
 	EventSubject* m_owner;
 	NSControlType* m_control;
 	NSNotificationProxy* m_notificationProxy;
-	std::map< int, NSTimer* > m_timers;
+	NSTimer* m_timer;
 	bool m_haveFocus;
 	bool m_tracking;
 

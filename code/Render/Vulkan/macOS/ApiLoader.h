@@ -86,6 +86,10 @@ extern PFN_vkDestroyShaderModule vkDestroyShaderModule;
 extern PFN_vkDestroyDescriptorSetLayout vkDestroyDescriptorSetLayout;
 extern PFN_vkDestroyPipelineLayout vkDestroyPipelineLayout;
 extern PFN_vkDestroySampler vkDestroySampler;
+extern PFN_vkDestroyCommandPool vkDestroyCommandPool;
+extern PFN_vkDestroyDescriptorPool vkDestroyDescriptorPool;
+extern PFN_vkCmdClearColorImage vkCmdClearColorImage;
+extern PFN_vkCmdClearDepthStencilImage vkCmdClearDepthStencilImage;
 
 // macOS Vulkan extensions.
 extern PFN_vkCreateMacOSSurfaceMVK vkCreateMacOSSurfaceMVK;

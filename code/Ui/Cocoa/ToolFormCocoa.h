@@ -3,7 +3,6 @@
 #import <Cocoa/Cocoa.h>
 #import "Ui/Cocoa/NSWindowDelegateProxy.h"
 
-#include <map>
 #include "Ui/Itf/IFontMetric.h"
 #include "Ui/Itf/IToolForm.h"
 
@@ -62,9 +61,9 @@ public:
 
 	virtual void releaseCapture() override;
 
-	virtual void startTimer(int interval, int id) override;
+	virtual void startTimer(int interval) override;
 
-	virtual void stopTimer(int id) override;
+	virtual void stopTimer() override;
 
 	virtual void setRect(const Rect& rect) override;
 
@@ -134,7 +133,7 @@ private:
 	EventSubject* m_owner;
 	IWidget* m_parent;
 	NSWindow* m_window;
-	std::map< int, NSTimer* > m_timers;
+	NSTimer* m_timer;
 	int32_t m_result;
 	
 	void callbackTimer(void* controlId);
