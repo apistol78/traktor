@@ -22,17 +22,17 @@ ArticulatedEntity::ArticulatedEntity(
 
 void ArticulatedEntity::destroy()
 {
-	for (RefArray< Joint >::iterator i = m_joints.begin(); i != m_joints.end(); ++i)
+	for (auto joint : m_joints)
 	{
-		if (*i)
-			(*i)->destroy();
+		if (joint)
+			joint->destroy();
 	}
 	m_joints.resize(0);
 
-	for (RefArray< RigidEntity >::iterator i = m_entities.begin(); i != m_entities.end(); ++i)
+	for (auto entity : m_entities)
 	{
-		if (*i)
-			(*i)->destroy();
+		if (entity)
+			entity->destroy();
 	}
 	m_entities.resize(0);
 
@@ -41,21 +41,21 @@ void ArticulatedEntity::destroy()
 
 void ArticulatedEntity::update(const world::UpdateParams& update)
 {
-	for (RefArray< RigidEntity >::iterator i = m_entities.begin(); i != m_entities.end(); ++i)
-		(*i)->update(update);
+	for (auto entity : m_entities)
+		entity->update(update);
 }
 
 void ArticulatedEntity::setTransform(const Transform& transform)
 {
 	Transform invTransform = m_transform.inverse();
-	for (RefArray< RigidEntity >::iterator i = m_entities.begin(); i != m_entities.end(); ++i)
+	for (auto entity : m_entities)
 	{
 		Transform currentTransform;
-		if ((*i)->getTransform(currentTransform))
+		if (entity->getTransform(currentTransform))
 		{
 			Transform Tlocal = invTransform * currentTransform;
 			Transform Tworld = transform * Tlocal;
-			(*i)->setTransform(Tworld);
+			entity->setTransform(Tworld);
 		}
 	}
 	m_transform = transform;
@@ -72,9 +72,9 @@ Aabb3 ArticulatedEntity::getBoundingBox() const
 	Transform invTransform = m_transform.inverse();
 
 	Aabb3 boundingBox;
-	for (RefArray< RigidEntity >::const_iterator i = m_entities.begin(); i != m_entities.end(); ++i)
+	for (auto entity : m_entities)
 	{
-		Aabb3 childBoundingBox = (*i)->getWorldBoundingBox();
+		Aabb3 childBoundingBox = entity->getWorldBoundingBox();
 		if (!childBoundingBox.empty())
 			boundingBox.contain(childBoundingBox.transform(invTransform));
 	}

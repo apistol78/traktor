@@ -29,12 +29,11 @@ void ArticulatedEntityEditor::drawGuide(render::PrimitiveRenderer* primitiveRend
 
 	if (getContext()->shouldDrawGuide(L"Physics.Joints"))
 	{
-		const std::vector< ArticulatedEntityData::Constraint >& constraints = articulatedEntityData->getConstraints();
+		const RefArray< scene::EntityAdapter >& constraintChildren = getEntityAdapter()->getChildren();
+		const auto& constraints = articulatedEntityData->getConstraints();
 		Transform transform = articulatedEntityData->getTransform();
 
-		const RefArray< scene::EntityAdapter >& constraintChildren = getEntityAdapter()->getChildren();
-
-		for (uint32_t i = 0; i < uint32_t(constraints.size()); ++i)
+		for (uint32_t i = 0; i < (uint32_t)constraints.size(); ++i)
 		{
 			const ArticulatedEntityData::Constraint& constraint = constraints[i];
 			if (constraint.entityIndex1 < 0)

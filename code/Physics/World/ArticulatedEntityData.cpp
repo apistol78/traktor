@@ -1,8 +1,8 @@
 #include "Core/Serialization/ISerializer.h"
+#include "Core/Serialization/MemberAlignedVector.h"
 #include "Core/Serialization/MemberComposite.h"
 #include "Core/Serialization/MemberRef.h"
 #include "Core/Serialization/MemberRefArray.h"
-#include "Core/Serialization/MemberStl.h"
 #include "Physics/Joint.h"
 #include "Physics/JointDesc.h"
 #include "Physics/PhysicsManager.h"
@@ -28,17 +28,17 @@ Ref< ArticulatedEntity > ArticulatedEntityData::createEntity(
 	RefArray< Joint > joints;
 
 	entities.resize(m_entityData.size());
-	for (uint32_t i = 0; i < uint32_t(m_entityData.size()); ++i)
+	for (uint32_t i = 0; i < m_entityData.size(); ++i)
 	{
 		Ref< RigidEntity > entity = dynamic_type_cast< RigidEntity* >(builder->create(m_entityData[i]));
 		if (!entity)
-			return 0;
+			return nullptr;
 
 		entities[i] = entity;
 	}
 
 	joints.resize(m_constraints.size());
-	for (uint32_t i = 0; i < uint32_t(m_constraints.size()); ++i)
+	for (uint32_t i = 0; i < m_constraints.size(); ++i)
 	{
 		Ref< Body > body1, body2;
 
@@ -56,7 +56,7 @@ Ref< ArticulatedEntity > ArticulatedEntityData::createEntity(
 				body2
 			);
 			if (!joint)
-				return 0;
+				return nullptr;
 
 			joints[i] = joint;
 		}
@@ -72,10 +72,10 @@ Ref< ArticulatedEntity > ArticulatedEntityData::createEntity(
 void ArticulatedEntityData::setTransform(const Transform& transform)
 {
 	Transform deltaTransform = transform * getTransform().inverse();
-	for (RefArray< world::EntityData >::iterator i = m_entityData.begin(); i != m_entityData.end(); ++i)
+	for (auto entityData : m_entityData)
 	{
-		Transform currentTransform = (*i)->getTransform();
-		(*i)->setTransform(deltaTransform * currentTransform);
+		Transform currentTransform = entityData->getTransform();
+		entityData->setTransform(deltaTransform * currentTransform);
 	}
 	EntityData::setTransform(transform);
 }
@@ -85,7 +85,7 @@ void ArticulatedEntityData::serialize(ISerializer& s)
 	world::EntityData::serialize(s);
 
 	s >> MemberRefArray< world::EntityData >(L"entityData", m_entityData);
-	s >> MemberStlVector< Constraint, MemberComposite< Constraint > >(L"constraints", m_constraints);
+	s >> MemberAlignedVector< Constraint, MemberComposite< Constraint > >(L"constraints", m_constraints);
 }
 
 ArticulatedEntityData::Constraint::Constraint()

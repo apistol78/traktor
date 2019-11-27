@@ -1,8 +1,8 @@
 #pragma once
 
-#include <vector>
 #include "Core/Ref.h"
 #include "Core/RefArray.h"
+#include "Core/Containers/AlignedVector.h"
 #include "World/EntityData.h"
 
 #undef T_DLLCLASS
@@ -28,7 +28,7 @@ class ArticulatedEntity;
 class JointDesc;
 class PhysicsManager;
 
-/*! \brief Articulated entity data.
+/*! Articulated entity data.
  * \ingroup Physics
  */
 class T_DLLCLASS ArticulatedEntityData : public world::EntityData
@@ -58,11 +58,11 @@ public:
 
 	const RefArray< world::EntityData >& getEntityData() const { return m_entityData; }
 
-	const std::vector< Constraint >& getConstraints() const { return m_constraints; }
+	const AlignedVector< Constraint >& getConstraints() const { return m_constraints; }
 
 private:
 	RefArray< world::EntityData > m_entityData;
-	std::vector< Constraint > m_constraints;
+	AlignedVector< Constraint > m_constraints;
 };
 
 	}

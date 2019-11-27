@@ -162,24 +162,16 @@ void VehicleComponent::updateSuspension(float dT)
 		Vector4 anchorW = bodyT * data->getAnchor().xyz1();
 		Vector4 axisW = bodyT * -data->getAxis().xyz0().normalized();
 
-		//const float c_suspensionTraceRadius = 0.25f;
+		const float c_suspensionTraceRadius = 0.25f;
 		float contactFudge = 0.0f;
 
 		// Trace wheel contact.
-		//if (m_physicsManager->querySweep(
-		//	anchorW,
-		//	axisW,
-		//	data->getSuspensionLength().max + data->getRadius() + m_data->getFudgeDistance(),
-		//	c_suspensionTraceRadius,
-		//	physics::QueryFilter(m_traceInclude, m_traceIgnore),
-		//	result
-		//))
-		if (m_physicsManager->queryRay(
+		if (m_physicsManager->querySweep(
 			anchorW,
 			axisW,
 			data->getSuspensionLength().max + data->getRadius() + m_data->getFudgeDistance(),
+			c_suspensionTraceRadius,
 			physics::QueryFilter(m_traceInclude, m_traceIgnore),
-			false,
 			result
 		))
 		{
@@ -267,20 +259,6 @@ void VehicleComponent::updateFriction(float dT)
 	Transform bodyTinv = bodyT.inverse();
 
 	Scalar rollingFriction(0.0f);
-
-	//float totalGrip = 0.0f;
-	//for (RefArray< Wheel >::iterator i = m_wheels.begin(); i != m_wheels.end(); ++i)
-	//{
-	//	if (!(*i)->contact)
-	//		continue;
-
-	//	Vector4 axis = bodyT * (*i)->data->getAxis();
-	//	totalGrip += dot3(axis, (*i)->contactNormal) * Scalar((*i)->contactFudge);
-	//}
-
-	//totalGrip /= float(m_wheels.size());
-	//float frictionPower = std::pow(clamp(totalGrip, 0.0f, 1.0f), 4.0f);
-
 	Scalar massPerWheel = Scalar(m_totalMass / m_wheels.size());
 
 	for (auto wheel : m_wheels)
@@ -289,7 +267,7 @@ void VehicleComponent::updateFriction(float dT)
 			continue;
 
 		const WheelData* data = wheel->data;
-		T_ASSERT(data != 0);
+		T_ASSERT(data != nullptr);
 
 		Vector4 axis = bodyT * data->getAxis();
 
@@ -357,24 +335,24 @@ void VehicleComponent::updateFriction(float dT)
 		);
 	}
 
-	//// Help keep vehicle stationary if almost standstill.
-	//if (!m_airBorn)
-	//{
-	//	Vector4 linearVelocityW = m_body->getLinearVelocity();
-	//	Scalar forwardVelocityW = dot3(bodyT.axisZ(), linearVelocityW);
+	// Help keep vehicle stationary if almost standstill.
+	if (!m_airBorn)
+	{
+		Vector4 linearVelocityW = m_body->getLinearVelocity();
+		Scalar forwardVelocityW = dot3(bodyT.axisZ(), linearVelocityW);
 
-	//	bool throttleIdle = abs(m_engineThrottle) < c_throttleThreshold;
-	//	bool almostStill = bool(abs(forwardVelocityW) < c_linearVelocityThreshold);
+		bool throttleIdle = abs(m_engineThrottle) < c_throttleThreshold;
+		bool almostStill = (bool)(abs(forwardVelocityW) < c_linearVelocityThreshold);
 
-	//	if (throttleIdle && almostStill)
-	//	{
-	//		float s = 1.0f - abs(forwardVelocityW) / c_linearVelocityThreshold;
-	//		m_body->addLinearImpulse(
-	//			-bodyT.axisZ() * forwardVelocityW * Scalar(s * s * 0.3f * m_totalMass),
-	//			false
-	//		);
-	//	}
-	//}
+		if (throttleIdle && almostStill)
+		{
+			float s = 1.0f - abs(forwardVelocityW) / c_linearVelocityThreshold;
+			m_body->addLinearImpulse(
+				-bodyT.axisZ() * forwardVelocityW * Scalar(s * s * 0.3f * m_totalMass),
+				false
+			);
+		}
+	}
 
 	// Apply some rotational damping to prevent oscillation from suspension forces.
 	if (!m_airBorn && abs(m_steerAngle) < FUZZY_EPSILON)
