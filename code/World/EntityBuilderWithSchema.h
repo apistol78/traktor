@@ -1,9 +1,9 @@
 #pragma once
 
 #include <list>
-#include <map>
 #include <stack>
 #include <string>
+#include "Core/Containers/SmallMap.h"
 #include "World/IEntityBuilder.h"
 
 // import/export mechanism.
@@ -21,7 +21,7 @@ namespace traktor
 
 class IEntitySchema;
 
-/*! \brief Entity builder.
+/*! Entity builder with recording schema.
  * \ingroup World
  */
 class T_DLLCLASS EntityBuilderWithSchema : public IEntityBuilder
@@ -31,7 +31,7 @@ class T_DLLCLASS EntityBuilderWithSchema : public IEntityBuilder
 public:
 	EntityBuilderWithSchema(IEntityBuilder* entityBuilder, IEntitySchema* entitySchema);
 
-	EntityBuilderWithSchema(IEntityBuilder* entityBuilder, IEntitySchema* entitySchema, std::map< const world::EntityData*, Ref< world::Entity > >& outEntityProducts);
+	EntityBuilderWithSchema(IEntityBuilder* entityBuilder, IEntitySchema* entitySchema, SmallMap< const world::EntityData*, Ref< world::Entity > >& outEntityProducts);
 
 	virtual void addFactory(const IEntityFactory* entityFactory) override;
 
@@ -56,7 +56,7 @@ private:
 
 	Ref< IEntityBuilder > m_entityBuilder;
 	Ref< IEntitySchema > m_entitySchema;
-	std::map< const world::EntityData*, Ref< world::Entity > >* m_outEntityProducts;
+	SmallMap< const world::EntityData*, Ref< world::Entity > >* m_outEntityProducts;
 	mutable std::stack< scope_t > m_entityScope;
 };
 

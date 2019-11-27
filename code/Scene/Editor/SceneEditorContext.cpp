@@ -403,7 +403,7 @@ void SceneEditorContext::buildEntities()
 			RefArray< EntityAdapter > entityAdapters;
 			getEntities(entityAdapters);
 
-			std::map< const world::EntityData*, Ref< world::Entity > > entityProducts;
+			SmallMap< const world::EntityData*, Ref< world::Entity > > entityProducts;
 			for (auto entityAdapter : entityAdapters)
 				entityProducts.insert(std::make_pair(
 					entityAdapter->getEntityData(),
@@ -460,11 +460,11 @@ void SceneEditorContext::buildController()
 		RefArray< EntityAdapter > entityAdapters;
 		getEntities(entityAdapters);
 
-		std::map< const world::EntityData*, Ref< world::Entity > > entityProducts;
-		for (RefArray< EntityAdapter >::const_iterator i = entityAdapters.begin(); i != entityAdapters.end(); ++i)
+		SmallMap< const world::EntityData*, Ref< world::Entity > > entityProducts;
+		for (auto entityAdapter : entityAdapters)
 			entityProducts.insert(std::make_pair(
-				(*i)->getEntityData(),
-				(*i)->getEntity()
+				entityAdapter->getEntityData(),
+				entityAdapter->getEntity()
 			));
 
 		controller = m_sceneAsset->getControllerData()->createController(entityProducts, true);
@@ -492,8 +492,8 @@ void SceneEditorContext::selectAllEntities(bool select)
 	RefArray< EntityAdapter > entityAdapters;
 	getEntities(entityAdapters);
 
-	for (RefArray< EntityAdapter >::const_iterator i = entityAdapters.begin(); i != entityAdapters.end(); ++i)
-		selectEntity(*i, select);
+	for (auto entityAdapter : entityAdapters)
+		selectEntity(entityAdapter, select);
 }
 
 uint32_t SceneEditorContext::getEntities(RefArray< EntityAdapter >& outEntityAdapters, uint32_t flags) const

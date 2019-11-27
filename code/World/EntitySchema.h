@@ -1,7 +1,6 @@
 #pragma once
 
-#include <map>
-#include <vector>
+#include "Core/Containers/SmallMap.h"
 #include "World/IEntitySchema.h"
 
 // import/export mechanism.
@@ -68,15 +67,14 @@ private:
 
 	struct Indices
 	{
-		std::vector< uint32_t > children;
-		std::map< std::wstring, std::vector< uint32_t > > name;
-		std::map< const TypeInfo*, std::vector< uint32_t > > type;
+		AlignedVector< uint32_t > children;
+		SmallMap< std::wstring, AlignedVector< uint32_t > > name;
+		SmallMap< const TypeInfo*, AlignedVector< uint32_t > > type;
 	};
 
-	std::vector< EntityInfo > m_entityInfo;
-
+	AlignedVector< EntityInfo > m_entityInfo;
 	Indices m_global;
-	std::map< const Entity*, Indices > m_children;
+	SmallMap< const Entity*, Indices > m_children;
 };
 
 	}

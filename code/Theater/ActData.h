@@ -1,7 +1,7 @@
 #pragma once
 
-#include <map>
 #include "Core/RefArray.h"
+#include "Core/Containers/SmallMap.h"
 #include "Core/Serialization/ISerializable.h"
 
 // import/export mechanism.
@@ -38,7 +38,7 @@ class T_DLLCLASS ActData : public ISerializable
 public:
 	ActData();
 
-	Ref< Act > createInstance(const std::map< const world::EntityData*, Ref< world::Entity > >& entityProducts) const;
+	Ref< Act > createInstance(const SmallMap< const world::EntityData*, Ref< world::Entity > >& entityProducts) const;
 
 	virtual void serialize(ISerializer& s) override final;
 

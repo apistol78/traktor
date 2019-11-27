@@ -1,7 +1,7 @@
 #pragma once
 
-#include <map>
 #include "Core/Ref.h"
+#include "Core/Containers/SmallMap.h"
 #include "Core/Serialization/ISerializable.h"
 
 // import/export mechanism.
@@ -27,7 +27,7 @@ class EntityData;
 
 class ISceneController;
 
-/*! \brief Scene controller data.
+/*! Scene controller data.
  * \ingroup Scene
  *
  * Scene controller data is a persistent
@@ -39,13 +39,13 @@ class T_DLLCLASS ISceneControllerData : public ISerializable
 	T_RTTI_CLASS;
 
 public:
-	/*! \brief Create controller instance.
+	/*! Create controller instance.
 	 *
 	 * \param entityProducts Entites created from entity data.
 	 * \param editor True if scene is created in editor.
 	 * \return Controller instance.
 	 */
-	virtual Ref< ISceneController > createController(const std::map< const world::EntityData*, Ref< world::Entity > >& entityProducts, bool editor) const = 0;
+	virtual Ref< ISceneController > createController(const SmallMap< const world::EntityData*, Ref< world::Entity > >& entityProducts, bool editor) const = 0;
 };
 
 	}
