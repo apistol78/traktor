@@ -1686,9 +1686,9 @@ Directional
 			<comment/>
 			<position>
 				<first>6524</first>
-				<second>340</second>
+				<second>343</second>
 			</position>
-			<value>0.1</value>
+			<value>0.025</value>
 		</item>
 		<item type="traktor.render.Dot" version="traktor.render.Node:1">
 			<id>{3D2CEE51-DE29-4142-AD2E-E102A251C886}</id>
@@ -1775,8 +1775,8 @@ Directional
 			<id>{FCA23D41-99B3-AA43-94CA-18EFED4C30B3}</id>
 			<comment/>
 			<position>
-				<first>6536</first>
-				<second>424</second>
+				<first>6565</first>
+				<second>385</second>
 			</position>
 			<name>L_Albedo</name>
 			<global>false</global>
@@ -1795,8 +1795,8 @@ Directional
 			<id>{482C9736-F7D8-F245-B27A-D2E5328516C6}</id>
 			<comment/>
 			<position>
-				<first>6540</first>
-				<second>464</second>
+				<first>6548</first>
+				<second>425</second>
 			</position>
 			<name>L_Metalness</name>
 			<global>false</global>
@@ -3592,16 +3592,6 @@ Directional
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[130]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[129]"/>
-				<name>Input2</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
 				<node ref="/object/nodes/item[145]"/>
 				<name>Output</name>
 			</source>
@@ -4328,6 +4318,16 @@ Directional
 			<destination>
 				<node ref="/object/nodes/item[117]"/>
 				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[130]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[129]"/>
+				<name>Input2</name>
 			</destination>
 		</item>
 	</edges>

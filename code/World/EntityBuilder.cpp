@@ -35,18 +35,18 @@ void EntityBuilder::removeFactory(const IEntityFactory* entityFactory)
 const IEntityFactory* EntityBuilder::getFactory(const EntityData* entityData) const
 {
 	if (!entityData)
-		return 0;
+		return nullptr;
 
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 
 	const TypeInfo& entityDataType = type_of(entityData);
 	const IEntityFactory* entityFactory = 0;
 
-	std::map< const TypeInfo*, const IEntityFactory* >::const_iterator i = m_resolvedFactoryCache.find(&entityDataType);
-	if (i != m_resolvedFactoryCache.end())
+	auto it = m_resolvedFactoryCache.find(&entityDataType);
+	if (it != m_resolvedFactoryCache.end())
 	{
 		// This type of entity has already been created; reuse same factory.
-		entityFactory = i->second;
+		entityFactory = it->second;
 	}
 	else
 	{
@@ -77,7 +77,7 @@ const IEntityFactory* EntityBuilder::getFactory(const EntityData* entityData) co
 	if (!entityFactory)
 	{
 		log::error << L"Unable to find entity factory for \"" << entityData->getName() << L"\" of " << type_name(entityData) << Endl;
-		return 0;
+		return nullptr;
 	}
 
 	return entityFactory;
@@ -86,18 +86,18 @@ const IEntityFactory* EntityBuilder::getFactory(const EntityData* entityData) co
 const IEntityFactory* EntityBuilder::getFactory(const IEntityEventData* entityEventData) const
 {
 	if (!entityEventData)
-		return 0;
+		return nullptr;
 
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 
 	const TypeInfo& entityEventDataType = type_of(entityEventData);
 	const IEntityFactory* entityFactory = 0;
 
-	std::map< const TypeInfo*, const IEntityFactory* >::const_iterator i = m_resolvedFactoryCache.find(&entityEventDataType);
-	if (i != m_resolvedFactoryCache.end())
+	auto it = m_resolvedFactoryCache.find(&entityEventDataType);
+	if (it != m_resolvedFactoryCache.end())
 	{
 		// This type of entity has already been created; reuse same factory.
-		entityFactory = i->second;
+		entityFactory = it->second;
 	}
 	else
 	{
@@ -128,7 +128,7 @@ const IEntityFactory* EntityBuilder::getFactory(const IEntityEventData* entityEv
 	if (!entityFactory)
 	{
 		log::error << L"Unable to find entity factory for event of " << type_name(entityEventData) << Endl;
-		return 0;
+		return nullptr;
 	}
 
 	return entityFactory;
@@ -137,18 +137,18 @@ const IEntityFactory* EntityBuilder::getFactory(const IEntityEventData* entityEv
 const IEntityFactory* EntityBuilder::getFactory(const IEntityComponentData* entityComponentData) const
 {
 	if (!entityComponentData)
-		return 0;
+		return nullptr;
 
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 
 	const TypeInfo& entityComponentDataType = type_of(entityComponentData);
 	const IEntityFactory* entityFactory = 0;
 
-	std::map< const TypeInfo*, const IEntityFactory* >::const_iterator i = m_resolvedFactoryCache.find(&entityComponentDataType);
-	if (i != m_resolvedFactoryCache.end())
+	auto it = m_resolvedFactoryCache.find(&entityComponentDataType);
+	if (it != m_resolvedFactoryCache.end())
 	{
 		// This type of entity has already been created; reuse same factory.
-		entityFactory = i->second;
+		entityFactory = it->second;
 	}
 	else
 	{
@@ -179,7 +179,7 @@ const IEntityFactory* EntityBuilder::getFactory(const IEntityComponentData* enti
 	if (!entityFactory)
 	{
 		log::error << L"Unable to find entity factory for component of " << type_name(entityComponentData) << Endl;
-		return 0;
+		return nullptr;
 	}
 
 	return entityFactory;
@@ -188,19 +188,19 @@ const IEntityFactory* EntityBuilder::getFactory(const IEntityComponentData* enti
 Ref< Entity > EntityBuilder::create(const EntityData* entityData) const
 {
 	Ref< const IEntityFactory > entityFactory = getFactory(entityData);
-	return entityFactory ? entityFactory->createEntity(this, *entityData) : 0;
+	return entityFactory ? entityFactory->createEntity(this, *entityData) : nullptr;
 }
 
 Ref< IEntityEvent > EntityBuilder::create(const IEntityEventData* entityEventData) const
 {
 	Ref< const IEntityFactory > entityFactory = getFactory(entityEventData);
-	return entityFactory ? entityFactory->createEntityEvent(this, *entityEventData) : 0;
+	return entityFactory ? entityFactory->createEntityEvent(this, *entityEventData) : nullptr;
 }
 
 Ref< IEntityComponent > EntityBuilder::create(const IEntityComponentData* entityComponentData) const
 {
 	Ref< const IEntityFactory > entityFactory = getFactory(entityComponentData);
-	return entityFactory ? entityFactory->createEntityComponent(this, *entityComponentData) : 0;
+	return entityFactory ? entityFactory->createEntityComponent(this, *entityComponentData) : nullptr;
 }
 
 const IEntityBuilder* EntityBuilder::getCompositeEntityBuilder() const

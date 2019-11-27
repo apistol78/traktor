@@ -41,7 +41,7 @@ Ref< Scene > SceneResource::createScene(
 	}
 
 	Ref< world::IEntitySchema > entitySchema = new world::EntitySchema();
-	std::map< const world::EntityData*, Ref< world::Entity > > entityProducts;
+	SmallMap< const world::EntityData*, Ref< world::Entity > > entityProducts;
 
 	Ref< world::EntityBuilderWithSchema > entityBuilderSchema = new world::EntityBuilderWithSchema(entityBuilder, entitySchema, entityProducts);
 	Ref< world::Entity > rootEntity = entityBuilderSchema->create(m_entityData);
@@ -53,7 +53,7 @@ Ref< Scene > SceneResource::createScene(
 		if (!controller)
 		{
 			log::error << L"Failed to create scene; unable to instantiate scene controller" << Endl;
-			return 0;
+			return nullptr;
 		}
 	}
 

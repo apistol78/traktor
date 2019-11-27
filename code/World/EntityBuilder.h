@@ -1,7 +1,7 @@
 #pragma once
 
-#include <map>
 #include "Core/RefArray.h"
+#include "Core/Containers/SmallMap.h"
 #include "Core/Thread/Semaphore.h"
 #include "World/IEntityBuilder.h"
 
@@ -18,7 +18,7 @@ namespace traktor
 	namespace world
 	{
 
-/*! \brief Entity builder.
+/*! Entity builder.
  * \ingroup World
  */
 class T_DLLCLASS EntityBuilder : public IEntityBuilder
@@ -47,7 +47,7 @@ public:
 private:
 	mutable Semaphore m_lock;
 	RefArray< const IEntityFactory > m_entityFactories;
-	mutable std::map< const TypeInfo*, const IEntityFactory* > m_resolvedFactoryCache;
+	mutable SmallMap< const TypeInfo*, const IEntityFactory* > m_resolvedFactoryCache;
 };
 
 	}

@@ -38,7 +38,7 @@ Ref< Object > SceneFactory::create(resource::IResourceManager* resourceManager, 
 {
 	Ref< SceneResource > sceneResource = instance->getObject< SceneResource >();
 	if (!sceneResource)
-		return 0;
+		return nullptr;
 
 	return sceneResource->createScene(
 		resourceManager,

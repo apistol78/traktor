@@ -13,11 +13,11 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.world.EntityBuilderWithSchema", EntityBuilderWi
 EntityBuilderWithSchema::EntityBuilderWithSchema(IEntityBuilder* entityBuilder, IEntitySchema* entitySchema)
 :	m_entityBuilder(entityBuilder)
 ,	m_entitySchema(entitySchema)
-,	m_outEntityProducts(0)
+,	m_outEntityProducts(nullptr)
 {
 }
 
-EntityBuilderWithSchema::EntityBuilderWithSchema(IEntityBuilder* entityBuilder, IEntitySchema* entitySchema, std::map< const world::EntityData*, Ref< world::Entity > >& outEntityProducts)
+EntityBuilderWithSchema::EntityBuilderWithSchema(IEntityBuilder* entityBuilder, IEntitySchema* entitySchema, SmallMap< const world::EntityData*, Ref< world::Entity > >& outEntityProducts)
 :	m_entityBuilder(entityBuilder)
 ,	m_entitySchema(entitySchema)
 ,	m_outEntityProducts(&outEntityProducts)
@@ -53,7 +53,7 @@ Ref< Entity > EntityBuilderWithSchema::create(const EntityData* entityData) cons
 {
 	Ref< const IEntityFactory > entityFactory = m_entityBuilder->getFactory(entityData);
 	if (!entityFactory)
-		return 0;
+		return nullptr;
 
 	m_entityScope.push(scope_t());
 

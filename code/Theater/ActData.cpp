@@ -15,10 +15,10 @@ namespace traktor
 		namespace
 		{
 
-world::Entity* findEntityDataProduct(const std::map< const world::EntityData*, Ref< world::Entity > >& entityProducts, const world::EntityData* entityData)
+world::Entity* findEntityDataProduct(const SmallMap< const world::EntityData*, Ref< world::Entity > >& entityProducts, const world::EntityData* entityData)
 {
-	std::map< const world::EntityData*, Ref< world::Entity > >::const_iterator i = entityProducts.find(entityData);
-	return i != entityProducts.end() ? i->second : 0;
+	auto it = entityProducts.find(entityData);
+	return it != entityProducts.end() ? it->second : nullptr;
 }
 
 		}
@@ -30,7 +30,7 @@ ActData::ActData()
 {
 }
 
-Ref< Act > ActData::createInstance(const std::map< const world::EntityData*, Ref< world::Entity > >& entityProducts) const
+Ref< Act > ActData::createInstance(const SmallMap< const world::EntityData*, Ref< world::Entity > >& entityProducts) const
 {
 	bool infinite = false;
 
@@ -39,7 +39,7 @@ Ref< Act > ActData::createInstance(const std::map< const world::EntityData*, Ref
 	{
 		Ref< world::Entity > entity = findEntityDataProduct(entityProducts, m_tracks[i]->getEntityData());
 		if (!entity)
-			return 0;
+			return nullptr;
 
 		Ref< world::Entity > lookAtEntity = findEntityDataProduct(entityProducts, m_tracks[i]->getLookAtEntityData());
 
