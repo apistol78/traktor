@@ -20,8 +20,9 @@ namespace traktor
 
 DialogCocoa::DialogCocoa(EventSubject* owner)
 :	m_owner(owner)
-,	m_window(0)
+,	m_window(nullptr)
 ,	m_result(0)
+,	m_timer(nullptr)
 {
 }
 
@@ -92,10 +93,7 @@ void DialogCocoa::setMinSize(const Size& minSize)
 void DialogCocoa::destroy()
 {
 	// Release all timers.
-	for (std::map< int, NSTimer* >::iterator i = m_timers.begin(); i != m_timers.end(); ++i)
-		[i->second invalidate];
-
-	m_timers.clear();
+	stopTimer();
 
 	// Release objects.
 	if (m_window)
@@ -172,8 +170,10 @@ void DialogCocoa::releaseCapture()
 {
 }
 
-void DialogCocoa::startTimer(int interval, int id)
+void DialogCocoa::startTimer(int interval)
 {
+	stopTimer();
+
 	ITargetProxyCallback* targetCallback = new TargetProxyCallbackImpl< DialogCocoa >(
 		this,
 		&DialogCocoa::callbackTimer,
@@ -195,16 +195,15 @@ void DialogCocoa::startTimer(int interval, int id)
 	[[NSRunLoop currentRunLoop] addTimer: timer forMode: NSDefaultRunLoopMode];
 	[[NSRunLoop currentRunLoop] addTimer: timer forMode: NSModalPanelRunLoopMode];
 
-	m_timers[id] = timer;
+	m_timer = timer;
 }
 
-void DialogCocoa::stopTimer(int id)
+void DialogCocoa::stopTimer()
 {
-	std::map< int, NSTimer* >::iterator i = m_timers.find(id);
-	if (i != m_timers.end())
+	if (m_timer)
 	{
-		[i->second invalidate];
-		m_timers.erase(i);
+		[m_timer invalidate];
+		m_timer = nullptr;
 	}
 }
 

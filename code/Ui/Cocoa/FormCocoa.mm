@@ -18,6 +18,7 @@ namespace traktor
 
 FormCocoa::FormCocoa(EventSubject* owner)
 :	m_owner(owner)
+,	m_timer(nullptr)
 {
 }
 
@@ -83,10 +84,7 @@ void FormCocoa::showProgress(int32_t current, int32_t total)
 void FormCocoa::destroy()
 {
 	// Release all timers.
-	for (std::map< int, NSTimer* >::iterator i = m_timers.begin(); i != m_timers.end(); ++i)
-		[i->second invalidate];
-
-	m_timers.clear();
+	stopTimer();
 
 	// Release objects.
 	if (m_window)
@@ -164,8 +162,10 @@ void FormCocoa::releaseCapture()
 {
 }
 
-void FormCocoa::startTimer(int interval, int id)
+void FormCocoa::startTimer(int interval)
 {
+	stopTimer();
+
 	ITargetProxyCallback* targetCallback = new TargetProxyCallbackImpl< FormCocoa >(
 		this,
 		&FormCocoa::callbackTimer,
@@ -187,16 +187,15 @@ void FormCocoa::startTimer(int interval, int id)
 	[[NSRunLoop currentRunLoop] addTimer: timer forMode: NSDefaultRunLoopMode];
 	[[NSRunLoop currentRunLoop] addTimer: timer forMode: NSModalPanelRunLoopMode];
 
-	m_timers[id] = timer;
+	m_timer = timer;
 }
 
-void FormCocoa::stopTimer(int id)
+void FormCocoa::stopTimer()
 {
-	std::map< int, NSTimer* >::iterator i = m_timers.find(id);
-	if (i != m_timers.end())
+	if (m_timer)
 	{
-		[i->second invalidate];
-		m_timers.erase(i);
+		[m_timer invalidate];
+		m_timer = nullptr;
 	}
 }
 
