@@ -1,6 +1,6 @@
 #pragma once
 
-#define T_SCRIPT_LUA_USE_MT_LOCK
+// #define T_SCRIPT_LUA_USE_MT_LOCK
 
 #include "Core/RefArray.h"
 #include "Core/Containers/AlignedVector.h"
@@ -91,6 +91,7 @@ private:
 #if defined(T_SCRIPT_LUA_USE_MT_LOCK)
 	mutable Semaphore m_lock;
 #endif
+	static ScriptManagerLua* ms_instance;
 	ScriptContextLua* m_lockContext;
 	AlignedVector< RegisteredClass > m_classRegistry;
 	RefArray< ScriptContextLua > m_contexts;

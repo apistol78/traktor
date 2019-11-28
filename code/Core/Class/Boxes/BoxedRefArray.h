@@ -33,21 +33,21 @@ public:
 			m_arr[i] = arr[i];
 	}
 
-	int32_t size() const;
+	inline int32_t size() const { return (int32_t)m_arr.size(); }
 
-	bool empty() const;
+	inline bool empty() const { return m_arr.empty(); }
 
-	void set(int32_t index, ITypedObject* object);
+	inline void set(int32_t index, ITypedObject* object) { m_arr[index] = object; }
 
-	ITypedObject* get(int32_t index);
+	inline ITypedObject* get(int32_t index) { return m_arr[index]; }
 
 	void push_back(ITypedObject* object);
 
 	void pop_back();
 
-	ITypedObject* front();
+	inline ITypedObject* front() { return m_arr.front(); }
 
-	ITypedObject* back();
+	inline ITypedObject* back() { return m_arr.back(); }
 
 	virtual std::wstring toString() const override final;
 

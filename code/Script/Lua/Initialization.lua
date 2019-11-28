@@ -73,7 +73,6 @@ function class(name, super)
 	end
 
 	-- Ensure these are written after "flatten".
-	-- cl.__name = "[" .. name .. "]"
 	cl.__type = ID_CLASS
 	cl.__super = super
 
@@ -85,7 +84,6 @@ function class(name, super)
 			if alloc ~= nil then o = alloc(...) else o = {} end
 
 			-- Setup object.
-			-- o.__name = "[" .. name .. " instance]"
 			o.__type = ID_INSTANCE
 			setmetatable(o, cl)
 
@@ -97,28 +95,29 @@ function class(name, super)
 		end
 	})
 
+	local getters = rawget(cl, "__getters")
 	cl.__index = function(instance, member)
-		local m = rawget(cl, member)
-		if m ~= nil then return m end
-
-		local getters = rawget(cl, "__getters")
-
+		-- Check for property getter.
 		local gpfn = rawget(getters, member)
 		if gpfn ~= nil then return gpfn(instance) end
 
+		-- Check for method.
+		local m = rawget(cl, member)
+		if m ~= nil then return m end
+
+		-- Invoke "unknown" handler.
 		local unknown = rawget(cl, "__unknown")
 		if unknown ~= nil then return function(...) return unknown(member, ...) end end
-
 		return nil
 	end
 
+	local setters = rawget(cl, "__setters")
 	cl.__newindex = function(instance, member, value)
-	 	local setters = rawget(cl, "__setters")
-	 	assert (setters ~= nil)
-
+		-- Check for property setter.
 	 	local spfn = rawget(setters, member)
-	 	if spfn ~= nil then spfn(instance, value); return end
+		if spfn ~= nil then spfn(instance, value); return end
 
+		 -- Set value in instance table.
  		rawset(instance, member, value)
 	end
 

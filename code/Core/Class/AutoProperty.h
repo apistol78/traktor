@@ -38,10 +38,7 @@ struct PropertySet final : public IRuntimeDispatch
 
 	virtual Any invoke(ITypedObject* self, uint32_t argc, const Any* argv) const override final
 	{
-		T_VERIFY_ARGUMENT_COUNT(1)
-		T_VERIFY_ARGUMENT_TYPE(0, ValueType)
-
-		(mandatory_non_null_type_cast< ClassType* >(self)->*m_method)(
+		((ClassType*)(self)->*m_method)(
 			CastAny< ValueType >::get(argv[0])
 		);
 		return Any();
@@ -73,9 +70,7 @@ struct PropertyGet final : public IRuntimeDispatch
 
 	virtual Any invoke(ITypedObject* self, uint32_t argc, const Any* argv) const override final
 	{
-		T_VERIFY_ARGUMENT_COUNT(0)
-
-		ValueType value = (mandatory_non_null_type_cast< ClassType* >(self)->*m_method)();
+		ValueType value = ((ClassType*)(self)->*m_method)();
 		return CastAny< ValueType >::set(value);
 	}
 };
@@ -104,11 +99,8 @@ struct FnPropertySet final : public IRuntimeDispatch
 
 	virtual Any invoke(ITypedObject* self, uint32_t argc, const Any* argv) const override final
 	{
-		T_VERIFY_ARGUMENT_COUNT(1)
-		T_VERIFY_ARGUMENT_TYPE(0, ValueType)
-
 		(*m_method)(
-			mandatory_non_null_type_cast< ClassType* >(self),
+			(ClassType*)(self),
 			CastAny< ValueType >::get(argv[0])
 		);
 		return Any();
@@ -139,9 +131,7 @@ struct FnPropertyGet final : public IRuntimeDispatch
 
 	virtual Any invoke(ITypedObject* self, uint32_t argc, const Any* argv) const override final
 	{
-		T_VERIFY_ARGUMENT_COUNT(0)
-
-		ValueType value = (*m_method)(mandatory_non_null_type_cast< ClassType* >(self));
+		ValueType value = (*m_method)((ClassType*)(self));
 		return CastAny< ValueType >::set(value);
 	}
 };

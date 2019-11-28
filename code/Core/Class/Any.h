@@ -95,67 +95,70 @@ public:
 	std::wstring getWideString() const;
 
 	/*! Get object from Any, cast if necessary. */
-	ITypedObject* getObject() const { return m_type == AtObject ? m_data.m_object : nullptr; }
+	inline ITypedObject* getObject() const { return m_type == AtObject ? m_data.m_object : nullptr; }
 
 	/*! Get object from Any, cast if necessary. */
 	template < typename ObjectType >
-	ObjectType* getObject() const { return m_type == AtObject ? dynamic_type_cast< ObjectType* >(m_data.m_object) : nullptr; }
+	inline ObjectType* getObject() const { return m_type == AtObject ? dynamic_type_cast< ObjectType* >(m_data.m_object) : nullptr; }
 
 	/*! Get type of contained value. */
-	AnyType getType() const { return m_type; }
+	inline AnyType getType() const { return m_type; }
 
 	/*! Check if contained value is void. */
-	bool isVoid() const { return m_type == AtVoid; }
+	inline bool isVoid() const { return m_type == AtVoid; }
 
 	/*! Check if contained value is boolean. */
-	bool isBoolean() const { return m_type == AtBoolean; }
+	inline bool isBoolean() const { return m_type == AtBoolean; }
 
 	/*! Check if contained value is 32-bit integer. */
-	bool isInt32() const { return m_type == AtInt32; }
+	inline bool isInt32() const { return m_type == AtInt32; }
 
 	/*! Check if contained value is 64-bit integer. */
-	bool isInt64() const { return m_type == AtInt64; }
+	inline bool isInt64() const { return m_type == AtInt64; }
 
 	/*! Check if contained value is 32-bit float. */
-	bool isFloat() const { return m_type == AtFloat; }
+	inline bool isFloat() const { return m_type == AtFloat; }
 
 	/*! Check if contained value is string. */
-	bool isString() const { return m_type == AtString; }
+	inline bool isString() const { return m_type == AtString; }
 
 	/*! Check if contained value is object. */
-	bool isObject() const { return m_type == AtObject; }
+	inline bool isObject() const { return m_type == AtObject; }
 
 	/*! Check if contained value is object. */
 	template < typename ObjectType >
-	bool isObject() const { return m_type == AtObject && is_a< ObjectType >(m_data.m_object); }
+	inline bool isObject() const { return m_type == AtObject && is_a< ObjectType >(m_data.m_object); }
 
 	/*! Check if contained value is numeric. */
-	bool isNumeric() const { return isInt32() || isInt64() || isFloat(); }
+	inline bool isNumeric() const { return isInt32() || isInt64() || isFloat(); }
 
 	// \name Unsafe accessors.
 	// \{
 
 	/*! Get boolean from Any, assuming correct type. */
-	bool getBooleanUnsafe() const { T_ASSERT(m_type == AtBoolean); return m_data.m_boolean; }
+	inline bool getBooleanUnsafe() const { T_ASSERT(m_type == AtBoolean); return m_data.m_boolean; }
 
 	/*! Get 32-bit integer from Any, assuming correct type. */
-	int32_t getInt32Unsafe( ) const { T_ASSERT(m_type == AtInt32); return m_data.m_int32; }
+	inline int32_t getInt32Unsafe( ) const { T_ASSERT(m_type == AtInt32); return m_data.m_int32; }
 
 	/*! Get 64-bit integer from Any, assuming correct type. */
-	int64_t getInt64Unsafe( ) const { T_ASSERT(m_type == AtInt64); return m_data.m_int64; }
+	inline int64_t getInt64Unsafe( ) const { T_ASSERT(m_type == AtInt64); return m_data.m_int64; }
 
 	/*! Get 32-bit float from Any, assuming correct type. */
-	float getFloatUnsafe() const { T_ASSERT(m_type == AtFloat); return m_data.m_float; }
+	inline float getFloatUnsafe() const { T_ASSERT(m_type == AtFloat); return m_data.m_float; }
 
 	/*! Get string from Any, assuming correct type. */
-	std::string getStringUnsafe() const { T_ASSERT(m_type == AtString); return m_data.m_string; }
+	inline std::string getStringUnsafe() const { T_ASSERT(m_type == AtString); return m_data.m_string; }
+
+	/*! Get string from Any, assuming correct type. */
+	inline const char* getCStringUnsafe() const { T_ASSERT(m_type == AtString); return m_data.m_string; }
 
 	/*! Get object from Any, assuming correct type. */
-	ITypedObject* getObjectUnsafe() const { T_ASSERT(m_type == AtObject); return m_data.m_object; }
+	inline ITypedObject* getObjectUnsafe() const { T_ASSERT(m_type == AtObject); return m_data.m_object; }
 
 	/*! Get object from Any, assuming correct type. */
 	template < typename ObjectType >
-	ObjectType* getObjectUnsafe() const { T_ASSERT(m_type == AtObject); return mandatory_non_null_type_cast< ObjectType* >(m_data.m_object); }
+	inline ObjectType* getObjectUnsafe() const { T_ASSERT(m_type == AtObject); return mandatory_non_null_type_cast< ObjectType* >(m_data.m_object); }
 
 	// \}
 
