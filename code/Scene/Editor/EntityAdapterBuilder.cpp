@@ -208,12 +208,16 @@ Ref< world::Entity > EntityAdapterBuilder::create(const world::EntityData* entit
 
 Ref< world::IEntityEvent > EntityAdapterBuilder::create(const world::IEntityEventData* entityEventData) const
 {
-	return m_entityBuilder->create(entityEventData);
+	const world::IEntityFactory* entityFactory = m_entityBuilder->getFactory(entityEventData);
+	T_FATAL_ASSERT (entityFactory);
+	return entityFactory->createEntityEvent(this, *entityEventData);
 }
 
 Ref< world::IEntityComponent > EntityAdapterBuilder::create(const world::IEntityComponentData* entityComponentData) const
 {
-	return m_entityBuilder->create(entityComponentData);
+	const world::IEntityFactory* entityFactory = m_entityBuilder->getFactory(entityComponentData);
+	T_FATAL_ASSERT (entityFactory);
+	return entityFactory->createEntityComponent(this, *entityComponentData);
 }
 
 const world::IEntityBuilder* EntityAdapterBuilder::getCompositeEntityBuilder() const
