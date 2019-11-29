@@ -15,10 +15,10 @@ namespace traktor
 	namespace script
 	{
 
-class IScriptManager;
+class IScriptCompiler;
 class Preprocessor;
 
-/*! \brief Script pipeline.
+/*! Script pipeline.
  * \ingroup Script
  */
 class T_DLLCLASS ScriptPipeline : public editor::DefaultPipeline
@@ -26,8 +26,6 @@ class T_DLLCLASS ScriptPipeline : public editor::DefaultPipeline
 	T_RTTI_CLASS;
 
 public:
-	virtual ~ScriptPipeline();
-
 	virtual bool create(const editor::IPipelineSettings* settings) override final;
 
 	virtual TypeInfoSet getAssetTypes() const override final;
@@ -54,7 +52,7 @@ public:
 	) const override final;
 
 private:
-	Ref< IScriptManager > m_scriptManager;
+	Ref< IScriptCompiler > m_scriptCompiler;
 	Ref< Preprocessor > m_preprocessor;
 	std::wstring m_assetPath;
 };

@@ -34,9 +34,9 @@ public:
 
 	Project* getProject() const;
 
-	virtual std::wstring getName() const;
+	virtual std::wstring getName() const override final;
 
-	virtual std::wstring getLocation() const;
+	virtual std::wstring getLocation() const override final;
 
 	virtual bool resolve(const Path& referringSolutionPath, SolutionLoader* solutionLoader) override final;
 

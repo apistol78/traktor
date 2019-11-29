@@ -21,27 +21,13 @@ class IRuntimeClass;
 	namespace script
 	{
 
+class IErrorCallback;
 class IScriptBlob;
 class IScriptContext;
 class IScriptDebugger;
 class IScriptProfiler;
 
-/*! Script error callback.
- * \ingroup Script
- */
-class IErrorCallback
-{
-public:
-	virtual ~IErrorCallback() {}
-
-	/*! Syntax error callback. */
-	virtual void syntaxError(const std::wstring& name, uint32_t line, const std::wstring& message) = 0;
-
-	/*! Other error callback. */
-	virtual void otherError(const std::wstring& message) = 0;
-};
-
-/*! \brief
+/*! Script runtime statistics.
  * \ingroup Script
  */
 struct ScriptStatistics
@@ -68,16 +54,6 @@ class T_DLLCLASS IScriptManager
 public:
 	/*! Destroy script manager. */
 	virtual void destroy() = 0;
-
-	/*! Compile script into "consumable" blob.
-	 *
-	 * \param fileName Script file name.
-	 * \param script Script
-	 * \param map Optional source map; used for debugging.
-	 * \param errorCallback Optional callback which is called for each error found during compilation.
-	 * \return Script blob; null if failed to compile.
-	 */
-	virtual Ref< IScriptBlob > compile(const std::wstring& fileName, const std::wstring& script, IErrorCallback* errorCallback) const = 0;
 
 	/*! Create script context.
 	 *
@@ -112,8 +88,7 @@ public:
 	 */
 	virtual void collectGarbage(bool full) = 0;
 
-	/*! \brief
-	 */
+	/*! */
 	virtual void getStatistics(ScriptStatistics& outStatistics) const = 0;
 };
 

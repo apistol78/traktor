@@ -49,8 +49,6 @@ public:
 
 	virtual void registerClass(IRuntimeClass* runtimeClass) override final;
 
-	virtual Ref< IScriptBlob > compile(const std::wstring& fileName, const std::wstring& script, IErrorCallback* errorCallback) const override final;
-
 	virtual Ref< IScriptContext > createContext(bool strict) override final;
 
 	virtual Ref< IScriptDebugger > createDebugger() override final;

@@ -4,17 +4,17 @@
 #include "Core/Class/IRuntimeClass.h"
 #include "Core/Class/IRuntimeDispatch.h"
 #include "Core/Io/DynamicMemoryStream.h"
-#include "Core/Io/Utf8Encoding.h"
-#include "Core/Log/Log.h"
+// #include "Core/Io/Utf8Encoding.h"
+// #include "Core/Log/Log.h"
 #include "Core/Math/MathUtils.h"
 #include "Core/Misc/Save.h"
 #include "Core/Misc/Split.h"
-#include "Core/Misc/String.h"
+// #include "Core/Misc/String.h"
 #include "Core/Misc/TString.h"
 #include "Core/Serialization/ISerializable.h"
 #include "Core/Thread/Acquire.h"
 #include "Core/Timer/Timer.h"
-#include "Script/Lua/ScriptBlobLua.h"
+// #include "Script/Lua/ScriptBlobLua.h"
 #include "Script/Lua/ScriptClassLua.h"
 #include "Script/Lua/ScriptContextLua.h"
 #include "Script/Lua/ScriptDebuggerLua.h"
@@ -434,55 +434,6 @@ void ScriptManagerLua::registerClass(IRuntimeClass* runtimeClass)
 		pushAny(runtimeClass->getConstantValue(i));
 		lua_setfield(m_luaState, -2, runtimeClass->getConstantName(i).c_str());
 	}
-}
-
-Ref< IScriptBlob > ScriptManagerLua::compile(const std::wstring& fileName, const std::wstring& script, IErrorCallback* errorCallback) const
-{
-#if defined(T_SCRIPT_LUA_USE_MT_LOCK)
-	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-#endif
-	CHECK_LUA_STACK(m_luaState, 0);
-
-	std::string metaFileName = "@" + wstombs(Utf8Encoding(), fileName);
-	std::string text = wstombs(Utf8Encoding(), script);
-
-	int32_t result = luaL_loadbuffer(
-		m_luaState,
-		text.c_str(),
-		text.length(),
-		metaFileName.c_str()
-	);
-	if (result != 0)
-	{
-		std::wstring error = mbstows(lua_tostring(m_luaState, -1));
-
-		size_t p0 = error.find(L':');
-		T_ASSERT(p0 != error.npos);
-
-		error = error.substr(p0 + 1);
-
-		size_t p1 = error.find(L':');
-		T_ASSERT(p1 != error.npos);
-
-		int32_t line = parseString< int32_t >(error.substr(0, p1));
-		error = trim(error.substr(p1 + 1));
-
-		if (errorCallback)
-			errorCallback->syntaxError(fileName, line, error);
-		else
-			log::error << fileName << L" (" << line << L"): " << error << Endl;
-
-		lua_pop(m_luaState, 1);
-		return 0;
-	}
-
-	lua_pop(m_luaState, 1);
-
-	Ref< ScriptBlobLua > blob = new ScriptBlobLua();
-	blob->m_fileName = wstombs(fileName);
-	blob->m_script = text;
-
-	return blob;
 }
 
 Ref< IScriptContext > ScriptManagerLua::createContext(bool strict)

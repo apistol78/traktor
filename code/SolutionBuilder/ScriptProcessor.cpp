@@ -12,6 +12,7 @@
 #include "Core/Io/Utf8Encoding.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Script/IScriptContext.h"
+#include "Script/Lua/ScriptCompilerLua.h"
 #include "Script/Lua/ScriptManagerLua.h"
 #include "SolutionBuilder/AggregationItem.h"
 #include "SolutionBuilder/Configuration.h"
@@ -163,6 +164,7 @@ T_IMPLEMENT_RTTI_CLASS(L"ScriptProcessor", ScriptProcessor, Object)
 bool ScriptProcessor::create()
 {
 	// Create script manager and register our classes.
+	m_scriptCompiler = new script::ScriptCompilerLua();
 	m_scriptManager = new script::ScriptManagerLua();
 
 	BoxedClassFactory().createClasses(m_scriptManager);
@@ -352,7 +354,7 @@ bool ScriptProcessor::prepare(const std::wstring& fileName)
 	ss << L"end" << Endl;
 
 	// Compile script into blob.
-	Ref< script::IScriptBlob > scriptBlob = m_scriptManager->compile(fileName, ss.str(), 0);
+	Ref< script::IScriptBlob > scriptBlob = m_scriptCompiler->compile(fileName, ss.str(), 0);
 	if (!scriptBlob)
 		return false;
 

@@ -33,6 +33,7 @@
 #include "Run/App/StdOutput.h"
 #include "Run/App/StreamInput.h"
 #include "Run/App/StreamOutput.h"
+#include "Script/IScriptCompiler.h"
 #include "Script/IScriptContext.h"
 #include "Script/IScriptManager.h"
 #include "Sql/SqlClassFactory.h"
@@ -111,8 +112,13 @@ Ref< PropertyGroup > loadSettings(const std::wstring& settingsFile)
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.run.Run", Run, Object)
 
-Run::Run(script::IScriptManager* scriptManager, script::IScriptContext* scriptContext)
-:	m_scriptManager(scriptManager)
+Run::Run(
+	script::IScriptCompiler* scriptCompiler,
+	script::IScriptManager* scriptManager,
+	script::IScriptContext* scriptContext
+)
+:	m_scriptCompiler(scriptCompiler)
+,	m_scriptManager(scriptManager)
 ,	m_scriptContext(scriptContext)
 ,	m_exitCode(0)
 {
@@ -398,7 +404,7 @@ bool Run::loadScript(const std::wstring& fileName)
 
 	safeClose(file);
 
-	Ref< script::IScriptBlob > blob = m_scriptManager->compile(
+	Ref< script::IScriptBlob > blob = m_scriptCompiler->compile(
 		fileName,
 		ss.str(),
 		nullptr
@@ -466,7 +472,7 @@ std::wstring Run::evaluate(const std::wstring& fileName)
 	ss << L"\toutput:printSection(" << id << L")" << Endl;
 	ss << L"end" << Endl;
 
-	Ref< script::IScriptBlob > scriptBlob = m_scriptManager->compile(fileName, ss.str(), nullptr);
+	Ref< script::IScriptBlob > scriptBlob = m_scriptCompiler->compile(fileName, ss.str(), nullptr);
 	if (!scriptBlob)
 	{
 		log::error << L"Unable to compile script." << Endl;
