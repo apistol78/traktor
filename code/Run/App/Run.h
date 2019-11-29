@@ -12,6 +12,7 @@ class Environment;
 	namespace script
 	{
 
+class IScriptCompiler;
 class IScriptContext;
 class IScriptManager;
 
@@ -28,7 +29,11 @@ class Run : public Object
 	T_RTTI_CLASS;
 
 public:
-	Run(script::IScriptManager* scriptManager, script::IScriptContext* scriptContext);
+	Run(
+		script::IScriptCompiler* scriptCompiler,
+		script::IScriptManager* scriptManager,
+		script::IScriptContext* scriptContext
+	);
 
 	void cd(const std::wstring& path);
 
@@ -77,6 +82,7 @@ public:
 	static void registerRuntimeClasses(script::IScriptManager* scriptManager);
 
 private:
+	Ref< script::IScriptCompiler > m_scriptCompiler;
 	Ref< script::IScriptManager > m_scriptManager;
 	Ref< script::IScriptContext > m_scriptContext;
 	std::list< std::wstring > m_cwd;

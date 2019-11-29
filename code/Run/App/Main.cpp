@@ -13,11 +13,13 @@
 #include "Run/App/Run.h"
 #include "Run/App/StdOutput.h"
 #include "Script/IScriptContext.h"
+#include "Script/Lua/ScriptCompilerLua.h"
 #include "Script/Lua/ScriptManagerLua.h"
 
 namespace
 {
 
+traktor::Ref< traktor::script::IScriptCompiler > g_scriptCompiler;
 traktor::Ref< traktor::script::IScriptManager > g_scriptManager;
 
 }
@@ -31,7 +33,7 @@ namespace traktor
 int32_t executeRun(const std::wstring& text, const Path& fileName, const CommandLine& cmdLine)
 {
 	// Compile script into a runnable blob.
-	Ref< script::IScriptBlob > scriptBlob = g_scriptManager->compile(fileName.getPathName(), text, nullptr);
+	Ref< script::IScriptBlob > scriptBlob = g_scriptCompiler->compile(fileName.getPathName(), text, nullptr);
 	if (!scriptBlob)
 	{
 		log::error << L"Unable to compile script" << Endl;
@@ -49,7 +51,7 @@ int32_t executeRun(const std::wstring& text, const Path& fileName, const Command
 
 	// Setup globals in script context.
 	scriptContext->setGlobal("environment", Any::fromObject(OS::getInstance().getEnvironment()));
-	scriptContext->setGlobal("run", Any::fromObject(new Run(g_scriptManager, scriptContext)));
+	scriptContext->setGlobal("run", Any::fromObject(new Run(g_scriptCompiler, g_scriptManager, scriptContext)));
 	scriptContext->setGlobal("fileSystem", Any::fromObject(&FileSystem::getInstance()));
 	scriptContext->setGlobal("os", Any::fromObject(&OS::getInstance()));
 	scriptContext->setGlobal("stdout", Any::fromObject(new StdOutput(stdout)));
@@ -108,7 +110,7 @@ int32_t executeTemplate(const std::wstring& text, const Path& fileName, const Co
 	int32_t id = o->addSection(text.substr(offset));
 	ss << L"output:printSection(" << id << L")" << Endl;
 
-	Ref< script::IScriptBlob > scriptBlob = g_scriptManager->compile(fileName.getPathName(), ss.str(), nullptr);
+	Ref< script::IScriptBlob > scriptBlob = g_scriptCompiler->compile(fileName.getPathName(), ss.str(), nullptr);
 	if (!scriptBlob)
 	{
 		log::error << L"Unable to compile script" << Endl;
@@ -130,7 +132,7 @@ int32_t executeTemplate(const std::wstring& text, const Path& fileName, const Co
 
 	// Setup globals in script context.
 	scriptContext->setGlobal("environment", Any::fromObject(OS::getInstance().getEnvironment()));
-	scriptContext->setGlobal("run", Any::fromObject(new Run(g_scriptManager, scriptContext)));
+	scriptContext->setGlobal("run", Any::fromObject(new Run(g_scriptCompiler, g_scriptManager, scriptContext)));
 	scriptContext->setGlobal("fileSystem", Any::fromObject(&FileSystem::getInstance()));
 	scriptContext->setGlobal("os", Any::fromObject(&OS::getInstance()));
 	scriptContext->setGlobal("stdout", Any::fromObject(new StdOutput(stdout)));
@@ -195,12 +197,8 @@ int main(int argc, const char** argv)
 
 	std::wstring text = ss.str();
 
+	g_scriptCompiler = new script::ScriptCompilerLua();
 	g_scriptManager = new script::ScriptManagerLua();
-	if (!g_scriptManager)
-	{
-		log::error << L"Failed to create script manager." << Endl;
-		return 1;
-	}
 
 	run::Run::registerRuntimeClasses(g_scriptManager);
 	net::Network::initialize();

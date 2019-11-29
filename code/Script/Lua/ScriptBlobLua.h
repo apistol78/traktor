@@ -16,6 +16,7 @@ public:
 	virtual void serialize(ISerializer& s) override final;
 
 private:
+	friend class ScriptCompilerLua;
 	friend class ScriptContextLua;
 	friend class ScriptManagerLua;
 

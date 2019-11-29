@@ -16,7 +16,8 @@
 #include "Editor/IPipelineBuilder.h"
 #include "Editor/IPipelineDepends.h"
 #include "Editor/IPipelineSettings.h"
-#include "Script/IScriptManager.h"
+#include "Script/IErrorCallback.h"
+#include "Script/IScriptCompiler.h"
 #include "Script/ScriptResource.h"
 #include "Script/Editor/Preprocessor.h"
 #include "Script/Editor/Script.h"
@@ -128,28 +129,23 @@ bool flattenDependencies(editor::IPipelineBuilder* pipelineBuilder, const std::w
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.script.ScriptPipeline", 21, ScriptPipeline, editor::DefaultPipeline)
 
-ScriptPipeline::~ScriptPipeline()
-{
-	safeDestroy(m_scriptManager);
-}
-
 bool ScriptPipeline::create(const editor::IPipelineSettings* settings)
 {
 	// Get implementation type name; return true if no type specified to silence error from pipeline if scripting isn't used.
-	std::wstring scriptManagerTypeName = settings->getProperty< std::wstring >(L"Editor.ScriptManagerType");
-	if (scriptManagerTypeName.empty())
+	std::wstring scriptCompilerTypeName = settings->getProperty< std::wstring >(L"Editor.ScriptCompilerType");
+	if (scriptCompilerTypeName.empty())
 		return true;
 
 	// Create script manager instance.
-	const TypeInfo* scriptManagerType = TypeInfo::find(scriptManagerTypeName.c_str());
-	if (!scriptManagerType)
+	const TypeInfo* scriptCompilerType = TypeInfo::find(scriptCompilerTypeName.c_str());
+	if (!scriptCompilerType)
 	{
-		log::error << L"Script pipeline failed; no such type \"" << scriptManagerTypeName << L"\"" << Endl;
+		log::error << L"Script pipeline failed; no such type \"" << scriptCompilerTypeName << L"\"" << Endl;
 		return false;
 	}
 
-	m_scriptManager = dynamic_type_cast< IScriptManager* >(scriptManagerType->createInstance());
-	T_ASSERT(m_scriptManager);
+	m_scriptCompiler = dynamic_type_cast< IScriptCompiler* >(scriptCompilerType->createInstance());
+	T_ASSERT(m_scriptCompiler);
 
 	// Create preprocessor.
 	m_preprocessor = new Preprocessor();
@@ -158,8 +154,8 @@ bool ScriptPipeline::create(const editor::IPipelineSettings* settings)
 		m_preprocessor->setDefinition(L"_EDITOR");
 
 	std::set< std::wstring > definitions = settings->getProperty< std::set< std::wstring > >(L"ScriptPipeline.PreprocessorDefinitions");
-	for (std::set< std::wstring >::const_iterator i = definitions.begin(); i != definitions.end(); ++i)
-		m_preprocessor->setDefinition(*i);
+	for (const auto& definition : definitions)
+		m_preprocessor->setDefinition(definition);
 
 	m_assetPath = settings->getProperty< std::wstring >(L"Pipeline.AssetPath", L"");
 
@@ -288,7 +284,7 @@ bool ScriptPipeline::buildOutput(
 
 	// Compile script; save binary blobs if possible.
 	ErrorCallback errorCallback;
-	Ref< IScriptBlob > blob = m_scriptManager->compile(outputGuid.format(), text, &errorCallback);
+	Ref< IScriptBlob > blob = m_scriptCompiler->compile(outputGuid.format(), text, &errorCallback);
 	if (!blob)
 	{
 		log::error << L"Script pipeline failed; unable to compile script " << outputGuid.format() << L"." << Endl;

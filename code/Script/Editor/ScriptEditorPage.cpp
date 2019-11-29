@@ -19,6 +19,7 @@
 #include "Editor/TypeBrowseFilter.h"
 #include "I18N/Format.h"
 #include "I18N/Text.h"
+#include "Script/IScriptCompiler.h"
 #include "Script/IScriptProfiler.h"
 #include "Script/StackFrame.h"
 #include "Script/Editor/IScriptOutline.h"
@@ -252,12 +253,12 @@ bool ScriptEditorPage::create(ui::Container* parent)
 			m_edit->setLanguage(syntaxLanguage);
 		}
 
-		std::wstring scriptManagerTypeName = m_editor->getSettings()->getProperty< std::wstring >(L"Editor.ScriptManagerType");
-		const TypeInfo* scriptManagerType = TypeInfo::find(scriptManagerTypeName.c_str());
-		if (scriptManagerType)
+		std::wstring scriptCompilerTypeName = m_editor->getSettings()->getProperty< std::wstring >(L"Editor.ScriptCompilerType");
+		const TypeInfo* scriptCompilerType = TypeInfo::find(scriptCompilerTypeName.c_str());
+		if (scriptCompilerType)
 		{
-			m_scriptManager = dynamic_type_cast< IScriptManager* >(scriptManagerType->createInstance());
-			T_ASSERT(m_scriptManager);
+			m_scriptCompiler = dynamic_type_cast< IScriptCompiler* >(scriptCompilerType->createInstance());
+			T_ASSERT(m_scriptCompiler);
 		}
 
 		std::wstring scriptOutlineTypeName = L"traktor.script.ScriptOutlineLua";
@@ -270,7 +271,7 @@ bool ScriptEditorPage::create(ui::Container* parent)
 	}
 
 	// Setup compile timer.
-	if (m_script && m_scriptManager)
+	if (m_script && m_scriptCompiler)
 	{
 		parent->addEventHandler< ui::TimerEvent >(this, &ScriptEditorPage::eventTimer);
 		parent->startTimer(100);
@@ -303,19 +304,18 @@ bool ScriptEditorPage::create(ui::Container* parent)
 
 void ScriptEditorPage::destroy()
 {
-	if (m_scriptDebuggerSessions != 0)
+	if (m_scriptDebuggerSessions != nullptr)
 	{
 		m_scriptDebuggerSessions->removeListener(this);
-		m_scriptDebuggerSessions = 0;
+		m_scriptDebuggerSessions = nullptr;
 	}
 
-	m_preprocessor = 0;
+	m_preprocessor = nullptr;
+	m_scriptCompiler = nullptr;
 
 	// Destroy panels.
 	m_site->destroyAdditionalPanel(m_containerExplorer);
-
 	safeDestroy(m_containerExplorer);
-	safeDestroy(m_scriptManager);
 }
 
 bool ScriptEditorPage::dropInstance(db::Instance* instance, const ui::Point& position)
@@ -757,14 +757,14 @@ void ScriptEditorPage::eventTimer(ui::TimerEvent* event)
 		if (m_document)
 			m_document->push(new PropertyInteger(m_edit->getCaretOffset()));
 
-		if (m_scriptManager)
+		if (m_scriptCompiler)
 		{
 			// Take snapshot of script and try to compile it.
 			std::wstring script;
 			std::set< std::wstring > usings;
 			m_preprocessor->evaluate(m_edit->getText(), script, usings);
 
-			if (m_scriptManager->compile(L"", script, this))
+			if (m_scriptCompiler->compile(L"", script, this))
 			{
 				// Reset error status.
 				m_compileStatus->setText(i18n::Text(L"SCRIPT_EDITOR_STATUS_READY"));

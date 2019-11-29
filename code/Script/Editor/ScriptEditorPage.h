@@ -2,8 +2,8 @@
 
 #include <list>
 #include "Editor/IEditorPage.h"
+#include "Script/IErrorCallback.h"
 #include "Script/IScriptDebugger.h"
-#include "Script/IScriptManager.h"
 #include "Script/Editor/IScriptDebuggerSessions.h"
 #include "Script/Editor/IScriptOutline.h"
 #include "Ui/SyntaxRichEdit/SyntaxTypes.h"
@@ -47,8 +47,8 @@ class ToolBarButtonClickEvent;
 	namespace script
 	{
 
+class IScriptCompiler;
 class IScriptContext;
-class IScriptManager;
 class Preprocessor;
 class Script;
 class ScriptAsset;
@@ -85,7 +85,7 @@ private:
 	Ref< Script > m_script;
 	Ref< ScriptAsset > m_scriptAsset;
 	Ref< IScriptDebuggerSessions > m_scriptDebuggerSessions;
-	Ref< IScriptManager > m_scriptManager;
+	Ref< IScriptCompiler > m_scriptCompiler;
 	Ref< IScriptOutline > m_scriptOutline;
 	Ref< Preprocessor > m_preprocessor;
 	Ref< ui::IBitmap > m_bitmapFunction;
