@@ -20,6 +20,7 @@
 #include "World/Entity/CameraComponentData.h"
 #include "World/Entity/ComponentEntity.h"
 #include "World/Entity/ComponentEntityData.h"
+#include "World/Entity/GroupComponent.h"
 #include "World/Entity/GroupEntity.h"
 #include "World/Entity/LightComponent.h"
 #include "World/Entity/LightComponentData.h"
@@ -35,102 +36,114 @@ namespace traktor
 		namespace
 		{
 
-void IEntityEventInstance_cancelImmediate(IEntityEventInstance* this_)
+void IEntityEventInstance_cancelImmediate(IEntityEventInstance* self)
 {
-	this_->cancel(CtImmediate);
+	self->cancel(CtImmediate);
 }
 
-void IEntityEventInstance_cancelEnd(IEntityEventInstance* this_)
+void IEntityEventInstance_cancelEnd(IEntityEventInstance* self)
 {
-	this_->cancel(CtEnd);
+	self->cancel(CtEnd);
 }
 
-IEntityEventInstance* IEntityEventManager_raise_1(IEntityEventManager* this_, const IEntityEvent* event, Entity* sender, const Transform& Toffset)
+IEntityEventInstance* IEntityEventManager_raise_1(IEntityEventManager* self, const IEntityEvent* event, Entity* sender, const Transform& Toffset)
 {
-	return this_->raise(event, sender, Toffset);
+	return self->raise(event, sender, Toffset);
 }
 
-IEntityEventInstance* IEntityEventManager_raise_2(IEntityEventManager* this_, const EntityEventSet* eventSet, const std::wstring& eventId, Entity* sender, const Transform& Toffset)
+IEntityEventInstance* IEntityEventManager_raise_2(IEntityEventManager* self, const EntityEventSet* eventSet, const std::wstring& eventId, Entity* sender, const Transform& Toffset)
 {
-	return this_->raise(eventSet, eventId, sender, Toffset);
+	return self->raise(eventSet, eventId, sender, Toffset);
 }
 
-void IEntityEventManager_cancelAllImmediate(IEntityEventManager* this_)
+void IEntityEventManager_cancelAllImmediate(IEntityEventManager* self)
 {
-	this_->cancelAll(CtImmediate);
+	self->cancelAll(CtImmediate);
 }
 
-void IEntityEventManager_cancelAllEnd(IEntityEventManager* this_)
+void IEntityEventManager_cancelAllEnd(IEntityEventManager* self)
 {
-	this_->cancelAll(CtEnd);
+	self->cancelAll(CtEnd);
 }
 
-Ref< Entity > IEntityBuilder_create(IEntityBuilder* this_, const EntityData* entityData)
+Ref< Entity > IEntityBuilder_create(IEntityBuilder* self, const EntityData* entityData)
 {
-	return this_->create(entityData);
+	return self->create(entityData);
 }
 
-void Entity_setTransform(Entity* this_, const Transform& transform)
+void Entity_setTransform(Entity* self, const Transform& transform)
 {
-	this_->setTransform(transform);
+	self->setTransform(transform);
 }
 
-Transform Entity_getTransform(Entity* this_)
+Transform Entity_getTransform(Entity* self)
 {
 	Transform transform;
-	this_->getTransform(transform);
+	self->getTransform(transform);
 	return transform;
 }
 
-void CameraComponentData_setCameraType(CameraComponentData* this_, int32_t type)
+void CameraComponentData_setCameraType(CameraComponentData* self, int32_t type)
 {
-	this_->setCameraType((CameraType)type);
+	self->setCameraType((CameraType)type);
 }
 
-int32_t CameraComponentData_getCameraType(CameraComponentData* this_)
+int32_t CameraComponentData_getCameraType(CameraComponentData* self)
 {
-	return (int32_t)this_->getCameraType();
+	return (int32_t)self->getCameraType();
 }
 
-void CameraComponent_setCameraType(CameraComponent* this_, int32_t type)
+void CameraComponent_setCameraType(CameraComponent* self, int32_t type)
 {
-	this_->setCameraType((CameraType)type);
+	self->setCameraType((CameraType)type);
 }
 
-int32_t CameraComponent_getCameraType(CameraComponent* this_)
+int32_t CameraComponent_getCameraType(CameraComponent* self)
 {
-	return (int32_t)this_->getCameraType();
+	return (int32_t)self->getCameraType();
 }
 
-RefArray< Entity > GroupEntity_getEntitiesOf(GroupEntity* this_, const TypeInfo& entityType)
+RefArray< Entity > GroupComponent_getEntitiesOf(GroupComponent* self, const TypeInfo& entityType)
 {
 	RefArray< Entity > entities;
-	this_->getEntitiesOf(entityType, entities);
+	self->getEntitiesOf(entityType, entities);
 	return entities;
 }
 
-Ref< Entity > GroupEntity_getFirstEntityOf(GroupEntity* this_, const TypeInfo& entityType)
+Ref< Entity > GroupComponent_getFirstEntityOf(GroupComponent* self, const TypeInfo& entityType)
 {
-	return this_->getFirstEntityOf(entityType);
+	return self->getFirstEntityOf(entityType);
 }
 
-void Entity_update(Entity* this_, float totalTime, float deltaTime)
+RefArray< Entity > GroupEntity_getEntitiesOf(GroupEntity* self, const TypeInfo& entityType)
+{
+	RefArray< Entity > entities;
+	self->getEntitiesOf(entityType, entities);
+	return entities;
+}
+
+Ref< Entity > GroupEntity_getFirstEntityOf(GroupEntity* self, const TypeInfo& entityType)
+{
+	return self->getFirstEntityOf(entityType);
+}
+
+void Entity_update(Entity* self, float totalTime, float deltaTime)
 {
 	UpdateParams up;
 	up.totalTime = totalTime;
 	up.deltaTime = deltaTime;
 	up.alternateTime = totalTime;
-	this_->update(up);
+	self->update(up);
 }
 
-IEntityComponentData* ComponentEntityData_getComponent(ComponentEntityData* this_, const TypeInfo& componentDataType)
+IEntityComponentData* ComponentEntityData_getComponent(ComponentEntityData* self, const TypeInfo& componentDataType)
 {
-	return this_->getComponent(componentDataType);
+	return self->getComponent(componentDataType);
 }
 
-IEntityComponent* ComponentEntity_getComponent(ComponentEntity* this_, const TypeInfo& componentType)
+IEntityComponent* ComponentEntity_getComponent(ComponentEntity* self, const TypeInfo& componentType)
 {
-	return this_->getComponent(componentType);
+	return self->getComponent(componentType);
 }
 
 		}
@@ -208,6 +221,16 @@ void WorldClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classEntity->addMethod("destroy", &Entity::destroy);
 	classEntity->addMethod("update", &Entity_update);
 	registrar->registerClass(classEntity);
+
+	auto classGroupComponent = new AutoRuntimeClass< GroupComponent >();
+	classGroupComponent->addConstructor();
+	classGroupComponent->addMethod("addEntity", &GroupComponent::addEntity);
+	classGroupComponent->addMethod("removeEntity", &GroupComponent::removeEntity);
+	classGroupComponent->addMethod("removeAllEntities", &GroupComponent::removeAllEntities);
+	classGroupComponent->addMethod("getEntities", &GroupComponent::getEntities);
+	classGroupComponent->addMethod("getEntitiesOf", &GroupComponent_getEntitiesOf);
+	classGroupComponent->addMethod("getFirstEntityOf", &GroupComponent_getFirstEntityOf);
+	registrar->registerClass(classGroupComponent);
 
 	auto classGroupEntity = new AutoRuntimeClass< GroupEntity >();
 	classGroupEntity->addConstructor();

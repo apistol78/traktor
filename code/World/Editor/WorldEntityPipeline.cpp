@@ -5,6 +5,7 @@
 #include "World/Entity/DecalComponentData.h"
 #include "World/Entity/DecalEventData.h"
 #include "World/Entity/ExternalEntityData.h"
+#include "World/Entity/GroupComponentData.h"
 #include "World/Entity/GroupEntityData.h"
 #include "World/Entity/LightComponentData.h"
 #include "World/Entity/ProbeComponentData.h"
@@ -23,6 +24,7 @@ TypeInfoSet WorldEntityPipeline::getAssetTypes() const
 	typeSet.insert< DecalComponentData >();
 	typeSet.insert< DecalEventData >();
 	typeSet.insert< ExternalEntityData >();
+	typeSet.insert< GroupComponentData >();
 	typeSet.insert< GroupEntityData >();
 	typeSet.insert< LightComponentData >();
 	typeSet.insert< ProbeComponentData >();
