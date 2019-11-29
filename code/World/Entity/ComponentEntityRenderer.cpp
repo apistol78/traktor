@@ -1,3 +1,5 @@
+#include "World/IEntityComponent.h"
+#include "World/WorldContext.h"
 #include "World/Entity/ComponentEntity.h"
 #include "World/Entity/ComponentEntityRenderer.h"
 
@@ -21,7 +23,8 @@ void ComponentEntityRenderer::render(
 )
 {
 	ComponentEntity* componentEntity = mandatory_non_null_type_cast< ComponentEntity* >(renderable);
-	componentEntity->render(worldContext, worldRenderView, worldRenderPass);
+	for (auto component : componentEntity->getComponents())
+		worldContext.build(worldRenderView, worldRenderPass, component);
 }
 
 void ComponentEntityRenderer::flush(

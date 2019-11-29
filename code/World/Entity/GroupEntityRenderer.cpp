@@ -1,4 +1,5 @@
 #include "World/WorldContext.h"
+#include "World/Entity/GroupComponent.h"
 #include "World/Entity/GroupEntity.h"
 #include "World/Entity/GroupEntityRenderer.h"
 
@@ -16,7 +17,10 @@ GroupEntityRenderer::GroupEntityRenderer(uint32_t filter)
 
 const TypeInfoSet GroupEntityRenderer::getRenderableTypes() const
 {
-	return makeTypeInfoSet< GroupEntity >();
+	return makeTypeInfoSet<
+		GroupComponent,
+		GroupEntity
+	>();
 }
 
 void GroupEntityRenderer::render(
@@ -26,11 +30,18 @@ void GroupEntityRenderer::render(
 	Object* renderable
 )
 {
-	GroupEntity* groupEntity = checked_type_cast< GroupEntity*, false >(renderable);
-	if ((groupEntity->getMask() & m_filter) != 0)
+	if (auto groupComponent = dynamic_type_cast< GroupComponent* >(renderable))
 	{
-		for (auto childEntity : groupEntity->getEntities())
+		for (auto childEntity : groupComponent->getEntities())
 			worldContext.build(worldRenderView, worldRenderPass, childEntity);
+	}
+	else if (auto groupEntity = dynamic_type_cast< GroupEntity* >(renderable))
+	{
+		if ((groupEntity->getMask() & m_filter) != 0)
+		{
+			for (auto childEntity : groupEntity->getEntities())
+				worldContext.build(worldRenderView, worldRenderPass, childEntity);
+		}
 	}
 }
 

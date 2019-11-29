@@ -1,5 +1,4 @@
 #include "World/IEntityComponent.h"
-#include "World/WorldContext.h"
 #include "World/Entity/ComponentEntity.h"
 
 namespace traktor
@@ -90,12 +89,6 @@ IEntityComponent* ComponentEntity::getComponent(const TypeInfo& componentType) c
 			return component;
 	}
 	return nullptr;
-}
-
-void ComponentEntity::render(WorldContext& worldContext, WorldRenderView& worldRenderView, const IWorldRenderPass& worldRenderPass)
-{
-	for (auto component : m_components)
-		worldContext.build(worldRenderView, worldRenderPass, component);
 }
 
 	}
