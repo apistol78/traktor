@@ -46,26 +46,27 @@ public:
 
 	virtual void update(const UpdateParams& update) override;
 
-	/*! \brief Set component in character instance.
+	/*! Set component in character instance.
 	 */
 	void setComponent(IEntityComponent* component);
 
-	/*! \brief Get component of type.
-	 */
+	/*! Get component of type. */
 	IEntityComponent* getComponent(const TypeInfo& componentType) const;
 
-	/*! \brief Get component of type.
-	 */
+	/*! Get component of type. */
 	template < typename ComponentType >
 	ComponentType* getComponent() const
 	{
 		return checked_type_cast< ComponentType* >(getComponent(type_of< ComponentType >()));
 	}
 
-	void render(WorldContext& worldContext, WorldRenderView& worldRenderView, const IWorldRenderPass& worldRenderPass);
+	/*! Get all components. */
+	const RefArray< IEntityComponent >& getComponents() const
+	{
+		return m_components;
+	}
 
-	/*! \brief Quick access to entity's transform.
-	 */
+	/*! Quick access to entity's transform. */
 	const Transform& getTransform() const
 	{
 		return m_transform;
