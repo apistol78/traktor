@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Core/Thread/Semaphore.h"
 #include "Script/IScriptCompiler.h"
 
 // import/export mechanism.
@@ -32,6 +33,7 @@ public:
 	virtual Ref< IScriptBlob > compile(const std::wstring& fileName, const std::wstring& script, IErrorCallback* errorCallback) const override final;
 
 private:
+	mutable Semaphore m_lock;
 	lua_State* m_luaState;
 };
 

@@ -1,6 +1,7 @@
 #include "Core/Io/Utf8Encoding.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/String.h"
+#include "Core/Thread/Acquire.h"
 #include "Script/IErrorCallback.h"
 #include "Script/Lua/ScriptBlobLua.h"
 #include "Script/Lua/ScriptCompilerLua.h"
@@ -14,7 +15,7 @@ namespace traktor
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.script.ScriptCompilerLua", 0, ScriptCompilerLua, IScriptCompiler)
 
 ScriptCompilerLua::ScriptCompilerLua()
-:	m_luaState(0)
+:	m_luaState(nullptr)
 {
 	m_luaState = luaL_newstate();
 }
@@ -26,6 +27,8 @@ ScriptCompilerLua::~ScriptCompilerLua()
 
 Ref< IScriptBlob > ScriptCompilerLua::compile(const std::wstring& fileName, const std::wstring& script, IErrorCallback* errorCallback) const
 {
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+
 	std::string metaFileName = "@" + wstombs(Utf8Encoding(), fileName);
 	std::string text = wstombs(Utf8Encoding(), script);
 
