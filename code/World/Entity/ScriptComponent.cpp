@@ -11,24 +11,24 @@ namespace traktor
 T_IMPLEMENT_RTTI_CLASS(L"traktor.world.ScriptComponent", ScriptComponent, IEntityComponent)
 
 ScriptComponent::ScriptComponent(const resource::Proxy< IRuntimeClass >& clazz)
-:	m_owner(0)
+:	m_owner(nullptr)
 ,	m_class(clazz)
 {
 }
 
 void ScriptComponent::destroy()
 {
-	m_owner = 0;
+	m_owner = nullptr;
 	m_class.clear();
-	m_object = 0;
-	m_methodUpdate = 0;
+	m_object = nullptr;
+	m_methodUpdate = nullptr;
 }
 
 void ScriptComponent::setOwner(Entity* owner)
 {
-	T_ASSERT(m_owner == 0);
+	T_ASSERT(m_owner == nullptr);
 	m_owner = owner;
-	m_object = createRuntimeClassInstance(m_class, m_owner, 0, 0);
+	m_object = nullptr;
 	m_methodUpdate = findRuntimeClassMethod(m_class, "update");
 	m_class.consume();
 }
@@ -44,10 +44,10 @@ Aabb3 ScriptComponent::getBoundingBox() const
 
 void ScriptComponent::update(const UpdateParams& update)
 {
-	T_ASSERT(m_owner != 0);
+	T_ASSERT(m_owner != nullptr);
 
 	// Check if class has changed, hot-reload new class.
-	if (m_class.changed())
+	if (m_class.changed() || m_object == nullptr)
 	{
 		m_object = createRuntimeClassInstance(m_class, m_owner, 0, 0);
 		m_methodUpdate = findRuntimeClassMethod(m_class, "update");
@@ -55,7 +55,7 @@ void ScriptComponent::update(const UpdateParams& update)
 	}
 
 	// Invoke update method if available.
-	if (m_class && m_object && m_methodUpdate != 0)
+	if (m_class && m_object && m_methodUpdate != nullptr)
 	{
 		Any argv[] =
 		{
