@@ -47,6 +47,11 @@ bool WorldEntityPipeline::buildDependencies(
 		pipelineDepends->addDependency(decalEventData->getShader(), editor::PdfBuild | editor::PdfResource);
 	else if (const ExternalEntityData* externalEntityData = dynamic_type_cast< const ExternalEntityData* >(sourceAsset))
 		pipelineDepends->addDependency(externalEntityData->getEntityData(), editor::PdfBuild);
+	else if (const GroupComponentData* groupComponentData = dynamic_type_cast< const GroupComponentData* >(sourceAsset))
+	{
+		for (auto entityData : groupComponentData->getEntityData())
+			pipelineDepends->addDependency(entityData);
+	}
 	else if (const GroupEntityData* groupEntityData = dynamic_type_cast< const GroupEntityData* >(sourceAsset))
 	{
 		for (auto entityData : groupEntityData->getEntityData())
