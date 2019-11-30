@@ -599,7 +599,7 @@ void GraphControl::eventMouseDown(MouseButtonDownEvent* event)
 					if (m_mode != MdConnectEdge)
 					{
 						// See if we can find an existing edge connected to this input.
-						for (auto edge : m_edges)
+						for (Ref< Edge > edge : m_edges)
 						{
 							if (edge->getDestinationPin() != pin)
 								continue;
