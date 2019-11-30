@@ -199,8 +199,7 @@ void VehicleComponent::updateSuspension(float dT)
 
 			// Suspension forces.
 			float t = 1.0f - (suspensionLength - data->getSuspensionLength().min) / (data->getSuspensionLength().max - data->getSuspensionLength().min);
-
-			float springForce = clamp(t * data->getSuspensionSpring(), -c_maxSuspensionForce, c_maxSuspensionForce);
+			float springForce = clamp(t * data->getSuspensionSpring(), 0.0f, c_maxSuspensionForce);
 			float dampingForce = clamp(suspensionVelocity * data->getSuspensionDamping(), -c_maxDampingForce, c_maxDampingForce);
 
 			// Apply forces.
