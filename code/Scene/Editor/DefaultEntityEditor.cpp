@@ -113,7 +113,10 @@ bool DefaultEntityEditor::removeChildEntity(EntityAdapter* childEntityAdapter) c
 
 	if (removedCount > 0)
 	{
-		r->apply(entityData);
+		if (auto componentEntityData = dynamic_type_cast< world::ComponentEntityData* >(entityData))
+			r->apply(componentEntityData->getComponent< world::GroupComponentData >());
+		else
+			r->apply(entityData);
 		return true;
 	}
 

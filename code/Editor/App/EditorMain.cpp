@@ -86,8 +86,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR szCmdLine, int)
 #endif
 
 #if defined(_DEBUG)
-	CycleRefDebugger cycleDebugger;
-	Object::setReferenceDebugger(&cycleDebugger);
+	//CycleRefDebugger cycleDebugger;
+	//Object::setReferenceDebugger(&cycleDebugger);
 #endif
 
 	Ref< traktor::IStream > logFile;
