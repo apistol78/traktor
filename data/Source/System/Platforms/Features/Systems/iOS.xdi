@@ -165,19 +165,19 @@
 			<item>
 				<first>World.AmbientOcclusionQuality</first>
 				<second type="traktor.PropertyInteger">
-					<value>1</value>
+					<value>0</value>
 				</second>
 			</item>
 			<item>
 				<first>World.AntiAliasQuality</first>
 				<second type="traktor.PropertyInteger">
-					<value>1</value>
+					<value>0</value>
 				</second>
 			</item>
 			<item>
 				<first>World.ImageProcessQuality</first>
 				<second type="traktor.PropertyInteger">
-					<value>2</value>
+					<value>0</value>
 				</second>
 			</item>
 			<item>
@@ -188,6 +188,12 @@
 			</item>
 			<item>
 				<first>World.ReflectionsQuality</first>
+				<second type="traktor.PropertyInteger">
+					<value>1</value>
+				</second>
+			</item>
+			<item>
+				<first>World.ShadowQuality</first>
 				<second type="traktor.PropertyInteger">
 					<value>1</value>
 				</second>

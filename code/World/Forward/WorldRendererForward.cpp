@@ -827,10 +827,6 @@ void WorldRendererForward::buildLights(WorldRenderView& worldRenderView, int32_t
 
 		if (shadowsEnable && light.castShadow && light.type == LtDirectional)
 		{
-			Matrix44 shadowLightView;
-			Matrix44 shadowLightProjection;
-			Frustum shadowFrustum;
-
 			const auto& shadowSettings = m_settings.shadowSettings[m_shadowsQuality];
 
 			for (int32_t slice = 0; slice < shadowSettings.cascadingSlices; ++slice)
@@ -844,6 +840,10 @@ void WorldRendererForward::buildLights(WorldRenderView& worldRenderView, int32_t
 				sliceViewFrustum.setFarZ(zf);
 
 				// Calculate shadow map projection.
+				Matrix44 shadowLightView;
+				Matrix44 shadowLightProjection;
+				Frustum shadowFrustum;
+
 				m_shadowProjection->calculate(
 					viewInverse,
 					light.position,
@@ -856,6 +856,7 @@ void WorldRendererForward::buildLights(WorldRenderView& worldRenderView, int32_t
 					shadowFrustum
 				);
 
+				// Render shadow map.
 				WorldRenderView shadowRenderView;
 				shadowRenderView.resetLights();
 				shadowRenderView.setProjection(shadowLightProjection);
