@@ -875,18 +875,17 @@ void GraphControl::eventDoubleClick(MouseDoubleClickEvent* event)
 void GraphControl::eventMouseWheel(MouseWheelEvent* event)
 {
 	Point ct = getInnerRect().getCenter();
-	Size vp0 = (event->getPosition() - ct) / m_scale;
+	Point p0 = clientToVirtual(event->getPosition());
 
 	if (event->getRotation() < 0)
 		m_scale *= 0.9f;
 	else if (event->getRotation() > 0)
 		m_scale /= 0.9f;
 
-	Size vp1 = (event->getPosition() - ct) / m_scale;
-	m_offset -= (vp0 - vp1);
+	Point p1 = clientToVirtual(event->getPosition());
+	m_offset += (p1 - p0);
 
 	update();
-
 	event->consume();
 }
 
