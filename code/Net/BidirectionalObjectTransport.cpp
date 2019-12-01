@@ -1,4 +1,5 @@
 #include "Core/Io/BufferedStream.h"
+#include "Core/Io/DynamicMemoryStream.h"
 #include "Core/Misc/Endian.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Serialization/BinarySerializer.h"
@@ -36,13 +37,17 @@ bool BidirectionalObjectTransport::send(const ISerializable* object)
 	if (!m_socket)
 		return false;
 
+	// Serialize into a memory blob.
+	DynamicMemoryStream ms(false, true);
+	if (!BinarySerializer(&ms).writeObject(object))
+		return false;
+
+	// Send entire blob in one go.
 	{
 		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-		net::SocketStream ss(m_socket, false, true, 10000);
-		BufferedStream bs(&ss);
-		if (!BinarySerializer(&bs).writeObject(object))
+		int32_t nsent = m_socket->send(ms.getBuffer().c_ptr(), (int32_t)ms.getBuffer().size());
+		if (nsent != (int32_t)ms.getBuffer().size())
 			return false;
-		bs.flush();
 	}
 
 	return true;
@@ -74,23 +79,37 @@ BidirectionalObjectTransport::Result BidirectionalObjectTransport::recv(const Ty
 				if (m_socket->select(true, false, false, timeout) <= 0)
 					break;
 			}
+
+			// Check queue again if any object of given type has already been received on another thread.
+			for (const auto& objectType : objectTypes)
+			{
+				RefArray< ISerializable >& typeInQueue = m_inQueue[objectType];
+				if (!typeInQueue.empty())
+				{
+					outObject = typeInQueue.front();
+					typeInQueue.pop_front();
+					return RtSuccess;
+				}
+			}
+
+			// Ensure still have pending data on socket.
 			if (m_socket->select(true, false, false, 0) <= 0)
 				continue;
 
+			// Receive object from socket.
 			Ref< ISerializable > object;
 			{
 				T_ANONYMOUS_VAR(Release< Semaphore >)(m_lock);
-				net::SocketStream ss(m_socket, true, false, 10000);
-				BinarySerializer s(&ss);
-				object = s.readObject();
+				net::SocketStream ss(m_socket, true, false, timeout);
+				object = BinarySerializer(&ss).readObject();
 			}
-
 			if (!object)
 			{
 				m_socket = nullptr;
 				break;
 			}
 
+			// Check if received object is of desired type.
 			for (const auto& objectType : objectTypes)
 			{
 				if (is_type_of(*objectType, type_of(object)))
@@ -100,8 +119,8 @@ BidirectionalObjectTransport::Result BidirectionalObjectTransport::recv(const Ty
 				}
 			}
 
-			RefArray< ISerializable >& typeInQueue = m_inQueue[&type_of(object)];
-			typeInQueue.push_back(object);
+			// Received a object which we don't wait for; enqueue for later.
+			m_inQueue[&type_of(object)].push_back(object);
 		}
 	}
 
