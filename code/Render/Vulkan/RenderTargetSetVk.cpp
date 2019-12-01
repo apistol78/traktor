@@ -302,7 +302,19 @@ bool RenderTargetSetVk::prepareAsTarget(
 			VkAttachmentDescription passAttachment = {};
 			passAttachment.format = m_colorTargets[colorIndex]->getVkFormat();
 			passAttachment.samples = VK_SAMPLE_COUNT_1_BIT;
-			passAttachment.loadOp = ((clear.mask & CfColor) != 0) ? VK_ATTACHMENT_LOAD_OP_CLEAR : VK_ATTACHMENT_LOAD_OP_LOAD;// VK_ATTACHMENT_LOAD_OP_DONT_CARE;
+
+			if ((clear.mask & CfColor) != 0)
+			{
+				passAttachment.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
+			}
+			else
+			{
+				if (m_colorTargets[colorIndex]->getVkImageLayout() == VK_IMAGE_LAYOUT_UNDEFINED)
+					passAttachment.loadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
+				else
+					passAttachment.loadOp = VK_ATTACHMENT_LOAD_OP_LOAD;
+			}
+			
 			passAttachment.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
 			passAttachment.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
 			passAttachment.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
@@ -318,7 +330,19 @@ bool RenderTargetSetVk::prepareAsTarget(
 				VkAttachmentDescription passAttachment = {};
 				passAttachment.format = m_colorTargets[i]->getVkFormat();
 				passAttachment.samples = VK_SAMPLE_COUNT_1_BIT;
-				passAttachment.loadOp = ((clear.mask & CfColor) != 0) ? VK_ATTACHMENT_LOAD_OP_CLEAR : VK_ATTACHMENT_LOAD_OP_LOAD;// VK_ATTACHMENT_LOAD_OP_DONT_CARE;
+
+				if ((clear.mask & CfColor) != 0)
+				{
+					passAttachment.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
+				}
+				else
+				{
+					if (m_colorTargets[i]->getVkImageLayout() == VK_IMAGE_LAYOUT_UNDEFINED)
+						passAttachment.loadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
+					else
+						passAttachment.loadOp = VK_ATTACHMENT_LOAD_OP_LOAD;
+				}
+				
 				passAttachment.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
 				passAttachment.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
 				passAttachment.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
@@ -333,10 +357,29 @@ bool RenderTargetSetVk::prepareAsTarget(
 			VkAttachmentDescription passAttachment = {};
 			passAttachment.format = m_depthTarget->getVkFormat();
 			passAttachment.samples = VK_SAMPLE_COUNT_1_BIT;
-			passAttachment.loadOp = ((clear.mask & CfDepth) != 0) ? VK_ATTACHMENT_LOAD_OP_CLEAR : VK_ATTACHMENT_LOAD_OP_LOAD;// VK_ATTACHMENT_LOAD_OP_DONT_CARE;
+
+			if ((clear.mask & CfDepth) != 0)
+			{
+				passAttachment.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
+				passAttachment.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
+			}
+			else
+			{
+				if (m_depthTarget->getVkImageLayout() == VK_IMAGE_LAYOUT_UNDEFINED)
+				{
+					passAttachment.loadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
+					passAttachment.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
+				}
+				else
+				{
+					passAttachment.loadOp = VK_ATTACHMENT_LOAD_OP_LOAD;
+					passAttachment.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_LOAD;
+				}
+			}
+
 			passAttachment.storeOp = VK_ATTACHMENT_STORE_OP_STORE;// VK_ATTACHMENT_STORE_OP_DONT_CARE;
-			passAttachment.stencilLoadOp = ((clear.mask & CfStencil) != 0) ? VK_ATTACHMENT_LOAD_OP_CLEAR : VK_ATTACHMENT_LOAD_OP_LOAD;// VK_ATTACHMENT_LOAD_OP_DONT_CARE;
 			passAttachment.stencilStoreOp = VK_ATTACHMENT_STORE_OP_STORE;//VK_ATTACHMENT_STORE_OP_DONT_CARE;
+
 			passAttachment.initialLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
 			passAttachment.finalLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
 			passAttachments.push_back(passAttachment);
@@ -346,10 +389,29 @@ bool RenderTargetSetVk::prepareAsTarget(
 			VkAttachmentDescription passAttachment = {};
 			passAttachment.format = primaryDepthTarget->getVkFormat();
 			passAttachment.samples = VK_SAMPLE_COUNT_1_BIT;
-			passAttachment.loadOp = ((clear.mask & CfDepth) != 0) ? VK_ATTACHMENT_LOAD_OP_CLEAR : VK_ATTACHMENT_LOAD_OP_LOAD;// VK_ATTACHMENT_LOAD_OP_DONT_CARE;
-			passAttachment.storeOp = VK_ATTACHMENT_STORE_OP_STORE;//VK_ATTACHMENT_STORE_OP_DONT_CARE;
-			passAttachment.stencilLoadOp = ((clear.mask & CfStencil) != 0) ? VK_ATTACHMENT_LOAD_OP_CLEAR : VK_ATTACHMENT_LOAD_OP_LOAD;// VK_ATTACHMENT_LOAD_OP_DONT_CARE;
+
+			if ((clear.mask & CfDepth) != 0)
+			{
+				passAttachment.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
+				passAttachment.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
+			}
+			else
+			{
+				if (primaryDepthTarget->getVkImageLayout() == VK_IMAGE_LAYOUT_UNDEFINED)
+				{
+					passAttachment.loadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
+					passAttachment.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
+				}
+				else
+				{
+					passAttachment.loadOp = VK_ATTACHMENT_LOAD_OP_LOAD;
+					passAttachment.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_LOAD;
+				}
+			}
+
+			passAttachment.storeOp = VK_ATTACHMENT_STORE_OP_STORE;// VK_ATTACHMENT_STORE_OP_DONT_CARE;
 			passAttachment.stencilStoreOp = VK_ATTACHMENT_STORE_OP_STORE;//VK_ATTACHMENT_STORE_OP_DONT_CARE;
+
 			passAttachment.initialLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
 			passAttachment.finalLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
 			passAttachments.push_back(passAttachment);
