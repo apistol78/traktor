@@ -826,7 +826,7 @@
 			<item>
 				<first>Physics.SolverIterations</first>
 				<second type="traktor.PropertyInteger">
-					<value>10</value>
+					<value>4</value>
 				</second>
 			</item>
 			<item>
