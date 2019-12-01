@@ -60,6 +60,8 @@ public:
 
 	VkImageView getVkImageView() const { return m_imageView; }
 
+	VkImageLayout getVkImageLayout() const { return m_imageLayout; }
+
 private:
 	VkPhysicalDevice m_physicalDevice;
 	VkDevice m_logicalDevice;

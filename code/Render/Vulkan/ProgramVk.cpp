@@ -1,5 +1,3 @@
-#pragma optimize( "", off )
-
 #include <cstring>
 #include <limits>
 #include "Core/Math/Matrix44.h"
