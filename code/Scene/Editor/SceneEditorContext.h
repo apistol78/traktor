@@ -228,17 +228,6 @@ public:
 
 	void cloneSelected();
 
-	/*! \name Debug texture view. */
-	//@{
-
-	void clearDebugTargets();
-
-	void addDebugTarget(const render::DebugTarget& debugTarget);
-
-	const AlignedVector< render::DebugTarget >& getDebugTargets() const;
-
-	//@}
-
 	/*! \name Plugin access. */
 	//@{
 
@@ -316,7 +305,6 @@ private:
 	Ref< world::IEntityEventManager > m_eventManager;
 	Ref< resource::IResourceManager > m_resourceManager;
 	Ref< render::IRenderSystem > m_renderSystem;
-	AlignedVector< render::DebugTarget > m_debugTargets;
 	Ref< physics::PhysicsManager > m_physicsManager;
 	RefArray< ISceneEditorProfile > m_editorProfiles;
 	RefArray< ISceneEditorPlugin > m_editorPlugins;

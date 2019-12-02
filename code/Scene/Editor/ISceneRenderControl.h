@@ -1,7 +1,9 @@
 #pragma once
 
+#include <vector>
 #include "Core/Object.h"
 #include "Core/Math/Frustum.h"
+#include "Render/Types.h"
 #include "World/WorldTypes.h"
 
 namespace traktor
@@ -60,6 +62,10 @@ public:
 	virtual void moveCamera(MoveCameraMode mode, const Vector4& mouseDelta, const Vector4& viewDelta) = 0;
 
 	virtual void showSelectionRectangle(const ui::Rect& rect) = 0;
+
+	virtual void getDebugTargets(std::vector< render::DebugTarget >& outDebugTargets) = 0;
+
+	virtual void setDebugTarget(const render::DebugTarget* debugTarget) = 0;
 };
 
 	}

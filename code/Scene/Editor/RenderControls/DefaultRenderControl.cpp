@@ -7,9 +7,9 @@
 #include "Editor/IEditor.h"
 #include "I18N/Text.h"
 #include "Scene/Editor/Camera.h"
+#include "Scene/Editor/ISceneEditorProfile.h"
 #include "Scene/Editor/SceneEditorContext.h"
 #include "Scene/Editor/RenderControls/CameraRenderControl.h"
-#include "Scene/Editor/RenderControls/DebugRenderControl.h"
 #include "Scene/Editor/RenderControls/DefaultRenderControl.h"
 #include "Scene/Editor/RenderControls/FinalRenderControl.h"
 #include "Scene/Editor/RenderControls/OrthogonalRenderControl.h"
@@ -88,7 +88,6 @@ bool DefaultRenderControl::create(ui::Widget* parent, SceneEditorContext* contex
 	m_toolView->add(i18n::Text(L"SCENE_EDITOR_VIEW_BOTTOM"));
 	m_toolView->add(i18n::Text(L"SCENE_EDITOR_VIEW_LEFT"));
 	m_toolView->add(i18n::Text(L"SCENE_EDITOR_VIEW_RIGHT"));
-	m_toolView->add(i18n::Text(L"SCENE_EDITOR_VIEW_DEBUG"));
 	m_toolView->add(i18n::Text(L"SCENE_EDITOR_VIEW_CAMERA"));
 	m_toolView->add(i18n::Text(L"SCENE_EDITOR_VIEW_FINAL"));
 	m_toolView->select(viewType);
@@ -119,7 +118,7 @@ bool DefaultRenderControl::create(ui::Widget* parent, SceneEditorContext* contex
 	m_toolAspect->add(L"9:16");
 	m_toolAspect->select(0);
 
-	Ref< ui::ToolBarDropMenu > toolQualityMenu = new ui::ToolBarDropMenu(ui::dpi96(130), i18n::Text(L"SCENE_EDITOR_QUALITY"), true, i18n::Text(L"SCENE_EDITOR_QUALITY_TOOLTIP"));
+	m_toolQualityMenu = new ui::ToolBarDropMenu(ui::dpi96(130), i18n::Text(L"SCENE_EDITOR_QUALITY"), true, i18n::Text(L"SCENE_EDITOR_QUALITY_TOOLTIP"));
 
 	m_menuPostProcess = new ui::MenuItem(i18n::Text(L"SCENE_EDITOR_POST_PROCESS"));
 	m_menuPostProcess->add(new ui::MenuItem(ui::Command(0, L"Scene.Editor.PostProcessQuality"), L"Disabled", true, 0));
@@ -127,7 +126,7 @@ bool DefaultRenderControl::create(ui::Widget* parent, SceneEditorContext* contex
 	m_menuPostProcess->add(new ui::MenuItem(ui::Command(2, L"Scene.Editor.PostProcessQuality"), L"Medium", true, 0));
 	m_menuPostProcess->add(new ui::MenuItem(ui::Command(3, L"Scene.Editor.PostProcessQuality"), L"High", true, 0));
 	m_menuPostProcess->add(new ui::MenuItem(ui::Command(4, L"Scene.Editor.PostProcessQuality"), L"Ultra", true, 0));
-	toolQualityMenu->add(m_menuPostProcess);
+	m_toolQualityMenu->add(m_menuPostProcess);
 
 	m_menuMotionBlur = new ui::MenuItem(i18n::Text(L"SCENE_EDITOR_MOTION_BLUR"));
 	m_menuMotionBlur->add(new ui::MenuItem(ui::Command(0, L"Scene.Editor.MotionBlurQuality"), L"Disabled", true, 0));
@@ -135,7 +134,7 @@ bool DefaultRenderControl::create(ui::Widget* parent, SceneEditorContext* contex
 	m_menuMotionBlur->add(new ui::MenuItem(ui::Command(2, L"Scene.Editor.MotionBlurQuality"), L"Medium", true, 0));
 	m_menuMotionBlur->add(new ui::MenuItem(ui::Command(3, L"Scene.Editor.MotionBlurQuality"), L"High", true, 0));
 	m_menuMotionBlur->add(new ui::MenuItem(ui::Command(4, L"Scene.Editor.MotionBlurQuality"), L"Ultra", true, 0));
-	toolQualityMenu->add(m_menuMotionBlur);
+	m_toolQualityMenu->add(m_menuMotionBlur);
 
 	m_menuShadows = new ui::MenuItem(i18n::Text(L"SCENE_EDITOR_SHADOWS"));
 	m_menuShadows->add(new ui::MenuItem(ui::Command(0, L"Scene.Editor.ShadowQuality"), L"Disabled", true, 0));
@@ -143,7 +142,7 @@ bool DefaultRenderControl::create(ui::Widget* parent, SceneEditorContext* contex
 	m_menuShadows->add(new ui::MenuItem(ui::Command(2, L"Scene.Editor.ShadowQuality"), L"Medium", true, 0));
 	m_menuShadows->add(new ui::MenuItem(ui::Command(3, L"Scene.Editor.ShadowQuality"), L"High", true, 0));
 	m_menuShadows->add(new ui::MenuItem(ui::Command(4, L"Scene.Editor.ShadowQuality"), L"Ultra", true, 0));
-	toolQualityMenu->add(m_menuShadows);
+	m_toolQualityMenu->add(m_menuShadows);
 
 	m_menuReflections = new ui::MenuItem(i18n::Text(L"SCENE_EDITOR_REFLECTIONS"));
 	m_menuReflections->add(new ui::MenuItem(ui::Command(0, L"Scene.Editor.ReflectionsQuality"), L"Disabled", true, 0));
@@ -151,7 +150,7 @@ bool DefaultRenderControl::create(ui::Widget* parent, SceneEditorContext* contex
 	m_menuReflections->add(new ui::MenuItem(ui::Command(2, L"Scene.Editor.ReflectionsQuality"), L"Medium", true, 0));
 	m_menuReflections->add(new ui::MenuItem(ui::Command(3, L"Scene.Editor.ReflectionsQuality"), L"High", true, 0));
 	m_menuReflections->add(new ui::MenuItem(ui::Command(4, L"Scene.Editor.ReflectionsQuality"), L"Ultra", true, 0));
-	toolQualityMenu->add(m_menuReflections);
+	m_toolQualityMenu->add(m_menuReflections);
 
 	m_menuAO = new ui::MenuItem(i18n::Text(L"SCENE_EDITOR_AO"));
 	m_menuAO->add(new ui::MenuItem(ui::Command(0, L"Scene.Editor.AmbientOcclusionQuality"), L"Disabled", true, 0));
@@ -159,7 +158,7 @@ bool DefaultRenderControl::create(ui::Widget* parent, SceneEditorContext* contex
 	m_menuAO->add(new ui::MenuItem(ui::Command(2, L"Scene.Editor.AmbientOcclusionQuality"), L"Medium", true, 0));
 	m_menuAO->add(new ui::MenuItem(ui::Command(3, L"Scene.Editor.AmbientOcclusionQuality"), L"High", true, 0));
 	m_menuAO->add(new ui::MenuItem(ui::Command(4, L"Scene.Editor.AmbientOcclusionQuality"), L"Ultra", true, 0));
-	toolQualityMenu->add(m_menuAO);
+	m_toolQualityMenu->add(m_menuAO);
 
 	m_menuAA = new ui::MenuItem(i18n::Text(L"SCENE_EDITOR_AA"));
 	m_menuAA->add(new ui::MenuItem(ui::Command(0, L"Scene.Editor.AntiAliasQuality"), L"Disabled", true, 0));
@@ -167,7 +166,7 @@ bool DefaultRenderControl::create(ui::Widget* parent, SceneEditorContext* contex
 	m_menuAA->add(new ui::MenuItem(ui::Command(2, L"Scene.Editor.AntiAliasQuality"), L"Medium", true, 0));
 	m_menuAA->add(new ui::MenuItem(ui::Command(3, L"Scene.Editor.AntiAliasQuality"), L"High", true, 0));
 	m_menuAA->add(new ui::MenuItem(ui::Command(4, L"Scene.Editor.AntiAliasQuality"), L"Ultra", true, 0));
-	toolQualityMenu->add(m_menuAA);
+	m_toolQualityMenu->add(m_menuAA);
 
 	m_toolWorldRenderer = new ui::ToolBarDropDown(ui::Command(1, L"Scene.Editor.WorldRenderer"), ui::dpi96(130), i18n::Text(L"SCENE_EDITOR_WORLD_RENDERER"));
 	m_toolWorldRenderer->add(L"Simple");
@@ -175,15 +174,22 @@ bool DefaultRenderControl::create(ui::Widget* parent, SceneEditorContext* contex
 	m_toolWorldRenderer->add(L"Deferred");
 	m_toolWorldRenderer->select(2);
 
+	m_toolDebugMode = new ui::ToolBarDropDown(ui::Command(1, L"Scene.Editor.DebugMode"), ui::dpi96(140), i18n::Text(L"SCENE_EDITOR_DEBUG_MODE"));
+	m_toolDebugMode->add(L"Default");
+	m_toolDebugMode->select(0);
+
 	m_toolBar->addItem(m_toolView);
 	m_toolBar->addItem(m_toolToggleGrid);
 	m_toolBar->addItem(m_toolToggleGuide);
 	m_toolBar->addItem(new ui::ToolBarSeparator());
 	m_toolBar->addItem(m_toolAspect);
 	m_toolBar->addItem(new ui::ToolBarSeparator());
-	m_toolBar->addItem(toolQualityMenu);
+	m_toolBar->addItem(m_toolQualityMenu);
 	m_toolBar->addItem(new ui::ToolBarSeparator());
 	m_toolBar->addItem(m_toolWorldRenderer);
+	m_toolBar->addItem(new ui::ToolBarSeparator());
+	m_toolBar->addItem(m_toolDebugMode);
+
 	m_toolBar->addEventHandler< ui::ToolBarButtonClickEvent >(this, &DefaultRenderControl::eventToolClick);
 
 	m_menuPostProcess->get(0)->setChecked(true);
@@ -210,17 +216,8 @@ void DefaultRenderControl::destroy()
 	m_context->getEditor()->commitGlobalSettings();
 	m_toolView = nullptr;
 
-	if (m_renderControl)
-	{
-		m_renderControl->destroy();
-		m_renderControl = nullptr;
-	}
-
-	if (m_container)
-	{
-		m_container->destroy();
-		m_container = nullptr;
-	}
+	safeDestroy(m_renderControl);
+	safeDestroy(m_container);
 }
 
 void DefaultRenderControl::updateWorldRenderer()
@@ -267,6 +264,33 @@ void DefaultRenderControl::update()
 {
 	if (m_renderControl)
 		m_renderControl->update();
+
+	// Update available debug modes.
+	std::vector< render::DebugTarget > debugTargets;
+
+	int32_t selected = m_toolDebugMode->getSelected();
+	m_toolDebugMode->removeAll();
+	m_toolDebugMode->add(L"Default");
+
+	if (m_renderControl)
+	{
+		m_renderControl->getDebugTargets(debugTargets);
+		for (auto profile : m_context->getEditorProfiles())
+			profile->getDebugTargets(m_context, debugTargets);
+
+		for (const auto& debugTarget : debugTargets)
+			m_toolDebugMode->add(debugTarget.name);
+	}
+
+	if (!(selected >= 0 && selected < m_toolDebugMode->count()))
+		selected = 0;
+
+	m_toolDebugMode->select(selected);
+
+	if (selected >= 1)
+		m_renderControl->setDebugTarget(&debugTargets[selected - 1]);
+	else
+		m_renderControl->setDebugTarget(nullptr);
 }
 
 bool DefaultRenderControl::hitTest(const ui::Point& position) const
@@ -296,6 +320,18 @@ void DefaultRenderControl::showSelectionRectangle(const ui::Rect& rect)
 		m_renderControl->showSelectionRectangle(rect);
 }
 
+void DefaultRenderControl::getDebugTargets(std::vector< render::DebugTarget >& outDebugTargets)
+{
+	if (m_renderControl)
+		m_renderControl->getDebugTargets(outDebugTargets);
+}
+
+void DefaultRenderControl::setDebugTarget(const render::DebugTarget* debugTarget)
+{
+	if (m_renderControl)
+		m_renderControl->setDebugTarget(debugTarget);
+}
+
 bool DefaultRenderControl::createRenderControl(int32_t type)
 {
 	safeDestroy(m_renderControl);
@@ -309,9 +345,20 @@ bool DefaultRenderControl::createRenderControl(int32_t type)
 	if (!worldRendererType)
 		return false;
 
+	// Enable all tools by default.
+	m_toolToggleGrid->setEnable(true);
+	m_toolToggleGuide->setEnable(true);
+	m_toolView->setEnable(true);
+	m_toolAspect->setEnable(true);
+	m_toolQualityMenu->setEnable(true);
+	m_toolWorldRenderer->setEnable(true);
+
+	bool toolsEnable = true;
+
 	switch (type)
 	{
-	case 0:
+	default:
+	case 0: // Perspective
 		{
 			Ref< PerspectiveRenderControl > renderControl = new PerspectiveRenderControl();
 			if (!renderControl->create(m_container, m_context, m_cameraId, *worldRendererType))
@@ -374,16 +421,7 @@ bool DefaultRenderControl::createRenderControl(int32_t type)
 		}
 		break;
 
-	case 7:	// Debug
-		{
-			Ref< DebugRenderControl > renderControl = new DebugRenderControl();
-			if (!renderControl->create(m_container, m_context))
-				return false;
-			m_renderControl = renderControl;
-		}
-		break;
-
-	case 8:	// Camera
+	case 7:	// Camera
 		{
 			Ref< CameraRenderControl > renderControl = new CameraRenderControl();
 			if (!renderControl->create(m_container, m_context))
@@ -392,12 +430,17 @@ bool DefaultRenderControl::createRenderControl(int32_t type)
 		}
 		break;
 
-	case 9: // Final
+	case 8: // Final
 		{
 			Ref< FinalRenderControl > renderControl = new FinalRenderControl();
 			if (!renderControl->create(m_container, m_context, m_cameraId))
 				return false;
 			m_renderControl = renderControl;
+
+			// Some tools not applicable to final view.
+			m_toolToggleGrid->setEnable(false);
+			m_toolToggleGuide->setEnable(false);
+			m_toolWorldRenderer->setEnable(false);
 		}
 		break;
 	}
@@ -416,6 +459,15 @@ bool DefaultRenderControl::createRenderControl(int32_t type)
 		m_renderControl->handleCommand(ui::Command(L"Scene.Editor.EnableGuide"));
 	else
 		m_renderControl->handleCommand(ui::Command(L"Scene.Editor.DisableGuide"));
+
+	m_renderControl->setQuality(
+		(world::Quality)getChecked(m_menuPostProcess)->getCommand().getId(),
+		(world::Quality)getChecked(m_menuShadows)->getCommand().getId(),
+		(world::Quality)getChecked(m_menuReflections)->getCommand().getId(),
+		(world::Quality)getChecked(m_menuMotionBlur)->getCommand().getId(),
+		(world::Quality)getChecked(m_menuAO)->getCommand().getId(),
+		(world::Quality)getChecked(m_menuAA)->getCommand().getId()
+	);
 
 	{
 		Ref< PropertyGroup > settings = m_context->getEditor()->checkoutGlobalSettings();
