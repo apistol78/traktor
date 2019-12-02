@@ -361,7 +361,7 @@ void OrthogonalRenderControl::getDebugTargets(std::vector< render::DebugTarget >
 		m_worldRenderer->getDebugTargets(outDebugTargets);
 }
 
-void OrthogonalRenderControl::setDebugTarget(const render::DebugTarget* debugTarget)
+void OrthogonalRenderControl::setDebugTarget(const render::DebugTarget* debugTarget, float alpha)
 {
 }
 

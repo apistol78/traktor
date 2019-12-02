@@ -289,7 +289,7 @@ void FinalRenderControl::getDebugTargets(std::vector< render::DebugTarget >& out
 {
 }
 
-void FinalRenderControl::setDebugTarget(const render::DebugTarget* debugTarget)
+void FinalRenderControl::setDebugTarget(const render::DebugTarget* debugTarget, float alpha)
 {
 }
 

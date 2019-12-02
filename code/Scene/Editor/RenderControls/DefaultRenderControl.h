@@ -9,6 +9,7 @@ namespace traktor
 
 class Container;
 class MenuItem;
+class Slider;
 class ToolBar;
 class ToolBarButton;
 class ToolBarButtonClickEvent;
@@ -58,7 +59,7 @@ public:
 
 	virtual void getDebugTargets(std::vector< render::DebugTarget >& outDebugTargets) override final;
 
-	virtual void setDebugTarget(const render::DebugTarget* debugTarget) override final;
+	virtual void setDebugTarget(const render::DebugTarget* debugTarget, float alpha) override final;
 
 private:
 	Ref< SceneEditorContext > m_context;
@@ -73,6 +74,7 @@ private:
 	Ref< ui::ToolBarDropMenu > m_toolQualityMenu;
 	Ref< ui::ToolBarDropDown > m_toolWorldRenderer;
 	Ref< ui::ToolBarDropDown > m_toolDebugMode;
+	Ref< ui::Slider > m_sliderDebugAlpha;
 	Ref< ui::MenuItem > m_menuPostProcess;
 	Ref< ui::MenuItem > m_menuMotionBlur;
 	Ref< ui::MenuItem > m_menuShadows;

@@ -65,7 +65,7 @@ public:
 
 	virtual void getDebugTargets(std::vector< render::DebugTarget >& outDebugTargets) = 0;
 
-	virtual void setDebugTarget(const render::DebugTarget* debugTarget) = 0;
+	virtual void setDebugTarget(const render::DebugTarget* debugTarget, float alpha) = 0;
 };
 
 	}

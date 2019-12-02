@@ -84,7 +84,7 @@ public:
 
 	virtual void getDebugTargets(std::vector< render::DebugTarget >& outDebugTargets) override final;
 
-	virtual void setDebugTarget(const render::DebugTarget* debugTarget) override final;
+	virtual void setDebugTarget(const render::DebugTarget* debugTarget, float alpha) override final;
 
 private:
 	Ref< SceneEditorContext > m_context;
