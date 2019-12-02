@@ -81,7 +81,7 @@ public:
 
 	virtual void getDebugTargets(std::vector< render::DebugTarget >& outDebugTargets) override final;
 
-	virtual void setDebugTarget(const render::DebugTarget* debugTarget) override final;
+	virtual void setDebugTarget(const render::DebugTarget* debugTarget, float alpha) override final;
 
 private:
 	Ref< SceneEditorContext > m_context;
@@ -92,6 +92,7 @@ private:
 	Ref< render::ScreenRenderer > m_screenRenderer;
 	resource::Proxy< render::Shader > m_debugShader;
 	render::DebugTarget m_debugTarget;
+	float m_debugAlpha;
 	const TypeInfo* m_worldRendererType;
 	Ref< world::IWorldRenderer > m_worldRenderer;
 	world::WorldRenderView m_worldRenderView;

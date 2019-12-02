@@ -271,7 +271,7 @@ void CameraRenderControl::getDebugTargets(std::vector< render::DebugTarget >& ou
 {
 }
 
-void CameraRenderControl::setDebugTarget(const render::DebugTarget* debugTarget)
+void CameraRenderControl::setDebugTarget(const render::DebugTarget* debugTarget, float alpha)
 {
 }
 

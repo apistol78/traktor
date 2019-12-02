@@ -97,7 +97,8 @@ Vector4 projectUnit(const ui::Rect& rc, const ui::Point& pnt)
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.PerspectiveRenderControl", PerspectiveRenderControl, ISceneRenderControl)
 
 PerspectiveRenderControl::PerspectiveRenderControl()
-:	m_worldRendererType(nullptr)
+:	m_debugAlpha(1.0f)
+,	m_worldRendererType(nullptr)
 ,	m_imageProcessQuality(world::QuDisabled)
 ,	m_shadowQuality(world::QuDisabled)
 ,	m_reflectionsQuality(world::QuDisabled)
@@ -411,12 +412,14 @@ void PerspectiveRenderControl::getDebugTargets(std::vector< render::DebugTarget 
 		m_worldRenderer->getDebugTargets(outDebugTargets);
 }
 
-void PerspectiveRenderControl::setDebugTarget(const render::DebugTarget* debugTarget)
+void PerspectiveRenderControl::setDebugTarget(const render::DebugTarget* debugTarget, float alpha)
 {
 	if (debugTarget)
 		m_debugTarget = *debugTarget;
 	else
 		m_debugTarget.texture = nullptr;
+
+	m_debugAlpha = alpha;
 }
 
 void PerspectiveRenderControl::updateSettings()
@@ -583,8 +586,8 @@ void PerspectiveRenderControl::eventPaint(ui::PaintEvent* event)
 		if (m_debugTarget.texture)
 		{
 			m_debugShader->setTechnique(c_visualizeTechniques[m_debugTarget.visualize]);
-			m_debugShader->setTextureParameter(L"DebugTexture", m_debugTarget.texture);
-			m_debugShader->setVectorParameter(L"Transform", Vector4(0.0f, 0.0f, 1.0f, 0.0f));
+			m_debugShader->setTextureParameter(L"Scene_DebugTexture", m_debugTarget.texture);
+			m_debugShader->setFloatParameter(L"Scene_DebugAlpha", m_debugAlpha);
 			m_screenRenderer->draw(m_renderView, m_debugShader);
 		}
 

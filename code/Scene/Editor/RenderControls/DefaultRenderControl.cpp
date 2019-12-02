@@ -18,6 +18,7 @@
 #include "Ui/Container.h"
 #include "Ui/Menu.h"
 #include "Ui/MenuItem.h"
+#include "Ui/Slider.h"
 #include "Ui/StyleBitmap.h"
 #include "Ui/TableLayout.h"
 #include "Ui/ToolBar/ToolBar.h"
@@ -25,6 +26,7 @@
 #include "Ui/ToolBar/ToolBarButtonClickEvent.h"
 #include "Ui/ToolBar/ToolBarDropDown.h"
 #include "Ui/ToolBar/ToolBarDropMenu.h"
+#include "Ui/ToolBar/ToolBarEmbed.h"
 #include "Ui/ToolBar/ToolBarSeparator.h"
 
 namespace traktor
@@ -178,6 +180,11 @@ bool DefaultRenderControl::create(ui::Widget* parent, SceneEditorContext* contex
 	m_toolDebugMode->add(L"Default");
 	m_toolDebugMode->select(0);
 
+	m_sliderDebugAlpha = new ui::Slider();
+	m_sliderDebugAlpha->create(m_toolBar);
+	m_sliderDebugAlpha->setRange(0, 100);
+	m_sliderDebugAlpha->setValue(100);
+
 	m_toolBar->addItem(m_toolView);
 	m_toolBar->addItem(m_toolToggleGrid);
 	m_toolBar->addItem(m_toolToggleGuide);
@@ -189,6 +196,7 @@ bool DefaultRenderControl::create(ui::Widget* parent, SceneEditorContext* contex
 	m_toolBar->addItem(m_toolWorldRenderer);
 	m_toolBar->addItem(new ui::ToolBarSeparator());
 	m_toolBar->addItem(m_toolDebugMode);
+	m_toolBar->addItem(new ui::ToolBarEmbed(m_sliderDebugAlpha, ui::dpi96(70)));
 
 	m_toolBar->addEventHandler< ui::ToolBarButtonClickEvent >(this, &DefaultRenderControl::eventToolClick);
 
@@ -287,10 +295,12 @@ void DefaultRenderControl::update()
 
 	m_toolDebugMode->select(selected);
 
+	float alpha = m_sliderDebugAlpha->getValue() / 100.0f;
+
 	if (selected >= 1)
-		m_renderControl->setDebugTarget(&debugTargets[selected - 1]);
+		m_renderControl->setDebugTarget(&debugTargets[selected - 1], alpha);
 	else
-		m_renderControl->setDebugTarget(nullptr);
+		m_renderControl->setDebugTarget(nullptr, 1.0f);
 }
 
 bool DefaultRenderControl::hitTest(const ui::Point& position) const
@@ -326,10 +336,10 @@ void DefaultRenderControl::getDebugTargets(std::vector< render::DebugTarget >& o
 		m_renderControl->getDebugTargets(outDebugTargets);
 }
 
-void DefaultRenderControl::setDebugTarget(const render::DebugTarget* debugTarget)
+void DefaultRenderControl::setDebugTarget(const render::DebugTarget* debugTarget, float alpha)
 {
 	if (m_renderControl)
-		m_renderControl->setDebugTarget(debugTarget);
+		m_renderControl->setDebugTarget(debugTarget, alpha);
 }
 
 bool DefaultRenderControl::createRenderControl(int32_t type)
