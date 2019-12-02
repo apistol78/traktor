@@ -13,6 +13,7 @@ class ToolBar;
 class ToolBarButton;
 class ToolBarButtonClickEvent;
 class ToolBarDropDown;
+class ToolBarDropMenu;
 class Widget;
 
 	}
@@ -55,6 +56,10 @@ public:
 
 	virtual void showSelectionRectangle(const ui::Rect& rect) override final;
 
+	virtual void getDebugTargets(std::vector< render::DebugTarget >& outDebugTargets) override final;
+
+	virtual void setDebugTarget(const render::DebugTarget* debugTarget) override final;
+
 private:
 	Ref< SceneEditorContext > m_context;
 	int32_t m_cameraId;
@@ -65,7 +70,9 @@ private:
 	Ref< ui::ToolBarButton > m_toolToggleGuide;
 	Ref< ui::ToolBarDropDown > m_toolView;
 	Ref< ui::ToolBarDropDown > m_toolAspect;
+	Ref< ui::ToolBarDropMenu > m_toolQualityMenu;
 	Ref< ui::ToolBarDropDown > m_toolWorldRenderer;
+	Ref< ui::ToolBarDropDown > m_toolDebugMode;
 	Ref< ui::MenuItem > m_menuPostProcess;
 	Ref< ui::MenuItem > m_menuMotionBlur;
 	Ref< ui::MenuItem > m_menuShadows;

@@ -75,6 +75,10 @@ public:
 
 	virtual void showSelectionRectangle(const ui::Rect& rect) override final;
 
+	virtual void getDebugTargets(std::vector< render::DebugTarget >& outDebugTargets) override final;
+
+	virtual void setDebugTarget(const render::DebugTarget* debugTarget) override final;
+
 private:
 	Ref< SceneEditorContext > m_context;
 	Ref< ui::Container > m_containerAspect;

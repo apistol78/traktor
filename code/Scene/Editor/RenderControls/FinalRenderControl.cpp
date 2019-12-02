@@ -285,6 +285,14 @@ void FinalRenderControl::showSelectionRectangle(const ui::Rect& rect)
 {
 }
 
+void FinalRenderControl::getDebugTargets(std::vector< render::DebugTarget >& outDebugTargets)
+{
+}
+
+void FinalRenderControl::setDebugTarget(const render::DebugTarget* debugTarget)
+{
+}
+
 void FinalRenderControl::updateSettings()
 {
 	const PropertyGroup* settings = m_context->getEditor()->getSettings();
@@ -452,20 +460,6 @@ void FinalRenderControl::eventPaint(ui::PaintEvent* event)
 		m_renderView->end();
 		m_renderView->present();
 	}
-
-	// Debug world renderer targets.
-	std::vector< render::DebugTarget > debugTargets;
-	m_worldRenderer->getDebugTargets(debugTargets);
-
-	// Debug profile render targets.
-	const RefArray< ISceneEditorProfile >& profiles = m_context->getEditorProfiles();
-	for (auto profile : profiles)
-		profile->getDebugTargets(m_context, debugTargets);
-
-	// Push debug targets to context.
-	m_context->clearDebugTargets();
-	for (auto debugTarget : debugTargets)
-		m_context->addDebugTarget(debugTarget);
 
 	event->consume();
 }

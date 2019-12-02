@@ -97,7 +97,6 @@ void SceneEditorContext::destroy()
 	m_sourceDb = nullptr;
 	m_eventManager = nullptr;
 	m_renderSystem = nullptr;
-	m_debugTargets.clear();
 	m_physicsManager = nullptr;
 	m_editorProfiles.clear();
 	m_editorPlugins.clear();
@@ -718,27 +717,12 @@ void SceneEditorContext::cloneSelected()
 	raiseSelect();
 }
 
-void SceneEditorContext::clearDebugTargets()
-{
-	m_debugTargets.resize(0);
-}
-
-void SceneEditorContext::addDebugTarget(const render::DebugTarget& debugTarget)
-{
-	m_debugTargets.push_back(debugTarget);
-}
-
-const AlignedVector< render::DebugTarget >& SceneEditorContext::getDebugTargets() const
-{
-	return m_debugTargets;
-}
-
 ISceneEditorPlugin* SceneEditorContext::getEditorPluginOf(const TypeInfo& pluginType) const
 {
-	for (RefArray< ISceneEditorPlugin >::const_iterator i = m_editorPlugins.begin(); i != m_editorPlugins.end(); ++i)
+	for (auto editorPlugin : m_editorPlugins)
 	{
-		if (&type_of(*i) == &pluginType)
-			return *i;
+		if (&type_of(editorPlugin) == &pluginType)
+			return editorPlugin;
 	}
 	return nullptr;
 }

@@ -15,9 +15,12 @@
 #include "Editor/IEditor.h"
 #include "Render/IRenderSystem.h"
 #include "Render/IRenderView.h"
-#include "Render/RenderTargetSet.h"
 #include "Render/PrimitiveRenderer.h"
+#include "Render/RenderTargetSet.h"
+#include "Render/ScreenRenderer.h"
+#include "Render/Shader.h"
 #include "Render/ImageProcess/ImageProcess.h"
+#include "Resource/IResourceManager.h"
 #include "Scene/Scene.h"
 #include "Scene/Editor/Camera.h"
 #include "Scene/Editor/EntityAdapter.h"
@@ -52,6 +55,8 @@ namespace traktor
 		namespace
 		{
 
+const resource::Id< render::Shader > c_debugShader(Guid(L"{949B3C96-0196-F24E-B36E-98DD504BCE9D}"));
+
 const float c_defaultFieldOfView = 80.0f;
 const float c_defaultMouseWheelRate = 10.0f;
 const int32_t c_defaultMultiSample = 0;
@@ -61,6 +66,21 @@ const float c_cameraTranslateDeltaScale = 0.025f;
 const float c_cameraRotateDeltaScale = 0.01f;
 const float c_deltaAdjust = 0.05f;
 const float c_deltaAdjustSmall = 0.01f;
+
+const wchar_t* c_visualizeTechniques[] =
+{
+	L"Default",
+	L"UnitDepth",
+	L"ViewDepth",
+	L"Normals",
+	L"Velocity",
+	L"Roughness",
+	L"Metalness",
+	L"Specular",
+	L"LightMask",
+	L"ShadowMap",
+	L"ShadowMask"
+};
 
 Vector4 projectUnit(const ui::Rect& rc, const ui::Point& pnt)
 {
@@ -132,6 +152,15 @@ bool PerspectiveRenderControl::create(ui::Widget* parent, SceneEditorContext* co
 		m_context->getRenderSystem(),
 		1
 	))
+		return false;
+
+	m_screenRenderer = new render::ScreenRenderer();
+	if (!m_screenRenderer->create(
+		m_context->getRenderSystem()
+	))
+		return false;
+
+	if (!m_context->getResourceManager()->bind(c_debugShader, m_debugShader))
 		return false;
 
 	m_renderWidget->addEventHandler< ui::MouseButtonDownEvent >(this, &PerspectiveRenderControl::eventButtonDown);
@@ -376,6 +405,20 @@ void PerspectiveRenderControl::showSelectionRectangle(const ui::Rect& rect)
 	m_selectionRectangle = rect;
 }
 
+void PerspectiveRenderControl::getDebugTargets(std::vector< render::DebugTarget >& outDebugTargets)
+{
+	if (m_worldRenderer)
+		m_worldRenderer->getDebugTargets(outDebugTargets);
+}
+
+void PerspectiveRenderControl::setDebugTarget(const render::DebugTarget* debugTarget)
+{
+	if (debugTarget)
+		m_debugTarget = *debugTarget;
+	else
+		m_debugTarget.texture = nullptr;
+}
+
 void PerspectiveRenderControl::updateSettings()
 {
 	const PropertyGroup* settings = m_context->getEditor()->getSettings();
@@ -536,6 +579,15 @@ void PerspectiveRenderControl::eventPaint(ui::PaintEvent* event)
 		m_worldRenderer->render(m_renderView, 0);
 		m_worldRenderer->endRender(m_renderView, 0, deltaTime);
 
+		// Render debug target.
+		if (m_debugTarget.texture)
+		{
+			m_debugShader->setTechnique(c_visualizeTechniques[m_debugTarget.visualize]);
+			m_debugShader->setTextureParameter(L"DebugTexture", m_debugTarget.texture);
+			m_debugShader->setVectorParameter(L"Transform", Vector4(0.0f, 0.0f, 1.0f, 0.0f));
+			m_screenRenderer->draw(m_renderView, m_debugShader);
+		}
+
 		// Render wire guides.
 		m_primitiveRenderer->begin(0, projection);
 		m_primitiveRenderer->setClipDistance(m_worldRenderView.getViewFrustum().getNearZ());
@@ -687,19 +739,6 @@ void PerspectiveRenderControl::eventPaint(ui::PaintEvent* event)
 		m_renderView->end();
 		m_renderView->present();
 	}
-
-	// Debug world renderer targets.
-	std::vector< render::DebugTarget > debugTargets;
-	m_worldRenderer->getDebugTargets(debugTargets);
-
-	// Debug profile render targets.
-	for (auto profile : m_context->getEditorProfiles())
-		profile->getDebugTargets(m_context, debugTargets);
-
-	// Push debug targets to context.
-	m_context->clearDebugTargets();
-	for (auto debugTarget : debugTargets)
-		m_context->addDebugTarget(debugTarget);
 
 	event->consume();
 }

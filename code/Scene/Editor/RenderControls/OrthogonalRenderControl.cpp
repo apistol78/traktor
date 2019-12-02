@@ -355,6 +355,16 @@ void OrthogonalRenderControl::showSelectionRectangle(const ui::Rect& rect)
 	m_selectionRectangle = rect;
 }
 
+void OrthogonalRenderControl::getDebugTargets(std::vector< render::DebugTarget >& outDebugTargets)
+{
+	if (m_worldRenderer)
+		m_worldRenderer->getDebugTargets(outDebugTargets);
+}
+
+void OrthogonalRenderControl::setDebugTarget(const render::DebugTarget* debugTarget)
+{
+}
+
 void OrthogonalRenderControl::updateSettings()
 {
 	Ref< PropertyGroup > colors = m_context->getEditor()->getSettings()->getProperty< PropertyGroup >(L"Editor.Colors");

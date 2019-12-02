@@ -1,385 +1,385 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.i18n.Dictionary">
-  <map>
-    <item>
-      <first>SCENE_CREATE_PREVIEW_SCENE_DESCRIPTION</first>
-      <second>Create preview scene...</second>
-    </item>
-    <item>
-      <first>SCENE_EDITOR_AA</first>
-      <second>Antialias</second>
-    </item>
-    <item>
-      <first>SCENE_EDITOR_ADD_ENTITY</first>
-      <second>Add entity...</second>
-    </item>
-    <item>
-      <first>SCENE_EDITOR_ADD_COMPONENT_ENTITY</first>
-      <second>Add component entity...</second>
-    </item>
-    <item>
-      <first>SCENE_EDITOR_ADD_GROUP_ENTITY</first>
-      <second>Add group entity</second>
-    </item>
-    <item>
-      <first>SCENE_EDITOR_ADD_REFERENCE</first>
-      <second>References</second>
-    </item>
-    <item>
-      <first>SCENE_EDITOR_AO</first>
-      <second>Ambient occlusion</second>
-    </item>
-    <item>
-      <first>SCENE_EDITOR_ASPECT</first>
-      <second>Aspect</second>
-    </item>
-    <item>
-      <first>SCENE_EDITOR_BROWSE_POSTPROCESS</first>
-      <second>Browse postprocessing filter...</second>
-    </item>
-    <item>
-      <first>SCENE_EDITOR_CAMERA_BANK</first>
-      <second>Bank</second>
-    </item>
-    <item>
-      <first>SCENE_EDITOR_CAMERA_HEAD</first>
-      <second>Head</second>
-    </item>
-    <item>
-      <first>SCENE_EDITOR_CAMERA_PITCH</first>
-      <second>Pitch</second>
-    </item>
-    <item>
-      <first>SCENE_EDITOR_CAMERA_POSITION</first>
-      <second>Camera position {0} {1} {2}</second>
-    </item>
-    <item>
-      <first>SCENE_EDITOR_CAMERA_X</first>
-      <second>X</second>
-    </item>
-    <item>
-      <first>SCENE_EDITOR_CAMERA_Y</first>
-      <second>Y</second>
-    </item>
-    <item>
-      <first>SCENE_EDITOR_CAMERA_Z</first>
-      <second>Z</second>
-    </item>
-    <item>
-      <first>SCENE_EDITOR_CONTROLLER</first>
-      <second>Controller</second>
-    </item>
-    <item>
-      <first>SCENE_EDITOR_CREATE_EXTERNAL</first>
-      <second>Create external...</second>
-    </item>
-    <item>
-      <first>SCENE_EDITOR_DELTA_SCALE</first>
-      <second>Delta {0}</second>
-    </item>
-    <item>
-      <first>SCENE_EDITOR_DEPENDENCY_FILES</first>
-      <second>External file(s)</second>
-    </item>
-    <item>
-      <first>SCENE_EDITOR_DEPENDENCY_GROUP</first>
-      <second>Group &quot;{0}&quot;</second>
-    </item>
-    <item>
-      <first>SCENE_EDITOR_DEPENDENCY_INVESTIGATOR</first>
-      <second>Dependencies</second>
-    </item>
-    <item>
-      <first>SCENE_EDITOR_DOUBLE_VIEW</first>
-      <second>Double view</second>
-    </item>
-    <item>
-      <first>SCENE_EDITOR_EDIT_SPACE_OBJECT</first>
-      <second>Edit object space</second>
-    </item>
-    <item>
-      <first>SCENE_EDITOR_EDIT_SPACE_WORLD</first>
-      <second>Edit world space</second>
-    </item>
-    <item>
-      <first>SCENE_EDITOR_ENTITIES</first>
-      <second>Entities</second>
-    </item>
-    <item>
-      <first>SCENE_EDITOR_ENTITY_NAME</first>
-      <second>Name</second>
-    </item>
-    <item>
-      <first>SCENE_EDITOR_FILTER_ENTITY</first>
-      <second>Filter on entity type...</second>
-    </item>
-    <item>
-      <first>SCENE_EDITOR_FIND_IN_DATABASE</first>
-      <second>Find in database</second>
-    </item>
-    <item>
-      <first>SCENE_EDITOR_FRAME_TIME</first>
-      <second>Total time {0} ms, FPS {1}</second>
-    </item>
-    <item>
-      <first>SCENE_EDITOR_GUIDES</first>
-      <second>Guides</second>
-    </item>
-    <item>
-      <first>SCENE_EDITOR_GUIDES_NAME</first>
-      <second>Name</second>
-    </item>
-    <item>
-      <first>SCENE_EDITOR_GUIDES_VISIBLE</first>
-      <second>Visible</second>
-    </item>
-    <item>
-      <first>SCENE_EDITOR_LOADING</first>
-      <second>Loading scene...</second>
-    </item>
-    <item>
-      <first>SCENE_EDITOR_LOADING_TITLE</first>
-      <second>Loading</second>
-    </item>
-    <item>
-      <first>SCENE_EDITOR_MISC</first>
-      <second>Misc</second>
-    </item>
-    <item>
-      <first>SCENE_EDITOR_MOTION_BLUR</first>
-      <second>Motion blur</second>
-    </item>
-    <item>
-      <first>SCENE_EDITOR_MOVE_ENTITY_INTO_VIEW</first>
-      <second>Move entity infront of camera</second>
-    </item>
-    <item>
-      <first>SCENE_EDITOR_MOVE_TO_ENTITY</first>
-      <second>Move to entity</second>
-    </item>
-    <item>
-      <first>SCENE_EDITOR_MOVE_UP</first>
-      <second>Move up</second>
-    </item>
-    <item>
-      <first>SCENE_EDITOR_MOVE_DOWN</first>
-      <second>Move down</second>
-    </item>
-    <item>
-      <first>SCENE_EDITOR_PHYSICS</first>
-      <second>Physic bodies {0}, {1} active</second>
-    </item>
-    <item>
-      <first>SCENE_EDITOR_PLAY</first>
-      <second>Play</second>
-    </item>
-    <item>
-      <first>SCENE_EDITOR_POST_PROCESS</first>
-      <second>Post Process</second>
-    </item>
-    <item>
-      <first>SCENE_EDITOR_QUADRUPLE_VIEW</first>
-      <second>Four views</second>
-    </item>
-    <item>
-      <first>SCENE_EDITOR_QUALITY</first>
-      <second>Quality</second>
-    </item>
-    <item>
-      <first>SCENE_EDITOR_QUALITY_TOOLTIP</first>
-      <second>Change render quality</second>
-    </item>
-    <item>
-      <first>SCENE_EDITOR_REFLECTIONS</first>
-      <second>Reflections</second>
-    </item>
-    <item>
-      <first>SCENE_EDITOR_REMOVE_ENTITY</first>
-      <second>Remove</second>
-    </item>
-    <item>
-      <first>SCENE_EDITOR_RENDER_TIME</first>
-      <second>Render time {0} ms, FPS {1}</second>
-    </item>
-    <item>
-      <first>SCENE_EDITOR_RESOLVE_EXTERNAL</first>
-      <second>Resolve external</second>
-    </item>
-    <item>
-      <first>SCENE_EDITOR_RESET</first>
-      <second>Reset</second>
-    </item>
-    <item>
-      <first>SCENE_EDITOR_REWIND</first>
-      <second>Rewind</second>
-    </item>
-    <item>
-      <first>SCENE_EDITOR_ROTATE</first>
-      <second>Rotate</second>
-    </item>
-    <item>
-      <first>SCENE_EDITOR_SCALE</first>
-      <second>Scale</second>
-    </item>
-    <item>
-      <first>SCENE_EDITOR_SETTINGS</first>
-      <second>Scene</second>
-    </item>
-    <item>
-      <first>SCENE_EDITOR_SETTINGS_BUILD_LIGHTING</first>
-      <second>Bake lighting in editor</second>
-    </item>
-    <item>
-      <first>SCENE_EDITOR_SETTINGS_BUILD_NAVMESH</first>
-      <second>Build NavMesh in editor</second>
-    </item>
-    <item>
-      <first>SCENE_EDITOR_SETTINGS_BUILD_OCCLUSION</first>
-      <second>Bake terrain occlusion in editor</second>
-    </item>
-    <item>
-      <first>SCENE_EDITOR_SETTINGS_BUILD_WHEN_DROP</first>
-      <second>Auto-build entity when drag&apos;n&apos;drop</second>
-    </item>
-    <item>
-      <first>SCENE_EDITOR_SETTINGS_FOV</first>
-      <second>Field of view</second>
-    </item>
-    <item>
-      <first>SCENE_EDITOR_SETTINGS_INVERT_MOUSE_WHEEL</first>
-      <second>Invert mouse wheel</second>
-    </item>
-    <item>
-      <first>SCENE_EDITOR_SETTINGS_INVERT_PAN_Y</first>
-      <second>Invert mouse Y when panning</second>
-    </item>
-    <item>
-      <first>SCENE_EDITOR_SETTINGS_MOUSE_WHEEL_RATE</first>
-      <second>Mouse wheel rate</second>
-    </item>
-    <item>
-      <first>SCENE_EDITOR_SETTINGS_WORLDRENDERER_TYPE</first>
-      <second>World renderer</second>
-    </item>
-    <item>
-      <first>SCENE_EDITOR_SETTINGS_WORLD_RENDERER</first>
-      <second>World renderer</second>
-    </item>
-    <item>
-      <first>SCENE_EDITOR_SET_CAMERA_MESSAGE</first>
-      <second>Set camera position and orientation</second>
-    </item>
-    <item>
-      <first>SCENE_EDITOR_SET_CAMERA_TITLE</first>
-      <second>Set camera position</second>
-    </item>
-    <item>
-      <first>SCENE_EDITOR_SHADOWS</first>
-      <second>Shadows</second>
-    </item>
-    <item>
-      <first>SCENE_EDITOR_SINGLE_VIEW</first>
-      <second>Single view</second>
-    </item>
-    <item>
-      <first>SCENE_EDITOR_STOP</first>
-      <second>Stop</second>
-    </item>
-    <item>
-      <first>SCENE_EDITOR_TOGGLE_GRID</first>
-      <second>Toggle grid</second>
-    </item>
-    <item>
-      <first>SCENE_EDITOR_TOGGLE_GUIDE</first>
-      <second>Toggle guide lines</second>
-    </item>
-    <item>
-      <first>SCENE_EDITOR_TOGGLE_PICK</first>
-      <second>Toggle pick</second>
-    </item>
-    <item>
-      <first>SCENE_EDITOR_TOGGLE_POSTPROCESS</first>
-      <second>Toggle post processing</second>
-    </item>
-    <item>
-      <first>SCENE_EDITOR_TOGGLE_SNAP</first>
-      <second>Toggle snap</second>
-    </item>
-    <item>
-      <first>SCENE_EDITOR_TOGGLE_SNAP_SPACING</first>
-      <second>Snap spacing</second>
-    </item>
-    <item>
-      <first>SCENE_EDITOR_TOGGLE_X</first>
-      <second>Toggle X axis</second>
-    </item>
-    <item>
-      <first>SCENE_EDITOR_TOGGLE_Y</first>
-      <second>Toggle Y axis</second>
-    </item>
-    <item>
-      <first>SCENE_EDITOR_TOGGLE_Z</first>
-      <second>Toggle Z axis</second>
-    </item>
-    <item>
-      <first>SCENE_EDITOR_TRANSLATE</first>
-      <second>Translate</second>
-    </item>
-    <item>
-      <first>SCENE_EDITOR_UNNAMED_ENTITY</first>
-      <second>Unnamed</second>
-    </item>
-    <item>
-      <first>SCENE_EDITOR_VIEW_BACK</first>
-      <second>Back</second>
-    </item>
-    <item>
-      <first>SCENE_EDITOR_VIEW_BOTTOM</first>
-      <second>Bottom</second>
-    </item>
-    <item>
-      <first>SCENE_EDITOR_VIEW_CAMERA</first>
-      <second>Camera</second>
-    </item>
-    <item>
-      <first>SCENE_EDITOR_VIEW_PROBE</first>
-      <second>Probe</second>
-    </item>
-    <item>
-      <first>SCENE_EDITOR_VIEW_FINAL</first>
-      <second>Final</second>
-    </item>
-    <item>
-      <first>SCENE_EDITOR_VIEW_DEBUG</first>
-      <second>Debug</second>
-    </item>
-    <item>
-      <first>SCENE_EDITOR_VIEW_FRONT</first>
-      <second>Front</second>
-    </item>
-    <item>
-      <first>SCENE_EDITOR_VIEW_LEFT</first>
-      <second>Left</second>
-    </item>
-    <item>
-      <first>SCENE_EDITOR_VIEW_MODE</first>
-      <second>View mode</second>
-    </item>
-    <item>
-      <first>SCENE_EDITOR_VIEW_PERSPECTIVE</first>
-      <second>Perspective</second>
-    </item>
-    <item>
-      <first>SCENE_EDITOR_VIEW_REFERENCES</first>
-      <second>References</second>
-    </item>
-    <item>
-      <first>SCENE_EDITOR_VIEW_RIGHT</first>
-      <second>Right</second>
-    </item>
-    <item>
-      <first>SCENE_EDITOR_VIEW_TOP</first>
-      <second>Top</second>
-    </item>
-  </map>
+	<map>
+		<item>
+			<first>SCENE_CREATE_PREVIEW_SCENE_DESCRIPTION</first>
+			<second>Create preview scene...</second>
+		</item>
+		<item>
+			<first>SCENE_EDITOR_AA</first>
+			<second>Antialias</second>
+		</item>
+		<item>
+			<first>SCENE_EDITOR_ADD_ENTITY</first>
+			<second>Add entity...</second>
+		</item>
+		<item>
+			<first>SCENE_EDITOR_ADD_COMPONENT_ENTITY</first>
+			<second>Add component entity...</second>
+		</item>
+		<item>
+			<first>SCENE_EDITOR_ADD_GROUP_ENTITY</first>
+			<second>Add group entity</second>
+		</item>
+		<item>
+			<first>SCENE_EDITOR_ADD_REFERENCE</first>
+			<second>References</second>
+		</item>
+		<item>
+			<first>SCENE_EDITOR_AO</first>
+			<second>Ambient occlusion</second>
+		</item>
+		<item>
+			<first>SCENE_EDITOR_ASPECT</first>
+			<second>Aspect</second>
+		</item>
+		<item>
+			<first>SCENE_EDITOR_BROWSE_POSTPROCESS</first>
+			<second>Browse postprocessing filter...</second>
+		</item>
+		<item>
+			<first>SCENE_EDITOR_CAMERA_BANK</first>
+			<second>Bank</second>
+		</item>
+		<item>
+			<first>SCENE_EDITOR_CAMERA_HEAD</first>
+			<second>Head</second>
+		</item>
+		<item>
+			<first>SCENE_EDITOR_CAMERA_PITCH</first>
+			<second>Pitch</second>
+		</item>
+		<item>
+			<first>SCENE_EDITOR_CAMERA_POSITION</first>
+			<second>Camera position {0} {1} {2}</second>
+		</item>
+		<item>
+			<first>SCENE_EDITOR_CAMERA_X</first>
+			<second>X</second>
+		</item>
+		<item>
+			<first>SCENE_EDITOR_CAMERA_Y</first>
+			<second>Y</second>
+		</item>
+		<item>
+			<first>SCENE_EDITOR_CAMERA_Z</first>
+			<second>Z</second>
+		</item>
+		<item>
+			<first>SCENE_EDITOR_CONTROLLER</first>
+			<second>Controller</second>
+		</item>
+		<item>
+			<first>SCENE_EDITOR_CREATE_EXTERNAL</first>
+			<second>Create external...</second>
+		</item>
+		<item>
+			<first>SCENE_EDITOR_DEBUG_MODE</first>
+			<second>Debug mode</second>
+		</item>
+		<item>
+			<first>SCENE_EDITOR_DELTA_SCALE</first>
+			<second>Delta {0}</second>
+		</item>
+		<item>
+			<first>SCENE_EDITOR_DEPENDENCY_FILES</first>
+			<second>External file(s)</second>
+		</item>
+		<item>
+			<first>SCENE_EDITOR_DEPENDENCY_GROUP</first>
+			<second>Group &quot;{0}&quot;</second>
+		</item>
+		<item>
+			<first>SCENE_EDITOR_DEPENDENCY_INVESTIGATOR</first>
+			<second>Dependencies</second>
+		</item>
+		<item>
+			<first>SCENE_EDITOR_DOUBLE_VIEW</first>
+			<second>Double view</second>
+		</item>
+		<item>
+			<first>SCENE_EDITOR_EDIT_SPACE_OBJECT</first>
+			<second>Edit object space</second>
+		</item>
+		<item>
+			<first>SCENE_EDITOR_EDIT_SPACE_WORLD</first>
+			<second>Edit world space</second>
+		</item>
+		<item>
+			<first>SCENE_EDITOR_ENTITIES</first>
+			<second>Entities</second>
+		</item>
+		<item>
+			<first>SCENE_EDITOR_ENTITY_NAME</first>
+			<second>Name</second>
+		</item>
+		<item>
+			<first>SCENE_EDITOR_FILTER_ENTITY</first>
+			<second>Filter on entity type...</second>
+		</item>
+		<item>
+			<first>SCENE_EDITOR_FIND_IN_DATABASE</first>
+			<second>Find in database</second>
+		</item>
+		<item>
+			<first>SCENE_EDITOR_FRAME_TIME</first>
+			<second>Total time {0} ms, FPS {1}</second>
+		</item>
+		<item>
+			<first>SCENE_EDITOR_GUIDES</first>
+			<second>Guides</second>
+		</item>
+		<item>
+			<first>SCENE_EDITOR_GUIDES_NAME</first>
+			<second>Name</second>
+		</item>
+		<item>
+			<first>SCENE_EDITOR_GUIDES_VISIBLE</first>
+			<second>Visible</second>
+		</item>
+		<item>
+			<first>SCENE_EDITOR_LOADING</first>
+			<second>Loading scene...</second>
+		</item>
+		<item>
+			<first>SCENE_EDITOR_LOADING_TITLE</first>
+			<second>Loading</second>
+		</item>
+		<item>
+			<first>SCENE_EDITOR_MISC</first>
+			<second>Misc</second>
+		</item>
+		<item>
+			<first>SCENE_EDITOR_MOTION_BLUR</first>
+			<second>Motion blur</second>
+		</item>
+		<item>
+			<first>SCENE_EDITOR_MOVE_ENTITY_INTO_VIEW</first>
+			<second>Move entity infront of camera</second>
+		</item>
+		<item>
+			<first>SCENE_EDITOR_MOVE_TO_ENTITY</first>
+			<second>Move to entity</second>
+		</item>
+		<item>
+			<first>SCENE_EDITOR_MOVE_UP</first>
+			<second>Move up</second>
+		</item>
+		<item>
+			<first>SCENE_EDITOR_MOVE_DOWN</first>
+			<second>Move down</second>
+		</item>
+		<item>
+			<first>SCENE_EDITOR_PHYSICS</first>
+			<second>Physic bodies {0}, {1} active</second>
+		</item>
+		<item>
+			<first>SCENE_EDITOR_PLAY</first>
+			<second>Play</second>
+		</item>
+		<item>
+			<first>SCENE_EDITOR_POST_PROCESS</first>
+			<second>Post Process</second>
+		</item>
+		<item>
+			<first>SCENE_EDITOR_QUADRUPLE_VIEW</first>
+			<second>Four views</second>
+		</item>
+		<item>
+			<first>SCENE_EDITOR_QUALITY</first>
+			<second>Quality</second>
+		</item>
+		<item>
+			<first>SCENE_EDITOR_QUALITY_TOOLTIP</first>
+			<second>Change render quality</second>
+		</item>
+		<item>
+			<first>SCENE_EDITOR_REFLECTIONS</first>
+			<second>Reflections</second>
+		</item>
+		<item>
+			<first>SCENE_EDITOR_REMOVE_ENTITY</first>
+			<second>Remove</second>
+		</item>
+		<item>
+			<first>SCENE_EDITOR_RENDER_TIME</first>
+			<second>Render time {0} ms, FPS {1}</second>
+		</item>
+		<item>
+			<first>SCENE_EDITOR_RESOLVE_EXTERNAL</first>
+			<second>Resolve external</second>
+		</item>
+		<item>
+			<first>SCENE_EDITOR_RESET</first>
+			<second>Reset</second>
+		</item>
+		<item>
+			<first>SCENE_EDITOR_REWIND</first>
+			<second>Rewind</second>
+		</item>
+		<item>
+			<first>SCENE_EDITOR_ROTATE</first>
+			<second>Rotate</second>
+		</item>
+		<item>
+			<first>SCENE_EDITOR_SCALE</first>
+			<second>Scale</second>
+		</item>
+		<item>
+			<first>SCENE_EDITOR_SETTINGS</first>
+			<second>Scene</second>
+		</item>
+		<item>
+			<first>SCENE_EDITOR_SETTINGS_BUILD_LIGHTING</first>
+			<second>Bake lighting in editor</second>
+		</item>
+		<item>
+			<first>SCENE_EDITOR_SETTINGS_BUILD_NAVMESH</first>
+			<second>Build NavMesh in editor</second>
+		</item>
+		<item>
+			<first>SCENE_EDITOR_SETTINGS_BUILD_OCCLUSION</first>
+			<second>Bake terrain occlusion in editor</second>
+		</item>
+		<item>
+			<first>SCENE_EDITOR_SETTINGS_BUILD_WHEN_DROP</first>
+			<second>Auto-build entity when drag&apos;n&apos;drop</second>
+		</item>
+		<item>
+			<first>SCENE_EDITOR_SETTINGS_FOV</first>
+			<second>Field of view</second>
+		</item>
+		<item>
+			<first>SCENE_EDITOR_SETTINGS_INVERT_MOUSE_WHEEL</first>
+			<second>Invert mouse wheel</second>
+		</item>
+		<item>
+			<first>SCENE_EDITOR_SETTINGS_INVERT_PAN_Y</first>
+			<second>Invert mouse Y when panning</second>
+		</item>
+		<item>
+			<first>SCENE_EDITOR_SETTINGS_MOUSE_WHEEL_RATE</first>
+			<second>Mouse wheel rate</second>
+		</item>
+		<item>
+			<first>SCENE_EDITOR_SETTINGS_WORLDRENDERER_TYPE</first>
+			<second>World renderer</second>
+		</item>
+		<item>
+			<first>SCENE_EDITOR_SETTINGS_WORLD_RENDERER</first>
+			<second>World renderer</second>
+		</item>
+		<item>
+			<first>SCENE_EDITOR_SET_CAMERA_MESSAGE</first>
+			<second>Set camera position and orientation</second>
+		</item>
+		<item>
+			<first>SCENE_EDITOR_SET_CAMERA_TITLE</first>
+			<second>Set camera position</second>
+		</item>
+		<item>
+			<first>SCENE_EDITOR_SHADOWS</first>
+			<second>Shadows</second>
+		</item>
+		<item>
+			<first>SCENE_EDITOR_SINGLE_VIEW</first>
+			<second>Single view</second>
+		</item>
+		<item>
+			<first>SCENE_EDITOR_STOP</first>
+			<second>Stop</second>
+		</item>
+		<item>
+			<first>SCENE_EDITOR_TOGGLE_GRID</first>
+			<second>Toggle grid</second>
+		</item>
+		<item>
+			<first>SCENE_EDITOR_TOGGLE_GUIDE</first>
+			<second>Toggle guide lines</second>
+		</item>
+		<item>
+			<first>SCENE_EDITOR_TOGGLE_PICK</first>
+			<second>Toggle pick</second>
+		</item>
+		<item>
+			<first>SCENE_EDITOR_TOGGLE_POSTPROCESS</first>
+			<second>Toggle post processing</second>
+		</item>
+		<item>
+			<first>SCENE_EDITOR_TOGGLE_SNAP</first>
+			<second>Toggle snap</second>
+		</item>
+		<item>
+			<first>SCENE_EDITOR_TOGGLE_SNAP_SPACING</first>
+			<second>Snap spacing</second>
+		</item>
+		<item>
+			<first>SCENE_EDITOR_TOGGLE_X</first>
+			<second>Toggle X axis</second>
+		</item>
+		<item>
+			<first>SCENE_EDITOR_TOGGLE_Y</first>
+			<second>Toggle Y axis</second>
+		</item>
+		<item>
+			<first>SCENE_EDITOR_TOGGLE_Z</first>
+			<second>Toggle Z axis</second>
+		</item>
+		<item>
+			<first>SCENE_EDITOR_TRANSLATE</first>
+			<second>Translate</second>
+		</item>
+		<item>
+			<first>SCENE_EDITOR_UNNAMED_ENTITY</first>
+			<second>Unnamed</second>
+		</item>
+		<item>
+			<first>SCENE_EDITOR_VIEW_BACK</first>
+			<second>Back</second>
+		</item>
+		<item>
+			<first>SCENE_EDITOR_VIEW_BOTTOM</first>
+			<second>Bottom</second>
+		</item>
+		<item>
+			<first>SCENE_EDITOR_VIEW_CAMERA</first>
+			<second>Camera</second>
+		</item>
+		<item>
+			<first>SCENE_EDITOR_VIEW_PROBE</first>
+			<second>Probe</second>
+		</item>
+		<item>
+			<first>SCENE_EDITOR_VIEW_FINAL</first>
+			<second>Final</second>
+		</item>
+		<item>
+			<first>SCENE_EDITOR_VIEW_FRONT</first>
+			<second>Front</second>
+		</item>
+		<item>
+			<first>SCENE_EDITOR_VIEW_LEFT</first>
+			<second>Left</second>
+		</item>
+		<item>
+			<first>SCENE_EDITOR_VIEW_MODE</first>
+			<second>View mode</second>
+		</item>
+		<item>
+			<first>SCENE_EDITOR_VIEW_PERSPECTIVE</first>
+			<second>Perspective</second>
+		</item>
+		<item>
+			<first>SCENE_EDITOR_VIEW_REFERENCES</first>
+			<second>References</second>
+		</item>
+		<item>
+			<first>SCENE_EDITOR_VIEW_RIGHT</first>
+			<second>Right</second>
+		</item>
+		<item>
+			<first>SCENE_EDITOR_VIEW_TOP</first>
+			<second>Top</second>
+		</item>
+	</map>
 </object>

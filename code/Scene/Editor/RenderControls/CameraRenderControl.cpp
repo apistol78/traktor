@@ -267,6 +267,14 @@ void CameraRenderControl::showSelectionRectangle(const ui::Rect& rect)
 	m_selectionRectangle = rect;
 }
 
+void CameraRenderControl::getDebugTargets(std::vector< render::DebugTarget >& outDebugTargets)
+{
+}
+
+void CameraRenderControl::setDebugTarget(const render::DebugTarget* debugTarget)
+{
+}
+
 void CameraRenderControl::updateSettings()
 {
 	const PropertyGroup* settings = m_context->getEditor()->getSettings();

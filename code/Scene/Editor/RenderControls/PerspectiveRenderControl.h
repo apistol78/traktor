@@ -4,6 +4,7 @@
 #include "Core/Math/Color4ub.h"
 #include "Core/Math/Matrix44.h"
 #include "Core/Timer/Timer.h"
+#include "Resource/Proxy.h"
 #include "Scene/Editor/ISceneRenderControl.h"
 #include "Scene/Editor/RenderControlModel.h"
 #include "Ui/Rect.h"
@@ -24,8 +25,10 @@ class Widget;
 	{
 
 class IRenderView;
-class RenderTargetSet;
 class PrimitiveRenderer;
+class RenderTargetSet;
+class ScreenRenderer;
+class Shader;
 
 	}
 
@@ -76,12 +79,19 @@ public:
 
 	virtual void showSelectionRectangle(const ui::Rect& rect) override final;
 
+	virtual void getDebugTargets(std::vector< render::DebugTarget >& outDebugTargets) override final;
+
+	virtual void setDebugTarget(const render::DebugTarget* debugTarget) override final;
+
 private:
 	Ref< SceneEditorContext > m_context;
 	Ref< ui::Container > m_containerAspect;
 	Ref< ui::Widget > m_renderWidget;
 	Ref< render::IRenderView > m_renderView;
 	Ref< render::PrimitiveRenderer > m_primitiveRenderer;
+	Ref< render::ScreenRenderer > m_screenRenderer;
+	resource::Proxy< render::Shader > m_debugShader;
+	render::DebugTarget m_debugTarget;
 	const TypeInfo* m_worldRendererType;
 	Ref< world::IWorldRenderer > m_worldRenderer;
 	world::WorldRenderView m_worldRenderView;
