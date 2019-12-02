@@ -96,7 +96,11 @@ bool RenderTargetDepthVk::create(const RenderTargetSetCreateDesc& setDesc, const
 	VkImageCreateInfo imageCreateInfo = {};
 	imageCreateInfo.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
 	imageCreateInfo.imageType = VK_IMAGE_TYPE_2D;
+#if !defined(__ANDROID__)
 	imageCreateInfo.format = VK_FORMAT_D32_SFLOAT;
+#else
+	imageCreateInfo.format = VK_FORMAT_D16_UNORM;
+#endif
 	imageCreateInfo.extent.width = setDesc.width;
 	imageCreateInfo.extent.height = setDesc.height;
 	imageCreateInfo.extent.depth = 1;
@@ -358,11 +362,6 @@ void RenderTargetDepthVk::prepareAsTexture(VkCommandBuffer cmdBuffer)
 	);
 
 	m_imageLayout = layoutTransitionBarrier.newLayout;
-}
-
-void RenderTargetDepthVk::discard()
-{
-	m_imageLayout = VK_IMAGE_LAYOUT_UNDEFINED;
 }
 
 	}

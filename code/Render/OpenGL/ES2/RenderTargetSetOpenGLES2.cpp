@@ -365,22 +365,6 @@ ISimpleTexture* RenderTargetSetOpenGLES2::getDepthTexture() const
 	return m_depthTarget;
 }
 
-void RenderTargetSetOpenGLES2::discard()
-{
-#if defined(__ANDROID__)
-	if (s_glDiscardFramebufferEXT)
-	{
-		const GLenum discards[]  = { GL_COLOR_ATTACHMENT0 };
-		for (int32_t i = 0; i < m_desc.count; ++i)
-		{
-			glBindFramebuffer(GL_FRAMEBUFFER, m_targetFBO[i]);
-			(*s_glDiscardFramebufferEXT)(GL_FRAMEBUFFER, 1, discards);
-		}
-	}
-#endif
-	m_contentValid = false;
-}
-
 bool RenderTargetSetOpenGLES2::isContentValid() const
 {
 	return m_contentValid;

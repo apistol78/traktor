@@ -60,8 +60,6 @@ public:
 
 	void flush();
 
-	void flushBase();
-
 	void begin(
 		render::RenderContext* renderContext,
 		Terrain* terrain,

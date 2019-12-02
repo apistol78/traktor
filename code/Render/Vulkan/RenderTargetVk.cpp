@@ -373,10 +373,5 @@ void RenderTargetVk::prepareForReadBack(VkCommandBuffer cmdBuffer)
 	m_accessFlags = imb.dstAccessMask;
 }
 
-void RenderTargetVk::discard()
-{
-	m_imageLayout = VK_IMAGE_LAYOUT_UNDEFINED;
-}
-
 	}
 }

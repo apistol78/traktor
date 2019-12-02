@@ -50,7 +50,6 @@ struct TerrainSurfaceRenderBlock : public render::RenderBlock
 				render::Clear cl;
 				cl.mask = render::CfColor;
 				cl.colors[0] = Color4f(0.0f, 0.0f, 0.0f, 0.0f);
-
 				renderView->begin(renderTargetSet, 0, &cl);
 			}
 			else
@@ -164,12 +163,6 @@ void TerrainSurfaceCache::flush(uint32_t patchId)
 		m_alloc.free(entry.tile);
 		entry.tile.dim = 0;
 	}
-}
-
-void TerrainSurfaceCache::flushBase()
-{
-	if (m_base)
-		m_base->discard();
 }
 
 void TerrainSurfaceCache::flush()

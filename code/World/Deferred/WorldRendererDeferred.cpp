@@ -237,6 +237,7 @@ bool WorldRendererDeferred::create(
 		rtscd.usingPrimaryDepthStencil = (desc.sharedDepthStencil == nullptr) ? true : false;
 		rtscd.sharedDepthStencil = desc.sharedDepthStencil;
 		rtscd.preferTiled = true;
+		rtscd.storeDepthStencil = true;					// Store depth for z-cull later.
 		rtscd.targets[0].format = render::TfR16F;		// Depth (R)
 		rtscd.targets[1].format = render::TfR16G16F;	// Normals (RG)
 		rtscd.targets[2].format = render::TfR11G11B10F;	// Metalness (R), Roughness (G), Specular (B)
@@ -262,6 +263,7 @@ bool WorldRendererDeferred::create(
 		rtscd.usingPrimaryDepthStencil = (desc.sharedDepthStencil == nullptr) ? true : false;
 		rtscd.sharedDepthStencil = desc.sharedDepthStencil;
 		rtscd.preferTiled = true;
+		rtscd.storeDepthStencil = false;
 		rtscd.targets[0].format = render::TfR16G16F;
 
 		m_velocityTargetSet = renderSystem->createRenderTargetSet(rtscd, T_FILE_LINE_W);
@@ -282,6 +284,7 @@ bool WorldRendererDeferred::create(
 		rtscd.createDepthStencil = false;
 		rtscd.usingPrimaryDepthStencil = false;
 		rtscd.preferTiled = true;
+		rtscd.storeDepthStencil = false;
 		rtscd.ignoreStencil = true;
 		rtscd.generateMips = true;
 #if !defined(__ANDROID__) && !defined(__IOS__)
@@ -314,6 +317,7 @@ bool WorldRendererDeferred::create(
 		rtscd.createDepthStencil = false;
 		rtscd.usingPrimaryDepthStencil = false;
 		rtscd.preferTiled = true;
+		rtscd.storeDepthStencil = false;
 		rtscd.ignoreStencil = true;
 		rtscd.generateMips = false;
 #if !defined(__ANDROID__) && !defined(__IOS__)
@@ -389,6 +393,7 @@ bool WorldRendererDeferred::create(
 			rtscd.usingPrimaryDepthStencil = false;
 			rtscd.ignoreStencil = true;
 			rtscd.preferTiled = true;
+			rtscd.storeDepthStencil = true;	// Used as texture.
 			if ((m_shadowCascadeTargetSet = renderSystem->createRenderTargetSet(rtscd, T_FILE_LINE_W)) == nullptr)
 				m_shadowsQuality = QuDisabled;
 
@@ -402,6 +407,7 @@ bool WorldRendererDeferred::create(
 			rtscd.usingPrimaryDepthStencil = false;
 			rtscd.ignoreStencil = true;
 			rtscd.preferTiled = true;
+			rtscd.storeDepthStencil = false;
 			rtscd.targets[0].format = render::TfR8;
 			rtscd.targets[0].sRGB = false;
 			if ((m_shadowMaskTargetSet = renderSystem->createRenderTargetSet(rtscd, T_FILE_LINE_W)) == nullptr)
@@ -422,6 +428,7 @@ bool WorldRendererDeferred::create(
 			rtscd.usingPrimaryDepthStencil = false;
 			rtscd.ignoreStencil = true;
 			rtscd.preferTiled = true;
+			rtscd.storeDepthStencil = true;	// Used as texture.
 			if ((m_shadowAtlasTargetSet = renderSystem->createRenderTargetSet(rtscd, T_FILE_LINE_W)) == nullptr)
 				m_shadowsQuality = QuDisabled;
 		}
@@ -446,6 +453,7 @@ bool WorldRendererDeferred::create(
 		rtscd.usingPrimaryDepthStencil = (desc.sharedDepthStencil == nullptr) ? true : false;
 		rtscd.sharedDepthStencil = desc.sharedDepthStencil;
 		rtscd.preferTiled = true;
+		rtscd.storeDepthStencil = false;
 #if !defined(__ANDROID__) && !defined(__IOS__)
 		rtscd.targets[0].format = render::TfR32G32B32A32F;
 #else

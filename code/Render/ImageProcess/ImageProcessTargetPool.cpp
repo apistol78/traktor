@@ -95,8 +95,6 @@ void ImageProcessTargetPool::releaseTarget(const RenderTargetSetCreateDesc& rtsc
 
 	it->acquired.remove(rts);
 	it->free.push_back(rts);
-
-	rts->discard();
 }
 
 	}

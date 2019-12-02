@@ -74,10 +74,6 @@ ISimpleTexture* RenderTargetSetPs4::getDepthTexture() const
 	return m_depthTarget;
 }
 
-void RenderTargetSetPs4::discard()
-{
-}
-
 bool RenderTargetSetPs4::isContentValid() const
 {
 	return true;

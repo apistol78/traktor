@@ -224,10 +224,6 @@ ISimpleTexture* RenderTargetSetPs3::getDepthTexture() const
 	return 0;
 }
 
-void RenderTargetSetPs3::discard()
-{
-}
-
 bool RenderTargetSetPs3::isContentValid() const
 {
 	return m_contentValid;

@@ -27,21 +27,19 @@ public:
 
 	bool create(const RenderTargetSetCreateDesc& setDesc);
 
-	virtual void destroy() T_OVERRIDE T_FINAL;
+	virtual void destroy() override final;
 
-	virtual int getWidth() const T_OVERRIDE T_FINAL;
+	virtual int getWidth() const override final;
 
-	virtual int getHeight() const T_OVERRIDE T_FINAL;
+	virtual int getHeight() const override final;
 
-	virtual ISimpleTexture* getColorTexture(int index) const T_OVERRIDE T_FINAL;
+	virtual ISimpleTexture* getColorTexture(int index) const override final;
 
-	virtual ISimpleTexture* getDepthTexture() const T_OVERRIDE T_FINAL;
+	virtual ISimpleTexture* getDepthTexture() const override final;
 
-	virtual void discard() T_OVERRIDE T_FINAL;
+	virtual bool isContentValid() const override final;
 
-	virtual bool isContentValid() const T_OVERRIDE T_FINAL;
-
-	virtual bool read(int index, void* buffer) const T_OVERRIDE T_FINAL;
+	virtual bool read(int index, void* buffer) const override final;
 
 	RenderTargetPs4* getColorTargetPs4(int32_t index) const { return m_colorTargets[index]; }
 
