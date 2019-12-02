@@ -658,9 +658,6 @@ bool TerrainComponent::updatePatches(const uint32_t* region)
 		}
 	}
 
-	if (m_surfaceCache)
-		m_surfaceCache->flushBase();
-
 	for (const auto layer : m_layers)
 		layer->updatePatches(*this);
 

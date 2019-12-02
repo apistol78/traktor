@@ -224,11 +224,6 @@ ISimpleTexture* RenderTargetSetOpenGL::getDepthTexture() const
 	return m_depthTarget;
 }
 
-void RenderTargetSetOpenGL::discard()
-{
-	m_contentValid = false;
-}
-
 bool RenderTargetSetOpenGL::isContentValid() const
 {
 	return m_contentValid;

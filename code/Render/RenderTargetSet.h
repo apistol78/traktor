@@ -42,9 +42,6 @@ public:
 	/*! Get depth target texture. */
 	virtual ISimpleTexture* getDepthTexture() const = 0;
 
-	/*! Discard target content. */
-	virtual void discard() = 0;
-
 	/*! Check if target content is valid. */
 	virtual bool isContentValid() const = 0;
 

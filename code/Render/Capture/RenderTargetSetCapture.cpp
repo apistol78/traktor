@@ -78,13 +78,6 @@ ISimpleTexture* RenderTargetSetCapture::getDepthTexture() const
 	return m_depthTexture;
 }
 
-void RenderTargetSetCapture::discard()
-{
-	T_CAPTURE_ASSERT (m_renderTargetSet, L"Render target set destroyed.");
-	if (m_renderTargetSet)
-		m_renderTargetSet->discard();
-}
-
 bool RenderTargetSetCapture::isContentValid() const
 {
 	T_CAPTURE_ASSERT (m_renderTargetSet, L"Render target set destroyed.");

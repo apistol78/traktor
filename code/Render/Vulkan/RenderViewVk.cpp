@@ -460,11 +460,6 @@ bool RenderViewVk::begin(
 	if (m_primaryTargets.empty())
 		return false;
 
-	// Ensure all primary targets are "discarded", cannot
-	// keep target layouts from previous frames.
-	for (auto primaryTarget : m_primaryTargets)
-		primaryTarget->discard();
-
 	// Get next target from swap chain.
     vkAcquireNextImageKHR(
 		m_logicalDevice,
@@ -511,17 +506,10 @@ bool RenderViewVk::begin(
 	const Clear* clear
 )
 {
-	// End current render pass, restart later.
-	// \tbd
-	// This indicate poor use of render passes,
-	// some draw calls on pass before and after
-	// nested begin/end.
-	// Also this will cause viewport to be
-	// reset along with other stuff.
-	// Also targets transition to "target" multiple
-	// times.
-	if (!m_targetStateDirty)
-		vkCmdEndRenderPass(m_graphicsCommandBuffer);
+	// We cannot interleave render passes:
+	// 1) Too expensive to store/load.
+	// 2) Unable to determine store/load before begin/end.
+	T_FATAL_ASSERT(m_targetStateDirty);
 
 	TargetState ts;
 	ts.rts = mandatory_non_null_type_cast< RenderTargetSetVk* >(renderTargetSet);
@@ -543,9 +531,10 @@ bool RenderViewVk::begin(
 	const Clear* clear
 )
 {
-	// End current render pass, restart later.
-	if (!m_targetStateDirty)
-		vkCmdEndRenderPass(m_graphicsCommandBuffer);
+	// We cannot interleave render passes:
+	// 1) Too expensive to store/load.
+	// 2) Unable to determine store/load before begin/end.
+	T_FATAL_ASSERT(m_targetStateDirty);
 
 	TargetState ts;
 	ts.rts = mandatory_non_null_type_cast< RenderTargetSetVk* >(renderTargetSet);
@@ -880,7 +869,7 @@ void RenderViewVk::present()
 	result = vkEndCommandBuffer(m_graphicsCommandBuffer);
 	if (result != VK_SUCCESS)
 	{
-		log::warning << L"Vulkan error reported, \"" << getHumanResult(result) << L"\"; need to reset renderer." << Endl;
+		log::warning << L"Vulkan error reported, \"" << getHumanResult(result) << L"\"; need to reset renderer (1)." << Endl;
 		
 		// Issue an event in order to reset view.
 		RenderEvent evt;
@@ -904,10 +893,10 @@ void RenderViewVk::present()
 
 	vkResetFences(m_logicalDevice, 1, &m_renderFence);
     vkQueueSubmit(m_presentQueue, 1, &si, m_renderFence);
-    result = vkWaitForFences(m_logicalDevice, 1, &m_renderFence, VK_TRUE, 1 * 1000ull * 1000ull * 1000ull);
+    result = vkWaitForFences(m_logicalDevice, 1, &m_renderFence, VK_TRUE, 5 * 60 * 1000ull * 1000ull * 1000ull);
 	if (result != VK_SUCCESS)
 	{
-		log::warning << L"Vulkan error reported, \"" << getHumanResult(result) << L"\"; need to reset renderer." << Endl;
+		log::warning << L"Vulkan error reported, \"" << getHumanResult(result) << L"\"; need to reset renderer (2)." << Endl;
 		
 		// Issue an event in order to reset view.
 		RenderEvent evt;
@@ -929,7 +918,7 @@ void RenderViewVk::present()
     result = vkQueuePresentKHR(m_presentQueue, &pi);
 	if (result != VK_SUCCESS)
 	{
-		log::warning << L"Vulkan error reported, \"" << getHumanResult(result) << L"\"; need to reset renderer." << Endl;
+		log::warning << L"Vulkan error reported, \"" << getHumanResult(result) << L"\"; need to reset renderer (3)." << Endl;
 
 		// Issue an event in order to reset view.
 		RenderEvent evt;
@@ -1105,8 +1094,8 @@ bool RenderViewVk::create(uint32_t width, uint32_t height)
 	AutoArrayPtr< VkPresentModeKHR > presentModes(new VkPresentModeKHR[presentModeCount]);
 	vkGetPhysicalDeviceSurfacePresentModesKHR(m_physicalDevice, m_surface, &presentModeCount, presentModes.ptr());
 
-	VkPresentModeKHR presentationMode = VK_PRESENT_MODE_FIFO_KHR;   // always supported.
-#if 0	// Other present modes might not be vsync;ed.
+	VkPresentModeKHR presentationMode = VK_PRESENT_MODE_FIFO_KHR;   // Always supported,
+#if defined(__IOS__) || defined(__ANDROID__)						// other present modes might not be vsync;ed.
 	for (uint32_t i = 0; i < presentModeCount; ++i)
 	{
 		if (presentModes[i] == VK_PRESENT_MODE_MAILBOX_KHR)
@@ -1161,7 +1150,11 @@ bool RenderViewVk::create(uint32_t width, uint32_t height)
 	VkImageCreateInfo ici = {};
 	ici.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
 	ici.imageType = VK_IMAGE_TYPE_2D;
+#if !defined(__ANDROID__)
 	ici.format = VK_FORMAT_D32_SFLOAT_S8_UINT;
+#else
+	ici.format = VK_FORMAT_D24_UNORM_S8_UINT;
+#endif
 	ici.extent = { width, height, 1 };
 	ici.mipLevels = 1;
 	ici.arrayLayers = 1;
@@ -1208,7 +1201,11 @@ bool RenderViewVk::create(uint32_t width, uint32_t height)
 			height,
 			colorFormat,
 			presentImages[i],
+#if !defined(__ANDROID__)
             VK_FORMAT_D32_SFLOAT_S8_UINT,
+#else
+			 VK_FORMAT_D24_UNORM_S8_UINT,
+#endif
 			depthImage,
 			(L"Primary " + toString(i)).c_str()
 		))

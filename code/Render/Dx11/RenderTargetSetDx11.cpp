@@ -103,11 +103,6 @@ ISimpleTexture* RenderTargetSetDx11::getDepthTexture() const
 	return m_depthTexture;
 }
 
-void RenderTargetSetDx11::discard()
-{
-	m_contentValid = false;
-}
-
 bool RenderTargetSetDx11::isContentValid() const
 {
 	return m_contentValid;
