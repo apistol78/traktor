@@ -5,8 +5,8 @@
 			<id>{833E469C-13DC-FC48-A22B-E1BA820E0079}</id>
 			<comment/>
 			<position>
-				<first>276</first>
-				<second>32</second>
+				<first>-2</first>
+				<second>157</second>
 			</position>
 			<parameterName>ColorTexture</parameterName>
 			<type>PtTexture2D</type>
@@ -16,8 +16,8 @@
 			<id>{A6733B69-CA8C-4B46-85BD-4C554507719C}</id>
 			<comment/>
 			<position>
-				<first>-496</first>
-				<second>-60</second>
+				<first>-529</first>
+				<second>-70</second>
 			</position>
 			<value>1</value>
 		</item>
@@ -25,16 +25,16 @@
 			<id>{696E3411-8D22-694D-B342-E503C04BD653}</id>
 			<comment/>
 			<position>
-				<first>1158</first>
-				<second>-22</second>
+				<first>1188</first>
+				<second>-19</second>
 			</position>
 		</item>
 		<item type="traktor.render.Div" version="traktor.render.Node:1">
 			<id>{EB016B02-3AAC-034D-877F-611797CA3DAB}</id>
 			<comment/>
 			<position>
-				<first>-350</first>
-				<second>-62</second>
+				<first>-305</first>
+				<second>-54</second>
 			</position>
 		</item>
 		<item type="traktor.render.Sampler" version="5,traktor.render.Node:1">
@@ -80,8 +80,8 @@
 			<id>{7BF18B4B-4BBF-8B48-AC85-586B05058D2D}</id>
 			<comment/>
 			<position>
-				<first>-174</first>
-				<second>-34</second>
+				<first>10</first>
+				<second>3</second>
 			</position>
 		</item>
 		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
@@ -97,16 +97,16 @@
 			<id>{EA7EE9F2-784F-3142-9CBE-C8BE73BD33E5}</id>
 			<comment/>
 			<position>
-				<first>1264</first>
-				<second>230</second>
+				<first>1302</first>
+				<second>232</second>
 			</position>
 		</item>
 		<item type="traktor.render.PixelOutput" version="7,traktor.render.Node:1">
 			<id>{7366C988-637B-4448-88F4-ADB19E0B26E6}</id>
 			<comment/>
 			<position>
-				<first>1598</first>
-				<second>202</second>
+				<first>1696</first>
+				<second>197</second>
 			</position>
 			<technique>Default</technique>
 			<priority>
@@ -153,8 +153,8 @@
 			<id>{DCFECE6F-04AD-F94C-899C-848E99121DDE}</id>
 			<comment/>
 			<position>
-				<first>1442</first>
-				<second>238</second>
+				<first>1540</first>
+				<second>233</second>
 			</position>
 			<swizzle>xxxx</swizzle>
 		</item>
@@ -188,16 +188,16 @@
 				<first>901</first>
 				<second>171</second>
 			</position>
-			<fromX>0</fromX>
-			<toX>3</toX>
-			<fromY>0</fromY>
-			<toY>3</toY>
+			<fromX>-1</fromX>
+			<toX>1</toX>
+			<fromY>-1</fromY>
+			<toY>1</toY>
 		</item>
 		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
 			<id>{4A87DC31-FC66-4B1A-A79C-D806347C3158}</id>
 			<comment/>
 			<position>
-				<first>738</first>
+				<first>708</first>
 				<second>213</second>
 			</position>
 			<value>0</value>
@@ -206,16 +206,16 @@
 			<id>{75D464DD-654A-4451-9B2C-FCF7F0CC45C8}</id>
 			<comment/>
 			<position>
-				<first>907</first>
-				<second>92</second>
+				<first>918</first>
+				<second>51</second>
 			</position>
 		</item>
 		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
 			<id>{DB5CA95A-A592-4DEB-B01B-D2D584F4CB4B}</id>
 			<comment/>
 			<position>
-				<first>-719</first>
-				<second>-13</second>
+				<first>-764</first>
+				<second>-21</second>
 			</position>
 			<parameterName>ColorTexture</parameterName>
 			<type>PtTexture2D</type>
