@@ -57,10 +57,9 @@ public:
 		int32_t colorIndex,
 		const Clear& clear,
 		RenderTargetDepthVk* primaryDepthTarget,
-
-		// Out
 		uint32_t& outId,
-		VkRenderPass& outRenderPass
+		VkRenderPass& outRenderPass,
+		VkFramebuffer& outFrameBuffer
 	);
 
 	bool prepareAsTexture(
@@ -73,6 +72,8 @@ public:
 	RenderTargetVk* getColorTargetVk(int32_t index) const { return m_colorTargets[index]; }
 
 	RenderTargetDepthVk* getDepthTargetVk() const { return m_depthTarget; }
+	
+	bool usingPrimaryDepthStencil() const { return m_setDesc.usingPrimaryDepthStencil; }
 
 private:
 	struct RenderPass

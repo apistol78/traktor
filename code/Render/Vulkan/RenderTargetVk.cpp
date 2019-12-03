@@ -247,36 +247,6 @@ void* RenderTargetVk::getInternalHandle()
 	return nullptr;
 }
 
-void RenderTargetVk::prepareAsTarget(VkCommandBuffer cmdBuffer)
-{
-	if (m_imageLayout == VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL)
-		return;
-
-	VkImageMemoryBarrier imb = {};
-	imb.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
-	imb.srcAccessMask = 0; // m_accessFlags;
-	imb.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
-	imb.oldLayout = m_imageLayout;
-	imb.newLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
-	imb.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
-	imb.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
-	imb.image = m_image;
-	imb.subresourceRange = { VK_IMAGE_ASPECT_COLOR_BIT, 0, 1, 0, 1 };
-
-	vkCmdPipelineBarrier(
-		cmdBuffer,
-		VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT,
-		VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
-		0,
-		0, nullptr,
-		0, nullptr,
-		1, &imb
-	);
-
-	m_imageLayout = imb.newLayout;
-	m_accessFlags = imb.dstAccessMask;
-}
-
 void RenderTargetVk::prepareForPresentation(VkCommandBuffer cmdBuffer)
 {
 	if (m_imageLayout == VK_IMAGE_LAYOUT_PRESENT_SRC_KHR)
@@ -299,6 +269,36 @@ void RenderTargetVk::prepareForPresentation(VkCommandBuffer cmdBuffer)
 		cmdBuffer,
 		VK_PIPELINE_STAGE_ALL_COMMANDS_BIT,
 		VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT,
+		0,
+		0, nullptr,
+		0, nullptr,
+		1, &imb
+	);
+
+	m_imageLayout = imb.newLayout;
+	m_accessFlags = imb.dstAccessMask;
+}
+
+void RenderTargetVk::prepareAsTarget(VkCommandBuffer cmdBuffer)
+{
+	if (m_imageLayout == VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL)
+		return;
+
+	VkImageMemoryBarrier imb = {};
+	imb.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
+	imb.srcAccessMask = 0; // m_accessFlags;
+	imb.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
+	imb.oldLayout = m_imageLayout;
+	imb.newLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+	imb.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+	imb.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+	imb.image = m_image;
+	imb.subresourceRange = { VK_IMAGE_ASPECT_COLOR_BIT, 0, 1, 0, 1 };
+
+	vkCmdPipelineBarrier(
+		cmdBuffer,
+		VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT,
+		VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
 		0,
 		0, nullptr,
 		0, nullptr,
