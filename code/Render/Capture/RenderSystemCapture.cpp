@@ -185,7 +185,7 @@ Ref< IVolumeTexture > RenderSystemCapture::createVolumeTexture(const VolumeTextu
 	return new VolumeTextureCapture(texture);
 }
 
-Ref< RenderTargetSet > RenderSystemCapture::createRenderTargetSet(const RenderTargetSetCreateDesc& desc, const wchar_t* const tag)
+Ref< IRenderTargetSet > RenderSystemCapture::createRenderTargetSet(const RenderTargetSetCreateDesc& desc, const wchar_t* const tag)
 {
 	T_CAPTURE_ASSERT(desc.count >= 0, L"Negative number of targets.");
 	T_CAPTURE_ASSERT(desc.count <= 4, L"Too many targets.");
@@ -212,7 +212,7 @@ Ref< RenderTargetSet > RenderSystemCapture::createRenderTargetSet(const RenderTa
 		T_CAPTURE_ASSERT(desc.sharedDepthStencil == nullptr, L"Invalid values in create desc.");
 	}
 
-	Ref< RenderTargetSet > renderTargetSet = m_renderSystem->createRenderTargetSet(desc, tag);
+	Ref< IRenderTargetSet > renderTargetSet = m_renderSystem->createRenderTargetSet(desc, tag);
 	if (!renderTargetSet)
 		return nullptr;
 

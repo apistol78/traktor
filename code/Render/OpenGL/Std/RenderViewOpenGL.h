@@ -95,9 +95,9 @@ public:
 
 	virtual bool begin(const Clear* clear) override final;
 
-	virtual bool begin(RenderTargetSet* renderTargetSet, const Clear* clear) override final;
+	virtual bool begin(IRenderTargetSet* renderTargetSet, const Clear* clear) override final;
 
-	virtual bool begin(RenderTargetSet* renderTargetSet, int32_t renderTarget, const Clear* clear) override final;
+	virtual bool begin(IRenderTargetSet* renderTargetSet, int32_t renderTarget, const Clear* clear) override final;
 
 	virtual void draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, IProgram* program, const Primitives& primitives) override final;
 

@@ -6,7 +6,7 @@
 #include "Core/Serialization/MemberEnum.h"
 #include "Core/Serialization/MemberStl.h"
 #include "Core/Serialization/MemberComposite.h"
-#include "Render/RenderTargetSet.h"
+#include "Render/IRenderTargetSet.h"
 #include "Render/ScreenRenderer.h"
 #include "Render/Shader.h"
 #include "Resource/IResourceManager.h"

@@ -432,7 +432,7 @@ bool RenderViewOpenGL::begin(const Clear* clear)
 	return begin(m_primaryTarget, 0, clear);
 }
 
-bool RenderViewOpenGL::begin(RenderTargetSet* renderTargetSet, const Clear* clear)
+bool RenderViewOpenGL::begin(IRenderTargetSet* renderTargetSet, const Clear* clear)
 {
 	// Ensure deferred clears on targets are executed.
 	if (m_targetsDirty && !m_targetStack.empty())
@@ -456,7 +456,7 @@ bool RenderViewOpenGL::begin(RenderTargetSet* renderTargetSet, const Clear* clea
 	return true;
 }
 
-bool RenderViewOpenGL::begin(RenderTargetSet* renderTargetSet, int32_t renderTarget, const Clear* clear)
+bool RenderViewOpenGL::begin(IRenderTargetSet* renderTargetSet, int32_t renderTarget, const Clear* clear)
 {
 	// Ensure deferred clears on targets are executed.
 	if (m_targetsDirty && !m_targetStack.empty())

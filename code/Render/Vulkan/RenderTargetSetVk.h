@@ -4,7 +4,7 @@
 #include "Core/RefArray.h"
 #include "Core/Containers/SmallMap.h"
 #include "Core/Math/Color4f.h"
-#include "Render/RenderTargetSet.h"
+#include "Render/IRenderTargetSet.h"
 #include "Render/Vulkan/ApiHeader.h"
 
 namespace traktor
@@ -19,7 +19,7 @@ struct RenderTargetSetCreateDesc;
 /*!
  * \ingroup Vulkan
  */
-class RenderTargetSetVk : public RenderTargetSet
+class RenderTargetSetVk : public IRenderTargetSet
 {
 	T_RTTI_CLASS;
 

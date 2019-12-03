@@ -23,8 +23,8 @@ class Widget;
 	namespace render
 	{
 
+class IRenderTargetSet;
 class IRenderView;
-class RenderTargetSet;
 class PrimitiveRenderer;
 
 	}

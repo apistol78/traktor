@@ -114,8 +114,8 @@ private:
 	Ref< resource::IResourceManager > m_resourceManager;
 	Ref< render::IRenderSystem > m_renderSystem;
 	Ref< render::IRenderView > m_renderView;
-	Ref< render::RenderTargetSet > m_depthTexture;
-	Ref< render::RenderTargetSet > m_postTargetSet;
+	Ref< render::IRenderTargetSet > m_depthTexture;
+	Ref< render::IRenderTargetSet > m_postTargetSet;
 	Ref< render::RenderContext > m_globalContext;
 	resource::Proxy< render::ISimpleTexture > m_background;
 	resource::Proxy< render::ImageProcessSettings > m_postProcessSettings;

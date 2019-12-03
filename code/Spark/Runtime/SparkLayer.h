@@ -30,7 +30,7 @@ class IEnvironment;
 
 class ImageProcess;
 class ImageProcessSettings;
-class RenderTargetSet;
+class IRenderTargetSet;
 
 	}
 
@@ -167,7 +167,7 @@ private:
 	Ref< MovieRenderer > m_movieRenderer;
 	Ref< AccDisplayRenderer > m_displayRenderer;
 	Ref< ISoundRenderer > m_soundRenderer;
-	Ref< render::RenderTargetSet > m_imageTargetSet;
+	Ref< render::IRenderTargetSet > m_imageTargetSet;
 	resource::Proxy< render::ImageProcessSettings > m_imageProcessSettings;
 	Ref< render::ImageProcess > m_imageProcess;
 	bool m_clearBackground;

@@ -21,9 +21,9 @@ namespace traktor
 	{
 
 class ImageProcess;
+class IRenderTargetSet;
 class ISimpleTexture;
 class RenderContext;
-class RenderTargetSet;
 class StructBuffer;
 
 	}
@@ -121,15 +121,15 @@ private:
 	Quality m_ambientOcclusionQuality;
 	Quality m_antiAliasQuality;
 	Ref< IShadowProjection > m_shadowProjection;
-	Ref< render::RenderTargetSet > m_visualTargetSet;
-	Ref< render::RenderTargetSet > m_intermediateTargetSet;
-	Ref< render::RenderTargetSet > m_gbufferTargetSet;
-	Ref< render::RenderTargetSet > m_velocityTargetSet;
-	Ref< render::RenderTargetSet > m_colorTargetSet;
-	Ref< render::RenderTargetSet > m_reflectionsTargetSet;		//!< Reflections target.
-	Ref< render::RenderTargetSet > m_shadowCascadeTargetSet;	//!< Shadow map for directional lights.
-	Ref< render::RenderTargetSet > m_shadowMaskTargetSet;		//!< Screen space projected shadow mask, directional lights.
-	Ref< render::RenderTargetSet > m_shadowAtlasTargetSet;		//!< Shadow map atlas for spot and point lights.
+	Ref< render::IRenderTargetSet > m_visualTargetSet;
+	Ref< render::IRenderTargetSet > m_intermediateTargetSet;
+	Ref< render::IRenderTargetSet > m_gbufferTargetSet;
+	Ref< render::IRenderTargetSet > m_velocityTargetSet;
+	Ref< render::IRenderTargetSet > m_colorTargetSet;
+	Ref< render::IRenderTargetSet > m_reflectionsTargetSet;		//!< Reflections target.
+	Ref< render::IRenderTargetSet > m_shadowCascadeTargetSet;	//!< Shadow map for directional lights.
+	Ref< render::IRenderTargetSet > m_shadowMaskTargetSet;		//!< Screen space projected shadow mask, directional lights.
+	Ref< render::IRenderTargetSet > m_shadowAtlasTargetSet;		//!< Shadow map atlas for spot and point lights.
 	Ref< render::RenderContext > m_globalContext;
 	Ref< render::ImageProcess > m_colorTargetCopy;
 	Ref< render::ImageProcess > m_ambientOcclusion;

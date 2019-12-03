@@ -296,12 +296,12 @@ bool RenderViewOpenGLES2::begin(const Clear* clear)
 	return true;
 }
 
-bool RenderViewOpenGLES2::begin(RenderTargetSet* renderTargetSet, const Clear* clear)
+bool RenderViewOpenGLES2::begin(IRenderTargetSet* renderTargetSet, const Clear* clear)
 {
 	return begin(renderTargetSet, 0, clear);
 }
 
-bool RenderViewOpenGLES2::begin(RenderTargetSet* renderTargetSet, int32_t renderTarget, const Clear* clear)
+bool RenderViewOpenGLES2::begin(IRenderTargetSet* renderTargetSet, int32_t renderTarget, const Clear* clear)
 {
 	RenderTargetSetOpenGLES2* rts = checked_type_cast< RenderTargetSetOpenGLES2* >(renderTargetSet);
 

@@ -2,8 +2,8 @@
 #include "Core/Math/Float.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Render/IRenderSystem.h"
+#include "Render/IRenderTargetSet.h"
 #include "Render/IRenderView.h"
-#include "Render/RenderTargetSet.h"
 #include "Render/StructBuffer.h"
 #include "Render/StructElement.h"
 #include "Render/Context/RenderContext.h"
@@ -695,8 +695,8 @@ void WorldRendererForward::endRender(render::IRenderView* renderView, int32_t fr
 		params.projection = f.projection;
 		params.deltaTime = deltaTime;
 
-		render::RenderTargetSet* sourceTargetSet = m_visualTargetSet;
-		render::RenderTargetSet* outputTargetSet = m_intermediateTargetSet;
+		render::IRenderTargetSet* sourceTargetSet = m_visualTargetSet;
+		render::IRenderTargetSet* outputTargetSet = m_intermediateTargetSet;
 		T_ASSERT(sourceTargetSet);
 
 		StaticVector< render::ImageProcess*, 5 > processes;

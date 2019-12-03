@@ -1,7 +1,7 @@
 #include "Render/ICubeTexture.h"
 #include "Render/IRenderSystem.h"
+#include "Render/IRenderTargetSet.h"
 #include "Render/IRenderView.h"
-#include "Render/RenderTargetSet.h"
 #include "World/IEntityRenderer.h"
 #include "World/WorldEntityRenderers.h"
 #include "World/Deferred/WorldRendererDeferred.h"

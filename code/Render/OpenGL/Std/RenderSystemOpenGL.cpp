@@ -817,7 +817,7 @@ Ref< IVolumeTexture > RenderSystemOpenGL::createVolumeTexture(const VolumeTextur
 	return texture;
 }
 
-Ref< RenderTargetSet > RenderSystemOpenGL::createRenderTargetSet(const RenderTargetSetCreateDesc& desc, const wchar_t* const tag)
+Ref< IRenderTargetSet > RenderSystemOpenGL::createRenderTargetSet(const RenderTargetSetCreateDesc& desc, const wchar_t* const tag)
 {
 	T_ANONYMOUS_VAR(ContextOpenGL::Scope)(m_resourceContext);
 

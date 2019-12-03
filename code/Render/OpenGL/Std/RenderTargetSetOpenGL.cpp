@@ -51,7 +51,7 @@ struct DeleteFramebufferCallback : public ResourceContextOpenGL::IDeleteCallback
 
 		}
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderTargetSetOpenGL", RenderTargetSetOpenGL, RenderTargetSet)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderTargetSetOpenGL", RenderTargetSetOpenGL, IRenderTargetSet)
 
 uint32_t RenderTargetSetOpenGL::ms_primaryTargetTag = 1;
 

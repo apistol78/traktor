@@ -2,7 +2,7 @@
 
 #include "Core/RefArray.h"
 #include "Core/Math/Vector4.h"
-#include "Render/RenderTargetSet.h"
+#include "Render/IRenderTargetSet.h"
 #include "Render/Types.h"
 
 namespace traktor
@@ -18,7 +18,7 @@ class ResourceContextOpenGL;
 /*!
  * \ingroup OGL
  */
-class RenderTargetSetOpenGL : public RenderTargetSet
+class RenderTargetSetOpenGL : public IRenderTargetSet
 {
 	T_RTTI_CLASS;
 

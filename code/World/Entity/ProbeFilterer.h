@@ -1,7 +1,5 @@
 #pragma once
 
-//#include "Core/Containers/AlignedVector.h"
-//#include "Core/Math/Vector2.h"
 #include "Core/Object.h"
 #include "Core/Ref.h"
 #include "Core/RefArray.h"
@@ -14,8 +12,8 @@ namespace traktor
 
 class ICubeTexture;
 class IRenderSystem;
+class IRenderTargetSet;
 class IRenderView;
-class RenderTargetSet;
 class ScreenRenderer;
 
     }
@@ -46,8 +44,7 @@ private:
     Ref< render::IRenderSystem > m_renderSystem;
     resource::Proxy< render::Shader > m_filterShader;
     Ref< render::ScreenRenderer > m_screenRenderer;
-    RefArray< render::RenderTargetSet > m_renderTargetSets;
-	//AlignedVector< Vector2 > m_halton;
+    RefArray< render::IRenderTargetSet > m_renderTargetSets;
 };
 
     }

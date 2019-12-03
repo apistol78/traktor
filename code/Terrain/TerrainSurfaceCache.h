@@ -27,8 +27,8 @@ class IResourceManager;
 	{
 
 class IRenderSystem;
+class IRenderTargetSet;
 class ISimpleTexture;
-class RenderTargetSet;
 class ScreenRenderer;
 class RenderContext;
 class RenderBlock;
@@ -40,7 +40,7 @@ class RenderBlock;
 
 class Terrain;
 
-/*! \brief Terrain surface cache manager.
+/*! Terrain surface cache manager.
  * \ingroup Terrain
  */
 class T_DLLCLASS TerrainSurfaceCache : public Object
@@ -96,8 +96,8 @@ private:
 	render::IRenderSystem* m_renderSystem;
 	Ref< render::ScreenRenderer > m_screenRenderer;
 	TerrainSurfaceAlloc m_alloc;
-	Ref< render::RenderTargetSet > m_pool;
-	Ref< render::RenderTargetSet > m_base;
+	Ref< render::IRenderTargetSet > m_pool;
+	Ref< render::IRenderTargetSet > m_base;
 	std::vector< Entry > m_entries;
 	bool m_clearCache;
 	uint32_t m_updateCount;

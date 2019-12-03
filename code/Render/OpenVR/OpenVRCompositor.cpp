@@ -3,8 +3,8 @@
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Misc/TString.h"
 #include "Render/IRenderSystem.h"
+#include "Render/IRenderTargetSet.h"
 #include "Render/IRenderView.h"
-#include "Render/RenderTargetSet.h"
 #include "Render/OpenVR/OpenVRCompositor.h"
 
 namespace traktor

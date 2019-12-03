@@ -5,8 +5,8 @@
 #include "Drawing/PixelFormat.h"
 #include "Render/IndexBuffer.h"
 #include "Render/IRenderSystem.h"
+#include "Render/IRenderTargetSet.h"
 #include "Render/ITimeQuery.h"
-#include "Render/RenderTargetSet.h"
 #include "Render/Capture/Error.h"
 #include "Render/Capture/IndexBufferCapture.h"
 #include "Render/Capture/ProgramCapture.h"
@@ -120,7 +120,7 @@ bool RenderViewCapture::begin(
 }
 
 bool RenderViewCapture::begin(
-	RenderTargetSet* renderTargetSet,
+	IRenderTargetSet* renderTargetSet,
 	const Clear* clear
 )
 {
@@ -137,7 +137,7 @@ bool RenderViewCapture::begin(
 }
 
 bool RenderViewCapture::begin(
-	RenderTargetSet* renderTargetSet,
+	IRenderTargetSet* renderTargetSet,
 	int32_t renderTarget,
 	const Clear* clear
 )

@@ -220,7 +220,7 @@ Ref< IVolumeTexture > RenderSystemOpenGLES2::createVolumeTexture(const VolumeTex
 		return nullptr;
 }
 
-Ref< RenderTargetSet > RenderSystemOpenGLES2::createRenderTargetSet(const RenderTargetSetCreateDesc& desc, const wchar_t* const tag)
+Ref< IRenderTargetSet > RenderSystemOpenGLES2::createRenderTargetSet(const RenderTargetSetCreateDesc& desc, const wchar_t* const tag)
 {
 	T_ANONYMOUS_VAR(ContextOpenGLES2::Scope)(m_context);
 	Ref< RenderTargetSetOpenGLES2 > renderTargetSet = new RenderTargetSetOpenGLES2(m_context);

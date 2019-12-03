@@ -15,11 +15,10 @@ namespace traktor
 	namespace render
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderTargetSetDx11", RenderTargetSetDx11, RenderTargetSet)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderTargetSetDx11", RenderTargetSetDx11, IRenderTargetSet)
 
 RenderTargetSetDx11::RenderTargetSetDx11(ContextDx11* context)
-:	RenderTargetSet()
-,	m_context(context)
+:	m_context(context)
 ,	m_width(0)
 ,	m_height(0)
 ,	m_contentValid(false)

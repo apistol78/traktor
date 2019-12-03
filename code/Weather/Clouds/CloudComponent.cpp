@@ -7,9 +7,9 @@
 #include "Core/Misc/SafeDestroy.h"
 #include "Render/IndexBuffer.h"
 #include "Render/IRenderSystem.h"
+#include "Render/IRenderTargetSet.h"
 #include "Render/IRenderView.h"
 #include "Render/PrimitiveRenderer.h"
-#include "Render/RenderTargetSet.h"
 #include "Render/VertexBuffer.h"
 #include "Render/VertexElement.h"
 #include "Render/Context/RenderContext.h"
@@ -155,7 +155,7 @@ Vector4 colorAsVector4(const Color4ub& color)
 
 struct ImpostorUpdateRenderBlock : public render::RenderBlock
 {
-	render::RenderTargetSet* impostorTargetSet;
+	render::IRenderTargetSet* impostorTargetSet;
 	Color4f impostorClearColor;
 	render::RenderBlock* particlePass[1024];
 	uint32_t particlePassCount;

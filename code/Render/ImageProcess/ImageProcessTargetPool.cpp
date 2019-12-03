@@ -1,6 +1,6 @@
 #include <cstring>
 #include "Render/IRenderSystem.h"
-#include "Render/RenderTargetSet.h"
+#include "Render/IRenderTargetSet.h"
 #include "Render/ImageProcess/ImageProcessTargetPool.h"
 
 namespace traktor
@@ -57,7 +57,7 @@ ImageProcessTargetPool::ImageProcessTargetPool(IRenderSystem* renderSystem)
 {
 }
 
-RenderTargetSet* ImageProcessTargetPool::acquireTarget(const RenderTargetSetCreateDesc& rtscd)
+IRenderTargetSet* ImageProcessTargetPool::acquireTarget(const RenderTargetSetCreateDesc& rtscd)
 {
 	Pool* pool = nullptr;
 
@@ -74,21 +74,21 @@ RenderTargetSet* ImageProcessTargetPool::acquireTarget(const RenderTargetSetCrea
 
 	if (!pool->free.empty())
 	{
-		Ref< RenderTargetSet > rts = pool->free.back();
+		Ref< IRenderTargetSet > rts = pool->free.back();
 		pool->free.pop_back();
 		pool->acquired.push_back(rts);
 		return rts;
 	}
 	else
 	{
-		Ref< RenderTargetSet > rts = m_renderSystem->createRenderTargetSet(rtscd, T_FILE_LINE_W);
+		Ref< IRenderTargetSet > rts = m_renderSystem->createRenderTargetSet(rtscd, T_FILE_LINE_W);
 		if (rts)
 			pool->acquired.push_back(rts);
 		return rts;
 	}
 }
 
-void ImageProcessTargetPool::releaseTarget(const RenderTargetSetCreateDesc& rtscd, RenderTargetSet* rts)
+void ImageProcessTargetPool::releaseTarget(const RenderTargetSetCreateDesc& rtscd, IRenderTargetSet* rts)
 {
 	AlignedVector< Pool >::iterator it = std::find_if(m_pool.begin(), m_pool.end(), FindPoolPred(rtscd));
 	T_ASSERT(it != m_pool.end());

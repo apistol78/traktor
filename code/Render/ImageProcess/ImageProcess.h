@@ -36,14 +36,14 @@ class IResourceManager;
 class ImageProcessSettings;
 class ImageProcessTargetPool;
 class IRenderSystem;
+class IRenderTargetSet;
 class IRenderView;
 class ISimpleTexture;
 class ITexture;
 class Shader;
-class RenderTargetSet;
 class ScreenRenderer;
 
-/*! \brief Frame buffer post processing system.
+/*! Frame buffer post processing system.
  * \ingroup Render
  *
  * Predefined targets:
@@ -112,7 +112,7 @@ private:
 	{
 		std::wstring name;
 		RenderTargetSetCreateDesc rtscd;
-		Ref< RenderTargetSet > rts;
+		Ref< IRenderTargetSet > rts;
 		Ref< ISimpleTexture > rt;
 		float clearColor[4];
 		bool shouldClear;
@@ -139,7 +139,7 @@ private:
 	SmallMap< handle_t, float > m_scalarParameters;
 	SmallMap< handle_t, Vector4 > m_vectorParameters;
 	SmallMap< handle_t, resource::Proxy< ITexture > > m_textureParameters;
-	Ref< RenderTargetSet > m_currentTarget;
+	Ref< IRenderTargetSet > m_currentTarget;
 	bool m_requireHighRange;
 	bool m_allTargetsPersistent;
 	Semaphore m_lock;

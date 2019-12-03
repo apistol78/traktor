@@ -10,8 +10,8 @@ namespace traktor
 
 class ICubeTexture;
 class IRenderSystem;
+class IRenderTargetSet;
 class IRenderView;
-class RenderTargetSet;
 
 	}
 
@@ -51,7 +51,7 @@ private:
 	Ref< render::IRenderSystem > m_renderSystem;
 	const TypeInfo& m_worldRendererType;
 	Ref< IWorldRenderer > m_worldRenderer;
-	Ref< render::RenderTargetSet > m_renderTargetSet;
+	Ref< render::IRenderTargetSet > m_renderTargetSet;
 	mutable AlignedVector< uint8_t > m_data;
 };
 

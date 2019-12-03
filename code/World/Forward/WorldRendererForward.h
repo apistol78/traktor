@@ -19,9 +19,9 @@ namespace traktor
 	{
 
 class ImageProcess;
+class IRenderTargetSet;
 class ISimpleTexture;
 class RenderContext;
-class RenderTargetSet;
 class StructBuffer;
 
 	}
@@ -119,9 +119,9 @@ private:
 	Quality m_shadowsQuality;
 	Quality m_ambientOcclusionQuality;
 	Quality m_antiAliasQuality;
-	Ref< render::RenderTargetSet > m_visualTargetSet;
-	Ref< render::RenderTargetSet > m_intermediateTargetSet;
-	Ref< render::RenderTargetSet > m_gbufferTargetSet;
+	Ref< render::IRenderTargetSet > m_visualTargetSet;
+	Ref< render::IRenderTargetSet > m_intermediateTargetSet;
+	Ref< render::IRenderTargetSet > m_gbufferTargetSet;
 	Ref< render::RenderContext > m_globalContext;
 	Ref< render::ImageProcess > m_ambientOcclusion;
 	Ref< render::ImageProcess > m_antiAlias;
@@ -131,10 +131,10 @@ private:
 
 	// Directional shadow map.
 	Ref< IShadowProjection > m_shadowProjection;
-	Ref< render::RenderTargetSet > m_shadowCascadeTargetSet;
+	Ref< render::IRenderTargetSet > m_shadowCascadeTargetSet;
 
 	// Point/Spot shadow map.
-	Ref< render::RenderTargetSet > m_shadowAtlasTargetSet;
+	Ref< render::IRenderTargetSet > m_shadowAtlasTargetSet;
 
 	Ref< GroupEntity > m_rootEntity;
 	AlignedVector< Frame > m_frames;
