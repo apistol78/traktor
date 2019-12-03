@@ -1,3 +1,4 @@
+#include "Core/Containers/StaticVector.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/AutoPtr.h"
 #include "Core/Misc/SafeDestroy.h"
@@ -76,6 +77,7 @@ RenderViewVk::RenderViewVk(
 ,	m_targetStateDirty(false)
 ,	m_targetId(0)
 ,	m_targetRenderPass(0)
+,	m_targetFrameBuffer(0)
 ,	m_cursorVisible(true)
 ,	m_drawCalls(0)
 ,	m_primitiveCount(0)
@@ -1290,10 +1292,47 @@ void RenderViewVk::validateTargetState()
 		
 		// Out
 		m_targetId,
-		m_targetRenderPass
+		m_targetRenderPass,
+		m_targetFrameBuffer
 	))
 		return;
 
+	// Transform clear values.
+	StaticVector< VkClearValue, 4+1 > clearValues;
+	if (ts.colorIndex >= 0)
+	{
+		auto& cv = clearValues.push_back();
+		ts.clear.colors[0].storeUnaligned(cv.color.float32);
+	}
+	else
+	{
+		for (int32_t i = 0; i < ts.rts->getColorTargetCount(); ++i)
+		{
+			auto& cv = clearValues.push_back();
+			ts.clear.colors[i].storeUnaligned(cv.color.float32);
+		}
+	}
+	if (ts.rts->getDepthTargetVk() || ts.rts->usingPrimaryDepthStencil())
+	{
+		auto& cv = clearValues.push_back();
+		cv.depthStencil.depth = ts.clear.depth;
+		cv.depthStencil.stencil = ts.clear.stencil;
+	}
+
+	// Begin render pass.
+	VkRenderPassBeginInfo rpbi = {};
+	rpbi.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
+	rpbi.renderPass = m_targetRenderPass;
+	rpbi.framebuffer = m_targetFrameBuffer;
+	rpbi.renderArea.offset.x = 0;
+	rpbi.renderArea.offset.y = 0;
+	rpbi.renderArea.extent.width = ts.rts->getWidth();
+	rpbi.renderArea.extent.height = ts.rts->getHeight();
+	rpbi.clearValueCount = (uint32_t)clearValues.size();
+	rpbi.pClearValues = clearValues.c_ptr();
+	vkCmdBeginRenderPass(m_graphicsCommandBuffer, &rpbi,  VK_SUBPASS_CONTENTS_INLINE);
+
+	// Set viewport.
 	VkViewport vp = {};
 	vp.x = ts.viewport.left;
 	vp.y = ts.viewport.top;

@@ -49,13 +49,7 @@ public:
 
 	virtual void* getInternalHandle() override final;
 
-	void prepareAsTarget(VkCommandBuffer cmdBuffer);
-
 	void prepareForPresentation(VkCommandBuffer cmdBuffer);
-
-	void prepareAsTexture(VkCommandBuffer cmdBuffer);
-
-	void prepareForReadBack(VkCommandBuffer cmdBuffer);
 
 	VkFormat getVkFormat() const { return m_format; }
 
@@ -66,6 +60,8 @@ public:
 	VkImageLayout getVkImageLayout() const { return m_imageLayout; }
 
 private:
+	friend class RenderTargetSetVk;
+
 	VkPhysicalDevice m_physicalDevice;
 	VkDevice m_logicalDevice;
 	VmaAllocator m_allocator;
@@ -79,6 +75,12 @@ private:
 	VkAccessFlags m_accessFlags;
 	int32_t m_width;
 	int32_t m_height;
+
+	void prepareAsTarget(VkCommandBuffer cmdBuffer);
+
+	void prepareAsTexture(VkCommandBuffer cmdBuffer);
+
+	void prepareForReadBack(VkCommandBuffer cmdBuffer);
 };
 
 	}

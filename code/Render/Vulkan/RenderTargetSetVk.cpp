@@ -268,10 +268,9 @@ bool RenderTargetSetVk::prepareAsTarget(
 	int32_t colorIndex,
 	const Clear& clear,
 	RenderTargetDepthVk* primaryDepthTarget,
-
-	// Out
 	uint32_t& outId,
-	VkRenderPass& outRenderPass
+	VkRenderPass& outRenderPass,
+	VkFramebuffer& outFrameBuffer
 )
 {
 	auto key = std::make_tuple(
@@ -545,43 +544,9 @@ bool RenderTargetSetVk::prepareAsTarget(
 	if (m_depthTarget)
 		m_depthTarget->prepareAsTarget(commandBuffer);
 
-	StaticVector< VkClearValue, 4+1 > clearValues;
-
-	if (colorIndex >= 0)
-	{
-		auto& cv = clearValues.push_back();
-		clear.colors[0].storeUnaligned(cv.color.float32);
-	}
-	else
-	{
-		for (int32_t i = 0; i < m_setDesc.count; ++i)
-		{
-			auto& cv = clearValues.push_back();
-			clear.colors[i].storeUnaligned(cv.color.float32);
-		}
-	}
-	if (m_depthTarget || m_setDesc.usingPrimaryDepthStencil)
-	{
-		auto& cv = clearValues.push_back();
-		cv.depthStencil.depth = clear.depth;
-		cv.depthStencil.stencil = clear.stencil;
-	}
-
-	VkRenderPassBeginInfo renderPassBeginInfo = {};
-	renderPassBeginInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
-	renderPassBeginInfo.renderPass = rt.renderPass;
-	renderPassBeginInfo.framebuffer = rt.frameBuffer;
-	renderPassBeginInfo.renderArea.offset.x = 0;
-	renderPassBeginInfo.renderArea.offset.y = 0;
-	renderPassBeginInfo.renderArea.extent.width = m_setDesc.width;
-	renderPassBeginInfo.renderArea.extent.height = m_setDesc.height;
-	renderPassBeginInfo.clearValueCount = (uint32_t)clearValues.size();
-	renderPassBeginInfo.pClearValues = clearValues.c_ptr();
-	vkCmdBeginRenderPass(commandBuffer, &renderPassBeginInfo,  VK_SUBPASS_CONTENTS_INLINE);
-
 	outId = rt.id;
 	outRenderPass = rt.renderPass;
-
+	outFrameBuffer = rt.frameBuffer;
 	return true;
 }
 

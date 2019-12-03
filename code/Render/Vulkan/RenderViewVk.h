@@ -157,6 +157,7 @@ private:
 	bool m_targetStateDirty;
 	uint32_t m_targetId;
 	VkRenderPass m_targetRenderPass;
+	VkFramebuffer m_targetFrameBuffer;
 	SmallMap< pipeline_key_t, VkPipeline > m_pipelines;
 	Ref< UniformBufferPoolVk > m_uniformBufferPool;
 	bool m_cursorVisible;
