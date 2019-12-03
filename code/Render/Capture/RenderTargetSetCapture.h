@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Render/RenderTargetSet.h"
+#include "Render/IRenderTargetSet.h"
 
 namespace traktor
 {
@@ -12,12 +12,12 @@ class SimpleTextureCapture;
 /*!
  * \ingroup Capture
  */
-class RenderTargetSetCapture : public RenderTargetSet
+class RenderTargetSetCapture : public IRenderTargetSet
 {
 	T_RTTI_CLASS;
 
 public:
-	RenderTargetSetCapture(RenderTargetSet* renderTargetSet);
+	RenderTargetSetCapture(IRenderTargetSet* renderTargetSet);
 
 	virtual void destroy() override final;
 
@@ -33,14 +33,14 @@ public:
 
 	virtual bool read(int32_t index, void* buffer) const override final;
 
-	RenderTargetSet* getRenderTargetSet() const { return m_renderTargetSet; }
+	IRenderTargetSet* getRenderTargetSet() const { return m_renderTargetSet; }
 
 	bool haveColorTexture(int32_t index) const;
 
 	bool haveDepthTexture() const;
 
 private:
-	Ref< RenderTargetSet > m_renderTargetSet;
+	Ref< IRenderTargetSet > m_renderTargetSet;
 	mutable Ref< SimpleTextureCapture > m_colorTextures[4];
 	mutable Ref< SimpleTextureCapture > m_depthTexture;
 };

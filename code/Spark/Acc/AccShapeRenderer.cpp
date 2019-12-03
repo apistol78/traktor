@@ -9,7 +9,7 @@
 #include "Spark/Acc/AccShape.h"
 #include "Spark/Acc/AccShapeRenderer.h"
 #include "Render/IRenderSystem.h"
-#include "Render/RenderTargetSet.h"
+#include "Render/IRenderTargetSet.h"
 #include "Render/Context/RenderContext.h"
 
 namespace traktor

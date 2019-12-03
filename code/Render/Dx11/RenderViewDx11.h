@@ -79,12 +79,12 @@ public:
 	) override final;
 
 	virtual bool begin(
-		RenderTargetSet* renderTargetSet,
+		IRenderTargetSet* renderTargetSet,
 		const Clear* clear
 	) override final;
 
 	virtual bool begin(
-		RenderTargetSet* renderTargetSet,
+		IRenderTargetSet* renderTargetSet,
 		int32_t renderTarget,
 		const Clear* clear
 	) override final;

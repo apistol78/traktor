@@ -2,7 +2,7 @@
 
 #include "Core/RefArray.h"
 #include "Core/Misc/ComRef.h"
-#include "Render/RenderTargetSet.h"
+#include "Render/IRenderTargetSet.h"
 
 namespace traktor
 {
@@ -17,12 +17,12 @@ struct RenderTargetSetCreateDesc;
 /*!
  * \ingroup DX11
  */
-class RenderTargetSetDx11 : public RenderTargetSet
+class RenderTargetSetDx11 : public IRenderTargetSet
 {
 	T_RTTI_CLASS;
 
 public:
-	RenderTargetSetDx11(ContextDx11* context);
+	explicit RenderTargetSetDx11(ContextDx11* context);
 
 	virtual ~RenderTargetSetDx11();
 

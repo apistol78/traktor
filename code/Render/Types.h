@@ -641,7 +641,7 @@ struct RenderTargetCreateDesc
 	}
 };
 
-class RenderTargetSet;
+class IRenderTargetSet;
 
 /*! Descriptor for render target sets. */
 struct RenderTargetSetCreateDesc
@@ -659,7 +659,7 @@ struct RenderTargetSetCreateDesc
 	bool storeDepthStencil;						/*!< Store depth/stencil after rendering. */
 	bool ignoreStencil;							/*!< Ignoring stencil; stencil isn't used in rendering. */
 	bool generateMips;							/*!< Generate complete mip-chain after target been renderered onto. */
-	RenderTargetSet* sharedDepthStencil;		/*!< Use depth/stencil buffer of shared target set. */
+	IRenderTargetSet* sharedDepthStencil;		/*!< Use depth/stencil buffer of shared target set. */
 	RenderTargetCreateDesc targets[MaxTargets];	/*!< Descriptor for each target. */
 
 	RenderTargetSetCreateDesc()

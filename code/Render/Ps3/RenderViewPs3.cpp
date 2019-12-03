@@ -635,7 +635,7 @@ bool RenderViewPs3::begin(const Clear* clear)
 	return true;
 }
 
-bool RenderViewPs3::begin(RenderTargetSet* renderTargetSet, const Clear* clear)
+bool RenderViewPs3::begin(IRenderTargetSet* renderTargetSet, const Clear* clear)
 {
 	T_ASSERT (!m_renderTargetStack.empty());
 
@@ -702,7 +702,7 @@ bool RenderViewPs3::begin(RenderTargetSet* renderTargetSet, const Clear* clear)
 	return true;
 }
 
-bool RenderViewPs3::begin(RenderTargetSet* renderTargetSet, int32_t renderTarget, const Clear* clear)
+bool RenderViewPs3::begin(IRenderTargetSet* renderTargetSet, int32_t renderTarget, const Clear* clear)
 {
 	T_ASSERT (!m_renderTargetStack.empty());
 

@@ -19,12 +19,12 @@ namespace traktor
 
 class IndexBuffer;
 class IProgram;
+class IRenderTargetSet;
 class IRenderView;
 class ProgramParameters;
-class RenderTargetSet;
 class VertexBuffer;
 
-/*! \brief Render block base class.
+/*! Render block base class.
  * \ingroup Render
  */
 class T_DLLCLASS RenderBlock
@@ -39,13 +39,12 @@ public:
 
 	RenderBlock()
 #if defined(_DEBUG)
-	:	name(0)
+	:	name(nullptr)
 	,	distance(0.0f)
 #else
 	:	distance(0.0f)
 #endif
-	,	program(0)
-	,	programParams(0)
+	,	programParams(nullptr)
 	{
 	}
 
@@ -54,7 +53,7 @@ public:
 	virtual void render(IRenderView* renderView, const ProgramParameters* globalParameters) const = 0;
 };
 
-/*! \brief Null render block.
+/*! Null render block.
  * \ingroup Render
  *
  * Doesn't render anything; just update
@@ -66,7 +65,7 @@ public:
 	virtual void render(IRenderView* renderView, const ProgramParameters* globalParameters) const override final;
 };
 
-/*! \brief Simple render block.
+/*! Simple render block.
  * \ingroup Render
  */
 class T_DLLCLASS SimpleRenderBlock : public RenderBlock
@@ -79,7 +78,7 @@ public:
 	virtual void render(IRenderView* renderView, const ProgramParameters* globalParameters) const override final;
 };
 
-/*! \brief Instancing render block.
+/*! Instancing render block.
  * \ingroup Render
  */
 class T_DLLCLASS InstancingRenderBlock : public RenderBlock
@@ -98,7 +97,7 @@ public:
 	virtual void render(IRenderView* renderView, const ProgramParameters* globalParameters) const override final;
 };
 
-/*! \brief Instancing render block.
+/*! Instancing render block.
  * \ingroup Render
  */
 class T_DLLCLASS IndexedInstancingRenderBlock : public RenderBlock
@@ -114,9 +113,7 @@ public:
 	uint32_t instanceCount;
 
 	IndexedInstancingRenderBlock()
-	:	indexBuffer(0)
-	,	vertexBuffer(0)
-	,	primitive(PtPoints)
+	:	primitive(PtPoints)
 	,	offset(0)
 	,	count(0)
 	,	minIndex(0)
@@ -128,7 +125,7 @@ public:
 	virtual void render(IRenderView* renderView, const ProgramParameters* globalParameters) const override final;
 };
 
-/*! \brief Non-indexed primitives render block.
+/*! Non-indexed primitives render block.
  * \ingroup Render
  */
 class T_DLLCLASS NonIndexedRenderBlock : public RenderBlock
@@ -140,8 +137,7 @@ public:
 	uint32_t count;
 
 	NonIndexedRenderBlock()
-	:	vertexBuffer(0)
-	,	primitive(PtPoints)
+	:	primitive(PtPoints)
 	,	offset(0)
 	,	count(0)
 	{
@@ -150,7 +146,7 @@ public:
 	virtual void render(IRenderView* renderView, const ProgramParameters* globalParameters) const override final;
 };
 
-/*! \brief Indexed primitives render block.
+/*! Indexed primitives render block.
  * \ingroup Render
  */
 class T_DLLCLASS IndexedRenderBlock : public RenderBlock
@@ -165,9 +161,7 @@ public:
 	uint32_t maxIndex;
 
 	IndexedRenderBlock()
-	:	indexBuffer(0)
-	,	vertexBuffer(0)
-	,	primitive(PtPoints)
+	:	primitive(PtPoints)
 	,	offset(0)
 	,	count(0)
 	,	minIndex(0)
@@ -178,19 +172,18 @@ public:
 	virtual void render(IRenderView* renderView, const ProgramParameters* globalParameters) const override final;
 };
 
-/*! \brief Begin target render block.
+/*! Begin target render block.
  * \ingroup Render
  */
 class T_DLLCLASS TargetBeginRenderBlock : public RenderBlock
 {
 public:
-	Ref< RenderTargetSet > renderTargetSet;
+	Ref< IRenderTargetSet > renderTargetSet;
 	int32_t renderTargetIndex;
 	Clear clear;
 
 	TargetBeginRenderBlock()
 	:	RenderBlock()
-	,	renderTargetSet(0)
 	,	renderTargetIndex(0)
 	{
 		clear.mask = 0;
@@ -199,7 +192,7 @@ public:
 	virtual void render(IRenderView* renderView, const ProgramParameters* globalParameters) const override final;
 };
 
-/*! \brief End target render block.
+/*! End target render block.
  * \ingroup Render
  */
 class T_DLLCLASS TargetEndRenderBlock : public RenderBlock
@@ -208,7 +201,7 @@ public:
 	virtual void render(IRenderView* renderView, const ProgramParameters* globalParameters) const override final;
 };
 
-/*! \brief Set target viewport block.
+/*! Set target viewport block.
  * \ingroup Render
  */
 class T_DLLCLASS SetViewportRenderBlock : public RenderBlock
@@ -219,7 +212,7 @@ public:
 	virtual void render(IRenderView* renderView, const ProgramParameters* globalParameters) const override final;
 };
 
-/*! \brief Chain render block.
+/*! Chain render block.
  * \ingroup Render
  */
 class T_DLLCLASS ChainRenderBlock : public RenderBlock
@@ -230,8 +223,8 @@ public:
 
 	ChainRenderBlock()
 	:	RenderBlock()
-	,	inner(0)
-	,	next(0)
+	,	inner(nullptr)
+	,	next(nullptr)
 	{
 	}
 

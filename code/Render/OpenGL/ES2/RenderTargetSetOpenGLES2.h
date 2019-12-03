@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Render/RenderTargetSet.h"
+#include "Render/IRenderTargetSet.h"
 #include "Render/Types.h"
 
 namespace traktor
@@ -15,7 +15,7 @@ class RenderTargetOpenGLES2;
 /*!
  * \ingroup OGL
  */
-class RenderTargetSetOpenGLES2 : public RenderTargetSet
+class RenderTargetSetOpenGLES2 : public IRenderTargetSet
 {
 	T_RTTI_CLASS;
 

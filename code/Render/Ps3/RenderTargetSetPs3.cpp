@@ -10,15 +10,14 @@ namespace traktor
 	namespace render
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderTargetSetPs3", RenderTargetSetPs3, RenderTargetSet)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderTargetSetPs3", RenderTargetSetPs3, IRenderTargetSet)
 
 RenderTargetSetPs3::RenderTargetSetPs3(
 	TileArea& tileArea,
 	TileArea& zcullArea,
 	int32_t& counter
 )
-:	RenderTargetSet()
-,	m_tileArea(tileArea)
+:	m_tileArea(tileArea)
 #if defined(T_RENDER_PS3_USE_ZCULL)
 ,	m_zcullArea(zcullArea)
 #endif

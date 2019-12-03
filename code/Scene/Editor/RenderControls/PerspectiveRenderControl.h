@@ -24,9 +24,9 @@ class Widget;
 	namespace render
 	{
 
+class IRenderTargetSet;
 class IRenderView;
 class PrimitiveRenderer;
-class RenderTargetSet;
 class ScreenRenderer;
 class Shader;
 

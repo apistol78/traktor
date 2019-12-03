@@ -205,7 +205,7 @@ Ref< IVolumeTexture > RenderSystemPs4::createVolumeTexture(const VolumeTextureCr
 		return nullptr;
 }
 
-Ref< RenderTargetSet > RenderSystemPs4::createRenderTargetSet(const RenderTargetSetCreateDesc& desc, const wchar_t* const tag)
+Ref< IRenderTargetSet > RenderSystemPs4::createRenderTargetSet(const RenderTargetSetCreateDesc& desc, const wchar_t* const tag)
 {
 	Ref< RenderTargetSetPs4 > renderTargetSet = new RenderTargetSetPs4(m_context);
 	if (renderTargetSet->create(desc))

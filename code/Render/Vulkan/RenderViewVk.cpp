@@ -504,7 +504,7 @@ bool RenderViewVk::begin(
 }
 
 bool RenderViewVk::begin(
-	RenderTargetSet* renderTargetSet,
+	IRenderTargetSet* renderTargetSet,
 	const Clear* clear
 )
 {
@@ -528,7 +528,7 @@ bool RenderViewVk::begin(
 }
 
 bool RenderViewVk::begin(
-	RenderTargetSet* renderTargetSet,
+	IRenderTargetSet* renderTargetSet,
 	int32_t renderTarget,
 	const Clear* clear
 )

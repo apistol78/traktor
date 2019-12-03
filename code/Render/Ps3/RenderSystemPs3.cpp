@@ -302,7 +302,7 @@ Ref< IVolumeTexture > RenderSystemPs3::createVolumeTexture(const VolumeTextureCr
 		return nullptr;
 }
 
-Ref< RenderTargetSet > RenderSystemPs3::createRenderTargetSet(const RenderTargetSetCreateDesc& desc, const wchar_t* const tag)
+Ref< IRenderTargetSet > RenderSystemPs3::createRenderTargetSet(const RenderTargetSetCreateDesc& desc, const wchar_t* const tag)
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 	Ref< RenderTargetSetPs3 > renderTargetSet = new RenderTargetSetPs3(m_tileArea, m_zcullArea, m_counterRenderTargetSets);

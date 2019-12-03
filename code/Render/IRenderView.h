@@ -19,13 +19,13 @@ namespace traktor
 	{
 
 class IRenderSystem;
+class IRenderTargetSet;
 class VertexBuffer;
 class IndexBuffer;
 class ITexture;
 class ISimpleTexture;
 class ICubeTexture;
 class IVolumeTexture;
-class RenderTargetSet;
 class IProgram;
 
 #define T_USE_RENDER_MARKERS
@@ -114,7 +114,7 @@ public:
 	 * \return True if successful.
 	 */
 	virtual bool begin(
-		RenderTargetSet* renderTargetSet,
+		IRenderTargetSet* renderTargetSet,
 		const Clear* clear
 	) = 0;
 
@@ -126,7 +126,7 @@ public:
 	 * \return True if successful.
 	 */
 	virtual bool begin(
-		RenderTargetSet* renderTargetSet,
+		IRenderTargetSet* renderTargetSet,
 		int32_t renderTarget,
 		const Clear* clear
 	) = 0;

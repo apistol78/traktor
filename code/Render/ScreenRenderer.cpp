@@ -1,7 +1,7 @@
 #include "Core/Misc/SafeDestroy.h"
-#include "Render/IRenderView.h"
 #include "Render/IRenderSystem.h"
-#include "Render/RenderTargetSet.h"
+#include "Render/IRenderTargetSet.h"
+#include "Render/IRenderView.h"
 #include "Render/ScreenRenderer.h"
 #include "Render/Shader.h"
 #include "Render/VertexBuffer.h"
@@ -73,7 +73,7 @@ void ScreenRenderer::draw(IRenderView* renderView, Shader* shader)
 	shader->draw(renderView, m_vertexBuffer, nullptr, m_primitives);
 }
 
-void ScreenRenderer::draw(IRenderView* renderView, RenderTargetSet* renderTargetSet, int32_t renderTarget, IProgram* program)
+void ScreenRenderer::draw(IRenderView* renderView, IRenderTargetSet* renderTargetSet, int32_t renderTarget, IProgram* program)
 {
 	if (renderView->begin(renderTargetSet, renderTarget, nullptr))
 	{
@@ -82,7 +82,7 @@ void ScreenRenderer::draw(IRenderView* renderView, RenderTargetSet* renderTarget
 	}
 }
 
-void ScreenRenderer::draw(IRenderView* renderView, RenderTargetSet* renderTargetSet, int32_t renderTarget, Shader* shader)
+void ScreenRenderer::draw(IRenderView* renderView, IRenderTargetSet* renderTargetSet, int32_t renderTarget, Shader* shader)
 {
 	if (renderView->begin(renderTargetSet, renderTarget, nullptr))
 	{

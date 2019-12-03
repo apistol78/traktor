@@ -1,8 +1,8 @@
 #include "Core/Log/Log.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Render/IRenderSystem.h"
+#include "Render/IRenderTargetSet.h"
 #include "Render/IRenderView.h"
-#include "Render/RenderTargetSet.h"
 #include "Render/ScreenRenderer.h"
 #include "Render/Shader.h"
 #include "Render/Context/RenderContext.h"
@@ -24,7 +24,7 @@ const int32_t c_margin = 1;
 struct TerrainSurfaceRenderBlock : public render::RenderBlock
 {
 	render::ScreenRenderer* screenRenderer;
-	render::RenderTargetSet* renderTargetSet;
+	render::IRenderTargetSet* renderTargetSet;
 	TerrainSurfaceRenderBlock* next;
 	bool clear;
 

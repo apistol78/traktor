@@ -11,8 +11,8 @@ namespace traktor
 	{
 
 class IRenderSystem;
+class IRenderTargetSet;
 class RenderContext;
-class RenderTargetSet;
 
 	}
 
@@ -96,7 +96,7 @@ private:
 		Matrix33 transform;
 	};
 
-	Ref< render::RenderTargetSet > m_renderTargetShapes;
+	Ref< render::IRenderTargetSet > m_renderTargetShapes;
 	Ref< AccQuad > m_quad;
 	AlignedVector< Cache > m_cache;
 	Ref< Packer > m_packer;

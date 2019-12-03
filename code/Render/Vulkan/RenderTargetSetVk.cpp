@@ -20,7 +20,7 @@ uint32_t s_nextId = 1;
 
 		}
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderTargetSetVk", RenderTargetSetVk, RenderTargetSet)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderTargetSetVk", RenderTargetSetVk, IRenderTargetSet)
 
 RenderTargetSetVk::RenderTargetSetVk(
 	VkPhysicalDevice physicalDevice,
@@ -29,8 +29,7 @@ RenderTargetSetVk::RenderTargetSetVk(
 	VkCommandPool setupCommandPool,
 	VkQueue setupQueue
 )
-:	RenderTargetSet()
-,	m_physicalDevice(physicalDevice)
+:	m_physicalDevice(physicalDevice)
 ,	m_logicalDevice(logicalDevice)
 ,	m_allocator(allocator)
 ,	m_setupCommandPool(setupCommandPool)

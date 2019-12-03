@@ -47,8 +47,8 @@ class IResourceManager;
 	{
 
 class IRenderSystem;
+class IRenderTargetSet;
 class IRenderView;
-class RenderTargetSet;
 class Shader;
 
 	}

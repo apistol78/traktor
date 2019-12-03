@@ -26,9 +26,9 @@ class Color4f;
 class ImageProcess;
 class ImageProcessSettings;
 class IRenderSystem;
+class IRenderTargetSet;
 class IRenderView;
 class ITexture;
-class RenderTargetSet;
 
 	}
 
@@ -67,7 +67,7 @@ struct WorldCreateDesc
 	uint32_t frameCount;
 	float gamma;
 	bool allTargetsPersistent;
-	render::RenderTargetSet* sharedDepthStencil;	/*!< Share depth with this render target for all intermediate RTs; useful when rendering to other RT than primary. */
+	render::IRenderTargetSet* sharedDepthStencil;	/*!< Share depth with this render target for all intermediate RTs; useful when rendering to other RT than primary. */
 
 	WorldCreateDesc()
 	:	worldRenderSettings(0)

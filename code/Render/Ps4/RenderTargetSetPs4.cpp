@@ -10,11 +10,10 @@ namespace traktor
 	namespace render
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderTargetSetPs4", RenderTargetSetPs4, RenderTargetSet)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderTargetSetPs4", RenderTargetSetPs4, IRenderTargetSet)
 
 RenderTargetSetPs4::RenderTargetSetPs4(ContextPs4* context)
-:	RenderTargetSet()
-,	m_context(context)
+:	m_context(context)
 {
 }
 

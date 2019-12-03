@@ -587,7 +587,7 @@ Ref< IVolumeTexture > RenderSystemVk::createVolumeTexture(const VolumeTextureCre
 		return nullptr;
 }
 
-Ref< RenderTargetSet > RenderSystemVk::createRenderTargetSet(const RenderTargetSetCreateDesc& desc, const wchar_t* const tag)
+Ref< IRenderTargetSet > RenderSystemVk::createRenderTargetSet(const RenderTargetSetCreateDesc& desc, const wchar_t* const tag)
 {
 	Ref< RenderTargetSetVk > renderTargetSet = new RenderTargetSetVk(
 		m_physicalDevice,

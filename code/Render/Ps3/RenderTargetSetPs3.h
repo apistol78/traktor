@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Core/RefArray.h"
-#include "Render/RenderTargetSet.h"
+#include "Render/IRenderTargetSet.h"
 #include "Render/Types.h"
 #include "Render/Ps3/TileArea.h"
 #include "Render/Ps3/PlatformPs3.h"
@@ -23,7 +23,7 @@ class MemoryHeap;
 class MemoryHeapObject;
 class RenderTargetPs3;
 
-class T_DLLCLASS RenderTargetSetPs3 : public RenderTargetSet
+class T_DLLCLASS RenderTargetSetPs3 : public IRenderTargetSet
 {
 	T_RTTI_CLASS;
 

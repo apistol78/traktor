@@ -19,9 +19,9 @@ namespace traktor
 	{
 
 class IRenderSystem;
-class RenderTargetSet;
+class IRenderTargetSet;
 
-/*! \brief Pool of render targets.
+/*! Pool of render targets.
  * \ingroup Render
  */
 class T_DLLCLASS ImageProcessTargetPool : public Object
@@ -32,15 +32,15 @@ public:
 	struct Pool
 	{
 		RenderTargetSetCreateDesc rtscd;
-		RefArray< RenderTargetSet > free;
-		RefArray< RenderTargetSet > acquired;
+		RefArray< IRenderTargetSet > free;
+		RefArray< IRenderTargetSet > acquired;
 	};
 
 	ImageProcessTargetPool(IRenderSystem* renderSystem);
 
-	RenderTargetSet* acquireTarget(const RenderTargetSetCreateDesc& rtscd);
+	IRenderTargetSet* acquireTarget(const RenderTargetSetCreateDesc& rtscd);
 
-	void releaseTarget(const RenderTargetSetCreateDesc& rtscd, RenderTargetSet* rts);
+	void releaseTarget(const RenderTargetSetCreateDesc& rtscd, IRenderTargetSet* rts);
 
 private:
 	Ref< IRenderSystem > m_renderSystem;

@@ -8,9 +8,9 @@ namespace traktor
 	namespace render
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderTargetSetCapture", RenderTargetSetCapture, RenderTargetSet)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderTargetSetCapture", RenderTargetSetCapture, IRenderTargetSet)
 
-RenderTargetSetCapture::RenderTargetSetCapture(RenderTargetSet* renderTargetSet)
+RenderTargetSetCapture::RenderTargetSetCapture(IRenderTargetSet* renderTargetSet)
 :	m_renderTargetSet(renderTargetSet)
 {
 }

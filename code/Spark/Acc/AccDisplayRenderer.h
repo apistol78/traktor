@@ -26,9 +26,9 @@ class IResourceManager;
 	{
 
 class IRenderSystem;
+class IRenderTargetSet;
 class IRenderView;
 class RenderContext;
-class RenderTargetSet;
 
 	}
 
@@ -153,8 +153,8 @@ private:
 	render::IRenderSystem* m_renderSystem;
 	RefArray< render::RenderContext > m_renderContexts;
 	Ref< render::RenderContext > m_renderContext;
-	Ref< render::RenderTargetSet > m_renderTargetGlyphs;
-	Ref< render::RenderTargetSet > m_frameTarget;
+	Ref< render::IRenderTargetSet > m_renderTargetGlyphs;
+	Ref< render::IRenderTargetSet > m_frameTarget;
 	Ref< AccShapeResources > m_shapeResources;
 	Ref< AccShapeVertexPool > m_fillVertexPool;
 	Ref< AccShapeVertexPool > m_lineVertexPool;

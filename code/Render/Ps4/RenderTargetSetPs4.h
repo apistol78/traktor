@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Core/RefArray.h"
-#include "Render/RenderTargetSet.h"
+#include "Render/IRenderTargetSet.h"
 
 namespace traktor
 {
@@ -16,7 +16,7 @@ struct RenderTargetSetCreateDesc;
 /*!
  * \ingroup GNM
  */
-class RenderTargetSetPs4 : public RenderTargetSet
+class RenderTargetSetPs4 : public IRenderTargetSet
 {
 	T_RTTI_CLASS;
 

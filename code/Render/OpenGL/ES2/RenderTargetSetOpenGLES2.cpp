@@ -84,7 +84,7 @@ bool haveExtension(const char* extension)
 
 		}
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderTargetSetOpenGLES2", RenderTargetSetOpenGLES2, RenderTargetSet)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderTargetSetOpenGLES2", RenderTargetSetOpenGLES2, IRenderTargetSet)
 
 RenderTargetSetOpenGLES2::RenderTargetSetOpenGLES2(ContextOpenGLES2* context)
 :	m_context(context)

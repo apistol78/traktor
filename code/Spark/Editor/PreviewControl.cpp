@@ -24,10 +24,10 @@
 #include "Ui/Application.h"
 #if T_USE_ACCELERATED_RENDERER
 #	include "Render/IRenderSystem.h"
+#	include "Render/IRenderTargetSet.h"
 #	include "Render/IRenderView.h"
 #	include "Render/ScreenRenderer.h"
 #	include "Render/Shader.h"
-#	include "Render/RenderTargetSet.h"
 #else
 #	include "Graphics/IGraphicsSystem.h"
 #	if defined(_WIN32)

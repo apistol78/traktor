@@ -15,9 +15,9 @@ class Image;
 	{
 
 class IRenderSystem;
-class RenderTargetSet;
+class IRenderTargetSet;
 
-/*! \brief Performance capture render view.
+/*! Performance capture render view.
  * \ingroup RenderCapture
  */
 class RenderViewCapture : public IRenderView
@@ -64,12 +64,12 @@ public:
 	) override final;
 
 	virtual bool begin(
-		RenderTargetSet* renderTargetSet,
+		IRenderTargetSet* renderTargetSet,
 		const Clear* clear
 	) override final;
 
 	virtual bool begin(
-		RenderTargetSet* renderTargetSet,
+		IRenderTargetSet* renderTargetSet,
 		int32_t renderTarget,
 		const Clear* clear
 	) override final;

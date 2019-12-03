@@ -561,7 +561,7 @@ bool RenderViewDx11::begin(
 }
 
 bool RenderViewDx11::begin(
-	RenderTargetSet* renderTargetSet,
+	IRenderTargetSet* renderTargetSet,
 	const Clear* clear
 )
 {
@@ -716,7 +716,7 @@ bool RenderViewDx11::begin(
 }
 
 bool RenderViewDx11::begin(
-	RenderTargetSet* renderTargetSet,
+	IRenderTargetSet* renderTargetSet,
 	int32_t renderTarget,
 	const Clear* clear
 )
@@ -1047,11 +1047,11 @@ bool RenderViewDx11::getBackBufferContent(void* buffer) const
 	if (FAILED(hr))
 		return false;
 
-    D3D11_TEXTURE2D_DESC description;
-    d3dBackBuffer->GetDesc(&description);
-    description.BindFlags = 0;
-    description.CPUAccessFlags = D3D11_CPU_ACCESS_READ | D3D11_CPU_ACCESS_WRITE;
-    description.Usage = D3D11_USAGE_STAGING;
+		D3D11_TEXTURE2D_DESC description;
+		d3dBackBuffer->GetDesc(&description);
+		description.BindFlags = 0;
+		description.CPUAccessFlags = D3D11_CPU_ACCESS_READ | D3D11_CPU_ACCESS_WRITE;
+		description.Usage = D3D11_USAGE_STAGING;
 
 	hr = m_context->getD3DDevice()->CreateTexture2D(&description, 0, &d3dReadBackTexture.getAssign());
 	if (FAILED(hr))

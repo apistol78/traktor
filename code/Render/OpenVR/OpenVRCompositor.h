@@ -23,9 +23,9 @@ namespace traktor
 	namespace render
 	{
 
-class RenderTargetSet;
+class IRenderTargetSet;
 
-/*! \brief OpenVR compositor implementation.
+/*! OpenVR compositor implementation.
  * \ingroup Render
  */
 class T_DLLCLASS OpenVRCompositor : public IVRCompositor
@@ -55,7 +55,7 @@ public:
 
 private:
 	vr::IVRSystem* m_vr;
-	Ref< RenderTargetSet > m_targetSet;
+	Ref< IRenderTargetSet > m_targetSet;
 };
 
 	}

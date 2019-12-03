@@ -17,13 +17,13 @@ namespace traktor
 	{
 
 class IProgram;
-class IRenderView;
 class IRenderSystem;
-class RenderTargetSet;
+class IRenderTargetSet;
+class IRenderView;
 class Shader;
 class VertexBuffer;
 
-/*! \brief Screen renderer.
+/*! Screen renderer.
  * \ingroup Render
  *
  * Render full screen quads with given shader.
@@ -45,9 +45,9 @@ public:
 
 	void draw(IRenderView* renderView, Shader* shader);
 
-	void draw(IRenderView* renderView, RenderTargetSet* renderTargetSet, int32_t renderTarget, IProgram* program);
+	void draw(IRenderView* renderView, IRenderTargetSet* renderTargetSet, int32_t renderTarget, IProgram* program);
 
-	void draw(IRenderView* renderView, RenderTargetSet* renderTargetSet, int32_t renderTarget, Shader* shader);
+	void draw(IRenderView* renderView, IRenderTargetSet* renderTargetSet, int32_t renderTarget, Shader* shader);
 
 private:
 	Ref< VertexBuffer > m_vertexBuffer;

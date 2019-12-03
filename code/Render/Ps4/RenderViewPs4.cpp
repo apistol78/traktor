@@ -239,12 +239,12 @@ bool RenderViewPs4::begin(const Clear* clear)
 	return true;
 }
 
-bool RenderViewPs4::begin(RenderTargetSet* renderTargetSet, const Clear* clear)
+bool RenderViewPs4::begin(IRenderTargetSet* renderTargetSet, const Clear* clear)
 {
 	return true;
 }
 
-bool RenderViewPs4::begin(RenderTargetSet* renderTargetSet, int32_t renderTarget, const Clear* clear)
+bool RenderViewPs4::begin(IRenderTargetSet* renderTargetSet, int32_t renderTarget, const Clear* clear)
 {
 	return true;
 }
