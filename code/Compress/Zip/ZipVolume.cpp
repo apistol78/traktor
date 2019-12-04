@@ -1,4 +1,5 @@
 #include <sstream>
+#include "Compress/Zip/DeflateStreamZip.h"
 #include "Compress/Zip/ZipVolume.h"
 #include "Core/Io/File.h"
 #include "Core/Io/IStream.h"
@@ -50,6 +51,24 @@ struct CDFH
 	// uint8_t extraField[extraFieldLength]
 	// uint8_t comment[commentLength]
 };
+
+struct LFH
+{
+	uint32_t signature;
+	uint16_t version;
+	uint16_t generalFlags;
+	uint16_t compression;
+	uint16_t lastModificationTime;
+	uint16_t lastModificationDate;
+	uint32_t crc32;
+	uint32_t compressedSize;
+	uint32_t uncompressedSize;
+	uint16_t fileNameLength;
+	uint16_t extraFieldLength;
+	// uint8_t fileName[fileNameLength]
+	// uint8_t extraField[extraFieldLength]
+};
+
 #pragma pack()
 
 		}
@@ -126,25 +145,18 @@ ZipVolume::ZipVolume(IStream* zipFile)
 
 		m_zipFile->read(fileName, cdfh.fileNameLength);
 		fileName[cdfh.fileNameLength] = '\0';
-		log::info << L"Filename : " << mbstows(fileName) << Endl;
 
 		m_zipFile->read(extra, cdfh.extraFieldLength);
 		extra[cdfh.extraFieldLength] = '\0';
-		log::info << L"Extra : " << mbstows(extra) << Endl;
 
 		m_zipFile->read(comment, cdfh.commentLength);
 		comment[cdfh.commentLength] = '\0';
-		log::info << L"Comment : " << mbstows(comment) << Endl;
-
-		log::info << L"Compressed size " << cdfh.compressedSize << Endl;
-		log::info << L"Uncompressed size " << cdfh.uncompressedSize << Endl;
 
 		auto& fi = m_fileInfo[L"/" + mbstows(fileName)];
 		fi.offset = cdfh.lfhOffset;
 		fi.compressedSize = cdfh.compressedSize;
 		fi.uncompressedSize = cdfh.uncompressedSize;
 	}
-
 }
 
 std::wstring ZipVolume::getDescription() const
@@ -166,7 +178,7 @@ int ZipVolume::find(const Path& mask, RefArray< File >& out)
 	if (fileMask == L"*.*")
 		fileMask = L"*";
 
-	WildCompare maskCompare(systemPath + L"/" + fileMask);
+	WildCompare maskCompare(systemPath + fileMask);
 	for (auto fi : m_fileInfo)
 	{
 		if (maskCompare.match(fi.first))
@@ -189,7 +201,47 @@ bool ZipVolume::modify(const Path& fileName, uint32_t flags)
 
 Ref< IStream > ZipVolume::open(const Path& fileName, uint32_t mode)
 {
-	return nullptr;
+	char fileNameTmp[4096];
+	char extra[4096];
+
+	auto it = m_fileInfo.find(fileName.getPathNameNoVolume());
+	if (it == m_fileInfo.end())
+		return nullptr;
+
+	const auto& fi = it->second;
+
+	m_zipFile->seek(IStream::SeekSet, fi.offset);
+
+	LFH lfh = {};
+
+	if (m_zipFile->read(&lfh, sizeof(LFH)) != sizeof(LFH))
+	{
+		log::error << L"Corrupt ZIP file; failed to find LFH." << Endl;
+		return nullptr;
+	}
+
+	if (lfh.signature != 0x04034b50)
+	{
+		log::error << L"Corrupt ZIP file; incorrect LFH signature." << Endl;
+		return nullptr;
+	}
+
+	if (
+		lfh.fileNameLength >= sizeof_array(fileNameTmp) ||
+		lfh.extraFieldLength >= sizeof_array(extra)
+	)
+	{
+		log::error << L"Corrupt ZIP file; too long strings in header." << Endl;
+		return nullptr;
+	}
+
+	m_zipFile->read(fileNameTmp, lfh.fileNameLength);
+	fileNameTmp[lfh.fileNameLength] = '\0';
+
+	m_zipFile->read(extra, lfh.extraFieldLength);
+	extra[lfh.extraFieldLength] = '\0';
+
+	return new DeflateStreamZip(m_zipFile);
 }
 
 bool ZipVolume::exist(const Path& fileName)
