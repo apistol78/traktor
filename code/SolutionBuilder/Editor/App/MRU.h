@@ -9,19 +9,19 @@ namespace traktor
 	namespace sb
 	{
 
-/*! \brief Most-recently-used. */
+/*! Most-recently-used. */
 class MRU : public ISerializable
 {
 	T_RTTI_CLASS;
 
 public:
-	/*! \brief Called when a file has been successfully used, ie. opened or saved. */
+	/*! Called when a file has been successfully used, ie. opened or saved. */
 	void usedFile(const Path& filePath);
 
-	/*! \brief Get array of most recently used files. */
+	/*! Get array of most recently used files. */
 	bool getUsedFiles(std::vector< Path >& outFilePaths) const;
 
-	virtual void serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s) override final;
 
 private:
 	std::vector< std::wstring > m_filePaths;

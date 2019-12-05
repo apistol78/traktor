@@ -41,7 +41,7 @@ class SolutionForm : public ui::Form
 public:
 	bool create(const CommandLine& cmdLine);
 
-	virtual void destroy();
+	virtual void destroy() override final;
 
 private:
 	Ref< ui::ShortcutTable > m_shortcutTable;
