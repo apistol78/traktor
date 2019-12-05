@@ -1,9 +1,11 @@
-#include <sstream>
 #include "Compress/Zip/DeflateStreamZip.h"
 #include "Compress/Zip/ZipVolume.h"
 #include "Core/Io/File.h"
-#include "Core/Io/IStream.h"
+#include "Core/Io/StreamStream.h"
+#include "Core/Io/StringOutputStream.h"
 #include "Core/Log/Log.h"
+#include "Core/Misc/String.h"
+#include "Core/Misc/StringSplit.h"
 #include "Core/Misc/TString.h"
 #include "Core/Misc/WildCompare.h"
 
@@ -115,6 +117,10 @@ ZipVolume::ZipVolume(IStream* zipFile)
 	// Read rest of EOCD header.
 	m_zipFile->read(&eocd.disk, sizeof(EOCD) - sizeof(uint32_t));
 
+	// Add root entry; must be at index 0.
+	auto& root = m_fileInfo.push_back();
+	root.parent = -1;
+
 	// Read central directory.
 	m_zipFile->seek(IStream::SeekSet, eocd.cdOffset);
 	for (uint32_t i = 0; i < eocd.numberOfCDRecords; ++i)
@@ -152,10 +158,44 @@ ZipVolume::ZipVolume(IStream* zipFile)
 		m_zipFile->read(comment, cdfh.commentLength);
 		comment[cdfh.commentLength] = '\0';
 
-		auto& fi = m_fileInfo[L"/" + mbstows(fileName)];
-		fi.offset = cdfh.lfhOffset;
-		fi.compressedSize = cdfh.compressedSize;
-		fi.uncompressedSize = cdfh.uncompressedSize;
+		int32_t directory = 0;
+
+		StringSplit< std::wstring > ss(mbstows(fileName), L"/");
+		for (auto it = ss.begin(); it != ss.end(); )
+		{
+			std::wstring txt = *it++;
+			if (it != ss.end())
+			{
+				auto fiit = std::find_if(m_fileInfo.begin(), m_fileInfo.end(), [&](const FileInfo& fi) {
+					return fi.name == txt;
+				});
+				if (fiit == m_fileInfo.end())
+				{
+					int32_t index = (int32_t)(m_fileInfo.size());
+
+					auto& fi = m_fileInfo.push_back();
+					fi.name = txt;
+					fi.parent = directory;
+
+					m_fileInfo[directory].children.push_back(index);
+
+					directory = index;
+				}
+			}
+			else
+			{
+				int32_t index = (int32_t)(m_fileInfo.size());
+
+				auto& fi = m_fileInfo.push_back();
+				fi.name = txt;
+				fi.parent = directory;
+				fi.offset = cdfh.lfhOffset;
+				fi.compressedSize = cdfh.compressedSize;
+				fi.uncompressedSize = cdfh.uncompressedSize;
+
+				m_fileInfo[directory].children.push_back(index);
+			}
+		}
 	}
 }
 
@@ -171,23 +211,36 @@ Ref< File > ZipVolume::get(const Path& path)
 
 int ZipVolume::find(const Path& mask, RefArray< File >& out)
 {
-	std::wstring maskPath = mask.getPathOnly();
-	std::wstring systemPath = getSystemPath(maskPath);
-	std::wstring fileMask = mask.getFileName();
+	int32_t directoryIndex = findFileInfoIndex(mask.getPathOnlyNoVolume());
+	if (directoryIndex < 0)
+		return 0;
 
+	std::wstring fileMask = mask.getFileName();
 	if (fileMask == L"*.*")
 		fileMask = L"*";
 
-	WildCompare maskCompare(systemPath + fileMask);
-	for (auto fi : m_fileInfo)
+	WildCompare maskCompare(fileMask);
+	for (auto child : m_fileInfo[directoryIndex].children)
 	{
-		if (maskCompare.match(fi.first))
+		const auto& fi = m_fileInfo[child];
+		if (maskCompare.match(fi.name))
 		{
-			out.push_back(new File(
-				fi.first,
-				fi.second.uncompressedSize,
-				File::FfNormal
-			));
+			if (!fi.isDirectory())
+			{
+				out.push_back(new File(
+					fi.name,
+					fi.uncompressedSize,
+					File::FfNormal
+				));
+			}
+			else
+			{
+				out.push_back(new File(
+					fi.name,
+					0,
+					File::FfDirectory
+				));
+			}
 		}
 	}
 
@@ -203,16 +256,17 @@ Ref< IStream > ZipVolume::open(const Path& fileName, uint32_t mode)
 {
 	char fileNameTmp[4096];
 	char extra[4096];
+	LFH lfh = {};
 
-	auto it = m_fileInfo.find(fileName.getPathNameNoVolume());
-	if (it == m_fileInfo.end())
+	int32_t fileIndex = findFileInfoIndex(fileName.getPathNameNoVolume());
+	if (fileIndex < 0)
 		return nullptr;
 
-	const auto& fi = it->second;
+	const FileInfo& fi = m_fileInfo[fileIndex];
+	if (fi.isDirectory())
+		return nullptr;
 
 	m_zipFile->seek(IStream::SeekSet, fi.offset);
-
-	LFH lfh = {};
 
 	if (m_zipFile->read(&lfh, sizeof(LFH)) != sizeof(LFH))
 	{
@@ -241,12 +295,15 @@ Ref< IStream > ZipVolume::open(const Path& fileName, uint32_t mode)
 	m_zipFile->read(extra, lfh.extraFieldLength);
 	extra[lfh.extraFieldLength] = '\0';
 
-	return new DeflateStreamZip(m_zipFile);
+	return new StreamStream(
+		new DeflateStreamZip(m_zipFile),
+		fi.uncompressedSize
+	);
 }
 
 bool ZipVolume::exist(const Path& fileName)
 {
-	return false;
+	return (bool)(get(fileName) != nullptr);
 }
 
 bool ZipVolume::remove(const Path& fileName)
@@ -295,15 +352,50 @@ Path ZipVolume::getCurrentDirectory() const
 
 std::wstring ZipVolume::getSystemPath(const Path& path) const
 {
-	std::wstringstream ss;
+	StringOutputStream ss;
+	
 	if (path.isRelative())
 	{
 		std::wstring tmp = m_currentDirectory.getPathNameNoVolume();
-		ss << tmp << L"/" << path.getPathName();
+		ss << tmp << L"/" << path.getPathNameNoVolume();
 	}
 	else
 		ss << path.getPathNameNoVolume();
-	return ss.str();
+
+	std::wstring txt = ss.str();
+	if (startsWith< std::wstring >(txt, L"/"))
+		return txt.substr(1);
+	else
+		return txt;
+}
+
+int32_t ZipVolume::findFileInfoIndex(const Path& path) const
+{
+	std::wstring sp = getSystemPath(path);
+	int32_t index = 0;
+
+	StringSplit< std::wstring > ss(sp, L"/");
+	for (auto it = ss.begin(); it != ss.end(); ++it)
+	{
+		const std::wstring txt = *it;
+		const FileInfo& fi = m_fileInfo[index];
+
+		int32_t next = -1;
+		for (auto child : fi.children)
+		{
+			if (m_fileInfo[child].name == txt)
+			{
+				next = child;
+				break;
+			}
+		}
+		if (next < 0)
+			return -1;
+
+		index = next;
+	}
+
+	return index;
 }
 
 	}

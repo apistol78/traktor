@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Core/Ref.h"
-#include "Core/Containers/SmallMap.h"
+#include "Core/Containers/AlignedVector.h"
 #include "Core/Io/IVolume.h"
 
 // import/export mechanism.
@@ -58,16 +58,33 @@ public:
 private:
     struct FileInfo
     {
+        std::wstring name;
+        int32_t parent;
+        AlignedVector< int32_t > children;
+
         uint64_t offset;
         uint64_t compressedSize;
         uint64_t uncompressedSize;
+
+        FileInfo()
+        :   parent(-1)
+        ,   offset(0)
+        ,   compressedSize(0)
+        ,   uncompressedSize(0)
+        {
+        }
+
+        bool isDirectory() const { return (bool)(compressedSize == 0); }
     };
 
     Ref< IStream > m_zipFile;
-    SmallMap< std::wstring, FileInfo > m_fileInfo;
+    AlignedVector< FileInfo > m_fileInfo;
+
     Path m_currentDirectory;
 
     std::wstring getSystemPath(const Path& path) const;
+
+    int32_t findFileInfoIndex(const Path& path) const;
 };
 
     }
