@@ -54,6 +54,13 @@ class IRenderSystem;
 
 	}
 
+	namespace script
+	{
+
+class IScriptContext;
+
+	}
+
 	namespace world
 	{
 
@@ -77,7 +84,7 @@ class ISceneEditorProfile;
 class Scene;
 class SceneAsset;
 
-/*! \brief Scene editor context.
+/*! Scene editor context.
  *
  * Scene entities, editor profiles and entity editors are kept
  * by the scene editor context.
@@ -115,7 +122,8 @@ public:
 		world::IEntityEventManager* eventManager,
 		resource::IResourceManager* resourceManager,
 		render::IRenderSystem* renderSystem,
-		physics::PhysicsManager* physicsManager
+		physics::PhysicsManager* physicsManager,
+		script::IScriptContext* scriptContext
 	);
 
 	virtual ~SceneEditorContext();
@@ -260,6 +268,8 @@ public:
 
 	physics::PhysicsManager* getPhysicsManager() const { return m_physicsManager; }
 
+	script::IScriptContext* getScriptContext() const { return m_scriptContext; }
+
 	RefArray< ISceneEditorProfile >& getEditorProfiles() { return m_editorProfiles; }
 
 	RefArray< ISceneEditorPlugin >& getEditorPlugins() { return m_editorPlugins; }
@@ -306,6 +316,7 @@ private:
 	Ref< resource::IResourceManager > m_resourceManager;
 	Ref< render::IRenderSystem > m_renderSystem;
 	Ref< physics::PhysicsManager > m_physicsManager;
+	Ref< script::IScriptContext > m_scriptContext;
 	RefArray< ISceneEditorProfile > m_editorProfiles;
 	RefArray< ISceneEditorPlugin > m_editorPlugins;
 	RefArray< const IEntityEditorFactory > m_entityEditorFactories;
