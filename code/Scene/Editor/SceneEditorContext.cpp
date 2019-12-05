@@ -56,7 +56,8 @@ SceneEditorContext::SceneEditorContext(
 	world::IEntityEventManager* eventManager,
 	resource::IResourceManager* resourceManager,
 	render::IRenderSystem* renderSystem,
-	physics::PhysicsManager* physicsManager
+	physics::PhysicsManager* physicsManager,
+	script::IScriptContext* scriptContext
 )
 :	m_editor(editor)
 ,	m_document(document)
@@ -66,6 +67,7 @@ SceneEditorContext::SceneEditorContext(
 ,	m_resourceManager(resourceManager)
 ,	m_renderSystem(renderSystem)
 ,	m_physicsManager(physicsManager)
+,	m_scriptContext(scriptContext)
 ,	m_guideSize(2.0f)
 ,	m_pickEnable(true)
 ,	m_snapMode(SmNone)

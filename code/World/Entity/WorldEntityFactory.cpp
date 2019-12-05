@@ -235,9 +235,10 @@ Ref< IEntityComponent > WorldEntityFactory::createEntityComponent(const world::I
 
 	if (const ScriptComponentData* scriptComponentData = dynamic_type_cast< const ScriptComponentData* >(&entityComponentData))
 	{
-		// Do not instantiate script components inside editor.
-		if (!m_editor)
+		if (!m_editor || scriptComponentData->getEditorSupport())
 			return scriptComponentData->createComponent(m_resourceManager);
+		else
+			return nullptr;
 	}
 
 	if (const VolumeComponentData* volumeComponentData = dynamic_type_cast< const VolumeComponentData* >(&entityComponentData))

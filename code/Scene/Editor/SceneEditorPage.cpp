@@ -39,6 +39,8 @@
 #include "Scene/Editor/Events/PostFrameEvent.h"
 #include "Scene/Editor/Events/PostModifyEvent.h"
 #include "Scene/Editor/Events/PreModifyEvent.h"
+#include "Script/IScriptManager.h"
+#include "Script/ScriptFactory.h"
 #include "Ui/Application.h"
 #include "Ui/Clipboard.h"
 #include "Ui/Container.h"
@@ -159,6 +161,21 @@ bool SceneEditorPage::create(ui::Container* parent)
 	// Configure physics manager.
 	physicsManager->setGravity(Vector4(0.0f, -9.81f, 0.0f, 0.0f));
 
+	// Create script context.
+	Ref< script::IScriptManager > scriptManager = m_editor->getStoreObject< script::IScriptManager >(L"ScriptManager");
+	if (!scriptManager)
+	{
+		log::error << L"Unable to create scene editor; failed to get script manager." << Endl;
+		return false;
+	}
+
+	Ref< script::IScriptContext > scriptContext = scriptManager->createContext(false);
+	if (!scriptContext)
+	{
+		log::error << L"Unable to create scene editor; failed to create script context." << Endl;
+		return false;
+	}
+
 	// Create resource manager.
 	Ref< resource::IResourceManager > resourceManager = new resource::ResourceManager(
 		m_editor->getOutputDatabase(),
@@ -174,7 +191,8 @@ bool SceneEditorPage::create(ui::Container* parent)
 		eventManager,
 		resourceManager,
 		renderSystem,
-		physicsManager
+		physicsManager,
+		scriptContext
 	);
 
 	// Create profiles, plugins, resource factories, entity editors and guide ids.

@@ -1,7 +1,7 @@
+#include "Core/Serialization/ISerializable.h"
 #include "Database/Instance.h"
 #include "Scene/Editor/DefaultEditorProfile.h"
 #include "Scene/Editor/SceneEditorContext.h"
-#include "Core/Serialization/ISerializable.h"
 #include "Ui/Command.h"
 #include "World/Deferred/WorldRendererDeferred.h"
 #include "World/Entity/ExternalEntityData.h"
@@ -11,6 +11,7 @@
 #include "Render/Resource/SequenceTextureFactory.h"
 #include "Render/Resource/ShaderFactory.h"
 #include "Render/Resource/TextureFactory.h"
+#include "Script/ScriptFactory.h"
 #include "Sound/SoundFactory.h"
 #include "Video/VideoFactory.h"
 #include "Weather/Clouds/CloudMaskFactory.h"
@@ -79,6 +80,7 @@ void DefaultEditorProfile::createResourceFactories(
 	outResourceFactories.push_back(new video::VideoFactory(context->getRenderSystem()));
 	outResourceFactories.push_back(new weather::CloudMaskFactory());
 	outResourceFactories.push_back(new world::WorldResourceFactory(context->getRenderSystem(), nullptr));
+	outResourceFactories.push_back(new script::ScriptFactory(context->getScriptContext()));
 }
 
 void DefaultEditorProfile::createEntityFactories(

@@ -28,7 +28,7 @@ class IResourceManager;
 
 class ScriptComponent;
 
-/*! \brief Script entity component data.
+/*! Script entity component data.
  * \ingroup World
  */
 class T_DLLCLASS ScriptComponentData : public IEntityComponentData
@@ -46,8 +46,11 @@ public:
 
 	const resource::Id< IRuntimeClass >& getRuntimeClass() const { return m_class;  }
 
+	bool getEditorSupport() const { return m_editorSupport; }
+
 private:
 	resource::Id< IRuntimeClass > m_class;
+	bool m_editorSupport;
 };
 
 	}
