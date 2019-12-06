@@ -104,8 +104,8 @@ bool ClothEntity::create(
 		}
 	}
 
-	for (AlignedVector< Edge >::iterator i = m_edges.begin(); i != m_edges.end(); ++i)
-		i->length = (m_nodes[i->index[0]].position[0] - m_nodes[i->index[1]].position[0]).xyz0().length();
+	for (auto& edge : m_edges)
+		edge.length = (m_nodes[edge.index[0]].position[0] - m_nodes[edge.index[1]].position[0]).xyz0().length();
 
 	m_solverIterations = solverIterations;
 
@@ -160,7 +160,10 @@ void ClothEntity::render(
 	if (!m_shader->hasTechnique(worldRenderPass.getTechnique()))
 		return;
 
-	if (m_updateRequired)
+	if (
+		m_updateRequired &&
+		(worldRenderPass.getPassFlags() & world::IWorldRenderPass::PfFirst) != 0
+	)
 	{
 		ClothVertex* vertexFront = static_cast< ClothVertex* >(m_vertexBuffer->lock());
 		T_ASSERT(vertexFront);
@@ -266,37 +269,37 @@ void ClothEntity::update(const world::UpdateParams& update)
 	for (m_time += update.deltaTime * c_timeScale; m_updateTime < m_time; m_updateTime += c_updateDeltaTime)
 	{
 		m_aabb = Aabb3();
-		for (AlignedVector< Node >::iterator i = m_nodes.begin(); i != m_nodes.end(); ++i)
+		for (auto& node : m_nodes)
 		{
-			if (i->invMass < Scalar(FUZZY_EPSILON))
+			if (node.invMass < Scalar(FUZZY_EPSILON))
 				continue;
 
 			Vector4 force = gravity + wind + Vector4(
-				traktor::sinf(i->position[0].x() * 2.0f * PI + m_time * 0.2f) * 0.2f,
-				traktor::cosf(i->position[0].y() * 2.0f * PI + m_time * 0.2f) * 0.2f,
+				traktor::sinf(node.position[0].x() * 2.0f * PI + m_time * 0.2f) * 0.2f,
+				traktor::cosf(node.position[0].y() * 2.0f * PI + m_time * 0.2f) * 0.2f,
 				0.0f,
 				0.0f
 			);
 
-			Vector4 current = i->position[0];
-			i->position[0] += (current - i->position[1]) * m_damping + force * i->invMass * Scalar(c_updateDeltaTime * c_updateDeltaTime);
-			i->position[1] = current;
+			Vector4 current = node.position[0];
+			node.position[0] += (current - node.position[1]) * m_damping + force * node.invMass * Scalar(c_updateDeltaTime * c_updateDeltaTime);
+			node.position[1] = current;
 
-			m_aabb.contain(i->position[0]);
+			m_aabb.contain(node.position[0]);
 		}
 
 		for (uint32_t i = 0; i < m_solverIterations; ++i)
 		{
 			// Satisfy edge lengths.
-			for (AlignedVector< Edge >::iterator j = m_edges.begin(); j != m_edges.end(); ++j)
+			for (const auto& edge : m_edges)
 			{
-				Vector4 delta = m_nodes[j->index[1]].position[0] - m_nodes[j->index[0]].position[0];
+				Vector4 delta = m_nodes[edge.index[1]].position[0] - m_nodes[edge.index[0]].position[0];
 				Scalar deltaLength = delta.length();
 				if (deltaLength > FUZZY_EPSILON)
 				{
-					Scalar diff = (deltaLength - j->length) / deltaLength;
-					m_nodes[j->index[0]].position[0] += delta * diff * m_nodes[j->index[0]].invMass * Scalar(0.5f);
-					m_nodes[j->index[1]].position[0] -= delta * diff * m_nodes[j->index[1]].invMass * Scalar(0.5f);
+					Scalar diff = (deltaLength - edge.length) / deltaLength;
+					m_nodes[edge.index[0]].position[0] += delta * diff * m_nodes[edge.index[0]].invMass * Scalar(0.5f);
+					m_nodes[edge.index[1]].position[0] -= delta * diff * m_nodes[edge.index[1]].invMass * Scalar(0.5f);
 				}
 			}
 
