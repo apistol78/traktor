@@ -343,12 +343,12 @@ void GraphControl::alignNodes(Alignment align)
 	getSelectedNodes(nodes);
 
 	Rect bounds(
-		std::numeric_limits< int >::max(),
-		std::numeric_limits< int >::max(),
-		-std::numeric_limits< int >::max(),
-		-std::numeric_limits< int >::max()
+		std::numeric_limits< int32_t >::max(),
+		std::numeric_limits< int32_t >::max(),
+		-std::numeric_limits< int32_t >::max(),
+		-std::numeric_limits< int32_t >::max()
 	);
-	for (auto node : m_nodes)
+	for (auto node : nodes)
 	{
 		Rect rc = node->calculateRect();
 		bounds.left = std::min(bounds.left, rc.left);
@@ -357,7 +357,7 @@ void GraphControl::alignNodes(Alignment align)
 		bounds.bottom = std::max(bounds.bottom, rc.bottom);
 	}
 
-	for (auto node : m_nodes)
+	for (auto node : nodes)
 	{
 		Rect rc = node->calculateRect();
 		Point pt = rc.getTopLeft();
@@ -401,15 +401,15 @@ void GraphControl::evenSpace(EvenSpace space)
 	nodes.sort(SortNodePred(space));
 
 	Rect bounds(
-		std::numeric_limits< int >::max(),
-		std::numeric_limits< int >::max(),
-		-std::numeric_limits< int >::max(),
-		-std::numeric_limits< int >::max()
+		std::numeric_limits< int32_t >::max(),
+		std::numeric_limits< int32_t >::max(),
+		-std::numeric_limits< int32_t >::max(),
+		-std::numeric_limits< int32_t >::max()
 	);
 
-	int totalWidth = 0, totalHeight = 0;
+	int32_t totalWidth = 0, totalHeight = 0;
 
-	for (auto node : m_nodes)
+	for (auto node : nodes)
 	{
 		Rect rc = node->calculateRect();
 
@@ -422,12 +422,12 @@ void GraphControl::evenSpace(EvenSpace space)
 		totalHeight += rc.getHeight();
 	}
 
-	int spaceHoriz = (bounds.getWidth() - totalWidth) / int(nodes.size() - 1);
-	int spaceVert = (bounds.getHeight() - totalHeight) / int(nodes.size() - 1);
+	int32_t spaceHoriz = (bounds.getWidth() - totalWidth) / (int32_t)(nodes.size() - 1);
+	int32_t spaceVert = (bounds.getHeight() - totalHeight) / (int32_t)(nodes.size() - 1);
 
-	int x = bounds.left, y = bounds.top;
+	int32_t x = bounds.left, y = bounds.top;
 
-	for (auto node : m_nodes)
+	for (auto node : nodes)
 	{
 		Rect rc = node->calculateRect();
 		Point pt = rc.getTopLeft();

@@ -28,8 +28,7 @@ public:
 	float velocity;
 	Vector4 direction;
 	Vector4 directionPerp;
-	float suspensionPreviousLength;
-	float suspensionFilteredLength;
+	float suspensionLength;
 	bool contact;
 	float contactFudge;
 	int32_t contactMaterial;
@@ -37,7 +36,7 @@ public:
 	Vector4 contactNormal;
 	Vector4 contactVelocity;
 
-	Wheel(const WheelData* data);
+	explicit Wheel(const WheelData* data);
 
 	const WheelData* getData() const { return data; }
 
@@ -49,7 +48,7 @@ public:
 
 	const Vector4& getDirectionPerp() const { return directionPerp; }
 
-	float getSuspensionLength() const { return suspensionFilteredLength; }
+	float getSuspensionLength() const { return suspensionLength; }
 
 	bool getContact() const { return contact; }
 

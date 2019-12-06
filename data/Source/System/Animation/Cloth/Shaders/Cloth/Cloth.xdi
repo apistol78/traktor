@@ -14,8 +14,8 @@
 			<id>{6B54EDE8-000D-0442-8AB2-C4BA6175CDFC}</id>
 			<comment/>
 			<position>
-				<first>-142</first>
-				<second>162</second>
+				<first>-145</first>
+				<second>107</second>
 			</position>
 			<name>Position</name>
 			<usage>DuPosition</usage>
@@ -195,6 +195,18 @@
 			<outputPins/>
 			<values/>
 		</item>
+		<item type="traktor.render.VertexInput" version="traktor.render.Node:1">
+			<id>{DE737504-258C-044F-9131-059D2D9E219A}</id>
+			<comment/>
+			<position>
+				<first>-143</first>
+				<second>171</second>
+			</position>
+			<name>Normal</name>
+			<usage>DuNormal</usage>
+			<type>DtFloat3</type>
+			<index>0</index>
+		</item>
 	</nodes>
 	<edges>
 		<item type="traktor.render.Edge">
@@ -255,6 +267,16 @@
 			<destination>
 				<node ref="/object/nodes/item[5]"/>
 				<name>ViewVelocity</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[6]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[2]"/>
+				<name>Normal</name>
 			</destination>
 		</item>
 	</edges>

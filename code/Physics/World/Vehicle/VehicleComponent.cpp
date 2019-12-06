@@ -195,7 +195,7 @@ void VehicleComponent::updateSuspension(float dT)
 				suspensionLength = data->getSuspensionLength().max;
 
 			// Suspension velocity.
-			float suspensionVelocity = (wheel->suspensionPreviousLength - suspensionLength) / dT;
+			float suspensionVelocity = (wheel->suspensionLength - suspensionLength) / dT;
 
 			// Suspension forces.
 			float t = 1.0f - (suspensionLength - data->getSuspensionLength().min) / (data->getSuspensionLength().max - data->getSuspensionLength().min);
@@ -217,7 +217,7 @@ void VehicleComponent::updateSuspension(float dT)
 			);
 
 			// Save suspension state.
-			wheel->suspensionPreviousLength = suspensionLength;
+			wheel->suspensionLength = suspensionLength;
 
 			// Contact attributes.
 			Vector4 wheelVelocity = m_body->getVelocityAt(result.position.xyz1(), false);
@@ -238,7 +238,7 @@ void VehicleComponent::updateSuspension(float dT)
 		else
 		{
 			// Save suspension state.
-			wheel->suspensionPreviousLength = data->getSuspensionLength().max;
+			wheel->suspensionLength = data->getSuspensionLength().max;
 
 			wheel->contact = false;
 			wheel->contactFudge = 0.0f;
@@ -247,8 +247,6 @@ void VehicleComponent::updateSuspension(float dT)
 			wheel->contactNormal = Vector4(0.0f, 0.0f, 0.0f, 0.0f);
 			wheel->contactVelocity = Vector4(0.0f, 0.0f, 0.0f, 0.0f);
 		}
-
-		wheel->suspensionFilteredLength = wheel->suspensionPreviousLength * 0.2f + wheel->suspensionFilteredLength * 0.8f;
 	}
 }
 

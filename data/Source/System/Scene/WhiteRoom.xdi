@@ -4,7 +4,7 @@
 		<viewNearZ>0.1</viewNearZ>
 		<viewFarZ>10000</viewFarZ>
 		<linearLighting>true</linearLighting>
-		<exposureBias>2</exposureBias>
+		<exposureBias>4</exposureBias>
 		<shadowSettings>
 			<disabled>
 				<projection>SpUniform</projection>
@@ -84,12 +84,16 @@
 	</worldRenderSettings>
 	<imageProcessParams/>
 	<layers>
-		<item type="traktor.world.LayerEntityData" version="1">
+		<item type="traktor.world.LayerEntityData" version="1,traktor.world.GroupEntityData:1">
 			<name>Environment</name>
 			<transform>
 				<translation>0, 0, 0, 0</translation>
 				<rotation>0, 0, 0, 1</rotation>
 			</transform>
+			<mask>
+				<static>true</static>
+				<dynamic>true</dynamic>
+			</mask>
 			<entityData>
 				<item type="traktor.world.ComponentEntityData">
 					<name>Sky</name>
@@ -150,12 +154,16 @@
 			<dynamic>false</dynamic>
 			<attributes/>
 		</item>
-		<item type="traktor.world.LayerEntityData" version="1">
+		<item type="traktor.world.LayerEntityData" version="1,traktor.world.GroupEntityData:1">
 			<name>Entity</name>
 			<transform>
 				<translation>0, 0, 0, 0</translation>
 				<rotation>0, 0, 0, 1</rotation>
 			</transform>
+			<mask>
+				<static>true</static>
+				<dynamic>true</dynamic>
+			</mask>
 			<entityData/>
 			<visible>true</visible>
 			<locked>false</locked>

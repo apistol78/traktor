@@ -67,7 +67,7 @@ void PhysicsComponentEditor::drawGuide(render::PrimitiveRenderer* primitiveRende
 
 				Vector4 anchorL = wheel->data->getAnchor().xyz1();
 				Vector4 axisL = wheel->data->getAxis().xyz0().normalized();
-				Scalar suspLen = Scalar(wheel->suspensionFilteredLength);
+				Scalar suspLen = Scalar(wheel->suspensionLength);
 
 				Vector4 position = anchorL + axisL * -suspLen;
 

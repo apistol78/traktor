@@ -9,11 +9,18 @@ namespace traktor
 {
 	namespace shape
 	{
+		namespace
+		{
+		
+const resource::Id< render::Shader > c_defaultShader(Guid(L"{1B199356-39EB-43E9-B399-214B5F2E1D60}"));
+
+		}
 
 T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.shape.ExtrudeShapeLayerData", 0, ExtrudeShapeLayerData, ISplineLayerData)
 
 ExtrudeShapeLayerData::ExtrudeShapeLayerData()
-:	m_automaticOrientation(false)
+:	m_shader(c_defaultShader)
+,	m_automaticOrientation(false)
 ,	m_detail(10.0f)
 {
 }
