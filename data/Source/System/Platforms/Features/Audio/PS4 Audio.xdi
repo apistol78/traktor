@@ -134,7 +134,7 @@
 			<item>
 				<first>Audio.Type</first>
 				<second type="traktor.PropertyString">
-					<value>traktor.sound.SoundDriverPs4</value>
+					<value>traktor.sound.AudioDriverPs4</value>
 				</second>
 			</item>
 		</value>

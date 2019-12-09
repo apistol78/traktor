@@ -411,7 +411,7 @@
 			<item>
 				<first>Audio.Type</first>
 				<second type="traktor.PropertyString">
-					<value>traktor.sound.SoundDriverOpenAL</value>
+					<value>traktor.sound.AudioDriverOpenAL</value>
 				</second>
 			</item>
 		</value>
