@@ -214,7 +214,7 @@
 			<item>
 				<first>Audio.Type</first>
 				<second type="traktor.PropertyString">
-					<value>traktor.sound.SoundDriverWinMM</value>
+					<value>traktor.sound.AudioDriverWinMM</value>
 				</second>
 			</item>
 		</value>
