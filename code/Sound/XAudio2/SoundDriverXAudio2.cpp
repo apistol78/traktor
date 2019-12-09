@@ -142,7 +142,7 @@ SoundDriverXAudio2::~SoundDriverXAudio2()
 	destroy();
 }
 
-bool SoundDriverXAudio2::create(const SystemApplication& sysapp, const SoundDriverCreateDesc& desc, Ref< ISoundMixer >& outMixer)
+bool SoundDriverXAudio2::create(const SystemApplication& sysapp, const SoundDriverCreateDesc& desc, Ref< IAudioMixer >& outMixer)
 {
 	m_desc = desc;
 

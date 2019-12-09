@@ -80,7 +80,7 @@ void RepeatGrain::getActiveGrains(const ISoundBufferCursor* cursor, RefArray< co
 	m_grain->getActiveGrains(repeatCursor->m_cursor, outActiveGrains);
 }
 
-bool RepeatGrain::getBlock(ISoundBufferCursor* cursor, const ISoundMixer* mixer, SoundBlock& outBlock) const
+bool RepeatGrain::getBlock(ISoundBufferCursor* cursor, const IAudioMixer* mixer, SoundBlock& outBlock) const
 {
 	RepeatGrainCursor* repeatCursor = static_cast< RepeatGrainCursor* >(cursor);
 	if (!m_grain->getBlock(repeatCursor->m_cursor, mixer, outBlock))

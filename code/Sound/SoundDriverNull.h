@@ -23,7 +23,7 @@ class T_DLLCLASS SoundDriverNull : public ISoundDriver
 	T_RTTI_CLASS;
 
 public:
-	virtual bool create(const SystemApplication& sysapp, const SoundDriverCreateDesc& desc, Ref< ISoundMixer >& outMixer) override final;
+	virtual bool create(const SystemApplication& sysapp, const SoundDriverCreateDesc& desc, Ref< IAudioMixer >& outMixer) override final;
 
 	virtual void destroy() override final;
 

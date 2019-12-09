@@ -16,7 +16,7 @@ SoundDriverPulse::SoundDriverPulse()
 {
 }
 
-bool SoundDriverPulse::create(const SystemApplication& sysapp, const SoundDriverCreateDesc& desc, Ref< ISoundMixer >& outMixer)
+bool SoundDriverPulse::create(const SystemApplication& sysapp, const SoundDriverCreateDesc& desc, Ref< IAudioMixer >& outMixer)
 {
 	int error;
 

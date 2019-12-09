@@ -8,7 +8,7 @@
 #include "Core/Serialization/AttributePoint.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
-#include "Sound/ISoundMixer.h"
+#include "Sound/IAudioMixer.h"
 #include "Sound/Filters/SurroundEnvironment.h"
 #include "Sound/Filters/SurroundFilter.h"
 

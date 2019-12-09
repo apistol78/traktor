@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Sound/ISoundMixer.h"
+#include "Sound/IAudioMixer.h"
 
 namespace traktor
 {
@@ -13,7 +13,7 @@ class SpursJobQueue;
 /*! \brief PS3/SPU sound mixer
  * \ingroup Sound
  */
-class SoundMixerPs3 : public ISoundMixer
+class AudioMixerPs3 : public IAudioMixer
 {
 	T_RTTI_CLASS;
 
@@ -36,7 +36,7 @@ public:
 
 private:
 	Ref< SpursJobQueue > m_jobQueue;
-	Ref< ISoundMixer > m_mixer;
+	Ref< IAudioMixer > m_mixer;
 };
 
 	}

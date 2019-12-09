@@ -25,13 +25,13 @@ class IResourceManager;
 	{
 
 class GraphEvaluator;
+class IAudioMixer;
 class InputPin;
 class ISoundBufferCursor;
-class ISoundMixer;
 class OutputPin;
 struct SoundBlock;
 
-/*! \brief Node instance.
+/*! Node instance.
  */
 class T_DLLCLASS Node : public ISerializable
 {
@@ -136,7 +136,7 @@ public:
 
 	/*! \brief
 	 */
-	virtual bool getBlock(ISoundBufferCursor* cursor, const GraphEvaluator* evaluator, const ISoundMixer* mixer, SoundBlock& outBlock) const = 0;
+	virtual bool getBlock(ISoundBufferCursor* cursor, const GraphEvaluator* evaluator, const IAudioMixer* mixer, SoundBlock& outBlock) const = 0;
 
 	/*! \brief
 	 */

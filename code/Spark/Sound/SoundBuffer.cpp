@@ -49,7 +49,7 @@ Ref< sound::ISoundBufferCursor > SoundBuffer::createCursor() const
 	return new SoundBufferCursor();
 }
 
-bool SoundBuffer::getBlock(sound::ISoundBufferCursor* cursor, const sound::ISoundMixer* mixer, sound::SoundBlock& outBlock) const
+bool SoundBuffer::getBlock(sound::ISoundBufferCursor* cursor, const sound::IAudioMixer* mixer, sound::SoundBlock& outBlock) const
 {
 	SoundBufferCursor* fsbc = static_cast< SoundBufferCursor* >(cursor);
 	T_ASSERT(fsbc);

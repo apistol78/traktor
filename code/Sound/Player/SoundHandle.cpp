@@ -1,5 +1,5 @@
 #include "Core/Math/Vector4.h"
-#include "Sound/SoundChannel.h"
+#include "Sound/AudioChannel.h"
 #include "Sound/Player/SoundHandle.h"
 
 namespace traktor
@@ -54,7 +54,7 @@ void SoundHandle::setParameter(int32_t id, float parameter)
 		m_channel->setParameter(id, parameter);
 }
 
-SoundHandle::SoundHandle(SoundChannel* channel, Vector4& position, float& fadeOff)
+SoundHandle::SoundHandle(AudioChannel* channel, Vector4& position, float& fadeOff)
 :	m_channel(channel)
 ,	m_position(&position)
 ,	m_fadeOff(&fadeOff)

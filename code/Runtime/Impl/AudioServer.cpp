@@ -9,8 +9,8 @@
 #include "Core/Settings/PropertyString.h"
 #include "Core/Timer/Profiler.h"
 #include "Resource/IResourceManager.h"
+#include "Sound/AudioChannel.h"
 #include "Sound/ISoundDriver.h"
-#include "Sound/SoundChannel.h"
 #include "Sound/SoundDriverNull.h"
 #include "Sound/SoundDriverWriteOut.h"
 #include "Sound/SoundFactory.h"
@@ -193,7 +193,7 @@ uint32_t AudioServer::getActiveSoundChannels() const
 	{
 		for (uint32_t i = 0; ; ++i)
 		{
-			sound::SoundChannel* channel = m_soundSystem->getChannel(i);
+			sound::AudioChannel* channel = m_soundSystem->getChannel(i);
 			if (!channel)
 				break;
 

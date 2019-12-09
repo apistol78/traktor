@@ -1,6 +1,6 @@
 #include "Core/Memory/Alloc.h"
+#include "Sound/IAudioMixer.h"
 #include "Sound/ISoundBuffer.h"
-#include "Sound/ISoundMixer.h"
 #include "Sound/Processor/GraphEvaluator.h"
 #include "Sound/Processor/Nodes/Blend.h"
 
@@ -84,7 +84,7 @@ bool Blend::getScalar(ISoundBufferCursor* cursor, const GraphEvaluator* evaluato
 	return false;
 }
 
-bool Blend::getBlock(ISoundBufferCursor* cursor, const GraphEvaluator* evaluator, const ISoundMixer* mixer, SoundBlock& outBlock) const
+bool Blend::getBlock(ISoundBufferCursor* cursor, const GraphEvaluator* evaluator, const IAudioMixer* mixer, SoundBlock& outBlock) const
 {
 	BlendCursor* blendCursor = static_cast< BlendCursor* >(cursor);
 

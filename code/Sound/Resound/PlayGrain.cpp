@@ -1,7 +1,7 @@
 #include "Core/Math/Const.h"
+#include "Sound/IAudioMixer.h"
 #include "Sound/IFilter.h"
 #include "Sound/ISoundBuffer.h"
-#include "Sound/ISoundMixer.h"
 #include "Sound/ISoundResource.h"
 #include "Sound/Sound.h"
 #include "Sound/Resound/PlayGrain.h"
@@ -106,7 +106,7 @@ void PlayGrain::getActiveGrains(const ISoundBufferCursor* cursor, RefArray< cons
 	outActiveGrains.push_back(this);
 }
 
-bool PlayGrain::getBlock(ISoundBufferCursor* cursor, const ISoundMixer* mixer, SoundBlock& outBlock) const
+bool PlayGrain::getBlock(ISoundBufferCursor* cursor, const IAudioMixer* mixer, SoundBlock& outBlock) const
 {
 	PlayGrainCursor* playCursor = static_cast< PlayGrainCursor* >(cursor);
 	if (!playCursor)

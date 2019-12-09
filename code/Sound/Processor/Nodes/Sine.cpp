@@ -95,7 +95,7 @@ bool Sine::getScalar(ISoundBufferCursor* cursor, const GraphEvaluator* evaluator
 	return true;
 }
 
-bool Sine::getBlock(ISoundBufferCursor* cursor, const GraphEvaluator* evaluator, const ISoundMixer* mixer, SoundBlock& outBlock) const
+bool Sine::getBlock(ISoundBufferCursor* cursor, const GraphEvaluator* evaluator, const IAudioMixer* mixer, SoundBlock& outBlock) const
 {
 	SineCursor* sineCursor = static_cast< SineCursor* >(cursor);
 

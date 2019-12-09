@@ -1,6 +1,6 @@
 #include "Core/Math/MathUtils.h"
 #include "Sound/ISoundBuffer.h"
-#include "Sound/ISoundMixer.h"
+#include "Sound/IAudioMixer.h"
 #include "Sound/Resound/InLoopOutGrain.h"
 
 namespace traktor
@@ -96,7 +96,7 @@ void InLoopOutGrain::getActiveGrains(const ISoundBufferCursor* cursor, RefArray<
 	outActiveGrains.push_back(this);
 }
 
-bool InLoopOutGrain::getBlock(ISoundBufferCursor* cursor, const ISoundMixer* mixer, SoundBlock& outBlock) const
+bool InLoopOutGrain::getBlock(ISoundBufferCursor* cursor, const IAudioMixer* mixer, SoundBlock& outBlock) const
 {
 	InLoopOutGrainCursor* iloCursor = static_cast< InLoopOutGrainCursor* >(cursor);
 

@@ -6,10 +6,10 @@
 #include "Core/Math/Vector4.h"
 #include "Core/Memory/Alloc.h"
 #include "Core/Misc/Align.h"
+#include "Sound/AudioChannel.h"
+#include "Sound/IAudioMixer.h"
 #include "Sound/IFilter.h"
 #include "Sound/ISoundBuffer.h"
-#include "Sound/ISoundMixer.h"
-#include "Sound/SoundChannel.h"
 
 namespace traktor
 {
@@ -45,9 +45,9 @@ inline void moveSamples(float* destSamples, const float* sourceSamples, int32_t 
 
 		}
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.sound.SoundChannel", SoundChannel, Object)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.sound.AudioChannel", AudioChannel, Object)
 
-SoundChannel::SoundChannel(uint32_t id, uint32_t hwSampleRate, uint32_t hwFrameSamples)
+AudioChannel::AudioChannel(uint32_t id, uint32_t hwSampleRate, uint32_t hwFrameSamples)
 :	m_id(id)
 ,	m_hwSampleRate(hwSampleRate)
 ,	m_hwFrameSamples(hwFrameSamples)
@@ -67,32 +67,32 @@ SoundChannel::SoundChannel(uint32_t id, uint32_t hwSampleRate, uint32_t hwFrameS
 		m_outputSamples[i] = m_outputSamples[0] + outputSamplesCount * i;
 }
 
-SoundChannel::~SoundChannel()
+AudioChannel::~AudioChannel()
 {
 	Alloc::freeAlign(m_outputSamples[0]);
 }
 
-void SoundChannel::setVolume(float volume)
+void AudioChannel::setVolume(float volume)
 {
 	m_volume = clamp(volume, 0.0f, 1.0f);
 }
 
-float SoundChannel::getVolume() const
+float AudioChannel::getVolume() const
 {
 	return m_volume;
 }
 
-void SoundChannel::setPitch(float pitch)
+void AudioChannel::setPitch(float pitch)
 {
 	m_pitch = pitch;
 }
 
-float SoundChannel::getPitch() const
+float AudioChannel::getPitch() const
 {
 	return m_pitch;
 }
 
-void SoundChannel::setFilter(const IFilter* filter)
+void AudioChannel::setFilter(const IFilter* filter)
 {
 	StateFilter& sf = m_stateFilter.beginWrite();
 	if (filter != 0)
@@ -108,12 +108,12 @@ void SoundChannel::setFilter(const IFilter* filter)
 	m_stateFilter.endWrite();
 }
 
-bool SoundChannel::isPlaying() const
+bool AudioChannel::isPlaying() const
 {
 	return m_playing;
 }
 
-void SoundChannel::stop()
+void AudioChannel::stop()
 {
 	StateSound& ss = m_stateSound.beginWrite();
 
@@ -130,24 +130,24 @@ void SoundChannel::stop()
 	m_stateSound.endWrite();
 }
 
-ISoundBufferCursor* SoundChannel::getCursor()
+ISoundBufferCursor* AudioChannel::getCursor()
 {
 	return m_stateSound.read().cursor;
 }
 
-void SoundChannel::setParameter(handle_t id, float parameter)
+void AudioChannel::setParameter(handle_t id, float parameter)
 {
 	StateParameter& sp = m_stateParameters.beginWrite();
 	sp.set.push_back(std::make_pair(id, parameter));
 	m_stateParameters.endWrite();
 }
 
-void SoundChannel::disableRepeat()
+void AudioChannel::disableRepeat()
 {
 	m_allowRepeat = false;
 }
 
-bool SoundChannel::play(
+bool AudioChannel::play(
 	const ISoundBuffer* buffer,
 	handle_t category,
 	float gain,
@@ -178,7 +178,7 @@ bool SoundChannel::play(
 	return true;
 }
 
-bool SoundChannel::getBlock(const ISoundMixer* mixer, SoundBlock& outBlock)
+bool AudioChannel::getBlock(const IAudioMixer* mixer, SoundBlock& outBlock)
 {
 	StateSound& ss = m_stateSound.read();
 

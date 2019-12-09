@@ -63,7 +63,7 @@ bool Divide::getScalar(ISoundBufferCursor* cursor, const GraphEvaluator* evaluat
 	return true;
 }
 
-bool Divide::getBlock(ISoundBufferCursor* cursor, const GraphEvaluator* evaluator, const ISoundMixer* mixer, SoundBlock& outBlock) const
+bool Divide::getBlock(ISoundBufferCursor* cursor, const GraphEvaluator* evaluator, const IAudioMixer* mixer, SoundBlock& outBlock) const
 {
 	return false;
 }

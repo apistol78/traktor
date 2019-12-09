@@ -105,7 +105,7 @@ SoundDriverOpenAL::SoundDriverOpenAL()
 		m_buffers[i] = 0;
 }
 
-bool SoundDriverOpenAL::create(const SystemApplication& sysapp, const SoundDriverCreateDesc& desc, Ref< ISoundMixer >& outMixer)
+bool SoundDriverOpenAL::create(const SystemApplication& sysapp, const SoundDriverCreateDesc& desc, Ref< IAudioMixer >& outMixer)
 {
 	const ALuint c_formats[][2] =
 	{

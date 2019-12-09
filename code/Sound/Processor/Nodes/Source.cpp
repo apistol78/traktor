@@ -82,7 +82,7 @@ bool Source::getScalar(ISoundBufferCursor* cursor, const GraphEvaluator* evaluat
 	return false;
 }
 
-bool Source::getBlock(ISoundBufferCursor* cursor, const GraphEvaluator* evaluator, const ISoundMixer* mixer, SoundBlock& outBlock) const
+bool Source::getBlock(ISoundBufferCursor* cursor, const GraphEvaluator* evaluator, const IAudioMixer* mixer, SoundBlock& outBlock) const
 {
 	SourceCursor* sourceCursor = static_cast< SourceCursor* >(cursor);
 	if (!sourceCursor)

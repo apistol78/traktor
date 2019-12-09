@@ -82,7 +82,7 @@ bool Modulate::getScalar(ISoundBufferCursor* cursor, const GraphEvaluator* evalu
 	return false;
 }
 
-bool Modulate::getBlock(ISoundBufferCursor* cursor, const GraphEvaluator* evaluator, const ISoundMixer* mixer, SoundBlock& outBlock) const
+bool Modulate::getBlock(ISoundBufferCursor* cursor, const GraphEvaluator* evaluator, const IAudioMixer* mixer, SoundBlock& outBlock) const
 {
 	ModulateCursor* modulateCursor = static_cast< ModulateCursor* >(cursor);
 

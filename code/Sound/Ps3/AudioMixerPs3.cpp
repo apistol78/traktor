@@ -5,8 +5,8 @@
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Thread/Ps3/Spurs/SpursJobQueue.h"
 #include "Core/Thread/Ps3/Spurs/SpursManager.h"
-#include "Sound/SoundMixer.h"
-#include "Sound/Ps3/SoundMixerPs3.h"
+#include "Sound/AudioMixer.h"
+#include "Sound/Ps3/AudioMixerPs3.h"
 #include "Sound/Ps3/Spu/JobMC.h"
 
 #define T_USE_PPU_MIXER	0
@@ -33,24 +33,24 @@ namespace traktor
 	namespace sound
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.sound.SoundMixerPs3", SoundMixerPs3, ISoundMixer)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.sound.AudioMixerPs3", AudioMixerPs3, IAudioMixer)
 
-bool SoundMixerPs3::create()
+bool AudioMixerPs3::create()
 {
 #if !T_USE_PPU_MIXER
 	T_FATAL_ASSERT_M(sizeof(JobMC) == 128, L"Incorrect size of job descriptor; must be 128 bytes");
 	m_jobQueue = SpursManager::getInstance().createJobQueue(sizeof(JobMC), 512, SpursManager::Above);
 #endif
-	m_mixer = new SoundMixer();
+	m_mixer = new AudioMixer();
 	return true;
 }
 
-void SoundMixerPs3::destroy()
+void AudioMixerPs3::destroy()
 {
 	safeDestroy(m_jobQueue);
 }
 
-void SoundMixerPs3::mulConst(float* sb, uint32_t count, float factor) const
+void AudioMixerPs3::mulConst(float* sb, uint32_t count, float factor) const
 {
 #if !T_USE_PPU_MIXER
 
@@ -77,7 +77,7 @@ void SoundMixerPs3::mulConst(float* sb, uint32_t count, float factor) const
 #endif
 }
 
-void SoundMixerPs3::mulConst(float* lsb, const float* rsb, uint32_t count, float factor) const
+void AudioMixerPs3::mulConst(float* lsb, const float* rsb, uint32_t count, float factor) const
 {
 #if !T_USE_PPU_MIXER
 
@@ -104,7 +104,7 @@ void SoundMixerPs3::mulConst(float* lsb, const float* rsb, uint32_t count, float
 #endif
 }
 
-void SoundMixerPs3::addMulConst(float* lsb, const float* rsb, uint32_t count, float factor) const
+void AudioMixerPs3::addMulConst(float* lsb, const float* rsb, uint32_t count, float factor) const
 {
 #if !T_USE_PPU_MIXER
 
@@ -131,7 +131,7 @@ void SoundMixerPs3::addMulConst(float* lsb, const float* rsb, uint32_t count, fl
 #endif
 }
 
-void SoundMixerPs3::stretch(float* lsb, uint32_t lcount, const float* rsb, uint32_t rcount, float factor) const
+void AudioMixerPs3::stretch(float* lsb, uint32_t lcount, const float* rsb, uint32_t rcount, float factor) const
 {
 #if !T_USE_PPU_MIXER
 
@@ -160,7 +160,7 @@ void SoundMixerPs3::stretch(float* lsb, uint32_t lcount, const float* rsb, uint3
 #endif
 }
 
-void SoundMixerPs3::mute(float* sb, uint32_t count) const
+void AudioMixerPs3::mute(float* sb, uint32_t count) const
 {
 #if !T_USE_PPU_MIXER
 	mulConst(sb, count, 0.0f);
@@ -169,7 +169,7 @@ void SoundMixerPs3::mute(float* sb, uint32_t count) const
 #endif
 }
 
-void SoundMixerPs3::synchronize() const
+void AudioMixerPs3::synchronize() const
 {
 #if !T_USE_PPU_MIXER && !T_SPU_SYNCHRONIZED
 	while (!m_jobQueue->wait())

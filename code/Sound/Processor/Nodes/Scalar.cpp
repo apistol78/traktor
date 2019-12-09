@@ -52,7 +52,7 @@ bool Scalar::getScalar(ISoundBufferCursor* cursor, const GraphEvaluator* evaluat
 	return true;
 }
 
-bool Scalar::getBlock(ISoundBufferCursor* cursor, const GraphEvaluator* evaluator, const ISoundMixer* mixer, SoundBlock& outBlock) const
+bool Scalar::getBlock(ISoundBufferCursor* cursor, const GraphEvaluator* evaluator, const IAudioMixer* mixer, SoundBlock& outBlock) const
 {
 	return false;
 }

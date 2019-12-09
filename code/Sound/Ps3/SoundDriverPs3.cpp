@@ -3,8 +3,8 @@
 #include <sysutil/sysutil_sysparam.h>
 #include "Core/Log/Log.h"
 #include "Core/Misc/SafeDestroy.h"
+#include "Sound/Ps3/AudioMixerPs3.h"
 #include "Sound/Ps3/SoundDriverPs3.h"
-#include "Sound/Ps3/SoundMixerPs3.h"
 
 namespace traktor
 {
@@ -28,7 +28,7 @@ SoundDriverPs3::~SoundDriverPs3()
 {
 }
 
-bool SoundDriverPs3::create(const SystemApplication& sysapp, const SoundDriverCreateDesc& desc, Ref< ISoundMixer >& outMixer)
+bool SoundDriverPs3::create(const SystemApplication& sysapp, const SoundDriverCreateDesc& desc, Ref< IAudioMixer >& outMixer)
 {
 	CellAudioOutConfiguration audioOutConfig;
 	CellAudioPortParam audioParam;
@@ -187,7 +187,7 @@ bool SoundDriverPs3::create(const SystemApplication& sysapp, const SoundDriverCr
 	cellAudioPortStart(m_port);
 
 	// Create SPU-accelerated sound mixer.
-	Ref< SoundMixerPs3 > mixer = new SoundMixerPs3();
+	Ref< AudioMixerPs3 > mixer = new AudioMixerPs3();
 	if (mixer->create())
 		outMixer = mixer;
 

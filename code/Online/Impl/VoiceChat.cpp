@@ -138,7 +138,7 @@ public:
 		return new VoiceSoundBufferCursor();
 	}
 
-	virtual bool getBlock(sound::ISoundBufferCursor* cursor, const sound::ISoundMixer* mixer, sound::SoundBlock& outBlock) const
+	virtual bool getBlock(sound::ISoundBufferCursor* cursor, const sound::IAudioMixer* mixer, sound::SoundBlock& outBlock) const
 	{
 		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 

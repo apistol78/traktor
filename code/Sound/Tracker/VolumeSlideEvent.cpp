@@ -1,4 +1,4 @@
-#include "Sound/SoundChannel.h"
+#include "Sound/AudioChannel.h"
 #include "Sound/Tracker/VolumeSlideEvent.h"
 
 namespace traktor
@@ -13,9 +13,9 @@ VolumeSlideEvent::VolumeSlideEvent(float amount)
 {
 }
 
-bool VolumeSlideEvent::execute(SoundChannel* soundChannel, int32_t& bpm, int32_t& pattern, int32_t& row) const
+bool VolumeSlideEvent::execute(AudioChannel* audioChannel, int32_t& bpm, int32_t& pattern, int32_t& row) const
 {
-	soundChannel->setVolume(soundChannel->getVolume() + m_amount);
+	audioChannel->setVolume(audioChannel->getVolume() + m_amount);
 	return true;
 }
 

@@ -46,7 +46,7 @@ bool Output::getScalar(ISoundBufferCursor* cursor, const GraphEvaluator* evaluat
 	return false;
 }
 
-bool Output::getBlock(ISoundBufferCursor* cursor, const GraphEvaluator* evaluator, const ISoundMixer* mixer, SoundBlock& outBlock) const
+bool Output::getBlock(ISoundBufferCursor* cursor, const GraphEvaluator* evaluator, const IAudioMixer* mixer, SoundBlock& outBlock) const
 {
 	return evaluator->evaluateBlock(getInputPin(0), mixer, outBlock);
 }

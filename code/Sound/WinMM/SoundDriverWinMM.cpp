@@ -57,7 +57,7 @@ SoundDriverWinMM::SoundDriverWinMM()
 {
 }
 
-bool SoundDriverWinMM::create(const SystemApplication& sysapp, const SoundDriverCreateDesc& desc, Ref< ISoundMixer >& outMixer)
+bool SoundDriverWinMM::create(const SystemApplication& sysapp, const SoundDriverCreateDesc& desc, Ref< IAudioMixer >& outMixer)
 {
 	m_eventNotify = CreateEvent(NULL, FALSE, FALSE, NULL);
 	if (!m_eventNotify)

@@ -77,7 +77,7 @@ void SequenceGrain::getActiveGrains(const ISoundBufferCursor* cursor, RefArray< 
 	grain->getActiveGrains(sequenceCursor->m_grainCursor, outActiveGrains);
 }
 
-bool SequenceGrain::getBlock(ISoundBufferCursor* cursor, const ISoundMixer* mixer, SoundBlock& outBlock) const
+bool SequenceGrain::getBlock(ISoundBufferCursor* cursor, const IAudioMixer* mixer, SoundBlock& outBlock) const
 {
 	SequenceGrainCursor* sequenceCursor = static_cast< SequenceGrainCursor* >(cursor);
 

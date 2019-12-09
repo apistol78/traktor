@@ -52,7 +52,7 @@ void MuteGrain::getActiveGrains(const ISoundBufferCursor* cursor, RefArray< cons
 	outActiveGrains.push_back(this);
 }
 
-bool MuteGrain::getBlock(ISoundBufferCursor* cursor, const ISoundMixer* mixer, SoundBlock& outBlock) const
+bool MuteGrain::getBlock(ISoundBufferCursor* cursor, const IAudioMixer* mixer, SoundBlock& outBlock) const
 {
 	MuteGrainCursor* muteCursor = static_cast< MuteGrainCursor* >(cursor);
 	return muteCursor->m_timer.getElapsedTime() <= muteCursor->m_end;

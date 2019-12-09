@@ -38,6 +38,7 @@ class ToolBarButtonClickEvent;
 	namespace sound
 	{
 
+class AudioChannel;
 class BankAsset;
 class BankBuffer;
 class BankControl;
@@ -46,7 +47,6 @@ class IGrain;
 class IGrainData;
 class IGrainFacade;
 class GrainProperties;
-class SoundChannel;
 class SoundSystem;
 
 class BankAssetEditor : public editor::IObjectEditor
@@ -86,7 +86,7 @@ private:
 	Ref< ui::Widget > m_currentGrainView;
 	Ref< resource::IResourceManager > m_resourceManager;
 	Ref< SoundSystem > m_soundSystem;
-	Ref< SoundChannel > m_soundChannel;
+	Ref< AudioChannel > m_audioChannel;
 	Ref< BankBuffer > m_bankBuffer;
 	std::map< const IGrainData*, const IGrain* > m_grainInstances;
 

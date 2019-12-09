@@ -49,8 +49,8 @@ class ToolBarButtonClickEvent;
 	namespace sound
 	{
 
+class AudioChannel;
 class GraphAsset;
-class SoundChannel;
 class SoundSystem;
 class WaveformControl;
 
@@ -82,7 +82,7 @@ private:
 	Ref< ui::Menu > m_menuPopup;
 	Ref< resource::IResourceManager > m_resourceManager;
 	Ref< SoundSystem > m_soundSystem;
-	Ref< SoundChannel > m_soundChannel;
+	Ref< AudioChannel > m_audioChannel;
 
 	void updateView();
 

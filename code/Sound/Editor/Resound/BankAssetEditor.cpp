@@ -7,8 +7,8 @@
 #include "Editor/IEditor.h"
 #include "Editor/TypeBrowseFilter.h"
 #include "Resource/ResourceManager.h"
+#include "Sound/AudioChannel.h"
 #include "Sound/Sound.h"
-#include "Sound/SoundChannel.h"
 #include "Sound/SoundFactory.h"
 #include "Sound/SoundSystem.h"
 #include "Sound/Resound/BankBuffer.h"
@@ -186,8 +186,8 @@ bool BankAssetEditor::create(ui::Widget* parent, db::Instance* instance, ISerial
 	m_soundSystem = m_editor->getStoreObject< SoundSystem >(L"SoundSystem");
 	if (m_soundSystem)
 	{
-		m_soundChannel = m_soundSystem->getChannel(0);
-		if (!m_soundChannel)
+		m_audioChannel = m_soundSystem->getChannel(0);
+		if (!m_audioChannel)
 			m_soundSystem = nullptr;
 	}
 	if (!m_soundSystem)
@@ -203,10 +203,10 @@ bool BankAssetEditor::create(ui::Widget* parent, db::Instance* instance, ISerial
 
 void BankAssetEditor::destroy()
 {
-	if (m_soundChannel)
+	if (m_audioChannel)
 	{
-		m_soundChannel->stop();
-		m_soundChannel = nullptr;
+		m_audioChannel->stop();
+		m_audioChannel = nullptr;
 	}
 
 	if (m_resourceManager)
@@ -280,7 +280,7 @@ bool BankAssetEditor::handleCommand(const ui::Command& command)
 	}
 	else if (command == L"Bank.PlayGrain")
 	{
-		if (m_soundChannel && !m_soundChannel->isPlaying())
+		if (m_audioChannel && !m_audioChannel->isPlaying())
 		{
 			RefArray< IGrainData > grainData;
 			RefArray< IGrain > grains;
@@ -319,14 +319,14 @@ bool BankAssetEditor::handleCommand(const ui::Command& command)
 			if (!grains.empty())
 			{
 				m_bankBuffer = new BankBuffer(grains);
-				m_soundChannel->play(m_bankBuffer, 0, 1.0f, false, 0);
+				m_audioChannel->play(m_bankBuffer, 0, 1.0f, false, 0);
 
 				for (auto sliderParameter : m_sliderParameters)
 				{
 					const HandleWrapper* id = sliderParameter->getData< HandleWrapper >(L"ID");
 					T_ASSERT(id);
 
-					m_soundChannel->setParameter(
+					m_audioChannel->setParameter(
 						id->get(),
 						sliderParameter->getValue() / 100.0f
 					);
@@ -335,9 +335,9 @@ bool BankAssetEditor::handleCommand(const ui::Command& command)
 			else
 				log::error << L"No grains to play" << Endl;
 		}
-		else if (m_soundChannel && m_soundChannel->isPlaying())
+		else if (m_audioChannel && m_audioChannel->isPlaying())
 		{
-			m_soundChannel->stop();
+			m_audioChannel->stop();
 
 			for (auto graincell : m_bankControl->getGrains())
 				graincell->setActive(false);
@@ -458,8 +458,8 @@ void BankAssetEditor::eventParameterChange(ui::ContentChangeEvent* event)
 	const HandleWrapper* id = slider->getData< HandleWrapper >(L"ID");
 	T_ASSERT(id);
 
-	if (m_soundChannel)
-		m_soundChannel->setParameter(id->get(), slider->getValue() / 100.0f);
+	if (m_audioChannel)
+		m_audioChannel->setParameter(id->get(), slider->getValue() / 100.0f);
 }
 
 void BankAssetEditor::eventToolBarClick(ui::ToolBarButtonClickEvent* event)
@@ -505,9 +505,9 @@ void BankAssetEditor::eventGrainPropertiesChange(ui::ContentChangeEvent* event)
 {
 	// Stop playing if properties has changed, need to reflect changes
 	// without interference otherwise filter instances will be incorrect.
-	if (m_soundChannel && m_bankBuffer)
+	if (m_audioChannel && m_bankBuffer)
 	{
-		ISoundBufferCursor* cursor = m_soundChannel->getCursor();
+		ISoundBufferCursor* cursor = m_audioChannel->getCursor();
 		if (cursor)
 			m_bankBuffer->updateCursor(cursor);
 	}
@@ -523,9 +523,9 @@ void BankAssetEditor::eventGrainViewChange(ui::ContentChangeEvent* event)
 {
 	// Stop playing if properties has changed, need to reflect changes
 	// without interference otherwise filter instances will be incorrect.
-	if (m_soundChannel && m_bankBuffer)
+	if (m_audioChannel && m_bankBuffer)
 	{
-		ISoundBufferCursor* cursor = m_soundChannel->getCursor();
+		ISoundBufferCursor* cursor = m_audioChannel->getCursor();
 		if (cursor)
 			m_bankBuffer->updateCursor(cursor);
 	}
@@ -536,11 +536,11 @@ void BankAssetEditor::eventGrainViewChange(ui::ContentChangeEvent* event)
 
 void BankAssetEditor::eventTimer(ui::TimerEvent* event)
 {
-	if (!m_soundChannel)
+	if (!m_audioChannel)
 		return;
 
 	if (
-		!m_soundChannel->isPlaying() &&
+		!m_audioChannel->isPlaying() &&
 		m_toolBarItemPlay->isToggled()
 	)
 	{
@@ -552,14 +552,14 @@ void BankAssetEditor::eventTimer(ui::TimerEvent* event)
 		else
 		{
 			T_ASSERT(m_bankBuffer);
-			m_soundChannel->play(m_bankBuffer, 0, 1.0f, false, 0);
+			m_audioChannel->play(m_bankBuffer, 0, 1.0f, false, 0);
 
 			for (RefArray< ui::Slider >::const_iterator i = m_sliderParameters.begin(); i != m_sliderParameters.end(); ++i)
 			{
 				const HandleWrapper* id = (*i)->getData< HandleWrapper >(L"ID");
 				T_ASSERT(id);
 
-				m_soundChannel->setParameter(
+				m_audioChannel->setParameter(
 					id->get(),
 					(*i)->getValue() / 100.0f
 				);
@@ -567,9 +567,9 @@ void BankAssetEditor::eventTimer(ui::TimerEvent* event)
 		}
 	}
 
-	if (m_bankBuffer && m_soundChannel->isPlaying())
+	if (m_bankBuffer && m_audioChannel->isPlaying())
 	{
-		ISoundBufferCursor* cursor = m_soundChannel->getCursor();
+		ISoundBufferCursor* cursor = m_audioChannel->getCursor();
 		if (cursor)
 		{
 			RefArray< const IGrain > activeGrains;

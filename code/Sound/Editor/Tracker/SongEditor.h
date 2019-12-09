@@ -42,9 +42,9 @@ class ToolBarButtonClickEvent;
 	namespace sound
 	{
 
+class AudioChannel;
 class SongAsset;
 class SongBuffer;
-class SoundChannel;
 class SoundSystem;
 
 class T_DLLCLASS SongEditor : public editor::IEditorPage
@@ -78,7 +78,7 @@ private:
 
 	Ref< resource::IResourceManager > m_resourceManager;
 	Ref< SoundSystem > m_soundSystem;
-	Ref< SoundChannel > m_soundChannel;
+	Ref< AudioChannel > m_audioChannel;
 
 	void play();
 
