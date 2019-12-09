@@ -3,11 +3,11 @@
 #include "Core/Class/Boxes/BoxedTransform.h"
 #include "Core/Class/Boxes/BoxedVector4.h"
 #include "Core/Class/IRuntimeClassRegistrar.h"
+#include "Sound/AudioChannel.h"
+#include "Sound/IAudioMixer.h"
 #include "Sound/IFilter.h"
 #include "Sound/ISoundDriver.h"
-#include "Sound/ISoundMixer.h"
 #include "Sound/Sound.h"
-#include "Sound/SoundChannel.h"
 #include "Sound/SoundClassFactory.h"
 #include "Sound/SoundSystem.h"
 #include "Sound/Filters/CombFilter.h"
@@ -65,12 +65,12 @@ void SoundClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classSoundSystem->addMethod("getChannel", &SoundSystem::getChannel);
 	registrar->registerClass(classSoundSystem);
 
-	auto classSoundChannel = new AutoRuntimeClass< SoundChannel >();
-	classSoundChannel->addProperty("volume", &SoundChannel::setVolume, &SoundChannel::getVolume);
-	classSoundChannel->addProperty("playing", &SoundChannel::isPlaying);
-	classSoundChannel->addMethod("setFilter", &SoundChannel::setFilter);
-	classSoundChannel->addMethod("stop", &SoundChannel::stop);
-	registrar->registerClass(classSoundChannel);
+	auto classAudioChannel = new AutoRuntimeClass< AudioChannel >();
+	classAudioChannel->addProperty("volume", &AudioChannel::setVolume, &AudioChannel::getVolume);
+	classAudioChannel->addProperty("playing", &AudioChannel::isPlaying);
+	classAudioChannel->addMethod("setFilter", &AudioChannel::setFilter);
+	classAudioChannel->addMethod("stop", &AudioChannel::stop);
+	registrar->registerClass(classAudioChannel);
 
 	auto classISoundBuffer = new AutoRuntimeClass< ISoundBuffer >();
 	registrar->registerClass(classISoundBuffer);
@@ -78,8 +78,8 @@ void SoundClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	auto classISoundDriver = new AutoRuntimeClass< ISoundDriver >();
 	registrar->registerClass(classISoundDriver);
 
-	auto classISoundMixer = new AutoRuntimeClass< ISoundMixer >();
-	registrar->registerClass(classISoundMixer);
+	auto classIAudioMixer = new AutoRuntimeClass< IAudioMixer >();
+	registrar->registerClass(classIAudioMixer);
 
 	auto classIFilter = new AutoRuntimeClass< IFilter >();
 	registrar->registerClass(classIFilter);

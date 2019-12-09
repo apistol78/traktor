@@ -1,8 +1,8 @@
 #include <cstring>
 #include "Core/Math/MathUtils.h"
 #include "Core/Memory/Alloc.h"
+#include "Sound/IAudioMixer.h"
 #include "Sound/ISoundBuffer.h"
-#include "Sound/ISoundMixer.h"
 #include "Sound/Resound/SimultaneousGrain.h"
 
 namespace traktor
@@ -106,7 +106,7 @@ void SimultaneousGrain::getActiveGrains(const ISoundBufferCursor* cursor, RefArr
 		m_grains[i]->getActiveGrains(simultaneousCursor->m_grainCursors[i], outActiveGrains);
 }
 
-bool SimultaneousGrain::getBlock(ISoundBufferCursor* cursor, const ISoundMixer* mixer, SoundBlock& outBlock) const
+bool SimultaneousGrain::getBlock(ISoundBufferCursor* cursor, const IAudioMixer* mixer, SoundBlock& outBlock) const
 {
 	SimultaneousGrainCursor* simultaneousCursor = static_cast< SimultaneousGrainCursor* >(cursor);
 

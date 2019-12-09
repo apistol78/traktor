@@ -31,8 +31,8 @@ class ToolBarButtonClickEvent;
 	namespace sound
 	{
 
+class AudioChannel;
 class SoundAsset;
-class SoundChannel;
 class SoundSystem;
 
 class SoundAssetEditor
@@ -63,7 +63,7 @@ private:
 	Ref< ui::ToolBar > m_toolBar;
 	Ref< ui::AutoPropertyList > m_propertyList;
 	Ref< SoundSystem > m_soundSystem;
-	Ref< SoundChannel > m_soundChannel;
+	Ref< AudioChannel > m_audioChannel;
 
 	void eventToolBarClick(ui::ToolBarButtonClickEvent* event);
 

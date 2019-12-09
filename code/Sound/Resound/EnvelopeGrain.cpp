@@ -2,8 +2,8 @@
 #include "Core/Math/Const.h"
 #include "Core/Math/MathUtils.h"
 #include "Core/Memory/Alloc.h"
+#include "Sound/IAudioMixer.h"
 #include "Sound/ISoundBuffer.h"
-#include "Sound/ISoundMixer.h"
 #include "Sound/Resound/EnvelopeGrain.h"
 
 namespace traktor
@@ -155,7 +155,7 @@ void EnvelopeGrain::getActiveGrains(const ISoundBufferCursor* cursor, RefArray< 
 	}
 }
 
-bool EnvelopeGrain::getBlock(ISoundBufferCursor* cursor, const ISoundMixer* mixer, SoundBlock& outBlock) const
+bool EnvelopeGrain::getBlock(ISoundBufferCursor* cursor, const IAudioMixer* mixer, SoundBlock& outBlock) const
 {
 	EnvelopeGrainCursor* envelopeCursor = static_cast< EnvelopeGrainCursor* >(cursor);
 	T_ASSERT(envelopeCursor);

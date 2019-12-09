@@ -1,8 +1,8 @@
 #include "Core/Containers/AlignedVector.h"
 #include "Drawing/Image.h"
 #include "Drawing/PixelFormat.h"
+#include "Sound/AudioMixer.h"
 #include "Sound/ISoundBuffer.h"
-#include "Sound/SoundMixer.h"
 #include "Sound/Editor/WaveformControl.h"
 #include "Ui/Application.h"
 #include "Ui/Bitmap.h"
@@ -47,7 +47,7 @@ void WaveformControl::render(int32_t width, int32_t height, float start)
 	if (cursor)
 	{
 		float pixelsPerSecond = ui::dpi96(1000) / 1.0f;
-		SoundMixer mixer;
+		AudioMixer mixer;
 
 		struct Span
 		{

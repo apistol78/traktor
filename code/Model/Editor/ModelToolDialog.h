@@ -63,7 +63,7 @@ public:
 
 	bool create(ui::Widget* parent, const std::wstring& fileName, float scale);
 
-	void destroy();
+	virtual void destroy() override final;
 
 private:
 	editor::IEditor* m_editor;

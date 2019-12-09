@@ -20,50 +20,50 @@ namespace traktor
 
 struct IFilterInstance;
 
+class IAudioMixer;
 class IFilter;
 class ISoundBuffer;
 class ISoundBufferCursor;
-class ISoundMixer;
 
-/*! \brief Virtual sound channel.
+/*! Virtual audio channel.
  * \ingroup Sound
  *
  * The sound system manages a given number of virtual
- * sound channels which is responsible of managing
+ * audio channels which is responsible of managing
  * sounds attached to them and also calling appropriate
  * filters.
  */
-class T_DLLCLASS SoundChannel : public Object
+class T_DLLCLASS AudioChannel : public Object
 {
 	T_RTTI_CLASS;
 
 public:
-	SoundChannel(uint32_t id, uint32_t hwSampleRate, uint32_t hwFrameSamples);
+	AudioChannel(uint32_t id, uint32_t hwSampleRate, uint32_t hwFrameSamples);
 
-	virtual ~SoundChannel();
+	virtual ~AudioChannel();
 
-	/*! \brief Set channel volume. */
+	/*! Set channel volume. */
 	void setVolume(float volume);
 
-	/*! \brief Get channel volume. */
+	/*! Get channel volume. */
 	float getVolume() const;
 
-	/*! \brief Set pitch. */
+	/*! Set pitch. */
 	void setPitch(float pitch);
 
-	/*! \brief Get current pitch. */
+	/*! Get current pitch. */
 	float getPitch() const;
 
-	/*! \brief Associate filter in channel. */
+	/*! Associate filter in channel. */
 	void setFilter(const IFilter* filter);
 
-	/*! \brief Set cursor parameter. */
+	/*! Set cursor parameter. */
 	void setParameter(handle_t id, float parameter);
 
-	/*! \brief Disable repeat on current sound. */
+	/*! Disable repeat on current sound. */
 	void disableRepeat();
 
-	/*! \brief Play sound through this channel.
+	/*! Play sound through this channel.
 	 *
 	 * \param buffer Sound buffer.
 	 * \param category Sound category.
@@ -80,17 +80,17 @@ public:
 		uint32_t repeatFrom
 	);
 
-	/*! \brief Check if there are a sound playing in this channel. */
+	/*! Check if there are a sound playing in this channel. */
 	bool isPlaying() const;
 
-	/*! \brief Stop playing sound. */
+	/*! Stop playing sound. */
 	void stop();
 
-	/*! \brief Return current playing sound's cursor. */
+	/*! Return current playing sound's cursor. */
 	ISoundBufferCursor* getCursor();
 
-	/*! \brief Get next mixed and prepared sound block. */
-	bool getBlock(const ISoundMixer* mixer, SoundBlock& outBlock);
+	/*! Get next mixed and prepared sound block. */
+	bool getBlock(const IAudioMixer* mixer, SoundBlock& outBlock);
 
 private:
 	friend class SoundSystem;

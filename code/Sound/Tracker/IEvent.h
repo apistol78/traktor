@@ -15,14 +15,14 @@ namespace traktor
 	namespace sound
 	{
 
-class SoundChannel;
+class AudioChannel;
 
 class T_DLLCLASS IEvent : public Object
 {
 	T_RTTI_CLASS;
 
 public:
-	virtual bool execute(SoundChannel* soundChannel, int32_t& bpm, int32_t& pattern, int32_t& row) const = 0;
+	virtual bool execute(AudioChannel* audioChannel, int32_t& bpm, int32_t& pattern, int32_t& row) const = 0;
 };
 
 	}

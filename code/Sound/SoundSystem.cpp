@@ -9,14 +9,15 @@
 #include "Core/Thread/Acquire.h"
 #include "Core/Thread/ThreadManager.h"
 #include "Core/Timer/Timer.h"
+#include "Sound/AudioChannel.h"
+#include "Sound/AudioMixer.h"
+#include "Sound/IAudioMixer.h"
 #include "Sound/ISoundDriver.h"
-#include "Sound/ISoundMixer.h"
 #include "Sound/Sound.h"
-#include "Sound/SoundChannel.h"
-#include "Sound/SoundMixer.h"
 #include "Sound/SoundSystem.h"
+
 #if defined(T_SOUND_USE_AVX_MIXER)
-#	include "Sound/Avx/SoundMixerAvx.h"
+#	include "Sound/Avx/AudioMixerAvx.h"
 #endif
 
 namespace traktor
@@ -76,11 +77,11 @@ bool SoundSystem::create(const SoundSystemCreateDesc& desc)
 	if (!m_mixer)
 	{
 #if defined(T_SOUND_USE_AVX_MIXER)
-		if (SoundMixerAvx::supported())
-			m_mixer = new SoundMixerAvx();
+		if (AudioMixerAvx::supported())
+			m_mixer = new AudioMixerAvx();
 #endif
 		if (!m_mixer)
-			m_mixer = new SoundMixer();
+			m_mixer = new AudioMixer();
 	}
 
 	// Allocate samples.
@@ -110,7 +111,7 @@ bool SoundSystem::create(const SoundSystemCreateDesc& desc)
 	m_channels.resize(desc.channels);
 	for (uint32_t i = 0; i < desc.channels; ++i)
 	{
-		m_channels[i] = new SoundChannel(
+		m_channels[i] = new AudioChannel(
 			i,
 			desc.driverDesc.sampleRate,
 			desc.driverDesc.frameSamples
@@ -168,7 +169,7 @@ bool SoundSystem::reset(ISoundDriver* driver)
 
 	// If driver didn't create an alternative sound mixer we create the default mixer.
 	if (!m_mixer)
-		m_mixer = new SoundMixer();
+		m_mixer = new AudioMixer();
 
 	// Restart mixer and submission threads.
 	resume();
@@ -219,7 +220,7 @@ void SoundSystem::resume()
 	// If driver didn't create an alternative sound mixer we create
 	// a default mixer.
 	if (!m_mixer)
-		m_mixer = new SoundMixer();
+		m_mixer = new AudioMixer();
 
 	// Create threads.
 	if (!m_threadMixer)
@@ -260,7 +261,7 @@ void SoundSystem::setCombineMatrix(float cm[SbcMaxChannelCount][SbcMaxChannelCou
 	std::memcpy(m_desc.cm, cm, sizeof(float) * SbcMaxChannelCount * SbcMaxChannelCount);
 }
 
-SoundChannel* SoundSystem::getChannel(uint32_t channelId)
+AudioChannel* SoundSystem::getChannel(uint32_t channelId)
 {
 	if (channelId < m_channels.size())
 		return m_channels[channelId];

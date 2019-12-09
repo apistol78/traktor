@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Sound/ISoundMixer.h"
+#include "Sound/IAudioMixer.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -15,10 +15,10 @@ namespace traktor
 	namespace sound
 	{
 
-/*! \brief AVX2 sound mixer implementation.
+/*! AVX2 sound mixer implementation.
  * \ingroup Sound
  */
-class T_DLLCLASS SoundMixerAvx : public ISoundMixer
+class T_DLLCLASS AudioMixerAvx : public IAudioMixer
 {
 	T_RTTI_CLASS;
 

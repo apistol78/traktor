@@ -19,9 +19,9 @@ namespace traktor
 	{
 
 class Graph;
+class IAudioMixer;
 class InputPin;
 class ISoundBufferCursor;
-class ISoundMixer;
 class Node;
 class OutputPin;
 struct SoundBlock;
@@ -37,9 +37,9 @@ public:
 
 	bool evaluateScalar(const InputPin* consumerPin, float& outScalar) const;
 
-	bool evaluateBlock(const OutputPin* producerPin, const ISoundMixer* mixer, SoundBlock& outBlock) const;
+	bool evaluateBlock(const OutputPin* producerPin, const IAudioMixer* mixer, SoundBlock& outBlock) const;
 
-	bool evaluateBlock(const InputPin* consumerPin, const ISoundMixer* mixer, SoundBlock& outBlock) const;
+	bool evaluateBlock(const InputPin* consumerPin, const IAudioMixer* mixer, SoundBlock& outBlock) const;
 
 	float getTime() const;
 

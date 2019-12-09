@@ -29,11 +29,11 @@ public:
 private:
 	friend class SoundPlayer;
 
-	SoundChannel* m_channel;
+	AudioChannel* m_channel;
 	Vector4* m_position;
 	float* m_fadeOff;
 
-	SoundHandle(SoundChannel* channel, Vector4& position, float& fadeOff);
+	SoundHandle(AudioChannel* channel, Vector4& position, float& fadeOff);
 
 	void detach();
 };

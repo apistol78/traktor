@@ -2,8 +2,8 @@
 #include "Core/Math/Const.h"
 #include "Core/Math/MathUtils.h"
 #include "Core/Memory/Alloc.h"
+#include "Sound/IAudioMixer.h"
 #include "Sound/ISoundBuffer.h"
-#include "Sound/ISoundMixer.h"
 #include "Sound/Resound/BlendGrain.h"
 
 namespace traktor
@@ -124,7 +124,7 @@ void BlendGrain::getActiveGrains(const ISoundBufferCursor* cursor, RefArray< con
 		m_grains[1]->getActiveGrains(blendCursor->m_cursors[1], outActiveGrains);
 }
 
-bool BlendGrain::getBlock(ISoundBufferCursor* cursor, const ISoundMixer* mixer, SoundBlock& outBlock) const
+bool BlendGrain::getBlock(ISoundBufferCursor* cursor, const IAudioMixer* mixer, SoundBlock& outBlock) const
 {
 	BlendGrainCursor* blendCursor = static_cast< BlendGrainCursor* >(cursor);
 

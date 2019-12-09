@@ -9,7 +9,7 @@
 #include "Editor/IEditorPageSite.h"
 #include "I18N/Text.h"
 #include "Resource/ResourceManager.h"
-#include "Sound/SoundChannel.h"
+#include "Sound/AudioChannel.h"
 #include "Sound/SoundFactory.h"
 #include "Sound/SoundSystem.h"
 #include "Sound/Editor/WaveformControl.h"
@@ -81,9 +81,9 @@ bool SongEditor::create(ui::Container* parent)
 	m_soundSystem = m_editor->getStoreObject< SoundSystem >(L"SoundSystem");
 	if (m_soundSystem)
 	{
-		m_soundChannel = m_soundSystem->getChannel(0);
-		if (!m_soundChannel)
-			m_soundSystem = 0;
+		m_audioChannel = m_soundSystem->getChannel(0);
+		if (!m_audioChannel)
+			m_soundSystem = nullptr;
 	}
 	if (!m_soundSystem)
 		log::warning << L"Unable to create preview sound system; preview unavailable" << Endl;
@@ -97,10 +97,10 @@ bool SongEditor::create(ui::Container* parent)
 
 void SongEditor::destroy()
 {
-	if (m_soundChannel)
+	if (m_audioChannel)
 	{
-		m_soundChannel->stop();
-		m_soundChannel = nullptr;
+		m_audioChannel->stop();
+		m_audioChannel = nullptr;
 	}
 
 	m_resourceManager = nullptr;
@@ -159,7 +159,7 @@ void SongEditor::play()
 
 	m_songBuffer = new SongBuffer(patterns, m_songAsset->getBpm());
 
-	m_soundChannel->play(
+	m_audioChannel->play(
 		m_songBuffer,
 		0,
 		1.0f,
@@ -170,7 +170,7 @@ void SongEditor::play()
 
 void SongEditor::stop()
 {
-	m_soundChannel->stop();
+	m_audioChannel->stop();
 	m_songBuffer = nullptr;
 }
 
@@ -227,7 +227,7 @@ void SongEditor::eventTimer(ui::TimerEvent* event)
 	if (!m_songBuffer)
 		return;
 
-	const auto cursor = m_soundChannel->getCursor();
+	const auto cursor = m_audioChannel->getCursor();
 
 	int32_t pattern = m_songBuffer->getCurrentPattern(cursor);
 	int32_t row = m_songBuffer->getCurrentRow(cursor);

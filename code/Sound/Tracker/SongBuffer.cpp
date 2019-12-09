@@ -2,9 +2,9 @@
 #include "Core/Math/MathUtils.h"
 #include "Core/Memory/Alloc.h"
 #include "Core/Timer/Timer.h"
-#include "Sound/ISoundMixer.h"
+#include "Sound/AudioChannel.h"
+#include "Sound/IAudioMixer.h"
 #include "Sound/Sound.h"
-#include "Sound/SoundChannel.h"
 #include "Sound/Tracker/IEvent.h"
 #include "Sound/Tracker/Pattern.h"
 #include "Sound/Tracker/Play.h"
@@ -28,7 +28,7 @@ public:
 	int32_t m_bpm;
 	int32_t m_currentPattern;
 	int32_t m_currentRow;
-	Ref< SoundChannel > m_channels[c_maxTrackCount];
+	Ref< AudioChannel > m_channels[c_maxTrackCount];
 
 	SoundBufferCursor()
 	:	m_bpm(0)
@@ -82,7 +82,7 @@ Ref< ISoundBufferCursor > SongBuffer::createCursor() const
 		soundBufferCursor->m_outputSamples[i] = soundBufferCursor->m_outputSamples[0] + outputSamplesCount * i;
 
 	for (uint32_t i = 0; i < c_maxTrackCount; ++i)
-		soundBufferCursor->m_channels[i] = new SoundChannel(
+		soundBufferCursor->m_channels[i] = new AudioChannel(
 			i,
 			44100,
 			1024
@@ -96,7 +96,7 @@ Ref< ISoundBufferCursor > SongBuffer::createCursor() const
 	return soundBufferCursor;
 }
 
-bool SongBuffer::getBlock(ISoundBufferCursor* cursor, const ISoundMixer* mixer, SoundBlock& outBlock) const
+bool SongBuffer::getBlock(ISoundBufferCursor* cursor, const IAudioMixer* mixer, SoundBlock& outBlock) const
 {
 	SoundBufferCursor* soundBufferCursor = static_cast< SoundBufferCursor* >(cursor);
 	while (soundBufferCursor->m_currentPattern < m_patterns.size())

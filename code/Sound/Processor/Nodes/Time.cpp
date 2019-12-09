@@ -50,7 +50,7 @@ bool Time::getScalar(ISoundBufferCursor* cursor, const GraphEvaluator* evaluator
 	return true;
 }
 
-bool Time::getBlock(ISoundBufferCursor* cursor, const GraphEvaluator* evaluator, const ISoundMixer* mixer, SoundBlock& outBlock) const
+bool Time::getBlock(ISoundBufferCursor* cursor, const GraphEvaluator* evaluator, const IAudioMixer* mixer, SoundBlock& outBlock) const
 {
 	return false;
 }

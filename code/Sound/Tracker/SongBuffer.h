@@ -27,7 +27,7 @@ public:
 
 	virtual Ref< ISoundBufferCursor > createCursor() const T_OVERRIDE T_FINAL;
 
-	virtual bool getBlock(ISoundBufferCursor* cursor, const ISoundMixer* mixer, SoundBlock& outBlock) const T_OVERRIDE T_FINAL;
+	virtual bool getBlock(ISoundBufferCursor* cursor, const IAudioMixer* mixer, SoundBlock& outBlock) const T_OVERRIDE T_FINAL;
 
 	int32_t getCurrentPattern(const ISoundBufferCursor* cursor) const;
 

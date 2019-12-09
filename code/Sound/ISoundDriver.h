@@ -17,9 +17,9 @@ namespace traktor
 	namespace sound
 	{
 
-class ISoundMixer;
+class IAudioMixer;
 
-/*! \brief Sound driver.
+/*! Sound driver.
  * \ingroup Sound
  *
  * Sound driver works as follows:
@@ -47,7 +47,7 @@ public:
 	 * \param outMixer Return alternative mixer implementation.
 	 * \return True if successful.
 	 */
-	virtual bool create(const SystemApplication& sysapp, const SoundDriverCreateDesc& desc, Ref< ISoundMixer >& outMixer) = 0;
+	virtual bool create(const SystemApplication& sysapp, const SoundDriverCreateDesc& desc, Ref< IAudioMixer >& outMixer) = 0;
 
 	virtual void destroy() = 0;
 

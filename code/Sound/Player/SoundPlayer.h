@@ -18,8 +18,8 @@ namespace traktor
 	namespace sound
 	{
 
+class AudioChannel;
 class LowPassFilter;
-class SoundChannel;
 class SoundHandle;
 class SoundSystem;
 class SurroundEnvironment;
@@ -56,7 +56,7 @@ private:
 		Ref< SurroundFilter > surroundFilter;
 		Ref< LowPassFilter > lowPassFilter;
 		Ref< const Sound > sound;
-		SoundChannel* soundChannel;
+		AudioChannel* audioChannel;
 		uint32_t priority;
 		float fadeOff;
 		float time;

@@ -8,12 +8,12 @@
 #include "Database/Instance.h"
 #include "Editor/IEditor.h"
 #include "I18N/Text.h"
+#include "Sound/AudioChannel.h"
 #include "Sound/Decoders/FlacStreamDecoder.h"
 #include "Sound/Decoders/Mp3StreamDecoder.h"
 #include "Sound/Decoders/OggStreamDecoder.h"
 #include "Sound/Decoders/WavStreamDecoder.h"
 #include "Sound/Sound.h"
-#include "Sound/SoundChannel.h"
 #include "Sound/SoundSystem.h"
 #include "Sound/StreamSoundBuffer.h"
 #include "Sound/Editor/SoundAsset.h"
@@ -68,9 +68,9 @@ bool SoundAssetEditor::create(ui::Widget* parent, db::Instance* instance, ISeria
 	m_soundSystem = m_editor->getStoreObject< SoundSystem >(L"SoundSystem");
 	if (m_soundSystem)
 	{
-		m_soundChannel = m_soundSystem->getChannel(0);
-		if (!m_soundChannel)
-			m_soundSystem = 0;
+		m_audioChannel = m_soundSystem->getChannel(0);
+		if (!m_audioChannel)
+			m_soundSystem = nullptr;
 	}
 	if (!m_soundSystem)
 		log::warning << L"Unable to create preview sound system; preview unavailable" << Endl;
@@ -80,10 +80,10 @@ bool SoundAssetEditor::create(ui::Widget* parent, db::Instance* instance, ISeria
 
 void SoundAssetEditor::destroy()
 {
-	if (m_soundChannel)
+	if (m_audioChannel)
 	{
-		m_soundChannel->stop();
-		m_soundChannel = 0;
+		m_audioChannel->stop();
+		m_audioChannel = 0;
 	}
 
 	safeDestroy(m_propertyList);
@@ -163,7 +163,7 @@ void SoundAssetEditor::eventToolBarClick(ui::ToolBarButtonClickEvent* event)
 		return;
 	}
 
-	m_soundChannel->play(buffer, 0, m_asset->getGain(), false, 0);
+	m_audioChannel->play(buffer, 0, m_asset->getGain(), false, 0);
 }
 
 void SoundAssetEditor::eventPropertyCommand(ui::PropertyCommandEvent* event)

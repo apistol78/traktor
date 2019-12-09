@@ -29,7 +29,7 @@ public:
 
 	virtual Ref< ISoundBufferCursor > createCursor() const override final;
 
-	virtual bool getBlock(ISoundBufferCursor* cursor, const ISoundMixer* mixer, SoundBlock& outBlock) const override final;
+	virtual bool getBlock(ISoundBufferCursor* cursor, const IAudioMixer* mixer, SoundBlock& outBlock) const override final;
 
 private:
 	Ref< const Graph > m_graph;

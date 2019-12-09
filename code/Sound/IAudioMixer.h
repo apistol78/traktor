@@ -15,14 +15,14 @@ namespace traktor
 	namespace sound
 	{
 
-/*! \brief Sound mixer interface.
+/*! Audio mixer interface.
  * \ingroup Sound
  *
  * Following restrictions for use with this interface apply:
  * - Sample blocks must be 16-byte aligned.
  * - Counts must be a multiple of 4.
  */
-class T_DLLCLASS ISoundMixer : public Object
+class T_DLLCLASS IAudioMixer : public Object
 {
 	T_RTTI_CLASS;
 

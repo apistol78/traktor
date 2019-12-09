@@ -65,7 +65,7 @@ bool Parameter::getScalar(ISoundBufferCursor* cursor, const GraphEvaluator* eval
 	return true;
 }
 
-bool Parameter::getBlock(ISoundBufferCursor* cursor, const GraphEvaluator* evaluator, const ISoundMixer* mixer, SoundBlock& outBlock) const
+bool Parameter::getBlock(ISoundBufferCursor* cursor, const GraphEvaluator* evaluator, const IAudioMixer* mixer, SoundBlock& outBlock) const
 {
 	return false;
 }

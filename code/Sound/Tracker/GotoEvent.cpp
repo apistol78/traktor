@@ -1,4 +1,4 @@
-#include "Sound/SoundChannel.h"
+#include "Sound/AudioChannel.h"
 #include "Sound/Tracker/GotoEvent.h"
 
 namespace traktor
@@ -14,7 +14,7 @@ GotoEvent::GotoEvent(int32_t pattern, int32_t row)
 {
 }
 
-bool GotoEvent::execute(SoundChannel* soundChannel, int32_t& bpm, int32_t& pattern, int32_t& row) const
+bool GotoEvent::execute(AudioChannel* audioChannel, int32_t& bpm, int32_t& pattern, int32_t& row) const
 {
 	pattern = m_pattern;
 	row = m_row;

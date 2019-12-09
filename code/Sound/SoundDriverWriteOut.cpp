@@ -22,7 +22,7 @@ SoundDriverWriteOut::SoundDriverWriteOut(ISoundDriver* childDriver)
 {
 }
 
-bool SoundDriverWriteOut::create(const SystemApplication& sysapp, const SoundDriverCreateDesc& desc, Ref< ISoundMixer >& outMixer)
+bool SoundDriverWriteOut::create(const SystemApplication& sysapp, const SoundDriverCreateDesc& desc, Ref< IAudioMixer >& outMixer)
 {
 	if (m_childDriver)
 	{

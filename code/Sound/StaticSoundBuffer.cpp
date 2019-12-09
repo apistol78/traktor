@@ -163,7 +163,7 @@ Ref< ISoundBufferCursor > StaticSoundBuffer::createCursor() const
 		return 0;
 }
 
-bool StaticSoundBuffer::getBlock(ISoundBufferCursor* cursor, const ISoundMixer* mixer, SoundBlock& outBlock) const
+bool StaticSoundBuffer::getBlock(ISoundBufferCursor* cursor, const IAudioMixer* mixer, SoundBlock& outBlock) const
 {
 	StaticSoundBufferCursor* ssbc = static_cast< StaticSoundBufferCursor* >(cursor);
 

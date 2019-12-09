@@ -28,7 +28,7 @@ public:
 
 	virtual bool getScalar(ISoundBufferCursor* cursor, const GraphEvaluator* evaluator, float& outParameter) const override final;
 
-	virtual bool getBlock(ISoundBufferCursor* cursor, const GraphEvaluator* evaluator, const ISoundMixer* mixer, SoundBlock& outBlock) const override final;
+	virtual bool getBlock(ISoundBufferCursor* cursor, const GraphEvaluator* evaluator, const IAudioMixer* mixer, SoundBlock& outBlock) const override final;
 
 	virtual void serialize(ISerializer& s) override final;
 

@@ -53,7 +53,7 @@ bool GraphEvaluator::evaluateScalar(const InputPin* consumerPin, float& outScala
 		return false;
 }
 
-bool GraphEvaluator::evaluateBlock(const OutputPin* producerPin, const ISoundMixer* mixer, SoundBlock& outBlock) const
+bool GraphEvaluator::evaluateBlock(const OutputPin* producerPin, const IAudioMixer* mixer, SoundBlock& outBlock) const
 {
 	const Node* producerNode = producerPin->getNode();
 	T_ASSERT(producerNode != nullptr);
@@ -68,7 +68,7 @@ bool GraphEvaluator::evaluateBlock(const OutputPin* producerPin, const ISoundMix
 	return true;
 }
 
-bool GraphEvaluator::evaluateBlock(const InputPin* consumerPin, const ISoundMixer* mixer, SoundBlock& outBlock) const
+bool GraphEvaluator::evaluateBlock(const InputPin* consumerPin, const IAudioMixer* mixer, SoundBlock& outBlock) const
 {
 	const OutputPin* producerPin = m_graph->findSourcePin(consumerPin);
 	if (producerPin)

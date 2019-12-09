@@ -63,7 +63,7 @@ bool Multiply::getScalar(ISoundBufferCursor* cursor, const GraphEvaluator* evalu
 	return true;
 }
 
-bool Multiply::getBlock(ISoundBufferCursor* cursor, const GraphEvaluator* evaluator, const ISoundMixer* mixer, SoundBlock& outBlock) const
+bool Multiply::getBlock(ISoundBufferCursor* cursor, const GraphEvaluator* evaluator, const IAudioMixer* mixer, SoundBlock& outBlock) const
 {
 	return false;
 }

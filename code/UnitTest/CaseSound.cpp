@@ -1,9 +1,9 @@
 #include "Core/Thread/Signal.h"
 #include "Core/Timer/Timer.h"
+#include "Sound/AudioChannel.h"
 #include "Sound/ISoundBuffer.h"
 #include "Sound/ISoundDriver.h"
 #include "Sound/Sound.h"
-#include "Sound/SoundChannel.h"
 #include "Sound/SoundSystem.h"
 #include "UnitTest/CaseSound.h"
 
@@ -26,7 +26,7 @@ public:
 	{
 	}
 
-	virtual bool create(const SystemApplication& sysapp, const sound::SoundDriverCreateDesc& desc, Ref< sound::ISoundMixer >& outMixer) override final
+	virtual bool create(const SystemApplication& sysapp, const sound::SoundDriverCreateDesc& desc, Ref< sound::IAudioMixer >& outMixer) override final
 	{
 		return true;
 	}
@@ -71,7 +71,7 @@ public:
 		return 0;
 	}
 
-	virtual bool getBlock(sound::ISoundBufferCursor* cursor, const sound::ISoundMixer* mixer, sound::SoundBlock& outBlock) const override final
+	virtual bool getBlock(sound::ISoundBufferCursor* cursor, const sound::IAudioMixer* mixer, sound::SoundBlock& outBlock) const override final
 	{
 		outBlock.samples[0] = m_block;
 		outBlock.samplesCount = sizeof_array(m_block);

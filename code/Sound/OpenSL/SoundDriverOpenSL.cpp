@@ -19,7 +19,7 @@ SoundDriverOpenSL::SoundDriverOpenSL()
 {
 }
 
-bool SoundDriverOpenSL::create(const SystemApplication& sysapp, const SoundDriverCreateDesc& desc, Ref< ISoundMixer >& outMixer)
+bool SoundDriverOpenSL::create(const SystemApplication& sysapp, const SoundDriverCreateDesc& desc, Ref< IAudioMixer >& outMixer)
 {
 	SLresult result;
 

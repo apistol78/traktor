@@ -63,7 +63,7 @@ bool Subtract::getScalar(ISoundBufferCursor* cursor, const GraphEvaluator* evalu
 	return true;
 }
 
-bool Subtract::getBlock(ISoundBufferCursor* cursor, const GraphEvaluator* evaluator, const ISoundMixer* mixer, SoundBlock& outBlock) const
+bool Subtract::getBlock(ISoundBufferCursor* cursor, const GraphEvaluator* evaluator, const IAudioMixer* mixer, SoundBlock& outBlock) const
 {
 	return false;
 }

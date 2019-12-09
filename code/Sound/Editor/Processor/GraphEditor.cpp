@@ -10,7 +10,7 @@
 #include "Editor/IEditorPageSite.h"
 #include "I18N/Text.h"
 #include "Resource/ResourceManager.h"
-#include "Sound/SoundChannel.h"
+#include "Sound/AudioChannel.h"
 #include "Sound/SoundFactory.h"
 #include "Sound/SoundSystem.h"
 #include "Sound/Editor/WaveformControl.h"
@@ -150,9 +150,9 @@ bool GraphEditor::create(ui::Container* parent)
 	m_soundSystem = m_editor->getStoreObject< SoundSystem >(L"SoundSystem");
 	if (m_soundSystem)
 	{
-		m_soundChannel = m_soundSystem->getChannel(0);
-		if (!m_soundChannel)
-			m_soundSystem = 0;
+		m_audioChannel = m_soundSystem->getChannel(0);
+		if (!m_audioChannel)
+			m_soundSystem = nullptr;
 	}
 	if (!m_soundSystem)
 		log::warning << L"Unable to create preview sound system; preview unavailable" << Endl;
@@ -166,10 +166,10 @@ bool GraphEditor::create(ui::Container* parent)
 
 void GraphEditor::destroy()
 {
-	if (m_soundChannel)
+	if (m_audioChannel)
 	{
-		m_soundChannel->stop();
-		m_soundChannel = 0;
+		m_audioChannel->stop();
+		m_audioChannel = 0;
 	}
 
 	if (m_resourceManager)

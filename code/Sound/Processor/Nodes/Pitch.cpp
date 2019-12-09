@@ -56,7 +56,7 @@ bool Pitch::getScalar(ISoundBufferCursor* cursor, const GraphEvaluator* evaluato
 	return false;
 }
 
-bool Pitch::getBlock(ISoundBufferCursor* cursor, const GraphEvaluator* evaluator, const ISoundMixer* mixer, SoundBlock& outBlock) const
+bool Pitch::getBlock(ISoundBufferCursor* cursor, const GraphEvaluator* evaluator, const IAudioMixer* mixer, SoundBlock& outBlock) const
 {
 	float adjust;
 	if (!evaluator->evaluateScalar(getInputPin(1), adjust))
