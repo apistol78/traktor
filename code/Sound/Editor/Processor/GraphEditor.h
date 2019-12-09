@@ -50,8 +50,8 @@ class ToolBarButtonClickEvent;
 	{
 
 class AudioChannel;
+class AudioSystem;
 class GraphAsset;
-class SoundSystem;
 class WaveformControl;
 
 class T_DLLCLASS GraphEditor : public editor::IEditorPage
@@ -81,7 +81,7 @@ private:
 	Ref< ui::GraphControl > m_graph;
 	Ref< ui::Menu > m_menuPopup;
 	Ref< resource::IResourceManager > m_resourceManager;
-	Ref< SoundSystem > m_soundSystem;
+	Ref< AudioSystem > m_audioSystem;
 	Ref< AudioChannel > m_audioChannel;
 
 	void updateView();

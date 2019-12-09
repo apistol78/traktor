@@ -32,8 +32,8 @@ class ToolBarButtonClickEvent;
 	{
 
 class AudioChannel;
+class AudioSystem;
 class SoundAsset;
-class SoundSystem;
 
 class SoundAssetEditor
 :	public editor::IObjectEditor
@@ -62,7 +62,7 @@ private:
 	Ref< SoundAsset > m_asset;
 	Ref< ui::ToolBar > m_toolBar;
 	Ref< ui::AutoPropertyList > m_propertyList;
-	Ref< SoundSystem > m_soundSystem;
+	Ref< AudioSystem > m_audioSystem;
 	Ref< AudioChannel > m_audioChannel;
 
 	void eventToolBarClick(ui::ToolBarButtonClickEvent* event);

@@ -49,7 +49,7 @@ class PrimitiveRenderer;
 	{
 
 class SoundPlayer;
-class SoundSystem;
+class AudioSystem;
 
 	}
 
@@ -77,7 +77,7 @@ public:
 		int style,
 		resource::IResourceManager* resourceManager,
 		render::IRenderSystem* renderSystem,
-		sound::SoundSystem* soundSystem
+		sound::AudioSystem* audioSystem
 	);
 
 	virtual void destroy() override final;
@@ -122,7 +122,7 @@ private:
 	Ref< render::ImageProcess > m_postProcess;
 	Ref< render::PrimitiveRenderer > m_primitiveRenderer;
 	Ref< render::RenderContext > m_renderContext;
-	Ref< sound::SoundSystem > m_soundSystem;
+	Ref< sound::AudioSystem > m_audioSystem;
 	Ref< sound::SoundPlayer > m_soundPlayer;
 	Ref< PointRenderer > m_pointRenderer;
 	Ref< MeshRenderer > m_meshRenderer;

@@ -8,9 +8,9 @@
 #include "Editor/TypeBrowseFilter.h"
 #include "Resource/ResourceManager.h"
 #include "Sound/AudioChannel.h"
+#include "Sound/AudioSystem.h"
 #include "Sound/Sound.h"
 #include "Sound/SoundFactory.h"
-#include "Sound/SoundSystem.h"
 #include "Sound/Resound/BankBuffer.h"
 #include "Sound/Resound/BlendGrainData.h"
 #include "Sound/Resound/EnvelopeGrainData.h"
@@ -182,16 +182,16 @@ bool BankAssetEditor::create(ui::Widget* parent, db::Instance* instance, ISerial
 	m_grainFacades[&type_of< SimultaneousGrainData >()] = new SimultaneousGrainFacade();
 	m_grainFacades[&type_of< TriggerGrainData >()] = new TriggerGrainFacade();
 
-	// Get sound system for preview.
-	m_soundSystem = m_editor->getStoreObject< SoundSystem >(L"SoundSystem");
-	if (m_soundSystem)
+	// Get audio system for preview.
+	m_audioSystem = m_editor->getStoreObject< AudioSystem >(L"AudioSystem");
+	if (m_audioSystem)
 	{
-		m_audioChannel = m_soundSystem->getChannel(0);
+		m_audioChannel = m_audioSystem->getChannel(0);
 		if (!m_audioChannel)
-			m_soundSystem = nullptr;
+			m_audioSystem = nullptr;
 	}
-	if (!m_soundSystem)
-		log::warning << L"Unable to create preview sound system; preview unavailable." << Endl;
+	if (!m_audioSystem)
+		log::warning << L"Unable to create preview audio system; preview unavailable." << Endl;
 
 	m_resourceManager = new resource::ResourceManager(m_editor->getOutputDatabase(), m_editor->getSettings()->getProperty< bool >(L"Resource.Verbose", false));
 	m_resourceManager->addFactory(new SoundFactory());
@@ -212,7 +212,7 @@ void BankAssetEditor::destroy()
 	if (m_resourceManager)
 		m_resourceManager = nullptr;
 
-	m_soundSystem = nullptr;
+	m_audioSystem = nullptr;
 }
 
 void BankAssetEditor::apply()

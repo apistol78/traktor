@@ -35,17 +35,17 @@ class Sound;
  * from virtual channels and feeding them through the
  * submission thread into the audio driver for playback.
  */
-class T_DLLCLASS SoundSystem : public Object
+class T_DLLCLASS AudioSystem : public Object
 {
 	T_RTTI_CLASS;
 
 public:
-	explicit SoundSystem(IAudioDriver* driver);
+	explicit AudioSystem(IAudioDriver* driver);
 
 	/*! Create audio system.
 	 *
 	 * \param desc Initialize description.
-	 * \return True if sound system created successfully.
+	 * \return True if audio system created successfully.
 	 */
 	bool create(const SoundSystemCreateDesc& desc);
 

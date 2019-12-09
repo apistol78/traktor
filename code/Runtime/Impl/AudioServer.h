@@ -44,14 +44,14 @@ public:
 
 	uint32_t getActiveSoundChannels() const;
 
-	virtual sound::SoundSystem* getSoundSystem() override final;
+	virtual sound::AudioSystem* getAudioSystem() override final;
 
 	virtual sound::ISoundPlayer* getSoundPlayer() override final;
 
 	virtual sound::SurroundEnvironment* getSurroundEnvironment() override final;
 
 private:
-	Ref< sound::SoundSystem > m_soundSystem;
+	Ref< sound::AudioSystem > m_audioSystem;
 	Ref< sound::SoundPlayer > m_soundPlayer;
 	Ref< sound::SurroundEnvironment > m_surroundEnvironment;
 	std::wstring m_audioType;

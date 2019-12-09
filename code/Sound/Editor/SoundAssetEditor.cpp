@@ -9,12 +9,12 @@
 #include "Editor/IEditor.h"
 #include "I18N/Text.h"
 #include "Sound/AudioChannel.h"
+#include "Sound/AudioSystem.h"
 #include "Sound/Decoders/FlacStreamDecoder.h"
 #include "Sound/Decoders/Mp3StreamDecoder.h"
 #include "Sound/Decoders/OggStreamDecoder.h"
 #include "Sound/Decoders/WavStreamDecoder.h"
 #include "Sound/Sound.h"
-#include "Sound/SoundSystem.h"
 #include "Sound/StreamSoundBuffer.h"
 #include "Sound/Editor/SoundAsset.h"
 #include "Sound/Editor/SoundAssetEditor.h"
@@ -64,16 +64,16 @@ bool SoundAssetEditor::create(ui::Widget* parent, db::Instance* instance, ISeria
 	m_propertyList->setColumnName(1, i18n::Text(L"PROPERTY_COLUMN_VALUE"));
 	m_propertyList->bind(m_asset);
 
-	// Get sound system for preview.
-	m_soundSystem = m_editor->getStoreObject< SoundSystem >(L"SoundSystem");
-	if (m_soundSystem)
+	// Get audio system for preview.
+	m_audioSystem = m_editor->getStoreObject< AudioSystem >(L"AudioSystem");
+	if (m_audioSystem)
 	{
-		m_audioChannel = m_soundSystem->getChannel(0);
+		m_audioChannel = m_audioSystem->getChannel(0);
 		if (!m_audioChannel)
-			m_soundSystem = nullptr;
+			m_audioSystem = nullptr;
 	}
-	if (!m_soundSystem)
-		log::warning << L"Unable to create preview sound system; preview unavailable" << Endl;
+	if (!m_audioSystem)
+		log::warning << L"Unable to create preview audio system; preview unavailable" << Endl;
 
 	return true;
 }
@@ -89,7 +89,7 @@ void SoundAssetEditor::destroy()
 	safeDestroy(m_propertyList);
 	safeDestroy(m_toolBar);
 
-	m_soundSystem = 0;
+	m_audioSystem = 0;
 	m_instance = 0;
 	m_asset = 0;
 }
@@ -119,9 +119,9 @@ ui::Size SoundAssetEditor::getPreferredSize() const
 
 void SoundAssetEditor::eventToolBarClick(ui::ToolBarButtonClickEvent* event)
 {
-	if (!m_soundSystem)
+	if (!m_audioSystem)
 	{
-		log::error << L"Failed to preview sound asset; no sound system" << Endl;
+		log::error << L"Failed to preview sound asset; no audio system." << Endl;
 		return;
 	}
 
@@ -131,7 +131,7 @@ void SoundAssetEditor::eventToolBarClick(ui::ToolBarButtonClickEvent* event)
 	Ref< IStream > file = FileSystem::getInstance().open(fileName, File::FmRead);
 	if (!file)
 	{
-		log::error << L"Failed to preview sound asset; unable to open file" << Endl;
+		log::error << L"Failed to preview sound asset; unable to open file." << Endl;
 		return;
 	}
 
@@ -146,7 +146,7 @@ void SoundAssetEditor::eventToolBarClick(ui::ToolBarButtonClickEvent* event)
 		decoder = new sound::OggStreamDecoder();
 	else
 	{
-		log::error << L"Failed to preview sound asset; unable to determine decoder from extension" << Endl;
+		log::error << L"Failed to preview sound asset; unable to determine decoder from extension." << Endl;
 		return;
 	}
 

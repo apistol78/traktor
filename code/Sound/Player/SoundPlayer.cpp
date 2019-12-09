@@ -2,8 +2,8 @@
 #include "Core/Math/Float.h"
 #include "Core/Thread/Acquire.h"
 #include "Sound/AudioChannel.h"
+#include "Sound/AudioSystem.h"
 #include "Sound/Sound.h"
-#include "Sound/SoundSystem.h"
 #include "Sound/Filters/GroupFilter.h"
 #include "Sound/Filters/LowPassFilter.h"
 #include "Sound/Filters/SurroundEnvironment.h"
@@ -35,15 +35,15 @@ SoundPlayer::SoundPlayer()
 	s_handleVelocity = getParameterHandle(L"Velocity");
 }
 
-bool SoundPlayer::create(SoundSystem* soundSystem, SurroundEnvironment* surroundEnvironment)
+bool SoundPlayer::create(AudioSystem* audioSystem, SurroundEnvironment* surroundEnvironment)
 {
-	m_soundSystem = soundSystem;
+	m_audioSystem = audioSystem;
 	m_surroundEnvironment = surroundEnvironment;
 
-	for (uint32_t i = 0; m_soundSystem->getChannel(i); ++i)
+	for (uint32_t i = 0; m_audioSystem->getChannel(i); ++i)
 	{
 		Channel ch;
-		ch.audioChannel = m_soundSystem->getChannel(i);
+		ch.audioChannel = m_audioSystem->getChannel(i);
 		ch.priority = ~0U;
 		m_channels.push_back(ch);
 	}
@@ -67,7 +67,7 @@ void SoundPlayer::destroy()
 
 	m_channels.clear();
 	m_surroundEnvironment = nullptr;
-	m_soundSystem = nullptr;
+	m_audioSystem = nullptr;
 }
 
 Ref< ISoundHandle > SoundPlayer::play(const Sound* sound, uint32_t priority)

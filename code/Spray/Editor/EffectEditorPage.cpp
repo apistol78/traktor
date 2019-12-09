@@ -20,8 +20,8 @@
 #include "Render/Resource/ShaderFactory.h"
 #include "Render/Resource/TextureFactory.h"
 #include "Resource/ResourceManager.h"
+#include "Sound/AudioSystem.h"
 #include "Sound/SoundFactory.h"
-#include "Sound/SoundSystem.h"
 #include "Spray/Effect.h"
 #include "Spray/EffectData.h"
 #include "Spray/EffectFactory.h"
@@ -118,7 +118,7 @@ bool EffectEditorPage::create(ui::Container* parent)
 	if (!renderSystem)
 		return false;
 
-	m_soundSystem = m_editor->getStoreObject< sound::SoundSystem >(L"SoundSystem");
+	m_audioSystem = m_editor->getStoreObject< sound::AudioSystem >(L"AudioSystem");
 
 	Ref< db::Database > database = m_editor->getOutputDatabase();
 	T_ASSERT(database);
@@ -178,7 +178,7 @@ bool EffectEditorPage::create(ui::Container* parent)
 	m_toolBar->addEventHandler< ui::ToolBarButtonClickEvent >(this, &EffectEditorPage::eventToolClick);
 
 	m_previewControl = new EffectPreviewControl(m_editor);
-	m_previewControl->create(container, ui::WsNone, m_resourceManager, renderSystem, m_soundSystem);
+	m_previewControl->create(container, ui::WsNone, m_resourceManager, renderSystem, m_audioSystem);
 	m_previewControl->showGuide(m_guideVisible);
 	m_previewControl->setMoveEmitter(m_moveEmitter);
 	m_previewControl->setGroundClip(m_groundClip);
@@ -216,7 +216,7 @@ void EffectEditorPage::destroy()
 	settings->setProperty< PropertyBoolean >(L"EffectEditor.ToggleGroundClip", m_groundClip);
 
 	m_editor->commitGlobalSettings();
-	m_soundSystem = nullptr;
+	m_audioSystem = nullptr;
 
 	// Destroy panels.
 	m_site->destroyAdditionalPanel(m_sequencer);

@@ -15,7 +15,7 @@
 #include "Render/ImageProcess/ImageProcess.h"
 #include "Render/ImageProcess/ImageProcessSettings.h"
 #include "Resource/IResourceManager.h"
-#include "Sound/SoundSystem.h"
+#include "Sound/AudioSystem.h"
 #include "Sound/Player/SoundPlayer.h"
 #include "Spray/Effect.h"
 #include "Spray/EffectData.h"
@@ -108,7 +108,7 @@ bool EffectPreviewControl::create(
 	int style,
 	resource::IResourceManager* resourceManager,
 	render::IRenderSystem* renderSystem,
-	sound::SoundSystem* soundSystem
+	sound::AudioSystem* audioSystem
 )
 {
 	if (!Widget::create(parent, style))
@@ -158,10 +158,10 @@ bool EffectPreviewControl::create(
 
 	m_renderContext = new render::RenderContext(512 * 1024);
 
-	if ((m_soundSystem = soundSystem) != nullptr)
+	if ((m_audioSystem = audioSystem) != nullptr)
 	{
 		m_soundPlayer = new sound::SoundPlayer();
-		m_soundPlayer->create(m_soundSystem, nullptr);
+		m_soundPlayer->create(m_audioSystem, nullptr);
 	}
 
 	m_pointRenderer = new PointRenderer(renderSystem, 50.0f, 100.0f);
@@ -194,7 +194,7 @@ void EffectPreviewControl::destroy()
 	safeClose(m_renderView);
 
 	safeDestroy(m_soundPlayer);
-	m_soundSystem = nullptr;
+	m_audioSystem = nullptr;
 
 	Widget::destroy();
 }

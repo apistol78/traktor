@@ -4,12 +4,12 @@
 #include "Core/Class/Boxes/BoxedVector4.h"
 #include "Core/Class/IRuntimeClassRegistrar.h"
 #include "Sound/AudioChannel.h"
+#include "Sound/AudioSystem.h"
 #include "Sound/IAudioDriver.h"
 #include "Sound/IAudioMixer.h"
 #include "Sound/IFilter.h"
 #include "Sound/Sound.h"
 #include "Sound/SoundClassFactory.h"
-#include "Sound/SoundSystem.h"
 #include "Sound/Filters/CombFilter.h"
 #include "Sound/Filters/DitherFilter.h"
 #include "Sound/Filters/EqualizerFilter.h"
@@ -61,8 +61,8 @@ void SoundClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classSound->addProperty("range", &Sound::getRange);
 	registrar->registerClass(classSound);
 
-	auto classSoundSystem = new AutoRuntimeClass< SoundSystem >();
-	classSoundSystem->addMethod("getChannel", &SoundSystem::getChannel);
+	auto classSoundSystem = new AutoRuntimeClass< AudioSystem >();
+	classSoundSystem->addMethod("getChannel", &AudioSystem::getChannel);
 	registrar->registerClass(classSoundSystem);
 
 	auto classAudioChannel = new AutoRuntimeClass< AudioChannel >();

@@ -1,10 +1,10 @@
 #include "Core/Thread/Signal.h"
 #include "Core/Timer/Timer.h"
 #include "Sound/AudioChannel.h"
+#include "Sound/AudioSystem.h"
 #include "Sound/ISoundBuffer.h"
 #include "Sound/IAudioDriver.h"
 #include "Sound/Sound.h"
-#include "Sound/SoundSystem.h"
 #include "UnitTest/CaseSound.h"
 
 namespace traktor
@@ -88,8 +88,8 @@ void CaseSound::run()
 	Timer timer;
 	Signal signal;
 
-	TestAudioDriver soundDriver(timer, signal);
-	sound::SoundSystem soundSystem(&soundDriver);
+	TestAudioDriver audioDriver(timer, signal);
+	sound::AudioSystem audioSystem(&audioDriver);
 
 	sound::SoundSystemCreateDesc desc;
 	desc.channels = 1;
@@ -98,19 +98,19 @@ void CaseSound::run()
 	desc.driverDesc.hwChannels = 1;
 	desc.driverDesc.frameSamples = 1500;
 
-	soundSystem.create(desc);
+	audioSystem.create(desc);
 
 	TestSoundBuffer soundBuffer;
 
 	timer.start();
-	soundSystem.getChannel(0)->play(&soundBuffer, 0, 1.0f, 0.0f, 0.0f, false, 0);
+	audioSystem.getChannel(0)->play(&soundBuffer, 0, 1.0f, 0.0f, 0.0f, false, 0);
 
 	signal.wait();
 
-	double latency = soundDriver.m_signalAt * 1000;
+	double latency = audioDriver.m_signalAt * 1000;
 	CASE_ASSERT (latency < 10);
 
-	soundSystem.destroy();
+	audioSystem.destroy();
 }
 
 }

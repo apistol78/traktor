@@ -10,8 +10,8 @@
 #include "I18N/Text.h"
 #include "Resource/ResourceManager.h"
 #include "Sound/AudioChannel.h"
+#include "Sound/AudioSystem.h"
 #include "Sound/SoundFactory.h"
-#include "Sound/SoundSystem.h"
 #include "Sound/Editor/WaveformControl.h"
 #include "Sound/Editor/Tracker/SongAsset.h"
 #include "Sound/Editor/Tracker/SongEditor.h"
@@ -77,16 +77,16 @@ bool SongEditor::create(ui::Container* parent)
 	for (uint32_t i = 0; i < 16; ++i)
 		m_patternGrid->addColumn(new ui::GridColumn(L"Channel " + toString(i), ui::dpi96(100)));
 
-	// Get sound system for preview.
-	m_soundSystem = m_editor->getStoreObject< SoundSystem >(L"SoundSystem");
-	if (m_soundSystem)
+	// Get audio system for preview.
+	m_audioSystem = m_editor->getStoreObject< AudioSystem >(L"AudioSystem");
+	if (m_audioSystem)
 	{
-		m_audioChannel = m_soundSystem->getChannel(0);
+		m_audioChannel = m_audioSystem->getChannel(0);
 		if (!m_audioChannel)
-			m_soundSystem = nullptr;
+			m_audioSystem = nullptr;
 	}
-	if (!m_soundSystem)
-		log::warning << L"Unable to create preview sound system; preview unavailable" << Endl;
+	if (!m_audioSystem)
+		log::warning << L"Unable to create preview audio system; preview unavailable." << Endl;
 
 	m_resourceManager = new resource::ResourceManager(m_editor->getOutputDatabase(), true);
 	m_resourceManager->addFactory(new SoundFactory());
@@ -104,7 +104,7 @@ void SongEditor::destroy()
 	}
 
 	m_resourceManager = nullptr;
-	m_soundSystem = nullptr;
+	m_audioSystem = nullptr;
 }
 
 bool SongEditor::dropInstance(db::Instance* instance, const ui::Point& position)

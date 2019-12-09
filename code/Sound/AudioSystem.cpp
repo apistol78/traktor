@@ -11,10 +11,10 @@
 #include "Core/Timer/Timer.h"
 #include "Sound/AudioChannel.h"
 #include "Sound/AudioMixer.h"
+#include "Sound/AudioSystem.h"
 #include "Sound/IAudioDriver.h"
 #include "Sound/IAudioMixer.h"
 #include "Sound/Sound.h"
-#include "Sound/SoundSystem.h"
 
 #if defined(T_SOUND_USE_AVX_MIXER)
 #	include "Sound/Avx/AudioMixerAvx.h"
@@ -48,9 +48,9 @@ inline void clearSamples(float* samples, int32_t samplesCount)
 
 		}
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.sound.SoundSystem", SoundSystem, Object)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.sound.AudioSystem", AudioSystem, Object)
 
-SoundSystem::SoundSystem(IAudioDriver* driver)
+AudioSystem::AudioSystem(IAudioDriver* driver)
 :	m_driver(driver)
 ,	m_suspended(false)
 ,	m_volume(1.0f)
@@ -61,7 +61,7 @@ SoundSystem::SoundSystem(IAudioDriver* driver)
 {
 }
 
-bool SoundSystem::create(const SoundSystemCreateDesc& desc)
+bool AudioSystem::create(const SoundSystemCreateDesc& desc)
 {
 	T_ASSERT(m_driver);
 
@@ -100,7 +100,7 @@ bool SoundSystem::create(const SoundSystemCreateDesc& desc)
 		m_samplesBlocks.push_back(&m_samplesData[i * samplesPerBlock]);
 
 	// Create mixer and submission threads.
-	m_threadMixer = ThreadManager::getInstance().create(makeFunctor(this, &SoundSystem::threadMixer), L"Sound mixer", 1);
+	m_threadMixer = ThreadManager::getInstance().create(makeFunctor(this, &AudioSystem::threadMixer), L"Sound mixer", 1);
 	if (!m_threadMixer)
 	{
 		m_driver->destroy();
@@ -127,7 +127,7 @@ bool SoundSystem::create(const SoundSystemCreateDesc& desc)
 	return true;
 }
 
-void SoundSystem::destroy()
+void AudioSystem::destroy()
 {
 	// Release all channels to ensure submission thread no longer tries to request blocks from channels.
 	{
@@ -155,7 +155,7 @@ void SoundSystem::destroy()
 	}
 }
 
-bool SoundSystem::reset(IAudioDriver* driver)
+bool AudioSystem::reset(IAudioDriver* driver)
 {
 	// Tear down current driver and threads.
 	suspend();
@@ -176,7 +176,7 @@ bool SoundSystem::reset(IAudioDriver* driver)
 	return true;
 }
 
-void SoundSystem::suspend()
+void AudioSystem::suspend()
 {
 	// Prevent multiple suspends.
 	if (m_suspended)
@@ -197,7 +197,7 @@ void SoundSystem::suspend()
 	m_suspended = true;
 }
 
-void SoundSystem::resume()
+void AudioSystem::resume()
 {
 	// Prevent multiple resumes.
 	if (!m_suspended)
@@ -225,7 +225,7 @@ void SoundSystem::resume()
 	// Create threads.
 	if (!m_threadMixer)
 	{
-		m_threadMixer = ThreadManager::getInstance().create(makeFunctor(this, &SoundSystem::threadMixer), L"Sound mixer", 1);
+		m_threadMixer = ThreadManager::getInstance().create(makeFunctor(this, &AudioSystem::threadMixer), L"Sound mixer", 1);
 		if (!m_threadMixer)
 			return;
 	}
@@ -235,33 +235,33 @@ void SoundSystem::resume()
 	m_suspended = false;
 }
 
-void SoundSystem::setVolume(float volume)
+void AudioSystem::setVolume(float volume)
 {
 	m_volume = volume;
 }
 
-float SoundSystem::getVolume() const
+float AudioSystem::getVolume() const
 {
 	return m_volume;
 }
 
-void SoundSystem::setVolume(handle_t category, float volume)
+void AudioSystem::setVolume(handle_t category, float volume)
 {
 	m_categoryVolumes[category] = volume;
 }
 
-float SoundSystem::getVolume(handle_t category) const
+float AudioSystem::getVolume(handle_t category) const
 {
 	SmallMap< handle_t, float >::const_iterator i = m_categoryVolumes.find(category);
 	return i != m_categoryVolumes.end() ? i->second : 1.0f;
 }
 
-void SoundSystem::setCombineMatrix(float cm[SbcMaxChannelCount][SbcMaxChannelCount])
+void AudioSystem::setCombineMatrix(float cm[SbcMaxChannelCount][SbcMaxChannelCount])
 {
 	std::memcpy(m_desc.cm, cm, sizeof(float) * SbcMaxChannelCount * SbcMaxChannelCount);
 }
 
-AudioChannel* SoundSystem::getChannel(uint32_t channelId)
+AudioChannel* AudioSystem::getChannel(uint32_t channelId)
 {
 	if (channelId < m_channels.size())
 		return m_channels[channelId];
@@ -269,17 +269,17 @@ AudioChannel* SoundSystem::getChannel(uint32_t channelId)
 		return nullptr;
 }
 
-double SoundSystem::getTime() const
+double AudioSystem::getTime() const
 {
 	return m_time;
 }
 
-void SoundSystem::getThreadPerformances(double& outMixerTime) const
+void AudioSystem::getThreadPerformances(double& outMixerTime) const
 {
 	outMixerTime = m_mixerThreadTime;
 }
 
-void SoundSystem::threadMixer()
+void AudioSystem::threadMixer()
 {
 	SoundBlock frameBlock;
 	Timer timerMixer;

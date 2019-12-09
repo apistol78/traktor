@@ -47,7 +47,7 @@ class IResourceManager;
 	namespace sound
 	{
 
-class SoundSystem;
+class AudioSystem;
 
 	}
 
@@ -87,7 +87,7 @@ private:
 	Ref< ui::SequencerControl > m_sequencer;
 	Ref< ui::Menu > m_popupMenu;
 	Ref< resource::IResourceManager > m_resourceManager;
-	Ref< sound::SoundSystem > m_soundSystem;
+	Ref< sound::AudioSystem > m_audioSystem;
 	bool m_velocityVisible;
 	bool m_guideVisible;
 	bool m_moveEmitter;

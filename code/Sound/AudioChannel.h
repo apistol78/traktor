@@ -28,7 +28,7 @@ class ISoundBufferCursor;
 /*! Virtual audio channel.
  * \ingroup Sound
  *
- * The sound system manages a given number of virtual
+ * The audio system manages a given number of virtual
  * audio channels which is responsible of managing
  * sounds attached to them and also calling appropriate
  * filters.
@@ -93,7 +93,7 @@ public:
 	bool getBlock(const IAudioMixer* mixer, SoundBlock& outBlock);
 
 private:
-	friend class SoundSystem;
+	friend class AudioSystem;
 
 	struct StateFilter
 	{
