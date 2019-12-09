@@ -8,7 +8,7 @@
 #   include <AL/alc.h>
 #endif
 #include "Core/Misc/AutoPtr.h"
-#include "Sound/ISoundDriver.h"
+#include "Sound/IAudioDriver.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -26,14 +26,14 @@ namespace traktor
 /*!
  * \ingroup OpenAL
  */
-class T_DLLCLASS SoundDriverOpenAL : public ISoundDriver
+class T_DLLCLASS AudioDriverOpenAL : public IAudioDriver
 {
 	T_RTTI_CLASS;
 
 public:
-	SoundDriverOpenAL();
+	AudioDriverOpenAL();
 
-	virtual bool create(const SystemApplication& sysapp, const SoundDriverCreateDesc& desc, Ref< IAudioMixer >& outMixer) T_OVERRIDE T_FINAL;
+	virtual bool create(const SystemApplication& sysapp, const AudioDriverCreateDesc& desc, Ref< IAudioMixer >& outMixer) T_OVERRIDE T_FINAL;
 
 	virtual void destroy() T_OVERRIDE T_FINAL;
 
@@ -44,7 +44,7 @@ public:
 private:
 	ALCdevice* m_device;
 	ALCcontext* m_context;
-	SoundDriverCreateDesc m_desc;
+	AudioDriverCreateDesc m_desc;
 	ALuint m_format;
 	ALuint m_buffers[4];
 	ALuint m_source;

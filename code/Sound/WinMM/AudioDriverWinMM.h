@@ -1,7 +1,7 @@
 #pragma once
 
 #include <windows.h>
-#include "Sound/ISoundDriver.h"
+#include "Sound/IAudioDriver.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -19,14 +19,14 @@ namespace traktor
 /*!
  * \ingroup WMM
  */
-class T_DLLCLASS SoundDriverWinMM : public ISoundDriver
+class T_DLLCLASS AudioDriverWinMM : public IAudioDriver
 {
 	T_RTTI_CLASS;
 
 public:
-	SoundDriverWinMM();
+	AudioDriverWinMM();
 
-	virtual bool create(const SystemApplication& sysapp, const SoundDriverCreateDesc& desc, Ref< IAudioMixer >& outMixer) override final;
+	virtual bool create(const SystemApplication& sysapp, const AudioDriverCreateDesc& desc, Ref< IAudioMixer >& outMixer) override final;
 
 	virtual void destroy() override final;
 

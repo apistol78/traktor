@@ -4,7 +4,7 @@
 #include "Core/Log/Log.h"
 #include "Core/Math/MathUtils.h"
 #include "Core/Misc/TString.h"
-#include "Sound/Alsa/SoundDriverAlsa.h"
+#include "Sound/Alsa/AudioDriverAlsa.h"
 
 namespace traktor
 {
@@ -17,9 +17,9 @@ const char* c_device = "default"; // "plughw:0,0";
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.SoundDriverAlsa", 0, SoundDriverAlsa, ISoundDriver)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.AudioDriverAlsa", 0, AudioDriverAlsa, IAudioDriver)
 
-SoundDriverAlsa::SoundDriverAlsa()
+AudioDriverAlsa::AudioDriverAlsa()
 :	m_handle(0)
 ,	m_hw_params(0)
 ,	m_buffer(0)
@@ -27,12 +27,12 @@ SoundDriverAlsa::SoundDriverAlsa()
 {
 }
 
-SoundDriverAlsa::~SoundDriverAlsa()
+AudioDriverAlsa::~AudioDriverAlsa()
 {
 	T_ASSERT (!m_handle);
 }
 
-bool SoundDriverAlsa::create(const SystemApplication& sysapp, const SoundDriverCreateDesc& desc, Ref< IAudioMixer >& outMixer)
+bool AudioDriverAlsa::create(const SystemApplication& sysapp, const AudioDriverCreateDesc& desc, Ref< IAudioMixer >& outMixer)
 {
 	int res;
 
@@ -158,7 +158,7 @@ bool SoundDriverAlsa::create(const SystemApplication& sysapp, const SoundDriverC
 	return true;
 }
 
-void SoundDriverAlsa::destroy()
+void AudioDriverAlsa::destroy()
 {
 	if (m_handle)
 	{
@@ -172,12 +172,12 @@ void SoundDriverAlsa::destroy()
 	}
 }
 
-void SoundDriverAlsa::wait()
+void AudioDriverAlsa::wait()
 {
 	snd_pcm_wait(m_handle, -1);
 }
 
-void SoundDriverAlsa::submit(const SoundBlock& soundBlock)
+void AudioDriverAlsa::submit(const SoundBlock& soundBlock)
 {
 	// Step 1) Swizzle into intermediate output buffer.
 

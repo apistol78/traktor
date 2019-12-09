@@ -7,22 +7,22 @@
 #include "Core/Serialization/ISerializable.h"
 #include "Core/Thread/Thread.h"
 #include "Core/Thread/ThreadManager.h"
-#include "Sound/SoundDriverWriteOut.h"
+#include "Sound/AudioDriverWriteOut.h"
 
 namespace traktor
 {
 	namespace sound
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.SoundDriverWriteOut", 0, SoundDriverWriteOut, ISoundDriver)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.AudioDriverWriteOut", 0, AudioDriverWriteOut, IAudioDriver)
 
-SoundDriverWriteOut::SoundDriverWriteOut(ISoundDriver* childDriver)
+AudioDriverWriteOut::AudioDriverWriteOut(IAudioDriver* childDriver)
 :	m_childDriver(childDriver)
 ,	m_wait(true)
 {
 }
 
-bool SoundDriverWriteOut::create(const SystemApplication& sysapp, const SoundDriverCreateDesc& desc, Ref< IAudioMixer >& outMixer)
+bool AudioDriverWriteOut::create(const SystemApplication& sysapp, const AudioDriverCreateDesc& desc, Ref< IAudioMixer >& outMixer)
 {
 	if (m_childDriver)
 	{
@@ -44,7 +44,7 @@ bool SoundDriverWriteOut::create(const SystemApplication& sysapp, const SoundDri
 	return true;
 }
 
-void SoundDriverWriteOut::destroy()
+void AudioDriverWriteOut::destroy()
 {
 	if (m_stream)
 	{
@@ -55,7 +55,7 @@ void SoundDriverWriteOut::destroy()
 	safeDestroy(m_childDriver);
 }
 
-void SoundDriverWriteOut::wait()
+void AudioDriverWriteOut::wait()
 {
 	if (m_childDriver)
 		m_childDriver->wait();
@@ -66,7 +66,7 @@ void SoundDriverWriteOut::wait()
 	}
 }
 
-void SoundDriverWriteOut::submit(const SoundBlock& soundBlock)
+void AudioDriverWriteOut::submit(const SoundBlock& soundBlock)
 {
 	// Submit to child driver first.
 	if (m_childDriver)

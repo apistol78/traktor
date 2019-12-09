@@ -2,7 +2,7 @@
 #include "Core/Log/Log.h"
 #include "Core/Math/MathUtils.h"
 #include "Core/Serialization/ISerializable.h"
-#include "Sound/Ds8/SoundDriverDs8.h"
+#include "Sound/Ds8/AudioDriverDs8.h"
 
 #undef min
 #undef max
@@ -45,9 +45,9 @@ void writeSamples(void* dest, const float* samples, uint32_t samplesCount, uint3
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.SoundDriverDs8", 0, SoundDriverDs8, ISoundDriver)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.AudioDriverDs8", 0, AudioDriverDs8, IAudioDriver)
 
-bool SoundDriverDs8::create(const SystemApplication& sysapp, const SoundDriverCreateDesc& desc, Ref< IAudioMixer >& outMixer)
+bool AudioDriverDs8::create(const SystemApplication& sysapp, const AudioDriverCreateDesc& desc, Ref< IAudioMixer >& outMixer)
 {
 	DSBUFFERDESC dsbd;
 	HRESULT hr;
@@ -155,14 +155,14 @@ bool SoundDriverDs8::create(const SystemApplication& sysapp, const SoundDriverCr
 	return true;
 }
 
-void SoundDriverDs8::destroy()
+void AudioDriverDs8::destroy()
 {
 	m_dsNotify.release();
 	m_dsBuffer.release();
 	m_ds.release();
 }
 
-void SoundDriverDs8::wait()
+void AudioDriverDs8::wait()
 {
 	DWORD result = WaitForMultipleObjects(3, m_eventNotify, FALSE, INFINITE);
 	if (result == WAIT_OBJECT_0)
@@ -173,7 +173,7 @@ void SoundDriverDs8::wait()
 		m_bufferWrite = (m_bufferSize * 1) / 3;
 }
 
-void SoundDriverDs8::submit(const SoundBlock& soundBlock)
+void AudioDriverDs8::submit(const SoundBlock& soundBlock)
 {
 	uint8_t* ptr[2];
 	DWORD size[2];

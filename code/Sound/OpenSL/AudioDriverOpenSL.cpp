@@ -1,15 +1,15 @@
 #include "Core/Log/Log.h"
 #include "Core/Math/MathUtils.h"
-#include "Sound/OpenSL/SoundDriverOpenSL.h"
+#include "Sound/OpenSL/AudioDriverOpenSL.h"
 
 namespace traktor
 {
 	namespace sound
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.SoundDriverOpenSL", 0, SoundDriverOpenSL, ISoundDriver)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.AudioDriverOpenSL", 0, AudioDriverOpenSL, IAudioDriver)
 
-SoundDriverOpenSL::SoundDriverOpenSL()
+AudioDriverOpenSL::AudioDriverOpenSL()
 :	m_engineObject(0)
 ,	m_engineEngine(0)
 ,	m_outputMixObject(0)
@@ -19,7 +19,7 @@ SoundDriverOpenSL::SoundDriverOpenSL()
 {
 }
 
-bool SoundDriverOpenSL::create(const SystemApplication& sysapp, const SoundDriverCreateDesc& desc, Ref< IAudioMixer >& outMixer)
+bool AudioDriverOpenSL::create(const SystemApplication& sysapp, const AudioDriverCreateDesc& desc, Ref< IAudioMixer >& outMixer)
 {
 	SLresult result;
 
@@ -147,7 +147,7 @@ bool SoundDriverOpenSL::create(const SystemApplication& sysapp, const SoundDrive
 		return false;
 	}
 
-	result = (*m_playerBufferQueue)->RegisterCallback(m_playerBufferQueue, &SoundDriverOpenSL::queueCallback, this);
+	result = (*m_playerBufferQueue)->RegisterCallback(m_playerBufferQueue, &AudioDriverOpenSL::queueCallback, this);
 	if (result != SL_RESULT_SUCCESS)
 	{
 		log::error << L"Unable to create OpenSL sound driver; Failed to register queue callback." << Endl;
@@ -168,16 +168,16 @@ bool SoundDriverOpenSL::create(const SystemApplication& sysapp, const SoundDrive
 	return true;
 }
 
-void SoundDriverOpenSL::destroy()
+void AudioDriverOpenSL::destroy()
 {
 }
 
-void SoundDriverOpenSL::wait()
+void AudioDriverOpenSL::wait()
 {
 	m_eventQueue.wait(1000);
 }
 
-void SoundDriverOpenSL::submit(const SoundBlock& soundBlock)
+void AudioDriverOpenSL::submit(const SoundBlock& soundBlock)
 {
 	int16_t* write = m_queueBuffer.ptr();
 	for (int32_t i = 0; i < soundBlock.samplesCount; ++i)
@@ -198,12 +198,12 @@ void SoundDriverOpenSL::submit(const SoundBlock& soundBlock)
 	);
 }
 
-void SoundDriverOpenSL::queueCallback(
+void AudioDriverOpenSL::queueCallback(
 	SLAndroidSimpleBufferQueueItf caller,
 	void *pContext
 )
 {
-	SoundDriverOpenSL* this_ = reinterpret_cast< SoundDriverOpenSL* >(pContext);
+	AudioDriverOpenSL* this_ = reinterpret_cast< AudioDriverOpenSL* >(pContext);
 	T_ASSERT (this_);
 
 	this_->m_eventQueue.broadcast();

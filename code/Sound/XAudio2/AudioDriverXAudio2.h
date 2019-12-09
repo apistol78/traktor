@@ -6,7 +6,7 @@
 #endif
 #include <xaudio2.h>
 #include "Core/Misc/ComRef.h"
-#include "Sound/ISoundDriver.h"
+#include "Sound/IAudioDriver.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -24,16 +24,16 @@ namespace traktor
 /*!
  * \ingroup XA2
  */
-class T_DLLCLASS SoundDriverXAudio2 : public ISoundDriver
+class T_DLLCLASS AudioDriverXAudio2 : public IAudioDriver
 {
 	T_RTTI_CLASS;
 
 public:
-	SoundDriverXAudio2();
+	AudioDriverXAudio2();
 
-	virtual ~SoundDriverXAudio2();
+	virtual ~AudioDriverXAudio2();
 
-	virtual bool create(const SystemApplication& sysapp, const SoundDriverCreateDesc& desc, Ref< IAudioMixer >& outMixer) override final;
+	virtual bool create(const SystemApplication& sysapp, const AudioDriverCreateDesc& desc, Ref< IAudioMixer >& outMixer) override final;
 
 	virtual void destroy() override final;
 
@@ -42,7 +42,7 @@ public:
 	virtual void submit(const SoundBlock& soundBlock) override final;
 
 private:
-	SoundDriverCreateDesc m_desc;
+	AudioDriverCreateDesc m_desc;
 	ComRef< IXAudio2 > m_audio;
 	IXAudio2EngineCallback* m_engineCallback;
 	IXAudio2VoiceCallback* m_voiceCallback;

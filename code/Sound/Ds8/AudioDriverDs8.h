@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Sound/Ds8/Platform.h"
-#include "Sound/ISoundDriver.h"
+#include "Sound/IAudioDriver.h"
 #include "Core/Misc/ComRef.h"
 
 // import/export mechanism.
@@ -20,12 +20,12 @@ namespace traktor
 /*!
  * \ingroup DS8
  */
-class T_DLLCLASS SoundDriverDs8 : public ISoundDriver
+class T_DLLCLASS AudioDriverDs8 : public IAudioDriver
 {
 	T_RTTI_CLASS;
 
 public:
-	virtual bool create(const SystemApplication& sysapp, const SoundDriverCreateDesc& desc, Ref< IAudioMixer >& outMixer) override final;
+	virtual bool create(const SystemApplication& sysapp, const AudioDriverCreateDesc& desc, Ref< IAudioMixer >& outMixer) override final;
 
 	virtual void destroy() override final;
 

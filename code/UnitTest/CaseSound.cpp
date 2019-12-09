@@ -2,7 +2,7 @@
 #include "Core/Timer/Timer.h"
 #include "Sound/AudioChannel.h"
 #include "Sound/ISoundBuffer.h"
-#include "Sound/ISoundDriver.h"
+#include "Sound/IAudioDriver.h"
 #include "Sound/Sound.h"
 #include "Sound/SoundSystem.h"
 #include "UnitTest/CaseSound.h"
@@ -12,21 +12,21 @@ namespace traktor
 	namespace
 	{
 
-class TestSoundDriver : public RefCountImpl< sound::ISoundDriver >
+class TestAudioDriver : public RefCountImpl< sound::IAudioDriver >
 {
 public:
 	Timer& m_timer;
 	Signal& m_signal;
 	double m_signalAt;
 
-	TestSoundDriver(Timer& timer, Signal& signal)
+	TestAudioDriver(Timer& timer, Signal& signal)
 	:	m_timer(timer)
 	,	m_signal(signal)
 	,	m_signalAt(0.0)
 	{
 	}
 
-	virtual bool create(const SystemApplication& sysapp, const sound::SoundDriverCreateDesc& desc, Ref< sound::IAudioMixer >& outMixer) override final
+	virtual bool create(const SystemApplication& sysapp, const sound::AudioDriverCreateDesc& desc, Ref< sound::IAudioMixer >& outMixer) override final
 	{
 		return true;
 	}
@@ -88,7 +88,7 @@ void CaseSound::run()
 	Timer timer;
 	Signal signal;
 
-	TestSoundDriver soundDriver(timer, signal);
+	TestAudioDriver soundDriver(timer, signal);
 	sound::SoundSystem soundSystem(&soundDriver);
 
 	sound::SoundSystemCreateDesc desc;

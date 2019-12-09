@@ -38,7 +38,7 @@ public:
 	virtual bool apply(PropertyGroup* settings) override final;
 
 private:
-	Ref< ui::DropDown > m_dropSoundDriver;
+	Ref< ui::DropDown > m_dropAudioDriver;
 	Ref< ui::Edit > m_editVirtualChannels;
 	Ref< ui::DropDown > m_dropSampleRate;
 	Ref< ui::DropDown > m_dropBitsPerSample;

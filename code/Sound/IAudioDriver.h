@@ -19,35 +19,35 @@ namespace traktor
 
 class IAudioMixer;
 
-/*! Sound driver.
+/*! Audio driver.
  * \ingroup Sound
  *
- * Sound driver works as follows:
- *  -# Sound system submits a sound block.
- *  -# Sound system waits until driver is ready for another block.
+ * Audio driver works as follows:
+ *  -# Audio system submits a sound block.
+ *  -# Audio system waits until driver is ready for another block.
  *  -# Repeat from step 1.
  *
- * Note that even though there are no sound actually playing the
- * sound system keeps on passing "muted" sound blocks.
+ * Note that even though there are no audio actually playing the
+ * audio system keeps on passing "muted" sound blocks.
  *
  * A sound block passed to the driver is always of a fixed size
- * determined by the "frameSamples" member in SoundDriverCreateDesc structure.
+ * determined by the "frameSamples" member in AudioDriverCreateDesc structure.
  *
  * It the drivers responsibility to ensure that there are no glitches in the
  * playback by any means necessary.
  */
-class T_DLLCLASS ISoundDriver : public Object
+class T_DLLCLASS IAudioDriver : public Object
 {
 	T_RTTI_CLASS;
 
 public:
-	/*! \brief Create sound driver.
+	/*! Create sound driver.
 	 *
 	 * \param desc Sound driver create description.
 	 * \param outMixer Return alternative mixer implementation.
 	 * \return True if successful.
 	 */
-	virtual bool create(const SystemApplication& sysapp, const SoundDriverCreateDesc& desc, Ref< IAudioMixer >& outMixer) = 0;
+	virtual bool create(const SystemApplication& sysapp, const AudioDriverCreateDesc& desc, Ref< IAudioMixer >& outMixer) = 0;
 
 	virtual void destroy() = 0;
 

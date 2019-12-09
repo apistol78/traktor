@@ -3,7 +3,7 @@
 #include "Core/Settings/PropertyInteger.h"
 #include "Core/Settings/PropertyString.h"
 #include "I18N/Text.h"
-#include "Sound/ISoundDriver.h"
+#include "Sound/IAudioDriver.h"
 #include "Sound/Editor/SoundSettingsPage.h"
 #include "Ui/Container.h"
 #include "Ui/Edit.h"
@@ -28,8 +28,8 @@ bool SoundSettingsPage::create(ui::Container* parent, const PropertyGroup* origi
 	Ref< ui::Static > staticSounder = new ui::Static();
 	staticSounder->create(container, i18n::Text(L"EDITOR_SETTINGS_SOUND_DRIVER_TYPE"));
 
-	m_dropSoundDriver = new ui::DropDown();
-	m_dropSoundDriver->create(container);
+	m_dropAudioDriver = new ui::DropDown();
+	m_dropAudioDriver->create(container);
 
 	Ref< ui::Static > staticVirtualChannels = new ui::Static();
 	staticVirtualChannels->create(container, i18n::Text(L"EDITOR_SETTINGS_SOUND_VIRTUAL_CHANNELS"));
@@ -81,17 +81,17 @@ bool SoundSettingsPage::create(ui::Container* parent, const PropertyGroup* origi
 	m_editMixerFrames = new ui::Edit();
 	m_editMixerFrames->create(container, L"", ui::WsNone, new ui::NumericEditValidator(false, 1, 16));
 
-	std::wstring soundDriverType = settings->getProperty< std::wstring >(L"Editor.SoundDriver");
+	std::wstring soundDriverType = settings->getProperty< std::wstring >(L"Editor.AudioDriver");
 
 	TypeInfoSet soundDriverTypes;
-	type_of< sound::ISoundDriver >().findAllOf(soundDriverTypes, false);
+	type_of< sound::IAudioDriver >().findAllOf(soundDriverTypes, false);
 
 	for (TypeInfoSet::const_iterator i = soundDriverTypes.begin(); i != soundDriverTypes.end(); ++i)
 	{
 		std::wstring name = (*i)->getName();
-		int32_t index = m_dropSoundDriver->add(name);
+		int32_t index = m_dropAudioDriver->add(name);
 		if (name == soundDriverType)
-			m_dropSoundDriver->select(index);
+			m_dropAudioDriver->select(index);
 	}
 
 	m_editVirtualChannels->setText(toString(settings->getProperty< int32_t >(L"Editor.SoundVirtualChannels")));
@@ -134,7 +134,7 @@ void SoundSettingsPage::destroy()
 
 bool SoundSettingsPage::apply(PropertyGroup* settings)
 {
-	settings->setProperty< PropertyString >(L"Editor.SoundDriver", m_dropSoundDriver->getSelectedItem());
+	settings->setProperty< PropertyString >(L"Editor.AudioDriver", m_dropAudioDriver->getSelectedItem());
 	settings->setProperty< PropertyInteger >(L"Editor.SoundVirtualChannels", parseString< int32_t >(m_editVirtualChannels->getText()));
 
 	switch (m_dropSampleRate->getSelected())

@@ -1,22 +1,22 @@
 #include <pulse/error.h>
 #include "Core/Log/Log.h"
 #include "Core/Misc/TString.h"
-#include "Sound/Pulse/SoundDriverPulse.h"
+#include "Sound/Pulse/AudioDriverPulse.h"
 
 namespace traktor
 {
 	namespace sound
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.SoundDriverPulse", 0, SoundDriverPulse, ISoundDriver)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.AudioDriverPulse", 0, AudioDriverPulse, IAudioDriver)
 
-SoundDriverPulse::SoundDriverPulse()
+AudioDriverPulse::AudioDriverPulse()
 :	m_pa(0)
 ,	m_pendingSize(0)
 {
 }
 
-bool SoundDriverPulse::create(const SystemApplication& sysapp, const SoundDriverCreateDesc& desc, Ref< IAudioMixer >& outMixer)
+bool AudioDriverPulse::create(const SystemApplication& sysapp, const AudioDriverCreateDesc& desc, Ref< IAudioMixer >& outMixer)
 {
 	int error;
 
@@ -37,7 +37,7 @@ bool SoundDriverPulse::create(const SystemApplication& sysapp, const SoundDriver
 	return true;
 }
 
-void SoundDriverPulse::destroy()
+void AudioDriverPulse::destroy()
 {
 	int error;
 	if (m_pa)
@@ -50,7 +50,7 @@ void SoundDriverPulse::destroy()
 	m_pendingSize = 0;
 }
 
-void SoundDriverPulse::wait()
+void AudioDriverPulse::wait()
 {
 	int error;
 	if (m_pendingSize > 0)
@@ -60,7 +60,7 @@ void SoundDriverPulse::wait()
 	}
 }
 
-void SoundDriverPulse::submit(const SoundBlock& soundBlock)
+void AudioDriverPulse::submit(const SoundBlock& soundBlock)
 {
 	float* ptr = m_pending.ptr();
 	for (uint32_t j = 0; j < soundBlock.samplesCount; ++j)

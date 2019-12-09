@@ -1,7 +1,7 @@
 #include "Core/Rtti/TypeInfo.h"
 
 #if defined(T_STATIC)
-#	include "Sound/OpenSL/SoundDriverOpenSL.h"
+#	include "Sound/OpenSL/AudioDriverOpenSL.h"
 
 namespace traktor
 {
@@ -10,7 +10,7 @@ namespace traktor
 
 extern "C" void __module__Traktor_Sound_OpenSL_ES()
 {
-	T_FORCE_LINK_REF(SoundDriverOpenSL);
+	T_FORCE_LINK_REF(AudioDriverOpenSL);
 }
 
 	}

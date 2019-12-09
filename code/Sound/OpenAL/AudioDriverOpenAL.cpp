@@ -5,7 +5,7 @@
 #include "Core/Misc/TString.h"
 #include "Core/Thread/Thread.h"
 #include "Core/Thread/ThreadManager.h"
-#include "Sound/OpenAL/SoundDriverOpenAL.h"
+#include "Sound/OpenAL/AudioDriverOpenAL.h"
 
 #if defined(__IOS__)
 #	include "Sound/OpenAL/iOS/AudioSession.h"
@@ -92,9 +92,9 @@ void writeSamples(void* dest, const float* samples, uint32_t samplesCount, uint3
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.SoundDriverOpenAL", 0, SoundDriverOpenAL, ISoundDriver)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.AudioDriverOpenAL", 0, AudioDriverOpenAL, IAudioDriver)
 
-SoundDriverOpenAL::SoundDriverOpenAL()
+AudioDriverOpenAL::AudioDriverOpenAL()
 :	m_device(0)
 ,	m_context(0)
 ,	m_format(0)
@@ -105,7 +105,7 @@ SoundDriverOpenAL::SoundDriverOpenAL()
 		m_buffers[i] = 0;
 }
 
-bool SoundDriverOpenAL::create(const SystemApplication& sysapp, const SoundDriverCreateDesc& desc, Ref< IAudioMixer >& outMixer)
+bool AudioDriverOpenAL::create(const SystemApplication& sysapp, const AudioDriverCreateDesc& desc, Ref< IAudioMixer >& outMixer)
 {
 	const ALuint c_formats[][2] =
 	{
@@ -172,7 +172,7 @@ bool SoundDriverOpenAL::create(const SystemApplication& sysapp, const SoundDrive
 	return true;
 }
 
-void SoundDriverOpenAL::destroy()
+void AudioDriverOpenAL::destroy()
 {
 	alSourceStop(m_source);
 	alDeleteSources(1, &m_source);
@@ -183,7 +183,7 @@ void SoundDriverOpenAL::destroy()
 	alcCloseDevice(m_device);
 }
 
-void SoundDriverOpenAL::wait()
+void AudioDriverOpenAL::wait()
 {
 	alcMakeContextCurrent(m_context);
 	alcProcessContext(m_context);
@@ -212,7 +212,7 @@ void SoundDriverOpenAL::wait()
 #endif
 }
 
-void SoundDriverOpenAL::submit(const SoundBlock& soundBlock)
+void AudioDriverOpenAL::submit(const SoundBlock& soundBlock)
 {
 	ALuint buffer = 0;
 	ALCenum error;

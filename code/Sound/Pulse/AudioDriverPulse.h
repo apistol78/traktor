@@ -2,7 +2,7 @@
 
 #include <pulse/simple.h>
 #include "Core/Misc/AutoPtr.h"
-#include "Sound/ISoundDriver.h"
+#include "Sound/IAudioDriver.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -20,14 +20,14 @@ namespace traktor
 /*!
  * \ingroup Sound Pulse
  */
-class T_DLLCLASS SoundDriverPulse : public ISoundDriver
+class T_DLLCLASS AudioDriverPulse : public IAudioDriver
 {
 	T_RTTI_CLASS;
 
 public:
-	SoundDriverPulse();
+	AudioDriverPulse();
 
-	virtual bool create(const SystemApplication& sysapp, const SoundDriverCreateDesc& desc, Ref< IAudioMixer >& outMixer) T_OVERRIDE T_FINAL;
+	virtual bool create(const SystemApplication& sysapp, const AudioDriverCreateDesc& desc, Ref< IAudioMixer >& outMixer) T_OVERRIDE T_FINAL;
 
 	virtual void destroy() T_OVERRIDE T_FINAL;
 

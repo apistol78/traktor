@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Sound/ISoundDriver.h"
+#include "Sound/IAudioDriver.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -15,15 +15,15 @@ namespace traktor
 	namespace sound
 	{
 
-/*! \brief Null device sound driver.
+/*! Null device sound driver.
  * \ingroup Sound
  */
-class T_DLLCLASS SoundDriverNull : public ISoundDriver
+class T_DLLCLASS AudioDriverNull : public IAudioDriver
 {
 	T_RTTI_CLASS;
 
 public:
-	virtual bool create(const SystemApplication& sysapp, const SoundDriverCreateDesc& desc, Ref< IAudioMixer >& outMixer) override final;
+	virtual bool create(const SystemApplication& sysapp, const AudioDriverCreateDesc& desc, Ref< IAudioMixer >& outMixer) override final;
 
 	virtual void destroy() override final;
 
@@ -32,7 +32,7 @@ public:
 	virtual void submit(const SoundBlock& soundBlock) override final;
 
 private:
-	SoundDriverCreateDesc m_desc;
+	AudioDriverCreateDesc m_desc;
 };
 
 	}

@@ -10,9 +10,9 @@
 #include "Core/Timer/Profiler.h"
 #include "Resource/IResourceManager.h"
 #include "Sound/AudioChannel.h"
-#include "Sound/ISoundDriver.h"
-#include "Sound/SoundDriverNull.h"
-#include "Sound/SoundDriverWriteOut.h"
+#include "Sound/AudioDriverNull.h"
+#include "Sound/AudioDriverWriteOut.h"
+#include "Sound/IAudioDriver.h"
 #include "Sound/SoundFactory.h"
 #include "Sound/SoundSystem.h"
 #include "Sound/Filters/SurroundEnvironment.h"
@@ -37,7 +37,7 @@ bool AudioServer::create(const PropertyGroup* settings, const SystemApplication&
 	m_audioType = settings->getProperty< std::wstring >(L"Audio.Type");
 
 	// Create sound driver.
-	Ref< sound::ISoundDriver > soundDriver = dynamic_type_cast< sound::ISoundDriver* >(TypeInfo::createInstance(m_audioType.c_str()));
+	Ref< sound::IAudioDriver > soundDriver = dynamic_type_cast< sound::IAudioDriver* >(TypeInfo::createInstance(m_audioType.c_str()));
 	if (!soundDriver)
 		return false;
 
@@ -45,7 +45,7 @@ bool AudioServer::create(const PropertyGroup* settings, const SystemApplication&
 	if (settings->getProperty< bool >(L"Audio.WriteOut", false))
 	{
 		log::info << L"Creating \"write out\" sound driver wrapper" << Endl;
-		soundDriver = new sound::SoundDriverWriteOut(soundDriver);
+		soundDriver = new sound::AudioDriverWriteOut(soundDriver);
 	}
 
 	// Create sound system.
@@ -73,7 +73,7 @@ bool AudioServer::create(const PropertyGroup* settings, const SystemApplication&
 
 	if (!m_soundSystem->create(sscd))
 	{
-		soundDriver = new sound::SoundDriverNull();
+		soundDriver = new sound::AudioDriverNull();
 		m_soundSystem = new sound::SoundSystem(soundDriver);
 		if (!m_soundSystem->create(sscd))
 		{
@@ -213,7 +213,7 @@ int32_t AudioServer::reconfigure(const PropertyGroup* settings)
 	std::wstring audioType = settings->getProperty< std::wstring >(L"Audio.Type");
 	if (audioType != m_audioType)
 	{
-		Ref< sound::ISoundDriver > soundDriver = dynamic_type_cast< sound::ISoundDriver* >(TypeInfo::createInstance(audioType.c_str()));
+		Ref< sound::IAudioDriver > soundDriver = dynamic_type_cast< sound::IAudioDriver* >(TypeInfo::createInstance(audioType.c_str()));
 		if (soundDriver && m_soundSystem->reset(soundDriver))
 			m_audioType = audioType;
 		else

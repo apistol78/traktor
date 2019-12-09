@@ -2,7 +2,7 @@
 #include "Core/Log/Log.h"
 #include "Core/Math/MathUtils.h"
 #include "Core/Serialization/ISerializable.h"
-#include "Sound/WinMM/SoundDriverWinMM.h"
+#include "Sound/WinMM/AudioDriverWinMM.h"
 
 #undef min
 #undef max
@@ -47,9 +47,9 @@ void writeSamples(void* dest, const float* samples, uint32_t samplesCount, uint3
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.SoundDriverWinMM", 0, SoundDriverWinMM, ISoundDriver)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.AudioDriverWinMM", 0, AudioDriverWinMM, IAudioDriver)
 
-SoundDriverWinMM::SoundDriverWinMM()
+AudioDriverWinMM::AudioDriverWinMM()
 :	m_wo(NULL)
 ,	m_eventNotify(NULL)
 ,	m_buffer(0)
@@ -57,7 +57,7 @@ SoundDriverWinMM::SoundDriverWinMM()
 {
 }
 
-bool SoundDriverWinMM::create(const SystemApplication& sysapp, const SoundDriverCreateDesc& desc, Ref< IAudioMixer >& outMixer)
+bool AudioDriverWinMM::create(const SystemApplication& sysapp, const AudioDriverCreateDesc& desc, Ref< IAudioMixer >& outMixer)
 {
 	m_eventNotify = CreateEvent(NULL, FALSE, FALSE, NULL);
 	if (!m_eventNotify)
@@ -100,7 +100,7 @@ bool SoundDriverWinMM::create(const SystemApplication& sysapp, const SoundDriver
 	return true;
 }
 
-void SoundDriverWinMM::destroy()
+void AudioDriverWinMM::destroy()
 {
 	if (m_wo)
 	{
@@ -119,14 +119,14 @@ void SoundDriverWinMM::destroy()
 	}
 }
 
-void SoundDriverWinMM::wait()
+void AudioDriverWinMM::wait()
 {
 	WAVEHDR* block = &m_blocks[m_nextPrepareBlock];
 	while ((block->dwFlags & WHDR_DONE) == 0)
 		WaitForSingleObject(m_eventNotify, INFINITE);
 }
 
-void SoundDriverWinMM::submit(const SoundBlock& soundBlock)
+void AudioDriverWinMM::submit(const SoundBlock& soundBlock)
 {
 	// Grab block to prepare.
 	WAVEHDR* block = &m_blocks[m_nextPrepareBlock];

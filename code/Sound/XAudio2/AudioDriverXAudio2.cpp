@@ -4,7 +4,7 @@
 #include "Core/Math/MathUtils.h"
 #include "Core/Memory/Alloc.h"
 #include "Core/Serialization/ISerializable.h"
-#include "Sound/XAudio2/SoundDriverXAudio2.h"
+#include "Sound/XAudio2/AudioDriverXAudio2.h"
 
 #undef min
 #undef max
@@ -120,9 +120,9 @@ void writeSamples(void* dest, const float* samples, uint32_t samplesCount, uint3
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.SoundDriverXAudio2", 0, SoundDriverXAudio2, ISoundDriver)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.AudioDriverXAudio2", 0, AudioDriverXAudio2, IAudioDriver)
 
-SoundDriverXAudio2::SoundDriverXAudio2()
+AudioDriverXAudio2::AudioDriverXAudio2()
 :	m_engineCallback(0)
 ,	m_voiceCallback(0)
 ,	m_masteringVoice(0)
@@ -137,12 +137,12 @@ SoundDriverXAudio2::SoundDriverXAudio2()
 		m_buffers[i] = 0;
 }
 
-SoundDriverXAudio2::~SoundDriverXAudio2()
+AudioDriverXAudio2::~AudioDriverXAudio2()
 {
 	destroy();
 }
 
-bool SoundDriverXAudio2::create(const SystemApplication& sysapp, const SoundDriverCreateDesc& desc, Ref< IAudioMixer >& outMixer)
+bool AudioDriverXAudio2::create(const SystemApplication& sysapp, const AudioDriverCreateDesc& desc, Ref< IAudioMixer >& outMixer)
 {
 	m_desc = desc;
 
@@ -179,7 +179,7 @@ bool SoundDriverXAudio2::create(const SystemApplication& sysapp, const SoundDriv
 	return true;
 }
 
-void SoundDriverXAudio2::destroy()
+void AudioDriverXAudio2::destroy()
 {
 	if (m_sourceVoice)
 	{
@@ -229,7 +229,7 @@ void SoundDriverXAudio2::destroy()
 #endif
 }
 
-void SoundDriverXAudio2::wait()
+void AudioDriverXAudio2::wait()
 {
 	XAUDIO2_VOICE_STATE state;
 
@@ -244,7 +244,7 @@ void SoundDriverXAudio2::wait()
 	}
 }
 
-void SoundDriverXAudio2::submit(const SoundBlock& soundBlock)
+void AudioDriverXAudio2::submit(const SoundBlock& soundBlock)
 {
 	XAUDIO2_BUFFER buffer = { 0 };
 
@@ -289,7 +289,7 @@ void SoundDriverXAudio2::submit(const SoundBlock& soundBlock)
 	m_sourceVoice->SubmitSourceBuffer(&buffer);
 }
 
-bool SoundDriverXAudio2::reset()
+bool AudioDriverXAudio2::reset()
 {
 	HRESULT hr;
 

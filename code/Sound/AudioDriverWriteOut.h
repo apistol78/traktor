@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Core/Misc/AutoPtr.h"
-#include "Sound/ISoundDriver.h"
+#include "Sound/IAudioDriver.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -19,17 +19,17 @@ class IStream;
 	namespace sound
 	{
 
-/*! \brief Write-out device sound driver.
+/*! Write-out device audio driver.
  * \ingroup Sound
  */
-class T_DLLCLASS SoundDriverWriteOut : public ISoundDriver
+class T_DLLCLASS AudioDriverWriteOut : public IAudioDriver
 {
 	T_RTTI_CLASS;
 
 public:
-	SoundDriverWriteOut(ISoundDriver* childDriver = 0);
+	AudioDriverWriteOut(IAudioDriver* childDriver = 0);
 
-	virtual bool create(const SystemApplication& sysapp, const SoundDriverCreateDesc& desc, Ref< IAudioMixer >& outMixer) override final;
+	virtual bool create(const SystemApplication& sysapp, const AudioDriverCreateDesc& desc, Ref< IAudioMixer >& outMixer) override final;
 
 	virtual void destroy() override final;
 
@@ -38,8 +38,8 @@ public:
 	virtual void submit(const SoundBlock& soundBlock) override final;
 
 private:
-	Ref< ISoundDriver > m_childDriver;
-	SoundDriverCreateDesc m_desc;
+	Ref< IAudioDriver > m_childDriver;
+	AudioDriverCreateDesc m_desc;
 	Ref< IStream > m_stream;
 	AutoArrayPtr< float > m_interleaved;
 	bool m_wait;
