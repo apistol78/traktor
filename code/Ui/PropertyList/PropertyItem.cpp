@@ -159,7 +159,7 @@ void PropertyItem::notifyChange()
 
 void PropertyItem::addChildItem(PropertyItem* childItem)
 {
-	if (childItem->m_parent == 0)
+	if (childItem->m_parent == nullptr)
 	{
 		m_childItems.push_back(childItem);
 		childItem->m_parent = this;
@@ -171,7 +171,7 @@ void PropertyItem::removeChildItem(PropertyItem* childItem)
 	if (childItem->getParentItem() == this)
 	{
 		m_childItems.remove(childItem);
-		childItem->m_parent = 0;
+		childItem->m_parent = nullptr;
 	}
 }
 
@@ -291,14 +291,14 @@ void PropertyItem::updateChildrenInPlaceControls()
 	for (PropertyItem* parent = m_parent; parent; parent = parent->m_parent)
 		expanded &= parent->m_expanded;
 
-	for (RefArray< PropertyItem >::iterator i = m_childItems.begin(); i != m_childItems.end(); ++i)
+	for (auto childItem : m_childItems)
 	{
 		if (expanded)
-			(*i)->createInPlaceControls(m_propertyList);
+			childItem->createInPlaceControls(m_propertyList);
 		else
-			(*i)->destroyInPlaceControls();
+			childItem->destroyInPlaceControls();
 
-		(*i)->updateChildrenInPlaceControls();
+		childItem->updateChildrenInPlaceControls();
 	}
 }
 
