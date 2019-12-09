@@ -1,7 +1,7 @@
 #include "Core/Rtti/TypeInfo.h"
 
 #if defined(T_STATIC)
-#	include "Sound/WinMM/SoundDriverWinMM.h"
+#	include "Sound/WinMM/AudioDriverWinMM.h"
 
 namespace traktor
 {
@@ -10,7 +10,7 @@ namespace traktor
 
 extern "C" void __module__Traktor_Sound_WinMM()
 {
-	T_FORCE_LINK_REF(SoundDriverWinMM);
+	T_FORCE_LINK_REF(AudioDriverWinMM);
 }
 
 	}

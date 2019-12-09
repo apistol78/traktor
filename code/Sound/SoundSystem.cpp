@@ -11,8 +11,8 @@
 #include "Core/Timer/Timer.h"
 #include "Sound/AudioChannel.h"
 #include "Sound/AudioMixer.h"
+#include "Sound/IAudioDriver.h"
 #include "Sound/IAudioMixer.h"
-#include "Sound/ISoundDriver.h"
 #include "Sound/Sound.h"
 #include "Sound/SoundSystem.h"
 
@@ -50,7 +50,7 @@ inline void clearSamples(float* samples, int32_t samplesCount)
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.sound.SoundSystem", SoundSystem, Object)
 
-SoundSystem::SoundSystem(ISoundDriver* driver)
+SoundSystem::SoundSystem(IAudioDriver* driver)
 :	m_driver(driver)
 ,	m_suspended(false)
 ,	m_volume(1.0f)
@@ -155,7 +155,7 @@ void SoundSystem::destroy()
 	}
 }
 
-bool SoundSystem::reset(ISoundDriver* driver)
+bool SoundSystem::reset(IAudioDriver* driver)
 {
 	// Tear down current driver and threads.
 	suspend();
@@ -209,7 +209,7 @@ void SoundSystem::resume()
 		return;
 
 	// Re-instanciate driver.
-	m_driver = checked_type_cast< ISoundDriver* >(type_of(m_driver).createInstance());
+	m_driver = checked_type_cast< IAudioDriver* >(type_of(m_driver).createInstance());
 	if (!m_driver)
 		return;
 

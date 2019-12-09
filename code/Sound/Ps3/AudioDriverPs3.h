@@ -1,7 +1,7 @@
 #pragma once
 
 #include <sys/event.h>
-#include "Sound/ISoundDriver.h"
+#include "Sound/IAudioDriver.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -19,16 +19,16 @@ namespace traktor
 /*!
  * \ingroup SoundPS3
  */
-class T_DLLCLASS SoundDriverPs3 : public ISoundDriver
+class T_DLLCLASS AudioDriverPs3 : public IAudioDriver
 {
 	T_RTTI_CLASS;
 
 public:
-	SoundDriverPs3();
+	AudioDriverPs3();
 
-	virtual ~SoundDriverPs3();
+	virtual ~AudioDriverPs3();
 
-	virtual bool create(const SystemApplication& sysapp, const SoundDriverCreateDesc& desc, Ref< IAudioMixer >& outMixer);
+	virtual bool create(const SystemApplication& sysapp, const AudioDriverCreateDesc& desc, Ref< IAudioMixer >& outMixer);
 
 	virtual void destroy();
 

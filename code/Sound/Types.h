@@ -31,7 +31,7 @@ namespace traktor
 #	define T_SOUND_SPEAKERS_SETUP T_SOUND_SPEAKER_SETUP_7_1
 #endif
 
-/*! \brief Static sound resource flags. */
+/*! Static sound resource flags. */
 enum StaticResourceFlags
 {
 	SrfZLib = 1,
@@ -40,7 +40,7 @@ enum StaticResourceFlags
 	SrfDelta = 8
 };
 
-/*! \brief Sound channel mapping. */
+/*! Sound channel mapping. */
 enum SoundBlockChannel
 {
 #if T_SOUND_SPEAKERS_SETUP == T_SOUND_SPEAKER_SETUP_2_0
@@ -68,18 +68,18 @@ enum SoundBlockChannel
 #endif
 };
 
-/*! \brief Parameter handle. */
+/*! Parameter handle. */
 typedef uint32_t handle_t;
 
-/*! \brief Sound driver create description. */
-struct SoundDriverCreateDesc
+/*! Audio driver create description. */
+struct AudioDriverCreateDesc
 {
 	uint32_t sampleRate;	//!< Playback rate, ex. 44100.
 	uint8_t bitsPerSample;	//!< Bits per sample, ex. 8, 16 or 24.
 	uint16_t hwChannels;	//!< Number of hardware channels.
 	uint32_t frameSamples;	//!< Size of frames, i.e. size of mixed sound blocks passed to the driver.
 
-	SoundDriverCreateDesc()
+	AudioDriverCreateDesc()
 	:	sampleRate(0)
 	,	bitsPerSample(0)
 	,	hwChannels(0)
@@ -88,12 +88,12 @@ struct SoundDriverCreateDesc
 	}
 };
 
-/*! \brief Sound system create description. */
+/*! Sound system create description. */
 struct SoundSystemCreateDesc
 {
 	SystemApplication sysapp;
 	uint32_t channels;									//!< Number of virtual channels.
-	SoundDriverCreateDesc driverDesc;					//!< Driver create description.
+	AudioDriverCreateDesc driverDesc;					//!< Driver create description.
 	float cm[SbcMaxChannelCount][SbcMaxChannelCount];	//!< Final combine matrix.
 
 	SoundSystemCreateDesc()
@@ -105,7 +105,7 @@ struct SoundSystemCreateDesc
 	}
 };
 
-/*! \brief Block of sound samples. */
+/*! Block of sound samples. */
 struct SoundBlock
 {
 	float* samples[SbcMaxChannelCount];	//!< Point to samples, one per channel.
@@ -115,19 +115,19 @@ struct SoundBlock
 	handle_t category;
 };
 
-/*! \brief Return handle from parameter name.
+/*! Return handle from parameter name.
  *
  * \param name Parameter name.
  * \return Parameter handle.
  */
 handle_t T_DLLCLASS getParameterHandle(const std::wstring& name);
 
-/*! \brief Linear to decibel. */
+/*! Linear to decibel. */
 inline float linearToDecibel(float lin) {
 	return 20.0f * std::log10(lin);
 }
 
-/*! \brief Decibel to linear. */
+/*! Decibel to linear. */
 inline float decibelToLinear(float db) {
 	return std::pow(10.0f, db / 20.0f);
 }

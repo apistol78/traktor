@@ -3,7 +3,7 @@
 #include "Core/Settings/PropertyInteger.h"
 #include "Core/Settings/PropertyString.h"
 #include "Editor/IEditor.h"
-#include "Sound/ISoundDriver.h"
+#include "Sound/IAudioDriver.h"
 #include "Sound/SoundSystem.h"
 #include "Sound/Player/SoundPlayer.h"
 #include "Sound/Editor/SoundEditorPlugin.h"
@@ -49,13 +49,13 @@ void SoundEditorPlugin::handleWorkspaceOpened()
 	if (m_editor->getStoreObject(L"SoundSystem") != 0)
 		return;
 
-	std::wstring soundDriverTypeName = settings->getProperty< std::wstring >(L"Editor.SoundDriver");
-	const TypeInfo* soundDriverType = TypeInfo::find(soundDriverTypeName.c_str());
-	if (!soundDriverType)
+	std::wstring audioDriverTypeName = settings->getProperty< std::wstring >(L"Editor.AudioDriver");
+	const TypeInfo* audioDriverType = TypeInfo::find(audioDriverTypeName.c_str());
+	if (!audioDriverType)
 		return;
 
-	Ref< ISoundDriver > soundDriver = dynamic_type_cast< ISoundDriver* >(soundDriverType->createInstance());
-	T_ASSERT(soundDriver);
+	Ref< IAudioDriver > audioDriver = dynamic_type_cast< IAudioDriver* >(audioDriverType->createInstance());
+	T_ASSERT(audioDriver);
 
 	SoundSystemCreateDesc desc;
 	desc.channels = settings->getProperty< int32_t >(L"Editor.SoundVirtualChannels", 8);
@@ -64,7 +64,7 @@ void SoundEditorPlugin::handleWorkspaceOpened()
 	desc.driverDesc.hwChannels = settings->getProperty< int32_t >(L"Editor.SoundHwChannels", 5 + 1);
 	desc.driverDesc.frameSamples = settings->getProperty< int32_t >(L"Editor.SoundFrameSamples", 1024);
 
-	Ref< SoundSystem > soundSystem = new SoundSystem(soundDriver);
+	Ref< SoundSystem > soundSystem = new SoundSystem(audioDriver);
 	if (!soundSystem->create(desc))
 		return;
 

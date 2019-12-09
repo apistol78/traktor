@@ -4,7 +4,7 @@
 #include <SLES/OpenSLES_Android.h>
 #include "Core/Misc/AutoPtr.h"
 #include "Core/Thread/Event.h"
-#include "Sound/ISoundDriver.h"
+#include "Sound/IAudioDriver.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -22,14 +22,14 @@ namespace traktor
 /*!
  * \ingroup OpenSL
  */
-class T_DLLCLASS SoundDriverOpenSL : public ISoundDriver
+class T_DLLCLASS AudioDriverOpenSL : public IAudioDriver
 {
 	T_RTTI_CLASS;
 
 public:
-	SoundDriverOpenSL();
+	AudioDriverOpenSL();
 
-	virtual bool create(const SystemApplication& sysapp, const SoundDriverCreateDesc& desc, Ref< IAudioMixer >& outMixer) T_OVERRIDE T_FINAL;
+	virtual bool create(const SystemApplication& sysapp, const AudioDriverCreateDesc& desc, Ref< IAudioMixer >& outMixer) T_OVERRIDE T_FINAL;
 
 	virtual void destroy() T_OVERRIDE T_FINAL;
 
@@ -38,7 +38,7 @@ public:
 	virtual void submit(const SoundBlock& soundBlock) T_OVERRIDE T_FINAL;
 
 private:
-	SoundDriverCreateDesc m_desc;
+	AudioDriverCreateDesc m_desc;
 	SLObjectItf m_engineObject;
 	SLEngineItf m_engineEngine;
 	SLObjectItf m_outputMixObject;

@@ -24,8 +24,8 @@ namespace traktor
 	{
 
 class AudioChannel;
+class IAudioDriver;
 class IAudioMixer;
-class ISoundDriver;
 class Sound;
 
 /*! Audio system manager.
@@ -40,7 +40,7 @@ class T_DLLCLASS SoundSystem : public Object
 	T_RTTI_CLASS;
 
 public:
-	explicit SoundSystem(ISoundDriver* driver);
+	explicit SoundSystem(IAudioDriver* driver);
 
 	/*! Create audio system.
 	 *
@@ -58,7 +58,7 @@ public:
 	 * \param driver New audio driver implementation.
 	 * \return True if reset succeeded.
 	 */
-	bool reset(ISoundDriver* driver);
+	bool reset(IAudioDriver* driver);
 
 	/*! Suspend playback.
 	 */
@@ -120,7 +120,7 @@ public:
 	void getThreadPerformances(double& outMixerTime) const;
 
 private:
-	Ref< ISoundDriver > m_driver;
+	Ref< IAudioDriver > m_driver;
 	Ref< IAudioMixer > m_mixer;
 	SoundSystemCreateDesc m_desc;
 	bool m_suspended;

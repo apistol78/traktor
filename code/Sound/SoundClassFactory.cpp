@@ -4,9 +4,9 @@
 #include "Core/Class/Boxes/BoxedVector4.h"
 #include "Core/Class/IRuntimeClassRegistrar.h"
 #include "Sound/AudioChannel.h"
+#include "Sound/IAudioDriver.h"
 #include "Sound/IAudioMixer.h"
 #include "Sound/IFilter.h"
-#include "Sound/ISoundDriver.h"
 #include "Sound/Sound.h"
 #include "Sound/SoundClassFactory.h"
 #include "Sound/SoundSystem.h"
@@ -75,8 +75,8 @@ void SoundClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	auto classISoundBuffer = new AutoRuntimeClass< ISoundBuffer >();
 	registrar->registerClass(classISoundBuffer);
 
-	auto classISoundDriver = new AutoRuntimeClass< ISoundDriver >();
-	registrar->registerClass(classISoundDriver);
+	auto classIAudioDriver = new AutoRuntimeClass< IAudioDriver >();
+	registrar->registerClass(classIAudioDriver);
 
 	auto classIAudioMixer = new AutoRuntimeClass< IAudioMixer >();
 	registrar->registerClass(classIAudioMixer);

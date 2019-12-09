@@ -4,16 +4,16 @@
 #include "Core/Log/Log.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Sound/Ps3/AudioMixerPs3.h"
-#include "Sound/Ps3/SoundDriverPs3.h"
+#include "Sound/Ps3/AudioDriverPs3.h"
 
 namespace traktor
 {
 	namespace sound
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.SoundDriverPs3", 0, SoundDriverPs3, ISoundDriver)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.AudioDriverPs3", 0, AudioDriverPs3, IAudioDriver)
 
-SoundDriverPs3::SoundDriverPs3()
+AudioDriverPs3::AudioDriverPs3()
 :	m_port(0)
 ,	m_eventQueueKey(0)
 ,	m_blockPtr(0)
@@ -24,11 +24,11 @@ SoundDriverPs3::SoundDriverPs3()
 {
 }
 
-SoundDriverPs3::~SoundDriverPs3()
+AudioDriverPs3::~AudioDriverPs3()
 {
 }
 
-bool SoundDriverPs3::create(const SystemApplication& sysapp, const SoundDriverCreateDesc& desc, Ref< IAudioMixer >& outMixer)
+bool AudioDriverPs3::create(const SystemApplication& sysapp, const AudioDriverCreateDesc& desc, Ref< IAudioMixer >& outMixer)
 {
 	CellAudioOutConfiguration audioOutConfig;
 	CellAudioPortParam audioParam;
@@ -194,7 +194,7 @@ bool SoundDriverPs3::create(const SystemApplication& sysapp, const SoundDriverCr
 	return true;
 }
 
-void SoundDriverPs3::destroy()
+void AudioDriverPs3::destroy()
 {
 	cellAudioRemoveNotifyEventQueue(m_eventQueueKey);
 	sys_event_queue_destroy(m_eventQueue, 0);
@@ -204,7 +204,7 @@ void SoundDriverPs3::destroy()
 	cellAudioQuit();
 }
 
-void SoundDriverPs3::wait()
+void AudioDriverPs3::wait()
 {
 	sys_event_t event;
 
@@ -229,7 +229,7 @@ void SoundDriverPs3::wait()
 	}
 }
 
-void SoundDriverPs3::submit(const SoundBlock& soundBlock)
+void AudioDriverPs3::submit(const SoundBlock& soundBlock)
 {
 	T_ASSERT (soundBlock.samplesCount % CELL_AUDIO_BLOCK_SAMPLES == 0);
 	T_ASSERT (soundBlock.samplesCount / CELL_AUDIO_BLOCK_SAMPLES <= m_blocksPerFrame);
