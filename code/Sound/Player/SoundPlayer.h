@@ -19,13 +19,13 @@ namespace traktor
 	{
 
 class AudioChannel;
+class AudioSystem;
 class LowPassFilter;
 class SoundHandle;
-class SoundSystem;
 class SurroundEnvironment;
 class SurroundFilter;
 
-/*! \brief High-level sound player implementation.
+/*! High-level sound player implementation.
  * \ingroup Sound
  */
 class T_DLLCLASS SoundPlayer : public ISoundPlayer
@@ -35,7 +35,7 @@ class T_DLLCLASS SoundPlayer : public ISoundPlayer
 public:
 	SoundPlayer();
 
-	bool create(SoundSystem* soundSystem, SurroundEnvironment* surroundEnvironment);
+	bool create(AudioSystem* audioSystem, SurroundEnvironment* surroundEnvironment);
 
 	virtual void destroy() override final;
 
@@ -65,7 +65,7 @@ private:
 	};
 
 	mutable Semaphore m_lock;
-	Ref< SoundSystem > m_soundSystem;
+	Ref< AudioSystem > m_audioSystem;
 	Ref< SurroundEnvironment > m_surroundEnvironment;
 	AlignedVector< Channel > m_channels;
 	Timer m_timer;

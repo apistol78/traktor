@@ -159,7 +159,7 @@ bool PreviewControl::create(
 		m_soundRenderer->create(soundPlayer);
 	}
 	else
-		log::warning << L"Unable to create sound system; Flash sound disabled" << Endl;
+		log::warning << L"Unable to create audio system; all sound disabled." << Endl;
 
 	addEventHandler< ui::SizeEvent >(this, &PreviewControl::eventSize);
 	addEventHandler< ui::PaintEvent >(this, &PreviewControl::eventPaint);

@@ -15,8 +15,8 @@ namespace traktor
 	namespace sound
 	{
 
+class AudioSystem;
 class ISoundPlayer;
-class SoundSystem;
 class SurroundEnvironment;
 
 	}
@@ -24,7 +24,7 @@ class SurroundEnvironment;
 	namespace runtime
 	{
 
-/*! \brief Audio server.
+/*! Audio server.
  * \ingroup Runtime
  *
  * "Audio.Type"					- Sound system type.
@@ -38,7 +38,7 @@ class T_DLLCLASS IAudioServer : public IServer
 	T_RTTI_CLASS;
 
 public:
-	virtual sound::SoundSystem* getSoundSystem() = 0;
+	virtual sound::AudioSystem* getAudioSystem() = 0;
 
 	virtual sound::ISoundPlayer* getSoundPlayer() = 0;
 

@@ -3,8 +3,8 @@
 #include "Core/Settings/PropertyInteger.h"
 #include "Core/Settings/PropertyString.h"
 #include "Editor/IEditor.h"
+#include "Sound/AudioSystem.h"
 #include "Sound/IAudioDriver.h"
-#include "Sound/SoundSystem.h"
 #include "Sound/Player/SoundPlayer.h"
 #include "Sound/Editor/SoundEditorPlugin.h"
 
@@ -27,9 +27,9 @@ bool SoundEditorPlugin::create(ui::Widget* parent, editor::IEditorPageSite* site
 
 void SoundEditorPlugin::destroy()
 {
-	Ref< SoundSystem > soundSystem = m_editor->getStoreObject< SoundSystem >(L"SoundSystem");
-	safeDestroy(soundSystem);
-	m_editor->setStoreObject(L"SoundSystem", 0);
+	Ref< AudioSystem > audioSystem = m_editor->getStoreObject< AudioSystem >(L"AudioSystem");
+	safeDestroy(audioSystem);
+	m_editor->setStoreObject(L"AudioSystem", 0);
 }
 
 bool SoundEditorPlugin::handleCommand(const ui::Command& command, bool result)
@@ -46,7 +46,7 @@ void SoundEditorPlugin::handleWorkspaceOpened()
 	Ref< const PropertyGroup > settings = m_editor->getSettings();
 	T_ASSERT(settings);
 
-	if (m_editor->getStoreObject(L"SoundSystem") != 0)
+	if (m_editor->getStoreObject(L"AudioSystem") != 0)
 		return;
 
 	std::wstring audioDriverTypeName = settings->getProperty< std::wstring >(L"Editor.AudioDriver");
@@ -64,15 +64,15 @@ void SoundEditorPlugin::handleWorkspaceOpened()
 	desc.driverDesc.hwChannels = settings->getProperty< int32_t >(L"Editor.SoundHwChannels", 5 + 1);
 	desc.driverDesc.frameSamples = settings->getProperty< int32_t >(L"Editor.SoundFrameSamples", 1024);
 
-	Ref< SoundSystem > soundSystem = new SoundSystem(audioDriver);
-	if (!soundSystem->create(desc))
+	Ref< AudioSystem > audioSystem = new AudioSystem(audioDriver);
+	if (!audioSystem->create(desc))
 		return;
 
 	Ref< SoundPlayer > soundPlayer = new SoundPlayer();
-	if (!soundPlayer->create(soundSystem, 0))
+	if (!soundPlayer->create(audioSystem, 0))
 		return;
 
-	m_editor->setStoreObject(L"SoundSystem", soundSystem);
+	m_editor->setStoreObject(L"AudioSystem", audioSystem);
 	m_editor->setStoreObject(L"SoundPlayer", soundPlayer);
 }
 

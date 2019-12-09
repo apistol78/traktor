@@ -43,9 +43,9 @@ class ToolBarButtonClickEvent;
 	{
 
 class AudioChannel;
+class AudioSystem;
 class SongAsset;
 class SongBuffer;
-class SoundSystem;
 
 class T_DLLCLASS SongEditor : public editor::IEditorPage
 {
@@ -77,7 +77,7 @@ private:
 	int32_t m_currentPattern;
 
 	Ref< resource::IResourceManager > m_resourceManager;
-	Ref< SoundSystem > m_soundSystem;
+	Ref< AudioSystem > m_audioSystem;
 	Ref< AudioChannel > m_audioChannel;
 
 	void play();

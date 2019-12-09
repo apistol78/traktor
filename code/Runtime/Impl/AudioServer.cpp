@@ -13,8 +13,8 @@
 #include "Sound/AudioDriverNull.h"
 #include "Sound/AudioDriverWriteOut.h"
 #include "Sound/IAudioDriver.h"
+#include "Sound/AudioSystem.h"
 #include "Sound/SoundFactory.h"
-#include "Sound/SoundSystem.h"
 #include "Sound/Filters/SurroundEnvironment.h"
 #include "Sound/Player/SoundPlayer.h"
 
@@ -36,20 +36,20 @@ bool AudioServer::create(const PropertyGroup* settings, const SystemApplication&
 {
 	m_audioType = settings->getProperty< std::wstring >(L"Audio.Type");
 
-	// Create sound driver.
-	Ref< sound::IAudioDriver > soundDriver = dynamic_type_cast< sound::IAudioDriver* >(TypeInfo::createInstance(m_audioType.c_str()));
-	if (!soundDriver)
+	// Create audio driver.
+	Ref< sound::IAudioDriver > audioDriver = dynamic_type_cast< sound::IAudioDriver* >(TypeInfo::createInstance(m_audioType.c_str()));
+	if (!audioDriver)
 		return false;
 
 	// Create a wrapping "write out" driver if we want to debug audio.
 	if (settings->getProperty< bool >(L"Audio.WriteOut", false))
 	{
-		log::info << L"Creating \"write out\" sound driver wrapper" << Endl;
-		soundDriver = new sound::AudioDriverWriteOut(soundDriver);
+		log::info << L"Creating \"write out\" audio driver wrapper." << Endl;
+		audioDriver = new sound::AudioDriverWriteOut(audioDriver);
 	}
 
-	// Create sound system.
-	m_soundSystem = new sound::SoundSystem(soundDriver);
+	// Create audio system.
+	m_audioSystem = new sound::AudioSystem(audioDriver);
 
 	sound::SoundSystemCreateDesc sscd;
 	sscd.sysapp = sysapp;
@@ -71,21 +71,21 @@ bool AudioServer::create(const PropertyGroup* settings, const SystemApplication&
 	sscd.driverDesc.frameSamples = 4 * 256;
 #endif
 
-	if (!m_soundSystem->create(sscd))
+	if (!m_audioSystem->create(sscd))
 	{
-		soundDriver = new sound::AudioDriverNull();
-		m_soundSystem = new sound::SoundSystem(soundDriver);
-		if (!m_soundSystem->create(sscd))
+		audioDriver = new sound::AudioDriverNull();
+		m_audioSystem = new sound::AudioSystem(audioDriver);
+		if (!m_audioSystem->create(sscd))
 		{
-			log::error << L"Audio server failed; unable to create sound system." << Endl;
-			m_soundSystem = 0;
+			log::error << L"Audio server failed; unable to create audio system." << Endl;
+			m_audioSystem = nullptr;
 			return true;
 		}
-		log::error << L"Audio server failed; unable to create sound driver, using null driver..." << Endl;
+		log::error << L"Audio server failed; unable to create audio driver, using null driver..." << Endl;
 	}
 
 	// Set master volume.
-	m_soundSystem->setVolume(settings->getProperty< float >(L"Audio.MasterVolume", 1.0f));
+	m_audioSystem->setVolume(settings->getProperty< float >(L"Audio.MasterVolume", 1.0f));
 	m_autoMute = settings->getProperty< bool >(L"Audio.AutoMute", true);
 
 	// Set category volumes.
@@ -97,7 +97,7 @@ bool AudioServer::create(const PropertyGroup* settings, const SystemApplication&
 		{
 			const std::wstring& category = i->first;
 			float volume = PropertyFloat::get(i->second);
-			m_soundSystem->setVolume(
+			m_audioSystem->setVolume(
 				sound::getParameterHandle(category),
 				volume
 			);
@@ -117,10 +117,10 @@ bool AudioServer::create(const PropertyGroup* settings, const SystemApplication&
 
 	// Create high-level sound player.
 	m_soundPlayer = new sound::SoundPlayer();
-	if (!m_soundPlayer->create(m_soundSystem, m_surroundEnvironment))
+	if (!m_soundPlayer->create(m_audioSystem, m_surroundEnvironment))
 	{
 		log::error << L"Audio server failed; unable to create sound player, sound muted" << Endl;
-		safeDestroy(m_soundSystem);
+		safeDestroy(m_audioSystem);
 		m_soundPlayer = 0;
 		return true;
 	}
@@ -132,7 +132,7 @@ void AudioServer::destroy()
 {
 	m_surroundEnvironment = 0;
 	safeDestroy(m_soundPlayer);
-	safeDestroy(m_soundSystem);
+	safeDestroy(m_audioSystem);
 }
 
 void AudioServer::createResourceFactories(IEnvironment* environment)
@@ -145,7 +145,7 @@ void AudioServer::update(float dT, bool renderViewActive)
 {
 	T_PROFILER_SCOPE(L"AudioServer update");
 
-	if (!m_soundSystem || !m_soundPlayer)
+	if (!m_audioSystem || !m_soundPlayer)
 		return;
 
 	if (m_autoMute)
@@ -156,19 +156,19 @@ void AudioServer::update(float dT, bool renderViewActive)
 			if (!m_soundMuted)
 			{
 				T_DEBUG(L"Audio server muted; application inactive");
-				m_soundMutedVolume = m_soundSystem->getVolume();
+				m_soundMutedVolume = m_audioSystem->getVolume();
 				m_soundMuted = true;
 			}
 
 			// Fade down volume until zero.
-			float volume = m_soundSystem->getVolume();
+			float volume = m_audioSystem->getVolume();
 			volume = std::max(volume - dT, 0.0f);
-			m_soundSystem->setVolume(volume);
+			m_audioSystem->setVolume(volume);
 		}
 		// Fade up volume until "un-muted".
 		else if (m_soundMuted)
 		{
-			float volume = m_soundSystem->getVolume();
+			float volume = m_audioSystem->getVolume();
 
 			volume += dT;
 			if (volume >= m_soundMutedVolume)
@@ -178,7 +178,7 @@ void AudioServer::update(float dT, bool renderViewActive)
 				m_soundMuted = false;
 			}
 
-			m_soundSystem->setVolume(volume);
+			m_audioSystem->setVolume(volume);
 		}
 	}
 
@@ -193,7 +193,7 @@ uint32_t AudioServer::getActiveSoundChannels() const
 	{
 		for (uint32_t i = 0; ; ++i)
 		{
-			sound::AudioChannel* channel = m_soundSystem->getChannel(i);
+			sound::AudioChannel* channel = m_audioSystem->getChannel(i);
 			if (!channel)
 				break;
 
@@ -206,7 +206,7 @@ uint32_t AudioServer::getActiveSoundChannels() const
 
 int32_t AudioServer::reconfigure(const PropertyGroup* settings)
 {
-	if (!m_soundSystem)
+	if (!m_audioSystem)
 		return CrUnaffected;
 
 	// Replace audio driver.
@@ -214,14 +214,14 @@ int32_t AudioServer::reconfigure(const PropertyGroup* settings)
 	if (audioType != m_audioType)
 	{
 		Ref< sound::IAudioDriver > soundDriver = dynamic_type_cast< sound::IAudioDriver* >(TypeInfo::createInstance(audioType.c_str()));
-		if (soundDriver && m_soundSystem->reset(soundDriver))
+		if (soundDriver && m_audioSystem->reset(soundDriver))
 			m_audioType = audioType;
 		else
 			log::warning << L"Unable to replace sound driver" << Endl;
 	}
 
 	// Set master volume.
-	m_soundSystem->setVolume(settings->getProperty< float >(L"Audio.MasterVolume", 1.0f));
+	m_audioSystem->setVolume(settings->getProperty< float >(L"Audio.MasterVolume", 1.0f));
 	m_autoMute = settings->getProperty< bool >(L"Audio.AutoMute", true);
 
 	// Set category volumes.
@@ -233,7 +233,7 @@ int32_t AudioServer::reconfigure(const PropertyGroup* settings)
 		{
 			const std::wstring& category = i->first;
 			float volume = PropertyFloat::get(i->second);
-			m_soundSystem->setVolume(
+			m_audioSystem->setVolume(
 				sound::getParameterHandle(category),
 				volume
 			);
@@ -249,9 +249,9 @@ int32_t AudioServer::reconfigure(const PropertyGroup* settings)
 	return CrAccepted;
 }
 
-sound::SoundSystem* AudioServer::getSoundSystem()
+sound::AudioSystem* AudioServer::getAudioSystem()
 {
-	return m_soundSystem;
+	return m_audioSystem;
 }
 
 sound::ISoundPlayer* AudioServer::getSoundPlayer()
