@@ -51,7 +51,7 @@ public:
 
 	/*! */
 
-	/*! \brief Render all lights. */
+	/*! Render all lights. */
 	void renderLights(
 		render::IRenderView* renderView,
 		float time,
@@ -64,12 +64,13 @@ public:
 		render::ITexture* normalMap,
 		render::ITexture* miscMap,
 		render::ITexture* colorMap,
+		render::ITexture* occlusionMap,
 		render::ITexture* shadowMask,
 		render::ITexture* shadowMapAtlas,
 		render::ITexture* reflectionMap
 	);
 
-	/*! \brief Render screenspace reflections. */
+	/*! Render screenspace reflections. */
 	void renderReflections(
 		render::IRenderView* renderView,
 		const Matrix44& projection,
@@ -81,7 +82,7 @@ public:
 		render::ITexture* miscMap
 	);
 
-	/*! \brief Render fog. */
+	/*! Render fog. */
 	void renderFog(
 		render::IRenderView* renderView,
 		const Matrix44& projection,

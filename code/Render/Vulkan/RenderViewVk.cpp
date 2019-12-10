@@ -1298,7 +1298,7 @@ void RenderViewVk::validateTargetState()
 		return;
 
 	// Transform clear values.
-	StaticVector< VkClearValue, 4+1 > clearValues;
+	StaticVector< VkClearValue, 8+1 > clearValues;
 	if (ts.colorIndex >= 0)
 	{
 		auto& cv = clearValues.push_back();
