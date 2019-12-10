@@ -44,7 +44,7 @@ const resource::Id< render::ImageProcessSettings > c_motionBlurLow(Guid(L"{BDFEF
 const resource::Id< render::ImageProcessSettings > c_motionBlurMedium(Guid(L"{A70CBA02-B75A-E246-A9B6-99B8B2B98D2A}"));
 const resource::Id< render::ImageProcessSettings > c_motionBlurHigh(Guid(L"{E893B98C-90A3-9848-B4F3-3D8C0CE57CE8}"));
 const resource::Id< render::ImageProcessSettings > c_motionBlurUltra(Guid(L"{CD4A0939-233B-2E43-988D-DA6E0DB7A6E6}"));
-const resource::Id< render::ImageProcessSettings > c_toneMapFixed(Guid(L"{BC4FA128-A976-4023-A422-637581ADFD7E}"));
+const resource::Id< render::ImageProcessSettings > c_toneMapFixed(Guid(L"{838922A0-49CE-6645-8A9C-BA0E71081033}"));
 const resource::Id< render::ImageProcessSettings > c_toneMapAdaptive(Guid(L"{BC4FA128-A976-4023-A422-637581ADFD7E}"));
 
 render::handle_t s_techniqueDeferredColor = 0;

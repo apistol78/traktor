@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.scene.SceneAsset" version="8">
-	<worldRenderSettings type="traktor.world.WorldRenderSettings" version="32">
+	<worldRenderSettings type="traktor.world.WorldRenderSettings" version="33">
 		<viewNearZ>0.1</viewNearZ>
 		<viewFarZ>10000</viewFarZ>
 		<linearLighting>true</linearLighting>
-		<exposureBias>4</exposureBias>
+		<exposureMode>EmFixed</exposureMode>
+		<exposure>-0.5</exposure>
 		<shadowSettings>
 			<disabled>
 				<projection>SpUniform</projection>

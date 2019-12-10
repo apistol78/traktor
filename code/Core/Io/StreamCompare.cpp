@@ -40,7 +40,7 @@ bool StreamCompare::execute()
 		if (std::memcmp(firstBuf, secondBuf, r0) != 0)
 		{
 			result = false;
-			return false;
+			break;
 		}
 	}
 
