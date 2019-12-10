@@ -82,7 +82,8 @@ void ProbeCapturer::build(
 		wrs.viewNearZ = 0.01f;
 		wrs.viewFarZ = 12000.0f;
 		wrs.linearLighting = true;
-		wrs.exposureBias = 1.0f;
+		wrs.exposureMode = world::WorldRenderSettings::EmFixed;
+		wrs.exposure = 1.0f;
 		wrs.fog = false;
 
 		world::WorldCreateDesc wcd;

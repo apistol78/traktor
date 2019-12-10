@@ -18,7 +18,7 @@ namespace traktor
 
 class Edit;
 
-/*! \brief Numeric property item.
+/*! Numeric property item.
  * \ingroup UI
  */
 class T_DLLCLASS NumericPropertyItem : public PropertyItem
@@ -36,7 +36,8 @@ public:
 		RpMetresPerSecond,
 		RpKilograms,
 		RpPercent,
-		RpHerz
+		RpHerz,
+		RpEV
 	};
 
 	NumericPropertyItem(const std::wstring& text, double value, double limitMin, double limitMax, bool floatPoint, bool hex, Representation representation);

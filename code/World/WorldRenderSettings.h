@@ -40,6 +40,12 @@ class T_DLLCLASS WorldRenderSettings : public ISerializable
 	T_RTTI_CLASS;
 
 public:
+	enum ExposureMode
+	{
+		EmFixed,
+		EmAdaptive
+	};
+
 	enum ShadowProjection
 	{
 		SpBox,
@@ -69,7 +75,8 @@ public:
 	float viewNearZ;
 	float viewFarZ;
 	bool linearLighting;
-	float exposureBias;
+	ExposureMode exposureMode;
+	float exposure;
 	ShadowSettings shadowSettings[QuLast];
 	bool fog;
 	float fogDistanceY;

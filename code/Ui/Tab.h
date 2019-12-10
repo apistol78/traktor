@@ -18,7 +18,7 @@ namespace traktor
 class IBitmap;
 class TabPage;
 
-/*! \brief Tab container.
+/*! Tab container.
  * \ingroup UI
  */
 class T_DLLCLASS Tab : public Widget
@@ -80,15 +80,13 @@ private:
 		bool operator == (const PageState& rh) const;
 	};
 
-	typedef std::vector< PageState > page_state_vector_t;
-
 	Ref< IBitmap > m_bitmapClose;
 	Ref< IBitmap > m_bitmapImages;
 	uint32_t m_imageWidth;
 	uint32_t m_imageHeight;
 	Rect m_innerRect;
 	Font m_fontBold;
-	page_state_vector_t m_pages;
+	AlignedVector< PageState > m_pages;
 	Ref< TabPage > m_selectedPage;
 	Ref< TabPage > m_hoverPage;
 	bool m_closeButton;
@@ -109,10 +107,6 @@ private:
 	void eventSize(SizeEvent* event);
 
 	void eventPaint(PaintEvent* event);
-
-#if defined(_DEBUG)
-	void checkPageStates();
-#endif
 };
 
 	}

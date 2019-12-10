@@ -36,7 +36,8 @@ const resource::Id< render::ImageProcessSettings > c_antiAliasMedium(Guid(L"{3E1
 const resource::Id< render::ImageProcessSettings > c_antiAliasHigh(Guid(L"{0C288028-7BFD-BE46-A25F-F3910BE50319}"));
 const resource::Id< render::ImageProcessSettings > c_antiAliasUltra(Guid(L"{4750DA97-67F4-E247-A9C2-B4883B1158B2}"));
 const resource::Id< render::ImageProcessSettings > c_gammaCorrection(Guid(L"{AB0ABBA7-77BF-0A4E-8E3B-4987B801CE6B}"));
-const resource::Id< render::ImageProcessSettings > c_toneMap(Guid(L"{BC4FA128-A976-4023-A422-637581ADFD7E}"));
+const resource::Id< render::ImageProcessSettings > c_toneMapFixed(Guid(L"{BC4FA128-A976-4023-A422-637581ADFD7E}"));
+const resource::Id< render::ImageProcessSettings > c_toneMapAdaptive(Guid(L"{BC4FA128-A976-4023-A422-637581ADFD7E}"));
 
 render::handle_t s_techniqueForwardColor = 0;
 render::handle_t s_techniqueForwardGBufferWrite = 0;
@@ -60,6 +61,18 @@ struct LightShaderData
 	float atlasTransform[4];
 };
 #pragma pack()
+
+resource::Id< render::ImageProcessSettings > getToneMapId(WorldRenderSettings::ExposureMode exposureMode)
+{
+	switch (exposureMode)
+	{
+	default:
+	case WorldRenderSettings::EmFixed:
+		return c_toneMapFixed;
+	case WorldRenderSettings::EmAdaptive:
+		return c_toneMapAdaptive;
+	}
+}
 
 		}
 
@@ -337,9 +350,10 @@ bool WorldRendererForward::create(
 	// Create tone map processing.
 	if (m_toneMapQuality > QuDisabled)
 	{
+		resource::Id< render::ImageProcessSettings > toneMapId = getToneMapId(m_settings.exposureMode);
 		resource::Proxy< render::ImageProcessSettings > toneMap;
 
-		if (!resourceManager->bind(c_toneMap, toneMap))
+		if (!resourceManager->bind(toneMapId, toneMap))
 		{
 			log::warning << L"Unable to create tone map process." << Endl;
 			m_toneMapQuality = QuDisabled;
@@ -358,8 +372,8 @@ bool WorldRendererForward::create(
 				desc.allTargetsPersistent
 			))
 				m_toneMapImageProcess->setFloatParameter(
-					render::getParameterHandle(L"World_ExposureBias"),
-					m_settings.exposureBias
+					render::getParameterHandle(L"World_Exposure"),
+					m_settings.exposure
 				);
 			else
 			{

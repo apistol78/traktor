@@ -13,9 +13,12 @@
 namespace traktor
 {
 
+/*! Units.
+ * \ingroup Core
+ */
 enum UnitType
 {
-	UtUndefined,
+	AuUndefined,
 	AuSeconds,
 	AuMetres,
 	AuRadians,
@@ -26,10 +29,11 @@ enum UnitType
 	AuKilograms,
 	AuPercent,
 	AuPixels,
-	AuHertz
+	AuHertz,
+	AuEV
 };
 
-/*! \brief Member numeric range attribute.
+/*! Member unit attribute.
  * \ingroup Core
  */
 class T_DLLCLASS AttributeUnit : public Attribute
@@ -37,7 +41,7 @@ class T_DLLCLASS AttributeUnit : public Attribute
 	T_RTTI_CLASS;
 
 public:
-	AttributeUnit(UnitType unit, bool perSecond = false);
+	explicit AttributeUnit(UnitType unit, bool perSecond = false);
 
 	UnitType getUnit() const;
 

@@ -225,7 +225,6 @@ int32_t WorldServer::reconfigure(const PropertyGroup* settings)
 	world::Quality terrainQuality = (world::Quality)settings->getProperty< int32_t >(L"World.TerrainQuality", world::QuMedium);
 	world::Quality oceanQuality = (world::Quality)settings->getProperty< int32_t >(L"World.OceanQuality", world::QuMedium);
 	float gamma = settings->getProperty< float >(L"World.Gamma", 2.2f);
-	int32_t superSample = settings->getProperty< int32_t >(L"World.SuperSample", 0);
 
 	// Check if we need to be reconfigured.
 	if (
