@@ -26,8 +26,8 @@
 			<id>{C957843A-D370-294D-9DD2-F91034ACAC6E}</id>
 			<comment/>
 			<position>
-				<first>380</first>
-				<second>377</second>
+				<first>409</first>
+				<second>404</second>
 			</position>
 			<parameterName>AO</parameterName>
 			<type>PtTexture2D</type>
@@ -55,8 +55,8 @@
 			<id>{2BAF2CFD-2483-C14B-9BED-6A7D7B9070B6}</id>
 			<comment/>
 			<position>
-				<first>1097</first>
-				<second>368</second>
+				<first>1032</first>
+				<second>352</second>
 			</position>
 			<technique>Default</technique>
 			<priority>
@@ -68,7 +68,7 @@
 				<overlay>false</overlay>
 			</priority>
 			<cullMode>CmNever</cullMode>
-			<blendEnable>true</blendEnable>
+			<blendEnable>false</blendEnable>
 			<blendColorOperation>BoAdd</blendColorOperation>
 			<blendColorSource>BfZero</blendColorSource>
 			<blendColorDestination>BfSourceColor</blendColorDestination>
@@ -103,8 +103,8 @@
 			<id>{ACA94244-665D-494F-8C0D-C8B8AA3727B1}</id>
 			<comment/>
 			<position>
-				<first>892</first>
-				<second>425</second>
+				<first>841</first>
+				<second>414</second>
 			</position>
 			<swizzle>xxx0</swizzle>
 		</item>

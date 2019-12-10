@@ -31,6 +31,7 @@ render::handle_t s_handleDepthMap;
 render::handle_t s_handleNormalMap;
 render::handle_t s_handleMiscMap;
 render::handle_t s_handleColorMap;
+render::handle_t s_handleOcclusionMap;
 render::handle_t s_handleLightDiffuseMap;
 render::handle_t s_handleLightSpecularMap;
 render::handle_t s_handleProbeDiffuse;
@@ -74,6 +75,7 @@ LightRendererDeferred::LightRendererDeferred()
 	s_handleNormalMap = render::getParameterHandle(L"World_NormalMap");
 	s_handleMiscMap = render::getParameterHandle(L"World_MiscMap");
 	s_handleColorMap = render::getParameterHandle(L"World_ColorMap");
+	s_handleOcclusionMap = render::getParameterHandle(L"World_OcclusionMap");
 	s_handleLightDiffuseMap = render::getParameterHandle(L"World_LightDiffuseMap");
 	s_handleLightSpecularMap = render::getParameterHandle(L"World_LightSpecularMap");
 	s_handleProbeDiffuse = render::getParameterHandle(L"World_ProbeDiffuse");
@@ -143,6 +145,7 @@ void LightRendererDeferred::renderLights(
 	render::ITexture* normalMap,
 	render::ITexture* miscMap,
 	render::ITexture* colorMap,
+	render::ITexture* occlusionMap,
 	render::ITexture* shadowMask,
 	render::ITexture* shadowMapAtlas,
 	render::ITexture* reflectionMap
@@ -162,6 +165,7 @@ void LightRendererDeferred::renderLights(
 	m_lightShader->setTextureParameter(s_handleNormalMap, normalMap);
 	m_lightShader->setTextureParameter(s_handleMiscMap, miscMap);
 	m_lightShader->setTextureParameter(s_handleColorMap, colorMap);
+	m_lightShader->setTextureParameter(s_handleOcclusionMap, occlusionMap);
 	m_lightShader->setTextureParameter(s_handleShadowMask, shadowMask);
 	m_lightShader->setTextureParameter(s_handleShadowMapAtlas, shadowMapAtlas);
 	m_lightShader->setTextureParameter(s_handleReflectionMap, reflectionMap);

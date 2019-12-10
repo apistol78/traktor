@@ -242,7 +242,7 @@ bool WorldRendererDeferred::create(
 	// Create "gbuffer" targets.
 	{
 		render::RenderTargetSetCreateDesc rtscd;
-		rtscd.count = 4;
+		rtscd.count = 5;
 		rtscd.width = desc.width;
 		rtscd.height = desc.height;
 		rtscd.multiSample = 0;
@@ -255,6 +255,7 @@ bool WorldRendererDeferred::create(
 		rtscd.targets[1].format = render::TfR16G16F;	// Normals (RG)
 		rtscd.targets[2].format = render::TfR11G11B10F;	// Metalness (R), Roughness (G), Specular (B)
 		rtscd.targets[3].format = render::TfR11G11B10F;	// Surface color (RGB)
+		rtscd.targets[4].format = render::TfR8;			// Ambient occlusion (R)
 
 		m_gbufferTargetSet = renderSystem->createRenderTargetSet(rtscd, T_FILE_LINE_W);
 		if (!m_gbufferTargetSet)
@@ -942,6 +943,7 @@ void WorldRendererDeferred::render(render::IRenderView* renderView, int32_t fram
 		clear.colors[1] = Color4f(0.0f, 0.0f, 1.0f, 0.0f);	// normal
 		clear.colors[2] = Color4f(0.0f, 1.0f, 0.0f, 1.0f);	// misc
 		clear.colors[3] = Color4f(0.0f, 0.0f, 0.0f, 0.0f);	// surface
+		clear.colors[4] = Color4f(1.0f, 1.0f, 1.0f, 1.0f);	// ambient occlusion
 		clear.depth = 1.0f;
 
 		T_RENDER_PUSH_MARKER(renderView, "World: GBuffer");
@@ -995,6 +997,34 @@ void WorldRendererDeferred::render(render::IRenderView* renderView, int32_t fram
 			renderView->end();
 		}
 		T_RENDER_POP_MARKER(renderView);
+	}
+
+	// Render ambient occlusion.
+	if (m_ambientOcclusion)
+	{
+		if (renderView->begin(m_gbufferTargetSet, 4, nullptr))
+		{
+			render::ImageProcessStep::Instance::RenderParams params;
+			params.viewFrustum = f.viewFrustum;
+			params.lastView = f.lastView;
+			params.view = f.view;
+			params.projection = f.projection;
+			params.deltaTime = 0.0f;
+
+			T_RENDER_PUSH_MARKER(renderView, "World: Ambient occlusion");
+			m_ambientOcclusion->render(
+				renderView,
+				nullptr,	// color
+				m_gbufferTargetSet->getColorTexture(0),	// depth
+				m_gbufferTargetSet->getColorTexture(1),	// normal
+				nullptr,	// velocity
+				nullptr,	// shadow mask
+				params
+			);
+			T_RENDER_POP_MARKER(renderView);
+
+			renderView->end();
+		}
 	}
 
 	// Render shadow maps.
@@ -1176,34 +1206,12 @@ void WorldRendererDeferred::render(render::IRenderView* renderView, int32_t fram
 			m_gbufferTargetSet->getColorTexture(1),	// normals
 			m_gbufferTargetSet->getColorTexture(2),	// metalness/roughness
 			m_gbufferTargetSet->getColorTexture(3),	// surface color
+			m_gbufferTargetSet->getColorTexture(4),	// ambient occlusion
 			m_shadowMaskTargetSet != nullptr ? m_shadowMaskTargetSet->getColorTexture(0) : nullptr,		// shadow mask
 			m_shadowAtlasTargetSet != nullptr ? m_shadowAtlasTargetSet->getDepthTexture() : nullptr,	// shadow map atlas,
 			m_reflectionsTargetSet != nullptr ? m_reflectionsTargetSet->getColorTexture(0) : nullptr	// reflection map
 		);
 		T_RENDER_POP_MARKER(renderView);
-
-		// Modulate with ambient occlusion.
-		if (m_ambientOcclusion)
-		{
-			render::ImageProcessStep::Instance::RenderParams params;
-			params.viewFrustum = f.viewFrustum;
-			params.lastView = f.lastView;
-			params.view = f.view;
-			params.projection = f.projection;
-			params.deltaTime = 0.0f;
-
-			T_RENDER_PUSH_MARKER(renderView, "World: Ambient occlusion");
-			m_ambientOcclusion->render(
-				renderView,
-				nullptr,	// color
-				m_gbufferTargetSet->getColorTexture(0),	// depth
-				m_gbufferTargetSet->getColorTexture(1),	// normal
-				nullptr,	// velocity
-				nullptr,	// shadow mask
-				params
-			);
-			T_RENDER_POP_MARKER(renderView);
-		}
 
 		render::ProgramParameters visualProgramParams;
 		visualProgramParams.beginParameters(m_globalContext);
@@ -1359,6 +1367,7 @@ void WorldRendererDeferred::getDebugTargets(std::vector< render::DebugTarget >& 
 		outTargets.push_back(render::DebugTarget(L"GBuffer roughness", render::DtvDeferredRoughness, m_gbufferTargetSet->getColorTexture(2)));
 		outTargets.push_back(render::DebugTarget(L"GBuffer specular", render::DtvDeferredSpecular, m_gbufferTargetSet->getColorTexture(2)));
 		outTargets.push_back(render::DebugTarget(L"GBuffer surface color", render::DtvDefault, m_gbufferTargetSet->getColorTexture(3)));
+		outTargets.push_back(render::DebugTarget(L"GBuffer ambient occlusion", render::DtvDefault, m_gbufferTargetSet->getColorTexture(4)));
 	}
 
 	if (m_velocityTargetSet)
