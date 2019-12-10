@@ -75,7 +75,7 @@ private:
 		int32_t right;
 		int32_t depth;
 
-		PageState(TabPage* page, int32_t right = 0);
+		PageState(TabPage* page = nullptr, int32_t right = 0);
 
 		bool operator == (const PageState& rh) const;
 	};

@@ -83,7 +83,7 @@ void WorldRenderSettings::serialize(ISerializer& s)
 			};
 
 			s >> MemberEnum< ExposureMode >(L"exposureMode", exposureMode, c_ExposureMode_Keys);
-			s >> Member< float >(L"exposure", exposure, AttributeRange(0.0f) | AttributeUnit(AuEV));
+			s >> Member< float >(L"exposure", exposure, AttributeUnit(AuEV));
 		}
 		else
 		{

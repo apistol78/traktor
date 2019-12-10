@@ -40,7 +40,7 @@ IPropertyValue* PropertyArray::getProperty(uint32_t index)
 	if (index < m_values.size())
 		return m_values[index];
 	else
-		return 0;
+		return nullptr;
 }
 
 const IPropertyValue* PropertyArray::getProperty(uint32_t index) const
@@ -48,7 +48,7 @@ const IPropertyValue* PropertyArray::getProperty(uint32_t index) const
 	if (index < m_values.size())
 		return m_values[index];
 	else
-		return 0;
+		return nullptr;
 }
 
 void PropertyArray::serialize(ISerializer& s)
@@ -78,17 +78,19 @@ Ref< IPropertyValue > PropertyArray::join(const IPropertyValue* right) const
 
 		return joinedArray;
 	}
-	else
+	else if (right)
 		return right->clone();
+	else
+		return nullptr;
 }
 
 Ref< IPropertyValue > PropertyArray::clone() const
 {
 	Ref< PropertyArray > cloneArray = new PropertyArray();
-	for (RefArray< IPropertyValue >::const_iterator i = m_values.begin(); i != m_values.end(); ++i)
+	for (auto value : m_values)
 	{
-		if ((*i))
-			cloneArray->addProperty((*i)->clone());
+		if (value)
+			cloneArray->addProperty(value->clone());
 	}
 	return cloneArray;
 }

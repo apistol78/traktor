@@ -36,7 +36,7 @@ const resource::Id< render::ImageProcessSettings > c_antiAliasMedium(Guid(L"{3E1
 const resource::Id< render::ImageProcessSettings > c_antiAliasHigh(Guid(L"{0C288028-7BFD-BE46-A25F-F3910BE50319}"));
 const resource::Id< render::ImageProcessSettings > c_antiAliasUltra(Guid(L"{4750DA97-67F4-E247-A9C2-B4883B1158B2}"));
 const resource::Id< render::ImageProcessSettings > c_gammaCorrection(Guid(L"{AB0ABBA7-77BF-0A4E-8E3B-4987B801CE6B}"));
-const resource::Id< render::ImageProcessSettings > c_toneMapFixed(Guid(L"{BC4FA128-A976-4023-A422-637581ADFD7E}"));
+const resource::Id< render::ImageProcessSettings > c_toneMapFixed(Guid(L"{838922A0-49CE-6645-8A9C-BA0E71081033}"));
 const resource::Id< render::ImageProcessSettings > c_toneMapAdaptive(Guid(L"{BC4FA128-A976-4023-A422-637581ADFD7E}"));
 
 render::handle_t s_techniqueForwardColor = 0;
