@@ -37,7 +37,7 @@ namespace traktor
 		namespace
 		{
 
-/*! \brief Stylize member name.
+/*! Stylize member name.
  *
  * Transform from internal naming convention to
  * more human acceptable form.
@@ -92,6 +92,8 @@ NumericPropertyItem::Representation findRepresentation(const MemberType& m)
 			return NumericPropertyItem::RpPercent;
 		else if (unit->getUnit() == AuHertz)
 			return NumericPropertyItem::RpHerz;
+		else if (unit->getUnit() == AuEV)
+			return NumericPropertyItem::RpEV;
 	}
 	return NumericPropertyItem::RpNormal;
 }

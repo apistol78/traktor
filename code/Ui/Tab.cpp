@@ -52,7 +52,6 @@ bool Tab::create(Widget* parent, int32_t style)
 	m_bottom = bool((style & WsBottom) == WsBottom);
 
 	m_bitmapClose = new StyleBitmap(L"UI.TabClose", c_ResourceTabClose, sizeof(c_ResourceTabClose));
-	T_FATAL_ASSERT (m_bitmapClose);
 
 	return true;
 }
@@ -92,8 +91,8 @@ int32_t Tab::addPage(TabPage* page)
 	if (page == 0)
 		return -1;
 
-	for (page_state_vector_t::iterator i = m_pages.begin(); i != m_pages.end(); ++i)
-		i->depth++;
+	for (auto& ps : m_pages)
+		ps.depth++;
 
 	m_pages.push_back(PageState(page));
 
@@ -105,22 +104,20 @@ int32_t Tab::addPage(TabPage* page)
 
 	m_selectedPage = page;
 
-#if defined(_DEBUG)
-	checkPageStates();
-#endif
 	return int32_t(m_pages.size() - 1);
 }
 
 int32_t Tab::getPageCount() const
 {
-	return int32_t(m_pages.size());
+	return (int32_t)m_pages.size();
 }
 
 TabPage* Tab::getPage(int32_t index) const
 {
-	if (index < 0 || index >= int32_t(m_pages.size()))
+	if (index >= 0 && index < (int32_t)m_pages.size())
+		return m_pages[index].page;
+	else
 		return nullptr;
-	return m_pages[index].page;
 }
 
 TabPage* Tab::getPageAt(const Point& position) const
@@ -128,10 +125,10 @@ TabPage* Tab::getPageAt(const Point& position) const
 	if (position.y >= dpi96(c_tabHeight))
 		return nullptr;
 
-	for (page_state_vector_t::const_iterator i = m_pages.begin(); i != m_pages.end(); ++i)
+	for (const auto& ps : m_pages)
 	{
-		if (position.x <= i->right)
-			return i->page;
+		if (position.x <= ps.right)
+			return ps.page;
 	}
 
 	return nullptr;
@@ -139,35 +136,28 @@ TabPage* Tab::getPageAt(const Point& position) const
 
 void Tab::removePage(TabPage* page)
 {
-	page_state_vector_t::iterator i = std::find(m_pages.begin(), m_pages.end(), PageState(page));
-	if (i != m_pages.end())
+	auto it = std::find(m_pages.begin(), m_pages.end(), PageState(page));
+	if (it == m_pages.end())
+		return;
+
+	m_pages.erase(it);
+
+	if (page == m_selectedPage)
 	{
-		m_pages.erase(i);
-		if (page == m_selectedPage)
+		page->setVisible(false);
+
+		// Decrement all depths, to one found with zero depth is the new active page.
+		for (auto& ps : m_pages)
+			ps.depth--;
+
+		PageState* newPageState = findPageState(0);
+		if (newPageState)
 		{
-			page->setVisible(false);
-
-			// Decrement all depths, to one found with zero depth is the new active page.
-			for (page_state_vector_t::iterator j = m_pages.begin(); j != m_pages.end(); ++j)
-				j->depth--;
-
-#if defined(_DEBUG)
-			checkPageStates();
-#endif
-
-			PageState* newPageState = findPageState(0);
-			if (newPageState)
-			{
-				m_selectedPage = newPageState->page;
-				m_selectedPage->setVisible(true);
-			}
-			else
-				m_selectedPage = 0;
-
-#if defined(_DEBUG)
-			checkPageStates();
-#endif
+			m_selectedPage = newPageState->page;
+			m_selectedPage->setVisible(true);
 		}
+		else
+			m_selectedPage = nullptr;
 	}
 }
 
@@ -184,31 +174,19 @@ void Tab::setActivePage(TabPage* page)
 	if (m_selectedPage)
 		m_selectedPage->setVisible(false);
 
-#if defined(_DEBUG)
-	checkPageStates();
-#endif
-
 	if ((m_selectedPage = page) != nullptr)
 	{
 		PageState* state = findPageState(page);
 		T_ASSERT(state);
 
-#if defined(_DEBUG)
-		checkPageStates();
-#endif
-
 		int32_t depth = state->depth;
-		for (page_state_vector_t::iterator i = m_pages.begin(); i != m_pages.end(); ++i)
+		for (auto& ps : m_pages)
 		{
-			if (i->depth <= depth)
-				i->depth++;
+			if (ps.depth <= depth)
+				ps.depth++;
 		}
 
 		state->depth = 0;
-
-#if defined(_DEBUG)
-		checkPageStates();
-#endif
 
 		m_selectedPage->setVisible(true);
 	}
@@ -224,42 +202,30 @@ TabPage* Tab::cycleActivePage(bool forward)
 	if (m_pages.size() < 2)
 		return m_selectedPage;
 
-#if defined(_DEBUG)
-	checkPageStates();
-#endif
-
-	int32_t maxDepth = int32_t(m_pages.size() - 1);
+	int32_t maxDepth = (int32_t)(m_pages.size() - 1);
 
 	if (forward)
 	{
-		for (page_state_vector_t::iterator i = m_pages.begin(); i != m_pages.end(); ++i)
+		for (auto& ps : m_pages)
 		{
-			if (--i->depth < 0)
-				i->depth = maxDepth;
+			if (--ps.depth < 0)
+				ps.depth = maxDepth;
 		}
 	}
 	else
 	{
-		for (page_state_vector_t::iterator i = m_pages.begin(); i != m_pages.end(); ++i)
+		for (auto& ps : m_pages)
 		{
-			if (++i->depth > maxDepth)
-				i->depth = 0;
+			if (++ps.depth > maxDepth)
+				ps.depth = 0;
 		}
 	}
-
-#if defined(_DEBUG)
-	checkPageStates();
-#endif
 
 	if (m_selectedPage)
 		m_selectedPage->setVisible(false);
 
 	PageState* pageState = findPageState(0);
 	T_ASSERT(pageState);
-
-#if defined(_DEBUG)
-	checkPageStates();
-#endif
 
 	m_selectedPage = pageState->page;
 	m_selectedPage->setVisible(true);
@@ -338,13 +304,12 @@ void Tab::eventButtonDown(MouseButtonDownEvent* event)
 
 	if (pnt.y >= y0 && pnt.y <= y1)
 	{
-		PageState* selectedPageState = 0;
-
-		for (page_state_vector_t::iterator i = m_pages.begin(); i != m_pages.end(); ++i)
+		PageState* selectedPageState = nullptr;
+		for (auto& ps : m_pages)
 		{
-			if (pnt.x <= i->right)
+			if (pnt.x <= ps.right)
 			{
-				selectedPageState = &(*i);
+				selectedPageState = &ps;
 				break;
 			}
 		}
@@ -362,37 +327,22 @@ void Tab::eventButtonDown(MouseButtonDownEvent* event)
 
 		if (!closed && selectedPageState && selectedPageState->page != m_selectedPage)
 		{
-#if defined(_DEBUG)
-			checkPageStates();
-#endif
-
 			if (m_selectedPage)
-			{
-#if defined(_DEBUG)
-				PageState* state = findPageState(m_selectedPage);
-				T_ASSERT(state);
-				T_ASSERT(state->depth == 0);
-#endif
 				m_selectedPage->setVisible(false);
-			}
 
 			TabSelectionChangeEvent selectionChangeEvent(this, selectedPageState->page);
 			raiseEvent(&selectionChangeEvent);
 
-			if ((m_selectedPage = selectedPageState->page) != 0)
+			if ((m_selectedPage = selectedPageState->page) != nullptr)
 			{
-				for (page_state_vector_t::iterator i = m_pages.begin(); i != m_pages.end(); ++i)
+				for (auto& ps : m_pages)
 				{
-					if (i->depth < selectedPageState->depth)
-						i->depth++;
+					if (ps.depth < selectedPageState->depth)
+						ps.depth++;
 				}
 				selectedPageState->depth = 0;
 				m_selectedPage->setVisible(true);
 			}
-
-#if defined(_DEBUG)
-			checkPageStates();
-#endif
 		}
 
 		setFocus();
@@ -449,9 +399,9 @@ void Tab::eventPaint(PaintEvent* event)
 	if (!m_pages.empty())
 	{
 		int32_t left = rcTabs.left;
-		for (page_state_vector_t::iterator i = m_pages.begin(); i != m_pages.end(); ++i)
+		for (auto& ps : m_pages)
 		{
-			const TabPage* page = i->page;
+			const TabPage* page = ps.page;
 			const std::wstring text = page->getText();
 
 			Size sizText = canvas.getFontMetric().getExtent(text);
@@ -466,10 +416,10 @@ void Tab::eventPaint(PaintEvent* event)
 			int32_t tabWidth = tabWidthNoMargin + dpi96(4 * 2);
 
 			// Save right separator position in vector.
-			i->right = left + tabWidth;
+			ps.right = left + tabWidth;
 
 			// Draw only those tabs that are visible.
-			if (i->right < rcTabs.right)
+			if (ps.right < rcTabs.right)
 			{
 				// Calculate tab item rectangle.
 				Rect rcTab(
@@ -579,40 +529,23 @@ void Tab::eventPaint(PaintEvent* event)
 
 Tab::PageState* Tab::findPageState(const TabPage* page)
 {
-	for (page_state_vector_t::iterator i = m_pages.begin(); i != m_pages.end(); ++i)
+	for (auto& ps : m_pages)
 	{
-		if (i->page == page)
-			return &(*i);
+		if (ps.page == page)
+			return &ps;
 	}
 	return nullptr;
 }
 
 Tab::PageState* Tab::findPageState(int32_t depth)
 {
-	for (page_state_vector_t::iterator i = m_pages.begin(); i != m_pages.end(); ++i)
+	for (auto& ps : m_pages)
 	{
-		if (i->depth == depth)
-			return &(*i);
+		if (ps.depth == depth)
+			return &ps;
 	}
 	return nullptr;
 }
-
-#if defined(_DEBUG)
-void Tab::checkPageStates()
-{
-	std::vector< int32_t > counts(m_pages.size(), 0);
-	for (page_state_vector_t::const_iterator i = m_pages.begin(); i != m_pages.end(); ++i)
-	{
-		int32_t depth = i->depth;
-		T_ASSERT(depth < counts.size());
-
-		if (depth < counts.size())
-			counts[depth]++;
-	}
-	for (std::vector< int32_t >::const_iterator i = counts.begin(); i != counts.end(); ++i)
-		T_ASSERT(*i == 1);
-}
-#endif
 
 Tab::PageState::PageState(TabPage* page_, int32_t right_)
 :	page(page_)

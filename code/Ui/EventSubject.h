@@ -27,7 +27,7 @@ namespace traktor
 class Event;
 class EventHandler;
 
-/*! \brief Event subject.
+/*! Event subject.
  * \ingroup UI
  */
 class T_DLLCLASS EventSubject : public Object
@@ -121,7 +121,7 @@ public:
 	template < typename EventType, typename ClassType >
 	IEventHandler* addEventHandler(ClassType* target, typename MethodEventHandler< ClassType, EventType >::method_t method)
 	{
-		Ref< IEventHandler > eventHandler = new MethodEventHandler< ClassType, EventType >(target, method);
+		IEventHandler* eventHandler = new MethodEventHandler< ClassType, EventType >(target, method);
 		addEventHandler(type_of< EventType >(), eventHandler);
 		return eventHandler;
 	}
@@ -129,7 +129,7 @@ public:
 	template < typename EventType >
 	IEventHandler* addEventHandler(typename FunctionEventHandler< EventType >::function_t fn)
 	{
-		Ref< IEventHandler > eventHandler = new FunctionEventHandler< EventType >(fn);
+		IEventHandler* eventHandler = new FunctionEventHandler< EventType >(fn);
 		addEventHandler(type_of< EventType >(), eventHandler);
 		return eventHandler;
 	}
@@ -138,7 +138,7 @@ public:
 	template < typename EventType >
 	IEventHandler* addEventHandler(const std::function< void(EventType*) >& fn)
 	{
-		Ref< IEventHandler > eventHandler = new LambdaEventHandler< EventType >(fn);
+		IEventHandler* eventHandler = new LambdaEventHandler< EventType >(fn);
 		addEventHandler(type_of< EventType >(), eventHandler);
 		return eventHandler;
 	}
@@ -170,4 +170,3 @@ private:
 
 	}
 }
-

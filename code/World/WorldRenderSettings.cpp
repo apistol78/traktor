@@ -46,13 +46,14 @@ const wchar_t* c_ImageProcess_elementNames[] =
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.WorldRenderSettings", 32, WorldRenderSettings, ISerializable)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.WorldRenderSettings", 33, WorldRenderSettings, ISerializable)
 
 WorldRenderSettings::WorldRenderSettings()
 :	viewNearZ(1.0f)
 ,	viewFarZ(100.0f)
 ,	linearLighting(true)
-,	exposureBias(2.0f)
+,	exposureMode(EmFixed)
+,	exposure(1.0f)
 ,	fog(false)
 ,	fogDistanceY(0.0f)
 ,	fogDistanceZ(90.0f)
@@ -71,7 +72,25 @@ void WorldRenderSettings::serialize(ISerializer& s)
 	s >> Member< bool >(L"linearLighting", linearLighting);
 
 	if (s.getVersion() >= 28)
-		s >> Member< float >(L"exposureBias", exposureBias, AttributeRange(0.0f));
+	{
+		if (s.getVersion() >= 33)
+		{
+			const MemberEnum< ExposureMode >::Key c_ExposureMode_Keys[] =
+			{
+				{ L"EmFixed", EmFixed },
+				{ L"EmAdaptive", EmAdaptive },
+				{ 0 }
+			};
+
+			s >> MemberEnum< ExposureMode >(L"exposureMode", exposureMode, c_ExposureMode_Keys);
+			s >> Member< float >(L"exposure", exposure, AttributeRange(0.0f) | AttributeUnit(AuEV));
+		}
+		else
+		{
+			exposureMode = EmAdaptive;
+			s >> Member< float >(L"exposureBias", exposure, AttributeRange(0.0f));
+		}
+	}
 
 	if (s.getVersion() >= 23)
 	{

@@ -100,7 +100,10 @@ void line_dda(float x0, float y0, float x1, float y1, Visitor& visitor)
 		tdeltax = stepx * rxr;
 	}
 	else
+	{
 		tmaxx = std::numeric_limits< float >::max();
+		tdeltax = 0.0f;
+	}
 
 	if (std::abs(dy) > FUZZY_EPSILON)
 	{
@@ -109,7 +112,10 @@ void line_dda(float x0, float y0, float x1, float y1, Visitor& visitor)
 		tdeltay = stepy * ryr;
 	}
 	else
+	{
 		tmaxy = std::numeric_limits< float >::max();
+		tdeltay = 0.0f;
+	}
 
 	int32_t ix1 = int32_t(x1);
 	int32_t iy1 = int32_t(y1);
@@ -881,16 +887,16 @@ void TerrainEditModifier::draw(render::PrimitiveRenderer* primitiveRenderer) con
 	primitiveRenderer->drawSolidPoint(m_center, 8, Color4ub(255, 0, 0, 255));
 	primitiveRenderer->pushDepthState(false, false, false);
 
-	float a0 = 0.0f;
-	float x0 = m_center.x() + cosf(a0) * radius;
-	float z0 = m_center.z() + sinf(a0) * radius;
+	float x0 = m_center.x() + cosf(0.0f) * radius;
+	float z0 = m_center.z() + sinf(0.0f) * radius;
 	float y0 = m_heightfield->getWorldHeight(x0, z0);
 
 	for (int32_t i = 1; i <= 32; ++i)
 	{
-		float a1 = TWO_PI * i / 32.0f;
-		float x1 = m_center.x() + cosf(a1) * radius;
-		float z1 = m_center.z() + sinf(a1) * radius;
+		const float a = TWO_PI * i / 32.0f;
+
+		float x1 = m_center.x() + cosf(a) * radius;
+		float z1 = m_center.z() + sinf(a) * radius;
 		float y1 = m_heightfield->getWorldHeight(x1, z1);
 
 		primitiveRenderer->drawLine(
@@ -900,7 +906,6 @@ void TerrainEditModifier::draw(render::PrimitiveRenderer* primitiveRenderer) con
 			Color4ub(255, 0, 0, 180)
 		);
 
-		a0 = a1;
 		x0 = x1;
 		z0 = z1;
 		y0 = y1;

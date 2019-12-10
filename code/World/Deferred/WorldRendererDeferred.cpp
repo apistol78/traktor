@@ -44,7 +44,8 @@ const resource::Id< render::ImageProcessSettings > c_motionBlurLow(Guid(L"{BDFEF
 const resource::Id< render::ImageProcessSettings > c_motionBlurMedium(Guid(L"{A70CBA02-B75A-E246-A9B6-99B8B2B98D2A}"));
 const resource::Id< render::ImageProcessSettings > c_motionBlurHigh(Guid(L"{E893B98C-90A3-9848-B4F3-3D8C0CE57CE8}"));
 const resource::Id< render::ImageProcessSettings > c_motionBlurUltra(Guid(L"{CD4A0939-233B-2E43-988D-DA6E0DB7A6E6}"));
-const resource::Id< render::ImageProcessSettings > c_toneMap(Guid(L"{BC4FA128-A976-4023-A422-637581ADFD7E}"));
+const resource::Id< render::ImageProcessSettings > c_toneMapFixed(Guid(L"{BC4FA128-A976-4023-A422-637581ADFD7E}"));
+const resource::Id< render::ImageProcessSettings > c_toneMapAdaptive(Guid(L"{BC4FA128-A976-4023-A422-637581ADFD7E}"));
 
 render::handle_t s_techniqueDeferredColor = 0;
 render::handle_t s_techniqueDeferredGBufferWrite = 0;
@@ -146,6 +147,18 @@ resource::Id< render::ImageProcessSettings > getMotionBlurId(Quality quality)
 		return c_motionBlurHigh;
 	case QuUltra:
 		return c_motionBlurUltra;
+	}
+}
+
+resource::Id< render::ImageProcessSettings > getToneMapId(WorldRenderSettings::ExposureMode exposureMode)
+{
+	switch (exposureMode)
+	{
+	default:
+	case WorldRenderSettings::EmFixed:
+		return c_toneMapFixed;
+	case WorldRenderSettings::EmAdaptive:
+		return c_toneMapAdaptive;
 	}
 }
 
@@ -683,9 +696,10 @@ bool WorldRendererDeferred::create(
 	// Create tone map processing.
 	if (m_toneMapQuality > QuDisabled)
 	{
+		resource::Id< render::ImageProcessSettings > toneMapId = getToneMapId(m_settings.exposureMode);
 		resource::Proxy< render::ImageProcessSettings > toneMap;
 
-		if (!resourceManager->bind(c_toneMap, toneMap))
+		if (!resourceManager->bind(toneMapId, toneMap))
 		{
 			log::warning << L"Unable to create tone map process." << Endl;
 			m_toneMapQuality = QuDisabled;
@@ -704,8 +718,8 @@ bool WorldRendererDeferred::create(
 				desc.allTargetsPersistent
 			))
 				m_toneMapImageProcess->setFloatParameter(
-					render::getParameterHandle(L"World_ExposureBias"),
-					m_settings.exposureBias
+					render::getParameterHandle(L"World_Exposure"),
+					m_settings.exposure
 				);
 			else
 			{
