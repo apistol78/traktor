@@ -40,7 +40,7 @@ class BoxedProgramParameters : public Object
 
 public:
 	BoxedProgramParameters()
-	:	m_programParameters(0)
+	:	m_programParameters(nullptr)
 	{
 	}
 
@@ -112,7 +112,7 @@ void MeshComponent_setParameterCallback(MeshComponent* self, IRuntimeDelegate* c
 	if (callback)
 		self->setParameterCallback(new DelegateMeshParameterCallback(callback));
 	else
-		self->setParameterCallback(0);
+		self->setParameterCallback(nullptr);
 }
 
 		}

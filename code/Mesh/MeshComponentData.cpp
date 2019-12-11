@@ -42,7 +42,7 @@ Ref< MeshComponent > MeshComponentData::createComponent(resource::IResourceManag
 {
 	resource::Proxy< IMesh > mesh;
 	if (!resourceManager->bind(m_mesh, mesh))
-		return 0;
+		return nullptr;
 
 	Ref< MeshComponent > component;
 
