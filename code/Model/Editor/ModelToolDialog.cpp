@@ -1041,6 +1041,9 @@ void ModelToolDialog::eventRenderPaint(ui::PaintEvent* event)
 					m_modelTris->findChildJoints(i, childJointIds);
 
 					auto Tjoint = m_modelTris->getJointGlobalTransform(i);
+
+					m_primitiveRenderer->drawWireFrame(Tjoint.toMatrix44(), 1.0f);
+
 					if (!childJointIds.empty())
 					{
 						for (auto childId : childJointIds)
@@ -1081,6 +1084,9 @@ void ModelToolDialog::eventRenderPaint(ui::PaintEvent* event)
 						m_modelTris->findChildJoints(i, childJointIds);
 
 						auto TjointPose = pose->getJointGlobalTransform(m_modelTris, i);
+
+						m_primitiveRenderer->drawWireFrame(TjointPose.toMatrix44(), 1.0f);
+
 						if (!childJointIds.empty())
 						{
 							for (auto childId : childJointIds)

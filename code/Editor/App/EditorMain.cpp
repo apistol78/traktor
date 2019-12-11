@@ -161,10 +161,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR szCmdLine, int)
 		OS::getInstance().setEnvironment(L"TRAKTOR_HOME", home);
 	}
 
-#if defined(__LINUX__) || defined(__RPI__)
+	// Ensure temporary folder exist.
 	std::wstring writableFolder = OS::getInstance().getWritableFolderPath() + L"/Traktor/Editor";
 	FileSystem::getInstance().makeAllDirectories(writableFolder);
-#endif
 
 	ui::Application::getInstance()->initialize(
 		new WidgetFactoryImpl(),

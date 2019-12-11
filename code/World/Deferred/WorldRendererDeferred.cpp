@@ -1165,6 +1165,27 @@ void WorldRendererDeferred::render(render::IRenderView* renderView, int32_t fram
 
 	if (renderView->begin(m_visualTargetSet, &clear))
 	{
+		// Visual setup.
+		render::ProgramParameters visualProgramParams;
+		visualProgramParams.beginParameters(m_globalContext);
+		visualProgramParams.setFloatParameter(s_handleTime, f.time);
+		visualProgramParams.setFloatParameter(s_handleLightCount, float(f.lights.size()));
+		visualProgramParams.setVectorParameter(s_handleFogDistanceAndDensity, m_fogDistanceAndDensity);
+		visualProgramParams.setVectorParameter(s_handleFogColor, m_fogColor);
+		visualProgramParams.setMatrixParameter(s_handleView, f.view);
+		visualProgramParams.setMatrixParameter(s_handleViewInverse, f.view.inverse());
+		visualProgramParams.setMatrixParameter(s_handleProjection, f.projection);
+		visualProgramParams.setTextureParameter(s_handleColorMap, m_colorTargetSet->getColorTexture(0));
+		visualProgramParams.setTextureParameter(s_handleDepthMap, m_gbufferTargetSet->getColorTexture(0));
+		visualProgramParams.setTextureParameter(s_handleNormalMap, m_gbufferTargetSet->getColorTexture(1));
+		visualProgramParams.setStructBufferParameter(s_handleLightSBuffer, f.lightSBuffer);
+		visualProgramParams.setStructBufferParameter(s_handleTileSBuffer, f.tileSBuffer);
+		visualProgramParams.endParameters(m_globalContext);
+
+		T_RENDER_PUSH_MARKER(renderView, "World: Visual setup");
+		f.visual->getRenderContext()->render(renderView, render::RpSetup, &visualProgramParams);
+		T_RENDER_POP_MARKER(renderView);
+
 		// Pre-baked indirect lighting.
 		render::ProgramParameters irradianceProgramParams;
 		irradianceProgramParams.beginParameters(m_globalContext);
@@ -1213,30 +1234,17 @@ void WorldRendererDeferred::render(render::IRenderView* renderView, int32_t fram
 		);
 		T_RENDER_POP_MARKER(renderView);
 
-		render::ProgramParameters visualProgramParams;
-		visualProgramParams.beginParameters(m_globalContext);
-		visualProgramParams.setFloatParameter(s_handleTime, f.time);
-		visualProgramParams.setFloatParameter(s_handleLightCount, float(f.lights.size()));
-		visualProgramParams.setVectorParameter(s_handleFogDistanceAndDensity, m_fogDistanceAndDensity);
-		visualProgramParams.setVectorParameter(s_handleFogColor, m_fogColor);
-		visualProgramParams.setMatrixParameter(s_handleView, f.view);
-		visualProgramParams.setMatrixParameter(s_handleViewInverse, f.view.inverse());
-		visualProgramParams.setMatrixParameter(s_handleProjection, f.projection);
-		visualProgramParams.setTextureParameter(s_handleColorMap, m_colorTargetSet->getColorTexture(0));
-		visualProgramParams.setTextureParameter(s_handleDepthMap, m_gbufferTargetSet->getColorTexture(0));
-		visualProgramParams.setTextureParameter(s_handleNormalMap, m_gbufferTargetSet->getColorTexture(1));
-		visualProgramParams.setStructBufferParameter(s_handleLightSBuffer, f.lightSBuffer);
-		visualProgramParams.setStructBufferParameter(s_handleTileSBuffer, f.tileSBuffer);
-		visualProgramParams.endParameters(m_globalContext);
-
+		// Visual opaque.
 		T_RENDER_PUSH_MARKER(renderView, "World: Visual opaque");
-		f.visual->getRenderContext()->render(renderView, render::RpSetup | render::RpOpaque, &visualProgramParams);
+		f.visual->getRenderContext()->render(renderView, render::RpOpaque, &visualProgramParams);
 		T_RENDER_POP_MARKER(renderView);
 
+		// Visual post opaque.
 		T_RENDER_PUSH_MARKER(renderView, "World: Visual post opaque");
 		f.visual->getRenderContext()->render(renderView, render::RpPostOpaque, &visualProgramParams);
 		T_RENDER_POP_MARKER(renderView);
 
+		// Modulate with fog.
 		if (dot4(m_fogDistanceAndDensity, Vector4(0.0f, 0.0f, 1.0f, 1.0f)) > FUZZY_EPSILON)
 		{
 			T_RENDER_PUSH_MARKER(renderView, "World: Fog");
@@ -1254,10 +1262,12 @@ void WorldRendererDeferred::render(render::IRenderView* renderView, int32_t fram
 			T_RENDER_POP_MARKER(renderView);
 		}
 
+		// Visual alpha blend.
 		T_RENDER_PUSH_MARKER(renderView, "World: Visual alpha blend");
 		f.visual->getRenderContext()->render(renderView, render::RpAlphaBlend, &visualProgramParams);
 		T_RENDER_POP_MARKER(renderView);
 
+		// Visual post alpha blend.
 		T_RENDER_PUSH_MARKER(renderView, "World: Visual post alpha blend");
 		f.visual->getRenderContext()->render(renderView, render::RpPostAlphaBlend | render::RpOverlay, &visualProgramParams);
 		T_RENDER_POP_MARKER(renderView);
