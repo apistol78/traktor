@@ -21,7 +21,7 @@ namespace traktor
 class Window;
 #endif
 
-/*! \brief Vulkan render system.
+/*! Vulkan render system.
  * \ingroup Vulkan
  *
  * Vulkan render system implementation.

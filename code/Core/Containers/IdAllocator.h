@@ -14,7 +14,7 @@
 namespace traktor
 {
 
-/*! \brief ID allocator.
+/*! ID allocator.
  * \ingroup Core
  */
 class T_DLLCLASS IdAllocator

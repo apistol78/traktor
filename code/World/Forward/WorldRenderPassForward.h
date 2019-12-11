@@ -23,7 +23,7 @@ class StructBuffer;
 	namespace world
 	{
 
-/*! \brief World render pass.
+/*! World render pass.
  * \ingroup World
  */
 class T_DLLCLASS WorldRenderPassForward : public IWorldRenderPass

@@ -20,7 +20,7 @@ class SocketAddress;
 class SocketAddressIPv4;
 class SocketAddressIPv6;
 
-/*! \brief TCP stream socket.
+/*! TCP stream socket.
  * \ingroup Net
  */
 class T_DLLCLASS TcpSocket : public Socket
@@ -32,31 +32,31 @@ public:
 
 	TcpSocket(handle_t socket_);
 
-	/*! \brief Bind to local address. */
+	/*! Bind to local address. */
 	bool bind(const SocketAddressIPv4& socketAddress, bool reuseAddr = false);
 
-	/*! \brief Bind to local address. */
+	/*! Bind to local address. */
 	bool bind(const SocketAddressIPv6& socketAddress, bool reuseAddr = false);
 
-	/*! \brief Connect to remote host. */
+	/*! Connect to remote host. */
 	bool connect(const SocketAddressIPv4& socketAddress);
 
-	/*! \brief Connect to remote host. */
+	/*! Connect to remote host. */
 	bool connect(const SocketAddressIPv6& socketAddress);
 
-	/*! \brief Begin listen for connection requests. */
+	/*! Begin listen for connection requests. */
 	bool listen();
 
-	/*! \brief Accept connection. */
+	/*! Accept connection. */
 	Ref< TcpSocket > accept();
 
-	/*! \brief Get local socket address. */
+	/*! Get local socket address. */
 	Ref< SocketAddress > getLocalAddress();
 
-	/*! \brief Get remote socket address. */
+	/*! Get remote socket address. */
 	Ref< SocketAddress > getRemoteAddress();
 
-	/*! \brief Set "no delay" option; ie disable Nagle algorithm. */
+	/*! Set "no delay" option; ie disable Nagle algorithm. */
 	void setNoDelay(bool noDelay);
 };
 

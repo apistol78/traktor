@@ -9,7 +9,7 @@ namespace traktor
 
 class ActionFrame;
 
-/*! \brief ActionScript virtual machine image interface.
+/*! ActionScript virtual machine image interface.
  * \ingroup Spark
  */
 class IActionVMImage : public ISerializable
@@ -17,7 +17,7 @@ class IActionVMImage : public ISerializable
 	T_RTTI_CLASS;
 
 public:
-	/*! \brief Execute image. */
+	/*! Execute image. */
 	virtual void execute(ActionFrame* frame) const = 0;
 };
 

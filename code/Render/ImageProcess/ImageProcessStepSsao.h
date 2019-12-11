@@ -24,7 +24,7 @@ namespace traktor
 class Shader;
 class ISimpleTexture;
 
-/*! \brief Post SSAO step.
+/*! Post SSAO step.
  * \ingroup Render
  */
 class T_DLLCLASS ImageProcessStepSsao : public ImageProcessStep

@@ -18,7 +18,7 @@ namespace traktor
 
 class InflateLzoImpl;
 
-/*! \brief LZO inflate stream.
+/*! LZO inflate stream.
  * \ingroup Compress
  */
 class T_DLLCLASS InflateStreamLzo : public IStream

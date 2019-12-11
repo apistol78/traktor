@@ -8,7 +8,7 @@ namespace traktor
 	namespace render
 	{
 
-/*! \brief Setup MSAA sample descriptor.
+/*! Setup MSAA sample descriptor.
  *
  * \param d3dDevice DirectX device.
  * \param sampleCount Number of samples.
@@ -18,7 +18,7 @@ namespace traktor
  */
 bool setupSampleDesc(ID3D11Device* d3dDevice, uint32_t sampleCount, DXGI_FORMAT colorFormat, DXGI_SAMPLE_DESC& outSampleDesc);
 
-/*! \brief Setup MSAA sample descriptor.
+/*! Setup MSAA sample descriptor.
  *
  * \param d3dDevice DirectX device.
  * \param sampleCount Number of samples.
@@ -37,7 +37,7 @@ uint32_t getDisplayModeCount(IDXGIOutput* dxgiOutput);
 */
 bool getDisplayMode(IDXGIOutput* dxgiOutput, uint32_t index, DisplayMode& outDisplayMode);
 
-/*! \brief Find matching DXGI display mode descriptor.
+/*! Find matching DXGI display mode descriptor.
  *
  * \param dxgiOutput Output device.
  * \param dm Display mode.

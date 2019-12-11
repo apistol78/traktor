@@ -20,7 +20,7 @@ namespace traktor
 /*! \ingroup Render */
 //@{
 
-/*! \brief Vertex buffer element declaration.
+/*! Vertex buffer element declaration.
  *
  * This class describe the format of each element of a vertex
  * in a vertex buffer.

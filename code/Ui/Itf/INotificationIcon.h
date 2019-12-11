@@ -10,7 +10,7 @@ namespace traktor
 class IWidget;
 class ISystemBitmap;
 
-/*! \brief NotificationIcon interface.
+/*! NotificationIcon interface.
  * \ingroup UI
  */
 class INotificationIcon

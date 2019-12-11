@@ -7,7 +7,7 @@ namespace traktor
 	namespace spark
 	{
 
-/*! \brief System class.
+/*! System class.
  * \ingroup Spark
  */
 class AsSystem : public ActionObject

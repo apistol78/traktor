@@ -19,7 +19,7 @@ namespace traktor
 class Canvas;
 class IBitmap;
 
-/*! \brief Docking pane.
+/*! Docking pane.
  * \ingroup UI
  */
 class T_DLLCLASS DockPane : public Object

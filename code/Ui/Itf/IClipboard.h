@@ -20,7 +20,7 @@ class Image;
 	namespace ui
 	{
 
-/*! \brief Clipboard interface.
+/*! Clipboard interface.
  * \ingroup UI
  */
 class IClipboard

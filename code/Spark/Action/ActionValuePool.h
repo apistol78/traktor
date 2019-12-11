@@ -18,7 +18,7 @@ namespace traktor
 
 class ActionValue;
 
-/*! \brief ActionValue pool.
+/*! ActionValue pool.
  * \ingroup Spark
  */
 class T_DLLCLASS ActionValuePool
@@ -48,7 +48,7 @@ public:
 
 	ActionValuePool();
 
-	/*! \brief Allocate N values from pool.
+	/*! Allocate N values from pool.
 	 *
 	 * \param count Number of values.
 	 * \return Pointer to first value.
@@ -61,7 +61,7 @@ public:
 		return value;
 	}
 
-	/*! \brief Number of values allocated from pool.
+	/*! Number of values allocated from pool.
 	 *
 	 * \return Offset from first pool value.
 	 */
@@ -70,7 +70,7 @@ public:
 		return m_next;
 	}
 
-	/*! \brief Rewind, or release, N values back to pool.
+	/*! Rewind, or release, N values back to pool.
 	 *
 	 * \param offset Offset from first pool value.
 	 */
@@ -82,7 +82,7 @@ public:
 		m_next = offset;
 	}
 
-	/*! \brief Rewind all values back to pool. */
+	/*! Rewind all values back to pool. */
 	void flush()
 	{
 		rewind(0);

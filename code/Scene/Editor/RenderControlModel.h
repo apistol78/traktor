@@ -20,7 +20,7 @@ class ISceneRenderControl;
 class SceneEditorContext;
 class TransformChain;
 
-/*! \brief Common model for 3d render control editors. */
+/*! Common model for 3d render control editors. */
 class RenderControlModel : public Object
 {
 	T_RTTI_CLASS;

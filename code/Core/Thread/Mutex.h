@@ -20,7 +20,7 @@
 namespace traktor
 {
 
-/*! \brief Mutually exclusive primitive.
+/*! Mutually exclusive primitive.
  * \ingroup Core
  */
 class T_DLLCLASS Mutex : public IWaitable

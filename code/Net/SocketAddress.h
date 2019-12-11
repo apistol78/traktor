@@ -16,7 +16,7 @@ namespace traktor
 	namespace net
 	{
 
-/*! \brief Socket address.
+/*! Socket address.
  * \ingroup Net
  */
 class T_DLLCLASS SocketAddress : public Object

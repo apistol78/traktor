@@ -17,7 +17,7 @@ namespace traktor
 	namespace json
 	{
 
-/*! \brief JSON document.
+/*! JSON document.
  * \ingroup JSON
  */
 class T_DLLCLASS JsonDocument : public JsonArray
@@ -25,35 +25,35 @@ class T_DLLCLASS JsonDocument : public JsonArray
 	T_RTTI_CLASS;
 
 public:
-	/*! \brief Load JSON document from file.
+	/*! Load JSON document from file.
 	 *
 	 * \param fileName Path to file.
 	 * \return True if successfully loaded.
 	 */
 	bool loadFromFile(const Path& fileName);
 
-	/*! \brief Load JSON document from stream.
+	/*! Load JSON document from stream.
 	 *
 	 * \param stream Stream to load from.
 	 * \return True if successfully loaded.
 	 */
 	bool loadFromStream(IStream* stream);
 
-	/*! \brief Load JSON document from text string.
+	/*! Load JSON document from text string.
 	 *
 	 * \param text Text string.
 	 * \return True if successfully loaded.
 	 */
 	bool loadFromText(const std::wstring& text);
 
-	/*! \brief Save JSON document to file.
+	/*! Save JSON document to file.
 	 *
 	 * \param fileName Path to file.
 	 * \return True if successfully saved.
 	 */
 	bool saveToFile(const Path& fileName);
 
-	/*! \brief Save JSON document to stream.
+	/*! Save JSON document to stream.
 	 *
 	 * \param stream Stream to save into.
 	 * \return True if successfully saved.

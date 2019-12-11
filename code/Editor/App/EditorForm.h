@@ -70,7 +70,7 @@ class MRU;
 class PipelineAgentsManager;
 class PropertiesView;
 
-/*! \brief Main editor form.
+/*! Main editor form.
  *
  * This is the surrounding form containing editor pages and the
  * database view.

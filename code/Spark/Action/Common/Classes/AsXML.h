@@ -10,7 +10,7 @@ namespace traktor
 struct CallArgs;
 class XML;
 
-/*! \brief XML class.
+/*! XML class.
  * \ingroup Spark
  */
 class AsXML : public ActionClass

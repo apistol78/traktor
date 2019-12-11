@@ -5,7 +5,7 @@
 namespace traktor
 {
 
-/*! \brief Acquire synchronization primitive.
+/*! Acquire synchronization primitive.
  * \ingroup Core
  *
  * Helper class to acquire and release synchronization
@@ -30,7 +30,7 @@ private:
 	T& m_lock;
 };
 
-/*! \brief Release synchronization primitive.
+/*! Release synchronization primitive.
  * \ingroup Core
  *
  * Helper class to acquire and release synchronization

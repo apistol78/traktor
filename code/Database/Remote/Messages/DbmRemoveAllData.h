@@ -15,7 +15,7 @@ namespace traktor
 	namespace db
 	{
 
-/*! \brief Remove all data attached to instance.
+/*! Remove all data attached to instance.
  * \ingroup Database
  */
 class T_DLLCLASS DbmRemoveAllData : public IMessage

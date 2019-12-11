@@ -8,7 +8,7 @@ namespace traktor
 	namespace
 	{
 
-/*! \brief Feed stream directly into Adler32 checksum. */
+/*! Feed stream directly into Adler32 checksum. */
 class Adler32Stream : public IStream
 {
 public:

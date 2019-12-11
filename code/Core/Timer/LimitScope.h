@@ -13,7 +13,7 @@
 namespace traktor
 {
 
-/*! \brief Time limit scope.
+/*! Time limit scope.
  * \ingroup Core
  *
  * Timed limit debugging aid; will

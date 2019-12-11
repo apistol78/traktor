@@ -14,7 +14,7 @@
 namespace traktor
 {
 
-/*! \brief Dynamic memory stream wrapper.
+/*! Dynamic memory stream wrapper.
  * \ingroup Core
  */
 class T_DLLCLASS DynamicMemoryStream : public IStream

@@ -8,7 +8,7 @@ namespace traktor
 	namespace spark
 	{
 
-/*! \brief ActionScript immutable value array.
+/*! ActionScript immutable value array.
  * \ingroup Spark
  *
  * Only intended to be used in implementation.

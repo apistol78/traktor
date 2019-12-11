@@ -16,7 +16,7 @@ namespace traktor
 	namespace net
 	{
 
-/*! \brief HTTP chunk based stream.
+/*! HTTP chunk based stream.
  *
  * \note This stream is read-only and should not
  * be written to.

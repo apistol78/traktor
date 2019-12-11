@@ -15,7 +15,7 @@ namespace traktor
 	namespace editor
 	{
 
-/*! \brief Default pipeline.
+/*! Default pipeline.
  * \ingroup Editor
  *
  * This pipeline is used for every source instance

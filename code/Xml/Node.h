@@ -20,7 +20,7 @@ class OutputStream;
 	namespace xml
 	{
 
-/*! \brief XML Node.
+/*! XML Node.
  * \ingroup XML
  */
 class T_DLLCLASS Node : public Object

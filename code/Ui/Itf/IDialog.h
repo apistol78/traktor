@@ -9,7 +9,7 @@ namespace traktor
 
 class ISystemBitmap;
 
-/*! \brief Dialog interface.
+/*! Dialog interface.
  * \ingroup UI
  */
 class IDialog : public IWidget

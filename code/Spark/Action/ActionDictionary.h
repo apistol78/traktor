@@ -17,7 +17,7 @@ namespace traktor
 	namespace spark
 	{
 
-/*! \brief ActionScript constant string dictionary.
+/*! ActionScript constant string dictionary.
  * \ingroup Spark
  */
 class T_DLLCLASS ActionDictionary : public Object

@@ -17,7 +17,7 @@ namespace traktor
 	namespace world
 	{
 
-/*! \brief Entity data.
+/*! Entity data.
  * \ingroup World
  *
  * Serialized data used to create runtime entities.

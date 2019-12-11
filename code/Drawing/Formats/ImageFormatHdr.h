@@ -15,7 +15,7 @@ namespace traktor
 	namespace drawing
 	{
 
-/*! \brief HDR format.
+/*! HDR format.
  * \ingroup Drawing
  */
 class T_DLLCLASS ImageFormatHdr : public IImageFormat

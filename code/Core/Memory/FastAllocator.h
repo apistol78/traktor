@@ -8,7 +8,7 @@ namespace traktor
 
 class BlockAllocator;
 
-/*! \brief Fast allocator.
+/*! Fast allocator.
  * \ingroup Core
  *
  * The fast allocator is optimized for allocated

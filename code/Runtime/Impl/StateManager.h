@@ -8,7 +8,7 @@ namespace traktor
 	namespace runtime
 	{
 
-/*! \brief State manager.
+/*! State manager.
  * \ingroup Runtime
  */
 class StateManager : public IStateManager
@@ -16,22 +16,22 @@ class StateManager : public IStateManager
 	T_RTTI_CLASS;
 
 public:
-	/*! \brief Destroy state manager. */
+	/*! Destroy state manager. */
 	void destroy();
 
-	/*! \brief Enter state transition.
+	/*! Enter state transition.
 	 *
 	 * \param state New state.
 	 */
 	virtual void enter(IState* state) override final;
 
-	/*! \brief Get current state.
+	/*! Get current state.
 	 *
 	 * \return Current state.
 	 */
 	IState* getCurrent() { return m_current; }
 
-	/*! \brief Get next state.
+	/*! Get next state.
 	 *
 	 * \return Next state.
 	 */
@@ -44,17 +44,17 @@ private:
 	Ref< IState > m_current;
 	Ref< IState > m_next;
 
-	/*! \brief Begin update transition.
+	/*! Begin update transition.
 	 *
 	 * \return True if transition needs to be performed.
 	 */
 	bool beginTransition();
 
-	/*! \brief Leave current state.
+	/*! Leave current state.
 	 */
 	void leaveCurrent();
 
-	/*! \brief Enter next state.
+	/*! Enter next state.
 	 */
 	void enterNext();
 };

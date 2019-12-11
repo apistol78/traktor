@@ -17,7 +17,7 @@ namespace traktor
 
 class Widget;
 
-/*! \brief ChildEvent
+/*! ChildEvent
  * \ingroup UI
  */
 class T_DLLCLASS ChildEvent : public Event

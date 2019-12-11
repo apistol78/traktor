@@ -24,7 +24,7 @@ class BidirectionalObjectTransport;
 	namespace runtime
 	{
 
-/*! \brief Application target manager connection.
+/*! Application target manager connection.
  * \ingroup Runtime
  */
 class T_DLLCLASS TargetManagerConnection : public Object

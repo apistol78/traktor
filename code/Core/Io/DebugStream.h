@@ -17,7 +17,7 @@ namespace traktor
 
 class OutputStream;
 
-/*! \brief Debug stream wrapper.
+/*! Debug stream wrapper.
  * \ingroup Core
  *
  * Measure number of calls made to a stream.

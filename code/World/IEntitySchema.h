@@ -19,7 +19,7 @@ namespace traktor
 
 class Entity;
 
-/*! \brief Entity schema interface.
+/*! Entity schema interface.
  * \ingroup World
  *
  * Entity schema are blue-prints of entities
@@ -32,7 +32,7 @@ class T_DLLCLASS IEntitySchema : public Object
 	T_RTTI_CLASS;
 
 public:
-	/*! \brief Insert entity into schema.
+	/*! Insert entity into schema.
 	 *
 	 * \param parentEntity Parent entity.
 	 * \param name Instance name.
@@ -44,7 +44,7 @@ public:
 	 */
 	virtual Entity* getEntity(uint32_t index) const = 0;
 
-	/*! \brief Get named entity.
+	/*! Get named entity.
 	 *
 	 * \param name Name of entity.
 	 * \param index Index of entity.
@@ -52,7 +52,7 @@ public:
 	 */
 	virtual Entity* getEntity(const std::wstring& name, uint32_t index = 0) const = 0;
 
-	/*! \brief Get entity of certain type.
+	/*! Get entity of certain type.
 	 *
 	 * \param entityType Type of entity.
 	 * \param index Index of entity.
@@ -60,7 +60,7 @@ public:
 	 */
 	virtual Entity* getEntity(const TypeInfo& entityType, uint32_t index = 0) const = 0;
 
-	/*! \brief Get named entity of certain type.
+	/*! Get named entity of certain type.
 	 *
 	 * \param entityType Type of entity.
 	 * \param name Name of entity instance.
@@ -68,14 +68,14 @@ public:
 	 */
 	virtual Entity* getEntity(const std::wstring& name, const TypeInfo& entityType, uint32_t index = 0) const = 0;
 
-	/*! \brief Get child entity.
+	/*! Get child entity.
 	 *
 	 * \param index Index of entity.
 	 * \return Found entity, null if no entity found.
 	 */
 	virtual Entity* getChildEntity(const Entity* parentEntity, uint32_t index = 0) const = 0;
 
-	/*! \brief Get named child entity.
+	/*! Get named child entity.
 	 *
 	 * \param name Name of entity.
 	 * \param index Index of entity.
@@ -83,7 +83,7 @@ public:
 	 */
 	virtual Entity* getChildEntity(const Entity* parentEntity, const std::wstring& name, uint32_t index = 0) const = 0;
 
-	/*! \brief Get entity of certain type.
+	/*! Get entity of certain type.
 	 *
 	 * \param entityType Type of entity.
 	 * \param index Index of entity.
@@ -91,7 +91,7 @@ public:
 	 */
 	virtual Entity* getChildEntity(const Entity* parentEntity, const TypeInfo& entityType, uint32_t index = 0) const = 0;
 
-	/*! \brief Get named entity of certain type.
+	/*! Get named entity of certain type.
 	 *
 	 * \param entityType Type of entity.
 	 * \param name Name of entity instance.
@@ -103,7 +103,7 @@ public:
 	 */
 	virtual uint32_t getEntities(RefArray< Entity >& outEntities) const = 0;
 
-	/*! \brief Get named entities.
+	/*! Get named entities.
 	 *
 	 * \param name Name of entities.
 	 * \param outEntities Array of found entities.
@@ -111,7 +111,7 @@ public:
 	 */
 	virtual uint32_t getEntities(const std::wstring& name, RefArray< Entity >& outEntities) const = 0;
 
-	/*! \brief Get all entities of certain type.
+	/*! Get all entities of certain type.
 	 *
 	 * \param entityType Type of entity.
 	 * \param outEntities Array of found entities.
@@ -119,7 +119,7 @@ public:
 	 */
 	virtual uint32_t getEntities(const TypeInfo& entityType, RefArray< Entity >& outEntities) const = 0;
 
-	/*! \brief Get all named entities of certain type.
+	/*! Get all named entities of certain type.
 	 *
 	 * \param entityType Type of entity.
 	 * \param outEntities Array of found entities.

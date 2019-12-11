@@ -24,7 +24,7 @@ class ActionObject;
 class ActionDictionary;
 class ActionFunction;
 
-/*! \brief ActionScript execution stack frame.
+/*! ActionScript execution stack frame.
  * \ingroup Spark
  */
 class T_DLLCLASS ActionFrame : public Object

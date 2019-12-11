@@ -18,7 +18,7 @@ namespace traktor
 	namespace world
 	{
 
-/*! \brief World entity base class.
+/*! World entity base class.
  * \ingroup World
  */
 class T_DLLCLASS Entity : public Object
@@ -26,7 +26,7 @@ class T_DLLCLASS Entity : public Object
 	T_RTTI_CLASS;
 
 public:
-	/*! \brief Destroy entity resources.
+	/*! Destroy entity resources.
 	 *
 	 * Called automatically from Entity destructor
 	 * in order to destroy any resources allocated
@@ -38,34 +38,34 @@ public:
 	 */
 	virtual void destroy();
 
-	/*! \brief Set entity transform.
+	/*! Set entity transform.
 	 *
 	 * \param transform Entity transform.
 	 */
 	virtual void setTransform(const Transform& transform);
 
-	/*! \brief Get entity transform.
+	/*! Get entity transform.
 	 *
 	 * \param outTransform Returning entity transform.
 	 * \return True if entity have a transform.
 	 */
 	virtual bool getTransform(Transform& outTransform) const;
 
-	/*! \brief Get entity bounding box.
+	/*! Get entity bounding box.
 	 * Return entity bounding box in entity space.
 	 *
 	 * \return Entity bounding box.
 	 */
 	virtual Aabb3 getBoundingBox() const = 0;
 
-	/*! \brief Get entity bounding box.
+	/*! Get entity bounding box.
 	 * Return entity bounding box in world space.
 	 *
 	 * \return Entity bounding box.
 	 */
 	virtual Aabb3 getWorldBoundingBox() const;
 
-	/*! \brief Update entity.
+	/*! Update entity.
 	 *
 	 * \param update Update parameters.
 	 */

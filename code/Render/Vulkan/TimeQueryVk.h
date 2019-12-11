@@ -7,7 +7,7 @@ namespace traktor
 	namespace render
 	{
 
-/*! \brief GPU time stamp recording query.
+/*! GPU time stamp recording query.
  * \ingroup Render
  */
 class TimeQueryVk : public ITimeQuery

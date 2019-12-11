@@ -18,7 +18,7 @@ namespace traktor
 	namespace render
 	{
 
-/*! \brief Immutable shader graph node.
+/*! Immutable shader graph node.
  * \ingroup Render
  *
  * Immutable shader graph nodes are nodes which

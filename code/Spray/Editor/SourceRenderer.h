@@ -16,7 +16,7 @@ class PrimitiveRenderer;
 
 class SourceData;
 
-/*! \brief Emitter source renderer. */
+/*! Emitter source renderer. */
 class SourceRenderer : public Object
 {
 	T_RTTI_CLASS;

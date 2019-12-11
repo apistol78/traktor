@@ -17,7 +17,7 @@ namespace traktor
 	namespace runtime
 	{
 
-/*! \brief Deployment tool description.
+/*! Deployment tool description.
  * \ingroup Runtime
  */
 class T_DLLCLASS DeployTool : public ISerializable

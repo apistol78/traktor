@@ -13,7 +13,7 @@
 namespace traktor
 {
 
-/*! \brief Platform specific debugger path.
+/*! Platform specific debugger path.
  * \ingroup Core
  *
  * Used by the framework in order to invoke platform specific
@@ -24,7 +24,7 @@ class T_DLLCLASS Debugger
 public:
 	static Debugger& getInstance();
 
-	/*! \brief Show assert failed dialog.
+	/*! Show assert failed dialog.
 	 *
 	 * \param expression Failed expression.
 	 * \param file Source file where assert triggered.
@@ -33,13 +33,13 @@ public:
 	 */
 	void assertionFailed(const char* const expression, const char* const file, int line, const wchar_t* const message = L"");
 
-	/*! \brief Check if debugger is attached. */
+	/*! Check if debugger is attached. */
 	bool isDebuggerAttached() const;
 
-	/*! \brief Break application into debugger. */
+	/*! Break application into debugger. */
 	void breakDebugger();
 
-	/*! \brief Report profiling event to debugger. */
+	/*! Report profiling event to debugger. */
 	void reportEvent(const wchar_t* const text, ...);
 };
 

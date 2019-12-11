@@ -20,7 +20,7 @@ namespace traktor
 /*! \ingroup Render */
 //@{
 
-/*! \brief Struct buffer element declaration.
+/*! Struct buffer element declaration.
  *
  * This class describe the format of each element of a struct
  * in a struct buffer.

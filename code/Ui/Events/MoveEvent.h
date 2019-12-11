@@ -16,7 +16,7 @@ namespace traktor
 	namespace ui
 	{
 
-/*! \brief Move event.
+/*! Move event.
  * \ingroup UI
  */
 class T_DLLCLASS MoveEvent : public Event

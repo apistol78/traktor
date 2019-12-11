@@ -15,7 +15,7 @@ namespace traktor
 	namespace physics
 	{
 
-/*! \brief Dynamic rigid body description.
+/*! Dynamic rigid body description.
  * \ingroup Physics
  */
 class T_DLLCLASS DynamicBodyDesc : public BodyDesc

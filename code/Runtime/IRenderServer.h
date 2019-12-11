@@ -24,7 +24,7 @@ class IRenderView;
 	namespace runtime
 	{
 
-/*! \brief Render server.
+/*! Render server.
  * \ingroup Runtime
  *
  * "Render.Type"				- Render system type.

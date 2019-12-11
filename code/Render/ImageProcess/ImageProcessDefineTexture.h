@@ -19,7 +19,7 @@ namespace traktor
 
 class ITexture;
 
-/*! \brief Define a texture parameter.
+/*! Define a texture parameter.
  * \ingroup Render
  */
 class T_DLLCLASS ImageProcessDefineTexture : public ImageProcessDefine

@@ -15,7 +15,7 @@ namespace traktor
 	namespace sound
 	{
 
-/*! \brief Stream sound resource.
+/*! Stream sound resource.
  * \ingroup Sound
  */
 class T_DLLCLASS StreamSoundResource : public ISoundResource

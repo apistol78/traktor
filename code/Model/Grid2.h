@@ -8,7 +8,7 @@ namespace traktor
 	namespace model
 	{
 
-/*! \brief Default accessor of position from value.
+/*! Default accessor of position from value.
  * \ingroup Model
  */
 template < typename ValueType >
@@ -17,7 +17,7 @@ struct DefaultPositionAccessor2
 	static Vector2 get(const ValueType& v) { return v; }
 };
 
-/*! \brief Default hash function.
+/*! Default hash function.
  * \ingroup Model
  */
 struct DefaultHashFunction2
@@ -34,7 +34,7 @@ struct DefaultHashFunction2
 	}
 };
 
-/*! \brief 2-dimensional grid container.
+/*! 2-dimensional grid container.
  * \ingroup Model
  */
 template

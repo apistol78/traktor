@@ -15,7 +15,7 @@ namespace traktor
 	namespace render
 	{
 
-/*! \brief Texture base class.
+/*! Texture base class.
  * \ingroup Render
  */
 class T_DLLCLASS ITexture : public Object
@@ -29,17 +29,17 @@ public:
 		void* bits;
 	};
 
-	/*! \brief Destroy texture.
+	/*! Destroy texture.
 	 */
 	virtual void destroy() = 0;
 
-	/*! \brief Resolve render texture.
+	/*! Resolve render texture.
 	 *
 	 * \return Render texture.
 	 */
 	virtual ITexture* resolve() = 0;
 
-	/*! \brief Get number of mip maps.
+	/*! Get number of mip maps.
 	 *
 	 * \return Number of mips.
 	 */

@@ -17,7 +17,7 @@ namespace traktor
 	namespace db
 	{
 
-/*! \brief Array of string result.
+/*! Array of string result.
  * \ingroup Database
  */
 class T_DLLCLASS MsgStringArrayResult : public IMessage

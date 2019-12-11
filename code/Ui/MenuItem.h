@@ -28,7 +28,7 @@ class MouseMoveEvent;
 class Rect;
 class Widget;
 
-/*! \brief Menu item.
+/*! Menu item.
  * \ingroup UI
  */
 class T_DLLCLASS MenuItem

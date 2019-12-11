@@ -7,7 +7,7 @@ namespace traktor
 	namespace ai
 	{
 
-/*! \brief Navigation mesh component editor.
+/*! Navigation mesh component editor.
  * \ingroup AI
  */
 class NavMeshComponentEditor : public scene::DefaultComponentEditor

@@ -15,7 +15,7 @@ namespace traktor
 	namespace db
 	{
 
-/*! \brief Release handle object.
+/*! Release handle object.
  * \ingroup Database
  */
 class T_DLLCLASS CnmReleaseObject : public IMessage

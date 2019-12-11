@@ -21,7 +21,7 @@ namespace traktor
 class ShaderGraph;
 class External;
 
-/*! \brief Shader fragment linker.
+/*! Shader fragment linker.
  * \ingroup Render
  *
  * The fragment linker merges shader graph fragments
@@ -36,7 +36,7 @@ public:
 	{
 		virtual ~IFragmentReader() {}
 
-		/*! \brief Read callback.
+		/*! Read callback.
 		 *
 		 * Read fragments from user defined source,
 		 * Will automatically be resolved.
@@ -48,7 +48,7 @@ public:
 
 	FragmentLinker(const IFragmentReader& fragmentReader);
 
-	/*! \brief Resolve shader graph.
+	/*! Resolve shader graph.
 	 *
 	 * Resolving External nodes within shader graph and replacing
 	 * them with resolved shader graph fragment.

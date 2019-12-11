@@ -16,7 +16,7 @@ namespace traktor
 
 class IStream;
 
-/*! \brief Bit stream writer.
+/*! Bit stream writer.
  * \ingroup Core
  */
 class T_DLLCLASS BitWriter : public Object
@@ -28,40 +28,40 @@ public:
 
 	virtual ~BitWriter();
 
-	/*! \brief Write single bit to stream. */
+	/*! Write single bit to stream. */
 	void writeBit(bool bit);
 
-	/*! \brief Write variable bit-length unsigned number to stream. */
+	/*! Write variable bit-length unsigned number to stream. */
 	void writeUnsigned(int32_t nbits, uint32_t value);
 
-	/*! \brief Write variable bit-length signed number to stream. */
+	/*! Write variable bit-length signed number to stream. */
 	void writeSigned(int32_t nbits, int32_t value);
 
-	/*! \brief Write signed 8 bit number. */
+	/*! Write signed 8 bit number. */
 	bool writeInt8(int8_t v);
 
-	/*! \brief Write unsigned 8 bit number. */
+	/*! Write unsigned 8 bit number. */
 	bool writeUInt8(uint8_t v);
 
-	/*! \brief Write signed 16 bit number. */
+	/*! Write signed 16 bit number. */
 	bool writeInt16(int16_t v);
 
-	/*! \brief Write unsigned 16 bit number. */
+	/*! Write unsigned 16 bit number. */
 	bool writeUInt16(uint16_t v);
 
-	/*! \brief Write signed 32 bit number. */
+	/*! Write signed 32 bit number. */
 	bool writeInt32(int32_t v);
 
-	/*! \brief Write unsigned 8 bit number. */
+	/*! Write unsigned 8 bit number. */
 	bool writeUInt32(uint32_t v);
 
-	/*! \brief Flush bits. */
+	/*! Flush bits. */
 	void flush();
 
-	/*! \brief Return current bit position. */
+	/*! Return current bit position. */
 	int64_t tell() const;
 
-	/*! \brief Get reference to underlying stream. */
+	/*! Get reference to underlying stream. */
 	Ref< IStream > getStream();
 
 private:

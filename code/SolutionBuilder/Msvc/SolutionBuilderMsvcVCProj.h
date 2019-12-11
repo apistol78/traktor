@@ -11,7 +11,7 @@ class SolutionBuilderMsvcConfiguration;
 class SolutionBuilderMsvcTool;
 class ProjectItem;
 
-/*! \brief Visual Studio solution project settings. */
+/*! Visual Studio solution project settings. */
 class SolutionBuilderMsvcVCProj : public SolutionBuilderMsvcProject
 {
 	T_RTTI_CLASS;

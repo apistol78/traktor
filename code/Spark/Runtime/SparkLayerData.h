@@ -26,7 +26,7 @@ class ImageProcessSettings;
 
 class Movie;
 
-/*! \brief Stage Spark layer persistent data.
+/*! Stage Spark layer persistent data.
  * \ingroup Spark
  */
 class T_DLLCLASS SparkLayerData : public runtime::LayerData

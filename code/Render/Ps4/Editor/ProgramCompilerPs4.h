@@ -15,7 +15,7 @@ namespace traktor
 	namespace render
 	{
 
-/*! \brief PSSL program compiler.
+/*! PSSL program compiler.
  * \ingroup Render
  */
 class T_DLLCLASS ProgramCompilerPs4 : public IProgramCompiler

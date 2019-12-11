@@ -11,19 +11,19 @@ namespace traktor
 /*! \ingroup PhysX */
 //@{
 
-/*! \brief Convert from PhysX vector. */
+/*! Convert from PhysX vector. */
 T_FORCE_INLINE Vector4 fromPxVec3(const physx::PxVec3& v, float w = 0.0f)
 {
 	return Vector4(v[0], v[1], v[2], w);
 }
 
-/*! \brief Convert to PhysX vector. */
+/*! Convert to PhysX vector. */
 T_FORCE_INLINE physx::PxVec3 toPxVec3(const Vector4& v)
 {
 	return physx::PxVec3(v.x(), v.y(), v.z());
 }
 
-/*! \brief Convert from PhysX matrix. */
+/*! Convert from PhysX matrix. */
 T_FORCE_INLINE Matrix33 fromPxMat33(const physx::PxMat33& m)
 {
 	return Matrix33(
@@ -33,7 +33,7 @@ T_FORCE_INLINE Matrix33 fromPxMat33(const physx::PxMat33& m)
 	);
 }
 
-/*! \brief Convert from PhysX matrix. */
+/*! Convert from PhysX matrix. */
 T_FORCE_INLINE Transform fromPxMat44(const physx::PxMat44& m)
 {
 	return Transform(Matrix44(
@@ -44,7 +44,7 @@ T_FORCE_INLINE Transform fromPxMat44(const physx::PxMat44& m)
 	));
 }
 
-/*! \brief Convert to PhysX matrix. */
+/*! Convert to PhysX matrix. */
 T_FORCE_INLINE physx::PxMat44 toPxMat44(const Transform& t)
 {
 	Matrix44 m = t.toMatrix44();

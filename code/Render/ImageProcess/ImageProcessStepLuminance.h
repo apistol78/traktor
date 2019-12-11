@@ -21,7 +21,7 @@ namespace traktor
 
 class Shader;
 
-/*! \brief Luminance step.
+/*! Luminance step.
  * \ingroup Render
  */
 class T_DLLCLASS ImageProcessStepLuminance : public ImageProcessStep

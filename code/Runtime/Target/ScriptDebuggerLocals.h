@@ -23,7 +23,7 @@ class Variable;
 	namespace runtime
 	{
 
-/*! \brief Response from running target when locals has been captured.
+/*! Response from running target when locals has been captured.
  * \ingroup Runtime
  */
 class T_DLLCLASS ScriptDebuggerLocals : public ISerializable

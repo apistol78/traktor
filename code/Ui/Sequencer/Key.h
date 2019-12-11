@@ -21,7 +21,7 @@ class Point;
 class Rect;
 class Sequence;
 
-/*! \brief Sequence key.
+/*! Sequence key.
  * \ingroup UI
  */
 class T_DLLCLASS Key

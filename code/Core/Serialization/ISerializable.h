@@ -15,7 +15,7 @@ namespace traktor
 
 class ISerializer;
 
-/*! \brief Base class of each serializable class.
+/*! Base class of each serializable class.
  * \ingroup Core
  *
  * Any class supporting serialization must be
@@ -26,7 +26,7 @@ class T_DLLCLASS ISerializable : public Object
 	T_RTTI_CLASS;
 
 public:
-	/*! \brief Serialize object.
+	/*! Serialize object.
 	 *
 	 * \param s Serializer interface.
 	 */

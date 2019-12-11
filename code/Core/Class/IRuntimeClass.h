@@ -16,7 +16,7 @@ namespace traktor
 
 class IRuntimeDispatch;
 
-/*! \brief Runtime class definition.
+/*! Runtime class definition.
  * \ingroup Core
  */
 class T_DLLCLASS IRuntimeClass : public Object
@@ -24,7 +24,7 @@ class T_DLLCLASS IRuntimeClass : public Object
 	T_RTTI_CLASS;
 
 public:
-	/*! \brief Operator types. */
+	/*! Operator types. */
 	enum OperatorType
 	{
 		OptAdd = 0,
@@ -34,55 +34,55 @@ public:
 		OptCount = 4
 	};
 
-	/*! \brief Get exported native type. */
+	/*! Get exported native type. */
 	virtual const TypeInfo& getExportType() const = 0;
 
-	/*! \brief Get constructor dispatch. */
+	/*! Get constructor dispatch. */
 	virtual const IRuntimeDispatch* getConstructorDispatch() const = 0;
 
-	/*! \brief Get number of constants. */
+	/*! Get number of constants. */
 	virtual uint32_t getConstantCount() const = 0;
 
-	/*! \brief Get constant. */
+	/*! Get constant. */
 	virtual std::string getConstantName(uint32_t constId) const = 0;
 
-	/*! \brief Get constant value. */
+	/*! Get constant value. */
 	virtual Any getConstantValue(uint32_t constId) const = 0;
 
-	/*! \brief Get exported method count. */
+	/*! Get exported method count. */
 	virtual uint32_t getMethodCount() const = 0;
 
-	/*! \brief Get name of exported method. */
+	/*! Get name of exported method. */
 	virtual std::string getMethodName(uint32_t methodId) const = 0;
 
-	/*! \brief Get dispatcher of exported method. */
+	/*! Get dispatcher of exported method. */
 	virtual const IRuntimeDispatch* getMethodDispatch(uint32_t methodId) const = 0;
 
-	/*! \brief Get exported static method count. */
+	/*! Get exported static method count. */
 	virtual uint32_t getStaticMethodCount() const = 0;
 
-	/*! \brief Get name of exported static method. */
+	/*! Get name of exported static method. */
 	virtual std::string getStaticMethodName(uint32_t methodId) const = 0;
 
-	/*! \brief Get dispatcher of exported static method. */
+	/*! Get dispatcher of exported static method. */
 	virtual const IRuntimeDispatch* getStaticMethodDispatch(uint32_t methodId) const = 0;
 
-	/*! \brief Get exported properties count. */
+	/*! Get exported properties count. */
 	virtual uint32_t getPropertiesCount() const = 0;
 
-	/*! \brief Get name of exported property. */
+	/*! Get name of exported property. */
 	virtual std::string getPropertyName(uint32_t propertyId) const = 0;
 
-	/*! \brief Get "get" dispatcher of exported property. */
+	/*! Get "get" dispatcher of exported property. */
 	virtual const IRuntimeDispatch* getPropertyGetDispatch(uint32_t propertyId) const = 0;
 
-	/*! \brief Get "set" dispatcher of exported property. */
+	/*! Get "set" dispatcher of exported property. */
 	virtual const IRuntimeDispatch* getPropertySetDispatch(uint32_t propertyId) const = 0;
 
-	/*! \brief Get math operator. */
+	/*! Get math operator. */
 	virtual const IRuntimeDispatch* getOperatorDispatch(OperatorType op) const = 0;
 
-	/*! \brief Invoke unknown method. */
+	/*! Invoke unknown method. */
 	virtual const IRuntimeDispatch* getUnknownDispatch() const = 0;
 };
 

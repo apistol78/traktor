@@ -23,7 +23,7 @@ namespace traktor
 class Node;
 class Element;
 
-/*! \brief XML DOM Document.
+/*! XML DOM Document.
  * \ingroup XML
  */
 class T_DLLCLASS Document : public Object

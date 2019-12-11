@@ -27,7 +27,7 @@ class ITexture;
 class StructBuffer;
 class VertexBuffer;
 
-/*! \brief Shader
+/*! Shader
  * \ingroup Render
  *
  * An shader is actually only a facade for several
@@ -47,7 +47,7 @@ public:
 
 	bool hasTechnique(handle_t handle) const;
 
-	/*! \brief Set shader technique.
+	/*! Set shader technique.
 	 *
 	 * \note
 	 * Shader parameters are invalid when changing
@@ -57,13 +57,13 @@ public:
 	 */
 	void setTechnique(handle_t handle);
 
-	/*! \brief Get set of shader techniques.
+	/*! Get set of shader techniques.
 	 *
 	 * \param outHandles Set of technique handles.
 	 */
 	void getTechniques(SmallSet< handle_t >& outHandles) const;
 
-	/*! \brief Set shader combination.
+	/*! Set shader combination.
 	 *
 	 * Select proper permutation from shader
 	 * branches.
@@ -95,14 +95,14 @@ public:
 
 	void setStencilReference(uint32_t stencilReference);
 
-	/*! \brief Draw primitives with this shader.
+	/*! Draw primitives with this shader.
 	 *
 	 * \param renderView Render primitives view.
 	 * \param primitives Primitives.
 	 */
 	void draw(IRenderView* renderView, VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, const Primitives& primitives);
 
-	/*! \brief Draw primitives with this shader.
+	/*! Draw primitives with this shader.
 	 *
 	 * \param renderView Render primitives view.
 	 * \param primitives Primitives.

@@ -13,7 +13,7 @@
 namespace traktor
 {
 
-/*! \brief Member read only attribute.
+/*! Member read only attribute.
  * \ingroup Core
  */
 class T_DLLCLASS AttributeReadOnly : public Attribute

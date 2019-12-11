@@ -16,7 +16,7 @@
 namespace traktor
 {
 
-/*! \brief Spurs job manager.
+/*! Spurs job manager.
  * \ingroup Core
  */
 class T_DLLCLASS SpursJobQueue

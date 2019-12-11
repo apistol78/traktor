@@ -9,7 +9,7 @@ namespace traktor
 
 struct CallArgs;
 
-/*! \brief Security class.
+/*! Security class.
  * \ingroup Spark
  */
 class AsSecurity : public ActionClass

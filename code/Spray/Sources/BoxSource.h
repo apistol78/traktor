@@ -17,7 +17,7 @@ namespace traktor
 	namespace spray
 	{
 
-/*! \brief Box particle source.
+/*! Box particle source.
  * \ingroup Spray
  */
 class T_DLLCLASS BoxSource : public Source

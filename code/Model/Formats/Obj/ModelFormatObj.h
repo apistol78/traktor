@@ -15,7 +15,7 @@ namespace traktor
 	namespace model
 	{
 
-/*! \brief Wavefront object model format.
+/*! Wavefront object model format.
  * \ingroup Model
  */
 class T_DLLCLASS ModelFormatObj : public ModelFormat

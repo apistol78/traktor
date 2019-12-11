@@ -15,7 +15,7 @@ class PropertyList;
 	namespace editor
 	{
 
-/*! \brief Color scheme settings page.
+/*! Color scheme settings page.
  * \ingroup Editor
  */
 class ColorSettingsPage : public ISettingsPage

@@ -22,7 +22,7 @@ namespace traktor
 class Job;
 class Functor;
 
-/*! \brief Job queue.
+/*! Job queue.
  * \ingroup Core
  */
 class T_DLLCLASS JobQueue : public Object
@@ -34,17 +34,17 @@ public:
 
 	virtual ~JobQueue();
 
-	/*! \brief Create queue.
+	/*! Create queue.
 	 *
 	 * \param workerThreads Number of worker threads.
 	 * \return True if successfully created.
 	 */
 	bool create(uint32_t workerThreads, Thread::Priority priority);
 
-	/*! \brief Destroy queue. */
+	/*! Destroy queue. */
 	void destroy();
 
-	/*! \brief Enqueue job.
+	/*! Enqueue job.
 	 *
 	 * Add job to internal worker queue, as soon as
 	 * a worker thread is idle the scheduler assigns
@@ -52,7 +52,7 @@ public:
 	 */
 	Ref< Job > add(Functor* functor);
 
-	/*! \brief Enqueue jobs and wait for all to finish.
+	/*! Enqueue jobs and wait for all to finish.
 	 *
 	 * Add jobs to internal worker queue, one job
 	 * is always run on the caller thread to reduce
@@ -60,14 +60,14 @@ public:
 	 */
 	void fork(const RefArray< Functor >& functors);
 
-	/*! \brief Wait until all jobs are finished.
+	/*! Wait until all jobs are finished.
 	 *
 	 * \param timeout Timeout in milliseconds; -1 if infinite timeout.
 	 * \return True if jobs have finished, false if timeout.
 	 */
 	bool wait(int32_t timeout = -1);
 
-	/*! \brief Stop all worker threads. */
+	/*! Stop all worker threads. */
 	void stop();
 
 private:

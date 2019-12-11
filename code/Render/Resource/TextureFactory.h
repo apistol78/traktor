@@ -17,7 +17,7 @@ namespace traktor
 
 class IRenderSystem;
 
-/*! \brief Texture resource factory.
+/*! Texture resource factory.
  * \ingroup Render
  */
 class T_DLLCLASS TextureFactory : public resource::IResourceFactory

@@ -11,7 +11,7 @@ class IStream;
 	namespace db
 	{
 
-/*! \brief Transaction remove all data action.
+/*! Transaction remove all data action.
  * \ingroup Database
  */
 class ActionRemoveAllData : public Action

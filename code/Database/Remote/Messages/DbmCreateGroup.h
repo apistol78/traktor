@@ -16,7 +16,7 @@ namespace traktor
 	namespace db
 	{
 
-/*! \brief Create group.
+/*! Create group.
  * \ingroup Database
  */
 class T_DLLCLASS DbmCreateGroup : public IMessage

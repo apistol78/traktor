@@ -16,7 +16,7 @@ namespace traktor
 	namespace sound
 	{
 
-/*! \brief Echo filter.
+/*! Echo filter.
  * \ingroup Sound
  */
 class T_DLLCLASS EchoFilter : public IFilter

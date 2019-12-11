@@ -10,7 +10,7 @@ namespace traktor
 struct CallArgs;
 class SpriteInstance;
 
-/*! \brief MovieClipLoader class.
+/*! MovieClipLoader class.
  * \ingroup Spark
  */
 class AsMovieClipLoader : public ActionClass

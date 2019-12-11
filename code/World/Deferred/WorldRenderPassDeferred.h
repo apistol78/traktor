@@ -17,7 +17,7 @@ namespace traktor
 
 class WorldRenderView;
 
-/*! \brief World render pass.
+/*! World render pass.
  * \ingroup World
  */
 class T_DLLCLASS WorldRenderPassDeferred : public IWorldRenderPass

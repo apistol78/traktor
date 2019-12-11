@@ -20,7 +20,7 @@ class IStream;
 
 class Mesh;
 
-/*! \brief Render mesh writer.
+/*! Render mesh writer.
  * \ingroup Render
  */
 class T_DLLCLASS MeshWriter : public Object

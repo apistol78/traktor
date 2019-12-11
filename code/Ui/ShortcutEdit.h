@@ -15,7 +15,7 @@ namespace traktor
 	namespace ui
 	{
 
-/*! \brief Shortcut edit control.
+/*! Shortcut edit control.
  * \ingroup UI
  */
 class T_DLLCLASS ShortcutEdit : public Widget

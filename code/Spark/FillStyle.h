@@ -27,7 +27,7 @@ class ColorTransform;
 #	pragma warning( disable:4324 )
 #endif
 
-/*! \brief Shape fill style.
+/*! Shape fill style.
  * \ingroup Spark
  */
 class T_DLLCLASS FillStyle

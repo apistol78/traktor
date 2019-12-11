@@ -18,7 +18,7 @@ namespace traktor
 
 class NavMesh;
 
-/*! \brief Navigation mesh entity data.
+/*! Navigation mesh entity data.
  * \ingroup AI
  */
 class T_DLLCLASS NavMeshComponentData : public world::IEntityComponentData

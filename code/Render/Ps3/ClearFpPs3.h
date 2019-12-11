@@ -11,7 +11,7 @@ class MemoryHeap;
 class MemoryHeapObject;
 class StateCachePs3;
 
-/*! \brief Clear FP targets helper.
+/*! Clear FP targets helper.
  *
  * As PS3 doesn't support clearing FP targets
  * we clear targets by drawing a solid quad

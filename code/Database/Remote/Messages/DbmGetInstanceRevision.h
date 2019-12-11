@@ -15,7 +15,7 @@ namespace traktor
 	namespace db
 	{
 
-/*! \brief Get instance's revision.
+/*! Get instance's revision.
  * \ingroup Database
  */
 class T_DLLCLASS DbmGetInstanceRevision : public IMessage

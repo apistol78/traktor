@@ -17,7 +17,7 @@ namespace traktor
 
 class OggStreamEncoderImpl;
 
-/*! \brief OGG stream encoder.
+/*! OGG stream encoder.
  * \ingroup Sound
  */
 class T_DLLCLASS OggStreamEncoder : public IStreamEncoder

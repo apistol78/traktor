@@ -15,7 +15,7 @@ namespace traktor
 	namespace render
 	{
 
-/*! \brief Texture resource.
+/*! Texture resource.
  * \ingroup Render
  */
 class T_DLLCLASS TextureResource : public ISerializable

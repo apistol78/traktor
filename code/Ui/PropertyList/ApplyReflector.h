@@ -20,7 +20,7 @@ namespace traktor
 class AutoPropertyList;
 class PropertyItem;
 
-/*! \brief Auto property list apply reflector.
+/*! Auto property list apply reflector.
  * \ingroup UI
  */
 class T_DLLCLASS ApplyReflector : public Serializer

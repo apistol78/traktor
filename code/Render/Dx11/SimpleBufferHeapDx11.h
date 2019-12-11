@@ -10,7 +10,7 @@ namespace traktor
 
 class ContextDx11;
 
-/*! \brief Manages DX11 buffer memory.
+/*! Manages DX11 buffer memory.
  * \ingroup DX11
  */
 class SimpleBufferHeapDx11 : public IBufferHeapDx11

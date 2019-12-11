@@ -16,7 +16,7 @@ namespace traktor
 	namespace db
 	{
 
-/*! \brief Connection string parser.
+/*! Connection string parser.
  * \ingroup Database
  */
 class T_DLLCLASS ConnectionString : public Object

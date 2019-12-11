@@ -18,7 +18,7 @@ class Widget;
 class EditorForm;
 class IEditorPlugin;
 
-/*! \brief Editor plugin site.
+/*! Editor plugin site.
  * \ingroup Editor
  */
 class EditorPluginSite : public IEditorPageSite

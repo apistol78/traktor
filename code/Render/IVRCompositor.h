@@ -20,7 +20,7 @@ namespace traktor
 class IRenderSystem;
 class IRenderView;
 
-/*! \brief VR compositor interface.
+/*! VR compositor interface.
  * \ingroup Render
  *
  * This class provide an interface for the engine
@@ -38,7 +38,7 @@ class T_DLLCLASS IVRCompositor : public Object
 	T_RTTI_CLASS;
 
 public:
-	/*! \brief Create VR compositor.
+	/*! Create VR compositor.
 	 *
 	 * Create the VR compositor and implement
 	 * the connection to the underlying VR subsystem.
@@ -52,11 +52,11 @@ public:
 	 */
 	virtual bool create(IRenderSystem* renderSystem, IRenderView* renderView) = 0;
 
-	/*! \brief Destroy VR compositor.
+	/*! Destroy VR compositor.
 	 */
 	virtual void destroy() = 0;
 
-	/*! \brief Get width of renderable output.
+	/*! Get width of renderable output.
 	 *
 	 * As VR compositor might require different
 	 * size of the renderable view the application
@@ -66,7 +66,7 @@ public:
 	 */
 	virtual int32_t getWidth() const = 0;
 
-	/*! \brief Get height of renderable output.
+	/*! Get height of renderable output.
 	 *
 	 * As VR compositor might require different
 	 * size of the renderable view the application
@@ -82,7 +82,7 @@ public:
 	/*! */
 	virtual Matrix44 getEyeToHead(int32_t eye) const = 0;
 
-	/*! \brief Begin rendering of either left or right eye.
+	/*! Begin rendering of either left or right eye.
 	 *
 	 * This method should be called before rendering
 	 * of either eye to ensure the VR compositor is ready
@@ -94,7 +94,7 @@ public:
 	 */
 	virtual bool beginRenderEye(IRenderView* renderView, int32_t eye) = 0;
 
-	/*! \brief End rendering of either left or right eye.
+	/*! End rendering of either left or right eye.
 	 *
 	 * \param renderView Render view implementation.
 	 * \param eye Which eye should be rendered.
@@ -102,7 +102,7 @@ public:
 	 */
 	virtual bool endRenderEye(IRenderView* renderView, int32_t eye) = 0;
 
-	/*! \brief Perform final composition of VR output.
+	/*! Perform final composition of VR output.
 	 *
 	 * This method assume both eyes has been rendered
 	 * so the compositor can provide required frames to

@@ -17,7 +17,7 @@ class Edit;
 	namespace editor
 	{
 
-/*! \brief Pipeline settings pages.
+/*! Pipeline settings pages.
  * \ingroup Editor
  */
 class PipelineSettingsPage : public ISettingsPage

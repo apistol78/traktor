@@ -17,7 +17,7 @@ namespace traktor
 
 class ITexture;
 
-/*! \brief Bind textures to shaders.
+/*! Bind textures to shaders.
  * \ingroup Render
  */
 class T_DLLCLASS TextureLinker : public Object

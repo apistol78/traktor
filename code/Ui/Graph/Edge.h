@@ -25,7 +25,7 @@ class PaintSettings;
 class Pin;
 class Size;
 
-/*! \brief Graph edge.
+/*! Graph edge.
  * \ingroup UI
  */
 class T_DLLCLASS Edge

@@ -172,7 +172,7 @@ public:
 	/*! \name Camera control. */
 	//@{
 
-	/*! \brief Get camera by index.
+	/*! Get camera by index.
 	 *
 	 * \param index Camera index, 0 to 3.
 	 * \return Camera.
@@ -223,7 +223,7 @@ public:
 
 	void selectAllEntities(bool select = true);
 
-	/*! \brief Get entities. */
+	/*! Get entities. */
 	uint32_t getEntities(RefArray< EntityAdapter >& outEntityAdapters, uint32_t flags = GfDefault) const;
 
 	uint32_t findAdaptersOfType(const TypeInfo& entityType, RefArray< EntityAdapter >& outEntityAdapters, uint32_t flags = GfDefault) const;

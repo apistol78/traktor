@@ -26,7 +26,7 @@ class RumbleEffectPlayer;
 	namespace runtime
 	{
 
-/*! \brief Input server.
+/*! Input server.
  * \ingroup Runtime
  *
  * "Input.Rumble"	- Rumble enable.

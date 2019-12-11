@@ -43,7 +43,7 @@ class IComponentEditor;
 class IEntityEditor;
 class SceneEditorContext;
 
-/*! \brief Entity adapter class.
+/*! Entity adapter class.
  *
  * Map between EntityData and Entity.
  * Also keep parent-child relationship of entities.
@@ -55,7 +55,7 @@ class T_DLLCLASS EntityAdapter : public Object
 public:
 	EntityAdapter(SceneEditorContext* context);
 
-	/*! \brief Prepare adapter.
+	/*! Prepare adapter.
 	 *
 	 * Prepare adapter for editor use.
 	 */

@@ -17,7 +17,7 @@ namespace traktor
 class IFontMetric;
 class ISystemBitmap;
 
-/*! \brief Canvas interface.
+/*! Canvas interface.
  * \ingroup UI
  */
 class ICanvas

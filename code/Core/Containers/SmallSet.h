@@ -9,7 +9,7 @@
 namespace traktor
 {
 
-/*! \brief Small "set" container.
+/*! Small "set" container.
  * \ingroup Core
  *
  * This container is optimized for a set

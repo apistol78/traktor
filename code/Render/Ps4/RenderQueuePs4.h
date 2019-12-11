@@ -12,7 +12,7 @@ namespace traktor
 class ContextPs4;
 class MemoryHeapObjectPs4;
 
-/*! \brief Rendering queue.
+/*! Rendering queue.
  * \ingroup Render
  *
  * Each frame's queued rendering commands etc.

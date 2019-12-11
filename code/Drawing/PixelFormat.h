@@ -20,7 +20,7 @@ class Color4f;
 
 class Palette;
 
-/*! \brief Pixel format description.
+/*! Pixel format description.
  * \ingroup Drawing
  */
 class T_DLLCLASS PixelFormat
@@ -61,7 +61,7 @@ public:
 		int pixelCount
 	) const;
 
-	/*! \brief Convert pixels to FP32 format.
+	/*! Convert pixels to FP32 format.
 	 */
 	void convertTo4f(
 		const Palette* srcPalette,
@@ -71,7 +71,7 @@ public:
 		int pixelCount
 	) const;
 
-	/*! \brief Convert pixels from FP32 format.
+	/*! Convert pixels from FP32 format.
 	 */
 	void convertFrom4f(
 		const Color4f* T_RESTRICT srcPixels,
@@ -81,7 +81,7 @@ public:
 		int pixelCount
 	) const;
 
-	/*! \brief Get endian swapped format.
+	/*! Get endian swapped format.
 	 */
 	PixelFormat endianSwapped() const;
 

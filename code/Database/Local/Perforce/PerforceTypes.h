@@ -5,7 +5,7 @@ namespace traktor
 	namespace db
 	{
 
-/*! \brief P4 actions.
+/*! P4 actions.
  * \ingroup Database
  */
 enum class PerforceAction

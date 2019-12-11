@@ -24,7 +24,7 @@ class Raster;
 	namespace spark
 	{
 
-/*! \brief Software display renderer.
+/*! Software display renderer.
  * \ingroup Spark
  */
 class T_DLLCLASS SwDisplayRenderer : public IDisplayRenderer

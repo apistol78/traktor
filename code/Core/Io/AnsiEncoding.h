@@ -13,7 +13,7 @@
 namespace traktor
 {
 
-/*! \brief ANSI encoding.
+/*! ANSI encoding.
  * \ingroup Core
  */
 class T_DLLCLASS AnsiEncoding : public IEncoding

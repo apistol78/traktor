@@ -12,7 +12,7 @@ namespace traktor
 class EntityAdapter;
 class SceneEditorContext;
 
-/*! \brief Rotation modifier. */
+/*! Rotation modifier. */
 class RotateModifier : public IModifier
 {
 	T_RTTI_CLASS;

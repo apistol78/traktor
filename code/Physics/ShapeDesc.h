@@ -20,7 +20,7 @@ namespace traktor
 
 class CollisionSpecification;
 
-/*! \brief Collision shape description.
+/*! Collision shape description.
  * \ingroup Physics
  */
 class T_DLLCLASS ShapeDesc : public ISerializable

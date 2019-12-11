@@ -15,7 +15,7 @@ namespace traktor
 	namespace drawing
 	{
 
-/*! \brief Transform colors filter.
+/*! Transform colors filter.
  * \ingroup Drawing
  *
  * Linearly transform colors; RGBA' = RGBA * Km + Kc

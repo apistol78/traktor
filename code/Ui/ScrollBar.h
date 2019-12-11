@@ -15,7 +15,7 @@ namespace traktor
 	namespace ui
 	{
 
-/*! \brief Scroll bar.
+/*! Scroll bar.
  * \ingroup UI
  */
 class T_DLLCLASS ScrollBar : public Widget

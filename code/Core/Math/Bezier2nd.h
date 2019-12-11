@@ -15,7 +15,7 @@ namespace traktor
 
 class Bezier3rd;
 
-/*! \brief Quadratic bezier curve.
+/*! Quadratic bezier curve.
  * \ingroup Core
  */
 class T_DLLCLASS Bezier2nd
@@ -45,7 +45,7 @@ public:
 
 	void toBezier3rd(Bezier3rd& out3rd) const;
 
-	/*! \brief Construct a 2nd order bezier curve from three points
+	/*! Construct a 2nd order bezier curve from three points
 	 * by which all three lies on the curve.
 	 */
 	static Bezier2nd fromPoints(const Vector2& p0, const Vector2& p1, const Vector2& p2);

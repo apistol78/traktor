@@ -8,7 +8,7 @@ namespace traktor
 	namespace run
 	{
 
-/*! \brief Stream input reader.
+/*! Stream input reader.
  * \ingroup Run
  */
 class StreamInput : public IInput

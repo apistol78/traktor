@@ -20,7 +20,7 @@ namespace traktor
 #	pragma warning( disable:4324 )
 #endif
 
-/*! \brief Dynamic text field.
+/*! Dynamic text field.
  * \ingroup Spark
  */
 class T_DLLCLASS Edit : public Character
@@ -60,101 +60,101 @@ public:
 		const SmallMap< uint32_t, Ref< const IActionVMImage > >* events
 	) const override final;
 
-	/*! \brief Get font identifier.
+	/*! Get font identifier.
 	 *
 	 * \return Font identifier.
 	 */
 	uint16_t getFontId() const;
 
-	/*! \brief Get font height.
+	/*! Get font height.
 	 *
 	 * \return Font height.
 	 */
 	uint16_t getFontHeight() const;
 
-	/*! \brief Get text character bounding box.
+	/*! Get text character bounding box.
 	 *
 	 * \return Bounding box.
 	 */
 	const Aabb2& getTextBounds() const;
 
-	/*! \brief Get text color.
+	/*! Get text color.
 	 *
 	 * \return Text color.
 	 */
 	const Color4f& getTextColor() const;
 
-	/*! \brief Get max length of input text.
+	/*! Get max length of input text.
 	 *
 	 * \return Max length.
 	 */
 	uint16_t getMaxLength() const;
 
-	/*! \brief Set initial text string.
+	/*! Set initial text string.
 	 */
 	void setInitialText(const std::wstring& initialText);
 
-	/*! \brief Initial text string.
+	/*! Initial text string.
 	 *
 	 * \return Initial text, can be HTML.
 	 */
 	const std::wstring& getInitialText() const;
 
-	/*! \brief Get text alignment within bounding box.
+	/*! Get text alignment within bounding box.
 	 *
 	 * \return Alignment.
 	 */
 	SwfTextAlignType getAlign() const;
 
-	/*! \brief Get left margin.
+	/*! Get left margin.
 	 *
 	 * \return Left margin.
 	 */
 	uint16_t getLeftMargin() const;
 
-	/*! \brief Get right margin.
+	/*! Get right margin.
 	 *
 	 * \return Right margin.
 	 */
 	uint16_t getRightMargin() const;
 
-	/*! \brief Get indent.
+	/*! Get indent.
 	 *
 	 * \return Indent.
 	 */
 	int16_t getIndent() const;
 
-	/*! \brief Get leading.
+	/*! Get leading.
 	 *
 	 * \return Leading.
 	 */
 	int16_t getLeading() const;
 
-	/*! \brief Read only.
+	/*! Read only.
 	 *
 	 * \return True if read-only.
 	 */
 	bool readOnly() const;
 
-	/*! \brief Word wrap enabled.
+	/*! Word wrap enabled.
 	 *
 	 * \return True if word wrap is enabled.
 	 */
 	bool wordWrap() const;
 
-	/*! \brief Multiline text field.
+	/*! Multiline text field.
 	 *
 	 * \return True if multiline.
 	 */
 	bool multiLine() const;
 
-	/*! \brief Password text field.
+	/*! Password text field.
 	 *
 	 * \return True if password field.
 	 */
 	bool password() const;
 
-	/*! \brief Render HTML content.
+	/*! Render HTML content.
 	 *
 	 * \return True if text is HTML.
 	 */

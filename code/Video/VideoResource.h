@@ -15,7 +15,7 @@ namespace traktor
 	namespace video
 	{
 
-/*! \brief Video resource.
+/*! Video resource.
  * \ingroup Video
  */
 class T_DLLCLASS VideoResource : public ISerializable

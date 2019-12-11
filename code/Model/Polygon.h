@@ -20,7 +20,7 @@ class ISerializer;
 	namespace model
 	{
 
-/*! \brief Polygon
+/*! Polygon
  * \ingroup Model
  */
 class T_DLLCLASS Polygon : public ISerializable

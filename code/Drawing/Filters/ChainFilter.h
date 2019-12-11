@@ -16,7 +16,7 @@ namespace traktor
 	namespace drawing
 	{
 
-/*! \brief Chain of filters.
+/*! Chain of filters.
  * \ingroup Drawing
  */
 class T_DLLCLASS ChainFilter : public IImageFilter

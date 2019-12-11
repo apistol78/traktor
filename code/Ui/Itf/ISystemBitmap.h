@@ -16,7 +16,7 @@ class Image;
 	namespace ui
 	{
 
-/*! \brief System bitmap interface.
+/*! System bitmap interface.
  * \ingroup UI
  */
 class ISystemBitmap

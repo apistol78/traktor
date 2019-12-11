@@ -17,7 +17,7 @@ namespace traktor
 
 class IStream;
 
-/*! \brief Stream copy.
+/*! Stream copy.
  * \ingroup Core
  *
  * Copy entire stream data from one stream

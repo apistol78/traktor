@@ -5,7 +5,7 @@
 namespace traktor
 {
 
-/*! \brief Small, static, directional map
+/*! Small, static, directional map
  * \ingroup Core
  *
  * This container is optimized for fast lookup

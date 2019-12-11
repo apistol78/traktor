@@ -16,7 +16,7 @@ namespace traktor
 
 class Bezier2nd;
 
-/*! \brief Cubic bezier curve.
+/*! Cubic bezier curve.
  * \ingroup Core
  */
 class T_DLLCLASS Bezier3rd
@@ -37,7 +37,7 @@ public:
 
 	float flatness() const;
 
-	/*! \brief Check if curve is sufficently flat.
+	/*! Check if curve is sufficently flat.
 	 *
 	 * \param tolerance Tolerance value as defined by PostScript.
 	 */

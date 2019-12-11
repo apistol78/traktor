@@ -13,7 +13,7 @@
 namespace traktor
 {
 
-/*! \brief Reference counted.
+/*! Reference counted.
  * \ingroup Core
  */
 class T_DLLCLASS IRefCount
@@ -26,7 +26,7 @@ public:
 	virtual void release(void* owner) const = 0;
 };
 
-/*! \brief Reference count value with atomic inc/dec operations.
+/*! Reference count value with atomic inc/dec operations.
  * \ingroup Core
  */
 class T_DLLCLASS AtomicRefCount
@@ -56,19 +56,19 @@ private:
 	int32_t m_value;
 };
 
-/*! \brief Reference counted implementation.
+/*! Reference counted implementation.
  * \ingroup Core
  */
 template < typename T >
 class RefCountImpl : public T
 {
 public:
-	virtual void addRef(void* owner) const T_OVERRIDE
+	virtual void addRef(void* owner) const override
 	{
 		++m_refCount;
 	}
 
-	virtual void release(void* owner) const T_OVERRIDE
+	virtual void release(void* owner) const override
 	{
 		T_ASSERT(m_refCount > 0);
 		if (--m_refCount == 0)
@@ -81,42 +81,42 @@ private:
 
 #if defined(T_TYPESAFE_REF)
 
-/*! \brief Safe add reference template.
+/*! Safe add reference template.
 * \ingroup Core
 */
 #	define T_SAFE_ADDREF(ptr) \
 	if ((ptr)) \
 		(ptr)->addRef((void*)this);
 
-/*! \brief Safe release template.
+/*! Safe release template.
 * \ingroup Core
 */
 #	define T_SAFE_RELEASE(ptr) \
 	if ((ptr)) \
 		(ptr)->release((void*)this);
 
-/*! \brief Safe add reference template.
+/*! Safe add reference template.
  * \ingroup Core
  */
 #	define T_SAFE_ANONYMOUS_ADDREF(ptr) \
 	if ((ptr)) \
-		(ptr)->addRef(0);
+		(ptr)->addRef(nullptr);
 
-/*! \brief Safe release template.
+/*! Safe release template.
 * \ingroup Core
 */
 #	define T_SAFE_ANONYMOUS_RELEASE(ptr) \
 	if ((ptr)) \
-		(ptr)->release(0);
+		(ptr)->release(nullptr);
 
-/*! \brief (Not as) Safe add reference template.
+/*! (Not as) Safe add reference template.
  * \ingroup Core
  */
 #	define T_SAFE_EXPLICIT_ADDREF(ptr, owner) \
 	if ((ptr)) \
 		(ptr)->addRef(owner);
 
-/*! \brief (Not as) Safe release template.
+/*! (Not as) Safe release template.
  * \ingroup Core
  */
 #	define T_SAFE_EXPLICIT_RELEASE(ptr, owner) \
@@ -125,42 +125,42 @@ private:
 
 #else
 
-/*! \brief (Not as) Safe add reference template.
+/*! (Not as) Safe add reference template.
  * \ingroup Core
  */
 #	define T_SAFE_ADDREF(ptr) \
 	if ((ptr)) \
 		((IRefCount*)(ptr))->addRef((void*)this);
 
-/*! \brief (Not as) Safe release template.
+/*! (Not as) Safe release template.
 * \ingroup Core
 */
 #	define T_SAFE_RELEASE(ptr) \
 	if ((ptr)) \
 		((IRefCount*)(ptr))->release((void*)this);
 
-/*! \brief (Not as) Safe add reference template.
+/*! (Not as) Safe add reference template.
  * \ingroup Core
  */
 #	define T_SAFE_ANONYMOUS_ADDREF(ptr) \
 	if ((ptr)) \
-		((IRefCount*)(ptr))->addRef(0);
+		((IRefCount*)(ptr))->addRef(nullptr);
 
-/*! \brief (Not as) Safe release template.
+/*! (Not as) Safe release template.
 * \ingroup Core
 */
 #	define T_SAFE_ANONYMOUS_RELEASE(ptr) \
 	if ((ptr)) \
-		((IRefCount*)(ptr))->release(0);
+		((IRefCount*)(ptr))->release(nullptr);
 
-/*! \brief (Not as) Safe add reference template.
+/*! (Not as) Safe add reference template.
  * \ingroup Core
  */
 #	define T_SAFE_EXPLICIT_ADDREF(ptr, owner) \
 	if ((ptr)) \
 		((IRefCount*)(ptr))->addRef(owner);
 
-/*! \brief (Not as) Safe release template.
+/*! (Not as) Safe release template.
  * \ingroup Core
  */
 #	define T_SAFE_EXPLICIT_RELEASE(ptr, owner) \

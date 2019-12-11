@@ -16,7 +16,7 @@ namespace traktor
 	namespace ui
 	{
 
-/*! \brief Color property item.
+/*! Color property item.
  * \ingroup UI
  */
 class T_DLLCLASS ColorPropertyItem : public PropertyItem

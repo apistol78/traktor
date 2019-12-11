@@ -15,7 +15,7 @@ namespace traktor
 	namespace ui
 	{
 
-/*! \brief Progress bar.
+/*! Progress bar.
  * \ingroup UI
  */
 class T_DLLCLASS ProgressBar : public Widget

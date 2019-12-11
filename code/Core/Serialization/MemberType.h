@@ -14,7 +14,7 @@
 namespace traktor
 {
 
-/*! \brief Rtti type member.
+/*! Rtti type member.
  * \ingroup Core
  */
 class T_DLLCLASS MemberType : public MemberComplex

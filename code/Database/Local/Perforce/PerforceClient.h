@@ -17,7 +17,7 @@ namespace traktor
 class PerforceChangeList;
 class PerforceChangeListFile;
 
-/*! \brief P4 client.
+/*! P4 client.
  * \ingroup Database
  */
 class PerforceClient : public Object

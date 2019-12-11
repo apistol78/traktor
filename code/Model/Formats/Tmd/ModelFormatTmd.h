@@ -15,7 +15,7 @@ namespace traktor
 	namespace model
 	{
 
-/*! \brief Traktor model format.
+/*! Traktor model format.
  * \ingroup Model
  */
 class T_DLLCLASS ModelFormatTmd : public ModelFormat

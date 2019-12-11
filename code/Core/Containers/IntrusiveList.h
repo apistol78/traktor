@@ -6,7 +6,7 @@
 namespace traktor
 {
 
-/*! \brief Default link accessors.
+/*! Default link accessors.
  * \ingroup Core
  */
 template < typename ItemType >
@@ -30,7 +30,7 @@ struct DefaultLink
 	}
 };
 
-/*! \brief Intrusive double linked list.
+/*! Intrusive double linked list.
  * \ingroup Core
  *
  * Intrusive means it uses members in elements

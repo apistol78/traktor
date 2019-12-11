@@ -16,7 +16,7 @@ namespace traktor
 	namespace spray
 	{
 
-/*! \brief Cone particle source persistent data.
+/*! Cone particle source persistent data.
  * \ingroup Spray
  */
 class T_DLLCLASS ConeSourceData : public SourceData

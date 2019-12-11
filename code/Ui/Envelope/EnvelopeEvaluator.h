@@ -19,7 +19,7 @@ namespace traktor
 
 class EnvelopeKey;
 
-/*! \brief Envelope evaluator.
+/*! Envelope evaluator.
  * \ingroup UI
  */
 class T_DLLCLASS EnvelopeEvaluator : public Object

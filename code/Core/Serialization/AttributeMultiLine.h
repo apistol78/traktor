@@ -13,7 +13,7 @@
 namespace traktor
 {
 
-/*! \brief Member string multi-line attribute.
+/*! Member string multi-line attribute.
  * \ingroup Core
  */
 class T_DLLCLASS AttributeMultiLine : public Attribute

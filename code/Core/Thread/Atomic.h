@@ -19,7 +19,7 @@ namespace traktor
 #	define T_ATOMIC_INLINE
 #endif
 
-/*! \brief Thread atomic operations.
+/*! Thread atomic operations.
  * \ingroup Core
  *
  * Perform atomic operations on variables.
@@ -43,34 +43,34 @@ private:
 	};
 
 public:
-	/*! \brief Increment variable.
+	/*! Increment variable.
 	 *
 	 * \return Result value of variable.
 	 */
 	static T_ATOMIC_INLINE int32_t increment(int32_t& value);
 
-	/*! \brief Decrement variable.
+	/*! Decrement variable.
 	 *
 	 * \return Result value of variable.
 	 */
 	static T_ATOMIC_INLINE int32_t decrement(int32_t& value);
 
-	/*! \brief Add variable.
+	/*! Add variable.
 	 *
 	 * \return Result value of variable.
 	 */
 	static T_ATOMIC_INLINE int32_t add(int32_t& value, int32_t delta);
 
-	/*! \brief Set value of variable. */
+	/*! Set value of variable. */
 	static T_ATOMIC_INLINE uint32_t exchange(uint32_t& s, uint32_t v);
 
-	/*! \brief Set value of variable. */
+	/*! Set value of variable. */
 	static T_ATOMIC_INLINE uint64_t exchange(uint64_t& s, uint64_t v);
 
-	/*! \brief Compare and swap. */
+	/*! Compare and swap. */
 	static T_ATOMIC_INLINE int32_t compareAndSwap(int32_t& value, int32_t compareTo, int32_t replaceWithIfEqual);
 
-	/*! \brief Set value of variable. */
+	/*! Set value of variable. */
 	template < typename T >
 	static T exchange(T& s, T v)
 	{

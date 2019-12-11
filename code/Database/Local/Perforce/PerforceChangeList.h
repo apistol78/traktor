@@ -10,7 +10,7 @@ namespace traktor
 
 class PerforceChangeListFile;
 
-/*! \brief P4 change list.
+/*! P4 change list.
  * \ingroup Database
  */
 class PerforceChangeList : public ISerializable

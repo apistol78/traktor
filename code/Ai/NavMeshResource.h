@@ -15,7 +15,7 @@ namespace traktor
 	namespace ai
 	{
 
-/*! \brief Navigation mesh persistent resource.
+/*! Navigation mesh persistent resource.
  * \ingroup AI
  */
 class T_DLLCLASS NavMeshResource : public ISerializable

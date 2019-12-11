@@ -16,7 +16,7 @@ namespace traktor
 	namespace i18n
 	{
 
-/*! \brief Automatic text localization with formating.
+/*! Automatic text localization with formating.
  * \ingroup I18N
  *
  * Used as an implicit bridge from ID to localized text.

@@ -16,7 +16,7 @@ namespace traktor
 	namespace json
 	{
 
-/*! \brief JSON named member.
+/*! JSON named member.
  * \ingroup JSON
  */
 class T_DLLCLASS JsonMember : public JsonNode
@@ -28,16 +28,16 @@ public:
 
 	JsonMember(const std::wstring& name, const Any& value);
 
-	/*! \brief Get name of member.
+	/*! Get name of member.
 	 *
 	 * \return Name of member.
 	 */
 	const std::wstring& getName() const { return m_name; }
 
-	/*! \brief Set value of member. */
+	/*! Set value of member. */
 	void setValue(const Any& value) { m_value = value; }
 
-	/*! \brief Get value of member.
+	/*! Get value of member.
 	 *
 	 * \return Value of member.
 	 */

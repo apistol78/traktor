@@ -7,7 +7,7 @@ namespace traktor
 	namespace ui
 	{
 
-/*! \brief WebBrowser interface.
+/*! WebBrowser interface.
  * \ingroup UI
  */
 class IWebBrowser : public IWidget

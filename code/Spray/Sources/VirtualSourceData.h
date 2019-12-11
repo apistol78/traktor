@@ -15,7 +15,7 @@ namespace traktor
 	namespace spray
 	{
 
-/*! \brief Virtual particle source persistent data.
+/*! Virtual particle source persistent data.
  * \ingroup Spray
  */
 class T_DLLCLASS VirtualSourceData : public SourceData

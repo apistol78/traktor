@@ -20,7 +20,7 @@ class ActionContext;
 class ActionFrame;
 class ActionValue;
 
-/*! \brief ActionScript callable function base.
+/*! ActionScript callable function base.
  * \ingroup Spark
  */
 class T_DLLCLASS ActionFunction : public ActionObject

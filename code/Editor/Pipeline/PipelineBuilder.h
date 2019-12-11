@@ -38,7 +38,7 @@ class IPipelineDb;
 class IPipelineInstanceCache;
 class PipelineFactory;
 
-/*! \brief Pipeline manager.
+/*! Pipeline manager.
  * \ingroup Editor
  */
 class T_DLLCLASS PipelineBuilder : public IPipelineBuilder
@@ -133,16 +133,16 @@ private:
 	int32_t m_cacheMiss;
 	int32_t m_cacheVoid;
 
-	/*! \brief Perform build. */
+	/*! Perform build. */
 	BuildResult performBuild(const IPipelineDependencySet* dependencySet, const PipelineDependency* dependency, const Object* buildParams, uint32_t reason);
 
-	/*! \brief Isolate instance in cache. */
+	/*! Isolate instance in cache. */
 	bool putInstancesInCache(const Guid& guid, const PipelineDependencyHash& hash, const RefArray< db::Instance >& instances);
 
-	/*! \brief Get isolated instance from cache. */
+	/*! Get isolated instance from cache. */
 	bool getInstancesFromCache(const Guid& guid, const PipelineDependencyHash& hash);
 
-	/*! \brief Build thread method. */
+	/*! Build thread method. */
 	void buildThread(const IPipelineDependencySet* dependencySet, Thread* controlThread, int32_t cpuCore);
 };
 

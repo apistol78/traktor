@@ -26,7 +26,7 @@ class Shader;
 	namespace world
 	{
 
-/*! \brief World render pass.
+/*! World render pass.
  * \ingroup World
  */
 class T_DLLCLASS IWorldRenderPass : public Object
@@ -43,22 +43,22 @@ public:
 
 	virtual render::handle_t getTechnique() const = 0;
 
-	/*! \brief Return flags of pass. */
+	/*! Return flags of pass. */
 	virtual uint32_t getPassFlags() const = 0;
 
-	/*! \brief Set shader technique used by this pass. */
+	/*! Set shader technique used by this pass. */
 	virtual void setShaderTechnique(render::Shader* shader) const = 0;
 
-	/*! \brief Set shader combination used by this pass. */
+	/*! Set shader combination used by this pass. */
 	virtual void setShaderCombination(render::Shader* shader) const = 0;
 
-	/*! \brief Set shader parameters.
+	/*! Set shader parameters.
 	 *
 	 * \param programParams Block to set parameters into.
 	 */
 	virtual void setProgramParameters(render::ProgramParameters* programParams) const = 0;
 
-	/*! \brief Set shader parameters.
+	/*! Set shader parameters.
 	 *
 	 * \param programParams Block to set parameters into.
 	 * \param lastWorld Previous world transform.

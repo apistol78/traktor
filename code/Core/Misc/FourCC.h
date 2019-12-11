@@ -5,7 +5,7 @@
 namespace traktor
 {
 
-/*! \brief Helper class for Four Character Code identifiers, hence FourCC.
+/*! Helper class for Four Character Code identifiers, hence FourCC.
  * \ingroup Core
  *
  * A FourCC code is simple for humans to understand and also fast for
@@ -14,7 +14,7 @@ namespace traktor
 class FourCC
 {
 public:
-	/*! \brief Initialize null FourCC.
+	/*! Initialize null FourCC.
 	 *
 	 * Initialize a null FourCC identifier, should
 	 * be considered non-valid for identification purpose
@@ -22,28 +22,28 @@ public:
 	 */
 	inline FourCC();
 
-	/*! \brief Copy constructor.
+	/*! Copy constructor.
 	 *
 	 * \param fcc Source FourCC identifier.
 	 */
 	inline FourCC(const FourCC& fcc);
 
-	/*! \brief Initialize the FourCC from a dword number.
+	/*! Initialize the FourCC from a dword number.
 	 *
 	 * \param fcc Source dword identifier.
 	 */
 	inline explicit FourCC(uint32_t fcc);
 
-	/*! \brief Initialize the FourCC from a 4-letter string.
+	/*! Initialize the FourCC from a 4-letter string.
 	 *
 	 * \param str 4-letter string.
 	 */
 	inline explicit FourCC(const char* str);
 
-	/*! \brief Format into string. */
+	/*! Format into string. */
 	inline std::wstring format() const;
 
-	/*! \brief Equal operator.
+	/*! Equal operator.
 	 *
 	 * Compare if two FourCC identifiers are equal.
 	 * This is actually a simple 32 bit integer compare.
@@ -51,7 +51,7 @@ public:
 	 */
 	inline bool operator == (const FourCC& fcc) const;
 
-	/*! \brief Non-equal operator.
+	/*! Non-equal operator.
 	 *
 	 * Compare if two FourCC identifiers are not equal.
 	 * This is actually a simple 32 bit integer compare.
@@ -67,7 +67,7 @@ public:
 	 */
 	inline bool operator > (const FourCC& fcc) const;
 
-	/*! \brief FourCC encoded into dword. */
+	/*! FourCC encoded into dword. */
 	inline operator uint32_t () const;
 
 private:

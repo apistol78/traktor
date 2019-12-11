@@ -26,7 +26,7 @@ class IResourceManager;
 
 class StateContext;
 
-/*! \brief Animation state node.
+/*! Animation state node.
  * \ingroup Animation
  */
 class T_DLLCLASS StateNode : public ISerializable

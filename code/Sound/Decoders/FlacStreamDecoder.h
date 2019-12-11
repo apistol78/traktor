@@ -17,7 +17,7 @@ namespace traktor
 
 class FlacStreamDecoderImpl;
 
-/*! \brief FLAC stream decoder.
+/*! FLAC stream decoder.
  * \ingroup Sound
  */
 class T_DLLCLASS FlacStreamDecoder : public IStreamDecoder

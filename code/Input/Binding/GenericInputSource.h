@@ -22,7 +22,7 @@ class GenericInputSourceData;
 class IInputDevice;
 class InputSystem;
 
-/*! \brief Generic input source.
+/*! Generic input source.
  * \ingroup Input
  */
 class T_DLLCLASS GenericInputSource : public IInputSource

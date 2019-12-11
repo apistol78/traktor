@@ -9,7 +9,7 @@ namespace traktor
 
 struct CallArgs;
 
-/*! \brief TextField.StyleSheet class.
+/*! TextField.StyleSheet class.
  * \ingroup Spark
  */
 class AsTextField_StyleSheet : public ActionClass

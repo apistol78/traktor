@@ -15,7 +15,7 @@ namespace traktor
 	namespace runtime
 	{
 
-/*! \brief Event from target when debug state has changed.
+/*! Event from target when debug state has changed.
  * \ingroup Runtime
  */
 class T_DLLCLASS ScriptDebuggerStateChange : public ISerializable

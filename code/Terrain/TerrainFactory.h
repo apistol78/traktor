@@ -15,7 +15,7 @@ namespace traktor
 	namespace terrain
 	{
 
-/*! \brief Terrain resource factory.
+/*! Terrain resource factory.
  * \ingroup Terrain
  */
 class T_DLLCLASS TerrainFactory : public resource::IResourceFactory

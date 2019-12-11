@@ -20,7 +20,7 @@ namespace traktor
 
 class IProviderInstance;
 
-/*! \brief Provider group interface.
+/*! Provider group interface.
  * \ingroup Database
  */
 class T_DLLCLASS IProviderGroup : public Object
@@ -28,33 +28,33 @@ class T_DLLCLASS IProviderGroup : public Object
 	T_RTTI_CLASS;
 
 public:
-	/*! \brief Get name of group.
+	/*! Get name of group.
 	 *
 	 * \return Group name.
 	 */
 	virtual std::wstring getName() const = 0;
 
-	/*! \brief Rename group.
+	/*! Rename group.
 	 *
 	 * \param name New name of group.
 	 * \return True if group was renamed successfully.
 	 */
 	virtual bool rename(const std::wstring& name) = 0;
 
-	/*! \brief Remove group.
+	/*! Remove group.
 	 *
 	 * \return True if group was removed.
 	 */
 	virtual bool remove() = 0;
 
-	/*! \brief Create new child group.
+	/*! Create new child group.
 	 *
 	 * \param groupName Name of child group.
 	 * \return Group object.
 	 */
 	virtual Ref< IProviderGroup > createGroup(const std::wstring& groupName) = 0;
 
-	/*! \brief Create new child instance.
+	/*! Create new child instance.
 	 *
 	 * \param instanceName Name of child instance.
 	 * \param instanceGuid Guid of child instance.
@@ -62,7 +62,7 @@ public:
 	 */
 	virtual Ref< IProviderInstance > createInstance(const std::wstring& instanceName, const Guid& instanceGuid) = 0;
 
-	/*! \brief Get all children.
+	/*! Get all children.
 	 *
 	 * \param outChildGroups Returning array of all child groups.
 	 * \param outChildInstances Returning array of all child instances.

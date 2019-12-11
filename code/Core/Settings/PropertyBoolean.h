@@ -13,7 +13,7 @@
 namespace traktor
 {
 
-/*! \brief Boolean property value.
+/*! Boolean property value.
  * \ingroup Core
  */
 class T_DLLCLASS PropertyBoolean : public IPropertyValue

@@ -13,7 +13,7 @@
 namespace traktor
 {
 
-/*! \brief Global lock to ensure serialization of
+/*! Global lock to ensure serialization of
  *  FBX usage.
  * \ingroup Core
  */

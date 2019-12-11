@@ -21,7 +21,7 @@ namespace traktor
 
 class IActionVMImage;
 
-/*! \brief SWF frame actions.
+/*! SWF frame actions.
  * \ingroup Spark
  *
  * Keep display list actions for a single
@@ -104,75 +104,75 @@ public:
 
 	Frame();
 
-	/*! \brief Set frame label.
+	/*! Set frame label.
 	 *
 	 * \param label Frame label.
 	 */
 	void setLabel(const std::string& label);
 
-	/*! \brief Get frame label.
+	/*! Get frame label.
 	 *
 	 * \return Frame label.
 	 */
 	const std::string& getLabel() const;
 
-	/*! \brief Change background color used to clear frame.
+	/*! Change background color used to clear frame.
 	 *
 	 * \param backgroundColor Background color.
 	 */
 	void changeBackgroundColor(const Color4f& backgroundColor);
 
-	/*! \brief Check if this frame changes background color.
+	/*! Check if this frame changes background color.
 	 *
 	 * \return True if background color changed.
 	 */
 	bool hasBackgroundColorChanged() const;
 
-	/*! \brief Get background color.
+	/*! Get background color.
 	 *
 	 * \return Background color.
 	 */
 	const Color4f& getBackgroundColor() const;
 
-	/*! \brief Place object onto display list.
+	/*! Place object onto display list.
 	 *
 	 * \param placeObject Place object description.
 	 */
 	void placeObject(const PlaceObject& placeObject);
 
-	/*! \brief Remove object from display list.
+	/*! Remove object from display list.
 	 *
 	 * \param removeObject Remove object description.
 	 */
 	void removeObject(const RemoveObject& removeObject);
 
-	/*! \brief Add frame action script.
+	/*! Add frame action script.
 	 *
 	 * \param actionScript Frame action script.
 	 */
 	void addActionScript(const IActionVMImage* actionScript);
 
-	/*! \brief Start sound.
+	/*! Start sound.
 	 */
 	void startSound(uint16_t soundId);
 
-	/*! \brief Get place object descriptions by this frame.
+	/*! Get place object descriptions by this frame.
 	 *
 	 * \return Place object descriptions.
 	 */
 	const SmallMap< uint16_t, PlaceObject >& getPlaceObjects() const;
 
-	/*! \brief Get remove object descriptions by this frame.
+	/*! Get remove object descriptions by this frame.
 	 *
 	 * \return Remove object descriptions.
 	 */
 	const SmallMap< uint16_t, RemoveObject >& getRemoveObjects() const;
 
-	/*! \brief Get start sounds.
+	/*! Get start sounds.
 	 */
 	const AlignedVector< uint16_t >& getStartSounds() const;
 
-	/*! \brief Get action scripts associated with this frame.
+	/*! Get action scripts associated with this frame.
 	 *
 	 * \return Action scripts.
 	 */

@@ -18,7 +18,7 @@ namespace traktor
 
 class DeflateZipImpl;
 
-/*! \brief Zip deflate stream.
+/*! Zip deflate stream.
  * \ingroup Compress
  */
 class T_DLLCLASS DeflateStreamZip : public IStream

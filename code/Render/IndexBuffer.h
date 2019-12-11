@@ -16,7 +16,7 @@ namespace traktor
 	namespace render
 	{
 
-/*! \brief Index buffer.
+/*! Index buffer.
  * \ingroup Render
  *
  * Index buffer base class, each renderer should create

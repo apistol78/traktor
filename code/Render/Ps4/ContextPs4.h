@@ -14,7 +14,7 @@ namespace traktor
 class MemoryHeapObjectPs4;
 class MemoryHeapPs4;
 
-/*! \brief GNM context.
+/*! GNM context.
  * \ingroup GNM
  */
 class ContextPs4 : public Object
@@ -22,7 +22,7 @@ class ContextPs4 : public Object
 	T_RTTI_CLASS;
 
 public:
-	/*! \brief Garbage delete callback.
+	/*! Garbage delete callback.
 	 *
 	 * Context keeps a queue for deletion callbacks
 	 * to ensure resources are deleted properly (not used, same thread etc).

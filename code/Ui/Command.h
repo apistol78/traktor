@@ -17,7 +17,7 @@ namespace traktor
 	namespace ui
 	{
 
-/*! \brief Command
+/*! Command
  * \ingroup UI
  */
 class T_DLLCLASS Command : public Object

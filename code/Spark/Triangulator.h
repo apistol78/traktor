@@ -17,7 +17,7 @@ namespace traktor
 	namespace spark
 	{
 
-/*! \brief Trapezoid triangulation.
+/*! Trapezoid triangulation.
  * \ingroup Spark
  */
 class T_DLLCLASS Triangulator : public Object

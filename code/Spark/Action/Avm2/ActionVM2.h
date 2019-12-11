@@ -15,7 +15,7 @@ namespace traktor
 	namespace spark
 	{
 
-/*! \brief ActionScript virtual machine 2.
+/*! ActionScript virtual machine 2.
  * \ingroup Spark
  *
  * Virtual machine to execute blocks of ActionScript

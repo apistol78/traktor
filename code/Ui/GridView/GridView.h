@@ -22,7 +22,7 @@ class GridColumn;
 class GridHeader;
 class GridRow;
 
-/*! \brief Grid view control.
+/*! Grid view control.
  * \ingroup UI
  */
 class T_DLLCLASS GridView : public AutoWidget

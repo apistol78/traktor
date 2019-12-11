@@ -24,7 +24,7 @@ class ISerializer;
 class ActionContext;
 class ActionObject;
 
-/*! \brief Action value.
+/*! Action value.
  * \ingroup Spark
  *
  * An action value can be of several different
@@ -72,111 +72,111 @@ public:
 
 	virtual ~ActionValue();
 
-	/*! \brief Clear value. */
+	/*! Clear value. */
 	void clear();
 
-	/*! \brief Cast to boolean. */
+	/*! Cast to boolean. */
 	ActionValue toBoolean() const { return ActionValue(getBoolean()); }
 
-	/*! \brief Cast to integer. */
+	/*! Cast to integer. */
 	ActionValue toInteger() const { return ActionValue(getInteger()); }
 
-	/*! \brief Cast to float. */
+	/*! Cast to float. */
 	ActionValue toFloat() const { return ActionValue(getFloat()); }
 
-	/*! \brief Cast to string. */
+	/*! Cast to string. */
 	ActionValue toString() const { return ActionValue(getString()); }
 
-	/*! \brief Get type of value. */
+	/*! Get type of value. */
 	Type getType() const { return m_type; }
 
-	/*! \brief Check if undefined. */
+	/*! Check if undefined. */
 	bool isUndefined() const { return m_type == AvtUndefined; }
 
-	/*! \brief Check if boolean. */
+	/*! Check if boolean. */
 	bool isBoolean() const { return m_type == AvtBoolean; }
 
-	/*! \brief Check if integer. */
+	/*! Check if integer. */
 	bool isInteger() const { return m_type == AvtInteger; }
 
-	/*! \brief Check if float. */
+	/*! Check if float. */
 	bool isFloat() const { return m_type == AvtFloat; }
 
-	/*! \brief Check if number. */
+	/*! Check if number. */
 	bool isNumeric() const { return m_type == AvtInteger || m_type == AvtFloat; }
 
-	/*! \brief Check if string. */
+	/*! Check if string. */
 	bool isString() const { return m_type == AvtString; }
 
-	/*! \brief Check if strong object. */
+	/*! Check if strong object. */
 	bool isObjectStrong() const { return m_type == AvtObject; }
 
-	/*! \brief Check if weak object. */
+	/*! Check if weak object. */
 	bool isObjectWeak() const { return m_type == AvtObjectWeak; }
 
-	/*! \brief Check if object. */
+	/*! Check if object. */
 	bool isObject() const { return m_type == AvtObject || m_type == AvtObjectWeak; }
 
-	/*! \brief Check if object. */
+	/*! Check if object. */
 	template < typename ObjectType >
 	bool isObject() const { return (m_type == AvtObject || m_type == AvtObjectWeak) && is_a< ObjectType >(m_value.o); }
 
-	/*! \brief Get boolean value. */
+	/*! Get boolean value. */
 	bool getBoolean() const;
 
-	/*! \brief Get integer value. */
+	/*! Get integer value. */
 	int32_t getInteger() const;
 
-	/*! \brief Get float value. */
+	/*! Get float value. */
 	float getFloat() const;
 
-	/*! \brief Get string value. */
+	/*! Get string value. */
 	std::string getString() const;
 
-	/*! \brief Get wide string value. */
+	/*! Get wide string value. */
 	std::wstring getWideString() const;
 
-	/*! \brief Get object. */
+	/*! Get object. */
 	ActionObject* getObject() const { return (m_type == AvtObject || m_type == AvtObjectWeak) ? m_value.o : 0; }
 
-	/*! \brief Get object. */
+	/*! Get object. */
 	template < typename ObjectType >
 	ObjectType* getObject() const { return dynamic_type_cast< ObjectType* >(getObject()); }
 
-	/*! \brief Get object always, ie. create boxes if not a object. */
+	/*! Get object always, ie. create boxes if not a object. */
 	Ref< ActionObject > getObjectAlways(ActionContext* context) const;
 
-	/*! \brief Get object always, ie. create boxes if not a object. */
+	/*! Get object always, ie. create boxes if not a object. */
 	template < typename ObjectType >
 	Ref< ObjectType > getObjectAlways(ActionContext* context) const { return dynamic_type_cast< ObjectType* >(getObjectAlways(context)); }
 
-	/*! \brief Get string hidden identifier. */
+	/*! Get string hidden identifier. */
 	int32_t getStringId() const;
 
-	/*! \brief Serialize value. */
+	/*! Serialize value. */
 	void serialize(ISerializer& s);
 
-	/*! \brief Copy value. */
+	/*! Copy value. */
 	ActionValue& operator = (const ActionValue& v);
 
 #if defined(T_CXX11)
-	/*! \brief Move value. */
+	/*! Move value. */
 	ActionValue& operator = (ActionValue&& v);
 #endif
 
-	/*! \brief Add */
+	/*! Add */
 	ActionValue operator + (const ActionValue& r) const;
 
-	/*! \brief Subtract */
+	/*! Subtract */
 	ActionValue operator - (const ActionValue& r) const;
 
-	/*! \brief Multiply */
+	/*! Multiply */
 	ActionValue operator * (const ActionValue& r) const;
 
-	/*! \brief Divide */
+	/*! Divide */
 	ActionValue operator / (const ActionValue& r) const;
 
-	/*! \brief Compare equal. */
+	/*! Compare equal. */
 	bool operator == (const ActionValue& r) const;
 
 private:

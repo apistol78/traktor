@@ -15,7 +15,7 @@ namespace traktor
 	namespace db
 	{
 
-/*! \brief Get instance's primary type.
+/*! Get instance's primary type.
  * \ingroup Database
  */
 class T_DLLCLASS DbmGetInstancePrimaryType : public IMessage

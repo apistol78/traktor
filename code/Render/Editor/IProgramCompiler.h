@@ -24,7 +24,7 @@ class IProgramHints;
 class ProgramResource;
 class ShaderGraph;
 
-/*! \brief Program compiler interface.
+/*! Program compiler interface.
  * \ingroup Render
  */
 class T_DLLCLASS IProgramCompiler : public Object
@@ -32,7 +32,7 @@ class T_DLLCLASS IProgramCompiler : public Object
 	T_RTTI_CLASS;
 
 public:
-	/*! \brief Compiled stats. */
+	/*! Compiled stats. */
 	struct Stats
 	{
 		uint32_t vertexCost;
@@ -49,13 +49,13 @@ public:
 		}
 	};
 
-	/*! \brief Get renderer signature.
+	/*! Get renderer signature.
 	 *
 	 * \return Renderer signature.
 	 */
 	virtual const wchar_t* getRendererSignature() const = 0;
 
-	/*! \brief Compile program.
+	/*! Compile program.
 	 *
 	 * \param shaderGraph Program shader graph.
 	 * \param settings Compiler settings.
@@ -74,7 +74,7 @@ public:
 		Stats* outStats
 	) const = 0;
 
-	/*! \brief Generate render specific shader if possible.
+	/*! Generate render specific shader if possible.
 	 *
 	 * \note This is only used to aid optimization of shader graphs
 	 * from within the editor.

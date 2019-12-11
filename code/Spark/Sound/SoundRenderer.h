@@ -23,7 +23,7 @@ class ISoundPlayer;
 	namespace spark
 	{
 
-/*! \brief Default sound renderer using Traktor sound package.
+/*! Default sound renderer using Traktor sound package.
  * \ingroup Spark
  */
 class T_DLLCLASS SoundRenderer : public ISoundRenderer

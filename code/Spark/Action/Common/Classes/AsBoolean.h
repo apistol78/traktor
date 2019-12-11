@@ -11,7 +11,7 @@ struct CallArgs;
 
 class Boolean;
 
-/*! \brief Boolean class.
+/*! Boolean class.
  * \ingroup Spark
  */
 class AsBoolean : public ActionClass

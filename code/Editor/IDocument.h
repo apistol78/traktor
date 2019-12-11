@@ -26,7 +26,7 @@ class Instance;
 	namespace editor
 	{
 
-/*! \brief Editor page working document.
+/*! Editor page working document.
  * \ingroup Editor
  *
  * Each open editor page has an associated
@@ -44,7 +44,7 @@ class T_DLLCLASS IDocument : public Object
 	T_RTTI_CLASS;
 
 public:
-	/*! \brief Edit instance in document.
+	/*! Edit instance in document.
 	 *
 	 * Instances which are logically edited
 	 * within a document, or more specifically through an
@@ -56,34 +56,34 @@ public:
 	 */
 	virtual void editInstance(db::Instance* instance, ISerializable* object) = 0;
 
-	/*! \brief Check if instance is already edited through this document.
+	/*! Check if instance is already edited through this document.
 	 *
 	 * \param instance Database instance.
 	 * \return True if it belongs to this document.
 	 */
 	virtual bool containInstance(db::Instance* instance) const = 0;
 
-	/*! \brief Get number of editing instances.
+	/*! Get number of editing instances.
 	 *
 	 * \return Number of editing instances.
 	 */
 	virtual uint32_t getInstanceCount() const = 0;
 
-	/*! \brief Get editing instance.
+	/*! Get editing instance.
 	 *
 	 * \param index Index of editing instance.
 	 * \return Editing instance.
 	 */
 	virtual db::Instance* getInstance(uint32_t index) const = 0;
 
-	/*! \brief Get editing object.
+	/*! Get editing object.
 	 *
 	 * \param index Index of editing object.
 	 * \return Editing object.
 	 */
 	virtual ISerializable* getObject(uint32_t index) const = 0;
 
-	/*! \brief Replace editing object.
+	/*! Replace editing object.
 	 *
 	 * \param index Index of editing object.
 	 * \param object New editing object.
@@ -91,7 +91,7 @@ public:
 	 */
 	virtual bool setObject(uint32_t index, ISerializable* object) = 0;
 
-	/*! \brief Force document to be modified.
+	/*! Force document to be modified.
 	 *
 	 * Document are tagged as modified even if all objects
 	 * hasn't changed.
@@ -100,7 +100,7 @@ public:
 	 */
 	virtual void setModified() = 0;
 
-	/*! \brief Push current state of document.
+	/*! Push current state of document.
 	 *
 	 * Push document state onto undo stack.
 	 *
@@ -108,7 +108,7 @@ public:
 	 */
 	virtual void push(const ISerializable* meta) = 0;
 
-	/*! \brief Undo state of document.
+	/*! Undo state of document.
 	 *
 	 * \param redoMeta Meta object in case this undo will get redo;ed.
 	 * \param outMeta Meta object associated with pushed state.
@@ -116,14 +116,14 @@ public:
 	 */
 	virtual bool undo(const ISerializable* redoMeta, Ref< const ISerializable >* outMeta) = 0;
 
-	/*! \brief Redo state of document.
+	/*! Redo state of document.
 	 *
 	 * \param outMeta Meta object associated with pushed state.
 	 * \return True if state recovered.
 	 */
 	virtual bool redo(Ref< const ISerializable >* outMeta) = 0;
 
-	/*! \brief Get editing object.
+	/*! Get editing object.
 	 *
 	 * \param T Type of editing object.
 	 * \param index Index of editing object.
@@ -135,7 +135,7 @@ public:
 		return dynamic_type_cast< T* >(getObject(index));
 	}
 
-	/*! \brief Push current state of document.
+	/*! Push current state of document.
 	 *
 	 * Push document state onto undo stack.
 	 */
@@ -144,7 +144,7 @@ public:
 		push(nullptr);
 	}
 
-	/*! \brief Undo state of document.
+	/*! Undo state of document.
 	 *
 	 * \return True if state recovered.
 	 */
@@ -153,7 +153,7 @@ public:
 		return undo(nullptr, nullptr);
 	}
 
-	/*! \brief Undo state of document.
+	/*! Undo state of document.
 	 *
 	 * \param redoMeta Meta object in case this undo will get redo;ed.
 	 * \param outMeta Meta object associated with pushed state.
@@ -169,7 +169,7 @@ public:
 		return true;
 	}
 
-	/*! \brief Redo state of document.
+	/*! Redo state of document.
 	 *
 	 * \return True if state recovered.
 	 */
@@ -178,7 +178,7 @@ public:
 		return redo(nullptr);
 	}
 
-	/*! \brief Redo state of document.
+	/*! Redo state of document.
 	 *
 	 * \param outMeta Meta object associated with pushed state.
 	 * \return True if state recovered.

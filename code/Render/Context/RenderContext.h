@@ -23,7 +23,7 @@ namespace traktor
 
 class IRenderView;
 
-/*! \brief Deferred render context.
+/*! Deferred render context.
  * \ingroup Render
  *
  * A render context is used to defer rendering in a
@@ -38,13 +38,13 @@ public:
 
 	virtual ~RenderContext();
 
-	/*! \brief Allocate a unaligned block of memory from context's heap. */
+	/*! Allocate a unaligned block of memory from context's heap. */
 	void* alloc(uint32_t blockSize);
 
-	/*! \brief Allocate a aligned block of memory from context's heap. */
+	/*! Allocate a aligned block of memory from context's heap. */
 	void* alloc(uint32_t blockSize, uint32_t align);
 
-	/*! \brief Allocate object from context's heap.
+	/*! Allocate object from context's heap.
 	 *
 	 * \note Object's destructor won't be called when
 	 * heap is flushed.
@@ -56,7 +56,7 @@ public:
 		return new (object) ObjectType();
 	}
 
-	/*! \brief Allocate named object from context's heap. */
+	/*! Allocate named object from context's heap. */
 	template < typename ObjectType >
 	ObjectType* alloc(const char* const name)
 	{
@@ -67,13 +67,13 @@ public:
 		return object;
 	}
 
-	/*! \brief Enqueue a render block in context. */
+	/*! Enqueue a render block in context. */
 	void draw(uint32_t type, RenderBlock* renderBlock);
 
-	/*! \brief Render blocks. */
+	/*! Render blocks. */
 	void render(IRenderView* renderView, uint32_t priorities, const ProgramParameters* globalParameters) const;
 
-	/*! \brief Flush blocks. */
+	/*! Flush blocks. */
 	void flush();
 
 	uint32_t getAllocatedSize() const { return uint32_t(m_heapPtr - m_heap.c_ptr()); }

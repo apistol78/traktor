@@ -13,7 +13,7 @@
 namespace traktor
 {
 
-/*! \brief Member precision attribute.
+/*! Member precision attribute.
  * \ingroup Core
  */
 class T_DLLCLASS AttributePrecision : public Attribute

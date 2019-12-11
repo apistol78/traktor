@@ -16,7 +16,7 @@ namespace traktor
 	namespace editor
 	{
 
-/*! \brief Base class for assets.
+/*! Base class for assets.
  * \ingroup Editor
  *
  * Derive from this class for assets which reference

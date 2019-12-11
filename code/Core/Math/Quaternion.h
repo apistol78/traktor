@@ -16,7 +16,7 @@
 namespace traktor
 {
 
-/*! \brief Quaternion
+/*! Quaternion
  * \ingroup Core
  */
 class T_MATH_ALIGN16 T_DLLCLASS Quaternion

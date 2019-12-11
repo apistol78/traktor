@@ -18,7 +18,7 @@
 namespace traktor
 {
 
-/*! \brief Enumeration base member.
+/*! Enumeration base member.
  * \ingroup Core
  */
 class T_DLLCLASS MemberEnumBase : public MemberComplex
@@ -37,7 +37,7 @@ public:
 	virtual void serialize(ISerializer& s) const override final;
 };
 
-/*! \brief Enumeration member.
+/*! Enumeration member.
  * \ingroup Core
  */
 template < typename EnumType >
@@ -97,7 +97,7 @@ private:
 	EnumType& m_en;
 };
 
-/*! \brief Enumeration member.
+/*! Enumeration member.
  * \ingroup Core
  */
 template < typename EnumType, typename ValueType = uint32_t >

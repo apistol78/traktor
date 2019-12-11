@@ -15,7 +15,7 @@ namespace traktor
 	namespace ui
 	{
 
-/*! \brief Close event.
+/*! Close event.
  * \ingroup UI
  */
 class T_DLLCLASS CloseEvent : public Event

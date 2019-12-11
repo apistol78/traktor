@@ -8,7 +8,7 @@ namespace traktor
 	namespace run
 	{
 
-/*! \brief Stream output writer.
+/*! Stream output writer.
  * \ingroup Run
  */
 class StreamOutput : public IOutput

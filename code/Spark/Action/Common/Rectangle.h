@@ -17,7 +17,7 @@ namespace traktor
 
 class Point;
 
-/*! \brief ActionScript number wrapper.
+/*! ActionScript number wrapper.
  * \ingroup Spark
  */
 class T_DLLCLASS Rectangle : public ActionObjectRelay

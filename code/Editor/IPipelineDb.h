@@ -17,7 +17,7 @@ namespace traktor
 	namespace editor
 	{
 
-/*! \brief Pipeline database.
+/*! Pipeline database.
  * \ingroup Editor
  *
  * The pipeline db keeps records of builds

@@ -17,7 +17,7 @@ namespace traktor
 
 class CgProgram;
 
-/*! \brief PS3 program compiler.
+/*! PS3 program compiler.
  * \ingroup Render
  */
 class T_DLLCLASS ProgramCompilerPs3 : public IProgramCompiler

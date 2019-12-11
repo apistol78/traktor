@@ -16,7 +16,7 @@ namespace traktor
 	namespace ui
 	{
 
-/*! \brief Slider
+/*! Slider
  * \ingroup UI
  */
 class T_DLLCLASS Slider : public Widget

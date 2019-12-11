@@ -26,13 +26,13 @@ class T_DLLCLASS ISceneControllerEditorFactory : public Object
 	T_RTTI_CLASS;
 
 public:
-	/*! \brief Get supported set of controller data types.
+	/*! Get supported set of controller data types.
 	 *
 	 * \return Set of controller data types.
 	 */
 	virtual const TypeInfoSet getControllerDataTypes() const = 0;
 
-	/*! \brief Create controller editor instance.
+	/*! Create controller editor instance.
 	 *
 	 * \param controllerDataType Controller data type.
 	 */

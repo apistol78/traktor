@@ -15,7 +15,7 @@ namespace traktor
 	namespace ui
 	{
 
-/*! \brief Button
+/*! Button
  * \ingroup UI
  */
 class T_DLLCLASS Button : public Widget

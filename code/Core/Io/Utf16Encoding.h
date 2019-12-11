@@ -13,7 +13,7 @@
 namespace traktor
 {
 
-/*! \brief UTF-16 encoding.
+/*! UTF-16 encoding.
  * \ingroup Core
  */
 class T_DLLCLASS Utf16Encoding : public IEncoding

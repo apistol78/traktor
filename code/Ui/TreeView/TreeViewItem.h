@@ -19,7 +19,7 @@ namespace traktor
 
 class TreeView;
 
-/*! \brief Tree view item.
+/*! Tree view item.
  * \ingroup UI
  */
 class T_DLLCLASS TreeViewItem : public AutoWidgetCell
@@ -95,7 +95,7 @@ public:
 
 	Ref< TreeViewItem > findChild(const std::wstring& childPath);
 
-	/*! \brief Get path to this item.
+	/*! Get path to this item.
 	 *
 	 * Path is separated with / for each level.
 	 */

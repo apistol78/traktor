@@ -25,7 +25,7 @@ class ActionFunction;
 class ActionValue;
 class ActionObjectRelay;
 
-/*! \brief ActionScript object.
+/*! ActionScript object.
  * \ingroup Spark
  */
 class T_DLLCLASS ActionObject : public Collectable

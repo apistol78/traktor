@@ -23,7 +23,7 @@ class Color4f;
 class Image;
 class IRasterImpl;
 
-/*! \brief Raster primitives.
+/*! Raster primitives.
  * \ingroup Drawing
  */
 class T_DLLCLASS Raster : public Object

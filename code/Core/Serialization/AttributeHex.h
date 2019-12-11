@@ -13,7 +13,7 @@
 namespace traktor
 {
 
-/*! \brief Member hex attribute.
+/*! Member hex attribute.
  * \ingroup Core
  */
 class T_DLLCLASS AttributeHex : public Attribute

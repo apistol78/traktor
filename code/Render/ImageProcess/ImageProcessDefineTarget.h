@@ -17,7 +17,7 @@ namespace traktor
 	namespace render
 	{
 
-/*! \brief Define post processing render target.
+/*! Define post processing render target.
  * \ingroup Render
  */
 class T_DLLCLASS ImageProcessDefineTarget : public ImageProcessDefine

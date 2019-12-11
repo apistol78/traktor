@@ -18,7 +18,7 @@ namespace traktor
 
 class InflateLzfImpl;
 
-/*! \brief LZF inflate stream.
+/*! LZF inflate stream.
  * \ingroup Compress
  */
 class T_DLLCLASS InflateStreamLzf : public IStream

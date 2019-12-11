@@ -15,7 +15,7 @@ namespace traktor
 	namespace ui
 	{
 
-/*! \brief CheckBox
+/*! CheckBox
  * \ingroup UI
  */
 class T_DLLCLASS CheckBox : public Widget

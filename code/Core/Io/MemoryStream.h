@@ -13,7 +13,7 @@
 namespace traktor
 {
 
-/*! \brief Fixed memory stream.
+/*! Fixed memory stream.
  * \ingroup Core
  */
 class T_DLLCLASS MemoryStream : public IStream

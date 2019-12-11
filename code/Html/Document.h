@@ -23,7 +23,7 @@ class IEncoding;
 
 class Element;
 
-/*! \brief HTML DOM Document.
+/*! HTML DOM Document.
  * \ingroup HTML
  */
 class T_DLLCLASS Document : public Object

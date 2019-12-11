@@ -14,7 +14,7 @@ class TreeView;
 	namespace script
 	{
 
-/*! \brief Runtime classes view.
+/*! Runtime classes view.
  * \ingroup Script
  */
 class ScriptClassesView : public ui::Container

@@ -7,7 +7,7 @@ namespace traktor
 	namespace spark
 	{
 
-/*! \brief BitmapFilter class.
+/*! BitmapFilter class.
  * \ingroup Spark
  */
 class As_flash_filters_BitmapFilter : public ActionClass

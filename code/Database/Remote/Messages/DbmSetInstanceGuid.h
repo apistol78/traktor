@@ -16,7 +16,7 @@ namespace traktor
 	namespace db
 	{
 
-/*! \brief Set instance guid.
+/*! Set instance guid.
  * \ingroup Database
  */
 class T_DLLCLASS DbmSetInstanceGuid : public IMessage

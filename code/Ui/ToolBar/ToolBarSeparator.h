@@ -15,7 +15,7 @@ namespace traktor
 	namespace ui
 	{
 
-/*! \brief Tool bar separator.
+/*! Tool bar separator.
  * \ingroup UI
  */
 class T_DLLCLASS ToolBarSeparator : public ToolBarItem

@@ -15,7 +15,7 @@ namespace traktor
 	namespace ui
 	{
 
-/*! \brief Aspect layout.
+/*! Aspect layout.
  * \ingroup UI
  */
 class T_DLLCLASS AspectLayout : public Layout

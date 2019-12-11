@@ -21,7 +21,7 @@ class ISerializer;
 	namespace model
 	{
 
-/*! \brief Vertex
+/*! Vertex
  * \ingroup Model
  */
 class T_DLLCLASS Vertex : public ISerializable

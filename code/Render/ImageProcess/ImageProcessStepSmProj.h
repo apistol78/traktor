@@ -21,7 +21,7 @@ namespace traktor
 class Shader;
 class ISimpleTexture;
 
-/*! \brief Shadow mask projection.
+/*! Shadow mask projection.
  * \ingroup Render
  */
 class T_DLLCLASS ImageProcessStepSmProj : public ImageProcessStep

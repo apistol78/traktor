@@ -15,7 +15,7 @@ namespace traktor
 	namespace drawing
 	{
 
-/*! \brief Gray scale filter.
+/*! Gray scale filter.
  * \ingroup Drawing
  */
 class T_DLLCLASS GrayscaleFilter : public IImageFilter

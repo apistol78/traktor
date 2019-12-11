@@ -15,7 +15,7 @@ namespace traktor
 	namespace drawing
 	{
 
-/*! \brief Perlin noise image filter.
+/*! Perlin noise image filter.
  * \ingroup Drawing
  *
  * Create image filled with perlin based noise.

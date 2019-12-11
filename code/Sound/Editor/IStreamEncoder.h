@@ -19,7 +19,7 @@ class IStream;
 	namespace sound
 	{
 
-/*! \brief Sound stream encoder.
+/*! Sound stream encoder.
  * \ingroup Sound
  */
 class T_DLLCLASS IStreamEncoder : public Object

@@ -15,7 +15,7 @@ namespace traktor
 	namespace world
 	{
 
-/*! \brief Layer atttribute base class.
+/*! Layer atttribute base class.
  * \ingroup World
  */
 class T_DLLCLASS ILayerAttribute : public ISerializable

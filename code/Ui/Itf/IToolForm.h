@@ -7,7 +7,7 @@ namespace traktor
 	namespace ui
 	{
 
-/*! \brief ToolForm interface.
+/*! ToolForm interface.
  * \ingroup UI
  */
 class IToolForm : public IWidget

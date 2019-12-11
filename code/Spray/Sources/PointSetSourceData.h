@@ -20,7 +20,7 @@ namespace traktor
 
 class PointSet;
 
-/*! \brief Point set particle source persistent data.
+/*! Point set particle source persistent data.
  * \ingroup Spray
  */
 class T_DLLCLASS PointSetSourceData : public SourceData

@@ -15,7 +15,7 @@ namespace traktor
 	namespace render
 	{
 
-/*! \brief OpenGL ES 2.0 program compiler.
+/*! OpenGL ES 2.0 program compiler.
  * \ingroup Render
  */
 class T_DLLCLASS ProgramCompilerOpenGLES2 : public IProgramCompiler

@@ -5,7 +5,7 @@
 namespace traktor
 {
 
-/*! \brief Automatically call functors when entering and leaving scope.
+/*! Automatically call functors when entering and leaving scope.
  * \ingroup Core
  */
 class EnterLeave

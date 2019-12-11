@@ -23,7 +23,7 @@ class Frame;
 class IActionVM;
 class IActionVMImage;
 
-/*! \brief Flash sprite.
+/*! Flash sprite.
  * \ingroup Spark
  */
 class T_DLLCLASS Sprite : public Character

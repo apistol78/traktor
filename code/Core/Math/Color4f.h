@@ -16,7 +16,7 @@
 namespace traktor
 {
 
-/*! \brief 4 channel, 32-bit, color.
+/*! 4 channel, 32-bit, color.
  * \ingroup Core
  */
 class T_MATH_ALIGN16 T_DLLCLASS Color4f

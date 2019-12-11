@@ -29,7 +29,7 @@ class IResourceManager;
 	namespace world
 	{
 
-/*! \brief World entity factory.
+/*! World entity factory.
  * \ingroup World
  */
 class T_DLLCLASS WorldEntityFactory : public IEntityFactory

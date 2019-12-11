@@ -16,7 +16,7 @@ namespace traktor
 	namespace net
 	{
 
-/*! \brief Generic network service.
+/*! Generic network service.
  * \ingroup Net
  */
 class T_DLLCLASS NetworkService : public IService

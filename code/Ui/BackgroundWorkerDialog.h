@@ -23,7 +23,7 @@ class Button;
 class Static;
 class ProgressBar;
 
-/*! \brief Background worker thread progress dialog.
+/*! Background worker thread progress dialog.
  * \ingroup UI
  */
 class T_DLLCLASS BackgroundWorkerDialog : public Dialog

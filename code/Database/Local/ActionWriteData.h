@@ -12,7 +12,7 @@ class IStream;
 	namespace db
 	{
 
-/*! \brief Transaction write object action.
+/*! Transaction write object action.
  * \ingroup Database
  */
 class ActionWriteData : public Action

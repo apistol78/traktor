@@ -19,7 +19,7 @@ namespace traktor
 class ImageProcessDefine;
 class ImageProcessStep;
 
-/*! \brief Post processing settings.
+/*! Post processing settings.
  * \ingroup Render
  */
 class T_DLLCLASS ImageProcessSettings : public ISerializable

@@ -20,7 +20,7 @@ namespace traktor
 
 class Image;
 
-/*! \brief Image file format base class.
+/*! Image file format base class.
  * \ingroup Drawing
  */
 class T_DLLCLASS IImageFormat : public Object

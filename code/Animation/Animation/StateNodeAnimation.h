@@ -18,7 +18,7 @@ namespace traktor
 
 class Animation;
 
-/*! \brief Animation state node.
+/*! Animation state node.
  * \ingroup Animation
  */
 class T_DLLCLASS StateNodeAnimation : public StateNode

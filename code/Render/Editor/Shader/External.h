@@ -22,7 +22,7 @@ namespace traktor
 
 class ShaderGraph;
 
-/*! \brief External shader node.
+/*! External shader node.
  * \ingroup Render
  *
  * External shader node is a special kind of node

@@ -30,7 +30,7 @@ class IRenderSystem;
 class IRenderView;
 class ScreenRenderer;
 
-/*! \brief Post processing step.
+/*! Post processing step.
  * \ingroup Render
  */
 class T_DLLCLASS ImageProcessStep : public ISerializable
@@ -38,7 +38,7 @@ class T_DLLCLASS ImageProcessStep : public ISerializable
 	T_RTTI_CLASS;
 
 public:
-	/*! \brief Step instance. */
+	/*! Step instance. */
 	class T_DLLCLASS Instance : public Object
 	{
 	public:

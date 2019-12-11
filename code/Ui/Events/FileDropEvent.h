@@ -17,7 +17,7 @@ namespace traktor
 	namespace ui
 	{
 
-/*! \brief File drag'n'drop event.
+/*! File drag'n'drop event.
  * \ingroup UI
  */
 class T_DLLCLASS FileDropEvent : public Event

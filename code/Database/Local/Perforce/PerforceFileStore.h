@@ -18,7 +18,7 @@ namespace traktor
 class PerforceClient;
 class PerforceChangeList;
 
-/*! \brief Perforce file store.
+/*! Perforce file store.
  * \ingroup Database
  */
 class T_DLLCLASS PerforceFileStore : public IFileStore

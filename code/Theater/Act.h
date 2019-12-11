@@ -17,7 +17,7 @@ class Scene;
 
 class Track;
 
-/*! \brief Act
+/*! Act
  * \ingroup Theater
  */
 class Act : public Object

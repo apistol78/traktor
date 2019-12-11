@@ -16,7 +16,7 @@ namespace traktor
 /*! \ingroup Core */
 //@{
 
-/*! \brief STL vector member. */
+/*! STL vector member. */
 template < typename ValueType, typename ValueMember = Member< ValueType > >
 class MemberStlVector : public MemberArray
 {
@@ -94,7 +94,7 @@ private:
 	mutable size_t m_index;
 };
 
-/*! \brief STL list member. */
+/*! STL list member. */
 template < typename ValueType, typename ValueMember = Member< ValueType > >
 class MemberStlList : public MemberArray
 {
@@ -153,7 +153,7 @@ private:
 	mutable typename value_type::iterator m_iter;
 };
 
-/*! \brief STL set member. */
+/*! STL set member. */
 template < typename ValueType, typename ValueMember = Member< ValueType > >
 class MemberStlSet : public MemberArray
 {
@@ -208,7 +208,7 @@ private:
 	mutable typename value_type::iterator m_iter;
 };
 
-/*! \brief STL pair member. */
+/*! STL pair member. */
 template < typename FirstType, typename SecondType, typename FirstMember = Member< FirstType >, typename SecondMember = Member< SecondType > >
 class MemberStlPair : public MemberComplex
 {
@@ -237,7 +237,7 @@ private:
 	value_type& m_ref;
 };
 
-/*! \brief STL map member. */
+/*! STL map member. */
 template < typename KeyType, typename ValueType, typename PairMember = MemberStlPair< KeyType, ValueType > >
 class MemberStlMap : public MemberArray
 {

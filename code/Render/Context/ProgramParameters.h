@@ -23,7 +23,7 @@ class ITexture;
 class RenderContext;
 class StructBuffer;
 
-/*! \brief Program parameter values.
+/*! Program parameter values.
  * \ingroup Render
  */
 class T_DLLCLASS ProgramParameters

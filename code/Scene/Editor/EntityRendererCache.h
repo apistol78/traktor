@@ -18,7 +18,7 @@ class Entity;
 class EntityAdapter;
 class SceneEditorContext;
 
-/*! \brief Entity adapter lookup from entity accelerator.
+/*! Entity adapter lookup from entity accelerator.
  *
  * This class is used by the special entity renderer, EntityRendererAdapter,
  * in order to quickly lookup entity adapter from entity.

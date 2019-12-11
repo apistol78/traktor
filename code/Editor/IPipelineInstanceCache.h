@@ -12,7 +12,7 @@ class Guid;
 	namespace editor
 	{
 
-/*! \brief Pipeline database instance object read-only cache.
+/*! Pipeline database instance object read-only cache.
  * \ingroup Editor
  */
 class IPipelineInstanceCache : public Object

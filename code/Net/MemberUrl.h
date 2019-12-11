@@ -9,7 +9,7 @@ namespace traktor
 	namespace net
 	{
 
-/*! \brief URL serialization member.
+/*! URL serialization member.
  * \ingroup Net
  */
 class MemberUrl : public MemberComplex

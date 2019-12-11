@@ -15,7 +15,7 @@ namespace traktor
 	namespace db
 	{
 
-/*! \brief Get instance's name.
+/*! Get instance's name.
  * \ingroup Database
  */
 class T_DLLCLASS DbmGetInstanceName : public IMessage

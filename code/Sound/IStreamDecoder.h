@@ -19,7 +19,7 @@ class IStream;
 	namespace sound
 	{
 
-/*! \brief Sound stream decoder.
+/*! Sound stream decoder.
  * \ingroup Sound
  *
  * Stream decoders are called frequently from the mixer thread

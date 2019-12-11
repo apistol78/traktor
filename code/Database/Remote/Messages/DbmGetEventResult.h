@@ -18,7 +18,7 @@ namespace traktor
 
 class IEvent;
 
-/*! \brief Get event result.
+/*! Get event result.
  * \ingroup Database
  */
 class T_DLLCLASS DbmGetEventResult : public IMessage

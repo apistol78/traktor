@@ -23,7 +23,7 @@ struct IWidgetRect
 	Rect rect;
 };
 
-/*! \brief Widget interface.
+/*! Widget interface.
  * \ingroup UI
  */
 class IWidget

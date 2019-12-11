@@ -17,7 +17,7 @@ namespace traktor
 	namespace ui
 	{
 
-/*! \brief Flood layout.
+/*! Flood layout.
  * \ingroup UI
  */
 class T_DLLCLASS FloodLayout : public Layout

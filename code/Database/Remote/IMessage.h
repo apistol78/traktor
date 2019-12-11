@@ -15,7 +15,7 @@ namespace traktor
 	namespace db
 	{
 
-/*! \brief Network message interface.
+/*! Network message interface.
  * \ingroup Database
  */
 class T_DLLCLASS IMessage : public ISerializable

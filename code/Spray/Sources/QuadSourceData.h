@@ -17,7 +17,7 @@ namespace traktor
 	namespace spray
 	{
 
-/*! \brief Quad particle source persistent data.
+/*! Quad particle source persistent data.
  * \ingroup Spray
  */
 class T_DLLCLASS QuadSourceData : public SourceData

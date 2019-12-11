@@ -16,7 +16,7 @@ namespace traktor
 
 class IHash;
 
-/*! \brief Hash stream
+/*! Hash stream
  * \ingroup Core
  */
 class T_DLLCLASS HashStream : public IStream

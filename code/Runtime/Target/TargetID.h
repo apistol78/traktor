@@ -16,7 +16,7 @@ namespace traktor
 	namespace runtime
 	{
 
-/*! \brief Running target identification.
+/*! Running target identification.
  * \ingroup Runtime
  */
 class T_DLLCLASS TargetID : public ISerializable

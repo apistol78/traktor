@@ -40,7 +40,7 @@ class WorldRenderView;
 
 class ISceneController;
 
-/*! \brief Scene
+/*! Scene
  * \ingroup Scene
  *
  * A scene holds information about entities,

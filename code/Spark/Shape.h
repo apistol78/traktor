@@ -24,7 +24,7 @@ namespace traktor
 #	pragma warning( disable:4324 )
 #endif
 
-/*! \brief Flash shape.
+/*! Flash shape.
  * \ingroup Spark
  */
 class T_DLLCLASS Shape : public Character

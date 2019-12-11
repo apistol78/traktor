@@ -17,7 +17,7 @@ namespace traktor
 	namespace spray
 	{
 
-/*! \brief Quad particle source.
+/*! Quad particle source.
  * \ingroup Spray
  */
 class T_DLLCLASS QuadSource : public Source

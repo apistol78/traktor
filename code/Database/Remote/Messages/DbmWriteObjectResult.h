@@ -15,7 +15,7 @@ namespace traktor
 	namespace db
 	{
 
-/*! \brief Write instance object result.
+/*! Write instance object result.
  * \ingroup Database
  */
 class T_DLLCLASS DbmWriteObjectResult : public IMessage

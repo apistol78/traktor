@@ -15,7 +15,7 @@ namespace traktor
 	namespace db
 	{
 
-/*! \brief Instance removed event.
+/*! Instance removed event.
  * \ingroup Database
  */
 class T_DLLCLASS EvtInstanceRemoved : public EvtInstance

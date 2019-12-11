@@ -37,7 +37,7 @@ class IWorldRenderPass;
 
 class IMeshParameterCallback;
 
-/*! \brief Skinned mesh.
+/*! Skinned mesh.
  *
  * For each vertex the skinned mesh blends
  * the final world transform from a palette of

@@ -5,7 +5,7 @@
 namespace traktor
 {
 
-/*! \brief Singleton base class.
+/*! Singleton base class.
  * \ingroup Core
  *
  * Singletons should be derived from
@@ -20,7 +20,7 @@ protected:
 
 	virtual ~ISingleton() {}
 
-	/*! \brief Destroy singleton.
+	/*! Destroy singleton.
 	 *
 	 * Called from the SingletonManager when
 	 * this singleton should be destroyed.

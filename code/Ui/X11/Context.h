@@ -23,31 +23,31 @@ class Context : public Object
 public:
     Context(Display* display, int screen, XIM xim);
 
-	//! \brief Bind callback for specified event with given window target.
+	//! Bind callback for specified event with given window target.
     void bind(WidgetData* widget, int32_t eventType, const std::function< void(XEvent& xe) >& fn);
 
-	//! \brief Unbind all callbacks for specified window.
+	//! Unbind all callbacks for specified window.
     void unbind(WidgetData* widget);
 
-	//! \brief Defer callback until all dispatches has finished.
+	//! Defer callback until all dispatches has finished.
 	void defer(const std::function< void() >& fn);
 
-	//! \brief Push modal widget.
+	//! Push modal widget.
 	void pushModal(WidgetData* widget);
 
-	//! \brief Pop modal widget.
+	//! Pop modal widget.
 	void popModal();
 
-	//! \brief Grab input to widget.
+	//! Grab input to widget.
 	void grab(WidgetData* widget);
 
-	//! \brief Ungrab input.
+	//! Ungrab input.
 	void ungrab(WidgetData* widget);
 
-	//! \brief Set focus.
+	//! Set focus.
 	void setFocus(WidgetData* widget);
 
-	//! \brief Dispatch event to callbacks.
+	//! Dispatch event to callbacks.
     void dispatch(XEvent& xe);
 
 	//@{

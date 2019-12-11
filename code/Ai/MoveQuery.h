@@ -20,7 +20,7 @@ namespace traktor
 	namespace ai
 	{
 
-/*! \brief Continuous movement query.
+/*! Continuous movement query.
  * \ingroup AI
  */
 class T_DLLCLASS MoveQuery : public Object
@@ -32,7 +32,7 @@ public:
 
 	virtual ~MoveQuery();
 
-	/*! \brief Update query to get desired "move to" position.
+	/*! Update query to get desired "move to" position.
 	 *
 	 * \param currentPosition Current entity position.
 	 * \param outMoveToPosition Desired move to position to advance on movement query.

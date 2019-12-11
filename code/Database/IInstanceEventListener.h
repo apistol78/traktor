@@ -12,7 +12,7 @@ class Guid;
 
 class Instance;
 
-/*! \brief Instance event listener.
+/*! Instance event listener.
  * \ingroup Database
  */
 class IInstanceEventListener

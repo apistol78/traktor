@@ -15,7 +15,7 @@ namespace traktor
 	namespace script
 	{
 
-/*! \brief External script asset.
+/*! External script asset.
  * \ingroup Script
  */
 class T_DLLCLASS ScriptAsset : public editor::Asset

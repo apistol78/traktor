@@ -20,7 +20,7 @@ class OutputStream;
 	namespace html
 	{
 
-/*! \brief HTML DOM Node.
+/*! HTML DOM Node.
  * \ingroup HTML
  */
 class T_DLLCLASS Node : public Object

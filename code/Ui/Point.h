@@ -9,7 +9,7 @@ namespace traktor
 
 #pragma pack(1)
 
-/*! \brief 2D point.
+/*! 2D point.
  * \ingroup UI
  */
 class Point

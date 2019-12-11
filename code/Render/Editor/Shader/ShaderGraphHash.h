@@ -18,7 +18,7 @@ namespace traktor
 class Node;
 class ShaderGraph;
 
-/*! \brief Shader graph hash.
+/*! Shader graph hash.
  * \ingroup Render
  */
 class T_DLLCLASS ShaderGraphHash : public Object

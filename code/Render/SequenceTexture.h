@@ -18,7 +18,7 @@ namespace traktor
 	namespace render
 	{
 
-/*! \brief Sequence, flipbook, texture.
+/*! Sequence, flipbook, texture.
  * \ingroup Render
  */
 class T_DLLCLASS SequenceTexture : public ITexture

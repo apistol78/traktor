@@ -24,7 +24,7 @@ class Guid;
 class IBitmap;
 class ScrollBar;
 
-/*! \brief Log list control.
+/*! Log list control.
  * \ingroup UI
  */
 class T_DLLCLASS LogList : public Widget

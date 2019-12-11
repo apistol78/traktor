@@ -16,7 +16,7 @@ namespace traktor
 
 class ISerializable;
 
-/*! \brief Object data reflection.
+/*! Object data reflection.
  * \ingroup Core
  *
  * Using serialization mechanism to create a
@@ -33,21 +33,21 @@ class T_DLLCLASS Reflection : public RfmCompound
 	T_RTTI_CLASS;
 
 public:
-	/*! \brief Create a reflection model from object.
+	/*! Create a reflection model from object.
 	 *
 	 * \param object Source object.
 	 * \return Reflection model.
 	 */
 	static Ref< Reflection > create(const ISerializable* object);
 
-	/*! \brief Apply changes on model back onto object.
+	/*! Apply changes on model back onto object.
 	 *
 	 * \param object Target object.
 	 * \return True if changes successfully applied.
 	 */
 	bool apply(ISerializable* object) const;
 
-	/*! \brief Use model to create a clone of the source object.
+	/*! Use model to create a clone of the source object.
 	 *
 	 * \return Clone of source object.
 	 */

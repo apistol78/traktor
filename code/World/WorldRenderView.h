@@ -20,7 +20,7 @@ namespace traktor
 	namespace world
 	{
 
-/*! \brief World render view.
+/*! World render view.
  * \ingroup World
  *
  * WorldRenderView represent the view of the world from the WorldRenderer's

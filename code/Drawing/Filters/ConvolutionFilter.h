@@ -17,7 +17,7 @@ namespace traktor
 	namespace drawing
 	{
 
-/*! \brief Convolution filter.
+/*! Convolution filter.
  * \ingroup Drawing
  */
 class T_DLLCLASS ConvolutionFilter : public IImageFilter

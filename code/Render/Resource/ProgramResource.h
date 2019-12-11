@@ -15,7 +15,7 @@ namespace traktor
 	namespace render
 	{
 
-/*! \brief Program resource base class.
+/*! Program resource base class.
  * \ingroup Render
  */
 class T_DLLCLASS ProgramResource : public ISerializable

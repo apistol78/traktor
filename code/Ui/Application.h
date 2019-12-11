@@ -29,7 +29,7 @@ class PropertyGroup;
 class Clipboard;
 class StyleSheet;
 
-/*! \brief User interface application.
+/*! User interface application.
  * \ingroup UI
  *
  * The Application singleton is used to register
@@ -44,7 +44,7 @@ class T_DLLCLASS Application : public EventSubject
 public:
 	static Application* getInstance();
 
-	/*! \brief Initialize UI application.
+	/*! Initialize UI application.
 	 *
 	 * This must be called prior to any UI related
 	 * calls are being made.
@@ -54,10 +54,10 @@ public:
 	 */
 	bool initialize(IWidgetFactory* widgetFactory, const StyleSheet* styleSheet);
 
-	/*! \brief Cleanup UI application. */
+	/*! Cleanup UI application. */
 	void finalize();
 
-	/*! \brief Process system events.
+	/*! Process system events.
 	 *
 	 * Process a single system event.
 	 * This method will return as soon as there are no
@@ -65,7 +65,7 @@ public:
 	 */
 	bool process();
 
-	/*! \brief Execute application.
+	/*! Execute application.
 	 *
 	 * Process all system events.
 	 * This method will block until the application
@@ -73,41 +73,41 @@ public:
 	 */
 	int execute();
 
-	/*! \brief Exit application.
+	/*! Exit application.
 	 *
 	 * Should be called from the application when
 	 * it wants to be terminated.
 	 */
 	void exit(int exitCode);
 
-	/*! \brief Get system event loop. */
+	/*! Get system event loop. */
 	IEventLoop* getEventLoop();
 
-	/*! \brief Get system widget factory. */
+	/*! Get system widget factory. */
 	IWidgetFactory* getWidgetFactory();
 
-	/*! \brief Get clipboard. */
+	/*! Get clipboard. */
 	Clipboard* getClipboard();
 
-	/*! \brief Set style sheet. */
+	/*! Set style sheet. */
 	void setStyleSheet(const StyleSheet* styleSheet);
 
-	/*! \brief Get style sheet. */
+	/*! Get style sheet. */
 	const StyleSheet* getStyleSheet() const;
 
-	/*! \brief Get properties. */
+	/*! Get properties. */
 	PropertyGroup* getProperties();
 
 	/*! \name Virtual key translation. */
 	//@{
 
-	/*! \brief Translate from key name to code.
+	/*! Translate from key name to code.
 	 *
 	 * \note Key name is unlocalized, i.e. it's always in English.
 	 */
 	VirtualKey translateVirtualKey(const std::wstring& keyName) const;
 
-	/*! \brief Translate from key code to name.
+	/*! Translate from key code to name.
 	 *
 	 * \note Key name is unlocalized, i.e. it's always in English.
 	 */
@@ -123,7 +123,7 @@ private:
 	Ref< PropertyGroup > m_properties;
 };
 
-/*! \brief Convenience wrappers. */
+/*! Convenience wrappers. */
 //@{
 
 inline int32_t getSystemDPI()

@@ -18,7 +18,7 @@ namespace traktor
 class InputPin;
 class OutputPin;
 
-/*! \brief Shader graph edge.
+/*! Shader graph edge.
  * \ingroup Render
  */
 class T_DLLCLASS Edge : public ISerializable

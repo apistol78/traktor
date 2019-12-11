@@ -23,7 +23,7 @@ class StackFrame;
 	namespace runtime
 	{
 
-/*! \brief Response from running target when a stack frame has been captured.
+/*! Response from running target when a stack frame has been captured.
  * \ingroup Runtime
  */
 class T_DLLCLASS ScriptDebuggerStackFrame : public ISerializable

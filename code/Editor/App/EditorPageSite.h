@@ -11,7 +11,7 @@ namespace traktor
 
 class EditorForm;
 
-/*! \brief Editor page site implementation.
+/*! Editor page site implementation.
  * \ingroup Editor
  *
  * Keep information about editor pages and their

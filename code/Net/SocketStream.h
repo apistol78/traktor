@@ -18,7 +18,7 @@ namespace traktor
 
 class Socket;
 
-/*! \brief Socket stream wrapper.
+/*! Socket stream wrapper.
  * \ingroup Net
  */
 class T_DLLCLASS SocketStream : public IStream

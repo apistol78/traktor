@@ -45,7 +45,7 @@ class MovieRenderer;
 class SpriteInstance;
 class ISoundRenderer;
 
-/*! \brief Stage Spark layer.
+/*! Stage Spark layer.
  * \ingroup Spark
  */
 class T_DLLCLASS SparkLayer
@@ -93,32 +93,32 @@ public:
 
 	virtual void resume() override final;
 
-	/*! \brief Get reference to current Spark movie player.
+	/*! Get reference to current Spark movie player.
 	 *
 	 * \return Spark movie player object.
 	 */
 	MoviePlayer* getMoviePlayer();
 
-	/*! \brief Get ActionScript context.
+	/*! Get ActionScript context.
 	 *
 	 * \return ActionScript context.
 	 */
 	ActionContext* getContext();
 
-	/*! \brief Get "_root" sprite.
+	/*! Get "_root" sprite.
 	 *
 	 * \return "_root" sprite.
 	 */
 	SpriteInstance* getRoot();
 
-	/*! \brief Get external movie.
+	/*! Get external movie.
 	 *
 	 * \param id Name of external movie.
 	 * \return External movie, null if doesn't exist.
 	 */
 	Movie* getExternal(const std::wstring& id) const;
 
-	/*! \brief Invoke methods registered through Spark ExternalInterface protocol.
+	/*! Invoke methods registered through Spark ExternalInterface protocol.
 	 *
 	 * \param methodName Name of registered method.
 	 * \param argc Argument count.
@@ -127,7 +127,7 @@ public:
 	 */
 	Any externalCall(const std::string& methodName, uint32_t argc, const Any* argv);
 
-	/*! \brief Get "safe" string which only contain glyphs which are valid with loaded fonts.
+	/*! Get "safe" string which only contain glyphs which are valid with loaded fonts.
 	 *
 	 * \param text Input text with potential unprintable glyphs.
 	 * \param empty String to return if no glyphs in input text was valid.
@@ -135,13 +135,13 @@ public:
 	 */
 	std::wstring getPrintableString(const std::wstring& text, const std::wstring& empty) const;
 
-	/*! \brief Set if Spark should be rendererd.
+	/*! Set if Spark should be rendererd.
 	 *
 	 * \param visible True if Spark should be rendered.
 	 */
 	void setVisible(bool visible) { m_visible = visible; }
 
-	/*! \brief Check if Spark is being rendered.
+	/*! Check if Spark is being rendered.
 	 *
 	 * \return True if Spark is being rendered.
 	 */

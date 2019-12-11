@@ -15,7 +15,7 @@ namespace traktor
 	namespace drawing
 	{
 
-/*! \brief Tone map filter.
+/*! Tone map filter.
  * \ingroup Drawing
  *
  * Adjust dynamic range of image so

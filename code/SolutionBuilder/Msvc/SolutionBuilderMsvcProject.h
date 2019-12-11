@@ -12,7 +12,7 @@ class GeneratorContext;
 class Solution;
 class Project;
 
-/*! \brief Visual Studio solution project settings. */
+/*! Visual Studio solution project settings. */
 class SolutionBuilderMsvcProject : public ISerializable
 {
 	T_RTTI_CLASS;

@@ -18,7 +18,7 @@ namespace traktor
 
 class InputValueSet;
 
-/*! \brief Abstract input signal node.
+/*! Abstract input signal node.
  * \ingroup Input
  *
  * Input node is used by the states in order

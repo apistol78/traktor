@@ -15,7 +15,7 @@ namespace traktor
 	namespace runtime
 	{
 
-/*! \brief Control debugger on running target.
+/*! Control debugger on running target.
  * \ingroup Runtime
  */
 class T_DLLCLASS ScriptDebuggerControl : public ISerializable

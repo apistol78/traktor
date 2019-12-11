@@ -20,7 +20,7 @@ namespace traktor
 /*! \ingroup Bullet */
 //@{
 
-/*! \brief Convert from Bullet vector. */
+/*! Convert from Bullet vector. */
 inline Vector4 fromBtVector3(const btVector3& v, float w)
 {
 	T_CONVERT_ASSERT(!isNanOrInfinite((v).x()));
@@ -30,7 +30,7 @@ inline Vector4 fromBtVector3(const btVector3& v, float w)
 	return Vector4(v.x(), v.y(), v.z(), w);
 }
 
-/*! \brief Convert to Bullet vector. */
+/*! Convert to Bullet vector. */
 inline btVector3 toBtVector3(const Vector4& v)
 {
 	T_CONVERT_ASSERT(!isNanOrInfinite((v).x()));
@@ -39,19 +39,19 @@ inline btVector3 toBtVector3(const Vector4& v)
 	return btVector3(v.x(), v.y(), v.z());
 }
 
-/*! \brief Convert from Bullet quaternion. */
+/*! Convert from Bullet quaternion. */
 inline Quaternion fromBtQuaternion(const btQuaternion& q)
 {
 	return Quaternion(q.x(), q.y(), q.z(), q.w());
 }
 
-/*! \brief Convert to Bullet quaternion. */
+/*! Convert to Bullet quaternion. */
 inline btQuaternion toBtQuaternion(const Quaternion& q)
 {
 	return btQuaternion(q.e.x(), q.e.y(), q.e.z(), q.e.w());
 }
 
-/*! \brief Convert from Bullet matrix. */
+/*! Convert from Bullet matrix. */
 inline Matrix33 fromBtMatrix(const btMatrix3x3& matrix)
 {
 	return Matrix33(
@@ -61,7 +61,7 @@ inline Matrix33 fromBtMatrix(const btMatrix3x3& matrix)
 	);
 }
 
-/*! \brief Convert from Bullet transform. */
+/*! Convert from Bullet transform. */
 inline Transform fromBtTransform(const btTransform& transform)
 {
 	return Transform(
@@ -70,7 +70,7 @@ inline Transform fromBtTransform(const btTransform& transform)
 	);
 }
 
-/*! \brief Convert to Bullet transform. */
+/*! Convert to Bullet transform. */
 inline btTransform toBtTransform(const Transform& transform)
 {
 	btQuaternion basis = toBtQuaternion(transform.rotation());

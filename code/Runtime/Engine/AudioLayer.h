@@ -27,7 +27,7 @@ class Sound;
 	namespace runtime
 	{
 
-/*! \brief Stage audio layer.
+/*! Stage audio layer.
  * \ingroup Runtime
  */
 class T_DLLCLASS AudioLayer : public Layer
@@ -47,23 +47,23 @@ public:
 
 	virtual void destroy() override;
 
-	/*! \brief Play sound. */
+	/*! Play sound. */
 	void play();
 
-	/*! \brief Stop sound. */
+	/*! Stop sound. */
 	void stop();
 
-	/*! \brief Fade off sound. */
+	/*! Fade off sound. */
 	void fadeOff();
 
-	/*! \brief Set sound effect parameter.
+	/*! Set sound effect parameter.
 	 *
 	 * \param parameterName Name of effect parameter.
 	 * \param value Effect parameter value.
 	 */
 	void setParameter(const std::wstring& parameterName, float value);
 
-	/*! \brief Tween effect parameter over a period of time.
+	/*! Tween effect parameter over a period of time.
 	 *
 	 * \param parameterName Name of effect parameter.
 	 * \param fromValue Effect parameter "from" value.

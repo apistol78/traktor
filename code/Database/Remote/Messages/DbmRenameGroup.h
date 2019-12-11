@@ -16,7 +16,7 @@ namespace traktor
 	namespace db
 	{
 
-/*! \brief Rename group.
+/*! Rename group.
  * \ingroup Database
  */
 class T_DLLCLASS DbmRenameGroup : public IMessage

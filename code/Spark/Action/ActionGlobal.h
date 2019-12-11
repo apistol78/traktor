@@ -17,7 +17,7 @@ namespace traktor
 
 struct CallArgs;
 
-/*! \brief ActionScript global object.
+/*! ActionScript global object.
  * \ingroup Spark
  */
 class T_DLLCLASS ActionGlobal : public ActionObject

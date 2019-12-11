@@ -20,7 +20,7 @@ namespace traktor
 
 class Joint;
 
-/*! \brief Animation skeleton.
+/*! Animation skeleton.
  * \ingroup Animation
  */
 class T_DLLCLASS Skeleton : public ISerializable

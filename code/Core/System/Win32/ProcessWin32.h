@@ -15,7 +15,7 @@
 namespace traktor
 {
 
-/*! \brief Win32 system process.
+/*! Win32 system process.
  * \ingroup Core
  */
 class T_DLLCLASS ProcessWin32 : public IProcess

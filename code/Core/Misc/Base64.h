@@ -15,7 +15,7 @@
 namespace traktor
 {
 
-/*! \brief Base64 encode binary data.
+/*! Base64 encode binary data.
  * \ingroup Core
  */
 class T_DLLCLASS Base64 : public Object

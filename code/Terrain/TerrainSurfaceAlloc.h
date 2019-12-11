@@ -8,7 +8,7 @@ namespace traktor
 	namespace terrain
 	{
 
-/*! \brief Terrain surface allocator.
+/*! Terrain surface allocator.
  * \ingroup Terrain
  */
 class TerrainSurfaceAlloc : public Object
@@ -34,7 +34,7 @@ public:
 
 	TerrainSurfaceAlloc();
 
-	/*! \brief Alloc tile.
+	/*! Alloc tile.
 	 *
 	 * \param size Tile size, 0 = 1024, 1 = 512, 2 = 256, 3 = 128
 	 */

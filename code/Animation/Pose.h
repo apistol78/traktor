@@ -18,7 +18,7 @@ namespace traktor
 	namespace animation
 	{
 
-/*! \brief Skeleton pose.
+/*! Skeleton pose.
  * \ingroup Animation
  */
 class T_DLLCLASS Pose : public ISerializable

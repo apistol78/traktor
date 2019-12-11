@@ -21,7 +21,7 @@ namespace traktor
 
 class Shader;
 
-/*! \brief Generic compute step.
+/*! Generic compute step.
  * \ingroup Render
  */
 class T_DLLCLASS ImageProcessStepCompute : public ImageProcessStep

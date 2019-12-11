@@ -14,7 +14,7 @@ namespace traktor
 
 class Attribute;
 
-/*! \brief Member serialization.
+/*! Member serialization.
  * \ingroup Core
  *
  * Member class is a named descriptor of a member reference.
@@ -43,13 +43,13 @@ public:
 
 	virtual ~Member() {}
 
-	/*! \brief Get member name.
+	/*! Get member name.
 	 *
 	 * \return Member name.
 	 */
 	const wchar_t* const getName() const { return m_name; }
 
-	/*! \brief Get member attributes.
+	/*! Get member attributes.
 	 *
 	 * Get member attributes if applicable.
 	 *
@@ -57,25 +57,25 @@ public:
 	 */
 	const Attribute* getAttributes() const { return m_attributes; }
 
-	/*! \brief Get member reference.
+	/*! Get member reference.
 	 *
 	 * \return Member reference.
 	 */
 	operator value_type& () const { return m_ref; }
 
-	/*! \brief Dereference member.
+	/*! Dereference member.
 	 *
 	 * \return Member reference.
 	 */
 	value_type& operator * () const { return m_ref; }
 
-	/*! \brief Dereference member.
+	/*! Dereference member.
 	 *
 	 * \return Member pointer.
 	 */
 	value_type* operator -> () const { return &m_ref; }
 
-	/*! \brief Assign value to member.
+	/*! Assign value to member.
 	 *
 	 * \param value New member value.
 	 */
@@ -87,7 +87,7 @@ private:
 	const Attribute* m_attributes;
 };
 
-/*! \brief Member serialization.
+/*! Member serialization.
  * \ingroup Core
  *
  * Member class is a named descriptor of a member reference.
@@ -116,13 +116,13 @@ public:
 
 	virtual ~Member() {}
 
-	/*! \brief Get member name.
+	/*! Get member name.
 	 *
 	 * \return Member name.
 	 */
 	const wchar_t* const getName() const { return m_name; }
 
-	/*! \brief Get member attributes.
+	/*! Get member attributes.
 	 *
 	 * Get member attributes if applicable.
 	 *
@@ -130,25 +130,25 @@ public:
 	 */
 	virtual const Attribute* getAttributes() const { return m_attributes; }
 
-	/*! \brief Get member reference.
+	/*! Get member reference.
 	 *
 	 * \return Member reference.
 	 */
 	operator value_type& () const { return m_ref; }
 
-	/*! \brief Dereference member.
+	/*! Dereference member.
 	 *
 	 * \return Member reference.
 	 */
 	value_type& operator * () const { return m_ref; }
 
-	///*! \brief Dereference member.
+	///*! Dereference member.
 	// *
 	// * \return Member pointer.
 	// */
 	//value_type* operator -> () const { return &m_ref; }
 
-	/*! \brief Assign value to member.
+	/*! Assign value to member.
 	 *
 	 * \param value New member value.
 	 */
@@ -160,7 +160,7 @@ private:
 	const Attribute* m_attributes;
 };
 
-/*! \brief Any-data member serialization.
+/*! Any-data member serialization.
  * \ingroup Core
  *
  * Specialized Member-class for data members as we want
@@ -177,25 +177,25 @@ public:
 	{
 	}
 
-	/*! \brief Get member name.
+	/*! Get member name.
 	 *
 	 * \return Member name.
 	 */
 	const wchar_t* const getName() const { return m_name; }
 
-	/*! \brief Get pointer to binary blob.
+	/*! Get pointer to binary blob.
 	 *
 	 * \return Pointer to binary blob.
 	 */
 	void* getBlob() const { return m_blob; }
 
-	/*! \brief Get size of binary blob.
+	/*! Get size of binary blob.
 	 *
 	 * \return Size of binary blob.
 	 */
 	uint32_t getBlobSize() const { return m_blobSize; }
 
-	/*! \brief Set size of binary blob.
+	/*! Set size of binary blob.
 	 *
 	 * \param blobSize Size of binary blob.
 	 */

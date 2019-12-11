@@ -23,7 +23,7 @@ namespace traktor
 	namespace render
 	{
 
-/*! \brief Shader graph traversal helper.
+/*! Shader graph traversal helper.
  * \ingroup Render
  */
 class ShaderGraphTraverse
@@ -268,7 +268,7 @@ struct CollectOutputs
 	}
 };
 
-/*! \brief Traverse shader graph nodes through a root set.
+/*! Traverse shader graph nodes through a root set.
  * \ingroup Render
  *
  * \param shaderGraph Shader graph.
@@ -281,22 +281,22 @@ void shaderGraphTraverse(const ShaderGraph* shaderGraph, const RefArray< Node >&
 	ShaderGraphTraverse(shaderGraph, roots).preorder(visitor);
 }
 
-/*! \brief Check if an input propagate to a target node.
+/*! Check if an input propagate to a target node.
  * \ingroup Render
  */
 bool T_DLLCLASS doesInputPropagateToNode(const ShaderGraph* shaderGraph, const InputPin* inputPin, Node* targetNode);
 
-/*! \brief Check if two pins are connected.
+/*! Check if two pins are connected.
  * \ingroup Render
  */
 bool T_DLLCLASS arePinsConnected(const ShaderGraph* shaderGraph, const OutputPin* outputPin, const InputPin* inputPin);
 
-/*! \brief Get merging, common, outputs from a set of input pins.
+/*! Get merging, common, outputs from a set of input pins.
  * \ingroup Render
  */
 void T_DLLCLASS getMergingOutputs(const ShaderGraph* shaderGraph, const AlignedVector< const InputPin* >& inputPins, AlignedVector< const OutputPin* >& outMergedOutputPins);
 
-/*! \brief Get non-dependent outputs from a an input and a set of dependent output pins.
+/*! Get non-dependent outputs from a an input and a set of dependent output pins.
  * \ingroup Render
  */
 void T_DLLCLASS getNonDependentOutputs(const ShaderGraph* shaderGraph, const InputPin* inputPin, const AlignedVector< const OutputPin* >& dependentOutputPins, AlignedVector< const OutputPin* >& outOutputPins);

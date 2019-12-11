@@ -18,7 +18,7 @@ namespace traktor
 
 class ToolBarItem;
 
-/*! \brief Tool bar item group.
+/*! Tool bar item group.
  * \ingroup UI
  */
 class T_DLLCLASS ToolBarItemGroup : public Object

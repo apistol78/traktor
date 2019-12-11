@@ -18,7 +18,7 @@ namespace traktor
 
 class Act;
 
-/*! \brief Theater scene controller.
+/*! Theater scene controller.
  * \ingroup Theater
  */
 class T_DLLCLASS TheaterController : public scene::ISceneController

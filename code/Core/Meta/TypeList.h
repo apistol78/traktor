@@ -10,7 +10,7 @@ namespace traktor
 
 struct Empty {};
 
-/*! \brief Type list template. */
+/*! Type list template. */
 template <
 	typename Type1 = Empty,
 	typename Type2 = Empty,
@@ -26,21 +26,21 @@ struct TypeList
 	enum { length = tail_t::length + 1 };
 };
 
-/*! \brief Type list template, empty specialization. */
+/*! Type list template, empty specialization. */
 template <>
 struct TypeList< Empty, Empty, Empty, Empty, Empty >
 {
 	enum { length = 0 };
 };
 
-/*! \brief Type list length. */
+/*! Type list length. */
 template < typename TL >
 struct Length
 {
 	enum { value = TL::length };
 };
 
-/*! \brief Get type at index from type list. */
+/*! Get type at index from type list. */
 template <
 	typename TL,
 	int Index,
@@ -53,7 +53,7 @@ struct Get
 	typedef typename Get< typename TL::tail_t, Index, Depth + 1 >::type_t type_t;
 };
 
-/*! \brief Get type at index from type list, found index specialization. */
+/*! Get type at index from type list, found index specialization. */
 template <
 	typename TL,
 	int Index,
@@ -65,7 +65,7 @@ struct Get < TL, Index, Depth, true, OutOfBounds >
 	typedef typename TL::head_t type_t;
 };
 
-/*! \brief Get type at index from type list, out of bounds specialization. */
+/*! Get type at index from type list, out of bounds specialization. */
 template <
 	typename TL,
 	int Index,

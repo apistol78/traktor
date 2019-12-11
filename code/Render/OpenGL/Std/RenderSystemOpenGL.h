@@ -23,7 +23,7 @@ namespace traktor
 
 class Window;
 
-/*! \brief OpenGL render system.
+/*! OpenGL render system.
  * \ingroup OGL
  *
  * OpenGL render system implementation.

@@ -12,7 +12,7 @@ class Context;
 class LocalGroup;
 class Transaction;
 
-/*! \brief Local instance.
+/*! Local instance.
  * \ingroup Database
  */
 class LocalInstance : public IProviderInstance

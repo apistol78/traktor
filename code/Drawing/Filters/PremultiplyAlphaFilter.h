@@ -15,7 +15,7 @@ namespace traktor
 	namespace drawing
 	{
 
-/*! \brief Multiply color with alpha filter.
+/*! Multiply color with alpha filter.
  * \ingroup Drawing
  */
 class T_DLLCLASS PremultiplyAlphaFilter : public IImageFilter

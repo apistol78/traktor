@@ -15,7 +15,7 @@ namespace traktor
 	namespace world
 	{
 
-/*! \brief Component data interface.
+/*! Component data interface.
  * \ingroup World
  */
 class T_DLLCLASS IEntityComponentData : public ISerializable

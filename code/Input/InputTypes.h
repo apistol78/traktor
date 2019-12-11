@@ -16,7 +16,7 @@ namespace traktor
 	namespace input
 	{
 
-/*! \brief Input control type.
+/*! Input control type.
  * \ingroup Input
  */
 enum InputDefaultControlType
@@ -223,7 +223,7 @@ enum InputDefaultControlType
 	DtKeyLastIndex = DtKeyMediaSelect
 };
 
-/*! \brief Input device category.
+/*! Input device category.
  * \ingroup Input
  */
 enum InputCategory
@@ -239,7 +239,7 @@ enum InputCategory
 	CtUnknown		= 256
 };
 
-/*! \brief Input rumble specification.
+/*! Input rumble specification.
  * \ingroup Input
  */
 struct InputRumble
@@ -248,10 +248,10 @@ struct InputRumble
 	float highFrequencyRumble;
 };
 
-/*! \brief Shader parameter handle. */
+/*! Shader parameter handle. */
 typedef uint32_t handle_t;
 
-/*! \brief Return handle from parameter name.
+/*! Return handle from parameter name.
  *
  * \param name Parameter name.
  * \return Parameter handle.

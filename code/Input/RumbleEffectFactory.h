@@ -15,7 +15,7 @@ namespace traktor
 	namespace input
 	{
 
-/*! \brief Rumble effect resource factory.
+/*! Rumble effect resource factory.
  * \ingroup Input
  */
 class T_DLLCLASS RumbleEffectFactory : public resource::IResourceFactory

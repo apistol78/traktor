@@ -24,7 +24,7 @@ class Rect;
 class Point;
 class SequencerControl;
 
-/*! \brief Sequence item.
+/*! Sequence item.
  * \ingroup UI
  */
 class T_DLLCLASS SequenceItem

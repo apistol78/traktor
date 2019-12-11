@@ -10,7 +10,7 @@ namespace traktor
 /*! \ingroup Core */
 //@{
 
-/*! \brief Aligned vector member. */
+/*! Aligned vector member. */
 template < typename ValueType, typename ValueMember = Member< ValueType > >
 class MemberAlignedVector : public MemberArray
 {

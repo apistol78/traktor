@@ -18,7 +18,7 @@ namespace traktor
 
 class ContextOpenGLES2;
 
-/*! \brief OpenGL ES 2.0 render system.
+/*! OpenGL ES 2.0 render system.
  * \ingroup OGL
  *
  * OpenGL render system implementation.

@@ -19,7 +19,7 @@ namespace traktor
 
 class IAllocator;
 
-/*! \brief Pool allocator.
+/*! Pool allocator.
  * \ingroup Core
  *
  * Pool allocator is designed to allocate continuous chunks of
@@ -47,13 +47,13 @@ public:
 
 	virtual ~PoolAllocator();
 
-	/*! \brief Enter allocation scope. */
+	/*! Enter allocation scope. */
 	void enter();
 
-	/*! \brief Leave allocation scope. */
+	/*! Leave allocation scope. */
 	void leave();
 
-	/*! \brief Allocate chunk.
+	/*! Allocate chunk.
 	 *
 	 * \param size Size of chunk.
 	 * \param align Alignment of chunk.
@@ -61,7 +61,7 @@ public:
 	 */
 	void* alloc(uint32_t size, uint32_t align);
 
-	/*! \brief Allocate object.
+	/*! Allocate object.
 	 *
 	 * \return Pointer to object.
 	 */
@@ -72,7 +72,7 @@ public:
 		return new (ptr) Type();
 	}
 
-	/*! \brief Allocate array of objects.
+	/*! Allocate array of objects.
 	 *
 	 * \param count Number of objects.
 	 * \return Pointer to first object.
@@ -87,7 +87,7 @@ public:
 		return new (ptr) Type [count];
 	}
 
-	/*! \brief Allocate array of object pointers.
+	/*! Allocate array of object pointers.
 	 *
 	 * \param count Number of object pointers.
 	 * \return Pointer to first object pointer.

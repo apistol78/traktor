@@ -17,7 +17,7 @@ namespace traktor
 
 class ISerializer;
 
-/*! \brief Linear transform.
+/*! Linear transform.
  * \ingroup Core
  */
 class T_MATH_ALIGN16 T_DLLCLASS Transform

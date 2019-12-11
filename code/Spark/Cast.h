@@ -17,19 +17,19 @@ namespace traktor
 	namespace spark
 	{
 
-/*! \brief Cast AS value to Any.
+/*! Cast AS value to Any.
  * \ingroup Spark
  */
 Any T_DLLCLASS castActionToAny(const ActionValue& value);
 
-/*! \brief Cast Any value to AS.
+/*! Cast Any value to AS.
  * \ingroup Spark
  */
 ActionValue T_DLLCLASS castAnyToAction(const Any& value);
 
 	}
 
-/*! \brief AS value cast rule.
+/*! AS value cast rule.
  * \ingroup Spark
  */
 template < >
@@ -56,7 +56,7 @@ struct CastAny < spark::ActionValue, false >
 	}
 };
 
-/*! \brief AS value cast rule.
+/*! AS value cast rule.
  * \ingroup Spark
  */
 template < >

@@ -6,7 +6,7 @@
 namespace traktor
 {
 
-/*! \brief Allocator interface.
+/*! Allocator interface.
  * \ingroup Core
  *
  * Allocators used by the Heap must implement this interface.

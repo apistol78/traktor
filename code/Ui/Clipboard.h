@@ -30,7 +30,7 @@ class Image;
 
 class IClipboard;
 
-/*! \brief Clipboard
+/*! Clipboard
  * \ingroup UI
  */
 class T_DLLCLASS Clipboard : public Object

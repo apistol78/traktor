@@ -17,7 +17,7 @@ class IEditor;
 
 class ShaderDependencyTracker;
 
-/*! \brief Render editor plugin.
+/*! Render editor plugin.
  * \ingroup Render
  */
 class RenderEditorPlugin : public editor::IEditorPlugin

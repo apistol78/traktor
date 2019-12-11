@@ -5,7 +5,7 @@ namespace traktor
 	namespace spark
 	{
 
-/*! \brief ActionScript opcodes.
+/*! ActionScript opcodes.
  * \ingroup Spark
  */
 enum ActionOpcode

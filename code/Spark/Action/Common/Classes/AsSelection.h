@@ -10,7 +10,7 @@ namespace traktor
 
 struct CallArgs;
 
-/*! \brief Selection class.
+/*! Selection class.
  * \ingroup Spark
  */
 class AsSelection : public ActionObject

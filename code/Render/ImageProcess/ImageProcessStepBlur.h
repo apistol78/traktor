@@ -22,7 +22,7 @@ namespace traktor
 
 class Shader;
 
-/*! \brief Post blur step.
+/*! Post blur step.
  * \ingroup Render
  */
 class T_DLLCLASS ImageProcessStepBlur : public ImageProcessStep

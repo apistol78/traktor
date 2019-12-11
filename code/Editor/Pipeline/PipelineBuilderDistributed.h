@@ -74,7 +74,7 @@ private:
 	int32_t m_succeeded;
 	int32_t m_failed;
 
-	/*! \brief Perform build. */
+	/*! Perform build. */
 	bool performBuild(const IPipelineDependencySet* dependencySet, const PipelineDependency* dependency);
 };
 

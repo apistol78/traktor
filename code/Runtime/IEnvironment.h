@@ -35,7 +35,7 @@ class Database;
 	namespace runtime
 	{
 
-/*! \brief Runtime environment.
+/*! Runtime environment.
  * \ingroup Runtime
  *
  * This class represent the runtime environment.

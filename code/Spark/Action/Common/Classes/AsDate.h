@@ -9,7 +9,7 @@ namespace traktor
 
 class Date;
 
-/*! \brief Date class.
+/*! Date class.
  * \ingroup Spark
  */
 class AsDate : public ActionClass

@@ -15,7 +15,7 @@ namespace traktor
 	namespace db
 	{
 
-/*! \brief Single handle result.
+/*! Single handle result.
  * \ingroup Database
  */
 class T_DLLCLASS MsgHandleResult : public IMessage

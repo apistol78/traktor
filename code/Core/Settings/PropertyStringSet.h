@@ -14,7 +14,7 @@
 namespace traktor
 {
 
-/*! \brief String set property value.
+/*! String set property value.
  * \ingroup Core
  */
 class T_DLLCLASS PropertyStringSet : public IPropertyValue

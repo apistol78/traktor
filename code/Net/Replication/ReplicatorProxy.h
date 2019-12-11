@@ -134,7 +134,7 @@ public:
 	 */
 	void setSendState(bool sendState);
 
-	/*! \brief Send high priority event to this ghost.
+	/*! Send high priority event to this ghost.
 	 */
 	void sendEvent(const ISerializable* eventObject, bool inOrder);
 

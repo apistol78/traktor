@@ -17,7 +17,7 @@ namespace traktor
 	namespace spark
 	{
 
-/*! \brief Base of garbage collectable classes.
+/*! Base of garbage collectable classes.
  * \ingroup Spark
  */
 class T_DLLCLASS Collectable : public Object
@@ -49,13 +49,13 @@ public:
 
 	virtual void release(void* owner) const override final;
 
-	/*! \brief Register a weak reference. */
+	/*! Register a weak reference. */
 	void addWeakRef(IWeakRefDispose* weakRefDispose);
 
-	/*! \brief Remove a weak reference. */
+	/*! Remove a weak reference. */
 	void releaseWeakRef(IWeakRefDispose* weakRefDispose);
 
-	/*! \brief Get alive collectible instance count. */
+	/*! Get alive collectible instance count. */
 	static int32_t getInstanceCount();
 
 protected:

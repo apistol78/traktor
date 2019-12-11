@@ -7,7 +7,7 @@ namespace traktor
 	namespace terrain
 	{
 
-/*! \brief Brush falloff.
+/*! Brush falloff.
  * \ingroup Terrain
  */
 class IFallOff : public Object
@@ -15,7 +15,7 @@ class IFallOff : public Object
 	T_RTTI_CLASS;
 
 public:
-	/*! \brief Evaluate brush falloff.
+	/*! Evaluate brush falloff.
 	 *
 	 * \param x Brush X coordinate, -1 to 1.
 	 * \param y Brush Y coordinate, -1 to 1.

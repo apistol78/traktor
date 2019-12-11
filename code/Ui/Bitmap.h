@@ -26,7 +26,7 @@ class Image;
 	namespace ui
 	{
 
-/*! \brief Bitmap.
+/*! Bitmap.
  * \ingroup UI
  *
  * The Bitmap class is a wrapper for system
@@ -47,7 +47,7 @@ public:
 
 	virtual ~Bitmap();
 
-	/*! \brief Create empty bitmap.
+	/*! Create empty bitmap.
 	 *
 	 * \param width Width of bitmap.
 	 * \param height Height of bitmap.
@@ -55,14 +55,14 @@ public:
 	 */
 	bool create(uint32_t width, uint32_t height);
 
-	/*! \brief Create a copy of an image.
+	/*! Create a copy of an image.
 	 *
 	 * \param image Source image.
 	 * \return True if successful.
 	 */
 	bool create(drawing::Image* image);
 
-	/*! \brief Create a sub-copy of an image.
+	/*! Create a sub-copy of an image.
 	 *
 	 * \param image Source image.
 	 * \param srcRect Source rectangle from image.
@@ -70,13 +70,13 @@ public:
 	 */
 	bool create(drawing::Image* image, const ui::Rect& srcRect);
 
-	/*! \brief Destroy bitmap. */
+	/*! Destroy bitmap. */
 	virtual void destroy() override final;
 
-	/*! \brief Copy image into bitmap. */
+	/*! Copy image into bitmap. */
 	void copyImage(drawing::Image* image);
 
-	/*! \brief Copy sub-rectangle from image into bitmap.
+	/*! Copy sub-rectangle from image into bitmap.
 	 *
 	 * \param image Source image.
 	 * \param srcRect Source rectangle.
@@ -84,19 +84,19 @@ public:
 	 */
 	void copySubImage(drawing::Image* image, const ui::Rect& srcRect, const ui::Point& destPos);
 
-	/*! \brief Get image from bitmap. */
+	/*! Get image from bitmap. */
 	virtual Ref< drawing::Image > getImage() const override final;
 
-	/*! \brief Get size of bitmap in pixels. */
+	/*! Get size of bitmap in pixels. */
 	virtual Size getSize() const override final;
 
-	/*! \brief Get system bitmap. */
+	/*! Get system bitmap. */
 	virtual ISystemBitmap* getSystemBitmap() const override final;
 
-	/*! \brief Load bitmap from file. */
+	/*! Load bitmap from file. */
 	static Ref< Bitmap > load(const std::wstring& fileName, int32_t dpi = -1);
 
-	/*! \brief Load bitmap from resource. */
+	/*! Load bitmap from resource. */
 	static Ref< Bitmap > load(const void* resource, uint32_t size, const std::wstring& extension, int32_t dpi = -1);
 
 private:

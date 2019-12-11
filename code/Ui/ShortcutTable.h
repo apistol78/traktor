@@ -20,7 +20,7 @@ namespace traktor
 
 class KeyDownEvent;
 
-/*! \brief Shortcut table.
+/*! Shortcut table.
  * \ingroup UI
  */
 class T_DLLCLASS ShortcutTable : public EventSubject

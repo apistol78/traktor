@@ -22,7 +22,7 @@ namespace traktor
 		instance = 0; \
 	}
 
-/*! \brief Check if device is a XInput device.
+/*! Check if device is a XInput device.
  *
  * Enum each PNP device using WMI and check each device ID to see if it contains
  * "IG_" (ex. "VID_045E&PID_028E&IG_00").  If it does, then it's an XInput device

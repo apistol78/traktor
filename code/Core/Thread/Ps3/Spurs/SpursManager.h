@@ -17,7 +17,7 @@ namespace traktor
 
 class SpursJobQueue;
 
-/*! \brief Spurs job manager.
+/*! Spurs job manager.
  * \ingroup Core
  */
 class T_DLLCLASS SpursManager : public ISingleton

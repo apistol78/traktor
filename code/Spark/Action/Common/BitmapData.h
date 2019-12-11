@@ -27,7 +27,7 @@ class SpriteInstance;
 class Point;
 class Rectangle;
 
-/*! \brief ActionScript boolean wrapper.
+/*! ActionScript boolean wrapper.
  * \ingroup Spark
  */
 class T_DLLCLASS BitmapData : public ActionObjectRelay

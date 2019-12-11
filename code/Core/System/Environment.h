@@ -15,7 +15,7 @@
 namespace traktor
 {
 
-/*! \brief OS environment.
+/*! OS environment.
  * \ingroup Core
  */
 class T_DLLCLASS Environment : public Object

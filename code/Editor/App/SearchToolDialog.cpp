@@ -44,7 +44,7 @@ namespace traktor
 		namespace
 		{
 
-/*! \brief Stylize member name.
+/*! Stylize member name.
  *
  * Transform from internal naming convention to
  * more human acceptable form.

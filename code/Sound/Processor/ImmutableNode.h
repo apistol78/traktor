@@ -19,7 +19,7 @@ namespace traktor
 	namespace sound
 	{
 
-/*! \brief Immutable processor graph node.
+/*! Immutable processor graph node.
  * \ingroup Sound
  */
 class T_DLLCLASS ImmutableNode : public Node

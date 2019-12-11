@@ -15,7 +15,7 @@ namespace traktor
 	namespace sound
 	{
 
-/*! \brief Ring modulation filter.
+/*! Ring modulation filter.
  * \ingroup Sound
  */
 class T_DLLCLASS RingModulationFilter : public IFilter

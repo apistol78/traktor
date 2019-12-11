@@ -16,7 +16,7 @@ namespace traktor
 
 class ISerializable;
 
-/*! \brief Calculate hash of object.
+/*! Calculate hash of object.
  * \ingroup Core
  *
  * Calculates an Adler-32 hash from a given object

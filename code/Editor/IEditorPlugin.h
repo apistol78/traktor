@@ -33,7 +33,7 @@ class Widget;
 
 class IEditorPageSite;
 
-/*! \brief Editor plugin.
+/*! Editor plugin.
  * \ingroup Editor
  *
  * Editor plugins are windowless extensions
@@ -44,7 +44,7 @@ class T_DLLCLASS IEditorPlugin : public Object
 	T_RTTI_CLASS;
 
 public:
-	/*! \brief Create plugin.
+	/*! Create plugin.
 	 *
 	 * \param parent UI parent widget.
 	 * \param site Editor site interface.
@@ -52,10 +52,10 @@ public:
 	 */
 	virtual bool create(ui::Widget* parent, IEditorPageSite* site) = 0;
 
-	/*! \brief Destroy plugin. */
+	/*! Destroy plugin. */
 	virtual void destroy() = 0;
 
-	/*! \brief Handle shortcut command.
+	/*! Handle shortcut command.
 	 *
 	 * \param command Shortcut command.
 	 * \param result Result from previously action; plugins get all commands even if it's already has been processed.
@@ -63,17 +63,17 @@ public:
 	 */
 	virtual bool handleCommand(const ui::Command& command, bool result) = 0;
 
-	/*! \brief Handle database event.
+	/*! Handle database event.
 	 *
 	 * \param eventId Instance guid.
 	 */
 	virtual void handleDatabaseEvent(db::Database* database, const Guid& eventId) = 0;
 
-	/*! \brief Workspace opened.
+	/*! Workspace opened.
 	 */
 	virtual void handleWorkspaceOpened() = 0;
 
-	/*! \brief Workspace closed.
+	/*! Workspace closed.
 	 */
 	virtual void handleWorkspaceClosed() = 0;
 };

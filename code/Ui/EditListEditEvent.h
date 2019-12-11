@@ -18,7 +18,7 @@ namespace traktor
 
 class Edit;
 
-/*! \brief Edit event.
+/*! Edit event.
  * \ingroup UI
  */
 class T_DLLCLASS EditListEditEvent : public ContentChangeEvent

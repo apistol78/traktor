@@ -15,7 +15,7 @@ namespace traktor
 	namespace db
 	{
 
-/*! \brief Instance guid changed event.
+/*! Instance guid changed event.
  * \ingroup Database
  */
 class T_DLLCLASS EvtInstanceGuidChanged : public EvtInstance
@@ -27,7 +27,7 @@ public:
 
 	EvtInstanceGuidChanged(const Guid& instanceGuid, const Guid& instancePreviousGuid);
 
-	/*! \brief Instance's previous guid.
+	/*! Instance's previous guid.
 	 *
 	 * \return Previous guid of instance.
 	 */

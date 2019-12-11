@@ -17,7 +17,7 @@ namespace traktor
 	namespace ui
 	{
 
-/*! \brief Tool tip event.
+/*! Tool tip event.
  * \ingroup UI
  */
 class T_DLLCLASS ToolTipEvent : public Event

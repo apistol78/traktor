@@ -17,7 +17,7 @@ namespace traktor
 	namespace runtime
 	{
 
-/*! \brief Deployment editor settings page.
+/*! Deployment editor settings page.
  * \ingroup Runtime
  */
 class T_DLLCLASS DeploySettingsPage : public editor::ISettingsPage

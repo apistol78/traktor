@@ -8,7 +8,7 @@ namespace traktor
 	namespace sb
 	{
 
-/*! \brief Visual Studio librarian tool. */
+/*! Visual Studio librarian tool. */
 class SolutionBuilderMsvcLibrarianTool : public SolutionBuilderMsvcTool
 {
 	T_RTTI_CLASS;

@@ -5,7 +5,7 @@
 namespace traktor
 {
 
-/*! \brief Get call stack.
+/*! Get call stack.
  *
  * \param ncs Number of call stack entries in cs.
  * \param outCs Array of call stack entries.

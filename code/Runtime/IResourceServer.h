@@ -22,7 +22,7 @@ class IResourceManager;
 	namespace runtime
 	{
 
-/*! \brief Resource server.
+/*! Resource server.
  * \ingroup Runtime
  */
 class T_DLLCLASS IResourceServer : public IServer

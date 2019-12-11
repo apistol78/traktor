@@ -17,7 +17,7 @@ class ShortcutEdit;
 	namespace editor
 	{
 
-/*! \brief Interface for settings pages.
+/*! Interface for settings pages.
  * \ingroup Editor
  */
 class ShortcutsSettingsPage : public ISettingsPage

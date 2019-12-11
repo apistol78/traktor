@@ -17,7 +17,7 @@ namespace traktor
 
 class RemoteConnection;
 
-/*! \brief Remote database provider.
+/*! Remote database provider.
  * \ingroup Database
  */
 class T_DLLCLASS RemoteDatabase : public IProviderDatabase

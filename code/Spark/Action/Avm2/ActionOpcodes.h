@@ -7,7 +7,7 @@ namespace traktor
 	namespace spark
 	{
 
-/*! \brief AVM2 opcodes.
+/*! AVM2 opcodes.
  * \ingroup Spark
  */
 enum Avm2OpCodes

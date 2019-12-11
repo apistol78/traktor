@@ -19,7 +19,7 @@ namespace traktor
 
 class SHMatrix;
 
-/*! \brief Spherical harmonics coefficients.
+/*! Spherical harmonics coefficients.
  * \ingroup Render
  */
 class T_DLLCLASS SHCoeffs : public ISerializable

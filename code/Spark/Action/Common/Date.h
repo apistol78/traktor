@@ -15,7 +15,7 @@ namespace traktor
 	namespace spark
 	{
 
-/*! \brief ActionScript date.
+/*! ActionScript date.
  * \ingroup Spark
  */
 class T_DLLCLASS Date : public ActionObjectRelay

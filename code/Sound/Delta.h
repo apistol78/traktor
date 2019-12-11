@@ -22,7 +22,7 @@ class BitWriter;
 class T_DLLCLASS Delta
 {
 public:
-	/*! \brief Encode signed 16-bit sample data with delta encoding.
+	/*! Encode signed 16-bit sample data with delta encoding.
 	* \ingroup Sound
 	*
 	* \param data Input raw data
@@ -32,7 +32,7 @@ public:
 	*/
 	static uint32_t encode(const int16_t* data, uint32_t count, BitWriter& bw);
 
-	/*! \brief Decode delta encoded block into 16-bit signed data.
+	/*! Decode delta encoded block into 16-bit signed data.
 	* \ingroup Sound
 	*/
 	static void decode(BitReader& br, uint32_t count, int16_t* out);

@@ -15,7 +15,7 @@ namespace traktor
 	namespace drawing
 	{
 
-/*! \brief Separate alpha from a premultiplied alpha image.
+/*! Separate alpha from a premultiplied alpha image.
  * \ingroup Drawing
  */
 class T_DLLCLASS SeparateAlphaFilter : public IImageFilter

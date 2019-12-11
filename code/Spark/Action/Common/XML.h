@@ -21,7 +21,7 @@ class Thread;
 class ActionContext;
 struct CallArgs;
 
-/*! \brief ActionScript XML document.
+/*! ActionScript XML document.
  * \ingroup Spark
  */
 class T_DLLCLASS XML : public XMLNode

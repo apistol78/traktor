@@ -30,7 +30,7 @@ class VertexBuffer;
 
 class ColorTransform;
 
-/*! \brief Simple unit-quad shape.
+/*! Simple unit-quad shape.
  * \ingroup Spark
  */
 class AccQuad : public Object

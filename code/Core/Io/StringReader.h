@@ -18,7 +18,7 @@ namespace traktor
 
 class IStream;
 
-/*! \brief Read strings from stream.
+/*! Read strings from stream.
  * \ingroup Core
  */
 class T_DLLCLASS StringReader : public Object
@@ -28,10 +28,10 @@ class T_DLLCLASS StringReader : public Object
 public:
 	StringReader(IStream* stream, IEncoding* encoding);
 
-	/*! \brief Read character from stream. */
+	/*! Read character from stream. */
 	wchar_t readChar();
 
-	/*! \brief Read string from stream until end-of-line or end-of-file. */
+	/*! Read string from stream until end-of-line or end-of-file. */
 	int64_t readLine(std::wstring& out);
 
 private:

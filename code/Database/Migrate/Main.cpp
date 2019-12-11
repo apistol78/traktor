@@ -26,7 +26,7 @@ using namespace traktor;
 namespace
 {
 
-/*! \brief Count number of groups in database.
+/*! Count number of groups in database.
  *
  * \param group Current group
  * \reurn Number of groups including current group.
@@ -46,7 +46,7 @@ int32_t countGroups(db::Group* group)
 	return localCount;
 }
 
-/*! \brief Migrate instance from source into target group.
+/*! Migrate instance from source into target group.
  *
  * \param sourceInstance Source instance to migrate.
  * \param targetGroup Migrate into target group.
@@ -115,7 +115,7 @@ bool migrateInstance(Ref< db::Instance > sourceInstance, Ref< db::Group > target
 	return true;
 }
 
-/* \brief Migrate instances sequentially.
+/* Migrate instances sequentially.
  *
  * \param targetGroup Target group
  * \param sourceGroup Source group
@@ -167,7 +167,7 @@ bool migrateGroup(db::Group* targetGroup, db::Group* sourceGroup, int32_t& group
 	return true;
 }
 
-/*! \brief Create instance migration jobs.
+/*! Create instance migration jobs.
  *
  * \param targetGroup Target group
  * \param sourceGroup Source group
@@ -217,7 +217,7 @@ bool createMigrationJobs(db::Group* targetGroup, db::Group* sourceGroup, RefArra
 	return true;
 }
 
-/*! \brief Load settings.
+/*! Load settings.
  *
  * \param settingsFile File path to settings.
  * \return Settings group.

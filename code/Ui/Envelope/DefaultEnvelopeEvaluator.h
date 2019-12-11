@@ -9,7 +9,7 @@ namespace traktor
 	namespace ui
 	{
 
-/*! \brief Default envelope evaluator.
+/*! Default envelope evaluator.
  * \ingroup UI
  */
 template

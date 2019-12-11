@@ -33,7 +33,7 @@ class Instance;
 
 class IEditor;
 
-/*! \brief Wizard tool base class.
+/*! Wizard tool base class.
  * \ingroup Editor
  *
  * Wizards are launched by context menu

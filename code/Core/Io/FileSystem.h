@@ -21,7 +21,7 @@ namespace traktor
 
 class IStream;
 
-/*! \brief File system manager.
+/*! File system manager.
  * \ingroup Core
  *
  * Manages physical or virtual file volumes.
@@ -39,70 +39,70 @@ public:
 
 	static FileSystem& getInstance();
 
-	/*! \brief Mount custom volume.
+	/*! Mount custom volume.
 	 *
 	 * \param id Mount identifier.
 	 * \param volume Mount volume.
 	 */
 	void mount(const std::wstring& id, IVolume* volume);
 
-	/*! \brief Unmount volume.
+	/*! Unmount volume.
 	 *
 	 * \param id Mount identifier.
 	 */
 	void umount(const std::wstring& id);
 
-	/*! \brief Get number of volumes.
+	/*! Get number of volumes.
 	 *
 	 * \return Number of mounted volumes.
 	 */
 	int32_t getVolumeCount() const;
 
-	/*! \brief Get volume by index.
+	/*! Get volume by index.
 	 *
 	 * \param index Index of mounted volume.
 	 * \return Volume instance.
 	 */
 	IVolume* getVolume(int32_t index) const;
 
-	/*! \brief Get identifier of volume.
+	/*! Get identifier of volume.
 	 *
 	 * \param index Index of mounted volume.
 	 * \return Volume mount identifier.
 	 */
 	std::wstring getVolumeId(int32_t index) const;
 
-	/*! \brief Set volume as current volume.
+	/*! Set volume as current volume.
 	 *
 	 * \param volume Current volume.
 	 */
 	void setCurrentVolume(IVolume* volume);
 
-	/*! \brief Get current volume.
+	/*! Get current volume.
 	 *
 	 * \return Current volume.
 	 */
 	IVolume* getCurrentVolume() const;
 
-	/*! \brief Set current volume and directory.
+	/*! Set current volume and directory.
 	 *
 	 * \param directory New current directory.
 	 * \return True if successfully changed.
 	 */
 	bool setCurrentVolumeAndDirectory(const Path& directory);
 
-	/*! \brief Get current volume and directory.
+	/*! Get current volume and directory.
 	 */
 	Path getCurrentVolumeAndDirectory() const;
 
-	/*! \brief Get file description.
+	/*! Get file description.
 	 *
 	 * \param fileName Path to file to query.
 	 * \return File description.
 	 */
 	Ref< File > get(const Path& fileName);
 
-	/*! \brief Find files.
+	/*! Find files.
 	 *
 	 * \param fileMask Path (with or without wild cards) of files to query.
 	 * \param out Array of file descriptions.
@@ -110,7 +110,7 @@ public:
 	 */
 	int32_t find(const Path& fileMask, RefArray< File >& out);
 
-	/*! \brief Modify file's flags.
+	/*! Modify file's flags.
 	 *
 	 * \param fileName Path to file to modify.
 	 * \param flags New file flags.
@@ -118,7 +118,7 @@ public:
 	 */
 	bool modify(const Path& fileName, uint32_t flags);
 
-	/*! \brief Open file for reading or writing.
+	/*! Open file for reading or writing.
 	 *
 	 * \param fileName Path to file to open.
 	 * \param mode Desired file mode.
@@ -126,21 +126,21 @@ public:
 	 */
 	Ref< IStream > open(const Path& fileName, uint32_t mode);
 
-	/*! \brief Return true if file exists.
+	/*! Return true if file exists.
 	 *
 	 * \param fileName Path to file.
 	 * \return True if file exists.
 	 */
 	bool exist(const Path& fileName);
 
-	/*! \brief Remove file.
+	/*! Remove file.
 	 *
 	 * \param fileName Path to file.
 	 * \return True if file was successfully removed.
 	 */
 	bool remove(const Path& fileName);
 
-	/*! \brief Move file to a different location.
+	/*! Move file to a different location.
 	 *
 	 * \param destination Path to destination file.
 	 * \param source Path to source file.
@@ -149,7 +149,7 @@ public:
 	 */
 	bool move(const Path& destination, const Path& source, bool overwrite = false);
 
-	/*! \brief Copy file to another location.
+	/*! Copy file to another location.
 	 *
 	 * \param destination Path to destination file.
 	 * \param source Path to source file.
@@ -158,28 +158,28 @@ public:
 	 */
 	bool copy(const Path& destination, const Path& source, bool overwrite = false);
 
-	/*! \brief Make a new directory.
+	/*! Make a new directory.
 	 *
 	 * \param directory Path to new directory.
 	 * \return True if directory was successfully created.
 	 */
 	bool makeDirectory(const Path& directory);
 
-	/*! \brief Make a new directory hierarchy.
+	/*! Make a new directory hierarchy.
 	 *
 	 * \param directory Path to new directory.
 	 * \return True if directory was successfully created.
 	 */
 	bool makeAllDirectories(const Path& directory);
 
-	/*! \brief Remove directory.
+	/*! Remove directory.
 	 *
 	 * \param directory Path to directory.
 	 * \return True if directory was successfully removed.
 	 */
 	bool removeDirectory(const Path& directory);
 
-	/*! \brief Rename directory.
+	/*! Rename directory.
 	 *
 	 * \param directory Path to directory.
 	 * \param newName New name of directory.
@@ -187,14 +187,14 @@ public:
 	 */
 	bool renameDirectory(const Path& directory, const std::wstring& newName);
 
-	/*! \brief Translate a relative path to an absolute path.
+	/*! Translate a relative path to an absolute path.
 	 *
 	 * \param relativePath Relative path.
 	 * \return Absolute path.
 	 */
 	Path getAbsolutePath(const Path& relativePath) const;
 
-	/*! \brief Translate a relative path to an absolute path.
+	/*! Translate a relative path to an absolute path.
 	 *
 	 * \param basePath Base path.
 	 * \param relativePath Relative path.
@@ -202,7 +202,7 @@ public:
 	 */
 	Path getAbsolutePath(const Path& basePath, const Path& relativePath) const;
 
-	/*! \brief Get relative path between two absolute paths.
+	/*! Get relative path between two absolute paths.
 	 *
 	 * \par
 	 * absolutePath = c:/foo/bar/dummy.txt\n

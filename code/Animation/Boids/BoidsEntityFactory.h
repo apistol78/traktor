@@ -15,7 +15,7 @@ namespace traktor
 	namespace animation
 	{
 
-/*! \brief Boids entity factory.
+/*! Boids entity factory.
  * \ingroup Animation
  */
 class T_DLLCLASS BoidsEntityFactory : public world::IEntityFactory

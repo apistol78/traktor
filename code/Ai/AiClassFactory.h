@@ -15,7 +15,7 @@ namespace traktor
 	namespace ai
 	{
 
-/*! \brief AI runtime class factory.
+/*! AI runtime class factory.
  * \ingroup AI
  */
 class T_DLLCLASS  AiClassFactory : public IRuntimeClassFactory

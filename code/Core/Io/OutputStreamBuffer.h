@@ -13,7 +13,7 @@
 namespace traktor
 {
 
-/*! \brief Buffer used by output streams.
+/*! Buffer used by output streams.
  * \ingroup Core
  */
 class T_DLLCLASS OutputStreamBuffer : public IOutputStreamBuffer

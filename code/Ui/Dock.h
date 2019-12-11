@@ -19,7 +19,7 @@ class DockPane;
 class ToolForm;
 class Image;
 
-/*! \brief Docking widget.
+/*! Docking widget.
  * \ingroup UI
  */
 class T_DLLCLASS Dock : public Widget

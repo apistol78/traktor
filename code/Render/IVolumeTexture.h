@@ -15,7 +15,7 @@ namespace traktor
 	namespace render
 	{
 
-/*! \brief Volume texture.
+/*! Volume texture.
  * \ingroup Render
  */
 class T_DLLCLASS IVolumeTexture : public ITexture

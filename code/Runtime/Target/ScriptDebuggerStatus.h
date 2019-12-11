@@ -15,7 +15,7 @@ namespace traktor
 	namespace runtime
 	{
 
-/*! \brief Debugger status response.
+/*! Debugger status response.
  * \ingroup Runtime
  */
 class T_DLLCLASS ScriptDebuggerStatus : public ISerializable

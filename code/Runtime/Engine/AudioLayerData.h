@@ -23,7 +23,7 @@ class Sound;
 	namespace runtime
 	{
 
-/*! \brief Stage audio layer persistent data.
+/*! Stage audio layer persistent data.
  * \ingroup Runtime
  */
 class T_DLLCLASS AudioLayerData : public LayerData

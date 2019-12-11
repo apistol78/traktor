@@ -19,7 +19,7 @@ namespace traktor
 
 class PointSet;
 
-/*! \brief Point set particle source.
+/*! Point set particle source.
  * \ingroup Spray
  */
 class T_DLLCLASS PointSetSource : public Source

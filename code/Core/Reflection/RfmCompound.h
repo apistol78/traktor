@@ -16,7 +16,7 @@ namespace traktor
 
 class ReflectionMemberPredicate;
 
-/*! \brief Reflected compound member.
+/*! Reflected compound member.
  * \ingroup Core
  */
 class T_DLLCLASS RfmCompound : public ReflectionMember

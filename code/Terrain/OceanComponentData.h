@@ -29,7 +29,7 @@ class Shader;
 
 class Terrain;
 
-/*! \brief Ocean component data.
+/*! Ocean component data.
  * \ingroup Terrain
  */
 class T_DLLCLASS OceanComponentData : public world::IEntityComponentData

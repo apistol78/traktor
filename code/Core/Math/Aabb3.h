@@ -17,7 +17,7 @@
 namespace traktor
 {
 
-/*! \brief Axis aligned bounding box.
+/*! Axis aligned bounding box.
  * \ingroup Core
  */
 class T_MATH_ALIGN16 T_DLLCLASS Aabb3
@@ -32,27 +32,27 @@ public:
 
 	explicit Aabb3(const Vector4& mn_, const Vector4& mx_);
 
-	/*! \brief Get bounding box corners.
+	/*! Get bounding box corners.
 	 *
 	 * \param extents Output array of corner points.
 	 */
 	void getExtents(Vector4 extents[8]) const;
 
-	/*! \brief Return true if point is inside bounding box.
+	/*! Return true if point is inside bounding box.
 	 *
 	 * \param pt Point
 	 * \return True if inside.
 	 */
 	bool inside(const Vector4& pt) const;
 
-	/*! \brief Return true if point is outside bounding box.
+	/*! Return true if point is outside bounding box.
 	*
 	* \param pt Point
 	* \return True if outside.
 	*/
 	bool outside(const Vector4& pt) const;
 
-	/*! \brief Return true if point is on bounding box surface.
+	/*! Return true if point is on bounding box surface.
 	 *
 	 * \param pt Point
 	 * \param margin Surface margin.
@@ -60,7 +60,7 @@ public:
 	 */
 	bool surface(const Vector4& pt, float margin) const;
 
-	/*! \brief Ray intersection query.
+	/*! Ray intersection query.
 	 *
 	 * \param p Start point.
 	 * \param d Ray direction.
@@ -69,7 +69,7 @@ public:
 	 */
 	bool intersectRay(const Vector4& p, const Vector4& d, Scalar& outDistance) const;
 
-	/*! \brief Ray intersection query.
+	/*! Ray intersection query.
 	*
 	* \param p Start point.
 	* \param d Ray direction.
@@ -79,7 +79,7 @@ public:
 	*/
 	bool intersectRay(const Vector4& p, const Vector4& d, Scalar& outDistanceEnter, Scalar& outDistanceExit) const;
 
-	/*! \brief Line segment intersection query.
+	/*! Line segment intersection query.
 	 *
 	 * \param p1 Start point.
 	 * \param p2 End point.
@@ -88,33 +88,33 @@ public:
 	 */
 	bool intersectSegment(const Vector4& p1, const Vector4& p2, Scalar& outDistance) const;
 
-	/*! \brief Transform bounding box.
+	/*! Transform bounding box.
 	 *
 	 * \param m Transformation matrix.
 	 * \return Transformed bounding box.
 	 */
 	Aabb3 transform(const Matrix44& m) const;
 
-	/*! \brief Transform bounding box.
+	/*! Transform bounding box.
 	*
 	* \param m Transformation.
 	* \return Transformed bounding box.
 	*/
 	Aabb3 transform(const Transform& tf) const;
 
-	/*! \brief Return 6 faces, 4 indices each (24 integers total). */
+	/*! Return 6 faces, 4 indices each (24 integers total). */
 	static const int* getFaces();
 
-	/*! \brief Return 12 edges, 2 indices to vertex each (24 integers total). */
+	/*! Return 12 edges, 2 indices to vertex each (24 integers total). */
 	static const int* getEdges();
 
-	/*! \brief Return 12 edges, 2 indices to face each (24 integers total). */
+	/*! Return 12 edges, 2 indices to face each (24 integers total). */
 	static const int* getEdgeAdjacency();
 
-	/*! \brief Return 6 normals. */
+	/*! Return 6 normals. */
 	static const Vector4* getNormals();
 
-	/*! \brief Expand bounding box to contain point. */
+	/*! Expand bounding box to contain point. */
 	T_MATH_INLINE Aabb3& contain(const Vector4& pt)
 	{
 		mn = traktor::min(mn, pt);
@@ -122,7 +122,7 @@ public:
 		return *this;
 	}
 
-	/*! \brief Expand bounding box to contain sphere. */
+	/*! Expand bounding box to contain sphere. */
 	T_MATH_INLINE Aabb3& contain(const Vector4& center, const Scalar& radius)
 	{
 		mn = traktor::min(mn, center - radius);
@@ -130,7 +130,7 @@ public:
 		return *this;
 	}
 
-	/*! \brief Expand bounding box to contain bounding box. */
+	/*! Expand bounding box to contain bounding box. */
 	T_MATH_INLINE Aabb3& contain(const Aabb3& aabb)
 	{
 		if (!aabb.empty())
@@ -141,13 +141,13 @@ public:
 		return *this;
 	}
 
-	/*! \brief Check if bounding boxes overlap. */
+	/*! Check if bounding boxes overlap. */
 	T_MATH_INLINE bool overlap(const Aabb3& aabb) const
 	{
 		return inside(aabb.mn) || inside(aabb.mx) || aabb.inside(mn) || aabb.inside(mx);
 	}
 
-	/*! \brief Scale bounding box along extent vector. */
+	/*! Scale bounding box along extent vector. */
 	T_MATH_INLINE Aabb3 scale(const Scalar& factor) const
 	{
 		Vector4 center = getCenter();
@@ -157,7 +157,7 @@ public:
 		return Aabb3(bbmn, bbmx);
 	}
 
-	/*! \brief Expand bounding box. */
+	/*! Expand bounding box. */
 	T_MATH_INLINE Aabb3 expand(const Scalar& margin) const
 	{
 		Vector4 center = getCenter();
@@ -167,7 +167,7 @@ public:
 		return Aabb3(bbmn, bbmx);
 	}
 
-	/*! \brief Query intersection with sphere. */
+	/*! Query intersection with sphere. */
 	T_MATH_INLINE bool queryIntersectionSphere(const Vector4& center, const Scalar& radius) const
 	{
 		Vector4 minDistance = max(mn - center, Vector4::zero());
@@ -176,19 +176,19 @@ public:
 		return distance <= radius * radius;
 	}
 
-	/*! \brief Get center of bounding box. */
+	/*! Get center of bounding box. */
 	T_MATH_INLINE Vector4 getCenter() const
 	{
 		return ((mn + mx) * Scalar(0.5f)).xyz1();
 	}
 
-	/*! \brief Get extent of bounding box. */
+	/*! Get extent of bounding box. */
 	T_MATH_INLINE Vector4 getExtent() const
 	{
 		return ((mx - mn) * Scalar(0.5f)).xyz0();
 	}
 
-	/*! \brief Check if bounding box is empty. */
+	/*! Check if bounding box is empty. */
 	T_MATH_INLINE bool empty() const
 	{
 		return mx.x() < mn.x();

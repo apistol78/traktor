@@ -13,7 +13,7 @@
 namespace traktor
 {
 
-/*! \brief Log target.
+/*! Log target.
  * \ingroup Core
  */
 class T_DLLCLASS ILogTarget : public Object
@@ -22,7 +22,7 @@ public:
 	virtual void log(uint32_t threadId, int32_t level, const wchar_t* str) = 0;
 };
 
-/*! \brief Log stream.
+/*! Log stream.
  * \ingroup Core
  */
 class T_DLLCLASS LogStream : public OutputStream

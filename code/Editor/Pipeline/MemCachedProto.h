@@ -32,7 +32,7 @@ public:
 
 	bool readData(uint8_t* data, uint32_t dataLength);
 
-	/*! \brief Write data to memcached.
+	/*! Write data to memcached.
 	 * \note Data block must contain space for two more
 	 *       bytes as we need to append \r\n.
 	 */

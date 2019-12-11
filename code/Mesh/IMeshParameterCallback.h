@@ -23,7 +23,7 @@ class Shader;
 	namespace mesh
 	{
 
-/*! \brief Set custom shader parameter callback.
+/*! Set custom shader parameter callback.
  *
  * Called when meshes are rendered in order to allow
  * user defined shader parameters.

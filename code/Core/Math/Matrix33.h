@@ -16,7 +16,7 @@
 namespace traktor
 {
 
-/*! \brief 3x3 matrix.
+/*! 3x3 matrix.
  * \ingroup Core
  */
 #if defined (_MSC_VER)

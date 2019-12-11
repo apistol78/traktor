@@ -29,7 +29,7 @@ class PhysicsManager;
 	namespace animation
 	{
 
-/*! \brief Animated mesh entity factory.
+/*! Animated mesh entity factory.
  * \ingroup Animation
  */
 class T_DLLCLASS AnimatedMeshComponentFactory : public world::IEntityFactory

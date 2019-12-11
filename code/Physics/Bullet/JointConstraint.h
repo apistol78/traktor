@@ -10,7 +10,7 @@ namespace traktor
 
 struct JointSolver;
 
-/*! \brief Bullet constraint type to enable custom joints.
+/*! Bullet constraint type to enable custom joints.
  * \ingroup Bullet
  */
 class JointConstraint : public btTypedConstraint

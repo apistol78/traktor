@@ -18,7 +18,7 @@
 namespace traktor
 {
 
-/*! \brief Transformation path.
+/*! Transformation path.
  * \ingroup Core
  */
 class T_DLLCLASS TransformPath : public ISerializable
@@ -52,21 +52,21 @@ public:
 
 	TransformPath(const TransformPath& path);
 
-	/*! \brief Insert key into path.
+	/*! Insert key into path.
 	 *
 	 * \param key New key frame.
 	 * \return Index where key was inserted.
 	 */
 	size_t insert(const Key& key);
 
-	/*! \brief Evaluate frame.
+	/*! Evaluate frame.
 	 *
 	 * \param at Time to evaluate.
 	 * \return Evaluated frame.
 	 */
 	Key evaluate(float at) const;
 
-	/*! \brief Evaluate frame.
+	/*! Evaluate frame.
 	 *
 	 * \param at Time to evaluate.
 	 * \param end End time of path.
@@ -74,7 +74,7 @@ public:
 	 */
 	Key evaluate(float at, float end) const;
 
-	/*! \brief Evaluate frame.
+	/*! Evaluate frame.
 	 *
 	 * \param at Time to evaluate.
 	 * \param end End time of path.
@@ -83,28 +83,28 @@ public:
 	 */
 	Key evaluate(float at, float end, float loop) const;
 
-	/*! \brief Get closest key frame from time.
+	/*! Get closest key frame from time.
 	 *
 	 * \param at Closest to time.
 	 * \return Index of closest key frame, -1 if no key frame found.
 	 */
 	int32_t getClosestKey(float at) const;
 
-	/*! \brief Get closest previous key frame from time.
+	/*! Get closest previous key frame from time.
 	 *
 	 * \param at Closest to time.
 	 * \return Index of closest key frame, -1 if no key frame found.
 	 */
 	int32_t getClosestPreviousKey(float at) const;
 
-	/*! \brief Get closest next key frame from time.
+	/*! Get closest next key frame from time.
 	 *
 	 * \param at Closest to time.
 	 * \return Index of closest key frame, -1 if no key frame found.
 	 */
 	int32_t getClosestNextKey(float at) const;
 
-	/*! \brief Split path into two paths at given time.
+	/*! Split path into two paths at given time.
 	 *
 	 * \param at Split at time.
 	 * \param outPath1 Path before split point.
@@ -114,44 +114,44 @@ public:
 
 	virtual void serialize(ISerializer& s) override final;
 
-	/*! \brief Get time of first key frame.
+	/*! Get time of first key frame.
 	 *
 	 * \return Path's first key frame time.
 	 */
 	float getStartTime() const { return !m_keys.empty() ? m_keys.front().T : 0.0f; }
 
-	/*! \brief Get time of last key frame.
+	/*! Get time of last key frame.
 	 *
 	 * \return Path's last key frame time.
 	 */
 	float getEndTime() const { return !m_keys.empty() ? m_keys.back().T : 0.0f; }
 
-	/*! \brief Get key frames.
+	/*! Get key frames.
 	 *
 	 * \return Key frames.
 	 */
 	const AlignedVector< Key >& getKeys() const { return m_keys; }
 
-	/*! \brief Get key frames.
+	/*! Get key frames.
 	 *
 	 * \return Key frames.
 	 */
 	AlignedVector< Key >& getKeys() { return m_keys; }
 
-	/*! \brief Get number of key frames.
+	/*! Get number of key frames.
 	 *
 	 * \return Number of key frames.
 	 */
 	size_t size() const { return m_keys.size(); }
 
-	/*! \brief Get key frame at index.
+	/*! Get key frame at index.
 	 *
 	 * \param at Index.
 	 * \return Key frame at index.
 	 */
 	const Key& operator [] (size_t at) const { return m_keys[at]; }
 
-	/*! \brief Get key frame at index.
+	/*! Get key frame at index.
 	 *
 	 * \param at Index.
 	 * \return Key frame at index.

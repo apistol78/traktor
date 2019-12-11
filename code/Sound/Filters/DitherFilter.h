@@ -16,7 +16,7 @@ namespace traktor
 	namespace sound
 	{
 
-/*! \brief Dither filter.
+/*! Dither filter.
  * \ingroup Sound
  */
 class T_DLLCLASS DitherFilter : public IFilter

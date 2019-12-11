@@ -16,7 +16,7 @@ namespace traktor
 	namespace input
 	{
 
-/*! \brief Generic input source.
+/*! Generic input source.
  * \ingroup Input
  */
 class T_DLLCLASS GenericInputSourceData : public IInputSourceData

@@ -29,7 +29,7 @@ int32_t cycle(float f)
 	return f >= 0.0f ? n : n - 1;
 }
 
-/*! \brief Rasterizer implementation interface. */
+/*! Rasterizer implementation interface. */
 class IRasterImpl : public IRefCount
 {
 public:
@@ -72,7 +72,7 @@ public:
 	virtual void submit() = 0;
 };
 
-/*! \brief Style interface. */
+/*! Style interface. */
 template < typename color_type >
 class IStyle
 {
@@ -80,11 +80,11 @@ public:
 	virtual void generateSpan(color_type* span, int x, int y, unsigned len) const = 0;
 };
 
-/*! \brief Solid style partial template. */
+/*! Solid style partial template. */
 template < typename color_type >
 class SolidStyle : public IStyle< color_type > {};
 
-/*! \brief Solid style for 8-bit gray color. */
+/*! Solid style for 8-bit gray color. */
 template < >
 class SolidStyle< agg::gray8 > : public IStyle< agg::gray8 >
 {
@@ -104,7 +104,7 @@ private:
 	agg::gray8 m_color;
 };
 
-/*! \brief Solid style for 32-bit colors. */
+/*! Solid style for 32-bit colors. */
 template < >
 class SolidStyle< agg::rgba8 > : public IStyle< agg::rgba8 >
 {
@@ -129,7 +129,7 @@ private:
 	agg::rgba8 m_color;
 };
 
-/*! \brief Linear gradient style for 32-bit colors. */
+/*! Linear gradient style for 32-bit colors. */
 class LinearGradientStyle : public IStyle< agg::rgba8 >
 {
 public:
@@ -173,7 +173,7 @@ private:
 	AlignedVector< std::pair< Color4f, float > > m_colors;
 };
 
-/*! \brief Radial gradient style for 32-bit colors. */
+/*! Radial gradient style for 32-bit colors. */
 class RadialGradientStyle : public IStyle< agg::rgba8 >
 {
 public:
@@ -217,7 +217,7 @@ private:
 	AlignedVector< std::pair< Color4f, float > > m_colors;
 };
 
-/*! \brief Image style for 32-bit colors. */
+/*! Image style for 32-bit colors. */
 class ImageClampStyle : public IStyle< agg::rgba8 >
 {
 public:
@@ -260,7 +260,7 @@ private:
 	Ref< const drawing::Image > m_image;
 };
 
-/*! \brief Image style for 32-bit colors. */
+/*! Image style for 32-bit colors. */
 class ImageRepeatStyle : public IStyle< agg::rgba8 >
 {
 public:
@@ -306,11 +306,11 @@ private:
 	Ref< const drawing::Image > m_image;
 };
 
-/*! \brief Style handler partial template. */
+/*! Style handler partial template. */
 template< typename color_type >
 class StyleHandler {};
 
-/*! \brief Style handler for 8-bit gray colors. */
+/*! Style handler for 8-bit gray colors. */
 template < >
 class StyleHandler< agg::gray8 >
 {
@@ -361,7 +361,7 @@ private:
 	AlignedVector< IStyle< agg::gray8 >* > m_styles;
 };
 
-/*! \brief Style handler for 32-bit colors. */
+/*! Style handler for 32-bit colors. */
 template < >
 class StyleHandler< agg::rgba8 >
 {
@@ -418,7 +418,7 @@ private:
 	AlignedVector< IStyle< agg::rgba8 >* > m_styles;
 };
 
-/*! \brief Rasterizer implementation. */
+/*! Rasterizer implementation. */
 template < typename pixfmt_type, typename color_type >
 class RasterImpl : public RefCountImpl< IRasterImpl >
 {

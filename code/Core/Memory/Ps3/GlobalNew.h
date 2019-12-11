@@ -3,7 +3,7 @@
 #include "Core/Memory/IAllocator.h"
 #include "Core/Memory/MemoryConfig.h"
 
-/*! \brief Global new/delete operators.
+/*! Global new/delete operators.
  * \ingroup Core
  *
  * These are overloaded in order to make PS3

@@ -69,13 +69,13 @@ public:
 	/*! \} */
 
 
-	/*! \brief Allocate interpolator variable. */
+	/*! Allocate interpolator variable. */
 	bool allocateInterpolator(int32_t width, int32_t& outId, int32_t& outOffset);
 
 	/*! \name Parameters */
 	/*! \{ */
 
-	/*! \brief Define program parameter.
+	/*! Define program parameter.
 	 *
 	 * \param name Name of parameter.
 	 * \param type Type of parameter.

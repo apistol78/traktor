@@ -12,31 +12,31 @@ namespace traktor
 /*! \ingroup Havok */
 //@{
 
-/*! \brief Convert from Havok vector. */
+/*! Convert from Havok vector. */
 T_FORCE_INLINE Vector4 fromHkVector4(const hkVector4& v)
 {
 	return Vector4(v(0), v(1), v(2), v(3));
 }
 
-/*! \brief Convert to Havok vector. */
+/*! Convert to Havok vector. */
 T_FORCE_INLINE hkVector4 toHkVector4(const Vector4& v)
 {
 	return hkVector4(v.x(), v.y(), v.z(), v.w());
 }
 
-/*! \brief Convert from Havok quaternion. */
+/*! Convert from Havok quaternion. */
 T_FORCE_INLINE Quaternion fromHkQuaternion(const hkQuaternion& q)
 {
 	return Quaternion(q.m_vec(0), q.m_vec(1), q.m_vec(2), q.m_vec(3));
 }
 
-/*! \brief Convert to Havok quaternion. */
+/*! Convert to Havok quaternion. */
 T_FORCE_INLINE hkQuaternion toHkQuaternion(const Quaternion& q)
 {
 	return hkQuaternion(q.e.x(), q.e.y(), q.e.z(), q.e.w());
 }
 
-/*! \brief Convert from Havok matrix. */
+/*! Convert from Havok matrix. */
 T_FORCE_INLINE Matrix33 fromHkMatrix3(const hkMatrix3& m)
 {
 	Matrix33 out;
@@ -50,7 +50,7 @@ T_FORCE_INLINE Matrix33 fromHkMatrix3(const hkMatrix3& m)
 	return out;
 }
 
-/*! \brief Convert to Havok matrix. */
+/*! Convert to Havok matrix. */
 T_FORCE_INLINE hkMatrix3 toHkMatrix3(const Matrix33& m)
 {
 	hkMatrix3 out;
@@ -64,7 +64,7 @@ T_FORCE_INLINE hkMatrix3 toHkMatrix3(const Matrix33& m)
 	return out;
 }
 
-/*! \brief Convert from Havok transform. */
+/*! Convert from Havok transform. */
 T_FORCE_INLINE Transform fromHkTransform(const hkTransform& t)
 {
 	hkVector4 hkt = t.getTranslation();
@@ -72,7 +72,7 @@ T_FORCE_INLINE Transform fromHkTransform(const hkTransform& t)
 	return Transform(fromHkVector4(hkt), fromHkQuaternion(hkr));
 }
 
-/*! \brief Convert to Havok transform. */
+/*! Convert to Havok transform. */
 T_FORCE_INLINE hkTransform toHkTransform(const Transform& m)
 {
 	return hkTransform(

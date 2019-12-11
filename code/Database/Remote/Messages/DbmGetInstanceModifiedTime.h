@@ -15,7 +15,7 @@ namespace traktor
 	namespace db
 	{
 
-/*! \brief Get instance's modified time.
+/*! Get instance's modified time.
  * \ingroup Database
  */
 class T_DLLCLASS DbmGetInstanceModifiedTime : public IMessage

@@ -28,7 +28,7 @@ namespace traktor
 class Thread;
 class OutputStream;
 
-/*! \brief Runtime profiler.
+/*! Runtime profiler.
  * \ingroup Core
  *
  * The runtime profiler measures time spent in
@@ -51,7 +51,7 @@ public:
 		int32_t alloc;
 	};
 
-	/*! \brief Profiler report listener.
+	/*! Profiler report listener.
 	 */
 	class IReportListener : public IRefCount
 	{
@@ -59,7 +59,7 @@ public:
 		virtual void reportProfilerEvents(double currentTime, const AlignedVector< Event >& events) = 0;
 	};
 
-	/*! \brief JSON report listener.
+	/*! JSON report listener.
 	 *
 	 * Format of JSON is Chromium tracer compatible.
 	 */
@@ -80,19 +80,19 @@ public:
 
 	static Profiler& getInstance();
 
-	/*! \brief Set report listener.
+	/*! Set report listener.
 	 */
 	void setListener(IReportListener* listener);
 
-	/*! \brief Begin recording event.
+	/*! Begin recording event.
 	 */
 	void beginEvent(const wchar_t* const name);
 
-	/*! \brief End recording event.
+	/*! End recording event.
 	 */
 	void endEvent();
 
-	/*! \brief Get current time.
+	/*! Get current time.
 	 */
 	double getTime() const;
 
@@ -115,7 +115,7 @@ private:
 	Timer m_timer;
 };
 
-/*! \brief Scoped profiling event.
+/*! Scoped profiling event.
  * \ingroup Core
  */
 class ProfilerScoped

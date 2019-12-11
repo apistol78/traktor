@@ -13,7 +13,7 @@
 namespace traktor
 {
 
-/*! \brief 2D ray
+/*! 2D ray
  * \ingroup Core
  */
 class T_DLLCLASS Ray2
@@ -30,7 +30,7 @@ public:
 
 	T_MATH_INLINE float distance(const Vector2& pt) const;
 
-	/*! \brief Calculate unique intersection between two rays.
+	/*! Calculate unique intersection between two rays.
 	 *
 	 * \param ray Intersecting ray.
 	 * \param outR Distance on "this" ray.

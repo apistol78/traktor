@@ -24,7 +24,7 @@ namespace traktor
 
 class IWidget;
 
-/*! \brief Deferred widget rectangle.
+/*! Deferred widget rectangle.
  * \ingroup UI
  */
 struct WidgetRect
@@ -39,7 +39,7 @@ struct WidgetRect
 	}
 };
 
-/*! \brief Base widget class.
+/*! Base widget class.
  * \ingroup UI
  */
 class T_DLLCLASS Widget
@@ -143,7 +143,7 @@ public:
 
 	Align getVerticalAlign() const;
 
-	/*! \brief If this widget accepts to be part of layout.
+	/*! If this widget accepts to be part of layout.
 	 * For instance child dialogs cannot be part of a layout
 	 * as it's not logical, thus should return false.
 	 */
@@ -165,7 +165,7 @@ public:
 
 	Widget* getLastChild() const;
 
-	/*! \brief Get internal widget.
+	/*! Get internal widget.
 	 *
 	 * Retrieve the internal widget object, useful when
 	 * getting information about the native peer widget.

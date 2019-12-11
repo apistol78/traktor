@@ -35,13 +35,13 @@ class T_DLLCLASS IComponentEditorFactory : public Object
 	T_RTTI_CLASS;
 
 public:
-	/*! \brief Get supported set of components.
+	/*! Get supported set of components.
 	 *
 	 * \return Type Set of IEntityComponentData types.
 	 */
 	virtual const TypeInfoSet getComponentDataTypes() const = 0;
 
-	/*! \brief Create component editor.
+	/*! Create component editor.
 	 *
 	 * \param context Scene editor context.
 	 * \param entityAdapter Owner entity adapter.

@@ -15,7 +15,7 @@ namespace traktor
 	namespace render
 	{
 
-/*! \brief Repeat step any number of times.
+/*! Repeat step any number of times.
  * \ingroup Render
  */
 class T_DLLCLASS ImageProcessStepRepeat : public ImageProcessStep

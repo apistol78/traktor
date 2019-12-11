@@ -18,7 +18,7 @@ namespace traktor
 
 class Widget;
 
-/*! \brief Layout base class.
+/*! Layout base class.
  * \ingroup UI
  */
 class T_DLLCLASS Layout : public Object

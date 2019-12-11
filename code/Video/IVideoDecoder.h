@@ -18,7 +18,7 @@ class IStream;
 	namespace video
 	{
 
-/*! \brief Video decoder information.
+/*! Video decoder information.
  * \ingroup Video
  */
 struct VideoDecoderInfo
@@ -28,7 +28,7 @@ struct VideoDecoderInfo
 	float rate;
 };
 
-/*! \brief Video decoder stream interface.
+/*! Video decoder stream interface.
  * \ingroup Video
  */
 class T_DLLCLASS IVideoDecoder : public Object

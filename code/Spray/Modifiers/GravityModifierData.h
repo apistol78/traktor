@@ -16,7 +16,7 @@ namespace traktor
 	namespace spray
 	{
 
-/*! \brief Gravity modifier persistent data.
+/*! Gravity modifier persistent data.
  * \ingroup Spray
  */
 class T_DLLCLASS GravityModifierData : public ModifierData

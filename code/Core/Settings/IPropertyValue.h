@@ -14,7 +14,7 @@
 namespace traktor
 {
 
-/*! \brief Property value base.
+/*! Property value base.
  * \ingroup Core
  */
 class T_DLLCLASS IPropertyValue : public ISerializable

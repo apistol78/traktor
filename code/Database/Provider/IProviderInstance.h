@@ -23,7 +23,7 @@ class IStream;
 	namespace db
 	{
 
-/*! \brief Provider instance interface.
+/*! Provider instance interface.
  * \ingroup Database
  */
 class T_DLLCLASS IProviderInstance : public Object
@@ -31,37 +31,37 @@ class T_DLLCLASS IProviderInstance : public Object
 	T_RTTI_CLASS;
 
 public:
-	/*! \brief Get primary type of instance.
+	/*! Get primary type of instance.
 	 *
 	 * \return Type name of instance.
 	 */
 	virtual std::wstring getPrimaryTypeName() const = 0;
 
-	/*! \brief Open modification transaction of instance.
+	/*! Open modification transaction of instance.
 	 *
 	 * \return True if transaction opened.
 	 */
 	virtual bool openTransaction() = 0;
 
-	/* \brief Commit changes performed within transaction.
+	/* Commit changes performed within transaction.
 	 *
 	 * \return True if all changed committed successfully.
 	 */
 	virtual bool commitTransaction() = 0;
 
-	/*! \brief Close transaction of instance, all non-committed changes is discarded.
+	/*! Close transaction of instance, all non-committed changes is discarded.
 	 *
 	 * \return True if transaction was closed.
 	 */
 	virtual bool closeTransaction() = 0;
 
-	/*! \brief Get name of instance.
+	/*! Get name of instance.
 	 *
 	 * \return Name of instance.
 	 */
 	virtual std::wstring getName() const = 0;
 
-	/*! \brief Set name of instance.
+	/*! Set name of instance.
 	 *
 	 * \note
 	 * Must be performed within a transaction.
@@ -70,13 +70,13 @@ public:
 	 */
 	virtual bool setName(const std::wstring& name) = 0;
 
-	/*! \brief Get guid of instance.
+	/*! Get guid of instance.
 	 *
 	 * \return Guid of instance.
 	 */
 	virtual Guid getGuid() const = 0;
 
-	/*! \brief Set guid of instance.
+	/*! Set guid of instance.
 	 *
 	 * \note
 	 * Must be performed within a transaction.
@@ -86,20 +86,20 @@ public:
 	 */
 	virtual bool setGuid(const Guid& guid) = 0;
 
-	/*! \brief Get last date this instance was changed.
+	/*! Get last date this instance was changed.
 	 *
 	 * \param outModifyDate Modification date.
 	 * \return True if modification date was retrieved.
 	 */
 	virtual bool getLastModifyDate(DateTime& outModifyDate) const = 0;
 
-	/*! \brief Get flags from instance storage.
+	/*! Get flags from instance storage.
 	 *
 	 * \param Instance storage flags.
 	 */
 	virtual uint32_t getFlags() const = 0;
 
-	/*! \brief Remove instance.
+	/*! Remove instance.
 	 *
 	 * \note
 	 * Must be performed within a transaction.
@@ -108,14 +108,14 @@ public:
 	 */
 	virtual bool remove() = 0;
 
-	/*! \brief Read object contained by instance.
+	/*! Read object contained by instance.
 	 *
 	 * \param outSerializerType Serializer type which must be used to read object from stream.
 	 * \return Stream to serialized object.
 	 */
 	virtual Ref< IStream > readObject(const TypeInfo*& outSerializerType) const = 0;
 
-	/*! \brief Write object to instance.
+	/*! Write object to instance.
 	 *
 	 * \note
 	 * Must be performed within a transaction.
@@ -126,14 +126,14 @@ public:
 	 */
 	virtual Ref< IStream > writeObject(const std::wstring& primaryTypeName, const TypeInfo*& outSerializerType) = 0;
 
-	/*! \brief Get list of names to data blobs contained within instance.
+	/*! Get list of names to data blobs contained within instance.
 	 *
 	 * \param outDataNames List of names of data blobs.
 	 * \return Number of data names contained within instance.
 	 */
 	virtual uint32_t getDataNames(std::vector< std::wstring >& outDataNames) const = 0;
 
-	/*! \brief Get date when a data blob was last modified.
+	/*! Get date when a data blob was last modified.
 	 *
 	 * \param dataName Name of data blob.
 	 * \param outLastWriteTime Last modification date of data blob.
@@ -141,7 +141,7 @@ public:
 	 */
 	virtual bool getDataLastWriteTime(const std::wstring& dataName, DateTime& outLastWriteTime) const = 0;
 
-	/*! \brief Remove all data blobs from instance.
+	/*! Remove all data blobs from instance.
 	 *
 	 * \note
 	 * Must be performed within a transaction.
@@ -150,14 +150,14 @@ public:
 	 */
 	virtual bool removeAllData() = 0;
 
-	/*! \brief Read data blob contained within instance.
+	/*! Read data blob contained within instance.
 	 *
 	 * \param dataName Name of data blob.
 	 * \return Stream to data blob.
 	 */
 	virtual Ref< IStream > readData(const std::wstring& dataName) const = 0;
 
-	/*! \brief Write data to blob contained within instance.
+	/*! Write data to blob contained within instance.
 	 *
 	 * \note
 	 * Must be performed within a transaction.

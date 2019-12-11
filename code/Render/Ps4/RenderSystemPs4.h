@@ -18,7 +18,7 @@ namespace traktor
 
 class ContextPs4;
 
-/*! \brief Playstation 4 GNM render system.
+/*! Playstation 4 GNM render system.
  * \ingroup GNM
  *
  * Playstation 4 GNM render system implementation.

@@ -17,7 +17,7 @@ namespace traktor
 
 class ActionContext;
 
-/*! \brief Base class for all native ActionScript classes.
+/*! Base class for all native ActionScript classes.
  * \ingroup Spark
  */
 class T_DLLCLASS ActionClass : public ActionFunction
@@ -29,21 +29,21 @@ public:
 
 	virtual ActionValue call(ActionObject* self, ActionObject* super, const ActionValueArray& args) override;
 
-	/*! \brief Initialize instance of class.
+	/*! Initialize instance of class.
 	 *
 	 * Called before constructor in order to
 	 * prepare instance members, properties etc.
 	 */
 	virtual void initialize(ActionObject* self) = 0;
 
-	/*! \brief Construct instance.
+	/*! Construct instance.
 	 *
 	 * Called after instance has been initialized and
 	 * constructor has been invoked through "new" operator.
 	 */
 	virtual void construct(ActionObject* self, const ActionValueArray& args) = 0;
 
-	/*! \brief Constructor called.
+	/*! Constructor called.
 	 *
 	 * Constructor explicitly called as a
 	 * function.

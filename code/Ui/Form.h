@@ -17,7 +17,7 @@ namespace traktor
 
 class IBitmap;
 
-/*! \brief Top level form.
+/*! Top level form.
  * \ingroup UI
  *
  * Form is a top level widget, i.e. the application

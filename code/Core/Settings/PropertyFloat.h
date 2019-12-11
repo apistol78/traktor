@@ -13,7 +13,7 @@
 namespace traktor
 {
 
-/*! \brief Single precision float property value.
+/*! Single precision float property value.
  * \ingroup Core
  */
 class T_DLLCLASS PropertyFloat : public IPropertyValue

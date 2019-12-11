@@ -17,7 +17,7 @@ namespace traktor
 	namespace ui
 	{
 
-/*! \brief Syntax highlight language.
+/*! Syntax highlight language.
  * \ingroup UI
  */
 class T_DLLCLASS SyntaxLanguage : public Object
@@ -40,11 +40,11 @@ public:
 		StPreprocessor
 	};
 
-	/*! \brief Return line comment token.
+	/*! Return line comment token.
 	 */
 	virtual std::wstring lineComment() const = 0;
 
-	/*! \brief Consume line text.
+	/*! Consume line text.
 	 *
 	 * \param text Single line of text, same line will continue until fully consumed.
 	 * \param outState Output text state.
@@ -53,7 +53,7 @@ public:
 	 */
 	virtual bool consume(const std::wstring& text, State& outState, int& outConsumedChars) const = 0;
 
-	/*! \brief Extract code outline.
+	/*! Extract code outline.
 	 *
 	 * \param line Line number.
 	 * \param text Single line of text.

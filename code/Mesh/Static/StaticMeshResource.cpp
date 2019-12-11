@@ -1,8 +1,9 @@
 #include "Core/Log/Log.h"
 #include "Core/Misc/TString.h"
 #include "Core/Serialization/ISerializer.h"
+#include "Core/Serialization/MemberAlignedVector.h"
 #include "Core/Serialization/MemberComposite.h"
-#include "Core/Serialization/MemberStl.h"
+#include "Core/Serialization/MemberSmallMap.h"
 #include "Mesh/Static/StaticMesh.h"
 #include "Mesh/Static/StaticMeshResource.h"
 #include "Render/Mesh/Mesh.h"
@@ -37,28 +38,27 @@ Ref< IMesh > StaticMeshResource::createMesh(
 		renderMesh = render::MeshReader(meshFactory).read(dataStream);
 		if (!renderMesh)
 		{
-			log::error << L"Static mesh create failed; unable to read render mesh" << Endl;
-			return 0;
+			log::error << L"Static mesh create failed; unable to read render mesh." << Endl;
+			return nullptr;
 		}
 	}
 
 	Ref< StaticMesh > staticMesh = new StaticMesh();
 
 	if (!resourceManager->bind(m_shader, staticMesh->m_shader))
-		return 0;
+		return nullptr;
 
 	staticMesh->m_renderMesh = renderMesh;
 
-	for (std::map< std::wstring, parts_t >::const_iterator i = m_parts.begin(); i != m_parts.end(); ++i)
+	for (const auto& tp : m_parts)
 	{
-		render::handle_t worldTechnique = render::getParameterHandle(i->first);
-
-		staticMesh->m_parts[worldTechnique].reserve(i->second.size());
-		for (parts_t::const_iterator j = i->second.begin(); j != i->second.end(); ++j)
+		render::handle_t worldTechnique = render::getParameterHandle(tp.first);
+		staticMesh->m_parts[worldTechnique].reserve(tp.second.size());
+		for (const auto& p : tp.second)
 		{
 			StaticMesh::Part part;
-			part.shaderTechnique = render::getParameterHandle(j->shaderTechnique);
-			part.meshPart = j->meshPart;
+			part.shaderTechnique = render::getParameterHandle(p.shaderTechnique);
+			part.meshPart = p.meshPart;
 			staticMesh->m_parts[worldTechnique].push_back(part);
 		}
 	}
@@ -66,7 +66,6 @@ Ref< IMesh > StaticMeshResource::createMesh(
 #if defined(_DEBUG)
 	staticMesh->m_name = wstombs(name);
 #endif
-
 	return staticMesh;
 }
 
@@ -75,15 +74,11 @@ void StaticMeshResource::serialize(ISerializer& s)
 	T_ASSERT_M(s.getVersion() >= 5, L"Incorrect version");
 	s >> Member< bool >(L"haveRenderMesh", m_haveRenderMesh);
 	s >> resource::Member< render::Shader >(L"shader", m_shader);
-	s >> MemberStlMap<
+	s >> MemberSmallMap<
 		std::wstring,
 		parts_t,
-		MemberStlPair<
-			std::wstring,
-			parts_t,
-			Member< std::wstring >,
-			MemberStlList< Part, MemberComposite< Part > >
-		>
+		Member< std::wstring >,
+		MemberAlignedVector< Part, MemberComposite< Part > >
 	>(L"parts", m_parts);
 }
 

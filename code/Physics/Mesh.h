@@ -20,7 +20,7 @@ class IStream;
 	namespace physics
 	{
 
-/*! \brief Mesh geometry.
+/*! Mesh geometry.
  * \ingroup Physics
  */
 class T_DLLCLASS Mesh : public Object

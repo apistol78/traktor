@@ -15,7 +15,7 @@ namespace traktor
 	namespace editor
 	{
 
-/*! \brief Assets pipeline.
+/*! Assets pipeline.
  * \ingroup Editor
  */
 class T_DLLCLASS AssetsPipeline : public IPipeline

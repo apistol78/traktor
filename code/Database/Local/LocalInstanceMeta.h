@@ -10,7 +10,7 @@ namespace traktor
 	namespace db
 	{
 
-/*! \brief Local instance meta.
+/*! Local instance meta.
  * \ingroup Database
  */
 class LocalInstanceMeta : public ISerializable

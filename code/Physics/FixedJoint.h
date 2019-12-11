@@ -15,7 +15,7 @@ namespace traktor
 	namespace physics
 	{
 
-/*! \brief Fixed joint.
+/*! Fixed joint.
  * \ingroup Physics
  */
 class T_DLLCLASS FixedJoint : public Joint

@@ -10,7 +10,7 @@ namespace traktor
 
 struct CallArgs;
 
-/*! \brief Key class.
+/*! Key class.
  * \ingroup Spark
  */
 class AsKey : public ActionObject

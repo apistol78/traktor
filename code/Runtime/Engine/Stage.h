@@ -38,7 +38,7 @@ class StageLoader;
 class UpdateControl;
 class UpdateInfo;
 
-/*! \brief Stage class.
+/*! Stage class.
  * \ingroup Runtime
  *
  * Stages describe a current state of the application;
@@ -64,32 +64,32 @@ public:
 
 	void destroy();
 
-	/*! \brief Add layer to stage.
+	/*! Add layer to stage.
 	 *
 	 * \param layer Layer to add.
 	 */
 	void addLayer(Layer* layer);
 
-	/*! \brief Remove layer from stage.
+	/*! Remove layer from stage.
 	 *
 	 * \param layer Layer to remove.
 	 */
 	void removeLayer(Layer* layer);
 
-	/*! \brief Remove all layers from stage. */
+	/*! Remove all layers from stage. */
 	void removeAllLayers();
 
-	/*! \brief Get layer by name.
+	/*! Get layer by name.
 	 *
 	 * \param name Name of layer ot find.
 	 * \return Layer object if found; null if not found.
 	 */
 	Layer* getLayer(const std::wstring& name) const;
 
-	/*! \brief Signal that the application should terminate. */
+	/*! Signal that the application should terminate. */
 	void terminate();
 
-	/*! \brief Invoke a function in stage's script.
+	/*! Invoke a function in stage's script.
 	 *
 	 * \param fn Script function name.
 	 * \param argc Number of arguments.
@@ -98,7 +98,7 @@ public:
 	 */
 	Any invokeScript(const std::string& fn, uint32_t argc, const Any* argv);
 
-	/*! \brief Load next stage.
+	/*! Load next stage.
 	 *
 	 * Next stage is determined by this stage's "transitions"; each
 	 * transition has a name and is used to link to other stages.
@@ -109,7 +109,7 @@ public:
 	 */
 	Ref< Stage > loadStage(const std::wstring& name, const Object* params);
 
-	/*! \brief Asynchronously load next stage.
+	/*! Asynchronously load next stage.
 	 *
 	 * Next stage is determined by this stage's "transitions"; each
 	 * transition has a name and is used to link to other stages.
@@ -123,13 +123,13 @@ public:
 	 */
 	Ref< StageLoader > loadStageAsync(const std::wstring& name, const Object* params);
 
-	/*! \brief Leave this stage and enter another stage.
+	/*! Leave this stage and enter another stage.
 	 *
 	 * \param stage Next stage.
 	 */
 	bool gotoStage(Stage* stage);
 
-	/*! \brief Update this stage.
+	/*! Update this stage.
 	 *
 	 * \param stateManager Engine state manager.
 	 * \param info Engine update information.

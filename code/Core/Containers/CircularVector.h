@@ -5,7 +5,7 @@
 namespace traktor
 {
 
-/*! \brief Circular static container.
+/*! Circular static container.
  *
  * \note
  * This implementation only permit Capacity-1 elements

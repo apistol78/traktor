@@ -22,7 +22,7 @@ class ISerializer;
 
 class ColorTransform;
 
-/*! \brief Shape line style.
+/*! Shape line style.
  * \ingroup Spark
  */
 class T_DLLCLASS LineStyle

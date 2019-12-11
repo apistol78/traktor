@@ -19,7 +19,7 @@ namespace traktor
 
 class Socket;
 
-/*! \brief Set of sockets.
+/*! Set of sockets.
  * \ingroup Net
  *
  * Enable queries on a set of socket

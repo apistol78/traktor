@@ -18,7 +18,7 @@ namespace traktor
 
 class Point;
 
-/*! \brief ActionScript Matrix class.
+/*! ActionScript Matrix class.
  * \ingroup Spark
  */
 class T_DLLCLASS Matrix : public ActionObjectRelay

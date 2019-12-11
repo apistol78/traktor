@@ -15,7 +15,7 @@ namespace traktor
 	namespace ui
 	{
 
-/*! \brief Mini button control.
+/*! Mini button control.
  * \ingroup UI
  */
 class T_DLLCLASS MiniButton : public Widget

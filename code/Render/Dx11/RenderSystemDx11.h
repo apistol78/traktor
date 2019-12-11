@@ -24,7 +24,7 @@ class IBufferHeapDx11;
 class ResourceCache;
 class Window;
 
-/*! \brief DirectX 10 render system.
+/*! DirectX 10 render system.
  * \ingroup DX11
  *
  * OpenGL render system implementation.

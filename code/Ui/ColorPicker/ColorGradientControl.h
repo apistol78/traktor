@@ -24,7 +24,7 @@ class Image;
 
 class Bitmap;
 
-/*! \brief Color gradient control.
+/*! Color gradient control.
  * \ingroup UI
  */
 class T_DLLCLASS ColorGradientControl : public Widget

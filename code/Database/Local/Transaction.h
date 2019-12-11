@@ -16,7 +16,7 @@ class Mutex;
 class Action;
 class Context;
 
-/*! \brief Transaction
+/*! Transaction
  * \ingroup Database
  */
 class Transaction : public Object

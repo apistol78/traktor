@@ -21,7 +21,7 @@ namespace traktor
 class RumbleEffect;
 class IInputDevice;
 
-/*! \brief Rumble effect player.
+/*! Rumble effect player.
  * \ingroup Input
  */
 class T_DLLCLASS RumbleEffectPlayer : public Object

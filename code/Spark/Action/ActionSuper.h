@@ -15,7 +15,7 @@ namespace traktor
 	namespace spark
 	{
 
-/*! \brief Class wrapper to access parent class members.
+/*! Class wrapper to access parent class members.
  * \ingroup Spark
  *
  * \note Super is accessed through

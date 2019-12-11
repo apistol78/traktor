@@ -16,7 +16,7 @@ namespace traktor
 	namespace drawing
 	{
 
-/*! \brief Image information.
+/*! Image information.
  * \ingroup Drawing
  *
  * Additional information about the image.

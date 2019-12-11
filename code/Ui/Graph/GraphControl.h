@@ -24,7 +24,7 @@ class Node;
 class PaintSettings;
 class Pin;
 
-/*! \brief Graph control.
+/*! Graph control.
  * \ingroup UI
  */
 class T_DLLCLASS GraphControl : public Widget
@@ -85,7 +85,7 @@ public:
 
 	int getSelectedEdges(RefArray< Edge >& out) const;
 
-	/*! \brief Get edges connected to given pin.
+	/*! Get edges connected to given pin.
 	 *
 	 * \param pin Pin from which we want to find edges.
 	 * \param outEdges Found edges.
@@ -93,7 +93,7 @@ public:
 	 */
 	int getConnectedEdges(const Pin* pin, RefArray< Edge >& outEdges) const;
 
-	/*! \brief Get edges connected to given node.
+	/*! Get edges connected to given node.
 	 *
 	 * \param node Node from which we want to find edges.
 	 * \param outEdges Found edges.
@@ -101,7 +101,7 @@ public:
 	 */
 	int getConnectedEdges(const Node* node, RefArray< Edge >& outEdges) const;
 
-	/*! \brief Get edges connected to given nodes.
+	/*! Get edges connected to given nodes.
 	 *
 	 * \param nodes Nodes from which we want to find edges.
 	 * \param inclusive True if both endpoints of an edge must be in nodes array, false if only one must be in the array.

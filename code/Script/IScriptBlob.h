@@ -15,7 +15,7 @@ namespace traktor
 	namespace script
 	{
 
-/*! \brief Pre-compiled script blob.
+/*! Pre-compiled script blob.
  * \ingroup Script
  */
 class T_DLLCLASS IScriptBlob : public ISerializable

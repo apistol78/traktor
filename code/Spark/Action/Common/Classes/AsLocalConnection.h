@@ -9,7 +9,7 @@ namespace traktor
 
 struct CallArgs;
 
-/*! \brief LocalConnection class.
+/*! LocalConnection class.
  * \ingroup Spark
  */
 class AsLocalConnection : public ActionClass

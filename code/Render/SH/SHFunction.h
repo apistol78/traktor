@@ -16,7 +16,7 @@ namespace traktor
 	namespace render
 	{
 
-/*! \brief Spherical harmonics function.
+/*! Spherical harmonics function.
  * \ingroup Render
  */
 class T_DLLCLASS SHFunction : public Object

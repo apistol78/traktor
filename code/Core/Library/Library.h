@@ -16,7 +16,7 @@
 namespace traktor
 {
 
-/*! \brief System dynamic library.
+/*! System dynamic library.
  * \ingroup Core
  */
 class T_DLLCLASS Library : public Object
@@ -28,14 +28,14 @@ public:
 
 	virtual ~Library();
 
-	/*! \brief Open library.
+	/*! Open library.
 	 *
 	 * \param libraryName Name of library.
 	 * \return True if library opened successfully.
 	 */
 	bool open(const Path& libraryName);
 
-	/*! \brief Open library.
+	/*! Open library.
 	 *
 	 * This method take user defined search paths
 	 * which is used recursively, i.e. dependent
@@ -49,10 +49,10 @@ public:
 	 */
 	bool open(const Path& libraryName, const std::vector< Path >& searchPaths, bool includeDefaultPaths);
 
-	/*! \brief Close library. */
+	/*! Close library. */
 	void close();
 
-	/*! \brief Detach library.
+	/*! Detach library.
 	 *
 	 * \note
 	 * A detached library is not unloaded from the
@@ -60,14 +60,14 @@ public:
 	 */
 	void detach();
 
-	/*! \brief Find exported symbol from library.
+	/*! Find exported symbol from library.
 	 *
 	 * \param symbol Name of exported symbol.
 	 * \return Pointer to symbol.
 	 */
 	void* find(const std::wstring& symbol);
 
-	/*! \brief Get library path.
+	/*! Get library path.
 	 *
 	 * \return Path to library.
 	 */

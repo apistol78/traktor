@@ -15,7 +15,7 @@ namespace traktor
 	namespace spark
 	{
 
-/*! \brief Flash runtime class factory.
+/*! Flash runtime class factory.
  * \ingroup Spark
  */
 class T_DLLCLASS ClassFactory : public IRuntimeClassFactory

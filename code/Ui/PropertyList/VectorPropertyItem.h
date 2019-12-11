@@ -17,7 +17,7 @@ namespace traktor
 
 class Edit;
 
-/*! \brief Vector property item.
+/*! Vector property item.
  * \ingroup UI
  */
 class T_DLLCLASS VectorPropertyItem : public PropertyItem

@@ -7,7 +7,7 @@ namespace traktor
 	namespace script
 	{
 
-/*! \brief LUA script outline parser.
+/*! LUA script outline parser.
  * \ingroup Script
  */
 class ScriptOutlineLua : public IScriptOutline

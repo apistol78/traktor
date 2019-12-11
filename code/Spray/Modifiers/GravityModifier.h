@@ -7,7 +7,7 @@ namespace traktor
 	namespace spray
 	{
 
-/*! \brief Gravity modifier.
+/*! Gravity modifier.
  * \ingroup Spray
  */
 class GravityModifier : public Modifier

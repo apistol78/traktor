@@ -20,7 +20,7 @@ namespace traktor
 
 class MenuItem;
 
-/*! \brief Tool bar dropdown.
+/*! Tool bar dropdown.
  * \ingroup UI
  */
 class T_DLLCLASS ToolBarDropMenu : public ToolBarItem

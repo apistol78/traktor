@@ -15,7 +15,7 @@ namespace traktor
 	namespace sound
 	{
 
-/*! \brief Sound editor plugin factory.
+/*! Sound editor plugin factory.
  * \ingroup Sound
  */
 class T_DLLCLASS SoundEditorPluginFactory : public editor::IEditorPluginFactory

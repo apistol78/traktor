@@ -17,7 +17,7 @@ namespace traktor
 	namespace ui
 	{
 
-/*! \brief Widget style sheet.
+/*! Widget style sheet.
  * \ingroup UI
  */
 class T_DLLCLASS StyleSheet : public ISerializable
@@ -31,7 +31,7 @@ public:
 
 	std::wstring getValue(const wchar_t* const name) const;
 
-	/*! \brief Merge this style sheet with another.
+	/*! Merge this style sheet with another.
 	 *
 	 * Styles defined in right override existing styles.
 	 * */

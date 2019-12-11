@@ -17,7 +17,7 @@ namespace traktor
 
 class IStream;
 
-/*! \brief System process.
+/*! System process.
  * \ingroup Core
  *
  * System process wrapper; interface to
@@ -52,34 +52,34 @@ public:
 		StCtrlBreak
 	};
 
-	/*! \brief Set process scheduling priority.
+	/*! Set process scheduling priority.
 	 *
 	 * \param New process priority.
 	 * \return True if priority changed.
 	 */
 	virtual bool setPriority(Priority priority) = 0;
 
-	/*! \brief Get pipe stream.
+	/*! Get pipe stream.
 	 *
 	 * \return Exit code.
 	 */
 	virtual Ref< IStream > getPipeStream(StdPipe pipe) = 0;
 
-	/*! \brief Send signal to process.
+	/*! Send signal to process.
 	 *
 	 * \param signalType Type of signal \sa SignalType.
 	 * \return True if signal reached process.
 	 */
 	virtual bool signal(SignalType signalType) = 0;
 
-	/*! \brief Terminate process.
+	/*! Terminate process.
 	 *
 	 * \param exitCode Exit code of process.
 	 * \return True if process being terminated.
 	 */
 	virtual bool terminate(int32_t exitCode) = 0;
 
-	/*! \brief Get exit code returned by process.
+	/*! Get exit code returned by process.
 	 *
 	 * \return Exit code.
 	 */

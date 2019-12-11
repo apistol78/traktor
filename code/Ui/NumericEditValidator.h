@@ -19,7 +19,7 @@ namespace traktor
 	namespace ui
 	{
 
-/*! \brief Numeric text edit validator.
+/*! Numeric text edit validator.
  * \ingroup UI
  */
 class T_DLLCLASS NumericEditValidator : public EditValidator

@@ -28,7 +28,7 @@ class INodeShape;
 class Pin;
 class Size;
 
-/*! \brief Graph node.
+/*! Graph node.
  * \ingroup UI
  */
 class T_DLLCLASS Node

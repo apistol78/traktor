@@ -15,7 +15,7 @@ namespace traktor
 	namespace db
 	{
 
-/*! \brief Get database root group.
+/*! Get database root group.
  * \ingroup Database
  */
 class T_DLLCLASS DbmGetRootGroup : public IMessage

@@ -17,7 +17,7 @@ namespace traktor
 	namespace render
 	{
 
-/*! \brief Set render target.
+/*! Set render target.
  * \ingroup Render
  */
 class T_DLLCLASS ImageProcessStepDiscardTarget : public ImageProcessStep

@@ -17,7 +17,7 @@ namespace traktor
 
 class Tab;
 
-/*! \brief Tab page.
+/*! Tab page.
  * \ingroup UI
  */
 class T_DLLCLASS TabPage : public Container

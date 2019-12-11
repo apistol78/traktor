@@ -19,7 +19,7 @@ namespace traktor
 
 class ITexture;
 
-/*! \brief Sequence texture resource.
+/*! Sequence texture resource.
  * \ingroup Render
  */
 class T_DLLCLASS SequenceTextureResource : public ISerializable

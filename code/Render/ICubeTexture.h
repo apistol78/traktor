@@ -17,7 +17,7 @@ namespace traktor
 
 class ISimpleTexture;
 
-/*! \brief Cube texture.
+/*! Cube texture.
  * \ingroup Render
  */
 class T_DLLCLASS ICubeTexture : public ITexture
@@ -35,11 +35,11 @@ public:
 		SdNegativeZ = 5
 	};
 
-	/*! \brief Size of cube map side in pixels.
+	/*! Size of cube map side in pixels.
 	 */
 	virtual int32_t getSide() const = 0;
 
-	/*! \brief Lock access to texture data.
+	/*! Lock access to texture data.
 	 *
 	 * \param side Cube side.
 	 * \param level Mip level.
@@ -48,7 +48,7 @@ public:
 	 */
 	virtual bool lock(int32_t side, int32_t level, Lock& lock) = 0;
 
-	/*! \brief Unlock access to texture data.
+	/*! Unlock access to texture data.
 	 *
 	 * \param side Cube side.
 	 * \param level Mip level.

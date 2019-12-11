@@ -7,7 +7,7 @@ namespace traktor
 	namespace scene
 	{
 
-/*! \brief Layer entity factory.
+/*! Layer entity factory.
  * \ingroup Scene
  */
 class LayerEntityFactory : public world::IEntityFactory

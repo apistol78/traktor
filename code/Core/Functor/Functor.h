@@ -17,7 +17,7 @@
 namespace traktor
 {
 
-/*! \brief Functor base class.
+/*! Functor base class.
  * \ingroup Core
  *
  * A functor is an object encapsulating a call to a function or a method on
@@ -36,7 +36,7 @@ public:
 
 #if defined(T_CXX11) && !defined(__PS3__)
 
-/*! \brief C++11 lambda functor.
+/*! C++11 lambda functor.
  * \ingroup Core
  */
 class LambdaFunctor : public Functor
@@ -56,7 +56,7 @@ private:
 	std::function< void() > m_fn;
 };
 
-/*! \brief Create functor object.
+/*! Create functor object.
  * \ingroup Core
  */
 inline Ref< LambdaFunctor > makeFunctor(const std::function< void() >& fn)
@@ -66,7 +66,7 @@ inline Ref< LambdaFunctor > makeFunctor(const std::function< void() >& fn)
 
 #endif	// T_CXX11
 
-/*! \brief Class method functor.
+/*! Class method functor.
  * \ingroup Core
  */
 template < typename T >
@@ -91,7 +91,7 @@ private:
 	method_t m_method;
 };
 
-/*! \brief Create functor object.
+/*! Create functor object.
  * \ingroup Core
  */
 template < typename T >
@@ -100,7 +100,7 @@ inline Ref< Functor0< T > > makeFunctor(T* self, typename Functor0< T >::method_
 	return new Functor0< T >(self, method);
 }
 
-/*! \brief Class method functor.
+/*! Class method functor.
  * \ingroup Core
  */
 template < typename T, typename P1 >
@@ -127,7 +127,7 @@ private:
 	P1 m_p1;
 };
 
-/*! \brief Create functor object.
+/*! Create functor object.
  * \ingroup Core
  */
 template < typename T, typename P1 >
@@ -136,7 +136,7 @@ inline Ref< Functor1< T, P1 > > makeFunctor(T* self, typename Functor1< T, P1 >:
 	return new Functor1< T, P1 >(self, method, p1);
 }
 
-/*! \brief Class method functor.
+/*! Class method functor.
  * \ingroup Core
  */
 template < typename T, typename P1, typename P2 >
@@ -165,7 +165,7 @@ private:
 	P2 m_p2;
 };
 
-/*! \brief Create functor object.
+/*! Create functor object.
  * \ingroup Core
  */
 template < typename T, typename P1, typename P2 >
@@ -174,7 +174,7 @@ inline Ref< Functor2< T, P1, P2 > > makeFunctor(T* self, typename Functor2< T, P
 	return new Functor2< T, P1, P2 >(self, method, p1, p2);
 }
 
-/*! \brief Class method functor.
+/*! Class method functor.
  * \ingroup Core
  */
 template < typename T, typename P1, typename P2, typename P3 >
@@ -205,7 +205,7 @@ private:
 	P3 m_p3;
 };
 
-/*! \brief Create functor object.
+/*! Create functor object.
  * \ingroup Core
  */
 template < typename T, typename P1, typename P2, typename P3 >
@@ -214,7 +214,7 @@ inline Ref< Functor3< T, P1, P2, P3 > > makeFunctor(T* self, typename Functor3< 
 	return new Functor3< T, P1, P2, P3 >(self, method, p1, p2, p3);
 }
 
-/*! \brief Class method functor.
+/*! Class method functor.
  * \ingroup Core
  */
 template < typename T, typename P1, typename P2, typename P3, typename P4 >
@@ -247,7 +247,7 @@ private:
 	P4 m_p4;
 };
 
-/*! \brief Create functor object.
+/*! Create functor object.
  * \ingroup Core
  */
 template < typename T, typename P1, typename P2, typename P3, typename P4 >
@@ -256,7 +256,7 @@ inline Ref< Functor4< T, P1, P2, P3, P4 > > makeFunctor(T* self, typename Functo
 	return new Functor4< T, P1, P2, P3, P4 >(self, method, p1, p2, p3, p4);
 }
 
-/*! \brief Class method functor.
+/*! Class method functor.
  * \ingroup Core
  */
 template < typename T, typename P1, typename P2, typename P3, typename P4, typename P5 >
@@ -291,7 +291,7 @@ private:
 	P5 m_p5;
 };
 
-/*! \brief Create functor object.
+/*! Create functor object.
  * \ingroup Core
  */
 template < typename T, typename P1, typename P2, typename P3, typename P4, typename P5 >
@@ -300,7 +300,7 @@ inline Ref< Functor5< T, P1, P2, P3, P4, P5 > > makeFunctor(T* self, typename Fu
 	return new Functor5< T, P1, P2, P3, P4, P5 >(self, method, p1, p2, p3, p4, p5);
 }
 
-/*! \brief Class method functor.
+/*! Class method functor.
  * \ingroup Core
  */
 template < typename T, typename P1, typename P2, typename P3, typename P4, typename P5, typename P6 >
@@ -337,7 +337,7 @@ private:
 	P6 m_p6;
 };
 
-/*! \brief Create functor object.
+/*! Create functor object.
  * \ingroup Core
  */
 template < typename T, typename P1, typename P2, typename P3, typename P4, typename P5, typename P6 >
@@ -346,7 +346,7 @@ inline Ref< Functor6< T, P1, P2, P3, P4, P5, P6 > > makeFunctor(T* self, typenam
 	return new Functor6< T, P1, P2, P3, P4, P5, P6 >(self, method, p1, p2, p3, p4, p5, p6);
 }
 
-/*! \brief Static function functor.
+/*! Static function functor.
  * \ingroup Core
  */
 class StaticFunctor0 : public Functor
@@ -368,7 +368,7 @@ private:
 	function_t m_function;
 };
 
-/*! \brief Create functor object.
+/*! Create functor object.
  * \ingroup Core
  */
 inline Ref< StaticFunctor0 > makeStaticFunctor(StaticFunctor0::function_t function)
@@ -376,7 +376,7 @@ inline Ref< StaticFunctor0 > makeStaticFunctor(StaticFunctor0::function_t functi
 	return new StaticFunctor0(function);
 }
 
-/*! \brief Static function functor.
+/*! Static function functor.
  * \ingroup Core
  */
 template < typename P1 >
@@ -401,7 +401,7 @@ private:
 	P1 m_p1;
 };
 
-/*! \brief Create functor object.
+/*! Create functor object.
  * \ingroup Core
  */
 template < typename P1 >
@@ -410,7 +410,7 @@ inline Ref< StaticFunctor1< P1 > > makeStaticFunctor(typename StaticFunctor1< P1
 	return new StaticFunctor1< P1 >(function, p1);
 }
 
-/*! \brief Static function functor.
+/*! Static function functor.
  * \ingroup Core
  */
 template < typename P1, typename P2 >
@@ -437,7 +437,7 @@ private:
 	P2 m_p2;
 };
 
-/*! \brief Create functor object.
+/*! Create functor object.
  * \ingroup Core
  */
 template < typename P1, typename P2 >
@@ -446,7 +446,7 @@ inline Ref< StaticFunctor2< P1, P2 > > makeStaticFunctor(typename StaticFunctor2
 	return new StaticFunctor2< P1, P2 >(function, p1, p2);
 }
 
-/*! \brief Static function functor.
+/*! Static function functor.
  * \ingroup Core
  */
 template < typename P1, typename P2, typename P3 >
@@ -475,7 +475,7 @@ private:
 	P3 m_p3;
 };
 
-/*! \brief Create functor object.
+/*! Create functor object.
  * \ingroup Core
  */
 template < typename P1, typename P2, typename P3 >
@@ -484,7 +484,7 @@ inline Ref< StaticFunctor3< P1, P2, P3 > > makeStaticFunctor(typename StaticFunc
 	return new StaticFunctor3< P1, P2, P3 >(function, p1, p2, p3);
 }
 
-/*! \brief Static function functor.
+/*! Static function functor.
  * \ingroup Core
  */
 template < typename P1, typename P2, typename P3, typename P4 >
@@ -515,7 +515,7 @@ private:
 	P4 m_p4;
 };
 
-/*! \brief Create functor object.
+/*! Create functor object.
  * \ingroup Core
  */
 template < typename P1, typename P2, typename P3, typename P4 >
@@ -524,7 +524,7 @@ inline Ref< StaticFunctor4< P1, P2, P3, P4 > > makeStaticFunctor(typename Static
 	return new StaticFunctor4< P1, P2, P3, P4 >(function, p1, p2, p3, p4);
 }
 
-/*! \brief Static function functor.
+/*! Static function functor.
  * \ingroup Core
  */
 template < typename P1, typename P2, typename P3, typename P4, typename P5 >
@@ -557,7 +557,7 @@ private:
 	P5 m_p5;
 };
 
-/*! \brief Create functor object.
+/*! Create functor object.
  * \ingroup Core
  */
 template < typename P1, typename P2, typename P3, typename P4, typename P5 >
@@ -566,7 +566,7 @@ inline Ref< StaticFunctor5< P1, P2, P3, P4, P5 > > makeStaticFunctor(typename St
 	return new StaticFunctor5< P1, P2, P3, P4, P5 >(function, p1, p2, p3, p4, p5);
 }
 
-/*! \brief Static function functor.
+/*! Static function functor.
  * \ingroup Core
  */
 template < typename P1, typename P2, typename P3, typename P4, typename P5, typename P6 >
@@ -601,7 +601,7 @@ private:
 	P6 m_p6;
 };
 
-/*! \brief Create functor object.
+/*! Create functor object.
  * \ingroup Core
  */
 template < typename P1, typename P2, typename P3, typename P4, typename P5, typename P6 >
@@ -610,7 +610,7 @@ inline Ref< StaticFunctor6< P1, P2, P3, P4, P5, P6 > > makeStaticFunctor(typenam
 	return new StaticFunctor6< P1, P2, P3, P4, P5, P6 >(function, p1, p2, p3, p4, p5, p6);
 }
 
-/*! \brief Static function functor.
+/*! Static function functor.
  * \ingroup Core
  */
 template < typename P1, typename P2, typename P3, typename P4, typename P5, typename P6, typename P7 >
@@ -647,7 +647,7 @@ private:
 	P7 m_p7;
 };
 
-/*! \brief Create functor object.
+/*! Create functor object.
  * \ingroup Core
  */
 template < typename P1, typename P2, typename P3, typename P4, typename P5, typename P6, typename P7 >
@@ -656,7 +656,7 @@ inline Ref< StaticFunctor7< P1, P2, P3, P4, P5, P6, P7 > > makeStaticFunctor(typ
 	return new StaticFunctor7< P1, P2, P3, P4, P5, P6, P7 >(function, p1, p2, p3, p4, p5, p6, p7);
 }
 
-/*! \brief Static function functor.
+/*! Static function functor.
  * \ingroup Core
  */
 template < typename P1, typename P2, typename P3, typename P4, typename P5, typename P6, typename P7, typename P8 >
@@ -695,7 +695,7 @@ private:
 	P8 m_p8;
 };
 
-/*! \brief Create functor object.
+/*! Create functor object.
  * \ingroup Core
  */
 template < typename P1, typename P2, typename P3, typename P4, typename P5, typename P6, typename P7, typename P8 >

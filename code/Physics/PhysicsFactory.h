@@ -15,7 +15,7 @@ namespace traktor
 	namespace physics
 	{
 
-/*! \brief Physics resource factory.
+/*! Physics resource factory.
  * \ingroup Physics
  */
 class T_DLLCLASS PhysicsFactory : public resource::IResourceFactory

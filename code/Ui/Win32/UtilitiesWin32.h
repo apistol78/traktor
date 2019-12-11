@@ -8,7 +8,7 @@ namespace traktor
 	namespace ui
 	{
 
-/*! \brief Translate Win32 virtual key to our virtual key.
+/*! Translate Win32 virtual key to our virtual key.
  * \ingroup UIW32
  *
  * \param keyCode Win32 virtual key.
@@ -16,7 +16,7 @@ namespace traktor
  */
 VirtualKey translateToVirtualKey(uint32_t keyCode);
 
-/*! \brief Translate virtual key to Win32 virtual key.
+/*! Translate virtual key to Win32 virtual key.
  * \ingroup UIW32
  *
  * \param vk Virtual key.

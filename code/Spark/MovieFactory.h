@@ -27,7 +27,7 @@ class SwfReader;
 class Movie;
 class Tag;
 
-/*! \brief Flash movie factory.
+/*! Flash movie factory.
  * \ingroup Spark
  */
 class T_DLLCLASS MovieFactory : public Object

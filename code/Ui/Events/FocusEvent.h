@@ -15,7 +15,7 @@ namespace traktor
 	namespace ui
 	{
 
-/*! \brief Focus event.
+/*! Focus event.
  * \ingroup UI
  */
 class T_DLLCLASS FocusEvent : public Event

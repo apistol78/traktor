@@ -9,7 +9,7 @@
 namespace traktor
 {
 
-	/*! \brief Format helper of Matrix44 instances.
+	/*! Format helper of Matrix44 instances.
 	 * \ingroup Core
 	 */
 	inline OutputStream& operator << (OutputStream& os, const Matrix44& v)
@@ -18,7 +18,7 @@ namespace traktor
 		return os;
 	}
 
-	/*! \brief Format helper of Vector2 instances.
+	/*! Format helper of Vector2 instances.
 	 * \ingroup Core
 	 */
 	inline OutputStream& operator << (OutputStream& os, const Vector2& v)
@@ -27,7 +27,7 @@ namespace traktor
 		return os;
 	}
 
-	/*! \brief Format helper of Vector4 instances.
+	/*! Format helper of Vector4 instances.
 	 * \ingroup Core
 	 */
 	inline OutputStream& operator << (OutputStream& os, const Vector4& v)
@@ -36,7 +36,7 @@ namespace traktor
 		return os;
 	}
 
-	/*! \brief Format helper of Quaternion instances.
+	/*! Format helper of Quaternion instances.
 	 * \ingroup Core
 	 */
 	inline OutputStream& operator << (OutputStream& os, const Quaternion& q)

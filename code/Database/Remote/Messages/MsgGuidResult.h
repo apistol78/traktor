@@ -16,7 +16,7 @@ namespace traktor
 	namespace db
 	{
 
-/*! \brief Guid result.
+/*! Guid result.
  * \ingroup Database
  */
 class T_DLLCLASS MsgGuidResult : public IMessage

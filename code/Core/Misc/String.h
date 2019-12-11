@@ -11,7 +11,7 @@
 namespace traktor
 {
 
-/*! \brief Replace all occurrences of a character into another character.
+/*! Replace all occurrences of a character into another character.
  * \ingroup Core
  *
  * \param str Source string.
@@ -27,7 +27,7 @@ String replaceAll(const String& str, typename String::value_type ch, typename St
 	return cpy;
 }
 
-/*! \brief Replace all occurrences of a substring into another string.
+/*! Replace all occurrences of a substring into another string.
  * \ingroup Core
  *
  * \param str Source string.
@@ -47,7 +47,7 @@ String replaceAll(const String& str, const String& ndl, const String& rep)
 	return cpy;
 }
 
-/*! \brief Apply transformation of an entire string.
+/*! Apply transformation of an entire string.
  * \ingroup Core
  *
  * \param str Source string.
@@ -62,7 +62,7 @@ String transform(const String& str, int (*func)(int c))
 	return cpy;
 }
 
-/*! \brief Implode set of strings into a single string.
+/*! Implode set of strings into a single string.
  * \ingroup Core
  *
  * \param begin From iterator.
@@ -84,7 +84,7 @@ typename Iterator::value_type implode(const Iterator& begin, const Iterator& end
 	return tmp;
 }
 
-/*! \brief Transform a string to all uppercase.
+/*! Transform a string to all uppercase.
  * \ingroup Core
  *
  * \param str Source string.
@@ -96,7 +96,7 @@ String toUpper(const String& str)
 	return transform< String >(str, std::toupper);
 }
 
-/*! \brief Transform a string to all lowercase.
+/*! Transform a string to all lowercase.
  * \ingroup Core
  *
  * \param str Source string.
@@ -108,7 +108,7 @@ String toLower(const String& str)
 	return transform< String >(str, std::tolower);
 }
 
-/*! \brief See if the start of a string matches a given string.
+/*! See if the start of a string matches a given string.
  * \ingroup Core
  *
  * \param str Source string.
@@ -125,7 +125,7 @@ bool startsWith(const StringType& str, const StringType& start)
 	return bool(str.substr(0, start.length()) == start);
 }
 
-/*! \brief See if the end of a string matches a given string.
+/*! See if the end of a string matches a given string.
  * \ingroup Core
  *
  * \param str Source string.
@@ -142,7 +142,7 @@ bool endsWith(const StringType& str, const StringType& end)
 	return bool(str.substr(str.length() - end.length(), end.length()) == end);
 }
 
-/*! \brief Perform a lexicographically compare of strings.
+/*! Perform a lexicographically compare of strings.
  * \ingroup Core
  *
  * \param a Left hand string.
@@ -155,7 +155,7 @@ int compareIgnoreCase(const StringType& a, const StringType& b)
 	return toLower< StringType >(a).compare(toLower< StringType >(b));
 }
 
-/*! \brief Trim leading white-space.
+/*! Trim leading white-space.
  * \ingroup Core
  */
 inline std::wstring ltrim(const std::wstring& a, const std::wstring& ws = L" \t\n\r")
@@ -166,7 +166,7 @@ inline std::wstring ltrim(const std::wstring& a, const std::wstring& ws = L" \t\
 	return a.substr(i);
 }
 
-/*! \brief Trim trailing white-space.
+/*! Trim trailing white-space.
  * \ingroup Core
  */
 inline std::wstring rtrim(const std::wstring& a, const std::wstring& ws = L" \t\n\r")
@@ -177,7 +177,7 @@ inline std::wstring rtrim(const std::wstring& a, const std::wstring& ws = L" \t\
 	return a.substr(0, i + 1);
 }
 
-/*! \brief Trim white-space.
+/*! Trim white-space.
  * \ingroup Core
  */
 inline std::wstring trim(const std::wstring& a)
@@ -185,7 +185,7 @@ inline std::wstring trim(const std::wstring& a)
 	return ltrim(rtrim(a));
 }
 
-/*! \brief Convert value to literal.
+/*! Convert value to literal.
  * \ingroup Core
  */
 template < typename ValueType >
@@ -195,7 +195,7 @@ std::wstring toString(const ValueType& value)
 	return ss.str();
 }
 
-/*! \brief Convert value to literal.
+/*! Convert value to literal.
  * \ingroup Core
  */
 inline std::wstring toString(float value, int32_t decimals = 6)
@@ -206,7 +206,7 @@ inline std::wstring toString(float value, int32_t decimals = 6)
 	return ss.str();
 }
 
-/*! \brief Convert value to literal.
+/*! Convert value to literal.
  * \ingroup Core
  */
 inline std::wstring toString(double value, int32_t decimals = 6)
@@ -217,7 +217,7 @@ inline std::wstring toString(double value, int32_t decimals = 6)
 	return ss.str();
 }
 
-/*! \brief Convert literal to value.
+/*! Convert literal to value.
  * \ingroup Core
  */
 template < typename ValueType >
@@ -231,7 +231,7 @@ ValueType parseString(const std::string& text, const ValueType& defaultValue)
 	return value;
 }
 
-/*! \brief Convert literal to value.
+/*! Convert literal to value.
  * \ingroup Core
  */
 template < typename ValueType >
@@ -240,7 +240,7 @@ ValueType parseString(const std::string& text)
 	return parseString(text, std::numeric_limits< ValueType >::has_signaling_NaN ?  std::numeric_limits< ValueType >::signaling_NaN() : 0);
 }
 
-/*! \brief Convert literal to value.
+/*! Convert literal to value.
  * \ingroup Core
  */
 template < typename ValueType >
@@ -254,7 +254,7 @@ ValueType parseString(const std::wstring& text, const ValueType& defaultValue)
 	return value;
 }
 
-/*! \brief Convert literal to boolean.
+/*! Convert literal to boolean.
  * \ingroup Core
  */
 template < >
@@ -266,7 +266,7 @@ inline float parseString< float >(const std::wstring& text, const float& default
 }
 
 
-/*! \brief Convert literal to value.
+/*! Convert literal to value.
  * \ingroup Core
  */
 template < typename ValueType >
@@ -275,7 +275,7 @@ ValueType parseString(const std::wstring& text)
 	return parseString(text, std::numeric_limits< ValueType >::has_signaling_NaN ?  std::numeric_limits< ValueType >::signaling_NaN() : 0);
 }
 
-/*! \brief Convert literal to boolean.
+/*! Convert literal to boolean.
  * \ingroup Core
  */
 template < >
@@ -294,7 +294,7 @@ inline bool parseString< bool >(const std::wstring& text)
 	return false;
 }
 
-/*! \brief Two-way split.
+/*! Two-way split.
  * \ingroup Core
  */
 inline bool split(const std::wstring& str, wchar_t delim, std::wstring& outLeft, std::wstring& outRight)

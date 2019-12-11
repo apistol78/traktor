@@ -18,7 +18,7 @@ namespace traktor
 
 class DeflateLzoImpl;
 
-/*! \brief LZO deflate stream.
+/*! LZO deflate stream.
  * \ingroup Compress
  */
 class T_DLLCLASS DeflateStreamLzo : public IStream

@@ -10,7 +10,7 @@ namespace traktor
 class Array;
 struct CallArgs;
 
-/*! \brief Array class.
+/*! Array class.
  * \ingroup Spark
  */
 class AsArray : public ActionClass

@@ -18,7 +18,7 @@ namespace traktor
 class RigidEntity;
 class Joint;
 
-/*! \brief Articulated entity.
+/*! Articulated entity.
  * \ingroup Physics
  */
 class T_DLLCLASS ArticulatedEntity : public world::Entity

@@ -15,18 +15,18 @@ namespace traktor
 	namespace net
 	{
 
-/*! \brief Network manager.
+/*! Network manager.
  * \ingroup Net
  */
 class T_DLLCLASS Network
 {
 public:
-	/*! \brief Initialize network.
+	/*! Initialize network.
 	 * \return True if network is initialized and ready to be used.
 	 */
 	static bool initialize();
 
-	/*! \brief Finalize network. */
+	/*! Finalize network. */
 	static void finalize();
 
 private:

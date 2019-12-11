@@ -30,19 +30,19 @@ class T_DLLCLASS IEditorPageSite : public Object
 	T_RTTI_CLASS;
 
 public:
-	/*! \brief Attach object to property list. */
+	/*! Attach object to property list. */
 	virtual void setPropertyObject(Object* properties) = 0;
 
-	/*! \brief Create additional docking panel. */
+	/*! Create additional docking panel. */
 	virtual void createAdditionalPanel(ui::Widget* widget, int size, bool south) = 0;
 
-	/*! \brief Destroy additional docking panel. */
+	/*! Destroy additional docking panel. */
 	virtual void destroyAdditionalPanel(ui::Widget* widget) = 0;
 
-	/*! \brief Show additional docking panel. */
+	/*! Show additional docking panel. */
 	virtual void showAdditionalPanel(ui::Widget* widget) = 0;
 
-	/*! \brief Hide additional docking panel. */
+	/*! Hide additional docking panel. */
 	virtual void hideAdditionalPanel(ui::Widget* widget) = 0;
 };
 

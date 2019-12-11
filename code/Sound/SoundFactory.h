@@ -15,7 +15,7 @@ namespace traktor
 	namespace sound
 	{
 
-/*! \brief Sound resource factory.
+/*! Sound resource factory.
  * \ingroup Sound
  */
 class T_DLLCLASS SoundFactory : public resource::IResourceFactory

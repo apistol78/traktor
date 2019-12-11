@@ -15,7 +15,7 @@ namespace traktor
 	namespace render
 	{
 
-/*! \brief Sequence texture resource factory.
+/*! Sequence texture resource factory.
  * \ingroup Render
  */
 class T_DLLCLASS SequenceTextureFactory : public resource::IResourceFactory

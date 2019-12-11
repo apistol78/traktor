@@ -21,7 +21,7 @@ class GraphCanvas;
 class Node;
 class Pin;
 
-/*! \brief Graph node visual shape.
+/*! Graph node visual shape.
  * \ingroup UI
  */
 class T_DLLCLASS INodeShape : public Object

@@ -9,7 +9,7 @@
 namespace traktor
 {
 
-/*! \brief Object reference member.
+/*! Object reference member.
  * \ingroup Core
  */
 template < typename Class >

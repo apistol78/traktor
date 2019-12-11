@@ -17,14 +17,14 @@ namespace traktor
 	namespace sound
 	{
 
-/*! \brief Filter instance data.
+/*! Filter instance data.
 * \ingroup Sound
 */
 struct T_DLLCLASS IFilterInstance : public IRefCount
 {
 };
 
-/*! \brief IFilter base class.
+/*! IFilter base class.
  * \ingroup Sound
  */
 class T_DLLCLASS IFilter : public ISerializable

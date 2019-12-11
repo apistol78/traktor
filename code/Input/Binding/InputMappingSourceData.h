@@ -18,7 +18,7 @@ namespace traktor
 
 class IInputSourceData;
 
-/*! \brief Input mapping source data.
+/*! Input mapping source data.
  * \ingroup Input
  *
  * Serializable description of input sources.

@@ -32,7 +32,7 @@ struct WaveFormat
 
 #pragma pack()
 
-/*! \brief WAV stream decoder.
+/*! WAV stream decoder.
  */
 class T_DLLCLASS WavStreamDecoder : public IStreamDecoder
 {

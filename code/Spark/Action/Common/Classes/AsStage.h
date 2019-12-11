@@ -11,7 +11,7 @@ namespace traktor
 
 struct CallArgs;
 
-/*! \brief Stage class.
+/*! Stage class.
  * \ingroup Spark
  */
 class AsStage : public ActionObject
@@ -23,7 +23,7 @@ public:
 
 	void eventResize(int32_t width, int32_t height);
 
-	/*! \brief Convert from screen coordinates to stage coordinates.
+	/*! Convert from screen coordinates to stage coordinates.
 	 *
 	 * \note
 	 * Screen coordinates are expressing in Pixels and
@@ -31,7 +31,7 @@ public:
 	 */
 	Vector2 toStage(const Vector2& pos) const;
 
-	/*! \brief Convert from stage coordinates to screen coordinates.
+	/*! Convert from stage coordinates to screen coordinates.
 	 */
 	Vector2 toScreen(const Vector2& pos) const;
 

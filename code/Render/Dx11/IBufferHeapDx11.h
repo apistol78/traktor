@@ -8,7 +8,7 @@ namespace traktor
 	namespace render
 	{
 
-/*! \brief Manages DX11 buffer memory.
+/*! Manages DX11 buffer memory.
  * \ingroup DX11
  */
 class IBufferHeapDx11 : public Object

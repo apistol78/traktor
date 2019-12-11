@@ -18,7 +18,7 @@ namespace traktor
 
 class Solution;
 
-/*! \brief Solution builder generator base class.
+/*! Solution builder generator base class.
  *
  * Each solution generate is derived from this
  * base class. Each derived generator is instanciated

@@ -7,7 +7,7 @@
 namespace traktor
 {
 
-/*! \brief Aggregate member.
+/*! Aggregate member.
  * \ingroup Core
  */
 template < typename Class >

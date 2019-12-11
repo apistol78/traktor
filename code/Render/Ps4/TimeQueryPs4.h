@@ -9,7 +9,7 @@ namespace traktor
 
 class ContextPs4;
 
-/*! \brief GPU time stamp recording query.
+/*! GPU time stamp recording query.
  * \ingroup Render
  */
 class TimeQueryPs4 : public ITimeQuery

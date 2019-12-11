@@ -18,7 +18,7 @@ namespace traktor
 	namespace spark
 	{
 
-/*! \brief Array of ActionValue objects.
+/*! Array of ActionValue objects.
  * \ingroup Spark
  */
 class T_DLLCLASS Array : public ActionObjectRelay

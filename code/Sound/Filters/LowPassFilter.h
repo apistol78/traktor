@@ -15,7 +15,7 @@ namespace traktor
 	namespace sound
 	{
 
-/*! \brief Low pass filter.
+/*! Low pass filter.
  * \ingroup Sound
  */
 class T_DLLCLASS LowPassFilter : public IFilter

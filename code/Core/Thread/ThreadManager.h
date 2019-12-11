@@ -18,7 +18,7 @@ namespace traktor
 
 class Thread;
 
-/*! \brief OS thread manager.
+/*! OS thread manager.
  * \ingroup Core
  *
  * All threads should be created and destroyed
@@ -29,7 +29,7 @@ class T_DLLCLASS ThreadManager : public ISingleton
 public:
 	static ThreadManager& getInstance();
 
-	/*! \brief Create thread.
+	/*! Create thread.
 	 *
 	 * Create a thread from a functor.
 	 * An optional name can be assigned to the thread
@@ -42,7 +42,7 @@ public:
 	 */
 	Thread* create(Functor* functor, const wchar_t* const name = L"Unnamed", int hardwareCore = -1);
 
-	/*! \brief Destroy thread.
+	/*! Destroy thread.
 	 *
 	 * Destroy a thread.
 	 * All threads must be destroyed through this
@@ -53,7 +53,7 @@ public:
 	 */
 	void destroy(Thread* thread);
 
-	/*! \brief Get current thread.
+	/*! Get current thread.
 	 *
 	 * Get thread object of currently executing thread.
 	 *

@@ -15,7 +15,7 @@ namespace traktor
 	namespace sound
 	{
 
-/*! \brief Comb filter.
+/*! Comb filter.
  * \ingroup Sound
  */
 class T_DLLCLASS CombFilter : public IFilter

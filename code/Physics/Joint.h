@@ -17,7 +17,7 @@ namespace traktor
 
 class Body;
 
-/*! \brief Joint base class.
+/*! Joint base class.
  * \ingroup Physics
  */
 class T_DLLCLASS Joint : public Object
@@ -27,10 +27,10 @@ class T_DLLCLASS Joint : public Object
 public:
 	virtual void destroy() = 0;
 
-	/*! \brief Get first constraint body. */
+	/*! Get first constraint body. */
 	virtual Body* getBody1() = 0;
 
-	/*! \brief Get second constraint body.
+	/*! Get second constraint body.
 	 *
 	 * \note
 	 * This return null if first body is constrained

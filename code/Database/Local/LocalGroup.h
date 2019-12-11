@@ -10,7 +10,7 @@ namespace traktor
 
 class Context;
 
-/*! \brief Local group.
+/*! Local group.
  * \ingroup Database
  */
 class LocalGroup : public IProviderGroup

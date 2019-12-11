@@ -10,7 +10,7 @@ namespace traktor
 	{
 
 /*!
- * \brief Per instance data structure.
+ * Per instance data structure.
  *
  * \note
  * Must be packed into Vector4;s as an array

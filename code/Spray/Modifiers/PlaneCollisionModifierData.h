@@ -16,7 +16,7 @@ namespace traktor
 	namespace spray
 	{
 
-/*! \brief Plane collision modifier persistent data.
+/*! Plane collision modifier persistent data.
  * \ingroup Spray
  */
 class T_DLLCLASS PlaneCollisionModifierData : public ModifierData

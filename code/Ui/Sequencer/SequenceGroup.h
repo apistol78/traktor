@@ -17,7 +17,7 @@ namespace traktor
 
 class IBitmap;
 
-/*! \brief Sequence group.
+/*! Sequence group.
  * \ingroup UI
  */
 class T_DLLCLASS SequenceGroup : public SequenceItem

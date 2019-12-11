@@ -17,7 +17,7 @@ namespace traktor
 
 class Bitmap;
 
-/*! \brief Static image.
+/*! Static image.
  * \ingroup UI
  */
 class T_DLLCLASS Image : public Widget

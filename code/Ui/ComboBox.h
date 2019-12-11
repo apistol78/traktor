@@ -20,7 +20,7 @@ class Button;
 class Edit;
 class ListBox;
 
-/*! \brief Combo box control.
+/*! Combo box control.
  * \ingroup UI
  */
 class T_DLLCLASS ComboBox : public Widget

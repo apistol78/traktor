@@ -15,7 +15,7 @@ namespace traktor
 	namespace ui
 	{
 
-/*! \brief Horizontal or vertical splitter.
+/*! Horizontal or vertical splitter.
  * \ingroup UI
  */
 class T_DLLCLASS Splitter : public Widget
@@ -25,7 +25,7 @@ class T_DLLCLASS Splitter : public Widget
 public:
 	Splitter();
 
-	/*! \brief Create splitter control.
+	/*! Create splitter control.
 	 *
 	 * \param parent Parent widget.
 	 * \param vertical Orientation of splitter.

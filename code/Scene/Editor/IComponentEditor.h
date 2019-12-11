@@ -30,7 +30,7 @@ class T_DLLCLASS IComponentEditor : public Object
 	T_RTTI_CLASS;
 
 public:
-	/*! \brief Draw guide for component.
+	/*! Draw guide for component.
 	 *
 	 * A guide is the wire overlay
 	 * in the 3d editor view.

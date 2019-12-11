@@ -15,7 +15,7 @@ namespace traktor
 	namespace ui
 	{
 
-/*! \brief Sequencer tick.
+/*! Sequencer tick.
  * \ingroup UI
  */
 class T_DLLCLASS Tick : public Key

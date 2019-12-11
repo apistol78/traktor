@@ -16,7 +16,7 @@ namespace traktor
 	namespace runtime
 	{
 
-/*! \brief Update information.
+/*! Update information.
  * \ingroup Runtime
  *
  * Update information provide time measurements
@@ -29,19 +29,19 @@ class T_DLLCLASS UpdateInfo : public Object
 public:
 	UpdateInfo();
 
-	/*! \brief Get total application time.
+	/*! Get total application time.
 	 *
 	 * \return Time in seconds.
 	 */
 	float getTotalTime() const { return m_totalTime; }
 
-	/*! \brief Get real time in current state.
+	/*! Get real time in current state.
 	 *
 	 * \return Time in seconds.
 	 */
 	float getStateTime() const { return m_stateTime; }
 
-	/*! \brief Get simulation time in current state.
+	/*! Get simulation time in current state.
 	 *
 	 * \note Simulation time are updated in discreet
 	 * time steps thus might not be same as state time.
@@ -52,7 +52,7 @@ public:
 	 */
 	float getSimulationTime() const { return m_simulationTime; }
 
-	/*! \brief Get simulation delta time.
+	/*! Get simulation delta time.
 	 *
 	 * Simulation delta time is a fixed value
 	 * defined at the beginning of the application.
@@ -61,13 +61,13 @@ public:
 	 */
 	float getSimulationDeltaTime() const { return m_simulationDeltaTime; }
 
-	/*! \brief Get simulation frequency.
+	/*! Get simulation frequency.
 	 *
 	 * \return Frequency in hertz.
 	 */
 	int32_t getSimulationFrequency() const { return m_simulationFrequency; }
 
-	/*! \brief Get frame delta time.
+	/*! Get frame delta time.
 	 *
 	 * Frame delta time varies depending on current
 	 * frame-rate.
@@ -76,13 +76,13 @@ public:
 	 */
 	float getFrameDeltaTime() const { return m_frameDeltaTime; }
 
-	/*! \brief Get frame count.
+	/*! Get frame count.
 	 *
 	 * \return Frame count since beginning of application.
 	 */
 	uint64_t getFrame() const { return m_frame; }
 
-	/*! \brief Get interval fraction.
+	/*! Get interval fraction.
 	 *
 	 * I = 1 - (Tsim - Tstate) / dTsim
 	 *
@@ -90,7 +90,7 @@ public:
 	 */
 	float getInterval() const { return clamp((m_stateTime - m_simulationTime) / m_simulationDeltaTime, 0.0f, 1.0f); }
 
-	/*! \brief If system is detected as being too slow.
+	/*! If system is detected as being too slow.
 	 *
 	 * \return True if system incapable of sustaining a stable frame rate.
 	 */

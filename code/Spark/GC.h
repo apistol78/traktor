@@ -11,7 +11,7 @@ namespace traktor
 
 class Collectable;
 
-/*! \brief Cyclic object garbage collector.
+/*! Cyclic object garbage collector.
  * \ingroup Spark
  *
  * This collaborate with Collectable in order

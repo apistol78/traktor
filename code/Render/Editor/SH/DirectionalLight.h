@@ -16,7 +16,7 @@ namespace traktor
 	{
 
 /*!
- * \brief Directional light function.
+ * Directional light function.
  */
 class T_DLLCLASS DirectionalLight : public SHFunction
 {

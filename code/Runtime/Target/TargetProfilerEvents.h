@@ -16,7 +16,7 @@ namespace traktor
 	namespace runtime
 	{
 
-/*! \brief Target profiler events from running target.
+/*! Target profiler events from running target.
  * \ingroup Runtime
  */
 class T_DLLCLASS TargetProfilerEvents : public ISerializable

@@ -15,7 +15,7 @@ namespace traktor
 	namespace drawing
 	{
 
-/*! \brief Quantize filter.
+/*! Quantize filter.
  * \ingroup Drawing
  */
 class T_DLLCLASS QuantizeFilter : public IImageFilter

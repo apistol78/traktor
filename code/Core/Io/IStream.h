@@ -13,7 +13,7 @@
 namespace traktor
 {
 
-/*! \brief Stream base class.
+/*! Stream base class.
  * \ingroup Core
  *
  * Streams are used through-out the framework in order
@@ -31,38 +31,38 @@ public:
 		SeekSet
 	};
 
-	/*! \brief Close stream.
+	/*! Close stream.
 	 *
 	 * No further reading or writing is permitted
 	 * to the stream.
 	 */
 	virtual void close() = 0;
 
-	/*! \brief Can we read from stream. */
+	/*! Can we read from stream. */
 	virtual bool canRead() const = 0;
 
-	/*! \brief Can we write to stream. */
+	/*! Can we write to stream. */
 	virtual bool canWrite() const = 0;
 
-	/*! \brief Can we seek in stream. */
+	/*! Can we seek in stream. */
 	virtual bool canSeek() const = 0;
 
-	/*! \brief Get current position in stream. */
+	/*! Get current position in stream. */
 	virtual int64_t tell() const = 0;
 
-	/*! \brief Get number of bytes available from stream. */
+	/*! Get number of bytes available from stream. */
 	virtual int64_t available() const = 0;
 
-	/*! \brief Move current position. */
+	/*! Move current position. */
 	virtual int64_t seek(SeekOriginType origin, int64_t offset) = 0;
 
-	/*! \brief Read block from stream. */
+	/*! Read block from stream. */
 	virtual int64_t read(void* block, int64_t nbytes) = 0;
 
-	/*! \brief Write data to stream. */
+	/*! Write data to stream. */
 	virtual int64_t write(const void* block, int64_t nbytes) = 0;
 
-	/*! \brief Ensure all data has been written to stream. */
+	/*! Ensure all data has been written to stream. */
 	virtual void flush() = 0;
 };
 

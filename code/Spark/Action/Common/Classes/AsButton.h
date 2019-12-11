@@ -9,7 +9,7 @@ namespace traktor
 
 class ButtonInstance;
 
-/*! \brief Button class.
+/*! Button class.
  * \ingroup Spark
  */
 class AsButton : public ActionClass

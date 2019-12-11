@@ -13,7 +13,7 @@ class Semaphore;
 
 class Connection;
 
-/*! \brief Database message listener.
+/*! Database message listener.
  * \ingroup Database
  */
 class DatabaseMessageListener : public IMessageListenerImpl< DatabaseMessageListener >

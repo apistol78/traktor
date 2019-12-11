@@ -16,7 +16,7 @@ namespace traktor
 	namespace physics
 	{
 
-/*! \brief Hinge joint.
+/*! Hinge joint.
  * \ingroup Physics
  */
 class T_DLLCLASS HingeJoint : public Joint

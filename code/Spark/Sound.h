@@ -16,7 +16,7 @@ namespace traktor
 	namespace spark
 	{
 
-/*! \brief Flash sound container.
+/*! Flash sound container.
  * \ingroup Spark
  */
 class T_DLLCLASS Sound : public ISerializable

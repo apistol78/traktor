@@ -24,7 +24,7 @@ class MouseButtonUpEvent;
 class MouseDoubleClickEvent;
 class MouseMoveEvent;
 
-/*! \brief Auto widget cell.
+/*! Auto widget cell.
  * \ingroup UI
  */
 class T_DLLCLASS AutoWidgetCell

@@ -20,7 +20,7 @@ namespace traktor
 #	undef MessageBox
 #endif
 
-/*! \brief Message box.
+/*! Message box.
  * \ingroup UI
  */
 class T_DLLCLASS MessageBox : public ConfigDialog

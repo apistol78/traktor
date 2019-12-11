@@ -15,7 +15,7 @@ namespace traktor
 	namespace runtime
 	{
 
-/*! \brief Runtime editor plugin factory.
+/*! Runtime editor plugin factory.
  * \ingroup Runtime
  */
 class T_DLLCLASS EditorPluginFactory : public editor::IEditorPluginFactory

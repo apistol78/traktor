@@ -11,7 +11,7 @@ namespace traktor
 
 class IFileStore;
 
-/*! \brief Local database context.
+/*! Local database context.
  * \ingroup Database
  */
 class Context : public Object

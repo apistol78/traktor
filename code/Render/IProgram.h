@@ -24,7 +24,7 @@ class Matrix44;
 class ITexture;
 class StructBuffer;
 
-/*! \brief Shader program
+/*! Shader program
  * \ingroup Render
  */
 class T_DLLCLASS IProgram : public Object

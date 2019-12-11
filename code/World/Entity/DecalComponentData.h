@@ -23,7 +23,7 @@ class Shader;
 	namespace world
 	{
 
-/*! \brief Decal entity data.
+/*! Decal entity data.
  * \ingroup World
  */
 class T_DLLCLASS DecalComponentData : public IEntityComponentData

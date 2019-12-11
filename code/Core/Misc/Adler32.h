@@ -14,7 +14,7 @@
 namespace traktor
 {
 
-/* \brief Adler32 checksum.
+/* Adler32 checksum.
  * \ingroup Core
  */
 class T_DLLCLASS Adler32 : public IHash

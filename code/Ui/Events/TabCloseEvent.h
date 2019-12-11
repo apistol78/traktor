@@ -17,7 +17,7 @@ namespace traktor
 
 class TabPage;
 
-/*! \brief Close event.
+/*! Close event.
  * \ingroup UI
  */
 class T_DLLCLASS TabCloseEvent : public CloseEvent

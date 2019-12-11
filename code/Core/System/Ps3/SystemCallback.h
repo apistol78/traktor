@@ -14,7 +14,7 @@
 namespace traktor
 {
 
-/*! \brief System callback manager.
+/*! System callback manager.
  * \ingroup Core
  *
  * \note

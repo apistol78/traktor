@@ -15,7 +15,7 @@ namespace traktor
 	namespace ui
 	{
 
-/*! \brief Tool tip control.
+/*! Tool tip control.
  * \ingroup UI
  */
 class T_DLLCLASS ToolTip : public ToolForm

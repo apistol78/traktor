@@ -15,7 +15,7 @@ namespace traktor
 
 class FileSystem;
 
-/*! \brief Native Win32 file volume.
+/*! Native Win32 file volume.
  * \ingroup Core
  */
 class T_DLLCLASS NativeVolume : public IVolume

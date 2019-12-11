@@ -10,7 +10,7 @@ namespace traktor
 
 const uint32_t c_magic = 'TRKT';
 
-/*! \brief Prepended on all heap allocated objects.
+/*! Prepended on all heap allocated objects.
  *
  * \note
  * Must be a multiple of maximum alignment requirement.

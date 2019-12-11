@@ -15,7 +15,7 @@ namespace traktor
 	namespace render
 	{
 
-/*! \brief DX11 program compiler.
+/*! DX11 program compiler.
  * \ingroup Render
  */
 class T_DLLCLASS ProgramCompilerDx11 : public IProgramCompiler

@@ -45,7 +45,7 @@ class IWorldRenderPass;
 
 #define T_USE_LEGACY_INSTANCING	0
 
-/*! \brief Instance mesh.
+/*! Instance mesh.
  *
  * Instance meshes are meshes which are repeated
  * automatically by the GPU in any number of instances

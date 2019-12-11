@@ -30,13 +30,13 @@ class T_DLLCLASS IApplication : public Object
 	T_RTTI_CLASS;
 
 public:
-	/*! \brief Get runtime environment.
+	/*! Get runtime environment.
 	 *
 	 * \return Runtime environment.
 	 */
 	virtual IEnvironment* getEnvironment() = 0;
 
-	/*! \brief Get state manager.
+	/*! Get state manager.
 	 *
 	 * \return State manager.
 	 */

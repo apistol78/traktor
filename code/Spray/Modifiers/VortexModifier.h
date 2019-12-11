@@ -7,7 +7,7 @@ namespace traktor
 	namespace spray
 	{
 
-/*! \brief Vortex modifier.
+/*! Vortex modifier.
  * \ingroup Spray
  */
 class VortexModifier : public Modifier

@@ -17,7 +17,7 @@ namespace traktor
 	namespace sound
 	{
 
-/*! \brief Static sound buffer.
+/*! Static sound buffer.
  * \ingroup Sound
  */
 class T_DLLCLASS StaticSoundBuffer : public ISoundBuffer

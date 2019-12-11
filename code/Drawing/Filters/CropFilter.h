@@ -15,7 +15,7 @@ namespace traktor
 	namespace drawing
 	{
 
-/*! \brief Crop filter.
+/*! Crop filter.
  * \ingroup Drawing
  */
 class T_DLLCLASS CropFilter : public IImageFilter

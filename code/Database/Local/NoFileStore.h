@@ -15,7 +15,7 @@ namespace traktor
 	namespace db
 	{
 
-/*! \brief No file store.
+/*! No file store.
  * \ingroup Database
  */
 class T_DLLCLASS NoFileStore : public IFileStore

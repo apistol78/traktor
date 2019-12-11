@@ -7,7 +7,7 @@
 namespace traktor
 {
 
-/*! \brief Thread-safe FIFO queue.
+/*! Thread-safe FIFO queue.
  * \ingroup Core
  */
 template < typename ItemType, typename LockType = Semaphore >

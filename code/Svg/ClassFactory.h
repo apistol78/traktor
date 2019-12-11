@@ -15,7 +15,7 @@ namespace traktor
 	namespace svg
 	{
 
-/*! \brief SVG class binding factory.
+/*! SVG class binding factory.
  * \ingroup SVG
  */
 class T_DLLCLASS ClassFactory : public IRuntimeClassFactory

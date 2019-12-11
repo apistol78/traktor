@@ -18,7 +18,7 @@ namespace traktor
 	namespace drawing
 	{
 
-/*! \brief PNG format.
+/*! PNG format.
  * \ingroup Drawing
  */
 class T_DLLCLASS ImageFormatPng : public IImageFormat

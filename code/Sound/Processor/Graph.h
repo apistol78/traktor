@@ -29,43 +29,43 @@ class T_DLLCLASS Graph : public ISerializable
 	T_RTTI_CLASS;
 
 public:
-	/*! \brief */
+	/*! */
 	Graph();
 
-	/*! \brief */
+	/*! */
 	Graph(const RefArray< Node >& nodes, const RefArray< Edge >& edges);
 
-	/*! \brief */
+	/*! */
 	virtual ~Graph();
 
-	/*! \brief Add node to graph.
+	/*! Add node to graph.
 	 *
 	 * \param node Node to add.
 	 */
 	void addNode(Node* node);
 
-	/*! \brief Remove node from graph.
+	/*! Remove node from graph.
 	 *
 	 * \param node Node to remove.
 	 */
 	void removeNode(Node* node);
 
-	/*! \brief Add edge to graph.
+	/*! Add edge to graph.
 	 *
 	 * \param edge Edge to add.
 	 */
 	void addEdge(Edge* edge);
 
-	/*! \brief Remove edge from graph.
+	/*! Remove edge from graph.
 	 *
 	 * \param edge Edge to remove.
 	 */
 	void removeEdge(Edge* edge);
 
-	/*! \brief Remove all nodes and edges from graph. */
+	/*! Remove all nodes and edges from graph. */
 	void removeAll();
 
-	/*! \brief Get all nodes of a specific type.
+	/*! Get all nodes of a specific type.
 	 *
 	 * \param nodeType Type of node to find.
 	 * \param outNodes Nodes of given type.
@@ -73,7 +73,7 @@ public:
 	 */
 	size_t findNodesOf(const TypeInfo& nodeType, RefArray< Node >& outNodes) const;
 
-	/*! \brief Get all nodes of a specific type.
+	/*! Get all nodes of a specific type.
 	 *
 	 * \param nodeType Type of node to find.
 	 * \param outNodes Nodes of given type.
@@ -92,14 +92,14 @@ public:
 		return outNodes.size();
 	}
 
-	/*! \brief Find edge connected to input pin.
+	/*! Find edge connected to input pin.
 	 *
 	 * \param inputPin Input pin.
 	 * \return Connected edge.
 	 */
 	Edge* findEdge(const InputPin* inputPin) const;
 
-	/*! \brief Find edges connected from output pin.
+	/*! Find edges connected from output pin.
 	 *
 	 * \param outputPin Output pin.
 	 * \param outEdges Connected edges.
@@ -107,14 +107,14 @@ public:
 	 */
 	uint32_t findEdges(const OutputPin* outputPin, RefSet< Edge >& outEdges) const;
 
-	/*! \brief Find output pin connected to input pin.
+	/*! Find output pin connected to input pin.
 	 *
 	 * \param inputPin Input pin.
 	 * \return Connected output pin.
 	 */
 	const OutputPin* findSourcePin(const InputPin* inputPin) const;
 
-	/*! \brief Find all input pins which are connected to output pin.
+	/*! Find all input pins which are connected to output pin.
 	 *
 	 * \param outputPin Output pin.
 	 * \param outDestinations Connected input pins.
@@ -122,33 +122,33 @@ public:
 	 */
 	uint32_t findDestinationPins(const OutputPin* outputPin, AlignedVector< const InputPin* >& outDestinations) const;
 
-	/*! \brief Get number of destination pins connected to an output pin.
+	/*! Get number of destination pins connected to an output pin.
 	 *
 	 * \param outputPin Output pin.
 	 * \return Number of connected destinations.
 	 */
 	uint32_t getDestinationCount(const OutputPin* outputPin) const;
 
-	/*! \brief Detach node from all input and output edges.
+	/*! Detach node from all input and output edges.
 	 *
 	 * \param node Node to be detached.
 	 */
 	void detach(const Node* node);
 
-	/*! \brief Rewire all edges from one output to another output.
+	/*! Rewire all edges from one output to another output.
 	 *
 	 * \param outputPin Current output pin.
 	 * \param newOutputPin New output pin.
 	 */
 	void rewire(const OutputPin* outputPin, const OutputPin* newOutputPin);
 
-	/*! \brief */
+	/*! */
 	virtual void serialize(ISerializer& s) override final;
 
-	/*! \brief */
+	/*! */
 	const RefArray< Node >& getNodes() const { return m_nodes; }
 
-	/*! \brief */
+	/*! */
 	const RefArray< Edge >& getEdges() const { return m_edges; }
 
 private:
@@ -159,7 +159,7 @@ private:
 	SmallMap< const InputPin*, Edge* > m_inputPinEdge;
 	SmallMap< const OutputPin*, RefSet< Edge >* > m_outputPinEdges;	//!< \note Allocating RefSets in order to reduce number of copies.
 
-	/*! \brief */
+	/*! */
 	void updateAdjacency();
 };
 

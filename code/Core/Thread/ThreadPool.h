@@ -17,7 +17,7 @@ namespace traktor
 
 class Functor;
 
-/*! \brief Thread pool manager.
+/*! Thread pool manager.
  * \ingroup Core
  */
 class T_DLLCLASS ThreadPool : public ISingleton

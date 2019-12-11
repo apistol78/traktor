@@ -18,7 +18,7 @@
 namespace traktor
 {
 
-/*! \brief Critical section primitive.
+/*! Critical section primitive.
  * \ingroup Core
  */
 class T_DLLCLASS CriticalSection : public IWaitable

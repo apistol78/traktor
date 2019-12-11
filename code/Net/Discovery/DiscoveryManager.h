@@ -39,7 +39,7 @@ enum DiscoveryManagerMode
 	MdVerbose = 4
 };
 
-/*! \brief Network service publish and discovery manager.
+/*! Network service publish and discovery manager.
  * \ingroup Net
  */
 class T_DLLCLASS DiscoveryManager : public Object

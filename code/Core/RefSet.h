@@ -15,7 +15,7 @@
 namespace traktor
 {
 
-/*! \brief Object set reference container.
+/*! Object set reference container.
  * \ingroup Core
  */
 template < typename Class >

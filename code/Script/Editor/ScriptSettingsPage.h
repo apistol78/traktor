@@ -22,7 +22,7 @@ class CheckBox;
 	namespace script
 	{
 
-/*! \brief Editor script settings page.
+/*! Editor script settings page.
  * \ingroup Script
  */
 class T_DLLCLASS ScriptSettingsPage : public editor::ISettingsPage

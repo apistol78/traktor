@@ -19,7 +19,7 @@ namespace traktor
 class IActionVMImage;
 class SwfReader;
 
-/*! \brief ActionScript virtual machine interface.
+/*! ActionScript virtual machine interface.
  * \ingroup Spark
  */
 class T_DLLCLASS IActionVM : public Object
@@ -27,7 +27,7 @@ class T_DLLCLASS IActionVM : public Object
 	T_RTTI_CLASS;
 
 public:
-	/*! \brief Load executable image from binary representation of bytecode. */
+	/*! Load executable image from binary representation of bytecode. */
 	virtual Ref< const IActionVMImage > load(SwfReader& swf) const = 0;
 };
 

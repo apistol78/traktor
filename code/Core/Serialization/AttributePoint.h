@@ -13,7 +13,7 @@
 namespace traktor
 {
 
-/*! \brief Member point attribute.
+/*! Member point attribute.
  * \ingroup Core
  */
 class T_DLLCLASS AttributePoint : public Attribute

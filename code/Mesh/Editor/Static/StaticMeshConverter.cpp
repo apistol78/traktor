@@ -173,7 +173,7 @@ bool StaticMeshConverter::convert(
 
 	// Build parts.
 	AlignedVector< render::Mesh::Part > meshParts;
-	std::map< std::wstring, StaticMeshResource::parts_t > parts;
+	SmallMap< std::wstring, StaticMeshResource::parts_t > parts;
 
 	for (std::map< std::wstring, AlignedVector< IndexRange > >::const_iterator i = techniqueRanges.begin(); i != techniqueRanges.end(); ++i)
 	{

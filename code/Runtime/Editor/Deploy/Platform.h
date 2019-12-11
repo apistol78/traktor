@@ -16,7 +16,7 @@ namespace traktor
 	namespace runtime
 	{
 
-/*! \brief Deployment platform descriptor.
+/*! Deployment platform descriptor.
  * \ingroup Runtime
  */
 class T_DLLCLASS Platform : public ISerializable

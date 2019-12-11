@@ -9,7 +9,7 @@ namespace traktor
 		namespace
 		{
 
-/*! \brief Move pointer to next aligned address for current type. */
+/*! Move pointer to next aligned address for current type. */
 template < typename Type >
 inline void align(uint8_t*& ptr)
 {

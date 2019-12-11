@@ -16,7 +16,7 @@ namespace traktor
 	namespace db
 	{
 
-/*! \brief Write instance data.
+/*! Write instance data.
  * \ingroup Database
  */
 class T_DLLCLASS DbmWriteData : public IMessage

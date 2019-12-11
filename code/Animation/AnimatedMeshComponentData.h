@@ -51,7 +51,7 @@ class AnimatedMeshComponent;
 class Skeleton;
 class IPoseControllerData;
 
-/*! \brief Animated mesh entity data.
+/*! Animated mesh entity data.
  * \ingroup Animation
  */
 class T_DLLCLASS AnimatedMeshComponentData : public world::IEntityComponentData

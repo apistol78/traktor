@@ -18,7 +18,7 @@ namespace traktor
 
 class NavMesh;
 
-/*! \brief Navigation mesh entity.
+/*! Navigation mesh entity.
  * \ingroup AI
  *
  * Navigation mesh entities are used to attach a navigation mesh
@@ -43,7 +43,7 @@ public:
 
 	virtual void update(const world::UpdateParams& update) override final;
 
-	/*! \brief Get navigation mesh.
+	/*! Get navigation mesh.
 	 *
 	 * \return Navigation mesh proxy.
 	 */

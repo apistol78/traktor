@@ -18,7 +18,7 @@ namespace traktor
 class ColorTransform;
 class CharacterInstance;
 
-/*! \brief Geometry transform wrapper.
+/*! Geometry transform wrapper.
  * \ingroup Spark
  */
 class T_DLLCLASS Transform : public ActionObjectRelay

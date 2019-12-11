@@ -10,7 +10,7 @@ class SpursJobQueue;
 	namespace sound
 	{
 
-/*! \brief PS3/SPU sound mixer
+/*! PS3/SPU sound mixer
  * \ingroup Sound
  */
 class AudioMixerPs3 : public IAudioMixer

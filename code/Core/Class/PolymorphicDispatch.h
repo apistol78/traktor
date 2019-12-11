@@ -14,7 +14,7 @@
 namespace traktor
 {
 
-/*! \brief Polymorphic dispatch
+/*! Polymorphic dispatch
  * \ingroup Core
  *
  * Switch between dispatches based on number of

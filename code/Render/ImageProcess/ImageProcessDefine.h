@@ -25,7 +25,7 @@ class IResourceManager;
 class ImageProcess;
 class IRenderSystem;
 
-/*! \brief Post process definition.
+/*! Post process definition.
  * \ingroup Render
  */
 class T_DLLCLASS ImageProcessDefine : public ISerializable

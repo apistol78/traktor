@@ -16,7 +16,7 @@ namespace traktor
 	namespace world
 	{
 
-/*! \brief Entity schema implementation.
+/*! Entity schema implementation.
  * \ingroup World
  */
 class T_DLLCLASS EntitySchema : public IEntitySchema

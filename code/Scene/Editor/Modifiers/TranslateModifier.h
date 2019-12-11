@@ -11,7 +11,7 @@ namespace traktor
 
 class EntityAdapter;
 
-/*! \brief Translation modifier. */
+/*! Translation modifier. */
 class TranslateModifier : public IModifier
 {
 	T_RTTI_CLASS;

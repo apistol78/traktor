@@ -19,7 +19,7 @@ namespace traktor
 
 class IResultSet;
 
-/*! \brief SQL database connection.
+/*! SQL database connection.
  * \ingroup SQL
  */
 class T_DLLCLASS IConnection : public Object
@@ -27,37 +27,37 @@ class T_DLLCLASS IConnection : public Object
 	T_RTTI_CLASS;
 
 public:
-	/*! \brief Connect to database.
+	/*! Connect to database.
 	 *
 	 * \param connectionString Database connection string.
 	 * \return True if successful.
 	 */
 	virtual bool connect(const std::wstring& connectionString) = 0;
 
-	/*! \brief Disconnect from database. */
+	/*! Disconnect from database. */
 	virtual void disconnect() = 0;
 
-	/*! \brief Execute query statement.
+	/*! Execute query statement.
 	 *
 	 * \param query Query statement.
 	 * \return Result set; null if failed.
 	 */
 	virtual Ref< IResultSet > executeQuery(const std::wstring& query) = 0;
 
-	/*! \brief Execute update statement.
+	/*! Execute update statement.
 	 *
 	 * \param update Update statement.
 	 * \return Number of rows affected, -1 if failed.
 	 */
 	virtual int32_t executeUpdate(const std::wstring& update) = 0;
 
-	/*! \brief Get last auto-generated id used with insert.
+	/*! Get last auto-generated id used with insert.
 	 *
 	 * \return Last insert id.
 	 */
 	virtual int32_t lastInsertId() = 0;
 
-	/*! \brief Have table query.
+	/*! Have table query.
 	 *
 	 * Different providers have different
 	 * ways of storing table information thus

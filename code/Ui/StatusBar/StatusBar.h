@@ -15,7 +15,7 @@ namespace traktor
 	namespace ui
 	{
 
-/*! \brief Status bar control.
+/*! Status bar control.
  * \ingroup UI
  */
 class T_DLLCLASS StatusBar : public Widget

@@ -8,7 +8,7 @@
 namespace traktor
 {
 
-	/*! \brief Default delete operator policy.
+	/*! Default delete operator policy.
 	 * \ingroup Core
 	 */
 	template < typename Type >
@@ -20,7 +20,7 @@ namespace traktor
 		}
 	};
 
-	/*! \brief Default delete operator policy.
+	/*! Default delete operator policy.
 	 * \ingroup Core
 	 */
 	template < typename Type >
@@ -32,7 +32,7 @@ namespace traktor
 		}
 	};
 
-	/*! \brief Use freeAlign method to release memory.
+	/*! Use freeAlign method to release memory.
 	 * \ingroup Core
 	 */
 	template < typename Type >
@@ -44,7 +44,7 @@ namespace traktor
 		}
 	};
 
-	/*! \brief Use getAllocator()->free to release memory.
+	/*! Use getAllocator()->free to release memory.
 	 * \ingroup Core
 	 */
 	template < typename Type >
@@ -56,7 +56,7 @@ namespace traktor
 		}
 	};
 
-	/*! \brief Auto pointer
+	/*! Auto pointer
 	 * \ingroup Core
 	 */
 	template

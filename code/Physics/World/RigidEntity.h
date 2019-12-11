@@ -26,7 +26,7 @@ class IEntityEventManager;
 class Body;
 struct CollisionInfo;
 
-/*! \brief Rigid body entity.
+/*! Rigid body entity.
  * \ingroup Physics
  */
 class T_DLLCLASS RigidEntity : public world::Entity

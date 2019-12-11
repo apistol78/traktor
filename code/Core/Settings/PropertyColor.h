@@ -14,7 +14,7 @@
 namespace traktor
 {
 
-/*! \brief Color property value.
+/*! Color property value.
  * \ingroup Core
  */
 class T_DLLCLASS PropertyColor : public IPropertyValue

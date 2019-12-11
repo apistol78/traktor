@@ -14,7 +14,7 @@
 namespace traktor
 {
 
-/*! \brief Stream in stream.
+/*! Stream in stream.
  * \ingroup Core
  */
 class T_DLLCLASS StreamStream : public IStream

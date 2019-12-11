@@ -17,7 +17,7 @@
 namespace traktor
 {
 
-/*! \brief System file descriptor.
+/*! System file descriptor.
  * \ingroup Core
  */
 class T_DLLCLASS File : public ISerializable
@@ -25,7 +25,7 @@ class T_DLLCLASS File : public ISerializable
 	T_RTTI_CLASS;
 
 public:
-	/*! \brief File flags. */
+	/*! File flags. */
 	enum Flags
 	{
 		FfInvalid = 0,
@@ -36,7 +36,7 @@ public:
 		FfDirectory	= 16
 	};
 
-	/*! \brief File open modes. */
+	/*! File open modes. */
 	enum Mode
 	{
 		FmRead = 1,

@@ -7,7 +7,7 @@ namespace traktor
 	namespace scene
 	{
 
-/*! \brief Default scene editor profile. */
+/*! Default scene editor profile. */
 class DefaultEditorProfile : public ISceneEditorProfile
 {
 	T_RTTI_CLASS;

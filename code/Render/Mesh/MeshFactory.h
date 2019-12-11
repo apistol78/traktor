@@ -19,7 +19,7 @@ namespace traktor
 
 class Mesh;
 
-/*! \brief Render mesh factory.
+/*! Render mesh factory.
  * \ingroup Render
  */
 class T_DLLCLASS MeshFactory : public Object

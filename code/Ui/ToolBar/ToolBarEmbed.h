@@ -17,7 +17,7 @@ namespace traktor
 
 class Widget;
 
-/*! \brief Tool bar embedded widget.
+/*! Tool bar embedded widget.
  * \ingroup UI
  */
 class T_DLLCLASS ToolBarEmbed : public ToolBarItem

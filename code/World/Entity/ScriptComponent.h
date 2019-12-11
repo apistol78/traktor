@@ -22,7 +22,7 @@ class IRuntimeDispatch;
 
 class Entity;
 
-/*! \brief Script component.
+/*! Script component.
  * \ingroup World
  */
 class T_DLLCLASS ScriptComponent : public IEntityComponent

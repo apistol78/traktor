@@ -61,7 +61,7 @@ struct Light
 	bool castShadow;
 };
 
-/*! \brief Update parameters. */
+/*! Update parameters. */
 struct UpdateParams
 {
 	float totalTime;		/*!< Total time since first update. */

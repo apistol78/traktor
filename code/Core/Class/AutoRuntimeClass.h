@@ -18,7 +18,7 @@ namespace traktor
 /*! \ingroup Core */
 /*! \{ */
 
-/*! \brief Automatic generation of script class definition.
+/*! Automatic generation of script class definition.
  * \ingroup Core
  *
  * This class simplifies code necessary to map native classes

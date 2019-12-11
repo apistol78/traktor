@@ -13,7 +13,7 @@
 namespace traktor
 {
 
-/*! \brief Fixed size block allocator.
+/*! Fixed size block allocator.
  * \ingroup Core
  *
  * Simple fixed size block allocator with O(1) complexity

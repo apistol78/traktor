@@ -31,7 +31,7 @@ class IEditor;
 class IEditorPage;
 class IEditorPageSite;
 
-/*! \brief Interface for creating editor pages.
+/*! Interface for creating editor pages.
  * \ingroup Editor
  */
 class T_DLLCLASS IEditorPageFactory : public Object

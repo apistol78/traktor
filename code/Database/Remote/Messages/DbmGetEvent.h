@@ -15,7 +15,7 @@ namespace traktor
 	namespace db
 	{
 
-/*! \brief Get event from bus.
+/*! Get event from bus.
  * \ingroup Database
  */
 class T_DLLCLASS DbmGetEvent : public IMessage
