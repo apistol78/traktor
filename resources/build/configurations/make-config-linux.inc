@@ -1,6 +1,7 @@
 # Configuration file
 
-CCACHE=ccache
+#CCACHE=ccache
+CCACHE=
 
 C=$(CCACHE) clang
 C_FLAGS_COMMON=-fno-common -march=core2 -D _UNICODE -D UNICODE -D __LINUX__ -fPIC -fvisibility=hidden

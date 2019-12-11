@@ -162,7 +162,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR szCmdLine, int)
 	}
 
 #if defined(__LINUX__) || defined(__RPI__)
-	std::wstring writableFolder = OS::getInstance().getWritableFolderPath() + L"/Doctor Entertainment AB";
+	std::wstring writableFolder = OS::getInstance().getWritableFolderPath() + L"/Traktor/Editor";
 	FileSystem::getInstance().makeAllDirectories(writableFolder);
 #endif
 

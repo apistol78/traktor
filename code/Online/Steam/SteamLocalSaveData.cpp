@@ -13,13 +13,13 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.online.SteamLocalSaveData", SteamLocalSaveData,
 
 SteamLocalSaveData::SteamLocalSaveData()
 {
-	std::wstring savePath = OS::getInstance().getWritableFolderPath() + L"/Doctor Entertainment AB/Save";
+	std::wstring savePath = OS::getInstance().getWritableFolderPath() + L"/Traktor/Steam/Save";
 	FileSystem::getInstance().makeAllDirectories(savePath);
 }
 
 bool SteamLocalSaveData::enumerate(std::set< std::wstring >& outSaveDataIds)
 {
-	std::wstring savePath = OS::getInstance().getWritableFolderPath() + L"/Doctor Entertainment AB/Save";
+	std::wstring savePath = OS::getInstance().getWritableFolderPath() + L"/Traktor/Steam/Save";
 
 	RefArray< File > saveFiles;
 	FileSystem::getInstance().find(savePath + L"/*.save", saveFiles);
@@ -32,7 +32,7 @@ bool SteamLocalSaveData::enumerate(std::set< std::wstring >& outSaveDataIds)
 
 bool SteamLocalSaveData::get(const std::wstring& saveDataId, Ref< ISerializable >& outAttachment)
 {
-	std::wstring saveFile = OS::getInstance().getWritableFolderPath() + L"/Doctor Entertainment AB/Save/" + saveDataId + L".save";
+	std::wstring saveFile = OS::getInstance().getWritableFolderPath() + L"/Traktor/Steam/" + saveDataId + L".save";
 
 	Ref< IStream > file = FileSystem::getInstance().open(saveFile, File::FmRead);
 	if (!file)
@@ -46,7 +46,7 @@ bool SteamLocalSaveData::get(const std::wstring& saveDataId, Ref< ISerializable 
 
 bool SteamLocalSaveData::set(const std::wstring& saveDataId, const SaveDataDesc& saveDataDesc, const ISerializable* attachment, bool replace)
 {
-	std::wstring saveFile = OS::getInstance().getWritableFolderPath() + L"/Doctor Entertainment AB/Save/" + saveDataId + L".save";
+	std::wstring saveFile = OS::getInstance().getWritableFolderPath() + L"/Traktor/Steam/" + saveDataId + L".save";
 
 	if (!replace)
 	{
@@ -66,7 +66,7 @@ bool SteamLocalSaveData::set(const std::wstring& saveDataId, const SaveDataDesc&
 
 bool SteamLocalSaveData::remove(const std::wstring& saveDataId)
 {
-	std::wstring saveFile = OS::getInstance().getWritableFolderPath() + L"/Doctor Entertainment AB/Save/" + saveDataId + L".save";
+	std::wstring saveFile = OS::getInstance().getWritableFolderPath() + L"/Traktor/Steam/" + saveDataId + L".save";
 	return FileSystem::getInstance().remove(saveFile);
 }
 

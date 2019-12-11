@@ -476,7 +476,7 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	loadLanguageDictionaries();
 
 	// Load recently used files dictionary.
-	m_mru = loadRecent(OS::getInstance().getWritableFolderPath() + L"/Doctor Entertainment AB/Traktor.Editor.mru");
+	m_mru = loadRecent(OS::getInstance().getWritableFolderPath() + L"/Traktor/Editor/Traktor.Editor.mru");
 
 	if (!ui::Form::create(
 		c_title,
@@ -1518,7 +1518,7 @@ bool EditorForm::openWorkspace(const Path& workspacePath)
 		m_tab->update(nullptr, true);
 	}
 
-	saveRecent(OS::getInstance().getWritableFolderPath() + L"/Doctor Entertainment AB/Traktor.Editor.mru", m_mru);
+	saveRecent(OS::getInstance().getWritableFolderPath() + L"/Traktor/Editor/Traktor.Editor.mru", m_mru);
 	updateMRU();
 
 	log::info << L"Workspace opened successfully." << Endl;

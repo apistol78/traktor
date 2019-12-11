@@ -114,11 +114,8 @@ void showErrorDialog(const std::list< std::wstring >& tail)
 	amalgam::ErrorDialog errorDialog;
 	if (errorDialog.create())
 	{
-		for (std::list< std::wstring >::const_iterator i = tail.begin(); i != tail.end(); ++i)
-			errorDialog.addErrorString(*i);
-
-		errorDialog.addErrorString(L"Please copy this information and contact");
-		errorDialog.addErrorString(L"support@doctorentertainment.com");
+		for (const auto& error : tail)
+			errorDialog.addErrorString(error);
 
 		errorDialog.showModal();
 		errorDialog.destroy();
@@ -133,7 +130,7 @@ int main(int argc, const char** argv)
 	SystemApplication sysapp;
 	Ref< traktor::IStream > logFile;
 
-	std::wstring writablePath = OS::getInstance().getWritableFolderPath() + L"/Doctor Entertainment AB";
+	std::wstring writablePath = OS::getInstance().getWritableFolderPath() + L"/Traktor";
 	FileSystem::getInstance().makeAllDirectories(writablePath);
 
 #if !defined(_DEBUG)
