@@ -133,7 +133,7 @@ Ref< ProgramOpenGL > ProgramOpenGL::create(ResourceContextOpenGL* resourceContex
 	 		T_OGL_SAFE(glGetIntegerv(GL_PROGRAM_BINARY_FORMATS, binaryFormats.ptr()));
 
 	 		StringOutputStream ss;
-	 		ss << OS::getInstance().getWritableFolderPath() << L"/Doctor Entertainment AB/ProgramCache/Program_" << resourceOpenGL->m_hash << L".cache";
+	 		ss << OS::getInstance().getWritableFolderPath() << L"/Traktor/OpenGL/Cache/Program_" << resourceOpenGL->m_hash << L".cache";
 
 	 		// Read and upload cached program if available.
 	 		Ref< IStream > file = FileSystem::getInstance().open(ss.str(), File::FmRead);
@@ -225,7 +225,7 @@ Ref< ProgramOpenGL > ProgramOpenGL::create(ResourceContextOpenGL* resourceContex
 	 if (cacheEnable && needToCompile && formats > 0)
 	 {
 	 	StringOutputStream ss;
-	 	ss << OS::getInstance().getWritableFolderPath() << L"/Doctor Entertainment AB/ProgramCache/Program_" << resourceOpenGL->m_hash << L".cache";
+	 	ss << OS::getInstance().getWritableFolderPath() << L"/Traktor/OpenGL/Cache/Program_" << resourceOpenGL->m_hash << L".cache";
 
 	 	// Get and cache program binary.
 	 	T_OGL_SAFE(glGetProgramiv(programObject, GL_PROGRAM_BINARY_LENGTH, &binaryLength));

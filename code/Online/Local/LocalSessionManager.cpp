@@ -30,13 +30,13 @@ bool LocalSessionManager::create(const IGameConfiguration* configuration)
 #elif defined(_PS3)
 	std::wstring dbPath = std::wstring(gc->m_dbName) + L".db";
 #else
-	std::wstring dbPath = OS::getInstance().getWritableFolderPath() + L"/Doctor Entertainment AB/" + std::wstring(gc->m_dbName) + L".db";
+	std::wstring dbPath = OS::getInstance().getWritableFolderPath() + L"/Traktor/Lan/" + std::wstring(gc->m_dbName) + L".db";
 #endif
 
 	m_db = new sql::ConnectionSqlite3();
 	if (!m_db->connect(L"fileName=" + dbPath))
 	{
-		log::error << L"Local session create failed; Unable to connect to local session database" << Endl;
+		log::error << L"Local session create failed; Unable to connect to local session database." << Endl;
 		return false;
 	}
 

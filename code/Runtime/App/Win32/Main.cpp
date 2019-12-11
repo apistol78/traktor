@@ -36,7 +36,7 @@ extern "C"
 namespace
 {
 
-/*! \brief
+/*!
  */
 class LogTailTarget : public ILogTarget
 {
@@ -53,7 +53,7 @@ public:
 	}
 };
 
-/*! \brief
+/*!
  */
 class LogStreamTarget : public ILogTarget
 {
@@ -75,7 +75,7 @@ private:
 Ref< LogTailTarget > g_logTail;
 Path g_logFilePath;
 
-/*! \brief
+/*!
  */
 Ref< PropertyGroup > loadSettings(const Path& settingsFile)
 {
@@ -91,7 +91,7 @@ Ref< PropertyGroup > loadSettings(const Path& settingsFile)
 	return settings;
 }
 
-/*! \brief
+/*!
  */
 bool saveSettings(const PropertyGroup* settings, const Path& settingsFile)
 {
@@ -107,7 +107,7 @@ bool saveSettings(const PropertyGroup* settings, const Path& settingsFile)
 	return result;
 }
 
-/*! \brief
+/*!
  */
 void showErrorDialog()
 {
@@ -116,33 +116,28 @@ void showErrorDialog()
 	{
 		if (g_logTail)
 		{
-			const auto& tail = g_logTail->m_tail;
-			for (const auto& s : tail)
+			for (const auto& s : g_logTail->m_tail)
 				errorDialog.addErrorString(s);
 		}
-
-		errorDialog.addErrorString(L"Please copy this information and contact");
-		errorDialog.addErrorString(L"support@doctorentertainment.com");
-
 		errorDialog.showModal();
 		errorDialog.destroy();
 	}
 }
 
-/*! \brief
+/*!
  */
 bool checkPreconditions()
 {
 	BOOL sseSupported = ::IsProcessorFeaturePresent(PF_XMMI_INSTRUCTIONS_AVAILABLE);
 	if (!sseSupported)
 	{
-		log::error << L"This game requires a CPU with SSE support" << Endl;
+		log::error << L"This game requires a CPU with SSE support." << Endl;
 		return false;
 	}
 	return true;
 }
 
-/*! \brief
+/*!
  */
 bool isWindows64bit(bool& out64bit)
 {
@@ -173,7 +168,7 @@ bool isWindows64bit(bool& out64bit)
 #endif
 }
 
-/*! \brief
+/*!
  */
 void logSystemInfo()
 {
@@ -343,7 +338,7 @@ void logDriverVersion()
 
 }
 
-/*! \brief
+/*!
  */
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR szCmdLine, int)
 {
@@ -362,7 +357,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR szCmdLine, int)
 	if (!checkPreconditions())
 		return 1;
 
-	std::wstring writablePath = OS::getInstance().getWritableFolderPath() + L"/Doctor Entertainment AB";
+	std::wstring writablePath = OS::getInstance().getWritableFolderPath() + L"/Traktor";
 	FileSystem::getInstance().makeAllDirectories(writablePath);
 
 #if !defined(_DEBUG)

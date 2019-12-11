@@ -130,7 +130,7 @@ int main(int argc, const char** argv)
 	// Let's continue with the application.
 	CommandLine cmdLine(argc, argv);
 
-	std::wstring writablePath = OS::getInstance().getWritableFolderPath() + L"/Doctor Entertainment AB";
+	std::wstring writablePath = OS::getInstance().getWritableFolderPath() + L"/Traktor";
 	FileSystem::getInstance().makeAllDirectories(writablePath);
 
 #if !defined(_DEBUG)

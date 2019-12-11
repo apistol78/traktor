@@ -118,7 +118,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR szCmdLine, int)
 
 	// Find old sandbox matching same command line.
 	RefArray< File > sandboxes;
-	FileSystem::getInstance().find(OS::getInstance().getWritableFolderPath() + L"/Doctor Entertainment AB/Sandbox/*.*", sandboxes);
+	FileSystem::getInstance().find(OS::getInstance().getWritableFolderPath() + L"/Traktor/ShadowLaunch/*.*", sandboxes);
 	for (RefArray< File >::const_iterator i = sandboxes.begin(); i != sandboxes.end(); ++i)
 	{
 		const Path& p = (*i)->getPath();
@@ -146,7 +146,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR szCmdLine, int)
 		}
 	}
 
-	Path shadowPath = OS::getInstance().getWritableFolderPath() + L"/Doctor Entertainment AB/Sandbox/" + sandbox;
+	Path shadowPath = OS::getInstance().getWritableFolderPath() + L"/Traktor/ShadowLaunch/" + sandbox;
 	Path shadowFile = shadowPath + executableFile.getFileName();
 
 	if (!shadowCopy(shadowPath, executableFile))
