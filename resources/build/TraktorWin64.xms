@@ -6017,10 +6017,6 @@
 																<item type="Filter">
 																	<name>Formats</name>
 																	<items>
-																		<item type="File">
-																			<fileName>Formats/*.*</fileName>
-																			<items/>
-																		</item>
 																		<item type="Filter">
 																			<name>Fbx</name>
 																			<items>
@@ -6062,6 +6058,15 @@
 																			<items>
 																				<item type="File">
 																					<fileName>Formats/Tmd/*.*</fileName>
+																					<items/>
+																				</item>
+																			</items>
+																		</item>
+																		<item type="Filter">
+																			<name>Bvh</name>
+																			<items>
+																				<item type="File">
+																					<fileName>Formats/Bvh/*.*</fileName>
 																					<items/>
 																				</item>
 																			</items>

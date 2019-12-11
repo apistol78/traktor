@@ -156,6 +156,10 @@ void FinalRenderControl::updateWorldRenderer()
 
 	m_worldRenderSettings = *(m_sceneInstance->getWorldRenderSettings());
 
+	// Use world render settings from non-baked scene.
+	if (m_context->getScene() != nullptr)
+		m_worldRenderSettings = *(m_context->getScene()->getWorldRenderSettings());
+
 	// Create entity renderers.
 	Ref< world::WorldEntityRenderers > worldEntityRenderers = new world::WorldEntityRenderers();
 	for (auto editorProfile : m_context->getEditorProfiles())

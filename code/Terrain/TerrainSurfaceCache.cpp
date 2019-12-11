@@ -221,7 +221,7 @@ void TerrainSurfaceCache::begin(
 		renderBlock->renderTargetSet = m_base;
 		renderBlock->clear = true;
 
-		renderContext->draw(render::RpOpaque, renderBlock);
+		renderContext->draw(render::RpSetup, renderBlock);
 	}
 
 	m_updateCount = 0;

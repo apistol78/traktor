@@ -125,8 +125,8 @@ bool AnimationPipeline::buildOutput(
 	}
 
 	// Generate key poses.
-	const auto& skeletonMeshJoints = modelSkeleton->getJoints();
-	const auto& skeletonAnimJoints = modelAnimation->getJoints();
+	const AlignedVector< model::Joint >& skeletonMeshJoints = modelSkeleton->getJoints();
+	const AlignedVector< model::Joint >& skeletonAnimJoints = modelAnimation->getJoints();
 
 	Ref< Animation > anim = new Animation();
 
@@ -140,13 +140,32 @@ bool AnimationPipeline::buildOutput(
 
 		for (uint32_t j = 0; j < skeletonMeshJoints.size(); ++j)
 		{
-			const auto& name = skeletonMeshJoints[j].getName();
+			const std::wstring& name = skeletonMeshJoints[j].getName();
 
 			uint32_t k = modelAnimation->findJointIndex(name);
 			if (k != model::c_InvalidIndex)
 			{
-				const Transform& P = mp->getJointTransform(k);
-				kp.pose.setJointTransform(j, P);
+				Transform TjointAnim = skeletonAnimJoints[k].getTransform();
+				Transform TposeAnim = mp->getJointTransform(k);
+				Transform Tdelta = TjointAnim.inverse() * TposeAnim;	// Delta in joint space.
+				Transform Tglobal = modelAnimation->getJointGlobalTransform(k);
+				Transform TdeltaG = Tglobal * Tdelta * Tglobal.inverse();	// Delta in global space.
+
+				// Apply delta on skeleton joint in global space.
+				Transform TjointSkeleton = modelSkeleton->getJointGlobalTransform(j);
+				Transform TposeSkeleton = TdeltaG * TjointSkeleton;
+
+				// Calculate joint transform.
+				if (skeletonMeshJoints[j].getParent() != model::c_InvalidIndex)
+				{
+					Transform TparentW = modelSkeleton->getJointGlobalTransform(skeletonMeshJoints[j].getParent());
+					TposeSkeleton = TparentW.inverse() * TposeSkeleton;
+				}
+
+				kp.pose.setJointTransform(
+					j,
+					TposeSkeleton
+				);
 			}
 		}
 

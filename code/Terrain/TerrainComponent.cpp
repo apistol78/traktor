@@ -326,7 +326,7 @@ void TerrainComponent::render(
 	// Update all patch surfaces.
 	if (updateCache)
 	{
-		render::RenderBlock* renderBlock = 0;
+		render::RenderBlock* renderBlock = nullptr;
 
 		m_surfaceCache->begin(
 			worldContext.getRenderContext(),
@@ -390,7 +390,7 @@ void TerrainComponent::render(
 
 		// Queue surface cache render block.
 		if (renderBlock)
-			worldContext.getRenderContext()->draw(render::RpOpaque, renderBlock);
+			worldContext.getRenderContext()->draw(render::RpSetup, renderBlock);
 	}
 #if defined(T_USE_TERRAIN_VERTEX_TEXTURE_FETCH)
 	else

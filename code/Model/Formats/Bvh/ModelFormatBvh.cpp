@@ -41,7 +41,7 @@ void createJoints(
 	joint.setParent(parent);
 	joint.setName(jointName);
 	joint.setTransform(Transform(
-		bvhJoint->getOffset() * Vector4(-1.0f, 1.0f, 1.0f, 1.0f)
+		bvhJoint->getOffset() * Vector4(1.0f, 1.0f, -1.0f, 1.0f)
 	));
 
 	int32_t jointIndex = model->addJoint(joint);
@@ -75,22 +75,25 @@ bool convertKeyPose(
 		float c = cv[offset++];
 
 		if (channel == L"Xposition")
-			P += Vector4(c, 0.0f, 0.0f, 0.0f);
+			P.set(0, Scalar(c));
 		else if (channel == L"Yposition")
-			P += Vector4(0.0f, c, 0.0f, 0.0f);
+			P.set(1, Scalar(c));
 		else if (channel == L"Zposition")
-			P += Vector4(0.0f, 0.0f, c, 0.0f);
+			P.set(2, Scalar(c));
 
 		else if (channel == L"Xrotation")
-			R = R * rotateX(deg2rad(c));
+			R = R * rotateX(-deg2rad(c));
 		else if (channel == L"Yrotation")
-			R = R * rotateY(deg2rad(c));
+			R = R * rotateY(-deg2rad(c));
 		else if (channel == L"Zrotation")
 			R = R * rotateZ(deg2rad(c));
 	}
 
+	if (bvhJoint->getParent() == nullptr)
+		P = bvhJoint->getOffset();
+
 	Transform Tpose(
-		P,
+		P * Vector4(1.0f, 1.0f, -1.0f, 1.0f),
 		Quaternion(R)
 	);
 
