@@ -47,22 +47,22 @@ Ref< Object > MeshFactory::create(resource::IResourceManager* resourceManager, c
 	Ref< IMeshResource > resource = instance->getObject< IMeshResource >();
 	if (!resource)
 	{
-		log::error << L"Mesh factory failed; unable to checkout resource" << Endl;
-		return 0;
+		log::error << L"Mesh factory failed; unable to get mesh resource." << Endl;
+		return nullptr;
 	}
 
 	Ref< IStream > dataStream = instance->readData(L"Data");
 	if (!dataStream)
 	{
-		log::error << L"Mesh factory failed; unable to open data stream" << Endl;
-		return 0;
+		log::error << L"Mesh factory failed; unable to open data stream." << Endl;
+		return nullptr;
 	}
 
 	Ref< IMesh > mesh = resource->createMesh(instance->getPath(), dataStream, resourceManager, m_renderSystem, m_meshFactory);
 	if (!mesh)
 	{
-		log::error << L"Mesh factory failed; unable to create mesh" << Endl;
-		return 0;
+		log::error << L"Mesh factory failed; unable to create mesh." << Endl;
+		return nullptr;
 	}
 
 	return mesh;
