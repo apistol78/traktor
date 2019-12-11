@@ -20,7 +20,7 @@ class IEditor;
 class IScriptManager;
 class ScriptDebuggerSessions;
 
-/*! \brief Editor scripting plugin.
+/*! Editor scripting plugin.
  * \ingroup Script
  */
 class ScriptEditorPlugin

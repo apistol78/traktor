@@ -16,7 +16,7 @@ namespace traktor
 	namespace world
 	{
 
-/*! \brief Camera component data.
+/*! Camera component data.
  * \ingroup World
  */
 class T_DLLCLASS CameraComponentData : public IEntityComponentData

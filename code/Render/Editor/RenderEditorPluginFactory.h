@@ -15,7 +15,7 @@ namespace traktor
 	namespace render
 	{
 
-/*! \brief Render editor plugin factory.
+/*! Render editor plugin factory.
  * \ingroup Render
  */
 class T_DLLCLASS RenderEditorPluginFactory : public editor::IEditorPluginFactory

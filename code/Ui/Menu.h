@@ -20,7 +20,7 @@ class MenuItem;
 class Point;
 class Widget;
 
-/*! \brief Menu
+/*! Menu
  * \ingroup UI
  */
 class T_DLLCLASS Menu : public Object
@@ -34,7 +34,7 @@ public:
 
 	Ref< Widget > show(Widget* parent, const Point& at) const;
 
-	/*! \brief Show menu.
+	/*! Show menu.
 	 *
 	 * This method will not return until an menu item
 	 * has been selected.

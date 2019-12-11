@@ -11,7 +11,7 @@ namespace traktor
 class BlockFile;
 class CompactRegistry;
 
-/*! \brief Compact database context
+/*! Compact database context
  * \ingroup Database
  */
 class CompactContext : public Object

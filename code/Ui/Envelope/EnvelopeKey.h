@@ -15,7 +15,7 @@ namespace traktor
 	namespace ui
 	{
 
-/*! \brief Envelope key.
+/*! Envelope key.
  * \ingroup UI
  */
 class T_DLLCLASS EnvelopeKey : public Object

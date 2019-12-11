@@ -17,7 +17,7 @@ namespace traktor
 
 class Edge;
 
-/*! \brief Node or edge selection event.
+/*! Node or edge selection event.
  * \ingroup UI
  */
 class T_DLLCLASS EdgeDisconnectEvent : public Event

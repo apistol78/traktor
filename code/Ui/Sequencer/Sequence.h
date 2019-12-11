@@ -23,7 +23,7 @@ class Command;
 class IBitmap;
 class Key;
 
-/*! \brief Sequence of keys.
+/*! Sequence of keys.
  * \ingroup UI
  */
 class T_DLLCLASS Sequence : public SequenceItem

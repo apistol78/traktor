@@ -17,7 +17,7 @@ namespace traktor
 	namespace drawing
 	{
 
-/*! \brief Gaussian blur filter.
+/*! Gaussian blur filter.
  * \ingroup Drawing
  */
 class T_DLLCLASS GaussianBlurFilter : public IImageFilter

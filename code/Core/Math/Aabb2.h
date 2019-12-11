@@ -17,7 +17,7 @@
 namespace traktor
 {
 
-/*! \brief 2d axis aligned bounding box.
+/*! 2d axis aligned bounding box.
  * \ingroup Core
  */
 class T_MATH_ALIGN16 T_DLLCLASS Aabb2
@@ -32,27 +32,27 @@ public:
 
 	explicit Aabb2(const Vector2& mn_, const Vector2& mx_);
 
-	/*! \brief Get bounding box corners.
+	/*! Get bounding box corners.
 	 *
 	 * \param extents Output array of corner points.
 	 */
 	void getExtents(Vector2 extents[4]) const;
 
-	/*! \brief Return true if point is inside bounding box.
+	/*! Return true if point is inside bounding box.
 	 *
 	 * \param pt Point
 	 * \return True if inside.
 	 */
 	bool inside(const Vector2& pt) const;
 
-	/*! \brief Intersect segment with bounding box.
+	/*! Intersect segment with bounding box.
 	 *
 	 * \param outDistance Distance from start point to intersection.
 	 * \return True if intersection found.
 	 */
 	bool intersectSegment(const Vector2& p1, const Vector2& p2, float& outDistance) const;
 
-	/*! \brief Expand bounding box to contain point. */
+	/*! Expand bounding box to contain point. */
 	T_MATH_INLINE Aabb2& contain(const Vector2& pt)
 	{
 		mn = min(mn, pt);
@@ -60,7 +60,7 @@ public:
 		return *this;
 	}
 
-	/*! \brief Expand bounding box to contain sphere. */
+	/*! Expand bounding box to contain sphere. */
 	T_MATH_INLINE Aabb2& contain(const Vector2& center, float radius)
 	{
 		mn = min(mn, center - radius);
@@ -68,7 +68,7 @@ public:
 		return *this;
 	}
 
-	/*! \brief Expand bounding box to contain bounding box. */
+	/*! Expand bounding box to contain bounding box. */
 	T_MATH_INLINE Aabb2& contain(const Aabb2& aabb)
 	{
 		if (!aabb.empty())
@@ -79,7 +79,7 @@ public:
 		return *this;
 	}
 
-	/*! \brief Get overlapped bounding box. */
+	/*! Get overlapped bounding box. */
 	T_MATH_INLINE Aabb2 overlapped(const Aabb2& other) const
 	{
 		float x1 = max(mn.x, other.mn.x);
@@ -95,43 +95,43 @@ public:
 			return Aabb2();
 	}
 
-	/*! \brief Get center of bounding box. */
+	/*! Get center of bounding box. */
 	T_MATH_INLINE Vector2 getCenter() const
 	{
 		return !empty() ? (mn + mx) * 0.5f : Vector2::zero();
 	}
 
-	/*! \brief Get extent of bounding box. */
+	/*! Get extent of bounding box. */
 	T_MATH_INLINE Vector2 getExtent() const
 	{
 		return !empty() ? (mx - mn) * 0.5f : Vector2::zero();
 	}
 
-	/*! \brief Get size of bounding box. */
+	/*! Get size of bounding box. */
 	T_MATH_INLINE Vector2 getSize() const
 	{
 		return !empty() ? (mx - mn) : Vector2::zero();
 	}
 
-	/*! \brief Check if bounding box is empty. */
+	/*! Check if bounding box is empty. */
 	T_MATH_INLINE bool empty() const
 	{
 		return mx.x <= mn.x || mx.y <= mn.y;
 	}
 
-	/*! \brief Check if bounding box are equal. */
+	/*! Check if bounding box are equal. */
 	T_MATH_INLINE bool operator == (const Aabb2& rh) const
 	{
 		return mn == rh.mn && mx == rh.mx;
 	}
 
-	/*! \brief Check if bounding box are not equal. */
+	/*! Check if bounding box are not equal. */
 	T_MATH_INLINE bool operator != (const Aabb2& rh) const
 	{
 		return mn != rh.mn || mx != rh.mx;
 	}
 
-	/*! \brief Transform bounding box.
+	/*! Transform bounding box.
 	 * \note Size of bounding box might change as it's NOT an oriented bounding box.
 	 */
 	friend T_MATH_INLINE T_DLLCLASS Aabb2 operator * (const Matrix33& m, const Aabb2& b)

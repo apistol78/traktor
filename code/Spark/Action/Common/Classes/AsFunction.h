@@ -9,7 +9,7 @@ namespace traktor
 
 struct CallArgs;
 
-/*! \brief Function class.
+/*! Function class.
  * \ingroup Spark
  */
 class AsFunction : public ActionClass

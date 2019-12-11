@@ -19,7 +19,7 @@ namespace traktor
 
 class EntityAdapter;
 
-/*! \brief Preview render camera. */
+/*! Preview render camera. */
 class T_DLLCLASS Camera : public Object
 {
 public:

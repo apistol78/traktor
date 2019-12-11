@@ -16,7 +16,7 @@ namespace traktor
 	namespace sql
 	{
 
-/*! \brief SQL column types.
+/*! SQL column types.
  * \ingroup SQL
  */
 enum ColumnType
@@ -29,7 +29,7 @@ enum ColumnType
 	CtString
 };
 
-/*! \brief SQL query/update result set.
+/*! SQL query/update result set.
  * \ingroup SQL
  */
 class T_DLLCLASS IResultSet : public Object

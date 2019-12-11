@@ -3,7 +3,7 @@
 namespace traktor
 {
 
-/*! \brief Safe destroy call.
+/*! Safe destroy call.
  *
  * Helper function to reduce code bloat
  * in common pattern.
@@ -18,7 +18,7 @@ void safeDestroy(T& tv)
 	}
 }
 
-/*! \brief Safe close call.
+/*! Safe close call.
  *
  * Helper function to reduce code bloat
  * in common pattern.

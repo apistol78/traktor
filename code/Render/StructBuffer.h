@@ -15,7 +15,7 @@ namespace traktor
 	namespace render
 	{
 
-/*! \brief Struct buffer.
+/*! Struct buffer.
  * \ingroup Render
  */
 class T_DLLCLASS StructBuffer : public Object
@@ -23,22 +23,22 @@ class T_DLLCLASS StructBuffer : public Object
 	T_RTTI_CLASS;
 
 public:
-	/*! \brief Get buffer size in bytes.
+	/*! Get buffer size in bytes.
 	 *
 	 * \return Buffer size.
 	 */
 	uint32_t getBufferSize() const;
 
-	/*! \brief Destroy resources allocated by this buffer. */
+	/*! Destroy resources allocated by this buffer. */
 	virtual void destroy() = 0;
 
-	/*! \brief Lock access to entire buffer data.
+	/*! Lock access to entire buffer data.
 	 *
 	 * \return Pointer to buffer beginning.
 	 */
 	virtual void* lock() = 0;
 
-	/*! \brief Lock access to segment of buffer data.
+	/*! Lock access to segment of buffer data.
 	 *
 	 * \param structOffset Struct offset.
 	 * \param structCount Number of structs to lock.
@@ -46,7 +46,7 @@ public:
 	 */
 	virtual void* lock(uint32_t structOffset, uint32_t structCount) = 0;
 
-	/*! \brief Unlock access. */
+	/*! Unlock access. */
 	virtual void unlock() = 0;
 
 protected:

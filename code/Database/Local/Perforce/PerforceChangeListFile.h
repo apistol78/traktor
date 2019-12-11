@@ -8,7 +8,7 @@ namespace traktor
 	namespace db
 	{
 
-/*! \brief P4 change list file.
+/*! P4 change list file.
  * \ingroup Database
  */
 class PerforceChangeListFile : public ISerializable

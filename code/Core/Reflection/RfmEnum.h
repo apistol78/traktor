@@ -14,7 +14,7 @@
 namespace traktor
 {
 
-/*! \brief Reflected enumeration member.
+/*! Reflected enumeration member.
  * \ingroup Core
  */
 class T_DLLCLASS RfmEnum : public ReflectionMember

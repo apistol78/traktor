@@ -13,7 +13,7 @@
 namespace traktor
 {
 
-/*! \brief Packed representation of unit vector in 16-bit data.
+/*! Packed representation of unit vector in 16-bit data.
  * \ingroup Core
  */
 class T_DLLCLASS PackedUnitVector

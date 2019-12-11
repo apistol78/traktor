@@ -15,7 +15,7 @@ namespace traktor
 	namespace ui
 	{
 
-/*! \brief Tool form.
+/*! Tool form.
  * \ingroup UI
  */
 class T_DLLCLASS ToolForm : public Container

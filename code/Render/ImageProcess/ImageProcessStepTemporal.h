@@ -21,7 +21,7 @@ namespace traktor
 
 class Shader;
 
-/*! \brief Step useful for temporal filtering.
+/*! Step useful for temporal filtering.
  * \ingroup Render
  */
 class T_DLLCLASS ImageProcessStepTemporal : public ImageProcessStep

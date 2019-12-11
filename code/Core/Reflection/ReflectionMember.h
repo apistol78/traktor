@@ -13,7 +13,7 @@
 namespace traktor
 {
 
-/*! \brief Reflected member base class.
+/*! Reflected member base class.
  * \ingroup Core
  */
 class T_DLLCLASS ReflectionMember : public Object

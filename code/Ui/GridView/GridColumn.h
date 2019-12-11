@@ -16,7 +16,7 @@ namespace traktor
 	namespace ui
 	{
 
-/*! \brief Grid column.
+/*! Grid column.
  * \ingroup UI
  */
 class T_DLLCLASS GridColumn

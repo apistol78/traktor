@@ -31,7 +31,7 @@ class Shader;
 	namespace terrain
 	{
 
-/*! \brief Terrain persistent resource data.
+/*! Terrain persistent resource data.
  * \ingroup Terrain
  */
 class T_DLLCLASS TerrainResource : public ISerializable

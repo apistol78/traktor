@@ -23,7 +23,7 @@ class IEntityBuilder;
 	namespace animation
 	{
 
-/*! \brief Movement path entity data.
+/*! Movement path entity data.
  * \ingroup Animation
  */
 class T_DLLCLASS PathEntityData : public world::EntityData

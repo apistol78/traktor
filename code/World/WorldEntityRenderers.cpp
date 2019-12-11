@@ -9,7 +9,7 @@ namespace traktor
 		namespace
 		{
 
-/*! \brief Create map between entities and it's associated entity renderer. */
+/*! Create map between entities and it's associated entity renderer. */
 void updateEntityRendererMap(
 	const RefArray< IEntityRenderer >& entityRenderers,
 	WorldEntityRenderers::entity_renderer_map_t& outEntityRendererMap

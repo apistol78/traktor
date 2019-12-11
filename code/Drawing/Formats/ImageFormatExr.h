@@ -18,7 +18,7 @@ namespace traktor
 	namespace drawing
 	{
 
-/*! \brief EXR format.
+/*! EXR format.
  * \ingroup Drawing
  */
 class T_DLLCLASS ImageFormatExr : public IImageFormat

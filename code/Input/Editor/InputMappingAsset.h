@@ -24,7 +24,7 @@ class IInputNode;
 class InputMappingSourceData;
 class InputMappingStateData;
 
-/*! \brief Input mapping asset.
+/*! Input mapping asset.
  * \ingroup Input
  */
 class T_DLLCLASS InputMappingAsset : public ISerializable

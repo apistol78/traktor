@@ -15,7 +15,7 @@ namespace traktor
 	namespace ui
 	{
 
-/*! \brief Static property item.
+/*! Static property item.
  * \ingroup UI
  */
 class T_DLLCLASS StaticPropertyItem : public PropertyItem

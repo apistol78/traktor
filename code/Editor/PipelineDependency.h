@@ -28,7 +28,7 @@ class OutputStream;
 
 class IPipeline;
 
-/*! \brief Pipeline asset dependency.
+/*! Pipeline asset dependency.
  * \ingroup Editor
  *
  * Describe the dependencies of an asset;

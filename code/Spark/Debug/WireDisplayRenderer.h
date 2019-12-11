@@ -32,7 +32,7 @@ class IResourceManager;
 	namespace spark
 	{
 
-/*! \brief Debug wire display renderer.
+/*! Debug wire display renderer.
  * \ingroup Spark
  */
 class T_DLLCLASS WireDisplayRenderer : public IDisplayRenderer

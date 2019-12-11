@@ -23,7 +23,7 @@
 namespace traktor
 {
 
-/*! \brief 2d vector.
+/*! 2d vector.
  * \ingroup Core
  */
 class T_DLLCLASS Vector2

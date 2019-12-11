@@ -16,7 +16,7 @@ namespace traktor
 	namespace sql
 	{
 
-/*! \brief Sqlite3 database connection.
+/*! Sqlite3 database connection.
  * \ingroup SQL
  *
  * Connection string definition:

@@ -7,7 +7,7 @@ namespace traktor
 	namespace render
 	{
 
-/*! \brief Pin types.
+/*! Pin types.
  * \ingroup Render
  *
  * \note Ordered in predecence; higher number is higher predecence.
@@ -28,7 +28,7 @@ enum PinType
 	PntAny = (PntState)
 };
 
-/*! \brief Return true if type is a scalar.
+/*! Return true if type is a scalar.
  * \ingroup Render
  */
 inline bool isPinTypeScalar(PinType pinType)
@@ -36,7 +36,7 @@ inline bool isPinTypeScalar(PinType pinType)
 	return pinType >= PntScalar1 && pinType <= PntScalar4;
 }
 
-/*! \brief Return true if type is a texture.
+/*! Return true if type is a texture.
  * \ingroup Render
  */
 inline bool isPinTypeTexture(PinType pinType)
@@ -44,7 +44,7 @@ inline bool isPinTypeTexture(PinType pinType)
 	return pinType >= PntTexture2D && pinType <= PntTextureCube;
 }
 
-/*! \brief Return true if type is a struct buffer.
+/*! Return true if type is a struct buffer.
  * \ingroup Render
  */
 inline bool isPinTypeStructBuffer(PinType pinType)
@@ -52,7 +52,7 @@ inline bool isPinTypeStructBuffer(PinType pinType)
 	return pinType == PntStructBuffer;
 }
 
-/*! \brief Return true if type is a state.
+/*! Return true if type is a state.
  * \ingroup Render
  */
 inline bool isPinTypeState(PinType pinType)
@@ -60,7 +60,7 @@ inline bool isPinTypeState(PinType pinType)
 	return pinType == PntState;
 }
 
-/*! \brief Get width of scalar type.
+/*! Get width of scalar type.
  * \ingroup Render
  */
 inline int32_t getPinTypeWidth(PinType pinType)
@@ -68,7 +68,7 @@ inline int32_t getPinTypeWidth(PinType pinType)
 	return isPinTypeScalar(pinType) ? int32_t(pinType) : 0;
 }
 
-/*! \brief Pin order type.
+/*! Pin order type.
  * \ingroup Render
  */
 enum PinOrderType

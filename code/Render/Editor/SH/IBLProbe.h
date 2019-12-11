@@ -23,7 +23,7 @@ class Image;
 	{
 
 /*!
- * \brief "Image based lighting" probe.
+ * "Image based lighting" probe.
  */
 class T_DLLCLASS IBLProbe : public SHFunction
 {

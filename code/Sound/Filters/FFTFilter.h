@@ -17,7 +17,7 @@ namespace traktor
 	namespace sound
 	{
 
-/*! \brief FFT filter.
+/*! FFT filter.
  * \ingroup Sound
  */
 class T_DLLCLASS FFTFilter : public IFilter

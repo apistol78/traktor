@@ -16,7 +16,7 @@ namespace traktor
 	namespace ui
 	{
 
-/*! \brief Color change event.
+/*! Color change event.
  * \ingroup UI
  */
 class T_DLLCLASS ColorEvent : public Event

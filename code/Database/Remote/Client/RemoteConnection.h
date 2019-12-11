@@ -18,7 +18,7 @@ class TcpSocket;
 	namespace db
 	{
 
-/*! \brief Database connection.
+/*! Database connection.
  * \ingroup Database
  */
 class RemoteConnection : public Object

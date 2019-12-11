@@ -29,7 +29,7 @@ class Database;
 class Target;
 class TargetConfiguration;
 
-/*! \brief Migrate target action.
+/*! Migrate target action.
  * \ingroup Runtime
  */
 class T_DLLCLASS MigrateTargetAction : public ITargetAction

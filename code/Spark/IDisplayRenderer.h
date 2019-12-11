@@ -26,7 +26,7 @@ class MorphShape;
 class Shape;
 class SpriteInstance;
 
-/*! \brief Rendering interface.
+/*! Rendering interface.
  * \ingroup Spark
  */
 class T_DLLCLASS IDisplayRenderer : public Object
@@ -34,11 +34,11 @@ class T_DLLCLASS IDisplayRenderer : public Object
 	T_RTTI_CLASS;
 
 public:
-	/*! \brief Return true if renderer require proper dirty region.
+	/*! Return true if renderer require proper dirty region.
 	 */
 	virtual bool wantDirtyRegion() const = 0;
 
-	/*! \brief Begin rendering frame.
+	/*! Begin rendering frame.
 	 *
 	 * \param dictionary Flash character dictionary.
 	 * \param backgroundColor Frame background color.
@@ -58,30 +58,30 @@ public:
 		const Aabb2& dirtyRegion
 	) = 0;
 
-	/*! \brief Begin rendering sprite.
+	/*! Begin rendering sprite.
 	 */
 	virtual void beginSprite(const SpriteInstance& sprite, const Matrix33& transform) = 0;
 
-	/*! \brief End rendering sprite.
+	/*! End rendering sprite.
 	 */
 	virtual void endSprite(const SpriteInstance& sprite, const Matrix33& transform) = 0;
 
-	/*! \brief Begin rendering edit field. */
+	/*! Begin rendering edit field. */
 	virtual void beginEdit(const EditInstance& edit, const Matrix33& transform) = 0;
 
-	/*! \brief End rendering edit field. */
+	/*! End rendering edit field. */
 	virtual void endEdit(const EditInstance& edit, const Matrix33& transform) = 0;
 
-	/*! \brief Begin rendering mask.
+	/*! Begin rendering mask.
 	 *
 	 * \param increment Increment mask.
 	 */
 	virtual void beginMask(bool increment) = 0;
 
-	/*! \brief End rendering mask. */
+	/*! End rendering mask. */
 	virtual void endMask() = 0;
 
-	/*! \brief Render shape.
+	/*! Render shape.
 	 *
 	 * \param dictionary Flash character dictionary.
 	 * \param transform Shape transform.
@@ -91,7 +91,7 @@ public:
 	 */
 	virtual void renderShape(const Dictionary& dictionary, const Matrix33& transform, const Aabb2& clipBounds, const Shape& shape, const ColorTransform& cxform, uint8_t blendMode) = 0;
 
-	/*! \brief Render morph shape.
+	/*! Render morph shape.
 	 *
 	 * \param dictionary Flash character dictionary.
 	 * \param transform Shape transform.
@@ -100,7 +100,7 @@ public:
 	 */
 	virtual void renderMorphShape(const Dictionary& dictionary, const Matrix33& transform, const Aabb2& clipBounds, const MorphShape& shape, const ColorTransform& cxform) = 0;
 
-	/*! \brief Render glyph.
+	/*! Render glyph.
 	 *
 	 * \param dictionary Flash character dictionary.
 	 * \param transform Shape transform.
@@ -127,7 +127,7 @@ public:
 		const Color4f& filterColor
 	) = 0;
 
-	/*! \brief Render solid quad.
+	/*! Render solid quad.
 	 *
 	 * \param transform Shape transform.
 	 * \param bounds Quad bounds.
@@ -136,7 +136,7 @@ public:
 	 */
 	virtual void renderQuad(const Matrix33& transform, const Aabb2& bounds, const ColorTransform& cxform) = 0;
 
-	/*! \brief Render canvas.
+	/*! Render canvas.
 	 *
 	 * \param transform Shape transform.
 	 * \param canvas Canvas
@@ -145,7 +145,7 @@ public:
 	 */
 	virtual void renderCanvas(const Matrix33& transform, const Canvas& canvas, const ColorTransform& cxform, uint8_t blendMode) = 0;
 
-	/*! \brief End frame. */
+	/*! End frame. */
 	virtual void end() = 0;
 };
 

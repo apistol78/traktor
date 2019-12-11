@@ -8,7 +8,7 @@
 namespace traktor
 {
 
-/*! \brief Debug allocator.
+/*! Debug allocator.
  * \ingroup Core
  *
  * Debug allocator uses a couple of mechanisms to ensure

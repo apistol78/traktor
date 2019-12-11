@@ -15,7 +15,7 @@ namespace traktor
 	namespace physics
 	{
 
-/*! \brief Capsule collision shape.
+/*! Capsule collision shape.
  * \ingroup Physics
  */
 class T_DLLCLASS CapsuleShapeDesc : public ShapeDesc

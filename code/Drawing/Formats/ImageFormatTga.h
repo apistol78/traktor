@@ -15,7 +15,7 @@ namespace traktor
 	namespace drawing
 	{
 
-/*! \brief TGA format.
+/*! TGA format.
  * \ingroup Drawing
  */
 class T_DLLCLASS ImageFormatTga : public IImageFormat

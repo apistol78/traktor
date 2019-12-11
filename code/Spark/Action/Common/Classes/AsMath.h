@@ -10,7 +10,7 @@ namespace traktor
 
 struct CallArgs;
 
-/*! \brief Math class.
+/*! Math class.
  * \ingroup Spark
  */
 class AsMath : public ActionObject

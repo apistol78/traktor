@@ -13,7 +13,7 @@
 namespace traktor
 {
 
-/*! \brief High quality timer.
+/*! High quality timer.
  * \ingroup Core
  */
 class T_DLLCLASS Timer : public Object
@@ -23,22 +23,22 @@ class T_DLLCLASS Timer : public Object
 public:
 	Timer();
 
-	/*! \brief Start timer. */
+	/*! Start timer. */
 	void start();
 
-	/*! \brief Pause timer. */
+	/*! Pause timer. */
 	void pause();
 
-	/*! \brief Stop timer. */
+	/*! Stop timer. */
 	void stop();
 
-	/*! \brief Is timer started? */
+	/*! Is timer started? */
 	bool started() const { return !m_paused; }
 
-	/*! \brief Get number of seconds since timer started. */
+	/*! Get number of seconds since timer started. */
 	double getElapsedTime() const;
 
-	/*! \brief Get number of seconds since last call to this method. */
+	/*! Get number of seconds since last call to this method. */
 	double getDeltaTime();
 
 private:

@@ -15,7 +15,7 @@ namespace traktor
 	namespace physics
 	{
 
-/*! \brief Sphere collision shape.
+/*! Sphere collision shape.
  * \ingroup Physics
  */
 class T_DLLCLASS SphereShapeDesc : public ShapeDesc

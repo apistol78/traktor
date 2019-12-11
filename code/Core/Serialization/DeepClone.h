@@ -17,7 +17,7 @@ namespace traktor
 
 class ISerializable;
 
-/*! \brief Clone object.
+/*! Clone object.
  * \ingroup Core
  *
  * Creates a clone of an object through
@@ -30,10 +30,10 @@ class T_DLLCLASS DeepClone : public Object
 public:
 	DeepClone(const ISerializable* source);
 
-	/*! \brief Create new instance of source object. */
+	/*! Create new instance of source object. */
 	Ref< ISerializable > create() const;
 
-	/*! \brief Create new instance of source object. */
+	/*! Create new instance of source object. */
 	template < typename T >
 	Ref< T > create() const
 	{

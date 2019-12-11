@@ -19,7 +19,7 @@ namespace traktor
 	namespace xml
 	{
 
-/*! \brief XML based serializer.
+/*! XML based serializer.
  * \ingroup XML
  */
 class T_DLLCLASS XmlSerializer : public Serializer

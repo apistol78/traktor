@@ -16,7 +16,7 @@ namespace traktor
 	namespace ui
 	{
 
-/*! \brief Button click event.
+/*! Button click event.
  * \ingroup UI
  */
 class T_DLLCLASS ButtonClickEvent : public Event

@@ -7,7 +7,7 @@
 namespace traktor
 {
 
-/*! \brief Double buffer helper.
+/*! Double buffer helper.
  * \ingroup Core
  */
 template < typename Type >

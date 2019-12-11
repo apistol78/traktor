@@ -15,7 +15,7 @@ namespace traktor
 	namespace db
 	{
 
-/*! \brief Read instance object.
+/*! Read instance object.
  * \ingroup Database
  */
 class T_DLLCLASS DbmReadObject : public IMessage

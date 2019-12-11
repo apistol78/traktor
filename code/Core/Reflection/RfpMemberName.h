@@ -14,7 +14,7 @@
 namespace traktor
 {
 
-/*! \brief Member name query predicate.
+/*! Member name query predicate.
  * \ingroup Core
  */
 class T_DLLCLASS RfpMemberName : public ReflectionMemberPredicate

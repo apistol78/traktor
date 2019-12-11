@@ -10,7 +10,7 @@
 namespace traktor
 {
 
-/*! \brief Range template.
+/*! Range template.
  * \ingroup Core
  */
 template < typename Type >

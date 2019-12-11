@@ -16,7 +16,7 @@ namespace traktor
 	namespace sound
 	{
 
-/*! \brief Static sound resource.
+/*! Static sound resource.
  * \ingroup Sound
  */
 class T_DLLCLASS StaticSoundResource : public ISoundResource

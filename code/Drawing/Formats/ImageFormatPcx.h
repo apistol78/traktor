@@ -15,7 +15,7 @@ namespace traktor
 	namespace drawing
 	{
 
-/*! \brief PCX format.
+/*! PCX format.
  * \ingroup Drawing
  */
 class T_DLLCLASS ImageFormatPcx : public IImageFormat

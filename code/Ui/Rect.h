@@ -8,7 +8,7 @@ namespace traktor
 	namespace ui
 	{
 
-/*! \brief Rectangle
+/*! Rectangle
  * \ingroup UI
  */
 class Rect

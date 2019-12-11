@@ -14,7 +14,7 @@
 namespace traktor
 {
 
-/*! \brief Object array reference container.
+/*! Object array reference container.
  * \ingroup Core
  */
 template < typename ClassType >
@@ -32,7 +32,7 @@ public:
 	typedef int32_t difference_type;
 	typedef size_t size_type;
 
-	/*! \brief Constant iterator. */
+	/*! Constant iterator. */
 	class const_iterator
 	{
 	public:
@@ -153,7 +153,7 @@ public:
 		}
 	};
 
-	/*! \brief Mutable iterator. */
+	/*! Mutable iterator. */
 	class iterator : public const_iterator
 	{
 	public:
@@ -256,7 +256,7 @@ public:
 		}
 	};
 
-	/*! \brief Construct empty array. */
+	/*! Construct empty array. */
 	RefArray()
 	:	m_items(0)
 	,	m_size(0)
@@ -264,7 +264,7 @@ public:
 	{
 	}
 
-	/*! \brief Construct array with size. */
+	/*! Construct array with size. */
 	RefArray(size_type size)
 	:	m_items(0)
 	,	m_size(0)
@@ -278,7 +278,7 @@ public:
 			m_items[i] = 0;
 	}
 
-	/*! \brief Copy array. */
+	/*! Copy array. */
 	RefArray(const RefArray& s)
 	{
 		m_items = new value_type [s.m_size];
@@ -309,7 +309,7 @@ public:
 		clear();
 	}
 
-	/*! \brief Clear array.
+	/*! Clear array.
 	 *
 	 * All elements are released and
 	 * allocated memory are freed.
@@ -324,59 +324,59 @@ public:
 		m_capacity = 0;
 	}
 
-	/*! \brief Return iterator at beginning of array. */
+	/*! Return iterator at beginning of array. */
 	iterator begin()
 	{
 		return iterator(&m_items[0], this);
 	}
 
-	/*! \brief Return iterator one past last element. */
+	/*! Return iterator one past last element. */
 	iterator end()
 	{
 		return iterator(&m_items[m_size], this);
 	}
 
-	/*! \brief Return iterator at beginning of array. */
+	/*! Return iterator at beginning of array. */
 	const_iterator begin() const
 	{
 		return const_iterator(&m_items[0]);
 	}
 
-	/*! \brief Return iterator one past last element. */
+	/*! Return iterator one past last element. */
 	const_iterator end() const
 	{
 		return const_iterator(&m_items[m_size]);
 	}
 
-	/*! \brief Get front element. */
+	/*! Get front element. */
 	ClassType* front()
 	{
 		T_ASSERT(m_items);
 		return m_items[0];
 	}
 
-	/*! \brief Get back element. */
+	/*! Get back element. */
 	ClassType* back()
 	{
 		T_ASSERT(m_items);
 		return m_items[m_size - 1];
 	}
 
-	/*! \brief Get front element. */
+	/*! Get front element. */
 	const ClassType* front() const
 	{
 		T_ASSERT(m_items);
 		return m_items[0];
 	}
 
-	/*! \brief Get back element. */
+	/*! Get back element. */
 	const ClassType* back() const
 	{
 		T_ASSERT(m_items);
 		return m_items[m_size - 1];
 	}
 
-	/*! \brief Push element as front. */
+	/*! Push element as front. */
 	void push_front(ClassType* const val)
 	{
 		T_SAFE_ADDREF(val);
@@ -386,7 +386,7 @@ public:
 		m_items[0] = val;
 	}
 
-	/*! \brief Pop front element. */
+	/*! Pop front element. */
 	void pop_front()
 	{
 		T_SAFE_RELEASE(m_items[0]);
@@ -395,7 +395,7 @@ public:
 		shrink(1);
 	}
 
-	/*! \brief Push element as back. */
+	/*! Push element as back. */
 	void push_back(ClassType* const val)
 	{
 		T_SAFE_ADDREF(val);
@@ -403,14 +403,14 @@ public:
 		m_items[m_size - 1] = val;
 	}
 
-	/*! \brief Pop back element. */
+	/*! Pop back element. */
 	void pop_back()
 	{
 		T_SAFE_RELEASE(m_items[m_size - 1]);
 		shrink(1);
 	}
 
-	/*! \brief Insert element at specified location. */
+	/*! Insert element at specified location. */
 	void insert(iterator at, ClassType* const val)
 	{
 		T_SAFE_ADDREF(val);
@@ -426,7 +426,7 @@ public:
 		m_items[offset] = val;
 	}
 
-	/*! \brief Insert elements at specified location. */
+	/*! Insert elements at specified location. */
 	iterator insert(iterator at, iterator first, iterator last)
 	{
 		size_type size = m_size;
@@ -452,7 +452,7 @@ public:
 		return iterator(&m_items[offset], this);
 	}
 
-	/*! \brief Insert elements at specified location. */
+	/*! Insert elements at specified location. */
 	iterator insert(iterator at, const_iterator first, const_iterator last)
 	{
 		size_type size = m_size;
@@ -478,7 +478,7 @@ public:
 		return iterator(&m_items[offset], this);
 	}
 
-	/*! \brief Erase element from array. */
+	/*! Erase element from array. */
 	iterator erase(iterator iter)
 	{
 		T_ASSERT(m_size > 0);
@@ -498,7 +498,7 @@ public:
 		return iterator(&m_items[offset], this);
 	}
 
-	/*! \brief Remove first element from array by value. */
+	/*! Remove first element from array by value. */
 	bool remove(value_type item)
 	{
 		iterator i = std::find(begin(), end(), item);
@@ -511,7 +511,7 @@ public:
 			return false;
 	}
 
-	/*! \brief Erase range of elements from array. */
+	/*! Erase range of elements from array. */
 	void erase(iterator first, iterator last)
 	{
 		size_type offset = size_type(first.m_item - m_items);
@@ -534,7 +534,7 @@ public:
 		m_size = size;
 	}
 
-	/*! \brief Swap content with another array. */
+	/*! Swap content with another array. */
 	void swap(RefArray< ClassType >& src)
 	{
 		std::swap(m_items, src.m_items);
@@ -542,19 +542,19 @@ public:
 		std::swap(m_capacity, src.m_capacity);
 	}
 
-	/*! \brief Check if array is empty. */
+	/*! Check if array is empty. */
 	bool empty() const
 	{
 		return m_size == 0;
 	}
 
-	/*! \brief Number of elements in array. */
+	/*! Number of elements in array. */
 	size_type size() const
 	{
 		return m_size;
 	}
 
-	/*! \brief Resize array. */
+	/*! Resize array. */
 	void resize(size_type size)
 	{
 		if (size > m_size)
@@ -577,7 +577,7 @@ public:
 		m_size = size;
 	}
 
-	/*! \brief Capacity of array.
+	/*! Capacity of array.
 	 *
 	 * Return number of elements which can fit in the
 	 * array without allocate more memory.
@@ -587,7 +587,7 @@ public:
 		return m_capacity;
 	}
 
-	/*! \brief Reserve capacity of array. */
+	/*! Reserve capacity of array. */
 	void reserve(size_type size)
 	{
 		if (size > m_capacity)
@@ -607,19 +607,19 @@ public:
 		}
 	}
 
-	/*! \brief Return element at specified location. */
+	/*! Return element at specified location. */
 	const pointer at(size_type index) const
 	{
 		return m_items[index];
 	}
 
-	/*! \brief Return handle to element at specified location. */
+	/*! Return handle to element at specified location. */
 	InplaceRef< ClassType > at(size_type index)
 	{
 		return InplaceRef< ClassType >(m_items[index]);
 	}
 
-	/*! \brief Sort array.
+	/*! Sort array.
 	 *
 	 * Prefer use of this method instead
 	 * of std::sort directly as this will not cause

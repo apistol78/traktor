@@ -20,7 +20,7 @@ namespace traktor
 
 class Pose;
 
-/*! \brief Animation
+/*! Animation
  * \ingroup Model
  */
 class T_DLLCLASS Animation : public ISerializable

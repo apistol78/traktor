@@ -20,7 +20,7 @@ namespace traktor
 
 class IEvent;
 
-/*! \brief Provider event bus interface.
+/*! Provider event bus interface.
  * \ingroup Database
  *
  * The bus is used to communicate changes made to other
@@ -34,14 +34,14 @@ class T_DLLCLASS IProviderBus : public Object
 	T_RTTI_CLASS;
 
 public:
-	/*! \brief Put an event onto the bus.
+	/*! Put an event onto the bus.
 	 *
 	 * \param event Event instance.
 	 * \return True if event has been put onto the bus.
 	 */
 	virtual bool putEvent(const IEvent* event) = 0;
 
-	/*! \brief Get event from bus.
+	/*! Get event from bus.
 	 *
 	 * \param inoutSqnr Sequence number of last retrieved event, will return sequence number of returned event.
 	 * \param outEvent Event instance.

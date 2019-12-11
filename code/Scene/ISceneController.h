@@ -17,7 +17,7 @@ namespace traktor
 
 class Scene;
 
-/*! \brief Scene controller interface.
+/*! Scene controller interface.
  * \ingroup Scene
  *
  * Scene controllers are data-driven controllers

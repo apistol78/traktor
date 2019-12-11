@@ -5,7 +5,7 @@
 namespace traktor
 {
 
-/*! \brief Static array member.
+/*! Static array member.
  * \ingroup Core
  */
 template < typename ValueType, int ArraySize, typename ValueMember = Member< ValueType > >

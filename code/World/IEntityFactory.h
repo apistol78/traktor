@@ -24,7 +24,7 @@ class IEntityEventData;
 class Entity;
 class EntityData;
 
-/*! \brief Entity factory interface.
+/*! Entity factory interface.
  * \ingroup World
  */
 class T_DLLCLASS IEntityFactory : public Object

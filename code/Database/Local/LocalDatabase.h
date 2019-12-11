@@ -22,7 +22,7 @@ class Context;
 class LocalBus;
 class LocalGroup;
 
-/*! \brief Local database provider.
+/*! Local database provider.
  * \ingroup Database
  */
 class T_DLLCLASS LocalDatabase : public IProviderDatabase

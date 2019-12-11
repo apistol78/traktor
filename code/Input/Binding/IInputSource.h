@@ -19,7 +19,7 @@ namespace traktor
 class InputSystem;
 class InputValueSet;
 
-/*! \brief Abstract input source.
+/*! Abstract input source.
  * \ingroup Input
  */
 class T_DLLCLASS IInputSource : public Object
@@ -31,7 +31,7 @@ public:
 
 	virtual void prepare(float T, float dT) = 0;
 
-	/*! \brief Read value from input source.
+	/*! Read value from input source.
 	 *
 	 * \note
 	 * Should return NaN if unable to read value

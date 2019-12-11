@@ -15,7 +15,7 @@ namespace traktor
 	namespace db
 	{
 
-/*! \brief Close instance transaction.
+/*! Close instance transaction.
  * \ingroup Database
  */
 class T_DLLCLASS DbmCloseTransaction : public IMessage

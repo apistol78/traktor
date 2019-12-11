@@ -19,7 +19,7 @@ namespace traktor
 
 class Dictionary;
 
-/*! \brief Internationalization manager.
+/*! Internationalization manager.
  * \ingroup I18N
  */
 class T_DLLCLASS I18N : public ISingleton

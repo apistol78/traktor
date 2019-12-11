@@ -23,7 +23,7 @@ class EntityData;
 	namespace theater
 	{
 
-/*! \brief Track data.
+/*! Track data.
  * \ingroup Theater
  */
 class T_DLLCLASS TrackData : public ISerializable

@@ -15,7 +15,7 @@ class Solution;
 class Project;
 class Configuration;
 
-/*! \brief Visual Studio solution tool. */
+/*! Visual Studio solution tool. */
 class SolutionBuilderMsvcTool : public ISerializable
 {
 	T_RTTI_CLASS;

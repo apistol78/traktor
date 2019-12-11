@@ -13,7 +13,7 @@
 namespace traktor
 {
 
-/*! \brief Member direction attribute.
+/*! Member direction attribute.
  * \ingroup Core
  */
 class T_DLLCLASS AttributeDirection : public Attribute

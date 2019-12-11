@@ -15,7 +15,7 @@ namespace traktor
 	namespace physics
 	{
 
-/*! \brief Mesh geometry resource.
+/*! Mesh geometry resource.
  * \ingroup Physics
  */
 class T_DLLCLASS MeshResource : public ISerializable

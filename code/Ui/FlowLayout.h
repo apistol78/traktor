@@ -18,7 +18,7 @@ namespace traktor
 	namespace ui
 	{
 
-/*! \brief Flow layout.
+/*! Flow layout.
  * \ingroup UI
  */
 class T_DLLCLASS FlowLayout : public Layout

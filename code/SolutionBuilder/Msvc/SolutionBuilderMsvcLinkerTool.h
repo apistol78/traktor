@@ -10,7 +10,7 @@ namespace traktor
 
 class ProjectItem;
 
-/*! \brief Visual Studio linker tool. */
+/*! Visual Studio linker tool. */
 class SolutionBuilderMsvcLinkerTool : public SolutionBuilderMsvcTool
 {
 	T_RTTI_CLASS;

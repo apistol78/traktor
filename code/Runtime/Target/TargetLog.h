@@ -16,7 +16,7 @@ namespace traktor
 	namespace runtime
 	{
 
-/*! \brief Log statement from running target.
+/*! Log statement from running target.
  * \ingroup Runtime
  */
 class T_DLLCLASS TargetLog : public ISerializable

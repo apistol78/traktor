@@ -15,7 +15,7 @@ namespace traktor
 	namespace drawing
 	{
 
-/*! \brief Normal map image filter.
+/*! Normal map image filter.
  * \ingroup Drawing
  *
  * Calculate a normal map by sampling heights from

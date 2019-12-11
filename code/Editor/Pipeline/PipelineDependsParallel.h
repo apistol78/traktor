@@ -26,7 +26,7 @@ class IPipelineDependencySet;
 class IPipelineInstanceCache;
 class PipelineFactory;
 
-/*! \brief Parallel pipeline dependency walker.
+/*! Parallel pipeline dependency walker.
  * \ingroup Editor
  */
 class T_DLLCLASS PipelineDependsParallel : public IPipelineDepends

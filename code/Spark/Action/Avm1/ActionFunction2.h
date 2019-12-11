@@ -18,7 +18,7 @@ namespace traktor
 
 class ActionDictionary;
 
-/*! \brief ActionScript script function.
+/*! ActionScript script function.
  * \ingroup Spark
  */
 class T_DLLCLASS ActionFunction2 : public ActionFunction

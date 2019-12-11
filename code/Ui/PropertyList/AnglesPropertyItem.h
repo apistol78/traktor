@@ -18,7 +18,7 @@ namespace traktor
 
 class Edit;
 
-/*! \brief Angles property item.
+/*! Angles property item.
  * \ingroup UI
  */
 class T_DLLCLASS AnglesPropertyItem : public PropertyItem

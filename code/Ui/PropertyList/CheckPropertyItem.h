@@ -15,7 +15,7 @@ namespace traktor
 	namespace ui
 	{
 
-/*! \brief Check property item.
+/*! Check property item.
  * \ingroup UI
  */
 class T_DLLCLASS CheckPropertyItem : public PropertyItem

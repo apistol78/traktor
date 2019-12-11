@@ -32,7 +32,7 @@ class Widget;
 
 class IEditor;
 
-/*! \brief Editor tool base class.
+/*! Editor tool base class.
  * \ingroup Editor
  */
 class T_DLLCLASS IEditorTool : public Object

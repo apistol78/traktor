@@ -21,7 +21,7 @@ class Configuration;
 class ProjectItem;
 class Dependency;
 
-/*! \brief Project settings.
+/*! Project settings.
  *
  * Class to describe a project, each project
  * contains several items and configurations defining

@@ -21,7 +21,7 @@ namespace traktor
 class SHFunction;
 class SHMatrix;
 
-/*! \brief Spherical harmonics computation engine.
+/*! Spherical harmonics computation engine.
  * \ingroup Render
  */
 class T_DLLCLASS SHEngine : public Object

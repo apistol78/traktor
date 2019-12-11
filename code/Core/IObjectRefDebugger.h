@@ -5,7 +5,7 @@
 namespace traktor
 {
 
-/*! \brief Managed object reference debugger interface.
+/*! Managed object reference debugger interface.
  * \ingroup Core
  */
 struct T_NOVTABLE IObjectRefDebugger

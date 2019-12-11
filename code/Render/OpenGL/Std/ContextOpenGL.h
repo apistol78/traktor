@@ -14,7 +14,7 @@ namespace traktor
 	namespace render
 	{
 
-/*! \brief OpenGL context.
+/*! OpenGL context.
  * \ingroup OGL
  */
 class ContextOpenGL : public Object
@@ -22,7 +22,7 @@ class ContextOpenGL : public Object
 	T_RTTI_CLASS;
 
 public:
-	/*! \brief Scoped enter/leave helper.
+	/*! Scoped enter/leave helper.
 	 * \ingroup OGL
 	 */
 	struct Scope

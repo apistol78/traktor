@@ -16,7 +16,7 @@ class SpriteInstance;
 class Matrix;
 class Transform;
 
-/*! \brief MovieClip class.
+/*! MovieClip class.
  * \ingroup Spark
  */
 class AsMovieClip : public ActionClass

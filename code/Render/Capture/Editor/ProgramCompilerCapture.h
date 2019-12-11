@@ -15,7 +15,7 @@ namespace traktor
 	namespace render
 	{
 
-/*! \brief Wrapped program compiler.
+/*! Wrapped program compiler.
  * \ingroup Render
  */
 class T_DLLCLASS ProgramCompilerCapture : public IProgramCompiler

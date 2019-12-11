@@ -15,7 +15,7 @@ namespace traktor
 	namespace ai
 	{
 
-/*! \brief AI scene editor profile.
+/*! AI scene editor profile.
  * \ingroup AI
  */
 class T_DLLCLASS AiEditorProfile : public scene::ISceneEditorProfile

@@ -14,7 +14,7 @@ namespace traktor
 
 class ContextDx11;
 
-/*! \brief Manages DX11 buffer memory.
+/*! Manages DX11 buffer memory.
  * \ingroup DX11
  *
  * This virtualizes the DX11 buffers from VertexBuffer instances; thus permit

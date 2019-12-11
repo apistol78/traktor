@@ -15,7 +15,7 @@ namespace traktor
 	namespace ui
 	{
 
-/*! \brief Panel control.
+/*! Panel control.
  * \ingroup UI
  */
 class T_DLLCLASS Panel : public Container

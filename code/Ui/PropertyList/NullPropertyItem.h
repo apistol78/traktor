@@ -15,7 +15,7 @@ namespace traktor
 	namespace ui
 	{
 
-/*! \brief Null property item.
+/*! Null property item.
  * \ingroup UI
  */
 class T_DLLCLASS NullPropertyItem : public PropertyItem

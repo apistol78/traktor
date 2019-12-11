@@ -10,7 +10,7 @@ namespace traktor
 class EventSubject;
 class ISystemBitmap;
 
-/*! \brief Form interface.
+/*! Form interface.
  * \ingroup UI
  */
 class IForm : public IWidget

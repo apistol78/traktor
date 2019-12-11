@@ -20,7 +20,7 @@ namespace traktor
 
 class Shape;
 
-/*! \brief Font
+/*! Font
  * \ingroup Spark
  */
 class T_DLLCLASS Font : public ISerializable

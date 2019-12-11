@@ -21,7 +21,7 @@ class DiscoveryManager;
 	namespace runtime
 	{
 
-/*! \brief Enumerator of hosts able to communicate with editor.
+/*! Enumerator of hosts able to communicate with editor.
  * \ingroup Runtime
  */
 class HostEnumerator : public Object

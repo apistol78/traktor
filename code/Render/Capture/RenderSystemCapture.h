@@ -15,7 +15,7 @@ namespace traktor
 	namespace render
 	{
 
-/*! \brief Performance capture render system.
+/*! Performance capture render system.
  * \ingroup RenderCapture
  *
  * This render system is only a wrapper around

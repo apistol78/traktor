@@ -17,7 +17,7 @@ namespace traktor
 class Job;
 class Functor;
 
-/*! \brief Job manager.
+/*! Job manager.
  * \ingroup Core
  *
  * The job manager is responsible of scheduling
@@ -31,7 +31,7 @@ class T_DLLCLASS JobManager : public ISingleton
 public:
 	static JobManager& getInstance();
 
-	/*! \brief Enqueue job.
+	/*! Enqueue job.
 	 *
 	 * Add job to internal worker queue, as soon as
 	 * a worker thread is idle the scheduler assigns
@@ -39,7 +39,7 @@ public:
 	 */
 	Ref< Job > add(Functor* functor) { return m_queue.add(functor); }
 
-	/*! \brief Enqueue jobs and wait for all to finish.
+	/*! Enqueue jobs and wait for all to finish.
 	 *
 	 * Add jobs to internal worker queue, one job
 	 * is always run on the caller thread to reduce
@@ -47,14 +47,14 @@ public:
 	 */
 	void fork(const RefArray< Functor >& functors) { return m_queue.fork(functors); }
 
-	/*! \brief Wait until all jobs are finished.
+	/*! Wait until all jobs are finished.
 	 *
 	 * \param timeout Timeout in milliseconds; -1 if infinite timeout.
 	 * \return True if jobs have finished, false if timeout.
 	 */
 	bool wait(int32_t timeout = -1) { return m_queue.wait(timeout); }
 
-	/*! \brief Stop all worker threads. */
+	/*! Stop all worker threads. */
 	void stop() { m_queue.stop(); }
 
 protected:

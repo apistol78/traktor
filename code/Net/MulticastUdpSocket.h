@@ -15,7 +15,7 @@ namespace traktor
 	namespace net
 	{
 
-/*! \brief Multicast datagram socket.
+/*! Multicast datagram socket.
  * \ingroup Net
  */
 class T_DLLCLASS MulticastUdpSocket : public UdpSocket

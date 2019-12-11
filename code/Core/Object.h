@@ -15,7 +15,7 @@ namespace traktor
 
 struct IObjectRefDebugger;
 
-/*! \brief Managed object base class.
+/*! Managed object base class.
  * \ingroup Core
  */
 class T_DLLCLASS Object : public ITypedObject

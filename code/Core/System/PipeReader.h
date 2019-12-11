@@ -17,7 +17,7 @@ namespace traktor
 
 class IStream;
 
-/*! \brief Process pipe line reader.
+/*! Process pipe line reader.
  * \ingroup Core
  */
 class T_DLLCLASS PipeReader : public Object

@@ -23,7 +23,7 @@ class IScriptManager;
 	namespace runtime
 	{
 
-/*! \brief Script server.
+/*! Script server.
  * \ingroup Runtime
  *
  * "Script.Library"	- Script library.

@@ -32,7 +32,7 @@ class IProviderDatabase;
 class Group;
 class Instance;
 
-/*! \brief Database engine.
+/*! Database engine.
  * \ingroup Database
  *
  * The Database class manages a local view of
@@ -48,47 +48,47 @@ class T_DLLCLASS Database
 public:
 	Database();
 
-	/*! \brief Open database from provider instance.
+	/*! Open database from provider instance.
 	 *
 	 * \param providerDatabase Concrete provider database implementation.
 	 * \return True if database opened successfully.
 	 */
 	virtual bool open(IProviderDatabase* providerDatabase);
 
-	/*! \brief Open database from connection string. */
+	/*! Open database from connection string. */
 	virtual bool open(const ConnectionString& connectionString);
 
-	/*! \brief Create database from connection string. */
+	/*! Create database from connection string. */
 	virtual bool create(const ConnectionString& connectionString);
 
-	/*! \brief Close database. */
+	/*! Close database. */
 	virtual void close();
 
-	/*! \brief Root group. */
+	/*! Root group. */
 	virtual Ref< Group > getRootGroup();
 
-	/*! \brief Get group by path.
+	/*! Get group by path.
 	 *
 	 * \param groupPath Path to group.
 	 * \return Group.
 	 */
 	virtual Ref< Group > getGroup(const std::wstring& groupPath);
 
-	/*! \brief Create new group.
+	/*! Create new group.
 	 *
 	 * \param groupPath Path to new group.
 	 * \return New group.
 	 */
 	virtual Ref< Group > createGroup(const std::wstring& groupPath);
 
-	/*! \brief Get instance by guid.
+	/*! Get instance by guid.
 	 *
 	 * \param instanceGuid Instance guid.
 	 * \return Instance; null if no instance with given guid exist.
 	 */
 	virtual Ref< Instance > getInstance(const Guid& instanceGuid);
 
-	/*! \brief Get instance by path.
+	/*! Get instance by path.
 	 *
 	 * \param instancePath Path to instance.
 	 * \param primaryType Optional primary type; if instance isn't of type then null is returned.
@@ -96,7 +96,7 @@ public:
 	 */
 	virtual Ref< Instance > getInstance(const std::wstring& instancePath, const TypeInfo* primaryType = 0);
 
-	/*! \brief Create new instance.
+	/*! Create new instance.
 	 *
 	 * \param instancePath Path to new instance.
 	 * \param flags Create flags.
@@ -105,14 +105,14 @@ public:
 	 */
 	virtual Ref< Instance > createInstance(const std::wstring& instancePath, uint32_t flags = CifDefault, const Guid* guid = 0);
 
-	/*! \brief Get instance object by guid.
+	/*! Get instance object by guid.
 	 *
 	 * \param guid Instance guid.
 	 * \return Instance's object; null if no instance found.
 	 */
 	virtual Ref< ISerializable > getObjectReadOnly(const Guid& guid) const;
 
-	/*! \brief Get instance object by guid.
+	/*! Get instance object by guid.
 	 *
 	 * \param guid Instance guid.
 	 * \return Instance's object; null if no instance found.
@@ -124,7 +124,7 @@ public:
 		return dynamic_type_cast< T* >(object);
 	}
 
-	/*! \brief Get event from bus.
+	/*! Get event from bus.
 	 *
 	 * \note
 	 * This method may flush database tree and should not be called

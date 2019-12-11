@@ -30,7 +30,7 @@ class IEntityEventManager;
 
 class PhysicsManager;
 
-/*! \brief Physics entity factory.
+/*! Physics entity factory.
  * \ingroup Physics
  */
 class T_DLLCLASS EntityFactory : public world::IEntityFactory

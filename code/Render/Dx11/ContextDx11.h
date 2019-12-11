@@ -11,7 +11,7 @@ namespace traktor
 	namespace render
 	{
 
-/*! \brief DX11 context.
+/*! DX11 context.
  * \ingroup DX11
  */
 class ContextDx11 : public Object
@@ -19,7 +19,7 @@ class ContextDx11 : public Object
 	T_RTTI_CLASS;
 
 public:
-	/*! \brief Garbage delete callback.
+	/*! Garbage delete callback.
 	 *
 	 * Context keeps a queue for deletion callbacks
 	 * to ensure resources are deleted properly (not used, same thread etc).
@@ -31,7 +31,7 @@ public:
 		virtual void deleteResource() = 0;
 	};
 
-	/*! \brief Release COM object. */
+	/*! Release COM object. */
 	struct ReleaseComObjectCallback : public DeleteCallback
 	{
 		ComRef< IUnknown > m_unk;
@@ -41,7 +41,7 @@ public:
 		virtual void deleteResource();
 	};
 
-	/*! \brief Release COM objects. */
+	/*! Release COM objects. */
 	struct ReleaseComObjectArrayCallback : public DeleteCallback
 	{
 		ComRefArray< IUnknown > m_unks;

@@ -17,7 +17,7 @@ namespace traktor
 	namespace html
 	{
 
-/*! \brief HTML DOM Attribute.
+/*! HTML DOM Attribute.
  * \ingroup HTML
  */
 class T_DLLCLASS Attribute : public Object

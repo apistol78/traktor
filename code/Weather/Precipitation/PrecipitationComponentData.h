@@ -32,7 +32,7 @@ class IResourceManager;
 
 class PrecipitationComponent;
 
-/*! \brief Precipitation component data.
+/*! Precipitation component data.
  * \ingroup Weather
  */
 class T_DLLCLASS PrecipitationComponentData : public world::IEntityComponentData

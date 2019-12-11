@@ -8,7 +8,7 @@
 namespace traktor
 {
 
-/*! \brief Track allocator.
+/*! Track allocator.
  * \ingroup Core
  *
  * Track allocator is a light-weight debugging

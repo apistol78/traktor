@@ -27,7 +27,7 @@ class InputMappingStateData;
 class InputState;
 class InputSystem;
 
-/*! \brief Input sources to state mapping.
+/*! Input sources to state mapping.
  * \ingroup Input
  *
  * Each source is mapped into a linear array

@@ -7,7 +7,7 @@ namespace traktor
 	namespace ui
 	{
 
-/*! \brief UserWidget interface.
+/*! UserWidget interface.
  * \ingroup UI
  */
 class IUserWidget : public IWidget

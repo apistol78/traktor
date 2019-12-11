@@ -14,7 +14,7 @@
 namespace traktor
 {
 
-/*! \brief Color; 4 unsigned bytes representation.
+/*! Color; 4 unsigned bytes representation.
  * \ingroup Core
  */
 class T_DLLCLASS Color4ub

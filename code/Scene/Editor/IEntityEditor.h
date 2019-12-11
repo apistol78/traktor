@@ -33,7 +33,7 @@ class PrimitiveRenderer;
 
 class EntityAdapter;
 
-/*! \brief Abstract entity editor class.
+/*! Abstract entity editor class.
  *
  * The scene editor uses specializations of this
  * class to apply changes to selected entities.
@@ -47,39 +47,39 @@ class T_DLLCLASS IEntityEditor : public Object
 	T_RTTI_CLASS;
 
 public:
-	/*! \brief Is entity pickable.
+	/*! Is entity pickable.
 	 *
 	 * \return True if pickable.
 	 */
 	virtual bool isPickable() const = 0;
 
-	/*! \brief Is entity a group?
+	/*! Is entity a group?
 	 *
 	 * \return True if group.
 	 */
 	virtual bool isGroup() const = 0;
 
-	/*! \brief Is entity children private.
+	/*! Is entity children private.
 	 *
 	 * \return True if children private.
 	 */
 	virtual bool isChildrenPrivate() const = 0;
 
-	/*! \brief Add child entity.
+	/*! Add child entity.
 	 *
 	 * \param childEntityAdapter Child entity.
 	 * \return True if successfully added child.
 	 */
 	virtual bool addChildEntity(EntityAdapter* childEntityAdapter) const = 0;
 
-	/*! \brief Remove child entity.
+	/*! Remove child entity.
 	 *
 	 * \param childEntityAdapter Child entity.
 	 * \return True if successfully removed child.
 	 */
 	virtual bool removeChildEntity(EntityAdapter* childEntityAdapter) const = 0;
 
-	/*! \brief Local ray query.
+	/*! Local ray query.
 	 *
 	 * Query closest intersection of ray and entity.
 	 *
@@ -90,7 +90,7 @@ public:
 	 */
 	virtual bool queryRay(const Vector4& worldRayOrigin, const Vector4& worldRayDirection, Scalar& outDistance) const = 0;
 
-	/*! \brief Local frustum query.
+	/*! Local frustum query.
 	 *
 	 * Query intersection of frustum and entity.
 	 *
@@ -99,19 +99,19 @@ public:
 	 */
 	virtual bool queryFrustum(const Frustum& worldFrustum) const = 0;
 
-	/*! \brief Entity selected.
+	/*! Entity selected.
 	 *
 	 * \param selected True if entity was selected, false if it was deselected.
 	 */
 	virtual void entitySelected(bool selected) = 0;
 
-	/*! \brief Handle shortcut.
+	/*! Handle shortcut.
 	 *
 	 * \param command Shortcut command.
 	 */
 	virtual bool handleCommand(const ui::Command& command) = 0;
 
-	/*! \brief Draw guide for entity.
+	/*! Draw guide for entity.
 	 *
 	 * A guide is the wire overlay
 	 * in the 3d editor view.
@@ -120,7 +120,7 @@ public:
 	 */
 	virtual void drawGuide(render::PrimitiveRenderer* primitiveRenderer) const = 0;
 
-	/*! \brief Get status text.
+	/*! Get status text.
 	 *
 	 * Status text is shown beneath the
 	 * 3d editor view.

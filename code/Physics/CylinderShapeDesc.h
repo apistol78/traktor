@@ -15,7 +15,7 @@ namespace traktor
 	namespace physics
 	{
 
-/*! \brief Cylinder collision shape.
+/*! Cylinder collision shape.
  * \ingroup Physics
  */
 class T_DLLCLASS CylinderShapeDesc : public ShapeDesc

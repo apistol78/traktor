@@ -17,7 +17,7 @@ namespace traktor
 
 class IBitmap;
 
-/*! \brief Interpolator node shape.
+/*! Interpolator node shape.
  * \ingroup UI
  */
 class T_DLLCLASS IpolNodeShape : public INodeShape

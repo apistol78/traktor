@@ -15,7 +15,7 @@ namespace traktor
 	namespace xml
 	{
 
-/*! \brief XML Text.
+/*! XML Text.
  * \ingroup XML
  */
 class T_DLLCLASS Text : public Node

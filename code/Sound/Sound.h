@@ -19,7 +19,7 @@ namespace traktor
 
 class ISoundBuffer;
 
-/*! \brief Sound container class.
+/*! Sound container class.
  * \ingroup Sound
  */
 class T_DLLCLASS Sound : public Object

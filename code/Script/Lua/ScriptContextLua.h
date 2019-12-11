@@ -14,7 +14,7 @@ class ScriptDelegateLua;
 class ScriptManagerLua;
 class ScriptObjectLua;
 
-/*! \brief LUA scripting context.
+/*! LUA scripting context.
  * \ingroup LUA Script
  */
 class ScriptContextLua : public IScriptContext

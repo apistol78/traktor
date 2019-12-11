@@ -7,7 +7,7 @@ namespace traktor
 	namespace input
 	{
 
-/*! \brief InputDefaultControlType to VK mapping. */
+/*! InputDefaultControlType to VK mapping. */
 const DWORD c_vkControlKeys[] =
 {
 	0,	// DtInvalid

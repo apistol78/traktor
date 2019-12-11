@@ -17,7 +17,7 @@ namespace traktor
 	namespace render
 	{
 
-/*! \brief Spherical harmonics matrix class.
+/*! Spherical harmonics matrix class.
  * \ingroup Render
  */
 class T_DLLCLASS SHMatrix : public ISerializable

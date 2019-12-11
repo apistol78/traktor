@@ -11,7 +11,7 @@ namespace traktor
 
 class EventSubject;
 
-/*! \brief EventLoop interface.
+/*! EventLoop interface.
  * \ingroup UI
  */
 class IEventLoop

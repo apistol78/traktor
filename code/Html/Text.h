@@ -15,7 +15,7 @@ namespace traktor
 	namespace html
 	{
 
-/*! \brief HTML DOM Text.
+/*! HTML DOM Text.
  * \ingroup HTML
  */
 class T_DLLCLASS Text : public Node

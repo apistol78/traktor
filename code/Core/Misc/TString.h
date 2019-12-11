@@ -41,7 +41,7 @@ class IEncoding;
 	typedef std::string tstring;
 #endif
 
-/*! \brief Translate multibyte encoding into wide string.
+/*! Translate multibyte encoding into wide string.
  *
  * \param encoding Encoding object.
  * \param s Multibyte string.
@@ -49,7 +49,7 @@ class IEncoding;
  */
 std::wstring T_DLLCLASS mbstows(const IEncoding& encoding, const std::string& s);
 
-/*! \brief Translate wide string to multibyte string using encoding.
+/*! Translate wide string to multibyte string using encoding.
  *
  * \param encoding Encoding object.
  * \param s Wide string.

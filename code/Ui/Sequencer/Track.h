@@ -15,7 +15,7 @@ namespace traktor
 	namespace ui
 	{
 
-/*! \brief Sequencer range.
+/*! Sequencer range.
  * \ingroup UI
  */
 class T_DLLCLASS Track : public Key

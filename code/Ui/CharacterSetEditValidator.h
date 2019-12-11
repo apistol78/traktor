@@ -16,7 +16,7 @@ namespace traktor
 	namespace ui
 	{
 
-/*! \brief Character set text edit validator.
+/*! Character set text edit validator.
  * \ingroup UI
  */
 class T_DLLCLASS CharacterSetEditValidator : public EditValidator

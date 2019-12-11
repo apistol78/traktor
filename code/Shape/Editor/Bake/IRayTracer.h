@@ -38,7 +38,7 @@ class BakeConfiguration;
 class GBuffer;
 class IProbe;
 
-/*! \brief Ray tracer interface.
+/*! Ray tracer interface.
  * \ingroup Illuminate
  */
 class IRayTracer : public Object

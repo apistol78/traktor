@@ -16,7 +16,7 @@ namespace traktor
 	namespace editor
 	{
 
-/*! \brief Filter instances by type.
+/*! Filter instances by type.
  * \ingroup Editor
  */
 class T_DLLCLASS TypeBrowseFilter : public IBrowseFilter

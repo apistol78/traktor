@@ -23,7 +23,7 @@ class Edit;
 class GridView;
 class IBitmap;
 
-/*! \brief File dialog.
+/*! File dialog.
  * \ingroup UI
  */
 class T_DLLCLASS FileDialog : public ConfigDialog

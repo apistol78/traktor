@@ -9,7 +9,7 @@ namespace traktor
 class ReflectionMember;
 class RfmCompound;
 
-/*! \brief Internal reflection inspection serializer.
+/*! Internal reflection inspection serializer.
  * \ingroup Core
  */
 class ReflectionInspectSerializer : public Serializer

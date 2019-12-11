@@ -23,7 +23,7 @@ class ActionContext;
 class Movie;
 class Frame;
 
-/*! \brief Movie clip display list.
+/*! Movie clip display list.
  * \ingroup Spark
  */
 class T_DLLCLASS DisplayList : public Object
@@ -56,29 +56,29 @@ public:
 
 	DisplayList(ActionContext* context);
 
-	/*! \brief Reset display list. */
+	/*! Reset display list. */
 	void reset();
 
-	/*! \brief Begin update display list.
+	/*! Begin update display list.
 	 *
 	 * \param reset If display list should be considered "empty"; all characters not placed are removed when update are finished.
 	 */
 	void updateBegin(bool reset);
 
-	/*! \brief End updating display list.
+	/*! End updating display list.
 	 *
 	 * Not "placed" characters are removed.
 	 */
 	void updateEnd();
 
-	/*! \brief Update display list from frame.
+	/*! Update display list from frame.
 	 *
 	 * \param ownerInstance Instance which will be parent to other character instances created from this frame.
 	 * \param frame Frame actions.
 	 */
 	void updateFrame(CharacterInstance* ownerInstance, const Frame* frame);
 
-	/*! \brief Show character instance at depth.
+	/*! Show character instance at depth.
 	 *
 	 * \param depth Depth to place character instance.
 	 * \param characterId Identifier of character.
@@ -87,32 +87,32 @@ public:
 	 */
 	void showObject(int32_t depth, uint16_t characterId, CharacterInstance* characterInstance, bool immutable);
 
-	/*! \brief Remove character instance from display list.
+	/*! Remove character instance from display list.
 	 *
 	 * \param characterInstance Character instance.
 	 */
 	bool removeObject(CharacterInstance* characterInstance);
 
-	/*! \brief Remove character instance from display list.
+	/*! Remove character instance from display list.
 	 *
 	 * \param characterInstance Character instance.
 	 */
 	bool removeObject(int32_t depth);
 
-	/*! \brief Get depth where character instance is placed.
+	/*! Get depth where character instance is placed.
 	 *
 	 * \param characterInstance Character instance.
 	 * \return Depth of instance.
 	 */
 	int32_t getObjectDepth(const CharacterInstance* characterInstance) const;
 
-	/*! \brief Get next highest depth which is free.
+	/*! Get next highest depth which is free.
 	 *
 	 * \return Next highest depth.
 	 */
 	int32_t getNextHighestDepth() const;
 
-	/*! \brief Get next highest depth in given range which is free.
+	/*! Get next highest depth in given range which is free.
 	 *
 	 * \param minDepth Minimum depth.
 	 * \param maxDepth Maximum depth.
@@ -120,20 +120,20 @@ public:
 	 */
 	int32_t getNextHighestDepthInRange(int32_t minDepth, int32_t maxDepth) const;
 
-	/*! \brief Swap character instances at two depths.
+	/*! Swap character instances at two depths.
 	 *
 	 * \param depth1 First depth.
 	 * \param depth2 Second depth.
 	 */
 	void swap(int32_t depth1, int32_t depth2);
 
-	/*! \brief Get character instances.
+	/*! Get character instances.
 	 *
 	 * \param outCharacterInstances Output array of character instances.
 	 */
 	void getObjects(RefArray< CharacterInstance >& outCharacterInstances) const;
 
-	/*! \brief For each character instances.
+	/*! For each character instances.
 	 *
 	 * \param fn Callback function.
 	 */
@@ -151,7 +151,7 @@ public:
 		m_gather.resize(f);
 	}
 
-	/*! \brief For each character instances.
+	/*! For each character instances.
 	 *
 	 * \param fn Callback function.
 	 */
@@ -165,7 +165,7 @@ public:
 		}
 	}
 
-	/*! \brief For each visible character instances.
+	/*! For each visible character instances.
 	 *
 	 * \param fn Callback function.
 	 */
@@ -184,7 +184,7 @@ public:
 		m_gather.resize(f);
 	}
 
-	/*! \brief For each visible character instances.
+	/*! For each visible character instances.
 	 *
 	 * \param fn Callback function.
 	 */
@@ -199,7 +199,7 @@ public:
 		}
 	}
 
-	/*! \brief For each visible character instances in reverse.
+	/*! For each visible character instances in reverse.
 	 *
 	 * \param fn Callback function.
 	 */
@@ -218,13 +218,13 @@ public:
 		m_gather.resize(f);
 	}
 
-	/*! \brief Get background clear color.
+	/*! Get background clear color.
 	 *
 	 * \return Background colors.
 	 */
 	const Color4f& getBackgroundColor() const { return m_backgroundColor; }
 
-	/*! \brief Get depth layers.
+	/*! Get depth layers.
 	 *
 	 * \return Layers.
 	 */

@@ -17,7 +17,7 @@ namespace traktor
 	namespace spray
 	{
 
-/*! \brief Line particle source.
+/*! Line particle source.
  * \ingroup Spray
  */
 class T_DLLCLASS LineSource : public Source

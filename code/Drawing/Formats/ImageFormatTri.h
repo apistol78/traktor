@@ -15,7 +15,7 @@ namespace traktor
 	namespace drawing
 	{
 
-/*! \brief Traktor Image format.
+/*! Traktor Image format.
  * \ingroup Drawing
  */
 class T_DLLCLASS ImageFormatTri : public IImageFormat

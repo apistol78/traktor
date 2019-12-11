@@ -15,7 +15,7 @@ namespace traktor
 	namespace runtime
 	{
 
-/*! \brief Update control.
+/*! Update control.
  * \ingroup Runtime
  *
  * Application update control interface, as

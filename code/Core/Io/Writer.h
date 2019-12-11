@@ -15,7 +15,7 @@
 namespace traktor
 {
 
-/*! \brief Primitive writer class.
+/*! Primitive writer class.
  * \ingroup Core
  */
 class T_DLLCLASS Writer : public Object

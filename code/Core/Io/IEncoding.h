@@ -13,7 +13,7 @@
 namespace traktor
 {
 
-/*! \brief Character encoding.
+/*! Character encoding.
  * \ingroup Core
  */
 class T_DLLCLASS IEncoding : public Object
@@ -23,7 +23,7 @@ class T_DLLCLASS IEncoding : public Object
 public:
 	enum { MaxEncodingSize = 8 };
 
-	/*! \brief Translate from Unicode to special encoding.
+	/*! Translate from Unicode to special encoding.
 	 *
 	 * \param chars Unicode source characters.
 	 * \param count Number of source characters.
@@ -32,7 +32,7 @@ public:
 	 */
 	virtual int translate(const wchar_t* chars, int count, uint8_t* out) const = 0;
 
-	/*! \brief Translate from special encoding to Unicode.
+	/*! Translate from special encoding to Unicode.
 	 *
 	 * \param in Input character in special encoding.
 	 * \param count Number of valid bytes in input buffer.

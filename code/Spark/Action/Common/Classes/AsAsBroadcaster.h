@@ -9,7 +9,7 @@ namespace traktor
 
 struct CallArgs;
 
-/*! \brief AsBroadcaster class.
+/*! AsBroadcaster class.
  * \ingroup Spark
  */
 class AsAsBroadcaster : public ActionClass

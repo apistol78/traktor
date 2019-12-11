@@ -17,7 +17,7 @@ namespace traktor
 
 class Mp3StreamDecoderImpl;
 
-/*! \brief MP3 stream decoder.
+/*! MP3 stream decoder.
  * \ingroup Sound
  */
 class T_DLLCLASS Mp3StreamDecoder : public IStreamDecoder

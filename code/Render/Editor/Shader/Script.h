@@ -19,7 +19,7 @@ namespace traktor
 	namespace render
 	{
 
-/*! \brief Script shader node.
+/*! Script shader node.
  * \ingroup Render
  *
  * Script shader nodes enabled custom

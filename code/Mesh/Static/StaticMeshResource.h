@@ -1,8 +1,7 @@
 #pragma once
 
-#include <list>
-#include <map>
 #include "Core/Guid.h"
+#include "Core/Containers/SmallMap.h"
 #include "Mesh/IMeshResource.h"
 #include "Resource/Id.h"
 
@@ -55,11 +54,11 @@ public:
 
 private:
 	friend class StaticMeshConverter;
-	typedef std::list< Part > parts_t;
+	typedef AlignedVector< Part > parts_t;
 
 	bool m_haveRenderMesh;
 	resource::Id< render::Shader > m_shader;
-	std::map< std::wstring, parts_t > m_parts;
+	SmallMap< std::wstring, parts_t > m_parts;
 };
 
 	}

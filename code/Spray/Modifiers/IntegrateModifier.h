@@ -7,7 +7,7 @@ namespace traktor
 	namespace spray
 	{
 
-/*! \brief Integrate particle velocity modifier.
+/*! Integrate particle velocity modifier.
  * \ingroup Spray
  */
 class IntegrateModifier : public Modifier

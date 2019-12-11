@@ -30,7 +30,7 @@ class Shader;
 	namespace terrain
 	{
 
-/*! \brief Terrain source asset.
+/*! Terrain source asset.
  * \ingroup Terrain
  *
  * This contain source information about a terrain.

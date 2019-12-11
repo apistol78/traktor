@@ -25,7 +25,7 @@ class Edit;
 struct ColorGradient;
 struct AlphaGradient;
 
-/*! \brief Color picker dialog.
+/*! Color picker dialog.
  * \ingroup UI
  */
 class T_DLLCLASS ColorDialog : public ConfigDialog

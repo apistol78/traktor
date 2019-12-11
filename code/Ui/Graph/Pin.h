@@ -22,7 +22,7 @@ namespace traktor
 
 class Node;
 
-/*! \brief Graph node pin.
+/*! Graph node pin.
  * \ingroup UI
  */
 class T_DLLCLASS Pin

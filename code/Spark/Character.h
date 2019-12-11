@@ -25,7 +25,7 @@ class CharacterInstance;
 class Dictionary;
 class IActionVMImage;
 
-/*! \brief Character definition.
+/*! Character definition.
  * \ingroup Spark
  */
 class T_DLLCLASS Character : public ISerializable
@@ -37,13 +37,13 @@ public:
 
 	Character(uint16_t id);
 
-	/*! \brief Get character identification.
+	/*! Get character identification.
 	 *
 	 * \return Id
 	 */
 	uint16_t getId() const { return m_id; }
 
-	/*! \brief Get character unique tag.
+	/*! Get character unique tag.
 	 *
 	 * The tag is guaranteed to be unique during the
 	 * life-time of the running process even
@@ -52,7 +52,7 @@ public:
 	 */
 	int32_t getCacheTag() const { return m_tag; }
 
-	/*! \brief Create character instance.
+	/*! Create character instance.
 	 *
 	 * \param context ActionScript execution context.
 	 * \param parent Parent instance.

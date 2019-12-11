@@ -26,7 +26,7 @@ class MemberArray;
 class MemberComplex;
 class MemberEnumBase;
 
-/*! \brief Serializer interface.
+/*! Serializer interface.
  * \ingroup Core
  */
 class T_DLLCLASS ISerializer : public Object
@@ -40,7 +40,7 @@ public:
 		SdWrite
 	};
 
-	/*! \brief Get, serialized class, data version.
+	/*! Get, serialized class, data version.
 	 *
 	 * \return Data version.
 	 */

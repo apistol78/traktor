@@ -15,7 +15,7 @@ namespace traktor
 	namespace drawing
 	{
 
-/*! \brief BMP format.
+/*! BMP format.
  * \ingroup Drawing
  */
 class T_DLLCLASS ImageFormatBmp : public IImageFormat

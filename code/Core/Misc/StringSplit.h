@@ -6,7 +6,7 @@
 namespace traktor
 {
 
-/*! \brief String split iterator.
+/*! String split iterator.
  * \ingroup Core
  *
  * More efficient implementation of splitting string

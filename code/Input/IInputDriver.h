@@ -19,7 +19,7 @@ namespace traktor
 
 class IInputDevice;
 
-/*! \brief Input driver base.
+/*! Input driver base.
  * \ingroup Input
  */
 class T_DLLCLASS IInputDriver : public Object
@@ -34,7 +34,7 @@ public:
 		UrFailure = -1
 	};
 
-	/*! \brief Create input driver.
+	/*! Create input driver.
 	 *
 	 * \param sysapp System specific application object.
 	 * \param syswin Description of application's system window.
@@ -42,7 +42,7 @@ public:
 	 */
 	virtual bool create(const SystemApplication& sysapp, const SystemWindow& syswin, uint32_t inputCategories) = 0;
 
-	/*! \brief Get number of devices implemented by the driver.
+	/*! Get number of devices implemented by the driver.
 	 *
 	 * \note Users should not call this method.
 	 *
@@ -50,7 +50,7 @@ public:
 	 */
 	virtual int getDeviceCount() = 0;
 
-	/*! \brief Get device from ordinal.
+	/*! Get device from ordinal.
 	 *
 	 * \note Users should not call this method.
 	 *
@@ -59,7 +59,7 @@ public:
 	 */
 	virtual Ref< IInputDevice > getDevice(int index) = 0;
 
-	/*! \brief Update driver.
+	/*! Update driver.
 	 *
 	 * During driver update devices might be connected or disconnected
 	 * thus the driver implementation must return UrDevicesChanged in

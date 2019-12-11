@@ -17,7 +17,7 @@ namespace traktor
 	namespace i18n
 	{
 
-/*! \brief Dictionary
+/*! Dictionary
  * \ingroup I18N
  */
 class T_DLLCLASS Dictionary : public ISerializable

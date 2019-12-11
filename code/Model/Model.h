@@ -26,7 +26,7 @@ namespace traktor
 	namespace model
 	{
 
-/*! \brief Intermediate 3D model.
+/*! Intermediate 3D model.
  * \ingroup Model
  */
 class T_DLLCLASS Model : public ISerializable

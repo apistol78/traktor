@@ -14,7 +14,7 @@ namespace traktor
 	namespace
 	{
 
-/*! \brief Key value wrapped into separate member to be compatible with legacy data. */
+/*! Key value wrapped into separate member to be compatible with legacy data. */
 class MemberKeyValue : public MemberComplex
 {
 public:
@@ -36,7 +36,7 @@ private:
 	Vector4& m_refOrientation;
 };
 
-/*! \brief Open uniform TCB spline accessor. */
+/*! Open uniform TCB spline accessor. */
 class T_MATH_ALIGN16 OpenUniformAccessor
 {
 public:
@@ -131,7 +131,7 @@ private:
 	const AlignedVector< TransformPath::Key >& m_keys;
 };
 
-/*! \brief Closed uniform TCB spline accessor. */
+/*! Closed uniform TCB spline accessor. */
 class T_MATH_ALIGN16 ClosedUniformAccessor
 {
 public:

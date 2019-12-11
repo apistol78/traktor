@@ -15,7 +15,7 @@
 namespace traktor
 {
 
-/*! \brief Primitive reader class.
+/*! Primitive reader class.
  * \ingroup Core
  *
  * This class resolves endian issues automatically

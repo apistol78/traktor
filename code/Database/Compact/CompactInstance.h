@@ -10,7 +10,7 @@ namespace traktor
 class CompactContext;
 class CompactInstanceEntry;
 
-/*! \brief Compact instance
+/*! Compact instance
  * \ingroup Database
  */
 class CompactInstance : public IProviderInstance

@@ -18,7 +18,7 @@ class Semaphore;
 	namespace sql
 	{
 
-/*! \brief Sqlite3 query/update result set.
+/*! Sqlite3 query/update result set.
  * \ingroup SQL
  */
 class T_DLLCLASS ResultSetSqlite3 : public IResultSet

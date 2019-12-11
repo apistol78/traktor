@@ -18,7 +18,7 @@ namespace traktor
 
 class TreeViewItem;
 
-/*! \brief Tree view drag event.
+/*! Tree view drag event.
  * \ingroup UI
  */
 class T_DLLCLASS TreeViewDragEvent : public Event

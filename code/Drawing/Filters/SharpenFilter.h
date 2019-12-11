@@ -15,7 +15,7 @@ namespace traktor
 	namespace drawing
 	{
 
-/*! \brief Sharpen filter.
+/*! Sharpen filter.
  * \ingroup Drawing
  */
 class T_DLLCLASS SharpenFilter : public IImageFilter

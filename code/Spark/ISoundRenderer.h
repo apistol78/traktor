@@ -17,7 +17,7 @@ namespace traktor
 
 class Sound;
 
-/*! \brief Sound rendering interface.
+/*! Sound rendering interface.
  * \ingroup Spark
  */
 class T_DLLCLASS ISoundRenderer : public Object

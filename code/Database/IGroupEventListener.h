@@ -9,7 +9,7 @@ namespace traktor
 
 class Group;
 
-/*! \brief Group event listener.
+/*! Group event listener.
  * \ingroup Database
  */
 class IGroupEventListener

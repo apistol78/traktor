@@ -23,7 +23,7 @@ class Edit;
 	namespace render
 	{
 
-/*! \brief Editor render settings page.
+/*! Editor render settings page.
  * \ingroup Render
  */
 class T_DLLCLASS RenderSettingsPage : public editor::ISettingsPage

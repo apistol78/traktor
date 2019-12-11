@@ -15,7 +15,7 @@ namespace traktor
 	namespace ai
 	{
 
-/*! \brief Navigation mesh pipeline.
+/*! Navigation mesh pipeline.
  * \ingroup AI
  */
 class T_DLLCLASS NavMeshPipeline : public editor::DefaultPipeline

@@ -11,7 +11,7 @@ namespace traktor
 
 class ContextDx11;
 
-/*! \brief GPU time stamp recording query.
+/*! GPU time stamp recording query.
  * \ingroup Render
  */
 class TimeQueryDx11 : public ITimeQuery

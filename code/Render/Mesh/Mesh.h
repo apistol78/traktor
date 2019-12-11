@@ -22,7 +22,7 @@ namespace traktor
 class VertexBuffer;
 class IndexBuffer;
 
-/*! \brief Render mesh.
+/*! Render mesh.
  * \ingroup Render
  */
 class T_DLLCLASS Mesh : public Object

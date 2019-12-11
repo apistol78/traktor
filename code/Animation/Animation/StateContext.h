@@ -15,7 +15,7 @@ namespace traktor
 	namespace animation
 	{
 
-/*! \brief State evaluation context.
+/*! State evaluation context.
  * \ingroup Animation
  */
 class T_DLLCLASS StateContext : public Object

@@ -19,7 +19,7 @@ class Timer;
 	namespace ui
 	{
 
-/*! \brief Memory profiler control.
+/*! Memory profiler control.
  * \ingroup UI
  */
 class T_DLLCLASS ProfileControl : public Widget

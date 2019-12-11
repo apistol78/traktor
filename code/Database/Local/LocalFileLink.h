@@ -8,7 +8,7 @@ namespace traktor
 	namespace db
 	{
 
-/*! \brief Virtual file link.
+/*! Virtual file link.
  * \ingroup Database
  */
 class LocalFileLink : public ISerializable

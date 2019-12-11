@@ -17,7 +17,7 @@ class Font;
 #	pragma warning( disable:4324 )
 #endif
 
-/*! \brief Text layout engine.
+/*! Text layout engine.
  * \ingroup Spark
  */
 class TextLayout : public Object

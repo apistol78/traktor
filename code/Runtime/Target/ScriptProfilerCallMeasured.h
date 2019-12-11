@@ -16,7 +16,7 @@ namespace traktor
 	namespace runtime
 	{
 
-/*! \brief Script profiler measurement from running target.
+/*! Script profiler measurement from running target.
  * \ingroup Runtime
  */
 class T_DLLCLASS ScriptProfilerCallMeasured : public ISerializable

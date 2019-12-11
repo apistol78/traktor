@@ -30,23 +30,23 @@ class T_DLLCLASS ISoundPlayer : public Object
 public:
 	virtual void destroy() = 0;
 
-	/*! \brief Play global sound.
+	/*! Play global sound.
 	 */
 	virtual Ref< ISoundHandle > play(const Sound* sound, uint32_t priority) = 0;
 
-	/*! \brief Play positional sound.
+	/*! Play positional sound.
 	 */
 	virtual Ref< ISoundHandle > play(const Sound* sound, const Vector4& position, uint32_t priority, bool autoStopFar) = 0;
 
-	/*! \brief Set listener transform.
+	/*! Set listener transform.
 	 */
 	virtual void setListenerTransform(const Transform& listenerTransform) = 0;
 
-	/*! \brief Get listener transform.
+	/*! Get listener transform.
 	 */
 	virtual Transform getListenerTransform() const = 0;
 
-	/*! \brief Update sound player.
+	/*! Update sound player.
 	 */
 	virtual void update(float dT) = 0;
 };

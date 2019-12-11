@@ -13,7 +13,7 @@
 namespace traktor
 {
 
-/*! \brief Blocking spin lock primitive.
+/*! Blocking spin lock primitive.
  * \ingroup Core
  */
 class T_DLLCLASS SpinLock : public IWaitable

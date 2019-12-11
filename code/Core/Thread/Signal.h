@@ -13,7 +13,7 @@
 namespace traktor
 {
 
-/*! \brief Thread signal.
+/*! Thread signal.
  * \ingroup Core
  */
 class T_DLLCLASS Signal : public IWaitable

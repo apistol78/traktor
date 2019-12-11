@@ -5,7 +5,7 @@
 namespace traktor
 {
 
-/*! \brief Clamp time.
+/*! Clamp time.
  * \ingroup Core
  */
 struct ClampTime
@@ -32,7 +32,7 @@ struct ClampTime
 	}
 };
 
-/*! \brief Wrap time.
+/*! Wrap time.
  * \ingroup Core
  */
 struct WrapTime

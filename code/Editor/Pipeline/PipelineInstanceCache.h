@@ -24,7 +24,7 @@ class Database;
 	namespace editor
 	{
 
-/*! \brief Pipeline database instance object read-only cache.
+/*! Pipeline database instance object read-only cache.
  * \ingroup Editor
  */
 class T_DLLCLASS PipelineInstanceCache : public IPipelineInstanceCache

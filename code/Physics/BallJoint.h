@@ -16,7 +16,7 @@ namespace traktor
 	namespace physics
 	{
 
-/*! \brief Ball joint.
+/*! Ball joint.
  * \ingroup Physics
  */
 class T_DLLCLASS BallJoint : public Joint

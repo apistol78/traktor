@@ -15,7 +15,7 @@ namespace traktor
 	namespace db
 	{
 
-/*! \brief Integer value result.
+/*! Integer value result.
  * \ingroup Database
  */
 class T_DLLCLASS MsgIntResult : public IMessage

@@ -8,7 +8,7 @@ namespace traktor
 	namespace run
 	{
 
-/*! \brief Output writer with interleaved sections.
+/*! Output writer with interleaved sections.
  * \ingroup Run
  */
 class ProduceOutput : public IOutput

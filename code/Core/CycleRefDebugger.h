@@ -16,7 +16,7 @@
 namespace traktor
 {
 
-/*! \brief Check for leaking objects from circular references.
+/*! Check for leaking objects from circular references.
  * \ingroup Core
  */
 class T_DLLCLASS CycleRefDebugger : public IObjectRefDebugger

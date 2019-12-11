@@ -20,7 +20,7 @@ namespace traktor
 
 class AggregationItem;
 
-/*! \brief Configuration settings.
+/*! Configuration settings.
  *
  * Describes one of a project's configurations.
  * A configuration contains information about the

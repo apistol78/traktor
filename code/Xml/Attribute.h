@@ -17,7 +17,7 @@ namespace traktor
 	namespace xml
 	{
 
-/*! \brief XML Attribute.
+/*! XML Attribute.
  * \ingroup XML
  */
 class T_DLLCLASS Attribute : public Object

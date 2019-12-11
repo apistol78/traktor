@@ -20,7 +20,7 @@ class ISerializer;
 	namespace model
 	{
 
-/*! \brief Joint
+/*! Joint
  * \ingroup Model
  */
 class T_DLLCLASS Joint : public ISerializable

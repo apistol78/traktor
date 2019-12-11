@@ -16,7 +16,7 @@ namespace traktor
 	namespace spray
 	{
 
-/*! \brief Directional point particle source persistent data.
+/*! Directional point particle source persistent data.
  * \ingroup Spray
  */
 class T_DLLCLASS DirectionalPointSourceData : public SourceData

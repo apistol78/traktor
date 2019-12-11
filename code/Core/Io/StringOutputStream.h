@@ -15,7 +15,7 @@
 namespace traktor
 {
 
-/*! \brief StringOutputStream buffer.
+/*! StringOutputStream buffer.
  * \ingroup Core
  */
 class StringOutputStreamBuffer : public OutputStreamBuffer
@@ -41,7 +41,7 @@ private:
 	size_t m_tail;
 };
 
-/*! \brief Formatting string stream.
+/*! Formatting string stream.
  * \ingroup Core
  */
 class T_DLLCLASS StringOutputStream : public OutputStream

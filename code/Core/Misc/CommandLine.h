@@ -13,7 +13,7 @@
 namespace traktor
 {
 
-/*! \brief Helper class for command line arguments.
+/*! Helper class for command line arguments.
  * \ingroup Core
  *
  * Parse command line in the form of:

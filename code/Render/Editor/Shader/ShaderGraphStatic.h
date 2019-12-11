@@ -18,7 +18,7 @@ namespace traktor
 
 class ShaderGraph;
 
-/*! \brief Static analysis on shader graphs.
+/*! Static analysis on shader graphs.
  * \ingroup Render
  */
 class T_DLLCLASS ShaderGraphStatic : public Object
@@ -34,34 +34,34 @@ public:
 
 	ShaderGraphStatic(const ShaderGraph* shaderGraph);
 
-	/*! \brief Get permutation of shader graph for given platform. */
+	/*! Get permutation of shader graph for given platform. */
 	Ref< ShaderGraph > getPlatformPermutation(const std::wstring& platform) const;
 
-	/*! \brief Get permutation of shader graph for given renderer. */
+	/*! Get permutation of shader graph for given renderer. */
 	Ref< ShaderGraph > getRendererPermutation(const std::wstring& renderer) const;
 
-	/*! \brief Replace all "Connected" nodes with direct connections. */
+	/*! Replace all "Connected" nodes with direct connections. */
 	Ref< ShaderGraph > getConnectedPermutation() const;
 
-	/*! \brief Replace all "Type" nodes with direct connections based on input type. */
+	/*! Replace all "Type" nodes with direct connections based on input type. */
 	Ref< ShaderGraph > getTypePermutation() const;
 
-	/*! \brief Insert swizzle nodes for all inputs to ensure widths are as small as possible. */
+	/*! Insert swizzle nodes for all inputs to ensure widths are as small as possible. */
 	Ref< ShaderGraph > getSwizzledPermutation() const;
 
-	/*! \brief Calculate constant branches and replace with simpler branches. */
+	/*! Calculate constant branches and replace with simpler branches. */
 	Ref< ShaderGraph > getConstantFolded() const;
 
-	/*! \brief Remove redundant swizzle nodes. */
+	/*! Remove redundant swizzle nodes. */
 	Ref< ShaderGraph > cleanupRedundantSwizzles() const;
 
-	/*! \brief Propagate state given as input into PixelOutput. */
+	/*! Propagate state given as input into PixelOutput. */
 	Ref< ShaderGraph > getStateResolved() const;
 
-	/*! \brief Replace variable nodes with direct connections. */
+	/*! Replace variable nodes with direct connections. */
 	Ref< ShaderGraph > getVariableResolved(VariableResolveType resolve) const;
 
-	/*! \brief Remove disabled outputs. */
+	/*! Remove disabled outputs. */
 	Ref< ShaderGraph > removeDisabledOutputs() const;
 
 private:

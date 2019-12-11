@@ -15,7 +15,7 @@ namespace traktor
 
 class ScriptManagerLua;
 
-/*! \brief LUA script debugger
+/*! LUA script debugger
  * \ingroup Script
  */
 class ScriptDebuggerLua : public IScriptDebugger

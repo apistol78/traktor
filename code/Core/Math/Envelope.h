@@ -6,7 +6,7 @@
 namespace traktor
 {
 
-/*! \brief Linear evaluator.
+/*! Linear evaluator.
  * \ingroup Core
  */
 template < typename KeyType >
@@ -23,7 +23,7 @@ struct LinearEvaluator
 	}
 };
 
-/*! \brief Hermite spline evaluator.
+/*! Hermite spline evaluator.
  * \ingroup Core
  */
 template < typename KeyType >
@@ -62,7 +62,7 @@ struct HermiteEvaluator
 	}
 };
 
-/*! \brief Spline envelope.
+/*! Spline envelope.
  * \ingroup Core
  */
 template < typename KeyType, typename Evaluator = HermiteEvaluator< KeyType > >

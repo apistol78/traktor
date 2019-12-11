@@ -9,7 +9,7 @@ namespace traktor
 	namespace ui
 	{
 
-/*! \brief Translate X11 virtual key to our virtual key.
+/*! Translate X11 virtual key to our virtual key.
  * \ingroup UIW32
  *
  * \param keySym X11 virtual key symbols.

@@ -8,7 +8,7 @@
 namespace traktor
 {
 
-/*! \brief Array of objects member.
+/*! Array of objects member.
  * \ingroup Core
  */
 template < typename Class >

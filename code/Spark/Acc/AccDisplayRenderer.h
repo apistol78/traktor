@@ -44,7 +44,7 @@ class AccShapeResources;
 class AccShapeVertexPool;
 class AccTextureCache;
 
-/*! \brief Accelerated display renderer.
+/*! Accelerated display renderer.
  * \ingroup Spark
  *
  * This display renderer uses the render system

@@ -15,7 +15,7 @@ namespace traktor
 	namespace resource
 	{
 
-/*! \brief Assets pipeline.
+/*! Assets pipeline.
  * \ingroup Editor
  */
 class T_DLLCLASS ResourceBundlePipeline : public editor::IPipeline

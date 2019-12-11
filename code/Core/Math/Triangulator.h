@@ -16,7 +16,7 @@
 namespace traktor
 {
 
-/*! \brief Triangulator.
+/*! Triangulator.
  * \ingroup Core
  */
 class T_DLLCLASS Triangulator

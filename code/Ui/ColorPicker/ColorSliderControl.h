@@ -24,7 +24,7 @@ class Image;
 
 class Bitmap;
 
-/*! \brief Color slider control.
+/*! Color slider control.
  * \ingroup UI
  */
 class T_DLLCLASS ColorSliderControl : public Widget

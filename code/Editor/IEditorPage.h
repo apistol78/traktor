@@ -34,7 +34,7 @@ class Command;
 	namespace editor
 	{
 
-/*! \brief Editor page base.
+/*! Editor page base.
  * \ingroup Editor
  *
  * The editor use editor pages as the base for all supported editors.
@@ -45,7 +45,7 @@ class T_DLLCLASS IEditorPage : public Object
 	T_RTTI_CLASS;
 
 public:
-	/*! \brief Create editor page.
+	/*! Create editor page.
 	 *
 	 * First method called after specialized editor page
 	 * instantiated.
@@ -57,13 +57,13 @@ public:
 	 */
 	virtual bool create(ui::Container* parent) = 0;
 
-	/*! \brief Destroy editor page.
+	/*! Destroy editor page.
 	 *
 	 * Called when editor page is closed.
 	 */
 	virtual void destroy() = 0;
 
-	/*! \brief Drop instance from database view.
+	/*! Drop instance from database view.
 	 *
 	 * Called when user drag'n'dropped database instance
 	 * from database view into editor.
@@ -74,7 +74,7 @@ public:
 	 */
 	virtual bool dropInstance(db::Instance* instance, const ui::Point& position) = 0;
 
-	/*! \brief Handle UI commands.
+	/*! Handle UI commands.
 	 *
 	 * Editor issue following commands in respect to
 	 * various events:
@@ -99,7 +99,7 @@ public:
 	 */
 	virtual bool handleCommand(const ui::Command& command) = 0;
 
-	/*! \brief Database event.
+	/*! Database event.
 	 *
 	 * Called when editor encountered a database event.
 	 * Some editors might need to reload dependent instances.

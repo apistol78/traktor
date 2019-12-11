@@ -16,7 +16,7 @@ namespace traktor
 
 class Functor;
 
-/*! \brief OS thread class.
+/*! OS thread class.
  * \ingroup Core
  */
 class T_DLLCLASS Thread : public IWaitable

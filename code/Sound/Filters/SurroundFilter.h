@@ -18,7 +18,7 @@ namespace traktor
 
 class SurroundEnvironment;
 
-/*! \brief Surround filter.
+/*! Surround filter.
  * \ingroup Sound
  */
 class T_DLLCLASS SurroundFilter : public IFilter

@@ -17,7 +17,7 @@ namespace traktor
 	namespace world
 	{
 
-/*! \brief External entity data.
+/*! External entity data.
  * \ingroup World
  */
 class T_DLLCLASS ExternalEntityData : public EntityData

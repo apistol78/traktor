@@ -18,7 +18,7 @@ namespace traktor
 
 class ConnectionString;
 
-/*! \brief File store interface.
+/*! File store interface.
  * \ingroup Database
  */
 class T_DLLCLASS IFileStore : public Object

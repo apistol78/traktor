@@ -6,7 +6,7 @@ namespace traktor
 /*! \ingroup Core */
 //@{
 
-/*! \brief Type equal check. */
+/*! Type equal check. */
 template <
 	typename Type1,
 	typename Type2
@@ -16,7 +16,7 @@ struct Equal
 	enum { value = false };
 };
 
-/*! \brief Type equal check, matching type specialization. */
+/*! Type equal check, matching type specialization. */
 template <
 	typename Type
 >

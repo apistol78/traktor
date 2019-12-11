@@ -18,7 +18,7 @@ namespace traktor
 
 class Canvas;
 
-/*! \brief Paint event.
+/*! Paint event.
  * \ingroup UI
  */
 class T_DLLCLASS PaintEvent : public Event

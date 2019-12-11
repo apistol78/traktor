@@ -5,7 +5,7 @@
 namespace traktor
 {
 
-/*! \brief Get log-2 value.
+/*! Get log-2 value.
  * \ingroup Core
  */
 int32_t T_FORCE_INLINE log2(int32_t v)
@@ -18,7 +18,7 @@ int32_t T_FORCE_INLINE log2(int32_t v)
 	return 0;
 }
 
-/*! \brief Check if value is a log-2.
+/*! Check if value is a log-2.
  * \ingroup Core
  */
 bool T_FORCE_INLINE isLog2(int32_t v)
@@ -26,7 +26,7 @@ bool T_FORCE_INLINE isLog2(int32_t v)
 	return (1 << log2(v)) == v;
 }
 
-/*! \brief Get nearest log-2.
+/*! Get nearest log-2.
  * \ingroup Core
  */
 uint32_t T_FORCE_INLINE nearestLog2(uint32_t num)
@@ -43,7 +43,7 @@ uint32_t T_FORCE_INLINE nearestLog2(uint32_t num)
 	return n;
 }
 
-/*! \brief Get previous log-2.
+/*! Get previous log-2.
  * \ingroup Core
  */
 uint32_t T_FORCE_INLINE previousLog2(uint32_t num)

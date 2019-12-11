@@ -9,7 +9,7 @@
 namespace traktor
 {
 
-/*! \brief Small directional map
+/*! Small directional map
  * \ingroup Core
  *
  * This container is optimized for fast lookup
@@ -174,7 +174,7 @@ public:
 			erase(it);
 	}
 
-	/*! \brief Reset content but keep memory allocated.
+	/*! Reset content but keep memory allocated.
 	 * This method reset the map's content but keeps memory
 	 * allocated for it's internal vector to quickly be
 	 * able to rebuild map without reallocating memory.
@@ -184,7 +184,7 @@ public:
 		m_data.resize(0);
 	}
 
-	/*! \brief Clear content and release allocated memory. */
+	/*! Clear content and release allocated memory. */
 	void clear()
 	{
 		m_data.clear();

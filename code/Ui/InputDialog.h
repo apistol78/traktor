@@ -18,7 +18,7 @@ namespace traktor
 
 class EditValidator;
 
-/*! \brief User input dialog.
+/*! User input dialog.
  * \ingroup UI
  */
 class T_DLLCLASS InputDialog : public ConfigDialog

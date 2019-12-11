@@ -13,7 +13,7 @@ namespace traktor
 	namespace render
 	{
 
-/*! \brief Emscripten OpenGL ES2 context.
+/*! Emscripten OpenGL ES2 context.
  * \ingroup OGL
  */
 class ContextOpenGLES2 : public Object
@@ -21,7 +21,7 @@ class ContextOpenGLES2 : public Object
 	T_RTTI_CLASS;
 
 public:
-	/*! \brief Scoped enter/leave helper.
+	/*! Scoped enter/leave helper.
 	 * \ingroup OGL
 	 */
 	struct Scope
@@ -41,7 +41,7 @@ public:
 		}
 	};
 
-	/*! \brief Delete callback.
+	/*! Delete callback.
 	 * \ingroup OGL
 	 *
 	 * These are enqueued in the context

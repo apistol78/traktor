@@ -9,7 +9,7 @@ namespace traktor
 
 class Number;
 
-/*! \brief Number class.
+/*! Number class.
  * \ingroup Spark
  */
 class AsNumber : public ActionClass

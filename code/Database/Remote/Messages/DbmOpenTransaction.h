@@ -15,7 +15,7 @@ namespace traktor
 	namespace db
 	{
 
-/*! \brief Open instance transaction.
+/*! Open instance transaction.
  * \ingroup Database
  */
 class T_DLLCLASS DbmOpenTransaction : public IMessage

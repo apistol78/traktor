@@ -13,7 +13,7 @@
 namespace traktor
 {
 
-/*! \brief Object property value.
+/*! Object property value.
  * \ingroup Core
  */
 class T_DLLCLASS PropertyObject : public IPropertyValue

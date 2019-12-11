@@ -7,7 +7,7 @@ namespace traktor
 	namespace spray
 	{
 
-/*! \brief Particle size modifier.
+/*! Particle size modifier.
  * \ingroup Spray
  */
 class SizeModifier : public Modifier

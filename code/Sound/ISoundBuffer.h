@@ -32,7 +32,7 @@ public:
 	virtual void reset() = 0;
 };
 
-/*! \brief Sound buffer base class.
+/*! Sound buffer base class.
  * \ingroup Sound
  */
 class T_DLLCLASS ISoundBuffer : public Object

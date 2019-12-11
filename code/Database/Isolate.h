@@ -22,7 +22,7 @@ class IStream;
 class Group;
 class Instance;
 
-/*! \brief Instance isolation.
+/*! Instance isolation.
  * \ingroup Database
  */
 struct T_DLLCLASS Isolate

@@ -15,7 +15,7 @@
 namespace traktor
 {
 
-/*! \brief Buffered stream wrapper.
+/*! Buffered stream wrapper.
  * \ingroup Core
  *
  * Read from underlying stream with a fixed

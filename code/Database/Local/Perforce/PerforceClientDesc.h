@@ -7,7 +7,7 @@ namespace traktor
 	namespace db
 	{
 
-/*! \brief P4 client description.
+/*! P4 client description.
  * \ingroup Database
  */
 class PerforceClientDesc : public ISerializable

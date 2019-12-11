@@ -19,7 +19,7 @@ namespace traktor
 class IEncoding;
 class IStream;
 
-/*! \brief File output stream buffer.
+/*! File output stream buffer.
  * \ingroup Core
  */
 class T_DLLCLASS FileOutputStreamBuffer : public OutputStreamBuffer

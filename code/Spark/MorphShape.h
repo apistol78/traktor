@@ -19,7 +19,7 @@ namespace traktor
 	namespace spark
 	{
 
-/*! \brief Flash morph shape.
+/*! Flash morph shape.
  * \ingroup Spark
  */
 class T_DLLCLASS MorphShape : public Character

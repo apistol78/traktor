@@ -15,7 +15,7 @@ namespace traktor
 	namespace spark
 	{
 
-/*! \brief ActionScript boolean wrapper.
+/*! ActionScript boolean wrapper.
  * \ingroup Spark
  */
 class T_DLLCLASS Boolean : public ActionObjectRelay

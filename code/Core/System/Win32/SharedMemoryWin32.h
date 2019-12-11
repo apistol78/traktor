@@ -15,7 +15,7 @@
 namespace traktor
 {
 
-/*! \brief Win32 process shared memory. */
+/*! Win32 process shared memory. */
 class T_DLLCLASS SharedMemoryWin32 : public ISharedMemory
 {
 	T_RTTI_CLASS;

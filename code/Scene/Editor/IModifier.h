@@ -33,7 +33,7 @@ class Command;
 
 class TransformChain;
 
-/*! \brief Selection modifier abstraction. */
+/*! Selection modifier abstraction. */
 class T_DLLCLASS IModifier : public Object
 {
 	T_RTTI_CLASS;

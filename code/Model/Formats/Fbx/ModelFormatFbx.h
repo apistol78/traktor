@@ -15,7 +15,7 @@ namespace traktor
 	namespace model
 	{
 
-/*! \brief Autodesk FBX model format.
+/*! Autodesk FBX model format.
  * \ingroup Model
  */
 class T_DLLCLASS ModelFormatFbx : public ModelFormat

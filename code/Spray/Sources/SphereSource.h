@@ -17,7 +17,7 @@ namespace traktor
 	namespace spray
 	{
 
-/*! \brief Sphere particle source.
+/*! Sphere particle source.
  * \ingroup Spray
  */
 class T_DLLCLASS SphereSource : public Source

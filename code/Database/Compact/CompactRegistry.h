@@ -16,7 +16,7 @@ class CompactGroupEntry;
 class CompactInstanceEntry;
 class CompactRegistry;
 
-/*! \brief Compact registry block entry.
+/*! Compact registry block entry.
  * \ingroup Database
  */
 class CompactBlockEntry : public ISerializable
@@ -39,7 +39,7 @@ private:
 	uint32_t m_blockId;
 };
 
-/*! \brief Compact registry group entry.
+/*! Compact registry group entry.
  * \ingroup Database
  */
 class CompactGroupEntry : public ISerializable
@@ -67,7 +67,7 @@ private:
 	RefArray< CompactInstanceEntry > m_childInstances;
 };
 
-/*! \brief Compact registry instance entry.
+/*! Compact registry instance entry.
  * \ingroup Database
  */
 class CompactInstanceEntry : public ISerializable
@@ -103,7 +103,7 @@ private:
 	std::map< std::wstring, Ref< CompactBlockEntry > > m_dataBlocks;
 };
 
-/*! \brief Compact registry.
+/*! Compact registry.
  * \ingroup Database
  */
 class CompactRegistry : public ISerializable

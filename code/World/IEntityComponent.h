@@ -19,7 +19,7 @@ namespace traktor
 
 class Entity;
 
-/*! \brief Entity component.
+/*! Entity component.
  * \ingroup World
  */
 class T_DLLCLASS IEntityComponent : public Object

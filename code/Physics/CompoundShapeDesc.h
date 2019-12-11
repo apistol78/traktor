@@ -16,7 +16,7 @@ namespace traktor
 	namespace physics
 	{
 
-/*! \brief Compound collision shape.
+/*! Compound collision shape.
  * \ingroup Physics
  */
 class T_DLLCLASS CompoundShapeDesc : public ShapeDesc

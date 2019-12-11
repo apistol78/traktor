@@ -15,7 +15,7 @@ namespace traktor
 	namespace db
 	{
 
-/*! \brief Epoch value result.
+/*! Epoch value result.
  * \ingroup Database
  */
 class T_DLLCLASS MsgEpochResult : public IMessage

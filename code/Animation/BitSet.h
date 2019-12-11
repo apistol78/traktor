@@ -7,7 +7,7 @@ namespace traktor
 	namespace animation
 	{
 
-/*! \brief Bit set class.
+/*! Bit set class.
  * \ingroup Animation
  *
  * Helper class for maintaining a bit set.

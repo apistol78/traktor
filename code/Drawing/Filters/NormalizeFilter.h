@@ -15,7 +15,7 @@ namespace traktor
 	namespace drawing
 	{
 
-/*! \brief Normalize normal map image filter.
+/*! Normalize normal map image filter.
  * \ingroup Drawing
  */
 class T_DLLCLASS NormalizeFilter : public IImageFilter

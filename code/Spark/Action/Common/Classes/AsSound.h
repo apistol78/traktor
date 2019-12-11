@@ -10,7 +10,7 @@ namespace traktor
 struct CallArgs;
 class ISoundRenderer;
 
-/*! \brief Sound class.
+/*! Sound class.
  * \ingroup Spark
  */
 class AsSound : public ActionClass

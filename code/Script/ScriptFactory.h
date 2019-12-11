@@ -17,7 +17,7 @@ namespace traktor
 
 class IScriptContext;
 
-/*! \brief Script class factory.
+/*! Script class factory.
  * \ingroup Script
  */
 class T_DLLCLASS ScriptFactory : public resource::IResourceFactory

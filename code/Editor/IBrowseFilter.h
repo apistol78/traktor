@@ -22,7 +22,7 @@ class Instance;
 	namespace editor
 	{
 
-/*! \brief Browse instance filter interface.
+/*! Browse instance filter interface.
  * \ingroup Editor
  */
 class T_DLLCLASS IBrowseFilter

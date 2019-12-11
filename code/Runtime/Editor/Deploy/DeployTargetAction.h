@@ -30,7 +30,7 @@ class Database;
 class Target;
 class TargetConfiguration;
 
-/*! \brief Deploy target action.
+/*! Deploy target action.
  * \ingroup Runtime
  */
 class T_DLLCLASS DeployTargetAction : public ITargetAction

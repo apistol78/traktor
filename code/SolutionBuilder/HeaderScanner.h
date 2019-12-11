@@ -32,7 +32,7 @@ private:
     SmallSet< std::wstring > m_includePaths;
     SmallMap< std::wstring, Includes* > m_cache;
 
-    /*! \brief Scan header dependencies of source file. */
+    /*! Scan header dependencies of source file. */
     const Includes* scan(const std::wstring& fileName);
 };
 

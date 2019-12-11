@@ -23,7 +23,7 @@ class Node;
 class OutputPin;
 class ShaderGraph;
 
-/*! \brief Shader graph output pin type evaluator.
+/*! Shader graph output pin type evaluator.
  * \ingroup Render
  */
 class T_DLLCLASS ShaderGraphTypeEvaluator : public Object

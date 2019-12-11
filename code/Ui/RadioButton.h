@@ -15,7 +15,7 @@ namespace traktor
 	namespace ui
 	{
 
-/*! \brief Radio button.
+/*! Radio button.
  * \ingroup UI
  */
 class T_DLLCLASS RadioButton : public Widget

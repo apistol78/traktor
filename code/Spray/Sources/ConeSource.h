@@ -17,7 +17,7 @@ namespace traktor
 	namespace spray
 	{
 
-/*! \brief Cone particle source.
+/*! Cone particle source.
  * \ingroup Spray
  */
 class T_DLLCLASS ConeSource : public Source

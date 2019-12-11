@@ -15,7 +15,7 @@
 namespace traktor
 {
 
-/*! \brief 4x4 matrix.
+/*! 4x4 matrix.
  * \ingroup Core
  *
  * Elements are stored column major
@@ -28,7 +28,7 @@ public:
 
 	T_MATH_INLINE Matrix44(const Matrix44& m);
 
-	/*! \brief Construct matrix.
+	/*! Construct matrix.
 	 *
 	 * Construct through column vectors.
 	 */
@@ -39,7 +39,7 @@ public:
 		const Vector4& translation
 	);
 
-	/*! \brief Construct matrix.
+	/*! Construct matrix.
 	 *
 	 * e(r, c)
 	 */
@@ -74,19 +74,19 @@ public:
 
 	T_MATH_INLINE Matrix44 inverse() const;
 
-	/*! \brief Load elements column major.
+	/*! Load elements column major.
 	 *
 	 * \param in Pointer to 16 floats.
 	 */
 	static T_MATH_INLINE Matrix44 loadAligned(const float* in);
 
-	/*! \brief Load elements column major.
+	/*! Load elements column major.
 	 *
 	 * \param in Pointer to 16 floats.
 	 */
 	static T_MATH_INLINE Matrix44 loadUnaligned(const float* in);
 
-	/*! \brief Store elements column major.
+	/*! Store elements column major.
 	 *
 	 * \param out Pointer out 16 floats.
 	 */

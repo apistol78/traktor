@@ -84,7 +84,7 @@ struct ConvertPolicy< std::wstring, float >
 	}
 };
 
-/*! \brief String splitter.
+/*! String splitter.
  * \ingroup Core
  *
  * Split< std::wstring >::any(L"A,B,C", ",", out);

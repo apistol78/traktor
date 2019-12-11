@@ -16,7 +16,7 @@ namespace traktor
 	namespace script
 	{
 
-/*! \brief Call stack debug information.
+/*! Call stack debug information.
  * \ingroup Script
  */
 class T_DLLCLASS StackFrame : public ISerializable

@@ -13,28 +13,28 @@
 namespace traktor
 {
 
-/*! \brief System memory allocators.
+/*! System memory allocators.
  * \ingroup Core
  */
 class T_DLLCLASS Alloc
 {
 public:
-	/*! \brief Allocate chunk of memory. */
+	/*! Allocate chunk of memory. */
 	static void* acquire(size_t size, const char* tag);
 
-	/*! \brief Free chunk of memory. */
+	/*! Free chunk of memory. */
 	static void free(void* ptr);
 
-	/*! \brief Allocate aligned chunk of memory. */
+	/*! Allocate aligned chunk of memory. */
 	static void* acquireAlign(size_t size, size_t align, const char* tag);
 
-	/*! \brief Free aligned chunk of memory. */
+	/*! Free aligned chunk of memory. */
 	static void freeAlign(void* ptr);
 
-	/*! \brief Return number of allocations. */
+	/*! Return number of allocations. */
 	static size_t count();
 
-	/*! \brief Return amount of memory currently allocated. */
+	/*! Return amount of memory currently allocated. */
 	static size_t allocated();
 };
 

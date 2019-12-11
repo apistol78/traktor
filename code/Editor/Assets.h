@@ -17,7 +17,7 @@ namespace traktor
 	namespace editor
 	{
 
-/*! \brief Root assets.
+/*! Root assets.
  * \ingroup Editor
  */
 class T_DLLCLASS Assets : public ISerializable

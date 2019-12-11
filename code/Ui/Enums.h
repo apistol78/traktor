@@ -117,7 +117,7 @@ enum MouseButtons
 	MbtRight	= 4
 };
 
-/*! \brief Virtual key codes.
+/*! Virtual key codes.
  *
  * Platform independent key codes,
  * used for KeyEvent.

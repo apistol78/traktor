@@ -16,7 +16,7 @@
 namespace traktor
 {
 
-/*! \brief Serializer common class.
+/*! Serializer common class.
  * \ingroup Core
  */
 class T_DLLCLASS Serializer : public ISerializer

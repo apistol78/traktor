@@ -9,7 +9,7 @@ namespace traktor
 
 struct CallArgs;
 
-/*! \brief LoadVars class.
+/*! LoadVars class.
  * \ingroup Spark
  */
 class AsLoadVars : public ActionClass

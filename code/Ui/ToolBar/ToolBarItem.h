@@ -25,7 +25,7 @@ class MouseButtonUpEvent;
 class MouseTrackEvent;
 class ToolBar;
 
-/*! \brief Tool bar item.
+/*! Tool bar item.
  * \ingroup UI
  */
 class T_DLLCLASS ToolBarItem
@@ -50,7 +50,7 @@ protected:
 
 	virtual void paint(ToolBar* toolBar, Canvas& canvas, const Point& at, IBitmap* images, int imageWidth, int imageHeight) = 0;
 
-	/*! \brief Mouse enter item.
+	/*! Mouse enter item.
 	 *
 	 * \return True if tracking of item desired; false will not cause mouse to be captured.
 	 */

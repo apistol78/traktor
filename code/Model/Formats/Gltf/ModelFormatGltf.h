@@ -15,7 +15,7 @@ namespace traktor
 	namespace model
 	{
 
-/*! \brief glTF 2.0 model format.
+/*! glTF 2.0 model format.
  * \ingroup Model
  */
 class T_DLLCLASS ModelFormatGltf : public ModelFormat

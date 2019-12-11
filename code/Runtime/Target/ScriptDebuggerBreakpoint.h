@@ -16,7 +16,7 @@ namespace traktor
 	namespace runtime
 	{
 
-/*! \brief Add or remove script breakpoint on running target.
+/*! Add or remove script breakpoint on running target.
  * \ingroup Runtime
  */
 class T_DLLCLASS ScriptDebuggerBreakpoint : public ISerializable

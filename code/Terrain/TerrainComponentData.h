@@ -20,7 +20,7 @@ namespace traktor
 class ITerrainLayerData;
 class Terrain;
 
-/*! \brief Terrain entity data.
+/*! Terrain entity data.
  * \ingroup Terrain
  */
 class T_DLLCLASS TerrainComponentData : public world::IEntityComponentData

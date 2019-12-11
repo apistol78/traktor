@@ -8,7 +8,7 @@ namespace traktor
 	namespace sb
 	{
 
-/*! \brief Generator context. */
+/*! Generator context. */
 class GeneratorContext
 {
 public:

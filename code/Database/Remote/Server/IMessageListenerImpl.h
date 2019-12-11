@@ -10,7 +10,7 @@ namespace traktor
 	namespace db
 	{
 
-/*! \brief Message listener implementation.
+/*! Message listener implementation.
  * \ingroup Database
  */
 template < typename MessageListenerType >

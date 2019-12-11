@@ -17,7 +17,7 @@
 namespace traktor
 {
 
-/*! \brief 2d vector using 32-bit integers.
+/*! 2d vector using 32-bit integers.
  * \ingroup Core
  */
 class T_DLLCLASS Vector2i

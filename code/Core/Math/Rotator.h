@@ -14,7 +14,7 @@
 namespace traktor
 {
 
-/* \brief Rotator
+/* Rotator
  * \ingroup Core
  *
  * A rotator is allows for more than 360 degrees of rotation

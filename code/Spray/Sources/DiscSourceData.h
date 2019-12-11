@@ -16,7 +16,7 @@ namespace traktor
 	namespace spray
 	{
 
-/*! \brief Disc particle source persistent data.
+/*! Disc particle source persistent data.
  * \ingroup Spray
  */
 class T_DLLCLASS DiscSourceData : public SourceData

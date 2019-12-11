@@ -27,7 +27,7 @@ class IMessage;
 class IMessageListener;
 class IProviderDatabase;
 
-/*! \brief Client connection.
+/*! Client connection.
  * \ingroup Database
  */
 class Connection : public Object

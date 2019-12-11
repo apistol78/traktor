@@ -23,7 +23,7 @@ class StateGraph;
 class StateNode;
 class StateContext;
 
-/*! \brief Animation pose evaluation controller.
+/*! Animation pose evaluation controller.
  * \ingroup Animation
  */
 class T_DLLCLASS StatePoseController : public IPoseController

@@ -25,7 +25,7 @@ class IWebBrowser;
 class ISystemBitmap;
 class IClipboard;
 
-/*! \brief Widget factory interface.
+/*! Widget factory interface.
  * \ingroup UI
  */
 class IWidgetFactory

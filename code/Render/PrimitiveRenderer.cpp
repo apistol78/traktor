@@ -1,6 +1,7 @@
 #include "Core/Io/AnsiEncoding.h"
 #include "Core/Math/Const.h"
 #include "Core/Math/Half.h"
+#include "Core/Math/Triangulator.h"
 #include "Core/Math/Winding3.h"
 #include "Core/Misc/Endian.h"
 #include "Core/Misc/TString.h"
@@ -797,6 +798,35 @@ void PrimitiveRenderer::drawSolidQuad(
 {
 	drawSolidTriangle(vert1, color1, vert2, color2, vert3, color3);
 	drawSolidTriangle(vert1, color1, vert3, color3, vert4, color4);
+}
+
+void PrimitiveRenderer::drawSolidPolygon(
+	const AlignedVector< Vector4 >& vertices,
+	const Color4ub& color
+)
+{
+	if (vertices.size() == 3)
+		drawSolidTriangle(vertices[0], vertices[1], vertices[2], color);
+	else if (vertices.size() == 4)
+		drawSolidQuad(vertices[0], vertices[1], vertices[2], vertices[3], color);
+	else if (vertices.size() > 4)
+	{
+		Plane plane;
+		if (Winding3(vertices.c_ptr(), vertices.size()).getPlane(plane))
+		{
+			AlignedVector< Triangulator::Triangle > triangles;
+			Triangulator().freeze(vertices, plane.normal(), triangles);
+			for (const auto& triangle : triangles)
+			{
+				drawSolidTriangle(
+					vertices[triangle.indices[0]],
+					vertices[triangle.indices[1]],
+					vertices[triangle.indices[2]],
+					color
+				);
+			}
+		}
+	}
 }
 
 void PrimitiveRenderer::drawTextureTriangle(

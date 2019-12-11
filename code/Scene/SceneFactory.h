@@ -30,7 +30,7 @@ class IEntityBuilder;
 	namespace scene
 	{
 
-/*! \brief Scene factory.
+/*! Scene factory.
  * \ingroup Scene
  */
 class T_DLLCLASS SceneFactory : public resource::IResourceFactory
@@ -38,7 +38,7 @@ class T_DLLCLASS SceneFactory : public resource::IResourceFactory
 	T_RTTI_CLASS;
 
 public:
-	/*! \brief Construct scene factory.
+	/*! Construct scene factory.
 	 *
 	 * \param renderSystem Render system.
 	 * \param entityBuilder Entity builder.

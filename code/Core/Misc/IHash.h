@@ -13,7 +13,7 @@
 namespace traktor
 {
 
-/*! \brief Hash function interface.
+/*! Hash function interface.
  * \ingroup Core
  */
 class T_DLLCLASS IHash : public Object
@@ -21,17 +21,17 @@ class T_DLLCLASS IHash : public Object
 	T_RTTI_CLASS;
 
 public:
-	/*! \brief Begin feeding data for hash calculation. */
+	/*! Begin feeding data for hash calculation. */
 	virtual void begin() = 0;
 
-	/*! \brief Feed data to hash calculation.
+	/*! Feed data to hash calculation.
 	 *
 	 * \param buffer Pointer to data.
 	 * \param bufferSize Amount of data in bytes.
 	 */
 	virtual void feed(const void* buffer, uint64_t bufferSize) = 0;
 
-	/*! \brief End feeding data for hash calculation. */
+	/*! End feeding data for hash calculation. */
 	virtual void end() = 0;
 };
 

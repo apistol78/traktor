@@ -20,7 +20,7 @@
 namespace traktor
 {
 
-/*! \brief Primitive member reflection.
+/*! Primitive member reflection.
  * \ingroup Core
  */
 template < typename PrimitiveType >

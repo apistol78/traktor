@@ -18,7 +18,7 @@ namespace traktor
 
 class Image;
 
-/*! \brief Image copy transfer function base class.
+/*! Image copy transfer function base class.
  * \ingroup Drawing
  */
 class T_DLLCLASS ITransferFunction : public Object

@@ -7,7 +7,7 @@ namespace traktor
 	namespace spark
 	{
 
-/*! \brief Rectangle class.
+/*! Rectangle class.
  * \ingroup Spark
  */
 class As_flash_geom_Rectangle : public ActionClass

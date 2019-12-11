@@ -13,7 +13,7 @@
 namespace traktor
 {
 
-/*! \brief Construct/destruct items policy.
+/*! Construct/destruct items policy.
  * \ingroup Core
  *
  * Default policy when constructing or destroying
@@ -38,7 +38,7 @@ struct AlignedVectorConstructor
 	}
 };
 
-/*! \brief Vector container which strict item alignment.
+/*! Vector container which strict item alignment.
  * \ingroup Core
  *
  * This container is designed to be a drop-in replacement
@@ -549,7 +549,7 @@ public:
 		clear();
 	}
 
-	/*! \brief Get number of elements in vector.
+	/*! Get number of elements in vector.
 	 *
 	 * \return Number of elements.
 	 */
@@ -558,7 +558,7 @@ public:
 		return m_size;
 	}
 
-	/*! \brief Get number of elements allocated by vector.
+	/*! Get number of elements allocated by vector.
 	 *
 	 * \return Number of allocated elements.
 	 */
@@ -567,7 +567,7 @@ public:
 		return m_capacity;
 	}
 
-	/*! \brief Check if vector is empty.
+	/*! Check if vector is empty.
 	 *
 	 * \return True if vector empty.
 	 */
@@ -576,7 +576,7 @@ public:
 		return m_size == 0;
 	}
 
-	/*! \brief Clear vector.
+	/*! Clear vector.
 	 *
 	 * Clear frees all memory allocated
 	 * by the vector.
@@ -593,7 +593,7 @@ public:
 		m_capacity = 0;
 	}
 
-	/*! \brief Resize vector.
+	/*! Resize vector.
 	 *
 	 * Allocates more elements if required.
 	 * If vector shrink then no reallocation is performed.
@@ -606,7 +606,7 @@ public:
 		resize(size, zero);
 	}
 
-	/*! \brief Resize vector, pad with given value.
+	/*! Resize vector, pad with given value.
 	 *
 	 * Allocates more elements if required.
 	 * If vector shrink then no reallocation is performed.
@@ -635,7 +635,7 @@ public:
 		m_size = size;
 	}
 
-	/*! \brief Ensure vector capacity.
+	/*! Ensure vector capacity.
 	 *
 	 * \param capacity Vector capacity.
 	 */
@@ -664,7 +664,7 @@ public:
 		}
 	}
 
-	/*! \brief Push default value onto vector.
+	/*! Push default value onto vector.
 	 *
 	 * \param item Item value.
 	 */
@@ -675,7 +675,7 @@ public:
 		return m_data[m_size - 1];
 	}
 
-	/*! \brief Push value onto vector.
+	/*! Push value onto vector.
 	 *
 	 * \param item Item value.
 	 */
@@ -685,7 +685,7 @@ public:
 		Constructor::construct(m_data[m_size - 1], item);
 	}
 
-	/*! \brief Pop value from vector. */
+	/*! Pop value from vector. */
 	void pop_back()
 	{
 		T_ASSERT(m_size > 0);
@@ -693,7 +693,7 @@ public:
 		shrink(1);
 	}
 
-	/*! \brief Swap vector content. */
+	/*! Swap vector content. */
 	void swap(AlignedVector< ItemType >& rh)
 	{
 		{ auto tmp = m_data; m_data = rh.m_data; rh.m_data = tmp; }
@@ -701,7 +701,7 @@ public:
 		{ auto tmp = m_capacity; m_capacity = rh.m_capacity; rh.m_capacity = tmp; }
 	}
 
-	/*! \brief Get pointer to first element in vector.
+	/*! Get pointer to first element in vector.
 	 *
 	 * \return Pointer to first element.
 	 */
@@ -710,7 +710,7 @@ public:
 		return m_data;
 	}
 
-	/*! \brief Get constant pointer to first element in vector.
+	/*! Get constant pointer to first element in vector.
 	 *
 	 * \return Pointer to first element.
 	 */
@@ -719,7 +719,7 @@ public:
 		return m_data;
 	}
 
-	/*! \brief Return reference to value first in vector.
+	/*! Return reference to value first in vector.
 	 *
 	 * \return Value reference.
 	 */
@@ -729,7 +729,7 @@ public:
 		return *m_data;
 	}
 
-	/*! \brief Return reference to value first in vector.
+	/*! Return reference to value first in vector.
 	 *
 	 * \return Value reference.
 	 */
@@ -739,7 +739,7 @@ public:
 		return *m_data;
 	}
 
-	/*! \brief Return reference to value last in vector.
+	/*! Return reference to value last in vector.
 	 *
 	 * \return Value reference.
 	 */
@@ -749,7 +749,7 @@ public:
 		return m_data[m_size - 1];
 	}
 
-	/*! \brief Return reference to value last in vector.
+	/*! Return reference to value last in vector.
 	 *
 	 * \return Value reference.
 	 */
@@ -759,7 +759,7 @@ public:
 		return m_data[m_size - 1];
 	}
 
-	/*! \brief Return iterator at first element.
+	/*! Return iterator at first element.
 	 *
 	 * \return Iterator.
 	 */
@@ -768,7 +768,7 @@ public:
 		return iterator(m_data);
 	}
 
-	/*! \brief Return reverse iterator.
+	/*! Return reverse iterator.
 	 *
 	 * \return Iterator.
 	 */
@@ -777,7 +777,7 @@ public:
 		return reverse_iterator(&m_data[m_size - 1]);
 	}
 
-	/*! \brief Return iterator one step beyond last element.
+	/*! Return iterator one step beyond last element.
 	 *
 	 * \return Iterator.
 	 */
@@ -786,7 +786,7 @@ public:
 		return iterator(&m_data[m_size]);
 	}
 
-	/*! \brief Return reverse iterator at first element.
+	/*! Return reverse iterator at first element.
 	 *
 	 * \return Iterator.
 	 */
@@ -795,7 +795,7 @@ public:
 		return reverse_iterator(&m_data[-1]);
 	}
 
-	/*! \brief Return constant iterator at first element.
+	/*! Return constant iterator at first element.
 	 *
 	 * \return Iterator.
 	 */
@@ -804,7 +804,7 @@ public:
 		return const_iterator(m_data);
 	}
 
-	/*! \brief Return constant reverse iterator.
+	/*! Return constant reverse iterator.
 	 *
 	 * \return Iterator.
 	 */
@@ -813,7 +813,7 @@ public:
 		return const_reverse_iterator(&m_data[m_size - 1]);
 	}
 
-	/*! \brief Return constant iterator one step beyond last element.
+	/*! Return constant iterator one step beyond last element.
 	 *
 	 * \return Iterator.
 	 */
@@ -822,7 +822,7 @@ public:
 		return const_iterator(&m_data[m_size]);
 	}
 
-	/*! \brief Return constant reverse iterator at first element.
+	/*! Return constant reverse iterator at first element.
 	 *
 	 * \return Iterator.
 	 */
@@ -831,7 +831,7 @@ public:
 		return const_reverse_iterator(&m_data[-1]);
 	}
 
-	/*! \brief Erase element.
+	/*! Erase element.
 	 *
 	 * \param where Iterator at element.
 	 * \return New iterator at next element.
@@ -849,7 +849,7 @@ public:
 		return iterator(&m_data[offset]);
 	}
 
-	/*! \brief Erase range of elements.
+	/*! Erase range of elements.
 	 *
 	 * \param where Iterator at element.
 	 * \param last Iterator to last element.
@@ -876,7 +876,7 @@ public:
 		return iterator(&m_data[offset]);
 	}
 
-	/*! \brief Insert element into vector.
+	/*! Insert element into vector.
 	 *
 	 * \param where Iterator at element.
 	 * \param item Item value.
@@ -903,7 +903,7 @@ public:
 		return iterator(&m_data[offset]);
 	}
 
-	/*! \brief Insert elements into vector.
+	/*! Insert elements into vector.
 	 *
 	 * \param where Iterator at element.
 	 * \param from Iterator at first insert element.
@@ -941,7 +941,7 @@ public:
 		return iterator(&m_data[offset]);
 	}
 
-	/*! \brief Insert elements into vector.
+	/*! Insert elements into vector.
 	 *
 	 * \param where Iterator at element.
 	 * \param from Iterator at first insert element.

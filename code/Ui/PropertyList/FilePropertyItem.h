@@ -19,7 +19,7 @@ namespace traktor
 class Edit;
 class MiniButton;
 
-/*! \brief File property item.
+/*! File property item.
  * \ingroup UI
  */
 class T_DLLCLASS FilePropertyItem : public PropertyItem

@@ -16,7 +16,7 @@ namespace traktor
 	namespace ui
 	{
 
-/*! \brief Persistent hierarchical view state.
+/*! Persistent hierarchical view state.
  * \ingroup UI
  */
 class T_DLLCLASS HierarchicalState : public ISerializable
@@ -36,7 +36,7 @@ public:
 
 	bool getSelected(const std::wstring& path) const;
 
-	/*! \brief Merge tree states.
+	/*! Merge tree states.
 	 *
 	 * Right-hand state override existing states;
 	 * thus if a state exist in both left- and right-hand

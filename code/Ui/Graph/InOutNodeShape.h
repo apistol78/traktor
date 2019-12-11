@@ -18,7 +18,7 @@ namespace traktor
 class GraphControl;
 class IBitmap;
 
-/*! \brief Input/output node shape.
+/*! Input/output node shape.
  * \ingroup UI
  */
 class T_DLLCLASS InOutNodeShape : public INodeShape

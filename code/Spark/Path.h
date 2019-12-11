@@ -26,7 +26,7 @@ class ISerializer;
 #	pragma warning( disable:4324 )
 #endif
 
-/*! \brief Segment type.
+/*! Segment type.
  * \ingroup Spark
  */
 enum SubPathSegmentType
@@ -36,7 +36,7 @@ enum SubPathSegmentType
 	SpgtQuadratic = 2
 };
 
-/*! \brief Sub path segment.
+/*! Sub path segment.
  * \ingroup Spark
  */
 struct SubPathSegment
@@ -55,7 +55,7 @@ struct SubPathSegment
 	void serialize(ISerializer& s);
 };
 
-/*! \brief Sub path.
+/*! Sub path.
  * \ingroup Spark
  */
 struct SubPath
@@ -75,7 +75,7 @@ struct SubPath
 	void serialize(ISerializer& s);
 };
 
-/*! \brief Shape path.
+/*! Shape path.
  * \ingroup Spark
  */
 class T_DLLCLASS Path
@@ -91,10 +91,10 @@ public:
 
 	Path(const Matrix33& transform, const AlignedVector< Vector2 >& points, const AlignedVector< SubPath >& subPaths);
 
-	/*! \brief Reset path. */
+	/*! Reset path. */
 	void reset();
 
-	/*! \brief Move cursor to position.
+	/*! Move cursor to position.
 	 *
 	 * \param x Cursor x position.
 	 * \param y Cursor y position.
@@ -102,7 +102,7 @@ public:
 	 */
 	void moveTo(int32_t x, int32_t y, CoordinateMode mode);
 
-	/*! \brief Line from cursor to position.
+	/*! Line from cursor to position.
 	 *
 	 * \param x End x position.
 	 * \param y End y position.
@@ -110,7 +110,7 @@ public:
 	 */
 	void lineTo(int32_t x, int32_t y, CoordinateMode mode);
 
-	/*! \brief Quadratic spline from cursor to position.
+	/*! Quadratic spline from cursor to position.
 	 *
 	 * \param x1 Control point.
 	 * \param y1 Control point.
@@ -120,7 +120,7 @@ public:
 	 */
 	void quadraticTo(int32_t x1, int32_t y1, int32_t x, int32_t y, CoordinateMode mode);
 
-	/*! \brief End path.
+	/*! End path.
 	 *
 	 * \param fillStyle0 Index to odd fill style, 0 = no style.
 	 * \param fillStyle1 Index to even fill style, 0 = no style.
@@ -128,36 +128,36 @@ public:
 	 */
 	void end(uint16_t fillStyle0, uint16_t fillStyle1, uint16_t lineStyle);
 
-	/*! \brief Get origin of current sub path.
+	/*! Get origin of current sub path.
 	 */
 	Vector2 getOrigin() const;
 
-	/*! \brief Get bounds.
+	/*! Get bounds.
 	 */
 	Aabb2 getBounds() const;
 
-	/*! \brief Get cursor position.
+	/*! Get cursor position.
 	 *
 	 * \return Cursor position.
 	 */
 	const Vector2& getCursor() const { return m_cursor; }
 
-	/*! \brief Get path local transform. */
+	/*! Get path local transform. */
 	const Matrix33& getTransform() const { return m_transform; }
 
-	/*! \brief Get points.
+	/*! Get points.
 	 *
 	 * \return List of points.
 	 */
 	const AlignedVector< Vector2 >& getPoints() const { return m_points; }
 
-	/*! \brief Get sub paths.
+	/*! Get sub paths.
 	 *
 	 * \return List of sub-paths.
 	 */
 	const AlignedVector< SubPath >& getSubPaths() const { return m_subPaths; }
 
-	/*! \brief Serialize path.
+	/*! Serialize path.
 	 */
 	void serialize(ISerializer& s);
 
@@ -168,7 +168,7 @@ private:
 	AlignedVector< SubPath > m_subPaths;
 	SubPath m_current;
 
-	/*! \brief Transform between coordinate modes.
+	/*! Transform between coordinate modes.
 	 *
 	 * \param from From coordinate mode.
 	 * \param to To coordinate mode.

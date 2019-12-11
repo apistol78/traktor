@@ -24,7 +24,7 @@ class MiniButton;
 class MouseEvent;
 class PropertyList;
 
-/*! \brief Property item.
+/*! Property item.
  * \ingroup UI
  */
 class T_DLLCLASS PropertyItem : public Object

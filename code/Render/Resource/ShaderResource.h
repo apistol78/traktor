@@ -18,7 +18,7 @@ namespace traktor
 	namespace render
 	{
 
-/*! \brief Shader resource base class.
+/*! Shader resource base class.
  * \ingroup Render
  *
  * A shader resource is an intermediate representation

@@ -15,7 +15,7 @@ namespace traktor
 	namespace ui
 	{
 
-/*! \brief WebBrowser
+/*! WebBrowser
  * \ingroup UI
  */
 class T_DLLCLASS WebBrowser : public Widget

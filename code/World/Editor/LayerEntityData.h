@@ -17,7 +17,7 @@ namespace traktor
 
 class ILayerAttribute;
 
-/*! \brief Layer entity data.
+/*! Layer entity data.
  * \ingroup World
  *
  * Used by editor to store editing layer information

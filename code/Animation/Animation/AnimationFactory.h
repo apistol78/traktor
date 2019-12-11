@@ -15,7 +15,7 @@ namespace traktor
 	namespace animation
 	{
 
-/*! \brief Key framed animation factory.
+/*! Key framed animation factory.
  * \ingroup Animation
  */
 class T_DLLCLASS AnimationFactory : public resource::IResourceFactory

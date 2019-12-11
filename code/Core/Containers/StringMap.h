@@ -5,7 +5,7 @@
 namespace traktor
 {
 
-/*! \brief String map
+/*! String map
  * \ingroup Core
  */
 template < typename ValueType, typename StringType = std::string, int BucketCount = 128 >

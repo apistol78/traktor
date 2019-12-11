@@ -22,7 +22,7 @@ class Node;
 class OutputPin;
 class ShaderGraph;
 
-/*! \brief Shader graph optimizer.
+/*! Shader graph optimizer.
  * \ingroup Render
  *
  * \note The shader graph optimizer only works on
@@ -35,19 +35,19 @@ class T_DLLCLASS ShaderGraphOptimizer : public Object
 public:
 	ShaderGraphOptimizer(const ShaderGraph* shaderGraph);
 
-	/*! \brief Remove unused branches.
+	/*! Remove unused branches.
 	 *
 	 * \return Shader graph with removed unused branches.
 	 */
 	Ref< ShaderGraph > removeUnusedBranches() const;
 
-	/*! \brief Merge duplicated branches.
+	/*! Merge duplicated branches.
 	 *
 	 * \return Shader graph with removed duplicated branches.
 	 */
 	Ref< ShaderGraph > mergeBranches() const;
 
-	/*! \brief Insert interpolator nodes where appropriate.
+	/*! Insert interpolator nodes where appropriate.
 	 *
 	 * Using a order analysis to determine where to
 	 * best insert interpolators into the graph

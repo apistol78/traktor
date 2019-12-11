@@ -25,7 +25,7 @@ class Shader;
 	namespace terrain
 	{
 
-/*! \brief River component data.
+/*! River component data.
  * \ingroup Terrain
  */
 class T_DLLCLASS RiverComponentData : public world::IEntityComponentData

@@ -14,7 +14,7 @@
 namespace traktor
 {
 
-/*! \brief File path.
+/*! File path.
  * \ingroup Core
  */
 class T_DLLCLASS Path : public Object
@@ -30,19 +30,19 @@ public:
 
 	Path(const wchar_t* path);
 
-	/*! \brief Check if path is empty.
+	/*! Check if path is empty.
 	 *
 	 * \return True if path is empty.
 	 */
 	bool empty() const;
 
-	/*! \brief Get original, unresolved, path.
+	/*! Get original, unresolved, path.
 	 *
 	 * \return Original path.
 	 */
 	std::wstring getOriginal() const;
 
-	/*! \brief Return true if path include volume.
+	/*! Return true if path include volume.
 	 *
 	 * C:/foo/bar.txt => true
 	 * /foo/bar.txt => false
@@ -52,7 +52,7 @@ public:
 	 */
 	bool hasVolume() const;
 
-	/*! \brief Return name of volume.
+	/*! Return name of volume.
 	 *
 	 * C:/foo/bar.txt => C
 	 * /foo/bar.txt => [empty]
@@ -62,7 +62,7 @@ public:
 	 */
 	std::wstring getVolume() const;
 
-	/*! \brief Return true if path is relative.
+	/*! Return true if path is relative.
 	 *
 	 * C:/foo/bar.txt => false
 	 * /foo/bar.txt => false
@@ -72,7 +72,7 @@ public:
 	 */
 	bool isRelative() const;
 
-	/*! \brief Return file name.
+	/*! Return file name.
 	 *
 	 * C:/foo/bar.txt => bar.txt
 	 * /foo/bar.txt => bar.txt
@@ -82,7 +82,7 @@ public:
 	 */
 	std::wstring getFileName() const;
 
-	/*! \brief Return file name without extension.
+	/*! Return file name without extension.
 	 *
 	 * C:/foo/bar.txt => bar
 	 * /foo/bar.txt => bar
@@ -92,7 +92,7 @@ public:
 	 */
 	std::wstring getFileNameNoExtension() const;
 
-	/*! \brief Return path only, no file name.
+	/*! Return path only, no file name.
 	 *
 	 * C:/foo/bar.txt => C:/foo
 	 * /foo/bar.txt => /foo
@@ -102,7 +102,7 @@ public:
 	 */
 	std::wstring getPathOnly() const;
 
-	/*! \brief Return path only, no file name nor volume.
+	/*! Return path only, no file name nor volume.
 	 *
 	 * C:/foo/bar.txt => /foo
 	 * /foo/bar.txt => /foo
@@ -112,7 +112,7 @@ public:
 	 */
 	std::wstring getPathOnlyNoVolume() const;
 
-	/*! \brief Return path.
+	/*! Return path.
 	 *
 	 * C:/foo/bar.txt => C:/foo/bar.txt
 	 * /foo/bar.txt => /foo/bar.txt
@@ -122,7 +122,7 @@ public:
 	 */
 	std::wstring getPathName() const;
 
-	/*! \brief Return path but without file extension.
+	/*! Return path but without file extension.
 	 *
 	 * C:/foo/bar.txt => C:/foo/bar
 	 * /foo/bar.txt => /foo/bar
@@ -132,7 +132,7 @@ public:
 	 */
 	std::wstring getPathNameNoExtension() const;
 
-	/*! \brief Return path but without volume.
+	/*! Return path but without volume.
 	 *
 	 * C:/foo/bar.txt => /foo/bar.txt
 	 * /foo/bar.txt => /foo/bar.txt
@@ -142,7 +142,7 @@ public:
 	 */
 	std::wstring getPathNameNoVolume() const;
 
-	/*! \brief Return file extension.
+	/*! Return file extension.
 	 *
 	 * C:/foo/bar.txt => txt
 	 * /foo/bar.txt => txt
@@ -152,7 +152,7 @@ public:
 	 */
 	std::wstring getExtension() const;
 
-	/*! \brief Return normalized path.
+	/*! Return normalized path.
 	 *
 	 * C:/foo/../bar.txt => C:/bar.txt
 	 *
@@ -160,20 +160,20 @@ public:
 	 */
 	Path normalized() const;
 
-	/*! \brief Concate two paths.
+	/*! Concate two paths.
 	 *
 	 * \return Concated path.
 	 */
 	Path operator + (const Path& rh) const;
 
-	/*! \brief Compare equal operator.
+	/*! Compare equal operator.
 	 *
 	 * \param rh Compare to path.
 	 * \return True if paths is equal; depending on platform case sensitive.
 	 */
 	bool operator == (const Path& rh) const;
 
-	/*! \brief Compare less-than operator.
+	/*! Compare less-than operator.
 	 *
 	 * Implemented to be able to have
 	 * Path objects in an ordered stl map.
@@ -183,7 +183,7 @@ public:
 	 */
 	bool operator < (const Path& rh) const;
 
-	/*! \brief Compare greater-than operator.
+	/*! Compare greater-than operator.
 	 *
 	 * Implemented to be able to have
 	 * Path objects in an ordered stl map.
@@ -201,7 +201,7 @@ private:
 	std::wstring m_file;
 	std::wstring m_ext;
 
-	/*! \brief Resolve path.
+	/*! Resolve path.
 	 *
 	 * Resolve environment variables in path.
 	 */

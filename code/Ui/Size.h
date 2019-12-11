@@ -5,7 +5,7 @@ namespace traktor
 	namespace ui
 	{
 
-/*! \brief Size
+/*! Size
  * \ingroup UI
  */
 class Size

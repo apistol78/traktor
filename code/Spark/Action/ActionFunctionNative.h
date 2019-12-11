@@ -20,7 +20,7 @@ namespace traktor
 
 class ActionContext;
 
-/*! \brief Native call arguments.
+/*! Native call arguments.
  * \ingroup Spark
  */
 struct CallArgs
@@ -32,7 +32,7 @@ struct CallArgs
 	ActionValue ret;
 };
 
-/*! \brief Native function wrapper.
+/*! Native function wrapper.
  * \ingroup Spark
  */
 struct T_DLLCLASS INativeFunction : public Object
@@ -961,7 +961,7 @@ struct MethodNativeFunction_self_6 < ClassType, void, Argument1Type, Argument2Ty
 	}
 };
 
-/*! \brief ActionScript native function.
+/*! ActionScript native function.
  * \ingroup Spark
  */
 class T_DLLCLASS ActionFunctionNative : public ActionFunction

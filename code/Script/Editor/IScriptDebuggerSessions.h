@@ -21,7 +21,7 @@ class Guid;
 class IScriptDebugger;
 class IScriptProfiler;
 
-/*! \brief Debugger sessions interface.
+/*! Debugger sessions interface.
  * \ingroup Script
  */
 class T_DLLCLASS IScriptDebuggerSessions : public Object
@@ -40,21 +40,21 @@ public:
 		virtual void notifyRemoveBreakpoint(const Guid& scriptId, int32_t lineNumber) = 0;
 	};
 
-	/*! \brief Begin new debugging session.
+	/*! Begin new debugging session.
 	 *
 	 * \param scriptDebugger Script debugger.
 	 * \param scriptProfiler Script profiler.
 	 */
 	virtual void beginSession(script::IScriptDebugger* scriptDebugger, script::IScriptProfiler* scriptProfiler) = 0;
 
-	/*! \brief End debugging session.
+	/*! End debugging session.
 	 *
 	 * \param scriptDebugger Script debugger.
 	 * \param scriptProfiler Script profiler.
 	 */
 	virtual void endSession(script::IScriptDebugger* scriptDebugger, script::IScriptProfiler* scriptProfiler) = 0;
 
-	/*! \brief Activate new breakpoint.
+	/*! Activate new breakpoint.
 	 *
 	 * \param scriptId Script identifier.
 	 * \param lineNumber Line within script to associate with breakpoint.
@@ -62,7 +62,7 @@ public:
 	 */
 	virtual bool setBreakpoint(const Guid& scriptId, int32_t lineNumber) = 0;
 
-	/*! \brief Remove breakpoint.
+	/*! Remove breakpoint.
 	 *
 	 * \param scriptId Script identifier.
 	 * \param lineNumber Line within script to associate with breakpoint.
@@ -70,14 +70,14 @@ public:
 	 */
 	virtual bool removeBreakpoint(const Guid& scriptId, int32_t lineNumber) = 0;
 
-	/*! \brief Remove all breakpoints from script.
+	/*! Remove all breakpoints from script.
 	 *
 	 * \param scriptId Script identifier.
 	 * \return True if all breakpoints was removed.
 	 */
 	virtual bool removeAllBreakpoints(const Guid& scriptId) = 0;
 
-	/*! \brief Check if breakpoint is set.
+	/*! Check if breakpoint is set.
 	 *
 	 * \param scriptId Script identifier.
 	 * \param lineNumber Line within script to check for breakpoint.
@@ -85,13 +85,13 @@ public:
 	 */
 	virtual bool haveBreakpoint(const Guid& scriptId, int32_t lineNumber) const = 0;
 
-	/*! \brief Add session listener.
+	/*! Add session listener.
 	 *
 	 * \param listener Listener implementation.
 	 */
 	virtual void addListener(IListener* listener) = 0;
 
-	/*! \brief Remove session listener.
+	/*! Remove session listener.
 	 *
 	 * \param listener Listener to remove.
 	 */

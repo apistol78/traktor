@@ -21,7 +21,7 @@ namespace traktor
 
 class Shader;
 
-/*! \brief Generic simple step.
+/*! Generic simple step.
  * \ingroup Render
  */
 class T_DLLCLASS ImageProcessStepSimple : public ImageProcessStep

@@ -9,7 +9,7 @@ namespace traktor
 	namespace db
 	{
 
-/*! \brief Transaction set guid action.
+/*! Transaction set guid action.
  * \ingroup Database
  */
 class ActionSetGuid : public Action

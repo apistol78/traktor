@@ -18,7 +18,7 @@ namespace traktor
 
 class ShapeDesc;
 
-/*! \brief Rigid body description.
+/*! Rigid body description.
  * \ingroup Physics
  */
 class T_DLLCLASS BodyDesc : public ISerializable

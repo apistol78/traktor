@@ -19,7 +19,7 @@ namespace traktor
 	namespace net
 	{
 
-/*! \brief IPv6 socket address.
+/*! IPv6 socket address.
  * \ingroup Net
  */
 class T_DLLCLASS SocketAddressIPv6 : public SocketAddress

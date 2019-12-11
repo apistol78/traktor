@@ -17,7 +17,7 @@ namespace traktor
 
 class Matrix44;
 
-/*! \brief 3d plane.
+/*! 3d plane.
  * \ingroup Core
  *
  * Ax + By + Cz + D = 0
@@ -31,16 +31,16 @@ public:
 
 	T_MATH_INLINE Plane(const Plane& src);
 
-	/*! \brief Construct plane from normal and distance. */
+	/*! Construct plane from normal and distance. */
 	explicit T_MATH_INLINE Plane(const Vector4& normal, const Scalar& distance);
 
-	/*! \brief Construct plane from normal and a point in the specified plane. */
+	/*! Construct plane from normal and a point in the specified plane. */
 	explicit T_MATH_INLINE Plane(const Vector4& normal, const Vector4& pointInPlane);
 
-	/*! \brief Construct plane from three points in the specified plane. */
+	/*! Construct plane from three points in the specified plane. */
 	explicit T_MATH_INLINE Plane(const Vector4& a, const Vector4& b, const Vector4& c);
 
-	/*! \brief Construct plane from four explicit constants. */
+	/*! Construct plane from four explicit constants. */
 	explicit T_MATH_INLINE Plane(float a, float b, float c, float d);
 
 	T_MATH_INLINE void set(const Vector4& normal, const Scalar& distance);

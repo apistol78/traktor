@@ -26,7 +26,7 @@ class IResourceManager;
 class AccBitmapRect;
 class Bitmap;
 
-/*! \brief Texture cache for accelerated rendering.
+/*! Texture cache for accelerated rendering.
  * \ingroup Spark
  */
 class AccTextureCache : public Object

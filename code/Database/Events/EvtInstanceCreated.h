@@ -15,7 +15,7 @@ namespace traktor
 	namespace db
 	{
 
-/*! \brief Instance created event.
+/*! Instance created event.
  * \ingroup Database
  */
 class T_DLLCLASS EvtInstanceCreated : public EvtInstance
@@ -25,7 +25,7 @@ class T_DLLCLASS EvtInstanceCreated : public EvtInstance
 public:
 	EvtInstanceCreated(const std::wstring& groupPath = L"", const Guid& instanceGuid = Guid());
 
-	/*! \brief Path to group which contain new instance.
+	/*! Path to group which contain new instance.
 	 *
 	 * \return Group path.
 	 */

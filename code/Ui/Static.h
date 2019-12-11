@@ -15,7 +15,7 @@ namespace traktor
 	namespace ui
 	{
 
-/*! \brief Static text.
+/*! Static text.
  * \ingroup UI
  */
 class T_DLLCLASS Static : public Widget

@@ -10,7 +10,7 @@ namespace traktor
 
 struct CallArgs;
 
-/*! \brief Mouse class.
+/*! Mouse class.
  * \ingroup Spark
  */
 class AsMouse : public ActionObject

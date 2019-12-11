@@ -16,7 +16,7 @@ namespace traktor
 	namespace db
 	{
 
-/*! \brief Open database.
+/*! Open database.
  * \ingroup Database
  */
 class T_DLLCLASS DbmOpen : public IMessage

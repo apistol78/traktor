@@ -15,7 +15,7 @@ namespace traktor
 	namespace drawing
 	{
 
-/*! \brief Blur filter.
+/*! Blur filter.
  * \ingroup Drawing
  */
 class T_DLLCLASS BlurFilter : public IImageFilter

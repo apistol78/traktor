@@ -33,7 +33,7 @@ class ScriptContextLua;
 class ScriptDebuggerLua;
 class ScriptProfilerLua;
 
-/*! \brief LUA script manager.
+/*! LUA script manager.
  * \ingroup LUA Script
  */
 class T_DLLCLASS ScriptManagerLua : public IScriptManager

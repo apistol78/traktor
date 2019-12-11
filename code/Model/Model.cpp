@@ -16,7 +16,7 @@ namespace traktor
 		namespace
 		{
 
-/*! \brief Return true if a replacing vertex match or "exceed" an existing vertex. */
+/*! Return true if a replacing vertex match or "exceed" an existing vertex. */
 bool shouldReplace(const Vertex& existing, const Vertex& replaceWith)
 {
 	if (

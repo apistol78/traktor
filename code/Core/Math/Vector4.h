@@ -16,7 +16,7 @@
 namespace traktor
 {
 
-/*! \brief 4d vector.
+/*! 4d vector.
  * \ingroup Core
  */
 class T_MATH_ALIGN16 T_DLLCLASS Vector4

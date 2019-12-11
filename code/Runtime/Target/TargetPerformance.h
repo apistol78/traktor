@@ -15,7 +15,7 @@ namespace traktor
 	namespace runtime
 	{
 
-/*! \brief Target performance event from running target.
+/*! Target performance event from running target.
  * \ingroup Runtime
  */
 class T_DLLCLASS TargetPerformance : public ISerializable

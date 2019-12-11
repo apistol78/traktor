@@ -19,7 +19,7 @@
 namespace traktor
 {
 
-/*! \brief SAH tree.
+/*! SAH tree.
  *
  * Simple kD-tree with "surface area heuristic"
  * split determination.
@@ -78,14 +78,14 @@ public:
 
 	virtual ~SahTree();
 
-	/*! \brief Build tree from a set of polygons.
+	/*! Build tree from a set of polygons.
 	 *
 	 * \param polygons Polygon set.
 	 * \return True if built successfully.
 	 */
 	void build(const AlignedVector< Winding3 >& polygons);
 
-	/*! \brief Query for closest intersection.
+	/*! Query for closest intersection.
 	 *
 	 * \param origin Ray origin.
 	 * \param direction Ray direction.
@@ -96,7 +96,7 @@ public:
 	 */
 	bool queryClosestIntersection(const Vector4& origin, const Vector4& direction, float maxDistance, int32_t ignore, QueryResult& outResult, QueryCache& inoutCache) const;
 
-	/*! \brief Query for closest intersection.
+	/*! Query for closest intersection.
 	 *
 	 * \param origin Ray origin.
 	 * \param direction Ray direction.
@@ -108,7 +108,7 @@ public:
 		return queryClosestIntersection(origin, direction, 0.0f, -1, outResult, inoutCache);
 	}
 
-	/*! \brief Query for closest intersection.
+	/*! Query for closest intersection.
 	 *
 	 * \param origin Ray origin.
 	 * \param direction Ray direction.
@@ -119,7 +119,7 @@ public:
 		return queryClosestIntersection(origin, direction, -1, outResult, inoutCache);
 	}
 
-	/*! \brief Query for any intersection.
+	/*! Query for any intersection.
 	 *
 	 * \param origin Ray origin.
 	 * \param direction Ray direction.
@@ -129,7 +129,7 @@ public:
 	 */
 	bool queryAnyIntersection(const Vector4& origin, const Vector4& direction, float maxDistance, int32_t ignore, QueryCache& inoutCache) const;
 
-	/*! \brief Query for any intersection.
+	/*! Query for any intersection.
 	 *
 	 * \param origin Ray origin.
 	 * \param direction Ray direction.
@@ -140,7 +140,7 @@ public:
 		return queryAnyIntersection(origin, direction, maxDistance, -1, inoutCache);
 	}
 
-	/*! \brief Check if point is within winding.
+	/*! Check if point is within winding.
 	 *
 	 * \param index Index of winding.
 	 * \param position Position of point.
@@ -148,10 +148,10 @@ public:
 	 */
 	bool checkPoint(int32_t index, const Vector4& position) const;
 
-	/*! \brief Get polygons. */
+	/*! Get polygons. */
 	const AlignedVector< Winding3 >& getPolygons() const { return m_polygons; }
 
-	/*! \brief Get bounding box. */
+	/*! Get bounding box. */
 	const Aabb3& getBoundingBox() const { return m_root->aabb; }
 
 private:

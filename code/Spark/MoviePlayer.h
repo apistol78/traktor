@@ -37,7 +37,7 @@ class SpriteInstance;
 struct CallArgs;
 struct IExternalCall;
 
-/*! \brief Flash movie player.
+/*! Flash movie player.
  * \ingroup Spark
  *
  * Flash movie player is the main class used by applications
@@ -56,7 +56,7 @@ public:
 
 	virtual ~MoviePlayer();
 
-	/*! \brief Create movie player.
+	/*! Create movie player.
 	 *
 	 * \param movie Root movie.
 	 * \param width Output render width (in pixels).
@@ -66,73 +66,73 @@ public:
 	 */
 	bool create(Movie* movie, int32_t width, int32_t height, ISoundRenderer* soundRenderer);
 
-	/*! \brief Destroy resources used by movie player. */
+	/*! Destroy resources used by movie player. */
 	void destroy();
 
-	/*! \brief Goto frame and continue playing.
+	/*! Goto frame and continue playing.
 	 *
 	 * \param frame Frame number.
 	 */
 	void gotoAndPlay(uint32_t frame);
 
-	/*! \brief Goto frame and stop playing.
+	/*! Goto frame and stop playing.
 	 *
 	 * \param frame Frame number.
 	 */
 	void gotoAndStop(uint32_t frame);
 
-	/*! \brief Goto frame and continue playing.
+	/*! Goto frame and continue playing.
 	 *
 	 * \param frameLabel Frame label.
 	 * \return False if label not found.
 	 */
 	bool gotoAndPlay(const std::string& frameLabel);
 
-	/*! \brief Goto frame and stop playing.
+	/*! Goto frame and stop playing.
 	 *
 	 * \param frameLabel Frame label.
 	 * \return False if label not found.
 	 */
 	bool gotoAndStop(const std::string& frameLabel);
 
-	/*! \brief Get number of frames in root movie.
+	/*! Get number of frames in root movie.
 	 *
 	 * \return Number of frames.
 	 */
 	uint32_t getFrameCount() const;
 
-	/*! \brief Render frame. */
+	/*! Render frame. */
 	void render(MovieRenderer* movieRenderer) const;
 
-	/*! \brief Execute events in current frame. */
+	/*! Execute events in current frame. */
 	void execute(ISoundRenderer* soundRenderer);
 
-	/*! \brief Progress until next frame.
+	/*! Progress until next frame.
 	 *
 	 * \param deltaTime Time in seconds to progress movie.
 	 * \return True if new frame.
 	 */
 	bool progress(float deltaTime, ISoundRenderer* soundRenderer);
 
-	/*! \brief Post key event.
+	/*! Post key event.
 	 *
 	 * \param unicode Unicode character.
 	 */
 	void postKey(wchar_t unicode);
 
-	/*! \brief Post key down event.
+	/*! Post key down event.
 	 *
 	 * \param keyCode Key code.
 	 */
 	void postKeyDown(int32_t keyCode);
 
-	/*! \brief Post key up event.
+	/*! Post key up event.
 	 *
 	 * \param keyCode Key code.
 	 */
 	void postKeyUp(int32_t keyCode);
 
-	/*! \brief Post mouse button down event.
+	/*! Post mouse button down event.
 	 *
 	 * \param x Mouse cursor X coordinate.
 	 * \param y Mouse cursor Y coordinate.
@@ -140,7 +140,7 @@ public:
 	 */
 	void postMouseDown(int32_t x, int32_t y, int32_t button);
 
-	/*! \brief Post mouse button up event.
+	/*! Post mouse button up event.
 	 *
 	 * \param x Mouse cursor X coordinate.
 	 * \param y Mouse cursor Y coordinate.
@@ -148,7 +148,7 @@ public:
 	 */
 	void postMouseUp(int32_t x, int32_t y, int32_t button);
 
-	/*! \brief Post mouse move event.
+	/*! Post mouse move event.
 	 *
 	 * \param x Mouse cursor X coordinate.
 	 * \param y Mouse cursor Y coordinate.
@@ -156,7 +156,7 @@ public:
 	 */
 	void postMouseMove(int32_t x, int32_t y, int32_t button);
 
-	/*! \brief Post mouse wheel event.
+	/*! Post mouse wheel event.
 	 *
 	 * \param x Mouse cursor X coordinate.
 	 * \param y Mouse cursor Y coordinate.
@@ -164,14 +164,14 @@ public:
 	 */
 	void postMouseWheel(int32_t x, int32_t y, int32_t delta);
 
-	/*! \brief Post view resize event.
+	/*! Post view resize event.
 	 *
 	 * \param width New view width (in pixels).
 	 * \param height New view height (in pixels).
 	 */
 	void postViewResize(int32_t width, int32_t height);
 
-	/*! \brief Pop FS command from queue.
+	/*! Pop FS command from queue.
 	 *
 	 * \param outCommand Output FS command.
 	 * \param outArgs Output FS arguments.
@@ -179,41 +179,41 @@ public:
 	 */
 	bool getFsCommand(std::string& outCommand, std::string& outArgs);
 
-	/*! \brief Set external call interface.
+	/*! Set external call interface.
 	 */
 	void setExternalCall(IExternalCall* externalCall);
 
-	/*! \brief Dispatch callback through ExternalInterface.
+	/*! Dispatch callback through ExternalInterface.
 	 */
 	ActionValue dispatchCallback(const std::string& methodName, int32_t argc, const ActionValue* argv);
 
-	/*! \brief Get root movie instance.
+	/*! Get root movie instance.
 	 *
 	 * \return Root movie instance.
 	 */
 	SpriteInstance* getMovieInstance() const;
 
-	/*! \brief Get action virtual machine.
+	/*! Get action virtual machine.
 	 *
 	 * \return action virtual machine.
 	 */
 	const IActionVM* getVM() const;
 
-	/*! \brief Set global ActionScript value.
+	/*! Set global ActionScript value.
 	 *
 	 * \param name Name of global member.
 	 * \param value Value of global member.
 	 */
 	void setGlobal(const std::string& name, const ActionValue& value);
 
-	/*! \brief Get global ActionScript value.
+	/*! Get global ActionScript value.
 	 *
 	 * \param name Name of global member.
 	 * \return Value of global member; undefined if no such member.
 	 */
 	ActionValue getGlobal(const std::string& name) const;
 
-	/*! \brief Set GC enable/disable.
+	/*! Set GC enable/disable.
 	 */
 	void setGCEnable(bool gcEnable);
 

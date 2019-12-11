@@ -16,7 +16,7 @@ namespace traktor
 	namespace ui
 	{
 
-/*! \brief Mouse event.
+/*! Mouse event.
  * \ingroup UI
  */
 class T_DLLCLASS MouseDoubleClickEvent : public Event

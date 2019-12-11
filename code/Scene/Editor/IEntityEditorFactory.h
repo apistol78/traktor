@@ -28,13 +28,13 @@ class T_DLLCLASS IEntityEditorFactory : public Object
 	T_RTTI_CLASS;
 
 public:
-	/*! \brief Get supported set of entities.
+	/*! Get supported set of entities.
 	 *
 	 * \return Type Set of EntityData types.
 	 */
 	virtual const TypeInfoSet getEntityDataTypes() const = 0;
 
-	/*! \brief Create entity editor.
+	/*! Create entity editor.
 	 *
 	 * \param context Scene editor context.
 	 * \param entityDataType Entity data type.

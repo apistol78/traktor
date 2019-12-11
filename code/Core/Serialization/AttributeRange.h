@@ -14,7 +14,7 @@
 namespace traktor
 {
 
-/*! \brief Member numeric range attribute.
+/*! Member numeric range attribute.
  * \ingroup Core
  */
 class T_DLLCLASS AttributeRange : public Attribute

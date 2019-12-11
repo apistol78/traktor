@@ -9,7 +9,7 @@
 namespace traktor
 {
 
-/*! \brief Tension-Continuity-Bias spline evaluator.
+/*! Tension-Continuity-Bias spline evaluator.
  * \ingroup Core
  */
 template <

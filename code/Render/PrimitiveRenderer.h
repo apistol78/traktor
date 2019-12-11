@@ -42,7 +42,7 @@ class VertexBuffer;
 
 struct Vertex;
 
-/*! \brief Primitive renderer.
+/*! Primitive renderer.
  * \ingroup Render
  *
  * The primitive renderer is a helper class to render
@@ -238,6 +238,11 @@ public:
 		const Color4ub& color3,
 		const Vector4& vert4,
 		const Color4ub& color4
+	);
+
+	void drawSolidPolygon(
+		const AlignedVector< Vector4 >& vertices,
+		const Color4ub& color
 	);
 
 	void drawTextureTriangle(

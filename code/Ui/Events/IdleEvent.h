@@ -15,7 +15,7 @@ namespace traktor
 	namespace ui
 	{
 
-/*! \brief Idle event.
+/*! Idle event.
  * \ingroup UI
  */
 class T_DLLCLASS IdleEvent : public Event

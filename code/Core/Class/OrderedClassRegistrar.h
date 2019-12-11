@@ -14,7 +14,7 @@
 namespace traktor
 {
 
-/*! \brief Helper to ensure class hierarchy is preserved.
+/*! Helper to ensure class hierarchy is preserved.
  * \ingroup Core
  */
 class T_DLLCLASS OrderedClassRegistrar : public IRuntimeClassRegistrar

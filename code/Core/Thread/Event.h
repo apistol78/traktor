@@ -18,7 +18,7 @@
 namespace traktor
 {
 
-/*! \brief Thread signal event.
+/*! Thread signal event.
  * \ingroup Core
  */
 class T_DLLCLASS Event : public IWaitable

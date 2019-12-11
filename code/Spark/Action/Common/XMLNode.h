@@ -16,7 +16,7 @@ namespace traktor
 	namespace spark
 	{
 
-/*! \brief ActionScript XML node.
+/*! ActionScript XML node.
  * \ingroup Spark
  */
 class T_DLLCLASS XMLNode : public ActionObjectRelay

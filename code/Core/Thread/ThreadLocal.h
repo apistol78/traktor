@@ -5,7 +5,7 @@
 namespace traktor
 {
 
-/*! \brief Thread local storage.
+/*! Thread local storage.
  * \ingroup Core
  *
  * Provide thread unique storage of a pointer

@@ -16,7 +16,7 @@ namespace traktor
 	namespace render
 	{
 
-/*! \brief Swap render targets.
+/*! Swap render targets.
  * \ingroup Render
  */
 class T_DLLCLASS ImageProcessStepSwapTargets : public ImageProcessStep

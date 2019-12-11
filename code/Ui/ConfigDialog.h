@@ -18,7 +18,7 @@ namespace traktor
 class Button;
 class ButtonClickEvent;
 
-/*! \brief Configuration dialog.
+/*! Configuration dialog.
  * \ingroup UI
  */
 class T_DLLCLASS ConfigDialog : public Dialog

@@ -9,7 +9,7 @@ namespace traktor
 
 struct CallArgs;
 
-/*! \brief Error class.
+/*! Error class.
  * \ingroup Spark
  */
 class AsError : public ActionClass

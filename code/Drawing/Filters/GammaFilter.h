@@ -15,7 +15,7 @@ namespace traktor
 	namespace drawing
 	{
 
-/*! \brief Gamma filter.
+/*! Gamma filter.
  * \ingroup Drawing
  */
 class T_DLLCLASS GammaFilter : public IImageFilter

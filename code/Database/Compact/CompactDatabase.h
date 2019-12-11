@@ -21,7 +21,7 @@ class Path;
 class CompactContext;
 class CompactGroup;
 
-/*! \brief Compact database provider
+/*! Compact database provider
  * \ingroup Database
  */
 class T_DLLCLASS CompactDatabase : public IProviderDatabase

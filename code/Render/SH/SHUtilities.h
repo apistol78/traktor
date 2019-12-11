@@ -16,7 +16,7 @@ namespace traktor
 	namespace render
 	{
 
-/*! \brief Generate rotation SH matrix.
+/*! Generate rotation SH matrix.
  * \ingroup Render
  *
  * Generate SH rotation matrix from Cartesian rotation matrix.

@@ -15,7 +15,7 @@ namespace traktor
 	namespace render
 	{
 
-/*! \brief Vulkan program compiler.
+/*! Vulkan program compiler.
  * \ingroup Render
  */
 class T_DLLCLASS ProgramCompilerVk : public IProgramCompiler

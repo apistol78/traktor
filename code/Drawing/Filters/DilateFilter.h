@@ -15,7 +15,7 @@ namespace traktor
 	namespace drawing
 	{
 
-/*! \brief Dilate filter.
+/*! Dilate filter.
  * \ingroup Drawing
  */
 class T_DLLCLASS DilateFilter : public IImageFilter

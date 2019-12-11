@@ -9,7 +9,7 @@ namespace traktor
 	namespace physics
 	{
 
-/*! \brief Rigid body state.
+/*! Rigid body state.
  * \ingroup Physics
  */
 struct BodyState

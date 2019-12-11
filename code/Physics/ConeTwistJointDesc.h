@@ -16,7 +16,7 @@ namespace traktor
 	namespace physics
 	{
 
-/*! \brief Cone twist joint description.
+/*! Cone twist joint description.
  * \ingroup Physics
  */
 class T_DLLCLASS ConeTwistJointDesc : public JointDesc

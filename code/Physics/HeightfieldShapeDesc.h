@@ -24,7 +24,7 @@ class MaterialMask;
 	namespace physics
 	{
 
-/*! \brief Heightfield collision shape.
+/*! Heightfield collision shape.
  * \ingroup Physics
  */
 class T_DLLCLASS HeightfieldShapeDesc : public ShapeDesc

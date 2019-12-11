@@ -16,7 +16,7 @@ namespace traktor
 
 class IStream;
 
-/*! \brief Stream compare.
+/*! Stream compare.
  * \ingroup Core
  *
  * Compare feed of two streams; position of both streams

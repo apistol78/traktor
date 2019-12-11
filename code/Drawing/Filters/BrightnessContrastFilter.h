@@ -15,7 +15,7 @@ namespace traktor
 	namespace drawing
 	{
 
-/*! \brief Brightness & Contrast filter.
+/*! Brightness & Contrast filter.
  * \ingroup Drawing
  */
 class T_DLLCLASS BrightnessContrastFilter : public IImageFilter

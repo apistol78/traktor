@@ -16,7 +16,7 @@ namespace traktor
 	namespace db
 	{
 
-/*! \brief Instance base event.
+/*! Instance base event.
  * \ingroup Database
  */
 class T_DLLCLASS EvtInstance : public IEvent
@@ -26,7 +26,7 @@ class T_DLLCLASS EvtInstance : public IEvent
 public:
 	EvtInstance(const Guid& instanceGuid);
 
-	/*! \brief Instance's guid.
+	/*! Instance's guid.
 	 *
 	 * \return Instance's guid.
 	 */

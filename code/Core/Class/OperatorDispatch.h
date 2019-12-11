@@ -14,7 +14,7 @@
 namespace traktor
 {
 
-/*! \brief Operator dispatch
+/*! Operator dispatch
  * \ingroup Core
  *
  * Handle multiple dispatches for same operator.

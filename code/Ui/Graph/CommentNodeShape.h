@@ -18,7 +18,7 @@ namespace traktor
 class GraphControl;
 class IBitmap;
 
-/*! \brief Comment node shape.
+/*! Comment node shape.
  * \ingroup UI
  */
 class T_DLLCLASS CommentNodeShape : public INodeShape

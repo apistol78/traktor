@@ -10,7 +10,7 @@ namespace traktor
 	namespace script
 	{
 
-/*! \brief Script outline parser interface.
+/*! Script outline parser interface.
  * \ingroup Script
  */
 class IScriptOutline : public Object

@@ -14,7 +14,7 @@ class SolutionBuilderMsvcVCXBuildTool;
 class SolutionBuilderMsvcVCXImportCommon;
 class SolutionBuilderMsvcVCXPropertyGroup;
 
-/*! \brief Visual Studio solution project settings. */
+/*! Visual Studio solution project settings. */
 class SolutionBuilderMsvcVCXProj : public SolutionBuilderMsvcProject
 {
 	T_RTTI_CLASS;

@@ -19,7 +19,7 @@ namespace traktor
 class IStateManager;
 class UpdateInfo;
 
-/*! \brief Runtime state.
+/*! Runtime state.
  * \ingroup Runtime
  *
  * User applications implement multiple
@@ -49,13 +49,13 @@ public:
 		BrNothing = 1	//< Nothing built, fall back on default renderer.
 	};
 
-	/*! \brief Enter state. */
+	/*! Enter state. */
 	virtual void enter() = 0;
 
-	/*! \brief Leave state. */
+	/*! Leave state. */
 	virtual void leave() = 0;
 
-	/*! \brief Update state.
+	/*! Update state.
 	 *
 	 * \param stateManager State manager.
 	 * \param info Update information.
@@ -63,7 +63,7 @@ public:
 	 */
 	virtual UpdateResult update(IStateManager* stateManager, const UpdateInfo& info) = 0;
 
-	/*! \brief Build frame.
+	/*! Build frame.
 	 *
 	 * \param frame Build frame.
 	 * \param info Update information.
@@ -71,7 +71,7 @@ public:
 	 */
 	virtual BuildResult build(uint32_t frame, const UpdateInfo& info) = 0;
 
-	/*! \brief Render state.
+	/*! Render state.
 	 *
 	 * \param frame Render frame.
 	 * \param info Update information.
@@ -79,11 +79,11 @@ public:
 	 */
 	virtual bool render(uint32_t frame, const UpdateInfo& info) = 0;
 
-	/*! \brief Flush built frames.
+	/*! Flush built frames.
 	 */
 	virtual void flush() = 0;
 
-	/*! \brief Take event.
+	/*! Take event.
 	 *
 	 * \param event Event.
 	 * \return True if event handled.

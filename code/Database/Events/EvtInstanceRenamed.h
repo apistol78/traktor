@@ -15,7 +15,7 @@ namespace traktor
 	namespace db
 	{
 
-/*! \brief Instance renamed event.
+/*! Instance renamed event.
  * \ingroup Database
  */
 class T_DLLCLASS EvtInstanceRenamed : public EvtInstance
@@ -27,7 +27,7 @@ public:
 
 	EvtInstanceRenamed(const Guid& instanceGuid, const std::wstring& previousName);
 
-	/*! \brief Instance's previous name.
+	/*! Instance's previous name.
 	 *
 	 * \return Previous name of instance.
 	 */

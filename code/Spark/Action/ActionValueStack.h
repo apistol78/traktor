@@ -8,7 +8,7 @@ namespace traktor
 	namespace spark
 	{
 
-/*! \brief ActionScript value stack.
+/*! ActionScript value stack.
  * \ingroup Spark
  *
  * Only intended to be used in implementation.
@@ -22,7 +22,7 @@ public:
 	{
 	}
 
-	/*! \brief Push value onto stack.
+	/*! Push value onto stack.
 	 *
 	 * \param value Value to push.
 	 */
@@ -32,7 +32,7 @@ public:
 		m_stack[m_index++] = value;
 	}
 
-	/*! \brief Pop value of stack.
+	/*! Pop value of stack.
 	 *
 	 * \return Value.
 	 */
@@ -41,7 +41,7 @@ public:
 		return m_index > 0 ? m_stack[--m_index] : ms_undefined;
 	}
 
-	/*! \brief Peek at value on top of stack.
+	/*! Peek at value on top of stack.
 	 *
 	 * \param offset Offset from top of stack.
 	 * \return Value.
@@ -52,7 +52,7 @@ public:
 		return (index >= 0 && index < MaxStackDepth) ? m_stack[index] : ms_undefined;
 	}
 
-	/*! \brief Peek at value on top of stack.
+	/*! Peek at value on top of stack.
 	 *
 	 * \param offset Offset from top of stack.
 	 * \return Value.
@@ -63,7 +63,7 @@ public:
 		return (index >= 0 && index < MaxStackDepth) ? m_stack[index] : ms_undefined;
 	}
 
-	/*! \brief Stack empty.
+	/*! Stack empty.
 	 *
 	 * \return True if stack is empty.
 	 */
@@ -72,7 +72,7 @@ public:
 		return m_index <= 0;
 	}
 
-	/*! \brief Ensure stack contains given number of values.
+	/*! Ensure stack contains given number of values.
 	 *
 	 * \param ensureCount Number of values.
 	 */
@@ -83,7 +83,7 @@ public:
 			m_stack[m_index++] = ms_undefined;
 	}
 
-	/*! \brief Drop values from stack.
+	/*! Drop values from stack.
 	 *
 	 * \param dropCount Number of values to drop.
 	 */
@@ -93,7 +93,7 @@ public:
 			m_index = 0;
 	}
 
-	/*! \brief Stack depth.
+	/*! Stack depth.
 	 *
 	 * \return Depth of stack.
 	 */

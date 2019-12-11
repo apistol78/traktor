@@ -26,7 +26,7 @@ class Image;
 
 class ISystemBitmap;
 
-/*! \brief Bitmap interface.
+/*! Bitmap interface.
  * \ingroup UI
  */
 class T_DLLCLASS IBitmap : public Object

@@ -16,7 +16,7 @@ namespace traktor
 	namespace ui
 	{
 
-/*! \brief Auto property list.
+/*! Auto property list.
  * \ingroup UI
  */
 class T_DLLCLASS AutoPropertyList : public PropertyList
@@ -32,7 +32,7 @@ public:
 
 	bool apply();
 
-	/*! \brief Add object to property list.
+	/*! Add object to property list.
 	 *
 	 * Use this method when adding an object to an array item.
 	 */

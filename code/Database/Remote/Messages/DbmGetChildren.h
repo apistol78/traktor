@@ -15,7 +15,7 @@ namespace traktor
 	namespace db
 	{
 
-/*! \brief Get children.
+/*! Get children.
  * \ingroup Database
  */
 class T_DLLCLASS DbmGetChildren : public IMessage

@@ -13,7 +13,7 @@
 namespace traktor
 {
 
-/*! \brief 3D ray
+/*! 3D ray
  * \ingroup Core
  */
 class T_DLLCLASS Ray3

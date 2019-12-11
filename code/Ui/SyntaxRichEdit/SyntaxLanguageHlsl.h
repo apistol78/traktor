@@ -15,7 +15,7 @@ namespace traktor
 	namespace ui
 	{
 
-/*! \brief Syntax highlight HLSL or CG language.
+/*! Syntax highlight HLSL or CG language.
  * \ingroup UI
  */
 class T_DLLCLASS SyntaxLanguageHlsl : public SyntaxLanguage

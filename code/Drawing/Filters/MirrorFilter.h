@@ -15,7 +15,7 @@ namespace traktor
 	namespace drawing
 	{
 
-/*! \brief Mirror image filter.
+/*! Mirror image filter.
  * \ingroup Drawing
  *
  * Flip image horizontally and/or vertically.

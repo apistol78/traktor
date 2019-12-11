@@ -15,7 +15,7 @@ namespace traktor
 	namespace spray
 	{
 
-/*! \brief Integrate modifier persistent data.
+/*! Integrate modifier persistent data.
  * \ingroup Spray
  */
 class T_DLLCLASS IntegrateModifierData : public ModifierData

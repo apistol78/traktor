@@ -19,7 +19,7 @@ namespace traktor
 
 class IEntityRenderer;
 
-/*! \brief World entity renderers.
+/*! World entity renderers.
  * \ingroup World
  */
 class T_DLLCLASS WorldEntityRenderers : public Object

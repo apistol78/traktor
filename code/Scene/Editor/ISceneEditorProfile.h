@@ -66,7 +66,7 @@ class ISceneEditorPlugin;
 class ISceneControllerEditorFactory;
 class IEntityEditorFactory;
 
-/*! \brief Scene editor profile.
+/*! Scene editor profile.
  * \ingroup Scene
  *
  * Profiles are instantiated automatically by the
@@ -78,7 +78,7 @@ class T_DLLCLASS ISceneEditorProfile : public Object
 	T_RTTI_CLASS;
 
 public:
-	/*! \brief Get UI commands.
+	/*! Get UI commands.
 	 *
 	 * \param outCommands Output list of commands.
 	 */
@@ -86,13 +86,13 @@ public:
 		std::list< ui::Command >& outCommands
 	) const = 0;
 
-	/*! \brief Get guide draw ids.
+	/*! Get guide draw ids.
 	 */
 	virtual void getGuideDrawIds(
 		std::set< std::wstring >& outIds
 	) const = 0;
 
-	/*! \brief Create plugins.
+	/*! Create plugins.
 	 *
 	 * \param context Scene editor context.
 	 * \param outEditorPlugins Editor plugins.
@@ -102,7 +102,7 @@ public:
 		RefArray< ISceneEditorPlugin >& outEditorPlugins
 	) const = 0;
 
-	/*! \brief Create resource factories.
+	/*! Create resource factories.
 	 *
 	 * \param context Scene editor context.
 	 * \param outResourceFactories Output array of resource factories.
@@ -112,7 +112,7 @@ public:
 		RefArray< const resource::IResourceFactory >& outResourceFactories
 	) const = 0;
 
-	/*! \brief Create entity factories.
+	/*! Create entity factories.
 	 *
 	 * \param context Scene editor context.
 	 * \param outEntityFactories Output array of entity factories.
@@ -122,7 +122,7 @@ public:
 		RefArray< const world::IEntityFactory >& outEntityFactories
 	) const = 0;
 
-	/*! \brief Create entity renderers.
+	/*! Create entity renderers.
 	 *
 	 * \param context Scene editor context.
 	 * \param renderView Scene editor render view.
@@ -136,7 +136,7 @@ public:
 		RefArray< world::IEntityRenderer >& outEntityRenderers
 	) const = 0;
 
-	/*! \brief Create scene controller editor factories.
+	/*! Create scene controller editor factories.
 	 *
 	 * \param context Scene editor context.
 	 * \param outControllerEditorFactories Scene controller editor factories.
@@ -146,7 +146,7 @@ public:
 		RefArray< const ISceneControllerEditorFactory >& outControllerEditorFactories
 	) const = 0;
 
-	/*! \brief Create entity editor factories.
+	/*! Create entity editor factories.
 	 *
 	 * \param context Scene editor context.
 	 * \param outEntityEditorFactories Entity editor factories.
@@ -156,7 +156,7 @@ public:
 		RefArray< const IEntityEditorFactory >& outEntityEditorFactories
 	) const = 0;
 
-	/*! \brief Create entity component editor factories.
+	/*! Create entity component editor factories.
 	 *
 	 * \param context Scene editor context.
 	 * \param outComponentEditorFactories Component editor factories.
@@ -166,7 +166,7 @@ public:
 		RefArray< const IComponentEditorFactory >& outComponentEditorFactories
 	) const = 0;
 
-	/*! \brief Create entity from database instance.
+	/*! Create entity from database instance.
 	 *
 	 * \param instance Database instance.
 	 * \return Entity data from instance.
@@ -176,7 +176,7 @@ public:
 		db::Instance* instance
 	) const = 0;
 
-	/*! \brief Get debug targets.
+	/*! Get debug targets.
 	 */
 	virtual void getDebugTargets(
 		SceneEditorContext* context,

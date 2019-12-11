@@ -26,7 +26,7 @@ class Static;
 	namespace scene
 	{
 
-/*! \brief Scene editor settings page.
+/*! Scene editor settings page.
  * \ingroup Scene
  */
 class SceneEditorSettingsPage : public editor::ISettingsPage

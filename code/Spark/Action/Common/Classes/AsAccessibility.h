@@ -9,7 +9,7 @@ namespace traktor
 
 struct CallArgs;
 
-/*! \brief Accessibility class.
+/*! Accessibility class.
  * \ingroup Spark
  */
 class AsAccessibility : public ActionObject

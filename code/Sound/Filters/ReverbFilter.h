@@ -15,7 +15,7 @@ namespace traktor
 	namespace sound
 	{
 
-/*! \brief Reverb filter.
+/*! Reverb filter.
  * \ingroup Sound
  */
 class T_DLLCLASS ReverbFilter : public IFilter

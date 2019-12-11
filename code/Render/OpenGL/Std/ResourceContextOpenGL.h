@@ -8,7 +8,7 @@ namespace traktor
 	namespace render
 	{
 
-/*! \brief OpenGL resource context.
+/*! OpenGL resource context.
  * \ingroup OGL
  */
 class ResourceContextOpenGL : public ContextOpenGL
@@ -16,7 +16,7 @@ class ResourceContextOpenGL : public ContextOpenGL
 	T_RTTI_CLASS;
 
 public:
-	/*! \brief Delete callback.
+	/*! Delete callback.
 	 * \ingroup OGL
 	 *
 	 * These are enqueued in the context

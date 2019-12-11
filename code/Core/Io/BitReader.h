@@ -16,7 +16,7 @@ namespace traktor
 
 class IStream;
 
-/*! \brief Bit stream reader.
+/*! Bit stream reader.
  * \ingroup Core
  *
  * Used to read individual bits from any stream.
@@ -31,46 +31,46 @@ class T_DLLCLASS BitReader : public Object
 public:
 	BitReader(IStream* stream);
 
-	/*! \brief Read single bit from stream. */
+	/*! Read single bit from stream. */
 	bool readBit();
 
-	/*! \brief Read variable bit-length unsigned number from stream. */
+	/*! Read variable bit-length unsigned number from stream. */
 	uint32_t readUnsigned(int nbits);
 
-	/*! \brief Read variable bit-length signed number from stream. */
+	/*! Read variable bit-length signed number from stream. */
 	int32_t readSigned(int nbits);
 
-	/*! \brief Read signed 8 bit number. */
+	/*! Read signed 8 bit number. */
 	int8_t readInt8();
 
-	/*! \brief Read unsigned 8 bit number. */
+	/*! Read unsigned 8 bit number. */
 	uint8_t readUInt8();
 
-	/*! \brief Read signed 16 bit number. */
+	/*! Read signed 16 bit number. */
 	int16_t readInt16();
 
-	/*! \brief Read unsigned 16 bit number. */
+	/*! Read unsigned 16 bit number. */
 	uint16_t readUInt16();
 
-	/*! \brief Read signed 32 bit number. */
+	/*! Read signed 32 bit number. */
 	int32_t readInt32();
 
-	/*! \brief Read unsigned 8 bit number. */
+	/*! Read unsigned 8 bit number. */
 	uint32_t readUInt32();
 
-	/*! \brief Align stream to next byte boundary. */
+	/*! Align stream to next byte boundary. */
 	void alignByte();
 
-	/*! \brief Return current bit position. */
+	/*! Return current bit position. */
 	uint32_t tell() const;
 
-	/*! \brief Skip given number of bits. */
+	/*! Skip given number of bits. */
 	void skip(uint32_t nbits);
 
-	/*! \brief Check if end-of-stream has been reached. */
+	/*! Check if end-of-stream has been reached. */
 	bool eos() const;
 
-	/*! \brief Get reference to underlying stream. */
+	/*! Get reference to underlying stream. */
 	Ref< IStream > getStream();
 
 private:

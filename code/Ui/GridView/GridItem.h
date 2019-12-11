@@ -19,7 +19,7 @@ class Font;
 class GridRow;
 class IBitmap;
 
-/*! \brief Grid item.
+/*! Grid item.
  * \ingroup UI
  */
 class T_DLLCLASS GridItem : public AutoWidgetCell

@@ -9,7 +9,7 @@ namespace traktor
 
 class Context;
 
-/*! \brief Transaction action.
+/*! Transaction action.
  * \ingroup Database
  */
 class Action : public Object

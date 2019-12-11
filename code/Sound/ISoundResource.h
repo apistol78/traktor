@@ -32,7 +32,7 @@ class IResourceManager;
 
 class Sound;
 
-/*! \brief Sound resource.
+/*! Sound resource.
  * \ingroup Sound
  */
 class T_DLLCLASS ISoundResource : public ISerializable

@@ -15,7 +15,7 @@ namespace traktor
 	namespace drawing
 	{
 
-/*! \brief GIF format.
+/*! GIF format.
  * \ingroup Drawing
  */
 class T_DLLCLASS ImageFormatGif : public IImageFormat

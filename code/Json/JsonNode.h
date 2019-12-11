@@ -18,7 +18,7 @@ class OutputStream;
 	namespace json
 	{
 
-/*! \brief JSON abstract node.
+/*! JSON abstract node.
  * \ingroup JSON
  */
 class T_DLLCLASS JsonNode : public Object
@@ -26,7 +26,7 @@ class T_DLLCLASS JsonNode : public Object
 	T_RTTI_CLASS;
 
 public:
-	/*! \brief Write JSON respresentation of node into stream.
+	/*! Write JSON respresentation of node into stream.
 	 *
 	 * \param os Output stream.
 	 * \return True if successfully written.

@@ -15,7 +15,7 @@ class ListBox;
 	namespace editor
 	{
 
-/*! \brief Interface for settings pages.
+/*! Interface for settings pages.
  * \ingroup Editor
  */
 class ModulesSettingsPage : public ISettingsPage

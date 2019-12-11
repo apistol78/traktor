@@ -22,7 +22,7 @@ class HierarchicalState;
 class PropertyItem;
 class ScrollBar;
 
-/*! \brief Property list control.
+/*! Property list control.
  * \ingroup UI
  */
 class T_DLLCLASS PropertyList : public Widget

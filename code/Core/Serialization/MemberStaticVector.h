@@ -10,7 +10,7 @@ namespace traktor
 /*! \ingroup Core */
 //@{
 
-/*! \brief Static vector member. */
+/*! Static vector member. */
 template < typename ValueType, int Capacity, typename ValueMember = Member< ValueType > >
 class MemberStaticVector : public MemberArray
 {

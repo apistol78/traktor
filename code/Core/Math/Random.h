@@ -13,7 +13,7 @@
 namespace traktor
 {
 
-/*! \brief Random number generator.
+/*! Random number generator.
  * \ingroup Core
  *
  * A random number generator class based on the

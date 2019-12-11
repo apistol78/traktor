@@ -13,7 +13,7 @@
 namespace traktor
 {
 
-/*! \brief SHA-1 hash.
+/*! SHA-1 hash.
  * \ingroup Core
  */
 class T_DLLCLASS SHA1 : public IHash
@@ -27,20 +27,20 @@ public:
 
 	bool createFromString(const std::wstring& str);
 
-	/*! \brief Begin feeding data for SHA1 checksum calculation. */
+	/*! Begin feeding data for SHA1 checksum calculation. */
 	virtual void begin() override final;
 
-	/*! \brief Feed data to SHA1 checksum calculation.
+	/*! Feed data to SHA1 checksum calculation.
 	 *
 	 * \param buffer Pointer to data.
 	 * \param bufferSize Amount of data in bytes.
 	 */
 	virtual void feed(const void* buffer, uint64_t bufferSize) override final;
 
-	/*! \brief End feeding data for SHA1 checksum calculation. */
+	/*! End feeding data for SHA1 checksum calculation. */
 	virtual void end() override final;
 
-	/*! \brief Format MD5 checksum as string. */
+	/*! Format MD5 checksum as string. */
 	std::wstring format() const;
 
 private:

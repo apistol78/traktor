@@ -20,7 +20,7 @@ class Edit;
 class TextFormat;
 class TextLayout;
 
-/*! \brief Dynamic text character instance.
+/*! Dynamic text character instance.
  * \ingroup Spark
  */
 class T_DLLCLASS EditInstance : public CharacterInstance
@@ -30,88 +30,88 @@ class T_DLLCLASS EditInstance : public CharacterInstance
 public:
 	EditInstance(ActionContext* context, Dictionary* dictionary, CharacterInstance* parent, const Edit* edit, const std::wstring& html);
 
-	/*! \brief Get edit character. */
+	/*! Get edit character. */
 	const Edit* getEdit() const { return m_edit; }
 
-	/*! \brief Parse text. */
+	/*! Parse text. */
 	bool parseText(const std::wstring& text);
 
-	/*! \brief Parse html formatted text. */
+	/*! Parse html formatted text. */
 	bool parseHtml(const std::wstring& html);
 
-	/*! \brief Measure text (without replacing) using edit field's format. */
+	/*! Measure text (without replacing) using edit field's format. */
 	Vector2 measureText(const std::wstring& text) const;
 
-	/*! \brief Measure text (without replacing) using edit field's format. */
+	/*! Measure text (without replacing) using edit field's format. */
 	Vector2 measureText(const std::wstring& text, float width) const;
 
-	/*! \brief Set text bounds. */
+	/*! Set text bounds. */
 	void setTextBounds(const Aabb2& textBounds);
 
-	/*! \brief Get text bounds. */
+	/*! Get text bounds. */
 	const Aabb2& getTextBounds() const { return m_textBounds; }
 
-	/*! \brief Set text color. */
+	/*! Set text color. */
 	void setTextColor(const Color4f& textColor);
 
-	/*! \brief Get text color. */
+	/*! Get text color. */
 	const Color4f& getTextColor() const { return m_textColor; }
 
-	/*! \brief Set letter spacing. */
+	/*! Set letter spacing. */
 	void setLetterSpacing(float letterSpacing);
 
-	/*! \brief Get letter spacing. */
+	/*! Get letter spacing. */
 	float getLetterSpacing() const { return m_letterSpacing; }
 
-	/*! \brief Set text format. */
+	/*! Set text format. */
 	void setTextFormat(const TextFormat* textFormat);
 
-	/*! \brief Get text format. */
+	/*! Get text format. */
 	Ref< TextFormat > getTextFormat() const;
 
-	/*! \brief Set text format on text range. */
+	/*! Set text format on text range. */
 	void setTextFormat(const TextFormat* textFormat, int32_t beginIndex, int32_t endIndex);
 
-	/*! \brief Get text format from text range. */
+	/*! Get text format from text range. */
 	Ref< TextFormat > getTextFormat(int32_t beginIndex, int32_t endIndex) const;
 
-	/*! \brief Get text. */
+	/*! Get text. */
 	const std::wstring& getText() const { return m_text; }
 
-	/*! \brief Get html formatted text. */
+	/*! Get html formatted text. */
 	const std::wstring& getHtmlText() const;
 
-	/*! \brief Set multiline. */
+	/*! Set multiline. */
 	void setMultiLine(bool multiLine);
 
-	/*! \brief Get multiline. */
+	/*! Get multiline. */
 	bool getMultiLine() const;
 
-	/*! \brief Set word wrapping. */
+	/*! Set word wrapping. */
 	void setWordWrap(bool wordWrap);
 
-	/*! \brief Get word wrapping. */
+	/*! Get word wrapping. */
 	bool getWordWrap() const { return m_wordWrap; }
 
-	/*! \brief Set password mode. */
+	/*! Set password mode. */
 	void setPassword(bool password);
 
-	/*! \brief Get password mode. */
+	/*! Get password mode. */
 	bool getPassword() const { return m_password; }
 
-	/*! \brief Get caret position in text. */
+	/*! Get caret position in text. */
 	int32_t getCaret() const { return m_caret; }
 
-	/*! \brief Set scroll offset. */
+	/*! Set scroll offset. */
 	void setScroll(int32_t scroll);
 
-	/*! \brief Get scroll offset. */
+	/*! Get scroll offset. */
 	int32_t getScroll() const { return m_scroll; }
 
-	/*! \brief Get maximum scroll offset. */
+	/*! Get maximum scroll offset. */
 	int32_t getMaxScroll() const;
 
-	/*! \brief Prepare a text layout.
+	/*! Prepare a text layout.
 	 *
 	 * Preparing a text layout with edit field's font and attributes.
 	 * Useful for custom layout of field's content.
@@ -120,7 +120,7 @@ public:
 	 */
 	Ref< TextLayout > prepareTextLayout() const;
 
-	/*! \brief Override text layout.
+	/*! Override text layout.
 	 *
 	 * \note
 	 * Layout is modified if text is changed in this field.
@@ -129,13 +129,13 @@ public:
 	 */
 	void setTextLayout(TextLayout* layout);
 
-	/*! \brief Get current text layout. */
+	/*! Get current text layout. */
 	const TextLayout* getTextLayout() const { return m_layout; }
 
-	/*! \brief Set render clip mask enable. */
+	/*! Set render clip mask enable. */
 	void setRenderClipMask(bool renderClipMask);
 
-	/*! \brief Get render clip mask enable. */
+	/*! Get render clip mask enable. */
 	bool getRenderClipMask() const { return m_renderClipMask; }
 
 	virtual Aabb2 getBounds() const override final;

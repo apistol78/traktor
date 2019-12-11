@@ -17,7 +17,7 @@ namespace traktor
 
 class Shape;
 
-/*! \brief Flash shape instance.
+/*! Flash shape instance.
  * \ingroup Spark
  */
 class T_DLLCLASS ShapeInstance : public CharacterInstance

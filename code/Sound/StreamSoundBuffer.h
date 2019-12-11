@@ -17,7 +17,7 @@ namespace traktor
 
 class IStreamDecoder;
 
-/*! \brief Stream sound buffer.
+/*! Stream sound buffer.
  * \ingroup Sound
  */
 class T_DLLCLASS StreamSoundBuffer : public ISoundBuffer

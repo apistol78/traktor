@@ -16,7 +16,7 @@ namespace traktor
 	namespace sound
 	{
 
-/*! \brief Group filter.
+/*! Group filter.
  * \ingroup Sound
  */
 class T_DLLCLASS GroupFilter : public IFilter

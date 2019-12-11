@@ -16,7 +16,7 @@ namespace traktor
 	namespace spark
 	{
 
-/*! \brief Color transform wrapper.
+/*! Color transform wrapper.
  * \ingroup Spark
  */
 class T_DLLCLASS ColorTransform : public ActionObjectRelay

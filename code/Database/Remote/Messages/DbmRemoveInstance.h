@@ -15,7 +15,7 @@ namespace traktor
 	namespace db
 	{
 
-/*! \brief Remove instance.
+/*! Remove instance.
  * \ingroup Database
  */
 class T_DLLCLASS DbmRemoveInstance : public IMessage

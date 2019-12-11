@@ -15,7 +15,7 @@
 namespace traktor
 {
 
-/*! \brief Compare string with wild-card matching.
+/*! Compare string with wild-card matching.
  * \ingroup Core
  */
 class T_DLLCLASS WildCompare
@@ -29,10 +29,10 @@ public:
 
 	WildCompare(const std::wstring& mask);
 
-	/*! \brief Match string with wild-card pattern. */
+	/*! Match string with wild-card pattern. */
 	bool match(const std::wstring& str, CompareMode mode = CmIgnoreCase, std::vector< std::wstring >* outPieces = 0) const;
 
-	/*! \brief Insert string pieces at wild-card tokens */
+	/*! Insert string pieces at wild-card tokens */
 	std::wstring merge(const std::vector< std::wstring >& pieces) const;
 
 private:

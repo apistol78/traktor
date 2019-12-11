@@ -17,7 +17,7 @@ namespace traktor
 
 class EditValidator;
 
-/*! \brief Text edit.
+/*! Text edit.
  * \ingroup UI
  */
 class T_DLLCLASS Edit : public Widget

@@ -18,7 +18,7 @@ namespace traktor
 
 class IGrainData;
 
-/*! \brief Bank sound resource.
+/*! Bank sound resource.
  * \ingroup Sound
  */
 class T_DLLCLASS BankResource : public ISoundResource

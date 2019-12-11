@@ -22,7 +22,7 @@ class PhysicsManager;
 	namespace runtime
 	{
 
-/*! \brief Physics server.
+/*! Physics server.
  * \ingroup Runtime
  *
  * "Physics.Type"		- Physics manager type.

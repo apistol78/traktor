@@ -17,7 +17,7 @@ namespace traktor
 
 class Image;
 
-/*! \brief Image filter base class.
+/*! Image filter base class.
  * \ingroup Drawing
  */
 class T_DLLCLASS IImageFilter : public Object

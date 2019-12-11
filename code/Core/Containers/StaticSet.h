@@ -5,7 +5,7 @@
 namespace traktor
 {
 
-/*! \brief Small static "set" container.
+/*! Small static "set" container.
  * \ingroup Core
  *
  * This container is optimized for a set

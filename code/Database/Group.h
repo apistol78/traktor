@@ -28,7 +28,7 @@ class IInstanceEventListener;
 class IProviderGroup;
 class Instance;
 
-/*! \brief Database group.
+/*! Database group.
  * \ingroup Database
  *
  * A group is just a tool to split

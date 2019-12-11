@@ -15,7 +15,7 @@ namespace traktor
 	namespace runtime
 	{
 
-/*! \brief Abstract target action class.
+/*! Abstract target action class.
  * \ingroup Runtime
  */
 class T_DLLCLASS ITargetAction : public Object

@@ -20,7 +20,7 @@ class ISimpleTexture;
 class AccBitmapRect;
 class FillStyle;
 
-/*! \brief Gradient cache for accelerated rendering.
+/*! Gradient cache for accelerated rendering.
  * \ingroup Spark
  */
 class AccGradientCache : public Object

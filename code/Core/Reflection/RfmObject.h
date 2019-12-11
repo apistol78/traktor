@@ -16,7 +16,7 @@ namespace traktor
 
 class ISerializable;
 
-/*! \brief Reflected object member.
+/*! Reflected object member.
  * \ingroup Core
  */
 class T_DLLCLASS RfmObject : public ReflectionMember

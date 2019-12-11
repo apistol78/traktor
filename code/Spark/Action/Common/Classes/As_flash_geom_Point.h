@@ -9,7 +9,7 @@ namespace traktor
 
 struct CallArgs;
 
-/*! \brief Point class.
+/*! Point class.
  * \ingroup Spark
  */
 class As_flash_geom_Point : public ActionClass

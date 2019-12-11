@@ -16,7 +16,7 @@ namespace traktor
 	namespace runtime
 	{
 
-/*! \brief Application generic command events.
+/*! Application generic command events.
  * \ingroup Runtime
  *
  * These events are sent remotely from the editor to the

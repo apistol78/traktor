@@ -38,7 +38,7 @@ class FillStyle;
 class LineStyle;
 class Shape;
 
-/*! \brief Accelerated shape.
+/*! Accelerated shape.
  * \ingroup Spark
  */
 class AccShape : public Object

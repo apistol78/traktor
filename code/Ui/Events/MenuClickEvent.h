@@ -18,7 +18,7 @@ namespace traktor
 
 class MenuItem;
 
-/*! \brief Menu click event.
+/*! Menu click event.
  * \ingroup UI
  */
 class T_DLLCLASS MenuClickEvent : public Event

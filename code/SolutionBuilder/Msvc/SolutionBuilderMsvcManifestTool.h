@@ -10,7 +10,7 @@ namespace traktor
 
 class ProjectItem;
 
-/*! \brief Visual Studio manifest tool. */
+/*! Visual Studio manifest tool. */
 class SolutionBuilderMsvcManifestTool : public SolutionBuilderMsvcTool
 {
 	T_RTTI_CLASS;

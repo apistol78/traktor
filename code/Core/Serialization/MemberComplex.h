@@ -16,7 +16,7 @@ namespace traktor
 class Attribute;
 class ISerializer;
 
-/*! \brief Complex member base.
+/*! Complex member base.
  * \ingroup Core
  */
 class T_DLLCLASS MemberComplex
@@ -28,13 +28,13 @@ public:
 
 	virtual ~MemberComplex();
 
-	/*! \brief Get member name.
+	/*! Get member name.
 	 *
 	 * \return Member name.
 	 */
 	const wchar_t* const getName() const { return m_name; }
 
-	/*! \brief Get member attributes.
+	/*! Get member attributes.
 	 *
 	 * Get member attributes if applicable.
 	 *
@@ -42,7 +42,7 @@ public:
 	 */
 	const Attribute* getAttributes() const { return m_attributes; }
 
-	/*! \brief Check if member is compound.
+	/*! Check if member is compound.
 	 *
 	 * \return True if member is compound.
 	 */

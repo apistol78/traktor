@@ -12,7 +12,7 @@ class CompactContext;
 class CompactGroupEntry;
 class CompactInstance;
 
-/*! \brief Compact group
+/*! Compact group
  * \ingroup Database
  */
 class CompactGroup : public IProviderGroup

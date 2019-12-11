@@ -40,82 +40,82 @@ class T_DLLCLASS Node : public ISerializable
 public:
 	Node();
 
-	/*! \brief Set node instance id.
+	/*! Set node instance id.
 	 *
 	 * \return Instance id.
 	 */
 	void setId(const Guid& instanceId);
 
-	/*! \brief Get node instance id.
+	/*! Get node instance id.
 	 *
 	 * \return Instance id.
 	 */
 	const Guid& getId() const;
 
-	/*! \brief Set comment.
+	/*! Set comment.
 	 *
 	 * \param comment New comment.
 	 */
 	void setComment(const std::wstring& comment);
 
-	/*! \brief Get comment.
+	/*! Get comment.
 	 *
 	 * \return Comment.
 	 */
 	const std::wstring& getComment() const;
 
-	/*! \brief Get information.
+	/*! Get information.
 	 *
 	 * \return Information.
 	 */
 	virtual std::wstring getInformation() const;
 
-	/*! \brief Set position.
+	/*! Set position.
 	 *
 	 * \param position New position.
 	 */
 	void setPosition(const std::pair< int, int >& position);
 
-	/*! \brief Get position.
+	/*! Get position.
 	 *
 	 * \return Position.
 	 */
 	const std::pair< int, int >& getPosition() const;
 
-	/*! \brief Get number of input pins.
+	/*! Get number of input pins.
 	 *
 	 * \return Number of input pins.
 	 */
 	virtual size_t getInputPinCount() const = 0;
 
-	/*! \brief Get input pin.
+	/*! Get input pin.
 	 *
 	 * \param index Index of input pin.
 	 * \return Pointer to input pin, null if no such input pin.
 	 */
 	virtual const InputPin* getInputPin(size_t index) const = 0;
 
-	/*! \brief Get number of output pins.
+	/*! Get number of output pins.
 	 *
 	 * \return Number of output pins.
 	 */
 	virtual size_t getOutputPinCount() const = 0;
 
-	/*! \brief Get output pin.
+	/*! Get output pin.
 	 *
 	 * \param index Index of output pin.
 	 * \return Pointer to output pin, null if no such output pin.
 	 */
 	virtual const OutputPin* getOutputPin(size_t index) const = 0;
 
-	/*! \brief Find input pin by name.
+	/*! Find input pin by name.
 	 *
 	 * \param name Name of input pin.
 	 * \return Pointer to input pin, null if no such input pin.
 	 */
 	const InputPin* findInputPin(const std::wstring& name) const;
 
-	/*! \brief Find output pin by name.
+	/*! Find output pin by name.
 	 *
 	 * \param name Name of output pin.
 	 * \return Pointer to output pin, null if no such output pin.

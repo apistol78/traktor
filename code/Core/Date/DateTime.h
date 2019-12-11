@@ -14,7 +14,7 @@
 namespace traktor
 {
 
-/*! \brief Date and time class.
+/*! Date and time class.
  * \ingroup Core
  */
 class T_DLLCLASS DateTime : public ISerializable
@@ -24,13 +24,13 @@ class T_DLLCLASS DateTime : public ISerializable
 public:
 	DateTime();
 
-	/*! \brief Initialize DateTime object from seconds since the Epoch.
+	/*! Initialize DateTime object from seconds since the Epoch.
 	 *
 	 * \param seconds Seconds since the Epoch 1970-01-01 00:00:00 UTC.
 	 */
 	DateTime(uint64_t seconds);
 
-	/*! \brief Initialize DateTime object with given date.
+	/*! Initialize DateTime object with given date.
 	 *
 	 * \param year Fully qualified year.
 	 * \param month Month (1 - 12).
@@ -41,43 +41,43 @@ public:
 	 */
 	DateTime(uint16_t year, uint8_t month, uint16_t day, uint8_t hour, uint8_t minute, uint8_t second);
 
-	/*! \brief Return current date. */
+	/*! Return current date. */
 	static DateTime now();
 
-	/*! \brief Parse date; must conform to ISO 8601. */
+	/*! Parse date; must conform to ISO 8601. */
 	static DateTime parse(const std::wstring& str);
 
-	/*! \brief Return year. */
+	/*! Return year. */
 	uint16_t getYear() const;
 
-	/*! \brief Return month (1 - 12). */
+	/*! Return month (1 - 12). */
 	uint8_t getMonth() const;
 
-	/*! \brief Return day of month (1 - 31). */
+	/*! Return day of month (1 - 31). */
 	uint8_t getDay() const;
 
-	/*! \brief Return week day (0 = Sunday). */
+	/*! Return week day (0 = Sunday). */
 	uint8_t getWeekDay() const;
 
-	/*! \brief Return day of year (1 - 366). */
+	/*! Return day of year (1 - 366). */
 	uint16_t getYearDay() const;
 
-	/*! \brief Return true if current year is a leap year. */
+	/*! Return true if current year is a leap year. */
 	bool isLeapYear() const;
 
-	/*! \brief Return hour (0 - 23). */
+	/*! Return hour (0 - 23). */
 	uint8_t getHour() const;
 
-	/*! \brief Return minute (0 - 59). */
+	/*! Return minute (0 - 59). */
 	uint8_t getMinute() const;
 
-	/*! \brief Return second (0 - 59). */
+	/*! Return second (0 - 59). */
 	uint8_t getSecond() const;
 
-	/*! \brief Return seconds since the Epoch. */
+	/*! Return seconds since the Epoch. */
 	uint64_t getSecondsSinceEpoch() const;
 
-	/*! \brief Format as string.
+	/*! Format as string.
 	 *
 	 * See strftime for further information.
 	 *
@@ -85,10 +85,10 @@ public:
 	 */
 	std::wstring format(const std::wstring& fmt) const;
 
-	/*! \brief Implicit convert to epoch. */
+	/*! Implicit convert to epoch. */
 	operator uint64_t () const;
 
-	/*! \brief Serialize object. */
+	/*! Serialize object. */
 	virtual void serialize(ISerializer& s) override final;
 
 private:

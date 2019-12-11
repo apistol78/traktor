@@ -15,7 +15,7 @@ namespace traktor
 	namespace physics
 	{
 
-/*! \brief Joint description.
+/*! Joint description.
  * \ingroup Physics
  */
 class T_DLLCLASS JointDesc : public ISerializable

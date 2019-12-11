@@ -15,7 +15,7 @@ namespace traktor
 
 class ReflectionMember;
 
-/*! \brief Reflection member query predicate.
+/*! Reflection member query predicate.
  * \ingroup Core
  */
 class T_DLLCLASS ReflectionMemberPredicate : public Object

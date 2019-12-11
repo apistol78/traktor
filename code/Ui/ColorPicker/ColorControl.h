@@ -24,7 +24,7 @@ class Image;
 
 class Bitmap;
 
-/*! \brief Color static control.
+/*! Color static control.
  * \ingroup UI
  */
 class T_DLLCLASS ColorControl : public Widget

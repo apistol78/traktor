@@ -37,7 +37,7 @@ class IResourceManager;
 
 class IMesh;
 
-/*! \brief Mesh resource.
+/*! Mesh resource.
  *
  * Base class for all mesh resources.
  */

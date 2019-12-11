@@ -42,7 +42,7 @@ class IWorldRenderPass;
 
 class IMeshParameterCallback;
 
-/*! \brief Blend mesh
+/*! Blend mesh
  * \ingroup Mesh
  *
  * A blend mesh is mesh which is calculated

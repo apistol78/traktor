@@ -16,7 +16,7 @@ namespace traktor
 	namespace ui
 	{
 
-/*! \brief Tool bar button.
+/*! Tool bar button.
  * \ingroup UI
  */
 class T_DLLCLASS ToolBarButton : public ToolBarItem

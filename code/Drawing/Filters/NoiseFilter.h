@@ -15,7 +15,7 @@ namespace traktor
 	namespace drawing
 	{
 
-/*! \brief Noise filter filter.
+/*! Noise filter filter.
  * \ingroup Drawing
  */
 class T_DLLCLASS NoiseFilter : public IImageFilter

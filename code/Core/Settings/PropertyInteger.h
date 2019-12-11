@@ -13,7 +13,7 @@
 namespace traktor
 {
 
-/*! \brief Integer property value.
+/*! Integer property value.
  * \ingroup Core
  */
 class T_DLLCLASS PropertyInteger : public IPropertyValue

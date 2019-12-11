@@ -16,7 +16,7 @@ namespace traktor
 	namespace spark
 	{
 
-/*! \brief ActionScript string wrapper.
+/*! ActionScript string wrapper.
  * \ingroup Spark
  */
 class T_DLLCLASS String : public ActionObjectRelay

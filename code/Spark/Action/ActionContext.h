@@ -25,7 +25,7 @@ class SpriteInstance;
 class ICharacterFactory;
 class IMovieLoader;
 
-/*! \brief ActionScript execution context.
+/*! ActionScript execution context.
  * \ingroup Spark
  */
 class T_DLLCLASS ActionContext : public Collectable

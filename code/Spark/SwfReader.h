@@ -22,7 +22,7 @@ class PoolAllocator;
 	namespace spark
 	{
 
-/*! \brief SWF type reader.
+/*! SWF type reader.
  * \ingroup Spark
  *
  * This class holds a temporary pool of allocated
@@ -36,67 +36,67 @@ class T_DLLCLASS SwfReader : public Object
 public:
 	SwfReader(IStream* stream);
 
-	/*! \brief Enter allocation scope. */
+	/*! Enter allocation scope. */
 	void enterScope();
 
-	/*! \brief Leave allocation scope. */
+	/*! Leave allocation scope. */
 	void leaveScope();
 
-	/*! \brief Read header.
+	/*! Read header.
 	 *
 	 * \return SWF header, null if failed.
 	 */
 	SwfHeader* readHeader();
 
-	/*! \brief Read tag.
+	/*! Read tag.
 	 *
 	 * \return SWF tag, null if failed.
 	 */
 	SwfTag* readTag();
 
-	/*! \brief Read gradient record.
+	/*! Read gradient record.
 	 *
 	 * \param shapeType Type of shape record.
 	 * \return Gradient record, null if failed.
 	 */
 	SwfGradientRecord* readGradientRecord(int shapeType);
 
-	/*! \brief Read gradient.
+	/*! Read gradient.
 	 *
 	 * \param shapeType Type of shape record.
 	 * \return Gradient, null if failed.
 	 */
 	SwfGradient* readGradient(int shapeType);
 
-	/*! \brief Read focal gradient.
+	/*! Read focal gradient.
 	 *
 	 * \param shapeType Type of shape record.
 	 * \return Gradient, null if failed.
 	 */
 	SwfGradient* readFocalGradient(int shapeType);
 
-	/*! \brief Read fill style.
+	/*! Read fill style.
 	 *
 	 * \param shapeType Type of shape record.
 	 * \return Fill style, null if failed.
 	 */
 	SwfFillStyle* readFillStyle(int shapeType);
 
-	/*! \brief Read line style.
+	/*! Read line style.
 	 *
 	 * \param shapeType Type of shape record.
 	 * \return Line style, null if failed.
 	 */
 	SwfLineStyle* readLineStyle(int shapeType);
 
-	/*! \brief Read styles.
+	/*! Read styles.
 	 *
 	 * \param shapeType Type of shape record.
 	 * \return Styles, null if failed.
 	 */
 	SwfStyles* readStyles(int shapeType);
 
-	/*! \brief Read morph gradient record.
+	/*! Read morph gradient record.
 	 *
 	 * \param outStartGradientRecord Start morph gradient record.
 	 * \param outEndGradientRecord End morph gradient record.
@@ -124,7 +124,7 @@ public:
 
 	bool readFilterList(AlignedVector< SwfFilter* >& outFilterList);
 
-	/*! \brief Read sound.
+	/*! Read sound.
 	 */
 	SwfSoundInfo* readSoundInfo();
 

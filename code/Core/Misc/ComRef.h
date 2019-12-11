@@ -5,7 +5,7 @@
 namespace traktor
 {
 
-/*! \brief ActiveX/COM object reference container.
+/*! ActiveX/COM object reference container.
  * \ingroup Core
  *
  * Handles automatic reference counting of IUnknown objects.
@@ -95,7 +95,7 @@ private:
 	T* m_ptr;
 };
 
-/*! \brief ActiveX/COM object array reference container.
+/*! ActiveX/COM object array reference container.
  * \ingroup Core
  *
  * Handles automatic reference counting of IUnknown objects.

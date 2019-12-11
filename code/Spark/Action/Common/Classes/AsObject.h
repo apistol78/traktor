@@ -17,7 +17,7 @@ namespace traktor
 
 struct CallArgs;
 
-/*! \brief Object class.
+/*! Object class.
  * \ingroup Spark
  */
 class T_DLLCLASS AsObject : public ActionClass

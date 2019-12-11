@@ -17,7 +17,7 @@ namespace traktor
 
 class IState;
 
-/*! \brief State manager.
+/*! State manager.
  * \ingroup Runtime
  *
  * The state manager interface, it provide
@@ -29,7 +29,7 @@ class T_DLLCLASS IStateManager : public Object
 	T_RTTI_CLASS;
 
 public:
-	/*! \brief Enter state transition.
+	/*! Enter state transition.
 	 *
 	 * \param state New state.
 	 */

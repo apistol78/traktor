@@ -25,7 +25,7 @@ class ActionContext;
 class Dictionary;
 class IActionVMImage;
 
-/*! \brief Character instance.
+/*! Character instance.
  * \ingroup Spark
  */
 #if defined (_MSC_VER)
@@ -45,117 +45,117 @@ public:
 
 	virtual ~CharacterInstance();
 
-	/*! \brief Get character instance count. */
+	/*! Get character instance count. */
 	static int32_t getInstanceCount();
 
-	/*! \brief Destroy instance. */
+	/*! Destroy instance. */
 	virtual void destroy();
 
-	/*! \brief Get ActionScript execution context.
+	/*! Get ActionScript execution context.
 	 *
 	 * \return ActionScript context.
 	 */
 	ActionContext* getContext() const { return m_context; }
 
-	/*! \brief Get dictionary.
+	/*! Get dictionary.
 	 *
 	 * \return Dictionary.
 	 */
 	Dictionary* getDictionary() const { return m_dictionary; }
 
-	/*! \brief Set parent instance.
+	/*! Set parent instance.
 	 */
 	void setParent(CharacterInstance* parent);
 
-	/*! \brief Get parent instance.
+	/*! Get parent instance.
 	 *
 	 * \return Parent instance.
 	 */
 	CharacterInstance* getParent() const { return m_parent; }
 
-	/*! \brief Set instance name.
+	/*! Set instance name.
 	 *
 	 * \param name New name of instance.
 	 */
 	void setName(const std::string& name);
 
-	/*! \brief Get instance name.
+	/*! Get instance name.
 	 *
 	 * \return Name of instance, empty string if not named.
 	 */
 	const std::string& getName() const;
 
-	/*! \brief Set cache object.
+	/*! Set cache object.
 	 */
 	void setCacheObject(IRefCount* cacheObject);
 
-	/*! \brief Clear cache object.
+	/*! Clear cache object.
 	 */
 	virtual void clearCacheObject();
 
-	/*! \brief Set cache object.
+	/*! Set cache object.
 	 */
 	IRefCount* getCacheObject() { return m_cacheObject; }
 
-	/*! \brief Set user defined object.
+	/*! Set user defined object.
 	 */
 	void setUserObject(IRefCount* userObject);
 
-	/*! \brief Get user defined object.
+	/*! Get user defined object.
 	 */
 	IRefCount* getUserObject() { return m_userObject; }
 
-	/*! \brief Get instance target path.
+	/*! Get instance target path.
 	 *
 	 * \return Path of instance.
 	 */
 	std::string getTarget() const;
 
-	/*! \brief Set color transform.
+	/*! Set color transform.
 	 *
 	 * \param cxform Color transform.
 	 */
 	void setColorTransform(const ColorTransform& cxform);
 
-	/*! \brief Get color transform.
+	/*! Get color transform.
 	 *
 	 * \return Color transform.
 	 */
 	const ColorTransform& getColorTransform() const { return m_cxform; }
 
-	/*! \brief Get color transform; concatenated through parents.
+	/*! Get color transform; concatenated through parents.
 	 *
 	 * \return Color transform.
 	 */
 	ColorTransform getFullColorTransform() const;
 
-	/*! \brief Set alpha value in color transform.
+	/*! Set alpha value in color transform.
 	 */
 	void setAlpha(float alpha);
 
-	/*! \brief Get alpha value from color transform.
+	/*! Get alpha value from color transform.
 	 */
 	float getAlpha() const;
 
-	/*! \brief Set coordinate transformation.
+	/*! Set coordinate transformation.
 	 *
 	 * \param transform Transformation matrix.
 	 */
 	void setTransform(const Matrix33& transform);
 
-	/*! \brief Get coordinate transformation.
+	/*! Get coordinate transformation.
 	 *
 	 * \return Transformation matrix.
 	 */
 	const Matrix33& getTransform() const { return m_transform; }
 
-	/*! \brief Get coordinate transformation; concatenated through parents.
+	/*! Get coordinate transformation; concatenated through parents.
 	 *
 	 * \return Transformation matrix.
 	 */
 	Matrix33 getFullTransform() const;
 
-	/*! \brief Transform between characters.
+	/*! Transform between characters.
 	 */
 	Vector2 transformInto(const CharacterInstance* other, const Vector2& pnt) const;
 
@@ -207,13 +207,13 @@ public:
 	 */
 	bool haveFocus() const;
 
-	/*! \brief Set event scripts.
+	/*! Set event scripts.
 	 *
 	 * \param eventScripts Event scripts.
 	 */
 	void setEvents(const SmallMap< uint32_t, Ref< const IActionVMImage > >& eventScripts);
 
-	/*! \brief Get event scripts.
+	/*! Get event scripts.
 	 *
 	 * \return Event scripts.
 	 */
@@ -251,7 +251,7 @@ public:
 	/*! \name Character interface */
 	//@{
 
-	/*! \brief Get character bounding box.
+	/*! Get character bounding box.
 	 *
 	 * \return Bounding box.
 	 */
@@ -261,11 +261,11 @@ public:
 
 	virtual bool getMember(ActionContext* context, uint32_t memberName, ActionValue& outMemberValue) override;
 
-	/*! \brief Check if character has associated script event.
+	/*! Check if character has associated script event.
 	 */
 	bool haveScriptEvent(uint32_t eventName);
 
-	/*! \brief Execute script event associated with character.
+	/*! Execute script event associated with character.
 	 */
 	bool executeScriptEvent(uint32_t eventName, const ActionValue& arg);
 

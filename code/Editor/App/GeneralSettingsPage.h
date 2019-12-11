@@ -16,7 +16,7 @@ class Edit;
 	namespace editor
 	{
 
-/*! \brief Interface for settings pages.
+/*! Interface for settings pages.
  * \ingroup Editor
  */
 class GeneralSettingsPage : public ISettingsPage

@@ -8,7 +8,7 @@
 namespace traktor
 {
 
-/*! \brief Default element accessor.
+/*! Default element accessor.
  * \ingroup Core
  */
 template <
@@ -39,7 +39,7 @@ struct HermiteAccessor
 	}
 };
 
-/*! \brief Hermite spline evaluator.
+/*! Hermite spline evaluator.
  * \ingroup Core
  */
 template <

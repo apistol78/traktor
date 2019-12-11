@@ -24,7 +24,7 @@ class Entity;
 	namespace theater
 	{
 
-/*! \brief Track
+/*! Track
  * \ingroup Theater
  */
 class T_DLLCLASS Track : public Object

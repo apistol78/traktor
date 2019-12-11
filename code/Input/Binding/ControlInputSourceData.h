@@ -16,7 +16,7 @@ namespace traktor
 	namespace input
 	{
 
-/*! \brief Control input source.
+/*! Control input source.
  *
  * A control input source allows the graph
  * to query attributes of an input device such

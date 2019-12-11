@@ -17,7 +17,7 @@ namespace traktor
 	namespace input
 	{
 
-/*! \brief Input device base.
+/*! Input device base.
  * \ingroup Input
  *
  * Implementations of this class is created
@@ -45,13 +45,13 @@ public:
 		};
 	};
 
-	/*! \brief Human readable name of device provided by system.
+	/*! Human readable name of device provided by system.
 	 *
 	 * \return Human readable name of device.
 	 */
 	virtual std::wstring getName() const = 0;
 
-	/*! \brief Get device category.
+	/*! Get device category.
 	 *
 	 * Devices are identified by category
 	 * such as keyboard, joystick etc.
@@ -60,7 +60,7 @@ public:
 	 */
 	virtual InputCategory getCategory() const = 0;
 
-	/*! \brief Query device if it's currently connected.
+	/*! Query device if it's currently connected.
 	 *
 	 * Devices might become disconnected during
 	 * input system update and thus should
@@ -71,20 +71,20 @@ public:
 	 */
 	virtual bool isConnected() const = 0;
 
-	/*! \brief Number of controls the device support.
+	/*! Number of controls the device support.
 	 *
 	 * \return Number of controls.
 	 */
 	virtual int32_t getControlCount() = 0;
 
-	/*! \brief Get human readable name of control.
+	/*! Get human readable name of control.
 	 *
 	 * \param control Control identifier (0 - #controls-1).
 	 * \return Human readable name of control.
 	 */
 	virtual std::wstring getControlName(int32_t control) = 0;
 
-	/*! \brief Check if control is analogue.
+	/*! Check if control is analogue.
 	 *
 	 * Digital controls always return either 0 or 1
 	 * even if the return type of getControlValue is float.
@@ -94,7 +94,7 @@ public:
 	 */
 	virtual bool isControlAnalogue(int32_t control) const = 0;
 
-	/*! \brief Check if control is stable.
+	/*! Check if control is stable.
 	 *
 	 * Stable controls have a defined value when
 	 * no user interacts with the control.
@@ -104,14 +104,14 @@ public:
 	 */
 	virtual bool isControlStable(int32_t control) const = 0;
 
-	/*! \brief Get current value of a control.
+	/*! Get current value of a control.
 	 *
 	 * \param control Control identifier (0 - #controls-1).
 	 * \return Control value.
 	 */
 	virtual float getControlValue(int32_t control) = 0;
 
-	/*! \brief Get range of a control.
+	/*! Get range of a control.
 	 *
 	 * \param control Control identifier (0 - #controls-1).
 	 * \param outMin Minimum value.
@@ -120,7 +120,7 @@ public:
 	 */
 	virtual bool getControlRange(int32_t control, float& outMin, float& outMax) const = 0;
 
-	/*! \brief Get control identifier of a default control type.
+	/*! Get control identifier of a default control type.
 	 *
 	 * \param controlType Default control type.
 	 * \param analogue If control should be used as analogue.
@@ -129,14 +129,14 @@ public:
 	 */
 	virtual bool getDefaultControl(InputDefaultControlType controlType, bool analogue, int32_t& control) const = 0;
 
-	/*! \brief Get keyboard event.
+	/*! Get keyboard event.
 	 *
 	 * \param outEvent Returning event.
 	 * \return True if event returned.
 	 */
 	virtual bool getKeyEvent(KeyEvent& outEvent) = 0;
 
-	/*! \brief Reset device state.
+	/*! Reset device state.
 	 *
 	 * Device "state" are implementation specific but
 	 * should be reset into some sort of idle state which
@@ -144,7 +144,7 @@ public:
 	 */
 	virtual void resetState() = 0;
 
-	/*! \brief Read device state.
+	/*! Read device state.
 	 *
 	 * Update device internal state; state should be preserved
 	 * and thus getControlValue should return same value
@@ -152,19 +152,19 @@ public:
 	 */
 	virtual void readState() = 0;
 
-	/*! \brief Check to see if device support rumble.
+	/*! Check to see if device support rumble.
 	 *
 	 * \return True if device support rumble.
 	 */
 	virtual bool supportRumble() const = 0;
 
-	/*! \brief Set device rumble parameters.
+	/*! Set device rumble parameters.
 	 *
 	 * \param rumble Rumble parameter configuration.
 	 */
 	virtual void setRumble(const InputRumble& rumble) = 0;
 
-	/*! \brief Set exclusive use of device.
+	/*! Set exclusive use of device.
 	 *
 	 * \param exclusive If exclusive use is desired.
 	 */

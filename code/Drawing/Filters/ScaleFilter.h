@@ -15,7 +15,7 @@ namespace traktor
 	namespace drawing
 	{
 
-/*! \brief Scale image filter.
+/*! Scale image filter.
  * \ingroup Drawing
  *
  * Magnify or minify image, either using point sampling or

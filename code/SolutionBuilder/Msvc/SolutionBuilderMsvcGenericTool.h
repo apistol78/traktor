@@ -8,7 +8,7 @@ namespace traktor
 	namespace sb
 	{
 
-/*! \brief Visual Studio generic tool. */
+/*! Visual Studio generic tool. */
 class SolutionBuilderMsvcGenericTool : public SolutionBuilderMsvcTool
 {
 	T_RTTI_CLASS;

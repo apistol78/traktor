@@ -15,7 +15,7 @@ namespace traktor
 	namespace ui
 	{
 
-/*! \brief Scroll event.
+/*! Scroll event.
  * \ingroup UI
  */
 class T_DLLCLASS ScrollEvent : public Event

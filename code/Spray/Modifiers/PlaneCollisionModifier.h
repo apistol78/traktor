@@ -8,7 +8,7 @@ namespace traktor
 	namespace spray
 	{
 
-/*! \brief Plane collision modifier.
+/*! Plane collision modifier.
  * \ingroup Spray
  */
 class PlaneCollisionModifier : public Modifier

@@ -16,7 +16,7 @@ namespace traktor
 	namespace drawing
 	{
 
-/*! \brief Swizzle color channels.
+/*! Swizzle color channels.
  * \ingroup Drawing
  */
 class T_DLLCLASS SwizzleFilter : public IImageFilter

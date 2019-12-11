@@ -17,7 +17,7 @@ namespace traktor
 	namespace ui
 	{
 
-/*! \brief Auto widget cell.
+/*! Auto widget cell.
  * \ingroup UI
  */
 class T_DLLCLASS ChildWidgetCell : public AutoWidgetCell

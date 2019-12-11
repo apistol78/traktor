@@ -15,7 +15,7 @@ namespace traktor
 	namespace sound
 	{
 
-/*! \brief Equalizer filter.
+/*! Equalizer filter.
  * \ingroup Sound
  */
 class T_DLLCLASS EqualizerFilter : public IFilter

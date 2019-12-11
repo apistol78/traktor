@@ -17,7 +17,7 @@ namespace traktor
 
 class ImageFormatJpegImpl;
 
-/*! \brief JPEG format.
+/*! JPEG format.
  * \ingroup Drawing
  */
 class T_DLLCLASS ImageFormatJpeg : public IImageFormat

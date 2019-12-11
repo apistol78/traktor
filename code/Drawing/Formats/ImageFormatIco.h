@@ -18,7 +18,7 @@ namespace traktor
 	namespace drawing
 	{
 
-/*! \brief ICO format.
+/*! ICO format.
  * \ingroup Drawing
  */
 class T_DLLCLASS ImageFormatIco : public IImageFormat

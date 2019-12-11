@@ -23,7 +23,7 @@ class Edit;
 	namespace sound
 	{
 
-/*! \brief Editor sound settings page.
+/*! Editor sound settings page.
  * \ingroup Sound
  */
 class T_DLLCLASS SoundSettingsPage : public editor::ISettingsPage

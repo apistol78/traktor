@@ -20,7 +20,7 @@ namespace traktor
 class GridItem;
 class IBitmap;
 
-/*! \brief Grid row.
+/*! Grid row.
  * \ingroup UI
  */
 class T_DLLCLASS GridRow : public AutoWidgetCell

@@ -16,7 +16,7 @@ namespace traktor
 	namespace physics
 	{
 
-/*! \brief Axis joint description.
+/*! Axis joint description.
  * \ingroup Physics
  */
 class T_DLLCLASS AxisJointDesc : public JointDesc

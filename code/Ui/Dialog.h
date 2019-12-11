@@ -18,7 +18,7 @@ namespace traktor
 class ChildEvent;
 class IBitmap;
 
-/*! \brief Dialog
+/*! Dialog
  * \ingroup UI
  */
 class T_DLLCLASS Dialog : public Container

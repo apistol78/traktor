@@ -19,7 +19,7 @@ namespace traktor
 
 class InputStateData;
 
-/*! \brief Input mapping state data
+/*! Input mapping state data
  * \ingroup Input
  *
  * Serializable description of input states.

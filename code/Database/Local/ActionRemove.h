@@ -9,7 +9,7 @@ namespace traktor
 	namespace db
 	{
 
-/*! \brief Transaction remove action.
+/*! Transaction remove action.
  * \ingroup Database
  */
 class ActionRemove : public Action

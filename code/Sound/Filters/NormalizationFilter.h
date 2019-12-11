@@ -16,7 +16,7 @@ namespace traktor
 	namespace sound
 	{
 
-/*! \brief Normalization filter.
+/*! Normalization filter.
  * \ingroup Sound
  */
 class T_DLLCLASS NormalizationFilter : public IFilter

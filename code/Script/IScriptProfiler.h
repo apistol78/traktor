@@ -16,7 +16,7 @@ namespace traktor
 	namespace script
 	{
 
-/*! \brief Script profiler interface.
+/*! Script profiler interface.
  * \ingroup Script
  */
 class T_DLLCLASS IScriptProfiler : public Object
@@ -28,13 +28,13 @@ public:
 	{
 		virtual ~IListener() {}
 
-		/*! \brief Called whenever C++ invoke a function into script. */
+		/*! Called whenever C++ invoke a function into script. */
 		virtual void callEnter(const Guid& scriptId, const std::wstring& function) = 0;
 
-		/*! \brief Called after a C++ invoked script function returns. */
+		/*! Called after a C++ invoked script function returns. */
 		virtual void callLeave(const Guid& scriptId, const std::wstring& function) = 0;
 
-		/*! \brief Called when profiler has measured duration of a script function call. */
+		/*! Called when profiler has measured duration of a script function call. */
 		virtual void callMeasured(const Guid& scriptId, const std::wstring& function, uint32_t callCount, double inclusiveDuration, double exclusiveDuration) = 0;
 	};
 

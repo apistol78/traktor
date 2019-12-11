@@ -16,7 +16,7 @@ namespace traktor
 	namespace physics
 	{
 
-/*! \brief Box collision shape.
+/*! Box collision shape.
  * \ingroup Physics
  */
 class T_DLLCLASS BoxShapeDesc : public ShapeDesc

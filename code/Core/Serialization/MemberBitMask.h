@@ -13,7 +13,7 @@
 namespace traktor
 {
 
-/*! \brief Bit mask member.
+/*! Bit mask member.
  * \ingroup Core
  */
 class T_DLLCLASS MemberBitMask : public MemberComplex

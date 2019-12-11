@@ -15,7 +15,7 @@ namespace traktor
 	namespace spray
 	{
 
-/*! \brief Vortex modifier persistent data.
+/*! Vortex modifier persistent data.
  * \ingroup Spray
  */
 class T_DLLCLASS VortexModifierData : public ModifierData

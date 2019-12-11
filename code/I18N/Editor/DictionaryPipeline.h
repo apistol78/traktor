@@ -15,7 +15,7 @@ namespace traktor
 	namespace i18n
 	{
 
-/*! \brief Dictionary pipeline.
+/*! Dictionary pipeline.
  * \ingroup i18n
  */
 class T_DLLCLASS DictionaryPipeline : public editor::DefaultPipeline

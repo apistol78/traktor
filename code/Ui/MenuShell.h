@@ -18,7 +18,7 @@ namespace traktor
 class MenuItem;
 class ScrollBar;
 
-/*! \brief Menu shell
+/*! Menu shell
  * \ingroup UI
  */
 class T_DLLCLASS MenuShell : public Widget

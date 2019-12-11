@@ -16,7 +16,7 @@ namespace traktor
 	namespace ui
 	{
 
-/*! \brief Grid layout.
+/*! Grid layout.
  * \ingroup UI
  */
 class T_DLLCLASS GridLayout : public Layout

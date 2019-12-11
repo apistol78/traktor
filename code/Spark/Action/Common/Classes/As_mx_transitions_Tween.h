@@ -7,7 +7,7 @@ namespace traktor
 	namespace spark
 	{
 
-/*! \brief mx.transitions.Tween class.
+/*! mx.transitions.Tween class.
  * \ingroup Spark
  */
 class As_mx_transitions_Tween : public ActionClass

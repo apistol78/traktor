@@ -14,7 +14,7 @@
 namespace traktor
 {
 
-/*! \brief String array property value.
+/*! String array property value.
  * \ingroup Core
  */
 class T_DLLCLASS PropertyStringArray : public IPropertyValue

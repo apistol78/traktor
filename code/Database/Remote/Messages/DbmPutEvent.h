@@ -18,7 +18,7 @@ namespace traktor
 
 class IEvent;
 
-/*! \brief Put bus event.
+/*! Put bus event.
  * \ingroup Database
  */
 class T_DLLCLASS DbmPutEvent : public IMessage

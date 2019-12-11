@@ -13,7 +13,7 @@ class IStream;
 	namespace db
 	{
 
-/*! \brief Block file
+/*! Block file
  * \ingroup Database
  */
 class BlockFile : public Object

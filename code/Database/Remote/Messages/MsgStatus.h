@@ -15,7 +15,7 @@ namespace traktor
 	namespace db
 	{
 
-/*! \brief Status codes.
+/*! Status codes.
  * \ingroup Database
  */
 enum MsgStatusType
@@ -26,7 +26,7 @@ enum MsgStatusType
 	StInvalidReply = -3
 };
 
-/*! \brief Status result.
+/*! Status result.
  * \ingroup Database
  */
 class T_DLLCLASS MsgStatus : public IMessage

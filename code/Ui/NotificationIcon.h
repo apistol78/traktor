@@ -20,7 +20,7 @@ class Widget;
 class IBitmap;
 class INotificationIcon;
 
-/*! \brief Notification icon.
+/*! Notification icon.
  * \ingroup UI
  */
 class T_DLLCLASS NotificationIcon

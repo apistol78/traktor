@@ -15,7 +15,7 @@ namespace traktor
 #	define T_ENABLE_SCREENSPACE_CULLING 1
 #endif
 
-/*! \brief Mesh culling.
+/*! Mesh culling.
  * First it performs a grosse culling
  * with the view frustum, then it
  * will estimate screen space area

@@ -164,7 +164,7 @@ public:
 	 */
 	void setStatus(uint8_t status);
 
-	/*! \brief Get our status.
+	/*! Get our status.
 	 */
 	uint8_t getStatus() const;
 
@@ -196,7 +196,7 @@ public:
 	 */
 	void setState(const State* state);
 
-	/*! \brief Get state.
+	/*! Get state.
 	 */
 	const State* getState() const;
 
@@ -244,23 +244,23 @@ public:
 	 */
 	double getWorstReverseLatency() const;
 
-	/*! \brief Broadcast high priority event to all peers.
+	/*! Broadcast high priority event to all peers.
 	 */
 	bool broadcastEvent(const ISerializable* eventObject, bool inOrder);
 
-	/*! \brief Send high priority event to primary peer.
+	/*! Send high priority event to primary peer.
 	 */
 	bool sendEventToPrimary(const ISerializable* eventObject, bool inOrder);
 
-	/*! \brief Set if time is automatically synchronized.
+	/*! Set if time is automatically synchronized.
 	 */
 	void setTimeSynchronization(bool timeSynchronization);
 
-	/*! \brief Get network time.
+	/*! Get network time.
 	 */
 	double getTime() const;
 
-	/*! \brief Get network time variance.
+	/*! Get network time variance.
 	 */
 	double getTimeVariance() const;
 

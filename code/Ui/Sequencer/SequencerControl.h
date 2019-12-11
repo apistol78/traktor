@@ -19,7 +19,7 @@ namespace traktor
 class ScrollBar;
 class SequenceItem;
 
-/*! \brief Sequencer control.
+/*! Sequencer control.
  * \ingroup UI
  */
 class T_DLLCLASS SequencerControl : public Widget

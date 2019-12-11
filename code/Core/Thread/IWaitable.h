@@ -5,7 +5,7 @@
 namespace traktor
 {
 
-/*! \brief Waitable object interface.
+/*! Waitable object interface.
  * \ingroup Core
  */
 class IWaitable

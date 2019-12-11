@@ -9,7 +9,7 @@ namespace traktor
 
 struct CallArgs;
 
-/*! \brief Matrix class.
+/*! Matrix class.
  * \ingroup Spark
  */
 class As_flash_geom_Matrix : public ActionClass

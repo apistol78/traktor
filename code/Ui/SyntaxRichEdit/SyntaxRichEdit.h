@@ -19,7 +19,7 @@ namespace traktor
 
 class SyntaxLanguage;
 
-/*! \brief RichEdit control with automatic syntax highlighting.
+/*! RichEdit control with automatic syntax highlighting.
  * \ingroup UI
  */
 class T_DLLCLASS SyntaxRichEdit : public RichEdit

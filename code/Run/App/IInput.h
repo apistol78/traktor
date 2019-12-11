@@ -8,7 +8,7 @@ namespace traktor
 	namespace run
 	{
 
-/*! \brief Scriptable input reader interface.
+/*! Scriptable input reader interface.
  * \ingroup Run
  */
 class IInput : public Object

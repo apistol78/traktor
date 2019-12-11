@@ -20,7 +20,7 @@ class Environment;
 class IProcess;
 class ISharedMemory;
 
-/*! \brief Operative System information.
+/*! Operative System information.
  * \ingroup Core
  */
 class T_DLLCLASS OS
@@ -32,76 +32,76 @@ class T_DLLCLASS OS
 public:
 	static OS& getInstance();
 
-	/*! \brief Get number of CPU cores.
+	/*! Get number of CPU cores.
 	 *
 	 * \return Number of CPU cores.
 	 */
 	uint32_t getCPUCoreCount() const;
 
-	/*! \brief Get path to current executable.
+	/*! Get path to current executable.
 	 *
 	 * \return Executable path.
 	 */
 	Path getExecutable() const;
 
-	/*! \brief Get command line.
+	/*! Get command line.
 	 *
 	 * \return Process command line.
 	 */
 	std::wstring getCommandLine() const;
 
-	/*! \brief Get network name of computer.
+	/*! Get network name of computer.
 	 *
 	 * \return Computer network name.
 	 */
 	std::wstring getComputerName() const;
 
-	/*! \brief Get name of currently logged in user.
+	/*! Get name of currently logged in user.
 	 *
 	 * \return User name.
 	 */
 	std::wstring getCurrentUser() const;
 
-	/*! \brief Get path to user home.
+	/*! Get path to user home.
 	 *
 	 * \return User home path.
 	 */
 	std::wstring getUserHomePath() const;
 
-	/*! \brief Get path to user application data.
+	/*! Get path to user application data.
 	 *
 	 * \return User application data path.
 	 */
 	std::wstring getUserApplicationDataPath() const;
 
-	/*! \brief Get path to writable folder.
+	/*! Get path to writable folder.
 	 *
 	 * \return Writable folder.
 	 */
 	std::wstring getWritableFolderPath() const;
 
-	/*! \brief Open associate application of given file.
+	/*! Open associate application of given file.
 	 *
 	 * \param file File or URL to resource.
 	 * \return True if associated application opened successfully.
 	 */
 	bool openFile(const std::wstring& file) const;
 
-	/*! \brief Launch associate editor of given file.
+	/*! Launch associate editor of given file.
 	 *
 	 * \param file File or URL to resource.
 	 * \return True if associate editor opened successfully.
 	 */
 	bool editFile(const std::wstring& file) const;
 
-	/*! \brief Open file explorer to given file.
+	/*! Open file explorer to given file.
 	 *
 	 * \param file File or URL to resource.
 	 * \return True if explorer opened successfully.
 	 */
 	bool exploreFile(const std::wstring& file) const;
 
-	/*! \brief Set environment variable.
+	/*! Set environment variable.
 	 *
 	 * \param name Name of variable.
 	 * \param value New value of variable.
@@ -109,13 +109,13 @@ public:
 	 */
 	bool setEnvironment(const std::wstring& name, const std::wstring& value) const;
 
-	/*! \brief Get process's environment variables.
+	/*! Get process's environment variables.
 	 *
 	 * \return Environment variables.
 	 */
 	Ref< Environment > getEnvironment() const;
 
-	/*! \brief Get environment variable value.
+	/*! Get environment variable value.
 	 *
 	 * \param name Name of variable.
 	 * \param outValue Value of variable if found.
@@ -123,7 +123,7 @@ public:
 	 */
 	bool getEnvironment(const std::wstring& name, std::wstring& outValue) const;
 
-	/*! \brief Execute command.
+	/*! Execute command.
 	 *
 	 * \param commandLine Execute command line.
 	 * \param workingDirectory Process's initial working directory.
@@ -142,7 +142,7 @@ public:
 		bool detach
 	) const;
 
-	/*! \brief Create shared memory object.
+	/*! Create shared memory object.
 	 *
 	 * \param name Name of shared memory object.
 	 * \param size Size of shared memory.
@@ -150,7 +150,7 @@ public:
 	 */
 	Ref< ISharedMemory > createSharedMemory(const std::wstring& name, uint32_t size) const;
 
-	/*! \brief Set own process priority bias.
+	/*! Set own process priority bias.
 	 *
 	 * \param priorityBias Priority bias, -1 = below normal, 0 = normal and 1 = above normal.
 	 * \return True if priority bias applied successfully.
@@ -158,7 +158,7 @@ public:
 	bool setOwnProcessPriorityBias(int32_t priorityBias);
 
 #if defined(_WIN32)
-	/*! \brief Get registry value.
+	/*! Get registry value.
 	 *
 	 * \param key Registry key.
 	 * \param outValue Value of key if found.

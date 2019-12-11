@@ -13,7 +13,7 @@
 namespace traktor
 {
 
-/*! \brief Multiple reader, single writer lock.
+/*! Multiple reader, single writer lock.
  * \ingroup Core
  */
 class T_DLLCLASS ReaderWriterLock

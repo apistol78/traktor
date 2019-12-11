@@ -20,7 +20,7 @@ namespace traktor
 
 class IActionVMImage;
 
-/*! \brief Flash button character.
+/*! Flash button character.
  * \ingroup Spark
  */
 class T_DLLCLASS Button : public Character
@@ -90,25 +90,25 @@ public:
 
 	Button(uint16_t id);
 
-	/*! \brief Add button layer.
+	/*! Add button layer.
 	 *
 	 * \param layer Button layer description.
 	 */
 	void addButtonLayer(const ButtonLayer& layer);
 
-	/*! \brief Get button layers.
+	/*! Get button layers.
 	 *
 	 * \return Button layers.
 	 */
 	const button_layers_t& getButtonLayers() const;
 
-	/*! \brief Add button condition script.
+	/*! Add button condition script.
 	 *
 	 * \param condition Condition script.
 	 */
 	void addButtonCondition(const ButtonCondition& condition);
 
-	/*! \brief Get button condition scripts.
+	/*! Get button condition scripts.
 	 *
 	 * \return Condition scripts.
 	 */

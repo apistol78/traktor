@@ -18,7 +18,7 @@ namespace traktor
 class Layout;
 class SizeEvent;
 
-/*! \brief Layout container.
+/*! Layout container.
  * \ingroup UI
  */
 class T_DLLCLASS Container : public Widget

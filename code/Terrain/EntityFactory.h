@@ -29,7 +29,7 @@ class IRenderSystem;
 	namespace terrain
 	{
 
-/*! \brief Terrain entity factory.
+/*! Terrain entity factory.
  * \ingroup Terrain
  */
 class T_DLLCLASS EntityFactory : public world::IEntityFactory

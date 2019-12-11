@@ -18,7 +18,7 @@
 namespace traktor
 {
 
-/*! \brief Blocking semaphore primitive.
+/*! Blocking semaphore primitive.
  * \ingroup Core
  */
 class T_DLLCLASS Semaphore : public IWaitable

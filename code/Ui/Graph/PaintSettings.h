@@ -19,7 +19,7 @@ namespace traktor
 	namespace ui
 	{
 
-/*! \brief Graph visual settings.
+/*! Graph visual settings.
  * \ingroup UI
  */
 class T_DLLCLASS PaintSettings : public Object

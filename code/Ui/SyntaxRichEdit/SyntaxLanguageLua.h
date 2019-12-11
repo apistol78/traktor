@@ -15,7 +15,7 @@ namespace traktor
 	namespace ui
 	{
 
-/*! \brief Syntax highlight LUA language.
+/*! Syntax highlight LUA language.
  * \ingroup UI
  */
 class T_DLLCLASS SyntaxLanguageLua : public SyntaxLanguage

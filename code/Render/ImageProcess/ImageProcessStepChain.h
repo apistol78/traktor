@@ -16,7 +16,7 @@ namespace traktor
 	namespace render
 	{
 
-/*! \brief Chain of sub-steps.
+/*! Chain of sub-steps.
  * \ingroup Render
  */
 class T_DLLCLASS ImageProcessStepChain : public ImageProcessStep

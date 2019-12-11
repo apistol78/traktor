@@ -15,7 +15,7 @@ namespace traktor
 	namespace ui
 	{
 
-/*! \brief Center layout.
+/*! Center layout.
  * \ingroup UI
  */
 class T_DLLCLASS CenterLayout : public Layout

@@ -15,7 +15,7 @@ namespace traktor
 
 class ISingleton;
 
-/*! \brief Singleton manager.
+/*! Singleton manager.
  * \ingroup Core
  *
  * The singleton manager is responsible of maintaining a list
@@ -27,16 +27,16 @@ class T_DLLCLASS SingletonManager
 public:
 	static SingletonManager& getInstance();
 
-	/*! \brief Add singleton. */
+	/*! Add singleton. */
 	void add(ISingleton* singleton);
 
-	/*! \brief Add singleton before a dependent singleton. */
+	/*! Add singleton before a dependent singleton. */
 	void addBefore(ISingleton* singleton, ISingleton* dependency);
 
-	/*! \brief Add singleton after a dependent singleton. */
+	/*! Add singleton after a dependent singleton. */
 	void addAfter(ISingleton* singleton, ISingleton* dependency);
 
-	/*! \brief Explicit destroy all singletons. */
+	/*! Explicit destroy all singletons. */
 	void destroy();
 
 private:

@@ -29,7 +29,7 @@ namespace traktor
 		{
 
 /*!
- * \brief Language code translation table.
+ * Language code translation table.
  *
  * GetCurrentGameLanguage() can return the following:
  *

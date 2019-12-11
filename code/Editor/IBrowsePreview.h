@@ -32,7 +32,7 @@ class Bitmap;
 
 class IEditor;
 
-/*! \brief Browse instance preview generator interface.
+/*! Browse instance preview generator interface.
  * \ingroup Editor
  */
 class T_DLLCLASS IBrowsePreview : public Object

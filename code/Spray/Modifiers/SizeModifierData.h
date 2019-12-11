@@ -15,7 +15,7 @@ namespace traktor
 	namespace spray
 	{
 
-/*! \brief Size modifier persistent data.
+/*! Size modifier persistent data.
  * \ingroup Spray
  */
 class T_DLLCLASS SizeModifierData : public ModifierData

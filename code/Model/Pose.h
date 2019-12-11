@@ -19,7 +19,7 @@ namespace traktor
 
 class Model;
 
-/*! \brief Pose
+/*! Pose
  *         A pose is a set of joint transformations.
  *
  * The transformation stored in Joint is rest/bind pose, aka the T-pose.
@@ -36,7 +36,7 @@ public:
 
 	const Transform& getJointTransform(uint32_t jointId) const;
 
-	/*! \brief Evaluate global joint transformation.
+	/*! Evaluate global joint transformation.
 	 *         Traverse chain of joints to concate the global joint transform (in object space).
 	 *
 	 * \param model Model containing base skeleton with joint relationships.

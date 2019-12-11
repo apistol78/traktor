@@ -19,7 +19,7 @@ namespace traktor
 	namespace model
 	{
 
-/*! \brief Material descriptor.
+/*! Material descriptor.
  * \ingroup Model
  */
 class T_DLLCLASS Material : public PropertyGroup

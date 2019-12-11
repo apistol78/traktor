@@ -18,7 +18,7 @@ namespace traktor
 
 class Mesh;
 
-/*! \brief Mesh collision shape description.
+/*! Mesh collision shape description.
  * \ingroup Physics
  */
 class T_DLLCLASS MeshShapeDesc : public ShapeDesc

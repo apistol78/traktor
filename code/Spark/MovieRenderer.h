@@ -25,7 +25,7 @@ class Sprite;
 class SpriteInstance;
 class CharacterInstance;
 
-/*! \brief Flash movie renderer.
+/*! Flash movie renderer.
  * \ingroup Spark
  */
 class T_DLLCLASS MovieRenderer : public Object

@@ -10,7 +10,7 @@ namespace traktor
 
 class IWidget;
 
-/*! \brief PathDialog interface.
+/*! PathDialog interface.
  * \ingroup UI
  */
 class IPathDialog

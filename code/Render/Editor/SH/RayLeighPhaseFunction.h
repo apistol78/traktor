@@ -16,7 +16,7 @@ namespace traktor
 	{
 
 /*!
- * \brief Ray-Leigh scattering phase function.
+ * Ray-Leigh scattering phase function.
  */
 class T_DLLCLASS RayLeighPhaseFunction : public SHFunction
 {

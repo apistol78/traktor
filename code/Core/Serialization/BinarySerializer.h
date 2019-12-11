@@ -18,7 +18,7 @@ namespace traktor
 
 class IStream;
 
-/*! \brief Binary serializer.
+/*! Binary serializer.
  * \ingroup Core
  */
 class T_DLLCLASS BinarySerializer : public Serializer

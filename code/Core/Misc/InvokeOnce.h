@@ -5,7 +5,7 @@
 namespace traktor
 {
 
-/*! \brief Invoke method on pointer to object once then set pointer to null.
+/*! Invoke method on pointer to object once then set pointer to null.
  * \ingroup Core
  */
 // \{

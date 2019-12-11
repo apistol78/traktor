@@ -17,7 +17,7 @@ namespace traktor
 
 class IRenderSystem;
 
-/*! \brief Render mesh factory.
+/*! Render mesh factory.
  * \ingroup Render
  */
 class T_DLLCLASS RenderMeshFactory : public MeshFactory

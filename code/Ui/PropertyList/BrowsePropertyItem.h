@@ -18,7 +18,7 @@ namespace traktor
 
 class MiniButton;
 
-/*! \brief Browse property item.
+/*! Browse property item.
  * \ingroup UI
  */
 class T_DLLCLASS BrowsePropertyItem : public PropertyItem

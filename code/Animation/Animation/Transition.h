@@ -19,7 +19,7 @@ namespace traktor
 
 class StateNode;
 
-/*! \brief Animation graph transition.
+/*! Animation graph transition.
  * \ingroup Animation
  */
 class T_DLLCLASS Transition : public ISerializable

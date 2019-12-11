@@ -8,7 +8,7 @@ namespace traktor
 	namespace spark
 	{
 
-/*! \brief Color transform member.
+/*! Color transform member.
  * \ingroup Spark
  */
 class MemberColorTransform : public MemberComplex

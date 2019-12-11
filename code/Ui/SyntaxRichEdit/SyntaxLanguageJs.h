@@ -15,7 +15,7 @@ namespace traktor
 	namespace ui
 	{
 
-/*! \brief Syntax highlight JavaScript language.
+/*! Syntax highlight JavaScript language.
  * \ingroup UI
  */
 class T_DLLCLASS SyntaxLanguageJs : public SyntaxLanguage

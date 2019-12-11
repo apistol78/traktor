@@ -22,7 +22,7 @@ class OutputStream;
 
 class Attribute;
 
-/*! \brief XML Element.
+/*! XML Element.
  * \ingroup XML
  */
 class T_DLLCLASS Element : public Node
@@ -60,7 +60,7 @@ public:
 
 	Attribute* getAttribute(const std::wstring& name) const;
 
-	/*! \brief Get attribute by name, will always return an attribute.
+	/*! Get attribute by name, will always return an attribute.
 	 * This method will always return an attribute, if named attribute
 	 * doesn't exist a temporary one will be created with given value.
 	 *

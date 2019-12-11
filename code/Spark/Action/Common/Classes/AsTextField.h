@@ -14,7 +14,7 @@ class SpriteInstance;
 class FlashStyleSheet;
 class TextFormat;
 
-/*! \brief TextField class.
+/*! TextField class.
  * \ingroup Spark
  */
 class AsTextField : public ActionClass

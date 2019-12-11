@@ -13,7 +13,7 @@
 namespace traktor
 {
 
-/*! \brief 2D line
+/*! 2D line
  * \ingroup Core
  */
 class T_DLLCLASS Line2
@@ -41,7 +41,7 @@ public:
 
 	T_MATH_INLINE bool classify(const Vector2& pt, float thickness) const;
 
-	/*! \brief Intersect line segment with ray.
+	/*! Intersect line segment with ray.
 	 *
 	 * \param ray Intersecting ray.
 	 * \param outR Fraction on line segment; Pi = P0 + Pd * outR

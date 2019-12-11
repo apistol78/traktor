@@ -9,7 +9,7 @@ namespace traktor
 
 class Connection;
 
-/*! \brief Group message listener.
+/*! Group message listener.
  * \ingroup Database
  */
 class GroupMessageListener : public IMessageListenerImpl< GroupMessageListener >

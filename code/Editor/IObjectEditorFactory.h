@@ -29,7 +29,7 @@ class Command;
 class IEditor;
 class IObjectEditor;
 
-/*! \brief Interface used by Editor to create object editors.
+/*! Interface used by Editor to create object editors.
  * \ingroup Editor
  */
 class T_DLLCLASS IObjectEditorFactory : public Object

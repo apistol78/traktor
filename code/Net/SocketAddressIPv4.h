@@ -20,7 +20,7 @@ namespace traktor
 	namespace net
 	{
 
-/*! \brief IPv4 socket address.
+/*! IPv4 socket address.
  * \ingroup Net
  */
 class T_DLLCLASS SocketAddressIPv4 : public SocketAddress

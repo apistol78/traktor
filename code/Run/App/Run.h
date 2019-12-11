@@ -21,7 +21,7 @@ class IScriptManager;
 	namespace run
 	{
 
-/*! \brief Simplified interface for common scriptable actions.
+/*! Simplified interface for common scriptable actions.
  * \ingroup Run
  */
 class Run : public Object

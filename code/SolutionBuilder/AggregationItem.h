@@ -20,17 +20,17 @@ class T_DLLCLASS AggregationItem : public ISerializable
 	T_RTTI_CLASS;
 
 public:
-	/*! \brief Set source file path.
+	/*! Set source file path.
 	 *
 	 * \param sourceFile Source path.
 	 */
 	void setSourceFile(const std::wstring& sourceFile);
 
-	/*! \brief Get source file path.
+	/*! Get source file path.
 	 */
 	const std::wstring& getSourceFile() const;
 
-	/*! \brief Set target path.
+	/*! Set target path.
 	 *
 	 * Target path is relative to aggregation root;
 	 * for instance the Xcode generated aggregation
@@ -40,7 +40,7 @@ public:
 	 */
 	void setTargetPath(const std::wstring& targetPath);
 
-	/*! \brief Get target file path.
+	/*! Get target file path.
 	 */
 	const std::wstring& getTargetPath() const;
 

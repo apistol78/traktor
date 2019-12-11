@@ -19,7 +19,7 @@ namespace traktor
 class DeviceControlManager;
 class ControlInputSourceData;
 
-/*! \brief Control input source.
+/*! Control input source.
  * \ingroup Input
  */
 class T_DLLCLASS ControlInputSource : public IInputSource

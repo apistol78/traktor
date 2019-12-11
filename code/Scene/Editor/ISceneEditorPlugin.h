@@ -26,7 +26,7 @@ class Widget;
 
 class SceneEditorContext;
 
-/*! \brief Scene editor plugin interface.
+/*! Scene editor plugin interface.
  */
 class T_DLLCLASS ISceneEditorPlugin : public Object
 {

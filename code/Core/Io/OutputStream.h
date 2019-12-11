@@ -18,7 +18,7 @@
 namespace traktor
 {
 
-/*! \brief Output stream.
+/*! Output stream.
  * \ingroup Core
  */
 class T_DLLCLASS OutputStream : public Object
@@ -101,12 +101,12 @@ private:
 	LineEnd m_lineEnd;
 };
 
-/*! \brief Character stream operator.
+/*! Character stream operator.
  * \ingroup Core
  */
 T_DLLCLASS OutputStream& operator << (OutputStream& os, wchar_t ch);
 
-/*! \brief Scoped indentation.
+/*! Scoped indentation.
  * \ingroup Core
  */
 class T_DLLCLASS ScopeIndent
@@ -128,27 +128,27 @@ private:
 	int m_indent;
 };
 
-/*! \brief End-of-line.
+/*! End-of-line.
  * \ingroup Core
  */
 T_DLLCLASS OutputStream& Endl(OutputStream& s);
 
-/*! \brief Increase indentation.
+/*! Increase indentation.
  * \ingroup Core
  */
 T_DLLCLASS OutputStream& IncreaseIndent(OutputStream& s);
 
-/*! \brief Decrease indentation.
+/*! Decrease indentation.
  * \ingroup Core
  */
 T_DLLCLASS OutputStream& DecreaseIndent(OutputStream& s);
 
-/*! \brief Multiple lines with line numbers.
+/*! Multiple lines with line numbers.
  * \ingroup Core
  */
 T_DLLCLASS OutputStream& FormatMultipleLines(OutputStream& s, const std::wstring& str);
 
-/*! \brief Format as hexadecimal number.
+/*! Format as hexadecimal number.
  * \ingroup Core
  */
 T_DLLCLASS OutputStream& FormatHex(OutputStream& s, uint64_t number, uint8_t nibbles);

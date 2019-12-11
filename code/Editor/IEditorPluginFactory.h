@@ -20,7 +20,7 @@ namespace traktor
 class IEditor;
 class IEditorPlugin;
 
-/*! \brief Editor plugin factory.
+/*! Editor plugin factory.
  * \ingroup Editor
  */
 class T_DLLCLASS IEditorPluginFactory : public Object

@@ -25,7 +25,7 @@ class ISoundRenderer;
 class ShapeInstance;
 class Sprite;
 
-/*! \brief Flash sprite instance.
+/*! Flash sprite instance.
  * \ingroup Spark
  */
 class T_DLLCLASS SpriteInstance : public CharacterInstance
@@ -57,10 +57,10 @@ public:
 
 	bool getPlaying() const { return m_playing; }
 
-	/*! \brief Update display list and begin event dispatching. */
+	/*! Update display list and begin event dispatching. */
 	void updateDisplayList();
 
-	/*! \brief Update display list, sounds and begin event dispatching. */
+	/*! Update display list, sounds and begin event dispatching. */
 	void updateDisplayListAndSounds(ISoundRenderer* soundRenderer);
 
 	DisplayList& getDisplayList() { return m_displayList; }

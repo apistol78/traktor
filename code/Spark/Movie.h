@@ -26,7 +26,7 @@ class SpriteInstance;
 class ICharacterFactory;
 class IMovieLoader;
 
-/*! \brief Flash movie.
+/*! Flash movie.
  * \ingroup Spark
  */
 class T_DLLCLASS Movie : public ISerializable

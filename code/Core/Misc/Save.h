@@ -3,7 +3,7 @@
 namespace traktor
 {
 
-/*! \brief Scoped value.
+/*! Scoped value.
  * \ingroup Core
  *
  * Automatic restoration of variable values when getting out of scope.

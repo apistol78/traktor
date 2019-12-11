@@ -18,7 +18,7 @@ namespace traktor
 
 class Graph;
 
-/*! \brief GraphBuffer instance.
+/*! GraphBuffer instance.
  */
 class T_DLLCLASS GraphBuffer : public ISoundBuffer
 {

@@ -19,7 +19,7 @@ namespace traktor
 class AutoWidgetCell;
 class ScrollBar;
 
-/*! \brief Auto layout widget.
+/*! Auto layout widget.
  * \ingroup UI
  *
  * AutoWidget simplifies creation of custom widgets

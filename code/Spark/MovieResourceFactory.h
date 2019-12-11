@@ -15,7 +15,7 @@ namespace traktor
 	namespace spark
 	{
 
-/*! \brief Flash movie resource factory.
+/*! Flash movie resource factory.
  * \ingroup Spark
  */
 class T_DLLCLASS MovieResourceFactory : public resource::IResourceFactory

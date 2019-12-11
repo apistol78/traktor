@@ -14,7 +14,7 @@ class IEditor;
 	namespace sound
 	{
 
-/*! \brief Sound editor plugin.
+/*! Sound editor plugin.
  * \ingroup Sound
  */
 class SoundEditorPlugin : public editor::IEditorPlugin

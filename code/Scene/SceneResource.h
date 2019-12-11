@@ -46,7 +46,7 @@ class WorldRenderSettings;
 class ISceneControllerData;
 class Scene;
 
-/*! \brief Scene resource.
+/*! Scene resource.
  * \ingroup Scene
  */
 class T_DLLCLASS SceneResource : public ISerializable

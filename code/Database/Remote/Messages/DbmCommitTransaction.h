@@ -15,7 +15,7 @@ namespace traktor
 	namespace db
 	{
 
-/*! \brief Commit instance transaction.
+/*! Commit instance transaction.
  * \ingroup Database
  */
 class T_DLLCLASS DbmCommitTransaction : public IMessage

@@ -36,7 +36,7 @@ class Instance;
 	namespace editor
 	{
 
-/*! \brief Object editor base.
+/*! Object editor base.
  * \ingroup Editor
  *
  * Object editors are created as modal-less dialogs.
@@ -46,7 +46,7 @@ class T_DLLCLASS IObjectEditor : public Object
 	T_RTTI_CLASS;
 
 public:
-	/*! \brief Create object editor.
+	/*! Create object editor.
 	 *
 	 * \param parent Parent widget.
 	 * \param instance Database instance.
@@ -55,13 +55,13 @@ public:
 	 */
 	virtual bool create(ui::Widget* parent, db::Instance* instance, ISerializable* object) = 0;
 
-	/*! \brief Destroy object editor. */
+	/*! Destroy object editor. */
 	virtual void destroy() = 0;
 
-	/*! \brief Apply changes to object. */
+	/*! Apply changes to object. */
 	virtual void apply() = 0;
 
-	/*! \brief Handle UI commands.
+	/*! Handle UI commands.
 	 *
 	 * Editor issue following commands in respect to
 	 * various events:
@@ -86,7 +86,7 @@ public:
 	 */
 	virtual bool handleCommand(const ui::Command& command) = 0;
 
-	/*! \brief Database event.
+	/*! Database event.
 	 *
 	 * Called when editor encountered a database event.
 	 * Some editors might need to reload dependent instances.
@@ -95,7 +95,7 @@ public:
 	 */
 	virtual void handleDatabaseEvent(db::Database* database, const Guid& eventId) = 0;
 
-	/*! \brief Get preferred size of object editor dialog.
+	/*! Get preferred size of object editor dialog.
 	 *
 	 * \return Preferred size.
 	 */

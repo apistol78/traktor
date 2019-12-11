@@ -30,7 +30,7 @@ class IProviderInstance;
 
 class Group;
 
-/*! \brief Database instance.
+/*! Database instance.
  * \ingroup Database
  *
  * An instance is the actual container for data

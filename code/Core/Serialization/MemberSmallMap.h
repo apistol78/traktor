@@ -7,7 +7,7 @@
 namespace traktor
 {
 
-/*! \brief STL map member. */
+/*! STL map member. */
 template
 <
 	typename KeyType,

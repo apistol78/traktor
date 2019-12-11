@@ -24,7 +24,7 @@ class IndexBuffer;
 class Shader;
 class VertexBuffer;
 
-/*! \brief Post bokeh step.
+/*! Post bokeh step.
  * \ingroup Render
  */
 class T_DLLCLASS ImageProcessStepBokeh : public ImageProcessStep

@@ -21,7 +21,7 @@ class IStream;
 
 class XmlPullParserImpl;
 
-/*! \brief XML Pull parser.
+/*! XML Pull parser.
  * \ingroup XML
  */
 class T_DLLCLASS XmlPullParser : public Object

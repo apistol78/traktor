@@ -9,7 +9,7 @@ namespace traktor
 
 class TextFormat;
 
-/*! \brief TextFormat class.
+/*! TextFormat class.
  * \ingroup Spark
  */
 class AsTextFormat : public ActionClass

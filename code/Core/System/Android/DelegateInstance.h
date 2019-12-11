@@ -18,7 +18,7 @@ struct ANativeActivity;
 namespace traktor
 {
 
-/*! \brief Android delegable instance.
+/*! Android delegable instance.
  * \ingroup Core
  */
 class T_DLLCLASS DelegateInstance

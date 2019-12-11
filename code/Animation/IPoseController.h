@@ -20,7 +20,7 @@ namespace traktor
 class Pose;
 class Skeleton;
 
-/*! \brief Pose evaluation controller.
+/*! Pose evaluation controller.
  * \ingroup Animation
  */
 class T_DLLCLASS IPoseController : public Object
@@ -38,7 +38,7 @@ public:
 
 	virtual void setTransform(const Transform& transform) = 0;
 
-	/*! \brief Evaluate pose throught pose controller.
+	/*! Evaluate pose throught pose controller.
 	 *
 	 * \return True if pose is continuous since last evaluation.
 	 */

@@ -7,7 +7,7 @@ namespace traktor
 	namespace spray
 	{
 
-/*! \brief Drag modifier.
+/*! Drag modifier.
  * \ingroup Spray
  */
 class DragModifier : public Modifier

@@ -21,7 +21,7 @@ class IStream;
 class MeshFactory;
 class Mesh;
 
-/*! \brief Render mesh reader.
+/*! Render mesh reader.
  * \ingroup Render
  */
 class T_DLLCLASS MeshReader : public Object

@@ -15,7 +15,7 @@ namespace traktor
 	namespace runtime
 	{
 
-/*! \brief System server interface.
+/*! System server interface.
  * \ingroup Runtime
  *
  * System servers are system pieces such

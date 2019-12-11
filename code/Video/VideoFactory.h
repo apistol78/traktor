@@ -22,7 +22,7 @@ class IRenderSystem;
 	namespace video
 	{
 
-/*! \brief Video resource factory.
+/*! Video resource factory.
  * \ingroup Video
  */
 class T_DLLCLASS VideoFactory : public resource::IResourceFactory

@@ -37,7 +37,7 @@ class IWorldRenderPass;
 class IMeshParameterCallback;
 class StaticMesh;
 
-/*! \brief Level-of-detail mesh.
+/*! Level-of-detail mesh.
  */
 class T_DLLCLASS AutoLodMesh : public IMesh
 {

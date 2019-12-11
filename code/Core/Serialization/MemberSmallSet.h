@@ -6,7 +6,7 @@
 namespace traktor
 {
 
-/*! \brief Small set member. */
+/*! Small set member. */
 template < typename ValueType, typename ValueMember = Member< ValueType > >
 class MemberSmallSet : public MemberArray
 {

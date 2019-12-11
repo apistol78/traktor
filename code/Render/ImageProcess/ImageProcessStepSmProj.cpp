@@ -30,7 +30,7 @@ const Vector4 c_poissonTaps[] =
 	Vector4(0.473434f, -0.480026f, -0.791559f, -0.59771f)
 };
 
-/*! \brief Random rotation texture.
+/*! Random rotation texture.
  *
  * This texture is used to rotate the Poisson distribution
  * disc for each fragment in shadow mapping.

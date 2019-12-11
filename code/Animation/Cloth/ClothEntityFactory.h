@@ -29,7 +29,7 @@ class IResourceManager;
 	namespace animation
 	{
 
-/*! \brief Cloth entity factory.
+/*! Cloth entity factory.
  * \ingroup Animation
  */
 class T_DLLCLASS ClothEntityFactory : public world::IEntityFactory

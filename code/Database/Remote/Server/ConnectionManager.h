@@ -31,7 +31,7 @@ class StreamServer;
 
 class Connection;
 
-/*! \brief Client connection manager.
+/*! Client connection manager.
  * \ingroup Database
  */
 class T_DLLCLASS ConnectionManager : public Object

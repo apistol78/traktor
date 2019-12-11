@@ -20,7 +20,7 @@ class Edit;
 class HierarchicalState;
 class TreeViewItem;
 
-/*! \brief Tree view control.
+/*! Tree view control.
  * \ingroup UI
  */
 class T_DLLCLASS TreeView : public AutoWidget

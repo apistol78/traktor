@@ -23,7 +23,7 @@ class PropertyGroup;
 	namespace runtime
 	{
 
-/*! \brief Target feature description.
+/*! Target feature description.
  * \ingroup Runtime
  */
 class T_DLLCLASS Feature : public ISerializable

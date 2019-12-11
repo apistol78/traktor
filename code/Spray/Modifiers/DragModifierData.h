@@ -15,7 +15,7 @@ namespace traktor
 	namespace spray
 	{
 
-/*! \brief Drag modifier persistent data.
+/*! Drag modifier persistent data.
  * \ingroup Spray
  */
 class T_DLLCLASS DragModifierData : public ModifierData

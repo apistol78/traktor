@@ -25,7 +25,7 @@ namespace traktor
 
 class Bitmap;
 
-/*! \brief Dynamic canvas.
+/*! Dynamic canvas.
  * \ingroup Spark
  */
 #if defined (_MSC_VER)
@@ -42,34 +42,34 @@ public:
 
 	int32_t getDirtyTag() const;
 
-	/*! \brief Clear canvas. */
+	/*! Clear canvas. */
 	void clear();
 
-	/*! \brief Begin solid fill. */
+	/*! Begin solid fill. */
 	void beginFill(const Color4f& color);
 
-	/*! \brief Begin gradient fill. */
+	/*! Begin gradient fill. */
 	void beginGradientFill(FillStyle::GradientType gradientType, const AlignedVector< FillStyle::ColorRecord >& colorRecords, const Matrix33& gradientMatrix);
 
-	/*! \brief Begin bitmap fill. */
+	/*! Begin bitmap fill. */
 	void beginBitmapFill(Bitmap* image, const Matrix33& bitmapMatrix, bool repeat);
 
-	/*! \brief End fill. */
+	/*! End fill. */
 	void endFill();
 
-	/*! \brief Move cursor. */
+	/*! Move cursor. */
 	void moveTo(float x, float y);
 
-	/*! \brief Add a line from cursor. */
+	/*! Add a line from cursor. */
 	void lineTo(float x, float y);
 
-	/*! \brief Add a curve from cursor. */
+	/*! Add a curve from cursor. */
 	void curveTo(float controlX, float controlY, float anchorX, float anchorY);
 
-	/*! \brief Generate triangles and lines from canvas. */
+	/*! Generate triangles and lines from canvas. */
 	void triangulate(bool oddEven, AlignedVector< Triangle >& outTriangles, AlignedVector< Line >& outLines) const;
 
-	/*! \brief Get bounds of shapes in canvas. */
+	/*! Get bounds of shapes in canvas. */
 	const Aabb2& getBounds() const { return m_bounds; }
 
 	const Dictionary& getDictionary() const { return m_dictionary; }

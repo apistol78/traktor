@@ -23,7 +23,7 @@ class Guid;
 class Variable;
 class StackFrame;
 
-/*! \brief Script debugger
+/*! Script debugger
  * \ingroup Script
  */
 class T_DLLCLASS IScriptDebugger : public Object

@@ -29,7 +29,7 @@ class Database;
 class Target;
 class TargetConfiguration;
 
-/*! \brief Launch target action.
+/*! Launch target action.
  * \ingroup Runtime
  */
 class T_DLLCLASS LaunchTargetAction : public ITargetAction

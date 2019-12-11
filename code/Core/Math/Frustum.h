@@ -18,7 +18,7 @@
 namespace traktor
 {
 
-/*! \brief Frustum
+/*! Frustum
  * \ingroup Core
  */
 class T_DLLCLASS Frustum

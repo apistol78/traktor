@@ -36,7 +36,7 @@ class WorldRenderSettings;
 	namespace runtime
 	{
 
-/*! \brief World server.
+/*! World server.
  * \ingroup Runtime
  *
  * "World.ShadowQuality" - Shadow filter quality.

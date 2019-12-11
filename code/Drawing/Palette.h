@@ -17,7 +17,7 @@ namespace traktor
 	namespace drawing
 	{
 
-/*! \brief Palette
+/*! Palette
  * \ingroup Drawing
  */
 class T_DLLCLASS Palette : public Object

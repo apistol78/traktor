@@ -15,7 +15,7 @@ namespace traktor
 	namespace render
 	{
 
-/*! \brief Post processing resource factory.
+/*! Post processing resource factory.
  * \ingroup Render
  */
 class T_DLLCLASS ImageProcessFactory : public resource::IResourceFactory

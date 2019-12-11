@@ -15,7 +15,7 @@ namespace traktor
 	namespace physics
 	{
 
-/*! \brief Collision detection specification.
+/*! Collision detection specification.
  * \ingroup Physics
  */
 class T_DLLCLASS CollisionSpecification : public ISerializable

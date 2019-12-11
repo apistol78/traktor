@@ -18,7 +18,7 @@ class ToolBarButtonClickEvent;
 	namespace runtime
 	{
 
-/*! \brief Visual profiler dialog.
+/*! Visual profiler dialog.
  * \ingroup Runtime
  */
 class ProfilerDialog

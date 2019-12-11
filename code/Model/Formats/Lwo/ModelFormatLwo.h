@@ -15,7 +15,7 @@ namespace traktor
 	namespace model
 	{
 
-/*! \brief LightWave model format.
+/*! LightWave model format.
  * \ingroup Model
  */
 class T_DLLCLASS ModelFormatLwo : public ModelFormat

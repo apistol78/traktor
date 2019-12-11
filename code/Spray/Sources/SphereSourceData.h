@@ -17,7 +17,7 @@ namespace traktor
 	namespace spray
 	{
 
-/*! \brief Sphere particle source persistent data.
+/*! Sphere particle source persistent data.
  * \ingroup Spray
  */
 class T_DLLCLASS SphereSourceData : public SourceData

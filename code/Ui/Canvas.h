@@ -19,7 +19,7 @@ namespace traktor
 
 class IBitmap;
 
-/*! \brief Canvas
+/*! Canvas
  * \ingroup UI
  */
 class T_DLLCLASS Canvas : public Object

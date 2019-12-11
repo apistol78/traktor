@@ -15,7 +15,7 @@ namespace traktor
 	namespace ui
 	{
 
-/*! \brief Quadruple splitter.
+/*! Quadruple splitter.
  * \ingroup UI
  */
 class T_DLLCLASS QuadSplitter : public Widget
@@ -25,7 +25,7 @@ class T_DLLCLASS QuadSplitter : public Widget
 public:
 	QuadSplitter();
 
-	/*! \brief Create splitter control.
+	/*! Create splitter control.
 	 *
 	 * \param parent Parent widget.
 	 * \param position Initial position of splitters.

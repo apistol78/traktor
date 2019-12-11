@@ -5,7 +5,7 @@
 namespace traktor
 {
 
-/*! \brief Standard allocator.
+/*! Standard allocator.
  * \ingroup Core
  *
  * The standard allocator uses the standard malloc and free

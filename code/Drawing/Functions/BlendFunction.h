@@ -15,7 +15,7 @@ namespace traktor
 	namespace drawing
 	{
 
-/*! \brief Common blend transfer function.
+/*! Common blend transfer function.
  * \ingroup Drawing
  */
 class T_DLLCLASS BlendFunction : public ITransferFunction

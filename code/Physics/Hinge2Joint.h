@@ -16,7 +16,7 @@ namespace traktor
 	namespace physics
 	{
 
-/*! \brief 2 axis hinge joint.
+/*! 2 axis hinge joint.
  * \ingroup Physics
  */
 class T_DLLCLASS Hinge2Joint : public Joint

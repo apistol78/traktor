@@ -34,7 +34,7 @@ class BodyDesc;
 class PhysicsManager;
 class RigidEntity;
 
-/*! \brief Rigid body entity data.
+/*! Rigid body entity data.
  * \ingroup Physics
  */
 class T_DLLCLASS RigidEntityData : public world::EntityData

@@ -17,7 +17,7 @@ namespace traktor
 
 class MorphShape;
 
-/*! \brief Flash morph shape instance.
+/*! Flash morph shape instance.
  * \ingroup Spark
  */
 class T_DLLCLASS MorphShapeInstance : public CharacterInstance

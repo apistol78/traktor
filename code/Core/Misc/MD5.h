@@ -15,7 +15,7 @@
 namespace traktor
 {
 
-/*! \brief MD5 checksum.
+/*! MD5 checksum.
  * \ingroup Core
  */
 class T_DLLCLASS MD5 : public IHash
@@ -27,7 +27,7 @@ public:
 
 	explicit MD5(const void* md5);
 
-	/*! \brief Create object from MD5 checksum string.
+	/*! Create object from MD5 checksum string.
 	 *
 	 * \param md5 32 character hex encoded MD5.
 	 * \return True if created successfully.
@@ -36,23 +36,23 @@ public:
 
 	bool createFromString(const std::wstring& str);
 
-	/*! \brief Begin feeding data for MD5 checksum calculation. */
+	/*! Begin feeding data for MD5 checksum calculation. */
 	virtual void begin() override final;
 
-	/*! \brief Feed data to MD5 checksum calculation.
+	/*! Feed data to MD5 checksum calculation.
 	 *
 	 * \param buffer Pointer to data.
 	 * \param bufferSize Amount of data in bytes.
 	 */
 	virtual void feed(const void* buffer, uint64_t bufferSize) override final;
 
-	/*! \brief End feeding data for MD5 checksum calculation. */
+	/*! End feeding data for MD5 checksum calculation. */
 	virtual void end() override final;
 
-	/*! \brief Get pointer to MD5 checksum. */
+	/*! Get pointer to MD5 checksum. */
 	const uint32_t* get() const;
 
-	/*! \brief Format MD5 checksum as string. */
+	/*! Format MD5 checksum as string. */
 	std::wstring format() const;
 
 	bool operator == (const MD5& md5) const;

@@ -17,7 +17,7 @@ namespace traktor
 	namespace render
 	{
 
-/*! \brief Typed shader graph node input pin.
+/*! Typed shader graph node input pin.
  * \ingroup Render
  */
 class T_DLLCLASS TypedInputPin : public InputPin

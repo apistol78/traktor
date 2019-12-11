@@ -17,7 +17,7 @@ namespace traktor
 	namespace net
 	{
 
-/*! \brief Unified resource locator.
+/*! Unified resource locator.
  * \ingroup Net
  */
 class T_DLLCLASS Url : public Object

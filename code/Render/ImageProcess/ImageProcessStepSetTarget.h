@@ -19,7 +19,7 @@ namespace traktor
 
 class Shader;
 
-/*! \brief Set render target.
+/*! Set render target.
  * \ingroup Render
  */
 class T_DLLCLASS ImageProcessStepSetTarget : public ImageProcessStep

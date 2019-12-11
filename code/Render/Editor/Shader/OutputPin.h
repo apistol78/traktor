@@ -18,7 +18,7 @@ namespace traktor
 
 class Node;
 
-/*! \brief Shader graph node output pin.
+/*! Shader graph node output pin.
  * \ingroup Render
  */
 class T_DLLCLASS OutputPin

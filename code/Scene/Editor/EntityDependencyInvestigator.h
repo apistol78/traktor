@@ -18,7 +18,7 @@ class TreeViewItemActivateEvent;
 class SceneEditorContext;
 class EntityAdapter;
 
-/*! \brief Entity asset dependency investigator. */
+/*! Entity asset dependency investigator. */
 class EntityDependencyInvestigator : public ui::Container
 {
 	T_RTTI_CLASS;

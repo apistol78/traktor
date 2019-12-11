@@ -19,7 +19,7 @@ namespace traktor
 class IPathDialog;
 class Widget;
 
-/*! \brief Path dialog.
+/*! Path dialog.
  * \ingroup UI
  */
 class T_DLLCLASS PathDialog : public EventSubject

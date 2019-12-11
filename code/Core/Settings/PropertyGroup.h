@@ -15,7 +15,7 @@
 namespace traktor
 {
 
-/*! \brief Property value map.
+/*! Property value map.
  * \ingroup Core
  */
 class T_DLLCLASS PropertyGroup : public IPropertyValue
@@ -43,7 +43,7 @@ public:
 
 	const IPropertyValue* getProperty(const std::wstring& propertyName) const;
 
-	/*! \brief Set user property.
+	/*! Set user property.
 	 *
 	 * settings->setProperty< PropertyBoolean >("foo", true);
 	 */
@@ -54,7 +54,7 @@ public:
 		setProperty(propertyName, property);
 	}
 
-	/*! \brief Get user property.
+	/*! Get user property.
 	 *
 	 * bool foo = settings->getProperty< bool >("foo", false);
 	 */

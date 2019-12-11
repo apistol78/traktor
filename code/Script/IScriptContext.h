@@ -23,7 +23,7 @@ class IRuntimeClass;
 
 class IScriptBlob;
 
-/*! \brief Script context.
+/*! Script context.
  * \ingroup Script
  *
  * A script context is a thin, isolated, environment
@@ -37,45 +37,45 @@ class T_DLLCLASS IScriptContext : public Object
 	T_RTTI_CLASS;
 
 public:
-	/*! \brief Explicit destroy context. */
+	/*! Explicit destroy context. */
 	virtual void destroy() = 0;
 
-	/*! \brief Load script blob into context.
+	/*! Load script blob into context.
 	 *
 	 * \param scriptBlob Pre-compiled script blob.
 	 * \return True if resource loaded successfully.
 	 */
 	virtual bool load(const IScriptBlob* scriptBlob) = 0;
 
-	/*! \brief Set global variable value.
+	/*! Set global variable value.
 	 *
 	 * \param globalName Name of global variable.
 	 * \param globalValue Value of global variable.
 	 */
 	virtual void setGlobal(const std::string& globalName, const Any& globalValue) = 0;
 
-	/*! \brief Get global variable value.
+	/*! Get global variable value.
 	 *
 	 * \param globalName Name of global variable.
 	 * \return Global value; void if not found.
 	 */
 	virtual Any getGlobal(const std::string& globalName) = 0;
 
-	/*! \brief Get class defined in script environment.
+	/*! Get class defined in script environment.
 	 *
 	 * \param className Name of class.
 	 * \return Runtime class declaration.
 	 */
 	virtual Ref< const IRuntimeClass > findClass(const std::string& className) = 0;
 
-	/*! \brief Return true if context contains function (or method).
+	/*! Return true if context contains function (or method).
 	 *
 	 * \param functionName Name of function of interest.
 	 * \return True if function exists.
 	 */
 	virtual bool haveFunction(const std::string& functionName) const = 0;
 
-	/*! \brief Execute function.
+	/*! Execute function.
 	 *
 	 * \param functionName Name of function to execute.
 	 * \param argc Number of arguments.

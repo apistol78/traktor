@@ -8,7 +8,7 @@
 namespace traktor
 {
 
-/*! \brief Random geometry.
+/*! Random geometry.
  * \ingroup Core
  */
 class RandomGeometry : public Random

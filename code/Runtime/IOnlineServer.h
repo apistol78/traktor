@@ -22,7 +22,7 @@ class ISessionManager;
 	namespace runtime
 	{
 
-/*! \brief Online server.
+/*! Online server.
  * \ingroup Runtime
  */
 class T_DLLCLASS IOnlineServer : public IServer

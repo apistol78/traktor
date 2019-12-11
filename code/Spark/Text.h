@@ -17,7 +17,7 @@ namespace traktor
 	namespace spark
 	{
 
-/*! \brief Flash static text.
+/*! Flash static text.
  * \ingroup Spark
  */
 class T_DLLCLASS Text : public Character

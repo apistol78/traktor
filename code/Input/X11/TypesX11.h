@@ -8,7 +8,7 @@ namespace traktor
 	namespace input
 	{
 
-/*! \brief InputDefaultControlType to X11 KeySym mapping. */
+/*! InputDefaultControlType to X11 KeySym mapping. */
 const KeySym c_x11ControlKeys[] =
 {
 	0,
