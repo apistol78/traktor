@@ -31,6 +31,7 @@ Ref< IMeshResource > StaticMeshConverter::createResource() const
 
 bool StaticMeshConverter::getOperations(const MeshAsset* meshAsset, RefArray< const model::IModelOperation >& outOperations) const
 {
+	outOperations.reserve(5);
 	outOperations.push_back(new model::Triangulate());
 	outOperations.push_back(new model::SortCacheCoherency());
 	outOperations.push_back(new model::CalculateTangents(false));
@@ -50,22 +51,22 @@ bool StaticMeshConverter::convert(
 	IStream* meshResourceStream
 ) const
 {
-	// Create a copy of the first source model.
-	model::Model model = *models[0];
+	const model::Model* model = models[0];
+	T_FATAL_ASSERT(model != nullptr);
 
 	// Create render mesh.
 	uint32_t vertexSize = render::getVertexSize(vertexElements);
 	T_ASSERT(vertexSize > 0);
 
-	bool useLargeIndices = bool(model.getVertexCount() >= 65536);
+	bool useLargeIndices = (bool)(model->getVertexCount() >= 65536);
 	uint32_t indexSize = useLargeIndices ? sizeof(uint32_t) : sizeof(uint16_t);
 
 	if (useLargeIndices)
-		log::warning << L"Using 32-bit indices; might not work on all renderers" << Endl;
+		log::warning << L"Using 32-bit indices; might not work on all renderers." << Endl;
 
 	// Create render mesh.
-	uint32_t vertexBufferSize = uint32_t(model.getVertices().size() * vertexSize);
-	uint32_t indexBufferSize = uint32_t(model.getPolygons().size() * 3 * indexSize);
+	uint32_t vertexBufferSize = (uint32_t)(model->getVertices().size() * vertexSize);
+	uint32_t indexBufferSize = (uint32_t)(model->getPolygons().size() * 3 * indexSize);
 
 	Ref< render::Mesh > renderMesh = render::SystemMeshFactory().createMesh(
 		vertexElements,
@@ -75,25 +76,24 @@ bool StaticMeshConverter::convert(
 	);
 
 	// Create vertex buffer.
-	uint8_t* vertex = static_cast< uint8_t* >(renderMesh->getVertexBuffer()->lock());
+	uint8_t* vertex = (uint8_t*)renderMesh->getVertexBuffer()->lock();
+	std::memset(vertex, 0, vertexBufferSize);
 
-	for (AlignedVector< model::Vertex >::const_iterator i = model.getVertices().begin(); i != model.getVertices().end(); ++i)
+	for (const auto& v : model->getVertices())
 	{
-		std::memset(vertex, 0, vertexSize);
-
-		writeVertexData(vertexElements, vertex, render::DuPosition, 0, model.getPosition(i->getPosition()));
-		if (i->getNormal() != model::c_InvalidIndex)
-			writeVertexData(vertexElements, vertex, render::DuNormal, 0, model.getNormal(i->getNormal()));
-		if (i->getTangent() != model::c_InvalidIndex)
-			writeVertexData(vertexElements, vertex, render::DuTangent, 0, model.getNormal(i->getTangent()));
-		if (i->getBinormal() != model::c_InvalidIndex)
-			writeVertexData(vertexElements, vertex, render::DuBinormal, 0, model.getNormal(i->getBinormal()));
-		if (i->getColor() != model::c_InvalidIndex)
-			writeVertexData(vertexElements, vertex, render::DuColor, 0, model.getColor(i->getColor()));
-		if (i->getTexCoord(0) != model::c_InvalidIndex)
-			writeVertexData(vertexElements, vertex, render::DuCustom, 0, model.getTexCoord(i->getTexCoord(0)));
-		if (i->getTexCoord(1) != model::c_InvalidIndex)
-			writeVertexData(vertexElements, vertex, render::DuCustom, 1, model.getTexCoord(i->getTexCoord(1)));
+		writeVertexData(vertexElements, vertex, render::DuPosition, 0, model->getPosition(v.getPosition()));
+		if (v.getNormal() != model::c_InvalidIndex)
+			writeVertexData(vertexElements, vertex, render::DuNormal, 0, model->getNormal(v.getNormal()));
+		if (v.getTangent() != model::c_InvalidIndex)
+			writeVertexData(vertexElements, vertex, render::DuTangent, 0, model->getNormal(v.getTangent()));
+		if (v.getBinormal() != model::c_InvalidIndex)
+			writeVertexData(vertexElements, vertex, render::DuBinormal, 0, model->getNormal(v.getBinormal()));
+		if (v.getColor() != model::c_InvalidIndex)
+			writeVertexData(vertexElements, vertex, render::DuColor, 0, model->getColor(v.getColor()));
+		if (v.getTexCoord(0) != model::c_InvalidIndex)
+			writeVertexData(vertexElements, vertex, render::DuCustom, 0, model->getTexCoord(v.getTexCoord(0)));
+		if (v.getTexCoord(1) != model::c_InvalidIndex)
+			writeVertexData(vertexElements, vertex, render::DuCustom, 1, model->getTexCoord(v.getTexCoord(1)));
 
 		vertex += vertexSize;
 	}
@@ -103,10 +103,10 @@ bool StaticMeshConverter::convert(
 	// Create index buffer.
 	std::map< std::wstring, AlignedVector< IndexRange > > techniqueRanges;
 
-	uint8_t* index = static_cast< uint8_t* >(renderMesh->getIndexBuffer()->lock());
+	uint8_t* index = (uint8_t*)renderMesh->getIndexBuffer()->lock();
 	uint8_t* indexFirst = index;
 
-	for (std::map< std::wstring, std::list< MeshMaterialTechnique > >::const_iterator i = materialTechniqueMap.begin(); i != materialTechniqueMap.end(); ++i)
+	for (const auto& mt : materialTechniqueMap)
 	{
 		IndexRange range;
 
@@ -115,15 +115,14 @@ bool StaticMeshConverter::convert(
 		range.minIndex = std::numeric_limits< int32_t >::max();
 		range.maxIndex = -std::numeric_limits< int32_t >::max();
 
-		for (AlignedVector< model::Polygon >::const_iterator j = model.getPolygons().begin(); j != model.getPolygons().end(); ++j)
+		for (const auto& polygon : model->getPolygons())
 		{
-			const model::Polygon& polygon = *j;
 			T_ASSERT(polygon.getVertices().size() == 3);
 
-			if (model.getMaterial(polygon.getMaterial()).getName() != i->first)
+			if (model->getMaterial(polygon.getMaterial()).getName() != mt.first)
 				continue;
 
-			for (int k = 0; k < 3; ++k)
+			for (int32_t k = 0; k < 3; ++k)
 			{
 				if (useLargeIndices)
 					*(uint32_t*)index = polygon.getVertex(k);
@@ -141,9 +140,9 @@ bool StaticMeshConverter::convert(
 		if (range.offsetLast <= range.offsetFirst)
 			continue;
 
-		for (std::list< MeshMaterialTechnique >::const_iterator j = i->second.begin(); j != i->second.end(); ++j)
+		for (const auto& mtt : mt.second)
 		{
-			std::wstring technique = j->worldTechnique + L"/" + j->shaderTechnique;
+			std::wstring technique = mtt.worldTechnique + L"/" + mtt.shaderTechnique;
 			range.mergeInto(techniqueRanges[technique]);
 		}
 	}
@@ -154,20 +153,17 @@ bool StaticMeshConverter::convert(
 	// Dump index ranges.
 	log::info << L"Index ranges" << Endl;
 	log::info << IncreaseIndent;
-
-	for (std::map< std::wstring, AlignedVector< IndexRange > >::const_iterator i = techniqueRanges.begin(); i != techniqueRanges.end(); ++i)
+	for (const auto& tr : techniqueRanges)
 	{
-		log::info << L"\"" << i->first << L"\"" << Endl;
-
+		log::info << L"\"" << tr.first << L"\"" << Endl;
 		log::info << IncreaseIndent;
-		for (uint32_t j = 0; j < i->second.size(); ++j)
+		for (uint32_t i = 0; i < tr.second.size(); ++i)
 		{
-			const IndexRange& range = i->second[j];
-			log::info << j << L". offset from " << range.offsetFirst << L" to " << range.offsetLast << L", index min " << range.minIndex << L" max " << range.maxIndex << Endl;
+			const IndexRange& range = tr.second[i];
+			log::info << i << L". offset from " << range.offsetFirst << L" to " << range.offsetLast << L", index min " << range.minIndex << L" max " << range.maxIndex << Endl;
 		}
 		log::info << DecreaseIndent;
 	}
-
 	log::info << DecreaseIndent;
 #endif
 
@@ -216,7 +212,7 @@ bool StaticMeshConverter::convert(
 	}
 
 	renderMesh->setParts(meshParts);
-	renderMesh->setBoundingBox(model.getBoundingBox());
+	renderMesh->setBoundingBox(model->getBoundingBox());
 
 	if (!render::MeshWriter().write(meshResourceStream, renderMesh))
 		return false;
@@ -224,7 +220,6 @@ bool StaticMeshConverter::convert(
 	checked_type_cast< StaticMeshResource* >(meshResource)->m_haveRenderMesh = true;
 	checked_type_cast< StaticMeshResource* >(meshResource)->m_shader = resource::Id< render::Shader >(materialGuid);
 	checked_type_cast< StaticMeshResource* >(meshResource)->m_parts = parts;
-
 	return true;
 }
 

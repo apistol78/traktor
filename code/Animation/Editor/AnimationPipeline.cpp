@@ -124,7 +124,7 @@ bool AnimationPipeline::buildOutput(
 		return false;
 	}
 
-	// Generate key poses.
+	// Generate key poses; retarget animations onto skeleton mesh.
 	const AlignedVector< model::Joint >& skeletonMeshJoints = modelSkeleton->getJoints();
 	const AlignedVector< model::Joint >& skeletonAnimJoints = modelAnimation->getJoints();
 

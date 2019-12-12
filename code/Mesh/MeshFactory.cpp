@@ -4,12 +4,6 @@
 #include "Mesh/IMesh.h"
 #include "Mesh/IMeshResource.h"
 #include "Mesh/MeshFactory.h"
-#include "Mesh/Blend/BlendMesh.h"
-#include "Mesh/Indoor/IndoorMesh.h"
-#include "Mesh/Instance/InstanceMesh.h"
-#include "Mesh/Skinned/SkinnedMesh.h"
-#include "Mesh/Static/StaticMesh.h"
-#include "Mesh/Stream/StreamMesh.h"
 #include "Render/Mesh/RenderMeshFactory.h"
 
 namespace traktor
