@@ -25,6 +25,7 @@
 #include "Mesh/Editor/Instance/InstanceMeshConverter.h"
 #include "Mesh/Editor/Lod/AutoLodMeshConverter.h"
 #include "Mesh/Editor/Partition/PartitionMeshConverter.h"
+#include "Mesh/Editor/Proc/ProcMeshConverter.h"
 #include "Mesh/Editor/Skinned/SkinnedMeshConverter.h"
 #include "Mesh/Editor/Static/StaticMeshConverter.h"
 #include "Mesh/Editor/Stream/StreamMeshConverter.h"
@@ -255,6 +256,10 @@ bool MeshPipeline::buildOutput(
 
 	case MeshAsset::MtPartition:
 		converter = new PartitionMeshConverter();
+		break;
+
+	case MeshAsset::MtProc:
+		converter = new ProcMeshConverter();
 		break;
 
 	case MeshAsset::MtSkinned:

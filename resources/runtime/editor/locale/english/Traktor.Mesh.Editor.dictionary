@@ -138,6 +138,10 @@
       <second>Partition</second>
     </item>
     <item>
+      <first>MESHASSET_EDITOR_MESH_TYPE_PROC</first>
+      <second>Procedural</second>
+    </item>
+    <item>
       <first>MESHASSET_EDITOR_MESH_TYPE_SKINNED</first>
       <second>Skinned</second>
     </item>

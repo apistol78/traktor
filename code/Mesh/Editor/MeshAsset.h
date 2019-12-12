@@ -32,9 +32,10 @@ public:
 		MtInstance = 2,
 		MtLod = 3,
 		MtPartition = 4,
-		MtSkinned = 5,
-		MtStatic = 6,
-		MtStream = 7
+		MtProc = 5,
+		MtSkinned = 6,
+		MtStatic = 7,
+		MtStream = 8
 	};
 
 	MeshAsset();

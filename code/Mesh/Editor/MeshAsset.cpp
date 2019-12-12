@@ -31,6 +31,7 @@ void MeshAsset::serialize(ISerializer& s)
 		{ L"MtInstance", MtInstance },
 		{ L"MtLod", MtLod },
 		{ L"MtPartition", MtPartition },
+		{ L"MtProc", MtProc },
 		{ L"MtSkinned", MtSkinned },
 		{ L"MtStatic", MtStatic },
 		{ L"MtStream", MtStream },
