@@ -90,12 +90,30 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR szCmdLine, int)
 	//Object::setReferenceDebugger(&cycleDebugger);
 #endif
 
+	// Check if environment is already set, else set to current working directory.
+	std::wstring home;
+	if (!OS::getInstance().getEnvironment(L"TRAKTOR_HOME", home))
+	{
+		Path cwd = FileSystem::getInstance().getCurrentVolumeAndDirectory();
+#if !defined(_WIN32)
+		home = cwd.getPathNameNoExtension();
+#else
+		home = cwd.getPathName();
+#endif
+		OS::getInstance().setEnvironment(L"TRAKTOR_HOME", home);
+	}
+
+	// Ensure temporary folder exist.
+	std::wstring writableFolder = OS::getInstance().getWritableFolderPath() + L"/Traktor/Editor/Logs";
+	FileSystem::getInstance().makeAllDirectories(writableFolder);
+
+	// Save log file.
 	Ref< traktor::IStream > logFile;
 #if !defined(_DEBUG)
 	if (!Debugger::getInstance().isDebuggerAttached())
 	{
 		RefArray< File > logs;
-		FileSystem::getInstance().find(L"Editor_*.log", logs);
+		FileSystem::getInstance().find(writableFolder + L"/Logs/Editor_*.log", logs);
 
 		// Get "alive" log ids.
 		std::vector< int32_t > logIds;
@@ -130,7 +148,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR szCmdLine, int)
 
 		// Create new log file.
 		StringOutputStream ss;
-		ss << L"Editor_" << nextLogId << L".log";
+		ss << writableFolder << L"/Logs/Editor_" << nextLogId << L".log";
 		logFile = FileSystem::getInstance().open(ss.str(), File::FmWrite);
 		if (logFile)
 		{
@@ -147,23 +165,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR szCmdLine, int)
 			log::error << L"Unable to create log file; logging only to std pipes." << Endl;
 	}
 #endif
-
-	// Check if environment is already set, else set to current working directory.
-	std::wstring home;
-	if (!OS::getInstance().getEnvironment(L"TRAKTOR_HOME", home))
-	{
-		Path cwd = FileSystem::getInstance().getCurrentVolumeAndDirectory();
-#if !defined(_WIN32)
-		home = cwd.getPathNameNoExtension();
-#else
-		home = cwd.getPathName();
-#endif
-		OS::getInstance().setEnvironment(L"TRAKTOR_HOME", home);
-	}
-
-	// Ensure temporary folder exist.
-	std::wstring writableFolder = OS::getInstance().getWritableFolderPath() + L"/Traktor/Editor";
-	FileSystem::getInstance().makeAllDirectories(writableFolder);
 
 	ui::Application::getInstance()->initialize(
 		new WidgetFactoryImpl(),
@@ -216,7 +217,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR szCmdLine, int)
 #endif
 
 #if 0
-	Object::setReferenceDebugger(0);
+	Object::setReferenceDebugger(nullptr);
 #endif
 	return 0;
 }
