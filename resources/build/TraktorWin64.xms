@@ -1971,6 +1971,15 @@
 									</item>
 								</items>
 							</item>
+							<item type="Filter">
+								<name>Proc</name>
+								<items>
+									<item type="File">
+										<fileName>Proc/*.*</fileName>
+										<items/>
+									</item>
+								</items>
+							</item>
 						</items>
 						<dependencies>
 							<item type="ProjectDependency" version="3">
@@ -7160,6 +7169,15 @@
 								<items>
 									<item type="File">
 										<fileName>Lod/*.*</fileName>
+										<items/>
+									</item>
+								</items>
+							</item>
+							<item type="Filter">
+								<name>Proc</name>
+								<items>
+									<item type="File">
+										<fileName>Proc/*.*</fileName>
 										<items/>
 									</item>
 								</items>
