@@ -2,6 +2,7 @@
 #include "Core/Class/Boxes/BoxedAabb3.h"
 #include "Core/Class/Boxes/BoxedAlignedVector.h"
 #include "Core/Class/Boxes/BoxedMatrix44.h"
+#include "Core/Class/Boxes/BoxedQuaternion.h"
 #include "Core/Class/Boxes/BoxedRefArray.h"
 #include "Core/Class/Boxes/BoxedTransform.h"
 #include "Core/Class/Boxes/BoxedVector2.h"
@@ -253,6 +254,7 @@ void ModelClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
     classModel->addMethod("findJointIndex", &Model::findJointIndex);
     classModel->addMethod("findChildJoints", &Model_findChildJoints);
     classModel->addMethod("getJointGlobalTransform", &Model::getJointGlobalTransform);
+    classModel->addMethod("setJointRotation", &Model::setJointRotation);
     classModel->addMethod("addAnimation", &Model::addAnimation);
     classModel->addMethod("getAnimation", &Model::getAnimation);
     classModel->addMethod("findAnimation", &Model::findAnimation);

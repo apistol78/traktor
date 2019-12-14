@@ -42,23 +42,42 @@ bool Transform::apply(Model& model) const
 	model.setJoints(joints);
 
 	auto animations = model.getAnimations();
-	for (auto animation : animations)
+	if (!animations.empty())
 	{
-		for (uint32_t i = 0; i < animation->getKeyFrameCount(); ++i)
+		Matrix44 transformZeroOffset(
+			m_transform.axisX(),
+			m_transform.axisY(),
+			m_transform.axisZ(),
+			Vector4::origo()
+		);
+
+		for (auto animation : animations)
 		{
-			Ref< Pose > pose = DeepClone(animation->getKeyFramePose(i)).create< Pose >();
-
-			for (uint32_t j = 0; j < model.getJointCount(); ++j)
+			for (uint32_t i = 0; i < animation->getKeyFrameCount(); ++i)
 			{
-				traktor::Transform jt0 = pose->getJointTransform(j);
-				traktor::Transform jt1(
-					m_transform * jt0.translation().xyz1(),
-					jt0.rotation()
-				);
-				pose->setJointTransform(j, jt1);
+				Ref< Pose > pose = new Pose(*animation->getKeyFramePose(i));
+				for (uint32_t j = 0; j < model.getJointCount(); ++j)
+				{
+					traktor::Transform jt0 = pose->getJointTransform(j);
+					if (model.getJoint(j).getParent() != c_InvalidIndex)
+					{
+						traktor::Transform jt1(
+							transformZeroOffset * jt0.translation().xyz1(),
+							jt0.rotation()
+						);
+						pose->setJointTransform(j, jt1);
+					}
+					else
+					{
+						traktor::Transform jt1(
+							m_transform * jt0.translation().xyz1(),
+							jt0.rotation()
+						);
+						pose->setJointTransform(j, jt1);
+					}
+				}
+				animation->setKeyFramePose(i, pose);
 			}
-
-			animation->setKeyFramePose(i, pose);
 		}
 	}
 
