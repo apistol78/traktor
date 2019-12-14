@@ -10,6 +10,18 @@ namespace traktor
 {
 	namespace ui
 	{
+		namespace
+		{
+
+bool isWord(wchar_t ch)
+{
+	return 
+		(ch >= L'0' && ch <= L'9') ||
+		(ch >= L'a' && ch <= L'z') ||
+		(ch >= L'A' && ch <= L'Z');
+}
+
+		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.Edit", Edit, Widget)
 
@@ -309,7 +321,15 @@ void Edit::eventKeyDown(KeyDownEvent* event)
 	{
 	case VkLeft:
 		{
-			caret = std::max< int32_t >(caret - 1 , 0);
+			if ((event->getKeyState() & KsControl) == 0)
+				--caret;
+			else
+			{
+				std::wstring text = getText();
+				for (--caret; caret > 0 && isWord(text[caret - 1]); --caret)
+					;
+			}
+			caret = std::max< int32_t >(caret, 0);
 			modified = true;
 		}
 		break;
@@ -317,7 +337,14 @@ void Edit::eventKeyDown(KeyDownEvent* event)
 	case VkRight:
 		{
 			std::wstring text = getText();
-			caret = std::min< int32_t >(caret + 1, (int32_t)text.length());
+			if ((event->getKeyState() & KsControl) == 0)
+				++caret;
+			else
+			{
+				for (++caret; caret < (int32_t)text.length() && isWord(text[caret]); ++caret)
+					;
+			}
+			caret = std::min< int32_t >(caret, (int32_t)text.length());
 			modified = true;
 		}
 		break;
