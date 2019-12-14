@@ -41,7 +41,7 @@ public:
 	void feed(const std::wstring& value)
 	{
 		if (!value.empty())
-			feed(value.c_str(), uint64_t(value.length()));
+			feed(value.c_str(), (uint64_t)(value.length() * sizeof(wchar_t)));
 	}
 
 private:
