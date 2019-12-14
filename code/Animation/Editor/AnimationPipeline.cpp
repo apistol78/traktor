@@ -5,6 +5,7 @@
 #include "Animation/Editor/SkeletonAsset.h"
 #include "Core/Log/Log.h"
 #include "Core/Math/Const.h"
+#include "Core/Math/Format.h"
 #include "Core/Misc/String.h"
 #include "Core/Settings/PropertyString.h"
 #include "Database/Instance.h"
@@ -21,6 +22,14 @@ namespace traktor
 	namespace animation
 	{
 
+
+void formatAngles(OutputStream& os, const Quaternion& q)
+{
+	Vector4 e = q.toEulerAngles();
+	os << rad2deg(e.x()) << L", " << rad2deg(e.y()) << L", " << rad2deg(e.z());
+}
+
+
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.animation.AnimationPipeline", 9, AnimationPipeline, editor::IPipeline)
 
 bool AnimationPipeline::create(const editor::IPipelineSettings* settings)
@@ -35,9 +44,7 @@ void AnimationPipeline::destroy()
 
 TypeInfoSet AnimationPipeline::getAssetTypes() const
 {
-	TypeInfoSet typeSet;
-	typeSet.insert< AnimationAsset >();
-	return typeSet;
+	return makeTypeInfoSet< AnimationAsset >();
 }
 
 bool AnimationPipeline::buildDependencies(
@@ -106,10 +113,27 @@ bool AnimationPipeline::buildOutput(
 		}
 	}
 
-	// Scale models according to scale factor in asset.
-	model::Transform(scale(animationAsset->getScale(), animationAsset->getScale(), animationAsset->getScale())).apply(*modelAnimation);
-	if (modelSkeleton != modelAnimation)
-		model::Transform(scale(animationAsset->getScale(), animationAsset->getScale(), animationAsset->getScale())).apply(*modelSkeleton);
+	// Scale and/or translate animation data.
+	model::Transform(
+		translate(animationAsset->getTranslate()) *
+		scale(animationAsset->getScale(), animationAsset->getScale(), animationAsset->getScale())
+	).apply(*modelAnimation);
+
+	// Set joint orientations in animation rest/poses to match skeleton.
+	for (uint32_t i = 0; i < modelSkeleton->getJointCount(); ++i)
+	{
+		const model::Joint& jointSkeleton = modelSkeleton->getJoint(i);
+
+		uint32_t jointIdx = modelAnimation->findJointIndex(jointSkeleton.getName());
+		if (jointIdx == model::c_InvalidIndex)
+		{
+			log::warning << L"No such joint \"" << jointSkeleton.getName() << L"\" in animation skeleton." << Endl;
+			continue;
+		}
+
+		Quaternion rotation = jointSkeleton.getTransform().rotation();
+		modelAnimation->setJointRotation(jointIdx, rotation);
+	}
 
 	// Find animation take.
 	const std::wstring take = animationAsset->getTake();
@@ -143,30 +167,18 @@ bool AnimationPipeline::buildOutput(
 			const std::wstring& name = skeletonMeshJoints[j].getName();
 
 			uint32_t k = modelAnimation->findJointIndex(name);
-			if (k != model::c_InvalidIndex)
+			if (k == model::c_InvalidIndex)
 			{
-				Transform TjointAnim = skeletonAnimJoints[k].getTransform();
-				Transform TposeAnim = mp->getJointTransform(k);
-				Transform Tdelta = TjointAnim.inverse() * TposeAnim;	// Delta in joint space.
-				Transform Tglobal = modelAnimation->getJointGlobalTransform(k);
-				Transform TdeltaG = Tglobal * Tdelta * Tglobal.inverse();	// Delta in global space.
-
-				// Apply delta on skeleton joint in global space.
-				Transform TjointSkeleton = modelSkeleton->getJointGlobalTransform(j);
-				Transform TposeSkeleton = TdeltaG * TjointSkeleton;
-
-				// Calculate joint transform.
-				if (skeletonMeshJoints[j].getParent() != model::c_InvalidIndex)
-				{
-					Transform TparentW = modelSkeleton->getJointGlobalTransform(skeletonMeshJoints[j].getParent());
-					TposeSkeleton = TparentW.inverse() * TposeSkeleton;
-				}
-
-				kp.pose.setJointTransform(
-					j,
-					TposeSkeleton
-				);
+				log::warning << L"No \"" << name << L"\" joint in animation skeleton." << Endl;
+				continue;
 			}
+
+			Transform TposeAnim = mp->getJointTransform(k);
+
+			kp.pose.setJointTransform(
+				j,
+				TposeAnim
+			);
 		}
 
 		anim->addKeyPose(kp);

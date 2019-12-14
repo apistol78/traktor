@@ -100,7 +100,7 @@ void AnimatedMeshComponentEditor::drawGuide(render::PrimitiveRenderer* primitive
 					for (uint32_t i = 0; i < skeleton->getJointCount(); ++i)
 					{
 						const Joint* joint = skeleton->getJoint(i);
-						primitiveRenderer->drawWireFrame(jointTransforms[i].toMatrix44(), joint->getRadius() * 4.0f);
+						primitiveRenderer->drawWireFrame(jointTransforms[i].toMatrix44(), joint->getRadius() * 1.0f);
 						if (joint->getParent() >= 0)
 						{
 							const Joint* parent = skeleton->getJoint(joint->getParent());
@@ -124,10 +124,20 @@ void AnimatedMeshComponentEditor::drawGuide(render::PrimitiveRenderer* primitive
 				if (poseTransforms.size() == skeleton->getJointCount())
 				{
 					const Color4ub color(255, 255, 0, 255);
+					const Color4ub colorAlpha(255, 255, 0, 140);
+
 					for (uint32_t i = 0; i < skeleton->getJointCount(); ++i)
 					{
 						const Joint* joint = skeleton->getJoint(i);
-						primitiveRenderer->drawWireFrame(poseTransforms[i].toMatrix44(), joint->getRadius() * 4.0f);
+
+						primitiveRenderer->drawLine(
+							jointTransforms[i].translation(),
+							poseTransforms[i].translation(),
+							colorAlpha
+						);
+
+						primitiveRenderer->drawWireFrame(poseTransforms[i].toMatrix44(), joint->getRadius() * 1.0f);
+
 						if (joint->getParent() >= 0)
 						{
 							const Joint* parent = skeleton->getJoint(joint->getParent());

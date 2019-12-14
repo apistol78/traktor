@@ -184,6 +184,8 @@ public:
 
 	Transform getJointGlobalTransform(uint32_t jointId) const;
 
+	void setJointRotation(uint32_t jointId, const Quaternion& rotation);
+
 	//!@}
 
 	/*! \name Animations. */

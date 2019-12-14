@@ -422,8 +422,40 @@ void ModelToolDialog::updateOperations(ui::TreeViewItem* itemModel)
 
 	for (auto child : itemModel->getChildren())
 	{
-		const IModelOperation* operation = child->getData< IModelOperation >(L"OPERATION");
+		Ref< const IModelOperation > operation = child->getData< IModelOperation >(L"OPERATION");
 		T_ASSERT(operation != nullptr);
+
+		// Ensure script is up-to-date so user can iterate script without adding new operation each time.
+		if (auto executeScript = dynamic_type_cast< const ExecuteScript* >(operation))
+		{
+			const db::Instance* scriptInstance = child->getData< db::Instance >(L"SCRIPT_INSTANCE");
+			T_ASSERT(scriptInstance != nullptr);
+
+			// Ensure script has been built as we're
+			// actually loading class through resource manager. 
+			m_editor->buildAsset(
+				scriptInstance->getGuid(),
+				false
+			);
+			m_editor->buildWaitUntilFinished();
+
+			// Ensure script resource isn't cached.
+			m_resourceManager->reload(
+				scriptInstance->getGuid(),
+				false
+			);
+
+			// Load compiled script class.
+			resource::Proxy< IRuntimeClass > scriptClass;
+			if (!m_resourceManager->bind(
+				resource::Id< IRuntimeClass >(scriptInstance->getGuid()),
+				scriptClass
+			))
+				return;
+
+			// Create new operation; not set in UI item though.
+			operation = new ExecuteScript(scriptClass);
+		}
 
 		// Create a mutable clone of previous operation's output.
 		model = DeepClone(model).create< Model >();
@@ -598,6 +630,7 @@ void ModelToolDialog::eventModelTreeButtonDown(ui::MouseButtonDownEvent* event)
 
 				// Add operation to list.
 				Ref< ui::TreeViewItem > itemOperation = m_modelTree->createItem(itemModel, L"Execute Script", 0);
+				itemOperation->setData(L"SCRIPT_INSTANCE", scriptInstance);
 				itemOperation->setData(L"OPERATION", new ExecuteScript(scriptClass));
 				updateOperations(itemModel);
 			}
@@ -1035,14 +1068,15 @@ void ModelToolDialog::eventRenderPaint(ui::PaintEvent* event)
 
 				for (uint32_t i = 0; i < joints.size(); ++i)
 				{
-					const auto colorRest = (i == weightJoint) ? Color4ub(80, 80, 255, 255) : Color4ub(120, 255, 120, 255);
+					const Color4ub colorRest = (i == weightJoint) ? Color4ub(80, 80, 255, 255) : Color4ub(120, 255, 120, 255);
+					const float frameSize = (i == weightJoint) ? 0.5f : 0.25f;
 
 					childJointIds.resize(0);
 					m_modelTris->findChildJoints(i, childJointIds);
 
 					auto Tjoint = m_modelTris->getJointGlobalTransform(i);
 
-					m_primitiveRenderer->drawWireFrame(Tjoint.toMatrix44(), 1.0f);
+					m_primitiveRenderer->drawWireFrame(Tjoint.toMatrix44(), frameSize);
 
 					if (!childJointIds.empty())
 					{
@@ -1078,14 +1112,15 @@ void ModelToolDialog::eventRenderPaint(ui::PaintEvent* event)
 
 					for (uint32_t i = 0; i < joints.size(); ++i)
 					{
-						const auto colorPose = (i == weightJoint) ? Color4ub(255, 255, 80, 255) : Color4ub(255, 180, 120, 255);
+						const Color4ub colorPose = (i == weightJoint) ? Color4ub(255, 255, 80, 255) : Color4ub(255, 180, 120, 255);
+						const float frameSize = (i == weightJoint) ? 0.5f : 0.25f;
 
 						childJointIds.resize(0);
 						m_modelTris->findChildJoints(i, childJointIds);
 
 						auto TjointPose = pose->getJointGlobalTransform(m_modelTris, i);
 
-						m_primitiveRenderer->drawWireFrame(TjointPose.toMatrix44(), 1.0f);
+						m_primitiveRenderer->drawWireFrame(TjointPose.toMatrix44(), frameSize);
 
 						if (!childJointIds.empty())
 						{

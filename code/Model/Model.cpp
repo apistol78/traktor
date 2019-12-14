@@ -8,6 +8,7 @@
 #include "Core/Serialization/MemberSmallMap.h"
 #include "Model/ContainerHelpers.h"
 #include "Model/Model.h"
+#include "Model/Pose.h"
 
 namespace traktor
 {
@@ -304,6 +305,57 @@ Transform Model::getJointGlobalTransform(uint32_t jointId) const
 		jointId = m_joints[jointId].getParent();
 	}
 	return Tglobal;
+}
+
+void Model::setJointRotation(uint32_t jointId, const Quaternion& rotation)
+{
+	Joint& joint = m_joints[jointId];
+
+	Transform Tcurr = joint.getTransform();
+	Transform Tnext(Tcurr.translation(), rotation);
+	joint.setTransform(Tnext);
+
+	for (uint32_t i = 0; i < (uint32_t)m_joints.size(); ++i)
+	{
+		Joint& child = m_joints[i];
+		if (child.getParent() == jointId)
+		{
+			Transform Tchild = Tnext.inverse() * Tcurr * child.getTransform();
+			child.setTransform(Tchild);
+		}
+	}
+
+	for (auto animation : m_animations)
+	{
+		for (uint32_t i = 0; i < animation->getKeyFrameCount(); ++i)
+		{
+			Ref< Pose > pose = new Pose(*animation->getKeyFramePose(i));
+
+			Transform TposeCurr = pose->getJointTransform(jointId);
+
+			Quaternion QrotationDelta = TposeCurr.rotation() * Tcurr.rotation().inverse();
+			Transform TposeNew(
+				TposeCurr.translation(),
+				QrotationDelta * rotation
+			);
+
+			pose->setJointTransform(jointId, TposeNew);
+
+			Transform TposeDelta = TposeNew.inverse() * TposeCurr;
+			for (uint32_t j = 0; j < (uint32_t)m_joints.size(); ++j)
+			{
+				const Joint& child = m_joints[j];
+				if (child.getParent() == jointId)
+				{
+					Transform tmp0 = pose->getJointTransform(j);
+					Transform tmp1 = TposeNew.inverse() * TposeCurr * tmp0;
+					pose->setJointTransform(j, tmp1);
+				}
+			}
+
+			animation->setKeyFramePose(i, pose);
+		}
+	}
 }
 
 uint32_t Model::addAnimation(Animation* animation)
