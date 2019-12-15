@@ -1,7 +1,6 @@
 #pragma once
 
 #include <list>
-#include "Core/Ref.h"
 #include "Core/Memory/IAllocator.h"
 #include "Core/Thread/CriticalSection.h"
 
@@ -17,10 +16,10 @@ namespace traktor
  * any memory which it once has allocated in order to ensure
  * data isn't modified after it has been released.
  */
-class DebugAllocator : public RefCountImpl< IAllocator >
+class DebugAllocator : public IAllocator
 {
 public:
-	DebugAllocator(IAllocator* systemAllocator);
+	explicit DebugAllocator(IAllocator* systemAllocator);
 
 	virtual ~DebugAllocator();
 
@@ -37,7 +36,7 @@ private:
 	};
 
 	mutable CriticalSection m_lock;
-	Ref< IAllocator > m_systemAllocator;
+	IAllocator* m_systemAllocator;
 	std::list< Block > m_aliveBlocks;
 	std::list< Block > m_freedBlocks;
 	int32_t m_untilCheck;

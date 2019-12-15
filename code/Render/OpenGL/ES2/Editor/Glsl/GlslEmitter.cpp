@@ -2036,7 +2036,7 @@ bool emitSwitch(GlslContext& cx, Switch* node)
 
 		caseBranches.push_back(fs.str());
 		caseInputs.push_back(*caseInputVariable);
-		outputType = std::max(outputType, caseInputVariable->getType());
+		outputType = max(outputType, caseInputVariable->getType());
 
 		cx.getShader().popScope();
 		cx.getShader().popOutputStream(GlslShader::BtBody);
@@ -2057,7 +2057,7 @@ bool emitSwitch(GlslContext& cx, Switch* node)
 
 		caseBranches.push_back(fs.str());
 		caseInputs.push_back(*caseInputVariable);
-		outputType = std::max(outputType, caseInputVariable->getType());
+		outputType = max(outputType, caseInputVariable->getType());
 
 		cx.getShader().popScope();
 		cx.getShader().popOutputStream(GlslShader::BtBody);

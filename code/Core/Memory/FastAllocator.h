@@ -1,6 +1,5 @@
 #pragma once
 
-#include "Core/Ref.h"
 #include "Core/Memory/IAllocator.h"
 
 namespace traktor
@@ -15,10 +14,10 @@ class BlockAllocator;
  * fixed size chunks for small objects. It uses
  * a greedy O(1) allocation scheme for such allocations.
  */
-class FastAllocator : public RefCountImpl< IAllocator >
+class FastAllocator : public IAllocator
 {
 public:
-	FastAllocator(IAllocator* systemAllocator);
+	explicit FastAllocator(IAllocator* systemAllocator);
 
 	virtual ~FastAllocator();
 
@@ -27,7 +26,7 @@ public:
 	virtual void free(void* ptr) override final;
 
 private:
-	Ref< IAllocator > m_systemAllocator;
+	IAllocator* m_systemAllocator;
 	BlockAllocator* m_blockAlloc[5];
 	int32_t m_blockAllocLock[5];
 	int8_t m_blockAllocFull[5];

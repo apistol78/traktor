@@ -1,4 +1,4 @@
-#include "Core/Platform.h"
+#include "Core/System.h"
 #include "Core/Thread/Event.h"
 
 namespace traktor

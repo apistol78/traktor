@@ -221,7 +221,7 @@ bool InputDriverDi8::create(const SystemApplication& sysapp, const SystemWindow&
 {
 	HRESULT hr;
 
-	if (!(m_hWnd = syswin.hWnd))
+	if (!(m_hWnd = (HWND)syswin.hWnd))
 	{
 		if (!(m_hWnd = getMyProcessWindow()))
 		{

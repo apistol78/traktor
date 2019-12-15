@@ -1,12 +1,14 @@
 #include <cctype>
 #include <cstring>
-#if defined(__APPLE__)
+#if defined(_WIN32)
+#	include <windows.h>
+#elif defined(__APPLE__)
 #	include <mach/mach_time.h>
 #	include "Core/Math/Random.h"
 #elif defined(__LINUX__)
 #	include <uuid/uuid.h>
 #endif
-#include "Core/Platform.h"
+//#include "Core/Platform.h"
 #include "Core/Guid.h"
 #include "Core/Io/StringOutputStream.h"
 

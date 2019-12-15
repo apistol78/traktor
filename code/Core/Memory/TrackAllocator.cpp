@@ -1,5 +1,5 @@
 #include <iostream>
-#include "Core/Platform.h"
+#include "Core/System.h"
 #include "Core/Debug/CallStack.h"
 #include "Core/Memory/TrackAllocator.h"
 #include "Core/Thread/Acquire.h"

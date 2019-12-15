@@ -1,5 +1,5 @@
 #include <windows.h>
-#include "Core/Platform.h"
+#include "Core/System.h"
 #include "Input/Win32/InputDriverWin32.h"
 #include "Input/Win32/KeyboardDeviceWin32.h"
 #include "Input/Win32/MouseDeviceWin32.h"
@@ -19,12 +19,12 @@ bool InputDriverWin32::create(const SystemApplication& sysapp, const SystemWindo
 {
 	if (inputCategories & CtKeyboard)
 	{
-		m_keyboardDevice = new KeyboardDeviceWin32(syswin.hWnd);
+		m_keyboardDevice = new KeyboardDeviceWin32((HWND)syswin.hWnd);
 		m_devices.push_back(m_keyboardDevice);
 	}
 	if (inputCategories & CtMouse)
 	{
-		m_mouseDevice = new MouseDeviceWin32(syswin.hWnd);
+		m_mouseDevice = new MouseDeviceWin32((HWND)syswin.hWnd);
 		m_devices.push_back(m_mouseDevice);
 	}
 	update();

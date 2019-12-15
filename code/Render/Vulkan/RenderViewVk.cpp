@@ -146,7 +146,7 @@ bool RenderViewVk::create(const RenderViewEmbeddedDesc& desc)
     VkWin32SurfaceCreateInfoKHR sci = {};
     sci.sType = VK_STRUCTURE_TYPE_WIN32_SURFACE_CREATE_INFO_KHR;
     sci.hinstance = GetModuleHandle(nullptr);
-    sci.hwnd = desc.syswin.hWnd;
+    sci.hwnd = (HWND)desc.syswin.hWnd;
     if ((result = vkCreateWin32SurfaceKHR(m_instance, &sci, nullptr, &m_surface)) != VK_SUCCESS)
 	{
 		log::error << L"Failed to create Vulkan; unable to create Win32 renderable surface (" << getHumanResult(result) << L")." << Endl;
@@ -154,7 +154,7 @@ bool RenderViewVk::create(const RenderViewEmbeddedDesc& desc)
 	}
 
 	RECT rc;
-	GetClientRect(desc.syswin.hWnd, &rc);
+	GetClientRect((HWND)desc.syswin.hWnd, &rc);
 	width = (int32_t)(rc.right - rc.left);
 	height = (int32_t)(rc.bottom - rc.top);
 

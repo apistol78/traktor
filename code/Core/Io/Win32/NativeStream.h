@@ -20,7 +20,7 @@ class T_DLLCLASS NativeStream : public IStream
 	T_RTTI_CLASS;
 
 public:
-	NativeStream(HANDLE hFile, uint32_t mode);
+	NativeStream(void* hFile, uint32_t mode);
 
 	virtual ~NativeStream();
 
@@ -45,7 +45,7 @@ public:
 	virtual void flush();
 
 private:
-	HANDLE m_hFile;
+	void* m_hFile;
 	uint32_t m_mode;
 	mutable size_t m_fileSize;
 };
