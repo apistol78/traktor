@@ -37,12 +37,12 @@ bool DropDown::create(Widget* parent, int32_t style)
 int32_t DropDown::add(const std::wstring& item, Object* data)
 {
 	m_items.push_back({ item, data });
-	return int32_t(m_items.size() - 1);
+	return (int32_t)m_items.size() - 1;
 }
 
 bool DropDown::remove(int32_t index)
 {
-	if (index >= int32_t(m_items.size()))
+	if (index >= (int32_t)m_items.size())
 		return false;
 
 	auto i = m_items.begin() + index;
@@ -57,7 +57,7 @@ void DropDown::removeAll()
 
 int32_t DropDown::count() const
 {
-	return int32_t(m_items.size());
+	return (int32_t)m_items.size();
 }
 
 void DropDown::setItem(int32_t index, const std::wstring& item)
@@ -72,12 +72,12 @@ void DropDown::setData(int32_t index, Object* data)
 
 std::wstring DropDown::getItem(int32_t index) const
 {
-	return (index >= 0 && index < int32_t(m_items.size())) ? m_items[index].text : L"";
+	return (index >= 0 && index < (int32_t)m_items.size()) ? m_items[index].text : L"";
 }
 
-Ref< Object > DropDown::getData(int32_t index) const
+Object* DropDown::getData(int32_t index) const
 {
-	return (index >= 0 && index < int32_t(m_items.size())) ? m_items[index].data : nullptr;
+	return (index >= 0 && index < (int32_t)m_items.size()) ? m_items[index].data : nullptr;
 }
 
 void DropDown::select(int32_t index)
@@ -148,13 +148,13 @@ std::wstring DropDown::getSelectedItem() const
 		return L"";
 }
 
-Ref< Object > DropDown::getSelectedData() const
+Object* DropDown::getSelectedData() const
 {
 	int32_t s = getSelected();
 	if (s >= 0)
 		return getData(s);
 	else
-		return 0;
+		return nullptr;
 }
 
 Size DropDown::getPreferedSize() const
