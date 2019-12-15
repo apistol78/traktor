@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Core/IRefCount.h"
 #include "Core/Meta/Traits.h"
 #include "Core/Rtti/TypeInfo.h"
 

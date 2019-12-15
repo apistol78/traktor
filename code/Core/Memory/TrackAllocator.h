@@ -1,7 +1,6 @@
 #pragma once
 
 #include <map>
-#include "Core/Ref.h"
 #include "Core/Memory/IAllocator.h"
 #include "Core/Thread/Semaphore.h"
 
@@ -15,10 +14,10 @@ namespace traktor
  * allocator. It will keep a "live"-list to track
  * memory leaks.
  */
-class TrackAllocator : public RefCountImpl< IAllocator >
+class TrackAllocator : public IAllocator
 {
 public:
-	TrackAllocator(IAllocator* systemAllocator);
+	explicit TrackAllocator(IAllocator* systemAllocator);
 
 	virtual ~TrackAllocator();
 
@@ -51,7 +50,7 @@ private:
 	};
 
 	mutable Semaphore m_lock;
-	Ref< IAllocator > m_systemAllocator;
+	IAllocator* m_systemAllocator;
 	std::map< void*, Block > m_aliveBlocks;
 	std::map< void*, Stats > m_allocStats;
 };

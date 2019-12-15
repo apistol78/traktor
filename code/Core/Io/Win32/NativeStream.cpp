@@ -1,3 +1,4 @@
+#include "Core/System.h"
 #include "Core/Io/Win32/NativeStream.h"
 
 namespace traktor
@@ -5,7 +6,7 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.NativeStream", NativeStream, IStream)
 
-NativeStream::NativeStream(HANDLE hFile, uint32_t mode)
+NativeStream::NativeStream(void* hFile, uint32_t mode)
 :	m_hFile(hFile)
 ,	m_mode(mode)
 ,	m_fileSize(0)

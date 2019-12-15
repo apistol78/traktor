@@ -11,7 +11,7 @@ namespace traktor
  * The standard allocator uses the standard malloc and free
  * from the C runtime in order to allocate memory.
  */
-class StdAllocator : public RefCountImpl< IAllocator >
+class StdAllocator : public IAllocator
 {
 public:
 	virtual void* alloc(size_t size, size_t align, const char* const tag) override final;

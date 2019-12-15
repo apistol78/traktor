@@ -1,7 +1,6 @@
 #pragma once
 
 #include <cstddef>
-#include "Core/IRefCount.h"
 
 namespace traktor
 {
@@ -11,7 +10,7 @@ namespace traktor
  *
  * Allocators used by the Heap must implement this interface.
  */
-class IAllocator : public IRefCount
+class IAllocator
 {
 public:
 	virtual void* alloc(size_t size, size_t align, const char* const tag) = 0;

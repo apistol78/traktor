@@ -1,4 +1,4 @@
-#include "Core/Platform.h"
+#include "Core/System.h"
 #include "Core/Log/Log.h"
 #include "Input/Tobii/InputDeviceGaze.h"
 #include "Input/Tobii/InputDriverTobii.h"
@@ -51,7 +51,7 @@ bool InputDriverTobii::create(const SystemApplication& sysapp, const SystemWindo
 	TX_GAZEPOINTDATAPARAMS params = { TX_GAZEPOINTDATAMODE_LIGHTLYFILTERED };
 	TX_RESULT result;
 
-	m_hWnd = syswin.hWnd;
+	m_hWnd = (HWND)syswin.hWnd;
 
 	if ((result = txInitializeEyeX(TX_EYEXCOMPONENTOVERRIDEFLAG_NONE, NULL, NULL, NULL, NULL)) != TX_RESULT_OK)
 	{

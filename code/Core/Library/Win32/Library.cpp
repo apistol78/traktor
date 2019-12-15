@@ -1,9 +1,9 @@
-#include "Core/Platform.h"
+#include "Core/Io/StringOutputStream.h"
 #include "Core/Library/Library.h"
 #include "Core/Log/Log.h"
-#include "Core/Io/StringOutputStream.h"
-#include "Core/Misc/TString.h"
 #include "Core/Misc/String.h"
+#include "Core/Misc/TString.h"
+#include "Core/System.h"
 
 namespace traktor
 {

@@ -1,21 +1,9 @@
 #pragma once
 
-#if defined (_WIN32)
-#	if defined (_XBOX)
-#		include <xtl.h>
-#	else
-#		define NOMINMAX
-#		include <windows.h>
-#	endif
-#	include <tchar.h>
-#elif defined(__ANDROID__)
-#	include <android/native_window.h>
-#endif
-
 namespace traktor
 {
 
-	/*! \brief
+	/*!
 	 * \ingroup Core
 	 */
 	struct SystemApplication
@@ -24,7 +12,7 @@ namespace traktor
 		class DelegateInstance* instance;
 
 		SystemApplication()
-		:	instance(0)
+		:	instance(nullptr)
 		{
 		}
 
@@ -32,45 +20,30 @@ namespace traktor
 		:	instance(instance_)
 		{
 		}
-
-#elif defined(__PNACL__)
-		pp::Instance* instance;
-
-		SystemApplication()
-		:	instance(0)
-		{
-		}
-
-		explicit SystemApplication(pp::Instance* instance_)
-		:	instance(instance_)
-		{
-		}
-
 #else
 		void* unk;
 
 		SystemApplication()
-		:	unk(0)
+		:	unk(nullptr)
 		{
 		}
-
 #endif
 	};
 
-	/*! \brief
+	/*!
 	 * \ingroup Core
 	 */
 	struct SystemWindow
 	{
 #if defined(_WIN32) && !defined(_XBOX_ONE)
-		HWND hWnd;
+		void* hWnd;
 
 		SystemWindow()
-		:	hWnd(0)
+		:	hWnd(nullptr)
 		{
 		}
 
-		explicit SystemWindow(HWND hWnd_)
+		explicit SystemWindow(void* hWnd_)
 		:	hWnd(hWnd_)
 		{
 		}
@@ -80,7 +53,7 @@ namespace traktor
 		unsigned long window;
 
 		SystemWindow()
-		:	display(0)
+		:	display(nullptr)
 		,	window(0)
 		{
 		}
@@ -95,7 +68,7 @@ namespace traktor
 		void* view;
 
 		SystemWindow()
-		:	view(0)
+		:	view(nullptr)
 		{
 		}
 
@@ -108,7 +81,7 @@ namespace traktor
 		struct ANativeWindow** window;
 
 		SystemWindow()
-		:	window(0)
+		:	window(nullptr)
 		{
 		}
 
@@ -121,11 +94,10 @@ namespace traktor
 		void* unk;
 
 		SystemWindow()
-		:	unk(0)
+		:	unk(nullptr)
 		{
 		}
 #endif
 	};
 
 }
-

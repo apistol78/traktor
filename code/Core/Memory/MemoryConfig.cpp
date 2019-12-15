@@ -34,7 +34,6 @@ IAllocator* getAllocator()
 	if (!s_allocator)
 	{
 		s_stdAllocator = allocConstruct< StdAllocator >();
-		s_stdAllocator->addRef(nullptr);
 
 //#if defined(__IOS__) || defined(__ANDROID__) || defined(_PS3) || defined(__EMSCRIPTEN__) || defined(__APPLE__)
 		s_allocator = s_stdAllocator;
@@ -45,8 +44,6 @@ IAllocator* getAllocator()
 //		//s_allocator = allocConstruct< DebugAllocator >(s_stdAllocator);
 //		s_allocator = s_stdAllocator;
 //#endif
-
-		s_allocator->addRef(nullptr);
 
 #if !defined(_PS3) && !defined(__MAC__) && !defined(__IOS__)
 		std::atexit(destroyAllocator);
