@@ -123,12 +123,17 @@ public:
 
 	const traktor::Color4f& getColor() const;
 
+	void setLinear(bool linear);
+
+	bool getLinear() const;
+
 	virtual std::wstring getInformation() const override final;
 
 	virtual void serialize(ISerializer& s) override final;
 
 private:
 	traktor::Color4f m_color;
+	bool m_linear;
 };
 
 /*! Comment node. */

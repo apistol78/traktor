@@ -108,6 +108,26 @@ T_MATH_INLINE void Color4f::setEV(const Scalar& ev)
 	m_data += Vector4(mn, mn, mn, 0.0f);
 }
 
+T_MATH_INLINE Color4f Color4f::sRGB() const
+{
+	return Color4f(
+		std::pow(getRed(), 2.2f),
+		std::pow(getGreen(), 2.2f),
+		std::pow(getBlue(), 2.2f),
+		getAlpha()
+	);
+}
+
+T_MATH_INLINE Color4f Color4f::linear() const
+{
+	return Color4f(
+		std::pow(getRed(), 1.0f / 2.2f),
+		std::pow(getGreen(), 1.0f / 2.2f),
+		std::pow(getBlue(), 1.0f / 2.2f),
+		getAlpha()
+	);
+}
+
 T_MATH_INLINE Color4f Color4f::saturated() const
 {
 	return Color4f(traktor::max(traktor::min(m_data, Vector4(1.0f, 1.0f, 1.0f, 1.0f)), Vector4(0.0f, 0.0f, 0.0f, 0.0f)));

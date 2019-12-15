@@ -346,13 +346,14 @@ void Branch::serialize(ISerializer& s)
 
 /*---------------------------------------------------------------------------*/
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Color", 1, Color, ImmutableNode)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Color", 2, Color, ImmutableNode)
 
 const ImmutableNode::OutputPinDesc c_Color_o[] = { { L"Output" }, { 0 } };
 
 Color::Color(const traktor::Color4f& color)
 :	ImmutableNode(nullptr, c_Color_o)
 ,	m_color(color)
+,	m_linear(false)
 {
 }
 
@@ -364,6 +365,16 @@ void Color::setColor(const traktor::Color4f& color)
 const traktor::Color4f& Color::getColor() const
 {
 	return m_color;
+}
+
+void Color::setLinear(bool linear)
+{
+	m_linear = linear;
+}
+
+bool Color::getLinear() const
+{
+	return m_linear;
 }
 
 std::wstring Color::getInformation() const
@@ -392,6 +403,7 @@ std::wstring Color::getInformation() const
 void Color::serialize(ISerializer& s)
 {
 	ImmutableNode::serialize(s);
+
 	if (s.getVersion< Color >() >= 1)
 		s >> Member< traktor::Color4f >(L"color", m_color, AttributeHdr());
 	else
@@ -400,6 +412,9 @@ void Color::serialize(ISerializer& s)
 		s >> Member< traktor::Color4ub >(L"color", ldr);
 		m_color = Color4f::fromColor4ub(ldr);
 	}
+
+	if (s.getVersion< Color >() >= 2)
+		s >> Member< bool >(L"linear", m_linear);
 }
 
 /*---------------------------------------------------------------------------*/
