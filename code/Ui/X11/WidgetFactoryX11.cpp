@@ -19,9 +19,11 @@ namespace traktor
 		namespace
 		{
 
-int xerrorHandler(Display*, XErrorEvent* ee)
+int xerrorHandler(Display* display, XErrorEvent* ee)
 {
-	log::error << L"X11 error occured, major code " << (int32_t)ee->error_code << Endl;
+	char msg[256] = { 0 };
+	XGetErrorText(display, ee->error_code, msg, sizeof_array(msg));
+	log::debug << L"X11 error: request_code " << (int32_t)ee->request_code << L", error_code " << (int32_t)ee->error_code << L" (" << mbstows(msg) << L")" << Endl;
 	return 0;
 }
 
