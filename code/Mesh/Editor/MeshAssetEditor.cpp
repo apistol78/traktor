@@ -408,18 +408,18 @@ void MeshAssetEditor::updateMaterialList()
 
 		std::set< std::wstring > textureNames;
 		const std::map< std::wstring, Guid >& materialTextures = m_asset->getMaterialTextures();
-		for (AlignedVector< model::Material >::const_iterator i = materials.begin(); i != materials.end(); ++i)
+		for (const auto& material : materials)
 		{
 			std::wstring modelTextures[] =
 			{
-				i->getDiffuseMap().name,
-				i->getSpecularMap().name,
-				i->getRoughnessMap().name,
-				i->getMetalnessMap().name,
-				i->getTransparencyMap().name,
-				i->getEmissiveMap().name,
-				i->getReflectiveMap().name,
-				i->getNormalMap().name
+				material.getDiffuseMap().name,
+				material.getSpecularMap().name,
+				material.getRoughnessMap().name,
+				material.getMetalnessMap().name,
+				material.getTransparencyMap().name,
+				material.getEmissiveMap().name,
+				material.getReflectiveMap().name,
+				material.getNormalMap().name
 			};
 
 			for (uint32_t j = 0; j < sizeof_array(modelTextures); ++j)
@@ -432,7 +432,7 @@ void MeshAssetEditor::updateMaterialList()
 				Ref< db::Instance > materialTextureInstance;
 				std::wstring materialTexture = i18n::Text(L"MESHASSET_EDITOR_TEXTURE_NOT_ASSIGNED");
 
-				std::map< std::wstring, Guid >::const_iterator it = materialTextures.find(modelTextures[j]);
+				auto it = materialTextures.find(modelTextures[j]);
 				if (it != materialTextures.end())
 				{
 					materialTextureInstance = m_editor->getSourceDatabase()->getInstance(it->second);
@@ -445,21 +445,21 @@ void MeshAssetEditor::updateMaterialList()
 				textureItem->add(new ui::GridItem(materialTexture));
 
 				StringOutputStream ss;
-				if (modelTextures[j] == i->getDiffuseMap().name)
+				if (modelTextures[j] == material.getDiffuseMap().name)
 					ss << L" | Diffuse";
-				if (modelTextures[j] == i->getSpecularMap().name)
+				if (modelTextures[j] == material.getSpecularMap().name)
 					ss << L" | Specular";
-				if (modelTextures[j] == i->getRoughnessMap().name)
+				if (modelTextures[j] == material.getRoughnessMap().name)
 					ss << L" | Roughness";
-				if (modelTextures[j] == i->getMetalnessMap().name)
+				if (modelTextures[j] == material.getMetalnessMap().name)
 					ss << L" | Metalness";
-				if (modelTextures[j] == i->getTransparencyMap().name)
+				if (modelTextures[j] == material.getTransparencyMap().name)
 					ss << L" | Transparency";
-				if (modelTextures[j] == i->getEmissiveMap().name)
+				if (modelTextures[j] == material.getEmissiveMap().name)
 					ss << L" | Emissive";
-				if (modelTextures[j] == i->getReflectiveMap().name)
+				if (modelTextures[j] == material.getReflectiveMap().name)
 					ss << L" | Reflective (*)";
-				if (modelTextures[j] == i->getNormalMap().name)
+				if (modelTextures[j] == material.getNormalMap().name)
 					ss << L" | Normal";
 				textureItem->add(new ui::GridItem(ss.str().substr(3)));
 
@@ -588,7 +588,7 @@ void MeshAssetEditor::removeMaterialShader()
 		return;
 
 	selectedItem->set(2, new ui::GridItem(i18n::Text(L"MESHASSET_EDITOR_SHADER_NOT_ASSIGNED")));
-	selectedItem->setData(L"INSTANCE", 0);
+	selectedItem->setData(L"INSTANCE", nullptr);
 	m_materialShaderList->requestUpdate();
 }
 
@@ -618,12 +618,13 @@ void MeshAssetEditor::removeMaterialTexture()
 		return;
 
 	selectedItem->set(1, new ui::GridItem(i18n::Text(L"MESHASSET_EDITOR_TEXTURE_NOT_ASSIGNED")));
-	selectedItem->setData(L"INSTANCE", 0);
+	selectedItem->setData(L"INSTANCE", nullptr);
 	m_materialTextureList->requestUpdate();
 }
 
 void MeshAssetEditor::eventMeshTypeChange(ui::SelectionChangeEvent* event)
 {
+	m_asset->setMeshType(MeshAsset::MeshType(m_dropMeshType->getSelected()));
 	updateFile();
 }
 

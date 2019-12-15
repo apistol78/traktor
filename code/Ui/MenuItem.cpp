@@ -153,8 +153,7 @@ bool MenuItem::isChecked() const
 
 void MenuItem::remove(MenuItem* item)
 {
-	RefArray< MenuItem >::iterator i = std::find(m_items.begin(), m_items.end(), item);
-	m_items.erase(i);
+	m_items.remove(item);
 }
 
 void MenuItem::removeAll()
@@ -175,7 +174,7 @@ int MenuItem::count() const
 Ref< MenuItem > MenuItem::get(int index)
 {
 	if (index < 0 || index >= int(m_items.size()))
-		return 0;
+		return nullptr;
 
 	return m_items[index];
 }
