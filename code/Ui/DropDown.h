@@ -50,7 +50,7 @@ public:
 
 	std::wstring getItem(int32_t index) const;
 
-	Ref< Object > getData(int32_t index) const;
+	Object* getData(int32_t index) const;
 
 	void select(int32_t index);
 
@@ -66,16 +66,16 @@ public:
 
 	std::wstring getSelectedItem() const;
 
-	Ref< Object > getSelectedData() const;
+	Object* getSelectedData() const;
 
 	template < typename T >
-	Ref< T > getData(int32_t index) const
+	T* getData(int32_t index) const
 	{
 		return dynamic_type_cast< T* >(getData(index));
 	}
 
 	template < typename T >
-	Ref< T > getSelectedData() const
+	T* getSelectedData() const
 	{
 		return dynamic_type_cast< T* >(getSelectedData());
 	}
