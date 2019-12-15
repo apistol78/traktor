@@ -98,6 +98,11 @@ bool ConstantNodeTraits::evaluatePartial(
 {
 	if (const Color* color = dynamic_type_cast< const Color* >(node))
 	{
+		Color4f value = color->getColor();
+
+		if (!color->getLinear())
+			value = value.linear();
+
 		outputConstant = Constant(
 			color->getColor().getRed(),
 			color->getColor().getGreen(),

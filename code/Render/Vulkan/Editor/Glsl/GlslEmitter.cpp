@@ -157,10 +157,13 @@ bool emitColor(GlslContext& cx, Color* node)
 	auto& f = cx.getShader().getOutputStream(GlslShader::BtBody);
 
 	Ref< GlslVariable > out = cx.emitOutput(node, L"Output", GtFloat4);
-	Vector4 value = node->getColor();
+
+	Color4f value = node->getColor();
+	if (!node->getLinear())
+		value = value.linear();
 	
 	comment(f, node);
-	assign(f, out) << L"vec4(" << formatFloat(value.x()) << L", " << formatFloat(value.y()) << L", " << formatFloat(value.z()) << L", " << formatFloat(value.w()) << L");" << Endl;
+	assign(f, out) << L"vec4(" << formatFloat(value.getRed()) << L", " << formatFloat(value.getGreen()) << L", " << formatFloat(value.getBlue()) << L", " << formatFloat(value.getAlpha()) << L");" << Endl;
 
 	return true;
 }

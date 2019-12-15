@@ -58,6 +58,10 @@ public:
 
 	T_MATH_INLINE void setEV(const Scalar& ev);
 
+	T_MATH_INLINE Color4f sRGB() const;
+
+	T_MATH_INLINE Color4f linear() const;
+
 	T_MATH_INLINE Color4f saturated() const;
 
 	T_MATH_INLINE Color4f rgb0() const;
