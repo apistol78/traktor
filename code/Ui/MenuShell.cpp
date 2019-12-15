@@ -219,6 +219,10 @@ void MenuShell::eventGlobalButtonUp(MouseButtonUpEvent* event)
 	MenuItem* item = getItem(clientPosition);
 	if (item && item->isEnable())
 	{
+		// Toggle if checkbox item selected.
+		if (item->getCheckBox())
+			item->setChecked(!item->isChecked());
+
 		MenuClickEvent clickEvent(this, item, item->getCommand());
 		raiseEvent(&clickEvent);
 	}
