@@ -13,6 +13,8 @@ namespace traktor
 class IAllocator
 {
 public:
+	virtual ~IAllocator() {}
+
 	virtual void* alloc(size_t size, size_t align, const char* const tag) = 0;
 
 	virtual void free(void* ptr) = 0;
