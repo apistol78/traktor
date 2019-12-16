@@ -21,14 +21,14 @@ public:
 	SimpleTextureVk(
 		VkPhysicalDevice physicalDevice,
 		VkDevice logicalDevice,
-		VmaAllocator allocator
+		VmaAllocator allocator,
+		VkCommandPool setupCommandPool,
+		VkQueue setupQueue
 	);
 
 	virtual ~SimpleTextureVk();
 
 	bool create(
-		VkCommandPool commandPool,
-		VkQueue queue,
 		const SimpleTextureCreateDesc& desc,
 		const wchar_t* const tag
 	);
@@ -57,12 +57,14 @@ private:
 	VkPhysicalDevice m_physicalDevice;
 	VkDevice m_logicalDevice;
 	VmaAllocator m_allocator;
-	VmaAllocation m_allocation;
+	VkCommandPool m_setupCommandPool;
+	VkQueue m_setupQueue;
+	VmaAllocation m_stagingBufferAllocation;
+	VkBuffer m_stagingBuffer;
+	VmaAllocation m_textureAllocation;
 	VkImage m_textureImage;
 	VkImageView m_textureView;
-	int32_t m_mips;
-	int32_t m_width;
-	int32_t m_height;
+	SimpleTextureCreateDesc m_desc;
 };
 
 	}

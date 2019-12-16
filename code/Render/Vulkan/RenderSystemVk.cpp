@@ -542,11 +542,11 @@ Ref< ISimpleTexture > RenderSystemVk::createSimpleTexture(const SimpleTextureCre
 	Ref< SimpleTextureVk > texture = new SimpleTextureVk(
 		m_physicalDevice,
 		m_logicalDevice,
-		m_allocator
+		m_allocator,
+		m_graphicsCommandPool,
+		m_graphicsQueue
 	);
 	if (texture->create(
-		m_graphicsCommandPool,
-		m_graphicsQueue,
 		desc,
 		tag
 	))
