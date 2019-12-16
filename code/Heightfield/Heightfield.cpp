@@ -231,13 +231,13 @@ Vector4 Heightfield::normalAt(float gridX, float gridZ) const
 	{
 		uint32_t j = (i + 1) % sizeof_array(directions);
 
-		float dx1 = directions[i][0] * sx;
+		float dx1 = directions[i][0] * sx * c_distance;
 		float dy1 = (h[i] - h0) * sy;
-		float dz1 = directions[i][1] * sz;
+		float dz1 = directions[i][1] * sz * c_distance;
 
-		float dx2 = directions[j][0] * sx;
+		float dx2 = directions[j][0] * sx * c_distance;
 		float dy2 = (h[j] - h0) * sy;
-		float dz2 = directions[j][1] * sz;
+		float dz2 = directions[j][1] * sz * c_distance;
 
 		Vector4 n = cross(
 			Vector4(dx2, dy2, dz2),

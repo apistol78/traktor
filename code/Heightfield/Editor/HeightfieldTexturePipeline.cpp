@@ -28,57 +28,6 @@ float fract(float v)
 	return v - std::floor(v);
 }
 
-Vector4 normalAt(const Heightfield* heightfield, int32_t u, int32_t v)
-{
-	const float c_distance = 0.5f;
-	const float directions[][2] =
-	{
-		{ -c_distance, -c_distance },
-		{        0.0f, -c_distance },
-		{  c_distance, -c_distance },
-		{  c_distance,        0.0f },
-		{  c_distance,  c_distance },
-		{        0.0f,        0.0f },
-		{ -c_distance,  c_distance },
-		{ -c_distance,        0.0f }
-	};
-
-	float h0 = heightfield->getGridHeightNearest(u, v);
-
-	float h[sizeof_array(directions)];
-	for (uint32_t i = 0; i < sizeof_array(directions); ++i)
-		h[i] = heightfield->getGridHeightBilinear(u + directions[i][0], v + directions[i][1]);
-
-	const Vector4& worldExtent = heightfield->getWorldExtent();
-	float sx = worldExtent.x() / heightfield->getSize();
-	float sy = worldExtent.y();
-	float sz = worldExtent.z() / heightfield->getSize();
-
-	Vector4 N = Vector4::zero();
-
-	for (uint32_t i = 0; i < sizeof_array(directions); ++i)
-	{
-		uint32_t j = (i + 1) % sizeof_array(directions);
-
-		float dx1 = directions[i][0] * sx;
-		float dy1 = (h[i] - h0) * sy;
-		float dz1 = directions[i][1] * sz;
-
-		float dx2 = directions[j][0] * sx;
-		float dy2 = (h[j] - h0) * sy;
-		float dz2 = directions[j][1] * sz;
-
-		Vector4 n = cross(
-			Vector4(dx2, dy2, dz2),
-			Vector4(dx1, dy1, dz1)
-		);
-
-		N += n;
-	}
-
-	return N.normalized();
-}
-
 		}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.hf.HeightfieldTexturePipeline", 5, HeightfieldTexturePipeline, editor::DefaultPipeline)
@@ -233,6 +182,9 @@ bool HeightfieldTexturePipeline::buildOutput(
 		output->m_preserveAlphaCoverage = false;
 		output->m_alphaCoverageReference = 0.0f;
 		output->m_sharpenRadius = 0;
+		output->m_sharpenStrength = 0.0f;
+		output->m_noiseStrength = 0.0f;
+		output->m_systemTexture = true;
 
 		return pipelineBuilder->buildOutput(
 			sourceInstance,
@@ -249,7 +201,7 @@ bool HeightfieldTexturePipeline::buildOutput(
 		{
 			for (int32_t u = 0; u < size; ++u)
 			{
-				Vector4 normal = normalAt(heightfield, u, v);
+				Vector4 normal = heightfield->normalAt(u, v);
 				normal = normal * Vector4(0.5f, 0.5f, 0.5f, 0.0f) + Vector4(0.5f, 0.5f, 0.5f, 0.0f);
 				outputMap->setPixelUnsafe(u, v, Color4f(
 					normal.x(),
@@ -279,6 +231,9 @@ bool HeightfieldTexturePipeline::buildOutput(
 		output->m_preserveAlphaCoverage = false;
 		output->m_alphaCoverageReference = 0.0f;
 		output->m_sharpenRadius = 0;
+		output->m_sharpenStrength = 0.0f;
+		output->m_noiseStrength = 0.0f;
+		output->m_systemTexture = true;
 
 		return pipelineBuilder->buildOutput(
 			sourceInstance,

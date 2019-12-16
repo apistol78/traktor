@@ -545,25 +545,25 @@ bool TextureOutputPipeline::buildOutput(
 
 	if (textureOutput->m_textureType == Tt2D)
 	{
-		// Skip mips on non-system textures.
 		if (!textureOutput->m_systemTexture)
 		{
+			// Skip mips on non-system textures.
 			width = std::max(1, width >> m_skipMips);
 			height = std::max(1, height >> m_skipMips);
-		}
 
-		// Ensure image size doesn't exceed clamp size.
-		if (m_clampSize > 0)
-		{
-			if (width > m_clampSize)
+			// Ensure image size doesn't exceed clamp size.
+			if (m_clampSize > 0)
 			{
-				height = (height * m_clampSize) / width;
-				width = m_clampSize;
-			}
-			if (height > m_clampSize)
-			{
-				width = (width * m_clampSize) / height;
-				height = m_clampSize;
+				if (width > m_clampSize)
+				{
+					height = (height * m_clampSize) / width;
+					width = m_clampSize;
+				}
+				if (height > m_clampSize)
+				{
+					width = (width * m_clampSize) / height;
+					height = m_clampSize;
+				}
 			}
 		}
 

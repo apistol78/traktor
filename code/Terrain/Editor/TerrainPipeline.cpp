@@ -31,7 +31,6 @@ namespace traktor
 		namespace
 		{
 
-const float c_terrainNormalScale = 0.8f;
 const uint32_t c_cutsCountThreshold = 10;
 
 const Guid c_guidSplatMapSeed(L"{3BDF1640-E844-404b-85F2-277C022B8E23}");
@@ -220,7 +219,7 @@ bool TerrainPipeline::buildOutput(
 	if (!heightfield)
 	{
 		log::error << L"Heightfield pipeline failed; unable to read heights" << Endl;
-		return 0;
+		return false;
 	}
 
 	sourceData->close();

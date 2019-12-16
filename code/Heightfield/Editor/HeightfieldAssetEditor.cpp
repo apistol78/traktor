@@ -249,6 +249,64 @@ bool HeightfieldAssetEditor::handleCommand(const ui::Command& command)
 	}
 	else if (command == L"HeightfieldAssetEditor.Resize")
 	{
+		ui::InputDialog::Field fields[] =
+		{
+			ui::InputDialog::Field(L"Size", toString(m_heightfield->getSize()), new ui::NumericEditValidator(false, 1))
+		};
+
+		ui::InputDialog inputDialog;
+		inputDialog.create(
+			m_container,
+			i18n::Text(L"CROP_HEIGHTFIELD_WIZARDTOOL_TITLE"),
+			i18n::Text(L"CROP_HEIGHTFIELD_WIZARDTOOL_MESSAGE"),
+			fields,
+			sizeof_array(fields)
+		);
+
+		if (inputDialog.showModal() == ui::DrCancel)
+		{
+			inputDialog.destroy();
+			return false;
+		}
+
+		int32_t size = parseString< int32_t >(fields[0].value);
+
+		inputDialog.destroy();
+
+		if (size <= 0)
+		{
+			log::error << L"Invalid size; must at least be greater or equal to one." << Endl;
+			return false;
+		}
+
+		Ref< Heightfield > resized = new Heightfield(
+			size,
+			m_heightfield->getWorldExtent()
+		);
+
+		for (int32_t iy = 0; iy < size; ++iy)
+		{
+			for (int32_t ix = 0; ix < size; ++ix)
+			{
+				float sx = (float)(ix * m_heightfield->getSize()) / size;
+				float sy = (float)(iy * m_heightfield->getSize()) / size;
+
+				sx = clamp(sx, 0.0f, (float)(m_heightfield->getSize() - 1));
+				sy = clamp(sy, 0.0f, (float)(m_heightfield->getSize() - 1));
+
+				float h = m_heightfield->getGridHeightBilinear(sx, sy);
+				bool c = m_heightfield->getGridCut((int32_t)sx, (int32_t)sy);
+
+				resized->setGridHeight(ix, iy, h);
+				resized->setGridCut(ix, iy, c);
+			}
+		}
+
+		m_heightfield = resized;
+
+		m_editSize->setText(toString(m_heightfield->getSize()));
+		updatePreviewImage();
+
 		return true;
 	}
 	else if (command == L"HeightfieldAssetEditor.Crop")
@@ -289,7 +347,7 @@ bool HeightfieldAssetEditor::handleCommand(const ui::Command& command)
 
 		Ref< Heightfield > cropped = new Heightfield(
 			size,
-			m_heightfield->getWorldExtent() // * Vector4(factor, 1.0f, factor)
+			m_heightfield->getWorldExtent()
 		);
 
 		for (int32_t iy = 0; iy < size; ++iy)
