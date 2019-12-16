@@ -24,9 +24,9 @@
 			<addressV>AdWrap</addressV>
 			<addressW>AdWrap</addressW>
 			<compare>CfNone</compare>
-			<mipBias>0</mipBias>
+			<mipBias>-0.5</mipBias>
 			<ignoreMips>false</ignoreMips>
-			<useAnisotropic>false</useAnisotropic>
+			<useAnisotropic>true</useAnisotropic>
 		</item>
 		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
 			<id>{C6EFA042-9409-384F-A55B-2F2ED7138D07}</id>

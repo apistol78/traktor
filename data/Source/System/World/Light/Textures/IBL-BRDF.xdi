@@ -24,8 +24,8 @@
 	<generateSphereMap>false</generateSphereMap>
 	<preserveAlphaCoverage>false</preserveAlphaCoverage>
 	<alphaCoverageReference>0.5</alphaCoverageReference>
-	<sharpenRadius>5</sharpenRadius>
-	<sharpenStrength>1</sharpenStrength>
+	<sharpenRadius>0</sharpenRadius>
+	<sharpenStrength>0</sharpenStrength>
 	<noiseStrength>0</noiseStrength>
 	<systemTexture>true</systemTexture>
 </object>

@@ -247,6 +247,15 @@
 			<outputPins/>
 			<values/>
 		</item>
+		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
+			<id>{C97CCBA7-261D-FE49-A4D7-658193EA9E73}</id>
+			<comment/>
+			<position>
+				<first>1259</first>
+				<second>21</second>
+			</position>
+			<value>0.5</value>
+		</item>
 	</nodes>
 	<edges>
 		<item type="traktor.render.Edge">
@@ -347,6 +356,16 @@
 			<destination>
 				<node ref="/object/nodes/item[9]"/>
 				<name>ViewVelocity</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[10]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[5]"/>
+				<name>Specular</name>
 			</destination>
 		</item>
 	</edges>

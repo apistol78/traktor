@@ -72,7 +72,10 @@ bool SimpleTextureVk::create(
 	for (int32_t mip = 0; mip < desc.mipCount; ++mip)
 	{
 		uint32_t mipSize = getTextureMipPitch(desc.format, desc.width, desc.height, mip);
-		std::memcpy(data, desc.initialData[mip].data, mipSize);
+		if (desc.immutable)
+			std::memcpy(data, desc.initialData[mip].data, mipSize);
+		else
+			std::memset(data, 0, mipSize);
 		data += mipSize;
 	}
 	vmaUnmapMemory(m_allocator, m_stagingBufferAllocation);
