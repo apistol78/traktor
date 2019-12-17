@@ -83,13 +83,13 @@ void ProbeCapturer::build(
 		wrs.viewFarZ = 12000.0f;
 		wrs.linearLighting = true;
 		wrs.exposureMode = world::WorldRenderSettings::EmFixed;
-		wrs.exposure = 1.0f;
+		wrs.exposure = 0.0f;
 		wrs.fog = false;
 
 		world::WorldCreateDesc wcd;
 		wcd.worldRenderSettings = &wrs;
 		wcd.entityRenderers = probeEntityRenderers;
-		wcd.toneMapQuality = world::QuDisabled;
+		wcd.toneMapQuality = world::QuMedium;
 		wcd.motionBlurQuality = world::QuDisabled;
 		wcd.reflectionsQuality = world::QuDisabled;
 		wcd.shadowsQuality = world::QuDisabled;

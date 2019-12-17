@@ -5,7 +5,7 @@
 		<viewFarZ>10000</viewFarZ>
 		<linearLighting>true</linearLighting>
 		<exposureMode>EmFixed</exposureMode>
-		<exposure>-0.5</exposure>
+		<exposure>0</exposure>
 		<shadowSettings>
 			<disabled>
 				<projection>SpUniform</projection>
