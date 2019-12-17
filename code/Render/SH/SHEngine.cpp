@@ -148,19 +148,24 @@ void SHEngine::generateCoefficients(SHFunction* function, SHCoeffs& outResult)
 {
 	const double weight = 4.0 * PI;
 
-	outResult.resize(m_coefficientCount);
-#if 1
 	uint32_t sc = uint32_t(m_samplePoints.size() >> 2);
 
+	SHCoeffs intermediate[4];
+	intermediate[0].resize(m_coefficientCount);
+	intermediate[1].resize(m_coefficientCount);
+	intermediate[2].resize(m_coefficientCount);
+	intermediate[3].resize(m_coefficientCount);
+
 	RefArray< Functor > jobs(4);
-	jobs[0] = makeFunctor(this, &SHEngine::generateCoefficientsJob, function, 0 * sc, 1 * sc, &outResult);
-	jobs[1] = makeFunctor(this, &SHEngine::generateCoefficientsJob, function, 1 * sc, 2 * sc, &outResult);
-	jobs[2] = makeFunctor(this, &SHEngine::generateCoefficientsJob, function, 2 * sc, 3 * sc, &outResult);
-	jobs[3] = makeFunctor(this, &SHEngine::generateCoefficientsJob, function, 3 * sc, (uint32_t)m_samplePoints.size(), &outResult);
+	jobs[0] = makeFunctor(this, &SHEngine::generateCoefficientsJob, function, 0 * sc, 1 * sc, &intermediate[0]);
+	jobs[1] = makeFunctor(this, &SHEngine::generateCoefficientsJob, function, 1 * sc, 2 * sc, &intermediate[1]);
+	jobs[2] = makeFunctor(this, &SHEngine::generateCoefficientsJob, function, 2 * sc, 3 * sc, &intermediate[2]);
+	jobs[3] = makeFunctor(this, &SHEngine::generateCoefficientsJob, function, 3 * sc, (uint32_t)m_samplePoints.size(), &intermediate[3]);
 	JobManager::getInstance().fork(jobs);
-#else
-	generateCoefficientsJob(function, 0, m_samplePoints.size(), &outResult);
-#endif
+
+	outResult.resize(m_coefficientCount);
+	for (uint32_t i = 0; i < m_coefficientCount; ++i)
+		outResult[i] = intermediate[0][i] + intermediate[1][i] + intermediate[2][i] + intermediate[3][i];
 
 	Scalar factor(float(weight / m_samplePoints.size()));
 	for (uint32_t i = 0; i < m_coefficientCount; ++i)

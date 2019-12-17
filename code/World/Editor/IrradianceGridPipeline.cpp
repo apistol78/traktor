@@ -3,6 +3,7 @@
 #include "Core/Io/Writer.h"
 #include "Core/Log/Log.h"
 #include "Core/Math/Quasirandom.h"
+#include "Core/Math/Random.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Settings/PropertyString.h"
 #include "Database/Instance.h"
@@ -99,14 +100,22 @@ bool IrradianceGridPipeline::buildOutput(
 	if (!cubeMap)
 		return false;
 
+	Random random;
 	WrappedSHFunction shFunction([&] (const Vector4& unit) -> Vector4 {
-		return cubeMap->get(unit);
+		Color4f cl(0.0f, 0.0f, 0.0f, 0.0f);
+		for (int32_t i = 0; i < 100; ++i)
+		{
+			Vector2 uv = Quasirandom::hammersley(i, 100, random);
+			Vector4 direction = Quasirandom::uniformHemiSphere(uv, unit);
+			cl += cubeMap->get(direction);
+		}
+		return cl / Scalar(100.0f);
 	});
 
 	Ref< render::SHCoeffs > shCoeffs = new render::SHCoeffs();
 	
 	render::SHEngine shEngine(3);
-	shEngine.generateSamplePoints(32 * 256);
+	shEngine.generateSamplePoints(10000);
 	shEngine.generateCoefficients(&shFunction, *shCoeffs);
 
 	Ref< world::IrradianceGridResource > outputResource = new world::IrradianceGridResource();
