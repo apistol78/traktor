@@ -18,7 +18,7 @@
 #include "Net/TcpSocket.h"
 #include "Net/Discovery/DiscoveryManager.h"
 #include "Net/Discovery/NetworkService.h"
-#include "Remote/Server/App/Server.h"
+#include "Remote/Server/Server.h"
 
 namespace traktor
 {
@@ -140,7 +140,7 @@ bool Server::update()
         m_hostName = itf.addr->getHostName();
     }
 
-    if (m_serverSocket->select(true, false, false, 1000) <= 0)
+    if (m_serverSocket->select(true, false, false, 500) <= 0)
         return true;
 
     Ref< net::TcpSocket > clientSocket = m_serverSocket->accept();
