@@ -513,7 +513,7 @@
 			</position>
 			<technique/>
 		</item>
-		<item type="traktor.render.Color" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Color" version="2,traktor.render.Node:1">
 			<id>{320E5364-D7F2-EE4D-AF4C-34AF57F0D93D}</id>
 			<comment/>
 			<position>
@@ -521,6 +521,7 @@
 				<second>1465</second>
 			</position>
 			<color>0, 0, 0, 0</color>
+			<linear>false</linear>
 		</item>
 		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
 			<id>{9F665B15-EDF8-D443-8336-37A06826228E}</id>
@@ -1423,16 +1424,6 @@
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[31]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[53]"/>
-				<name>Input</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
 				<node ref="/object/nodes/item[54]"/>
 				<name>Output</name>
 			</source>
@@ -1809,6 +1800,16 @@
 			<destination>
 				<node ref="/object/nodes/item[29]"/>
 				<name>Mip</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[29]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[53]"/>
+				<name>Input</name>
 			</destination>
 		</item>
 	</edges>
