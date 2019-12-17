@@ -1,10 +1,5 @@
 #!/bin/bash
 
-# add lunarg vulkan repository.
-wget -qO - http://packages.lunarg.com/lunarg-signing-key-pub.asc | sudo apt-key add -
-wget -qO /etc/apt/sources.list.d/lunarg-vulkan-1.1.101-bionic.list http://packages.lunarg.com/vulkan/1.1.101/lunarg-vulkan-1.1.101-bionic.list
-apt update
-
 # install packages.
 PACKAGES="
     clang
@@ -17,7 +12,6 @@ PACKAGES="
     libasound2-dev
     libopenal-dev
     libpulse-dev
-    lunarg-vulkan-sdk
     mesa-vulkan-drivers
     libgles2-mesa-dev
     libopenimageio-dev
@@ -27,4 +21,4 @@ PACKAGES="
 "
 
 apt-get install $PACKAGES
-apt install lunarg-vulkan-sdk
+

@@ -17313,7 +17313,7 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/vulkan/Vulkan-Docs/src</item>
+						<item>$(VULKAN_SDK)/include</item>
 					</includePaths>
 					<definitions>
 						<item>T_RENDER_VULKAN_EXPORT</item>
@@ -17343,7 +17343,7 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/vulkan/Vulkan-Docs/src</item>
+						<item>$(VULKAN_SDK)/include</item>
 					</includePaths>
 					<definitions>
 						<item>T_RENDER_VULKAN_EXPORT</item>
@@ -17373,7 +17373,7 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/vulkan/Vulkan-Docs/src</item>
+						<item>$(VULKAN_SDK)/include</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
@@ -17403,7 +17403,7 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/vulkan/Vulkan-Docs/src</item>
+						<item>$(VULKAN_SDK)/include</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
