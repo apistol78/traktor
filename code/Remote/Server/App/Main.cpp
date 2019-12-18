@@ -6,7 +6,7 @@
 #include "Core/System/OS.h"
 #include "Core/Thread/Mutex.h"
 #include "Net/Network.h"
-#include "Remote/Server/App/Server.h"
+#include "Remote/Server/Server.h"
 #include "Ui/Application.h"
 #include "Ui/Bitmap.h"
 #include "Ui/Clipboard.h"
