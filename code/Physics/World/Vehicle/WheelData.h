@@ -16,7 +16,7 @@ namespace traktor
 	namespace physics
 	{
 
-/*! \brief
+/*! Wheel persistent data.
  * \ingroup Physics
  */
 class T_DLLCLASS WheelData : public ISerializable
@@ -44,9 +44,11 @@ public:
 
 	float getRollingFriction() const { return m_rollingFriction; }
 
-	float getSideFriction() const { return m_sideFriction; }
-
+	/*! Max slip cornering force. */
 	float getSlipCornerForce() const { return m_slipCornerForce; }
+
+	/*! Peak slip angle before entering frictional range. */
+	float getPeakSlipAngle() const { return m_peakSlipAngle; }
 
 	virtual void serialize(ISerializer& s) override final;
 
@@ -60,8 +62,8 @@ private:
 	float m_suspensionSpring;
 	float m_suspensionDamping;
 	float m_rollingFriction;
-	float m_sideFriction;
 	float m_slipCornerForce;
+	float m_peakSlipAngle;
 };
 
 	}

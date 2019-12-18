@@ -38,7 +38,7 @@ class PhysicsManager;
 class VehicleComponent;
 class WheelData;
 
-/*! \brief
+/*! Vehicle component persistent data.
  * \ingroup Physics
  */
 class T_DLLCLASS VehicleComponentData : public world::IEntityComponentData
