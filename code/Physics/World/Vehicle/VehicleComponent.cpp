@@ -17,10 +17,11 @@ namespace traktor
 
 const float c_maxSuspensionForce = 250.0f;
 const float c_maxDampingForce = 250.0f;
-const float c_slowGripCoeff = 0.9f;
-const float c_fastGripCoeff = 0.6f;
+const Scalar c_slowGripCoeff = 0.9_simd;
+const Scalar c_fastGripCoeff = 0.6_simd;
 const float c_throttleThreshold = 0.01f;
-const float c_linearVelocityThreshold = 4.0f;
+const Scalar c_linearVelocityThreshold = 4.0_simd;
+const float c_suspensionTraceRadius = 0.25f;
 
 		}
 
@@ -41,13 +42,13 @@ VehicleComponent::VehicleComponent(
 ,	m_wheels(wheels)
 ,	m_traceInclude(traceInclude)
 ,	m_traceIgnore(traceIgnore)
-,	m_totalMass(0.0f)
+,	m_totalMass(0.0_simd)
 ,	m_steerAngle(0.0f)
 ,	m_steerAngleTarget(0.0f)
 ,	m_engineThrottle(0.0f)
 ,	m_airBorn(true)
 {
-	m_totalMass = 1.0f / m_body->getInverseMass();
+	m_totalMass = 1.0_simd / Scalar(m_body->getInverseMass());
 }
 
 void VehicleComponent::destroy()
@@ -162,10 +163,8 @@ void VehicleComponent::updateSuspension(float dT)
 		Vector4 anchorW = bodyT * data->getAnchor().xyz1();
 		Vector4 axisW = bodyT * -data->getAxis().xyz0().normalized();
 
-		const float c_suspensionTraceRadius = 0.25f;
 		float contactFudge = 0.0f;
 
-		// Trace wheel contact.
 		if (m_physicsManager->querySweep(
 			anchorW,
 			axisW,
@@ -237,15 +236,14 @@ void VehicleComponent::updateSuspension(float dT)
 		}
 		else
 		{
-			// Save suspension state.
 			wheel->suspensionLength = data->getSuspensionLength().max;
 
 			wheel->contact = false;
 			wheel->contactFudge = 0.0f;
 			wheel->contactMaterial = 0;
-			wheel->contactPosition = Vector4(0.0f, 0.0f, 0.0f, 1.0f);
-			wheel->contactNormal = Vector4(0.0f, 0.0f, 0.0f, 0.0f);
-			wheel->contactVelocity = Vector4(0.0f, 0.0f, 0.0f, 0.0f);
+			wheel->contactPosition = Vector4::origo();
+			wheel->contactNormal = Vector4::zero();
+			wheel->contactVelocity = Vector4::zero();
 		}
 	}
 }
@@ -255,8 +253,8 @@ void VehicleComponent::updateFriction(float dT)
 	Transform bodyT = m_body->getTransform();
 	Transform bodyTinv = bodyT.inverse();
 
-	Scalar rollingFriction(0.0f);
-	Scalar massPerWheel = Scalar(m_totalMass / m_wheels.size());
+	Scalar rollingFriction = 0.0_simd;
+	Scalar massPerWheel = m_totalMass / Scalar(m_wheels.size());
 
 	for (auto wheel : m_wheels)
 	{
@@ -266,35 +264,42 @@ void VehicleComponent::updateFriction(float dT)
 		const WheelData* data = wheel->data;
 		T_ASSERT(data != nullptr);
 
-		Vector4 axis = bodyT * data->getAxis();
+		// Get suspension axis in world space.
+		Vector4 axisW = bodyT * data->getAxis();
 
+		// Wheel directions in world space.
 		Vector4 directionW = bodyT * wheel->direction;
 		Vector4 directionPerpW = bodyT * wheel->directionPerp;
 
+		// Project wheel directions onto contact plane.
 		directionW -= wheel->contactNormal * dot3(wheel->contactNormal, directionW);
 		directionPerpW -= wheel->contactNormal * dot3(wheel->contactNormal, directionPerpW);
-
 		directionW = directionW.normalized();
 		directionPerpW = directionPerpW.normalized();
 
+		// Determine velocities and percent of maximum velocity.
 		Scalar forwardVelocity = dot3(directionW, wheel->contactVelocity);
 		Scalar sideVelocity = dot3(directionPerpW, wheel->contactVelocity);
-
-		Scalar forwardVelocityFactor = clamp(abs(forwardVelocity) / Scalar(m_data->getMaxVelocity()), Scalar(0.0f), Scalar(1.0f));
-		Scalar sideVelocityFactor = clamp(abs(sideVelocity) / Scalar(m_data->getMaxVelocity()), Scalar(0.0f), Scalar(1.0f));
+		Scalar forwardVelocityFactor = clamp(abs(forwardVelocity) / Scalar(m_data->getMaxVelocity()), 0.0_simd, 1.0_simd);
+		Scalar sideVelocityFactor = clamp(abs(sideVelocity) / Scalar(m_data->getMaxVelocity()), 0.0_simd, 1.0_simd);
 
 		// Calculate grip factor of this wheel.
-		Scalar gripCoeff = lerp(
-			Scalar(c_slowGripCoeff),
-			Scalar(c_fastGripCoeff),
+		Scalar grip = 1.0_simd;
+
+		// Less grip when moving fast.
+		grip *= lerp(
+			c_slowGripCoeff,
+			c_fastGripCoeff,
 			forwardVelocityFactor
 		);
-		Scalar grip = clamp(
-			dot3(axis, wheel->contactNormal) * Scalar(wheel->contactFudge) * gripCoeff,
-			Scalar(0.0f),
-			Scalar(1.0f)
-		);
 
+		// Less grip if wheel is less aligned to contact plane.
+		grip *= abs(dot3(axisW, wheel->contactNormal));
+
+		// Less grip from fudge.
+		grip *= Scalar(wheel->contactFudge);
+
+		// Apply friction force.
 		m_body->addForceAt(
 			wheel->contactPosition,
 			directionPerpW * -sideVelocity * grip * Scalar(data->getSideFriction()),
@@ -305,7 +310,7 @@ void VehicleComponent::updateFriction(float dT)
 		Scalar velocity = wheel->contactVelocity.length();
 		if (velocity > FUZZY_EPSILON)
 		{
-			Scalar slipAngle = sideVelocity / velocity;
+			Scalar slipAngle = clamp(1.0_simd - abs(sideVelocity / velocity), 0.0_simd, 1.0_simd);
 
 			// Approximate cornering force, cornering force increase with velocity.
 			Scalar slipCornerForceCoeff = sideVelocityFactor * Scalar(data->getSlipCornerForce());
@@ -320,6 +325,7 @@ void VehicleComponent::updateFriction(float dT)
 			);
 		}
 
+		// Accumulate rolling friction, applied at center of mass for simplicity.
 		rollingFriction += forwardVelocity * Scalar(data->getRollingFriction()) * grip;
 	}
 
@@ -343,9 +349,9 @@ void VehicleComponent::updateFriction(float dT)
 
 		if (throttleIdle && almostStill)
 		{
-			float s = 1.0f - abs(forwardVelocityW) / c_linearVelocityThreshold;
+			Scalar s = 1.0_simd - abs(forwardVelocityW) / c_linearVelocityThreshold;
 			m_body->addLinearImpulse(
-				-bodyT.axisZ() * forwardVelocityW * Scalar(s * s * 0.3f * m_totalMass),
+				-bodyT.axisZ() * forwardVelocityW * s * s * 0.3_simd * m_totalMass,
 				false
 			);
 		}
@@ -354,10 +360,10 @@ void VehicleComponent::updateFriction(float dT)
 	// Apply some rotational damping to prevent oscillation from suspension forces.
 	if (!m_airBorn && abs(m_steerAngle) < FUZZY_EPSILON)
 	{
-		const float damping = 0.45f;
+		const Scalar damping = 0.45_simd;
 		Scalar headVelocity = dot3(m_body->getAngularVelocity(), bodyT.axisY());
 		Matrix33 inertiaInv = m_body->getInertiaTensorInverseWorld();
-		Vector4 C = Vector4(0.0f, -headVelocity * Scalar(damping), 0.0f);
+		Vector4 C = Vector4(0.0f, -headVelocity * damping, 0.0f);
 		m_body->addAngularImpulse(inertiaInv.inverse() * (bodyT * C), false);
 	}
 }
@@ -368,7 +374,7 @@ void VehicleComponent::updateEngine(float /*dT*/)
 	Transform bodyTinv = bodyT.inverse();
 
 	Scalar forwardVelocity = dot3(m_body->getLinearVelocity(), bodyT.axisZ());
-	Scalar engineForce = Scalar(m_engineThrottle * m_data->getEngineForce()) * (Scalar(1.0f) - clamp(abs(forwardVelocity) / Scalar(m_data->getMaxVelocity()), Scalar(0.0f), Scalar(1.0f)));
+	Scalar engineForce = Scalar(m_engineThrottle * m_data->getEngineForce()) * (1.0_simd - clamp(abs(forwardVelocity) / Scalar(m_data->getMaxVelocity()), 0.0_simd, 1.0_simd));
 
 	for (auto wheel : m_wheels)
 	{
@@ -384,7 +390,7 @@ void VehicleComponent::updateEngine(float /*dT*/)
 		Vector4 direction = wheel->direction * Vector4(1.0f, 0.0f, 1.0f, 0.0f);
 		direction.normalize();
 
-		Scalar grip = clamp(wheel->contactNormal.y(), Scalar(0.0f), Scalar(1.0f)) * Scalar(wheel->contactFudge);
+		Scalar grip = clamp(wheel->contactNormal.y(), 0.0_simd, 1.0_simd) * Scalar(wheel->contactFudge);
 
 		m_body->addForceAt(
 			bodyTinv * wheel->contactPosition,

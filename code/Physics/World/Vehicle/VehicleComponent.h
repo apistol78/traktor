@@ -21,7 +21,7 @@ class PhysicsManager;
 class VehicleComponentData;
 class Wheel;
 
-/*! \brief
+/*! Vehicle simulation component.
  * \ingroup Physics
  */
 class T_DLLCLASS VehicleComponent : public world::IEntityComponent
@@ -68,7 +68,7 @@ private:
 	RefArray< Wheel > m_wheels;
 	uint32_t m_traceInclude;
 	uint32_t m_traceIgnore;
-	float m_totalMass;
+	Scalar m_totalMass;
 	float m_steerAngle;
 	float m_steerAngleTarget;
 	float m_engineThrottle;

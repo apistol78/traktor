@@ -108,6 +108,11 @@ T_MATH_INLINE Scalar operator / (const Scalar& l, const Scalar& r)
 	return Scalar(l.m_data / r.m_data);
 }
 
+T_MATH_INLINE Scalar operator "" _simd(long double v)
+{
+	return Scalar((float)v);
+}
+
 T_MATH_INLINE Scalar abs(const Scalar& s)
 {
 	return Scalar((float)std::fabs(s.m_data));

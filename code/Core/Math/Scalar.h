@@ -75,6 +75,8 @@ public:
 	friend T_MATH_INLINE T_DLLCLASS Scalar operator / (const Scalar& l, const Scalar& r);
 };
 
+T_MATH_INLINE T_DLLCLASS Scalar operator "" _simd(long double v);
+
 T_MATH_INLINE T_DLLCLASS Scalar abs(const Scalar& s);
 
 T_MATH_INLINE T_DLLCLASS Scalar squareRoot(const Scalar& s);
@@ -106,4 +108,3 @@ T_MATH_INLINE T_DLLCLASS Scalar clamp(const Scalar& value, const Scalar& minLimi
 #		include "Core/Math/Std/Scalar.inl"
 #	endif
 #endif
-
