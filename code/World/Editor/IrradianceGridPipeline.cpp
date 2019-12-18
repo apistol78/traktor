@@ -88,17 +88,26 @@ bool IrradianceGridPipeline::buildOutput(
 
 	Ref< IStream > file = pipelineBuilder->openFile(Path(m_assetPath), asset->getFileName().getOriginal());
 	if (!file)
+	{
+		log::error << L"Irradiance grid pipeline failed; unable to open source file." << Endl;
 		return false;
+	}
 
 	Ref< drawing::Image > skyImage = drawing::Image::load(file, asset->getFileName().getExtension());
 	if (!skyImage)
+	{
+		log::error << L"Irradiance grid pipeline failed; unable to read source image." << Endl;
 		return false;
+	}
 
 	safeClose(file);
 
 	Ref< render::CubeMap > cubeMap = render::CubeMap::createFromImage(skyImage);
 	if (!cubeMap)
+	{
+		log::error << L"Irradiance grid pipeline failed; unable to create cube map from image." << Endl;
 		return false;
+	}
 
 	Random random;
 	WrappedSHFunction shFunction([&] (const Vector4& unit) -> Vector4 {
