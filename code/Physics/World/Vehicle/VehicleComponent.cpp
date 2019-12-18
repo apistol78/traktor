@@ -8,6 +8,8 @@
 #include "Physics/World/Vehicle/WheelData.h"
 #include "World/Entity.h"
 
+#include "Core/Log/Log.h"
+
 namespace traktor
 {
 	namespace physics
@@ -17,8 +19,8 @@ namespace traktor
 
 const float c_maxSuspensionForce = 250.0f;
 const float c_maxDampingForce = 250.0f;
-const Scalar c_slowGripCoeff = 0.9_simd;
-const Scalar c_fastGripCoeff = 0.6_simd;
+const Scalar c_slowGripCoeff = 1.0_simd;
+const Scalar c_fastGripCoeff = 0.01_simd;
 const float c_throttleThreshold = 0.01f;
 const Scalar c_linearVelocityThreshold = 4.0_simd;
 const float c_suspensionTraceRadius = 0.25f;
@@ -280,53 +282,62 @@ void VehicleComponent::updateFriction(float dT)
 		// Determine velocities and percent of maximum velocity.
 		Scalar forwardVelocity = dot3(directionW, wheel->contactVelocity);
 		Scalar sideVelocity = dot3(directionPerpW, wheel->contactVelocity);
-		Scalar forwardVelocityFactor = clamp(abs(forwardVelocity) / Scalar(m_data->getMaxVelocity()), 0.0_simd, 1.0_simd);
-		Scalar sideVelocityFactor = clamp(abs(sideVelocity) / Scalar(m_data->getMaxVelocity()), 0.0_simd, 1.0_simd);
 
-		// Calculate grip factor of this wheel.
-		Scalar grip = 1.0_simd;
-
-		// Less grip when moving fast.
-		grip *= lerp(
-			c_slowGripCoeff,
-			c_fastGripCoeff,
-			forwardVelocityFactor
-		);
-
-		// Less grip if wheel is less aligned to contact plane.
-		grip *= abs(dot3(axisW, wheel->contactNormal));
-
-		// Less grip from fudge.
-		grip *= Scalar(wheel->contactFudge);
-
-		// Apply friction force.
-		m_body->addForceAt(
-			wheel->contactPosition,
-			directionPerpW * -sideVelocity * grip * Scalar(data->getSideFriction()),
-			false
-		);
-
-		// Calculate slip force.
-		Scalar velocity = wheel->contactVelocity.length();
-		if (velocity > FUZZY_EPSILON)
+		// \tbd Should use absolute contact position movement to determine velocity; this will introduce error creep.
+		if (abs(forwardVelocity) > FUZZY_EPSILON)
 		{
-			Scalar slipAngle = clamp(1.0_simd - abs(sideVelocity / velocity), 0.0_simd, 1.0_simd);
+			// Calculate slip angle.
+			float k = std::atan2(
+				forwardVelocity,
+				sideVelocity
+			);
+			float slipAngle = abs(k - HALF_PI);
 
-			// Approximate cornering force, cornering force increase with velocity.
-			Scalar slipCornerForceCoeff = sideVelocityFactor * Scalar(data->getSlipCornerForce());
-			Scalar corneringForce = -slipAngle * slipCornerForceCoeff * grip;
-			if (abs(corneringForce) <= FUZZY_EPSILON)
-				continue;
+			// Calculate grip factor of this wheel.
+			Scalar grip = 1.0_simd;
 
+			// Less grip if wheel is less aligned to contact plane.
+			grip *= abs(dot3(axisW, wheel->contactNormal));
+
+			// Less grip from fudge.
+			grip *= Scalar(wheel->contactFudge);
+
+			// Calculate amount of force from slip angle. \tbd Should use curves.
+			const float peakSlipFriction = data->getSlipCornerForce();
+			const float maxSlipAngle = data->getPeakSlipAngle();
+
+			float force = 0.0f;
+			if (slipAngle < maxSlipAngle)
+			{
+				force = (slipAngle / maxSlipAngle) * peakSlipFriction;
+			}
+			else
+			{
+				const float c_fallOff = 2.0f;
+				float f = clamp(rad2deg(slipAngle - maxSlipAngle) / c_fallOff, 0.0f, 1.0f);
+				force = peakSlipFriction * f;
+			}
+
+			// Apply friction force.
 			m_body->addForceAt(
 				wheel->contactPosition,
-				directionPerpW * corneringForce,
+				directionPerpW * Scalar(force * sign(-sideVelocity)) * grip,
+				false
+			);
+
+			// Accumulate rolling friction, applied at center of mass for simplicity.
+			rollingFriction += forwardVelocity * Scalar(data->getRollingFriction()) * grip;
+		}
+		else if (abs(sideVelocity) > FUZZY_EPSILON)
+		{
+			// All movement lateral; complete static friction.
+			const float peakSlipFriction = data->getSlipCornerForce();
+			m_body->addForceAt(
+				wheel->contactPosition,
+				directionPerpW * Scalar(peakSlipFriction * sign(-sideVelocity)),
 				false
 			);
 		}
-
-		// Accumulate rolling friction, applied at center of mass for simplicity.
-		rollingFriction += forwardVelocity * Scalar(data->getRollingFriction()) * grip;
 	}
 
 	if (abs(rollingFriction) > FUZZY_EPSILON)
