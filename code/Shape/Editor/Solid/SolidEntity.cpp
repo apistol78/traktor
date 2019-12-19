@@ -136,24 +136,26 @@ void SolidEntity::update(const world::UpdateParams& update)
 
 		model::Triangulate().apply(current);
 
-        safeDestroy(m_vertexBuffer);
-        safeDestroy(m_indexBuffer);
-
         const uint32_t nvertices = current.getVertexCount();
 		const uint32_t nindices = current.getPolygonCount() * 3;
 
         if (nvertices > 0 && nindices > 0)
         {
-            AlignedVector< render::VertexElement > vertexElements;
-            vertexElements.push_back(render::VertexElement(render::DuPosition, render::DtFloat3, offsetof(Vertex, position)));
-            vertexElements.push_back(render::VertexElement(render::DuNormal, render::DtFloat3, offsetof(Vertex, normal)));
-            vertexElements.push_back(render::VertexElement(render::DuCustom, render::DtFloat2, offsetof(Vertex, texCoord)));
+			if (m_vertexBuffer == nullptr || m_vertexBuffer->getBufferSize() < nvertices * sizeof(Vertex))
+			{
+				safeDestroy(m_vertexBuffer);
 
-            m_vertexBuffer = m_renderSystem->createVertexBuffer(
-                vertexElements,
-                nvertices * sizeof(Vertex),
-                false
-            );
+				AlignedVector< render::VertexElement > vertexElements;
+				vertexElements.push_back(render::VertexElement(render::DuPosition, render::DtFloat3, offsetof(Vertex, position)));
+				vertexElements.push_back(render::VertexElement(render::DuNormal, render::DtFloat3, offsetof(Vertex, normal)));
+				vertexElements.push_back(render::VertexElement(render::DuCustom, render::DtFloat2, offsetof(Vertex, texCoord)));
+
+				m_vertexBuffer = m_renderSystem->createVertexBuffer(
+					vertexElements,
+					(nvertices + 4 * 128) * sizeof(Vertex),
+					false
+				);
+			}
 
             Vertex* vertex = (Vertex*)m_vertexBuffer->lock();
 			for (const auto& v : current.getVertices())
@@ -173,9 +175,13 @@ void SolidEntity::update(const world::UpdateParams& update)
             m_vertexBuffer->unlock();
 
             // Create indices and material batches.
-            m_indexBuffer = m_renderSystem->createIndexBuffer(render::ItUInt16, nindices * sizeof(uint16_t), false);
-            uint16_t* index = (uint16_t*)m_indexBuffer->lock();
+			if (m_indexBuffer == nullptr || m_indexBuffer->getBufferSize() < nindices * sizeof(uint16_t))
+			{
+				safeDestroy(m_indexBuffer);
+            	m_indexBuffer = m_renderSystem->createIndexBuffer(render::ItUInt16, (nindices + 3 * 128) * sizeof(uint16_t), false);
+			}
 
+            uint16_t* index = (uint16_t*)m_indexBuffer->lock();
 			uint32_t offset = 0;
 			for (uint32_t i = 0; i < current.getMaterialCount(); ++i)
 			{
@@ -205,9 +211,13 @@ void SolidEntity::update(const world::UpdateParams& update)
 
 				offset += count * 3;
 			}
-
             m_indexBuffer->unlock();
         }
+		else
+		{
+			safeDestroy(m_vertexBuffer);
+			safeDestroy(m_indexBuffer);			
+		}
 
 		m_dirty = false;
     }
@@ -230,7 +240,6 @@ void SolidEntity::render(
 		return;
 
 	auto renderContext = worldContext.getRenderContext();
-
 	for (const auto& batch : m_batches)
 	{
 		render::SimpleRenderBlock* renderBlock = renderContext->alloc< render::SimpleRenderBlock >("Solid");
