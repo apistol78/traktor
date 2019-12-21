@@ -10,12 +10,11 @@ namespace traktor
 T_IMPLEMENT_RTTI_CLASS(L"traktor.world.VolumeComponent", VolumeComponent, IEntityComponent)
 
 VolumeComponent::VolumeComponent(const VolumeComponentData* data)
-:	m_owner(0)
+:	m_owner(nullptr)
 ,	m_data(data)
 {
-	const AlignedVector< Aabb3 >& volumes = m_data->getVolumes();
-	for (AlignedVector< Aabb3 >::const_iterator i = volumes.begin(); i != volumes.end(); ++i)
-		m_boundingBox.contain(*i);
+	for (const auto& volume : m_data->getVolumes())
+		m_boundingBox.contain(volume);
 }
 
 void VolumeComponent::destroy()
@@ -47,10 +46,9 @@ bool VolumeComponent::inside(const Vector4& point) const
 		return false;
 
 	Vector4 p = transform.inverse() * point.xyz1();
-	const AlignedVector< Aabb3 >& volumes = m_data->getVolumes();
-	for (AlignedVector< Aabb3 >::const_iterator i = volumes.begin(); i != volumes.end(); ++i)
+	for (const auto& volume : m_data->getVolumes())
 	{
-		if (i->inside(p))
+		if (volume.inside(p))
 			return true;
 	}
 
