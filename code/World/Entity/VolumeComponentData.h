@@ -17,7 +17,7 @@ namespace traktor
 	namespace world
 	{
 
-/*! \brief
+/*!
  * \ingroup World
  */
 class T_DLLCLASS VolumeComponentData : public IEntityComponentData

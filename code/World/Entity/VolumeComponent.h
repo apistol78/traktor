@@ -19,7 +19,7 @@ namespace traktor
 class Entity;
 class VolumeComponentData;
 
-/*! \brief
+/*! Bounding volume component for spatial queries.
  * \ingroup World
  */
 class T_DLLCLASS VolumeComponent : public IEntityComponent
