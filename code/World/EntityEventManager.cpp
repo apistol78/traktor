@@ -22,7 +22,7 @@ IEntityEventInstance* EntityEventManager::raise(const IEntityEvent* event, Entit
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 
 	if (!event || m_eventInstances.size() >= m_maxEventInstances)
-		return 0;
+		return nullptr;
 
 	Ref< IEntityEventInstance > eventInstance = event->createInstance(this, sender, Toffset);
 	if (eventInstance)
@@ -36,11 +36,11 @@ IEntityEventInstance* EntityEventManager::raise(const EntityEventSet* eventSet, 
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 
 	if (!eventSet || eventId.empty())
-		return 0;
+		return nullptr;
 
 	const IEntityEvent* event = eventSet->getEvent(eventId);
 	if (!event)
-		return 0;
+		return nullptr;
 
 	return raise(event, sender, Toffset);
 }
@@ -48,20 +48,20 @@ IEntityEventInstance* EntityEventManager::raise(const EntityEventSet* eventSet, 
 void EntityEventManager::update(const UpdateParams& update)
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-	for (RefArray< IEntityEventInstance >::iterator i = m_eventInstances.begin(); i != m_eventInstances.end(); )
+	for (auto it = m_eventInstances.begin(); it != m_eventInstances.end(); )
 	{
-		if ((*i)->update(update))
-			++i;
+		if ((*it)->update(update))
+			++it;
 		else
-			i = m_eventInstances.erase(i);
+			it = m_eventInstances.erase(it);
 	}
 }
 
 void EntityEventManager::attach(IWorldRenderer* worldRenderer)
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-	for (RefArray< IEntityEventInstance >::iterator i = m_eventInstances.begin(); i != m_eventInstances.end(); ++i)
-		(*i)->attach(worldRenderer);
+	for (auto eventInstance : m_eventInstances)
+		eventInstance->attach(worldRenderer);
 }
 
 void EntityEventManager::cancelAll(CancelType when)
@@ -69,8 +69,8 @@ void EntityEventManager::cancelAll(CancelType when)
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 
 	// Issue cancel on all instances.
-	for (RefArray< IEntityEventInstance >::iterator i = m_eventInstances.begin(); i != m_eventInstances.end(); ++i)
-		(*i)->cancel(when);
+	for (auto eventInstance : m_eventInstances)
+		eventInstance->cancel(when);
 
 	// Remove all instances directly instead of waiting for next update.
 	if (when == CtImmediate)
