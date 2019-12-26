@@ -421,6 +421,7 @@ void PhysicsClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classWheel->addProperty("contactPosition", &Wheel::getContactPosition);
 	classWheel->addProperty("contactNormal", &Wheel::getContactNormal);
 	classWheel->addProperty("contactVelocity", &Wheel::getContactVelocity);
+	classWheel->addProperty("sliding", &Wheel::getSliding);
 	registrar->registerClass(classWheel);
 
 	auto classVehicleComponent = new AutoRuntimeClass< VehicleComponent >();
