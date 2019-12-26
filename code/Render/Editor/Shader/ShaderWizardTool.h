@@ -15,7 +15,7 @@ namespace traktor
 	namespace render
 	{
 
-class T_DLLCLASS ImageProcessShaderWizardTool : public editor::IWizardTool
+class T_DLLCLASS ShaderWizardTool : public editor::IWizardTool
 {
 	T_RTTI_CLASS;
 
