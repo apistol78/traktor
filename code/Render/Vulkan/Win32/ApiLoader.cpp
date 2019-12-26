@@ -106,6 +106,8 @@ PFN_vkQueuePresentKHR vkQueuePresentKHR = nullptr;
 PFN_vkDestroySwapchainKHR vkDestroySwapchainKHR = nullptr;
 PFN_vkCreateDebugUtilsMessengerEXT vkCreateDebugUtilsMessengerEXT = nullptr;
 PFN_vkSetDebugUtilsObjectNameEXT vkSetDebugUtilsObjectNameEXT = nullptr;
+PFN_vkCmdBeginDebugUtilsLabelEXT vkCmdBeginDebugUtilsLabelEXT = nullptr;
+PFN_vkCmdEndDebugUtilsLabelEXT vkCmdEndDebugUtilsLabelEXT = nullptr;
 
 bool initializeVulkanApi()
 {
@@ -769,6 +771,20 @@ bool initializeVulkanExtensions(VkInstance instance)
 	if (vkSetDebugUtilsObjectNameEXT == nullptr)
 	{
 		log::error << L"Failed to resolve Vulkan entry point \"vkSetDebugUtilsObjectNameEXT\"." << Endl;
+		return false;
+	}
+
+	*(void**)&vkCmdBeginDebugUtilsLabelEXT = vkGetInstanceProcAddr(instance, "vkCmdBeginDebugUtilsLabelEXT");
+	if (vkCmdBeginDebugUtilsLabelEXT == nullptr)
+	{
+		log::error << L"Failed to resolve Vulkan entry point \"vkCmdBeginDebugUtilsLabelEXT\"." << Endl;
+		return false;
+	}
+
+	*(void**)&vkCmdEndDebugUtilsLabelEXT = vkGetInstanceProcAddr(instance, "vkCmdEndDebugUtilsLabelEXT");
+	if (vkCmdEndDebugUtilsLabelEXT == nullptr)
+	{
+		log::error << L"Failed to resolve Vulkan entry point \"vkCmdEndDebugUtilsLabelEXT\"." << Endl;
 		return false;
 	}
 

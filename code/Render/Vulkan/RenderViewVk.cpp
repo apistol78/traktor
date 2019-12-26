@@ -935,25 +935,25 @@ void RenderViewVk::present()
 
 void RenderViewVk::pushMarker(const char* const marker)
 {
-//#if !defined(__ANDROID__)
-//	if (m_haveDebugMarkers)
-//	{
-//		VkDebugMarkerMarkerInfoEXT mi = {};
-//		mi.sType = VK_STRUCTURE_TYPE_DEBUG_MARKER_MARKER_INFO_EXT;
-//		mi.pMarkerName = marker;
-//		vkCmdDebugMarkerBeginEXT(m_graphicsCommandBuffer, &mi);
-//	}
-//#endif
+#if !defined(__ANDROID__)
+	if (m_haveDebugMarkers)
+	{
+		VkDebugUtilsLabelEXT dul = {};
+		dul.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_LABEL_EXT;
+		dul.pLabelName = marker;
+		vkCmdBeginDebugUtilsLabelEXT(m_graphicsCommandBuffer, &dul);
+	}
+#endif
 }
 
 void RenderViewVk::popMarker()
 {
-//#if !defined(__ANDROID__)
-//	if (m_haveDebugMarkers)
-//	{
-//		vkCmdDebugMarkerEndEXT(m_graphicsCommandBuffer);
-//	}
-//#endif
+#if !defined(__ANDROID__)
+	if (m_haveDebugMarkers)
+	{
+		vkCmdEndDebugUtilsLabelEXT(m_graphicsCommandBuffer);
+	}
+#endif
 }
 
 void RenderViewVk::getStatistics(RenderViewStatistics& outStatistics) const
@@ -1260,15 +1260,15 @@ bool RenderViewVk::create(uint32_t width, uint32_t height)
 	vkEnumerateDeviceExtensionProperties(m_physicalDevice, nullptr, &extensionCount, extensions.ptr());
 
 	m_haveDebugMarkers = false;
-	//for (auto extension : extensions)
-	//{
-	//	if (strcmp(extension.extensionName, VK_EXT_DEBUG_MARKER_EXTENSION_NAME) == 0)
-	//	{
-	//		log::info << L"Found debug marker extension; debug markers enabled." << Endl;
-	//		m_haveDebugMarkers = true;
-	//		break;
-	//	}
-	//}
+	for (auto extension : extensions)
+	{
+		if (strcmp(extension.extensionName, VK_EXT_DEBUG_MARKER_EXTENSION_NAME) == 0)
+		{
+			log::info << L"Found debug marker extension; debug markers enabled." << Endl;
+			m_haveDebugMarkers = true;
+			break;
+		}
+	}
 
 	// Create uniform buffer pool.
 	m_uniformBufferPool = new UniformBufferPoolVk(m_logicalDevice, m_allocator);
