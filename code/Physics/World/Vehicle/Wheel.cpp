@@ -21,6 +21,7 @@ Wheel::Wheel(const WheelData* data)
 ,	contactPosition(Vector4::origo())
 ,	contactNormal(Vector4::zero())
 ,	contactVelocity(Vector4::zero())
+,	sliding(false)
 {
 }
 

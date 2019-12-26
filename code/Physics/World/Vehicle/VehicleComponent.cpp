@@ -8,8 +8,6 @@
 #include "Physics/World/Vehicle/WheelData.h"
 #include "World/Entity.h"
 
-#include "Core/Log/Log.h"
-
 namespace traktor
 {
 	namespace physics
@@ -167,12 +165,12 @@ void VehicleComponent::updateSuspension(float dT)
 
 		float contactFudge = 0.0f;
 
-		if (m_physicsManager->querySweep(
+		if (m_physicsManager->queryRay(
 			anchorW,
 			axisW,
 			data->getSuspensionLength().max + data->getRadius() + m_data->getFudgeDistance(),
-			c_suspensionTraceRadius,
 			physics::QueryFilter(m_traceInclude, m_traceIgnore),
+			false,
 			result
 		))
 		{
@@ -310,12 +308,14 @@ void VehicleComponent::updateFriction(float dT)
 			if (slipAngle < maxSlipAngle)
 			{
 				force = (slipAngle / maxSlipAngle) * peakSlipFriction;
+				wheel->sliding = false;
 			}
 			else
 			{
 				const float c_fallOff = 2.0f;
 				float f = clamp(rad2deg(slipAngle - maxSlipAngle) / c_fallOff, 0.0f, 1.0f);
 				force = peakSlipFriction * f;
+				wheel->sliding = true;
 			}
 
 			// Apply friction force.

@@ -35,6 +35,7 @@ public:
 	Vector4 contactPosition;
 	Vector4 contactNormal;
 	Vector4 contactVelocity;
+	bool sliding;
 
 	explicit Wheel(const WheelData* data);
 
@@ -57,6 +58,8 @@ public:
 	const Vector4& getContactNormal() const { return contactNormal; }
 
 	const Vector4& getContactVelocity() const { return contactVelocity; }
+
+	bool getSliding() const { return sliding; }
 };
 
 	}
