@@ -1,3 +1,4 @@
+#include <cstring>
 #include "Core/Containers/StaticVector.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/AutoPtr.h"
@@ -1262,7 +1263,7 @@ bool RenderViewVk::create(uint32_t width, uint32_t height)
 	m_haveDebugMarkers = false;
 	for (auto extension : extensions)
 	{
-		if (strcmp(extension.extensionName, VK_EXT_DEBUG_MARKER_EXTENSION_NAME) == 0)
+		if (std::strcmp(extension.extensionName, VK_EXT_DEBUG_MARKER_EXTENSION_NAME) == 0)
 		{
 			log::info << L"Found debug marker extension; debug markers enabled." << Endl;
 			m_haveDebugMarkers = true;
