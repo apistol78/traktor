@@ -36,10 +36,8 @@ struct TerrainSurfaceRenderBlock : public render::RenderBlock
 	{
 	}
 
-	virtual void render(render::IRenderView* renderView, const render::ProgramParameters* globalParameters) const
+	virtual void render(render::IRenderView* renderView) const
 	{
-		if (globalParameters)
-			globalParameters->fixup(program);
 		if (programParams)
 			programParams->fixup(program);
 
@@ -59,7 +57,7 @@ struct TerrainSurfaceRenderBlock : public render::RenderBlock
 		screenRenderer->draw(renderView, program);
 
 		if (next)
-			next->render(renderView, globalParameters);
+			next->render(renderView);
 
 		if (renderTargetSet)
 			renderView->end();

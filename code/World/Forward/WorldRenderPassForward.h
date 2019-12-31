@@ -33,6 +33,7 @@ class T_DLLCLASS WorldRenderPassForward : public IWorldRenderPass
 public:
 	WorldRenderPassForward(
 		render::handle_t technique,
+		render::ProgramParameters* sharedParams,
 		uint32_t passFlags,
 		const Matrix44& view,
 		render::StructBuffer* lightSBuffer,
@@ -52,6 +53,7 @@ public:
 
 	WorldRenderPassForward(
 		render::handle_t technique,
+		render::ProgramParameters* sharedParams,
 		uint32_t passFlags,
 		const Matrix44& view,
 		render::ISimpleTexture* colorMap,
@@ -73,6 +75,7 @@ public:
 
 private:
 	render::handle_t m_technique;
+	render::ProgramParameters* m_sharedParams;
 	uint32_t m_passFlags;
 	Matrix44 m_view;
 	Matrix44 m_viewInverse;

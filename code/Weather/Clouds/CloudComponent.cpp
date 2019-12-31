@@ -160,7 +160,7 @@ struct ImpostorUpdateRenderBlock : public render::RenderBlock
 	render::RenderBlock* particlePass[1024];
 	uint32_t particlePassCount;
 
-	virtual void render(render::IRenderView* renderView, const render::ProgramParameters* globalParameters) const
+	virtual void render(render::IRenderView* renderView) const
 	{
 		render::Clear clear;
 		clear.mask = render::CfColor;
@@ -169,7 +169,7 @@ struct ImpostorUpdateRenderBlock : public render::RenderBlock
 		renderView->begin(impostorTargetSet, 0, &clear);
 
 		for (uint32_t i = 0; i < particlePassCount; ++i)
-			particlePass[i]->render(renderView, globalParameters);
+			particlePass[i]->render(renderView);
 
 		renderView->end();
 	}

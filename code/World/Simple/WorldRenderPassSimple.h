@@ -33,6 +33,7 @@ class T_DLLCLASS WorldRenderPassSimple : public IWorldRenderPass
 public:
 	WorldRenderPassSimple(
 		render::handle_t technique,
+		render::ProgramParameters* globalProgramParams,
 		const Matrix44& view
 	);
 
@@ -50,6 +51,7 @@ public:
 
 private:
 	render::handle_t m_technique;
+	render::ProgramParameters* m_globalProgramParams;
 	Matrix44 m_view;
 	Matrix44 m_viewInverse;
 

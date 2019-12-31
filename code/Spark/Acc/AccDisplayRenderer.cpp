@@ -243,7 +243,7 @@ void AccDisplayRenderer::build(render::RenderContext* renderContext, uint32_t fr
 void AccDisplayRenderer::render(render::IRenderView* renderView, uint32_t frame, const Vector2& offset, float scale)
 {
 	T_RENDER_PUSH_MARKER(renderView, "Flash: Render");
-	m_renderContexts[frame]->render(renderView, render::RpOverlay, 0);
+	m_renderContexts[frame]->render(renderView, render::RpOverlay);
 	T_RENDER_POP_MARKER(renderView);
 }
 

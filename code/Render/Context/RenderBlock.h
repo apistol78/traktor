@@ -50,7 +50,7 @@ public:
 
 	virtual ~RenderBlock() {}
 
-	virtual void render(IRenderView* renderView, const ProgramParameters* globalParameters) const = 0;
+	virtual void render(IRenderView* renderView) const = 0;
 };
 
 /*! Null render block.
@@ -62,7 +62,7 @@ public:
 class T_DLLCLASS NullRenderBlock : public RenderBlock
 {
 public:
-	virtual void render(IRenderView* renderView, const ProgramParameters* globalParameters) const override final;
+	virtual void render(IRenderView* renderView) const override final;
 };
 
 /*! Simple render block.
@@ -75,7 +75,7 @@ public:
 	Ref< VertexBuffer > vertexBuffer;
 	Primitives primitives;
 
-	virtual void render(IRenderView* renderView, const ProgramParameters* globalParameters) const override final;
+	virtual void render(IRenderView* renderView) const override final;
 };
 
 /*! Instancing render block.
@@ -94,7 +94,7 @@ public:
 	{
 	}
 
-	virtual void render(IRenderView* renderView, const ProgramParameters* globalParameters) const override final;
+	virtual void render(IRenderView* renderView) const override final;
 };
 
 /*! Instancing render block.
@@ -122,7 +122,7 @@ public:
 	{
 	}
 
-	virtual void render(IRenderView* renderView, const ProgramParameters* globalParameters) const override final;
+	virtual void render(IRenderView* renderView) const override final;
 };
 
 /*! Non-indexed primitives render block.
@@ -143,7 +143,7 @@ public:
 	{
 	}
 
-	virtual void render(IRenderView* renderView, const ProgramParameters* globalParameters) const override final;
+	virtual void render(IRenderView* renderView) const override final;
 };
 
 /*! Indexed primitives render block.
@@ -169,7 +169,7 @@ public:
 	{
 	}
 
-	virtual void render(IRenderView* renderView, const ProgramParameters* globalParameters) const override final;
+	virtual void render(IRenderView* renderView) const override final;
 };
 
 /*! Begin target render block.
@@ -189,7 +189,7 @@ public:
 		clear.mask = 0;
 	}
 
-	virtual void render(IRenderView* renderView, const ProgramParameters* globalParameters) const override final;
+	virtual void render(IRenderView* renderView) const override final;
 };
 
 /*! End target render block.
@@ -198,7 +198,7 @@ public:
 class T_DLLCLASS TargetEndRenderBlock : public RenderBlock
 {
 public:
-	virtual void render(IRenderView* renderView, const ProgramParameters* globalParameters) const override final;
+	virtual void render(IRenderView* renderView) const override final;
 };
 
 /*! Set target viewport block.
@@ -209,7 +209,7 @@ class T_DLLCLASS SetViewportRenderBlock : public RenderBlock
 public:
 	Viewport viewport;
 
-	virtual void render(IRenderView* renderView, const ProgramParameters* globalParameters) const override final;
+	virtual void render(IRenderView* renderView) const override final;
 };
 
 /*! Chain render block.
@@ -228,7 +228,7 @@ public:
 	{
 	}
 
-	virtual void render(IRenderView* renderView, const ProgramParameters* globalParameters) const override final;
+	virtual void render(IRenderView* renderView) const override final;
 };
 
 	}

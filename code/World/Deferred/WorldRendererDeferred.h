@@ -81,8 +81,10 @@ private:
 	struct ShadowContext
 	{
 		Ref< WorldContext > shadow;
-		Matrix44 shadowLightView;
-		Matrix44 shadowLightProjection;
+		//Matrix44 shadowLightView;
+		//Matrix44 shadowLightProjection;
+
+		// \tbd Used by projection post processing...
 		Matrix44 viewToLightSpace;
 	};
 
@@ -98,10 +100,13 @@ private:
 		AlignedVector< Light > lights;
 		Ref< render::StructBuffer > lightSBuffer;
 		Ref< render::StructBuffer > tileSBuffer;
+
+		// \tbd Used by post processing...
 		Frustum viewFrustum;
 		Matrix44 projection;
 		Matrix44 lastView;
 		Matrix44 view;
+
 		int32_t atlasCount;
 		float time;
 
@@ -130,7 +135,7 @@ private:
 	Ref< render::IRenderTargetSet > m_shadowCascadeTargetSet;	//!< Shadow map for directional lights.
 	Ref< render::IRenderTargetSet > m_shadowMaskTargetSet;		//!< Screen space projected shadow mask, directional lights.
 	Ref< render::IRenderTargetSet > m_shadowAtlasTargetSet;		//!< Shadow map atlas for spot and point lights.
-	Ref< render::RenderContext > m_globalContext;
+	//Ref< render::RenderContext > m_globalContext;
 	Ref< render::ImageProcess > m_colorTargetCopy;
 	Ref< render::ImageProcess > m_ambientOcclusion;
 	Ref< render::ImageProcess > m_antiAlias;

@@ -51,10 +51,6 @@ public:
 
 	void setTimes(float time, float deltaTime, float interval);
 
-	void setEyePosition(const Vector4& eyePosition);
-
-	void setEyeDirection(const Vector4& eyeDirection);
-
 	void addLight(const Light& light);
 
 	void resetLights();

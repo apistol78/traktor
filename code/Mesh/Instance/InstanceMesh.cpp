@@ -122,8 +122,8 @@ void InstanceMesh::render(
 
 		// Setup batch shared parameters.
 		render::ProgramParameters* batchParameters = renderContext->alloc< render::ProgramParameters >();
-		batchParameters->attachParameters(extraParameters);
 		batchParameters->beginParameters(renderContext);
+		batchParameters->attachParameters(extraParameters);
 		worldRenderPass.setProgramParameters(
 			batchParameters,
 			Transform::identity(),
@@ -171,8 +171,8 @@ void InstanceMesh::render(
 
 #endif
 
-			renderBlock->programParams->attachParameters(batchParameters);
 			renderBlock->programParams->beginParameters(renderContext);
+			renderBlock->programParams->attachParameters(batchParameters);
 			renderBlock->programParams->setVectorArrayParameter(
 				s_handleInstanceWorld,
 				reinterpret_cast< const Vector4* >(instanceBatch),
@@ -210,8 +210,8 @@ void InstanceMesh::render(
 
 			// Setup batch shared parameters.
 			render::ProgramParameters* batchParameters = renderContext->alloc< render::ProgramParameters >();
-			batchParameters->attachParameters(extraParameters);
 			batchParameters->beginParameters(renderContext);
+			batchParameters->attachParameters(extraParameters);
 			worldRenderPass.setProgramParameters(
 				batchParameters,
 				Transform::identity(),
@@ -259,8 +259,8 @@ void InstanceMesh::render(
 
 #endif
 
-				renderBlock->programParams->attachParameters(batchParameters);
 				renderBlock->programParams->beginParameters(renderContext);
+				renderBlock->programParams->attachParameters(batchParameters);
 				renderBlock->programParams->setVectorArrayParameter(
 					s_handleInstanceWorld,
 					reinterpret_cast< const Vector4* >(instanceBatch),

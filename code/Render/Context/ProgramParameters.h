@@ -31,8 +31,6 @@ class T_DLLCLASS ProgramParameters
 public:
 	ProgramParameters();
 
-	void attachParameters(ProgramParameters* attachParameters);
-
 	/*! \name Record parameters.
 	 *
 	 * Must set all parameters between begin- and endParameters.
@@ -60,6 +58,8 @@ public:
 	void setStructBufferParameter(handle_t handle, StructBuffer* structBuffer);
 
 	void setStencilReference(uint32_t stencilReference);
+
+	void attachParameters(ProgramParameters* attachParameters);
 
 	void fixup(IProgram* program) const;
 
@@ -89,7 +89,6 @@ public:
 	//@}
 
 private:
-	ProgramParameters* m_attachParameters;
 	uint8_t* m_parameterFirst;
 	uint8_t* m_parameterLast;
 };

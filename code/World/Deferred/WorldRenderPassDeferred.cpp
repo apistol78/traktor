@@ -50,12 +50,14 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.world.WorldRenderPassDeferred", WorldRenderPass
 
 WorldRenderPassDeferred::WorldRenderPassDeferred(
 	render::handle_t technique,
+	render::ProgramParameters* sharedParams,
 	const WorldRenderView& worldRenderView,
 	uint32_t passFlags,
 	bool fogEnabled,
 	bool depthEnable
 )
 :	m_technique(technique)
+,	m_sharedParams(sharedParams)
 ,	m_worldRenderView(worldRenderView)
 ,	m_passFlags(passFlags)
 ,	m_fogEnabled(fogEnabled)
@@ -67,11 +69,13 @@ WorldRenderPassDeferred::WorldRenderPassDeferred(
 
 WorldRenderPassDeferred::WorldRenderPassDeferred(
 	render::handle_t technique,
+	render::ProgramParameters* sharedParams,
 	const WorldRenderView& worldRenderView,
 	uint32_t passFlags,
 	bool irradianceEnable
 )
 :	m_technique(technique)
+,	m_sharedParams(sharedParams)
 ,	m_worldRenderView(worldRenderView)
 ,	m_passFlags(passFlags)
 ,	m_fogEnabled(false)
@@ -119,6 +123,8 @@ void WorldRenderPassDeferred::setProgramParameters(render::ProgramParameters* pr
 
 void WorldRenderPassDeferred::setWorldProgramParameters(render::ProgramParameters* programParams, const Transform& lastWorld, const Transform& world) const
 {
+	programParams->attachParameters(m_sharedParams);
+
 	Matrix44 w = world.toMatrix44();
 	programParams->setMatrixParameter(s_handleWorld, w);
 	programParams->setMatrixParameter(s_handleWorldView, m_worldRenderView.getView() * w);

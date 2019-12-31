@@ -85,29 +85,31 @@ private:
 	struct FrameShadow
 	{
 		Ref< WorldContext > shadow;
-		Matrix44 shadowLightView;
-		Matrix44 shadowLightProjection;
-		Matrix44 viewToLightSpace;
 	};
 
 	struct Frame
 	{
 		FrameShadow slice[MaxSliceCount];
 		FrameShadow atlas[16];
+
 		Ref< WorldContext > depth;
 		Ref< WorldContext > visual;
+
 		Ref< render::StructBuffer > lightSBuffer;
+
 		Matrix44 projection;
 		Matrix44 view;
 		Frustum viewFrustum;
-		float time;
+
+		//float time;
 		int32_t lightCount;
+
 		bool haveDepth;
 		bool haveShadows;
 
 		Frame()
-		:	time(0.0f)
-		,	lightCount(0)
+		//:	time(0.0f)
+		:	lightCount(0)
 		,	haveDepth(false)
 		,	haveShadows(false)
 		{
@@ -122,7 +124,7 @@ private:
 	Ref< render::IRenderTargetSet > m_visualTargetSet;
 	Ref< render::IRenderTargetSet > m_intermediateTargetSet;
 	Ref< render::IRenderTargetSet > m_gbufferTargetSet;
-	Ref< render::RenderContext > m_globalContext;
+	//Ref< render::RenderContext > m_globalContext;
 	Ref< render::ImageProcess > m_ambientOcclusion;
 	Ref< render::ImageProcess > m_antiAlias;
 	Ref< render::ImageProcess > m_visualImageProcess;
