@@ -92,21 +92,16 @@ enum ParameterTypes
 	PmtMatrixArray,
 	PmtTexture,
 	PmtStructBuffer,
-	PmtStencilReference
+	PmtStencilReference,
+	PmtAttachedParameters
 };
 
 		}
 
 ProgramParameters::ProgramParameters()
-:	m_attachParameters(0)
-,	m_parameterFirst(0)
-,	m_parameterLast(0)
+:	m_parameterFirst(nullptr)
+,	m_parameterLast(nullptr)
 {
-}
-
-void ProgramParameters::attachParameters(ProgramParameters* attachParameters)
-{
-	m_attachParameters = attachParameters;
 }
 
 void ProgramParameters::beginParameters(RenderContext* context)
@@ -211,6 +206,15 @@ void ProgramParameters::setStencilReference(uint32_t stencilReference)
 	write< uint32_t >(m_parameterLast, stencilReference);
 }
 
+void ProgramParameters::attachParameters(ProgramParameters* programParameters)
+{
+	T_ASSERT(m_parameterLast);
+	align< handle_t >(m_parameterLast);
+	write< handle_t >(m_parameterLast, 0);
+	write< int8_t >(m_parameterLast, PmtAttachedParameters);
+	write< ProgramParameters* >(m_parameterLast, programParameters);
+}
+
 void ProgramParameters::fixup(IProgram* program) const
 {
 	T_ASSERT(program);
@@ -277,11 +281,15 @@ void ProgramParameters::fixup(IProgram* program) const
 		case PmtStencilReference:
 			program->setStencilReference(read< uint32_t >(parameter));
 			break;
+
+		case PmtAttachedParameters:
+			{
+				auto programParameters = read< ProgramParameters* >(parameter);
+				programParameters->fixup(program);
+			}
+			break;
 		}
 	}
-
-	if (m_attachParameters)
-		m_attachParameters->fixup(program);
 }
 
 	}

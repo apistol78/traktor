@@ -27,6 +27,7 @@ class T_DLLCLASS WorldRenderPassDeferred : public IWorldRenderPass
 public:
 	WorldRenderPassDeferred(
 		render::handle_t technique,
+		render::ProgramParameters* sharedParams,
 		const WorldRenderView& worldRenderView,
 		uint32_t passFlags,
 		bool fogEnabled,
@@ -35,6 +36,7 @@ public:
 
 	WorldRenderPassDeferred(
 		render::handle_t technique,
+		render::ProgramParameters* sharedParams,
 		const WorldRenderView& worldRenderView,
 		uint32_t passFlags,
 		bool irradianceEnable
@@ -54,6 +56,7 @@ public:
 
 private:
 	render::handle_t m_technique;
+	render::ProgramParameters* m_sharedParams;
 	const WorldRenderView& m_worldRenderView;
 	uint32_t m_passFlags;
 	bool m_fogEnabled;

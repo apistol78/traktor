@@ -43,8 +43,6 @@ bool WorldRendererSimple::create(
 	m_frames.resize(desc.frameCount);
 	for (auto& frame : m_frames)
 		frame.visual = new WorldContext(desc.entityRenderers);
-
-	m_globalContext = new render::RenderContext(16 * 1024);
 	
 	m_rootEntity = new GroupEntity();
 	return true;
@@ -65,29 +63,27 @@ void WorldRendererSimple::build(WorldRenderView& worldRenderView, int32_t frame)
 {
 	Frame& f = m_frames[frame];
 
+	// Ensure no lights in view.
+	worldRenderView.resetLights();
+
 	// Flush render contexts.
 	f.visual->getRenderContext()->flush();
 
-	// Begun building new frame.
-	const Matrix44& view = worldRenderView.getView();
-	Matrix44 viewInverse = view.inverse();
-
-	worldRenderView.setEyePosition(viewInverse.translation().xyz1());
-	worldRenderView.setEyeDirection(viewInverse.axisZ().xyz0());
+	// Default visual parameters.
+	auto globalProgramParams = f.visual->getRenderContext()->alloc< render::ProgramParameters >();
+	globalProgramParams->beginParameters(f.visual->getRenderContext());
+	globalProgramParams->setFloatParameter(s_handleTime, worldRenderView.getTime());
+	globalProgramParams->setMatrixParameter(s_handleProjection, worldRenderView.getProjection());
+	globalProgramParams->endParameters(f.visual->getRenderContext());
 
 	// Build visual context.
 	WorldRenderPassSimple defaultPass(
 		s_techniqueSimpleColor,
+		globalProgramParams,
 		worldRenderView.getView()
 	);
 	f.visual->build(worldRenderView, defaultPass, m_rootEntity);
 	f.visual->flush(worldRenderView, defaultPass, m_rootEntity);
-
-	// Store some global values.
-	f.projection = worldRenderView.getProjection();
-	f.view = worldRenderView.getView();
-	f.viewFrustum = worldRenderView.getViewFrustum();
-	f.time = worldRenderView.getTime();
 
 	m_rootEntity->removeAllEntities();
 }
@@ -100,21 +96,11 @@ bool WorldRendererSimple::beginRender(render::IRenderView* renderView, int32_t f
 void WorldRendererSimple::render(render::IRenderView* renderView, int32_t frame)
 {
 	Frame& f = m_frames[frame];
-
-	render::ProgramParameters defaultProgramParams;
-	defaultProgramParams.beginParameters(m_globalContext);
-	defaultProgramParams.setFloatParameter(s_handleTime, f.time);
-	defaultProgramParams.setMatrixParameter(s_handleProjection, f.projection);
-	defaultProgramParams.endParameters(m_globalContext);
-
-	f.visual->getRenderContext()->render(renderView, render::RpAll, &defaultProgramParams);
-
-	m_globalContext->flush();
+	f.visual->getRenderContext()->render(renderView, render::RpAll);
 }
 
 void WorldRendererSimple::endRender(render::IRenderView* renderView, int32_t frame, float deltaTime)
 {
-	Frame& f = m_frames[frame];
 }
 
 render::ImageProcess* WorldRendererSimple::getVisualImageProcess()

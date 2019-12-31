@@ -60,6 +60,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.world.WorldRenderPassForward", WorldRenderPassF
 
 WorldRenderPassForward::WorldRenderPassForward(
 	render::handle_t technique,
+	render::ProgramParameters* sharedParams,
 	uint32_t passFlags,
 	const Matrix44& view,
 	render::StructBuffer* lightSBuffer,
@@ -77,6 +78,7 @@ WorldRenderPassForward::WorldRenderPassForward(
 	render::ISimpleTexture* shadowAtlas
 )
 :	m_technique(technique)
+,	m_sharedParams(sharedParams)
 ,	m_passFlags(passFlags)
 ,	m_view(view)
 ,	m_viewInverse(view.inverse())
@@ -99,6 +101,7 @@ WorldRenderPassForward::WorldRenderPassForward(
 
 WorldRenderPassForward::WorldRenderPassForward(
 	render::handle_t technique,
+	render::ProgramParameters* sharedParams,
 	uint32_t passFlags,
 	const Matrix44& view,
 	render::ISimpleTexture* colorMap,
@@ -106,6 +109,7 @@ WorldRenderPassForward::WorldRenderPassForward(
 	render::ISimpleTexture* occlusionMap
 )
 :	m_technique(technique)
+,	m_sharedParams(sharedParams)
 ,	m_passFlags(passFlags)
 ,	m_view(view)
 ,	m_viewInverse(view.inverse())
@@ -184,6 +188,7 @@ void WorldRenderPassForward::setProgramParameters(render::ProgramParameters* pro
 void WorldRenderPassForward::setWorldProgramParameters(render::ProgramParameters* programParams, const Transform& world) const
 {
 	Matrix44 w = world.toMatrix44();
+	programParams->attachParameters(m_sharedParams);
 	programParams->setMatrixParameter(s_handleView, m_view);
 	programParams->setMatrixParameter(s_handleViewInverse, m_viewInverse);
 	programParams->setMatrixParameter(s_handleWorld, w);

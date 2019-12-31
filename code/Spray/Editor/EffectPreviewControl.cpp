@@ -602,15 +602,6 @@ void EffectPreviewControl::eventPaint(ui::PaintEvent* event)
 		globalLight.range = Scalar(0.0f);
 		worldRenderView.addLight(globalLight);
 
-		world::WorldRenderPassSimple defaultPass(
-			render::getParameterHandle(L"World_SimpleColor"),
-			viewTransform
-		);
-
-		m_pointRenderer->flush(m_renderContext, defaultPass);
-		m_meshRenderer->flush(m_renderContext, defaultPass);
-		m_trailRenderer->flush(m_renderContext, defaultPass);
-
 		render::ProgramParameters visualProgramParams;
 		visualProgramParams.beginParameters(m_globalContext);
 		visualProgramParams.setFloatParameter(L"World_Time", time);
@@ -618,7 +609,17 @@ void EffectPreviewControl::eventPaint(ui::PaintEvent* event)
 		visualProgramParams.setMatrixParameter(L"World_Projection", projectionTransform);
 		visualProgramParams.endParameters(m_globalContext);
 
-		m_renderContext->render(m_renderView, render::RpAll, &visualProgramParams);
+		world::WorldRenderPassSimple defaultPass(
+			render::getParameterHandle(L"World_SimpleColor"),
+			&visualProgramParams,
+			viewTransform
+		);
+
+		m_pointRenderer->flush(m_renderContext, defaultPass);
+		m_meshRenderer->flush(m_renderContext, defaultPass);
+		m_trailRenderer->flush(m_renderContext, defaultPass);
+
+		m_renderContext->render(m_renderView, render::RpAll);
 		m_renderContext->flush();
 
 		m_globalContext->flush();

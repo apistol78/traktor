@@ -456,10 +456,6 @@ bool WorldRendererForward::create(
 	for (auto& frame : m_frames)
 		frame.visual = new WorldContext(desc.entityRenderers);
 
-	// Allocate "global" parameter context; as it's reset for each render
-	// call this can be fairly small.
-	m_globalContext = new render::RenderContext(16 * 1024);
-
 	// Determine slice distances.
 	const auto& shadowSettings = m_settings.shadowSettings[m_shadowsQuality];
 	for (int32_t i = 0; i < shadowSettings.cascadingSlices; ++i)
@@ -528,16 +524,6 @@ void WorldRendererForward::build(WorldRenderView& worldRenderView, int32_t frame
 
 	f.visual->getRenderContext()->flush();
 
-	// Begun building new frame.
-	const Matrix44& view = worldRenderView.getView();
-	Matrix44 viewInverse = view.inverse();
-
-	worldRenderView.setEyePosition(viewInverse.translation().xyz1());
-	worldRenderView.setEyeDirection(viewInverse.axisZ().xyz0());
-
-	// Store some global values.
-	f.time = worldRenderView.getTime();
-
 	// \tbd Improve light iteration... 
 	worldRenderView.resetLights();
 
@@ -553,6 +539,11 @@ void WorldRendererForward::build(WorldRenderView& worldRenderView, int32_t frame
 
 	// Build visual context.
 	buildVisual(worldRenderView, frame);
+
+	// \tbd Used by post processing, need to move those to use render context...
+	f.projection = worldRenderView.getProjection();
+	f.view = worldRenderView.getView();
+	f.viewFrustum = worldRenderView.getViewFrustum();
 
 	m_count++;
 	m_rootEntity->removeAllEntities();
@@ -580,13 +571,6 @@ void WorldRendererForward::render(render::IRenderView* renderView, int32_t frame
 	Frame& f = m_frames[frame];
 	render::Clear clear;
 
-	// Prepare global program parameters.
-	render::ProgramParameters defaultProgramParams;
-	defaultProgramParams.beginParameters(m_globalContext);
-	defaultProgramParams.setFloatParameter(s_handleTime, f.time);
-	defaultProgramParams.setMatrixParameter(s_handleProjection, f.projection);
-	defaultProgramParams.endParameters(m_globalContext);
-
 	// Render gbuffer.
 	{
 		T_RENDER_PUSH_MARKER(renderView, "World: GBuffer");
@@ -601,7 +585,7 @@ void WorldRendererForward::render(render::IRenderView* renderView, int32_t frame
 
 		if (renderView->begin(m_gbufferTargetSet, &clear))
 		{
-			f.depth->getRenderContext()->render(renderView, render::RpOpaque, &defaultProgramParams);
+			f.depth->getRenderContext()->render(renderView, render::RpOpaque);
 			renderView->end();
 		}
 		T_RENDER_POP_MARKER(renderView);
@@ -645,17 +629,7 @@ void WorldRendererForward::render(render::IRenderView* renderView, int32_t frame
 		if (renderView->begin(m_shadowAtlasTargetSet, &clear))
 		{
 			for (int32_t i = 0; i < 16; ++i)
-			{
-				render::ProgramParameters shadowProgramParams;
-				shadowProgramParams.beginParameters(m_globalContext);
-				shadowProgramParams.setFloatParameter(s_handleTime, f.time);
-				shadowProgramParams.setMatrixParameter(s_handleView, f.atlas[i].shadowLightView);
-				shadowProgramParams.setMatrixParameter(s_handleViewInverse, f.atlas[i].shadowLightView.inverse());
-				shadowProgramParams.setMatrixParameter(s_handleProjection, f.atlas[i].shadowLightProjection);
-				shadowProgramParams.endParameters(m_globalContext);
-
-				f.atlas[i].shadow->getRenderContext()->render(renderView, render::RpSetup | render::RpOpaque, &shadowProgramParams);
-			}
+				f.atlas[i].shadow->getRenderContext()->render(renderView, render::RpSetup | render::RpOpaque);
 			renderView->end();
 		}
 		T_RENDER_POP_MARKER(renderView);
@@ -669,17 +643,7 @@ void WorldRendererForward::render(render::IRenderView* renderView, int32_t frame
 		if (renderView->begin(m_shadowCascadeTargetSet, &clear))
 		{
 			for (int32_t i = 0; i < m_settings.shadowSettings[m_shadowsQuality].cascadingSlices; ++i)
-			{
-				render::ProgramParameters shadowProgramParams;
-				shadowProgramParams.beginParameters(m_globalContext);
-				shadowProgramParams.setFloatParameter(s_handleTime, f.time);
-				shadowProgramParams.setMatrixParameter(s_handleView, f.slice[i].shadowLightView);
-				shadowProgramParams.setMatrixParameter(s_handleViewInverse, f.slice[i].shadowLightView.inverse());
-				shadowProgramParams.setMatrixParameter(s_handleProjection, f.slice[i].shadowLightProjection);
-				shadowProgramParams.endParameters(m_globalContext);
-
-				f.slice[i].shadow->getRenderContext()->render(renderView, render::RpSetup | render::RpOpaque, &shadowProgramParams);
-			}
+				f.slice[i].shadow->getRenderContext()->render(renderView, render::RpSetup | render::RpOpaque);
 			renderView->end();
 		}
 		T_RENDER_POP_MARKER(renderView);
@@ -688,11 +652,9 @@ void WorldRendererForward::render(render::IRenderView* renderView, int32_t frame
 	// Render visuals.
 	{
 		T_RENDER_PUSH_MARKER(renderView, "World: Visual");
-		f.visual->getRenderContext()->render(renderView, render::RpAll, &defaultProgramParams);
+		f.visual->getRenderContext()->render(renderView, render::RpAll);
 		T_RENDER_POP_MARKER(renderView);
 	}
-
-	m_globalContext->flush();
 }
 
 void WorldRendererForward::endRender(render::IRenderView* renderView, int32_t frame, float deltaTime)
@@ -798,8 +760,15 @@ void WorldRendererForward::buildGBuffer(WorldRenderView& worldRenderView, int32_
 {
 	Frame& f = m_frames[frame];
 
+	auto sharedParams = f.depth->getRenderContext()->alloc< render::ProgramParameters >();
+	sharedParams->beginParameters(f.depth->getRenderContext());
+	sharedParams->setFloatParameter(s_handleTime, worldRenderView.getTime());
+	sharedParams->setMatrixParameter(s_handleProjection, worldRenderView.getProjection());
+	sharedParams->endParameters(f.depth->getRenderContext());
+
 	WorldRenderPassForward pass(
 		s_techniqueForwardGBufferWrite,
+		sharedParams,
 		IWorldRenderPass::PfFirst,
 		worldRenderView.getView(),
 		nullptr,
@@ -877,20 +846,10 @@ void WorldRendererForward::buildLights(WorldRenderView& worldRenderView, int32_t
 				shadowRenderView.setView(shadowLightView, shadowLightView);
 				shadowRenderView.setViewFrustum(shadowFrustum);
 				shadowRenderView.setCullFrustum(shadowFrustum);
-				shadowRenderView.setEyePosition(worldRenderView.getEyePosition());
 				shadowRenderView.setTimes(
 					worldRenderView.getTime(),
 					worldRenderView.getDeltaTime(),
 					worldRenderView.getInterval()
-				);
-
-				WorldRenderPassForward shadowPass(
-					s_techniqueShadow,
-					IWorldRenderPass::PfNone,
-					shadowRenderView.getView(),
-					nullptr,
-					nullptr,
-					nullptr
 				);
 
 				// Set viewport to current cascade.
@@ -905,15 +864,31 @@ void WorldRendererForward::buildLights(WorldRenderView& worldRenderView, int32_t
 				);
 				f.slice[slice].shadow->getRenderContext()->draw(render::RpSetup, svrb);	
 
+				// Render entities into shadow map.
+				auto sharedParams = f.slice[slice].shadow->getRenderContext()->alloc< render::ProgramParameters >();
+				sharedParams->beginParameters(f.slice[slice].shadow->getRenderContext());
+				sharedParams->setFloatParameter(s_handleTime, worldRenderView.getTime());
+				sharedParams->setMatrixParameter(s_handleView, shadowLightView);
+				sharedParams->setMatrixParameter(s_handleViewInverse, shadowLightView.inverse());
+				sharedParams->setMatrixParameter(s_handleProjection, shadowLightProjection);
+				sharedParams->endParameters(f.slice[slice].shadow->getRenderContext());
+
+				WorldRenderPassForward shadowPass(
+					s_techniqueShadow,
+					sharedParams,
+					IWorldRenderPass::PfNone,
+					shadowRenderView.getView(),
+					nullptr,
+					nullptr,
+					nullptr
+				);
+
 				f.slice[slice].shadow->build(shadowRenderView, shadowPass, m_rootEntity);
 				f.slice[slice].shadow->flush(shadowRenderView, shadowPass, m_rootEntity);
 
-				f.slice[slice].shadowLightView = shadowLightView;
-				f.slice[slice].shadowLightProjection = shadowLightProjection;
-				f.slice[slice].viewToLightSpace = shadowLightProjection * shadowLightView * viewInverse;
-
 				// Write transposed matrix to shaders as shaders have row-major order.
-				Matrix44 vls = f.slice[slice].viewToLightSpace.transpose();
+				Matrix44 viewToLightSpace = shadowLightProjection * shadowLightView * viewInverse;
+				Matrix44 vls = viewToLightSpace.transpose();
 				vls.axisX().storeUnaligned(lightShaderData->viewToLight0);
 				vls.axisY().storeUnaligned(lightShaderData->viewToLight1);
 				vls.axisZ().storeUnaligned(lightShaderData->viewToLight2);
@@ -962,20 +937,10 @@ void WorldRendererForward::buildLights(WorldRenderView& worldRenderView, int32_t
 			shadowRenderView.setView(shadowLightView, shadowLightView);
 			shadowRenderView.setViewFrustum(shadowFrustum);
 			shadowRenderView.setCullFrustum(shadowFrustum);
-			shadowRenderView.setEyePosition(worldRenderView.getEyePosition());
 			shadowRenderView.setTimes(
 				worldRenderView.getTime(),
 				worldRenderView.getDeltaTime(),
 				worldRenderView.getInterval()
-			);
-
-			WorldRenderPassForward shadowPass(
-				s_techniqueShadow,
-				IWorldRenderPass::PfNone,
-				shadowRenderView.getView(),
-				nullptr,
-				nullptr,
-				nullptr
 			);
 
 			// Set viewport to light atlas slot.
@@ -990,15 +955,31 @@ void WorldRendererForward::buildLights(WorldRenderView& worldRenderView, int32_t
 			);
 			f.atlas[atlasIndex].shadow->getRenderContext()->draw(render::RpSetup, svrb);	
 
+			// Render entities into shadow map.
+			auto sharedParams = f.atlas[atlasIndex].shadow->getRenderContext()->alloc< render::ProgramParameters >();
+			sharedParams->beginParameters(f.atlas[atlasIndex].shadow->getRenderContext());
+			sharedParams->setFloatParameter(s_handleTime, worldRenderView.getTime());
+			sharedParams->setMatrixParameter(s_handleView, shadowLightView);
+			sharedParams->setMatrixParameter(s_handleViewInverse, shadowLightView.inverse());
+			sharedParams->setMatrixParameter(s_handleProjection, shadowLightProjection);
+			sharedParams->endParameters(f.atlas[atlasIndex].shadow->getRenderContext());
+
+			WorldRenderPassForward shadowPass(
+				s_techniqueShadow,
+				sharedParams,
+				IWorldRenderPass::PfNone,
+				shadowRenderView.getView(),
+				nullptr,
+				nullptr,
+				nullptr
+			);
+
 			f.atlas[atlasIndex].shadow->build(shadowRenderView, shadowPass, m_rootEntity);
 			f.atlas[atlasIndex].shadow->flush(shadowRenderView, shadowPass, m_rootEntity);
 
-			f.atlas[atlasIndex].shadowLightView = shadowLightView;
-			f.atlas[atlasIndex].shadowLightProjection = shadowLightProjection;
-			f.atlas[atlasIndex].viewToLightSpace = shadowLightProjection * shadowLightView * viewInverse;
-
 			// Write transposed matrix to shaders as shaders have row-major order.
-			Matrix44 vls = f.atlas[atlasIndex].viewToLightSpace.transpose();
+			Matrix44 viewToLightSpace = shadowLightProjection * shadowLightView * viewInverse;
+			Matrix44 vls = viewToLightSpace.transpose();
 			vls.axisX().storeUnaligned(lightShaderData->viewToLight0);
 			vls.axisY().storeUnaligned(lightShaderData->viewToLight1);
 			vls.axisZ().storeUnaligned(lightShaderData->viewToLight2);
@@ -1038,8 +1019,15 @@ void WorldRendererForward::buildVisual(WorldRenderView& worldRenderView, int32_t
 
 	bool shadowsEnable = (bool)(m_shadowsQuality != QuDisabled);
 
+	auto sharedParams = f.visual->getRenderContext()->alloc< render::ProgramParameters >();
+	sharedParams->beginParameters(f.visual->getRenderContext());
+	sharedParams->setFloatParameter(s_handleTime, worldRenderView.getTime());
+	sharedParams->setMatrixParameter(s_handleProjection, worldRenderView.getProjection());
+	sharedParams->endParameters(f.visual->getRenderContext());
+
 	WorldRenderPassForward defaultPass(
 		s_techniqueForwardColor,
+		sharedParams,
 		IWorldRenderPass::PfLast,
 		worldRenderView.getView(),
 		f.lightSBuffer,
@@ -1058,10 +1046,6 @@ void WorldRendererForward::buildVisual(WorldRenderView& worldRenderView, int32_t
 	);
 	f.visual->build(worldRenderView, defaultPass, m_rootEntity);
 	f.visual->flush(worldRenderView, defaultPass, m_rootEntity);
-
-	f.projection = worldRenderView.getProjection();
-	f.view = worldRenderView.getView();
-	f.viewFrustum = worldRenderView.getViewFrustum();
 }
 
 	}

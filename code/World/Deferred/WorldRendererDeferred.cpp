@@ -785,7 +785,7 @@ bool WorldRendererDeferred::create(
 
 	// Allocate "global" parameter context; as it's reset for each render
 	// call this can be fairly small.
-	m_globalContext = new render::RenderContext(64 * 1024);
+	//m_globalContext = new render::RenderContext(64 * 1024);
 
 	// Create light primitive renderer.
 	m_lightRenderer = new LightRendererDeferred();
@@ -834,7 +834,7 @@ void WorldRendererDeferred::destroy()
 	safeDestroy(m_colorTargetCopy);
 	safeDestroy(m_shadowMaskProject);
 
-	m_globalContext = nullptr;
+	//m_globalContext = nullptr;
 
 	safeDestroy(m_shadowAtlasTargetSet);
 	safeDestroy(m_shadowMaskTargetSet);
@@ -883,12 +883,7 @@ void WorldRendererDeferred::build(WorldRenderView& worldRenderView, int32_t fram
 
 	f.visual->clear();
 
-	Matrix44 viewInverse = worldRenderView.getView().inverse();
-	worldRenderView.setEyePosition(viewInverse.translation().xyz1());
-	worldRenderView.setEyeDirection(viewInverse.axisZ().xyz0());
-
 	// Store some global values.
-	f.time = worldRenderView.getTime();
 	f.projection = worldRenderView.getProjection();
 	f.lastView = worldRenderView.getLastView();
 	f.view = worldRenderView.getView();
@@ -928,15 +923,7 @@ void WorldRendererDeferred::render(render::IRenderView* renderView, int32_t fram
 
 	// Render gbuffer.
 	{
-		render::ProgramParameters gbufferProgramParams;
-		gbufferProgramParams.beginParameters(m_globalContext);
-		gbufferProgramParams.setFloatParameter(s_handleTime, f.time);
-		gbufferProgramParams.setMatrixParameter(s_handleView, f.view);
-		gbufferProgramParams.setMatrixParameter(s_handleViewInverse, f.view.inverse());
-		gbufferProgramParams.setMatrixParameter(s_handleProjection, f.projection);
-		gbufferProgramParams.endParameters(m_globalContext);
-
-		const float clearZ = f.viewFrustum.getFarZ();
+		const float clearZ = m_settings.viewFarZ;
 
 		clear.mask = render::CfColor | render::CfDepth;
 		clear.colors[0] = Color4f(clearZ, clearZ, clearZ, clearZ);	// depth
@@ -949,7 +936,7 @@ void WorldRendererDeferred::render(render::IRenderView* renderView, int32_t fram
 		T_RENDER_PUSH_MARKER(renderView, "World: GBuffer");
 		if (renderView->begin(m_gbufferTargetSet, &clear))
 		{
-			f.gbuffer->getRenderContext()->render(renderView, render::RpOpaque, &gbufferProgramParams);
+			f.gbuffer->getRenderContext()->render(renderView, render::RpOpaque);
 			renderView->end();
 		}
 		T_RENDER_POP_MARKER(renderView);
@@ -958,14 +945,6 @@ void WorldRendererDeferred::render(render::IRenderView* renderView, int32_t fram
 	// Render velocity.
 	if (m_motionBlurQuality > QuDisabled)
 	{
-		render::ProgramParameters velocityProgramParams;
-		velocityProgramParams.beginParameters(m_globalContext);
-		velocityProgramParams.setFloatParameter(s_handleTime, f.time);
-		velocityProgramParams.setMatrixParameter(s_handleView, f.view);
-		velocityProgramParams.setMatrixParameter(s_handleViewInverse, f.view.inverse());
-		velocityProgramParams.setMatrixParameter(s_handleProjection, f.projection);
-		velocityProgramParams.endParameters(m_globalContext);
-
 		clear.mask = render::CfColor;
 		clear.colors[0] = Color4f(0.0f, 0.0f, 0.0f, 0.0f);
 
@@ -993,7 +972,7 @@ void WorldRendererDeferred::render(render::IRenderView* renderView, int32_t fram
 				);
 			}
 
-			f.velocity->getRenderContext()->render(renderView, render::RpOpaque, &velocityProgramParams);
+			f.velocity->getRenderContext()->render(renderView, render::RpOpaque);
 			renderView->end();
 		}
 		T_RENDER_POP_MARKER(renderView);
@@ -1039,16 +1018,7 @@ void WorldRendererDeferred::render(render::IRenderView* renderView, int32_t fram
 			T_RENDER_PUSH_MARKER(renderView, "World: Cascade shadow map");
 			if (renderView->begin(m_shadowCascadeTargetSet, &clear))
 			{
-				render::ProgramParameters shadowProgramParams;
-				shadowProgramParams.beginParameters(m_globalContext);
-				shadowProgramParams.setFloatParameter(s_handleTime, f.time);
-				shadowProgramParams.setMatrixParameter(s_handleView, f.slice[i].shadowLightView);
-				shadowProgramParams.setMatrixParameter(s_handleViewInverse, f.slice[i].shadowLightView.inverse());
-				shadowProgramParams.setMatrixParameter(s_handleProjection, f.slice[i].shadowLightProjection);
-				shadowProgramParams.endParameters(m_globalContext);
-
-				f.slice[i].shadow->getRenderContext()->render(renderView, render::RpSetup | render::RpOpaque, &shadowProgramParams);
-
+				f.slice[i].shadow->getRenderContext()->render(renderView, render::RpSetup | render::RpOpaque);
 				renderView->end();
 			}
 			T_RENDER_POP_MARKER(renderView);
@@ -1097,17 +1067,7 @@ void WorldRendererDeferred::render(render::IRenderView* renderView, int32_t fram
 		if (renderView->begin(m_shadowAtlasTargetSet, &clear))
 		{
 			for (int32_t i = 0; i < f.atlasCount; ++i)
-			{
-				render::ProgramParameters shadowProgramParams;
-				shadowProgramParams.beginParameters(m_globalContext);
-				shadowProgramParams.setFloatParameter(s_handleTime, f.time);
-				shadowProgramParams.setMatrixParameter(s_handleView, f.atlas[i].shadowLightView);
-				shadowProgramParams.setMatrixParameter(s_handleViewInverse, f.atlas[i].shadowLightView.inverse());
-				shadowProgramParams.setMatrixParameter(s_handleProjection, f.atlas[i].shadowLightProjection);
-				shadowProgramParams.endParameters(m_globalContext);
-
-				f.atlas[i].shadow->getRenderContext()->render(renderView, render::RpSetup | render::RpOpaque, &shadowProgramParams);
-			}
+				f.atlas[i].shadow->getRenderContext()->render(renderView, render::RpSetup | render::RpOpaque);
 			renderView->end();
 		}
 		T_RENDER_POP_MARKER(renderView);
@@ -1122,20 +1082,8 @@ void WorldRendererDeferred::render(render::IRenderView* renderView, int32_t fram
 		if (renderView->begin(m_reflectionsTargetSet, &clear))
 		{
 			// Render reflection probes.
-			render::ProgramParameters reflectionsProgramParams;
-			reflectionsProgramParams.beginParameters(m_globalContext);
-			reflectionsProgramParams.setFloatParameter(s_handleTime, f.time);
-			reflectionsProgramParams.setMatrixParameter(s_handleView, f.view);
-			reflectionsProgramParams.setMatrixParameter(s_handleViewInverse, f.view.inverse());
-			reflectionsProgramParams.setMatrixParameter(s_handleProjection, f.projection);
-			reflectionsProgramParams.setTextureParameter(s_handleDepthMap, m_gbufferTargetSet->getColorTexture(0));
-			reflectionsProgramParams.setTextureParameter(s_handleNormalMap, m_gbufferTargetSet->getColorTexture(1));
-			reflectionsProgramParams.setTextureParameter(s_handleMiscMap, m_gbufferTargetSet->getColorTexture(2));
-			reflectionsProgramParams.setTextureParameter(s_handleColorMap, m_gbufferTargetSet->getColorTexture(3));
-			reflectionsProgramParams.endParameters(m_globalContext);
-
 			T_RENDER_PUSH_MARKER(renderView, "World: Reflections (probes)");
-			f.reflections->getRenderContext()->render(renderView, render::RpOpaque | render::RpOverlay, &reflectionsProgramParams);
+			f.reflections->getRenderContext()->render(renderView, render::RpOpaque | render::RpOverlay);
 			T_RENDER_POP_MARKER(renderView);
 
 			// Render screenspace reflections.
@@ -1166,51 +1114,13 @@ void WorldRendererDeferred::render(render::IRenderView* renderView, int32_t fram
 	if (renderView->begin(m_visualTargetSet, &clear))
 	{
 		// Visual setup.
-		render::ProgramParameters visualProgramParams;
-		visualProgramParams.beginParameters(m_globalContext);
-		visualProgramParams.setFloatParameter(s_handleTime, f.time);
-		visualProgramParams.setFloatParameter(s_handleLightCount, float(f.lights.size()));
-		visualProgramParams.setVectorParameter(s_handleFogDistanceAndDensity, m_fogDistanceAndDensity);
-		visualProgramParams.setVectorParameter(s_handleFogColor, m_fogColor);
-		visualProgramParams.setMatrixParameter(s_handleView, f.view);
-		visualProgramParams.setMatrixParameter(s_handleViewInverse, f.view.inverse());
-		visualProgramParams.setMatrixParameter(s_handleProjection, f.projection);
-		visualProgramParams.setTextureParameter(s_handleColorMap, m_colorTargetSet->getColorTexture(0));
-		visualProgramParams.setTextureParameter(s_handleDepthMap, m_gbufferTargetSet->getColorTexture(0));
-		visualProgramParams.setTextureParameter(s_handleNormalMap, m_gbufferTargetSet->getColorTexture(1));
-		visualProgramParams.setStructBufferParameter(s_handleLightSBuffer, f.lightSBuffer);
-		visualProgramParams.setStructBufferParameter(s_handleTileSBuffer, f.tileSBuffer);
-		visualProgramParams.endParameters(m_globalContext);
-
 		T_RENDER_PUSH_MARKER(renderView, "World: Visual setup");
-		f.visual->getRenderContext()->render(renderView, render::RpSetup, &visualProgramParams);
+		f.visual->getRenderContext()->render(renderView, render::RpSetup);
 		T_RENDER_POP_MARKER(renderView);
 
 		// Pre-baked indirect lighting.
-		render::ProgramParameters irradianceProgramParams;
-		irradianceProgramParams.beginParameters(m_globalContext);
-		irradianceProgramParams.setFloatParameter(s_handleTime, f.time);
-		irradianceProgramParams.setMatrixParameter(s_handleView, f.view);
-		irradianceProgramParams.setMatrixParameter(s_handleViewInverse, f.view.inverse());
-		irradianceProgramParams.setMatrixParameter(s_handleProjection, f.projection);
-		irradianceProgramParams.setTextureParameter(s_handleDepthMap, m_gbufferTargetSet->getColorTexture(0));
-		irradianceProgramParams.setTextureParameter(s_handleNormalMap, m_gbufferTargetSet->getColorTexture(1));
-		irradianceProgramParams.setTextureParameter(s_handleMiscMap, m_gbufferTargetSet->getColorTexture(2));
-		irradianceProgramParams.setTextureParameter(s_handleColorMap, m_gbufferTargetSet->getColorTexture(3));
-
-		if (m_irradianceGrid)
-		{
-			const auto size = m_irradianceGrid->getSize();
-			irradianceProgramParams.setVectorParameter(s_handleIrradianceGridSize, Vector4((float)size[0], (float)size[1], (float)size[2], 0.0f));
-			irradianceProgramParams.setVectorParameter(s_handleIrradianceGridBoundsMin, m_irradianceGrid->getBoundingBox().mn);
-			irradianceProgramParams.setVectorParameter(s_handleIrradianceGridBoundsMax, m_irradianceGrid->getBoundingBox().mx);
-			irradianceProgramParams.setStructBufferParameter(s_handleIrradianceGridSBuffer, m_irradianceGrid->getBuffer());
-		}
-
-		irradianceProgramParams.endParameters(m_globalContext);
-
 		T_RENDER_PUSH_MARKER(renderView, "World: Irradiance");
-		f.irradiance->getRenderContext()->render(renderView, render::RpOpaque | render::RpOverlay, &irradianceProgramParams);
+		f.irradiance->getRenderContext()->render(renderView, render::RpOpaque | render::RpOverlay);
 		T_RENDER_POP_MARKER(renderView);
 
 		// Add analytical lights.
@@ -1236,12 +1146,12 @@ void WorldRendererDeferred::render(render::IRenderView* renderView, int32_t fram
 
 		// Visual opaque.
 		T_RENDER_PUSH_MARKER(renderView, "World: Visual opaque");
-		f.visual->getRenderContext()->render(renderView, render::RpOpaque, &visualProgramParams);
+		f.visual->getRenderContext()->render(renderView, render::RpOpaque);
 		T_RENDER_POP_MARKER(renderView);
 
 		// Visual post opaque.
 		T_RENDER_PUSH_MARKER(renderView, "World: Visual post opaque");
-		f.visual->getRenderContext()->render(renderView, render::RpPostOpaque, &visualProgramParams);
+		f.visual->getRenderContext()->render(renderView, render::RpPostOpaque);
 		T_RENDER_POP_MARKER(renderView);
 
 		// Modulate with fog.
@@ -1264,12 +1174,12 @@ void WorldRendererDeferred::render(render::IRenderView* renderView, int32_t fram
 
 		// Visual alpha blend.
 		T_RENDER_PUSH_MARKER(renderView, "World: Visual alpha blend");
-		f.visual->getRenderContext()->render(renderView, render::RpAlphaBlend, &visualProgramParams);
+		f.visual->getRenderContext()->render(renderView, render::RpAlphaBlend);
 		T_RENDER_POP_MARKER(renderView);
 
 		// Visual post alpha blend.
 		T_RENDER_PUSH_MARKER(renderView, "World: Visual post alpha blend");
-		f.visual->getRenderContext()->render(renderView, render::RpPostAlphaBlend | render::RpOverlay, &visualProgramParams);
+		f.visual->getRenderContext()->render(renderView, render::RpPostAlphaBlend | render::RpOverlay);
 		T_RENDER_POP_MARKER(renderView);
 
 		renderView->end();
@@ -1297,8 +1207,6 @@ void WorldRendererDeferred::render(render::IRenderView* renderView, int32_t fram
 		renderView->end();
 	}
 	T_RENDER_POP_MARKER(renderView);
-
-	m_globalContext->flush();
 }
 
 void WorldRendererDeferred::endRender(render::IRenderView* renderView, int32_t frame, float deltaTime)
@@ -1429,8 +1337,17 @@ void WorldRendererDeferred::buildGBuffer(WorldRenderView& worldRenderView, int32
 
 	worldRenderView.resetLights();
 
+	auto sharedParams = f.gbuffer->getRenderContext()->alloc< render::ProgramParameters >();
+	sharedParams->beginParameters(f.gbuffer->getRenderContext());
+	sharedParams->setFloatParameter(s_handleTime, worldRenderView.getTime());
+	sharedParams->setMatrixParameter(s_handleView, worldRenderView.getView());
+	sharedParams->setMatrixParameter(s_handleViewInverse, worldRenderView.getView().inverse());
+	sharedParams->setMatrixParameter(s_handleProjection, worldRenderView.getProjection());
+	sharedParams->endParameters(f.gbuffer->getRenderContext());
+
 	WorldRenderPassDeferred gbufferPass(
 		s_techniqueDeferredGBufferWrite,
+		sharedParams,
 		worldRenderView,
 		IWorldRenderPass::PfFirst,
 		false
@@ -1449,8 +1366,21 @@ void WorldRendererDeferred::buildReflections(const WorldRenderView& worldRenderV
 	WorldRenderView reflectionsRenderView = worldRenderView;
 	reflectionsRenderView.resetLights();
 
+	auto sharedParams = f.reflections->getRenderContext()->alloc< render::ProgramParameters >();
+	sharedParams->beginParameters(f.reflections->getRenderContext());
+	sharedParams->setFloatParameter(s_handleTime, worldRenderView.getTime());
+	sharedParams->setMatrixParameter(s_handleView, worldRenderView.getView());
+	sharedParams->setMatrixParameter(s_handleViewInverse, worldRenderView.getView().inverse());
+	sharedParams->setMatrixParameter(s_handleProjection, worldRenderView.getProjection());
+	sharedParams->setTextureParameter(s_handleDepthMap, m_gbufferTargetSet->getColorTexture(0));
+	sharedParams->setTextureParameter(s_handleNormalMap, m_gbufferTargetSet->getColorTexture(1));
+	sharedParams->setTextureParameter(s_handleMiscMap, m_gbufferTargetSet->getColorTexture(2));
+	sharedParams->setTextureParameter(s_handleColorMap, m_gbufferTargetSet->getColorTexture(3));
+	sharedParams->endParameters(f.reflections->getRenderContext());
+
 	WorldRenderPassDeferred reflectionsPass(
 		s_techniqueReflectionWrite,
+		sharedParams,
 		reflectionsRenderView,
 		IWorldRenderPass::PfNone,
 		false
@@ -1466,8 +1396,32 @@ void WorldRendererDeferred::buildIrradiance(const WorldRenderView& worldRenderVi
 	WorldRenderView irradianceRenderView = worldRenderView;
 	irradianceRenderView.resetLights();
 
+	auto sharedParams = f.irradiance->getRenderContext()->alloc< render::ProgramParameters >();
+	sharedParams->beginParameters(f.irradiance->getRenderContext());
+
+	sharedParams->setFloatParameter(s_handleTime, worldRenderView.getTime());
+	sharedParams->setMatrixParameter(s_handleView, worldRenderView.getView());
+	sharedParams->setMatrixParameter(s_handleViewInverse, worldRenderView.getView().inverse());
+	sharedParams->setMatrixParameter(s_handleProjection, worldRenderView.getProjection());
+	sharedParams->setTextureParameter(s_handleDepthMap, m_gbufferTargetSet->getColorTexture(0));
+	sharedParams->setTextureParameter(s_handleNormalMap, m_gbufferTargetSet->getColorTexture(1));
+	sharedParams->setTextureParameter(s_handleMiscMap, m_gbufferTargetSet->getColorTexture(2));
+	sharedParams->setTextureParameter(s_handleColorMap, m_gbufferTargetSet->getColorTexture(3));
+
+	if (m_irradianceGrid)
+	{
+		const auto size = m_irradianceGrid->getSize();
+		sharedParams->setVectorParameter(s_handleIrradianceGridSize, Vector4((float)size[0], (float)size[1], (float)size[2], 0.0f));
+		sharedParams->setVectorParameter(s_handleIrradianceGridBoundsMin, m_irradianceGrid->getBoundingBox().mn);
+		sharedParams->setVectorParameter(s_handleIrradianceGridBoundsMax, m_irradianceGrid->getBoundingBox().mx);
+		sharedParams->setStructBufferParameter(s_handleIrradianceGridSBuffer, m_irradianceGrid->getBuffer());
+	}
+
+	sharedParams->endParameters(f.irradiance->getRenderContext());
+
 	WorldRenderPassDeferred irradiancePass(
 		s_techniqueIrradianceWrite,
+		sharedParams,
 		irradianceRenderView,
 		IWorldRenderPass::PfNone,
 		(bool)m_irradianceGrid
@@ -1486,8 +1440,17 @@ void WorldRendererDeferred::buildVelocity(const WorldRenderView& worldRenderView
 	WorldRenderView velocityRenderView = worldRenderView;
 	velocityRenderView.resetLights();
 
+	auto sharedParams = f.velocity->getRenderContext()->alloc< render::ProgramParameters >();
+	sharedParams->beginParameters(f.velocity->getRenderContext());
+	sharedParams->setFloatParameter(s_handleTime, worldRenderView.getTime());
+	sharedParams->setMatrixParameter(s_handleView, worldRenderView.getView());
+	sharedParams->setMatrixParameter(s_handleViewInverse, worldRenderView.getView().inverse());
+	sharedParams->setMatrixParameter(s_handleProjection, worldRenderView.getProjection());
+	sharedParams->endParameters(f.velocity->getRenderContext());
+
 	WorldRenderPassDeferred velocityPass(
 		s_techniqueVelocityWrite,
+		sharedParams,
 		velocityRenderView,
 		IWorldRenderPass::PfNone,
 		false
@@ -1576,15 +1539,23 @@ void WorldRendererDeferred::buildLights(const WorldRenderView& worldRenderView, 
 				shadowRenderView.setView(shadowLightView, shadowLightView);
 				shadowRenderView.setViewFrustum(shadowFrustum);
 				shadowRenderView.setCullFrustum(shadowFrustum);
-				shadowRenderView.setEyePosition(worldRenderView.getEyePosition());
 				shadowRenderView.setTimes(
 					worldRenderView.getTime(),
 					worldRenderView.getDeltaTime(),
 					worldRenderView.getInterval()
 				);
 
+				auto sharedParams = f.slice[slice].shadow->getRenderContext()->alloc< render::ProgramParameters >();
+				sharedParams->beginParameters(f.slice[slice].shadow->getRenderContext());
+				sharedParams->setFloatParameter(s_handleTime, worldRenderView.getTime());
+				sharedParams->setMatrixParameter(s_handleView, shadowLightView);
+				sharedParams->setMatrixParameter(s_handleViewInverse, shadowLightView.inverse());
+				sharedParams->setMatrixParameter(s_handleProjection, shadowLightProjection);
+				sharedParams->endParameters(f.slice[slice].shadow->getRenderContext());
+
 				WorldRenderPassDeferred shadowPass(
 					s_techniqueShadow,
+					sharedParams,
 					shadowRenderView,
 					IWorldRenderPass::PfNone,
 					false
@@ -1605,8 +1576,6 @@ void WorldRendererDeferred::buildLights(const WorldRenderView& worldRenderView, 
 				f.slice[slice].shadow->build(shadowRenderView, shadowPass, m_rootEntity);
 				f.slice[slice].shadow->flush(shadowRenderView, shadowPass, m_rootEntity);
 
-				f.slice[slice].shadowLightView = shadowLightView;
-				f.slice[slice].shadowLightProjection = shadowLightProjection;
 				f.slice[slice].viewToLightSpace = shadowLightProjection * shadowLightView * viewInverse;
 			}
 
@@ -1650,15 +1619,23 @@ void WorldRendererDeferred::buildLights(const WorldRenderView& worldRenderView, 
 			shadowRenderView.setView(shadowLightView, shadowLightView);
 			shadowRenderView.setViewFrustum(shadowFrustum);
 			shadowRenderView.setCullFrustum(shadowFrustum);
-			shadowRenderView.setEyePosition(worldRenderView.getEyePosition());
 			shadowRenderView.setTimes(
 				worldRenderView.getTime(),
 				worldRenderView.getDeltaTime(),
 				worldRenderView.getInterval()
 			);
 
+			auto sharedParams = f.atlas[atlasIndex].shadow->getRenderContext()->alloc< render::ProgramParameters >();
+			sharedParams->beginParameters(f.atlas[atlasIndex].shadow->getRenderContext());
+			sharedParams->setFloatParameter(s_handleTime, worldRenderView.getTime());
+			sharedParams->setMatrixParameter(s_handleView, shadowLightView);
+			sharedParams->setMatrixParameter(s_handleViewInverse, shadowLightView.inverse());
+			sharedParams->setMatrixParameter(s_handleProjection, shadowLightProjection);
+			sharedParams->endParameters(f.atlas[atlasIndex].shadow->getRenderContext());
+
 			WorldRenderPassDeferred shadowPass(
 				s_techniqueShadow,
+				sharedParams,
 				shadowRenderView,
 				IWorldRenderPass::PfNone,
 				false
@@ -1679,8 +1656,6 @@ void WorldRendererDeferred::buildLights(const WorldRenderView& worldRenderView, 
 			f.atlas[atlasIndex].shadow->build(shadowRenderView, shadowPass, m_rootEntity);
 			f.atlas[atlasIndex].shadow->flush(shadowRenderView, shadowPass, m_rootEntity);
 
-			f.atlas[atlasIndex].shadowLightView = shadowLightView;
-			f.atlas[atlasIndex].shadowLightProjection = shadowLightProjection;
 			f.atlas[atlasIndex].viewToLightSpace = shadowLightProjection * shadowLightView * viewInverse;
 
 			// Write transposed matrix to shaders as shaders have row-major order.
@@ -1779,8 +1754,25 @@ void WorldRendererDeferred::buildVisual(const WorldRenderView& worldRenderView, 
 	WorldRenderView visualRenderView = worldRenderView;
 	visualRenderView.resetLights();
 
+	auto sharedParams = f.visual->getRenderContext()->alloc< render::ProgramParameters >();
+	sharedParams->beginParameters(f.visual->getRenderContext());
+	sharedParams->setFloatParameter(s_handleTime, worldRenderView.getTime());
+	sharedParams->setMatrixParameter(s_handleView, worldRenderView.getView());
+	sharedParams->setMatrixParameter(s_handleViewInverse, worldRenderView.getView().inverse());
+	sharedParams->setMatrixParameter(s_handleProjection, worldRenderView.getProjection());
+	sharedParams->setFloatParameter(s_handleLightCount, float(f.lights.size()));
+	sharedParams->setVectorParameter(s_handleFogDistanceAndDensity, m_fogDistanceAndDensity);
+	sharedParams->setVectorParameter(s_handleFogColor, m_fogColor);
+	sharedParams->setTextureParameter(s_handleColorMap, m_colorTargetSet->getColorTexture(0));
+	sharedParams->setTextureParameter(s_handleDepthMap, m_gbufferTargetSet->getColorTexture(0));
+	sharedParams->setTextureParameter(s_handleNormalMap, m_gbufferTargetSet->getColorTexture(1));
+	sharedParams->setStructBufferParameter(s_handleLightSBuffer, f.lightSBuffer);
+	sharedParams->setStructBufferParameter(s_handleTileSBuffer, f.tileSBuffer);
+	sharedParams->endParameters(f.visual->getRenderContext());
+
 	WorldRenderPassDeferred deferredColorPass(
 		s_techniqueDeferredColor,
+		sharedParams,
 		visualRenderView,
 		IWorldRenderPass::PfLast,
 		m_settings.fog,

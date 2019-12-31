@@ -86,13 +86,13 @@ void RenderContext::draw(uint32_t type, RenderBlock* renderBlock)
 		m_renderQueue[5].push_back(renderBlock);
 }
 
-void RenderContext::render(IRenderView* renderView, uint32_t priorities, const ProgramParameters* globalParameters) const
+void RenderContext::render(IRenderView* renderView, uint32_t priorities) const
 {
 	// Render setup blocks unsorted.
 	if (priorities & RpSetup)
 	{
 		for (auto renderBlock : m_renderQueue[0])
-			renderBlock->render(renderView, globalParameters);
+			renderBlock->render(renderView);
 	}
 
 	// Render opaque blocks, sorted by shader.
@@ -100,7 +100,7 @@ void RenderContext::render(IRenderView* renderView, uint32_t priorities, const P
 	{
 		std::sort(m_renderQueue[1].begin(), m_renderQueue[1].end(), SortOpaquePredicate);
 		for (auto renderBlock : m_renderQueue[1])
-			renderBlock->render(renderView, globalParameters);
+			renderBlock->render(renderView);
 	}
 
 	// Render post opaque blocks, sorted by shader.
@@ -108,7 +108,7 @@ void RenderContext::render(IRenderView* renderView, uint32_t priorities, const P
 	{
 		std::sort(m_renderQueue[2].begin(), m_renderQueue[2].end(), SortOpaquePredicate);
 		for (auto renderBlock : m_renderQueue[2])
-			renderBlock->render(renderView, globalParameters);
+			renderBlock->render(renderView);
 	}
 
 	// Render alpha blend blocks back to front.
@@ -116,7 +116,7 @@ void RenderContext::render(IRenderView* renderView, uint32_t priorities, const P
 	{
 		std::sort(m_renderQueue[3].begin(), m_renderQueue[3].end(), SortAlphaBlendPredicate);
 		for (auto renderBlock : m_renderQueue[3])
-			renderBlock->render(renderView, globalParameters);
+			renderBlock->render(renderView);
 	}
 
 	// Render post alpha blend blocks back to front.
@@ -124,14 +124,14 @@ void RenderContext::render(IRenderView* renderView, uint32_t priorities, const P
 	{
 		std::sort(m_renderQueue[4].begin(), m_renderQueue[4].end(), SortAlphaBlendPredicate);
 		for (auto renderBlock : m_renderQueue[4])
-			renderBlock->render(renderView, globalParameters);
+			renderBlock->render(renderView);
 	}
 
 	// Render overlay blocks unsorted.
 	if (priorities & RpOverlay)
 	{
 		for (auto renderBlock : m_renderQueue[5])
-			renderBlock->render(renderView, globalParameters);
+			renderBlock->render(renderView);
 	}
 }
 

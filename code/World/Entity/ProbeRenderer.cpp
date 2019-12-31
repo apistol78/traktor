@@ -48,7 +48,7 @@ public:
 	int32_t face;
 	bool* pending;
 
-	virtual void render(render::IRenderView* renderView, const render::ProgramParameters* globalParameters) const override final
+	virtual void render(render::IRenderView* renderView) const override final
 	{
 		capturer->render(renderView, texture, face);
 		
@@ -67,7 +67,7 @@ public:
 	Ref< render::ICubeTexture > texture;
 	bool* pending;
 
-	virtual void render(render::IRenderView* renderView, const render::ProgramParameters* globalParameters) const override final
+	virtual void render(render::IRenderView* renderView) const override final
 	{
 		filterer->render(renderView, texture);
 		*pending = false;

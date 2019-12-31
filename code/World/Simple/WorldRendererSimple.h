@@ -61,18 +61,8 @@ private:
 	struct Frame
 	{
 		Ref< WorldContext > visual;
-		Matrix44 projection;
-		Matrix44 view;
-		Frustum viewFrustum;
-		float time;
-
-		Frame()
-		:	time(0.0f)
-		{
-		}
 	};
 
-	Ref< render::RenderContext > m_globalContext;
 	AlignedVector< Frame > m_frames;
 	Ref< GroupEntity > m_rootEntity;
 };

@@ -71,7 +71,7 @@ public:
 	void draw(uint32_t type, RenderBlock* renderBlock);
 
 	/*! Render blocks. */
-	void render(IRenderView* renderView, uint32_t priorities, const ProgramParameters* globalParameters) const;
+	void render(IRenderView* renderView, uint32_t priorities) const;
 
 	/*! Flush blocks. */
 	void flush();

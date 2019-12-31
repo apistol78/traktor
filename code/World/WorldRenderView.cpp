@@ -65,6 +65,11 @@ void WorldRenderView::setView(const Matrix44& lastView, const Matrix44& view)
 {
 	m_lastView = lastView;
 	m_view = view;
+
+	// Calculate eye position and direction in world space.
+	Matrix44 viewInverse = view.inverse();
+	m_eyePosition = viewInverse.translation().xyz1();
+	m_eyeDirection = viewInverse.axisZ().xyz0();
 }
 
 void WorldRenderView::setViewSize(const Vector2& viewSize)
@@ -77,16 +82,6 @@ void WorldRenderView::setTimes(float time, float deltaTime, float interval)
 	m_time = time;
 	m_deltaTime = deltaTime;
 	m_interval = interval;
-}
-
-void WorldRenderView::setEyePosition(const Vector4& eyePosition)
-{
-	m_eyePosition = eyePosition;
-}
-
-void WorldRenderView::setEyeDirection(const Vector4& eyeDirection)
-{
-	m_eyeDirection = eyeDirection;
 }
 
 void WorldRenderView::addLight(const Light& light)
