@@ -1,3 +1,4 @@
+#include "Core/Math/Const.h"
 #include "Core/Serialization/AttributeDirection.h"
 #include "Core/Serialization/AttributePoint.h"
 #include "Core/Serialization/AttributeRange.h"
