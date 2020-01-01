@@ -248,7 +248,7 @@ void AccGlyph::render(
 
 	renderBlock->programParams->endParameters(renderContext);
 
-	renderContext->draw(render::RpOverlay, renderBlock);
+	renderContext->enqueue(renderBlock);
 
 	m_offset += m_count;
 	m_count = 0;

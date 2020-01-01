@@ -137,26 +137,11 @@ public:
 	/*! \name Render steps. */
 	//@{
 
-	/*! Begin render "render contexts".
-	 *
-	 * \param frame Multi threaded context frame.
-	 * \param clearColor Clear visual target color.
-	 * \return True if rendering begun.
-	 */
-	virtual bool beginRender(render::IRenderView* renderView, int32_t frame, const Color4f& clearColor) = 0;
-
 	/*! Render "render contexts".
 	 *
 	 * \param frame Multi threaded context frame.
 	 */
 	virtual void render(render::IRenderView* renderView, int32_t frame) = 0;
-
-	/*! End render "render contexts".
-	 *
-	 * \param frame Multi threaded context frame.
-	 * \param deltaTime Last frame delta time.
-	 */
-	virtual void endRender(render::IRenderView* renderView, int32_t frame, float deltaTime) = 0;
 
 	//@}
 

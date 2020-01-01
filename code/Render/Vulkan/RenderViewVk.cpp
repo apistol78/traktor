@@ -513,6 +513,7 @@ bool RenderViewVk::begin(
 	// 1) Too expensive to store/load.
 	// 2) Unable to determine store/load before begin/end.
 	T_FATAL_ASSERT(m_targetStateDirty);
+	T_FATAL_ASSERT(renderTargetSet != nullptr);
 
 	TargetState ts;
 	ts.rts = mandatory_non_null_type_cast< RenderTargetSetVk* >(renderTargetSet);
@@ -538,6 +539,7 @@ bool RenderViewVk::begin(
 	// 1) Too expensive to store/load.
 	// 2) Unable to determine store/load before begin/end.
 	T_FATAL_ASSERT(m_targetStateDirty);
+	T_FATAL_ASSERT(renderTargetSet != nullptr);
 
 	TargetState ts;
 	ts.rts = mandatory_non_null_type_cast< RenderTargetSetVk* >(renderTargetSet);

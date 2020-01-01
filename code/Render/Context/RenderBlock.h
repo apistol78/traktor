@@ -1,5 +1,6 @@
 #pragma once
 
+#include <functional>
 #include "Core/Config.h"
 #include "Core/Math/Color4f.h"
 #include "Render/Types.h"
@@ -227,6 +228,17 @@ public:
 	,	next(nullptr)
 	{
 	}
+
+	virtual void render(IRenderView* renderView) const override final;
+};
+
+/*! Lambda callback render block.
+ * \ingroup Render
+ */
+class T_DLLCLASS LambdaRenderBlock : public RenderBlock
+{
+public:
+	std::function< void(IRenderView*) > lambda;
 
 	virtual void render(IRenderView* renderView) const override final;
 };

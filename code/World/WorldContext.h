@@ -39,9 +39,7 @@ class T_DLLCLASS WorldContext : public Object
 	T_RTTI_CLASS;
 
 public:
-	explicit WorldContext(WorldEntityRenderers* entityRenderers);
-
-	void clear();
+	explicit WorldContext(WorldEntityRenderers* entityRenderers, render::RenderContext* renderContext);
 
 	void build(WorldRenderView& worldRenderView, const IWorldRenderPass& worldRenderPass, Object* renderable);
 

@@ -608,7 +608,7 @@ void AccShape::render(
 			renderBlockSolid->programParams->setVectorParameter(m_shapeResources->m_handleCxFormAdd, cxform.add);
 			renderBlockSolid->programParams->setStencilReference(maskReference);
 			renderBlockSolid->programParams->endParameters(renderContext);
-			renderContext->draw(render::RpOverlay, renderBlockSolid);
+			renderContext->enqueue(renderBlockSolid);
 		}
 	}
 
@@ -629,7 +629,7 @@ void AccShape::render(
 			renderBlockTextured->programParams->setVectorParameter(m_shapeResources->m_handleCxFormAdd, cxform.add);
 			renderBlockTextured->programParams->setStencilReference(maskReference);
 			renderBlockTextured->programParams->endParameters(renderContext);
-			renderContext->draw(render::RpOverlay, renderBlockTextured);
+			renderContext->enqueue(renderBlockTextured);
 		}
 	}
 
@@ -650,7 +650,7 @@ void AccShape::render(
 			renderBlockLine->programParams->setVectorParameter(m_shapeResources->m_handleCxFormAdd, cxform.add);
 			renderBlockLine->programParams->setStencilReference(maskReference);
 			renderBlockLine->programParams->endParameters(renderContext);
-			renderContext->draw(render::RpOverlay, renderBlockLine);
+			renderContext->enqueue(renderBlockLine);
 		}
 	}
 
@@ -666,7 +666,7 @@ void AccShape::render(
 				renderBlock->primitive = j->primitives.type;
 				renderBlock->offset = j->primitives.offset;
 				renderBlock->count = j->primitives.count;
-				renderContext->draw(render::RpOverlay, renderBlock);
+				renderContext->enqueue(renderBlock);
 			}
 		}
 		else
@@ -684,7 +684,7 @@ void AccShape::render(
 				renderBlock->programParams->setTextureParameter(m_shapeResources->m_handleTexture, j->texture->texture);
 				renderBlock->programParams->setFloatParameter(m_shapeResources->m_handleTextureClamp, j->textureClamp ? 1.0f : 0.0f);
 				renderBlock->programParams->endParameters(renderContext);
-				renderContext->draw(render::RpOverlay, renderBlock);
+				renderContext->enqueue(renderBlock);
 			}
 		}
 	}
@@ -705,7 +705,7 @@ void AccShape::render(
 			renderBlock->programParams->setVectorParameter(m_shapeResources->m_handleLineColor, i->color);
 			renderBlock->programParams->setFloatParameter(m_shapeResources->m_handleLineWidth, i->width);
 			renderBlock->programParams->endParameters(renderContext);
-			renderContext->draw(render::RpOverlay, renderBlock);
+			renderContext->enqueue(renderBlock);
 		}
 	}
 }

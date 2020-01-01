@@ -534,13 +534,13 @@ void EffectPreviewControl::eventPaint(ui::PaintEvent* event)
 		m_renderView->end();
 	}
 
-	if (m_postProcess)
-	{
-		cl.mask = render::CfColor | render::CfDepth | render::CfStencil;
-		cl.colors[0] = Color4f(tmp[0], tmp[1], tmp[2], tmp[3]);
-		
-		m_renderView->begin(m_postTargetSet, 0, &cl);
-	}
+	//if (m_postProcess)
+	//{
+	//	cl.mask = render::CfColor | render::CfDepth | render::CfStencil;
+	//	cl.colors[0] = Color4f(tmp[0], tmp[1], tmp[2], tmp[3]);
+	//	
+	//	m_renderView->begin(m_postTargetSet, 0, &cl);
+	//}
 
 	if (m_effectInstance)
 	{
@@ -619,7 +619,8 @@ void EffectPreviewControl::eventPaint(ui::PaintEvent* event)
 		m_meshRenderer->flush(m_renderContext, defaultPass);
 		m_trailRenderer->flush(m_renderContext, defaultPass);
 
-		m_renderContext->render(m_renderView, render::RpAll);
+		m_renderContext->merge(render::RpAll);
+		m_renderContext->render(m_renderView);
 		m_renderContext->flush();
 
 		m_globalContext->flush();
@@ -627,32 +628,32 @@ void EffectPreviewControl::eventPaint(ui::PaintEvent* event)
 		m_lastDeltaTime = deltaTime;
 	}
 
-	if (m_postProcess)
-	{
-		m_renderView->end();
+	//if (m_postProcess)
+	//{
+	//	m_renderView->end();
 
-		render::ImageProcessStep::Instance::RenderParams params;
-		params.view = viewTransform;
-		params.viewToLight = Matrix44::identity();
-		params.projection = projectionTransform;
-		params.godRayDirection = Vector4(0.0f, 0.0f, -1.0f);
-		params.sliceCount = 0;
-		params.sliceIndex = 0;
-		params.sliceNearZ = 0.0f;
-		params.sliceFarZ = 0.0f;
-		params.shadowFarZ = 0.0f;
-		params.shadowMapBias = 0.0f;
-		params.deltaTime = deltaTime;
-		m_postProcess->render(
-			m_renderView,
-			m_postTargetSet->getColorTexture(0),
-			0,
-			0,
-			0,
-			0,
-			params
-		);
-	}
+	//	render::ImageProcessStep::Instance::RenderParams params;
+	//	params.view = viewTransform;
+	//	params.viewToLight = Matrix44::identity();
+	//	params.projection = projectionTransform;
+	//	params.godRayDirection = Vector4(0.0f, 0.0f, -1.0f);
+	//	params.sliceCount = 0;
+	//	params.sliceIndex = 0;
+	//	params.sliceNearZ = 0.0f;
+	//	params.sliceFarZ = 0.0f;
+	//	params.shadowFarZ = 0.0f;
+	//	params.shadowMapBias = 0.0f;
+	//	params.deltaTime = deltaTime;
+	//	m_postProcess->render(
+	//		m_renderView,
+	//		m_postTargetSet->getColorTexture(0),
+	//		0,
+	//		0,
+	//		0,
+	//		0,
+	//		params
+	//	);
+	//}
 
 	if (!m_primitiveRenderer->begin(0, projectionTransform))
 		return;

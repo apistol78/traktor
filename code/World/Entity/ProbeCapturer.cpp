@@ -170,9 +170,7 @@ void ProbeCapturer::render(render::IRenderView* renderView, render::ICubeTexture
 
 	if (renderView->begin(m_renderTargetSet, &clear))
 	{
-		m_worldRenderer->beginRender(renderView, 0, clear.colors[0]);
 		m_worldRenderer->render(renderView, 0);
-		m_worldRenderer->endRender(renderView, 0, 1.0f / 60.0f);
 		renderView->end();
 	}
 

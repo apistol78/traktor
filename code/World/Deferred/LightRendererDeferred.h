@@ -13,6 +13,7 @@ namespace traktor
 class IRenderSystem;
 class IRenderView;
 class ITexture;
+class RenderContext;
 class Shader;
 class StructBuffer;
 class VertexBuffer;
@@ -53,7 +54,7 @@ public:
 
 	/*! Render all lights. */
 	void renderLights(
-		render::IRenderView* renderView,
+		render::RenderContext* renderContext,
 		float time,
 		int32_t lightCount,
 		const Matrix44& projection,
@@ -72,7 +73,7 @@ public:
 
 	/*! Render screenspace reflections. */
 	void renderReflections(
-		render::IRenderView* renderView,
+		render::RenderContext* renderContext,
 		const Matrix44& projection,
 		const Matrix44& view,
 		const Matrix44& lastView,
@@ -84,7 +85,7 @@ public:
 
 	/*! Render fog. */
 	void renderFog(
-		render::IRenderView* renderView,
+		render::RenderContext* renderContext,
 		const Matrix44& projection,
 		const Matrix44& view,
 		const Vector4& fogDistanceAndDensity,

@@ -4,6 +4,8 @@
 #include "Render/Shader.h"
 #include "Render/VertexBuffer.h"
 #include "Render/VertexElement.h"
+#include "Render/Context/RenderBlock.h"
+#include "Render/Context/RenderContext.h"
 #include "Resource/IResourceManager.h"
 #include "World/Deferred/LightRendererDeferred.h"
 
@@ -134,7 +136,7 @@ void LightRendererDeferred::destroy()
 }
 
 void LightRendererDeferred::renderLights(
-	render::IRenderView* renderView,
+	render::RenderContext* renderContext,
 	float time,
 	int32_t lightCount,
 	const Matrix44& projection,
@@ -151,32 +153,37 @@ void LightRendererDeferred::renderLights(
 	render::ITexture* reflectionMap
 )
 {
-	Scalar p11 = projection.get(0, 0);
-	Scalar p22 = projection.get(1, 1);
+	auto lrb = renderContext->alloc< render::LambdaRenderBlock >();
+	lrb->lambda = [=](render::IRenderView* renderView)
+	{
+		Scalar p11 = projection.get(0, 0);
+		Scalar p22 = projection.get(1, 1);
 
-	m_lightShader->setCombination(s_handleShadowEnable, bool(shadowMask != nullptr && shadowMask != nullptr));
-	m_lightShader->setCombination(s_handleReflectionsEnable, bool(reflectionMap != nullptr));
+		m_lightShader->setCombination(s_handleShadowEnable, bool(shadowMask != nullptr && shadowMask != nullptr));
+		m_lightShader->setCombination(s_handleReflectionsEnable, bool(reflectionMap != nullptr));
 
-	m_lightShader->setFloatParameter(s_handleTime, time);
-	m_lightShader->setFloatParameter(s_handleLightCount, float(lightCount));
-	m_lightShader->setVectorParameter(s_handleMagicCoeffs, Vector4(1.0f / p11, 1.0f / p22, 0.0f, 0.0f));
-	m_lightShader->setMatrixParameter(s_handleViewInverse, view.inverse());
-	m_lightShader->setTextureParameter(s_handleDepthMap, depthMap);
-	m_lightShader->setTextureParameter(s_handleNormalMap, normalMap);
-	m_lightShader->setTextureParameter(s_handleMiscMap, miscMap);
-	m_lightShader->setTextureParameter(s_handleColorMap, colorMap);
-	m_lightShader->setTextureParameter(s_handleOcclusionMap, occlusionMap);
-	m_lightShader->setTextureParameter(s_handleShadowMask, shadowMask);
-	m_lightShader->setTextureParameter(s_handleShadowMapAtlas, shadowMapAtlas);
-	m_lightShader->setTextureParameter(s_handleReflectionMap, reflectionMap);
-	m_lightShader->setStructBufferParameter(s_handleLightSBuffer, lightSBuffer);
-	m_lightShader->setStructBufferParameter(s_handleTileSBuffer, tileSBuffer);
+		m_lightShader->setFloatParameter(s_handleTime, time);
+		m_lightShader->setFloatParameter(s_handleLightCount, float(lightCount));
+		m_lightShader->setVectorParameter(s_handleMagicCoeffs, Vector4(1.0f / p11, 1.0f / p22, 0.0f, 0.0f));
+		m_lightShader->setMatrixParameter(s_handleViewInverse, view.inverse());
+		m_lightShader->setTextureParameter(s_handleDepthMap, depthMap);
+		m_lightShader->setTextureParameter(s_handleNormalMap, normalMap);
+		m_lightShader->setTextureParameter(s_handleMiscMap, miscMap);
+		m_lightShader->setTextureParameter(s_handleColorMap, colorMap);
+		m_lightShader->setTextureParameter(s_handleOcclusionMap, occlusionMap);
+		m_lightShader->setTextureParameter(s_handleShadowMask, shadowMask);
+		m_lightShader->setTextureParameter(s_handleShadowMapAtlas, shadowMapAtlas);
+		m_lightShader->setTextureParameter(s_handleReflectionMap, reflectionMap);
+		m_lightShader->setStructBufferParameter(s_handleLightSBuffer, lightSBuffer);
+		m_lightShader->setStructBufferParameter(s_handleTileSBuffer, tileSBuffer);
 
-	m_lightShader->draw(renderView, m_vertexBufferQuad, 0, m_primitivesQuad);
+		m_lightShader->draw(renderView, m_vertexBufferQuad, 0, m_primitivesQuad);
+	};
+	renderContext->enqueue(lrb);
 }
 
 void LightRendererDeferred::renderReflections(
-	render::IRenderView* renderView,
+	render::RenderContext* renderContext,
 	const Matrix44& projection,
 	const Matrix44& view,
 	const Matrix44& lastView,
@@ -186,22 +193,27 @@ void LightRendererDeferred::renderReflections(
 	render::ITexture* miscMap
 )
 {
-	Scalar p11 = projection.get(0, 0);
-	Scalar p22 = projection.get(1, 1);
+	auto lrb = renderContext->alloc< render::LambdaRenderBlock >();
+	lrb->lambda = [=](render::IRenderView* renderView)
+	{
+		Scalar p11 = projection.get(0, 0);
+		Scalar p22 = projection.get(1, 1);
 
-	m_reflectionShader->setMatrixParameter(s_handleProjection, projection);
-	m_reflectionShader->setMatrixParameter(s_handleViewInverse, view.inverse());
-	m_reflectionShader->setVectorParameter(s_handleMagicCoeffs, Vector4(1.0f / p11, 1.0f / p22, 0.0f, 0.0f));
-	m_reflectionShader->setTextureParameter(s_handleScreenMap, screenMap);
-	m_reflectionShader->setTextureParameter(s_handleDepthMap, depthMap);
-	m_reflectionShader->setTextureParameter(s_handleNormalMap, normalMap);
-	m_reflectionShader->setTextureParameter(s_handleMiscMap, miscMap);
+		m_reflectionShader->setMatrixParameter(s_handleProjection, projection);
+		m_reflectionShader->setMatrixParameter(s_handleViewInverse, view.inverse());
+		m_reflectionShader->setVectorParameter(s_handleMagicCoeffs, Vector4(1.0f / p11, 1.0f / p22, 0.0f, 0.0f));
+		m_reflectionShader->setTextureParameter(s_handleScreenMap, screenMap);
+		m_reflectionShader->setTextureParameter(s_handleDepthMap, depthMap);
+		m_reflectionShader->setTextureParameter(s_handleNormalMap, normalMap);
+		m_reflectionShader->setTextureParameter(s_handleMiscMap, miscMap);
 
-	m_reflectionShader->draw(renderView, m_vertexBufferQuad, 0, m_primitivesQuad);
+		m_reflectionShader->draw(renderView, m_vertexBufferQuad, 0, m_primitivesQuad);
+	};
+	renderContext->enqueue(lrb);
 }
 
 void LightRendererDeferred::renderFog(
-	render::IRenderView* renderView,
+	render::RenderContext* renderContext,
 	const Matrix44& projection,
 	const Matrix44& view,
 	const Vector4& fogDistanceAndDensity,
@@ -212,21 +224,26 @@ void LightRendererDeferred::renderFog(
 	render::ITexture* colorMap
 )
 {
-	Scalar p11 = projection.get(0, 0);
-	Scalar p22 = projection.get(1, 1);
+	auto lrb = renderContext->alloc< render::LambdaRenderBlock >();
+	lrb->lambda = [=](render::IRenderView* renderView)
+	{
+		Scalar p11 = projection.get(0, 0);
+		Scalar p22 = projection.get(1, 1);
 
-	m_fogShader->setMatrixParameter(s_handleProjection, projection);
-	m_fogShader->setMatrixParameter(s_handleView, view);
-	m_fogShader->setMatrixParameter(s_handleViewInverse, view.inverse());
-	m_fogShader->setVectorParameter(s_handleMagicCoeffs, Vector4(1.0f / p11, 1.0f / p22, 0.0f, 0.0f));
-	m_fogShader->setVectorParameter(s_handleFogDistanceAndDensity, fogDistanceAndDensity);
-	m_fogShader->setVectorParameter(s_handleFogColor, fogColor);
-	m_fogShader->setTextureParameter(s_handleDepthMap, depthMap);
-	m_fogShader->setTextureParameter(s_handleNormalMap, normalMap);
-	m_fogShader->setTextureParameter(s_handleMiscMap, miscMap);
-	m_fogShader->setTextureParameter(s_handleColorMap, colorMap);
+		m_fogShader->setMatrixParameter(s_handleProjection, projection);
+		m_fogShader->setMatrixParameter(s_handleView, view);
+		m_fogShader->setMatrixParameter(s_handleViewInverse, view.inverse());
+		m_fogShader->setVectorParameter(s_handleMagicCoeffs, Vector4(1.0f / p11, 1.0f / p22, 0.0f, 0.0f));
+		m_fogShader->setVectorParameter(s_handleFogDistanceAndDensity, fogDistanceAndDensity);
+		m_fogShader->setVectorParameter(s_handleFogColor, fogColor);
+		m_fogShader->setTextureParameter(s_handleDepthMap, depthMap);
+		m_fogShader->setTextureParameter(s_handleNormalMap, normalMap);
+		m_fogShader->setTextureParameter(s_handleMiscMap, miscMap);
+		m_fogShader->setTextureParameter(s_handleColorMap, colorMap);
 
-	m_fogShader->draw(renderView, m_vertexBufferQuad, 0, m_primitivesQuad);
+		m_fogShader->draw(renderView, m_vertexBufferQuad, 0, m_primitivesQuad);
+	};
+	renderContext->enqueue(lrb);
 }
 
 	}

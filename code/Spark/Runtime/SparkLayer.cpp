@@ -496,37 +496,37 @@ void SparkLayer::render(uint32_t frame)
 	render::IRenderView* renderView = m_environment->getRender()->getRenderView();
 	T_ASSERT(renderView);
 
-	if (m_imageProcess)
-	{
-		render::Clear cl;
-		cl.mask = render::CfColor | render::CfDepth;
-		cl.colors[0] = Color4f(0.0f, 0.0f, 0.0f, 0.0);
-		cl.depth = 1.0f;
-		
-		if (renderView->begin(m_imageTargetSet, 0, &cl))
-		{
-			m_displayRenderer->render(
-				renderView,
-				frame,
-				m_offset,
-				m_scale
-			);
+	//if (m_imageProcess)
+	//{
+	//	render::Clear cl;
+	//	cl.mask = render::CfColor | render::CfDepth;
+	//	cl.colors[0] = Color4f(0.0f, 0.0f, 0.0f, 0.0);
+	//	cl.depth = 1.0f;
+	//	
+	//	if (renderView->begin(m_imageTargetSet, 0, &cl))
+	//	{
+	//		m_displayRenderer->render(
+	//			renderView,
+	//			frame,
+	//			m_offset,
+	//			m_scale
+	//		);
 
-			renderView->end();
+	//		renderView->end();
 
-			render::ImageProcessStep::Instance::RenderParams params;
-			m_imageProcess->render(
-				renderView,
-				m_imageTargetSet->getColorTexture(0),
-				nullptr,
-				nullptr,
-				nullptr,
-				nullptr,
-				params
-			);
-		}
-	}
-	else
+	//		render::ImageProcessStep::Instance::RenderParams params;
+	//		m_imageProcess->render(
+	//			renderView,
+	//			m_imageTargetSet->getColorTexture(0),
+	//			nullptr,
+	//			nullptr,
+	//			nullptr,
+	//			nullptr,
+	//			params
+	//		);
+	//	}
+	//}
+	//else
 	{
 		m_displayRenderer->render(
 			renderView,

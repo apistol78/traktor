@@ -68,13 +68,22 @@ public:
 	}
 
 	/*! Enqueue a render block in context. */
+	void enqueue(RenderBlock* renderBlock);
+
+	/*! Add render block to sorting queue. */
 	void draw(uint32_t type, RenderBlock* renderBlock);
 
-	/*! Render blocks. */
-	void render(IRenderView* renderView, uint32_t priorities) const;
+	/*! Merge sorting queues into render queue. */
+	void merge(uint32_t priorities);
+
+	/*! Render blocks queued in render queue. */
+	void render(IRenderView* renderView) const;
 
 	/*! Flush blocks. */
 	void flush();
+
+	/*! Check if any draws is pending for merge. */
+	bool havePendingDraws() const;
 
 	uint32_t getAllocatedSize() const { return uint32_t(m_heapPtr - m_heap.c_ptr()); }
 
@@ -82,7 +91,8 @@ private:
 	AutoPtr< uint8_t, AllocFreeAlign > m_heap;
 	uint8_t* m_heapEnd;
 	uint8_t* m_heapPtr;
-	mutable AlignedVector< RenderBlock* > m_renderQueue[6];
+	AlignedVector< RenderBlock* > m_renderQueue;
+	AlignedVector< RenderBlock* > m_priorityQueue[6];
 };
 
 	}

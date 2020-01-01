@@ -320,20 +320,16 @@ void WorldLayer::render(uint32_t frame)
 
 	render::IRenderView* renderView = m_environment->getRender()->getRenderView();
 
-	if (m_worldRenderer->beginRender(renderView, frame, c_clearColor))
+	// Bind per-scene post processing parameters.
+	render::ImageProcess* postProcess = m_worldRenderer->getVisualImageProcess();
+	if (postProcess)
 	{
-		// Bind per-scene post processing parameters.
-		render::ImageProcess* postProcess = m_worldRenderer->getVisualImageProcess();
-		if (postProcess)
-		{
-			for (const auto param : m_scene->getImageProcessParams())
-				postProcess->setTextureParameter(param.first, param.second);
-		}
-
-		// Render world.
-		m_worldRenderer->render(renderView, frame);
-		m_worldRenderer->endRender(renderView, frame, m_deltaTime);
+		for (const auto param : m_scene->getImageProcessParams())
+			postProcess->setTextureParameter(param.first, param.second);
 	}
+
+	// Render world.
+	m_worldRenderer->render(renderView, frame);
 }
 
 void WorldLayer::flush()

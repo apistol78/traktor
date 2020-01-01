@@ -122,11 +122,21 @@ void TargetBeginRenderBlock::render(IRenderView* renderView) const
 {
 	T_CONTEXT_PUSH_MARKER(renderView, name);
 
-	renderView->begin(
-		renderTargetSet,
-		renderTargetIndex,
-		&clear
-	);
+	if (renderTargetIndex >= 0)
+	{
+		renderView->begin(
+			renderTargetSet,
+			renderTargetIndex,
+			&clear
+		);
+	}
+	else
+	{
+		renderView->begin(
+			renderTargetSet,
+			&clear
+		);
+	}
 
 	T_CONTEXT_POP_MARKER(renderView);
 }
@@ -158,6 +168,15 @@ void ChainRenderBlock::render(IRenderView* renderView) const
 
 	if (next)
 		next->render(renderView);
+
+	T_CONTEXT_POP_MARKER(renderView);
+}
+
+void LambdaRenderBlock::render(IRenderView* renderView) const
+{
+	T_CONTEXT_PUSH_MARKER(renderView, name);
+
+	lambda(renderView);
 
 	T_CONTEXT_POP_MARKER(renderView);
 }

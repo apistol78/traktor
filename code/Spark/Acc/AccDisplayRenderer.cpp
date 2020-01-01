@@ -224,7 +224,7 @@ void AccDisplayRenderer::destroy()
 	safeDestroy(m_lineVertexPool);
 
 	m_renderContexts.clear();
-	m_renderContext = 0;
+	m_renderContext = nullptr;
 }
 
 void AccDisplayRenderer::build(uint32_t frame)
@@ -243,14 +243,14 @@ void AccDisplayRenderer::build(render::RenderContext* renderContext, uint32_t fr
 void AccDisplayRenderer::render(render::IRenderView* renderView, uint32_t frame, const Vector2& offset, float scale)
 {
 	T_RENDER_PUSH_MARKER(renderView, "Flash: Render");
-	m_renderContexts[frame]->render(renderView, render::RpOverlay);
+	m_renderContexts[frame]->render(renderView);
 	T_RENDER_POP_MARKER(renderView);
 }
 
 void AccDisplayRenderer::flush()
 {
-	for (RefArray< render::RenderContext >::iterator i = m_renderContexts.begin(); i != m_renderContexts.end(); ++i)
-		(*i)->flush();
+	for (auto renderContext : m_renderContexts)
+		renderContext->flush();
 }
 
 void AccDisplayRenderer::flushCaches()
@@ -309,7 +309,7 @@ void AccDisplayRenderer::begin(
 		render::TargetBeginRenderBlock* renderBlock = m_renderContext->alloc< render::TargetBeginRenderBlock >("Flash begin target");
 		renderBlock->renderTargetSet = m_frameTarget;
 		renderBlock->renderTargetIndex = 0;
-		m_renderContext->draw(render::RpOverlay, renderBlock);
+		m_renderContext->enqueue(renderBlock);
 	}
 
 	m_frameBounds.set(frameBounds.mn.x, frameBounds.mn.y, frameBounds.mx.x, frameBounds.mx.y);
@@ -327,13 +327,13 @@ void AccDisplayRenderer::begin(
 	// 	render::TargetClearRenderBlock* renderBlock = m_renderContext->alloc< render::TargetClearRenderBlock >("Flash clear (color+stencil)");
 	// 	renderBlock->clearMask = render::CfColor | render::CfStencil;
 	// 	renderBlock->clearColor = backgroundColor;
-	// 	m_renderContext->draw(render::RpOverlay, renderBlock);
+	// 	m_renderContext->enqueue(renderBlock);
 	// }
 	// else
 	// {
 	// 	render::TargetClearRenderBlock* renderBlock = m_renderContext->alloc< render::TargetClearRenderBlock >("Flash clear (stencil)");
 	// 	renderBlock->clearMask = render::CfStencil;
-	// 	m_renderContext->draw(render::RpOverlay, renderBlock);
+	// 	m_renderContext->enqueue(renderBlock);
 	// }
 
 	// Flush glyph cache is RT has become invalid.
@@ -642,7 +642,7 @@ void AccDisplayRenderer::renderGlyph(
 		render::TargetBeginRenderBlock* renderBlockBegin = m_renderContext->alloc< render::TargetBeginRenderBlock >("Flash glyph render begin");
 		renderBlockBegin->renderTargetSet = m_renderTargetGlyphs;
 		renderBlockBegin->renderTargetIndex = 0;
-		m_renderContext->draw(render::RpOverlay, renderBlockBegin);
+		m_renderContext->enqueue(renderBlockBegin);
 
 		// Clear previous glyph by drawing a solid quad at it's place.
 		m_quad->render(
@@ -673,7 +673,7 @@ void AccDisplayRenderer::renderGlyph(
 		);
 
 		render::TargetEndRenderBlock* renderBlockEnd = m_renderContext->alloc< render::TargetEndRenderBlock >("Flash glyph render end");
-		m_renderContext->draw(render::RpOverlay, renderBlockEnd);
+		m_renderContext->enqueue(renderBlockEnd);
 
 		it1->second.index = index;
 	}
@@ -834,14 +834,14 @@ void AccDisplayRenderer::end()
 	if (m_frameTarget)
 	{
 		render::TargetEndRenderBlock* renderBlock = m_renderContext->alloc< render::TargetEndRenderBlock >("Flash end target");
-		m_renderContext->draw(render::RpOverlay, renderBlock);
+		m_renderContext->enqueue(renderBlock);
 		m_quad->blit(m_renderContext, m_frameTarget->getColorTexture(0));
 	}
 
 	m_gradientCache->synchronize();
 	m_fillVertexPool->cycleGarbage();
 	m_lineVertexPool->cycleGarbage();
-	m_renderContext = 0;
+	m_renderContext = nullptr;
 }
 
 void AccDisplayRenderer::renderEnqueuedGlyphs()
