@@ -172,7 +172,7 @@ void AccQuad::render(
 
 	renderBlock->programParams->endParameters(renderContext);
 
-	renderContext->draw(render::RpOverlay, renderBlock);
+	renderContext->enqueue(renderBlock);
 }
 
 void AccQuad::blit(
@@ -192,7 +192,7 @@ void AccQuad::blit(
 	renderBlock->programParams->setTextureParameter(s_handleTexture, texture);
 	renderBlock->programParams->endParameters(renderContext);
 
-	renderContext->draw(render::RpOverlay, renderBlock);
+	renderContext->enqueue(renderBlock);
 }
 
 	}

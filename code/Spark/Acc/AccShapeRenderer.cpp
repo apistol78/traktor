@@ -291,7 +291,7 @@ void AccShapeRenderer::beginCacheAsBitmap(
 				renderBlockBegin->clear.stencil = maskReference;
 			}
 
-			renderContext->draw(render::RpOverlay, renderBlockBegin);
+			renderContext->enqueue(renderBlockBegin);
 
 			m_renderIntoSlot = slot;
 		}
@@ -312,7 +312,7 @@ void AccShapeRenderer::endCacheAsBitmap(
 	if (m_renderIntoSlot >= 0)
 	{
 		render::TargetEndRenderBlock* renderBlockEnd = renderContext->alloc< render::TargetEndRenderBlock >("Flash shape render end");
-		renderContext->draw(render::RpOverlay, renderBlockEnd);
+		renderContext->enqueue(renderBlockEnd);
 		m_renderIntoSlot = -1;
 	}
 

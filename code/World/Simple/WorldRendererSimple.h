@@ -47,11 +47,7 @@ public:
 
 	virtual void build(WorldRenderView& worldRenderView, int32_t frame) override final;
 
-	virtual bool beginRender(render::IRenderView* renderView, int32_t frame, const Color4f& clearColor) override final;
-
 	virtual void render(render::IRenderView* renderView, int32_t frame) override final;
-
-	virtual void endRender(render::IRenderView* renderView, int32_t frame, float deltaTime) override final;
 
 	virtual render::ImageProcess* getVisualImageProcess() override final;
 
@@ -60,7 +56,8 @@ public:
 private:
 	struct Frame
 	{
-		Ref< WorldContext > visual;
+		Ref< render::RenderContext > renderContext;
+		Ref< WorldContext > worldContext;
 	};
 
 	AlignedVector< Frame > m_frames;

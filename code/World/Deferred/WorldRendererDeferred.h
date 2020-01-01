@@ -67,65 +67,34 @@ public:
 
 	virtual void build(WorldRenderView& worldRenderView, int32_t frame) override final;
 
-	virtual bool beginRender(render::IRenderView* renderView, int32_t frame, const Color4f& clearColor) override final;
-
 	virtual void render(render::IRenderView* renderView, int32_t frame) override final;
-
-	virtual void endRender(render::IRenderView* renderView, int32_t frame, float deltaTime) override final;
 
 	virtual render::ImageProcess* getVisualImageProcess() override final;
 
 	virtual void getDebugTargets(std::vector< render::DebugTarget >& outTargets) const override final;
 
 private:
-	struct ShadowContext
-	{
-		Ref< WorldContext > shadow;
-		//Matrix44 shadowLightView;
-		//Matrix44 shadowLightProjection;
-
-		// \tbd Used by projection post processing...
-		Matrix44 viewToLightSpace;
-	};
-
 	struct Frame
 	{
-		ShadowContext slice[MaxSliceCount];
-		ShadowContext atlas[16];
-		Ref< WorldContext > gbuffer;
-		Ref< WorldContext > reflections;
-		Ref< WorldContext > irradiance;
-		Ref< WorldContext > velocity;
-		Ref< WorldContext > visual;
+		Ref< render::RenderContext > renderContext;
+		Ref< WorldContext > worldContext;
 		AlignedVector< Light > lights;
 		Ref< render::StructBuffer > lightSBuffer;
 		Ref< render::StructBuffer > tileSBuffer;
-
-		// \tbd Used by post processing...
-		Frustum viewFrustum;
-		Matrix44 projection;
-		Matrix44 lastView;
-		Matrix44 view;
-
-		int32_t atlasCount;
-		float time;
-
-		Frame()
-		:	atlasCount(0)
-		,	time(0.0f)
-		{
-		}
 	};
 
 	WorldRenderSettings m_settings;
 	WorldRenderSettings::ShadowSettings m_shadowSettings;
+
 	Quality m_toneMapQuality;
 	Quality m_motionBlurQuality;
 	Quality m_shadowsQuality;
 	Quality m_reflectionsQuality;
 	Quality m_ambientOcclusionQuality;
 	Quality m_antiAliasQuality;
+
 	Ref< IShadowProjection > m_shadowProjection;
+
 	Ref< render::IRenderTargetSet > m_visualTargetSet;
 	Ref< render::IRenderTargetSet > m_intermediateTargetSet;
 	Ref< render::IRenderTargetSet > m_gbufferTargetSet;
@@ -135,7 +104,7 @@ private:
 	Ref< render::IRenderTargetSet > m_shadowCascadeTargetSet;	//!< Shadow map for directional lights.
 	Ref< render::IRenderTargetSet > m_shadowMaskTargetSet;		//!< Screen space projected shadow mask, directional lights.
 	Ref< render::IRenderTargetSet > m_shadowAtlasTargetSet;		//!< Shadow map atlas for spot and point lights.
-	//Ref< render::RenderContext > m_globalContext;
+
 	Ref< render::ImageProcess > m_colorTargetCopy;
 	Ref< render::ImageProcess > m_ambientOcclusion;
 	Ref< render::ImageProcess > m_antiAlias;
@@ -145,28 +114,32 @@ private:
 	Ref< render::ImageProcess > m_motionBlurImageProcess;
 	Ref< render::ImageProcess > m_toneMapImageProcess;
 	Ref< render::ImageProcess > m_shadowMaskProject;
+
 	Ref< LightRendererDeferred > m_lightRenderer;
+
 	resource::Proxy< IrradianceGrid > m_irradianceGrid;
 	Ref< GroupEntity > m_rootEntity;
 	AutoArrayPtr< Frame > m_frames;
 	uint32_t m_frameCount;
 	float m_slicePositions[MaxSliceCount + 1];
-	uint32_t m_count;
 	Vector4 m_fogDistanceAndDensity;
 	Vector4 m_fogColor;
-	bool m_includeObjectVelocity;
 
 	void buildGBuffer(WorldRenderView& worldRenderView, int32_t frame);
 
-	void buildReflections(const WorldRenderView& worldRenderView, int32_t frame);
-
-	void buildIrradiance(const WorldRenderView& worldRenderView, int32_t frame);
-
 	void buildVelocity(const WorldRenderView& worldRenderView, int32_t frame);
+
+	void buildAmbientOcclusion(WorldRenderView& worldRenderView, int32_t frame);
 
 	void buildLights(const WorldRenderView& worldRenderView, int32_t frame);
 
+	void buildReflections(const WorldRenderView& worldRenderView, int32_t frame);
+
 	void buildVisual(const WorldRenderView& worldRenderView, int32_t frame);
+
+	void buildCopyFrame(const WorldRenderView& worldRenderView, int32_t frame);
+
+	void buildEndFrame(WorldRenderView& worldRenderView, int32_t frame);
 };
 
 	}

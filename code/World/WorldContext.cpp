@@ -7,27 +7,15 @@ namespace traktor
 {
 	namespace world
 	{
-		namespace
-		{
-
-const uint32_t c_renderContextSize = 1 * 1024 * 1024;
-
-		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.world.WorldContext", WorldContext, Object)
 
-WorldContext::WorldContext(WorldEntityRenderers* entityRenderers)
+WorldContext::WorldContext(WorldEntityRenderers* entityRenderers, render::RenderContext* renderContext)
 :	m_entityRenderers(entityRenderers)
-,	m_renderContext(new render::RenderContext(c_renderContextSize))
+,	m_renderContext(renderContext)
 ,	m_lastRenderableType(nullptr)
 ,	m_lastRenderer(nullptr)
 {
-}
-
-void WorldContext::clear()
-{
-	if (m_renderContext)
-		m_renderContext->flush();
 }
 
 void WorldContext::build(WorldRenderView& worldRenderView, const IWorldRenderPass& worldRenderPass, Object* renderable)

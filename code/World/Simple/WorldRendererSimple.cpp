@@ -42,7 +42,10 @@ bool WorldRendererSimple::create(
 {
 	m_frames.resize(desc.frameCount);
 	for (auto& frame : m_frames)
-		frame.visual = new WorldContext(desc.entityRenderers);
+	{
+		frame.renderContext = new render::RenderContext(1 * 1024 * 1024);
+		frame.worldContext = new WorldContext(desc.entityRenderers, frame.renderContext);
+	}
 	
 	m_rootEntity = new GroupEntity();
 	return true;
@@ -51,7 +54,10 @@ bool WorldRendererSimple::create(
 void WorldRendererSimple::destroy()
 {
 	for (auto& frame : m_frames)
-		frame.visual = nullptr;
+	{
+		frame.renderContext = nullptr;
+		frame.worldContext = nullptr;
+	}
 }
 
 void WorldRendererSimple::attach(Entity* entity)
@@ -67,14 +73,14 @@ void WorldRendererSimple::build(WorldRenderView& worldRenderView, int32_t frame)
 	worldRenderView.resetLights();
 
 	// Flush render contexts.
-	f.visual->getRenderContext()->flush();
+	f.renderContext->flush();
 
 	// Default visual parameters.
-	auto globalProgramParams = f.visual->getRenderContext()->alloc< render::ProgramParameters >();
-	globalProgramParams->beginParameters(f.visual->getRenderContext());
+	auto globalProgramParams = f.renderContext->alloc< render::ProgramParameters >();
+	globalProgramParams->beginParameters(f.renderContext);
 	globalProgramParams->setFloatParameter(s_handleTime, worldRenderView.getTime());
 	globalProgramParams->setMatrixParameter(s_handleProjection, worldRenderView.getProjection());
-	globalProgramParams->endParameters(f.visual->getRenderContext());
+	globalProgramParams->endParameters(f.renderContext);
 
 	// Build visual context.
 	WorldRenderPassSimple defaultPass(
@@ -82,25 +88,19 @@ void WorldRendererSimple::build(WorldRenderView& worldRenderView, int32_t frame)
 		globalProgramParams,
 		worldRenderView.getView()
 	);
-	f.visual->build(worldRenderView, defaultPass, m_rootEntity);
-	f.visual->flush(worldRenderView, defaultPass, m_rootEntity);
+
+	T_ASSERT(!f.renderContext->havePendingDraws());
+	f.worldContext->build(worldRenderView, defaultPass, m_rootEntity);
+	f.worldContext->flush(worldRenderView, defaultPass, m_rootEntity);
+	f.renderContext->merge(render::RpAll);
 
 	m_rootEntity->removeAllEntities();
-}
-
-bool WorldRendererSimple::beginRender(render::IRenderView* renderView, int32_t frame, const Color4f& clearColor)
-{
-	return true;
 }
 
 void WorldRendererSimple::render(render::IRenderView* renderView, int32_t frame)
 {
 	Frame& f = m_frames[frame];
-	f.visual->getRenderContext()->render(renderView, render::RpAll);
-}
-
-void WorldRendererSimple::endRender(render::IRenderView* renderView, int32_t frame, float deltaTime)
-{
+	f.renderContext->render(renderView);
 }
 
 render::ImageProcess* WorldRendererSimple::getVisualImageProcess()

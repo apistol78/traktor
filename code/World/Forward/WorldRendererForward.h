@@ -71,47 +71,22 @@ public:
 
 	virtual void build(WorldRenderView& worldRenderView, int32_t frame) override final;
 
-	virtual bool beginRender(render::IRenderView* renderView, int32_t frame, const Color4f& clearColor) override final;
-
 	virtual void render(render::IRenderView* renderView, int32_t frame) override final;
-
-	virtual void endRender(render::IRenderView* renderView, int32_t frame, float deltaTime) override final;
 
 	virtual render::ImageProcess* getVisualImageProcess() override final;
 
 	virtual void getDebugTargets(std::vector< render::DebugTarget >& outTargets) const override final;
 
 private:
-	struct FrameShadow
-	{
-		Ref< WorldContext > shadow;
-	};
-
 	struct Frame
 	{
-		FrameShadow slice[MaxSliceCount];
-		FrameShadow atlas[16];
-
-		Ref< WorldContext > depth;
-		Ref< WorldContext > visual;
-
+		Ref< render::RenderContext > renderContext;
+		Ref< WorldContext > worldContext;
 		Ref< render::StructBuffer > lightSBuffer;
-
-		Matrix44 projection;
-		Matrix44 view;
-		Frustum viewFrustum;
-
-		//float time;
 		int32_t lightCount;
 
-		bool haveDepth;
-		bool haveShadows;
-
 		Frame()
-		//:	time(0.0f)
 		:	lightCount(0)
-		,	haveDepth(false)
-		,	haveShadows(false)
 		{
 		}
 	};
@@ -121,21 +96,19 @@ private:
 	Quality m_shadowsQuality;
 	Quality m_ambientOcclusionQuality;
 	Quality m_antiAliasQuality;
+
 	Ref< render::IRenderTargetSet > m_visualTargetSet;
 	Ref< render::IRenderTargetSet > m_intermediateTargetSet;
 	Ref< render::IRenderTargetSet > m_gbufferTargetSet;
-	//Ref< render::RenderContext > m_globalContext;
+	
 	Ref< render::ImageProcess > m_ambientOcclusion;
 	Ref< render::ImageProcess > m_antiAlias;
 	Ref< render::ImageProcess > m_visualImageProcess;
 	Ref< render::ImageProcess > m_gammaCorrectionImageProcess;
 	Ref< render::ImageProcess > m_toneMapImageProcess;
 
-	// Directional shadow map.
 	Ref< IShadowProjection > m_shadowProjection;
 	Ref< render::IRenderTargetSet > m_shadowCascadeTargetSet;
-
-	// Point/Spot shadow map.
 	Ref< render::IRenderTargetSet > m_shadowAtlasTargetSet;
 
 	Ref< GroupEntity > m_rootEntity;
@@ -143,11 +116,17 @@ private:
 	float m_slicePositions[MaxSliceCount + 1];
 	uint32_t m_count;
 
+	void buildBeginFrame(WorldRenderView& worldRenderView, int32_t frame);
+
 	void buildGBuffer(WorldRenderView& worldRenderView, int32_t frame);
+
+	void buildAmbientOcclusion(WorldRenderView& worldRenderView, int32_t frame);
 
 	void buildLights(WorldRenderView& worldRenderView, int32_t frame);
 
 	void buildVisual(WorldRenderView& worldRenderView, int32_t frame);
+
+	void buildEndFrame(WorldRenderView& worldRenderView, int32_t frame);
 };
 
 	}

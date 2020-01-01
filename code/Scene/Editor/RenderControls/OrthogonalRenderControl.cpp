@@ -530,9 +530,7 @@ void OrthogonalRenderControl::eventPaint(ui::PaintEvent* event)
 			m_worldRenderer->build(worldRenderView, 0);
 		}
 
-		m_worldRenderer->beginRender(m_renderView, 0, Color4f(colorClear[0], colorClear[1], colorClear[2], colorClear[3]));
 		m_worldRenderer->render(m_renderView, 0);
-		m_worldRenderer->endRender(m_renderView, 0, deltaTime);
 
 		// Draw wire guides.
 		m_primitiveRenderer->begin(0, worldRenderView.getProjection());

@@ -578,9 +578,7 @@ void PerspectiveRenderControl::eventPaint(ui::PaintEvent* event)
 			}
 		}
 
-		m_worldRenderer->beginRender(m_renderView, 0, clear.colors[0]);
 		m_worldRenderer->render(m_renderView, 0);
-		m_worldRenderer->endRender(m_renderView, 0, deltaTime);
 
 		// Render debug target.
 		if (m_debugTarget.texture)

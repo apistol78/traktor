@@ -2,6 +2,10 @@
 #include "Core/Memory/Alloc.h"
 #include "Render/Context/RenderContext.h"
 
+#if defined(_DEBUG)
+#	include "Core/Log/Log.h"
+#endif
+
 namespace traktor
 {
 	namespace render
@@ -42,7 +46,7 @@ RenderContext::RenderContext(uint32_t heapSize)
 ,	m_heapPtr(0)
 {
 	m_heap.reset(static_cast< uint8_t* >(Alloc::acquireAlign(heapSize, 16, T_FILE_LINE)));
-	T_FATAL_ASSERT_M (m_heap.ptr(), L"Out of memory (Render context)");
+	T_FATAL_ASSERT_M(m_heap.ptr(), L"Out of memory (Render context)");
 	m_heapEnd = m_heap.ptr() + heapSize;
 	m_heapPtr = m_heap.ptr();
 }
@@ -70,84 +74,118 @@ void* RenderContext::alloc(uint32_t blockSize, uint32_t align)
 	return alloc(blockSize);
 }
 
+void RenderContext::enqueue(RenderBlock* renderBlock)
+{
+	m_renderQueue.push_back(renderBlock);
+}
+
 void RenderContext::draw(uint32_t type, RenderBlock* renderBlock)
 {
 	if (type == RpSetup)
-		m_renderQueue[0].push_back(renderBlock);
+		m_priorityQueue[0].push_back(renderBlock);
 	else if (type == RpOpaque)
-		m_renderQueue[1].push_back(renderBlock);
+		m_priorityQueue[1].push_back(renderBlock);
 	else if (type == RpPostOpaque)
-		m_renderQueue[2].push_back(renderBlock);
+		m_priorityQueue[2].push_back(renderBlock);
 	else if (type == RpAlphaBlend)
-		m_renderQueue[3].push_back(renderBlock);
+		m_priorityQueue[3].push_back(renderBlock);
 	else if (type == RpPostAlphaBlend)
-		m_renderQueue[4].push_back(renderBlock);
+		m_priorityQueue[4].push_back(renderBlock);
 	else if (type == RpOverlay)
-		m_renderQueue[5].push_back(renderBlock);
+		m_priorityQueue[5].push_back(renderBlock);
 }
 
-void RenderContext::render(IRenderView* renderView, uint32_t priorities) const
+void RenderContext::merge(uint32_t priorities)
 {
-	// Render setup blocks unsorted.
+	// Merge setup blocks unsorted.
 	if (priorities & RpSetup)
 	{
-		for (auto renderBlock : m_renderQueue[0])
-			renderBlock->render(renderView);
+		m_renderQueue.insert(m_renderQueue.end(), m_priorityQueue[0].begin(), m_priorityQueue[0].end());
+		m_priorityQueue[0].resize(0);
 	}
 
-	// Render opaque blocks, sorted by shader.
+	// Merge opaque blocks, sorted by shader.
 	if (priorities & RpOpaque)
 	{
-		std::sort(m_renderQueue[1].begin(), m_renderQueue[1].end(), SortOpaquePredicate);
-		for (auto renderBlock : m_renderQueue[1])
-			renderBlock->render(renderView);
+		std::sort(m_priorityQueue[1].begin(), m_priorityQueue[1].end(), SortOpaquePredicate);
+		m_renderQueue.insert(m_renderQueue.end(), m_priorityQueue[1].begin(), m_priorityQueue[1].end());
+		m_priorityQueue[1].resize(0);
 	}
 
-	// Render post opaque blocks, sorted by shader.
+	// Merge post opaque blocks, sorted by shader.
 	if (priorities & RpPostOpaque)
 	{
-		std::sort(m_renderQueue[2].begin(), m_renderQueue[2].end(), SortOpaquePredicate);
-		for (auto renderBlock : m_renderQueue[2])
-			renderBlock->render(renderView);
+		std::sort(m_priorityQueue[2].begin(), m_priorityQueue[2].end(), SortOpaquePredicate);
+		m_renderQueue.insert(m_renderQueue.end(), m_priorityQueue[2].begin(), m_priorityQueue[2].end());
+		m_priorityQueue[2].resize(0);
 	}
 
-	// Render alpha blend blocks back to front.
+	// Merge alpha blend blocks back to front.
 	if (priorities & RpAlphaBlend)
 	{
-		std::sort(m_renderQueue[3].begin(), m_renderQueue[3].end(), SortAlphaBlendPredicate);
-		for (auto renderBlock : m_renderQueue[3])
-			renderBlock->render(renderView);
+		std::sort(m_priorityQueue[3].begin(), m_priorityQueue[3].end(), SortAlphaBlendPredicate);
+		m_renderQueue.insert(m_renderQueue.end(), m_priorityQueue[3].begin(), m_priorityQueue[3].end());
+		m_priorityQueue[3].resize(0);
 	}
 
-	// Render post alpha blend blocks back to front.
+	// Merge post alpha blend blocks back to front.
 	if (priorities & RpPostAlphaBlend)
 	{
-		std::sort(m_renderQueue[4].begin(), m_renderQueue[4].end(), SortAlphaBlendPredicate);
-		for (auto renderBlock : m_renderQueue[4])
-			renderBlock->render(renderView);
+		std::sort(m_priorityQueue[4].begin(), m_priorityQueue[4].end(), SortAlphaBlendPredicate);
+		m_renderQueue.insert(m_renderQueue.end(), m_priorityQueue[4].begin(), m_priorityQueue[4].end());
+		m_priorityQueue[4].resize(0);
 	}
 
-	// Render overlay blocks unsorted.
+	// Merge overlay blocks unsorted.
 	if (priorities & RpOverlay)
 	{
-		for (auto renderBlock : m_renderQueue[5])
-			renderBlock->render(renderView);
+		m_renderQueue.insert(m_renderQueue.end(), m_priorityQueue[5].begin(), m_priorityQueue[5].end());
+		m_priorityQueue[5].resize(0);
 	}
+}
+
+void RenderContext::render(IRenderView* renderView) const
+{
+	for (auto renderBlock : m_renderQueue)
+		renderBlock->render(renderView);
 }
 
 void RenderContext::flush()
 {
 	// Reset queues and heap.
-	for (int32_t i = 0; i < sizeof_array(m_renderQueue); ++i)
+	for (int32_t i = 0; i < sizeof_array(m_priorityQueue); ++i)
 	{
+#if defined(_DEBUG)
+		if (!m_priorityQueue[i].empty())
+		{
+			const wchar_t* c_queueNames[] = { L"Setup", L"Opaque", L"Post-Opaque", L"Alpha-Blend", L"Post-Alpha-Blend", L"Overlay" };
+			log::debug << L"Still " << (int32_t)m_priorityQueue[i].size() << L" non-merged render blocks in priority queue \"" << c_queueNames[i] << L"\", discarded." << Endl;
+		}
+#endif
 		// As blocks are allocated from a fixed pool we need to manually call destructors.
-		for (auto renderBlock : m_renderQueue[i])
+		for (auto renderBlock : m_priorityQueue[i])
 			renderBlock->~RenderBlock();
 
-		m_renderQueue[i].resize(0);
+		m_priorityQueue[i].resize(0);
 	}
 
+	// As blocks are allocated from a fixed pool we need to manually call destructors.
+	for (auto renderBlock : m_renderQueue)
+		renderBlock->~RenderBlock();
+
+	m_renderQueue.resize(0);
+
 	m_heapPtr = m_heap.ptr();
+}
+
+bool RenderContext::havePendingDraws() const
+{
+	for (int32_t i = 0; i < sizeof_array(m_priorityQueue); ++i)
+	{
+		if (!m_priorityQueue[i].empty())
+			return true;
+	}
+	return false;
 }
 
 	}

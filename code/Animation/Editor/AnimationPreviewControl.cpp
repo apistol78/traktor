@@ -364,9 +364,7 @@ void AnimationPreviewControl::eventPaint(ui::PaintEvent* event)
 		m_worldRenderer->build(m_worldRenderView, 0);
 	}
 
-	m_worldRenderer->beginRender(m_renderView, 0, clearColor);
 	m_worldRenderer->render(m_renderView, 0);
-	m_worldRenderer->endRender(m_renderView, 0, deltaTime);
 
 	if (m_primitiveRenderer->begin(0, projectionTransform))
 	{

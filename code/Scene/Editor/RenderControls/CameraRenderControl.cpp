@@ -385,9 +385,7 @@ void CameraRenderControl::eventPaint(ui::PaintEvent* event)
 			}
 		}
 
-		m_worldRenderer->beginRender(m_renderView, 0, Color4f(colorClear[0], colorClear[1], colorClear[2], colorClear[3]));
 		m_worldRenderer->render(m_renderView, 0);
-		m_worldRenderer->endRender(m_renderView, 0, deltaTime);
 
 		m_renderView->end();
 		m_renderView->present();
