@@ -8,11 +8,13 @@ namespace traktor
 	namespace hf
 	{
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.hf.HeightfieldAsset", 5, HeightfieldAsset, ISerializable)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.hf.HeightfieldAsset", 7, HeightfieldAsset, ISerializable)
 
 HeightfieldAsset::HeightfieldAsset()
 :	m_worldExtent(0.0f, 0.0f, 0.0f, 0.0f)
 ,	m_vistaDistance(0.0f)
+,	m_erosionEnable(false)
+,	m_erodeIterations(100000)
 {
 }
 
@@ -28,6 +30,12 @@ void HeightfieldAsset::serialize(ISerializer& s)
 
 	if (s.getVersion() >= 5)
 		s >> Member< float >(L"vistaDistance", m_vistaDistance);
+
+	if (s.getVersion() >= 6)
+		s >> Member< bool >(L"erosionEnable", m_erosionEnable);
+
+	if (s.getVersion() >= 7)
+		s >> Member< int32_t >(L"erodeIterations", m_erodeIterations);
 }
 
 	}

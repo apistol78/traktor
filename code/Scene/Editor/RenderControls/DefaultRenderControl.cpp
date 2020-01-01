@@ -36,6 +36,8 @@ namespace traktor
 		namespace
 		{
 
+const wchar_t* c_worldRendererTypes[] = { L"traktor.world.WorldRendererSimple", L"traktor.world.WorldRendererForward", L"traktor.world.WorldRendererDeferred" };
+
 ui::MenuItem* getChecked(ui::MenuItem* menu)
 {
 	for (int i = 0; i < menu->count(); ++i)
@@ -43,7 +45,7 @@ ui::MenuItem* getChecked(ui::MenuItem* menu)
 		if (menu->get(i)->isChecked())
 			return menu->get(i);
 	}
-	return 0;
+	return nullptr;
 }
 
 		}
@@ -174,7 +176,13 @@ bool DefaultRenderControl::create(ui::Widget* parent, SceneEditorContext* contex
 	m_toolWorldRenderer->add(L"Simple");
 	m_toolWorldRenderer->add(L"Forward");
 	m_toolWorldRenderer->add(L"Deferred");
-	m_toolWorldRenderer->select(2);
+
+	std::wstring worldRendererTypeName = settings->getProperty< std::wstring >(L"SceneEditor.WorldRendererType", L"traktor.world.WorldRendererDeferred");
+	for (int32_t i = 0; i < 3; ++i)
+	{
+		if (worldRendererTypeName == c_worldRendererTypes[i])
+			m_toolWorldRenderer->select(i);
+	}
 
 	m_toolDebugMode = new ui::ToolBarDropDown(ui::Command(1, L"Scene.Editor.DebugMode"), ui::dpi96(140), i18n::Text(L"SCENE_EDITOR_DEBUG_MODE"));
 	m_toolDebugMode->add(L"Default");
@@ -569,7 +577,6 @@ void DefaultRenderControl::eventToolClick(ui::ToolBarButtonClickEvent* event)
 	}
 	else if (event->getCommand() == L"Scene.Editor.WorldRenderer")
 	{
-		const wchar_t* c_worldRendererTypes[] = { L"traktor.world.WorldRendererSimple", L"traktor.world.WorldRendererForward", L"traktor.world.WorldRendererDeferred" };
 		const TypeInfo* worldRendererType = TypeInfo::find(c_worldRendererTypes[m_toolWorldRenderer->getSelected()]);
 		if (worldRendererType)
 			m_renderControl->setWorldRendererType(*worldRendererType);

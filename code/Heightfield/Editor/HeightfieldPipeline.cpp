@@ -9,6 +9,7 @@
 #include "Heightfield/Heightfield.h"
 #include "Heightfield/HeightfieldFormat.h"
 #include "Heightfield/HeightfieldResource.h"
+#include "Heightfield/Editor/ErosionFilter.h"
 #include "Heightfield/Editor/HeightfieldAsset.h"
 #include "Heightfield/Editor/HeightfieldPipeline.h"
 
@@ -79,6 +80,10 @@ bool HeightfieldPipeline::buildOutput(
 
 	sourceData->close();
 	sourceData = nullptr;
+
+	// Apply erosion filter.
+	if (heightfieldAsset->getErosionEnable())
+		ErosionFilter(heightfieldAsset->getErodeIterations()).apply(heightfield);
 
 	// Create height field resource.
 	Ref< HeightfieldResource > resource = new HeightfieldResource();

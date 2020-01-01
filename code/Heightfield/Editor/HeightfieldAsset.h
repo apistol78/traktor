@@ -16,6 +16,14 @@ namespace traktor
 	namespace hf
 	{
 
+/*! Heightfield asset.
+ * \ingroup Heightfield
+ *
+ * Heightfield asset is a database instance which contain
+ * meta information about heightfield.
+ * Actual heightfield data is stored as database instance
+ * data channels.
+ */
 class T_DLLCLASS HeightfieldAsset : public ISerializable
 {
 	T_RTTI_CLASS;
@@ -23,7 +31,7 @@ class T_DLLCLASS HeightfieldAsset : public ISerializable
 public:
 	HeightfieldAsset();
 
-	HeightfieldAsset(const Vector4& worldExtent);
+	explicit HeightfieldAsset(const Vector4& worldExtent);
 
 	virtual void serialize(ISerializer& s) override final;
 
@@ -31,9 +39,15 @@ public:
 
 	float getVistaDistance() const { return m_vistaDistance; }
 
+	bool getErosionEnable() const { return m_erosionEnable; }
+
+	int32_t getErodeIterations() const { return m_erodeIterations; }
+
 private:
 	Vector4 m_worldExtent;
 	float m_vistaDistance;
+	bool m_erosionEnable;
+	int32_t m_erodeIterations;
 };
 
 	}
