@@ -11,6 +11,7 @@
 #include "Editor/IPipelineSettings.h"
 #include "Heightfield/Heightfield.h"
 #include "Heightfield/HeightfieldFormat.h"
+#include "Heightfield/Editor/ErosionFilter.h"
 #include "Heightfield/Editor/HeightfieldAsset.h"
 #include "Heightfield/Editor/HeightfieldTextureAsset.h"
 #include "Heightfield/Editor/HeightfieldTexturePipeline.h"
@@ -127,11 +128,15 @@ bool HeightfieldTexturePipeline::buildOutput(
 	if (!heightfield)
 	{
 		log::error << L"Heightfield pipeline failed; unable to read heights" << Endl;
-		return 0;
+		return false;
 	}
 
 	sourceData->close();
-	sourceData = 0;
+	sourceData = nullptr;
+
+	// Apply erosion filter.
+	if (heightfieldAsset->getErosionEnable())
+		ErosionFilter(heightfieldAsset->getErodeIterations()).apply(heightfield);
 
 	int32_t size = heightfield->getSize();
 
