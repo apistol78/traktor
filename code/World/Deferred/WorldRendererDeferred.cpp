@@ -58,6 +58,7 @@ render::handle_t s_handleView = 0;
 render::handle_t s_handleViewInverse = 0;
 render::handle_t s_handleProjection = 0;
 render::handle_t s_handleColorMap = 0;
+render::handle_t s_handleOcclusionMap = 0;
 render::handle_t s_handleDepthMap = 0;
 render::handle_t s_handleLightMap = 0;
 render::handle_t s_handleNormalMap = 0;
@@ -188,6 +189,7 @@ WorldRendererDeferred::WorldRendererDeferred()
 	s_handleViewInverse = render::getParameterHandle(L"World_ViewInverse");
 	s_handleProjection = render::getParameterHandle(L"World_Projection");
 	s_handleColorMap = render::getParameterHandle(L"World_ColorMap");
+	s_handleOcclusionMap = render::getParameterHandle(L"World_OcclusionMap");
 	s_handleDepthMap = render::getParameterHandle(L"World_DepthMap");
 	s_handleLightMap = render::getParameterHandle(L"World_LightMap");
 	s_handleNormalMap = render::getParameterHandle(L"World_NormalMap");
@@ -1522,6 +1524,7 @@ void WorldRendererDeferred::buildVisual(const WorldRenderView& worldRenderView, 
 		sharedParams->setTextureParameter(s_handleNormalMap, m_gbufferTargetSet->getColorTexture(1));
 		sharedParams->setTextureParameter(s_handleMiscMap, m_gbufferTargetSet->getColorTexture(2));
 		sharedParams->setTextureParameter(s_handleColorMap, m_gbufferTargetSet->getColorTexture(3));
+		sharedParams->setTextureParameter(s_handleOcclusionMap, m_gbufferTargetSet->getColorTexture(4));
 
 		if (m_irradianceGrid)
 		{
@@ -1558,6 +1561,7 @@ void WorldRendererDeferred::buildVisual(const WorldRenderView& worldRenderView, 
 			worldRenderView.getView(),
 			f.lightSBuffer,
 			f.tileSBuffer,
+			m_irradianceGrid,
 			m_gbufferTargetSet->getColorTexture(0),	// depth
 			m_gbufferTargetSet->getColorTexture(1),	// normals
 			m_gbufferTargetSet->getColorTexture(2),	// metalness/roughness
