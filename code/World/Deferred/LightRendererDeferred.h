@@ -30,6 +30,8 @@ class IResourceManager;
 	namespace world
 	{
 
+class IrradianceGrid;
+
 /*! Light renderer.
  * \ingroup World
  *
@@ -61,6 +63,7 @@ public:
 		const Matrix44& view,
 		render::StructBuffer* lightSBuffer,
 		render::StructBuffer* tileSBuffer,
+		IrradianceGrid* irradianceGrid,
 		render::ITexture* depthMap,
 		render::ITexture* normalMap,
 		render::ITexture* miscMap,
