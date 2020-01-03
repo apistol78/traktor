@@ -119,8 +119,7 @@ void TerrainComponent::render(
 	world::WorldRenderView& worldRenderView,
 	const world::IWorldRenderPass& worldRenderPass,
 	float detailDistance,
-	uint32_t cacheSize,
-	bool layersEnable
+	uint32_t cacheSize
 )
 {
 	if (
@@ -525,17 +524,21 @@ void TerrainComponent::render(
 	}
 
 #endif
+}
 
-	if (layersEnable)
-	{
-		for (const auto layer : m_layers)
-			layer->render(
-				*this,
-				worldContext,
-				worldRenderView,
-				worldRenderPass
-			);
-	}
+void TerrainComponent::renderLayers(
+	world::WorldContext& worldContext,
+	world::WorldRenderView& worldRenderView,
+	const world::IWorldRenderPass& worldRenderPass
+)
+{
+	for (const auto layer : m_layers)
+		layer->render(
+			*this,
+			worldContext,
+			worldRenderView,
+			worldRenderPass
+		);
 }
 
 void TerrainComponent::setVisualizeMode(VisualizeMode visualizeMode)

@@ -73,7 +73,6 @@ private:
 		Vector4 center;
 		float distance;
 		bool visible;
-		float scale;
 		int32_t from;
 		int32_t to;
 	};

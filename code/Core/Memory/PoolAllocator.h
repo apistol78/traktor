@@ -103,7 +103,8 @@ public:
 	}
 
 private:
-	Ref< IAllocator > m_allocator;
+	IAllocator* m_allocator;
+	bool m_ownAllocator;
 	uint32_t m_totalSize;
 	uint8_t* m_head;
 	uint8_t* m_tail;

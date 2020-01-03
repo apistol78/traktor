@@ -91,7 +91,7 @@ public:
 		m_mesh.clear();
 	}
 
-	virtual void getLockedVertexIndexBase(unsigned char **vertexbase, int& numverts,PHY_ScalarType& type, int& stride,unsigned char **indexbase,int & indexstride,int& numfaces,PHY_ScalarType& indicestype,int subpart=0)
+	virtual void getLockedVertexIndexBase(unsigned char** vertexbase, int& numverts,PHY_ScalarType& type, int& stride, unsigned char**indexbase, int& indexstride, int& numfaces, PHY_ScalarType& indicestype, int subpart = 0) override final
 	{
 		const AlignedVector< Vector4 >& vertices = m_mesh->getVertices();
 		const AlignedVector< Mesh::Triangle >& shapeTriangles = m_mesh->getShapeTriangles();
@@ -106,7 +106,7 @@ public:
 		indicestype = PHY_INTEGER;
 	}
 
-	virtual void getLockedReadOnlyVertexIndexBase(const unsigned char **vertexbase, int& numverts,PHY_ScalarType& type, int& stride,const unsigned char **indexbase,int & indexstride,int& numfaces,PHY_ScalarType& indicestype,int subpart=0) const
+	virtual void getLockedReadOnlyVertexIndexBase(const unsigned char** vertexbase, int& numverts, PHY_ScalarType& type, int& stride, const unsigned char** indexbase, int & indexstride, int& numfaces, PHY_ScalarType& indicestype, int subpart = 0) const override final
 	{
 		const AlignedVector< Vector4 >& vertices = m_mesh->getVertices();
 		const AlignedVector< Mesh::Triangle >& shapeTriangles = m_mesh->getShapeTriangles();
@@ -121,24 +121,24 @@ public:
 		indicestype = PHY_INTEGER;
 	}
 
-	virtual void unLockVertexBase(int subpart)
+	virtual void unLockVertexBase(int subpart) override final
 	{
 	}
 
-	virtual void unLockReadOnlyVertexBase(int subpart) const
+	virtual void unLockReadOnlyVertexBase(int subpart) const override final
 	{
 	}
 
-	virtual int getNumSubParts() const
+	virtual int getNumSubParts() const override final
 	{
 		return 1;
 	}
 
-	virtual void preallocateVertices(int numverts)
+	virtual void preallocateVertices(int numverts) override final
 	{
 	}
 
-	virtual void preallocateIndices(int numindices)
+	virtual void preallocateIndices(int numindices) override final
 	{
 	}
 
@@ -196,7 +196,7 @@ struct ClosestConvexExcludeResultCallback : public btCollisionWorld::ClosestConv
 	{
 	}
 
-	virtual	btScalar addSingleResult(btCollisionWorld::LocalConvexResult& convexResult, bool normalInWorldSpace)
+	virtual	btScalar addSingleResult(btCollisionWorld::LocalConvexResult& convexResult, bool normalInWorldSpace) override final
 	{
 		T_ASSERT(convexResult.m_hitFraction <= m_closestHitFraction);
 
@@ -253,12 +253,12 @@ struct ClosestRayExcludeResultCallback : public btCollisionWorld::RayResultCallb
 	{
 	}
 
-	virtual bool needsCollision(btBroadphaseProxy* proxy0) const
+	virtual bool needsCollision(btBroadphaseProxy* proxy0) const override final
 	{
 		return true;
 	}
 
-	virtual	btScalar addSingleResult(btCollisionWorld::LocalRayResult& rayResult, bool normalInWorldSpace)
+	virtual	btScalar addSingleResult(btCollisionWorld::LocalRayResult& rayResult, bool normalInWorldSpace) override final
 	{
 		T_ASSERT(rayResult.m_hitFraction <= m_closestHitFraction);
 
@@ -313,12 +313,12 @@ struct ClosestRayExcludeAndCullResultCallback : public btCollisionWorld::RayResu
 	{
 	}
 
-	virtual bool needsCollision(btBroadphaseProxy* proxy0) const
+	virtual bool needsCollision(btBroadphaseProxy* proxy0) const override final
 	{
 		return true;
 	}
 
-	virtual	btScalar addSingleResult(btCollisionWorld::LocalRayResult& rayResult, bool normalInWorldSpace)
+	virtual	btScalar addSingleResult(btCollisionWorld::LocalRayResult& rayResult, bool normalInWorldSpace) override final
 	{
 		T_ASSERT(rayResult.m_hitFraction <= m_closestHitFraction);
 
@@ -364,12 +364,12 @@ struct ConvexExcludeResultCallback : public btCollisionWorld::ConvexResultCallba
 	{
 	}
 
-	virtual bool needsCollision(btBroadphaseProxy* proxy0) const
+	virtual bool needsCollision(btBroadphaseProxy* proxy0) const override final
 	{
 		return true;
 	}
 
-	virtual	btScalar addSingleResult(btCollisionWorld::LocalConvexResult& convexResult, bool normalInWorldSpace)
+	virtual	btScalar addSingleResult(btCollisionWorld::LocalConvexResult& convexResult, bool normalInWorldSpace) override final
 	{
 		BodyBullet* bodyBullet = reinterpret_cast< BodyBullet* >(convexResult.m_hitCollisionObject->getUserPointer());
 		T_ASSERT(bodyBullet);
@@ -472,7 +472,7 @@ struct QuerySphereCallback : public btBroadphaseAabbCallback
 {
 	RefArray< BodyBullet > bodies;
 
-	virtual bool process(const btBroadphaseProxy* proxy)
+	virtual bool process(const btBroadphaseProxy* proxy) override final
 	{
 		btRigidBody* rigidBody = static_cast< btRigidBody* >(proxy->m_clientObject);
 		if (rigidBody)
@@ -495,7 +495,7 @@ public:
 	{
 	}
 
-	virtual void processTriangle(btVector3* triangle, int partId, int triangleIndex)
+	virtual void processTriangle(btVector3* triangle, int partId, int triangleIndex) override final
 	{
 		TriangleResult tr;
 		tr.v[0] = fromBtVector3(m_colT * triangle[0], 1.0f);
@@ -534,11 +534,11 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.physics.PhysicsManagerBullet", 0, Physi
 PhysicsManagerBullet* PhysicsManagerBullet::ms_this = nullptr;
 
 PhysicsManagerBullet::PhysicsManagerBullet()
-:	m_configuration(0)
-,	m_dispatcher(0)
-,	m_broadphase(0)
-,	m_solver(0)
-,	m_dynamicsWorld(0)
+:	m_configuration(nullptr)
+,	m_dispatcher(nullptr)
+,	m_broadphase(nullptr)
+,	m_solver(nullptr)
+,	m_dynamicsWorld(nullptr)
 ,	m_queryCountLast(0)
 ,	m_queryCount(0)
 {
@@ -639,11 +639,11 @@ void PhysicsManagerBullet::destroy()
 	m_joints.clear();
 	m_bodies.clear();
 
-	delete m_dynamicsWorld; m_dynamicsWorld = 0;
-	delete m_solver; m_solver = 0;
-	delete m_broadphase; m_broadphase = 0;
-	delete m_dispatcher; m_dispatcher = 0;
-	delete m_configuration; m_configuration = 0;
+	delete m_dynamicsWorld; m_dynamicsWorld = nullptr;
+	delete m_solver; m_solver = nullptr;
+	delete m_broadphase; m_broadphase = nullptr;
+	delete m_dispatcher; m_dispatcher = nullptr;
+	delete m_configuration; m_configuration = nullptr;
 }
 
 void PhysicsManagerBullet::setGravity(const Vector4& gravity)

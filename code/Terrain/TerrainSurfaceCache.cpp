@@ -79,7 +79,8 @@ Vector4 offsetFromTile(const TerrainSurfaceAlloc::Tile& tile, uint32_t size)
 T_IMPLEMENT_RTTI_CLASS(L"traktor.terrain.TerrainSurfaceCache", TerrainSurfaceCache, Object)
 
 TerrainSurfaceCache::TerrainSurfaceCache()
-:	m_clearCache(true)
+:	m_haveBase(false)
+,	m_clearCache(true)
 ,	m_updateCount(0)
 ,	m_size(0)
 ,	m_handleColorEnable(render::getParameterHandle(L"ColorEnable"))
@@ -133,6 +134,7 @@ bool TerrainSurfaceCache::create(resource::IResourceManager* resourceManager, re
 	if (!m_base)
 		return false;
 
+	m_haveBase = false;
 	m_clearCache = true;
 	m_updateCount = 0;
 	m_size = size;
@@ -178,10 +180,7 @@ void TerrainSurfaceCache::begin(
 	const Vector4& worldExtent
 )
 {
-	if (!m_pool->isContentValid())
-		flush();
-
-	if (!m_base->isContentValid())
+	if (!m_haveBase)
 	{
 		render::Shader* shader = terrain->getSurfaceShader();
 		if (!shader)
@@ -220,6 +219,8 @@ void TerrainSurfaceCache::begin(
 		renderBlock->clear = true;
 
 		renderContext->draw(render::RpSetup, renderBlock);
+
+		m_haveBase = true;
 	}
 
 	m_updateCount = 0;

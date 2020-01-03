@@ -1,6 +1,5 @@
 #pragma once
 
-#include <vector>
 #include "Core/Containers/SmallMap.h"
 #include "Core/Containers/SmallSet.h"
 #include "Core/Math/Aabb3.h"
@@ -43,8 +42,6 @@ class IWorldRenderPass;
 	namespace mesh
 	{
 
-#define T_USE_LEGACY_INSTANCING	0
-
 /*! Instance mesh.
  *
  * Instance meshes are meshes which are repeated
@@ -56,9 +53,7 @@ class T_DLLCLASS InstanceMesh : public IMesh
 	T_RTTI_CLASS;
 
 public:
-#if defined(__IOS__) || T_USE_LEGACY_INSTANCING
-	enum { MaxInstanceCount = 4 };		// ES doesn't support 32-bit indices thus we cannot batch enough instances.
-#elif defined(__PS3__)
+#if defined(__PS3__)
 	enum { MaxInstanceCount = 20 };
 #else
 	enum { MaxInstanceCount = 60 };
@@ -111,7 +106,7 @@ private:
 	resource::Proxy< render::Shader > m_shader;
 	Ref< world::OccluderMesh > m_occluderMesh;
 	Ref< render::Mesh > m_renderMesh;
-	SmallMap< render::handle_t, std::vector< Part > > m_parts;
+	SmallMap< render::handle_t, AlignedVector< Part > > m_parts;
 	int32_t m_maxInstanceCount;
 };
 
