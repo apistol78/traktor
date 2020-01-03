@@ -94,6 +94,11 @@ void VehicleComponent::update(const world::UpdateParams& update)
 	updateWheels(dT);
 }
 
+Body* VehicleComponent::getBody() const
+{
+	return m_body;
+}
+
 void VehicleComponent::setSteerAngle(float steerAngle)
 {
 	m_steerAngleTarget = steerAngle;
@@ -282,13 +287,10 @@ void VehicleComponent::updateFriction(float dT)
 		Scalar sideVelocity = dot3(directionPerpW, wheel->contactVelocity);
 
 		// \tbd Should use absolute contact position movement to determine velocity; this will introduce error creep.
-		if (abs(forwardVelocity) > FUZZY_EPSILON)
+		if (abs(forwardVelocity) > 0.05f)
 		{
 			// Calculate slip angle.
-			float k = std::atan2(
-				forwardVelocity,
-				sideVelocity
-			);
+			float k = std::atan2(forwardVelocity, sideVelocity);
 			float slipAngle = abs(k - HALF_PI);
 
 			// Calculate grip factor of this wheel.
@@ -328,13 +330,12 @@ void VehicleComponent::updateFriction(float dT)
 			// Accumulate rolling friction, applied at center of mass for simplicity.
 			rollingFriction += forwardVelocity * Scalar(data->getRollingFriction()) * grip;
 		}
-		else if (abs(sideVelocity) > FUZZY_EPSILON)
+		else
 		{
-			// All movement lateral; complete static friction.
-			const float peakSlipFriction = data->getSlipCornerForce();
-			m_body->addForceAt(
+			Scalar f = Scalar(1.0f - abs(forwardVelocity) / 0.05f);
+			m_body->addImpulse(
 				wheel->contactPosition,
-				directionPerpW * Scalar(peakSlipFriction * sign(-sideVelocity)),
+				wheel->contactVelocity * -massPerWheel * f * 0.2_simd,
 				false
 			);
 		}
@@ -347,35 +348,6 @@ void VehicleComponent::updateFriction(float dT)
 			Vector4(0.0f, 0.0f, -rollingFriction, 0.0f),
 			true
 		);
-	}
-
-	// Help keep vehicle stationary if almost standstill.
-	if (!m_airBorn)
-	{
-		Vector4 linearVelocityW = m_body->getLinearVelocity();
-		Scalar forwardVelocityW = dot3(bodyT.axisZ(), linearVelocityW);
-
-		bool throttleIdle = abs(m_engineThrottle) < c_throttleThreshold;
-		bool almostStill = (bool)(abs(forwardVelocityW) < c_linearVelocityThreshold);
-
-		if (throttleIdle && almostStill)
-		{
-			Scalar s = 1.0_simd - abs(forwardVelocityW) / c_linearVelocityThreshold;
-			m_body->addLinearImpulse(
-				-bodyT.axisZ() * forwardVelocityW * s * s * 0.3_simd * m_totalMass,
-				false
-			);
-		}
-	}
-
-	// Apply some rotational damping to prevent oscillation from suspension forces.
-	if (!m_airBorn && abs(m_steerAngle) < FUZZY_EPSILON)
-	{
-		const Scalar damping = 0.45_simd;
-		Scalar headVelocity = dot3(m_body->getAngularVelocity(), bodyT.axisY());
-		Matrix33 inertiaInv = m_body->getInertiaTensorInverseWorld();
-		Vector4 C = Vector4(0.0f, -headVelocity * damping, 0.0f);
-		m_body->addAngularImpulse(inertiaInv.inverse() * (bodyT * C), false);
 	}
 }
 

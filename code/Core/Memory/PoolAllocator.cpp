@@ -16,6 +16,7 @@ PoolAllocator::PoolAllocator()
 
 PoolAllocator::PoolAllocator(IAllocator* allocator, uint32_t totalSize)
 :	m_allocator(allocator)
+,	m_ownAllocator(false)
 ,	m_totalSize(totalSize)
 ,	m_head(nullptr)
 ,	m_tail(nullptr)
@@ -24,6 +25,7 @@ PoolAllocator::PoolAllocator(IAllocator* allocator, uint32_t totalSize)
 
 PoolAllocator::PoolAllocator(uint32_t totalSize)
 :	m_allocator(new StdAllocator())
+,	m_ownAllocator(true)
 ,	m_totalSize(totalSize)
 ,	m_head(nullptr)
 ,	m_tail(nullptr)
@@ -31,7 +33,9 @@ PoolAllocator::PoolAllocator(uint32_t totalSize)
 }
 
 PoolAllocator::PoolAllocator(void* heap, uint32_t totalSize)
-:	m_totalSize(totalSize)
+:	m_allocator(nullptr)
+,	m_ownAllocator(false)
+,	m_totalSize(totalSize)
 ,	m_head(static_cast< uint8_t* >(heap))
 ,	m_tail(static_cast< uint8_t* >(heap))
 {
@@ -46,6 +50,9 @@ PoolAllocator::~PoolAllocator()
 	{
 		for (auto heap : m_heaps)
 			m_allocator->free(heap);
+
+		if (m_ownAllocator)
+			delete m_allocator;
 	}
 
 	T_EXCEPTION_GUARD_END;

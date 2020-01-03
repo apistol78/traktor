@@ -83,7 +83,7 @@ World_DeferredGBufferWrite
 			<id>{4F904B51-75A9-4D19-96EC-534FABB8BA69}</id>
 			<comment/>
 			<position>
-				<first>59</first>
+				<first>63</first>
 				<second>258</second>
 			</position>
 			<name>Enable</name>
@@ -96,7 +96,7 @@ World_DeferredGBufferWrite
 			<id>{CA2E92C9-EAA0-4545-815F-51EE96A7A409}</id>
 			<comment/>
 			<position>
-				<first>39</first>
+				<first>43</first>
 				<second>358</second>
 			</position>
 			<name>Roughness</name>
@@ -109,8 +109,8 @@ World_DeferredGBufferWrite
 			<id>{C4793C58-4118-4914-8734-1D4FEBC4FC01}</id>
 			<comment/>
 			<position>
-				<first>39</first>
-				<second>158</second>
+				<first>43</first>
+				<second>108</second>
 			</position>
 			<name>ViewNormal</name>
 			<connectable>true</connectable>
@@ -122,7 +122,7 @@ World_DeferredGBufferWrite
 			<id>{FA893653-9994-4A8E-BDE0-55917C5B2AF7}</id>
 			<comment/>
 			<position>
-				<first>19</first>
+				<first>23</first>
 				<second>458</second>
 			</position>
 			<name>SurfaceColor</name>
@@ -135,8 +135,8 @@ World_DeferredGBufferWrite
 			<id>{A664B618-FCD7-408A-81C9-A3773F959224}</id>
 			<comment/>
 			<position>
-				<first>19</first>
-				<second>208</second>
+				<first>23</first>
+				<second>158</second>
 			</position>
 			<name>ViewPosition</name>
 			<connectable>true</connectable>
@@ -148,7 +148,7 @@ World_DeferredGBufferWrite
 			<id>{4F9F4253-5618-40FB-A8BF-9FBAF2E0CC39}</id>
 			<comment/>
 			<position>
-				<first>39</first>
+				<first>43</first>
 				<second>308</second>
 			</position>
 			<name>Metalness</name>
@@ -161,7 +161,7 @@ World_DeferredGBufferWrite
 			<id>{4C571CDA-798F-C142-867C-44B059740876}</id>
 			<comment/>
 			<position>
-				<first>59</first>
+				<first>63</first>
 				<second>408</second>
 			</position>
 			<name>Specular</name>
@@ -169,6 +169,19 @@ World_DeferredGBufferWrite
 			<optional>true</optional>
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>1</defaultValue>
+		</item>
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{C9E7EC8E-27BE-B148-8B22-54895036386B}</id>
+			<comment/>
+			<position>
+				<first>73</first>
+				<second>208</second>
+			</position>
+			<name>Alpha</name>
+			<connectable>true</connectable>
+			<optional>true</optional>
+			<haveDefaultValue>false</haveDefaultValue>
+			<defaultValue>0</defaultValue>
 		</item>
 	</nodes>
 	<edges>
@@ -240,6 +253,16 @@ World_DeferredGBufferWrite
 			<destination>
 				<node ref="/object/nodes/item"/>
 				<name>Specular</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[8]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item"/>
+				<name>Alpha</name>
 			</destination>
 		</item>
 	</edges>

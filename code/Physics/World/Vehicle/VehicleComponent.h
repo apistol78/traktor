@@ -48,6 +48,8 @@ public:
 
 	virtual void update(const world::UpdateParams& update) override final;
 
+	Body* getBody() const;
+
 	void setSteerAngle(float steerAngle);
 
 	float getSteerAngle() const;

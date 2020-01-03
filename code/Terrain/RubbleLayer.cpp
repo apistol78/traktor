@@ -110,6 +110,8 @@ void RubbleLayer::render(
 				if (cluster.visible && visible)
 					continue;
 
+				const float randomScaleAmount = cluster.rubbleDef->randomScaleAmount;
+
 				// Use cluster center as random seed.
 				RandomGeometry random(
 					(int32_t)(cluster.center.x() * 919.0f + cluster.center.z() * 463.0f)
@@ -125,7 +127,7 @@ void RubbleLayer::render(
 
 					m_instances[j].position = Vector4(px, py, pz, 0.0f);
 					m_instances[j].rotation = Quaternion::fromEulerAngles(random.nextFloat() * TWO_PI, (random.nextFloat() * 2.0f - 1.0f) * deg2rad(10.0f), 0.0f);
-					m_instances[j].scale = random.nextFloat() * cluster.scale + (1.0f - cluster.scale);
+					m_instances[j].scale = random.nextFloat() * randomScaleAmount + (1.0f - randomScaleAmount);
 				}
 			}
 		}

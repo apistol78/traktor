@@ -71,8 +71,9 @@ void InstanceMesh::render(
 	if (instanceWorld.empty())
 		return;
 
-	SmallMap< render::handle_t, std::vector< Part > >::const_iterator it = m_parts.find(worldRenderPass.getTechnique());
-	T_ASSERT(it != m_parts.end());
+	auto it = m_parts.find(worldRenderPass.getTechnique());
+	if (it == m_parts.end())
+		return;
 
 	// Sort instances by ascending distance; note we're sorting caller's vector.
 	std::sort(instanceWorld.begin(), instanceWorld.end(), SortRenderInstance());
@@ -105,9 +106,9 @@ void InstanceMesh::render(
 	const AlignedVector< render::Mesh::Part >& meshParts = m_renderMesh->getParts();
 
 	// Render opaque parts front-to-back.
-	for (std::vector< Part >::const_iterator i = it->second.begin(); i != it->second.end(); ++i)
+	for (const auto& part : it->second)
 	{
-		m_shader->setTechnique(i->shaderTechnique);
+		m_shader->setTechnique(part.shaderTechnique);
 		worldRenderPass.setShaderCombination(m_shader);
 
 		if ((m_shader->getCurrentPriority() & (render::RpAlphaBlend | render::RpPostAlphaBlend)) != 0)
@@ -142,8 +143,6 @@ void InstanceMesh::render(
 				instanceLastBatch[j] = instanceWorld[batchOffset + j].data0;
 			}
 
-#if !T_USE_LEGACY_INSTANCING
-
 			render::InstancingRenderBlock* renderBlock = renderContext->alloc< render::InstancingRenderBlock >("InstanceMesh opaque");
 
 			renderBlock->distance = instanceWorld[batchOffset + batchCount - 1].distance;
@@ -151,25 +150,8 @@ void InstanceMesh::render(
 			renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
 			renderBlock->indexBuffer = m_renderMesh->getIndexBuffer();
 			renderBlock->vertexBuffer = m_renderMesh->getVertexBuffer();
-			renderBlock->primitives = meshParts[i->meshPart].primitives;
+			renderBlock->primitives = meshParts[part.meshPart].primitives;
 			renderBlock->count = batchCount;
-
-#else
-
-			render::IndexedRenderBlock* renderBlock = renderContext->alloc< render::IndexedRenderBlock >("InstanceMesh opaque");
-
-			renderBlock->distance = instanceWorld[batchOffset + batchCount - 1].second;
-			renderBlock->program = program;
-			renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
-			renderBlock->indexBuffer = m_renderMesh->getIndexBuffer();
-			renderBlock->vertexBuffer = m_renderMesh->getVertexBuffer();
-			renderBlock->primitive = meshParts[i->meshPart].primitives.type;
-			renderBlock->offset = meshParts[i->meshPart].primitives.offset;
-			renderBlock->count = meshParts[i->meshPart].primitives.count * batchCount;
-			renderBlock->minIndex = meshParts[i->meshPart].primitives.minIndex;
-			renderBlock->maxIndex = meshParts[i->meshPart].primitives.maxIndex;
-
-#endif
 
 			renderBlock->programParams->beginParameters(renderContext);
 			renderBlock->programParams->attachParameters(batchParameters);
@@ -196,9 +178,9 @@ void InstanceMesh::render(
 	{
 		std::reverse(instanceWorld.begin(), instanceWorld.end());
 
-		for (std::vector< Part >::const_iterator i = it->second.begin(); i != it->second.end(); ++i)
+		for (const auto& part : it->second)
 		{
-			m_shader->setTechnique(i->shaderTechnique);
+			m_shader->setTechnique(part.shaderTechnique);
 			worldRenderPass.setShaderCombination(m_shader);
 
 			if ((m_shader->getCurrentPriority() & (render::RpAlphaBlend | render::RpPostAlphaBlend)) == 0)
@@ -230,8 +212,6 @@ void InstanceMesh::render(
 					instanceLastBatch[j] = instanceWorld[batchOffset + j].data0;
 				}
 
-#if !T_USE_LEGACY_INSTANCING
-
 				render::InstancingRenderBlock* renderBlock = renderContext->alloc< render::InstancingRenderBlock >("InstanceMesh blend");
 
 				renderBlock->distance = instanceWorld[batchOffset + batchCount - 1].distance;
@@ -239,25 +219,8 @@ void InstanceMesh::render(
 				renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
 				renderBlock->indexBuffer = m_renderMesh->getIndexBuffer();
 				renderBlock->vertexBuffer = m_renderMesh->getVertexBuffer();
-				renderBlock->primitives = meshParts[i->meshPart].primitives;
+				renderBlock->primitives = meshParts[part.meshPart].primitives;
 				renderBlock->count = batchCount;
-
-#else
-
-				render::IndexedRenderBlock* renderBlock = renderContext->alloc< render::IndexedRenderBlock >("InstanceMesh blend");
-
-				renderBlock->distance = instanceWorld[batchOffset + batchCount - 1].second;
-				renderBlock->program = program;
-				renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
-				renderBlock->indexBuffer = m_renderMesh->getIndexBuffer();
-				renderBlock->vertexBuffer = m_renderMesh->getVertexBuffer();
-				renderBlock->primitive = meshParts[i->meshPart].primitives.type;
-				renderBlock->offset = meshParts[i->meshPart].primitives.offset;
-				renderBlock->count = meshParts[i->meshPart].primitives.count * batchCount;
-				renderBlock->minIndex = meshParts[i->meshPart].primitives.minIndex;
-				renderBlock->maxIndex = meshParts[i->meshPart].primitives.maxIndex;
-
-#endif
 
 				renderBlock->programParams->beginParameters(renderContext);
 				renderBlock->programParams->attachParameters(batchParameters);

@@ -36,7 +36,7 @@ uint32_t SplatBrush::begin(int32_t x, int32_t y, int32_t radius, const IFallOff*
 {
 	m_radius = radius;
 	m_fallOff = fallOff;
-	m_strength = powf(abs(strength), 2.0f);
+	m_strength = abs(strength) / 10.0f;
 	m_material = material;
 	return MdSplat;
 }

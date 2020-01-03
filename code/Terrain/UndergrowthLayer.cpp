@@ -2,6 +2,7 @@
 #include "Core/Containers/StaticVector.h"
 #include "Core/Log/Log.h"
 #include "Core/Math/Half.h"
+#include "Core/Math/Quasirandom.h"
 #include "Core/Math/RandomGeometry.h"
 #include "Heightfield/Heightfield.h"
 #include "Resource/IResourceManager.h"
@@ -203,8 +204,10 @@ void UndergrowthLayer::render(
 			RandomGeometry random(int32_t(cluster.center.x() * 919.0f + cluster.center.z() * 463.0f));
 			for (int32_t j = cluster.from; j < cluster.to; ++j)
 			{
-				float dx = (random.nextFloat() * 2.0f - 1.0f) * m_clusterSize;
-				float dz = (random.nextFloat() * 2.0f - 1.0f) * m_clusterSize;
+				Vector2 ruv = Quasirandom::hammersley(j - cluster.from, cluster.to - cluster.from, random);
+
+				float dx = (ruv.x * 2.0f - 1.0f) * m_clusterSize;
+				float dz = (ruv.y * 2.0f - 1.0f) * m_clusterSize;
 
 				float px = cluster.center.x() + dx;
 				float pz = cluster.center.z() + dz;

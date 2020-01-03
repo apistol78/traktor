@@ -15,12 +15,12 @@ namespace traktor
 
 const int32_t c_maximumStep = 32;
 
-inline float quantizeMin(float v)
+float quantizeMin(float v)
 {
 	return floorf(v);
 }
 
-inline float quantizeMax(float v)
+float quantizeMax(float v)
 {
 	return ceilf(v);
 }

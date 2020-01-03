@@ -591,7 +591,7 @@ bool emitInstance(GlslContext& cx, Instance* node)
 	Ref< GlslVariable > out = cx.emitOutput(node, L"Output", GtFloat);
 
 	comment(f, node);
-	assign(f, out) << L"float(gl_InstanceID);" << Endl;
+	assign(f, out) << L"float(gl_InstanceIndex);" << Endl;
 
 	return true;
 }
@@ -1716,7 +1716,7 @@ bool emitSampler(GlslContext& cx, Sampler* node)
 		switch (texture->getType())
 		{
 		case GtTexture2D:
-			assign(f, out) << L"texture(sampler2D(" << texture->getName() << L", " << samplerName << L"), " << texCoord->cast(GtFloat3) << L", 0.0);" << Endl;
+			assign(f, out) << L"textureLod(sampler2D(" << texture->getName() << L", " << samplerName << L"), " << texCoord->cast(GtFloat2) << L", 0.0);" << Endl;
 			break;
 
 		case GtTexture3D:

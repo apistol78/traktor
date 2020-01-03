@@ -169,8 +169,8 @@ void Heightfield::gridToWorld(int32_t gridX, int32_t gridZ, float& outWorldX, fl
 
 void Heightfield::gridToWorld(float gridX, float gridZ, float& outWorldX, float& outWorldZ) const
 {
-	outWorldX = m_worldExtentFloats[0] * (gridX / m_size - 0.5f);
-	outWorldZ = m_worldExtentFloats[2] * (gridZ / m_size - 0.5f);
+	outWorldX = m_worldExtentFloats[0] * (gridX / m_size - 0.5f) + 0.5f;
+	outWorldZ = m_worldExtentFloats[2] * (gridZ / m_size - 0.5f) + 0.5f;
 }
 
 void Heightfield::worldToGrid(float worldX, float worldZ, int32_t& outGridX, int32_t& outGridZ) const
@@ -183,8 +183,8 @@ void Heightfield::worldToGrid(float worldX, float worldZ, int32_t& outGridX, int
 
 void Heightfield::worldToGrid(float worldX, float worldZ, float& outGridX, float& outGridZ) const
 {
-	outGridX = m_size * (worldX + m_worldExtentFloats[0] * 0.5f) / m_worldExtentFloats[0]/* - 0.5f*/;
-	outGridZ = m_size * (worldZ + m_worldExtentFloats[2] * 0.5f) / m_worldExtentFloats[2]/* - 0.5f*/;
+	outGridX = m_size * (worldX - 0.5f + m_worldExtentFloats[0] * 0.5f) / m_worldExtentFloats[0];
+	outGridZ = m_size * (worldZ - 0.5f + m_worldExtentFloats[2] * 0.5f) / m_worldExtentFloats[2];
 }
 
 float Heightfield::unitToWorld(float unitY) const
