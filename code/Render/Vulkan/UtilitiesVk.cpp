@@ -1,3 +1,4 @@
+#include "Core/Misc/TString.h"
 #include "Render/Vulkan/ApiLoader.h"
 #include "Render/Vulkan/UtilitiesVk.h"
 
@@ -415,6 +416,19 @@ const wchar_t* getHumanResult(VkResult result)
 	default:
 		return L"** Unknown **";
 	}
+}
+
+void setObjectDebugName(VkDevice device, const wchar_t* const tag, uint64_t object, VkObjectType objectType)
+{
+	// Set debug name of texture.
+#if !defined(__ANDROID__) && !defined(__APPLE__)
+	VkDebugUtilsObjectNameInfoEXT ni = {};
+	ni.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_OBJECT_NAME_INFO_EXT;
+	ni.objectType = objectType; // VK_OBJECT_TYPE_IMAGE;
+	ni.objectHandle = object; // (uint64_t)m_textureImage;
+	ni.pObjectName = tag ? wstombs(tag).c_str() : "Unnamed";
+	vkSetDebugUtilsObjectNameEXT(device, &ni);
+#endif
 }
 
 	}

@@ -240,7 +240,7 @@ bool WorldRendererDeferred::create(
 	// Create "gbuffer" targets.
 	{
 		render::RenderTargetSetCreateDesc rtscd;
-		rtscd.count = 5;
+		rtscd.count = 4;
 		rtscd.width = desc.width;
 		rtscd.height = desc.height;
 		rtscd.multiSample = 0;
@@ -253,12 +253,33 @@ bool WorldRendererDeferred::create(
 		rtscd.targets[1].format = render::TfR16G16F;	// Normals (RG)
 		rtscd.targets[2].format = render::TfR11G11B10F;	// Metalness (R), Roughness (G), Specular (B)
 		rtscd.targets[3].format = render::TfR11G11B10F;	// Surface color (RGB)
-		rtscd.targets[4].format = render::TfR8;			// Ambient occlusion (R)
 
 		m_gbufferTargetSet = renderSystem->createRenderTargetSet(rtscd, T_FILE_LINE_W);
 		if (!m_gbufferTargetSet)
 		{
 			log::error << L"Unable to create depth render target." << Endl;
+			return false;
+		}
+	}
+
+	// Create "ambient occlusion" target.
+	{
+		render::RenderTargetSetCreateDesc rtscd;
+		rtscd.count = 1;
+		rtscd.width = desc.width;
+		rtscd.height = desc.height;
+		rtscd.multiSample = 0;
+		rtscd.createDepthStencil = false;
+		rtscd.usingPrimaryDepthStencil = (desc.sharedDepthStencil == nullptr) ? true : false;
+		rtscd.sharedDepthStencil = desc.sharedDepthStencil;
+		rtscd.preferTiled = true;
+		rtscd.storeDepthStencil = false;
+		rtscd.targets[0].format = render::TfR8;			// Ambient occlusion (R)
+
+		m_ambientOcclusionTargetSet = renderSystem->createRenderTargetSet(rtscd, T_FILE_LINE_W);
+		if (!m_ambientOcclusionTargetSet)
+		{
+			log::error << L"Unable to create ambient occlusion render target." << Endl;
 			return false;
 		}
 	}
@@ -820,6 +841,7 @@ void WorldRendererDeferred::destroy()
 	safeDestroy(m_shadowCascadeTargetSet);
 	safeDestroy(m_colorTargetSet);
 	safeDestroy(m_velocityTargetSet);
+	safeDestroy(m_ambientOcclusionTargetSet);
 	safeDestroy(m_gbufferTargetSet);
 	safeDestroy(m_intermediateTargetSet);
 	safeDestroy(m_visualTargetSet);
@@ -884,8 +906,10 @@ void WorldRendererDeferred::getDebugTargets(std::vector< render::DebugTarget >& 
 		outTargets.push_back(render::DebugTarget(L"GBuffer roughness", render::DtvDeferredRoughness, m_gbufferTargetSet->getColorTexture(2)));
 		outTargets.push_back(render::DebugTarget(L"GBuffer specular", render::DtvDeferredSpecular, m_gbufferTargetSet->getColorTexture(2)));
 		outTargets.push_back(render::DebugTarget(L"GBuffer surface color", render::DtvDefault, m_gbufferTargetSet->getColorTexture(3)));
-		outTargets.push_back(render::DebugTarget(L"GBuffer ambient occlusion", render::DtvDefault, m_gbufferTargetSet->getColorTexture(4)));
 	}
+
+	if (m_ambientOcclusionTargetSet)
+		outTargets.push_back(render::DebugTarget(L"Ambient occlusion", render::DtvDefault, m_ambientOcclusionTargetSet->getColorTexture(0)));
 
 	if (m_velocityTargetSet)
 		outTargets.push_back(render::DebugTarget(L"Velocity", render::DtvVelocity, m_velocityTargetSet->getColorTexture(0)));
@@ -944,7 +968,6 @@ void WorldRendererDeferred::buildGBuffer(WorldRenderView& worldRenderView, int32
 	tb->clear.colors[1] = Color4f(0.0f, 0.0f, 1.0f, 0.0f);	// normal
 	tb->clear.colors[2] = Color4f(0.0f, 1.0f, 0.0f, 1.0f);	// misc
 	tb->clear.colors[3] = Color4f(0.0f, 0.0f, 0.0f, 0.0f);	// surface
-	tb->clear.colors[4] = Color4f(1.0f, 1.0f, 1.0f, 1.0f);	// ambient occlusion
 	tb->clear.depth = 1.0f;
 	f.renderContext->enqueue(tb);
 
@@ -1044,35 +1067,36 @@ void WorldRendererDeferred::buildAmbientOcclusion(WorldRenderView& worldRenderVi
 {
 	Frame& f = m_frames[frame];
 
-	if (!m_ambientOcclusion)
-		return;
-
 	auto tb = f.renderContext->alloc< render::TargetBeginRenderBlock >("World ambient occlusion; begin");
-	tb->renderTargetSet = m_gbufferTargetSet;
-	tb->renderTargetIndex = 4;
-	tb->clear.mask = 0;
+	tb->renderTargetSet = m_ambientOcclusionTargetSet;
+	tb->renderTargetIndex = -1;
+	tb->clear.mask = render::CfColor;
+	tb->clear.colors[0] = Color4f(1.0f, 1.0f, 1.0f, 1.0f);
 	f.renderContext->enqueue(tb);
 
-	render::ImageProcessStep::Instance::RenderParams params;
-	params.viewFrustum = worldRenderView.getViewFrustum();
-	params.view = worldRenderView.getView();
-	params.projection = worldRenderView.getProjection();
-	params.deltaTime = 0.0f;
-
-	auto lrb = f.renderContext->alloc< render::LambdaRenderBlock >("World ambient occlusion; process");
-	lrb->lambda = [&, params](render::IRenderView* renderView)
+	if (m_ambientOcclusion)
 	{
-		m_ambientOcclusion->render(
-			renderView,
-			nullptr,	// color
-			m_gbufferTargetSet->getColorTexture(0),	// depth
-			m_gbufferTargetSet->getColorTexture(1),	// normal
-			nullptr,	// velocity
-			nullptr,	// shadow mask
-			params
-		);
-	};
-	f.renderContext->enqueue(lrb);
+		render::ImageProcessStep::Instance::RenderParams params;
+		params.viewFrustum = worldRenderView.getViewFrustum();
+		params.view = worldRenderView.getView();
+		params.projection = worldRenderView.getProjection();
+		params.deltaTime = 0.0f;
+
+		auto lrb = f.renderContext->alloc< render::LambdaRenderBlock >("World ambient occlusion; process");
+		lrb->lambda = [&, params](render::IRenderView* renderView)
+		{
+			m_ambientOcclusion->render(
+				renderView,
+				nullptr,	// color
+				m_gbufferTargetSet->getColorTexture(0),	// depth
+				m_gbufferTargetSet->getColorTexture(1),	// normal
+				nullptr,	// velocity
+				nullptr,	// shadow mask
+				params
+			);
+		};
+		f.renderContext->enqueue(lrb);
+	}
 
 	auto te = f.renderContext->alloc< render::TargetEndRenderBlock >("World ambient occlusion; end");
 	f.renderContext->enqueue(te);
@@ -1524,7 +1548,7 @@ void WorldRendererDeferred::buildVisual(const WorldRenderView& worldRenderView, 
 		sharedParams->setTextureParameter(s_handleNormalMap, m_gbufferTargetSet->getColorTexture(1));
 		sharedParams->setTextureParameter(s_handleMiscMap, m_gbufferTargetSet->getColorTexture(2));
 		sharedParams->setTextureParameter(s_handleColorMap, m_gbufferTargetSet->getColorTexture(3));
-		sharedParams->setTextureParameter(s_handleOcclusionMap, m_gbufferTargetSet->getColorTexture(4));
+		sharedParams->setTextureParameter(s_handleOcclusionMap, m_ambientOcclusionTargetSet->getColorTexture(0));
 
 		if (m_irradianceGrid)
 		{
@@ -1566,7 +1590,7 @@ void WorldRendererDeferred::buildVisual(const WorldRenderView& worldRenderView, 
 			m_gbufferTargetSet->getColorTexture(1),	// normals
 			m_gbufferTargetSet->getColorTexture(2),	// metalness/roughness
 			m_gbufferTargetSet->getColorTexture(3),	// surface color
-			m_gbufferTargetSet->getColorTexture(4),	// ambient occlusion
+			m_ambientOcclusionTargetSet->getColorTexture(0),	// ambient occlusion
 			m_shadowMaskTargetSet != nullptr ? m_shadowMaskTargetSet->getColorTexture(0) : nullptr,		// shadow mask
 			m_shadowAtlasTargetSet != nullptr ? m_shadowAtlasTargetSet->getDepthTexture() : nullptr,	// shadow map atlas,
 			m_reflectionsTargetSet != nullptr ? m_reflectionsTargetSet->getColorTexture(0) : nullptr	// reflection map

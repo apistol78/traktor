@@ -123,6 +123,10 @@ private:
 		Ref< StructBuffer > sbuffer;
 	};
 
+#if defined(_DEBUG)
+	std::wstring m_tag;
+#endif
+
 	VkPhysicalDevice m_physicalDevice;
 	VkDevice m_logicalDevice;
 	VmaAllocator m_allocator;

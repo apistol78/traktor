@@ -1,5 +1,6 @@
 #include <cstring>
 #include <limits>
+#include "Core/Log/Log.h"
 #include "Core/Math/Matrix44.h"
 #include "Render/Vulkan/ApiLoader.h"
 #include "Render/Vulkan/CubeTextureVk.h"
@@ -82,6 +83,10 @@ ProgramVk::~ProgramVk()
 bool ProgramVk::create(const ProgramResourceVk* resource, const wchar_t* const tag)
 {
 	VkShaderStageFlags stageFlags;
+
+#if defined(_DEBUG)
+	m_tag = tag;
+#endif
 
 	m_renderState = resource->m_renderState;
 	m_hash = resource->m_hash;
@@ -219,15 +224,7 @@ bool ProgramVk::create(const ProgramResourceVk* resource, const wchar_t* const t
 		if (vkCreateSampler(m_logicalDevice, &sci, nullptr, &sampler) != VK_SUCCESS)
 			return false;
 
-#if !defined(__ANDROID__) && !defined(__APPLE__)
-		// Set debug name of sampler.
-		VkDebugUtilsObjectNameInfoEXT ni = {};
-		ni.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_OBJECT_NAME_INFO_EXT;
-		ni.objectType = VK_OBJECT_TYPE_SAMPLER;
-		ni.objectHandle = (uint64_t)sampler;
-		ni.pObjectName = "Sampler";
-		vkSetDebugUtilsObjectNameEXT(m_logicalDevice, &ni);
-#endif
+		setObjectDebugName(m_logicalDevice, L"Sampler", (uint64_t)sampler, VK_OBJECT_TYPE_SAMPLER);
 
 		m_samplers.push_back({ resourceSampler.binding, sampler });
 	}
@@ -287,6 +284,11 @@ bool ProgramVk::validateGraphics(VkDescriptorPool descriptorPool, VkCommandBuffe
 
 	if (vkAllocateDescriptorSets(m_logicalDevice, &allocateInfo, &descriptorSet) != VK_SUCCESS)
 		return false;
+
+#if defined(_DEBUG)
+	// Set debug name of descriptor set.
+	setObjectDebugName(m_logicalDevice, m_tag.c_str(), (uint64_t)descriptorSet, VK_OBJECT_TYPE_DESCRIPTOR_SET);
+#endif
 
 	AlignedVector< VkDescriptorBufferInfo > bufferInfos;
 	AlignedVector< VkDescriptorImageInfo > imageInfos;

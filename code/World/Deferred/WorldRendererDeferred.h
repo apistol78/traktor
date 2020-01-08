@@ -98,6 +98,7 @@ private:
 	Ref< render::IRenderTargetSet > m_visualTargetSet;
 	Ref< render::IRenderTargetSet > m_intermediateTargetSet;
 	Ref< render::IRenderTargetSet > m_gbufferTargetSet;
+	Ref< render::IRenderTargetSet > m_ambientOcclusionTargetSet;
 	Ref< render::IRenderTargetSet > m_velocityTargetSet;
 	Ref< render::IRenderTargetSet > m_colorTargetSet;
 	Ref< render::IRenderTargetSet > m_reflectionsTargetSet;		//!< Reflections target.

@@ -46,6 +46,8 @@ bool changeImageLayout(
 
 const wchar_t* getHumanResult(VkResult result);
 
+void setObjectDebugName(VkDevice device, const wchar_t* const tag, uint64_t object, VkObjectType objectType);
+
 	}
 }
 
