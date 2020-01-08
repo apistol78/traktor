@@ -98,8 +98,8 @@
 			<id>{3E90F329-FCAD-BB43-951D-04B20FD2A776}</id>
 			<comment/>
 			<position>
-				<first>4382</first>
-				<second>440</second>
+				<first>4010</first>
+				<second>401</second>
 			</position>
 			<technique>Default</technique>
 			<priority>
@@ -358,8 +358,8 @@
 			<id>{A64423E6-B339-994D-860E-C10151E3951B}</id>
 			<comment/>
 			<position>
-				<first>3177</first>
-				<second>382</second>
+				<first>3066</first>
+				<second>393</second>
 			</position>
 		</item>
 		<item type="traktor.render.Branch" version="traktor.render.Node:1">
@@ -375,44 +375,18 @@
 			<id>{89F982B8-3212-6844-B1F6-A37124250437}</id>
 			<comment/>
 			<position>
-				<first>3529</first>
-				<second>357</second>
+				<first>3498</first>
+				<second>345</second>
 			</position>
 		</item>
 		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
 			<id>{78703D6F-D38D-3A40-80BF-CEF96FA6D5CF}</id>
 			<comment/>
 			<position>
-				<first>3301</first>
-				<second>326</second>
+				<first>3270</first>
+				<second>314</second>
 			</position>
 			<value>2</value>
-		</item>
-		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
-			<id>{AAFA554B-02BD-034C-A65E-ED464BA9334C}</id>
-			<comment/>
-			<position>
-				<first>3936</first>
-				<second>509</second>
-			</position>
-			<swizzle>000w</swizzle>
-		</item>
-		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
-			<id>{9FA6DA30-392F-7D42-9246-5AC8902867F8}</id>
-			<comment/>
-			<position>
-				<first>3936</first>
-				<second>472</second>
-			</position>
-			<swizzle>xyz0</swizzle>
-		</item>
-		<item type="traktor.render.Add" version="traktor.render.Node:1">
-			<id>{EBC5187D-0846-C64C-ABA7-7D6E303F57A7}</id>
-			<comment/>
-			<position>
-				<first>4140</first>
-				<second>462</second>
-			</position>
 		</item>
 	</nodes>
 	<edges>
@@ -698,56 +672,6 @@
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[25]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[29]"/>
-				<name>Input</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[29]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[30]"/>
-				<name>Input1</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[28]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[30]"/>
-				<name>Input2</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[30]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[10]"/>
-				<name>Input</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[23]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[28]"/>
-				<name>Input</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
 				<node ref="/object/nodes/item[3]"/>
 				<name>Output</name>
 			</source>
@@ -784,6 +708,16 @@
 			<destination>
 				<node ref="/object/nodes/item[11]"/>
 				<name>T_Height</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[25]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[10]"/>
+				<name>Input</name>
 			</destination>
 		</item>
 	</edges>

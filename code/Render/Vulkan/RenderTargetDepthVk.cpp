@@ -61,15 +61,8 @@ bool RenderTargetDepthVk::createPrimary(int32_t width, int32_t height, VkFormat 
 	m_width = width;
 	m_height = height;
 
-#if !defined(__ANDROID__) && !defined(__APPLE__)
 	// Set debug name of texture.
-	VkDebugUtilsObjectNameInfoEXT ni = {};
-	ni.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_OBJECT_NAME_INFO_EXT;
-	ni.objectType = VK_OBJECT_TYPE_IMAGE;
-	ni.objectHandle = (uint64_t)m_image;
-	ni.pObjectName = tag ? wstombs(tag).c_str() : "RenderTargetVk";
-	vkSetDebugUtilsObjectNameEXT(m_logicalDevice, &ni);
-#endif
+	setObjectDebugName(m_logicalDevice, tag, (uint64_t)m_image, VK_OBJECT_TYPE_IMAGE);
 
 	// Prepare for target.
 	VkCommandBuffer commandBuffer = beginSingleTimeCommands(
@@ -194,15 +187,8 @@ bool RenderTargetDepthVk::create(const RenderTargetSetCreateDesc& setDesc, const
 	m_width = setDesc.width;
 	m_height = setDesc.height;
 
-#if !defined(__ANDROID__) && !defined(__APPLE__)
 	// Set debug name of texture.
-	VkDebugUtilsObjectNameInfoEXT ni = {};
-	ni.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_OBJECT_NAME_INFO_EXT;
-	ni.objectType = VK_OBJECT_TYPE_IMAGE;
-	ni.objectHandle = (uint64_t)m_image;
-	ni.pObjectName = tag ? wstombs(tag).c_str() : "RenderTargetDepthVk";
-	vkSetDebugUtilsObjectNameEXT(m_logicalDevice, &ni);
-#endif
+	setObjectDebugName(m_logicalDevice, tag, (uint64_t)m_image, VK_OBJECT_TYPE_IMAGE);
 
 	// Prepare for target.
 	VkCommandBuffer commandBuffer = beginSingleTimeCommands(

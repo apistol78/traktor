@@ -97,9 +97,11 @@ bool SimpleTextureVk::create(
 	ici.samples = VK_SAMPLE_COUNT_1_BIT;
 	ici.flags = 0;
 
+	/*
 	// Non-compressed textures allow for shader storage.
 	if (desc.format < TfDXT1)
 		ici.usage |= VK_IMAGE_USAGE_STORAGE_BIT;
+	*/
 
 	aci.usage = VMA_MEMORY_USAGE_GPU_ONLY;
 	if (vmaCreateImage(m_allocator, &ici, &aci, &m_textureImage, &m_textureAllocation, nullptr) != VK_SUCCESS)
@@ -108,15 +110,8 @@ bool SimpleTextureVk::create(
 		return false;			
 	}
 
-#if !defined(__ANDROID__) && !defined(__APPLE__)
 	// Set debug name of texture.
-	VkDebugUtilsObjectNameInfoEXT ni = {};
-	ni.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_OBJECT_NAME_INFO_EXT;
-	ni.objectType = VK_OBJECT_TYPE_IMAGE;
-	ni.objectHandle = (uint64_t)m_textureImage;
-	ni.pObjectName = tag ? wstombs(tag).c_str() : "SimpleTextureVk";
-	vkSetDebugUtilsObjectNameEXT(m_logicalDevice, &ni);
-#endif
+	setObjectDebugName(m_logicalDevice, tag, (uint64_t)m_textureImage, VK_OBJECT_TYPE_IMAGE);
 
 	// Create texture view.
 	VkImageViewCreateInfo ivci = {};

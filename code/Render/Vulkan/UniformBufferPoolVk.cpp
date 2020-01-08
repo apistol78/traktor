@@ -58,15 +58,8 @@ bool UniformBufferPoolVk::acquire(
 		if (vmaCreateBuffer(m_allocator, &bci, &aci, &inoutBuffer, &inoutAllocation, nullptr) != VK_SUCCESS)
 			return false;
 
-#if !defined(__ANDROID__) && !defined(__APPLE__)
 		// Set debug name of uniform buffer.
-		VkDebugUtilsObjectNameInfoEXT ni = {};
-		ni.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_OBJECT_NAME_INFO_EXT;
-		ni.objectType = VK_OBJECT_TYPE_BUFFER;
-		ni.objectHandle = (uint64_t)inoutBuffer;
-		ni.pObjectName = "Uniform buffer";
-		vkSetDebugUtilsObjectNameEXT(m_logicalDevice, &ni);
-#endif
+		setObjectDebugName(m_logicalDevice, L"Uniform buffer", (uint64_t)inoutBuffer, VK_OBJECT_TYPE_BUFFER);
 	}
 
 	return true;
