@@ -913,9 +913,12 @@ public:
 	template< typename IteratorType >
 	iterator insert(const iterator& where, const IteratorType& from, const IteratorType& to)
 	{
+		IteratorType::const_pointer fptr = &(*from);
+		IteratorType::const_pointer tptr = &(*to);
+
 		size_t size = m_size;
 		size_t offset = size_t(where.m_ptr - m_data);
-		size_t count = size_t(to.m_ptr - from.m_ptr);
+		size_t count = size_t(tptr - fptr);
 
 		grow(count);
 
@@ -936,7 +939,7 @@ public:
 		for (size_t i = 0; i < count; ++i)
 		{
 			Constructor::destroy(m_data[i + offset]);
-			Constructor::construct(m_data[i + offset], from.m_ptr[i]);
+			Constructor::construct(m_data[i + offset], fptr[i]);
 		}
 
 		return iterator(&m_data[offset]);
