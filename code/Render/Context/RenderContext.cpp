@@ -100,7 +100,7 @@ void RenderContext::merge(uint32_t priorities)
 	// Merge setup blocks unsorted.
 	if (priorities & RpSetup)
 	{
-		//m_renderQueue.insert(m_renderQueue.end(), m_priorityQueue[0].begin(), m_priorityQueue[0].end());
+		m_renderQueue.insert(m_renderQueue.end(), m_priorityQueue[0].begin(), m_priorityQueue[0].end());
 		m_priorityQueue[0].resize(0);
 	}
 
@@ -108,7 +108,7 @@ void RenderContext::merge(uint32_t priorities)
 	if (priorities & RpOpaque)
 	{
 		std::sort(m_priorityQueue[1].begin(), m_priorityQueue[1].end(), SortOpaquePredicate);
-		//m_renderQueue.insert(m_renderQueue.end(), m_priorityQueue[1].begin(), m_priorityQueue[1].end());
+		m_renderQueue.insert(m_renderQueue.end(), m_priorityQueue[1].begin(), m_priorityQueue[1].end());
 		m_priorityQueue[1].resize(0);
 	}
 
@@ -116,7 +116,7 @@ void RenderContext::merge(uint32_t priorities)
 	if (priorities & RpPostOpaque)
 	{
 		std::sort(m_priorityQueue[2].begin(), m_priorityQueue[2].end(), SortOpaquePredicate);
-		//m_renderQueue.insert(m_renderQueue.end(), m_priorityQueue[2].begin(), m_priorityQueue[2].end());
+		m_renderQueue.insert(m_renderQueue.end(), m_priorityQueue[2].begin(), m_priorityQueue[2].end());
 		m_priorityQueue[2].resize(0);
 	}
 
@@ -124,7 +124,7 @@ void RenderContext::merge(uint32_t priorities)
 	if (priorities & RpAlphaBlend)
 	{
 		std::sort(m_priorityQueue[3].begin(), m_priorityQueue[3].end(), SortAlphaBlendPredicate);
-		//m_renderQueue.insert(m_renderQueue.end(), m_priorityQueue[3].begin(), m_priorityQueue[3].end());
+		m_renderQueue.insert(m_renderQueue.end(), m_priorityQueue[3].begin(), m_priorityQueue[3].end());
 		m_priorityQueue[3].resize(0);
 	}
 
@@ -132,14 +132,14 @@ void RenderContext::merge(uint32_t priorities)
 	if (priorities & RpPostAlphaBlend)
 	{
 		std::sort(m_priorityQueue[4].begin(), m_priorityQueue[4].end(), SortAlphaBlendPredicate);
-		//m_renderQueue.insert(m_renderQueue.end(), m_priorityQueue[4].begin(), m_priorityQueue[4].end());
+		m_renderQueue.insert(m_renderQueue.end(), m_priorityQueue[4].begin(), m_priorityQueue[4].end());
 		m_priorityQueue[4].resize(0);
 	}
 
 	// Merge overlay blocks unsorted.
 	if (priorities & RpOverlay)
 	{
-		//m_renderQueue.insert(m_renderQueue.end(), m_priorityQueue[5].begin(), m_priorityQueue[5].end());
+		m_renderQueue.insert(m_renderQueue.end(), m_priorityQueue[5].begin(), m_priorityQueue[5].end());
 		m_priorityQueue[5].resize(0);
 	}
 }
