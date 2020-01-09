@@ -150,24 +150,20 @@ void TargetEndRenderBlock::render(IRenderView* renderView) const
 	T_CONTEXT_POP_MARKER(renderView);
 }
 
+void PresentRenderBlock::render(IRenderView* renderView) const
+{
+	T_CONTEXT_PUSH_MARKER(renderView, name);
+
+	renderView->present();
+
+	T_CONTEXT_POP_MARKER(renderView);
+}
+
 void SetViewportRenderBlock::render(IRenderView* renderView) const
 {
 	T_CONTEXT_PUSH_MARKER(renderView, name);
 
 	renderView->setViewport(viewport);
-
-	T_CONTEXT_POP_MARKER(renderView);
-}
-
-void ChainRenderBlock::render(IRenderView* renderView) const
-{
-	T_CONTEXT_PUSH_MARKER(renderView, name);
-
-	if (inner)
-		inner->render(renderView);
-
-	if (next)
-		next->render(renderView);
 
 	T_CONTEXT_POP_MARKER(renderView);
 }

@@ -248,7 +248,7 @@ void ProbeRenderer::flush(
 					renderBlock->texture = m_capture->getTexture();
 					renderBlock->face = m_captureFace;
 					renderBlock->pending = &m_capturePending;
-					renderContext->draw(render::RpOpaque, renderBlock);
+					renderContext->enqueue(renderBlock);
 
 					m_capturePending = true;
 					m_captureFace++;
@@ -260,7 +260,7 @@ void ProbeRenderer::flush(
 					renderBlock->filterer = m_probeFilterer;
 					renderBlock->texture = m_capture->getTexture();
 					renderBlock->pending = &m_capturePending;
-					renderContext->draw(render::RpOpaque, renderBlock);
+					renderContext->enqueue(renderBlock);
 
 					m_capturePending = true;
 					m_captureFace++;

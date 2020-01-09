@@ -54,13 +54,33 @@ public:
 	virtual void render(IRenderView* renderView) const = 0;
 };
 
+/*! Drawable render block base class.
+ * \ingroup Render
+ *
+ * A "drawable" block needs to be sortable
+ * thus public access to sorting keys.
+ */
+class T_DLLCLASS DrawableRenderBlock : public RenderBlock
+{
+public:
+	float distance;
+	Ref< IProgram > program;
+	ProgramParameters* programParams;
+
+	DrawableRenderBlock()
+	:	distance(0.0f)
+	,	programParams(nullptr)
+	{
+	}
+};
+
 /*! Null render block.
  * \ingroup Render
  *
  * Doesn't render anything; just update
  * shader parameters if available.
  */
-class T_DLLCLASS NullRenderBlock : public RenderBlock
+class T_DLLCLASS NullRenderBlock : public DrawableRenderBlock
 {
 public:
 	virtual void render(IRenderView* renderView) const override final;
@@ -69,7 +89,7 @@ public:
 /*! Simple render block.
  * \ingroup Render
  */
-class T_DLLCLASS SimpleRenderBlock : public RenderBlock
+class T_DLLCLASS SimpleRenderBlock : public DrawableRenderBlock
 {
 public:
 	Ref< IndexBuffer > indexBuffer;
@@ -82,7 +102,7 @@ public:
 /*! Instancing render block.
  * \ingroup Render
  */
-class T_DLLCLASS InstancingRenderBlock : public RenderBlock
+class T_DLLCLASS InstancingRenderBlock : public DrawableRenderBlock
 {
 public:
 	Ref< IndexBuffer > indexBuffer;
@@ -101,7 +121,7 @@ public:
 /*! Instancing render block.
  * \ingroup Render
  */
-class T_DLLCLASS IndexedInstancingRenderBlock : public RenderBlock
+class T_DLLCLASS IndexedInstancingRenderBlock : public DrawableRenderBlock
 {
 public:
 	Ref< IndexBuffer > indexBuffer;
@@ -129,7 +149,7 @@ public:
 /*! Non-indexed primitives render block.
  * \ingroup Render
  */
-class T_DLLCLASS NonIndexedRenderBlock : public RenderBlock
+class T_DLLCLASS NonIndexedRenderBlock : public DrawableRenderBlock
 {
 public:
 	Ref< VertexBuffer > vertexBuffer;
@@ -150,7 +170,7 @@ public:
 /*! Indexed primitives render block.
  * \ingroup Render
  */
-class T_DLLCLASS IndexedRenderBlock : public RenderBlock
+class T_DLLCLASS IndexedRenderBlock : public DrawableRenderBlock
 {
 public:
 	Ref< IndexBuffer > indexBuffer;
@@ -202,6 +222,15 @@ public:
 	virtual void render(IRenderView* renderView) const override final;
 };
 
+/*! Present backbuffer.
+ * \ingroup Render
+ */
+class T_DLLCLASS PresentRenderBlock : public RenderBlock
+{
+public:
+	virtual void render(IRenderView* renderView) const override final;
+};
+
 /*! Set target viewport block.
  * \ingroup Render
  */
@@ -209,25 +238,6 @@ class T_DLLCLASS SetViewportRenderBlock : public RenderBlock
 {
 public:
 	Viewport viewport;
-
-	virtual void render(IRenderView* renderView) const override final;
-};
-
-/*! Chain render block.
- * \ingroup Render
- */
-class T_DLLCLASS ChainRenderBlock : public RenderBlock
-{
-public:
-	RenderBlock* inner;
-	RenderBlock* next;
-
-	ChainRenderBlock()
-	:	RenderBlock()
-	,	inner(nullptr)
-	,	next(nullptr)
-	{
-	}
 
 	virtual void render(IRenderView* renderView) const override final;
 };

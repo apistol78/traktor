@@ -325,8 +325,6 @@ void TerrainComponent::render(
 	// Update all patch surfaces.
 	if (updateCache)
 	{
-		render::RenderBlock* renderBlock = nullptr;
-
 		m_surfaceCache->begin(
 			worldContext.getRenderContext(),
 			m_terrain,
@@ -377,7 +375,6 @@ void TerrainComponent::render(
 				patch.lastSurfaceLod,
 				visiblePatch.patchId,
 				// Out
-				renderBlock,
 				patch.surfaceOffset
 			);
 
@@ -386,10 +383,6 @@ void TerrainComponent::render(
 			patchLodInstances[patchLod].push_back(&visiblePatch);
 #endif
 		}
-
-		// Queue surface cache render block.
-		if (renderBlock)
-			worldContext.getRenderContext()->draw(render::RpSetup, renderBlock);
 	}
 #if defined(T_USE_TERRAIN_VERTEX_TEXTURE_FETCH)
 	else
@@ -408,41 +401,41 @@ void TerrainComponent::render(
 	{
 		Patch& patch = m_patches[visiblePatch.patchId];
 
-		render::SimpleRenderBlock* renderBlock = worldContext.getRenderContext()->alloc< render::SimpleRenderBlock >("Terrain patch");
+		auto rb = worldContext.getRenderContext()->alloc< render::SimpleRenderBlock >("Terrain patch");
 
-		renderBlock->distance = visiblePatch.distance;
-		renderBlock->program = (patch.lastSurfaceLod == 0) ? detailProgram : coarseProgram;
-		renderBlock->programParams = worldContext.getRenderContext()->alloc< render::ProgramParameters >();
-		renderBlock->indexBuffer = m_indexBuffer;
-		renderBlock->vertexBuffer = m_vertexBuffer;
-		renderBlock->primitives = m_primitives[patch.lastPatchLod];
+		rb->distance = visiblePatch.distance;
+		rb->program = (patch.lastSurfaceLod == 0) ? detailProgram : coarseProgram;
+		rb->programParams = worldContext.getRenderContext()->alloc< render::ProgramParameters >();
+		rb->indexBuffer = m_indexBuffer;
+		rb->vertexBuffer = m_vertexBuffer;
+		rb->primitives = m_primitives[patch.lastPatchLod];
 
-		renderBlock->programParams->beginParameters(worldContext.getRenderContext());
-		worldRenderPass.setProgramParameters(renderBlock->programParams, render::RpOpaque);
+		rb->programParams->beginParameters(worldContext.getRenderContext());
+		worldRenderPass.setProgramParameters(rb->programParams, render::RpOpaque);
 
-		renderBlock->programParams->setTextureParameter(m_handleHeightfield, m_terrain->getHeightMap());
-		renderBlock->programParams->setTextureParameter(m_handleSurface, m_surfaceCache->getVirtualTexture());
-		renderBlock->programParams->setTextureParameter(m_handleColorMap, m_terrain->getColorMap());
-		renderBlock->programParams->setTextureParameter(m_handleNormals, m_terrain->getNormalMap());
-		renderBlock->programParams->setTextureParameter(m_handleSplatMap, m_terrain->getSplatMap());
-		renderBlock->programParams->setTextureParameter(m_handleCutMap, m_terrain->getCutMap());
-		renderBlock->programParams->setTextureParameter(m_handleMaterialMap, m_terrain->getMaterialMap());
-		renderBlock->programParams->setVectorParameter(m_handleEye, eyePosition);
-		renderBlock->programParams->setVectorParameter(m_handleWorldOrigin, -worldExtent * Scalar(0.5f));
-		renderBlock->programParams->setVectorParameter(m_handleWorldExtent, worldExtent);
-		renderBlock->programParams->setVectorParameter(m_handlePatchExtent, patchExtent);
-		renderBlock->programParams->setVectorParameter(m_handleSurfaceOffset, patch.surfaceOffset);
-		renderBlock->programParams->setVectorParameter(m_handlePatchOrigin, visiblePatch.patchOrigin);
-		renderBlock->programParams->setFloatParameter(m_handleDetailDistance, detailDistance);
+		rb->programParams->setTextureParameter(m_handleHeightfield, m_terrain->getHeightMap());
+		rb->programParams->setTextureParameter(m_handleSurface, m_surfaceCache->getVirtualTexture());
+		rb->programParams->setTextureParameter(m_handleColorMap, m_terrain->getColorMap());
+		rb->programParams->setTextureParameter(m_handleNormals, m_terrain->getNormalMap());
+		rb->programParams->setTextureParameter(m_handleSplatMap, m_terrain->getSplatMap());
+		rb->programParams->setTextureParameter(m_handleCutMap, m_terrain->getCutMap());
+		rb->programParams->setTextureParameter(m_handleMaterialMap, m_terrain->getMaterialMap());
+		rb->programParams->setVectorParameter(m_handleEye, eyePosition);
+		rb->programParams->setVectorParameter(m_handleWorldOrigin, -worldExtent * Scalar(0.5f));
+		rb->programParams->setVectorParameter(m_handleWorldExtent, worldExtent);
+		rb->programParams->setVectorParameter(m_handlePatchExtent, patchExtent);
+		rb->programParams->setVectorParameter(m_handleSurfaceOffset, patch.surfaceOffset);
+		rb->programParams->setVectorParameter(m_handlePatchOrigin, visiblePatch.patchOrigin);
+		rb->programParams->setFloatParameter(m_handleDetailDistance, detailDistance);
 
 		if (m_visualizeMode == VmSurfaceLod)
-			renderBlock->programParams->setVectorParameter(m_handleDebugPatchColor, c_lodColor[patch.lastSurfaceLod]);
+			rb->programParams->setVectorParameter(m_handleDebugPatchColor, c_lodColor[patch.lastSurfaceLod]);
 		else if (m_visualizeMode == VmPatchLod)
-			renderBlock->programParams->setVectorParameter(m_handleDebugPatchColor, c_lodColor[patch.lastPatchLod]);
+			rb->programParams->setVectorParameter(m_handleDebugPatchColor, c_lodColor[patch.lastPatchLod]);
 
-		renderBlock->programParams->endParameters(worldContext.getRenderContext());
+		rb->programParams->endParameters(worldContext.getRenderContext());
 
-		worldContext.getRenderContext()->draw(render::RpOpaque, renderBlock);
+		worldContext.getRenderContext()->draw(render::RpOpaque, rb);
 	}
 
 #else
@@ -452,75 +445,74 @@ void TerrainComponent::render(
 	// Setup shared shader parameters.
 	for (int32_t i = 0; i < 2; ++i)
 	{
-		render::NullRenderBlock* renderBlock = renderContext->alloc< render::NullRenderBlock >("Terrain patch setup");
+		auto rb = renderContext->alloc< render::NullRenderBlock >("Terrain patch setup");
 
-		renderBlock->distance = -std::numeric_limits< float >::max();
-		renderBlock->program = (i == 0) ? coarseProgram : detailProgram;
-		renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
+		rb->program = (i == 0) ? coarseProgram : detailProgram;
+		rb->programParams = renderContext->alloc< render::ProgramParameters >();
 
-		renderBlock->programParams->beginParameters(renderContext);
+		rb->programParams->beginParameters(renderContext);
 
-		renderBlock->programParams->setTextureParameter(m_handleHeightfield, m_terrain->getHeightMap());
-		renderBlock->programParams->setTextureParameter(m_handleSurface, m_surfaceCache->getVirtualTexture());
-		renderBlock->programParams->setTextureParameter(m_handleColorMap, m_terrain->getColorMap());
-		renderBlock->programParams->setTextureParameter(m_handleNormals, m_terrain->getNormalMap());
-		renderBlock->programParams->setTextureParameter(m_handleSplatMap, m_terrain->getSplatMap());
-		renderBlock->programParams->setTextureParameter(m_handleCutMap, m_terrain->getCutMap());
-		renderBlock->programParams->setTextureParameter(m_handleMaterialMap, m_terrain->getMaterialMap());
-		renderBlock->programParams->setVectorParameter(m_handleEye, eyePosition);
-		renderBlock->programParams->setVectorParameter(m_handleWorldOrigin, -worldExtent * Scalar(0.5f));
-		renderBlock->programParams->setVectorParameter(m_handleWorldExtent, worldExtent);
-		renderBlock->programParams->setFloatParameter(m_handleDetailDistance, detailDistance);
+		rb->programParams->setTextureParameter(m_handleHeightfield, m_terrain->getHeightMap());
+		rb->programParams->setTextureParameter(m_handleSurface, m_surfaceCache->getVirtualTexture());
+		rb->programParams->setTextureParameter(m_handleColorMap, m_terrain->getColorMap());
+		rb->programParams->setTextureParameter(m_handleNormals, m_terrain->getNormalMap());
+		rb->programParams->setTextureParameter(m_handleSplatMap, m_terrain->getSplatMap());
+		rb->programParams->setTextureParameter(m_handleCutMap, m_terrain->getCutMap());
+		rb->programParams->setTextureParameter(m_handleMaterialMap, m_terrain->getMaterialMap());
+		rb->programParams->setVectorParameter(m_handleEye, eyePosition);
+		rb->programParams->setVectorParameter(m_handleWorldOrigin, -worldExtent * Scalar(0.5f));
+		rb->programParams->setVectorParameter(m_handleWorldExtent, worldExtent);
+		rb->programParams->setFloatParameter(m_handleDetailDistance, detailDistance);
 
 		if (m_visualizeMode == VmColorMap)
-			renderBlock->programParams->setTextureParameter(m_handleDebugMap, m_terrain->getColorMap());
+			rb->programParams->setTextureParameter(m_handleDebugMap, m_terrain->getColorMap());
 		else if (m_visualizeMode == VmNormalMap)
-			renderBlock->programParams->setTextureParameter(m_handleDebugMap, m_terrain->getNormalMap());
+			rb->programParams->setTextureParameter(m_handleDebugMap, m_terrain->getNormalMap());
 		else if (m_visualizeMode == VmHeightMap)
-			renderBlock->programParams->setTextureParameter(m_handleDebugMap, m_terrain->getHeightMap());
+			rb->programParams->setTextureParameter(m_handleDebugMap, m_terrain->getHeightMap());
 		else if (m_visualizeMode == VmSplatMap)
-			renderBlock->programParams->setTextureParameter(m_handleDebugMap, m_terrain->getSplatMap());
+			rb->programParams->setTextureParameter(m_handleDebugMap, m_terrain->getSplatMap());
 		else if (m_visualizeMode == VmCutMap)
-			renderBlock->programParams->setTextureParameter(m_handleDebugMap, m_terrain->getCutMap());
+			rb->programParams->setTextureParameter(m_handleDebugMap, m_terrain->getCutMap());
 		else if (m_visualizeMode == VmMaterialMap)
-			renderBlock->programParams->setTextureParameter(m_handleDebugMap, m_terrain->getMaterialMap());
+			rb->programParams->setTextureParameter(m_handleDebugMap, m_terrain->getMaterialMap());
 
-		worldRenderPass.setProgramParameters(renderBlock->programParams);
+		worldRenderPass.setProgramParameters(rb->programParams);
 
-		renderBlock->programParams->endParameters(renderContext);
+		rb->programParams->endParameters(renderContext);
 
-		worldContext.getRenderContext()->draw(render::RpOpaque, renderBlock);
+		renderContext->enqueue(rb);
 	}
 
 	// Render each visible patch.
 	for (const auto& visiblePatch : visiblePatches)
 	{
-		Patch& patch = m_patches[visiblePatch.patchId];
+		const Patch& patch = m_patches[visiblePatch.patchId];
 		const Vector4& patchOrigin = visiblePatch.patchOrigin;
 
-		render::SimpleRenderBlock* renderBlock = renderContext->alloc< render::SimpleRenderBlock >("Terrain patch");
+		auto rb = renderContext->alloc< render::SimpleRenderBlock >("Terrain patch");
 
-		renderBlock->distance = visiblePatch.distance;
-		renderBlock->program = (patch.lastSurfaceLod == 0) ? detailProgram : coarseProgram;
-		renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
-		renderBlock->indexBuffer = m_indexBuffer;
-		renderBlock->vertexBuffer = patch.vertexBuffer;
-		renderBlock->primitives = m_primitives[patch.lastPatchLod];
+		rb->distance = visiblePatch.distance;
+		rb->program = (patch.lastSurfaceLod == 0) ? detailProgram : coarseProgram;
+		rb->programParams = renderContext->alloc< render::ProgramParameters >();
+		rb->indexBuffer = m_indexBuffer;
+		rb->vertexBuffer = patch.vertexBuffer;
+		rb->primitives = m_primitives[patch.lastPatchLod];
 
-		renderBlock->programParams->beginParameters(renderContext);
+		rb->programParams->beginParameters(renderContext);
 
-		renderBlock->programParams->setVectorParameter(m_handlePatchOrigin, patchOrigin);
-		renderBlock->programParams->setVectorParameter(m_handleSurfaceOffset, patch.surfaceOffset);
-		renderBlock->programParams->setVectorParameter(m_handlePatchExtent, patchExtent);
+		rb->programParams->setVectorParameter(m_handlePatchOrigin, patchOrigin);
+		rb->programParams->setVectorParameter(m_handleSurfaceOffset, patch.surfaceOffset);
+		rb->programParams->setVectorParameter(m_handlePatchExtent, patchExtent);
 
 		if (m_visualizeMode == VmSurfaceLod)
-			renderBlock->programParams->setVectorParameter(m_handleDebugPatchColor, c_lodColor[patch.lastSurfaceLod]);
+			rb->programParams->setVectorParameter(m_handleDebugPatchColor, c_lodColor[patch.lastSurfaceLod]);
 		else if (m_visualizeMode == VmPatchLod)
-			renderBlock->programParams->setVectorParameter(m_handleDebugPatchColor, c_lodColor[patch.lastPatchLod]);
+			rb->programParams->setVectorParameter(m_handleDebugPatchColor, c_lodColor[patch.lastPatchLod]);
 
-		renderBlock->programParams->endParameters(renderContext);
+		rb->programParams->endParameters(renderContext);
 
-		worldContext.getRenderContext()->draw(render::RpOpaque, renderBlock);
+		renderContext->draw(render::RpOpaque, rb);
 	}
 
 #endif
