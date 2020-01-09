@@ -910,7 +910,8 @@ public:
 	 * \param to Iterator at last insert element.
 	 * \return Iterator at new element.
 	 */
-	iterator insert(const iterator& where, const const_iterator& from, const const_iterator& to)
+	template< typename IteratorType >
+	iterator insert(const iterator& where, const IteratorType& from, const IteratorType& to)
 	{
 		size_t size = m_size;
 		size_t offset = size_t(where.m_ptr - m_data);
