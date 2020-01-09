@@ -913,8 +913,8 @@ public:
 	template< typename IteratorType >
 	iterator insert(const iterator& where, const IteratorType& from, const IteratorType& to)
 	{
-		IteratorType::const_pointer fptr = &(*from);
-		IteratorType::const_pointer tptr = &(*to);
+		typename IteratorType::const_pointer fptr = &(*from);
+		typename IteratorType::const_pointer tptr = &(*to);
 
 		size_t size = m_size;
 		size_t offset = size_t(where.m_ptr - m_data);
