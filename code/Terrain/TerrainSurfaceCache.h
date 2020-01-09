@@ -77,7 +77,6 @@ public:
 		uint32_t surfaceLod,
 		uint32_t patchId,
 		// Out
-		render::RenderBlock*& outRenderBlock,
 		Vector4& outTextureOffset
 	);
 

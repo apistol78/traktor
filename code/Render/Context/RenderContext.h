@@ -71,7 +71,7 @@ public:
 	void enqueue(RenderBlock* renderBlock);
 
 	/*! Add render block to sorting queue. */
-	void draw(uint32_t type, RenderBlock* renderBlock);
+	void draw(uint32_t type, DrawableRenderBlock* renderBlock);
 
 	/*! Merge sorting queues into render queue. */
 	void merge(uint32_t priorities);
@@ -92,7 +92,7 @@ private:
 	uint8_t* m_heapEnd;
 	uint8_t* m_heapPtr;
 	AlignedVector< RenderBlock* > m_renderQueue;
-	AlignedVector< RenderBlock* > m_priorityQueue[6];
+	AlignedVector< DrawableRenderBlock* > m_priorityQueue[6];
 };
 
 	}

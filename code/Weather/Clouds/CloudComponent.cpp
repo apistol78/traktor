@@ -510,7 +510,7 @@ void CloudComponent::renderCluster(
 				i += instanceCount;
 			}
 
-			renderContext->draw(render::RpOpaque, impostorRenderBlock);
+			renderContext->enqueue(impostorRenderBlock);
 		}
 
 		m_lastCameraPosition = cameraPosition;

@@ -18,21 +18,15 @@ namespace traktor
 		namespace
 		{
 
-//const uint32_t c_maxUpdatePerFrame = 1;
+const uint32_t c_maxUpdatePerFrame = 1;
 const int32_t c_margin = 1;
 
-struct TerrainSurfaceRenderBlock : public render::RenderBlock
+struct TerrainSurfaceRenderBlock : public render::DrawableRenderBlock
 {
 	render::ScreenRenderer* screenRenderer;
-	render::IRenderTargetSet* renderTargetSet;
-	TerrainSurfaceRenderBlock* next;
-	bool clear;
 
 	TerrainSurfaceRenderBlock()
 	:	screenRenderer(nullptr)
-	,	renderTargetSet(nullptr)
-	,	next(nullptr)
-	,	clear(false)
 	{
 	}
 
@@ -41,26 +35,7 @@ struct TerrainSurfaceRenderBlock : public render::RenderBlock
 		if (programParams)
 			programParams->fixup(program);
 
-		if (renderTargetSet)
-		{
-			if (clear)
-			{
-				render::Clear cl;
-				cl.mask = render::CfColor;
-				cl.colors[0] = Color4f(0.0f, 0.0f, 0.0f, 0.0f);
-				renderView->begin(renderTargetSet, 0, &cl);
-			}
-			else
-				renderView->begin(renderTargetSet, 0, nullptr);
-		}
-
 		screenRenderer->draw(renderView, program);
-
-		if (next)
-			next->render(renderView);
-
-		if (renderTargetSet)
-			renderView->end();
 	}
 };
 
@@ -123,8 +98,13 @@ bool TerrainSurfaceCache::create(resource::IResourceManager* resourceManager, re
 		return false;
 
 	desc.count = 1;
+#if !defined(__ANDROID__) && !defined(__IOS__)
 	desc.width = 256;
 	desc.height = 256;
+#else
+	desc.width = 64;
+	desc.height = 64;
+#endif
 	desc.multiSample = 0;
 	desc.createDepthStencil = false;
 	desc.usingPrimaryDepthStencil = false;
@@ -180,6 +160,8 @@ void TerrainSurfaceCache::begin(
 	const Vector4& worldExtent
 )
 {
+	const static Vector4 c_textureOffset(-1.0f, 1.0f, 2.0f, -2.0f);
+
 	if (!m_haveBase)
 	{
 		render::Shader* shader = terrain->getSurfaceShader();
@@ -195,30 +177,32 @@ void TerrainSurfaceCache::begin(
 		if (!shader->getCurrentProgram())
 			return;
 
-		TerrainSurfaceRenderBlock* renderBlock = renderContext->alloc< TerrainSurfaceRenderBlock >("Terrain surface (base)");
+		auto tb = renderContext->alloc< render::TargetBeginRenderBlock >("Terrain surface, base begin");
+		tb->renderTargetSet = m_base;
+		tb->renderTargetIndex = -1;
+		tb->clear.mask = render::CfColor;
+		tb->clear.colors[0] = Color4f(0.0f, 0.0f, 0.0f, 0.0f);
+		renderContext->enqueue(tb);
 
-		renderBlock->screenRenderer = m_screenRenderer;
-		renderBlock->distance = 0.0f;
-		renderBlock->program = shader->getCurrentProgram();
-		renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
+		auto rb = renderContext->alloc< TerrainSurfaceRenderBlock >("Terrain surface, base");
+		rb->screenRenderer = m_screenRenderer;
+		rb->distance = 0.0f;
+		rb->program = shader->getCurrentProgram();
+		rb->programParams = renderContext->alloc< render::ProgramParameters >();
+		rb->programParams->beginParameters(renderContext);
+		rb->programParams->setTextureParameter(m_handleHeightfield, heightMap);
+		rb->programParams->setTextureParameter(m_handleColorMap, colorMap);
+		rb->programParams->setTextureParameter(m_handleSplatMap, splatMap);
+		rb->programParams->setVectorParameter(m_handleWorldOrigin, worldOrigin);
+		rb->programParams->setVectorParameter(m_handleWorldExtent, worldExtent);
+		rb->programParams->setVectorParameter(m_handlePatchOrigin, worldOrigin);
+		rb->programParams->setVectorParameter(m_handlePatchExtent, worldExtent);
+		rb->programParams->setVectorParameter(m_handleTextureOffset, c_textureOffset);
+		rb->programParams->endParameters(renderContext);
+		renderContext->enqueue(rb);
 
-		renderBlock->programParams->beginParameters(renderContext);
-		renderBlock->programParams->setTextureParameter(m_handleHeightfield, heightMap);
-		renderBlock->programParams->setTextureParameter(m_handleColorMap, colorMap);
-		renderBlock->programParams->setTextureParameter(m_handleSplatMap, splatMap);
-		renderBlock->programParams->setVectorParameter(m_handleWorldOrigin, worldOrigin);
-		renderBlock->programParams->setVectorParameter(m_handleWorldExtent, worldExtent);
-		renderBlock->programParams->setVectorParameter(m_handlePatchOrigin, worldOrigin);
-		renderBlock->programParams->setVectorParameter(m_handlePatchExtent, worldExtent);
-
-		const Vector4 textureOffset(-1.0f, 1.0f, 2.0f, -2.0f);
-		renderBlock->programParams->setVectorParameter(m_handleTextureOffset, textureOffset);
-		renderBlock->programParams->endParameters(renderContext);
-
-		renderBlock->renderTargetSet = m_base;
-		renderBlock->clear = true;
-
-		renderContext->draw(render::RpSetup, renderBlock);
+		auto te = renderContext->alloc< render::TargetEndRenderBlock >("Terrain surface, base end");
+		renderContext->enqueue(te);
 
 		m_haveBase = true;
 	}
@@ -236,14 +220,13 @@ void TerrainSurfaceCache::get(
 	uint32_t surfaceLod,
 	uint32_t patchId,
 	// Out
-	render::RenderBlock*& outRenderBlock,
 	Vector4& outTextureOffset
 )
 {
 	// If the cache is already valid we just reuse it.
 	if (patchId < m_entries.size())
 	{
-		if (/*m_updateCount >= c_maxUpdatePerFrame ||*/ (m_entries[patchId].lod == surfaceLod && m_entries[patchId].tile.dim > 0))
+		if (m_updateCount >= c_maxUpdatePerFrame || (m_entries[patchId].lod == surfaceLod && m_entries[patchId].tile.dim > 0))
 		{
 			outTextureOffset = offsetFromTile(m_entries[patchId].tile, m_size);
 			return;
@@ -288,6 +271,13 @@ void TerrainSurfaceCache::get(
 	patchOriginM -= Vector4(dpx, 0.0f, dpz, 0.0f) * Scalar(c_margin);
 	patchExtentM += Vector4(dpx, 0.0f, dpz, 0.0f) * Scalar(2.0f * c_margin);
 
+	Vector4 textureOffset(
+		-1.0f + 2.0f * tile.x / 4096.0f,
+		 1.0f - 2.0f * tile.y / 4096.0f,
+		 2.0f * tile.dim / 4096.0f,
+		-2.0f * tile.dim / 4096.0f
+	);
+
 	render::Shader* shader = terrain->getSurfaceShader();
 	if (!shader)
 		return;
@@ -301,43 +291,36 @@ void TerrainSurfaceCache::get(
 	if (!shader->getCurrentProgram())
 		return;
 
-	TerrainSurfaceRenderBlock* renderBlock = renderContext->alloc< TerrainSurfaceRenderBlock >("Terrain surface");
-
-	renderBlock->screenRenderer = m_screenRenderer;
-	renderBlock->distance = 0.0f;
-	renderBlock->program = shader->getCurrentProgram();
-	renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
-
-	renderBlock->programParams->beginParameters(renderContext);
-	renderBlock->programParams->setTextureParameter(m_handleHeightfield, heightMap);
-	renderBlock->programParams->setTextureParameter(m_handleColorMap, colorMap);
-	renderBlock->programParams->setTextureParameter(m_handleSplatMap, splatMap);
-	renderBlock->programParams->setVectorParameter(m_handleWorldOrigin, worldOriginM);
-	renderBlock->programParams->setVectorParameter(m_handleWorldExtent, worldExtentM);
-	renderBlock->programParams->setVectorParameter(m_handlePatchOrigin, patchOriginM);
-	renderBlock->programParams->setVectorParameter(m_handlePatchExtent, patchExtentM);
-
-	Vector4 textureOffset(
-		-1.0f + 2.0f * tile.x / 4096.0f,
-		 1.0f - 2.0f * tile.y / 4096.0f,
-		 2.0f * tile.dim / 4096.0f,
-		-2.0f * tile.dim / 4096.0f
-	);
-	renderBlock->programParams->setVectorParameter(m_handleTextureOffset, textureOffset);
-	renderBlock->programParams->endParameters(renderContext);
-
-	renderBlock->renderTargetSet = m_pool;
-	renderBlock->clear = m_clearCache;
-
-	if (outRenderBlock)
+	auto tb = renderContext->alloc< render::TargetBeginRenderBlock >("Terrain surface, begin");
+	tb->renderTargetSet = m_pool;
+	tb->renderTargetIndex = -1;
+	tb->clear.mask = 0;
+	if (m_clearCache)
 	{
-		TerrainSurfaceRenderBlock* renderBlockChain = static_cast< TerrainSurfaceRenderBlock* >(outRenderBlock);
-
-		renderBlockChain->renderTargetSet = nullptr;
-		renderBlockChain->clear = false;
-
-		renderBlock->next = renderBlockChain;
+		tb->clear.mask = render::CfColor;
+		tb->clear.colors[0] = Color4f(0.0f, 0.0f, 0.0f, 0.0f);
 	}
+	renderContext->enqueue(tb);
+
+	auto rb = renderContext->alloc< TerrainSurfaceRenderBlock >("Terrain surface");
+	rb->screenRenderer = m_screenRenderer;
+	rb->distance = 0.0f;
+	rb->program = shader->getCurrentProgram();
+	rb->programParams = renderContext->alloc< render::ProgramParameters >();
+	rb->programParams->beginParameters(renderContext);
+	rb->programParams->setTextureParameter(m_handleHeightfield, heightMap);
+	rb->programParams->setTextureParameter(m_handleColorMap, colorMap);
+	rb->programParams->setTextureParameter(m_handleSplatMap, splatMap);
+	rb->programParams->setVectorParameter(m_handleWorldOrigin, worldOriginM);
+	rb->programParams->setVectorParameter(m_handleWorldExtent, worldExtentM);
+	rb->programParams->setVectorParameter(m_handlePatchOrigin, patchOriginM);
+	rb->programParams->setVectorParameter(m_handlePatchExtent, patchExtentM);
+	rb->programParams->setVectorParameter(m_handleTextureOffset, textureOffset);
+	rb->programParams->endParameters(renderContext);
+	renderContext->enqueue(rb);
+
+	auto te = renderContext->alloc< render::TargetEndRenderBlock >("Terrain surface, end");
+	renderContext->enqueue(te);
 
 	m_clearCache = false;
 
@@ -346,7 +329,6 @@ void TerrainSurfaceCache::get(
 	m_entries[patchId].tile = tile;
 
 	outTextureOffset = offsetFromTile(tile, m_size);
-	outRenderBlock = renderBlock;
 }
 
 render::ISimpleTexture* TerrainSurfaceCache::getVirtualTexture() const
