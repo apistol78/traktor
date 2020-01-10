@@ -1,6 +1,6 @@
 #pragma once
 
-#include <vector>
+#include "Core/Containers/AlignedVector.h"
 #include "Resource/Id.h"
 #include "Terrain/ITerrainLayerData.h"
 
@@ -50,7 +50,7 @@ private:
 
 	resource::Id< render::Shader > m_shader;
 	float m_spreadDistance;
-	std::vector< Plant > m_plants;
+	AlignedVector< Plant > m_plants;
 };
 
 	}

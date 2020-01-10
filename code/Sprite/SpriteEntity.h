@@ -25,7 +25,7 @@ class T_DLLCLASS SpriteEntity : public world::Entity
 public:
 	virtual void setTransform(const Transform& transform);
 
-	virtual bool getTransform(Transform& outTransform) const;
+	virtual Transform getTransform() const;
 
 	virtual Aabb3 getBoundingBox() const;
 

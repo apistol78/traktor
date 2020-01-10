@@ -241,10 +241,9 @@ void ClothEntity::setTransform(const Transform& transform)
 	m_transform = transform;
 }
 
-bool ClothEntity::getTransform(Transform& outTransform) const
+Transform ClothEntity::getTransform() const
 {
-	outTransform = m_transform;
-	return true;
+	return m_transform;
 }
 
 Aabb3 ClothEntity::getBoundingBox() const

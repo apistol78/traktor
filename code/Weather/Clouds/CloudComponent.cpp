@@ -336,9 +336,7 @@ void CloudComponent::renderCluster(
 	)
 		return;
 
-	Transform transform;
-	if (!m_owner->getTransform(transform))
-		return;
+	Transform transform = m_owner->getTransform();
 
 	const Frustum& viewFrustum = worldRenderView.getViewFrustum();
 	const Matrix44& view = worldRenderView.getView();

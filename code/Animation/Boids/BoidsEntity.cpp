@@ -74,10 +74,9 @@ void BoidsEntity::setTransform(const Transform& transform)
 	m_transform = transform;
 }
 
-bool BoidsEntity::getTransform(Transform& outTransform) const
+Transform BoidsEntity::getTransform() const
 {
-	outTransform = m_transform;
-	return true;
+	return m_transform;
 }
 
 Aabb3 BoidsEntity::getBoundingBox() const

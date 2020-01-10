@@ -45,21 +45,6 @@ namespace traktor
 const float c_clampKeyDistance = 1.0f / 30.0f;
 const float c_velocityScale = 0.2f;
 
-struct FindTrackData
-{
-	world::EntityData* m_entityData;
-
-	FindTrackData(world::EntityData* entityData)
-	:	m_entityData(entityData)
-	{
-	}
-
-	bool operator () (const TrackData* trackData) const
-	{
-		return trackData->getEntityData() == m_entityData;
-	}
-};
-
 class TransformPathKeyWrapper : public Object
 {
 public:
@@ -411,7 +396,9 @@ void TheaterControllerEditor::captureEntities()
 
 		Ref< TrackData > instanceTrackData;
 
-		auto it = std::find_if(tracks.begin(), tracks.end(), FindTrackData(entityData));
+		auto it = std::find_if(tracks.begin(), tracks.end(), [&](const TrackData* trackData) {
+			return trackData->getEntityData() == entityData;
+		});
 		if (it != tracks.end())
 			instanceTrackData = *it;
 		else

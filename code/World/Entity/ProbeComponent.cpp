@@ -50,9 +50,7 @@ Aabb3 ProbeComponent::getBoundingBox() const
 
 Transform ProbeComponent::getTransform() const
 {
-	Transform transform;
-	m_owner->getTransform(transform);
-	return transform;
+	return m_owner->getTransform();
 }
 
 	}

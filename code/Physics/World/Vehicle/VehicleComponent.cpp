@@ -61,12 +61,9 @@ void VehicleComponent::setOwner(world::Entity* owner)
 {
 	if ((m_owner = owner) != nullptr)
 	{
-		Transform transform;
-		if (m_owner->getTransform(transform))
-		{
-			m_body->setTransform(transform);
-			m_body->setEnable(true);
-		}
+		Transform transform = m_owner->getTransform();
+		m_body->setTransform(transform);
+		m_body->setEnable(true);
 	}
 }
 

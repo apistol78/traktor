@@ -52,12 +52,9 @@ void CharacterComponent::setOwner(world::Entity* owner)
 {
 	if ((m_owner = owner) != nullptr)
 	{
-		Transform transform;
-		if (m_owner->getTransform(transform))
-		{
-			m_bodyWide->setTransform(transform);
-			m_bodyWide->setEnable(true);
-		}
+		Transform transform = m_owner->getTransform();
+		m_bodyWide->setTransform(transform);
+		m_bodyWide->setEnable(true);
 	}
 }
 

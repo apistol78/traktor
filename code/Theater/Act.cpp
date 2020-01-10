@@ -96,12 +96,12 @@ bool Act::update(scene::Scene* scene, float time, float deltaTime) const
 		Ref< world::Entity > entity = m_tracks[i]->getEntity();
 		T_ASSERT(entity);
 
-		if (!entity->getTransform(transform))
-			continue;
+		transform = entity->getTransform();
 
 		Ref< world::Entity > lookAtEntity = m_tracks[i]->getLookAtEntity();
-		if (lookAtEntity && lookAtEntity->getTransform(lookAtTransform))
+		if (lookAtEntity)
 		{
+			lookAtTransform = lookAtEntity->getTransform();
 			Matrix44 m = lookAt(
 				transform.translation().xyz1(),
 				lookAtTransform.translation().xyz1()

@@ -76,7 +76,7 @@ public:
 
 	virtual void setTransform(const Transform& transform) override final;
 
-	virtual bool getTransform(Transform& outTransform) const override final;
+	virtual Transform getTransform() const override final;
 
 	virtual Aabb3 getBoundingBox() const override final;
 

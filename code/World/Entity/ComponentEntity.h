@@ -40,13 +40,15 @@ public:
 
 	virtual void setTransform(const Transform& transform) override;
 
-	virtual bool getTransform(Transform& outTransform) const override;
+	virtual Transform getTransform() const override;
 
 	virtual Aabb3 getBoundingBox() const override;
 
 	virtual void update(const UpdateParams& update) override;
 
 	/*! Set component in character instance.
+	 *
+	 * \param component Component instance.
 	 */
 	void setComponent(IEntityComponent* component);
 
@@ -64,12 +66,6 @@ public:
 	const RefArray< IEntityComponent >& getComponents() const
 	{
 		return m_components;
-	}
-
-	/*! Quick access to entity's transform. */
-	const Transform& getTransform() const
-	{
-		return m_transform;
 	}
 
 private:

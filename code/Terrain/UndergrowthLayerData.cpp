@@ -1,7 +1,7 @@
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
+#include "Core/Serialization/MemberAlignedVector.h"
 #include "Core/Serialization/MemberComposite.h"
-#include "Core/Serialization/MemberStl.h"
 #include "Render/Shader.h"
 #include "Resource/Member.h"
 #include "Terrain/UndergrowthLayer.h"
@@ -29,14 +29,14 @@ Ref< ITerrainLayer > UndergrowthLayerData::createLayerInstance(
 	if (layer->create(resourceManager, renderSystem, *this, terrainComponent))
 		return layer;
 	else
-		return 0;
+		return nullptr;
 }
 
 void UndergrowthLayerData::serialize(ISerializer& s)
 {
 	s >> resource::Member< render::Shader >(L"shader", m_shader);
 	s >> Member< float >(L"spreadDistance", m_spreadDistance);
-	s >> MemberStlVector< Plant, MemberComposite< Plant > >(L"plants", m_plants);
+	s >> MemberAlignedVector< Plant, MemberComposite< Plant > >(L"plants", m_plants);
 }
 
 UndergrowthLayerData::Plant::Plant()

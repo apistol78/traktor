@@ -1,5 +1,4 @@
 #include <algorithm>
-#include <vector>
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberRefArray.h"
 #include "Theater/ActData.h"
@@ -33,7 +32,7 @@ Ref< scene::ISceneController > TheaterControllerData::createController(const Sma
 	// Do not randomize acts if in editor.
 	if (!editor && m_randomizeActs)
 	{
-		std::vector< size_t > indices(acts.size());
+		AlignedVector< size_t > indices(acts.size());
 		for (size_t i = 0; i < indices.size(); ++i)
 			indices[i] = i;
 
@@ -59,12 +58,11 @@ float TheaterControllerData::getActStartTime(int32_t act) const
 
 void TheaterControllerData::serialize(ISerializer& s)
 {
+	T_FATAL_ASSERT(s.getVersion< TheaterControllerData >() >= 1);
+
 	s >> MemberRefArray< ActData >(L"acts", m_acts);
-	if (s.getVersion() >= 1)
-	{
-		s >> Member< bool >(L"repeatActs", m_repeatActs);
-		s >> Member< bool >(L"randomizeActs", m_randomizeActs);
-	}
+	s >> Member< bool >(L"repeatActs", m_repeatActs);
+	s >> Member< bool >(L"randomizeActs", m_randomizeActs);
 }
 
 	}

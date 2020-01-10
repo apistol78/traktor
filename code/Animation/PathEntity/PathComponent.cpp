@@ -13,7 +13,7 @@ PathComponent::PathComponent(
 	TimeMode timeMode,
 	float timeOffset
 )
-:	m_owner(0)
+:	m_owner(nullptr)
 ,	m_transform(Transform::identity())
 ,	m_path(path)
 ,	m_timeMode(timeMode)
@@ -25,13 +25,13 @@ PathComponent::PathComponent(
 
 void PathComponent::destroy()
 {
-	m_owner = 0;
+	m_owner = nullptr;
 }
 
 void PathComponent::setOwner(world::Entity* owner)
 {
-	if ((m_owner = owner) != 0)
-		m_owner->getTransform(m_transform);
+	if ((m_owner = owner) != nullptr)
+		m_transform = m_owner->getTransform();
 }
 
 void PathComponent::setTransform(const Transform& transform)

@@ -22,8 +22,8 @@ Ref< IEntityEventInstance > DecalEvent::createInstance(IEntityEventManager* even
 	Transform T;
 
 	// Calculate world transform from sender and offset.
-	if (sender && sender->getTransform(T))
-		T = T * Toffset;
+	if (sender)
+		T = sender->getTransform() * Toffset;
 	else
 		T = Toffset;
 

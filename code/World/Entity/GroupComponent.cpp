@@ -31,7 +31,7 @@ void GroupComponent::setOwner(Entity* owner)
 {
 	T_ASSERT(m_owner == nullptr);
 	if ((m_owner = owner) != nullptr)
-		m_owner->getTransform(m_transform);
+		m_transform = m_owner->getTransform();
 }
 
 void GroupComponent::update(const UpdateParams& update)
@@ -65,13 +65,10 @@ void GroupComponent::setTransform(const Transform& transform)
 	Transform invTransform = m_transform.inverse();
 	for (auto entity : m_entities)
 	{
-		Transform currentTransform;
-		if (entity->getTransform(currentTransform))
-		{
-			Transform Tlocal = invTransform * currentTransform;
-			Transform Tworld = transform * Tlocal;
-			entity->setTransform(Tworld);
-		}
+		Transform currentTransform = entity->getTransform();
+		Transform Tlocal = invTransform * currentTransform;
+		Transform Tworld = transform * Tlocal;
+		entity->setTransform(Tworld);
 	}
 	m_transform = transform;
 }
@@ -86,9 +83,7 @@ Aabb3 GroupComponent::getBoundingBox() const
 		Aabb3 childBoundingBox = entity->getBoundingBox();
 		if (!childBoundingBox.empty())
 		{
-			Transform childTransform;
-			entity->getTransform(childTransform);
-
+			Transform childTransform = entity->getTransform();
 			Transform intoParentTransform = invTransform * childTransform;
 			boundingBox.contain(childBoundingBox.transform(intoParentTransform));
 		}

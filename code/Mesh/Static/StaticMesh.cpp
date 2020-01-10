@@ -36,7 +36,6 @@ void StaticMesh::render(
 	Aabb3 boundingBox = m_renderMesh->getBoundingBox();
 
 	const AlignedVector< render::Mesh::Part >& meshParts = m_renderMesh->getParts();
-	// for (AlignedVector< Part >::const_iterator i = it->second.begin(); i != it->second.end(); ++i)
 	for (const auto& part : it->second)
 	{
 		m_shader->setTechnique(part.shaderTechnique);

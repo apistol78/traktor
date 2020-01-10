@@ -22,7 +22,7 @@ LightComponent::LightComponent(
 	float flickerAmount,
 	float flickerFilter
 )
-:	m_owner(0)
+:	m_owner(nullptr)
 ,	m_lightType(lightType)
 ,	m_color(color)
 ,	m_castShadow(castShadow)
@@ -66,9 +66,7 @@ Aabb3 LightComponent::getBoundingBox() const
 
 Transform LightComponent::getTransform() const
 {
-	Transform transform;
-	m_owner->getTransform(transform);
-	return transform;
+	return m_owner->getTransform();
 }
 
 	}

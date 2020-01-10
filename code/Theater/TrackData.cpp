@@ -26,7 +26,7 @@ void TrackData::setEntityData(world::EntityData* entityData)
 	m_entityData = entityData;
 }
 
-Ref< world::EntityData > TrackData::getEntityData() const
+world::EntityData* TrackData::getEntityData() const
 {
 	return m_entityData;
 }
@@ -36,7 +36,7 @@ void TrackData::setLookAtEntityData(world::EntityData* entityData)
 	m_lookAtEntityData = entityData;
 }
 
-Ref< world::EntityData > TrackData::getLookAtEntityData() const
+world::EntityData* TrackData::getLookAtEntityData() const
 {
 	return m_lookAtEntityData;
 }
@@ -108,33 +108,16 @@ float TrackData::getWobbleRate() const
 
 void TrackData::serialize(ISerializer& s)
 {
+	T_FATAL_ASSERT(s.getVersion< TrackData >() >= 5);
+
 	s >> MemberRef< world::EntityData >(L"entityData", m_entityData);
-
-	if (s.getVersion() >= 2)
-		s >> MemberRef< world::EntityData >(L"lookAtEntityData", m_lookAtEntityData);
-
+	s >> MemberRef< world::EntityData >(L"lookAtEntityData", m_lookAtEntityData);
 	s >> MemberComposite< TransformPath >(L"path", m_path);
-
-	if (s.getVersion() >= 1)
-	{
-		s >> Member< float >(L"loopStart", m_loopStart);
-		s >> Member< float >(L"loopEnd", m_loopEnd);
-
-		if (s.getVersion() < 3)
-		{
-			float loopEase = 0.0f;
-			s >> Member< float >(L"loopEase", loopEase);
-		}
-	}
-
-	if (s.getVersion() >= 4)
-		s >> Member< float >(L"timeOffset", m_timeOffset);
-
-	if (s.getVersion() >= 5)
-	{
-		s >> Member< float >(L"wobbleMagnitude", m_wobbleMagnitude, AttributeRange(0.0f));
-		s >> Member< float >(L"wobbleRate", m_wobbleRate, AttributeRange(0.0f));
-	}
+	s >> Member< float >(L"loopStart", m_loopStart);
+	s >> Member< float >(L"loopEnd", m_loopEnd);
+	s >> Member< float >(L"timeOffset", m_timeOffset);
+	s >> Member< float >(L"wobbleMagnitude", m_wobbleMagnitude, AttributeRange(0.0f));
+	s >> Member< float >(L"wobbleRate", m_wobbleRate, AttributeRange(0.0f));
 }
 
 	}

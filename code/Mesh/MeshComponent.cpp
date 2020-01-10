@@ -24,9 +24,9 @@ void MeshComponent::setOwner(world::Entity* owner)
 {
 	if ((m_owner = owner) != nullptr)
 	{
-		Transform T;
-		if (m_owner->getTransform(T))
-			m_transform = IntervalTransform(T);
+		m_transform = IntervalTransform(
+			m_owner->getTransform()
+		);
 	}
 }
 

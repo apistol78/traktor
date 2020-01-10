@@ -97,7 +97,7 @@ private:
 	TerrainSurfaceAlloc m_alloc;
 	Ref< render::IRenderTargetSet > m_pool;
 	Ref< render::IRenderTargetSet > m_base;
-	std::vector< Entry > m_entries;
+	AlignedVector< Entry > m_entries;
 	bool m_haveBase;
 	bool m_clearCache;
 	uint32_t m_updateCount;
