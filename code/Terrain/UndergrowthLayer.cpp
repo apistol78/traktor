@@ -305,8 +305,8 @@ void UndergrowthLayer::updatePatches(const TerrainComponent& terrainComponent)
 	// Get set of materials which have undergrowth.
 	StaticVector< uint8_t, 16 > um(16, 0);
 	uint8_t maxMaterialIndex = 0;
-	for (std::vector< UndergrowthLayerData::Plant >::const_iterator i = m_layerData.m_plants.begin(); i != m_layerData.m_plants.end(); ++i)
-		um[i->material] = ++maxMaterialIndex;
+	for (const auto& plant : m_layerData.m_plants)
+		um[plant.material] = ++maxMaterialIndex;
 
 	int32_t size = heightfield->getSize();
 	Vector4 extentPerGrid = heightfield->getWorldExtent() / Scalar(float(size));
@@ -349,13 +349,13 @@ void UndergrowthLayer::updatePatches(const TerrainComponent& terrainComponent)
 				if (cm[i] <= 0)
 					continue;
 
-				for (std::vector< UndergrowthLayerData::Plant >::const_iterator j = m_layerData.m_plants.begin(); j != m_layerData.m_plants.end(); ++j)
+				for (const auto& plant : m_layerData.m_plants)
 				{
-					if (um[j->material] == i + 1)
+					if (um[plant.material] == i + 1)
 					{
 						int32_t densityFactor = cm[i];
 
-						int32_t density = (j->density * densityFactor) / (16 * 16);
+						int32_t density = (plant.density * densityFactor) / (16 * 16);
 						if (density <= 4)
 							continue;
 
@@ -364,8 +364,8 @@ void UndergrowthLayer::updatePatches(const TerrainComponent& terrainComponent)
 
 						Cluster c;
 						c.center = Vector4(wx, wy, wz, 1.0f);
-						c.plant = j->plant;
-						c.plantScale = j->scale * (0.5f + 0.5f * densityFactor / (16.0f * 16.0f));
+						c.plant = plant.plant;
+						c.plantScale = plant.scale * (0.5f + 0.5f * densityFactor / (16.0f * 16.0f));
 						c.from = from;
 						c.to = to;
 						m_clusters.push_back(c);

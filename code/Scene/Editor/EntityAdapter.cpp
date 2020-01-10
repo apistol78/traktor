@@ -151,11 +151,7 @@ void EntityAdapter::setTransform(const Transform& transform)
 
 Transform EntityAdapter::getTransform() const
 {
-	Transform transform;
-	if (m_entity && m_entity->getTransform(transform))
-		return transform;
-	else
-		return getTransform0();
+	return m_entity ? m_entity->getTransform() : getTransform0();
 }
 
 Aabb3 EntityAdapter::getBoundingBox() const

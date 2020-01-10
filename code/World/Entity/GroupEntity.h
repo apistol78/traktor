@@ -52,7 +52,7 @@ public:
 
 	virtual void setTransform(const Transform& transform) override;
 
-	virtual bool getTransform(Transform& outTransform) const override;
+	virtual Transform getTransform() const override;
 
 	virtual Aabb3 getBoundingBox() const override;
 

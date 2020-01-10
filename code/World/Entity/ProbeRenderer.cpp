@@ -243,12 +243,12 @@ void ProbeRenderer::flush(
 					);
 
 					// Chain probe render as render block.
-					auto renderBlock = worldContext.getRenderContext()->alloc< ProbeCaptureRenderBlock >();
-					renderBlock->capturer = m_probeCapturer;
-					renderBlock->texture = m_capture->getTexture();
-					renderBlock->face = m_captureFace;
-					renderBlock->pending = &m_capturePending;
-					renderContext->enqueue(renderBlock);
+					auto rb = worldContext.getRenderContext()->alloc< ProbeCaptureRenderBlock >();
+					rb->capturer = m_probeCapturer;
+					rb->texture = m_capture->getTexture();
+					rb->face = m_captureFace;
+					rb->pending = &m_capturePending;
+					renderContext->enqueue(rb);
 
 					m_capturePending = true;
 					m_captureFace++;
@@ -256,11 +256,11 @@ void ProbeRenderer::flush(
 				else if (m_captureFace == 6)
 				{
 					// Filter rest of mips.
-					auto renderBlock = worldContext.getRenderContext()->alloc< ProbeDownSampleRenderBlock >();
-					renderBlock->filterer = m_probeFilterer;
-					renderBlock->texture = m_capture->getTexture();
-					renderBlock->pending = &m_capturePending;
-					renderContext->enqueue(renderBlock);
+					auto rb = worldContext.getRenderContext()->alloc< ProbeDownSampleRenderBlock >();
+					rb->filterer = m_probeFilterer;
+					rb->texture = m_capture->getTexture();
+					rb->pending = &m_capturePending;
+					renderContext->enqueue(rb);
 
 					m_capturePending = true;
 					m_captureFace++;
@@ -309,34 +309,34 @@ void ProbeRenderer::flush(
 		Matrix44 worldView = view * transform.toMatrix44();
 		Matrix44 worldViewInv = worldView.inverse();
 
-		render::IndexedRenderBlock* renderBlock = renderContext->alloc< render::IndexedRenderBlock >("Probe");
+		auto rb = renderContext->alloc< render::IndexedRenderBlock >("Probe");
 
-		renderBlock->distance = 0.0f;
-		renderBlock->program = program;
-		renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
-		renderBlock->indexBuffer = m_indexBuffer;
-		renderBlock->vertexBuffer = m_vertexBuffer;
-		renderBlock->primitive = render::PtTriangles;
+		rb->distance = 0.0f;
+		rb->program = program;
+		rb->programParams = renderContext->alloc< render::ProgramParameters >();
+		rb->indexBuffer = m_indexBuffer;
+		rb->vertexBuffer = m_vertexBuffer;
+		rb->primitive = render::PtTriangles;
 		
 		if (!probeComponent->getLocal())
 		{
-			renderBlock->offset = 0;
-			renderBlock->count = 2;
-			renderBlock->minIndex = 0;
-			renderBlock->maxIndex = 3;
+			rb->offset = 0;
+			rb->count = 2;
+			rb->minIndex = 0;
+			rb->maxIndex = 3;
 		}
 		else
 		{
-			renderBlock->offset = 6;
-			renderBlock->count = 12;
-			renderBlock->minIndex = 4;
-			renderBlock->maxIndex = 11;
+			rb->offset = 6;
+			rb->count = 12;
+			rb->minIndex = 4;
+			rb->maxIndex = 11;
 		}
 
-		renderBlock->programParams->beginParameters(renderContext);
+		rb->programParams->beginParameters(renderContext);
 
 		worldRenderPass.setProgramParameters(
-			renderBlock->programParams,
+			rb->programParams,
 			transform,
 			transform,
 			probeComponent->getBoundingBox()
@@ -344,19 +344,19 @@ void ProbeRenderer::flush(
 
 		if (probeComponent->getLocal())
 		{
-			renderBlock->programParams->setVectorParameter(s_handleProbeVolumeCenter, probeComponent->getVolume().getCenter());
-			renderBlock->programParams->setVectorParameter(s_handleProbeVolumeExtent, probeComponent->getVolume().getExtent());
+			rb->programParams->setVectorParameter(s_handleProbeVolumeCenter, probeComponent->getVolume().getCenter());
+			rb->programParams->setVectorParameter(s_handleProbeVolumeExtent, probeComponent->getVolume().getExtent());
 		}
 
-		renderBlock->programParams->setFloatParameter(s_handleProbeIntensity, probeComponent->getIntensity());
-		renderBlock->programParams->setFloatParameter(s_handleProbeTextureMips, probeComponent->getTexture() != nullptr ? (float)probeComponent->getTexture()->getMips() : 0.0f);
-		renderBlock->programParams->setVectorParameter(s_handleMagicCoeffs, magicCoeffs);
-		renderBlock->programParams->setMatrixParameter(s_handleWorldViewInv, worldViewInv);
-		renderBlock->programParams->setTextureParameter(s_handleProbeTexture, probeComponent->getTexture());
+		rb->programParams->setFloatParameter(s_handleProbeIntensity, probeComponent->getIntensity());
+		rb->programParams->setFloatParameter(s_handleProbeTextureMips, probeComponent->getTexture() != nullptr ? (float)probeComponent->getTexture()->getMips() : 0.0f);
+		rb->programParams->setVectorParameter(s_handleMagicCoeffs, magicCoeffs);
+		rb->programParams->setMatrixParameter(s_handleWorldViewInv, worldViewInv);
+		rb->programParams->setTextureParameter(s_handleProbeTexture, probeComponent->getTexture());
 
-		renderBlock->programParams->endParameters(renderContext);
+		rb->programParams->endParameters(renderContext);
 
-		renderContext->draw(render::RpOverlay, renderBlock);
+		renderContext->draw(render::RpOverlay, rb);
 	}
 
 	// Flush all queued decals.

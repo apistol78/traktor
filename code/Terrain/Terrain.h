@@ -1,7 +1,7 @@
 #pragma once
 
-#include <vector>
 #include "Core/Object.h"
+#include "Core/Containers/AlignedVector.h"
 #include "Resource/Proxy.h"
 
 // import/export mechanism.
@@ -124,13 +124,13 @@ public:
 	 *
 	 * \return Information about each patch.
 	 */
-	const std::vector< Patch >& getPatches() const { return m_patches; }
+	const AlignedVector< Patch >& getPatches() const { return m_patches; }
 
 	/*! Get vector of patch information.
 	 *
 	 * \return Information about each patch.
 	 */
-	std::vector< Patch >& editPatches() { return m_patches; }
+	AlignedVector< Patch >& editPatches() { return m_patches; }
 
 private:
 	friend class TerrainFactory;
@@ -148,7 +148,7 @@ private:
 	resource::Proxy< render::Shader > m_terrainCoarseShader;
 	resource::Proxy< render::Shader > m_terrainDetailShader;
 	resource::Proxy< render::Shader > m_surfaceShader;
-	std::vector< Patch > m_patches;
+	AlignedVector< Patch > m_patches;
 };
 
 	}

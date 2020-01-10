@@ -32,7 +32,7 @@ SoundEventInstance::SoundEventInstance(
 	{
 		Transform T = Transform::identity();
 		if (m_sender)
-			m_sender->getTransform(T);
+			T = m_sender->getTransform();
 		m_handle = m_soundPlayer->play(m_sound, (T * m_Toffset).translation(), 16, m_autoStopFar);
 	}
 	else
@@ -51,7 +51,7 @@ bool SoundEventInstance::update(const world::UpdateParams& update)
 	{
 		Transform T = Transform::identity();
 		if (m_sender)
-			m_sender->getTransform(T);
+			T = m_sender->getTransform();
 		m_handle->setPosition((T * m_Toffset).translation());
 	}
 

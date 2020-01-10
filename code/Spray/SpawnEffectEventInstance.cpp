@@ -25,10 +25,7 @@ SpawnEffectEventInstance::SpawnEffectEventInstance(
 {
 	Transform T;
 	if (m_sender)
-	{
-		m_sender->getTransform(T);
-		T = T * m_Toffset;
-	}
+		T = m_sender->getTransform() * m_Toffset;
 	else
 		T = m_Toffset;
 
@@ -50,10 +47,9 @@ bool SpawnEffectEventInstance::update(const world::UpdateParams& update)
 	{
 		Transform T;
 		if (m_sender)
-		{
-			m_sender->getTransform(T);
-			T = T * m_Toffset;
-		}
+			T = m_sender->getTransform() * m_Toffset;
+		else
+			T = m_Toffset;
 
 		if (m_spawnEffect->m_useRotation)
 			m_effectEntity->setTransform(T);

@@ -38,15 +38,13 @@ public:
 
     virtual void setTransform(const Transform& transform) override final;
 
-    virtual bool getTransform(Transform& outTransform) const override final;
+    virtual Transform getTransform() const override final;
 
 	virtual Aabb3 getBoundingBox() const override final;
 
     virtual void update(const world::UpdateParams& update) override final;
 
 	const PrimitiveEntityData* getData() const { return m_data; }
-
-    const Transform& getTransform() const { return m_transform; }
 
     const model::Model* getModel() const { return m_model; }
 

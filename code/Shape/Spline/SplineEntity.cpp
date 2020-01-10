@@ -32,15 +32,11 @@ void SplineEntity::setTransform(const Transform& transform)
 	Transform invTransform = getTransform().inverse();
 	for (auto controlPointEntity : m_controlPointEntities)
 	{
-		Transform currentTransform;
-		if (controlPointEntity->getTransform(currentTransform))
-		{
-			Transform Tlocal = invTransform * currentTransform;
-			Transform Tworld = transform * Tlocal;
-			controlPointEntity->setTransform(Tworld);
-		}
+		Transform currentTransform = controlPointEntity->getTransform();
+		Transform Tlocal = invTransform * currentTransform;
+		Transform Tworld = transform * Tlocal;
+		controlPointEntity->setTransform(Tworld);
 	}
-
 	world::ComponentEntity::setTransform(transform);
 }
 
@@ -61,8 +57,7 @@ void SplineEntity::update(const world::UpdateParams& update)
 		m_path = TransformPath();
 		for (uint32_t i = 0; i < m_controlPointEntities.size(); ++i)
 		{
-			Transform T;
-			m_controlPointEntities[i]->getTransform(T);
+			Transform T = m_controlPointEntities[i]->getTransform();
 
 			TransformPath::Key k;
 			k.T = (float)i / (m_controlPointEntities.size() - 1);

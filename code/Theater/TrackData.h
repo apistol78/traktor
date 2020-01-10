@@ -35,11 +35,11 @@ public:
 
 	void setEntityData(world::EntityData* entityData);
 
-	Ref< world::EntityData > getEntityData() const;
+	world::EntityData* getEntityData() const;
 
 	void setLookAtEntityData(world::EntityData* entityData);
 
-	Ref< world::EntityData > getLookAtEntityData() const;
+	world::EntityData* getLookAtEntityData() const;
 
 	void setPath(const TransformPath& path);
 

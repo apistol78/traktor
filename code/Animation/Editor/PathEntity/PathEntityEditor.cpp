@@ -125,10 +125,7 @@ void PathEntityEditor::drawGuide(render::PrimitiveRenderer* primitiveRenderer) c
 		// Draw attached entity's bounding box.
 		if (world::Entity* attachedEntity = pathEntity->getEntity())
 		{
-			Transform transform;
-			if (!attachedEntity->getTransform(transform))
-				transform = Transform::identity();
-
+			Transform transform = attachedEntity->getTransform();
 			primitiveRenderer->pushWorld(transform.toMatrix44());
 			primitiveRenderer->drawWireAabb(attachedEntity->getBoundingBox(), Color4ub(255, 255, 0));
 			primitiveRenderer->popWorld();

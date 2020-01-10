@@ -225,9 +225,10 @@ void OceanComponent::render(
 	bool reflectionEnable
 )
 {
-	Transform transform;
-	if (!m_owner || !m_owner->getTransform(transform))
+	if (!m_owner)
 		return;
+
+	Transform transform = m_owner->getTransform();
 
 	const Matrix44& view = worldRenderView.getView();
 	Matrix44 viewInv = view.inverse();

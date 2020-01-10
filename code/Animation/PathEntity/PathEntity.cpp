@@ -37,10 +37,9 @@ void PathEntity::setTransform(const Transform& transform)
 	m_transform = transform;
 }
 
-bool PathEntity::getTransform(Transform& outTransform) const
+Transform PathEntity::getTransform() const
 {
-	outTransform = m_transform;
-	return true;
+	return m_transform;
 }
 
 Aabb3 PathEntity::getBoundingBox() const

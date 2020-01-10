@@ -41,10 +41,10 @@ void VolumeComponent::update(const UpdateParams& update)
 
 bool VolumeComponent::inside(const Vector4& point) const
 {
-	Transform transform;
-	if (!m_owner || !m_owner->getTransform(transform))
+	if (!m_owner)
 		return false;
 
+	Transform transform = m_owner->getTransform();
 	Vector4 p = transform.inverse() * point.xyz1();
 	for (const auto& volume : m_data->getVolumes())
 	{

@@ -17,10 +17,10 @@ void Entity::setTransform(const Transform& transform)
 	// Don't do anything.
 }
 
-bool Entity::getTransform(Transform& outTransform) const
+Transform Entity::getTransform() const
 {
 	// Doesn't have a transform.
-	return false;
+	return Transform::identity();
 }
 
 Aabb3 Entity::getWorldBoundingBox() const
@@ -29,8 +29,8 @@ Aabb3 Entity::getWorldBoundingBox() const
 	if (boundingBox.empty())
 		return Aabb3();
 
-	Transform transform;
-	return getTransform(transform) ? boundingBox.transform(transform) : boundingBox;
+	Transform transform = getTransform();
+	return boundingBox.transform(transform);
 }
 
 	}

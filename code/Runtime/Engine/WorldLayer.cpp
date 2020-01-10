@@ -205,8 +205,7 @@ void WorldLayer::prepare(const UpdateInfo& info)
 	// it's reset in "build".
 	if (m_cameraEntity)
 	{
-		Transform cameraTransform;
-		m_cameraEntity->getTransform(cameraTransform);
+		Transform cameraTransform = m_cameraEntity->getTransform();
 
 		m_cameraTransform.step();
 		m_cameraTransform.set(cameraTransform);
@@ -232,9 +231,9 @@ void WorldLayer::prepare(const UpdateInfo& info)
 			Transform listenerTransform;
 
 			if (m_listenerEntity)
-				m_listenerEntity->getTransform(listenerTransform);
+				listenerTransform = m_listenerEntity->getTransform();
 			else
-				m_cameraEntity->getTransform(listenerTransform);
+				listenerTransform = m_cameraEntity->getTransform();
 
 			surroundEnvironment->setListenerTransform(listenerTransform);
 		}
@@ -289,8 +288,7 @@ void WorldLayer::build(const UpdateInfo& info, uint32_t frame)
 
 	if (m_cameraEntity)
 	{
-		Transform cameraTransform;
-		m_cameraEntity->getTransform(cameraTransform);
+		Transform cameraTransform = m_cameraEntity->getTransform();
 
 		m_cameraTransform.step();
 		m_cameraTransform.set(cameraTransform);

@@ -46,10 +46,9 @@ public:
 
 	/*! Get entity transform.
 	 *
-	 * \param outTransform Returning entity transform.
-	 * \return True if entity have a transform.
+	 * \return Entity transform.
 	 */
-	virtual bool getTransform(Transform& outTransform) const;
+	virtual Transform getTransform() const;
 
 	/*! Get entity bounding box.
 	 * Return entity bounding box in entity space.

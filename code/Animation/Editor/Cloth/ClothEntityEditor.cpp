@@ -35,10 +35,9 @@ void ClothEntityEditor::drawGuide(render::PrimitiveRenderer* primitiveRenderer) 
 	{
 		ClothEntity* clothEntity = checked_type_cast< ClothEntity* >(getEntityAdapter()->getEntity());
 
+		Transform transform = clothEntity->getTransform();
 		Aabb3 boundingBox = clothEntity->getBoundingBox();
-		Transform transform;
-
-		clothEntity->getTransform(transform);
+		
 		primitiveRenderer->pushWorld(transform.toMatrix44());
 		primitiveRenderer->drawWireAabb(boundingBox, Color4ub(255, 255, 0, 200));
 

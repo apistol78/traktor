@@ -3,8 +3,8 @@
 
 namespace traktor
 {
-    namespace shape
-    {
+	namespace shape
+	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.shape.PrimitiveEntity", PrimitiveEntity, world::Entity)
 
@@ -18,27 +18,26 @@ PrimitiveEntity::PrimitiveEntity(const PrimitiveEntityData* data, const Transfor
 
 void PrimitiveEntity::setTransform(const Transform& transform)
 {
-    if (m_transform != transform)
-    {
-        m_transform = transform;
-        m_dirty = true;
-    }
+	if (m_transform != transform)
+	{
+		m_transform = transform;
+		m_dirty = true;
+	}
 }
 
- bool PrimitiveEntity::getTransform(Transform& outTransform) const
- {
-     outTransform = m_transform;
-     return true;
- }
+Transform PrimitiveEntity::getTransform() const
+{
+	return m_transform;
+}
 
- Aabb3 PrimitiveEntity::getBoundingBox() const
- {
+Aabb3 PrimitiveEntity::getBoundingBox() const
+{
 	return m_boundingBox;
- }
+}
 
 void PrimitiveEntity::update(const world::UpdateParams& update)
 {
 }
 
-    }
+	}
 }

@@ -39,10 +39,9 @@ void ComponentEntity::setTransform(const Transform& transform)
 	}
 }
 
-bool ComponentEntity::getTransform(Transform& outTransform) const
+Transform ComponentEntity::getTransform() const
 {
-	outTransform = m_transform;
-	return true;
+	return m_transform;
 }
 
 Aabb3 ComponentEntity::getBoundingBox() const

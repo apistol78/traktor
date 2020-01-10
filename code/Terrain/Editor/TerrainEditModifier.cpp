@@ -741,7 +741,7 @@ void TerrainEditModifier::end(const scene::TransformChain& transformChain)
 		Terrain* terrain = m_terrainComponent->getTerrain();
 		T_ASSERT(terrain);
 
-		std::vector< Terrain::Patch >& patches = terrain->editPatches();
+		auto& patches = terrain->editPatches();
 
 		uint32_t heightfieldSize = m_heightfield->getSize();
 		uint32_t patchCount = heightfieldSize / (terrain->getPatchDim() * terrain->getDetailSkip());

@@ -35,8 +35,8 @@ void RigidEntity::destroy()
 {
 	safeDestroy(m_body);
 	safeDestroy(m_entity);
-	m_eventManager = 0;
-	m_eventCollide = 0;
+	m_eventManager = nullptr;
+	m_eventCollide = nullptr;
 }
 
 void RigidEntity::update(const world::UpdateParams& update)
@@ -58,18 +58,14 @@ void RigidEntity::setTransform(const Transform& transform)
 		m_entity->setTransform(transform);
 }
 
-bool RigidEntity::getTransform(Transform& outTransform) const
+Transform RigidEntity::getTransform() const
 {
 	if (m_body)
-	{
-		outTransform = m_body->getTransform();
-		return true;
-	}
-
-	if (m_entity)
-		return m_entity->getTransform(outTransform);
-
-	return false;
+		return m_body->getTransform();
+	else if (m_entity)
+		return m_entity->getTransform();
+	else
+		return Transform::identity();
 }
 
 Aabb3 RigidEntity::getBoundingBox() const
@@ -96,8 +92,7 @@ void RigidEntity::collisionListener(const physics::CollisionInfo& collisionInfo)
 		Quaternion(Vector4(0.0f, 1.0f, 0.0f, 0.0f), normal)
 	);
 
-	Transform T;
-	getTransform(T);
+	Transform T = getTransform();
 
 	m_eventManager->raise(m_eventCollide, this, T.inverse() * Tworld);
 }

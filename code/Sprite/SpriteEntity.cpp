@@ -11,9 +11,9 @@ void SpriteEntity::setTransform(const Transform& transform)
 {
 }
 
-bool SpriteEntity::getTransform(Transform& outTransform) const
+Transform SpriteEntity::getTransform() const
 {
-	return false;
+	return Transform::identity();
 }
 
 Aabb3 SpriteEntity::getBoundingBox() const

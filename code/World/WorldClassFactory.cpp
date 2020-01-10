@@ -78,9 +78,7 @@ void Entity_setTransform(Entity* self, const Transform& transform)
 
 Transform Entity_getTransform(Entity* self)
 {
-	Transform transform;
-	self->getTransform(transform);
-	return transform;
+	return self->getTransform();
 }
 
 void CameraComponentData_setCameraType(CameraComponentData* self, int32_t type)

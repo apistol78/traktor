@@ -19,7 +19,7 @@ TheaterController::TheaterController(const RefArray< const Act >& acts, bool rep
 ,	m_lastTime(-1.0f)
 {
 	// Measure total duration of all acts.
-	for (int32_t i = 0; i < int32_t(m_acts.size()); ++i)
+	for (int32_t i = 0; i < (int32_t)m_acts.size(); ++i)
 		m_totalDuration += m_acts[i]->getDuration();
 }
 
@@ -38,9 +38,9 @@ void TheaterController::update(scene::Scene* scene, float time, float deltaTime)
 	}
 
 	// Figure out which act we're in; as time might not be continous we need to find this each update.
-	const Act* act = 0;
+	const Act* act = nullptr;
 	float actStartTime = 0.0f;
-	for (int32_t i = 0; i < int32_t(m_acts.size()); ++i)
+	for (int32_t i = 0; i < (int32_t)m_acts.size(); ++i)
 	{
 		float actDuration = m_acts[i]->getDuration();
 		if (time >= actStartTime && (m_acts[i]->isInfinite() || time <= actStartTime + actDuration - FUZZY_EPSILON))
