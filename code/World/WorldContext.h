@@ -45,6 +45,8 @@ public:
 
 	void flush(WorldRenderView& worldRenderView, const IWorldRenderPass& worldRenderPass, Entity* rootEntity);
 
+	void flush(Entity* rootEntity);
+
 	WorldEntityRenderers* getEntityRenderers() const { return m_entityRenderers; }
 
 	render::RenderContext* getRenderContext() const { return m_renderContext; }

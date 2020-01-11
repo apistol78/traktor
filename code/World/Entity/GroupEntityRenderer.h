@@ -41,6 +41,11 @@ public:
 		Entity* rootEntity
 	) override final;
 
+	virtual void flush(
+		WorldContext& worldContext,
+		Entity* rootEntity
+	) override final;
+
 private:
 	uint32_t m_filter;
 };

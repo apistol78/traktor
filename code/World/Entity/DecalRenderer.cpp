@@ -191,5 +191,12 @@ void DecalRenderer::flush(
 	m_decalComponents.resize(0);
 }
 
+void DecalRenderer::flush(
+	WorldContext& worldContext,
+	Entity* rootEntity
+)
+{
+}
+
 	}
 }

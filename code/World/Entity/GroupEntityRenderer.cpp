@@ -54,5 +54,12 @@ void GroupEntityRenderer::flush(
 {
 }
 
+void GroupEntityRenderer::flush(
+	WorldContext& worldContext,
+	Entity* rootEntity
+)
+{
+}
+
 	}
 }

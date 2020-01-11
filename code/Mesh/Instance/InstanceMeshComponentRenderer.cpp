@@ -78,5 +78,12 @@ void InstanceMeshComponentRenderer::flush(
 	}
 }
 
+void InstanceMeshComponentRenderer::flush(
+	world::WorldContext& worldContext,
+	world::Entity* rootEntity
+)
+{
+}
+
 	}
 }

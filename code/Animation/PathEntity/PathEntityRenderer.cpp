@@ -33,5 +33,12 @@ void PathEntityRenderer::flush(
 {
 }
 
+void PathEntityRenderer::flush(
+	world::WorldContext& worldContext,
+	world::Entity* rootEntity
+)
+{
+}
+
 	}
 }

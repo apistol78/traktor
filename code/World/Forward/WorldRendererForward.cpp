@@ -482,6 +482,12 @@ void WorldRendererForward::build(WorldRenderView& worldRenderView, int32_t frame
 
 	f.renderContext->flush();
 
+	// \tbd Flush all entity renderers first, only used by probes atm and need to render to targets.
+	// Until we have RenderGraph properly implemented we need to make sure
+	// rendering probes doesn't nest render passes.
+	f.worldContext->flush(m_rootEntity);
+	f.renderContext->merge(render::RpAll);
+
 	// \tbd Improve light iteration... 
 	worldRenderView.resetLights();
 

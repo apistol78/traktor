@@ -68,17 +68,21 @@ public:
 		Entity* rootEntity
 	) override final;
 
+	void flush(
+		WorldContext& worldContext,
+		Entity* rootEntity
+	) override final;
+
 private:
 	Ref< ProbeCapturer > m_probeCapturer;
 	Ref< ProbeFilterer > m_probeFilterer;
 	resource::Proxy< render::Shader > m_probeShader;
 	Ref< render::VertexBuffer > m_vertexBuffer;
 	Ref< render::IndexBuffer > m_indexBuffer;
-	RefArray< ProbeComponent > m_probeComponents;
+	RefArray< ProbeComponent > m_captureQueue;	//!< Probes queued for capture.
 	Ref< ProbeComponent > m_capture;
 	int32_t m_captureFace;
 	bool m_capturePending;
-	bool m_capturing;
 };
 
 	}

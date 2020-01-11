@@ -39,6 +39,11 @@ public:
 		world::Entity* rootEntity
 	) override final;
 
+	virtual void flush(
+		world::WorldContext& worldContext,
+		world::Entity* rootEntity
+	) override final;
+
 private:
 	SmallMap< InstanceMesh*, AlignedVector< InstanceMesh::RenderInstance > > m_meshInstances;
 };

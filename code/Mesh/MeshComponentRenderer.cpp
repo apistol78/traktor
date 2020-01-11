@@ -33,5 +33,12 @@ void MeshComponentRenderer::flush(
 {
 }
 
+void MeshComponentRenderer::flush(
+	world::WorldContext& worldContext,
+	world::Entity* rootEntity
+)
+{
+}
+
 	}
 }

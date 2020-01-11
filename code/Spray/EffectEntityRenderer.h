@@ -54,6 +54,11 @@ public:
 		world::Entity* rootEntity
 	) override final;
 
+	virtual void flush(
+		world::WorldContext& worldContext,
+		world::Entity* rootEntity
+	) override final;
+
 private:
 	Ref< PointRenderer > m_pointRenderer;
 	Ref< MeshRenderer > m_meshRenderer;

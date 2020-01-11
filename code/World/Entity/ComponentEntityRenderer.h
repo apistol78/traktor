@@ -38,6 +38,11 @@ public:
 		const IWorldRenderPass& worldRenderPass,
 		Entity* rootEntity
 	) override final;
+
+	virtual void flush(
+		WorldContext& worldContext,
+		Entity* rootEntity
+	) override final;
 };
 
 	}

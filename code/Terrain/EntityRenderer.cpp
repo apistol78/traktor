@@ -77,5 +77,12 @@ void EntityRenderer::flush(
 {
 }
 
+void EntityRenderer::flush(
+	world::WorldContext& worldContext,
+	world::Entity* rootEntity
+)
+{
+}
+
 	}
 }

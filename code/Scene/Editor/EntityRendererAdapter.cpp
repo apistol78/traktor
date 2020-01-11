@@ -56,5 +56,16 @@ void EntityRendererAdapter::flush(
 	);
 }
 
+void EntityRendererAdapter::flush(
+	world::WorldContext& worldContext,
+	world::Entity* rootEntity
+)
+{
+	m_entityRenderer->flush(
+		worldContext,
+		rootEntity
+	);
+}
+
 	}
 }
