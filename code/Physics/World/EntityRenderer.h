@@ -38,6 +38,12 @@ public:
 		world::Entity* rootEntity
 	) override final
 	{ /* Not implemented */ }
+
+	virtual void flush(
+		world::WorldContext& worldContext,
+		world::Entity* rootEntity
+	) override final
+	{ /* Not implemented */ }
 };
 
 	}

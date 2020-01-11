@@ -46,6 +46,11 @@ public:
 		world::Entity* rootEntity
 	) override final;
 
+	virtual void flush(
+		world::WorldContext& worldContext,
+		world::Entity* rootEntity
+	) override final;
+
 private:
 	Ref< render::PrimitiveRenderer > m_primitiveRenderer;
 };

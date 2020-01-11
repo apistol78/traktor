@@ -82,5 +82,12 @@ void EffectEntityRenderer::flush(
 	m_trailRenderer->flush(worldContext.getRenderContext(), worldRenderPass);
 }
 
+void EffectEntityRenderer::flush(
+	world::WorldContext& worldContext,
+	world::Entity* rootEntity
+)
+{
+}
+
 	}
 }

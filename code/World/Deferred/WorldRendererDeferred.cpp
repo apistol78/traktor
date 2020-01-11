@@ -273,7 +273,7 @@ bool WorldRendererDeferred::create(
 		rtscd.usingPrimaryDepthStencil = (desc.sharedDepthStencil == nullptr) ? true : false;
 		rtscd.sharedDepthStencil = desc.sharedDepthStencil;
 		rtscd.preferTiled = true;
-		rtscd.storeDepthStencil = false;
+		rtscd.storeDepthStencil = true;
 		rtscd.targets[0].format = render::TfR8;			// Ambient occlusion (R)
 
 		m_ambientOcclusionTargetSet = renderSystem->createRenderTargetSet(rtscd, T_FILE_LINE_W);
@@ -864,6 +864,12 @@ void WorldRendererDeferred::build(WorldRenderView& worldRenderView, int32_t fram
 	f.renderContext->flush();
 
 	worldRenderView.resetLights();
+
+	// \tbd Flush all entity renderers first, only used by probes atm and need to render to targets.
+	// Until we have RenderGraph properly implemented we need to make sure
+	// rendering probes doesn't nest render passes.
+	f.worldContext->flush(m_rootEntity);
+	f.renderContext->merge(render::RpAll);
 
 	buildGBuffer(worldRenderView, frame);
 	buildVelocity(worldRenderView, frame);

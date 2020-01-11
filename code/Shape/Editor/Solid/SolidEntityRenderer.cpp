@@ -40,5 +40,12 @@ void SolidEntityRenderer::flush(
 {
 }
 
+void SolidEntityRenderer::flush(
+	world::WorldContext& worldContext,
+	world::Entity* rootEntity
+)
+{
+}
+
 	}
 }

@@ -35,5 +35,12 @@ void BoidsEntityRenderer::flush(
 {
 }
 
+void BoidsEntityRenderer::flush(
+	world::WorldContext& worldContext,
+	world::Entity* rootEntity
+)
+{
+}
+
 	}
 }

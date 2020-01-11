@@ -52,5 +52,12 @@ void LightRenderer::flush(
 {
 }
 
+void LightRenderer::flush(
+	WorldContext& worldContext,
+	Entity* rootEntity
+)
+{
+}
+
 	}
 }

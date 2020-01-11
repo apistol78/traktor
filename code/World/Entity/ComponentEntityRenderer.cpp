@@ -36,5 +36,12 @@ void ComponentEntityRenderer::flush(
 {
 }
 
+void ComponentEntityRenderer::flush(
+	WorldContext& worldContext,
+	Entity* rootEntity
+)
+{
+}
+
 	}
 }

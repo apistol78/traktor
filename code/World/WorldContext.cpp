@@ -49,5 +49,11 @@ void WorldContext::flush(WorldRenderView& worldRenderView, const IWorldRenderPas
 		entityRenderer->flush(*this, worldRenderView, worldRenderPass, rootEntity);
 }
 
+void WorldContext::flush(Entity* rootEntity)
+{
+	for (auto entityRenderer : m_entityRenderers->get())
+		entityRenderer->flush(*this, rootEntity);
+}
+
 	}
 }

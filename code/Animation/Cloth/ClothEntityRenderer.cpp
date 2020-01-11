@@ -33,5 +33,12 @@ void ClothEntityRenderer::flush(
 {
 }
 
+void ClothEntityRenderer::flush(
+	world::WorldContext& worldContext,
+	world::Entity* rootEntity
+)
+{
+}
+
 	}
 }

@@ -75,6 +75,12 @@ void WorldRendererSimple::build(WorldRenderView& worldRenderView, int32_t frame)
 	// Flush render contexts.
 	f.renderContext->flush();
 
+	// \tbd Flush all entity renderers first, only used by probes atm and need to render to targets.
+	// Until we have RenderGraph properly implemented we need to make sure
+	// rendering probes doesn't nest render passes.
+	f.worldContext->flush(m_rootEntity);
+	f.renderContext->merge(render::RpAll);
+
 	// Default visual parameters.
 	auto globalProgramParams = f.renderContext->alloc< render::ProgramParameters >();
 	globalProgramParams->beginParameters(f.renderContext);

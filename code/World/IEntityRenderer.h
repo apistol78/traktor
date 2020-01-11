@@ -55,6 +55,12 @@ public:
 		const IWorldRenderPass& worldRenderPass,
 		Entity* rootEntity
 	) = 0;
+
+	/*! Render flush, last of frame. */
+	virtual void flush(
+		WorldContext& worldContext,
+		Entity* rootEntity
+	) = 0;
 };
 
 	}

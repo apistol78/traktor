@@ -49,5 +49,12 @@ void WeatherRenderer::flush(
 {
 }
 
+void WeatherRenderer::flush(
+	world::WorldContext& worldContext,
+	world::Entity* rootEntity
+)
+{
+}
+
 	}
 }

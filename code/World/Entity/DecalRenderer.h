@@ -53,6 +53,11 @@ public:
 		Entity* rootEntity
 	) override final;
 
+	virtual void flush(
+		WorldContext& worldContext,
+		Entity* rootEntity
+	) override final;
+
 private:
 	Ref< render::VertexBuffer > m_vertexBuffer;
 	Ref< render::IndexBuffer > m_indexBuffer;
