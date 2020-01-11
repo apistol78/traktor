@@ -1,6 +1,7 @@
 #pragma once
 
 #include <eyex/EyeX.h>
+#include "Core/System.h"
 #include "Input/IInputDriver.h"
 
 // import/export mechanism.
