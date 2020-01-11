@@ -2,6 +2,7 @@
 
 #include <list>
 #include <tuple>
+#include "Core/System.h"
 #include "Core/Containers/AlignedVector.h"
 #include "Render/IRenderView.h"
 #include "Render/Vulkan/ApiHeader.h"
