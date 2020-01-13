@@ -45,6 +45,7 @@ int launch(const CommandLine& cmdLine)
 	std::wstring application = cmdLine.getString(2);
 	bool wait = cmdLine.hasOption('w', L"wait");
 	bool base = cmdLine.hasOption('t', L"target-base");
+	bool verbose = cmdLine.hasOption('v', L"verbose");
 	Path targetBase = base ? cmdLine.getOption('t', L"target-base").getString() : L"";
 
 	if (!targetBase.isRelative())
@@ -53,7 +54,7 @@ int launch(const CommandLine& cmdLine)
 		return 1;
 	}
 
-	if (base)
+	if (verbose && base)
 		log::info << L"Using target base \"" << targetBase.getPathName() << L"\"" << Endl;
 
 	std::wstring arguments;
@@ -78,7 +79,8 @@ int launch(const CommandLine& cmdLine)
 		return 1;
 	}
 
-	log::info << L"Successfully connected to \"" << host << L"\"." << Endl;
+	if (verbose)
+		log::info << L"Successfully connected to \"" << host << L"\"." << Endl;
 
 	clientSocket->setNoDelay(true);
 
@@ -107,7 +109,7 @@ int launch(const CommandLine& cmdLine)
 	return 0;
 }
 
-bool deployFile(const net::SocketAddressIPv4& addr, const Path& sourceFile, const Path& targetBase)
+bool deployFile(const net::SocketAddressIPv4& addr, const Path& sourceFile, const Path& targetBase, bool verbose)
 {
 	Ref< net::TcpSocket > clientSocket = new net::TcpSocket();
 	if (!clientSocket->connect(addr))
@@ -120,7 +122,8 @@ bool deployFile(const net::SocketAddressIPv4& addr, const Path& sourceFile, cons
 
 	net::SocketStream clientStream(clientSocket, true, true, 5000);
 
-	log::info << L"Deploying file \"" << sourceFile.getFileName() << L"\"..." << Endl;
+	if (verbose)
+		log::info << L"Deploying file \"" << sourceFile.getFileName() << L"\"..." << Endl;
 
 	Path targetFile;
 	Path sourceFileA = FileSystem::getInstance().getAbsolutePath(sourceFile).normalized();
@@ -130,14 +133,15 @@ bool deployFile(const net::SocketAddressIPv4& addr, const Path& sourceFile, cons
 		targetFile
 	))
 	{
-		log::error << L"Unable to resolve relative path of file \"" << sourceFile.getPathName() << L"\"" << Endl;
+		log::error << L"Unable to resolve relative path of file \"" << sourceFile.getPathName() << L"\"." << Endl;
 		return false;
 	}
 
 	if (!targetBase.getPathName().empty())
 		targetFile = targetBase + targetFile;
 
-	log::info << L"\ttarget \"" << targetFile.getPathName() << L"\"." << Endl;
+	if (verbose)
+		log::info << L"\ttarget \"" << targetFile.getPathName() << L"\"." << Endl;
 
 	Ref< File > file = FileSystem::getInstance().get(sourceFile);
 	if (!file)
@@ -146,7 +150,8 @@ bool deployFile(const net::SocketAddressIPv4& addr, const Path& sourceFile, cons
 		return false;
 	}
 
-	log::info << L"\tsize " << file->getSize() << L" byte(s)." << Endl;
+	if (verbose)
+		log::info << L"\tsize " << file->getSize() << L" byte(s)." << Endl;
 
 	Ref< traktor::IStream > fileStream = FileSystem::getInstance().open(sourceFile, File::FmRead);
 	if (!fileStream)
@@ -189,22 +194,24 @@ bool deployFile(const net::SocketAddressIPv4& addr, const Path& sourceFile, cons
 			return false;
 		}
 	}
-	else
+	else if (verbose)
 		log::info << L"File already up-to-date; skipped." << Endl;
 
 	fileStream->close();
 	fileStream = nullptr;
 
-	log::info << L"File deployed successfully." << Endl;
+	if (verbose)
+		log::info << L"File deployed successfully." << Endl;
 	return true;
 }
 
-bool deployFiles(const net::SocketAddressIPv4& addr, const Path& sourcePath, const Path& targetBase, bool recursive)
+bool deployFiles(const net::SocketAddressIPv4& addr, const Path& sourcePath, const Path& targetBase, bool recursive, bool verbose)
 {
 	RefArray< File > files;
-
 	FileSystem::getInstance().find(sourcePath, files);
-	log::info << L"Found " << int32_t(files.size()) << L" file(s) matching \"" << sourcePath.getPathName() << L"\"." << Endl;
+
+	if (verbose)
+		log::info << L"Found " << int32_t(files.size()) << L" file(s) matching \"" << sourcePath.getPathName() << L"\"." << Endl;
 
 	for (auto file : files)
 	{
@@ -215,18 +222,20 @@ bool deployFiles(const net::SocketAddressIPv4& addr, const Path& sourcePath, con
 			{
 				if (sourceFile.getFileName() != L"." && sourceFile.getFileName() != L"..")
 				{
-					log::info << L"Enter directory \"" << sourceFile.getPathName() << L"\"" << Endl;
-					if (!deployFiles(addr, sourceFile.getPathName() + L"/" + sourcePath.getFileName(), targetBase, true))
+					if (verbose)
+						log::info << L"Enter directory \"" << sourceFile.getPathName() << L"\"" << Endl;
+					if (!deployFiles(addr, sourceFile.getPathName() + L"/" + sourcePath.getFileName(), targetBase, true, verbose))
 						return false;
-					log::info << L"Leaving directory \"" << sourceFile.getPathName() << L"\"" << Endl;
+					if (verbose)
+						log::info << L"Leaving directory \"" << sourceFile.getPathName() << L"\"" << Endl;
 				}
 			}
-			else
+			else if (verbose)
 				log::info << L"Directory \"" << sourceFile.getPathName() << L"\" skipped" << Endl;
 		}
 		else
 		{
-			if (!deployFile(addr, sourceFile, targetBase))
+			if (!deployFile(addr, sourceFile, targetBase, verbose))
 				return false;
 		}
 	}
@@ -238,6 +247,7 @@ int deploy(const CommandLine& cmdLine)
 	std::wstring host = cmdLine.getString(1);
 	bool recursive = cmdLine.hasOption('r', L"recursive");
 	bool base = cmdLine.hasOption('t', L"target-base");
+	bool verbose = cmdLine.hasOption('v', L"verbose");
 	Path targetBase = base ? cmdLine.getOption('t', L"target-base").getString() : L"";
 
 	if (!targetBase.isRelative())
@@ -246,7 +256,7 @@ int deploy(const CommandLine& cmdLine)
 		return 1;
 	}
 
-	if (base)
+	if (verbose && base)
 		log::info << L"Using target base \"" << targetBase.getPathName() << L"\"" << Endl;
 
 	int32_t port = parseHost(host);
@@ -256,7 +266,7 @@ int deploy(const CommandLine& cmdLine)
 	for (int i = 2; i < cmdLine.getCount(); ++i)
 	{
 		Path sourcePath = cmdLine.getString(i);
-		if (!deployFiles(addr, sourcePath, targetBase, recursive))
+		if (!deployFiles(addr, sourcePath, targetBase, recursive, verbose))
 		{
 			ret = 3;
 			break;
@@ -273,19 +283,25 @@ int main(int argc, const char** argv)
 
 	if (cmdLine.getCount() < 3)
 	{
+		log::info << L"Traktor.Remote.Client.App; Built '" << mbstows(__TIME__) << L" - " << mbstows(__DATE__) << L"'" << Endl;
 		log::info << L"Usage:" << Endl;
 		log::info << Endl;
 		log::info << L"  Traktor.Remote.Client.App deploy <host> (options) <application> (arguments...)" << Endl;
-		log::info << L"    -w, -wait	                       Wait until application terminates." << Endl;
+		log::info << L"    -w, -wait	                   Wait until application terminates." << Endl;
 		log::info << L"    -t=<base>, -target-base=<base>  Target base path." << Endl;
+		log::info << L"    -v, -verbose                    Verbose logging." << Endl; 
 		log::info << Endl;
 		log::info << L"  Traktor.Remote.Client.App launch <host> (options) <files>" << Endl;
 		log::info << L"    -r, -recursive                  Recursive deploy files in directories." << Endl;
 		log::info << L"    -t=<base>, -target-base=<base>  Target base path." << Endl;
+		log::info << L"    -v, -verbose                    Verbose logging." << Endl; 
 		return 0;
 	}
 
-	log::info << L"Traktor.Remote.Client.App; Built '" << mbstows(__TIME__) << L" - " << mbstows(__DATE__) << L"'" << Endl;
+	bool verbose = cmdLine.hasOption('v', L"verbose");
+
+	if (verbose)
+		log::info << L"Traktor.Remote.Client.App; Built '" << mbstows(__TIME__) << L" - " << mbstows(__DATE__) << L"'" << Endl;
 
 	net::Network::initialize();
 
