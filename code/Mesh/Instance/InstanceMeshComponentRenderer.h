@@ -35,14 +35,10 @@ public:
 	virtual void flush(
 		world::WorldContext& worldContext,
 		world::WorldRenderView& worldRenderView,
-		const world::IWorldRenderPass& worldRenderPass,
-		world::Entity* rootEntity
+		const world::IWorldRenderPass& worldRenderPass
 	) override final;
 
-	virtual void flush(
-		world::WorldContext& worldContext,
-		world::Entity* rootEntity
-	) override final;
+	virtual void flush(world::WorldContext& worldContext) override final;
 
 private:
 	SmallMap< InstanceMesh*, AlignedVector< InstanceMesh::RenderInstance > > m_meshInstances;

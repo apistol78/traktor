@@ -34,15 +34,11 @@ public:
 	virtual void flush(
 		world::WorldContext& worldContext,
 		world::WorldRenderView& worldRenderView,
-		const world::IWorldRenderPass& worldRenderPass,
-		world::Entity* rootEntity
+		const world::IWorldRenderPass& worldRenderPass
 	) override final
 	{ /* Not implemented */ }
 
-	virtual void flush(
-		world::WorldContext& worldContext,
-		world::Entity* rootEntity
-	) override final
+	virtual void flush(world::WorldContext& worldContext) override final
 	{ /* Not implemented */ }
 };
 

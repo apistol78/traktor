@@ -34,16 +34,12 @@ void SolidEntityRenderer::render(
 void SolidEntityRenderer::flush(
 	world::WorldContext& worldContext,
 	world::WorldRenderView& worldRenderView,
-	const world::IWorldRenderPass& worldRenderPass,
-	world::Entity* rootEntity
+	const world::IWorldRenderPass& worldRenderPass
 )
 {
 }
 
-void SolidEntityRenderer::flush(
-	world::WorldContext& worldContext,
-	world::Entity* rootEntity
-)
+void SolidEntityRenderer::flush(world::WorldContext& worldContext)
 {
 }
 

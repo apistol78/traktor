@@ -116,8 +116,7 @@ void DecalRenderer::render(
 void DecalRenderer::flush(
 	WorldContext& worldContext,
 	WorldRenderView& worldRenderView,
-	const IWorldRenderPass& worldRenderPass,
-	Entity* rootEntity
+	const IWorldRenderPass& worldRenderPass
 )
 {
 	render::RenderContext* renderContext = worldContext.getRenderContext();
@@ -191,10 +190,7 @@ void DecalRenderer::flush(
 	m_decalComponents.resize(0);
 }
 
-void DecalRenderer::flush(
-	WorldContext& worldContext,
-	Entity* rootEntity
-)
+void DecalRenderer::flush(WorldContext& worldContext)
 {
 }
 

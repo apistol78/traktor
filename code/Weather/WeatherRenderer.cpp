@@ -43,16 +43,12 @@ void WeatherRenderer::render(
 void WeatherRenderer::flush(
 	world::WorldContext& worldContext,
 	world::WorldRenderView& worldRenderView,
-	const world::IWorldRenderPass& worldRenderPass,
-	world::Entity* rootEntity
+	const world::IWorldRenderPass& worldRenderPass
 )
 {
 }
 
-void WeatherRenderer::flush(
-	world::WorldContext& worldContext,
-	world::Entity* rootEntity
-)
+void WeatherRenderer::flush(world::WorldContext& worldContext)
 {
 }
 

@@ -35,21 +35,24 @@ class T_DLLCLASS WorldContext : public Object
 	T_RTTI_CLASS;
 
 public:
-	explicit WorldContext(WorldEntityRenderers* entityRenderers, render::RenderContext* renderContext);
+	explicit WorldContext(WorldEntityRenderers* entityRenderers, render::RenderContext* renderContext, Entity* rootEntity);
 
 	void build(WorldRenderView& worldRenderView, const IWorldRenderPass& worldRenderPass, Object* renderable);
 
-	void flush(WorldRenderView& worldRenderView, const IWorldRenderPass& worldRenderPass, Entity* rootEntity);
+	void flush(WorldRenderView& worldRenderView, const IWorldRenderPass& worldRenderPass);
 
-	void flush(Entity* rootEntity);
+	void flush();
 
 	WorldEntityRenderers* getEntityRenderers() const { return m_entityRenderers; }
 
 	render::RenderContext* getRenderContext() const { return m_renderContext; }
 
+	Entity* getRootEntity() const { return m_rootEntity; }
+
 private:
 	WorldEntityRenderers* m_entityRenderers;
 	render::RenderContext* m_renderContext;
+	Entity* m_rootEntity;
 };
 
 	}

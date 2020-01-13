@@ -73,8 +73,7 @@ void EffectEntityRenderer::render(
 void EffectEntityRenderer::flush(
 	world::WorldContext& worldContext,
 	world::WorldRenderView& worldRenderView,
-	const world::IWorldRenderPass& worldRenderPass,
-	world::Entity* rootEntity
+	const world::IWorldRenderPass& worldRenderPass
 )
 {
 	m_pointRenderer->flush(worldContext.getRenderContext(), worldRenderPass);
@@ -82,10 +81,7 @@ void EffectEntityRenderer::flush(
 	m_trailRenderer->flush(worldContext.getRenderContext(), worldRenderPass);
 }
 
-void EffectEntityRenderer::flush(
-	world::WorldContext& worldContext,
-	world::Entity* rootEntity
-)
+void EffectEntityRenderer::flush(world::WorldContext& worldContext)
 {
 }
 

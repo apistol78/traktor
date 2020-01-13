@@ -44,27 +44,19 @@ void EntityRendererAdapter::render(
 void EntityRendererAdapter::flush(
 	world::WorldContext& worldContext,
 	world::WorldRenderView& worldRenderView,
-	const world::IWorldRenderPass& worldRenderPass,
-	world::Entity* rootEntity
+	const world::IWorldRenderPass& worldRenderPass
 )
 {
 	m_entityRenderer->flush(
 		worldContext,
 		worldRenderView,
-		worldRenderPass,
-		rootEntity
+		worldRenderPass
 	);
 }
 
-void EntityRendererAdapter::flush(
-	world::WorldContext& worldContext,
-	world::Entity* rootEntity
-)
+void EntityRendererAdapter::flush(world::WorldContext& worldContext)
 {
-	m_entityRenderer->flush(
-		worldContext,
-		rootEntity
-	);
+	m_entityRenderer->flush(worldContext);
 }
 
 	}

@@ -278,16 +278,12 @@ void ProbeRenderer::render(
 void ProbeRenderer::flush(
 	WorldContext& worldContext,
 	WorldRenderView& worldRenderView,
-	const IWorldRenderPass& worldRenderPass,
-	Entity* rootEntity
+	const IWorldRenderPass& worldRenderPass
 )
 {
 }
 
-void ProbeRenderer::flush(
-	WorldContext& worldContext,
-	Entity* rootEntity
-)
+void ProbeRenderer::flush(WorldContext& worldContext)
 {
 	render::RenderContext* renderContext = worldContext.getRenderContext();
 	T_ASSERT(renderContext);
@@ -316,7 +312,7 @@ void ProbeRenderer::flush(
 			// Build probe context.
 			m_probeCapturer->build(
 				worldContext.getEntityRenderers(),
-				rootEntity,
+				worldContext.getRootEntity(),
 				m_capture->getTransform().translation().xyz1(),
 				m_captureFace
 			);

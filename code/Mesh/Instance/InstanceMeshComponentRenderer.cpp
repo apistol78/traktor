@@ -57,8 +57,7 @@ void InstanceMeshComponentRenderer::render(
 void InstanceMeshComponentRenderer::flush(
 	world::WorldContext& worldContext,
 	world::WorldRenderView& worldRenderView,
-	const world::IWorldRenderPass& worldRenderPass,
-	world::Entity* rootEntity
+	const world::IWorldRenderPass& worldRenderPass
 )
 {
 	for (SmallMap< InstanceMesh*, AlignedVector< InstanceMesh::RenderInstance > >::iterator i = m_meshInstances.begin(); i != m_meshInstances.end(); ++i)
@@ -78,10 +77,7 @@ void InstanceMeshComponentRenderer::flush(
 	}
 }
 
-void InstanceMeshComponentRenderer::flush(
-	world::WorldContext& worldContext,
-	world::Entity* rootEntity
-)
+void InstanceMeshComponentRenderer::flush(world::WorldContext& worldContext)
 {
 }
 
