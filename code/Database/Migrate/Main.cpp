@@ -37,11 +37,8 @@ int32_t countGroups(db::Group* group)
 	group->getChildGroups(childGroups);
 
 	int32_t localCount = 1;
-	for (RefArray< db::Group >::iterator i = childGroups.begin(); i != childGroups.end(); ++i)
-	{
-		T_ASSERT(*i);
-		localCount += countGroups(*i);
-	}
+	for (auto childGroup : childGroups)
+		localCount += countGroups(childGroup);
 
 	return localCount;
 }
@@ -73,31 +70,31 @@ bool migrateInstance(Ref< db::Instance > sourceInstance, Ref< db::Group > target
 		Ref< db::Instance > targetInstance = targetGroup->createInstance(sourceInstance->getName(), db::CifReplaceExisting, &sourceGuid);
 		if (!targetInstance)
 		{
-			traktor::log::error << L"Failed, unable to create target instance" << Endl;
+			traktor::log::error << L"Failed, unable to create target instance." << Endl;
 			return false;
 		}
 
 		targetInstance->setObject(sourceObject);
 
-		for (std::vector< std::wstring >::iterator j = dataNames.begin(); j != dataNames.end(); ++j)
+		for (const auto& dataName : dataNames)
 		{
-			Ref< IStream > sourceStream = sourceInstance->readData(*j);
+			Ref< IStream > sourceStream = sourceInstance->readData(dataName);
 			if (!sourceStream)
 			{
-				traktor::log::error << L"Failed, unable to open source stream" << Endl;
+				traktor::log::error << L"Failed, unable to open source stream \"" << dataName << L"." << Endl;
 				return false;
 			}
 
-			Ref< IStream > targetStream = targetInstance->writeData(*j);
+			Ref< IStream > targetStream = targetInstance->writeData(dataName);
 			if (!targetStream)
 			{
-				traktor::log::error << L"Failed, unable to open target stream" << Endl;
+				traktor::log::error << L"Failed, unable to open target stream \"" << dataName << L"." << Endl;
 				return false;
 			}
 
 			if (!StreamCopy(targetStream, sourceStream).execute())
 			{
-				traktor::log::error << L"Failed, unable to copy data" << Endl;
+				traktor::log::error << L"Failed, unable to copy data \"" << dataName << L"." << Endl;
 				return false;
 			}
 
@@ -107,7 +104,7 @@ bool migrateInstance(Ref< db::Instance > sourceInstance, Ref< db::Group > target
 
 		if (!targetInstance->commit())
 		{
-			traktor::log::error << L"Failed, unable to commit target instance" << Endl;
+			traktor::log::error << L"Failed, unable to commit target instance," << Endl;
 			return false;
 		}
 	}
@@ -133,12 +130,9 @@ bool migrateGroup(db::Group* targetGroup, db::Group* sourceGroup, int32_t& group
 	RefArray< db::Instance > childInstances;
 	sourceGroup->getChildInstances(childInstances);
 
-	for (RefArray< db::Instance >::iterator i = childInstances.begin(); i != childInstances.end(); ++i)
+	for (auto childInstance : childInstances)
 	{
-		Ref< db::Instance > sourceInstance = *i;
-		T_ASSERT(sourceInstance);
-
-		if (!migrateInstance(sourceInstance, targetGroup))
+		if (!migrateInstance(childInstance, targetGroup))
 			return false;
 	}
 
@@ -147,20 +141,17 @@ bool migrateGroup(db::Group* targetGroup, db::Group* sourceGroup, int32_t& group
 	RefArray< db::Group > childGroups;
 	sourceGroup->getChildGroups(childGroups);
 
-	for (RefArray< db::Group >::iterator i = childGroups.begin(); i != childGroups.end(); ++i)
+	for (auto childGroup : childGroups)
 	{
-		Ref< db::Group > sourceChildGroup = *i;
-		T_ASSERT(sourceChildGroup);
-
-		Ref< db::Group > targetChildGroup = targetGroup->getGroup(sourceChildGroup->getName());
+		Ref< db::Group > targetChildGroup = targetGroup->getGroup(childGroup->getName());
 		if (!targetChildGroup)
 		{
-			targetChildGroup = targetGroup->createGroup(sourceChildGroup->getName());
+			targetChildGroup = targetGroup->createGroup(childGroup->getName());
 			if (!targetChildGroup)
 				return false;
 		}
 
-		if (!migrateGroup(targetChildGroup, sourceChildGroup, groupIndex, groupCount))
+		if (!migrateGroup(targetChildGroup, childGroup, groupIndex, groupCount))
 			return false;
 	}
 
@@ -179,17 +170,14 @@ bool createMigrationJobs(db::Group* targetGroup, db::Group* sourceGroup, RefArra
 	RefArray< db::Instance > childInstances;
 	sourceGroup->getChildInstances(childInstances);
 
-	for (RefArray< db::Instance >::iterator i = childInstances.begin(); i != childInstances.end(); ++i)
+	for (auto childInstance : childInstances)
 	{
-		Ref< db::Instance > sourceInstance = *i;
-		T_ASSERT(sourceInstance);
-
+		Ref< db::Instance > sourceInstance = childInstance;
 		Ref< Job > job = JobManager::getInstance().add(makeFunctor(
 			[=] () {
 				migrateInstance(sourceInstance, targetGroup);
 			}
 		));
-
 		if (job)
 			outJobs.push_back(job);
 	}
@@ -197,20 +185,17 @@ bool createMigrationJobs(db::Group* targetGroup, db::Group* sourceGroup, RefArra
 	RefArray< db::Group > childGroups;
 	sourceGroup->getChildGroups(childGroups);
 
-	for (RefArray< db::Group >::iterator i = childGroups.begin(); i != childGroups.end(); ++i)
+	for (auto childGroup : childGroups)
 	{
-		Ref< db::Group > sourceChildGroup = *i;
-		T_ASSERT(sourceChildGroup);
-
-		Ref< db::Group > targetChildGroup = targetGroup->getGroup(sourceChildGroup->getName());
+		Ref< db::Group > targetChildGroup = targetGroup->getGroup(childGroup->getName());
 		if (!targetChildGroup)
 		{
-			targetChildGroup = targetGroup->createGroup(sourceChildGroup->getName());
+			targetChildGroup = targetGroup->createGroup(childGroup->getName());
 			if (!targetChildGroup)
 				return false;
 		}
 
-		if (!createMigrationJobs(targetChildGroup, sourceChildGroup, outJobs))
+		if (!createMigrationJobs(targetChildGroup, childGroup, outJobs))
 			return false;
 	}
 
@@ -237,10 +222,7 @@ Ref< PropertyGroup > loadSettings(const std::wstring& settingsFile)
 	}
 
 	if (settings)
-	{
-		traktor::log::info << L"Using configuration \"" << userConfig << L"\"" << Endl;
 		return settings;
-	}
 
 	if ((file = FileSystem::getInstance().open(globalConfig, File::FmRead)) != 0)
 	{
@@ -248,13 +230,7 @@ Ref< PropertyGroup > loadSettings(const std::wstring& settingsFile)
 		file->close();
 	}
 
-	if (settings)
-	{
-		traktor::log::info << L"Using configuration \"" << globalConfig << L"\"" << Endl;
-		return settings;
-	}
-
-	return 0;
+	return settings;
 }
 
 }
@@ -264,10 +240,9 @@ int main(int argc, const char** argv)
 	CommandLine cmdLine(argc, argv);
 	Ref< traktor::IStream > logFile;
 
-	traktor::log::info << L"Database Migration Tool; Built '" << mbstows(__TIME__) << L" - " << mbstows(__DATE__) << L"'" << Endl;
-
 	if (!cmdLine.hasOption('s', L"settings") && cmdLine.getCount() < 2)
 	{
+		traktor::log::info << L"Database Migration Tool; Built '" << mbstows(__TIME__) << L" - " << mbstows(__DATE__) << L"'" << Endl;
 		traktor::log::info << L"Usage: Traktor.Database.Migrate.App [source database] [destination database] (module)*" << Endl;
 		traktor::log::info << L"       Traktor.Database.Migrate.App -s|-settings=[settings]" << Endl;
 		traktor::log::info << L"       -s|-settings    Settings (default \"Traktor.Editor\")" << Endl;
@@ -275,6 +250,11 @@ int main(int argc, const char** argv)
 		traktor::log::info << L"       -sequential     Migrate sequentially" << Endl;
 		return 0;
 	}
+
+	bool verbose = cmdLine.hasOption('v', L"verbose");
+
+	if (verbose)
+		traktor::log::info << L"Database Migration Tool; Built '" << mbstows(__TIME__) << L" - " << mbstows(__DATE__) << L"'" << Endl;
 
 	std::wstring sourceCs;
 	std::wstring destinationCs;
@@ -292,10 +272,11 @@ int main(int argc, const char** argv)
 			traktor::log::warning.setGlobalTarget(new LogRedirectTarget(logStreamTarget, traktor::log::warning.getGlobalTarget()));
 			traktor::log::error  .setGlobalTarget(new LogRedirectTarget(logStreamTarget, traktor::log::error  .getGlobalTarget()));
 
-			traktor::log::info << L"Log file \"" << logPath << L"\" created" << Endl;
+			if (verbose)
+				traktor::log::info << L"Log file \"" << logPath << L"\" created." << Endl;
 		}
 		else
-			traktor::log::error << L"Unable to create log file; logging only to std pipes" << Endl;
+			traktor::log::error << L"Unable to create log file; logging only to std pipes." << Endl;
 	}
 
 	// Either read configuration from settings file or from command line.
@@ -306,7 +287,7 @@ int main(int argc, const char** argv)
 		Ref< PropertyGroup > settings = loadSettings(settingsFile);
 		if (!settings)
 		{
-			traktor::log::error << L"Unable to load migrate settings \"" << settingsFile << L"\"" << Endl;
+			traktor::log::error << L"Unable to load migrate settings \"" << settingsFile << L"\"." << Endl;
 			return 1;
 		}
 
@@ -314,12 +295,12 @@ int main(int argc, const char** argv)
 		std::set< std::wstring > modules = settings->getProperty< std::set< std::wstring > >(L"Migrate.Modules");
 
 		std::vector< Path > modulePathsFlatten(modulePaths.begin(), modulePaths.end());
-		for (std::set< std::wstring >::const_iterator i = modules.begin(); i != modules.end(); ++i)
+		for (const auto& module : modules)
 		{
 			Library library;
-			if (!library.open(*i, modulePathsFlatten, true))
+			if (!library.open(module, modulePathsFlatten, true))
 			{
-				traktor::log::error << L"Unable to load module \"" << *i << L"\"" << Endl;
+				traktor::log::error << L"Unable to load module \"" << module << L"\"." << Endl;
 				return 2;
 			}
 			library.detach();
@@ -335,7 +316,7 @@ int main(int argc, const char** argv)
 			Library library;
 			if (!library.open(cmdLine.getString(i)))
 			{
-				traktor::log::error << L"Unable to load module \"" << cmdLine.getString(i) << L"\"" << Endl;
+				traktor::log::error << L"Unable to load module \"" << cmdLine.getString(i) << L"\"." << Endl;
 				return 2;
 			}
 			library.detach();
@@ -346,19 +327,23 @@ int main(int argc, const char** argv)
 	}
 
 	// Open databases.
-	traktor::log::info << L"Opening source database \"" << sourceCs << L"\"..." << Endl;
+	if (verbose)
+		traktor::log::info << L"Opening source database \"" << sourceCs << L"\"..." << Endl;
+
 	Ref< db::Database > sourceDb = new db::Database();
 	if (!sourceDb->open(sourceCs))
 	{
-		traktor::log::error << L"Unable to open source database \"" << sourceCs << L"\"" << Endl;
+		traktor::log::error << L"Unable to open source database \"" << sourceCs << L"\"." << Endl;
 		return 3;
 	}
 
-	traktor::log::info << L"Opening destination database \"" << destinationCs << L"\"..." << Endl;
+	if (verbose)
+		traktor::log::info << L"Opening destination database \"" << destinationCs << L"\"..." << Endl;
+
 	Ref< db::Database > destinationDb = new db::Database();
 	if (!destinationDb->create(destinationCs))
 	{
-		traktor::log::error << L"Unable to create destination database \"" << destinationCs << L"\"" << Endl;
+		traktor::log::error << L"Unable to create destination database \"" << destinationCs << L"\"." << Endl;
 		return 4;
 	}
 
@@ -369,14 +354,18 @@ int main(int argc, const char** argv)
 	{
 		if (!cmdLine.hasOption(L"sequential"))
 		{
-			traktor::log::info << L"Migration begin, creating jobs..." << Endl;
+			if (verbose)
+				traktor::log::info << L"Migration begin, creating jobs..." << Endl;
 
 			RefArray< Job > jobs;
 			if (!createMigrationJobs(targetGroup, sourceGroup, jobs))
 				return 5;
 
 			int32_t njobs = int32_t(jobs.size());
-			traktor::log::info << L"Waiting for " << njobs << L" job(s) to complete..." << Endl;
+
+			if (verbose)
+				traktor::log::info << L"Waiting for " << njobs << L" job(s) to complete..." << Endl;
+
 			while (!jobs.empty())
 			{
 				log::info << L":" << (njobs - int32_t(jobs.size())) << L":" << njobs << Endl;
@@ -386,20 +375,24 @@ int main(int argc, const char** argv)
 		}
 		else
 		{
-			traktor::log::info << L"Migration begin, counting groups..." << Endl;
+			if (verbose)
+				traktor::log::info << L"Migration begin, counting groups..." << Endl;
 
 			// Count number of groups; quicker than number of instances but
 			// should be sufficient for progress information.
 			int32_t groupIndex = 0;
 			int32_t groupCount = countGroups(sourceGroup);
 
-			traktor::log::info << L"Migrating " << groupCount << L" group(s)..." << Endl;
+			if (verbose)
+				traktor::log::info << L"Migrating " << groupCount << L" group(s)..." << Endl;
+
 			if (!migrateGroup(targetGroup, sourceGroup, groupIndex, groupCount))
 				return 5;
 		}
 	}
 
-	traktor::log::info << L"Migration complete" << Endl;
+	if (verbose)
+		traktor::log::info << L"Migration complete." << Endl;
 
 	// Close database connections.
 	destinationDb->close();
@@ -408,13 +401,13 @@ int main(int argc, const char** argv)
 	// Close log file if being recorded.
 	if (logFile)
 	{
-		traktor::log::info.setBuffer(0);
-		traktor::log::warning.setBuffer(0);
-		traktor::log::error.setBuffer(0);
-		traktor::log::debug.setBuffer(0);
+		traktor::log::info.setBuffer(nullptr);
+		traktor::log::warning.setBuffer(nullptr);
+		traktor::log::error.setBuffer(nullptr);
+		traktor::log::debug.setBuffer(nullptr);
 
 		logFile->close();
-		logFile = 0;
+		logFile = nullptr;
 	}
 
 	return 0;
