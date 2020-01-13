@@ -115,15 +115,15 @@
 				</second>
 			</item>
 			<item>
-				<first>TexturePipeline.ClampSize</first>
-				<second type="traktor.PropertyInteger">
-					<value>512</value>
+				<first>TerrainPipeline.SuppressDetailShader</first>
+				<second type="traktor.PropertyBoolean">
+					<value>true</value>
 				</second>
 			</item>
 			<item>
 				<first>TexturePipeline.CompressionMethod</first>
 				<second type="traktor.PropertyString">
-					<value>PVRTC</value>
+					<value>ETC1</value>
 				</second>
 			</item>
 			<item>
