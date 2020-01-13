@@ -1,9 +1,6 @@
 #pragma once
 
 #include "Core/Object.h"
-#include "Core/Ref.h"
-#include "Core/Math/Frustum.h"
-#include "Core/Math/Matrix44.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -26,7 +23,6 @@ class RenderContext;
 	{
 
 class Entity;
-class IEntityRenderer;
 class IWorldRenderPass;
 class WorldEntityRenderers;
 class WorldRenderView;
@@ -52,10 +48,8 @@ public:
 	render::RenderContext* getRenderContext() const { return m_renderContext; }
 
 private:
-	Ref< WorldEntityRenderers > m_entityRenderers;
-	Ref< render::RenderContext > m_renderContext;
-	const TypeInfo* m_lastRenderableType;
-	IEntityRenderer* m_lastRenderer;
+	WorldEntityRenderers* m_entityRenderers;
+	render::RenderContext* m_renderContext;
 };
 
 	}

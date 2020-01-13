@@ -431,13 +431,6 @@ bool WorldRendererForward::create(
 			return false;
 	}
 
-	// Allocate contexts.
-	for (auto& frame : m_frames)
-	{
-		frame.renderContext = new render::RenderContext(1 * 1024 * 1024);
-		frame.worldContext = new WorldContext(desc.entityRenderers, frame.renderContext);
-	}
-
 	// Determine slice distances.
 	const auto& shadowSettings = m_settings.shadowSettings[m_shadowsQuality];
 	for (int32_t i = 0; i < shadowSettings.cascadingSlices; ++i)
@@ -448,7 +441,12 @@ bool WorldRendererForward::create(
 	}
 	m_slicePositions[shadowSettings.cascadingSlices] = shadowSettings.farZ;
 
+	m_entityRenderers = desc.entityRenderers;
 	m_rootEntity = new GroupEntity();
+
+	for (auto& frame : m_frames)
+		frame.renderContext = new render::RenderContext(1 * 1024 * 1024);
+
 	m_count = 0;
 	return true;
 }
@@ -456,11 +454,8 @@ bool WorldRendererForward::create(
 void WorldRendererForward::destroy()
 {
 	for (auto& frame : m_frames)
-	{
-		frame.renderContext = nullptr;
-		frame.worldContext = nullptr;
 		safeDestroy(frame.lightSBuffer);
-	}
+	m_frames.clear();
 
 	safeDestroy(m_toneMapImageProcess);
 	safeDestroy(m_gammaCorrectionImageProcess);
@@ -478,19 +473,24 @@ void WorldRendererForward::attach(Entity* entity)
 
 void WorldRendererForward::build(WorldRenderView& worldRenderView, int32_t frame)
 {
-	Frame& f = m_frames[frame];
+	WorldContext wc(
+		m_entityRenderers,
+		m_frames[frame].renderContext
+	);
 
-	f.renderContext->flush();
+	// Ensure no lights in view.
+	worldRenderView.resetLights();
+
+	// Reset render context by flushing it.
+	wc.getRenderContext()->flush();
 
 	// \tbd Flush all entity renderers first, only used by probes atm and need to render to targets.
 	// Until we have RenderGraph properly implemented we need to make sure
 	// rendering probes doesn't nest render passes.
-	f.worldContext->flush(m_rootEntity);
-	f.renderContext->merge(render::RpAll);
+	wc.flush(m_rootEntity);
+	wc.getRenderContext()->merge(render::RpAll);
 
-	// \tbd Improve light iteration... 
-	worldRenderView.resetLights();
-
+	// Build each pass one by one.
 	buildBeginFrame(worldRenderView, frame);
 	buildGBuffer(worldRenderView, frame);
 	buildAmbientOcclusion(worldRenderView, frame);
@@ -504,8 +504,7 @@ void WorldRendererForward::build(WorldRenderView& worldRenderView, int32_t frame
 
 void WorldRendererForward::render(render::IRenderView* renderView, int32_t frame)
 {
-	Frame& f = m_frames[frame];
-	f.renderContext->render(renderView);
+	m_frames[frame].renderContext->render(renderView);
 }
 
 render::ImageProcess* WorldRendererForward::getVisualImageProcess()
@@ -552,30 +551,36 @@ void WorldRendererForward::getDebugTargets(std::vector< render::DebugTarget >& o
 
 void WorldRendererForward::buildBeginFrame(WorldRenderView& worldRenderView, int32_t frame)
 {
-	// \tbd Pass as argument...
-	const Color4f clearColor(0.0f, 0.0f, 0.0f, 1.0f);
-
-	Frame& f = m_frames[frame];
+	WorldContext wc(
+		m_entityRenderers,
+		m_frames[frame].renderContext
+	);
 
 	if (!m_visualTargetSet)
 		return;
 
-	auto tb = f.renderContext->alloc< render::TargetBeginRenderBlock >();
+	// \tbd Pass as argument...
+	const Color4f clearColor(0.0f, 0.0f, 0.0f, 1.0f);
+
+	auto tb = wc.getRenderContext()->alloc< render::TargetBeginRenderBlock >();
 	tb->renderTargetSet = m_visualTargetSet;
 	tb->renderTargetIndex = 0;
 	tb->clear.mask = render::CfColor | render::CfDepth;
 	tb->clear.colors[0] = clearColor;
 	tb->clear.depth = 1.0f;
-	f.renderContext->enqueue(tb);
+	wc.getRenderContext()->enqueue(tb);
 }
 
 void WorldRendererForward::buildGBuffer(WorldRenderView& worldRenderView, int32_t frame)
 {
-	Frame& f = m_frames[frame];
+	WorldContext wc(
+		m_entityRenderers,
+		m_frames[frame].renderContext
+	);
 
 	const float clearZ = m_settings.viewFarZ;
 
-	auto tb = f.renderContext->alloc< render::TargetBeginRenderBlock >();
+	auto tb = wc.getRenderContext()->alloc< render::TargetBeginRenderBlock >();
 	tb->renderTargetSet = m_gbufferTargetSet;
 	tb->renderTargetIndex = -1;
 	tb->clear.mask = render::CfColor | render::CfDepth;
@@ -583,13 +588,13 @@ void WorldRendererForward::buildGBuffer(WorldRenderView& worldRenderView, int32_
 	tb->clear.colors[1] = Color4f(0.0f, 0.0f, 1.0f, 0.0f);	// normal
 	tb->clear.colors[2] = Color4f(1.0f, 1.0f, 1.0f, 1.0f);	// ao
 	tb->clear.depth = 1.0f;
-	f.renderContext->enqueue(tb);
+	wc.getRenderContext()->enqueue(tb);
 
-	auto sharedParams = f.renderContext->alloc< render::ProgramParameters >();
-	sharedParams->beginParameters(f.renderContext);
+	auto sharedParams = wc.getRenderContext()->alloc< render::ProgramParameters >();
+	sharedParams->beginParameters(wc.getRenderContext());
 	sharedParams->setFloatParameter(s_handleTime, worldRenderView.getTime());
 	sharedParams->setMatrixParameter(s_handleProjection, worldRenderView.getProjection());
-	sharedParams->endParameters(f.renderContext);
+	sharedParams->endParameters(wc.getRenderContext());
 
 	WorldRenderPassForward pass(
 		s_techniqueForwardGBufferWrite,
@@ -601,27 +606,30 @@ void WorldRendererForward::buildGBuffer(WorldRenderView& worldRenderView, int32_
 		nullptr
 	);
 
-	T_ASSERT(!f.renderContext->havePendingDraws());
-	f.worldContext->build(worldRenderView, pass, m_rootEntity);
-	f.worldContext->flush(worldRenderView, pass, m_rootEntity);
-	f.renderContext->merge(render::RpAll);
+	T_ASSERT(!wc.getRenderContext()->havePendingDraws());
+	wc.build(worldRenderView, pass, m_rootEntity);
+	wc.flush(worldRenderView, pass, m_rootEntity);
+	wc.getRenderContext()->merge(render::RpAll);
 
-	auto te = f.renderContext->alloc< render::TargetEndRenderBlock >();
-	f.renderContext->enqueue(te);
+	auto te = wc.getRenderContext()->alloc< render::TargetEndRenderBlock >();
+	wc.getRenderContext()->enqueue(te);
 }
 
 void WorldRendererForward::buildAmbientOcclusion(WorldRenderView& worldRenderView, int32_t frame)
 {
-	Frame& f = m_frames[frame];
+	WorldContext wc(
+		m_entityRenderers,
+		m_frames[frame].renderContext
+	);
 
 	if (!m_ambientOcclusion)
 		return;
 
-	auto tb = f.renderContext->alloc< render::TargetBeginRenderBlock >();
+	auto tb = wc.getRenderContext()->alloc< render::TargetBeginRenderBlock >();
 	tb->renderTargetSet = m_gbufferTargetSet;
 	tb->renderTargetIndex = 2;
 	tb->clear.mask = 0;
-	f.renderContext->enqueue(tb);
+	wc.getRenderContext()->enqueue(tb);
 
 	render::ImageProcessStep::Instance::RenderParams params;
 	params.viewFrustum = worldRenderView.getViewFrustum();
@@ -629,7 +637,7 @@ void WorldRendererForward::buildAmbientOcclusion(WorldRenderView& worldRenderVie
 	params.projection = worldRenderView.getProjection();
 	params.deltaTime = 0.0f;
 
-	auto lrb = f.renderContext->alloc< render::LambdaRenderBlock >();
+	auto lrb = wc.getRenderContext()->alloc< render::LambdaRenderBlock >();
 	lrb->lambda = [&, params](render::IRenderView* renderView)
 	{
 		m_ambientOcclusion->render(
@@ -642,15 +650,18 @@ void WorldRendererForward::buildAmbientOcclusion(WorldRenderView& worldRenderVie
 			params
 		);
 	};
-	f.renderContext->enqueue(lrb);
+	wc.getRenderContext()->enqueue(lrb);
 
-	auto te = f.renderContext->alloc< render::TargetEndRenderBlock >();
-	f.renderContext->enqueue(te);
+	auto te = wc.getRenderContext()->alloc< render::TargetEndRenderBlock >();
+	wc.getRenderContext()->enqueue(te);
 }
 
 void WorldRendererForward::buildLights(WorldRenderView& worldRenderView, int32_t frame)
 {
-	Frame& f = m_frames[frame];
+	WorldContext wc(
+		m_entityRenderers,
+		m_frames[frame].renderContext
+	);
 
 	Matrix44 view = worldRenderView.getView();
 	Matrix44 viewInverse = worldRenderView.getView().inverse();
@@ -658,7 +669,7 @@ void WorldRendererForward::buildLights(WorldRenderView& worldRenderView, int32_t
 
 	bool shadowsEnable = (bool)(m_shadowsQuality != QuDisabled);
 
-	LightShaderData* lightShaderData = (LightShaderData*)f.lightSBuffer->lock();
+	LightShaderData* lightShaderData = (LightShaderData*)m_frames[frame].lightSBuffer->lock();
 	T_FATAL_ASSERT(lightShaderData != nullptr);
 
 	int32_t atlasIndex = 0;
@@ -679,12 +690,12 @@ void WorldRendererForward::buildLights(WorldRenderView& worldRenderView, int32_t
 		{
 			const auto& shadowSettings = m_settings.shadowSettings[m_shadowsQuality];
 
-			auto tb = f.renderContext->alloc< render::TargetBeginRenderBlock >();
+			auto tb = wc.getRenderContext()->alloc< render::TargetBeginRenderBlock >();
 			tb->renderTargetSet = m_shadowCascadeTargetSet;
 			tb->renderTargetIndex = -1;
 			tb->clear.mask = render::CfDepth;
 			tb->clear.depth = 1.0f;
-			f.renderContext->enqueue(tb);
+			wc.getRenderContext()->enqueue(tb);
 
 			for (int32_t slice = 0; slice < shadowSettings.cascadingSlices; ++slice)
 			{
@@ -727,7 +738,7 @@ void WorldRendererForward::buildLights(WorldRenderView& worldRenderView, int32_t
 				);
 
 				// Set viewport to current cascade.
-				auto svrb = f.renderContext->alloc< render::SetViewportRenderBlock >();
+				auto svrb = wc.getRenderContext()->alloc< render::SetViewportRenderBlock >();
 				svrb->viewport = render::Viewport(
 					0,
 					slice * 1024,
@@ -736,16 +747,16 @@ void WorldRendererForward::buildLights(WorldRenderView& worldRenderView, int32_t
 					0.0f,
 					1.0f
 				);
-				f.renderContext->enqueue(svrb);	
+				wc.getRenderContext()->enqueue(svrb);	
 
 				// Render entities into shadow map.
-				auto sharedParams = f.renderContext->alloc< render::ProgramParameters >();
-				sharedParams->beginParameters(f.renderContext);
+				auto sharedParams = wc.getRenderContext()->alloc< render::ProgramParameters >();
+				sharedParams->beginParameters(wc.getRenderContext());
 				sharedParams->setFloatParameter(s_handleTime, worldRenderView.getTime());
 				sharedParams->setMatrixParameter(s_handleView, shadowLightView);
 				sharedParams->setMatrixParameter(s_handleViewInverse, shadowLightView.inverse());
 				sharedParams->setMatrixParameter(s_handleProjection, shadowLightProjection);
-				sharedParams->endParameters(f.renderContext);
+				sharedParams->endParameters(wc.getRenderContext());
 
 				WorldRenderPassForward shadowPass(
 					s_techniqueShadow,
@@ -757,10 +768,10 @@ void WorldRendererForward::buildLights(WorldRenderView& worldRenderView, int32_t
 					nullptr
 				);
 
-				T_ASSERT(!f.renderContext->havePendingDraws());
-				f.worldContext->build(shadowRenderView, shadowPass, m_rootEntity);
-				f.worldContext->flush(shadowRenderView, shadowPass, m_rootEntity);
-				f.renderContext->merge(render::RpAll);
+				T_ASSERT(!wc.getRenderContext()->havePendingDraws());
+				wc.build(shadowRenderView, shadowPass, m_rootEntity);
+				wc.flush(shadowRenderView, shadowPass, m_rootEntity);
+				wc.getRenderContext()->merge(render::RpAll);
 
 				// Write transposed matrix to shaders as shaders have row-major order.
 				Matrix44 viewToLightSpace = shadowLightProjection * shadowLightView * viewInverse;
@@ -779,8 +790,8 @@ void WorldRendererForward::buildLights(WorldRenderView& worldRenderView, int32_t
 				).storeUnaligned(lightShaderData->atlasTransform);
 			}
 
-			auto te = f.renderContext->alloc< render::TargetEndRenderBlock >();
-			f.renderContext->enqueue(te);
+			auto te = wc.getRenderContext()->alloc< render::TargetEndRenderBlock >();
+			wc.getRenderContext()->enqueue(te);
 		}
 		else if (shadowsEnable && light.castShadow && light.type == LtSpot)
 		{
@@ -823,15 +834,15 @@ void WorldRendererForward::buildLights(WorldRenderView& worldRenderView, int32_t
 			);
 
 			// Bind atlas shadow map.
-			auto tb = f.renderContext->alloc< render::TargetBeginRenderBlock >();
+			auto tb = wc.getRenderContext()->alloc< render::TargetBeginRenderBlock >();
 			tb->renderTargetSet = m_shadowAtlasTargetSet;
 			tb->renderTargetIndex = -1;
 			tb->clear.mask = render::CfDepth;
 			tb->clear.depth = 1.0f;
-			f.renderContext->enqueue(tb);
+			wc.getRenderContext()->enqueue(tb);
 
 			// Set viewport to light atlas slot.
-			auto svrb = f.renderContext->alloc< render::SetViewportRenderBlock >();
+			auto svrb = wc.getRenderContext()->alloc< render::SetViewportRenderBlock >();
 			svrb->viewport = render::Viewport(
 				(atlasIndex & 3) * 1024,
 				(atlasIndex / 4) * 1024,
@@ -840,16 +851,16 @@ void WorldRendererForward::buildLights(WorldRenderView& worldRenderView, int32_t
 				0.0f,
 				1.0f
 			);
-			f.renderContext->enqueue(svrb);	
+			wc.getRenderContext()->enqueue(svrb);	
 
 			// Render entities into shadow map.
-			auto sharedParams = f.renderContext->alloc< render::ProgramParameters >();
-			sharedParams->beginParameters(f.renderContext);
+			auto sharedParams = wc.getRenderContext()->alloc< render::ProgramParameters >();
+			sharedParams->beginParameters(wc.getRenderContext());
 			sharedParams->setFloatParameter(s_handleTime, worldRenderView.getTime());
 			sharedParams->setMatrixParameter(s_handleView, shadowLightView);
 			sharedParams->setMatrixParameter(s_handleViewInverse, shadowLightView.inverse());
 			sharedParams->setMatrixParameter(s_handleProjection, shadowLightProjection);
-			sharedParams->endParameters(f.renderContext);
+			sharedParams->endParameters(wc.getRenderContext());
 
 			WorldRenderPassForward shadowPass(
 				s_techniqueShadow,
@@ -861,14 +872,14 @@ void WorldRendererForward::buildLights(WorldRenderView& worldRenderView, int32_t
 				nullptr
 			);
 
-			T_ASSERT(!f.renderContext->havePendingDraws());
-			f.worldContext->build(shadowRenderView, shadowPass, m_rootEntity);
-			f.worldContext->flush(shadowRenderView, shadowPass, m_rootEntity);
-			f.renderContext->merge(render::RpAll);
+			T_ASSERT(!wc.getRenderContext()->havePendingDraws());
+			wc.build(shadowRenderView, shadowPass, m_rootEntity);
+			wc.flush(shadowRenderView, shadowPass, m_rootEntity);
+			wc.getRenderContext()->merge(render::RpAll);
 
 			// Unbind atlas shadow map.
-			auto te = f.renderContext->alloc< render::TargetEndRenderBlock >();
-			f.renderContext->enqueue(te);
+			auto te = wc.getRenderContext()->alloc< render::TargetEndRenderBlock >();
+			wc.getRenderContext()->enqueue(te);
 
 			// Write transposed matrix to shaders as shaders have row-major order.
 			Matrix44 viewToLightSpace = shadowLightProjection * shadowLightView * viewInverse;
@@ -899,31 +910,34 @@ void WorldRendererForward::buildLights(WorldRenderView& worldRenderView, int32_t
 		++lightShaderData;
 	}
 
-	f.lightSBuffer->unlock();
-	f.lightCount = worldRenderView.getLightCount();
+	m_frames[frame].lightSBuffer->unlock();
+	m_frames[frame].lightCount = worldRenderView.getLightCount();
 
 	worldRenderView.resetLights();
 }
 
 void WorldRendererForward::buildVisual(WorldRenderView& worldRenderView, int32_t frame)
 {
-	Frame& f = m_frames[frame];
+	WorldContext wc(
+		m_entityRenderers,
+		m_frames[frame].renderContext
+	);
 
 	bool shadowsEnable = (bool)(m_shadowsQuality != QuDisabled);
 
-	auto sharedParams = f.renderContext->alloc< render::ProgramParameters >();
-	sharedParams->beginParameters(f.renderContext);
+	auto sharedParams = wc.getRenderContext()->alloc< render::ProgramParameters >();
+	sharedParams->beginParameters(wc.getRenderContext());
 	sharedParams->setFloatParameter(s_handleTime, worldRenderView.getTime());
 	sharedParams->setMatrixParameter(s_handleProjection, worldRenderView.getProjection());
-	sharedParams->endParameters(f.renderContext);
+	sharedParams->endParameters(wc.getRenderContext());
 
 	WorldRenderPassForward defaultPass(
 		s_techniqueForwardColor,
 		sharedParams,
 		IWorldRenderPass::PfLast,
 		worldRenderView.getView(),
-		f.lightSBuffer,
-		f.lightCount,
+		m_frames[frame].lightSBuffer,
+		m_frames[frame].lightCount,
 		m_settings.fog,
 		m_settings.fogDistanceY,
 		m_settings.fogDistanceZ,
@@ -937,21 +951,24 @@ void WorldRendererForward::buildVisual(WorldRenderView& worldRenderView, int32_t
 		shadowsEnable ? m_shadowAtlasTargetSet->getDepthTexture() : nullptr
 	);
 
-	T_ASSERT(!f.renderContext->havePendingDraws());
-	f.worldContext->build(worldRenderView, defaultPass, m_rootEntity);
-	f.worldContext->flush(worldRenderView, defaultPass, m_rootEntity);
-	f.renderContext->merge(render::RpAll);
+	T_ASSERT(!wc.getRenderContext()->havePendingDraws());
+	wc.build(worldRenderView, defaultPass, m_rootEntity);
+	wc.flush(worldRenderView, defaultPass, m_rootEntity);
+	wc.getRenderContext()->merge(render::RpAll);
 }
 
 void WorldRendererForward::buildEndFrame(WorldRenderView& worldRenderView, int32_t frame)
 {
-	Frame& f = m_frames[frame];
+	WorldContext wc(
+		m_entityRenderers,
+		m_frames[frame].renderContext
+	);
 
 	if (!m_visualTargetSet)
 		return;
 
-	auto te = f.renderContext->alloc< render::TargetEndRenderBlock >();
-	f.renderContext->enqueue(te);
+	auto te = wc.getRenderContext()->alloc< render::TargetEndRenderBlock >();
+	wc.getRenderContext()->enqueue(te);
 
 	render::ImageProcessStep::Instance::RenderParams params;
 	params.viewFrustum = worldRenderView.getViewFrustum();
@@ -980,14 +997,14 @@ void WorldRendererForward::buildEndFrame(WorldRenderView& worldRenderView, int32
 		bool haveNext = bool((i + 1) < processes.size());
 		if (haveNext)
 		{
-			auto tb = f.renderContext->alloc< render::TargetBeginRenderBlock >();
+			auto tb = wc.getRenderContext()->alloc< render::TargetBeginRenderBlock >();
 			tb->renderTargetSet = outputTargetSet;
 			tb->renderTargetIndex = -1;
 			tb->clear.mask = 0;
-			f.renderContext->enqueue(tb);
+			wc.getRenderContext()->enqueue(tb);
 		}
 
-		auto lrb = f.renderContext->alloc< render::LambdaRenderBlock >();
+		auto lrb = wc.getRenderContext()->alloc< render::LambdaRenderBlock >();
 		lrb->lambda = [&, process, sourceTargetSet, params](render::IRenderView* renderView)
 		{
 			process->render(
@@ -1000,12 +1017,12 @@ void WorldRendererForward::buildEndFrame(WorldRenderView& worldRenderView, int32
 				params
 			);
 		};
-		f.renderContext->enqueue(lrb);
+		wc.getRenderContext()->enqueue(lrb);
 
 		if (haveNext)
 		{
-			auto te = f.renderContext->alloc< render::TargetEndRenderBlock >();
-			f.renderContext->enqueue(te);
+			auto te = wc.getRenderContext()->alloc< render::TargetEndRenderBlock >();
+			wc.getRenderContext()->enqueue(te);
 
 			std::swap(sourceTargetSet, outputTargetSet);
 		}

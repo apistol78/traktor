@@ -35,7 +35,7 @@ class GroupEntity;
 class IrradianceGrid;
 class IShadowProjection;
 class LightRendererDeferred;
-class WorldContext;
+class WorldEntityRenderers;
 
 /*! World renderer, using deferred rendering method.
  * \ingroup World
@@ -77,10 +77,9 @@ private:
 	struct Frame
 	{
 		Ref< render::RenderContext > renderContext;
-		Ref< WorldContext > worldContext;
-		AlignedVector< Light > lights;
 		Ref< render::StructBuffer > lightSBuffer;
 		Ref< render::StructBuffer > tileSBuffer;
+		int32_t lightCount;
 	};
 
 	WorldRenderSettings m_settings;
@@ -119,9 +118,11 @@ private:
 	Ref< LightRendererDeferred > m_lightRenderer;
 
 	resource::Proxy< IrradianceGrid > m_irradianceGrid;
+	
+	Ref< WorldEntityRenderers > m_entityRenderers;
 	Ref< GroupEntity > m_rootEntity;
-	AutoArrayPtr< Frame > m_frames;
-	uint32_t m_frameCount;
+	AlignedVector< Frame > m_frames;
+
 	float m_slicePositions[MaxSliceCount + 1];
 	Vector4 m_fogDistanceAndDensity;
 	Vector4 m_fogColor;
