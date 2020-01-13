@@ -64,14 +64,10 @@ public:
 	virtual void flush(
 		WorldContext& worldContext,
 		WorldRenderView& worldRenderView,
-		const IWorldRenderPass& worldRenderPass,
-		Entity* rootEntity
+		const IWorldRenderPass& worldRenderPass
 	) override final;
 
-	void flush(
-		WorldContext& worldContext,
-		Entity* rootEntity
-	) override final;
+	void flush(WorldContext& worldContext) override final;
 
 private:
 	Ref< ProbeCapturer > m_probeCapturer;

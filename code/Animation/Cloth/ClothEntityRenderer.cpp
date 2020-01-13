@@ -27,16 +27,12 @@ void ClothEntityRenderer::render(
 void ClothEntityRenderer::flush(
 	world::WorldContext& worldContext,
 	world::WorldRenderView& worldRenderView,
-	const world::IWorldRenderPass& worldRenderPass,
-	world::Entity* rootEntity
+	const world::IWorldRenderPass& worldRenderPass
 )
 {
 }
 
-void ClothEntityRenderer::flush(
-	world::WorldContext& worldContext,
-	world::Entity* rootEntity
-)
+void ClothEntityRenderer::flush(world::WorldContext& worldContext)
 {
 }
 

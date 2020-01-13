@@ -27,16 +27,12 @@ void PathEntityRenderer::render(
 void PathEntityRenderer::flush(
 	world::WorldContext& worldContext,
 	world::WorldRenderView& worldRenderView,
-	const world::IWorldRenderPass& worldRenderPass,
-	world::Entity* rootEntity
+	const world::IWorldRenderPass& worldRenderPass
 )
 {
 }
 
-void PathEntityRenderer::flush(
-	world::WorldContext& worldContext,
-	world::Entity* rootEntity
-)
+void PathEntityRenderer::flush(world::WorldContext& worldContext)
 {
 }
 

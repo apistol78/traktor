@@ -30,16 +30,12 @@ void ComponentEntityRenderer::render(
 void ComponentEntityRenderer::flush(
 	WorldContext& worldContext,
 	WorldRenderView& worldRenderView,
-	const IWorldRenderPass& worldRenderPass,
-	Entity* rootEntity
+	const IWorldRenderPass& worldRenderPass
 )
 {
 }
 
-void ComponentEntityRenderer::flush(
-	WorldContext& worldContext,
-	Entity* rootEntity
-)
+void ComponentEntityRenderer::flush(WorldContext& worldContext)
 {
 }
 

@@ -66,7 +66,8 @@ void WorldRendererSimple::build(WorldRenderView& worldRenderView, int32_t frame)
 {
 	WorldContext wc(
 		m_entityRenderers,
-		m_frames[frame].renderContext
+		m_frames[frame].renderContext,
+		m_rootEntity
 	);
 
 	// Ensure no lights in view.
@@ -78,7 +79,7 @@ void WorldRendererSimple::build(WorldRenderView& worldRenderView, int32_t frame)
 	// \tbd Flush all entity renderers first, only used by probes atm and need to render to targets.
 	// Until we have RenderGraph properly implemented we need to make sure
 	// rendering probes doesn't nest render passes.
-	wc.flush(m_rootEntity);
+	wc.flush();
 	wc.getRenderContext()->merge(render::RpAll);
 
 	// Default visual parameters.
@@ -96,7 +97,7 @@ void WorldRendererSimple::build(WorldRenderView& worldRenderView, int32_t frame)
 	);
 
 	wc.build(worldRenderView, defaultPass, m_rootEntity);
-	wc.flush(worldRenderView, defaultPass, m_rootEntity);
+	wc.flush(worldRenderView, defaultPass);
 	wc.getRenderContext()->merge(render::RpAll);
 
 	m_rootEntity->removeAllEntities();

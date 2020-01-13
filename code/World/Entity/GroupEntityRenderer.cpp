@@ -48,16 +48,12 @@ void GroupEntityRenderer::render(
 void GroupEntityRenderer::flush(
 	WorldContext& worldContext,
 	WorldRenderView& worldRenderView,
-	const IWorldRenderPass& worldRenderPass,
-	Entity* rootEntity
+	const IWorldRenderPass& worldRenderPass
 )
 {
 }
 
-void GroupEntityRenderer::flush(
-	WorldContext& worldContext,
-	Entity* rootEntity
-)
+void GroupEntityRenderer::flush(WorldContext& worldContext)
 {
 }
 

@@ -27,16 +27,12 @@ void MeshComponentRenderer::render(
 void MeshComponentRenderer::flush(
 	world::WorldContext& worldContext,
 	world::WorldRenderView& worldRenderView,
-	const world::IWorldRenderPass& worldRenderPass,
-	world::Entity* rootEntity
+	const world::IWorldRenderPass& worldRenderPass
 )
 {
 }
 
-void MeshComponentRenderer::flush(
-	world::WorldContext& worldContext,
-	world::Entity* rootEntity
-)
+void MeshComponentRenderer::flush(world::WorldContext& worldContext)
 {
 }
 

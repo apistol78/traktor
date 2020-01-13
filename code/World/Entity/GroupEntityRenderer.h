@@ -37,14 +37,10 @@ public:
 	virtual void flush(
 		WorldContext& worldContext,
 		WorldRenderView& worldRenderView,
-		const IWorldRenderPass& worldRenderPass,
-		Entity* rootEntity
+		const IWorldRenderPass& worldRenderPass
 	) override final;
 
-	virtual void flush(
-		WorldContext& worldContext,
-		Entity* rootEntity
-	) override final;
+	virtual void flush(WorldContext& worldContext) override final;
 
 private:
 	uint32_t m_filter;

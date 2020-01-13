@@ -46,16 +46,12 @@ void LightRenderer::render(
 void LightRenderer::flush(
 	WorldContext& worldContext,
 	WorldRenderView& worldRenderView,
-	const IWorldRenderPass& worldRenderPass,
-	Entity* rootEntity
+	const IWorldRenderPass& worldRenderPass
 )
 {
 }
 
-void LightRenderer::flush(
-	WorldContext& worldContext,
-	Entity* rootEntity
-)
+void LightRenderer::flush(WorldContext& worldContext)
 {
 }
 

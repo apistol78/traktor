@@ -29,16 +29,12 @@ void BoidsEntityRenderer::render(
 void BoidsEntityRenderer::flush(
 	world::WorldContext& worldContext,
 	world::WorldRenderView& worldRenderView,
-	const world::IWorldRenderPass& worldRenderPass,
-	world::Entity* rootEntity
+	const world::IWorldRenderPass& worldRenderPass
 )
 {
 }
 
-void BoidsEntityRenderer::flush(
-	world::WorldContext& worldContext,
-	world::Entity* rootEntity
-)
+void BoidsEntityRenderer::flush(world::WorldContext& worldContext)
 {
 }
 

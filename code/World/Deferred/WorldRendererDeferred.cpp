@@ -863,7 +863,8 @@ void WorldRendererDeferred::build(WorldRenderView& worldRenderView, int32_t fram
 {
 	WorldContext wc(
 		m_entityRenderers,
-		m_frames[frame].renderContext
+		m_frames[frame].renderContext,
+		m_rootEntity
 	);
 
 	// Ensure no lights in view.
@@ -875,7 +876,7 @@ void WorldRendererDeferred::build(WorldRenderView& worldRenderView, int32_t fram
 	// \tbd Flush all entity renderers first, only used by probes atm and need to render to targets.
 	// Until we have RenderGraph properly implemented we need to make sure
 	// rendering probes doesn't nest render passes.
-	wc.flush(m_rootEntity);
+	wc.flush();
 	wc.getRenderContext()->merge(render::RpAll);
 
 	buildGBuffer(worldRenderView, frame);
@@ -968,7 +969,8 @@ void WorldRendererDeferred::buildGBuffer(WorldRenderView& worldRenderView, int32
 {
 	WorldContext wc(
 		m_entityRenderers,
-		m_frames[frame].renderContext
+		m_frames[frame].renderContext,
+		m_rootEntity
 	);
 
 	const float clearZ = m_settings.viewFarZ;
@@ -1002,7 +1004,7 @@ void WorldRendererDeferred::buildGBuffer(WorldRenderView& worldRenderView, int32
 
 	T_ASSERT(!wc.getRenderContext()->havePendingDraws());
 	wc.build(worldRenderView, gbufferPass, m_rootEntity);
-	wc.flush(worldRenderView, gbufferPass, m_rootEntity);
+	wc.flush(worldRenderView, gbufferPass);
 	wc.getRenderContext()->merge(render::RpAll);
 
 	auto te = wc.getRenderContext()->alloc< render::TargetEndRenderBlock >("World GBuffer; end");
@@ -1013,7 +1015,8 @@ void WorldRendererDeferred::buildVelocity(const WorldRenderView& worldRenderView
 {
 	WorldContext wc(
 		m_entityRenderers,
-		m_frames[frame].renderContext
+		m_frames[frame].renderContext,
+		m_rootEntity
 	);
 
 	if (m_motionBlurQuality == QuDisabled)
@@ -1072,7 +1075,7 @@ void WorldRendererDeferred::buildVelocity(const WorldRenderView& worldRenderView
 
 	T_ASSERT(!wc.getRenderContext()->havePendingDraws());
 	wc.build(velocityRenderView, velocityPass, m_rootEntity);
-	wc.flush(velocityRenderView, velocityPass, m_rootEntity);
+	wc.flush(velocityRenderView, velocityPass);
 	wc.getRenderContext()->merge(render::RpAll);
 
 	auto te = wc.getRenderContext()->alloc< render::TargetEndRenderBlock >("World velocity; end");
@@ -1083,7 +1086,8 @@ void WorldRendererDeferred::buildAmbientOcclusion(WorldRenderView& worldRenderVi
 {
 	WorldContext wc(
 		m_entityRenderers,
-		m_frames[frame].renderContext
+		m_frames[frame].renderContext,
+		m_rootEntity
 	);
 
 	auto tb = wc.getRenderContext()->alloc< render::TargetBeginRenderBlock >("World ambient occlusion; begin");
@@ -1125,7 +1129,8 @@ void WorldRendererDeferred::buildLights(const WorldRenderView& worldRenderView, 
 {
 	WorldContext wc(
 		m_entityRenderers,
-		m_frames[frame].renderContext
+		m_frames[frame].renderContext,
+		m_rootEntity
 	);
 
 	Matrix44 view = worldRenderView.getView();
@@ -1246,7 +1251,7 @@ void WorldRendererDeferred::buildLights(const WorldRenderView& worldRenderView, 
 
 					T_ASSERT(!wc.getRenderContext()->havePendingDraws());
 					wc.build(shadowRenderView, shadowPass, m_rootEntity);
-					wc.flush(shadowRenderView, shadowPass, m_rootEntity);
+					wc.flush(shadowRenderView, shadowPass);
 					wc.getRenderContext()->merge(render::RpAll);
 
 					auto te = wc.getRenderContext()->alloc< render::TargetEndRenderBlock >("World cascade shadows; end");
@@ -1385,7 +1390,7 @@ void WorldRendererDeferred::buildLights(const WorldRenderView& worldRenderView, 
 
 			T_ASSERT(!wc.getRenderContext()->havePendingDraws());
 			wc.build(shadowRenderView, shadowPass, m_rootEntity);
-			wc.flush(shadowRenderView, shadowPass, m_rootEntity);
+			wc.flush(shadowRenderView, shadowPass);
 			wc.getRenderContext()->merge(render::RpAll);
 
 			auto te = wc.getRenderContext()->alloc< render::TargetEndRenderBlock >("World atlas shadows; end");
@@ -1486,7 +1491,8 @@ void WorldRendererDeferred::buildReflections(const WorldRenderView& worldRenderV
 
 	WorldContext wc(
 		m_entityRenderers,
-		m_frames[frame].renderContext
+		m_frames[frame].renderContext,
+		m_rootEntity
 	);
 
 	auto tb = wc.getRenderContext()->alloc< render::TargetBeginRenderBlock >("World reflections; begin");
@@ -1521,7 +1527,7 @@ void WorldRendererDeferred::buildReflections(const WorldRenderView& worldRenderV
 
 	T_ASSERT(!wc.getRenderContext()->havePendingDraws());
 	wc.build(reflectionsRenderView, reflectionsPass, m_rootEntity);
-	wc.flush(reflectionsRenderView, reflectionsPass, m_rootEntity);
+	wc.flush(reflectionsRenderView, reflectionsPass);
 	wc.getRenderContext()->merge(render::RpAll);
 
 	// Render screenspace reflections.
@@ -1547,7 +1553,8 @@ void WorldRendererDeferred::buildVisual(const WorldRenderView& worldRenderView, 
 {
 	WorldContext wc(
 		m_entityRenderers,
-		m_frames[frame].renderContext
+		m_frames[frame].renderContext,
+		m_rootEntity
 	);
 
 	auto tb = wc.getRenderContext()->alloc< render::TargetBeginRenderBlock >("World visual; begin");
@@ -1596,7 +1603,7 @@ void WorldRendererDeferred::buildVisual(const WorldRenderView& worldRenderView, 
 
 		T_ASSERT(!wc.getRenderContext()->havePendingDraws());
 		wc.build(irradianceRenderView, irradiancePass, m_rootEntity);
-		wc.flush(irradianceRenderView, irradiancePass, m_rootEntity);
+		wc.flush(irradianceRenderView, irradiancePass);
 		wc.getRenderContext()->merge(render::RpAll);
 	}
 
@@ -1670,7 +1677,7 @@ void WorldRendererDeferred::buildVisual(const WorldRenderView& worldRenderView, 
 
 		T_ASSERT(!wc.getRenderContext()->havePendingDraws());
 		wc.build(visualRenderView, deferredColorPass, m_rootEntity);
-		wc.flush(visualRenderView, deferredColorPass, m_rootEntity);
+		wc.flush(visualRenderView, deferredColorPass);
 		wc.getRenderContext()->merge(render::RpAll);
 	}
 
@@ -1682,7 +1689,8 @@ void WorldRendererDeferred::buildCopyFrame(const WorldRenderView& worldRenderVie
 {
 	WorldContext wc(
 		m_entityRenderers,
-		m_frames[frame].renderContext
+		m_frames[frame].renderContext,
+		m_rootEntity
 	);
 
 	auto tb = wc.getRenderContext()->alloc< render::TargetBeginRenderBlock >("World copy-frame; begin");
@@ -1719,7 +1727,8 @@ void WorldRendererDeferred::buildEndFrame(WorldRenderView& worldRenderView, int3
 {
 	WorldContext wc(
 		m_entityRenderers,
-		m_frames[frame].renderContext
+		m_frames[frame].renderContext,
+		m_rootEntity
 	);
 
 	if (!m_visualTargetSet)

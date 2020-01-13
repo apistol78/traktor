@@ -52,15 +52,11 @@ public:
 	virtual void flush(
 		WorldContext& worldContext,
 		WorldRenderView& worldRenderView,
-		const IWorldRenderPass& worldRenderPass,
-		Entity* rootEntity
+		const IWorldRenderPass& worldRenderPass
 	) = 0;
 
 	/*! Render flush, last of frame. */
-	virtual void flush(
-		WorldContext& worldContext,
-		Entity* rootEntity
-	) = 0;
+	virtual void flush(WorldContext& worldContext) = 0;
 };
 
 	}
