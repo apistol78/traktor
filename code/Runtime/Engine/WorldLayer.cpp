@@ -356,7 +356,7 @@ void WorldLayer::postReconfigured()
 
 void WorldLayer::suspend()
 {
-#if defined(__IOS__)
+#if defined(__ANDROID__) || defined(__IOS__)
 	// Destroy previous world renderer; do this
 	// to save memory which is easily re-constructed at resume.
 	safeDestroy(m_worldRenderer);

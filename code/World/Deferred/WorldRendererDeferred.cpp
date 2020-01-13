@@ -337,7 +337,7 @@ bool WorldRendererDeferred::create(
 	{
 		render::RenderTargetSetCreateDesc rtscd;
 		rtscd.count = 1;
-#if !defined(__ANDROID__)
+#if !defined(__ANDROID__) && !defined(__IOS__)
 		rtscd.width = desc.width;
 		rtscd.height = desc.height;
 #else

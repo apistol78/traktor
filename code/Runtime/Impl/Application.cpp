@@ -579,7 +579,7 @@ bool Application::update()
 
 	if ((currentState = m_stateManager->getCurrent()) != 0)
 	{
-#if !defined(__IOS__)
+#if !defined(__ANDROID__) && !defined(__IOS__)
 		// Check render active state; notify application when changes.
 		bool renderViewActive = m_renderServer->getRenderView()->isActive() && !m_renderServer->getRenderView()->isMinimized();
 		if (renderViewActive != m_renderViewActive)
