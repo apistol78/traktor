@@ -16,7 +16,6 @@ namespace traktor
 	{
 
 class GroupEntity;
-class WorldContext;
 class WorldEntityRenderers;
 
 /*! World renderer implementation.
@@ -57,11 +56,11 @@ private:
 	struct Frame
 	{
 		Ref< render::RenderContext > renderContext;
-		Ref< WorldContext > worldContext;
 	};
 
-	AlignedVector< Frame > m_frames;
+	Ref< WorldEntityRenderers > m_entityRenderers;
 	Ref< GroupEntity > m_rootEntity;
+	AlignedVector< Frame > m_frames;
 };
 
 	}

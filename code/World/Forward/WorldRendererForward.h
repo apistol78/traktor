@@ -31,7 +31,6 @@ class StructBuffer;
 
 class GroupEntity;
 class IShadowProjection;
-class WorldContext;
 class WorldEntityRenderers;
 
 /*! World renderer implementation.
@@ -81,7 +80,6 @@ private:
 	struct Frame
 	{
 		Ref< render::RenderContext > renderContext;
-		Ref< WorldContext > worldContext;
 		Ref< render::StructBuffer > lightSBuffer;
 		int32_t lightCount;
 
@@ -111,8 +109,10 @@ private:
 	Ref< render::IRenderTargetSet > m_shadowCascadeTargetSet;
 	Ref< render::IRenderTargetSet > m_shadowAtlasTargetSet;
 
+	Ref< WorldEntityRenderers > m_entityRenderers;
 	Ref< GroupEntity > m_rootEntity;
 	AlignedVector< Frame > m_frames;
+	
 	float m_slicePositions[MaxSliceCount + 1];
 	uint32_t m_count;
 

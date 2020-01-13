@@ -40,24 +40,21 @@ bool WorldRendererSimple::create(
 	const WorldCreateDesc& desc
 )
 {
+	m_entityRenderers = desc.entityRenderers;
+	m_rootEntity = new GroupEntity();
+
 	m_frames.resize(desc.frameCount);
 	for (auto& frame : m_frames)
-	{
 		frame.renderContext = new render::RenderContext(1 * 1024 * 1024);
-		frame.worldContext = new WorldContext(desc.entityRenderers, frame.renderContext);
-	}
 	
-	m_rootEntity = new GroupEntity();
 	return true;
 }
 
 void WorldRendererSimple::destroy()
 {
-	for (auto& frame : m_frames)
-	{
-		frame.renderContext = nullptr;
-		frame.worldContext = nullptr;
-	}
+	m_entityRenderers = nullptr;
+	m_rootEntity = nullptr;
+	m_frames.clear();
 }
 
 void WorldRendererSimple::attach(Entity* entity)
@@ -67,26 +64,29 @@ void WorldRendererSimple::attach(Entity* entity)
 
 void WorldRendererSimple::build(WorldRenderView& worldRenderView, int32_t frame)
 {
-	Frame& f = m_frames[frame];
+	WorldContext wc(
+		m_entityRenderers,
+		m_frames[frame].renderContext
+	);
 
 	// Ensure no lights in view.
 	worldRenderView.resetLights();
 
-	// Flush render contexts.
-	f.renderContext->flush();
+	// Reset render context by flushing it.
+	wc.getRenderContext()->flush();
 
 	// \tbd Flush all entity renderers first, only used by probes atm and need to render to targets.
 	// Until we have RenderGraph properly implemented we need to make sure
 	// rendering probes doesn't nest render passes.
-	f.worldContext->flush(m_rootEntity);
-	f.renderContext->merge(render::RpAll);
+	wc.flush(m_rootEntity);
+	wc.getRenderContext()->merge(render::RpAll);
 
 	// Default visual parameters.
-	auto globalProgramParams = f.renderContext->alloc< render::ProgramParameters >();
-	globalProgramParams->beginParameters(f.renderContext);
+	auto globalProgramParams = wc.getRenderContext()->alloc< render::ProgramParameters >();
+	globalProgramParams->beginParameters(wc.getRenderContext());
 	globalProgramParams->setFloatParameter(s_handleTime, worldRenderView.getTime());
 	globalProgramParams->setMatrixParameter(s_handleProjection, worldRenderView.getProjection());
-	globalProgramParams->endParameters(f.renderContext);
+	globalProgramParams->endParameters(wc.getRenderContext());
 
 	// Build visual context.
 	WorldRenderPassSimple defaultPass(
@@ -95,18 +95,16 @@ void WorldRendererSimple::build(WorldRenderView& worldRenderView, int32_t frame)
 		worldRenderView.getView()
 	);
 
-	T_ASSERT(!f.renderContext->havePendingDraws());
-	f.worldContext->build(worldRenderView, defaultPass, m_rootEntity);
-	f.worldContext->flush(worldRenderView, defaultPass, m_rootEntity);
-	f.renderContext->merge(render::RpAll);
+	wc.build(worldRenderView, defaultPass, m_rootEntity);
+	wc.flush(worldRenderView, defaultPass, m_rootEntity);
+	wc.getRenderContext()->merge(render::RpAll);
 
 	m_rootEntity->removeAllEntities();
 }
 
 void WorldRendererSimple::render(render::IRenderView* renderView, int32_t frame)
 {
-	Frame& f = m_frames[frame];
-	f.renderContext->render(renderView);
+	m_frames[frame].renderContext->render(renderView);
 }
 
 render::ImageProcess* WorldRendererSimple::getVisualImageProcess()

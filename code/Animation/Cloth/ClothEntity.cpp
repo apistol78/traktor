@@ -1,5 +1,6 @@
 #include "Animation/Cloth/ClothEntity.h"
 #include "Core/Math/Const.h"
+#include "Core/Math/Plane.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Render/VertexElement.h"
 #include "Render/Context/RenderContext.h"
