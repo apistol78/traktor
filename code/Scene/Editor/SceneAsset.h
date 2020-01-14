@@ -19,7 +19,7 @@ namespace traktor
 	namespace render
 	{
 
-class ImageProcessSettings;
+class ImageProcessData;
 class ITexture;
 
 	}

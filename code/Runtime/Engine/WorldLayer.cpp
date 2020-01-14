@@ -13,7 +13,7 @@
 #include "Core/Timer/Profiler.h"
 #include "Render/IRenderTargetSet.h"
 #include "Render/IRenderView.h"
-#include "Render/ImageProcess/ImageProcess.h"
+#include "Render/Image/ImageProcess.h"
 #include "Scene/Scene.h"
 #include "Sound/Filters/SurroundEnvironment.h"
 #include "Spray/Feedback/FeedbackManager.h"

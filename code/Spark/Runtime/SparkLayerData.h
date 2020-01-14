@@ -17,7 +17,7 @@ namespace traktor
 	namespace render
 	{
 
-class ImageProcessSettings;
+class ImageProcessData;
 
 	}
 
@@ -45,7 +45,7 @@ private:
 
 	resource::Id< Movie > m_movie;
 	std::map< std::wstring, resource::Id< Movie > > m_externalMovies;
-	resource::Id< render::ImageProcessSettings > m_imageProcess;
+	resource::Id< render::ImageProcessData > m_imageProcess;
 	bool m_clearBackground;
 	bool m_enableShapeCache;
 	bool m_enableDirtyRegions;

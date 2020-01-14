@@ -17,7 +17,7 @@
 #include "Render/IRenderTargetSet.h"
 #include "Render/IRenderView.h"
 #include "Render/PrimitiveRenderer.h"
-#include "Render/ImageProcess/ImageProcess.h"
+#include "Render/Image/ImageProcess.h"
 #include "Scene/Scene.h"
 #include "Scene/Editor/Camera.h"
 #include "Scene/Editor/EntityAdapter.h"

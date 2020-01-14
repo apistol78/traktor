@@ -10,7 +10,7 @@
 #include "Editor/IEditor.h"
 #include "Render/IRenderSystem.h"
 #include "Render/IRenderView.h"
-#include "Render/ImageProcess/ImageProcess.h"
+#include "Render/Image/ImageProcess.h"
 #include "Resource/IResourceManager.h"
 #include "Scene/Scene.h"
 #include "Scene/Editor/Camera.h"

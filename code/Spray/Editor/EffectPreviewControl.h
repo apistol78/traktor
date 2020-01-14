@@ -36,7 +36,7 @@ class IResourceManager;
 	{
 
 class ImageProcess;
-class ImageProcessSettings;
+class ImageProcessData;
 class IRenderSystem;
 class IRenderView;
 class ISimpleTexture;
@@ -92,7 +92,7 @@ public:
 
 	void setBackground(const resource::Id< render::ISimpleTexture >& background);
 
-	void setImageProcess(const resource::Id< render::ImageProcessSettings >& postProcess);
+	void setImageProcess(const resource::Id< render::ImageProcessData >& postProcess);
 
 	void showGuide(bool guideVisible);
 
@@ -118,7 +118,7 @@ private:
 	Ref< render::IRenderTargetSet > m_postTargetSet;
 	Ref< render::RenderContext > m_globalContext;
 	resource::Proxy< render::ISimpleTexture > m_background;
-	resource::Proxy< render::ImageProcessSettings > m_postProcessSettings;
+	resource::Proxy< render::ImageProcessData > m_postProcessSettings;
 	Ref< render::ImageProcess > m_postProcess;
 	Ref< render::PrimitiveRenderer > m_primitiveRenderer;
 	Ref< render::RenderContext > m_renderContext;

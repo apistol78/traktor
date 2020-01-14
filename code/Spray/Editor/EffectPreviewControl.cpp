@@ -12,8 +12,8 @@
 #include "Render/ISimpleTexture.h"
 #include "Render/PrimitiveRenderer.h"
 #include "Render/Context/RenderContext.h"
-#include "Render/ImageProcess/ImageProcess.h"
-#include "Render/ImageProcess/ImageProcessSettings.h"
+#include "Render/Image/ImageProcess.h"
+#include "Render/Image/ImageProcessData.h"
 #include "Resource/IResourceManager.h"
 #include "Sound/AudioSystem.h"
 #include "Sound/Player/SoundPlayer.h"
@@ -243,7 +243,7 @@ void EffectPreviewControl::setBackground(const resource::Id< render::ISimpleText
 	m_resourceManager->bind(background, m_background);
 }
 
-void EffectPreviewControl::setImageProcess(const resource::Id< render::ImageProcessSettings >& postProcess)
+void EffectPreviewControl::setImageProcess(const resource::Id< render::ImageProcessData >& postProcess)
 {
 	m_resourceManager->bind(postProcess, m_postProcessSettings);
 	updateRenderer();

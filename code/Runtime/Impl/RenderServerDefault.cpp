@@ -14,7 +14,7 @@
 #include "Render/IRenderSystem.h"
 #include "Render/IRenderView.h"
 #include "Render/IVRCompositor.h"
-#include "Render/ImageProcess/ImageProcessFactory.h"
+#include "Render/Image/ImageProcessFactory.h"
 #include "Render/Resource/ShaderFactory.h"
 #include "Render/Resource/SequenceTextureFactory.h"
 #include "Render/Resource/TextureFactory.h"

@@ -7,7 +7,7 @@
 #include "World/Entity/ExternalEntityData.h"
 
 // Resource factories
-#include "Render/ImageProcess/ImageProcessFactory.h"
+#include "Render/Image/ImageProcessFactory.h"
 #include "Render/Resource/SequenceTextureFactory.h"
 #include "Render/Resource/ShaderFactory.h"
 #include "Render/Resource/TextureFactory.h"
