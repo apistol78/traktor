@@ -82,12 +82,12 @@ Ref< HttpRequest > HttpRequest::parse(const std::wstring& request)
 				else if (tmp[0] == L"PATCH")
 					hr->m_method = MtPatch;
 				else
-					return 0;
+					return nullptr;
 
 				hr->m_resource = tmp[1];
 			}
 			else
-				return 0;
+				return nullptr;
 
 			haveMethod = true;
 		}
@@ -99,7 +99,7 @@ Ref< HttpRequest > HttpRequest::parse(const std::wstring& request)
 		}
 	}
 
-	return haveMethod ? hr : 0;
+	return haveMethod ? hr : nullptr;
 }
 
 	}

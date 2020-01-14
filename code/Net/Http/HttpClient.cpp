@@ -127,7 +127,7 @@ Ref< HttpClientResult > HttpClient::get(const net::Url& url, const IHttpRequestC
 	if (result->m_job)
 		return result;
 	else
-		return 0;
+		return nullptr;
 }
 
 Ref< HttpClientResult > HttpClient::put(const net::Url& url, const IHttpRequestContent* content)
@@ -139,7 +139,7 @@ Ref< HttpClientResult > HttpClient::put(const net::Url& url, const IHttpRequestC
 	if (result->m_job)
 		return result;
 	else
-		return 0;
+		return nullptr;
 }
 
 Ref< HttpClientResult > HttpClient::post(const net::Url& url, const IHttpRequestContent* content)
@@ -151,7 +151,7 @@ Ref< HttpClientResult > HttpClient::post(const net::Url& url, const IHttpRequest
 	if (result->m_job)
 		return result;
 	else
-		return 0;
+		return nullptr;
 }
 
 	}

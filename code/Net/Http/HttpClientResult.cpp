@@ -20,7 +20,7 @@ const HttpResponse* HttpClientResult::getResponse()
 	if (succeeded())
 		return m_response;
 	else
-		return 0;
+		return nullptr;
 }
 
 IStream* HttpClientResult::getStream()
@@ -28,7 +28,7 @@ IStream* HttpClientResult::getStream()
 	if (succeeded())
 		return m_stream;
 	else
-		return 0;
+		return nullptr;
 }
 
 	}

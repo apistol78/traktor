@@ -84,7 +84,6 @@ uint32_t HttpRequestContent::getContentLength() const
 
 bool HttpRequestContent::encodeIntoStream(IStream* stream) const
 {
-	log::info << L"Sending " << m_content.size() << L" byte(s) as " << m_contentType << L"..." << Endl;
 	return stream->write(m_content.c_ptr(), m_content.size()) == m_content.size();
 }
 
