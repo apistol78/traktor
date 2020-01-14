@@ -5,14 +5,14 @@
 #include "Core/Serialization/MemberComposite.h"
 #include "Render/IRenderSystem.h"
 #include "Render/IRenderTargetSet.h"
-#include "Render/IRenderView.h"
 #include "Render/Shader.h"
 #include "Render/VertexBuffer.h"
 #include "Render/VertexElement.h"
+#include "Render/Context/RenderContext.h"
 #include "Resource/IResourceManager.h"
 #include "Resource/Member.h"
 #include "Render/Image/ImageProcess.h"
-#include "Render/Image/ImageProcessStepLensDirt.h"
+#include "Render/Image/Steps/ImageProcessStepLensDirt.h"
 
 namespace traktor
 {
@@ -44,7 +44,7 @@ Ref< ImageProcessStep::Instance > ImageProcessStepLensDirt::create(
 	Ref< InstanceLensDirt > instance = new InstanceLensDirt(this);
 
 	if (!resourceManager->bind(m_shader, instance->m_shader))
-		return 0;
+		return nullptr;
 
 	instance->m_sources.resize(m_sources.size());
 	for (uint32_t i = 0; i < m_sources.size(); ++i)
@@ -127,29 +127,31 @@ void ImageProcessStepLensDirt::InstanceLensDirt::destroy()
 
 void ImageProcessStepLensDirt::InstanceLensDirt::render(
 	ImageProcess* imageProcess,
-	IRenderView* renderView,
-	ScreenRenderer* screenRenderer,
+	RenderContext* renderContext,
+	ProgramParameters* sharedParams,
 	const RenderParams& params
 )
 {
-	imageProcess->prepareShader(m_shader);
-
-	m_shader->setVectorArrayParameter(m_handleInstances, m_instances, InstanceCount);
-
-	for (std::vector< Source >::const_iterator i = m_sources.begin(); i != m_sources.end(); ++i)
+	auto pp = renderContext->alloc< ProgramParameters >();
+	pp->beginParameters(renderContext);
+	pp->attachParameters(sharedParams);
+	pp->setVectorArrayParameter(m_handleInstances, m_instances, InstanceCount);
+	for (const auto& s : m_sources)
 	{
-		ISimpleTexture* source = imageProcess->getTarget(i->source);
+		ISimpleTexture* source = imageProcess->getTarget(s.source);
 		if (source)
-			m_shader->setTextureParameter(i->param, source);
+			pp->setTextureParameter(s.param, source);		
 	}
+	pp->endParameters(renderContext);
 
-	m_shader->draw(
-		renderView,
-		m_vertexBuffer,
-		0,
-		m_primitives,
-		InstanceCount
-	);
+	auto rb = renderContext->alloc< InstancingRenderBlock >();
+	rb->program = m_shader->getCurrentProgram();
+	rb->programParams = pp;
+	rb->indexBuffer = nullptr;
+	rb->vertexBuffer = m_vertexBuffer;
+	rb->primitives = m_primitives;
+	rb->count = InstanceCount;
+	renderContext->enqueue(rb);
 }
 
 	}

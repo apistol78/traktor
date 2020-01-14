@@ -9,11 +9,11 @@
 #include "Render/IRenderTargetSet.h"
 #include "Render/ScreenRenderer.h"
 #include "Render/Shader.h"
+#include "Render/Context/RenderContext.h"
 #include "Resource/IResourceManager.h"
 #include "Resource/Member.h"
-#include "World/WorldRenderView.h"
 #include "Render/Image/ImageProcess.h"
-#include "Render/Image/ImageProcessStepBlur.h"
+#include "Render/Image/Steps/ImageProcessStepBlur.h"
 
 namespace traktor
 {
@@ -236,31 +236,33 @@ void ImageProcessStepBlur::InstanceBlur::destroy()
 
 void ImageProcessStepBlur::InstanceBlur::render(
 	ImageProcess* imageProcess,
-	IRenderView* renderView,
-	ScreenRenderer* screenRenderer,
+	RenderContext* renderContext,
+	ProgramParameters* sharedParams,
 	const RenderParams& params
 )
 {
-	imageProcess->prepareShader(m_shader);
-
-	for (const auto& source : m_sources)
-	{
-		ISimpleTexture* texture = imageProcess->getTarget(source.source);
-		if (texture)
-			m_shader->setTextureParameter(source.param, texture);
-	}
-
-	m_shader->setVectorArrayParameter(m_handleGaussianOffsetWeights, &m_gaussianOffsetWeights[0], (uint32_t)m_gaussianOffsetWeights.size());
-	m_shader->setVectorParameter(m_handleDirection, m_direction * Scalar(0.5f));
-	m_shader->setFloatParameter(m_handleViewFar, params.viewFrustum.getFarZ());
-	m_shader->setVectorParameter(m_handleNoiseOffset, Vector4(
+	auto pp = renderContext->alloc< ProgramParameters >();
+	pp->beginParameters(renderContext);
+	pp->attachParameters(sharedParams);
+	pp->setVectorArrayParameter(m_handleGaussianOffsetWeights, &m_gaussianOffsetWeights[0], (uint32_t)m_gaussianOffsetWeights.size());
+	pp->setVectorParameter(m_handleDirection, m_direction * Scalar(0.5f));
+	pp->setFloatParameter(m_handleViewFar, params.viewFrustum.getFarZ());
+	pp->setVectorParameter(m_handleNoiseOffset, Vector4(
 		s_random.nextFloat(),
 		s_random.nextFloat(),
 		0.0f,
 		0.0f
 	));
 
-	screenRenderer->draw(renderView, m_shader);
+	for (const auto& s : m_sources)
+	{
+		ISimpleTexture* source = imageProcess->getTarget(s.source);
+		if (source)
+			pp->setTextureParameter(s.param, source);		
+	}
+	pp->endParameters(renderContext);
+
+	imageProcess->getScreenRenderer()->draw(renderContext, m_shader, pp);
 }
 
 	}

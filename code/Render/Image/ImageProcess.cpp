@@ -6,6 +6,7 @@
 #include "Render/IRenderView.h"
 #include "Render/ScreenRenderer.h"
 #include "Render/Shader.h"
+#include "Render/Context/RenderContext.h"
 #include "Render/Image/ImageProcess.h"
 #include "Render/Image/ImageProcessDefine.h"
 #include "Render/Image/ImageProcessData.h"
@@ -98,7 +99,7 @@ void ImageProcess::destroy()
 }
 
 bool ImageProcess::render(
-	IRenderView* renderView,
+	RenderContext* renderContext,
 	ISimpleTexture* colorBuffer,
 	ISimpleTexture* depthBuffer,
 	ISimpleTexture* normalBuffer,
@@ -129,9 +130,7 @@ bool ImageProcess::render(
 	m_targets[s_handleInputShadowMask].persistent = true;
 	m_targets[s_handleInputShadowMask].implicit = true;
 
-	m_currentTarget = 0;
-
-	T_RENDER_PUSH_MARKER(renderView, "ImageProcess");
+	m_currentTarget = nullptr;
 
 	// Check if any target need to be cleared before post processing.
 	for (SmallMap< handle_t, Target >::iterator i = m_targets.begin(); i != m_targets.end(); ++i)
@@ -139,43 +138,55 @@ bool ImageProcess::render(
 		Target& target = i->second;
 		if (target.rts && target.shouldClear)
 		{
-			Clear clear;
-			clear.mask = CfColor;
-			clear.colors[0] = Color4f::loadUnaligned(target.clearColor);
-			if (renderView->begin(target.rts, 0, &clear))
-			{
-				renderView->end();
-				target.shouldClear = false;
-			}
+			auto tb = renderContext->alloc< TargetBeginRenderBlock >();
+			tb->renderTargetSet = target.rts;
+			tb->renderTargetIndex = -1;
+			tb->clear.mask = CfColor;
+			tb->clear.colors[0] = Color4f::loadUnaligned(target.clearColor);
+			renderContext->enqueue(tb);
+
+			auto te = renderContext->alloc< TargetEndRenderBlock >();
+			renderContext->enqueue(te);
+
+			target.shouldClear = false;
 		}
 	}
+
+	// Create shared parameters.
+	auto sharedParams = renderContext->alloc< ProgramParameters >();
+	sharedParams->beginParameters(renderContext);
+	for (SmallMap< handle_t, float >::const_iterator i = m_scalarParameters.begin(); i != m_scalarParameters.end(); ++i)
+		sharedParams->setFloatParameter(i->first, i->second);
+	for (SmallMap< handle_t, Vector4 >::const_iterator i = m_vectorParameters.begin(); i != m_vectorParameters.end(); ++i)
+		sharedParams->setVectorParameter(i->first, i->second);
+	for (SmallMap< handle_t, resource::Proxy< ITexture > >::const_iterator i = m_textureParameters.begin(); i != m_textureParameters.end(); ++i)
+		sharedParams->setTextureParameter(i->first, i->second);
+	sharedParams->endParameters(renderContext);
 
 	// Execute each post processing step in sequence.
 	for (auto instance : m_instances)
 	{
 		instance->render(
 			this,
-			renderView,
-			m_screenRenderer,
+			renderContext,
+			sharedParams,
 			params
 		);
 	}
 
-	// Release all non-persistent targets.
-	for (SmallMap< handle_t, Target >::iterator i = m_targets.begin(); i != m_targets.end(); ++i)
-	{
-		Target& target = i->second;
-		if (target.rts && !target.persistent)
-		{
-			m_targetPool->releaseTarget(
-				target.rtscd,
-				target.rts
-			);
-			target.rts = nullptr;
-		}
-	}
-
-	T_RENDER_POP_MARKER(renderView);
+	// // Release all non-persistent targets.
+	// for (SmallMap< handle_t, Target >::iterator i = m_targets.begin(); i != m_targets.end(); ++i)
+	// {
+	// 	Target& target = i->second;
+	// 	if (target.rts && !target.persistent)
+	// 	{
+	// 		m_targetPool->releaseTarget(
+	// 			target.rtscd,
+	// 			target.rts
+	// 		);
+	// 		target.rts = nullptr;
+	// 	}
+	// }
 
 	T_ASSERT_M(m_currentTarget == nullptr, L"Invalid post-process steps");
 	return true;
@@ -200,7 +211,7 @@ void ImageProcess::defineTarget(const std::wstring& name, handle_t id, const Ren
 	clearColor.storeUnaligned(t.clearColor);
 }
 
-void ImageProcess::setTarget(IRenderView* renderView, handle_t id)
+void ImageProcess::setTarget(RenderContext* renderContext, handle_t id)
 {
 	T_ASSERT_M(id != s_handleInputColor, L"Cannot bind source color buffer as output");
 	T_ASSERT_M(id != s_handleInputDepth, L"Cannot bind source depth buffer as output");
@@ -209,7 +220,10 @@ void ImageProcess::setTarget(IRenderView* renderView, handle_t id)
 	T_ASSERT_M(id != s_handleInputShadowMask, L"Cannot bind source shadow mask as output");
 
 	if (m_currentTarget)
-		renderView->end();
+	{
+		auto te = renderContext->alloc< TargetEndRenderBlock >();
+		renderContext->enqueue(te);
+	}
 
 	if (id != s_handleOutput)
 	{
@@ -227,7 +241,11 @@ void ImageProcess::setTarget(IRenderView* renderView, handle_t id)
 		m_currentTarget = t.rts;
 		T_ASSERT(m_currentTarget);
 
-		renderView->begin(m_currentTarget, 0, nullptr);
+		auto tb = renderContext->alloc< TargetBeginRenderBlock >();
+		tb->renderTargetSet = m_currentTarget;
+		tb->renderTargetIndex = -1;
+		tb->clear.mask = 0;
+		renderContext->enqueue(tb);
 	}
 	else
 		m_currentTarget = nullptr;
@@ -278,16 +296,16 @@ void ImageProcess::swapTargets(handle_t id0, handle_t id1)
 
 void ImageProcess::discardTarget(handle_t id)
 {
-	Target& target = m_targets[id];
-	if (target.rts && !target.persistent)
-	{
-		m_targetPool->releaseTarget(
-			target.rtscd,
-			target.rts
-		);
-		target.rts = nullptr;
-		target.rt = nullptr;
-	}
+	// Target& target = m_targets[id];
+	// if (target.rts && !target.persistent)
+	// {
+	// 	m_targetPool->releaseTarget(
+	// 		target.rtscd,
+	// 		target.rts
+	// 	);
+	// 	target.rts = nullptr;
+	// 	target.rt = nullptr;
+	// }
 }
 
 void ImageProcess::setCombination(handle_t handle, bool value)
@@ -312,18 +330,6 @@ void ImageProcess::setTextureParameter(handle_t handle, const resource::Proxy< I
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 	m_textureParameters[handle] = value;
-}
-
-void ImageProcess::prepareShader(Shader* shader) const
-{
-	for (SmallMap< handle_t, bool >::const_iterator i = m_booleanParameters.begin(); i != m_booleanParameters.end(); ++i)
-		shader->setCombination(i->first, i->second);
-	for (SmallMap< handle_t, float >::const_iterator i = m_scalarParameters.begin(); i != m_scalarParameters.end(); ++i)
-		shader->setFloatParameter(i->first, i->second);
-	for (SmallMap< handle_t, Vector4 >::const_iterator i = m_vectorParameters.begin(); i != m_vectorParameters.end(); ++i)
-		shader->setVectorParameter(i->first, i->second);
-	for (SmallMap< handle_t, resource::Proxy< ITexture > >::const_iterator i = m_textureParameters.begin(); i != m_textureParameters.end(); ++i)
-		shader->setTextureParameter(i->first, i->second);
 }
 
 bool ImageProcess::requireHighRange() const

@@ -9,11 +9,11 @@
 #include "Render/ISimpleTexture.h"
 #include "Render/ScreenRenderer.h"
 #include "Render/Shader.h"
+#include "Render/Context/RenderContext.h"
 #include "Resource/IResourceManager.h"
 #include "Resource/Member.h"
-#include "World/WorldRenderView.h"
 #include "Render/Image/ImageProcess.h"
-#include "Render/Image/ImageProcessStepSsao.h"
+#include "Render/Image/Steps/ImageProcessStepSsao.h"
 
 namespace traktor
 {
@@ -185,13 +185,11 @@ void ImageProcessStepSsao::InstanceSsao::destroy()
 
 void ImageProcessStepSsao::InstanceSsao::render(
 	ImageProcess* imageProcess,
-	IRenderView* renderView,
-	ScreenRenderer* screenRenderer,
+	RenderContext* renderContext,
+	ProgramParameters* sharedParams,
 	const RenderParams& params
 )
 {
-	imageProcess->prepareShader(m_shader);
-
 	Scalar p11 = params.projection.get(0, 0);
 	Scalar p22 = params.projection.get(1, 1);
 	Vector4 viewEdgeTopLeft = params.viewFrustum.corners[4];
@@ -199,26 +197,29 @@ void ImageProcessStepSsao::InstanceSsao::render(
 	Vector4 viewEdgeBottomLeft = params.viewFrustum.corners[7];
 	Vector4 viewEdgeBottomRight = params.viewFrustum.corners[6];
 
-	m_shader->setVectorParameter(m_handleRandom, Vector4(m_random.nextFloat(), m_random.nextFloat(), m_random.nextFloat(), m_random.nextFloat()));
-	m_shader->setVectorParameter(m_handleViewEdgeTopLeft, viewEdgeTopLeft);
-	m_shader->setVectorParameter(m_handleViewEdgeTopRight, viewEdgeTopRight);
-	m_shader->setVectorParameter(m_handleViewEdgeBottomLeft, viewEdgeBottomLeft);
-	m_shader->setVectorParameter(m_handleViewEdgeBottomRight, viewEdgeBottomRight);
-	m_shader->setMatrixParameter(m_handleProjection, params.projection);
-	m_shader->setVectorArrayParameter(m_handleOffsets, m_offsets, sizeof_array(m_offsets));
-	m_shader->setVectorArrayParameter(m_handleDirections, m_directions, sizeof_array(m_directions));
-	m_shader->setTextureParameter(m_handleRandomNormals, m_randomNormals);
-	m_shader->setTextureParameter(m_handleRandomRotations, m_randomRotations);
-	m_shader->setVectorParameter(m_handleMagicCoeffs, Vector4(1.0f / p11, 1.0f / p22, 0.0f, 0.0f));
-
-	for (std::vector< Source >::const_iterator i = m_sources.begin(); i != m_sources.end(); ++i)
+	auto pp = renderContext->alloc< ProgramParameters >();
+	pp->beginParameters(renderContext);
+	pp->attachParameters(sharedParams);
+	pp->setVectorParameter(m_handleRandom, Vector4(m_random.nextFloat(), m_random.nextFloat(), m_random.nextFloat(), m_random.nextFloat()));
+	pp->setVectorParameter(m_handleViewEdgeTopLeft, viewEdgeTopLeft);
+	pp->setVectorParameter(m_handleViewEdgeTopRight, viewEdgeTopRight);
+	pp->setVectorParameter(m_handleViewEdgeBottomLeft, viewEdgeBottomLeft);
+	pp->setVectorParameter(m_handleViewEdgeBottomRight, viewEdgeBottomRight);
+	pp->setMatrixParameter(m_handleProjection, params.projection);
+	pp->setVectorArrayParameter(m_handleOffsets, m_offsets, sizeof_array(m_offsets));
+	pp->setVectorArrayParameter(m_handleDirections, m_directions, sizeof_array(m_directions));
+	pp->setTextureParameter(m_handleRandomNormals, m_randomNormals);
+	pp->setTextureParameter(m_handleRandomRotations, m_randomRotations);
+	pp->setVectorParameter(m_handleMagicCoeffs, Vector4(1.0f / p11, 1.0f / p22, 0.0f, 0.0f));
+	for (const auto& s : m_sources)
 	{
-		ISimpleTexture* source = imageProcess->getTarget(i->source);
+		ISimpleTexture* source = imageProcess->getTarget(s.source);
 		if (source)
-			m_shader->setTextureParameter(i->param, source);
+			pp->setTextureParameter(s.param, source);		
 	}
+	pp->endParameters(renderContext);
 
-	screenRenderer->draw(renderView, m_shader);
+	imageProcess->getScreenRenderer()->draw(renderContext, m_shader, pp);
 }
 
 	}

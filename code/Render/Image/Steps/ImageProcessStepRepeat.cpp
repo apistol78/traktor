@@ -1,7 +1,7 @@
-#include "Render/Image/ImageProcessStepRepeat.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
 #include "Core/Serialization/MemberRef.h"
+#include "Render/Image/Steps/ImageProcessStepRepeat.h"
 
 namespace traktor
 {
@@ -24,7 +24,7 @@ Ref< ImageProcessStep::Instance > ImageProcessStepRepeat::create(
 {
 	Ref< Instance > instance = m_step->create(resourceManager, renderSystem, width, height);
 	if (!instance)
-		return 0;
+		return nullptr;
 
 	return new InstanceRepeat(m_count, instance);
 }
@@ -50,8 +50,8 @@ void ImageProcessStepRepeat::InstanceRepeat::destroy()
 
 void ImageProcessStepRepeat::InstanceRepeat::render(
 	ImageProcess* imageProcess,
-	IRenderView* renderView,
-	ScreenRenderer* screenRenderer,
+	RenderContext* renderContext,
+	ProgramParameters* sharedParams,
 	const RenderParams& params
 )
 {
@@ -59,8 +59,8 @@ void ImageProcessStepRepeat::InstanceRepeat::render(
 	{
 		m_instance->render(
 			imageProcess,
-			renderView,
-			screenRenderer,
+			renderContext,
+			sharedParams,
 			params
 		);
 	}

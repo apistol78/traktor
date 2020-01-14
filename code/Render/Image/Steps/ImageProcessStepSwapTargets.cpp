@@ -1,7 +1,7 @@
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
 #include "Render/Image/ImageProcess.h"
-#include "Render/Image/ImageProcessStepSwapTargets.h"
+#include "Render/Image/Steps/ImageProcessStepSwapTargets.h"
 
 namespace traktor
 {
@@ -43,8 +43,8 @@ void ImageProcessStepSwapTargets::InstanceSwapTargets::destroy()
 
 void ImageProcessStepSwapTargets::InstanceSwapTargets::render(
 	ImageProcess* imageProcess,
-	IRenderView* renderView,
-	ScreenRenderer* screenRenderer,
+	RenderContext* renderContext,
+	ProgramParameters* sharedParams,
 	const RenderParams& params
 )
 {

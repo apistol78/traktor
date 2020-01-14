@@ -63,8 +63,8 @@ public:
 
 		virtual void render(
 			ImageProcess* imageProcess,
-			IRenderView* renderView,
-			ScreenRenderer* screenRenderer,
+			RenderContext* renderContext,
+			ProgramParameters* sharedParams,
 			const RenderParams& params
 		) override final;
 

@@ -2,14 +2,14 @@
 #include "Core/Misc/AutoPtr.h"
 #include "Render/IRenderSystem.h"
 #include "Render/IRenderTargetSet.h"
-#include "Render/IRenderView.h"
 #include "Render/ISimpleTexture.h"
 #include "Render/ScreenRenderer.h"
 #include "Render/Shader.h"
+#include "Render/Context/RenderContext.h"
 #include "Resource/IResourceManager.h"
 #include "Resource/Member.h"
 #include "Render/Image/ImageProcess.h"
-#include "Render/Image/ImageProcessStepSmProj.h"
+#include "Render/Image/Steps/ImageProcessStepSmProj.h"
 
 namespace traktor
 {
@@ -82,14 +82,14 @@ Ref< ImageProcessStep::Instance > ImageProcessStepSmProj::create(
 {
 	resource::Proxy< Shader > shader;
 	if (!resourceManager->bind(m_shader, shader))
-		return 0;
+		return nullptr;
 
 	// Generate screen-space random rotation textures.
 	Ref< ISimpleTexture > shadowMapDiscRotation[2];
 	shadowMapDiscRotation[0] = createRandomRotationTexture(renderSystem);
 	shadowMapDiscRotation[1] = createRandomRotationTexture(renderSystem);
 	if (!shadowMapDiscRotation[0] || !shadowMapDiscRotation[1])
-		return 0;
+		return nullptr;
 
 	return new InstanceSmProj(this, shadowMapDiscRotation, shader);
 }
@@ -136,8 +136,8 @@ void ImageProcessStepSmProj::InstanceSmProj::destroy()
 
 void ImageProcessStepSmProj::InstanceSmProj::render(
 	ImageProcess* imageProcess,
-	IRenderView* renderView,
-	ScreenRenderer* screenRenderer,
+	RenderContext* renderContext,
+	ProgramParameters* sharedParams,
 	const RenderParams& params
 )
 {
@@ -145,9 +145,6 @@ void ImageProcessStepSmProj::InstanceSmProj::render(
 	ISimpleTexture* sourceDepth = imageProcess->getTarget(m_handleInputDepth);
 	if (!sourceShMap || !sourceDepth)
 		return;
-
-	imageProcess->setCombination(m_handleLastSlice, bool(params.sliceIndex >= (params.sliceCount - 1)));
-	imageProcess->prepareShader(m_shader);
 
 	float shadowMapBias = params.shadowMapBias / params.shadowFarZ;
 	float shadowFadeZ = params.shadowFarZ * 0.7f;
@@ -169,20 +166,25 @@ void ImageProcessStepSmProj::InstanceSmProj::render(
 	Scalar p11 = params.projection.get(0, 0);
 	Scalar p22 = params.projection.get(1, 1);
 
-	// Bind shadow map; some implementations use depth written in color channels (if shadow samplers not supported etc).
-	m_shader->setTextureParameter(m_handleShadowMap, sourceShMap);
-	m_shader->setTextureParameter(m_handleShadowMapDiscRotation, m_shadowMapDiscRotation[m_frame & 1]);
-	m_shader->setVectorParameter(m_handleShadowMapSizeAndBias, shadowMapSizeAndBias);
-	m_shader->setVectorArrayParameter(m_handleShadowMapPoissonTaps, c_poissonTaps, sizeof_array(c_poissonTaps));
-	m_shader->setTextureParameter(m_handleDepth, sourceDepth);
-	m_shader->setVectorParameter(m_handleMagicCoeffs, Vector4(1.0f / p11, 1.0f / p22, params.sliceNearZ - c_sliceBias, params.sliceFarZ + c_sliceBias));
-	m_shader->setVectorParameter(m_handleViewEdgeTopLeft, viewEdgeTopLeft);
-	m_shader->setVectorParameter(m_handleViewEdgeTopRight, viewEdgeTopRight);
-	m_shader->setVectorParameter(m_handleViewEdgeBottomLeft, viewEdgeBottomLeft);
-	m_shader->setVectorParameter(m_handleViewEdgeBottomRight, viewEdgeBottomRight);
-	m_shader->setMatrixParameter(m_handleViewToLight, params.viewToLight);
+	m_shader->setCombination(m_handleLastSlice, (bool)(params.sliceIndex >= (params.sliceCount - 1)));
 
-	screenRenderer->draw(renderView, m_shader);
+	auto pp = renderContext->alloc< ProgramParameters >();
+	pp->beginParameters(renderContext);
+	pp->attachParameters(sharedParams);
+	pp->setTextureParameter(m_handleShadowMap, sourceShMap);
+	pp->setTextureParameter(m_handleShadowMapDiscRotation, m_shadowMapDiscRotation[m_frame & 1]);
+	pp->setVectorParameter(m_handleShadowMapSizeAndBias, shadowMapSizeAndBias);
+	pp->setVectorArrayParameter(m_handleShadowMapPoissonTaps, c_poissonTaps, sizeof_array(c_poissonTaps));
+	pp->setTextureParameter(m_handleDepth, sourceDepth);
+	pp->setVectorParameter(m_handleMagicCoeffs, Vector4(1.0f / p11, 1.0f / p22, params.sliceNearZ - c_sliceBias, params.sliceFarZ + c_sliceBias));
+	pp->setVectorParameter(m_handleViewEdgeTopLeft, viewEdgeTopLeft);
+	pp->setVectorParameter(m_handleViewEdgeTopRight, viewEdgeTopRight);
+	pp->setVectorParameter(m_handleViewEdgeBottomLeft, viewEdgeBottomLeft);
+	pp->setVectorParameter(m_handleViewEdgeBottomRight, viewEdgeBottomRight);
+	pp->setMatrixParameter(m_handleViewToLight, params.viewToLight);
+	pp->endParameters(renderContext);
+
+	imageProcess->getScreenRenderer()->draw(renderContext, m_shader, pp);
 
 	++m_frame;
 }

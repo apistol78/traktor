@@ -27,8 +27,8 @@ class IResourceManager;
 
 class ImageProcess;
 class IRenderSystem;
-class IRenderView;
-class ScreenRenderer;
+class ProgramParameters;
+class RenderContext;
 
 /*! Post processing step.
  * \ingroup Render
@@ -74,8 +74,8 @@ public:
 
 		virtual void render(
 			ImageProcess* imageProcess,
-			IRenderView* renderView,
-			ScreenRenderer* screenRenderer,
+			RenderContext* renderContext,
+			ProgramParameters* sharedParams,
 			const RenderParams& params
 		) = 0;
 	};

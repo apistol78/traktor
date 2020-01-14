@@ -1,6 +1,6 @@
-#include "Render/Image/ImageProcessStepChain.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberRefArray.h"
+#include "Render/Image/Steps/ImageProcessStepChain.h"
 
 namespace traktor
 {
@@ -49,8 +49,8 @@ void ImageProcessStepChain::InstanceChain::destroy()
 
 void ImageProcessStepChain::InstanceChain::render(
 	ImageProcess* imageProcess,
-	IRenderView* renderView,
-	ScreenRenderer* screenRenderer,
+	RenderContext* renderContext,
+	ProgramParameters* sharedParams,
 	const RenderParams& params
 )
 {
@@ -58,8 +58,8 @@ void ImageProcessStepChain::InstanceChain::render(
 	{
 		instance->render(
 			imageProcess,
-			renderView,
-			screenRenderer,
+			renderContext,
+			sharedParams,
 			params
 		);
 	}

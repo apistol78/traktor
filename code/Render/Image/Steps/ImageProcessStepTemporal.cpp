@@ -4,10 +4,11 @@
 #include "Render/IRenderTargetSet.h"
 #include "Render/ScreenRenderer.h"
 #include "Render/Shader.h"
+#include "Render/Context/RenderContext.h"
 #include "Resource/IResourceManager.h"
 #include "Resource/Member.h"
-#include "Render/Image/ImageProcessStepTemporal.h"
 #include "Render/Image/ImageProcess.h"
+#include "Render/Image/Steps/ImageProcessStepTemporal.h"
 
 namespace traktor
 {
@@ -25,7 +26,7 @@ Ref< ImageProcessStep::Instance > ImageProcessStepTemporal::create(
 {
 	resource::Proxy< Shader > shader;
 	if (!resourceManager->bind(m_shader, shader))
-		return 0;
+		return nullptr;
 
 	std::vector< InstanceTemporal::Source > sources(m_sources.size());
 	for (uint32_t i = 0; i < m_sources.size(); ++i)
@@ -85,13 +86,11 @@ void ImageProcessStepTemporal::InstanceTemporal::destroy()
 
 void ImageProcessStepTemporal::InstanceTemporal::render(
 	ImageProcess* imageProcess,
-	IRenderView* renderView,
-	ScreenRenderer* screenRenderer,
+	RenderContext* renderContext,
+	ProgramParameters* sharedParams,
 	const RenderParams& params
 )
 {
-	imageProcess->prepareShader(m_shader);
-
 	Scalar p11 = params.projection.get(0, 0);
 	Scalar p22 = params.projection.get(1, 1);
 	Vector4 viewEdgeTopLeft = params.viewFrustum.corners[4];
@@ -101,28 +100,31 @@ void ImageProcessStepTemporal::InstanceTemporal::render(
 
 	Matrix44 deltaView = params.lastView * params.view.inverse();
 
-	m_shader->setFloatParameter(m_handleTime, m_time);
-	m_shader->setFloatParameter(m_handleDeltaTime, params.deltaTime);
-	m_shader->setVectorParameter(m_handleViewEdgeTopLeft, viewEdgeTopLeft);
-	m_shader->setVectorParameter(m_handleViewEdgeTopRight, viewEdgeTopRight);
-	m_shader->setVectorParameter(m_handleViewEdgeBottomLeft, viewEdgeBottomLeft);
-	m_shader->setVectorParameter(m_handleViewEdgeBottomRight, viewEdgeBottomRight);
-	m_shader->setVectorParameter(m_handleMagicCoeffs, Vector4(1.0f / p11, 1.0f / p22, 0.0f, 0.0f));
-	m_shader->setMatrixParameter(m_handleProjection, params.projection);
-	m_shader->setMatrixParameter(m_handleView, params.view);
-	m_shader->setMatrixParameter(m_handleViewLast, params.lastView);
-	m_shader->setMatrixParameter(m_handleViewInverse, params.view.inverse());
-	m_shader->setMatrixParameter(m_handleDeltaView, deltaView);
-	m_shader->setMatrixParameter(m_handleDeltaViewProj, params.projection * deltaView);
-
-	for (std::vector< Source >::const_iterator i = m_sources.begin(); i != m_sources.end(); ++i)
+	auto pp = renderContext->alloc< ProgramParameters >();
+	pp->beginParameters(renderContext);
+	pp->attachParameters(sharedParams);
+	pp->setFloatParameter(m_handleTime, m_time);
+	pp->setFloatParameter(m_handleDeltaTime, params.deltaTime);
+	pp->setVectorParameter(m_handleViewEdgeTopLeft, viewEdgeTopLeft);
+	pp->setVectorParameter(m_handleViewEdgeTopRight, viewEdgeTopRight);
+	pp->setVectorParameter(m_handleViewEdgeBottomLeft, viewEdgeBottomLeft);
+	pp->setVectorParameter(m_handleViewEdgeBottomRight, viewEdgeBottomRight);
+	pp->setVectorParameter(m_handleMagicCoeffs, Vector4(1.0f / p11, 1.0f / p22, 0.0f, 0.0f));
+	pp->setMatrixParameter(m_handleProjection, params.projection);
+	pp->setMatrixParameter(m_handleView, params.view);
+	pp->setMatrixParameter(m_handleViewLast, params.lastView);
+	pp->setMatrixParameter(m_handleViewInverse, params.view.inverse());
+	pp->setMatrixParameter(m_handleDeltaView, deltaView);
+	pp->setMatrixParameter(m_handleDeltaViewProj, params.projection * deltaView);
+	for (const auto& s : m_sources)
 	{
-		ISimpleTexture* source = imageProcess->getTarget(i->source);
+		ISimpleTexture* source = imageProcess->getTarget(s.source);
 		if (source)
-			m_shader->setTextureParameter(i->param, source);
+			pp->setTextureParameter(s.param, source);		
 	}
+	pp->endParameters(renderContext);
 
-	screenRenderer->draw(renderView, m_shader);
+	imageProcess->getScreenRenderer()->draw(renderContext, m_shader, pp);
 
 	m_time += params.deltaTime;
 }

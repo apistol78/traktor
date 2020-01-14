@@ -4,7 +4,7 @@
 #include "Core/Serialization/MemberEnum.h"
 #include "Render/IRenderSystem.h"
 #include "Render/Image/ImageProcess.h"
-#include "Render/Image/ImageProcessDefineTarget.h"
+#include "Render/Image/Defines/ImageProcessDefineTarget.h"
 
 namespace traktor
 {

@@ -1,6 +1,6 @@
-#include "Render/Image/ImageProcessStepSetTarget.h"
-#include "Render/Image/ImageProcess.h"
 #include "Core/Serialization/ISerializer.h"
+#include "Render/Image/ImageProcess.h"
+#include "Render/Image/Steps/ImageProcessStepSetTarget.h"
 
 namespace traktor
 {
@@ -37,12 +37,12 @@ void ImageProcessStepSetTarget::InstanceSetTarget::destroy()
 
 void ImageProcessStepSetTarget::InstanceSetTarget::render(
 	ImageProcess* imageProcess,
-	IRenderView* renderView,
-	ScreenRenderer* screenRenderer,
+	RenderContext* renderContext,
+	ProgramParameters* sharedParams,
 	const RenderParams& params
 )
 {
-	imageProcess->setTarget(renderView, m_target);
+	imageProcess->setTarget(renderContext, m_target);
 }
 
 	}

@@ -18,8 +18,9 @@ namespace traktor
 
 class IProgram;
 class IRenderSystem;
-class IRenderTargetSet;
 class IRenderView;
+class ProgramParameters;
+class RenderContext;
 class Shader;
 class VertexBuffer;
 
@@ -41,13 +42,23 @@ public:
 
 	void destroy();
 
+	// \name Direct draws.
+	// !{
+
 	void draw(IRenderView* renderView, IProgram* program);
 
 	void draw(IRenderView* renderView, Shader* shader);
 
-	void draw(IRenderView* renderView, IRenderTargetSet* renderTargetSet, int32_t renderTarget, IProgram* program);
+	// !}
 
-	void draw(IRenderView* renderView, IRenderTargetSet* renderTargetSet, int32_t renderTarget, Shader* shader);
+	// \name Context queued draws.
+	// !{
+
+	void draw(RenderContext* renderContext, IProgram* program, ProgramParameters* programParams = nullptr);
+
+	void draw(RenderContext* renderContext, Shader* shader, ProgramParameters* programParams = nullptr);
+
+	// !}
 
 private:
 	Ref< VertexBuffer > m_vertexBuffer;
