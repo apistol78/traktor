@@ -4,7 +4,7 @@
 #include "Resource/IResourceManager.h"
 #include "Resource/Member.h"
 #include "Render/Image/ImageProcess.h"
-#include "Render/Image/ImageProcessDefineTexture.h"
+#include "Render/Image/Defines/ImageProcessDefineTexture.h"
 
 namespace traktor
 {

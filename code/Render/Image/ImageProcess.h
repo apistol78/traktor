@@ -40,6 +40,7 @@ class IRenderTargetSet;
 class IRenderView;
 class ISimpleTexture;
 class ITexture;
+class RenderContext;
 class Shader;
 class ScreenRenderer;
 
@@ -74,7 +75,7 @@ public:
 	void destroy();
 
 	bool render(
-		IRenderView* renderView,
+		RenderContext* renderContext,
 		ISimpleTexture* colorBuffer,
 		ISimpleTexture* depthBuffer,
 		ISimpleTexture* normalBuffer,
@@ -85,7 +86,7 @@ public:
 
 	void defineTarget(const std::wstring& name, handle_t id, const RenderTargetSetCreateDesc& rtscd, const Color4f& clearColor, bool persistent);
 
-	void setTarget(IRenderView* renderView, handle_t id);
+	void setTarget(RenderContext* renderContext, handle_t id);
 
 	ISimpleTexture* getTarget(handle_t id);
 
@@ -101,11 +102,11 @@ public:
 
 	void setTextureParameter(handle_t handle, const resource::Proxy< ITexture >& value);
 
-	void prepareShader(Shader* shader) const;
-
 	bool requireHighRange() const;
 
 	void getDebugTargets(std::vector< DebugTarget >& outTargets) const;
+
+	ScreenRenderer* getScreenRenderer() const { return m_screenRenderer; }
 
 private:
 	struct Target

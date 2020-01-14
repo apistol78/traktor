@@ -2,10 +2,11 @@
 #include "Render/IRenderTargetSet.h"
 #include "Render/ScreenRenderer.h"
 #include "Render/Shader.h"
+#include "Render/Context/RenderContext.h"
 #include "Resource/IResourceManager.h"
 #include "Resource/Member.h"
 #include "Render/Image/ImageProcess.h"
-#include "Render/Image/ImageProcessStepLuminance.h"
+#include "Render/Image/Steps/ImageProcessStepLuminance.h"
 
 namespace traktor
 {
@@ -23,7 +24,7 @@ Ref< ImageProcessStep::Instance > ImageProcessStepLuminance::create(
 {
 	resource::Proxy< Shader > shader;
 	if (!resourceManager->bind(m_shader, shader))
-		return 0;
+		return nullptr;
 
 	Vector4 sampleOffsets[16];
 	int index = 0;
@@ -81,29 +82,32 @@ void ImageProcessStepLuminance::InstanceLuminance::destroy()
 
 void ImageProcessStepLuminance::InstanceLuminance::render(
 	ImageProcess* imageProcess,
-	IRenderView* renderView,
-	ScreenRenderer* screenRenderer,
+	RenderContext* renderContext,
+	ProgramParameters* sharedParams,
 	const RenderParams& params
 )
 {
+
 	ISimpleTexture* source = imageProcess->getTarget(m_source);
 	if (!source)
 		return;
-
-	imageProcess->prepareShader(m_shader);
-
-	Vector4 sampleOffsetScale(
+	
+	const Vector4 sampleOffsetScale(
 		1.0f / source->getWidth(),
 		1.0f / source->getHeight(),
 		0.5f / source->getWidth(),
 		0.5f / source->getHeight()
 	);
 
-	m_shader->setTextureParameter(L"SourceTexture", source);
-	m_shader->setVectorArrayParameter(L"SampleOffsets", m_sampleOffsets, sizeof_array(m_sampleOffsets));
-	m_shader->setVectorParameter(L"SampleOffsetScale", sampleOffsetScale);
+	auto pp = renderContext->alloc< ProgramParameters >();
+	pp->beginParameters(renderContext);
+	pp->attachParameters(sharedParams);
+	pp->setTextureParameter(L"SourceTexture", source);
+	pp->setVectorArrayParameter(L"SampleOffsets", m_sampleOffsets, sizeof_array(m_sampleOffsets));
+	pp->setVectorParameter(L"SampleOffsetScale", sampleOffsetScale);
+	pp->endParameters(renderContext);
 
-	screenRenderer->draw(renderView, m_shader);
+	imageProcess->getScreenRenderer()->draw(renderContext, m_shader, pp);
 }
 
 	}

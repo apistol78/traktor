@@ -1038,20 +1038,15 @@ void WorldRendererDeferred::buildVelocity(const WorldRenderView& worldRenderView
 		params.projection = worldRenderView.getProjection();
 		params.deltaTime = 0.0f;
 
-		auto lrb = wc.getRenderContext()->alloc< render::LambdaRenderBlock >("World velocity; prime");
-		lrb->lambda = [&, params](render::IRenderView* renderView)
-		{
-			m_motionBlurPrimeImageProcess->render(
-				renderView,
-				nullptr,	// color
-				m_gbufferTargetSet->getColorTexture(0),	// depth
-				nullptr,	// normal
-				nullptr,	// velocity
-				nullptr,	// shadow mask
-				params
-			);
-		};
-		wc.getRenderContext()->enqueue(lrb);
+		m_motionBlurPrimeImageProcess->render(
+			wc.getRenderContext(),
+			nullptr,	// color
+			m_gbufferTargetSet->getColorTexture(0),	// depth
+			nullptr,	// normal
+			nullptr,	// velocity
+			nullptr,	// shadow mask
+			params
+		);
 	}
 
 	WorldRenderView velocityRenderView = worldRenderView;
@@ -1105,20 +1100,15 @@ void WorldRendererDeferred::buildAmbientOcclusion(WorldRenderView& worldRenderVi
 		params.projection = worldRenderView.getProjection();
 		params.deltaTime = 0.0f;
 
-		auto lrb = wc.getRenderContext()->alloc< render::LambdaRenderBlock >("World ambient occlusion; process");
-		lrb->lambda = [&, params](render::IRenderView* renderView)
-		{
-			m_ambientOcclusion->render(
-				renderView,
-				nullptr,	// color
-				m_gbufferTargetSet->getColorTexture(0),	// depth
-				m_gbufferTargetSet->getColorTexture(1),	// normal
-				nullptr,	// velocity
-				nullptr,	// shadow mask
-				params
-			);
-		};
-		wc.getRenderContext()->enqueue(lrb);
+		m_ambientOcclusion->render(
+			wc.getRenderContext(),
+			nullptr,	// color
+			m_gbufferTargetSet->getColorTexture(0),	// depth
+			m_gbufferTargetSet->getColorTexture(1),	// normal
+			nullptr,	// velocity
+			nullptr,	// shadow mask
+			params
+		);
 	}
 
 	auto te = wc.getRenderContext()->alloc< render::TargetEndRenderBlock >("World ambient occlusion; end");
@@ -1286,20 +1276,15 @@ void WorldRendererDeferred::buildLights(const WorldRenderView& worldRenderView, 
 					params.shadowMapBias = m_shadowSettings.bias + slice * m_shadowSettings.biasCoeff;
 					params.deltaTime = 0.0f;
 
-					auto lrb = wc.getRenderContext()->alloc< render::LambdaRenderBlock >("World cascade shadow mask; process");
-					lrb->lambda = [&, params](render::IRenderView* renderView)
-					{
-						m_shadowMaskProject->render(
-							renderView,
-							m_shadowCascadeTargetSet->getDepthTexture(),	// color
-							m_gbufferTargetSet->getColorTexture(0),	// depth
-							m_gbufferTargetSet->getColorTexture(1),	// normal
-							nullptr,	// velocity
-							nullptr,	// shadow mask
-							params
-						);
-					};
-					wc.getRenderContext()->enqueue(lrb);
+					m_shadowMaskProject->render(
+						wc.getRenderContext(),
+						m_shadowCascadeTargetSet->getDepthTexture(),	// color
+						m_gbufferTargetSet->getColorTexture(0),	// depth
+						m_gbufferTargetSet->getColorTexture(1),	// normal
+						nullptr,	// velocity
+						nullptr,	// shadow mask
+						params
+					);
 
 					auto te = wc.getRenderContext()->alloc< render::TargetEndRenderBlock >("World cascade shadow mask; end");
 					wc.getRenderContext()->enqueue(te);
@@ -1704,20 +1689,15 @@ void WorldRendererDeferred::buildCopyFrame(const WorldRenderView& worldRenderVie
 	params.projection = worldRenderView.getProjection();
 	params.deltaTime = 0.0f;
 
-	auto lrb = wc.getRenderContext()->alloc< render::LambdaRenderBlock >();
-	lrb->lambda = [&, params](render::IRenderView* renderView)
-	{
-		m_colorTargetCopy->render(
-	 		renderView,
-	 		m_visualTargetSet->getColorTexture(0),	// color
-	 		nullptr,	// depth
-	 		nullptr,	// normal
-	 		nullptr,	// velocity
-	 		nullptr,	// shadow mask
-	 		params
-		);
-	};
-	wc.getRenderContext()->enqueue(lrb);
+	m_colorTargetCopy->render(
+		wc.getRenderContext(),
+		m_visualTargetSet->getColorTexture(0),	// color
+		nullptr,	// depth
+		nullptr,	// normal
+		nullptr,	// velocity
+		nullptr,	// shadow mask
+		params
+	);
 
 	auto te = wc.getRenderContext()->alloc< render::TargetEndRenderBlock >("World copy-frame; end");
 	wc.getRenderContext()->enqueue(te);
@@ -1771,20 +1751,15 @@ void WorldRendererDeferred::buildEndFrame(WorldRenderView& worldRenderView, int3
 			wc.getRenderContext()->enqueue(tb);
 		}
 
-		auto lrb = wc.getRenderContext()->alloc< render::LambdaRenderBlock >("World end-frame; process");
-		lrb->lambda = [&, process, sourceTargetSet, params](render::IRenderView* renderView)
-		{
-			process->render(
-				renderView,
-				sourceTargetSet->getColorTexture(0),	// color
-				m_gbufferTargetSet->getColorTexture(0),	// depth
-				m_gbufferTargetSet->getColorTexture(1),	// normal
-				m_velocityTargetSet ? m_velocityTargetSet->getColorTexture(0) : nullptr,	// velocity
-				nullptr,	// shadow mask
-				params
-			);
-		};
-		wc.getRenderContext()->enqueue(lrb);
+		process->render(
+			wc.getRenderContext(),
+			sourceTargetSet->getColorTexture(0),	// color
+			m_gbufferTargetSet->getColorTexture(0),	// depth
+			m_gbufferTargetSet->getColorTexture(1),	// normal
+			m_velocityTargetSet ? m_velocityTargetSet->getColorTexture(0) : nullptr,	// velocity
+			nullptr,	// shadow mask
+			params
+		);
 
 		if (haveNext)
 		{

@@ -1,6 +1,6 @@
-#include "Render/Image/ImageProcessStepDiscardTarget.h"
-#include "Render/Image/ImageProcess.h"
 #include "Core/Serialization/ISerializer.h"
+#include "Render/Image/ImageProcess.h"
+#include "Render/Image/Steps/ImageProcessStepDiscardTarget.h"
 
 namespace traktor
 {
@@ -46,8 +46,8 @@ void ImageProcessStepDiscardTarget::InstanceDiscardTarget::destroy()
 
 void ImageProcessStepDiscardTarget::InstanceDiscardTarget::render(
 	ImageProcess* imageProcess,
-	IRenderView* renderView,
-	ScreenRenderer* screenRenderer,
+	RenderContext* renderContext,
+	ProgramParameters* sharedParams,
 	const RenderParams& params
 )
 {

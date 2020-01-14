@@ -714,7 +714,7 @@
 													<name>Steps</name>
 													<items>
 														<item type="File">
-															<fileName>Steps/*.*</fileName>
+															<fileName>Image/Steps/*.*</fileName>
 															<items/>
 														</item>
 													</items>
@@ -723,7 +723,7 @@
 													<name>Defines</name>
 													<items>
 														<item type="File">
-															<fileName>Defines/*.*</fileName>
+															<fileName>Image/Defines/*.*</fileName>
 															<items/>
 														</item>
 													</items>

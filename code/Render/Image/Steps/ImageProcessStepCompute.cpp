@@ -3,12 +3,12 @@
 #include "Core/Serialization/MemberStaticArray.h"
 #include "Core/Serialization/MemberStl.h"
 #include "Render/IRenderTargetSet.h"
-#include "Render/IRenderView.h"
 #include "Render/Shader.h"
+#include "Render/Context/RenderContext.h"
 #include "Resource/IResourceManager.h"
 #include "Resource/Member.h"
-#include "Render/Image/ImageProcessStepCompute.h"
 #include "Render/Image/ImageProcess.h"
+#include "Render/Image/Steps/ImageProcessStepCompute.h"
 
 namespace traktor
 {
@@ -72,24 +72,29 @@ void ImageProcessStepCompute::InstanceCompute::destroy()
 
 void ImageProcessStepCompute::InstanceCompute::render(
 	ImageProcess* imageProcess,
-	IRenderView* renderView,
-	ScreenRenderer* screenRenderer,
+	RenderContext* renderContext,
+	ProgramParameters* sharedParams,
 	const RenderParams& params
 )
 {
-	imageProcess->prepareShader(m_shader);
-
-	m_shader->setFloatParameter(m_handleTime, m_time);
-	m_shader->setFloatParameter(m_handleDeltaTime, params.deltaTime);
-
-	for (const auto& source : m_sources)
+	auto pp = renderContext->alloc< ProgramParameters >();
+	pp->beginParameters(renderContext);
+	pp->attachParameters(sharedParams);
+	pp->setFloatParameter(m_handleTime, m_time);
+	pp->setFloatParameter(m_handleDeltaTime, params.deltaTime);
+	for (const auto& s : m_sources)
 	{
-		ISimpleTexture* texture = imageProcess->getTarget(source.source);
-		if (texture)
-			m_shader->setTextureParameter(source.param, texture);
+		ISimpleTexture* source = imageProcess->getTarget(s.source);
+		if (source)
+			pp->setTextureParameter(s.param, source);		
 	}
+	pp->endParameters(renderContext);
 
-	renderView->compute(m_shader->getCurrentProgram(), m_step->m_workSize);
+	// auto rb = renderContext->alloc< ComputeRenderBlock >();
+	// rb->program = m_shader->getCurrentProgram();
+	// rb->programParams = pp;
+	// rb->workSize = m_step->m_workSize
+	// renderContext->enqueue(rb);
 
 	m_time += params.deltaTime;
 }

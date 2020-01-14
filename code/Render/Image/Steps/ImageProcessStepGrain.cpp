@@ -6,10 +6,11 @@
 #include "Render/IRenderTargetSet.h"
 #include "Render/ScreenRenderer.h"
 #include "Render/Shader.h"
+#include "Render/Context/RenderContext.h"
 #include "Resource/IResourceManager.h"
 #include "Resource/Member.h"
-#include "Render/Image/ImageProcessStepGrain.h"
 #include "Render/Image/ImageProcess.h"
+#include "Render/Image/Steps/ImageProcessStepGrain.h"
 
 namespace traktor
 {
@@ -27,7 +28,7 @@ Ref< ImageProcessStep::Instance > ImageProcessStepGrain::create(
 {
 	resource::Proxy< Shader > shader;
 	if (!resourceManager->bind(m_shader, shader))
-		return 0;
+		return nullptr;
 
 	std::vector< InstanceGrain::Source > sources(m_sources.size());
 	for (uint32_t i = 0; i < m_sources.size(); ++i)
@@ -81,30 +82,31 @@ void ImageProcessStepGrain::InstanceGrain::destroy()
 
 void ImageProcessStepGrain::InstanceGrain::render(
 	ImageProcess* imageProcess,
-	IRenderView* renderView,
-	ScreenRenderer* screenRenderer,
+	RenderContext* renderContext,
+	ProgramParameters* sharedParams,
 	const RenderParams& params
 )
 {
-	imageProcess->prepareShader(m_shader);
-
-	m_shader->setFloatParameter(m_handleTime, m_time);
-	m_shader->setFloatParameter(m_handleDeltaTime, params.deltaTime);
-	m_shader->setVectorParameter(m_handleNoiseOffset, Vector4(
+	auto pp = renderContext->alloc< ProgramParameters >();
+	pp->beginParameters(renderContext);
+	pp->attachParameters(sharedParams);
+	pp->setFloatParameter(m_handleTime, m_time);
+	pp->setFloatParameter(m_handleDeltaTime, params.deltaTime);
+	pp->setVectorParameter(m_handleNoiseOffset, Vector4(
 		m_random.nextFloat(),
 		m_random.nextFloat(),
 		0.0f,
 		0.0f
 	));
-
-	for (std::vector< Source >::const_iterator i = m_sources.begin(); i != m_sources.end(); ++i)
+	for (const auto& s : m_sources)
 	{
-		ISimpleTexture* source = imageProcess->getTarget(i->source);
+		ISimpleTexture* source = imageProcess->getTarget(s.source);
 		if (source)
-			m_shader->setTextureParameter(i->param, source);
+			pp->setTextureParameter(s.param, source);		
 	}
+	pp->endParameters(renderContext);
 
-	screenRenderer->draw(renderView, m_shader);
+	imageProcess->getScreenRenderer()->draw(renderContext, m_shader, pp);
 
 	m_time += params.deltaTime;
 }

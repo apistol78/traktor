@@ -641,20 +641,15 @@ void WorldRendererForward::buildAmbientOcclusion(WorldRenderView& worldRenderVie
 	params.projection = worldRenderView.getProjection();
 	params.deltaTime = 0.0f;
 
-	auto lrb = wc.getRenderContext()->alloc< render::LambdaRenderBlock >();
-	lrb->lambda = [&, params](render::IRenderView* renderView)
-	{
-		m_ambientOcclusion->render(
-			renderView,
-			nullptr,	// color
-			m_gbufferTargetSet->getColorTexture(0),	// depth
-			m_gbufferTargetSet->getColorTexture(1),	// normal
-			nullptr,	// velocity
-			nullptr,	// shadow mask
-			params
-		);
-	};
-	wc.getRenderContext()->enqueue(lrb);
+	m_ambientOcclusion->render(
+		wc.getRenderContext(),
+		nullptr,	// color
+		m_gbufferTargetSet->getColorTexture(0),	// depth
+		m_gbufferTargetSet->getColorTexture(1),	// normal
+		nullptr,	// velocity
+		nullptr,	// shadow mask
+		params
+	);
 
 	auto te = wc.getRenderContext()->alloc< render::TargetEndRenderBlock >();
 	wc.getRenderContext()->enqueue(te);
@@ -1011,20 +1006,15 @@ void WorldRendererForward::buildEndFrame(WorldRenderView& worldRenderView, int32
 			wc.getRenderContext()->enqueue(tb);
 		}
 
-		auto lrb = wc.getRenderContext()->alloc< render::LambdaRenderBlock >();
-		lrb->lambda = [&, process, sourceTargetSet, params](render::IRenderView* renderView)
-		{
-			process->render(
-				renderView,
-				sourceTargetSet->getColorTexture(0),	// color
-				m_gbufferTargetSet->getColorTexture(0),	// depth
-				m_gbufferTargetSet->getColorTexture(1),	// normal
-				nullptr,	// velocity
-				m_shadowCascadeTargetSet ? m_shadowCascadeTargetSet->getColorTexture(0) : nullptr,	// shadow mask
-				params
-			);
-		};
-		wc.getRenderContext()->enqueue(lrb);
+		process->render(
+			wc.getRenderContext(),
+			sourceTargetSet->getColorTexture(0),	// color
+			m_gbufferTargetSet->getColorTexture(0),	// depth
+			m_gbufferTargetSet->getColorTexture(1),	// normal
+			nullptr,	// velocity
+			m_shadowCascadeTargetSet ? m_shadowCascadeTargetSet->getColorTexture(0) : nullptr,	// shadow mask
+			params
+		);
 
 		if (haveNext)
 		{

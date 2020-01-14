@@ -6,15 +6,14 @@
 #include "Render/IndexBuffer.h"
 #include "Render/IRenderSystem.h"
 #include "Render/IRenderTargetSet.h"
-#include "Render/IRenderView.h"
 #include "Render/Shader.h"
 #include "Render/VertexBuffer.h"
 #include "Render/VertexElement.h"
+#include "Render/Context/RenderContext.h"
 #include "Resource/IResourceManager.h"
 #include "Resource/Member.h"
-#include "World/WorldRenderView.h"
 #include "Render/Image/ImageProcess.h"
-#include "Render/Image/ImageProcessStepBokeh.h"
+#include "Render/Image/Steps/ImageProcessStepBokeh.h"
 
 namespace traktor
 {
@@ -188,35 +187,36 @@ void ImageProcessStepBokeh::InstanceBokeh::destroy()
 
 void ImageProcessStepBokeh::InstanceBokeh::render(
 	ImageProcess* imageProcess,
-	IRenderView* renderView,
-	ScreenRenderer* screenRenderer,
+	RenderContext* renderContext,
+	ProgramParameters* sharedParams,
 	const RenderParams& params
 )
 {
-	imageProcess->prepareShader(m_shader);
-
-	m_shader->setFloatParameter(m_handleTime, m_time);
-	m_shader->setFloatParameter(m_handleDeltaTime, params.deltaTime);
-	m_shader->setFloatParameter(m_handleRatio, float(renderView->getWidth()) / renderView->getHeight());
-
-	for (std::vector< Source >::const_iterator i = m_sources.begin(); i != m_sources.end(); ++i)
+	auto pp = renderContext->alloc< ProgramParameters >();
+	pp->beginParameters(renderContext);
+	pp->attachParameters(sharedParams);
+	pp->setFloatParameter(m_handleTime, m_time);
+	pp->setFloatParameter(m_handleDeltaTime, params.deltaTime);
+	pp->setFloatParameter(m_handleRatio, (float)1.0f); // (renderView->getWidth()) / renderView->getHeight());
+	for (const auto& s : m_sources)
 	{
-		ISimpleTexture* source = imageProcess->getTarget(i->source);
+		ISimpleTexture* source = imageProcess->getTarget(s.source);
 		if (source)
-			m_shader->setTextureParameter(i->param, source);
+			pp->setTextureParameter(s.param, source);		
 	}
+	pp->endParameters(renderContext);
 
-	m_shader->draw(
-		renderView,
-		m_vertexBuffer,
-		m_indexBuffer,
-		Primitives(
-			PtTriangles,
-			0,
-			m_quadCount * 2,
-			0,
-			m_quadCount * 4 - 1
-		)
+	auto rb = renderContext->alloc< SimpleRenderBlock >();
+	rb->program = m_shader->getCurrentProgram();
+	rb->programParams = pp;
+	rb->indexBuffer = m_indexBuffer;
+	rb->vertexBuffer = m_vertexBuffer;
+	rb->primitives = Primitives(
+		PtTriangles,
+		0,
+		m_quadCount * 2,
+		0,
+		m_quadCount * 4 - 1
 	);
 
 	m_time += params.deltaTime;

@@ -1,11 +1,11 @@
 #include "Core/Misc/SafeDestroy.h"
 #include "Render/IRenderSystem.h"
-#include "Render/IRenderTargetSet.h"
 #include "Render/IRenderView.h"
 #include "Render/ScreenRenderer.h"
 #include "Render/Shader.h"
 #include "Render/VertexBuffer.h"
 #include "Render/VertexElement.h"
+#include "Render/Context/RenderContext.h"
 
 namespace traktor
 {
@@ -70,25 +70,27 @@ void ScreenRenderer::draw(IRenderView* renderView, IProgram* program)
 
 void ScreenRenderer::draw(IRenderView* renderView, Shader* shader)
 {
-	shader->draw(renderView, m_vertexBuffer, nullptr, m_primitives);
+	IProgram* program = shader->getCurrentProgram();
+	if (program)
+		draw(renderView, program);
 }
 
-void ScreenRenderer::draw(IRenderView* renderView, IRenderTargetSet* renderTargetSet, int32_t renderTarget, IProgram* program)
+void ScreenRenderer::draw(RenderContext* renderContext, IProgram* program, ProgramParameters* programParams)
 {
-	if (renderView->begin(renderTargetSet, renderTarget, nullptr))
-	{
-		renderView->draw(m_vertexBuffer, nullptr, program, m_primitives);
-		renderView->end();
-	}
+	auto rb = renderContext->alloc< SimpleRenderBlock >(T_FILE_LINE);
+	rb->program = program;
+	rb->programParams = programParams;
+	rb->indexBuffer = nullptr;
+	rb->vertexBuffer = m_vertexBuffer;
+	rb->primitives = m_primitives;
+	renderContext->enqueue(rb);
 }
 
-void ScreenRenderer::draw(IRenderView* renderView, IRenderTargetSet* renderTargetSet, int32_t renderTarget, Shader* shader)
+void ScreenRenderer::draw(RenderContext* renderContext, Shader* shader, ProgramParameters* programParams)
 {
-	if (renderView->begin(renderTargetSet, renderTarget, nullptr))
-	{
-		shader->draw(renderView, m_vertexBuffer, nullptr, m_primitives);
-		renderView->end();
-	}
+	IProgram* program = shader->getCurrentProgram();
+	if (program)
+		draw(renderContext, program, programParams);
 }
 
 	}
