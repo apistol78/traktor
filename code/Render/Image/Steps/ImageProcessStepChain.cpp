@@ -47,7 +47,7 @@ void ImageProcessStepChain::InstanceChain::destroy()
 	m_instances.clear();
 }
 
-void ImageProcessStepChain::InstanceChain::render(
+void ImageProcessStepChain::InstanceChain::build(
 	ImageProcess* imageProcess,
 	RenderContext* renderContext,
 	ProgramParameters* sharedParams,
@@ -56,7 +56,7 @@ void ImageProcessStepChain::InstanceChain::render(
 {
 	for (auto instance : m_instances)
 	{
-		instance->render(
+		instance->build(
 			imageProcess,
 			renderContext,
 			sharedParams,

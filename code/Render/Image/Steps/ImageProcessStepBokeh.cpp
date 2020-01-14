@@ -51,7 +51,7 @@ Ref< ImageProcessStepBokeh::Instance > ImageProcessStepBokeh::create(
 {
 	resource::Proxy< Shader > shader;
 	if (!resourceManager->bind(m_shader, shader))
-		return 0;
+		return nullptr;
 
 	std::vector< InstanceBokeh::Source > sources(m_sources.size());
 	for (uint32_t i = 0; i < m_sources.size(); ++i)
@@ -185,7 +185,7 @@ void ImageProcessStepBokeh::InstanceBokeh::destroy()
 {
 }
 
-void ImageProcessStepBokeh::InstanceBokeh::render(
+void ImageProcessStepBokeh::InstanceBokeh::build(
 	ImageProcess* imageProcess,
 	RenderContext* renderContext,
 	ProgramParameters* sharedParams,

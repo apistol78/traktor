@@ -80,7 +80,7 @@ void ImageProcessStepGrain::InstanceGrain::destroy()
 {
 }
 
-void ImageProcessStepGrain::InstanceGrain::render(
+void ImageProcessStepGrain::InstanceGrain::build(
 	ImageProcess* imageProcess,
 	RenderContext* renderContext,
 	ProgramParameters* sharedParams,

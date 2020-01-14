@@ -35,7 +35,7 @@ void ImageProcessStepSetTarget::InstanceSetTarget::destroy()
 {
 }
 
-void ImageProcessStepSetTarget::InstanceSetTarget::render(
+void ImageProcessStepSetTarget::InstanceSetTarget::build(
 	ImageProcess* imageProcess,
 	RenderContext* renderContext,
 	ProgramParameters* sharedParams,

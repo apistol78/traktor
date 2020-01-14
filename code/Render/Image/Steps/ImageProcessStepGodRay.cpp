@@ -87,7 +87,7 @@ void ImageProcessStepGodRay::InstanceGodRay::destroy()
 {
 }
 
-void ImageProcessStepGodRay::InstanceGodRay::render(
+void ImageProcessStepGodRay::InstanceGodRay::build(
 	ImageProcess* imageProcess,
 	RenderContext* renderContext,
 	ProgramParameters* sharedParams,

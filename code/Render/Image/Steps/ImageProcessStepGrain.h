@@ -54,7 +54,7 @@ public:
 
 		virtual void destroy() override final;
 
-		virtual void render(
+		virtual void build(
 			ImageProcess* imageProcess,
 			RenderContext* renderContext,
 			ProgramParameters* sharedParams,

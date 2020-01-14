@@ -80,7 +80,7 @@ void ImageProcessStepLuminance::InstanceLuminance::destroy()
 {
 }
 
-void ImageProcessStepLuminance::InstanceLuminance::render(
+void ImageProcessStepLuminance::InstanceLuminance::build(
 	ImageProcess* imageProcess,
 	RenderContext* renderContext,
 	ProgramParameters* sharedParams,

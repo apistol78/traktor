@@ -44,7 +44,7 @@ void ImageProcessStepDiscardTarget::InstanceDiscardTarget::destroy()
 {
 }
 
-void ImageProcessStepDiscardTarget::InstanceDiscardTarget::render(
+void ImageProcessStepDiscardTarget::InstanceDiscardTarget::build(
 	ImageProcess* imageProcess,
 	RenderContext* renderContext,
 	ProgramParameters* sharedParams,

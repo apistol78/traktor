@@ -234,7 +234,7 @@ void ImageProcessStepBlur::InstanceBlur::destroy()
 {
 }
 
-void ImageProcessStepBlur::InstanceBlur::render(
+void ImageProcessStepBlur::InstanceBlur::build(
 	ImageProcess* imageProcess,
 	RenderContext* renderContext,
 	ProgramParameters* sharedParams,

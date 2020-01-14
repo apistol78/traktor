@@ -125,7 +125,7 @@ void ImageProcessStepLensDirt::InstanceLensDirt::destroy()
 	safeDestroy(m_vertexBuffer);
 }
 
-void ImageProcessStepLensDirt::InstanceLensDirt::render(
+void ImageProcessStepLensDirt::InstanceLensDirt::build(
 	ImageProcess* imageProcess,
 	RenderContext* renderContext,
 	ProgramParameters* sharedParams,
