@@ -46,6 +46,7 @@ bool HttpResponse::parse(IStream* stream)
 			else
 				response += ch;
 			break;
+
 		case 1:
 			if (ch == '\r')
 			{
@@ -62,6 +63,7 @@ bool HttpResponse::parse(IStream* stream)
 			else
 				response += ch;
 			break;
+
 		case 2:
 			if (ch == '\n')
 				state = 3;
@@ -71,6 +73,7 @@ bool HttpResponse::parse(IStream* stream)
 				state = 1;
 			}
 			break;
+
 		case 3:
 			if (ch == '\r')
 				state = 4;
@@ -80,6 +83,7 @@ bool HttpResponse::parse(IStream* stream)
 				state = 1;
 			}
 			break;
+
 		case 4:
 			if (ch == '\n')
 				state = -1;

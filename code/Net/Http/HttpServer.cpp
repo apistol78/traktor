@@ -46,7 +46,7 @@ public:
 
 	void destroy()
 	{
-		m_listener = 0;
+		m_listener = nullptr;
 		m_serverSocket.close();
 	}
 
