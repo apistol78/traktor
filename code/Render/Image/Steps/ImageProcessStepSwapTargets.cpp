@@ -41,7 +41,7 @@ void ImageProcessStepSwapTargets::InstanceSwapTargets::destroy()
 {
 }
 
-void ImageProcessStepSwapTargets::InstanceSwapTargets::render(
+void ImageProcessStepSwapTargets::InstanceSwapTargets::build(
 	ImageProcess* imageProcess,
 	RenderContext* renderContext,
 	ProgramParameters* sharedParams,

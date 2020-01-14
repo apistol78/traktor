@@ -1038,7 +1038,7 @@ void WorldRendererDeferred::buildVelocity(const WorldRenderView& worldRenderView
 		params.projection = worldRenderView.getProjection();
 		params.deltaTime = 0.0f;
 
-		m_motionBlurPrimeImageProcess->render(
+		m_motionBlurPrimeImageProcess->build(
 			wc.getRenderContext(),
 			nullptr,	// color
 			m_gbufferTargetSet->getColorTexture(0),	// depth
@@ -1100,7 +1100,7 @@ void WorldRendererDeferred::buildAmbientOcclusion(WorldRenderView& worldRenderVi
 		params.projection = worldRenderView.getProjection();
 		params.deltaTime = 0.0f;
 
-		m_ambientOcclusion->render(
+		m_ambientOcclusion->build(
 			wc.getRenderContext(),
 			nullptr,	// color
 			m_gbufferTargetSet->getColorTexture(0),	// depth
@@ -1276,7 +1276,7 @@ void WorldRendererDeferred::buildLights(const WorldRenderView& worldRenderView, 
 					params.shadowMapBias = m_shadowSettings.bias + slice * m_shadowSettings.biasCoeff;
 					params.deltaTime = 0.0f;
 
-					m_shadowMaskProject->render(
+					m_shadowMaskProject->build(
 						wc.getRenderContext(),
 						m_shadowCascadeTargetSet->getDepthTexture(),	// color
 						m_gbufferTargetSet->getColorTexture(0),	// depth
@@ -1689,7 +1689,7 @@ void WorldRendererDeferred::buildCopyFrame(const WorldRenderView& worldRenderVie
 	params.projection = worldRenderView.getProjection();
 	params.deltaTime = 0.0f;
 
-	m_colorTargetCopy->render(
+	m_colorTargetCopy->build(
 		wc.getRenderContext(),
 		m_visualTargetSet->getColorTexture(0),	// color
 		nullptr,	// depth
@@ -1751,7 +1751,7 @@ void WorldRendererDeferred::buildEndFrame(WorldRenderView& worldRenderView, int3
 			wc.getRenderContext()->enqueue(tb);
 		}
 
-		process->render(
+		process->build(
 			wc.getRenderContext(),
 			sourceTargetSet->getColorTexture(0),	// color
 			m_gbufferTargetSet->getColorTexture(0),	// depth

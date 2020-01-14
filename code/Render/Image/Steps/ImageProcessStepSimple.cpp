@@ -80,7 +80,7 @@ void ImageProcessStepSimple::InstanceSimple::destroy()
 	m_sources.clear();
 }
 
-void ImageProcessStepSimple::InstanceSimple::render(
+void ImageProcessStepSimple::InstanceSimple::build(
 	ImageProcess* imageProcess,
 	RenderContext* renderContext,
 	ProgramParameters* sharedParams,

@@ -183,7 +183,7 @@ void ImageProcessStepSsao::InstanceSsao::destroy()
 	m_randomNormals->destroy();
 }
 
-void ImageProcessStepSsao::InstanceSsao::render(
+void ImageProcessStepSsao::InstanceSsao::build(
 	ImageProcess* imageProcess,
 	RenderContext* renderContext,
 	ProgramParameters* sharedParams,

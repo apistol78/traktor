@@ -70,7 +70,7 @@ void ImageProcessStepCompute::InstanceCompute::destroy()
 	m_sources.clear();
 }
 
-void ImageProcessStepCompute::InstanceCompute::render(
+void ImageProcessStepCompute::InstanceCompute::build(
 	ImageProcess* imageProcess,
 	RenderContext* renderContext,
 	ProgramParameters* sharedParams,

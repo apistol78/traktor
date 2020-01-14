@@ -641,7 +641,7 @@ void WorldRendererForward::buildAmbientOcclusion(WorldRenderView& worldRenderVie
 	params.projection = worldRenderView.getProjection();
 	params.deltaTime = 0.0f;
 
-	m_ambientOcclusion->render(
+	m_ambientOcclusion->build(
 		wc.getRenderContext(),
 		nullptr,	// color
 		m_gbufferTargetSet->getColorTexture(0),	// depth
@@ -1006,7 +1006,7 @@ void WorldRendererForward::buildEndFrame(WorldRenderView& worldRenderView, int32
 			wc.getRenderContext()->enqueue(tb);
 		}
 
-		process->render(
+		process->build(
 			wc.getRenderContext(),
 			sourceTargetSet->getColorTexture(0),	// color
 			m_gbufferTargetSet->getColorTexture(0),	// depth

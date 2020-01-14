@@ -84,7 +84,7 @@ void ImageProcessStepTemporal::InstanceTemporal::destroy()
 {
 }
 
-void ImageProcessStepTemporal::InstanceTemporal::render(
+void ImageProcessStepTemporal::InstanceTemporal::build(
 	ImageProcess* imageProcess,
 	RenderContext* renderContext,
 	ProgramParameters* sharedParams,

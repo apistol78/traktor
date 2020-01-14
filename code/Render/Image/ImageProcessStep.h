@@ -72,7 +72,7 @@ public:
 
 		virtual void destroy() = 0;
 
-		virtual void render(
+		virtual void build(
 			ImageProcess* imageProcess,
 			RenderContext* renderContext,
 			ProgramParameters* sharedParams,

@@ -48,7 +48,7 @@ void ImageProcessStepRepeat::InstanceRepeat::destroy()
 	m_instance->destroy();
 }
 
-void ImageProcessStepRepeat::InstanceRepeat::render(
+void ImageProcessStepRepeat::InstanceRepeat::build(
 	ImageProcess* imageProcess,
 	RenderContext* renderContext,
 	ProgramParameters* sharedParams,
@@ -57,7 +57,7 @@ void ImageProcessStepRepeat::InstanceRepeat::render(
 {
 	for (uint32_t i = 0; i < m_count; ++i)
 	{
-		m_instance->render(
+		m_instance->build(
 			imageProcess,
 			renderContext,
 			sharedParams,

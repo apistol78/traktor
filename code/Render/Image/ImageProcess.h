@@ -74,7 +74,7 @@ public:
 
 	void destroy();
 
-	bool render(
+	bool build(
 		RenderContext* renderContext,
 		ISimpleTexture* colorBuffer,
 		ISimpleTexture* depthBuffer,

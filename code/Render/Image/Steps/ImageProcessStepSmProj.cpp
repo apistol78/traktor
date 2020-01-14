@@ -134,7 +134,7 @@ void ImageProcessStepSmProj::InstanceSmProj::destroy()
 {
 }
 
-void ImageProcessStepSmProj::InstanceSmProj::render(
+void ImageProcessStepSmProj::InstanceSmProj::build(
 	ImageProcess* imageProcess,
 	RenderContext* renderContext,
 	ProgramParameters* sharedParams,

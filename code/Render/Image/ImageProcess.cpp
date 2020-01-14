@@ -98,7 +98,7 @@ void ImageProcess::destroy()
 	safeDestroy(m_screenRenderer);
 }
 
-bool ImageProcess::render(
+bool ImageProcess::build(
 	RenderContext* renderContext,
 	ISimpleTexture* colorBuffer,
 	ISimpleTexture* depthBuffer,
@@ -166,7 +166,7 @@ bool ImageProcess::render(
 	// Execute each post processing step in sequence.
 	for (auto instance : m_instances)
 	{
-		instance->render(
+		instance->build(
 			this,
 			renderContext,
 			sharedParams,
