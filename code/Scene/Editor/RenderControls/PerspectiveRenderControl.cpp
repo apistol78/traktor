@@ -19,7 +19,7 @@
 #include "Render/PrimitiveRenderer.h"
 #include "Render/ScreenRenderer.h"
 #include "Render/Shader.h"
-#include "Render/ImageProcess/ImageProcess.h"
+#include "Render/Image/ImageProcess.h"
 #include "Resource/IResourceManager.h"
 #include "Scene/Scene.h"
 #include "Scene/Editor/Camera.h"

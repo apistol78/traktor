@@ -29,7 +29,7 @@ class IEnvironment;
 	{
 
 class ImageProcess;
-class ImageProcessSettings;
+class ImageProcessData;
 class IRenderTargetSet;
 
 	}
@@ -63,7 +63,7 @@ public:
 		runtime::IEnvironment* environment,
 		const resource::Proxy< Movie >& movie,
 		const std::map< std::wstring, resource::Proxy< Movie > >& externalMovies,
-		const resource::Proxy< render::ImageProcessSettings >& imageProcessSettings,
+		const resource::Proxy< render::ImageProcessData >& imageProcessSettings,
 		bool clearBackground,
 		bool enableShapeCache,
 		bool enableDirtyRegions,
@@ -168,7 +168,7 @@ private:
 	Ref< AccDisplayRenderer > m_displayRenderer;
 	Ref< ISoundRenderer > m_soundRenderer;
 	Ref< render::IRenderTargetSet > m_imageTargetSet;
-	resource::Proxy< render::ImageProcessSettings > m_imageProcessSettings;
+	resource::Proxy< render::ImageProcessData > m_imageProcessSettings;
 	Ref< render::ImageProcess > m_imageProcess;
 	bool m_clearBackground;
 	bool m_enableShapeCache;

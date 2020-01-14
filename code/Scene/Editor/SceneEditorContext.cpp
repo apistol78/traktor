@@ -9,7 +9,7 @@
 #include "Physics/Body.h"
 #include "Physics/PhysicsManager.h"
 #include "Render/ITexture.h"
-#include "Render/ImageProcess/ImageProcessSettings.h"
+#include "Render/Image/ImageProcessData.h"
 #include "Resource/IResourceManager.h"
 #include "Scene/ISceneController.h"
 #include "Scene/ISceneControllerData.h"

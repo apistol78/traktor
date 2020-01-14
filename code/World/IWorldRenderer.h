@@ -24,7 +24,7 @@ class Color4f;
 	{
 
 class ImageProcess;
-class ImageProcessSettings;
+class ImageProcessData;
 class IRenderSystem;
 class IRenderTargetSet;
 class IRenderView;

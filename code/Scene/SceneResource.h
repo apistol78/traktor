@@ -25,7 +25,7 @@ class IResourceManager;
 	namespace render
 	{
 
-class ImageProcessSettings;
+class ImageProcessData;
 class IRenderSystem;
 class ITexture;
 

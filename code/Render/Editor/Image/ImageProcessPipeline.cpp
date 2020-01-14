@@ -1,0 +1,234 @@
+#include "Core/RefArray.h"
+#include "Core/Io/StringOutputStream.h"
+#include "Core/Log/Log.h"
+#include "Core/Serialization/DeepClone.h"
+#include "Database/Instance.h"
+#include "Editor/IPipelineDepends.h"
+#include "Editor/IPipelineBuilder.h"
+#include "Render/Editor/Image/IImageProcessStepFacade.h"
+#include "Render/Editor/Image/ImageProcessPipeline.h"
+#include "Render/Image/ImageProcessData.h"
+#include "Render/Image/Defines/ImageProcessDefineTarget.h"
+#include "Render/Image/Defines/ImageProcessDefineTexture.h"
+#include "Render/Image/Steps/ImageProcessStepBlur.h"
+#include "Render/Image/Steps/ImageProcessStepBokeh.h"
+#include "Render/Image/Steps/ImageProcessStepChain.h"
+#include "Render/Image/Steps/ImageProcessStepCompute.h"
+#include "Render/Image/Steps/ImageProcessStepDiscardTarget.h"
+#include "Render/Image/Steps/ImageProcessStepGodRay.h"
+#include "Render/Image/Steps/ImageProcessStepGrain.h"
+#include "Render/Image/Steps/ImageProcessStepLensDirt.h"
+#include "Render/Image/Steps/ImageProcessStepLuminance.h"
+#include "Render/Image/Steps/ImageProcessStepRepeat.h"
+#include "Render/Image/Steps/ImageProcessStepSimple.h"
+#include "Render/Image/Steps/ImageProcessStepSsao.h"
+#include "Render/Image/Steps/ImageProcessStepSmProj.h"
+#include "Render/Image/Steps/ImageProcessStepTemporal.h"
+
+namespace traktor
+{
+	namespace render
+	{
+		namespace
+		{
+
+void gatherSources(const RefArray< ImageProcessStep >& steps, std::vector< std::wstring >& outSources);
+
+Ref< IImageProcessStepFacade > createFacade(const ImageProcessStep* step)
+{
+	StringOutputStream ss;
+	ss << type_name(step) << L"Facade";
+	const TypeInfo* facadeType = TypeInfo::find(ss.str().c_str());
+	if (facadeType)
+		return checked_type_cast< IImageProcessStepFacade* >(facadeType->createInstance());
+	else
+		return nullptr;
+}
+
+void gatherSources(const ImageProcessStep* step, std::vector< std::wstring >& outSources)
+{
+	Ref< IImageProcessStepFacade > facade = createFacade(step);
+	if (facade)
+	{
+		facade->getSources(step, outSources);
+
+		RefArray< ImageProcessStep > children;
+		facade->getChildren(step, children);
+		gatherSources(children, outSources);
+	}
+}
+
+void gatherSources(const RefArray< ImageProcessStep >& steps, std::vector< std::wstring >& outSources)
+{
+	for (const auto step : steps)
+		gatherSources(step, outSources);
+}
+
+		}
+
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ImageProcessPipeline", 2, ImageProcessPipeline, editor::IPipeline)
+
+bool ImageProcessPipeline::create(const editor::IPipelineSettings* settings)
+{
+	return true;
+}
+
+void ImageProcessPipeline::destroy()
+{
+}
+
+TypeInfoSet ImageProcessPipeline::getAssetTypes() const
+{
+	return makeTypeInfoSet< ImageProcessData >();
+}
+
+bool ImageProcessPipeline::buildDependencies(
+	editor::IPipelineDepends* pipelineDepends,
+	const db::Instance* sourceInstance,
+	const ISerializable* sourceAsset,
+	const std::wstring& outputPath,
+	const Guid& outputGuid
+) const
+{
+	const ImageProcessData* postProcessSettings = checked_type_cast< const ImageProcessData* >(sourceAsset);
+	T_FATAL_ASSERT (postProcessSettings);
+
+	for (const auto definition : postProcessSettings->getDefinitions())
+	{
+		if (const ImageProcessDefineTexture* defineTexture = dynamic_type_cast< const ImageProcessDefineTexture* >(definition))
+			pipelineDepends->addDependency(defineTexture->getTexture(), editor::PdfBuild | editor::PdfResource);
+	}
+
+	RefArray< ImageProcessStep > ss;
+	for (const auto step : postProcessSettings->getSteps())
+		ss.push_back(step);
+
+	while (!ss.empty())
+	{
+		Ref< ImageProcessStep > step = ss.front(); ss.pop_front();
+
+		if (const ImageProcessStepBlur* stepBlur = dynamic_type_cast< const ImageProcessStepBlur* >(step))
+			pipelineDepends->addDependency(stepBlur->getShader(), editor::PdfBuild | editor::PdfResource);
+		else if (const ImageProcessStepBokeh* stepBokeh = dynamic_type_cast< const ImageProcessStepBokeh* >(step))
+			pipelineDepends->addDependency(stepBokeh->getShader(), editor::PdfBuild | editor::PdfResource);
+		else if (const ImageProcessStepChain* stepChain = dynamic_type_cast< const ImageProcessStepChain* >(step))
+		{
+			for (const auto step : stepChain->getSteps())
+				ss.push_back(step);
+		}
+		else if (const ImageProcessStepCompute* stepCompute = dynamic_type_cast< const ImageProcessStepCompute* >(step))
+			pipelineDepends->addDependency(stepCompute->getShader(), editor::PdfBuild | editor::PdfResource);
+		else if (const ImageProcessStepGodRay* stepGodRay = dynamic_type_cast< const ImageProcessStepGodRay* >(step))
+			pipelineDepends->addDependency(stepGodRay->getShader(), editor::PdfBuild | editor::PdfResource);
+		else if (const ImageProcessStepGrain* stepGrain = dynamic_type_cast< const ImageProcessStepGrain* >(step))
+			pipelineDepends->addDependency(stepGrain->getShader(), editor::PdfBuild | editor::PdfResource);
+		else if (const ImageProcessStepLensDirt* stepLensDirt = dynamic_type_cast< const ImageProcessStepLensDirt* >(step))
+			pipelineDepends->addDependency(stepLensDirt->getShader(), editor::PdfBuild | editor::PdfResource);
+		else if (const ImageProcessStepLuminance* stepLuminance = dynamic_type_cast< const ImageProcessStepLuminance* >(step))
+			pipelineDepends->addDependency(stepLuminance->getShader(), editor::PdfBuild | editor::PdfResource);
+		else if (const ImageProcessStepRepeat* stepRepeat = dynamic_type_cast< const ImageProcessStepRepeat* >(step))
+			ss.push_back(stepRepeat->getStep());
+		else if (const ImageProcessStepSimple* stepSimple = dynamic_type_cast< const ImageProcessStepSimple* >(step))
+			pipelineDepends->addDependency(stepSimple->getShader(), editor::PdfBuild | editor::PdfResource);
+		else if (const ImageProcessStepSsao* stepSsao = dynamic_type_cast< const ImageProcessStepSsao* >(step))
+			pipelineDepends->addDependency(stepSsao->getShader(), editor::PdfBuild | editor::PdfResource);
+		else if (const ImageProcessStepSmProj* stepSmProj = dynamic_type_cast< const ImageProcessStepSmProj* >(step))
+			pipelineDepends->addDependency(stepSmProj->getShader(), editor::PdfBuild | editor::PdfResource);
+		else if (const ImageProcessStepTemporal* stepTemporal = dynamic_type_cast< const ImageProcessStepTemporal* >(step))
+			pipelineDepends->addDependency(stepTemporal->getShader(), editor::PdfBuild | editor::PdfResource);
+	}
+
+	return true;
+}
+
+bool ImageProcessPipeline::buildOutput(
+	editor::IPipelineBuilder* pipelineBuilder,
+	const editor::IPipelineDependencySet* dependencySet,
+	const editor::PipelineDependency* dependency,
+	const db::Instance* sourceInstance,
+	const ISerializable* sourceAsset,
+	uint32_t sourceAssetHash,
+	const std::wstring& outputPath,
+	const Guid& outputGuid,
+	const Object* buildParams,
+	uint32_t reason
+) const
+{
+	Ref< ImageProcessData > pp = DeepClone(sourceAsset).create< ImageProcessData >();
+	if (!pp)
+		return false;
+
+	SmallSet< std::wstring > targets;
+
+	// Get all user defined, non-persistent, targets.
+	for (const auto definition : pp->getDefinitions())
+	{
+		if (const ImageProcessDefineTarget* defineTarget = dynamic_type_cast< const ImageProcessDefineTarget* >(definition))
+		{
+			if (!defineTarget->persistent())
+				targets.insert(defineTarget->getId());
+		}
+	}
+
+	// Copy steps, insert discard target steps when a user defined target is no longer used
+	// to improve target pooling.
+	RefArray< ImageProcessStep > outputSteps;
+	const RefArray< ImageProcessStep >& steps = pp->getSteps();
+	for (RefArray< ImageProcessStep >::const_iterator i = steps.begin(); i != steps.end(); ++i)
+	{
+		Ref< IImageProcessStepFacade > facade = createFacade(*i);
+		if (!facade)
+		{
+			log::error << L"No facade found for post process step " << type_name(*i) << Endl;
+			return false;
+		}
+
+		outputSteps.push_back(*i);
+
+		// Get sources which are still to be used.
+		std::vector< std::wstring > toBeUsedSources;
+		for (RefArray< ImageProcessStep >::const_iterator j = i + 1; j != steps.end(); ++j)
+			gatherSources(*j, toBeUsedSources);
+
+		// Discard targets which will no longer be used.
+		for (auto j = targets.begin(); j != targets.end(); )
+		{
+			if (std::find(toBeUsedSources.begin(), toBeUsedSources.end(), *j) == toBeUsedSources.end())
+			{
+				log::info << L"Inserting discard target step \"" << *j << L"\"" << Endl;
+				outputSteps.push_back(new ImageProcessStepDiscardTarget(*j));
+				targets.erase(j); j = targets.begin();
+			}
+			else
+				++j;
+		}
+	}
+
+	// Replace steps which include discard steps.
+	pp->setSteps(outputSteps);
+
+	Ref< db::Instance > outputInstance = pipelineBuilder->createOutputInstance(outputPath, outputGuid);
+	if (!outputInstance)
+		return false;
+
+	outputInstance->setObject(pp);
+
+	if (!outputInstance->commit())
+		return false;
+
+	return true;
+}
+
+Ref< ISerializable > ImageProcessPipeline::buildOutput(
+	editor::IPipelineBuilder* pipelineBuilder,
+	const db::Instance* sourceInstance,
+	const ISerializable* sourceAsset,
+	const Object* buildParams
+) const
+{
+	T_FATAL_ERROR;
+	return nullptr;
+}
+
+	}
+}

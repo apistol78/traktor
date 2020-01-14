@@ -4,7 +4,7 @@
 #include "Spark/Movie.h"
 #include "Spark/Runtime/SparkLayer.h"
 #include "Spark/Runtime/SparkLayerData.h"
-#include "Render/ImageProcess/ImageProcessSettings.h"
+#include "Render/Image/ImageProcessData.h"
 #include "Resource/IResourceManager.h"
 #include "Resource/Member.h"
 
@@ -28,7 +28,7 @@ Ref< runtime::Layer > SparkLayerData::createInstance(runtime::Stage* stage, runt
 {
 	resource::IResourceManager* resourceManager = environment->getResource()->getResourceManager();
 	resource::Proxy< Movie > movie;
-	resource::Proxy< render::ImageProcessSettings > imageProcess;
+	resource::Proxy< render::ImageProcessData > imageProcess;
 
 	// Bind proxies to resource manager.
 	if (!resourceManager->bind(m_movie, movie))
@@ -83,7 +83,7 @@ void SparkLayerData::serialize(ISerializer& s)
 		>
 	>(L"externalMovies", m_externalMovies);
 
-	s >> resource::Member< render::ImageProcessSettings >(L"imageProcess", m_imageProcess);
+	s >> resource::Member< render::ImageProcessData >(L"imageProcess", m_imageProcess);
 	s >> Member< bool >(L"clearBackground", m_clearBackground);
 	s >> Member< bool >(L"enableSound", m_enableSound);
 	s >> Member< bool >(L"enableShapeCache", m_enableShapeCache);

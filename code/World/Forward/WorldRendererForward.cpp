@@ -7,8 +7,8 @@
 #include "Render/StructBuffer.h"
 #include "Render/StructElement.h"
 #include "Render/Context/RenderContext.h"
-#include "Render/ImageProcess/ImageProcess.h"
-#include "Render/ImageProcess/ImageProcessSettings.h"
+#include "Render/Image/ImageProcess.h"
+#include "Render/Image/ImageProcessData.h"
 #include "Resource/IResourceManager.h"
 #include "World/WorldContext.h"
 #include "World/Entity/GroupEntity.h"
@@ -25,18 +25,18 @@ namespace traktor
 
 const int32_t c_maxLightCount = 1024;
 
-const resource::Id< render::ImageProcessSettings > c_ambientOcclusionLow(Guid(L"{ED4F221C-BAB1-4645-BD08-84C5B3FA7C20}"));		// SSAO, half size
-const resource::Id< render::ImageProcessSettings > c_ambientOcclusionMedium(Guid(L"{A4249C8A-9A0D-B349-B0ED-E8B354CD7BDF}"));	// SSAO, full size
-const resource::Id< render::ImageProcessSettings > c_ambientOcclusionHigh(Guid(L"{37F82A38-D632-5541-9B29-E77C2F74B0C0}"));		// HBAO, half size
-const resource::Id< render::ImageProcessSettings > c_ambientOcclusionUltra(Guid(L"{C1C9DDCB-2F82-A94C-BF65-653D8E68F628}"));	// HBAO, full size
-const resource::Id< render::ImageProcessSettings > c_antiAliasNone(Guid(L"{960283DC-7AC2-804B-901F-8AD4C205F4E0}"));
-const resource::Id< render::ImageProcessSettings > c_antiAliasLow(Guid(L"{DBF2FBB9-1310-A24E-B443-AF0D018571F7}"));
-const resource::Id< render::ImageProcessSettings > c_antiAliasMedium(Guid(L"{3E1D810B-339A-F742-9345-4ECA00220D57}"));
-const resource::Id< render::ImageProcessSettings > c_antiAliasHigh(Guid(L"{0C288028-7BFD-BE46-A25F-F3910BE50319}"));
-const resource::Id< render::ImageProcessSettings > c_antiAliasUltra(Guid(L"{4750DA97-67F4-E247-A9C2-B4883B1158B2}"));
-const resource::Id< render::ImageProcessSettings > c_gammaCorrection(Guid(L"{AB0ABBA7-77BF-0A4E-8E3B-4987B801CE6B}"));
-const resource::Id< render::ImageProcessSettings > c_toneMapFixed(Guid(L"{838922A0-49CE-6645-8A9C-BA0E71081033}"));
-const resource::Id< render::ImageProcessSettings > c_toneMapAdaptive(Guid(L"{BC4FA128-A976-4023-A422-637581ADFD7E}"));
+const resource::Id< render::ImageProcessData > c_ambientOcclusionLow(Guid(L"{ED4F221C-BAB1-4645-BD08-84C5B3FA7C20}"));		// SSAO, half size
+const resource::Id< render::ImageProcessData > c_ambientOcclusionMedium(Guid(L"{A4249C8A-9A0D-B349-B0ED-E8B354CD7BDF}"));	// SSAO, full size
+const resource::Id< render::ImageProcessData > c_ambientOcclusionHigh(Guid(L"{37F82A38-D632-5541-9B29-E77C2F74B0C0}"));		// HBAO, half size
+const resource::Id< render::ImageProcessData > c_ambientOcclusionUltra(Guid(L"{C1C9DDCB-2F82-A94C-BF65-653D8E68F628}"));	// HBAO, full size
+const resource::Id< render::ImageProcessData > c_antiAliasNone(Guid(L"{960283DC-7AC2-804B-901F-8AD4C205F4E0}"));
+const resource::Id< render::ImageProcessData > c_antiAliasLow(Guid(L"{DBF2FBB9-1310-A24E-B443-AF0D018571F7}"));
+const resource::Id< render::ImageProcessData > c_antiAliasMedium(Guid(L"{3E1D810B-339A-F742-9345-4ECA00220D57}"));
+const resource::Id< render::ImageProcessData > c_antiAliasHigh(Guid(L"{0C288028-7BFD-BE46-A25F-F3910BE50319}"));
+const resource::Id< render::ImageProcessData > c_antiAliasUltra(Guid(L"{4750DA97-67F4-E247-A9C2-B4883B1158B2}"));
+const resource::Id< render::ImageProcessData > c_gammaCorrection(Guid(L"{AB0ABBA7-77BF-0A4E-8E3B-4987B801CE6B}"));
+const resource::Id< render::ImageProcessData > c_toneMapFixed(Guid(L"{838922A0-49CE-6645-8A9C-BA0E71081033}"));
+const resource::Id< render::ImageProcessData > c_toneMapAdaptive(Guid(L"{BC4FA128-A976-4023-A422-637581ADFD7E}"));
 
 render::handle_t s_techniqueForwardColor = 0;
 render::handle_t s_techniqueForwardGBufferWrite = 0;
@@ -61,7 +61,7 @@ struct LightShaderData
 };
 #pragma pack()
 
-resource::Id< render::ImageProcessSettings > getToneMapId(WorldRenderSettings::ExposureMode exposureMode)
+resource::Id< render::ImageProcessData > getToneMapId(WorldRenderSettings::ExposureMode exposureMode)
 {
 	switch (exposureMode)
 	{
@@ -179,8 +179,8 @@ bool WorldRendererForward::create(
 
 	// Create ambient occlusion processing.
 	{
-		resource::Id< render::ImageProcessSettings > ambientOcclusionId;
-		resource::Proxy< render::ImageProcessSettings > ambientOcclusion;
+		resource::Id< render::ImageProcessData > ambientOcclusionId;
+		resource::Proxy< render::ImageProcessData > ambientOcclusion;
 
 		switch (m_ambientOcclusionQuality)
 		{
@@ -232,8 +232,8 @@ bool WorldRendererForward::create(
 
 	// Create antialias processing.
 	{
-		resource::Id< render::ImageProcessSettings > antiAliasId;
-		resource::Proxy< render::ImageProcessSettings > antiAlias;
+		resource::Id< render::ImageProcessData > antiAliasId;
+		resource::Proxy< render::ImageProcessData > antiAlias;
 
 		switch (m_antiAliasQuality)
 		{
@@ -285,10 +285,10 @@ bool WorldRendererForward::create(
 
 	// Create "visual" post processing filter.
 	{
-		const resource::Id< render::ImageProcessSettings >& imageProcessSettings = desc.worldRenderSettings->imageProcess[desc.imageProcessQuality];
+		const resource::Id< render::ImageProcessData >& imageProcessSettings = desc.worldRenderSettings->imageProcess[desc.imageProcessQuality];
 		if (imageProcessSettings)
 		{
-			resource::Proxy< render::ImageProcessSettings > imageProcess;
+			resource::Proxy< render::ImageProcessData > imageProcess;
 			if (!resourceManager->bind(imageProcessSettings, imageProcess))
 				log::warning << L"Unable to create visual post processing image filter; post processing disabled" << Endl;
 
@@ -315,7 +315,7 @@ bool WorldRendererForward::create(
 	// Create gamma correction processing.
 	if (m_settings.linearLighting)
 	{
-		resource::Proxy< render::ImageProcessSettings > gammaCorrection;
+		resource::Proxy< render::ImageProcessData > gammaCorrection;
 		if (!resourceManager->bind(c_gammaCorrection, gammaCorrection))
 			log::warning << L"Unable to create gamma correction process; gamma correction disabled" << Endl;
 
@@ -346,8 +346,8 @@ bool WorldRendererForward::create(
 	// Create tone map processing.
 	if (m_toneMapQuality > QuDisabled)
 	{
-		resource::Id< render::ImageProcessSettings > toneMapId = getToneMapId(m_settings.exposureMode);
-		resource::Proxy< render::ImageProcessSettings > toneMap;
+		resource::Id< render::ImageProcessData > toneMapId = getToneMapId(m_settings.exposureMode);
+		resource::Proxy< render::ImageProcessData > toneMap;
 
 		if (!resourceManager->bind(toneMapId, toneMap))
 		{

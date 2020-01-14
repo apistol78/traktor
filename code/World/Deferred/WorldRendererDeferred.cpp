@@ -9,9 +9,9 @@
 #include "Render/StructBuffer.h"
 #include "Render/StructElement.h"
 #include "Render/Context/RenderContext.h"
-#include "Render/ImageProcess/ImageProcess.h"
-#include "Render/ImageProcess/ImageProcessSettings.h"
-#include "Render/ImageProcess/ImageProcessTargetPool.h"
+#include "Render/Image/ImageProcess.h"
+#include "Render/Image/ImageProcessData.h"
+#include "Render/Image/ImageProcessTargetPool.h"
 #include "Resource/IResourceManager.h"
 #include "World/IrradianceGrid.h"
 #include "World/WorldContext.h"
@@ -28,24 +28,24 @@ namespace traktor
 		namespace
 		{
 
-const resource::Id< render::ImageProcessSettings > c_colorTargetCopy(Guid(L"{7DCC28A2-C357-B54F-ACF4-8159301B1764}"));
-const resource::Id< render::ImageProcessSettings > c_ambientOcclusionLow(Guid(L"{ED4F221C-BAB1-4645-BD08-84C5B3FA7C20}"));		//< SSAO, half size
-const resource::Id< render::ImageProcessSettings > c_ambientOcclusionMedium(Guid(L"{A4249C8A-9A0D-B349-B0ED-E8B354CD7BDF}"));	//< SSAO, full size
-const resource::Id< render::ImageProcessSettings > c_ambientOcclusionHigh(Guid(L"{37F82A38-D632-5541-9B29-E77C2F74B0C0}"));		//< HBAO, half size
-const resource::Id< render::ImageProcessSettings > c_ambientOcclusionUltra(Guid(L"{C1C9DDCB-2F82-A94C-BF65-653D8E68F628}"));	//< HBAO, full size
-const resource::Id< render::ImageProcessSettings > c_antiAliasNone(Guid(L"{960283DC-7AC2-804B-901F-8AD4C205F4E0}"));
-const resource::Id< render::ImageProcessSettings > c_antiAliasLow(Guid(L"{DBF2FBB9-1310-A24E-B443-AF0D018571F7}"));
-const resource::Id< render::ImageProcessSettings > c_antiAliasMedium(Guid(L"{3E1D810B-339A-F742-9345-4ECA00220D57}"));
-const resource::Id< render::ImageProcessSettings > c_antiAliasHigh(Guid(L"{0C288028-7BFD-BE46-A25F-F3910BE50319}"));
-const resource::Id< render::ImageProcessSettings > c_antiAliasUltra(Guid(L"{4750DA97-67F4-E247-A9C2-B4883B1158B2}"));
-const resource::Id< render::ImageProcessSettings > c_gammaCorrection(Guid(L"{AB0ABBA7-77BF-0A4E-8E3B-4987B801CE6B}"));
-const resource::Id< render::ImageProcessSettings > c_motionBlurPrime(Guid(L"{73C2C7DC-BD77-F348-A6B7-06E0EFB633D9}"));
-const resource::Id< render::ImageProcessSettings > c_motionBlurLow(Guid(L"{BDFEFBE0-C5E9-2643-B445-DB02AC5C7687}"));
-const resource::Id< render::ImageProcessSettings > c_motionBlurMedium(Guid(L"{A70CBA02-B75A-E246-A9B6-99B8B2B98D2A}"));
-const resource::Id< render::ImageProcessSettings > c_motionBlurHigh(Guid(L"{E893B98C-90A3-9848-B4F3-3D8C0CE57CE8}"));
-const resource::Id< render::ImageProcessSettings > c_motionBlurUltra(Guid(L"{CD4A0939-233B-2E43-988D-DA6E0DB7A6E6}"));
-const resource::Id< render::ImageProcessSettings > c_toneMapFixed(Guid(L"{838922A0-49CE-6645-8A9C-BA0E71081033}"));
-const resource::Id< render::ImageProcessSettings > c_toneMapAdaptive(Guid(L"{BC4FA128-A976-4023-A422-637581ADFD7E}"));
+const resource::Id< render::ImageProcessData > c_colorTargetCopy(Guid(L"{7DCC28A2-C357-B54F-ACF4-8159301B1764}"));
+const resource::Id< render::ImageProcessData > c_ambientOcclusionLow(Guid(L"{ED4F221C-BAB1-4645-BD08-84C5B3FA7C20}"));		//< SSAO, half size
+const resource::Id< render::ImageProcessData > c_ambientOcclusionMedium(Guid(L"{A4249C8A-9A0D-B349-B0ED-E8B354CD7BDF}"));	//< SSAO, full size
+const resource::Id< render::ImageProcessData > c_ambientOcclusionHigh(Guid(L"{37F82A38-D632-5541-9B29-E77C2F74B0C0}"));		//< HBAO, half size
+const resource::Id< render::ImageProcessData > c_ambientOcclusionUltra(Guid(L"{C1C9DDCB-2F82-A94C-BF65-653D8E68F628}"));	//< HBAO, full size
+const resource::Id< render::ImageProcessData > c_antiAliasNone(Guid(L"{960283DC-7AC2-804B-901F-8AD4C205F4E0}"));
+const resource::Id< render::ImageProcessData > c_antiAliasLow(Guid(L"{DBF2FBB9-1310-A24E-B443-AF0D018571F7}"));
+const resource::Id< render::ImageProcessData > c_antiAliasMedium(Guid(L"{3E1D810B-339A-F742-9345-4ECA00220D57}"));
+const resource::Id< render::ImageProcessData > c_antiAliasHigh(Guid(L"{0C288028-7BFD-BE46-A25F-F3910BE50319}"));
+const resource::Id< render::ImageProcessData > c_antiAliasUltra(Guid(L"{4750DA97-67F4-E247-A9C2-B4883B1158B2}"));
+const resource::Id< render::ImageProcessData > c_gammaCorrection(Guid(L"{AB0ABBA7-77BF-0A4E-8E3B-4987B801CE6B}"));
+const resource::Id< render::ImageProcessData > c_motionBlurPrime(Guid(L"{73C2C7DC-BD77-F348-A6B7-06E0EFB633D9}"));
+const resource::Id< render::ImageProcessData > c_motionBlurLow(Guid(L"{BDFEFBE0-C5E9-2643-B445-DB02AC5C7687}"));
+const resource::Id< render::ImageProcessData > c_motionBlurMedium(Guid(L"{A70CBA02-B75A-E246-A9B6-99B8B2B98D2A}"));
+const resource::Id< render::ImageProcessData > c_motionBlurHigh(Guid(L"{E893B98C-90A3-9848-B4F3-3D8C0CE57CE8}"));
+const resource::Id< render::ImageProcessData > c_motionBlurUltra(Guid(L"{CD4A0939-233B-2E43-988D-DA6E0DB7A6E6}"));
+const resource::Id< render::ImageProcessData > c_toneMapFixed(Guid(L"{838922A0-49CE-6645-8A9C-BA0E71081033}"));
+const resource::Id< render::ImageProcessData > c_toneMapAdaptive(Guid(L"{BC4FA128-A976-4023-A422-637581ADFD7E}"));
 
 render::handle_t s_techniqueDeferredColor = 0;
 render::handle_t s_techniqueDeferredGBufferWrite = 0;
@@ -97,13 +97,13 @@ struct TileShaderData
 
 #pragma pack()
 
-resource::Id< render::ImageProcessSettings > getAmbientOcclusionId(Quality quality)
+resource::Id< render::ImageProcessData > getAmbientOcclusionId(Quality quality)
 {
 	switch (quality)
 	{
 	default:
 	case QuDisabled:
-		return resource::Id< render::ImageProcessSettings >();
+		return resource::Id< render::ImageProcessData >();
 	case QuLow:
 		return c_ambientOcclusionLow;
 	case QuMedium:
@@ -115,7 +115,7 @@ resource::Id< render::ImageProcessSettings > getAmbientOcclusionId(Quality quali
 	}
 }
 
-resource::Id< render::ImageProcessSettings > getAntiAliasId(Quality quality)
+resource::Id< render::ImageProcessData > getAntiAliasId(Quality quality)
 {
 	switch (quality)
 	{
@@ -133,13 +133,13 @@ resource::Id< render::ImageProcessSettings > getAntiAliasId(Quality quality)
 	}
 }
 
-resource::Id< render::ImageProcessSettings > getMotionBlurId(Quality quality)
+resource::Id< render::ImageProcessData > getMotionBlurId(Quality quality)
 {
 	switch (quality)
 	{
 	default:
 	case QuDisabled:
-		return resource::Id< render::ImageProcessSettings >();
+		return resource::Id< render::ImageProcessData >();
 	case QuLow:
 		return c_motionBlurLow;
 	case QuMedium:
@@ -151,7 +151,7 @@ resource::Id< render::ImageProcessSettings > getMotionBlurId(Quality quality)
 	}
 }
 
-resource::Id< render::ImageProcessSettings > getToneMapId(WorldRenderSettings::ExposureMode exposureMode)
+resource::Id< render::ImageProcessData > getToneMapId(WorldRenderSettings::ExposureMode exposureMode)
 {
 	switch (exposureMode)
 	{
@@ -232,8 +232,8 @@ bool WorldRendererDeferred::create(
 	);
 	m_fogColor = m_settings.fogColor;
 
-	// Create post process target pool to enable sharing of targets between multiple processes.
-	Ref< render::ImageProcessTargetPool > postProcessTargetPool = new render::ImageProcessTargetPool(renderSystem);
+	// Create image process target pool to enable sharing of targets between multiple processes.
+	Ref< render::ImageProcessTargetPool > targetPool = new render::ImageProcessTargetPool(renderSystem);
 
 	// Create "gbuffer" targets.
 	{
@@ -384,7 +384,7 @@ bool WorldRendererDeferred::create(
 		m_shadowProjection = new UniformShadowProjection(resolution);
 
 		// Create shadow screen projection processes.
-		resource::Proxy< render::ImageProcessSettings > shadowMaskProject;
+		resource::Proxy< render::ImageProcessData > shadowMaskProject;
 		if (!resourceManager->bind(m_shadowSettings.maskProject, shadowMaskProject))
 		{
 			log::warning << L"Unable to create shadow project process; shadows disabled." << Endl;
@@ -396,7 +396,7 @@ bool WorldRendererDeferred::create(
 			m_shadowMaskProject = new render::ImageProcess();
 			if (!m_shadowMaskProject->create(
 				shadowMaskProject,
-				postProcessTargetPool,
+				targetPool,
 				resourceManager,
 				renderSystem,
 				desc.width / m_shadowSettings.maskDenominator,
@@ -502,7 +502,7 @@ bool WorldRendererDeferred::create(
 
 	// Create "color read-back" copy processing.
 	{
-		resource::Proxy< render::ImageProcessSettings > colorTargetCopy;
+		resource::Proxy< render::ImageProcessData > colorTargetCopy;
 
 		if (!resourceManager->bind(c_colorTargetCopy, colorTargetCopy))
 			log::warning << L"Unable to create color read-back processing; color read-back disabled." << Endl;
@@ -512,7 +512,7 @@ bool WorldRendererDeferred::create(
 			m_colorTargetCopy = new render::ImageProcess();
 			if (!m_colorTargetCopy->create(
 				colorTargetCopy,
-				postProcessTargetPool,
+				targetPool,
 				resourceManager,
 				renderSystem,
 				desc.width,
@@ -528,8 +528,8 @@ bool WorldRendererDeferred::create(
 
 	// Create ambient occlusion processing.
 	{
-		resource::Id< render::ImageProcessSettings > ambientOcclusionId = getAmbientOcclusionId(m_ambientOcclusionQuality);
-		resource::Proxy< render::ImageProcessSettings > ambientOcclusion;
+		resource::Id< render::ImageProcessData > ambientOcclusionId = getAmbientOcclusionId(m_ambientOcclusionQuality);
+		resource::Proxy< render::ImageProcessData > ambientOcclusion;
 
 		if (ambientOcclusionId)
 		{
@@ -542,7 +542,7 @@ bool WorldRendererDeferred::create(
 			m_ambientOcclusion = new render::ImageProcess();
 			if (!m_ambientOcclusion->create(
 				ambientOcclusion,
-				postProcessTargetPool,
+				targetPool,
 				resourceManager,
 				renderSystem,
 				desc.width,
@@ -558,8 +558,8 @@ bool WorldRendererDeferred::create(
 
 	// Create antialias processing.
 	{
-		resource::Id< render::ImageProcessSettings > antiAliasId = getAntiAliasId(m_antiAliasQuality);
-		resource::Proxy< render::ImageProcessSettings > antiAlias;
+		resource::Id< render::ImageProcessData > antiAliasId = getAntiAliasId(m_antiAliasQuality);
+		resource::Proxy< render::ImageProcessData > antiAlias;
 
 		if (antiAliasId)
 		{
@@ -572,7 +572,7 @@ bool WorldRendererDeferred::create(
 			m_antiAlias = new render::ImageProcess();
 			if (!m_antiAlias->create(
 				antiAlias,
-				postProcessTargetPool,
+				targetPool,
 				resourceManager,
 				renderSystem,
 				desc.width,
@@ -588,10 +588,10 @@ bool WorldRendererDeferred::create(
 
 	// Create "visual" post processing filter.
 	{
-		const resource::Id< render::ImageProcessSettings >& imageProcessSettings = desc.worldRenderSettings->imageProcess[desc.imageProcessQuality];
+		const resource::Id< render::ImageProcessData >& imageProcessSettings = desc.worldRenderSettings->imageProcess[desc.imageProcessQuality];
 		if (imageProcessSettings)
 		{
-			resource::Proxy< render::ImageProcessSettings > imageProcess;
+			resource::Proxy< render::ImageProcessData > imageProcess;
 			if (!resourceManager->bind(imageProcessSettings, imageProcess))
 				log::warning << L"Unable to create visual post processing image filter; post processing disabled." << Endl;
 
@@ -600,7 +600,7 @@ bool WorldRendererDeferred::create(
 				m_visualImageProcess = new render::ImageProcess();
 				if (!m_visualImageProcess->create(
 					imageProcess,
-					postProcessTargetPool,
+					targetPool,
 					resourceManager,
 					renderSystem,
 					desc.width,
@@ -621,7 +621,7 @@ bool WorldRendererDeferred::create(
 		std::abs(desc.gamma - 1.0f) > FUZZY_EPSILON
 	)
 	{
-		resource::Proxy< render::ImageProcessSettings > gammaCorrection;
+		resource::Proxy< render::ImageProcessData > gammaCorrection;
 		if (!resourceManager->bind(c_gammaCorrection, gammaCorrection))
 			log::warning << L"Unable to create gamma correction process; gamma correction disabled." << Endl;
 
@@ -630,7 +630,7 @@ bool WorldRendererDeferred::create(
 			m_gammaCorrectionImageProcess = new render::ImageProcess();
 			if (m_gammaCorrectionImageProcess->create(
 				gammaCorrection,
-				postProcessTargetPool,
+				targetPool,
 				resourceManager,
 				renderSystem,
 				desc.width,
@@ -652,7 +652,7 @@ bool WorldRendererDeferred::create(
 	// Create motion blur prime processing.
 	if (m_motionBlurQuality > QuDisabled)
 	{
-		resource::Proxy< render::ImageProcessSettings > motionBlurPrime;
+		resource::Proxy< render::ImageProcessData > motionBlurPrime;
 		if (!resourceManager->bind(c_motionBlurPrime, motionBlurPrime))
 		{
 			log::warning << L"Unable to create motion blur prime process; motion blur disabled." << Endl;
@@ -664,7 +664,7 @@ bool WorldRendererDeferred::create(
 			m_motionBlurPrimeImageProcess = new render::ImageProcess();
 			if (!m_motionBlurPrimeImageProcess->create(
 				motionBlurPrime,
-				postProcessTargetPool,
+				targetPool,
 				resourceManager,
 				renderSystem,
 				desc.width,
@@ -682,8 +682,8 @@ bool WorldRendererDeferred::create(
 	// Create motion blur final processing.
 	if (m_motionBlurQuality > QuDisabled)
 	{
-		resource::Id< render::ImageProcessSettings > motionBlurId = getMotionBlurId(desc.motionBlurQuality);
-		resource::Proxy< render::ImageProcessSettings > motionBlur;
+		resource::Id< render::ImageProcessData > motionBlurId = getMotionBlurId(desc.motionBlurQuality);
+		resource::Proxy< render::ImageProcessData > motionBlur;
 
 		if (!resourceManager->bind(motionBlurId, motionBlur))
 		{
@@ -696,7 +696,7 @@ bool WorldRendererDeferred::create(
 			m_motionBlurImageProcess = new render::ImageProcess();
 			if (!m_motionBlurImageProcess->create(
 				motionBlur,
-				postProcessTargetPool,
+				targetPool,
 				resourceManager,
 				renderSystem,
 				desc.width,
@@ -714,8 +714,8 @@ bool WorldRendererDeferred::create(
 	// Create tone map processing.
 	if (m_toneMapQuality > QuDisabled)
 	{
-		resource::Id< render::ImageProcessSettings > toneMapId = getToneMapId(m_settings.exposureMode);
-		resource::Proxy< render::ImageProcessSettings > toneMap;
+		resource::Id< render::ImageProcessData > toneMapId = getToneMapId(m_settings.exposureMode);
+		resource::Proxy< render::ImageProcessData > toneMap;
 
 		if (!resourceManager->bind(toneMapId, toneMap))
 		{
@@ -728,7 +728,7 @@ bool WorldRendererDeferred::create(
 			m_toneMapImageProcess = new render::ImageProcess();
 			if (m_toneMapImageProcess->create(
 				toneMap,
-				postProcessTargetPool,
+				targetPool,
 				resourceManager,
 				renderSystem,
 				desc.width,

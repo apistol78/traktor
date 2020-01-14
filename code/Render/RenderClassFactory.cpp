@@ -7,7 +7,7 @@
 #include "Render/ISimpleTexture.h"
 #include "Render/IVolumeTexture.h"
 #include "Render/RenderClassFactory.h"
-#include "Render/ImageProcess/ImageProcess.h"
+#include "Render/Image/ImageProcess.h"
 
 namespace traktor
 {

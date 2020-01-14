@@ -14,8 +14,8 @@
 #include "Mesh/MeshFactory.h"
 #include "Render/IRenderSystem.h"
 #include "Render/ITexture.h"
-#include "Render/ImageProcess/ImageProcessFactory.h"
-#include "Render/ImageProcess/ImageProcessSettings.h"
+#include "Render/Image/ImageProcessFactory.h"
+#include "Render/Image/ImageProcessData.h"
 #include "Render/Resource/SequenceTextureFactory.h"
 #include "Render/Resource/ShaderFactory.h"
 #include "Render/Resource/TextureFactory.h"
@@ -296,11 +296,11 @@ bool EffectEditorPage::handleCommand(const ui::Command& command)
 	}
 	else if (command == L"Effect.Editor.BrowseImageProcess")
 	{
-		Ref< db::Instance > postProcessInstance = m_editor->browseInstance(type_of< render::ImageProcessSettings >());
+		Ref< db::Instance > postProcessInstance = m_editor->browseInstance(type_of< render::ImageProcessData >());
 		if (postProcessInstance)
 		{
 			m_editor->buildAsset(postProcessInstance->getGuid(), false);
-			m_previewControl->setImageProcess(resource::Id< render::ImageProcessSettings >(postProcessInstance->getGuid()));
+			m_previewControl->setImageProcess(resource::Id< render::ImageProcessData >(postProcessInstance->getGuid()));
 		}
 	}
 	else if (command == L"Effect.Editor.ReplaceEmitterSource")

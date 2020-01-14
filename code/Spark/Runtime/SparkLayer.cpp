@@ -31,8 +31,8 @@
 #include "Render/IRenderSystem.h"
 #include "Render/IRenderTargetSet.h"
 #include "Render/IRenderView.h"
-#include "Render/ImageProcess/ImageProcess.h"
-#include "Render/ImageProcess/ImageProcessSettings.h"
+#include "Render/Image/ImageProcess.h"
+#include "Render/Image/ImageProcessData.h"
 #include "Spray/Feedback/IFeedbackManager.h"
 
 namespace traktor
@@ -122,7 +122,7 @@ SparkLayer::SparkLayer(
 	runtime::IEnvironment* environment,
 	const resource::Proxy< Movie >& movie,
 	const std::map< std::wstring, resource::Proxy< Movie > >& externalMovies,
-	const resource::Proxy< render::ImageProcessSettings >& imageProcessSettings,
+	const resource::Proxy< render::ImageProcessData >& imageProcessSettings,
 	bool clearBackground,
 	bool enableShapeCache,
 	bool enableDirtyRegions,
