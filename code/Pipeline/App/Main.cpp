@@ -404,14 +404,14 @@ bool perform(const PipelineParameters* params)
 	std::set< std::wstring > modules = settings->getProperty< std::set< std::wstring > >(L"Editor.Modules");
 
 	std::vector< Path > modulePathsFlatten(modulePaths.begin(), modulePaths.end());
-	for (std::set< std::wstring >::const_iterator i = modules.begin(); i != modules.end(); ++i)
+	for (const auto& module : modules)
 	{
-		if (g_loadedModules.find(*i) == g_loadedModules.end())
+		if (g_loadedModules.find(module) == g_loadedModules.end())
 		{
 			Library library;
-			if (!library.open(*i, modulePathsFlatten, true))
+			if (!library.open(module, modulePathsFlatten, true))
 			{
-				traktor::log::error << L"Unable to load module \"" << *i << L"\"" << Endl;
+				traktor::log::error << L"Unable to load module \"" << module << L"\"." << Endl;
 				return false;
 			}
 
@@ -419,7 +419,7 @@ bool perform(const PipelineParameters* params)
 				traktor::log::info << L"Library \"" << library.getPath().getPathName() << L"\" loaded." << Endl;
 
 			library.detach();
-			g_loadedModules.insert(*i);
+			g_loadedModules.insert(module);
 		}
 	}
 
@@ -506,20 +506,20 @@ bool perform(const PipelineParameters* params)
 	const std::vector< Guid >& roots = params->getRoots();
 	if (!roots.empty())
 	{
-		for (std::vector< Guid >::const_iterator i = roots.begin(); i != roots.end(); ++i)
+		for (const auto& root : roots)
 		{
-			traktor::log::info << L"Traversing root \"" << i->format() << L"\"..." << Endl;
-			pipelineDepends->addDependency(*i, editor::PdfBuild);
+			traktor::log::info << L"Traversing root \"" << root.format() << L"\"..." << Endl;
+			pipelineDepends->addDependency(root, editor::PdfBuild);
 		}
 	}
 	else
 	{
 		RefArray< db::Instance > assetInstances;
 		db::recursiveFindChildInstances(sourceDatabaseAndCache.database->getRootGroup(), db::FindInstanceByType(type_of< editor::Assets >()), assetInstances);
-		for (RefArray< db::Instance >::iterator i = assetInstances.begin(); i != assetInstances.end(); ++i)
+		for (auto assetInstance : assetInstances)
 		{
-			traktor::log::info << L"Traversing root \"" << (*i)->getGuid().format() << L"\"..." << Endl;
-			pipelineDepends->addDependency(*i, editor::PdfBuild);
+			traktor::log::info << L"Traversing root \"" << assetInstance->getGuid().format() << L"\"..." << Endl;
+			pipelineDepends->addDependency(assetInstance, editor::PdfBuild);
 		}
 	}
 
@@ -678,7 +678,7 @@ int slave(const CommandLine& cmdLine)
 		traktor::log::error  .setGlobalTarget(errorTarget);
 
 		transport->close();
-		transport = 0;
+		transport = nullptr;
 	}
 
 #if defined(_WIN32)
@@ -697,7 +697,7 @@ int master(const CommandLine& cmdLine)
 	if (cmdLine.hasOption('l', L"log"))
 	{
 		std::wstring logPath = cmdLine.getOption('l', L"log").getString();
-		if ((logFile = FileSystem::getInstance().open(logPath, File::FmWrite)) != 0)
+		if ((logFile = FileSystem::getInstance().open(logPath, File::FmWrite)) != nullptr)
 		{
 			Ref< FileOutputStream > logStream = new FileOutputStream(logFile, new Utf8Encoding());
 			Ref< LogStreamTarget > logStreamTarget = new LogStreamTarget(logStream);
@@ -706,10 +706,10 @@ int master(const CommandLine& cmdLine)
 			traktor::log::warning.setGlobalTarget(new LogRedirectTarget(logStreamTarget, traktor::log::warning.getGlobalTarget()));
 			traktor::log::error  .setGlobalTarget(new LogRedirectTarget(logStreamTarget, traktor::log::error  .getGlobalTarget()));
 
-			traktor::log::info << L"Log file \"Application.log\" created" << Endl;
+			traktor::log::info << L"Log file \"Application.log\" created." << Endl;
 		}
 		else
-			traktor::log::error << L"Unable to create log file; logging only to std pipes" << Endl;
+			traktor::log::error << L"Unable to create log file; logging only to std pipes." << Endl;
 	}
 
 	uint16_t port = c_defaultIPCPort;
@@ -742,7 +742,7 @@ int master(const CommandLine& cmdLine)
 			Guid assetGuid(cmdLine.getString(i));
 			if (assetGuid.isNull() || !assetGuid.isValid())
 			{
-				traktor::log::error << L"Invalid root asset guid (" << i << L" \"" << cmdLine.getString(i) << L"\")" << Endl;
+				traktor::log::error << L"Invalid root asset guid (" << i << L" \"" << cmdLine.getString(i) << L"\")." << Endl;
 				return 1;
 			}
 			roots.push_back(assetGuid);
@@ -752,7 +752,7 @@ int master(const CommandLine& cmdLine)
 	Ref< net::TcpSocket > socket = new net::TcpSocket();
 	if (!socket->connect(net::SocketAddressIPv4(L"localhost", port)))
 	{
-		traktor::log::error << L"Unable to establish connection with pipeline slave using port " << port << Endl;
+		traktor::log::error << L"Unable to establish connection with pipeline slave using port " << port << L"." << Endl;
 		return 1;
 	}
 
@@ -807,17 +807,17 @@ int master(const CommandLine& cmdLine)
 	}
 
 	transport->close();
-	transport = 0;
+	transport = nullptr;
 
 	if (logFile)
 	{
-		traktor::log::info.setBuffer(0);
-		traktor::log::warning.setBuffer(0);
-		traktor::log::error.setBuffer(0);
-		traktor::log::debug.setBuffer(0);
+		traktor::log::info.setBuffer(nullptr);
+		traktor::log::warning.setBuffer(nullptr);
+		traktor::log::error.setBuffer(nullptr);
+		traktor::log::debug.setBuffer(nullptr);
 
 		logFile->close();
-		logFile = 0;
+		logFile = nullptr;
 	}
 
 	return result;
@@ -836,7 +836,7 @@ int standalone(const CommandLine& cmdLine)
 	if (cmdLine.hasOption('l', L"log"))
 	{
 		std::wstring logPath = cmdLine.getOption('l', L"log").getString();
-		if ((logFile = FileSystem::getInstance().open(logPath, File::FmWrite)) != 0)
+		if ((logFile = FileSystem::getInstance().open(logPath, File::FmWrite)) != nullptr)
 		{
 			Ref< FileOutputStream > logStream = new FileOutputStream(logFile, new Utf8Encoding());
 			Ref< LogStreamTarget > logStreamTarget = new LogStreamTarget(logStream);
@@ -845,10 +845,10 @@ int standalone(const CommandLine& cmdLine)
 			traktor::log::warning.setGlobalTarget(new LogRedirectTarget(logStreamTarget, traktor::log::warning.getGlobalTarget()));
 			traktor::log::error  .setGlobalTarget(new LogRedirectTarget(logStreamTarget, traktor::log::error  .getGlobalTarget()));
 
-			traktor::log::info << L"Log file \"Application.log\" created" << Endl;
+			traktor::log::info << L"Log file \"Application.log\" created." << Endl;
 		}
 		else
-			traktor::log::error << L"Unable to create log file; logging only to std pipes" << Endl;
+			traktor::log::error << L"Unable to create log file; logging only to std pipes." << Endl;
 	}
 
 	std::vector< Guid > roots;
@@ -859,7 +859,7 @@ int standalone(const CommandLine& cmdLine)
 			Guid assetGuid(cmdLine.getString(i));
 			if (assetGuid.isNull() || !assetGuid.isValid())
 			{
-				traktor::log::error << L"Invalid root asset guid (" << i << L")" << Endl;
+				traktor::log::error << L"Invalid root asset guid (" << i << L")." << Endl;
 				return 1;
 			}
 			roots.push_back(assetGuid);
@@ -917,19 +917,19 @@ void threadProcessAgentClient(
 		if (transport->recv< editor::AgentBuild >(100, agentBuild) != 1)
 			continue;
 
-		log::info << L"Received build item " << agentBuild->getOutputGuid().format() << Endl;
+		log::info << L"Received build item " << agentBuild->getOutputGuid().format() << L"." << Endl;
 
 		const TypeInfo* pipelineType = TypeInfo::find(agentBuild->getPipelineTypeName().c_str());
 		if (!pipelineType)
 		{
-			log::error << L"Agent build error; no such pipeline \"" << agentBuild->getPipelineTypeName() << L"\"" << Endl;
+			log::error << L"Agent build error; no such pipeline \"" << agentBuild->getPipelineTypeName() << L"\"." << Endl;
 			continue;
 		}
 
 		Ref< editor::IPipeline > pipeline = pipelineFactory->findPipeline(*pipelineType);
 		if (!pipeline)
 		{
-			log::error << L"Agent build error; unable to get pipeline" << Endl;
+			log::error << L"Agent build error; unable to get pipeline." << Endl;
 			continue;
 		}
 
@@ -955,13 +955,13 @@ void threadProcessAgentClient(
 		transport->send(&agentStatus);
 
 		if (result)
-			log::info << L"Build succeeded" << Endl;
+			log::info << L"Build succeeded." << Endl;
 		else
-			log::info << L"Build failed" << Endl;
+			log::info << L"Build failed." << Endl;
 	}
 
 	transport->close();
-	transport = 0;
+	transport = nullptr;
 }
 
 int agent(const CommandLine& cmdLine)
@@ -989,14 +989,14 @@ int agent(const CommandLine& cmdLine)
 	}
 
 	std::set< std::wstring > modules = settings->getProperty< std::set< std::wstring > >(L"Editor.Modules");
-	for (std::set< std::wstring >::const_iterator i = modules.begin(); i != modules.end(); ++i)
+	for (const auto& module : modules)
 	{
-		if (g_loadedModules.find(*i) == g_loadedModules.end())
+		if (g_loadedModules.find(module) == g_loadedModules.end())
 		{
 			Library library;
-			if (!library.open(*i))
+			if (!library.open(module))
 			{
-				traktor::log::warning << L"Unable to load module \"" << *i << L"\"" << Endl;
+				traktor::log::warning << L"Unable to load module \"" << module << L"\"." << Endl;
 				continue;
 			}
 
@@ -1004,7 +1004,7 @@ int agent(const CommandLine& cmdLine)
 				traktor::log::info << L"Library \"" << library.getPath().getPathName() << L"\" loaded." << Endl;
 
 			library.detach();
-			g_loadedModules.insert(*i);
+			g_loadedModules.insert(module);
 		}
 	}
 
@@ -1013,13 +1013,13 @@ int agent(const CommandLine& cmdLine)
 	Ref< net::TcpSocket > serverSocket = new net::TcpSocket();
 	if (!serverSocket->bind(net::SocketAddressIPv4()))
 	{
-		traktor::log::error << L"Unable to bind server socket to port" << Endl;
+		traktor::log::error << L"Unable to bind server socket to port." << Endl;
 		return 1;
 	}
 
 	if (!serverSocket->listen())
 	{
-		traktor::log::error << L"Unable to listen on server socket" << Endl;
+		traktor::log::error << L"Unable to listen on server socket." << Endl;
 		return 2;
 	}
 
@@ -1028,14 +1028,14 @@ int agent(const CommandLine& cmdLine)
 	Ref< net::DiscoveryManager > discoveryManager = new net::DiscoveryManager();
 	if (!discoveryManager->create(net::MdPublishServices))
 	{
-		traktor::log::error << L"Unable to create discovery manager" << Endl;
+		traktor::log::error << L"Unable to create discovery manager." << Endl;
 		return 3;
 	}
 
 	net::SocketAddressIPv4::Interface itf;
 	if (!net::SocketAddressIPv4::getBestInterface(itf))
 	{
-		traktor::log::error << L"Unable to get interfaces" << Endl;
+		traktor::log::error << L"Unable to get interfaces." << Endl;
 		return 4;
 	}
 
@@ -1058,7 +1058,7 @@ int agent(const CommandLine& cmdLine)
 
 	discoveryManager->addService(new net::NetworkService(L"Pipeline/Agent2", properties));
 
-	traktor::log::info << L"Discoverable as \"Pipeline/Agent2\", host \"" << itf.addr->getHostName() << L"\" on port " << listenPort << Endl;
+	traktor::log::info << L"Discoverable as \"Pipeline/Agent2\", host \"" << itf.addr->getHostName() << L"\" on port " << listenPort << L"." << Endl;
 	traktor::log::info << L"Waiting for client(s)..." << Endl;
 
 	std::map< std::wstring, Ref< db::Database > > databases;
@@ -1072,7 +1072,7 @@ int agent(const CommandLine& cmdLine)
 			{
 				if ((*i)->wait(0))
 				{
-					traktor::log::info << L"Client thread destroyed" << Endl;
+					traktor::log::info << L"Client thread destroyed." << Endl;
 					ThreadManager::getInstance().destroy(*i);
 					i = clientThreads.erase(i);
 				}
@@ -1091,11 +1091,11 @@ int agent(const CommandLine& cmdLine)
 		Ref< editor::AgentConnect > agentConnect;
 		if (clientTransport->recv< editor::AgentConnect >(10000, agentConnect) != 1)
 		{
-			log::error << L"Agent build error; no AgentConnect message received" << Endl;
+			log::error << L"Agent build error; no AgentConnect message received." << Endl;
 			continue;
 		}
 
-		log::info << L"Agent connect message received" << Endl;
+		log::info << L"Agent connect message received," << Endl;
 		log::info << L"\tHost \"" << agentConnect->getHost() << L"\"" << Endl;
 		log::info << L"\tDatabase port " << agentConnect->getDatabasePort() << Endl;
 		log::info << L"\tStream server port " << agentConnect->getStreamServerPort() << Endl;
@@ -1114,7 +1114,7 @@ int agent(const CommandLine& cmdLine)
 			Ref< db::Database > sourceDatabase = new db::Database();
 			if (!sourceDatabase->open(cs))
 			{
-				log::error << L"Agent build error; unable to open source database" << Endl;
+				log::error << L"Agent build error; unable to open source database." << Endl;
 				continue;
 			}
 
@@ -1135,7 +1135,7 @@ int agent(const CommandLine& cmdLine)
 			Ref< db::Database > outputDatabase = new db::Database();
 			if (!outputDatabase->open(cs))
 			{
-				log::error << L"Agent build error; unable to open output database" << Endl;
+				log::error << L"Agent build error; unable to open output database." << Endl;
 				continue;
 			}
 
@@ -1165,7 +1165,7 @@ int agent(const CommandLine& cmdLine)
 		);
 		if (!clientThread)
 		{
-			traktor::log::error << L"Unable to create client thread" << Endl;
+			traktor::log::error << L"Unable to create client thread." << Endl;
 			continue;
 		}
 
@@ -1220,12 +1220,12 @@ int main(int argc, const char** argv)
 		{
 			TCHAR fileName[MAX_PATH];
 			GetModuleFileName(hCrashModule, fileName, sizeof_array(fileName));
-			log::error << L"Unhandled exception occurred at 0x" << (uint64_t)g_exceptionAddress << L" in module " << (uint64_t)hCrashModule << L" " << fileName << Endl;
+			log::error << L"Unhandled exception occurred at 0x" << (uint64_t)g_exceptionAddress << L" in module " << (uint64_t)hCrashModule << L" " << fileName << L"." << Endl;
 		}
 		else
-			log::error << L"Unhandled exception occurred at 0x" << (uint64_t)g_exceptionAddress << Endl;
+			log::error << L"Unhandled exception occurred at 0x" << (uint64_t)g_exceptionAddress << L"." << Endl;
 #	else
-		log::error << L"Unhandled exception occurred" << Endl;
+		log::error << L"Unhandled exception occurred." << Endl;
 #	endif
 	}
 #endif
