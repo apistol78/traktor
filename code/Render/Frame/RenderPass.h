@@ -4,6 +4,7 @@
 #include "Core/Object.h"
 #include "Core/Ref.h"
 #include "Core/Containers/AlignedVector.h"
+#include "Render/Types.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -18,64 +19,55 @@ namespace traktor
 	namespace render
 	{
 
-class IRenderGraph;
 class RenderContext;
+class RenderPassBuilder;
+class RenderPassResources;
 
 /*! Render pass definition.
  * \ingroup Render
  */
 class T_DLLCLASS RenderPass : public Object
 {
-    T_RTTI_CLASS;
+	T_RTTI_CLASS;
 
 public:
-	class IHandler : public IRefCount
-	{
-	public:
-		virtual void executeRenderPass(IRenderGraph* renderGraph, RenderContext* renderContext) = 0;
-	};
+	typedef std::function< void(RenderPassBuilder&) > fn_setup_t;
 
-	class LambdaHandler : public RefCountImpl< IHandler >
-	{
-	public:
-	    typedef std::function< void(IRenderGraph*, RenderContext*) > fn_t;
-
-		explicit LambdaHandler(fn_t fn);
-
-		virtual void executeRenderPass(IRenderGraph* renderGraph, RenderContext* renderContext) override final;
-
-	private:
-		fn_t m_fn;
-	};
-
-	void addInput(const std::wstring& targetSetName, uint32_t targetColorIndex);
-
-	uint32_t getInputCount() const;
-
-	void setOutput(const std::wstring& targetSetName);
-
-	void setHandler(IHandler* handler);
-
-	void setHandler(const LambdaHandler::fn_t& handler)
-	{
-		setHandler(new LambdaHandler(handler));
-	}
+	typedef std::function< void(RenderPassResources&, RenderContext*) > fn_build_t;
 
 private:
+	friend class RenderPassBuilder;
 	friend class RenderGraph;
 
 	struct Input
 	{
-		std::wstring targetSetName;
-		uint32_t targetColorIndex;
+		handle_t targetSetName;
+		int32_t targetColorIndex;
+
+		Input()
+		:	targetSetName(0)
+		,	targetColorIndex(-1)
+		{
+		}
 	};
 
-	std::wstring m_passId;
-	AlignedVector< Input > m_inputs;
-	std::wstring m_output;
-	Ref< IHandler > m_handler;
+	struct Output
+	{
+		handle_t targetSetName;
+		int32_t targetColorIndex;
+		Clear clear;
 
-	explicit RenderPass(const std::wstring& passId);
+		Output()
+		:	targetSetName(0)
+		,	targetColorIndex(-1)
+		{
+			clear.mask = 0;
+		}
+	};
+
+	AlignedVector< Input > m_inputs;
+	Output m_output;
+	fn_build_t m_build;
 };
 
 	}

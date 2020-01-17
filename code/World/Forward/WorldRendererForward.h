@@ -19,9 +19,8 @@ namespace traktor
 	{
 
 class ImageProcess;
-class IRenderTargetSet;
-class ISimpleTexture;
 class RenderContext;
+class RenderGraph;
 class StructBuffer;
 
 	}
@@ -30,7 +29,6 @@ class StructBuffer;
 	{
 
 class GroupEntity;
-class IShadowProjection;
 class WorldEntityRenderers;
 
 /*! World renderer implementation.
@@ -68,7 +66,7 @@ public:
 
 	virtual void attach(Entity* entity) override final;
 
-	virtual void build(WorldRenderView& worldRenderView, int32_t frame) override final;
+	virtual void build(const WorldRenderView& worldRenderView, int32_t frame) override final;
 
 	virtual void render(render::IRenderView* renderView, int32_t frame) override final;
 
@@ -81,13 +79,22 @@ private:
 	{
 		Ref< render::RenderContext > renderContext;
 		Ref< render::StructBuffer > lightSBuffer;
-		int32_t lightCount;
-
-		Frame()
-		:	lightCount(0)
-		{
-		}
 	};
+
+#pragma pack(1)
+	struct LightShaderData
+	{
+		float typeRangeRadius[4];
+		float position[4];
+		float direction[4];
+		float color[4];
+		float viewToLight0[4];
+		float viewToLight1[4];
+		float viewToLight2[4];
+		float viewToLight3[4];
+		float atlasTransform[4];
+	};
+#pragma pack()
 
 	WorldRenderSettings m_settings;
 	Quality m_toneMapQuality;
@@ -95,9 +102,7 @@ private:
 	Quality m_ambientOcclusionQuality;
 	Quality m_antiAliasQuality;
 
-	Ref< render::IRenderTargetSet > m_visualTargetSet;
-	Ref< render::IRenderTargetSet > m_intermediateTargetSet;
-	Ref< render::IRenderTargetSet > m_gbufferTargetSet;
+	Ref< render::RenderGraph > m_renderGraph;
 	
 	Ref< render::ImageProcess > m_ambientOcclusion;
 	Ref< render::ImageProcess > m_antiAlias;
@@ -105,28 +110,25 @@ private:
 	Ref< render::ImageProcess > m_gammaCorrectionImageProcess;
 	Ref< render::ImageProcess > m_toneMapImageProcess;
 
-	Ref< IShadowProjection > m_shadowProjection;
-	Ref< render::IRenderTargetSet > m_shadowCascadeTargetSet;
-	Ref< render::IRenderTargetSet > m_shadowAtlasTargetSet;
-
 	Ref< WorldEntityRenderers > m_entityRenderers;
 	Ref< GroupEntity > m_rootEntity;
 	AlignedVector< Frame > m_frames;
-	
+	AlignedVector< Light > m_lights;
+
+	LightShaderData* m_lightShaderData;
+
 	float m_slicePositions[MaxSliceCount + 1];
 	uint32_t m_count;
 
-	void buildBeginFrame(WorldRenderView& worldRenderView, int32_t frame);
+	void buildGBuffer(const WorldRenderView& worldRenderView);
 
-	void buildGBuffer(WorldRenderView& worldRenderView, int32_t frame);
+	void buildAmbientOcclusion(const WorldRenderView& worldRenderView);
 
-	void buildAmbientOcclusion(WorldRenderView& worldRenderView, int32_t frame);
+	void buildLights(const WorldRenderView& worldRenderView, int32_t frame);
 
-	void buildLights(WorldRenderView& worldRenderView, int32_t frame);
+	void buildVisual(const WorldRenderView& worldRenderView, int32_t frame);
 
-	void buildVisual(WorldRenderView& worldRenderView, int32_t frame);
-
-	void buildEndFrame(WorldRenderView& worldRenderView, int32_t frame);
+	void buildProcess(const WorldRenderView& worldRenderView);
 };
 
 	}

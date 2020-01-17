@@ -2,102 +2,108 @@
 #include "Render/Context/RenderBlock.h"
 #include "Render/Context/RenderContext.h"
 #include "Render/Frame/RenderGraph.h"
-#include "Render/Frame/RenderPass.h"
+#include "Render/Frame/RenderPassBuilder.h"
 
 namespace traktor
 {
 	namespace render
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderGraph", RenderGraph, IRenderGraph)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderGraph", RenderGraph, Object)
 
-RenderGraph::RenderGraph(IRenderSystem* renderSystem)
+RenderGraph::RenderGraph(IRenderSystem* renderSystem, int32_t width, int32_t height)
 :	m_renderSystem(renderSystem)
-,	m_width(-1)
-,	m_height(-1)
+,	m_width(width)
+,	m_height(height)
 {
 }
 
-bool RenderGraph::addRenderTarget(const std::wstring& targetId, const RenderTargetSetCreateDesc& rtscd, const RenderTargetAutoSize& rtas)
+void RenderGraph::destroy()
+{
+	m_renderSystem = nullptr;
+	m_targets.clear();
+	m_passes.clear();
+	m_order.clear();
+}
+
+bool RenderGraph::addRenderTarget(handle_t targetId, const RenderTargetSetCreateDesc& rtscd, const RenderTargetAutoSize& rtas)
 {
 	if (m_targets.find(targetId) != m_targets.end())
 		return false;
-
 	m_targets[targetId].rtscd = rtscd;
 	m_targets[targetId].rtas = rtas;
-	m_targets[targetId].rts = nullptr;
 	return true;
 }
 
-IRenderTargetSet* RenderGraph::getRenderTarget(const std::wstring& targetId) const
+IRenderTargetSet* RenderGraph::getRenderTarget(handle_t targetId) const
 {
 	auto it = m_targets.find(targetId);
 	if (it != m_targets.end())
-		return it->second.rts;
+		return it->second.rts[0];
 	else
 		return nullptr;
 }
 
-RenderPass* RenderGraph::addRenderPass(const std::wstring& passId)
+void RenderGraph::addPass(const RenderPass::fn_setup_t& setup, const RenderPass::fn_build_t& build)
 {
-	Ref< RenderPass > renderPass = new RenderPass(passId);
-	m_passes.push_back(renderPass);
-	m_order.resize(0);
-	return renderPass;
+	// Allocate pass from list.
+	auto& pass = m_passes.push_back();
+
+	// Setup pass using builder.
+	RenderPassBuilder builder(pass);
+	setup(builder);
+
+	// Attach build handler.
+	pass.m_build = build;
 }
 
-void RenderGraph::removeRenderPass(const std::wstring& passId)
+bool RenderGraph::validate()
 {
-	auto it = std::find_if(m_passes.begin(), m_passes.end(), [&](const RenderPass* renderPass) {
-		return renderPass->m_passId == passId;
-	});
-	if (it != m_passes.end())
-	{
-		m_passes.erase(it);
-		m_order.resize(0);
-	}
-}
-
-bool RenderGraph::validate(int32_t width, int32_t height)
-{
-	// Always assume graph is valid if it doesn't contain any pass.
-	if (m_passes.empty())
-		return true;
-
-	// Check if we need to re-create targets and/or passes.
-	if (
-		!m_order.empty() &&
-		m_width == width &&
-		m_height == height
-	)
-		return true;
-
-	// Create render targets.
 	for (auto& tm : m_targets)
 	{
+		if (tm.second.rts[0])
+			continue;
+
 		RenderTargetSetCreateDesc rtscd = tm.second.rtscd;
 		const auto& rtas = tm.second.rtas;
 
 		if (rtas.screenWidthDenom > 0)
-			rtscd.width = (width + rtas.screenWidthDenom - 1) / rtas.screenWidthDenom;
+			rtscd.width = (m_width + rtas.screenWidthDenom - 1) / rtas.screenWidthDenom;
 		if (rtas.screenHeightDenom > 0)
-			rtscd.height = (height + rtas.screenHeightDenom - 1) / rtas.screenHeightDenom;
+			rtscd.height = (m_height + rtas.screenHeightDenom - 1) / rtas.screenHeightDenom;
 
 		if (rtas.maxWidth > 0)
 			rtscd.width = min< int32_t >(rtscd.width, rtas.maxWidth);
 		if (rtas.maxHeight > 0)
 			rtscd.height = min< int32_t >(rtscd.height, rtas.maxHeight);
 
-		tm.second.rts = m_renderSystem->createRenderTargetSet(rtscd, tm.first.c_str());
-		if (!tm.second.rts)
+		tm.second.rts[0] = m_renderSystem->createRenderTargetSet(rtscd, T_FILE_LINE_W);
+		if (!tm.second.rts[0])
 			return false;
+
+		bool cyclic = false;
+		for (const auto& pass : m_passes)
+		{
+			if (pass.m_output.targetSetName != tm.first)
+				continue;
+			auto it = std::find_if(pass.m_inputs.begin(), pass.m_inputs.end(), [&](const RenderPass::Input& input) {
+				return input.targetSetName == tm.first;
+			});
+			cyclic |= (bool)(it != pass.m_inputs.end());
+		}
+		if (cyclic)
+		{
+			tm.second.rts[1] = m_renderSystem->createRenderTargetSet(rtscd, T_FILE_LINE_W);
+			if (!tm.second.rts[1])
+				return false;
+		}
 	}
 
 	// Collect all "root" passes, ie passes which doesn't require any inputs.
 	for (size_t i = 0; i < m_passes.size(); ++i)
 	{
-		auto pass = m_passes[i];
-		if (pass->m_inputs.empty())
+		const auto& pass = m_passes[i];
+		if (pass.m_inputs.empty())
 			m_order.push_back(i);
 	}
 
@@ -107,20 +113,20 @@ bool RenderGraph::validate(int32_t width, int32_t height)
 		bool found = false;
 		for (size_t i = 0; i < m_passes.size(); ++i)
 		{
-			auto pass = m_passes[i];
-			if (pass->m_inputs.empty())
+			const auto& pass = m_passes[i];
+			if (pass.m_inputs.empty())
 				continue;
 
 			size_t satisfied = 0;
 			for (auto index : m_order)
 			{
-				for (uint32_t j =  0; j < pass->m_inputs.size(); ++j)
+				for (uint32_t j =  0; j < pass.m_inputs.size(); ++j)
 				{
-					if (pass->m_inputs[j].targetSetName == m_passes[index]->m_output)
+					if (pass.m_inputs[j].targetSetName == m_passes[index].m_output.targetSetName)
 						satisfied |= 1 << j;
 				}
 			}
-			if (satisfied == pass->m_inputs.size() - 1)
+			if (satisfied == pass.m_inputs.size() - 1)
 			{
 				m_order.push_back(i);
 				found = true;
@@ -133,12 +139,10 @@ bool RenderGraph::validate(int32_t width, int32_t height)
 		}
 	}
 
-	m_width = width;
-	m_height = height;
 	return true;
 }
 
-bool RenderGraph::render(RenderContext* renderContext)
+bool RenderGraph::build(RenderContext* renderContext)
 {
 	T_ASSERT (m_width >= 0 && m_height >= 0);
 
@@ -152,26 +156,46 @@ bool RenderGraph::render(RenderContext* renderContext)
 
 	for (auto index : m_order)
 	{
-		auto pass = m_passes[index];
-		T_FATAL_ASSERT(pass != nullptr);
+		const auto& pass = m_passes[index];
 
-		if (!pass->m_output.empty())
+		if (pass.m_output.targetSetName != 0)
 		{
-			auto it = m_targets.find(pass->m_output);
+			auto it = m_targets.find(pass.m_output.targetSetName);
 			T_ASSERT(it != m_targets.end());
 
 			auto tb = renderContext->alloc< TargetBeginRenderBlock >();
-			tb->renderTargetSet = it->second.rts;
+
+			if (it->second.rts[1])
+				tb->renderTargetSet = it->second.rts[1];
+			else
+				tb->renderTargetSet = it->second.rts[0];
+
+			tb->renderTargetIndex = pass.m_output.targetColorIndex;
+			tb->clear = pass.m_output.clear;
 			renderContext->enqueue(tb);			
 		}
 
-		if (pass->m_handler)
-			pass->m_handler->executeRenderPass(this, renderContext);
-
-		if (!pass->m_output.empty())
+		if (pass.m_build)
 		{
+			RenderPassResources resources(this);
+			pass.m_build(resources, renderContext);
+		}
+
+		if (pass.m_output.targetSetName != 0)
+		{
+			auto it = m_targets.find(pass.m_output.targetSetName);
+			T_ASSERT(it != m_targets.end());
+
 			auto te = renderContext->alloc< TargetEndRenderBlock >();
 			renderContext->enqueue(te);
+
+			if (it->second.rts[0] && it->second.rts[1])
+			{
+				std::swap(
+					it->second.rts[0],
+					it->second.rts[1]
+				);
+			}
 		}
 	}
 
