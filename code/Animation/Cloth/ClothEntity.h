@@ -66,9 +66,9 @@ public:
 		uint32_t solverIterations
 	);
 
-	void render(
+	void build(
 		world::WorldContext& worldContext,
-		world::WorldRenderView& worldRenderView,
+		const world::WorldRenderView& worldRenderView,
 		const world::IWorldRenderPass& worldRenderPass
 	);
 

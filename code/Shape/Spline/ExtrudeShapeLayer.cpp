@@ -203,9 +203,9 @@ void ExtrudeShapeLayer::pathChanged()
 	);
 }
 
-void ExtrudeShapeLayer::render(
+void ExtrudeShapeLayer::build(
 	world::WorldContext& worldContext,
-	world::WorldRenderView& worldRenderView,
+	const world::WorldRenderView& worldRenderView,
 	const world::IWorldRenderPass& worldRenderPass
 )
 {

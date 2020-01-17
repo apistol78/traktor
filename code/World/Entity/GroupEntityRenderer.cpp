@@ -23,9 +23,31 @@ const TypeInfoSet GroupEntityRenderer::getRenderableTypes() const
 	>();
 }
 
-void GroupEntityRenderer::render(
+void GroupEntityRenderer::gather(
 	WorldContext& worldContext,
-	WorldRenderView& worldRenderView,
+	const WorldRenderView& worldRenderView,
+	const Object* renderable,
+	AlignedVector< Light >& outLights
+)
+{
+	if (auto groupComponent = dynamic_type_cast< const GroupComponent* >(renderable))
+	{
+		for (auto childEntity : groupComponent->getEntities())
+			worldContext.gather(worldRenderView, childEntity, outLights);
+	}
+	else if (auto groupEntity = dynamic_type_cast< const GroupEntity* >(renderable))
+	{
+		if ((groupEntity->getMask() & m_filter) != 0)
+		{
+			for (auto childEntity : groupEntity->getEntities())
+				worldContext.gather(worldRenderView, childEntity, outLights);
+		}
+	}
+}
+
+void GroupEntityRenderer::build(
+	WorldContext& worldContext,
+	const WorldRenderView& worldRenderView,
 	const IWorldRenderPass& worldRenderPass,
 	Object* renderable
 )
@@ -47,7 +69,7 @@ void GroupEntityRenderer::render(
 
 void GroupEntityRenderer::flush(
 	WorldContext& worldContext,
-	WorldRenderView& worldRenderView,
+	const WorldRenderView& worldRenderView,
 	const IWorldRenderPass& worldRenderPass
 )
 {

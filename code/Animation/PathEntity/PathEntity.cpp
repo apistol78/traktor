@@ -1,5 +1,4 @@
 #include "Animation/PathEntity/PathEntity.h"
-#include "World/WorldContext.h"
 
 namespace traktor
 {
@@ -107,16 +106,6 @@ void PathEntity::update(const world::UpdateParams& update)
 
 	m_entity->setTransform(m_transform * transform);
 	m_entity->update(update);
-}
-
-void PathEntity::render(
-	world::WorldContext& worldContext,
-	world::WorldRenderView& worldRenderView,
-	const world::IWorldRenderPass& worldRenderPass
-)
-{
-	if (m_entity)
-		worldContext.build(worldRenderView, worldRenderPass, m_entity);
 }
 
 	}

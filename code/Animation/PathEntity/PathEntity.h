@@ -61,12 +61,6 @@ public:
 
 	virtual void update(const world::UpdateParams& update) override final;
 
-	void render(
-		world::WorldContext& worldContext,
-		world::WorldRenderView& worldRenderView,
-		const world::IWorldRenderPass& worldRenderPass
-	);
-
 	void setPath(const TransformPath& path) { m_path = path; }
 
 	const TransformPath& getPath() const { return m_path; }
@@ -83,7 +77,7 @@ public:
 
 	float getTime() const { return m_time; }
 
-	world::Entity* getEntity() { return m_entity; }
+	world::Entity* getEntity() const { return m_entity; }
 
 	void setListener(IListener* listener) { m_listener = listener; }
 

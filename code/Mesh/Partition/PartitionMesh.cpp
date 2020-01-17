@@ -24,9 +24,9 @@ bool PartitionMesh::supportTechnique(render::handle_t technique) const
 	return true;
 }
 
-void PartitionMesh::render(
+void PartitionMesh::build(
 	render::RenderContext* renderContext,
-	world::WorldRenderView& worldRenderView,
+	const world::WorldRenderView& worldRenderView,
 	const world::IWorldRenderPass& worldRenderPass,
 	const Transform& worldTransform,
 	float distance,

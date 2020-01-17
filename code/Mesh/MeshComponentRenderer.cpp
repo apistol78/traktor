@@ -13,20 +13,29 @@ const TypeInfoSet MeshComponentRenderer::getRenderableTypes() const
 	return makeTypeInfoSet< MeshComponent >();
 }
 
-void MeshComponentRenderer::render(
+void MeshComponentRenderer::gather(
 	world::WorldContext& worldContext,
-	world::WorldRenderView& worldRenderView,
+	const world::WorldRenderView& worldRenderView,
+	const Object* renderable,
+	AlignedVector< world::Light >& outLights
+)
+{
+}
+
+void MeshComponentRenderer::build(
+	world::WorldContext& worldContext,
+	const world::WorldRenderView& worldRenderView,
 	const world::IWorldRenderPass& worldRenderPass,
 	Object* renderable
 )
 {
 	MeshComponent* meshComponent = mandatory_non_null_type_cast< MeshComponent* >(renderable);
-	meshComponent->render(worldContext, worldRenderView, worldRenderPass);
+	meshComponent->build(worldContext, worldRenderView, worldRenderPass);
 }
 
 void MeshComponentRenderer::flush(
 	world::WorldContext& worldContext,
-	world::WorldRenderView& worldRenderView,
+	const world::WorldRenderView& worldRenderView,
 	const world::IWorldRenderPass& worldRenderPass
 )
 {

@@ -21,7 +21,7 @@ bool StaticMesh::supportTechnique(render::handle_t technique) const
 	return m_parts.find(technique) != m_parts.end();
 }
 
-void StaticMesh::render(
+void StaticMesh::build(
 	render::RenderContext* renderContext,
 	const world::IWorldRenderPass& worldRenderPass,
 	const Transform& lastWorldTransform,

@@ -12,27 +12,18 @@ namespace traktor
 		namespace
 		{
 
-render::handle_t s_techniqueSimpleColor = 0;
-render::handle_t s_handleTime = 0;
-render::handle_t s_handleView = 0;
-render::handle_t s_handleViewInverse = 0;
-render::handle_t s_handleProjection = 0;
+// Techniques
+const render::Handle s_techniqueSimpleColor(L"World_SimpleColor");
+
+// Global parameters.
+const render::Handle s_handleTime(L"World_Time");
+const render::Handle s_handleView(L"World_View");
+const render::Handle s_handleViewInverse(L"World_ViewInverse");
+const render::Handle s_handleProjection(L"World_Projection");
 
 		}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.WorldRendererSimple", 0, WorldRendererSimple, IWorldRenderer)
-
-WorldRendererSimple::WorldRendererSimple()
-{
-	// Techniques
-	s_techniqueSimpleColor = render::getParameterHandle(L"World_SimpleColor");
-
-	// Global parameters.
-	s_handleTime = render::getParameterHandle(L"World_Time");
-	s_handleView = render::getParameterHandle(L"World_View");
-	s_handleViewInverse = render::getParameterHandle(L"World_ViewInverse");
-	s_handleProjection = render::getParameterHandle(L"World_Projection");
-}
 
 bool WorldRendererSimple::create(
 	resource::IResourceManager* resourceManager,
@@ -62,16 +53,13 @@ void WorldRendererSimple::attach(Entity* entity)
 	m_rootEntity->addEntity(entity);
 }
 
-void WorldRendererSimple::build(WorldRenderView& worldRenderView, int32_t frame)
+void WorldRendererSimple::build(const WorldRenderView& worldRenderView, int32_t frame)
 {
 	WorldContext wc(
 		m_entityRenderers,
 		m_frames[frame].renderContext,
 		m_rootEntity
 	);
-
-	// Ensure no lights in view.
-	worldRenderView.resetLights();
 
 	// Reset render context by flushing it.
 	wc.getRenderContext()->flush();

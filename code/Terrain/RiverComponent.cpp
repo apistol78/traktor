@@ -182,9 +182,9 @@ void RiverComponent::update(const world::UpdateParams& update)
 {
 }
 
-void RiverComponent::render(
+void RiverComponent::build(
 	render::RenderContext* renderContext,
-	world::WorldRenderView& worldRenderView,
+	const world::WorldRenderView& worldRenderView,
 	const world::IWorldRenderPass& worldRenderPass
 )
 {

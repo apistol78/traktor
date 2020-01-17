@@ -14,16 +14,25 @@ const TypeInfoSet SolidEntityRenderer::getRenderableTypes() const
 	return makeTypeInfoSet< SolidEntity >();
 }
 
-void SolidEntityRenderer::render(
+void SolidEntityRenderer::gather(
 	world::WorldContext& worldContext,
-	world::WorldRenderView& worldRenderView,
+	const world::WorldRenderView& worldRenderView,
+	const Object* renderable,
+	AlignedVector< world::Light >& outLights
+)
+{
+}
+
+void SolidEntityRenderer::build(
+	world::WorldContext& worldContext,
+	const world::WorldRenderView& worldRenderView,
 	const world::IWorldRenderPass& worldRenderPass,
 	Object* renderable
 )
 {
 	if (auto solidEntity = dynamic_type_cast< SolidEntity* >(renderable))
 	{
-		solidEntity->render(
+		solidEntity->build(
 			worldContext,
 			worldRenderView,
 			worldRenderPass
@@ -33,7 +42,7 @@ void SolidEntityRenderer::render(
 
 void SolidEntityRenderer::flush(
 	world::WorldContext& worldContext,
-	world::WorldRenderView& worldRenderView,
+	const world::WorldRenderView& worldRenderView,
 	const world::IWorldRenderPass& worldRenderPass
 )
 {

@@ -76,9 +76,9 @@ void SkyComponent::update(const world::UpdateParams& update)
 {
 }
 
-void SkyComponent::render(
+void SkyComponent::build(
 	render::RenderContext* renderContext,
-	world::WorldRenderView& worldRenderView,
+	const world::WorldRenderView& worldRenderView,
 	const world::IWorldRenderPass& worldRenderPass
 )
 {

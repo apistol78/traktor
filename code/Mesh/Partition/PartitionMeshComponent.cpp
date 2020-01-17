@@ -29,7 +29,7 @@ Aabb3 PartitionMeshComponent::getBoundingBox() const
 	return m_mesh->getBoundingBox();
 }
 
-void PartitionMeshComponent::render(world::WorldContext& worldContext, world::WorldRenderView& worldRenderView, const world::IWorldRenderPass& worldRenderPass)
+void PartitionMeshComponent::build(world::WorldContext& worldContext, const world::WorldRenderView& worldRenderView, const world::IWorldRenderPass& worldRenderPass)
 {
 	if (!m_mesh->supportTechnique(worldRenderPass.getTechnique()))
 		return;
@@ -48,7 +48,7 @@ void PartitionMeshComponent::render(world::WorldContext& worldContext, world::Wo
 	))
 		return;
 
-	m_mesh->render(
+	m_mesh->build(
 		worldContext.getRenderContext(),
 		worldRenderView,
 		worldRenderPass,

@@ -15,17 +15,17 @@ const TypeInfoSet LightRenderer::getRenderableTypes() const
 	return makeTypeInfoSet< LightComponent >();
 }
 
-void LightRenderer::render(
+void LightRenderer::gather(
 	WorldContext& worldContext,
-	WorldRenderView& worldRenderView,
-	const IWorldRenderPass& worldRenderPass,
-	Object* renderable
+	const WorldRenderView& worldRenderView,
+	const Object* renderable,
+	AlignedVector< Light >& outLights
 )
 {
 	const LightComponent* lightComponent = mandatory_non_null_type_cast< const LightComponent* >(renderable);
 	Transform transform = lightComponent->getTransform();
 
-	Light light;
+	Light& light = outLights.push_back();
 	light.type = lightComponent->getLightType();
 	light.position = transform.translation();
 	light.direction = transform.axisY();
@@ -39,13 +39,20 @@ void LightRenderer::render(
 		Scalar randomFlicker(lightComponent->getFlickerCoeff());
 		light.color *= randomFlicker;
 	}
+}
 
-	worldRenderView.addLight(light);
+void LightRenderer::build(
+	WorldContext& worldContext,
+	const WorldRenderView& worldRenderView,
+	const IWorldRenderPass& worldRenderPass,
+	Object* renderable
+)
+{
 }
 
 void LightRenderer::flush(
 	WorldContext& worldContext,
-	WorldRenderView& worldRenderView,
+	const WorldRenderView& worldRenderView,
 	const IWorldRenderPass& worldRenderPass
 )
 {

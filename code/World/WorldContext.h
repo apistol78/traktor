@@ -1,6 +1,8 @@
 #pragma once
 
 #include "Core/Object.h"
+#include "Core/Containers/AlignedVector.h"
+#include "World/WorldTypes.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -37,9 +39,11 @@ class T_DLLCLASS WorldContext : public Object
 public:
 	explicit WorldContext(WorldEntityRenderers* entityRenderers, render::RenderContext* renderContext, Entity* rootEntity);
 
-	void build(WorldRenderView& worldRenderView, const IWorldRenderPass& worldRenderPass, Object* renderable);
+	void gather(const WorldRenderView& worldRenderView, const Object* renderable, AlignedVector< Light >& outLights);
 
-	void flush(WorldRenderView& worldRenderView, const IWorldRenderPass& worldRenderPass);
+	void build(const WorldRenderView& worldRenderView, const IWorldRenderPass& worldRenderPass, Object* renderable);
+
+	void flush(const WorldRenderView& worldRenderView, const IWorldRenderPass& worldRenderPass);
 
 	void flush();
 

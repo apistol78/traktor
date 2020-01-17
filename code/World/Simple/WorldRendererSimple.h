@@ -32,8 +32,6 @@ class T_DLLCLASS WorldRendererSimple : public IWorldRenderer
 	T_RTTI_CLASS;
 
 public:
-	WorldRendererSimple();
-
 	virtual bool create(
 		resource::IResourceManager* resourceManager,
 		render::IRenderSystem* renderSystem,
@@ -44,7 +42,7 @@ public:
 
 	virtual void attach(Entity* entity) override final;
 
-	virtual void build(WorldRenderView& worldRenderView, int32_t frame) override final;
+	virtual void build(const WorldRenderView& worldRenderView, int32_t frame) override final;
 
 	virtual void render(render::IRenderView* renderView, int32_t frame) override final;
 

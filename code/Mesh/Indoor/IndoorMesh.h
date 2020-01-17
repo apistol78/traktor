@@ -53,9 +53,9 @@ public:
 
 	bool supportTechnique(render::handle_t technique) const;
 
-	void render(
+	void build(
 		render::RenderContext* renderContext,
-		world::WorldRenderView& worldRenderView,
+		const world::WorldRenderView& worldRenderView,
 		const world::IWorldRenderPass& worldRenderPass,
 		const Transform& worldTransform,
 		float distance,

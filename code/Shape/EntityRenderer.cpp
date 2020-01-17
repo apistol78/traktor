@@ -14,16 +14,25 @@ const TypeInfoSet EntityRenderer::getRenderableTypes() const
 	return makeTypeInfoSet< SplineEntity >();
 }
 
-void EntityRenderer::render(
+void EntityRenderer::gather(
 	world::WorldContext& worldContext,
-	world::WorldRenderView& worldRenderView,
+	const world::WorldRenderView& worldRenderView,
+	const Object* renderable,
+	AlignedVector< world::Light >& outLights
+)
+{
+}
+
+void EntityRenderer::build(
+	world::WorldContext& worldContext,
+	const world::WorldRenderView& worldRenderView,
 	const world::IWorldRenderPass& worldRenderPass,
 	Object* renderable
 )
 {
 	if (SplineEntity* splineEntity = dynamic_type_cast< SplineEntity* >(renderable))
 	{
-		splineEntity->render(
+		splineEntity->build(
 			worldContext,
 			worldRenderView,
 			worldRenderPass
@@ -33,7 +42,7 @@ void EntityRenderer::render(
 
 void EntityRenderer::flush(
 	world::WorldContext& worldContext,
-	world::WorldRenderView& worldRenderView,
+	const world::WorldRenderView& worldRenderView,
 	const world::IWorldRenderPass& worldRenderPass
 )
 {

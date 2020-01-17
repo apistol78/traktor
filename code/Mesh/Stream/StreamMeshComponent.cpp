@@ -22,7 +22,7 @@ StreamMeshComponent::StreamMeshComponent(const resource::Proxy< StreamMesh >& me
 void StreamMeshComponent::destroy()
 {
 	m_mesh.clear();
-	m_instance = 0;
+	m_instance = nullptr;
 	MeshComponent::destroy();
 }
 
@@ -31,7 +31,7 @@ Aabb3 StreamMeshComponent::getBoundingBox() const
 	return m_mesh->getBoundingBox();
 }
 
-void StreamMeshComponent::render(world::WorldContext& worldContext, world::WorldRenderView& worldRenderView, const world::IWorldRenderPass& worldRenderPass)
+void StreamMeshComponent::build(world::WorldContext& worldContext, const world::WorldRenderView& worldRenderView, const world::IWorldRenderPass& worldRenderPass)
 {
 	if (m_frame >= m_mesh->getFrameCount())
 		return;
@@ -61,7 +61,7 @@ void StreamMeshComponent::render(world::WorldContext& worldContext, world::World
 	))
 		return;
 
-	m_mesh->render(
+	m_mesh->build(
 		worldContext.getRenderContext(),
 		worldRenderPass,
 		transform,

@@ -50,7 +50,7 @@ public:
 
 	bool supportTechnique(float lodDistance, render::handle_t technique) const;
 
-	void render(
+	void build(
 		float lodDistance,
 		render::RenderContext* renderContext,
 		const world::IWorldRenderPass& worldRenderPass,

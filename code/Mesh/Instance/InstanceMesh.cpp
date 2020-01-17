@@ -57,7 +57,7 @@ void InstanceMesh::getTechniques(SmallSet< render::handle_t >& outHandles) const
 		outHandles.insert(part.first);
 }
 
-void InstanceMesh::render(
+void InstanceMesh::build(
 	render::RenderContext* renderContext,
 	const world::IWorldRenderPass& worldRenderPass,
 	AlignedVector< RenderInstance >& instanceWorld,

@@ -59,7 +59,7 @@ public:
 
 	bool supportTechnique(render::handle_t technique) const;
 
-	void render(
+	void build(
 		render::RenderContext* renderContext,
 		const world::IWorldRenderPass& worldRenderPass,
 		const Transform& lastWorldTransform,

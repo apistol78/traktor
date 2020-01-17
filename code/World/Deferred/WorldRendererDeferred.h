@@ -65,7 +65,7 @@ public:
 
 	virtual void attach(Entity* entity) override final;
 
-	virtual void build(WorldRenderView& worldRenderView, int32_t frame) override final;
+	virtual void build(const WorldRenderView& worldRenderView, int32_t frame) override final;
 
 	virtual void render(render::IRenderView* renderView, int32_t frame) override final;
 
@@ -122,16 +122,17 @@ private:
 	Ref< WorldEntityRenderers > m_entityRenderers;
 	Ref< GroupEntity > m_rootEntity;
 	AlignedVector< Frame > m_frames;
+	AlignedVector< Light > m_lights;
 
 	float m_slicePositions[MaxSliceCount + 1];
 	Vector4 m_fogDistanceAndDensity;
 	Vector4 m_fogColor;
 
-	void buildGBuffer(WorldRenderView& worldRenderView, int32_t frame);
+	void buildGBuffer(const WorldRenderView& worldRenderView, int32_t frame);
 
 	void buildVelocity(const WorldRenderView& worldRenderView, int32_t frame);
 
-	void buildAmbientOcclusion(WorldRenderView& worldRenderView, int32_t frame);
+	void buildAmbientOcclusion(const WorldRenderView& worldRenderView, int32_t frame);
 
 	void buildLights(const WorldRenderView& worldRenderView, int32_t frame);
 
@@ -141,7 +142,7 @@ private:
 
 	void buildCopyFrame(const WorldRenderView& worldRenderView, int32_t frame);
 
-	void buildEndFrame(WorldRenderView& worldRenderView, int32_t frame);
+	void buildEndFrame(const WorldRenderView& worldRenderView, int32_t frame);
 };
 
 	}

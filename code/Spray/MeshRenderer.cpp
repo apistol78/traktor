@@ -76,7 +76,7 @@ void MeshRenderer::flush(
 			m_instances[j].distance = 0.0f;
 		}
 
-		i->first->render(
+		i->first->build(
 			renderContext,
 			worldRenderPass,
 			m_instances,

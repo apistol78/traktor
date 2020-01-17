@@ -75,10 +75,10 @@ void RubbleLayer::update(const world::UpdateParams& update)
 {
 }
 
-void RubbleLayer::render(
+void RubbleLayer::build(
 	TerrainComponent& terrainComponent,
 	world::WorldContext& worldContext,
-	world::WorldRenderView& worldRenderView,
+	const world::WorldRenderView& worldRenderView,
 	const world::IWorldRenderPass& worldRenderPass
 )
 {
@@ -165,7 +165,7 @@ void RubbleLayer::render(
 				m_instanceData[k].distance = cluster.distance;
 			}
 
-			cluster.rubbleDef->mesh->render(
+			cluster.rubbleDef->mesh->build(
 				renderContext,
 				worldRenderPass,
 				m_instanceData,

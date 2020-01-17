@@ -93,7 +93,7 @@ public:
 
 	void getTechniques(SmallSet< render::handle_t >& outHandles) const;
 
-	void render(
+	void build(
 		render::RenderContext* renderContext,
 		const world::IWorldRenderPass& worldRenderPass,
 		AlignedVector< RenderInstance >& instanceWorld,

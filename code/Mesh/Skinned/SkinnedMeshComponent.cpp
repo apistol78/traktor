@@ -43,7 +43,7 @@ Aabb3 SkinnedMeshComponent::getBoundingBox() const
 	return m_mesh->getBoundingBox();
 }
 
-void SkinnedMeshComponent::render(world::WorldContext& worldContext, world::WorldRenderView& worldRenderView, const world::IWorldRenderPass& worldRenderPass)
+void SkinnedMeshComponent::build(world::WorldContext& worldContext, const world::WorldRenderView& worldRenderView, const world::IWorldRenderPass& worldRenderPass)
 {
 	if (!m_mesh->supportTechnique(worldRenderPass.getTechnique()))
 		return;
@@ -69,7 +69,7 @@ void SkinnedMeshComponent::render(world::WorldContext& worldContext, world::Worl
 	))
 		return;
 
-	m_mesh->render(
+	m_mesh->build(
 		worldContext.getRenderContext(),
 		worldRenderPass,
 		lastWorldTransform,

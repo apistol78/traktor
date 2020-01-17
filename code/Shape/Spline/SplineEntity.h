@@ -47,9 +47,9 @@ public:
 
 	virtual void update(const world::UpdateParams& update) override;
 
-	void render(
+	void build(
 		world::WorldContext& worldContext,
-		world::WorldRenderView& worldRenderView,
+		const world::WorldRenderView& worldRenderView,
 		const world::IWorldRenderPass& worldRenderPass
 	);
 

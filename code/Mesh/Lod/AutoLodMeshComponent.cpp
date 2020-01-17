@@ -30,7 +30,7 @@ Aabb3 AutoLodMeshComponent::getBoundingBox() const
 	return m_mesh->getBoundingBox(m_lodDistance);
 }
 
-void AutoLodMeshComponent::render(world::WorldContext& worldContext, world::WorldRenderView& worldRenderView, const world::IWorldRenderPass& worldRenderPass)
+void AutoLodMeshComponent::build(world::WorldContext& worldContext, const world::WorldRenderView& worldRenderView, const world::IWorldRenderPass& worldRenderPass)
 {
 	Transform transform = m_transform.get(worldRenderView.getInterval());
 
@@ -53,7 +53,7 @@ void AutoLodMeshComponent::render(world::WorldContext& worldContext, world::Worl
 	))
 		return;
 
-	m_mesh->render(
+	m_mesh->build(
 		m_lodDistance,
 		worldContext.getRenderContext(),
 		worldRenderPass,

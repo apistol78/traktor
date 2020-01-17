@@ -218,9 +218,9 @@ void OceanComponent::update(const world::UpdateParams& update)
 {
 }
 
-void OceanComponent::render(
+void OceanComponent::build(
 	render::RenderContext* renderContext,
-	world::WorldRenderView& worldRenderView,
+	const world::WorldRenderView& worldRenderView,
 	const world::IWorldRenderPass& worldRenderPass,
 	bool reflectionEnable
 )

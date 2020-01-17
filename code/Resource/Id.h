@@ -31,6 +31,11 @@ public:
 	{
 	}
 
+	explicit Id(const wchar_t* const id)
+	:	m_id(Guid(id))
+	{
+	}
+
 	bool isNull() const
 	{
 		return m_id.isNull();

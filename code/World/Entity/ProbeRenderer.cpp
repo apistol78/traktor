@@ -168,9 +168,18 @@ const TypeInfoSet ProbeRenderer::getRenderableTypes() const
 	return makeTypeInfoSet< ProbeComponent >();
 }
 
-void ProbeRenderer::render(
+void ProbeRenderer::gather(
 	WorldContext& worldContext,
-	WorldRenderView& worldRenderView,
+	const WorldRenderView& worldRenderView,
+	const Object* renderable,
+	AlignedVector< Light >& outLights
+)
+{
+}
+
+void ProbeRenderer::build(
+	WorldContext& worldContext,
+	const WorldRenderView& worldRenderView,
 	const IWorldRenderPass& worldRenderPass,
 	Object* renderable
 )
@@ -180,7 +189,7 @@ void ProbeRenderer::render(
 	if (!m_probeShader)
 		return;
 
-	// Add to capture queue.
+	// Add to capture queue if probe is "dirty".
 	if (probeComponent->getDirty())
 	{
 		m_captureQueue.push_back(probeComponent);
@@ -277,7 +286,7 @@ void ProbeRenderer::render(
 
 void ProbeRenderer::flush(
 	WorldContext& worldContext,
-	WorldRenderView& worldRenderView,
+	const WorldRenderView& worldRenderView,
 	const IWorldRenderPass& worldRenderPass
 )
 {

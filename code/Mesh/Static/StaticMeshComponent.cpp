@@ -36,7 +36,7 @@ Aabb3 StaticMeshComponent::getBoundingBox() const
 	return m_mesh->getBoundingBox();
 }
 
-void StaticMeshComponent::render(world::WorldContext& worldContext, world::WorldRenderView& worldRenderView, const world::IWorldRenderPass& worldRenderPass)
+void StaticMeshComponent::build(world::WorldContext& worldContext, const world::WorldRenderView& worldRenderView, const world::IWorldRenderPass& worldRenderPass)
 {
 	if (!m_mesh->supportTechnique(worldRenderPass.getTechnique()))
 		return;
@@ -62,7 +62,7 @@ void StaticMeshComponent::render(world::WorldContext& worldContext, world::World
 	))
 		return;
 
-	m_mesh->render(
+	m_mesh->build(
 		worldContext.getRenderContext(),
 		worldRenderPass,
 		lastWorldTransform,

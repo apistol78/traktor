@@ -18,9 +18,18 @@ const TypeInfoSet InstanceMeshComponentRenderer::getRenderableTypes() const
 	return makeTypeInfoSet< InstanceMeshComponent >();
 }
 
-void InstanceMeshComponentRenderer::render(
+
+void InstanceMeshComponentRenderer::gather(
 	world::WorldContext& worldContext,
-	world::WorldRenderView& worldRenderView,
+	const world::WorldRenderView& worldRenderView,
+	const Object* renderable,
+	AlignedVector< world::Light >& outLights
+)
+{
+}
+void InstanceMeshComponentRenderer::build(
+	world::WorldContext& worldContext,
+	const world::WorldRenderView& worldRenderView,
 	const world::IWorldRenderPass& worldRenderPass,
 	Object* renderable
 )
@@ -56,7 +65,7 @@ void InstanceMeshComponentRenderer::render(
 
 void InstanceMeshComponentRenderer::flush(
 	world::WorldContext& worldContext,
-	world::WorldRenderView& worldRenderView,
+	const world::WorldRenderView& worldRenderView,
 	const world::IWorldRenderPass& worldRenderPass
 )
 {
@@ -66,7 +75,7 @@ void InstanceMeshComponentRenderer::flush(
 			continue;
 
 		T_ASSERT(i->first);
-		i->first->render(
+		i->first->build(
 			worldContext.getRenderContext(),
 			worldRenderPass,
 			i->second,
