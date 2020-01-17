@@ -52,9 +52,9 @@ public:
 
 	virtual void destroy() override final;
 
-	void render(
+	void build(
 		world::WorldContext& worldContext,
-		world::WorldRenderView& worldRenderView,
+		const world::WorldRenderView& worldRenderView,
 		const world::IWorldRenderPass& worldRenderPass
 	);
 

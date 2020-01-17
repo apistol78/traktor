@@ -77,9 +77,9 @@ public:
 
 	virtual void update(const world::UpdateParams& update) override final;
 
-	void render(
+	void build(
 		render::RenderContext* renderContext,
-		world::WorldRenderView& worldRenderView,
+		const world::WorldRenderView& worldRenderView,
 		const world::IWorldRenderPass& worldRenderPass,
 		render::PrimitiveRenderer* primitiveRenderer
 	);
@@ -106,9 +106,9 @@ private:
 	float m_timeUntilUpdate;
 	uint32_t m_updateCount;
 
-	void renderCluster(
+	void buildCluster(
 		render::RenderContext* renderContext,
-		world::WorldRenderView& worldRenderView,
+		const world::WorldRenderView& worldRenderView,
 		const world::IWorldRenderPass& worldRenderPass,
 		render::PrimitiveRenderer* primitiveRenderer,
 		const CloudParticleCluster& cluster

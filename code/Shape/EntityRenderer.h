@@ -25,16 +25,23 @@ class T_DLLCLASS EntityRenderer : public world::IEntityRenderer
 public:
 	virtual const TypeInfoSet getRenderableTypes() const override final;
 
-	virtual void render(
+	virtual void gather(
 		world::WorldContext& worldContext,
-		world::WorldRenderView& worldRenderView,
+		const world::WorldRenderView& worldRenderView,
+		const Object* renderable,
+		AlignedVector< world::Light >& outLights
+	) override final;
+
+	virtual void build(
+		world::WorldContext& worldContext,
+		const world::WorldRenderView& worldRenderView,
 		const world::IWorldRenderPass& worldRenderPass,
 		Object* renderable
 	) override final;
 
 	virtual void flush(
 		world::WorldContext& worldContext,
-		world::WorldRenderView& worldRenderView,
+		const world::WorldRenderView& worldRenderView,
 		const world::IWorldRenderPass& worldRenderPass
 	) override final;
 

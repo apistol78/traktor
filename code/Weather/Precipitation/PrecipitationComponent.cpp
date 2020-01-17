@@ -105,7 +105,7 @@ void PrecipitationComponent::update(const world::UpdateParams& update)
 	}
 }
 
-void PrecipitationComponent::render(world::WorldContext& worldContext, world::WorldRenderView& worldRenderView, const world::IWorldRenderPass& worldRenderPass)
+void PrecipitationComponent::build(world::WorldContext& worldContext, const world::WorldRenderView& worldRenderView, const world::IWorldRenderPass& worldRenderPass)
 {
 	if (!m_mesh->supportTechnique(worldRenderPass.getTechnique()))
 		return;
@@ -144,7 +144,7 @@ void PrecipitationComponent::render(world::WorldContext& worldContext, world::Wo
 	mc.m_opacity = m_opacity;
 	mc.m_layerAngle = m_layerAngle;
 
-	m_mesh->render(
+	m_mesh->build(
 		worldContext.getRenderContext(),
 		worldRenderPass,
 		Transform(m_rotation),

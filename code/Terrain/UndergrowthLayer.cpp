@@ -155,10 +155,10 @@ void UndergrowthLayer::update(const world::UpdateParams& update)
 {
 }
 
-void UndergrowthLayer::render(
+void UndergrowthLayer::build(
 	TerrainComponent& terrainComponent,
 	world::WorldContext& worldContext,
-	world::WorldRenderView& worldRenderView,
+	const world::WorldRenderView& worldRenderView,
 	const world::IWorldRenderPass& worldRenderPass
 )
 {

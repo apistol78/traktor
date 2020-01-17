@@ -65,7 +65,7 @@ public:
 
 	Ref< Instance > createInstance() const;
 
-	void render(
+	void build(
 		render::RenderContext* renderContext,
 		const world::IWorldRenderPass& worldRenderPass,
 		const Transform& worldTransform,

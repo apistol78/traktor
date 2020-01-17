@@ -105,17 +105,17 @@ public:
 
 	bool create(const TerrainComponentData& data);
 
-	void render(
+	void build(
 		world::WorldContext& worldContext,
-		world::WorldRenderView& worldRenderView,
+		const world::WorldRenderView& worldRenderView,
 		const world::IWorldRenderPass& worldRenderPass,
 		float detailDistance,
 		uint32_t cacheSize
 	);
 
-	void renderLayers(
+	void buildLayers(
 		world::WorldContext& worldContext,
-		world::WorldRenderView& worldRenderView,
+		const world::WorldRenderView& worldRenderView,
 		const world::IWorldRenderPass& worldRenderPass
 	);
 

@@ -56,17 +56,14 @@ void BoidsEntity::destroy()
 	m_boidEntities.resize(0);
 }
 
-void BoidsEntity::render(
+void BoidsEntity::build(
 	world::WorldContext& worldContext,
-	world::WorldRenderView& worldRenderView,
+	const world::WorldRenderView& worldRenderView,
 	const world::IWorldRenderPass& worldRenderPass
 )
 {
 	for (RefArray< world::Entity >::iterator i = m_boidEntities.begin(); i != m_boidEntities.end(); ++i)
-	{
-		if (*i)
-			worldContext.build(worldRenderView, worldRenderPass, *i);
-	}
+		worldContext.build(worldRenderView, worldRenderPass, *i);
 }
 
 void BoidsEntity::setTransform(const Transform& transform)

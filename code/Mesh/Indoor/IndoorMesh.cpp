@@ -27,9 +27,9 @@ bool IndoorMesh::supportTechnique(render::handle_t technique) const
 	return true;
 }
 
-void IndoorMesh::render(
+void IndoorMesh::build(
 	render::RenderContext* renderContext,
-	world::WorldRenderView& worldRenderView,
+	const world::WorldRenderView& worldRenderView,
 	const world::IWorldRenderPass& worldRenderPass,
 	const Transform& worldTransform,
 	float distance,

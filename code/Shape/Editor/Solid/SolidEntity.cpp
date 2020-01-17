@@ -223,9 +223,9 @@ void SolidEntity::update(const world::UpdateParams& update)
     }
 }
 
-void SolidEntity::render(
+void SolidEntity::build(
 	world::WorldContext& worldContext,
-	world::WorldRenderView& worldRenderView,
+	const world::WorldRenderView& worldRenderView,
 	const world::IWorldRenderPass& worldRenderPass
 )
 {

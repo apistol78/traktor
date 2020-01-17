@@ -49,28 +49,37 @@ const TypeInfoSet EntityRenderer::getRenderableTypes() const
 	return typeSet;
 }
 
-void EntityRenderer::render(
+void EntityRenderer::gather(
 	world::WorldContext& worldContext,
-	world::WorldRenderView& worldRenderView,
+	const world::WorldRenderView& worldRenderView,
+	const Object* renderable,
+	AlignedVector< world::Light >& outLights
+)
+{
+}
+
+void EntityRenderer::build(
+	world::WorldContext& worldContext,
+	const world::WorldRenderView& worldRenderView,
 	const world::IWorldRenderPass& worldRenderPass,
 	Object* renderable
 )
 {
 	if (TerrainComponent* terrainComponent = dynamic_type_cast< TerrainComponent* >(renderable))
 	{
-		terrainComponent->render(worldContext, worldRenderView, worldRenderPass, m_terrainDetailDistance, m_terrainCacheSize);
+		terrainComponent->build(worldContext, worldRenderView, worldRenderPass, m_terrainDetailDistance, m_terrainCacheSize);
 		if (m_terrainLayersEnable)
-			terrainComponent->renderLayers(worldContext, worldRenderView, worldRenderPass);
+			terrainComponent->buildLayers(worldContext, worldRenderView, worldRenderPass);
 	}
 	else if (OceanComponent* oceanComponent = dynamic_type_cast< OceanComponent* >(renderable))
-		oceanComponent->render(worldContext.getRenderContext(), worldRenderView, worldRenderPass, m_oceanReflectionEnable);
+		oceanComponent->build(worldContext.getRenderContext(), worldRenderView, worldRenderPass, m_oceanReflectionEnable);
 	else if (RiverComponent* riverComponent = dynamic_type_cast< RiverComponent* >(renderable))
-		riverComponent->render(worldContext.getRenderContext(), worldRenderView, worldRenderPass);
+		riverComponent->build(worldContext.getRenderContext(), worldRenderView, worldRenderPass);
 }
 
 void EntityRenderer::flush(
 	world::WorldContext& worldContext,
-	world::WorldRenderView& worldRenderView,
+	const world::WorldRenderView& worldRenderView,
 	const world::IWorldRenderPass& worldRenderPass
 )
 {

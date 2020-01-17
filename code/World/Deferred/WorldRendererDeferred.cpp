@@ -28,51 +28,54 @@ namespace traktor
 		namespace
 		{
 
-const resource::Id< render::ImageProcessData > c_colorTargetCopy(Guid(L"{7DCC28A2-C357-B54F-ACF4-8159301B1764}"));
-const resource::Id< render::ImageProcessData > c_ambientOcclusionLow(Guid(L"{ED4F221C-BAB1-4645-BD08-84C5B3FA7C20}"));		//< SSAO, half size
-const resource::Id< render::ImageProcessData > c_ambientOcclusionMedium(Guid(L"{A4249C8A-9A0D-B349-B0ED-E8B354CD7BDF}"));	//< SSAO, full size
-const resource::Id< render::ImageProcessData > c_ambientOcclusionHigh(Guid(L"{37F82A38-D632-5541-9B29-E77C2F74B0C0}"));		//< HBAO, half size
-const resource::Id< render::ImageProcessData > c_ambientOcclusionUltra(Guid(L"{C1C9DDCB-2F82-A94C-BF65-653D8E68F628}"));	//< HBAO, full size
-const resource::Id< render::ImageProcessData > c_antiAliasNone(Guid(L"{960283DC-7AC2-804B-901F-8AD4C205F4E0}"));
-const resource::Id< render::ImageProcessData > c_antiAliasLow(Guid(L"{DBF2FBB9-1310-A24E-B443-AF0D018571F7}"));
-const resource::Id< render::ImageProcessData > c_antiAliasMedium(Guid(L"{3E1D810B-339A-F742-9345-4ECA00220D57}"));
-const resource::Id< render::ImageProcessData > c_antiAliasHigh(Guid(L"{0C288028-7BFD-BE46-A25F-F3910BE50319}"));
-const resource::Id< render::ImageProcessData > c_antiAliasUltra(Guid(L"{4750DA97-67F4-E247-A9C2-B4883B1158B2}"));
-const resource::Id< render::ImageProcessData > c_gammaCorrection(Guid(L"{AB0ABBA7-77BF-0A4E-8E3B-4987B801CE6B}"));
-const resource::Id< render::ImageProcessData > c_motionBlurPrime(Guid(L"{73C2C7DC-BD77-F348-A6B7-06E0EFB633D9}"));
-const resource::Id< render::ImageProcessData > c_motionBlurLow(Guid(L"{BDFEFBE0-C5E9-2643-B445-DB02AC5C7687}"));
-const resource::Id< render::ImageProcessData > c_motionBlurMedium(Guid(L"{A70CBA02-B75A-E246-A9B6-99B8B2B98D2A}"));
-const resource::Id< render::ImageProcessData > c_motionBlurHigh(Guid(L"{E893B98C-90A3-9848-B4F3-3D8C0CE57CE8}"));
-const resource::Id< render::ImageProcessData > c_motionBlurUltra(Guid(L"{CD4A0939-233B-2E43-988D-DA6E0DB7A6E6}"));
-const resource::Id< render::ImageProcessData > c_toneMapFixed(Guid(L"{838922A0-49CE-6645-8A9C-BA0E71081033}"));
-const resource::Id< render::ImageProcessData > c_toneMapAdaptive(Guid(L"{BC4FA128-A976-4023-A422-637581ADFD7E}"));
+const resource::Id< render::ImageProcessData > c_colorTargetCopy(L"{7DCC28A2-C357-B54F-ACF4-8159301B1764}");
+const resource::Id< render::ImageProcessData > c_ambientOcclusionLow(L"{ED4F221C-BAB1-4645-BD08-84C5B3FA7C20}");
+const resource::Id< render::ImageProcessData > c_ambientOcclusionMedium(L"{A4249C8A-9A0D-B349-B0ED-E8B354CD7BDF}");
+const resource::Id< render::ImageProcessData > c_ambientOcclusionHigh(L"{37F82A38-D632-5541-9B29-E77C2F74B0C0}");
+const resource::Id< render::ImageProcessData > c_ambientOcclusionUltra(L"{C1C9DDCB-2F82-A94C-BF65-653D8E68F628}");
+const resource::Id< render::ImageProcessData > c_antiAliasNone(L"{960283DC-7AC2-804B-901F-8AD4C205F4E0}");
+const resource::Id< render::ImageProcessData > c_antiAliasLow(L"{DBF2FBB9-1310-A24E-B443-AF0D018571F7}");
+const resource::Id< render::ImageProcessData > c_antiAliasMedium(L"{3E1D810B-339A-F742-9345-4ECA00220D57}");
+const resource::Id< render::ImageProcessData > c_antiAliasHigh(L"{0C288028-7BFD-BE46-A25F-F3910BE50319}");
+const resource::Id< render::ImageProcessData > c_antiAliasUltra(L"{4750DA97-67F4-E247-A9C2-B4883B1158B2}");
+const resource::Id< render::ImageProcessData > c_gammaCorrection(L"{AB0ABBA7-77BF-0A4E-8E3B-4987B801CE6B}");
+const resource::Id< render::ImageProcessData > c_motionBlurPrime(L"{73C2C7DC-BD77-F348-A6B7-06E0EFB633D9}");
+const resource::Id< render::ImageProcessData > c_motionBlurLow(L"{BDFEFBE0-C5E9-2643-B445-DB02AC5C7687}");
+const resource::Id< render::ImageProcessData > c_motionBlurMedium(L"{A70CBA02-B75A-E246-A9B6-99B8B2B98D2A}");
+const resource::Id< render::ImageProcessData > c_motionBlurHigh(L"{E893B98C-90A3-9848-B4F3-3D8C0CE57CE8}");
+const resource::Id< render::ImageProcessData > c_motionBlurUltra(L"{CD4A0939-233B-2E43-988D-DA6E0DB7A6E6}");
+const resource::Id< render::ImageProcessData > c_toneMapFixed(L"{838922A0-49CE-6645-8A9C-BA0E71081033}");
+const resource::Id< render::ImageProcessData > c_toneMapAdaptive(L"{BC4FA128-A976-4023-A422-637581ADFD7E}");
 
-render::handle_t s_techniqueDeferredColor = 0;
-render::handle_t s_techniqueDeferredGBufferWrite = 0;
-render::handle_t s_techniqueReflectionWrite = 0;
-render::handle_t s_techniqueIrradianceWrite = 0;
-render::handle_t s_techniqueVelocityWrite = 0;
-render::handle_t s_techniqueShadow = 0;
-render::handle_t s_handleTime = 0;
-render::handle_t s_handleView = 0;
-render::handle_t s_handleViewInverse = 0;
-render::handle_t s_handleProjection = 0;
-render::handle_t s_handleColorMap = 0;
-render::handle_t s_handleOcclusionMap = 0;
-render::handle_t s_handleDepthMap = 0;
-render::handle_t s_handleLightMap = 0;
-render::handle_t s_handleNormalMap = 0;
-render::handle_t s_handleMiscMap = 0;
-render::handle_t s_handleReflectionMap = 0;
-render::handle_t s_handleFogDistanceAndDensity = 0;
-render::handle_t s_handleFogColor = 0;
-render::handle_t s_handleLightCount = 0;
-render::handle_t s_handleLightSBuffer = 0;
-render::handle_t s_handleTileSBuffer = 0;
-render::handle_t s_handleIrradianceGridSize = 0;
-render::handle_t s_handleIrradianceGridSBuffer = 0;
-render::handle_t s_handleIrradianceGridBoundsMin = 0;
-render::handle_t s_handleIrradianceGridBoundsMax = 0;
+// Techniques
+const render::Handle s_techniqueDeferredColor(L"World_DeferredColor");
+const render::Handle s_techniqueDeferredGBufferWrite(L"World_DeferredGBufferWrite");
+const render::Handle s_techniqueReflectionWrite(L"World_ReflectionWrite");
+const render::Handle s_techniqueIrradianceWrite(L"World_IrradianceWrite");
+const render::Handle s_techniqueVelocityWrite(L"World_VelocityWrite");
+const render::Handle s_techniqueShadow(L"World_ShadowWrite");
+
+// Global parameters.
+const render::Handle s_handleTime(L"World_Time");
+const render::Handle s_handleView(L"World_View");
+const render::Handle s_handleViewInverse(L"World_ViewInverse");
+const render::Handle s_handleProjection(L"World_Projection");
+const render::Handle s_handleColorMap(L"World_ColorMap");
+const render::Handle s_handleOcclusionMap(L"World_OcclusionMap");
+const render::Handle s_handleDepthMap(L"World_DepthMap");
+const render::Handle s_handleLightMap(L"World_LightMap");
+const render::Handle s_handleNormalMap(L"World_NormalMap");
+const render::Handle s_handleMiscMap(L"World_MiscMap");
+const render::Handle s_handleReflectionMap(L"World_ReflectionMap");
+const render::Handle s_handleFogDistanceAndDensity(L"World_FogDistanceAndDensity");
+const render::Handle s_handleFogColor(L"World_FogColor");
+const render::Handle s_handleLightCount(L"World_LightCount");
+const render::Handle s_handleLightSBuffer(L"World_LightSBuffer");
+const render::Handle s_handleTileSBuffer(L"World_TileSBuffer");
+const render::Handle s_handleIrradianceGridSize(L"World_IrradianceGridSize");
+const render::Handle s_handleIrradianceGridSBuffer(L"World_IrradianceGridSBuffer");
+const render::Handle s_handleIrradianceGridBoundsMin(L"World_IrradianceGridBoundsMin");
+const render::Handle s_handleIrradianceGridBoundsMax(L"World_IrradianceGridBoundsMax");
 
 #pragma pack(1)
 
@@ -174,35 +177,6 @@ WorldRendererDeferred::WorldRendererDeferred()
 ,	m_ambientOcclusionQuality(QuDisabled)
 ,	m_antiAliasQuality(QuDisabled)
 {
-	// Techniques
-	s_techniqueDeferredColor = render::getParameterHandle(L"World_DeferredColor");
-	s_techniqueDeferredGBufferWrite = render::getParameterHandle(L"World_DeferredGBufferWrite");
-	s_techniqueReflectionWrite = render::getParameterHandle(L"World_ReflectionWrite");
-	s_techniqueIrradianceWrite = render::getParameterHandle(L"World_IrradianceWrite");
-	s_techniqueVelocityWrite = render::getParameterHandle(L"World_VelocityWrite");
-	s_techniqueShadow = render::getParameterHandle(L"World_ShadowWrite");
-
-	// Global parameters.
-	s_handleTime = render::getParameterHandle(L"World_Time");
-	s_handleView = render::getParameterHandle(L"World_View");
-	s_handleViewInverse = render::getParameterHandle(L"World_ViewInverse");
-	s_handleProjection = render::getParameterHandle(L"World_Projection");
-	s_handleColorMap = render::getParameterHandle(L"World_ColorMap");
-	s_handleOcclusionMap = render::getParameterHandle(L"World_OcclusionMap");
-	s_handleDepthMap = render::getParameterHandle(L"World_DepthMap");
-	s_handleLightMap = render::getParameterHandle(L"World_LightMap");
-	s_handleNormalMap = render::getParameterHandle(L"World_NormalMap");
-	s_handleMiscMap = render::getParameterHandle(L"World_MiscMap");
-	s_handleReflectionMap = render::getParameterHandle(L"World_ReflectionMap");
-	s_handleFogDistanceAndDensity = render::getParameterHandle(L"World_FogDistanceAndDensity");
-	s_handleFogColor = render::getParameterHandle(L"World_FogColor");
-	s_handleLightCount = render::getParameterHandle(L"World_LightCount");
-	s_handleLightSBuffer = render::getParameterHandle(L"World_LightSBuffer");
-	s_handleTileSBuffer = render::getParameterHandle(L"World_TileSBuffer");
-	s_handleIrradianceGridSize = render::getParameterHandle(L"World_IrradianceGridSize");
-	s_handleIrradianceGridSBuffer = render::getParameterHandle(L"World_IrradianceGridSBuffer");
-	s_handleIrradianceGridBoundsMin = render::getParameterHandle(L"World_IrradianceGridBoundsMin");
-	s_handleIrradianceGridBoundsMax = render::getParameterHandle(L"World_IrradianceGridBoundsMax");
 }
 
 bool WorldRendererDeferred::create(
@@ -859,7 +833,7 @@ void WorldRendererDeferred::attach(Entity* entity)
 	m_rootEntity->addEntity(entity);
 }
 
-void WorldRendererDeferred::build(WorldRenderView& worldRenderView, int32_t frame)
+void WorldRendererDeferred::build(const WorldRenderView& worldRenderView, int32_t frame)
 {
 	WorldContext wc(
 		m_entityRenderers,
@@ -867,11 +841,16 @@ void WorldRendererDeferred::build(WorldRenderView& worldRenderView, int32_t fram
 		m_rootEntity
 	);
 
-	// Ensure no lights in view.
-	worldRenderView.resetLights();
-
 	// Reset render context by flushing it.
 	wc.getRenderContext()->flush();
+
+	// Gather active lights.
+	m_lights.resize(0);
+	wc.gather(
+		worldRenderView,
+		m_rootEntity,
+		m_lights
+	);
 
 	// \tbd Flush all entity renderers first, only used by probes atm and need to render to targets.
 	// Until we have RenderGraph properly implemented we need to make sure
@@ -965,7 +944,7 @@ void WorldRendererDeferred::getDebugTargets(std::vector< render::DebugTarget >& 
 		m_toneMapImageProcess->getDebugTargets(outTargets);
 }
 
-void WorldRendererDeferred::buildGBuffer(WorldRenderView& worldRenderView, int32_t frame)
+void WorldRendererDeferred::buildGBuffer(const WorldRenderView& worldRenderView, int32_t frame)
 {
 	WorldContext wc(
 		m_entityRenderers,
@@ -1049,9 +1028,6 @@ void WorldRendererDeferred::buildVelocity(const WorldRenderView& worldRenderView
 		);
 	}
 
-	WorldRenderView velocityRenderView = worldRenderView;
-	velocityRenderView.resetLights();
-
 	auto sharedParams = wc.getRenderContext()->alloc< render::ProgramParameters >();
 	sharedParams->beginParameters(wc.getRenderContext());
 	sharedParams->setFloatParameter(s_handleTime, worldRenderView.getTime());
@@ -1063,21 +1039,21 @@ void WorldRendererDeferred::buildVelocity(const WorldRenderView& worldRenderView
 	WorldRenderPassDeferred velocityPass(
 		s_techniqueVelocityWrite,
 		sharedParams,
-		velocityRenderView,
+		worldRenderView,
 		IWorldRenderPass::PfNone,
 		false
 	);
 
 	T_ASSERT(!wc.getRenderContext()->havePendingDraws());
-	wc.build(velocityRenderView, velocityPass, m_rootEntity);
-	wc.flush(velocityRenderView, velocityPass);
+	wc.build(worldRenderView, velocityPass, m_rootEntity);
+	wc.flush(worldRenderView, velocityPass);
 	wc.getRenderContext()->merge(render::RpAll);
 
 	auto te = wc.getRenderContext()->alloc< render::TargetEndRenderBlock >("World velocity; end");
 	wc.getRenderContext()->enqueue(te);
 }
 
-void WorldRendererDeferred::buildAmbientOcclusion(WorldRenderView& worldRenderView, int32_t frame)
+void WorldRendererDeferred::buildAmbientOcclusion(const WorldRenderView& worldRenderView, int32_t frame)
 {
 	WorldContext wc(
 		m_entityRenderers,
@@ -1138,11 +1114,11 @@ void WorldRendererDeferred::buildLights(const WorldRenderView& worldRenderView, 
 	int32_t resolution = castShadow ? m_shadowCascadeTargetSet->getWidth() : 0;
 	int32_t atlasIndex = 0;
 
-	m_frames[frame].lightCount = worldRenderView.getLightCount();
+	m_frames[frame].lightCount = m_lights.size();
 
-	for (int32_t i = 0; i < worldRenderView.getLightCount(); ++i)
+	for (int32_t i = 0; i < m_lights.size(); ++i)
 	{
-		const Light& light = worldRenderView.getLight(i);
+		const Light& light = m_lights[i];
 
 		// Write shared information about light into sbuffer.
 		lightShaderData->typeRangeRadius[0] = (float)light.type;
@@ -1200,7 +1176,6 @@ void WorldRendererDeferred::buildLights(const WorldRenderView& worldRenderView, 
 
 					// Render shadow map.
 					WorldRenderView shadowRenderView;
-					shadowRenderView.resetLights();
 					shadowRenderView.setProjection(shadowLightProjection);
 					shadowRenderView.setView(shadowLightView, shadowLightView);
 					shadowRenderView.setViewFrustum(shadowFrustum);
@@ -1326,7 +1301,6 @@ void WorldRendererDeferred::buildLights(const WorldRenderView& worldRenderView, 
 			shadowLightView = shadowLightView.inverse();
 
 			WorldRenderView shadowRenderView;
-			shadowRenderView.resetLights();
 			shadowRenderView.setProjection(shadowLightProjection);
 			shadowRenderView.setView(shadowLightView, shadowLightView);
 			shadowRenderView.setViewFrustum(shadowFrustum);
@@ -1438,9 +1412,9 @@ void WorldRendererDeferred::buildLights(const WorldRenderView& worldRenderView, 
 				tileFrustum.buildFromCorners(corners);
 
 				int32_t count = 0;
-				for (uint32_t i = 0; i <  worldRenderView.getLightCount(); ++i)
+				for (uint32_t i = 0; i < m_lights.size(); ++i)
 				{
-					const Light& light = worldRenderView.getLight(i);
+					const Light& light = m_lights[i];
 
 					if (light.type == LtDirectional)
 					{
@@ -1487,9 +1461,6 @@ void WorldRendererDeferred::buildReflections(const WorldRenderView& worldRenderV
 	tb->clear.colors[0] = Color4f(0.0f, 0.0f, 0.0f, 0.0f);
 	wc.getRenderContext()->enqueue(tb);
 
-	WorldRenderView reflectionsRenderView = worldRenderView;
-	reflectionsRenderView.resetLights();
-
 	auto sharedParams = wc.getRenderContext()->alloc< render::ProgramParameters >();
 	sharedParams->beginParameters(wc.getRenderContext());
 	sharedParams->setFloatParameter(s_handleTime, worldRenderView.getTime());
@@ -1505,14 +1476,14 @@ void WorldRendererDeferred::buildReflections(const WorldRenderView& worldRenderV
 	WorldRenderPassDeferred reflectionsPass(
 		s_techniqueReflectionWrite,
 		sharedParams,
-		reflectionsRenderView,
+		worldRenderView,
 		IWorldRenderPass::PfNone,
 		false
 	);
 
 	T_ASSERT(!wc.getRenderContext()->havePendingDraws());
-	wc.build(reflectionsRenderView, reflectionsPass, m_rootEntity);
-	wc.flush(reflectionsRenderView, reflectionsPass);
+	wc.build(worldRenderView, reflectionsPass, m_rootEntity);
+	wc.flush(worldRenderView, reflectionsPass);
 	wc.getRenderContext()->merge(render::RpAll);
 
 	// Render screenspace reflections.
@@ -1551,9 +1522,6 @@ void WorldRendererDeferred::buildVisual(const WorldRenderView& worldRenderView, 
 
 	// Irradiance
 	{
-		WorldRenderView irradianceRenderView = worldRenderView;
-		irradianceRenderView.resetLights();
-
 		auto sharedParams = wc.getRenderContext()->alloc< render::ProgramParameters >();
 		sharedParams->beginParameters(wc.getRenderContext());
 
@@ -1581,14 +1549,14 @@ void WorldRendererDeferred::buildVisual(const WorldRenderView& worldRenderView, 
 		WorldRenderPassDeferred irradiancePass(
 			s_techniqueIrradianceWrite,
 			sharedParams,
-			irradianceRenderView,
+			worldRenderView,
 			IWorldRenderPass::PfNone,
 			(bool)m_irradianceGrid
 		);
 
 		T_ASSERT(!wc.getRenderContext()->havePendingDraws());
-		wc.build(irradianceRenderView, irradiancePass, m_rootEntity);
-		wc.flush(irradianceRenderView, irradiancePass);
+		wc.build(worldRenderView, irradiancePass, m_rootEntity);
+		wc.flush(worldRenderView, irradiancePass);
 		wc.getRenderContext()->merge(render::RpAll);
 	}
 
@@ -1632,9 +1600,6 @@ void WorldRendererDeferred::buildVisual(const WorldRenderView& worldRenderView, 
 
 	// Forward visuals; not included in GBuffer.
 	{
-		WorldRenderView visualRenderView = worldRenderView;
-		visualRenderView.resetLights();
-
 		auto sharedParams = wc.getRenderContext()->alloc< render::ProgramParameters >();
 		sharedParams->beginParameters(wc.getRenderContext());
 		sharedParams->setFloatParameter(s_handleTime, worldRenderView.getTime());
@@ -1654,15 +1619,15 @@ void WorldRendererDeferred::buildVisual(const WorldRenderView& worldRenderView, 
 		WorldRenderPassDeferred deferredColorPass(
 			s_techniqueDeferredColor,
 			sharedParams,
-			visualRenderView,
+			worldRenderView,
 			IWorldRenderPass::PfLast,
 			m_settings.fog,
 			m_gbufferTargetSet->getColorTexture(0) != nullptr
 		);
 
 		T_ASSERT(!wc.getRenderContext()->havePendingDraws());
-		wc.build(visualRenderView, deferredColorPass, m_rootEntity);
-		wc.flush(visualRenderView, deferredColorPass);
+		wc.build(worldRenderView, deferredColorPass, m_rootEntity);
+		wc.flush(worldRenderView, deferredColorPass);
 		wc.getRenderContext()->merge(render::RpAll);
 	}
 
@@ -1703,7 +1668,7 @@ void WorldRendererDeferred::buildCopyFrame(const WorldRenderView& worldRenderVie
 	wc.getRenderContext()->enqueue(te);
 }
 
-void WorldRendererDeferred::buildEndFrame(WorldRenderView& worldRenderView, int32_t frame)
+void WorldRendererDeferred::buildEndFrame(const WorldRenderView& worldRenderView, int32_t frame)
 {
 	WorldContext wc(
 		m_entityRenderers,

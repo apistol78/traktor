@@ -16,16 +16,25 @@ WorldContext::WorldContext(WorldEntityRenderers* entityRenderers, render::Render
 {
 }
 
-void WorldContext::build(WorldRenderView& worldRenderView, const IWorldRenderPass& worldRenderPass, Object* renderable)
+void WorldContext::gather(const WorldRenderView& worldRenderView, const Object* renderable, AlignedVector< Light >& outLights)
 {
 	if (!renderable)
 		return;
 	IEntityRenderer* renderer = m_entityRenderers->find(type_of(renderable));
 	if (renderer)
-		renderer->render(*this, worldRenderView, worldRenderPass, renderable);
+		renderer->gather(*this, worldRenderView, renderable, outLights);
 }
 
-void WorldContext::flush(WorldRenderView& worldRenderView, const IWorldRenderPass& worldRenderPass)
+void WorldContext::build(const WorldRenderView& worldRenderView, const IWorldRenderPass& worldRenderPass, Object* renderable)
+{
+	if (!renderable)
+		return;
+	IEntityRenderer* renderer = m_entityRenderers->find(type_of(renderable));
+	if (renderer)
+		renderer->build(*this, worldRenderView, worldRenderPass, renderable);
+}
+
+void WorldContext::flush(const WorldRenderView& worldRenderView, const IWorldRenderPass& worldRenderPass)
 {
 	for (auto entityRenderer : m_entityRenderers->get())
 		entityRenderer->flush(*this, worldRenderView, worldRenderPass);

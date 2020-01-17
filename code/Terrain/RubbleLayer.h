@@ -42,10 +42,10 @@ public:
 
 	virtual void update(const world::UpdateParams& update) override final;
 
-	virtual void render(
+	virtual void build(
 		TerrainComponent& terrainComponent,
 		world::WorldContext& worldContext,
-		world::WorldRenderView& worldRenderView,
+		const world::WorldRenderView& worldRenderView,
 		const world::IWorldRenderPass& worldRenderPass
 	) override final;
 

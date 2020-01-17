@@ -594,13 +594,13 @@ void EffectPreviewControl::eventPaint(ui::PaintEvent* event)
 		worldRenderView.setViewFrustum(viewFrustum);
 		worldRenderView.setTimes(time, deltaTime, 0.0f);
 
-		world::Light globalLight;
-		globalLight.type = world::LtDirectional;
-		globalLight.position = Vector4(0.0f, 0.0f, 0.0f, 1.0f);
-		globalLight.direction = Vector4(0.0f, 1.0f, -1.0f, 0.0f).normalized();
-		globalLight.color = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
-		globalLight.range = Scalar(0.0f);
-		worldRenderView.addLight(globalLight);
+		// world::Light globalLight;
+		// globalLight.type = world::LtDirectional;
+		// globalLight.position = Vector4(0.0f, 0.0f, 0.0f, 1.0f);
+		// globalLight.direction = Vector4(0.0f, 1.0f, -1.0f, 0.0f).normalized();
+		// globalLight.color = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
+		// globalLight.range = Scalar(0.0f);
+		// worldRenderView.addLight(globalLight);
 
 		render::ProgramParameters visualProgramParams;
 		visualProgramParams.beginParameters(m_globalContext);

@@ -13,20 +13,29 @@ const TypeInfoSet ClothEntityRenderer::getRenderableTypes() const
 	return makeTypeInfoSet< ClothEntity >();
 }
 
-void ClothEntityRenderer::render(
+void ClothEntityRenderer::gather(
 	world::WorldContext& worldContext,
-	world::WorldRenderView& worldRenderView,
+	const world::WorldRenderView& worldRenderView,
+	const Object* renderable,
+	AlignedVector< world::Light >& outLights
+)
+{
+}
+
+void ClothEntityRenderer::build(
+	world::WorldContext& worldContext,
+	const world::WorldRenderView& worldRenderView,
 	const world::IWorldRenderPass& worldRenderPass,
 	Object* renderable
 )
 {
-	if (ClothEntity* clothEntity = mandatory_non_null_type_cast< ClothEntity* >(renderable))
-		clothEntity->render(worldContext, worldRenderView, worldRenderPass);
+	ClothEntity* clothEntity = mandatory_non_null_type_cast< ClothEntity* >(renderable);
+	clothEntity->build(worldContext, worldRenderView, worldRenderPass);
 }
 
 void ClothEntityRenderer::flush(
 	world::WorldContext& worldContext,
-	world::WorldRenderView& worldRenderView,
+	const world::WorldRenderView& worldRenderView,
 	const world::IWorldRenderPass& worldRenderPass
 )
 {

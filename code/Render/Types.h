@@ -879,6 +879,46 @@ uint32_t T_DLLCLASS getTextureMipPitch(TextureFormat format, uint32_t textureWid
  */
 uint32_t T_DLLCLASS getTextureSize(TextureFormat format, uint32_t textureWidth, uint32_t textureHeight, uint32_t mipLevels);
 
+/*! Automatically resolved handles from literal. */
+class T_DLLCLASS Handle
+{
+public:
+	Handle()
+	:	m_id(0)
+	{
+	}
+
+	explicit Handle(handle_t id)
+	:	m_id(id)
+	{
+	}
+
+	explicit Handle(const wchar_t* const name)
+	{
+		m_id = getParameterHandle(name);
+	}
+
+	Handle& operator = (handle_t id)
+	{
+		m_id = id;
+		return *this;
+	}
+
+	Handle& operator = (const wchar_t* const name)
+	{
+		m_id = getParameterHandle(name);
+		return *this;
+	}
+
+	operator handle_t () const
+	{
+		return m_id;
+	}
+
+private:
+	handle_t m_id;
+};
+
 //@}
 
 	}

@@ -152,9 +152,9 @@ bool ClothEntity::create(
 	return true;
 }
 
-void ClothEntity::render(
+void ClothEntity::build(
 	world::WorldContext& worldContext,
-	world::WorldRenderView& worldRenderView,
+	const world::WorldRenderView& worldRenderView,
 	const world::IWorldRenderPass& worldRenderPass
 )
 {

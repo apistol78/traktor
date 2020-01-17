@@ -130,7 +130,7 @@ public:
 	 * \param frame Multi threaded context frame.
 	 * \param entity Root entity.
 	 */
-	virtual void build(WorldRenderView& worldRenderView, int32_t frame) = 0;
+	virtual void build(const WorldRenderView& worldRenderView, int32_t frame) = 0;
 
 	//@}
 

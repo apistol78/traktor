@@ -52,9 +52,9 @@ public:
 
     virtual void update(const world::UpdateParams& update) override final;
 
-	void render(
+	void build(
 		world::WorldContext& worldContext,
-		world::WorldRenderView& worldRenderView,
+		const world::WorldRenderView& worldRenderView,
 		const world::IWorldRenderPass& worldRenderPass
 	);
 

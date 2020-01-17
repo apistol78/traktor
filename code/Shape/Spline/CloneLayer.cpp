@@ -70,9 +70,9 @@ void CloneLayer::pathChanged()
 	}
 }
 
-void CloneLayer::render(
+void CloneLayer::build(
 	world::WorldContext& worldContext,
-	world::WorldRenderView& worldRenderView,
+	const world::WorldRenderView& worldRenderView,
 	const world::IWorldRenderPass& worldRenderPass
 )
 {

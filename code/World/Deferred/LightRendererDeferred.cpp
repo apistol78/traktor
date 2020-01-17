@@ -17,42 +17,42 @@ namespace traktor
 		namespace
 		{
 
-const resource::Id< render::Shader > c_lightShader(Guid(L"{707DE0B0-0E2B-A44A-9441-9B1FCFD428AA}"));
-const resource::Id< render::Shader > c_reflectionShader(Guid(L"{F04EEA34-85E0-974F-BE97-79D24C6ACFBD}"));
-const resource::Id< render::Shader > c_fogShader(Guid(L"{9453D74C-76C4-8748-9A5B-9E3D6D4F9406}"));
+const resource::Id< render::Shader > c_lightShader(L"{707DE0B0-0E2B-A44A-9441-9B1FCFD428AA}");
+const resource::Id< render::Shader > c_reflectionShader(L"{F04EEA34-85E0-974F-BE97-79D24C6ACFBD}");
+const resource::Id< render::Shader > c_fogShader(L"{9453D74C-76C4-8748-9A5B-9E3D6D4F9406}");
 
-render::handle_t s_handleTime;
-render::handle_t s_handleShadowEnable;
-render::handle_t s_handleReflectionsEnable;
-render::handle_t s_handleIrradianceEnable;
-render::handle_t s_handleExtent;
-render::handle_t s_handleProjection;
-render::handle_t s_handleView;
-render::handle_t s_handleViewInverse;
-render::handle_t s_handleMagicCoeffs;
-render::handle_t s_handleScreenMap;
-render::handle_t s_handleDepthMap;
-render::handle_t s_handleNormalMap;
-render::handle_t s_handleMiscMap;
-render::handle_t s_handleColorMap;
-render::handle_t s_handleOcclusionMap;
-render::handle_t s_handleLightDiffuseMap;
-render::handle_t s_handleLightSpecularMap;
-render::handle_t s_handleProbeDiffuse;
-render::handle_t s_handleProbeSpecular;
-render::handle_t s_handleProbeSpecularMips;
-render::handle_t s_handleFogDistanceAndDensity;
-render::handle_t s_handleFogColor;
-render::handle_t s_handleLightCount;
-render::handle_t s_handleShadowMask;
-render::handle_t s_handleShadowMapAtlas;
-render::handle_t s_handleReflectionMap;
-render::handle_t s_handleLightSBuffer;
-render::handle_t s_handleTileSBuffer;
-render::handle_t s_handleIrradianceGridSize;
-render::handle_t s_handleIrradianceGridSBuffer;
-render::handle_t s_handleIrradianceGridBoundsMin;
-render::handle_t s_handleIrradianceGridBoundsMax;
+const render::Handle s_handleTime(L"World_Time");
+const render::Handle s_handleShadowEnable(L"World_ShadowEnable");
+const render::Handle s_handleReflectionsEnable(L"World_ReflectionsEnable");
+const render::Handle s_handleIrradianceEnable(L"World_IrradianceEnable");
+const render::Handle s_handleExtent(L"World_Extent");
+const render::Handle s_handleProjection(L"World_Projection");
+const render::Handle s_handleView(L"World_View");
+const render::Handle s_handleViewInverse(L"World_ViewInverse");
+const render::Handle s_handleMagicCoeffs(L"World_MagicCoeffs");
+const render::Handle s_handleScreenMap(L"World_ScreenMap");
+const render::Handle s_handleDepthMap(L"World_DepthMap");
+const render::Handle s_handleNormalMap(L"World_NormalMap");
+const render::Handle s_handleMiscMap(L"World_MiscMap");
+const render::Handle s_handleColorMap(L"World_ColorMap");
+const render::Handle s_handleOcclusionMap(L"World_OcclusionMap");
+const render::Handle s_handleLightDiffuseMap(L"World_LightDiffuseMap");
+const render::Handle s_handleLightSpecularMap(L"World_LightSpecularMap");
+const render::Handle s_handleProbeDiffuse(L"World_ProbeDiffuse");
+const render::Handle s_handleProbeSpecular(L"World_ProbeSpecular");
+const render::Handle s_handleProbeSpecularMips(L"World_ProbeSpecularMips");
+const render::Handle s_handleFogDistanceAndDensity(L"World_FogDistanceAndDensity");
+const render::Handle s_handleFogColor(L"World_FogColor");
+const render::Handle s_handleLightCount(L"World_LightCount");
+const render::Handle s_handleShadowMask(L"World_ShadowMask");
+const render::Handle s_handleShadowMapAtlas(L"World_ShadowMapAtlas");
+const render::Handle s_handleReflectionMap(L"World_ReflectionMap");
+const render::Handle s_handleLightSBuffer(L"World_LightSBuffer");
+const render::Handle s_handleTileSBuffer(L"World_TileSBuffer");
+const render::Handle s_handleIrradianceGridSize(L"World_IrradianceGridSize");
+const render::Handle s_handleIrradianceGridSBuffer(L"World_IrradianceGridSBuffer");
+const render::Handle s_handleIrradianceGridBoundsMin(L"World_IrradianceGridBoundsMin");
+const render::Handle s_handleIrradianceGridBoundsMax(L"World_IrradianceGridBoundsMax");
 
 #pragma pack(1)
 
@@ -67,42 +67,6 @@ struct LightVertex
 		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.world.LightRendererDeferred", LightRendererDeferred, Object)
-
-LightRendererDeferred::LightRendererDeferred()
-{
-	s_handleTime = render::getParameterHandle(L"World_Time");
-	s_handleShadowEnable = render::getParameterHandle(L"World_ShadowEnable");
-	s_handleReflectionsEnable = render::getParameterHandle(L"World_ReflectionsEnable");
-	s_handleIrradianceEnable = render::getParameterHandle(L"World_IrradianceEnable");
-	s_handleExtent = render::getParameterHandle(L"World_Extent");
-	s_handleProjection = render::getParameterHandle(L"World_Projection");
-	s_handleView = render::getParameterHandle(L"World_View");
-	s_handleViewInverse = render::getParameterHandle(L"World_ViewInverse");
-	s_handleMagicCoeffs = render::getParameterHandle(L"World_MagicCoeffs");
-	s_handleScreenMap = render::getParameterHandle(L"World_ScreenMap");
-	s_handleDepthMap = render::getParameterHandle(L"World_DepthMap");
-	s_handleNormalMap = render::getParameterHandle(L"World_NormalMap");
-	s_handleMiscMap = render::getParameterHandle(L"World_MiscMap");
-	s_handleColorMap = render::getParameterHandle(L"World_ColorMap");
-	s_handleOcclusionMap = render::getParameterHandle(L"World_OcclusionMap");
-	s_handleLightDiffuseMap = render::getParameterHandle(L"World_LightDiffuseMap");
-	s_handleLightSpecularMap = render::getParameterHandle(L"World_LightSpecularMap");
-	s_handleProbeDiffuse = render::getParameterHandle(L"World_ProbeDiffuse");
-	s_handleProbeSpecular = render::getParameterHandle(L"World_ProbeSpecular");
-	s_handleProbeSpecularMips = render::getParameterHandle(L"World_ProbeSpecularMips");
-	s_handleFogDistanceAndDensity = render::getParameterHandle(L"World_FogDistanceAndDensity");
-	s_handleFogColor = render::getParameterHandle(L"World_FogColor");
-	s_handleLightCount = render::getParameterHandle(L"World_LightCount");
-	s_handleShadowMask = render::getParameterHandle(L"World_ShadowMask");
-	s_handleShadowMapAtlas = render::getParameterHandle(L"World_ShadowMapAtlas");
-	s_handleReflectionMap = render::getParameterHandle(L"World_ReflectionMap");
-	s_handleLightSBuffer = render::getParameterHandle(L"World_LightSBuffer");
-	s_handleTileSBuffer = render::getParameterHandle(L"World_TileSBuffer");
-	s_handleIrradianceGridSize = render::getParameterHandle(L"World_IrradianceGridSize");
-	s_handleIrradianceGridSBuffer = render::getParameterHandle(L"World_IrradianceGridSBuffer");
-	s_handleIrradianceGridBoundsMin = render::getParameterHandle(L"World_IrradianceGridBoundsMin");
-	s_handleIrradianceGridBoundsMax = render::getParameterHandle(L"World_IrradianceGridBoundsMax");
-}
 
 bool LightRendererDeferred::create(
 	resource::IResourceManager* resourceManager,

@@ -10,25 +10,32 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.animation.BoidsEntityRenderer", BoidsEntityRend
 
 const TypeInfoSet BoidsEntityRenderer::getRenderableTypes() const
 {
-	TypeInfoSet typeSet;
-	typeSet.insert< BoidsEntity >();
-	return typeSet;
+	return makeTypeInfoSet< BoidsEntity >();
 }
 
-void BoidsEntityRenderer::render(
+void BoidsEntityRenderer::gather(
 	world::WorldContext& worldContext,
-	world::WorldRenderView& worldRenderView,
+	const world::WorldRenderView& worldRenderView,
+	const Object* renderable,
+	AlignedVector< world::Light >& outLights
+)
+{
+}
+
+void BoidsEntityRenderer::build(
+	world::WorldContext& worldContext,
+	const world::WorldRenderView& worldRenderView,
 	const world::IWorldRenderPass& worldRenderPass,
 	Object* renderable
 )
 {
-	if (BoidsEntity* clothEntity = dynamic_type_cast< BoidsEntity* >(renderable))
-		clothEntity->render(worldContext, worldRenderView, worldRenderPass);
+	BoidsEntity* boidsEntity = mandatory_non_null_type_cast< BoidsEntity* >(renderable);
+	boidsEntity->build(worldContext, worldRenderView, worldRenderPass);
 }
 
 void BoidsEntityRenderer::flush(
 	world::WorldContext& worldContext,
-	world::WorldRenderView& worldRenderView,
+	const world::WorldRenderView& worldRenderView,
 	const world::IWorldRenderPass& worldRenderPass
 )
 {

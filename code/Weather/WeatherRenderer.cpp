@@ -25,24 +25,33 @@ const TypeInfoSet WeatherRenderer::getRenderableTypes() const
 	return typeSet;
 }
 
-void WeatherRenderer::render(
+void WeatherRenderer::gather(
 	world::WorldContext& worldContext,
-	world::WorldRenderView& worldRenderView,
+	const world::WorldRenderView& worldRenderView,
+	const Object* renderable,
+	AlignedVector< world::Light >& outLights
+)
+{
+}
+
+void WeatherRenderer::build(
+	world::WorldContext& worldContext,
+	const world::WorldRenderView& worldRenderView,
 	const world::IWorldRenderPass& worldRenderPass,
 	Object* renderable
 )
 {
 	if (CloudComponent* cloudComponent = dynamic_type_cast< CloudComponent* >(renderable))
-		cloudComponent->render(worldContext.getRenderContext(), worldRenderView, worldRenderPass, m_primitiveRenderer);
+		cloudComponent->build(worldContext.getRenderContext(), worldRenderView, worldRenderPass, m_primitiveRenderer);
 	else if (PrecipitationComponent* precipitationComponent = dynamic_type_cast< PrecipitationComponent* >(renderable))
-		precipitationComponent->render(worldContext, worldRenderView, worldRenderPass);
+		precipitationComponent->build(worldContext, worldRenderView, worldRenderPass);
 	else if (SkyComponent* skyComponent = dynamic_type_cast< SkyComponent* >(renderable))
-		skyComponent->render(worldContext.getRenderContext(), worldRenderView, worldRenderPass);
+		skyComponent->build(worldContext.getRenderContext(), worldRenderView, worldRenderPass);
 }
 
 void WeatherRenderer::flush(
 	world::WorldContext& worldContext,
-	world::WorldRenderView& worldRenderView,
+	const world::WorldRenderView& worldRenderView,
 	const world::IWorldRenderPass& worldRenderPass
 )
 {

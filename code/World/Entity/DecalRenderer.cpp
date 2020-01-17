@@ -88,9 +88,18 @@ const TypeInfoSet DecalRenderer::getRenderableTypes() const
 	return makeTypeInfoSet< DecalComponent >();
 }
 
-void DecalRenderer::render(
+void DecalRenderer::gather(
 	WorldContext& worldContext,
-	WorldRenderView& worldRenderView,
+	const WorldRenderView& worldRenderView,
+	const Object* renderable,
+	AlignedVector< Light >& outLights
+)
+{
+}
+
+void DecalRenderer::build(
+	WorldContext& worldContext,
+	const WorldRenderView& worldRenderView,
 	const IWorldRenderPass& worldRenderPass,
 	Object* renderable
 )
@@ -115,7 +124,7 @@ void DecalRenderer::render(
 
 void DecalRenderer::flush(
 	WorldContext& worldContext,
-	WorldRenderView& worldRenderView,
+	const WorldRenderView& worldRenderView,
 	const IWorldRenderPass& worldRenderPass
 )
 {

@@ -34,7 +34,7 @@ bool SkinnedMesh::supportTechnique(render::handle_t technique) const
 	return m_parts.find(technique) != m_parts.end();
 }
 
-void SkinnedMesh::render(
+void SkinnedMesh::build(
 	render::RenderContext* renderContext,
 	const world::IWorldRenderPass& worldRenderPass,
 	const Transform& lastWorldTransform,

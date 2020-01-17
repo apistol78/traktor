@@ -80,14 +80,14 @@ void SplineEntity::update(const world::UpdateParams& update)
 	world::ComponentEntity::update(update);
 }
 
-void SplineEntity::render(
+void SplineEntity::build(
 	world::WorldContext& worldContext,
-	world::WorldRenderView& worldRenderView,
+	const world::WorldRenderView& worldRenderView,
 	const world::IWorldRenderPass& worldRenderPass
 )
 {
 	for (auto layer : m_layers)
-		layer->render(worldContext, worldRenderView, worldRenderPass);
+		layer->build(worldContext, worldRenderView, worldRenderPass);
 }
 
 	}

@@ -34,9 +34,9 @@ public:
 
 	virtual void update(const world::UpdateParams& update) = 0;
 
-	virtual void render(
+	virtual void build(
 		world::WorldContext& worldContext,
-		world::WorldRenderView& worldRenderView,
+		const world::WorldRenderView& worldRenderView,
 		const world::IWorldRenderPass& worldRenderPass
 	) = 0;
 };

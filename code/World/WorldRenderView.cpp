@@ -84,18 +84,5 @@ void WorldRenderView::setTimes(float time, float deltaTime, float interval)
 	m_interval = interval;
 }
 
-void WorldRenderView::addLight(const Light& light)
-{
-	if (light.castShadow)
-		m_lights.insert(m_lights.begin(), light);
-	else
-		m_lights.push_back(light);
-}
-
-void WorldRenderView::resetLights()
-{
-	m_lights.resize(0);
-}
-
 	}
 }

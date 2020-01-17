@@ -28,7 +28,7 @@ bool AutoLodMesh::supportTechnique(float lodDistance, render::handle_t technique
 		return true;
 }
 
-void AutoLodMesh::render(
+void AutoLodMesh::build(
 	float lodDistance,
 	render::RenderContext* renderContext,
 	const world::IWorldRenderPass& worldRenderPass,
@@ -40,7 +40,7 @@ void AutoLodMesh::render(
 {
 	StaticMesh* staticMesh = getStaticMesh(lodDistance);
 	if (staticMesh)
-		staticMesh->render(
+		staticMesh->build(
 			renderContext,
 			worldRenderPass,
 			lastWorldTransform,

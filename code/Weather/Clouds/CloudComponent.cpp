@@ -313,19 +313,19 @@ void CloudComponent::update(const world::UpdateParams& update)
 	m_timeUntilUpdate -= update.deltaTime;
 }
 
-void CloudComponent::render(
+void CloudComponent::build(
 	render::RenderContext* renderContext,
-	world::WorldRenderView& worldRenderView,
+	const world::WorldRenderView& worldRenderView,
 	const world::IWorldRenderPass& worldRenderPass,
 	render::PrimitiveRenderer* primitiveRenderer
 )
 {
-	renderCluster(renderContext, worldRenderView, worldRenderPass, primitiveRenderer, m_cluster);
+	buildCluster(renderContext, worldRenderView, worldRenderPass, primitiveRenderer, m_cluster);
 }
 
-void CloudComponent::renderCluster(
+void CloudComponent::buildCluster(
 	render::RenderContext* renderContext,
-	world::WorldRenderView& worldRenderView,
+	const world::WorldRenderView& worldRenderView,
 	const world::IWorldRenderPass& worldRenderPass,
 	render::PrimitiveRenderer* primitiveRenderer,
 	const CloudParticleCluster& cluster

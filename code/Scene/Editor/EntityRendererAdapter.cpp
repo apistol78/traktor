@@ -21,9 +21,19 @@ const TypeInfoSet EntityRendererAdapter::getRenderableTypes() const
 	return m_entityRenderer->getRenderableTypes();
 }
 
-void EntityRendererAdapter::render(
+void EntityRendererAdapter::gather(
 	world::WorldContext& worldContext,
-	world::WorldRenderView& worldRenderView,
+	const world::WorldRenderView& worldRenderView,
+	const Object* renderable,
+	AlignedVector< world::Light >& outLights
+)
+{
+	m_entityRenderer->gather(worldContext, worldRenderView, renderable, outLights);
+}
+
+void EntityRendererAdapter::build(
+	world::WorldContext& worldContext,
+	const world::WorldRenderView& worldRenderView,
 	const world::IWorldRenderPass& worldRenderPass,
 	Object* renderable
 )
@@ -31,7 +41,7 @@ void EntityRendererAdapter::render(
 	EntityAdapter* entityAdapter = m_cache->begin(renderable);
 	if (!entityAdapter || m_filter(entityAdapter))
 	{
-		m_entityRenderer->render(
+		m_entityRenderer->build(
 			worldContext,
 			worldRenderView,
 			worldRenderPass,
@@ -43,7 +53,7 @@ void EntityRendererAdapter::render(
 
 void EntityRendererAdapter::flush(
 	world::WorldContext& worldContext,
-	world::WorldRenderView& worldRenderView,
+	const world::WorldRenderView& worldRenderView,
 	const world::IWorldRenderPass& worldRenderPass
 )
 {

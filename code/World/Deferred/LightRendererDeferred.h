@@ -43,8 +43,6 @@ class LightRendererDeferred : public Object
 	T_RTTI_CLASS;
 
 public:
-	LightRendererDeferred();
-
 	bool create(
 		resource::IResourceManager* resourceManager,
 		render::IRenderSystem* renderSystem

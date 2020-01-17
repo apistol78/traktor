@@ -184,7 +184,7 @@ Ref< BlendMesh::Instance > BlendMesh::createInstance() const
 	return instance;
 }
 
-void BlendMesh::render(
+void BlendMesh::build(
 	render::RenderContext* renderContext,
 	const world::IWorldRenderPass& worldRenderPass,
 	const Transform& lastWorldTransform,

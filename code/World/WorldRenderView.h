@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Core/Object.h"
-#include "Core/Containers/AlignedVector.h"
 #include "Core/Math/Frustum.h"
 #include "Core/Math/Matrix44.h"
 #include "Core/Math/Vector2.h"
@@ -51,10 +50,6 @@ public:
 
 	void setTimes(float time, float deltaTime, float interval);
 
-	void addLight(const Light& light);
-
-	void resetLights();
-
 	T_FORCE_INLINE int getIndex() const {
 		return m_index;
 	}
@@ -81,14 +76,6 @@ public:
 
 	T_FORCE_INLINE const Vector2& getViewSize() const {
 		return m_viewSize;
-	}
-
-	T_FORCE_INLINE const Light& getLight(int index) const {
-		return m_lights[index];
-	}
-
-	T_FORCE_INLINE int32_t getLightCount() const {
-		return int32_t(m_lights.size());
 	}
 
 	T_FORCE_INLINE float getTime() const {
@@ -119,7 +106,6 @@ private:
 	Matrix44 m_lastView;
 	Matrix44 m_view;
 	Vector2 m_viewSize;
-	AlignedVector< Light > m_lights;
 	float m_time;
 	float m_deltaTime;
 	float m_interval;

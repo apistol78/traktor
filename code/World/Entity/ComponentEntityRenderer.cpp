@@ -15,9 +15,18 @@ const TypeInfoSet ComponentEntityRenderer::getRenderableTypes() const
 	return makeTypeInfoSet< ComponentEntity >();
 }
 
-void ComponentEntityRenderer::render(
+void ComponentEntityRenderer::gather(
+	world::WorldContext& worldContext,
+	const world::WorldRenderView& worldRenderView,
+	const Object* renderable,
+	AlignedVector< world::Light >& outLights
+)
+{
+}
+
+void ComponentEntityRenderer::build(
 	WorldContext& worldContext,
-	WorldRenderView& worldRenderView,
+	const WorldRenderView& worldRenderView,
 	const IWorldRenderPass& worldRenderPass,
 	Object* renderable
 )
@@ -29,7 +38,7 @@ void ComponentEntityRenderer::render(
 
 void ComponentEntityRenderer::flush(
 	WorldContext& worldContext,
-	WorldRenderView& worldRenderView,
+	const WorldRenderView& worldRenderView,
 	const IWorldRenderPass& worldRenderPass
 )
 {

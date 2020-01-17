@@ -114,9 +114,9 @@ bool TerrainComponent::create(const TerrainComponentData& data)
 	return true;
 }
 
-void TerrainComponent::render(
+void TerrainComponent::build(
 	world::WorldContext& worldContext,
-	world::WorldRenderView& worldRenderView,
+	const world::WorldRenderView& worldRenderView,
 	const world::IWorldRenderPass& worldRenderPass,
 	float detailDistance,
 	uint32_t cacheSize
@@ -518,14 +518,14 @@ void TerrainComponent::render(
 #endif
 }
 
-void TerrainComponent::renderLayers(
+void TerrainComponent::buildLayers(
 	world::WorldContext& worldContext,
-	world::WorldRenderView& worldRenderView,
+	const world::WorldRenderView& worldRenderView,
 	const world::IWorldRenderPass& worldRenderPass
 )
 {
 	for (const auto layer : m_layers)
-		layer->render(
+		layer->build(
 			*this,
 			worldContext,
 			worldRenderView,

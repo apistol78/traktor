@@ -1,6 +1,8 @@
 #pragma once
 
 #include "Core/Object.h"
+#include "Core/Containers/AlignedVector.h"
+#include "World/WorldTypes.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -33,13 +35,28 @@ class T_DLLCLASS IEntityRenderer : public Object
 public:
 	virtual const TypeInfoSet getRenderableTypes() const = 0;
 
-	/*! Render pass.
+	/*! Gather pass. 
 	 *
-	 * Render instance into render context.
+	 * Called once per frame to gather active lights.
+	 *
+	 * Currently specialized in gathering lights but
+	 * might be refactored in the future to be able
+	 * to gather other data as well.
 	 */
-	virtual void render(
+	virtual void gather(
 		WorldContext& worldContext,
-		WorldRenderView& worldRenderView,
+		const WorldRenderView& worldRenderView,
+		const Object* renderable,
+		AlignedVector< Light >& outLights
+	) = 0;
+
+	/*! Build pass.
+	 *
+	 * Build entity render blocks into render context.
+	 */
+	virtual void build(
+		WorldContext& worldContext,
+		const WorldRenderView& worldRenderView,
 		const IWorldRenderPass& worldRenderPass,
 		Object* renderable
 	) = 0;
@@ -51,7 +68,7 @@ public:
 	 */
 	virtual void flush(
 		WorldContext& worldContext,
-		WorldRenderView& worldRenderView,
+		const WorldRenderView& worldRenderView,
 		const IWorldRenderPass& worldRenderPass
 	) = 0;
 

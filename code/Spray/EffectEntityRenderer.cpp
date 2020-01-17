@@ -32,9 +32,18 @@ const TypeInfoSet EffectEntityRenderer::getRenderableTypes() const
 	return makeTypeInfoSet< EffectComponent >();
 }
 
-void EffectEntityRenderer::render(
+void EffectEntityRenderer::gather(
 	world::WorldContext& worldContext,
-	world::WorldRenderView& worldRenderView,
+	const world::WorldRenderView& worldRenderView,
+	const Object* renderable,
+	AlignedVector< world::Light >& outLights
+)
+{
+}
+
+void EffectEntityRenderer::build(
+	world::WorldContext& worldContext,
+	const world::WorldRenderView& worldRenderView,
 	const world::IWorldRenderPass& worldRenderPass,
 	Object* renderable
 )
@@ -72,7 +81,7 @@ void EffectEntityRenderer::render(
 
 void EffectEntityRenderer::flush(
 	world::WorldContext& worldContext,
-	world::WorldRenderView& worldRenderView,
+	const world::WorldRenderView& worldRenderView,
 	const world::IWorldRenderPass& worldRenderPass
 )
 {

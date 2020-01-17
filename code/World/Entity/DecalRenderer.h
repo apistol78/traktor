@@ -39,16 +39,23 @@ public:
 
 	virtual const TypeInfoSet getRenderableTypes() const override final;
 
-	virtual void render(
+	virtual void gather(
 		WorldContext& worldContext,
-		WorldRenderView& worldRenderView,
+		const WorldRenderView& worldRenderView,
+		const Object* renderable,
+		AlignedVector< Light >& outLights
+	) override final;
+
+	virtual void build(
+		WorldContext& worldContext,
+		const WorldRenderView& worldRenderView,
 		const IWorldRenderPass& worldRenderPass,
 		Object* renderable
 	) override final;
 
 	virtual void flush(
 		WorldContext& worldContext,
-		WorldRenderView& worldRenderView,
+		const WorldRenderView& worldRenderView,
 		const IWorldRenderPass& worldRenderPass
 	) override final;
 
