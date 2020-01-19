@@ -110,6 +110,17 @@ handle_t getParameterHandle(const std::wstring& name)
 	return handle;
 }
 
+std::wstring getParameterName(handle_t handle)
+{
+	T_ANONYMOUS_VAR(Acquire< CriticalSection >)(m_handleLock);
+	for (auto m : m_handles)
+	{
+		if (m.second == handle)
+			return m.first;
+	}
+	return L"";
+}
+
 void getParameterHandles(SmallMap< std::wstring, handle_t >& outHandles)
 {
 	T_ANONYMOUS_VAR(Acquire< CriticalSection >)(m_handleLock);

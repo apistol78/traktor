@@ -1,3 +1,4 @@
+#include "Core/Log/Log.h"
 #include "Render/IRenderSystem.h"
 #include "Render/Context/RenderBlock.h"
 #include "Render/Context/RenderContext.h"
@@ -8,6 +9,20 @@ namespace traktor
 {
 	namespace render
 	{
+		namespace
+		{
+		
+void traverse(const AlignedVector< RenderPass >& passes, int32_t index)
+{
+	const auto& pass = passes[index];
+
+	for (const auto& input : pass.m_inputs)
+	{
+		
+	}
+}
+
+		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderGraph", RenderGraph, Object)
 
@@ -44,10 +59,11 @@ IRenderTargetSet* RenderGraph::getRenderTarget(handle_t targetId) const
 		return nullptr;
 }
 
-void RenderGraph::addPass(const RenderPass::fn_setup_t& setup, const RenderPass::fn_build_t& build)
+void RenderGraph::addPass(const wchar_t* const name, const RenderPass::fn_setup_t& setup, const RenderPass::fn_build_t& build)
 {
 	// Allocate pass from list.
 	auto& pass = m_passes.push_back();
+	pass.m_name = name;
 
 	// Setup pass using builder.
 	RenderPassBuilder builder(pass);
@@ -99,45 +115,65 @@ bool RenderGraph::validate()
 		}
 	}
 
-	// Collect all "root" passes, ie passes which doesn't require any inputs.
+	for (const auto& consumer : m_passes)
+	{
+		for (const auto& input : consumer.m_inputs)
+		{
+			for (auto& producer : m_passes)
+			{
+				if (producer.m_output.targetSetName == input.targetSetName)
+					producer.m_refs++;
+			}
+		}
+	}
+
+	// Collect all passes which write to framebuffer.
 	for (size_t i = 0; i < m_passes.size(); ++i)
 	{
 		const auto& pass = m_passes[i];
-		if (pass.m_inputs.empty())
-			m_order.push_back(i);
+		if (pass.m_output.targetSetName != 0)
+			continue;
+
+		m_order.push_back(i);
 	}
 
-	// Add passes which has all it's inputs already queued in order.
-	while (m_order.size() != m_passes.size())
+	int32_t from = 0;
+	for (;;)
 	{
-		bool found = false;
-		for (size_t i = 0; i < m_passes.size(); ++i)
+		int32_t to = (int32_t)m_order.size();
+	
+		for (int32_t i = from; i < to; ++i)
 		{
-			const auto& pass = m_passes[i];
-			if (pass.m_inputs.empty())
-				continue;
-
-			size_t satisfied = 0;
-			for (auto index : m_order)
+			const auto& pass = m_passes[m_order[i]];
+			for (const auto& input : pass.m_inputs)
 			{
-				for (uint32_t j =  0; j < pass.m_inputs.size(); ++j)
+				for (int32_t j = 0; j < m_passes.size(); ++j)
 				{
-					if (pass.m_inputs[j].targetSetName == m_passes[index].m_output.targetSetName)
-						satisfied |= 1 << j;
+					if (
+						m_passes[j].m_valid == false &&
+						m_passes[j].m_output.targetSetName == input.targetSetName
+					)
+					{
+						m_order.push_back(j);
+						m_passes[j].m_valid = true;
+						break;
+					}
 				}
 			}
-			if (satisfied == pass.m_inputs.size() - 1)
-			{
-				m_order.push_back(i);
-				found = true;
-			}
 		}
-		if (!found)
-		{
-			// Unable to satisfy atleast a single pass this iteration.
-			return false;
-		}
+
+		if (to == m_order.size())
+			break;
+
+		from = to;
 	}
+
+	std::reverse(m_order.begin(), m_order.end());
+
+	log::info << L"== Render passes ==" << Endl;
+	for (auto index : m_order)
+		log::info << index << L". " << m_passes[index].m_name << Endl;
+	log::info << L"===================" << Endl;
 
 	return true;
 }
@@ -146,13 +182,13 @@ bool RenderGraph::build(RenderContext* renderContext)
 {
 	T_ASSERT (m_width >= 0 && m_height >= 0);
 
-	auto tb = renderContext->alloc< TargetBeginRenderBlock >();
-	tb->renderTargetSet = nullptr;
-	tb->clear.mask = render::CfColor | render::CfDepth | render::CfStencil;
-	tb->clear.colors[0] = Color4f(46 / 255.0f, 56 / 255.0f, 92 / 255.0f, 1.0f);
-	tb->clear.depth = 1.0f;
-	tb->clear.stencil = 0;
-	renderContext->enqueue(tb);
+	//auto tb = renderContext->alloc< TargetBeginRenderBlock >();
+	//tb->renderTargetSet = nullptr;
+	//tb->clear.mask = render::CfColor | render::CfDepth | render::CfStencil;
+	//tb->clear.colors[0] = Color4f(46 / 255.0f, 56 / 255.0f, 92 / 255.0f, 1.0f);
+	//tb->clear.depth = 1.0f;
+	//tb->clear.stencil = 0;
+	//renderContext->enqueue(tb);
 
 	for (auto index : m_order)
 	{
@@ -161,7 +197,7 @@ bool RenderGraph::build(RenderContext* renderContext)
 		if (pass.m_output.targetSetName != 0)
 		{
 			auto it = m_targets.find(pass.m_output.targetSetName);
-			T_ASSERT(it != m_targets.end());
+			T_FATAL_ASSERT(it != m_targets.end());
 
 			auto tb = renderContext->alloc< TargetBeginRenderBlock >();
 
@@ -169,6 +205,7 @@ bool RenderGraph::build(RenderContext* renderContext)
 				tb->renderTargetSet = it->second.rts[1];
 			else
 				tb->renderTargetSet = it->second.rts[0];
+			T_FATAL_ASSERT(tb->renderTargetSet != nullptr);
 
 			tb->renderTargetIndex = pass.m_output.targetColorIndex;
 			tb->clear = pass.m_output.clear;
@@ -177,7 +214,7 @@ bool RenderGraph::build(RenderContext* renderContext)
 
 		if (pass.m_build)
 		{
-			RenderPassResources resources(this);
+			RenderPassResources resources(this, pass);
 			pass.m_build(resources, renderContext);
 		}
 
@@ -199,11 +236,14 @@ bool RenderGraph::build(RenderContext* renderContext)
 		}
 	}
 
-	auto te = renderContext->alloc< TargetEndRenderBlock >();
-	renderContext->enqueue(te);
+	//auto te = renderContext->alloc< TargetEndRenderBlock >();
+	//renderContext->enqueue(te);
 
-	auto p = renderContext->alloc< PresentRenderBlock >();
-	renderContext->enqueue(p);
+	//auto p = renderContext->alloc< PresentRenderBlock >();
+	//renderContext->enqueue(p);
+
+	m_order.resize(0);
+	m_passes.resize(0);
 
 	return true;
 }

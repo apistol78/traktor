@@ -88,7 +88,7 @@ public:
 	IRenderTargetSet* getRenderTarget(handle_t targetId) const;
 
 	/*! */
-	void addPass(const RenderPass::fn_setup_t& setup, const RenderPass::fn_build_t& build);
+	void addPass(const wchar_t* const name, const RenderPass::fn_setup_t& setup, const RenderPass::fn_build_t& build);
 
 	/*! */
 	bool validate();

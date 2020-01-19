@@ -1,5 +1,6 @@
 #include <numeric>
 #include "Core/Log/Log.h"
+#include "Core/Math/Const.h"
 #include "Core/Math/Vector2.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Render/IndexBuffer.h"

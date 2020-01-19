@@ -779,6 +779,16 @@ typedef uint32_t handle_t;
  */
 handle_t T_DLLCLASS getParameterHandle(const std::wstring& name);
 
+/*! Get name of handle.
+ *
+ * Useful for debugging purposes only,
+ * since resolving name from handle is very slow.
+ *
+ * \param handle Parameter handle.
+ * \return Parameter name.
+ */
+std::wstring T_DLLCLASS getParameterName(handle_t handle);
+
 /*! Get map of all currently used parameters.
  *
  * \param outHandles Map of all used parameters.
