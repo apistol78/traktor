@@ -22,6 +22,9 @@ void ComponentEntityRenderer::gather(
 	AlignedVector< world::Light >& outLights
 )
 {
+	const ComponentEntity* componentEntity = mandatory_non_null_type_cast< const ComponentEntity* >(renderable);
+	for (auto component : componentEntity->getComponents())
+		worldContext.gather(worldRenderView, component, outLights);
 }
 
 void ComponentEntityRenderer::build(

@@ -18,18 +18,20 @@ namespace traktor
 
 class IRenderTargetSet;
 class RenderGraph;
+class RenderPass;
 
 class T_DLLCLASS RenderPassResources : public Object
 {
     T_RTTI_CLASS;
 
 public:
-    explicit RenderPassResources(const RenderGraph* renderGraph);
+    explicit RenderPassResources(const RenderGraph* renderGraph, const RenderPass& pass);
 
 	IRenderTargetSet* getInput(handle_t targetId) const;
 
 private:
     const RenderGraph* m_renderGraph;
+    const RenderPass& m_pass;
 };
 
     }

@@ -31,13 +31,16 @@ class T_DLLCLASS RenderPass : public Object
 	T_RTTI_CLASS;
 
 public:
+	RenderPass();
+
 	typedef std::function< void(RenderPassBuilder&) > fn_setup_t;
 
 	typedef std::function< void(RenderPassResources&, RenderContext*) > fn_build_t;
 
 private:
-	friend class RenderPassBuilder;
 	friend class RenderGraph;
+	friend class RenderPassBuilder;
+	friend class RenderPassResources;
 
 	struct Input
 	{
@@ -65,9 +68,12 @@ private:
 		}
 	};
 
+	const wchar_t* m_name;
 	AlignedVector< Input > m_inputs;
 	Output m_output;
 	fn_build_t m_build;
+	
+	int32_t m_refs;
 };
 
 	}

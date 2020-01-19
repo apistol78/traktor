@@ -363,29 +363,33 @@ bool WorldRendererForward::create(
 	rtas.screenHeightDenom = 1;
 	m_renderGraph->addRenderTarget(s_handleAmbientOcclusion, rtscd, rtas);
 
-	// Cascading shadow map.
-	rtscd.count = 0;
-	rtscd.width = 1024;
-	rtscd.height = m_settings.shadowSettings[m_shadowsQuality].cascadingSlices * 1024;
-	rtscd.multiSample = 0;
-	rtscd.createDepthStencil = true;
-	rtscd.usingDepthStencilAsTexture = true;
-	rtscd.usingPrimaryDepthStencil = false;
-	rtscd.ignoreStencil = true;
-	rtscd.preferTiled = true;
-	m_renderGraph->addRenderTarget(s_handleShadowMapCascade, rtscd);
+	const bool shadowsEnable = (bool)(m_shadowsQuality != QuDisabled);
+	if (shadowsEnable)
+	{
+		// Cascading shadow map.
+		rtscd.count = 0;
+		rtscd.width = 1024;
+		rtscd.height = m_settings.shadowSettings[m_shadowsQuality].cascadingSlices * 1024;
+		rtscd.multiSample = 0;
+		rtscd.createDepthStencil = true;
+		rtscd.usingDepthStencilAsTexture = true;
+		rtscd.usingPrimaryDepthStencil = false;
+		rtscd.ignoreStencil = true;
+		rtscd.preferTiled = true;
+		m_renderGraph->addRenderTarget(s_handleShadowMapCascade, rtscd);
 
-	// Atlas shadow map.
-	rtscd.count = 0;
-	rtscd.width =
-	rtscd.height = 4096;
-	rtscd.multiSample = 0;
-	rtscd.createDepthStencil = true;
-	rtscd.usingDepthStencilAsTexture = true;
-	rtscd.usingPrimaryDepthStencil = false;
-	rtscd.ignoreStencil = true;
-	rtscd.preferTiled = true;
-	m_renderGraph->addRenderTarget(s_handleShadowMapAtlas, rtscd);
+		// Atlas shadow map.
+		rtscd.count = 0;
+		rtscd.width =
+		rtscd.height = 4096;
+		rtscd.multiSample = 0;
+		rtscd.createDepthStencil = true;
+		rtscd.usingDepthStencilAsTexture = true;
+		rtscd.usingPrimaryDepthStencil = false;
+		rtscd.ignoreStencil = true;
+		rtscd.preferTiled = true;
+		m_renderGraph->addRenderTarget(s_handleShadowMapAtlas, rtscd);
+	}
 
 	// Visual
 	rtscd.count = 1;
@@ -531,6 +535,7 @@ void WorldRendererForward::getDebugTargets(std::vector< render::DebugTarget >& o
 void WorldRendererForward::buildGBuffer(const WorldRenderView& worldRenderView)
 {
 	m_renderGraph->addPass(
+		L"GBuffer",
 		[&](render::RenderPassBuilder& builder)
 		{
 			const float clearZ = m_settings.viewFarZ;
@@ -578,19 +583,22 @@ void WorldRendererForward::buildGBuffer(const WorldRenderView& worldRenderView)
 void WorldRendererForward::buildAmbientOcclusion(const WorldRenderView& worldRenderView)
 {
 	m_renderGraph->addPass(
+		L"Ambient occlusion",
 		[&](render::RenderPassBuilder& builder)
 		{
-			builder.addInput(s_handleGBuffer, 0);
-			builder.addInput(s_handleGBuffer, 1);
-			builder.setOutput(s_handleAmbientOcclusion);
+			if (m_ambientOcclusion != nullptr)
+				builder.addInput(s_handleGBuffer);
+
+			render::Clear clear;
+			clear.mask = render::CfColor;
+			clear.colors[0] = Color4f(1.0f, 1.0f, 1.0f, 1.0f);
+
+			builder.setOutput(s_handleAmbientOcclusion, clear);
 		},
 		[=](render::RenderPassResources& resources, render::RenderContext* renderContext)
 		{
-			WorldContext wc(
-				m_entityRenderers,
-				renderContext,
-				m_rootEntity
-			);
+			if (m_ambientOcclusion == nullptr)
+				return;
 
 			auto gbufferTargetSet = m_renderGraph->getRenderTarget(s_handleGBuffer);
 
@@ -601,7 +609,7 @@ void WorldRendererForward::buildAmbientOcclusion(const WorldRenderView& worldRen
 			params.deltaTime = 0.0f;
 
 			m_ambientOcclusion->build(
-				wc.getRenderContext(),
+				renderContext,
 				nullptr,	// color
 				gbufferTargetSet->getColorTexture(0),	// depth
 				gbufferTargetSet->getColorTexture(1),	// normal
@@ -676,6 +684,7 @@ void WorldRendererForward::buildLights(const WorldRenderView& worldRenderView, i
 	if (lightCascadeIndex >= 0)
 	{
 		m_renderGraph->addPass(
+			L"Shadow cascade",
 			[&](render::RenderPassBuilder& builder)
 			{
 				render::Clear clear;
@@ -795,6 +804,7 @@ void WorldRendererForward::buildLights(const WorldRenderView& worldRenderView, i
 		for (int32_t lightAtlasIndex : lightAtlasIndices)
 		{
 			m_renderGraph->addPass(
+				L"Shadow atlas",
 				[&](render::RenderPassBuilder& builder)
 				{
 					render::Clear clear;
@@ -912,15 +922,21 @@ void WorldRendererForward::buildLights(const WorldRenderView& worldRenderView, i
 
 void WorldRendererForward::buildVisual(const WorldRenderView& worldRenderView, int32_t frame)
 {
+	const bool shadowsEnable = (bool)(m_shadowsQuality != QuDisabled);
 	int32_t lightCount = (int32_t)m_lights.size();
 
 	m_renderGraph->addPass(
+		L"Visual",
 		[&](render::RenderPassBuilder& builder)
 		{
 			builder.addInput(s_handleGBuffer);
 			builder.addInput(s_handleAmbientOcclusion);
-			builder.addInput(s_handleShadowMapCascade);
-			builder.addInput(s_handleShadowMapAtlas);
+
+			if (shadowsEnable)
+			{
+				builder.addInput(s_handleShadowMapCascade);
+				builder.addInput(s_handleShadowMapAtlas);
+			}
 
 			render::Clear clear;
 			clear.mask = render::CfColor | render::CfDepth;
@@ -1001,6 +1017,7 @@ void WorldRendererForward::buildProcess(const WorldRenderView& worldRenderView)
 
 		bool haveNext = bool((i + 1) < processes.size());
 		m_renderGraph->addPass(
+			L"Process",
 			[&](render::RenderPassBuilder& builder)
 			{
 				if (haveNext)
