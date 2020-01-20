@@ -23,11 +23,11 @@ class T_DLLCLASS RenderPassBuilder : public Object
 public:
     explicit RenderPassBuilder(RenderPass& renderPass);
 
-	void addInput(handle_t targetSetName, int32_t targetColorIndex = -1);
+	void addInput(handle_t name, int32_t colorIndex = -1);
 
-	void setOutput(handle_t targetSetName);
+	void setOutput(handle_t name);
 
-	void setOutput(handle_t targetSetName, const Clear& clear);
+	void setOutput(handle_t name, const Clear& clear);
 
 private:
     RenderPass& m_renderPass;

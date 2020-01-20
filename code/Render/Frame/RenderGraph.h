@@ -112,6 +112,8 @@ private:
 
 	int32_t m_width;
 	int32_t m_height;
+
+	void traverse(int32_t index, const std::function< void(int32_t) >& fn) const;
 };
 
 	}

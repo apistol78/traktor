@@ -44,25 +44,25 @@ private:
 
 	struct Input
 	{
-		handle_t targetSetName;
-		int32_t targetColorIndex;
+		handle_t name;		//!< Resource name.
+		int32_t colorIndex;	//!< Index of target's color attachment.
 
 		Input()
-		:	targetSetName(0)
-		,	targetColorIndex(-1)
+		:	name(0)
+		,	colorIndex(0)
 		{
 		}
 	};
 
 	struct Output
 	{
-		handle_t targetSetName;
-		int32_t targetColorIndex;
-		Clear clear;
+		handle_t name;		//!< Resource name.
+		int32_t colorIndex;	//!< Index of target's color attachment, -1 means all attachments.
+		Clear clear;		//!< Target clear value and mask.
 
 		Output()
-		:	targetSetName(0)
-		,	targetColorIndex(-1)
+		:	name(0)
+		,	colorIndex(-1)
 		{
 			clear.mask = 0;
 		}
