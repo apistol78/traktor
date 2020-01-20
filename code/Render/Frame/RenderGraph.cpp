@@ -9,20 +9,6 @@ namespace traktor
 {
 	namespace render
 	{
-		namespace
-		{
-		
-void traverse(const AlignedVector< RenderPass >& passes, int32_t index)
-{
-	const auto& pass = passes[index];
-
-	for (const auto& input : pass.m_inputs)
-	{
-		
-	}
-}
-
-		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderGraph", RenderGraph, Object)
 
@@ -75,6 +61,7 @@ void RenderGraph::addPass(const wchar_t* const name, const RenderPass::fn_setup_
 
 bool RenderGraph::validate()
 {
+	// Create targets.
 	for (auto& tm : m_targets)
 	{
 		if (tm.second.rts[0])
@@ -100,10 +87,10 @@ bool RenderGraph::validate()
 		bool cyclic = false;
 		for (const auto& pass : m_passes)
 		{
-			if (pass.m_output.targetSetName != tm.first)
+			if (pass.m_output.name != tm.first)
 				continue;
 			auto it = std::find_if(pass.m_inputs.begin(), pass.m_inputs.end(), [&](const RenderPass::Input& input) {
-				return input.targetSetName == tm.first;
+				return input.name == tm.first;
 			});
 			cyclic |= (bool)(it != pass.m_inputs.end());
 		}
@@ -115,65 +102,28 @@ bool RenderGraph::validate()
 		}
 	}
 
-	for (const auto& consumer : m_passes)
-	{
-		for (const auto& input : consumer.m_inputs)
-		{
-			for (auto& producer : m_passes)
-			{
-				if (producer.m_output.targetSetName == input.targetSetName)
-					producer.m_refs++;
-			}
-		}
-	}
-
 	// Collect all passes which write to framebuffer.
 	for (size_t i = 0; i < m_passes.size(); ++i)
 	{
-		const auto& pass = m_passes[i];
-		if (pass.m_output.targetSetName != 0)
-			continue;
-
-		m_order.push_back(i);
+		if (m_passes[i].m_output.name == 0)
+			m_order.push_back(i);
 	}
 
-	int32_t from = 0;
-	for (;;)
+	// Append passes depth-first.
+	int32_t to = (int32_t)m_order.size();
+	for (int32_t i = 0; i < to; ++i)
 	{
-		int32_t to = (int32_t)m_order.size();
-	
-		for (int32_t i = from; i < to; ++i)
-		{
-			const auto& pass = m_passes[m_order[i]];
-			for (const auto& input : pass.m_inputs)
-			{
-				for (int32_t j = 0; j < m_passes.size(); ++j)
-				{
-					if (
-						m_passes[j].m_valid == false &&
-						m_passes[j].m_output.targetSetName == input.targetSetName
-					)
-					{
-						m_order.push_back(j);
-						m_passes[j].m_valid = true;
-						break;
-					}
-				}
-			}
-		}
-
-		if (to == m_order.size())
-			break;
-
-		from = to;
+		traverse(i, [&](int32_t index) {
+			m_order.push_back(index);
+		});
 	}
 
-	std::reverse(m_order.begin(), m_order.end());
-
+#if defined(_DEBUG)
 	log::info << L"== Render passes ==" << Endl;
 	for (auto index : m_order)
 		log::info << index << L". " << m_passes[index].m_name << Endl;
 	log::info << L"===================" << Endl;
+#endif
 
 	return true;
 }
@@ -194,9 +144,9 @@ bool RenderGraph::build(RenderContext* renderContext)
 	{
 		const auto& pass = m_passes[index];
 
-		if (pass.m_output.targetSetName != 0)
+		if (pass.m_output.name != 0)
 		{
-			auto it = m_targets.find(pass.m_output.targetSetName);
+			auto it = m_targets.find(pass.m_output.name);
 			T_FATAL_ASSERT(it != m_targets.end());
 
 			auto tb = renderContext->alloc< TargetBeginRenderBlock >();
@@ -207,7 +157,7 @@ bool RenderGraph::build(RenderContext* renderContext)
 				tb->renderTargetSet = it->second.rts[0];
 			T_FATAL_ASSERT(tb->renderTargetSet != nullptr);
 
-			tb->renderTargetIndex = pass.m_output.targetColorIndex;
+			tb->renderTargetIndex = pass.m_output.colorIndex;
 			tb->clear = pass.m_output.clear;
 			renderContext->enqueue(tb);			
 		}
@@ -218,9 +168,9 @@ bool RenderGraph::build(RenderContext* renderContext)
 			pass.m_build(resources, renderContext);
 		}
 
-		if (pass.m_output.targetSetName != 0)
+		if (pass.m_output.name != 0)
 		{
-			auto it = m_targets.find(pass.m_output.targetSetName);
+			auto it = m_targets.find(pass.m_output.name);
 			T_ASSERT(it != m_targets.end());
 
 			auto te = renderContext->alloc< TargetEndRenderBlock >();
@@ -246,6 +196,21 @@ bool RenderGraph::build(RenderContext* renderContext)
 	m_passes.resize(0);
 
 	return true;
+}
+		
+void RenderGraph::traverse(int32_t index, const std::function< void(int32_t) >& fn) const
+{
+	for (const auto& input : m_passes[index].m_inputs)
+	{
+		for (int32_t i = 0; i < m_passes.size(); ++i)
+		{
+			if (i == index)
+				continue;
+			if (m_passes[i].m_output.name == input.name)
+				traverse(i, fn);
+		}
+	}
+	fn(index);
 }
 
 	}

@@ -13,26 +13,26 @@ RenderPassBuilder::RenderPassBuilder(RenderPass& renderPass)
 {
 }
 
-void RenderPassBuilder::addInput(handle_t targetSetName, int32_t targetColorIndex)
+void RenderPassBuilder::addInput(handle_t name, int32_t colorIndex)
 {
 	auto& input = m_renderPass.m_inputs.push_back();
-	input.targetSetName = targetSetName;
-	input.targetColorIndex = targetColorIndex;
+	input.name = name;
+	input.colorIndex = colorIndex;
 }
 
-void RenderPassBuilder::setOutput(handle_t targetSetName)
+void RenderPassBuilder::setOutput(handle_t name)
 {
 	auto& output = m_renderPass.m_output;
-	output.targetSetName = targetSetName;
-	output.targetColorIndex = -1;
+	output.name = name;
+	output.colorIndex = -1;
 	output.clear.mask = 0;
 }
 
-void RenderPassBuilder::setOutput(handle_t targetSetName, const Clear& clear)
+void RenderPassBuilder::setOutput(handle_t name, const Clear& clear)
 {
 	auto& output = m_renderPass.m_output;
-	output.targetSetName = targetSetName;
-	output.targetColorIndex = -1;
+	output.name = name;
+	output.colorIndex = -1;
 	output.clear = clear;
 }
 
