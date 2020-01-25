@@ -1,3 +1,4 @@
+#include "Core/Containers/SmallSet.h"
 #include "Core/Log/Log.h"
 #include "Render/IRenderSystem.h"
 #include "Render/Context/RenderBlock.h"
@@ -40,7 +41,7 @@ IRenderTargetSet* RenderGraph::getRenderTarget(handle_t targetId) const
 {
 	auto it = m_targets.find(targetId);
 	if (it != m_targets.end())
-		return it->second.rts[0];
+		return it->second.rts;
 	else
 		return nullptr;
 }
@@ -64,7 +65,7 @@ bool RenderGraph::validate()
 	// Create targets.
 	for (auto& tm : m_targets)
 	{
-		if (tm.second.rts[0])
+		if (tm.second.rts)
 			continue;
 
 		RenderTargetSetCreateDesc rtscd = tm.second.rtscd;
@@ -80,43 +81,23 @@ bool RenderGraph::validate()
 		if (rtas.maxHeight > 0)
 			rtscd.height = min< int32_t >(rtscd.height, rtas.maxHeight);
 
-		tm.second.rts[0] = m_renderSystem->createRenderTargetSet(rtscd, T_FILE_LINE_W);
-		if (!tm.second.rts[0])
+		tm.second.rts = m_renderSystem->createRenderTargetSet(rtscd, T_FILE_LINE_W);
+		if (!tm.second.rts)
 			return false;
-
-		bool cyclic = false;
-		for (const auto& pass : m_passes)
-		{
-			if (pass.m_output.name != tm.first)
-				continue;
-			auto it = std::find_if(pass.m_inputs.begin(), pass.m_inputs.end(), [&](const RenderPass::Input& input) {
-				return input.name == tm.first;
-			});
-			cyclic |= (bool)(it != pass.m_inputs.end());
-		}
-		if (cyclic)
-		{
-			tm.second.rts[1] = m_renderSystem->createRenderTargetSet(rtscd, T_FILE_LINE_W);
-			if (!tm.second.rts[1])
-				return false;
-		}
-	}
-
-	// Collect all passes which write to framebuffer.
-	for (size_t i = 0; i < m_passes.size(); ++i)
-	{
-		if (m_passes[i].m_output.name == 0)
-			m_order.push_back(i);
 	}
 
 	// Append passes depth-first.
-	int32_t to = (int32_t)m_order.size();
-	for (int32_t i = 0; i < to; ++i)
+	SmallSet< uint32_t > order;
+	for (size_t i = 0; i < m_passes.size(); ++i)
 	{
-		traverse(i, [&](int32_t index) {
-			m_order.push_back(index);
-		});
+		if (m_passes[i].m_output.name == 0)
+		{
+			traverse(i, [&](int32_t index) {
+				order.insert(index);
+			});
+		}
 	}
+	m_order = AlignedVector< uint32_t >(order.begin(), order.end());
 
 #if defined(_DEBUG)
 	log::info << L"== Render passes ==" << Endl;
@@ -150,13 +131,7 @@ bool RenderGraph::build(RenderContext* renderContext)
 			T_FATAL_ASSERT(it != m_targets.end());
 
 			auto tb = renderContext->alloc< TargetBeginRenderBlock >();
-
-			if (it->second.rts[1])
-				tb->renderTargetSet = it->second.rts[1];
-			else
-				tb->renderTargetSet = it->second.rts[0];
-			T_FATAL_ASSERT(tb->renderTargetSet != nullptr);
-
+			tb->renderTargetSet = it->second.rts;
 			tb->renderTargetIndex = pass.m_output.colorIndex;
 			tb->clear = pass.m_output.clear;
 			renderContext->enqueue(tb);			
@@ -170,19 +145,8 @@ bool RenderGraph::build(RenderContext* renderContext)
 
 		if (pass.m_output.name != 0)
 		{
-			auto it = m_targets.find(pass.m_output.name);
-			T_ASSERT(it != m_targets.end());
-
 			auto te = renderContext->alloc< TargetEndRenderBlock >();
 			renderContext->enqueue(te);
-
-			if (it->second.rts[0] && it->second.rts[1])
-			{
-				std::swap(
-					it->second.rts[0],
-					it->second.rts[1]
-				);
-			}
 		}
 	}
 

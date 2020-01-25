@@ -31,6 +31,8 @@ class StructBuffer;
 class GroupEntity;
 class WorldEntityRenderers;
 
+struct LightShaderData;
+
 /*! World renderer implementation.
  * \ingroup World
  *
@@ -81,21 +83,6 @@ private:
 		Ref< render::StructBuffer > lightSBuffer;
 	};
 
-#pragma pack(1)
-	struct LightShaderData
-	{
-		float typeRangeRadius[4];
-		float position[4];
-		float direction[4];
-		float color[4];
-		float viewToLight0[4];
-		float viewToLight1[4];
-		float viewToLight2[4];
-		float viewToLight3[4];
-		float atlasTransform[4];
-	};
-#pragma pack()
-
 	WorldRenderSettings m_settings;
 	Quality m_toneMapQuality;
 	Quality m_shadowsQuality;
@@ -115,8 +102,6 @@ private:
 	AlignedVector< Frame > m_frames;
 	AlignedVector< Light > m_lights;
 
-	LightShaderData* m_lightShaderData;
-
 	float m_slicePositions[MaxSliceCount + 1];
 	uint32_t m_count;
 
@@ -124,7 +109,7 @@ private:
 
 	void buildAmbientOcclusion(const WorldRenderView& worldRenderView);
 
-	void buildLights(const WorldRenderView& worldRenderView, int32_t frame);
+	void buildLights(const WorldRenderView& worldRenderView, int32_t frame, LightShaderData* lightShaderData);
 
 	void buildVisual(const WorldRenderView& worldRenderView, int32_t frame);
 

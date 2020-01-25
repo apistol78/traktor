@@ -24,6 +24,7 @@ class ImageProcess;
 class IRenderTargetSet;
 class ISimpleTexture;
 class RenderContext;
+class RenderGraph;
 class StructBuffer;
 
 	}
@@ -36,6 +37,9 @@ class IrradianceGrid;
 class IShadowProjection;
 class LightRendererDeferred;
 class WorldEntityRenderers;
+
+struct LightShaderData;
+struct TileShaderData;
 
 /*! World renderer, using deferred rendering method.
  * \ingroup World
@@ -92,18 +96,18 @@ private:
 	Quality m_ambientOcclusionQuality;
 	Quality m_antiAliasQuality;
 
-	Ref< IShadowProjection > m_shadowProjection;
+	Ref< render::RenderGraph > m_renderGraph;
 
-	Ref< render::IRenderTargetSet > m_visualTargetSet;
-	Ref< render::IRenderTargetSet > m_intermediateTargetSet;
-	Ref< render::IRenderTargetSet > m_gbufferTargetSet;
-	Ref< render::IRenderTargetSet > m_ambientOcclusionTargetSet;
-	Ref< render::IRenderTargetSet > m_velocityTargetSet;
-	Ref< render::IRenderTargetSet > m_colorTargetSet;
-	Ref< render::IRenderTargetSet > m_reflectionsTargetSet;		//!< Reflections target.
-	Ref< render::IRenderTargetSet > m_shadowCascadeTargetSet;	//!< Shadow map for directional lights.
-	Ref< render::IRenderTargetSet > m_shadowMaskTargetSet;		//!< Screen space projected shadow mask, directional lights.
-	Ref< render::IRenderTargetSet > m_shadowAtlasTargetSet;		//!< Shadow map atlas for spot and point lights.
+	//Ref< render::IRenderTargetSet > m_visualTargetSet;
+	//Ref< render::IRenderTargetSet > m_intermediateTargetSet;
+	//Ref< render::IRenderTargetSet > m_gbufferTargetSet;
+	//Ref< render::IRenderTargetSet > m_ambientOcclusionTargetSet;
+	//Ref< render::IRenderTargetSet > m_velocityTargetSet;
+	//Ref< render::IRenderTargetSet > m_colorTargetSet;
+	//Ref< render::IRenderTargetSet > m_reflectionsTargetSet;		//!< Reflections target.
+	//Ref< render::IRenderTargetSet > m_shadowCascadeTargetSet;	//!< Shadow map for directional lights.
+	//Ref< render::IRenderTargetSet > m_shadowMaskTargetSet;		//!< Screen space projected shadow mask, directional lights.
+	//Ref< render::IRenderTargetSet > m_shadowAtlasTargetSet;		//!< Shadow map atlas for spot and point lights.
 
 	Ref< render::ImageProcess > m_colorTargetCopy;
 	Ref< render::ImageProcess > m_ambientOcclusion;
@@ -128,21 +132,21 @@ private:
 	Vector4 m_fogDistanceAndDensity;
 	Vector4 m_fogColor;
 
-	void buildGBuffer(const WorldRenderView& worldRenderView, int32_t frame);
+	void buildGBuffer(const WorldRenderView& worldRenderView);
 
-	void buildVelocity(const WorldRenderView& worldRenderView, int32_t frame);
+	void buildVelocity(const WorldRenderView& worldRenderView);
 
-	void buildAmbientOcclusion(const WorldRenderView& worldRenderView, int32_t frame);
+	void buildAmbientOcclusion(const WorldRenderView& worldRenderView);
 
-	void buildLights(const WorldRenderView& worldRenderView, int32_t frame);
+	void buildLights(const WorldRenderView& worldRenderView, int32_t frame, LightShaderData* lightShaderData, TileShaderData* tileShaderData);
 
-	void buildReflections(const WorldRenderView& worldRenderView, int32_t frame);
+	void buildReflections(const WorldRenderView& worldRenderView);
 
 	void buildVisual(const WorldRenderView& worldRenderView, int32_t frame);
 
-	void buildCopyFrame(const WorldRenderView& worldRenderView, int32_t frame);
+	void buildCopyFrame(const WorldRenderView& worldRenderView);
 
-	void buildEndFrame(const WorldRenderView& worldRenderView, int32_t frame);
+	void buildEndFrame(const WorldRenderView& worldRenderView);
 };
 
 	}

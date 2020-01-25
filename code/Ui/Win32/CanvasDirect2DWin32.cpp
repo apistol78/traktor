@@ -319,8 +319,16 @@ Size CanvasDirect2DWin32::getExtent(Window& hWnd, const std::wstring& text) cons
 
 void CanvasDirect2DWin32::getAscentAndDescent(int32_t& outAscent, int32_t& outDescent) const
 {
-	outAscent = m_dwTextFormat->GetFontSize() * m_fontMetrics.ascent / m_fontMetrics.designUnitsPerEm;
-	outDescent = m_dwTextFormat->GetFontSize() * m_fontMetrics.descent / m_fontMetrics.designUnitsPerEm;
+	if (m_dwTextFormat)
+	{
+		outAscent = m_dwTextFormat->GetFontSize() * m_fontMetrics.ascent / m_fontMetrics.designUnitsPerEm;
+		outDescent = m_dwTextFormat->GetFontSize() * m_fontMetrics.descent / m_fontMetrics.designUnitsPerEm;
+	}
+	else
+	{
+		outAscent =
+		outDescent = 0;
+	}
 }
 
 int32_t CanvasDirect2DWin32::getAdvance(wchar_t ch, wchar_t next) const
