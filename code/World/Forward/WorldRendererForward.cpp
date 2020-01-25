@@ -55,7 +55,15 @@ const render::Handle s_handleGBuffer(L"GBuffer");
 const render::Handle s_handleAmbientOcclusion(L"AmbientOcclusion");
 const render::Handle s_handleShadowMapCascade(L"ShadowMapCascade");
 const render::Handle s_handleShadowMapAtlas(L"ShadowMapAtlas");
-const render::Handle s_handleVisual(L"Visual");
+const render::Handle s_handleVisual[] =
+{
+	render::Handle(L"Visual1"),
+	render::Handle(L"Visual2"),
+	render::Handle(L"Visual3"),
+	render::Handle(L"Visual4"),
+	render::Handle(L"Visual5"),
+	render::Handle(L"Visual6")
+};
 
 resource::Id< render::ImageProcessData > getAmbientOcclusionId(Quality quality)
 {
@@ -106,6 +114,21 @@ resource::Id< render::ImageProcessData > getToneMapId(WorldRenderSettings::Expos
 }
 
 		}
+		
+#pragma pack(1)
+struct LightShaderData
+{
+	float typeRangeRadius[4];
+	float position[4];
+	float direction[4];
+	float color[4];
+	float viewToLight0[4];
+	float viewToLight1[4];
+	float viewToLight2[4];
+	float viewToLight3[4];
+	float atlasTransform[4];
+};
+#pragma pack()
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.WorldRendererForward", 0, WorldRendererForward, IWorldRenderer)
 
@@ -146,7 +169,7 @@ bool WorldRendererForward::create(
 		if (ambientOcclusionId)
 		{
 			if (!resourceManager->bind(ambientOcclusionId, ambientOcclusion))
-				log::warning << L"Unable to create ambient occlusion process; AO disabled" << Endl;
+				log::warning << L"Unable to create ambient occlusion process; AO disabled." << Endl;
 		}
 
 		if (ambientOcclusion)
@@ -162,7 +185,7 @@ bool WorldRendererForward::create(
 				desc.allTargetsPersistent
 			))
 			{
-				log::warning << L"Unable to create ambient occlusion process; AO disabled" << Endl;
+				log::warning << L"Unable to create ambient occlusion process; AO disabled." << Endl;
 				m_ambientOcclusion = nullptr;
 			}
 		}
@@ -176,7 +199,7 @@ bool WorldRendererForward::create(
 		if (antiAliasId != c_antiAliasNone)
 		{
 			if (!resourceManager->bind(antiAliasId, antiAlias))
-				log::warning << L"Unable to create antialias process; AA disabled" << Endl;
+				log::warning << L"Unable to create antialias process; AA disabled." << Endl;
 		}
 
 		if (antiAlias)
@@ -192,7 +215,7 @@ bool WorldRendererForward::create(
 				desc.allTargetsPersistent
 			))
 			{
-				log::warning << L"Unable to create antialias process; AA disabled" << Endl;
+				log::warning << L"Unable to create antialias process; AA disabled." << Endl;
 				m_antiAlias = nullptr;
 			}
 		}
@@ -205,7 +228,7 @@ bool WorldRendererForward::create(
 		{
 			resource::Proxy< render::ImageProcessData > imageProcess;
 			if (!resourceManager->bind(imageProcessSettings, imageProcess))
-				log::warning << L"Unable to create visual post processing image filter; post processing disabled" << Endl;
+				log::warning << L"Unable to create visual post processing image filter; post processing disabled." << Endl;
 
 			if (imageProcess)
 			{
@@ -220,7 +243,7 @@ bool WorldRendererForward::create(
 					desc.allTargetsPersistent
 				))
 				{
-					log::warning << L"Unable to create visual post processing; post processing disabled" << Endl;
+					log::warning << L"Unable to create visual post processing; post processing disabled." << Endl;
 					m_visualImageProcess = nullptr;
 				}
 			}
@@ -228,11 +251,14 @@ bool WorldRendererForward::create(
 	}
 
 	// Create gamma correction processing.
-	if (m_settings.linearLighting)
+	if (
+		m_settings.linearLighting &&
+		std::abs(desc.gamma - 1.0f) > FUZZY_EPSILON
+	)
 	{
 		resource::Proxy< render::ImageProcessData > gammaCorrection;
 		if (!resourceManager->bind(c_gammaCorrection, gammaCorrection))
-			log::warning << L"Unable to create gamma correction process; gamma correction disabled" << Endl;
+			log::warning << L"Unable to create gamma correction process; gamma correction disabled." << Endl;
 
 		if (gammaCorrection)
 		{
@@ -252,7 +278,7 @@ bool WorldRendererForward::create(
 			}
 			else
 			{
-				log::warning << L"Unable to create gamma correction process; gamma correction disabled" << Endl;
+				log::warning << L"Unable to create gamma correction process; gamma correction disabled." << Endl;
 				m_gammaCorrectionImageProcess = nullptr;
 			}
 		}
@@ -401,7 +427,8 @@ bool WorldRendererForward::create(
 	rtscd.targets[0].format = render::TfR11G11B10F;
 	rtas.screenWidthDenom = 1;
 	rtas.screenHeightDenom = 1;
-	m_renderGraph->addRenderTarget(s_handleVisual, rtscd, rtas);
+	for (int32_t i = 0; i < sizeof_array(s_handleVisual); ++i)
+		m_renderGraph->addRenderTarget(s_handleVisual[i], rtscd, rtas);
 
 	// Allocate render contexts.
 	for (auto& frame : m_frames)
@@ -453,8 +480,8 @@ void WorldRendererForward::build(const WorldRenderView& worldRenderView, int32_t
 
 	// Lock light sbuffer; \tbd data is currently written both when setting
 	// up render passes and when executing passes.
-	m_lightShaderData = (LightShaderData*)m_frames[frame].lightSBuffer->lock();
-	T_FATAL_ASSERT(m_lightShaderData != nullptr);
+	LightShaderData* lightShaderData = (LightShaderData*)m_frames[frame].lightSBuffer->lock();
+	T_FATAL_ASSERT(lightShaderData != nullptr);
 
 	// \tbd Flush all entity renderers first, only used by probes atm and need to render to targets.
 	// Until we have RenderGraph properly implemented we need to make sure
@@ -465,7 +492,7 @@ void WorldRendererForward::build(const WorldRenderView& worldRenderView, int32_t
 	// Add each pass to render graph.
 	buildGBuffer(worldRenderView);
 	buildAmbientOcclusion(worldRenderView);
-	buildLights(worldRenderView, frame);
+	buildLights(worldRenderView, frame, lightShaderData);
 	buildVisual(worldRenderView, frame);
 	buildProcess(worldRenderView);
 
@@ -557,10 +584,10 @@ void WorldRendererForward::buildGBuffer(const WorldRenderView& worldRenderView)
 			);
 
 			auto sharedParams = wc.getRenderContext()->alloc< render::ProgramParameters >();
-			sharedParams->beginParameters(wc.getRenderContext());
+			sharedParams->beginParameters(renderContext);
 			sharedParams->setFloatParameter(s_handleTime, worldRenderView.getTime());
 			sharedParams->setMatrixParameter(s_handleProjection, worldRenderView.getProjection());
-			sharedParams->endParameters(wc.getRenderContext());
+			sharedParams->endParameters(renderContext);
 
 			WorldRenderPassForward pass(
 				s_techniqueForwardGBufferWrite,
@@ -572,10 +599,10 @@ void WorldRendererForward::buildGBuffer(const WorldRenderView& worldRenderView)
 				nullptr
 			);
 
-			T_ASSERT(!wc.getRenderContext()->havePendingDraws());
+			T_ASSERT(!renderContext->havePendingDraws());
 			wc.build(worldRenderView, pass, m_rootEntity);
 			wc.flush(worldRenderView, pass);
-			wc.getRenderContext()->merge(render::RpAll);		
+			renderContext->merge(render::RpAll);		
 		}
 	);
 }
@@ -621,7 +648,7 @@ void WorldRendererForward::buildAmbientOcclusion(const WorldRenderView& worldRen
 	);
 }
 
-void WorldRendererForward::buildLights(const WorldRenderView& worldRenderView, int32_t frame)
+void WorldRendererForward::buildLights(const WorldRenderView& worldRenderView, int32_t frame, LightShaderData* lightShaderData)
 {
 	const UniformShadowProjection shadowProjection(1024);
 	const auto shadowSettings = m_settings.shadowSettings[m_shadowsQuality];
@@ -662,7 +689,7 @@ void WorldRendererForward::buildLights(const WorldRenderView& worldRenderView, i
 	for (int32_t i = 0; i < (int32_t)m_lights.size(); ++i)
 	{
 		const auto& light = m_lights[i];
-		auto* lsd = &m_lightShaderData[i];
+		auto* lsd = &lightShaderData[i];
 
 		lsd->typeRangeRadius[0] = (float)light.type;
 		lsd->typeRangeRadius[1] = light.range;
@@ -701,7 +728,7 @@ void WorldRendererForward::buildLights(const WorldRenderView& worldRenderView, i
 				);
 
 				const auto& light = m_lights[lightCascadeIndex];
-				auto* lsd = &m_lightShaderData[lightCascadeIndex];
+				auto* lsd = &lightShaderData[lightCascadeIndex];
 
 				for (int32_t slice = 0; slice < shadowSettings.cascadingSlices; ++slice)
 				{
@@ -821,7 +848,7 @@ void WorldRendererForward::buildLights(const WorldRenderView& worldRenderView, i
 					);
 
 					const auto& light = m_lights[lightAtlasIndex];
-					auto* lsd = &m_lightShaderData[lightAtlasIndex];
+					auto* lsd = &lightShaderData[lightAtlasIndex];
 
 					// Calculate shadow map projection.
 					Matrix44 shadowLightView;
@@ -942,7 +969,7 @@ void WorldRendererForward::buildVisual(const WorldRenderView& worldRenderView, i
 			clear.mask = render::CfColor | render::CfDepth;
 			clear.colors[0] = Color4f(0.0f, 0.0f, 0.0f, 1.0f);
 			clear.depth = 1.0f;
-			builder.setOutput(s_handleVisual, clear);
+			builder.setOutput(s_handleVisual[0], clear);
 		},
 		[=](render::RenderPassResources& resources, render::RenderContext* renderContext)
 		{
@@ -1021,15 +1048,15 @@ void WorldRendererForward::buildProcess(const WorldRenderView& worldRenderView)
 			[&](render::RenderPassBuilder& builder)
 			{
 				if (haveNext)
-					builder.setOutput(s_handleVisual);
+					builder.setOutput(s_handleVisual[i + 1]);
 
 				builder.addInput(s_handleGBuffer);
-				builder.addInput(s_handleVisual);
+				builder.addInput(s_handleVisual[i]);
 			},
 			[=](render::RenderPassResources& resources, render::RenderContext* renderContext)
 			{
 				auto gbufferTargetSet = resources.getInput(s_handleGBuffer);
-				auto visualTargetSet = resources.getInput(s_handleVisual);
+				auto visualTargetSet = resources.getInput(s_handleVisual[i]);
 
 				render::ImageProcessStep::Instance::RenderParams params;
 				params.viewFrustum = worldRenderView.getViewFrustum();

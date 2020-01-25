@@ -1,4 +1,6 @@
+#include "Core/Misc/SafeDestroy.h"
 #include "Render/Context/RenderContext.h"
+#include "Render/Frame/RenderGraph.h"
 #include "World/WorldRenderView.h"
 #include "World/WorldContext.h"
 #include "World/Entity/GroupEntity.h"
@@ -21,6 +23,9 @@ const render::Handle s_handleView(L"World_View");
 const render::Handle s_handleViewInverse(L"World_ViewInverse");
 const render::Handle s_handleProjection(L"World_Projection");
 
+// Render graph.
+const render::Handle s_handleVisual(L"Visual");
+
 		}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.WorldRendererSimple", 0, WorldRendererSimple, IWorldRenderer)
@@ -34,6 +39,13 @@ bool WorldRendererSimple::create(
 	m_entityRenderers = desc.entityRenderers;
 	m_rootEntity = new GroupEntity();
 
+	// Create render graph.
+	m_renderGraph = new render::RenderGraph(
+		renderSystem,
+		desc.width,
+		desc.height
+	);
+
 	m_frames.resize(desc.frameCount);
 	for (auto& frame : m_frames)
 		frame.renderContext = new render::RenderContext(1 * 1024 * 1024);
@@ -43,6 +55,7 @@ bool WorldRendererSimple::create(
 
 void WorldRendererSimple::destroy()
 {
+	safeDestroy(m_renderGraph);
 	m_entityRenderers = nullptr;
 	m_rootEntity = nullptr;
 	m_frames.clear();
@@ -70,23 +83,47 @@ void WorldRendererSimple::build(const WorldRenderView& worldRenderView, int32_t 
 	wc.flush();
 	wc.getRenderContext()->merge(render::RpAll);
 
-	// Default visual parameters.
-	auto globalProgramParams = wc.getRenderContext()->alloc< render::ProgramParameters >();
-	globalProgramParams->beginParameters(wc.getRenderContext());
-	globalProgramParams->setFloatParameter(s_handleTime, worldRenderView.getTime());
-	globalProgramParams->setMatrixParameter(s_handleProjection, worldRenderView.getProjection());
-	globalProgramParams->endParameters(wc.getRenderContext());
+	m_renderGraph->addPass(
+		L"Visual",
+		[&](render::RenderPassBuilder& builder)
+		{
+		},
+		[=](render::RenderPassResources& resources, render::RenderContext* renderContext)
+		{
+			WorldContext wc(
+				m_entityRenderers,
+				renderContext,
+				m_rootEntity
+			);
 
-	// Build visual context.
-	WorldRenderPassSimple defaultPass(
-		s_techniqueSimpleColor,
-		globalProgramParams,
-		worldRenderView.getView()
+			// Default visual parameters.
+			auto globalProgramParams = renderContext->alloc< render::ProgramParameters >();
+			globalProgramParams->beginParameters(renderContext);
+			globalProgramParams->setFloatParameter(s_handleTime, worldRenderView.getTime());
+			globalProgramParams->setMatrixParameter(s_handleProjection, worldRenderView.getProjection());
+			globalProgramParams->endParameters(renderContext);
+
+			// Build visual context.
+			WorldRenderPassSimple defaultPass(
+				s_techniqueSimpleColor,
+				globalProgramParams,
+				worldRenderView.getView()
+			);
+
+			wc.build(worldRenderView, defaultPass, m_rootEntity);
+			wc.flush(worldRenderView, defaultPass);
+			renderContext->merge(render::RpAll);
+		}
 	);
 
-	wc.build(worldRenderView, defaultPass, m_rootEntity);
-	wc.flush(worldRenderView, defaultPass);
-	wc.getRenderContext()->merge(render::RpAll);
+	// Validate render graph.
+	if (!m_renderGraph->validate())
+		return;
+
+	// Build render context through render graph.
+	m_renderGraph->build(
+		m_frames[frame].renderContext
+	);
 
 	m_rootEntity->removeAllEntities();
 }

@@ -12,6 +12,13 @@
 
 namespace traktor
 {
+	namespace render
+	{
+
+class RenderGraph;
+
+	}
+
 	namespace world
 	{
 
@@ -56,6 +63,7 @@ private:
 		Ref< render::RenderContext > renderContext;
 	};
 
+	Ref< render::RenderGraph > m_renderGraph;
 	Ref< WorldEntityRenderers > m_entityRenderers;
 	Ref< GroupEntity > m_rootEntity;
 	AlignedVector< Frame > m_frames;

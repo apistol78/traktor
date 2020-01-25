@@ -101,7 +101,7 @@ private:
 	{
 		RenderTargetSetCreateDesc rtscd;
 		RenderTargetAutoSize rtas;
-		Ref< IRenderTargetSet > rts[2];
+		Ref< IRenderTargetSet > rts;
 	};
 
 	Ref< IRenderSystem > m_renderSystem;

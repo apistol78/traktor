@@ -18,7 +18,7 @@ IRenderTargetSet* RenderPassResources::getInput(handle_t targetId) const
 {
 #if defined(_DEBUG)
     auto it = std::find_if(m_pass.m_inputs.begin(), m_pass.m_inputs.end(), [&](const RenderPass::Input& input) {
-        return input.targetSetName == targetId;
+        return input.name == targetId;
     });
     T_ASSERT(it != m_pass.m_inputs.end());
 #endif

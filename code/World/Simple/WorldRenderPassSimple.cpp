@@ -55,7 +55,7 @@ render::handle_t WorldRenderPassSimple::getTechnique() const
 
 uint32_t WorldRenderPassSimple::getPassFlags() const
 {
-	return PfLast;
+	return PfFirst;
 }
 
 void WorldRenderPassSimple::setShaderTechnique(render::Shader* shader) const
