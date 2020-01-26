@@ -28,10 +28,11 @@ void RenderGraph::destroy()
 	m_order.clear();
 }
 
-bool RenderGraph::addRenderTarget(handle_t targetId, const RenderTargetSetCreateDesc& rtscd, const RenderTargetAutoSize& rtas)
+bool RenderGraph::addRenderTarget(const wchar_t* const name, handle_t targetId, const RenderTargetSetCreateDesc& rtscd, const RenderTargetAutoSize& rtas)
 {
 	if (m_targets.find(targetId) != m_targets.end())
 		return false;
+	m_targets[targetId].name = name;
 	m_targets[targetId].rtscd = rtscd;
 	m_targets[targetId].rtas = rtas;
 	return true;
@@ -81,10 +82,22 @@ bool RenderGraph::validate()
 		if (rtas.maxHeight > 0)
 			rtscd.height = min< int32_t >(rtscd.height, rtas.maxHeight);
 
-		tm.second.rts = m_renderSystem->createRenderTargetSet(rtscd, T_FILE_LINE_W);
+		tm.second.rts = m_renderSystem->createRenderTargetSet(rtscd, tm.second.name);
 		if (!tm.second.rts)
 			return false;
 	}
+
+
+#if defined(_DEBUG)
+	log::info << L"== Render passes ==" << Endl;
+	for (int32_t i = 0; i < m_passes.size(); ++i)
+	{
+		log::info << i << L". " << m_passes[i].m_name << L" -> " << getParameterName(m_passes[i].m_output.name) << Endl;
+		for (const auto& input : m_passes[i].m_inputs)
+			log::info << L"   " << getParameterName(input.name) << Endl;
+	}
+	log::info << L"===================" << Endl;
+#endif
 
 	// Append passes depth-first.
 	SmallSet< uint32_t > order;
@@ -100,9 +113,9 @@ bool RenderGraph::validate()
 	m_order = AlignedVector< uint32_t >(order.begin(), order.end());
 
 #if defined(_DEBUG)
-	log::info << L"== Render passes ==" << Endl;
+	log::info << L"== Order ==" << Endl;
 	for (auto index : m_order)
-		log::info << index << L". " << m_passes[index].m_name << Endl;
+		log::info << index << L". " << m_passes[index].m_name << L" -> " << getParameterName(m_passes[index].m_output.name) << Endl;
 	log::info << L"===================" << Endl;
 #endif
 

@@ -140,6 +140,8 @@ private:
 
 	void buildLights(const WorldRenderView& worldRenderView, int32_t frame, LightShaderData* lightShaderData, TileShaderData* tileShaderData);
 
+	void buildShadowMask(const WorldRenderView& worldRenderView);
+
 	void buildReflections(const WorldRenderView& worldRenderView);
 
 	void buildVisual(const WorldRenderView& worldRenderView, int32_t frame);
