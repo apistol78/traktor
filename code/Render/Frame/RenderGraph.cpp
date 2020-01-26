@@ -1,6 +1,7 @@
 #include "Core/Containers/SmallSet.h"
 #include "Core/Log/Log.h"
 #include "Render/IRenderSystem.h"
+#include "Render/IRenderTargetSet.h"
 #include "Render/Context/RenderBlock.h"
 #include "Render/Context/RenderContext.h"
 #include "Render/Frame/RenderGraph.h"
@@ -173,6 +174,19 @@ bool RenderGraph::build(RenderContext* renderContext)
 	m_passes.resize(0);
 
 	return true;
+}
+
+void RenderGraph::getDebugTargets(std::vector< render::DebugTarget >& outTargets) const
+{
+	for (auto it : m_targets)
+	{
+		if (it.second.rts)
+			outTargets.push_back(render::DebugTarget(
+				it.second.name,
+				render::DtvDefault,
+				it.second.rts->getColorTexture(0)
+			));
+	}
 }
 		
 void RenderGraph::traverse(int32_t index, const std::function< void(int32_t) >& fn) const

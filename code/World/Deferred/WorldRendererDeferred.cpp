@@ -234,268 +234,33 @@ bool WorldRendererDeferred::create(
 	);
 	m_fogColor = m_settings.fogColor;
 
-//	// Create "gbuffer" targets.
-//	{
-//		render::RenderTargetSetCreateDesc rtscd;
-//		rtscd.count = 4;
-//		rtscd.width = desc.width;
-//		rtscd.height = desc.height;
-//		rtscd.multiSample = 0;
-//		rtscd.createDepthStencil = false;
-//		rtscd.usingPrimaryDepthStencil = (desc.sharedDepthStencil == nullptr) ? true : false;
-//		rtscd.sharedDepthStencil = desc.sharedDepthStencil;
-//		rtscd.preferTiled = true;
-//		rtscd.storeDepthStencil = true;					// Store depth for z-cull later.
-//		rtscd.targets[0].format = render::TfR16F;		// Depth (R)
-//		rtscd.targets[1].format = render::TfR16G16F;	// Normals (RG)
-//		rtscd.targets[2].format = render::TfR11G11B10F;	// Metalness (R), Roughness (G), Specular (B)
-//		rtscd.targets[3].format = render::TfR11G11B10F;	// Surface color (RGB)
-//
-//		m_gbufferTargetSet = renderSystem->createRenderTargetSet(rtscd, T_FILE_LINE_W);
-//		if (!m_gbufferTargetSet)
-//		{
-//			log::error << L"Unable to create depth render target." << Endl;
-//			return false;
-//		}
-//	}
-//
-//	// Create "ambient occlusion" target.
-//	{
-//		render::RenderTargetSetCreateDesc rtscd;
-//		rtscd.count = 1;
-//		rtscd.width = desc.width;
-//		rtscd.height = desc.height;
-//		rtscd.multiSample = 0;
-//		rtscd.createDepthStencil = false;
-//		rtscd.usingPrimaryDepthStencil = (desc.sharedDepthStencil == nullptr) ? true : false;
-//		rtscd.sharedDepthStencil = desc.sharedDepthStencil;
-//		rtscd.preferTiled = true;
-//		rtscd.storeDepthStencil = true;
-//		rtscd.targets[0].format = render::TfR8;			// Ambient occlusion (R)
-//
-//		m_ambientOcclusionTargetSet = renderSystem->createRenderTargetSet(rtscd, T_FILE_LINE_W);
-//		if (!m_ambientOcclusionTargetSet)
-//		{
-//			log::error << L"Unable to create ambient occlusion render target." << Endl;
-//			return false;
-//		}
-//	}
-//
-//	// Create "velocity" target.
-//	if (m_motionBlurQuality > QuDisabled)
-//	{
-//		render::RenderTargetSetCreateDesc rtscd;
-//		rtscd.count = 1;
-//		rtscd.width = desc.width;
-//		rtscd.height = desc.height;
-//		rtscd.multiSample = 0;
-//		rtscd.createDepthStencil = false;
-//		rtscd.usingPrimaryDepthStencil = (desc.sharedDepthStencil == nullptr) ? true : false;
-//		rtscd.sharedDepthStencil = desc.sharedDepthStencil;
-//		rtscd.preferTiled = true;
-//		rtscd.storeDepthStencil = false;
-//		rtscd.targets[0].format = render::TfR16G16F;
-//
-//		m_velocityTargetSet = renderSystem->createRenderTargetSet(rtscd, T_FILE_LINE_W);
-//		if (!m_velocityTargetSet)
-//		{
-//			log::error << L"Unable to create velocity render target; motion blur disabled." << Endl;
-//			m_motionBlurQuality = QuDisabled;
-//		}
-//	}
-//
-//	// Create "color read-back" target.
-//	{
-//		render::RenderTargetSetCreateDesc rtscd;
-//		rtscd.count = 1;
-//		rtscd.width = previousLog2(desc.width);
-//		rtscd.height = previousLog2(desc.height);
-//		rtscd.multiSample = 0;
-//		rtscd.createDepthStencil = false;
-//		rtscd.usingPrimaryDepthStencil = false;
-//		rtscd.preferTiled = true;
-//		rtscd.storeDepthStencil = false;
-//		rtscd.ignoreStencil = true;
-//		rtscd.generateMips = true;
-//#if !defined(__ANDROID__) && !defined(__IOS__)
-//		rtscd.targets[0].format = render::TfR16G16B16A16F;
-//#else
-//		rtscd.targets[0].format = render::TfR11G11B10F;
-//#endif
-//
-//		m_colorTargetSet = renderSystem->createRenderTargetSet(rtscd, T_FILE_LINE_W);
-//		if (!m_colorTargetSet)
-//		{
-//			log::error << L"Unable to create color read-back render target." << Endl;
-//			return false;
-//		}
-//	}
-//
-//	// Create "reflections" target.
-//	if (m_reflectionsQuality > QuDisabled)
-//	{
-//		render::RenderTargetSetCreateDesc rtscd;
-//		rtscd.count = 1;
-//#if !defined(__ANDROID__) && !defined(__IOS__)
-//		rtscd.width = desc.width;
-//		rtscd.height = desc.height;
-//#else
-//		rtscd.width = desc.width / 2;
-//		rtscd.height = desc.height / 2;
-//#endif
-//		rtscd.multiSample = 0;
-//		rtscd.createDepthStencil = false;
-//		rtscd.usingPrimaryDepthStencil = false;
-//		rtscd.preferTiled = true;
-//		rtscd.storeDepthStencil = false;
-//		rtscd.ignoreStencil = true;
-//		rtscd.generateMips = false;
-//#if !defined(__ANDROID__) && !defined(__IOS__)
-//		rtscd.targets[0].format = render::TfR16G16B16A16F;
-//#else
-//		rtscd.targets[0].format = render::TfR11G11B10F;
-//#endif
-//
-//		m_reflectionsTargetSet = renderSystem->createRenderTargetSet(rtscd, T_FILE_LINE_W);
-//		if (!m_reflectionsTargetSet)
-//		{
-//			log::error << L"Unable to create reflections render target." << Endl;
-//			return false;
-//		}
-//	}
-//
-//	// Create "shadow map" targets.
-//	if (m_shadowsQuality > QuDisabled)
-//	{
-//		render::RenderSystemInformation info;
-//		renderSystem->getInformation(info);
-//
-//		int32_t maxResolution = m_shadowSettings.resolution;
-//		if (info.dedicatedMemoryTotal < 512 * 1024 * 1024)
-//			maxResolution /= 2;
-//
-//		int32_t resolution = min< int32_t >(
-//			nearestLog2((max< int32_t >(desc.width, desc.height) * 190) / 100),
-//			maxResolution
-//		);
-//		T_DEBUG(L"Using shadow map resolution " << resolution);
-//
-//		// Create shadow screen projection processes.
-//		resource::Proxy< render::ImageProcessData > shadowMaskProject;
-//		if (!resourceManager->bind(m_shadowSettings.maskProject, shadowMaskProject))
-//		{
-//			log::warning << L"Unable to create shadow project process; shadows disabled." << Endl;
-//			m_shadowsQuality = QuDisabled;
-//		}
-//
-//		if (m_shadowsQuality > QuDisabled)
-//		{
-//			m_shadowMaskProject = new render::ImageProcess();
-//			if (!m_shadowMaskProject->create(
-//				shadowMaskProject,
-//				nullptr,
-//				resourceManager,
-//				renderSystem,
-//				desc.width / m_shadowSettings.maskDenominator,
-//				desc.height / m_shadowSettings.maskDenominator,
-//				desc.allTargetsPersistent
-//			))
-//			{
-//				log::warning << L"Unable to create shadow project process; shadows disabled." << Endl;
-//				m_shadowsQuality = QuDisabled;
-//			}
-//		}
-//
-//		// Create shadow render targets.
-//		if (m_shadowsQuality > QuDisabled)
-//		{
-//			render::RenderTargetSetCreateDesc rtscd;
-//
-//			// Create shadow cascade map target.
-//			rtscd.count = 0;
-//			rtscd.width = resolution;
-//			rtscd.height = resolution;
-//			rtscd.multiSample = 0;
-//			rtscd.createDepthStencil = true;
-//			rtscd.usingDepthStencilAsTexture = true;
-//			rtscd.usingPrimaryDepthStencil = false;
-//			rtscd.ignoreStencil = true;
-//			rtscd.preferTiled = true;
-//			rtscd.storeDepthStencil = true;	// Used as texture.
-//			if ((m_shadowCascadeTargetSet = renderSystem->createRenderTargetSet(rtscd, T_FILE_LINE_W)) == nullptr)
-//				m_shadowsQuality = QuDisabled;
-//
-//			// Create shadow screen mask map target.
-//			rtscd.count = 1;
-//			rtscd.width = desc.width / m_shadowSettings.maskDenominator;
-//			rtscd.height = desc.height / m_shadowSettings.maskDenominator;
-//			rtscd.multiSample = 0;
-//			rtscd.createDepthStencil = false;
-//			rtscd.usingDepthStencilAsTexture = false;
-//			rtscd.usingPrimaryDepthStencil = false;
-//			rtscd.ignoreStencil = true;
-//			rtscd.preferTiled = true;
-//			rtscd.storeDepthStencil = false;
-//			rtscd.targets[0].format = render::TfR8;
-//			rtscd.targets[0].sRGB = false;
-//			if ((m_shadowMaskTargetSet = renderSystem->createRenderTargetSet(rtscd, T_FILE_LINE_W)) == nullptr)
-//				m_shadowsQuality = QuDisabled;
-//
-//			// Create shadow atlas map target.
-//			rtscd.count = 0;
-//#if !defined(__ANDROID__) && !defined(__IOS__)
-//			rtscd.width =
-//			rtscd.height = 4096;
-//#else
-//			rtscd.width =
-//			rtscd.height = 1024;
-//#endif
-//			rtscd.multiSample = 0;
-//			rtscd.createDepthStencil = true;
-//			rtscd.usingDepthStencilAsTexture = true;
-//			rtscd.usingPrimaryDepthStencil = false;
-//			rtscd.ignoreStencil = true;
-//			rtscd.preferTiled = true;
-//			rtscd.storeDepthStencil = true;	// Used as texture.
-//			if ((m_shadowAtlasTargetSet = renderSystem->createRenderTargetSet(rtscd, T_FILE_LINE_W)) == nullptr)
-//				m_shadowsQuality = QuDisabled;
-//		}
-//
-//		// Ensure targets are destroyed if something went wrong in setup.
-//		if (m_shadowsQuality == QuDisabled)
-//		{
-//			safeDestroy(m_shadowCascadeTargetSet);
-//			safeDestroy(m_shadowMaskTargetSet);
-//			safeDestroy(m_shadowAtlasTargetSet);
-//		}
-//	}
-//
-//	// Create "visual" and "intermediate" target.
-//	{
-//		render::RenderTargetSetCreateDesc rtscd;
-//		rtscd.count = 1;
-//		rtscd.width = desc.width;
-//		rtscd.height = desc.height;
-//		rtscd.multiSample = desc.multiSample;
-//		rtscd.createDepthStencil = false;
-//		rtscd.usingPrimaryDepthStencil = (desc.sharedDepthStencil == nullptr) ? true : false;
-//		rtscd.sharedDepthStencil = desc.sharedDepthStencil;
-//		rtscd.preferTiled = true;
-//		rtscd.storeDepthStencil = false;
-//#if !defined(__ANDROID__) && !defined(__IOS__)
-//		rtscd.targets[0].format = render::TfR32G32B32A32F;
-//#else
-//		rtscd.targets[0].format = render::TfR11G11B10F;
-//#endif
-//
-//		m_visualTargetSet = renderSystem->createRenderTargetSet(rtscd, T_FILE_LINE_W);
-//		if (!m_visualTargetSet)
-//			return false;
-//
-//		m_intermediateTargetSet = renderSystem->createRenderTargetSet(rtscd, T_FILE_LINE_W);
-//		if (!m_intermediateTargetSet)
-//			return false;
-//	}
+	// Create shadow screen projection processes.
+	{
+		resource::Proxy< render::ImageProcessData > shadowMaskProject;
+		if (!resourceManager->bind(m_shadowSettings.maskProject, shadowMaskProject))
+		{
+			log::warning << L"Unable to create shadow project process; shadows disabled." << Endl;
+			m_shadowsQuality = QuDisabled;
+		}
+
+		if (m_shadowsQuality > QuDisabled)
+		{
+			m_shadowMaskProject = new render::ImageProcess();
+			if (!m_shadowMaskProject->create(
+				shadowMaskProject,
+				nullptr,
+				resourceManager,
+				renderSystem,
+				desc.width / m_shadowSettings.maskDenominator,
+				desc.height / m_shadowSettings.maskDenominator,
+				desc.allTargetsPersistent
+			))
+			{
+				log::warning << L"Unable to create shadow project process; shadows disabled." << Endl;
+				m_shadowsQuality = QuDisabled;
+			}
+		}
+	}
 
 	// Create "color read-back" copy processing.
 	{
@@ -870,9 +635,9 @@ bool WorldRendererDeferred::create(
 	rtscd.ignoreStencil = true;
 	rtscd.generateMips = true;
 #if !defined(__ANDROID__) && !defined(__IOS__)
-		rtscd.targets[0].format = render::TfR16G16B16A16F;
+	rtscd.targets[0].format = render::TfR16G16B16A16F;
 #else
-		rtscd.targets[0].format = render::TfR11G11B10F;
+	rtscd.targets[0].format = render::TfR11G11B10F;
 #endif
 	rtas.screenWidthDenom = 2;
 	rtas.screenHeightDenom = 2;
@@ -954,9 +719,9 @@ bool WorldRendererDeferred::create(
 	rtscd.sharedDepthStencil = desc.sharedDepthStencil;
 	rtscd.preferTiled = true;
 #if !defined(__ANDROID__) && !defined(__IOS__)
-		rtscd.targets[0].format = render::TfR32G32B32A32F;
+	rtscd.targets[0].format = render::TfR32G32B32A32F;
 #else
-		rtscd.targets[0].format = render::TfR11G11B10F;
+	rtscd.targets[0].format = render::TfR11G11B10F;
 #endif
 	rtas.screenWidthDenom = 1;
 	rtas.screenHeightDenom = 1;
@@ -988,18 +753,6 @@ void WorldRendererDeferred::destroy()
 	safeDestroy(m_ambientOcclusion);
 	safeDestroy(m_colorTargetCopy);
 	safeDestroy(m_shadowMaskProject);
-
-	//safeDestroy(m_shadowAtlasTargetSet);
-	//safeDestroy(m_shadowMaskTargetSet);
-	//safeDestroy(m_shadowCascadeTargetSet);
-	//safeDestroy(m_colorTargetSet);
-	//safeDestroy(m_velocityTargetSet);
-	//safeDestroy(m_ambientOcclusionTargetSet);
-	//safeDestroy(m_gbufferTargetSet);
-	//safeDestroy(m_intermediateTargetSet);
-	//safeDestroy(m_visualTargetSet);
-
-	//m_shadowProjection = nullptr;
 
 	safeDestroy(m_renderGraph);
 
@@ -1084,66 +837,8 @@ render::ImageProcess* WorldRendererDeferred::getVisualImageProcess()
 
 void WorldRendererDeferred::getDebugTargets(std::vector< render::DebugTarget >& outTargets) const
 {
-	//if (m_visualTargetSet)
-	//	outTargets.push_back(render::DebugTarget(L"Visual", render::DtvDefault, m_visualTargetSet->getColorTexture(0)));
-
-	//if (m_intermediateTargetSet)
-	//	outTargets.push_back(render::DebugTarget(L"Intermediate", render::DtvDefault, m_intermediateTargetSet->getColorTexture(0)));
-
-	//if (m_gbufferTargetSet)
-	//{
-	//	outTargets.push_back(render::DebugTarget(L"GBuffer depth", render::DtvViewDepth, m_gbufferTargetSet->getColorTexture(0)));
-	//	outTargets.push_back(render::DebugTarget(L"GBuffer normals", render::DtvNormals, m_gbufferTargetSet->getColorTexture(1)));
-	//	outTargets.push_back(render::DebugTarget(L"GBuffer metalness", render::DtvDeferredMetalness, m_gbufferTargetSet->getColorTexture(2)));
-	//	outTargets.push_back(render::DebugTarget(L"GBuffer roughness", render::DtvDeferredRoughness, m_gbufferTargetSet->getColorTexture(2)));
-	//	outTargets.push_back(render::DebugTarget(L"GBuffer specular", render::DtvDeferredSpecular, m_gbufferTargetSet->getColorTexture(2)));
-	//	outTargets.push_back(render::DebugTarget(L"GBuffer surface color", render::DtvDefault, m_gbufferTargetSet->getColorTexture(3)));
-	//}
-
-	//if (m_ambientOcclusionTargetSet)
-	//	outTargets.push_back(render::DebugTarget(L"Ambient occlusion", render::DtvDefault, m_ambientOcclusionTargetSet->getColorTexture(0)));
-
-	//if (m_velocityTargetSet)
-	//	outTargets.push_back(render::DebugTarget(L"Velocity", render::DtvVelocity, m_velocityTargetSet->getColorTexture(0)));
-
-	//if (m_colorTargetSet)
-	//	outTargets.push_back(render::DebugTarget(L"Color read-back copy", render::DtvDefault, m_colorTargetSet->getColorTexture(0)));
-
-	//if (m_reflectionsTargetSet)
-	//	outTargets.push_back(render::DebugTarget(L"Reflections", render::DtvDefault, m_reflectionsTargetSet->getColorTexture(0)));
-
-	//if (m_shadowCascadeTargetSet)
-	//	outTargets.push_back(render::DebugTarget(L"Shadow map (cascade)", render::DtvShadowMap, m_shadowCascadeTargetSet->getDepthTexture()));
-
-	//if (m_shadowMaskTargetSet)
-	//	outTargets.push_back(render::DebugTarget(L"Shadow mask (cascade)", render::DtvDefault, m_shadowMaskTargetSet->getColorTexture(0)));
-
-	//if (m_shadowAtlasTargetSet)
-	//	outTargets.push_back(render::DebugTarget(L"Shadow map (atlas)", render::DtvShadowMap, m_shadowAtlasTargetSet->getDepthTexture()));
-
-	//if (m_colorTargetCopy)
-	//	m_colorTargetCopy->getDebugTargets(outTargets);
-
-	//if (m_ambientOcclusion)
-	//	m_ambientOcclusion->getDebugTargets(outTargets);
-
-	//if (m_antiAlias)
-	//	m_antiAlias->getDebugTargets(outTargets);
-
-	//if (m_visualImageProcess)
-	//	m_visualImageProcess->getDebugTargets(outTargets);
-
-	//if (m_gammaCorrectionImageProcess)
-	//	m_gammaCorrectionImageProcess->getDebugTargets(outTargets);
-
-	//if (m_motionBlurPrimeImageProcess)
-	//	m_motionBlurPrimeImageProcess->getDebugTargets(outTargets);
-
-	//if (m_motionBlurImageProcess)
-	//	m_motionBlurImageProcess->getDebugTargets(outTargets);
-
-	//if (m_toneMapImageProcess)
-	//	m_toneMapImageProcess->getDebugTargets(outTargets);
+	if (m_renderGraph)
+		m_renderGraph->getDebugTargets(outTargets);
 }
 
 void WorldRendererDeferred::buildGBuffer(const WorldRenderView& worldRenderView)
