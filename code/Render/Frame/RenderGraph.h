@@ -69,12 +69,14 @@ public:
 
 	/*! Add render target definition.
 	 *
+	 * \param name Debug name of target.
 	 * \param targetId Unique identifier of target.
 	 * \param rtscd Render target set create description.
 	 * \param rtas Optional information if size of target should be calculated from view size.
 	 * \return True if target defined successfully.
 	 */
 	bool addRenderTarget(
+		const wchar_t* const name,
 		const handle_t targetId,
 		const RenderTargetSetCreateDesc& rtscd,
 		const RenderTargetAutoSize& rtas = RenderTargetAutoSize()
@@ -99,6 +101,7 @@ public:
 private:
 	struct Target
 	{
+		const wchar_t* name;
 		RenderTargetSetCreateDesc rtscd;
 		RenderTargetAutoSize rtas;
 		Ref< IRenderTargetSet > rts;

@@ -424,9 +424,9 @@ void setObjectDebugName(VkDevice device, const wchar_t* const tag, uint64_t obje
 #if !defined(__ANDROID__) && !defined(__APPLE__)
 	VkDebugUtilsObjectNameInfoEXT ni = {};
 	ni.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_OBJECT_NAME_INFO_EXT;
-	ni.objectType = objectType; // VK_OBJECT_TYPE_IMAGE;
-	ni.objectHandle = object; // (uint64_t)m_textureImage;
-	ni.pObjectName = tag ? wstombs(tag).c_str() : "Unnamed";
+	ni.objectType = objectType;
+	ni.objectHandle = object;
+	ni.pObjectName = tag ? strdup(wstombs(tag).c_str()) : "Unnamed";
 	vkSetDebugUtilsObjectNameEXT(device, &ni);
 #endif
 }

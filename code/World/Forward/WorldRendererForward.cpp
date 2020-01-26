@@ -375,7 +375,7 @@ bool WorldRendererForward::create(
 	rtscd.targets[1].format = render::TfR16G16F;	// Normals (RG)
 	rtas.screenWidthDenom = 1;
 	rtas.screenHeightDenom = 1;
-	m_renderGraph->addRenderTarget(s_handleGBuffer, rtscd, rtas);
+	m_renderGraph->addRenderTarget(L"GBuffer", s_handleGBuffer, rtscd, rtas);
 
 	// Ambient occlusion.
 	rtscd.count = 1;
@@ -387,7 +387,7 @@ bool WorldRendererForward::create(
 	rtscd.targets[0].format = render::TfR8;			// Ambient occlusion (R)
 	rtas.screenWidthDenom = 1;
 	rtas.screenHeightDenom = 1;
-	m_renderGraph->addRenderTarget(s_handleAmbientOcclusion, rtscd, rtas);
+	m_renderGraph->addRenderTarget(L"AmbientOcclusion", s_handleAmbientOcclusion, rtscd, rtas);
 
 	const bool shadowsEnable = (bool)(m_shadowsQuality != QuDisabled);
 	if (shadowsEnable)
@@ -402,7 +402,7 @@ bool WorldRendererForward::create(
 		rtscd.usingPrimaryDepthStencil = false;
 		rtscd.ignoreStencil = true;
 		rtscd.preferTiled = true;
-		m_renderGraph->addRenderTarget(s_handleShadowMapCascade, rtscd);
+		m_renderGraph->addRenderTarget(L"ShadowMap Cascade", s_handleShadowMapCascade, rtscd);
 
 		// Atlas shadow map.
 		rtscd.count = 0;
@@ -414,7 +414,7 @@ bool WorldRendererForward::create(
 		rtscd.usingPrimaryDepthStencil = false;
 		rtscd.ignoreStencil = true;
 		rtscd.preferTiled = true;
-		m_renderGraph->addRenderTarget(s_handleShadowMapAtlas, rtscd);
+		m_renderGraph->addRenderTarget(L"ShadowMap Atlas", s_handleShadowMapAtlas, rtscd);
 	}
 
 	// Visual
@@ -428,7 +428,7 @@ bool WorldRendererForward::create(
 	rtas.screenWidthDenom = 1;
 	rtas.screenHeightDenom = 1;
 	for (int32_t i = 0; i < sizeof_array(s_handleVisual); ++i)
-		m_renderGraph->addRenderTarget(s_handleVisual[i], rtscd, rtas);
+		m_renderGraph->addRenderTarget(L"Visual", s_handleVisual[i], rtscd, rtas);
 
 	// Allocate render contexts.
 	for (auto& frame : m_frames)
