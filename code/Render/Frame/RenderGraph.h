@@ -2,6 +2,7 @@
 
 #include <functional>
 #include <string>
+#include <vector>
 #include "Core/Object.h"
 #include "Core/RefArray.h"
 #include "Core/Containers/SmallMap.h"
@@ -97,6 +98,9 @@ public:
 
 	/*! */
 	bool build(RenderContext* renderContext);
+
+	/*! */
+	void getDebugTargets(std::vector< render::DebugTarget >& outTargets) const;
 
 private:
 	struct Target
