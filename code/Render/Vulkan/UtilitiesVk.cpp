@@ -1,3 +1,4 @@
+#include <cstring>
 #include "Core/Misc/TString.h"
 #include "Render/Vulkan/ApiLoader.h"
 #include "Render/Vulkan/UtilitiesVk.h"
