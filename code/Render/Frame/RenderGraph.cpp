@@ -77,7 +77,6 @@ bool RenderGraph::validate()
 			rtscd.width = (m_width + rtas.screenWidthDenom - 1) / rtas.screenWidthDenom;
 		if (rtas.screenHeightDenom > 0)
 			rtscd.height = (m_height + rtas.screenHeightDenom - 1) / rtas.screenHeightDenom;
-
 		if (rtas.maxWidth > 0)
 			rtscd.width = min< int32_t >(rtscd.width, rtas.maxWidth);
 		if (rtas.maxHeight > 0)
@@ -127,7 +126,9 @@ bool RenderGraph::validate()
 			});
 		}
 	}
-	m_order = AlignedVector< uint32_t >(order.begin(), order.end());
+
+	m_order.resize(0);
+	m_order.insert(m_order.end(), order.begin(), order.end());
 
 #if defined(_DEBUG)
 	log::info << L"== Order ==" << Endl;
@@ -141,8 +142,7 @@ bool RenderGraph::validate()
 
 bool RenderGraph::build(RenderContext* renderContext)
 {
-	T_ASSERT (m_width >= 0 && m_height >= 0);
-
+	// Render passes in dependency order.
 	for (auto index : m_order)
 	{
 		const auto& pass = m_passes[index];
@@ -179,9 +179,9 @@ bool RenderGraph::build(RenderContext* renderContext)
 			std::swap(target.second.rts[0], target.second.rts[1]);
 	}
 
+	// Remove all passes.
 	m_order.resize(0);
 	m_passes.resize(0);
-
 	return true;
 }
 
