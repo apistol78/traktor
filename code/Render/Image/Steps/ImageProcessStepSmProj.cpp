@@ -120,6 +120,7 @@ ImageProcessStepSmProj::InstanceSmProj::InstanceSmProj(
 	m_handleShadowMapDiscRotation = getParameterHandle(L"ShadowMapDiscRotation");
 	m_handleShadowMapSizeAndBias = getParameterHandle(L"ShadowMapSizeAndBias");
 	m_handleShadowMapPoissonTaps = getParameterHandle(L"ShadowMapPoissonTaps");
+	m_handleShadowMapUvTransform = getParameterHandle(L"ShadowMapUvTransform");
 	m_handleDepth = getParameterHandle(L"Depth");
 	m_handleMagicCoeffs = getParameterHandle(L"MagicCoeffs");
 	m_handleViewEdgeTopLeft = getParameterHandle(L"ViewEdgeTopLeft");
@@ -174,6 +175,7 @@ void ImageProcessStepSmProj::InstanceSmProj::build(
 	pp->setTextureParameter(m_handleShadowMap, sourceShMap);
 	pp->setTextureParameter(m_handleShadowMapDiscRotation, m_shadowMapDiscRotation[m_frame & 1]);
 	pp->setVectorParameter(m_handleShadowMapSizeAndBias, shadowMapSizeAndBias);
+	pp->setVectorParameter(m_handleShadowMapUvTransform, params.shadowMapUvTransform);
 	pp->setVectorArrayParameter(m_handleShadowMapPoissonTaps, c_poissonTaps, sizeof_array(c_poissonTaps));
 	pp->setTextureParameter(m_handleDepth, sourceDepth);
 	pp->setVectorParameter(m_handleMagicCoeffs, Vector4(1.0f / p11, 1.0f / p22, params.sliceNearZ - c_sliceBias, params.sliceFarZ + c_sliceBias));

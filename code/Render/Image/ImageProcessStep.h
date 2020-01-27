@@ -50,6 +50,7 @@ public:
 			Matrix44 viewToLight;
 			Matrix44 projection;
 			Vector4 godRayDirection;
+			Vector4 shadowMapUvTransform;
 			int32_t sliceCount;
 			int32_t sliceIndex;
 			float sliceNearZ;
@@ -59,7 +60,8 @@ public:
 			float deltaTime;
 
 			RenderParams()
-			:	sliceCount(0)
+			:	shadowMapUvTransform(0.0f, 0.0f, 1.0f, 1.0f)
+			,	sliceCount(0)
 			,	sliceIndex(0)
 			,	sliceNearZ(0.0f)
 			,	sliceFarZ(0.0f)
