@@ -83,7 +83,6 @@ private:
 		Ref< render::RenderContext > renderContext;
 		Ref< render::StructBuffer > lightSBuffer;
 		Ref< render::StructBuffer > tileSBuffer;
-		int32_t lightCount;
 	};
 
 	WorldRenderSettings m_settings;
@@ -98,7 +97,6 @@ private:
 
 	Ref< render::RenderGraph > m_renderGraph;
 
-	Ref< render::ImageProcess > m_colorTargetCopy;
 	Ref< render::ImageProcess > m_ambientOcclusion;
 	Ref< render::ImageProcess > m_antiAlias;
 	Ref< render::ImageProcess > m_visualImageProcess;
@@ -121,23 +119,25 @@ private:
 	Vector4 m_fogDistanceAndDensity;
 	Vector4 m_fogColor;
 
-	void buildGBuffer(const WorldRenderView& worldRenderView);
+	void buildGBuffer(const WorldRenderView& worldRenderView) const;
 
-	void buildVelocity(const WorldRenderView& worldRenderView);
+	void buildVelocity(const WorldRenderView& worldRenderView) const;
 
-	void buildAmbientOcclusion(const WorldRenderView& worldRenderView);
+	void buildAmbientOcclusion(const WorldRenderView& worldRenderView) const;
 
-	void buildLights(const WorldRenderView& worldRenderView, int32_t frame, LightShaderData* lightShaderData, TileShaderData* tileShaderData);
+	void buildCascadeShadowMap(const WorldRenderView& worldRenderView, int32_t lightCascadeIndex, LightShaderData* lightShaderData) const;
 
-	void buildShadowMask(const WorldRenderView& worldRenderView);
+	void buildAtlasShadowMap(const WorldRenderView& worldRenderView, const StaticVector< int32_t, 16 >& lightAtlasIndices, LightShaderData* lightShaderData) const;
 
-	void buildReflections(const WorldRenderView& worldRenderView);
+	void buildTileData(const WorldRenderView& worldRenderView, TileShaderData* tileShaderData) const;
 
-	void buildVisual(const WorldRenderView& worldRenderView, int32_t frame);
+	void buildShadowMask(const WorldRenderView& worldRenderView, int32_t lightCascadeIndex) const;
 
-	void buildCopyFrame(const WorldRenderView& worldRenderView);
+	void buildReflections(const WorldRenderView& worldRenderView) const;
 
-	void buildEndFrame(const WorldRenderView& worldRenderView);
+	void buildVisual(const WorldRenderView& worldRenderView, int32_t frame) const;
+
+	void buildProcess(const WorldRenderView& worldRenderView) const;
 };
 
 	}

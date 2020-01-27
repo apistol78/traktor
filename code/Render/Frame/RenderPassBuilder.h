@@ -25,6 +25,8 @@ public:
 
 	void addInput(handle_t name, int32_t colorIndex = -1);
 
+    void addHistoryInput(handle_t name, int32_t colorIndex = -1);
+
 	void setOutput(handle_t name);
 
 	void setOutput(handle_t name, const Clear& clear);
