@@ -18,6 +18,15 @@ void RenderPassBuilder::addInput(handle_t name, int32_t colorIndex)
 	auto& input = m_renderPass.m_inputs.push_back();
 	input.name = name;
 	input.colorIndex = colorIndex;
+	input.history = false;
+}
+
+void RenderPassBuilder::addHistoryInput(handle_t name, int32_t colorIndex)
+{
+	auto& input = m_renderPass.m_inputs.push_back();
+	input.name = name;
+	input.colorIndex = colorIndex;
+	input.history = true;
 }
 
 void RenderPassBuilder::setOutput(handle_t name)

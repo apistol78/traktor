@@ -46,10 +46,12 @@ private:
 	{
 		handle_t name;		//!< Resource name.
 		int32_t colorIndex;	//!< Index of target's color attachment.
+		bool history;		//!< Read previous frame; useful when cyclic behaviour desired.
 
 		Input()
 		:	name(0)
 		,	colorIndex(0)
+		,	history(false)
 		{
 		}
 	};

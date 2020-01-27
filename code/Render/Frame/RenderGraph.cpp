@@ -39,11 +39,11 @@ bool RenderGraph::addRenderTarget(const wchar_t* const name, handle_t targetId, 
 	return true;
 }
 
-IRenderTargetSet* RenderGraph::getRenderTarget(handle_t targetId) const
+IRenderTargetSet* RenderGraph::getRenderTarget(handle_t targetId, bool history) const
 {
 	auto it = m_targets.find(targetId);
 	if (it != m_targets.end())
-		return it->second.rts;
+		return it->second.rts[history ? 1 : 0];
 	else
 		return nullptr;
 }
@@ -67,7 +67,7 @@ bool RenderGraph::validate()
 	// Create targets.
 	for (auto& tm : m_targets)
 	{
-		if (tm.second.rts)
+		if (tm.second.rts[0])
 			continue;
 
 		RenderTargetSetCreateDesc rtscd = tm.second.rtscd;
@@ -83,11 +83,27 @@ bool RenderGraph::validate()
 		if (rtas.maxHeight > 0)
 			rtscd.height = min< int32_t >(rtscd.height, rtas.maxHeight);
 
-		tm.second.rts = m_renderSystem->createRenderTargetSet(rtscd, tm.second.name);
-		if (!tm.second.rts)
+		tm.second.rts[0] = m_renderSystem->createRenderTargetSet(rtscd, tm.second.name);
+		if (!tm.second.rts[0])
 			return false;
-	}
 
+		// Check if any pass require history of this target.
+		bool needHistory = false;
+		for (const auto& pass : m_passes)
+		{
+			for (const auto& input : pass.m_inputs)
+			{
+				if (input.name == tm.first)
+					needHistory |= input.history;
+			}
+		}
+		if (needHistory)
+		{
+			tm.second.rts[1] = m_renderSystem->createRenderTargetSet(rtscd, tm.second.name);
+			if (!tm.second.rts[1])
+				return false;
+		}
+	}
 
 #if defined(_DEBUG)
 	log::info << L"== Render passes ==" << Endl;
@@ -127,14 +143,6 @@ bool RenderGraph::build(RenderContext* renderContext)
 {
 	T_ASSERT (m_width >= 0 && m_height >= 0);
 
-	//auto tb = renderContext->alloc< TargetBeginRenderBlock >();
-	//tb->renderTargetSet = nullptr;
-	//tb->clear.mask = render::CfColor | render::CfDepth | render::CfStencil;
-	//tb->clear.colors[0] = Color4f(46 / 255.0f, 56 / 255.0f, 92 / 255.0f, 1.0f);
-	//tb->clear.depth = 1.0f;
-	//tb->clear.stencil = 0;
-	//renderContext->enqueue(tb);
-
 	for (auto index : m_order)
 	{
 		const auto& pass = m_passes[index];
@@ -145,7 +153,7 @@ bool RenderGraph::build(RenderContext* renderContext)
 			T_FATAL_ASSERT(it != m_targets.end());
 
 			auto tb = renderContext->alloc< TargetBeginRenderBlock >();
-			tb->renderTargetSet = it->second.rts;
+			tb->renderTargetSet = it->second.rts[0];
 			tb->renderTargetIndex = pass.m_output.colorIndex;
 			tb->clear = pass.m_output.clear;
 			renderContext->enqueue(tb);			
@@ -164,11 +172,12 @@ bool RenderGraph::build(RenderContext* renderContext)
 		}
 	}
 
-	//auto te = renderContext->alloc< TargetEndRenderBlock >();
-	//renderContext->enqueue(te);
-
-	//auto p = renderContext->alloc< PresentRenderBlock >();
-	//renderContext->enqueue(p);
+	// Keep target history.
+	for (auto& target : m_targets)
+	{
+		if (target.second.rts[1])
+			std::swap(target.second.rts[0], target.second.rts[1]);
+	}
 
 	m_order.resize(0);
 	m_passes.resize(0);
@@ -180,12 +189,19 @@ void RenderGraph::getDebugTargets(std::vector< render::DebugTarget >& outTargets
 {
 	for (auto it : m_targets)
 	{
-		if (it.second.rts)
+		if (it.second.rts[0])
 			outTargets.push_back(render::DebugTarget(
 				it.second.name,
 				render::DtvDefault,
-				it.second.rts->getColorTexture(0)
+				it.second.rts[0]->getColorTexture(0)
 			));
+
+		if (it.second.rts[1])
+			outTargets.push_back(render::DebugTarget(
+				it.second.name,
+				render::DtvDefault,
+				it.second.rts[1]->getColorTexture(0)
+			));			
 	}
 }
 		
@@ -193,6 +209,10 @@ void RenderGraph::traverse(int32_t index, const std::function< void(int32_t) >& 
 {
 	for (const auto& input : m_passes[index].m_inputs)
 	{
+		// History inputs are not included since they usually indicate a cyclic dependency.
+		if (input.history)
+			continue;
+
 		for (int32_t i = 0; i < m_passes.size(); ++i)
 		{
 			if (i == index)

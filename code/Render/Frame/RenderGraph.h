@@ -86,9 +86,10 @@ public:
 	/*! Get render target from target identifier.
 	 *
 	 * \param targetId Unique identifier of target.
+	 * \param history Get history target.
 	 * \return Render target set.
 	 */
-	IRenderTargetSet* getRenderTarget(handle_t targetId) const;
+	IRenderTargetSet* getRenderTarget(handle_t targetId, bool history = false) const;
 
 	/*! */
 	void addPass(const wchar_t* const name, const RenderPass::fn_setup_t& setup, const RenderPass::fn_build_t& build);
@@ -108,7 +109,7 @@ private:
 		const wchar_t* name;
 		RenderTargetSetCreateDesc rtscd;
 		RenderTargetAutoSize rtas;
-		Ref< IRenderTargetSet > rts;
+		Ref< IRenderTargetSet > rts[2];
 	};
 
 	Ref< IRenderSystem > m_renderSystem;

@@ -31,7 +31,6 @@ namespace traktor
 
 const int32_t c_maxLightCount = 1024;
 
-const resource::Id< render::ImageProcessData > c_colorTargetCopy(L"{7DCC28A2-C357-B54F-ACF4-8159301B1764}");
 const resource::Id< render::ImageProcessData > c_ambientOcclusionLow(L"{ED4F221C-BAB1-4645-BD08-84C5B3FA7C20}");
 const resource::Id< render::ImageProcessData > c_ambientOcclusionMedium(L"{A4249C8A-9A0D-B349-B0ED-E8B354CD7BDF}");
 const resource::Id< render::ImageProcessData > c_ambientOcclusionHigh(L"{37F82A38-D632-5541-9B29-E77C2F74B0C0}");
@@ -84,7 +83,6 @@ const render::Handle s_handleIrradianceGridBoundsMax(L"World_IrradianceGridBound
 const render::Handle s_handleGBuffer(L"GBuffer");
 const render::Handle s_handleAmbientOcclusion(L"AmbientOcclusion");
 const render::Handle s_handleVelocity(L"Velocity");
-const render::Handle s_handleColorReadBack(L"ColorReadBack");
 const render::Handle s_handleReflections(L"Reflections");
 const render::Handle s_handleShadowMapCascade(L"ShadowMapCascade");
 const render::Handle s_handleShadowMapAtlas(L"ShadowMapAtlas");
@@ -258,32 +256,6 @@ bool WorldRendererDeferred::create(
 			{
 				log::warning << L"Unable to create shadow project process; shadows disabled." << Endl;
 				m_shadowsQuality = QuDisabled;
-			}
-		}
-	}
-
-	// Create "color read-back" copy processing.
-	{
-		resource::Proxy< render::ImageProcessData > colorTargetCopy;
-
-		if (!resourceManager->bind(c_colorTargetCopy, colorTargetCopy))
-			log::warning << L"Unable to create color read-back processing; color read-back disabled." << Endl;
-
-		if (colorTargetCopy)
-		{
-			m_colorTargetCopy = new render::ImageProcess();
-			if (!m_colorTargetCopy->create(
-				colorTargetCopy,
-				nullptr,
-				resourceManager,
-				renderSystem,
-				desc.width,
-				desc.height,
-				desc.allTargetsPersistent
-			))
-			{
-				log::warning << L"Unable to create color read-back processing; color read-back disabled." << Endl;
-				m_colorTargetCopy = nullptr;
 			}
 		}
 	}
@@ -624,25 +596,6 @@ bool WorldRendererDeferred::create(
 	rtas.screenHeightDenom = 1;
 	m_renderGraph->addRenderTarget(L"Velocity", s_handleVelocity, rtscd, rtas);
 
-	// Color read-back.
-	rtscd.count = 1;
-	rtscd.multiSample = 0;
-	rtscd.createDepthStencil = false;
-	rtscd.usingPrimaryDepthStencil = (desc.sharedDepthStencil == nullptr) ? true : false;
-	rtscd.sharedDepthStencil = desc.sharedDepthStencil;
-	rtscd.preferTiled = true;
-	rtscd.storeDepthStencil = false;
-	rtscd.ignoreStencil = true;
-	rtscd.generateMips = true;
-#if !defined(__ANDROID__) && !defined(__IOS__)
-	rtscd.targets[0].format = render::TfR16G16B16A16F;
-#else
-	rtscd.targets[0].format = render::TfR11G11B10F;
-#endif
-	rtas.screenWidthDenom = 2;
-	rtas.screenHeightDenom = 2;
-	m_renderGraph->addRenderTarget(L"Color ReadBack", s_handleColorReadBack, rtscd, rtas);
-	
 	// Reflections
 	if (m_reflectionsQuality != QuDisabled)
 	{
@@ -751,7 +704,6 @@ void WorldRendererDeferred::destroy()
 	safeDestroy(m_visualImageProcess);
 	safeDestroy(m_antiAlias);
 	safeDestroy(m_ambientOcclusion);
-	safeDestroy(m_colorTargetCopy);
 	safeDestroy(m_shadowMaskProject);
 
 	safeDestroy(m_renderGraph);
@@ -793,6 +745,55 @@ void WorldRendererDeferred::build(const WorldRenderView& worldRenderView, int32_
 	TileShaderData* tileShaderData = (TileShaderData*)m_frames[frame].tileSBuffer->lock();
 	T_FATAL_ASSERT(lightShaderData != nullptr);
 
+	// Write all lights to sbuffer; without shadow map information.
+	const Matrix44& view = worldRenderView.getView();
+	for (int32_t i = 0; i < (int32_t)m_lights.size(); ++i)
+	{
+		const auto& light = m_lights[i];
+		auto* lsd = &lightShaderData[i];
+
+		lsd->typeRangeRadius[0] = (float)light.type;
+		lsd->typeRangeRadius[1] = light.range;
+		lsd->typeRangeRadius[2] = light.radius / 2.0f;
+		lsd->typeRangeRadius[3] = 0.0f;
+
+		(view * light.position.xyz1()).storeUnaligned(lsd->position);
+		(view * light.direction.xyz0()).storeUnaligned(lsd->direction);
+		light.color.storeUnaligned(lsd->color);
+
+		Vector4::zero().storeUnaligned(lsd->viewToLight0);
+		Vector4::zero().storeUnaligned(lsd->viewToLight1);
+		Vector4::zero().storeUnaligned(lsd->viewToLight2);
+		Vector4::zero().storeUnaligned(lsd->viewToLight3);
+	}
+
+	// Find directional light for cascade shadow map.
+	int32_t lightCascadeIndex = -1;
+	if (m_shadowsQuality != QuDisabled)
+	{
+		for (int32_t i = 0; i < (int32_t)m_lights.size(); ++i)
+		{
+			const auto& light = m_lights[i];
+			if (light.castShadow && light.type == LtDirectional)
+			{
+				lightCascadeIndex = i;
+				break;
+			}
+		}
+	}
+
+	// Find spot lights for atlas shadow map.
+	StaticVector< int32_t, 16 > lightAtlasIndices;
+	if (m_shadowsQuality != QuDisabled)
+	{
+		for (int32_t i = 0; i < (int32_t)m_lights.size(); ++i)
+		{
+			const auto& light = m_lights[i];
+			if (light.castShadow && light.type == LtSpot)
+				lightAtlasIndices.push_back(i);
+		}
+	}
+
 	// \tbd Flush all entity renderers first, only used by probes atm and need to render to targets.
 	// Until we have RenderGraph properly implemented we need to make sure
 	// rendering probes doesn't nest render passes.
@@ -802,12 +803,13 @@ void WorldRendererDeferred::build(const WorldRenderView& worldRenderView, int32_
 	buildGBuffer(worldRenderView);
 	buildVelocity(worldRenderView);
 	buildAmbientOcclusion(worldRenderView);
-	buildLights(worldRenderView, frame, lightShaderData, tileShaderData);
-	buildShadowMask(worldRenderView);
+	buildCascadeShadowMap(worldRenderView, lightCascadeIndex, lightShaderData);
+	buildAtlasShadowMap(worldRenderView, lightAtlasIndices, lightShaderData);
+	buildTileData(worldRenderView, tileShaderData);
+	buildShadowMask(worldRenderView, lightCascadeIndex);
 	buildReflections(worldRenderView);
 	buildVisual(worldRenderView, frame);
-	buildCopyFrame(worldRenderView);
-	buildEndFrame(worldRenderView);
+	buildProcess(worldRenderView);
 
 	// Validate render graph.
 	if (!m_renderGraph->validate())
@@ -841,7 +843,7 @@ void WorldRendererDeferred::getDebugTargets(std::vector< render::DebugTarget >& 
 		m_renderGraph->getDebugTargets(outTargets);
 }
 
-void WorldRendererDeferred::buildGBuffer(const WorldRenderView& worldRenderView)
+void WorldRendererDeferred::buildGBuffer(const WorldRenderView& worldRenderView) const
 {
 	m_renderGraph->addPass(
 		L"GBuffer",
@@ -891,7 +893,7 @@ void WorldRendererDeferred::buildGBuffer(const WorldRenderView& worldRenderView)
 	);
 }
 
-void WorldRendererDeferred::buildVelocity(const WorldRenderView& worldRenderView)
+void WorldRendererDeferred::buildVelocity(const WorldRenderView& worldRenderView) const
 {
 	if (m_motionBlurQuality == QuDisabled)
 		return;
@@ -998,7 +1000,7 @@ void WorldRendererDeferred::buildVelocity(const WorldRenderView& worldRenderView
 	}
 }
 
-void WorldRendererDeferred::buildAmbientOcclusion(const WorldRenderView& worldRenderView)
+void WorldRendererDeferred::buildAmbientOcclusion(const WorldRenderView& worldRenderView) const
 {
 	m_renderGraph->addPass(
 		L"Ambient occlusion",
@@ -1038,76 +1040,153 @@ void WorldRendererDeferred::buildAmbientOcclusion(const WorldRenderView& worldRe
 	);
 }
 
-void WorldRendererDeferred::buildLights(const WorldRenderView& worldRenderView, int32_t frame, LightShaderData* lightShaderData, TileShaderData* tileShaderData)
+void WorldRendererDeferred::buildCascadeShadowMap(const WorldRenderView& worldRenderView, int32_t lightCascadeIndex, LightShaderData* lightShaderData) const
 {
+	if (lightCascadeIndex < 0)
+		return;
+
 	const UniformShadowProjection shadowProjection(1024);
 	const auto shadowSettings = m_settings.shadowSettings[m_shadowsQuality];
-	const bool shadowsEnable = (bool)(m_shadowsQuality != QuDisabled);
 
 	Matrix44 view = worldRenderView.getView();
 	Matrix44 viewInverse = view.inverse();
 	Frustum viewFrustum = worldRenderView.getViewFrustum();
 
-	// Find cascade shadow light.
-	int32_t lightCascadeIndex = -1;
-	if (shadowsEnable)
-	{
-		for (int32_t i = 0; i < (int32_t)m_lights.size(); ++i)
+	m_renderGraph->addPass(
+		L"Shadow cascade",
+		[&](render::RenderPassBuilder& builder)
 		{
-			const auto& light = m_lights[i];
-			if (light.castShadow && light.type == LtDirectional)
+			render::Clear clear;
+			clear.mask = render::CfDepth;
+			clear.depth = 1.0f;
+			builder.setOutput(s_handleShadowMapCascade, clear);
+		},
+		[=](render::RenderPassResources& resources, render::RenderContext* renderContext)
+		{
+			WorldContext wc(
+				m_entityRenderers,
+				renderContext,
+				m_rootEntity
+			);
+
+			const auto& light = m_lights[lightCascadeIndex];
+			auto* lsd = &lightShaderData[lightCascadeIndex];
+
+			for (int32_t slice = 0; slice < shadowSettings.cascadingSlices; ++slice)
 			{
-				lightCascadeIndex = i;
-				break;
+				Scalar zn(max(m_slicePositions[slice], m_settings.viewNearZ));
+				Scalar zf(min(m_slicePositions[slice + 1], shadowSettings.farZ));
+
+				// Create sliced view frustum.
+				Frustum sliceViewFrustum = viewFrustum;
+				sliceViewFrustum.setNearZ(zn);
+				sliceViewFrustum.setFarZ(zf);
+
+				// Calculate shadow map projection.
+				Matrix44 shadowLightView;
+				Matrix44 shadowLightProjection;
+				Frustum shadowFrustum;
+
+				shadowProjection.calculate(
+					viewInverse,
+					light.position,
+					light.direction,
+					sliceViewFrustum,
+					shadowSettings.farZ,
+					shadowSettings.quantizeProjection,
+					shadowLightView,
+					shadowLightProjection,
+					shadowFrustum
+				);
+
+				// Render shadow map.
+				WorldRenderView shadowRenderView;
+				shadowRenderView.setProjection(shadowLightProjection);
+				shadowRenderView.setView(shadowLightView, shadowLightView);
+				shadowRenderView.setViewFrustum(shadowFrustum);
+				shadowRenderView.setCullFrustum(shadowFrustum);
+				shadowRenderView.setTimes(
+					worldRenderView.getTime(),
+					worldRenderView.getDeltaTime(),
+					worldRenderView.getInterval()
+				);
+
+				// Set viewport to current cascade.
+				auto svrb = renderContext->alloc< render::SetViewportRenderBlock >();
+				svrb->viewport = render::Viewport(
+					0,
+					slice * 1024,
+					1024,
+					1024,
+					0.0f,
+					1.0f
+				);
+				renderContext->enqueue(svrb);	
+
+				// Render entities into shadow map.
+				auto sharedParams = renderContext->alloc< render::ProgramParameters >();
+				sharedParams->beginParameters(renderContext);
+				sharedParams->setFloatParameter(s_handleTime, worldRenderView.getTime());
+				sharedParams->setMatrixParameter(s_handleView, shadowLightView);
+				sharedParams->setMatrixParameter(s_handleViewInverse, shadowLightView.inverse());
+				sharedParams->setMatrixParameter(s_handleProjection, shadowLightProjection);
+				sharedParams->endParameters(renderContext);
+
+				WorldRenderPassDeferred shadowPass(
+					s_techniqueShadow,
+					sharedParams,
+					shadowRenderView,
+					IWorldRenderPass::PfNone,
+					false
+				);
+
+				T_ASSERT(!renderContext->havePendingDraws());
+				wc.build(shadowRenderView, shadowPass, m_rootEntity);
+				wc.flush(shadowRenderView, shadowPass);
+				renderContext->merge(render::RpAll);
+
+				// Write transposed matrix to shaders as shaders have row-major order.
+				Matrix44 viewToLightSpace = shadowLightProjection * shadowLightView * viewInverse;
+				Matrix44 vls = viewToLightSpace.transpose();
+				vls.axisX().storeUnaligned(lsd->viewToLight0);
+				vls.axisY().storeUnaligned(lsd->viewToLight1);
+				vls.axisZ().storeUnaligned(lsd->viewToLight2);
+				vls.translation().storeUnaligned(lsd->viewToLight3);
+
+				// Write slice coordinates to shaders.
+				Vector4(
+					0.0f,
+					float(slice) / shadowSettings.cascadingSlices,
+					1.0f,
+					1.0f / shadowSettings.cascadingSlices
+				).storeUnaligned(lsd->atlasTransform);
 			}
 		}
-	}
+	);		
+}
 
-	// Find atlas shadow lights.
-	StaticVector< int32_t, 16 > lightAtlasIndices;
-	if (shadowsEnable)
-	{
-		for (int32_t i = 0; i < (int32_t)m_lights.size(); ++i)
-		{
-			const auto& light = m_lights[i];
-			if (light.castShadow && light.type == LtSpot)
-				lightAtlasIndices.push_back(i);
-		}
-	}
+void WorldRendererDeferred::buildAtlasShadowMap(const WorldRenderView& worldRenderView, const StaticVector< int32_t, 16 >& lightAtlasIndices, LightShaderData* lightShaderData) const
+{
+	if (lightAtlasIndices.empty())
+		return;
 
-	// Write all lights to sbuffer; without shadow map information.
-	for (int32_t i = 0; i < (int32_t)m_lights.size(); ++i)
-	{
-		const auto& light = m_lights[i];
-		auto* lsd = &lightShaderData[i];
+	const auto shadowSettings = m_settings.shadowSettings[m_shadowsQuality];
 
-		lsd->typeRangeRadius[0] = (float)light.type;
-		lsd->typeRangeRadius[1] = light.range;
-		lsd->typeRangeRadius[2] = light.radius / 2.0f;
-		lsd->typeRangeRadius[3] = 0.0f;
+	Matrix44 view = worldRenderView.getView();
+	Matrix44 viewInverse = view.inverse();
+	Frustum viewFrustum = worldRenderView.getViewFrustum();
 
-		(view * light.position.xyz1()).storeUnaligned(lsd->position);
-		(view * light.direction.xyz0()).storeUnaligned(lsd->direction);
-		light.color.storeUnaligned(lsd->color);
-
-		Vector4::zero().storeUnaligned(lsd->viewToLight0);
-		Vector4::zero().storeUnaligned(lsd->viewToLight1);
-		Vector4::zero().storeUnaligned(lsd->viewToLight2);
-		Vector4::zero().storeUnaligned(lsd->viewToLight3);
-	}
-
-	// If shadow casting directional light found add cascade shadow map pass
-	// and update light sbuffer.
-	if (lightCascadeIndex >= 0)
+	int32_t atlasIndex = 0;
+	for (int32_t lightAtlasIndex : lightAtlasIndices)
 	{
 		m_renderGraph->addPass(
-			L"Shadow cascade",
+			L"Shadow atlas",
 			[&](render::RenderPassBuilder& builder)
 			{
 				render::Clear clear;
 				clear.mask = render::CfDepth;
 				clear.depth = 1.0f;
-				builder.setOutput(s_handleShadowMapCascade, clear);
+				builder.setOutput(s_handleShadowMapAtlas, clear);
 			},
 			[=](render::RenderPassResources& resources, render::RenderContext* renderContext)
 			{
@@ -1117,286 +1196,173 @@ void WorldRendererDeferred::buildLights(const WorldRenderView& worldRenderView, 
 					m_rootEntity
 				);
 
-				const auto& light = m_lights[lightCascadeIndex];
-				auto* lsd = &lightShaderData[lightCascadeIndex];
+				const auto& light = m_lights[lightAtlasIndex];
+				auto* lsd = &lightShaderData[lightAtlasIndex];
 
-				for (int32_t slice = 0; slice < shadowSettings.cascadingSlices; ++slice)
-				{
-					Scalar zn(max(m_slicePositions[slice], m_settings.viewNearZ));
-					Scalar zf(min(m_slicePositions[slice + 1], shadowSettings.farZ));
+				// Calculate shadow map projection.
+				Matrix44 shadowLightView;
+				Matrix44 shadowLightProjection;
+				Frustum shadowFrustum;
 
-					// Create sliced view frustum.
-					Frustum sliceViewFrustum = viewFrustum;
-					sliceViewFrustum.setNearZ(zn);
-					sliceViewFrustum.setFarZ(zf);
+				shadowFrustum.buildPerspective(
+					light.radius,
+					1.0f,
+					0.1f,
+					light.range
+				);
 
-					// Calculate shadow map projection.
-					Matrix44 shadowLightView;
-					Matrix44 shadowLightProjection;
-					Frustum shadowFrustum;
+				shadowLightProjection = perspectiveLh(light.radius, 1.0f, 0.1f, light.range);
 
-					shadowProjection.calculate(
-						viewInverse,
-						light.position,
-						light.direction,
-						sliceViewFrustum,
-						shadowSettings.farZ,
-						shadowSettings.quantizeProjection,
-						shadowLightView,
-						shadowLightProjection,
-						shadowFrustum
-					);
+				Vector4 lightAxisX, lightAxisY, lightAxisZ;
+				lightAxisZ = -light.direction.xyz0().normalized();
+				lightAxisX = cross(viewInverse.axisZ(), lightAxisZ).normalized();
+				lightAxisY = cross(lightAxisX, lightAxisZ).normalized();
 
-					// Render shadow map.
-					WorldRenderView shadowRenderView;
-					shadowRenderView.setProjection(shadowLightProjection);
-					shadowRenderView.setView(shadowLightView, shadowLightView);
-					shadowRenderView.setViewFrustum(shadowFrustum);
-					shadowRenderView.setCullFrustum(shadowFrustum);
-					shadowRenderView.setTimes(
-						worldRenderView.getTime(),
-						worldRenderView.getDeltaTime(),
-						worldRenderView.getInterval()
-					);
+				shadowLightView = Matrix44(
+					lightAxisX,
+					lightAxisY,
+					lightAxisZ,
+					light.position.xyz1()
+				);
+				shadowLightView = shadowLightView.inverse();
 
-					// Set viewport to current cascade.
-					auto svrb = renderContext->alloc< render::SetViewportRenderBlock >();
-					svrb->viewport = render::Viewport(
-						0,
-						slice * 1024,
-						1024,
-						1024,
-						0.0f,
-						1.0f
-					);
-					renderContext->enqueue(svrb);	
+				// Render shadow map.
+				WorldRenderView shadowRenderView;
+				shadowRenderView.setProjection(shadowLightProjection);
+				shadowRenderView.setView(shadowLightView, shadowLightView);
+				shadowRenderView.setViewFrustum(shadowFrustum);
+				shadowRenderView.setCullFrustum(shadowFrustum);
+				shadowRenderView.setTimes(
+					worldRenderView.getTime(),
+					worldRenderView.getDeltaTime(),
+					worldRenderView.getInterval()
+				);
 
-					// Render entities into shadow map.
-					auto sharedParams = renderContext->alloc< render::ProgramParameters >();
-					sharedParams->beginParameters(renderContext);
-					sharedParams->setFloatParameter(s_handleTime, worldRenderView.getTime());
-					sharedParams->setMatrixParameter(s_handleView, shadowLightView);
-					sharedParams->setMatrixParameter(s_handleViewInverse, shadowLightView.inverse());
-					sharedParams->setMatrixParameter(s_handleProjection, shadowLightProjection);
-					sharedParams->endParameters(renderContext);
+				// Set viewport to light atlas slot.
+				auto svrb = renderContext->alloc< render::SetViewportRenderBlock >();
+				svrb->viewport = render::Viewport(
+					(atlasIndex & 3) * 1024,
+					(atlasIndex / 4) * 1024,
+					1024,
+					1024,
+					0.0f,
+					1.0f
+				);
+				renderContext->enqueue(svrb);	
 
-					WorldRenderPassDeferred shadowPass(
-						s_techniqueShadow,
-						sharedParams,
-						shadowRenderView,
-						IWorldRenderPass::PfNone,
-						false
-					);
+				// Render entities into shadow map.
+				auto sharedParams = renderContext->alloc< render::ProgramParameters >();
+				sharedParams->beginParameters(renderContext);
+				sharedParams->setFloatParameter(s_handleTime, worldRenderView.getTime());
+				sharedParams->setMatrixParameter(s_handleView, shadowLightView);
+				sharedParams->setMatrixParameter(s_handleViewInverse, shadowLightView.inverse());
+				sharedParams->setMatrixParameter(s_handleProjection, shadowLightProjection);
+				sharedParams->endParameters(renderContext);
 
-					T_ASSERT(!renderContext->havePendingDraws());
-					wc.build(shadowRenderView, shadowPass, m_rootEntity);
-					wc.flush(shadowRenderView, shadowPass);
-					renderContext->merge(render::RpAll);
+				WorldRenderPassDeferred shadowPass(
+					s_techniqueShadow,
+					sharedParams,
+					shadowRenderView,
+					IWorldRenderPass::PfNone,
+					false
+				);
 
-					// Write transposed matrix to shaders as shaders have row-major order.
-					Matrix44 viewToLightSpace = shadowLightProjection * shadowLightView * viewInverse;
-					Matrix44 vls = viewToLightSpace.transpose();
-					vls.axisX().storeUnaligned(lsd->viewToLight0);
-					vls.axisY().storeUnaligned(lsd->viewToLight1);
-					vls.axisZ().storeUnaligned(lsd->viewToLight2);
-					vls.translation().storeUnaligned(lsd->viewToLight3);
+				T_ASSERT(!renderContext->havePendingDraws());
+				wc.build(shadowRenderView, shadowPass, m_rootEntity);
+				wc.flush(shadowRenderView, shadowPass);
+				renderContext->merge(render::RpAll);
 
-					// Write slice coordinates to shaders.
-					Vector4(
-						0.0f,
-						float(slice) / shadowSettings.cascadingSlices,
-						1.0f,
-						1.0f / shadowSettings.cascadingSlices
-					).storeUnaligned(lsd->atlasTransform);
-				}
+				// Write transposed matrix to shaders as shaders have row-major order.
+				Matrix44 viewToLightSpace = shadowLightProjection * shadowLightView * viewInverse;
+				Matrix44 vls = viewToLightSpace.transpose();
+				vls.axisX().storeUnaligned(lsd->viewToLight0);
+				vls.axisY().storeUnaligned(lsd->viewToLight1);
+				vls.axisZ().storeUnaligned(lsd->viewToLight2);
+				vls.translation().storeUnaligned(lsd->viewToLight3);
+
+				// Write atlas coordinates to shaders.
+				Vector4(
+					(atlasIndex & 3) / 4.0f,
+					(atlasIndex / 4) / 4.0f,
+					1.0f / 4.0f,
+					1.0f / 4.0f
+				).storeUnaligned(lsd->atlasTransform);					
 			}
 		);
-	}
+		++atlasIndex;
+	}		
+}
 
-	if (!lightAtlasIndices.empty())
-	{
-		int32_t atlasIndex = 0;
-		for (int32_t lightAtlasIndex : lightAtlasIndices)
-		{
-			m_renderGraph->addPass(
-				L"Shadow atlas",
-				[&](render::RenderPassBuilder& builder)
-				{
-					render::Clear clear;
-					clear.mask = render::CfDepth;
-					clear.depth = 1.0f;
-					builder.setOutput(s_handleShadowMapAtlas, clear);
-				},
-				[=](render::RenderPassResources& resources, render::RenderContext* renderContext)
-				{
-					WorldContext wc(
-						m_entityRenderers,
-						renderContext,
-						m_rootEntity
-					);
-
-					const auto& light = m_lights[lightAtlasIndex];
-					auto* lsd = &lightShaderData[lightAtlasIndex];
-
-					// Calculate shadow map projection.
-					Matrix44 shadowLightView;
-					Matrix44 shadowLightProjection;
-					Frustum shadowFrustum;
-
-					shadowFrustum.buildPerspective(
-						light.radius,
-						1.0f,
-						0.1f,
-						light.range
-					);
-
-					shadowLightProjection = perspectiveLh(light.radius, 1.0f, 0.1f, light.range);
-
-					Vector4 lightAxisX, lightAxisY, lightAxisZ;
-					lightAxisZ = -light.direction.xyz0().normalized();
-					lightAxisX = cross(viewInverse.axisZ(), lightAxisZ).normalized();
-					lightAxisY = cross(lightAxisX, lightAxisZ).normalized();
-
-					shadowLightView = Matrix44(
-						lightAxisX,
-						lightAxisY,
-						lightAxisZ,
-						light.position.xyz1()
-					);
-					shadowLightView = shadowLightView.inverse();
-
-					// Render shadow map.
-					WorldRenderView shadowRenderView;
-					shadowRenderView.setProjection(shadowLightProjection);
-					shadowRenderView.setView(shadowLightView, shadowLightView);
-					shadowRenderView.setViewFrustum(shadowFrustum);
-					shadowRenderView.setCullFrustum(shadowFrustum);
-					shadowRenderView.setTimes(
-						worldRenderView.getTime(),
-						worldRenderView.getDeltaTime(),
-						worldRenderView.getInterval()
-					);
-
-					// Set viewport to light atlas slot.
-					auto svrb = renderContext->alloc< render::SetViewportRenderBlock >();
-					svrb->viewport = render::Viewport(
-						(atlasIndex & 3) * 1024,
-						(atlasIndex / 4) * 1024,
-						1024,
-						1024,
-						0.0f,
-						1.0f
-					);
-					renderContext->enqueue(svrb);	
-
-					// Render entities into shadow map.
-					auto sharedParams = renderContext->alloc< render::ProgramParameters >();
-					sharedParams->beginParameters(renderContext);
-					sharedParams->setFloatParameter(s_handleTime, worldRenderView.getTime());
-					sharedParams->setMatrixParameter(s_handleView, shadowLightView);
-					sharedParams->setMatrixParameter(s_handleViewInverse, shadowLightView.inverse());
-					sharedParams->setMatrixParameter(s_handleProjection, shadowLightProjection);
-					sharedParams->endParameters(renderContext);
-
-					WorldRenderPassDeferred shadowPass(
-						s_techniqueShadow,
-						sharedParams,
-						shadowRenderView,
-						IWorldRenderPass::PfNone,
-						false
-					);
-
-					T_ASSERT(!renderContext->havePendingDraws());
-					wc.build(shadowRenderView, shadowPass, m_rootEntity);
-					wc.flush(shadowRenderView, shadowPass);
-					renderContext->merge(render::RpAll);
-
-					// Write transposed matrix to shaders as shaders have row-major order.
-					Matrix44 viewToLightSpace = shadowLightProjection * shadowLightView * viewInverse;
-					Matrix44 vls = viewToLightSpace.transpose();
-					vls.axisX().storeUnaligned(lsd->viewToLight0);
-					vls.axisY().storeUnaligned(lsd->viewToLight1);
-					vls.axisZ().storeUnaligned(lsd->viewToLight2);
-					vls.translation().storeUnaligned(lsd->viewToLight3);
-
-					// Write atlas coordinates to shaders.
-					Vector4(
-						(atlasIndex & 3) / 4.0f,
-						(atlasIndex / 4) / 4.0f,
-						1.0f / 4.0f,
-						1.0f / 4.0f
-					).storeUnaligned(lsd->atlasTransform);					
-				}
-			);
-			++atlasIndex;
-		}
-	}
+void WorldRendererDeferred::buildTileData(const WorldRenderView& worldRenderView, TileShaderData* tileShaderData) const
+{
+	const Frustum& viewFrustum = worldRenderView.getViewFrustum();
 
 	// Update tile data.
+	const float dx = 1.0f / 16.0f;
+	const float dy = 1.0f / 16.0f;
+
+	Vector4 nh = viewFrustum.corners[1] - viewFrustum.corners[0];
+	Vector4 nv = viewFrustum.corners[3] - viewFrustum.corners[0];
+	Vector4 fh = viewFrustum.corners[5] - viewFrustum.corners[4];
+	Vector4 fv = viewFrustum.corners[7] - viewFrustum.corners[4];
+
+	Frustum tileFrustum;
+	for (int32_t y = 0; y < 16; ++y)
 	{
-		const float dx = 1.0f / 16.0f;
-		const float dy = 1.0f / 16.0f;
-
-		Vector4 nh = viewFrustum.corners[1] - viewFrustum.corners[0];
-		Vector4 nv = viewFrustum.corners[3] - viewFrustum.corners[0];
-		Vector4 fh = viewFrustum.corners[5] - viewFrustum.corners[4];
-		Vector4 fv = viewFrustum.corners[7] - viewFrustum.corners[4];
-
-		Frustum tileFrustum;
-		for (int32_t y = 0; y < 16; ++y)
+		float fy = float(y) * dy;
+		for (int32_t x = 0; x < 16; ++x)
 		{
-			float fy = float(y) * dy;
-			for (int32_t x = 0; x < 16; ++x)
+			float fx = float(x) * dx;
+
+			Vector4 corners[] =
 			{
-				float fx = float(x) * dx;
+				// Near
+				viewFrustum.corners[0] + nh * Scalar(fx) + nv * Scalar(fy),				// l t
+				viewFrustum.corners[0] + nh * Scalar(fx + dx) + nv * Scalar(fy),		// r t
+				viewFrustum.corners[0] + nh * Scalar(fx + dx) + nv * Scalar(fy + dy),	// r b
+				viewFrustum.corners[0] + nh * Scalar(fx) + nv * Scalar(fy + dy),		// l b
+				// Far
+				viewFrustum.corners[4] + fh * Scalar(fx) + fv * Scalar(fy),				// l t
+				viewFrustum.corners[4] + fh * Scalar(fx + dx) + fv * Scalar(fy),		// r t
+				viewFrustum.corners[4] + fh * Scalar(fx + dx) + fv * Scalar(fy + dy),	// r b
+				viewFrustum.corners[4] + fh * Scalar(fx) + fv * Scalar(fy + dy)			// l b
+			};
 
-				Vector4 corners[] =
+			tileFrustum.buildFromCorners(corners);
+
+			int32_t count = 0;
+			for (uint32_t i = 0; i < m_lights.size(); ++i)
+			{
+				const Light& light = m_lights[i];
+
+				if (light.type == LtDirectional)
 				{
-					// Near
-					viewFrustum.corners[0] + nh * Scalar(fx) + nv * Scalar(fy),				// l t
-					viewFrustum.corners[0] + nh * Scalar(fx + dx) + nv * Scalar(fy),		// r t
-					viewFrustum.corners[0] + nh * Scalar(fx + dx) + nv * Scalar(fy + dy),	// r b
-					viewFrustum.corners[0] + nh * Scalar(fx) + nv * Scalar(fy + dy),		// l b
-					// Far
-					viewFrustum.corners[4] + fh * Scalar(fx) + fv * Scalar(fy),				// l t
-					viewFrustum.corners[4] + fh * Scalar(fx + dx) + fv * Scalar(fy),		// r t
-					viewFrustum.corners[4] + fh * Scalar(fx + dx) + fv * Scalar(fy + dy),	// r b
-					viewFrustum.corners[4] + fh * Scalar(fx) + fv * Scalar(fy + dy)			// l b
-				};
-
-				tileFrustum.buildFromCorners(corners);
-
-				int32_t count = 0;
-				for (uint32_t i = 0; i < m_lights.size(); ++i)
-				{
-					const Light& light = m_lights[i];
-
-					if (light.type == LtDirectional)
-					{
-						tileShaderData[x + y * 16].lights[count++] = float(i);
-					}
-					else if (light.type == LtPoint)
-					{
-						Vector4 lvp = worldRenderView.getView() * light.position.xyz1();
-						if (tileFrustum.inside(lvp, Scalar(light.range)) != Frustum::IrOutside)
-							tileShaderData[x + y * 16].lights[count++] = float(i);
-					}
-					else if (light.type == LtSpot)
-					{
-						tileShaderData[x + y * 16].lights[count++] = float(i);
-					}
-
-					if (count >= 4)
-						break;
+					tileShaderData[x + y * 16].lights[count++] = float(i);
 				}
-				tileShaderData[x + y * 16].lightCount[0] = float(count);
+				else if (light.type == LtPoint)
+				{
+					Vector4 lvp = worldRenderView.getView() * light.position.xyz1();
+					if (tileFrustum.inside(lvp, Scalar(light.range)) != Frustum::IrOutside)
+						tileShaderData[x + y * 16].lights[count++] = float(i);
+				}
+				else if (light.type == LtSpot)
+				{
+					tileShaderData[x + y * 16].lights[count++] = float(i);
+				}
+
+				if (count >= 4)
+					break;
 			}
+			tileShaderData[x + y * 16].lightCount[0] = float(count);
 		}
 	}
 }
 
-void WorldRendererDeferred::buildShadowMask(const WorldRenderView& worldRenderView)
+void WorldRendererDeferred::buildShadowMask(const WorldRenderView& worldRenderView, int32_t lightCascadeIndex) const
 {
+	if (lightCascadeIndex < 0)
+		return;
+
 	const auto shadowSettings = m_settings.shadowSettings[m_shadowsQuality];
 	const bool shadowsEnable = (bool)(m_shadowsQuality != QuDisabled);
 
@@ -1450,7 +1416,7 @@ void WorldRendererDeferred::buildShadowMask(const WorldRenderView& worldRenderVi
 	);
 }
 
-void WorldRendererDeferred::buildReflections(const WorldRenderView& worldRenderView)
+void WorldRendererDeferred::buildReflections(const WorldRenderView& worldRenderView) const
 {
 	if (m_reflectionsQuality == QuDisabled)
 		return;
@@ -1462,7 +1428,7 @@ void WorldRendererDeferred::buildReflections(const WorldRenderView& worldRenderV
 			builder.addInput(s_handleGBuffer);
 
 			if (m_reflectionsQuality >= QuHigh)
-				builder.addInput(s_handleColorReadBack);
+				builder.addHistoryInput(s_handleVisual[0]);
 
 			render::Clear clear;
 			clear.mask = render::CfColor;
@@ -1477,8 +1443,8 @@ void WorldRendererDeferred::buildReflections(const WorldRenderView& worldRenderV
 				m_rootEntity
 			);
 
-			auto gbufferTargetSet = m_renderGraph->getRenderTarget(s_handleGBuffer);
-			auto colorReadBack = m_renderGraph->getRenderTarget(s_handleColorReadBack);
+			auto gbufferTargetSet = resources.getInput(s_handleGBuffer);
+			auto visualTargetSet = resources.getInput(s_handleVisual[0]);
 
 			auto sharedParams = renderContext->alloc< render::ProgramParameters >();
 			sharedParams->beginParameters(renderContext);
@@ -1506,14 +1472,14 @@ void WorldRendererDeferred::buildReflections(const WorldRenderView& worldRenderV
 			renderContext->merge(render::RpAll);
 
 			// Render screenspace reflections.
-			if (m_reflectionsQuality >= QuHigh && colorReadBack != nullptr)
+			if (m_reflectionsQuality >= QuHigh)
 			{
 				m_lightRenderer->renderReflections(
-					wc.getRenderContext(),
+					renderContext,
 					worldRenderView.getProjection(),
 					worldRenderView.getView(),
 					worldRenderView.getLastView(),
-					colorReadBack->getColorTexture(0),	// \tbd using last frame copy without reprojection...
+					visualTargetSet->getColorTexture(0),	// \tbd using last frame copy without reprojection...
 					gbufferTargetSet->getColorTexture(0),	// depth
 					gbufferTargetSet->getColorTexture(1),	// normals
 					gbufferTargetSet->getColorTexture(2)	// metalness, roughness and specular
@@ -1523,7 +1489,7 @@ void WorldRendererDeferred::buildReflections(const WorldRenderView& worldRenderV
 	);
 }
 
-void WorldRendererDeferred::buildVisual(const WorldRenderView& worldRenderView, int32_t frame)
+void WorldRendererDeferred::buildVisual(const WorldRenderView& worldRenderView, int32_t frame) const
 {
 	const bool shadowsEnable = (bool)(m_shadowsQuality != QuDisabled);
 	int32_t lightCount = (int32_t)m_lights.size();
@@ -1564,7 +1530,7 @@ void WorldRendererDeferred::buildVisual(const WorldRenderView& worldRenderView, 
 			auto sharedParams = renderContext->alloc< render::ProgramParameters >();
 			sharedParams->beginParameters(renderContext);
 			sharedParams->setFloatParameter(s_handleTime, worldRenderView.getTime());
-			sharedParams->setFloatParameter(s_handleLightCount, (float)m_frames[frame].lightCount);
+			sharedParams->setFloatParameter(s_handleLightCount, (float)lightCount);
 			sharedParams->setVectorParameter(s_handleFogDistanceAndDensity, m_fogDistanceAndDensity);
 			sharedParams->setVectorParameter(s_handleFogColor, m_fogColor);
 			sharedParams->setMatrixParameter(s_handleView, worldRenderView.getView());
@@ -1603,9 +1569,9 @@ void WorldRendererDeferred::buildVisual(const WorldRenderView& worldRenderView, 
 
 			// Analytical lights; resolve with gbuffer.
 			m_lightRenderer->renderLights(
-				wc.getRenderContext(),
+				renderContext,
 				worldRenderView.getTime(),
-				m_frames[frame].lightCount,
+				lightCount,
 				worldRenderView.getProjection(),
 				worldRenderView.getView(),
 				m_frames[frame].lightSBuffer,
@@ -1625,7 +1591,7 @@ void WorldRendererDeferred::buildVisual(const WorldRenderView& worldRenderView, 
 			if (dot4(m_fogDistanceAndDensity, Vector4(0.0f, 0.0f, 1.0f, 1.0f)) > FUZZY_EPSILON)
 			{
 				m_lightRenderer->renderFog(
-					wc.getRenderContext(),
+					renderContext,
 					worldRenderView.getProjection(),
 					worldRenderView.getView(),
 					m_fogDistanceAndDensity,
@@ -1655,38 +1621,7 @@ void WorldRendererDeferred::buildVisual(const WorldRenderView& worldRenderView, 
 	);
 }
 
-void WorldRendererDeferred::buildCopyFrame(const WorldRenderView& worldRenderView)
-{
-	m_renderGraph->addPass(
-		L"Copy Frame",
-		[&](render::RenderPassBuilder& builder)
-		{
-			builder.addInput(s_handleVisual[0]);
-			builder.setOutput(s_handleColorReadBack);
-		},
-		[=](render::RenderPassResources& resources, render::RenderContext* renderContext)
-		{
-			auto visualTargetSet = resources.getInput(s_handleVisual[0]);
-
-			render::ImageProcessStep::Instance::RenderParams params;
-			params.viewFrustum = worldRenderView.getViewFrustum();
-			params.projection = worldRenderView.getProjection();
-			params.deltaTime = 0.0f;
-
-			m_colorTargetCopy->build(
-				renderContext,
-				visualTargetSet->getColorTexture(0),	// color
-				nullptr,	// depth
-				nullptr,	// normal
-				nullptr,	// velocity
-				nullptr,	// shadow mask
-				params
-			);
-		}
-	);
-}
-
-void WorldRendererDeferred::buildEndFrame(const WorldRenderView& worldRenderView)
+void WorldRendererDeferred::buildProcess(const WorldRenderView& worldRenderView) const
 {
 	render::ImageProcessStep::Instance::RenderParams params;
 	params.viewFrustum = worldRenderView.getViewFrustum();

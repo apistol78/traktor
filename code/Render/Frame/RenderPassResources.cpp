@@ -16,13 +16,13 @@ RenderPassResources::RenderPassResources(const RenderGraph* renderGraph, const R
 
 IRenderTargetSet* RenderPassResources::getInput(handle_t targetId) const
 {
-#if defined(_DEBUG)
     auto it = std::find_if(m_pass.m_inputs.begin(), m_pass.m_inputs.end(), [&](const RenderPass::Input& input) {
         return input.name == targetId;
     });
-    T_ASSERT(it != m_pass.m_inputs.end());
-#endif
-    return m_renderGraph->getRenderTarget(targetId);
+    if (it != m_pass.m_inputs.end())
+        return m_renderGraph->getRenderTarget(targetId, it->history);
+    else
+        return nullptr;
 }
 
     }
