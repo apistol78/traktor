@@ -58,6 +58,7 @@ public:
 		handle_t m_handleShadowMapDiscRotation;
 		handle_t m_handleShadowMapSizeAndBias;
 		handle_t m_handleShadowMapPoissonTaps;
+		handle_t m_handleShadowMapUvTransform;
 		handle_t m_handleDepth;
 		handle_t m_handleMagicCoeffs;
 		handle_t m_handleViewEdgeTopLeft;
