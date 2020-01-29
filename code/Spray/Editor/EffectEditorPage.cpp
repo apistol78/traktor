@@ -16,6 +16,7 @@
 #include "Render/ITexture.h"
 #include "Render/Image/ImageProcessFactory.h"
 #include "Render/Image/ImageProcessData.h"
+#include "Render/Image2/ImageGraphFactory.h"
 #include "Render/Resource/SequenceTextureFactory.h"
 #include "Render/Resource/ShaderFactory.h"
 #include "Render/Resource/TextureFactory.h"
@@ -130,6 +131,7 @@ bool EffectEditorPage::create(ui::Container* parent)
 	m_resourceManager->addFactory(new render::ShaderFactory(renderSystem));
 	m_resourceManager->addFactory(new sound::SoundFactory());
 	m_resourceManager->addFactory(new render::ImageProcessFactory());
+	m_resourceManager->addFactory(new render::ImageGraphFactory());
 	m_resourceManager->addFactory(new EffectFactory(nullptr));
 
 	m_effectData = m_document->getObject< EffectData >(0);
