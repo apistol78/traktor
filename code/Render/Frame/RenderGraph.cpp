@@ -28,12 +28,18 @@ void RenderGraph::destroy()
 	m_order.clear();
 }
 
-bool RenderGraph::addTargetSet(const wchar_t* const name, handle_t targetSetId, const RenderGraphTargetSetDesc& targetSetDesc)
+bool RenderGraph::addTargetSet(
+	const wchar_t* const name,
+	handle_t targetSetId,
+	const RenderGraphTargetSetDesc& targetSetDesc,
+	IRenderTargetSet* sharedDepthStencilTargetSet
+)
 {
 	if (m_targets.find(targetSetId) != m_targets.end())
 		return false;
 	m_targets[targetSetId].name = name;
 	m_targets[targetSetId].targetSetDesc = targetSetDesc;
+	m_targets[targetSetId].sharedDepthStencilTargetSet = sharedDepthStencilTargetSet;
 	return true;
 }
 
@@ -67,12 +73,13 @@ bool RenderGraph::validate()
 		rtscd.height = td.height;
 		rtscd.multiSample = 0;
 		rtscd.createDepthStencil = td.createDepthStencil;
+		rtscd.usingPrimaryDepthStencil = td.usingPrimaryDepthStencil;
 		rtscd.usingDepthStencilAsTexture = td.usingDepthStencilAsTexture;
 		rtscd.usingPrimaryDepthStencil = false;
 		rtscd.storeDepthStencil = true;
 		rtscd.ignoreStencil = false;
 		rtscd.generateMips = td.generateMips;
-		rtscd.sharedDepthStencil = nullptr;
+		rtscd.sharedDepthStencil = tm.second.sharedDepthStencilTargetSet;
 
 		for (int32_t i = 0; i < td.count; ++i)
 			rtscd.targets[i].format = td.colorFormats[i];
