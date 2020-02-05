@@ -183,7 +183,7 @@ bool ScenePipeline::buildOutput(
 	for (uint32_t i = 0; i < world::QuLast; ++i)
 	{
 		if (m_suppressImageProcess)
-			sceneResource->getWorldRenderSettings()->imageProcess[i] = resource::Id< render::ImageProcessData >();
+			sceneResource->getWorldRenderSettings()->imageProcess[i] = resource::Id< render::ImageGraph >();
 	}
 
 	for (uint32_t i = 0; i < world::QuLast; ++i)
@@ -196,7 +196,7 @@ bool ScenePipeline::buildOutput(
 				shadowSetting.cascadingSlices = std::min(shadowSetting.cascadingSlices, m_shadowMapMaxSlices);
 		}
 		else
-			shadowSetting.maskProject = resource::Id< render::ImageProcessData >();
+			shadowSetting.maskProject = resource::Id< render::ImageGraph >();
 	}
 
 	Ref< db::Instance > outputInstance = pipelineBuilder->createOutputInstance(outputPath, outputGuid);

@@ -266,7 +266,6 @@ void SparkLayer::prepare(const runtime::UpdateInfo& info)
 		desc.multiSample = 0;
 		desc.createDepthStencil = false;
 		desc.usingPrimaryDepthStencil = true;
-		desc.preferTiled = false;
 		desc.ignoreStencil = false;
 		desc.generateMips = false;
 		desc.targets[0].format = render::TfR8G8B8A8;

@@ -67,7 +67,6 @@ bool OpenVRCompositor::create(IRenderSystem* renderSystem, IRenderView* renderVi
 	rtscd.createDepthStencil = true;
 	rtscd.usingDepthStencilAsTexture = false;
 	rtscd.usingPrimaryDepthStencil = false;
-	rtscd.preferTiled = false;
 	rtscd.ignoreStencil = false;
 	rtscd.generateMips = false;
 	rtscd.targets[0].format = TfR8G8B8A8;

@@ -40,7 +40,6 @@ bool ImageProcessDefineTarget::define(ImageProcess* imageProcess, resource::IRes
 	rtscd.multiSample = m_multiSample;
 	rtscd.createDepthStencil = m_depthStencil;
 	rtscd.usingPrimaryDepthStencil = false;
-	rtscd.preferTiled = m_preferTiled;
 	rtscd.ignoreStencil = true;
 	rtscd.generateMips = m_generateMips;
 	rtscd.targets[0].format = m_format;

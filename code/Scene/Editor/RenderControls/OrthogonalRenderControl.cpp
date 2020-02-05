@@ -357,8 +357,8 @@ void OrthogonalRenderControl::showSelectionRectangle(const ui::Rect& rect)
 
 void OrthogonalRenderControl::getDebugTargets(std::vector< render::DebugTarget >& outDebugTargets)
 {
-	if (m_worldRenderer)
-		m_worldRenderer->getDebugTargets(outDebugTargets);
+	// if (m_worldRenderer)
+	// 	m_worldRenderer->getDebugTargets(outDebugTargets);
 }
 
 void OrthogonalRenderControl::setDebugTarget(const render::DebugTarget* debugTarget, float alpha)

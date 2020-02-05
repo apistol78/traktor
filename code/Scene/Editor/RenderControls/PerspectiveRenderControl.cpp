@@ -408,8 +408,8 @@ void PerspectiveRenderControl::showSelectionRectangle(const ui::Rect& rect)
 
 void PerspectiveRenderControl::getDebugTargets(std::vector< render::DebugTarget >& outDebugTargets)
 {
-	if (m_worldRenderer)
-		m_worldRenderer->getDebugTargets(outDebugTargets);
+	// if (m_worldRenderer)
+	// 	m_worldRenderer->getDebugTargets(outDebugTargets);
 }
 
 void PerspectiveRenderControl::setDebugTarget(const render::DebugTarget* debugTarget, float alpha)
@@ -570,12 +570,12 @@ void PerspectiveRenderControl::eventPaint(ui::PaintEvent* event)
 			m_worldRenderer->build(m_worldRenderView, 0);
 
 			// Set post process parameters from scene instance.
-			render::ImageProcess* postProcess = m_worldRenderer->getVisualImageProcess();
-			if (postProcess)
-			{
-				for (SmallMap< render::handle_t, resource::Proxy< render::ITexture > >::const_iterator i = sceneInstance->getImageProcessParams().begin(); i != sceneInstance->getImageProcessParams().end(); ++i)
-					postProcess->setTextureParameter(i->first, i->second);
-			}
+			// render::ImageProcess* postProcess = m_worldRenderer->getVisualImageProcess();
+			// if (postProcess)
+			// {
+			// 	for (SmallMap< render::handle_t, resource::Proxy< render::ITexture > >::const_iterator i = sceneInstance->getImageProcessParams().begin(); i != sceneInstance->getImageProcessParams().end(); ++i)
+			// 		postProcess->setTextureParameter(i->first, i->second);
+			// }
 		}
 
 		m_worldRenderer->render(m_renderView, 0);

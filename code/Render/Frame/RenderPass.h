@@ -2,7 +2,7 @@
 
 #include <functional>
 #include "Core/Object.h"
-#include "Core/Ref.h"
+#include "Core/RefArray.h"
 #include "Core/Containers/AlignedVector.h"
 #include "Render/Types.h"
 
@@ -20,8 +20,7 @@ namespace traktor
 	{
 
 class RenderContext;
-class RenderPassBuilder;
-class RenderPassResources;
+class RenderGraph;
 
 /*! Render pass definition.
  * \ingroup Render
@@ -31,51 +30,70 @@ class T_DLLCLASS RenderPass : public Object
 	T_RTTI_CLASS;
 
 public:
-	RenderPass();
-
-	typedef std::function< void(RenderPassBuilder&) > fn_setup_t;
-
-	typedef std::function< void(RenderPassResources&, RenderContext*) > fn_build_t;
-
-private:
-	friend class RenderGraph;
-	friend class RenderPassBuilder;
-	friend class RenderPassResources;
+	typedef std::function< void(const RenderGraph&, RenderContext*) > fn_build_t;
 
 	struct Input
 	{
-		handle_t name;		//!< Resource name.
-		int32_t colorIndex;	//!< Index of target's color attachment.
-		bool history;		//!< Read previous frame; useful when cyclic behaviour desired.
-
-		Input()
-		:	name(0)
-		,	colorIndex(0)
-		,	history(false)
-		{
-		}
+		handle_t targetSetId;	//!< Resource name.
+		int32_t colorIndex;		//!< Index of target's color attachment.
+		bool history;			//!< Read previous frame; useful when cyclic behaviour desired.
 	};
 
 	struct Output
 	{
-		handle_t name;		//!< Resource name.
-		int32_t colorIndex;	//!< Index of target's color attachment, -1 means all attachments.
-		Clear clear;		//!< Target clear value and mask.
-
-		Output()
-		:	name(0)
-		,	colorIndex(-1)
-		{
-			clear.mask = 0;
-		}
+		handle_t targetSetId;	//!< Resource name.
+		int32_t colorIndex;		//!< Index of target's color attachment, -1 means all attachments.
+		Clear clear;			//!< Target clear value and mask.
 	};
 
+	explicit RenderPass(const wchar_t* const name = L"Unnamed");
+
+	const wchar_t* getName() const { return m_name; }
+
+	//! \{
+
+	void addInput(handle_t targetSetId);
+
+	void addInput(handle_t targetSetId, int32_t colorIndex, bool history);
+
+	const AlignedVector< Input >& getInputs() const { return m_inputs; }
+
+	//! \}
+
+	//! \{
+
+	void setOutput(handle_t targetSetId);
+
+	void setOutput(handle_t targetSetId, const Clear& clear);
+
+	void setOutput(handle_t targetSetId, int32_t colorIndex, const Clear& clear);
+
+	const Output& getOutput() const { return m_output; }
+
+	//! \}
+
+	//! \{
+
+	void addBuild(const fn_build_t& build);
+
+	const AlignedVector< fn_build_t >& getBuilds() const { return m_builds; }
+
+	//! \}
+
+	//! \{
+
+	void addSubPass(const RenderPass* subPass);
+
+	const RefArray< const RenderPass >& getSubPasses() const { return m_subPasses; }
+
+	//! \}
+
+protected:
 	const wchar_t* m_name;
 	AlignedVector< Input > m_inputs;
 	Output m_output;
-	fn_build_t m_build;
-	
-	int32_t m_refs;
+    AlignedVector< fn_build_t > m_builds;
+	RefArray< const RenderPass > m_subPasses;
 };
 
 	}

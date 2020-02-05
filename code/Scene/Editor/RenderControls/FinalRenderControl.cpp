@@ -450,12 +450,12 @@ void FinalRenderControl::eventPaint(ui::PaintEvent* event)
 	if (m_renderView->begin(nullptr))
 	{
 		// Set post process parameters from scene instance.
-		render::ImageProcess* postProcess = m_worldRenderer->getVisualImageProcess();
-		if (postProcess)
-		{
-			for (const auto& imageProcessParam : m_sceneInstance->getImageProcessParams())
-				postProcess->setTextureParameter(imageProcessParam.first, imageProcessParam.second);
-		}
+		// render::ImageProcess* postProcess = m_worldRenderer->getVisualImageProcess();
+		// if (postProcess)
+		// {
+		// 	for (const auto& imageProcessParam : m_sceneInstance->getImageProcessParams())
+		// 		postProcess->setTextureParameter(imageProcessParam.first, imageProcessParam.second);
+		// }
 
 		m_worldRenderer->render(m_renderView, 0);
 

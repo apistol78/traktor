@@ -60,7 +60,6 @@ bool RenderTargetSetVk::createPrimary(int32_t width, int32_t height, VkFormat co
 	m_setDesc.createDepthStencil = true;
 	m_setDesc.usingDepthStencilAsTexture = false;
 	m_setDesc.usingPrimaryDepthStencil = false;	// We contain primary depth thus do not share.
-	m_setDesc.preferTiled = false;
 	m_setDesc.ignoreStencil = false;
 	m_setDesc.generateMips = false;
 	m_setDesc.sharedDepthStencil = nullptr;

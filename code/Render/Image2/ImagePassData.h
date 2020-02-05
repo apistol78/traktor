@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Core/Ref.h"
+#include <string>
 #include "Core/RefArray.h"
 #include "Core/Serialization/ISerializable.h"
 
@@ -25,25 +25,24 @@ class IResourceManager;
     {
 
 class IImageStepData;
-class ImagePassData;
-class ImageGraph;
+class ImagePass;
 
 /*!
  * \ingroup Render
  */
-class T_DLLCLASS ImageGraphData : public ISerializable
+class T_DLLCLASS ImagePassData : public ISerializable
 {
     T_RTTI_CLASS;
 
 public:
-    Ref< ImageGraph > createInstance(resource::IResourceManager* resourceManager) const;
+    Ref< const ImagePass > createInstance(resource::IResourceManager* resourceManager) const;
 
     virtual void serialize(ISerializer& s) override final;
 
 private:
     friend class ImageGraphPipeline;
 
-    RefArray< ImagePassData > m_passes;
+    std::wstring m_output;
     RefArray< IImageStepData > m_steps;
 };
 

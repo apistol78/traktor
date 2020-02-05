@@ -206,13 +206,13 @@ void ProgramParameters::setStencilReference(uint32_t stencilReference)
 	write< uint32_t >(m_parameterLast, stencilReference);
 }
 
-void ProgramParameters::attachParameters(ProgramParameters* programParameters)
+void ProgramParameters::attachParameters(const ProgramParameters* programParameters)
 {
 	T_ASSERT(m_parameterLast);
 	align< handle_t >(m_parameterLast);
 	write< handle_t >(m_parameterLast, 0);
 	write< int8_t >(m_parameterLast, PmtAttachedParameters);
-	write< ProgramParameters* >(m_parameterLast, programParameters);
+	write< const ProgramParameters* >(m_parameterLast, programParameters);
 }
 
 void ProgramParameters::fixup(IProgram* program) const
@@ -284,7 +284,7 @@ void ProgramParameters::fixup(IProgram* program) const
 
 		case PmtAttachedParameters:
 			{
-				auto programParameters = read< ProgramParameters* >(parameter);
+				auto programParameters = read< const ProgramParameters* >(parameter);
 				programParameters->fixup(program);
 			}
 			break;

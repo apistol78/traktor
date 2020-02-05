@@ -1054,7 +1054,7 @@
 													<items/>
 												</item>
 											</items>
-										</item>										
+										</item>
 										<item type="Filter">
 											<name>Frame</name>
 											<items>
@@ -5821,6 +5821,15 @@
 														<items>
 															<item type="File">
 																<fileName>SH/*.*</fileName>
+																<items/>
+															</item>
+														</items>
+													</item>
+													<item type="Filter">
+														<name>Image2</name>
+														<items>
+															<item type="File">
+																<fileName>Image2/*.*</fileName>
 																<items/>
 															</item>
 														</items>

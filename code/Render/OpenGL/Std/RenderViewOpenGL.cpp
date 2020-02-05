@@ -63,7 +63,6 @@ RenderViewOpenGL::RenderViewOpenGL(
 	m_primaryTargetDesc.multiSample = desc.multiSample;
 	m_primaryTargetDesc.createDepthStencil = bool(desc.depthBits > 0 || desc.stencilBits > 0);
 	m_primaryTargetDesc.usingPrimaryDepthStencil = false;
-	m_primaryTargetDesc.preferTiled = false;
 	m_primaryTargetDesc.ignoreStencil = bool(desc.stencilBits == 0);
 	m_waitVBlanks = desc.waitVBlanks;
 
@@ -115,7 +114,6 @@ RenderViewOpenGL::RenderViewOpenGL(
 	m_primaryTargetDesc.multiSample = desc.multiSample;
 	m_primaryTargetDesc.createDepthStencil = bool(desc.depthBits > 0 || desc.stencilBits > 0);
 	m_primaryTargetDesc.usingPrimaryDepthStencil = false;
-	m_primaryTargetDesc.preferTiled = false;
 	m_primaryTargetDesc.ignoreStencil = bool(desc.stencilBits == 0);
 	m_waitVBlanks = desc.waitVBlanks;
 }
