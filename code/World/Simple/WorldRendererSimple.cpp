@@ -83,12 +83,9 @@ void WorldRendererSimple::build(const WorldRenderView& worldRenderView, int32_t 
 	wc.flush();
 	wc.getRenderContext()->merge(render::RpAll);
 
-	m_renderGraph->addPass(
-		L"Visual",
-		[&](render::RenderPassBuilder& builder)
-		{
-		},
-		[=](render::RenderPassResources& resources, render::RenderContext* renderContext)
+	Ref< render::RenderPass > rp = new render::RenderPass(L"Visual");
+	rp->addBuild(
+		[=](const render::RenderGraph& renderGraph, render::RenderContext* renderContext)
 		{
 			WorldContext wc(
 				m_entityRenderers,
@@ -115,6 +112,7 @@ void WorldRendererSimple::build(const WorldRenderView& worldRenderView, int32_t 
 			renderContext->merge(render::RpAll);
 		}
 	);
+	m_renderGraph->addPass(rp);
 
 	// Validate render graph.
 	if (!m_renderGraph->validate())
@@ -131,15 +129,6 @@ void WorldRendererSimple::build(const WorldRenderView& worldRenderView, int32_t 
 void WorldRendererSimple::render(render::IRenderView* renderView, int32_t frame)
 {
 	m_frames[frame].renderContext->render(renderView);
-}
-
-render::ImageProcess* WorldRendererSimple::getVisualImageProcess()
-{
-	return nullptr;
-}
-
-void WorldRendererSimple::getDebugTargets(std::vector< render::DebugTarget >& outTargets) const
-{
 }
 
 	}

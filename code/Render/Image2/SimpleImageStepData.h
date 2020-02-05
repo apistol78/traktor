@@ -2,7 +2,7 @@
 
 #include <string>
 #include "Core/Containers/AlignedVector.h"
-#include "Render/Image2/IImagePassData.h"
+#include "Render/Image2/IImageStepData.h"
 #include "Resource/Id.h"
 
 // import/export mechanism.
@@ -23,16 +23,18 @@ class Shader;
 /*!
  * \ingroup Render
  */
-class T_DLLCLASS SimpleImagePassData : public IImagePassData
+class T_DLLCLASS SimpleImageStepData : public IImageStepData
 {
     T_RTTI_CLASS;
 
 public:
-    virtual Ref< IImagePass > createInstance(resource::IResourceManager* resourceManager) const override final;
+    virtual Ref< const IImageStep > createInstance(resource::IResourceManager* resourceManager) const override final;
 
     virtual void serialize(ISerializer& s) override final;
 
 private:
+    friend class ImageGraphPipeline;
+
     struct Source
     {
         std::wstring input;
@@ -43,7 +45,6 @@ private:
 
     resource::Id< Shader > m_shader;
     AlignedVector< Source > m_sources;
-    std::wstring m_output;
 };
 
     }

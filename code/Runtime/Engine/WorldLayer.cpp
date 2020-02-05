@@ -319,12 +319,12 @@ void WorldLayer::render(uint32_t frame)
 	render::IRenderView* renderView = m_environment->getRender()->getRenderView();
 
 	// Bind per-scene post processing parameters.
-	render::ImageProcess* postProcess = m_worldRenderer->getVisualImageProcess();
-	if (postProcess)
-	{
-		for (const auto param : m_scene->getImageProcessParams())
-			postProcess->setTextureParameter(param.first, param.second);
-	}
+	// render::ImageProcess* postProcess = m_worldRenderer->getVisualImageProcess();
+	// if (postProcess)
+	// {
+	// 	for (const auto param : m_scene->getImageProcessParams())
+	// 		postProcess->setTextureParameter(param.first, param.second);
+	// }
 
 	// Render world.
 	m_worldRenderer->render(renderView, frame);
@@ -460,7 +460,7 @@ void WorldLayer::setControllerEnable(bool controllerEnable)
 
 render::ImageProcess* WorldLayer::getImageProcess() const
 {
-	return m_worldRenderer->getVisualImageProcess();
+	return nullptr; // m_worldRenderer->getVisualImageProcess();
 }
 
 void WorldLayer::resetController()
@@ -589,9 +589,9 @@ void WorldLayer::feedbackValues(spray::FeedbackType type, const float* values, i
 	else if (type == spray::FbtImageProcess)
 	{
 		T_ASSERT(count >= 4);
-		render::ImageProcess* postProcess = m_worldRenderer->getVisualImageProcess();
-		if (postProcess)
-			postProcess->setVectorParameter(s_handleFeedback, Vector4::loadUnaligned(values));
+		// render::ImageProcess* postProcess = m_worldRenderer->getVisualImageProcess();
+		// if (postProcess)
+		// 	postProcess->setVectorParameter(s_handleFeedback, Vector4::loadUnaligned(values));
 	}
 }
 

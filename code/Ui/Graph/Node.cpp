@@ -129,12 +129,12 @@ const INodeShape* Node::getShape() const
 	return m_shape;
 }
 
-Ref< Pin > Node::createInputPin(const std::wstring& name, bool mandatory)
+Pin* Node::createInputPin(const std::wstring& name, bool mandatory)
 {
 	return createInputPin(name, name, mandatory);
 }
 
-Ref< Pin > Node::createInputPin(const std::wstring& name, const std::wstring& label, bool mandatory)
+Pin* Node::createInputPin(const std::wstring& name, const std::wstring& label, bool mandatory)
 {
 	T_ASSERT(m_shape);
 
@@ -151,22 +151,27 @@ const RefArray< Pin >& Node::getInputPins() const
 	return m_inputPins;
 }
 
-Pin* Node::findInputPin(const std::wstring& name) const
+Pin* Node::getInputPin(uint32_t index) const
 {
-	for (RefArray< Pin >::const_iterator i = m_inputPins.begin(); i != m_inputPins.end(); ++i)
-	{
-		if ((*i)->getName() == name)
-			return *i;
-	}
-	return 0;
+	return m_inputPins[index];
 }
 
-Ref< Pin > Node::createOutputPin(const std::wstring& name)
+Pin* Node::findInputPin(const std::wstring& name) const
+{
+	for (auto inputPin : m_inputPins)
+	{
+		if (inputPin->getName() == name)
+			return inputPin;
+	}
+	return nullptr;
+}
+
+Pin* Node::createOutputPin(const std::wstring& name)
 {
 	return createOutputPin(name, name);
 }
 
-Ref< Pin > Node::createOutputPin(const std::wstring& name, const std::wstring& label)
+Pin* Node::createOutputPin(const std::wstring& name, const std::wstring& label)
 {
 	T_ASSERT(m_shape);
 
@@ -183,14 +188,19 @@ const RefArray< Pin >& Node::getOutputPins() const
 	return m_outputPins;
 }
 
+Pin* Node::getOutputPin(uint32_t index) const
+{
+	return m_outputPins[index];
+}
+
 Pin* Node::findOutputPin(const std::wstring& name) const
 {
-	for (RefArray< Pin >::const_iterator i = m_outputPins.begin(); i != m_outputPins.end(); ++i)
+	for (auto outputPin : m_outputPins)
 	{
-		if ((*i)->getName() == name)
-			return *i;
+		if (outputPin->getName() == name)
+			return outputPin;
 	}
-	return 0;
+	return nullptr;
 }
 
 bool Node::hit(const Point& p) const

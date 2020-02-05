@@ -5,7 +5,6 @@
 #include "Render/Context/RenderBlock.h"
 #include "Render/Context/RenderContext.h"
 #include "Render/Frame/RenderGraph.h"
-#include "Render/Frame/RenderPassBuilder.h"
 
 namespace traktor
 {
@@ -29,37 +28,27 @@ void RenderGraph::destroy()
 	m_order.clear();
 }
 
-bool RenderGraph::addRenderTarget(const wchar_t* const name, handle_t targetId, const RenderTargetSetCreateDesc& rtscd, const RenderTargetAutoSize& rtas)
+bool RenderGraph::addTargetSet(const wchar_t* const name, handle_t targetSetId, const RenderGraphTargetSetDesc& targetSetDesc)
 {
-	if (m_targets.find(targetId) != m_targets.end())
+	if (m_targets.find(targetSetId) != m_targets.end())
 		return false;
-	m_targets[targetId].name = name;
-	m_targets[targetId].rtscd = rtscd;
-	m_targets[targetId].rtas = rtas;
+	m_targets[targetSetId].name = name;
+	m_targets[targetSetId].targetSetDesc = targetSetDesc;
 	return true;
 }
 
-IRenderTargetSet* RenderGraph::getRenderTarget(handle_t targetId, bool history) const
+IRenderTargetSet* RenderGraph::getTargetSet(handle_t targetSetId, bool history) const
 {
-	auto it = m_targets.find(targetId);
+	auto it = m_targets.find(targetSetId);
 	if (it != m_targets.end())
 		return it->second.rts[history ? 1 : 0];
 	else
 		return nullptr;
 }
 
-void RenderGraph::addPass(const wchar_t* const name, const RenderPass::fn_setup_t& setup, const RenderPass::fn_build_t& build)
+void RenderGraph::addPass(const RenderPass* pass)
 {
-	// Allocate pass from list.
-	auto& pass = m_passes.push_back();
-	pass.m_name = name;
-
-	// Setup pass using builder.
-	RenderPassBuilder builder(pass);
-	setup(builder);
-
-	// Attach build handler.
-	pass.m_build = build;
+	m_passes.push_back(pass);
 }
 
 bool RenderGraph::validate()
@@ -70,17 +59,32 @@ bool RenderGraph::validate()
 		if (tm.second.rts[0])
 			continue;
 
-		RenderTargetSetCreateDesc rtscd = tm.second.rtscd;
-		const auto& rtas = tm.second.rtas;
+		const auto& td = tm.second.targetSetDesc;
 
-		if (rtas.screenWidthDenom > 0)
-			rtscd.width = (m_width + rtas.screenWidthDenom - 1) / rtas.screenWidthDenom;
-		if (rtas.screenHeightDenom > 0)
-			rtscd.height = (m_height + rtas.screenHeightDenom - 1) / rtas.screenHeightDenom;
-		if (rtas.maxWidth > 0)
-			rtscd.width = min< int32_t >(rtscd.width, rtas.maxWidth);
-		if (rtas.maxHeight > 0)
-			rtscd.height = min< int32_t >(rtscd.height, rtas.maxHeight);
+		RenderTargetSetCreateDesc rtscd = {};
+		rtscd.count = td.count;
+		rtscd.width = td.width;
+		rtscd.height = td.height;
+		rtscd.multiSample = 0;
+		rtscd.createDepthStencil = td.createDepthStencil;
+		rtscd.usingDepthStencilAsTexture = td.usingDepthStencilAsTexture;
+		rtscd.usingPrimaryDepthStencil = false;
+		rtscd.storeDepthStencil = true;
+		rtscd.ignoreStencil = false;
+		rtscd.generateMips = td.generateMips;
+		rtscd.sharedDepthStencil = nullptr;
+
+		for (int32_t i = 0; i < td.count; ++i)
+			rtscd.targets[i].format = td.colorFormats[i];
+		
+		if (td.screenWidthDenom > 0)
+			rtscd.width = (m_width + td.screenWidthDenom - 1) / td.screenWidthDenom;
+		if (td.screenHeightDenom > 0)
+			rtscd.height = (m_height + td.screenHeightDenom - 1) / td.screenHeightDenom;
+		if (td.maxWidth > 0)
+			rtscd.width = min< int32_t >(rtscd.width, td.maxWidth);
+		if (td.maxHeight > 0)
+			rtscd.height = min< int32_t >(rtscd.height, td.maxHeight);
 
 		tm.second.rts[0] = m_renderSystem->createRenderTargetSet(rtscd, tm.second.name);
 		if (!tm.second.rts[0])
@@ -88,11 +92,11 @@ bool RenderGraph::validate()
 
 		// Check if any pass require history of this target.
 		bool needHistory = false;
-		for (const auto& pass : m_passes)
+		for (auto pass : m_passes)
 		{
-			for (const auto& input : pass.m_inputs)
+			for (const auto& input : pass->getInputs())
 			{
-				if (input.name == tm.first)
+				if (input.targetSetId == tm.first)
 					needHistory |= input.history;
 			}
 		}
@@ -104,22 +108,11 @@ bool RenderGraph::validate()
 		}
 	}
 
-#if defined(_DEBUG)
-	log::info << L"== Render passes ==" << Endl;
-	for (int32_t i = 0; i < m_passes.size(); ++i)
-	{
-		log::info << i << L". " << m_passes[i].m_name << L" -> " << getParameterName(m_passes[i].m_output.name) << Endl;
-		for (const auto& input : m_passes[i].m_inputs)
-			log::info << L"   " << getParameterName(input.name) << Endl;
-	}
-	log::info << L"===================" << Endl;
-#endif
-
 	// Append passes depth-first.
 	SmallSet< uint32_t > order;
-	for (size_t i = 0; i < m_passes.size(); ++i)
+	for (int32_t i = 0; i < (int32_t)m_passes.size(); ++i)
 	{
-		if (m_passes[i].m_output.name == 0)
+		if (m_passes[i]->getOutput().targetSetId == 0)
 		{
 			traverse(i, [&](int32_t index) {
 				order.insert(index);
@@ -129,14 +122,6 @@ bool RenderGraph::validate()
 
 	m_order.resize(0);
 	m_order.insert(m_order.end(), order.begin(), order.end());
-
-#if defined(_DEBUG)
-	log::info << L"== Order ==" << Endl;
-	for (auto index : m_order)
-		log::info << index << L". " << m_passes[index].m_name << L" -> " << getParameterName(m_passes[index].m_output.name) << Endl;
-	log::info << L"===================" << Endl;
-#endif
-
 	return true;
 }
 
@@ -145,27 +130,25 @@ bool RenderGraph::build(RenderContext* renderContext)
 	// Render passes in dependency order.
 	for (auto index : m_order)
 	{
-		const auto& pass = m_passes[index];
+		const auto pass = m_passes[index];
+		const auto& output = pass->getOutput();
 
-		if (pass.m_output.name != 0)
+		if (output.targetSetId != 0)
 		{
-			auto it = m_targets.find(pass.m_output.name);
+			auto it = m_targets.find(output.targetSetId);
 			T_FATAL_ASSERT(it != m_targets.end());
 
 			auto tb = renderContext->alloc< TargetBeginRenderBlock >();
 			tb->renderTargetSet = it->second.rts[0];
-			tb->renderTargetIndex = pass.m_output.colorIndex;
-			tb->clear = pass.m_output.clear;
+			tb->renderTargetIndex = output.colorIndex;
+			tb->clear = output.clear;
 			renderContext->enqueue(tb);			
 		}
 
-		if (pass.m_build)
-		{
-			RenderPassResources resources(this, pass);
-			pass.m_build(resources, renderContext);
-		}
+		for (const auto& build : pass->getBuilds())
+			build(*this, renderContext);
 
-		if (pass.m_output.name != 0)
+		if (output.targetSetId != 0)
 		{
 			auto te = renderContext->alloc< TargetEndRenderBlock >();
 			renderContext->enqueue(te);
@@ -204,10 +187,10 @@ void RenderGraph::getDebugTargets(std::vector< render::DebugTarget >& outTargets
 			));			
 	}
 }
-		
+
 void RenderGraph::traverse(int32_t index, const std::function< void(int32_t) >& fn) const
 {
-	for (const auto& input : m_passes[index].m_inputs)
+	for (const auto& input : m_passes[index]->getInputs())
 	{
 		// History inputs are not included since they usually indicate a cyclic dependency.
 		if (input.history)
@@ -217,7 +200,7 @@ void RenderGraph::traverse(int32_t index, const std::function< void(int32_t) >& 
 		{
 			if (i == index)
 				continue;
-			if (m_passes[i].m_output.name == input.name)
+			if (m_passes[i]->getOutput().targetSetId == input.targetSetId)
 				traverse(i, fn);
 		}
 	}

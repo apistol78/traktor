@@ -5,7 +5,7 @@
 #include "Core/Serialization/MemberEnum.h"
 #include "Core/Serialization/MemberStaticArray.h"
 #include "Render/ITexture.h"
-#include "Render/Image/ImageProcessData.h"
+#include "Render/Image2/ImageGraph.h"
 #include "Resource/Member.h"
 #include "World/IrradianceGrid.h"
 #include "World/WorldRenderSettings.h"
@@ -171,7 +171,7 @@ void WorldRenderSettings::serialize(ISerializer& s)
 		s >> resource::Member< IrradianceGrid >(L"irradianceGrid", irradianceGrid);
 
 	if (s.getVersion() >= 22)
-		s >> MemberStaticArray< resource::Id< render::ImageProcessData >, sizeof_array(imageProcess), resource::Member< render::ImageProcessData > >(L"imageProcess", imageProcess, c_ImageProcess_elementNames);
+		s >> MemberStaticArray< resource::Id< render::ImageGraph >, sizeof_array(imageProcess), resource::Member< render::ImageGraph > >(L"imageProcess", imageProcess, c_ImageProcess_elementNames);
 }
 
 WorldRenderSettings::ShadowSettings::ShadowSettings()
@@ -209,12 +209,12 @@ void WorldRenderSettings::ShadowSettings::serialize(ISerializer& s)
 	s >> Member< float >(L"cascadingLambda", cascadingLambda, AttributeRange(0.0f, 10.0f));
 	s >> Member< bool >(L"quantizeProjection", quantizeProjection);
 	s >> Member< int32_t >(L"maskDenominator", maskDenominator, AttributeRange(1));
-	s >> resource::Member< render::ImageProcessData >(L"maskProject", maskProject);
+	s >> resource::Member< render::ImageGraph >(L"maskProject", maskProject);
 
 	if (s.getVersion() < 27)
 	{
-		resource::Id< render::ImageProcessData > maskFilter;
-		s >> resource::Member< render::ImageProcessData >(L"maskFilter", maskFilter);
+		resource::Id< render::ImageGraph > maskFilter;
+		s >> resource::Member< render::ImageGraph >(L"maskFilter", maskFilter);
 	}
 }
 

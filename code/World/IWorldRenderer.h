@@ -144,15 +144,6 @@ public:
 	virtual void render(render::IRenderView* renderView, int32_t frame) = 0;
 
 	//@}
-
-	/*! \name Target accessor. */
-	//@{
-
-	virtual render::ImageProcess* getVisualImageProcess() = 0;
-
-	virtual void getDebugTargets(std::vector< render::DebugTarget >& outTargets) const = 0;
-
-	//@}
 };
 
 	}

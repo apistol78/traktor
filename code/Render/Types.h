@@ -655,7 +655,6 @@ struct RenderTargetSetCreateDesc
 	bool createDepthStencil;					/*!< Attach depth/stencil buffer; shared among all targets. */
 	bool usingDepthStencilAsTexture;			/*!< Will be using depth/stencil buffer as a texture input of shaders. */
 	bool usingPrimaryDepthStencil;				/*!< Share primary depth/stencil buffer; shared among all targets. */
-	bool preferTiled;							/*!< Prefer tiled memory; only implemented in PS3 renderer. */
 	bool storeDepthStencil;						/*!< Store depth/stencil after rendering. */
 	bool ignoreStencil;							/*!< Ignoring stencil; stencil isn't used in rendering. */
 	bool generateMips;							/*!< Generate complete mip-chain after target been renderered onto. */
@@ -670,7 +669,6 @@ struct RenderTargetSetCreateDesc
 	,	createDepthStencil(false)
 	,	usingDepthStencilAsTexture(false)
 	,	usingPrimaryDepthStencil(false)
-	,	preferTiled(false)
 	,	storeDepthStencil(false)
 	,	ignoreStencil(true)
 	,	generateMips(false)

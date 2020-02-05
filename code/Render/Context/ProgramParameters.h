@@ -59,7 +59,7 @@ public:
 
 	void setStencilReference(uint32_t stencilReference);
 
-	void attachParameters(ProgramParameters* attachParameters);
+	void attachParameters(const ProgramParameters* attachParameters);
 
 	void fixup(IProgram* program) const;
 

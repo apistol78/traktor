@@ -59,7 +59,6 @@ bool ProbeFilterer::create()
         rtscd.createDepthStencil = false;
         rtscd.usingDepthStencilAsTexture = false;
         rtscd.usingPrimaryDepthStencil = false;
-        rtscd.preferTiled = false;
         rtscd.ignoreStencil = true;
         rtscd.generateMips = false;
         rtscd.targets[0].format = render::TfR11G11B10F;

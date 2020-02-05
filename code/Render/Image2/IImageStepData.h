@@ -23,17 +23,17 @@ class IResourceManager;
     namespace render
     {
 
-class IImagePass;
+class IImageStep;
 
 /*!
  * \ingroup Render
  */
-class T_DLLCLASS IImagePassData : public ISerializable
+class T_DLLCLASS IImageStepData : public ISerializable
 {
     T_RTTI_CLASS;
 
 public:
-    virtual Ref< IImagePass > createInstance(resource::IResourceManager* resourceManager) const = 0;
+    virtual Ref< const IImageStep > createInstance(resource::IResourceManager* resourceManager) const = 0;
 };
 
     }

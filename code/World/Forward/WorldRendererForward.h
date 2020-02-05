@@ -18,7 +18,7 @@ namespace traktor
 	namespace render
 	{
 
-class ImageProcess;
+class ImageGraph;
 class RenderContext;
 class RenderGraph;
 class StructBuffer;
@@ -72,10 +72,6 @@ public:
 
 	virtual void render(render::IRenderView* renderView, int32_t frame) override final;
 
-	virtual render::ImageProcess* getVisualImageProcess() override final;
-
-	virtual void getDebugTargets(std::vector< render::DebugTarget >& outTargets) const override final;
-
 private:
 	struct Frame
 	{
@@ -91,11 +87,11 @@ private:
 
 	Ref< render::RenderGraph > m_renderGraph;
 	
-	Ref< render::ImageProcess > m_ambientOcclusion;
-	Ref< render::ImageProcess > m_antiAlias;
-	Ref< render::ImageProcess > m_visualImageProcess;
-	Ref< render::ImageProcess > m_gammaCorrectionImageProcess;
-	Ref< render::ImageProcess > m_toneMapImageProcess;
+	resource::Proxy< render::ImageGraph > m_ambientOcclusion;
+	resource::Proxy< render::ImageGraph > m_antiAlias;
+	resource::Proxy< render::ImageGraph > m_visual;
+	resource::Proxy< render::ImageGraph > m_gammaCorrection;
+	resource::Proxy< render::ImageGraph > m_toneMap;
 
 	Ref< WorldEntityRenderers > m_entityRenderers;
 	Ref< GroupEntity > m_rootEntity;

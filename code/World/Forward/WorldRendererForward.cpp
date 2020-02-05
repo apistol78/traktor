@@ -8,8 +8,8 @@
 #include "Render/StructElement.h"
 #include "Render/Context/RenderContext.h"
 #include "Render/Frame/RenderGraph.h"
-#include "Render/Image/ImageProcess.h"
-#include "Render/Image/ImageProcessData.h"
+#include "Render/Image2/ImageGraph.h"
+#include "Render/Image2/ImageGraphData.h"
 #include "Resource/IResourceManager.h"
 #include "World/WorldContext.h"
 #include "World/Entity/GroupEntity.h"
@@ -26,18 +26,18 @@ namespace traktor
 
 const int32_t c_maxLightCount = 1024;
 
-const resource::Id< render::ImageProcessData > c_ambientOcclusionLow(L"{ED4F221C-BAB1-4645-BD08-84C5B3FA7C20}");
-const resource::Id< render::ImageProcessData > c_ambientOcclusionMedium(L"{A4249C8A-9A0D-B349-B0ED-E8B354CD7BDF}");
-const resource::Id< render::ImageProcessData > c_ambientOcclusionHigh(L"{37F82A38-D632-5541-9B29-E77C2F74B0C0}");
-const resource::Id< render::ImageProcessData > c_ambientOcclusionUltra(L"{C1C9DDCB-2F82-A94C-BF65-653D8E68F628}");
-const resource::Id< render::ImageProcessData > c_antiAliasNone(L"{960283DC-7AC2-804B-901F-8AD4C205F4E0}");
-const resource::Id< render::ImageProcessData > c_antiAliasLow(L"{DBF2FBB9-1310-A24E-B443-AF0D018571F7}");
-const resource::Id< render::ImageProcessData > c_antiAliasMedium(L"{3E1D810B-339A-F742-9345-4ECA00220D57}");
-const resource::Id< render::ImageProcessData > c_antiAliasHigh(L"{0C288028-7BFD-BE46-A25F-F3910BE50319}");
-const resource::Id< render::ImageProcessData > c_antiAliasUltra(L"{4750DA97-67F4-E247-A9C2-B4883B1158B2}");
-const resource::Id< render::ImageProcessData > c_gammaCorrection(L"{AB0ABBA7-77BF-0A4E-8E3B-4987B801CE6B}");
-const resource::Id< render::ImageProcessData > c_toneMapFixed(L"{838922A0-49CE-6645-8A9C-BA0E71081033}");
-const resource::Id< render::ImageProcessData > c_toneMapAdaptive(L"{BC4FA128-A976-4023-A422-637581ADFD7E}");
+const resource::Id< render::ImageGraph > c_ambientOcclusionLow(L"{ED4F221C-BAB1-4645-BD08-84C5B3FA7C20}");
+const resource::Id< render::ImageGraph > c_ambientOcclusionMedium(L"{A4249C8A-9A0D-B349-B0ED-E8B354CD7BDF}");
+const resource::Id< render::ImageGraph > c_ambientOcclusionHigh(L"{37F82A38-D632-5541-9B29-E77C2F74B0C0}");
+const resource::Id< render::ImageGraph > c_ambientOcclusionUltra(L"{C1C9DDCB-2F82-A94C-BF65-653D8E68F628}");
+const resource::Id< render::ImageGraph > c_antiAliasNone(L"{960283DC-7AC2-804B-901F-8AD4C205F4E0}");
+const resource::Id< render::ImageGraph > c_antiAliasLow(L"{DBF2FBB9-1310-A24E-B443-AF0D018571F7}");
+const resource::Id< render::ImageGraph > c_antiAliasMedium(L"{3E1D810B-339A-F742-9345-4ECA00220D57}");
+const resource::Id< render::ImageGraph > c_antiAliasHigh(L"{0C288028-7BFD-BE46-A25F-F3910BE50319}");
+const resource::Id< render::ImageGraph > c_antiAliasUltra(L"{4750DA97-67F4-E247-A9C2-B4883B1158B2}");
+const resource::Id< render::ImageGraph > c_gammaCorrection(L"{AB0ABBA7-77BF-0A4E-8E3B-4987B801CE6B}");
+const resource::Id< render::ImageGraph > c_toneMapFixed(L"{838922A0-49CE-6645-8A9C-BA0E71081033}");
+const resource::Id< render::ImageGraph > c_toneMapAdaptive(L"{BC4FA128-A976-4023-A422-637581ADFD7E}");
 
 // Techniques
 const render::Handle s_techniqueForwardColor(L"World_ForwardColor");
@@ -65,13 +65,13 @@ const render::Handle s_handleVisual[] =
 	render::Handle(L"Visual6")
 };
 
-resource::Id< render::ImageProcessData > getAmbientOcclusionId(Quality quality)
+resource::Id< render::ImageGraph > getAmbientOcclusionId(Quality quality)
 {
 	switch (quality)
 	{
 	default:
 	case QuDisabled:
-		return resource::Id< render::ImageProcessData >();
+		return resource::Id< render::ImageGraph >();
 	case QuLow:
 		return c_ambientOcclusionLow;
 	case QuMedium:
@@ -83,7 +83,7 @@ resource::Id< render::ImageProcessData > getAmbientOcclusionId(Quality quality)
 	}
 }
 
-resource::Id< render::ImageProcessData > getAntiAliasId(Quality quality)
+resource::Id< render::ImageGraph > getAntiAliasId(Quality quality)
 {
 	switch (quality)
 	{
@@ -101,7 +101,7 @@ resource::Id< render::ImageProcessData > getAntiAliasId(Quality quality)
 	}
 }
 
-resource::Id< render::ImageProcessData > getToneMapId(WorldRenderSettings::ExposureMode exposureMode)
+resource::Id< render::ImageGraph > getToneMapId(WorldRenderSettings::ExposureMode exposureMode)
 {
 	switch (exposureMode)
 	{
@@ -147,8 +147,7 @@ bool WorldRendererForward::create(
 	const WorldCreateDesc& desc
 )
 {
-	render::RenderTargetSetCreateDesc rtscd;
-	render::RenderTargetAutoSize rtas;
+	render::RenderGraphTargetSetDesc rgtd;
 	render::Clear clear;
 
 	// Store settings.
@@ -163,91 +162,103 @@ bool WorldRendererForward::create(
 
 	// Create ambient occlusion processing.
 	{
-		resource::Id< render::ImageProcessData > ambientOcclusionId = getAmbientOcclusionId(m_ambientOcclusionQuality);
-		resource::Proxy< render::ImageProcessData > ambientOcclusion;
+		// resource::Id< render::ImageGraph > ambientOcclusionId = getAmbientOcclusionId(m_ambientOcclusionQuality);
+		// resource::Proxy< render::ImageGraph > ambientOcclusion;
 
-		if (ambientOcclusionId)
-		{
-			if (!resourceManager->bind(ambientOcclusionId, ambientOcclusion))
-				log::warning << L"Unable to create ambient occlusion process; AO disabled." << Endl;
-		}
+		// if (ambientOcclusionId)
+		// {
+		// 	if (!resourceManager->bind(ambientOcclusionId, ambientOcclusion))
+		// 		log::warning << L"Unable to create ambient occlusion process; AO disabled." << Endl;
+		// }
 
-		if (ambientOcclusion)
-		{
-			m_ambientOcclusion = new render::ImageProcess();
-			if (!m_ambientOcclusion->create(
-				ambientOcclusion,
-				nullptr,
-				resourceManager,
-				renderSystem,
-				desc.width,
-				desc.height,
-				desc.allTargetsPersistent
-			))
-			{
-				log::warning << L"Unable to create ambient occlusion process; AO disabled." << Endl;
-				m_ambientOcclusion = nullptr;
-			}
-		}
+		// if (ambientOcclusion)
+		// {
+		// 	m_ambientOcclusion = new render::ImageProcess();
+		// 	if (!m_ambientOcclusion->create(
+		// 		ambientOcclusion,
+		// 		nullptr,
+		// 		resourceManager,
+		// 		renderSystem,
+		// 		desc.width,
+		// 		desc.height,
+		// 		desc.allTargetsPersistent
+		// 	))
+		// 	{
+		// 		log::warning << L"Unable to create ambient occlusion process; AO disabled." << Endl;
+		// 		m_ambientOcclusion = nullptr;
+		// 	}
+		// }
+
+		resource::Id< render::ImageGraph > ambientOcclusion = getAmbientOcclusionId(m_ambientOcclusionQuality);
+		if (!resourceManager->bind(ambientOcclusion, m_ambientOcclusion))
+			log::warning << L"Unable to create ambient occlusion process; AO disabled." << Endl;
 	}
 
 	// Create antialias processing.
 	{
-		resource::Id< render::ImageProcessData > antiAliasId = getAntiAliasId(m_antiAliasQuality);
-		resource::Proxy< render::ImageProcessData > antiAlias;
+		// resource::Id< render::ImageGraph > antiAliasId = getAntiAliasId(m_antiAliasQuality);
+		// resource::Proxy< render::ImageGraph > antiAlias;
 
-		if (antiAliasId != c_antiAliasNone)
-		{
-			if (!resourceManager->bind(antiAliasId, antiAlias))
-				log::warning << L"Unable to create antialias process; AA disabled." << Endl;
-		}
+		// if (antiAliasId != c_antiAliasNone)
+		// {
+		// 	if (!resourceManager->bind(antiAliasId, antiAlias))
+		// 		log::warning << L"Unable to create antialias process; AA disabled." << Endl;
+		// }
 
-		if (antiAlias)
-		{
-			m_antiAlias = new render::ImageProcess();
-			if (!m_antiAlias->create(
-				antiAlias,
-				nullptr,
-				resourceManager,
-				renderSystem,
-				desc.width,
-				desc.height,
-				desc.allTargetsPersistent
-			))
-			{
-				log::warning << L"Unable to create antialias process; AA disabled." << Endl;
-				m_antiAlias = nullptr;
-			}
-		}
+		// if (antiAlias)
+		// {
+		// 	m_antiAlias = new render::ImageProcess();
+		// 	if (!m_antiAlias->create(
+		// 		antiAlias,
+		// 		nullptr,
+		// 		resourceManager,
+		// 		renderSystem,
+		// 		desc.width,
+		// 		desc.height,
+		// 		desc.allTargetsPersistent
+		// 	))
+		// 	{
+		// 		log::warning << L"Unable to create antialias process; AA disabled." << Endl;
+		// 		m_antiAlias = nullptr;
+		// 	}
+		// }
+
+		resource::Id< render::ImageGraph > antiAlias = getAntiAliasId(m_antiAliasQuality);
+		if (!resourceManager->bind(antiAlias, m_antiAlias))
+			log::warning << L"Unable to create antialias process; AA disabled." << Endl;
 	}
 
 	// Create "visual" post processing filter.
 	{
-		const resource::Id< render::ImageProcessData >& imageProcessSettings = desc.worldRenderSettings->imageProcess[desc.imageProcessQuality];
-		if (imageProcessSettings)
-		{
-			resource::Proxy< render::ImageProcessData > imageProcess;
-			if (!resourceManager->bind(imageProcessSettings, imageProcess))
-				log::warning << L"Unable to create visual post processing image filter; post processing disabled." << Endl;
+		// const resource::Id< render::ImageGraph >& imageProcessSettings = desc.worldRenderSettings->imageProcess[desc.imageProcessQuality];
+		// if (imageProcessSettings)
+		// {
+		// 	resource::Proxy< render::ImageGraph > imageProcess;
+		// 	if (!resourceManager->bind(imageProcessSettings, imageProcess))
+		// 		log::warning << L"Unable to create visual post processing image filter; post processing disabled." << Endl;
 
-			if (imageProcess)
-			{
-				m_visualImageProcess = new render::ImageProcess();
-				if (!m_visualImageProcess->create(
-					imageProcess,
-					nullptr,
-					resourceManager,
-					renderSystem,
-					desc.width,
-					desc.height,
-					desc.allTargetsPersistent
-				))
-				{
-					log::warning << L"Unable to create visual post processing; post processing disabled." << Endl;
-					m_visualImageProcess = nullptr;
-				}
-			}
-		}
+		// 	if (imageProcess)
+		// 	{
+		// 		m_visual = new render::ImageProcess();
+		// 		if (!m_visual->create(
+		// 			imageProcess,
+		// 			nullptr,
+		// 			resourceManager,
+		// 			renderSystem,
+		// 			desc.width,
+		// 			desc.height,
+		// 			desc.allTargetsPersistent
+		// 		))
+		// 		{
+		// 			log::warning << L"Unable to create visual post processing; post processing disabled." << Endl;
+		// 			m_visual = nullptr;
+		// 		}
+		// 	}
+		// }
+
+		const auto& visualImageGraph = desc.worldRenderSettings->imageProcess[desc.imageProcessQuality];
+		if (!resourceManager->bind(visualImageGraph, m_visual))
+			log::warning << L"Unable to create visual post processing; post processing disabled." << Endl;
 	}
 
 	// Create gamma correction processing.
@@ -256,69 +267,79 @@ bool WorldRendererForward::create(
 		std::abs(desc.gamma - 1.0f) > FUZZY_EPSILON
 	)
 	{
-		resource::Proxy< render::ImageProcessData > gammaCorrection;
-		if (!resourceManager->bind(c_gammaCorrection, gammaCorrection))
-			log::warning << L"Unable to create gamma correction process; gamma correction disabled." << Endl;
+		// resource::Proxy< render::ImageGraph > gammaCorrection;
+		// if (!resourceManager->bind(c_gammaCorrection, gammaCorrection))
+		// 	log::warning << L"Unable to create gamma correction process; gamma correction disabled." << Endl;
 
-		if (gammaCorrection)
-		{
-			m_gammaCorrectionImageProcess = new render::ImageProcess();
-			if (m_gammaCorrectionImageProcess->create(
-				gammaCorrection,
-				nullptr,
-				resourceManager,
-				renderSystem,
-				desc.width,
-				desc.height,
-				desc.allTargetsPersistent
-			))
-			{
-				m_gammaCorrectionImageProcess->setFloatParameter(render::getParameterHandle(L"World_Gamma"), desc.gamma);
-				m_gammaCorrectionImageProcess->setFloatParameter(render::getParameterHandle(L"World_GammaInverse"), 1.0f / desc.gamma);
-			}
-			else
-			{
-				log::warning << L"Unable to create gamma correction process; gamma correction disabled." << Endl;
-				m_gammaCorrectionImageProcess = nullptr;
-			}
-		}
+		// if (gammaCorrection)
+		// {
+		// 	m_gammaCorrection = new render::ImageProcess();
+		// 	if (m_gammaCorrection->create(
+		// 		gammaCorrection,
+		// 		nullptr,
+		// 		resourceManager,
+		// 		renderSystem,
+		// 		desc.width,
+		// 		desc.height,
+		// 		desc.allTargetsPersistent
+		// 	))
+		// 	{
+		// 		m_gammaCorrection->setFloatParameter(render::getParameterHandle(L"World_Gamma"), desc.gamma);
+		// 		m_gammaCorrection->setFloatParameter(render::getParameterHandle(L"World_GammaInverse"), 1.0f / desc.gamma);
+		// 	}
+		// 	else
+		// 	{
+		// 		log::warning << L"Unable to create gamma correction process; gamma correction disabled." << Endl;
+		// 		m_gammaCorrection = nullptr;
+		// 	}
+		// }
+
+		if (!resourceManager->bind(c_gammaCorrection, m_gammaCorrection))
+			log::warning << L"Unable to create gamma correction process; gamma correction disabled." << Endl;
 	}
 
 	// Create tone map processing.
 	if (m_toneMapQuality > QuDisabled)
 	{
-		resource::Id< render::ImageProcessData > toneMapId = getToneMapId(m_settings.exposureMode);
-		resource::Proxy< render::ImageProcessData > toneMap;
+		// resource::Id< render::ImageGraph > toneMapId = getToneMapId(m_settings.exposureMode);
+		// resource::Proxy< render::ImageGraph > toneMap;
 
-		if (!resourceManager->bind(toneMapId, toneMap))
+		// if (!resourceManager->bind(toneMapId, toneMap))
+		// {
+		// 	log::warning << L"Unable to create tone map process." << Endl;
+		// 	m_toneMapQuality = QuDisabled;
+		// }
+
+		// if (toneMap)
+		// {
+		// 	m_toneMap = new render::ImageProcess();
+		// 	if (m_toneMap->create(
+		// 		toneMap,
+		// 		nullptr,
+		// 		resourceManager,
+		// 		renderSystem,
+		// 		desc.width,
+		// 		desc.height,
+		// 		desc.allTargetsPersistent
+		// 	))
+		// 		m_toneMap->setFloatParameter(
+		// 			render::getParameterHandle(L"World_Exposure"),
+		// 			m_settings.exposure
+		// 		);
+		// 	else
+		// 	{
+		// 		log::warning << L"Unable to create tone map process; tone mapping disabled." << Endl;
+		// 		m_toneMap = nullptr;
+		// 		m_toneMapQuality = QuDisabled;
+		// 	}
+		// }
+
+		resource::Id< render::ImageGraph > toneMap = getToneMapId(m_settings.exposureMode);
+		if (!resourceManager->bind(toneMap, m_toneMap))
 		{
 			log::warning << L"Unable to create tone map process." << Endl;
 			m_toneMapQuality = QuDisabled;
-		}
-
-		if (toneMap)
-		{
-			m_toneMapImageProcess = new render::ImageProcess();
-			if (m_toneMapImageProcess->create(
-				toneMap,
-				nullptr,
-				resourceManager,
-				renderSystem,
-				desc.width,
-				desc.height,
-				desc.allTargetsPersistent
-			))
-				m_toneMapImageProcess->setFloatParameter(
-					render::getParameterHandle(L"World_Exposure"),
-					m_settings.exposure
-				);
-			else
-			{
-				log::warning << L"Unable to create tone map process; tone mapping disabled." << Endl;
-				m_toneMapImageProcess = nullptr;
-				m_toneMapQuality = QuDisabled;
-			}
-		}
+		}		
 	}
 
 	// Allocate light lists.
@@ -365,70 +386,65 @@ bool WorldRendererForward::create(
 	);
 	
 	// GBuffer
-	rtscd.count = 2;
-	rtscd.multiSample = desc.multiSample;
-	rtscd.createDepthStencil = false;
-	rtscd.usingPrimaryDepthStencil = (desc.sharedDepthStencil == nullptr) ? true : false;
-	rtscd.sharedDepthStencil = desc.sharedDepthStencil;
-	rtscd.preferTiled = true;
-	rtscd.targets[0].format = render::TfR16F;		// Depth (R)
-	rtscd.targets[1].format = render::TfR16G16F;	// Normals (RG)
-	rtas.screenWidthDenom = 1;
-	rtas.screenHeightDenom = 1;
-	m_renderGraph->addRenderTarget(L"GBuffer", s_handleGBuffer, rtscd, rtas);
+	rgtd.count = 2;
+	//rgtd.multiSample = desc.multiSample;
+	rgtd.createDepthStencil = false;
+	//rgtd.usingPrimaryDepthStencil = (desc.sharedDepthStencil == nullptr) ? true : false;
+	//rgtd.sharedDepthStencil = desc.sharedDepthStencil;
+	rgtd.colorFormats[0] = render::TfR16F;		// Depth (R)
+	rgtd.colorFormats[1] = render::TfR16G16F;	// Normals (RG)
+	rgtd.screenWidthDenom = 1;
+	rgtd.screenHeightDenom = 1;
+	m_renderGraph->addTargetSet(L"GBuffer", s_handleGBuffer, rgtd);
 
 	// Ambient occlusion.
-	rtscd.count = 1;
-	rtscd.multiSample = desc.multiSample;
-	rtscd.createDepthStencil = false;
-	rtscd.usingPrimaryDepthStencil = (desc.sharedDepthStencil == nullptr) ? true : false;
-	rtscd.sharedDepthStencil = desc.sharedDepthStencil;
-	rtscd.preferTiled = true;
-	rtscd.targets[0].format = render::TfR8;			// Ambient occlusion (R)
-	rtas.screenWidthDenom = 1;
-	rtas.screenHeightDenom = 1;
-	m_renderGraph->addRenderTarget(L"AmbientOcclusion", s_handleAmbientOcclusion, rtscd, rtas);
+	rgtd.count = 1;
+	//rgtd.multiSample = desc.multiSample;
+	rgtd.createDepthStencil = false;
+	//rgtd.usingPrimaryDepthStencil = (desc.sharedDepthStencil == nullptr) ? true : false;
+	//rgtd.sharedDepthStencil = desc.sharedDepthStencil;
+	rgtd.colorFormats[0] = render::TfR8;			// Ambient occlusion (R)
+	rgtd.screenWidthDenom = 1;
+	rgtd.screenHeightDenom = 1;
+	m_renderGraph->addTargetSet(L"AmbientOcclusion", s_handleAmbientOcclusion, rgtd);
 
 	const bool shadowsEnable = (bool)(m_shadowsQuality != QuDisabled);
 	if (shadowsEnable)
 	{
 		// Cascading shadow map.
-		rtscd.count = 0;
-		rtscd.width = 1024;
-		rtscd.height = m_settings.shadowSettings[m_shadowsQuality].cascadingSlices * 1024;
-		rtscd.multiSample = 0;
-		rtscd.createDepthStencil = true;
-		rtscd.usingDepthStencilAsTexture = true;
-		rtscd.usingPrimaryDepthStencil = false;
-		rtscd.ignoreStencil = true;
-		rtscd.preferTiled = true;
-		m_renderGraph->addRenderTarget(L"ShadowMap Cascade", s_handleShadowMapCascade, rtscd);
+		rgtd.count = 0;
+		rgtd.width = 1024;
+		rgtd.height = m_settings.shadowSettings[m_shadowsQuality].cascadingSlices * 1024;
+		//rgtd.multiSample = 0;
+		rgtd.createDepthStencil = true;
+		rgtd.usingDepthStencilAsTexture = true;
+		//rgtd.usingPrimaryDepthStencil = false;
+		//rgtd.ignoreStencil = true;
+		m_renderGraph->addTargetSet(L"ShadowMap Cascade", s_handleShadowMapCascade, rgtd);
 
 		// Atlas shadow map.
-		rtscd.count = 0;
-		rtscd.width =
-		rtscd.height = 4096;
-		rtscd.multiSample = 0;
-		rtscd.createDepthStencil = true;
-		rtscd.usingDepthStencilAsTexture = true;
-		rtscd.usingPrimaryDepthStencil = false;
-		rtscd.ignoreStencil = true;
-		rtscd.preferTiled = true;
-		m_renderGraph->addRenderTarget(L"ShadowMap Atlas", s_handleShadowMapAtlas, rtscd);
+		rgtd.count = 0;
+		rgtd.width =
+		rgtd.height = 4096;
+		//rgtd.multiSample = 0;
+		rgtd.createDepthStencil = true;
+		rgtd.usingDepthStencilAsTexture = true;
+		//rgtd.usingPrimaryDepthStencil = false;
+		//rgtd.ignoreStencil = true;
+		m_renderGraph->addTargetSet(L"ShadowMap Atlas", s_handleShadowMapAtlas, rgtd);
 	}
 
 	// Visual
-	rtscd.count = 1;
-	rtscd.multiSample = desc.multiSample;
-	rtscd.createDepthStencil = false;
-	rtscd.usingPrimaryDepthStencil = (desc.sharedDepthStencil == nullptr) ? true : false;
-	rtscd.sharedDepthStencil = desc.sharedDepthStencil;
-	rtscd.preferTiled = true;
-	rtscd.targets[0].format = render::TfR11G11B10F;
-	rtas.screenWidthDenom = 1;
-	rtas.screenHeightDenom = 1;
+	rgtd.count = 1;
+	//rgtd.multiSample = desc.multiSample;
+	rgtd.createDepthStencil = false;
+	//rgtd.usingPrimaryDepthStencil = (desc.sharedDepthStencil == nullptr) ? true : false;
+	//rgtd.sharedDepthStencil = desc.sharedDepthStencil;
+	rgtd.colorFormats[0] = render::TfR11G11B10F;
+	rgtd.screenWidthDenom = 1;
+	rgtd.screenHeightDenom = 1;
 	for (int32_t i = 0; i < sizeof_array(s_handleVisual); ++i)
-		m_renderGraph->addRenderTarget(L"Visual", s_handleVisual[i], rtscd, rtas);
+		m_renderGraph->addTargetSet(L"Visual", s_handleVisual[i], rgtd);
 
 	// Allocate render contexts.
 	for (auto& frame : m_frames)
@@ -444,9 +460,10 @@ void WorldRendererForward::destroy()
 		safeDestroy(frame.lightSBuffer);
 	m_frames.clear();
 
-	safeDestroy(m_toneMapImageProcess);
-	safeDestroy(m_gammaCorrectionImageProcess);
-	safeDestroy(m_visualImageProcess);
+	// safeDestroy(m_toneMap);
+	// safeDestroy(m_gammaCorrection);
+	// safeDestroy(m_visual);
+
 	safeDestroy(m_renderGraph);
 }
 
@@ -517,65 +534,21 @@ void WorldRendererForward::render(render::IRenderView* renderView, int32_t frame
 	m_frames[frame].renderContext->render(renderView);
 }
 
-render::ImageProcess* WorldRendererForward::getVisualImageProcess()
-{
-	return m_visualImageProcess;
-}
-
-void WorldRendererForward::getDebugTargets(std::vector< render::DebugTarget >& outTargets) const
-{
-	// if (m_visualTargetSet)
-	// 	outTargets.push_back(render::DebugTarget(L"Visual", render::DtvDefault, m_visualTargetSet->getColorTexture(0)));
-
-	// if (m_intermediateTargetSet)
-	// 	outTargets.push_back(render::DebugTarget(L"Intermediate", render::DtvDefault, m_intermediateTargetSet->getColorTexture(0)));
-
-	// if (m_gbufferTargetSet)
-	// {
-	// 	outTargets.push_back(render::DebugTarget(L"GBuffer depth", render::DtvViewDepth, m_gbufferTargetSet->getColorTexture(0)));
-	// 	outTargets.push_back(render::DebugTarget(L"GBuffer normals", render::DtvNormals, m_gbufferTargetSet->getColorTexture(1)));
-	// 	outTargets.push_back(render::DebugTarget(L"GBuffer AO", render::DtvDefault, m_gbufferTargetSet->getColorTexture(2)));
-	// }
-
-	// if (m_shadowCascadeTargetSet)
-	// 	outTargets.push_back(render::DebugTarget(L"Shadow map (cascade)", render::DtvShadowMap, m_shadowCascadeTargetSet->getDepthTexture()));
-
-	// if (m_shadowAtlasTargetSet)
-	// 	outTargets.push_back(render::DebugTarget(L"Shadow map (atlas)", render::DtvShadowMap, m_shadowAtlasTargetSet->getDepthTexture()));
-
-	// if (m_ambientOcclusion)
-	// 	m_ambientOcclusion->getDebugTargets(outTargets);
-
-	// if (m_antiAlias)
-	// 	m_antiAlias->getDebugTargets(outTargets);
-
-	// if (m_visualImageProcess)
-	// 	m_visualImageProcess->getDebugTargets(outTargets);
-
-	// if (m_gammaCorrectionImageProcess)
-	// 	m_gammaCorrectionImageProcess->getDebugTargets(outTargets);
-
-	// if (m_toneMapImageProcess)
-	// 	m_toneMapImageProcess->getDebugTargets(outTargets);
-}
-
 void WorldRendererForward::buildGBuffer(const WorldRenderView& worldRenderView)
 {
-	m_renderGraph->addPass(
-		L"GBuffer",
-		[&](render::RenderPassBuilder& builder)
-		{
-			const float clearZ = m_settings.viewFarZ;
+	const float clearZ = m_settings.viewFarZ;
 
-			render::Clear clear;
-			clear.mask = render::CfColor | render::CfDepth;
-			clear.colors[0] = Color4f(clearZ, clearZ, clearZ, clearZ);
-			clear.colors[1] = Color4f(0.0f, 0.0f, 0.0f, 0.0f);
-			clear.depth = 1.0f;	
+	Ref< render::RenderPass > rp = new render::RenderPass(L"GBuffer");
+	
+	render::Clear clear;
+	clear.mask = render::CfColor | render::CfDepth;
+	clear.colors[0] = Color4f(clearZ, clearZ, clearZ, clearZ);	// depth
+	clear.colors[1] = Color4f(0.0f, 0.0f, 0.0f, 0.0f);	// normal
+	clear.depth = 1.0f;	
+	rp->setOutput(s_handleGBuffer, clear);
 
-			builder.setOutput(s_handleGBuffer, clear);
-		},
-		[=](render::RenderPassResources& resources, render::RenderContext* renderContext)
+	rp->addBuild(
+		[=](const render::RenderGraph& renderGraph, render::RenderContext* renderContext)
 		{
 			WorldContext wc(
 				m_entityRenderers,
@@ -605,47 +578,31 @@ void WorldRendererForward::buildGBuffer(const WorldRenderView& worldRenderView)
 			renderContext->merge(render::RpAll);		
 		}
 	);
+
+	m_renderGraph->addPass(rp);
 }
 
 void WorldRendererForward::buildAmbientOcclusion(const WorldRenderView& worldRenderView)
 {
-	m_renderGraph->addPass(
-		L"Ambient occlusion",
-		[&](render::RenderPassBuilder& builder)
-		{
-			if (m_ambientOcclusion != nullptr)
-				builder.addInput(s_handleGBuffer);
+	Ref< render::RenderPass > rp = new render::RenderPass(L"Ambient occlusion");
 
-			render::Clear clear;
-			clear.mask = render::CfColor;
-			clear.colors[0] = Color4f(1.0f, 1.0f, 1.0f, 1.0f);
+	if (m_ambientOcclusion != nullptr)
+	{
+		rp->addInput(s_handleGBuffer);
 
-			builder.setOutput(s_handleAmbientOcclusion, clear);
-		},
-		[=](render::RenderPassResources& resources, render::RenderContext* renderContext)
-		{
-			if (m_ambientOcclusion == nullptr)
-				return;
+		render::ImageGraphParams ipd;
+		ipd.viewFrustum = worldRenderView.getViewFrustum();
+		ipd.view = worldRenderView.getView();
+		ipd.projection = worldRenderView.getProjection();
+		m_ambientOcclusion->addPasses(m_renderGraph, rp, ipd);
+	}
 
-			auto gbufferTargetSet = m_renderGraph->getRenderTarget(s_handleGBuffer);
+	render::Clear clear;
+	clear.mask = render::CfColor;
+	clear.colors[0] = Color4f(1.0f, 1.0f, 1.0f, 1.0f);
+	rp->setOutput(s_handleAmbientOcclusion, clear);
 
-			render::ImageProcessStep::Instance::RenderParams params;
-			params.viewFrustum = worldRenderView.getViewFrustum();
-			params.view = worldRenderView.getView();
-			params.projection = worldRenderView.getProjection();
-			params.deltaTime = 0.0f;
-
-			m_ambientOcclusion->build(
-				renderContext,
-				nullptr,	// color
-				gbufferTargetSet->getColorTexture(0),	// depth
-				gbufferTargetSet->getColorTexture(1),	// normal
-				nullptr,	// velocity
-				nullptr,	// shadow mask
-				params
-			);
-		}
-	);
+	m_renderGraph->addPass(rp);
 }
 
 void WorldRendererForward::buildLights(const WorldRenderView& worldRenderView, int32_t frame, LightShaderData* lightShaderData)
@@ -710,16 +667,15 @@ void WorldRendererForward::buildLights(const WorldRenderView& worldRenderView, i
 	// and update light sbuffer.
 	if (lightCascadeIndex >= 0)
 	{
-		m_renderGraph->addPass(
-			L"Shadow cascade",
-			[&](render::RenderPassBuilder& builder)
-			{
-				render::Clear clear;
-				clear.mask = render::CfDepth;
-				clear.depth = 1.0f;
-				builder.setOutput(s_handleShadowMapCascade, clear);
-			},
-			[=](render::RenderPassResources& resources, render::RenderContext* renderContext)
+		Ref< render::RenderPass > rp = new render::RenderPass(L"Shadow cascade");
+
+		render::Clear clear;
+		clear.mask = render::CfDepth;
+		clear.depth = 1.0f;
+		rp->setOutput(s_handleShadowMapCascade, clear);
+
+		rp->addBuild(
+			[=](const render::RenderGraph& renderGraph, render::RenderContext* renderContext)
 			{
 				WorldContext wc(
 					m_entityRenderers,
@@ -823,6 +779,8 @@ void WorldRendererForward::buildLights(const WorldRenderView& worldRenderView, i
 				}
 			}
 		);
+
+		m_renderGraph->addPass(rp);
 	}
 
 	if (!lightAtlasIndices.empty())
@@ -830,16 +788,15 @@ void WorldRendererForward::buildLights(const WorldRenderView& worldRenderView, i
 		int32_t atlasIndex = 0;
 		for (int32_t lightAtlasIndex : lightAtlasIndices)
 		{
-			m_renderGraph->addPass(
-				L"Shadow atlas",
-				[&](render::RenderPassBuilder& builder)
-				{
-					render::Clear clear;
-					clear.mask = render::CfDepth;
-					clear.depth = 1.0f;
-					builder.setOutput(s_handleShadowMapAtlas, clear);
-				},
-				[=](render::RenderPassResources& resources, render::RenderContext* renderContext)
+			Ref< render::RenderPass > rp = new render::RenderPass(L"Shadow atlas");
+
+			render::Clear clear;
+			clear.mask = render::CfDepth;
+			clear.depth = 1.0f;
+			rp->setOutput(s_handleShadowMapAtlas, clear);
+			
+			rp->addBuild(
+				[=](const render::RenderGraph& renderGraph, render::RenderContext* renderContext)
 				{
 					WorldContext wc(
 						m_entityRenderers,
@@ -942,6 +899,9 @@ void WorldRendererForward::buildLights(const WorldRenderView& worldRenderView, i
 					).storeUnaligned(lsd->atlasTransform);					
 				}
 			);
+
+			m_renderGraph->addPass(rp);
+
 			++atlasIndex;
 		}
 	}
@@ -952,26 +912,24 @@ void WorldRendererForward::buildVisual(const WorldRenderView& worldRenderView, i
 	const bool shadowsEnable = (bool)(m_shadowsQuality != QuDisabled);
 	int32_t lightCount = (int32_t)m_lights.size();
 
-	m_renderGraph->addPass(
-		L"Visual",
-		[&](render::RenderPassBuilder& builder)
-		{
-			builder.addInput(s_handleGBuffer);
-			builder.addInput(s_handleAmbientOcclusion);
+	Ref< render::RenderPass > rp = new render::RenderPass(L"Visual");
+	rp->addInput(s_handleGBuffer);
+	rp->addInput(s_handleAmbientOcclusion);
 
-			if (shadowsEnable)
-			{
-				builder.addInput(s_handleShadowMapCascade);
-				builder.addInput(s_handleShadowMapAtlas);
-			}
+	if (shadowsEnable)
+	{
+		rp->addInput(s_handleShadowMapCascade);
+		rp->addInput(s_handleShadowMapAtlas);
+	}
 
-			render::Clear clear;
-			clear.mask = render::CfColor | render::CfDepth;
-			clear.colors[0] = Color4f(0.0f, 0.0f, 0.0f, 1.0f);
-			clear.depth = 1.0f;
-			builder.setOutput(s_handleVisual[0], clear);
-		},
-		[=](render::RenderPassResources& resources, render::RenderContext* renderContext)
+	render::Clear clear;
+	clear.mask = render::CfColor | render::CfDepth;
+	clear.colors[0] = Color4f(0.0f, 0.0f, 0.0f, 1.0f);
+	clear.depth = 1.0f;
+	rp->setOutput(s_handleVisual[0], clear);
+
+	rp->addBuild(
+		[=](const render::RenderGraph& renderGraph, render::RenderContext* renderContext)
 		{
 			WorldContext wc(
 				m_entityRenderers,
@@ -979,10 +937,10 @@ void WorldRendererForward::buildVisual(const WorldRenderView& worldRenderView, i
 				m_rootEntity
 			);
 
-			auto gbufferTargetSet = m_renderGraph->getRenderTarget(s_handleGBuffer);
-			auto ambientOcclusionTargetSet = m_renderGraph->getRenderTarget(s_handleAmbientOcclusion);
-			auto shadowCascadeTargetSet = m_renderGraph->getRenderTarget(s_handleShadowMapCascade);
-			auto shadowAtlasTargetSet = m_renderGraph->getRenderTarget(s_handleShadowMapAtlas);
+			auto gbufferTargetSet = renderGraph.getTargetSet(s_handleGBuffer);
+			auto ambientOcclusionTargetSet = renderGraph.getTargetSet(s_handleAmbientOcclusion);
+			auto shadowCascadeTargetSet = renderGraph.getTargetSet(s_handleShadowMapCascade);
+			auto shadowAtlasTargetSet = renderGraph.getTargetSet(s_handleShadowMapAtlas);
 
 			auto sharedParams = wc.getRenderContext()->alloc< render::ProgramParameters >();
 			sharedParams->beginParameters(wc.getRenderContext());
@@ -1016,65 +974,42 @@ void WorldRendererForward::buildVisual(const WorldRenderView& worldRenderView, i
 			wc.getRenderContext()->merge(render::RpAll);
 		}
 	);
+
+	m_renderGraph->addPass(rp);
 }
 
 void WorldRendererForward::buildProcess(const WorldRenderView& worldRenderView)
 {
-	render::ImageProcessStep::Instance::RenderParams params;
-	params.viewFrustum = worldRenderView.getViewFrustum();
-	params.viewToLight = Matrix44::identity(); //f.viewToLightSpace;
-	params.view = worldRenderView.getView();
-	params.projection = worldRenderView.getProjection();
-	params.deltaTime = 1.0f / 60.0f; // deltaTime;
+	render::ImageGraphParams ipd;
+	ipd.viewFrustum = worldRenderView.getViewFrustum();
+	ipd.viewToLight = Matrix44::identity();
+	ipd.view = worldRenderView.getView();
+	ipd.projection = worldRenderView.getProjection();
+	ipd.deltaTime = 1.0f / 60.0f;				
 
-	StaticVector< render::ImageProcess*, 4 > processes;
-	if (m_toneMapImageProcess)
-		processes.push_back(m_toneMapImageProcess);
-	if (m_visualImageProcess)
-		processes.push_back(m_visualImageProcess);
-	if (m_gammaCorrectionImageProcess)
-		processes.push_back(m_gammaCorrectionImageProcess);
+	StaticVector< render::ImageGraph*, 4 > processes;
+	if (m_toneMap)
+		processes.push_back(m_toneMap);
+	if (m_visual)
+		processes.push_back(m_visual);
+	if (m_gammaCorrection)
+		processes.push_back(m_gammaCorrection);
 	if (m_antiAlias)
 		processes.push_back(m_antiAlias);
 
 	for (size_t i = 0; i < processes.size(); ++i)
 	{
 		auto process = processes[i];
-		T_ASSERT(process != nullptr);
+		bool next = (bool)((i + 1) < processes.size());
 
-		bool haveNext = bool((i + 1) < processes.size());
-		m_renderGraph->addPass(
-			L"Process",
-			[&](render::RenderPassBuilder& builder)
-			{
-				if (haveNext)
-					builder.setOutput(s_handleVisual[i + 1]);
+		Ref< render::RenderPass > rp = new render::RenderPass(L"Process");
 
-				builder.addInput(s_handleGBuffer);
-				builder.addInput(s_handleVisual[i]);
-			},
-			[=](render::RenderPassResources& resources, render::RenderContext* renderContext)
-			{
-				auto gbufferTargetSet = resources.getInput(s_handleGBuffer);
-				auto visualTargetSet = resources.getInput(s_handleVisual[i]);
+		if (next)
+			rp->setOutput(s_handleVisual[i + 1]);
 
-				render::ImageProcessStep::Instance::RenderParams params;
-				params.viewFrustum = worldRenderView.getViewFrustum();
-				params.view = worldRenderView.getView();
-				params.projection = worldRenderView.getProjection();
-				params.deltaTime = 1.0f / 60.0f; // \tbd deltaTime;
+		process->addPasses(m_renderGraph, rp, ipd);
 
-				process->build(
-					renderContext,
-					visualTargetSet->getColorTexture(0),	// color
-					gbufferTargetSet->getColorTexture(0),	// depth
-					gbufferTargetSet->getColorTexture(1),	// normal
-					nullptr,	// velocity
-					nullptr,	// shadow mask
-					params
-				);
-			}
-		);
+		m_renderGraph->addPass(rp);
 	}
 }
 

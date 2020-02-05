@@ -18,7 +18,7 @@ namespace traktor
 	namespace render
 	{
 
-class ImageProcessData;
+class ImageGraph;
 
 	}
 
@@ -65,7 +65,7 @@ public:
 		float cascadingLambda;
 		bool quantizeProjection;
 		int32_t maskDenominator;
-		resource::Id< render::ImageProcessData > maskProject;
+		resource::Id< render::ImageGraph > maskProject;
 
 		ShadowSettings();
 
@@ -85,7 +85,7 @@ public:
 	float fogDensityZ;
 	Color4f fogColor;
 	resource::Id< IrradianceGrid > irradianceGrid;
-	resource::Id< render::ImageProcessData > imageProcess[QuLast];
+	resource::Id< render::ImageGraph > imageProcess[QuLast];
 
 	WorldRenderSettings();
 

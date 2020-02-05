@@ -20,7 +20,7 @@ namespace traktor
 	namespace render
 	{
 
-class ImageProcess;
+class ImageGraph;
 class IRenderTargetSet;
 class ISimpleTexture;
 class RenderContext;
@@ -73,10 +73,6 @@ public:
 
 	virtual void render(render::IRenderView* renderView, int32_t frame) override final;
 
-	virtual render::ImageProcess* getVisualImageProcess() override final;
-
-	virtual void getDebugTargets(std::vector< render::DebugTarget >& outTargets) const override final;
-
 private:
 	struct Frame
 	{
@@ -97,14 +93,14 @@ private:
 
 	Ref< render::RenderGraph > m_renderGraph;
 
-	Ref< render::ImageProcess > m_ambientOcclusion;
-	Ref< render::ImageProcess > m_antiAlias;
-	Ref< render::ImageProcess > m_visualImageProcess;
-	Ref< render::ImageProcess > m_gammaCorrectionImageProcess;
-	Ref< render::ImageProcess > m_motionBlurPrimeImageProcess;
-	Ref< render::ImageProcess > m_motionBlurImageProcess;
-	Ref< render::ImageProcess > m_toneMapImageProcess;
-	Ref< render::ImageProcess > m_shadowMaskProject;
+	resource::Proxy< render::ImageGraph > m_ambientOcclusion;
+	resource::Proxy< render::ImageGraph > m_antiAlias;
+	resource::Proxy< render::ImageGraph > m_visual;
+	resource::Proxy< render::ImageGraph > m_gammaCorrection;
+	resource::Proxy< render::ImageGraph > m_motionBlurPrime;
+	resource::Proxy< render::ImageGraph > m_motionBlur;
+	resource::Proxy< render::ImageGraph > m_toneMap;
+	resource::Proxy< render::ImageGraph > m_shadowMaskProject;
 
 	Ref< LightRendererDeferred > m_lightRenderer;
 

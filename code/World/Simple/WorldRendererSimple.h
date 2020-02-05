@@ -53,10 +53,6 @@ public:
 
 	virtual void render(render::IRenderView* renderView, int32_t frame) override final;
 
-	virtual render::ImageProcess* getVisualImageProcess() override final;
-
-	virtual void getDebugTargets(std::vector< render::DebugTarget >& outTargets) const override final;
-
 private:
 	struct Frame
 	{

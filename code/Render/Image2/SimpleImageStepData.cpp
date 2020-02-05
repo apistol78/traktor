@@ -3,8 +3,8 @@
 #include "Core/Serialization/MemberAlignedVector.h"
 #include "Core/Serialization/MemberComposite.h"
 #include "Render/Shader.h"
-#include "Render/Image2/SimpleImagePass.h"
-#include "Render/Image2/SimpleImagePassData.h"
+#include "Render/Image2/SimpleImageStep.h"
+#include "Render/Image2/SimpleImageStepData.h"
 #include "Resource/IResourceManager.h"
 #include "Resource/Member.h"
 
@@ -13,11 +13,11 @@ namespace traktor
     namespace render
     {
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.SimpleImagePassData", 0, SimpleImagePassData, IImagePassData)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.SimpleImageStepData", 0, SimpleImageStepData, IImageStepData)
 
-Ref< IImagePass > SimpleImagePassData::createInstance(resource::IResourceManager* resourceManager) const
+Ref< const IImageStep > SimpleImageStepData::createInstance(resource::IResourceManager* resourceManager) const
 {
-	Ref< SimpleImagePass > instance = new SimpleImagePass();
+	Ref< SimpleImageStep > instance = new SimpleImageStep();
 
 	// Bind shader.
 	if (!resourceManager->bind(m_shader, instance->m_shader))
@@ -32,19 +32,16 @@ Ref< IImagePass > SimpleImagePassData::createInstance(resource::IResourceManager
 		});
 	}
 
-	// Get output handle.
-	instance->m_output = getParameterHandle(m_output);
 	return instance; 
 }
 
-void SimpleImagePassData::serialize(ISerializer& s)
+void SimpleImageStepData::serialize(ISerializer& s)
 {
 	s >> resource::Member< render::Shader >(L"shader", m_shader);
 	s >> MemberAlignedVector< Source, MemberComposite< Source > >(L"sources", m_sources);
-	s >> Member< std::wstring >(L"output", m_output);
 }
 
-void SimpleImagePassData::Source::serialize(ISerializer& s)
+void SimpleImageStepData::Source::serialize(ISerializer& s)
 {
 	s >> Member< std::wstring >(L"input", input);
 	s >> Member< std::wstring >(L"parameter", parameter);

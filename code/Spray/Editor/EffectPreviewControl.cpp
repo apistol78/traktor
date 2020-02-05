@@ -141,7 +141,6 @@ bool EffectPreviewControl::create(
 		rtscd.multiSample = desc.multiSample;
 		rtscd.createDepthStencil = false;
 		rtscd.usingPrimaryDepthStencil = true;
-		rtscd.preferTiled = false;
 		rtscd.ignoreStencil = true;
 		rtscd.generateMips = false;
 		rtscd.targets[0].format = render::TfR32F;
@@ -346,7 +345,6 @@ void EffectPreviewControl::updateRenderer()
 	rtscd.multiSample = 0/*desc.multiSample*/;
 	rtscd.createDepthStencil = false;
 	rtscd.usingPrimaryDepthStencil = true;
-	rtscd.preferTiled = false;
 	rtscd.ignoreStencil = true;
 	rtscd.generateMips = false;
 	rtscd.targets[0].format = render::TfR32F;
@@ -367,7 +365,6 @@ void EffectPreviewControl::updateRenderer()
 		desc.multiSample = 0;
 		desc.createDepthStencil = false;
 		desc.usingPrimaryDepthStencil = true;
-		desc.preferTiled = false;
 		desc.ignoreStencil = false;
 		desc.generateMips = false;
 		desc.targets[0].format = render::TfR11G11B10F;

@@ -29,7 +29,6 @@ struct FindPoolPred
 			p.rtscd.createDepthStencil != m_rtscd.createDepthStencil ||
 			p.rtscd.usingDepthStencilAsTexture != m_rtscd.usingDepthStencilAsTexture ||
 			p.rtscd.usingPrimaryDepthStencil != m_rtscd.usingPrimaryDepthStencil ||
-			p.rtscd.preferTiled != m_rtscd.preferTiled ||
 			p.rtscd.ignoreStencil != m_rtscd.ignoreStencil ||
 			p.rtscd.generateMips != m_rtscd.generateMips
 		)
