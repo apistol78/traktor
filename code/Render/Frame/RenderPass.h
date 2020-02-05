@@ -37,6 +37,13 @@ public:
 		handle_t targetSetId;	//!< Resource name.
 		int32_t colorIndex;		//!< Index of target's color attachment.
 		bool history;			//!< Read previous frame; useful when cyclic behaviour desired.
+
+		Input()
+		:	targetSetId(0)
+		,	colorIndex(0)
+		,	history(false)
+		{
+		}
 	};
 
 	struct Output
@@ -44,6 +51,13 @@ public:
 		handle_t targetSetId;	//!< Resource name.
 		int32_t colorIndex;		//!< Index of target's color attachment, -1 means all attachments.
 		Clear clear;			//!< Target clear value and mask.
+
+		Output()
+		:	targetSetId(0)
+		,	colorIndex(-1)
+		{
+			clear.mask = 0;
+		}
 	};
 
 	explicit RenderPass(const wchar_t* const name = L"Unnamed");

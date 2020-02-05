@@ -387,26 +387,22 @@ bool WorldRendererForward::create(
 	
 	// GBuffer
 	rgtd.count = 2;
-	//rgtd.multiSample = desc.multiSample;
 	rgtd.createDepthStencil = false;
-	//rgtd.usingPrimaryDepthStencil = (desc.sharedDepthStencil == nullptr) ? true : false;
-	//rgtd.sharedDepthStencil = desc.sharedDepthStencil;
+	rgtd.usingPrimaryDepthStencil = (desc.sharedDepthStencil == nullptr) ? true : false;
 	rgtd.colorFormats[0] = render::TfR16F;		// Depth (R)
 	rgtd.colorFormats[1] = render::TfR16G16F;	// Normals (RG)
 	rgtd.screenWidthDenom = 1;
 	rgtd.screenHeightDenom = 1;
-	m_renderGraph->addTargetSet(L"GBuffer", s_handleGBuffer, rgtd);
+	m_renderGraph->addTargetSet(L"GBuffer", s_handleGBuffer, rgtd, desc.sharedDepthStencil);
 
 	// Ambient occlusion.
 	rgtd.count = 1;
-	//rgtd.multiSample = desc.multiSample;
 	rgtd.createDepthStencil = false;
-	//rgtd.usingPrimaryDepthStencil = (desc.sharedDepthStencil == nullptr) ? true : false;
-	//rgtd.sharedDepthStencil = desc.sharedDepthStencil;
+	rgtd.usingPrimaryDepthStencil = (desc.sharedDepthStencil == nullptr) ? true : false;
 	rgtd.colorFormats[0] = render::TfR8;			// Ambient occlusion (R)
 	rgtd.screenWidthDenom = 1;
 	rgtd.screenHeightDenom = 1;
-	m_renderGraph->addTargetSet(L"AmbientOcclusion", s_handleAmbientOcclusion, rgtd);
+	m_renderGraph->addTargetSet(L"AmbientOcclusion", s_handleAmbientOcclusion, rgtd, desc.sharedDepthStencil);
 
 	const bool shadowsEnable = (bool)(m_shadowsQuality != QuDisabled);
 	if (shadowsEnable)
@@ -415,36 +411,32 @@ bool WorldRendererForward::create(
 		rgtd.count = 0;
 		rgtd.width = 1024;
 		rgtd.height = m_settings.shadowSettings[m_shadowsQuality].cascadingSlices * 1024;
-		//rgtd.multiSample = 0;
 		rgtd.createDepthStencil = true;
+		rgtd.usingPrimaryDepthStencil = false;
 		rgtd.usingDepthStencilAsTexture = true;
-		//rgtd.usingPrimaryDepthStencil = false;
-		//rgtd.ignoreStencil = true;
+		rgtd.ignoreStencil = true;
 		m_renderGraph->addTargetSet(L"ShadowMap Cascade", s_handleShadowMapCascade, rgtd);
 
 		// Atlas shadow map.
 		rgtd.count = 0;
 		rgtd.width =
 		rgtd.height = 4096;
-		//rgtd.multiSample = 0;
 		rgtd.createDepthStencil = true;
+		rgtd.usingPrimaryDepthStencil = false;
 		rgtd.usingDepthStencilAsTexture = true;
-		//rgtd.usingPrimaryDepthStencil = false;
-		//rgtd.ignoreStencil = true;
+		rgtd.ignoreStencil = true;
 		m_renderGraph->addTargetSet(L"ShadowMap Atlas", s_handleShadowMapAtlas, rgtd);
 	}
 
 	// Visual
 	rgtd.count = 1;
-	//rgtd.multiSample = desc.multiSample;
 	rgtd.createDepthStencil = false;
-	//rgtd.usingPrimaryDepthStencil = (desc.sharedDepthStencil == nullptr) ? true : false;
-	//rgtd.sharedDepthStencil = desc.sharedDepthStencil;
+	rgtd.usingPrimaryDepthStencil = (desc.sharedDepthStencil == nullptr) ? true : false;
 	rgtd.colorFormats[0] = render::TfR11G11B10F;
 	rgtd.screenWidthDenom = 1;
 	rgtd.screenHeightDenom = 1;
 	for (int32_t i = 0; i < sizeof_array(s_handleVisual); ++i)
-		m_renderGraph->addTargetSet(L"Visual", s_handleVisual[i], rgtd);
+		m_renderGraph->addTargetSet(L"Visual", s_handleVisual[i], rgtd, desc.sharedDepthStencil);
 
 	// Allocate render contexts.
 	for (auto& frame : m_frames)

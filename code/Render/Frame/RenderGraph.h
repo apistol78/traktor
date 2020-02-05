@@ -40,7 +40,9 @@ struct RenderGraphTargetSetDesc
 	int32_t maxWidth;
 	int32_t maxHeight;
 	bool createDepthStencil;
+	bool usingPrimaryDepthStencil;
 	bool usingDepthStencilAsTexture;
+	bool ignoreStencil;
 	bool generateMips;
 	TextureFormat colorFormats[MaxColorTargets];
 
@@ -53,7 +55,9 @@ struct RenderGraphTargetSetDesc
 	,	maxWidth(0)
 	,	maxHeight(0)
 	,	createDepthStencil(false)
+	,	usingPrimaryDepthStencil(false)
 	,	usingDepthStencilAsTexture(false)
+	,	ignoreStencil(false)
 	,	generateMips(false)
 	{
 		for (int32_t i = 0; i < sizeof_array(colorFormats); ++i)
@@ -88,12 +92,14 @@ public:
 	 * \param name Debug name of target.
 	 * \param targetId Unique identifier of target.
 	 * \param targetSetDesc Render target set create description.
+	 * \param sharedDepthStencilTargetSet Share depth/stencil with target set.
 	 * \return True if target defined successfully.
 	 */
 	bool addTargetSet(
 		const wchar_t* const name,
 		const handle_t targetSetId,
-		const RenderGraphTargetSetDesc& targetSetDesc
+		const RenderGraphTargetSetDesc& targetSetDesc,
+		IRenderTargetSet* sharedDepthStencilTargetSet = nullptr
 	);
 
 	/*! Get target set from target identifier.
@@ -124,6 +130,7 @@ private:
 	{
 		const wchar_t* name;
 		RenderGraphTargetSetDesc targetSetDesc;
+		Ref< IRenderTargetSet > sharedDepthStencilTargetSet;
 		Ref< IRenderTargetSet > rts[2];
 	};
 
