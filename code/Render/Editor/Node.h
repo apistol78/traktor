@@ -20,7 +20,7 @@ namespace traktor
 class InputPin;
 class OutputPin;
 
-/*! Shader graph node.
+/*! Graph node.
  * \ingroup Render
  */
 class T_DLLCLASS Node : public ISerializable

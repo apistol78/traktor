@@ -1,7 +1,7 @@
 #include "Core/Log/Log.h"
+#include "Render/Editor/GraphTraverse.h"
 #include "Render/Editor/Shader/Nodes.h"
 #include "Render/Editor/Shader/ShaderGraph.h"
-#include "Render/Editor/Shader/ShaderGraphTraverse.h"
 #include "Render/Editor/Shader/INodeTraits.h"
 #include "Render/Editor/Shader/ShaderGraphTypePropagation.h"
 
@@ -26,7 +26,7 @@ ShaderGraphTypePropagation::ShaderGraphTypePropagation(const ShaderGraph* shader
 				roots.push_back(node);
 		}
 
-		ShaderGraphTraverse traverse(m_shaderGraph, roots);
+		GraphTraverse traverse(m_shaderGraph, roots);
 		traverse.postorder([&](const Node* node) {
 			const INodeTraits* nodeTraits = INodeTraits::find(node);
 			if (!nodeTraits)

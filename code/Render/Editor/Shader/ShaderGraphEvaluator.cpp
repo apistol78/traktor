@@ -1,9 +1,9 @@
 #include "Core/Containers/SmallMap.h"
+#include "Render/Editor/Edge.h"
+#include "Render/Editor/GraphTraverse.h"
 #include "Render/Editor/Shader/INodeTraits.h"
-#include "Render/Editor/Shader/ShaderGraphEvaluator.h"
-#include "Render/Editor/Shader/Edge.h"
 #include "Render/Editor/Shader/ShaderGraph.h"
-#include "Render/Editor/Shader/ShaderGraphTraverse.h"
+#include "Render/Editor/Shader/ShaderGraphEvaluator.h"
 
 namespace traktor
 {
@@ -92,7 +92,7 @@ Constant ShaderGraphEvaluator::evaluate(const OutputPin* outputPin) const
 {
 	EvaluateVisitor visitor;
 	visitor.shaderGraph = m_shaderGraph;
-	ShaderGraphTraverse(m_shaderGraph, outputPin->getNode()).postorder(visitor);
+	GraphTraverse(m_shaderGraph, outputPin->getNode()).postorder(visitor);
 	return visitor.evaluatedConstants[outputPin];
 }
 

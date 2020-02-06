@@ -2,7 +2,7 @@
 
 #include <string>
 #include "Render/Types.h"
-#include "Render/Editor/Shader/OutputPin.h"
+#include "Render/Editor/OutputPin.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS

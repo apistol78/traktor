@@ -5,11 +5,11 @@
 #include "Core/Serialization/MemberComplex.h"
 #include "Core/Serialization/MemberRefArray.h"
 #include "Core/Serialization/MemberStl.h"
-#include "Render/Editor/Shader/Edge.h"
+#include "Render/Editor/Edge.h"
+#include "Render/Editor/InputPin.h"
+#include "Render/Editor/OutputPin.h"
 #include "Render/Editor/Shader/External.h"
-#include "Render/Editor/Shader/InputPin.h"
 #include "Render/Editor/Shader/Nodes.h"
-#include "Render/Editor/Shader/OutputPin.h"
 #include "Render/Editor/Shader/ShaderGraph.h"
 
 namespace traktor

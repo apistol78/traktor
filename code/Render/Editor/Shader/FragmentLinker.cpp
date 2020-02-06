@@ -1,12 +1,12 @@
 #include "Core/Log/Log.h"
 #include "Core/Serialization/DeepClone.h"
+#include "Render/Editor/Edge.h"
+#include "Render/Editor/Node.h"
 #include "Render/Editor/Shader/ShaderGraph.h"
 #include "Render/Editor/Shader/ShaderGraphStatic.h"
 #include "Render/Editor/Shader/ShaderGraphValidator.h"
-#include "Render/Editor/Shader/Node.h"
 #include "Render/Editor/Shader/Nodes.h"
 #include "Render/Editor/Shader/External.h"
-#include "Render/Editor/Shader/Edge.h"
 #include "Render/Editor/Shader/FragmentLinker.h"
 
 namespace traktor

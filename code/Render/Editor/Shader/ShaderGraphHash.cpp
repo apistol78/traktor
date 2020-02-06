@@ -1,8 +1,8 @@
 #include <list>
 #include "Core/Serialization/DeepClone.h"
 #include "Core/Serialization/DeepHash.h"
-#include "Render/Editor/Shader/Node.h"
-#include "Render/Editor/Shader/OutputPin.h"
+#include "Render/Editor/Node.h"
+#include "Render/Editor/OutputPin.h"
 #include "Render/Editor/Shader/ShaderGraph.h"
 #include "Render/Editor/Shader/INodeTraits.h"
 #include "Render/Editor/Shader/ShaderGraphHash.h"

@@ -1,7 +1,7 @@
-#include "Render/Editor/Shader/Nodes.h"
-#include "Render/Editor/Shader/OutputPin.h"
-#include "Render/Editor/Shader/ShaderGraph.h"
+#include "Render/Editor/OutputPin.h"
 #include "Render/Editor/Shader/INodeTraits.h"
+#include "Render/Editor/Shader/Nodes.h"
+#include "Render/Editor/Shader/ShaderGraph.h"
 #include "Render/Editor/Shader/ShaderGraphTypeEvaluator.h"
 
 namespace traktor

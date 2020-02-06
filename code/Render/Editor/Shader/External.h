@@ -5,7 +5,7 @@
 #include <vector>
 #include "Core/Guid.h"
 #include "Core/RefArray.h"
-#include "Render/Editor/Shader/Node.h"
+#include "Render/Editor/Node.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS

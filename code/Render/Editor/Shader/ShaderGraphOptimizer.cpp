@@ -1,10 +1,10 @@
 #include <deque>
 #include <set>
 #include "Core/Log/Log.h"
-#include "Render/Editor/Shader/Edge.h"
+#include "Render/Editor/Edge.h"
+#include "Render/Editor/GraphTraverse.h"
 #include "Render/Editor/Shader/Nodes.h"
 #include "Render/Editor/Shader/ShaderGraph.h"
-#include "Render/Editor/Shader/ShaderGraphTraverse.h"
 #include "Render/Editor/Shader/INodeTraits.h"
 #include "Render/Editor/Shader/ShaderGraphHash.h"
 #include "Render/Editor/Shader/ShaderGraphOptimizer.h"
@@ -103,7 +103,7 @@ Ref< ShaderGraph > ShaderGraphOptimizer::removeUnusedBranches() const
 
 	CopyVisitor visitor;
 	visitor.m_shaderGraph = new ShaderGraph();
-	ShaderGraphTraverse(m_shaderGraph, roots).preorder(visitor);
+	GraphTraverse(m_shaderGraph, roots).preorder(visitor);
 	return visitor.m_shaderGraph;
 }
 

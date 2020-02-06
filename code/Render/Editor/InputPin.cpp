@@ -1,5 +1,5 @@
-#include "Render/Editor/Shader/InputPin.h"
-#include "Render/Editor/Shader/Node.h"
+#include "Render/Editor/InputPin.h"
+#include "Render/Editor/Node.h"
 
 namespace traktor
 {

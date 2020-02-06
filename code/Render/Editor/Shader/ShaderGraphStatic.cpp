@@ -3,11 +3,11 @@
 #include "Core/Log/Log.h"
 #include "Core/Math/Const.h"
 #include "Core/Serialization/DeepClone.h"
-#include "Render/Editor/Shader/Edge.h"
+#include "Render/Editor/Edge.h"
+#include "Render/Editor/GraphTraverse.h"
+#include "Render/Editor/Shader/INodeTraits.h"
 #include "Render/Editor/Shader/Nodes.h"
 #include "Render/Editor/Shader/ShaderGraph.h"
-#include "Render/Editor/Shader/ShaderGraphTraverse.h"
-#include "Render/Editor/Shader/INodeTraits.h"
 #include "Render/Editor/Shader/ShaderGraphOptimizer.h"
 #include "Render/Editor/Shader/ShaderGraphStatic.h"
 #include "Render/Editor/Shader/ShaderGraphTypeEvaluator.h"
@@ -598,7 +598,7 @@ restart_iteration:
 
 	// Traverse copy shader graph; replace inputs if constant.
 	ConstantFoldingVisitor visitor(new ShaderGraph(), outputConstants);
-	ShaderGraphTraverse(shaderGraph, roots).preorder(visitor);
+	GraphTraverse(shaderGraph, roots).preorder(visitor);
 
 	T_ASSERT(ShaderGraphValidator(visitor.m_shaderGraph).validateIntegrity());
 	return visitor.m_shaderGraph;

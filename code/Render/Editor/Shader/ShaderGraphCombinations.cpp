@@ -1,7 +1,7 @@
 #include <algorithm>
 #include <set>
 #include "Core/Log/Log.h"
-#include "Render/Editor/Shader/Edge.h"
+#include "Render/Editor/Edge.h"
 #include "Render/Editor/Shader/Nodes.h"
 #include "Render/Editor/Shader/ShaderGraph.h"
 #include "Render/Editor/Shader/ShaderGraphCombinations.h"

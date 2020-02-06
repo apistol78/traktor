@@ -1,8 +1,8 @@
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberRefArray.h"
+#include "Render/Editor/Node.h"
+#include "Render/Editor/Edge.h"
 #include "Render/Editor/Shader/ShaderGraphEditorClipboardData.h"
-#include "Render/Editor/Shader/Node.h"
-#include "Render/Editor/Shader/Edge.h"
 
 namespace traktor
 {

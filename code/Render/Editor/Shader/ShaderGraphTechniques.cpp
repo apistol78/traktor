@@ -1,10 +1,10 @@
 #include <stack>
 #include "Core/Serialization/DeepClone.h"
-#include "Render/Editor/Shader/Edge.h"
+#include "Render/Editor/Edge.h"
+#include "Render/Editor/GraphTraverse.h"
+#include "Render/Editor/Shader/INodeTraits.h"
 #include "Render/Editor/Shader/Nodes.h"
 #include "Render/Editor/Shader/ShaderGraph.h"
-#include "Render/Editor/Shader/ShaderGraphTraverse.h"
-#include "Render/Editor/Shader/INodeTraits.h"
 #include "Render/Editor/Shader/ShaderGraphOptimizer.h"
 #include "Render/Editor/Shader/ShaderGraphStatic.h"
 #include "Render/Editor/Shader/ShaderGraphTechniques.h"
@@ -112,7 +112,7 @@ ShaderGraphTechniques::ShaderGraphTechniques(const ShaderGraph* shaderGraph)
 
 			CopyVisitor visitor;
 			visitor.m_shaderGraph = new ShaderGraph();
-			ShaderGraphTraverse(shaderGraphOpt, roots).preorder(visitor);
+			GraphTraverse(shaderGraphOpt, roots).preorder(visitor);
 			m_techniques[name] = visitor.m_shaderGraph;
 		}
 	}

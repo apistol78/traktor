@@ -1,30 +1,30 @@
-#include "Render/Editor/Shader/ShaderGraphTraverse.h"
+#include "Render/Editor/GraphTraverse.h"
 
 namespace traktor
 {
     namespace render
     {
 
-bool doesInputPropagateToNode(const ShaderGraph* shaderGraph, const InputPin* inputPin, Node* targetNode)
+bool doesInputPropagateToNode(const Graph* graph, const InputPin* inputPin, Node* targetNode)
 {
 	FindInputPin visitor;
 	visitor.inputPin = inputPin;
 	visitor.found = false;
-	ShaderGraphTraverse(shaderGraph, targetNode).preorder(visitor);
+	GraphTraverse(graph, targetNode).preorder(visitor);
 	return visitor.found;
 }
 
-bool arePinsConnected(const ShaderGraph* shaderGraph, const OutputPin* outputPin, const InputPin* inputPin)
+bool arePinsConnected(const Graph* graph, const OutputPin* outputPin, const InputPin* inputPin)
 {
 	PinsConnected visitor;
 	visitor.outputPin = outputPin;
 	visitor.inputPin = inputPin;
 	visitor.connected = false;
-	ShaderGraphTraverse(shaderGraph, inputPin->getNode()).preorder(visitor);
+	GraphTraverse(graph, inputPin->getNode()).preorder(visitor);
 	return visitor.connected;
 }
 
-void getMergingOutputs(const ShaderGraph* shaderGraph, const AlignedVector< const InputPin* >& inputPins, AlignedVector< const OutputPin* >& outMergedOutputPins)
+void getMergingOutputs(const Graph* graph, const AlignedVector< const InputPin* >& inputPins, AlignedVector< const OutputPin* >& outMergedOutputPins)
 {
 	T_ASSERT(inputPins.size() >= 2);
 
@@ -33,7 +33,7 @@ void getMergingOutputs(const ShaderGraph* shaderGraph, const AlignedVector< cons
 	for (size_t i = 0; i < inputPins.size(); ++i)
 	{
 		visitors[i].inputPin = inputPins[i];
-		ShaderGraphTraverse(shaderGraph, inputPins[i]->getNode()).preorder(visitors[i]);
+		GraphTraverse(graph, inputPins[i]->getNode()).preorder(visitors[i]);
 	}
 
 	// Keep only output pins which are found from all inputs.
@@ -64,7 +64,7 @@ void getMergingOutputs(const ShaderGraph* shaderGraph, const AlignedVector< cons
 			for (int32_t k = 0; k < checkInputPinCount && !connected; ++k)
 			{
 				const InputPin* checkInputPin = checkNode->getInputPin(k);
-				connected = arePinsConnected(shaderGraph, commonOutputPins[i], checkInputPin);
+				connected = arePinsConnected(graph, commonOutputPins[i], checkInputPin);
 			}
 		}
 
@@ -73,11 +73,11 @@ void getMergingOutputs(const ShaderGraph* shaderGraph, const AlignedVector< cons
 	}
 }
 
-void getNonDependentOutputs(const ShaderGraph* shaderGraph, const InputPin* inputPin, const AlignedVector< const OutputPin* >& dependentOutputPins, AlignedVector< const OutputPin* >& outOutputPins)
+void getNonDependentOutputs(const Graph* graph, const InputPin* inputPin, const AlignedVector< const OutputPin* >& dependentOutputPins, AlignedVector< const OutputPin* >& outOutputPins)
 {
 	CollectOutputs visitor;
 	visitor.inputPin = inputPin;
-	ShaderGraphTraverse(shaderGraph, inputPin->getNode()).preorder(visitor);
+	GraphTraverse(graph, inputPin->getNode()).preorder(visitor);
 
 	// Keep only output pins which are not dependent on input from dependentOutputPins.
 	AlignedVector< const OutputPin* > nonDependentOutputPins;
@@ -92,7 +92,7 @@ void getNonDependentOutputs(const ShaderGraph* shaderGraph, const InputPin* inpu
 			const InputPin* outputNodeInputPin = outputNode->getInputPin(j);
             for (auto dependentOutputPin : dependentOutputPins)
 			{
-				if (arePinsConnected(shaderGraph, dependentOutputPin, outputNodeInputPin))
+				if (arePinsConnected(graph, dependentOutputPin, outputNodeInputPin))
 					outputNodeDependent = true;
 			}
 		}
@@ -116,7 +116,7 @@ void getNonDependentOutputs(const ShaderGraph* shaderGraph, const InputPin* inpu
 			for (int32_t k = 0; k < checkInputPinCount && !connected; ++k)
 			{
 				const InputPin* checkInputPin = checkNode->getInputPin(k);
-				connected = arePinsConnected(shaderGraph, nonDependentOutputPins[i], checkInputPin);
+				connected = arePinsConnected(graph, nonDependentOutputPins[i], checkInputPin);
 			}
 		}
 
