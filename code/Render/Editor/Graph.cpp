@@ -12,7 +12,7 @@ namespace traktor
 	namespace render
 	{
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.render.Graph", 0, Graph, ISerializable)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Graph", 0, Graph, ISerializable)
 
 Graph::Graph()
 {
