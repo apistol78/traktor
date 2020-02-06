@@ -1994,7 +1994,7 @@ void Switch::addCase(int32_t value)
 	m_inputPins.push_back(new InputPin(this, Guid(), ss.str(), false));
 }
 
-const std::vector< int32_t >& Switch::getCases() const
+const AlignedVector< int32_t >& Switch::getCases() const
 {
 	return m_cases;
 }
@@ -2034,7 +2034,7 @@ void Switch::serialize(ISerializer& s)
 	if (s.getVersion() >= 1)
 		s >> MemberEnum< Branch >(L"branch", m_branch, kBranch);
 
-	s >> MemberStlVector< int32_t >(L"cases", m_cases);
+	s >> MemberAlignedVector< int32_t >(L"cases", m_cases);
 
 	if (s.getDirection() == ISerializer::SdRead)
 	{

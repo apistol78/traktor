@@ -31,11 +31,10 @@ bool SwitchNodeDialog::create(ui::Widget* parent, Switch* switchNode)
 	m_caseList->create(this, ui::WsDoubleBuffer | ui::GridView::WsColumnHeader);
 	m_caseList->addColumn(new ui::GridColumn(i18n::Text(L"SHADERGRAPH_SWITCH_CASES"), 300));
 
-	const std::vector< int32_t >& cases = switchNode->getCases();
-	for (std::vector< int32_t >::const_iterator i = cases.begin(); i != cases.end(); ++i)
+	for (const auto c : switchNode->getCases())
 	{
 		Ref< ui::GridRow > row = new ui::GridRow();
-		row->add(new ui::GridItem(toString(*i)));
+		row->add(new ui::GridItem(toString(c)));
 		m_caseList->addRow(row);
 	}
 

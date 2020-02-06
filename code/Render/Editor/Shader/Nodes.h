@@ -5,7 +5,7 @@
 #include "Core/Math/Color4f.h"
 #include "Core/Math/Vector4.h"
 #include "Render/Types.h"
-#include "Render/Editor/Shader/ImmutableNode.h"
+#include "Render/Editor/ImmutableNode.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -996,7 +996,7 @@ public:
 
 	void addCase(int32_t value);
 
-	const std::vector< int32_t >& getCases() const;
+	const AlignedVector< int32_t >& getCases() const;
 
 	virtual int getInputPinCount() const override final;
 
@@ -1010,8 +1010,8 @@ public:
 
 private:
 	Branch m_branch;
-	std::vector< int32_t > m_cases;
-	std::vector< InputPin* > m_inputPins;
+	AlignedVector< int32_t > m_cases;
+	AlignedVector< InputPin* > m_inputPins;
 	OutputPin* m_outputPin;
 };
 

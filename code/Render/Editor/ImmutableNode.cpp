@@ -1,4 +1,4 @@
-#include "Render/Editor/Shader/ImmutableNode.h"
+#include "Render/Editor/ImmutableNode.h"
 
 namespace traktor
 {
@@ -32,23 +32,23 @@ ImmutableNode::~ImmutableNode()
 
 int ImmutableNode::getInputPinCount() const
 {
-	return int(m_inputPins.size());
+	return (int)m_inputPins.size();
 }
 
 const InputPin* ImmutableNode::getInputPin(int index) const
 {
-	T_ASSERT(index >= 0 && index < int(m_inputPins.size()));
+	T_ASSERT(index >= 0 && index < (int)m_inputPins.size());
 	return m_inputPins[index];
 }
 
 int ImmutableNode::getOutputPinCount() const
 {
-	return int(m_outputPins.size());
+	return (int)m_outputPins.size();
 }
 
 const OutputPin* ImmutableNode::getOutputPin(int index) const
 {
-	T_ASSERT(index >= 0 && index < int(m_outputPins.size()));
+	T_ASSERT(index >= 0 && index < (int)m_outputPins.size());
 	return m_outputPins[index];
 }
 

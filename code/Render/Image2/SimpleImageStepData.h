@@ -37,8 +37,11 @@ private:
 
     struct Source
     {
-        std::wstring input;
         std::wstring parameter;
+        std::wstring targetSetId;
+        int32_t colorIndex;
+
+        Source();
 
         void serialize(ISerializer& s);
     };

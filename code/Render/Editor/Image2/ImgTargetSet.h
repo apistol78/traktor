@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Core/Serialization/ISerializable.h"
+#include "Render/Editor/ImmutableNode.h"
 #include "Render/Frame/RenderGraph.h"
 
 // import/export mechanism.
@@ -16,28 +16,27 @@ namespace traktor
 	namespace render
 	{
 
-class T_DLLCLASS IgaTarget : public ISerializable
+class T_DLLCLASS ImgTargetSet : public ImmutableNode
 {
 	T_RTTI_CLASS;
 
 public:
-	IgaTarget();
+	ImgTargetSet();
 
-	explicit IgaTarget(const std::wstring& name);
+	explicit ImgTargetSet(const std::wstring& name);
 
 	void setName(const std::wstring& name);
 
 	const std::wstring& getName() const;
 
-	void setPosition(int32_t x, int32_t y);
+	void setTargetSetDesc(const RenderGraphTargetSetDesc& targetSetDesc);
 
-	const int32_t* getPosition() const;
+	const RenderGraphTargetSetDesc& getTargetSetDesc() const;
 
 	virtual void serialize(ISerializer& s) override final;
 
 private:
 	std::wstring m_name;
-	int32_t m_position[2];
 	RenderGraphTargetSetDesc m_targetSetDesc;
 };
 

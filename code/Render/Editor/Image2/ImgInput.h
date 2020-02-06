@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Render/Editor/Graph.h"
+#include "Render/Editor/ImmutableNode.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -15,15 +15,15 @@ namespace traktor
 	namespace render
 	{
 
-class T_DLLCLASS ImageGraphAsset : public Graph
+class T_DLLCLASS ImgInput : public ImmutableNode
 {
 	T_RTTI_CLASS;
 
 public:
-	ImageGraphAsset();
+	ImgInput();
 
-	ImageGraphAsset(const RefArray< Node >& nodes, const RefArray< Edge >& edges);
+	virtual void serialize(ISerializer& s) override final;
 };
 
-	}
+	}   
 }
