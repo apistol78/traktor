@@ -1,5 +1,7 @@
 #pragma once
 
+#include <set>
+#include <string>
 #include "Core/Serialization/ISerializable.h"
 
 // import/export mechanism.
@@ -18,6 +20,9 @@ namespace traktor
 class T_DLLCLASS IImgStep : public ISerializable
 {
     T_RTTI_CLASS;
+
+public:
+    virtual void getInputs(std::set< std::wstring >& outInputs) const = 0;
 };
 
     }

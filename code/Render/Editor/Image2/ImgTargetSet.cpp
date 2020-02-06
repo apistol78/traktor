@@ -91,20 +91,20 @@ ImgTargetSet::ImgTargetSet()
 {
 }
 
-ImgTargetSet::ImgTargetSet(const std::wstring& name)
+ImgTargetSet::ImgTargetSet(const std::wstring& targetSetId)
 :	ImmutableNode(c_ImgTarget_i, c_ImgTarget_o)
-,	m_name(name)
+,	m_targetSetId(targetSetId)
 {
 }
 
-void ImgTargetSet::setName(const std::wstring& name)
+void ImgTargetSet::setTargetSetId(const std::wstring& targetSetId)
 {
-	m_name = name;
+	m_targetSetId = targetSetId;
 }
 
-const std::wstring& ImgTargetSet::getName() const
+const std::wstring& ImgTargetSet::getTargetSetId() const
 {
-	return m_name;
+	return m_targetSetId;
 }
 
 void ImgTargetSet::setTargetSetDesc(const RenderGraphTargetSetDesc& targetSetDesc)
@@ -120,7 +120,7 @@ const RenderGraphTargetSetDesc& ImgTargetSet::getTargetSetDesc() const
 void ImgTargetSet::serialize(ISerializer& s)
 {
 	Node::serialize(s);
-	s >> Member< std::wstring >(L"name", m_name);
+	s >> Member< std::wstring >(L"targetSetId", m_targetSetId);
 	s >> MemberRenderGraphTargetSetDesc(L"targetSetDesc", m_targetSetDesc);
 }
 
