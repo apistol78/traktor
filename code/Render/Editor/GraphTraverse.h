@@ -4,11 +4,11 @@
 #include "Core/RefArray.h"
 #include "Core/Containers/AlignedVector.h"
 #include "Core/Containers/SmallSet.h"
-#include "Render/Editor/Shader/Edge.h"
-#include "Render/Editor/Shader/InputPin.h"
-#include "Render/Editor/Shader/Node.h"
-#include "Render/Editor/Shader/OutputPin.h"
-#include "Render/Editor/Shader/ShaderGraph.h"
+#include "Render/Editor/Edge.h"
+#include "Render/Editor/Graph.h"
+#include "Render/Editor/InputPin.h"
+#include "Render/Editor/Node.h"
+#include "Render/Editor/OutputPin.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -23,20 +23,20 @@ namespace traktor
 	namespace render
 	{
 
-/*! Shader graph traversal helper.
+/*! Graph traversal helper.
  * \ingroup Render
  */
-class ShaderGraphTraverse
+class GraphTraverse
 {
 public:
-	ShaderGraphTraverse(const ShaderGraph* shaderGraph, Node* root)
-	:	m_shaderGraph(shaderGraph)
+	GraphTraverse(const Graph* graph, Node* root)
+	:	m_graph(graph)
 	{
 		m_roots.push_back(root);
 	}
 
-	ShaderGraphTraverse(const ShaderGraph* shaderGraph, const RefArray< Node >& roots)
-	:	m_shaderGraph(shaderGraph)
+	GraphTraverse(const Graph* graph, const RefArray< Node >& roots)
+	:	m_graph(graph)
 	,	m_roots(roots)
 	{
 	}
@@ -71,7 +71,7 @@ public:
 	}
 
 private:
-	const ShaderGraph* m_shaderGraph;
+	const Graph* m_graph;
 	RefArray< Node > m_roots;
 
 	class LambdaVisitor
@@ -112,7 +112,7 @@ private:
 			const InputPin* inputPin = node->getInputPin(i);
 			T_ASSERT(inputPin);
 
-			Edge* edge = m_shaderGraph->findEdge(inputPin);
+			Edge* edge = m_graph->findEdge(inputPin);
 			if (edge)
 			{
 				if (!visitor(edge))
@@ -136,7 +136,7 @@ private:
 			const InputPin* inputPin = node->getInputPin(i);
 			T_ASSERT(inputPin);
 
-			Edge* edge = m_shaderGraph->findEdge(inputPin);
+			Edge* edge = m_graph->findEdge(inputPin);
 			if (edge)
 			{
 				if (!visitor(edge))
@@ -169,7 +169,7 @@ private:
 				const InputPin* inputPin = (*i)->getInputPin(j);
 				T_ASSERT(inputPin);
 
-				Edge* edge = m_shaderGraph->findEdge(inputPin);
+				Edge* edge = m_graph->findEdge(inputPin);
 				if (edge)
 				{
 					if (!visitor(edge))
@@ -271,35 +271,35 @@ struct CollectOutputs
 /*! Traverse shader graph nodes through a root set.
  * \ingroup Render
  *
- * \param shaderGraph Shader graph.
+ * \param graph Shader graph.
  * \param roots Root nodes.
  * \param visitor Node and edge visitor.
  */
 template < typename VisitorType >
-void shaderGraphTraverse(const ShaderGraph* shaderGraph, const RefArray< Node >& roots, VisitorType& visitor)
+void graphTraverse(const Graph* graph, const RefArray< Node >& roots, VisitorType& visitor)
 {
-	ShaderGraphTraverse(shaderGraph, roots).preorder(visitor);
+	GraphTraverse(graph, roots).preorder(visitor);
 }
 
 /*! Check if an input propagate to a target node.
  * \ingroup Render
  */
-bool T_DLLCLASS doesInputPropagateToNode(const ShaderGraph* shaderGraph, const InputPin* inputPin, Node* targetNode);
+bool T_DLLCLASS doesInputPropagateToNode(const Graph* graph, const InputPin* inputPin, Node* targetNode);
 
 /*! Check if two pins are connected.
  * \ingroup Render
  */
-bool T_DLLCLASS arePinsConnected(const ShaderGraph* shaderGraph, const OutputPin* outputPin, const InputPin* inputPin);
+bool T_DLLCLASS arePinsConnected(const Graph* graph, const OutputPin* outputPin, const InputPin* inputPin);
 
 /*! Get merging, common, outputs from a set of input pins.
  * \ingroup Render
  */
-void T_DLLCLASS getMergingOutputs(const ShaderGraph* shaderGraph, const AlignedVector< const InputPin* >& inputPins, AlignedVector< const OutputPin* >& outMergedOutputPins);
+void T_DLLCLASS getMergingOutputs(const Graph* graph, const AlignedVector< const InputPin* >& inputPins, AlignedVector< const OutputPin* >& outMergedOutputPins);
 
 /*! Get non-dependent outputs from a an input and a set of dependent output pins.
  * \ingroup Render
  */
-void T_DLLCLASS getNonDependentOutputs(const ShaderGraph* shaderGraph, const InputPin* inputPin, const AlignedVector< const OutputPin* >& dependentOutputPins, AlignedVector< const OutputPin* >& outOutputPins);
+void T_DLLCLASS getNonDependentOutputs(const Graph* graph, const InputPin* inputPin, const AlignedVector< const OutputPin* >& dependentOutputPins, AlignedVector< const OutputPin* >& outOutputPins);
 
 	}
 }

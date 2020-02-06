@@ -1,5 +1,5 @@
-#include "Render/Editor/Shader/InputPin.h"
-#include "Render/Editor/Shader/OutputPin.h"
+#include "Render/Editor/InputPin.h"
+#include "Render/Editor/OutputPin.h"
 #include "Render/Editor/Shader/Nodes.h"
 #include "Render/Editor/Shader/Facades/UniformNodeFacade.h"
 #include "Ui/Application.h"

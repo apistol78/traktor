@@ -3,11 +3,11 @@
 #include "Render/Dx11/Platform.h"
 #include "Render/Dx11/Editor/Hlsl/HlslContext.h"
 #include "Render/Dx11/Editor/Hlsl/HlslShader.h"
+#include "Render/Editor/GraphTraverse.h"
+#include "Render/Editor/InputPin.h"
+#include "Render/Editor/Node.h"
+#include "Render/Editor/OutputPin.h"
 #include "Render/Editor/Shader/ShaderGraph.h"
-#include "Render/Editor/Shader/Node.h"
-#include "Render/Editor/Shader/InputPin.h"
-#include "Render/Editor/Shader/OutputPin.h"
-#include "Render/Editor/Shader/ShaderGraphTraverse.h"
 
 namespace traktor
 {

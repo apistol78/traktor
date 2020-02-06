@@ -2,7 +2,7 @@
 
 #include <map>
 #include <vector>
-#include "Render/Editor/Shader/Node.h"
+#include "Render/Editor/Node.h"
 #include "Render/Editor/Shader/TypedInputPin.h"
 #include "Render/Editor/Shader/TypedOutputPin.h"
 

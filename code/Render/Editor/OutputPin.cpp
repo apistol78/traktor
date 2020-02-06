@@ -1,6 +1,6 @@
 #include <algorithm>
-#include "Render/Editor/Shader/Node.h"
-#include "Render/Editor/Shader/OutputPin.h"
+#include "Render/Editor/Node.h"
+#include "Render/Editor/OutputPin.h"
 
 namespace traktor
 {

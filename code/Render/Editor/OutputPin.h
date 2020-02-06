@@ -18,13 +18,15 @@ namespace traktor
 
 class Node;
 
-/*! Shader graph node input pin.
+/*! Graph node output pin.
  * \ingroup Render
  */
-class T_DLLCLASS InputPin
+class T_DLLCLASS OutputPin
 {
 public:
-	InputPin(Node* node, const Guid& id, const std::wstring& name, bool optional);
+	OutputPin();
+
+	OutputPin(Node* node, const Guid& id, const std::wstring& name);
 
 	Node* getNode() const;
 
@@ -32,13 +34,10 @@ public:
 
 	const std::wstring& getName() const;
 
-	bool isOptional() const;
-
 private:
 	Node* m_node;
 	Guid m_id;
 	std::wstring m_name;
-	bool m_optional;
 };
 
 	}

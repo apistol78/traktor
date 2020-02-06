@@ -2,9 +2,9 @@
 #include "Core/Serialization/AttributePrivate.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberStl.h"
-#include "Render/Editor/Shader/InputPin.h"
-#include "Render/Editor/Shader/Node.h"
-#include "Render/Editor/Shader/OutputPin.h"
+#include "Render/Editor/InputPin.h"
+#include "Render/Editor/Node.h"
+#include "Render/Editor/OutputPin.h"
 
 namespace traktor
 {

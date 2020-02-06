@@ -3,11 +3,11 @@
 //#include "Render/Ps4/Platform.h"
 #include "Render/Ps4/Editor/Pssl/PsslContext.h"
 #include "Render/Ps4/Editor/Pssl/PsslShader.h"
-#include "Render/Editor/Shader/InputPin.h"
-#include "Render/Editor/Shader/Node.h"
-#include "Render/Editor/Shader/OutputPin.h"
+#include "Render/Editor/GraphTraverse.h"
+#include "Render/Editor/InputPin.h"
+#include "Render/Editor/Node.h"
+#include "Render/Editor/OutputPin.h"
 #include "Render/Editor/Shader/ShaderGraph.h"
-#include "Render/Editor/Shader/ShaderGraphTraverse.h"
 
 namespace traktor
 {

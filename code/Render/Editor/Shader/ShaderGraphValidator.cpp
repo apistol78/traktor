@@ -3,12 +3,12 @@
 #include <map>
 #include <stack>
 #include "Core/Log/Log.h"
-#include "Render/Editor/Shader/Edge.h"
-#include "Render/Editor/Shader/InputPin.h"
+#include "Render/Editor/Edge.h"
+#include "Render/Editor/GraphTraverse.h"
+#include "Render/Editor/InputPin.h"
+#include "Render/Editor/OutputPin.h"
 #include "Render/Editor/Shader/Nodes.h"
-#include "Render/Editor/Shader/OutputPin.h"
 #include "Render/Editor/Shader/ShaderGraph.h"
-#include "Render/Editor/Shader/ShaderGraphTraverse.h"
 #include "Render/Editor/Shader/ShaderGraphValidator.h"
 
 namespace traktor
@@ -343,7 +343,7 @@ bool ShaderGraphValidator::validate(ShaderGraphType type, std::vector< const Nod
 
 	// Collect active nodes from root nodes.
 	CollectVisitor visitor;
-	ShaderGraphTraverse(m_shaderGraph, roots).preorder(visitor);
+	GraphTraverse(m_shaderGraph, roots).preorder(visitor);
 
 	// Perform checks on active nodes.
 	Report report(outErrorNodes);
