@@ -2,6 +2,7 @@
 #include "Core/Misc/SafeDestroy.h"
 #include "Editor/IDocument.h"
 #include "Editor/IEditorPageSite.h"
+#include "Render/Editor/Image2/IImgStep.h"
 #include "Render/Editor/Image2/ImageGraphAsset.h"
 #include "Render/Editor/Image2/ImageGraphEditorPage.h"
 #include "Render/Editor/Image2/ImgInput.h"
@@ -18,8 +19,10 @@
 #include "Ui/Graph/EdgeConnectEvent.h"
 #include "Ui/Graph/EdgeDisconnectEvent.h"
 #include "Ui/Graph/GraphControl.h"
+#include "Ui/Graph/InputNodeShape.h"
 #include "Ui/Graph/Node.h"
 #include "Ui/Graph/NodeMovedEvent.h"
+#include "Ui/Graph/OutputNodeShape.h"
 #include "Ui/Graph/Pin.h"
 #include "Ui/Graph/SelectEvent.h"
 
@@ -331,103 +334,78 @@ void ImageGraphEditorPage::handleDatabaseEvent(db::Database* database, const Gui
 {
 }
 
+Ref< ui::Node > ImageGraphEditorPage::createEditorNode(Node* node) const
+{
+	Ref< ui::Node > editorNode;
+
+	const std::pair< int, int >& p = node->getPosition();
+	const ui::Point position(ui::dpi96(p.first), ui::dpi96(p.second));
+
+	if (auto input = dynamic_type_cast< ImgInput* >(node))
+	{
+		editorNode = new ui::Node(
+			L"Input",
+			input->getTargetSetId(),
+			position,
+			new ui::InputNodeShape(m_editorGraph)
+		);
+		editorNode->createOutputPin(L"Output");
+	}
+	else if (auto output = dynamic_type_cast< ImgOutput* >(node))
+	{
+		editorNode = new ui::Node(
+			L"Output",
+			L"",
+			position,
+			new ui::OutputNodeShape(m_editorGraph)
+		);
+		editorNode->createInputPin(L"Input", false);
+	}
+	else if (auto pass = dynamic_type_cast< ImgPass* >(node))
+	{
+		editorNode = new ui::Node(
+			L"Pass",
+			L"",
+			position,
+			new ui::DefaultNodeShape(m_editorGraph, ui::DefaultNodeShape::StDefault)
+		);
+
+		std::set< std::wstring > inputs;
+		for (const auto step : pass->getSteps())
+			step->getInputs(inputs);
+		for (const auto& input : inputs)
+			editorNode->createInputPin(input, false);
+
+		editorNode->createOutputPin(L"Output");
+	}
+	else if (auto targetSet = dynamic_type_cast< ImgTargetSet* >(node))
+	{
+		editorNode = new ui::Node(
+			L"TargetSet",
+			targetSet->getTargetSetId(),
+			position,
+			new ui::DefaultNodeShape(m_editorGraph, ui::DefaultNodeShape::StDefault)
+		);
+		editorNode->createInputPin(L"Input", false);
+		editorNode->createOutputPin(L"Output");
+	}
+	else
+	{
+		T_FATAL_ERROR;
+		return nullptr;
+	}
+
+	editorNode->setData(L"IMGNODE", node);
+	return editorNode;
+}
+
 void ImageGraphEditorPage::createEditorGraph()
 {
 	for (auto node : m_imageGraph->getNodes())
 	{
-		if (auto input = dynamic_type_cast< ImgInput* >(node))
-		{
-			const std::pair< int, int >& p = input->getPosition();
-
-			Ref< ui::Node > inputNode = new ui::Node(
-				L"Input",
-				L"",
-				ui::Point(ui::dpi96(p.first), ui::dpi96(p.second)),
-				new ui::DefaultNodeShape(m_editorGraph, ui::DefaultNodeShape::StDefault)
-			);
-			inputNode->createOutputPin(L"Output");
-			inputNode->setData(L"IMGNODE", input);
-
-			m_editorGraph->addNode(inputNode);
-		}
-		else if (auto output = dynamic_type_cast< ImgOutput* >(node))
-		{
-			const std::pair< int, int >& p = output->getPosition();
-
-			Ref< ui::Node > outputNode = new ui::Node(
-				L"Output",
-				L"",
-				ui::Point(ui::dpi96(p.first), ui::dpi96(p.second)),
-				new ui::DefaultNodeShape(m_editorGraph, ui::DefaultNodeShape::StDefault)
-			);
-			outputNode->createInputPin(L"Input", false);
-			outputNode->setData(L"IMGNODE", output);
-
-			m_editorGraph->addNode(outputNode);
-		}
-		else if (auto pass = dynamic_type_cast< ImgPass* >(node))
-		{
-			const std::pair< int, int >& p = pass->getPosition();
-
-			Ref< ui::Node > passNode = new ui::Node(
-				L"Pass",
-				L"",
-				ui::Point(ui::dpi96(p.first), ui::dpi96(p.second)),
-				new ui::DefaultNodeShape(m_editorGraph, ui::DefaultNodeShape::StDefault)
-			);
-			passNode->createInputPin(L"Input", false);
-			passNode->createOutputPin(L"Output");
-			passNode->setData(L"IMGNODE", pass);
-
-			m_editorGraph->addNode(passNode);			
-		}
-		else if (auto targetSet = dynamic_type_cast< ImgTargetSet* >(node))
-		{
-			const std::pair< int, int >& p = targetSet->getPosition();
-
-			Ref< ui::Node > targetSetNode = new ui::Node(
-				L"TargetSet",
-				targetSet->getName(),
-				ui::Point(ui::dpi96(p.first), ui::dpi96(p.second)),
-				new ui::DefaultNodeShape(m_editorGraph, ui::DefaultNodeShape::StDefault)
-			);
-			targetSetNode->createInputPin(L"Input", false);
-			targetSetNode->createOutputPin(L"Output");
-			targetSetNode->setData(L"IMGNODE", targetSet);
-
-			m_editorGraph->addNode(targetSetNode);			
-		}
+		Ref< ui::Node > editorNode = createEditorNode(node);
+		m_editorGraph->addNode(editorNode);
 	}
-
-	// // Add targets defined in asset.
-	// for (auto target : m_imageGraph->getTargets())
-	// {
-	// 	const int32_t* p = target->getPosition();
-
-	// 	Ref< ui::Node > targetNode = new ui::Node(
-	// 		target->getName(),
-	// 		L"Target",
-	// 		ui::Point(ui::dpi96(p[0]), ui::dpi96(p[1])),
-	// 		new ui::DefaultNodeShape(m_editorGraph, ui::DefaultNodeShape::StDefault)
-	// 	);
-	// 	targetNode->createInputPin(L"Input", false);
-	// 	targetNode->createOutputPin(L"Output");
-	// 	targetNode->setData(L"TARGET", target);
-	//     m_editorGraph->addNode(targetNode);
-	// }
-
-	// // Add passes defined in asset.
-	// for (auto pass : m_imageGraph->getPasses())
-	// {
-	// 	const int32_t* p = pass->getPosition();
-
-	// 	Ref< ui::Node > passNode = new ui::Node(
-	// 		pass->getName(),
-	// 		L"Pass",
-	// 		ui::Point(ui::dpi96(p[0]), ui::dpi96(p[1])),
-	// 		new ui::DefaultNodeShape(m_editorGraph, ui::DefaultNodeShape::StExternal)
-	// 	);
-	// 	passNode->setData(L"PASS", pass);
 
 	// 	// Create input pins and input edges.
 	// 	for (const auto& input : pass->getInputs())
@@ -496,17 +474,10 @@ void ImageGraphEditorPage::eventSelect(ui::SelectEvent* event)
 	RefArray< ui::Node > nodes;
 	if (m_editorGraph->getSelectedNodes(nodes) == 1)
 	{
-		ImgPass* pass = nodes[0]->getData< ImgPass >(L"PASS");
-		if (pass)
+		Node* node = nodes[0]->getData< Node >(L"IMGNODE");
+		if (node)
 		{
-			m_site->setPropertyObject(pass);
-			return;
-		}
-
-		ImgTargetSet* target = nodes[0]->getData< ImgTargetSet >(L"TARGET");
-		if (target)
-		{
-			m_site->setPropertyObject(target);
+			m_site->setPropertyObject(node);
 			return;
 		}
 	}
@@ -515,31 +486,19 @@ void ImageGraphEditorPage::eventSelect(ui::SelectEvent* event)
 
 void ImageGraphEditorPage::eventNodeMoved(ui::NodeMovedEvent* event)
 {
-	ui::Node* node = event->getNode();
+	const ui::Node* editorNode = event->getNode();
+	Node* node = editorNode->getData< Node >(L"IMGNODE");
 
 	// Get dpi agnostic position.
-	ui::Point position = node->getPosition();
+	ui::Point position = editorNode->getPosition();
 	position.x = ui::invdpi96(position.x);
 	position.y = ui::invdpi96(position.y);
 
-	// // Save position in pass or target.
-	// IgaPass* pass = node->getData< IgaPass >(L"PASS");
-	// if (pass)
-	// {
-	// 	pass->setPosition(
-	// 		position.x,
-	// 		position.y
-	// 	);
-	// }
-
-	// IgaTarget* target = node->getData< IgaTarget >(L"TARGET");
-	// if (target)
-	// {
-	// 	target->setPosition(
-	// 		position.x,
-	// 		position.y
-	// 	);
-	// }
+	// Save position in node.
+	node->setPosition(std::make_pair(
+		position.x,
+		position.y
+	));
 }
 
 void ImageGraphEditorPage::eventEdgeConnect(ui::EdgeConnectEvent* event)

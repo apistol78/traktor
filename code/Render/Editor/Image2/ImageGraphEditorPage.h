@@ -42,6 +42,7 @@ class SelectEvent;
 class IgaPass;
 class IgaTarget;
 class ImageGraphAsset;
+class Node;
 
 class T_DLLEXPORT ImageGraphEditorPage : public editor::IEditorPage
 {
@@ -60,8 +61,6 @@ public:
 
 	virtual void handleDatabaseEvent(db::Database* database, const Guid& eventId) override final;
 
-	void createEditorGraph();
-
 private:
 	editor::IEditor* m_editor;
 	editor::IEditorPageSite* m_site;
@@ -69,6 +68,10 @@ private:
 	Ref< ImageGraphAsset > m_imageGraph;
 	Ref< ui::GraphControl > m_editorGraph;
     Ref< ui::Menu > m_menuPopup;
+
+	Ref< ui::Node > createEditorNode(Node* node) const;
+
+	void createEditorGraph();
 
     void eventButtonDown(ui::MouseButtonDownEvent* event);
 
