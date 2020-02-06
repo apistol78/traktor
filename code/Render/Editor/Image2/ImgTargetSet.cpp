@@ -1,10 +1,9 @@
-#include "Core/Serialization/AttributePrivate.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
 #include "Core/Serialization/MemberComplex.h"
 #include "Core/Serialization/MemberEnum.h"
 #include "Core/Serialization/MemberStaticArray.h"
-#include "Render/Editor/Image2/IgaTarget.h"
+#include "Render/Editor/Image2/ImgTargetSet.h"
 
 namespace traktor
 {
@@ -80,48 +79,48 @@ private:
 	value_type& m_ref;
 };
 
+const ImmutableNode::InputPinDesc c_ImgTarget_i[] = { { L"Input", false }, { 0 } };
+const ImmutableNode::OutputPinDesc c_ImgTarget_o[] = { { L"Output" }, { 0 } };
+
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.IgaTarget", 0, IgaTarget, ISerializable)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ImgTargetSet", 0, ImgTargetSet, ImmutableNode)
 
-IgaTarget::IgaTarget()
+ImgTargetSet::ImgTargetSet()
+:	ImmutableNode(c_ImgTarget_i, c_ImgTarget_o)
 {
-	m_position[0] =
-	m_position[1] = 0;
 }
 
-IgaTarget::IgaTarget(const std::wstring& name)
-:   m_name(name)
+ImgTargetSet::ImgTargetSet(const std::wstring& name)
+:	ImmutableNode(c_ImgTarget_i, c_ImgTarget_o)
+,	m_name(name)
 {
-	m_position[0] =
-	m_position[1] = 0;
 }
 
-void IgaTarget::setName(const std::wstring& name)
+void ImgTargetSet::setName(const std::wstring& name)
 {
 	m_name = name;
 }
 
-const std::wstring& IgaTarget::getName() const
+const std::wstring& ImgTargetSet::getName() const
 {
 	return m_name;
 }
 
-void IgaTarget::setPosition(int32_t x, int32_t y)
+void ImgTargetSet::setTargetSetDesc(const RenderGraphTargetSetDesc& targetSetDesc)
 {
-	m_position[0] = x;
-	m_position[1] = y;
+	m_targetSetDesc = targetSetDesc;
 }
 
-const int32_t* IgaTarget::getPosition() const
+const RenderGraphTargetSetDesc& ImgTargetSet::getTargetSetDesc() const
 {
-	return m_position;
+	return m_targetSetDesc;
 }
 
-void IgaTarget::serialize(ISerializer& s)
+void ImgTargetSet::serialize(ISerializer& s)
 {
+	Node::serialize(s);
 	s >> Member< std::wstring >(L"name", m_name);
-	s >> MemberStaticArray< int32_t, 2 >(L"position", m_position, AttributePrivate());
 	s >> MemberRenderGraphTargetSetDesc(L"targetSetDesc", m_targetSetDesc);
 }
 

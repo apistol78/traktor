@@ -79,7 +79,7 @@ PinType ShaderGraphTypeEvaluator::evaluate(const OutputPin* outputPin) const
 		uint32_t inputPinCount = node->getInputPinCount();
 
 		// Evaluate input pin types.
-		std::vector< PinType > inputPinTypes(inputPinCount);
+		AlignedVector< PinType > inputPinTypes(inputPinCount);
 		for (uint32_t i = 0; i < inputPinCount; ++i)
 			inputPinTypes[i] = evaluate(node->getInputPin(i));
 

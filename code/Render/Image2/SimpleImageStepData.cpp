@@ -27,8 +27,9 @@ Ref< const IImageStep > SimpleImageStepData::createInstance(resource::IResourceM
 	for (const auto& source : m_sources)
 	{
 		instance->m_sources.push_back({
-			getParameterHandle(source.input),
-			getParameterHandle(source.parameter)
+			getParameterHandle(source.parameter),
+			getParameterHandle(source.targetSetId),
+			source.colorIndex
 		});
 	}
 
@@ -41,10 +42,16 @@ void SimpleImageStepData::serialize(ISerializer& s)
 	s >> MemberAlignedVector< Source, MemberComposite< Source > >(L"sources", m_sources);
 }
 
+SimpleImageStepData::Source::Source()
+:	colorIndex(0)
+{
+}
+
 void SimpleImageStepData::Source::serialize(ISerializer& s)
 {
-	s >> Member< std::wstring >(L"input", input);
 	s >> Member< std::wstring >(L"parameter", parameter);
+	s >> Member< std::wstring >(L"targetSetId", targetSetId);
+	s >> Member< int32_t >(L"colorIndex", colorIndex);
 }
 
     }

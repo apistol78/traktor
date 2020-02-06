@@ -2,10 +2,12 @@
 #include "Core/Misc/SafeDestroy.h"
 #include "Editor/IDocument.h"
 #include "Editor/IEditorPageSite.h"
-#include "Render/Editor/Image2/IgaPass.h"
-#include "Render/Editor/Image2/IgaTarget.h"
 #include "Render/Editor/Image2/ImageGraphAsset.h"
 #include "Render/Editor/Image2/ImageGraphEditorPage.h"
+#include "Render/Editor/Image2/ImgInput.h"
+#include "Render/Editor/Image2/ImgOutput.h"
+#include "Render/Editor/Image2/ImgPass.h"
+#include "Render/Editor/Image2/ImgTargetSet.h"
 #include "Ui/Application.h"
 #include "Ui/Container.h"
 #include "Ui/Menu.h"
@@ -23,8 +25,8 @@
 
 namespace traktor
 {
-    namespace render
-    {
+	namespace render
+	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ImageGraphEditorPage", ImageGraphEditorPage, editor::IEditorPage)
 
@@ -46,7 +48,7 @@ bool ImageGraphEditorPage::create(ui::Container* parent)
 
 	m_editorGraph = new ui::GraphControl();
 	m_editorGraph->create(container);
-    m_editorGraph->addEventHandler< ui::MouseButtonDownEvent >(this, &ImageGraphEditorPage::eventButtonDown);
+	m_editorGraph->addEventHandler< ui::MouseButtonDownEvent >(this, &ImageGraphEditorPage::eventButtonDown);
 	m_editorGraph->addEventHandler< ui::SelectEvent >(this, &ImageGraphEditorPage::eventSelect);
 	m_editorGraph->addEventHandler< ui::NodeMovedEvent >(this, &ImageGraphEditorPage::eventNodeMoved);
 	//m_editorGraph->addEventHandler< ui::NodeActivateEvent >(this, &ImageGraphEditorPage::eventNodeDoubleClick);
@@ -55,12 +57,12 @@ bool ImageGraphEditorPage::create(ui::Container* parent)
 
 	m_menuPopup = new ui::Menu();
 	Ref< ui::MenuItem > menuItemCreate = new ui::MenuItem(L"Create...");
-    menuItemCreate->add(new ui::MenuItem(ui::Command(L"ImageGraph.Editor.AddPass"), L"Pass"));
-    menuItemCreate->add(new ui::MenuItem(ui::Command(L"ImageGraph.Editor.AddTarget"), L"Target"));
-    m_menuPopup->add(menuItemCreate);
-    m_menuPopup->add(new ui::MenuItem(ui::Command(L"Editor.Delete"), L"Delete"));
+	menuItemCreate->add(new ui::MenuItem(ui::Command(L"ImageGraph.Editor.AddPass"), L"Pass"));
+	menuItemCreate->add(new ui::MenuItem(ui::Command(L"ImageGraph.Editor.AddTarget"), L"Target"));
+	m_menuPopup->add(menuItemCreate);
+	m_menuPopup->add(new ui::MenuItem(ui::Command(L"Editor.Delete"), L"Delete"));
 
-    createEditorGraph();
+	createEditorGraph();
 	return true;
 }
 
@@ -282,42 +284,42 @@ bool ImageGraphEditorPage::handleCommand(const ui::Command& command)
 		m_document->push();
 		m_editorGraph->evenSpace(ui::GraphControl::EsHorizontally);
 	}
-    else if (command == L"ImageGraph.Editor.AddPass")
-    {
-		// Create image graph pass.
-		Ref< IgaPass > pass = new IgaPass(L"Unnamed");
-		m_imageGraph->addPass(pass);
+	else if (command == L"ImageGraph.Editor.AddPass")
+	{
+		// // Create image graph pass.
+		// Ref< IgaPass > pass = new IgaPass(L"Unnamed");
+		// m_imageGraph->addPass(pass);
 
-		// Create node in graph control.
-		Ref< ui::Node > passNode = new ui::Node(
-			pass->getName(),
-			L"Pass",
-			ui::Point(0, 0),
-			new ui::DefaultNodeShape(m_editorGraph, ui::DefaultNodeShape::StExternal)
-		);
-		passNode->createInputPin(L"Input", false);
-		passNode->createOutputPin(L"Output");
-		passNode->setData(L"PASS", pass);
-		m_editorGraph->addNode(passNode);
-    }
-    else if (command == L"ImageGraph.Editor.AddTarget")
-    {
-		// Create image graph target.
-		Ref< IgaTarget > target = new IgaTarget(L"Unnamed");
-		m_imageGraph->addTarget(target);
+		// // Create node in graph control.
+		// Ref< ui::Node > passNode = new ui::Node(
+		// 	pass->getName(),
+		// 	L"Pass",
+		// 	ui::Point(0, 0),
+		// 	new ui::DefaultNodeShape(m_editorGraph, ui::DefaultNodeShape::StExternal)
+		// );
+		// passNode->createInputPin(L"Input", false);
+		// passNode->createOutputPin(L"Output");
+		// passNode->setData(L"PASS", pass);
+		// m_editorGraph->addNode(passNode);
+	}
+	else if (command == L"ImageGraph.Editor.AddTarget")
+	{
+		// // Create image graph target.
+		// Ref< IgaTarget > target = new IgaTarget(L"Unnamed");
+		// m_imageGraph->addTarget(target);
 
-		// Create node in graph control.
-		Ref< ui::Node > targetNode = new ui::Node(
-			target->getName(),
-			L"Target",
-			ui::Point(0, 0),
-			new ui::DefaultNodeShape(m_editorGraph, ui::DefaultNodeShape::StDefault)
-		);
-		targetNode->createInputPin(L"Input", false);
-		targetNode->createOutputPin(L"Output");
-		targetNode->setData(L"TARGET", target);
-        m_editorGraph->addNode(targetNode);
-    }
+		// // Create node in graph control.
+		// Ref< ui::Node > targetNode = new ui::Node(
+		// 	target->getName(),
+		// 	L"Target",
+		// 	ui::Point(0, 0),
+		// 	new ui::DefaultNodeShape(m_editorGraph, ui::DefaultNodeShape::StDefault)
+		// );
+		// targetNode->createInputPin(L"Input", false);
+		// targetNode->createOutputPin(L"Output");
+		// targetNode->setData(L"TARGET", target);
+		// m_editorGraph->addNode(targetNode);
+	}
 	else
 		return false;
 
@@ -331,83 +333,127 @@ void ImageGraphEditorPage::handleDatabaseEvent(db::Database* database, const Gui
 
 void ImageGraphEditorPage::createEditorGraph()
 {
-    // Add targets defined in asset.
-    for (auto target : m_imageGraph->getTargets())
-    {
-		const int32_t* p = target->getPosition();
-
-		Ref< ui::Node > targetNode = new ui::Node(
-			target->getName(),
-			L"Target",
-			ui::Point(ui::dpi96(p[0]), ui::dpi96(p[1])),
-			new ui::DefaultNodeShape(m_editorGraph, ui::DefaultNodeShape::StDefault)
-		);
-		targetNode->createInputPin(L"Input", false);
-		targetNode->createOutputPin(L"Output");
-		targetNode->setData(L"TARGET", target);
-        m_editorGraph->addNode(targetNode);
-    }
-
-    // Add passes defined in asset.
-    for (auto pass : m_imageGraph->getPasses())
-    {
-		const int32_t* p = pass->getPosition();
-
-		Ref< ui::Node > passNode = new ui::Node(
-			pass->getName(),
-			L"Pass",
-			ui::Point(ui::dpi96(p[0]), ui::dpi96(p[1])),
-			new ui::DefaultNodeShape(m_editorGraph, ui::DefaultNodeShape::StExternal)
-		);
-		passNode->setData(L"PASS", pass);
-
-		// Create input pins and input edges.
-		for (const auto& input : pass->getInputs())
+	for (auto node : m_imageGraph->getNodes())
+	{
+		if (auto input = dynamic_type_cast< ImgInput* >(node))
 		{
-			ui::Pin* inputPin = passNode->createInputPin(input.name, false);
-			if (input.source != nullptr)
-			{
-				for (auto editorNode : m_editorGraph->getNodes())
-				{
-					if (editorNode->getData< IgaTarget >(L"TARGET") == input.source)
-					{
-						m_editorGraph->addEdge(new ui::Edge(
-							editorNode->getOutputPin(0),
-							inputPin
-						));
-						break;
-					}
-				}
-			}
-		}
 
-		// Create output pin and output edge.
+		}
+		else if (auto output = dynamic_type_cast< ImgOutput* >(node))
 		{
-			const auto& output = pass->getOutput();
 
-			ui::Pin* outputPin = passNode->createOutputPin(L"Output");
-			if (output.target != nullptr)
-			{
-				for (auto editorNode : m_editorGraph->getNodes())
-				{
-					if (editorNode->getData< IgaTarget >(L"TARGET") == output.target)
-					{
-						m_editorGraph->addEdge(new ui::Edge(
-							outputPin,
-							editorNode->getInputPin(0)
-						));
-						break;
-					}
-				}
-			}
 		}
-	
-		// Add pass node to graph.
-        m_editorGraph->addNode(passNode);
+		else if (auto pass = dynamic_type_cast< ImgPass* >(node))
+		{
+			const std::pair< int, int >& p = pass->getPosition();
+
+			Ref< ui::Node > passNode = new ui::Node(
+				L"Pass",
+				L"Pass",
+				ui::Point(ui::dpi96(p.first), ui::dpi96(p.second)),
+				new ui::DefaultNodeShape(m_editorGraph, ui::DefaultNodeShape::StDefault)
+			);
+			passNode->createInputPin(L"Input", false);
+			passNode->createOutputPin(L"Output");
+			passNode->setData(L"IMGNODE", pass);
+
+			m_editorGraph->addNode(passNode);			
+		}
+		else if (auto targetSet = dynamic_type_cast< ImgTargetSet* >(node))
+		{
+			const std::pair< int, int >& p = targetSet->getPosition();
+
+			Ref< ui::Node > targetSetNode = new ui::Node(
+				targetSet->getName(),
+				L"TargetSet",
+				ui::Point(ui::dpi96(p.first), ui::dpi96(p.second)),
+				new ui::DefaultNodeShape(m_editorGraph, ui::DefaultNodeShape::StDefault)
+			);
+			targetSetNode->createInputPin(L"Input", false);
+			targetSetNode->createOutputPin(L"Output");
+			targetSetNode->setData(L"IMGNODE", targetSet);
+
+			m_editorGraph->addNode(targetSetNode);			
+		}
 	}
 
+	// // Add targets defined in asset.
+	// for (auto target : m_imageGraph->getTargets())
+	// {
+	// 	const int32_t* p = target->getPosition();
+
+	// 	Ref< ui::Node > targetNode = new ui::Node(
+	// 		target->getName(),
+	// 		L"Target",
+	// 		ui::Point(ui::dpi96(p[0]), ui::dpi96(p[1])),
+	// 		new ui::DefaultNodeShape(m_editorGraph, ui::DefaultNodeShape::StDefault)
+	// 	);
+	// 	targetNode->createInputPin(L"Input", false);
+	// 	targetNode->createOutputPin(L"Output");
+	// 	targetNode->setData(L"TARGET", target);
+	//     m_editorGraph->addNode(targetNode);
+	// }
+
+	// // Add passes defined in asset.
+	// for (auto pass : m_imageGraph->getPasses())
+	// {
+	// 	const int32_t* p = pass->getPosition();
+
+	// 	Ref< ui::Node > passNode = new ui::Node(
+	// 		pass->getName(),
+	// 		L"Pass",
+	// 		ui::Point(ui::dpi96(p[0]), ui::dpi96(p[1])),
+	// 		new ui::DefaultNodeShape(m_editorGraph, ui::DefaultNodeShape::StExternal)
+	// 	);
+	// 	passNode->setData(L"PASS", pass);
+
+	// 	// Create input pins and input edges.
+	// 	for (const auto& input : pass->getInputs())
+	// 	{
+	// 		ui::Pin* inputPin = passNode->createInputPin(input.name, false);
+	// 		if (input.source != nullptr)
+	// 		{
+	// 			for (auto editorNode : m_editorGraph->getNodes())
+	// 			{
+	// 				if (editorNode->getData< IgaTarget >(L"TARGET") == input.source)
+	// 				{
+	// 					m_editorGraph->addEdge(new ui::Edge(
+	// 						editorNode->getOutputPin(0),
+	// 						inputPin
+	// 					));
+	// 					break;
+	// 				}
+	// 			}
+	// 		}
+	// 	}
+
+	// 	// Create output pin and output edge.
+	// 	{
+	// 		const auto& output = pass->getOutput();
+
+	// 		ui::Pin* outputPin = passNode->createOutputPin(L"Output");
+	// 		if (output.target != nullptr)
+	// 		{
+	// 			for (auto editorNode : m_editorGraph->getNodes())
+	// 			{
+	// 				if (editorNode->getData< IgaTarget >(L"TARGET") == output.target)
+	// 				{
+	// 					m_editorGraph->addEdge(new ui::Edge(
+	// 						outputPin,
+	// 						editorNode->getInputPin(0)
+	// 					));
+	// 					break;
+	// 				}
+	// 			}
+	// 		}
+	// 	}
+	
+	// 	// Add pass node to graph.
+	//     m_editorGraph->addNode(passNode);
+	// }
+
 	m_editorGraph->center();
-    m_editorGraph->update();
+	m_editorGraph->update();
 }
 
 void ImageGraphEditorPage::eventButtonDown(ui::MouseButtonDownEvent* event)
@@ -428,14 +474,14 @@ void ImageGraphEditorPage::eventSelect(ui::SelectEvent* event)
 	RefArray< ui::Node > nodes;
 	if (m_editorGraph->getSelectedNodes(nodes) == 1)
 	{
-		IgaPass* pass = nodes[0]->getData< IgaPass >(L"PASS");
+		ImgPass* pass = nodes[0]->getData< ImgPass >(L"PASS");
 		if (pass)
 		{
 			m_site->setPropertyObject(pass);
 			return;
 		}
 
-		IgaTarget* target = nodes[0]->getData< IgaTarget >(L"TARGET");
+		ImgTargetSet* target = nodes[0]->getData< ImgTargetSet >(L"TARGET");
 		if (target)
 		{
 			m_site->setPropertyObject(target);
@@ -454,24 +500,24 @@ void ImageGraphEditorPage::eventNodeMoved(ui::NodeMovedEvent* event)
 	position.x = ui::invdpi96(position.x);
 	position.y = ui::invdpi96(position.y);
 
-	// Save position in pass or target.
-	IgaPass* pass = node->getData< IgaPass >(L"PASS");
-	if (pass)
-	{
-		pass->setPosition(
-			position.x,
-			position.y
-		);
-	}
+	// // Save position in pass or target.
+	// IgaPass* pass = node->getData< IgaPass >(L"PASS");
+	// if (pass)
+	// {
+	// 	pass->setPosition(
+	// 		position.x,
+	// 		position.y
+	// 	);
+	// }
 
-	IgaTarget* target = node->getData< IgaTarget >(L"TARGET");
-	if (target)
-	{
-		target->setPosition(
-			position.x,
-			position.y
-		);
-	}
+	// IgaTarget* target = node->getData< IgaTarget >(L"TARGET");
+	// if (target)
+	// {
+	// 	target->setPosition(
+	// 		position.x,
+	// 		position.y
+	// 	);
+	// }
 }
 
 void ImageGraphEditorPage::eventEdgeConnect(ui::EdgeConnectEvent* event)
@@ -484,21 +530,21 @@ void ImageGraphEditorPage::eventEdgeConnect(ui::EdgeConnectEvent* event)
 
 	bool attached = false;
 
-	// "Render target" to "Pass"
-	{
-		IgaTarget* source = sourcePin->getNode()->getData< IgaTarget >(L"TARGET");
-		IgaPass* destination = destinationPin->getNode()->getData< IgaPass >(L"PASS");
-		if (source != nullptr && destination != nullptr)
-			attached |= destination->attachInput(destinationPin->getName(), source);
-	}
+	// // "Render target" to "Pass"
+	// {
+	// 	IgaTarget* source = sourcePin->getNode()->getData< IgaTarget >(L"TARGET");
+	// 	IgaPass* destination = destinationPin->getNode()->getData< IgaPass >(L"PASS");
+	// 	if (source != nullptr && destination != nullptr)
+	// 		attached |= destination->attachInput(destinationPin->getName(), source);
+	// }
 
-	// "Pass" to "Render target"
-	{
-		IgaPass* source = sourcePin->getNode()->getData< IgaPass >(L"PASS");
-		IgaTarget* destination = destinationPin->getNode()->getData< IgaTarget >(L"TARGET");
-		if (source != nullptr && destination != nullptr)
-			attached |= source->attachOutput(destination);
-	}
+	// // "Pass" to "Render target"
+	// {
+	// 	IgaPass* source = sourcePin->getNode()->getData< IgaPass >(L"PASS");
+	// 	IgaTarget* destination = destinationPin->getNode()->getData< IgaTarget >(L"TARGET");
+	// 	if (source != nullptr && destination != nullptr)
+	// 		attached |= source->attachOutput(destination);
+	// }
 
 	// If nothing attached ignore adding this edge.
 	if (!attached)
@@ -524,21 +570,21 @@ void ImageGraphEditorPage::eventEdgeDisconnect(ui::EdgeDisconnectEvent* event)
 
 	bool detached = false;
 
-	{
-		IgaPass* pass = sourcePin->getNode()->getData< IgaPass >(L"PASS");
-		if (pass)
-			detached |= pass->attachOutput(nullptr);
-	}
+	// {
+	// 	IgaPass* pass = sourcePin->getNode()->getData< IgaPass >(L"PASS");
+	// 	if (pass)
+	// 		detached |= pass->attachOutput(nullptr);
+	// }
 
-	{
-		IgaPass* pass = destinationPin->getNode()->getData< IgaPass >(L"PASS");
-		if (pass)
-			detached |= pass->attachInput(destinationPin->getName(), nullptr);
-	}
+	// {
+	// 	IgaPass* pass = destinationPin->getNode()->getData< IgaPass >(L"PASS");
+	// 	if (pass)
+	// 		detached |= pass->attachInput(destinationPin->getName(), nullptr);
+	// }
 
 	if (!detached)
 		log::warning << L"No input/output detached from disconnecting edge." << Endl;
 }
 
-    }
+	}
 }

@@ -1,6 +1,6 @@
 #pragma once
 
-#include <vector>
+#include "Core/Containers/AlignedVector.h"
 #include "Render/Editor/InputPin.h"
 #include "Render/Editor/Node.h"
 #include "Render/Editor/OutputPin.h"
@@ -18,10 +18,10 @@ namespace traktor
 	namespace render
 	{
 
-/*! Immutable shader graph node.
+/*! Immutable graph node.
  * \ingroup Render
  *
- * Immutable shader graph nodes are nodes which
+ * Immutable graph nodes are nodes which
  * doesn't change their appearance, i.e. has a fixed
  * set of input and output pins.
  */
@@ -54,8 +54,8 @@ public:
 	virtual const OutputPin* getOutputPin(int index) const override final;
 
 private:
-	std::vector< InputPin* > m_inputPins;
-	std::vector< OutputPin* > m_outputPins;
+	AlignedVector< InputPin* > m_inputPins;
+	AlignedVector< OutputPin* > m_outputPins;
 
 	ImmutableNode& operator = (const ImmutableNode&) { T_FATAL_ERROR; return *this; }
 };

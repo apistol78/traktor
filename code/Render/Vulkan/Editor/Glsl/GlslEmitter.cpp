@@ -2220,7 +2220,7 @@ bool emitSwitch(GlslContext& cx, Switch* node)
 	if (!in)
 		return false;
 
-	const std::vector< int32_t >& caseConditions = node->getCases();
+	const auto& caseConditions = node->getCases();
 	std::vector< std::wstring > caseBranches;
 	std::vector< GlslVariable > caseInputs;
 	GlslType outputType = GtVoid;
@@ -2271,7 +2271,7 @@ bool emitSwitch(GlslContext& cx, Switch* node)
 	Ref< GlslVariable > out = cx.emitOutput(node, L"Output", outputType);
 	assign(f, out) << expandScalar(0.0f, outputType) << L";" << Endl;
 
-	const std::vector< int32_t >& cases = node->getCases();
+	const auto& cases = node->getCases();
 
 	comment(f, node);
 	for (uint32_t i = 0; i < uint32_t(cases.size()); ++i)
