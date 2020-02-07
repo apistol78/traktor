@@ -57,6 +57,12 @@ public:
 			postorderImpl(*i, visitor, visited);
 	}
 
+	void preorder(const std::function< bool(const Node*) >& fn)
+	{
+		LambdaVisitor visitor(fn);
+		preorder(visitor);
+	}
+
 	void postorder(const std::function< bool(const Node*) >& fn)
 	{
 		LambdaVisitor visitor(fn);

@@ -2,6 +2,7 @@
 #include "Core/Misc/SafeDestroy.h"
 #include "Editor/IDocument.h"
 #include "Editor/IEditorPageSite.h"
+#include "Render/Editor/Edge.h"
 #include "Render/Editor/Image2/IImgStep.h"
 #include "Render/Editor/Image2/ImageGraphAsset.h"
 #include "Render/Editor/Image2/ImageGraphEditorPage.h"
@@ -54,12 +55,12 @@ bool ImageGraphEditorPage::create(ui::Container* parent)
 	m_editorGraph->addEventHandler< ui::MouseButtonDownEvent >(this, &ImageGraphEditorPage::eventButtonDown);
 	m_editorGraph->addEventHandler< ui::SelectEvent >(this, &ImageGraphEditorPage::eventSelect);
 	m_editorGraph->addEventHandler< ui::NodeMovedEvent >(this, &ImageGraphEditorPage::eventNodeMoved);
-	//m_editorGraph->addEventHandler< ui::NodeActivateEvent >(this, &ImageGraphEditorPage::eventNodeDoubleClick);
 	m_editorGraph->addEventHandler< ui::EdgeConnectEvent >(this, &ImageGraphEditorPage::eventEdgeConnect);
 	m_editorGraph->addEventHandler< ui::EdgeDisconnectEvent >(this, &ImageGraphEditorPage::eventEdgeDisconnect);
 
 	m_menuPopup = new ui::Menu();
 	Ref< ui::MenuItem > menuItemCreate = new ui::MenuItem(L"Create...");
+	menuItemCreate->add(new ui::MenuItem(ui::Command(L"ImageGraph.Editor.AddInput"), L"Input"));
 	menuItemCreate->add(new ui::MenuItem(ui::Command(L"ImageGraph.Editor.AddPass"), L"Pass"));
 	menuItemCreate->add(new ui::MenuItem(ui::Command(L"ImageGraph.Editor.AddTarget"), L"Target"));
 	m_menuPopup->add(menuItemCreate);
@@ -124,9 +125,9 @@ bool ImageGraphEditorPage::handleCommand(const ui::Command& command)
 
 		// 	for (auto selectedEdge : selectedEdges)
 		// 	{
-		// 		Ref< Edge > shaderEdge = selectedEdge->getData< Edge >(L"SHADEREDGE");
-		// 		T_ASSERT(shaderEdge);
-		// 		data->addEdge(shaderEdge);
+		// 		Ref< Edge > edge = selectedEdge->getData< Edge >(L"SHADEREDGE");
+		// 		T_ASSERT(edge);
+		// 		data->addEdge(edge);
 		// 	}
 
 		// 	ui::Application::getInstance()->getClipboard()->setObject(data);
@@ -216,10 +217,10 @@ bool ImageGraphEditorPage::handleCommand(const ui::Command& command)
 		// for (RefArray< ui::Edge >::iterator i = edges.begin(); i != edges.end(); ++i)
 		// {
 		// 	ui::Edge* editorEdge = *i;
-		// 	Ref< Edge > shaderEdge = editorEdge->getData< Edge >(L"SHADEREDGE");
+		// 	Ref< Edge > edge = editorEdge->getData< Edge >(L"SHADEREDGE");
 
 		// 	m_editorGraph->removeEdge(editorEdge);
-		// 	m_imageGraph->removeEdge(shaderEdge);
+		// 	m_imageGraph->removeEdge(edge);
 		// }
 
 		// for (RefArray< ui::Node >::iterator i = nodes.begin(); i != nodes.end(); ++i)
@@ -287,41 +288,32 @@ bool ImageGraphEditorPage::handleCommand(const ui::Command& command)
 		m_document->push();
 		m_editorGraph->evenSpace(ui::GraphControl::EsHorizontally);
 	}
+	else if (command == L"ImageGraph.Editor.AddInput")
+	{
+		// Create image graph input.
+		Ref< ImgInput > input = new ImgInput();
+		m_imageGraph->addNode(input);
+
+		// Create node in graph control.
+		m_editorGraph->addNode(createEditorNode(input));
+	}
 	else if (command == L"ImageGraph.Editor.AddPass")
 	{
-		// // Create image graph pass.
-		// Ref< IgaPass > pass = new IgaPass(L"Unnamed");
-		// m_imageGraph->addPass(pass);
+		// Create image graph pass.
+		Ref< ImgPass > pass = new ImgPass();
+		m_imageGraph->addNode(pass);
 
-		// // Create node in graph control.
-		// Ref< ui::Node > passNode = new ui::Node(
-		// 	pass->getName(),
-		// 	L"Pass",
-		// 	ui::Point(0, 0),
-		// 	new ui::DefaultNodeShape(m_editorGraph, ui::DefaultNodeShape::StExternal)
-		// );
-		// passNode->createInputPin(L"Input", false);
-		// passNode->createOutputPin(L"Output");
-		// passNode->setData(L"PASS", pass);
-		// m_editorGraph->addNode(passNode);
+		// Create node in graph control.
+		m_editorGraph->addNode(createEditorNode(pass));
 	}
 	else if (command == L"ImageGraph.Editor.AddTarget")
 	{
-		// // Create image graph target.
-		// Ref< IgaTarget > target = new IgaTarget(L"Unnamed");
-		// m_imageGraph->addTarget(target);
+		// Create image graph target set.
+		Ref< ImgTargetSet > targetSet = new ImgTargetSet(L"Unnamed");
+		m_imageGraph->addNode(targetSet);
 
-		// // Create node in graph control.
-		// Ref< ui::Node > targetNode = new ui::Node(
-		// 	target->getName(),
-		// 	L"Target",
-		// 	ui::Point(0, 0),
-		// 	new ui::DefaultNodeShape(m_editorGraph, ui::DefaultNodeShape::StDefault)
-		// );
-		// targetNode->createInputPin(L"Input", false);
-		// targetNode->createOutputPin(L"Output");
-		// targetNode->setData(L"TARGET", target);
-		// m_editorGraph->addNode(targetNode);
+		// Create node in graph control.
+		m_editorGraph->addNode(createEditorNode(targetSet));
 	}
 	else
 		return false;
@@ -401,56 +393,67 @@ Ref< ui::Node > ImageGraphEditorPage::createEditorNode(Node* node) const
 
 void ImageGraphEditorPage::createEditorGraph()
 {
+	// Keep a map from image graph nodes to editor nodes.
+	std::map< Ref< Node >, Ref< ui::Node > > nodeMap;
+
+	// Create editor nodes for each image graph node.
 	for (auto node : m_imageGraph->getNodes())
 	{
 		Ref< ui::Node > editorNode = createEditorNode(node);
 		m_editorGraph->addNode(editorNode);
+		nodeMap[node] = editorNode;
 	}
 
-	// 	// Create input pins and input edges.
-	// 	for (const auto& input : pass->getInputs())
-	// 	{
-	// 		ui::Pin* inputPin = passNode->createInputPin(input.name, false);
-	// 		if (input.source != nullptr)
-	// 		{
-	// 			for (auto editorNode : m_editorGraph->getNodes())
-	// 			{
-	// 				if (editorNode->getData< IgaTarget >(L"TARGET") == input.source)
-	// 				{
-	// 					m_editorGraph->addEdge(new ui::Edge(
-	// 						editorNode->getOutputPin(0),
-	// 						inputPin
-	// 					));
-	// 					break;
-	// 				}
-	// 			}
-	// 		}
-	// 	}
+	// Create editor edges for each shader edge.
+	for (auto edge : m_imageGraph->getEdges())
+	{
+		const OutputPin* sourcePin = edge->getSource();
+		if (!sourcePin)
+		{
+			log::warning << L"Invalid edge, no source pin." << Endl;
+			continue;
+		}
 
-	// 	// Create output pin and output edge.
-	// 	{
-	// 		const auto& output = pass->getOutput();
+		const InputPin* destinationPin = edge->getDestination();
+		if (!destinationPin)
+		{
+			log::warning << L"Invalid edge, no destination pin." << Endl;
+			continue;
+		}
 
-	// 		ui::Pin* outputPin = passNode->createOutputPin(L"Output");
-	// 		if (output.target != nullptr)
-	// 		{
-	// 			for (auto editorNode : m_editorGraph->getNodes())
-	// 			{
-	// 				if (editorNode->getData< IgaTarget >(L"TARGET") == output.target)
-	// 				{
-	// 					m_editorGraph->addEdge(new ui::Edge(
-	// 						outputPin,
-	// 						editorNode->getInputPin(0)
-	// 					));
-	// 					break;
-	// 				}
-	// 			}
-	// 		}
-	// 	}
-	
-	// 	// Add pass node to graph.
-	//     m_editorGraph->addNode(passNode);
-	// }
+		ui::Node* editorSourceNode = nodeMap[sourcePin->getNode()];
+		if (!editorSourceNode)
+		{
+			log::warning << L"Invalid pin, no editor source node found of pin \"" << sourcePin->getName() << L"\"." << Endl;
+			continue;
+		}
+
+		ui::Node* editorDestinationNode = nodeMap[destinationPin->getNode()];
+		if (!editorDestinationNode)
+		{
+			log::warning << L"Invalid pin, no editor destination node found of pin \"" << destinationPin->getName() << L"\"." << Endl;
+			continue;
+		}
+
+		ui::Pin* editorSourcePin = editorSourceNode->findOutputPin(sourcePin->getName());
+		if (!editorSourcePin)
+		{
+			log::warning << L"Unable to find editor source pin \"" << sourcePin->getName() << L"\"." << Endl;
+			continue;
+		}
+
+		ui::Pin* editorDestinationPin = editorDestinationNode->findInputPin(destinationPin->getName());
+		if (!editorDestinationPin)
+		{
+			log::warning << L"Unable to find editor destination pin \"" << destinationPin->getName() << L"\"." << Endl;
+			continue;
+		}
+
+		Ref< ui::Edge > editorEdge = new ui::Edge(editorSourcePin, editorDestinationPin);
+		editorEdge->setData(L"IMGEDGE", edge);
+
+		m_editorGraph->addEdge(editorEdge);
+	}
 
 	m_editorGraph->center();
 	m_editorGraph->update();
@@ -503,68 +506,54 @@ void ImageGraphEditorPage::eventNodeMoved(ui::NodeMovedEvent* event)
 
 void ImageGraphEditorPage::eventEdgeConnect(ui::EdgeConnectEvent* event)
 {
-	ui::Edge* edge = event->getEdge();
-	ui::Pin* sourcePin = edge->getSourcePin();
-	ui::Pin* destinationPin = edge->getDestinationPin();
+	Ref< ui::Edge > editorEdge = event->getEdge();
+	Ref< ui::Pin > editorSourcePin = editorEdge->getSourcePin();
+	T_ASSERT(editorSourcePin);
+
+	ui::Pin* editorDestinationPin = editorEdge->getDestinationPin();
+	T_ASSERT(editorDestinationPin);
+
+	Node* sourceNode = editorSourcePin->getNode()->getData< Node >(L"IMGNODE");
+	T_ASSERT(sourceNode);
+
+	Node* destinationNode = editorDestinationPin->getNode()->getData< Node >(L"IMGNODE");
+	T_ASSERT(destinationNode);
+
+	const OutputPin* sourcePin = sourceNode->findOutputPin(editorSourcePin->getName());
+	T_ASSERT(sourcePin);
+
+	const InputPin* destinationPin = destinationNode->findInputPin(editorDestinationPin->getName());
+	T_ASSERT(destinationPin);
+
+	// Replace existing edge.
+	Ref< Edge > edge = m_imageGraph->findEdge(destinationPin);
+	if (edge)
+	{
+		m_imageGraph->removeEdge(edge);
+
+		RefArray< ui::Edge > editorEdges;
+		m_editorGraph->getConnectedEdges(editorDestinationPin, editorEdges);
+		T_ASSERT(editorEdges.size() == 1);
+
+		m_editorGraph->removeEdge(editorEdges.front());
+	}
 
 	m_document->push();
 
-	bool attached = false;
+	edge = new Edge(sourcePin, destinationPin);
+	m_imageGraph->addEdge(edge);
 
-	// // "Render target" to "Pass"
-	// {
-	// 	IgaTarget* source = sourcePin->getNode()->getData< IgaTarget >(L"TARGET");
-	// 	IgaPass* destination = destinationPin->getNode()->getData< IgaPass >(L"PASS");
-	// 	if (source != nullptr && destination != nullptr)
-	// 		attached |= destination->attachInput(destinationPin->getName(), source);
-	// }
-
-	// // "Pass" to "Render target"
-	// {
-	// 	IgaPass* source = sourcePin->getNode()->getData< IgaPass >(L"PASS");
-	// 	IgaTarget* destination = destinationPin->getNode()->getData< IgaTarget >(L"TARGET");
-	// 	if (source != nullptr && destination != nullptr)
-	// 		attached |= source->attachOutput(destination);
-	// }
-
-	// If nothing attached ignore adding this edge.
-	if (!attached)
-		return;
-
-	// Disconnect existing edge first.
-	RefArray< ui::Edge > edges;
-	m_editorGraph->getConnectedEdges(destinationPin, edges);
-	for (auto edge : edges)
-		m_editorGraph->removeEdge(edge);
-
-	// Create new edge.
-	m_editorGraph->addEdge(edge);
+	editorEdge->setData(L"IMGEDGE", edge);
+	m_editorGraph->addEdge(editorEdge);
 }
 
 void ImageGraphEditorPage::eventEdgeDisconnect(ui::EdgeDisconnectEvent* event)
 {
-	ui::Edge* edge = event->getEdge();
-	ui::Pin* sourcePin = edge->getSourcePin();
-	ui::Pin* destinationPin = edge->getDestinationPin();
+	ui::Edge* editorEdge = event->getEdge();
+	Edge* edge = mandatory_non_null_type_cast< Edge* >(editorEdge->getData(L"IMGEDGE"));
 
 	m_document->push();
-
-	bool detached = false;
-
-	// {
-	// 	IgaPass* pass = sourcePin->getNode()->getData< IgaPass >(L"PASS");
-	// 	if (pass)
-	// 		detached |= pass->attachOutput(nullptr);
-	// }
-
-	// {
-	// 	IgaPass* pass = destinationPin->getNode()->getData< IgaPass >(L"PASS");
-	// 	if (pass)
-	// 		detached |= pass->attachInput(destinationPin->getName(), nullptr);
-	// }
-
-	if (!detached)
-		log::warning << L"No input/output detached from disconnecting edge." << Endl;
+	m_imageGraph->removeEdge(edge);
 }
 
 	}

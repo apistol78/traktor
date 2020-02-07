@@ -835,19 +835,16 @@ void ShaderGraphEditorPage::createEditorNodes(const RefArray< Node >& shaderNode
 	std::map< Ref< Node >, Ref< ui::Node > > nodeMap;
 
 	// Create editor nodes for each shader node.
-	for (RefArray< Node >::const_iterator i = shaderNodes.begin(); i != shaderNodes.end(); ++i)
+	for (auto shaderNode : shaderNodes)
 	{
-		Node* shaderNode = *i;
 		Ref< ui::Node > editorNode = createEditorNode(shaderNode);
 		m_editorGraph->addNode(editorNode);
 		nodeMap[shaderNode] = editorNode;
 	}
 
 	// Create editor edges for each shader edge.
-	for (RefArray< Edge >::const_iterator i = shaderEdges.begin(); i != shaderEdges.end(); ++i)
+	for (auto shaderEdge : shaderEdges)
 	{
-		Edge* shaderEdge = *i;
-
 		const OutputPin* shaderSourcePin = shaderEdge->getSource();
 		if (!shaderSourcePin)
 		{
@@ -1383,11 +1380,11 @@ void ShaderGraphEditorPage::eventEdgeConnect(ui::EdgeConnectEvent* event)
 
 void ShaderGraphEditorPage::eventEdgeDisconnect(ui::EdgeDisconnectEvent* event)
 {
-	Ref< ui::Edge > editorEdge = event->getEdge();
-	Ref< Edge > shaderEdge = checked_type_cast< Edge* >(editorEdge->getData(L"SHADEREDGE"));
+	ui::Edge* editorEdge = event->getEdge();
+	Edge* edge = mandatory_non_null_type_cast< Edge* >(editorEdge->getData(L"SHADEREDGE"));
 
 	m_document->push();
-	m_shaderGraph->removeEdge(shaderEdge);
+	m_shaderGraph->removeEdge(edge);
 
 	updateGraph();
 }

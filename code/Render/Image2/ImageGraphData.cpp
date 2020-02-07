@@ -1,9 +1,10 @@
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberRefArray.h"
 #include "Render/Image2/IImageStepData.h"
-#include "Render/Image2/ImagePassData.h"
 #include "Render/Image2/ImageGraph.h"
 #include "Render/Image2/ImageGraphData.h"
+#include "Render/Image2/ImagePassData.h"
+#include "Render/Image2/ImageTargetSetData.h"
 
 namespace traktor
 {
@@ -15,6 +16,14 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ImageGraphData", 0, ImageGraphDa
 Ref< ImageGraph > ImageGraphData::createInstance(resource::IResourceManager* resourceManager) const
 {
     Ref< ImageGraph > instance = new ImageGraph();
+
+    for (auto targetSetData : m_targetSets)
+    {
+        Ref< const ImageTargetSet > targetSet = targetSetData->createInstance();
+        if (!targetSet)
+            return nullptr;
+        instance->m_targetSets.push_back(targetSet);
+    }
 
     for (auto passData : m_passes)
     {
@@ -37,6 +46,7 @@ Ref< ImageGraph > ImageGraphData::createInstance(resource::IResourceManager* res
 
 void ImageGraphData::serialize(ISerializer& s)
 {
+    s >> MemberRefArray< ImageTargetSetData >(L"targetSets", m_targetSets);
     s >> MemberRefArray< ImagePassData >(L"passes", m_passes);
     s >> MemberRefArray< IImageStepData >(L"steps", m_steps);
 }

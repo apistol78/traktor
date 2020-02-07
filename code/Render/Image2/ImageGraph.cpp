@@ -5,6 +5,7 @@
 #include "Render/Image2/IImageStep.h"
 #include "Render/Image2/ImageGraph.h"
 #include "Render/Image2/ImagePass.h"
+#include "Render/Image2/ImageTargetSet.h"
 
 namespace traktor
 {
@@ -15,11 +16,20 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ImageGraph", ImageGraph, Object)
 
 bool ImageGraph::create(IRenderSystem* renderSystem, RenderGraph* renderGraph)
 {
+	// Create screen renderer.
 	m_screenRenderer = new ScreenRenderer();
 	if (!m_screenRenderer->create(renderSystem))
 		return false;
 
-	// \tbd Declare render graph targets here.
+	// Add all transient render targets to render graph.
+	for (auto targetSet : m_targetSets)
+	{
+		renderGraph->addTargetSet(
+			L"",
+			targetSet->getTargetSetId(),
+			targetSet->getTargetSetDesc()
+		);
+	}
 
 	return true;
 }
