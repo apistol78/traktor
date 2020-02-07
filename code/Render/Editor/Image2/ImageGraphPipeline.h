@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Core/RefArray.h"
 #include "Editor/IPipeline.h"
 
 // import/export mechanism.
@@ -14,6 +15,9 @@ namespace traktor
 {
 	namespace render
 	{
+
+class IImageStepData;
+class ImgPass;
 
 class T_DLLCLASS ImageGraphPipeline : public editor::IPipeline
 {
@@ -53,6 +57,9 @@ public:
 		const ISerializable* sourceAsset,
 		const Object* buildParams
 	) const override final;
+
+private:
+	void convertAssetPassToSteps(const ImgPass* pass, RefArray< IImageStepData >& outSteps) const;
 };
 
 	}

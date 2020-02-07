@@ -20,6 +20,7 @@ namespace traktor
 
 class IImageStep;
 class ImagePass;
+class ImageTargetSet;
 class IRenderSystem;
 class RenderContext;
 class RenderGraph;
@@ -81,6 +82,7 @@ private:
     friend class ImageGraphData;
 
     Ref< ScreenRenderer > m_screenRenderer;
+    RefArray< const ImageTargetSet > m_targetSets;
     RefArray< const ImagePass > m_passes;
     RefArray< const IImageStep > m_steps;
 };

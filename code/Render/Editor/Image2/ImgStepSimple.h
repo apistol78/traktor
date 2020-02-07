@@ -21,6 +21,8 @@ public:
     virtual void serialize(ISerializer& s) override final;
 
 private:
+    friend class ImageGraphPipeline;
+
     struct Source
     {
         std::wstring parameter;

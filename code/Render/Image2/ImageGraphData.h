@@ -25,8 +25,9 @@ class IResourceManager;
     {
 
 class IImageStepData;
-class ImagePassData;
 class ImageGraph;
+class ImagePassData;
+class ImageTargetSetData;
 
 /*!
  * \ingroup Render
@@ -43,6 +44,7 @@ public:
 private:
     friend class ImageGraphPipeline;
 
+    RefArray< ImageTargetSetData > m_targetSets;
     RefArray< ImagePassData > m_passes;
     RefArray< IImageStepData > m_steps;
 };
