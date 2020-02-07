@@ -41,7 +41,10 @@ private:
         std::wstring targetSetId;
         int32_t colorIndex;
 
-        Source();
+        Source()
+        :   colorIndex(0)
+        {
+        }
 
         void serialize(ISerializer& s);
     };

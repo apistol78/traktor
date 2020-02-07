@@ -2,7 +2,7 @@
 #include "Core/RefArray.h"
 #include "Core/Containers/SmallMap.h"
 #include "Core/Thread/Atomic.h"
-#include "Render/Editor/Shader/Node.h"
+#include "Render/Editor/Node.h"
 #include "Render/Editor/Shader/INodeTraits.h"
 
 namespace traktor
@@ -51,7 +51,7 @@ const INodeTraits* INodeTraits::find(const Node* node)
 
 	// Find traits from node type.
 	SmallMap< const TypeInfo*, Ref< INodeTraits > >::const_iterator i = s_traits.find(&type_of(node));
-	return i != s_traits.end() ? i->second : 0;
+	return i != s_traits.end() ? i->second : nullptr;
 }
 
 	}

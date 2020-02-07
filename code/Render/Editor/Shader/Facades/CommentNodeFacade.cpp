@@ -1,4 +1,4 @@
-#include "Render/Editor/Shader/Node.h"
+#include "Render/Editor/Node.h"
 #include "Render/Editor/Shader/Facades/CommentNodeFacade.h"
 #include "Ui/Application.h"
 #include "Ui/Graph/Node.h"

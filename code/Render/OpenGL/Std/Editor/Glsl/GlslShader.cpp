@@ -1,4 +1,4 @@
-#include "Render/Editor/Shader/OutputPin.h"
+#include "Render/Editor/OutputPin.h"
 #include "Render/OpenGL/Std/Editor/Glsl/GlslImage.h"
 #include "Render/OpenGL/Std/Editor/Glsl/GlslLayout.h"
 #include "Render/OpenGL/Std/Editor/Glsl/GlslSampler.h"

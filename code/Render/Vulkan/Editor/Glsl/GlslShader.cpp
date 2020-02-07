@@ -1,4 +1,4 @@
-#include "Render/Editor/Shader/OutputPin.h"
+#include "Render/Editor/OutputPin.h"
 #include "Render/Vulkan/Editor/Glsl/GlslImage.h"
 #include "Render/Vulkan/Editor/Glsl/GlslLayout.h"
 #include "Render/Vulkan/Editor/Glsl/GlslSampler.h"

@@ -1548,7 +1548,7 @@ bool emitSwitch(CgContext& cx, Switch* node)
 	if (!in)
 		return false;
 
-	const std::vector< int32_t >& caseConditions = node->getCases();
+	const auto& caseConditions = node->getCases();
 	std::vector< std::wstring > caseBranches;
 	RefArray< CgVariable > caseInputs;
 	CgType outputType = CtVoid;
