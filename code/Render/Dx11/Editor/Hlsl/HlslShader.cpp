@@ -1,7 +1,7 @@
 #include <cassert>
 #include "Render/Dx11/Platform.h"
 #include "Render/Dx11/Editor/Hlsl/HlslShader.h"
-#include "Render/Editor/Shader/OutputPin.h"
+#include "Render/Editor/OutputPin.h"
 
 namespace traktor
 {

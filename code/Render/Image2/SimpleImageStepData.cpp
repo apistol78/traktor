@@ -42,11 +42,6 @@ void SimpleImageStepData::serialize(ISerializer& s)
 	s >> MemberAlignedVector< Source, MemberComposite< Source > >(L"sources", m_sources);
 }
 
-SimpleImageStepData::Source::Source()
-:	colorIndex(0)
-{
-}
-
 void SimpleImageStepData::Source::serialize(ISerializer& s)
 {
 	s >> Member< std::wstring >(L"parameter", parameter);
