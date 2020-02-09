@@ -140,7 +140,7 @@ bool ImageGraphPipeline::buildOutput(
 			}
 
 			Ref< ImagePassData > passData = new ImagePassData();
-			passData->m_output = targetSet->getTargetSetId();
+			passData->m_output = targetSet->getTargetSetDesc().id;
 			convertAssetPassToSteps(pass, passData->m_steps);
 			data->m_passes.push_back(passData);
 		}
@@ -150,7 +150,6 @@ bool ImageGraphPipeline::buildOutput(
 			// we should rename these with a globally unique identifier
 			// so it won't clash with other image graphs.
 			Ref< ImageTargetSetData > targetSetData = new ImageTargetSetData();
-			targetSetData->m_targetSetId = targetSet->getTargetSetId();
 			targetSetData->m_targetSetDesc = targetSet->getTargetSetDesc();
 			data->m_targetSets.push_back(targetSetData);
 		}

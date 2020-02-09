@@ -309,7 +309,7 @@ bool ImageGraphEditorPage::handleCommand(const ui::Command& command)
 	else if (command == L"ImageGraph.Editor.AddTarget")
 	{
 		// Create image graph target set.
-		Ref< ImgTargetSet > targetSet = new ImgTargetSet(L"Unnamed");
+		Ref< ImgTargetSet > targetSet = new ImgTargetSet();
 		m_imageGraph->addNode(targetSet);
 
 		// Create node in graph control.
@@ -374,7 +374,7 @@ Ref< ui::Node > ImageGraphEditorPage::createEditorNode(Node* node) const
 	{
 		editorNode = new ui::Node(
 			L"TargetSet",
-			targetSet->getTargetSetId(),
+			targetSet->getTargetSetDesc().id,
 			position,
 			new ui::DefaultNodeShape(m_editorGraph, ui::DefaultNodeShape::StDefault)
 		);

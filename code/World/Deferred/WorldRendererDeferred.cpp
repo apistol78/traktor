@@ -3,6 +3,7 @@
 #include "Core/Math/Log2.h"
 #include "Core/Math/Float.h"
 #include "Core/Misc/SafeDestroy.h"
+#include "Core/Misc/String.h"
 #include "Render/IRenderSystem.h"
 #include "Render/IRenderTargetSet.h"
 #include "Render/IRenderView.h"
@@ -77,25 +78,6 @@ const render::Handle s_handleIrradianceGridSize(L"World_IrradianceGridSize");
 const render::Handle s_handleIrradianceGridSBuffer(L"World_IrradianceGridSBuffer");
 const render::Handle s_handleIrradianceGridBoundsMin(L"World_IrradianceGridBoundsMin");
 const render::Handle s_handleIrradianceGridBoundsMax(L"World_IrradianceGridBoundsMax");
-
-// Render graph.
-const render::Handle s_handleGBuffer(L"GBuffer");
-const render::Handle s_handleAmbientOcclusion(L"AmbientOcclusion");
-const render::Handle s_handleVelocity(L"Velocity");
-const render::Handle s_handleReflections(L"Reflections");
-const render::Handle s_handleShadowMapCascade(L"ShadowMapCascade");
-const render::Handle s_handleShadowMapAtlas(L"ShadowMapAtlas");
-const render::Handle s_handleShadowMask(L"ShadowMask");
-const render::Handle s_handleVisual[] =
-{
-	render::Handle(L"Visual1"),
-	render::Handle(L"Visual2"),
-	render::Handle(L"Visual3"),
-	render::Handle(L"Visual4"),
-	render::Handle(L"Visual5"),
-	render::Handle(L"Visual6"),
-	render::Handle(L"Visual7")
-};
 
 resource::Id< render::ImageGraph > getAmbientOcclusionId(Quality quality)
 {
@@ -595,67 +577,66 @@ bool WorldRendererDeferred::create(
 	
 	// GBuffer
 	rgtd = render::RenderGraphTargetSetDesc();
+	rgtd.id = L"GBuffer";
 	rgtd.count = 4;
-	//rgtd.multiSample = 0;
 	rgtd.createDepthStencil = false;
-	//rgtd.usingPrimaryDepthStencil = (desc.sharedDepthStencil == nullptr) ? true : false;
-	//rgtd.sharedDepthStencil = desc.sharedDepthStencil;
-	//rgtd.storeDepthStencil = true;					// Store depth for z-cull later.
-	rgtd.colorFormats[0] = render::TfR16F;		// Depth (R)
-	rgtd.colorFormats[1] = render::TfR16G16F;	// Normals (RG)
-	rgtd.colorFormats[2] = render::TfR11G11B10F;	// Metalness (R), Roughness (G), Specular (B)
-	rgtd.colorFormats[3] = render::TfR11G11B10F;	// Surface color (RGB)
+	rgtd.usingPrimaryDepthStencil = (desc.sharedDepthStencil == nullptr) ? true : false;
+	rgtd.targets[0].id = L"Depth";
+	rgtd.targets[0].colorFormat = render::TfR16F;		// Depth (R)
+	rgtd.targets[0].id = L"Normals";
+	rgtd.targets[1].colorFormat = render::TfR16G16F;	// Normals (RG)
+	rgtd.targets[0].id = L"Attributes";
+	rgtd.targets[2].colorFormat = render::TfR11G11B10F;	// Metalness (R), Roughness (G), Specular (B)
+	rgtd.targets[0].id = L"Albedo";
+	rgtd.targets[3].colorFormat = render::TfR11G11B10F;	// Surface color (RGB)
 	rgtd.screenWidthDenom = 1;
 	rgtd.screenHeightDenom = 1;
-	m_renderGraph->addTargetSet(L"GBuffer", s_handleGBuffer, rgtd);
+	m_handleGBuffer = m_renderGraph->addTargetSet(rgtd, desc.sharedDepthStencil);
 
 	// Ambient occlusion.
-	rgtd = render::RenderGraphTargetSetDesc();
+	rgtd.id = L"AmbientOcclusion";
 	rgtd.count = 1;
-	//rgtd.multiSample = 0;
 	rgtd.createDepthStencil = false;
-	//rgtd.usingPrimaryDepthStencil = (desc.sharedDepthStencil == nullptr) ? true : false;
-	//rgtd.sharedDepthStencil = desc.sharedDepthStencil;
-	//rgtd.storeDepthStencil = true;
-	rgtd.colorFormats[0] = render::TfR8;			// Ambient occlusion (R)
+	rgtd.usingPrimaryDepthStencil = (desc.sharedDepthStencil == nullptr) ? true : false;
+	rgtd.targets[0].id = L"AmbientOcclusion";
+	rgtd.targets[0].colorFormat = render::TfR8;			// Ambient occlusion (R)
 	rgtd.screenWidthDenom = 1;
 	rgtd.screenHeightDenom = 1;
-	m_renderGraph->addTargetSet(L"Ambient Occlusion", s_handleAmbientOcclusion, rgtd);
+	m_handleAmbientOcclusion = m_renderGraph->addTargetSet(rgtd, desc.sharedDepthStencil);
 
 	// Velocity
+	rgtd.id = L"Velocity";
 	rgtd = render::RenderGraphTargetSetDesc();
 	rgtd.count = 1;
-	//rgtd.multiSample = 0;
 	rgtd.createDepthStencil = false;
-	//rgtd.usingPrimaryDepthStencil = (desc.sharedDepthStencil == nullptr) ? true : false;
-	//rgtd.sharedDepthStencil = desc.sharedDepthStencil;
-	//rgtd.storeDepthStencil = false;
-	rgtd.colorFormats[0] = render::TfR16G16F;
+	rgtd.usingPrimaryDepthStencil = (desc.sharedDepthStencil == nullptr) ? true : false;
+	rgtd.targets[0].id = L"Velocity";
+	rgtd.targets[0].colorFormat = render::TfR16G16F;
 	rgtd.screenWidthDenom = 1;
 	rgtd.screenHeightDenom = 1;
-	m_renderGraph->addTargetSet(L"Velocity", s_handleVelocity, rgtd);
+	m_handleVelocity = m_renderGraph->addTargetSet(rgtd, desc.sharedDepthStencil);
 
 	// Reflections
 	if (m_reflectionsQuality != QuDisabled)
 	{
 		rgtd = render::RenderGraphTargetSetDesc();
+		rgtd.id = L"Reflections";
 		rgtd.count = 1;
-		//rgtd.multiSample = 0;
 		rgtd.createDepthStencil = false;
-		//rgtd.usingPrimaryDepthStencil = (desc.sharedDepthStencil == nullptr) ? true : false;
-		//rgtd.sharedDepthStencil = desc.sharedDepthStencil;
-		//rgtd.storeDepthStencil = false;
-		//rgtd.ignoreStencil = true;
+		rgtd.usingPrimaryDepthStencil = (desc.sharedDepthStencil == nullptr) ? true : false;
+		rgtd.ignoreStencil = true;
 #if !defined(__ANDROID__) && !defined(__IOS__)
-		rgtd.colorFormats[0] = render::TfR16G16B16A16F;
+		rgtd.targets[0].id = L"Reflections";
+		rgtd.targets[0].colorFormat = render::TfR16G16B16A16F;
 		rgtd.screenWidthDenom = 1;
 		rgtd.screenHeightDenom = 1;
 #else
-		rgtd.colorFormats[0] = render::TfR11G11B10F;
+		rgtd.targets[0].id = L"Reflections";
+		rgtd.targets[0].colorFormat = render::TfR11G11B10F;
 		rgtd.screenWidthDenom = 2;
 		rgtd.screenHeightDenom = 2;
 #endif
-		m_renderGraph->addTargetSet(L"Reflections", s_handleReflections, rgtd);
+		m_handleReflections = m_renderGraph->addTargetSet(rgtd, desc.sharedDepthStencil);
 	}
 
 	const bool shadowsEnable = (bool)(m_shadowsQuality != QuDisabled);
@@ -664,65 +645,55 @@ bool WorldRendererDeferred::create(
 		const auto& shadowSettings = m_settings.shadowSettings[m_shadowsQuality];
 
 		// Cascading shadow map.
-		rgtd = render::RenderGraphTargetSetDesc();
+		rgtd.id = L"ShadowMapCascade";
 		rgtd.count = 0;
 		rgtd.width = shadowSettings.resolution;
 		rgtd.height = shadowSettings.cascadingSlices * shadowSettings.resolution;
-		//rgtd.multiSample = 0;
 		rgtd.createDepthStencil = true;
+		rgtd.usingPrimaryDepthStencil = false;
 		rgtd.usingDepthStencilAsTexture = true;
-		//rgtd.usingPrimaryDepthStencil = false;
-		//rgtd.ignoreStencil = true;
-		//rgtd.storeDepthStencil = true;
-		m_renderGraph->addTargetSet(L"ShadowMap Cascade", s_handleShadowMapCascade, rgtd);
+		rgtd.ignoreStencil = true;
+		m_handleShadowMapCascade = m_renderGraph->addTargetSet(rgtd);
 
 		// Atlas shadow map.
-		rgtd = render::RenderGraphTargetSetDesc();
+		rgtd.id = L"ShadowMapAtlas";
 		rgtd.count = 0;
 		rgtd.width =
 		rgtd.height = 4096;
-		//rgtd.multiSample = 0;
 		rgtd.createDepthStencil = true;
+		rgtd.usingPrimaryDepthStencil = false;
 		rgtd.usingDepthStencilAsTexture = true;
-		//rgtd.usingPrimaryDepthStencil = false;
-		//rgtd.ignoreStencil = true;
-		//rgtd.storeDepthStencil = true;
-		m_renderGraph->addTargetSet(L"ShadowMap Atlas", s_handleShadowMapAtlas, rgtd);
+		rgtd.ignoreStencil = true;
+		m_handleShadowMapAtlas = m_renderGraph->addTargetSet(rgtd);
 
 		// Screen space shadow mask.
-		rgtd = render::RenderGraphTargetSetDesc();
+		rgtd.id = L"ShadowMask";
 		rgtd.count = 1;
 		rgtd.width = 0;
 		rgtd.height = 0;
-		//rgtd.multiSample = 0;
 		rgtd.createDepthStencil = false;
-		rgtd.usingDepthStencilAsTexture = false;
-		//rgtd.usingPrimaryDepthStencil = false;
-		//rgtd.sharedDepthStencil = desc.sharedDepthStencil;
-		//rgtd.ignoreStencil = true;
-		//rgtd.storeDepthStencil = false;
-		rgtd.colorFormats[0] = render::TfR8;
+		rgtd.usingPrimaryDepthStencil = (desc.sharedDepthStencil == nullptr) ? true : false;
+		rgtd.ignoreStencil = true;
+		rgtd.targets[0].id = L"ShadowMask";
+		rgtd.targets[0].colorFormat = render::TfR8;
 		rgtd.screenWidthDenom = m_shadowSettings.maskDenominator;
 		rgtd.screenHeightDenom = m_shadowSettings.maskDenominator;
-		m_renderGraph->addTargetSet(L"ShadowMask", s_handleShadowMask, rgtd);
+		m_handleShadowMask = m_renderGraph->addTargetSet(rgtd, desc.sharedDepthStencil);
 	}
 
 	// Visual
-	rgtd = render::RenderGraphTargetSetDesc();
-	rgtd.count = 1;
-	//rgtd.multiSample = desc.multiSample;
-	rgtd.createDepthStencil = false;
-	//rgtd.usingPrimaryDepthStencil = (desc.sharedDepthStencil == nullptr) ? true : false;
-	//rgtd.sharedDepthStencil = desc.sharedDepthStencil;
-#if !defined(__ANDROID__) && !defined(__IOS__)
-	rgtd.colorFormats[0] = render::TfR32G32B32A32F;
-#else
-	rgtd.colorFormats[0] = render::TfR11G11B10F;
-#endif
-	rgtd.screenWidthDenom = 1;
-	rgtd.screenHeightDenom = 1;
-	for (int32_t i = 0; i < sizeof_array(s_handleVisual); ++i)
-		m_renderGraph->addTargetSet(L"Visual", s_handleVisual[i], rgtd);
+	for (int32_t i = 0; i < sizeof_array(m_handleVisual); ++i)
+	{
+		rgtd.id = L"Visual" + toString(i);
+		rgtd.count = 1;
+		rgtd.createDepthStencil = false;
+		rgtd.usingPrimaryDepthStencil = (desc.sharedDepthStencil == nullptr) ? true : false;
+		rgtd.targets[0].id = L"Color";
+		rgtd.targets[0].colorFormat = render::TfR32G32B32A32F;
+		rgtd.screenWidthDenom = 1;
+		rgtd.screenHeightDenom = 1;
+		m_handleVisual[i] = m_renderGraph->addTargetSet(rgtd, desc.sharedDepthStencil);
+	}
 
 	for (auto& frame : m_frames)
 		frame.renderContext = new render::RenderContext(1 * 1024 * 1024);
@@ -889,7 +860,7 @@ void WorldRendererDeferred::buildGBuffer(const WorldRenderView& worldRenderView)
 	clear.colors[2] = Color4f(0.0f, 1.0f, 0.0f, 1.0f);	// misc
 	clear.colors[3] = Color4f(0.0f, 0.0f, 0.0f, 0.0f);	// surface
 	clear.depth = 1.0f;	
-	rp->setOutput(s_handleGBuffer, clear);
+	rp->setOutput(m_handleGBuffer, clear);
 
 	rp->addBuild(
 		[=](const render::RenderGraph& renderGraph, render::RenderContext* renderContext)
@@ -939,7 +910,7 @@ void WorldRendererDeferred::buildVelocity(const WorldRenderView& worldRenderView
 		m_motionBlurPrime->addPasses(m_renderGraph, rp, data);
 	}
 
-	rp->setOutput(s_handleVelocity);
+	rp->setOutput(m_handleVelocity);
 
 	rp->addBuild(
 		[=](const render::RenderGraph& renderGraph, render::RenderContext* renderContext)
@@ -981,7 +952,7 @@ void WorldRendererDeferred::buildAmbientOcclusion(const WorldRenderView& worldRe
 
 	if (m_ambientOcclusion != nullptr)
 	{
-		rp->addInput(s_handleGBuffer);
+		rp->addInput(m_handleGBuffer);
 
 		render::ImageGraphParams ipd;
 		ipd.viewFrustum = worldRenderView.getViewFrustum();
@@ -993,7 +964,7 @@ void WorldRendererDeferred::buildAmbientOcclusion(const WorldRenderView& worldRe
 	render::Clear clear;
 	clear.mask = render::CfColor;
 	clear.colors[0] = Color4f(1.0f, 1.0f, 1.0f, 1.0f);
-	rp->setOutput(s_handleAmbientOcclusion, clear);
+	rp->setOutput(m_handleAmbientOcclusion, clear);
 
 	m_renderGraph->addPass(rp);
 }
@@ -1015,7 +986,7 @@ void WorldRendererDeferred::buildCascadeShadowMap(const WorldRenderView& worldRe
 	render::Clear clear;
 	clear.mask = render::CfDepth;
 	clear.depth = 1.0f;
-	rp->setOutput(s_handleShadowMapCascade, clear);
+	rp->setOutput(m_handleShadowMapCascade, clear);
 
 	rp->addBuild(
 		[=](const render::RenderGraph& renderGraph, render::RenderContext* renderContext)
@@ -1127,7 +1098,7 @@ void WorldRendererDeferred::buildAtlasShadowMap(const WorldRenderView& worldRend
 		render::Clear clear;
 		clear.mask = render::CfDepth;
 		clear.depth = 1.0f;
-		rp->setOutput(s_handleShadowMapAtlas, clear);
+		rp->setOutput(m_handleShadowMapAtlas, clear);
 
 		rp->addBuild(
 			[=](const render::RenderGraph& renderGraph, render::RenderContext* renderContext)
@@ -1319,8 +1290,8 @@ void WorldRendererDeferred::buildShadowMask(const WorldRenderView& worldRenderVi
 	Ref< render::RenderPass > rp = new render::RenderPass(L"Shadow mask");
 
 	// \tbd Should be setup by ImageGraph
-	// rp->addInput(s_handleGBuffer);
-	// rp->addInput(s_handleShadowMapCascade);
+	// rp->addInput(m_handleGBuffer);
+	// rp->addInput(m_handleShadowMapCascade);
 
 	// Add sub-pass for each slice.
 	for (int32_t slice = 0; slice < m_shadowSettings.cascadingSlices; ++slice)
@@ -1372,7 +1343,7 @@ void WorldRendererDeferred::buildShadowMask(const WorldRenderView& worldRenderVi
 	render::Clear clear;
 	clear.mask = render::CfColor;
 	clear.colors[0] = Color4f(1.0f, 1.0f, 1.0f, 1.0f);
-	rp->setOutput(s_handleShadowMask, clear);
+	rp->setOutput(m_handleShadowMask, clear);
 
 	m_renderGraph->addPass(rp);
 }
@@ -1384,15 +1355,15 @@ void WorldRendererDeferred::buildReflections(const WorldRenderView& worldRenderV
 
 	Ref< render::RenderPass > rp = new render::RenderPass(L"Reflections");
 
-	rp->addInput(s_handleGBuffer);
+	rp->addInput(m_handleGBuffer);
 
 	if (m_reflectionsQuality >= QuHigh)
-		rp->addInput(s_handleVisual[0], 0, true);
+		rp->addInput(m_handleVisual[0], 0, true);
 
 	render::Clear clear;
 	clear.mask = render::CfColor;
 	clear.colors[0] = Color4f(0.0f, 0.0f, 0.0f, 0.0f);
-	rp->setOutput(s_handleReflections, clear);
+	rp->setOutput(m_handleReflections, clear);
 	
 	rp->addBuild(
 		[=](const render::RenderGraph& renderGraph, render::RenderContext* renderContext)
@@ -1403,8 +1374,8 @@ void WorldRendererDeferred::buildReflections(const WorldRenderView& worldRenderV
 				m_rootEntity
 			);
 
-			auto gbufferTargetSet = renderGraph.getTargetSet(s_handleGBuffer);
-			auto visualTargetSet = renderGraph.getTargetSet(s_handleVisual[0]);
+			auto gbufferTargetSet = renderGraph.getTargetSet(m_handleGBuffer);
+			auto visualTargetSet = renderGraph.getTargetSet(m_handleVisual[0]);
 
 			auto sharedParams = renderContext->alloc< render::ProgramParameters >();
 			sharedParams->beginParameters(renderContext);
@@ -1458,20 +1429,20 @@ void WorldRendererDeferred::buildVisual(const WorldRenderView& worldRenderView, 
 
 	Ref< render::RenderPass > rp = new render::RenderPass(L"Visual");
 
-	rp->addInput(s_handleGBuffer);
-	rp->addInput(s_handleAmbientOcclusion);
-	rp->addInput(s_handleReflections);
+	rp->addInput(m_handleGBuffer);
+	rp->addInput(m_handleAmbientOcclusion);
+	rp->addInput(m_handleReflections);
 
 	if (shadowsEnable)
 	{
-		rp->addInput(s_handleShadowMask);
-		rp->addInput(s_handleShadowMapAtlas);
+		rp->addInput(m_handleShadowMask);
+		rp->addInput(m_handleShadowMapAtlas);
 	}
 
 	render::Clear clear;
 	clear.mask = render::CfColor;
 	clear.colors[0] = Color4f(0.0f, 0.0f, 0.0f, 1.0f);
-	rp->setOutput(s_handleVisual[0], clear);
+	rp->setOutput(m_handleVisual[0], clear);
 
 	rp->addBuild(
 		[=](const render::RenderGraph& renderGraph, render::RenderContext* renderContext)
@@ -1482,11 +1453,11 @@ void WorldRendererDeferred::buildVisual(const WorldRenderView& worldRenderView, 
 				m_rootEntity
 			);
 
-			auto gbufferTargetSet = renderGraph.getTargetSet(s_handleGBuffer);
-			auto ambientOcclusionTargetSet = renderGraph.getTargetSet(s_handleAmbientOcclusion);
-			auto reflectionsTargetSet = renderGraph.getTargetSet(s_handleReflections);
-			auto shadowMaskTargetSet = renderGraph.getTargetSet(s_handleShadowMask);
-			auto shadowAtlasTargetSet = renderGraph.getTargetSet(s_handleShadowMapAtlas);
+			auto gbufferTargetSet = renderGraph.getTargetSet(m_handleGBuffer);
+			auto ambientOcclusionTargetSet = renderGraph.getTargetSet(m_handleAmbientOcclusion);
+			auto reflectionsTargetSet = renderGraph.getTargetSet(m_handleReflections);
+			auto shadowMaskTargetSet = renderGraph.getTargetSet(m_handleShadowMask);
+			auto shadowAtlasTargetSet = renderGraph.getTargetSet(m_handleShadowMapAtlas);
 
 			auto sharedParams = renderContext->alloc< render::ProgramParameters >();
 			sharedParams->beginParameters(renderContext);
@@ -1613,7 +1584,7 @@ void WorldRendererDeferred::buildProcess(const WorldRenderView& worldRenderView)
 		Ref< render::RenderPass > rp = new render::RenderPass(L"Process");
 
 		if (next)
-			rp->setOutput(s_handleVisual[i + 1]);
+			rp->setOutput(m_handleVisual[i + 1]);
 
 		process->addPasses(m_renderGraph, rp, ipd);
 

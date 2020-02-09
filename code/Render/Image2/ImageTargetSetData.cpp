@@ -50,6 +50,27 @@ public:
 	}
 };
 
+class MemberRenderGraphTargetDesc : public MemberComplex
+{
+public:
+	typedef RenderGraphTargetDesc value_type;
+
+	MemberRenderGraphTargetDesc(const wchar_t* const name, value_type& ref)
+	:   MemberComplex(name, true)
+	,   m_ref(ref)
+	{
+	}
+
+	virtual void serialize(ISerializer& s) const override final
+	{
+		s >> Member< std::wstring >(L"id", m_ref.id);
+		s >> MemberTextureFormat(L"colorFormat", m_ref.colorFormat);
+	}
+
+private:
+	value_type& m_ref;
+};
+
 class MemberRenderGraphTargetSetDesc : public MemberComplex
 {
 public:
@@ -63,6 +84,7 @@ public:
 
 	virtual void serialize(ISerializer& s) const override final
 	{
+		s >> Member< std::wstring >(L"id", m_ref.id);
 		s >> Member< int32_t >(L"count", m_ref.count);
 		s >> Member< int32_t >(L"width", m_ref.width);
 		s >> Member< int32_t >(L"height", m_ref.height);
@@ -73,7 +95,7 @@ public:
 		s >> Member< bool >(L"createDepthStencil", m_ref.createDepthStencil);
 		s >> Member< bool >(L"usingDepthStencilAsTexture", m_ref.usingDepthStencilAsTexture);
 		s >> Member< bool >(L"generateMips", m_ref.generateMips);
-		s >> MemberStaticArray< TextureFormat, RenderGraphTargetSetDesc::MaxColorTargets, MemberTextureFormat >(L"colorFormats", m_ref.colorFormats);
+		s >> MemberStaticArray< RenderGraphTargetDesc, RenderGraphTargetSetDesc::MaxColorTargets, MemberRenderGraphTargetDesc >(L"targets", m_ref.targets);
 	}
 
 private:
@@ -87,14 +109,12 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ImageTargetSetData", 0, ImageTar
 Ref< const ImageTargetSet > ImageTargetSetData::createInstance() const
 {
     return new ImageTargetSet(
-        getParameterHandle(m_targetSetId),
         m_targetSetDesc
     );
 }
 
 void ImageTargetSetData::serialize(ISerializer& s)
 {
-	s >> Member< std::wstring >(L"targetSetId", m_targetSetId);
 	s >> MemberRenderGraphTargetSetDesc(L"targetSetDesc", m_targetSetDesc);
 }
 

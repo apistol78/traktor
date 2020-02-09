@@ -25,8 +25,6 @@ bool ImageGraph::create(IRenderSystem* renderSystem, RenderGraph* renderGraph)
 	for (auto targetSet : m_targetSets)
 	{
 		renderGraph->addTargetSet(
-			L"",
-			targetSet->getTargetSetId(),
 			targetSet->getTargetSetDesc()
 		);
 	}

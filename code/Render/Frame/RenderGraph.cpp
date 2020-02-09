@@ -28,19 +28,17 @@ void RenderGraph::destroy()
 	m_order.clear();
 }
 
-bool RenderGraph::addTargetSet(
-	const wchar_t* const name,
-	handle_t targetSetId,
+handle_t RenderGraph::addTargetSet(
 	const RenderGraphTargetSetDesc& targetSetDesc,
 	IRenderTargetSet* sharedDepthStencilTargetSet
 )
 {
-	if (m_targets.find(targetSetId) != m_targets.end())
-		return false;
-	m_targets[targetSetId].name = name;
-	m_targets[targetSetId].targetSetDesc = targetSetDesc;
-	m_targets[targetSetId].sharedDepthStencilTargetSet = sharedDepthStencilTargetSet;
-	return true;
+	handle_t id = getParameterHandle(targetSetDesc.id);
+	if (m_targets.find(id) != m_targets.end())
+		return 0;
+	m_targets[id].targetSetDesc = targetSetDesc;
+	m_targets[id].sharedDepthStencilTargetSet = sharedDepthStencilTargetSet;
+	return id;
 }
 
 IRenderTargetSet* RenderGraph::getTargetSet(handle_t targetSetId, bool history) const
@@ -82,7 +80,7 @@ bool RenderGraph::validate()
 		rtscd.sharedDepthStencil = tm.second.sharedDepthStencilTargetSet;
 
 		for (int32_t i = 0; i < td.count; ++i)
-			rtscd.targets[i].format = td.colorFormats[i];
+			rtscd.targets[i].format = td.targets[i].colorFormat;
 		
 		if (td.screenWidthDenom > 0)
 			rtscd.width = (m_width + td.screenWidthDenom - 1) / td.screenWidthDenom;
