@@ -24,14 +24,11 @@ class T_DLLCLASS ImageTargetSet : public Object
 	T_RTTI_CLASS;
 
 public:
-    ImageTargetSet(handle_t targetSetId, const RenderGraphTargetSetDesc& targetSetDesc);
-
-    handle_t getTargetSetId() const;
+    ImageTargetSet(const RenderGraphTargetSetDesc& targetSetDesc);
 
     const RenderGraphTargetSetDesc& getTargetSetDesc() const;
 
 private:
-	handle_t m_targetSetId;
 	RenderGraphTargetSetDesc m_targetSetDesc;
 };
 

@@ -87,6 +87,12 @@ private:
 
 	Ref< render::RenderGraph > m_renderGraph;
 	
+	render::Handle m_handleGBuffer;
+	render::Handle m_handleAmbientOcclusion;
+	render::Handle m_handleShadowMapCascade;
+	render::Handle m_handleShadowMapAtlas;
+	render::Handle m_handleVisual[6];
+
 	resource::Proxy< render::ImageGraph > m_ambientOcclusion;
 	resource::Proxy< render::ImageGraph > m_antiAlias;
 	resource::Proxy< render::ImageGraph > m_visual;

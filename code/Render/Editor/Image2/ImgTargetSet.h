@@ -23,12 +23,6 @@ class T_DLLCLASS ImgTargetSet : public ImmutableNode
 public:
 	ImgTargetSet();
 
-	explicit ImgTargetSet(const std::wstring& targetSetId);
-
-	void setTargetSetId(const std::wstring& targetSetId);
-
-	const std::wstring& getTargetSetId() const;
-
 	void setTargetSetDesc(const RenderGraphTargetSetDesc& targetSetDesc);
 
 	const RenderGraphTargetSetDesc& getTargetSetDesc() const;
@@ -36,7 +30,6 @@ public:
 	virtual void serialize(ISerializer& s) override final;
 
 private:
-	std::wstring m_targetSetId;
 	RenderGraphTargetSetDesc m_targetSetDesc;
 };
 

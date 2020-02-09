@@ -28,10 +28,25 @@ class RenderContext;
 /*!
  * \ingroup Render
  */
+struct RenderGraphTargetDesc
+{
+	std::wstring id;
+	TextureFormat colorFormat;
+
+	RenderGraphTargetDesc()
+	:	colorFormat(TfInvalid)
+	{
+	}
+};
+
+/*!
+ * \ingroup Render
+ */
 struct RenderGraphTargetSetDesc
 {
 	enum { MaxColorTargets = 8 };
 
+	std::wstring id;
 	int32_t count;
 	int32_t width;
 	int32_t height;
@@ -44,7 +59,7 @@ struct RenderGraphTargetSetDesc
 	bool usingDepthStencilAsTexture;
 	bool ignoreStencil;
 	bool generateMips;
-	TextureFormat colorFormats[MaxColorTargets];
+	RenderGraphTargetDesc targets[MaxColorTargets];
 
 	RenderGraphTargetSetDesc()
 	:	count(0)
@@ -60,8 +75,6 @@ struct RenderGraphTargetSetDesc
 	,	ignoreStencil(false)
 	,	generateMips(false)
 	{
-		for (int32_t i = 0; i < sizeof_array(colorFormats); ++i)
-			colorFormats[i] = TfInvalid;
 	}
 };
 
@@ -89,15 +102,11 @@ public:
 
 	/*! Add target definition.
 	 *
-	 * \param name Debug name of target.
-	 * \param targetId Unique identifier of target.
 	 * \param targetSetDesc Render target set create description.
 	 * \param sharedDepthStencilTargetSet Share depth/stencil with target set.
-	 * \return True if target defined successfully.
+	 * \return Id of target, 0 if not able to add target set.
 	 */
-	bool addTargetSet(
-		const wchar_t* const name,
-		const handle_t targetSetId,
+	handle_t addTargetSet(
 		const RenderGraphTargetSetDesc& targetSetDesc,
 		IRenderTargetSet* sharedDepthStencilTargetSet = nullptr
 	);
