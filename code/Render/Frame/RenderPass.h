@@ -48,13 +48,11 @@ public:
 
 	struct Output
 	{
-		handle_t targetSetId;	//!< Resource name.
-		int32_t colorIndex;		//!< Index of target's color attachment, -1 means all attachments.
+		handle_t targetSetId;	//!< Resource name, all set's color attachments are written to by pass.
 		Clear clear;			//!< Target clear value and mask.
 
 		Output()
 		:	targetSetId(0)
-		,	colorIndex(-1)
 		{
 			clear.mask = 0;
 		}
@@ -79,8 +77,6 @@ public:
 	void setOutput(handle_t targetSetId);
 
 	void setOutput(handle_t targetSetId, const Clear& clear);
-
-	void setOutput(handle_t targetSetId, int32_t colorIndex, const Clear& clear);
 
 	const Output& getOutput() const { return m_output; }
 
