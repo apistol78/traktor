@@ -141,6 +141,16 @@ public:
 	 */
 	void rewire(const OutputPin* outputPin, const OutputPin* newOutputPin);
 
+	/*! Replace old node with new node.
+	 *
+	 * Edges with matching pin names are
+	 * kept and rewired to new node.
+	 *
+	 * \param oldNode Old node to be replaced.
+	 * \param newNode New node replacing old node.
+	 */
+	void replace(Node* oldNode, Node* newNode);
+
 	/*! Serialize graph. */
 	virtual void serialize(ISerializer& s) override final;
 

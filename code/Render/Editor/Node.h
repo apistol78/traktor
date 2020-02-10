@@ -80,6 +80,10 @@ public:
 
 	/*! Get input pin.
 	 *
+	 * \note
+	 * Returned pointer must be immutable and always
+	 * same instances for same index.
+	 *
 	 * \param index Index of input pin.
 	 * \return Pointer to input pin, null if no such input pin.
 	 */
@@ -92,6 +96,10 @@ public:
 	virtual int getOutputPinCount() const = 0;
 
 	/*! Get output pin.
+	 *
+	 * \note
+	 * Returned pointer must be immutable and always
+	 * same instances for same index.
 	 *
 	 * \param index Index of output pin.
 	 * \return Pointer to output pin, null if no such output pin.

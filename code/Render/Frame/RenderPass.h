@@ -70,7 +70,7 @@ public:
 
 	void addInput(handle_t targetSetId, int32_t colorIndex, bool history);
 
-	const AlignedVector< Input >& getInputs() const { return m_inputs; }
+	AlignedVector< Input > getInputs() const;
 
 	//! \}
 

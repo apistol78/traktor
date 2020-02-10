@@ -16,11 +16,10 @@ namespace traktor
     {
 
 class ImageGraph;
+class ImageGraphContext;
 class RenderContext;
 class RenderGraph;
 class RenderPass;
-
-struct ImageGraphParams;
 
 /*! Image pass step.
  * \ingroup Render
@@ -34,14 +33,14 @@ class T_DLLCLASS IImageStep : public Object
 
 public:
     /*! */
-    virtual void setup(const ImageGraph* imageGraph, RenderPass& pass) const = 0;
+    virtual void setup(const ImageGraph* imageGraph, const ImageGraphContext& cx, RenderPass& pass) const = 0;
 
     /*! */
     virtual void build(
-        const ImageGraph* imageGraph,
-        const RenderGraph& renderGraph,
-        RenderContext* renderContext,
-        const ImageGraphParams& data
+		const ImageGraph* imageGraph,
+		const ImageGraphContext& cx,
+		const RenderGraph& renderGraph,
+		RenderContext* renderContext
     ) const = 0;
 };
 

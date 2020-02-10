@@ -154,6 +154,44 @@ void Graph::rewire(const OutputPin* outputPin, const OutputPin* newOutputPin)
 	}
 }
 
+void Graph::replace(Node* oldNode, Node* newNode)
+{
+	// Ensure node isn't deleted until very end of this method.
+	T_ANONYMOUS_VAR(Ref< Node >)(oldNode);
+
+	// Replace node.
+	m_nodes.remove(oldNode);
+	m_nodes.push_back(newNode);
+
+	// Rewire edges.
+	RefArray< Edge > deleteEdges;
+	for (auto edge : m_edges)
+	{
+		if (edge->getSource()->getNode() == oldNode)
+		{
+			const OutputPin* newSource = newNode->findOutputPin(edge->getSource()->getName());
+			if (newSource)
+				edge->setSource(newSource);
+			else
+				deleteEdges.push_back(edge);
+		}
+		if (edge->getDestination()->getNode() == oldNode)
+		{
+			const InputPin* newDestination = newNode->findInputPin(edge->getDestination()->getName());
+			if (newDestination)
+				edge->setDestination(newDestination);
+			else
+				deleteEdges.push_back(edge);
+		}
+	}
+	for (auto edge : deleteEdges)
+		m_edges.remove(edge);
+
+	// Update mappings.
+	updateInputPinToEdge();
+	updateOutputPinDestinationCount();
+}
+
 void Graph::serialize(ISerializer& s)
 {
 	s >> MemberRefArray< Node >(L"nodes", m_nodes);

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Core/Containers/AlignedVector.h"
+#include <list>
 #include "Render/Editor/Image2/IImgStep.h"
 #include "Resource/Id.h"
 
@@ -23,19 +23,8 @@ public:
 private:
     friend class ImageGraphPipeline;
 
-    struct Source
-    {
-        std::wstring parameter;
-        std::wstring targetSetId;
-        int32_t colorIndex;
-
-        Source();
-
-        void serialize(ISerializer& s);
-    };
-
     resource::Id< Shader > m_shader;
-    AlignedVector< Source > m_sources;
+    std::list< std::wstring > m_parameters;
 };
 
     }

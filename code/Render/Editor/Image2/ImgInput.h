@@ -22,12 +22,12 @@ class T_DLLCLASS ImgInput : public ImmutableNode
 public:
 	ImgInput();
 
-	const std::wstring& getTargetSetId() const;
+	const std::wstring& getTextureId() const;
 
 	virtual void serialize(ISerializer& s) override final;
 
 private:
-	std::wstring m_targetSetId;
+	std::wstring m_textureId;
 };
 
 	}   

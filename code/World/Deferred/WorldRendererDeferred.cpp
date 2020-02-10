@@ -7,11 +7,13 @@
 #include "Render/IRenderSystem.h"
 #include "Render/IRenderTargetSet.h"
 #include "Render/IRenderView.h"
+#include "Render/ScreenRenderer.h"
 #include "Render/StructBuffer.h"
 #include "Render/StructElement.h"
 #include "Render/Context/RenderContext.h"
 #include "Render/Frame/RenderGraph.h"
 #include "Render/Image2/ImageGraph.h"
+#include "Render/Image2/ImageGraphContext.h"
 #include "Render/Image2/ImageGraphData.h"
 #include "Resource/IResourceManager.h"
 #include "World/IrradianceGrid.h"
@@ -78,6 +80,13 @@ const render::Handle s_handleIrradianceGridSize(L"World_IrradianceGridSize");
 const render::Handle s_handleIrradianceGridSBuffer(L"World_IrradianceGridSBuffer");
 const render::Handle s_handleIrradianceGridBoundsMin(L"World_IrradianceGridBoundsMin");
 const render::Handle s_handleIrradianceGridBoundsMax(L"World_IrradianceGridBoundsMax");
+
+// ImageGraph input textures.
+const render::Handle s_handleInputColor(L"InputColor");
+const render::Handle s_handleInputDepth(L"InputDepth");
+const render::Handle s_handleInputNormal(L"InputNormal");
+const render::Handle s_handleInputVelocity(L"InputVelocity");
+const render::Handle s_handleInputShadowMask(L"InputShadowMask");
 
 resource::Id< render::ImageGraph > getAmbientOcclusionId(Quality quality)
 {
@@ -214,31 +223,6 @@ bool WorldRendererDeferred::create(
 
 	// Create shadow screen projection processes.
 	{
-		//resource::Proxy< render::ImageGraphData > shadowMaskProject;
-		//if (!resourceManager->bind(m_shadowSettings.maskProject, shadowMaskProject))
-		//{
-		//	log::warning << L"Unable to create shadow project process; shadows disabled." << Endl;
-		//	m_shadowsQuality = QuDisabled;
-		//}
-
-		//if (m_shadowsQuality > QuDisabled)
-		//{
-		//	m_shadowMaskProject = new render::ImageGraph();
-		//	if (!m_shadowMaskProject->create(
-		//		shadowMaskProject,
-		//		nullptr,
-		//		resourceManager,
-		//		renderSystem,
-		//		desc.width / m_shadowSettings.maskDenominator,
-		//		desc.height / m_shadowSettings.maskDenominator,
-		//		desc.allTargetsPersistent
-		//	))
-		//	{
-		//		log::warning << L"Unable to create shadow project process; shadows disabled." << Endl;
-		//		m_shadowsQuality = QuDisabled;
-		//	}
-		//}
-
 		if (!resourceManager->bind(m_shadowSettings.maskProject, m_shadowMaskProject))
 		{
 			log::warning << L"Unable to create shadow project process; shadows disabled." << Endl;
@@ -248,33 +232,6 @@ bool WorldRendererDeferred::create(
 
 	// Create ambient occlusion processing.
 	{
-		//resource::Id< render::ImageGraphData > ambientOcclusionId = getAmbientOcclusionId(m_ambientOcclusionQuality);
-		//resource::Proxy< render::ImageGraphData > ambientOcclusion;
-
-		//if (ambientOcclusionId)
-		//{
-		//	if (!resourceManager->bind(ambientOcclusionId, ambientOcclusion))
-		//		log::warning << L"Unable to create ambient occlusion process; AO disabled." << Endl;
-		//}
-
-		//if (ambientOcclusion)
-		//{
-		//	m_ambientOcclusion = new render::ImageGraph();
-		//	if (!m_ambientOcclusion->create(
-		//		ambientOcclusion,
-		//		nullptr,
-		//		resourceManager,
-		//		renderSystem,
-		//		desc.width,
-		//		desc.height,
-		//		desc.allTargetsPersistent
-		//	))
-		//	{
-		//		log::warning << L"Unable to create ambient occlusion process; AO disabled." << Endl;
-		//		m_ambientOcclusion = nullptr;
-		//	}
-		//}
-
 		resource::Id< render::ImageGraph > ambientOcclusion = getAmbientOcclusionId(m_ambientOcclusionQuality);
 		if (!resourceManager->bind(ambientOcclusion, m_ambientOcclusion))
 			log::warning << L"Unable to create ambient occlusion process; AO disabled." << Endl;
@@ -282,33 +239,6 @@ bool WorldRendererDeferred::create(
 
 	// Create antialias processing.
 	{
-		//resource::Id< render::ImageGraphData > antiAliasId = getAntiAliasId(m_antiAliasQuality);
-		//resource::Proxy< render::ImageGraphData > antiAlias;
-
-		//if (antiAliasId != c_antiAliasNone)
-		//{
-		//	if (!resourceManager->bind(antiAliasId, antiAlias))
-		//		log::warning << L"Unable to create antialias process; AA disabled." << Endl;
-		//}
-
-		//if (antiAlias)
-		//{
-		//	m_antiAlias = new render::ImageGraph();
-		//	if (!m_antiAlias->create(
-		//		antiAlias,
-		//		nullptr,
-		//		resourceManager,
-		//		renderSystem,
-		//		desc.width,
-		//		desc.height,
-		//		desc.allTargetsPersistent
-		//	))
-		//	{
-		//		log::warning << L"Unable to create antialias process; AA disabled." << Endl;
-		//		m_antiAlias = nullptr;
-		//	}
-		//}
-
 		resource::Id< render::ImageGraph > antiAlias = getAntiAliasId(m_antiAliasQuality);
 		if (!resourceManager->bind(antiAlias, m_antiAlias))
 			log::warning << L"Unable to create antialias process; AA disabled." << Endl;
@@ -316,32 +246,6 @@ bool WorldRendererDeferred::create(
 
 	// Create "visual" post processing filter.
 	{
-		//const resource::Id< render::ImageGraphData >& imageProcessSettings = desc.worldRenderSettings->imageProcess[desc.imageProcessQuality];
-		//if (imageProcessSettings)
-		//{
-		//	resource::Proxy< render::ImageGraphData > imageProcess;
-		//	if (!resourceManager->bind(imageProcessSettings, imageProcess))
-		//		log::warning << L"Unable to create visual post processing image filter; post processing disabled." << Endl;
-
-		//	if (imageProcess)
-		//	{
-		//		m_visual = new render::ImageGraph();
-		//		if (!m_visual->create(
-		//			imageProcess,
-		//			nullptr,
-		//			resourceManager,
-		//			renderSystem,
-		//			desc.width,
-		//			desc.height,
-		//			desc.allTargetsPersistent
-		//		))
-		//		{
-		//			log::warning << L"Unable to create visual post processing; post processing disabled." << Endl;
-		//			m_visual = nullptr;
-		//		}
-		//	}
-		//}
-
 		const auto& visualImageGraph = desc.worldRenderSettings->imageProcess[desc.imageProcessQuality];
 		if (!resourceManager->bind(visualImageGraph, m_visual))
 			log::warning << L"Unable to create visual post processing; post processing disabled." << Endl;
@@ -353,33 +257,6 @@ bool WorldRendererDeferred::create(
 		std::abs(desc.gamma - 1.0f) > FUZZY_EPSILON
 	)
 	{
-		//resource::Proxy< render::ImageGraphData > gammaCorrection;
-		//if (!resourceManager->bind(c_gammaCorrection, gammaCorrection))
-		//	log::warning << L"Unable to create gamma correction process; gamma correction disabled." << Endl;
-
-		//if (gammaCorrection)
-		//{
-		//	m_gammaCorrection = new render::ImageGraph();
-		//	if (m_gammaCorrection->create(
-		//		gammaCorrection,
-		//		nullptr,
-		//		resourceManager,
-		//		renderSystem,
-		//		desc.width,
-		//		desc.height,
-		//		desc.allTargetsPersistent
-		//	))
-		//	{
-		//		m_gammaCorrection->setFloatParameter(render::getParameterHandle(L"World_Gamma"), desc.gamma);
-		//		m_gammaCorrection->setFloatParameter(render::getParameterHandle(L"World_GammaInverse"), 1.0f / desc.gamma);
-		//	}
-		//	else
-		//	{
-		//		log::warning << L"Unable to create gamma correction process; gamma correction disabled." << Endl;
-		//		m_gammaCorrection = nullptr;
-		//	}
-		//}
-
 		if (!resourceManager->bind(c_gammaCorrection, m_gammaCorrection))
 			log::warning << L"Unable to create gamma correction process; gamma correction disabled." << Endl;
 	}
@@ -387,32 +264,6 @@ bool WorldRendererDeferred::create(
 	// Create motion blur prime processing.
 	if (m_motionBlurQuality > QuDisabled)
 	{
-		//resource::Proxy< render::ImageGraphData > motionBlurPrime;
-		//if (!resourceManager->bind(c_motionBlurPrime, motionBlurPrime))
-		//{
-		//	log::warning << L"Unable to create motion blur prime process; motion blur disabled." << Endl;
-		//	m_motionBlurQuality = QuDisabled;
-		//}
-
-		//if (motionBlurPrime)
-		//{
-		//	m_motionBlurPrime = new render::ImageGraph();
-		//	if (!m_motionBlurPrime->create(
-		//		motionBlurPrime,
-		//		nullptr,
-		//		resourceManager,
-		//		renderSystem,
-		//		desc.width,
-		//		desc.height,
-		//		desc.allTargetsPersistent
-		//	))
-		//	{
-		//		log::warning << L"Unable to create motion blur process; motion blur disabled." << Endl;
-		//		m_motionBlurPrime = nullptr;
-		//		m_motionBlurQuality = QuDisabled;
-		//	}
-		//}
-
 		if (!resourceManager->bind(c_motionBlurPrime, m_motionBlurPrime))
 		{
 			log::warning << L"Unable to create motion blur prime process; motion blur disabled." << Endl;
@@ -423,34 +274,6 @@ bool WorldRendererDeferred::create(
 	// Create motion blur final processing.
 	if (m_motionBlurQuality > QuDisabled)
 	{
-		//resource::Id< render::ImageGraphData > motionBlurId = getMotionBlurId(desc.motionBlurQuality);
-		//resource::Proxy< render::ImageGraphData > motionBlur;
-
-		//if (!resourceManager->bind(motionBlurId, motionBlur))
-		//{
-		//	log::warning << L"Unable to create motion blur process; motion blur disabled." << Endl;
-		//	m_motionBlurQuality = QuDisabled;
-		//}
-
-		//if (motionBlur)
-		//{
-		//	m_motionBlur = new render::ImageGraph();
-		//	if (!m_motionBlur->create(
-		//		motionBlur,
-		//		nullptr,
-		//		resourceManager,
-		//		renderSystem,
-		//		desc.width,
-		//		desc.height,
-		//		desc.allTargetsPersistent
-		//	))
-		//	{
-		//		log::warning << L"Unable to create motion blur process; motion blur disabled." << Endl;
-		//		m_motionBlur = nullptr;
-		//		m_motionBlurQuality = QuDisabled;
-		//	}
-		//}
-
 		resource::Id< render::ImageGraph > motionBlur = getMotionBlurId(desc.motionBlurQuality);
 		if (!resourceManager->bind(motionBlur, m_motionBlur))
 		{
@@ -462,39 +285,6 @@ bool WorldRendererDeferred::create(
 	// Create tone map processing.
 	if (m_toneMapQuality > QuDisabled)
 	{
-		//resource::Id< render::ImageGraphData > toneMapId = getToneMapId(m_settings.exposureMode);
-		//resource::Proxy< render::ImageGraphData > toneMap;
-
-		//if (!resourceManager->bind(toneMapId, toneMap))
-		//{
-		//	log::warning << L"Unable to create tone map process." << Endl;
-		//	m_toneMapQuality = QuDisabled;
-		//}
-
-		//if (toneMap)
-		//{
-		//	m_toneMap = new render::ImageGraph();
-		//	if (m_toneMap->create(
-		//		toneMap,
-		//		nullptr,
-		//		resourceManager,
-		//		renderSystem,
-		//		desc.width,
-		//		desc.height,
-		//		desc.allTargetsPersistent
-		//	))
-		//		m_toneMap->setFloatParameter(
-		//			render::getParameterHandle(L"World_Exposure"),
-		//			m_settings.exposure
-		//		);
-		//	else
-		//	{
-		//		log::warning << L"Unable to create tone map process; tone mapping disabled." << Endl;
-		//		m_toneMap = nullptr;
-		//		m_toneMapQuality = QuDisabled;
-		//	}
-		//}
-
 		resource::Id< render::ImageGraph > toneMap = getToneMapId(m_settings.exposureMode);
 		if (!resourceManager->bind(toneMap, m_toneMap))
 		{
@@ -695,8 +485,32 @@ bool WorldRendererDeferred::create(
 		m_handleVisual[i] = m_renderGraph->addTargetSet(rgtd, desc.sharedDepthStencil);
 	}
 
+	// Allocate render contexts.
 	for (auto& frame : m_frames)
 		frame.renderContext = new render::RenderContext(1 * 1024 * 1024);
+
+	// Create screen renderer.
+	m_screenRenderer = new render::ScreenRenderer();
+	if (!m_screenRenderer->create(renderSystem))
+		return false;
+
+	// Add target sets from image graphs.
+	if (m_ambientOcclusion)
+		m_ambientOcclusion->addTargetSets(m_renderGraph);
+	if (m_antiAlias)
+		m_antiAlias->addTargetSets(m_renderGraph);
+	if (m_visual)
+		m_visual->addTargetSets(m_renderGraph);
+	if (m_gammaCorrection)
+		m_gammaCorrection->addTargetSets(m_renderGraph);
+	if (m_motionBlurPrime)
+		m_motionBlurPrime->addTargetSets(m_renderGraph);
+	if (m_motionBlur)
+		m_motionBlur->addTargetSets(m_renderGraph);
+	if (m_toneMap)
+		m_toneMap->addTargetSets(m_renderGraph);
+	if (m_shadowMaskProject)
+		m_shadowMaskProject->addTargetSets(m_renderGraph);
 
 	return true;
 }
@@ -711,17 +525,8 @@ void WorldRendererDeferred::destroy()
 	m_frames.clear();
 
 	safeDestroy(m_lightRenderer);
-
-	// safeDestroy(m_toneMap);
-	// safeDestroy(m_motionBlurPrime);
-	// safeDestroy(m_motionBlur);
-	// safeDestroy(m_gammaCorrection);
-	// safeDestroy(m_visual);
-	// safeDestroy(m_antiAlias);
-	// safeDestroy(m_ambientOcclusion);
-	// safeDestroy(m_shadowMaskProject);
-
 	safeDestroy(m_renderGraph);
+	safeDestroy(m_screenRenderer);
 
 	m_irradianceGrid.clear();
 }
@@ -906,8 +711,9 @@ void WorldRendererDeferred::buildVelocity(const WorldRenderView& worldRenderView
 	
 	if (m_motionBlurPrime)
 	{
-		render::ImageGraphParams data;
-		m_motionBlurPrime->addPasses(m_renderGraph, rp, data);
+		render::ImageGraphContext cx(m_screenRenderer);
+		cx.associateTextureTargetSet(s_handleInputDepth, m_handleGBuffer, 0);
+		m_motionBlurPrime->addPasses(m_renderGraph, rp, cx);
 	}
 
 	rp->setOutput(m_handleVelocity);
@@ -952,13 +758,17 @@ void WorldRendererDeferred::buildAmbientOcclusion(const WorldRenderView& worldRe
 
 	if (m_ambientOcclusion != nullptr)
 	{
-		rp->addInput(m_handleGBuffer);
-
 		render::ImageGraphParams ipd;
 		ipd.viewFrustum = worldRenderView.getViewFrustum();
 		ipd.view = worldRenderView.getView();
 		ipd.projection = worldRenderView.getProjection();
-		m_ambientOcclusion->addPasses(m_renderGraph, rp, ipd);
+
+		render::ImageGraphContext cx(m_screenRenderer);
+		cx.associateTextureTargetSet(s_handleInputDepth, m_handleGBuffer, 0);
+		cx.associateTextureTargetSet(s_handleInputNormal, m_handleGBuffer, 1);
+		cx.setParams(ipd);
+
+		m_ambientOcclusion->addPasses(m_renderGraph, rp, cx);
 	}
 
 	render::Clear clear;
@@ -1337,7 +1147,14 @@ void WorldRendererDeferred::buildShadowMask(const WorldRenderView& worldRenderVi
 		);
 		ipd.deltaTime = 0.0f;
 		ipd.time = 0.0f;
-		m_shadowMaskProject->addPasses(m_renderGraph, rp, ipd);
+
+		render::ImageGraphContext cx(m_screenRenderer);
+		cx.associateTextureTargetSetDepth(s_handleInputColor, m_handleShadowMapCascade);
+		cx.associateTextureTargetSet(s_handleInputDepth, m_handleGBuffer, 0);
+		cx.associateTextureTargetSet(s_handleInputNormal, m_handleGBuffer, 1);
+		cx.setParams(ipd);
+
+		m_shadowMaskProject->addPasses(m_renderGraph, rp, cx);
 	}
 
 	render::Clear clear;
@@ -1562,7 +1379,14 @@ void WorldRendererDeferred::buildProcess(const WorldRenderView& worldRenderView)
 	ipd.viewToLight = Matrix44::identity();
 	ipd.view = worldRenderView.getView();
 	ipd.projection = worldRenderView.getProjection();
-	ipd.deltaTime = 1.0f / 60.0f;
+	ipd.deltaTime = 1.0f / 60.0f;				
+
+	render::ImageGraphContext cx(m_screenRenderer);
+	cx.associateTextureTargetSet(s_handleInputColor, m_handleVisual[0], 0);
+	cx.associateTextureTargetSet(s_handleInputDepth, m_handleGBuffer, 0);
+	cx.associateTextureTargetSet(s_handleInputNormal, m_handleGBuffer, 1);
+	cx.associateTextureTargetSet(s_handleInputVelocity, m_handleVelocity, 0);
+	cx.setParams(ipd);
 
 	StaticVector< render::ImageGraph*, 5 > processes;
 	if (m_motionBlur)
@@ -1586,7 +1410,7 @@ void WorldRendererDeferred::buildProcess(const WorldRenderView& worldRenderView)
 		if (next)
 			rp->setOutput(m_handleVisual[i + 1]);
 
-		process->addPasses(m_renderGraph, rp, ipd);
+		process->addPasses(m_renderGraph, rp, cx);
 
 		m_renderGraph->addPass(rp);
 	}

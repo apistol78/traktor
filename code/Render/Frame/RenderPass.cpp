@@ -28,6 +28,14 @@ void RenderPass::addInput(handle_t targetSetId, int32_t colorIndex, bool history
     input.history = history;
 }
 
+AlignedVector< RenderPass::Input > RenderPass::getInputs() const
+{
+    AlignedVector< Input > inputs = m_inputs;
+    for (auto subPass : m_subPasses)
+        inputs.insert(inputs.end(), subPass->m_inputs.begin(), subPass->m_inputs.end());
+    return inputs;
+}
+
 void RenderPass::setOutput(handle_t targetSetId)
 {
     m_output.targetSetId = targetSetId;

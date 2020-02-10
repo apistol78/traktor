@@ -20,15 +20,15 @@ ImgInput::ImgInput()
 {
 }
 
-const std::wstring& ImgInput::getTargetSetId() const
+const std::wstring& ImgInput::getTextureId() const
 {
-	return m_targetSetId;
+	return m_textureId;
 }
 
 void ImgInput::serialize(ISerializer& s)
 {
 	Node::serialize(s);
-	s >> Member< std::wstring >(L"targetSetId", m_targetSetId);
+	s >> Member< std::wstring >(L"textureId", m_textureId);
 }
 
 	}
