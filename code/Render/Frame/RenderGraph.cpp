@@ -138,6 +138,7 @@ bool RenderGraph::build(RenderContext* renderContext)
 		const auto pass = m_passes[index];
 		const auto& output = pass->getOutput();
 
+		// Begin render pass.
 		if (output.targetSetId != 0)
 		{
 			auto it = m_targets.find(output.targetSetId);
@@ -150,9 +151,18 @@ bool RenderGraph::build(RenderContext* renderContext)
 			renderContext->enqueue(tb);			
 		}
 
+		// Build sub passes first.
+		for (auto subPass : pass->getSubPasses())
+		{
+			for (const auto& build : subPass->getBuilds())
+				build(*this, renderContext);
+		}
+
+		// Build this pass.
 		for (const auto& build : pass->getBuilds())
 			build(*this, renderContext);
 
+		// End render pass.
 		if (output.targetSetId != 0)
 		{
 			auto te = renderContext->alloc< TargetEndRenderBlock >();

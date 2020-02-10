@@ -21,6 +21,7 @@ namespace traktor
 class ImageGraph;
 class RenderContext;
 class RenderGraph;
+class ScreenRenderer;
 class StructBuffer;
 
 	}
@@ -85,6 +86,7 @@ private:
 	Quality m_ambientOcclusionQuality;
 	Quality m_antiAliasQuality;
 
+	Ref< render::ScreenRenderer > m_screenRenderer;
 	Ref< render::RenderGraph > m_renderGraph;
 	
 	render::Handle m_handleGBuffer;

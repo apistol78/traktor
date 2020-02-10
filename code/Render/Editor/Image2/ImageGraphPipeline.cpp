@@ -5,6 +5,7 @@
 #include "Render/Editor/GraphTraverse.h"
 #include "Render/Editor/Image2/ImageGraphAsset.h"
 #include "Render/Editor/Image2/ImageGraphPipeline.h"
+#include "Render/Editor/Image2/ImgInput.h"
 #include "Render/Editor/Image2/ImgOutput.h"
 #include "Render/Editor/Image2/ImgPass.h"
 #include "Render/Editor/Image2/ImgStepSimple.h"
@@ -112,6 +113,7 @@ bool ImageGraphPipeline::buildOutput(
 	// First node in array is the "main" pass of the output image graph.
 	T_ASSERT(is_a< ImgPass >(nodes.front()));
 	convertAssetPassToSteps(
+		asset,
 		mandatory_non_null_type_cast< const ImgPass* >(nodes.front()),
 		data->m_steps
 	);
@@ -141,7 +143,7 @@ bool ImageGraphPipeline::buildOutput(
 
 			Ref< ImagePassData > passData = new ImagePassData();
 			passData->m_output = targetSet->getTargetSetDesc().id;
-			convertAssetPassToSteps(pass, passData->m_steps);
+			convertAssetPassToSteps(asset, pass, passData->m_steps);
 			data->m_passes.push_back(passData);
 		}
 		else if (auto targetSet = dynamic_type_cast< const ImgTargetSet* >(nodes[i]))
@@ -178,7 +180,7 @@ Ref< ISerializable > ImageGraphPipeline::buildOutput(
 	return nullptr;
 }
 
-void ImageGraphPipeline::convertAssetPassToSteps(const ImgPass* pass, RefArray< IImageStepData >& outSteps) const
+bool ImageGraphPipeline::convertAssetPassToSteps(const ImageGraphAsset* asset, const ImgPass* pass, RefArray< IImageStepData >& outSteps) const
 {
 	for (auto step : pass->getSteps())
 	{
@@ -187,17 +189,43 @@ void ImageGraphPipeline::convertAssetPassToSteps(const ImgPass* pass, RefArray< 
 			Ref< SimpleImageStepData > simpleData = new SimpleImageStepData();
 			simpleData->m_shader = simpleStep->m_shader;
 			
-			for (const auto& source : simpleStep->m_sources)
+			for (const auto& parameter : simpleStep->m_parameters)
 			{
-				auto& sourceData = simpleData->m_sources.push_back();
-				sourceData.parameter = source.parameter;
-				sourceData.targetSetId = source.targetSetId;
-				sourceData.colorIndex = source.colorIndex;
+				const InputPin* inputPin = pass->findInputPin(parameter);
+				T_FATAL_ASSERT(inputPin != nullptr);
+
+				const OutputPin* sourcePin = asset->findSourcePin(inputPin);
+				if (!sourcePin)
+				{
+					log::error << L"Image graph pipeline failed; input \"" << parameter << L"\" not connected." << Endl;
+					return false;
+				}
+
+				if (auto input = dynamic_type_cast< const ImgInput* >(sourcePin->getNode()))
+				{
+					// Reading texture from input texture.
+					auto& sourceData = simpleData->m_sources.push_back();
+					sourceData.textureId = input->getTextureId();
+					sourceData.parameter = parameter;
+				}
+				else if (auto targetSet = dynamic_type_cast< const ImgTargetSet* >(sourcePin->getNode()))
+				{
+					// Reading texture from transient target set.
+					auto& sourceData = simpleData->m_sources.push_back();
+					//sourceData.textureId = input->getTextureId();
+					sourceData.parameter = parameter;
+				}
+				else
+				{
+					log::error << L"Image graph pipeline failed; input \"" << parameter << L"\" connected to incorrect node." << Endl;
+					return false;
+				}
 			}
 
 			outSteps.push_back(simpleData);
 		}
 	}
+	return true;
 }
 
 	}

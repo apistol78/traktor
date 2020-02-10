@@ -3,6 +3,8 @@
 #include "Core/Serialization/MemberComplex.h"
 #include "Core/Serialization/MemberEnum.h"
 #include "Core/Serialization/MemberStaticArray.h"
+#include "Render/Editor/InputPin.h"
+#include "Render/Editor/OutputPin.h"
 #include "Render/Editor/Image2/ImgTargetSet.h"
 
 namespace traktor
@@ -101,16 +103,22 @@ private:
 	value_type& m_ref;
 };
 
-const ImmutableNode::InputPinDesc c_ImgTarget_i[] = { { L"Input", false }, { 0 } };
-const ImmutableNode::OutputPinDesc c_ImgTarget_o[] = { { L"Output" }, { 0 } };
-
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ImgTargetSet", 0, ImgTargetSet, ImmutableNode)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ImgTargetSet", 0, ImgTargetSet, Node)
 
 ImgTargetSet::ImgTargetSet()
-:	ImmutableNode(c_ImgTarget_i, c_ImgTarget_o)
 {
+	const Guid c_null;
+	m_inputPins.push_back(new InputPin(this, c_null, L"Input", false));
+}
+
+ImgTargetSet::~ImgTargetSet()
+{
+	for (auto& inputPin : m_inputPins)
+		delete inputPin;
+	for (auto& outputPin : m_outputPins)
+		delete outputPin;
 }
 
 void ImgTargetSet::setTargetSetDesc(const RenderGraphTargetSetDesc& targetSetDesc)
@@ -123,10 +131,47 @@ const RenderGraphTargetSetDesc& ImgTargetSet::getTargetSetDesc() const
 	return m_targetSetDesc;
 }
 
+int ImgTargetSet::getInputPinCount() const
+{
+	return (int)m_inputPins.size();
+}
+
+const InputPin* ImgTargetSet::getInputPin(int index) const
+{
+	T_ASSERT(index >= 0 && index < (int)m_inputPins.size());
+	return m_inputPins[index];
+}
+
+int ImgTargetSet::getOutputPinCount() const
+{
+	return (int)m_outputPins.size();
+}
+
+const OutputPin* ImgTargetSet::getOutputPin(int index) const
+{
+	T_ASSERT(index >= 0 && index < (int)m_outputPins.size());
+	return m_outputPins[index];
+}
+
 void ImgTargetSet::serialize(ISerializer& s)
 {
 	Node::serialize(s);
 	s >> MemberRenderGraphTargetSetDesc(L"targetSetDesc", m_targetSetDesc);
+	if (s.getDirection() == ISerializer::SdRead)
+		refresh();
+}
+
+void ImgTargetSet::refresh()
+{
+	const Guid c_null;
+
+	for (auto& outputPin : m_outputPins)
+		delete outputPin;
+
+	m_outputPins.clear();
+
+	for (int32_t i = 0; i < m_targetSetDesc.count; ++i)
+		m_outputPins.push_back(new OutputPin(this, c_null, m_targetSetDesc.targets[i].id));
 }
 
 	}

@@ -68,6 +68,7 @@ private:
 	Ref< ImageGraphAsset > m_imageGraph;
 	Ref< ui::GraphControl > m_editorGraph;
     Ref< ui::Menu > m_menuPopup;
+	Ref< Node > m_propertiesNode;
 
 	Ref< ui::Node > createEditorNode(Node* node) const;
 

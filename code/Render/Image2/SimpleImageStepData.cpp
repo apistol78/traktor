@@ -27,9 +27,8 @@ Ref< const IImageStep > SimpleImageStepData::createInstance(resource::IResourceM
 	for (const auto& source : m_sources)
 	{
 		instance->m_sources.push_back({
-			getParameterHandle(source.parameter),
-			getParameterHandle(source.targetSetId),
-			source.colorIndex
+			getParameterHandle(source.textureId),
+			getParameterHandle(source.parameter)
 		});
 	}
 
@@ -44,9 +43,8 @@ void SimpleImageStepData::serialize(ISerializer& s)
 
 void SimpleImageStepData::Source::serialize(ISerializer& s)
 {
+	s >> Member< std::wstring >(L"textureId", textureId);
 	s >> Member< std::wstring >(L"parameter", parameter);
-	s >> Member< std::wstring >(L"targetSetId", targetSetId);
-	s >> Member< int32_t >(L"colorIndex", colorIndex);
 }
 
     }

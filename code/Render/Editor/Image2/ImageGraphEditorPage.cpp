@@ -1,5 +1,7 @@
+#include "Core/Io/StringOutputStream.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/SafeDestroy.h"
+#include "Core/Serialization/DeepClone.h"
 #include "Editor/IDocument.h"
 #include "Editor/IEditorPageSite.h"
 #include "Render/Editor/Edge.h"
@@ -61,6 +63,7 @@ bool ImageGraphEditorPage::create(ui::Container* parent)
 	m_menuPopup = new ui::Menu();
 	Ref< ui::MenuItem > menuItemCreate = new ui::MenuItem(L"Create...");
 	menuItemCreate->add(new ui::MenuItem(ui::Command(L"ImageGraph.Editor.AddInput"), L"Input"));
+	menuItemCreate->add(new ui::MenuItem(ui::Command(L"ImageGraph.Editor.AddOutput"), L"Output"));
 	menuItemCreate->add(new ui::MenuItem(ui::Command(L"ImageGraph.Editor.AddPass"), L"Pass"));
 	menuItemCreate->add(new ui::MenuItem(ui::Command(L"ImageGraph.Editor.AddTarget"), L"Target"));
 	m_menuPopup->add(menuItemCreate);
@@ -88,8 +91,22 @@ bool ImageGraphEditorPage::handleCommand(const ui::Command& command)
 	}
 	else if (command == L"Editor.PropertiesChanged")
 	{
-		// refreshGraph();
-		// updateGraph();
+		RefArray< ui::Node > nodes;
+		if (
+			m_editorGraph->getSelectedNodes(nodes) == 1 &&
+			m_propertiesNode != nullptr
+		)
+		{
+			Node* node = nodes.front()->getData< Node >(L"IMGNODE");
+			T_FATAL_ASSERT(&type_of(m_propertiesNode) == &type_of(node));
+
+			m_imageGraph->replace(
+				node,
+				m_propertiesNode
+			);
+		}
+
+		createEditorGraph();
 	}
 	else if (command == L"Editor.Cut" || command == L"Editor.Copy")
 	{
@@ -297,6 +314,15 @@ bool ImageGraphEditorPage::handleCommand(const ui::Command& command)
 		// Create node in graph control.
 		m_editorGraph->addNode(createEditorNode(input));
 	}
+	else if (command == L"ImageGraph.Editor.AddOutput")
+	{
+		// Create image graph output.
+		Ref< ImgOutput > output = new ImgOutput();
+		m_imageGraph->addNode(output);
+
+		// Create node in graph control.
+		m_editorGraph->addNode(createEditorNode(output));
+	}
 	else if (command == L"ImageGraph.Editor.AddPass")
 	{
 		// Create image graph pass.
@@ -337,11 +363,10 @@ Ref< ui::Node > ImageGraphEditorPage::createEditorNode(Node* node) const
 	{
 		editorNode = new ui::Node(
 			L"Input",
-			input->getTargetSetId(),
+			input->getTextureId(),
 			position,
 			new ui::InputNodeShape(m_editorGraph)
 		);
-		editorNode->createOutputPin(L"Output");
 	}
 	else if (auto output = dynamic_type_cast< ImgOutput* >(node))
 	{
@@ -351,24 +376,19 @@ Ref< ui::Node > ImageGraphEditorPage::createEditorNode(Node* node) const
 			position,
 			new ui::OutputNodeShape(m_editorGraph)
 		);
-		editorNode->createInputPin(L"Input", false);
 	}
 	else if (auto pass = dynamic_type_cast< ImgPass* >(node))
 	{
+		StringOutputStream ss;
+		for (auto step : pass->getSteps())
+			ss << type_name(step) << Endl;
+
 		editorNode = new ui::Node(
 			L"Pass",
-			L"",
+			ss.str(),
 			position,
 			new ui::DefaultNodeShape(m_editorGraph, ui::DefaultNodeShape::StDefault)
 		);
-
-		std::set< std::wstring > inputs;
-		for (const auto step : pass->getSteps())
-			step->getInputs(inputs);
-		for (const auto& input : inputs)
-			editorNode->createInputPin(input, false);
-
-		editorNode->createOutputPin(L"Output");
 	}
 	else if (auto targetSet = dynamic_type_cast< ImgTargetSet* >(node))
 	{
@@ -378,13 +398,23 @@ Ref< ui::Node > ImageGraphEditorPage::createEditorNode(Node* node) const
 			position,
 			new ui::DefaultNodeShape(m_editorGraph, ui::DefaultNodeShape::StDefault)
 		);
-		editorNode->createInputPin(L"Input", false);
-		editorNode->createOutputPin(L"Output");
 	}
 	else
 	{
 		T_FATAL_ERROR;
 		return nullptr;
+	}
+
+	for (int i = 0; i < node->getInputPinCount(); ++i)
+	{
+		const InputPin* inputPin = node->getInputPin(i);
+		editorNode->createInputPin(inputPin->getName(), false);
+	}
+
+	for (int i = 0; i < node->getOutputPinCount(); ++i)
+	{
+		const OutputPin* outputPin = node->getOutputPin(i);
+		editorNode->createOutputPin(outputPin->getName());
 	}
 
 	editorNode->setData(L"IMGNODE", node);
@@ -395,6 +425,10 @@ void ImageGraphEditorPage::createEditorGraph()
 {
 	// Keep a map from image graph nodes to editor nodes.
 	std::map< Ref< Node >, Ref< ui::Node > > nodeMap;
+
+	// Ensure editor graph is clean.
+	m_editorGraph->removeAllEdges();
+	m_editorGraph->removeAllNodes();
 
 	// Create editor nodes for each image graph node.
 	for (auto node : m_imageGraph->getNodes())
@@ -455,7 +489,6 @@ void ImageGraphEditorPage::createEditorGraph()
 		m_editorGraph->addEdge(editorEdge);
 	}
 
-	m_editorGraph->center();
 	m_editorGraph->update();
 }
 
@@ -477,14 +510,22 @@ void ImageGraphEditorPage::eventSelect(ui::SelectEvent* event)
 	RefArray< ui::Node > nodes;
 	if (m_editorGraph->getSelectedNodes(nodes) == 1)
 	{
-		Node* node = nodes[0]->getData< Node >(L"IMGNODE");
+		Node* node = nodes.front()->getData< Node >(L"IMGNODE");
 		if (node)
 		{
-			m_site->setPropertyObject(node);
+			// Create a clone of the selected node as we cannot
+			// allow in-place editing of a node as graph contain
+			// pointers to pins within each node.
+			m_propertiesNode = DeepClone(node).create< Node >();
+			m_site->setPropertyObject(m_propertiesNode);
 			return;
 		}
 	}
+
+	// Multiple nodes or no node selected; do not show
+	// any properties in any case.
 	m_site->setPropertyObject(nullptr);
+	m_propertiesNode = nullptr;
 }
 
 void ImageGraphEditorPage::eventNodeMoved(ui::NodeMovedEvent* event)

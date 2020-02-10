@@ -37,14 +37,8 @@ private:
 
     struct Source
     {
+        std::wstring textureId;
         std::wstring parameter;
-        std::wstring targetSetId;
-        int32_t colorIndex;
-
-        Source()
-        :   colorIndex(0)
-        {
-        }
 
         void serialize(ISerializer& s);
     };

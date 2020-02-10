@@ -4,6 +4,7 @@
 #include "Render/Frame/RenderGraph.h"
 #include "Render/Image2/IImageStep.h"
 #include "Render/Image2/ImageGraph.h"
+#include "Render/Image2/ImageGraphContext.h"
 #include "Render/Image2/ImagePass.h"
 #include "Render/Image2/ImageTargetSet.h"
 
@@ -14,37 +15,24 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ImageGraph", ImageGraph, Object)
 
-bool ImageGraph::create(IRenderSystem* renderSystem, RenderGraph* renderGraph)
+void ImageGraph::addTargetSets(RenderGraph* renderGraph) const
 {
-	// Create screen renderer.
-	m_screenRenderer = new ScreenRenderer();
-	if (!m_screenRenderer->create(renderSystem))
-		return false;
-
-	// Add all transient render targets to render graph.
 	for (auto targetSet : m_targetSets)
 	{
 		renderGraph->addTargetSet(
 			targetSet->getTargetSetDesc()
 		);
 	}
-
-	return true;
 }
 
-void ImageGraph::destroy()
-{
-	safeDestroy(m_screenRenderer);
-}
-
-void ImageGraph::addPasses(RenderGraph* renderGraph, RenderPass* parentPass, const ImageGraphParams& data) const
+void ImageGraph::addPasses(RenderGraph* renderGraph, RenderPass* parentPass, const ImageGraphContext& cx) const
 {
 	for (auto pass : m_passes)
 	{
 		Ref< RenderPass > rp = new RenderPass();
 
 		for (auto step : pass->m_steps)
-			step->setup(this, *rp);
+			step->setup(this, cx, *rp);
 
 		rp->setOutput(pass->m_output);
 		rp->addBuild(
@@ -61,7 +49,7 @@ void ImageGraph::addPasses(RenderGraph* renderGraph, RenderPass* parentPass, con
 				sharedParams->endParameters(renderContext);
 				
 				for (auto step : pass->m_steps)
-					step->build(this, renderGraph, renderContext, data);
+					step->build(this, cx, renderGraph, renderContext);
 			}
 		);
 
@@ -71,7 +59,7 @@ void ImageGraph::addPasses(RenderGraph* renderGraph, RenderPass* parentPass, con
 	Ref< RenderPass > rp = new RenderPass();
 
 	for (auto step : m_steps)
-		step->setup(this, *rp);
+		step->setup(this, cx, *rp);
 
 	rp->addBuild(
 		[=](const RenderGraph& renderGraph, RenderContext* renderContext)
@@ -87,7 +75,7 @@ void ImageGraph::addPasses(RenderGraph* renderGraph, RenderPass* parentPass, con
 			sharedParams->endParameters(renderContext);
 
 			for (auto step : m_steps)
-				step->build(this, renderGraph, renderContext, data);
+				step->build(this, cx, renderGraph, renderContext);
 		}
 	);
 

@@ -28,13 +28,13 @@ class T_DLLCLASS SimpleImageStep : public IImageStep
 	T_RTTI_CLASS;
 
 public:
-	virtual void setup(const ImageGraph* imageGraph, RenderPass& pass) const override final;
+	virtual void setup(const ImageGraph* imageGraph, const ImageGraphContext& cx, RenderPass& pass) const override final;
 
     virtual void build(
-        const ImageGraph* imageGraph,
-        const RenderGraph& renderGraph,
-        RenderContext* renderContext,
-        const ImageGraphParams& data
+		const ImageGraph* imageGraph,
+		const ImageGraphContext& cx,
+		const RenderGraph& renderGraph,
+		RenderContext* renderContext
 	) const override final;
 
 private:
@@ -42,9 +42,8 @@ private:
 
 	struct Source
 	{
+		handle_t textureId;
 		handle_t parameter;
-		handle_t targetSet;
-		int32_t colorIndex;
 	};
 
 	resource::Proxy< render::Shader > m_shader;

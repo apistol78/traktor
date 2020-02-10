@@ -25,6 +25,7 @@ class IRenderTargetSet;
 class ISimpleTexture;
 class RenderContext;
 class RenderGraph;
+class ScreenRenderer;
 class StructBuffer;
 
 	}
@@ -91,7 +92,9 @@ private:
 	Quality m_ambientOcclusionQuality;
 	Quality m_antiAliasQuality;
 
+	Ref< render::ScreenRenderer > m_screenRenderer;
 	Ref< render::RenderGraph > m_renderGraph;
+	Ref< LightRendererDeferred > m_lightRenderer;
 
 	render::Handle m_handleGBuffer;
 	render::Handle m_handleAmbientOcclusion;
@@ -110,8 +113,6 @@ private:
 	resource::Proxy< render::ImageGraph > m_motionBlur;
 	resource::Proxy< render::ImageGraph > m_toneMap;
 	resource::Proxy< render::ImageGraph > m_shadowMaskProject;
-
-	Ref< LightRendererDeferred > m_lightRenderer;
 
 	resource::Proxy< IrradianceGrid > m_irradianceGrid;
 	
