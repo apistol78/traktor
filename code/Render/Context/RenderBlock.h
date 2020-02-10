@@ -205,7 +205,7 @@ public:
 
 	TargetBeginRenderBlock()
 	:	RenderBlock()
-	,	renderTargetIndex(0)
+	,	renderTargetIndex(-1)
 	{
 		clear.mask = 0;
 	}

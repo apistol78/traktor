@@ -146,7 +146,6 @@ bool RenderGraph::build(RenderContext* renderContext)
 
 			auto tb = renderContext->alloc< TargetBeginRenderBlock >();
 			tb->renderTargetSet = it->second.rts[0];
-			tb->renderTargetIndex = output.colorIndex;
 			tb->clear = output.clear;
 			renderContext->enqueue(tb);			
 		}
