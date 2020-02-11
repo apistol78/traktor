@@ -414,11 +414,11 @@ bool WorldRendererDeferred::create(
 	rgtd = render::RenderGraphTargetSetDesc();
 	rgtd.count = 1;
 	rgtd.createDepthStencil = false;
-	rgtd.usingPrimaryDepthStencil = (desc.sharedDepthStencil == nullptr) ? true : false;
+	rgtd.usingPrimaryDepthStencil = false;
 	rgtd.targets[0].colorFormat = render::TfR8;			// Ambient occlusion (R)
 	rgtd.screenWidthDenom = 1;
 	rgtd.screenHeightDenom = 1;
-	m_renderGraph->addTargetSet(s_handleAmbientOcclusion, rgtd, desc.sharedDepthStencil);
+	m_renderGraph->addTargetSet(s_handleAmbientOcclusion, rgtd);
 
 	// Velocity
 	rgtd = render::RenderGraphTargetSetDesc();

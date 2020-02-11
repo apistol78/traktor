@@ -282,7 +282,7 @@ bool WorldRendererForward::create(
 	rgtd = render::RenderGraphTargetSetDesc();
 	rgtd.count = 1;
 	rgtd.createDepthStencil = false;
-	rgtd.usingPrimaryDepthStencil = (desc.sharedDepthStencil == nullptr) ? true : false;
+	rgtd.usingPrimaryDepthStencil = false;
 	rgtd.targets[0].colorFormat = render::TfR8;			// Ambient occlusion (R)
 	rgtd.screenWidthDenom = 1;
 	rgtd.screenHeightDenom = 1;
