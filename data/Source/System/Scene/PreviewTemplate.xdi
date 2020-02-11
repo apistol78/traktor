@@ -29,7 +29,7 @@
 				<cascadingLambda>1.5</cascadingLambda>
 				<quantizeProjection>false</quantizeProjection>
 				<maskDenominator>2</maskDenominator>
-				<maskProject>{F751F3EB-33D2-9247-9E3F-54B1A0E3522C}</maskProject>
+				<maskProject>{D8A7B76E-AB55-8E43-AB60-A35F3135DB3D}</maskProject>
 			</low>
 			<medium>
 				<projection>SpUniform</projection>
@@ -41,7 +41,7 @@
 				<cascadingLambda>1.5</cascadingLambda>
 				<quantizeProjection>true</quantizeProjection>
 				<maskDenominator>2</maskDenominator>
-				<maskProject>{F751F3EB-33D2-9247-9E3F-54B1A0E3522C}</maskProject>
+				<maskProject>{D8A7B76E-AB55-8E43-AB60-A35F3135DB3D}</maskProject>
 			</medium>
 			<high>
 				<projection>SpUniform</projection>
@@ -53,7 +53,7 @@
 				<cascadingLambda>1.5</cascadingLambda>
 				<quantizeProjection>true</quantizeProjection>
 				<maskDenominator>1</maskDenominator>
-				<maskProject>{F751F3EB-33D2-9247-9E3F-54B1A0E3522C}</maskProject>
+				<maskProject>{D8A7B76E-AB55-8E43-AB60-A35F3135DB3D}</maskProject>
 			</high>
 			<ultra>
 				<projection>SpUniform</projection>
@@ -65,7 +65,7 @@
 				<cascadingLambda>1.5</cascadingLambda>
 				<quantizeProjection>true</quantizeProjection>
 				<maskDenominator>1</maskDenominator>
-				<maskProject>{F751F3EB-33D2-9247-9E3F-54B1A0E3522C}</maskProject>
+				<maskProject>{D8A7B76E-AB55-8E43-AB60-A35F3135DB3D}</maskProject>
 			</ultra>
 		</shadowSettings>
 		<fog>false</fog>

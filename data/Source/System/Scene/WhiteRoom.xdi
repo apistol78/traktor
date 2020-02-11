@@ -29,7 +29,7 @@
 				<cascadingLambda>1</cascadingLambda>
 				<quantizeProjection>false</quantizeProjection>
 				<maskDenominator>2</maskDenominator>
-				<maskProject>{50BB0E53-6C8F-ED42-97E8-445D2705F4E5}</maskProject>
+				<maskProject>{D8A7B76E-AB55-8E43-AB60-A35F3135DB3D}</maskProject>
 			</low>
 			<medium>
 				<projection>SpUniform</projection>
@@ -41,7 +41,7 @@
 				<cascadingLambda>1</cascadingLambda>
 				<quantizeProjection>true</quantizeProjection>
 				<maskDenominator>2</maskDenominator>
-				<maskProject>{50BB0E53-6C8F-ED42-97E8-445D2705F4E5}</maskProject>
+				<maskProject>{D8A7B76E-AB55-8E43-AB60-A35F3135DB3D}</maskProject>
 			</medium>
 			<high>
 				<projection>SpUniform</projection>
@@ -53,7 +53,7 @@
 				<cascadingLambda>1</cascadingLambda>
 				<quantizeProjection>true</quantizeProjection>
 				<maskDenominator>1</maskDenominator>
-				<maskProject>{76B1745B-418E-DA42-BE70-4CC832B5F832}</maskProject>
+				<maskProject>{D8A7B76E-AB55-8E43-AB60-A35F3135DB3D}</maskProject>
 			</high>
 			<ultra>
 				<projection>SpUniform</projection>
@@ -65,7 +65,7 @@
 				<cascadingLambda>1</cascadingLambda>
 				<quantizeProjection>true</quantizeProjection>
 				<maskDenominator>1</maskDenominator>
-				<maskProject>{15273E38-4539-B541-8B37-FC3EFF777C11}</maskProject>
+				<maskProject>{D8A7B76E-AB55-8E43-AB60-A35F3135DB3D}</maskProject>
 			</ultra>
 		</shadowSettings>
 		<fog>false</fog>
@@ -76,11 +76,11 @@
 		<fogColor>1, 1, 1, 1</fogColor>
 		<irradianceGrid>{6CBAE4B1-7E14-FC44-8F46-4F39D9A6DE84}</irradianceGrid>
 		<imageProcess>
-			<disabled>{E7BBD0E4-7F19-ED40-B561-AAECE3D186F5}</disabled>
-			<low>{9866EA1B-72EF-E94E-93B7-12C0A5D56C12}</low>
-			<medium>{8E62FF58-7793-E34F-A7BA-388137BE94EA}</medium>
-			<high>{A0D78236-39D8-394D-8631-784A2CAD0C0C}</high>
-			<ultra>{19B3FABA-6966-F342-8B8A-3752C086C25B}</ultra>
+			<disabled>{00000000-0000-0000-0000-000000000000}</disabled>
+			<low>{00000000-0000-0000-0000-000000000000}</low>
+			<medium>{00000000-0000-0000-0000-000000000000}</medium>
+			<high>{00000000-0000-0000-0000-000000000000}</high>
+			<ultra>{00000000-0000-0000-0000-000000000000}</ultra>
 		</imageProcess>
 	</worldRenderSettings>
 	<imageProcessParams/>

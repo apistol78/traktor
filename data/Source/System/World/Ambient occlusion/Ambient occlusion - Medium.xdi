@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.render.ImageGraphAsset">
+	<nodes>
+		<item type="traktor.render.ImgOutput" version="traktor.render.Node:1">
+			<id>{402BEABF-3110-F341-B938-F607AA2BFD06}</id>
+			<comment/>
+			<position>
+				<first>1717</first>
+				<second>237</second>
+			</position>
+		</item>
+		<item type="traktor.render.ImgTargetSet" version="traktor.render.Node:1">
+			<id>{3A1ECA6F-641F-2E4C-89C1-F74C3451031C}</id>
+			<comment/>
+			<position>
+				<first>656</first>
+				<second>262</second>
+			</position>
+			<targetSetId>AO</targetSetId>
+			<width>0</width>
+			<height>0</height>
+			<screenWidthDenom>2</screenWidthDenom>
+			<screenHeightDenom>2</screenHeightDenom>
+			<maxWidth>0</maxWidth>
+			<maxHeight>0</maxHeight>
+			<createDepthStencil>false</createDepthStencil>
+			<ignoreStencil>false</ignoreStencil>
+			<generateMips>false</generateMips>
+			<targets>
+				<item>
+					<textureId>Output</textureId>
+					<colorFormat>TfR8</colorFormat>
+				</item>
+			</targets>
+		</item>
+		<item type="traktor.render.ImgInput" version="traktor.render.Node:1">
+			<id>{320D5AFA-90F1-D944-9A56-E1C11AD015BE}</id>
+			<comment/>
+			<position>
+				<first>153</first>
+				<second>111</second>
+			</position>
+			<textureId>InputDepth</textureId>
+		</item>
+		<item type="traktor.render.ImgInput" version="traktor.render.Node:1">
+			<id>{63AA17C2-50D0-7F43-B0D2-1E2B6C5B7BAB}</id>
+			<comment/>
+			<position>
+				<first>162</first>
+				<second>259</second>
+			</position>
+			<textureId>InputNormal</textureId>
+		</item>
+		<item type="traktor.render.ImgPass" version="traktor.render.Node:1">
+			<id>{23FA7ED0-9D6F-934E-8339-1E8C74500B18}</id>
+			<comment/>
+			<position>
+				<first>409</first>
+				<second>192</second>
+			</position>
+			<steps>
+				<item type="traktor.render.ImgStepAmbientOcclusion">
+					<shader>{C4F79F8D-43EF-6D43-993E-6A3B83F60B0B}</shader>
+					<parameters>
+						<item>Depth</item>
+						<item>Normal</item>
+					</parameters>
+				</item>
+			</steps>
+		</item>
+		<item type="traktor.render.ImgPass" version="traktor.render.Node:1">
+			<id>{24FF23FF-E024-9548-A200-0B292E95DA0D}</id>
+			<comment/>
+			<position>
+				<first>916</first>
+				<second>220</second>
+			</position>
+			<steps>
+				<item type="traktor.render.ImgStepDirectionalBlur">
+					<blurType>BtGaussian</blurType>
+					<direction>3, 0</direction>
+					<taps>16</taps>
+					<shader>{FECC6D88-5127-0247-B896-A6EDC6FE87A9}</shader>
+					<parameters>
+						<item>Source</item>
+						<item>Depth</item>
+					</parameters>
+				</item>
+			</steps>
+		</item>
+		<item type="traktor.render.ImgPass" version="traktor.render.Node:1">
+			<id>{A3B318DF-EB83-EE4F-9CEF-C182B0F99F1F}</id>
+			<comment/>
+			<position>
+				<first>1442</first>
+				<second>155</second>
+			</position>
+			<steps>
+				<item type="traktor.render.ImgStepDirectionalBlur">
+					<blurType>BtGaussian</blurType>
+					<direction>0, 3</direction>
+					<taps>16</taps>
+					<shader>{FECC6D88-5127-0247-B896-A6EDC6FE87A9}</shader>
+					<parameters>
+						<item>Depth</item>
+						<item>Source</item>
+					</parameters>
+				</item>
+			</steps>
+		</item>
+		<item type="traktor.render.ImgTargetSet" version="traktor.render.Node:1">
+			<id>{07E0F511-6269-EB4E-856D-7933E9FD66BE}</id>
+			<comment/>
+			<position>
+				<first>1183</first>
+				<second>214</second>
+			</position>
+			<targetSetId>Temporary</targetSetId>
+			<width>0</width>
+			<height>0</height>
+			<screenWidthDenom>1</screenWidthDenom>
+			<screenHeightDenom>1</screenHeightDenom>
+			<maxWidth>0</maxWidth>
+			<maxHeight>0</maxHeight>
+			<createDepthStencil>false</createDepthStencil>
+			<ignoreStencil>false</ignoreStencil>
+			<generateMips>false</generateMips>
+			<targets>
+				<item>
+					<textureId>Output</textureId>
+					<colorFormat>TfR8</colorFormat>
+				</item>
+			</targets>
+		</item>
+	</nodes>
+	<edges>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[2]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[4]"/>
+				<name>Depth</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[3]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[4]"/>
+				<name>Normal</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[4]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[1]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[2]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[5]"/>
+				<name>Depth</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[1]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[5]"/>
+				<name>Source</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[5]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[7]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[2]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[6]"/>
+				<name>Depth</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[7]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[6]"/>
+				<name>Source</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[6]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item"/>
+				<name>Input</name>
+			</destination>
+		</item>
+	</edges>
+</object>

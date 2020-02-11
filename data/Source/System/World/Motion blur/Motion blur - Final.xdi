@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.render.ImageGraphAsset">
+	<nodes>
+		<item type="traktor.render.ImgInput" version="traktor.render.Node:1">
+			<id>{6834F690-121C-C249-8191-A03A37AFC8F2}</id>
+			<comment/>
+			<position>
+				<first>128</first>
+				<second>156</second>
+			</position>
+			<textureId>InputColor</textureId>
+		</item>
+		<item type="traktor.render.ImgOutput" version="traktor.render.Node:1">
+			<id>{A24C08E3-CDBB-F540-A23E-D2DDEE8715EB}</id>
+			<comment/>
+			<position>
+				<first>678</first>
+				<second>161</second>
+			</position>
+		</item>
+		<item type="traktor.render.ImgPass" version="traktor.render.Node:1">
+			<id>{DB09FFB6-7207-5947-A15B-8026A5683991}</id>
+			<comment/>
+			<position>
+				<first>424</first>
+				<second>149</second>
+			</position>
+			<steps>
+				<item type="traktor.render.ImgStepSimple">
+					<shader>{438372D7-2801-1A49-9152-A9DD69BE73CB}</shader>
+					<parameters>
+						<item>Source</item>
+						<item>Velocity</item>
+					</parameters>
+				</item>
+			</steps>
+		</item>
+		<item type="traktor.render.ImgInput" version="traktor.render.Node:1">
+			<id>{1CDD9E7D-07EA-9B42-888A-4828267774A3}</id>
+			<comment/>
+			<position>
+				<first>121</first>
+				<second>228</second>
+			</position>
+			<textureId>InputVelocity</textureId>
+		</item>
+	</nodes>
+	<edges>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[2]"/>
+				<name>Source</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[3]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[2]"/>
+				<name>Velocity</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[2]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[1]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+	</edges>
+</object>
