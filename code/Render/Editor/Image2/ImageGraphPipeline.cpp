@@ -8,11 +8,18 @@
 #include "Render/Editor/Image2/ImgInput.h"
 #include "Render/Editor/Image2/ImgOutput.h"
 #include "Render/Editor/Image2/ImgPass.h"
+#include "Render/Editor/Image2/ImgStepAmbientOcclusion.h"
+#include "Render/Editor/Image2/ImgStepDirectionalBlur.h"
+#include "Render/Editor/Image2/ImgStepShadowProject.h"
 #include "Render/Editor/Image2/ImgStepSimple.h"
 #include "Render/Editor/Image2/ImgTargetSet.h"
+#include "Render/Editor/Image2/ImgTexture.h"
+#include "Render/Image2/AmbientOcclusionImageStepData.h"
+#include "Render/Image2/DirectionalBlurImageStepData.h"
 #include "Render/Image2/ImageGraphData.h"
 #include "Render/Image2/ImagePassData.h"
 #include "Render/Image2/ImageTargetSetData.h"
+#include "Render/Image2/ShadowProjectImageStepData.h"
 #include "Render/Image2/SimpleImageStepData.h"
 
 namespace traktor
@@ -63,10 +70,18 @@ bool ImageGraphPipeline::buildDependencies(
 		{
 			for (auto step : pass->getSteps())
 			{
-				if (auto simple = dynamic_type_cast< const ImgStepSimple* >(step))
-					pipelineDepends->addDependency(simple->m_shader, editor::PdfBuild | editor::PdfResource);
+				if (auto ambientOcclusionStep = dynamic_type_cast< const ImgStepAmbientOcclusion* >(step))
+					pipelineDepends->addDependency(ambientOcclusionStep->m_shader, editor::PdfBuild | editor::PdfResource);
+				else if (auto directionalBlurStep = dynamic_type_cast< const ImgStepDirectionalBlur* >(step))
+					pipelineDepends->addDependency(directionalBlurStep->m_shader, editor::PdfBuild | editor::PdfResource);
+				else if (auto shadowProjectStep = dynamic_type_cast< const ImgStepShadowProject* >(step))
+					pipelineDepends->addDependency(shadowProjectStep->m_shader, editor::PdfBuild | editor::PdfResource);
+				else if (auto simpleStep = dynamic_type_cast< const ImgStepSimple* >(step))
+					pipelineDepends->addDependency(simpleStep->m_shader, editor::PdfBuild | editor::PdfResource);
 			}
 		}
+		else if (auto texture = dynamic_type_cast< const ImgTexture* >(node))
+			pipelineDepends->addDependency(texture->m_texture, editor::PdfBuild | editor::PdfResource);
 		return true;
 	});
 
@@ -104,6 +119,11 @@ bool ImageGraphPipeline::buildOutput(
 		nodes.push_back(node);
 		return true;
 	});
+
+	log::info << L"Compiled image graph sequence:" << Endl;
+	for (int32_t i = 0; i < (int32_t)nodes.size(); ++i)
+		log::info << i << L". " << type_name(nodes[i]) << Endl;
+
 	T_ASSERT(is_a< ImgOutput >(nodes.front()));
 	nodes.pop_front();
 
@@ -142,7 +162,7 @@ bool ImageGraphPipeline::buildOutput(
 			}
 
 			Ref< ImagePassData > passData = new ImagePassData();
-			passData->m_output = targetSet->getTargetSetDesc().id;
+			passData->m_output = targetSet->getTargetSetId();
 			convertAssetPassToSteps(asset, pass, passData->m_steps);
 			data->m_passes.push_back(passData);
 		}
@@ -152,10 +172,24 @@ bool ImageGraphPipeline::buildOutput(
 			// we should rename these with a globally unique identifier
 			// so it won't clash with other image graphs.
 			Ref< ImageTargetSetData > targetSetData = new ImageTargetSetData();
-			targetSetData->m_targetSetDesc = targetSet->getTargetSetDesc();
+			targetSetData->m_targetSetId = targetSet->getTargetSetId();
+			for (int32_t i = 0; i < targetSet->getTextureCount(); ++i)
+				targetSetData->m_textureIds[i] = targetSet->getTargetSetId() + L"/" + targetSet->getTextureId(i);
+			targetSetData->m_targetSetDesc = targetSet->getRenderGraphTargetSetDesc();
 			data->m_targetSets.push_back(targetSetData);
 		}
+		else if (auto texture = dynamic_type_cast< const ImgTexture* >(nodes[i]))
+		{
+			// \tbd Add texture reference to image graph data.
+		}
 	}
+
+	// Reverse order of passes, not strictly necessary
+	// but might improve robustness of render graph pass sorting.
+	std::reverse(
+		data->m_passes.begin(),
+		data->m_passes.end()
+	);
 
 	Ref< db::Instance > outputInstance = pipelineBuilder->createOutputInstance(outputPath, outputGuid);
 	if (!outputInstance)
@@ -184,45 +218,204 @@ bool ImageGraphPipeline::convertAssetPassToSteps(const ImageGraphAsset* asset, c
 {
 	for (auto step : pass->getSteps())
 	{
-		if (auto simpleStep = dynamic_type_cast< const ImgStepSimple* >(step))
+		if (auto ambientOcclusionStep = dynamic_type_cast< const ImgStepAmbientOcclusion* >(step))
 		{
-			Ref< SimpleImageStepData > simpleData = new SimpleImageStepData();
-			simpleData->m_shader = simpleStep->m_shader;
+			Ref< AmbientOcclusionImageStepData > stepData = new AmbientOcclusionImageStepData();
+			stepData->m_shader = ambientOcclusionStep->m_shader;
 			
-			for (const auto& parameter : simpleStep->m_parameters)
+			std::set< std::wstring > inputs;
+			step->getInputs(inputs);
+			for (const auto& input : inputs)
 			{
-				const InputPin* inputPin = pass->findInputPin(parameter);
+				const InputPin* inputPin = pass->findInputPin(input);
 				T_FATAL_ASSERT(inputPin != nullptr);
 
 				const OutputPin* sourcePin = asset->findSourcePin(inputPin);
 				if (!sourcePin)
 				{
-					log::error << L"Image graph pipeline failed; input \"" << parameter << L"\" not connected." << Endl;
+					log::error << L"Image graph pipeline failed; input \"" << input << L"\" not connected." << Endl;
 					return false;
 				}
 
-				if (auto input = dynamic_type_cast< const ImgInput* >(sourcePin->getNode()))
+				if (auto inputNode = dynamic_type_cast< const ImgInput* >(sourcePin->getNode()))
 				{
 					// Reading texture from input texture.
-					auto& sourceData = simpleData->m_sources.push_back();
-					sourceData.textureId = input->getTextureId();
-					sourceData.parameter = parameter;
+					auto& sourceData = stepData->m_sources.push_back();
+					sourceData.textureId = inputNode->getTextureId();
+					sourceData.parameter = input;
 				}
-				else if (auto targetSet = dynamic_type_cast< const ImgTargetSet* >(sourcePin->getNode()))
+				else if (auto targetSetNode = dynamic_type_cast< const ImgTargetSet* >(sourcePin->getNode()))
 				{
 					// Reading texture from transient target set.
-					auto& sourceData = simpleData->m_sources.push_back();
-					//sourceData.textureId = input->getTextureId();
-					sourceData.parameter = parameter;
+					auto& sourceData = stepData->m_sources.push_back();
+					sourceData.textureId = targetSetNode->getTargetSetId() + L"/" + sourcePin->getName();
+					sourceData.parameter = input;
+				}
+				else if (auto textureNode = dynamic_type_cast< const ImgTexture* >(sourcePin->getNode()))
+				{
+					// Reading texture resource.
+					auto& sourceData = stepData->m_sources.push_back();
+					sourceData.textureId = textureNode->getId().format();
+					sourceData.parameter = input;
 				}
 				else
 				{
-					log::error << L"Image graph pipeline failed; input \"" << parameter << L"\" connected to incorrect node." << Endl;
+					log::error << L"Image graph pipeline failed; input \"" << input << L"\" connected to incorrect node." << Endl;
 					return false;
 				}
 			}
 
-			outSteps.push_back(simpleData);
+			outSteps.push_back(stepData);
+		}
+		else if (auto directionalBlurStep = dynamic_type_cast< const ImgStepDirectionalBlur* >(step))
+		{
+			Ref< DirectionalBlurImageStepData > stepData = new DirectionalBlurImageStepData();
+			stepData->m_blurType = (DirectionalBlurImageStepData::BlurType)directionalBlurStep->m_blurType;
+			stepData->m_direction = directionalBlurStep->m_direction;
+			stepData->m_taps = directionalBlurStep->m_taps;
+			stepData->m_shader = directionalBlurStep->m_shader;
+
+			std::set< std::wstring > inputs;
+			step->getInputs(inputs);
+			for (const auto& input : inputs)
+			{
+				const InputPin* inputPin = pass->findInputPin(input);
+				T_FATAL_ASSERT(inputPin != nullptr);
+
+				const OutputPin* sourcePin = asset->findSourcePin(inputPin);
+				if (!sourcePin)
+				{
+					log::error << L"Image graph pipeline failed; input \"" << input << L"\" not connected." << Endl;
+					return false;
+				}
+
+				if (auto inputNode = dynamic_type_cast< const ImgInput* >(sourcePin->getNode()))
+				{
+					// Reading texture from input texture.
+					auto& sourceData = stepData->m_sources.push_back();
+					sourceData.textureId = inputNode->getTextureId();
+					sourceData.parameter = input;
+				}
+				else if (auto targetSetNode = dynamic_type_cast< const ImgTargetSet* >(sourcePin->getNode()))
+				{
+					// Reading texture from transient target set.
+					auto& sourceData = stepData->m_sources.push_back();
+					sourceData.textureId = targetSetNode->getTargetSetId() + L"/" + sourcePin->getName();
+					sourceData.parameter = input;
+				}
+				else if (auto textureNode = dynamic_type_cast< const ImgTexture* >(sourcePin->getNode()))
+				{
+					// Reading texture resource.
+					auto& sourceData = stepData->m_sources.push_back();
+					sourceData.textureId = textureNode->getId().format();
+					sourceData.parameter = input;
+				}
+				else
+				{
+					log::error << L"Image graph pipeline failed; input \"" << input << L"\" connected to incorrect node." << Endl;
+					return false;
+				}
+			}
+
+			outSteps.push_back(stepData);
+		}
+		else if (auto shadowProjectStep = dynamic_type_cast< const ImgStepShadowProject* >(step))
+		{
+			Ref< ShadowProjectImageStepData > stepData = new ShadowProjectImageStepData();
+			stepData->m_shader = shadowProjectStep->m_shader;
+
+			std::set< std::wstring > inputs;
+			step->getInputs(inputs);
+			for (const auto& input : inputs)
+			{
+				const InputPin* inputPin = pass->findInputPin(input);
+				T_FATAL_ASSERT(inputPin != nullptr);
+
+				const OutputPin* sourcePin = asset->findSourcePin(inputPin);
+				if (!sourcePin)
+				{
+					log::error << L"Image graph pipeline failed; input \"" << input << L"\" not connected." << Endl;
+					return false;
+				}
+
+				if (auto inputNode = dynamic_type_cast< const ImgInput* >(sourcePin->getNode()))
+				{
+					// Reading texture from input texture.
+					auto& sourceData = stepData->m_sources.push_back();
+					sourceData.textureId = inputNode->getTextureId();
+					sourceData.parameter = input;
+				}
+				else if (auto targetSetNode = dynamic_type_cast< const ImgTargetSet* >(sourcePin->getNode()))
+				{
+					// Reading texture from transient target set.
+					auto& sourceData = stepData->m_sources.push_back();
+					sourceData.textureId = targetSetNode->getTargetSetId() + L"/" + sourcePin->getName();
+					sourceData.parameter = input;
+				}
+				else if (auto textureNode = dynamic_type_cast< const ImgTexture* >(sourcePin->getNode()))
+				{
+					// Reading texture resource.
+					auto& sourceData = stepData->m_sources.push_back();
+					sourceData.textureId = textureNode->getId().format();
+					sourceData.parameter = input;
+				}
+				else
+				{
+					log::error << L"Image graph pipeline failed; input \"" << input << L"\" connected to incorrect node." << Endl;
+					return false;
+				}
+			}
+
+			outSteps.push_back(stepData);
+		}
+		else if (auto simpleStep = dynamic_type_cast< const ImgStepSimple* >(step))
+		{
+			Ref< SimpleImageStepData > stepData = new SimpleImageStepData();
+			stepData->m_shader = simpleStep->m_shader;
+			
+			std::set< std::wstring > inputs;
+			step->getInputs(inputs);
+			for (const auto& input : inputs)
+			{
+				const InputPin* inputPin = pass->findInputPin(input);
+				T_FATAL_ASSERT(inputPin != nullptr);
+
+				const OutputPin* sourcePin = asset->findSourcePin(inputPin);
+				if (!sourcePin)
+				{
+					log::error << L"Image graph pipeline failed; input \"" << input << L"\" not connected." << Endl;
+					return false;
+				}
+
+				if (auto inputNode = dynamic_type_cast< const ImgInput* >(sourcePin->getNode()))
+				{
+					// Reading texture from input texture.
+					auto& sourceData = stepData->m_sources.push_back();
+					sourceData.textureId = inputNode->getTextureId();
+					sourceData.parameter = input;
+				}
+				else if (auto targetSetNode = dynamic_type_cast< const ImgTargetSet* >(sourcePin->getNode()))
+				{
+					// Reading texture from transient target set.
+					auto& sourceData = stepData->m_sources.push_back();
+					sourceData.textureId = targetSetNode->getTargetSetId() + L"/" + sourcePin->getName();
+					sourceData.parameter = input;
+				}
+				else if (auto textureNode = dynamic_type_cast< const ImgTexture* >(sourcePin->getNode()))
+				{
+					// Reading texture resource.
+					auto& sourceData = stepData->m_sources.push_back();
+					sourceData.textureId = textureNode->getId().format();
+					sourceData.parameter = input;
+				}
+				else
+				{
+					log::error << L"Image graph pipeline failed; input \"" << input << L"\" connected to incorrect node." << Endl;
+					return false;
+				}
+			}
+
+			outSteps.push_back(stepData);
 		}
 	}
 	return true;

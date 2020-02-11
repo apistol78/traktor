@@ -12,6 +12,7 @@
 #include "Render/Editor/Image2/ImgOutput.h"
 #include "Render/Editor/Image2/ImgPass.h"
 #include "Render/Editor/Image2/ImgTargetSet.h"
+#include "Render/Editor/Image2/ImgTexture.h"
 #include "Ui/Application.h"
 #include "Ui/Container.h"
 #include "Ui/Menu.h"
@@ -65,7 +66,8 @@ bool ImageGraphEditorPage::create(ui::Container* parent)
 	menuItemCreate->add(new ui::MenuItem(ui::Command(L"ImageGraph.Editor.AddInput"), L"Input"));
 	menuItemCreate->add(new ui::MenuItem(ui::Command(L"ImageGraph.Editor.AddOutput"), L"Output"));
 	menuItemCreate->add(new ui::MenuItem(ui::Command(L"ImageGraph.Editor.AddPass"), L"Pass"));
-	menuItemCreate->add(new ui::MenuItem(ui::Command(L"ImageGraph.Editor.AddTarget"), L"Target"));
+	menuItemCreate->add(new ui::MenuItem(ui::Command(L"ImageGraph.Editor.AddTargetSet"), L"TargetSet"));
+	menuItemCreate->add(new ui::MenuItem(ui::Command(L"ImageGraph.Editor.AddTexture"), L"Texture"));
 	m_menuPopup->add(menuItemCreate);
 	m_menuPopup->add(new ui::MenuItem(ui::Command(L"Editor.Delete"), L"Delete"));
 
@@ -104,9 +106,15 @@ bool ImageGraphEditorPage::handleCommand(const ui::Command& command)
 				node,
 				m_propertiesNode
 			);
-		}
 
-		createEditorGraph();
+			createEditorGraph();
+
+			// Re-create a clone of the selected node as we cannot
+			// allow in-place editing of a node as graph contain
+			// pointers to pins within each node.
+			m_propertiesNode = DeepClone(m_propertiesNode).create< Node >();
+			m_site->setPropertyObject(m_propertiesNode);
+		}
 	}
 	else if (command == L"Editor.Cut" || command == L"Editor.Copy")
 	{
@@ -332,7 +340,7 @@ bool ImageGraphEditorPage::handleCommand(const ui::Command& command)
 		// Create node in graph control.
 		m_editorGraph->addNode(createEditorNode(pass));
 	}
-	else if (command == L"ImageGraph.Editor.AddTarget")
+	else if (command == L"ImageGraph.Editor.AddTargetSet")
 	{
 		// Create image graph target set.
 		Ref< ImgTargetSet > targetSet = new ImgTargetSet();
@@ -340,6 +348,15 @@ bool ImageGraphEditorPage::handleCommand(const ui::Command& command)
 
 		// Create node in graph control.
 		m_editorGraph->addNode(createEditorNode(targetSet));
+	}
+	else if (command == L"ImageGraph.Editor.AddTexture")
+	{
+		// Create image graph texture reference.
+		Ref< ImgTexture > texture = new ImgTexture();
+		m_imageGraph->addNode(texture);
+
+		// Create node in graph control.
+		m_editorGraph->addNode(createEditorNode(texture));
 	}
 	else
 		return false;
@@ -381,7 +398,7 @@ Ref< ui::Node > ImageGraphEditorPage::createEditorNode(Node* node) const
 	{
 		StringOutputStream ss;
 		for (auto step : pass->getSteps())
-			ss << type_name(step) << Endl;
+			ss << step->getTitle() << Endl;
 
 		editorNode = new ui::Node(
 			L"Pass",
@@ -394,9 +411,18 @@ Ref< ui::Node > ImageGraphEditorPage::createEditorNode(Node* node) const
 	{
 		editorNode = new ui::Node(
 			L"TargetSet",
-			targetSet->getTargetSetDesc().id,
+			targetSet->getTargetSetId(),
 			position,
-			new ui::DefaultNodeShape(m_editorGraph, ui::DefaultNodeShape::StDefault)
+			new ui::DefaultNodeShape(m_editorGraph, ui::DefaultNodeShape::StExternal)
+		);
+	}
+	else if (auto texture = dynamic_type_cast< ImgTexture* >(node))
+	{
+		editorNode = new ui::Node(
+			L"Texture",
+			Guid(texture->getTexture()).format(),
+			position,
+			new ui::InputNodeShape(m_editorGraph)
 		);
 	}
 	else

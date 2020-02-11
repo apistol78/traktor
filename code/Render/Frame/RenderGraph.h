@@ -6,7 +6,7 @@
 #include "Core/Object.h"
 #include "Core/RefArray.h"
 #include "Core/Containers/SmallMap.h"
-#include "Render/Types.h"
+#include "Render/Frame/RenderGraphTypes.h"
 #include "Render/Frame/RenderPass.h"
 
 // import/export mechanism.
@@ -24,59 +24,6 @@ namespace traktor
 
 class IRenderSystem;
 class RenderContext;
-
-/*!
- * \ingroup Render
- */
-struct RenderGraphTargetDesc
-{
-	std::wstring id;
-	TextureFormat colorFormat;
-
-	RenderGraphTargetDesc()
-	:	colorFormat(TfInvalid)
-	{
-	}
-};
-
-/*!
- * \ingroup Render
- */
-struct RenderGraphTargetSetDesc
-{
-	enum { MaxColorTargets = 8 };
-
-	std::wstring id;
-	int32_t count;
-	int32_t width;
-	int32_t height;
-	int32_t screenWidthDenom;
-	int32_t screenHeightDenom;
-	int32_t maxWidth;
-	int32_t maxHeight;
-	bool createDepthStencil;
-	bool usingPrimaryDepthStencil;
-	bool usingDepthStencilAsTexture;
-	bool ignoreStencil;
-	bool generateMips;
-	RenderGraphTargetDesc targets[MaxColorTargets];
-
-	RenderGraphTargetSetDesc()
-	:	count(0)
-	,	width(0)
-	,	height(0)
-	,	screenWidthDenom(0)
-	,	screenHeightDenom(0)
-	,	maxWidth(0)
-	,	maxHeight(0)
-	,	createDepthStencil(false)
-	,	usingPrimaryDepthStencil(false)
-	,	usingDepthStencilAsTexture(false)
-	,	ignoreStencil(false)
-	,	generateMips(false)
-	{
-	}
-};
 
 /*! Render graph.
  * \ingroup Render
@@ -102,13 +49,15 @@ public:
 
 	/*! Add target definition.
 	 *
+	 * \param targetSetId Unique identifier of target.
 	 * \param targetSetDesc Render target set create description.
-	 * \param sharedDepthStencilTargetSet Share depth/stencil with target set.
-	 * \return Id of target, 0 if not able to add target set.
+	 * \param sharedDepthStencil Share depth/stencil with target set.
+	 * \return True if target set added.
 	 */
-	handle_t addTargetSet(
+	bool addTargetSet(
+		handle_t targetSetId,
 		const RenderGraphTargetSetDesc& targetSetDesc,
-		IRenderTargetSet* sharedDepthStencilTargetSet = nullptr
+		IRenderTargetSet* sharedDepthStencil = nullptr
 	);
 
 	/*! Get target set from target identifier.
@@ -137,7 +86,7 @@ public:
 private:
 	struct Target
 	{
-		const wchar_t* name;
+		//const wchar_t* name;
 		RenderGraphTargetSetDesc targetSetDesc;
 		Ref< IRenderTargetSet > sharedDepthStencilTargetSet;
 		Ref< IRenderTargetSet > rts[2];

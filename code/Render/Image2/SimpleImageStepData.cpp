@@ -15,7 +15,7 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.SimpleImageStepData", 0, SimpleImageStepData, IImageStepData)
 
-Ref< const IImageStep > SimpleImageStepData::createInstance(resource::IResourceManager* resourceManager) const
+Ref< const IImageStep > SimpleImageStepData::createInstance(resource::IResourceManager* resourceManager, IRenderSystem* /*renderSystem*/) const
 {
 	Ref< SimpleImageStep > instance = new SimpleImageStep();
 

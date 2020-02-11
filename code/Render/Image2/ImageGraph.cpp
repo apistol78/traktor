@@ -20,6 +20,7 @@ void ImageGraph::addTargetSets(RenderGraph* renderGraph) const
 	for (auto targetSet : m_targetSets)
 	{
 		renderGraph->addTargetSet(
+			targetSet->getTargetSetId(),
 			targetSet->getTargetSetDesc()
 		);
 	}
@@ -27,12 +28,28 @@ void ImageGraph::addTargetSets(RenderGraph* renderGraph) const
 
 void ImageGraph::addPasses(RenderGraph* renderGraph, RenderPass* parentPass, const ImageGraphContext& cx) const
 {
+	// Copy context and append internal targets.
+	ImageGraphContext context = cx;
+	for (auto targetSet : m_targetSets)
+	{
+		const auto& desc = targetSet->getTargetSetDesc();
+		for (int32_t i = 0; i < desc.count; ++i)
+		{
+			context.associateTextureTargetSet(
+				targetSet->getTextureId(i),
+				targetSet->getTargetSetId(),
+				i
+			);
+		}
+	}
+
+	// Add all passes to render graph.
 	for (auto pass : m_passes)
 	{
 		Ref< RenderPass > rp = new RenderPass();
 
 		for (auto step : pass->m_steps)
-			step->setup(this, cx, *rp);
+			step->setup(this, context, *rp);
 
 		rp->setOutput(pass->m_output);
 		rp->addBuild(
@@ -49,17 +66,18 @@ void ImageGraph::addPasses(RenderGraph* renderGraph, RenderPass* parentPass, con
 				sharedParams->endParameters(renderContext);
 				
 				for (auto step : pass->m_steps)
-					step->build(this, cx, renderGraph, renderContext);
+					step->build(this, context, renderGraph, renderContext);
 			}
 		);
 
 		renderGraph->addPass(rp);
 	}
 
+	// Add sub pass to parent render pass.
 	Ref< RenderPass > rp = new RenderPass();
 
 	for (auto step : m_steps)
-		step->setup(this, cx, *rp);
+		step->setup(this, context, *rp);
 
 	rp->addBuild(
 		[=](const RenderGraph& renderGraph, RenderContext* renderContext)
@@ -75,7 +93,7 @@ void ImageGraph::addPasses(RenderGraph* renderGraph, RenderPass* parentPass, con
 			sharedParams->endParameters(renderContext);
 
 			for (auto step : m_steps)
-				step->build(this, cx, renderGraph, renderContext);
+				step->build(this, context, renderGraph, renderContext);
 		}
 	);
 

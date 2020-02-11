@@ -28,6 +28,7 @@ class IImageStepData;
 class ImageGraph;
 class ImagePassData;
 class ImageTargetSetData;
+class IRenderSystem;
 
 /*!
  * \ingroup Render
@@ -37,7 +38,7 @@ class T_DLLCLASS ImageGraphData : public ISerializable
     T_RTTI_CLASS;
 
 public:
-    Ref< ImageGraph > createInstance(resource::IResourceManager* resourceManager) const;
+    Ref< ImageGraph > createInstance(resource::IResourceManager* resourceManager, IRenderSystem* renderSystem) const;
 
     virtual void serialize(ISerializer& s) override final;
 

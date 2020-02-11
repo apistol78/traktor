@@ -24,7 +24,7 @@ public:
 
 	virtual ~RenderTargetSetOpenGLES2();
 
-	bool create(const RenderTargetSetCreateDesc& desc);
+	bool create(const RenderTargetSetCreateDesc& desc, IRenderTargetSet* sharedDepthStencil);
 
 	virtual void destroy() override final;
 

@@ -216,7 +216,7 @@ bool RenderViewOpenGL::reset(const RenderViewDefaultDesc& desc)
 		if (m_primaryTargetDesc.width > 0 && m_primaryTargetDesc.height > 0)
 		{
 			m_primaryTarget = new RenderTargetSetOpenGL(m_resourceContext);
-			if (!m_primaryTarget->create(m_primaryTargetDesc))
+			if (!m_primaryTarget->create(m_primaryTargetDesc, nullptr))
 			{
 				log::error << L"Failed to create primary target" << Endl;
 				return false;
@@ -263,7 +263,7 @@ bool RenderViewOpenGL::reset(int32_t width, int32_t height)
 		if (m_primaryTargetDesc.width > 0 && m_primaryTargetDesc.height > 0)
 		{
 			m_primaryTarget = new RenderTargetSetOpenGL(m_resourceContext);
-			if (!m_primaryTarget->create(m_primaryTargetDesc))
+			if (!m_primaryTarget->create(m_primaryTargetDesc, nullptr))
 			{
 				log::error << L"Failed to create primary target" << Endl;
 				return false;

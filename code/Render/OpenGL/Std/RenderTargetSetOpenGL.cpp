@@ -60,6 +60,7 @@ RenderTargetSetOpenGL::RenderTargetSetOpenGL(ResourceContextOpenGL* resourceCont
 ,	m_targetFBO(0)
 ,	m_depthBufferOrTexture(0)
 ,	m_currentTag(0)
+,	m_depthTargetShared(false)
 ,	m_contentValid(false)
 {
 }
@@ -69,7 +70,7 @@ RenderTargetSetOpenGL::~RenderTargetSetOpenGL()
 	destroy();
 }
 
-bool RenderTargetSetOpenGL::create(const RenderTargetSetCreateDesc& desc)
+bool RenderTargetSetOpenGL::create(const RenderTargetSetCreateDesc& desc, IRenderTargetSet* sharedDepthStencil)
 {
 	T_ASSERT(desc.multiSample <= 1);
 	m_desc = desc;
@@ -122,10 +123,12 @@ bool RenderTargetSetOpenGL::create(const RenderTargetSetCreateDesc& desc)
 			m_desc.width,
 			m_desc.height
 		);
+		m_depthTargetShared = false;
 	}
-	else if (m_desc.sharedDepthStencil)
+	else if (sharedDepthStencil)
 	{
-		m_depthTarget = dynamic_type_cast< RenderTargetDepthOpenGL* >(m_desc.sharedDepthStencil->getDepthTexture());
+		m_depthTarget = dynamic_type_cast< RenderTargetDepthOpenGL* >(sharedDepthStencil->getDepthTexture());
+		m_depthTargetShared = true;
 	}
 
 	// Create color targets.
@@ -186,7 +189,7 @@ void RenderTargetSetOpenGL::destroy()
 
 	if (m_depthBufferOrTexture)
 	{
-		if (!m_desc.sharedDepthStencil)
+		if (!m_depthTargetShared)
 		{
 			if (m_resourceContext)
 				m_resourceContext->deleteResource(new DeleteRenderBufferCallback(m_depthBufferOrTexture));

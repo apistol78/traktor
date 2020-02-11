@@ -17,7 +17,6 @@
 #include "Render/IRenderView.h"
 #include "Render/PrimitiveRenderer.h"
 #include "Render/Context/RenderContext.h"
-#include "Render/Image/ImageProcessFactory.h"
 #include "Render/Image2/ImageGraphFactory.h"
 #include "Render/Resource/ShaderFactory.h"
 #include "Render/Resource/SequenceTextureFactory.h"
@@ -76,8 +75,7 @@ bool AnimationPreviewControl::create(ui::Widget* parent)
 	m_resourceManager->addFactory(new render::ShaderFactory(m_renderSystem));
 	m_resourceManager->addFactory(new render::SequenceTextureFactory());
 	m_resourceManager->addFactory(new render::TextureFactory(m_renderSystem, 0));
-	m_resourceManager->addFactory(new render::ImageProcessFactory());
-	m_resourceManager->addFactory(new render::ImageGraphFactory());
+	m_resourceManager->addFactory(new render::ImageGraphFactory(m_renderSystem));
 
 	render::RenderViewEmbeddedDesc desc;
 	desc.depthBits = 24;

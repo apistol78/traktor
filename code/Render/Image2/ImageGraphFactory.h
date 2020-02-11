@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Core/Ref.h"
 #include "Resource/IResourceFactory.h"
 
 // import/export mechanism.
@@ -15,6 +16,8 @@ namespace traktor
 	namespace render
 	{
 
+class IRenderSystem;
+
 /*! Image graph resource factory.
  * \ingroup Render
  */
@@ -23,6 +26,8 @@ class T_DLLCLASS ImageGraphFactory : public resource::IResourceFactory
 	T_RTTI_CLASS;
 
 public:
+	explicit ImageGraphFactory(IRenderSystem* renderSystem);
+
 	virtual const TypeInfoSet getResourceTypes() const override final;
 
 	virtual const TypeInfoSet getProductTypes(const TypeInfo& resourceType) const override final;
@@ -30,6 +35,9 @@ public:
 	virtual bool isCacheable(const TypeInfo& productType) const override final;
 
 	virtual Ref< Object > create(resource::IResourceManager* resourceManager, const db::Database* database, const db::Instance* instance, const TypeInfo& productType, const Object* current) const override final;
+
+private:
+	Ref< IRenderSystem > m_renderSystem;
 };
 
 	}

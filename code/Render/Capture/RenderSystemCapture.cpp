@@ -185,7 +185,7 @@ Ref< IVolumeTexture > RenderSystemCapture::createVolumeTexture(const VolumeTextu
 	return new VolumeTextureCapture(texture);
 }
 
-Ref< IRenderTargetSet > RenderSystemCapture::createRenderTargetSet(const RenderTargetSetCreateDesc& desc, const wchar_t* const tag)
+Ref< IRenderTargetSet > RenderSystemCapture::createRenderTargetSet(const RenderTargetSetCreateDesc& desc, IRenderTargetSet* sharedDepthStencil, const wchar_t* const tag)
 {
 	T_CAPTURE_ASSERT(desc.count >= 0, L"Negative number of targets.");
 	T_CAPTURE_ASSERT(desc.count <= 4, L"Too many targets.");
@@ -196,10 +196,10 @@ Ref< IRenderTargetSet > RenderSystemCapture::createRenderTargetSet(const RenderT
 	if (desc.createDepthStencil)
 	{
 		T_CAPTURE_ASSERT(!desc.usingPrimaryDepthStencil, L"Invalid values in create desc.");
-		T_CAPTURE_ASSERT(desc.sharedDepthStencil == nullptr, L"Invalid values in create desc.");
+		T_CAPTURE_ASSERT(sharedDepthStencil == nullptr, L"Invalid values in create desc.");
 	}
 	
-	if (desc.sharedDepthStencil)
+	if (sharedDepthStencil)
 	{
 		T_CAPTURE_ASSERT(!desc.createDepthStencil, L"Invalid values in create desc.");
 		T_CAPTURE_ASSERT(!desc.usingPrimaryDepthStencil, L"Invalid values in create desc.");
@@ -209,10 +209,10 @@ Ref< IRenderTargetSet > RenderSystemCapture::createRenderTargetSet(const RenderT
 	{
 		T_CAPTURE_ASSERT(!desc.createDepthStencil, L"Invalid values in create desc.");
 		T_CAPTURE_ASSERT(!desc.usingDepthStencilAsTexture, L"Invalid values in create desc.");
-		T_CAPTURE_ASSERT(desc.sharedDepthStencil == nullptr, L"Invalid values in create desc.");
+		T_CAPTURE_ASSERT(sharedDepthStencil == nullptr, L"Invalid values in create desc.");
 	}
 
-	Ref< IRenderTargetSet > renderTargetSet = m_renderSystem->createRenderTargetSet(desc, tag);
+	Ref< IRenderTargetSet > renderTargetSet = m_renderSystem->createRenderTargetSet(desc, sharedDepthStencil, tag);
 	if (!renderTargetSet)
 		return nullptr;
 

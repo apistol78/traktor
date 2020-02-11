@@ -64,7 +64,7 @@ bool ProbeFilterer::create()
         rtscd.targets[0].format = render::TfR11G11B10F;
         rtscd.targets[0].sRGB = false;
 
-        m_renderTargetSets[mip] = m_renderSystem->createRenderTargetSet(rtscd, T_FILE_LINE_W);
+        m_renderTargetSets[mip] = m_renderSystem->createRenderTargetSet(rtscd, nullptr, T_FILE_LINE_W);
         if (!m_renderTargetSets[mip])
             return false;
     }

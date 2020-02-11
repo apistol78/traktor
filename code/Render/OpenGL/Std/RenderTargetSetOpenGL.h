@@ -29,7 +29,7 @@ public:
 
 	virtual ~RenderTargetSetOpenGL();
 
-	bool create(const RenderTargetSetCreateDesc& desc);
+	bool create(const RenderTargetSetCreateDesc& desc, IRenderTargetSet* sharedDepthStencil);
 
 	virtual void destroy() override final;
 
@@ -66,6 +66,7 @@ private:
 	Ref< RenderTargetDepthOpenGL > m_depthTarget;
 	Ref< RenderTargetOpenGL > m_colorTargets[8];
 	uint32_t m_currentTag;
+	bool m_depthTargetShared;
 	bool m_contentValid;
 
 	bool createFramebuffer(GLuint primaryDepthBuffer);

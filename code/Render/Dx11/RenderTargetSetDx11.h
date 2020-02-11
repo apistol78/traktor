@@ -26,7 +26,7 @@ public:
 
 	virtual ~RenderTargetSetDx11();
 
-	bool create(const RenderTargetSetCreateDesc& setDesc);
+	bool create(const RenderTargetSetCreateDesc& setDesc, IRenderTargetSet* sharedDepthStencil);
 
 	virtual void destroy() override final;
 

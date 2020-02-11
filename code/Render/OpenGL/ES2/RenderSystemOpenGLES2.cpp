@@ -220,11 +220,11 @@ Ref< IVolumeTexture > RenderSystemOpenGLES2::createVolumeTexture(const VolumeTex
 		return nullptr;
 }
 
-Ref< IRenderTargetSet > RenderSystemOpenGLES2::createRenderTargetSet(const RenderTargetSetCreateDesc& desc, const wchar_t* const tag)
+Ref< IRenderTargetSet > RenderSystemOpenGLES2::createRenderTargetSet(const RenderTargetSetCreateDesc& desc, IRenderTargetSet* sharedDepthStencil, const wchar_t* const tag)
 {
 	T_ANONYMOUS_VAR(ContextOpenGLES2::Scope)(m_context);
 	Ref< RenderTargetSetOpenGLES2 > renderTargetSet = new RenderTargetSetOpenGLES2(m_context);
-	if (renderTargetSet->create(desc))
+	if (renderTargetSet->create(desc, sharedDepthStencil))
 		return renderTargetSet;
 	else
 		return nullptr;

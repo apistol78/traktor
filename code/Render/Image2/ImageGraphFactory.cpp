@@ -10,6 +10,11 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ImageGraphFactory", ImageGraphFactory, resource::IResourceFactory)
 
+ImageGraphFactory::ImageGraphFactory(IRenderSystem* renderSystem)
+:	m_renderSystem(renderSystem)
+{
+}
+
 const TypeInfoSet ImageGraphFactory::getResourceTypes() const
 {
 	return makeTypeInfoSet< ImageGraphData >();
@@ -29,7 +34,7 @@ Ref< Object > ImageGraphFactory::create(resource::IResourceManager* resourceMana
 {
 	Ref< ImageGraphData > imageGraphData = instance->getObject< ImageGraphData >();
     if (imageGraphData)
-        return imageGraphData->createInstance(resourceManager);
+        return imageGraphData->createInstance(resourceManager, m_renderSystem);
     else
         return nullptr;
 }

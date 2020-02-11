@@ -7,9 +7,22 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ImageTargetSet", ImageTargetSet, Object)
 
-ImageTargetSet::ImageTargetSet(const RenderGraphTargetSetDesc& targetSetDesc)
-:   m_targetSetDesc(targetSetDesc)
+ImageTargetSet::ImageTargetSet(handle_t targetSetId, handle_t textureIds[RenderGraphTargetSetDesc::MaxColorTargets], const RenderGraphTargetSetDesc& targetSetDesc)
+:	m_targetSetId(targetSetId)
+,   m_targetSetDesc(targetSetDesc)
 {
+	for (int32_t i = 0; i < sizeof_array(textureIds); ++i)
+		m_textureIds[i] = textureIds[i];
+}
+
+handle_t ImageTargetSet::getTargetSetId() const
+{
+	return m_targetSetId;
+}
+
+handle_t ImageTargetSet::getTextureId(int32_t colorIndex) const
+{
+	return m_textureIds[colorIndex];
 }
 
 const RenderGraphTargetSetDesc& ImageTargetSet::getTargetSetDesc() const

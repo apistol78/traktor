@@ -63,7 +63,6 @@ public:
 
 	virtual void serialize(ISerializer& s) const override final
 	{
-		s >> Member< std::wstring >(L"id", m_ref.id);
 		s >> MemberTextureFormat(L"colorFormat", m_ref.colorFormat);
 	}
 
@@ -84,7 +83,6 @@ public:
 
 	virtual void serialize(ISerializer& s) const override final
 	{
-		s >> Member< std::wstring >(L"id", m_ref.id);
 		s >> Member< int32_t >(L"count", m_ref.count);
 		s >> Member< int32_t >(L"width", m_ref.width);
 		s >> Member< int32_t >(L"height", m_ref.height);
@@ -108,13 +106,21 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ImageTargetSetData", 0, ImageTar
 
 Ref< const ImageTargetSet > ImageTargetSetData::createInstance() const
 {
+	handle_t textureIds[RenderGraphTargetSetDesc::MaxColorTargets];
+	for (int32_t i = 0; i < sizeof_array(textureIds); ++i)
+		textureIds[i] = getParameterHandle(m_textureIds[i]);
+
     return new ImageTargetSet(
+		getParameterHandle(m_targetSetId),
+		textureIds,
         m_targetSetDesc
     );
 }
 
 void ImageTargetSetData::serialize(ISerializer& s)
 {
+	s >> Member< std::wstring >(L"targetSetId", m_targetSetId);
+	s >> MemberStaticArray< std::wstring, RenderGraphTargetSetDesc::MaxColorTargets >(L"textureIds", m_textureIds);
 	s >> MemberRenderGraphTargetSetDesc(L"targetSetDesc", m_targetSetDesc);
 }
 

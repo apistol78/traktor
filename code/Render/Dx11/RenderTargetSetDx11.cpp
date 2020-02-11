@@ -32,7 +32,7 @@ RenderTargetSetDx11::~RenderTargetSetDx11()
 	destroy();
 }
 
-bool RenderTargetSetDx11::create(const RenderTargetSetCreateDesc& setDesc)
+bool RenderTargetSetDx11::create(const RenderTargetSetCreateDesc& setDesc, IRenderTargetSet* sharedDepthStencil)
 {
 	m_colorTextures.resize(setDesc.count);
 	for (int32_t i = 0; i < setDesc.count; ++i)
@@ -48,9 +48,9 @@ bool RenderTargetSetDx11::create(const RenderTargetSetCreateDesc& setDesc)
 		if (!m_depthTexture->create(setDesc))
 			return false;
 	}
-	else if (setDesc.sharedDepthStencil)
+	else if (sharedDepthStencil)
 	{
-		m_depthTexture = dynamic_type_cast< RenderTargetDepthDx11* >(setDesc.sharedDepthStencil->getDepthTexture());
+		m_depthTexture = dynamic_type_cast< RenderTargetDepthDx11* >(sharedDepthStencil->getDepthTexture());
 		m_sharedDepthStencil = true;
 	}
 	else

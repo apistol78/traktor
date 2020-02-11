@@ -1,0 +1,199 @@
+#include "Core/Math/Const.h"
+#include "Core/Math/Random.h"
+#include "Core/Serialization/ISerializer.h"
+#include "Core/Serialization/Member.h"
+#include "Core/Serialization/MemberAlignedVector.h"
+#include "Core/Serialization/MemberComposite.h"
+#include "Core/Serialization/MemberEnum.h"
+#include "Render/Shader.h"
+#include "Render/Image2/DirectionalBlurImageStep.h"
+#include "Render/Image2/DirectionalBlurImageStepData.h"
+#include "Resource/IResourceManager.h"
+#include "Resource/Member.h"
+
+namespace traktor
+{
+    namespace render
+    {
+		namespace
+		{
+		
+Random s_random;
+
+		}
+
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.DirectionalBlurImageStepData", 0, DirectionalBlurImageStepData, IImageStepData)
+
+DirectionalBlurImageStepData::DirectionalBlurImageStepData()
+:   m_blurType(BtGaussian)
+,   m_direction(1.0f, 0.0f)
+,   m_taps(15)
+{
+}
+
+Ref< const IImageStep > DirectionalBlurImageStepData::createInstance(resource::IResourceManager* resourceManager, IRenderSystem* /*renderSystem*/) const
+{
+	Ref< DirectionalBlurImageStep > instance = new DirectionalBlurImageStep();
+
+	// Bind shader.
+	if (!resourceManager->bind(m_shader, instance->m_shader))
+		return nullptr;
+
+	// Get handles of sources.
+	for (const auto& source : m_sources)
+	{
+		instance->m_sources.push_back({
+			getParameterHandle(source.textureId),
+			getParameterHandle(source.parameter)
+		});
+	}
+
+	float totalWeight = 0.0f;
+
+	// Calculate kernel offset and weights.
+	instance->m_gaussianOffsetWeights.resize(m_taps);
+	if (m_blurType == BtGaussian)
+	{
+		float sigma = m_taps / 4.73f;
+
+		// Iterate to prevent under or over sigma.
+		for (int32_t i = 0; i < 10; ++i)
+		{
+			const float x = m_taps / 2.0f;
+			float a = 1.0f / sqrtf(TWO_PI * sigma * sigma);
+			float weight = a * std::exp(-((x * x) / (2.0f * sigma * sigma)));
+			if (weight > 0.01f)
+				sigma -= 0.1f;
+			else if (weight < 0.001f)
+				sigma += 0.01f;
+			else
+				break;
+		}
+
+		const float a = 1.0f / sqrtf(TWO_PI * sigma * sigma);
+		for (int32_t i = 0; i < m_taps; ++i)
+		{
+			float x = i - m_taps / 2.0f;
+
+			float weight = a * std::exp(-((x * x) / (2.0f * sigma * sigma)));
+			totalWeight += weight;
+
+			instance->m_gaussianOffsetWeights[i].set(
+				i - (m_taps - 1.0f)/ 2.0f,
+				weight,
+				0.0f,
+				0.0f
+			);
+		}
+	}
+	else if (m_blurType == BtSine)
+	{
+		float step = 1.0f / (m_taps - 1.0f);
+		float angleMin = (PI * step) / 2.0f;
+		float angleMax = PI - angleMin;
+
+		for (int i = 0; i < m_taps; ++i)
+		{
+			float phi = (float(i) * step) * (angleMax - angleMin) + angleMin;
+
+			float weight = sinf(phi);
+			totalWeight += weight;
+
+			instance->m_gaussianOffsetWeights[i].set(
+				i - (m_taps - 1.0f) / 2.0f,
+				weight,
+				0.0f,
+				0.0f
+			);
+		}
+	}
+	else if (m_blurType == BtBox)
+	{
+		for (int i = 0; i < m_taps; ++i)
+		{
+			instance->m_gaussianOffsetWeights[i].set(
+				i - (m_taps - 1.0f) / 2.0f,
+				1.0f,
+				0.0f,
+				0.0f
+			);
+		}
+		totalWeight = float(m_taps);
+	}
+	else if (m_blurType == BtBox2D)
+	{
+		for (int i = 0; i < m_taps; ++i)
+		{
+			float x = s_random.nextFloat() * 2.0f - 1.0f;
+			float y = s_random.nextFloat() * 2.0f - 1.0f;
+			instance->m_gaussianOffsetWeights[i].set(
+				x,
+				y,
+				0.0f,
+				0.0f
+			);
+		}
+	}
+	else if (m_blurType == BtCircle2D)
+	{
+		for (int i = 0; i < m_taps; )
+		{
+			float x = s_random.nextFloat() * 2.0f - 1.0f;
+			float y = s_random.nextFloat() * 2.0f - 1.0f;
+			if (std::sqrt(x * x + y * y) <= 1.0f)
+			{
+				instance->m_gaussianOffsetWeights[i].set(
+					x,
+					y,
+					0.0f,
+					0.0f
+				);
+				++i;
+			}
+		}
+	}
+
+	if (totalWeight > FUZZY_EPSILON)
+	{
+		Vector4 invWeight(1.0f, 1.0f / totalWeight, 1.0f, 1.0f);
+		for (int i = 0; i < m_taps; ++i)
+			instance->m_gaussianOffsetWeights[i] *= invWeight;
+	}
+
+	instance->m_direction = Vector4(
+		m_direction.x,
+		m_direction.y,
+		0.0f,
+		0.0f
+	);
+
+	return instance; 
+}
+
+void DirectionalBlurImageStepData::serialize(ISerializer& s)
+{
+	const MemberEnum< BlurType >::Key c_BlurType_Keys[] =
+	{
+		{ L"BtGaussian", BtGaussian },
+		{ L"BtSine", BtSine },
+		{ L"BtBox", BtBox },
+		{ L"BtBox2D", BtBox2D },
+		{ L"BtCircle2D", BtCircle2D },
+		{ 0 }
+	};
+
+	s >> MemberEnum< BlurType >(L"blurType", m_blurType, c_BlurType_Keys);
+	s >> Member< Vector2 >(L"direction", m_direction);
+	s >> Member< int32_t >(L"taps", m_taps);
+	s >> resource::Member< render::Shader >(L"shader", m_shader);
+	s >> MemberAlignedVector< Source, MemberComposite< Source > >(L"sources", m_sources);
+}
+
+void DirectionalBlurImageStepData::Source::serialize(ISerializer& s)
+{
+	s >> Member< std::wstring >(L"textureId", textureId);
+	s >> Member< std::wstring >(L"parameter", parameter);
+}
+
+    }
+}

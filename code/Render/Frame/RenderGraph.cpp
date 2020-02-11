@@ -28,17 +28,17 @@ void RenderGraph::destroy()
 	m_order.clear();
 }
 
-handle_t RenderGraph::addTargetSet(
+bool RenderGraph::addTargetSet(
+	handle_t targetSetId,
 	const RenderGraphTargetSetDesc& targetSetDesc,
 	IRenderTargetSet* sharedDepthStencilTargetSet
 )
 {
-	handle_t id = getParameterHandle(targetSetDesc.id);
-	if (m_targets.find(id) != m_targets.end())
-		return 0;
-	m_targets[id].targetSetDesc = targetSetDesc;
-	m_targets[id].sharedDepthStencilTargetSet = sharedDepthStencilTargetSet;
-	return id;
+	if (m_targets.find(targetSetId) != m_targets.end())
+		return false;
+	m_targets[targetSetId].targetSetDesc = targetSetDesc;
+	m_targets[targetSetId].sharedDepthStencilTargetSet = sharedDepthStencilTargetSet;
+	return true;
 }
 
 IRenderTargetSet* RenderGraph::getTargetSet(handle_t targetSetId, bool history) const
@@ -77,7 +77,6 @@ bool RenderGraph::validate()
 		rtscd.storeDepthStencil = true;
 		rtscd.ignoreStencil = false;
 		rtscd.generateMips = td.generateMips;
-		rtscd.sharedDepthStencil = tm.second.sharedDepthStencilTargetSet;
 
 		for (int32_t i = 0; i < td.count; ++i)
 			rtscd.targets[i].format = td.targets[i].colorFormat;
@@ -91,7 +90,7 @@ bool RenderGraph::validate()
 		if (td.maxHeight > 0)
 			rtscd.height = min< int32_t >(rtscd.height, td.maxHeight);
 
-		tm.second.rts[0] = m_renderSystem->createRenderTargetSet(rtscd, tm.second.name);
+		tm.second.rts[0] = m_renderSystem->createRenderTargetSet(rtscd, tm.second.sharedDepthStencilTargetSet, T_FILE_LINE_W);
 		if (!tm.second.rts[0])
 			return false;
 
@@ -107,7 +106,7 @@ bool RenderGraph::validate()
 		}
 		if (needHistory)
 		{
-			tm.second.rts[1] = m_renderSystem->createRenderTargetSet(rtscd, tm.second.name);
+			tm.second.rts[1] = m_renderSystem->createRenderTargetSet(rtscd, nullptr, T_FILE_LINE_W);
 			if (!tm.second.rts[1])
 				return false;
 		}
@@ -188,14 +187,14 @@ void RenderGraph::getDebugTargets(std::vector< render::DebugTarget >& outTargets
 	{
 		if (it.second.rts[0])
 			outTargets.push_back(render::DebugTarget(
-				it.second.name,
+				L"",
 				render::DtvDefault,
 				it.second.rts[0]->getColorTexture(0)
 			));
 
 		if (it.second.rts[1])
 			outTargets.push_back(render::DebugTarget(
-				it.second.name,
+				L"",
 				render::DtvDefault,
 				it.second.rts[1]->getColorTexture(0)
 			));			

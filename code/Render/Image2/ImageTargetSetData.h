@@ -2,7 +2,7 @@
 
 #include <string>
 #include "Core/Serialization/ISerializable.h"
-#include "Render/Frame/RenderGraph.h"
+#include "Render/Frame/RenderGraphTypes.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -35,6 +35,7 @@ private:
 	friend class ImageGraphPipeline;
 
 	std::wstring m_targetSetId;
+	std::wstring m_textureIds[RenderGraphTargetSetDesc::MaxColorTargets];
 	RenderGraphTargetSetDesc m_targetSetDesc;
 };
 

@@ -24,6 +24,7 @@ class IResourceManager;
     {
 
 class IImageStep;
+class IRenderSystem;
 
 /*!
  * \ingroup Render
@@ -33,7 +34,7 @@ class T_DLLCLASS IImageStepData : public ISerializable
     T_RTTI_CLASS;
 
 public:
-    virtual Ref< const IImageStep > createInstance(resource::IResourceManager* resourceManager) const = 0;
+    virtual Ref< const IImageStep > createInstance(resource::IResourceManager* resourceManager, IRenderSystem* renderSystem) const = 0;
 };
 
     }

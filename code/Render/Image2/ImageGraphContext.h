@@ -18,6 +18,7 @@ namespace traktor
 	namespace render
 	{
 
+class RenderGraph;
 class ScreenRenderer;
 
 /*!
@@ -40,6 +41,7 @@ struct ImageGraphParams
     float shadowMapBias;
     float deltaTime;
     float time;
+    int32_t frame;
 
     ImageGraphParams()
     :	shadowMapUvTransform(0.0f, 0.0f, 1.0f, 1.0f)
@@ -51,6 +53,7 @@ struct ImageGraphParams
     ,	shadowMapBias(0.0f)
     ,	deltaTime(0.0f)
     ,   time(0.0f)
+    ,   frame(0)
     {
     }
 };
@@ -75,7 +78,9 @@ public:
 
     void associateTextureTargetSetDepth(handle_t textureId, handle_t targetSetId);
 
-	TextureTargetSet findTextureTargetSet(handle_t textureId) const;
+    handle_t findTextureTargetSetId(handle_t textureId) const;
+
+    ITexture* findTexture(const RenderGraph& renderGraph, handle_t textureId) const;
 
     void setParams(const ImageGraphParams& params) { m_params = params; }
 

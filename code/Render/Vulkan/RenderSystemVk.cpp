@@ -591,7 +591,7 @@ Ref< IVolumeTexture > RenderSystemVk::createVolumeTexture(const VolumeTextureCre
 		return nullptr;
 }
 
-Ref< IRenderTargetSet > RenderSystemVk::createRenderTargetSet(const RenderTargetSetCreateDesc& desc, const wchar_t* const tag)
+Ref< IRenderTargetSet > RenderSystemVk::createRenderTargetSet(const RenderTargetSetCreateDesc& desc, IRenderTargetSet* sharedDepthStencil, const wchar_t* const tag)
 {
 	Ref< RenderTargetSetVk > renderTargetSet = new RenderTargetSetVk(
 		m_physicalDevice,
@@ -600,7 +600,7 @@ Ref< IRenderTargetSet > RenderSystemVk::createRenderTargetSet(const RenderTarget
 		m_graphicsCommandPool,
 		m_graphicsQueue
 	);
-	if (renderTargetSet->create(desc, tag))
+	if (renderTargetSet->create(desc, sharedDepthStencil, tag))
 		return renderTargetSet;
 	else
 		return nullptr;

@@ -55,7 +55,7 @@ bool AccShapeRenderer::create(render::IRenderSystem* renderSystem, resource::IRe
 	rtscd.ignoreStencil = false;
 	rtscd.targets[0].format = render::TfR8G8B8A8;
 
-	m_renderTargetShapes = renderSystem->createRenderTargetSet(rtscd, T_FILE_LINE_W);
+	m_renderTargetShapes = renderSystem->createRenderTargetSet(rtscd, nullptr, T_FILE_LINE_W);
 	if (!m_renderTargetShapes)
 	{
 		log::error << L"Unable to create accelerated display renderer; failed to create shape cache target" << Endl;
