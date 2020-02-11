@@ -73,7 +73,7 @@ bool OpenVRCompositor::create(IRenderSystem* renderSystem, IRenderView* renderVi
 	rtscd.targets[0].sRGB = false;
 	rtscd.targets[1].format = TfR8G8B8A8;
 	rtscd.targets[1].sRGB = false;
-	if ((m_targetSet = renderSystem->createRenderTargetSet(rtscd, T_FILE_LINE_W)) == nullptr)
+	if ((m_targetSet = renderSystem->createRenderTargetSet(rtscd, nullptr, T_FILE_LINE_W)) == nullptr)
 	{
 		log::error << L"Failed to initialize OpenVR compositor; Unable to create render targets." << Endl;
 		return false;

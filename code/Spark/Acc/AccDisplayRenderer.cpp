@@ -175,7 +175,7 @@ bool AccDisplayRenderer::create(
 	rtscd.usingPrimaryDepthStencil = false;
 	rtscd.targets[0].format = render::TfR8;
 
-	m_renderTargetGlyphs = m_renderSystem->createRenderTargetSet(rtscd, T_FILE_LINE_W);
+	m_renderTargetGlyphs = m_renderSystem->createRenderTargetSet(rtscd, nullptr, T_FILE_LINE_W);
 	if (!m_renderTargetGlyphs)
 	{
 		log::error << L"Unable to create accelerated display renderer; failed to create glyph cache target." << Endl;
@@ -301,7 +301,7 @@ void AccDisplayRenderer::begin(
 		rtscd.ignoreStencil = false;
 		rtscd.targets[0].format = render::TfR8G8B8A8;
 
-		m_frameTarget = m_renderSystem->createRenderTargetSet(rtscd, T_FILE_LINE_W);
+		m_frameTarget = m_renderSystem->createRenderTargetSet(rtscd, nullptr, T_FILE_LINE_W);
 	}
 
 	if (m_frameTarget)

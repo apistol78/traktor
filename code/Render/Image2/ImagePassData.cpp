@@ -12,7 +12,7 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ImagePassData", 0, ImagePassData, ISerializable)
 
-Ref< const ImagePass > ImagePassData::createInstance(resource::IResourceManager* resourceManager) const
+Ref< const ImagePass > ImagePassData::createInstance(resource::IResourceManager* resourceManager, IRenderSystem* renderSystem) const
 {
     Ref< ImagePass > instance = new ImagePass();
 
@@ -20,7 +20,7 @@ Ref< const ImagePass > ImagePassData::createInstance(resource::IResourceManager*
 
     for (auto stepData : m_steps)
     {
-        Ref< const IImageStep > step = stepData->createInstance(resourceManager);
+        Ref< const IImageStep > step = stepData->createInstance(resourceManager, renderSystem);
         if (!step)
             return nullptr;
         instance->m_steps.push_back(step);

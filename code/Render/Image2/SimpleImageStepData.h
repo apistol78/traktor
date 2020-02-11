@@ -28,7 +28,7 @@ class T_DLLCLASS SimpleImageStepData : public IImageStepData
     T_RTTI_CLASS;
 
 public:
-    virtual Ref< const IImageStep > createInstance(resource::IResourceManager* resourceManager) const override final;
+    virtual Ref< const IImageStep > createInstance(resource::IResourceManager* resourceManager, IRenderSystem* renderSystem) const override final;
 
     virtual void serialize(ISerializer& s) override final;
 

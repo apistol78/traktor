@@ -35,8 +35,6 @@ class IResourceManager;
 	namespace render
 	{
 
-class ImageProcess;
-class ImageProcessData;
 class IRenderSystem;
 class IRenderView;
 class ISimpleTexture;
@@ -92,7 +90,7 @@ public:
 
 	void setBackground(const resource::Id< render::ISimpleTexture >& background);
 
-	void setImageProcess(const resource::Id< render::ImageProcessData >& postProcess);
+	//void setImageProcess(const resource::Id< render::ImageProcessData >& postProcess);
 
 	void showGuide(bool guideVisible);
 
@@ -115,11 +113,11 @@ private:
 	Ref< render::IRenderSystem > m_renderSystem;
 	Ref< render::IRenderView > m_renderView;
 	Ref< render::IRenderTargetSet > m_depthTexture;
-	Ref< render::IRenderTargetSet > m_postTargetSet;
+	//Ref< render::IRenderTargetSet > m_postTargetSet;
 	Ref< render::RenderContext > m_globalContext;
 	resource::Proxy< render::ISimpleTexture > m_background;
-	resource::Proxy< render::ImageProcessData > m_postProcessSettings;
-	Ref< render::ImageProcess > m_postProcess;
+	//resource::Proxy< render::ImageProcessData > m_postProcessSettings;
+	//Ref< render::ImageProcess > m_postProcess;
 	Ref< render::PrimitiveRenderer > m_primitiveRenderer;
 	Ref< render::RenderContext > m_renderContext;
 	Ref< sound::AudioSystem > m_audioSystem;

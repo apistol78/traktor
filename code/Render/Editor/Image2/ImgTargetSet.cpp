@@ -1,8 +1,8 @@
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
-#include "Core/Serialization/MemberComplex.h"
+#include "Core/Serialization/MemberAlignedVector.h"
+#include "Core/Serialization/MemberComposite.h"
 #include "Core/Serialization/MemberEnum.h"
-#include "Core/Serialization/MemberStaticArray.h"
 #include "Render/Editor/InputPin.h"
 #include "Render/Editor/OutputPin.h"
 #include "Render/Editor/Image2/ImgTargetSet.h"
@@ -51,63 +51,20 @@ public:
 	}
 };
 
-class MemberRenderGraphTargetDesc : public MemberComplex
-{
-public:
-	typedef RenderGraphTargetDesc value_type;
-
-	MemberRenderGraphTargetDesc(const wchar_t* const name, value_type& ref)
-	:   MemberComplex(name, true)
-	,   m_ref(ref)
-	{
-	}
-
-	virtual void serialize(ISerializer& s) const override final
-	{
-		s >> Member< std::wstring >(L"id", m_ref.id);
-		s >> MemberTextureFormat(L"colorFormat", m_ref.colorFormat);
-	}
-
-private:
-	value_type& m_ref;
-};
-
-class MemberRenderGraphTargetSetDesc : public MemberComplex
-{
-public:
-	typedef RenderGraphTargetSetDesc value_type;
-
-	MemberRenderGraphTargetSetDesc(const wchar_t* const name, value_type& ref)
-	:   MemberComplex(name, true)
-	,   m_ref(ref)
-	{
-	}
-
-	virtual void serialize(ISerializer& s) const override final
-	{
-		s >> Member< std::wstring >(L"id", m_ref.id);
-		s >> Member< int32_t >(L"count", m_ref.count);
-		s >> Member< int32_t >(L"width", m_ref.width);
-		s >> Member< int32_t >(L"height", m_ref.height);
-		s >> Member< int32_t >(L"screenWidthDenom", m_ref.screenWidthDenom);
-		s >> Member< int32_t >(L"screenHeightDenom", m_ref.screenHeightDenom);
-		s >> Member< int32_t >(L"maxWidth", m_ref.maxWidth);
-		s >> Member< int32_t >(L"maxHeight", m_ref.maxHeight);
-		s >> Member< bool >(L"createDepthStencil", m_ref.createDepthStencil);
-		s >> Member< bool >(L"usingDepthStencilAsTexture", m_ref.usingDepthStencilAsTexture);
-		s >> Member< bool >(L"generateMips", m_ref.generateMips);
-		s >> MemberStaticArray< RenderGraphTargetDesc, RenderGraphTargetSetDesc::MaxColorTargets, MemberRenderGraphTargetDesc >(L"targets", m_ref.targets);
-	}
-
-private:
-	value_type& m_ref;
-};
-
 		}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ImgTargetSet", 0, ImgTargetSet, Node)
 
 ImgTargetSet::ImgTargetSet()
+:	m_width(0)
+,	m_height(0)
+,	m_screenWidthDenom(0)
+,	m_screenHeightDenom(0)
+,	m_maxWidth(0)
+,	m_maxHeight(0)
+,	m_createDepthStencil(false)
+,	m_ignoreStencil(false)
+,	m_generateMips(false)
 {
 	const Guid c_null;
 	m_inputPins.push_back(new InputPin(this, c_null, L"Input", false));
@@ -121,14 +78,42 @@ ImgTargetSet::~ImgTargetSet()
 		delete outputPin;
 }
 
-void ImgTargetSet::setTargetSetDesc(const RenderGraphTargetSetDesc& targetSetDesc)
+const std::wstring& ImgTargetSet::getTargetSetId() const
 {
-	m_targetSetDesc = targetSetDesc;
+	return m_targetSetId;
 }
 
-const RenderGraphTargetSetDesc& ImgTargetSet::getTargetSetDesc() const
+int32_t ImgTargetSet::getTextureCount() const
 {
-	return m_targetSetDesc;
+	return (int32_t)m_targets.size();
+}
+
+const std::wstring& ImgTargetSet::getTextureId(int32_t colorIndex) const
+{
+	return m_targets[colorIndex].textureId;
+}
+
+RenderGraphTargetSetDesc ImgTargetSet::getRenderGraphTargetSetDesc() const
+{
+	RenderGraphTargetSetDesc desc = {};
+
+	desc.count = (int32_t)m_targets.size();
+	desc.width = m_width;
+	desc.height = m_height;
+	desc.screenWidthDenom = m_screenWidthDenom;
+	desc.screenHeightDenom = m_screenHeightDenom;
+	desc.maxWidth = m_maxWidth;
+	desc.maxHeight = m_maxHeight;
+	desc.createDepthStencil = m_createDepthStencil;
+	desc.usingPrimaryDepthStencil = false;
+	desc.usingDepthStencilAsTexture = false;
+	desc.ignoreStencil = m_ignoreStencil;
+	desc.generateMips = m_generateMips;
+	
+	for (int32_t i = 0; i < (int32_t)m_targets.size(); ++i)
+		desc.targets[i].colorFormat = m_targets[i].colorFormat;
+
+	return desc;
 }
 
 int ImgTargetSet::getInputPinCount() const
@@ -156,7 +141,19 @@ const OutputPin* ImgTargetSet::getOutputPin(int index) const
 void ImgTargetSet::serialize(ISerializer& s)
 {
 	Node::serialize(s);
-	s >> MemberRenderGraphTargetSetDesc(L"targetSetDesc", m_targetSetDesc);
+	
+	s >> Member< std::wstring >(L"targetSetId", m_targetSetId);
+	s >> Member< int32_t >(L"width", m_width);
+	s >> Member< int32_t >(L"height", m_height);
+	s >> Member< int32_t >(L"screenWidthDenom", m_screenWidthDenom);
+	s >> Member< int32_t >(L"screenHeightDenom", m_screenHeightDenom);
+	s >> Member< int32_t >(L"maxWidth", m_maxWidth);
+	s >> Member< int32_t >(L"maxHeight", m_maxHeight);
+	s >> Member< bool >(L"createDepthStencil", m_createDepthStencil);
+	s >> Member< bool >(L"ignoreStencil", m_ignoreStencil);
+	s >> Member< bool >(L"generateMips", m_generateMips);
+	s >> MemberAlignedVector< TargetDesc, MemberComposite< TargetDesc > >(L"targets", m_targets);
+
 	if (s.getDirection() == ISerializer::SdRead)
 		refresh();
 }
@@ -170,8 +167,19 @@ void ImgTargetSet::refresh()
 
 	m_outputPins.clear();
 
-	for (int32_t i = 0; i < m_targetSetDesc.count; ++i)
-		m_outputPins.push_back(new OutputPin(this, c_null, m_targetSetDesc.targets[i].id));
+	for (const auto& target : m_targets)
+		m_outputPins.push_back(new OutputPin(this, c_null, target.textureId));
+}
+
+ImgTargetSet::TargetDesc::TargetDesc()
+:	colorFormat(TfInvalid)
+{
+}
+
+void ImgTargetSet::TargetDesc::serialize(ISerializer& s)
+{
+	s >> Member< std::wstring >(L"textureId", textureId);
+	s >> MemberTextureFormat(L"colorFormat", colorFormat);
 }
 
 	}

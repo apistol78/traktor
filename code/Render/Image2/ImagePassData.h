@@ -26,6 +26,7 @@ class IResourceManager;
 
 class IImageStepData;
 class ImagePass;
+class IRenderSystem;
 
 /*!
  * \ingroup Render
@@ -35,7 +36,7 @@ class T_DLLCLASS ImagePassData : public ISerializable
     T_RTTI_CLASS;
 
 public:
-    Ref< const ImagePass > createInstance(resource::IResourceManager* resourceManager) const;
+    Ref< const ImagePass > createInstance(resource::IResourceManager* resourceManager, IRenderSystem* renderSystem) const;
 
     virtual void serialize(ISerializer& s) override final;
 

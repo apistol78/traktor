@@ -36,7 +36,7 @@ public:
 
 	bool createPrimary(int32_t width, int32_t height, VkFormat colorFormat, VkImage colorImage, VkFormat depthFormat, VkImage depthImage, const wchar_t* const tag);
 
-	bool create(const RenderTargetSetCreateDesc& setDesc, const wchar_t* const tag);
+	bool create(const RenderTargetSetCreateDesc& setDesc, IRenderTargetSet* sharedDepthStencil, const wchar_t* const tag);
 
 	virtual void destroy() override final;
 
@@ -100,6 +100,7 @@ private:
 	RefArray< RenderTargetVk > m_colorTargets;
 	Ref< RenderTargetDepthVk > m_depthTarget;
 	SmallMap< render_pass_key_t, RenderPass > m_renderPasses;
+	bool m_depthTargetShared;
 };
 
 	}

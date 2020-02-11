@@ -99,7 +99,7 @@ RenderTargetSetOpenGLES2::~RenderTargetSetOpenGLES2()
 	destroy();
 }
 
-bool RenderTargetSetOpenGLES2::create(const RenderTargetSetCreateDesc& desc)
+bool RenderTargetSetOpenGLES2::create(const RenderTargetSetCreateDesc& desc, IRenderTargetSet* sharedDepthStencil)
 {
 	m_desc = desc;
 
@@ -161,9 +161,9 @@ bool RenderTargetSetOpenGLES2::create(const RenderTargetSetCreateDesc& desc)
 			m_desc.height
 		);
 	}
-	else if (m_desc.sharedDepthStencil)
+	else if (sharedDepthStencil)
 	{
-		m_depthTarget = dynamic_type_cast< RenderTargetDepthOpenGLES2* >(m_desc.sharedDepthStencil->getDepthTexture());
+		m_depthTarget = dynamic_type_cast< RenderTargetDepthOpenGLES2* >(sharedDepthStencil->getDepthTexture());
 	}
 
 	// Create color targets.

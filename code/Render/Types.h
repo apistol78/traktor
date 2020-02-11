@@ -653,12 +653,11 @@ struct RenderTargetSetCreateDesc
 	int32_t height;								/*!< Height of render targets. */
 	int32_t multiSample;						/*!< Number of samples; 0 no multisample. */
 	bool createDepthStencil;					/*!< Attach depth/stencil buffer; shared among all targets. */
-	bool usingDepthStencilAsTexture;			/*!< Will be using depth/stencil buffer as a texture input of shaders. */
 	bool usingPrimaryDepthStencil;				/*!< Share primary depth/stencil buffer; shared among all targets. */
+	bool usingDepthStencilAsTexture;			/*!< Will be using depth/stencil buffer as a texture input of shaders. */
 	bool storeDepthStencil;						/*!< Store depth/stencil after rendering. */
 	bool ignoreStencil;							/*!< Ignoring stencil; stencil isn't used in rendering. */
 	bool generateMips;							/*!< Generate complete mip-chain after target been renderered onto. */
-	IRenderTargetSet* sharedDepthStencil;		/*!< Use depth/stencil buffer of shared target set. */
 	RenderTargetCreateDesc targets[MaxTargets];	/*!< Descriptor for each target. */
 
 	RenderTargetSetCreateDesc()
@@ -667,12 +666,11 @@ struct RenderTargetSetCreateDesc
 	,	height(0)
 	,	multiSample(0)
 	,	createDepthStencil(false)
-	,	usingDepthStencilAsTexture(false)
 	,	usingPrimaryDepthStencil(false)
+	,	usingDepthStencilAsTexture(false)
 	,	storeDepthStencil(false)
 	,	ignoreStencil(true)
 	,	generateMips(false)
-	,	sharedDepthStencil(nullptr)
 	{
 	}
 };

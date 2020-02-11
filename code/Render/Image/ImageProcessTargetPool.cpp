@@ -80,7 +80,7 @@ IRenderTargetSet* ImageProcessTargetPool::acquireTarget(const RenderTargetSetCre
 	}
 	else
 	{
-		Ref< IRenderTargetSet > rts = m_renderSystem->createRenderTargetSet(rtscd, T_FILE_LINE_W);
+		Ref< IRenderTargetSet > rts = m_renderSystem->createRenderTargetSet(rtscd, nullptr, T_FILE_LINE_W);
 		if (rts)
 			pool->acquired.push_back(rts);
 		return rts;

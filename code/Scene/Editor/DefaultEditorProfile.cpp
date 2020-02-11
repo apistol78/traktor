@@ -7,7 +7,6 @@
 #include "World/Entity/ExternalEntityData.h"
 
 // Resource factories
-#include "Render/Image/ImageProcessFactory.h"
 #include "Render/Image2/ImageGraphFactory.h"
 #include "Render/Resource/SequenceTextureFactory.h"
 #include "Render/Resource/ShaderFactory.h"
@@ -73,8 +72,7 @@ void DefaultEditorProfile::createResourceFactories(
 	RefArray< const resource::IResourceFactory >& outResourceFactories
 ) const
 {
-	outResourceFactories.push_back(new render::ImageProcessFactory());
-	outResourceFactories.push_back(new render::ImageGraphFactory());
+	outResourceFactories.push_back(new render::ImageGraphFactory(context->getRenderSystem()));
 	outResourceFactories.push_back(new render::SequenceTextureFactory());
 	outResourceFactories.push_back(new render::ShaderFactory(context->getRenderSystem()));
 	outResourceFactories.push_back(new render::TextureFactory(context->getRenderSystem(), 0));

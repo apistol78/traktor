@@ -13,7 +13,7 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ImageGraphData", 0, ImageGraphData, ISerializable)
 
-Ref< ImageGraph > ImageGraphData::createInstance(resource::IResourceManager* resourceManager) const
+Ref< ImageGraph > ImageGraphData::createInstance(resource::IResourceManager* resourceManager, IRenderSystem* renderSystem) const
 {
     Ref< ImageGraph > instance = new ImageGraph();
 
@@ -27,7 +27,7 @@ Ref< ImageGraph > ImageGraphData::createInstance(resource::IResourceManager* res
 
     for (auto passData : m_passes)
     {
-        Ref< const ImagePass > pass = passData->createInstance(resourceManager);
+        Ref< const ImagePass > pass = passData->createInstance(resourceManager, renderSystem);
         if (!pass)
             return nullptr;
         instance->m_passes.push_back(pass);
@@ -35,7 +35,7 @@ Ref< ImageGraph > ImageGraphData::createInstance(resource::IResourceManager* res
 
     for (auto stepData : m_steps)
     {
-        Ref< const IImageStep > step = stepData->createInstance(resourceManager);
+        Ref< const IImageStep > step = stepData->createInstance(resourceManager, renderSystem);
         if (!step)
             return nullptr;
         instance->m_steps.push_back(step);

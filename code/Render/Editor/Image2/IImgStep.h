@@ -22,6 +22,8 @@ class T_DLLCLASS IImgStep : public ISerializable
     T_RTTI_CLASS;
 
 public:
+    virtual std::wstring getTitle() const = 0;
+
     virtual void getInputs(std::set< std::wstring >& outInputs) const = 0;
 };
 

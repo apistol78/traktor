@@ -297,6 +297,8 @@ void ProbeRenderer::flush(WorldContext& worldContext)
 	render::RenderContext* renderContext = worldContext.getRenderContext();
 	T_ASSERT(renderContext);
 
+	return;
+
 	// Get dirty probe which needs to be updated.
 	if (!m_capture)
 	{

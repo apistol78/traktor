@@ -138,8 +138,19 @@ public:
 	/*! Create volume texture. */
 	virtual Ref< IVolumeTexture > createVolumeTexture(const VolumeTextureCreateDesc& desc, const wchar_t* const tag) = 0;
 
-	/*! Create render target set. */
-	virtual Ref< IRenderTargetSet > createRenderTargetSet(const RenderTargetSetCreateDesc& desc, const wchar_t* const tag) = 0;
+	/*! Create render target set.
+	 *
+	 * \note
+	 * If "usingPrimaryDepthStencil" is set in description
+	 * then sharedDepthStencil is ignored and primary depth buffer
+	 * is used for sharing.
+	 *
+	 * \param desc Render target set description.
+	 * \param sharedDepthStencil Share depth/stencil with this render target set.
+	 * \param tag Debug tag.
+	 * \return Render target set.
+	 */
+	virtual Ref< IRenderTargetSet > createRenderTargetSet(const RenderTargetSetCreateDesc& desc, IRenderTargetSet* sharedDepthStencil, const wchar_t* const tag) = 0;
 
 	/*! Create program from program resource.
 	 *

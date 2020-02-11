@@ -2,7 +2,7 @@
 
 #include "Core/Containers/AlignedVector.h"
 #include "Render/Editor/Node.h"
-#include "Render/Frame/RenderGraph.h"
+#include "Render/Frame/RenderGraphTypes.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -26,9 +26,13 @@ public:
 
 	virtual ~ImgTargetSet();
 
-	void setTargetSetDesc(const RenderGraphTargetSetDesc& targetSetDesc);
+	const std::wstring& getTargetSetId() const;
 
-	const RenderGraphTargetSetDesc& getTargetSetDesc() const;
+	int32_t getTextureCount() const;
+
+	const std::wstring& getTextureId(int32_t colorIndex) const;
+
+	RenderGraphTargetSetDesc getRenderGraphTargetSetDesc() const;
 
 	virtual int getInputPinCount() const override final;
 
@@ -41,9 +45,30 @@ public:
 	virtual void serialize(ISerializer& s) override final;
 
 private:
+	struct TargetDesc
+	{
+		std::wstring textureId;
+		render::TextureFormat colorFormat;
+
+		TargetDesc();
+
+		void serialize(ISerializer& s);
+	};
+
 	AlignedVector< InputPin* > m_inputPins;
 	AlignedVector< OutputPin* > m_outputPins;
-	RenderGraphTargetSetDesc m_targetSetDesc;
+
+	std::wstring m_targetSetId;
+	int32_t m_width;
+	int32_t m_height;
+	int32_t m_screenWidthDenom;
+	int32_t m_screenHeightDenom;
+	int32_t m_maxWidth;
+	int32_t m_maxHeight;
+	bool m_createDepthStencil;
+	bool m_ignoreStencil;
+	bool m_generateMips;
+	AlignedVector< TargetDesc > m_targets;
 
 	void refresh();
 };

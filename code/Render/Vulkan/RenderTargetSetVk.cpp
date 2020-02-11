@@ -34,6 +34,7 @@ RenderTargetSetVk::RenderTargetSetVk(
 ,	m_allocator(allocator)
 ,	m_setupCommandPool(setupCommandPool)
 ,	m_setupQueue(setupQueue)
+,	m_depthTargetShared(false)
 {
 }
 
@@ -62,14 +63,13 @@ bool RenderTargetSetVk::createPrimary(int32_t width, int32_t height, VkFormat co
 	m_setDesc.usingPrimaryDepthStencil = false;	// We contain primary depth thus do not share.
 	m_setDesc.ignoreStencil = false;
 	m_setDesc.generateMips = false;
-	m_setDesc.sharedDepthStencil = nullptr;
 	m_setDesc.targets[0].format = TfR8G8B8A8;
 	m_setDesc.targets[0].sRGB = false;
 
 	return true;
 }
 
-bool RenderTargetSetVk::create(const RenderTargetSetCreateDesc& setDesc, const wchar_t* const tag)
+bool RenderTargetSetVk::create(const RenderTargetSetCreateDesc& setDesc, IRenderTargetSet* sharedDepthStencil, const wchar_t* const tag)
 {
 	m_colorTargets.resize(setDesc.count);
 	for (int32_t i = 0; i < setDesc.count; ++i)
@@ -84,10 +84,12 @@ bool RenderTargetSetVk::create(const RenderTargetSetCreateDesc& setDesc, const w
 		m_depthTarget = new RenderTargetDepthVk(m_physicalDevice, m_logicalDevice, m_allocator, m_setupCommandPool, m_setupQueue);
 		if (!m_depthTarget->create(setDesc, tag))
 			return false;
+		m_depthTargetShared = false;
 	}
-	else if (setDesc.sharedDepthStencil != nullptr)
+	else if (sharedDepthStencil != nullptr)
 	{
-		m_depthTarget = static_cast< RenderTargetSetVk* >(setDesc.sharedDepthStencil)->getDepthTargetVk();
+		m_depthTarget = static_cast< RenderTargetSetVk* >(sharedDepthStencil)->getDepthTargetVk();
+		m_depthTargetShared = true;
 	}
 
 	m_setDesc = setDesc;
@@ -105,7 +107,7 @@ void RenderTargetSetVk::destroy()
 	m_colorTargets.resize(0);
 
 	// Only destroy depth target texture if not being shared, else just release reference.
-	if (!m_setDesc.sharedDepthStencil)
+	if (!m_depthTargetShared)
 		safeDestroy(m_depthTarget);
 	else
 		m_depthTarget = nullptr;

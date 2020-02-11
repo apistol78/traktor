@@ -146,7 +146,7 @@ bool EffectPreviewControl::create(
 		rtscd.targets[0].format = render::TfR32F;
 		rtscd.targets[0].sRGB = false;
 
-		m_depthTexture = renderSystem->createRenderTargetSet(rtscd, T_FILE_LINE_W);
+		m_depthTexture = renderSystem->createRenderTargetSet(rtscd, nullptr, T_FILE_LINE_W);
 		if (!m_depthTexture)
 			return false;
 	}
@@ -242,11 +242,11 @@ void EffectPreviewControl::setBackground(const resource::Id< render::ISimpleText
 	m_resourceManager->bind(background, m_background);
 }
 
-void EffectPreviewControl::setImageProcess(const resource::Id< render::ImageProcessData >& postProcess)
-{
-	m_resourceManager->bind(postProcess, m_postProcessSettings);
-	updateRenderer();
-}
+//void EffectPreviewControl::setImageProcess(const resource::Id< render::ImageProcessData >& postProcess)
+//{
+//	m_resourceManager->bind(postProcess, m_postProcessSettings);
+//	updateRenderer();
+//}
 
 void EffectPreviewControl::showGuide(bool guideVisible)
 {
@@ -327,8 +327,8 @@ void EffectPreviewControl::updateSettings()
 void EffectPreviewControl::updateRenderer()
 {
 	safeDestroy(m_depthTexture);
-	safeDestroy(m_postTargetSet);
-	safeDestroy(m_postProcess);
+	//safeDestroy(m_postTargetSet);
+	//safeDestroy(m_postProcess);
 
 	if (!m_renderView)
 		return;
@@ -350,27 +350,27 @@ void EffectPreviewControl::updateRenderer()
 	rtscd.targets[0].format = render::TfR32F;
 	rtscd.targets[0].sRGB = false;
 
-	m_depthTexture = m_renderSystem->createRenderTargetSet(rtscd, T_FILE_LINE_W);
+	m_depthTexture = m_renderSystem->createRenderTargetSet(rtscd, nullptr, T_FILE_LINE_W);
 
 	// Re-create post processing.
-	if (m_postProcessSettings)
-	{
-		m_postProcess = new render::ImageProcess();
-		m_postProcess->create(m_postProcessSettings, 0, m_resourceManager, m_renderSystem, sz.cx, sz.cy, false);
+	//if (m_postProcessSettings)
+	//{
+	//	m_postProcess = new render::ImageProcess();
+	//	m_postProcess->create(m_postProcessSettings, 0, m_resourceManager, m_renderSystem, sz.cx, sz.cy, false);
 
-		render::RenderTargetSetCreateDesc desc;
-		desc.count = 1;
-		desc.width = sz.cx;
-		desc.height = sz.cy;
-		desc.multiSample = 0;
-		desc.createDepthStencil = false;
-		desc.usingPrimaryDepthStencil = true;
-		desc.ignoreStencil = false;
-		desc.generateMips = false;
-		desc.targets[0].format = render::TfR11G11B10F;
-		desc.targets[0].sRGB = false;
-		m_postTargetSet = m_renderSystem->createRenderTargetSet(desc, T_FILE_LINE_W);
-	}
+	//	render::RenderTargetSetCreateDesc desc;
+	//	desc.count = 1;
+	//	desc.width = sz.cx;
+	//	desc.height = sz.cy;
+	//	desc.multiSample = 0;
+	//	desc.createDepthStencil = false;
+	//	desc.usingPrimaryDepthStencil = true;
+	//	desc.ignoreStencil = false;
+	//	desc.generateMips = false;
+	//	desc.targets[0].format = render::TfR11G11B10F;
+	//	desc.targets[0].sRGB = false;
+	//	m_postTargetSet = m_renderSystem->createRenderTargetSet(desc, nullptr, T_FILE_LINE_W);
+	//}
 }
 
 void EffectPreviewControl::eventButtonDown(ui::MouseButtonDownEvent* event)

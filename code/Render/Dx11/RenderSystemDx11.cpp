@@ -543,11 +543,11 @@ Ref< IVolumeTexture > RenderSystemDx11::createVolumeTexture(const VolumeTextureC
 		return nullptr;
 }
 
-Ref< IRenderTargetSet > RenderSystemDx11::createRenderTargetSet(const RenderTargetSetCreateDesc& desc, const wchar_t* const tag)
+Ref< IRenderTargetSet > RenderSystemDx11::createRenderTargetSet(const RenderTargetSetCreateDesc& desc, IRenderTargetSet* sharedDepthStencil, const wchar_t* const tag)
 {
 	T_ANONYMOUS_VAR(ConditionalAcquire< Semaphore >)(m_context->getLock(), m_resourceCreateLock);
 	Ref< RenderTargetSetDx11 > renderTargetSet = new RenderTargetSetDx11(m_context);
-	if (renderTargetSet->create(desc))
+	if (renderTargetSet->create(desc, sharedDepthStencil))
 		return renderTargetSet;
 	else
 		return nullptr;

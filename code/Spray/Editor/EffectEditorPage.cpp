@@ -14,8 +14,6 @@
 #include "Mesh/MeshFactory.h"
 #include "Render/IRenderSystem.h"
 #include "Render/ITexture.h"
-#include "Render/Image/ImageProcessFactory.h"
-#include "Render/Image/ImageProcessData.h"
 #include "Render/Image2/ImageGraphFactory.h"
 #include "Render/Resource/SequenceTextureFactory.h"
 #include "Render/Resource/ShaderFactory.h"
@@ -130,8 +128,7 @@ bool EffectEditorPage::create(ui::Container* parent)
 	m_resourceManager->addFactory(new render::SequenceTextureFactory());
 	m_resourceManager->addFactory(new render::ShaderFactory(renderSystem));
 	m_resourceManager->addFactory(new sound::SoundFactory());
-	m_resourceManager->addFactory(new render::ImageProcessFactory());
-	m_resourceManager->addFactory(new render::ImageGraphFactory());
+	m_resourceManager->addFactory(new render::ImageGraphFactory(renderSystem));
 	m_resourceManager->addFactory(new EffectFactory(nullptr));
 
 	m_effectData = m_document->getObject< EffectData >(0);
@@ -298,12 +295,12 @@ bool EffectEditorPage::handleCommand(const ui::Command& command)
 	}
 	else if (command == L"Effect.Editor.BrowseImageProcess")
 	{
-		Ref< db::Instance > postProcessInstance = m_editor->browseInstance(type_of< render::ImageProcessData >());
-		if (postProcessInstance)
-		{
-			m_editor->buildAsset(postProcessInstance->getGuid(), false);
-			m_previewControl->setImageProcess(resource::Id< render::ImageProcessData >(postProcessInstance->getGuid()));
-		}
+		//Ref< db::Instance > postProcessInstance = m_editor->browseInstance(type_of< render::ImageProcessData >());
+		//if (postProcessInstance)
+		//{
+		//	m_editor->buildAsset(postProcessInstance->getGuid(), false);
+		//	m_previewControl->setImageProcess(resource::Id< render::ImageProcessData >(postProcessInstance->getGuid()));
+		//}
 	}
 	else if (command == L"Effect.Editor.ReplaceEmitterSource")
 	{
