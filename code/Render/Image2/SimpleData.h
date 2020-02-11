@@ -23,7 +23,7 @@ class Shader;
 /*!
  * \ingroup Render
  */
-class T_DLLCLASS SimpleImageStepData : public IImageStepData
+class T_DLLCLASS SimpleData : public IImageStepData
 {
     T_RTTI_CLASS;
 

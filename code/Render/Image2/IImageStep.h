@@ -17,6 +17,7 @@ namespace traktor
 
 class ImageGraph;
 class ImageGraphContext;
+class ProgramParameters;
 class RenderContext;
 class RenderGraph;
 class RenderPass;
@@ -40,6 +41,7 @@ public:
 		const ImageGraph* imageGraph,
 		const ImageGraphContext& cx,
 		const RenderGraph& renderGraph,
+		const ProgramParameters* sharedParams,
 		RenderContext* renderContext
     ) const = 0;
 };

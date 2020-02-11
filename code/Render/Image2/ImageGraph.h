@@ -2,6 +2,10 @@
 
 #include "Core/Object.h"
 #include "Core/RefArray.h"
+#include "Core/Containers/SmallMap.h"
+#include "Core/Math/Vector4.h"
+#include "Render/Types.h"
+#include "Resource/Proxy.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -20,6 +24,7 @@ class IImageStep;
 class ImageGraphContext;
 class ImagePass;
 class ImageTargetSet;
+class ITexture;
 class RenderGraph;
 class RenderPass;
 
@@ -35,12 +40,21 @@ public:
 
     void addPasses(RenderGraph* renderGraph, RenderPass* parentPass, const ImageGraphContext& cx) const;
 
+	void setFloatParameter(handle_t handle, float value);
+
+	void setVectorParameter(handle_t handle, const Vector4& value);
+
+	void setTextureParameter(handle_t handle, const resource::Proxy< ITexture >& value);
+
 private:
     friend class ImageGraphData;
 
     RefArray< const ImageTargetSet > m_targetSets;
     RefArray< const ImagePass > m_passes;
     RefArray< const IImageStep > m_steps;
+	SmallMap< handle_t, float > m_scalarParameters;
+	SmallMap< handle_t, Vector4 > m_vectorParameters;
+	SmallMap< handle_t, resource::Proxy< ITexture > > m_textureParameters;
 };
 
     }

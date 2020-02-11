@@ -33,23 +33,22 @@ namespace traktor
 
 const int32_t c_maxLightCount = 1024;
 
-const resource::Id< render::ImageGraph > c_ambientOcclusionLow(L"{ED4F221C-BAB1-4645-BD08-84C5B3FA7C20}");
-const resource::Id< render::ImageGraph > c_ambientOcclusionMedium(L"{A4249C8A-9A0D-B349-B0ED-E8B354CD7BDF}");
-const resource::Id< render::ImageGraph > c_ambientOcclusionHigh(L"{37F82A38-D632-5541-9B29-E77C2F74B0C0}");
-const resource::Id< render::ImageGraph > c_ambientOcclusionUltra(L"{C1C9DDCB-2F82-A94C-BF65-653D8E68F628}");
-const resource::Id< render::ImageGraph > c_antiAliasNone(L"{960283DC-7AC2-804B-901F-8AD4C205F4E0}");
-const resource::Id< render::ImageGraph > c_antiAliasLow(L"{DBF2FBB9-1310-A24E-B443-AF0D018571F7}");
-const resource::Id< render::ImageGraph > c_antiAliasMedium(L"{3E1D810B-339A-F742-9345-4ECA00220D57}");
-const resource::Id< render::ImageGraph > c_antiAliasHigh(L"{0C288028-7BFD-BE46-A25F-F3910BE50319}");
-const resource::Id< render::ImageGraph > c_antiAliasUltra(L"{4750DA97-67F4-E247-A9C2-B4883B1158B2}");
-const resource::Id< render::ImageGraph > c_gammaCorrection(L"{AB0ABBA7-77BF-0A4E-8E3B-4987B801CE6B}");
-const resource::Id< render::ImageGraph > c_motionBlurPrime(L"{73C2C7DC-BD77-F348-A6B7-06E0EFB633D9}");
-const resource::Id< render::ImageGraph > c_motionBlurLow(L"{BDFEFBE0-C5E9-2643-B445-DB02AC5C7687}");
-const resource::Id< render::ImageGraph > c_motionBlurMedium(L"{A70CBA02-B75A-E246-A9B6-99B8B2B98D2A}");
-const resource::Id< render::ImageGraph > c_motionBlurHigh(L"{E893B98C-90A3-9848-B4F3-3D8C0CE57CE8}");
-const resource::Id< render::ImageGraph > c_motionBlurUltra(L"{CD4A0939-233B-2E43-988D-DA6E0DB7A6E6}");
-const resource::Id< render::ImageGraph > c_toneMapFixed(L"{838922A0-49CE-6645-8A9C-BA0E71081033}");
-const resource::Id< render::ImageGraph > c_toneMapAdaptive(L"{BC4FA128-A976-4023-A422-637581ADFD7E}");
+const resource::Id< render::ImageGraph > c_ambientOcclusionLow(L"{5A3B0260-32F9-B343-BBA4-88BD932F917A}") ; // L"{ED4F221C-BAB1-4645-BD08-84C5B3FA7C20}");
+const resource::Id< render::ImageGraph > c_ambientOcclusionMedium(L"{5A3B0260-32F9-B343-BBA4-88BD932F917A}") ; // L"{A4249C8A-9A0D-B349-B0ED-E8B354CD7BDF}");
+const resource::Id< render::ImageGraph > c_ambientOcclusionHigh(L"{5A3B0260-32F9-B343-BBA4-88BD932F917A}") ; // L"{37F82A38-D632-5541-9B29-E77C2F74B0C0}");
+const resource::Id< render::ImageGraph > c_ambientOcclusionUltra(L"{5A3B0260-32F9-B343-BBA4-88BD932F917A}") ; // L"{C1C9DDCB-2F82-A94C-BF65-653D8E68F628}");
+const resource::Id< render::ImageGraph > c_antiAliasLow(L"{D03B9566-EFA3-7A43-B3AD-F59DB34DEE96}") ; // L"{DBF2FBB9-1310-A24E-B443-AF0D018571F7}");
+const resource::Id< render::ImageGraph > c_antiAliasMedium(L"{D03B9566-EFA3-7A43-B3AD-F59DB34DEE96}") ; // L"{3E1D810B-339A-F742-9345-4ECA00220D57}");
+const resource::Id< render::ImageGraph > c_antiAliasHigh(L"{D03B9566-EFA3-7A43-B3AD-F59DB34DEE96}") ; // L"{0C288028-7BFD-BE46-A25F-F3910BE50319}");
+const resource::Id< render::ImageGraph > c_antiAliasUltra(L"{D03B9566-EFA3-7A43-B3AD-F59DB34DEE96}") ; // L"{4750DA97-67F4-E247-A9C2-B4883B1158B2}");
+const resource::Id< render::ImageGraph > c_gammaCorrection(L"{B1E8367D-91DD-D648-A44F-B86492169771}") ; // L"{AB0ABBA7-77BF-0A4E-8E3B-4987B801CE6B}");
+const resource::Id< render::ImageGraph > c_motionBlurPrime(L"{CB34E98B-55C9-E447-BD59-5A1D91DCA88E}") ; // L"{73C2C7DC-BD77-F348-A6B7-06E0EFB633D9}");
+const resource::Id< render::ImageGraph > c_motionBlurLow(L"{E813C1A0-D27D-AE4F-9EE4-637529ECCD69}") ; // L"{BDFEFBE0-C5E9-2643-B445-DB02AC5C7687}");
+const resource::Id< render::ImageGraph > c_motionBlurMedium(L"{E813C1A0-D27D-AE4F-9EE4-637529ECCD69}") ; // L"{A70CBA02-B75A-E246-A9B6-99B8B2B98D2A}");
+const resource::Id< render::ImageGraph > c_motionBlurHigh(L"{E813C1A0-D27D-AE4F-9EE4-637529ECCD69}") ; // L"{E893B98C-90A3-9848-B4F3-3D8C0CE57CE8}");
+const resource::Id< render::ImageGraph > c_motionBlurUltra(L"{E813C1A0-D27D-AE4F-9EE4-637529ECCD69}") ; // L"{CD4A0939-233B-2E43-988D-DA6E0DB7A6E6}");
+const resource::Id< render::ImageGraph > c_toneMapFixed(L"{1F20DAB5-22EB-B84C-92B0-71E94C1CE261}") ; // L"{838922A0-49CE-6645-8A9C-BA0E71081033}");
+const resource::Id< render::ImageGraph > c_toneMapAdaptive(L"{1F20DAB5-22EB-B84C-92B0-71E94C1CE261}") ; // L"{BC4FA128-A976-4023-A422-637581ADFD7E}");
 
 // Techniques
 const render::Handle s_techniqueDeferredColor(L"World_DeferredColor");
@@ -80,6 +79,9 @@ const render::Handle s_handleIrradianceGridSize(L"World_IrradianceGridSize");
 const render::Handle s_handleIrradianceGridSBuffer(L"World_IrradianceGridSBuffer");
 const render::Handle s_handleIrradianceGridBoundsMin(L"World_IrradianceGridBoundsMin");
 const render::Handle s_handleIrradianceGridBoundsMax(L"World_IrradianceGridBoundsMax");
+const render::Handle s_handleGamma(L"World_Gamma");
+const render::Handle s_handleGammaInverse(L"World_GammaInverse");
+const render::Handle s_handleExposure(L"World_Exposure");
 
 // RenderGraph targets.
 const render::Handle s_handleGBuffer(L"GBuffer");
@@ -131,7 +133,7 @@ resource::Id< render::ImageGraph > getAntiAliasId(Quality quality)
 	{
 	default:
 	case QuDisabled:
-		return c_antiAliasNone;
+		return resource::Id< render::ImageGraph >();
 	case QuLow:
 		return c_antiAliasLow;
 	case QuMedium:
@@ -241,6 +243,7 @@ bool WorldRendererDeferred::create(
 	m_fogColor = m_settings.fogColor;
 
 	// Create shadow screen projection processes.
+	if (m_shadowsQuality > QuDisabled)
 	{
 		if (!resourceManager->bind(m_shadowSettings.maskProject, m_shadowMaskProject))
 		{
@@ -250,6 +253,7 @@ bool WorldRendererDeferred::create(
 	}
 
 	// Create ambient occlusion processing.
+	if (m_ambientOcclusionQuality > QuDisabled)
 	{
 		resource::Id< render::ImageGraph > ambientOcclusion = getAmbientOcclusionId(m_ambientOcclusionQuality);
 		if (!resourceManager->bind(ambientOcclusion, m_ambientOcclusion))
@@ -257,6 +261,7 @@ bool WorldRendererDeferred::create(
 	}
 
 	// Create antialias processing.
+	if (m_antiAliasQuality > QuDisabled)
 	{
 		resource::Id< render::ImageGraph > antiAlias = getAntiAliasId(m_antiAliasQuality);
 		if (!resourceManager->bind(antiAlias, m_antiAlias))
@@ -264,6 +269,7 @@ bool WorldRendererDeferred::create(
 	}
 
 	// Create "visual" post processing filter.
+	if (desc.imageProcessQuality > QuDisabled)
 	{
 		const auto& visualImageGraph = desc.worldRenderSettings->imageProcess[desc.imageProcessQuality];
 		if (!resourceManager->bind(visualImageGraph, m_visual))
@@ -276,7 +282,12 @@ bool WorldRendererDeferred::create(
 		std::abs(desc.gamma - 1.0f) > FUZZY_EPSILON
 	)
 	{
-		if (!resourceManager->bind(c_gammaCorrection, m_gammaCorrection))
+		if (resourceManager->bind(c_gammaCorrection, m_gammaCorrection))
+		{
+			m_gammaCorrection->setFloatParameter(s_handleGamma, desc.gamma);
+			m_gammaCorrection->setFloatParameter(s_handleGammaInverse, 1.0f / desc.gamma);
+		}
+		else
 			log::warning << L"Unable to create gamma correction process; gamma correction disabled." << Endl;
 	}
 
@@ -305,7 +316,9 @@ bool WorldRendererDeferred::create(
 	if (m_toneMapQuality > QuDisabled)
 	{
 		resource::Id< render::ImageGraph > toneMap = getToneMapId(m_settings.exposureMode);
-		if (!resourceManager->bind(toneMap, m_toneMap))
+		if (resourceManager->bind(toneMap, m_toneMap))
+			m_toneMap->setFloatParameter(s_handleExposure, m_settings.exposure);
+		else
 		{
 			log::warning << L"Unable to create tone map process." << Endl;
 			m_toneMapQuality = QuDisabled;
@@ -1104,10 +1117,6 @@ void WorldRendererDeferred::buildShadowMask(const WorldRenderView& worldRenderVi
 	Frustum viewFrustum = worldRenderView.getViewFrustum();
 
 	Ref< render::RenderPass > rp = new render::RenderPass(L"Shadow mask");
-
-	// \tbd Should be setup by ImageGraph
-	// rp->addInput(s_handleGBuffer);
-	// rp->addInput(s_handleShadowMapCascade);
 
 	// Add sub-pass for each slice.
 	for (int32_t slice = 0; slice < m_shadowSettings.cascadingSlices; ++slice)

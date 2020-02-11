@@ -73,7 +73,6 @@ bool RenderGraph::validate()
 		rtscd.createDepthStencil = td.createDepthStencil;
 		rtscd.usingPrimaryDepthStencil = td.usingPrimaryDepthStencil;
 		rtscd.usingDepthStencilAsTexture = td.usingDepthStencilAsTexture;
-		rtscd.usingPrimaryDepthStencil = false;
 		rtscd.storeDepthStencil = true;
 		rtscd.ignoreStencil = false;
 		rtscd.generateMips = td.generateMips;
@@ -187,14 +186,14 @@ void RenderGraph::getDebugTargets(std::vector< render::DebugTarget >& outTargets
 	{
 		if (it.second.rts[0])
 			outTargets.push_back(render::DebugTarget(
-				L"",
+				getParameterName(it.first),
 				render::DtvDefault,
 				it.second.rts[0]->getColorTexture(0)
 			));
 
 		if (it.second.rts[1])
 			outTargets.push_back(render::DebugTarget(
-				L"",
+				getParameterName(it.first),
 				render::DtvDefault,
 				it.second.rts[1]->getColorTexture(0)
 			));			

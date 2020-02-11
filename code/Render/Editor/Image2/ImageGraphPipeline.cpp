@@ -14,13 +14,13 @@
 #include "Render/Editor/Image2/ImgStepSimple.h"
 #include "Render/Editor/Image2/ImgTargetSet.h"
 #include "Render/Editor/Image2/ImgTexture.h"
-#include "Render/Image2/AmbientOcclusionImageStepData.h"
-#include "Render/Image2/DirectionalBlurImageStepData.h"
+#include "Render/Image2/AmbientOcclusionData.h"
+#include "Render/Image2/DirectionalBlurData.h"
 #include "Render/Image2/ImageGraphData.h"
 #include "Render/Image2/ImagePassData.h"
 #include "Render/Image2/ImageTargetSetData.h"
-#include "Render/Image2/ShadowProjectImageStepData.h"
-#include "Render/Image2/SimpleImageStepData.h"
+#include "Render/Image2/ShadowProjectData.h"
+#include "Render/Image2/SimpleData.h"
 
 namespace traktor
 {
@@ -220,7 +220,7 @@ bool ImageGraphPipeline::convertAssetPassToSteps(const ImageGraphAsset* asset, c
 	{
 		if (auto ambientOcclusionStep = dynamic_type_cast< const ImgStepAmbientOcclusion* >(step))
 		{
-			Ref< AmbientOcclusionImageStepData > stepData = new AmbientOcclusionImageStepData();
+			Ref< AmbientOcclusionData > stepData = new AmbientOcclusionData();
 			stepData->m_shader = ambientOcclusionStep->m_shader;
 			
 			std::set< std::wstring > inputs;
@@ -269,8 +269,8 @@ bool ImageGraphPipeline::convertAssetPassToSteps(const ImageGraphAsset* asset, c
 		}
 		else if (auto directionalBlurStep = dynamic_type_cast< const ImgStepDirectionalBlur* >(step))
 		{
-			Ref< DirectionalBlurImageStepData > stepData = new DirectionalBlurImageStepData();
-			stepData->m_blurType = (DirectionalBlurImageStepData::BlurType)directionalBlurStep->m_blurType;
+			Ref< DirectionalBlurData > stepData = new DirectionalBlurData();
+			stepData->m_blurType = (DirectionalBlurData::BlurType)directionalBlurStep->m_blurType;
 			stepData->m_direction = directionalBlurStep->m_direction;
 			stepData->m_taps = directionalBlurStep->m_taps;
 			stepData->m_shader = directionalBlurStep->m_shader;
@@ -321,7 +321,7 @@ bool ImageGraphPipeline::convertAssetPassToSteps(const ImageGraphAsset* asset, c
 		}
 		else if (auto shadowProjectStep = dynamic_type_cast< const ImgStepShadowProject* >(step))
 		{
-			Ref< ShadowProjectImageStepData > stepData = new ShadowProjectImageStepData();
+			Ref< ShadowProjectData > stepData = new ShadowProjectData();
 			stepData->m_shader = shadowProjectStep->m_shader;
 
 			std::set< std::wstring > inputs;
@@ -370,7 +370,7 @@ bool ImageGraphPipeline::convertAssetPassToSteps(const ImageGraphAsset* asset, c
 		}
 		else if (auto simpleStep = dynamic_type_cast< const ImgStepSimple* >(step))
 		{
-			Ref< SimpleImageStepData > stepData = new SimpleImageStepData();
+			Ref< SimpleData > stepData = new SimpleData();
 			stepData->m_shader = simpleStep->m_shader;
 			
 			std::set< std::wstring > inputs;

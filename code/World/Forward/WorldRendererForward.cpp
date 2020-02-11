@@ -33,7 +33,6 @@ const resource::Id< render::ImageGraph > c_ambientOcclusionLow(L"{5A3B0260-32F9-
 const resource::Id< render::ImageGraph > c_ambientOcclusionMedium(L"{5A3B0260-32F9-B343-BBA4-88BD932F917A}") ; // L"{A4249C8A-9A0D-B349-B0ED-E8B354CD7BDF}");
 const resource::Id< render::ImageGraph > c_ambientOcclusionHigh(L"{5A3B0260-32F9-B343-BBA4-88BD932F917A}") ; // L"{37F82A38-D632-5541-9B29-E77C2F74B0C0}");
 const resource::Id< render::ImageGraph > c_ambientOcclusionUltra(L"{5A3B0260-32F9-B343-BBA4-88BD932F917A}") ; // L"{C1C9DDCB-2F82-A94C-BF65-653D8E68F628}");
-const resource::Id< render::ImageGraph > c_antiAliasNone(L"{D03B9566-EFA3-7A43-B3AD-F59DB34DEE96}") ; // L"{960283DC-7AC2-804B-901F-8AD4C205F4E0}");
 const resource::Id< render::ImageGraph > c_antiAliasLow(L"{D03B9566-EFA3-7A43-B3AD-F59DB34DEE96}") ; // L"{DBF2FBB9-1310-A24E-B443-AF0D018571F7}");
 const resource::Id< render::ImageGraph > c_antiAliasMedium(L"{D03B9566-EFA3-7A43-B3AD-F59DB34DEE96}") ; // L"{3E1D810B-339A-F742-9345-4ECA00220D57}");
 const resource::Id< render::ImageGraph > c_antiAliasHigh(L"{D03B9566-EFA3-7A43-B3AD-F59DB34DEE96}") ; // L"{0C288028-7BFD-BE46-A25F-F3910BE50319}");
@@ -52,6 +51,9 @@ const render::Handle s_handleTime(L"World_Time");
 const render::Handle s_handleView(L"World_View");
 const render::Handle s_handleViewInverse(L"World_ViewInverse");
 const render::Handle s_handleProjection(L"World_Projection");
+const render::Handle s_handleGamma(L"World_Gamma");
+const render::Handle s_handleGammaInverse(L"World_GammaInverse");
+const render::Handle s_handleExposure(L"World_Exposure");
 
 // RenderGraph targets.
 const render::Handle s_handleGBuffer(L"GBuffer");
@@ -99,7 +101,7 @@ resource::Id< render::ImageGraph > getAntiAliasId(Quality quality)
 	{
 	default:
 	case QuDisabled:
-		return c_antiAliasNone;
+		return resource::Id< render::ImageGraph >();
 	case QuLow:
 		return c_antiAliasLow;
 	case QuMedium:
@@ -171,6 +173,7 @@ bool WorldRendererForward::create(
 	m_frames.resize(desc.frameCount);
 
 	// Create ambient occlusion processing.
+	if (m_ambientOcclusionQuality > QuDisabled)
 	{
 		resource::Id< render::ImageGraph > ambientOcclusion = getAmbientOcclusionId(m_ambientOcclusionQuality);
 		if (!resourceManager->bind(ambientOcclusion, m_ambientOcclusion))
@@ -178,6 +181,7 @@ bool WorldRendererForward::create(
 	}
 
 	// Create antialias processing.
+	if (m_antiAliasQuality > QuDisabled)
 	{
 		resource::Id< render::ImageGraph > antiAlias = getAntiAliasId(m_antiAliasQuality);
 		if (!resourceManager->bind(antiAlias, m_antiAlias))
@@ -185,6 +189,7 @@ bool WorldRendererForward::create(
 	}
 
 	// Create "visual" post processing filter.
+	if (desc.imageProcessQuality > QuDisabled)
 	{
 		const auto& visualImageGraph = desc.worldRenderSettings->imageProcess[desc.imageProcessQuality];
 		if (!resourceManager->bind(visualImageGraph, m_visual))
@@ -197,7 +202,12 @@ bool WorldRendererForward::create(
 		std::abs(desc.gamma - 1.0f) > FUZZY_EPSILON
 	)
 	{
-		if (!resourceManager->bind(c_gammaCorrection, m_gammaCorrection))
+		if (resourceManager->bind(c_gammaCorrection, m_gammaCorrection))
+		{
+			m_gammaCorrection->setFloatParameter(s_handleGamma, desc.gamma);
+			m_gammaCorrection->setFloatParameter(s_handleGammaInverse, 1.0f / desc.gamma);
+		}
+		else
 			log::warning << L"Unable to create gamma correction process; gamma correction disabled." << Endl;
 	}
 
@@ -205,7 +215,9 @@ bool WorldRendererForward::create(
 	if (m_toneMapQuality > QuDisabled)
 	{
 		resource::Id< render::ImageGraph > toneMap = getToneMapId(m_settings.exposureMode);
-		if (!resourceManager->bind(toneMap, m_toneMap))
+		if (resourceManager->bind(toneMap, m_toneMap))
+			m_toneMap->setFloatParameter(s_handleExposure, m_settings.exposure);
+		else
 		{
 			log::warning << L"Unable to create tone map process." << Endl;
 			m_toneMapQuality = QuDisabled;

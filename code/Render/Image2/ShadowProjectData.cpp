@@ -7,8 +7,8 @@
 #include "Core/Serialization/MemberComposite.h"
 #include "Render/IRenderSystem.h"
 #include "Render/Shader.h"
-#include "Render/Image2/ShadowProjectImageStep.h"
-#include "Render/Image2/ShadowProjectImageStepData.h"
+#include "Render/Image2/ShadowProject.h"
+#include "Render/Image2/ShadowProjectData.h"
 #include "Resource/IResourceManager.h"
 #include "Resource/Member.h"
 
@@ -55,11 +55,11 @@ Ref< ISimpleTexture > createRandomRotationTexture(IRenderSystem* renderSystem)
 		
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ShadowProjectImageStepData", 0, ShadowProjectImageStepData, IImageStepData)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ShadowProjectData", 0, ShadowProjectData, IImageStepData)
 
-Ref< const IImageStep > ShadowProjectImageStepData::createInstance(resource::IResourceManager* resourceManager, IRenderSystem* renderSystem) const
+Ref< const IImageStep > ShadowProjectData::createInstance(resource::IResourceManager* resourceManager, IRenderSystem* renderSystem) const
 {
-	Ref< ShadowProjectImageStep > instance = new ShadowProjectImageStep();
+	Ref< ShadowProject > instance = new ShadowProject();
 
 	// Bind shader.
 	if (!resourceManager->bind(m_shader, instance->m_shader))
@@ -83,13 +83,13 @@ Ref< const IImageStep > ShadowProjectImageStepData::createInstance(resource::IRe
 	return instance; 
 }
 
-void ShadowProjectImageStepData::serialize(ISerializer& s)
+void ShadowProjectData::serialize(ISerializer& s)
 {
 	s >> resource::Member< render::Shader >(L"shader", m_shader);
 	s >> MemberAlignedVector< Source, MemberComposite< Source > >(L"sources", m_sources);
 }
 
-void ShadowProjectImageStepData::Source::serialize(ISerializer& s)
+void ShadowProjectData::Source::serialize(ISerializer& s)
 {
 	s >> Member< std::wstring >(L"textureId", textureId);
 	s >> Member< std::wstring >(L"parameter", parameter);

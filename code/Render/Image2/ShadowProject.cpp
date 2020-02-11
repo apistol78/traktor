@@ -5,7 +5,7 @@
 #include "Render/Frame/RenderGraph.h"
 #include "Render/Image2/ImageGraph.h"
 #include "Render/Image2/ImageGraphContext.h"
-#include "Render/Image2/ShadowProjectImageStep.h"
+#include "Render/Image2/ShadowProject.h"
 
 namespace traktor
 {
@@ -38,14 +38,14 @@ const static Handle s_handleViewEdgeBottomLeft(L"ViewEdgeBottomLeft");
 const static Handle s_handleViewEdgeBottomRight(L"ViewEdgeBottomRight");
 const static Handle s_handleShadowMapPoissonTaps(L"ShadowMapPoissonTaps");
 const static Handle s_handleViewToLight(L"ViewToLight");
-const static Handle s_handleShadowMap(L"ShadowMap");
+const static Handle s_handleShadowMap(L"InputShadowMap");	// \tbd Check name convention...
 const static Handle s_handleShadowMapDiscRotation(L"ShadowMapDiscRotation");
 
 		}
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ShadowProjectImageStep", ShadowProjectImageStep, IImageStep)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ShadowProject", ShadowProject, IImageStep)
 
-void ShadowProjectImageStep::setup(const ImageGraph* /*imageGraph*/, const ImageGraphContext& cx, RenderPass& pass) const
+void ShadowProject::setup(const ImageGraph* /*imageGraph*/, const ImageGraphContext& cx, RenderPass& pass) const
 {
 	for (const auto& source : m_sources)
 	{
@@ -55,10 +55,11 @@ void ShadowProjectImageStep::setup(const ImageGraph* /*imageGraph*/, const Image
 	}
 }
 
-void ShadowProjectImageStep::build(
+void ShadowProject::build(
 	const ImageGraph* imageGraph,
 	const ImageGraphContext& cx,
 	const RenderGraph& renderGraph,
+	const ProgramParameters* sharedParams,
 	RenderContext* renderContext
 ) const
 {
@@ -95,7 +96,8 @@ void ShadowProjectImageStep::build(
 	// Setup parameters for the shader.
 	auto pp = renderContext->alloc< ProgramParameters >();
 	pp->beginParameters(renderContext);
-	
+	pp->attachParameters(sharedParams);	
+
 	pp->setFloatParameter(s_handleTime, params.time);
 	pp->setFloatParameter(s_handleDeltaTime, params.deltaTime);
 	pp->setVectorParameter(s_handleShadowMapSizeAndBias, shadowMapSizeAndBias);
