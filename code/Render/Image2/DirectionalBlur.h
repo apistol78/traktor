@@ -18,13 +18,12 @@ namespace traktor
 	namespace render
 	{
 
-class ISimpleTexture;
 class Shader;
 
 /*!
  * \ingroup Render
  */
-class T_DLLCLASS AmbientOcclusionImageStep : public IImageStep
+class T_DLLCLASS DirectionalBlur : public IImageStep
 {
 	T_RTTI_CLASS;
 
@@ -35,11 +34,12 @@ public:
 		const ImageGraph* imageGraph,
 		const ImageGraphContext& cx,
 		const RenderGraph& renderGraph,
+		const ProgramParameters* sharedParams,
 		RenderContext* renderContext
 	) const override final;
 
 private:
-	friend class AmbientOcclusionImageStepData;
+	friend class DirectionalBlurData;
 
 	struct Source
 	{
@@ -49,10 +49,8 @@ private:
 
 	resource::Proxy< render::Shader > m_shader;
 	AlignedVector< Source > m_sources;
-	Vector4 m_offsets[64];
-	Vector4 m_directions[8];
-	Ref< ISimpleTexture > m_randomNormals;
-	Ref< ISimpleTexture > m_randomRotations;
+	AlignedVector< Vector4 > m_gaussianOffsetWeights;
+	Vector4 m_direction;
 };
 
 	}

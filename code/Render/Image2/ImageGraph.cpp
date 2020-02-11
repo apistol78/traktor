@@ -1,4 +1,5 @@
 #include "Core/Misc/SafeDestroy.h"
+#include "Render/ITexture.h"
 #include "Render/ScreenRenderer.h"
 #include "Render/Context/RenderContext.h"
 #include "Render/Frame/RenderGraph.h"
@@ -28,7 +29,8 @@ void ImageGraph::addTargetSets(RenderGraph* renderGraph) const
 
 void ImageGraph::addPasses(RenderGraph* renderGraph, RenderPass* parentPass, const ImageGraphContext& cx) const
 {
-	// Copy context and append internal targets.
+	// Copy context and append our internal targets so
+	// steps can have a single method of accessing input textures.
 	ImageGraphContext context = cx;
 	for (auto targetSet : m_targetSets)
 	{
@@ -57,16 +59,16 @@ void ImageGraph::addPasses(RenderGraph* renderGraph, RenderPass* parentPass, con
 			{
 				auto sharedParams = renderContext->alloc< ProgramParameters >();
 				sharedParams->beginParameters(renderContext);
-				// for (SmallMap< handle_t, float >::const_iterator i = m_scalarParameters.begin(); i != m_scalarParameters.end(); ++i)
-				// 	sharedParams->setFloatParameter(i->first, i->second);
-				// for (SmallMap< handle_t, Vector4 >::const_iterator i = m_vectorParameters.begin(); i != m_vectorParameters.end(); ++i)
-				// 	sharedParams->setVectorParameter(i->first, i->second);
-				// for (SmallMap< handle_t, resource::Proxy< ITexture > >::const_iterator i = m_textureParameters.begin(); i != m_textureParameters.end(); ++i)
-				// 	sharedParams->setTextureParameter(i->first, i->second);
+				for (auto it : m_scalarParameters)
+					sharedParams->setFloatParameter(it.first, it.second);
+				for (auto it : m_vectorParameters)
+					sharedParams->setVectorParameter(it.first, it.second);
+				for (auto it : m_textureParameters)
+					sharedParams->setTextureParameter(it.first, it.second);
 				sharedParams->endParameters(renderContext);
 				
 				for (auto step : pass->m_steps)
-					step->build(this, context, renderGraph, renderContext);
+					step->build(this, context, renderGraph, sharedParams, renderContext);
 			}
 		);
 
@@ -84,20 +86,35 @@ void ImageGraph::addPasses(RenderGraph* renderGraph, RenderPass* parentPass, con
 		{
 			auto sharedParams = renderContext->alloc< ProgramParameters >();
 			sharedParams->beginParameters(renderContext);
-			// for (SmallMap< handle_t, float >::const_iterator i = m_scalarParameters.begin(); i != m_scalarParameters.end(); ++i)
-			// 	sharedParams->setFloatParameter(i->first, i->second);
-			// for (SmallMap< handle_t, Vector4 >::const_iterator i = m_vectorParameters.begin(); i != m_vectorParameters.end(); ++i)
-			// 	sharedParams->setVectorParameter(i->first, i->second);
-			// for (SmallMap< handle_t, resource::Proxy< ITexture > >::const_iterator i = m_textureParameters.begin(); i != m_textureParameters.end(); ++i)
-			// 	sharedParams->setTextureParameter(i->first, i->second);
+			for (auto it : m_scalarParameters)
+				sharedParams->setFloatParameter(it.first, it.second);
+			for (auto it : m_vectorParameters)
+				sharedParams->setVectorParameter(it.first, it.second);
+			for (auto it : m_textureParameters)
+				sharedParams->setTextureParameter(it.first, it.second);
 			sharedParams->endParameters(renderContext);
 
 			for (auto step : m_steps)
-				step->build(this, context, renderGraph, renderContext);
+				step->build(this, context, renderGraph, sharedParams, renderContext);
 		}
 	);
 
 	parentPass->addSubPass(rp);
+}
+
+void ImageGraph::setFloatParameter(handle_t handle, float value)
+{
+	m_scalarParameters[handle] = value;
+}
+
+void ImageGraph::setVectorParameter(handle_t handle, const Vector4& value)
+{
+	m_vectorParameters[handle] = value;
+}
+
+void ImageGraph::setTextureParameter(handle_t handle, const resource::Proxy< ITexture >& value)
+{
+	m_textureParameters[handle] = value;
 }
 
 	}

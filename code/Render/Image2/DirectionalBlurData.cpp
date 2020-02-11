@@ -6,8 +6,8 @@
 #include "Core/Serialization/MemberComposite.h"
 #include "Core/Serialization/MemberEnum.h"
 #include "Render/Shader.h"
-#include "Render/Image2/DirectionalBlurImageStep.h"
-#include "Render/Image2/DirectionalBlurImageStepData.h"
+#include "Render/Image2/DirectionalBlur.h"
+#include "Render/Image2/DirectionalBlurData.h"
 #include "Resource/IResourceManager.h"
 #include "Resource/Member.h"
 
@@ -22,18 +22,18 @@ Random s_random;
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.DirectionalBlurImageStepData", 0, DirectionalBlurImageStepData, IImageStepData)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.DirectionalBlurData", 0, DirectionalBlurData, IImageStepData)
 
-DirectionalBlurImageStepData::DirectionalBlurImageStepData()
+DirectionalBlurData::DirectionalBlurData()
 :   m_blurType(BtGaussian)
 ,   m_direction(1.0f, 0.0f)
 ,   m_taps(15)
 {
 }
 
-Ref< const IImageStep > DirectionalBlurImageStepData::createInstance(resource::IResourceManager* resourceManager, IRenderSystem* /*renderSystem*/) const
+Ref< const IImageStep > DirectionalBlurData::createInstance(resource::IResourceManager* resourceManager, IRenderSystem* /*renderSystem*/) const
 {
-	Ref< DirectionalBlurImageStep > instance = new DirectionalBlurImageStep();
+	Ref< DirectionalBlur > instance = new DirectionalBlur();
 
 	// Bind shader.
 	if (!resourceManager->bind(m_shader, instance->m_shader))
@@ -170,7 +170,7 @@ Ref< const IImageStep > DirectionalBlurImageStepData::createInstance(resource::I
 	return instance; 
 }
 
-void DirectionalBlurImageStepData::serialize(ISerializer& s)
+void DirectionalBlurData::serialize(ISerializer& s)
 {
 	const MemberEnum< BlurType >::Key c_BlurType_Keys[] =
 	{
@@ -189,7 +189,7 @@ void DirectionalBlurImageStepData::serialize(ISerializer& s)
 	s >> MemberAlignedVector< Source, MemberComposite< Source > >(L"sources", m_sources);
 }
 
-void DirectionalBlurImageStepData::Source::serialize(ISerializer& s)
+void DirectionalBlurData::Source::serialize(ISerializer& s)
 {
 	s >> Member< std::wstring >(L"textureId", textureId);
 	s >> Member< std::wstring >(L"parameter", parameter);

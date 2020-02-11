@@ -23,7 +23,7 @@ class Shader;
 /*!
  * \ingroup Render
  */
-class T_DLLCLASS ShadowProjectImageStepData : public IImageStepData
+class T_DLLCLASS AmbientOcclusionData : public IImageStepData
 {
     T_RTTI_CLASS;
 
