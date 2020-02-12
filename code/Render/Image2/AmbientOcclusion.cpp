@@ -19,7 +19,7 @@ const static Handle s_handleDeltaTime(L"DeltaTime");
 
 		}
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.render.AmbientOcclusion", AmbientOcclusion, IImageStep)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.render.AmbientOcclusion", AmbientOcclusion, ImageStep)
 
 void AmbientOcclusion::setup(const ImageGraph* /*imageGraph*/, const ImageGraphContext& cx, RenderPass& pass) const
 {

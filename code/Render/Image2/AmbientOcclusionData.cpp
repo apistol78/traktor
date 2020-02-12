@@ -1,24 +1,19 @@
 #include "Core/Math/RandomGeometry.h"
 #include "Core/Misc/AutoPtr.h"
-#include "Core/Serialization/ISerializer.h"
-#include "Core/Serialization/Member.h"
-#include "Core/Serialization/MemberAlignedVector.h"
-#include "Core/Serialization/MemberComposite.h"
 #include "Render/IRenderSystem.h"
 #include "Render/Shader.h"
 #include "Render/Image2/AmbientOcclusion.h"
 #include "Render/Image2/AmbientOcclusionData.h"
 #include "Resource/IResourceManager.h"
-#include "Resource/Member.h"
 
 namespace traktor
 {
-    namespace render
-    {
+	namespace render
+	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.AmbientOcclusionData", 0, AmbientOcclusionData, IImageStepData)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.AmbientOcclusionData", 0, AmbientOcclusionData, ImageStepData)
 
-Ref< const IImageStep > AmbientOcclusionData::createInstance(resource::IResourceManager* resourceManager, IRenderSystem* renderSystem) const
+Ref< const ImageStep > AmbientOcclusionData::createInstance(resource::IResourceManager* resourceManager, IRenderSystem* renderSystem) const
 {
 	Ref< AmbientOcclusion > instance = new AmbientOcclusion();
 	RandomGeometry random;
@@ -115,17 +110,5 @@ Ref< const IImageStep > AmbientOcclusionData::createInstance(resource::IResource
 	return instance; 
 }
 
-void AmbientOcclusionData::serialize(ISerializer& s)
-{
-	s >> resource::Member< render::Shader >(L"shader", m_shader);
-	s >> MemberAlignedVector< Source, MemberComposite< Source > >(L"sources", m_sources);
-}
-
-void AmbientOcclusionData::Source::serialize(ISerializer& s)
-{
-	s >> Member< std::wstring >(L"textureId", textureId);
-	s >> Member< std::wstring >(L"parameter", parameter);
-}
-
-    }
+	}
 }

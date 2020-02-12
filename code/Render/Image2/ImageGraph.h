@@ -20,9 +20,9 @@ namespace traktor
     namespace render
     {
 
-class IImageStep;
 class ImageGraphContext;
 class ImagePass;
+class ImageStep;
 class ImageTargetSet;
 class ITexture;
 class RenderGraph;
@@ -51,7 +51,7 @@ private:
 
     RefArray< const ImageTargetSet > m_targetSets;
     RefArray< const ImagePass > m_passes;
-    RefArray< const IImageStep > m_steps;
+    RefArray< const ImageStep > m_steps;
 	SmallMap< handle_t, float > m_scalarParameters;
 	SmallMap< handle_t, Vector4 > m_vectorParameters;
 	SmallMap< handle_t, resource::Proxy< ITexture > > m_textureParameters;

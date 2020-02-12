@@ -1,8 +1,7 @@
 #pragma once
 
 #include "Core/Containers/AlignedVector.h"
-#include "Render/Types.h"
-#include "Render/Image2/IImageStep.h"
+#include "Render/Image2/ImageStep.h"
 #include "Resource/Proxy.h"
 
 // import/export mechanism.
@@ -23,14 +22,14 @@ class Shader;
 /*!
  * \ingroup Render
  */
-class T_DLLCLASS Simple : public IImageStep
+class T_DLLCLASS Simple : public ImageStep
 {
 	T_RTTI_CLASS;
 
 public:
 	virtual void setup(const ImageGraph* imageGraph, const ImageGraphContext& cx, RenderPass& pass) const override final;
 
-    virtual void build(
+	virtual void build(
 		const ImageGraph* imageGraph,
 		const ImageGraphContext& cx,
 		const RenderGraph& renderGraph,

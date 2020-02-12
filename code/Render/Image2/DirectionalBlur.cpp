@@ -37,7 +37,7 @@ Random s_random;
 
 		}
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.render.DirectionalBlur", DirectionalBlur, IImageStep)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.render.DirectionalBlur", DirectionalBlur, ImageStep)
 
 void DirectionalBlur::setup(const ImageGraph* /*imageGraph*/, const ImageGraphContext& cx, RenderPass& pass) const
 {
