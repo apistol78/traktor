@@ -217,9 +217,6 @@ bool WorldRendererDeferred::create(
 	const WorldCreateDesc& desc
 )
 {
-	render::RenderGraphTargetSetDesc rgtd;
-	render::Clear clear;
-
 	// Store settings.
 	m_settings = *desc.worldRenderSettings;
 	m_toneMapQuality = desc.toneMapQuality;
@@ -229,6 +226,7 @@ bool WorldRendererDeferred::create(
 	m_reflectionsQuality = desc.reflectionsQuality;
 	m_ambientOcclusionQuality = desc.ambientOcclusionQuality;
 	m_antiAliasQuality = desc.antiAliasQuality;
+	m_sharedDepthStencil = desc.sharedDepthStencil;
 
 	// Allocate frames.
 	m_frames.resize(desc.frameCount);
@@ -396,113 +394,6 @@ bool WorldRendererDeferred::create(
 		desc.width,
 		desc.height
 	);
-	
-	// GBuffer
-	rgtd = render::RenderGraphTargetSetDesc();
-	rgtd.count = 4;
-	rgtd.createDepthStencil = false;
-	rgtd.usingPrimaryDepthStencil = (desc.sharedDepthStencil == nullptr) ? true : false;
-	rgtd.targets[0].colorFormat = render::TfR16F;		// Depth (R)
-	rgtd.targets[1].colorFormat = render::TfR16G16F;	// Normals (RG)
-	rgtd.targets[2].colorFormat = render::TfR11G11B10F;	// Metalness (R), Roughness (G), Specular (B)
-	rgtd.targets[3].colorFormat = render::TfR11G11B10F;	// Surface color (RGB)
-	rgtd.screenWidthDenom = 1;
-	rgtd.screenHeightDenom = 1;
-	m_renderGraph->addTargetSet(s_handleGBuffer, rgtd, desc.sharedDepthStencil);
-
-	// Ambient occlusion.
-	rgtd = render::RenderGraphTargetSetDesc();
-	rgtd.count = 1;
-	rgtd.createDepthStencil = false;
-	rgtd.usingPrimaryDepthStencil = false;
-	rgtd.targets[0].colorFormat = render::TfR8;			// Ambient occlusion (R)
-	rgtd.screenWidthDenom = 1;
-	rgtd.screenHeightDenom = 1;
-	m_renderGraph->addTargetSet(s_handleAmbientOcclusion, rgtd);
-
-	// Velocity
-	rgtd = render::RenderGraphTargetSetDesc();
-	rgtd.count = 1;
-	rgtd.createDepthStencil = false;
-	rgtd.usingPrimaryDepthStencil = (desc.sharedDepthStencil == nullptr) ? true : false;
-	rgtd.targets[0].colorFormat = render::TfR16G16F;
-	rgtd.screenWidthDenom = 1;
-	rgtd.screenHeightDenom = 1;
-	m_renderGraph->addTargetSet(s_handleVelocity, rgtd, desc.sharedDepthStencil);
-
-	// Reflections
-	if (m_reflectionsQuality != QuDisabled)
-	{
-		rgtd = render::RenderGraphTargetSetDesc();
-		rgtd.count = 1;
-		rgtd.createDepthStencil = false;
-		rgtd.usingPrimaryDepthStencil = (desc.sharedDepthStencil == nullptr) ? true : false;
-		rgtd.ignoreStencil = true;
-#if !defined(__ANDROID__) && !defined(__IOS__)
-		rgtd.targets[0].colorFormat = render::TfR16G16B16A16F;
-		rgtd.screenWidthDenom = 1;
-		rgtd.screenHeightDenom = 1;
-#else
-		rgtd.targets[0].colorFormat = render::TfR11G11B10F;
-		rgtd.screenWidthDenom = 2;
-		rgtd.screenHeightDenom = 2;
-#endif
-		m_renderGraph->addTargetSet(s_handleReflections, rgtd, desc.sharedDepthStencil);
-	}
-
-	const bool shadowsEnable = (bool)(m_shadowsQuality != QuDisabled);
-	if (shadowsEnable)
-	{
-		const auto& shadowSettings = m_settings.shadowSettings[m_shadowsQuality];
-
-		// Cascading shadow map.
-		rgtd = render::RenderGraphTargetSetDesc();
-		rgtd.count = 0;
-		rgtd.width = shadowSettings.resolution;
-		rgtd.height = shadowSettings.cascadingSlices * shadowSettings.resolution;
-		rgtd.createDepthStencil = true;
-		rgtd.usingPrimaryDepthStencil = false;
-		rgtd.usingDepthStencilAsTexture = true;
-		rgtd.ignoreStencil = true;
-		m_renderGraph->addTargetSet(s_handleShadowMapCascade, rgtd);
-
-		// Atlas shadow map.
-		rgtd = render::RenderGraphTargetSetDesc();
-		rgtd.count = 0;
-		rgtd.width =
-		rgtd.height = 4096;
-		rgtd.createDepthStencil = true;
-		rgtd.usingPrimaryDepthStencil = false;
-		rgtd.usingDepthStencilAsTexture = true;
-		rgtd.ignoreStencil = true;
-		m_renderGraph->addTargetSet(s_handleShadowMapAtlas, rgtd);
-
-		// Screen space shadow mask.
-		rgtd = render::RenderGraphTargetSetDesc();
-		rgtd.count = 1;
-		rgtd.width = 0;
-		rgtd.height = 0;
-		rgtd.createDepthStencil = false;
-		rgtd.usingPrimaryDepthStencil = (desc.sharedDepthStencil == nullptr) ? true : false;
-		rgtd.ignoreStencil = true;
-		rgtd.targets[0].colorFormat = render::TfR8;
-		rgtd.screenWidthDenom = m_shadowSettings.maskDenominator;
-		rgtd.screenHeightDenom = m_shadowSettings.maskDenominator;
-		m_renderGraph->addTargetSet(s_handleShadowMask, rgtd, desc.sharedDepthStencil);
-	}
-
-	// Visual
-	for (int32_t i = 0; i < sizeof_array(s_handleVisual); ++i)
-	{
-		rgtd = render::RenderGraphTargetSetDesc();
-		rgtd.count = 1;
-		rgtd.createDepthStencil = false;
-		rgtd.usingPrimaryDepthStencil = (desc.sharedDepthStencil == nullptr) ? true : false;
-		rgtd.targets[0].colorFormat = render::TfR32G32B32A32F;
-		rgtd.screenWidthDenom = 1;
-		rgtd.screenHeightDenom = 1;
-		m_renderGraph->addTargetSet(s_handleVisual[i], rgtd, desc.sharedDepthStencil);
-	}
 
 	// Allocate render contexts.
 	for (auto& frame : m_frames)
@@ -512,24 +403,6 @@ bool WorldRendererDeferred::create(
 	m_screenRenderer = new render::ScreenRenderer();
 	if (!m_screenRenderer->create(renderSystem))
 		return false;
-
-	// Add target sets from image graphs.
-	if (m_ambientOcclusion)
-		m_ambientOcclusion->addTargetSets(m_renderGraph);
-	if (m_antiAlias)
-		m_antiAlias->addTargetSets(m_renderGraph);
-	if (m_visual)
-		m_visual->addTargetSets(m_renderGraph);
-	if (m_gammaCorrection)
-		m_gammaCorrection->addTargetSets(m_renderGraph);
-	if (m_motionBlurPrime)
-		m_motionBlurPrime->addTargetSets(m_renderGraph);
-	if (m_motionBlur)
-		m_motionBlur->addTargetSets(m_renderGraph);
-	if (m_toneMap)
-		m_toneMap->addTargetSets(m_renderGraph);
-	if (m_shadowMaskProject)
-		m_shadowMaskProject->addTargetSets(m_renderGraph);
 
 	return true;
 }
@@ -675,6 +548,20 @@ void WorldRendererDeferred::buildGBuffer(const WorldRenderView& worldRenderView)
 {
 	const float clearZ = m_settings.viewFarZ;
 
+	// Add GBuffer target set.
+	render::RenderGraphTargetSetDesc rgtd = {};
+	rgtd.count = 4;
+	rgtd.createDepthStencil = false;
+	rgtd.usingPrimaryDepthStencil = (m_sharedDepthStencil == nullptr) ? true : false;
+	rgtd.targets[0].colorFormat = render::TfR16F;		// Depth (R)
+	rgtd.targets[1].colorFormat = render::TfR16G16F;	// Normals (RG)
+	rgtd.targets[2].colorFormat = render::TfR11G11B10F;	// Metalness (R), Roughness (G), Specular (B)
+	rgtd.targets[3].colorFormat = render::TfR11G11B10F;	// Surface color (RGB)
+	rgtd.screenWidthDenom = 1;
+	rgtd.screenHeightDenom = 1;
+	m_renderGraph->addTargetSet(s_handleGBuffer, rgtd, m_sharedDepthStencil);
+
+	// Add GBuffer render pass.
 	Ref< render::RenderPass > rp = new render::RenderPass(L"GBuffer");
 
 	render::Clear clear;
@@ -726,6 +613,17 @@ void WorldRendererDeferred::buildVelocity(const WorldRenderView& worldRenderView
 	if (m_motionBlurQuality == QuDisabled)
 		return;
 
+	// Add Velocity target set.
+	render::RenderGraphTargetSetDesc rgtd = {};
+	rgtd.count = 1;
+	rgtd.createDepthStencil = false;
+	rgtd.usingPrimaryDepthStencil = (m_sharedDepthStencil == nullptr) ? true : false;
+	rgtd.targets[0].colorFormat = render::TfR16G16F;
+	rgtd.screenWidthDenom = 1;
+	rgtd.screenHeightDenom = 1;
+	m_renderGraph->addTargetSet(s_handleVelocity, rgtd, m_sharedDepthStencil);
+
+	// Add Velocity render pass.
 	Ref< render::RenderPass > rp = new render::RenderPass(L"Velocity");
 	
 	if (m_motionBlurPrime)
@@ -773,6 +671,17 @@ void WorldRendererDeferred::buildVelocity(const WorldRenderView& worldRenderView
 
 void WorldRendererDeferred::buildAmbientOcclusion(const WorldRenderView& worldRenderView) const
 {
+	// Add ambient occlusion target set.
+	render::RenderGraphTargetSetDesc rgtd = {};
+	rgtd.count = 1;
+	rgtd.createDepthStencil = false;
+	rgtd.usingPrimaryDepthStencil = false;
+	rgtd.targets[0].colorFormat = render::TfR8;			// Ambient occlusion (R)
+	rgtd.screenWidthDenom = 1;
+	rgtd.screenHeightDenom = 1;
+	m_renderGraph->addTargetSet(s_handleAmbientOcclusion, rgtd, m_sharedDepthStencil);
+
+	// Add ambient occlusion render pass.
 	Ref< render::RenderPass > rp = new render::RenderPass(L"Ambient occlusion");
 
 	if (m_ambientOcclusion != nullptr)
@@ -810,6 +719,18 @@ void WorldRendererDeferred::buildCascadeShadowMap(const WorldRenderView& worldRe
 	Matrix44 viewInverse = view.inverse();
 	Frustum viewFrustum = worldRenderView.getViewFrustum();
 
+	// Add cascading shadow map target.
+	render::RenderGraphTargetSetDesc rgtd = {};
+	rgtd.count = 0;
+	rgtd.width = shadowSettings.resolution;
+	rgtd.height = shadowSettings.cascadingSlices * shadowSettings.resolution;
+	rgtd.createDepthStencil = true;
+	rgtd.usingPrimaryDepthStencil = false;
+	rgtd.usingDepthStencilAsTexture = true;
+	rgtd.ignoreStencil = true;
+	m_renderGraph->addTargetSet(s_handleShadowMapCascade, rgtd);
+
+	// Add cascading shadow map render pass.
 	Ref< render::RenderPass > rp = new render::RenderPass(L"Shadow cascade");
 
 	render::Clear clear;
@@ -919,6 +840,18 @@ void WorldRendererDeferred::buildAtlasShadowMap(const WorldRenderView& worldRend
 	Matrix44 viewInverse = view.inverse();
 	Frustum viewFrustum = worldRenderView.getViewFrustum();
 
+	// Add atlas shadow map target.
+	render::RenderGraphTargetSetDesc rgtd = {};
+	rgtd.count = 0;
+	rgtd.width =
+	rgtd.height = 4096;
+	rgtd.createDepthStencil = true;
+	rgtd.usingPrimaryDepthStencil = false;
+	rgtd.usingDepthStencilAsTexture = true;
+	rgtd.ignoreStencil = true;
+	m_renderGraph->addTargetSet(s_handleShadowMapAtlas, rgtd);
+
+	// Add atlas shadow map render pass.
 	int32_t atlasIndex = 0;
 	for (int32_t lightAtlasIndex : lightAtlasIndices)
 	{
@@ -1116,6 +1049,20 @@ void WorldRendererDeferred::buildShadowMask(const WorldRenderView& worldRenderVi
 	Matrix44 viewInverse = view.inverse();
 	Frustum viewFrustum = worldRenderView.getViewFrustum();
 
+	// Add screen space shadow mask target.
+	render::RenderGraphTargetSetDesc rgtd = {};
+	rgtd.count = 1;
+	rgtd.width = 0;
+	rgtd.height = 0;
+	rgtd.createDepthStencil = false;
+	rgtd.usingPrimaryDepthStencil = (m_sharedDepthStencil == nullptr) ? true : false;
+	rgtd.ignoreStencil = true;
+	rgtd.targets[0].colorFormat = render::TfR8;
+	rgtd.screenWidthDenom = m_shadowSettings.maskDenominator;
+	rgtd.screenHeightDenom = m_shadowSettings.maskDenominator;
+	m_renderGraph->addTargetSet(s_handleShadowMask, rgtd, m_sharedDepthStencil);
+
+	// Add screen space shadow mask render pass.
 	Ref< render::RenderPass > rp = new render::RenderPass(L"Shadow mask");
 
 	// Add sub-pass for each slice.
@@ -1185,6 +1132,24 @@ void WorldRendererDeferred::buildReflections(const WorldRenderView& worldRenderV
 	if (m_reflectionsQuality == QuDisabled)
 		return;
 
+	// Add Reflections target.
+	render::RenderGraphTargetSetDesc rgtd = {};
+	rgtd.count = 1;
+	rgtd.createDepthStencil = false;
+	rgtd.usingPrimaryDepthStencil = (m_sharedDepthStencil == nullptr) ? true : false;
+	rgtd.ignoreStencil = true;
+#if !defined(__ANDROID__) && !defined(__IOS__)
+	rgtd.targets[0].colorFormat = render::TfR16G16B16A16F;
+	rgtd.screenWidthDenom = 1;
+	rgtd.screenHeightDenom = 1;
+#else
+	rgtd.targets[0].colorFormat = render::TfR11G11B10F;
+	rgtd.screenWidthDenom = 2;
+	rgtd.screenHeightDenom = 2;
+#endif
+	m_renderGraph->addTargetSet(s_handleReflections, rgtd, m_sharedDepthStencil);
+
+	// Add Reflections render pass.
 	Ref< render::RenderPass > rp = new render::RenderPass(L"Reflections");
 
 	rp->addInput(s_handleGBuffer);
@@ -1259,8 +1224,18 @@ void WorldRendererDeferred::buildVisual(const WorldRenderView& worldRenderView, 
 	const bool shadowsEnable = (bool)(m_shadowsQuality != QuDisabled);
 	int32_t lightCount = (int32_t)m_lights.size();
 
-	Ref< render::RenderPass > rp = new render::RenderPass(L"Visual");
+	// Add visual[0] target set.
+	render::RenderGraphTargetSetDesc rgtd = {};
+	rgtd.count = 1;
+	rgtd.createDepthStencil = false;
+	rgtd.usingPrimaryDepthStencil = (m_sharedDepthStencil == nullptr) ? true : false;
+	rgtd.targets[0].colorFormat = render::TfR11G11B10F;
+	rgtd.screenWidthDenom = 1;
+	rgtd.screenHeightDenom = 1;
+	m_renderGraph->addTargetSet(s_handleVisual[0], rgtd, m_sharedDepthStencil);
 
+	// Add visual[0] render pass.
+	Ref< render::RenderPass > rp = new render::RenderPass(L"Visual");
 	rp->addInput(s_handleGBuffer);
 	rp->addInput(s_handleAmbientOcclusion);
 	rp->addInput(s_handleReflections);
@@ -1403,6 +1378,7 @@ void WorldRendererDeferred::buildProcess(const WorldRenderView& worldRenderView)
 	cx.associateTextureTargetSet(s_handleInputVelocity, s_handleVelocity, 0);
 	cx.setParams(ipd);
 
+	// Collect active image graphs.
 	StaticVector< render::ImageGraph*, 5 > processes;
 	if (m_motionBlur)
 		processes.push_back(m_motionBlur);
@@ -1415,6 +1391,24 @@ void WorldRendererDeferred::buildProcess(const WorldRenderView& worldRenderView)
 	if (m_antiAlias)
 		processes.push_back(m_antiAlias);
 
+	// Add visual[N] and image graph render targets.
+	for (size_t i = 1; i < processes.size(); ++i)
+	{
+		// Add visual[N] render target.
+		render::RenderGraphTargetSetDesc rgtd = {};
+		rgtd.count = 1;
+		rgtd.createDepthStencil = false;
+		rgtd.usingPrimaryDepthStencil = (m_sharedDepthStencil == nullptr) ? true : false;
+		rgtd.targets[0].colorFormat = render::TfR11G11B10F;
+		rgtd.screenWidthDenom = 1;
+		rgtd.screenHeightDenom = 1;
+		m_renderGraph->addTargetSet(s_handleVisual[i], rgtd, m_sharedDepthStencil);
+
+		// Add image graph render targets.
+		processes[i]->addTargetSets(m_renderGraph);
+	}
+
+	// Add visual[N] render passes.
 	for (size_t i = 0; i < processes.size(); ++i)
 	{
 		auto process = processes[i];
