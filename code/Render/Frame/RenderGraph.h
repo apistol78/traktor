@@ -24,6 +24,7 @@ namespace traktor
 
 class IRenderSystem;
 class RenderContext;
+class RenderGraphTargetSetPool;
 
 /*! Render graph.
  * \ingroup Render
@@ -52,9 +53,8 @@ public:
 	 * \param targetSetId Unique identifier of target.
 	 * \param targetSetDesc Render target set create description.
 	 * \param sharedDepthStencil Share depth/stencil with target set.
-	 * \return True if target set added.
 	 */
-	bool addTargetSet(
+	void addTargetSet(
 		handle_t targetSetId,
 		const RenderGraphTargetSetDesc& targetSetDesc,
 		IRenderTargetSet* sharedDepthStencil = nullptr
@@ -63,10 +63,9 @@ public:
 	/*! Get target set from target identifier.
 	 *
 	 * \param targetSetId Unique identifier of target.
-	 * \param history Get history target.
 	 * \return Render target set.
 	 */
-	IRenderTargetSet* getTargetSet(handle_t targetSetId, bool history = false) const;
+	IRenderTargetSet* getTargetSet(handle_t targetSetId) const;
 
 	/*! Add render pass to graph.
 	 *
@@ -86,13 +85,13 @@ public:
 private:
 	struct Target
 	{
-		//const wchar_t* name;
 		RenderGraphTargetSetDesc targetSetDesc;
 		Ref< IRenderTargetSet > sharedDepthStencilTargetSet;
-		Ref< IRenderTargetSet > rts[2];
+		Ref< IRenderTargetSet > rts;
 	};
 
 	Ref< IRenderSystem > m_renderSystem;
+	Ref< RenderGraphTargetSetPool > m_pool;
 	SmallMap< handle_t, Target > m_targets;
 	RefArray< const RenderPass > m_passes;
 	AlignedVector< uint32_t > m_order;

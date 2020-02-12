@@ -1189,8 +1189,8 @@ void WorldRendererDeferred::buildReflections(const WorldRenderView& worldRenderV
 
 	rp->addInput(s_handleGBuffer);
 
-	if (m_reflectionsQuality >= QuHigh)
-		rp->addInput(s_handleVisual[0], 0, true);
+	// if (m_reflectionsQuality >= QuHigh)
+	// 	rp->addInput(s_handleVisual[0], 0, true);
 
 	render::Clear clear;
 	clear.mask = render::CfColor;
@@ -1235,19 +1235,19 @@ void WorldRendererDeferred::buildReflections(const WorldRenderView& worldRenderV
 			renderContext->merge(render::RpAll);
 
 			// Render screenspace reflections.
-			if (m_reflectionsQuality >= QuHigh)
-			{
-				m_lightRenderer->renderReflections(
-					renderContext,
-					worldRenderView.getProjection(),
-					worldRenderView.getView(),
-					worldRenderView.getLastView(),
-					visualTargetSet->getColorTexture(0),	// \tbd using last frame copy without reprojection...
-					gbufferTargetSet->getColorTexture(0),	// depth
-					gbufferTargetSet->getColorTexture(1),	// normals
-					gbufferTargetSet->getColorTexture(2)	// metalness, roughness and specular
-				);
-			}
+			// if (m_reflectionsQuality >= QuHigh)
+			// {
+			// 	m_lightRenderer->renderReflections(
+			// 		renderContext,
+			// 		worldRenderView.getProjection(),
+			// 		worldRenderView.getView(),
+			// 		worldRenderView.getLastView(),
+			// 		visualTargetSet->getColorTexture(0),	// \tbd using last frame copy without reprojection...
+			// 		gbufferTargetSet->getColorTexture(0),	// depth
+			// 		gbufferTargetSet->getColorTexture(1),	// normals
+			// 		gbufferTargetSet->getColorTexture(2)	// metalness, roughness and specular
+			// 	);
+			// }
 		}
 	);
 

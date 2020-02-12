@@ -17,15 +17,6 @@ void RenderPass::addInput(handle_t targetSetId)
 	auto& input = m_inputs.push_back();
 	input.targetSetId = targetSetId;
 	input.colorIndex = 0;
-	input.history = false;
-}
-
-void RenderPass::addInput(handle_t targetSetId, int32_t colorIndex, bool history)
-{
-	auto& input = m_inputs.push_back();
-	input.targetSetId = targetSetId;
-	input.colorIndex = colorIndex;
-	input.history = history;
 }
 
 AlignedVector< RenderPass::Input > RenderPass::getInputs() const
