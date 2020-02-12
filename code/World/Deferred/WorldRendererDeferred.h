@@ -92,6 +92,8 @@ private:
 	Quality m_ambientOcclusionQuality;
 	Quality m_antiAliasQuality;
 
+	Ref< render::IRenderTargetSet > m_sharedDepthStencil;
+
 	Ref< render::ScreenRenderer > m_screenRenderer;
 	Ref< render::RenderGraph > m_renderGraph;
 	Ref< LightRendererDeferred > m_lightRenderer;
