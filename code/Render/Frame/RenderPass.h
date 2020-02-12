@@ -36,12 +36,10 @@ public:
 	{
 		handle_t targetSetId;	//!< Resource name.
 		int32_t colorIndex;		//!< Index of target's color attachment.
-		bool history;			//!< Read previous frame; useful when cyclic behaviour desired.
 
 		Input()
 		:	targetSetId(0)
 		,	colorIndex(0)
-		,	history(false)
 		{
 		}
 	};
@@ -65,8 +63,6 @@ public:
 	//! \{
 
 	void addInput(handle_t targetSetId);
-
-	void addInput(handle_t targetSetId, int32_t colorIndex, bool history);
 
 	AlignedVector< Input > getInputs() const;
 

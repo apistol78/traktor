@@ -5,6 +5,7 @@
 #include "Render/Context/RenderBlock.h"
 #include "Render/Context/RenderContext.h"
 #include "Render/Frame/RenderGraph.h"
+#include "Render/Frame/RenderGraphTargetSetPool.h"
 
 namespace traktor
 {
@@ -18,6 +19,7 @@ RenderGraph::RenderGraph(IRenderSystem* renderSystem, int32_t width, int32_t hei
 ,	m_width(width)
 ,	m_height(height)
 {
+	m_pool = new RenderGraphTargetSetPool(renderSystem, width, height);
 }
 
 void RenderGraph::destroy()
@@ -26,26 +28,25 @@ void RenderGraph::destroy()
 	m_targets.clear();
 	m_passes.clear();
 	m_order.clear();
+	m_pool = nullptr;
 }
 
-bool RenderGraph::addTargetSet(
+void RenderGraph::addTargetSet(
 	handle_t targetSetId,
 	const RenderGraphTargetSetDesc& targetSetDesc,
 	IRenderTargetSet* sharedDepthStencilTargetSet
 )
 {
-	if (m_targets.find(targetSetId) != m_targets.end())
-		return false;
-	m_targets[targetSetId].targetSetDesc = targetSetDesc;
-	m_targets[targetSetId].sharedDepthStencilTargetSet = sharedDepthStencilTargetSet;
-	return true;
+	auto& target = m_targets[targetSetId];
+	target.targetSetDesc = targetSetDesc;
+	target.sharedDepthStencilTargetSet = sharedDepthStencilTargetSet;
 }
 
-IRenderTargetSet* RenderGraph::getTargetSet(handle_t targetSetId, bool history) const
+IRenderTargetSet* RenderGraph::getTargetSet(handle_t targetSetId) const
 {
 	auto it = m_targets.find(targetSetId);
 	if (it != m_targets.end())
-		return it->second.rts[history ? 1 : 0];
+		return it->second.rts;
 	else
 		return nullptr;
 }
@@ -57,58 +58,12 @@ void RenderGraph::addPass(const RenderPass* pass)
 
 bool RenderGraph::validate()
 {
-	// Create targets.
+	// Acquire targets.
 	for (auto& tm : m_targets)
 	{
-		if (tm.second.rts[0])
-			continue;
-
-		const auto& td = tm.second.targetSetDesc;
-
-		RenderTargetSetCreateDesc rtscd = {};
-		rtscd.count = td.count;
-		rtscd.width = td.width;
-		rtscd.height = td.height;
-		rtscd.multiSample = 0;
-		rtscd.createDepthStencil = td.createDepthStencil;
-		rtscd.usingPrimaryDepthStencil = td.usingPrimaryDepthStencil;
-		rtscd.usingDepthStencilAsTexture = td.usingDepthStencilAsTexture;
-		rtscd.storeDepthStencil = true;
-		rtscd.ignoreStencil = false;
-		rtscd.generateMips = td.generateMips;
-
-		for (int32_t i = 0; i < td.count; ++i)
-			rtscd.targets[i].format = td.targets[i].colorFormat;
-		
-		if (td.screenWidthDenom > 0)
-			rtscd.width = (m_width + td.screenWidthDenom - 1) / td.screenWidthDenom;
-		if (td.screenHeightDenom > 0)
-			rtscd.height = (m_height + td.screenHeightDenom - 1) / td.screenHeightDenom;
-		if (td.maxWidth > 0)
-			rtscd.width = min< int32_t >(rtscd.width, td.maxWidth);
-		if (td.maxHeight > 0)
-			rtscd.height = min< int32_t >(rtscd.height, td.maxHeight);
-
-		tm.second.rts[0] = m_renderSystem->createRenderTargetSet(rtscd, tm.second.sharedDepthStencilTargetSet, T_FILE_LINE_W);
-		if (!tm.second.rts[0])
+		tm.second.rts = m_pool->acquire(tm.second.targetSetDesc, tm.second.sharedDepthStencilTargetSet);
+		if (!tm.second.rts)
 			return false;
-
-		// Check if any pass require history of this target.
-		bool needHistory = false;
-		for (auto pass : m_passes)
-		{
-			for (const auto& input : pass->getInputs())
-			{
-				if (input.targetSetId == tm.first)
-					needHistory |= input.history;
-			}
-		}
-		if (needHistory)
-		{
-			tm.second.rts[1] = m_renderSystem->createRenderTargetSet(rtscd, nullptr, T_FILE_LINE_W);
-			if (!tm.second.rts[1])
-				return false;
-		}
 	}
 
 	// Append passes depth-first.
@@ -143,7 +98,7 @@ bool RenderGraph::build(RenderContext* renderContext)
 			T_FATAL_ASSERT(it != m_targets.end());
 
 			auto tb = renderContext->alloc< TargetBeginRenderBlock >();
-			tb->renderTargetSet = it->second.rts[0];
+			tb->renderTargetSet = it->second.rts;
 			tb->clear = output.clear;
 			renderContext->enqueue(tb);			
 		}
@@ -167,16 +122,22 @@ bool RenderGraph::build(RenderContext* renderContext)
 		}
 	}
 
-	// Keep target history.
-	for (auto& target : m_targets)
+	// Release targets.
+	for (auto& tm : m_targets)
 	{
-		if (target.second.rts[1])
-			std::swap(target.second.rts[0], target.second.rts[1]);
+		if (tm.second.rts)
+		{
+			m_pool->release(tm.second.rts);
+			tm.second.rts = nullptr;
+		}
 	}
 
-	// Remove all passes.
-	m_order.resize(0);
+	// Remove all data; keep memory allocated for arrays
+	// since it's very likely this will be identically
+	// re-populated next frame.
+	m_targets.reset();
 	m_passes.resize(0);
+	m_order.resize(0);
 	return true;
 }
 
@@ -184,19 +145,12 @@ void RenderGraph::getDebugTargets(std::vector< render::DebugTarget >& outTargets
 {
 	for (auto it : m_targets)
 	{
-		if (it.second.rts[0])
+		if (it.second.rts)
 			outTargets.push_back(render::DebugTarget(
 				getParameterName(it.first),
 				render::DtvDefault,
-				it.second.rts[0]->getColorTexture(0)
+				it.second.rts->getColorTexture(0)
 			));
-
-		if (it.second.rts[1])
-			outTargets.push_back(render::DebugTarget(
-				getParameterName(it.first),
-				render::DtvDefault,
-				it.second.rts[1]->getColorTexture(0)
-			));			
 	}
 }
 
@@ -204,10 +158,6 @@ void RenderGraph::traverse(int32_t index, const std::function< void(int32_t) >& 
 {
 	for (const auto& input : m_passes[index]->getInputs())
 	{
-		// History inputs are not included since they usually indicate a cyclic dependency.
-		if (input.history)
-			continue;
-
 		for (int32_t i = 0; i < m_passes.size(); ++i)
 		{
 			if (i == index)
