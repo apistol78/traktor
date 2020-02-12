@@ -2,8 +2,7 @@
 
 #include "Core/Ref.h"
 #include "Core/Containers/AlignedVector.h"
-#include "Render/Types.h"
-#include "Render/Image2/IImageStep.h"
+#include "Render/Image2/ImageStep.h"
 #include "Resource/Proxy.h"
 
 // import/export mechanism.
@@ -25,7 +24,7 @@ class Shader;
 /*!
  * \ingroup Render
  */
-class T_DLLCLASS ShadowProject : public IImageStep
+class T_DLLCLASS ShadowProject : public ImageStep
 {
 	T_RTTI_CLASS;
 

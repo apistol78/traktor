@@ -17,7 +17,7 @@ namespace traktor
 	namespace render
 	{
 
-class IImageStep;
+class ImageStep;
 
 /*!
  * \ingroup Render
@@ -33,7 +33,7 @@ private:
 	friend class ImagePassData;
 
 	handle_t m_output;
-	RefArray< const IImageStep > m_steps;
+	RefArray< const ImageStep > m_steps;
 };
 
 	}

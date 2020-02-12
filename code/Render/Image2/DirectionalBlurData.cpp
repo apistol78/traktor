@@ -2,14 +2,11 @@
 #include "Core/Math/Random.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
-#include "Core/Serialization/MemberAlignedVector.h"
-#include "Core/Serialization/MemberComposite.h"
 #include "Core/Serialization/MemberEnum.h"
 #include "Render/Shader.h"
 #include "Render/Image2/DirectionalBlur.h"
 #include "Render/Image2/DirectionalBlurData.h"
 #include "Resource/IResourceManager.h"
-#include "Resource/Member.h"
 
 namespace traktor
 {
@@ -22,7 +19,7 @@ Random s_random;
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.DirectionalBlurData", 0, DirectionalBlurData, IImageStepData)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.DirectionalBlurData", 0, DirectionalBlurData, ImageStepData)
 
 DirectionalBlurData::DirectionalBlurData()
 :   m_blurType(BtGaussian)
@@ -31,7 +28,7 @@ DirectionalBlurData::DirectionalBlurData()
 {
 }
 
-Ref< const IImageStep > DirectionalBlurData::createInstance(resource::IResourceManager* resourceManager, IRenderSystem* /*renderSystem*/) const
+Ref< const ImageStep > DirectionalBlurData::createInstance(resource::IResourceManager* resourceManager, IRenderSystem* /*renderSystem*/) const
 {
 	Ref< DirectionalBlur > instance = new DirectionalBlur();
 
@@ -182,17 +179,11 @@ void DirectionalBlurData::serialize(ISerializer& s)
 		{ 0 }
 	};
 
+	ImageStepData::serialize(s);
+
 	s >> MemberEnum< BlurType >(L"blurType", m_blurType, c_BlurType_Keys);
 	s >> Member< Vector2 >(L"direction", m_direction);
 	s >> Member< int32_t >(L"taps", m_taps);
-	s >> resource::Member< render::Shader >(L"shader", m_shader);
-	s >> MemberAlignedVector< Source, MemberComposite< Source > >(L"sources", m_sources);
-}
-
-void DirectionalBlurData::Source::serialize(ISerializer& s)
-{
-	s >> Member< std::wstring >(L"textureId", textureId);
-	s >> Member< std::wstring >(L"parameter", parameter);
 }
 
     }

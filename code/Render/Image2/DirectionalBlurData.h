@@ -1,10 +1,7 @@
 #pragma once
 
-#include <string>
-#include "Core/Containers/AlignedVector.h"
 #include "Core/Math/Vector2.h"
-#include "Render/Image2/IImageStepData.h"
-#include "Resource/Id.h"
+#include "Render/Image2/ImageStepData.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -19,19 +16,17 @@ namespace traktor
     namespace render
     {
 
-class Shader;
-
 /*!
  * \ingroup Render
  */
-class T_DLLCLASS DirectionalBlurData : public IImageStepData
+class T_DLLCLASS DirectionalBlurData : public ImageStepData
 {
     T_RTTI_CLASS;
 
 public:
     DirectionalBlurData();
 
-    virtual Ref< const IImageStep > createInstance(resource::IResourceManager* resourceManager, IRenderSystem* renderSystem) const override final;
+    virtual Ref< const ImageStep > createInstance(resource::IResourceManager* resourceManager, IRenderSystem* renderSystem) const override final;
 
     virtual void serialize(ISerializer& s) override final;
 
@@ -49,19 +44,9 @@ private:
 		BtCircle2D
 	};
 
-    struct Source
-    {
-        std::wstring textureId;
-        std::wstring parameter;
-
-        void serialize(ISerializer& s);
-    };
-
 	BlurType m_blurType;
 	Vector2 m_direction;
 	int32_t m_taps;
-    resource::Id< Shader > m_shader;
-    AlignedVector< Source > m_sources;
 };
 
     }

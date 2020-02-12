@@ -1,9 +1,9 @@
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
 #include "Core/Serialization/MemberRefArray.h"
-#include "Render/Image2/IImageStepData.h"
 #include "Render/Image2/ImagePass.h"
 #include "Render/Image2/ImagePassData.h"
+#include "Render/Image2/ImageStepData.h"
 
 namespace traktor
 {
@@ -20,7 +20,7 @@ Ref< const ImagePass > ImagePassData::createInstance(resource::IResourceManager*
 
     for (auto stepData : m_steps)
     {
-        Ref< const IImageStep > step = stepData->createInstance(resourceManager, renderSystem);
+        Ref< const ImageStep > step = stepData->createInstance(resourceManager, renderSystem);
         if (!step)
             return nullptr;
         instance->m_steps.push_back(step);
@@ -32,7 +32,7 @@ Ref< const ImagePass > ImagePassData::createInstance(resource::IResourceManager*
 void ImagePassData::serialize(ISerializer& s)
 {
     s >> Member< std::wstring >(L"output", m_output);
-    s >> MemberRefArray< IImageStepData >(L"steps", m_steps);
+    s >> MemberRefArray< ImageStepData >(L"steps", m_steps);
 }
 
     }

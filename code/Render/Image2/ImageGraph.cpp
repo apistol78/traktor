@@ -3,10 +3,10 @@
 #include "Render/ScreenRenderer.h"
 #include "Render/Context/RenderContext.h"
 #include "Render/Frame/RenderGraph.h"
-#include "Render/Image2/IImageStep.h"
 #include "Render/Image2/ImageGraph.h"
 #include "Render/Image2/ImageGraphContext.h"
 #include "Render/Image2/ImagePass.h"
+#include "Render/Image2/ImageStep.h"
 #include "Render/Image2/ImageTargetSet.h"
 
 namespace traktor

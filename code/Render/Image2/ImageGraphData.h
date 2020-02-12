@@ -24,9 +24,9 @@ class IResourceManager;
     namespace render
     {
 
-class IImageStepData;
 class ImageGraph;
 class ImagePassData;
+class ImageStepData;
 class ImageTargetSetData;
 class IRenderSystem;
 
@@ -47,7 +47,7 @@ private:
 
     RefArray< ImageTargetSetData > m_targetSets;
     RefArray< ImagePassData > m_passes;
-    RefArray< IImageStepData > m_steps;
+    RefArray< ImageStepData > m_steps;
 };
 
     }

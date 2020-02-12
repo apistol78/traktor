@@ -24,8 +24,8 @@ class IResourceManager;
     namespace render
     {
 
-class IImageStepData;
 class ImagePass;
+class ImageStepData;
 class IRenderSystem;
 
 /*!
@@ -44,7 +44,7 @@ private:
     friend class ImageGraphPipeline;
 
     std::wstring m_output;
-    RefArray< IImageStepData > m_steps;
+    RefArray< ImageStepData > m_steps;
 };
 
     }
