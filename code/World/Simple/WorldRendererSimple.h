@@ -49,20 +49,12 @@ public:
 
 	virtual void attach(Entity* entity) override final;
 
-	virtual void build(const WorldRenderView& worldRenderView, int32_t frame) override final;
-
-	virtual void render(render::IRenderView* renderView, int32_t frame) override final;
+	virtual void build(const WorldRenderView& worldRenderView, render::RenderContext* renderContext) override final;
 
 private:
-	struct Frame
-	{
-		Ref< render::RenderContext > renderContext;
-	};
-
 	Ref< render::RenderGraph > m_renderGraph;
 	Ref< WorldEntityRenderers > m_entityRenderers;
 	Ref< GroupEntity > m_rootEntity;
-	AlignedVector< Frame > m_frames;
 };
 
 	}

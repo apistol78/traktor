@@ -19,6 +19,7 @@
 #include "Render/PrimitiveRenderer.h"
 #include "Render/ScreenRenderer.h"
 #include "Render/Shader.h"
+#include "Render/Context/RenderContext.h"
 #include "Render/Image/ImageProcess.h"
 #include "Resource/IResourceManager.h"
 #include "Scene/Scene.h"
@@ -146,6 +147,8 @@ bool PerspectiveRenderControl::create(ui::Widget* parent, SceneEditorContext* co
 	m_renderView = m_context->getRenderSystem()->createRenderView(desc);
 	if (!m_renderView)
 		return false;
+
+	m_renderContext = new render::RenderContext(1 * 1024 * 1024);
 
 	m_primitiveRenderer = new render::PrimitiveRenderer();
 	if (!m_primitiveRenderer->create(
@@ -513,18 +516,8 @@ void PerspectiveRenderControl::eventSize(ui::SizeEvent* event)
 void PerspectiveRenderControl::eventPaint(ui::PaintEvent* event)
 {
 	Ref< scene::Scene > sceneInstance = m_context->getScene();
-
-	float colorClear[4];
-	float deltaTime = float(m_timer.getDeltaTime());
-	float scaledTime = m_context->getTime();
-
-	m_colorClear.getRGBA32F(colorClear);
-
 	if (!sceneInstance || !m_renderView || !m_primitiveRenderer)
 		return;
-
-	const world::WorldRenderSettings* worldRenderSettings = sceneInstance->getWorldRenderSettings();
-	ui::Size sz = m_renderWidget->getInnerRect().getSize();
 
 	// Lazy create world renderer.
 	if (!m_worldRenderer)
@@ -534,7 +527,21 @@ void PerspectiveRenderControl::eventPaint(ui::PaintEvent* event)
 			return;
 	}
 
-	// Update world render view.
+	float colorClear[4]; m_colorClear.getRGBA32F(colorClear);
+	float deltaTime = float(m_timer.getDeltaTime());
+	float scaledTime = m_context->getTime();
+
+	const world::WorldRenderSettings* worldRenderSettings = sceneInstance->getWorldRenderSettings();
+	ui::Size sz = m_renderWidget->getInnerRect().getSize();
+
+	// Get current transformations.
+	Matrix44 projection = getProjectionTransform();
+	Matrix44 view = getViewTransform();
+
+	// Start building render context.
+	m_renderContext->flush();
+
+	// Build world.
 	m_worldRenderView.setPerspective(
 		float(sz.cx),
 		float(sz.cy),
@@ -543,42 +550,22 @@ void PerspectiveRenderControl::eventPaint(ui::PaintEvent* event)
 		worldRenderSettings->viewNearZ,
 		worldRenderSettings->viewFarZ
 	);
+	m_worldRenderView.setTimes(scaledTime, deltaTime, 1.0f);
+	m_worldRenderView.setView(m_worldRenderView.getView(), view);
+	m_worldRenderer->attach(sceneInstance->getRootEntity());
+	m_context->getEntityEventManager()->attach(m_worldRenderer);
+	m_worldRenderer->build(m_worldRenderView, m_renderContext);
 
-	// Get current transformations.
-	Matrix44 projection = getProjectionTransform();
-	Matrix44 view = getViewTransform();
-
-	// Render world.
-	render::Clear clear = { 0 };
+	// Render frame.
+	render::Clear clear = {};
 	clear.mask = render::CfColor | render::CfDepth | render::CfStencil;
 	clear.colors[0] = Color4f(colorClear[0], colorClear[1], colorClear[2], colorClear[3]);
 	clear.depth = 1.0f;
 	clear.stencil = 0;
-
 	if (m_renderView->begin(&clear))
 	{
-		// Render entities.
-		m_worldRenderView.setTimes(scaledTime, deltaTime, 1.0f);
-		m_worldRenderView.setView(m_worldRenderView.getView(), view);
-
-		Ref< scene::Scene > sceneInstance = m_context->getScene();
-		if (sceneInstance)
-		{
-			// Build frame from scene entities.
-			m_worldRenderer->attach(sceneInstance->getRootEntity());
-			m_context->getEntityEventManager()->attach(m_worldRenderer);
-			m_worldRenderer->build(m_worldRenderView, 0);
-
-			// Set post process parameters from scene instance.
-			// render::ImageProcess* postProcess = m_worldRenderer->getVisualImageProcess();
-			// if (postProcess)
-			// {
-			// 	for (SmallMap< render::handle_t, resource::Proxy< render::ITexture > >::const_iterator i = sceneInstance->getImageProcessParams().begin(); i != sceneInstance->getImageProcessParams().end(); ++i)
-			// 		postProcess->setTextureParameter(i->first, i->second);
-			// }
-		}
-
-		m_worldRenderer->render(m_renderView, 0);
+		// Render context.
+		m_renderContext->render(m_renderView);
 
 		// Render debug target.
 		if (m_debugTarget.texture)

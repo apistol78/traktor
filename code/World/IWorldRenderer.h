@@ -29,6 +29,7 @@ class IRenderSystem;
 class IRenderTargetSet;
 class IRenderView;
 class ITexture;
+class RenderContext;
 
 	}
 
@@ -124,24 +125,12 @@ public:
 	 */
 	virtual void attach(Entity* entity) = 0;
 
-	/*! Build "render contexts".
+	/*! Build "render context".
 	 *
 	 * \param worldRenderView World render view.
-	 * \param frame Multi threaded context frame.
-	 * \param entity Root entity.
+	 * \param renderContext Build into render context.
 	 */
-	virtual void build(const WorldRenderView& worldRenderView, int32_t frame) = 0;
-
-	//@}
-
-	/*! \name Render steps. */
-	//@{
-
-	/*! Render "render contexts".
-	 *
-	 * \param frame Multi threaded context frame.
-	 */
-	virtual void render(render::IRenderView* renderView, int32_t frame) = 0;
+	virtual void build(const WorldRenderView& worldRenderView, render::RenderContext* renderContext) = 0;
 
 	//@}
 };

@@ -69,14 +69,11 @@ public:
 
 	virtual void attach(Entity* entity) override final;
 
-	virtual void build(const WorldRenderView& worldRenderView, int32_t frame) override final;
-
-	virtual void render(render::IRenderView* renderView, int32_t frame) override final;
+	virtual void build(const WorldRenderView& worldRenderView, render::RenderContext* renderContext) override final;
 
 private:
 	struct Frame
 	{
-		Ref< render::RenderContext > renderContext;
 		Ref< render::StructBuffer > lightSBuffer;
 	};
 
@@ -103,7 +100,7 @@ private:
 	AlignedVector< Light > m_lights;
 
 	float m_slicePositions[MaxSliceCount + 1];
-	uint32_t m_count;
+	int32_t m_count;
 
 	void buildGBuffer(const WorldRenderView& worldRenderView);
 

@@ -31,7 +31,7 @@ Aabb3 StreamMeshComponent::getBoundingBox() const
 	return m_mesh->getBoundingBox();
 }
 
-void StreamMeshComponent::build(world::WorldContext& worldContext, const world::WorldRenderView& worldRenderView, const world::IWorldRenderPass& worldRenderPass)
+void StreamMeshComponent::build(const world::WorldContext& worldContext, const world::WorldRenderView& worldRenderView, const world::IWorldRenderPass& worldRenderPass)
 {
 	if (m_frame >= m_mesh->getFrameCount())
 		return;

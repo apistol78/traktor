@@ -35,7 +35,7 @@ public:
 	virtual void update(const world::UpdateParams& update) = 0;
 
 	virtual void build(
-		world::WorldContext& worldContext,
+		const world::WorldContext& worldContext,
 		const world::WorldRenderView& worldRenderView,
 		const world::IWorldRenderPass& worldRenderPass
 	) = 0;

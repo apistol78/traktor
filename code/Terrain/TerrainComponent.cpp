@@ -115,7 +115,7 @@ bool TerrainComponent::create(const TerrainComponentData& data)
 }
 
 void TerrainComponent::build(
-	world::WorldContext& worldContext,
+	const world::WorldContext& worldContext,
 	const world::WorldRenderView& worldRenderView,
 	const world::IWorldRenderPass& worldRenderPass,
 	float detailDistance,
@@ -519,7 +519,7 @@ void TerrainComponent::build(
 }
 
 void TerrainComponent::buildLayers(
-	world::WorldContext& worldContext,
+	const world::WorldContext& worldContext,
 	const world::WorldRenderView& worldRenderView,
 	const world::IWorldRenderPass& worldRenderPass
 )

@@ -89,8 +89,7 @@ const TypeInfoSet DecalRenderer::getRenderableTypes() const
 }
 
 void DecalRenderer::gather(
-	WorldContext& worldContext,
-	const WorldRenderView& worldRenderView,
+	const WorldContext& worldContext,
 	const Object* renderable,
 	AlignedVector< Light >& outLights
 )
@@ -98,7 +97,7 @@ void DecalRenderer::gather(
 }
 
 void DecalRenderer::build(
-	WorldContext& worldContext,
+	const WorldContext& worldContext,
 	const WorldRenderView& worldRenderView,
 	const IWorldRenderPass& worldRenderPass,
 	Object* renderable
@@ -123,7 +122,7 @@ void DecalRenderer::build(
 }
 
 void DecalRenderer::flush(
-	WorldContext& worldContext,
+	const WorldContext& worldContext,
 	const WorldRenderView& worldRenderView,
 	const IWorldRenderPass& worldRenderPass
 )
@@ -199,7 +198,7 @@ void DecalRenderer::flush(
 	m_decalComponents.resize(0);
 }
 
-void DecalRenderer::flush(WorldContext& worldContext)
+void DecalRenderer::flush(const WorldContext& worldContext)
 {
 }
 

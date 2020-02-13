@@ -81,7 +81,7 @@ void SplineEntity::update(const world::UpdateParams& update)
 }
 
 void SplineEntity::build(
-	world::WorldContext& worldContext,
+	const world::WorldContext& worldContext,
 	const world::WorldRenderView& worldRenderView,
 	const world::IWorldRenderPass& worldRenderPass
 )

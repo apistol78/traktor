@@ -28,6 +28,7 @@ class SkinnedMesh;
 class IRenderSystem;
 class IRenderView;
 class PrimitiveRenderer;
+class RenderContext;
 
 	}
 
@@ -83,6 +84,7 @@ private:
 	Ref< resource::IResourceManager > m_resourceManager;
 	Ref< render::IRenderSystem > m_renderSystem;
 	Ref< render::IRenderView > m_renderView;
+	Ref< render::RenderContext > m_renderContext;
 	Ref< render::PrimitiveRenderer > m_primitiveRenderer;
 	Ref< world::IWorldRenderer > m_worldRenderer;
 	world::WorldRenderView m_worldRenderView;

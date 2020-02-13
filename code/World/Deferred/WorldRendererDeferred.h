@@ -70,14 +70,11 @@ public:
 
 	virtual void attach(Entity* entity) override final;
 
-	virtual void build(const WorldRenderView& worldRenderView, int32_t frame) override final;
-
-	virtual void render(render::IRenderView* renderView, int32_t frame) override final;
+	virtual void build(const WorldRenderView& worldRenderView, render::RenderContext* renderContext) override final;
 
 private:
 	struct Frame
 	{
-		Ref< render::RenderContext > renderContext;
 		Ref< render::StructBuffer > lightSBuffer;
 		Ref< render::StructBuffer > tileSBuffer;
 	};
@@ -121,6 +118,8 @@ private:
 	float m_slicePositions[MaxSliceCount + 1];
 	Vector4 m_fogDistanceAndDensity;
 	Vector4 m_fogColor;
+
+	int32_t m_count;
 
 	void buildGBuffer(const WorldRenderView& worldRenderView) const;
 

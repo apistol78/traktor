@@ -15,18 +15,17 @@ const TypeInfoSet PathEntityRenderer::getRenderableTypes() const
 }
 
 void PathEntityRenderer::gather(
-	world::WorldContext& worldContext,
-	const world::WorldRenderView& worldRenderView,
+	const world::WorldContext& worldContext,
 	const Object* renderable,
 	AlignedVector< world::Light >& outLights
 )
 {
 	const PathEntity* pathEntity = mandatory_non_null_type_cast< const PathEntity* >(renderable);
-	worldContext.gather(worldRenderView, pathEntity->getEntity(), outLights);
+	worldContext.gather(pathEntity->getEntity(), outLights);
 }
 
 void PathEntityRenderer::build(
-	world::WorldContext& worldContext,
+	const world::WorldContext& worldContext,
 	const world::WorldRenderView& worldRenderView,
 	const world::IWorldRenderPass& worldRenderPass,
 	Object* renderable
@@ -37,14 +36,14 @@ void PathEntityRenderer::build(
 }
 
 void PathEntityRenderer::flush(
-	world::WorldContext& worldContext,
+	const world::WorldContext& worldContext,
 	const world::WorldRenderView& worldRenderView,
 	const world::IWorldRenderPass& worldRenderPass
 )
 {
 }
 
-void PathEntityRenderer::flush(world::WorldContext& worldContext)
+void PathEntityRenderer::flush(const world::WorldContext& worldContext)
 {
 }
 

@@ -29,7 +29,7 @@ Aabb3 IndoorMeshComponent::getBoundingBox() const
 	return m_mesh->getBoundingBox();
 }
 
-void IndoorMeshComponent::build(world::WorldContext& worldContext, const world::WorldRenderView& worldRenderView, const world::IWorldRenderPass& worldRenderPass)
+void IndoorMeshComponent::build(const world::WorldContext& worldContext, const world::WorldRenderView& worldRenderView, const world::IWorldRenderPass& worldRenderPass)
 {
 	if (!m_mesh->supportTechnique(worldRenderPass.getTechnique()))
 		return;

@@ -28,7 +28,7 @@ public:
 
 	virtual void build(
 		TerrainComponent& terrainComponent,
-		world::WorldContext& worldContext,
+		const world::WorldContext& worldContext,
 		const world::WorldRenderView& worldRenderView,
 		const world::IWorldRenderPass& worldRenderPass
 	) = 0;

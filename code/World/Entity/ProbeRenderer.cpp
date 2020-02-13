@@ -169,8 +169,7 @@ const TypeInfoSet ProbeRenderer::getRenderableTypes() const
 }
 
 void ProbeRenderer::gather(
-	WorldContext& worldContext,
-	const WorldRenderView& worldRenderView,
+	const WorldContext& worldContext,
 	const Object* renderable,
 	AlignedVector< Light >& outLights
 )
@@ -178,7 +177,7 @@ void ProbeRenderer::gather(
 }
 
 void ProbeRenderer::build(
-	WorldContext& worldContext,
+	const WorldContext& worldContext,
 	const WorldRenderView& worldRenderView,
 	const IWorldRenderPass& worldRenderPass,
 	Object* renderable
@@ -285,14 +284,14 @@ void ProbeRenderer::build(
 }
 
 void ProbeRenderer::flush(
-	WorldContext& worldContext,
+	const WorldContext& worldContext,
 	const WorldRenderView& worldRenderView,
 	const IWorldRenderPass& worldRenderPass
 )
 {
 }
 
-void ProbeRenderer::flush(WorldContext& worldContext)
+void ProbeRenderer::flush(const WorldContext& worldContext)
 {
 	render::RenderContext* renderContext = worldContext.getRenderContext();
 	T_ASSERT(renderContext);
