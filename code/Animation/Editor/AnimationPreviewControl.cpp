@@ -88,6 +88,8 @@ bool AnimationPreviewControl::create(ui::Widget* parent)
 	if (!m_renderView)
 		return false;
 
+	m_renderContext = new render::RenderContext(1 * 1024 * 1024);
+
 	m_primitiveRenderer = new render::PrimitiveRenderer();
 	if (!m_primitiveRenderer->create(m_resourceManager, m_renderSystem, 1))
 		return false;
@@ -302,20 +304,15 @@ void AnimationPreviewControl::eventSize(ui::SizeEvent* event)
 
 void AnimationPreviewControl::eventPaint(ui::PaintEvent* event)
 {
+	if (!m_renderView)
+		return;
+
 	float deltaTime = float(m_timer.getDeltaTime());
 	float scaledTime = float(m_timer.getElapsedTime());
 
 	float tmp[4];
 	m_colorClear.getRGBA32F(tmp);
 	Color4f clearColor(tmp[0], tmp[1], tmp[2], tmp[3]);
-
-	render::Clear cl;
-	cl.mask = render::CfColor | render::CfDepth;
-	cl.colors[0] = clearColor;
-	cl.depth = 1.0f;
-
-	if (!m_renderView || !m_renderView->begin(&cl))
-		return;
 
 	render::Viewport viewport = m_renderView->getViewport();
 	float aspect = float(viewport.width) / viewport.height;
@@ -334,9 +331,10 @@ void AnimationPreviewControl::eventPaint(ui::PaintEvent* event)
 		viewInverse.translation()
 	);
 
-	m_worldRenderView.setTimes(scaledTime, deltaTime, 1.0f);
-	m_worldRenderView.setView(viewTransform, viewTransform);
+	// Start building render context.
+	m_renderContext->flush();
 
+	// Build world.
 	if (m_entity)
 	{
 		world::UpdateParams up;
@@ -359,97 +357,110 @@ void AnimationPreviewControl::eventPaint(ui::PaintEvent* event)
 		lightEntity.setComponent(&lightComponent);
 		lightEntity.update(up);
 
+		m_worldRenderView.setTimes(scaledTime, deltaTime, 1.0f);
+		m_worldRenderView.setView(viewTransform, viewTransform);
+
 		m_worldRenderer->attach(&lightEntity);
 		m_worldRenderer->attach(m_entity);
-		m_worldRenderer->build(m_worldRenderView, 0);
+		m_worldRenderer->build(m_worldRenderView, m_renderContext);
 	}
 
-	m_worldRenderer->render(m_renderView, 0);
-
-	if (m_primitiveRenderer->begin(0, projectionTransform))
+	// Render frame.
+	render::Clear cl = {};
+	cl.mask = render::CfColor | render::CfDepth;
+	cl.colors[0] = clearColor;
+	cl.depth = 1.0f;
+	if (m_renderView->begin(&cl))
 	{
-		m_primitiveRenderer->pushView(viewTransform);
+		// Render context.
+		m_renderContext->render(m_renderView);
 
-		for (int x = -10; x <= 10; ++x)
+		// Render guide lines.
+		if (m_primitiveRenderer->begin(0, projectionTransform))
 		{
-			m_primitiveRenderer->drawLine(
-				Vector4(float(x), 0.0f, -10.0f, 1.0f),
-				Vector4(float(x), 0.0f, 10.0f, 1.0f),
-				(x == 0) ? 1.0f : 0.0f,
-				m_colorGrid
-			);
-			m_primitiveRenderer->drawLine(
-				Vector4(-10.0f, 0.0f, float(x), 1.0f),
-				Vector4(10.0f, 0.0f, float(x), 1.0f),
-				(x == 0) ? 1.0f : 0.0f,
-				m_colorGrid
-			);
+			m_primitiveRenderer->pushView(viewTransform);
+
+			for (int x = -10; x <= 10; ++x)
+			{
+				m_primitiveRenderer->drawLine(
+					Vector4(float(x), 0.0f, -10.0f, 1.0f),
+					Vector4(float(x), 0.0f, 10.0f, 1.0f),
+					(x == 0) ? 1.0f : 0.0f,
+					m_colorGrid
+				);
+				m_primitiveRenderer->drawLine(
+					Vector4(-10.0f, 0.0f, float(x), 1.0f),
+					Vector4(10.0f, 0.0f, float(x), 1.0f),
+					(x == 0) ? 1.0f : 0.0f,
+					m_colorGrid
+				);
+			}
+
+			//if (m_entity && m_entity->getSkeleton())
+			//{
+			//	m_primitiveRenderer->pushDepthState(false, false, false);
+
+			//	const resource::Proxy< Skeleton >& skeleton = m_entity->getSkeleton();
+
+			//	AlignedVector< Transform > poseTransforms = m_entity->getPoseTransforms();
+			//	if (poseTransforms.empty())
+			//		calculateJointTransforms(skeleton, poseTransforms);
+
+			//	if (poseTransforms.size() == skeleton->getJointCount())
+			//	{
+			//		for (uint32_t i = 0; i < skeleton->getJointCount(); ++i)
+			//		{
+			//			const Joint* joint = skeleton->getJoint(i);
+
+			//			Color4ub color = Color4ub(255, 255, 0, 128);
+
+			//			m_primitiveRenderer->drawWireFrame(poseTransforms[i].toMatrix44(), joint->getRadius() * 4.0f);
+
+			//			if (joint->getParent() >= 0)
+			//			{
+			//				const Joint* parent = skeleton->getJoint(joint->getParent());
+			//				T_ASSERT(parent);
+
+			//				Vector4 start = poseTransforms[joint->getParent()].translation().xyz1();
+			//				Vector4 end = poseTransforms[i].translation().xyz1();
+
+			//				Vector4 z = (end - start).normalized();
+			//				Vector4 y = cross(z, Vector4(0.0f, 1.0f, 0.0f, 0.0f));
+			//				Vector4 x = cross(y, z);
+
+			//				Scalar radius(parent->getRadius());
+			//				x *= radius;
+			//				y *= radius;
+			//				z *= radius;
+
+			//				m_primitiveRenderer->drawLine(start, start + z + x + y, color);
+			//				m_primitiveRenderer->drawLine(start, start + z - x + y, color);
+			//				m_primitiveRenderer->drawLine(start, start + z + x - y, color);
+			//				m_primitiveRenderer->drawLine(start, start + z - x - y, color);
+
+			//				m_primitiveRenderer->drawLine(start + z + x + y, end, color);
+			//				m_primitiveRenderer->drawLine(start + z - x + y, end, color);
+			//				m_primitiveRenderer->drawLine(start + z + x - y, end, color);
+			//				m_primitiveRenderer->drawLine(start + z - x - y, end, color);
+
+			//				m_primitiveRenderer->drawLine(start + z + x + y, start + z - x + y, color);
+			//				m_primitiveRenderer->drawLine(start + z - x + y, start + z - x - y, color);
+			//				m_primitiveRenderer->drawLine(start + z - x - y, start + z + x - y, color);
+			//				m_primitiveRenderer->drawLine(start + z + x - y, start + z + x + y, color);
+			//			}
+			//		}
+			//	}
+
+			//	m_primitiveRenderer->popDepthState();
+			//}
+
+			m_primitiveRenderer->end(0);
+			m_primitiveRenderer->render(m_renderView, 0);
 		}
 
-		//if (m_entity && m_entity->getSkeleton())
-		//{
-		//	m_primitiveRenderer->pushDepthState(false, false, false);
-
-		//	const resource::Proxy< Skeleton >& skeleton = m_entity->getSkeleton();
-
-		//	AlignedVector< Transform > poseTransforms = m_entity->getPoseTransforms();
-		//	if (poseTransforms.empty())
-		//		calculateJointTransforms(skeleton, poseTransforms);
-
-		//	if (poseTransforms.size() == skeleton->getJointCount())
-		//	{
-		//		for (uint32_t i = 0; i < skeleton->getJointCount(); ++i)
-		//		{
-		//			const Joint* joint = skeleton->getJoint(i);
-
-		//			Color4ub color = Color4ub(255, 255, 0, 128);
-
-		//			m_primitiveRenderer->drawWireFrame(poseTransforms[i].toMatrix44(), joint->getRadius() * 4.0f);
-
-		//			if (joint->getParent() >= 0)
-		//			{
-		//				const Joint* parent = skeleton->getJoint(joint->getParent());
-		//				T_ASSERT(parent);
-
-		//				Vector4 start = poseTransforms[joint->getParent()].translation().xyz1();
-		//				Vector4 end = poseTransforms[i].translation().xyz1();
-
-		//				Vector4 z = (end - start).normalized();
-		//				Vector4 y = cross(z, Vector4(0.0f, 1.0f, 0.0f, 0.0f));
-		//				Vector4 x = cross(y, z);
-
-		//				Scalar radius(parent->getRadius());
-		//				x *= radius;
-		//				y *= radius;
-		//				z *= radius;
-
-		//				m_primitiveRenderer->drawLine(start, start + z + x + y, color);
-		//				m_primitiveRenderer->drawLine(start, start + z - x + y, color);
-		//				m_primitiveRenderer->drawLine(start, start + z + x - y, color);
-		//				m_primitiveRenderer->drawLine(start, start + z - x - y, color);
-
-		//				m_primitiveRenderer->drawLine(start + z + x + y, end, color);
-		//				m_primitiveRenderer->drawLine(start + z - x + y, end, color);
-		//				m_primitiveRenderer->drawLine(start + z + x - y, end, color);
-		//				m_primitiveRenderer->drawLine(start + z - x - y, end, color);
-
-		//				m_primitiveRenderer->drawLine(start + z + x + y, start + z - x + y, color);
-		//				m_primitiveRenderer->drawLine(start + z - x + y, start + z - x - y, color);
-		//				m_primitiveRenderer->drawLine(start + z - x - y, start + z + x - y, color);
-		//				m_primitiveRenderer->drawLine(start + z + x - y, start + z + x + y, color);
-		//			}
-		//		}
-		//	}
-
-		//	m_primitiveRenderer->popDepthState();
-		//}
-
-		m_primitiveRenderer->end(0);
-		m_primitiveRenderer->render(m_renderView, 0);
+		m_renderView->end();
+		m_renderView->present();
 	}
-
-	m_renderView->end();
-	m_renderView->present();
 
 	event->consume();
 }

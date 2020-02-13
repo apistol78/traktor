@@ -265,10 +265,6 @@ bool WorldRendererForward::create(
 		desc.height
 	);
 
-	// Allocate render contexts.
-	for (auto& frame : m_frames)
-		frame.renderContext = new render::RenderContext(1 * 1024 * 1024);
-
 	// Create screen renderer.
 	m_screenRenderer = new render::ScreenRenderer();
 	if (!m_screenRenderer->create(renderSystem))
@@ -293,41 +289,22 @@ void WorldRendererForward::attach(Entity* entity)
 	m_rootEntity->addEntity(entity);
 }
 
-void WorldRendererForward::build(const WorldRenderView& worldRenderView, int32_t frame)
+void WorldRendererForward::build(const WorldRenderView& worldRenderView, render::RenderContext* renderContext)
 {
-	WorldContext wc(
-		m_entityRenderers,
-		m_frames[frame].renderContext,
-		m_rootEntity
-	);
-
-	// Reset render context by flushing it.
-	m_frames[frame].renderContext->flush();
+	int32_t frame = m_count % (int32_t)m_frames.size();
 
 	// Gather active lights.
 	m_lights.resize(0);
-	wc.gather(
-		worldRenderView,
-		m_rootEntity,
-		m_lights
-	);
-
-	// Discard excessive lights.
+	WorldContext(m_entityRenderers, m_rootEntity).gather(m_rootEntity, m_lights);
 	if (m_lights.size() > c_maxLightCount)
 		m_lights.resize(c_maxLightCount);
 
-	// Lock light sbuffer; \tbd data is currently written both when setting
+	// Lock light sbuffer; \note data is currently written both when setting
 	// up render passes and when executing passes.
 	LightShaderData* lightShaderData = (LightShaderData*)m_frames[frame].lightSBuffer->lock();
 	T_FATAL_ASSERT(lightShaderData != nullptr);
 
-	// \tbd Flush all entity renderers first, only used by probes atm and need to render to targets.
-	// Until we have RenderGraph properly implemented we need to make sure
-	// rendering probes doesn't nest render passes.
-	wc.flush();
-	wc.getRenderContext()->merge(render::RpAll);
-
-	// Add each pass to render graph.
+	// Add passes to render graph.
 	buildGBuffer(worldRenderView);
 	buildAmbientOcclusion(worldRenderView);
 	buildLights(worldRenderView, frame, lightShaderData);
@@ -339,20 +316,14 @@ void WorldRendererForward::build(const WorldRenderView& worldRenderView, int32_t
 		return;
 
 	// Build render context through render graph.
-	m_renderGraph->build(
-		m_frames[frame].renderContext
-	);
+	m_renderGraph->build(renderContext);
 
 	// Unlock light sbuffer.
 	m_frames[frame].lightSBuffer->unlock();
 
-	m_count++;
+	// Flush attached entities.
 	m_rootEntity->removeAllEntities();
-}
-
-void WorldRendererForward::render(render::IRenderView* renderView, int32_t frame)
-{
-	m_frames[frame].renderContext->render(renderView);
+	m_count++;
 }
 
 void WorldRendererForward::buildGBuffer(const WorldRenderView& worldRenderView)
@@ -375,8 +346,8 @@ void WorldRendererForward::buildGBuffer(const WorldRenderView& worldRenderView)
 	
 	render::Clear clear;
 	clear.mask = render::CfColor | render::CfDepth;
-	clear.colors[0] = Color4f(clearZ, clearZ, clearZ, clearZ);	// depth
-	clear.colors[1] = Color4f(0.0f, 0.0f, 0.0f, 0.0f);	// normal
+	clear.colors[0] = Color4f(clearZ, clearZ, clearZ, clearZ);
+	clear.colors[1] = Color4f(0.0f, 0.0f, 0.0f, 0.0f);
 	clear.depth = 1.0f;	
 	rp->setOutput(s_handleGBuffer, clear);
 

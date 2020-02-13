@@ -34,7 +34,7 @@ public:
 
 	virtual void update(const world::UpdateParams& update) override final;
 
-	virtual void build(world::WorldContext& worldContext, const world::WorldRenderView& worldRenderView, const world::IWorldRenderPass& worldRenderPass) override final;
+	virtual void build(const world::WorldContext& worldContext, const world::WorldRenderView& worldRenderView, const world::IWorldRenderPass& worldRenderPass) override final;
 
 	void removeAll();
 

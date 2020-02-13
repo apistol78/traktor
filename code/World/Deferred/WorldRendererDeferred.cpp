@@ -208,6 +208,7 @@ WorldRendererDeferred::WorldRendererDeferred()
 ,	m_shadowsQuality(QuDisabled)
 ,	m_ambientOcclusionQuality(QuDisabled)
 ,	m_antiAliasQuality(QuDisabled)
+,	m_count(0)
 {
 }
 
@@ -395,10 +396,6 @@ bool WorldRendererDeferred::create(
 		desc.height
 	);
 
-	// Allocate render contexts.
-	for (auto& frame : m_frames)
-		frame.renderContext = new render::RenderContext(1 * 1024 * 1024);
-
 	// Create screen renderer.
 	m_screenRenderer = new render::ScreenRenderer();
 	if (!m_screenRenderer->create(renderSystem))
@@ -428,26 +425,13 @@ void WorldRendererDeferred::attach(Entity* entity)
 	m_rootEntity->addEntity(entity);
 }
 
-void WorldRendererDeferred::build(const WorldRenderView& worldRenderView, int32_t frame)
+void WorldRendererDeferred::build(const WorldRenderView& worldRenderView, render::RenderContext* renderContext)
 {
-	WorldContext wc(
-		m_entityRenderers,
-		m_frames[frame].renderContext,
-		m_rootEntity
-	);
-
-	// Reset render context by flushing it.
-	m_frames[frame].renderContext->flush();
+	int32_t frame = m_count % (int32_t)m_frames.size();
 
 	// Gather active lights.
 	m_lights.resize(0);
-	wc.gather(
-		worldRenderView,
-		m_rootEntity,
-		m_lights
-	);
-
-	// Discard excessive lights.
+	WorldContext(m_entityRenderers, m_rootEntity).gather(m_rootEntity, m_lights);
 	if (m_lights.size() > c_maxLightCount)
 		m_lights.resize(c_maxLightCount);
 
@@ -506,12 +490,6 @@ void WorldRendererDeferred::build(const WorldRenderView& worldRenderView, int32_
 		}
 	}
 
-	// \tbd Flush all entity renderers first, only used by probes atm and need to render to targets.
-	// Until we have RenderGraph properly implemented we need to make sure
-	// rendering probes doesn't nest render passes.
-	wc.flush();
-	wc.getRenderContext()->merge(render::RpAll);
-
 	buildGBuffer(worldRenderView);
 	buildVelocity(worldRenderView);
 	buildAmbientOcclusion(worldRenderView);
@@ -528,20 +506,15 @@ void WorldRendererDeferred::build(const WorldRenderView& worldRenderView, int32_
 		return;
 
 	// Build render context through render graph.
-	m_renderGraph->build(
-		m_frames[frame].renderContext
-	);
+	m_renderGraph->build(renderContext);
 
 	// Unlock light sbuffers.
 	m_frames[frame].tileSBuffer->unlock();
 	m_frames[frame].lightSBuffer->unlock();
 
+	// Flush attached entities.
 	m_rootEntity->removeAllEntities();
-}
-
-void WorldRendererDeferred::render(render::IRenderView* renderView, int32_t frame)
-{
-	m_frames[frame].renderContext->render(renderView);
+	m_count++;
 }
 
 void WorldRendererDeferred::buildGBuffer(const WorldRenderView& worldRenderView) const

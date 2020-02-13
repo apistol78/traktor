@@ -16,19 +16,18 @@ const TypeInfoSet ComponentEntityRenderer::getRenderableTypes() const
 }
 
 void ComponentEntityRenderer::gather(
-	world::WorldContext& worldContext,
-	const world::WorldRenderView& worldRenderView,
+	const WorldContext& worldContext,
 	const Object* renderable,
-	AlignedVector< world::Light >& outLights
+	AlignedVector< Light >& outLights
 )
 {
 	const ComponentEntity* componentEntity = mandatory_non_null_type_cast< const ComponentEntity* >(renderable);
 	for (auto component : componentEntity->getComponents())
-		worldContext.gather(worldRenderView, component, outLights);
+		worldContext.gather(component, outLights);
 }
 
 void ComponentEntityRenderer::build(
-	WorldContext& worldContext,
+	const WorldContext& worldContext,
 	const WorldRenderView& worldRenderView,
 	const IWorldRenderPass& worldRenderPass,
 	Object* renderable
@@ -40,14 +39,14 @@ void ComponentEntityRenderer::build(
 }
 
 void ComponentEntityRenderer::flush(
-	WorldContext& worldContext,
+	const WorldContext& worldContext,
 	const WorldRenderView& worldRenderView,
 	const IWorldRenderPass& worldRenderPass
 )
 {
 }
 
-void ComponentEntityRenderer::flush(WorldContext& worldContext)
+void ComponentEntityRenderer::flush(const WorldContext& worldContext)
 {
 }
 

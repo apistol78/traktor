@@ -15,8 +15,7 @@ const TypeInfoSet SolidEntityRenderer::getRenderableTypes() const
 }
 
 void SolidEntityRenderer::gather(
-	world::WorldContext& worldContext,
-	const world::WorldRenderView& worldRenderView,
+	const world::WorldContext& worldContext,
 	const Object* renderable,
 	AlignedVector< world::Light >& outLights
 )
@@ -24,7 +23,7 @@ void SolidEntityRenderer::gather(
 }
 
 void SolidEntityRenderer::build(
-	world::WorldContext& worldContext,
+	const world::WorldContext& worldContext,
 	const world::WorldRenderView& worldRenderView,
 	const world::IWorldRenderPass& worldRenderPass,
 	Object* renderable
@@ -41,14 +40,14 @@ void SolidEntityRenderer::build(
 }
 
 void SolidEntityRenderer::flush(
-	world::WorldContext& worldContext,
+	const world::WorldContext& worldContext,
 	const world::WorldRenderView& worldRenderView,
 	const world::IWorldRenderPass& worldRenderPass
 )
 {
 }
 
-void SolidEntityRenderer::flush(world::WorldContext& worldContext)
+void SolidEntityRenderer::flush(const world::WorldContext& worldContext)
 {
 }
 

@@ -37,15 +37,17 @@ class T_DLLCLASS WorldContext : public Object
 	T_RTTI_CLASS;
 
 public:
-	explicit WorldContext(WorldEntityRenderers* entityRenderers, render::RenderContext* renderContext, Entity* rootEntity);
+	WorldContext(WorldEntityRenderers* entityRenderers, Entity* rootEntity);
 
-	void gather(const WorldRenderView& worldRenderView, const Object* renderable, AlignedVector< Light >& outLights);
+	WorldContext(WorldEntityRenderers* entityRenderers, render::RenderContext* renderContext, Entity* rootEntity);
 
-	void build(const WorldRenderView& worldRenderView, const IWorldRenderPass& worldRenderPass, Object* renderable);
+	void gather(const Object* renderable, AlignedVector< Light >& outLights) const;
 
-	void flush(const WorldRenderView& worldRenderView, const IWorldRenderPass& worldRenderPass);
+	void build(const WorldRenderView& worldRenderView, const IWorldRenderPass& worldRenderPass, Object* renderable) const;
 
-	void flush();
+	void flush(const WorldRenderView& worldRenderView, const IWorldRenderPass& worldRenderPass) const;
+
+	void flush() const;
 
 	WorldEntityRenderers* getEntityRenderers() const { return m_entityRenderers; }
 

@@ -41,26 +41,25 @@ public:
 	virtual const TypeInfoSet getRenderableTypes() const override final;
 
 	virtual void gather(
-		world::WorldContext& worldContext,
-		const world::WorldRenderView& worldRenderView,
+		const world::WorldContext& worldContext,
 		const Object* renderable,
 		AlignedVector< world::Light >& outLights
 	) override final;
 
 	virtual void build(
-		world::WorldContext& worldContext,
+		const world::WorldContext& worldContext,
 		const world::WorldRenderView& worldRenderView,
 		const world::IWorldRenderPass& worldRenderPass,
 		Object* renderable
 	) override final;
 
 	virtual void flush(
-		world::WorldContext& worldContext,
+		const world::WorldContext& worldContext,
 		const world::WorldRenderView& worldRenderView,
 		const world::IWorldRenderPass& worldRenderPass
 	) override final;
 
-	virtual void flush(world::WorldContext& worldContext) override final;
+	virtual void flush(const world::WorldContext& worldContext) override final;
 
 private:
 	Ref< PointRenderer > m_pointRenderer;

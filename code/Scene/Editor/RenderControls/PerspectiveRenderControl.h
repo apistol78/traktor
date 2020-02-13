@@ -27,6 +27,7 @@ class Widget;
 class IRenderTargetSet;
 class IRenderView;
 class PrimitiveRenderer;
+class RenderContext;
 class ScreenRenderer;
 class Shader;
 
@@ -88,6 +89,7 @@ private:
 	Ref< ui::Container > m_containerAspect;
 	Ref< ui::Widget > m_renderWidget;
 	Ref< render::IRenderView > m_renderView;
+	Ref< render::RenderContext > m_renderContext;
 	Ref< render::PrimitiveRenderer > m_primitiveRenderer;
 	Ref< render::ScreenRenderer > m_screenRenderer;
 	resource::Proxy< render::Shader > m_debugShader;

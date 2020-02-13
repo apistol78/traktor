@@ -26,26 +26,25 @@ public:
 	virtual const TypeInfoSet getRenderableTypes() const override final;
 
 	virtual void gather(
-		WorldContext& worldContext,
-		const WorldRenderView& worldRenderView,
+		const WorldContext& worldContext,
 		const Object* renderable,
 		AlignedVector< Light >& outLights
 	) override final;
 
 	virtual void build(
-		WorldContext& worldContext,
+		const WorldContext& worldContext,
 		const WorldRenderView& worldRenderView,
 		const IWorldRenderPass& worldRenderPass,
 		Object* renderable
 	) override final;
 
 	virtual void flush(
-		WorldContext& worldContext,
+		const WorldContext& worldContext,
 		const WorldRenderView& worldRenderView,
 		const IWorldRenderPass& worldRenderPass
 	) override final;
 
-	virtual void flush(WorldContext& worldContext) override final;
+	virtual void flush(const WorldContext& worldContext) override final;
 };
 
 	}

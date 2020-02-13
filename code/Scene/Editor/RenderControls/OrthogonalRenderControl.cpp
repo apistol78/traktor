@@ -10,6 +10,7 @@
 #include "Render/IRenderSystem.h"
 #include "Render/IRenderView.h"
 #include "Render/PrimitiveRenderer.h"
+#include "Render/Context/RenderContext.h"
 #include "Scene/Scene.h"
 #include "Scene/Editor/Camera.h"
 #include "Scene/Editor/CameraMesh.h"
@@ -113,6 +114,8 @@ bool OrthogonalRenderControl::create(ui::Widget* parent, SceneEditorContext* con
 	m_renderView = m_context->getRenderSystem()->createRenderView(desc);
 	if (!m_renderView)
 		return false;
+
+	m_renderContext = new render::RenderContext(1 * 1024 * 1024);
 
 	m_primitiveRenderer = new render::PrimitiveRenderer();
 	if (!m_primitiveRenderer->create(
@@ -474,13 +477,6 @@ void OrthogonalRenderControl::eventSize(ui::SizeEvent* event)
 void OrthogonalRenderControl::eventPaint(ui::PaintEvent* event)
 {
 	Ref< scene::Scene > sceneInstance = m_context->getScene();
-
-	float colorClear[4];
-	float deltaTime = float(m_timer.getDeltaTime());
-	float scaledTime = m_context->getTime();
-
-	m_colorClear.getRGBA32F(colorClear);
-
 	if (!sceneInstance || !m_renderView || !m_primitiveRenderer)
 		return;
 
@@ -492,45 +488,43 @@ void OrthogonalRenderControl::eventPaint(ui::PaintEvent* event)
 			return;
 	}
 
-	// Render world.
-	render::Clear clear = { 0 };
+	float colorClear[4]; m_colorClear.getRGBA32F(colorClear);
+	float deltaTime = float(m_timer.getDeltaTime());
+	float scaledTime = m_context->getTime();
+	float ratio = float(m_dirtySize.cx) / m_dirtySize.cy;
+	float width = m_magnification;
+	float height = m_magnification / ratio;
+	Matrix44 view = getViewTransform();
+
+	// Start building render context.
+	m_renderContext->flush();
+
+	// Build world.
+	const world::WorldRenderSettings* worldRenderSettings = sceneInstance->getWorldRenderSettings();
+	world::WorldRenderView worldRenderView;
+	worldRenderView.setIndex(m_worldIndex);
+	worldRenderView.setOrthogonal(
+		width,
+		height,
+		worldRenderSettings->viewNearZ,
+		worldRenderSettings->viewFarZ
+	);
+	worldRenderView.setTimes(scaledTime, deltaTime, 1.0f);
+	worldRenderView.setView(view, view);
+	m_worldRenderer->attach(sceneInstance->getRootEntity());
+	m_context->getEntityEventManager()->attach(m_worldRenderer);
+	m_worldRenderer->build(worldRenderView, m_renderContext);
+
+	// Render frame.
+	render::Clear clear = {};
 	clear.mask = render::CfColor | render::CfDepth | render::CfStencil;
 	clear.colors[0] = Color4f(colorClear[0], colorClear[1], colorClear[2], colorClear[3]);
 	clear.depth = 1.0f;
 	clear.stencil = 0;
-
 	if (m_renderView->begin(&clear))
 	{
-		const world::WorldRenderSettings* worldRenderSettings = sceneInstance->getWorldRenderSettings();
-
-		float ratio = float(m_dirtySize.cx) / m_dirtySize.cy;
-		float width = m_magnification;
-		float height = m_magnification / ratio;
-
-		world::WorldRenderView worldRenderView;
-		worldRenderView.setIndex(m_worldIndex);
-		worldRenderView.setOrthogonal(
-			width,
-			height,
-			worldRenderSettings->viewNearZ,
-			worldRenderSettings->viewFarZ
-		);
-
-		Matrix44 view = getViewTransform();
-
-		// Render entities.
-		worldRenderView.setTimes(scaledTime, deltaTime, 1.0f);
-		worldRenderView.setView(view, view);
-
-		Ref< scene::Scene > sceneInstance = m_context->getScene();
-		if (sceneInstance)
-		{
-			m_worldRenderer->attach(sceneInstance->getRootEntity());
-			m_context->getEntityEventManager()->attach(m_worldRenderer);
-			m_worldRenderer->build(worldRenderView, 0);
-		}
-
-		m_worldRenderer->render(m_renderView, 0);
+		// Render context.
+		m_renderContext->render(m_renderView);
 
 		// Draw wire guides.
 		m_primitiveRenderer->begin(0, worldRenderView.getProjection());

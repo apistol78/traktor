@@ -10,6 +10,7 @@
 #include "Editor/IEditor.h"
 #include "Render/IRenderSystem.h"
 #include "Render/IRenderView.h"
+#include "Render/Context/RenderContext.h"
 #include "Render/Image/ImageProcess.h"
 #include "Resource/IResourceManager.h"
 #include "Scene/Scene.h"
@@ -99,6 +100,8 @@ bool FinalRenderControl::create(ui::Widget* parent, SceneEditorContext* context,
 	m_renderView = m_context->getRenderSystem()->createRenderView(desc);
 	if (!m_renderView)
 		return false;
+
+	m_renderContext = new render::RenderContext(1 * 1024 * 1024);
 
 	m_renderWidget->addEventHandler< ui::MouseButtonDownEvent >(this, &FinalRenderControl::eventButtonDown);
 	m_renderWidget->addEventHandler< ui::MouseButtonUpEvent >(this, &FinalRenderControl::eventButtonUp);
@@ -385,16 +388,6 @@ void FinalRenderControl::eventSize(ui::SizeEvent* event)
 
 void FinalRenderControl::eventPaint(ui::PaintEvent* event)
 {
-	float colorClear[4];
-	float deltaTime = float(m_timer.getDeltaTime());
-	float scaledTime = m_context->getTime();
-	float scaledDeltaTime = m_context->isPlaying() ? deltaTime * m_context->getTimeScale() : 0.0f;
-
-	m_colorClear.getRGBA32F(colorClear);
-
-	if (!m_sceneInstance || !m_renderView)
-		return;
-
 	// Reload scene if changed.
 	if (m_sceneInstance.changed())
 	{
@@ -402,8 +395,8 @@ void FinalRenderControl::eventPaint(ui::PaintEvent* event)
 		m_sceneInstance.consume();
 	}
 
-	const world::WorldRenderSettings* worldRenderSettings = m_sceneInstance->getWorldRenderSettings();
-	ui::Size sz = m_renderWidget->getInnerRect().getSize();
+	if (!m_sceneInstance || !m_renderView)
+		return;
 
 	// Lazy create world renderer.
 	if (!m_worldRenderer)
@@ -413,15 +406,25 @@ void FinalRenderControl::eventPaint(ui::PaintEvent* event)
 			return;
 	}
 
+	float colorClear[4]; m_colorClear.getRGBA32F(colorClear);
+	float deltaTime = float(m_timer.getDeltaTime());
+	float scaledTime = m_context->getTime();
+	float scaledDeltaTime = m_context->isPlaying() ? deltaTime * m_context->getTimeScale() : 0.0f;
+
+	const world::WorldRenderSettings* worldRenderSettings = m_sceneInstance->getWorldRenderSettings();
+	ui::Size sz = m_renderWidget->getInnerRect().getSize();
+
 	// Update scene entities; final render control has it's own set of entities thus
 	// need to manually update those.
 	world::UpdateParams update;
 	update.totalTime = scaledTime;
 	update.deltaTime = deltaTime;
 	update.alternateTime = scaledTime;
-
 	m_sceneInstance->updateController(update);
 	m_sceneInstance->updateEntity(update);
+
+	// Start building render context.
+	m_renderContext->flush();
 
 	// Update world render view.
 	m_worldRenderView.setPerspective(
@@ -440,25 +443,19 @@ void FinalRenderControl::eventPaint(ui::PaintEvent* event)
 	// Build world.
 	m_worldRenderView.setTimes(scaledTime, deltaTime, 1.0f);
 	m_worldRenderView.setView(m_worldRenderView.getView(), view);
-
-	// Build frame from scene entities.
 	m_worldRenderer->attach(m_sceneInstance->getRootEntity());
 	m_context->getEntityEventManager()->attach(m_worldRenderer);
-	m_worldRenderer->build(m_worldRenderView, 0);
+	m_worldRenderer->build(m_worldRenderView, m_renderContext);
 
-	// Render world.
-	if (m_renderView->begin(nullptr))
+	// Render frame.
+	render::Clear clear = { 0 };
+	clear.mask = render::CfColor | render::CfDepth | render::CfStencil;
+	clear.colors[0] = Color4f(colorClear[0], colorClear[1], colorClear[2], colorClear[3]);
+	clear.depth = 1.0f;
+	clear.stencil = 0;
+	if (m_renderView->begin(&clear))
 	{
-		// Set post process parameters from scene instance.
-		// render::ImageProcess* postProcess = m_worldRenderer->getVisualImageProcess();
-		// if (postProcess)
-		// {
-		// 	for (const auto& imageProcessParam : m_sceneInstance->getImageProcessParams())
-		// 		postProcess->setTextureParameter(imageProcessParam.first, imageProcessParam.second);
-		// }
-
-		m_worldRenderer->render(m_renderView, 0);
-
+		m_renderContext->render(m_renderView);
 		m_renderView->end();
 		m_renderView->present();
 	}

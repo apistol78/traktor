@@ -20,15 +20,14 @@ const TypeInfoSet InstanceMeshComponentRenderer::getRenderableTypes() const
 
 
 void InstanceMeshComponentRenderer::gather(
-	world::WorldContext& worldContext,
-	const world::WorldRenderView& worldRenderView,
+	const world::WorldContext& worldContext,
 	const Object* renderable,
 	AlignedVector< world::Light >& outLights
 )
 {
 }
 void InstanceMeshComponentRenderer::build(
-	world::WorldContext& worldContext,
+	const world::WorldContext& worldContext,
 	const world::WorldRenderView& worldRenderView,
 	const world::IWorldRenderPass& worldRenderPass,
 	Object* renderable
@@ -64,7 +63,7 @@ void InstanceMeshComponentRenderer::build(
 }
 
 void InstanceMeshComponentRenderer::flush(
-	world::WorldContext& worldContext,
+	const world::WorldContext& worldContext,
 	const world::WorldRenderView& worldRenderView,
 	const world::IWorldRenderPass& worldRenderPass
 )
@@ -86,7 +85,7 @@ void InstanceMeshComponentRenderer::flush(
 	}
 }
 
-void InstanceMeshComponentRenderer::flush(world::WorldContext& worldContext)
+void InstanceMeshComponentRenderer::flush(const world::WorldContext& worldContext)
 {
 }
 

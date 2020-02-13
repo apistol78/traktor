@@ -38,18 +38,7 @@ bool WorldRendererSimple::create(
 {
 	m_entityRenderers = desc.entityRenderers;
 	m_rootEntity = new GroupEntity();
-
-	// Create render graph.
-	m_renderGraph = new render::RenderGraph(
-		renderSystem,
-		desc.width,
-		desc.height
-	);
-
-	m_frames.resize(desc.frameCount);
-	for (auto& frame : m_frames)
-		frame.renderContext = new render::RenderContext(1 * 1024 * 1024);
-	
+	m_renderGraph = new render::RenderGraph(renderSystem, desc.width, desc.height);
 	return true;
 }
 
@@ -58,7 +47,6 @@ void WorldRendererSimple::destroy()
 	safeDestroy(m_renderGraph);
 	m_entityRenderers = nullptr;
 	m_rootEntity = nullptr;
-	m_frames.clear();
 }
 
 void WorldRendererSimple::attach(Entity* entity)
@@ -66,22 +54,16 @@ void WorldRendererSimple::attach(Entity* entity)
 	m_rootEntity->addEntity(entity);
 }
 
-void WorldRendererSimple::build(const WorldRenderView& worldRenderView, int32_t frame)
+void WorldRendererSimple::build(const WorldRenderView& worldRenderView, render::RenderContext* renderContext)
 {
-	WorldContext wc(
-		m_entityRenderers,
-		m_frames[frame].renderContext,
-		m_rootEntity
-	);
+	// WorldContext wc(
+	// 	m_entityRenderers,
+	// 	renderContext,
+	// 	m_rootEntity
+	// );
 
-	// Reset render context by flushing it.
-	wc.getRenderContext()->flush();
-
-	// \tbd Flush all entity renderers first, only used by probes atm and need to render to targets.
-	// Until we have RenderGraph properly implemented we need to make sure
-	// rendering probes doesn't nest render passes.
-	wc.flush();
-	wc.getRenderContext()->merge(render::RpAll);
+	// wc.flush();
+	// wc.getRenderContext()->merge(render::RpAll);
 
 	Ref< render::RenderPass > rp = new render::RenderPass(L"Visual");
 	rp->addBuild(
@@ -119,16 +101,10 @@ void WorldRendererSimple::build(const WorldRenderView& worldRenderView, int32_t 
 		return;
 
 	// Build render context through render graph.
-	m_renderGraph->build(
-		m_frames[frame].renderContext
-	);
+	m_renderGraph->build(renderContext);
 
+	// Flush attached entities.
 	m_rootEntity->removeAllEntities();
-}
-
-void WorldRendererSimple::render(render::IRenderView* renderView, int32_t frame)
-{
-	m_frames[frame].renderContext->render(renderView);
 }
 
 	}

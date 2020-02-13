@@ -33,8 +33,7 @@ const TypeInfoSet EffectEntityRenderer::getRenderableTypes() const
 }
 
 void EffectEntityRenderer::gather(
-	world::WorldContext& worldContext,
-	const world::WorldRenderView& worldRenderView,
+	const world::WorldContext& worldContext,
 	const Object* renderable,
 	AlignedVector< world::Light >& outLights
 )
@@ -42,7 +41,7 @@ void EffectEntityRenderer::gather(
 }
 
 void EffectEntityRenderer::build(
-	world::WorldContext& worldContext,
+	const world::WorldContext& worldContext,
 	const world::WorldRenderView& worldRenderView,
 	const world::IWorldRenderPass& worldRenderPass,
 	Object* renderable
@@ -80,7 +79,7 @@ void EffectEntityRenderer::build(
 }
 
 void EffectEntityRenderer::flush(
-	world::WorldContext& worldContext,
+	const world::WorldContext& worldContext,
 	const world::WorldRenderView& worldRenderView,
 	const world::IWorldRenderPass& worldRenderPass
 )
@@ -90,7 +89,7 @@ void EffectEntityRenderer::flush(
 	m_trailRenderer->flush(worldContext.getRenderContext(), worldRenderPass);
 }
 
-void EffectEntityRenderer::flush(world::WorldContext& worldContext)
+void EffectEntityRenderer::flush(const world::WorldContext& worldContext)
 {
 }
 

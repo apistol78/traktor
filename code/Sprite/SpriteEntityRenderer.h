@@ -26,21 +26,20 @@ public:
 	virtual const TypeInfoSet getEntityTypes() const override final;
 
 	virtual void gather(
-		world::WorldContext& worldContext,
-		const world::WorldRenderView& worldRenderView,
+		const world::WorldContext& worldContext,
 		const Object* renderable,
 		AlignedVector< world::Light >& outLights
 	) override final;
 
 	virtual void build(
-		world::WorldContext& worldContext,
+		const world::WorldContext& worldContext,
 		const world::WorldRenderView& worldRenderView,
 		const world::IWorldRenderPass& worldRenderPass,
 		world::Entity* entity
 	) override final;
 
 	virtual void flush(
-		world::WorldContext& worldContext,
+		const world::WorldContext& worldContext,
 		const world::WorldRenderView& worldRenderView,
 		const world::IWorldRenderPass& worldRenderPass
 	) override final;

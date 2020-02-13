@@ -305,7 +305,7 @@ void WorldLayer::build(const UpdateInfo& info, uint32_t frame)
 	if (eventManager)
 		eventManager->attach(m_worldRenderer);
 
-	m_worldRenderer->build(m_worldRenderView, frame);
+	// m_worldRenderer->build(m_worldRenderView, frame);
 
 	m_deltaTime = info.getFrameDeltaTime();
 }
@@ -327,7 +327,7 @@ void WorldLayer::render(uint32_t frame)
 	// }
 
 	// Render world.
-	m_worldRenderer->render(renderView, frame);
+	// m_worldRenderer->render(renderView, frame);
 }
 
 void WorldLayer::flush()

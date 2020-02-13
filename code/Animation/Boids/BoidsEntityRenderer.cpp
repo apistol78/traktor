@@ -14,8 +14,7 @@ const TypeInfoSet BoidsEntityRenderer::getRenderableTypes() const
 }
 
 void BoidsEntityRenderer::gather(
-	world::WorldContext& worldContext,
-	const world::WorldRenderView& worldRenderView,
+	const world::WorldContext& worldContext,
 	const Object* renderable,
 	AlignedVector< world::Light >& outLights
 )
@@ -23,7 +22,7 @@ void BoidsEntityRenderer::gather(
 }
 
 void BoidsEntityRenderer::build(
-	world::WorldContext& worldContext,
+	const world::WorldContext& worldContext,
 	const world::WorldRenderView& worldRenderView,
 	const world::IWorldRenderPass& worldRenderPass,
 	Object* renderable
@@ -34,14 +33,14 @@ void BoidsEntityRenderer::build(
 }
 
 void BoidsEntityRenderer::flush(
-	world::WorldContext& worldContext,
+	const world::WorldContext& worldContext,
 	const world::WorldRenderView& worldRenderView,
 	const world::IWorldRenderPass& worldRenderPass
 )
 {
 }
 
-void BoidsEntityRenderer::flush(world::WorldContext& worldContext)
+void BoidsEntityRenderer::flush(const world::WorldContext& worldContext)
 {
 }
 

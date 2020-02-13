@@ -14,8 +14,7 @@ const TypeInfoSet SpriteEntityRenderer::getEntityTypes() const
 }
 
 void SpriteEntityRenderer::gather(
-	world::WorldContext& worldContext,
-	const world::WorldRenderView& worldRenderView,
+	const world::WorldContext& worldContext,
 	const Object* renderable,
 	AlignedVector< world::Light >& outLights
 )
@@ -23,7 +22,7 @@ void SpriteEntityRenderer::gather(
 }
 
 void SpriteEntityRenderer::build(
-	world::WorldContext& worldContext,
+	const world::WorldContext& worldContext,
 	const world::WorldRenderView& worldRenderView,
 	const world::IWorldRenderPass& worldRenderPass,
 	world::Entity* entity
@@ -32,7 +31,7 @@ void SpriteEntityRenderer::build(
 }
 
 void SpriteEntityRenderer::flush(
-	world::WorldContext& worldContext,
+	const world::WorldContext& worldContext,
 	const world::WorldRenderView& worldRenderView,
 	const world::IWorldRenderPass& worldRenderPass
 )

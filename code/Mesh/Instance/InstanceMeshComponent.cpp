@@ -29,7 +29,7 @@ Aabb3 InstanceMeshComponent::getBoundingBox() const
 	return m_mesh->getBoundingBox();
 }
 
-void InstanceMeshComponent::build(world::WorldContext& worldContext, const world::WorldRenderView& worldRenderView, const world::IWorldRenderPass& worldRenderPass)
+void InstanceMeshComponent::build(const world::WorldContext& worldContext, const world::WorldRenderView& worldRenderView, const world::IWorldRenderPass& worldRenderPass)
 {
 	T_ASSERT_M(0, L"Forgot to register InstanceMeshComponentRenderer?");
 }

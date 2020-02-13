@@ -39,13 +39,17 @@ public:
 	 *
 	 * Called once per frame to gather active lights.
 	 *
+	 * \note
 	 * Currently specialized in gathering lights but
 	 * might be refactored in the future to be able
 	 * to gather other data as well.
+	 *
+	 * \param worldContext World context.
+	 * \param renderable Renderable instance.
+	 * \param outLights Gathered lights.
 	 */
 	virtual void gather(
-		WorldContext& worldContext,
-		const WorldRenderView& worldRenderView,
+		const WorldContext& worldContext,
 		const Object* renderable,
 		AlignedVector< Light >& outLights
 	) = 0;
@@ -55,7 +59,7 @@ public:
 	 * Build entity render blocks into render context.
 	 */
 	virtual void build(
-		WorldContext& worldContext,
+		const WorldContext& worldContext,
 		const WorldRenderView& worldRenderView,
 		const IWorldRenderPass& worldRenderPass,
 		Object* renderable
@@ -67,13 +71,13 @@ public:
 	 * renderer might have used.
 	 */
 	virtual void flush(
-		WorldContext& worldContext,
+		const WorldContext& worldContext,
 		const WorldRenderView& worldRenderView,
 		const IWorldRenderPass& worldRenderPass
 	) = 0;
 
 	/*! Render flush, last of frame. */
-	virtual void flush(WorldContext& worldContext) = 0;
+	virtual void flush(const WorldContext& worldContext) = 0;
 };
 
 	}

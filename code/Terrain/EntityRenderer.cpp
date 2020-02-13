@@ -50,8 +50,7 @@ const TypeInfoSet EntityRenderer::getRenderableTypes() const
 }
 
 void EntityRenderer::gather(
-	world::WorldContext& worldContext,
-	const world::WorldRenderView& worldRenderView,
+	const world::WorldContext& worldContext,
 	const Object* renderable,
 	AlignedVector< world::Light >& outLights
 )
@@ -59,7 +58,7 @@ void EntityRenderer::gather(
 }
 
 void EntityRenderer::build(
-	world::WorldContext& worldContext,
+	const world::WorldContext& worldContext,
 	const world::WorldRenderView& worldRenderView,
 	const world::IWorldRenderPass& worldRenderPass,
 	Object* renderable
@@ -78,14 +77,14 @@ void EntityRenderer::build(
 }
 
 void EntityRenderer::flush(
-	world::WorldContext& worldContext,
+	const world::WorldContext& worldContext,
 	const world::WorldRenderView& worldRenderView,
 	const world::IWorldRenderPass& worldRenderPass
 )
 {
 }
 
-void EntityRenderer::flush(world::WorldContext& worldContext)
+void EntityRenderer::flush(const world::WorldContext& worldContext)
 {
 }
 

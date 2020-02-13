@@ -14,8 +14,7 @@ const TypeInfoSet ClothEntityRenderer::getRenderableTypes() const
 }
 
 void ClothEntityRenderer::gather(
-	world::WorldContext& worldContext,
-	const world::WorldRenderView& worldRenderView,
+	const world::WorldContext& worldContext,
 	const Object* renderable,
 	AlignedVector< world::Light >& outLights
 )
@@ -23,7 +22,7 @@ void ClothEntityRenderer::gather(
 }
 
 void ClothEntityRenderer::build(
-	world::WorldContext& worldContext,
+	const world::WorldContext& worldContext,
 	const world::WorldRenderView& worldRenderView,
 	const world::IWorldRenderPass& worldRenderPass,
 	Object* renderable
@@ -34,14 +33,14 @@ void ClothEntityRenderer::build(
 }
 
 void ClothEntityRenderer::flush(
-	world::WorldContext& worldContext,
+	const world::WorldContext& worldContext,
 	const world::WorldRenderView& worldRenderView,
 	const world::IWorldRenderPass& worldRenderPass
 )
 {
 }
 
-void ClothEntityRenderer::flush(world::WorldContext& worldContext)
+void ClothEntityRenderer::flush(const world::WorldContext& worldContext)
 {
 }
 

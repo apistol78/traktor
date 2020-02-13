@@ -105,7 +105,7 @@ void PrecipitationComponent::update(const world::UpdateParams& update)
 	}
 }
 
-void PrecipitationComponent::build(world::WorldContext& worldContext, const world::WorldRenderView& worldRenderView, const world::IWorldRenderPass& worldRenderPass)
+void PrecipitationComponent::build(const world::WorldContext& worldContext, const world::WorldRenderView& worldRenderView, const world::IWorldRenderPass& worldRenderPass)
 {
 	if (!m_mesh->supportTechnique(worldRenderPass.getTechnique()))
 		return;

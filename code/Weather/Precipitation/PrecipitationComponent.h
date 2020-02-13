@@ -59,7 +59,7 @@ public:
 
 	virtual void update(const world::UpdateParams& update) override final;
 
-	void build(world::WorldContext& worldContext, const world::WorldRenderView& worldRenderView, const world::IWorldRenderPass& worldRenderPass);
+	void build(const world::WorldContext& worldContext, const world::WorldRenderView& worldRenderView, const world::IWorldRenderPass& worldRenderPass);
 
 private:
 	resource::Proxy< mesh::StaticMesh > m_mesh;
