@@ -1,7 +1,7 @@
 #include "Shape/Spline/CloneLayer.h"
 #include "Shape/Spline/SplineEntity.h"
 #include "World/IEntityBuilder.h"
-#include "World/WorldContext.h"
+#include "World/WorldBuildContext.h"
 
 namespace traktor
 {
@@ -71,13 +71,13 @@ void CloneLayer::pathChanged()
 }
 
 void CloneLayer::build(
-	const world::WorldContext& worldContext,
+	const world::WorldBuildContext& context,
 	const world::WorldRenderView& worldRenderView,
 	const world::IWorldRenderPass& worldRenderPass
 )
 {
 	for (auto entity : m_entities)
-		worldContext.build(worldRenderView, worldRenderPass, entity);
+		context.build(worldRenderView, worldRenderPass, entity);
 }
 
 	}

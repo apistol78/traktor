@@ -2,7 +2,7 @@
 #include "Weather/Clouds/CloudComponent.h"
 #include "Weather/Precipitation/PrecipitationComponent.h"
 #include "Weather/Sky/SkyComponent.h"
-#include "World/WorldContext.h"
+#include "World/WorldBuildContext.h"
 
 namespace traktor
 {
@@ -26,7 +26,7 @@ const TypeInfoSet WeatherRenderer::getRenderableTypes() const
 }
 
 void WeatherRenderer::gather(
-	const world::WorldContext& worldContext,
+	const world::WorldGatherContext& context,
 	const Object* renderable,
 	AlignedVector< world::Light >& outLights
 )
@@ -34,29 +34,29 @@ void WeatherRenderer::gather(
 }
 
 void WeatherRenderer::build(
-	const world::WorldContext& worldContext,
+	const world::WorldBuildContext& context,
 	const world::WorldRenderView& worldRenderView,
 	const world::IWorldRenderPass& worldRenderPass,
 	Object* renderable
 )
 {
 	if (auto cloudComponent = dynamic_type_cast< CloudComponent* >(renderable))
-		cloudComponent->build(worldContext.getRenderContext(), worldRenderView, worldRenderPass, m_primitiveRenderer);
+		cloudComponent->build(context.getRenderContext(), worldRenderView, worldRenderPass, m_primitiveRenderer);
 	else if (auto precipitationComponent = dynamic_type_cast< PrecipitationComponent* >(renderable))
-		precipitationComponent->build(worldContext, worldRenderView, worldRenderPass);
+		precipitationComponent->build(context, worldRenderView, worldRenderPass);
 	else if (auto skyComponent = dynamic_type_cast< SkyComponent* >(renderable))
-		skyComponent->build(worldContext.getRenderContext(), worldRenderView, worldRenderPass);
+		skyComponent->build(context.getRenderContext(), worldRenderView, worldRenderPass);
 }
 
 void WeatherRenderer::flush(
-	const world::WorldContext& worldContext,
+	const world::WorldBuildContext& context,
 	const world::WorldRenderView& worldRenderView,
 	const world::IWorldRenderPass& worldRenderPass
 )
 {
 }
 
-void WeatherRenderer::flush(const world::WorldContext& worldContext)
+void WeatherRenderer::flush(const world::WorldBuildContext& context)
 {
 }
 

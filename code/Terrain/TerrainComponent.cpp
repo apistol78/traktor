@@ -17,7 +17,7 @@
 #include "Terrain/TerrainComponent.h"
 #include "Terrain/TerrainSurfaceCache.h"
 #include "World/IWorldRenderPass.h"
-#include "World/WorldContext.h"
+#include "World/WorldBuildContext.h"
 #include "World/WorldRenderView.h"
 
 namespace traktor
@@ -115,7 +115,7 @@ bool TerrainComponent::create(const TerrainComponentData& data)
 }
 
 void TerrainComponent::build(
-	const world::WorldContext& worldContext,
+	const world::WorldBuildContext& context,
 	const world::WorldRenderView& worldRenderView,
 	const world::IWorldRenderPass& worldRenderPass,
 	float detailDistance,
@@ -326,7 +326,7 @@ void TerrainComponent::build(
 	if (updateCache)
 	{
 		m_surfaceCache->begin(
-			worldContext.getRenderContext(),
+			context.getRenderContext(),
 			m_terrain,
 			-worldExtent * Scalar(0.5f),
 			worldExtent
@@ -366,7 +366,7 @@ void TerrainComponent::build(
 
 			// Update surface cache.
 			m_surfaceCache->get(
-				worldContext.getRenderContext(),
+				context.getRenderContext(),
 				m_terrain,
 				-worldExtent * Scalar(0.5f),
 				worldExtent,
@@ -401,16 +401,16 @@ void TerrainComponent::build(
 	{
 		Patch& patch = m_patches[visiblePatch.patchId];
 
-		auto rb = worldContext.getRenderContext()->alloc< render::SimpleRenderBlock >("Terrain patch");
+		auto rb = context.getRenderContext()->alloc< render::SimpleRenderBlock >("Terrain patch");
 
 		rb->distance = visiblePatch.distance;
 		rb->program = (patch.lastSurfaceLod == 0) ? detailProgram : coarseProgram;
-		rb->programParams = worldContext.getRenderContext()->alloc< render::ProgramParameters >();
+		rb->programParams = context.getRenderContext()->alloc< render::ProgramParameters >();
 		rb->indexBuffer = m_indexBuffer;
 		rb->vertexBuffer = m_vertexBuffer;
 		rb->primitives = m_primitives[patch.lastPatchLod];
 
-		rb->programParams->beginParameters(worldContext.getRenderContext());
+		rb->programParams->beginParameters(context.getRenderContext());
 		worldRenderPass.setProgramParameters(rb->programParams, render::RpOpaque);
 
 		rb->programParams->setTextureParameter(m_handleHeightfield, m_terrain->getHeightMap());
@@ -433,14 +433,14 @@ void TerrainComponent::build(
 		else if (m_visualizeMode == VmPatchLod)
 			rb->programParams->setVectorParameter(m_handleDebugPatchColor, c_lodColor[patch.lastPatchLod]);
 
-		rb->programParams->endParameters(worldContext.getRenderContext());
+		rb->programParams->endParameters(context.getRenderContext());
 
-		worldContext.getRenderContext()->draw(render::RpOpaque, rb);
+		context.getRenderContext()->draw(render::RpOpaque, rb);
 	}
 
 #else
 
-	render::RenderContext* renderContext = worldContext.getRenderContext();
+	render::RenderContext* renderContext = context.getRenderContext();
 
 	// Setup shared shader parameters.
 	for (int32_t i = 0; i < 2; ++i)
@@ -519,7 +519,7 @@ void TerrainComponent::build(
 }
 
 void TerrainComponent::buildLayers(
-	const world::WorldContext& worldContext,
+	const world::WorldBuildContext& context,
 	const world::WorldRenderView& worldRenderView,
 	const world::IWorldRenderPass& worldRenderPass
 )
@@ -527,7 +527,7 @@ void TerrainComponent::buildLayers(
 	for (const auto layer : m_layers)
 		layer->build(
 			*this,
-			worldContext,
+			context,
 			worldRenderView,
 			worldRenderPass
 		);

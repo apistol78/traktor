@@ -17,7 +17,7 @@
 #include "Shape/Editor/Solid/PrimitiveEntityData.h"
 #include "Shape/Editor/Solid/SolidEntity.h"
 #include "World/IWorldRenderPass.h"
-#include "World/WorldContext.h"
+#include "World/WorldBuildContext.h"
 
 // https://github.com/evanw/csg.js/blob/master/csg.js
 
@@ -224,7 +224,7 @@ void SolidEntity::update(const world::UpdateParams& update)
 }
 
 void SolidEntity::build(
-	const world::WorldContext& worldContext,
+	const world::WorldBuildContext& context,
 	const world::WorldRenderView& worldRenderView,
 	const world::IWorldRenderPass& worldRenderPass
 )
@@ -239,7 +239,7 @@ void SolidEntity::build(
 	if (!program)
 		return;
 
-	auto renderContext = worldContext.getRenderContext();
+	auto renderContext = context.getRenderContext();
 	for (const auto& batch : m_batches)
 	{
 		render::SimpleRenderBlock* renderBlock = renderContext->alloc< render::SimpleRenderBlock >("Solid");

@@ -1,6 +1,7 @@
 #include "Animation/PathEntity/PathEntity.h"
 #include "Animation/PathEntity/PathEntityRenderer.h"
-#include "World/WorldContext.h"
+#include "World/WorldBuildContext.h"
+#include "World/WorldGatherContext.h"
 
 namespace traktor
 {
@@ -15,35 +16,35 @@ const TypeInfoSet PathEntityRenderer::getRenderableTypes() const
 }
 
 void PathEntityRenderer::gather(
-	const world::WorldContext& worldContext,
+	const world::WorldGatherContext& context,
 	const Object* renderable,
 	AlignedVector< world::Light >& outLights
 )
 {
 	const PathEntity* pathEntity = mandatory_non_null_type_cast< const PathEntity* >(renderable);
-	worldContext.gather(pathEntity->getEntity(), outLights);
+	context.gather(pathEntity->getEntity(), outLights);
 }
 
 void PathEntityRenderer::build(
-	const world::WorldContext& worldContext,
+	const world::WorldBuildContext& context,
 	const world::WorldRenderView& worldRenderView,
 	const world::IWorldRenderPass& worldRenderPass,
 	Object* renderable
 )
 {
 	PathEntity* pathEntity = mandatory_non_null_type_cast< PathEntity* >(renderable);
-	worldContext.build(worldRenderView, worldRenderPass, pathEntity->getEntity());
+	context.build(worldRenderView, worldRenderPass, pathEntity->getEntity());
 }
 
 void PathEntityRenderer::flush(
-	const world::WorldContext& worldContext,
+	const world::WorldBuildContext& context,
 	const world::WorldRenderView& worldRenderView,
 	const world::IWorldRenderPass& worldRenderPass
 )
 {
 }
 
-void PathEntityRenderer::flush(const world::WorldContext& worldContext)
+void PathEntityRenderer::flush(const world::WorldBuildContext& context)
 {
 }
 

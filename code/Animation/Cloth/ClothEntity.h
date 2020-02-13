@@ -23,7 +23,7 @@ namespace traktor
 	{
 
 class IWorldRenderPass;
-class WorldContext;
+class WorldBuildContext;
 class WorldRenderView;
 
 	}
@@ -67,7 +67,7 @@ public:
 	);
 
 	void build(
-		const world::WorldContext& worldContext,
+		const world::WorldBuildContext& context,
 		const world::WorldRenderView& worldRenderView,
 		const world::IWorldRenderPass& worldRenderPass
 	);

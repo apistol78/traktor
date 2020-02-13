@@ -11,7 +11,7 @@
 #include "Mesh/Skinned/SkinnedMesh.h"
 #include "World/Entity.h"
 #include "World/IWorldRenderPass.h"
-#include "World/WorldContext.h"
+#include "World/WorldBuildContext.h"
 #include "World/WorldRenderView.h"
 
 #if !defined(__EMSCRIPTEN__)
@@ -113,7 +113,7 @@ Aabb3 AnimatedMeshComponent::getBoundingBox() const
 	return boundingBox;
 }
 
-void AnimatedMeshComponent::build(const world::WorldContext& worldContext, const world::WorldRenderView& worldRenderView, const world::IWorldRenderPass& worldRenderPass)
+void AnimatedMeshComponent::build(const world::WorldBuildContext& context, const world::WorldRenderView& worldRenderView, const world::IWorldRenderPass& worldRenderPass)
 {
 	if (!m_mesh->supportTechnique(worldRenderPass.getTechnique()))
 		return;
@@ -148,7 +148,7 @@ void AnimatedMeshComponent::build(const world::WorldContext& worldContext, const
 	}
 
 	m_mesh->build(
-		worldContext.getRenderContext(),
+		context.getRenderContext(),
 		worldRenderPass,
 		lastWorldTransform,
 		worldTransform,
@@ -158,7 +158,7 @@ void AnimatedMeshComponent::build(const world::WorldContext& worldContext, const
 	);
 
 	for (auto binding : m_bindings)
-		worldContext.build(worldRenderView, worldRenderPass, binding.entity);
+		context.build(worldRenderView, worldRenderPass, binding.entity);
 
 	// If only entity's shadow is visible then reduce frequency of controller updates.
 	if (m_updateController == 0 && worldRenderPass.getTechnique() == s_handleWorld_ShadowWrite)

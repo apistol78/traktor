@@ -56,8 +56,8 @@ bool ProbeCapturer::create()
 }
 
 void ProbeCapturer::build(
-	WorldEntityRenderers* entityRenderers,
-	Entity* rootEntity,
+	const WorldEntityRenderers* entityRenderers,
+	const Entity* rootEntity,
 	const Vector4& pivot,
 	int32_t face
 )
@@ -153,7 +153,7 @@ void ProbeCapturer::build(
 	worldRenderView.setTimes(0.0f, 1.0f / 60.0f, 0.0f);
 	worldRenderView.setView(view, view);
 
-	m_worldRenderer->attach(rootEntity);
+	m_worldRenderer->attach(const_cast< Entity* >(rootEntity));
 	m_worldRenderer->build(worldRenderView, 0);
 }
 

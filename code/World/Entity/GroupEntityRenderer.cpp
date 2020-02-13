@@ -1,4 +1,5 @@
-#include "World/WorldContext.h"
+#include "World/WorldBuildContext.h"
+#include "World/WorldGatherContext.h"
 #include "World/Entity/GroupComponent.h"
 #include "World/Entity/GroupEntity.h"
 #include "World/Entity/GroupEntityRenderer.h"
@@ -24,7 +25,7 @@ const TypeInfoSet GroupEntityRenderer::getRenderableTypes() const
 }
 
 void GroupEntityRenderer::gather(
-	const WorldContext& worldContext,
+	const WorldGatherContext& context,
 	const Object* renderable,
 	AlignedVector< Light >& outLights
 )
@@ -32,20 +33,20 @@ void GroupEntityRenderer::gather(
 	if (auto groupComponent = dynamic_type_cast< const GroupComponent* >(renderable))
 	{
 		for (auto childEntity : groupComponent->getEntities())
-			worldContext.gather(childEntity, outLights);
+			context.gather(childEntity, outLights);
 	}
 	else if (auto groupEntity = dynamic_type_cast< const GroupEntity* >(renderable))
 	{
 		if ((groupEntity->getMask() & m_filter) != 0)
 		{
 			for (auto childEntity : groupEntity->getEntities())
-				worldContext.gather(childEntity, outLights);
+				context.gather(childEntity, outLights);
 		}
 	}
 }
 
 void GroupEntityRenderer::build(
-	const WorldContext& worldContext,
+	const WorldBuildContext& context,
 	const WorldRenderView& worldRenderView,
 	const IWorldRenderPass& worldRenderPass,
 	Object* renderable
@@ -54,27 +55,27 @@ void GroupEntityRenderer::build(
 	if (auto groupComponent = dynamic_type_cast< GroupComponent* >(renderable))
 	{
 		for (auto childEntity : groupComponent->getEntities())
-			worldContext.build(worldRenderView, worldRenderPass, childEntity);
+			context.build(worldRenderView, worldRenderPass, childEntity);
 	}
 	else if (auto groupEntity = dynamic_type_cast< GroupEntity* >(renderable))
 	{
 		if ((groupEntity->getMask() & m_filter) != 0)
 		{
 			for (auto childEntity : groupEntity->getEntities())
-				worldContext.build(worldRenderView, worldRenderPass, childEntity);
+				context.build(worldRenderView, worldRenderPass, childEntity);
 		}
 	}
 }
 
 void GroupEntityRenderer::flush(
-	const WorldContext& worldContext,
+	const WorldBuildContext& context,
 	const WorldRenderView& worldRenderView,
 	const IWorldRenderPass& worldRenderPass
 )
 {
 }
 
-void GroupEntityRenderer::flush(const WorldContext& worldContext)
+void GroupEntityRenderer::flush(const WorldBuildContext& context)
 {
 }
 

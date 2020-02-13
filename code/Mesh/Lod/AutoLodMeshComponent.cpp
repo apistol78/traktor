@@ -2,7 +2,7 @@
 #include "Mesh/Lod/AutoLodMesh.h"
 #include "Mesh/Lod/AutoLodMeshComponent.h"
 #include "World/IWorldRenderPass.h"
-#include "World/WorldContext.h"
+#include "World/WorldBuildContext.h"
 #include "World/WorldRenderView.h"
 
 namespace traktor
@@ -30,7 +30,7 @@ Aabb3 AutoLodMeshComponent::getBoundingBox() const
 	return m_mesh->getBoundingBox(m_lodDistance);
 }
 
-void AutoLodMeshComponent::build(const world::WorldContext& worldContext, const world::WorldRenderView& worldRenderView, const world::IWorldRenderPass& worldRenderPass)
+void AutoLodMeshComponent::build(const world::WorldBuildContext& context, const world::WorldRenderView& worldRenderView, const world::IWorldRenderPass& worldRenderPass)
 {
 	Transform transform = m_transform.get(worldRenderView.getInterval());
 
@@ -55,7 +55,7 @@ void AutoLodMeshComponent::build(const world::WorldContext& worldContext, const 
 
 	m_mesh->build(
 		m_lodDistance,
-		worldContext.getRenderContext(),
+		context.getRenderContext(),
 		worldRenderPass,
 		m_transform.get0(),
 		transform,

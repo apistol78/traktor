@@ -8,7 +8,7 @@
 #include "Render/Context/RenderContext.h"
 #include "Resource/IResourceManager.h"
 #include "World/IWorldRenderPass.h"
-#include "World/WorldContext.h"
+#include "World/WorldBuildContext.h"
 #include "World/WorldRenderView.h"
 #include "World/Entity/ProbeCapturer.h"
 #include "World/Entity/ProbeComponent.h"
@@ -169,7 +169,7 @@ const TypeInfoSet ProbeRenderer::getRenderableTypes() const
 }
 
 void ProbeRenderer::gather(
-	const WorldContext& worldContext,
+	const WorldGatherContext& context,
 	const Object* renderable,
 	AlignedVector< Light >& outLights
 )
@@ -177,7 +177,7 @@ void ProbeRenderer::gather(
 }
 
 void ProbeRenderer::build(
-	const WorldContext& worldContext,
+	const WorldBuildContext& context,
 	const WorldRenderView& worldRenderView,
 	const IWorldRenderPass& worldRenderPass,
 	Object* renderable
@@ -209,7 +209,7 @@ void ProbeRenderer::build(
 			return;
 	}
 
-	render::RenderContext* renderContext = worldContext.getRenderContext();
+	render::RenderContext* renderContext = context.getRenderContext();
 	T_ASSERT(renderContext);
 
 	const Matrix44& projection = worldRenderView.getProjection();
@@ -284,16 +284,16 @@ void ProbeRenderer::build(
 }
 
 void ProbeRenderer::flush(
-	const WorldContext& worldContext,
+	const WorldBuildContext& context,
 	const WorldRenderView& worldRenderView,
 	const IWorldRenderPass& worldRenderPass
 )
 {
 }
 
-void ProbeRenderer::flush(const WorldContext& worldContext)
+void ProbeRenderer::flush(const WorldBuildContext& context)
 {
-	render::RenderContext* renderContext = worldContext.getRenderContext();
+	render::RenderContext* renderContext = context.getRenderContext();
 	T_ASSERT(renderContext);
 
 	// Get dirty probe which needs to be updated.
@@ -319,14 +319,14 @@ void ProbeRenderer::flush(const WorldContext& worldContext)
 		{
 			// Build probe context.
 			m_probeCapturer->build(
-				worldContext.getEntityRenderers(),
-				worldContext.getRootEntity(),
+				context.getEntityRenderers(),
+				context.getRootEntity(),
 				m_capture->getTransform().translation().xyz1(),
 				m_captureFace
 			);
 
 			// Chain probe render as render block.
-			auto rb = worldContext.getRenderContext()->alloc< ProbeCaptureRenderBlock >();
+			auto rb = context.getRenderContext()->alloc< ProbeCaptureRenderBlock >();
 			rb->capturer = m_probeCapturer;
 			rb->texture = m_capture->getTexture();
 			rb->face = m_captureFace;
@@ -339,7 +339,7 @@ void ProbeRenderer::flush(const WorldContext& worldContext)
 		else if (m_captureFace == 6)
 		{
 			// Filter rest of mips.
-			auto rb = worldContext.getRenderContext()->alloc< ProbeDownSampleRenderBlock >();
+			auto rb = context.getRenderContext()->alloc< ProbeDownSampleRenderBlock >();
 			rb->filterer = m_probeFilterer;
 			rb->texture = m_capture->getTexture();
 			rb->pending = &m_capturePending;

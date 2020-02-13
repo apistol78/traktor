@@ -19,7 +19,8 @@ namespace traktor
 
 class Entity;
 class IWorldRenderPass;
-class WorldContext;
+class WorldBuildContext;
+class WorldGatherContext;
 class WorldRenderView;
 
 /*! Entity renderer.
@@ -44,12 +45,12 @@ public:
 	 * might be refactored in the future to be able
 	 * to gather other data as well.
 	 *
-	 * \param worldContext World context.
+	 * \param context World context.
 	 * \param renderable Renderable instance.
 	 * \param outLights Gathered lights.
 	 */
 	virtual void gather(
-		const WorldContext& worldContext,
+		const WorldGatherContext& context,
 		const Object* renderable,
 		AlignedVector< Light >& outLights
 	) = 0;
@@ -59,7 +60,7 @@ public:
 	 * Build entity render blocks into render context.
 	 */
 	virtual void build(
-		const WorldContext& worldContext,
+		const WorldBuildContext& context,
 		const WorldRenderView& worldRenderView,
 		const IWorldRenderPass& worldRenderPass,
 		Object* renderable
@@ -71,13 +72,13 @@ public:
 	 * renderer might have used.
 	 */
 	virtual void flush(
-		const WorldContext& worldContext,
+		const WorldBuildContext& context,
 		const WorldRenderView& worldRenderView,
 		const IWorldRenderPass& worldRenderPass
 	) = 0;
 
 	/*! Render flush, last of frame. */
-	virtual void flush(const WorldContext& worldContext) = 0;
+	virtual void flush(const WorldBuildContext& context) = 0;
 };
 
 	}

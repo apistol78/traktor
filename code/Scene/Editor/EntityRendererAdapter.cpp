@@ -22,16 +22,16 @@ const TypeInfoSet EntityRendererAdapter::getRenderableTypes() const
 }
 
 void EntityRendererAdapter::gather(
-	const world::WorldContext& worldContext,
+	const world::WorldGatherContext& context,
 	const Object* renderable,
 	AlignedVector< world::Light >& outLights
 )
 {
-	m_entityRenderer->gather(worldContext, renderable, outLights);
+	m_entityRenderer->gather(context, renderable, outLights);
 }
 
 void EntityRendererAdapter::build(
-	const world::WorldContext& worldContext,
+	const world::WorldBuildContext& context,
 	const world::WorldRenderView& worldRenderView,
 	const world::IWorldRenderPass& worldRenderPass,
 	Object* renderable
@@ -41,7 +41,7 @@ void EntityRendererAdapter::build(
 	if (!entityAdapter || m_filter(entityAdapter))
 	{
 		m_entityRenderer->build(
-			worldContext,
+			context,
 			worldRenderView,
 			worldRenderPass,
 			renderable
@@ -51,21 +51,21 @@ void EntityRendererAdapter::build(
 }
 
 void EntityRendererAdapter::flush(
-	const world::WorldContext& worldContext,
+	const world::WorldBuildContext& context,
 	const world::WorldRenderView& worldRenderView,
 	const world::IWorldRenderPass& worldRenderPass
 )
 {
 	m_entityRenderer->flush(
-		worldContext,
+		context,
 		worldRenderView,
 		worldRenderPass
 	);
 }
 
-void EntityRendererAdapter::flush(const world::WorldContext& worldContext)
+void EntityRendererAdapter::flush(const world::WorldBuildContext& context)
 {
-	m_entityRenderer->flush(worldContext);
+	m_entityRenderer->flush(context);
 }
 
 	}

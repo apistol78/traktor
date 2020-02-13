@@ -19,7 +19,7 @@ namespace traktor
 
 class Entity;
 class IWorldRenderPass;
-class WorldContext;
+class WorldBuildContext;
 class WorldRenderView;
 
 	}
@@ -47,7 +47,7 @@ public:
 
 	virtual void update(const world::UpdateParams& update) override;
 
-	virtual void build(const world::WorldContext& worldContext, const world::WorldRenderView& worldRenderView, const world::IWorldRenderPass& worldRenderPass) = 0;
+	virtual void build(const world::WorldBuildContext& context, const world::WorldRenderView& worldRenderView, const world::IWorldRenderPass& worldRenderPass) = 0;
 
 	void setParameterCallback(const IMeshParameterCallback* parameterCallback) { m_parameterCallback = parameterCallback; }
 

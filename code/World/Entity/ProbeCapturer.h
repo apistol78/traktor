@@ -38,8 +38,8 @@ public:
 	bool create();
 
 	void build(
-		WorldEntityRenderers* entityRenderers,
-		Entity* rootEntity,
+		const WorldEntityRenderers* entityRenderers,
+		const Entity* rootEntity,
 		const Vector4& pivot,
 		int32_t face
 	);

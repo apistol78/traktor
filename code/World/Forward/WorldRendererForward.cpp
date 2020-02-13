@@ -14,7 +14,8 @@
 #include "Render/Image2/ImageGraphContext.h"
 #include "Render/Image2/ImageGraphData.h"
 #include "Resource/IResourceManager.h"
-#include "World/WorldContext.h"
+#include "World/WorldBuildContext.h"
+#include "World/WorldGatherContext.h"
 #include "World/Entity/GroupEntity.h"
 #include "World/Forward/WorldRendererForward.h"
 #include "World/Forward/WorldRenderPassForward.h"
@@ -295,7 +296,7 @@ void WorldRendererForward::build(const WorldRenderView& worldRenderView, render:
 
 	// Gather active lights.
 	m_lights.resize(0);
-	WorldContext(m_entityRenderers, m_rootEntity).gather(m_rootEntity, m_lights);
+	WorldGatherContext(m_entityRenderers, m_rootEntity).gather(m_rootEntity, m_lights);
 	if (m_lights.size() > c_maxLightCount)
 		m_lights.resize(c_maxLightCount);
 
@@ -354,10 +355,10 @@ void WorldRendererForward::buildGBuffer(const WorldRenderView& worldRenderView)
 	rp->addBuild(
 		[=](const render::RenderGraph& renderGraph, render::RenderContext* renderContext)
 		{
-			WorldContext wc(
+			WorldBuildContext wc(
 				m_entityRenderers,
-				renderContext,
-				m_rootEntity
+				m_rootEntity,
+				renderContext
 			);
 
 			auto sharedParams = wc.getRenderContext()->alloc< render::ProgramParameters >();
@@ -509,10 +510,10 @@ void WorldRendererForward::buildLights(const WorldRenderView& worldRenderView, i
 			rp->addBuild(
 				[=](const render::RenderGraph& renderGraph, render::RenderContext* renderContext)
 				{
-					WorldContext wc(
+					WorldBuildContext wc(
 						m_entityRenderers,
-						renderContext,
-						m_rootEntity
+						m_rootEntity,
+						renderContext
 					);
 
 					const auto& light = m_lights[lightCascadeIndex];
@@ -643,10 +644,10 @@ void WorldRendererForward::buildLights(const WorldRenderView& worldRenderView, i
 				rp->addBuild(
 					[=](const render::RenderGraph& renderGraph, render::RenderContext* renderContext)
 					{
-						WorldContext wc(
+						WorldBuildContext wc(
 							m_entityRenderers,
-							renderContext,
-							m_rootEntity
+							m_rootEntity,
+							renderContext
 						);
 
 						const auto& light = m_lights[lightAtlasIndex];
@@ -787,10 +788,10 @@ void WorldRendererForward::buildVisual(const WorldRenderView& worldRenderView, i
 	rp->addBuild(
 		[=](const render::RenderGraph& renderGraph, render::RenderContext* renderContext)
 		{
-			WorldContext wc(
+			WorldBuildContext wc(
 				m_entityRenderers,
-				renderContext,
-				m_rootEntity
+				m_rootEntity,
+				renderContext
 			);
 
 			auto gbufferTargetSet = renderGraph.getTargetSet(s_handleGBuffer);

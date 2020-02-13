@@ -12,7 +12,7 @@
 #include "Shape/Spline/ExtrudeShapeLayer.h"
 #include "Shape/Spline/SplineEntity.h"
 #include "World/IWorldRenderPass.h"
-#include "World/WorldContext.h"
+#include "World/WorldBuildContext.h"
 
 namespace traktor
 {
@@ -205,7 +205,7 @@ void ExtrudeShapeLayer::pathChanged()
 }
 
 void ExtrudeShapeLayer::build(
-	const world::WorldContext& worldContext,
+	const world::WorldBuildContext& context,
 	const world::WorldRenderView& worldRenderView,
 	const world::IWorldRenderPass& worldRenderPass
 )
@@ -220,7 +220,7 @@ void ExtrudeShapeLayer::build(
 	if (!program)
 		return;
 
-	auto renderContext = worldContext.getRenderContext();
+	auto renderContext = context.getRenderContext();
 
 	render::SimpleRenderBlock* renderBlock = renderContext->alloc< render::SimpleRenderBlock >("Extrude");
 

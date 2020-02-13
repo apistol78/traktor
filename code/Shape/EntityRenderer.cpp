@@ -1,6 +1,6 @@
 #include "Shape/EntityRenderer.h"
 #include "Shape/Spline/SplineEntity.h"
-#include "World/WorldContext.h"
+#include "World/WorldBuildContext.h"
 
 namespace traktor
 {
@@ -15,7 +15,7 @@ const TypeInfoSet EntityRenderer::getRenderableTypes() const
 }
 
 void EntityRenderer::gather(
-	const world::WorldContext& worldContext,
+	const world::WorldGatherContext& context,
 	const Object* renderable,
 	AlignedVector< world::Light >& outLights
 )
@@ -23,7 +23,7 @@ void EntityRenderer::gather(
 }
 
 void EntityRenderer::build(
-	const world::WorldContext& worldContext,
+	const world::WorldBuildContext& context,
 	const world::WorldRenderView& worldRenderView,
 	const world::IWorldRenderPass& worldRenderPass,
 	Object* renderable
@@ -32,7 +32,7 @@ void EntityRenderer::build(
 	if (SplineEntity* splineEntity = dynamic_type_cast< SplineEntity* >(renderable))
 	{
 		splineEntity->build(
-			worldContext,
+			context,
 			worldRenderView,
 			worldRenderPass
 		);
@@ -40,14 +40,14 @@ void EntityRenderer::build(
 }
 
 void EntityRenderer::flush(
-	const world::WorldContext& worldContext,
+	const world::WorldBuildContext& context,
 	const world::WorldRenderView& worldRenderView,
 	const world::IWorldRenderPass& worldRenderPass
 )
 {
 }
 
-void EntityRenderer::flush(const world::WorldContext& worldContext)
+void EntityRenderer::flush(const world::WorldBuildContext& context)
 {
 }
 

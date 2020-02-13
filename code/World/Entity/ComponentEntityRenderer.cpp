@@ -1,5 +1,6 @@
 #include "World/IEntityComponent.h"
-#include "World/WorldContext.h"
+#include "World/WorldBuildContext.h"
+#include "World/WorldGatherContext.h"
 #include "World/Entity/ComponentEntity.h"
 #include "World/Entity/ComponentEntityRenderer.h"
 
@@ -16,18 +17,18 @@ const TypeInfoSet ComponentEntityRenderer::getRenderableTypes() const
 }
 
 void ComponentEntityRenderer::gather(
-	const WorldContext& worldContext,
+	const WorldGatherContext& context,
 	const Object* renderable,
 	AlignedVector< Light >& outLights
 )
 {
 	const ComponentEntity* componentEntity = mandatory_non_null_type_cast< const ComponentEntity* >(renderable);
 	for (auto component : componentEntity->getComponents())
-		worldContext.gather(component, outLights);
+		context.gather(component, outLights);
 }
 
 void ComponentEntityRenderer::build(
-	const WorldContext& worldContext,
+	const WorldBuildContext& context,
 	const WorldRenderView& worldRenderView,
 	const IWorldRenderPass& worldRenderPass,
 	Object* renderable
@@ -35,18 +36,18 @@ void ComponentEntityRenderer::build(
 {
 	ComponentEntity* componentEntity = mandatory_non_null_type_cast< ComponentEntity* >(renderable);
 	for (auto component : componentEntity->getComponents())
-		worldContext.build(worldRenderView, worldRenderPass, component);
+		context.build(worldRenderView, worldRenderPass, component);
 }
 
 void ComponentEntityRenderer::flush(
-	const WorldContext& worldContext,
+	const WorldBuildContext& context,
 	const WorldRenderView& worldRenderView,
 	const IWorldRenderPass& worldRenderPass
 )
 {
 }
 
-void ComponentEntityRenderer::flush(const WorldContext& worldContext)
+void ComponentEntityRenderer::flush(const WorldBuildContext& context)
 {
 }
 

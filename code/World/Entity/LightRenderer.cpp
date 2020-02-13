@@ -16,7 +16,7 @@ const TypeInfoSet LightRenderer::getRenderableTypes() const
 }
 
 void LightRenderer::gather(
-	const WorldContext& worldContext,
+	const WorldGatherContext& context,
 	const Object* renderable,
 	AlignedVector< Light >& outLights
 )
@@ -41,7 +41,7 @@ void LightRenderer::gather(
 }
 
 void LightRenderer::build(
-	const WorldContext& worldContext,
+	const WorldBuildContext& context,
 	const WorldRenderView& worldRenderView,
 	const IWorldRenderPass& worldRenderPass,
 	Object* renderable
@@ -50,14 +50,14 @@ void LightRenderer::build(
 }
 
 void LightRenderer::flush(
-	const WorldContext& worldContext,
+	const WorldBuildContext& context,
 	const WorldRenderView& worldRenderView,
 	const IWorldRenderPass& worldRenderPass
 )
 {
 }
 
-void LightRenderer::flush(const WorldContext& worldContext)
+void LightRenderer::flush(const WorldBuildContext& context)
 {
 }
 

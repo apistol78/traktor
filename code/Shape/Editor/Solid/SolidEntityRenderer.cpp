@@ -1,6 +1,6 @@
 #include "Shape/Editor/Solid/SolidEntity.h"
 #include "Shape/Editor/Solid/SolidEntityRenderer.h"
-#include "World/WorldContext.h"
+#include "World/WorldBuildContext.h"
 
 namespace traktor
 {
@@ -15,7 +15,7 @@ const TypeInfoSet SolidEntityRenderer::getRenderableTypes() const
 }
 
 void SolidEntityRenderer::gather(
-	const world::WorldContext& worldContext,
+	const world::WorldGatherContext& context,
 	const Object* renderable,
 	AlignedVector< world::Light >& outLights
 )
@@ -23,7 +23,7 @@ void SolidEntityRenderer::gather(
 }
 
 void SolidEntityRenderer::build(
-	const world::WorldContext& worldContext,
+	const world::WorldBuildContext& context,
 	const world::WorldRenderView& worldRenderView,
 	const world::IWorldRenderPass& worldRenderPass,
 	Object* renderable
@@ -32,7 +32,7 @@ void SolidEntityRenderer::build(
 	if (auto solidEntity = dynamic_type_cast< SolidEntity* >(renderable))
 	{
 		solidEntity->build(
-			worldContext,
+			context,
 			worldRenderView,
 			worldRenderPass
 		);
@@ -40,14 +40,14 @@ void SolidEntityRenderer::build(
 }
 
 void SolidEntityRenderer::flush(
-	const world::WorldContext& worldContext,
+	const world::WorldBuildContext& context,
 	const world::WorldRenderView& worldRenderView,
 	const world::IWorldRenderPass& worldRenderPass
 )
 {
 }
 
-void SolidEntityRenderer::flush(const world::WorldContext& worldContext)
+void SolidEntityRenderer::flush(const world::WorldBuildContext& context)
 {
 }
 
