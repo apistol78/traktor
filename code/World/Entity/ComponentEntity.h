@@ -19,7 +19,7 @@ namespace traktor
 
 class IEntityComponent;
 class IWorldRenderPass;
-class WorldContext;
+class WorldBuildContext;
 class WorldRenderView;
 
 /*! \brief

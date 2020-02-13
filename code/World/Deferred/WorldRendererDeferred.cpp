@@ -17,7 +17,8 @@
 #include "Render/Image2/ImageGraphData.h"
 #include "Resource/IResourceManager.h"
 #include "World/IrradianceGrid.h"
-#include "World/WorldContext.h"
+#include "World/WorldBuildContext.h"
+#include "World/WorldGatherContext.h"
 #include "World/Deferred/LightRendererDeferred.h"
 #include "World/Deferred/WorldRendererDeferred.h"
 #include "World/Deferred/WorldRenderPassDeferred.h"
@@ -431,7 +432,7 @@ void WorldRendererDeferred::build(const WorldRenderView& worldRenderView, render
 
 	// Gather active lights.
 	m_lights.resize(0);
-	WorldContext(m_entityRenderers, m_rootEntity).gather(m_rootEntity, m_lights);
+	WorldGatherContext(m_entityRenderers, m_rootEntity).gather(m_rootEntity, m_lights);
 	if (m_lights.size() > c_maxLightCount)
 		m_lights.resize(c_maxLightCount);
 
@@ -549,10 +550,10 @@ void WorldRendererDeferred::buildGBuffer(const WorldRenderView& worldRenderView)
 	rp->addBuild(
 		[=](const render::RenderGraph& renderGraph, render::RenderContext* renderContext)
 		{
-			WorldContext wc(
+			WorldBuildContext wc(
 				m_entityRenderers,
-				renderContext,
-				m_rootEntity
+				m_rootEntity,
+				renderContext
 			);
 
 			auto sharedParams = renderContext->alloc< render::ProgramParameters >();
@@ -611,10 +612,10 @@ void WorldRendererDeferred::buildVelocity(const WorldRenderView& worldRenderView
 	rp->addBuild(
 		[=](const render::RenderGraph& renderGraph, render::RenderContext* renderContext)
 		{
-			WorldContext wc(
+			WorldBuildContext wc(
 				m_entityRenderers,
-				renderContext,
-				m_rootEntity
+				m_rootEntity,
+				renderContext
 			);
 
 			auto sharedParams = renderContext->alloc< render::ProgramParameters >();
@@ -714,10 +715,10 @@ void WorldRendererDeferred::buildCascadeShadowMap(const WorldRenderView& worldRe
 	rp->addBuild(
 		[=](const render::RenderGraph& renderGraph, render::RenderContext* renderContext)
 		{
-			WorldContext wc(
+			WorldBuildContext wc(
 				m_entityRenderers,
-				renderContext,
-				m_rootEntity
+				m_rootEntity,
+				renderContext
 			);
 
 			const auto& light = m_lights[lightCascadeIndex];
@@ -838,10 +839,10 @@ void WorldRendererDeferred::buildAtlasShadowMap(const WorldRenderView& worldRend
 		rp->addBuild(
 			[=](const render::RenderGraph& renderGraph, render::RenderContext* renderContext)
 			{
-				WorldContext wc(
+				WorldBuildContext wc(
 					m_entityRenderers,
-					renderContext,
-					m_rootEntity
+					m_rootEntity,
+					renderContext
 				);
 
 				const auto& light = m_lights[lightAtlasIndex];
@@ -1138,10 +1139,10 @@ void WorldRendererDeferred::buildReflections(const WorldRenderView& worldRenderV
 	rp->addBuild(
 		[=](const render::RenderGraph& renderGraph, render::RenderContext* renderContext)
 		{
-			WorldContext wc(
+			WorldBuildContext wc(
 				m_entityRenderers,
-				renderContext,
-				m_rootEntity
+				m_rootEntity,
+				renderContext
 			);
 
 			auto gbufferTargetSet = renderGraph.getTargetSet(s_handleGBuffer);
@@ -1227,10 +1228,10 @@ void WorldRendererDeferred::buildVisual(const WorldRenderView& worldRenderView, 
 	rp->addBuild(
 		[=](const render::RenderGraph& renderGraph, render::RenderContext* renderContext)
 		{
-			WorldContext wc(
+			WorldBuildContext wc(
 				m_entityRenderers,
-				renderContext,
-				m_rootEntity
+				m_rootEntity,
+				renderContext
 			);
 
 			auto gbufferTargetSet = renderGraph.getTargetSet(s_handleGBuffer);

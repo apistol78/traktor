@@ -47,7 +47,7 @@ class IResourceManager;
 	{
 
 class IWorldRenderPass;
-class WorldContext;
+class WorldBuildContext;
 class WorldRenderView;
 
 	}
@@ -106,7 +106,7 @@ public:
 	bool create(const TerrainComponentData& data);
 
 	void build(
-		const world::WorldContext& worldContext,
+		const world::WorldBuildContext& context,
 		const world::WorldRenderView& worldRenderView,
 		const world::IWorldRenderPass& worldRenderPass,
 		float detailDistance,
@@ -114,7 +114,7 @@ public:
 	);
 
 	void buildLayers(
-		const world::WorldContext& worldContext,
+		const world::WorldBuildContext& context,
 		const world::WorldRenderView& worldRenderView,
 		const world::IWorldRenderPass& worldRenderPass
 	);

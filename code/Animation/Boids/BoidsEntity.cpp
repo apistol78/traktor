@@ -1,6 +1,6 @@
 #include "Animation/Boids/BoidsEntity.h"
 #include "Core/Math/RandomGeometry.h"
-#include "World/WorldContext.h"
+#include "World/WorldBuildContext.h"
 
 namespace traktor
 {
@@ -57,13 +57,13 @@ void BoidsEntity::destroy()
 }
 
 void BoidsEntity::build(
-	const world::WorldContext& worldContext,
+	const world::WorldBuildContext& context,
 	const world::WorldRenderView& worldRenderView,
 	const world::IWorldRenderPass& worldRenderPass
 )
 {
 	for (RefArray< world::Entity >::iterator i = m_boidEntities.begin(); i != m_boidEntities.end(); ++i)
-		worldContext.build(worldRenderView, worldRenderPass, *i);
+		context.build(worldRenderView, worldRenderPass, *i);
 }
 
 void BoidsEntity::setTransform(const Transform& transform)

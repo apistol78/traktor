@@ -25,27 +25,27 @@ public:
 	virtual const TypeInfoSet getRenderableTypes() const override final;
 
 	virtual void gather(
-		const world::WorldContext& worldContext,
+		const world::WorldGatherContext& context,
 		const Object* renderable,
 		AlignedVector< world::Light >& outLights
 	) override final
 	{ /* Not implemented */ }
 
 	virtual void build(
-		const world::WorldContext& worldContext,
+		const world::WorldBuildContext& context,
 		const world::WorldRenderView& worldRenderView,
 		const world::IWorldRenderPass& worldRenderPass,
 		Object* renderable
 	) override final;
 
 	virtual void flush(
-		const world::WorldContext& worldContext,
+		const world::WorldBuildContext& context,
 		const world::WorldRenderView& worldRenderView,
 		const world::IWorldRenderPass& worldRenderPass
 	) override final
 	{ /* Not implemented */ }
 
-	virtual void flush(const world::WorldContext& worldContext) override final
+	virtual void flush(const world::WorldBuildContext& context) override final
 	{ /* Not implemented */ }
 };
 

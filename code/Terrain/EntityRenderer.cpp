@@ -3,7 +3,7 @@
 #include "Terrain/OceanComponent.h"
 #include "Terrain/RiverComponent.h"
 #include "Terrain/TerrainComponent.h"
-#include "World/WorldContext.h"
+#include "World/WorldBuildContext.h"
 
 namespace traktor
 {
@@ -50,7 +50,7 @@ const TypeInfoSet EntityRenderer::getRenderableTypes() const
 }
 
 void EntityRenderer::gather(
-	const world::WorldContext& worldContext,
+	const world::WorldGatherContext& context,
 	const Object* renderable,
 	AlignedVector< world::Light >& outLights
 )
@@ -58,7 +58,7 @@ void EntityRenderer::gather(
 }
 
 void EntityRenderer::build(
-	const world::WorldContext& worldContext,
+	const world::WorldBuildContext& context,
 	const world::WorldRenderView& worldRenderView,
 	const world::IWorldRenderPass& worldRenderPass,
 	Object* renderable
@@ -66,25 +66,25 @@ void EntityRenderer::build(
 {
 	if (TerrainComponent* terrainComponent = dynamic_type_cast< TerrainComponent* >(renderable))
 	{
-		terrainComponent->build(worldContext, worldRenderView, worldRenderPass, m_terrainDetailDistance, m_terrainCacheSize);
+		terrainComponent->build(context, worldRenderView, worldRenderPass, m_terrainDetailDistance, m_terrainCacheSize);
 		if (m_terrainLayersEnable)
-			terrainComponent->buildLayers(worldContext, worldRenderView, worldRenderPass);
+			terrainComponent->buildLayers(context, worldRenderView, worldRenderPass);
 	}
 	else if (OceanComponent* oceanComponent = dynamic_type_cast< OceanComponent* >(renderable))
-		oceanComponent->build(worldContext.getRenderContext(), worldRenderView, worldRenderPass, m_oceanReflectionEnable);
+		oceanComponent->build(context.getRenderContext(), worldRenderView, worldRenderPass, m_oceanReflectionEnable);
 	else if (RiverComponent* riverComponent = dynamic_type_cast< RiverComponent* >(renderable))
-		riverComponent->build(worldContext.getRenderContext(), worldRenderView, worldRenderPass);
+		riverComponent->build(context.getRenderContext(), worldRenderView, worldRenderPass);
 }
 
 void EntityRenderer::flush(
-	const world::WorldContext& worldContext,
+	const world::WorldBuildContext& context,
 	const world::WorldRenderView& worldRenderView,
 	const world::IWorldRenderPass& worldRenderPass
 )
 {
 }
 
-void EntityRenderer::flush(const world::WorldContext& worldContext)
+void EntityRenderer::flush(const world::WorldBuildContext& context)
 {
 }
 

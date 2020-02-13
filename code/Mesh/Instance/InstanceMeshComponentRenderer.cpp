@@ -3,7 +3,7 @@
 #include "Mesh/Instance/InstanceMeshComponent.h"
 #include "Mesh/Instance/InstanceMeshComponentRenderer.h"
 #include "World/IWorldRenderPass.h"
-#include "World/WorldContext.h"
+#include "World/WorldBuildContext.h"
 #include "World/WorldRenderView.h"
 
 namespace traktor
@@ -18,16 +18,16 @@ const TypeInfoSet InstanceMeshComponentRenderer::getRenderableTypes() const
 	return makeTypeInfoSet< InstanceMeshComponent >();
 }
 
-
 void InstanceMeshComponentRenderer::gather(
-	const world::WorldContext& worldContext,
+	const world::WorldGatherContext& context,
 	const Object* renderable,
 	AlignedVector< world::Light >& outLights
 )
 {
 }
+
 void InstanceMeshComponentRenderer::build(
-	const world::WorldContext& worldContext,
+	const world::WorldBuildContext& context,
 	const world::WorldRenderView& worldRenderView,
 	const world::IWorldRenderPass& worldRenderPass,
 	Object* renderable
@@ -63,7 +63,7 @@ void InstanceMeshComponentRenderer::build(
 }
 
 void InstanceMeshComponentRenderer::flush(
-	const world::WorldContext& worldContext,
+	const world::WorldBuildContext& context,
 	const world::WorldRenderView& worldRenderView,
 	const world::IWorldRenderPass& worldRenderPass
 )
@@ -75,7 +75,7 @@ void InstanceMeshComponentRenderer::flush(
 
 		T_ASSERT(i->first);
 		i->first->build(
-			worldContext.getRenderContext(),
+			context.getRenderContext(),
 			worldRenderPass,
 			i->second,
 			0
@@ -85,7 +85,7 @@ void InstanceMeshComponentRenderer::flush(
 	}
 }
 
-void InstanceMeshComponentRenderer::flush(const world::WorldContext& worldContext)
+void InstanceMeshComponentRenderer::flush(const world::WorldBuildContext& context)
 {
 }
 

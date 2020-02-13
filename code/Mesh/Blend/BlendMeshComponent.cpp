@@ -2,7 +2,7 @@
 #include "Mesh/Blend/BlendMesh.h"
 #include "Mesh/Blend/BlendMeshComponent.h"
 #include "World/IWorldRenderPass.h"
-#include "World/WorldContext.h"
+#include "World/WorldBuildContext.h"
 #include "World/WorldRenderView.h"
 
 namespace traktor
@@ -32,7 +32,7 @@ Aabb3 BlendMeshComponent::getBoundingBox() const
 	return m_mesh->getBoundingBox();
 }
 
-void BlendMeshComponent::build(const world::WorldContext& worldContext, const world::WorldRenderView& worldRenderView, const world::IWorldRenderPass& worldRenderPass)
+void BlendMeshComponent::build(const world::WorldBuildContext& context, const world::WorldRenderView& worldRenderView, const world::IWorldRenderPass& worldRenderPass)
 {
 	if (!m_mesh->supportTechnique(worldRenderPass.getTechnique()))
 		return;
@@ -61,7 +61,7 @@ void BlendMeshComponent::build(const world::WorldContext& worldContext, const wo
 		m_blendWeights.resize(blendTargetCount, 0.0f);
 
 	m_mesh->build(
-		worldContext.getRenderContext(),
+		context.getRenderContext(),
 		worldRenderPass,
 		m_transform.get0(),
 		m_transform.get(worldRenderView.getInterval()),

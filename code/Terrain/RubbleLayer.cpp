@@ -13,7 +13,7 @@
 #include "Terrain/RubbleLayer.h"
 #include "Terrain/RubbleLayerData.h"
 #include "World/IWorldRenderPass.h"
-#include "World/WorldContext.h"
+#include "World/WorldBuildContext.h"
 #include "World/WorldRenderView.h"
 
 namespace traktor
@@ -77,7 +77,7 @@ void RubbleLayer::update(const world::UpdateParams& update)
 
 void RubbleLayer::build(
 	TerrainComponent& terrainComponent,
-	const world::WorldContext& worldContext,
+	const world::WorldBuildContext& context,
 	const world::WorldRenderView& worldRenderView,
 	const world::IWorldRenderPass& worldRenderPass
 )
@@ -133,7 +133,7 @@ void RubbleLayer::build(
 		}
 	}
 
-	render::RenderContext* renderContext = worldContext.getRenderContext();
+	render::RenderContext* renderContext = context.getRenderContext();
 
 	// Expose some more shader parameters, such as terrain color etc.
 	render::ProgramParameters* extraParameters = renderContext->alloc< render::ProgramParameters >();

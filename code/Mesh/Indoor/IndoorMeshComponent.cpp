@@ -2,7 +2,7 @@
 #include "Mesh/Indoor/IndoorMesh.h"
 #include "Mesh/Indoor/IndoorMeshComponent.h"
 #include "World/IWorldRenderPass.h"
-#include "World/WorldContext.h"
+#include "World/WorldBuildContext.h"
 #include "World/WorldRenderView.h"
 
 namespace traktor
@@ -29,7 +29,7 @@ Aabb3 IndoorMeshComponent::getBoundingBox() const
 	return m_mesh->getBoundingBox();
 }
 
-void IndoorMeshComponent::build(const world::WorldContext& worldContext, const world::WorldRenderView& worldRenderView, const world::IWorldRenderPass& worldRenderPass)
+void IndoorMeshComponent::build(const world::WorldBuildContext& context, const world::WorldRenderView& worldRenderView, const world::IWorldRenderPass& worldRenderPass)
 {
 	if (!m_mesh->supportTechnique(worldRenderPass.getTechnique()))
 		return;
@@ -49,7 +49,7 @@ void IndoorMeshComponent::build(const world::WorldContext& worldContext, const w
 		return;
 
 	m_mesh->build(
-		worldContext.getRenderContext(),
+		context.getRenderContext(),
 		worldRenderView,
 		worldRenderPass,
 		transform,

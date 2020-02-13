@@ -5,7 +5,7 @@
 #include "Render/VertexElement.h"
 #include "Render/Context/RenderContext.h"
 #include "World/IWorldRenderPass.h"
-#include "World/WorldContext.h"
+#include "World/WorldBuildContext.h"
 
 namespace traktor
 {
@@ -153,7 +153,7 @@ bool ClothEntity::create(
 }
 
 void ClothEntity::build(
-	const world::WorldContext& worldContext,
+	const world::WorldBuildContext& context,
 	const world::WorldRenderView& worldRenderView,
 	const world::IWorldRenderPass& worldRenderPass
 )
@@ -200,7 +200,7 @@ void ClothEntity::build(
 	worldRenderPass.setShaderTechnique(m_shader);
 	worldRenderPass.setShaderCombination(m_shader);
 
-	render::RenderContext* renderContext = worldContext.getRenderContext();
+	render::RenderContext* renderContext = context.getRenderContext();
 	T_ASSERT(renderContext);
 
 	render::IndexedRenderBlock* renderBlock = renderContext->alloc< render::IndexedRenderBlock >();

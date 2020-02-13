@@ -28,7 +28,7 @@ class VertexBuffer;
     {
 
 class IWorldRenderPass;
-class WorldContext;
+class WorldBuildContext;
 class WorldRenderView;
 
     }
@@ -53,7 +53,7 @@ public:
     virtual void update(const world::UpdateParams& update) override final;
 
 	void build(
-		const world::WorldContext& worldContext,
+		const world::WorldBuildContext& context,
 		const world::WorldRenderView& worldRenderView,
 		const world::IWorldRenderPass& worldRenderPass
 	);

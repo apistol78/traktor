@@ -47,7 +47,7 @@ public:
 
 	virtual void build(
 		TerrainComponent& terrainComponent,
-		const world::WorldContext& worldContext,
+		const world::WorldBuildContext& context,
 		const world::WorldRenderView& worldRenderView,
 		const world::IWorldRenderPass& worldRenderPass
 	) override final;

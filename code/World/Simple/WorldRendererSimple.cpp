@@ -2,7 +2,7 @@
 #include "Render/Context/RenderContext.h"
 #include "Render/Frame/RenderGraph.h"
 #include "World/WorldRenderView.h"
-#include "World/WorldContext.h"
+#include "World/WorldBuildContext.h"
 #include "World/Entity/GroupEntity.h"
 #include "World/Simple/WorldRendererSimple.h"
 #include "World/Simple/WorldRenderPassSimple.h"
@@ -56,23 +56,14 @@ void WorldRendererSimple::attach(Entity* entity)
 
 void WorldRendererSimple::build(const WorldRenderView& worldRenderView, render::RenderContext* renderContext)
 {
-	// WorldContext wc(
-	// 	m_entityRenderers,
-	// 	renderContext,
-	// 	m_rootEntity
-	// );
-
-	// wc.flush();
-	// wc.getRenderContext()->merge(render::RpAll);
-
 	Ref< render::RenderPass > rp = new render::RenderPass(L"Visual");
 	rp->addBuild(
 		[=](const render::RenderGraph& renderGraph, render::RenderContext* renderContext)
 		{
-			WorldContext wc(
+			WorldBuildContext wc(
 				m_entityRenderers,
-				renderContext,
-				m_rootEntity
+				m_rootEntity,
+				renderContext
 			);
 
 			// Default visual parameters.

@@ -14,7 +14,7 @@ const TypeInfoSet MeshComponentRenderer::getRenderableTypes() const
 }
 
 void MeshComponentRenderer::gather(
-	const world::WorldContext& worldContext,
+	const world::WorldGatherContext& context,
 	const Object* renderable,
 	AlignedVector< world::Light >& outLights
 )
@@ -22,25 +22,25 @@ void MeshComponentRenderer::gather(
 }
 
 void MeshComponentRenderer::build(
-	const world::WorldContext& worldContext,
+	const world::WorldBuildContext& context,
 	const world::WorldRenderView& worldRenderView,
 	const world::IWorldRenderPass& worldRenderPass,
 	Object* renderable
 )
 {
 	MeshComponent* meshComponent = mandatory_non_null_type_cast< MeshComponent* >(renderable);
-	meshComponent->build(worldContext, worldRenderView, worldRenderPass);
+	meshComponent->build(context, worldRenderView, worldRenderPass);
 }
 
 void MeshComponentRenderer::flush(
-	const world::WorldContext& worldContext,
+	const world::WorldBuildContext& context,
 	const world::WorldRenderView& worldRenderView,
 	const world::IWorldRenderPass& worldRenderPass
 )
 {
 }
 
-void MeshComponentRenderer::flush(const world::WorldContext& worldContext)
+void MeshComponentRenderer::flush(const world::WorldBuildContext& context)
 {
 }
 

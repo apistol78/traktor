@@ -2,7 +2,7 @@
 #include "Mesh/Stream/StreamMesh.h"
 #include "Mesh/Stream/StreamMeshComponent.h"
 #include "World/IWorldRenderPass.h"
-#include "World/WorldContext.h"
+#include "World/WorldBuildContext.h"
 #include "World/WorldRenderView.h"
 
 namespace traktor
@@ -31,7 +31,7 @@ Aabb3 StreamMeshComponent::getBoundingBox() const
 	return m_mesh->getBoundingBox();
 }
 
-void StreamMeshComponent::build(const world::WorldContext& worldContext, const world::WorldRenderView& worldRenderView, const world::IWorldRenderPass& worldRenderPass)
+void StreamMeshComponent::build(const world::WorldBuildContext& context, const world::WorldRenderView& worldRenderView, const world::IWorldRenderPass& worldRenderPass)
 {
 	if (m_frame >= m_mesh->getFrameCount())
 		return;
@@ -62,7 +62,7 @@ void StreamMeshComponent::build(const world::WorldContext& worldContext, const w
 		return;
 
 	m_mesh->build(
-		worldContext.getRenderContext(),
+		context.getRenderContext(),
 		worldRenderPass,
 		transform,
 		m_instance,

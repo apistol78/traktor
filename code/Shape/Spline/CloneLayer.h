@@ -48,7 +48,7 @@ public:
 	virtual void pathChanged() override final;
 
 	virtual void build(
-		const world::WorldContext& worldContext,
+		const world::WorldBuildContext& context,
 		const world::WorldRenderView& worldRenderView,
 		const world::IWorldRenderPass& worldRenderPass
 	) override final;

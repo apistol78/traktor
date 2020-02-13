@@ -40,25 +40,25 @@ public:
 	virtual const TypeInfoSet getRenderableTypes() const override final;
 
 	virtual void gather(
-		const WorldContext& worldContext,
+		const WorldGatherContext& context,
 		const Object* renderable,
 		AlignedVector< Light >& outLights
 	) override final;
 
 	virtual void build(
-		const WorldContext& worldContext,
+		const WorldBuildContext& context,
 		const WorldRenderView& worldRenderView,
 		const IWorldRenderPass& worldRenderPass,
 		Object* renderable
 	) override final;
 
 	virtual void flush(
-		const WorldContext& worldContext,
+		const WorldBuildContext& context,
 		const WorldRenderView& worldRenderView,
 		const IWorldRenderPass& worldRenderPass
 	) override final;
 
-	virtual void flush(const WorldContext& worldContext) override final;
+	virtual void flush(const WorldBuildContext& context) override final;
 
 private:
 	Ref< render::VertexBuffer > m_vertexBuffer;

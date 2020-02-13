@@ -17,7 +17,7 @@ namespace traktor
 
 class IWorldRenderPass;
 struct UpdateParams;
-class WorldContext;
+class WorldBuildContext;
 class WorldRenderView;
 
 	}
@@ -35,7 +35,7 @@ public:
 	virtual void update(const world::UpdateParams& update) = 0;
 
 	virtual void build(
-		const world::WorldContext& worldContext,
+		const world::WorldBuildContext& context,
 		const world::WorldRenderView& worldRenderView,
 		const world::IWorldRenderPass& worldRenderPass
 	) = 0;

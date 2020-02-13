@@ -18,7 +18,7 @@ namespace traktor
 	{
 
 class IWorldRenderPass;
-class WorldContext;
+class WorldBuildContext;
 class WorldRenderView;
 
 	}

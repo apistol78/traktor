@@ -58,10 +58,10 @@ void CompositeMeshComponent::update(const world::UpdateParams& update)
 	MeshComponent::update(update);
 }
 
-void CompositeMeshComponent::build(const world::WorldContext& worldContext, const world::WorldRenderView& worldRenderView, const world::IWorldRenderPass& worldRenderPass)
+void CompositeMeshComponent::build(const world::WorldBuildContext& context, const world::WorldRenderView& worldRenderView, const world::IWorldRenderPass& worldRenderPass)
 {
 	for (RefArray< MeshComponent >::iterator i = m_meshComponents.begin(); i != m_meshComponents.end(); ++i)
-		(*i)->build(worldContext, worldRenderView, worldRenderPass);
+		(*i)->build(context, worldRenderView, worldRenderPass);
 }
 
 void CompositeMeshComponent::removeAll()

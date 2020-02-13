@@ -1,7 +1,7 @@
 #include "Physics/World/ArticulatedEntity.h"
 #include "Physics/World/EntityRenderer.h"
 #include "Physics/World/RigidEntity.h"
-#include "World/WorldContext.h"
+#include "World/WorldBuildContext.h"
 
 namespace traktor
 {
@@ -19,19 +19,19 @@ const TypeInfoSet EntityRenderer::getRenderableTypes() const
 }
 
 void EntityRenderer::build(
-	const world::WorldContext& worldContext,
+	const world::WorldBuildContext& context,
 	const world::WorldRenderView& worldRenderView,
 	const world::IWorldRenderPass& worldRenderPass,
 	Object* renderable
 )
 {
 	if (RigidEntity* rigidEntity = dynamic_type_cast< RigidEntity* >(renderable))
-		worldContext.build(worldRenderView, worldRenderPass, rigidEntity->getEntity());
+		context.build(worldRenderView, worldRenderPass, rigidEntity->getEntity());
 	else if (ArticulatedEntity* articulatedEntity = dynamic_type_cast< ArticulatedEntity* >(renderable))
 	{
 		const RefArray< RigidEntity >& entities = articulatedEntity->getEntities();
 		for (RefArray< RigidEntity >::const_iterator i = entities.begin(); i != entities.end(); ++i)
-			worldContext.build(worldRenderView, worldRenderPass, *i);
+			context.build(worldRenderView, worldRenderPass, *i);
 	}
 }
 

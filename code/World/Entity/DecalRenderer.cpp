@@ -5,7 +5,7 @@
 #include "Render/VertexElement.h"
 #include "Render/Context/RenderContext.h"
 #include "World/IWorldRenderPass.h"
-#include "World/WorldContext.h"
+#include "World/WorldBuildContext.h"
 #include "World/WorldRenderView.h"
 #include "World/Entity/DecalComponent.h"
 #include "World/Entity/DecalRenderer.h"
@@ -89,7 +89,7 @@ const TypeInfoSet DecalRenderer::getRenderableTypes() const
 }
 
 void DecalRenderer::gather(
-	const WorldContext& worldContext,
+	const WorldGatherContext& context,
 	const Object* renderable,
 	AlignedVector< Light >& outLights
 )
@@ -97,7 +97,7 @@ void DecalRenderer::gather(
 }
 
 void DecalRenderer::build(
-	const WorldContext& worldContext,
+	const WorldBuildContext& context,
 	const WorldRenderView& worldRenderView,
 	const IWorldRenderPass& worldRenderPass,
 	Object* renderable
@@ -122,12 +122,12 @@ void DecalRenderer::build(
 }
 
 void DecalRenderer::flush(
-	const WorldContext& worldContext,
+	const WorldBuildContext& context,
 	const WorldRenderView& worldRenderView,
 	const IWorldRenderPass& worldRenderPass
 )
 {
-	render::RenderContext* renderContext = worldContext.getRenderContext();
+	render::RenderContext* renderContext = context.getRenderContext();
 	T_ASSERT(renderContext);
 
 	const Matrix44& projection = worldRenderView.getProjection();
@@ -198,7 +198,7 @@ void DecalRenderer::flush(
 	m_decalComponents.resize(0);
 }
 
-void DecalRenderer::flush(const WorldContext& worldContext)
+void DecalRenderer::flush(const WorldBuildContext& context)
 {
 }
 

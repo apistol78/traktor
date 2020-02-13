@@ -5,7 +5,7 @@
 #include "Spray/PointRenderer.h"
 #include "Spray/TrailRenderer.h"
 #include "World/IWorldRenderPass.h"
-#include "World/WorldContext.h"
+#include "World/WorldBuildContext.h"
 #include "World/WorldRenderView.h"
 
 namespace traktor
@@ -33,7 +33,7 @@ const TypeInfoSet EffectEntityRenderer::getRenderableTypes() const
 }
 
 void EffectEntityRenderer::gather(
-	const world::WorldContext& worldContext,
+	const world::WorldGatherContext& context,
 	const Object* renderable,
 	AlignedVector< world::Light >& outLights
 )
@@ -41,7 +41,7 @@ void EffectEntityRenderer::gather(
 }
 
 void EffectEntityRenderer::build(
-	const world::WorldContext& worldContext,
+	const world::WorldBuildContext& context,
 	const world::WorldRenderView& worldRenderView,
 	const world::IWorldRenderPass& worldRenderPass,
 	Object* renderable
@@ -79,17 +79,17 @@ void EffectEntityRenderer::build(
 }
 
 void EffectEntityRenderer::flush(
-	const world::WorldContext& worldContext,
+	const world::WorldBuildContext& context,
 	const world::WorldRenderView& worldRenderView,
 	const world::IWorldRenderPass& worldRenderPass
 )
 {
-	m_pointRenderer->flush(worldContext.getRenderContext(), worldRenderPass);
-	m_meshRenderer->flush(worldContext.getRenderContext(), worldRenderPass);
-	m_trailRenderer->flush(worldContext.getRenderContext(), worldRenderPass);
+	m_pointRenderer->flush(context.getRenderContext(), worldRenderPass);
+	m_meshRenderer->flush(context.getRenderContext(), worldRenderPass);
+	m_trailRenderer->flush(context.getRenderContext(), worldRenderPass);
 }
 
-void EffectEntityRenderer::flush(const world::WorldContext& worldContext)
+void EffectEntityRenderer::flush(const world::WorldBuildContext& context)
 {
 }
 

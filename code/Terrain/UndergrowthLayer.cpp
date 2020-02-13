@@ -18,7 +18,7 @@
 #include "Terrain/UndergrowthLayer.h"
 #include "Terrain/UndergrowthLayerData.h"
 #include "World/IWorldRenderPass.h"
-#include "World/WorldContext.h"
+#include "World/WorldBuildContext.h"
 #include "World/WorldRenderView.h"
 
 namespace traktor
@@ -157,7 +157,7 @@ void UndergrowthLayer::update(const world::UpdateParams& update)
 
 void UndergrowthLayer::build(
 	TerrainComponent& terrainComponent,
-	const world::WorldContext& worldContext,
+	const world::WorldBuildContext& context,
 	const world::WorldRenderView& worldRenderView,
 	const world::IWorldRenderPass& worldRenderPass
 )
@@ -237,7 +237,7 @@ void UndergrowthLayer::build(
 	if (!program)
 		return;
 
-	render::RenderContext* renderContext = worldContext.getRenderContext();
+	render::RenderContext* renderContext = context.getRenderContext();
 
 	Vector4 instanceData1[c_maxInstanceCount];
 	Vector4 instanceData2[c_maxInstanceCount];

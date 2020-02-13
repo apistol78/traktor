@@ -5,7 +5,7 @@
 #include "Render/Context/ProgramParameters.h"
 #include "Weather/Precipitation/PrecipitationComponent.h"
 #include "World/IWorldRenderPass.h"
-#include "World/WorldContext.h"
+#include "World/WorldBuildContext.h"
 #include "World/WorldRenderView.h"
 
 namespace traktor
@@ -105,7 +105,7 @@ void PrecipitationComponent::update(const world::UpdateParams& update)
 	}
 }
 
-void PrecipitationComponent::build(const world::WorldContext& worldContext, const world::WorldRenderView& worldRenderView, const world::IWorldRenderPass& worldRenderPass)
+void PrecipitationComponent::build(const world::WorldBuildContext& context, const world::WorldRenderView& worldRenderView, const world::IWorldRenderPass& worldRenderPass)
 {
 	if (!m_mesh->supportTechnique(worldRenderPass.getTechnique()))
 		return;
@@ -145,7 +145,7 @@ void PrecipitationComponent::build(const world::WorldContext& worldContext, cons
 	mc.m_layerAngle = m_layerAngle;
 
 	m_mesh->build(
-		worldContext.getRenderContext(),
+		context.getRenderContext(),
 		worldRenderPass,
 		Transform(m_rotation),
 		Transform(m_rotation),
