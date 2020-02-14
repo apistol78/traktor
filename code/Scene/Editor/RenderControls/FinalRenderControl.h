@@ -28,6 +28,7 @@ class Widget;
 
 class IRenderView;
 class RenderContext;
+class RenderGraph;
 
 	}
 
@@ -89,6 +90,7 @@ private:
 	Ref< ui::Widget > m_renderWidget;
 	Ref< render::IRenderView > m_renderView;
 	Ref< render::RenderContext > m_renderContext;
+	Ref< render::RenderGraph > m_renderGraph;
 	resource::Proxy< scene::Scene > m_sceneInstance;
 	Ref< world::IWorldRenderer > m_worldRenderer;
 	world::WorldRenderView m_worldRenderView;

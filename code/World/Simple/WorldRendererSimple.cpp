@@ -38,13 +38,11 @@ bool WorldRendererSimple::create(
 {
 	m_entityRenderers = desc.entityRenderers;
 	m_rootEntity = new GroupEntity();
-	m_renderGraph = new render::RenderGraph(renderSystem, desc.width, desc.height);
 	return true;
 }
 
 void WorldRendererSimple::destroy()
 {
-	safeDestroy(m_renderGraph);
 	m_entityRenderers = nullptr;
 	m_rootEntity = nullptr;
 }
@@ -54,7 +52,7 @@ void WorldRendererSimple::attach(Entity* entity)
 	m_rootEntity->addEntity(entity);
 }
 
-void WorldRendererSimple::build(const WorldRenderView& worldRenderView, render::RenderContext* renderContext)
+void WorldRendererSimple::setup(const WorldRenderView& worldRenderView, render::RenderGraph& renderGraph)
 {
 	Ref< render::RenderPass > rp = new render::RenderPass(L"Visual");
 	rp->addBuild(
@@ -85,14 +83,7 @@ void WorldRendererSimple::build(const WorldRenderView& worldRenderView, render::
 			renderContext->merge(render::RpAll);
 		}
 	);
-	m_renderGraph->addPass(rp);
-
-	// Validate render graph.
-	if (!m_renderGraph->validate())
-		return;
-
-	// Build render context through render graph.
-	m_renderGraph->build(renderContext);
+	renderGraph.addPass(rp);
 
 	// Flush attached entities.
 	m_rootEntity->removeAllEntities();

@@ -37,7 +37,9 @@ public:
 		RefArray< IRenderTargetSet > acquired;
 	};
 
-	RenderGraphTargetSetPool(IRenderSystem* renderSystem, int32_t width, int32_t height);
+	RenderGraphTargetSetPool(IRenderSystem* renderSystem);
+
+	bool validate(int32_t width, int32_t height);
 
 	IRenderTargetSet* acquire(const RenderGraphTargetSetDesc& targetSetDesc, IRenderTargetSet* sharedDepthStencilTargetSet);
 

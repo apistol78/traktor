@@ -17,6 +17,7 @@
 #include "Render/IRenderView.h"
 #include "Render/PrimitiveRenderer.h"
 #include "Render/Context/RenderContext.h"
+#include "Render/Frame/RenderGraph.h"
 #include "Render/Image2/ImageGraphFactory.h"
 #include "Render/Resource/ShaderFactory.h"
 #include "Render/Resource/SequenceTextureFactory.h"
@@ -89,6 +90,7 @@ bool AnimationPreviewControl::create(ui::Widget* parent)
 		return false;
 
 	m_renderContext = new render::RenderContext(1 * 1024 * 1024);
+	m_renderGraph = new render::RenderGraph(m_renderSystem);
 
 	m_primitiveRenderer = new render::PrimitiveRenderer();
 	if (!m_primitiveRenderer->create(m_resourceManager, m_renderSystem, 1))
@@ -213,8 +215,6 @@ void AnimationPreviewControl::updateWorldRenderer()
 	world::WorldCreateDesc wcd;
 	wcd.worldRenderSettings = &wrs;
 	wcd.entityRenderers = worldEntityRenderers;
-	wcd.width = sz.cx;
-	wcd.height = sz.cy;
 	wcd.frameCount = 1;
 
 	Ref< world::IWorldRenderer > worldRenderer = new world::WorldRendererForward();
@@ -298,8 +298,6 @@ void AnimationPreviewControl::eventSize(ui::SizeEvent* event)
 
 	m_renderView->reset(sz.cx, sz.cy);
 	m_renderView->setViewport(render::Viewport(0, 0, sz.cx, sz.cy, 0, 1));
-
-	updateWorldRenderer();
 }
 
 void AnimationPreviewControl::eventPaint(ui::PaintEvent* event)
@@ -307,6 +305,7 @@ void AnimationPreviewControl::eventPaint(ui::PaintEvent* event)
 	if (!m_renderView)
 		return;
 
+	ui::Size sz = getInnerRect().getSize();
 	float deltaTime = float(m_timer.getDeltaTime());
 	float scaledTime = float(m_timer.getElapsedTime());
 
@@ -331,10 +330,7 @@ void AnimationPreviewControl::eventPaint(ui::PaintEvent* event)
 		viewInverse.translation()
 	);
 
-	// Start building render context.
-	m_renderContext->flush();
-
-	// Build world.
+	// Setup world render passes.
 	if (m_entity)
 	{
 		world::UpdateParams up;
@@ -362,8 +358,16 @@ void AnimationPreviewControl::eventPaint(ui::PaintEvent* event)
 
 		m_worldRenderer->attach(&lightEntity);
 		m_worldRenderer->attach(m_entity);
-		m_worldRenderer->build(m_worldRenderView, m_renderContext);
+		m_worldRenderer->setup(m_worldRenderView, *m_renderGraph);
 	}
+
+	// Validate render graph.
+	if (!m_renderGraph->validate(sz.cx, sz.cy))
+		return;
+
+	// Build render context.
+	m_renderContext->flush();
+	m_renderGraph->build(m_renderContext);
 
 	// Render frame.
 	render::Clear cl = {};

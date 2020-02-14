@@ -28,6 +28,7 @@ class IRenderTargetSet;
 class IRenderView;
 class PrimitiveRenderer;
 class RenderContext;
+class RenderGraph;
 class ScreenRenderer;
 class Shader;
 
@@ -90,6 +91,7 @@ private:
 	Ref< ui::Widget > m_renderWidget;
 	Ref< render::IRenderView > m_renderView;
 	Ref< render::RenderContext > m_renderContext;
+	Ref< render::RenderGraph > m_renderGraph;
 	Ref< render::PrimitiveRenderer > m_primitiveRenderer;
 	Ref< render::ScreenRenderer > m_screenRenderer;
 	resource::Proxy< render::Shader > m_debugShader;

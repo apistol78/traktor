@@ -19,8 +19,6 @@ namespace traktor
 	{
 
 class ImageGraph;
-class RenderContext;
-class RenderGraph;
 class ScreenRenderer;
 class StructBuffer;
 
@@ -69,7 +67,7 @@ public:
 
 	virtual void attach(Entity* entity) override final;
 
-	virtual void build(const WorldRenderView& worldRenderView, render::RenderContext* renderContext) override final;
+	virtual void setup(const WorldRenderView& worldRenderView, render::RenderGraph& renderGraph) override final;
 
 private:
 	struct Frame
@@ -84,9 +82,7 @@ private:
 	Quality m_antiAliasQuality;
 
 	Ref< render::IRenderTargetSet > m_sharedDepthStencil;
-
 	Ref< render::ScreenRenderer > m_screenRenderer;
-	Ref< render::RenderGraph > m_renderGraph;
 	
 	resource::Proxy< render::ImageGraph > m_ambientOcclusion;
 	resource::Proxy< render::ImageGraph > m_antiAlias;
@@ -102,15 +98,15 @@ private:
 	float m_slicePositions[MaxSliceCount + 1];
 	int32_t m_count;
 
-	void buildGBuffer(const WorldRenderView& worldRenderView);
+	void buildGBuffer(const WorldRenderView& worldRenderView, render::RenderGraph& renderGraph);
 
-	void buildAmbientOcclusion(const WorldRenderView& worldRenderView);
+	void buildAmbientOcclusion(const WorldRenderView& worldRenderView, render::RenderGraph& renderGraph);
 
-	void buildLights(const WorldRenderView& worldRenderView, int32_t frame, LightShaderData* lightShaderData);
+	void buildLights(const WorldRenderView& worldRenderView, render::RenderGraph& renderGraph, int32_t frame, LightShaderData* lightShaderData);
 
-	void buildVisual(const WorldRenderView& worldRenderView, int32_t frame);
+	void buildVisual(const WorldRenderView& worldRenderView, render::RenderGraph& renderGraph, int32_t frame);
 
-	void buildProcess(const WorldRenderView& worldRenderView);
+	void buildProcess(const WorldRenderView& worldRenderView, render::RenderGraph& renderGraph);
 };
 
 	}

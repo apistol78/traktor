@@ -23,6 +23,7 @@ class Widget;
 
 class IRenderView;
 class RenderContext;
+class RenderGraph;
 class PrimitiveRenderer;
 
 	}
@@ -92,6 +93,7 @@ private:
 	Ref< ui::Widget > m_renderWidget;
 	Ref< render::IRenderView > m_renderView;
 	Ref< render::RenderContext > m_renderContext;
+	Ref< render::RenderGraph > m_renderGraph;
 	Ref< render::PrimitiveRenderer > m_primitiveRenderer;
 	const TypeInfo* m_worldRendererType;
 	Ref< world::IWorldRenderer > m_worldRenderer;

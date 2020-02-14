@@ -11,6 +11,7 @@
 #include "Render/IRenderView.h"
 #include "Render/PrimitiveRenderer.h"
 #include "Render/Context/RenderContext.h"
+#include "Render/Frame/RenderGraph.h"
 #include "Scene/Scene.h"
 #include "Scene/Editor/Camera.h"
 #include "Scene/Editor/CameraMesh.h"
@@ -116,6 +117,7 @@ bool OrthogonalRenderControl::create(ui::Widget* parent, SceneEditorContext* con
 		return false;
 
 	m_renderContext = new render::RenderContext(1 * 1024 * 1024);
+	m_renderGraph = new render::RenderGraph(m_context->getRenderSystem());
 
 	m_primitiveRenderer = new render::PrimitiveRenderer();
 	if (!m_primitiveRenderer->create(
@@ -183,10 +185,6 @@ void OrthogonalRenderControl::updateWorldRenderer()
 	if (!sceneInstance)
 		return;
 
-	ui::Size sz = m_renderWidget->getInnerRect().getSize();
-	if (sz.cx <= 0 || sz.cy <= 0)
-		return;
-
 	Ref< const world::WorldRenderSettings > worldRenderSettings = sceneInstance->getWorldRenderSettings();
 
 	// Create entity renderers; every renderer is wrapped in a custom renderer in order to check flags etc.
@@ -222,8 +220,6 @@ void OrthogonalRenderControl::updateWorldRenderer()
 	wcd.ambientOcclusionQuality = m_ambientOcclusionQuality;
 	wcd.antiAliasQuality = m_antiAliasQuality;
 	wcd.multiSample = m_multiSample;
-	wcd.width = sz.cx;
-	wcd.height = sz.cy;
 	wcd.frameCount = 1;
 
 	if (worldRenderer->create(
@@ -469,8 +465,6 @@ void OrthogonalRenderControl::eventSize(ui::SizeEvent* event)
 	m_renderView->reset(sz.cx, sz.cy);
 	m_renderView->setViewport(render::Viewport(0, 0, sz.cx, sz.cy, 0, 1));
 
-	safeDestroy(m_worldRenderer);
-
 	m_dirtySize = sz;
 }
 
@@ -496,10 +490,7 @@ void OrthogonalRenderControl::eventPaint(ui::PaintEvent* event)
 	float height = m_magnification / ratio;
 	Matrix44 view = getViewTransform();
 
-	// Start building render context.
-	m_renderContext->flush();
-
-	// Build world.
+	// Setup world render passes.
 	const world::WorldRenderSettings* worldRenderSettings = sceneInstance->getWorldRenderSettings();
 	world::WorldRenderView worldRenderView;
 	worldRenderView.setIndex(m_worldIndex);
@@ -513,7 +504,15 @@ void OrthogonalRenderControl::eventPaint(ui::PaintEvent* event)
 	worldRenderView.setView(view, view);
 	m_worldRenderer->attach(sceneInstance->getRootEntity());
 	m_context->getEntityEventManager()->attach(m_worldRenderer);
-	m_worldRenderer->build(worldRenderView, m_renderContext);
+	m_worldRenderer->setup(worldRenderView, *m_renderGraph);
+
+	// Validate render graph.
+	if (!m_renderGraph->validate(m_dirtySize.cx, m_dirtySize.cy))
+		return;
+
+	// Build render context.
+	m_renderContext->flush();
+	m_renderGraph->build(m_renderContext);
 
 	// Render frame.
 	render::Clear clear = {};

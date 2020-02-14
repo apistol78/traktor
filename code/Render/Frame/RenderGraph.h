@@ -43,7 +43,7 @@ class T_DLLCLASS RenderGraph : public Object
 
 public:
 	/*! */
-	explicit RenderGraph(IRenderSystem* renderSystem, int32_t width, int32_t height);
+	explicit RenderGraph(IRenderSystem* renderSystem);
 
 	/*! */
 	void destroy();
@@ -74,7 +74,7 @@ public:
 	void addPass(const RenderPass* pass);
 
 	/*! */
-	bool validate();
+	bool validate(int32_t width, int32_t height);
 
 	/*! */
 	bool build(RenderContext* renderContext);
@@ -90,13 +90,10 @@ private:
 		Ref< IRenderTargetSet > rts;
 	};
 
-	Ref< IRenderSystem > m_renderSystem;
 	Ref< RenderGraphTargetSetPool > m_pool;
 	SmallMap< handle_t, Target > m_targets;
 	RefArray< const RenderPass > m_passes;
 	AlignedVector< uint32_t > m_order;
-	int32_t m_width;
-	int32_t m_height;
 
 	void traverse(int32_t index, const std::function< void(int32_t) >& fn) const;
 };

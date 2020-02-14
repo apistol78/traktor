@@ -16,18 +16,18 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ImageGraph", ImageGraph, Object)
 
-void ImageGraph::addTargetSets(RenderGraph* renderGraph) const
+void ImageGraph::addTargetSets(RenderGraph& renderGraph) const
 {
 	for (auto targetSet : m_targetSets)
 	{
-		renderGraph->addTargetSet(
+		renderGraph.addTargetSet(
 			targetSet->getTargetSetId(),
 			targetSet->getTargetSetDesc()
 		);
 	}
 }
 
-void ImageGraph::addPasses(RenderGraph* renderGraph, RenderPass* parentPass, const ImageGraphContext& cx) const
+void ImageGraph::addPasses(RenderGraph& renderGraph, RenderPass* parentPass, const ImageGraphContext& cx) const
 {
 	// Copy context and append our internal targets so
 	// steps can have a single method of accessing input textures.
@@ -72,7 +72,7 @@ void ImageGraph::addPasses(RenderGraph* renderGraph, RenderPass* parentPass, con
 			}
 		);
 
-		renderGraph->addPass(rp);
+		renderGraph.addPass(rp);
 	}
 
 	// Add sub pass to parent render pass.

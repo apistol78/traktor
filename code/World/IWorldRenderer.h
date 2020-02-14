@@ -17,19 +17,12 @@
 
 namespace traktor
 {
-
-class Color4f;
-
 	namespace render
 	{
 
-class ImageProcess;
-class ImageProcessData;
 class IRenderSystem;
 class IRenderTargetSet;
-class IRenderView;
-class ITexture;
-class RenderContext;
+class RenderGraph;
 
 	}
 
@@ -62,12 +55,9 @@ struct WorldCreateDesc
 	Quality ambientOcclusionQuality;
 	Quality antiAliasQuality;
 	Quality imageProcessQuality;
-	int32_t width;
-	int32_t height;
 	uint32_t multiSample;
 	uint32_t frameCount;
 	float gamma;
-	bool allTargetsPersistent;
 	render::IRenderTargetSet* sharedDepthStencil;	/*!< Share depth with this render target for all intermediate RTs; useful when rendering to other RT than primary. */
 
 	WorldCreateDesc()
@@ -80,12 +70,9 @@ struct WorldCreateDesc
 	,	ambientOcclusionQuality(QuDisabled)
 	,	antiAliasQuality(QuDisabled)
 	,	imageProcessQuality(QuDisabled)
-	,	width(0)
-	,	height(0)
 	,	multiSample(0)
 	,	frameCount(0)
 	,	gamma(2.2f)
-	,	allTargetsPersistent(false)
 	,	sharedDepthStencil(nullptr)
 	{
 	}
@@ -125,12 +112,12 @@ public:
 	 */
 	virtual void attach(Entity* entity) = 0;
 
-	/*! Build "render context".
+	/*! Setup render passes.
 	 *
 	 * \param worldRenderView World render view.
-	 * \param renderContext Build into render context.
+	 * \param renderGraph Setup into render graph.
 	 */
-	virtual void build(const WorldRenderView& worldRenderView, render::RenderContext* renderContext) = 0;
+	virtual void setup(const WorldRenderView& worldRenderView, render::RenderGraph& renderGraph) = 0;
 
 	//@}
 };

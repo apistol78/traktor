@@ -10,11 +10,39 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderGraphTargetSetPool", RenderGraphTargetSetPool, Object)
 
-RenderGraphTargetSetPool::RenderGraphTargetSetPool(IRenderSystem* renderSystem, int32_t width, int32_t height)
+RenderGraphTargetSetPool::RenderGraphTargetSetPool(IRenderSystem* renderSystem)
 :	m_renderSystem(renderSystem)
-,   m_width(width)
-,   m_height(height)
+,   m_width(0)
+,   m_height(0)
 {
+}
+
+bool RenderGraphTargetSetPool::validate(int32_t width, int32_t height)
+{
+	// If output size has changed we flush all targets
+	// which has been creating related to output size.
+	if (width != m_width || height != m_height)
+	{
+		for (auto& pool : m_pool)
+		{
+			if (
+				pool.targetSetDesc.screenWidthDenom != 0 ||
+				pool.targetSetDesc.screenHeightDenom != 0
+			)
+			{
+				for (auto rts : pool.free)
+					rts->destroy();
+				for (auto rts : pool.acquired)
+					rts->destroy();
+
+				pool.free.resize(0);
+				pool.acquired.resize(0);
+			}
+		}
+		m_width = width;
+		m_height = height;
+	}
+	return true;
 }
 
 IRenderTargetSet* RenderGraphTargetSetPool::acquire(const RenderGraphTargetSetDesc& targetSetDesc, IRenderTargetSet* sharedDepthStencilTargetSet)
