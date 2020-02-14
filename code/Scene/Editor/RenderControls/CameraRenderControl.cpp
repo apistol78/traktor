@@ -18,7 +18,7 @@
 #include "Render/IRenderView.h"
 #include "Render/PrimitiveRenderer.h"
 #include "Render/Context/RenderContext.h"
-#include "Render/Image/ImageProcess.h"
+#include "Render/Frame/RenderGraph.h"
 #include "Scene/Scene.h"
 #include "Scene/Editor/Camera.h"
 #include "Scene/Editor/EntityAdapter.h"
@@ -103,6 +103,7 @@ bool CameraRenderControl::create(ui::Widget* parent, SceneEditorContext* context
 		return false;
 
 	m_renderContext = new render::RenderContext(1 * 1024 * 1024);
+	m_renderGraph = new render::RenderGraph(m_context->getRenderSystem());
 
 	m_primitiveRenderer = new render::PrimitiveRenderer();
 	if (!m_primitiveRenderer->create(
@@ -136,10 +137,6 @@ void CameraRenderControl::updateWorldRenderer()
 
 	Ref< scene::Scene > sceneInstance = m_context->getScene();
 	if (!sceneInstance)
-		return;
-
-	ui::Size sz = m_renderWidget->getInnerRect().getSize();
-	if (sz.cx <= 0 || sz.cy <= 0)
 		return;
 
 	m_worldRenderSettings = *sceneInstance->getWorldRenderSettings();
@@ -182,11 +179,8 @@ void CameraRenderControl::updateWorldRenderer()
 	wcd.ambientOcclusionQuality = m_ambientOcclusionQuality;
 	wcd.antiAliasQuality = m_antiAliasQuality;
 	wcd.imageProcessQuality = m_imageProcessQuality;
-	wcd.width = sz.cx;
-	wcd.height = sz.cy;
 	wcd.multiSample = m_multiSample;
 	wcd.frameCount = 1;
-	wcd.allTargetsPersistent = true;
 
 	if (worldRenderer->create(
 		m_context->getResourceManager(),
@@ -303,8 +297,6 @@ void CameraRenderControl::eventSize(ui::SizeEvent* event)
 	m_renderView->reset(sz.cx, sz.cy);
 	m_renderView->setViewport(render::Viewport(0, 0, sz.cx, sz.cy, 0, 1));
 
-	safeDestroy(m_worldRenderer);
-
 	m_dirtySize = sz;
 }
 
@@ -332,9 +324,6 @@ void CameraRenderControl::eventPaint(ui::PaintEvent* event)
 	float colorClear[4]; m_colorClear.getRGBA32F(colorClear);
 	float deltaTime = float(m_timer.getDeltaTime());
 	float scaledTime = m_context->getTime();
-
-	// Start building render context.
-	m_renderContext->flush();
 
 	// Create world render view.
 	const world::WorldRenderSettings* worldRenderSettings = sceneInstance->getWorldRenderSettings();
@@ -364,12 +353,20 @@ void CameraRenderControl::eventPaint(ui::PaintEvent* event)
 	Matrix44 projection = m_worldRenderView.getProjection();
 	Matrix44 view = m_cameraEntities[0]->getTransform().inverse().toMatrix44();
 
-	// Build world.
+	// Setup world render passes.
 	m_worldRenderView.setTimes(scaledTime, deltaTime, 1.0f);
 	m_worldRenderView.setView(m_worldRenderView.getView(), view);
 	m_worldRenderer->attach(sceneInstance->getRootEntity());
 	m_context->getEntityEventManager()->attach(m_worldRenderer);
-	m_worldRenderer->build(m_worldRenderView, m_renderContext);
+	m_worldRenderer->setup(m_worldRenderView, *m_renderGraph);
+
+	// Validate render graph.
+	if (!m_renderGraph->validate(m_dirtySize.cx, m_dirtySize.cy))
+		return;
+
+	// Build render context.
+	m_renderContext->flush();
+	m_renderGraph->build(m_renderContext);
 
 	// Render frame.
 	render::Clear clear = { 0 };

@@ -95,12 +95,11 @@ void ProbeCapturer::build(
 		wcd.ambientOcclusionQuality = world::QuDisabled;
 		wcd.antiAliasQuality = world::QuDisabled;
 		wcd.imageProcessQuality = world::QuDisabled;
-		wcd.width = c_faceSize;
-		wcd.height = c_faceSize;
+		// wcd.width = c_faceSize;
+		// wcd.height = c_faceSize;
 		wcd.multiSample = 0;
 		wcd.frameCount = 1;
 		wcd.gamma = 1.0f;
-		wcd.allTargetsPersistent = false;
 		wcd.sharedDepthStencil = m_renderTargetSet;
 
 		if (!m_worldRenderer->create(
@@ -153,8 +152,8 @@ void ProbeCapturer::build(
 	worldRenderView.setTimes(0.0f, 1.0f / 60.0f, 0.0f);
 	worldRenderView.setView(view, view);
 
-	m_worldRenderer->attach(const_cast< Entity* >(rootEntity));
-	m_worldRenderer->build(worldRenderView, 0);
+	// m_worldRenderer->attach(const_cast< Entity* >(rootEntity));
+	// m_worldRenderer->build(worldRenderView, 0);
 }
 
 void ProbeCapturer::render(render::IRenderView* renderView, render::ICubeTexture* probeTexture, int32_t face)

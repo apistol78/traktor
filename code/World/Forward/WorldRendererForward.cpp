@@ -259,13 +259,6 @@ bool WorldRendererForward::create(
 	m_entityRenderers = desc.entityRenderers;
 	m_rootEntity = new GroupEntity();
 
-	// Create render graph.
-	m_renderGraph = new render::RenderGraph(
-		renderSystem,
-		desc.width,
-		desc.height
-	);
-
 	// Create screen renderer.
 	m_screenRenderer = new render::ScreenRenderer();
 	if (!m_screenRenderer->create(renderSystem))
@@ -280,8 +273,6 @@ void WorldRendererForward::destroy()
 	for (auto& frame : m_frames)
 		safeDestroy(frame.lightSBuffer);
 	m_frames.clear();
-
-	safeDestroy(m_renderGraph);
 	safeDestroy(m_screenRenderer);
 }
 
@@ -290,7 +281,7 @@ void WorldRendererForward::attach(Entity* entity)
 	m_rootEntity->addEntity(entity);
 }
 
-void WorldRendererForward::build(const WorldRenderView& worldRenderView, render::RenderContext* renderContext)
+void WorldRendererForward::setup(const WorldRenderView& worldRenderView, render::RenderGraph& renderGraph)
 {
 	int32_t frame = m_count % (int32_t)m_frames.size();
 
@@ -306,28 +297,22 @@ void WorldRendererForward::build(const WorldRenderView& worldRenderView, render:
 	T_FATAL_ASSERT(lightShaderData != nullptr);
 
 	// Add passes to render graph.
-	buildGBuffer(worldRenderView);
-	buildAmbientOcclusion(worldRenderView);
-	buildLights(worldRenderView, frame, lightShaderData);
-	buildVisual(worldRenderView, frame);
-	buildProcess(worldRenderView);
-
-	// Validate render graph.
-	if (!m_renderGraph->validate())
-		return;
-
-	// Build render context through render graph.
-	m_renderGraph->build(renderContext);
+	buildGBuffer(worldRenderView, renderGraph);
+	buildAmbientOcclusion(worldRenderView, renderGraph);
+	buildLights(worldRenderView, renderGraph, frame, lightShaderData);
+	buildVisual(worldRenderView, renderGraph, frame);
+	buildProcess(worldRenderView, renderGraph);
 
 	// Unlock light sbuffer.
-	m_frames[frame].lightSBuffer->unlock();
+	// \fixme Cannot unlock these until render context has been built...
+	//m_frames[frame].lightSBuffer->unlock();
 
 	// Flush attached entities.
 	m_rootEntity->removeAllEntities();
 	m_count++;
 }
 
-void WorldRendererForward::buildGBuffer(const WorldRenderView& worldRenderView)
+void WorldRendererForward::buildGBuffer(const WorldRenderView& worldRenderView, render::RenderGraph& renderGraph)
 {
 	const float clearZ = m_settings.viewFarZ;
 
@@ -340,7 +325,7 @@ void WorldRendererForward::buildGBuffer(const WorldRenderView& worldRenderView)
 	rgtd.targets[1].colorFormat = render::TfR16G16F;	// Normals (RG)
 	rgtd.screenWidthDenom = 1;
 	rgtd.screenHeightDenom = 1;
-	m_renderGraph->addTargetSet(s_handleGBuffer, rgtd, m_sharedDepthStencil);
+	renderGraph.addTargetSet(s_handleGBuffer, rgtd, m_sharedDepthStencil);
 
 	// Add GBuffer render pass.
 	Ref< render::RenderPass > rp = new render::RenderPass(L"GBuffer");
@@ -384,10 +369,10 @@ void WorldRendererForward::buildGBuffer(const WorldRenderView& worldRenderView)
 		}
 	);
 
-	m_renderGraph->addPass(rp);
+	renderGraph.addPass(rp);
 }
 
-void WorldRendererForward::buildAmbientOcclusion(const WorldRenderView& worldRenderView)
+void WorldRendererForward::buildAmbientOcclusion(const WorldRenderView& worldRenderView, render::RenderGraph& renderGraph)
 {
 	// Add ambient occlusion target set.
 	render::RenderGraphTargetSetDesc rgtd;
@@ -397,7 +382,7 @@ void WorldRendererForward::buildAmbientOcclusion(const WorldRenderView& worldRen
 	rgtd.targets[0].colorFormat = render::TfR8;			// Ambient occlusion (R)
 	rgtd.screenWidthDenom = 1;
 	rgtd.screenHeightDenom = 1;
-	m_renderGraph->addTargetSet(s_handleAmbientOcclusion, rgtd, m_sharedDepthStencil);
+	renderGraph.addTargetSet(s_handleAmbientOcclusion, rgtd, m_sharedDepthStencil);
 
 	// Add ambient occlusion render pass.
 	Ref< render::RenderPass > rp = new render::RenderPass(L"Ambient occlusion");
@@ -414,7 +399,7 @@ void WorldRendererForward::buildAmbientOcclusion(const WorldRenderView& worldRen
 		cx.associateTextureTargetSet(s_handleInputNormal, s_handleGBuffer, 1);
 		cx.setParams(ipd);
 
-		m_ambientOcclusion->addPasses(m_renderGraph, rp, cx);
+		m_ambientOcclusion->addPasses(renderGraph, rp, cx);
 	}
 
 	render::Clear clear;
@@ -422,10 +407,10 @@ void WorldRendererForward::buildAmbientOcclusion(const WorldRenderView& worldRen
 	clear.colors[0] = Color4f(1.0f, 1.0f, 1.0f, 1.0f);
 	rp->setOutput(s_handleAmbientOcclusion, clear);
 
-	m_renderGraph->addPass(rp);
+	renderGraph.addPass(rp);
 }
 
-void WorldRendererForward::buildLights(const WorldRenderView& worldRenderView, int32_t frame, LightShaderData* lightShaderData)
+void WorldRendererForward::buildLights(const WorldRenderView& worldRenderView, render::RenderGraph& renderGraph, int32_t frame, LightShaderData* lightShaderData)
 {
 	const UniformShadowProjection shadowProjection(1024);
 	const auto& shadowSettings = m_settings.shadowSettings[m_shadowsQuality];
@@ -496,7 +481,7 @@ void WorldRendererForward::buildLights(const WorldRenderView& worldRenderView, i
 		rgtd.usingPrimaryDepthStencil = false;
 		rgtd.usingDepthStencilAsTexture = true;
 		rgtd.ignoreStencil = true;
-		m_renderGraph->addTargetSet(s_handleShadowMapCascade, rgtd);
+		renderGraph.addTargetSet(s_handleShadowMapCascade, rgtd);
 
 		// Add cascading shadow map render pass.
 		Ref< render::RenderPass > rp = new render::RenderPass(L"Shadow cascade");
@@ -613,7 +598,7 @@ void WorldRendererForward::buildLights(const WorldRenderView& worldRenderView, i
 				}
 			);
 
-		m_renderGraph->addPass(rp);
+		renderGraph.addPass(rp);
 	}
 
 	if (shadowsEnable)
@@ -627,7 +612,7 @@ void WorldRendererForward::buildLights(const WorldRenderView& worldRenderView, i
 		rgtd.usingPrimaryDepthStencil = false;
 		rgtd.usingDepthStencilAsTexture = true;
 		rgtd.ignoreStencil = true;
-		m_renderGraph->addTargetSet(s_handleShadowMapAtlas, rgtd);
+		renderGraph.addTargetSet(s_handleShadowMapAtlas, rgtd);
 
 		// Add atlas shadow map render pass.
 		int32_t atlasIndex = 0;
@@ -746,14 +731,14 @@ void WorldRendererForward::buildLights(const WorldRenderView& worldRenderView, i
 					}
 				);
 
-			m_renderGraph->addPass(rp);
+			renderGraph.addPass(rp);
 
 			++atlasIndex;
 		}
 	}
 }
 
-void WorldRendererForward::buildVisual(const WorldRenderView& worldRenderView, int32_t frame)
+void WorldRendererForward::buildVisual(const WorldRenderView& worldRenderView, render::RenderGraph& renderGraph, int32_t frame)
 {
 	const bool shadowsEnable = (bool)(m_shadowsQuality != QuDisabled);
 	int32_t lightCount = (int32_t)m_lights.size();
@@ -766,7 +751,7 @@ void WorldRendererForward::buildVisual(const WorldRenderView& worldRenderView, i
 	rgtd.targets[0].colorFormat = render::TfR11G11B10F;
 	rgtd.screenWidthDenom = 1;
 	rgtd.screenHeightDenom = 1;
-	m_renderGraph->addTargetSet(s_handleVisual[0], rgtd, m_sharedDepthStencil);
+	renderGraph.addTargetSet(s_handleVisual[0], rgtd, m_sharedDepthStencil);
 
 	// Add visual[0] target set.
 	Ref< render::RenderPass > rp = new render::RenderPass(L"Visual");
@@ -832,10 +817,10 @@ void WorldRendererForward::buildVisual(const WorldRenderView& worldRenderView, i
 		}
 	);
 
-	m_renderGraph->addPass(rp);
+	renderGraph.addPass(rp);
 }
 
-void WorldRendererForward::buildProcess(const WorldRenderView& worldRenderView)
+void WorldRendererForward::buildProcess(const WorldRenderView& worldRenderView, render::RenderGraph& renderGraph)
 {
 	render::ImageGraphParams ipd;
 	ipd.viewFrustum = worldRenderView.getViewFrustum();
@@ -872,10 +857,10 @@ void WorldRendererForward::buildProcess(const WorldRenderView& worldRenderView)
 		rgtd.targets[0].colorFormat = render::TfR11G11B10F;
 		rgtd.screenWidthDenom = 1;
 		rgtd.screenHeightDenom = 1;
-		m_renderGraph->addTargetSet(s_handleVisual[i], rgtd, m_sharedDepthStencil);
+		renderGraph.addTargetSet(s_handleVisual[i], rgtd, m_sharedDepthStencil);
 
 		// Add image graph render targets.
-		processes[i]->addTargetSets(m_renderGraph);
+		processes[i]->addTargetSets(renderGraph);
 	}
 
 	// Add visual[N] render passes.
@@ -889,9 +874,9 @@ void WorldRendererForward::buildProcess(const WorldRenderView& worldRenderView)
 		if (next)
 			rp->setOutput(s_handleVisual[i + 1]);
 
-		process->addPasses(m_renderGraph, rp, cx);
+		process->addPasses(renderGraph, rp, cx);
 
-		m_renderGraph->addPass(rp);
+		renderGraph.addPass(rp);
 	}
 }
 

@@ -390,13 +390,6 @@ bool WorldRendererDeferred::create(
 	m_entityRenderers = desc.entityRenderers;
 	m_rootEntity = new GroupEntity();
 
-	// Create render graph.
-	m_renderGraph = new render::RenderGraph(
-		renderSystem,
-		desc.width,
-		desc.height
-	);
-
 	// Create screen renderer.
 	m_screenRenderer = new render::ScreenRenderer();
 	if (!m_screenRenderer->create(renderSystem))
@@ -415,7 +408,6 @@ void WorldRendererDeferred::destroy()
 	m_frames.clear();
 
 	safeDestroy(m_lightRenderer);
-	safeDestroy(m_renderGraph);
 	safeDestroy(m_screenRenderer);
 
 	m_irradianceGrid.clear();
@@ -426,7 +418,7 @@ void WorldRendererDeferred::attach(Entity* entity)
 	m_rootEntity->addEntity(entity);
 }
 
-void WorldRendererDeferred::build(const WorldRenderView& worldRenderView, render::RenderContext* renderContext)
+void WorldRendererDeferred::setup(const WorldRenderView& worldRenderView, render::RenderGraph& renderGraph)
 {
 	int32_t frame = m_count % (int32_t)m_frames.size();
 
@@ -491,34 +483,28 @@ void WorldRendererDeferred::build(const WorldRenderView& worldRenderView, render
 		}
 	}
 
-	buildGBuffer(worldRenderView);
-	buildVelocity(worldRenderView);
-	buildAmbientOcclusion(worldRenderView);
-	buildCascadeShadowMap(worldRenderView, lightCascadeIndex, lightShaderData);
-	buildAtlasShadowMap(worldRenderView, lightAtlasIndices, lightShaderData);
-	buildTileData(worldRenderView, tileShaderData);
-	buildShadowMask(worldRenderView, lightCascadeIndex);
-	buildReflections(worldRenderView);
-	buildVisual(worldRenderView, frame);
-	buildProcess(worldRenderView);
-
-	// Validate render graph.
-	if (!m_renderGraph->validate())
-		return;
-
-	// Build render context through render graph.
-	m_renderGraph->build(renderContext);
+	buildGBuffer(worldRenderView, renderGraph);
+	buildVelocity(worldRenderView, renderGraph);
+	buildAmbientOcclusion(worldRenderView, renderGraph);
+	buildCascadeShadowMap(worldRenderView, renderGraph, lightCascadeIndex, lightShaderData);
+	buildAtlasShadowMap(worldRenderView, renderGraph, lightAtlasIndices, lightShaderData);
+	buildTileData(worldRenderView, renderGraph, tileShaderData);
+	buildShadowMask(worldRenderView, renderGraph, lightCascadeIndex);
+	buildReflections(worldRenderView, renderGraph);
+	buildVisual(worldRenderView, renderGraph, frame);
+	buildProcess(worldRenderView, renderGraph);
 
 	// Unlock light sbuffers.
-	m_frames[frame].tileSBuffer->unlock();
-	m_frames[frame].lightSBuffer->unlock();
+	// \fixme Cannot unlock these until render context has been built...
+	// m_frames[frame].tileSBuffer->unlock();
+	// m_frames[frame].lightSBuffer->unlock();
 
 	// Flush attached entities.
 	m_rootEntity->removeAllEntities();
 	m_count++;
 }
 
-void WorldRendererDeferred::buildGBuffer(const WorldRenderView& worldRenderView) const
+void WorldRendererDeferred::buildGBuffer(const WorldRenderView& worldRenderView, render::RenderGraph& renderGraph) const
 {
 	const float clearZ = m_settings.viewFarZ;
 
@@ -533,7 +519,7 @@ void WorldRendererDeferred::buildGBuffer(const WorldRenderView& worldRenderView)
 	rgtd.targets[3].colorFormat = render::TfR11G11B10F;	// Surface color (RGB)
 	rgtd.screenWidthDenom = 1;
 	rgtd.screenHeightDenom = 1;
-	m_renderGraph->addTargetSet(s_handleGBuffer, rgtd, m_sharedDepthStencil);
+	renderGraph.addTargetSet(s_handleGBuffer, rgtd, m_sharedDepthStencil);
 
 	// Add GBuffer render pass.
 	Ref< render::RenderPass > rp = new render::RenderPass(L"GBuffer");
@@ -579,10 +565,10 @@ void WorldRendererDeferred::buildGBuffer(const WorldRenderView& worldRenderView)
 		}
 	);
 
-	m_renderGraph->addPass(rp);
+	renderGraph.addPass(rp);
 }
 
-void WorldRendererDeferred::buildVelocity(const WorldRenderView& worldRenderView) const
+void WorldRendererDeferred::buildVelocity(const WorldRenderView& worldRenderView, render::RenderGraph& renderGraph) const
 {
 	if (m_motionBlurQuality == QuDisabled)
 		return;
@@ -595,7 +581,7 @@ void WorldRendererDeferred::buildVelocity(const WorldRenderView& worldRenderView
 	rgtd.targets[0].colorFormat = render::TfR16G16F;
 	rgtd.screenWidthDenom = 1;
 	rgtd.screenHeightDenom = 1;
-	m_renderGraph->addTargetSet(s_handleVelocity, rgtd, m_sharedDepthStencil);
+	renderGraph.addTargetSet(s_handleVelocity, rgtd, m_sharedDepthStencil);
 
 	// Add Velocity render pass.
 	Ref< render::RenderPass > rp = new render::RenderPass(L"Velocity");
@@ -604,7 +590,7 @@ void WorldRendererDeferred::buildVelocity(const WorldRenderView& worldRenderView
 	{
 		render::ImageGraphContext cx(m_screenRenderer);
 		cx.associateTextureTargetSet(s_handleInputDepth, s_handleGBuffer, 0);
-		m_motionBlurPrime->addPasses(m_renderGraph, rp, cx);
+		m_motionBlurPrime->addPasses(renderGraph, rp, cx);
 	}
 
 	rp->setOutput(s_handleVelocity);
@@ -640,10 +626,10 @@ void WorldRendererDeferred::buildVelocity(const WorldRenderView& worldRenderView
 		}
 	);
 
-	m_renderGraph->addPass(rp);
+	renderGraph.addPass(rp);
 }
 
-void WorldRendererDeferred::buildAmbientOcclusion(const WorldRenderView& worldRenderView) const
+void WorldRendererDeferred::buildAmbientOcclusion(const WorldRenderView& worldRenderView, render::RenderGraph& renderGraph) const
 {
 	// Add ambient occlusion target set.
 	render::RenderGraphTargetSetDesc rgtd = {};
@@ -653,7 +639,7 @@ void WorldRendererDeferred::buildAmbientOcclusion(const WorldRenderView& worldRe
 	rgtd.targets[0].colorFormat = render::TfR8;			// Ambient occlusion (R)
 	rgtd.screenWidthDenom = 1;
 	rgtd.screenHeightDenom = 1;
-	m_renderGraph->addTargetSet(s_handleAmbientOcclusion, rgtd, m_sharedDepthStencil);
+	renderGraph.addTargetSet(s_handleAmbientOcclusion, rgtd, m_sharedDepthStencil);
 
 	// Add ambient occlusion render pass.
 	Ref< render::RenderPass > rp = new render::RenderPass(L"Ambient occlusion");
@@ -670,7 +656,7 @@ void WorldRendererDeferred::buildAmbientOcclusion(const WorldRenderView& worldRe
 		cx.associateTextureTargetSet(s_handleInputNormal, s_handleGBuffer, 1);
 		cx.setParams(ipd);
 
-		m_ambientOcclusion->addPasses(m_renderGraph, rp, cx);
+		m_ambientOcclusion->addPasses(renderGraph, rp, cx);
 	}
 
 	render::Clear clear;
@@ -678,10 +664,10 @@ void WorldRendererDeferred::buildAmbientOcclusion(const WorldRenderView& worldRe
 	clear.colors[0] = Color4f(1.0f, 1.0f, 1.0f, 1.0f);
 	rp->setOutput(s_handleAmbientOcclusion, clear);
 
-	m_renderGraph->addPass(rp);
+	renderGraph.addPass(rp);
 }
 
-void WorldRendererDeferred::buildCascadeShadowMap(const WorldRenderView& worldRenderView, int32_t lightCascadeIndex, LightShaderData* lightShaderData) const
+void WorldRendererDeferred::buildCascadeShadowMap(const WorldRenderView& worldRenderView, render::RenderGraph& renderGraph, int32_t lightCascadeIndex, LightShaderData* lightShaderData) const
 {
 	if (lightCascadeIndex < 0)
 		return;
@@ -702,7 +688,7 @@ void WorldRendererDeferred::buildCascadeShadowMap(const WorldRenderView& worldRe
 	rgtd.usingPrimaryDepthStencil = false;
 	rgtd.usingDepthStencilAsTexture = true;
 	rgtd.ignoreStencil = true;
-	m_renderGraph->addTargetSet(s_handleShadowMapCascade, rgtd);
+	renderGraph.addTargetSet(s_handleShadowMapCascade, rgtd);
 
 	// Add cascading shadow map render pass.
 	Ref< render::RenderPass > rp = new render::RenderPass(L"Shadow cascade");
@@ -800,10 +786,10 @@ void WorldRendererDeferred::buildCascadeShadowMap(const WorldRenderView& worldRe
 		}
 	);
 
-	m_renderGraph->addPass(rp);
+	renderGraph.addPass(rp);
 }
 
-void WorldRendererDeferred::buildAtlasShadowMap(const WorldRenderView& worldRenderView, const StaticVector< int32_t, 16 >& lightAtlasIndices, LightShaderData* lightShaderData) const
+void WorldRendererDeferred::buildAtlasShadowMap(const WorldRenderView& worldRenderView, render::RenderGraph& renderGraph, const StaticVector< int32_t, 16 >& lightAtlasIndices, LightShaderData* lightShaderData) const
 {
 	if (lightAtlasIndices.empty())
 		return;
@@ -823,7 +809,7 @@ void WorldRendererDeferred::buildAtlasShadowMap(const WorldRenderView& worldRend
 	rgtd.usingPrimaryDepthStencil = false;
 	rgtd.usingDepthStencilAsTexture = true;
 	rgtd.ignoreStencil = true;
-	m_renderGraph->addTargetSet(s_handleShadowMapAtlas, rgtd);
+	renderGraph.addTargetSet(s_handleShadowMapAtlas, rgtd);
 
 	// Add atlas shadow map render pass.
 	int32_t atlasIndex = 0;
@@ -939,13 +925,13 @@ void WorldRendererDeferred::buildAtlasShadowMap(const WorldRenderView& worldRend
 			}
 		);
 
-		m_renderGraph->addPass(rp);
+		renderGraph.addPass(rp);
 
 		++atlasIndex;
 	}		
 }
 
-void WorldRendererDeferred::buildTileData(const WorldRenderView& worldRenderView, TileShaderData* tileShaderData) const
+void WorldRendererDeferred::buildTileData(const WorldRenderView& worldRenderView, render::RenderGraph& renderGraph, TileShaderData* tileShaderData) const
 {
 	const Frustum& viewFrustum = worldRenderView.getViewFrustum();
 
@@ -1010,7 +996,7 @@ void WorldRendererDeferred::buildTileData(const WorldRenderView& worldRenderView
 	}
 }
 
-void WorldRendererDeferred::buildShadowMask(const WorldRenderView& worldRenderView, int32_t lightCascadeIndex) const
+void WorldRendererDeferred::buildShadowMask(const WorldRenderView& worldRenderView, render::RenderGraph& renderGraph, int32_t lightCascadeIndex) const
 {
 	if (m_shadowsQuality == QuDisabled || lightCascadeIndex < 0)
 		return;
@@ -1034,7 +1020,7 @@ void WorldRendererDeferred::buildShadowMask(const WorldRenderView& worldRenderVi
 	rgtd.targets[0].colorFormat = render::TfR8;
 	rgtd.screenWidthDenom = m_shadowSettings.maskDenominator;
 	rgtd.screenHeightDenom = m_shadowSettings.maskDenominator;
-	m_renderGraph->addTargetSet(s_handleShadowMask, rgtd, m_sharedDepthStencil);
+	renderGraph.addTargetSet(s_handleShadowMask, rgtd, m_sharedDepthStencil);
 
 	// Add screen space shadow mask render pass.
 	Ref< render::RenderPass > rp = new render::RenderPass(L"Shadow mask");
@@ -1090,7 +1076,7 @@ void WorldRendererDeferred::buildShadowMask(const WorldRenderView& worldRenderVi
 		cx.associateTextureTargetSet(s_handleInputNormal, s_handleGBuffer, 1);
 		cx.setParams(ipd);
 
-		m_shadowMaskProject->addPasses(m_renderGraph, rp, cx);
+		m_shadowMaskProject->addPasses(renderGraph, rp, cx);
 	}
 
 	render::Clear clear;
@@ -1098,10 +1084,10 @@ void WorldRendererDeferred::buildShadowMask(const WorldRenderView& worldRenderVi
 	clear.colors[0] = Color4f(1.0f, 1.0f, 1.0f, 1.0f);
 	rp->setOutput(s_handleShadowMask, clear);
 
-	m_renderGraph->addPass(rp);
+	renderGraph.addPass(rp);
 }
 
-void WorldRendererDeferred::buildReflections(const WorldRenderView& worldRenderView) const
+void WorldRendererDeferred::buildReflections(const WorldRenderView& worldRenderView, render::RenderGraph& renderGraph) const
 {
 	if (m_reflectionsQuality == QuDisabled)
 		return;
@@ -1121,7 +1107,7 @@ void WorldRendererDeferred::buildReflections(const WorldRenderView& worldRenderV
 	rgtd.screenWidthDenom = 2;
 	rgtd.screenHeightDenom = 2;
 #endif
-	m_renderGraph->addTargetSet(s_handleReflections, rgtd, m_sharedDepthStencil);
+	renderGraph.addTargetSet(s_handleReflections, rgtd, m_sharedDepthStencil);
 
 	// Add Reflections render pass.
 	Ref< render::RenderPass > rp = new render::RenderPass(L"Reflections");
@@ -1190,10 +1176,10 @@ void WorldRendererDeferred::buildReflections(const WorldRenderView& worldRenderV
 		}
 	);
 
-	m_renderGraph->addPass(rp);
+	renderGraph.addPass(rp);
 }
 
-void WorldRendererDeferred::buildVisual(const WorldRenderView& worldRenderView, int32_t frame) const
+void WorldRendererDeferred::buildVisual(const WorldRenderView& worldRenderView, render::RenderGraph& renderGraph, int32_t frame) const
 {
 	const bool shadowsEnable = (bool)(m_shadowsQuality != QuDisabled);
 	int32_t lightCount = (int32_t)m_lights.size();
@@ -1206,7 +1192,7 @@ void WorldRendererDeferred::buildVisual(const WorldRenderView& worldRenderView, 
 	rgtd.targets[0].colorFormat = render::TfR11G11B10F;
 	rgtd.screenWidthDenom = 1;
 	rgtd.screenHeightDenom = 1;
-	m_renderGraph->addTargetSet(s_handleVisual[0], rgtd, m_sharedDepthStencil);
+	renderGraph.addTargetSet(s_handleVisual[0], rgtd, m_sharedDepthStencil);
 
 	// Add visual[0] render pass.
 	Ref< render::RenderPass > rp = new render::RenderPass(L"Visual");
@@ -1333,10 +1319,10 @@ void WorldRendererDeferred::buildVisual(const WorldRenderView& worldRenderView, 
 		}
 	);
 
-	m_renderGraph->addPass(rp);
+	renderGraph.addPass(rp);
 }
 
-void WorldRendererDeferred::buildProcess(const WorldRenderView& worldRenderView) const
+void WorldRendererDeferred::buildProcess(const WorldRenderView& worldRenderView, render::RenderGraph& renderGraph) const
 {
 	render::ImageGraphParams ipd;
 	ipd.viewFrustum = worldRenderView.getViewFrustum();
@@ -1376,10 +1362,10 @@ void WorldRendererDeferred::buildProcess(const WorldRenderView& worldRenderView)
 		rgtd.targets[0].colorFormat = render::TfR11G11B10F;
 		rgtd.screenWidthDenom = 1;
 		rgtd.screenHeightDenom = 1;
-		m_renderGraph->addTargetSet(s_handleVisual[i], rgtd, m_sharedDepthStencil);
+		renderGraph.addTargetSet(s_handleVisual[i], rgtd, m_sharedDepthStencil);
 
 		// Add image graph render targets.
-		processes[i]->addTargetSets(m_renderGraph);
+		processes[i]->addTargetSets(renderGraph);
 	}
 
 	// Add visual[N] render passes.
@@ -1393,9 +1379,9 @@ void WorldRendererDeferred::buildProcess(const WorldRenderView& worldRenderView)
 		if (next)
 			rp->setOutput(s_handleVisual[i + 1]);
 
-		process->addPasses(m_renderGraph, rp, cx);
+		process->addPasses(renderGraph, rp, cx);
 
-		m_renderGraph->addPass(rp);
+		renderGraph.addPass(rp);
 	}
 }
 

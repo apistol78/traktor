@@ -11,7 +11,7 @@
 #include "Render/IRenderSystem.h"
 #include "Render/IRenderView.h"
 #include "Render/Context/RenderContext.h"
-#include "Render/Image/ImageProcess.h"
+#include "Render/Frame/RenderGraph.h"
 #include "Resource/IResourceManager.h"
 #include "Scene/Scene.h"
 #include "Scene/Editor/Camera.h"
@@ -102,6 +102,7 @@ bool FinalRenderControl::create(ui::Widget* parent, SceneEditorContext* context,
 		return false;
 
 	m_renderContext = new render::RenderContext(1 * 1024 * 1024);
+	m_renderGraph = new render::RenderGraph(m_context->getRenderSystem());
 
 	m_renderWidget->addEventHandler< ui::MouseButtonDownEvent >(this, &FinalRenderControl::eventButtonDown);
 	m_renderWidget->addEventHandler< ui::MouseButtonUpEvent >(this, &FinalRenderControl::eventButtonUp);
@@ -153,10 +154,6 @@ void FinalRenderControl::updateWorldRenderer()
 	if (!m_sceneInstance)
 		return;
 
-	ui::Size sz = m_renderWidget->getInnerRect().getSize();
-	if (sz.cx <= 0 || sz.cy <= 0)
-		return;
-
 	m_worldRenderSettings = *(m_sceneInstance->getWorldRenderSettings());
 
 	// Use world render settings from non-baked scene.
@@ -195,11 +192,8 @@ void FinalRenderControl::updateWorldRenderer()
 	wcd.ambientOcclusionQuality = m_ambientOcclusionQuality;
 	wcd.antiAliasQuality = m_antiAliasQuality;
 	wcd.imageProcessQuality = m_imageProcessQuality;
-	wcd.width = sz.cx;
-	wcd.height = sz.cy;
 	wcd.multiSample = m_multiSample;
 	wcd.frameCount = 1;
-	wcd.allTargetsPersistent = true;
 
 	if (worldRenderer->create(
 		m_context->getResourceManager(),
@@ -381,8 +375,6 @@ void FinalRenderControl::eventSize(ui::SizeEvent* event)
 	m_renderView->reset(sz.cx, sz.cy);
 	m_renderView->setViewport(render::Viewport(0, 0, sz.cx, sz.cy, 0, 1));
 
-	safeDestroy(m_worldRenderer);
-
 	m_dirtySize = sz;
 }
 
@@ -423,9 +415,6 @@ void FinalRenderControl::eventPaint(ui::PaintEvent* event)
 	m_sceneInstance->updateController(update);
 	m_sceneInstance->updateEntity(update);
 
-	// Start building render context.
-	m_renderContext->flush();
-
 	// Update world render view.
 	m_worldRenderView.setPerspective(
 		float(sz.cx),
@@ -440,12 +429,20 @@ void FinalRenderControl::eventPaint(ui::PaintEvent* event)
 	Matrix44 projection = getProjectionTransform();
 	Matrix44 view = getViewTransform();
 
-	// Build world.
+	// Setup world render passes.
 	m_worldRenderView.setTimes(scaledTime, deltaTime, 1.0f);
 	m_worldRenderView.setView(m_worldRenderView.getView(), view);
 	m_worldRenderer->attach(m_sceneInstance->getRootEntity());
 	m_context->getEntityEventManager()->attach(m_worldRenderer);
-	m_worldRenderer->build(m_worldRenderView, m_renderContext);
+	m_worldRenderer->setup(m_worldRenderView, *m_renderGraph);
+
+	// Validate render graph.
+	if (!m_renderGraph->validate(m_dirtySize.cx, m_dirtySize.cy))
+		return;
+
+	// Build render context.
+	m_renderContext->flush();
+	m_renderGraph->build(m_renderContext);
 
 	// Render frame.
 	render::Clear clear = { 0 };

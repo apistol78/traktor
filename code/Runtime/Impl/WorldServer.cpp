@@ -316,8 +316,6 @@ Ref< world::IWorldRenderer > WorldServer::createWorldRenderer(const world::World
 	wcd.ambientOcclusionQuality = m_ambientOcclusionQuality;
 	wcd.antiAliasQuality = m_antiAliasQuality;
 	wcd.imageProcessQuality = m_imageProcessQuality;
-	wcd.width = m_renderServer->getWidth();
-	wcd.height = m_renderServer->getHeight();
 	wcd.multiSample = m_renderServer->getMultiSample();
 	wcd.frameCount = m_renderServer->getThreadFrameQueueCount();
 	wcd.gamma = m_gamma;

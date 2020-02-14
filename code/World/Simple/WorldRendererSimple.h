@@ -12,13 +12,6 @@
 
 namespace traktor
 {
-	namespace render
-	{
-
-class RenderGraph;
-
-	}
-
 	namespace world
 	{
 
@@ -49,10 +42,9 @@ public:
 
 	virtual void attach(Entity* entity) override final;
 
-	virtual void build(const WorldRenderView& worldRenderView, render::RenderContext* renderContext) override final;
+	virtual void setup(const WorldRenderView& worldRenderView, render::RenderGraph& renderGraph) override final;
 
 private:
-	Ref< render::RenderGraph > m_renderGraph;
 	Ref< WorldEntityRenderers > m_entityRenderers;
 	Ref< GroupEntity > m_rootEntity;
 };

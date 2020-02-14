@@ -14,17 +14,13 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderGraph", RenderGraph, Object)
 
-RenderGraph::RenderGraph(IRenderSystem* renderSystem, int32_t width, int32_t height)
-:	m_renderSystem(renderSystem)
-,	m_width(width)
-,	m_height(height)
+RenderGraph::RenderGraph(IRenderSystem* renderSystem)
 {
-	m_pool = new RenderGraphTargetSetPool(renderSystem, width, height);
+	m_pool = new RenderGraphTargetSetPool(renderSystem);
 }
 
 void RenderGraph::destroy()
 {
-	m_renderSystem = nullptr;
 	m_targets.clear();
 	m_passes.clear();
 	m_order.clear();
@@ -56,8 +52,11 @@ void RenderGraph::addPass(const RenderPass* pass)
 	m_passes.push_back(pass);
 }
 
-bool RenderGraph::validate()
+bool RenderGraph::validate(int32_t width, int32_t height)
 {
+	if (!m_pool->validate(width, height))
+		return false;
+
 	// Acquire targets.
 	for (auto& tm : m_targets)
 	{

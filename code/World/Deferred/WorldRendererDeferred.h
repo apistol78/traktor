@@ -22,9 +22,6 @@ namespace traktor
 
 class ImageGraph;
 class IRenderTargetSet;
-class ISimpleTexture;
-class RenderContext;
-class RenderGraph;
 class ScreenRenderer;
 class StructBuffer;
 
@@ -35,7 +32,6 @@ class StructBuffer;
 
 class GroupEntity;
 class IrradianceGrid;
-class IShadowProjection;
 class LightRendererDeferred;
 class WorldEntityRenderers;
 
@@ -70,7 +66,7 @@ public:
 
 	virtual void attach(Entity* entity) override final;
 
-	virtual void build(const WorldRenderView& worldRenderView, render::RenderContext* renderContext) override final;
+	virtual void setup(const WorldRenderView& worldRenderView, render::RenderGraph& renderGraph) override final;
 
 private:
 	struct Frame
@@ -92,7 +88,6 @@ private:
 	Ref< render::IRenderTargetSet > m_sharedDepthStencil;
 
 	Ref< render::ScreenRenderer > m_screenRenderer;
-	Ref< render::RenderGraph > m_renderGraph;
 	Ref< LightRendererDeferred > m_lightRenderer;
 
 	render::Handle m_handleShadowMapCascade;
@@ -121,25 +116,25 @@ private:
 
 	int32_t m_count;
 
-	void buildGBuffer(const WorldRenderView& worldRenderView) const;
+	void buildGBuffer(const WorldRenderView& worldRenderView, render::RenderGraph& renderGraph) const;
 
-	void buildVelocity(const WorldRenderView& worldRenderView) const;
+	void buildVelocity(const WorldRenderView& worldRenderView, render::RenderGraph& renderGraph) const;
 
-	void buildAmbientOcclusion(const WorldRenderView& worldRenderView) const;
+	void buildAmbientOcclusion(const WorldRenderView& worldRenderView, render::RenderGraph& renderGraph) const;
 
-	void buildCascadeShadowMap(const WorldRenderView& worldRenderView, int32_t lightCascadeIndex, LightShaderData* lightShaderData) const;
+	void buildCascadeShadowMap(const WorldRenderView& worldRenderView, render::RenderGraph& renderGraph, int32_t lightCascadeIndex, LightShaderData* lightShaderData) const;
 
-	void buildAtlasShadowMap(const WorldRenderView& worldRenderView, const StaticVector< int32_t, 16 >& lightAtlasIndices, LightShaderData* lightShaderData) const;
+	void buildAtlasShadowMap(const WorldRenderView& worldRenderView, render::RenderGraph& renderGraph, const StaticVector< int32_t, 16 >& lightAtlasIndices, LightShaderData* lightShaderData) const;
 
-	void buildTileData(const WorldRenderView& worldRenderView, TileShaderData* tileShaderData) const;
+	void buildTileData(const WorldRenderView& worldRenderView, render::RenderGraph& renderGraph, TileShaderData* tileShaderData) const;
 
-	void buildShadowMask(const WorldRenderView& worldRenderView, int32_t lightCascadeIndex) const;
+	void buildShadowMask(const WorldRenderView& worldRenderView, render::RenderGraph& renderGraph, int32_t lightCascadeIndex) const;
 
-	void buildReflections(const WorldRenderView& worldRenderView) const;
+	void buildReflections(const WorldRenderView& worldRenderView, render::RenderGraph& renderGraph) const;
 
-	void buildVisual(const WorldRenderView& worldRenderView, int32_t frame) const;
+	void buildVisual(const WorldRenderView& worldRenderView, render::RenderGraph& renderGraph, int32_t frame) const;
 
-	void buildProcess(const WorldRenderView& worldRenderView) const;
+	void buildProcess(const WorldRenderView& worldRenderView, render::RenderGraph& renderGraph) const;
 };
 
 	}
