@@ -73,6 +73,7 @@ private:
 	struct Frame
 	{
 		Ref< render::StructBuffer > lightSBuffer;
+		void* lightSBufferMemory;
 	};
 
 	WorldRenderSettings m_settings;

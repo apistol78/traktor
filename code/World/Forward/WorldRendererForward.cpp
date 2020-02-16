@@ -229,6 +229,10 @@ bool WorldRendererForward::create(
 		);
 		if (!frame.lightSBuffer)
 			return false;
+
+		frame.lightSBufferMemory = frame.lightSBuffer->lock();
+		if (!frame.lightSBufferMemory)
+			return false;
 	}
 
 	// Determine slice distances.
@@ -276,10 +280,8 @@ void WorldRendererForward::setup(const WorldRenderView& worldRenderView, render:
 	if (m_lights.size() > c_maxLightCount)
 		m_lights.resize(c_maxLightCount);
 
-	// Lock light sbuffer; \note data is currently written both when setting
-	// up render passes and when executing passes.
-	LightShaderData* lightShaderData = (LightShaderData*)m_frames[frame].lightSBuffer->lock();
-	T_FATAL_ASSERT(lightShaderData != nullptr);
+	// Begun writing light shader data; written both in setup and build.
+	LightShaderData* lightShaderData = (LightShaderData*)m_frames[frame].lightSBufferMemory;
 
 	// Add passes to render graph.
 	auto gbufferTargetSetId = setupGBufferPass(
@@ -293,8 +295,8 @@ void WorldRendererForward::setup(const WorldRenderView& worldRenderView, render:
 		gbufferTargetSetId
 	);
 
-	render::handle_t shadowMapCascadeTargetSetId;
-	render::handle_t shadowMapAtlasTargetSetId;
+	render::handle_t shadowMapCascadeTargetSetId = 0;
+	render::handle_t shadowMapAtlasTargetSetId = 0;
 	setupLightPass(
 		worldRenderView,
 		renderGraph,
@@ -307,11 +309,11 @@ void WorldRendererForward::setup(const WorldRenderView& worldRenderView, render:
 	auto visualTargetSetId = setupVisualPass(
 		worldRenderView,
 		renderGraph,
-		frame,
 		gbufferTargetSetId,
 		ambientOcclusionTargetSetId,
 		shadowMapCascadeTargetSetId,
-		shadowMapAtlasTargetSetId
+		shadowMapAtlasTargetSetId,
+		frame
 	);
 
 	setupProcessPass(
@@ -321,12 +323,13 @@ void WorldRendererForward::setup(const WorldRenderView& worldRenderView, render:
 		visualTargetSetId
 	);
 
-	// Unlock light sbuffer.
-	// \fixme Cannot unlock these until render context has been built...
-	//m_frames[frame].lightSBuffer->unlock();
+	// Add cleanup pass to remove attached entities.
+	Ref< render::RenderPass > rp = new render::RenderPass(L"Cleanup");
+	rp->addBuild([=](const render::RenderGraph&, render::RenderContext*) {
+		m_rootEntity->removeAllEntities();
+	});
+	renderGraph.addPass(rp);
 
-	// Flush attached entities.
-	m_rootEntity->removeAllEntities();
 	m_count++;
 }
 
@@ -893,6 +896,7 @@ void WorldRendererForward::setupProcessPass(
 	if (m_antiAlias)
 		processes.push_back(m_antiAlias);
 
+	render::handle_t intermediateTargetSetId = 0;
 	for (size_t i = 0; i < processes.size(); ++i)
 	{
 		auto process = processes[i];
@@ -909,12 +913,15 @@ void WorldRendererForward::setupProcessPass(
 			rgtd.targets[0].colorFormat = render::TfR11G11B10F;
 			rgtd.screenWidthDenom = 1;
 			rgtd.screenHeightDenom = 1;
-			auto intermediateTargetSetId = renderGraph.addTargetSet(rgtd, m_sharedDepthStencil);
+			intermediateTargetSetId = renderGraph.addTargetSet(rgtd, m_sharedDepthStencil);
 
 			rp->setOutput(intermediateTargetSetId);
 		}
 
 		process->addPasses(renderGraph, rp, cx);
+
+		if (next)
+			cx.associateTextureTargetSet(s_handleInputColor, intermediateTargetSetId, 0);
 
 		renderGraph.addPass(rp);
 	}
