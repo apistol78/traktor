@@ -36,8 +36,6 @@ class T_DLLCLASS ImageGraph : public Object
     T_RTTI_CLASS;
 
 public:
-    void addTargetSets(RenderGraph& renderGraph) const;
-
     void addPasses(RenderGraph& renderGraph, RenderPass* parentPass, const ImageGraphContext& cx) const;
 
 	void setFloatParameter(handle_t handle, float value);

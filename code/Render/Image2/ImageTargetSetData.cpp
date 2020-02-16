@@ -111,7 +111,6 @@ Ref< const ImageTargetSet > ImageTargetSetData::createInstance() const
 		textureIds[i] = getParameterHandle(m_textureIds[i]);
 
     return new ImageTargetSet(
-		getParameterHandle(m_targetSetId),
 		textureIds,
         m_targetSetDesc
     );

@@ -84,25 +84,6 @@ const render::Handle s_handleGamma(L"World_Gamma");
 const render::Handle s_handleGammaInverse(L"World_GammaInverse");
 const render::Handle s_handleExposure(L"World_Exposure");
 
-// RenderGraph targets.
-const render::Handle s_handleGBuffer(L"GBuffer");
-const render::Handle s_handleAmbientOcclusion(L"AmbientOcclusion");
-const render::Handle s_handleVelocity(L"Velocity");
-const render::Handle s_handleReflections(L"Reflections");
-const render::Handle s_handleShadowMapCascade(L"ShadowMapCascade");
-const render::Handle s_handleShadowMapAtlas(L"ShadowMapAtlas");
-const render::Handle s_handleShadowMask(L"ShadowMask");
-const render::Handle s_handleVisual[7] =
-{
-	render::Handle(L"Visual0"),
-	render::Handle(L"Visual1"),
-	render::Handle(L"Visual2"),
-	render::Handle(L"Visual3"),
-	render::Handle(L"Visual4"),
-	render::Handle(L"Visual5"),
-	render::Handle(L"Visual6")
-};
-
 // ImageGraph input textures.
 const render::Handle s_handleInputColor(L"InputColor");
 const render::Handle s_handleInputDepth(L"InputDepth");
@@ -483,16 +464,76 @@ void WorldRendererDeferred::setup(const WorldRenderView& worldRenderView, render
 		}
 	}
 
-	buildGBuffer(worldRenderView, renderGraph);
-	buildVelocity(worldRenderView, renderGraph);
-	buildAmbientOcclusion(worldRenderView, renderGraph);
-	buildCascadeShadowMap(worldRenderView, renderGraph, lightCascadeIndex, lightShaderData);
-	buildAtlasShadowMap(worldRenderView, renderGraph, lightAtlasIndices, lightShaderData);
-	buildTileData(worldRenderView, renderGraph, tileShaderData);
-	buildShadowMask(worldRenderView, renderGraph, lightCascadeIndex);
-	buildReflections(worldRenderView, renderGraph);
-	buildVisual(worldRenderView, renderGraph, frame);
-	buildProcess(worldRenderView, renderGraph);
+	auto gbufferTargetSetId = setupGBufferPass(
+		worldRenderView,
+		renderGraph
+	);
+
+	auto velocityTargetSetId = setupVelocityPass(
+		worldRenderView,
+		renderGraph,
+		gbufferTargetSetId
+	);
+
+	auto ambientOcclusionTargetSetId = setupAmbientOcclusionPass(
+		worldRenderView,
+		renderGraph,
+		gbufferTargetSetId
+	);
+
+	auto shadowMapCascadeTargetSetId = setupCascadeShadowMapPass(
+		worldRenderView,
+		renderGraph,
+		lightCascadeIndex,
+		lightShaderData
+	);
+
+	auto shadowMapAtlasTargetSetId = setupAtlasShadowMapPass(
+		worldRenderView,
+		renderGraph,
+		lightAtlasIndices,
+		lightShaderData
+	);
+
+	setupTileDataPass(
+		worldRenderView,
+		renderGraph,
+		tileShaderData
+	);
+
+	auto shadowMaskTargetSetId = setupShadowMaskPass(
+		worldRenderView,
+		renderGraph,
+		gbufferTargetSetId,
+		shadowMapCascadeTargetSetId,
+		lightCascadeIndex
+	);
+
+	auto reflectionsTargetSetId = setupReflectionsPass(
+		worldRenderView,
+		renderGraph,
+		gbufferTargetSetId,
+		0 // visualTargetSetId
+	);
+
+	auto visualTargetSetId = setupVisualPass(
+		worldRenderView,
+		renderGraph,
+		gbufferTargetSetId,
+		ambientOcclusionTargetSetId,
+		reflectionsTargetSetId,
+		shadowMaskTargetSetId,
+		shadowMapAtlasTargetSetId,
+		frame
+	);
+
+	setupProcessPass(
+		worldRenderView,
+		renderGraph,
+		gbufferTargetSetId,
+		velocityTargetSetId,
+		visualTargetSetId
+	);
 
 	// Unlock light sbuffers.
 	// \fixme Cannot unlock these until render context has been built...
@@ -504,7 +545,10 @@ void WorldRendererDeferred::setup(const WorldRenderView& worldRenderView, render
 	m_count++;
 }
 
-void WorldRendererDeferred::buildGBuffer(const WorldRenderView& worldRenderView, render::RenderGraph& renderGraph) const
+render::handle_t WorldRendererDeferred::setupGBufferPass(
+	const WorldRenderView& worldRenderView,
+	render::RenderGraph& renderGraph
+) const
 {
 	const float clearZ = m_settings.viewFarZ;
 
@@ -519,7 +563,7 @@ void WorldRendererDeferred::buildGBuffer(const WorldRenderView& worldRenderView,
 	rgtd.targets[3].colorFormat = render::TfR11G11B10F;	// Surface color (RGB)
 	rgtd.screenWidthDenom = 1;
 	rgtd.screenHeightDenom = 1;
-	renderGraph.addTargetSet(s_handleGBuffer, rgtd, m_sharedDepthStencil);
+	auto gbufferTargetSetId = renderGraph.addTargetSet(rgtd, m_sharedDepthStencil);
 
 	// Add GBuffer render pass.
 	Ref< render::RenderPass > rp = new render::RenderPass(L"GBuffer");
@@ -531,7 +575,7 @@ void WorldRendererDeferred::buildGBuffer(const WorldRenderView& worldRenderView,
 	clear.colors[2] = Color4f(0.0f, 1.0f, 0.0f, 1.0f);	// misc
 	clear.colors[3] = Color4f(0.0f, 0.0f, 0.0f, 0.0f);	// surface
 	clear.depth = 1.0f;	
-	rp->setOutput(s_handleGBuffer, clear);
+	rp->setOutput(gbufferTargetSetId, clear);
 
 	rp->addBuild(
 		[=](const render::RenderGraph& renderGraph, render::RenderContext* renderContext)
@@ -566,12 +610,17 @@ void WorldRendererDeferred::buildGBuffer(const WorldRenderView& worldRenderView,
 	);
 
 	renderGraph.addPass(rp);
+	return gbufferTargetSetId;
 }
 
-void WorldRendererDeferred::buildVelocity(const WorldRenderView& worldRenderView, render::RenderGraph& renderGraph) const
+render::handle_t WorldRendererDeferred::setupVelocityPass(
+	const WorldRenderView& worldRenderView,
+	render::RenderGraph& renderGraph,
+	render::handle_t gbufferTargetSetId
+) const
 {
 	if (m_motionBlurQuality == QuDisabled)
-		return;
+		return 0;
 
 	// Add Velocity target set.
 	render::RenderGraphTargetSetDesc rgtd = {};
@@ -581,7 +630,7 @@ void WorldRendererDeferred::buildVelocity(const WorldRenderView& worldRenderView
 	rgtd.targets[0].colorFormat = render::TfR16G16F;
 	rgtd.screenWidthDenom = 1;
 	rgtd.screenHeightDenom = 1;
-	renderGraph.addTargetSet(s_handleVelocity, rgtd, m_sharedDepthStencil);
+	auto velocityTargetSetId = renderGraph.addTargetSet(rgtd, m_sharedDepthStencil);
 
 	// Add Velocity render pass.
 	Ref< render::RenderPass > rp = new render::RenderPass(L"Velocity");
@@ -589,11 +638,11 @@ void WorldRendererDeferred::buildVelocity(const WorldRenderView& worldRenderView
 	if (m_motionBlurPrime)
 	{
 		render::ImageGraphContext cx(m_screenRenderer);
-		cx.associateTextureTargetSet(s_handleInputDepth, s_handleGBuffer, 0);
+		cx.associateTextureTargetSet(s_handleInputDepth, gbufferTargetSetId, 0);
 		m_motionBlurPrime->addPasses(renderGraph, rp, cx);
 	}
 
-	rp->setOutput(s_handleVelocity);
+	rp->setOutput(velocityTargetSetId);
 
 	rp->addBuild(
 		[=](const render::RenderGraph& renderGraph, render::RenderContext* renderContext)
@@ -627,19 +676,24 @@ void WorldRendererDeferred::buildVelocity(const WorldRenderView& worldRenderView
 	);
 
 	renderGraph.addPass(rp);
+	return velocityTargetSetId;
 }
 
-void WorldRendererDeferred::buildAmbientOcclusion(const WorldRenderView& worldRenderView, render::RenderGraph& renderGraph) const
+render::handle_t WorldRendererDeferred::setupAmbientOcclusionPass(
+	const WorldRenderView& worldRenderView,
+	render::RenderGraph& renderGraph,
+	render::handle_t gbufferTargetSetId
+) const
 {
 	// Add ambient occlusion target set.
-	render::RenderGraphTargetSetDesc rgtd = {};
+	render::RenderGraphTargetSetDesc rgtd;
 	rgtd.count = 1;
 	rgtd.createDepthStencil = false;
 	rgtd.usingPrimaryDepthStencil = false;
 	rgtd.targets[0].colorFormat = render::TfR8;			// Ambient occlusion (R)
 	rgtd.screenWidthDenom = 1;
 	rgtd.screenHeightDenom = 1;
-	renderGraph.addTargetSet(s_handleAmbientOcclusion, rgtd, m_sharedDepthStencil);
+	auto ambientOcclusionTargetSetId = renderGraph.addTargetSet(rgtd, m_sharedDepthStencil);
 
 	// Add ambient occlusion render pass.
 	Ref< render::RenderPass > rp = new render::RenderPass(L"Ambient occlusion");
@@ -652,8 +706,8 @@ void WorldRendererDeferred::buildAmbientOcclusion(const WorldRenderView& worldRe
 		ipd.projection = worldRenderView.getProjection();
 
 		render::ImageGraphContext cx(m_screenRenderer);
-		cx.associateTextureTargetSet(s_handleInputDepth, s_handleGBuffer, 0);
-		cx.associateTextureTargetSet(s_handleInputNormal, s_handleGBuffer, 1);
+		cx.associateTextureTargetSet(s_handleInputDepth, gbufferTargetSetId, 0);
+		cx.associateTextureTargetSet(s_handleInputNormal, gbufferTargetSetId, 1);
 		cx.setParams(ipd);
 
 		m_ambientOcclusion->addPasses(renderGraph, rp, cx);
@@ -662,15 +716,21 @@ void WorldRendererDeferred::buildAmbientOcclusion(const WorldRenderView& worldRe
 	render::Clear clear;
 	clear.mask = render::CfColor;
 	clear.colors[0] = Color4f(1.0f, 1.0f, 1.0f, 1.0f);
-	rp->setOutput(s_handleAmbientOcclusion, clear);
+	rp->setOutput(ambientOcclusionTargetSetId, clear);
 
 	renderGraph.addPass(rp);
+	return ambientOcclusionTargetSetId;
 }
 
-void WorldRendererDeferred::buildCascadeShadowMap(const WorldRenderView& worldRenderView, render::RenderGraph& renderGraph, int32_t lightCascadeIndex, LightShaderData* lightShaderData) const
+render::handle_t WorldRendererDeferred::setupCascadeShadowMapPass(
+	const WorldRenderView& worldRenderView,
+	render::RenderGraph& renderGraph,
+	int32_t lightCascadeIndex,
+	LightShaderData* lightShaderData
+) const
 {
 	if (lightCascadeIndex < 0)
-		return;
+		return 0;
 
 	const auto& shadowSettings = m_settings.shadowSettings[m_shadowsQuality];
 	const UniformShadowProjection shadowProjection(shadowSettings.resolution);
@@ -688,7 +748,7 @@ void WorldRendererDeferred::buildCascadeShadowMap(const WorldRenderView& worldRe
 	rgtd.usingPrimaryDepthStencil = false;
 	rgtd.usingDepthStencilAsTexture = true;
 	rgtd.ignoreStencil = true;
-	renderGraph.addTargetSet(s_handleShadowMapCascade, rgtd);
+	auto shadowMapCascadeTargetSetId = renderGraph.addTargetSet(rgtd);
 
 	// Add cascading shadow map render pass.
 	Ref< render::RenderPass > rp = new render::RenderPass(L"Shadow cascade");
@@ -696,7 +756,7 @@ void WorldRendererDeferred::buildCascadeShadowMap(const WorldRenderView& worldRe
 	render::Clear clear;
 	clear.mask = render::CfDepth;
 	clear.depth = 1.0f;
-	rp->setOutput(s_handleShadowMapCascade, clear);
+	rp->setOutput(shadowMapCascadeTargetSetId, clear);
 
 	rp->addBuild(
 		[=](const render::RenderGraph& renderGraph, render::RenderContext* renderContext)
@@ -787,12 +847,18 @@ void WorldRendererDeferred::buildCascadeShadowMap(const WorldRenderView& worldRe
 	);
 
 	renderGraph.addPass(rp);
+	return shadowMapCascadeTargetSetId;
 }
 
-void WorldRendererDeferred::buildAtlasShadowMap(const WorldRenderView& worldRenderView, render::RenderGraph& renderGraph, const StaticVector< int32_t, 16 >& lightAtlasIndices, LightShaderData* lightShaderData) const
+render::handle_t WorldRendererDeferred::setupAtlasShadowMapPass(
+	const WorldRenderView& worldRenderView,
+	render::RenderGraph& renderGraph,
+	const StaticVector< int32_t, 16 >& lightAtlasIndices,
+	LightShaderData* lightShaderData
+) const
 {
 	if (lightAtlasIndices.empty())
-		return;
+		return 0;
 
 	const auto shadowSettings = m_settings.shadowSettings[m_shadowsQuality];
 
@@ -809,7 +875,7 @@ void WorldRendererDeferred::buildAtlasShadowMap(const WorldRenderView& worldRend
 	rgtd.usingPrimaryDepthStencil = false;
 	rgtd.usingDepthStencilAsTexture = true;
 	rgtd.ignoreStencil = true;
-	renderGraph.addTargetSet(s_handleShadowMapAtlas, rgtd);
+	auto shadowMapAtlasTargetSetId = renderGraph.addTargetSet(rgtd);
 
 	// Add atlas shadow map render pass.
 	int32_t atlasIndex = 0;
@@ -820,7 +886,7 @@ void WorldRendererDeferred::buildAtlasShadowMap(const WorldRenderView& worldRend
 		render::Clear clear;
 		clear.mask = render::CfDepth;
 		clear.depth = 1.0f;
-		rp->setOutput(s_handleShadowMapAtlas, clear);
+		rp->setOutput(shadowMapAtlasTargetSetId, clear);
 
 		rp->addBuild(
 			[=](const render::RenderGraph& renderGraph, render::RenderContext* renderContext)
@@ -928,10 +994,16 @@ void WorldRendererDeferred::buildAtlasShadowMap(const WorldRenderView& worldRend
 		renderGraph.addPass(rp);
 
 		++atlasIndex;
-	}		
+	}
+
+	return shadowMapAtlasTargetSetId;
 }
 
-void WorldRendererDeferred::buildTileData(const WorldRenderView& worldRenderView, render::RenderGraph& renderGraph, TileShaderData* tileShaderData) const
+void WorldRendererDeferred::setupTileDataPass(
+	const WorldRenderView& worldRenderView,
+	render::RenderGraph& renderGraph,
+	TileShaderData* tileShaderData
+) const
 {
 	const Frustum& viewFrustum = worldRenderView.getViewFrustum();
 
@@ -996,10 +1068,16 @@ void WorldRendererDeferred::buildTileData(const WorldRenderView& worldRenderView
 	}
 }
 
-void WorldRendererDeferred::buildShadowMask(const WorldRenderView& worldRenderView, render::RenderGraph& renderGraph, int32_t lightCascadeIndex) const
+render::handle_t WorldRendererDeferred::setupShadowMaskPass(
+	const WorldRenderView& worldRenderView,
+	render::RenderGraph& renderGraph,
+	render::handle_t gbufferTargetSetId,
+	render::handle_t shadowMapCascadeTargetSetId,
+	int32_t lightCascadeIndex
+) const
 {
 	if (m_shadowsQuality == QuDisabled || lightCascadeIndex < 0)
-		return;
+		return 0;
 
 	const auto shadowSettings = m_settings.shadowSettings[m_shadowsQuality];
 	const UniformShadowProjection shadowProjection(shadowSettings.resolution);
@@ -1020,7 +1098,7 @@ void WorldRendererDeferred::buildShadowMask(const WorldRenderView& worldRenderVi
 	rgtd.targets[0].colorFormat = render::TfR8;
 	rgtd.screenWidthDenom = m_shadowSettings.maskDenominator;
 	rgtd.screenHeightDenom = m_shadowSettings.maskDenominator;
-	renderGraph.addTargetSet(s_handleShadowMask, rgtd, m_sharedDepthStencil);
+	auto shadowMaskTargetSetId = renderGraph.addTargetSet(rgtd, m_sharedDepthStencil);
 
 	// Add screen space shadow mask render pass.
 	Ref< render::RenderPass > rp = new render::RenderPass(L"Shadow mask");
@@ -1071,9 +1149,9 @@ void WorldRendererDeferred::buildShadowMask(const WorldRenderView& worldRenderVi
 		ipd.time = 0.0f;
 
 		render::ImageGraphContext cx(m_screenRenderer);
-		cx.associateTextureTargetSetDepth(s_handleInputShadowMap, s_handleShadowMapCascade);
-		cx.associateTextureTargetSet(s_handleInputDepth, s_handleGBuffer, 0);
-		cx.associateTextureTargetSet(s_handleInputNormal, s_handleGBuffer, 1);
+		cx.associateTextureTargetSetDepth(s_handleInputShadowMap, shadowMapCascadeTargetSetId);
+		cx.associateTextureTargetSet(s_handleInputDepth, gbufferTargetSetId, 0);
+		cx.associateTextureTargetSet(s_handleInputNormal, gbufferTargetSetId, 1);
 		cx.setParams(ipd);
 
 		m_shadowMaskProject->addPasses(renderGraph, rp, cx);
@@ -1082,15 +1160,21 @@ void WorldRendererDeferred::buildShadowMask(const WorldRenderView& worldRenderVi
 	render::Clear clear;
 	clear.mask = render::CfColor;
 	clear.colors[0] = Color4f(1.0f, 1.0f, 1.0f, 1.0f);
-	rp->setOutput(s_handleShadowMask, clear);
+	rp->setOutput(shadowMaskTargetSetId, clear);
 
 	renderGraph.addPass(rp);
+	return shadowMaskTargetSetId;
 }
 
-void WorldRendererDeferred::buildReflections(const WorldRenderView& worldRenderView, render::RenderGraph& renderGraph) const
+render::handle_t WorldRendererDeferred::setupReflectionsPass(
+	const WorldRenderView& worldRenderView,
+	render::RenderGraph& renderGraph,
+	render::handle_t gbufferTargetSetId,
+	render::handle_t visualTargetSetId
+) const
 {
 	if (m_reflectionsQuality == QuDisabled)
-		return;
+		return 0;
 
 	// Add Reflections target.
 	render::RenderGraphTargetSetDesc rgtd = {};
@@ -1107,20 +1191,20 @@ void WorldRendererDeferred::buildReflections(const WorldRenderView& worldRenderV
 	rgtd.screenWidthDenom = 2;
 	rgtd.screenHeightDenom = 2;
 #endif
-	renderGraph.addTargetSet(s_handleReflections, rgtd, m_sharedDepthStencil);
+	auto reflectionsTargetSetId = renderGraph.addTargetSet(rgtd, m_sharedDepthStencil);
 
 	// Add Reflections render pass.
 	Ref< render::RenderPass > rp = new render::RenderPass(L"Reflections");
 
-	rp->addInput(s_handleGBuffer);
+	rp->addInput(gbufferTargetSetId);
 
 	// if (m_reflectionsQuality >= QuHigh)
-	// 	rp->addInput(s_handleVisual[0], 0, true);
+	// 	rp->addInput(visualTargetSetId, 0, true);
 
 	render::Clear clear;
 	clear.mask = render::CfColor;
 	clear.colors[0] = Color4f(0.0f, 0.0f, 0.0f, 0.0f);
-	rp->setOutput(s_handleReflections, clear);
+	rp->setOutput(reflectionsTargetSetId, clear);
 	
 	rp->addBuild(
 		[=](const render::RenderGraph& renderGraph, render::RenderContext* renderContext)
@@ -1131,8 +1215,7 @@ void WorldRendererDeferred::buildReflections(const WorldRenderView& worldRenderV
 				renderContext
 			);
 
-			auto gbufferTargetSet = renderGraph.getTargetSet(s_handleGBuffer);
-			auto visualTargetSet = renderGraph.getTargetSet(s_handleVisual[0]);
+			auto gbufferTargetSet = renderGraph.getTargetSet(gbufferTargetSetId);
 
 			auto sharedParams = renderContext->alloc< render::ProgramParameters >();
 			sharedParams->beginParameters(renderContext);
@@ -1162,6 +1245,7 @@ void WorldRendererDeferred::buildReflections(const WorldRenderView& worldRenderV
 			// Render screenspace reflections.
 			// if (m_reflectionsQuality >= QuHigh)
 			// {
+			//	auto visualTargetSet = renderGraph.getTargetSet(visualTargetSetId);
 			// 	m_lightRenderer->renderReflections(
 			// 		renderContext,
 			// 		worldRenderView.getProjection(),
@@ -1177,9 +1261,19 @@ void WorldRendererDeferred::buildReflections(const WorldRenderView& worldRenderV
 	);
 
 	renderGraph.addPass(rp);
+	return reflectionsTargetSetId;
 }
 
-void WorldRendererDeferred::buildVisual(const WorldRenderView& worldRenderView, render::RenderGraph& renderGraph, int32_t frame) const
+render::handle_t WorldRendererDeferred::setupVisualPass(
+	const WorldRenderView& worldRenderView,
+	render::RenderGraph& renderGraph,
+	render::handle_t gbufferTargetSetId,
+	render::handle_t ambientOcclusionTargetSetId,
+	render::handle_t reflectionsTargetSetId,
+	render::handle_t shadowMaskTargetSetId,
+	render::handle_t shadowMapAtlasTargetSetId,
+	int32_t frame
+) const
 {
 	const bool shadowsEnable = (bool)(m_shadowsQuality != QuDisabled);
 	int32_t lightCount = (int32_t)m_lights.size();
@@ -1192,24 +1286,24 @@ void WorldRendererDeferred::buildVisual(const WorldRenderView& worldRenderView, 
 	rgtd.targets[0].colorFormat = render::TfR11G11B10F;
 	rgtd.screenWidthDenom = 1;
 	rgtd.screenHeightDenom = 1;
-	renderGraph.addTargetSet(s_handleVisual[0], rgtd, m_sharedDepthStencil);
+	auto visualTargetSetId = renderGraph.addTargetSet(rgtd, m_sharedDepthStencil);
 
 	// Add visual[0] render pass.
 	Ref< render::RenderPass > rp = new render::RenderPass(L"Visual");
-	rp->addInput(s_handleGBuffer);
-	rp->addInput(s_handleAmbientOcclusion);
-	rp->addInput(s_handleReflections);
+	rp->addInput(gbufferTargetSetId);
+	rp->addInput(ambientOcclusionTargetSetId);
+	rp->addInput(reflectionsTargetSetId);
 
 	if (shadowsEnable)
 	{
-		rp->addInput(s_handleShadowMask);
-		rp->addInput(s_handleShadowMapAtlas);
+		rp->addInput(shadowMaskTargetSetId);
+		rp->addInput(shadowMapAtlasTargetSetId);
 	}
 
 	render::Clear clear;
 	clear.mask = render::CfColor;
 	clear.colors[0] = Color4f(0.0f, 0.0f, 0.0f, 1.0f);
-	rp->setOutput(s_handleVisual[0], clear);
+	rp->setOutput(visualTargetSetId, clear);
 
 	rp->addBuild(
 		[=](const render::RenderGraph& renderGraph, render::RenderContext* renderContext)
@@ -1220,11 +1314,11 @@ void WorldRendererDeferred::buildVisual(const WorldRenderView& worldRenderView, 
 				renderContext
 			);
 
-			auto gbufferTargetSet = renderGraph.getTargetSet(s_handleGBuffer);
-			auto ambientOcclusionTargetSet = renderGraph.getTargetSet(s_handleAmbientOcclusion);
-			auto reflectionsTargetSet = renderGraph.getTargetSet(s_handleReflections);
-			auto shadowMaskTargetSet = renderGraph.getTargetSet(s_handleShadowMask);
-			auto shadowAtlasTargetSet = renderGraph.getTargetSet(s_handleShadowMapAtlas);
+			auto gbufferTargetSet = renderGraph.getTargetSet(gbufferTargetSetId);
+			auto ambientOcclusionTargetSet = renderGraph.getTargetSet(ambientOcclusionTargetSetId);
+			auto reflectionsTargetSet = renderGraph.getTargetSet(reflectionsTargetSetId);
+			auto shadowMaskTargetSet = renderGraph.getTargetSet(shadowMaskTargetSetId);
+			auto shadowAtlasTargetSet = renderGraph.getTargetSet(shadowMapAtlasTargetSetId);
 
 			auto sharedParams = renderContext->alloc< render::ProgramParameters >();
 			sharedParams->beginParameters(renderContext);
@@ -1320,9 +1414,16 @@ void WorldRendererDeferred::buildVisual(const WorldRenderView& worldRenderView, 
 	);
 
 	renderGraph.addPass(rp);
+	return visualTargetSetId;
 }
 
-void WorldRendererDeferred::buildProcess(const WorldRenderView& worldRenderView, render::RenderGraph& renderGraph) const
+void WorldRendererDeferred::setupProcessPass(
+	const WorldRenderView& worldRenderView,
+	render::RenderGraph& renderGraph,
+	render::handle_t gbufferTargetSetId,
+	render::handle_t velocityTargetSetId,
+	render::handle_t visualTargetSetId
+) const
 {
 	render::ImageGraphParams ipd;
 	ipd.viewFrustum = worldRenderView.getViewFrustum();
@@ -1332,13 +1433,12 @@ void WorldRendererDeferred::buildProcess(const WorldRenderView& worldRenderView,
 	ipd.deltaTime = 1.0f / 60.0f;				
 
 	render::ImageGraphContext cx(m_screenRenderer);
-	cx.associateTextureTargetSet(s_handleInputColor, s_handleVisual[0], 0);
-	cx.associateTextureTargetSet(s_handleInputDepth, s_handleGBuffer, 0);
-	cx.associateTextureTargetSet(s_handleInputNormal, s_handleGBuffer, 1);
-	cx.associateTextureTargetSet(s_handleInputVelocity, s_handleVelocity, 0);
+	cx.associateTextureTargetSet(s_handleInputColor, visualTargetSetId, 0);
+	cx.associateTextureTargetSet(s_handleInputDepth, gbufferTargetSetId, 0);
+	cx.associateTextureTargetSet(s_handleInputNormal, gbufferTargetSetId, 1);
+	cx.associateTextureTargetSet(s_handleInputVelocity, velocityTargetSetId, 0);
 	cx.setParams(ipd);
 
-	// Collect active image graphs.
 	StaticVector< render::ImageGraph*, 5 > processes;
 	if (m_motionBlur)
 		processes.push_back(m_motionBlur);
@@ -1351,24 +1451,6 @@ void WorldRendererDeferred::buildProcess(const WorldRenderView& worldRenderView,
 	if (m_antiAlias)
 		processes.push_back(m_antiAlias);
 
-	// Add visual[N] and image graph render targets.
-	for (size_t i = 1; i < processes.size(); ++i)
-	{
-		// Add visual[N] render target.
-		render::RenderGraphTargetSetDesc rgtd = {};
-		rgtd.count = 1;
-		rgtd.createDepthStencil = false;
-		rgtd.usingPrimaryDepthStencil = (m_sharedDepthStencil == nullptr) ? true : false;
-		rgtd.targets[0].colorFormat = render::TfR11G11B10F;
-		rgtd.screenWidthDenom = 1;
-		rgtd.screenHeightDenom = 1;
-		renderGraph.addTargetSet(s_handleVisual[i], rgtd, m_sharedDepthStencil);
-
-		// Add image graph render targets.
-		processes[i]->addTargetSets(renderGraph);
-	}
-
-	// Add visual[N] render passes.
 	for (size_t i = 0; i < processes.size(); ++i)
 	{
 		auto process = processes[i];
@@ -1377,7 +1459,18 @@ void WorldRendererDeferred::buildProcess(const WorldRenderView& worldRenderView,
 		Ref< render::RenderPass > rp = new render::RenderPass(L"Process");
 
 		if (next)
-			rp->setOutput(s_handleVisual[i + 1]);
+		{
+			render::RenderGraphTargetSetDesc rgtd = {};
+			rgtd.count = 1;
+			rgtd.createDepthStencil = false;
+			rgtd.usingPrimaryDepthStencil = (m_sharedDepthStencil == nullptr) ? true : false;
+			rgtd.targets[0].colorFormat = render::TfR11G11B10F;
+			rgtd.screenWidthDenom = 1;
+			rgtd.screenHeightDenom = 1;
+			auto intermediateTargetSetId = renderGraph.addTargetSet(rgtd, m_sharedDepthStencil);
+
+			rp->setOutput(intermediateTargetSetId);
+		}
 
 		process->addPasses(renderGraph, rp, cx);
 
