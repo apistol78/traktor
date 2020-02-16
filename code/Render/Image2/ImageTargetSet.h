@@ -24,16 +24,13 @@ class T_DLLCLASS ImageTargetSet : public Object
 	T_RTTI_CLASS;
 
 public:
-    ImageTargetSet(handle_t targetSetId, handle_t textureIds[RenderGraphTargetSetDesc::MaxColorTargets], const RenderGraphTargetSetDesc& targetSetDesc);
-
-	handle_t getTargetSetId() const;
+    ImageTargetSet(handle_t textureIds[RenderGraphTargetSetDesc::MaxColorTargets], const RenderGraphTargetSetDesc& targetSetDesc);
 
 	handle_t getTextureId(int32_t colorIndex) const;
 
     const RenderGraphTargetSetDesc& getTargetSetDesc() const;
 
 private:
-	handle_t m_targetSetId;
 	handle_t m_textureIds[RenderGraphTargetSetDesc::MaxColorTargets];
 	RenderGraphTargetSetDesc m_targetSetDesc;
 };

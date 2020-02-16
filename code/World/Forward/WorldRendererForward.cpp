@@ -56,21 +56,6 @@ const render::Handle s_handleGamma(L"World_Gamma");
 const render::Handle s_handleGammaInverse(L"World_GammaInverse");
 const render::Handle s_handleExposure(L"World_Exposure");
 
-// RenderGraph targets.
-const render::Handle s_handleGBuffer(L"GBuffer");
-const render::Handle s_handleAmbientOcclusion(L"AmbientOcclusion");
-const render::Handle s_handleShadowMapCascade(L"ShadowMapCascade");
-const render::Handle s_handleShadowMapAtlas(L"ShadowMapAtlas");
-const render::Handle s_handleVisual[6] =
-{
-	render::Handle(L"Visual0"),
-	render::Handle(L"Visual1"),
-	render::Handle(L"Visual2"),
-	render::Handle(L"Visual3"),
-	render::Handle(L"Visual4"),
-	render::Handle(L"Visual5")
-};
-
 // ImageGraph input textures.
 const render::Handle s_handleInputColor(L"InputColor");
 const render::Handle s_handleInputDepth(L"InputDepth");
@@ -297,11 +282,44 @@ void WorldRendererForward::setup(const WorldRenderView& worldRenderView, render:
 	T_FATAL_ASSERT(lightShaderData != nullptr);
 
 	// Add passes to render graph.
-	buildGBuffer(worldRenderView, renderGraph);
-	buildAmbientOcclusion(worldRenderView, renderGraph);
-	buildLights(worldRenderView, renderGraph, frame, lightShaderData);
-	buildVisual(worldRenderView, renderGraph, frame);
-	buildProcess(worldRenderView, renderGraph);
+	auto gbufferTargetSetId = setupGBufferPass(
+		worldRenderView,
+		renderGraph
+	);
+
+	auto ambientOcclusionTargetSetId = setupAmbientOcclusionPass(
+		worldRenderView,
+		renderGraph,
+		gbufferTargetSetId
+	);
+
+	render::handle_t shadowMapCascadeTargetSetId;
+	render::handle_t shadowMapAtlasTargetSetId;
+	setupLightPass(
+		worldRenderView,
+		renderGraph,
+		frame,
+		lightShaderData,
+		shadowMapCascadeTargetSetId,
+		shadowMapAtlasTargetSetId
+	);
+
+	auto visualTargetSetId = setupVisualPass(
+		worldRenderView,
+		renderGraph,
+		frame,
+		gbufferTargetSetId,
+		ambientOcclusionTargetSetId,
+		shadowMapCascadeTargetSetId,
+		shadowMapAtlasTargetSetId
+	);
+
+	setupProcessPass(
+		worldRenderView,
+		renderGraph,
+		gbufferTargetSetId,
+		visualTargetSetId
+	);
 
 	// Unlock light sbuffer.
 	// \fixme Cannot unlock these until render context has been built...
@@ -312,7 +330,10 @@ void WorldRendererForward::setup(const WorldRenderView& worldRenderView, render:
 	m_count++;
 }
 
-void WorldRendererForward::buildGBuffer(const WorldRenderView& worldRenderView, render::RenderGraph& renderGraph)
+render::handle_t WorldRendererForward::setupGBufferPass(
+	const WorldRenderView& worldRenderView,
+	render::RenderGraph& renderGraph
+) const
 {
 	const float clearZ = m_settings.viewFarZ;
 
@@ -325,7 +346,7 @@ void WorldRendererForward::buildGBuffer(const WorldRenderView& worldRenderView, 
 	rgtd.targets[1].colorFormat = render::TfR16G16F;	// Normals (RG)
 	rgtd.screenWidthDenom = 1;
 	rgtd.screenHeightDenom = 1;
-	renderGraph.addTargetSet(s_handleGBuffer, rgtd, m_sharedDepthStencil);
+	auto gbufferTargetSetId = renderGraph.addTargetSet(rgtd, m_sharedDepthStencil);
 
 	// Add GBuffer render pass.
 	Ref< render::RenderPass > rp = new render::RenderPass(L"GBuffer");
@@ -335,7 +356,7 @@ void WorldRendererForward::buildGBuffer(const WorldRenderView& worldRenderView, 
 	clear.colors[0] = Color4f(clearZ, clearZ, clearZ, clearZ);
 	clear.colors[1] = Color4f(0.0f, 0.0f, 0.0f, 0.0f);
 	clear.depth = 1.0f;	
-	rp->setOutput(s_handleGBuffer, clear);
+	rp->setOutput(gbufferTargetSetId, clear);
 
 	rp->addBuild(
 		[=](const render::RenderGraph& renderGraph, render::RenderContext* renderContext)
@@ -370,9 +391,14 @@ void WorldRendererForward::buildGBuffer(const WorldRenderView& worldRenderView, 
 	);
 
 	renderGraph.addPass(rp);
+	return gbufferTargetSetId;
 }
 
-void WorldRendererForward::buildAmbientOcclusion(const WorldRenderView& worldRenderView, render::RenderGraph& renderGraph)
+render::handle_t WorldRendererForward::setupAmbientOcclusionPass(
+	const WorldRenderView& worldRenderView,
+	render::RenderGraph& renderGraph,
+	render::handle_t gbufferTargetSetId
+) const
 {
 	// Add ambient occlusion target set.
 	render::RenderGraphTargetSetDesc rgtd;
@@ -382,7 +408,7 @@ void WorldRendererForward::buildAmbientOcclusion(const WorldRenderView& worldRen
 	rgtd.targets[0].colorFormat = render::TfR8;			// Ambient occlusion (R)
 	rgtd.screenWidthDenom = 1;
 	rgtd.screenHeightDenom = 1;
-	renderGraph.addTargetSet(s_handleAmbientOcclusion, rgtd, m_sharedDepthStencil);
+	auto ambientOcclusionTargetSetId = renderGraph.addTargetSet(rgtd, m_sharedDepthStencil);
 
 	// Add ambient occlusion render pass.
 	Ref< render::RenderPass > rp = new render::RenderPass(L"Ambient occlusion");
@@ -395,8 +421,8 @@ void WorldRendererForward::buildAmbientOcclusion(const WorldRenderView& worldRen
 		ipd.projection = worldRenderView.getProjection();
 
 		render::ImageGraphContext cx(m_screenRenderer);
-		cx.associateTextureTargetSet(s_handleInputDepth, s_handleGBuffer, 0);
-		cx.associateTextureTargetSet(s_handleInputNormal, s_handleGBuffer, 1);
+		cx.associateTextureTargetSet(s_handleInputDepth, gbufferTargetSetId, 0);
+		cx.associateTextureTargetSet(s_handleInputNormal, gbufferTargetSetId, 1);
 		cx.setParams(ipd);
 
 		m_ambientOcclusion->addPasses(renderGraph, rp, cx);
@@ -405,12 +431,20 @@ void WorldRendererForward::buildAmbientOcclusion(const WorldRenderView& worldRen
 	render::Clear clear;
 	clear.mask = render::CfColor;
 	clear.colors[0] = Color4f(1.0f, 1.0f, 1.0f, 1.0f);
-	rp->setOutput(s_handleAmbientOcclusion, clear);
+	rp->setOutput(ambientOcclusionTargetSetId, clear);
 
 	renderGraph.addPass(rp);
+	return ambientOcclusionTargetSetId;
 }
 
-void WorldRendererForward::buildLights(const WorldRenderView& worldRenderView, render::RenderGraph& renderGraph, int32_t frame, LightShaderData* lightShaderData)
+void WorldRendererForward::setupLightPass(
+	const WorldRenderView& worldRenderView,
+	render::RenderGraph& renderGraph,
+	int32_t frame,
+	LightShaderData* lightShaderData,
+	render::handle_t& outShadowMapCascadeTargetSetId,
+	render::handle_t& outShadowMapAtlasTargetSetId
+) const
 {
 	const UniformShadowProjection shadowProjection(1024);
 	const auto& shadowSettings = m_settings.shadowSettings[m_shadowsQuality];
@@ -481,7 +515,7 @@ void WorldRendererForward::buildLights(const WorldRenderView& worldRenderView, r
 		rgtd.usingPrimaryDepthStencil = false;
 		rgtd.usingDepthStencilAsTexture = true;
 		rgtd.ignoreStencil = true;
-		renderGraph.addTargetSet(s_handleShadowMapCascade, rgtd);
+		outShadowMapCascadeTargetSetId = renderGraph.addTargetSet(rgtd);
 
 		// Add cascading shadow map render pass.
 		Ref< render::RenderPass > rp = new render::RenderPass(L"Shadow cascade");
@@ -489,7 +523,7 @@ void WorldRendererForward::buildLights(const WorldRenderView& worldRenderView, r
 		render::Clear clear;
 		clear.mask = render::CfDepth;
 		clear.depth = 1.0f;
-		rp->setOutput(s_handleShadowMapCascade, clear);
+		rp->setOutput(outShadowMapCascadeTargetSetId, clear);
 
 		if (lightCascadeIndex >= 0)
 			rp->addBuild(
@@ -612,7 +646,7 @@ void WorldRendererForward::buildLights(const WorldRenderView& worldRenderView, r
 		rgtd.usingPrimaryDepthStencil = false;
 		rgtd.usingDepthStencilAsTexture = true;
 		rgtd.ignoreStencil = true;
-		renderGraph.addTargetSet(s_handleShadowMapAtlas, rgtd);
+		outShadowMapAtlasTargetSetId = renderGraph.addTargetSet(rgtd);
 
 		// Add atlas shadow map render pass.
 		int32_t atlasIndex = 0;
@@ -623,7 +657,7 @@ void WorldRendererForward::buildLights(const WorldRenderView& worldRenderView, r
 			render::Clear clear;
 			clear.mask = render::CfDepth;
 			clear.depth = 1.0f;
-			rp->setOutput(s_handleShadowMapAtlas, clear);
+			rp->setOutput(outShadowMapAtlasTargetSetId, clear);
 			
 			if (!lightAtlasIndices.empty())
 				rp->addBuild(
@@ -738,7 +772,15 @@ void WorldRendererForward::buildLights(const WorldRenderView& worldRenderView, r
 	}
 }
 
-void WorldRendererForward::buildVisual(const WorldRenderView& worldRenderView, render::RenderGraph& renderGraph, int32_t frame)
+render::handle_t WorldRendererForward::setupVisualPass(
+	const WorldRenderView& worldRenderView,
+	render::RenderGraph& renderGraph,
+	render::handle_t gbufferTargetSetId,
+	render::handle_t ambientOcclusionTargetSetId,
+	render::handle_t shadowMapCascadeTargetSetId,
+	render::handle_t shadowMapAtlasTargetSetId,
+	int32_t frame
+) const
 {
 	const bool shadowsEnable = (bool)(m_shadowsQuality != QuDisabled);
 	int32_t lightCount = (int32_t)m_lights.size();
@@ -751,24 +793,24 @@ void WorldRendererForward::buildVisual(const WorldRenderView& worldRenderView, r
 	rgtd.targets[0].colorFormat = render::TfR11G11B10F;
 	rgtd.screenWidthDenom = 1;
 	rgtd.screenHeightDenom = 1;
-	renderGraph.addTargetSet(s_handleVisual[0], rgtd, m_sharedDepthStencil);
+	auto visualTargetSetId = renderGraph.addTargetSet(rgtd, m_sharedDepthStencil);
 
-	// Add visual[0] target set.
+	// Create render pass.
 	Ref< render::RenderPass > rp = new render::RenderPass(L"Visual");
-	rp->addInput(s_handleGBuffer);
-	rp->addInput(s_handleAmbientOcclusion);
+	rp->addInput(gbufferTargetSetId);
+	rp->addInput(ambientOcclusionTargetSetId);
 
 	if (shadowsEnable)
 	{
-		rp->addInput(s_handleShadowMapCascade);
-		rp->addInput(s_handleShadowMapAtlas);
+		rp->addInput(shadowMapCascadeTargetSetId);
+		rp->addInput(shadowMapAtlasTargetSetId);
 	}
 
 	render::Clear clear;
 	clear.mask = render::CfColor | render::CfDepth;
 	clear.colors[0] = Color4f(0.0f, 0.0f, 0.0f, 1.0f);
 	clear.depth = 1.0f;
-	rp->setOutput(s_handleVisual[0], clear);
+	rp->setOutput(visualTargetSetId, clear);
 
 	rp->addBuild(
 		[=](const render::RenderGraph& renderGraph, render::RenderContext* renderContext)
@@ -779,10 +821,10 @@ void WorldRendererForward::buildVisual(const WorldRenderView& worldRenderView, r
 				renderContext
 			);
 
-			auto gbufferTargetSet = renderGraph.getTargetSet(s_handleGBuffer);
-			auto ambientOcclusionTargetSet = renderGraph.getTargetSet(s_handleAmbientOcclusion);
-			auto shadowCascadeTargetSet = renderGraph.getTargetSet(s_handleShadowMapCascade);
-			auto shadowAtlasTargetSet = renderGraph.getTargetSet(s_handleShadowMapAtlas);
+			auto gbufferTargetSet = renderGraph.getTargetSet(gbufferTargetSetId);
+			auto ambientOcclusionTargetSet = renderGraph.getTargetSet(ambientOcclusionTargetSetId);
+			auto shadowCascadeTargetSet = renderGraph.getTargetSet(shadowMapCascadeTargetSetId);
+			auto shadowAtlasTargetSet = renderGraph.getTargetSet(shadowMapAtlasTargetSetId);
 
 			auto sharedParams = wc.getRenderContext()->alloc< render::ProgramParameters >();
 			sharedParams->beginParameters(wc.getRenderContext());
@@ -818,9 +860,15 @@ void WorldRendererForward::buildVisual(const WorldRenderView& worldRenderView, r
 	);
 
 	renderGraph.addPass(rp);
+	return visualTargetSetId;
 }
 
-void WorldRendererForward::buildProcess(const WorldRenderView& worldRenderView, render::RenderGraph& renderGraph)
+void WorldRendererForward::setupProcessPass(
+	const WorldRenderView& worldRenderView,
+	render::RenderGraph& renderGraph,
+	render::handle_t gbufferTargetSetId,
+	render::handle_t visualTargetSetId
+) const
 {
 	render::ImageGraphParams ipd;
 	ipd.viewFrustum = worldRenderView.getViewFrustum();
@@ -830,12 +878,11 @@ void WorldRendererForward::buildProcess(const WorldRenderView& worldRenderView, 
 	ipd.deltaTime = 1.0f / 60.0f;				
 
 	render::ImageGraphContext cx(m_screenRenderer);
-	cx.associateTextureTargetSet(s_handleInputColor, s_handleVisual[0], 0);
-	cx.associateTextureTargetSet(s_handleInputDepth, s_handleGBuffer, 0);
-	cx.associateTextureTargetSet(s_handleInputNormal, s_handleGBuffer, 1);
+	cx.associateTextureTargetSet(s_handleInputColor, visualTargetSetId, 0);
+	cx.associateTextureTargetSet(s_handleInputDepth, gbufferTargetSetId, 0);
+	cx.associateTextureTargetSet(s_handleInputNormal, gbufferTargetSetId, 1);
 	cx.setParams(ipd);
 
-	// Collect active image graphs.
 	StaticVector< render::ImageGraph*, 4 > processes;
 	if (m_toneMap)
 		processes.push_back(m_toneMap);
@@ -846,24 +893,6 @@ void WorldRendererForward::buildProcess(const WorldRenderView& worldRenderView, 
 	if (m_antiAlias)
 		processes.push_back(m_antiAlias);
 
-	// Add visual[N] and image graph render targets.
-	for (size_t i = 1; i < processes.size(); ++i)
-	{
-		// Add visual[N] render target.
-		render::RenderGraphTargetSetDesc rgtd;
-		rgtd.count = 1;
-		rgtd.createDepthStencil = false;
-		rgtd.usingPrimaryDepthStencil = (m_sharedDepthStencil == nullptr) ? true : false;
-		rgtd.targets[0].colorFormat = render::TfR11G11B10F;
-		rgtd.screenWidthDenom = 1;
-		rgtd.screenHeightDenom = 1;
-		renderGraph.addTargetSet(s_handleVisual[i], rgtd, m_sharedDepthStencil);
-
-		// Add image graph render targets.
-		processes[i]->addTargetSets(renderGraph);
-	}
-
-	// Add visual[N] render passes.
 	for (size_t i = 0; i < processes.size(); ++i)
 	{
 		auto process = processes[i];
@@ -872,7 +901,18 @@ void WorldRendererForward::buildProcess(const WorldRenderView& worldRenderView, 
 		Ref< render::RenderPass > rp = new render::RenderPass(L"Process");
 
 		if (next)
-			rp->setOutput(s_handleVisual[i + 1]);
+		{
+			render::RenderGraphTargetSetDesc rgtd = {};
+			rgtd.count = 1;
+			rgtd.createDepthStencil = false;
+			rgtd.usingPrimaryDepthStencil = (m_sharedDepthStencil == nullptr) ? true : false;
+			rgtd.targets[0].colorFormat = render::TfR11G11B10F;
+			rgtd.screenWidthDenom = 1;
+			rgtd.screenHeightDenom = 1;
+			auto intermediateTargetSetId = renderGraph.addTargetSet(rgtd, m_sharedDepthStencil);
+
+			rp->setOutput(intermediateTargetSetId);
+		}
 
 		process->addPasses(renderGraph, rp, cx);
 

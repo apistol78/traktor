@@ -15,6 +15,7 @@ namespace traktor
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderGraph", RenderGraph, Object)
 
 RenderGraph::RenderGraph(IRenderSystem* renderSystem)
+:	m_nextTargetSetId(1)
 {
 	m_pool = new RenderGraphTargetSetPool(renderSystem);
 }
@@ -27,15 +28,16 @@ void RenderGraph::destroy()
 	m_pool = nullptr;
 }
 
-void RenderGraph::addTargetSet(
-	handle_t targetSetId,
+handle_t RenderGraph::addTargetSet(
 	const RenderGraphTargetSetDesc& targetSetDesc,
 	IRenderTargetSet* sharedDepthStencilTargetSet
 )
 {
+	handle_t targetSetId = m_nextTargetSetId++;
 	auto& target = m_targets[targetSetId];
 	target.targetSetDesc = targetSetDesc;
 	target.sharedDepthStencilTargetSet = sharedDepthStencilTargetSet;
+	return targetSetId;
 }
 
 IRenderTargetSet* RenderGraph::getTargetSet(handle_t targetSetId) const

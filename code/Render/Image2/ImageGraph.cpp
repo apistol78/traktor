@@ -16,17 +16,6 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ImageGraph", ImageGraph, Object)
 
-void ImageGraph::addTargetSets(RenderGraph& renderGraph) const
-{
-	for (auto targetSet : m_targetSets)
-	{
-		renderGraph.addTargetSet(
-			targetSet->getTargetSetId(),
-			targetSet->getTargetSetDesc()
-		);
-	}
-}
-
 void ImageGraph::addPasses(RenderGraph& renderGraph, RenderPass* parentPass, const ImageGraphContext& cx) const
 {
 	// Copy context and append our internal targets so
@@ -34,12 +23,16 @@ void ImageGraph::addPasses(RenderGraph& renderGraph, RenderPass* parentPass, con
 	ImageGraphContext context = cx;
 	for (auto targetSet : m_targetSets)
 	{
+		render::handle_t targetSetId = renderGraph.addTargetSet(
+			targetSet->getTargetSetDesc()
+		);
+
 		const auto& desc = targetSet->getTargetSetDesc();
 		for (int32_t i = 0; i < desc.count; ++i)
 		{
 			context.associateTextureTargetSet(
 				targetSet->getTextureId(i),
-				targetSet->getTargetSetId(),
+				targetSetId,
 				i
 			);
 		}

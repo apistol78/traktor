@@ -98,15 +98,42 @@ private:
 	float m_slicePositions[MaxSliceCount + 1];
 	int32_t m_count;
 
-	void buildGBuffer(const WorldRenderView& worldRenderView, render::RenderGraph& renderGraph);
+	render::handle_t setupGBufferPass(
+		const WorldRenderView& worldRenderView,
+		render::RenderGraph& renderGraph
+	) const;
 
-	void buildAmbientOcclusion(const WorldRenderView& worldRenderView, render::RenderGraph& renderGraph);
+	render::handle_t setupAmbientOcclusionPass(
+		const WorldRenderView& worldRenderView,
+		render::RenderGraph& renderGraph,
+		render::handle_t gbufferTargetSetId
+	) const;
 
-	void buildLights(const WorldRenderView& worldRenderView, render::RenderGraph& renderGraph, int32_t frame, LightShaderData* lightShaderData);
+	void setupLightPass(
+		const WorldRenderView& worldRenderView,
+		render::RenderGraph& renderGraph,
+		int32_t frame,
+		LightShaderData* lightShaderData,
+		render::handle_t& outShadowMapCascadeTargetSetId,
+		render::handle_t& outShadowMapAtlasTargetSetId
+	) const;
 
-	void buildVisual(const WorldRenderView& worldRenderView, render::RenderGraph& renderGraph, int32_t frame);
+	render::handle_t setupVisualPass(
+		const WorldRenderView& worldRenderView,
+		render::RenderGraph& renderGraph,
+		render::handle_t gbufferTargetSetId,
+		render::handle_t ambientOcclusionTargetSetId,
+		render::handle_t shadowMapCascadeTargetSetId,
+		render::handle_t shadowMapAtlasTargetSetId,
+		int32_t frame
+	) const;
 
-	void buildProcess(const WorldRenderView& worldRenderView, render::RenderGraph& renderGraph);
+	void setupProcessPass(
+		const WorldRenderView& worldRenderView,
+		render::RenderGraph& renderGraph,
+		render::handle_t gbufferTargetSetId,
+		render::handle_t visualTargetSetId
+	) const;
 };
 
 	}

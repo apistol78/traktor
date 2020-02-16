@@ -116,25 +116,76 @@ private:
 
 	int32_t m_count;
 
-	void buildGBuffer(const WorldRenderView& worldRenderView, render::RenderGraph& renderGraph) const;
+	render::handle_t setupGBufferPass(
+		const WorldRenderView& worldRenderView,
+		render::RenderGraph& renderGraph
+	) const;
 
-	void buildVelocity(const WorldRenderView& worldRenderView, render::RenderGraph& renderGraph) const;
+	render::handle_t setupVelocityPass(
+		const WorldRenderView& worldRenderView,
+		render::RenderGraph& renderGraph,
+		render::handle_t gbufferTargetSetId
+	) const;
 
-	void buildAmbientOcclusion(const WorldRenderView& worldRenderView, render::RenderGraph& renderGraph) const;
+	render::handle_t setupAmbientOcclusionPass(
+		const WorldRenderView& worldRenderView,
+		render::RenderGraph& renderGraph,
+		render::handle_t gbufferTargetSetId
+	) const;
 
-	void buildCascadeShadowMap(const WorldRenderView& worldRenderView, render::RenderGraph& renderGraph, int32_t lightCascadeIndex, LightShaderData* lightShaderData) const;
+	render::handle_t setupCascadeShadowMapPass(
+		const WorldRenderView& worldRenderView,
+		render::RenderGraph& renderGraph,
+		int32_t lightCascadeIndex,
+		LightShaderData* lightShaderData
+	) const;
 
-	void buildAtlasShadowMap(const WorldRenderView& worldRenderView, render::RenderGraph& renderGraph, const StaticVector< int32_t, 16 >& lightAtlasIndices, LightShaderData* lightShaderData) const;
+	render::handle_t setupAtlasShadowMapPass(
+		const WorldRenderView& worldRenderView,
+		render::RenderGraph& renderGraph,
+		const StaticVector< int32_t, 16 >& lightAtlasIndices,
+		LightShaderData* lightShaderData
+	) const;
 
-	void buildTileData(const WorldRenderView& worldRenderView, render::RenderGraph& renderGraph, TileShaderData* tileShaderData) const;
+	void setupTileDataPass(
+		const WorldRenderView& worldRenderView,
+		render::RenderGraph& renderGraph,
+		TileShaderData* tileShaderData
+	) const;
 
-	void buildShadowMask(const WorldRenderView& worldRenderView, render::RenderGraph& renderGraph, int32_t lightCascadeIndex) const;
+	render::handle_t setupShadowMaskPass(
+		const WorldRenderView& worldRenderView,
+		render::RenderGraph& renderGraph,
+		render::handle_t gbufferTargetSetId,
+		render::handle_t shadowMapCascadeTargetSetId,
+		int32_t lightCascadeIndex
+	) const;
 
-	void buildReflections(const WorldRenderView& worldRenderView, render::RenderGraph& renderGraph) const;
+	render::handle_t setupReflectionsPass(
+		const WorldRenderView& worldRenderView,
+		render::RenderGraph& renderGraph,
+		render::handle_t gbufferTargetSetId,
+		render::handle_t visualTargetSetId
+	) const;
 
-	void buildVisual(const WorldRenderView& worldRenderView, render::RenderGraph& renderGraph, int32_t frame) const;
+	render::handle_t setupVisualPass(
+		const WorldRenderView& worldRenderView,
+		render::RenderGraph& renderGraph,
+		render::handle_t gbufferTargetSetId,
+		render::handle_t ambientOcclusionTargetSetId,
+		render::handle_t reflectionsTargetSetId,
+		render::handle_t shadowMaskTargetSetId,
+		render::handle_t shadowMapAtlasTargetSetId,
+		int32_t frame
+	) const;
 
-	void buildProcess(const WorldRenderView& worldRenderView, render::RenderGraph& renderGraph) const;
+	void setupProcessPass(
+		const WorldRenderView& worldRenderView,
+		render::RenderGraph& renderGraph,
+		render::handle_t gbufferTargetSetId,
+		render::handle_t velocityTargetSetId,
+		render::handle_t visualTargetSetId
+	) const;
 };
 
 	}

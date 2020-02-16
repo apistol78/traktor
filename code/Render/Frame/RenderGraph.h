@@ -50,12 +50,11 @@ public:
 
 	/*! Add target definition.
 	 *
-	 * \param targetSetId Unique identifier of target.
 	 * \param targetSetDesc Render target set create description.
 	 * \param sharedDepthStencil Share depth/stencil with target set.
+	 * \return Opaque handle of target set.
 	 */
-	void addTargetSet(
-		handle_t targetSetId,
+	handle_t addTargetSet(
 		const RenderGraphTargetSetDesc& targetSetDesc,
 		IRenderTargetSet* sharedDepthStencil = nullptr
 	);
@@ -94,6 +93,7 @@ private:
 	SmallMap< handle_t, Target > m_targets;
 	RefArray< const RenderPass > m_passes;
 	AlignedVector< uint32_t > m_order;
+	handle_t m_nextTargetSetId;
 
 	void traverse(int32_t index, const std::function< void(int32_t) >& fn) const;
 };
