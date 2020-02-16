@@ -72,7 +72,9 @@ private:
 	struct Frame
 	{
 		Ref< render::StructBuffer > lightSBuffer;
+		void* lightSBufferMemory;
 		Ref< render::StructBuffer > tileSBuffer;
+		void* tileSBufferMemory;
 	};
 
 	WorldRenderSettings m_settings;

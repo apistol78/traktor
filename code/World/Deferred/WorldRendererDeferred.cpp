@@ -328,6 +328,10 @@ bool WorldRendererDeferred::create(
 		if (!frame.lightSBuffer)
 			return false;
 
+		frame.lightSBufferMemory = frame.lightSBuffer->lock();
+		if (!frame.lightSBufferMemory)
+			return false;
+
 		AlignedVector< render::StructElement > tileShaderDataStruct;
 		tileShaderDataStruct.push_back(render::StructElement(render::DtFloat4, offsetof(TileShaderData, lights)));
 		tileShaderDataStruct.push_back(render::StructElement(render::DtFloat4, offsetof(TileShaderData, lightCount)));
@@ -338,6 +342,10 @@ bool WorldRendererDeferred::create(
 			render::getStructSize(tileShaderDataStruct) * 16 * 16
 		);
 		if (!frame.tileSBuffer)
+			return false;
+
+		frame.tileSBufferMemory = frame.tileSBuffer->lock();
+		if (!frame.tileSBufferMemory)
 			return false;
 	}
 
@@ -409,11 +417,9 @@ void WorldRendererDeferred::setup(const WorldRenderView& worldRenderView, render
 	if (m_lights.size() > c_maxLightCount)
 		m_lights.resize(c_maxLightCount);
 
-	// Lock light sbuffer; \tbd data is currently written both when setting
-	// up render passes and when executing passes.
-	LightShaderData* lightShaderData = (LightShaderData*)m_frames[frame].lightSBuffer->lock();
-	TileShaderData* tileShaderData = (TileShaderData*)m_frames[frame].tileSBuffer->lock();
-	T_FATAL_ASSERT(lightShaderData != nullptr);
+	// Begun writing light shader data; written both in setup and build.
+	LightShaderData* lightShaderData = (LightShaderData*)m_frames[frame].lightSBufferMemory;
+	TileShaderData* tileShaderData = (TileShaderData*)m_frames[frame].tileSBufferMemory;
 
 	// Write all lights to sbuffer; without shadow map information.
 	const Matrix44& view = worldRenderView.getView();
@@ -535,13 +541,13 @@ void WorldRendererDeferred::setup(const WorldRenderView& worldRenderView, render
 		visualTargetSetId
 	);
 
-	// Unlock light sbuffers.
-	// \fixme Cannot unlock these until render context has been built...
-	// m_frames[frame].tileSBuffer->unlock();
-	// m_frames[frame].lightSBuffer->unlock();
+	// Add cleanup pass to remove attached entities.
+	Ref< render::RenderPass > rp = new render::RenderPass(L"Cleanup");
+	rp->addBuild([=](const render::RenderGraph&, render::RenderContext*) {
+		m_rootEntity->removeAllEntities();
+	});
+	renderGraph.addPass(rp);
 
-	// Flush attached entities.
-	m_rootEntity->removeAllEntities();
 	m_count++;
 }
 
@@ -1451,6 +1457,7 @@ void WorldRendererDeferred::setupProcessPass(
 	if (m_antiAlias)
 		processes.push_back(m_antiAlias);
 
+	render::handle_t intermediateTargetSetId = 0;
 	for (size_t i = 0; i < processes.size(); ++i)
 	{
 		auto process = processes[i];
@@ -1467,12 +1474,15 @@ void WorldRendererDeferred::setupProcessPass(
 			rgtd.targets[0].colorFormat = render::TfR11G11B10F;
 			rgtd.screenWidthDenom = 1;
 			rgtd.screenHeightDenom = 1;
-			auto intermediateTargetSetId = renderGraph.addTargetSet(rgtd, m_sharedDepthStencil);
+			intermediateTargetSetId = renderGraph.addTargetSet(rgtd, m_sharedDepthStencil);
 
 			rp->setOutput(intermediateTargetSetId);
 		}
 
 		process->addPasses(renderGraph, rp, cx);
+
+		if (next)
+			cx.associateTextureTargetSet(s_handleInputColor, intermediateTargetSetId, 0);
 
 		renderGraph.addPass(rp);
 	}

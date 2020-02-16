@@ -85,8 +85,12 @@ void WorldRendererSimple::setup(const WorldRenderView& worldRenderView, render::
 	);
 	renderGraph.addPass(rp);
 
-	// Flush attached entities.
-	m_rootEntity->removeAllEntities();
+	// Add cleanup pass to remove attached entities.
+	rp = new render::RenderPass(L"Cleanup");
+	rp->addBuild([=](const render::RenderGraph&, render::RenderContext*) {
+		m_rootEntity->removeAllEntities();
+	});
+	renderGraph.addPass(rp);
 }
 
 	}

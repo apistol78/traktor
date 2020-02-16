@@ -14,6 +14,10 @@ RenderPass::RenderPass(const wchar_t* const name)
 
 void RenderPass::addInput(handle_t targetSetId)
 {
+	// Just ignore invalid target set id; convenient when setting up passes.
+	if (targetSetId == 0)
+		return;
+
 	auto& input = m_inputs.push_back();
 	input.targetSetId = targetSetId;
 	input.colorIndex = 0;
