@@ -18,6 +18,15 @@
 				<second>161</second>
 			</position>
 		</item>
+		<item type="traktor.render.ImgInput" version="traktor.render.Node:1">
+			<id>{1CDD9E7D-07EA-9B42-888A-4828267774A3}</id>
+			<comment/>
+			<position>
+				<first>121</first>
+				<second>228</second>
+			</position>
+			<textureId>InputVelocity</textureId>
+		</item>
 		<item type="traktor.render.ImgPass" version="traktor.render.Node:1">
 			<id>{DB09FFB6-7207-5947-A15B-8026A5683991}</id>
 			<comment/>
@@ -25,6 +34,7 @@
 				<first>424</first>
 				<second>149</second>
 			</position>
+			<name>Motion blur final</name>
 			<steps>
 				<item type="traktor.render.ImgStepSimple">
 					<shader>{438372D7-2801-1A49-9152-A9DD69BE73CB}</shader>
@@ -35,15 +45,6 @@
 				</item>
 			</steps>
 		</item>
-		<item type="traktor.render.ImgInput" version="traktor.render.Node:1">
-			<id>{1CDD9E7D-07EA-9B42-888A-4828267774A3}</id>
-			<comment/>
-			<position>
-				<first>121</first>
-				<second>228</second>
-			</position>
-			<textureId>InputVelocity</textureId>
-		</item>
 	</nodes>
 	<edges>
 		<item type="traktor.render.Edge">
@@ -52,23 +53,23 @@
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[2]"/>
+				<node ref="/object/nodes/item[3]"/>
 				<name>Source</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[3]"/>
+				<node ref="/object/nodes/item[2]"/>
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[2]"/>
+				<node ref="/object/nodes/item[3]"/>
 				<name>Velocity</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[2]"/>
+				<node ref="/object/nodes/item[3]"/>
 				<name>Output</name>
 			</source>
 			<destination>

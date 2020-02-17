@@ -16,7 +16,8 @@ Ref< const ImagePass > ImagePassData::createInstance(resource::IResourceManager*
 {
     Ref< ImagePass > instance = new ImagePass();
 
-    instance->m_output = getParameterHandle(m_output);
+    instance->m_name = m_name;
+    instance->m_outputTargetSet = m_outputTargetSet;
 
     for (auto stepData : m_steps)
     {
@@ -31,7 +32,8 @@ Ref< const ImagePass > ImagePassData::createInstance(resource::IResourceManager*
 
 void ImagePassData::serialize(ISerializer& s)
 {
-    s >> Member< std::wstring >(L"output", m_output);
+    s >> Member< std::wstring >(L"name", m_name);
+    s >> Member< int32_t >(L"outputTargetSet", m_outputTargetSet);
     s >> MemberRefArray< ImageStepData >(L"steps", m_steps);
 }
 

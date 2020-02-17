@@ -7,7 +7,7 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderPass", RenderPass, Object)
 
-RenderPass::RenderPass(const wchar_t* const name)
+RenderPass::RenderPass(const std::wstring& name)
 :   m_name(name)
 {
 }

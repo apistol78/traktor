@@ -25,6 +25,7 @@
 				<first>382</first>
 				<second>151</second>
 			</position>
+			<name>Gamma correction</name>
 			<steps>
 				<item type="traktor.render.ImgStepSimple">
 					<shader>{FC562574-333A-264B-BBAC-531D00653824}</shader>

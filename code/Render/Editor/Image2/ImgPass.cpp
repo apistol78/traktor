@@ -26,6 +26,11 @@ ImgPass::~ImgPass()
 		delete outputPin;
 }
 
+const std::wstring& ImgPass::getName() const
+{
+	return m_name;
+}
+
 const RefArray< IImgStep >& ImgPass::getSteps() const
 {
 	return m_steps;
@@ -56,6 +61,7 @@ const OutputPin* ImgPass::getOutputPin(int index) const
 void ImgPass::serialize(ISerializer& s)
 {
 	Node::serialize(s);
+	s >> Member< std::wstring >(L"name", m_name);
 	s >> MemberRefArray< IImgStep >(L"steps", m_steps);
 	if (s.getDirection() == ISerializer::SdRead)
 		refresh();

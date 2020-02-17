@@ -48,18 +48,18 @@ public:
 	/*! */
 	void destroy();
 
-	/*! Add target definition.
+	/*! Add transient target set.
 	 *
 	 * \param targetSetDesc Render target set create description.
 	 * \param sharedDepthStencil Share depth/stencil with target set.
-	 * \return Opaque handle of target set.
+	 * \return Opaque handle of transient target set.
 	 */
 	handle_t addTargetSet(
 		const RenderGraphTargetSetDesc& targetSetDesc,
 		IRenderTargetSet* sharedDepthStencil = nullptr
 	);
 
-	/*! Get target set from target identifier.
+	/*! Get transient target set from target identifier.
 	 *
 	 * \param targetSetId Unique identifier of target.
 	 * \return Render target set.

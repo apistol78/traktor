@@ -1,4 +1,4 @@
-#include "Core/Containers/SmallSet.h"
+#include "Core/Containers/StaticSet.h"
 #include "Core/Log/Log.h"
 #include "Render/IRenderSystem.h"
 #include "Render/IRenderTargetSet.h"
@@ -68,19 +68,33 @@ bool RenderGraph::validate(int32_t width, int32_t height)
 	}
 
 	// Append passes depth-first.
-	SmallSet< uint32_t > order;
+	StaticVector< uint32_t, 64 > order;
 	for (int32_t i = 0; i < (int32_t)m_passes.size(); ++i)
 	{
 		if (m_passes[i]->getOutput().targetSetId == 0)
 		{
 			traverse(i, [&](int32_t index) {
-				order.insert(index);
+				order.push_back(index);
 			});
 		}
 	}
 
 	m_order.resize(0);
-	m_order.insert(m_order.end(), order.begin(), order.end());
+
+	StaticSet< uint32_t, 64 > added;
+	for (auto index : order)
+	{
+		if (added.insert(index))
+			m_order.push_back(index);
+	}
+
+#if defined(_DEBUG)
+	for (int32_t i = 0; i < (int32_t)m_order.size(); ++i)
+	{
+		const auto pass = m_passes[m_order[i]];
+		log::info << i << L". " << pass->getName() << L" -> " << pass->getOutput().targetSetId << Endl;
+	}
+#endif
 	return true;
 }
 

@@ -1,5 +1,6 @@
 #pragma once
 
+#include <string>
 #include "Core/Object.h"
 #include "Core/RefArray.h"
 #include "Render/Types.h"
@@ -32,7 +33,8 @@ private:
 	friend class ImageGraph;
 	friend class ImagePassData;
 
-	handle_t m_output;
+	std::wstring m_name;
+	int32_t m_outputTargetSet;
 	RefArray< const ImageStep > m_steps;
 };
 

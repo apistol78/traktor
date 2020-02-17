@@ -25,6 +25,7 @@
 				<first>368</first>
 				<second>115</second>
 			</position>
+			<name>Tone mapping</name>
 			<steps>
 				<item type="traktor.render.ImgStepSimple">
 					<shader>{697DF682-AF08-9A44-A189-2DA42C020A2D}</shader>
