@@ -1,0 +1,490 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.render.ImageGraphAsset">
+	<nodes>
+		<item type="traktor.render.ImgInput" version="traktor.render.Node:1">
+			<id>{6834F690-121C-C249-8191-A03A37AFC8F2}</id>
+			<comment/>
+			<position>
+				<first>90</first>
+				<second>184</second>
+			</position>
+			<textureId>InputColor</textureId>
+		</item>
+		<item type="traktor.render.ImgOutput" version="traktor.render.Node:1">
+			<id>{A24C08E3-CDBB-F540-A23E-D2DDEE8715EB}</id>
+			<comment/>
+			<position>
+				<first>2163</first>
+				<second>623</second>
+			</position>
+		</item>
+		<item type="traktor.render.ImgPass" version="traktor.render.Node:1">
+			<id>{DB09FFB6-7207-5947-A15B-8026A5683991}</id>
+			<comment/>
+			<position>
+				<first>391</first>
+				<second>108</second>
+			</position>
+			<name>Tone mapping</name>
+			<steps>
+				<item type="traktor.render.ImgStepSimple">
+					<shader>{697DF682-AF08-9A44-A189-2DA42C020A2D}</shader>
+					<parameters>
+						<item>ColorTexture</item>
+					</parameters>
+				</item>
+			</steps>
+		</item>
+		<item type="traktor.render.ImgPass" version="traktor.render.Node:1">
+			<id>{B8EDE013-A426-F44E-8BFF-85FCE0AD62F5}</id>
+			<comment/>
+			<position>
+				<first>336</first>
+				<second>315</second>
+			</position>
+			<name>Initial luminance</name>
+			<steps>
+				<item type="traktor.render.ImgStepSimple">
+					<shader>{9B02255F-8C06-1540-AE46-C971346D5B35}</shader>
+					<parameters>
+						<item>ColorTexture</item>
+					</parameters>
+				</item>
+			</steps>
+		</item>
+		<item type="traktor.render.ImgTargetSet" version="traktor.render.Node:1">
+			<id>{3DD789DA-9DFE-694E-A135-C290CA5BCE09}</id>
+			<comment/>
+			<position>
+				<first>624</first>
+				<second>338</second>
+			</position>
+			<targetSetId>Initial luminance</targetSetId>
+			<width>0</width>
+			<height>0</height>
+			<screenWidthDenom>8</screenWidthDenom>
+			<screenHeightDenom>8</screenHeightDenom>
+			<maxWidth>256</maxWidth>
+			<maxHeight>256</maxHeight>
+			<createDepthStencil>false</createDepthStencil>
+			<ignoreStencil>false</ignoreStencil>
+			<generateMips>false</generateMips>
+			<targets>
+				<item>
+					<textureId>Output</textureId>
+					<colorFormat>TfR16F</colorFormat>
+				</item>
+			</targets>
+		</item>
+		<item type="traktor.render.ImgPass" version="traktor.render.Node:1">
+			<id>{FA8D6FCB-3331-394F-ABC2-5ECD01970E80}</id>
+			<comment/>
+			<position>
+				<first>330</first>
+				<second>475</second>
+			</position>
+			<name>Downsample -&gt; 64</name>
+			<steps>
+				<item type="traktor.render.ImgStepSimple">
+					<shader>{38EF7615-7D9D-BE43-B302-3F213026EE14}</shader>
+					<parameters>
+						<item>SourceTexture</item>
+					</parameters>
+				</item>
+			</steps>
+		</item>
+		<item type="traktor.render.ImgTargetSet" version="traktor.render.Node:1">
+			<id>{A73A24F1-D4CA-8C42-B7D6-57319A0B626C}</id>
+			<comment/>
+			<position>
+				<first>643</first>
+				<second>493</second>
+			</position>
+			<targetSetId>Illum64</targetSetId>
+			<width>64</width>
+			<height>64</height>
+			<screenWidthDenom>0</screenWidthDenom>
+			<screenHeightDenom>0</screenHeightDenom>
+			<maxWidth>0</maxWidth>
+			<maxHeight>0</maxHeight>
+			<createDepthStencil>false</createDepthStencil>
+			<ignoreStencil>false</ignoreStencil>
+			<generateMips>false</generateMips>
+			<targets>
+				<item>
+					<textureId>Output</textureId>
+					<colorFormat>TfR16F</colorFormat>
+				</item>
+			</targets>
+		</item>
+		<item type="traktor.render.ImgPass" version="traktor.render.Node:1">
+			<id>{8DF2AFDB-83A6-2B4A-B8F8-206D2880ED70}</id>
+			<comment/>
+			<position>
+				<first>336</first>
+				<second>621</second>
+			</position>
+			<name>Downsample -&gt; 16</name>
+			<steps>
+				<item type="traktor.render.ImgStepSimple">
+					<shader>{38EF7615-7D9D-BE43-B302-3F213026EE14}</shader>
+					<parameters>
+						<item>SourceTexture</item>
+					</parameters>
+				</item>
+			</steps>
+		</item>
+		<item type="traktor.render.ImgTargetSet" version="traktor.render.Node:1">
+			<id>{A9EBAEA7-960D-554D-A447-12B173CC2CF2}</id>
+			<comment/>
+			<position>
+				<first>645</first>
+				<second>639</second>
+			</position>
+			<targetSetId>Illum16</targetSetId>
+			<width>16</width>
+			<height>16</height>
+			<screenWidthDenom>0</screenWidthDenom>
+			<screenHeightDenom>0</screenHeightDenom>
+			<maxWidth>0</maxWidth>
+			<maxHeight>0</maxHeight>
+			<createDepthStencil>false</createDepthStencil>
+			<ignoreStencil>false</ignoreStencil>
+			<generateMips>false</generateMips>
+			<targets>
+				<item>
+					<textureId>Output</textureId>
+					<colorFormat>TfR16F</colorFormat>
+				</item>
+			</targets>
+		</item>
+		<item type="traktor.render.ImgPass" version="traktor.render.Node:1">
+			<id>{72F6335D-E27B-3443-BB7E-2E4361624F46}</id>
+			<comment/>
+			<position>
+				<first>337</first>
+				<second>761</second>
+			</position>
+			<name>Downsample -&gt; 4</name>
+			<steps>
+				<item type="traktor.render.ImgStepSimple">
+					<shader>{38EF7615-7D9D-BE43-B302-3F213026EE14}</shader>
+					<parameters>
+						<item>SourceTexture</item>
+					</parameters>
+				</item>
+			</steps>
+		</item>
+		<item type="traktor.render.ImgTargetSet" version="traktor.render.Node:1">
+			<id>{F008E0FF-3011-7D4F-8A9B-055C6DFC8FAD}</id>
+			<comment/>
+			<position>
+				<first>645</first>
+				<second>791</second>
+			</position>
+			<targetSetId>Illum4</targetSetId>
+			<width>4</width>
+			<height>4</height>
+			<screenWidthDenom>0</screenWidthDenom>
+			<screenHeightDenom>0</screenHeightDenom>
+			<maxWidth>0</maxWidth>
+			<maxHeight>0</maxHeight>
+			<createDepthStencil>false</createDepthStencil>
+			<ignoreStencil>false</ignoreStencil>
+			<generateMips>false</generateMips>
+			<targets>
+				<item>
+					<textureId>Output</textureId>
+					<colorFormat>TfR16F</colorFormat>
+				</item>
+			</targets>
+		</item>
+		<item type="traktor.render.ImgPass" version="traktor.render.Node:1">
+			<id>{4551D26C-E6C5-314C-A5E3-FC751E5067F2}</id>
+			<comment/>
+			<position>
+				<first>331</first>
+				<second>910</second>
+			</position>
+			<name>Downsample -&gt; 1</name>
+			<steps>
+				<item type="traktor.render.ImgStepSimple">
+					<shader>{38EF7615-7D9D-BE43-B302-3F213026EE14}</shader>
+					<parameters>
+						<item>SourceTexture</item>
+					</parameters>
+				</item>
+			</steps>
+		</item>
+		<item type="traktor.render.ImgTargetSet" version="traktor.render.Node:1">
+			<id>{3BA9C78C-6890-9244-A346-F23DF23C6271}</id>
+			<comment/>
+			<position>
+				<first>657</first>
+				<second>942</second>
+			</position>
+			<targetSetId>Illum1</targetSetId>
+			<width>1</width>
+			<height>1</height>
+			<screenWidthDenom>0</screenWidthDenom>
+			<screenHeightDenom>0</screenHeightDenom>
+			<maxWidth>0</maxWidth>
+			<maxHeight>0</maxHeight>
+			<createDepthStencil>false</createDepthStencil>
+			<ignoreStencil>false</ignoreStencil>
+			<generateMips>false</generateMips>
+			<targets>
+				<item>
+					<textureId>Output</textureId>
+					<colorFormat>TfR16F</colorFormat>
+				</item>
+			</targets>
+		</item>
+		<item type="traktor.render.ImgPass" version="traktor.render.Node:1">
+			<id>{0A105C00-4A7B-CB44-8C7B-AD779023A80F}</id>
+			<comment/>
+			<position>
+				<first>1152</first>
+				<second>656</second>
+			</position>
+			<name>Adaptation</name>
+			<steps>
+				<item type="traktor.render.ImgStepSimple">
+					<shader>{E9D34A63-454C-6B4C-A508-009527334A5B}</shader>
+					<parameters>
+						<item>SourceTexture</item>
+						<item>CurrentIllumTexture</item>
+					</parameters>
+				</item>
+			</steps>
+		</item>
+		<item type="traktor.render.ImgTargetSet" version="traktor.render.Node:1">
+			<id>{9F47267A-AB61-B44D-969A-B80BD8F7C02B}</id>
+			<comment/>
+			<position>
+				<first>911</first>
+				<second>592</second>
+			</position>
+			<targetSetId>Current</targetSetId>
+			<width>1</width>
+			<height>1</height>
+			<screenWidthDenom>0</screenWidthDenom>
+			<screenHeightDenom>0</screenHeightDenom>
+			<maxWidth>0</maxWidth>
+			<maxHeight>0</maxHeight>
+			<createDepthStencil>false</createDepthStencil>
+			<ignoreStencil>false</ignoreStencil>
+			<generateMips>false</generateMips>
+			<targets>
+				<item>
+					<textureId>Output</textureId>
+					<colorFormat>TfR16F</colorFormat>
+				</item>
+			</targets>
+		</item>
+		<item type="traktor.render.ImgTargetSet" version="traktor.render.Node:1">
+			<id>{0CE40D02-5155-3845-8A1B-F22F15E3EDE7}</id>
+			<comment/>
+			<position>
+				<first>1538</first>
+				<second>642</second>
+			</position>
+			<targetSetId>Adapt</targetSetId>
+			<width>1</width>
+			<height>1</height>
+			<screenWidthDenom>0</screenWidthDenom>
+			<screenHeightDenom>0</screenHeightDenom>
+			<maxWidth>0</maxWidth>
+			<maxHeight>0</maxHeight>
+			<createDepthStencil>false</createDepthStencil>
+			<ignoreStencil>false</ignoreStencil>
+			<generateMips>false</generateMips>
+			<targets>
+				<item>
+					<textureId>Output</textureId>
+					<colorFormat>TfR16F</colorFormat>
+				</item>
+			</targets>
+		</item>
+		<item type="traktor.render.ImgPass" version="traktor.render.Node:1">
+			<id>{E2399978-316D-D549-A53F-EF4008F86D01}</id>
+			<comment/>
+			<position>
+				<first>1798</first>
+				<second>577</second>
+			</position>
+			<name>Tone mapping</name>
+			<steps>
+				<item type="traktor.render.ImgStepSimple">
+					<shader>{EB500331-8E43-4540-A742-9E88EF4ABBF9}</shader>
+					<parameters>
+						<item>ColorTexture</item>
+						<item>CurrentIllumTexture</item>
+					</parameters>
+				</item>
+			</steps>
+		</item>
+	</nodes>
+	<edges>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[3]"/>
+				<name>ColorTexture</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[3]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[4]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[4]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[5]"/>
+				<name>SourceTexture</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[5]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[6]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[6]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[7]"/>
+				<name>SourceTexture</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[7]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[8]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[8]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[9]"/>
+				<name>SourceTexture</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[9]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[10]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[10]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[11]"/>
+				<name>SourceTexture</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[11]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[12]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[12]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[13]"/>
+				<name>SourceTexture</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[14]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[13]"/>
+				<name>CurrentIllumTexture</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[13]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[15]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[15]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[16]"/>
+				<name>CurrentIllumTexture</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[16]"/>
+				<name>ColorTexture</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[16]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[1]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+	</edges>
+</object>

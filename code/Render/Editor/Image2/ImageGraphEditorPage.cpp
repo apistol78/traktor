@@ -102,12 +102,22 @@ bool ImageGraphEditorPage::handleCommand(const ui::Command& command)
 			Node* node = nodes.front()->getData< Node >(L"IMGNODE");
 			T_FATAL_ASSERT(&type_of(m_propertiesNode) == &type_of(node));
 
+			// Keep position; user might have moved node while being selected.
+			m_propertiesNode->setPosition(node->getPosition());
+
 			m_imageGraph->replace(
 				node,
 				m_propertiesNode
 			);
 
 			createEditorGraph();
+
+			// Find and select re-created node.
+			for (auto n : m_editorGraph->getNodes())
+			{
+				if (n->getData< Node >(L"IMGNODE") == m_propertiesNode)
+					n->setSelected(true);
+			}
 
 			// Re-create a clone of the selected node as we cannot
 			// allow in-place editing of a node as graph contain
@@ -228,36 +238,30 @@ bool ImageGraphEditorPage::handleCommand(const ui::Command& command)
 	}
 	else if (command == L"Editor.Delete")
 	{
-		// RefArray< ui::Node > nodes;
-		// if (m_editorGraph->getSelectedNodes(nodes) <= 0)
-		// 	return false;
+		RefArray< ui::Node > nodes;
+		if (m_editorGraph->getSelectedNodes(nodes) <= 0)
+			return false;
 
-		// // Save undo state.
-		// m_document->push();
+		// Save undo state.
+		m_document->push();
 
-		// // Remove edges first which are connected to selected nodes.
-		// RefArray< ui::Edge > edges;
-		// m_editorGraph->getConnectedEdges(nodes, false, edges);
+		// Remove edges first which are connected to selected nodes.
+		RefArray< ui::Edge > edges;
+		m_editorGraph->getConnectedEdges(nodes, false, edges);
+		for (auto editorEdge : edges)
+		{
+			Ref< Edge > edge = editorEdge->getData< Edge >(L"IMGEDGE");
+			m_editorGraph->removeEdge(editorEdge);
+			m_imageGraph->removeEdge(edge);
+		}
+		for (auto editorNode : nodes)
+		{
+			Ref< Node > shaderNode = editorNode->getData< Node >(L"IMGNODE");
+			m_editorGraph->removeNode(editorNode);
+			m_imageGraph->removeNode(shaderNode);
+		}
 
-		// for (RefArray< ui::Edge >::iterator i = edges.begin(); i != edges.end(); ++i)
-		// {
-		// 	ui::Edge* editorEdge = *i;
-		// 	Ref< Edge > edge = editorEdge->getData< Edge >(L"SHADEREDGE");
-
-		// 	m_editorGraph->removeEdge(editorEdge);
-		// 	m_imageGraph->removeEdge(edge);
-		// }
-
-		// for (RefArray< ui::Node >::iterator i = nodes.begin(); i != nodes.end(); ++i)
-		// {
-		// 	ui::Node* editorNode = *i;
-		// 	Ref< Node > shaderNode = editorNode->getData< Node >(L"SHADERNODE");
-
-		// 	m_editorGraph->removeNode(editorNode);
-		// 	m_imageGraph->removeNode(shaderNode);
-		// }
-
-		// updateGraph();
+		createEditorGraph();
 	}
 	else if (command == L"Editor.Undo")
 	{
@@ -396,13 +400,9 @@ Ref< ui::Node > ImageGraphEditorPage::createEditorNode(Node* node) const
 	}
 	else if (auto pass = dynamic_type_cast< ImgPass* >(node))
 	{
-		StringOutputStream ss;
-		for (auto step : pass->getSteps())
-			ss << step->getTitle() << Endl;
-
 		editorNode = new ui::Node(
 			L"Pass",
-			ss.str(),
+			pass->getName(),
 			position,
 			new ui::DefaultNodeShape(m_editorGraph, ui::DefaultNodeShape::StDefault)
 		);

@@ -27,7 +27,7 @@ namespace traktor
 	namespace render
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ImageGraphPipeline", 0, ImageGraphPipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ImageGraphPipeline", 1, ImageGraphPipeline, editor::IPipeline)
 
 bool ImageGraphPipeline::create(const editor::IPipelineSettings* settings)
 {
@@ -134,6 +134,22 @@ bool ImageGraphPipeline::buildOutput(
 		data->m_steps
 	);
 
+	// Convert all target sets.
+	for (size_t i = 1; i < nodes.size(); ++i)
+	{
+		if (auto targetSet = dynamic_type_cast< const ImgTargetSet* >(nodes[i]))
+		{
+			Ref< ImageTargetSetData > tsd = new ImageTargetSetData();
+			
+			tsd->m_targetSetId = targetSet->getTargetSetId();
+			for (int32_t i = 0; i < targetSet->getTextureCount(); ++i)
+				tsd->m_textureIds[i] = targetSet->getTargetSetId() + L"/" + targetSet->getTextureId(i);
+			tsd->m_targetSetDesc = targetSet->getRenderGraphTargetSetDesc();
+
+			data->m_targetSets.push_back(tsd);
+		}
+	}
+
 	// Convert rest of nodes.
 	for (size_t i = 1; i < nodes.size(); ++i)
 	{
@@ -158,33 +174,29 @@ bool ImageGraphPipeline::buildOutput(
 			}
 
 			Ref< ImagePassData > passData = new ImagePassData();
+			passData->m_name = pass->getName();
+			passData->m_outputTargetSet = -1;
 
-			passData->m_output = targetSet->getTargetSetId();
-			log::info << L"SubPass " << i << L", output = \"" << passData->m_output << L"\"" << Endl;
+			// Find index of output target set.
+			int32_t targetSetIndex = 0;
+			for (size_t i = 1; i < nodes.size(); ++i)
+			{
+				if (!is_a< ImgTargetSet >(nodes[i]))
+					continue;
 
+				if (targetSet == nodes[i])
+				{
+					passData->m_outputTargetSet = targetSetIndex;
+					break;
+				}
+				else
+					++targetSetIndex;
+			}
+
+			// Convert pass's steps.
 			convertAssetPassToSteps(asset, pass, passData->m_steps);
 
 			data->m_passes.push_back(passData);
-		}
-		else if (auto targetSet = dynamic_type_cast< const ImgTargetSet* >(nodes[i]))
-		{
-			// \tbd Since these targets are "local" to this render graph
-			// we should rename these with a globally unique identifier
-			// so it won't clash with other image graphs.
-			Ref< ImageTargetSetData > tsd = new ImageTargetSetData();
-			
-			tsd->m_targetSetId = targetSet->getTargetSetId();
-			log::info << L"TargetSet, targetSetId = \"" << tsd->m_targetSetId << L"\"" << Endl;
-
-			for (int32_t i = 0; i < targetSet->getTextureCount(); ++i)
-			{
-				tsd->m_textureIds[i] = targetSet->getTargetSetId() + L"/" + targetSet->getTextureId(i);
-				log::info << L"\ttextureIds[" << i << L"] = " << tsd->m_textureIds[i] << Endl;
-			}
-
-			tsd->m_targetSetDesc = targetSet->getRenderGraphTargetSetDesc();
-
-			data->m_targetSets.push_back(tsd);
 		}
 		else if (auto texture = dynamic_type_cast< const ImgTexture* >(nodes[i]))
 		{

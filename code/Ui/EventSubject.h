@@ -76,6 +76,7 @@ public:
 
 		virtual void notify(Event* event) override
 		{
+			T_ANONYMOUS_VAR(Ref< ClassType >)(m_target);
 			(m_target->*m_method)(
 				mandatory_non_null_type_cast< EventType* >(event)
 			);

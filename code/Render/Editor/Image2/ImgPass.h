@@ -34,6 +34,8 @@ public:
 
 	virtual ~ImgPass();
 
+	const std::wstring& getName() const;
+
 	const RefArray< IImgStep >& getSteps() const;
 
 	virtual int getInputPinCount() const override final;
@@ -47,6 +49,7 @@ public:
 	virtual void serialize(ISerializer& s) override final;
 
 private:
+	std::wstring m_name;
 	AlignedVector< InputPin* > m_inputPins;
 	AlignedVector< OutputPin* > m_outputPins;
 	RefArray< IImgStep > m_steps;

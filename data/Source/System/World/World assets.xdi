@@ -29,5 +29,29 @@
 			<id>{1F20DAB5-22EB-B84C-92B0-71E94C1CE261}</id>
 			<editorDeployOnly>false</editorDeployOnly>
 		</item>
+		<item>
+			<id>{45F9CD9F-C700-9942-BB36-443629C88748}</id>
+			<editorDeployOnly>false</editorDeployOnly>
+		</item>
+		<item>
+			<id>{302E57C8-711D-094F-A764-75F76553E81B}</id>
+			<editorDeployOnly>false</editorDeployOnly>
+		</item>
+		<item>
+			<id>{416745F9-93C7-8D45-AE28-F2823DEE636A}</id>
+			<editorDeployOnly>false</editorDeployOnly>
+		</item>
+		<item>
+			<id>{C0316981-FA73-A34E-8135-1F596425688F}</id>
+			<editorDeployOnly>false</editorDeployOnly>
+		</item>
+		<item>
+			<id>{71D385F1-8364-C849-927F-5F1249F5DF92}</id>
+			<editorDeployOnly>false</editorDeployOnly>
+		</item>
+		<item>
+			<id>{88E329C8-A2F3-7443-B73E-4E85C6ECACBE}</id>
+			<editorDeployOnly>false</editorDeployOnly>
+		</item>
 	</dependencies>
 </object>

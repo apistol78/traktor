@@ -43,7 +43,8 @@ public:
 private:
     friend class ImageGraphPipeline;
 
-    std::wstring m_output;
+    std::wstring m_name;
+    int32_t m_outputTargetSet;
     RefArray< ImageStepData > m_steps;
 };
 

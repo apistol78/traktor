@@ -30,16 +30,16 @@ namespace traktor
 
 const int32_t c_maxLightCount = 1024;
 
-const resource::Id< render::ImageGraph > c_ambientOcclusionLow(L"{5A3B0260-32F9-B343-BBA4-88BD932F917A}") ; // L"{ED4F221C-BAB1-4645-BD08-84C5B3FA7C20}");
-const resource::Id< render::ImageGraph > c_ambientOcclusionMedium(L"{5A3B0260-32F9-B343-BBA4-88BD932F917A}") ; // L"{A4249C8A-9A0D-B349-B0ED-E8B354CD7BDF}");
-const resource::Id< render::ImageGraph > c_ambientOcclusionHigh(L"{5A3B0260-32F9-B343-BBA4-88BD932F917A}") ; // L"{37F82A38-D632-5541-9B29-E77C2F74B0C0}");
-const resource::Id< render::ImageGraph > c_ambientOcclusionUltra(L"{5A3B0260-32F9-B343-BBA4-88BD932F917A}") ; // L"{C1C9DDCB-2F82-A94C-BF65-653D8E68F628}");
-const resource::Id< render::ImageGraph > c_antiAliasLow(L"{D03B9566-EFA3-7A43-B3AD-F59DB34DEE96}") ; // L"{DBF2FBB9-1310-A24E-B443-AF0D018571F7}");
-const resource::Id< render::ImageGraph > c_antiAliasMedium(L"{D03B9566-EFA3-7A43-B3AD-F59DB34DEE96}") ; // L"{3E1D810B-339A-F742-9345-4ECA00220D57}");
-const resource::Id< render::ImageGraph > c_antiAliasHigh(L"{D03B9566-EFA3-7A43-B3AD-F59DB34DEE96}") ; // L"{0C288028-7BFD-BE46-A25F-F3910BE50319}");
-const resource::Id< render::ImageGraph > c_antiAliasUltra(L"{D03B9566-EFA3-7A43-B3AD-F59DB34DEE96}") ; // L"{4750DA97-67F4-E247-A9C2-B4883B1158B2}");
-const resource::Id< render::ImageGraph > c_gammaCorrection(L"{B1E8367D-91DD-D648-A44F-B86492169771}") ; // L"{AB0ABBA7-77BF-0A4E-8E3B-4987B801CE6B}");
-const resource::Id< render::ImageGraph > c_toneMapFixed(L"{1F20DAB5-22EB-B84C-92B0-71E94C1CE261}") ; // L"{838922A0-49CE-6645-8A9C-BA0E71081033}");
+const resource::Id< render::ImageGraph > c_ambientOcclusionLow(L"{416745F9-93C7-8D45-AE28-F2823DEE636A}");
+const resource::Id< render::ImageGraph > c_ambientOcclusionMedium(L"{5A3B0260-32F9-B343-BBA4-88BD932F917A}");
+const resource::Id< render::ImageGraph > c_ambientOcclusionHigh(L"{45F9CD9F-C700-9942-BB36-443629C88748}");
+const resource::Id< render::ImageGraph > c_ambientOcclusionUltra(L"{302E57C8-711D-094F-A764-75F76553E81B}");
+const resource::Id< render::ImageGraph > c_antiAliasLow(L"{71D385F1-8364-C849-927F-5F1249F5DF92}");
+const resource::Id< render::ImageGraph > c_antiAliasMedium(L"{D03B9566-EFA3-7A43-B3AD-F59DB34DEE96}");
+const resource::Id< render::ImageGraph > c_antiAliasHigh(L"{C0316981-FA73-A34E-8135-1F596425688F}");
+const resource::Id< render::ImageGraph > c_antiAliasUltra(L"{88E329C8-A2F3-7443-B73E-4E85C6ECACBE}");
+const resource::Id< render::ImageGraph > c_gammaCorrection(L"{B1E8367D-91DD-D648-A44F-B86492169771}");
+const resource::Id< render::ImageGraph > c_toneMapFixed(L"{1F20DAB5-22EB-B84C-92B0-71E94C1CE261}");
 const resource::Id< render::ImageGraph > c_toneMapAdaptive(L"{1F20DAB5-22EB-B84C-92B0-71E94C1CE261}") ; // L"{BC4FA128-A976-4023-A422-637581ADFD7E}");
 
 // Techniques

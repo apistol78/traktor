@@ -18,6 +18,15 @@
 				<second>268</second>
 			</position>
 		</item>
+		<item type="traktor.render.ImgTexture" version="traktor.render.Node:1">
+			<id>{93788A5D-BDD9-4945-B347-664110B43F64}</id>
+			<comment/>
+			<position>
+				<first>217</first>
+				<second>225</second>
+			</position>
+			<texture>{3DEEC673-EDF5-364A-B796-BAC7EF575258}</texture>
+		</item>
 		<item type="traktor.render.ImgPass" version="traktor.render.Node:1">
 			<id>{629AA5F1-E7FF-B548-B686-28EFD5A49717}</id>
 			<comment/>
@@ -25,6 +34,7 @@
 				<first>777</first>
 				<second>247</second>
 			</position>
+			<name>Final</name>
 			<steps>
 				<item type="traktor.render.ImgStepSimple">
 					<shader>{703701E9-2921-6646-9608-2DD2177B93BD}</shader>
@@ -35,15 +45,6 @@
 				</item>
 			</steps>
 		</item>
-		<item type="traktor.render.ImgTexture" version="traktor.render.Node:1">
-			<id>{93788A5D-BDD9-4945-B347-664110B43F64}</id>
-			<comment/>
-			<position>
-				<first>217</first>
-				<second>225</second>
-			</position>
-			<texture>{3DEEC673-EDF5-364A-B796-BAC7EF575258}</texture>
-		</item>
 	</nodes>
 	<edges>
 		<item type="traktor.render.Edge">
@@ -52,13 +53,13 @@
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[2]"/>
+				<node ref="/object/nodes/item[3]"/>
 				<name>Source</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[2]"/>
+				<node ref="/object/nodes/item[3]"/>
 				<name>Output</name>
 			</source>
 			<destination>
@@ -68,11 +69,11 @@
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[3]"/>
+				<node ref="/object/nodes/item[2]"/>
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[2]"/>
+				<node ref="/object/nodes/item[3]"/>
 				<name>ColorCorrection</name>
 			</destination>
 		</item>

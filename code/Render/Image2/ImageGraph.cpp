@@ -18,22 +18,24 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ImageGraph", ImageGraph, Object)
 
 void ImageGraph::addPasses(RenderGraph& renderGraph, RenderPass* parentPass, const ImageGraphContext& cx) const
 {
+	StaticVector< handle_t, 32 > targetSetIds;
+
 	// Copy context and append our internal targets so
 	// steps can have a single method of accessing input textures.
 	ImageGraphContext context = cx;
-	for (auto targetSet : m_targetSets)
+	for (int32_t i = 0; i < (int32_t)m_targetSets.size(); ++i)
 	{
-		render::handle_t targetSetId = renderGraph.addTargetSet(
-			targetSet->getTargetSetDesc()
+		targetSetIds[i] = renderGraph.addTargetSet(
+			m_targetSets[i]->getTargetSetDesc()
 		);
 
-		const auto& desc = targetSet->getTargetSetDesc();
-		for (int32_t i = 0; i < desc.count; ++i)
+		const auto& desc = m_targetSets[i]->getTargetSetDesc();
+		for (int32_t j = 0; j < desc.count; ++j)
 		{
 			context.associateTextureTargetSet(
-				targetSet->getTextureId(i),
-				targetSetId,
-				i
+				m_targetSets[i]->getTextureId(j),
+				targetSetIds[i],
+				j
 			);
 		}
 	}
@@ -41,12 +43,14 @@ void ImageGraph::addPasses(RenderGraph& renderGraph, RenderPass* parentPass, con
 	// Add all passes to render graph.
 	for (auto pass : m_passes)
 	{
-		Ref< RenderPass > rp = new RenderPass();
+		Ref< RenderPass > rp = new RenderPass(pass->m_name);
 
 		for (auto step : pass->m_steps)
 			step->setup(this, context, *rp);
 
-		rp->setOutput(pass->m_output);
+		if (pass->m_outputTargetSet >= 0)
+			rp->setOutput(targetSetIds[pass->m_outputTargetSet]);
+
 		rp->addBuild(
 			[=](const RenderGraph& renderGraph, RenderContext* renderContext)
 			{

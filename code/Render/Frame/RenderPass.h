@@ -56,9 +56,9 @@ public:
 		}
 	};
 
-	explicit RenderPass(const wchar_t* const name = L"Unnamed");
+	explicit RenderPass(const std::wstring& name = L"Unnamed");
 
-	const wchar_t* getName() const { return m_name; }
+	const std::wstring& getName() const { return m_name; }
 
 	//! \{
 
@@ -95,7 +95,7 @@ public:
 	//! \}
 
 protected:
-	const wchar_t* m_name;
+	std::wstring m_name;
 	AlignedVector< Input > m_inputs;
 	Output m_output;
     AlignedVector< fn_build_t > m_builds;

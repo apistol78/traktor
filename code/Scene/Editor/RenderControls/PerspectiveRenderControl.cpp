@@ -405,8 +405,8 @@ void PerspectiveRenderControl::showSelectionRectangle(const ui::Rect& rect)
 
 void PerspectiveRenderControl::getDebugTargets(std::vector< render::DebugTarget >& outDebugTargets)
 {
-	// if (m_worldRenderer)
-	// 	m_worldRenderer->getDebugTargets(outDebugTargets);
+	if (m_renderGraph)
+		m_renderGraph->getDebugTargets(outDebugTargets);
 }
 
 void PerspectiveRenderControl::setDebugTarget(const render::DebugTarget* debugTarget, float alpha)
