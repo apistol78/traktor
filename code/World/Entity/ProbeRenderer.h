@@ -34,9 +34,8 @@ class IResourceManager;
 	namespace world
 	{
 
-class ProbeCapturer;
+class IWorldRenderer;
 class ProbeComponent;
-class ProbeFilterer;
 
 /*! Probe entity renderer.
  * \ingroup World
@@ -76,15 +75,17 @@ public:
 	void setup(const WorldSetupContext& context) override final;
 
 private:
-	Ref< ProbeCapturer > m_probeCapturer;
-	Ref< ProbeFilterer > m_probeFilterer;
+	Ref< resource::IResourceManager > m_resourceManager;
+	Ref< render::IRenderSystem > m_renderSystem;
+
+	const TypeInfo& m_worldRendererType;
+	Ref< IWorldRenderer > m_worldRenderer;
+
 	resource::Proxy< render::Shader > m_probeShader;
 	Ref< render::VertexBuffer > m_vertexBuffer;
 	Ref< render::IndexBuffer > m_indexBuffer;
+
 	RefArray< ProbeComponent > m_captureQueue;	//!< Probes queued for capture.
-	Ref< ProbeComponent > m_capture;
-	int32_t m_captureFace;
-	bool m_capturePending;
 };
 
 	}
