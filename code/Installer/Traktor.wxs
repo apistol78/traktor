@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?define DXShortName="Jun2010" ?>
+<Wix
+  xmlns="http://schemas.microsoft.com/wix/2006/wi"
+  xmlns:gaming="http://schemas.microsoft.com/wix/GamingExtension"
+  xmlns:util="http://schemas.microsoft.com/wix/UtilExtension"
+>
+  <Product
+    Id="758D5A2F-9E42-4f22-BF1C-504037E55CFD"
+    Name="Puzzle Dimension"
+    Language="0"
+    Codepage="65001"
+    Version="1.0.0.0"
+    Manufacturer="Doctor Entertainment AB"
+    UpgradeCode="50247611-92FC-49b3-B615-712E6C284C4D"
+  >
+    <Package InstallerVersion="301" Compressed="yes" />
+    <Media Id="1" Cabinet="PuzzleDimension.cab" EmbedCab="yes" />
+
+    <Icon Id="icon.ico" SourceFile="$(env.GAME_HOME)/res/PuzzleDimension.ico"/>
+    <Property Id="ARPPRODUCTICON" Value="icon.ico" />
+
+    <Directory Id="TARGETDIR" Name="SourceDir">
+
+      <!-- Program folder -->
+      <Directory Id="ProgramFilesFolder">
+        <Directory Id="Dir_Company" Name="Doctor Entertainment AB">
+          <Directory Id="INSTALLLOCATION" Name="Puzzle Dimension">
+            <Component Id="Cmp_Game" Guid="D3BBDC52-2222-4EEC-972D-9DB6708D0302">
+              <File Id="File_Executable" Name="PuzzleDimension.exe" Source="$(env.GAME_HOME)/images/local-win32/PuzzleDimension.exe" DiskId="1" KeyPath="yes">
+                <!-- Register with Vista/Win7 Game Explorer -->
+                <gaming:Game Id="FF3E7FD8-C853-43ae-9B05-D72B511DCDF9" />
+              </File>
+              <File Id="File_Content" Name="Content.compact" Source="$(env.GAME_HOME)/images/local-win32/Content.compact" DiskId="1" />
+              <File Id="File_Config" Name="PuzzleDimension.config" Source="$(env.GAME_HOME)/images/local-win32/PuzzleDimension.config" DiskId="1" />
+            </Component>
+          </Directory>
+        </Directory>
+      </Directory>
+
+      <!-- Temp folder -->
+      <Directory Id="TempFolder" Name="TempFolder" >
+       
+        <!-- VC redist -->
+        <Directory Id="VCRedist" Name="Visual C++ Redist">
+          <Merge Id="VCRedist" DiskId="1" Language="0" SourceFile="$(env.TRAKTOR_HOME)/msvcrt/vc2008/Microsoft_VC90_CRT_x86.msm" />
+        </Directory>        
+
+        <!-- DirectX redist -->
+        <Directory Id="DirectXRedistDirectory" Name="DirectX9.0c">
+          <Component Id="DirectXRedist" Guid="F70909CC-77D6-4863-B482-2C029C970742">
+            <File Id="DXSETUPEXE"
+           Source="$(env.TRAKTOR_HOME)/msvcrt/directx/dxsetup.exe"
+                  KeyPath="yes"
+           Checksum="yes"/>
+            <File Id="dxupdate.cab"
+                  Source="$(env.TRAKTOR_HOME)/msvcrt/directx/dxupdate.cab"/>
+            <File Id="dxdllreg_x86.cab"
+                  Source="$(env.TRAKTOR_HOME)/msvcrt/directx/dxdllreg_x86.cab"/>
+            <File Id="dsetup32.dll"
+                  Source="$(env.TRAKTOR_HOME)/msvcrt/directx/dsetup32.dll"/>
+            <File Id="dsetup.dll"
+                  Source="$(env.TRAKTOR_HOME)/msvcrt/directx/dsetup.dll"/>
+            <File Id="D3DCompiler_43_x86" 
+                  Name="$(var.DXShortName)_D3DCompiler_43_x86.cab" 
+                  Source="$(env.TRAKTOR_HOME)/msvcrt/directx/$(var.DXShortName)_D3DCompiler_43_x86.cab" />
+            <File Id="d3dcsx_43_x86" 
+                  Name="$(var.DXShortName)_d3dcsx_43_x86.cab" 
+                  Source="$(env.TRAKTOR_HOME)/msvcrt/directx/$(var.DXShortName)_d3dcsx_43_x86.cab" />
+            <File Id="d3dx9_43_x86.cab" 
+                  Name="$(var.DXShortName)_d3dx9_43_x86.cab" 
+                  Source="$(env.TRAKTOR_HOME)/msvcrt/directx/$(var.DXShortName)_d3dx9_43_x86.cab" />
+            <File Id="d3dx10_43_x86.cab" 
+                  Name="$(var.DXShortName)_d3dx10_43_x86.cab" 
+                  Source="$(env.TRAKTOR_HOME)/msvcrt/directx/$(var.DXShortName)_d3dx10_43_x86.cab" />
+            <File Id="d3dx11_43_x86.cab" 
+                  Name="$(var.DXShortName)_d3dx11_43_x86.cab" 
+                  Source="$(env.TRAKTOR_HOME)/msvcrt/directx/$(var.DXShortName)_d3dx11_43_x86.cab" />
+            <File Id="X3DAudio_x86.cab" 
+                  Name="Feb2010_X3DAudio_x86.cab" 
+                  Source="$(env.TRAKTOR_HOME)/msvcrt/directx/Feb2010_X3DAudio_x86.cab" />
+            <File Id="XAudio_x86.cab" 
+                  Name="$(var.DXShortName)_XAudio_x86.cab" 
+                  Source="$(env.TRAKTOR_HOME)/msvcrt/directx/$(var.DXShortName)_XAudio_x86.cab" />
+            <File Id="xinput_x86.cab" 
+                  Name="APR2007_xinput_x86.cab" 
+                  Source="$(env.TRAKTOR_HOME)/msvcrt/directx/APR2007_xinput_x86.cab" />            
+            <!-- Add all we need -->
+          </Component>
+        </Directory>
+      </Directory>
+
+      <!-- Start menu -->
+      <Directory Id="ProgramMenuFolder">
+        <Directory Id="ShortcutDir_Company" Name="Doctor Entertainment AB">
+          <Component Id="ShortcutCmp_PuzzleDimension" Guid="E690EF76-572E-4110-A35F-BA30DF4C8C55">
+            <Shortcut Id="Shortcut_PuzzleDimension"
+                      Name="Puzzle Dimension"
+                      Description="Puzzle Dimension"
+                      Target="[INSTALLLOCATION]PuzzleDimension.exe"
+                      Arguments="PuzzleDimension.config -n=jp"
+                      WorkingDirectory="INSTALLLOCATION" />
+            <RemoveFolder Id="ShortcutDir_Company" On="uninstall" />
+            <RegistryValue Root="HKCU" Key="Software\Microsoft\Doctor Entertainment AB\Puzzle Dimension" Name="installed" Type="integer" Value="1" KeyPath="yes" />
+          </Component>
+        </Directory>
+      </Directory>
+
+    </Directory>
+
+    <Feature Id="VCRedist" Title="Visual C++ 9.0 Runtime" AllowAdvertise="no" Display="hidden" Level="1">
+      <MergeRef Id="VCRedist"/>
+    </Feature>
+
+    <Feature Id="DirectXRedist"
+          Title="DirectX runtime"
+          AllowAdvertise="no"
+          Display="hidden" Level="1">
+      <ComponentRef Id="DirectXRedist"/>
+    </Feature>
+
+    <Feature Id="ProductFeature" Title="Puzzle Dimension" Level="1">
+      <ComponentRef Id="Cmp_Game" />
+      <ComponentRef Id="ShortcutCmp_PuzzleDimension" />
+    </Feature>
+
+    <Property Id="WIXUI_INSTALLDIR" Value="INSTALLLOCATION" />
+    <UIRef Id="WixUI_InstallDir" />
+
+    <CustomAction Id="InstallDirectX"
+       FileKey="DXSETUPEXE"
+       ExeCommand="/silent"
+       Execute="deferred"
+       Impersonate="no"
+       Return="check"/>
+
+    <UI>
+      <ProgressText Action="InstallDirectX">Installing DirectX 9.0c</ProgressText>
+    </UI>
+
+    <UI>
+      <UIRef Id="WixUI_InstallDir" />
+      <!-- skip licence dialog -->
+      <Publish Dialog="WelcomeDlg" Control="Next" Event="NewDialog" Value="InstallDirDlg" Order="2">1</Publish>
+      <Publish Dialog="InstallDirDlg" Control="Back" Event="NewDialog" Value="WelcomeDlg" Order="2">1</Publish>
+    </UI>
+
+    <InstallExecuteSequence>
+      <Custom Action="InstallDirectX" Before="InstallFinalize">
+        <![CDATA[NOT REMOVE]]>
+      </Custom>
+    </InstallExecuteSequence>
+
+  </Product>
+</Wix>

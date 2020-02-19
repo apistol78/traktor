@@ -37,7 +37,7 @@ public:
 
 	bool create();
 
-	void build(
+	void setup(
 		const WorldEntityRenderers* entityRenderers,
 		const Entity* rootEntity,
 		const Vector4& pivot,

@@ -85,7 +85,7 @@ void InstanceMeshComponentRenderer::flush(
 	}
 }
 
-void InstanceMeshComponentRenderer::flush(const world::WorldBuildContext& context)
+void InstanceMeshComponentRenderer::setup(const world::WorldSetupContext& context)
 {
 }
 

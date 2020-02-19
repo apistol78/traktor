@@ -75,7 +75,7 @@ void GroupEntityRenderer::flush(
 {
 }
 
-void GroupEntityRenderer::flush(const WorldBuildContext& context)
+void GroupEntityRenderer::setup(const WorldSetupContext& context)
 {
 }
 

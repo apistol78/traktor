@@ -31,11 +31,5 @@ void WorldBuildContext::flush(const WorldRenderView& worldRenderView, const IWor
 		entityRenderer->flush(*this, worldRenderView, worldRenderPass);
 }
 
-void WorldBuildContext::flush() const
-{
-	for (auto entityRenderer : m_entityRenderers->get())
-		entityRenderer->flush(*this);
-}
-
 	}
 }

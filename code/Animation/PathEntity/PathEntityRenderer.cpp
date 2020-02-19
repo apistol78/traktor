@@ -44,7 +44,7 @@ void PathEntityRenderer::flush(
 {
 }
 
-void PathEntityRenderer::flush(const world::WorldBuildContext& context)
+void PathEntityRenderer::setup(const world::WorldSetupContext& context)
 {
 }
 

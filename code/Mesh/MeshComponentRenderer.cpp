@@ -40,7 +40,7 @@ void MeshComponentRenderer::flush(
 {
 }
 
-void MeshComponentRenderer::flush(const world::WorldBuildContext& context)
+void MeshComponentRenderer::setup(const world::WorldSetupContext& context)
 {
 }
 

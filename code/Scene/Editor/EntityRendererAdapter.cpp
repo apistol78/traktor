@@ -63,9 +63,9 @@ void EntityRendererAdapter::flush(
 	);
 }
 
-void EntityRendererAdapter::flush(const world::WorldBuildContext& context)
+void EntityRendererAdapter::setup(const world::WorldSetupContext& context)
 {
-	m_entityRenderer->flush(context);
+	m_entityRenderer->setup(context);
 }
 
 	}

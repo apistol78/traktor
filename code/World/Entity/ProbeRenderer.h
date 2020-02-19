@@ -73,7 +73,7 @@ public:
 		const IWorldRenderPass& worldRenderPass
 	) override final;
 
-	void flush(const WorldBuildContext& context) override final;
+	void setup(const WorldSetupContext& context) override final;
 
 private:
 	Ref< ProbeCapturer > m_probeCapturer;

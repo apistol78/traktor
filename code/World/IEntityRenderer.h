@@ -22,6 +22,7 @@ class IWorldRenderPass;
 class WorldBuildContext;
 class WorldGatherContext;
 class WorldRenderView;
+class WorldSetupContext;
 
 /*! Entity renderer.
  * \ingroup World
@@ -78,7 +79,7 @@ public:
 	) = 0;
 
 	/*! Render flush, last of frame. */
-	virtual void flush(const WorldBuildContext& context) = 0;
+	virtual void setup(const WorldSetupContext& context) = 0;
 };
 
 	}

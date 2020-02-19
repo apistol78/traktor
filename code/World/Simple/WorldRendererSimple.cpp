@@ -52,9 +52,14 @@ void WorldRendererSimple::attach(Entity* entity)
 	m_rootEntity->addEntity(entity);
 }
 
-void WorldRendererSimple::setup(const WorldRenderView& worldRenderView, render::RenderGraph& renderGraph)
+void WorldRendererSimple::setup(
+	const WorldRenderView& worldRenderView,
+	render::RenderGraph& renderGraph,
+	render::handle_t outputTargetSetId
+)
 {
 	Ref< render::RenderPass > rp = new render::RenderPass(L"Visual");
+	rp->setOutput(outputTargetSetId);
 	rp->addBuild(
 		[=](const render::RenderGraph& renderGraph, render::RenderContext* renderContext)
 		{

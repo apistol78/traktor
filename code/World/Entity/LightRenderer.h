@@ -44,7 +44,7 @@ public:
 		const IWorldRenderPass& worldRenderPass
 	) override final;
 
-	virtual void flush(const WorldBuildContext& context) override final;
+	virtual void setup(const WorldSetupContext& context) override final;
 };
 
 	}

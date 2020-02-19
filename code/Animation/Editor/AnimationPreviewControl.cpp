@@ -358,7 +358,7 @@ void AnimationPreviewControl::eventPaint(ui::PaintEvent* event)
 
 		m_worldRenderer->attach(&lightEntity);
 		m_worldRenderer->attach(m_entity);
-		m_worldRenderer->setup(m_worldRenderView, *m_renderGraph);
+		m_worldRenderer->setup(m_worldRenderView, *m_renderGraph, 0);
 	}
 
 	// Validate render graph.

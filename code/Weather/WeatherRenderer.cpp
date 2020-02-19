@@ -56,7 +56,7 @@ void WeatherRenderer::flush(
 {
 }
 
-void WeatherRenderer::flush(const world::WorldBuildContext& context)
+void WeatherRenderer::setup(const world::WorldSetupContext& context)
 {
 }
 
