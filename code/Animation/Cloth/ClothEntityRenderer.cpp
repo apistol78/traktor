@@ -40,7 +40,7 @@ void ClothEntityRenderer::flush(
 {
 }
 
-void ClothEntityRenderer::flush(const world::WorldBuildContext& context)
+void ClothEntityRenderer::setup(const world::WorldSetupContext& context)
 {
 }
 

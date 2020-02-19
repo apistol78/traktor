@@ -67,7 +67,11 @@ public:
 
 	virtual void attach(Entity* entity) override final;
 
-	virtual void setup(const WorldRenderView& worldRenderView, render::RenderGraph& renderGraph) override final;
+	virtual void setup(
+		const WorldRenderView& worldRenderView,
+		render::RenderGraph& renderGraph,
+		render::handle_t outputTargetSetId
+	) override final;
 
 private:
 	struct Frame
@@ -132,6 +136,7 @@ private:
 	void setupProcessPass(
 		const WorldRenderView& worldRenderView,
 		render::RenderGraph& renderGraph,
+		render::handle_t outputTargetSetId,
 		render::handle_t gbufferTargetSetId,
 		render::handle_t visualTargetSetId
 	) const;

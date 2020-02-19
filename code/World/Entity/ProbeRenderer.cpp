@@ -6,10 +6,12 @@
 #include "Render/VertexBuffer.h"
 #include "Render/VertexElement.h"
 #include "Render/Context/RenderContext.h"
+#include "Render/Frame/RenderGraph.h"
 #include "Resource/IResourceManager.h"
 #include "World/IWorldRenderPass.h"
 #include "World/WorldBuildContext.h"
 #include "World/WorldRenderView.h"
+#include "World/WorldSetupContext.h"
 #include "World/Entity/ProbeCapturer.h"
 #include "World/Entity/ProbeComponent.h"
 #include "World/Entity/ProbeFilterer.h"
@@ -21,6 +23,12 @@ namespace traktor
 	{
 		namespace
 		{
+
+#if !defined(__ANDROID__)
+const int32_t c_faceSize = 1024;
+#else
+const int32_t c_faceSize = 128;
+#endif
 
 const resource::Id< render::Shader > c_probeShader(Guid(L"{99BB18CB-A744-D845-9A17-D0E586E4D9EA}"));
 
@@ -291,10 +299,9 @@ void ProbeRenderer::flush(
 {
 }
 
-void ProbeRenderer::flush(const WorldBuildContext& context)
+void ProbeRenderer::setup(const WorldSetupContext& context)
 {
-	render::RenderContext* renderContext = context.getRenderContext();
-	T_ASSERT(renderContext);
+	render::RenderGraph& renderGraph = context.getRenderGraph();
 
 	// Get dirty probe which needs to be updated.
 	if (!m_capture)
@@ -308,57 +315,83 @@ void ProbeRenderer::flush(const WorldBuildContext& context)
 
 		m_captureQueue.pop_front();
 	}
-
 	T_ASSERT(m_capture);
 
-	// Progress updating probe, ensure last captured side is finished before progressing.
-	// Note the possible added latency if multiple queued frames are being used due to threaded rendering.
-	if (!m_capturePending)
+	Vector4 pivot;
+
+	// Render world into cube faces.
+	for (int32_t face = 0; face < 6; ++face)
 	{
-		if (m_captureFace < 6)
+		Matrix44 view;
+		switch (face)
 		{
-			// Build probe context.
-			m_probeCapturer->build(
-				context.getEntityRenderers(),
-				context.getRootEntity(),
-				m_capture->getTransform().translation().xyz1(),
-				m_captureFace
-			);
-
-			// Chain probe render as render block.
-			auto rb = context.getRenderContext()->alloc< ProbeCaptureRenderBlock >();
-			rb->capturer = m_probeCapturer;
-			rb->texture = m_capture->getTexture();
-			rb->face = m_captureFace;
-			rb->pending = &m_capturePending;
-			renderContext->enqueue(rb);
-
-			m_capturePending = true;
-			m_captureFace++;
+		case 0:	// +X
+			view = rotateY(deg2rad(-90.0f));
+			break;
+		case 1:	// -X
+			view = rotateY(deg2rad( 90.0f));
+			break;
+		case 2:	// +Y
+			view = rotateX(deg2rad( 90.0f));
+			break;
+		case 3: // -Y
+			view = rotateX(deg2rad(-90.0f));
+			break;
+		case 4:	// +Z
+			view = Matrix44::identity();
+			break;
+		case 5:	// -Z
+			view = rotateY(deg2rad(180.0f));
+			break;
 		}
-		else if (m_captureFace == 6)
-		{
-			// Filter rest of mips.
-			auto rb = context.getRenderContext()->alloc< ProbeDownSampleRenderBlock >();
-			rb->filterer = m_probeFilterer;
-			rb->texture = m_capture->getTexture();
-			rb->pending = &m_capturePending;
-			renderContext->enqueue(rb);
 
-			m_capturePending = true;
-			m_captureFace++;
-		}
-		else
-		{
-#if 1
-			// Probe capture is finished.
-			m_capture = nullptr;
-#else
-			// Restart capture indefinitely.
-			m_captureFace = 0;
-			m_capturePending = false;
-#endif
-		}
+		// Move to pivot point.
+		view = view * translate(pivot).inverse();
+
+		// Render entities.
+		world::WorldRenderView worldRenderView;
+		worldRenderView.setPerspective(
+			c_faceSize,
+			c_faceSize,
+			1.0f,
+			deg2rad(90.0f),
+			0.01f,
+			12000.0f
+		);
+		worldRenderView.setTimes(0.0f, 1.0f / 60.0f, 0.0f);
+		worldRenderView.setView(view, view);
+
+		// Create intermediate target.
+		render::RenderGraphTargetSetDesc rgtsd;
+		rgtsd.count = 1;
+		rgtsd.width = c_faceSize;
+		rgtsd.height = c_faceSize;
+		rgtsd.createDepthStencil = true;
+		rgtsd.usingPrimaryDepthStencil = false;
+		rgtsd.targets[0].colorFormat = render::TfR11G11B10F;
+		auto faceTargetSetId = renderGraph.addTargetSet(rgtsd);
+
+		// Render world to intermediate target.
+		// m_worldRenderer->setup(worldRenderView, renderGraph, faceTargetSetId);
+
+		// Copy intermediate target to cubemap side.
+		Ref< render::RenderPass > rp = new render::RenderPass(L"Probe transfer");
+		rp->addInput(faceTargetSetId);
+		rp->addBuild(
+			[=](const render::RenderGraph& renderGraph, render::RenderContext* renderContext)
+			{
+				auto faceTargetSet = renderGraph.getTargetSet(faceTargetSetId);
+
+				// renderView->copy(
+				// 	probeTexture,
+				// 	face,
+				// 	0,
+				// 	faceTargetSet->getColorTexture(0),
+				// 	0,
+				// 	0
+				// );
+			}
+		);
 	}
 }
 

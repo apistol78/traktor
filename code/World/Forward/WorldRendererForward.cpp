@@ -270,7 +270,11 @@ void WorldRendererForward::attach(Entity* entity)
 	m_rootEntity->addEntity(entity);
 }
 
-void WorldRendererForward::setup(const WorldRenderView& worldRenderView, render::RenderGraph& renderGraph)
+void WorldRendererForward::setup(
+	const WorldRenderView& worldRenderView,
+	render::RenderGraph& renderGraph,
+	render::handle_t outputTargetSetId
+)
 {
 	int32_t frame = m_count % (int32_t)m_frames.size();
 
@@ -319,6 +323,7 @@ void WorldRendererForward::setup(const WorldRenderView& worldRenderView, render:
 	setupProcessPass(
 		worldRenderView,
 		renderGraph,
+		outputTargetSetId,
 		gbufferTargetSetId,
 		visualTargetSetId
 	);
@@ -869,6 +874,7 @@ render::handle_t WorldRendererForward::setupVisualPass(
 void WorldRendererForward::setupProcessPass(
 	const WorldRenderView& worldRenderView,
 	render::RenderGraph& renderGraph,
+	render::handle_t outputTargetSetId,
 	render::handle_t gbufferTargetSetId,
 	render::handle_t visualTargetSetId
 ) const
@@ -917,6 +923,8 @@ void WorldRendererForward::setupProcessPass(
 
 			rp->setOutput(intermediateTargetSetId);
 		}
+		else
+			rp->setOutput(outputTargetSetId);
 
 		process->addPasses(renderGraph, rp, cx);
 

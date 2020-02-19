@@ -116,8 +116,13 @@ public:
 	 *
 	 * \param worldRenderView World render view.
 	 * \param renderGraph Setup into render graph.
+	 * \param outputTargetSetId ID of output target set.
 	 */
-	virtual void setup(const WorldRenderView& worldRenderView, render::RenderGraph& renderGraph) = 0;
+	virtual void setup(
+		const WorldRenderView& worldRenderView,
+		render::RenderGraph& renderGraph,
+		render::handle_t outputTargetSetId
+	) = 0;
 
 	//@}
 };

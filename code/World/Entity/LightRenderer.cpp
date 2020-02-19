@@ -57,7 +57,7 @@ void LightRenderer::flush(
 {
 }
 
-void LightRenderer::flush(const WorldBuildContext& context)
+void LightRenderer::setup(const WorldSetupContext& context)
 {
 }
 

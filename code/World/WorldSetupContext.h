@@ -17,7 +17,7 @@ namespace traktor
 	namespace render
 	{
 
-class RenderContext;
+class RenderGraph;
 
 	}
 
@@ -25,34 +25,30 @@ class RenderContext;
 	{
 
 class Entity;
-class IWorldRenderPass;
 class WorldEntityRenderers;
-class WorldRenderView;
 
-/*! World build context.
+/*! World setup context.
  * \ingroup World
  */
-class T_DLLCLASS WorldBuildContext : public Object
+class T_DLLCLASS WorldSetupContext : public Object
 {
 	T_RTTI_CLASS;
 
 public:
-	WorldBuildContext(const WorldEntityRenderers* entityRenderers, const Entity* rootEntity, render::RenderContext* renderContext);
+	WorldSetupContext(const WorldEntityRenderers* entityRenderers, const Entity* rootEntity, render::RenderGraph& renderGraph);
 
-	void build(const WorldRenderView& worldRenderView, const IWorldRenderPass& worldRenderPass, const Object* renderable) const;
-
-	void flush(const WorldRenderView& worldRenderView, const IWorldRenderPass& worldRenderPass) const;
+	void setup() const;
 
 	const WorldEntityRenderers* getEntityRenderers() const { return m_entityRenderers; }
 
 	const Entity* getRootEntity() const { return m_rootEntity; }
 
-	render::RenderContext* getRenderContext() const { return m_renderContext; }
+	render::RenderGraph& getRenderGraph() const { return m_renderGraph; }
 
 private:
 	const WorldEntityRenderers* m_entityRenderers;
 	const Entity* m_rootEntity;
-	render::RenderContext* m_renderContext;
+	render::RenderGraph& m_renderGraph;
 };
 
 	}

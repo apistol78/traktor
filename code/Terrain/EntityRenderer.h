@@ -54,7 +54,7 @@ public:
 		const world::IWorldRenderPass& worldRenderPass
 	) override final;
 
-	virtual void flush(const world::WorldBuildContext& context) override final;
+	virtual void setup(const world::WorldSetupContext& context) override final;
 
 private:
 	float m_terrainDetailDistance;

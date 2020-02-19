@@ -19,6 +19,7 @@
 #include "World/IrradianceGrid.h"
 #include "World/WorldBuildContext.h"
 #include "World/WorldGatherContext.h"
+#include "World/WorldSetupContext.h"
 #include "World/Deferred/LightRendererDeferred.h"
 #include "World/Deferred/WorldRendererDeferred.h"
 #include "World/Deferred/WorldRenderPassDeferred.h"
@@ -407,7 +408,11 @@ void WorldRendererDeferred::attach(Entity* entity)
 	m_rootEntity->addEntity(entity);
 }
 
-void WorldRendererDeferred::setup(const WorldRenderView& worldRenderView, render::RenderGraph& renderGraph)
+void WorldRendererDeferred::setup(
+	const WorldRenderView& worldRenderView,
+	render::RenderGraph& renderGraph,
+	render::handle_t outputTargetSetId
+)
 {
 	int32_t frame = m_count % (int32_t)m_frames.size();
 
@@ -536,10 +541,14 @@ void WorldRendererDeferred::setup(const WorldRenderView& worldRenderView, render
 	setupProcessPass(
 		worldRenderView,
 		renderGraph,
+		outputTargetSetId,
 		gbufferTargetSetId,
 		velocityTargetSetId,
 		visualTargetSetId
 	);
+
+	// Add additional passes by entity renderers.
+	WorldSetupContext(m_entityRenderers, m_rootEntity, renderGraph).setup();
 
 	// Add cleanup pass to remove attached entities.
 	Ref< render::RenderPass > rp = new render::RenderPass(L"Cleanup");
@@ -1426,6 +1435,7 @@ render::handle_t WorldRendererDeferred::setupVisualPass(
 void WorldRendererDeferred::setupProcessPass(
 	const WorldRenderView& worldRenderView,
 	render::RenderGraph& renderGraph,
+	render::handle_t outputTargetSetId,
 	render::handle_t gbufferTargetSetId,
 	render::handle_t velocityTargetSetId,
 	render::handle_t visualTargetSetId
@@ -1478,6 +1488,8 @@ void WorldRendererDeferred::setupProcessPass(
 
 			rp->setOutput(intermediateTargetSetId);
 		}
+		else
+			rp->setOutput(outputTargetSetId);
 
 		process->addPasses(renderGraph, rp, cx);
 

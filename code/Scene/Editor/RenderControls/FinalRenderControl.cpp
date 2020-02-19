@@ -434,7 +434,7 @@ void FinalRenderControl::eventPaint(ui::PaintEvent* event)
 	m_worldRenderView.setView(m_worldRenderView.getView(), view);
 	m_worldRenderer->attach(m_sceneInstance->getRootEntity());
 	m_context->getEntityEventManager()->attach(m_worldRenderer);
-	m_worldRenderer->setup(m_worldRenderView, *m_renderGraph);
+	m_worldRenderer->setup(m_worldRenderView, *m_renderGraph, 0);
 
 	// Validate render graph.
 	if (!m_renderGraph->validate(m_dirtySize.cx, m_dirtySize.cy))

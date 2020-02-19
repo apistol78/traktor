@@ -84,7 +84,7 @@ void EntityRenderer::flush(
 {
 }
 
-void EntityRenderer::flush(const world::WorldBuildContext& context)
+void EntityRenderer::setup(const world::WorldSetupContext& context)
 {
 }
 

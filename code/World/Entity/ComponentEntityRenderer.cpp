@@ -47,7 +47,7 @@ void ComponentEntityRenderer::flush(
 {
 }
 
-void ComponentEntityRenderer::flush(const WorldBuildContext& context)
+void ComponentEntityRenderer::setup(const WorldSetupContext& context)
 {
 }
 

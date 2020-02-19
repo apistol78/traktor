@@ -45,7 +45,7 @@ public:
 	) override final
 	{ /* Not implemented */ }
 
-	virtual void flush(const world::WorldBuildContext& context) override final
+	virtual void setup(const world::WorldSetupContext& context) override final
 	{ /* Not implemented */ }
 };
 

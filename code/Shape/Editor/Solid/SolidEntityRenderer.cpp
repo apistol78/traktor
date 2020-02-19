@@ -47,7 +47,7 @@ void SolidEntityRenderer::flush(
 {
 }
 
-void SolidEntityRenderer::flush(const world::WorldBuildContext& context)
+void SolidEntityRenderer::setup(const world::WorldSetupContext& context)
 {
 }
 

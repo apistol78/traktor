@@ -198,7 +198,7 @@ void DecalRenderer::flush(
 	m_decalComponents.resize(0);
 }
 
-void DecalRenderer::flush(const WorldBuildContext& context)
+void DecalRenderer::setup(const WorldSetupContext& context)
 {
 }
 

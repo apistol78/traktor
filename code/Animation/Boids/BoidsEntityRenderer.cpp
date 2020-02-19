@@ -40,7 +40,7 @@ void BoidsEntityRenderer::flush(
 {
 }
 
-void BoidsEntityRenderer::flush(const world::WorldBuildContext& context)
+void BoidsEntityRenderer::setup(const world::WorldSetupContext& context)
 {
 }
 

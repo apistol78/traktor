@@ -44,7 +44,7 @@ public:
 		const world::IWorldRenderPass& worldRenderPass
 	) override final;
 
-	virtual void flush(const world::WorldBuildContext& context) override final;
+	virtual void setup(const world::WorldSetupContext& context) override final;
 
 private:
 	SmallMap< InstanceMesh*, AlignedVector< InstanceMesh::RenderInstance > > m_meshInstances;
