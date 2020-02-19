@@ -1,6 +1,7 @@
 #include "Render/ICubeTexture.h"
 #include "Render/IndexBuffer.h"
 #include "Render/IRenderSystem.h"
+#include "Render/IRenderTargetSet.h"
 #include "Render/IRenderView.h"
 #include "Render/Shader.h"
 #include "Render/VertexBuffer.h"
@@ -8,13 +9,14 @@
 #include "Render/Context/RenderContext.h"
 #include "Render/Frame/RenderGraph.h"
 #include "Resource/IResourceManager.h"
+#include "World/IWorldRenderer.h"
 #include "World/IWorldRenderPass.h"
 #include "World/WorldBuildContext.h"
+#include "World/WorldEntityRenderers.h"
+#include "World/WorldRenderSettings.h"
 #include "World/WorldRenderView.h"
 #include "World/WorldSetupContext.h"
-#include "World/Entity/ProbeCapturer.h"
 #include "World/Entity/ProbeComponent.h"
-#include "World/Entity/ProbeFilterer.h"
 #include "World/Entity/ProbeRenderer.h"
 
 namespace traktor
@@ -39,48 +41,14 @@ struct Vertex
 };
 #pragma pack()
 
-render::handle_t s_handleProbeLocal;
-render::handle_t s_handleProbeVolumeCenter;
-render::handle_t s_handleProbeVolumeExtent;
-render::handle_t s_handleProbeTexture;
-render::handle_t s_handleProbeTextureMips;
-render::handle_t s_handleProbeIntensity;
-render::handle_t s_handleMagicCoeffs;
-render::handle_t s_handleWorldViewInv;
-
-class ProbeCaptureRenderBlock : public render::RenderBlock
-{
-public:
-	ProbeCapturer* capturer;
-	Ref< render::ICubeTexture > texture;
-	int32_t face;
-	bool* pending;
-
-	virtual void render(render::IRenderView* renderView) const override final
-	{
-		capturer->render(renderView, texture, face);
-		
-		// Need to flush renderer as we need to reuse sbuffers for lights
-		// in world renderer, sbuffers are being queued in driver.
-		renderView->flush();
-
-		*pending = false;
-	}
-};
-
-class ProbeDownSampleRenderBlock : public render::RenderBlock
-{
-public:
-	ProbeFilterer* filterer;
-	Ref< render::ICubeTexture > texture;
-	bool* pending;
-
-	virtual void render(render::IRenderView* renderView) const override final
-	{
-		filterer->render(renderView, texture);
-		*pending = false;
-	}
-};
+render::Handle s_handleProbeLocal(L"World_ProbeLocal");
+render::Handle s_handleProbeVolumeCenter(L"World_ProbeVolumeCenter");
+render::Handle s_handleProbeVolumeExtent(L"World_ProbeVolumeExtent");
+render::Handle s_handleProbeTexture(L"World_ProbeTexture");
+render::Handle s_handleProbeTextureMips(L"World_ProbeTextureMips");
+render::Handle s_handleProbeIntensity(L"World_ProbeIntensity");
+render::Handle s_handleMagicCoeffs(L"World_MagicCoeffs");
+render::Handle s_handleWorldViewInv(L"World_WorldViewInv");
 
 		}
 
@@ -91,25 +59,11 @@ ProbeRenderer::ProbeRenderer(
 	render::IRenderSystem* renderSystem,
 	const TypeInfo& worldRendererType
 )
-:	m_captureFace(0)
-,	m_capturePending(false)
+:	m_resourceManager(resourceManager)
+,	m_renderSystem(renderSystem)
+,	m_worldRendererType(worldRendererType)
 {
-	m_probeCapturer = new ProbeCapturer(resourceManager, renderSystem, worldRendererType);
-	m_probeCapturer->create();
-
-	m_probeFilterer = new ProbeFilterer(resourceManager, renderSystem);
-	m_probeFilterer->create();
-
 	resourceManager->bind(c_probeShader, m_probeShader);
-
-	s_handleProbeLocal = render::getParameterHandle(L"World_ProbeLocal");
-	s_handleProbeVolumeCenter = render::getParameterHandle(L"World_ProbeVolumeCenter");
-	s_handleProbeVolumeExtent = render::getParameterHandle(L"World_ProbeVolumeExtent");
-	s_handleProbeTexture = render::getParameterHandle(L"World_ProbeTexture");
-	s_handleProbeTextureMips = render::getParameterHandle(L"World_ProbeTextureMips");
-	s_handleProbeIntensity = render::getParameterHandle(L"World_ProbeIntensity");
-	s_handleMagicCoeffs = render::getParameterHandle(L"World_MagicCoeffs");
-	s_handleWorldViewInv = render::getParameterHandle(L"World_WorldViewInv");
 
 	AlignedVector< render::VertexElement > vertexElements;
 	vertexElements.push_back(render::VertexElement(render::DuPosition, render::DtFloat3, offsetof(Vertex, position), 0));
@@ -304,20 +258,69 @@ void ProbeRenderer::setup(const WorldSetupContext& context)
 	render::RenderGraph& renderGraph = context.getRenderGraph();
 
 	// Get dirty probe which needs to be updated.
-	if (!m_capture)
+	if (m_captureQueue.empty())
+		return;
+
+	Ref< ProbeComponent > capture = m_captureQueue.front();
+	m_captureQueue.pop_front();
+	T_ASSERT(capture);
+
+	capture->setDirty(false);
+
+	// Lazy create world renderer, need to access entity renderers.
+	if (!m_worldRenderer)
 	{
-		if (m_captureQueue.empty())
+		// Create a clone of world renderer without support to render probes.
+		// This prevents nasty cyclic references of entity renderers.
+		Ref< WorldEntityRenderers > probeEntityRenderers = new WorldEntityRenderers();
+		for (auto er : context.getEntityRenderers()->get())
+		{
+			const TypeInfoSet renderableTypes = er->getRenderableTypes();
+			if (renderableTypes.find(&type_of< ProbeComponent >()) == renderableTypes.end())
+				probeEntityRenderers->add(er);
+		}
+
+		m_worldRenderer = mandatory_non_null_type_cast< world::IWorldRenderer* >(m_worldRendererType.createInstance());
+
+		world::WorldRenderSettings wrs;
+		wrs.viewNearZ = 0.01f;
+		wrs.viewFarZ = 12000.0f;
+		wrs.linearLighting = true;
+		wrs.exposureMode = world::WorldRenderSettings::EmFixed;
+		wrs.exposure = 0.0f;
+		wrs.fog = false;
+
+		world::WorldCreateDesc wcd;
+		wcd.worldRenderSettings = &wrs;
+		wcd.entityRenderers = probeEntityRenderers;
+		wcd.toneMapQuality = world::QuMedium;
+		wcd.motionBlurQuality = world::QuDisabled;
+		wcd.reflectionsQuality = world::QuDisabled;
+		wcd.shadowsQuality = world::QuDisabled;
+		wcd.ambientOcclusionQuality = world::QuDisabled;
+		wcd.antiAliasQuality = world::QuDisabled;
+		wcd.imageProcessQuality = world::QuDisabled;
+		wcd.multiSample = 0;
+		wcd.frameCount = 1;
+		wcd.gamma = 1.0f;
+		wcd.sharedDepthStencil = nullptr;
+
+		if (!m_worldRenderer->create(
+			m_resourceManager,
+			m_renderSystem,
+			wcd
+		))
+		{
+			m_worldRenderer = nullptr;
 			return;
-
-		m_capture = m_captureQueue.front();
-		m_captureFace = 0;
-		m_capturePending = false;
-
-		m_captureQueue.pop_front();
+		}
 	}
-	T_ASSERT(m_capture);
 
-	Vector4 pivot;
+	render::ICubeTexture* probeTexture = capture->getTexture();
+	if (!probeTexture)
+		return;
+
+	Vector4 pivot = capture->getTransform().translation().xyz1();
 
 	// Render world into cube faces.
 	for (int32_t face = 0; face < 6; ++face)
@@ -372,7 +375,7 @@ void ProbeRenderer::setup(const WorldSetupContext& context)
 		auto faceTargetSetId = renderGraph.addTargetSet(rgtsd);
 
 		// Render world to intermediate target.
-		// m_worldRenderer->setup(worldRenderView, renderGraph, faceTargetSetId);
+		m_worldRenderer->setup(worldRenderView, renderGraph, faceTargetSetId);
 
 		// Copy intermediate target to cubemap side.
 		Ref< render::RenderPass > rp = new render::RenderPass(L"Probe transfer");
@@ -381,17 +384,22 @@ void ProbeRenderer::setup(const WorldSetupContext& context)
 			[=](const render::RenderGraph& renderGraph, render::RenderContext* renderContext)
 			{
 				auto faceTargetSet = renderGraph.getTargetSet(faceTargetSetId);
-
-				// renderView->copy(
-				// 	probeTexture,
-				// 	face,
-				// 	0,
-				// 	faceTargetSet->getColorTexture(0),
-				// 	0,
-				// 	0
-				// );
+				auto lrb = renderContext->alloc< render::LambdaRenderBlock >();
+				lrb->lambda = [=](render::IRenderView* renderView)
+				{
+					renderView->copy(
+						probeTexture,
+						face,
+						0,
+						faceTargetSet->getColorTexture(0),
+						0,
+						0
+					);
+				};
+				renderContext->enqueue(lrb);
 			}
 		);
+		renderGraph.addPass(rp);
 	}
 }
 
