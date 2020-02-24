@@ -159,7 +159,7 @@ void DecalRenderer::flush(
 		Matrix44 worldView = view * transform.toMatrix44();
 		Matrix44 worldViewInv = worldView.inverse();
 
-		render::IndexedRenderBlock* renderBlock = renderContext->alloc< render::IndexedRenderBlock >("Decal");
+		render::IndexedRenderBlock* renderBlock = renderContext->alloc< render::IndexedRenderBlock >(L"Decal");
 
 		renderBlock->distance = 0.0f;
 		renderBlock->program = program;

@@ -14,9 +14,10 @@
 #include "Render/Image2/ImageGraphContext.h"
 #include "Render/Image2/ImageGraphData.h"
 #include "Resource/IResourceManager.h"
+#include "World/Entity.h"
 #include "World/WorldBuildContext.h"
 #include "World/WorldGatherContext.h"
-#include "World/Entity/GroupEntity.h"
+#include "World/WorldSetupContext.h"
 #include "World/Forward/WorldRendererForward.h"
 #include "World/Forward/WorldRenderPassForward.h"
 #include "World/SMProj/UniformShadowProjection.h"
@@ -246,7 +247,6 @@ bool WorldRendererForward::create(
 	m_slicePositions[shadowSettings.cascadingSlices] = shadowSettings.farZ;
 
 	m_entityRenderers = desc.entityRenderers;
-	m_rootEntity = new GroupEntity();
 
 	// Create screen renderer.
 	m_screenRenderer = new render::ScreenRenderer();
@@ -265,13 +265,9 @@ void WorldRendererForward::destroy()
 	safeDestroy(m_screenRenderer);
 }
 
-void WorldRendererForward::attach(Entity* entity)
-{
-	m_rootEntity->addEntity(entity);
-}
-
 void WorldRendererForward::setup(
 	const WorldRenderView& worldRenderView,
+	const Entity* rootEntity,
 	render::RenderGraph& renderGraph,
 	render::handle_t outputTargetSetId
 )
@@ -280,22 +276,29 @@ void WorldRendererForward::setup(
 
 	// Gather active lights.
 	m_lights.resize(0);
-	WorldGatherContext(m_entityRenderers, m_rootEntity).gather(m_rootEntity, m_lights);
+	WorldGatherContext(m_entityRenderers, rootEntity).gather(rootEntity, m_lights);
 	if (m_lights.size() > c_maxLightCount)
 		m_lights.resize(c_maxLightCount);
 
 	// Begun writing light shader data; written both in setup and build.
 	LightShaderData* lightShaderData = (LightShaderData*)m_frames[frame].lightSBufferMemory;
 
+	// Add additional passes by entity renderers.
+	WorldSetupContext(m_entityRenderers, rootEntity, renderGraph).setup();
+
 	// Add passes to render graph.
 	auto gbufferTargetSetId = setupGBufferPass(
 		worldRenderView,
-		renderGraph
+		rootEntity,
+		renderGraph,
+		outputTargetSetId
 	);
 
 	auto ambientOcclusionTargetSetId = setupAmbientOcclusionPass(
 		worldRenderView,
+		rootEntity,
 		renderGraph,
+		outputTargetSetId,
 		gbufferTargetSetId
 	);
 
@@ -303,7 +306,9 @@ void WorldRendererForward::setup(
 	render::handle_t shadowMapAtlasTargetSetId = 0;
 	setupLightPass(
 		worldRenderView,
+		rootEntity,
 		renderGraph,
+		outputTargetSetId,
 		frame,
 		lightShaderData,
 		shadowMapCascadeTargetSetId,
@@ -312,7 +317,9 @@ void WorldRendererForward::setup(
 
 	auto visualTargetSetId = setupVisualPass(
 		worldRenderView,
+		rootEntity,
 		renderGraph,
+		outputTargetSetId,
 		gbufferTargetSetId,
 		ambientOcclusionTargetSetId,
 		shadowMapCascadeTargetSetId,
@@ -322,25 +329,21 @@ void WorldRendererForward::setup(
 
 	setupProcessPass(
 		worldRenderView,
+		rootEntity,
 		renderGraph,
 		outputTargetSetId,
 		gbufferTargetSetId,
 		visualTargetSetId
 	);
 
-	// Add cleanup pass to remove attached entities.
-	Ref< render::RenderPass > rp = new render::RenderPass(L"Cleanup");
-	rp->addBuild([=](const render::RenderGraph&, render::RenderContext*) {
-		m_rootEntity->removeAllEntities();
-	});
-	renderGraph.addPass(rp);
-
 	m_count++;
 }
 
 render::handle_t WorldRendererForward::setupGBufferPass(
 	const WorldRenderView& worldRenderView,
-	render::RenderGraph& renderGraph
+	const Entity* rootEntity,
+	render::RenderGraph& renderGraph,
+	render::handle_t outputTargetSetId
 ) const
 {
 	const float clearZ = m_settings.viewFarZ;
@@ -352,9 +355,9 @@ render::handle_t WorldRendererForward::setupGBufferPass(
 	rgtd.usingPrimaryDepthStencil = (m_sharedDepthStencil == nullptr) ? true : false;
 	rgtd.targets[0].colorFormat = render::TfR16F;		// Depth (R)
 	rgtd.targets[1].colorFormat = render::TfR16G16F;	// Normals (RG)
-	rgtd.screenWidthDenom = 1;
-	rgtd.screenHeightDenom = 1;
-	auto gbufferTargetSetId = renderGraph.addTargetSet(rgtd, m_sharedDepthStencil);
+	rgtd.referenceWidthDenom = 1;
+	rgtd.referenceHeightDenom = 1;
+	auto gbufferTargetSetId = renderGraph.addTargetSet(rgtd, m_sharedDepthStencil, outputTargetSetId);
 
 	// Add GBuffer render pass.
 	Ref< render::RenderPass > rp = new render::RenderPass(L"GBuffer");
@@ -371,7 +374,7 @@ render::handle_t WorldRendererForward::setupGBufferPass(
 		{
 			WorldBuildContext wc(
 				m_entityRenderers,
-				m_rootEntity,
+				rootEntity,
 				renderContext
 			);
 
@@ -392,7 +395,7 @@ render::handle_t WorldRendererForward::setupGBufferPass(
 			);
 
 			T_ASSERT(!renderContext->havePendingDraws());
-			wc.build(worldRenderView, pass, m_rootEntity);
+			wc.build(worldRenderView, pass, rootEntity);
 			wc.flush(worldRenderView, pass);
 			renderContext->merge(render::RpAll);		
 		}
@@ -404,7 +407,9 @@ render::handle_t WorldRendererForward::setupGBufferPass(
 
 render::handle_t WorldRendererForward::setupAmbientOcclusionPass(
 	const WorldRenderView& worldRenderView,
+	const Entity* rootEntity,
 	render::RenderGraph& renderGraph,
+	render::handle_t outputTargetSetId,
 	render::handle_t gbufferTargetSetId
 ) const
 {
@@ -414,9 +419,9 @@ render::handle_t WorldRendererForward::setupAmbientOcclusionPass(
 	rgtd.createDepthStencil = false;
 	rgtd.usingPrimaryDepthStencil = false;
 	rgtd.targets[0].colorFormat = render::TfR8;			// Ambient occlusion (R)
-	rgtd.screenWidthDenom = 1;
-	rgtd.screenHeightDenom = 1;
-	auto ambientOcclusionTargetSetId = renderGraph.addTargetSet(rgtd, m_sharedDepthStencil);
+	rgtd.referenceWidthDenom = 1;
+	rgtd.referenceHeightDenom = 1;
+	auto ambientOcclusionTargetSetId = renderGraph.addTargetSet(rgtd, m_sharedDepthStencil, outputTargetSetId);
 
 	// Add ambient occlusion render pass.
 	Ref< render::RenderPass > rp = new render::RenderPass(L"Ambient occlusion");
@@ -447,7 +452,9 @@ render::handle_t WorldRendererForward::setupAmbientOcclusionPass(
 
 void WorldRendererForward::setupLightPass(
 	const WorldRenderView& worldRenderView,
+	const Entity* rootEntity,
 	render::RenderGraph& renderGraph,
+	render::handle_t outputTargetSetId,
 	int32_t frame,
 	LightShaderData* lightShaderData,
 	render::handle_t& outShadowMapCascadeTargetSetId,
@@ -539,7 +546,7 @@ void WorldRendererForward::setupLightPass(
 				{
 					WorldBuildContext wc(
 						m_entityRenderers,
-						m_rootEntity,
+						rootEntity,
 						renderContext
 					);
 
@@ -617,7 +624,7 @@ void WorldRendererForward::setupLightPass(
 						);
 
 						T_ASSERT(!renderContext->havePendingDraws());
-						wc.build(shadowRenderView, shadowPass, m_rootEntity);
+						wc.build(shadowRenderView, shadowPass, rootEntity);
 						wc.flush(shadowRenderView, shadowPass);
 						renderContext->merge(render::RpAll);
 
@@ -673,7 +680,7 @@ void WorldRendererForward::setupLightPass(
 					{
 						WorldBuildContext wc(
 							m_entityRenderers,
-							m_rootEntity,
+							rootEntity,
 							renderContext
 						);
 
@@ -751,7 +758,7 @@ void WorldRendererForward::setupLightPass(
 						);
 
 						T_ASSERT(!renderContext->havePendingDraws());
-						wc.build(shadowRenderView, shadowPass, m_rootEntity);
+						wc.build(shadowRenderView, shadowPass, rootEntity);
 						wc.flush(shadowRenderView, shadowPass);
 						renderContext->merge(render::RpAll);
 
@@ -782,7 +789,9 @@ void WorldRendererForward::setupLightPass(
 
 render::handle_t WorldRendererForward::setupVisualPass(
 	const WorldRenderView& worldRenderView,
+	const Entity* rootEntity,
 	render::RenderGraph& renderGraph,
+	render::handle_t outputTargetSetId,
 	render::handle_t gbufferTargetSetId,
 	render::handle_t ambientOcclusionTargetSetId,
 	render::handle_t shadowMapCascadeTargetSetId,
@@ -799,9 +808,9 @@ render::handle_t WorldRendererForward::setupVisualPass(
 	rgtd.createDepthStencil = false;
 	rgtd.usingPrimaryDepthStencil = (m_sharedDepthStencil == nullptr) ? true : false;
 	rgtd.targets[0].colorFormat = render::TfR11G11B10F;
-	rgtd.screenWidthDenom = 1;
-	rgtd.screenHeightDenom = 1;
-	auto visualTargetSetId = renderGraph.addTargetSet(rgtd, m_sharedDepthStencil);
+	rgtd.referenceWidthDenom = 1;
+	rgtd.referenceHeightDenom = 1;
+	auto visualTargetSetId = renderGraph.addTargetSet(rgtd, m_sharedDepthStencil, outputTargetSetId);
 
 	// Create render pass.
 	Ref< render::RenderPass > rp = new render::RenderPass(L"Visual");
@@ -825,7 +834,7 @@ render::handle_t WorldRendererForward::setupVisualPass(
 		{
 			WorldBuildContext wc(
 				m_entityRenderers,
-				m_rootEntity,
+				rootEntity,
 				renderContext
 			);
 
@@ -861,7 +870,7 @@ render::handle_t WorldRendererForward::setupVisualPass(
 			);
 
 			T_ASSERT(!wc.getRenderContext()->havePendingDraws());
-			wc.build(worldRenderView, defaultPass, m_rootEntity);
+			wc.build(worldRenderView, defaultPass, rootEntity);
 			wc.flush(worldRenderView, defaultPass);
 			wc.getRenderContext()->merge(render::RpAll);
 		}
@@ -873,6 +882,7 @@ render::handle_t WorldRendererForward::setupVisualPass(
 
 void WorldRendererForward::setupProcessPass(
 	const WorldRenderView& worldRenderView,
+	const Entity* rootEntity,
 	render::RenderGraph& renderGraph,
 	render::handle_t outputTargetSetId,
 	render::handle_t gbufferTargetSetId,
@@ -917,9 +927,9 @@ void WorldRendererForward::setupProcessPass(
 			rgtd.createDepthStencil = false;
 			rgtd.usingPrimaryDepthStencil = (m_sharedDepthStencil == nullptr) ? true : false;
 			rgtd.targets[0].colorFormat = render::TfR11G11B10F;
-			rgtd.screenWidthDenom = 1;
-			rgtd.screenHeightDenom = 1;
-			intermediateTargetSetId = renderGraph.addTargetSet(rgtd, m_sharedDepthStencil);
+			rgtd.referenceWidthDenom = 1;
+			rgtd.referenceHeightDenom = 1;
+			intermediateTargetSetId = renderGraph.addTargetSet(rgtd, m_sharedDepthStencil, outputTargetSetId);
 
 			rp->setOutput(intermediateTargetSetId);
 		}

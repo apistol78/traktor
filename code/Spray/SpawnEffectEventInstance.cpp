@@ -64,7 +64,8 @@ bool SpawnEffectEventInstance::update(const world::UpdateParams& update)
 
 void SpawnEffectEventInstance::attach(world::IWorldRenderer* worldRenderer)
 {
-	worldRenderer->attach(m_effectEntity);
+	// \fixme
+	//worldRenderer->attach(m_effectEntity);
 }
 
 void SpawnEffectEventInstance::cancel(world::CancelType when)

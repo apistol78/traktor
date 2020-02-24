@@ -275,7 +275,7 @@ void AccShapeRenderer::beginCacheAsBitmap(
 			slot = int32_t(m_cache.size());
 			m_cache.push_back(c);
 
-			render::TargetBeginRenderBlock* renderBlockBegin = renderContext->alloc< render::TargetBeginRenderBlock >("Flash sprite cache begin");
+			render::TargetBeginRenderBlock* renderBlockBegin = renderContext->alloc< render::TargetBeginRenderBlock >(L"Flash sprite cache begin");
 			renderBlockBegin->renderTargetSet = m_renderTargetShapes;
 			renderBlockBegin->renderTargetIndex = 0;
 
@@ -311,7 +311,7 @@ void AccShapeRenderer::endCacheAsBitmap(
 {
 	if (m_renderIntoSlot >= 0)
 	{
-		render::TargetEndRenderBlock* renderBlockEnd = renderContext->alloc< render::TargetEndRenderBlock >("Flash shape render end");
+		render::TargetEndRenderBlock* renderBlockEnd = renderContext->alloc< render::TargetEndRenderBlock >(L"Flash shape render end");
 		renderContext->enqueue(renderBlockEnd);
 		m_renderIntoSlot = -1;
 	}

@@ -3,8 +3,8 @@
 #include "Render/IRenderView.h"
 
 #if defined(_DEBUG)
-#	define T_CONTEXT_PUSH_MARKER(renderView, name) T_RENDER_PUSH_MARKER(renderView, name)
-#	define T_CONTEXT_POP_MARKER(renderView) T_RENDER_POP_MARKER(renderView)
+#	define T_CONTEXT_PUSH_MARKER(renderView, name) // T_RENDER_PUSH_MARKER(renderView, name)
+#	define T_CONTEXT_POP_MARKER(renderView) // T_RENDER_POP_MARKER(renderView)
 #else
 #	define T_CONTEXT_PUSH_MARKER(renderView, name)
 #	define T_CONTEXT_POP_MARKER(renderView)

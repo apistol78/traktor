@@ -86,8 +86,16 @@ public:
 		s >> Member< int32_t >(L"count", m_ref.count);
 		s >> Member< int32_t >(L"width", m_ref.width);
 		s >> Member< int32_t >(L"height", m_ref.height);
-		s >> Member< int32_t >(L"screenWidthDenom", m_ref.screenWidthDenom);
-		s >> Member< int32_t >(L"screenHeightDenom", m_ref.screenHeightDenom);
+		if (s.getVersion() >= 1)
+		{
+			s >> Member< int32_t >(L"referenceWidthDenom", m_ref.referenceWidthDenom);
+			s >> Member< int32_t >(L"referenceHeightDenom", m_ref.referenceHeightDenom);
+		}
+		else
+		{
+			s >> Member< int32_t >(L"screenWidthDenom", m_ref.referenceWidthDenom);
+			s >> Member< int32_t >(L"screenHeightDenom", m_ref.referenceHeightDenom);
+		}
 		s >> Member< int32_t >(L"maxWidth", m_ref.maxWidth);
 		s >> Member< int32_t >(L"maxHeight", m_ref.maxHeight);
 		s >> Member< bool >(L"createDepthStencil", m_ref.createDepthStencil);
@@ -102,7 +110,7 @@ private:
 
         }
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ImageTargetSetData", 0, ImageTargetSetData, ISerializable)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ImageTargetSetData", 1, ImageTargetSetData, ISerializable)
 
 Ref< const ImageTargetSet > ImageTargetSetData::createInstance() const
 {

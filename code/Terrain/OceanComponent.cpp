@@ -247,7 +247,7 @@ void OceanComponent::build(
 	if (!program)
 		return;
 
-	render::SimpleRenderBlock* renderBlock = renderContext->alloc< render::SimpleRenderBlock >("Ocean");
+	render::SimpleRenderBlock* renderBlock = renderContext->alloc< render::SimpleRenderBlock >(L"Ocean");
 
 	renderBlock->distance = std::numeric_limits< float >::max();
 	renderBlock->program = program;

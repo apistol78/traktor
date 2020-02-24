@@ -101,7 +101,7 @@ void IndoorMesh::build(
 			if (!program)
 				continue;
 
-			render::SimpleRenderBlock* renderBlock = renderContext->alloc< render::SimpleRenderBlock >("IndoorMesh");
+			render::SimpleRenderBlock* renderBlock = renderContext->alloc< render::SimpleRenderBlock >(L"IndoorMesh");
 
 			renderBlock->distance = distance;
 			renderBlock->program = program;

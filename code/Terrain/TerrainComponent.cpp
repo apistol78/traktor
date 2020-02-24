@@ -445,7 +445,7 @@ void TerrainComponent::build(
 	// Setup shared shader parameters.
 	for (int32_t i = 0; i < 2; ++i)
 	{
-		auto rb = renderContext->alloc< render::NullRenderBlock >("Terrain patch setup");
+		auto rb = renderContext->alloc< render::NullRenderBlock >(L"Terrain patch setup");
 
 		rb->program = (i == 0) ? coarseProgram : detailProgram;
 		rb->programParams = renderContext->alloc< render::ProgramParameters >();
@@ -490,7 +490,7 @@ void TerrainComponent::build(
 		const Patch& patch = m_patches[visiblePatch.patchId];
 		const Vector4& patchOrigin = visiblePatch.patchOrigin;
 
-		auto rb = renderContext->alloc< render::SimpleRenderBlock >("Terrain patch");
+		auto rb = renderContext->alloc< render::SimpleRenderBlock >(L"Terrain patch");
 
 		rb->distance = visiblePatch.distance;
 		rb->program = (patch.lastSurfaceLod == 0) ? detailProgram : coarseProgram;

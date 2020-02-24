@@ -225,7 +225,7 @@ void AccGlyph::render(
 	if (!m_shaderGlyph->getCurrentProgram())
 		return;
 
-	render::IndexedRenderBlock* renderBlock = renderContext->alloc< render::IndexedRenderBlock >("Flash AccGlyph");
+	render::IndexedRenderBlock* renderBlock = renderContext->alloc< render::IndexedRenderBlock >(L"Flash AccGlyph");
 	renderBlock->program = m_shaderGlyph->getCurrentProgram();
 	renderBlock->indexBuffer = m_indexBuffer;
 	renderBlock->vertexBuffer = m_vertexBuffers[m_currentVertexBuffer];

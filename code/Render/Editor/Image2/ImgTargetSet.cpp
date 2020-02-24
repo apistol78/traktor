@@ -100,8 +100,8 @@ RenderGraphTargetSetDesc ImgTargetSet::getRenderGraphTargetSetDesc() const
 	desc.count = (int32_t)m_targets.size();
 	desc.width = m_width;
 	desc.height = m_height;
-	desc.screenWidthDenom = m_screenWidthDenom;
-	desc.screenHeightDenom = m_screenHeightDenom;
+	desc.referenceWidthDenom = m_screenWidthDenom;
+	desc.referenceHeightDenom = m_screenHeightDenom;
 	desc.maxWidth = m_maxWidth;
 	desc.maxHeight = m_maxHeight;
 	desc.createDepthStencil = m_createDepthStencil;

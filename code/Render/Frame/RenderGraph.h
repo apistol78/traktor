@@ -52,11 +52,13 @@ public:
 	 *
 	 * \param targetSetDesc Render target set create description.
 	 * \param sharedDepthStencil Share depth/stencil with target set.
+	 * \param sizeReferenceTargetSetId Target to get reference size from when determine target set.
 	 * \return Opaque handle of transient target set.
 	 */
 	handle_t addTargetSet(
 		const RenderGraphTargetSetDesc& targetSetDesc,
-		IRenderTargetSet* sharedDepthStencil = nullptr
+		IRenderTargetSet* sharedDepthStencil = nullptr,
+		handle_t sizeReferenceTargetSetId = 0
 	);
 
 	/*! Get transient target set from target identifier.
@@ -87,6 +89,7 @@ private:
 		RenderGraphTargetSetDesc targetSetDesc;
 		Ref< IRenderTargetSet > sharedDepthStencilTargetSet;
 		Ref< IRenderTargetSet > rts;
+		handle_t sizeReferenceTargetSetId;
 	};
 
 	Ref< RenderGraphTargetSetPool > m_pool;

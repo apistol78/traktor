@@ -27,9 +27,7 @@ class StructBuffer;
 	namespace world
 	{
 
-class GroupEntity;
 class WorldEntityRenderers;
-
 struct LightShaderData;
 
 /*! World renderer implementation.
@@ -65,10 +63,9 @@ public:
 
 	virtual void destroy() override final;
 
-	virtual void attach(Entity* entity) override final;
-
 	virtual void setup(
 		const WorldRenderView& worldRenderView,
+		const Entity* rootEntity,
 		render::RenderGraph& renderGraph,
 		render::handle_t outputTargetSetId
 	) override final;
@@ -96,7 +93,6 @@ private:
 	resource::Proxy< render::ImageGraph > m_toneMap;
 
 	Ref< WorldEntityRenderers > m_entityRenderers;
-	Ref< GroupEntity > m_rootEntity;
 	AlignedVector< Frame > m_frames;
 	AlignedVector< Light > m_lights;
 
@@ -105,18 +101,24 @@ private:
 
 	render::handle_t setupGBufferPass(
 		const WorldRenderView& worldRenderView,
-		render::RenderGraph& renderGraph
+		const Entity* rootEntity,
+		render::RenderGraph& renderGraph,
+		render::handle_t outputTargetSetId
 	) const;
 
 	render::handle_t setupAmbientOcclusionPass(
 		const WorldRenderView& worldRenderView,
+		const Entity* rootEntity,
 		render::RenderGraph& renderGraph,
+		render::handle_t outputTargetSetId,
 		render::handle_t gbufferTargetSetId
 	) const;
 
 	void setupLightPass(
 		const WorldRenderView& worldRenderView,
+		const Entity* rootEntity,
 		render::RenderGraph& renderGraph,
+		render::handle_t outputTargetSetId,
 		int32_t frame,
 		LightShaderData* lightShaderData,
 		render::handle_t& outShadowMapCascadeTargetSetId,
@@ -125,7 +127,9 @@ private:
 
 	render::handle_t setupVisualPass(
 		const WorldRenderView& worldRenderView,
+		const Entity* rootEntity,
 		render::RenderGraph& renderGraph,
+		render::handle_t outputTargetSetId,
 		render::handle_t gbufferTargetSetId,
 		render::handle_t ambientOcclusionTargetSetId,
 		render::handle_t shadowMapCascadeTargetSetId,
@@ -135,6 +139,7 @@ private:
 
 	void setupProcessPass(
 		const WorldRenderView& worldRenderView,
+		const Entity* rootEntity,
 		render::RenderGraph& renderGraph,
 		render::handle_t outputTargetSetId,
 		render::handle_t gbufferTargetSetId,

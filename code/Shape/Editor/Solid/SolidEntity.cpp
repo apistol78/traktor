@@ -242,7 +242,7 @@ void SolidEntity::build(
 	auto renderContext = context.getRenderContext();
 	for (const auto& batch : m_batches)
 	{
-		render::SimpleRenderBlock* renderBlock = renderContext->alloc< render::SimpleRenderBlock >("Solid");
+		render::SimpleRenderBlock* renderBlock = renderContext->alloc< render::SimpleRenderBlock >(L"Solid");
 
 		renderBlock->distance = std::numeric_limits< float >::max();
 		renderBlock->program = program;

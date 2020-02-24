@@ -31,7 +31,7 @@ class T_DLLCLASS RenderGraphTargetSetPool : public Object
 public:
 	struct Pool
 	{
-		RenderGraphTargetSetDesc targetSetDesc;
+		RenderTargetSetCreateDesc rtscd;
 		Ref< IRenderTargetSet > sharedDepthStencilTargetSet;
 		RefArray< IRenderTargetSet > free;
 		RefArray< IRenderTargetSet > acquired;
@@ -39,9 +39,14 @@ public:
 
 	RenderGraphTargetSetPool(IRenderSystem* renderSystem);
 
-	bool validate(int32_t width, int32_t height);
+	IRenderTargetSet* acquire(
+		const RenderGraphTargetSetDesc& targetSetDesc,
+		IRenderTargetSet* sharedDepthStencilTargetSet,
+		int32_t referenceWidth,
+		int32_t referenceHeight
+	);
 
-	IRenderTargetSet* acquire(const RenderGraphTargetSetDesc& targetSetDesc, IRenderTargetSet* sharedDepthStencilTargetSet);
+	void cleanup();
 
 	void release(IRenderTargetSet* targetSet);
 
