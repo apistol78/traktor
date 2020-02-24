@@ -89,7 +89,7 @@ bool AnimationPreviewControl::create(ui::Widget* parent)
 	if (!m_renderView)
 		return false;
 
-	m_renderContext = new render::RenderContext(1 * 1024 * 1024);
+	m_renderContext = new render::RenderContext(4 * 1024 * 1024);
 	m_renderGraph = new render::RenderGraph(m_renderSystem);
 
 	m_primitiveRenderer = new render::PrimitiveRenderer();
@@ -356,9 +356,10 @@ void AnimationPreviewControl::eventPaint(ui::PaintEvent* event)
 		m_worldRenderView.setTimes(scaledTime, deltaTime, 1.0f);
 		m_worldRenderView.setView(viewTransform, viewTransform);
 
-		m_worldRenderer->attach(&lightEntity);
-		m_worldRenderer->attach(m_entity);
-		m_worldRenderer->setup(m_worldRenderView, *m_renderGraph, 0);
+		// \fixme
+		//m_worldRenderer->attach(&lightEntity);
+		//m_worldRenderer->attach(m_entity);
+		//m_worldRenderer->setup(m_worldRenderView, *m_renderGraph, 0);
 	}
 
 	// Validate render graph.

@@ -116,7 +116,7 @@ bool OrthogonalRenderControl::create(ui::Widget* parent, SceneEditorContext* con
 	if (!m_renderView)
 		return false;
 
-	m_renderContext = new render::RenderContext(1 * 1024 * 1024);
+	m_renderContext = new render::RenderContext(4 * 1024 * 1024);
 	m_renderGraph = new render::RenderGraph(m_context->getRenderSystem());
 
 	m_primitiveRenderer = new render::PrimitiveRenderer();
@@ -502,9 +502,16 @@ void OrthogonalRenderControl::eventPaint(ui::PaintEvent* event)
 	);
 	worldRenderView.setTimes(scaledTime, deltaTime, 1.0f);
 	worldRenderView.setView(view, view);
-	m_worldRenderer->attach(sceneInstance->getRootEntity());
-	m_context->getEntityEventManager()->attach(m_worldRenderer);
-	m_worldRenderer->setup(worldRenderView, *m_renderGraph, 0);
+
+	// \fixme
+	//m_context->getEntityEventManager()->attach(m_worldRenderer);
+
+	m_worldRenderer->setup(
+		worldRenderView,
+		sceneInstance->getRootEntity(),
+		*m_renderGraph,
+		0
+	);
 
 	// Validate render graph.
 	if (!m_renderGraph->validate(m_dirtySize.cx, m_dirtySize.cy))

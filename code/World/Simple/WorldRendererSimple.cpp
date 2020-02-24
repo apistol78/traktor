@@ -1,9 +1,9 @@
 #include "Core/Misc/SafeDestroy.h"
 #include "Render/Context/RenderContext.h"
 #include "Render/Frame/RenderGraph.h"
+#include "World/Entity.h"
 #include "World/WorldRenderView.h"
 #include "World/WorldBuildContext.h"
-#include "World/Entity/GroupEntity.h"
 #include "World/Simple/WorldRendererSimple.h"
 #include "World/Simple/WorldRenderPassSimple.h"
 
@@ -37,23 +37,17 @@ bool WorldRendererSimple::create(
 )
 {
 	m_entityRenderers = desc.entityRenderers;
-	m_rootEntity = new GroupEntity();
 	return true;
 }
 
 void WorldRendererSimple::destroy()
 {
 	m_entityRenderers = nullptr;
-	m_rootEntity = nullptr;
-}
-
-void WorldRendererSimple::attach(Entity* entity)
-{
-	m_rootEntity->addEntity(entity);
 }
 
 void WorldRendererSimple::setup(
 	const WorldRenderView& worldRenderView,
+	const Entity* rootEntity,
 	render::RenderGraph& renderGraph,
 	render::handle_t outputTargetSetId
 )
@@ -65,7 +59,7 @@ void WorldRendererSimple::setup(
 		{
 			WorldBuildContext wc(
 				m_entityRenderers,
-				m_rootEntity,
+				rootEntity,
 				renderContext
 			);
 
@@ -83,18 +77,11 @@ void WorldRendererSimple::setup(
 				worldRenderView.getView()
 			);
 
-			wc.build(worldRenderView, defaultPass, m_rootEntity);
+			wc.build(worldRenderView, defaultPass, rootEntity);
 			wc.flush(worldRenderView, defaultPass);
 			renderContext->merge(render::RpAll);
 		}
 	);
-	renderGraph.addPass(rp);
-
-	// Add cleanup pass to remove attached entities.
-	rp = new render::RenderPass(L"Cleanup");
-	rp->addBuild([=](const render::RenderGraph&, render::RenderContext*) {
-		m_rootEntity->removeAllEntities();
-	});
 	renderGraph.addPass(rp);
 }
 

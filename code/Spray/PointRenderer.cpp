@@ -263,7 +263,7 @@ void PointRenderer::flush(
 			if (!program)
 				continue;
 
-			render::IndexedRenderBlock* renderBlock = renderContext->alloc< render::IndexedRenderBlock >("PointRenderer");
+			render::IndexedRenderBlock* renderBlock = renderContext->alloc< render::IndexedRenderBlock >(L"PointRenderer");
 
 			renderBlock->distance = batch.distance;
 			renderBlock->program = program;

@@ -91,7 +91,7 @@ void SkyComponent::build(
 
 	Vector4 sunDirection = m_transform.axisY();
 
-	render::SimpleRenderBlock* renderBlock = renderContext->alloc< render::SimpleRenderBlock >("Sky");
+	render::SimpleRenderBlock* renderBlock = renderContext->alloc< render::SimpleRenderBlock >(L"Sky");
 
 	// Render sky after all opaques but before of all alpha blended.
 	renderBlock->distance = std::numeric_limits< float >::max();

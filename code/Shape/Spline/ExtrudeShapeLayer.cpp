@@ -222,7 +222,7 @@ void ExtrudeShapeLayer::build(
 
 	auto renderContext = context.getRenderContext();
 
-	render::SimpleRenderBlock* renderBlock = renderContext->alloc< render::SimpleRenderBlock >("Extrude");
+	render::SimpleRenderBlock* renderBlock = renderContext->alloc< render::SimpleRenderBlock >(L"Extrude");
 
 	renderBlock->distance = std::numeric_limits< float >::max();
 	renderBlock->program = program;

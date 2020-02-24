@@ -30,8 +30,8 @@ struct RenderGraphTargetSetDesc
 	int32_t count;
 	int32_t width;
 	int32_t height;
-	int32_t screenWidthDenom;
-	int32_t screenHeightDenom;
+	int32_t referenceWidthDenom;
+	int32_t referenceHeightDenom;
 	int32_t maxWidth;
 	int32_t maxHeight;
 	bool createDepthStencil;
@@ -45,8 +45,8 @@ struct RenderGraphTargetSetDesc
 	:	count(0)
 	,	width(0)
 	,	height(0)
-	,	screenWidthDenom(0)
-	,	screenHeightDenom(0)
+	,	referenceWidthDenom(0)
+	,	referenceHeightDenom(0)
 	,	maxWidth(0)
 	,	maxHeight(0)
 	,	createDepthStencil(false)

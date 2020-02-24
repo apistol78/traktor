@@ -38,7 +38,8 @@ bool DecalEventInstance::update(const UpdateParams& update)
 
 void DecalEventInstance::attach(IWorldRenderer* worldRenderer)
 {
-	worldRenderer->attach(m_entity);
+	// \fixme
+	//worldRenderer->attach(m_entity);
 }
 
 void DecalEventInstance::cancel(CancelType when)

@@ -30,13 +30,15 @@ void RenderGraph::destroy()
 
 handle_t RenderGraph::addTargetSet(
 	const RenderGraphTargetSetDesc& targetSetDesc,
-	IRenderTargetSet* sharedDepthStencilTargetSet
+	IRenderTargetSet* sharedDepthStencilTargetSet,
+	handle_t sizeReferenceTargetSetId
 )
 {
 	handle_t targetSetId = m_nextTargetSetId++;
 	auto& target = m_targets[targetSetId];
 	target.targetSetDesc = targetSetDesc;
 	target.sharedDepthStencilTargetSet = sharedDepthStencilTargetSet;
+	target.sizeReferenceTargetSetId = sizeReferenceTargetSetId;
 	return targetSetId;
 }
 
@@ -56,19 +58,37 @@ void RenderGraph::addPass(const RenderPass* pass)
 
 bool RenderGraph::validate(int32_t width, int32_t height)
 {
-	if (!m_pool->validate(width, height))
-		return false;
-
 	// Acquire targets.
 	for (auto& tm : m_targets)
 	{
-		tm.second.rts = m_pool->acquire(tm.second.targetSetDesc, tm.second.sharedDepthStencilTargetSet);
+		int32_t referenceWidth = width;
+		int32_t referenceHeight = height;
+
+		if (tm.second.sizeReferenceTargetSetId != 0)
+		{
+			auto it = m_targets.find(tm.second.sizeReferenceTargetSetId);
+			if (it == m_targets.end())
+				return false;
+
+			referenceWidth = it->second.targetSetDesc.width;
+			referenceHeight = it->second.targetSetDesc.height;
+		}
+
+		tm.second.rts = m_pool->acquire(
+			tm.second.targetSetDesc,
+			tm.second.sharedDepthStencilTargetSet,
+			referenceWidth,
+			referenceHeight
+		);
 		if (!tm.second.rts)
 			return false;
 	}
 
+	// Cleanup non-acquired targets.
+	m_pool->cleanup();
+
 	// Append passes depth-first.
-	StaticVector< uint32_t, 64 > order;
+	StaticVector< uint32_t, 256 > order;
 	for (int32_t i = 0; i < (int32_t)m_passes.size(); ++i)
 	{
 		if (m_passes[i]->getOutput().targetSetId == 0)
@@ -81,7 +101,7 @@ bool RenderGraph::validate(int32_t width, int32_t height)
 
 	m_order.resize(0);
 
-	StaticSet< uint32_t, 64 > added;
+	StaticSet< uint32_t, 256 > added;
 	for (auto index : order)
 	{
 		if (added.insert(index))
@@ -100,6 +120,8 @@ bool RenderGraph::validate(int32_t width, int32_t height)
 
 bool RenderGraph::build(RenderContext* renderContext)
 {
+	T_FATAL_ASSERT(!renderContext->havePendingDraws());
+
 	// Render passes in dependency order.
 	for (auto index : m_order)
 	{
@@ -112,7 +134,7 @@ bool RenderGraph::build(RenderContext* renderContext)
 			auto it = m_targets.find(output.targetSetId);
 			T_FATAL_ASSERT(it != m_targets.end());
 
-			auto tb = renderContext->alloc< TargetBeginRenderBlock >();
+			auto tb = renderContext->alloc< TargetBeginRenderBlock >(std::wstring(L"Begin ") + pass->getName());
 			tb->renderTargetSet = it->second.rts;
 			tb->clear = output.clear;
 			renderContext->enqueue(tb);			
@@ -122,20 +144,28 @@ bool RenderGraph::build(RenderContext* renderContext)
 		for (auto subPass : pass->getSubPasses())
 		{
 			for (const auto& build : subPass->getBuilds())
+			{
 				build(*this, renderContext);
+				T_FATAL_ASSERT(!renderContext->havePendingDraws());
+			}
 		}
 
 		// Build this pass.
 		for (const auto& build : pass->getBuilds())
+		{
 			build(*this, renderContext);
+			T_FATAL_ASSERT(!renderContext->havePendingDraws());
+		}
 
 		// End render pass.
 		if (output.targetSetId != 0)
 		{
-			auto te = renderContext->alloc< TargetEndRenderBlock >();
+			auto te = renderContext->alloc< TargetEndRenderBlock >(std::wstring(L"End ") + pass->getName());
 			renderContext->enqueue(te);
 		}
 	}
+
+	T_FATAL_ASSERT(!renderContext->havePendingDraws());
 
 	// Release targets.
 	for (auto& tm : m_targets)

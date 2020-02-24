@@ -195,7 +195,7 @@ void RiverComponent::build(
 	if (!program)
 		return;
 
-	render::SimpleRenderBlock* renderBlock = renderContext->alloc< render::SimpleRenderBlock >("River");
+	render::SimpleRenderBlock* renderBlock = renderContext->alloc< render::SimpleRenderBlock >(L"River");
 
 	renderBlock->distance = 0.0f;
 	renderBlock->program = program;

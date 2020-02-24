@@ -102,7 +102,7 @@ bool CameraRenderControl::create(ui::Widget* parent, SceneEditorContext* context
 	if (!m_renderView)
 		return false;
 
-	m_renderContext = new render::RenderContext(1 * 1024 * 1024);
+	m_renderContext = new render::RenderContext(4 * 1024 * 1024);
 	m_renderGraph = new render::RenderGraph(m_context->getRenderSystem());
 
 	m_primitiveRenderer = new render::PrimitiveRenderer();
@@ -356,9 +356,16 @@ void CameraRenderControl::eventPaint(ui::PaintEvent* event)
 	// Setup world render passes.
 	m_worldRenderView.setTimes(scaledTime, deltaTime, 1.0f);
 	m_worldRenderView.setView(m_worldRenderView.getView(), view);
-	m_worldRenderer->attach(sceneInstance->getRootEntity());
-	m_context->getEntityEventManager()->attach(m_worldRenderer);
-	m_worldRenderer->setup(m_worldRenderView, *m_renderGraph, 0);
+
+	// \fixme
+	//m_context->getEntityEventManager()->attach(m_worldRenderer);
+
+	m_worldRenderer->setup(
+		m_worldRenderView,
+		sceneInstance->getRootEntity(),
+		*m_renderGraph,
+		0
+	);
 
 	// Validate render graph.
 	if (!m_renderGraph->validate(m_dirtySize.cx, m_dirtySize.cy))

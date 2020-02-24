@@ -1,4 +1,5 @@
 #include <cstring>
+#include "Core/Log/Log.h"
 #include "Render/IRenderSystem.h"
 #include "Render/IRenderTargetSet.h"
 #include "Render/Frame/RenderGraphTargetSetPool.h"
@@ -12,43 +13,42 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderGraphTargetSetPool", RenderGraphTa
 
 RenderGraphTargetSetPool::RenderGraphTargetSetPool(IRenderSystem* renderSystem)
 :	m_renderSystem(renderSystem)
-,   m_width(0)
-,   m_height(0)
 {
 }
 
-bool RenderGraphTargetSetPool::validate(int32_t width, int32_t height)
+IRenderTargetSet* RenderGraphTargetSetPool::acquire(
+	const RenderGraphTargetSetDesc& targetSetDesc,
+	IRenderTargetSet* sharedDepthStencilTargetSet,
+	int32_t referenceWidth,
+	int32_t referenceHeight
+)
 {
-	// If output size has changed we flush all targets
-	// which has been creating related to output size.
-	if (width != m_width || height != m_height)
-	{
-		for (auto& pool : m_pool)
-		{
-			if (
-				pool.targetSetDesc.screenWidthDenom != 0 ||
-				pool.targetSetDesc.screenHeightDenom != 0
-			)
-			{
-				for (auto rts : pool.free)
-					rts->destroy();
-				for (auto rts : pool.acquired)
-					rts->destroy();
+	// Create descriptor for given reference size.
+	RenderTargetSetCreateDesc rtscd = {};
+	rtscd.count = targetSetDesc.count;
+	rtscd.width = targetSetDesc.width;
+	rtscd.height = targetSetDesc.height;
+	rtscd.multiSample = 0;
+	rtscd.createDepthStencil = targetSetDesc.createDepthStencil;
+	rtscd.usingPrimaryDepthStencil = targetSetDesc.usingPrimaryDepthStencil;
+	rtscd.usingDepthStencilAsTexture = targetSetDesc.usingDepthStencilAsTexture;
+	rtscd.storeDepthStencil = true;
+	rtscd.ignoreStencil = false;
+	rtscd.generateMips = targetSetDesc.generateMips;
 
-				pool.free.resize(0);
-				pool.acquired.resize(0);
-			}
-		}
-		m_width = width;
-		m_height = height;
-	}
-	return true;
-}
+	for (int32_t i = 0; i < targetSetDesc.count; ++i)
+		rtscd.targets[i].format = targetSetDesc.targets[i].colorFormat;
+		
+	if (targetSetDesc.referenceWidthDenom > 0)
+		rtscd.width = (referenceWidth + targetSetDesc.referenceWidthDenom - 1) / targetSetDesc.referenceWidthDenom;
+	if (targetSetDesc.referenceHeightDenom > 0)
+		rtscd.height = (referenceHeight + targetSetDesc.referenceHeightDenom - 1) / targetSetDesc.referenceHeightDenom;
+	if (targetSetDesc.maxWidth > 0)
+		rtscd.width = min< int32_t >(rtscd.width, targetSetDesc.maxWidth);
+	if (targetSetDesc.maxHeight > 0)
+		rtscd.height = min< int32_t >(rtscd.height, targetSetDesc.maxHeight);
 
-IRenderTargetSet* RenderGraphTargetSetPool::acquire(const RenderGraphTargetSetDesc& targetSetDesc, IRenderTargetSet* sharedDepthStencilTargetSet)
-{
-	Pool* pool = nullptr;
-
+	// Find pool matching target description.
 	auto it = std::find_if(
         m_pool.begin(),
         m_pool.end(),
@@ -58,40 +58,44 @@ IRenderTargetSet* RenderGraphTargetSetPool::acquire(const RenderGraphTargetSetDe
                 return false;
 
             if (
-                p.targetSetDesc.count != targetSetDesc.count ||
-                p.targetSetDesc.width != targetSetDesc.width ||
-                p.targetSetDesc.height != targetSetDesc.height ||
-                p.targetSetDesc.screenWidthDenom != targetSetDesc.screenWidthDenom ||
-                p.targetSetDesc.screenHeightDenom != targetSetDesc.screenHeightDenom ||
-                p.targetSetDesc.maxWidth != targetSetDesc.maxWidth ||
-                p.targetSetDesc.maxHeight != targetSetDesc.maxHeight ||
-                p.targetSetDesc.createDepthStencil != targetSetDesc.createDepthStencil ||
-                p.targetSetDesc.usingPrimaryDepthStencil != targetSetDesc.usingPrimaryDepthStencil ||
-                p.targetSetDesc.usingDepthStencilAsTexture != targetSetDesc.usingDepthStencilAsTexture ||
-                p.targetSetDesc.ignoreStencil != targetSetDesc.ignoreStencil ||
-                p.targetSetDesc.generateMips != targetSetDesc.generateMips
+				p.rtscd.count != rtscd.count ||
+				p.rtscd.width != rtscd.width ||
+				p.rtscd.height != rtscd.height ||
+				p.rtscd.multiSample != rtscd.multiSample ||
+				p.rtscd.createDepthStencil != rtscd.createDepthStencil ||
+				p.rtscd.usingDepthStencilAsTexture != rtscd.usingDepthStencilAsTexture ||
+				p.rtscd.usingPrimaryDepthStencil != rtscd.usingPrimaryDepthStencil ||
+				p.rtscd.ignoreStencil != rtscd.ignoreStencil ||
+				p.rtscd.generateMips != rtscd.generateMips
             )
                 return false;
 
-            for (int32_t i = 0; i < p.targetSetDesc.count; ++i)
-            {
-                if (p.targetSetDesc.targets[i].colorFormat != targetSetDesc.targets[i].colorFormat)
-                    return false;
-            }
+ 			for (int32_t i = 0; i < p.rtscd.count; ++i)
+			{
+				if (
+					p.rtscd.targets[i].format != rtscd.targets[i].format ||
+					p.rtscd.targets[i].sRGB != rtscd.targets[i].sRGB
+				)
+					return false;
+			}
 
             return true;
         }
     );
+
+	// Get or create pool.
+	Pool* pool = nullptr;
 	if (it != m_pool.end())
 		pool = &(*it);
 	else
 	{
 		m_pool.resize(m_pool.size() + 1);
 		pool = &m_pool.back();
-		pool->targetSetDesc = targetSetDesc;
+		pool->rtscd = rtscd;
         pool->sharedDepthStencilTargetSet = sharedDepthStencilTargetSet;
 	}
 
+	// Acquire free target, if no one left we need to create a new target.
 	if (!pool->free.empty())
 	{
 		Ref< IRenderTargetSet > targetSet = pool->free.back();
@@ -101,35 +105,30 @@ IRenderTargetSet* RenderGraphTargetSetPool::acquire(const RenderGraphTargetSetDe
 	}
 	else
 	{
-		RenderTargetSetCreateDesc rtscd = {};
-		rtscd.count = targetSetDesc.count;
-		rtscd.width = targetSetDesc.width;
-		rtscd.height = targetSetDesc.height;
-		rtscd.multiSample = 0;
-		rtscd.createDepthStencil = targetSetDesc.createDepthStencil;
-		rtscd.usingPrimaryDepthStencil = targetSetDesc.usingPrimaryDepthStencil;
-		rtscd.usingDepthStencilAsTexture = targetSetDesc.usingDepthStencilAsTexture;
-		rtscd.storeDepthStencil = true;
-		rtscd.ignoreStencil = false;
-		rtscd.generateMips = targetSetDesc.generateMips;
-
-		for (int32_t i = 0; i < targetSetDesc.count; ++i)
-			rtscd.targets[i].format = targetSetDesc.targets[i].colorFormat;
-		
-		if (targetSetDesc.screenWidthDenom > 0)
-			rtscd.width = (m_width + targetSetDesc.screenWidthDenom - 1) / targetSetDesc.screenWidthDenom;
-		if (targetSetDesc.screenHeightDenom > 0)
-			rtscd.height = (m_height + targetSetDesc.screenHeightDenom - 1) / targetSetDesc.screenHeightDenom;
-		if (targetSetDesc.maxWidth > 0)
-			rtscd.width = min< int32_t >(rtscd.width, targetSetDesc.maxWidth);
-		if (targetSetDesc.maxHeight > 0)
-			rtscd.height = min< int32_t >(rtscd.height, targetSetDesc.maxHeight);
+		if (sharedDepthStencilTargetSet)
+		{
+			int32_t sharedWidth = sharedDepthStencilTargetSet->getWidth();
+			int32_t sharedHeight = sharedDepthStencilTargetSet->getHeight();
+			T_FATAL_ASSERT(sharedWidth == rtscd.width);
+			T_FATAL_ASSERT(sharedHeight == rtscd.height);
+		}
 
 		Ref< IRenderTargetSet > targetSet = m_renderSystem->createRenderTargetSet(rtscd, sharedDepthStencilTargetSet, T_FILE_LINE_W);
 		if (targetSet)
 			pool->acquired.push_back(targetSet);
 
 		return targetSet;
+	}
+}
+
+void RenderGraphTargetSetPool::cleanup()
+{
+	// Destroy all non-acquired targets; no longer used.
+	for (auto it = m_pool.begin(); it != m_pool.end(); ++it)
+	{
+		for (auto rt : it->free)
+			rt->destroy();
+		it->free.resize(0);
 	}
 }
 

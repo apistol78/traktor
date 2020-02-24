@@ -596,7 +596,7 @@ void AccShape::render(
 		render::IProgram* program = shaderSolid->getCurrentProgram();
 		if (program)
 		{
-			render::NullRenderBlock* renderBlockSolid = renderContext->alloc< render::NullRenderBlock >("Flash AccShape; set solid parameters");
+			render::NullRenderBlock* renderBlockSolid = renderContext->alloc< render::NullRenderBlock >(L"Flash AccShape; set solid parameters");
 			renderBlockSolid->program = program;
 			renderBlockSolid->programParams = renderContext->alloc< render::ProgramParameters >();
 			renderBlockSolid->programParams->beginParameters(renderContext);
@@ -617,7 +617,7 @@ void AccShape::render(
 		render::IProgram* program = shaderTextured->getCurrentProgram();
 		if (program)
 		{
-			render::NullRenderBlock* renderBlockTextured = renderContext->alloc< render::NullRenderBlock >("Flash AccShape; set textured parameters");
+			render::NullRenderBlock* renderBlockTextured = renderContext->alloc< render::NullRenderBlock >(L"Flash AccShape; set textured parameters");
 			renderBlockTextured->program = program;
 			renderBlockTextured->programParams = renderContext->alloc< render::ProgramParameters >();
 			renderBlockTextured->programParams->beginParameters(renderContext);
@@ -638,7 +638,7 @@ void AccShape::render(
 		render::IProgram* program = shaderLine->getCurrentProgram();
 		if (program)
 		{
-			render::NullRenderBlock* renderBlockLine = renderContext->alloc< render::NullRenderBlock >("Flash AccShape; set line parameters");
+			render::NullRenderBlock* renderBlockLine = renderContext->alloc< render::NullRenderBlock >(L"Flash AccShape; set line parameters");
 			renderBlockLine->program = program;
 			renderBlockLine->programParams = renderContext->alloc< render::ProgramParameters >();
 			renderBlockLine->programParams->beginParameters(renderContext);
@@ -660,7 +660,7 @@ void AccShape::render(
 		{
 			if (shaderSolid && shaderSolid->getCurrentProgram())
 			{
-				render::NonIndexedRenderBlock* renderBlock = renderContext->alloc< render::NonIndexedRenderBlock >("Flash AccShape; draw solid batch");
+				render::NonIndexedRenderBlock* renderBlock = renderContext->alloc< render::NonIndexedRenderBlock >(L"Flash AccShape; draw solid batch");
 				renderBlock->program = shaderSolid->getCurrentProgram();
 				renderBlock->vertexBuffer = m_fillVertexRange.vertexBuffer;
 				renderBlock->primitive = j->primitives.type;
@@ -673,7 +673,7 @@ void AccShape::render(
 		{
 			if (shaderTextured && shaderTextured->getCurrentProgram())
 			{
-				render::NonIndexedRenderBlock* renderBlock = renderContext->alloc< render::NonIndexedRenderBlock >("Flash AccShape; draw textured batch");
+				render::NonIndexedRenderBlock* renderBlock = renderContext->alloc< render::NonIndexedRenderBlock >(L"Flash AccShape; draw textured batch");
 				renderBlock->program = shaderTextured->getCurrentProgram();
 				renderBlock->vertexBuffer = m_fillVertexRange.vertexBuffer;
 				renderBlock->primitive = j->primitives.type;
@@ -693,7 +693,7 @@ void AccShape::render(
 	{
 		if (shaderLine && shaderLine->getCurrentProgram())
 		{
-			render::NonIndexedRenderBlock* renderBlock = renderContext->alloc< render::NonIndexedRenderBlock >("Flash AccShape; draw line batch");
+			render::NonIndexedRenderBlock* renderBlock = renderContext->alloc< render::NonIndexedRenderBlock >(L"Flash AccShape; draw line batch");
 			renderBlock->program = shaderLine->getCurrentProgram();
 			renderBlock->vertexBuffer = i->vertexRange.vertexBuffer;
 			renderBlock->primitive = i->primitives.type;

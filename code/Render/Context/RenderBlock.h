@@ -32,19 +32,14 @@ class T_DLLCLASS RenderBlock
 {
 public:
 #if defined(_DEBUG)
-	const char* name;
+	std::wstring name;
 #endif
 	float distance;
 	Ref< IProgram > program;
 	ProgramParameters* programParams;
 
 	RenderBlock()
-#if defined(_DEBUG)
-	:	name(nullptr)
-	,	distance(0.0f)
-#else
 	:	distance(0.0f)
-#endif
 	,	programParams(nullptr)
 	{
 	}

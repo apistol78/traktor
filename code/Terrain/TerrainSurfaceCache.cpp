@@ -177,14 +177,14 @@ void TerrainSurfaceCache::begin(
 		if (!shader->getCurrentProgram())
 			return;
 
-		auto tb = renderContext->alloc< render::TargetBeginRenderBlock >("Terrain surface, base begin");
+		auto tb = renderContext->alloc< render::TargetBeginRenderBlock >(L"Terrain surface, base begin");
 		tb->renderTargetSet = m_base;
 		tb->renderTargetIndex = -1;
 		tb->clear.mask = render::CfColor;
 		tb->clear.colors[0] = Color4f(0.0f, 0.0f, 0.0f, 0.0f);
 		renderContext->enqueue(tb);
 
-		auto rb = renderContext->alloc< TerrainSurfaceRenderBlock >("Terrain surface, base");
+		auto rb = renderContext->alloc< TerrainSurfaceRenderBlock >(L"Terrain surface, base");
 		rb->screenRenderer = m_screenRenderer;
 		rb->distance = 0.0f;
 		rb->program = shader->getCurrentProgram();
@@ -201,7 +201,7 @@ void TerrainSurfaceCache::begin(
 		rb->programParams->endParameters(renderContext);
 		renderContext->enqueue(rb);
 
-		auto te = renderContext->alloc< render::TargetEndRenderBlock >("Terrain surface, base end");
+		auto te = renderContext->alloc< render::TargetEndRenderBlock >(L"Terrain surface, base end");
 		renderContext->enqueue(te);
 
 		m_haveBase = true;
@@ -291,7 +291,7 @@ void TerrainSurfaceCache::get(
 	if (!shader->getCurrentProgram())
 		return;
 
-	auto tb = renderContext->alloc< render::TargetBeginRenderBlock >("Terrain surface, begin");
+	auto tb = renderContext->alloc< render::TargetBeginRenderBlock >(L"Terrain surface, begin");
 	tb->renderTargetSet = m_pool;
 	tb->renderTargetIndex = -1;
 	tb->clear.mask = 0;
@@ -302,7 +302,7 @@ void TerrainSurfaceCache::get(
 	}
 	renderContext->enqueue(tb);
 
-	auto rb = renderContext->alloc< TerrainSurfaceRenderBlock >("Terrain surface");
+	auto rb = renderContext->alloc< TerrainSurfaceRenderBlock >(L"Terrain surface");
 	rb->screenRenderer = m_screenRenderer;
 	rb->distance = 0.0f;
 	rb->program = shader->getCurrentProgram();
@@ -319,7 +319,7 @@ void TerrainSurfaceCache::get(
 	rb->programParams->endParameters(renderContext);
 	renderContext->enqueue(rb);
 
-	auto te = renderContext->alloc< render::TargetEndRenderBlock >("Terrain surface, end");
+	auto te = renderContext->alloc< render::TargetEndRenderBlock >(L"Terrain surface, end");
 	renderContext->enqueue(te);
 
 	m_clearCache = false;

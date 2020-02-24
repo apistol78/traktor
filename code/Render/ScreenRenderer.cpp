@@ -77,7 +77,7 @@ void ScreenRenderer::draw(IRenderView* renderView, Shader* shader)
 
 void ScreenRenderer::draw(RenderContext* renderContext, IProgram* program, ProgramParameters* programParams)
 {
-	auto rb = renderContext->alloc< SimpleRenderBlock >(T_FILE_LINE);
+	auto rb = renderContext->alloc< SimpleRenderBlock >(T_FILE_LINE_W);
 	rb->program = program;
 	rb->programParams = programParams;
 	rb->indexBuffer = nullptr;

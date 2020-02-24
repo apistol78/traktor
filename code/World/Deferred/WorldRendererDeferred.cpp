@@ -16,6 +16,7 @@
 #include "Render/Image2/ImageGraphContext.h"
 #include "Render/Image2/ImageGraphData.h"
 #include "Resource/IResourceManager.h"
+#include "World/Entity.h"
 #include "World/IrradianceGrid.h"
 #include "World/WorldBuildContext.h"
 #include "World/WorldGatherContext.h"
@@ -23,7 +24,6 @@
 #include "World/Deferred/LightRendererDeferred.h"
 #include "World/Deferred/WorldRendererDeferred.h"
 #include "World/Deferred/WorldRenderPassDeferred.h"
-#include "World/Entity/GroupEntity.h"
 #include "World/SMProj/UniformShadowProjection.h"
 
 namespace traktor
@@ -378,7 +378,6 @@ bool WorldRendererDeferred::create(
 	m_slicePositions[m_shadowSettings.cascadingSlices] = m_shadowSettings.farZ;
 
 	m_entityRenderers = desc.entityRenderers;
-	m_rootEntity = new GroupEntity();
 
 	// Create screen renderer.
 	m_screenRenderer = new render::ScreenRenderer();
@@ -403,13 +402,9 @@ void WorldRendererDeferred::destroy()
 	m_irradianceGrid.clear();
 }
 
-void WorldRendererDeferred::attach(Entity* entity)
-{
-	m_rootEntity->addEntity(entity);
-}
-
 void WorldRendererDeferred::setup(
 	const WorldRenderView& worldRenderView,
+	const Entity* rootEntity,
 	render::RenderGraph& renderGraph,
 	render::handle_t outputTargetSetId
 )
@@ -418,7 +413,7 @@ void WorldRendererDeferred::setup(
 
 	// Gather active lights.
 	m_lights.resize(0);
-	WorldGatherContext(m_entityRenderers, m_rootEntity).gather(m_rootEntity, m_lights);
+	WorldGatherContext(m_entityRenderers, rootEntity).gather(rootEntity, m_lights);
 	if (m_lights.size() > c_maxLightCount)
 		m_lights.resize(c_maxLightCount);
 
@@ -475,46 +470,64 @@ void WorldRendererDeferred::setup(
 		}
 	}
 
+	// Add additional passes by entity renderers.
+	WorldSetupContext(m_entityRenderers, rootEntity, renderGraph).setup();
+
+	// Add passes to render graph.
 	auto gbufferTargetSetId = setupGBufferPass(
 		worldRenderView,
-		renderGraph
+		rootEntity,
+		renderGraph,
+		outputTargetSetId
 	);
 
 	auto velocityTargetSetId = setupVelocityPass(
 		worldRenderView,
+		rootEntity,
 		renderGraph,
+		outputTargetSetId,
 		gbufferTargetSetId
 	);
 
 	auto ambientOcclusionTargetSetId = setupAmbientOcclusionPass(
 		worldRenderView,
+		rootEntity,
 		renderGraph,
+		outputTargetSetId,
 		gbufferTargetSetId
 	);
 
 	auto shadowMapCascadeTargetSetId = setupCascadeShadowMapPass(
 		worldRenderView,
+		rootEntity,
 		renderGraph,
+		outputTargetSetId,
 		lightCascadeIndex,
 		lightShaderData
 	);
 
 	auto shadowMapAtlasTargetSetId = setupAtlasShadowMapPass(
 		worldRenderView,
+		rootEntity,
 		renderGraph,
+		outputTargetSetId,
 		lightAtlasIndices,
 		lightShaderData
 	);
 
 	setupTileDataPass(
 		worldRenderView,
+		rootEntity,
 		renderGraph,
+		outputTargetSetId,
 		tileShaderData
 	);
 
 	auto shadowMaskTargetSetId = setupShadowMaskPass(
 		worldRenderView,
+		rootEntity,
 		renderGraph,
+		outputTargetSetId,
 		gbufferTargetSetId,
 		shadowMapCascadeTargetSetId,
 		lightCascadeIndex
@@ -522,14 +535,18 @@ void WorldRendererDeferred::setup(
 
 	auto reflectionsTargetSetId = setupReflectionsPass(
 		worldRenderView,
+		rootEntity,
 		renderGraph,
+		outputTargetSetId,
 		gbufferTargetSetId,
 		0 // visualTargetSetId
 	);
 
 	auto visualTargetSetId = setupVisualPass(
 		worldRenderView,
+		rootEntity,
 		renderGraph,
+		outputTargetSetId,
 		gbufferTargetSetId,
 		ambientOcclusionTargetSetId,
 		reflectionsTargetSetId,
@@ -540,6 +557,7 @@ void WorldRendererDeferred::setup(
 
 	setupProcessPass(
 		worldRenderView,
+		rootEntity,
 		renderGraph,
 		outputTargetSetId,
 		gbufferTargetSetId,
@@ -547,22 +565,14 @@ void WorldRendererDeferred::setup(
 		visualTargetSetId
 	);
 
-	// Add additional passes by entity renderers.
-	WorldSetupContext(m_entityRenderers, m_rootEntity, renderGraph).setup();
-
-	// Add cleanup pass to remove attached entities.
-	Ref< render::RenderPass > rp = new render::RenderPass(L"Cleanup");
-	rp->addBuild([=](const render::RenderGraph&, render::RenderContext*) {
-		m_rootEntity->removeAllEntities();
-	});
-	renderGraph.addPass(rp);
-
 	m_count++;
 }
 
 render::handle_t WorldRendererDeferred::setupGBufferPass(
 	const WorldRenderView& worldRenderView,
-	render::RenderGraph& renderGraph
+	const Entity* rootEntity,
+	render::RenderGraph& renderGraph,
+	render::handle_t outputTargetSetId
 ) const
 {
 	const float clearZ = m_settings.viewFarZ;
@@ -576,9 +586,9 @@ render::handle_t WorldRendererDeferred::setupGBufferPass(
 	rgtd.targets[1].colorFormat = render::TfR16G16F;	// Normals (RG)
 	rgtd.targets[2].colorFormat = render::TfR11G11B10F;	// Metalness (R), Roughness (G), Specular (B)
 	rgtd.targets[3].colorFormat = render::TfR11G11B10F;	// Surface color (RGB)
-	rgtd.screenWidthDenom = 1;
-	rgtd.screenHeightDenom = 1;
-	auto gbufferTargetSetId = renderGraph.addTargetSet(rgtd, m_sharedDepthStencil);
+	rgtd.referenceWidthDenom = 1;
+	rgtd.referenceHeightDenom = 1;
+	auto gbufferTargetSetId = renderGraph.addTargetSet(rgtd, m_sharedDepthStencil, outputTargetSetId);
 
 	// Add GBuffer render pass.
 	Ref< render::RenderPass > rp = new render::RenderPass(L"GBuffer");
@@ -597,7 +607,7 @@ render::handle_t WorldRendererDeferred::setupGBufferPass(
 		{
 			WorldBuildContext wc(
 				m_entityRenderers,
-				m_rootEntity,
+				rootEntity,
 				renderContext
 			);
 
@@ -618,7 +628,7 @@ render::handle_t WorldRendererDeferred::setupGBufferPass(
 			);
 
 			T_ASSERT(!renderContext->havePendingDraws());
-			wc.build(worldRenderView, gbufferPass, m_rootEntity);
+			wc.build(worldRenderView, gbufferPass, rootEntity);
 			wc.flush(worldRenderView, gbufferPass);
 			renderContext->merge(render::RpAll);
 		}
@@ -630,7 +640,9 @@ render::handle_t WorldRendererDeferred::setupGBufferPass(
 
 render::handle_t WorldRendererDeferred::setupVelocityPass(
 	const WorldRenderView& worldRenderView,
+	const Entity* rootEntity,
 	render::RenderGraph& renderGraph,
+	render::handle_t outputTargetSetId,
 	render::handle_t gbufferTargetSetId
 ) const
 {
@@ -643,9 +655,9 @@ render::handle_t WorldRendererDeferred::setupVelocityPass(
 	rgtd.createDepthStencil = false;
 	rgtd.usingPrimaryDepthStencil = (m_sharedDepthStencil == nullptr) ? true : false;
 	rgtd.targets[0].colorFormat = render::TfR16G16F;
-	rgtd.screenWidthDenom = 1;
-	rgtd.screenHeightDenom = 1;
-	auto velocityTargetSetId = renderGraph.addTargetSet(rgtd, m_sharedDepthStencil);
+	rgtd.referenceWidthDenom = 1;
+	rgtd.referenceHeightDenom = 1;
+	auto velocityTargetSetId = renderGraph.addTargetSet(rgtd, m_sharedDepthStencil, outputTargetSetId);
 
 	// Add Velocity render pass.
 	Ref< render::RenderPass > rp = new render::RenderPass(L"Velocity");
@@ -664,7 +676,7 @@ render::handle_t WorldRendererDeferred::setupVelocityPass(
 		{
 			WorldBuildContext wc(
 				m_entityRenderers,
-				m_rootEntity,
+				rootEntity,
 				renderContext
 			);
 
@@ -684,7 +696,7 @@ render::handle_t WorldRendererDeferred::setupVelocityPass(
 				false
 			);
 
-			wc.build(worldRenderView, velocityPass, m_rootEntity);
+			wc.build(worldRenderView, velocityPass, rootEntity);
 			wc.flush(worldRenderView, velocityPass);
 			renderContext->merge(render::RpAll);
 		}
@@ -696,7 +708,9 @@ render::handle_t WorldRendererDeferred::setupVelocityPass(
 
 render::handle_t WorldRendererDeferred::setupAmbientOcclusionPass(
 	const WorldRenderView& worldRenderView,
+	const Entity* rootEntity,
 	render::RenderGraph& renderGraph,
+	render::handle_t outputTargetSetId,
 	render::handle_t gbufferTargetSetId
 ) const
 {
@@ -706,9 +720,9 @@ render::handle_t WorldRendererDeferred::setupAmbientOcclusionPass(
 	rgtd.createDepthStencil = false;
 	rgtd.usingPrimaryDepthStencil = false;
 	rgtd.targets[0].colorFormat = render::TfR8;			// Ambient occlusion (R)
-	rgtd.screenWidthDenom = 1;
-	rgtd.screenHeightDenom = 1;
-	auto ambientOcclusionTargetSetId = renderGraph.addTargetSet(rgtd, m_sharedDepthStencil);
+	rgtd.referenceWidthDenom = 1;
+	rgtd.referenceHeightDenom = 1;
+	auto ambientOcclusionTargetSetId = renderGraph.addTargetSet(rgtd, m_sharedDepthStencil, outputTargetSetId);
 
 	// Add ambient occlusion render pass.
 	Ref< render::RenderPass > rp = new render::RenderPass(L"Ambient occlusion");
@@ -739,7 +753,9 @@ render::handle_t WorldRendererDeferred::setupAmbientOcclusionPass(
 
 render::handle_t WorldRendererDeferred::setupCascadeShadowMapPass(
 	const WorldRenderView& worldRenderView,
+	const Entity* rootEntity,
 	render::RenderGraph& renderGraph,
+	render::handle_t outputTargetSetId,
 	int32_t lightCascadeIndex,
 	LightShaderData* lightShaderData
 ) const
@@ -778,7 +794,7 @@ render::handle_t WorldRendererDeferred::setupCascadeShadowMapPass(
 		{
 			WorldBuildContext wc(
 				m_entityRenderers,
-				m_rootEntity,
+				rootEntity,
 				renderContext
 			);
 
@@ -854,7 +870,7 @@ render::handle_t WorldRendererDeferred::setupCascadeShadowMapPass(
 				);
 
 				T_ASSERT(!renderContext->havePendingDraws());
-				wc.build(shadowRenderView, shadowPass, m_rootEntity);
+				wc.build(shadowRenderView, shadowPass, rootEntity);
 				wc.flush(shadowRenderView, shadowPass);
 				renderContext->merge(render::RpAll);
 			}
@@ -867,7 +883,9 @@ render::handle_t WorldRendererDeferred::setupCascadeShadowMapPass(
 
 render::handle_t WorldRendererDeferred::setupAtlasShadowMapPass(
 	const WorldRenderView& worldRenderView,
+	const Entity* rootEntity,
 	render::RenderGraph& renderGraph,
+	render::handle_t outputTargetSetId,
 	const StaticVector< int32_t, 16 >& lightAtlasIndices,
 	LightShaderData* lightShaderData
 ) const
@@ -908,7 +926,7 @@ render::handle_t WorldRendererDeferred::setupAtlasShadowMapPass(
 			{
 				WorldBuildContext wc(
 					m_entityRenderers,
-					m_rootEntity,
+					rootEntity,
 					renderContext
 				);
 
@@ -984,7 +1002,7 @@ render::handle_t WorldRendererDeferred::setupAtlasShadowMapPass(
 				);
 
 				T_ASSERT(!renderContext->havePendingDraws());
-				wc.build(shadowRenderView, shadowPass, m_rootEntity);
+				wc.build(shadowRenderView, shadowPass, rootEntity);
 				wc.flush(shadowRenderView, shadowPass);
 				renderContext->merge(render::RpAll);
 
@@ -1016,7 +1034,9 @@ render::handle_t WorldRendererDeferred::setupAtlasShadowMapPass(
 
 void WorldRendererDeferred::setupTileDataPass(
 	const WorldRenderView& worldRenderView,
+	const Entity* rootEntity,
 	render::RenderGraph& renderGraph,
+	render::handle_t outputTargetSetId,
 	TileShaderData* tileShaderData
 ) const
 {
@@ -1085,7 +1105,9 @@ void WorldRendererDeferred::setupTileDataPass(
 
 render::handle_t WorldRendererDeferred::setupShadowMaskPass(
 	const WorldRenderView& worldRenderView,
+	const Entity* rootEntity,
 	render::RenderGraph& renderGraph,
+	render::handle_t outputTargetSetId,
 	render::handle_t gbufferTargetSetId,
 	render::handle_t shadowMapCascadeTargetSetId,
 	int32_t lightCascadeIndex
@@ -1111,9 +1133,9 @@ render::handle_t WorldRendererDeferred::setupShadowMaskPass(
 	rgtd.usingPrimaryDepthStencil = (m_sharedDepthStencil == nullptr) ? true : false;
 	rgtd.ignoreStencil = true;
 	rgtd.targets[0].colorFormat = render::TfR8;
-	rgtd.screenWidthDenom = m_shadowSettings.maskDenominator;
-	rgtd.screenHeightDenom = m_shadowSettings.maskDenominator;
-	auto shadowMaskTargetSetId = renderGraph.addTargetSet(rgtd, m_sharedDepthStencil);
+	rgtd.referenceWidthDenom = m_shadowSettings.maskDenominator;
+	rgtd.referenceHeightDenom = m_shadowSettings.maskDenominator;
+	auto shadowMaskTargetSetId = renderGraph.addTargetSet(rgtd, m_sharedDepthStencil, outputTargetSetId);
 
 	// Add screen space shadow mask render pass.
 	Ref< render::RenderPass > rp = new render::RenderPass(L"Shadow mask");
@@ -1183,7 +1205,9 @@ render::handle_t WorldRendererDeferred::setupShadowMaskPass(
 
 render::handle_t WorldRendererDeferred::setupReflectionsPass(
 	const WorldRenderView& worldRenderView,
+	const Entity* rootEntity,
 	render::RenderGraph& renderGraph,
+	render::handle_t outputTargetSetId,
 	render::handle_t gbufferTargetSetId,
 	render::handle_t visualTargetSetId
 ) const
@@ -1199,14 +1223,14 @@ render::handle_t WorldRendererDeferred::setupReflectionsPass(
 	rgtd.ignoreStencil = true;
 #if !defined(__ANDROID__) && !defined(__IOS__)
 	rgtd.targets[0].colorFormat = render::TfR16G16B16A16F;
-	rgtd.screenWidthDenom = 1;
-	rgtd.screenHeightDenom = 1;
+	rgtd.referenceWidthDenom = 1;
+	rgtd.referenceHeightDenom = 1;
 #else
 	rgtd.targets[0].colorFormat = render::TfR11G11B10F;
-	rgtd.screenWidthDenom = 2;
-	rgtd.screenHeightDenom = 2;
+	rgtd.referenceWidthDenom = 2;
+	rgtd.referenceHeightDenom = 2;
 #endif
-	auto reflectionsTargetSetId = renderGraph.addTargetSet(rgtd, m_sharedDepthStencil);
+	auto reflectionsTargetSetId = renderGraph.addTargetSet(rgtd, m_sharedDepthStencil, outputTargetSetId);
 
 	// Add Reflections render pass.
 	Ref< render::RenderPass > rp = new render::RenderPass(L"Reflections");
@@ -1226,7 +1250,7 @@ render::handle_t WorldRendererDeferred::setupReflectionsPass(
 		{
 			WorldBuildContext wc(
 				m_entityRenderers,
-				m_rootEntity,
+				rootEntity,
 				renderContext
 			);
 
@@ -1253,7 +1277,7 @@ render::handle_t WorldRendererDeferred::setupReflectionsPass(
 			);
 
 			T_ASSERT(!renderContext->havePendingDraws());
-			wc.build(worldRenderView, reflectionsPass, m_rootEntity);
+			wc.build(worldRenderView, reflectionsPass, rootEntity);
 			wc.flush(worldRenderView, reflectionsPass);
 			renderContext->merge(render::RpAll);
 
@@ -1281,7 +1305,9 @@ render::handle_t WorldRendererDeferred::setupReflectionsPass(
 
 render::handle_t WorldRendererDeferred::setupVisualPass(
 	const WorldRenderView& worldRenderView,
+	const Entity* rootEntity,
 	render::RenderGraph& renderGraph,
+	render::handle_t outputTargetSetId,
 	render::handle_t gbufferTargetSetId,
 	render::handle_t ambientOcclusionTargetSetId,
 	render::handle_t reflectionsTargetSetId,
@@ -1299,9 +1325,9 @@ render::handle_t WorldRendererDeferred::setupVisualPass(
 	rgtd.createDepthStencil = false;
 	rgtd.usingPrimaryDepthStencil = (m_sharedDepthStencil == nullptr) ? true : false;
 	rgtd.targets[0].colorFormat = render::TfR11G11B10F;
-	rgtd.screenWidthDenom = 1;
-	rgtd.screenHeightDenom = 1;
-	auto visualTargetSetId = renderGraph.addTargetSet(rgtd, m_sharedDepthStencil);
+	rgtd.referenceWidthDenom = 1;
+	rgtd.referenceHeightDenom = 1;
+	auto visualTargetSetId = renderGraph.addTargetSet(rgtd, m_sharedDepthStencil, outputTargetSetId);
 
 	// Add visual[0] render pass.
 	Ref< render::RenderPass > rp = new render::RenderPass(L"Visual");
@@ -1325,7 +1351,7 @@ render::handle_t WorldRendererDeferred::setupVisualPass(
 		{
 			WorldBuildContext wc(
 				m_entityRenderers,
-				m_rootEntity,
+				rootEntity,
 				renderContext
 			);
 
@@ -1371,7 +1397,7 @@ render::handle_t WorldRendererDeferred::setupVisualPass(
 			);
 
 			T_ASSERT(!renderContext->havePendingDraws());
-			wc.build(worldRenderView, irradiancePass, m_rootEntity);
+			wc.build(worldRenderView, irradiancePass, rootEntity);
 			wc.flush(worldRenderView, irradiancePass);
 			renderContext->merge(render::RpAll);
 
@@ -1422,7 +1448,7 @@ render::handle_t WorldRendererDeferred::setupVisualPass(
 			);
 
 			T_ASSERT(!renderContext->havePendingDraws());
-			wc.build(worldRenderView, deferredColorPass, m_rootEntity);
+			wc.build(worldRenderView, deferredColorPass, rootEntity);
 			wc.flush(worldRenderView, deferredColorPass);
 			renderContext->merge(render::RpAll);
 		}
@@ -1434,6 +1460,7 @@ render::handle_t WorldRendererDeferred::setupVisualPass(
 
 void WorldRendererDeferred::setupProcessPass(
 	const WorldRenderView& worldRenderView,
+	const Entity* rootEntity,
 	render::RenderGraph& renderGraph,
 	render::handle_t outputTargetSetId,
 	render::handle_t gbufferTargetSetId,
@@ -1482,9 +1509,9 @@ void WorldRendererDeferred::setupProcessPass(
 			rgtd.createDepthStencil = false;
 			rgtd.usingPrimaryDepthStencil = (m_sharedDepthStencil == nullptr) ? true : false;
 			rgtd.targets[0].colorFormat = render::TfR11G11B10F;
-			rgtd.screenWidthDenom = 1;
-			rgtd.screenHeightDenom = 1;
-			intermediateTargetSetId = renderGraph.addTargetSet(rgtd, m_sharedDepthStencil);
+			rgtd.referenceWidthDenom = 1;
+			rgtd.referenceHeightDenom = 1;
+			intermediateTargetSetId = renderGraph.addTargetSet(rgtd, m_sharedDepthStencil, outputTargetSetId);
 
 			rp->setOutput(intermediateTargetSetId);
 		}

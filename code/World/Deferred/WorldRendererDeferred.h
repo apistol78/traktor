@@ -30,7 +30,6 @@ class StructBuffer;
 	namespace world
 	{
 
-class GroupEntity;
 class IrradianceGrid;
 class LightRendererDeferred;
 class WorldEntityRenderers;
@@ -64,10 +63,9 @@ public:
 
 	virtual void destroy() override final;
 
-	virtual void attach(Entity* entity) override final;
-
 	virtual void setup(
 		const WorldRenderView& worldRenderView,
+		const Entity* rootEntity,
 		render::RenderGraph& renderGraph,
 		render::handle_t outputTargetSetId
 	) override final;
@@ -112,7 +110,6 @@ private:
 	resource::Proxy< IrradianceGrid > m_irradianceGrid;
 	
 	Ref< WorldEntityRenderers > m_entityRenderers;
-	Ref< GroupEntity > m_rootEntity;
 	AlignedVector< Frame > m_frames;
 	AlignedVector< Light > m_lights;
 
@@ -124,44 +121,58 @@ private:
 
 	render::handle_t setupGBufferPass(
 		const WorldRenderView& worldRenderView,
-		render::RenderGraph& renderGraph
+		const Entity* rootEntity,
+		render::RenderGraph& renderGraph,
+		render::handle_t outputTargetSetId
 	) const;
 
 	render::handle_t setupVelocityPass(
 		const WorldRenderView& worldRenderView,
+		const Entity* rootEntity,
 		render::RenderGraph& renderGraph,
+		render::handle_t outputTargetSetId,
 		render::handle_t gbufferTargetSetId
 	) const;
 
 	render::handle_t setupAmbientOcclusionPass(
 		const WorldRenderView& worldRenderView,
+		const Entity* rootEntity,
 		render::RenderGraph& renderGraph,
+		render::handle_t outputTargetSetId,
 		render::handle_t gbufferTargetSetId
 	) const;
 
 	render::handle_t setupCascadeShadowMapPass(
 		const WorldRenderView& worldRenderView,
+		const Entity* rootEntity,
 		render::RenderGraph& renderGraph,
+		render::handle_t outputTargetSetId,
 		int32_t lightCascadeIndex,
 		LightShaderData* lightShaderData
 	) const;
 
 	render::handle_t setupAtlasShadowMapPass(
 		const WorldRenderView& worldRenderView,
+		const Entity* rootEntity,
 		render::RenderGraph& renderGraph,
+		render::handle_t outputTargetSetId,
 		const StaticVector< int32_t, 16 >& lightAtlasIndices,
 		LightShaderData* lightShaderData
 	) const;
 
 	void setupTileDataPass(
 		const WorldRenderView& worldRenderView,
+		const Entity* rootEntity,
 		render::RenderGraph& renderGraph,
+		render::handle_t outputTargetSetId,
 		TileShaderData* tileShaderData
 	) const;
 
 	render::handle_t setupShadowMaskPass(
 		const WorldRenderView& worldRenderView,
+		const Entity* rootEntity,
 		render::RenderGraph& renderGraph,
+		render::handle_t outputTargetSetId,
 		render::handle_t gbufferTargetSetId,
 		render::handle_t shadowMapCascadeTargetSetId,
 		int32_t lightCascadeIndex
@@ -169,14 +180,18 @@ private:
 
 	render::handle_t setupReflectionsPass(
 		const WorldRenderView& worldRenderView,
+		const Entity* rootEntity,
 		render::RenderGraph& renderGraph,
+		render::handle_t outputTargetSetId,
 		render::handle_t gbufferTargetSetId,
 		render::handle_t visualTargetSetId
 	) const;
 
 	render::handle_t setupVisualPass(
 		const WorldRenderView& worldRenderView,
+		const Entity* rootEntity,
 		render::RenderGraph& renderGraph,
+		render::handle_t outputTargetSetId,
 		render::handle_t gbufferTargetSetId,
 		render::handle_t ambientOcclusionTargetSetId,
 		render::handle_t reflectionsTargetSetId,
@@ -187,6 +202,7 @@ private:
 
 	void setupProcessPass(
 		const WorldRenderView& worldRenderView,
+		const Entity* rootEntity,
 		render::RenderGraph& renderGraph,
 		render::handle_t outputTargetSetId,
 		render::handle_t gbufferTargetSetId,

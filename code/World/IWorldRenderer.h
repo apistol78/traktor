@@ -106,20 +106,16 @@ public:
 	/*! \name Build steps. */
 	//@{
 
-	/*! Attach entity to build. 
-	 *
-	 * \param entity Entity to attach to build.
-	 */
-	virtual void attach(Entity* entity) = 0;
-
 	/*! Setup render passes.
 	 *
 	 * \param worldRenderView World render view.
+	 * \param rootEntity Root entity.
 	 * \param renderGraph Setup into render graph.
 	 * \param outputTargetSetId ID of output target set.
 	 */
 	virtual void setup(
 		const WorldRenderView& worldRenderView,
+		const Entity* rootEntity,
 		render::RenderGraph& renderGraph,
 		render::handle_t outputTargetSetId
 	) = 0;

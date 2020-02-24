@@ -203,7 +203,7 @@ void TrailRenderer::flush(
 		if (!program)
 			continue;
 
-		render::IndexedRenderBlock* renderBlock = renderContext->alloc< render::IndexedRenderBlock >("Trail");
+		render::IndexedRenderBlock* renderBlock = renderContext->alloc< render::IndexedRenderBlock >(L"Trail");
 
 		renderBlock->distance = -std::numeric_limits< float >::max();
 		renderBlock->program = program;

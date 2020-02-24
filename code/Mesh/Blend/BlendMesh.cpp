@@ -287,8 +287,7 @@ void BlendMesh::build(
 		if (!program)
 			continue;
 
-		render::SimpleRenderBlock* renderBlock = renderContext->alloc< render::SimpleRenderBlock >("BlendMesh");
-
+		render::SimpleRenderBlock* renderBlock = renderContext->alloc< render::SimpleRenderBlock >(L"BlendMesh");
 		renderBlock->distance = distance;
 		renderBlock->program = program;
 		renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();

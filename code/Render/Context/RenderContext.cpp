@@ -4,6 +4,7 @@
 
 #if defined(_DEBUG)
 #	include "Core/Log/Log.h"
+#	include "Core/Misc/TString.h"
 #endif
 
 namespace traktor
@@ -146,8 +147,13 @@ void RenderContext::merge(uint32_t priorities)
 
 void RenderContext::render(IRenderView* renderView) const
 {
-	for (auto renderBlock : m_renderQueue)
-		renderBlock->render(renderView);
+	for (size_t i = 0; i < m_renderQueue.size(); ++i)
+	{
+#if defined(_DEBUG)
+		log::info << (int32_t)i << L". \"" << m_renderQueue[i]->name << L"\" " << mbstows(typeid(*m_renderQueue[i]).name()) << Endl;
+#endif
+		m_renderQueue[i]->render(renderView);
+	}
 }
 
 void RenderContext::flush()

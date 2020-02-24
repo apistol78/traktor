@@ -44,11 +44,7 @@ public:
 	/*! Allocate a aligned block of memory from context's heap. */
 	void* alloc(uint32_t blockSize, uint32_t align);
 
-	/*! Allocate object from context's heap.
-	 *
-	 * \note Object's destructor won't be called when
-	 * heap is flushed.
-	 */
+	/*! Allocate object from context's heap. */
 	template < typename ObjectType >
 	ObjectType* alloc()
 	{
@@ -58,7 +54,7 @@ public:
 
 	/*! Allocate named object from context's heap. */
 	template < typename ObjectType >
-	ObjectType* alloc(const char* const name)
+	ObjectType* alloc(const std::wstring& name)
 	{
 		ObjectType* object = alloc< ObjectType >();
 #if defined(_DEBUG)

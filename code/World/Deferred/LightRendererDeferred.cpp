@@ -129,7 +129,7 @@ void LightRendererDeferred::renderLights(
 	render::ITexture* reflectionMap
 )
 {
-	auto lrb = renderContext->alloc< render::LambdaRenderBlock >();
+	auto lrb = renderContext->alloc< render::LambdaRenderBlock >(L"Lights");
 	lrb->lambda = [=](render::IRenderView* renderView)
 	{
 		Scalar p11 = projection.get(0, 0);
@@ -179,7 +179,7 @@ void LightRendererDeferred::renderReflections(
 	render::ITexture* miscMap
 )
 {
-	auto lrb = renderContext->alloc< render::LambdaRenderBlock >();
+	auto lrb = renderContext->alloc< render::LambdaRenderBlock >(L"Reflections");
 	lrb->lambda = [=](render::IRenderView* renderView)
 	{
 		Scalar p11 = projection.get(0, 0);
@@ -210,7 +210,7 @@ void LightRendererDeferred::renderFog(
 	render::ITexture* colorMap
 )
 {
-	auto lrb = renderContext->alloc< render::LambdaRenderBlock >();
+	auto lrb = renderContext->alloc< render::LambdaRenderBlock >(L"Fog");
 	lrb->lambda = [=](render::IRenderView* renderView)
 	{
 		Scalar p11 = projection.get(0, 0);

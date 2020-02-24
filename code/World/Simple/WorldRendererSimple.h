@@ -40,17 +40,15 @@ public:
 
 	virtual void destroy() override final;
 
-	virtual void attach(Entity* entity) override final;
-
 	virtual void setup(
 		const WorldRenderView& worldRenderView,
+		const Entity* rootEntity,
 		render::RenderGraph& renderGraph,
 		render::handle_t outputTargetSetId
 	) override final;
 
 private:
 	Ref< WorldEntityRenderers > m_entityRenderers;
-	Ref< GroupEntity > m_rootEntity;
 };
 
 	}
