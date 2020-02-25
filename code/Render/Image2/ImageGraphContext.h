@@ -64,15 +64,11 @@ struct ImageGraphParams
 class T_DLLCLASS ImageGraphContext
 {
 public:
-	struct TextureTargetSet
-	{
-		handle_t targetSetId;
-		int32_t colorIndex;
-	};
-
     explicit ImageGraphContext(ScreenRenderer* screenRenderer);
 
     ScreenRenderer* getScreenRenderer() const { return m_screenRenderer; }
+
+    void associateTexture(handle_t textureId, ITexture* texture);
 
 	void associateTextureTargetSet(handle_t textureId, handle_t targetSetId, int32_t colorIndex);
 
@@ -87,6 +83,13 @@ public:
     const ImageGraphParams& getParams() const { return m_params; }
 
 private:
+	struct TextureTargetSet
+	{
+		handle_t targetSetId;
+		int32_t colorIndex;
+        ITexture* texture;
+	};
+
     Ref< ScreenRenderer > m_screenRenderer;
 	SmallMap< handle_t, TextureTargetSet > m_textureTargetSet;
     ImageGraphParams m_params;

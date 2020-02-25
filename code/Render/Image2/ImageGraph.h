@@ -24,6 +24,7 @@ class ImageGraphContext;
 class ImagePass;
 class ImageStep;
 class ImageTargetSet;
+class ImageTexture;
 class ITexture;
 class RenderGraph;
 class RenderPass;
@@ -47,6 +48,7 @@ public:
 private:
     friend class ImageGraphData;
 
+    RefArray< const ImageTexture > m_textures;
     RefArray< const ImageTargetSet > m_targetSets;
     RefArray< const ImagePass > m_passes;
     RefArray< const ImageStep > m_steps;

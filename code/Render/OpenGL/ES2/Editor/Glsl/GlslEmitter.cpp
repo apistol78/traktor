@@ -283,22 +283,22 @@ bool emitDiscard(GlslContext& cx, Discard* node)
 	// Create condition statement.
 	switch (node->getOperator())
 	{
-	case Conditional::CoLess:
+	case Discard::CoLess:
 		f << L"if (" << in->getName() << L" >= " << ref->getName() << L")" << Endl;
 		break;
-	case Conditional::CoLessEqual:
+	case Discard::CoLessEqual:
 		f << L"if (" << in->getName() << L" > " << ref->getName() << L")" << Endl;
 		break;
-	case Conditional::CoEqual:
+	case Discard::CoEqual:
 		f << L"if (" << in->getName() << L" != " << ref->getName() << L")" << Endl;
 		break;
-	case Conditional::CoNotEqual:
+	case Discard::CoNotEqual:
 		f << L"if (" << in->getName() << L" == " << ref->getName() << L")" << Endl;
 		break;
-	case Conditional::CoGreater:
+	case Discard::CoGreater:
 		f << L"if (" << in->getName() << L" <= " << ref->getName() << L")" << Endl;
 		break;
-	case Conditional::CoGreaterEqual:
+	case Discard::CoGreaterEqual:
 		f << L"if (" << in->getName() << L" < " << ref->getName() << L")" << Endl;
 		break;
 	default:

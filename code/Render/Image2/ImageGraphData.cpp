@@ -5,6 +5,7 @@
 #include "Render/Image2/ImagePassData.h"
 #include "Render/Image2/ImageStepData.h"
 #include "Render/Image2/ImageTargetSetData.h"
+#include "Render/Image2/ImageTextureData.h"
 
 namespace traktor
 {
@@ -16,6 +17,14 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ImageGraphData", 0, ImageGraphDa
 Ref< ImageGraph > ImageGraphData::createInstance(resource::IResourceManager* resourceManager, IRenderSystem* renderSystem) const
 {
     Ref< ImageGraph > instance = new ImageGraph();
+
+    for (auto textureData : m_textures)
+    {
+        Ref< const ImageTexture > texture = textureData->createInstance(resourceManager);
+        if (!texture)
+            return nullptr;
+        instance->m_textures.push_back(texture);
+    }
 
     for (auto targetSetData : m_targetSets)
     {
@@ -46,6 +55,7 @@ Ref< ImageGraph > ImageGraphData::createInstance(resource::IResourceManager* res
 
 void ImageGraphData::serialize(ISerializer& s)
 {
+    s >> MemberRefArray< ImageTextureData >(L"textures", m_textures);
     s >> MemberRefArray< ImageTargetSetData >(L"targetSets", m_targetSets);
     s >> MemberRefArray< ImagePassData >(L"passes", m_passes);
     s >> MemberRefArray< ImageStepData >(L"steps", m_steps);
