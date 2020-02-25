@@ -58,7 +58,7 @@ bool SoundEventInstance::update(const world::UpdateParams& update)
 	return true;
 }
 
-void SoundEventInstance::attach(world::IWorldRenderer* worldRenderer)
+void SoundEventInstance::gather(const std::function< void(world::Entity*) >& fn) const
 {
 }
 

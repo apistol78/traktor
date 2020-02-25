@@ -57,11 +57,11 @@ void EntityEventManager::update(const UpdateParams& update)
 	}
 }
 
-void EntityEventManager::attach(IWorldRenderer* worldRenderer)
+void EntityEventManager::gather(const std::function< void(Entity*) >& fn) const
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 	for (auto eventInstance : m_eventInstances)
-		eventInstance->attach(worldRenderer);
+		eventInstance->gather(fn);
 }
 
 void EntityEventManager::cancelAll(CancelType when)

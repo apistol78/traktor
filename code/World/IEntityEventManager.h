@@ -1,5 +1,6 @@
 #pragma once
 
+#include <functional>
 #include <string>
 #include "Core/Object.h"
 #include "Core/Math/Transform.h"
@@ -22,7 +23,6 @@ class Entity;
 class EntityEventSet;
 class IEntityEvent;
 class IEntityEventInstance;
-class IWorldRenderer;
 struct UpdateParams;
 
 /*! \brief
@@ -39,7 +39,7 @@ public:
 
 	virtual void update(const UpdateParams& update) = 0;
 
-	virtual void attach(IWorldRenderer* worldRenderer) = 0;
+	virtual void gather(const std::function< void(Entity*) >& fn) const = 0;
 
 	virtual void cancelAll(CancelType when) = 0;
 };

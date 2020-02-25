@@ -19,7 +19,7 @@ namespace traktor
 
 class IEntityEventInstance;
 
-/*! \brief
+/*!
  * \ingroup World
  */
 class T_DLLCLASS EntityEventManager : public IEntityEventManager
@@ -35,14 +35,14 @@ public:
 
 	virtual void update(const UpdateParams& update) override final;
 
-	virtual void attach(IWorldRenderer* worldRenderer) override final;
+	virtual void gather(const std::function< void(Entity*) >& fn) const override final;
 
 	virtual void cancelAll(CancelType when) override final;
 
 private:
 	uint32_t m_maxEventInstances;
 	RefArray< IEntityEventInstance > m_eventInstances;
-	Semaphore m_lock;
+	mutable Semaphore m_lock;
 };
 
 	}

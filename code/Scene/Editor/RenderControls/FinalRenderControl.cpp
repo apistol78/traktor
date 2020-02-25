@@ -28,12 +28,12 @@
 #include "Ui/Widget.h"
 #include "Ui/AspectLayout.h"
 #include "Ui/Itf/IWidget.h"
-#include "World/Entity.h"
 #include "World/IEntityEventManager.h"
 #include "World/IWorldRenderer.h"
 #include "World/WorldEntityRenderers.h"
 #include "World/WorldRenderSettings.h"
 #include "World/WorldRenderView.h"
+#include "World/Entity/GroupEntity.h"
 
 namespace traktor
 {
@@ -429,19 +429,15 @@ void FinalRenderControl::eventPaint(ui::PaintEvent* event)
 	Matrix44 projection = getProjectionTransform();
 	Matrix44 view = getViewTransform();
 
+	// Build a root entity by gathering entities from containers.
+	world::GroupEntity rootEntity;
+	m_context->getEntityEventManager()->gather([&](world::Entity* entity) { rootEntity.addEntity(entity); });
+	rootEntity.addEntity(m_sceneInstance->getRootEntity());
+
 	// Setup world render passes.
 	m_worldRenderView.setTimes(scaledTime, deltaTime, 1.0f);
 	m_worldRenderView.setView(m_worldRenderView.getView(), view);
-	
-	// \fixme
-	//m_context->getEntityEventManager()->attach(m_worldRenderer);
-
-	m_worldRenderer->setup(
-		m_worldRenderView,
-		m_sceneInstance->getRootEntity(),
-		*m_renderGraph,
-		0
-	);
+	m_worldRenderer->setup(m_worldRenderView, &rootEntity, *m_renderGraph, 0);
 
 	// Validate render graph.
 	if (!m_renderGraph->validate(m_dirtySize.cx, m_dirtySize.cy))

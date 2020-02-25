@@ -62,10 +62,9 @@ bool SpawnEffectEventInstance::update(const world::UpdateParams& update)
 	return !m_effectComponent->isFinished();
 }
 
-void SpawnEffectEventInstance::attach(world::IWorldRenderer* worldRenderer)
+void SpawnEffectEventInstance::gather(const std::function< void(world::Entity*) >& fn) const
 {
-	// \fixme
-	//worldRenderer->attach(m_effectEntity);
+	fn(m_effectEntity);
 }
 
 void SpawnEffectEventInstance::cancel(world::CancelType when)

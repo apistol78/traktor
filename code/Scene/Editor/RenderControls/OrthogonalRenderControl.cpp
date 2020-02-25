@@ -33,6 +33,7 @@
 #include "World/WorldEntityRenderers.h"
 #include "World/WorldRenderSettings.h"
 #include "World/WorldRenderView.h"
+#include "World/Entity/GroupEntity.h"
 
 namespace traktor
 {
@@ -490,6 +491,11 @@ void OrthogonalRenderControl::eventPaint(ui::PaintEvent* event)
 	float height = m_magnification / ratio;
 	Matrix44 view = getViewTransform();
 
+	// Build a root entity by gathering entities from containers.
+	world::GroupEntity rootEntity;
+	m_context->getEntityEventManager()->gather([&](world::Entity* entity) { rootEntity.addEntity(entity); });
+	rootEntity.addEntity(sceneInstance->getRootEntity());
+
 	// Setup world render passes.
 	const world::WorldRenderSettings* worldRenderSettings = sceneInstance->getWorldRenderSettings();
 	world::WorldRenderView worldRenderView;
@@ -502,16 +508,7 @@ void OrthogonalRenderControl::eventPaint(ui::PaintEvent* event)
 	);
 	worldRenderView.setTimes(scaledTime, deltaTime, 1.0f);
 	worldRenderView.setView(view, view);
-
-	// \fixme
-	//m_context->getEntityEventManager()->attach(m_worldRenderer);
-
-	m_worldRenderer->setup(
-		worldRenderView,
-		sceneInstance->getRootEntity(),
-		*m_renderGraph,
-		0
-	);
+	m_worldRenderer->setup(worldRenderView, &rootEntity, *m_renderGraph, 0);
 
 	// Validate render graph.
 	if (!m_renderGraph->validate(m_dirtySize.cx, m_dirtySize.cy))

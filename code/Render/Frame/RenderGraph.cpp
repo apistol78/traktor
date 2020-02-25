@@ -39,6 +39,16 @@ handle_t RenderGraph::addTargetSet(
 	target.targetSetDesc = targetSetDesc;
 	target.sharedDepthStencilTargetSet = sharedDepthStencilTargetSet;
 	target.sizeReferenceTargetSetId = sizeReferenceTargetSetId;
+	target.transient = true;
+	return targetSetId;
+}
+
+handle_t RenderGraph::addTargetSet(IRenderTargetSet* targetSet)
+{
+	handle_t targetSetId = m_nextTargetSetId++;
+	auto& target = m_targets[targetSetId];
+	target.rts = targetSet;
+	target.transient = false;
 	return targetSetId;
 }
 
@@ -61,6 +71,9 @@ bool RenderGraph::validate(int32_t width, int32_t height)
 	// Acquire targets.
 	for (auto& tm : m_targets)
 	{
+		if (!tm.second.transient)
+			continue;
+
 		int32_t referenceWidth = width;
 		int32_t referenceHeight = height;
 
@@ -175,10 +188,10 @@ bool RenderGraph::build(RenderContext* renderContext)
 
 	T_FATAL_ASSERT(!renderContext->havePendingDraws());
 
-	// Release targets.
+	// Release transient targets.
 	for (auto& tm : m_targets)
 	{
-		if (tm.second.rts)
+		if (tm.second.transient && tm.second.rts)
 		{
 			m_pool->release(tm.second.rts);
 			tm.second.rts = nullptr;

@@ -69,7 +69,7 @@ bool EnvelopeFeedbackEventInstance::update(const world::UpdateParams& update)
 	return m_time < duration;
 }
 
-void EnvelopeFeedbackEventInstance::attach(world::IWorldRenderer* worldRenderer)
+void EnvelopeFeedbackEventInstance::gather(const std::function< void(world::Entity*) >& fn) const
 {
 }
 
