@@ -1,3 +1,4 @@
+#include <algorithm>
 #include "Core/Io/FileOutputStream.h"
 #include "Core/Io/StringReader.h"
 #include "Core/Io/Utf8Encoding.h"

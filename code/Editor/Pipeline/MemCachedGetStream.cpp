@@ -1,12 +1,13 @@
+#include <algorithm>
 #include <cstring>
 #include <sstream>
+#include "Core/Log/Log.h"
+#include "Core/Misc/Split.h"
+#include "Core/Misc/String.h"
+#include "Core/Misc/TString.h"
+#include "Core/Thread/Acquire.h"
 #include "Editor/Pipeline/MemCachedGetStream.h"
 #include "Editor/Pipeline/MemCachedProto.h"
-#include "Core/Thread/Acquire.h"
-#include "Core/Misc/TString.h"
-#include "Core/Misc/String.h"
-#include "Core/Misc/Split.h"
-#include "Core/Log/Log.h"
 
 namespace traktor
 {
