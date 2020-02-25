@@ -12,11 +12,20 @@ ImageGraphContext::ImageGraphContext(ScreenRenderer* screenRenderer)
 {
 }
 
+void ImageGraphContext::associateTexture(handle_t textureId, ITexture* texture)
+{
+	auto& txts = m_textureTargetSet[textureId];
+	txts.targetSetId = 0;
+	txts.colorIndex = -1;
+	txts.texture = texture;
+}
+
 void ImageGraphContext::associateTextureTargetSet(handle_t textureId, handle_t targetSetId, int32_t colorIndex)
 {
 	auto& txts = m_textureTargetSet[textureId];
 	txts.targetSetId = targetSetId;
 	txts.colorIndex = colorIndex;
+	txts.texture = nullptr;
 }
 
 void ImageGraphContext::associateTextureTargetSetDepth(handle_t textureId, handle_t targetSetId)
@@ -24,6 +33,7 @@ void ImageGraphContext::associateTextureTargetSetDepth(handle_t textureId, handl
 	auto& txts = m_textureTargetSet[textureId];
 	txts.targetSetId = targetSetId;
 	txts.colorIndex = -1;
+	txts.texture = nullptr;
 }
 
 handle_t ImageGraphContext::findTextureTargetSetId(handle_t textureId) const
@@ -40,6 +50,9 @@ ITexture* ImageGraphContext::findTexture(const RenderGraph& renderGraph, handle_
 	auto it = m_textureTargetSet.find(textureId);
 	if (it == m_textureTargetSet.end())
 		return nullptr;
+
+	if (it->second.texture)
+		return it->second.texture;
 
 	auto targetSet = renderGraph.getTargetSet(it->second.targetSetId);
 	if (!targetSet)

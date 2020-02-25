@@ -28,6 +28,7 @@ class ImageGraph;
 class ImagePassData;
 class ImageStepData;
 class ImageTargetSetData;
+class ImageTextureData;
 class IRenderSystem;
 
 /*!
@@ -45,6 +46,7 @@ public:
 private:
     friend class ImageGraphPipeline;
 
+    RefArray< ImageTextureData > m_textures;
     RefArray< ImageTargetSetData > m_targetSets;
     RefArray< ImagePassData > m_passes;
     RefArray< ImageStepData > m_steps;

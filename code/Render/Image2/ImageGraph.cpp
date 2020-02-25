@@ -8,6 +8,7 @@
 #include "Render/Image2/ImagePass.h"
 #include "Render/Image2/ImageStep.h"
 #include "Render/Image2/ImageTargetSet.h"
+#include "Render/Image2/ImageTexture.h"
 
 namespace traktor
 {
@@ -20,9 +21,18 @@ void ImageGraph::addPasses(RenderGraph& renderGraph, RenderPass* parentPass, con
 {
 	StaticVector< handle_t, 32 > targetSetIds;
 
-	// Copy context and append our internal targets so
+	// Copy context and append our internal textures and targets so
 	// steps can have a single method of accessing input textures.
 	ImageGraphContext context = cx;
+
+	for (int32_t i = 0; i < (int32_t)m_textures.size(); ++i)
+	{
+		context.associateTexture(
+			m_textures[i]->getTextureId(),
+			m_textures[i]->getTexture()
+		);
+	}
+
 	for (int32_t i = 0; i < (int32_t)m_targetSets.size(); ++i)
 	{
 		targetSetIds[i] = renderGraph.addTargetSet(

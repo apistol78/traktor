@@ -208,9 +208,10 @@ bool Pipeline::buildOutput(
 								break;
 
 							case svg::SptCubic:
-								{
-									// Since Spark doesn't support cubic paths we need to approximate with quadratic.
-								}
+								// Since Spark doesn't support cubic paths we need to approximate with quadratic.
+								break;
+
+							default:
 								break;
 							}
 						}

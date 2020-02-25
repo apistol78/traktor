@@ -26,9 +26,9 @@ class T_DLLCLASS ImageFormatExr : public IImageFormat
 	T_RTTI_CLASS;
 
 public:
-	virtual Ref< Image > read(IStream* stream);
+	virtual Ref< Image > read(IStream* stream) override final;
 
-	virtual bool write(IStream* stream, Image* image);
+	virtual bool write(IStream* stream, Image* image) override final;
 };
 
 	}

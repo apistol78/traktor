@@ -19,6 +19,7 @@
 #include "Render/Image2/ImageGraphData.h"
 #include "Render/Image2/ImagePassData.h"
 #include "Render/Image2/ImageTargetSetData.h"
+#include "Render/Image2/ImageTextureData.h"
 #include "Render/Image2/ShadowProjectData.h"
 #include "Render/Image2/SimpleData.h"
 
@@ -27,7 +28,7 @@ namespace traktor
 	namespace render
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ImageGraphPipeline", 1, ImageGraphPipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ImageGraphPipeline", 2, ImageGraphPipeline, editor::IPipeline)
 
 bool ImageGraphPipeline::create(const editor::IPipelineSettings* settings)
 {
@@ -134,17 +135,26 @@ bool ImageGraphPipeline::buildOutput(
 		data->m_steps
 	);
 
-	// Convert all target sets.
+	// Convert all textures and target sets.
 	for (size_t i = 1; i < nodes.size(); ++i)
 	{
-		if (auto targetSet = dynamic_type_cast< const ImgTargetSet* >(nodes[i]))
+		if (auto textureNode = dynamic_type_cast< const ImgTexture* >(nodes[i]))
+		{
+			Ref< ImageTextureData > td = new ImageTextureData();
+
+			td->m_textureId = textureNode->getId().format();
+			td->m_texture = textureNode->m_texture;
+
+			data->m_textures.push_back(td);
+		}		
+		else if (auto targetSetNode = dynamic_type_cast< const ImgTargetSet* >(nodes[i]))
 		{
 			Ref< ImageTargetSetData > tsd = new ImageTargetSetData();
 			
-			tsd->m_targetSetId = targetSet->getTargetSetId();
-			for (int32_t i = 0; i < targetSet->getTextureCount(); ++i)
-				tsd->m_textureIds[i] = targetSet->getTargetSetId() + L"/" + targetSet->getTextureId(i);
-			tsd->m_targetSetDesc = targetSet->getRenderGraphTargetSetDesc();
+			tsd->m_targetSetId = targetSetNode->getTargetSetId();
+			for (int32_t i = 0; i < targetSetNode->getTextureCount(); ++i)
+				tsd->m_textureIds[i] = targetSetNode->getTargetSetId() + L"/" + targetSetNode->getTextureId(i);
+			tsd->m_targetSetDesc = targetSetNode->getRenderGraphTargetSetDesc();
 
 			data->m_targetSets.push_back(tsd);
 		}
@@ -197,10 +207,6 @@ bool ImageGraphPipeline::buildOutput(
 			convertAssetPassToSteps(asset, pass, passData->m_steps);
 
 			data->m_passes.push_back(passData);
-		}
-		else if (auto texture = dynamic_type_cast< const ImgTexture* >(nodes[i]))
-		{
-			// \tbd Add texture reference to image graph data.
 		}
 	}
 
