@@ -1,5 +1,6 @@
 #pragma once
 
+#include <functional>
 #include "Core/Object.h"
 #include "World/WorldTypes.h"
 
@@ -16,7 +17,7 @@ namespace traktor
 	namespace world
 	{
 
-class IWorldRenderer;
+class Entity;
 
 /*! \brief
  * \ingroup World
@@ -28,7 +29,7 @@ class T_DLLCLASS IEntityEventInstance : public Object
 public:
 	virtual bool update(const UpdateParams& update) = 0;
 
-	virtual void attach(IWorldRenderer* worldRenderer) = 0;
+	virtual void gather(const std::function< void(Entity*) >& fn) const = 0;
 
 	virtual void cancel(CancelType when) = 0;
 };

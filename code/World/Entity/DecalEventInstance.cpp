@@ -36,10 +36,9 @@ bool DecalEventInstance::update(const UpdateParams& update)
 	return false;
 }
 
-void DecalEventInstance::attach(IWorldRenderer* worldRenderer)
+void DecalEventInstance::gather(const std::function< void(Entity*) >& fn) const
 {
-	// \fixme
-	//worldRenderer->attach(m_entity);
+	fn(m_entity);
 }
 
 void DecalEventInstance::cancel(CancelType when)

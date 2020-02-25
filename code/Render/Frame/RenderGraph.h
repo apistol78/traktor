@@ -61,6 +61,13 @@ public:
 		handle_t sizeReferenceTargetSetId = 0
 	);
 
+	/*! Add external target set.
+	 *
+	 * \param targetSet Render target set.
+	 * \return Opaque handle of target set.
+	 */
+	handle_t addTargetSet(IRenderTargetSet* targetSet);
+
 	/*! Get transient target set from target identifier.
 	 *
 	 * \param targetSetId Unique identifier of target.
@@ -90,6 +97,7 @@ private:
 		Ref< IRenderTargetSet > sharedDepthStencilTargetSet;
 		Ref< IRenderTargetSet > rts;
 		handle_t sizeReferenceTargetSetId;
+		bool transient;
 	};
 
 	Ref< RenderGraphTargetSetPool > m_pool;

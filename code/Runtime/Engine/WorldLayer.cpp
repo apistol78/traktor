@@ -303,9 +303,9 @@ void WorldLayer::build(const UpdateInfo& info, uint32_t frame)
 
 	//m_worldRenderer->attach(m_renderGroup);
 
-	world::IEntityEventManager* eventManager = m_environment->getWorld()->getEntityEventManager();
-	if (eventManager)
-		eventManager->attach(m_worldRenderer);
+	//world::IEntityEventManager* eventManager = m_environment->getWorld()->getEntityEventManager();
+	//if (eventManager)
+	//	eventManager->attach(m_worldRenderer);
 
 	// m_worldRenderer->build(m_worldRenderView, frame);
 

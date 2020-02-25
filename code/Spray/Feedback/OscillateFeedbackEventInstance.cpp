@@ -53,7 +53,7 @@ bool OscillateFeedbackEventInstance::update(const world::UpdateParams& update)
 	return !finished;
 }
 
-void OscillateFeedbackEventInstance::attach(world::IWorldRenderer* worldRenderer)
+void OscillateFeedbackEventInstance::gather(const std::function< void(world::Entity*) >& fn) const
 {
 }
 
