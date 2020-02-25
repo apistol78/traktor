@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <cstring>
 #include <ctime>
 #include "Core/Containers/StaticVector.h"

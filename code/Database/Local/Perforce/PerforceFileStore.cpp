@@ -46,7 +46,7 @@ bool PerforceFileStore::create(const ConnectionString& connectionString)
 	{
 		for (auto changeList : changeLists)
 		{
-			if (compareIgnoreCase< std::wstring >(changeList->getDescription(), changeListDescription) == 0)
+			if (compareIgnoreCase(changeList->getDescription(), changeListDescription) == 0)
 			{
 				m_p4changeList = changeList;
 				break;

@@ -162,7 +162,7 @@ bool FileSystem::move(const Path& destination, const Path& source, bool overwrit
 	Path destinationPath = getAbsolutePath(destination).normalized();
 	Path sourcePath = getAbsolutePath(source).normalized();
 
-	if (compareIgnoreCase< std::wstring >(destinationPath.getPathOnly(), sourcePath.getPathOnly()) == 0)
+	if (compareIgnoreCase(destinationPath.getPathOnly(), sourcePath.getPathOnly()) == 0)
 	{
 		// Actually performing a rename operation; thus call rename on volume directly
 		// which is much faster than transferring the file's content.
@@ -188,7 +188,7 @@ bool FileSystem::copy(const Path& destination, const Path& source, bool overwrit
 	Path destinationPath = getAbsolutePath(destination).normalized();
 	Path sourcePath = getAbsolutePath(source).normalized();
 
-	if (compareIgnoreCase< std::wstring >(destinationPath.getPathOnly(), sourcePath.getPathOnly()) == 0)
+	if (compareIgnoreCase(destinationPath.getPathOnly(), sourcePath.getPathOnly()) == 0)
 	{
 		// Actually performing a rename operation; thus call rename on volume directly
 		// which is much faster than transferring the file's content.

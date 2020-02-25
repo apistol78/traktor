@@ -506,7 +506,7 @@ void MoviePlayer::setGCEnable(bool gcEnable)
 void MoviePlayer::Global_getURL(CallArgs& ca)
 {
 	std::string url = ca.args[0].getString();
-	if (startsWith< std::string >(url, "FSCommand:"))
+	if (startsWith(url, "FSCommand:"))
 	{
 		m_fsCommands.push_back(std::make_pair(
 			url.substr(10),

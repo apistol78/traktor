@@ -15,7 +15,7 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.i18n.DictionaryFormatCSV", 0, Dictionar
 
 bool DictionaryFormatCSV::supportExtension(const std::wstring& extension) const
 {
-	return compareIgnoreCase< std::wstring >(extension, L"csv") == 0;
+	return compareIgnoreCase(extension, L"csv") == 0;
 }
 
 Ref< Dictionary > DictionaryFormatCSV::read(IStream* stream, int32_t keyColumn, int32_t textColumn) const

@@ -1840,7 +1840,7 @@ bool emitScript(HlslContext& cx, Script* node)
 		}
 		ss << L")";
 
-		std::wstring processedScript = replaceAll< std::wstring >(script, L"ENTRY", ss.str());
+		std::wstring processedScript = replaceAll(script, L"ENTRY", ss.str());
 		T_ASSERT(!processedScript.empty());
 
 		StringOutputStream& fs = cx.getShader().getOutputStream(HlslShader::BtScript);

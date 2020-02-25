@@ -44,7 +44,7 @@ bool Translator::translate(const std::wstring& text, std::wstring& outText) cons
 
 	if (reader.readLine(tmp) >= 0)
 	{
-		if (startsWith< std::wstring >(tmp, L"[[[\""))
+		if (startsWith(tmp, L"[[[\""))
 		{
 			tmp = tmp.substr(4);
 

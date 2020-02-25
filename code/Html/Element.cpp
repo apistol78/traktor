@@ -152,8 +152,8 @@ void Element::toString(OutputStream& os) const
 	else
 	{
 		bool permitClosed = !bool(
-			compareIgnoreCase< std::wstring >(L"script", m_name) == 0 ||
-			compareIgnoreCase< std::wstring >(L"link", m_name) == 0
+			compareIgnoreCase(L"script", m_name) == 0 ||
+			compareIgnoreCase(L"link", m_name) == 0
 		);
 		if (permitClosed)
 			os << L"/>";

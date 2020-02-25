@@ -64,7 +64,7 @@ int launch(const CommandLine& cmdLine)
 			arguments += L" ";
 
 		std::wstring argument = cmdLine.getString(i);
-		if (startsWith< std::wstring >(argument, L"\\-"))
+		if (startsWith(argument, L"\\-"))
 			argument = argument.substr(1);
 
 		arguments += argument;
@@ -305,9 +305,9 @@ int main(int argc, const char** argv)
 
 	net::Network::initialize();
 
-	if (compareIgnoreCase< std::wstring >(cmdLine.getString(0), L"deploy") == 0)
+	if (compareIgnoreCase(cmdLine.getString(0), L"deploy") == 0)
 		ret = deploy(cmdLine);
-	else if (compareIgnoreCase< std::wstring >(cmdLine.getString(0), L"launch") == 0)
+	else if (compareIgnoreCase(cmdLine.getString(0), L"launch") == 0)
 		ret = launch(cmdLine);
 	else
 		log::error << L"Unknown operation \"" << cmdLine.getString(0) << L"\"." << Endl;

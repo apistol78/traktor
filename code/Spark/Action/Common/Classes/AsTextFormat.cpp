@@ -74,13 +74,13 @@ std::string AsTextFormat::TextFormat_get_align(TextFormat* self) const
 
 void AsTextFormat::TextFormat_set_align(TextFormat* self, const std::string& value) const
 {
-	if (compareIgnoreCase< std::string >(value, "left") == 0)
+	if (compareIgnoreCase(value, "left") == 0)
 		self->setAlign(StaLeft);
-	else if (compareIgnoreCase< std::string >(value, "right") == 0)
+	else if (compareIgnoreCase(value, "right") == 0)
 		self->setAlign(StaRight);
-	else if (compareIgnoreCase< std::string >(value, "center") == 0)
+	else if (compareIgnoreCase(value, "center") == 0)
 		self->setAlign(StaCenter);
-	else if (compareIgnoreCase< std::string >(value, "justify") == 0)
+	else if (compareIgnoreCase(value, "justify") == 0)
 		self->setAlign(StaJustify);
 }
 

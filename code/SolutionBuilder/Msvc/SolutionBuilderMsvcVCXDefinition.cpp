@@ -225,7 +225,7 @@ void SolutionBuilderMsvcVCXDefinition::findDefinitions(
 			file->getSystemFiles(project->getSourcePath(), systemFiles);
 			for (std::set< Path >::iterator j = systemFiles.begin(); j != systemFiles.end(); ++j)
 			{
-				if (compareIgnoreCase< std::wstring >(j->getExtension(), L"def") == 0)
+				if (compareIgnoreCase(j->getExtension(), L"def") == 0)
 				{
 					Path relativePath;
 					FileSystem::getInstance().getRelativePath(

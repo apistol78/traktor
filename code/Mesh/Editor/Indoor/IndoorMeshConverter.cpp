@@ -76,7 +76,7 @@ void createHulls(const model::Model& model, std::map< std::wstring, Hull >& outH
 	for (AlignedVector< model::Polygon >::const_iterator i = model.getPolygons().begin(); i != model.getPolygons().end(); ++i)
 	{
 		std::wstring materialName = model.getMaterial(i->getMaterial()).getName();
-		if (!startsWith< std::wstring >(materialName, L"Hull"))
+		if (!startsWith(materialName, L"Hull"))
 			continue;
 
 		Hull& hull = outHulls[materialName];
@@ -278,7 +278,7 @@ void createSectors(
 	for (AlignedVector< model::Polygon >::const_iterator i = model.getPolygons().begin(); i != model.getPolygons().end(); ++i)
 	{
 		std::wstring materialName = model.getMaterial(i->getMaterial()).getName();
-		if (startsWith< std::wstring >(materialName, L"Hull"))
+		if (startsWith(materialName, L"Hull"))
 			continue;
 
 		polygons.push_back(Polygon());

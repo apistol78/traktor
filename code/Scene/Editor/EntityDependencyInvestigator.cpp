@@ -29,7 +29,7 @@ namespace traktor
 
 std::wstring getCategoryText(const TypeInfo* categoryType)
 {
-	std::wstring id = L"DATABASE_CATEGORY_" + replaceAll< std::wstring >(toUpper(std::wstring(categoryType->getName())), L".", L"_");
+	std::wstring id = L"DATABASE_CATEGORY_" + replaceAll(toUpper(std::wstring(categoryType->getName())), L".", L"_");
 	return i18n::Text(id, categoryType->getName());
 }
 

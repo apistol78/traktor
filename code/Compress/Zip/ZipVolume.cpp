@@ -363,7 +363,7 @@ std::wstring ZipVolume::getSystemPath(const Path& path) const
 		ss << path.getPathNameNoVolume();
 
 	std::wstring txt = ss.str();
-	if (startsWith< std::wstring >(txt, L"/"))
+	if (startsWith(txt, L"/"))
 		return txt.substr(1);
 	else
 		return txt;

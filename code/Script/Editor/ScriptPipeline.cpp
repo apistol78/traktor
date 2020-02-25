@@ -76,7 +76,7 @@ bool readScript(editor::IPipelineCommon* pipelineCommon, const std::wstring& ass
 	}
 
 	// Ensure no double character line breaks.
-	outSource = replaceAll< std::wstring >(outSource, L"\r\n", L"\n");
+	outSource = replaceAll(outSource, L"\r\n", L"\n");
 	return true;
 }
 

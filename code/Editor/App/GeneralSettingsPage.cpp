@@ -65,7 +65,7 @@ bool GeneralSettingsPage::create(ui::Container* parent, const PropertyGroup* ori
 	for (int32_t i = 0; c_styleSheets[i].id; ++i)
 	{
 		m_dropStyleSheet->add(i18n::Text(c_styleSheets[i].id));
-		if (compareIgnoreCase< std::wstring >(c_styleSheets[i].path, settings->getProperty< std::wstring >(L"Editor.StyleSheet")) == 0)
+		if (compareIgnoreCase(c_styleSheets[i].path, settings->getProperty< std::wstring >(L"Editor.StyleSheet")) == 0)
 			current = i;
 	}
 	m_dropStyleSheet->select(current);
@@ -84,7 +84,7 @@ bool GeneralSettingsPage::create(ui::Container* parent, const PropertyGroup* ori
 	ui::Application::getInstance()->getWidgetFactory()->getSystemFonts(fonts);
 
 	fonts.sort([](const std::wstring& lh, const std::wstring& rh) {
-		return compareIgnoreCase< std::wstring >(lh, rh) < 0;
+		return compareIgnoreCase(lh, rh) < 0;
 	});
 
 	for (std::list< std::wstring >::const_iterator i = fonts.begin(); i != fonts.end(); ++i)

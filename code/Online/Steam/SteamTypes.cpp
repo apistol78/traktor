@@ -118,6 +118,8 @@ std::wstring getSteamError(EResult result)
 		return L"k_EResultDiskFull";
 	case k_EResultRemoteCallFailed:
 		return L"k_EResultRemoteCallFailed";
+	default:
+		break;
 	}
 	return toString(int(result));
 }

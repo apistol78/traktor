@@ -34,7 +34,7 @@ std::wstring GlslVariable::cast(GlslType to) const
 	};
 
 	const wchar_t* f = c[m_type][to];
-	return f ? replaceAll< std::wstring >(f, L"%", m_name) : m_name;
+	return f ? replaceAll(f, L"%", m_name) : m_name;
 }
 
 std::wstring GlslVariable::castToInteger(GlslType to) const
@@ -52,7 +52,7 @@ std::wstring GlslVariable::castToInteger(GlslType to) const
 	};
 
 	const wchar_t* f = c[m_type][to];
-	return f ? replaceAll< std::wstring >(f, L"%", m_name) : m_name;
+	return f ? replaceAll(f, L"%", m_name) : m_name;
 }
 
 GlslVariable& GlslVariable::operator = (const GlslVariable& other)

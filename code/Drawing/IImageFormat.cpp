@@ -34,37 +34,37 @@ Ref< IImageFormat > IImageFormat::determineFormat(const std::wstring& extension)
 {
 	Ref< IImageFormat > imageFormat;
 
-	if (compareIgnoreCase< std::wstring >(extension, L"bmp") == 0)
+	if (compareIgnoreCase(extension, L"bmp") == 0)
 		imageFormat = new ImageFormatBmp();
-	else if (compareIgnoreCase< std::wstring >(extension, L"dds") == 0)
+	else if (compareIgnoreCase(extension, L"dds") == 0)
 		imageFormat = new ImageFormatDds();
 #if defined(DRAWING_INCLUDE_ICO)
-	else if (compareIgnoreCase< std::wstring >(extension, L"ico") == 0)
+	else if (compareIgnoreCase(extension, L"ico") == 0)
 		imageFormat = new ImageFormatIco();
 #endif
 #if defined(DRAWING_INCLUDE_PNG)
-	else if (compareIgnoreCase< std::wstring >(extension, L"png") == 0)
+	else if (compareIgnoreCase(extension, L"png") == 0)
 		imageFormat = new ImageFormatPng();
 #endif
 #if defined(DRAWING_INCLUDE_JPEG)
-	else if (compareIgnoreCase< std::wstring >(extension, L"jpg") == 0 || compareIgnoreCase< std::wstring >(extension, L"jpeg") == 0)
+	else if (compareIgnoreCase(extension, L"jpg") == 0 || compareIgnoreCase(extension, L"jpeg") == 0)
 		imageFormat = new ImageFormatJpeg();
 #endif
 #if defined(DRAWING_INCLUDE_GIF)
-	else if (compareIgnoreCase< std::wstring >(extension, L"gif") == 0)
+	else if (compareIgnoreCase(extension, L"gif") == 0)
 		imageFormat = new ImageFormatGif();
 #endif
-	else if (compareIgnoreCase< std::wstring >(extension, L"hdr") == 0)
+	else if (compareIgnoreCase(extension, L"hdr") == 0)
 		imageFormat = new ImageFormatHdr();
 #if defined(DRAWING_INCLUDE_EXR)
-	else if (compareIgnoreCase< std::wstring >(extension, L"exr") == 0)
+	else if (compareIgnoreCase(extension, L"exr") == 0)
 		imageFormat = new ImageFormatExr();
 #endif
-	else if (compareIgnoreCase< std::wstring >(extension, L"pcx") == 0)
+	else if (compareIgnoreCase(extension, L"pcx") == 0)
 		imageFormat = new ImageFormatPcx();
-	else if (compareIgnoreCase< std::wstring >(extension, L"tga") == 0)
+	else if (compareIgnoreCase(extension, L"tga") == 0)
 		imageFormat = new ImageFormatTga();
-	else if (compareIgnoreCase< std::wstring >(extension, L"tri") == 0)
+	else if (compareIgnoreCase(extension, L"tri") == 0)
 		imageFormat = new ImageFormatTri();
 
 	return imageFormat;

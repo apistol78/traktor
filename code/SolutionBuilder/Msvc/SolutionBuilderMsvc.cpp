@@ -42,7 +42,7 @@ namespace traktor
 
 std::wstring quotifyString(const std::wstring& str)
 {
-	return replaceAll< std::wstring >(str, L"\"", L"&quot;");
+	return replaceAll(str, L"\"", L"&quot;");
 }
 
 struct ProjectNamePredicate

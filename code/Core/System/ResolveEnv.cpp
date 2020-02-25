@@ -26,14 +26,14 @@ std::wstring resolveEnv(const std::wstring& s, const Environment* env)
 		{
 			if (env->has(name))
 			{
-				tmp = tmp.substr(0, s) + replaceAll< std::wstring >(env->get(name), L'\\', L'/') + tmp.substr(e + 1);
+				tmp = tmp.substr(0, s) + replaceAll(env->get(name), L'\\', L'/') + tmp.substr(e + 1);
 				continue;
 			}
 		}
 
 		if (OS::getInstance().getEnvironment(name, val))
 		{
-			tmp = tmp.substr(0, s) + replaceAll< std::wstring >(val, L'\\', L'/') + tmp.substr(e + 1);
+			tmp = tmp.substr(0, s) + replaceAll(val, L'\\', L'/') + tmp.substr(e + 1);
 			continue;
 		}
 

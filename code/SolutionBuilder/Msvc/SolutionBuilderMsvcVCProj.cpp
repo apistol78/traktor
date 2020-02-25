@@ -218,7 +218,7 @@ bool SolutionBuilderMsvcVCProj::addItem(GeneratorContext& context, Solution* sol
 				// Unable to find any custom build rule; assume it's directly "compilable" by default.
 				os << L"<File" << Endl;
 				os << IncreaseIndent;
-				os << L"RelativePath=\"..\\" << replaceAll< std::wstring >(relativePath.getPathName(), '/', '\\') << L"\"" << Endl;
+				os << L"RelativePath=\"..\\" << replaceAll(relativePath.getPathName(), '/', '\\') << L"\"" << Endl;
 				os << DecreaseIndent;
 				os << L"/>" << Endl;
 			}
@@ -227,7 +227,7 @@ bool SolutionBuilderMsvcVCProj::addItem(GeneratorContext& context, Solution* sol
 				// Create custom build rule for this type of file.
 				os << L"<File" << Endl;
 				os << IncreaseIndent;
-				os << L"RelativePath=\"..\\" << replaceAll< std::wstring >(relativePath.getPathName(), '/', '\\') << L"\"" << Endl;
+				os << L"RelativePath=\"..\\" << replaceAll(relativePath.getPathName(), '/', '\\') << L"\"" << Endl;
 				os << DecreaseIndent;
 				os << L">" << Endl;
 				os << IncreaseIndent;

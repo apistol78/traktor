@@ -208,9 +208,9 @@ int main(int argc, const char** argv)
 	bool explicitRun = cmdLine.hasOption(L"as-run");
 	bool explicitTemplate = cmdLine.hasOption(L"as-template");
 
-	if ((explicitRun && !explicitTemplate) || compareIgnoreCase< std::wstring >(fileName.getExtension(), L"run") == 0)
+	if ((explicitRun && !explicitTemplate) || compareIgnoreCase(fileName.getExtension(), L"run") == 0)
 		result = run::executeRun(text, fileName, cmdLine);
-	else if ((!explicitRun && explicitTemplate) || compareIgnoreCase< std::wstring >(fileName.getExtension(), L"template") == 0)
+	else if ((!explicitRun && explicitTemplate) || compareIgnoreCase(fileName.getExtension(), L"template") == 0)
 		result = run::executeTemplate(text, fileName, cmdLine);
 	else
 		log::error << L"Unknown file type \"" << fileName.getExtension() << L"\"; must be either \"run\" or \"template\"." << Endl;

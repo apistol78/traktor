@@ -61,7 +61,7 @@ bool SteamUser::isMemberOfGroup(uint64_t userHandle, const std::wstring& groupNa
 	{
 		CSteamID clanId = SteamFriends()->GetClanByIndex(i);
 		const char* clanName = SteamFriends()->GetClanName(clanId);
-		if (clanName != 0 && compareIgnoreCase< std::wstring >(groupName, mbstows(clanName)) == 0)
+		if (clanName != 0 && compareIgnoreCase(groupName, mbstows(clanName)) == 0)
 			return true;
 	}
 

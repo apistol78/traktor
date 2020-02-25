@@ -1907,7 +1907,7 @@ bool emitScript(GlslContext& cx, Script* node)
 
 		ss << L")" << Endl;
 
-		std::wstring processedScript = replaceAll< std::wstring >(script, L"ENTRY", ss.str());
+		std::wstring processedScript = replaceAll(script, L"ENTRY", ss.str());
 		T_ASSERT(!processedScript.empty());
 
 		auto& fs = cx.getShader().getOutputStream(GlslShader::BtScript);

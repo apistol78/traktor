@@ -128,7 +128,7 @@ void ModelFormatBvh::getExtensions(std::wstring& outDescription, std::vector< st
 
 bool ModelFormatBvh::supportFormat(const std::wstring& extension) const
 {
-	return compareIgnoreCase< std::wstring >(extension, L"bvh") == 0;
+	return compareIgnoreCase(extension, L"bvh") == 0;
 }
 
 Ref< Model > ModelFormatBvh::read(const Path& filePath, const std::function< Ref< IStream >(const Path&) >& openStream) const

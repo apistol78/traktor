@@ -22,7 +22,7 @@ void ModelFormatObj::getExtensions(std::wstring& outDescription, std::vector< st
 
 bool ModelFormatObj::supportFormat(const std::wstring& extension) const
 {
-	return compareIgnoreCase< std::wstring >(extension, L"obj") == 0;
+	return compareIgnoreCase(extension, L"obj") == 0;
 }
 
 Ref< Model > ModelFormatObj::read(const Path& filePath, const std::function< Ref< IStream >(const Path&) >& openStream) const
@@ -45,7 +45,7 @@ Ref< Model > ModelFormatObj::read(const Path& filePath, const std::function< Ref
 		if (str.empty() || str[0] == L'#')
 			continue;
 
-		if (startsWith< std::wstring >(str, L"v "))
+		if (startsWith(str, L"v "))
 		{
 			fvalues.resize(0);
 			if (Split< std::wstring, float >::any(str.substr(2), L" \t", fvalues) >= 3)
@@ -58,7 +58,7 @@ Ref< Model > ModelFormatObj::read(const Path& filePath, const std::function< Ref
 				));
 			}
 		}
-		else if (startsWith< std::wstring >(str, L"vt "))
+		else if (startsWith(str, L"vt "))
 		{
 			fvalues.resize(0);
 			if (Split< std::wstring, float >::any(str.substr(2), L" \t", fvalues) >= 2)
@@ -69,7 +69,7 @@ Ref< Model > ModelFormatObj::read(const Path& filePath, const std::function< Ref
 				));
 			}
 		}
-		else if (startsWith< std::wstring >(str, L"vn "))
+		else if (startsWith(str, L"vn "))
 		{
 			fvalues.resize(0);
 			if (Split< std::wstring, float >::any(str.substr(2), L" \t", fvalues) >= 3)
@@ -82,7 +82,7 @@ Ref< Model > ModelFormatObj::read(const Path& filePath, const std::function< Ref
 				));
 			}
 		}
-		else if (startsWith< std::wstring >(str, L"f "))
+		else if (startsWith(str, L"f "))
 		{
 			AlignedVector< std::wstring > values;
 			if (Split< std::wstring >::any(str.substr(2), L" \t", values) > 0)
@@ -108,7 +108,7 @@ Ref< Model > ModelFormatObj::read(const Path& filePath, const std::function< Ref
 				md->addUniquePolygon(polygon);
 			}
 		}
-		else if (startsWith< std::wstring >(str, L"usemtl ") || startsWith< std::wstring >(str, L"g "))
+		else if (startsWith(str, L"usemtl ") || startsWith(str, L"g "))
 		{
 			materialId = c_InvalidIndex;
 

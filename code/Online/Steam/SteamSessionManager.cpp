@@ -232,7 +232,7 @@ std::wstring SteamSessionManager::getLanguageCode() const
 
 	for (uint32_t i = 0; i < sizeof_array(c_languageCodes); ++i)
 	{
-		if (compareIgnoreCase< std::wstring >(mbstows(language), c_languageCodes[i].steam) == 0)
+		if (compareIgnoreCase(mbstows(language), c_languageCodes[i].steam) == 0)
 			return c_languageCodes[i].code;
 	}
 
@@ -249,7 +249,7 @@ bool SteamSessionManager::requireFullScreen() const
 {
 	std::wstring value;
 	if (OS::getInstance().getEnvironment(L"SteamTenfoot", value))
-		return compareIgnoreCase< std::wstring >(value, L"1") == 0;
+		return compareIgnoreCase(value, L"1") == 0;
 	else
 		return false;
 }

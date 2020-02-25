@@ -75,7 +75,7 @@ void Script::serialize(ISerializer& s)
 			s >> MemberStlVector< Guid >(L"dependencies", dependencies);
 
 		s >> Member< std::wstring >(L"text", m_text, AttributeMultiLine());
-		m_text = replaceAll< std::wstring >(m_text, L"\\", L"\\\\");
+		m_text = replaceAll(m_text, L"\\", L"\\\\");
 
 		if (!dependencies.empty())
 		{
