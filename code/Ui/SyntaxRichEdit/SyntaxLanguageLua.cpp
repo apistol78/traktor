@@ -1,3 +1,4 @@
+#include <algorithm>
 #include "Core/Misc/String.h"
 #include "Ui/SyntaxRichEdit/SyntaxLanguageLua.h"
 

@@ -1,6 +1,7 @@
-#include "Input/Xi/InputDeviceXi.h"
-#include "Core/Misc/String.h"
+#include <algorithm>
 #include "Core/Log/Log.h"
+#include "Core/Misc/String.h"
+#include "Input/Xi/InputDeviceXi.h"
 
 namespace traktor
 {
