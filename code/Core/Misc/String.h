@@ -1,12 +1,18 @@
 #pragma once
 
-#include <algorithm>
-#include <cctype>
 #include <limits>
 #include <sstream>
 #include <string>
 #include "Core/Config.h"
 #include "Core/Io/StringOutputStream.h"
+
+// import/export mechanism.
+#undef T_DLLCLASS
+#if defined(T_CORE_EXPORT)
+#	define T_DLLCLASS T_DLLEXPORT
+#else
+#	define T_DLLCLASS T_DLLIMPORT
+#endif
 
 namespace traktor
 {
@@ -19,13 +25,17 @@ namespace traktor
  * \param rep Character to replace with.
  * \return Transformed string.
  */
-template < typename String >
-String replaceAll(const String& str, typename String::value_type ch, typename String::value_type rep)
-{
-	String cpy = str;
-	std::replace(cpy.begin(), cpy.end(), ch, rep);
-	return cpy;
-}
+std::string T_DLLCLASS replaceAll(const std::string& str, typename std::string::value_type ch, typename std::string::value_type rep);
+
+/*! Replace all occurrences of a character into another character.
+ * \ingroup Core
+ *
+ * \param str Source string.
+ * \param ch Character to search for.
+ * \param rep Character to replace with.
+ * \return Transformed string.
+ */
+std::wstring T_DLLCLASS replaceAll(const std::wstring& str, typename std::wstring::value_type ch, typename std::wstring::value_type rep);
 
 /*! Replace all occurrences of a substring into another string.
  * \ingroup Core
@@ -35,17 +45,17 @@ String replaceAll(const String& str, typename String::value_type ch, typename St
  * \param rep Replacing string.
  * \return Transformed string.
  */
-template < typename String >
-String replaceAll(const String& str, const String& ndl, const String& rep)
-{
-	String cpy = str; size_t p = 0;
-	while ((p = cpy.find(ndl, p)) != cpy.npos)
-	{
-		cpy = cpy.substr(0, p) + rep + cpy.substr(p + ndl.length());
-		p += rep.length();
-	}
-	return cpy;
-}
+std::string T_DLLCLASS replaceAll(const std::string& str, const std::string& ndl, const std::string& rep);
+
+/*! Replace all occurrences of a substring into another string.
+ * \ingroup Core
+ *
+ * \param str Source string.
+ * \param ndl Needle.
+ * \param rep Replacing string.
+ * \return Transformed string.
+ */
+std::wstring T_DLLCLASS replaceAll(const std::wstring& str, const std::wstring& ndl, const std::wstring& rep);
 
 /*! Apply transformation of an entire string.
  * \ingroup Core
@@ -54,13 +64,16 @@ String replaceAll(const String& str, const String& ndl, const String& rep)
  * \param func Pointer to transformation function.
  * \return Transformed string.
  */
-template < typename String >
-String transform(const String& str, int (*func)(int c))
-{
-	String cpy = str;
-	std::transform(cpy.begin(), cpy.end(), cpy.begin(), func);
-	return cpy;
-}
+std::string T_DLLCLASS transform(const std::string& str, int (*func)(int c));
+
+/*! Apply transformation of an entire string.
+ * \ingroup Core
+ *
+ * \param str Source string.
+ * \param func Pointer to transformation function.
+ * \return Transformed string.
+ */
+std::wstring T_DLLCLASS transform(const std::wstring& str, int (*func)(int c));
 
 /*! Implode set of strings into a single string.
  * \ingroup Core
@@ -90,11 +103,15 @@ typename Iterator::value_type implode(const Iterator& begin, const Iterator& end
  * \param str Source string.
  * \return All uppercase string.
  */
-template < typename String >
-String toUpper(const String& str)
-{
-	return transform< String >(str, std::toupper);
-}
+std::string T_DLLCLASS toUpper(const std::string& str);
+
+/*! Transform a string to all uppercase.
+ * \ingroup Core
+ *
+ * \param str Source string.
+ * \return All uppercase string.
+ */
+std::wstring T_DLLCLASS toUpper(const std::wstring& str);
 
 /*! Transform a string to all lowercase.
  * \ingroup Core
@@ -102,11 +119,15 @@ String toUpper(const String& str)
  * \param str Source string.
  * \return All lowercase string.
  */
-template < typename String >
-String toLower(const String& str)
-{
-	return transform< String >(str, std::tolower);
-}
+std::string T_DLLCLASS toLower(const std::string& str);
+
+/*! Transform a string to all lowercase.
+ * \ingroup Core
+ *
+ * \param str Source string.
+ * \return All lowercase string.
+ */
+std::wstring T_DLLCLASS toLower(const std::wstring& str);
 
 /*! See if the start of a string matches a given string.
  * \ingroup Core
@@ -115,15 +136,16 @@ String toLower(const String& str)
  * \param start Match string.
  * \return True if source string starts with given match string.
  */
-template < typename StringType >
-bool startsWith(const StringType& str, const StringType& start)
-{
-	if (str.length() < start.length())
-		return false;
-	if (start.length() <= 0)
-		return true;
-	return bool(str.substr(0, start.length()) == start);
-}
+bool T_DLLCLASS startsWith(const std::string& str, const std::string& start);
+
+/*! See if the start of a string matches a given string.
+ * \ingroup Core
+ *
+ * \param str Source string.
+ * \param start Match string.
+ * \return True if source string starts with given match string.
+ */
+bool T_DLLCLASS startsWith(const std::wstring& str, const std::wstring& start);
 
 /*! See if the end of a string matches a given string.
  * \ingroup Core
@@ -132,15 +154,16 @@ bool startsWith(const StringType& str, const StringType& start)
  * \param end Match string.
  * \return True if source string ends with given match string.
  */
-template < typename StringType >
-bool endsWith(const StringType& str, const StringType& end)
-{
-	if (str.length() < end.length())
-		return false;
-	if (end.length() <= 0)
-		return true;
-	return bool(str.substr(str.length() - end.length(), end.length()) == end);
-}
+bool T_DLLCLASS endsWith(const std::string& str, const std::string& end);
+
+/*! See if the end of a string matches a given string.
+ * \ingroup Core
+ *
+ * \param str Source string.
+ * \param end Match string.
+ * \return True if source string ends with given match string.
+ */
+bool T_DLLCLASS endsWith(const std::wstring& str, const std::wstring& end);
 
 /*! Perform a lexicographically compare of strings.
  * \ingroup Core
@@ -149,41 +172,31 @@ bool endsWith(const StringType& str, const StringType& end)
  * \param b Right hand string.
  * \return See basic_string::compare().
  */
-template < typename StringType >
-int compareIgnoreCase(const StringType& a, const StringType& b)
-{
-	return toLower< StringType >(a).compare(toLower< StringType >(b));
-}
+int T_DLLCLASS compareIgnoreCase(const std::string& a, const std::string& b);
+
+/*! Perform a lexicographically compare of strings.
+ * \ingroup Core
+ *
+ * \param a Left hand string.
+ * \param b Right hand string.
+ * \return See basic_string::compare().
+ */
+int T_DLLCLASS compareIgnoreCase(const std::wstring& a, const std::wstring& b);
 
 /*! Trim leading white-space.
  * \ingroup Core
  */
-inline std::wstring ltrim(const std::wstring& a, const std::wstring& ws = L" \t\n\r")
-{
-	size_t i = a.find_first_not_of(ws);
-	if (i == std::wstring::npos)
-		return L"";
-	return a.substr(i);
-}
+std::wstring T_DLLCLASS ltrim(const std::wstring& a, const std::wstring& ws = L" \t\n\r");
 
 /*! Trim trailing white-space.
  * \ingroup Core
  */
-inline std::wstring rtrim(const std::wstring& a, const std::wstring& ws = L" \t\n\r")
-{
-	size_t i = a.find_last_not_of(ws);
-	if (i == std::wstring::npos)
-		return L"";
-	return a.substr(0, i + 1);
-}
+std::wstring T_DLLCLASS rtrim(const std::wstring& a, const std::wstring& ws = L" \t\n\r");
 
 /*! Trim white-space.
  * \ingroup Core
  */
-inline std::wstring trim(const std::wstring& a)
-{
-	return ltrim(rtrim(a));
-}
+std::wstring T_DLLCLASS trim(const std::wstring& a);
 
 /*! Convert value to literal.
  * \ingroup Core
@@ -198,24 +211,12 @@ std::wstring toString(const ValueType& value)
 /*! Convert value to literal.
  * \ingroup Core
  */
-inline std::wstring toString(float value, int32_t decimals = 6)
-{
-	StringOutputStream ss;
-	ss.setDecimals(decimals);
-	ss << value;
-	return ss.str();
-}
+std::wstring T_DLLCLASS toString(float value, int32_t decimals = 6);
 
 /*! Convert value to literal.
  * \ingroup Core
  */
-inline std::wstring toString(double value, int32_t decimals = 6)
-{
-	StringOutputStream ss;
-	ss.setDecimals(decimals);
-	ss << value;
-	return ss.str();
-}
+std::wstring T_DLLCLASS toString(double value, int32_t decimals = 6);
 
 /*! Convert literal to value.
  * \ingroup Core
@@ -224,7 +225,7 @@ template < typename ValueType >
 ValueType parseString(const std::string& text, const ValueType& defaultValue)
 {
 	ValueType value = defaultValue;
-	if (startsWith< std::string >(text, "0x"))
+	if (startsWith(text, "0x"))
 		std::stringstream(text.substr(2)) >> std::hex >> value;
 	else
 		std::stringstream(text) >> value;
@@ -247,7 +248,7 @@ template < typename ValueType >
 ValueType parseString(const std::wstring& text, const ValueType& defaultValue)
 {
 	ValueType value = defaultValue;
-	if (startsWith< std::wstring >(text, L"0x"))
+	if (startsWith(text, L"0x"))
 		std::wstringstream(text.substr(2)) >> std::hex >> value;
 	else
 		std::wstringstream(text) >> value;
@@ -281,9 +282,9 @@ ValueType parseString(const std::wstring& text)
 template < >
 inline bool parseString< bool >(const std::wstring& text)
 {
-	if (compareIgnoreCase< std::wstring >(text, L"true") == 0)
+	if (compareIgnoreCase(text, L"true") == 0)
 		return true;
-	else if (compareIgnoreCase< std::wstring >(text, L"yes") == 0)
+	else if (compareIgnoreCase(text, L"yes") == 0)
 		return true;
 	else
 	{
@@ -297,17 +298,6 @@ inline bool parseString< bool >(const std::wstring& text)
 /*! Two-way split.
  * \ingroup Core
  */
-inline bool split(const std::wstring& str, wchar_t delim, std::wstring& outLeft, std::wstring& outRight)
-{
-	size_t p = str.find_first_of(delim);
-	if (p == str.npos)
-		return false;
-
-	outLeft = str.substr(0, p);
-	outRight = str.substr(p + 1);
-
-	return true;
-}
+bool T_DLLCLASS split(const std::wstring& str, wchar_t delim, std::wstring& outLeft, std::wstring& outRight);
 
 }
-

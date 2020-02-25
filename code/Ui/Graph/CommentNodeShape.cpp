@@ -79,7 +79,7 @@ void CommentNodeShape::paint(const Node* node, const Pin* hotPin, GraphCanvas* c
 		int32_t lineHeight = canvas->getTextExtent(L"W").cy;
 
 		std::vector< std::wstring > lines;
-		Split< std::wstring >::any(replaceAll< std::wstring >(comment, L"\n\r", L"\n"), L"\n", lines, true);
+		Split< std::wstring >::any(replaceAll(comment, L"\n\r", L"\n"), L"\n", lines, true);
 
 		Size textSize(0, 0);
 		for (std::vector< std::wstring >::const_iterator i = lines.begin(); i != lines.end(); ++i)
@@ -122,7 +122,7 @@ Size CommentNodeShape::calculateSize(const Node* node) const
 	int32_t lineHeight = m_graphControl->getFontMetric().getExtent(L"W").cy;
 
 	std::vector< std::wstring > lines;
-	Split< std::wstring >::any(replaceAll< std::wstring >(comment, L"\n\r", L"\n"), L"\n", lines, true);
+	Split< std::wstring >::any(replaceAll(comment, L"\n\r", L"\n"), L"\n", lines, true);
 
 	Size textSize(0, 0);
 	for (std::vector< std::wstring >::const_iterator i = lines.begin(); i != lines.end(); ++i)

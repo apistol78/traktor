@@ -236,7 +236,7 @@ void Path::resolve()
 		std::wstring name = tmp.substr(s + 2, e - s - 2);
 
 		if (OS::getInstance().getEnvironment(name, env))
-			tmp = tmp.substr(0, s) + replaceAll< std::wstring >(env, L'\\', L'/') + tmp.substr(e + 1);
+			tmp = tmp.substr(0, s) + replaceAll(env, L'\\', L'/') + tmp.substr(e + 1);
 		else
 			tmp = tmp.substr(0, s) + tmp.substr(e + 1);
 	}
@@ -263,7 +263,7 @@ void Path::resolve()
 	std::wstring::size_type sls = tmp.find_last_of(L'/');
 	if (sls != std::wstring::npos)
 	{
-		m_path = replaceAll< std::wstring >(tmp.substr(0, sls), L"//", L"/");
+		m_path = replaceAll(tmp.substr(0, sls), L"//", L"/");
 		tmp = tmp.substr(sls + 1);
 	}
 

@@ -32,7 +32,7 @@ bool AddAggregatesTool::execute(ui::Widget* parent, Solution* solution)
 			{
 				// \hack Add .lib rule first if missing in existing .dll aggregates.
 				std::wstring sourceFile = configuration->getAggregationItems().front()->getSourceFile();
-				if (compareIgnoreCase< std::wstring >(sourceFile, project->getName() + L".dll") == 0)
+				if (compareIgnoreCase(sourceFile, project->getName() + L".dll") == 0)
 				{
 					RefArray< AggregationItem > items = configuration->getAggregationItems();
 
@@ -43,7 +43,7 @@ bool AddAggregatesTool::execute(ui::Widget* parent, Solution* solution)
 
 					configuration->setAggregationItems(items);
 				}
-				else if (compareIgnoreCase< std::wstring >(sourceFile, project->getName() + L".lib") == 0)
+				else if (compareIgnoreCase(sourceFile, project->getName() + L".lib") == 0)
 				{
 					RefArray< AggregationItem > items = configuration->getAggregationItems();
 
@@ -58,8 +58,8 @@ bool AddAggregatesTool::execute(ui::Widget* parent, Solution* solution)
 				if (configuration->getTargetFormat() == Configuration::TfStaticLibrary)
 				{
 					if (!(
-						compareIgnoreCase< std::wstring >(configuration->getName(), L"DebugStatic") == 0 ||
-						compareIgnoreCase< std::wstring >(configuration->getName(), L"ReleaseStatic") == 0
+						compareIgnoreCase(configuration->getName(), L"DebugStatic") == 0 ||
+						compareIgnoreCase(configuration->getName(), L"ReleaseStatic") == 0
 					))
 					{
 						configuration->setConsumerLibraryPath(L"");
@@ -72,8 +72,8 @@ bool AddAggregatesTool::execute(ui::Widget* parent, Solution* solution)
 				{
 				case Configuration::TfStaticLibrary:
 					if (
-						compareIgnoreCase< std::wstring >(configuration->getName(), L"DebugStatic") == 0 ||
-						compareIgnoreCase< std::wstring >(configuration->getName(), L"ReleaseStatic") == 0
+						compareIgnoreCase(configuration->getName(), L"DebugStatic") == 0 ||
+						compareIgnoreCase(configuration->getName(), L"ReleaseStatic") == 0
 					)
 					{
 						{

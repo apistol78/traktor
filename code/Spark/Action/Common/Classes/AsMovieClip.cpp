@@ -303,9 +303,9 @@ bool AsMovieClip::MovieClip_beginGradientFill(SpriteInstance* self, const std::s
 {
 	FillStyle::GradientType gradientType = FillStyle::GtInvalid;
 
-	if (compareIgnoreCase< std::string >(fillType, "linear") == 0)
+	if (compareIgnoreCase(fillType, "linear") == 0)
 		gradientType = FillStyle::GtLinear;
-	else if (compareIgnoreCase< std::string >(fillType, "radial") == 0)
+	else if (compareIgnoreCase(fillType, "radial") == 0)
 		gradientType = FillStyle::GtRadial;
 	else
 		return false;
@@ -338,7 +338,7 @@ bool AsMovieClip::MovieClip_beginGradientFill(SpriteInstance* self, const std::s
 
 	if (matrix->getMember("matrixType", matrixTypeValue))
 	{
-		if (compareIgnoreCase< std::string >(matrixTypeValue.getString(), "box") != 0)
+		if (compareIgnoreCase(matrixTypeValue.getString(), "box") != 0)
 			return false;
 
 		ActionValue memberValue;

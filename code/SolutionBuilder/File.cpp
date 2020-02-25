@@ -36,7 +36,7 @@ void File::getSystemFiles(const Path& sourcePath, std::set< Path >& outFiles) co
 			directories.push_back(file);
 		else if (!file->isDirectory())
 		{
-			if (!startsWith< std::wstring >(file->getPath().getFileName(), L"."))
+			if (!startsWith(file->getPath().getFileName(), L"."))
 				outFiles.insert(file->getPath().getPathName());
 		}
 	}

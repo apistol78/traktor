@@ -342,13 +342,13 @@ void AsStage::Stage_set_scaleMode(CallArgs& ca)
 {
 	std::string sm = ca.args[0].getString();
 
-	if (compareIgnoreCase< std::string >(sm, "showAll") == 0)
+	if (compareIgnoreCase(sm, "showAll") == 0)
 		m_scaleMode = SmShowAll;
-	else if (compareIgnoreCase< std::string >(sm, "noBorder") == 0)
+	else if (compareIgnoreCase(sm, "noBorder") == 0)
 		m_scaleMode = SmNoBorder;
-	else if (compareIgnoreCase< std::string >(sm, "exactFit") == 0)
+	else if (compareIgnoreCase(sm, "exactFit") == 0)
 		m_scaleMode = SmExactFit;
-	else if (compareIgnoreCase< std::string >(sm, "noScale") == 0)
+	else if (compareIgnoreCase(sm, "noScale") == 0)
 	{
 		m_scaleMode = SmNoScale;
 		m_width = m_viewWidth;

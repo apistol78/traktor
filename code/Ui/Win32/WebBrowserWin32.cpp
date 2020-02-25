@@ -526,7 +526,7 @@ void WebBrowserWin32::navigate(const std::wstring& url)
 	HRESULT hr;
 
 	// Ensure path is absolute if using file:// protocol.
-	if (startsWith< std::wstring >(url, L"file://"))
+	if (startsWith(url, L"file://"))
 	{
 		std::wstring qurl = L"file://" + FileSystem::getInstance().getAbsolutePath(url.substr(7)).getPathName();
 		VariantInit(&vurl);

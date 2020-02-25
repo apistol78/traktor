@@ -31,7 +31,7 @@ std::wstring PsslVariable::cast(PsslType to) const
 	};
 
 	const wchar_t* f = c[m_type][to];
-	return f ? replaceAll< std::wstring >(f, L"%", m_name) : m_name;
+	return f ? replaceAll(f, L"%", m_name) : m_name;
 }
 
 	}

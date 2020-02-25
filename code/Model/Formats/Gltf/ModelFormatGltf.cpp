@@ -120,7 +120,7 @@ void ModelFormatGltf::getExtensions(std::wstring& outDescription, std::vector< s
 
 bool ModelFormatGltf::supportFormat(const std::wstring& extension) const
 {
-	return compareIgnoreCase< std::wstring >(extension, L"gltf") == 0;
+	return compareIgnoreCase(extension, L"gltf") == 0;
 }
 
 Ref< Model > ModelFormatGltf::read(const Path& filePath, const std::function< Ref< IStream >(const Path&) >& openStream) const

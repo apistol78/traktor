@@ -18,7 +18,7 @@ void ModelFormatTmd::getExtensions(std::wstring& outDescription, std::vector< st
 
 bool ModelFormatTmd::supportFormat(const std::wstring& extension) const
 {
-	return compareIgnoreCase< std::wstring >(extension, L"tmd") == 0;
+	return compareIgnoreCase(extension, L"tmd") == 0;
 }
 
 Ref< Model > ModelFormatTmd::read(const Path& filePath, const std::function< Ref< IStream >(const Path&) >& openStream) const

@@ -23,7 +23,7 @@ bool Library::open(const Path& libraryName)
 {
 #if !defined(_XBOX)
 	std::wstring ln = libraryName.getPathName();
-	if (!endsWith< std::wstring >(toLower(ln), L".dll"))
+	if (!endsWith(toLower(ln), L".dll"))
 		ln += L".dll";
 
 	tstring path = wstots(ln);

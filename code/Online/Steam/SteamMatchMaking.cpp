@@ -1,3 +1,4 @@
+#include <algorithm>
 #include "Core/Misc/CommandLine.h"
 #include "Core/Misc/TString.h"
 #include "Core/System/OS.h"

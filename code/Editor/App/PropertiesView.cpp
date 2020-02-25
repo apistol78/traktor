@@ -37,9 +37,9 @@ std::wstring lookupDocumentation(const std::wstring& id)
 {
 	std::wstring id_;
 
-	id_ = toUpper< std::wstring >(id);
-	id_ = replaceAll< std::wstring >(id_, L'.', L'_');
-	id_ = replaceAll< std::wstring >(id_, L' ', L'_');
+	id_ = toUpper(id);
+	id_ = replaceAll(id_, L'.', L'_');
+	id_ = replaceAll(id_, L' ', L'_');
 
 	std::wstring documentation = i18n::I18N::getInstance().get(id_);
 	if (documentation.empty())

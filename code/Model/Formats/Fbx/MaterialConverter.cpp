@@ -84,9 +84,9 @@ bool convertMaterials(Model& outModel, std::map< int32_t, int32_t >& outMaterial
 		{
 			int userTag = prop.GetUserTag();
 			std::wstring propName = mbstows(prop.GetNameAsCStr());
-			if (startsWith< std::wstring >(propName, L"DEA_"))
+			if (startsWith(propName, L"DEA_"))
 			{
-				propName = replaceAll< std::wstring >(propName, L"DEA_", L"");
+				propName = replaceAll(propName, L"DEA_", L"");
 				FbxPropertyT< FbxBool > propState = prop;
 				if (propState.IsValid())
 				{
@@ -271,7 +271,7 @@ bool convertMaterials(Model& outModel, std::map< int32_t, int32_t >& outMaterial
 		}
 
 		// \hack to enable emissive materials from Blender.
-		if (startsWith< std::wstring >(mm.getName(), L"EM_"))
+		if (startsWith(mm.getName(), L"EM_"))
 			mm.setEmissive(1.0f);
 
 		outMaterialMap[i] = outModel.addUniqueMaterial(mm);

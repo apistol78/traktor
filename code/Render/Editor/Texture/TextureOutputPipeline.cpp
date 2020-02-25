@@ -162,13 +162,13 @@ bool TextureOutputPipeline::create(const editor::IPipelineSettings* settings)
 	m_compressedData = settings->getProperty< bool >(L"TexturePipeline.CompressedData", true);
 
 	std::wstring compressionMethod = settings->getProperty< std::wstring >(L"TexturePipeline.CompressionMethod", L"DXTn");
-	if (compareIgnoreCase< std::wstring >(compressionMethod, L"None") == 0)
+	if (compareIgnoreCase(compressionMethod, L"None") == 0)
 		m_compressionMethod = CmNone;
-	else if (compareIgnoreCase< std::wstring >(compressionMethod, L"DXTn") == 0)
+	else if (compareIgnoreCase(compressionMethod, L"DXTn") == 0)
 		m_compressionMethod = CmDXTn;
-	else if (compareIgnoreCase< std::wstring >(compressionMethod, L"PVRTC") == 0)
+	else if (compareIgnoreCase(compressionMethod, L"PVRTC") == 0)
 		m_compressionMethod = CmPVRTC;
-	else if (compareIgnoreCase< std::wstring >(compressionMethod, L"ETC1") == 0)
+	else if (compareIgnoreCase(compressionMethod, L"ETC1") == 0)
 		m_compressionMethod = CmETC1;
 	else
 	{

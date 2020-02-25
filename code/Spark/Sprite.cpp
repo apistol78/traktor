@@ -52,7 +52,7 @@ int Sprite::findFrame(const std::string& frameLabel) const
 {
 	for (RefArray< Frame >::const_iterator i = m_frames.begin(); i != m_frames.end(); ++i)
 	{
-		if (compareIgnoreCase< std::string >((*i)->getLabel(), frameLabel) == 0)
+		if (compareIgnoreCase((*i)->getLabel(), frameLabel) == 0)
 			return int(std::distance(m_frames.begin(), i));
 	}
 	return -1;

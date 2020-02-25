@@ -207,7 +207,7 @@ Ref< IProcess > OS::execute(
 	}
 
 	// Convert all arguments; append bash if executing shell script.
-	if (endsWith< std::wstring >(executable, L".sh"))
+	if (endsWith(executable, L".sh"))
 		argv[argc++] = strdup("/bin/sh");
 	else
 	{

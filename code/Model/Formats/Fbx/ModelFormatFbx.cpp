@@ -139,7 +139,7 @@ void ModelFormatFbx::getExtensions(std::wstring& outDescription, std::vector< st
 
 bool ModelFormatFbx::supportFormat(const std::wstring& extension) const
 {
-	return compareIgnoreCase< std::wstring >(extension, L"fbx") == 0;
+	return compareIgnoreCase(extension, L"fbx") == 0;
 }
 
 Ref< Model > ModelFormatFbx::read(const Path& filePath, const std::function< Ref< IStream >(const Path&) >& openStream) const

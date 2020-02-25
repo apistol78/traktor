@@ -27,7 +27,7 @@ struct SettingsPagePredicate
 			return false;
 
 		// Sort using name of type.
-		int32_t r = compareIgnoreCase< std::wstring >(lh->getName(), rh->getName());
+		int32_t r = compareIgnoreCase(lh->getName(), rh->getName());
 		if (r < 0)
 			return true;
 		else

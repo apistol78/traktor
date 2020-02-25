@@ -379,7 +379,7 @@ void RichEdit::insert(const std::wstring& text)
 	if (text.empty())
 		return;
 
-	std::wstring tmp = traktor::replaceAll< std::wstring >(text, L"\r\n", L"\n");
+	std::wstring tmp = traktor::replaceAll(text, L"\r\n", L"\n");
 	for (std::wstring::const_iterator i = tmp.begin(); i != tmp.end(); ++i)
 		insertCharacter(*i, false);
 

@@ -232,7 +232,7 @@ bool OS::getEnvironment(const std::wstring& name, std::wstring& outValue) const
 					
 					// \hack Replace "\$" sequences with plain "$" as Info.plist preprocessor
 					// seems to intercept and remove those.
-					outValue = replaceAll< std::wstring >(outValue, L"\\$", L"$");
+					outValue = replaceAll(outValue, L"\\$", L"$");
 					
 					gotValue = true;
 				}
@@ -311,7 +311,7 @@ Ref< IProcess > OS::execute(
 	}
 
 	// Convert all arguments; append bash if executing shell script.
-	if (endsWith< std::wstring >(executable, L".sh"))
+	if (endsWith(executable, L".sh"))
 		argv[argc++] = strdup("/bin/sh");
 	else
 	{

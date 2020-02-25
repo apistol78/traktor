@@ -69,7 +69,7 @@ bool CheckPropertyItem::paste()
 	if (!clipboard)
 		return false;
 
-	m_checked = (bool)(compareIgnoreCase< std::wstring >(clipboard->getText(), L"true") == 0);
+	m_checked = (bool)(compareIgnoreCase(clipboard->getText(), L"true") == 0);
 	return true;
 }
 

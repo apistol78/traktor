@@ -30,7 +30,7 @@ std::wstring characterEntity(const std::wstring& str)
 
 	std::wstring result = str;
 	for (int i = 0; i < sizeof_array(c_entities); ++i)
-		result = replaceAll< std::wstring >(result, c_entities[i].needle, c_entities[i].escape);
+		result = replaceAll(result, c_entities[i].needle, c_entities[i].escape);
 
 	return result;
 }

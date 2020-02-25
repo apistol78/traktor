@@ -35,14 +35,14 @@ const struct { const wchar_t* name; Color4f color; } c_colorTable[] =
 
 bool parseColor(const std::wstring& color, Color4f& outColor)
 {
-	if (startsWith< std::wstring >(color, L"#"))
+	if (startsWith(color, L"#"))
 	{
 		int32_t red, green, blue;
 		swscanf(color.c_str(), L"#%02x%02x%02x", &red, &green, &blue);
 		outColor = Color4f(red, green, blue, 255.0f) / Scalar(255.0f);
 		return true;
 	}
-	else if (startsWith< std::wstring >(color, L"rgb"))
+	else if (startsWith(color, L"rgb"))
 	{
 		int32_t red, green, blue;
 		swscanf(color.c_str(), L"rgb(%d,%d,%d)", &red, &green, &blue);

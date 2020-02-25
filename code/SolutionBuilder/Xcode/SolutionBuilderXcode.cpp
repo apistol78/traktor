@@ -314,7 +314,7 @@ void collectFrameworks(const Project* project, std::set< std::wstring >& outFram
 		const std::vector< std::wstring >& libraries = (*i)->getLibraries();
 		for (std::vector< std::wstring >::const_iterator j = libraries.begin(); j != libraries.end(); ++j)
 		{
-			if (endsWith< std::wstring >(*j, L".framework"))
+			if (endsWith(*j, L".framework"))
 				outFrameworks.insert(*j);
 		}
 	}
@@ -1812,7 +1812,7 @@ void SolutionBuilderXcode::generateXCBuildConfigurationSection(OutputStream& s, 
 					const std::vector< std::wstring >& libraries = configurations[0]->getLibraries();
 					for (std::vector< std::wstring >::const_iterator j = libraries.begin(); j != libraries.end(); ++j)
 					{
-						if (endsWith< std::wstring >(*j, L".framework"))
+						if (endsWith(*j, L".framework"))
 							continue;
 
 						s << L"\t\t\t\t\t-l" << *j << L"," << Endl;
@@ -1925,7 +1925,7 @@ void SolutionBuilderXcode::generateXCBuildConfigurationSection(OutputStream& s, 
 					const std::vector< std::wstring >& libraries = configurations[1]->getLibraries();
 					for (std::vector< std::wstring >::const_iterator j = libraries.begin(); j != libraries.end(); ++j)
 					{
-						if (endsWith< std::wstring >(*j, L".framework"))
+						if (endsWith(*j, L".framework"))
 							continue;
 
 						s << L"\t\t\t\t\t-l" << *j << L"," << Endl;

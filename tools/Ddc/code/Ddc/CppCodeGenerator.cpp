@@ -104,7 +104,7 @@ const DfnAlias* findAlias(const DfnNode* node, const std::wstring& qualifiedName
 
 	if (const DfnAlias* aliasNode = dynamic_type_cast< const DfnAlias* >(node))
 	{
-		if (compareIgnoreCase< std::wstring >(aliasNode->getLanguage(), L"cpp") == 0)
+		if (compareIgnoreCase(aliasNode->getLanguage(), L"cpp") == 0)
 		{
 			const DfnType* aliasType = checked_type_cast< const DfnType*, false >(aliasNode->getType());
 
@@ -242,17 +242,17 @@ bool resolveLanguageType(
 					aliasGet = &DfnAlias::getLanguageType;
 					if (id[e] == L'.')
 					{
-						if (startsWith< std::wstring >(id.substr(e), L".type"))
+						if (startsWith(id.substr(e), L".type"))
 						{
 							aliasGet = &DfnAlias::getLanguageType;
 							e += 5;
 						}
-						else if (startsWith< std::wstring >(id.substr(e), L".argument"))
+						else if (startsWith(id.substr(e), L".argument"))
 						{
 							aliasGet = &DfnAlias::getLanguageArgType;
 							e += 9;
 						}
-						else if (startsWith< std::wstring >(id.substr(e), L".member"))
+						else if (startsWith(id.substr(e), L".member"))
 						{
 							aliasGet = &DfnAlias::getLanguageMember;
 							e += 7;

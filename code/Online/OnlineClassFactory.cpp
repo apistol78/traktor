@@ -45,7 +45,7 @@ bool translateComparison(const std::wstring& comparison, LobbyFilter::Comparison
 
 	for (uint32_t i = 0; i < sizeof_array(c_comparisons); ++i)
 	{
-		if (compareIgnoreCase< std::wstring >(comparison, c_comparisons[i].id) == 0)
+		if (compareIgnoreCase(comparison, c_comparisons[i].id) == 0)
 		{
 			outComparison = c_comparisons[i].value;
 			return true;
@@ -73,13 +73,13 @@ bool LobbyFilter_addComparison(LobbyFilter* self, const std::wstring& key, const
 
 bool LobbyFilter_setDistance(LobbyFilter* self, const std::wstring& distance)
 {
-	if (compareIgnoreCase< std::wstring >(distance, L"Local"))
+	if (compareIgnoreCase(distance, L"Local"))
 		self->setDistance(LobbyFilter::DtLocal);
-	else if (compareIgnoreCase< std::wstring >(distance, L"Near"))
+	else if (compareIgnoreCase(distance, L"Near"))
 		self->setDistance(LobbyFilter::DtNear);
-	else if (compareIgnoreCase< std::wstring >(distance, L"Far"))
+	else if (compareIgnoreCase(distance, L"Far"))
 		self->setDistance(LobbyFilter::DtFar);
-	else if (compareIgnoreCase< std::wstring >(distance, L"Infinity"))
+	else if (compareIgnoreCase(distance, L"Infinity"))
 		self->setDistance(LobbyFilter::DtInfinity);
 	else
 		return false;
@@ -150,11 +150,11 @@ Ref< LobbyResult > IMatchMaking_createLobby(IMatchMaking* self, uint32_t maxUser
 {
 	LobbyAccess la;
 
-	if (compareIgnoreCase< std::wstring >(access, L"public") == 0)
+	if (compareIgnoreCase(access, L"public") == 0)
 		la = LaPublic;
-	else if (compareIgnoreCase< std::wstring >(access, L"private") == 0)
+	else if (compareIgnoreCase(access, L"private") == 0)
 		la = LaPrivate;
-	else if (compareIgnoreCase< std::wstring >(access, L"friends") == 0)
+	else if (compareIgnoreCase(access, L"friends") == 0)
 		la = LaFriends;
 	else
 		return 0;

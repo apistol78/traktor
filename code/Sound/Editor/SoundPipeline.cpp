@@ -118,15 +118,15 @@ bool SoundPipeline::buildOutput(
 	const SoundAsset* soundAsset = checked_type_cast< const SoundAsset* >(sourceAsset);
 
 	Ref< IStreamDecoder > decoder;
-	if (compareIgnoreCase< std::wstring >(soundAsset->getFileName().getExtension(), L"wav") == 0)
+	if (compareIgnoreCase(soundAsset->getFileName().getExtension(), L"wav") == 0)
 		decoder = new sound::WavStreamDecoder();
-	else if (compareIgnoreCase< std::wstring >(soundAsset->getFileName().getExtension(), L"flac") == 0)
+	else if (compareIgnoreCase(soundAsset->getFileName().getExtension(), L"flac") == 0)
 		decoder = new sound::FlacStreamDecoder();
-	else if (compareIgnoreCase< std::wstring >(soundAsset->getFileName().getExtension(), L"mp3") == 0)
+	else if (compareIgnoreCase(soundAsset->getFileName().getExtension(), L"mp3") == 0)
 		decoder = new sound::Mp3StreamDecoder();
-	else if (compareIgnoreCase< std::wstring >(soundAsset->getFileName().getExtension(), L"ogg") == 0)
+	else if (compareIgnoreCase(soundAsset->getFileName().getExtension(), L"ogg") == 0)
 		decoder = new sound::OggStreamDecoder();
-	else if (compareIgnoreCase< std::wstring >(soundAsset->getFileName().getExtension(), L"tss") == 0)
+	else if (compareIgnoreCase(soundAsset->getFileName().getExtension(), L"tss") == 0)
 		decoder = new sound::TssStreamDecoder();
 	else
 	{

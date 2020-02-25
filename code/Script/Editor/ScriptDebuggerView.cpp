@@ -41,7 +41,7 @@ struct VariablePred
 {
 	bool operator () (const Variable* vl, const Variable* vr) const
 	{
-		return compareIgnoreCase< std::wstring >(vl->getName(), vr->getName()) <= 0;
+		return compareIgnoreCase(vl->getName(), vr->getName()) <= 0;
 	}
 };
 
