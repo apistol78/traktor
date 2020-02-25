@@ -1,4 +1,9 @@
 #include <algorithm>
+
+#include <stdio.h>
+#include <stdarg.h>
+#include <wchar.h>
+
 #include "Core/Misc/String.h"
 
 namespace traktor
@@ -166,6 +171,18 @@ bool split(const std::wstring& str, wchar_t delim, std::wstring& outLeft, std::w
 	outLeft = str.substr(0, p);
 	outRight = str.substr(p + 1);
 	return true;
+}
+
+std::wstring str(const wchar_t* const format, ...)
+{
+	wchar_t buf[1024];
+	va_list a;
+
+	va_start(a, format);
+	vswprintf(buf, sizeof_array(buf), format, a);
+	va_end(a);
+
+	return buf;
 }
 
 }

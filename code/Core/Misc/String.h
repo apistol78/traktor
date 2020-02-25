@@ -300,4 +300,9 @@ inline bool parseString< bool >(const std::wstring& text)
  */
 bool T_DLLCLASS split(const std::wstring& str, wchar_t delim, std::wstring& outLeft, std::wstring& outRight);
 
+/*! String formatting helper.
+ * \ingroup Core
+ */
+std::wstring str(const wchar_t* const format, ...);
+
 }

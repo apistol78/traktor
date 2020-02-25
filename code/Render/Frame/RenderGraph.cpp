@@ -134,7 +134,11 @@ bool RenderGraph::build(RenderContext* renderContext)
 			auto it = m_targets.find(output.targetSetId);
 			T_FATAL_ASSERT(it != m_targets.end());
 
-			auto tb = renderContext->alloc< TargetBeginRenderBlock >(std::wstring(L"Begin ") + pass->getName());
+			auto tb = renderContext->alloc< TargetBeginRenderBlock >(
+#if defined(_DEBUG)
+				str(L"Begin \"%s\"", pass->getName().c_str())
+#endif
+			);
 			tb->renderTargetSet = it->second.rts;
 			tb->clear = output.clear;
 			renderContext->enqueue(tb);			
@@ -160,7 +164,11 @@ bool RenderGraph::build(RenderContext* renderContext)
 		// End render pass.
 		if (output.targetSetId != 0)
 		{
-			auto te = renderContext->alloc< TargetEndRenderBlock >(std::wstring(L"End ") + pass->getName());
+			auto te = renderContext->alloc< TargetEndRenderBlock >(
+#if defined(_DEBUG)
+				str(L"End \"%s\"", pass->getName().c_str())
+#endif
+			);
 			renderContext->enqueue(te);
 		}
 	}
