@@ -6,6 +6,7 @@
 #include "Render/Context/RenderContext.h"
 #include "World/IWorldRenderPass.h"
 #include "World/WorldBuildContext.h"
+#include "World/WorldHandles.h"
 #include "World/WorldRenderView.h"
 #include "World/Entity/DecalComponent.h"
 #include "World/Entity/DecalRenderer.h"
@@ -24,10 +25,6 @@ struct Vertex
 };
 #pragma pack()
 
-render::handle_t s_handleDecalParams;
-render::handle_t s_handleMagicCoeffs;
-render::handle_t s_handleWorldViewInv;
-
 const uint32_t c_maxRenderDecals = 32;
 
 		}
@@ -36,10 +33,6 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.world.DecalRenderer", DecalRenderer, IEntityRen
 
 DecalRenderer::DecalRenderer(render::IRenderSystem* renderSystem)
 {
-	s_handleDecalParams = render::getParameterHandle(L"World_DecalParams");
-	s_handleMagicCoeffs = render::getParameterHandle(L"World_MagicCoeffs");
-	s_handleWorldViewInv = render::getParameterHandle(L"World_WorldViewInv");
-
 	AlignedVector< render::VertexElement > vertexElements;
 	vertexElements.push_back(render::VertexElement(render::DuPosition, render::DtFloat3, offsetof(Vertex, position), 0));
 	T_ASSERT_M (render::getVertexSize(vertexElements) == sizeof(Vertex), L"Incorrect size of vertex");

@@ -17,6 +17,7 @@
 #include "World/Entity.h"
 #include "World/WorldBuildContext.h"
 #include "World/WorldGatherContext.h"
+#include "World/WorldHandles.h"
 #include "World/WorldSetupContext.h"
 #include "World/Forward/WorldRendererForward.h"
 #include "World/Forward/WorldRenderPassForward.h"
@@ -42,27 +43,6 @@ const resource::Id< render::ImageGraph > c_antiAliasUltra(L"{88E329C8-A2F3-7443-
 const resource::Id< render::ImageGraph > c_gammaCorrection(L"{B1E8367D-91DD-D648-A44F-B86492169771}");
 const resource::Id< render::ImageGraph > c_toneMapFixed(L"{1F20DAB5-22EB-B84C-92B0-71E94C1CE261}");
 const resource::Id< render::ImageGraph > c_toneMapAdaptive(L"{1F20DAB5-22EB-B84C-92B0-71E94C1CE261}") ; // L"{BC4FA128-A976-4023-A422-637581ADFD7E}");
-
-// Techniques
-const render::Handle s_techniqueForwardColor(L"World_ForwardColor");
-const render::Handle s_techniqueForwardGBufferWrite(L"World_ForwardGBufferWrite");
-const render::Handle s_techniqueShadow(L"World_ShadowWrite");
-
-// Global parameters.
-const render::Handle s_handleTime(L"World_Time");
-const render::Handle s_handleView(L"World_View");
-const render::Handle s_handleViewInverse(L"World_ViewInverse");
-const render::Handle s_handleProjection(L"World_Projection");
-const render::Handle s_handleGamma(L"World_Gamma");
-const render::Handle s_handleGammaInverse(L"World_GammaInverse");
-const render::Handle s_handleExposure(L"World_Exposure");
-
-// ImageGraph input textures.
-const render::Handle s_handleInputColor(L"InputColor");
-const render::Handle s_handleInputDepth(L"InputDepth");
-const render::Handle s_handleInputNormal(L"InputNormal");
-const render::Handle s_handleInputVelocity(L"InputVelocity");
-const render::Handle s_handleInputShadowMap(L"InputShadowMap");
 
 resource::Id< render::ImageGraph > getAmbientOcclusionId(Quality quality)
 {

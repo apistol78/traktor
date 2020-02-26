@@ -2,8 +2,9 @@
 #include "Render/Context/RenderContext.h"
 #include "Render/Frame/RenderGraph.h"
 #include "World/Entity.h"
-#include "World/WorldRenderView.h"
 #include "World/WorldBuildContext.h"
+#include "World/WorldHandles.h"
+#include "World/WorldRenderView.h"
 #include "World/Simple/WorldRendererSimple.h"
 #include "World/Simple/WorldRenderPassSimple.h"
 
@@ -11,22 +12,6 @@ namespace traktor
 {
 	namespace world
 	{
-		namespace
-		{
-
-// Techniques
-const render::Handle s_techniqueSimpleColor(L"World_SimpleColor");
-
-// Global parameters.
-const render::Handle s_handleTime(L"World_Time");
-const render::Handle s_handleView(L"World_View");
-const render::Handle s_handleViewInverse(L"World_ViewInverse");
-const render::Handle s_handleProjection(L"World_Projection");
-
-// Render graph.
-const render::Handle s_handleVisual(L"Visual");
-
-		}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.WorldRendererSimple", 0, WorldRendererSimple, IWorldRenderer)
 

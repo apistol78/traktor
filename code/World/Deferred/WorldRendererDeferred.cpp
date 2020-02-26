@@ -20,6 +20,7 @@
 #include "World/IrradianceGrid.h"
 #include "World/WorldBuildContext.h"
 #include "World/WorldGatherContext.h"
+#include "World/WorldHandles.h"
 #include "World/WorldSetupContext.h"
 #include "World/Deferred/LightRendererDeferred.h"
 #include "World/Deferred/WorldRendererDeferred.h"
@@ -51,46 +52,6 @@ const resource::Id< render::ImageGraph > c_motionBlurHigh(L"{E813C1A0-D27D-AE4F-
 const resource::Id< render::ImageGraph > c_motionBlurUltra(L"{E813C1A0-D27D-AE4F-9EE4-637529ECCD69}") ; // L"{CD4A0939-233B-2E43-988D-DA6E0DB7A6E6}");
 const resource::Id< render::ImageGraph > c_toneMapFixed(L"{1F20DAB5-22EB-B84C-92B0-71E94C1CE261}");
 const resource::Id< render::ImageGraph > c_toneMapAdaptive(L"{1F20DAB5-22EB-B84C-92B0-71E94C1CE261}") ; // L"{BC4FA128-A976-4023-A422-637581ADFD7E}");
-
-// Techniques
-const render::Handle s_techniqueDeferredColor(L"World_DeferredColor");
-const render::Handle s_techniqueDeferredGBufferWrite(L"World_DeferredGBufferWrite");
-const render::Handle s_techniqueReflectionWrite(L"World_ReflectionWrite");
-const render::Handle s_techniqueIrradianceWrite(L"World_IrradianceWrite");
-const render::Handle s_techniqueVelocityWrite(L"World_VelocityWrite");
-const render::Handle s_techniqueShadow(L"World_ShadowWrite");
-
-// Global parameters.
-const render::Handle s_handleTime(L"World_Time");
-const render::Handle s_handleView(L"World_View");
-const render::Handle s_handleViewInverse(L"World_ViewInverse");
-const render::Handle s_handleProjection(L"World_Projection");
-const render::Handle s_handleColorMap(L"World_ColorMap");
-const render::Handle s_handleOcclusionMap(L"World_OcclusionMap");
-const render::Handle s_handleDepthMap(L"World_DepthMap");
-const render::Handle s_handleLightMap(L"World_LightMap");
-const render::Handle s_handleNormalMap(L"World_NormalMap");
-const render::Handle s_handleMiscMap(L"World_MiscMap");
-const render::Handle s_handleReflectionMap(L"World_ReflectionMap");
-const render::Handle s_handleFogDistanceAndDensity(L"World_FogDistanceAndDensity");
-const render::Handle s_handleFogColor(L"World_FogColor");
-const render::Handle s_handleLightCount(L"World_LightCount");
-const render::Handle s_handleLightSBuffer(L"World_LightSBuffer");
-const render::Handle s_handleTileSBuffer(L"World_TileSBuffer");
-const render::Handle s_handleIrradianceGridSize(L"World_IrradianceGridSize");
-const render::Handle s_handleIrradianceGridSBuffer(L"World_IrradianceGridSBuffer");
-const render::Handle s_handleIrradianceGridBoundsMin(L"World_IrradianceGridBoundsMin");
-const render::Handle s_handleIrradianceGridBoundsMax(L"World_IrradianceGridBoundsMax");
-const render::Handle s_handleGamma(L"World_Gamma");
-const render::Handle s_handleGammaInverse(L"World_GammaInverse");
-const render::Handle s_handleExposure(L"World_Exposure");
-
-// ImageGraph input textures.
-const render::Handle s_handleInputColor(L"InputColor");
-const render::Handle s_handleInputDepth(L"InputDepth");
-const render::Handle s_handleInputNormal(L"InputNormal");
-const render::Handle s_handleInputVelocity(L"InputVelocity");
-const render::Handle s_handleInputShadowMap(L"InputShadowMap");
 
 resource::Id< render::ImageGraph > getAmbientOcclusionId(Quality quality)
 {

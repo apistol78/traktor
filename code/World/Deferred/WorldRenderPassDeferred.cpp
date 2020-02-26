@@ -1,5 +1,6 @@
 #include "Render/Shader.h"
 #include "Render/Context/ProgramParameters.h"
+#include "World/WorldHandles.h"
 #include "World/WorldRenderView.h"
 #include "World/Deferred/WorldRenderPassDeferred.h"
 
@@ -11,38 +12,6 @@ namespace traktor
 		{
 
 enum { MaxForwardLightCount = 2 };
-
-bool s_handlesInitialized = false;
-render::handle_t s_techniqueDeferredColor;
-render::handle_t s_techniqueVelocityWrite;
-render::handle_t s_techniqueIrradianceWrite;
-render::handle_t s_handleWorld;
-render::handle_t s_handleWorldView;
-render::handle_t s_handleLastWorld;
-render::handle_t s_handleLastWorldView;
-render::handle_t s_handleFogEnable;
-render::handle_t s_handleDepthEnable;
-render::handle_t s_handleIrradianceEnable;
-
-void initializeHandles()
-{
-	if (s_handlesInitialized)
-		return;
-
-	s_techniqueDeferredColor = render::getParameterHandle(L"World_DeferredColor");
-	s_techniqueVelocityWrite = render::getParameterHandle(L"World_VelocityWrite");
-	s_techniqueIrradianceWrite = render::getParameterHandle(L"World_IrradianceWrite");
-
-	s_handleWorld = render::getParameterHandle(L"World_World");
-	s_handleWorldView = render::getParameterHandle(L"World_WorldView");
-	s_handleLastWorld = render::getParameterHandle(L"World_LastWorld");
-	s_handleLastWorldView = render::getParameterHandle(L"World_LastWorldView");
-	s_handleFogEnable = render::getParameterHandle(L"World_FogEnable");
-	s_handleDepthEnable = render::getParameterHandle(L"World_DepthEnable");
-	s_handleIrradianceEnable = render::getParameterHandle(L"World_IrradianceEnable");
-
-	s_handlesInitialized = true;
-}
 
 		}
 
@@ -64,7 +33,6 @@ WorldRenderPassDeferred::WorldRenderPassDeferred(
 ,	m_depthEnable(depthEnable)
 ,	m_irradianceEnable(false)
 {
-	initializeHandles();
 }
 
 WorldRenderPassDeferred::WorldRenderPassDeferred(
@@ -82,7 +50,6 @@ WorldRenderPassDeferred::WorldRenderPassDeferred(
 ,	m_depthEnable(false)
 ,	m_irradianceEnable(irradianceEnable)
 {
-	initializeHandles();
 }
 
 render::handle_t WorldRenderPassDeferred::getTechnique() const

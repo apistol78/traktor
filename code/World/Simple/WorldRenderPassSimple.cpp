@@ -1,37 +1,12 @@
 #include "Render/Shader.h"
 #include "Render/Context/ProgramParameters.h"
+#include "World/WorldHandles.h"
 #include "World/Simple/WorldRenderPassSimple.h"
 
 namespace traktor
 {
 	namespace world
 	{
-		namespace
-		{
-
-bool s_handlesInitialized = false;
-render::handle_t s_techniqueSimpleColor;
-render::handle_t s_handleView;
-render::handle_t s_handleViewInverse;
-render::handle_t s_handleWorld;
-render::handle_t s_handleWorldView;
-
-void initializeHandles()
-{
-	if (s_handlesInitialized)
-		return;
-
-	s_techniqueSimpleColor = render::getParameterHandle(L"World_SimpleColor");
-
-	s_handleView = render::getParameterHandle(L"World_View");
-	s_handleViewInverse = render::getParameterHandle(L"World_ViewInverse");
-	s_handleWorld = render::getParameterHandle(L"World_World");
-	s_handleWorldView = render::getParameterHandle(L"World_WorldView");
-
-	s_handlesInitialized = true;
-}
-
-		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.world.WorldRenderPassSimple", WorldRenderPassSimple, IWorldRenderPass)
 
@@ -45,7 +20,6 @@ WorldRenderPassSimple::WorldRenderPassSimple(
 ,	m_view(view)
 ,	m_viewInverse(view.inverse())
 {
-	initializeHandles();
 }
 
 render::handle_t WorldRenderPassSimple::getTechnique() const
