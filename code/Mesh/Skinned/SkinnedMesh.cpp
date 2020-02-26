@@ -52,19 +52,13 @@ void SkinnedMesh::build(
 	const AlignedVector< render::Mesh::Part >& meshParts = m_mesh->getParts();
 	for (const auto& part : it->second)
 	{
-		m_shader->setTechnique(part.shaderTechnique);
-		worldRenderPass.setShaderCombination(m_shader);
-
-		if (parameterCallback)
-			parameterCallback->setCombination(m_shader);
-
-		render::IProgram* program = m_shader->getCurrentProgram();
-		if (!program)
+		auto sp = worldRenderPass.getProgram(m_shader, part.shaderTechnique);
+		if (!sp)
 			continue;
 
 		render::SimpleRenderBlock* renderBlock = renderContext->alloc< render::SimpleRenderBlock >(L"SkinnedMesh");
 		renderBlock->distance = distance;
-		renderBlock->program = program;
+		renderBlock->program = sp.program;
 		renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
 		renderBlock->indexBuffer = m_mesh->getIndexBuffer();
 		renderBlock->vertexBuffer = m_mesh->getVertexBuffer();
@@ -84,7 +78,7 @@ void SkinnedMesh::build(
 		renderBlock->programParams->endParameters(renderContext);
 
 		renderContext->draw(
-			m_shader->getCurrentPriority(),
+			sp.priority,
 			renderBlock
 		);
 	}

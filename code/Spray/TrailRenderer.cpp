@@ -196,17 +196,14 @@ void TrailRenderer::flush(
 		if (!i->shader || !i->points)
 			continue;
 
-		worldRenderPass.setShaderTechnique(i->shader);
-		worldRenderPass.setShaderCombination(i->shader);
-
-		render::IProgram* program = i->shader->getCurrentProgram();
-		if (!program)
+		auto sp = worldRenderPass.getProgram(i->shader);
+		if (!sp)
 			continue;
 
 		render::IndexedRenderBlock* renderBlock = renderContext->alloc< render::IndexedRenderBlock >(L"Trail");
 
 		renderBlock->distance = -std::numeric_limits< float >::max();
-		renderBlock->program = program;
+		renderBlock->program = sp.program;
 		renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
 		renderBlock->indexBuffer = m_indexBuffer;
 		renderBlock->vertexBuffer = m_vertexBuffers[m_count];
@@ -221,7 +218,7 @@ void TrailRenderer::flush(
 		renderBlock->programParams->setVectorParameter(s_handleTimeAndAge, i->timeAndAge);
 		renderBlock->programParams->endParameters(renderContext);
 
-		renderContext->draw(i->shader->getCurrentPriority(), renderBlock);
+		renderContext->draw(sp.priority, renderBlock);
 
 		offset += c_stripeLength * 2;
 	}

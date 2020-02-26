@@ -197,8 +197,9 @@ void ClothEntity::build(
 		m_updateRequired = false;
 	}
 
-	worldRenderPass.setShaderTechnique(m_shader);
-	worldRenderPass.setShaderCombination(m_shader);
+	auto sp = worldRenderPass.getProgram(m_shader);
+	if (!sp)
+		return;
 
 	render::RenderContext* renderContext = context.getRenderContext();
 	T_ASSERT(renderContext);
@@ -206,7 +207,7 @@ void ClothEntity::build(
 	render::IndexedRenderBlock* renderBlock = renderContext->alloc< render::IndexedRenderBlock >();
 
 	renderBlock->distance = 0.0f;
-	renderBlock->program = m_shader->getCurrentProgram();
+	renderBlock->program = sp.program;
 	renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
 	renderBlock->indexBuffer = m_indexBuffer;
 	renderBlock->vertexBuffer = m_vertexBuffer;
@@ -226,7 +227,7 @@ void ClothEntity::build(
 	renderBlock->programParams->endParameters(renderContext);
 
 	renderContext->draw(
-		m_shader->getCurrentPriority(),
+		sp.priority,
 		renderBlock
 	);
 }

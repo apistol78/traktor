@@ -256,17 +256,14 @@ void PointRenderer::flush(
 			if (!batch.count || !batch.shader)
 				continue;
 
-			worldRenderPass.setShaderTechnique(batch.shader);
-			worldRenderPass.setShaderCombination(batch.shader);
-
-			render::IProgram* program = batch.shader->getCurrentProgram();
-			if (!program)
+			auto sp = worldRenderPass.getProgram(batch.shader);
+			if (!sp)
 				continue;
 
 			render::IndexedRenderBlock* renderBlock = renderContext->alloc< render::IndexedRenderBlock >(L"PointRenderer");
 
 			renderBlock->distance = batch.distance;
-			renderBlock->program = program;
+			renderBlock->program = sp.program;
 			renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
 			renderBlock->indexBuffer = m_indexBuffer;
 			renderBlock->vertexBuffer = m_vertexBuffers[m_count];
@@ -280,7 +277,10 @@ void PointRenderer::flush(
 			worldRenderPass.setProgramParameters(renderBlock->programParams);
 			renderBlock->programParams->endParameters(renderContext);
 
-			renderContext->draw(batch.shader->getCurrentPriority(), renderBlock);
+			renderContext->draw(
+				sp.priority,
+				renderBlock
+			);
 
 			m_vertex = nullptr;
 		}

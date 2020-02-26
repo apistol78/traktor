@@ -32,13 +32,9 @@ uint32_t WorldRenderPassSimple::getPassFlags() const
 	return PfFirst;
 }
 
-void WorldRenderPassSimple::setShaderTechnique(render::Shader* shader) const
+render::Shader::Permutation WorldRenderPassSimple::getPermutation(const render::Shader* shader) const
 {
-	shader->setTechnique(m_technique);
-}
-
-void WorldRenderPassSimple::setShaderCombination(render::Shader* shader) const
-{
+	return render::Shader::Permutation(m_technique);
 }
 
 void WorldRenderPassSimple::setProgramParameters(render::ProgramParameters* programParams) const

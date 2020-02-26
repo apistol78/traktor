@@ -8,6 +8,7 @@
 #include "Render/IRenderTargetSet.h"
 #include "Render/IRenderView.h"
 #include "Render/ScreenRenderer.h"
+#include "Render/Shader.h"
 #include "Render/StructBuffer.h"
 #include "Render/StructElement.h"
 #include "Render/Context/RenderContext.h"
@@ -22,7 +23,6 @@
 #include "World/WorldGatherContext.h"
 #include "World/WorldHandles.h"
 #include "World/WorldSetupContext.h"
-#include "World/Deferred/LightRendererDeferred.h"
 #include "World/Deferred/WorldRendererDeferred.h"
 #include "World/Deferred/WorldRenderPassDeferred.h"
 #include "World/SMProj/UniformShadowProjection.h"
@@ -35,6 +35,10 @@ namespace traktor
 		{
 
 const int32_t c_maxLightCount = 1024;
+
+const resource::Id< render::Shader > c_lightShader(L"{707DE0B0-0E2B-A44A-9441-9B1FCFD428AA}");
+const resource::Id< render::Shader > c_reflectionShader(L"{F04EEA34-85E0-974F-BE97-79D24C6ACFBD}");
+const resource::Id< render::Shader > c_fogShader(L"{9453D74C-76C4-8748-9A5B-9E3D6D4F9406}");
 
 const resource::Id< render::ImageGraph > c_ambientOcclusionLow(L"{416745F9-93C7-8D45-AE28-F2823DEE636A}");
 const resource::Id< render::ImageGraph > c_ambientOcclusionMedium(L"{5A3B0260-32F9-B343-BBA4-88BD932F917A}");
@@ -185,6 +189,14 @@ bool WorldRendererDeferred::create(
 	);
 	m_fogColor = m_settings.fogColor;
 
+	// Create light, reflection and fog shaders.
+	if (!resourceManager->bind(c_lightShader, m_lightShader))
+		return false;
+	if (!resourceManager->bind(c_reflectionShader, m_reflectionShader))
+		return false;
+	if (!resourceManager->bind(c_fogShader, m_fogShader))
+		return false;
+
 	// Create shadow screen projection processes.
 	if (m_shadowsQuality > QuDisabled)
 	{
@@ -311,17 +323,6 @@ bool WorldRendererDeferred::create(
 			return false;
 	}
 
-	// Create light primitive renderer.
-	m_lightRenderer = new LightRendererDeferred();
-	if (!m_lightRenderer->create(
-		resourceManager,
-		renderSystem
-	))
-	{
-		log::error << L"Unable to create light primitive renderer." << Endl;
-		return false;
-	}
-
 	// Create irradiance grid.
 	if (!m_settings.irradianceGrid.isNull())
 	{
@@ -357,7 +358,6 @@ void WorldRendererDeferred::destroy()
 	}
 	m_frames.clear();
 
-	safeDestroy(m_lightRenderer);
 	safeDestroy(m_screenRenderer);
 
 	m_irradianceGrid.clear();
@@ -1245,17 +1245,20 @@ render::handle_t WorldRendererDeferred::setupReflectionsPass(
 			// Render screenspace reflections.
 			// if (m_reflectionsQuality >= QuHigh)
 			// {
-			//	auto visualTargetSet = renderGraph.getTargetSet(visualTargetSetId);
-			// 	m_lightRenderer->renderReflections(
-			// 		renderContext,
-			// 		worldRenderView.getProjection(),
-			// 		worldRenderView.getView(),
-			// 		worldRenderView.getLastView(),
-			// 		visualTargetSet->getColorTexture(0),	// \tbd using last frame copy without reprojection...
-			// 		gbufferTargetSet->getColorTexture(0),	// depth
-			// 		gbufferTargetSet->getColorTexture(1),	// normals
-			// 		gbufferTargetSet->getColorTexture(2)	// metalness, roughness and specular
-			// 	);
+				//	auto visualTargetSet = renderGraph.getTargetSet(visualTargetSetId);
+
+				// auto lrb = renderContext->alloc< render::LambdaRenderBlock >(L"Reflections");
+				// lrb->lambda = [=](render::IRenderView* renderView)
+				// {
+				// 	Scalar p11 = projection.get(0, 0);
+				// 	Scalar p22 = projection.get(1, 1);
+
+				// 	m_reflectionShader->setVectorParameter(s_handleMagicCoeffs, Vector4(1.0f / p11, 1.0f / p22, 0.0f, 0.0f));
+				// 	m_reflectionShader->setTextureParameter(s_handleScreenMap, visualTargetSet->getColorTexture(0));
+
+				// 	m_reflectionShader->draw(renderView, m_vertexBufferQuad, 0, m_primitivesQuad);
+				// };
+				// renderContext->enqueue(lrb);
 			// }
 		}
 	);
@@ -1322,20 +1325,32 @@ render::handle_t WorldRendererDeferred::setupVisualPass(
 			auto shadowMaskTargetSet = renderGraph.getTargetSet(shadowMaskTargetSetId);
 			auto shadowAtlasTargetSet = renderGraph.getTargetSet(shadowMapAtlasTargetSetId);
 
+			const auto& view = worldRenderView.getView();
+			const auto& projection = worldRenderView.getProjection();
+
+			Scalar p11 = projection.get(0, 0);
+			Scalar p22 = projection.get(1, 1);
+
 			auto sharedParams = renderContext->alloc< render::ProgramParameters >();
 			sharedParams->beginParameters(renderContext);
 			sharedParams->setFloatParameter(s_handleTime, worldRenderView.getTime());
 			sharedParams->setFloatParameter(s_handleLightCount, (float)lightCount);
+			sharedParams->setVectorParameter(s_handleMagicCoeffs, Vector4(1.0f / p11, 1.0f / p22, 0.0f, 0.0f));
 			sharedParams->setVectorParameter(s_handleFogDistanceAndDensity, m_fogDistanceAndDensity);
 			sharedParams->setVectorParameter(s_handleFogColor, m_fogColor);
-			sharedParams->setMatrixParameter(s_handleView, worldRenderView.getView());
-			sharedParams->setMatrixParameter(s_handleViewInverse, worldRenderView.getView().inverse());
-			sharedParams->setMatrixParameter(s_handleProjection, worldRenderView.getProjection());
+			sharedParams->setMatrixParameter(s_handleView, view);
+			sharedParams->setMatrixParameter(s_handleViewInverse, view.inverse());
+			sharedParams->setMatrixParameter(s_handleProjection, projection);
 			sharedParams->setTextureParameter(s_handleDepthMap, gbufferTargetSet->getColorTexture(0));
 			sharedParams->setTextureParameter(s_handleNormalMap, gbufferTargetSet->getColorTexture(1));
 			sharedParams->setTextureParameter(s_handleMiscMap, gbufferTargetSet->getColorTexture(2));
 			sharedParams->setTextureParameter(s_handleColorMap, gbufferTargetSet->getColorTexture(3));
 			sharedParams->setTextureParameter(s_handleOcclusionMap, ambientOcclusionTargetSet->getColorTexture(0));
+			if (shadowMaskTargetSet)
+				sharedParams->setTextureParameter(s_handleShadowMask, shadowMaskTargetSet->getColorTexture(0));
+			if (shadowAtlasTargetSet)
+				sharedParams->setTextureParameter(s_handleShadowMapAtlas, shadowAtlasTargetSet->getDepthTexture());
+			sharedParams->setTextureParameter(s_handleReflectionMap, reflectionsTargetSet->getColorTexture(0));
 			sharedParams->setStructBufferParameter(s_handleLightSBuffer, m_frames[frame].lightSBuffer);
 			sharedParams->setStructBufferParameter(s_handleTileSBuffer, m_frames[frame].tileSBuffer);
 			if (m_irradianceGrid)
@@ -1363,40 +1378,14 @@ render::handle_t WorldRendererDeferred::setupVisualPass(
 			renderContext->merge(render::RpAll);
 
 			// Analytical lights; resolve with gbuffer.
-			m_lightRenderer->renderLights(
-				renderContext,
-				worldRenderView.getTime(),
-				lightCount,
-				worldRenderView.getProjection(),
-				worldRenderView.getView(),
-				m_frames[frame].lightSBuffer,
-				m_frames[frame].tileSBuffer,
-				m_irradianceGrid,
-				gbufferTargetSet->getColorTexture(0),	// depth
-				gbufferTargetSet->getColorTexture(1),	// normals
-				gbufferTargetSet->getColorTexture(2),	// metalness/roughness
-				gbufferTargetSet->getColorTexture(3),	// surface color
-				ambientOcclusionTargetSet->getColorTexture(0),	// ambient occlusion
-				shadowMaskTargetSet != nullptr ? shadowMaskTargetSet->getColorTexture(0) : nullptr,		// shadow mask
-				shadowAtlasTargetSet != nullptr ? shadowAtlasTargetSet->getDepthTexture() : nullptr,	// shadow map atlas,
-				reflectionsTargetSet != nullptr ? reflectionsTargetSet->getColorTexture(0) : nullptr	// reflection map
-			);
+			// m_lightShader->setCombination(s_handleShadowEnable, (bool)(shadowMaskTargetSet != nullptr));
+			// m_lightShader->setCombination(s_handleReflectionsEnable, (bool)(reflectionsTargetSet != nullptr));
+			// m_lightShader->setCombination(s_handleIrradianceEnable, (bool)(m_irradianceGrid != nullptr));
+			m_screenRenderer->draw(renderContext, m_lightShader, sharedParams);
 
-			// Fog
+			// Module with fog.
 			if (dot4(m_fogDistanceAndDensity, Vector4(0.0f, 0.0f, 1.0f, 1.0f)) > FUZZY_EPSILON)
-			{
-				m_lightRenderer->renderFog(
-					renderContext,
-					worldRenderView.getProjection(),
-					worldRenderView.getView(),
-					m_fogDistanceAndDensity,
-					m_fogColor,
-					gbufferTargetSet->getColorTexture(0),
-					gbufferTargetSet->getColorTexture(1),
-					gbufferTargetSet->getColorTexture(2),
-					gbufferTargetSet->getColorTexture(3)
-				);
-			}
+				m_screenRenderer->draw(renderContext, m_fogShader, sharedParams);
 
 			// Forward visuals; not included in GBuffer.
 			WorldRenderPassDeferred deferredColorPass(

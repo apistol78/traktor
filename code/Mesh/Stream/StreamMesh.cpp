@@ -87,11 +87,8 @@ void StreamMesh::build(
 	const AlignedVector< render::Mesh::Part >& meshParts = instance->mesh[0]->getParts();
 	for (const auto part : it->second)
 	{
-		m_shader->setTechnique(part.shaderTechnique);
-		worldRenderPass.setShaderCombination(m_shader);
-
-		render::IProgram* program = m_shader->getCurrentProgram();
-		if (!program)
+		auto sp = worldRenderPass.getProgram(m_shader, part.shaderTechnique);
+		if (!sp)
 			continue;
 
 		// \fixme Linear search by string
@@ -101,7 +98,7 @@ void StreamMesh::build(
 
 		render::SimpleRenderBlock* renderBlock = renderContext->alloc< render::SimpleRenderBlock >(L"StreamMesh");
 		renderBlock->distance = distance;
-		renderBlock->program = program;
+		renderBlock->program = sp.program;
 		renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
 		renderBlock->indexBuffer = instance->mesh[0]->getIndexBuffer();
 		renderBlock->vertexBuffer = instance->mesh[0]->getVertexBuffer();
@@ -119,7 +116,7 @@ void StreamMesh::build(
 		renderBlock->programParams->endParameters(renderContext);
 
 		renderContext->draw(
-			m_shader->getCurrentPriority(),
+			sp.priority,
 			renderBlock
 		);
 	}

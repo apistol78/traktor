@@ -68,9 +68,16 @@ void ScreenRenderer::draw(IRenderView* renderView, IProgram* program)
 	renderView->draw(m_vertexBuffer, nullptr, program, m_primitives);
 }
 
-void ScreenRenderer::draw(IRenderView* renderView, Shader* shader)
+void ScreenRenderer::draw(IRenderView* renderView, const Shader* shader)
 {
-	IProgram* program = shader->getCurrentProgram();
+	IProgram* program = shader->getProgram().program;
+	if (program)
+		draw(renderView, program);
+}
+
+void ScreenRenderer::draw(IRenderView* renderView, const Shader* shader, const Shader::Permutation& permutation)
+{
+	IProgram* program = shader->getProgram(permutation).program;
 	if (program)
 		draw(renderView, program);
 }
@@ -86,9 +93,16 @@ void ScreenRenderer::draw(RenderContext* renderContext, IProgram* program, Progr
 	renderContext->enqueue(rb);
 }
 
-void ScreenRenderer::draw(RenderContext* renderContext, Shader* shader, ProgramParameters* programParams)
+void ScreenRenderer::draw(RenderContext* renderContext, const Shader* shader, ProgramParameters* programParams)
 {
-	IProgram* program = shader->getCurrentProgram();
+	IProgram* program = shader->getProgram().program;
+	if (program)
+		draw(renderContext, program, nullptr);
+}
+
+void ScreenRenderer::draw(RenderContext* renderContext, const Shader* shader, const Shader::Permutation& permutation, ProgramParameters* programParams)
+{
+	IProgram* program = shader->getProgram(permutation).program;
 	if (program)
 		draw(renderContext, program, programParams);
 }

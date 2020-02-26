@@ -31,8 +31,6 @@ class Shader;
 class T_DLLCLASS IMeshParameterCallback : public IRefCount
 {
 public:
-	virtual void setCombination(render::Shader* shader) const = 0;
-
 	virtual void setParameters(render::ProgramParameters* programParameters) const = 0;
 };
 

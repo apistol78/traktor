@@ -3,7 +3,7 @@
 #include "Core/Object.h"
 #include "Core/Math/Aabb3.h"
 #include "Core/Math/Transform.h"
-#include "Render/Types.h"
+#include "Render/Shader.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -18,8 +18,8 @@ namespace traktor
 	namespace render
 	{
 
+class IProgram;
 class ProgramParameters;
-class Shader;
 
 	}
 
@@ -41,16 +41,14 @@ public:
 		PfLast = 1 << 1		//!< Last pass for this frame.
 	};
 
+	/*! Get shader technique. */
 	virtual render::handle_t getTechnique() const = 0;
 
 	/*! Return flags of pass. */
 	virtual uint32_t getPassFlags() const = 0;
 
-	/*! Set shader technique used by this pass. */
-	virtual void setShaderTechnique(render::Shader* shader) const = 0;
-
-	/*! Set shader combination used by this pass. */
-	virtual void setShaderCombination(render::Shader* shader) const = 0;
+	/*! Get shader permutation. */
+	virtual render::Shader::Permutation getPermutation(const render::Shader* shader) const = 0;
 
 	/*! Set shader parameters.
 	 *
@@ -66,6 +64,21 @@ public:
 	 * \param bounds World bounds.
 	 */
 	virtual void setProgramParameters(render::ProgramParameters* programParams, const Transform& lastWorld, const Transform& world, const Aabb3& bounds) const = 0;
+
+	/*! Get shader program. */
+	render::Shader::Program getProgram(const render::Shader* shader) const
+	{
+		auto perm = getPermutation(shader);
+		return shader->getProgram(perm);
+	}
+
+	/*! Get shader program, only set combinations but use an overriden shader technique. */
+	render::Shader::Program getProgram(const render::Shader* shader, render::handle_t technique) const
+	{
+		auto perm = getPermutation(shader);
+		perm.technique = technique;
+		return shader->getProgram(perm);
+	}
 };
 
 	}

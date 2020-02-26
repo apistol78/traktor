@@ -230,11 +230,8 @@ void UndergrowthLayer::build(
 		vs.count++;
 	}
 
-	worldRenderPass.setShaderTechnique(m_shader);
-	worldRenderPass.setShaderCombination(m_shader);
-
-	render::IProgram* program = m_shader->getCurrentProgram();
-	if (!program)
+	auto sp = worldRenderPass.getProgram(m_shader);
+	if (!sp)
 		return;
 
 	render::RenderContext* renderContext = context.getRenderContext();
@@ -263,7 +260,7 @@ void UndergrowthLayer::build(
 			render::IndexedInstancingRenderBlock* renderBlock = renderContext->alloc< render::IndexedInstancingRenderBlock >();
 
 			renderBlock->distance = vs.distances[i];
-			renderBlock->program = program;
+			renderBlock->program = sp.program;
 			renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
 			renderBlock->indexBuffer = m_indexBuffer;
 			renderBlock->vertexBuffer = m_vertexBuffer;
@@ -287,7 +284,7 @@ void UndergrowthLayer::build(
 			renderBlock->programParams->endParameters(renderContext);
 
 			renderContext->draw(
-				render::RpOpaque,
+				sp.priority,
 				renderBlock
 			);
 		}

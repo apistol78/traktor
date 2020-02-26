@@ -90,18 +90,12 @@ uint32_t WorldRenderPassForward::getPassFlags() const
 	return m_passFlags;
 }
 
-void WorldRenderPassForward::setShaderTechnique(render::Shader* shader) const
+render::Shader::Permutation WorldRenderPassForward::getPermutation(const render::Shader* shader) const
 {
-	shader->setTechnique(m_technique);
-}
-
-void WorldRenderPassForward::setShaderCombination(render::Shader* shader) const
-{
-	if (m_technique == s_techniqueForwardColor)
-	{
-		shader->setCombination(s_handleFogEnable, m_fogEnabled);
-		shader->setCombination(s_handleShadowEnable, m_shadowCascade != nullptr && m_shadowAtlas != nullptr);
-	}
+	render::Shader::Permutation perm(m_technique);
+	shader->setCombination(s_handleFogEnable, m_fogEnabled, perm);
+	shader->setCombination(s_handleShadowEnable, m_shadowCascade != nullptr && m_shadowAtlas != nullptr, perm);
+	return perm;
 }
 
 void WorldRenderPassForward::setProgramParameters(render::ProgramParameters* programParams) const

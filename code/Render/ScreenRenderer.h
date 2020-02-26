@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Core/Object.h"
-#include "Render/Types.h"
+#include "Render/Shader.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -21,7 +21,6 @@ class IRenderSystem;
 class IRenderView;
 class ProgramParameters;
 class RenderContext;
-class Shader;
 class VertexBuffer;
 
 /*! Screen renderer.
@@ -47,16 +46,20 @@ public:
 
 	void draw(IRenderView* renderView, IProgram* program);
 
-	void draw(IRenderView* renderView, Shader* shader);
+	void draw(IRenderView* renderView, const Shader* shader);
+
+	void draw(IRenderView* renderView, const Shader* shader, const Shader::Permutation& permutation);
 
 	// !}
 
 	// \name Context queued draws.
 	// !{
 
-	void draw(RenderContext* renderContext, IProgram* program, ProgramParameters* programParams = nullptr);
+	void draw(RenderContext* renderContext, IProgram* program, ProgramParameters* programParams);
 
-	void draw(RenderContext* renderContext, Shader* shader, ProgramParameters* programParams = nullptr);
+	void draw(RenderContext* renderContext, const Shader* shader, ProgramParameters* programParams);
+
+	void draw(RenderContext* renderContext, const Shader* shader, const Shader::Permutation& permutation, ProgramParameters* programParams);
 
 	// !}
 

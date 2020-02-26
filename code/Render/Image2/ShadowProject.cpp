@@ -90,9 +90,6 @@ void ShadowProject::build(
 	Scalar p11 = params.projection.get(0, 0);
 	Scalar p22 = params.projection.get(1, 1);
 
-	// \tbd Need to refactor "setCombination" -> "getCurrentProgram"
-	m_shader->setCombination(s_handleLastSlice, (bool)(params.sliceIndex >= (params.sliceCount - 1)));
-
 	// Setup parameters for the shader.
 	auto pp = renderContext->alloc< ProgramParameters >();
 	pp->beginParameters(renderContext);
@@ -120,7 +117,9 @@ void ShadowProject::build(
 	pp->endParameters(renderContext);
 
 	// Draw fullscreen quad with shader.
-	cx.getScreenRenderer()->draw(renderContext, m_shader, pp);
+	Shader::Permutation perm;
+	m_shader->setCombination(s_handleLastSlice, (bool)(params.sliceIndex >= (params.sliceCount - 1)), perm);
+	cx.getScreenRenderer()->draw(renderContext, m_shader, perm, pp);
 }
 
     }

@@ -10,11 +10,9 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.Shader", Shader, Object)
 
+const Handle Shader::ms_default(L"Default");
+
 Shader::Shader()
-:	m_parameterValue(0)
-,	m_currentTechnique(nullptr)
-,	m_currentProgram(nullptr)
-,	m_currentPriority(0)
 {
 }
 
@@ -25,10 +23,6 @@ Shader::~Shader()
 
 void Shader::destroy()
 {
-	m_currentTechnique = nullptr;
-	m_currentProgram = nullptr;
-	m_currentPriority = 0;
-
 	for (auto& technique : m_techniques)
 	{
 		for (auto& combination : technique.second.combinations)
@@ -38,20 +32,8 @@ void Shader::destroy()
 		}
 		technique.second.combinations.resize(0);
 	}
-
 	m_techniques.clear();
-}
-
-bool Shader::hasTechnique(handle_t handle) const
-{
-	return m_techniques.find(handle) != m_techniques.end();
-}
-
-void Shader::setTechnique(handle_t handle)
-{
-	SmallMap< handle_t, Technique >::iterator i = m_techniques.find(handle);
-	m_currentTechnique = (i != m_techniques.end()) ? &i->second : nullptr;
-	updateCurrentProgram();
+	m_parameterBits.clear();
 }
 
 void Shader::getTechniques(SmallSet< handle_t >& outHandles) const
@@ -60,114 +42,34 @@ void Shader::getTechniques(SmallSet< handle_t >& outHandles) const
 		outHandles.insert(technique.first);
 }
 
-void Shader::setCombination(handle_t handle, bool param)
+bool Shader::hasTechnique(handle_t handle) const
+{
+	return m_techniques.find(handle) != m_techniques.end();
+}
+
+void Shader::setCombination(handle_t handle, bool param, Permutation& inoutPermutation) const
 {
 	uint32_t bit = m_parameterBits[handle];
 	if (param)
-		m_parameterValue |= bit;
+		inoutPermutation.combination |= bit;
 	else
-		m_parameterValue &= ~bit;
-	updateCurrentProgram();
+		inoutPermutation.combination &= ~bit;
 }
 
-void Shader::setFloatParameter(handle_t handle, float param)
+Shader::Program Shader::getProgram(const Permutation& permutation) const
 {
-	if (m_currentProgram)
-		m_currentProgram->setFloatParameter(handle, param);
-}
+	const auto it = m_techniques.find(permutation.technique);
+	if (it == m_techniques.end())
+		return { nullptr, 0 };
 
-void Shader::setFloatArrayParameter(handle_t handle, const float* param, int length)
-{
-	if (m_currentProgram)
-		m_currentProgram->setFloatArrayParameter(handle, param, length);
-}
-
-void Shader::setVectorParameter(handle_t handle, const Vector4& param)
-{
-	if (m_currentProgram)
-		m_currentProgram->setVectorParameter(handle, param);
-}
-
-void Shader::setVectorArrayParameter(handle_t handle, const Vector4* param, int length)
-{
-	if (m_currentProgram)
-		m_currentProgram->setVectorArrayParameter(handle, param, length);
-}
-
-void Shader::setMatrixParameter(handle_t handle, const Matrix44& param)
-{
-	if (m_currentProgram)
-		m_currentProgram->setMatrixParameter(handle, param);
-}
-
-void Shader::setMatrixArrayParameter(handle_t handle, const Matrix44* param, int length)
-{
-	if (m_currentProgram)
-		m_currentProgram->setMatrixArrayParameter(handle, param, length);
-}
-
-void Shader::setTextureParameter(handle_t handle, ITexture* texture)
-{
-	if (m_currentProgram)
-		m_currentProgram->setTextureParameter(handle, texture);
-}
-
-void Shader::setStructBufferParameter(handle_t handle, StructBuffer* structBuffer)
-{
-	if (m_currentProgram)
-		m_currentProgram->setStructBufferParameter(handle, structBuffer);
-}
-
-void Shader::setStencilReference(uint32_t stencilReference)
-{
-	if (m_currentProgram)
-		m_currentProgram->setStencilReference(stencilReference);
-}
-
-void Shader::draw(IRenderView* renderView, VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, const Primitives& primitives)
-{
-	if (!m_currentProgram)
-		return;
-
-	renderView->draw(
-		vertexBuffer,
-		indexBuffer,
-		m_currentProgram,
-		primitives
-	);
-}
-
-void Shader::draw(IRenderView* renderView, VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, const Primitives& primitives, uint32_t instanceCount)
-{
-	if (!m_currentProgram)
-		return;
-
-	renderView->draw(
-		vertexBuffer,
-		indexBuffer,
-		m_currentProgram,
-		primitives,
-		instanceCount
-	);
-}
-
-void Shader::updateCurrentProgram()
-{
-	m_currentProgram = nullptr;
-	m_currentPriority = 0;
-
-	if (!m_currentTechnique)
-		return;
-
-	for (const auto& combination : m_currentTechnique->combinations)
+	const auto& technique = it->second;
+	for (const auto& combination : technique.combinations)
 	{
-		if ((m_parameterValue & combination.mask) == combination.value)
-		{
-			m_currentProgram = combination.program;
-			m_currentPriority = combination.priority;
-			break;
-		}
+		if ((permutation.combination & combination.mask) == combination.value)
+			return { combination.program, combination.priority };
 	}
+
+	return { nullptr, 0 };
 }
 
 	}

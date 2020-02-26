@@ -188,17 +188,14 @@ void RiverComponent::build(
 	const world::IWorldRenderPass& worldRenderPass
 )
 {
-	worldRenderPass.setShaderTechnique(m_shader);
-	worldRenderPass.setShaderCombination(m_shader);
-
-	render::IProgram* program = m_shader->getCurrentProgram();
-	if (!program)
-		return;
+	auto sp = worldRenderPass.getProgram(m_shader);
+	if (!sp)
+		return;			
 
 	render::SimpleRenderBlock* renderBlock = renderContext->alloc< render::SimpleRenderBlock >(L"River");
 
 	renderBlock->distance = 0.0f;
-	renderBlock->program = program;
+	renderBlock->program = sp.program;
 	renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
 	renderBlock->indexBuffer = m_indexBuffer;
 	renderBlock->vertexBuffer = m_vertexBuffer;
@@ -210,7 +207,7 @@ void RiverComponent::build(
 
 	renderBlock->programParams->endParameters(renderContext);
 
-	renderContext->draw(m_shader->getCurrentPriority(), renderBlock);
+	renderContext->draw(sp.priority, renderBlock);
 }
 
 	}

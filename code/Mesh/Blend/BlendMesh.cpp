@@ -278,22 +278,19 @@ void BlendMesh::build(
 	T_ASSERT(it != m_parts.end());
 
 	const AlignedVector< render::Mesh::Part >& meshParts = instance->mesh->getParts();
-	for (AlignedVector< Part >::const_iterator i = it->second.begin(); i != it->second.end(); ++i)
+	for (const auto& part : it->second)
 	{
-		m_shader->setTechnique(i->shaderTechnique);
-		worldRenderPass.setShaderCombination(m_shader);
-
-		render::IProgram* program = m_shader->getCurrentProgram();
-		if (!program)
+		auto sp = worldRenderPass.getProgram(m_shader, part.shaderTechnique);
+		if (!sp)
 			continue;
 
 		render::SimpleRenderBlock* renderBlock = renderContext->alloc< render::SimpleRenderBlock >(L"BlendMesh");
 		renderBlock->distance = distance;
-		renderBlock->program = program;
+		renderBlock->program = sp.program;
 		renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
 		renderBlock->indexBuffer = instance->mesh->getIndexBuffer();
 		renderBlock->vertexBuffer = instance->mesh->getVertexBuffer();
-		renderBlock->primitives = meshParts[i->meshPart].primitives;
+		renderBlock->primitives = meshParts[part.meshPart].primitives;
 
 		renderBlock->programParams->beginParameters(renderContext);
 		worldRenderPass.setProgramParameters(
@@ -307,7 +304,7 @@ void BlendMesh::build(
 		renderBlock->programParams->endParameters(renderContext);
 
 		renderContext->draw(
-			m_shader->getCurrentPriority(),
+			sp.priority,
 			renderBlock
 		);
 	}

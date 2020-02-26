@@ -154,9 +154,10 @@ void VideoEditorPage::eventPaint(ui::PaintEvent* event)
 			render::ISimpleTexture* texture = m_video->getTexture();
 			if (texture)
 			{
-				m_shader->setTextureParameter(L"Texture", texture);
-				m_shader->setVectorParameter(L"Bounds", Vector4(0.0f, 0.0f, 1.0f, 1.0f));
-				m_screenRenderer->draw(m_renderView, m_shader);
+				// \fixme
+				// m_shader->setTextureParameter(L"Texture", texture);
+				// m_shader->setVectorParameter(L"Bounds", Vector4(0.0f, 0.0f, 1.0f, 1.0f));
+				// m_screenRenderer->draw(m_renderView, m_shader);
 			}
 		}
 		m_renderView->end();

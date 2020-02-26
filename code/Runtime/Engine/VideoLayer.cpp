@@ -154,13 +154,14 @@ void VideoLayer::render(uint32_t frame)
 	render::ISimpleTexture* texture = m_video->getTexture();
 	if (texture)
 	{
-		m_shader->setTextureParameter(L"Texture", texture);
-		m_shader->setVectorParameter(L"Bounds", Vector4(m_screenBounds.mn.x, m_screenBounds.mn.y, m_screenBounds.mx.x, m_screenBounds.mx.y));
+		// \fixme
+		// m_shader->setTextureParameter(L"Texture", texture);
+		// m_shader->setVectorParameter(L"Bounds", Vector4(m_screenBounds.mn.x, m_screenBounds.mn.y, m_screenBounds.mx.x, m_screenBounds.mx.y));
 
-		m_screenRenderer->draw(
-			m_environment->getRender()->getRenderView(),
-			m_shader
-		);
+		// m_screenRenderer->draw(
+		// 	m_environment->getRender()->getRenderView(),
+		// 	m_shader
+		// );
 	}
 }
 

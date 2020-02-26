@@ -53,11 +53,8 @@ void PartitionMesh::build(
 	{
 		const Part& part = m_parts[partIndex];
 
-		m_shader->setTechnique(part.shaderTechnique);
-		worldRenderPass.setShaderCombination(m_shader);
-
-		render::IProgram* program = m_shader->getCurrentProgram();
-		if (!program)
+		auto sp = worldRenderPass.getProgram(m_shader, part.shaderTechnique);
+		if (!sp)
 			continue;
 
 		Vector4 center = worldView * part.boundingBox.getCenter();
@@ -65,7 +62,7 @@ void PartitionMesh::build(
 
 		render::SimpleRenderBlock* renderBlock = renderContext->alloc< render::SimpleRenderBlock >(L"PartitionMesh");
 		renderBlock->distance = distancePart;
-		renderBlock->program = program;
+		renderBlock->program = sp.program;
 		renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
 		renderBlock->indexBuffer = m_mesh->getIndexBuffer();
 		renderBlock->vertexBuffer = m_mesh->getVertexBuffer();
@@ -83,7 +80,7 @@ void PartitionMesh::build(
 		renderBlock->programParams->endParameters(renderContext);
 
 		renderContext->draw(
-			m_shader->getCurrentPriority(),
+			sp.priority,
 			renderBlock
 		);
 	}
