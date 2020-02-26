@@ -97,7 +97,7 @@ void ScreenRenderer::draw(RenderContext* renderContext, const Shader* shader, Pr
 {
 	IProgram* program = shader->getProgram().program;
 	if (program)
-		draw(renderContext, program, nullptr);
+		draw(renderContext, program, programParams);
 }
 
 void ScreenRenderer::draw(RenderContext* renderContext, const Shader* shader, const Shader::Permutation& permutation, ProgramParameters* programParams)
