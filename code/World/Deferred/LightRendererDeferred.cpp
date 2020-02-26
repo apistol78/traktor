@@ -8,6 +8,7 @@
 #include "Render/Context/RenderContext.h"
 #include "Resource/IResourceManager.h"
 #include "World/IrradianceGrid.h"
+#include "World/WorldHandles.h"
 #include "World/Deferred/LightRendererDeferred.h"
 
 namespace traktor
@@ -20,39 +21,6 @@ namespace traktor
 const resource::Id< render::Shader > c_lightShader(L"{707DE0B0-0E2B-A44A-9441-9B1FCFD428AA}");
 const resource::Id< render::Shader > c_reflectionShader(L"{F04EEA34-85E0-974F-BE97-79D24C6ACFBD}");
 const resource::Id< render::Shader > c_fogShader(L"{9453D74C-76C4-8748-9A5B-9E3D6D4F9406}");
-
-const render::Handle s_handleTime(L"World_Time");
-const render::Handle s_handleShadowEnable(L"World_ShadowEnable");
-const render::Handle s_handleReflectionsEnable(L"World_ReflectionsEnable");
-const render::Handle s_handleIrradianceEnable(L"World_IrradianceEnable");
-const render::Handle s_handleExtent(L"World_Extent");
-const render::Handle s_handleProjection(L"World_Projection");
-const render::Handle s_handleView(L"World_View");
-const render::Handle s_handleViewInverse(L"World_ViewInverse");
-const render::Handle s_handleMagicCoeffs(L"World_MagicCoeffs");
-const render::Handle s_handleScreenMap(L"World_ScreenMap");
-const render::Handle s_handleDepthMap(L"World_DepthMap");
-const render::Handle s_handleNormalMap(L"World_NormalMap");
-const render::Handle s_handleMiscMap(L"World_MiscMap");
-const render::Handle s_handleColorMap(L"World_ColorMap");
-const render::Handle s_handleOcclusionMap(L"World_OcclusionMap");
-const render::Handle s_handleLightDiffuseMap(L"World_LightDiffuseMap");
-const render::Handle s_handleLightSpecularMap(L"World_LightSpecularMap");
-const render::Handle s_handleProbeDiffuse(L"World_ProbeDiffuse");
-const render::Handle s_handleProbeSpecular(L"World_ProbeSpecular");
-const render::Handle s_handleProbeSpecularMips(L"World_ProbeSpecularMips");
-const render::Handle s_handleFogDistanceAndDensity(L"World_FogDistanceAndDensity");
-const render::Handle s_handleFogColor(L"World_FogColor");
-const render::Handle s_handleLightCount(L"World_LightCount");
-const render::Handle s_handleShadowMask(L"World_ShadowMask");
-const render::Handle s_handleShadowMapAtlas(L"World_ShadowMapAtlas");
-const render::Handle s_handleReflectionMap(L"World_ReflectionMap");
-const render::Handle s_handleLightSBuffer(L"World_LightSBuffer");
-const render::Handle s_handleTileSBuffer(L"World_TileSBuffer");
-const render::Handle s_handleIrradianceGridSize(L"World_IrradianceGridSize");
-const render::Handle s_handleIrradianceGridSBuffer(L"World_IrradianceGridSBuffer");
-const render::Handle s_handleIrradianceGridBoundsMin(L"World_IrradianceGridBoundsMin");
-const render::Handle s_handleIrradianceGridBoundsMax(L"World_IrradianceGridBoundsMax");
 
 #pragma pack(1)
 

@@ -16,6 +16,7 @@
 #include "World/IWorldRenderPass.h"
 #include "World/WorldBuildContext.h"
 #include "World/WorldEntityRenderers.h"
+#include "World/WorldHandles.h"
 #include "World/WorldRenderSettings.h"
 #include "World/WorldRenderView.h"
 #include "World/WorldSetupContext.h"
@@ -45,15 +46,6 @@ struct Vertex
 	float position[3];
 };
 #pragma pack()
-
-render::Handle s_handleProbeLocal(L"World_ProbeLocal");
-render::Handle s_handleProbeVolumeCenter(L"World_ProbeVolumeCenter");
-render::Handle s_handleProbeVolumeExtent(L"World_ProbeVolumeExtent");
-render::Handle s_handleProbeTexture(L"World_ProbeTexture");
-render::Handle s_handleProbeTextureMips(L"World_ProbeTextureMips");
-render::Handle s_handleProbeIntensity(L"World_ProbeIntensity");
-render::Handle s_handleMagicCoeffs(L"World_MagicCoeffs");
-render::Handle s_handleWorldViewInv(L"World_WorldViewInv");
 
 		}
 

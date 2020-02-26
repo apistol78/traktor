@@ -1,60 +1,13 @@
 #include "Render/ISimpleTexture.h"
 #include "Render/Shader.h"
 #include "Render/Context/ProgramParameters.h"
+#include "World/WorldHandles.h"
 #include "World/Forward/WorldRenderPassForward.h"
 
 namespace traktor
 {
 	namespace world
 	{
-		namespace
-		{
-
-bool s_handlesInitialized = false;
-render::handle_t s_techniqueDefault;
-render::handle_t s_handleView;
-render::handle_t s_handleViewInverse;
-render::handle_t s_handleWorld;
-render::handle_t s_handleWorldView;
-render::handle_t s_handleColorMap;
-render::handle_t s_handleFogEnable;
-render::handle_t s_handleFogDistanceAndDensity;
-render::handle_t s_handleFogColor;
-render::handle_t s_handleShadowEnable;
-render::handle_t s_handleShadowCascade;
-render::handle_t s_handleShadowAtlas;
-render::handle_t s_handleDepthMap;
-render::handle_t s_handleOcclusionMap;
-render::handle_t s_handleLightCount;
-render::handle_t s_handleLightSBuffer;
-
-void initializeHandles()
-{
-	if (s_handlesInitialized)
-		return;
-
-	s_techniqueDefault = render::getParameterHandle(L"World_ForwardColor");
-
-	s_handleView = render::getParameterHandle(L"World_View");
-	s_handleViewInverse = render::getParameterHandle(L"World_ViewInverse");
-	s_handleWorld = render::getParameterHandle(L"World_World");
-	s_handleWorldView = render::getParameterHandle(L"World_WorldView");
-	s_handleColorMap = render::getParameterHandle(L"World_ColorMap");
-	s_handleFogEnable = render::getParameterHandle(L"World_FogEnable");
-	s_handleFogDistanceAndDensity = render::getParameterHandle(L"World_FogDistanceAndDensity");
-	s_handleFogColor = render::getParameterHandle(L"World_FogColor");
-	s_handleShadowEnable = render::getParameterHandle(L"World_ShadowEnable");
-	s_handleShadowCascade = render::getParameterHandle(L"World_ShadowMapCascade");
-	s_handleShadowAtlas = render::getParameterHandle(L"World_ShadowMapAtlas");
-	s_handleDepthMap = render::getParameterHandle(L"World_DepthMap");
-	s_handleOcclusionMap = render::getParameterHandle(L"World_OcclusionMap");
-	s_handleLightCount = render::getParameterHandle(L"World_LightCount");
-	s_handleLightSBuffer = render::getParameterHandle(L"World_LightSBuffer");
-
-	s_handlesInitialized = true;
-}
-
-		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.world.WorldRenderPassForward", WorldRenderPassForward, IWorldRenderPass)
 
@@ -96,7 +49,6 @@ WorldRenderPassForward::WorldRenderPassForward(
 ,	m_shadowCascade(shadowCascade)
 ,	m_shadowAtlas(shadowAtlas)
 {
-	initializeHandles();
 }
 
 WorldRenderPassForward::WorldRenderPassForward(
@@ -126,7 +78,6 @@ WorldRenderPassForward::WorldRenderPassForward(
 ,	m_occlusionMap(occlusionMap)
 ,	m_shadowCascade(nullptr)
 {
-	initializeHandles();
 }
 
 render::handle_t WorldRenderPassForward::getTechnique() const
@@ -146,7 +97,7 @@ void WorldRenderPassForward::setShaderTechnique(render::Shader* shader) const
 
 void WorldRenderPassForward::setShaderCombination(render::Shader* shader) const
 {
-	if (m_technique == s_techniqueDefault)
+	if (m_technique == s_techniqueForwardColor)
 	{
 		shader->setCombination(s_handleFogEnable, m_fogEnabled);
 		shader->setCombination(s_handleShadowEnable, m_shadowCascade != nullptr && m_shadowAtlas != nullptr);
@@ -158,7 +109,7 @@ void WorldRenderPassForward::setProgramParameters(render::ProgramParameters* pro
 	setWorldProgramParameters(programParams, Transform::identity());
 
 	// Set these parameters only if we're rendering using default technique.
-	if (m_technique == s_techniqueDefault)
+	if (m_technique == s_techniqueForwardColor)
 	{
 		setColorMapProgramParameters(programParams);
 		setLightProgramParameters(programParams);
@@ -174,7 +125,7 @@ void WorldRenderPassForward::setProgramParameters(render::ProgramParameters* pro
 	setWorldProgramParameters(programParams, world);
 
 	// Set these parameters only if we're rendering using default technique.
-	if (m_technique == s_techniqueDefault)
+	if (m_technique == s_techniqueForwardColor)
 	{
 		setColorMapProgramParameters(programParams);
 		setLightProgramParameters(programParams);
@@ -219,9 +170,9 @@ void WorldRenderPassForward::setColorMapProgramParameters(render::ProgramParamet
 void WorldRenderPassForward::setShadowMapProgramParameters(render::ProgramParameters* programParams) const
 {
 	if (m_shadowCascade)
-		programParams->setTextureParameter(s_handleShadowCascade, m_shadowCascade);
+		programParams->setTextureParameter(s_handleShadowMapCascade, m_shadowCascade);
 	if (m_shadowAtlas)
-		programParams->setTextureParameter(s_handleShadowAtlas, m_shadowAtlas);
+		programParams->setTextureParameter(s_handleShadowMapAtlas, m_shadowAtlas);
 }
 
 void WorldRenderPassForward::setDepthMapProgramParameters(render::ProgramParameters* programParams) const
