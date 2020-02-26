@@ -28,8 +28,6 @@ class IEnvironment;
 	namespace render
 	{
 
-class ImageProcess;
-class ImageProcessData;
 class IRenderTargetSet;
 
 	}
@@ -63,7 +61,6 @@ public:
 		runtime::IEnvironment* environment,
 		const resource::Proxy< Movie >& movie,
 		const std::map< std::wstring, resource::Proxy< Movie > >& externalMovies,
-		const resource::Proxy< render::ImageProcessData >& imageProcessSettings,
 		bool clearBackground,
 		bool enableShapeCache,
 		bool enableDirtyRegions,
@@ -167,9 +164,6 @@ private:
 	Ref< MovieRenderer > m_movieRenderer;
 	Ref< AccDisplayRenderer > m_displayRenderer;
 	Ref< ISoundRenderer > m_soundRenderer;
-	Ref< render::IRenderTargetSet > m_imageTargetSet;
-	resource::Proxy< render::ImageProcessData > m_imageProcessSettings;
-	Ref< render::ImageProcess > m_imageProcess;
 	bool m_clearBackground;
 	bool m_enableShapeCache;
 	bool m_enableDirtyRegions;

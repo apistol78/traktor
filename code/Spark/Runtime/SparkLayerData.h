@@ -14,13 +14,6 @@
 
 namespace traktor
 {
-	namespace render
-	{
-
-class ImageProcessData;
-
-	}
-
 	namespace spark
 	{
 
@@ -45,7 +38,6 @@ private:
 
 	resource::Id< Movie > m_movie;
 	std::map< std::wstring, resource::Id< Movie > > m_externalMovies;
-	resource::Id< render::ImageProcessData > m_imageProcess;
 	bool m_clearBackground;
 	bool m_enableShapeCache;
 	bool m_enableDirtyRegions;

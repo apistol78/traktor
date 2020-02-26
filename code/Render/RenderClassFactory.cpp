@@ -7,7 +7,6 @@
 #include "Render/ISimpleTexture.h"
 #include "Render/IVolumeTexture.h"
 #include "Render/RenderClassFactory.h"
-#include "Render/Image/ImageProcess.h"
 
 namespace traktor
 {
@@ -48,16 +47,6 @@ Ref< BoxedDisplayMode > IRenderSystem_getDisplayMode(IRenderSystem* this_, uint3
 Ref< BoxedDisplayMode > IRenderSystem_getCurrentDisplayMode(IRenderSystem* this_)
 {
 	return new BoxedDisplayMode(this_->getCurrentDisplayMode());
-}
-
-void ImageProcess_setCombination(ImageProcess* this_, const std::wstring& name, bool value)
-{
-	this_->setCombination(render::getParameterHandle(name), value);
-}
-
-void ImageProcess_setParameter(ImageProcess* this_, const std::wstring& name, float value)
-{
-	this_->setFloatParameter(render::getParameterHandle(name), value);
 }
 
 		}
@@ -111,12 +100,6 @@ void RenderClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classIRenderView->addMethod("isCursorVisible", &IRenderView::isCursorVisible);
 	classIRenderView->addMethod("setGamma", &IRenderView::setGamma);
 	registrar->registerClass(classIRenderView);
-
-	auto classImageProcess = new AutoRuntimeClass< ImageProcess >();
-	classImageProcess->addMethod("setCombination", &ImageProcess_setCombination);
-	classImageProcess->addMethod("setParameter", &ImageProcess_setParameter);
-	classImageProcess->addMethod("requireHighRange", &ImageProcess::requireHighRange);
-	registrar->registerClass(classImageProcess);
 }
 
 	}
