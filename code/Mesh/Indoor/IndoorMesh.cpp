@@ -91,24 +91,19 @@ void IndoorMesh::build(
 		if (it == sector.parts.end())
 			continue;
 
-		for (std::vector< Part >::const_iterator j = it->second.begin(); j != it->second.end(); ++j)
+		for (const auto& part : it->second)
 		{
-			m_shader->setTechnique(j->shaderTechnique);
-
-			worldRenderPass.setShaderCombination(m_shader);
-
-			render::IProgram* program = m_shader->getCurrentProgram();
-			if (!program)
+			auto sp = worldRenderPass.getProgram(m_shader, part.shaderTechnique);
+			if (!sp)
 				continue;
 
 			render::SimpleRenderBlock* renderBlock = renderContext->alloc< render::SimpleRenderBlock >(L"IndoorMesh");
-
 			renderBlock->distance = distance;
-			renderBlock->program = program;
+			renderBlock->program = sp.program;
 			renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
 			renderBlock->indexBuffer = m_mesh->getIndexBuffer();
 			renderBlock->vertexBuffer = m_mesh->getVertexBuffer();
-			renderBlock->primitives = meshParts[j->meshPart].primitives;
+			renderBlock->primitives = meshParts[part.meshPart].primitives;
 
 			renderBlock->programParams->beginParameters(renderContext);
 			worldRenderPass.setProgramParameters(
@@ -122,7 +117,7 @@ void IndoorMesh::build(
 			renderBlock->programParams->endParameters(renderContext);
 
 			renderContext->draw(
-				m_shader->getCurrentPriority(),
+				sp.priority,
 				renderBlock
 			);
 		}

@@ -82,11 +82,8 @@ void SkyComponent::build(
 	const world::IWorldRenderPass& worldRenderPass
 )
 {
-	worldRenderPass.setShaderTechnique(m_shader);
-	worldRenderPass.setShaderCombination(m_shader);
-
-	render::IProgram* program = m_shader->getCurrentProgram();
-	if (!program)
+	auto sp = worldRenderPass.getProgram(m_shader);
+	if (!sp)
 		return;
 
 	Vector4 sunDirection = m_transform.axisY();
@@ -95,7 +92,7 @@ void SkyComponent::build(
 
 	// Render sky after all opaques but before of all alpha blended.
 	renderBlock->distance = std::numeric_limits< float >::max();
-	renderBlock->program = program;
+	renderBlock->program = sp.program;
 	renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
 	renderBlock->indexBuffer = m_indexBuffer;
 	renderBlock->vertexBuffer = m_vertexBuffer;
@@ -112,7 +109,7 @@ void SkyComponent::build(
 
 	renderBlock->programParams->endParameters(renderContext);
 
-	renderContext->draw(m_shader->getCurrentPriority(), renderBlock);
+	renderContext->draw(sp.priority, renderBlock);
 }
 
 	}

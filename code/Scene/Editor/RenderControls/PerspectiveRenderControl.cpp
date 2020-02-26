@@ -567,14 +567,14 @@ void PerspectiveRenderControl::eventPaint(ui::PaintEvent* event)
 		// Render context.
 		m_renderContext->render(m_renderView);
 
-		// Render debug target.
-		if (m_debugTarget.texture)
-		{
-			m_debugShader->setTechnique(c_visualizeTechniques[m_debugTarget.visualize]);
-			m_debugShader->setTextureParameter(L"Scene_DebugTexture", m_debugTarget.texture);
-			m_debugShader->setFloatParameter(L"Scene_DebugAlpha", m_debugAlpha);
-			m_screenRenderer->draw(m_renderView, m_debugShader);
-		}
+		// \fixme Render debug target.
+		// if (m_debugTarget.texture)
+		// {
+		// 	m_debugShader->setTechnique(c_visualizeTechniques[m_debugTarget.visualize]);
+		// 	m_debugShader->setTextureParameter(L"Scene_DebugTexture", m_debugTarget.texture);
+		// 	m_debugShader->setFloatParameter(L"Scene_DebugAlpha", m_debugAlpha);
+		// 	m_screenRenderer->draw(m_renderView, m_debugShader);
+		// }
 
 		// Render wire guides.
 		m_primitiveRenderer->begin(0, projection);

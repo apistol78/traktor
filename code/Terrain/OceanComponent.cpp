@@ -236,21 +236,20 @@ void OceanComponent::build(
 	if (eye.y() < transform.translation().y())
 		return;
 
-	worldRenderPass.setShaderTechnique(m_shader);
-	worldRenderPass.setShaderCombination(m_shader);
+	auto perm = worldRenderPass.getPermutation(m_shader);
 
-	m_shader->setCombination(s_handleReflectionMapAvailable, (bool)m_reflectionMap);
-	m_shader->setCombination(s_handleReflectionEnable, reflectionEnable && m_allowSSReflections);
-	m_shader->setCombination(s_handleTerrainAvailable, m_terrain);
+	m_shader->setCombination(s_handleReflectionMapAvailable, (bool)m_reflectionMap, perm);
+	m_shader->setCombination(s_handleReflectionEnable, reflectionEnable && m_allowSSReflections, perm);
+	m_shader->setCombination(s_handleTerrainAvailable, m_terrain, perm);
 
-	render::IProgram* program = m_shader->getCurrentProgram();
-	if (!program)
+	auto sp = m_shader->getProgram(perm);
+	if (!sp)
 		return;
 
 	render::SimpleRenderBlock* renderBlock = renderContext->alloc< render::SimpleRenderBlock >(L"Ocean");
 
 	renderBlock->distance = std::numeric_limits< float >::max();
-	renderBlock->program = program;
+	renderBlock->program = sp.program;
 	renderBlock->indexBuffer = m_indexBuffer;
 	renderBlock->vertexBuffer = m_vertexBuffer;
 	renderBlock->primitives = m_primitives;
@@ -288,7 +287,7 @@ void OceanComponent::build(
 
 	renderBlock->programParams->endParameters(renderContext);
 
-	renderContext->draw(m_shader->getCurrentPriority(), renderBlock);
+	renderContext->draw(sp.priority, renderBlock);
 }
 
 	}

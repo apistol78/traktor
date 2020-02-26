@@ -248,14 +248,15 @@ void Stage::render(uint32_t frame)
 	for (auto layer : m_layers)
 		layer->render(frame);
 
-	if (m_shaderFade && m_fade > FUZZY_EPSILON)
-	{
-		m_shaderFade->setFloatParameter(L"Fade", m_fade);
-		m_screenRenderer->draw(
-			m_environment->getRender()->getRenderView(),
-			m_shaderFade
-		);
-	}
+	// \fixme
+	// if (m_shaderFade && m_fade > FUZZY_EPSILON)
+	// {
+	// 	m_shaderFade->setFloatParameter(L"Fade", m_fade);
+	// 	m_screenRenderer->draw(
+	// 		m_environment->getRender()->getRenderView(),
+	// 		m_shaderFade
+	// 	);
+	// }
 }
 
 void Stage::flush()

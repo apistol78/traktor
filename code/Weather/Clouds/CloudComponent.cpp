@@ -473,11 +473,15 @@ void CloudComponent::buildCluster(
 				const wchar_t* c_techniquePasses[] = { L"Opacity", L"Default" };
 				for (uint32_t pass = 0; pass < sizeof_array(c_techniquePasses); ++pass)
 				{
-					m_particleShader->setTechnique(c_techniquePasses[pass]);
+					const render::Shader::Permutation perm(
+						render::getParameterHandle(c_techniquePasses[pass])
+					);
+					auto sp = m_particleShader->getProgram(perm);
+					T_ASSERT(sp);
 
 					render::IndexedRenderBlock* particleRenderBlock = renderContext->alloc< render::IndexedRenderBlock >();
 					particleRenderBlock->distance = 0.0f;
-					particleRenderBlock->program = m_particleShader->getCurrentProgram();
+					particleRenderBlock->program = sp.program;
 					particleRenderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
 					particleRenderBlock->indexBuffer = m_indexBuffer;
 					particleRenderBlock->vertexBuffer = m_vertexBuffer;
@@ -533,7 +537,7 @@ void CloudComponent::buildCluster(
 		render::NonIndexedRenderBlock* renderBlock = renderContext->alloc< render::NonIndexedRenderBlock >();
 
 		renderBlock->distance = sliceNearZ;
-		renderBlock->program = m_impostorShader->getCurrentProgram();
+		renderBlock->program = m_impostorShader->getProgram().program;
 		renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
 		renderBlock->vertexBuffer = m_vertexBuffer;
 		renderBlock->primitive = render::PtTriangleStrip;

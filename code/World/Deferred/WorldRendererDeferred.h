@@ -23,6 +23,7 @@ namespace traktor
 class ImageGraph;
 class IRenderTargetSet;
 class ScreenRenderer;
+class Shader;
 class StructBuffer;
 
 	}
@@ -97,6 +98,10 @@ private:
 	render::Handle m_handleShadowMapCascade;
 	render::Handle m_handleShadowMapAtlas;
 	render::Handle m_handleVisual[7];
+
+	resource::Proxy< render::Shader > m_lightShader;
+	resource::Proxy< render::Shader > m_reflectionShader;
+	resource::Proxy< render::Shader > m_fogShader;
 
 	resource::Proxy< render::ImageGraph > m_ambientOcclusion;
 	resource::Proxy< render::ImageGraph > m_antiAlias;

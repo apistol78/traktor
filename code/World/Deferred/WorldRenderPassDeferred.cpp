@@ -62,20 +62,19 @@ uint32_t WorldRenderPassDeferred::getPassFlags() const
 	return m_passFlags;
 }
 
-void WorldRenderPassDeferred::setShaderTechnique(render::Shader* shader) const
+render::Shader::Permutation WorldRenderPassDeferred::getPermutation(const render::Shader* shader) const
 {
-	shader->setTechnique(m_technique);
-}
+	render::Shader::Permutation perm(m_technique);
 
-void WorldRenderPassDeferred::setShaderCombination(render::Shader* shader) const
-{
 	if (m_technique == s_techniqueDeferredColor)
 	{
-		shader->setCombination(s_handleFogEnable, m_fogEnabled);
-		shader->setCombination(s_handleDepthEnable, m_depthEnable);
+		shader->setCombination(s_handleFogEnable, m_fogEnabled, perm);
+		shader->setCombination(s_handleDepthEnable, m_depthEnable, perm);
 	}
-	else if (m_technique == s_techniqueIrradianceWrite)
-		shader->setCombination(s_handleIrradianceEnable, m_irradianceEnable);
+	else
+		shader->setCombination(s_handleIrradianceEnable, m_irradianceEnable, perm);
+
+	return perm;
 }
 
 void WorldRenderPassDeferred::setProgramParameters(render::ProgramParameters* programParams) const

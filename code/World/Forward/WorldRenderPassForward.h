@@ -65,9 +65,7 @@ public:
 
 	virtual uint32_t getPassFlags() const override final;
 
-	virtual void setShaderTechnique(render::Shader* shader) const override final;
-
-	virtual void setShaderCombination(render::Shader* shader) const override final;
+	virtual render::Shader::Permutation getPermutation(const render::Shader* shader) const override final;
 
 	virtual void setProgramParameters(render::ProgramParameters* programParams) const override final;
 

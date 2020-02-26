@@ -199,12 +199,7 @@ void ProbeRenderer::build(
 	const Scalar p22 = projection.get(1, 1);
 	const Vector4 magicCoeffs(1.0f / p11, 1.0f / p22, 0.0f, 0.0f);
 
-	worldRenderPass.setShaderTechnique(m_probeShader);
-	worldRenderPass.setShaderCombination(m_probeShader);
-
-	m_probeShader->setCombination(s_handleProbeLocal, probeComponent->getLocal());
-
-	render::IProgram* program = m_probeShader->getCurrentProgram();
+	render::IProgram* program = worldRenderPass.getProgram(m_probeShader).program;
 	if (!program)
 		return;
 

@@ -137,14 +137,11 @@ void DecalRenderer::flush(
 		DecalComponent* decalComponent = m_decalComponents[i];
 		T_ASSERT(decalComponent);
 
-		render::Shader* shader = decalComponent->getShader();
+		const render::Shader* shader = decalComponent->getShader();
 		T_ASSERT(shader);
 
-		worldRenderPass.setShaderTechnique(shader);
-		worldRenderPass.setShaderCombination(shader);
-
-		render::IProgram* program = shader->getCurrentProgram();
-		if (!program)
+		const auto sp = worldRenderPass.getProgram(shader);
+		if (!sp)
 			continue;
 
 		const Transform& transform = decalComponent->getTransform();
@@ -155,7 +152,7 @@ void DecalRenderer::flush(
 		render::IndexedRenderBlock* renderBlock = renderContext->alloc< render::IndexedRenderBlock >(L"Decal");
 
 		renderBlock->distance = 0.0f;
-		renderBlock->program = program;
+		renderBlock->program = sp.program;
 		renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
 		renderBlock->indexBuffer = m_indexBuffer;
 		renderBlock->vertexBuffer = m_vertexBuffer;

@@ -99,7 +99,7 @@ void DirectionalBlur::build(
 	pp->endParameters(renderContext);
 
 	// Draw fullscreen quad with shader.
-	cx.getScreenRenderer()->draw(renderContext, m_shader, pp);
+	cx.getScreenRenderer()->draw(renderContext, m_shader, Shader::Permutation(), pp);
 }
 
     }

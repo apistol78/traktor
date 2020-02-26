@@ -27,6 +27,9 @@ namespace traktor
 		namespace
 		{
 
+const render::Handle c_handleVisualizeLods(L"VisualizeLods");
+const render::Handle c_handleVisualizeMap(L"VisualizeMap");
+
 const int32_t c_patchLodSteps = 3;
 const int32_t c_surfaceLodSteps = 3;
 
@@ -147,20 +150,28 @@ void TerrainComponent::build(
 	render::Shader* coarseShader = m_terrain->getTerrainCoarseShader();
 	render::Shader* detailShader = m_terrain->getTerrainDetailShader();
 
-	worldRenderPass.setShaderTechnique(coarseShader);
-	worldRenderPass.setShaderCombination(coarseShader);
+	auto coarsePerm = worldRenderPass.getPermutation(coarseShader);
+	auto detailPerm = worldRenderPass.getPermutation(detailShader);
 
-	worldRenderPass.setShaderTechnique(detailShader);
-	worldRenderPass.setShaderCombination(detailShader);
+	coarseShader->setCombination(m_handleCutEnable, m_terrain->getCutMap(), coarsePerm);
+	detailShader->setCombination(m_handleCutEnable, m_terrain->getCutMap(), detailPerm);
 
-	coarseShader->setCombination(m_handleCutEnable, m_terrain->getCutMap());
-	detailShader->setCombination(m_handleCutEnable, m_terrain->getCutMap());
+	coarseShader->setCombination(m_handleColorEnable, m_terrain->getColorMap(), coarsePerm);
+	detailShader->setCombination(m_handleColorEnable, m_terrain->getColorMap(), detailPerm);
 
-	coarseShader->setCombination(m_handleColorEnable, m_terrain->getColorMap());
-	detailShader->setCombination(m_handleColorEnable, m_terrain->getColorMap());
+	if (m_visualizeMode >= VmSurfaceLod && m_visualizeMode <= VmPatchLod)
+	{
+		coarseShader->setCombination(c_handleVisualizeLods, true, coarsePerm);
+		detailShader->setCombination(c_handleVisualizeLods, true, detailPerm);
+	}
+	else if (m_visualizeMode >= VmColorMap && m_visualizeMode <= VmMaterialMap)
+	{
+		coarseShader->setCombination(c_handleVisualizeMap, true, coarsePerm);
+		detailShader->setCombination(c_handleVisualizeMap, true, detailPerm);
+	}
 
-	render::IProgram* coarseProgram = coarseShader->getCurrentProgram();
-	render::IProgram* detailProgram = detailShader->getCurrentProgram();
+	render::IProgram* coarseProgram = coarseShader->getProgram(coarsePerm).program;
+	render::IProgram* detailProgram = detailShader->getProgram(detailPerm).program;
 
 	if (!coarseProgram || !detailProgram)
 		return;
@@ -536,35 +547,6 @@ void TerrainComponent::buildLayers(
 void TerrainComponent::setVisualizeMode(VisualizeMode visualizeMode)
 {
 	m_visualizeMode = visualizeMode;
-
-	render::Shader* coarseShader = m_terrain->getTerrainCoarseShader();
-	render::Shader* detailShader = m_terrain->getTerrainDetailShader();
-
-	if (coarseShader)
-	{
-		coarseShader->setCombination(L"VisualizeLods", false);
-		coarseShader->setCombination(L"VisualizeMap", false);
-	}
-	if (detailShader)
-	{
-		detailShader->setCombination(L"VisualizeLods", false);
-		detailShader->setCombination(L"VisualizeMap", false);
-	}
-
-	if (m_visualizeMode >= VmSurfaceLod && m_visualizeMode <= VmPatchLod)
-	{
-		if (coarseShader)
-			coarseShader->setCombination(L"VisualizeLods", true);
-		if (detailShader)
-			detailShader->setCombination(L"VisualizeLods", true);
-	}
-	else if (m_visualizeMode >= VmColorMap && m_visualizeMode <= VmMaterialMap)
-	{
-		if (coarseShader)
-			coarseShader->setCombination(L"VisualizeMap", true);
-		if (detailShader)
-			detailShader->setCombination(L"VisualizeMap", true);
-	}
 }
 
 void TerrainComponent::destroy()

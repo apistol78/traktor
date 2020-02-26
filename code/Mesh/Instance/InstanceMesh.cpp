@@ -13,8 +13,8 @@ namespace traktor
 		namespace
 		{
 
-render::handle_t s_handleInstanceWorld = 0;
-render::handle_t s_handleInstanceWorldLast = 0;
+render::Handle s_handleInstanceWorld(L"InstanceWorld");
+render::Handle s_handleInstanceWorldLast(L"InstanceWorldLast");
 
 struct SortRenderInstance
 {
@@ -31,10 +31,6 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.mesh.InstanceMesh", InstanceMesh, IMesh)
 InstanceMesh::InstanceMesh()
 :	m_maxInstanceCount(0)
 {
-	if (!s_handleInstanceWorld)
-		s_handleInstanceWorld = render::getParameterHandle(L"InstanceWorld");
-	if (!s_handleInstanceWorldLast)
-		s_handleInstanceWorldLast = render::getParameterHandle(L"InstanceWorldLast");
 }
 
 InstanceMesh::~InstanceMesh()
@@ -108,18 +104,15 @@ void InstanceMesh::build(
 	// Render opaque parts front-to-back.
 	for (const auto& part : it->second)
 	{
-		m_shader->setTechnique(part.shaderTechnique);
-		worldRenderPass.setShaderCombination(m_shader);
+		auto sp = worldRenderPass.getProgram(m_shader, part.shaderTechnique);
+		if (!sp)
+			continue;
 
-		if ((m_shader->getCurrentPriority() & (render::RpAlphaBlend | render::RpPostAlphaBlend)) != 0)
+		if ((sp.priority & (render::RpAlphaBlend | render::RpPostAlphaBlend)) != 0)
 		{
 			haveAlphaBlend = true;
 			continue;
 		}
-
-		render::IProgram* program = m_shader->getCurrentProgram();
-		if (!program)
-			continue;
 
 		// Setup batch shared parameters.
 		render::ProgramParameters* batchParameters = renderContext->alloc< render::ProgramParameters >();
@@ -145,7 +138,7 @@ void InstanceMesh::build(
 
 			render::InstancingRenderBlock* renderBlock = renderContext->alloc< render::InstancingRenderBlock >(L"InstanceMesh opaque");
 			renderBlock->distance = instanceWorld[batchOffset + batchCount - 1].distance;
-			renderBlock->program = program;
+			renderBlock->program = sp.program;
 			renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
 			renderBlock->indexBuffer = m_renderMesh->getIndexBuffer();
 			renderBlock->vertexBuffer = m_renderMesh->getVertexBuffer();
@@ -166,7 +159,7 @@ void InstanceMesh::build(
 			);
 			renderBlock->programParams->endParameters(renderContext);
 
-			renderContext->draw(m_shader->getCurrentPriority(), renderBlock);
+			renderContext->draw(sp.priority, renderBlock);
 
 			batchOffset += batchCount;
 		}
@@ -179,14 +172,11 @@ void InstanceMesh::build(
 
 		for (const auto& part : it->second)
 		{
-			m_shader->setTechnique(part.shaderTechnique);
-			worldRenderPass.setShaderCombination(m_shader);
-
-			if ((m_shader->getCurrentPriority() & (render::RpAlphaBlend | render::RpPostAlphaBlend)) == 0)
+			auto sp = worldRenderPass.getProgram(m_shader, part.shaderTechnique);
+			if (!sp)
 				continue;
 
-			render::IProgram* program = m_shader->getCurrentProgram();
-			if (!program)
+			if ((sp.priority & (render::RpAlphaBlend | render::RpPostAlphaBlend)) == 0)
 				continue;
 
 			// Setup batch shared parameters.
@@ -213,7 +203,7 @@ void InstanceMesh::build(
 
 				render::InstancingRenderBlock* renderBlock = renderContext->alloc< render::InstancingRenderBlock >(L"InstanceMesh blend");
 				renderBlock->distance = instanceWorld[batchOffset + batchCount - 1].distance;
-				renderBlock->program = program;
+				renderBlock->program = sp.program;
 				renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
 				renderBlock->indexBuffer = m_renderMesh->getIndexBuffer();
 				renderBlock->vertexBuffer = m_renderMesh->getVertexBuffer();
@@ -234,7 +224,7 @@ void InstanceMesh::build(
 				);
 				renderBlock->programParams->endParameters(renderContext);
 
-				renderContext->draw(m_shader->getCurrentPriority(), renderBlock);
+				renderContext->draw(sp.priority, renderBlock);
 
 				batchOffset += batchCount;
 			}

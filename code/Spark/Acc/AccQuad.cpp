@@ -148,7 +148,7 @@ void AccQuad::render(
 	}
 
 	render::NonIndexedRenderBlock* renderBlock = renderContext->alloc< render::NonIndexedRenderBlock >(L"Flash AccQuad");
-	renderBlock->program = (texture ? shaderTextured : shaderSolid)->getCurrentProgram();
+	renderBlock->program = (texture ? shaderTextured : shaderSolid)->getProgram().program;
 	renderBlock->vertexBuffer = m_vertexBuffer;
 	renderBlock->primitive = render::PtTriangleStrip;
 	renderBlock->offset = 0;
@@ -181,7 +181,7 @@ void AccQuad::blit(
 )
 {
 	render::NonIndexedRenderBlock* renderBlock = renderContext->alloc< render::NonIndexedRenderBlock >(L"Flash AccQuad (blit)");
-	renderBlock->program = m_shaderBlit->getCurrentProgram();
+	renderBlock->program = m_shaderBlit->getProgram().program;
 	renderBlock->vertexBuffer = m_vertexBuffer;
 	renderBlock->primitive = render::PtTriangleStrip;
 	renderBlock->offset = 0;

@@ -6,6 +6,7 @@
 #include "Core/Misc/Endian.h"
 #include "Core/Misc/TString.h"
 #include "Core/Thread/Acquire.h"
+#include "Render/IProgram.h"
 #include "Render/IRenderSystem.h"
 #include "Render/IRenderView.h"
 #include "Render/PrimitiveRenderer.h"
@@ -158,20 +159,25 @@ void PrimitiveRenderer::render(IRenderView* renderView, uint32_t frame)
 
 	for (const auto& batch : f.batches)
 	{
-		m_shader->setCombination(s_handleDepthTest, batch.depthState.depthTest);
-		m_shader->setCombination(s_handleDepthWrite, batch.depthState.depthWrite);
-		m_shader->setCombination(s_handleDepth, batch.depthState.depthOutput);
-		m_shader->setCombination(s_handleTexture, batch.texture != nullptr);
+		Shader::Permutation perm;
+		m_shader->setCombination(s_handleDepthTest, batch.depthState.depthTest, perm);
+		m_shader->setCombination(s_handleDepthWrite, batch.depthState.depthWrite, perm);
+		m_shader->setCombination(s_handleDepth, batch.depthState.depthOutput, perm);
+		m_shader->setCombination(s_handleTexture, batch.texture != nullptr, perm);
 
-		m_shader->setMatrixParameter(s_handleProjection, f.projections[batch.projection]);
+		IProgram* program = m_shader->getProgram(perm).program;
+		if (!program)
+			continue;
+
+		program->setMatrixParameter(s_handleProjection, f.projections[batch.projection]);
 
 		if (batch.texture)
-			m_shader->setTextureParameter(s_handleTexture, batch.texture);
+			program->setTextureParameter(s_handleTexture, batch.texture);
 
-		m_shader->draw(
-			renderView,
+		renderView->draw(
 			batch.vertexBuffer,
 			nullptr,
+			program,
 			batch.primitives
 		);
 	}

@@ -221,12 +221,14 @@ void AccGlyph::render(
 	const render::handle_t techniques[] = { s_handleTechniqueDefault, s_handleTechniqueDropShadow, 0, s_handleTechniqueGlow };
 	T_ASSERT(glyphFilter < sizeof_array(techniques));
 
-	m_shaderGlyph->setTechnique(techniques[glyphFilter]);
-	if (!m_shaderGlyph->getCurrentProgram())
+	const render::Shader::Permutation perm(techniques[glyphFilter]);
+
+	auto sp = m_shaderGlyph->getProgram(perm);
+	if (!sp)
 		return;
 
 	render::IndexedRenderBlock* renderBlock = renderContext->alloc< render::IndexedRenderBlock >(L"Flash AccGlyph");
-	renderBlock->program = m_shaderGlyph->getCurrentProgram();
+	renderBlock->program = sp.program;
 	renderBlock->indexBuffer = m_indexBuffer;
 	renderBlock->vertexBuffer = m_vertexBuffers[m_currentVertexBuffer];
 	renderBlock->primitive = render::PtTriangles;

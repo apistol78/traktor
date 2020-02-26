@@ -172,9 +172,11 @@ void TerrainSurfaceCache::begin(
 		render::ISimpleTexture* colorMap = terrain->getColorMap();
 		render::ISimpleTexture* splatMap = terrain->getSplatMap();
 
-		shader->setCombination(m_handleColorEnable, colorMap != nullptr);
+		render::Shader::Permutation perm;
+		shader->setCombination(m_handleColorEnable, colorMap != nullptr, perm);
 
-		if (!shader->getCurrentProgram())
+		auto sp = shader->getProgram(perm);
+		if (!sp)
 			return;
 
 		auto tb = renderContext->alloc< render::TargetBeginRenderBlock >(L"Terrain surface, base begin");
@@ -187,7 +189,7 @@ void TerrainSurfaceCache::begin(
 		auto rb = renderContext->alloc< TerrainSurfaceRenderBlock >(L"Terrain surface, base");
 		rb->screenRenderer = m_screenRenderer;
 		rb->distance = 0.0f;
-		rb->program = shader->getCurrentProgram();
+		rb->program = sp.program;
 		rb->programParams = renderContext->alloc< render::ProgramParameters >();
 		rb->programParams->beginParameters(renderContext);
 		rb->programParams->setTextureParameter(m_handleHeightfield, heightMap);
@@ -286,9 +288,11 @@ void TerrainSurfaceCache::get(
 	render::ISimpleTexture* colorMap = terrain->getColorMap();
 	render::ISimpleTexture* splatMap = terrain->getSplatMap();
 
-	shader->setCombination(m_handleColorEnable, colorMap != nullptr);
+	render::Shader::Permutation perm;
+	shader->setCombination(m_handleColorEnable, colorMap != nullptr, perm);
 
-	if (!shader->getCurrentProgram())
+	auto sp = shader->getProgram(perm);
+	if (!sp)
 		return;
 
 	auto tb = renderContext->alloc< render::TargetBeginRenderBlock >(L"Terrain surface, begin");
@@ -305,7 +309,7 @@ void TerrainSurfaceCache::get(
 	auto rb = renderContext->alloc< TerrainSurfaceRenderBlock >(L"Terrain surface");
 	rb->screenRenderer = m_screenRenderer;
 	rb->distance = 0.0f;
-	rb->program = shader->getCurrentProgram();
+	rb->program = sp.program;
 	rb->programParams = renderContext->alloc< render::ProgramParameters >();
 	rb->programParams->beginParameters(renderContext);
 	rb->programParams->setTextureParameter(m_handleHeightfield, heightMap);

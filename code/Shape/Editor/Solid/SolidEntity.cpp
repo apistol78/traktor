@@ -232,11 +232,8 @@ void SolidEntity::build(
 	if (!m_indexBuffer || !m_vertexBuffer)
 		return;
 
-	worldRenderPass.setShaderTechnique(m_shader);
-	worldRenderPass.setShaderCombination(m_shader);
-
-	render::IProgram* program = m_shader->getCurrentProgram();
-	if (!program)
+	auto sp = worldRenderPass.getProgram(m_shader);
+	if (!sp)
 		return;
 
 	auto renderContext = context.getRenderContext();
@@ -245,7 +242,7 @@ void SolidEntity::build(
 		render::SimpleRenderBlock* renderBlock = renderContext->alloc< render::SimpleRenderBlock >(L"Solid");
 
 		renderBlock->distance = std::numeric_limits< float >::max();
-		renderBlock->program = program;
+		renderBlock->program = sp.program;
 		renderBlock->indexBuffer = m_indexBuffer;
 		renderBlock->vertexBuffer = m_vertexBuffer;
 		renderBlock->primitives = batch.primitives;
@@ -259,7 +256,10 @@ void SolidEntity::build(
 
 		renderBlock->programParams->endParameters(renderContext);
 
-		renderContext->draw(m_shader->getCurrentPriority(), renderBlock);
+		renderContext->draw(
+			sp.priority,
+			renderBlock
+		);
 	}
 }
 
