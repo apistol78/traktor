@@ -3,8 +3,6 @@
 #include "Core/Misc/String.h"
 #include "Core/Singleton/ISingleton.h"
 #include "Core/Singleton/SingletonManager.h"
-#include "Core/Thread/Acquire.h"
-#include "Core/Thread/CriticalSection.h"
 #include "Render/Types.h"
 
 namespace traktor
@@ -20,7 +18,6 @@ namespace traktor
 #	pragma init_seg(lib)
 #endif
 
-CriticalSection m_handleLock;
 SmallMap< std::wstring, handle_t > m_handles;
 handle_t m_nextUnusedHandle = 1;
 
@@ -86,18 +83,16 @@ c_textureFormatInfo[] =
 
 	{ L"TfETC1", 8, 4 },
 
-	{ L"TfASTC4x4", 8, 1 },
-	{ L"TfASTC8x8", 8, 1 },
-	{ L"TfASTC10x10", 8, 1 },
-	{ L"TfASTC12x12", 8, 1 }
+	{ L"TfASTC4x4", 4, 8 },
+	{ L"TfASTC8x8", 8, 8 },
+	{ L"TfASTC10x10", 10, 8 },
+	{ L"TfASTC12x12", 12, 8 }
 };
 
 		}
 
 handle_t getParameterHandle(const std::wstring& name)
 {
-	T_ANONYMOUS_VAR(Acquire< CriticalSection >)(m_handleLock);
-
 	SmallMap< std::wstring, handle_t >::const_iterator i = m_handles.find(name);
 	if (i != m_handles.end())
 	{
@@ -112,7 +107,6 @@ handle_t getParameterHandle(const std::wstring& name)
 
 std::wstring getParameterName(handle_t handle)
 {
-	T_ANONYMOUS_VAR(Acquire< CriticalSection >)(m_handleLock);
 	for (auto m : m_handles)
 	{
 		if (m.second == handle)
@@ -123,7 +117,6 @@ std::wstring getParameterName(handle_t handle)
 
 void getParameterHandles(SmallMap< std::wstring, handle_t >& outHandles)
 {
-	T_ANONYMOUS_VAR(Acquire< CriticalSection >)(m_handleLock);
 	outHandles = m_handles;
 }
 

@@ -1350,7 +1350,8 @@ render::handle_t WorldRendererDeferred::setupVisualPass(
 				sharedParams->setTextureParameter(s_handleShadowMask, shadowMaskTargetSet->getColorTexture(0));
 			if (shadowAtlasTargetSet)
 				sharedParams->setTextureParameter(s_handleShadowMapAtlas, shadowAtlasTargetSet->getDepthTexture());
-			sharedParams->setTextureParameter(s_handleReflectionMap, reflectionsTargetSet->getColorTexture(0));
+			if (reflectionsTargetSet)
+				sharedParams->setTextureParameter(s_handleReflectionMap, reflectionsTargetSet->getColorTexture(0));
 			sharedParams->setStructBufferParameter(s_handleLightSBuffer, m_frames[frame].lightSBuffer);
 			sharedParams->setStructBufferParameter(s_handleTileSBuffer, m_frames[frame].tileSBuffer);
 			if (m_irradianceGrid)
@@ -1378,10 +1379,11 @@ render::handle_t WorldRendererDeferred::setupVisualPass(
 			renderContext->merge(render::RpAll);
 
 			// Analytical lights; resolve with gbuffer.
-			// m_lightShader->setCombination(s_handleShadowEnable, (bool)(shadowMaskTargetSet != nullptr));
-			// m_lightShader->setCombination(s_handleReflectionsEnable, (bool)(reflectionsTargetSet != nullptr));
-			// m_lightShader->setCombination(s_handleIrradianceEnable, (bool)(m_irradianceGrid != nullptr));
-			m_screenRenderer->draw(renderContext, m_lightShader, sharedParams);
+			render::Shader::Permutation perm;
+			m_lightShader->setCombination(s_handleShadowEnable, (bool)(shadowMaskTargetSet != nullptr), perm);
+			m_lightShader->setCombination(s_handleReflectionsEnable, (bool)(reflectionsTargetSet != nullptr), perm);
+			m_lightShader->setCombination(s_handleIrradianceEnable, (bool)(m_irradianceGrid != nullptr), perm);
+			m_screenRenderer->draw(renderContext, m_lightShader, perm, sharedParams);
 
 			// Module with fog.
 			if (dot4(m_fogDistanceAndDensity, Vector4(0.0f, 0.0f, 1.0f, 1.0f)) > FUZZY_EPSILON)
