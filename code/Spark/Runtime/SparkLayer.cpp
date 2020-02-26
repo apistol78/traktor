@@ -31,8 +31,6 @@
 #include "Render/IRenderSystem.h"
 #include "Render/IRenderTargetSet.h"
 #include "Render/IRenderView.h"
-#include "Render/Image/ImageProcess.h"
-#include "Render/Image/ImageProcessData.h"
 #include "Spray/Feedback/IFeedbackManager.h"
 
 namespace traktor
@@ -122,7 +120,6 @@ SparkLayer::SparkLayer(
 	runtime::IEnvironment* environment,
 	const resource::Proxy< Movie >& movie,
 	const std::map< std::wstring, resource::Proxy< Movie > >& externalMovies,
-	const resource::Proxy< render::ImageProcessData >& imageProcessSettings,
 	bool clearBackground,
 	bool enableShapeCache,
 	bool enableDirtyRegions,
@@ -133,7 +130,6 @@ SparkLayer::SparkLayer(
 ,	m_environment(environment)
 ,	m_movie(movie)
 ,	m_externalMovies(externalMovies)
-,	m_imageProcessSettings(imageProcessSettings)
 ,	m_clearBackground(clearBackground)
 ,	m_enableShapeCache(enableShapeCache)
 ,	m_enableDirtyRegions(enableDirtyRegions)
@@ -171,13 +167,10 @@ void SparkLayer::destroy()
 	m_environment = nullptr;
 	m_movie.clear();
 	m_externalMovies.clear();
-	m_imageProcessSettings.clear();
 
 	safeDestroy(m_moviePlayer);
 	safeDestroy(m_displayRenderer);
 	safeDestroy(m_soundRenderer);
-	safeDestroy(m_imageTargetSet);
-	safeDestroy(m_imageProcess);
 
 	Layer::destroy();
 }
@@ -234,44 +227,8 @@ void SparkLayer::prepare(const runtime::UpdateInfo& info)
 		m_movie.consume();
 	}
 
-	if (m_imageProcessSettings.changed())
-	{
-		m_imageProcess = nullptr;
-		m_imageTargetSet = nullptr;
-		m_imageProcessSettings.consume();
-	}
-
 	// Re-create if necessary movie player.
 	createMoviePlayer();
-	if (!m_moviePlayer)
-		return;
-
-	// Re-create post processing.
-	if (m_imageProcessSettings && !m_imageProcess)
-	{
-		resource::IResourceManager* resourceManager = m_environment->getResource()->getResourceManager();
-		render::IRenderSystem* renderSystem = m_environment->getRender()->getRenderSystem();
-		render::IRenderView* renderView = m_environment->getRender()->getRenderView();
-
-		int32_t width = renderView->getWidth();
-		int32_t height = renderView->getHeight();
-
-		m_imageProcess = new render::ImageProcess();
-		m_imageProcess->create(m_imageProcessSettings, 0, resourceManager, renderSystem, width, height, false);
-
-		render::RenderTargetSetCreateDesc desc;
-		desc.count = 1;
-		desc.width = width;
-		desc.height = height;
-		desc.multiSample = 0;
-		desc.createDepthStencil = false;
-		desc.usingPrimaryDepthStencil = true;
-		desc.ignoreStencil = false;
-		desc.generateMips = false;
-		desc.targets[0].format = render::TfR8G8B8A8;
-		desc.targets[0].sRGB = false;
-		m_imageTargetSet = renderSystem->createRenderTargetSet(desc, nullptr, T_FILE_LINE_W);
-	}
 }
 
 void SparkLayer::update(const runtime::UpdateInfo& info)
@@ -495,45 +452,12 @@ void SparkLayer::render(uint32_t frame)
 	render::IRenderView* renderView = m_environment->getRender()->getRenderView();
 	T_ASSERT(renderView);
 
-	//if (m_imageProcess)
-	//{
-	//	render::Clear cl;
-	//	cl.mask = render::CfColor | render::CfDepth;
-	//	cl.colors[0] = Color4f(0.0f, 0.0f, 0.0f, 0.0);
-	//	cl.depth = 1.0f;
-	//	
-	//	if (renderView->begin(m_imageTargetSet, 0, &cl))
-	//	{
-	//		m_displayRenderer->render(
-	//			renderView,
-	//			frame,
-	//			m_offset,
-	//			m_scale
-	//		);
-
-	//		renderView->end();
-
-	//		render::ImageProcessStep::Instance::RenderParams params;
-	//		m_imageProcess->render(
-	//			renderView,
-	//			m_imageTargetSet->getColorTexture(0),
-	//			nullptr,
-	//			nullptr,
-	//			nullptr,
-	//			nullptr,
-	//			params
-	//		);
-	//	}
-	//}
-	//else
-	{
-		m_displayRenderer->render(
-			renderView,
-			frame,
-			m_offset,
-			m_scale
-		);
-	}
+	m_displayRenderer->render(
+		renderView,
+		frame,
+		m_offset,
+		m_scale
+	);
 }
 
 void SparkLayer::flush()
@@ -544,8 +468,6 @@ void SparkLayer::flush()
 
 void SparkLayer::preReconfigured()
 {
-	// Discard post processing; need to be fully re-created if used.
-	m_imageProcess = nullptr;
 }
 
 void SparkLayer::postReconfigured()

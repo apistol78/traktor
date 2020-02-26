@@ -29,8 +29,6 @@ bool SparkLayerPipeline::buildDependencies(
 	for (const auto& externalMovie : layerData->m_externalMovies)
 		pipelineDepends->addDependency(externalMovie.second, editor::PdfBuild);
 
-	pipelineDepends->addDependency(layerData->m_imageProcess, editor::PdfBuild);
-
 	return true;
 }
 

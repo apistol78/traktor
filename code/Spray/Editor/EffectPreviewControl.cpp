@@ -12,8 +12,6 @@
 #include "Render/ISimpleTexture.h"
 #include "Render/PrimitiveRenderer.h"
 #include "Render/Context/RenderContext.h"
-#include "Render/Image/ImageProcess.h"
-#include "Render/Image/ImageProcessData.h"
 #include "Resource/IResourceManager.h"
 #include "Sound/AudioSystem.h"
 #include "Sound/Player/SoundPlayer.h"

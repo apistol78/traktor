@@ -4,7 +4,6 @@
 #include "Spark/Movie.h"
 #include "Spark/Runtime/SparkLayer.h"
 #include "Spark/Runtime/SparkLayerData.h"
-#include "Render/Image/ImageProcessData.h"
 #include "Resource/IResourceManager.h"
 #include "Resource/Member.h"
 
@@ -28,7 +27,6 @@ Ref< runtime::Layer > SparkLayerData::createInstance(runtime::Stage* stage, runt
 {
 	resource::IResourceManager* resourceManager = environment->getResource()->getResourceManager();
 	resource::Proxy< Movie > movie;
-	resource::Proxy< render::ImageProcessData > imageProcess;
 
 	// Bind proxies to resource manager.
 	if (!resourceManager->bind(m_movie, movie))
@@ -42,13 +40,6 @@ Ref< runtime::Layer > SparkLayerData::createInstance(runtime::Stage* stage, runt
 			return nullptr;
 	}
 
-	// Bind optional post processing.
-	if (m_imageProcess)
-	{
-		if (!resourceManager->bind(m_imageProcess, imageProcess))
-			return nullptr;
-	}
-
 	// Create layer instance.
 	return new SparkLayer(
 		stage,
@@ -57,7 +48,6 @@ Ref< runtime::Layer > SparkLayerData::createInstance(runtime::Stage* stage, runt
 		environment,
 		movie,
 		externalMovies,
-		imageProcess,
 		m_clearBackground,
 		m_enableShapeCache,
 		m_enableDirtyRegions,
@@ -83,7 +73,6 @@ void SparkLayerData::serialize(ISerializer& s)
 		>
 	>(L"externalMovies", m_externalMovies);
 
-	s >> resource::Member< render::ImageProcessData >(L"imageProcess", m_imageProcess);
 	s >> Member< bool >(L"clearBackground", m_clearBackground);
 	s >> Member< bool >(L"enableSound", m_enableSound);
 	s >> Member< bool >(L"enableShapeCache", m_enableShapeCache);
