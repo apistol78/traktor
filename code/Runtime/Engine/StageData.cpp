@@ -78,17 +78,17 @@ Ref< Stage > StageData::createInstance(IEnvironment* environment, const Object* 
 
 	// Bind proxies to resource manager.
 	if (m_class && !resourceManager->bind(m_class, clazz))
-		return 0;
+		return nullptr;
 	if (m_shaderFade && !resourceManager->bind(m_shaderFade, shaderFade))
-		return 0;
+		return nullptr;
 
 	// Create layers.
 	Ref< Stage > stage = new Stage(m_name, environment, clazz, shaderFade, m_fadeRate, m_transitions, params);
-	for (RefArray< LayerData >::const_iterator i = m_layers.begin(); i != m_layers.end(); ++i)
+	for (auto layerData : m_layers)
 	{
-		Ref< Layer > layer = (*i)->createInstance(stage, environment);
+		Ref< Layer > layer = layerData->createInstance(stage, environment);
 		if (!layer)
-			return 0;
+			return nullptr;
 
 		stage->addLayer(layer);
 	}

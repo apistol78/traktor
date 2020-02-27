@@ -1,13 +1,15 @@
+#include "Core/Log/Log.h"
+#include "Core/Misc/SafeDestroy.h"
+#include "Core/Misc/TString.h"
+#include "Render/IRenderView.h"
+#include "Render/Context/RenderContext.h"
+#include "Render/Frame/RenderGraph.h"
 #include "Runtime/IEnvironment.h"
 #include "Runtime/Engine/Stage.h"
 #include "Runtime/Engine/StageState.h"
 #include "Runtime/Events/ActiveEvent.h"
 #include "Runtime/Events/ReconfigureEvent.h"
 #include "Runtime/Target/CommandEvent.h"
-#include "Core/Log/Log.h"
-#include "Core/Misc/SafeDestroy.h"
-#include "Core/Misc/TString.h"
-#include "Render/IRenderView.h"
 
 namespace traktor
 {
@@ -23,6 +25,20 @@ StageState::StageState(
 :	m_environment(environment)
 ,	m_stage(stage)
 {
+	// Create render contexts and graphs; this
+	// should probably be moved so it can be
+	// properly checked and also shared between
+	// states.
+
+	uint32_t frameCount = environment->getRender()->getThreadFrameQueueCount();
+
+	m_frames.resize(frameCount);
+	for (auto& frame : m_frames)
+		frame.renderContext = new render::RenderContext(8 * 1024 * 124);
+
+	m_renderGraph = new render::RenderGraph(
+		environment->getRender()->getRenderSystem()
+	);
 }
 
 void StageState::enter()
@@ -52,21 +68,40 @@ StageState::UpdateResult StageState::update(IStateManager* stateManager, const U
 
 StageState::BuildResult StageState::build(uint32_t frame, const UpdateInfo& info)
 {
-	if (m_stage->build(info, frame))
-		return BrOk;
-	else
+	render::RenderContext* renderContext = m_frames[frame].renderContext;
+	T_FATAL_ASSERT(renderContext);
+
+	render::IRenderView* renderView = m_environment->getRender()->getRenderView();
+	T_FATAL_ASSERT(renderView);
+
+	// Render entire view.
+	int32_t width = renderView->getWidth();
+	int32_t height = renderView->getHeight();
+
+	// Setup stage passes.
+	if (!m_stage->setup(info, *m_renderGraph))
 		return BrFailed;
+
+	// Validate render graph.
+	if (!m_renderGraph->validate(width, height))
+		return BrFailed;
+
+	// Build render context.
+	renderContext->flush();
+	m_renderGraph->build(renderContext);		
+	return BrOk;
 }
 
 bool StageState::render(uint32_t frame, const UpdateInfo& info)
 {
-	m_stage->render(frame);
-	return true;
-}
+	render::RenderContext* renderContext = m_frames[frame].renderContext;
+	T_FATAL_ASSERT(renderContext);
 
-void StageState::flush()
-{
-	m_stage->flush();
+	render::IRenderView* renderView = m_environment->getRender()->getRenderView();
+	T_FATAL_ASSERT(renderView);
+
+	renderContext->render(renderView);
+	return true;
 }
 
 bool StageState::take(const Object* event)

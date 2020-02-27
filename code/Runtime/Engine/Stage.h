@@ -23,6 +23,7 @@ class IRuntimeClass;
 	namespace render
 	{
 
+class RenderGraph;
 class ScreenRenderer;
 class Shader;
 
@@ -137,11 +138,7 @@ public:
 	 */
 	bool update(IStateManager* stateManager, const UpdateInfo& info);
 
-	bool build(const UpdateInfo& info, uint32_t frame);
-
-	void render(uint32_t frame);
-
-	void flush();
+	bool setup(const UpdateInfo& info, render::RenderGraph& renderGraph);
 
 	void transition();
 

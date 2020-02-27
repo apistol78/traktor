@@ -236,17 +236,10 @@ bool Stage::update(IStateManager* stateManager, const UpdateInfo& info)
 	return true;
 }
 
-bool Stage::build(const UpdateInfo& info, uint32_t frame)
+bool Stage::setup(const UpdateInfo& info, render::RenderGraph& renderGraph)
 {
 	for (auto layer : m_layers)
-		layer->build(info, frame);
-	return true;
-}
-
-void Stage::render(uint32_t frame)
-{
-	for (auto layer : m_layers)
-		layer->render(frame);
+		layer->setup(info, renderGraph);
 
 	// \fixme
 	// if (m_shaderFade && m_fade > FUZZY_EPSILON)
@@ -257,12 +250,8 @@ void Stage::render(uint32_t frame)
 	// 		m_shaderFade
 	// 	);
 	// }
-}
 
-void Stage::flush()
-{
-	for (auto layer : m_layers)
-		layer->flush();
+	return true;
 }
 
 void Stage::transition()

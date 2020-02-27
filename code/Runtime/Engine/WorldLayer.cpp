@@ -93,7 +93,6 @@ void WorldLayer::destroy()
 	}
 
 	safeDestroy(m_worldRenderer);
-	safeDestroy(m_renderGroup);
 	safeDestroy(m_dynamicEntities);
 
 	Layer::destroy();
@@ -113,11 +112,6 @@ void WorldLayer::transition(Layer* fromLayer)
 
 		fromWorldLayer->m_worldRenderer = nullptr;
 
-		// Create render entity group; contain scene root as well as dynamic entities.
-		m_renderGroup = new world::GroupEntity();
-		m_renderGroup->addEntity(m_scene->getRootEntity());
-		m_renderGroup->addEntity(m_dynamicEntities);
-
 		// Also need to ensure scene change doesn't reset world renderer.
 		m_scene.consume();
 	}
@@ -128,19 +122,6 @@ void WorldLayer::prepare(const UpdateInfo& info)
 	T_PROFILER_SCOPE(L"WorldLayer prepare");
 	if (m_scene.changed())
 	{
-		// If render group already exist then ensure it doesn't contain anything
-		// before begin re-created as it will otherwise destroy it's children.
-		if (m_renderGroup)
-		{
-			m_renderGroup->removeAllEntities();
-			m_renderGroup = nullptr;
-		}
-
-		// Create render entity group; contain scene root as well as dynamic entities.
-		m_renderGroup = new world::GroupEntity();
-		m_renderGroup->addEntity(m_scene->getRootEntity());
-		m_renderGroup->addEntity(m_dynamicEntities);
-
 		// Scene has been successfully validated; drop existing world renderer if we've been flushed.
 		m_worldRenderer = nullptr;
 		m_scene.consume();
@@ -265,9 +246,9 @@ void WorldLayer::update(const UpdateInfo& info)
 		up.deltaTime = info.getSimulationDeltaTime();
 		up.alternateTime = m_alternateTime;
 
-		// Update all entities; calling manually because we have exclusive control
-		// of dynamic entities and an explicit render root group.
-		m_renderGroup->update(up);
+		// Update all entities.
+		m_scene->updateEntity(up);
+		m_dynamicEntities->update(up);
 
 		// Update entity events.
 		world::EntityEventManager* eventManager = m_environment->getWorld()->getEntityEventManager();
@@ -279,9 +260,9 @@ void WorldLayer::update(const UpdateInfo& info)
 	m_alternateTime += info.getSimulationDeltaTime();
 }
 
-void WorldLayer::build(const UpdateInfo& info, uint32_t frame)
+void WorldLayer::setup(const UpdateInfo& info, render::RenderGraph& renderGraph)
 {
-	T_PROFILER_SCOPE(L"WorldLayer build");
+	T_PROFILER_SCOPE(L"WorldLayer setup");
 	if (!m_worldRenderer || !m_scene)
 		return;
 
@@ -298,44 +279,23 @@ void WorldLayer::build(const UpdateInfo& info, uint32_t frame)
 		);
 	}
 
-	// \fixme
+	// Build a root entity by gathering entities from containers.
+	world::GroupEntity rootEntity;
 
-	//m_worldRenderer->attach(m_renderGroup);
+	world::EntityEventManager* eventManager = m_environment->getWorld()->getEntityEventManager();
+	if (eventManager)
+		eventManager->gather([&](world::Entity* entity) { rootEntity.addEntity(entity); });
 
-	//world::EntityEventManager* eventManager = m_environment->getWorld()->getEntityEventManager();
-	//if (eventManager)
-	//	eventManager->attach(m_worldRenderer);
+	rootEntity.addEntity(m_scene->getRootEntity());
+	rootEntity.addEntity(m_dynamicEntities);
 
-	// m_worldRenderer->build(m_worldRenderView, frame);
-
-	m_deltaTime = info.getFrameDeltaTime();
-}
-
-void WorldLayer::render(uint32_t frame)
-{
-	T_PROFILER_SCOPE(L"WorldLayer render");
-	if (!m_worldRenderer || !m_scene)
-		return;
-
-	render::IRenderView* renderView = m_environment->getRender()->getRenderView();
-
-	// Bind per-scene post processing parameters.
-	// render::ImageProcess* postProcess = m_worldRenderer->getVisualImageProcess();
-	// if (postProcess)
-	// {
-	// 	for (const auto param : m_scene->getImageProcessParams())
-	// 		postProcess->setTextureParameter(param.first, param.second);
-	// }
-
-	// Render world.
-	// m_worldRenderer->render(renderView, frame);
-}
-
-void WorldLayer::flush()
-{
-	// World renderer doesn't have a specific flush path; thus
-	// we teer down the world renderer completely.
-	safeDestroy(m_worldRenderer);
+	// Add render passes with world renderer.
+	m_worldRenderer->setup(
+		m_worldRenderView,
+		&rootEntity,
+		renderGraph,
+		0
+	);		
 }
 
 void WorldLayer::preReconfigured()
@@ -461,6 +421,7 @@ void WorldLayer::setControllerEnable(bool controllerEnable)
 
 render::ImageProcess* WorldLayer::getImageProcess() const
 {
+	// \fixme
 	return nullptr; // m_worldRenderer->getVisualImageProcess();
 }
 
@@ -590,6 +551,8 @@ void WorldLayer::feedbackValues(spray::FeedbackType type, const float* values, i
 	else if (type == spray::FbtImageProcess)
 	{
 		T_ASSERT(count >= 4);
+
+		// \fixme
 		// render::ImageProcess* postProcess = m_worldRenderer->getVisualImageProcess();
 		// if (postProcess)
 		// 	postProcess->setVectorParameter(s_handleFeedback, Vector4::loadUnaligned(values));

@@ -76,11 +76,7 @@ public:
 
 	virtual void update(const runtime::UpdateInfo& info) override final;
 
-	virtual void build(const runtime::UpdateInfo& info, uint32_t frame) override final;
-
-	virtual void render(uint32_t frame) override final;
-
-	virtual void flush() override final;
+	virtual void setup(const runtime::UpdateInfo& info, render::RenderGraph& renderGraph) override final;
 
 	virtual void preReconfigured() override final;
 

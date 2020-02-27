@@ -132,24 +132,20 @@ void VideoLayer::update(const UpdateInfo& info)
 	}
 }
 
-void VideoLayer::build(const UpdateInfo& info, uint32_t frame)
-{
-}
-
-void VideoLayer::render(uint32_t frame)
+void VideoLayer::setup(const UpdateInfo& info, render::RenderGraph& renderGraph)
 {
 	if (!m_visible)
 		return;
 
-	if (!m_screenRenderer)
-	{
-		m_screenRenderer = new render::ScreenRenderer();
-		if (!m_screenRenderer->create(m_environment->getRender()->getRenderSystem()))
-		{
-			m_screenRenderer = nullptr;
-			return;
-		}
-	}
+	// if (!m_screenRenderer)
+	// {
+	// 	m_screenRenderer = new render::ScreenRenderer();
+	// 	if (!m_screenRenderer->create(m_environment->getRender()->getRenderSystem()))
+	// 	{
+	// 		m_screenRenderer = nullptr;
+	// 		return;
+	// 	}
+	// }
 
 	render::ISimpleTexture* texture = m_video->getTexture();
 	if (texture)
@@ -163,10 +159,6 @@ void VideoLayer::render(uint32_t frame)
 		// 	m_shader
 		// );
 	}
-}
-
-void VideoLayer::flush()
-{
 }
 
 void VideoLayer::preReconfigured()
