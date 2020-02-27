@@ -161,6 +161,7 @@ private:
 	resource::Proxy< scene::Scene > m_scene;
 	Ref< world::IWorldRenderer > m_worldRenderer;
 	world::WorldRenderView m_worldRenderView;
+	Ref< world::GroupEntity > m_rootGroup;
 	Ref< world::GroupEntity > m_renderGroup;
 	Ref< world::GroupEntity > m_dynamicEntities;
 	Ref< const world::Entity > m_cameraEntity;
