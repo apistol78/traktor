@@ -18,7 +18,7 @@ T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.physics.RigidEntityData", 1, RigidEntityDa
 
 Ref< RigidEntity > RigidEntityData::createEntity(
 	const world::IEntityBuilder* entityBuilder,
-	world::IEntityEventManager* eventManager,
+	world::EntityEventManager* eventManager,
 	resource::IResourceManager* resourceManager,
 	PhysicsManager* physicsManager
 ) const

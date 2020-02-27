@@ -38,10 +38,10 @@
 #include "World/Entity.h"
 #include "World/EntityData.h"
 #include "World/IEntityBuilder.h"
-#include "World/IEntityEventManager.h"
+#include "World/EntityEventManager.h"
 #include "World/IEntityFactory.h"
 #include "World/IEntityRenderer.h"
-#include "World/IEntitySchema.h"
+#include "World/EntitySchema.h"
 #include "World/IWorldRenderer.h"
 #include "World/WorldEntityRenderers.h"
 #include "World/WorldRenderSettings.h"
@@ -220,7 +220,7 @@ void GameClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	auto classWorldServer = new AutoRuntimeClass< IWorldServer >();
 	classWorldServer->addProperty< const world::IEntityBuilder* >("entityBuilder", 0, &IWorldServer::getEntityBuilder);
 	classWorldServer->addProperty< world::WorldEntityRenderers* >("entityRenderers", 0, &IWorldServer::getEntityRenderers);
-	classWorldServer->addProperty< world::IEntityEventManager* >("entityEventManager", 0, &IWorldServer::getEntityEventManager);
+	classWorldServer->addProperty< world::EntityEventManager* >("entityEventManager", 0, &IWorldServer::getEntityEventManager);
 	classWorldServer->addMethod("addEntityFactory", &IWorldServer::addEntityFactory);
 	classWorldServer->addMethod("removeEntityFactory", &IWorldServer::removeEntityFactory);
 	classWorldServer->addMethod("addEntityRenderer", &IWorldServer::addEntityRenderer);
@@ -297,7 +297,7 @@ void GameClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	registrar->registerClass(classVideoLayer);
 
 	auto classWorldLayer = new AutoRuntimeClass< WorldLayer >();
-	classWorldLayer->addProperty< world::IEntitySchema* >("entitySchema", &WorldLayer::getEntitySchema);
+	classWorldLayer->addProperty< world::EntitySchema* >("entitySchema", &WorldLayer::getEntitySchema);
 	classWorldLayer->addProperty< const Frustum& >("viewFrustum", &WorldLayer::getViewFrustum);
 	classWorldLayer->addProperty< float >("fieldOfView", &WorldLayer::setFieldOfView, &WorldLayer::getFieldOfView);
 	classWorldLayer->addProperty< float >("alternateTime", &WorldLayer::setAlternateTime, &WorldLayer::getAlternateTime);

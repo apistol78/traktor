@@ -19,7 +19,7 @@ namespace traktor
 	namespace world
 	{
 
-class IEntitySchema;
+class EntitySchema;
 
 /*! Entity builder with recording schema.
  * \ingroup World
@@ -29,9 +29,9 @@ class T_DLLCLASS EntityBuilderWithSchema : public IEntityBuilder
 	T_RTTI_CLASS;
 
 public:
-	EntityBuilderWithSchema(IEntityBuilder* entityBuilder, IEntitySchema* entitySchema);
+	EntityBuilderWithSchema(IEntityBuilder* entityBuilder, EntitySchema* entitySchema);
 
-	EntityBuilderWithSchema(IEntityBuilder* entityBuilder, IEntitySchema* entitySchema, SmallMap< const world::EntityData*, Ref< world::Entity > >& outEntityProducts);
+	EntityBuilderWithSchema(IEntityBuilder* entityBuilder, EntitySchema* entitySchema, SmallMap< const world::EntityData*, Ref< world::Entity > >& outEntityProducts);
 
 	virtual void addFactory(const IEntityFactory* entityFactory) override;
 
@@ -55,7 +55,7 @@ private:
 	typedef std::list< std::pair< std::wstring, Ref< Entity > > > scope_t;
 
 	Ref< IEntityBuilder > m_entityBuilder;
-	Ref< IEntitySchema > m_entitySchema;
+	Ref< EntitySchema > m_entitySchema;
 	SmallMap< const world::EntityData*, Ref< world::Entity > >* m_outEntityProducts;
 	mutable std::stack< scope_t > m_entityScope;
 };

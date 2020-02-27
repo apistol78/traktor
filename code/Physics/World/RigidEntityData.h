@@ -16,7 +16,7 @@ namespace traktor
 
 class IEntityBuilder;
 class IEntityEventData;
-class IEntityEventManager;
+class EntityEventManager;
 
 	}
 
@@ -44,7 +44,7 @@ class T_DLLCLASS RigidEntityData : public world::EntityData
 public:
 	Ref< RigidEntity > createEntity(
 		const world::IEntityBuilder* entityBuilder,
-		world::IEntityEventManager* eventManager,
+		world::EntityEventManager* eventManager,
 		resource::IResourceManager* resourceManager,
 		PhysicsManager* physicsManager
 	) const;

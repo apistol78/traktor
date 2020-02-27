@@ -21,7 +21,7 @@ class IResourceManager;
 	namespace world
 	{
 
-class IEntityEventManager;
+class EntityEventManager;
 
 	}
 
@@ -39,7 +39,7 @@ class T_DLLCLASS EntityFactory : public world::IEntityFactory
 
 public:
 	EntityFactory(
-		world::IEntityEventManager* eventManager,
+		world::EntityEventManager* eventManager,
 		resource::IResourceManager* resourceManager,
 		PhysicsManager* physicsManager
 	);
@@ -57,7 +57,7 @@ public:
 	virtual Ref< world::IEntityComponent > createEntityComponent(const world::IEntityBuilder* builder, const world::IEntityComponentData& entityComponentData) const override final;
 
 private:
-	Ref< world::IEntityEventManager > m_eventManager;
+	Ref< world::EntityEventManager > m_eventManager;
 	Ref< resource::IResourceManager > m_resourceManager;
 	Ref< PhysicsManager > m_physicsManager;
 };

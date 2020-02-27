@@ -47,7 +47,7 @@
 #include "Render/IVRCompositor.h"
 #include "Resource/IResourceManager.h"
 #include "Script/IScriptManager.h"
-#include "World/IEntityEventManager.h"
+#include "World/EntityEventManager.h"
 
 namespace traktor
 {

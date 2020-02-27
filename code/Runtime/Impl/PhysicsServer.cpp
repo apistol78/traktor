@@ -61,7 +61,7 @@ void PhysicsServer::createResourceFactories(IEnvironment* environment)
 
 void PhysicsServer::createEntityFactories(IEnvironment* environment)
 {
-	world::IEntityEventManager* eventManger = environment->getWorld()->getEntityEventManager();
+	world::EntityEventManager* eventManger = environment->getWorld()->getEntityEventManager();
 	resource::IResourceManager* resourceManager = environment->getResource()->getResourceManager();
 	environment->getWorld()->addEntityFactory(new physics::EntityFactory(eventManger, resourceManager, m_physicsManager));
 }

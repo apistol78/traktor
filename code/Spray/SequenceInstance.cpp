@@ -1,6 +1,6 @@
 #include "Spray/Sequence.h"
 #include "Spray/SequenceInstance.h"
-#include "World/IEntityEventManager.h"
+#include "World/EntityEventManager.h"
 
 namespace traktor
 {

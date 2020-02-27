@@ -11,7 +11,7 @@
 #include "World/IEntityEvent.h"
 #include "World/IEntityEventData.h"
 #include "World/IEntityEventInstance.h"
-#include "World/IEntityEventManager.h"
+#include "World/EntityEventManager.h"
 #include "World/IEntityFactory.h"
 #include "World/IEntityRenderer.h"
 #include "World/IWorldRenderer.h"
@@ -46,22 +46,22 @@ void IEntityEventInstance_cancelEnd(IEntityEventInstance* self)
 	self->cancel(CtEnd);
 }
 
-IEntityEventInstance* IEntityEventManager_raise_1(IEntityEventManager* self, const IEntityEvent* event, Entity* sender, const Transform& Toffset)
+IEntityEventInstance* EntityEventManager_raise_1(EntityEventManager* self, const IEntityEvent* event, Entity* sender, const Transform& Toffset)
 {
 	return self->raise(event, sender, Toffset);
 }
 
-IEntityEventInstance* IEntityEventManager_raise_2(IEntityEventManager* self, const EntityEventSet* eventSet, const std::wstring& eventId, Entity* sender, const Transform& Toffset)
+IEntityEventInstance* EntityEventManager_raise_2(EntityEventManager* self, const EntityEventSet* eventSet, const std::wstring& eventId, Entity* sender, const Transform& Toffset)
 {
 	return self->raise(eventSet, eventId, sender, Toffset);
 }
 
-void IEntityEventManager_cancelAllImmediate(IEntityEventManager* self)
+void EntityEventManager_cancelAllImmediate(EntityEventManager* self)
 {
 	self->cancelAll(CtImmediate);
 }
 
-void IEntityEventManager_cancelAllEnd(IEntityEventManager* self)
+void EntityEventManager_cancelAllEnd(EntityEventManager* self)
 {
 	self->cancelAll(CtEnd);
 }
@@ -161,30 +161,26 @@ void WorldClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	auto classIEntityEvent = new AutoRuntimeClass< IEntityEvent >();
 	registrar->registerClass(classIEntityEvent);
 
-	auto classIEntityEventManager = new AutoRuntimeClass< IEntityEventManager >();
-	classIEntityEventManager->addMethod("raise", &IEntityEventManager_raise_1);
-	classIEntityEventManager->addMethod("raise", &IEntityEventManager_raise_2);
-	classIEntityEventManager->addMethod("cancelAllImmediate", &IEntityEventManager_cancelAllImmediate);
-	classIEntityEventManager->addMethod("cancelAllEnd", &IEntityEventManager_cancelAllEnd);
-	registrar->registerClass(classIEntityEventManager);
+	auto classEntityEventManager = new AutoRuntimeClass< EntityEventManager >();
+	classEntityEventManager->addMethod("raise", &EntityEventManager_raise_1);
+	classEntityEventManager->addMethod("raise", &EntityEventManager_raise_2);
+	classEntityEventManager->addMethod("cancelAllImmediate", &EntityEventManager_cancelAllImmediate);
+	classEntityEventManager->addMethod("cancelAllEnd", &EntityEventManager_cancelAllEnd);
+	registrar->registerClass(classEntityEventManager);
 
 	auto classEntityEventSet = new AutoRuntimeClass< EntityEventSet >();
 	classEntityEventSet->addMethod("getEvent", &EntityEventSet::getEvent);
 	registrar->registerClass(classEntityEventSet);
 
-	auto classIEntitySchema = new AutoRuntimeClass< IEntitySchema >();
-	classIEntitySchema->addMethod< Entity*, uint32_t >("getEntity", &IEntitySchema::getEntity);
-	classIEntitySchema->addMethod< Entity*, const std::wstring&, uint32_t >("getEntity", &IEntitySchema::getEntity);
-	classIEntitySchema->addMethod< Entity*, const TypeInfo&, uint32_t >("getEntityOf", &IEntitySchema::getEntity);
-	classIEntitySchema->addMethod< Entity*, const std::wstring&, const TypeInfo&, uint32_t >("getEntityOf", &IEntitySchema::getEntity);
-	classIEntitySchema->addMethod< Entity*, const Entity*, uint32_t >("getChildEntity", &IEntitySchema::getChildEntity);
-	classIEntitySchema->addMethod< Entity*, const Entity*, const std::wstring&, uint32_t >("getChildEntity", &IEntitySchema::getChildEntity);
-	classIEntitySchema->addMethod< Entity*, const Entity*, const TypeInfo&, uint32_t >("getChildEntityOf", &IEntitySchema::getChildEntity);
-	classIEntitySchema->addMethod< Entity*, const Entity*, const std::wstring&, const TypeInfo&, uint32_t >("getChildEntityOf", &IEntitySchema::getChildEntity);
-	registrar->registerClass(classIEntitySchema);
-
 	auto classEntitySchema = new AutoRuntimeClass< EntitySchema >();
-	classEntitySchema->addConstructor();
+	classEntitySchema->addMethod< Entity*, uint32_t >("getEntity", &EntitySchema::getEntity);
+	classEntitySchema->addMethod< Entity*, const std::wstring&, uint32_t >("getEntity", &EntitySchema::getEntity);
+	classEntitySchema->addMethod< Entity*, const TypeInfo&, uint32_t >("getEntityOf", &EntitySchema::getEntity);
+	classEntitySchema->addMethod< Entity*, const std::wstring&, const TypeInfo&, uint32_t >("getEntityOf", &EntitySchema::getEntity);
+	classEntitySchema->addMethod< Entity*, const Entity*, uint32_t >("getChildEntity", &EntitySchema::getChildEntity);
+	classEntitySchema->addMethod< Entity*, const Entity*, const std::wstring&, uint32_t >("getChildEntity", &EntitySchema::getChildEntity);
+	classEntitySchema->addMethod< Entity*, const Entity*, const TypeInfo&, uint32_t >("getChildEntityOf", &EntitySchema::getChildEntity);
+	classEntitySchema->addMethod< Entity*, const Entity*, const std::wstring&, const TypeInfo&, uint32_t >("getChildEntityOf", &EntitySchema::getChildEntity);
 	registrar->registerClass(classEntitySchema);
 
 	auto classIEntityFactory = new AutoRuntimeClass< IEntityFactory >();
@@ -201,7 +197,7 @@ void WorldClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	registrar->registerClass(classEntityBuilder);
 
 	auto classEntityBuilderWithSchema = new AutoRuntimeClass< EntityBuilderWithSchema >();
-	classEntityBuilderWithSchema->addConstructor< IEntityBuilder*, IEntitySchema* >();
+	classEntityBuilderWithSchema->addConstructor< IEntityBuilder*, EntitySchema* >();
 	registrar->registerClass(classEntityBuilderWithSchema);
 
 	auto classIEntityRenderer = new AutoRuntimeClass< IEntityRenderer >();

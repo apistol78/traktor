@@ -5,7 +5,7 @@
 #include "Spray/TrailInstance.h"
 #include "World/IEntityEvent.h"
 #include "World/IEntityEventInstance.h"
-#include "World/IEntityEventManager.h"
+#include "World/EntityEventManager.h"
 
 namespace traktor
 {

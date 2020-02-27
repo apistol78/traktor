@@ -18,7 +18,7 @@ namespace traktor
 T_IMPLEMENT_RTTI_CLASS(L"traktor.physics.EntityFactory", EntityFactory, world::IEntityFactory)
 
 EntityFactory::EntityFactory(
-	world::IEntityEventManager* eventManager,
+	world::EntityEventManager* eventManager,
 	resource::IResourceManager* resourceManager,
 	PhysicsManager* physicsManager
 )

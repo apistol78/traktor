@@ -9,7 +9,7 @@ namespace traktor
 	namespace world
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.world.EntityEventManager", EntityEventManager, IEntityEventManager)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.world.EntityEventManager", EntityEventManager, Object)
 
 EntityEventManager::EntityEventManager(uint32_t maxEventInstances)
 :	m_maxEventInstances(maxEventInstances)

@@ -21,8 +21,8 @@
 #include "World/Entity.h"
 #include "World/EntityData.h"
 #include "World/IEntityBuilder.h"
-#include "World/IEntitySchema.h"
-#include "World/IEntityEventManager.h"
+#include "World/EntitySchema.h"
+#include "World/EntityEventManager.h"
 #include "World/Entity/CameraComponent.h"
 #include "World/Entity/ComponentEntity.h"
 #include "World/Entity/GroupEntity.h"
@@ -146,7 +146,7 @@ void WorldLayer::prepare(const UpdateInfo& info)
 		m_scene.consume();
 
 		// Get initial camera.
-		m_cameraEntity = m_scene->getEntitySchema()->getEntity(L"Camera");
+		m_cameraEntity = m_scene->getEntitySchema()->getEntity(L"Camera", 0);
 		m_listenerEntity = m_cameraEntity;
 	}
 
@@ -270,7 +270,7 @@ void WorldLayer::update(const UpdateInfo& info)
 		m_renderGroup->update(up);
 
 		// Update entity events.
-		world::IEntityEventManager* eventManager = m_environment->getWorld()->getEntityEventManager();
+		world::EntityEventManager* eventManager = m_environment->getWorld()->getEntityEventManager();
 		if (eventManager)
 			eventManager->update(up);
 	}
@@ -302,7 +302,7 @@ void WorldLayer::build(const UpdateInfo& info, uint32_t frame)
 
 	//m_worldRenderer->attach(m_renderGroup);
 
-	//world::IEntityEventManager* eventManager = m_environment->getWorld()->getEntityEventManager();
+	//world::EntityEventManager* eventManager = m_environment->getWorld()->getEntityEventManager();
 	//if (eventManager)
 	//	eventManager->attach(m_worldRenderer);
 
@@ -370,7 +370,7 @@ void WorldLayer::resume()
 
 world::Entity* WorldLayer::getEntity(const std::wstring& name) const
 {
-	return m_scene->getEntitySchema()->getEntity(name);
+	return m_scene->getEntitySchema()->getEntity(name, 0);
 }
 
 world::Entity* WorldLayer::getEntity(const std::wstring& name, int32_t index) const
@@ -449,7 +449,7 @@ bool WorldLayer::isEntityAdded(const world::Entity* entity) const
 		return false;
 }
 
-world::IEntitySchema* WorldLayer::getEntitySchema() const
+world::EntitySchema* WorldLayer::getEntitySchema() const
 {
 	return m_scene->getEntitySchema();
 }

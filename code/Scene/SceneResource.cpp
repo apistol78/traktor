@@ -40,7 +40,7 @@ Ref< Scene > SceneResource::createScene(
 			log::error << L"Unable to bind image processing parameter \"" << i->first << L"\"" << Endl;
 	}
 
-	Ref< world::IEntitySchema > entitySchema = new world::EntitySchema();
+	Ref< world::EntitySchema > entitySchema = new world::EntitySchema();
 	SmallMap< const world::EntityData*, Ref< world::Entity > > entityProducts;
 
 	Ref< world::EntityBuilderWithSchema > entityBuilderSchema = new world::EntityBuilderWithSchema(entityBuilder, entitySchema, entityProducts);

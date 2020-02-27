@@ -1,7 +1,7 @@
 #include "World/EntityBuilderWithSchema.h"
 #include "World/EntityData.h"
 #include "World/IEntityFactory.h"
-#include "World/IEntitySchema.h"
+#include "World/EntitySchema.h"
 
 namespace traktor
 {
@@ -10,14 +10,14 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.world.EntityBuilderWithSchema", EntityBuilderWithSchema, IEntityBuilder)
 
-EntityBuilderWithSchema::EntityBuilderWithSchema(IEntityBuilder* entityBuilder, IEntitySchema* entitySchema)
+EntityBuilderWithSchema::EntityBuilderWithSchema(IEntityBuilder* entityBuilder, EntitySchema* entitySchema)
 :	m_entityBuilder(entityBuilder)
 ,	m_entitySchema(entitySchema)
 ,	m_outEntityProducts(nullptr)
 {
 }
 
-EntityBuilderWithSchema::EntityBuilderWithSchema(IEntityBuilder* entityBuilder, IEntitySchema* entitySchema, SmallMap< const world::EntityData*, Ref< world::Entity > >& outEntityProducts)
+EntityBuilderWithSchema::EntityBuilderWithSchema(IEntityBuilder* entityBuilder, EntitySchema* entitySchema, SmallMap< const world::EntityData*, Ref< world::Entity > >& outEntityProducts)
 :	m_entityBuilder(entityBuilder)
 ,	m_entitySchema(entitySchema)
 ,	m_outEntityProducts(&outEntityProducts)
