@@ -51,6 +51,7 @@ WorldLayer::WorldLayer(
 :	Layer(stage, name, permitTransition)
 ,	m_environment(environment)
 ,	m_scene(scene)
+,	m_rootGroup(new world::GroupEntity())
 ,	m_dynamicEntities(new world::GroupEntity())
 ,	m_alternateTime(0.0f)
 ,	m_deltaTime(0.0f)
@@ -280,19 +281,19 @@ void WorldLayer::setup(const UpdateInfo& info, render::RenderGraph& renderGraph)
 	}
 
 	// Build a root entity by gathering entities from containers.
-	world::GroupEntity rootEntity;
+	m_rootGroup->removeAllEntities();
 
 	world::EntityEventManager* eventManager = m_environment->getWorld()->getEntityEventManager();
 	if (eventManager)
-		eventManager->gather([&](world::Entity* entity) { rootEntity.addEntity(entity); });
+		eventManager->gather([&](world::Entity* entity) { m_rootGroup->addEntity(entity); });
 
-	rootEntity.addEntity(m_scene->getRootEntity());
-	rootEntity.addEntity(m_dynamicEntities);
+	m_rootGroup->addEntity(m_scene->getRootEntity());
+	m_rootGroup->addEntity(m_dynamicEntities);
 
 	// Add render passes with world renderer.
 	m_worldRenderer->setup(
 		m_worldRenderView,
-		&rootEntity,
+		m_rootGroup,
 		renderGraph,
 		0
 	);		

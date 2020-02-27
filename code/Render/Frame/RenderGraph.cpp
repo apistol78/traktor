@@ -99,7 +99,7 @@ bool RenderGraph::validate(int32_t width, int32_t height)
 	}
 
 	// Cleanup non-acquired targets.
-	m_pool->cleanup();
+	//m_pool->cleanup();
 
 	// Append passes depth-first.
 	StaticVector< uint32_t, 256 > order;
