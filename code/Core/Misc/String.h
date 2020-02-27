@@ -303,6 +303,6 @@ bool T_DLLCLASS split(const std::wstring& str, wchar_t delim, std::wstring& outL
 /*! String formatting helper.
  * \ingroup Core
  */
-std::wstring str(const wchar_t* const format, ...);
+std::wstring T_DLLCLASS str(const wchar_t* const format, ...);
 
 }
