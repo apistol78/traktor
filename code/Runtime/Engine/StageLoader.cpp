@@ -41,7 +41,7 @@ bool StageLoader::succeeded()
 	if (!wait())
 		return false;
 
-	return m_stage != 0;
+	return m_stage != nullptr;
 }
 
 bool StageLoader::failed()
@@ -49,13 +49,13 @@ bool StageLoader::failed()
 	if (!wait())
 		return false;
 
-	return m_stage == 0;
+	return m_stage == nullptr;
 }
 
 Ref< Stage > StageLoader::get()
 {
 	if (!wait())
-		return 0;
+		return nullptr;
 
 	return m_stage;
 }
@@ -68,7 +68,7 @@ Ref< StageLoader > StageLoader::createAsync(IEnvironment* environment, const Gui
 	if (stageLoader->m_job)
 		return stageLoader;
 	else
-		return 0;
+		return nullptr;
 #else
 	return create(environment, stageGuid, params);
 #endif

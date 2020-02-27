@@ -473,8 +473,6 @@ bool Application::update()
 		// Also ensure state are flushed before reconfiguring.
 		if ((currentState = m_stateManager->getCurrent()) != 0)
 		{
-			currentState->flush();
-
 			ReconfigureEvent configureEvent(false, 0);
 			currentState->take(&configureEvent);
 		}
@@ -790,7 +788,7 @@ bool Application::update()
 		double buildTimeStart = m_timer.getElapsedTime();
 		IState::BuildResult buildResult;
 		{
-			T_PROFILER_SCOPE(L"Application update state");
+			T_PROFILER_SCOPE(L"Application build state");
 			buildResult = currentState->build(m_frameBuild, m_updateInfo);
 		}
 		double buildTimeEnd = m_timer.getElapsedTime();
@@ -800,7 +798,7 @@ bool Application::update()
 		double gcTimeStart = m_timer.getElapsedTime();
 		if (m_scriptServer)
 		{
-			T_PROFILER_SCOPE(L"Application update script GC");
+			T_PROFILER_SCOPE(L"Application script GC");
 			m_scriptServer->cleanup(false);
 		}
 		double gcTimeEnd = m_timer.getElapsedTime();
@@ -959,18 +957,17 @@ bool Application::update()
 void Application::suspend()
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lockRender);
-	if (m_stateManager->getCurrent() != 0)
+	if (m_stateManager->getCurrent() != nullptr)
 	{
 		ActiveEvent activeEvent(false);
 		m_stateManager->getCurrent()->take(&activeEvent);
-		m_stateManager->getCurrent()->flush();
 	}
 }
 
 void Application::resume()
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lockRender);
-	if (m_stateManager->getCurrent() != 0)
+	if (m_stateManager->getCurrent() != nullptr)
 	{
 		ActiveEvent activeEvent(true);
 		m_stateManager->getCurrent()->take(&activeEvent);
@@ -1004,9 +1001,6 @@ void Application::pollDatabase()
 	{
 		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lockUpdate);
 		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lockRender);
-
-		if (m_stateManager->getCurrent() != 0)
-			m_stateManager->getCurrent()->flush();
 
 		Ref< resource::IResourceManager > resourceManager = m_resourceServer->getResourceManager();
 		if (resourceManager)

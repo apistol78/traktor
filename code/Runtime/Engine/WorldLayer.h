@@ -79,11 +79,7 @@ public:
 
 	virtual void update(const UpdateInfo& info) override final;
 
-	virtual void build(const UpdateInfo& info, uint32_t frame) override final;
-
-	virtual void render(uint32_t frame) override final;
-
-	virtual void flush() override final;
+	virtual void setup(const UpdateInfo& info, render::RenderGraph& renderGraph) override final;
 
 	virtual void preReconfigured() override final;
 

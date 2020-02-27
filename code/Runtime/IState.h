@@ -79,10 +79,6 @@ public:
 	 */
 	virtual bool render(uint32_t frame, const UpdateInfo& info) = 0;
 
-	/*! Flush built frames.
-	 */
-	virtual void flush() = 0;
-
 	/*! Take event.
 	 *
 	 * \param event Event.

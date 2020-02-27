@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Core/Containers/AlignedVector.h"
 #include "Runtime/IState.h"
 
 // import/export mechanism.
@@ -12,6 +13,14 @@
 
 namespace traktor
 {
+	namespace render
+	{
+
+class RenderContext;
+class RenderGraph;
+
+	}
+
 	namespace runtime
 	{
 
@@ -26,10 +35,7 @@ class T_DLLCLASS StageState : public IState
 	T_RTTI_CLASS;
 
 public:
-	StageState(
-		IEnvironment* environment,
-		Stage* stage
-	);
+	StageState(IEnvironment* environment, Stage* stage);
 
 	virtual void enter() override final;
 
@@ -41,13 +47,18 @@ public:
 
 	virtual bool render(uint32_t frame, const UpdateInfo& info) override final;
 
-	virtual void flush() override final;
-
 	virtual bool take(const Object* event) override final;
 
 private:
+	struct Frame
+	{
+		Ref< render::RenderContext > renderContext;
+	};
+
 	Ref< IEnvironment > m_environment;
 	Ref< Stage > m_stage;
+	AlignedVector< Frame > m_frames;
+	Ref< render::RenderGraph > m_renderGraph;
 };
 
 	}

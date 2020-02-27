@@ -1,10 +1,3 @@
-#include "Net/BidirectionalObjectTransport.h"
-#include "Net/SocketAddressIPv4.h"
-#include "Net/TcpSocket.h"
-
-#include "Runtime/IEnvironment.h"
-#include "Runtime/UpdateInfo.h"
-#include "Runtime/Engine/Stage.h"
 #include "Core/Class/Any.h"
 #include "Core/Io/StringOutputStream.h"
 #include "Core/Log/Log.h"
@@ -12,6 +5,18 @@
 #include "Core/Settings/PropertyBoolean.h"
 #include "Core/Settings/PropertyGroup.h"
 #include "Core/Timer/Profiler.h"
+#include "Input/IInputDevice.h"
+#include "Input/InputSystem.h"
+#include "Net/BidirectionalObjectTransport.h"
+#include "Net/SocketAddressIPv4.h"
+#include "Net/TcpSocket.h"
+#include "Render/IRenderSystem.h"
+#include "Render/IRenderTargetSet.h"
+#include "Render/IRenderView.h"
+#include "Render/Frame/RenderGraph.h"
+#include "Runtime/IEnvironment.h"
+#include "Runtime/UpdateInfo.h"
+#include "Runtime/Engine/Stage.h"
 #include "Spark/Cast.h"
 #include "Spark/DefaultCharacterFactory.h"
 #include "Spark/Font.h"
@@ -26,11 +31,6 @@
 #include "Spark/Debug/MovieDebugger.h"
 #include "Spark/Runtime/SparkLayer.h"
 #include "Spark/Sound/SoundRenderer.h"
-#include "Input/IInputDevice.h"
-#include "Input/InputSystem.h"
-#include "Render/IRenderSystem.h"
-#include "Render/IRenderTargetSet.h"
-#include "Render/IRenderView.h"
 #include "Spray/Feedback/IFeedbackManager.h"
 
 namespace traktor
@@ -433,37 +433,31 @@ void SparkLayer::update(const runtime::UpdateInfo& info)
 	}
 }
 
-void SparkLayer::build(const runtime::UpdateInfo& info, uint32_t frame)
+void SparkLayer::setup(const runtime::UpdateInfo& info, render::RenderGraph& renderGraph)
 {
-	T_PROFILER_SCOPE(L"SparkLayer build");
-	if (!m_displayRenderer || !m_movieRenderer || !m_moviePlayer || !m_visible)
-		return;
+	// T_PROFILER_SCOPE(L"SparkLayer setup");
+	// if (!m_displayRenderer || !m_movieRenderer || !m_moviePlayer || !m_visible)
+	// 	return;
 
-	m_displayRenderer->build(frame);
-	m_moviePlayer->render(m_movieRenderer);
-}
+	// m_displayRenderer->build(frame);
+	// m_moviePlayer->render(m_movieRenderer);
 
-void SparkLayer::render(uint32_t frame)
-{
-	T_PROFILER_SCOPE(L"SparkLayer render");
-	if (!m_displayRenderer || !m_visible)
-		return;
+	// render::IRenderView* renderView = m_environment->getRender()->getRenderView();
+	// T_ASSERT(renderView);
 
-	render::IRenderView* renderView = m_environment->getRender()->getRenderView();
-	T_ASSERT(renderView);
+	Ref< render::RenderPass > rp = new render::RenderPass(L"Spark");
+	rp->setOutput(0);
 
-	m_displayRenderer->render(
-		renderView,
-		frame,
-		m_offset,
-		m_scale
-	);
-}
+	rp->addBuild([this](const render::RenderGraph& renderGraph, render::RenderContext* renderContext) {
+		// m_displayRenderer->render(
+		// 	renderView,
+		// 	frame,
+		// 	m_offset,
+		// 	m_scale
+		// );
+	});
 
-void SparkLayer::flush()
-{
-	if (m_displayRenderer)
-		m_displayRenderer->flush();
+	renderGraph.addPass(rp);
 }
 
 void SparkLayer::preReconfigured()

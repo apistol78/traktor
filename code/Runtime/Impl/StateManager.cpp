@@ -16,9 +16,8 @@ void StateManager::destroy()
 
 	if (m_current)
 	{
-		m_current->flush();
 		m_current->leave();
-		m_current = 0;
+		m_current = nullptr;
 	}
 }
 
@@ -48,9 +47,8 @@ void StateManager::leaveCurrent()
 
 	if (m_current)
 	{
-		m_current->flush();
 		m_current->leave();
-		m_current = 0;
+		m_current = nullptr;
 	}
 }
 
@@ -60,7 +58,7 @@ void StateManager::enterNext()
 	T_ASSERT(!m_current);
 
 	m_current = m_next;
-	m_next = 0;
+	m_next = nullptr;
 
 	if (m_current)
 		m_current->enter();

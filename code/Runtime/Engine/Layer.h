@@ -13,6 +13,13 @@
 
 namespace traktor
 {
+	namespace render
+	{
+
+class RenderGraph;
+
+	}
+
 	namespace runtime
 	{
 
@@ -59,29 +66,12 @@ public:
 	 */
 	virtual void update(const UpdateInfo& info) = 0;
 
-	/*! Build renderable context.
+	/*! Setup render graph passes.
 	 *
 	 * \param info Engine update information.
-	 * \param frame Render frame.
+	 * \param renderGraph Render graph.
 	 */
-	virtual void build(const UpdateInfo& info, uint32_t frame) = 0;
-
-	/*! Render previously build context.
-	 *
-	 * This is usually called from another thread than
-	 * the "build" method so special care must be
-	 * taken to ensure integrity of data.
-	 *
-	 * \param frame Render frame.
-	 */
-	virtual void render(uint32_t frame) = 0;
-
-	/*! Flush anything pending; such as render contexts etc.
-	 *
-	 * Flush is called prior to state changes, configuration changes
-	 * or application runtime state.
-	 */
-	virtual void flush() = 0;
+	virtual void setup(const UpdateInfo& info, render::RenderGraph& renderGraph) = 0;
 
 	/*! Called before application is to be reconfigured. */
 	virtual void preReconfigured() = 0;

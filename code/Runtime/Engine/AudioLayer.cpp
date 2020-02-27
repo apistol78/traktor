@@ -32,14 +32,14 @@ AudioLayer::AudioLayer(
 
 void AudioLayer::destroy()
 {
-	m_environment = 0;
+	m_environment = nullptr;
 	m_sound.clear();
 	m_tweens.clear();
 
 	if (m_handle)
 	{
 		m_handle->fadeOff();
-		m_handle = 0;
+		m_handle = nullptr;
 	}
 
 	Layer::destroy();
@@ -54,7 +54,7 @@ void AudioLayer::play()
 	if (soundPlayer)
 		m_handle = soundPlayer->play(m_sound, 0);
 	else
-		m_handle = 0;
+		m_handle = nullptr;
 }
 
 void AudioLayer::stop()
@@ -62,7 +62,7 @@ void AudioLayer::stop()
 	if (m_handle)
 	{
 		m_handle->stop();
-		m_handle = 0;
+		m_handle = nullptr;
 	}
 }
 
@@ -71,7 +71,7 @@ void AudioLayer::fadeOff()
 	if (m_handle)
 	{
 		m_handle->fadeOff();
-		m_handle = 0;
+		m_handle = nullptr;
 	}
 }
 
@@ -148,15 +148,7 @@ void AudioLayer::update(const UpdateInfo& info)
 	}
 }
 
-void AudioLayer::build(const UpdateInfo& info, uint32_t frame)
-{
-}
-
-void AudioLayer::render(uint32_t frame)
-{
-}
-
-void AudioLayer::flush()
+void AudioLayer::setup(const UpdateInfo& info, render::RenderGraph& renderGraph)
 {
 }
 
