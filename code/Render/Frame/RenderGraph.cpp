@@ -1,5 +1,6 @@
 #include "Core/Containers/StaticSet.h"
 #include "Core/Log/Log.h"
+#include "Core/Misc/String.h"
 #include "Render/IRenderSystem.h"
 #include "Render/IRenderTargetSet.h"
 #include "Render/Context/RenderBlock.h"
