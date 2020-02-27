@@ -34,7 +34,7 @@ RigidBodyComponentData::RigidBodyComponentData(BodyDesc* bodyDesc, world::IEntit
 
 Ref< RigidBodyComponent > RigidBodyComponentData::createComponent(
 	const world::IEntityBuilder* entityBuilder,
-	world::IEntityEventManager* eventManager,
+	world::EntityEventManager* eventManager,
 	resource::IResourceManager* resourceManager,
 	PhysicsManager* physicsManager
 ) const

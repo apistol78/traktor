@@ -52,7 +52,7 @@ SceneEditorContext::SceneEditorContext(
 	editor::IDocument* document,
 	db::Database* resourceDb,
 	db::Database* sourceDb,
-	world::IEntityEventManager* eventManager,
+	world::EntityEventManager* eventManager,
 	resource::IResourceManager* resourceManager,
 	render::IRenderSystem* renderSystem,
 	physics::PhysicsManager* physicsManager,
@@ -355,7 +355,7 @@ void SceneEditorContext::buildEntities()
 
 	if (m_sceneAsset)
 	{
-		Ref< world::IEntitySchema > entitySchema = new world::EntitySchema();
+		Ref< world::EntitySchema > entitySchema = new world::EntitySchema();
 		Ref< world::EntityBuilder > entityBuilder = new world::EntityBuilder();
 		Ref< world::EntityBuilderWithSchema > entityBuilderSchema = new world::EntityBuilderWithSchema(entityBuilder, entitySchema);
 

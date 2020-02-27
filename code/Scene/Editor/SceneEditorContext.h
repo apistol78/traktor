@@ -66,7 +66,7 @@ class IScriptContext;
 
 class Entity;
 class EntityData;
-class IEntityEventManager;
+class EntityEventManager;
 
 	}
 
@@ -119,7 +119,7 @@ public:
 		editor::IDocument* document,
 		db::Database* resourceDb,
 		db::Database* sourceDb,
-		world::IEntityEventManager* eventManager,
+		world::EntityEventManager* eventManager,
 		resource::IResourceManager* resourceManager,
 		render::IRenderSystem* renderSystem,
 		physics::PhysicsManager* physicsManager,
@@ -260,7 +260,7 @@ public:
 
 	db::Database* getSourceDatabase() { return m_sourceDb; }
 
-	world::IEntityEventManager* getEntityEventManager() const { return m_eventManager; }
+	world::EntityEventManager* getEntityEventManager() const { return m_eventManager; }
 
 	resource::IResourceManager* getResourceManager() const { return m_resourceManager; }
 
@@ -312,7 +312,7 @@ private:
 	editor::IDocument* m_document;
 	Ref< db::Database > m_resourceDb;
 	Ref< db::Database > m_sourceDb;
-	Ref< world::IEntityEventManager > m_eventManager;
+	Ref< world::EntityEventManager > m_eventManager;
 	Ref< resource::IResourceManager > m_resourceManager;
 	Ref< render::IRenderSystem > m_renderSystem;
 	Ref< physics::PhysicsManager > m_physicsManager;

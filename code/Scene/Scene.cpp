@@ -14,7 +14,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.scene.Scene", Scene, Object)
 
 Scene::Scene(
 	ISceneController* controller,
-	world::IEntitySchema* entitySchema,
+	world::EntitySchema* entitySchema,
 	world::Entity* rootEntity,
 	world::WorldRenderSettings* worldRenderSettings,
 	const SmallMap< render::handle_t, resource::Proxy< render::ITexture > >& imageProcessParams
@@ -66,7 +66,7 @@ void Scene::updateEntity(const world::UpdateParams& update)
 		m_rootEntity->update(update);
 }
 
-world::IEntitySchema* Scene::getEntitySchema() const
+world::EntitySchema* Scene::getEntitySchema() const
 {
 	return m_entitySchema;
 }

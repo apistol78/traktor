@@ -23,7 +23,7 @@ Timer g_randomTimer;
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.spray.EffectComponent", EffectComponent, world::IEntityComponent)
 
-EffectComponent::EffectComponent(const resource::Proxy< Effect >& effect, world::IEntityEventManager* eventManager, sound::ISoundPlayer* soundPlayer)
+EffectComponent::EffectComponent(const resource::Proxy< Effect >& effect, world::EntityEventManager* eventManager, sound::ISoundPlayer* soundPlayer)
 :	m_transform(Transform::identity())
 ,	m_effect(effect)
 ,	m_counter(0)

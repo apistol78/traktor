@@ -6,7 +6,7 @@ namespace traktor
 	namespace world
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.world.EntitySchema", EntitySchema, IEntitySchema)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.world.EntitySchema", EntitySchema, Object)
 
 void EntitySchema::insertEntity(const Entity* parentEntity, const std::wstring& name, Entity* entity)
 {

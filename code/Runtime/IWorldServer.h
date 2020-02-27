@@ -24,7 +24,7 @@ class IFeedbackManager;
 	{
 
 class IEntityBuilder;
-class IEntityEventManager;
+class EntityEventManager;
 class IEntityFactory;
 class IEntityRenderer;
 class IWorldRenderer;
@@ -58,7 +58,7 @@ public:
 
 	virtual world::WorldEntityRenderers* getEntityRenderers() = 0;
 
-	virtual world::IEntityEventManager* getEntityEventManager() = 0;
+	virtual world::EntityEventManager* getEntityEventManager() = 0;
 
 	virtual spray::IFeedbackManager* getFeedbackManager() = 0;
 

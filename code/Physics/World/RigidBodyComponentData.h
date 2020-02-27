@@ -24,7 +24,7 @@ class IResourceManager;
 class Entity;
 class IEntityBuilder;
 class IEntityEventData;
-class IEntityEventManager;
+class EntityEventManager;
 
 	}
 
@@ -51,7 +51,7 @@ public:
 
 	Ref< RigidBodyComponent > createComponent(
 		const world::IEntityBuilder* entityBuilder,
-		world::IEntityEventManager* eventManager,
+		world::EntityEventManager* eventManager,
 		resource::IResourceManager* resourceManager,
 		PhysicsManager* physicsManager
 	) const;

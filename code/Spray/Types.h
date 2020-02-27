@@ -16,7 +16,7 @@ class ISoundPlayer;
 	{
 
 class Entity;
-class IEntityEventManager;
+class EntityEventManager;
 
 	}
 
@@ -48,7 +48,7 @@ struct Context
 	float deltaTime;
 	RandomGeometry random;
 	world::Entity* owner;
-	world::IEntityEventManager* eventManager;
+	world::EntityEventManager* eventManager;
 	sound::ISoundPlayer* soundPlayer;
 	VirtualSourceCallback* virtualSourceCallback;
 

@@ -3,7 +3,7 @@
 #include "Physics/CollisionListener.h"
 #include "Physics/World/RigidEntity.h"
 #include "World/IEntityEvent.h"
-#include "World/IEntityEventManager.h"
+#include "World/EntityEventManager.h"
 
 namespace traktor
 {
@@ -15,7 +15,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.physics.RigidEntity", RigidEntity, world::Entit
 RigidEntity::RigidEntity(
 	Body* body,
 	world::Entity* entity,
-	world::IEntityEventManager* eventManager,
+	world::EntityEventManager* eventManager,
 	world::IEntityEvent* eventCollide
 )
 :	m_body(body)

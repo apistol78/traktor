@@ -40,7 +40,7 @@
 #include "Ui/StatusBar/StatusBar.h"
 #include "Ui/Splitter.h"
 #include "Ui/QuadSplitter.h"
-#include "World/IEntityEventManager.h"
+#include "World/EntityEventManager.h"
 
 namespace traktor
 {

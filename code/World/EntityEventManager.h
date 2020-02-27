@@ -1,8 +1,11 @@
 #pragma once
 
+#include <functional>
+#include "Core/Object.h"
 #include "Core/RefArray.h"
+#include "Core/Math/Transform.h"
 #include "Core/Thread/Semaphore.h"
-#include "World/IEntityEventManager.h"
+#include "World/WorldTypes.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -17,27 +20,32 @@ namespace traktor
 	namespace world
 	{
 
+class Entity;
+class EntityEventSet;
+class IEntityEvent;
 class IEntityEventInstance;
+
+struct UpdateParams;
 
 /*!
  * \ingroup World
  */
-class T_DLLCLASS EntityEventManager : public IEntityEventManager
+class T_DLLCLASS EntityEventManager : public Object
 {
 	T_RTTI_CLASS;
 
 public:
-	EntityEventManager(uint32_t maxEventsInstances);
+	explicit EntityEventManager(uint32_t maxEventsInstances);
 
-	virtual IEntityEventInstance* raise(const IEntityEvent* event, Entity* sender, const Transform& Toffset) override final;
+	IEntityEventInstance* raise(const IEntityEvent* event, Entity* sender, const Transform& Toffset);
 
-	virtual IEntityEventInstance* raise(const EntityEventSet* eventSet, const std::wstring& eventId, Entity* sender, const Transform& Toffset) override final;
+	IEntityEventInstance* raise(const EntityEventSet* eventSet, const std::wstring& eventId, Entity* sender, const Transform& Toffset);
 
-	virtual void update(const UpdateParams& update) override final;
+	void update(const UpdateParams& update);
 
-	virtual void gather(const std::function< void(Entity*) >& fn) const override final;
+	void gather(const std::function< void(Entity*) >& fn) const;
 
-	virtual void cancelAll(CancelType when) override final;
+	void cancelAll(CancelType when);
 
 private:
 	uint32_t m_maxEventInstances;

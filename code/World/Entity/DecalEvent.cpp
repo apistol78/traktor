@@ -17,7 +17,7 @@ DecalEvent::DecalEvent()
 {
 }
 
-Ref< IEntityEventInstance > DecalEvent::createInstance(IEntityEventManager* eventManager, Entity* sender, const Transform& Toffset) const
+Ref< IEntityEventInstance > DecalEvent::createInstance(EntityEventManager* eventManager, Entity* sender, const Transform& Toffset) const
 {
 	Transform T;
 

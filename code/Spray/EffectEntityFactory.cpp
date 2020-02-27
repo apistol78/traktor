@@ -23,7 +23,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.spray.EffectEntityFactory", EffectEntityFactory
 
 EffectEntityFactory::EffectEntityFactory(
 	resource::IResourceManager* resourceManager,
-	world::IEntityEventManager* eventManager,
+	world::EntityEventManager* eventManager,
 	sound::ISoundPlayer* soundPlayer,
 	IFeedbackManager* feedbackManager
 )

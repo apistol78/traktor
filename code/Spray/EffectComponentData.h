@@ -30,7 +30,7 @@ class ISoundPlayer;
 	namespace world
 	{
 
-class IEntityEventManager;
+class EntityEventManager;
 
 	}
 
@@ -48,7 +48,7 @@ class T_DLLCLASS EffectComponentData : public world::IEntityComponentData
 	T_RTTI_CLASS;
 
 public:
-	Ref< EffectComponent > createComponent(resource::IResourceManager* resourceManager, world::IEntityEventManager* eventManager, sound::ISoundPlayer* soundPlayer) const;
+	Ref< EffectComponent > createComponent(resource::IResourceManager* resourceManager, world::EntityEventManager* eventManager, sound::ISoundPlayer* soundPlayer) const;
 
 	virtual void serialize(ISerializer& s) override final;
 

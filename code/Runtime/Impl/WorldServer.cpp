@@ -295,7 +295,7 @@ world::WorldEntityRenderers* WorldServer::getEntityRenderers()
 	return m_entityRenderers;
 }
 
-world::IEntityEventManager* WorldServer::getEntityEventManager()
+world::EntityEventManager* WorldServer::getEntityEventManager()
 {
 	return m_eventManager;
 }

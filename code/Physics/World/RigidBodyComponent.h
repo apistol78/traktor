@@ -16,7 +16,7 @@ namespace traktor
 
 class Entity;
 class IEntityEvent;
-class IEntityEventManager;
+class EntityEventManager;
 
 	}
 
@@ -36,7 +36,7 @@ class T_DLLCLASS RigidBodyComponent : public world::IEntityComponent
 public:
 	RigidBodyComponent(
 		Body* body,
-		world::IEntityEventManager* eventManager,
+		world::EntityEventManager* eventManager,
 		world::IEntityEvent* eventCollide
 	);
 
@@ -55,7 +55,7 @@ public:
 private:
 	world::Entity* m_owner;
 	Ref< Body > m_body;
-	Ref< world::IEntityEventManager > m_eventManager;
+	Ref< world::EntityEventManager > m_eventManager;
 	Ref< world::IEntityEvent > m_eventCollide;
 
 	void collisionListener(const physics::CollisionInfo& collisionInfo);

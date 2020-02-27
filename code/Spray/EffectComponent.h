@@ -26,7 +26,7 @@ class ISoundPlayer;
 	namespace world
 	{
 
-class IEntityEventManager;
+class EntityEventManager;
 
 	}
 
@@ -47,7 +47,7 @@ class T_DLLCLASS EffectComponent : public world::IEntityComponent
 	T_RTTI_CLASS;
 
 public:
-	EffectComponent(const resource::Proxy< Effect >& effect, world::IEntityEventManager* eventManager, sound::ISoundPlayer* soundPlayer);
+	EffectComponent(const resource::Proxy< Effect >& effect, world::EntityEventManager* eventManager, sound::ISoundPlayer* soundPlayer);
 
 	virtual void destroy() override final;
 

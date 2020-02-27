@@ -45,7 +45,7 @@ class Scene;
 class Entity;
 class EntityData;
 class GroupEntity;
-class IEntitySchema;
+class EntitySchema;
 class IWorldRenderer;
 
 	}
@@ -115,7 +115,7 @@ public:
 
 	bool isEntityAdded(const world::Entity* entity) const;
 
-	world::IEntitySchema* getEntitySchema() const;
+	world::EntitySchema* getEntitySchema() const;
 
 	void setControllerEnable(bool controllerEnable);
 

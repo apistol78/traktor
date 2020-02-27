@@ -32,7 +32,7 @@ public:
 		bool autoStopFar
 	);
 
-	virtual Ref< world::IEntityEventInstance > createInstance(world::IEntityEventManager* eventManager, world::Entity* sender, const Transform& Toffset) const override final;
+	virtual Ref< world::IEntityEventInstance > createInstance(world::EntityEventManager* eventManager, world::Entity* sender, const Transform& Toffset) const override final;
 
 private:
 	sound::ISoundPlayer* m_soundPlayer;
