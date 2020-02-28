@@ -98,8 +98,12 @@ bool RenderGraph::validate(int32_t width, int32_t height)
 			return false;
 	}
 
-	// Cleanup non-acquired targets.
-	//m_pool->cleanup();
+	// Cleanup pools which doesn't have any acquired
+	// targets, i.e. not used no more.
+	// Only pools are cleared, we need to keep
+	// references alive to targets previously acquired
+	// into deferred render contexts.
+	m_pool->cleanup();
 
 	// Append passes depth-first.
 	StaticVector< uint32_t, 256 > order;

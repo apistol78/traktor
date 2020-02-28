@@ -123,13 +123,10 @@ IRenderTargetSet* RenderGraphTargetSetPool::acquire(
 
 void RenderGraphTargetSetPool::cleanup()
 {
-	// Destroy all non-acquired targets; no longer used.
-	for (auto it = m_pool.begin(); it != m_pool.end(); ++it)
-	{
-		for (auto rt : it->free)
-			rt->destroy();
-		it->free.resize(0);
-	}
+	auto it = std::remove_if(m_pool.begin(), m_pool.end(), [](const Pool& pool) {
+		return pool.acquired.empty();
+	});
+	m_pool.erase(it, m_pool.end());
 }
 
 void RenderGraphTargetSetPool::release(IRenderTargetSet* targetSet)
