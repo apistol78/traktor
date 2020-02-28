@@ -1,8 +1,9 @@
-#include "Animation/Boids/BoidsEntity.h"
-#include "Animation/Boids/BoidsEntityData.h"
+#include "Animation/Boids/BoidsComponent.h"
+#include "Animation/Boids/BoidsComponentData.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
 #include "Core/Serialization/MemberRef.h"
+#include "World/EntityData.h"
 #include "World/IEntityBuilder.h"
 
 namespace traktor
@@ -10,9 +11,9 @@ namespace traktor
 	namespace animation
 	{
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.animation.BoidsEntityData", 1, BoidsEntityData, world::EntityData)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.animation.BoidsComponentData", 0, BoidsComponentData, world::IEntityComponentData)
 
-BoidsEntityData::BoidsEntityData()
+BoidsComponentData::BoidsComponentData()
 :	m_boidCount(0)
 ,	m_spawnPositionDiagonal(1.0f, 1.0f, 1.0f, 0.0f)
 ,	m_spawnVelocityDiagonal(0.0f, 0.0f, 0.0f, 0.0f)
@@ -26,14 +27,14 @@ BoidsEntityData::BoidsEntityData()
 {
 }
 
-Ref< BoidsEntity > BoidsEntityData::createEntity(const world::IEntityBuilder* builder) const
+Ref< BoidsComponent > BoidsComponentData::createComponent(const world::IEntityBuilder* builder) const
 {
 	RefArray< world::Entity > boidEntities(m_boidCount);
 	for (uint32_t i = 0; i < m_boidCount; ++i)
 		boidEntities[i] = builder->create(m_boidEntityData);
-	return new BoidsEntity(
+
+	return new BoidsComponent(
 		boidEntities,
-		getTransform(),
 		m_spawnPositionDiagonal,
 		m_spawnVelocityDiagonal,
 		m_constrain,
@@ -46,18 +47,13 @@ Ref< BoidsEntity > BoidsEntityData::createEntity(const world::IEntityBuilder* bu
 	);
 }
 
-void BoidsEntityData::serialize(ISerializer& s)
+void BoidsComponentData::serialize(ISerializer& s)
 {
-	world::EntityData::serialize(s);
-
 	s >> MemberRef< world::EntityData >(L"boidEntityData", m_boidEntityData);
 	s >> Member< uint32_t >(L"boidCount", m_boidCount);
 	s >> Member< Vector4 >(L"spawnPositionDiagonal", m_spawnPositionDiagonal);
 	s >> Member< Vector4 >(L"spawnVelocityDiagonal", m_spawnVelocityDiagonal);
-
-	if (s.getVersion() >= 1)
-		s >> Member< Vector4 >(L"constrain", m_constrain);
-
+	s >> Member< Vector4 >(L"constrain", m_constrain);
 	s >> Member< float >(L"followForce", m_followForce);
 	s >> Member< float >(L"repelDistance", m_repelDistance);
 	s >> Member< float >(L"repelForce", m_repelForce);

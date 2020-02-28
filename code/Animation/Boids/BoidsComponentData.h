@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Core/Ref.h"
-#include "World/EntityData.h"
+#include "World/IEntityComponentData.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -16,6 +16,7 @@ namespace traktor
 	namespace world
 	{
 
+class EntityData;
 class IEntityBuilder;
 
 	}
@@ -23,19 +24,19 @@ class IEntityBuilder;
 	namespace animation
 	{
 
-class BoidsEntity;
+class BoidsComponent;
 
 /*! \brief
  * \ingroup Animation
  */
-class T_DLLCLASS BoidsEntityData : public world::EntityData
+class T_DLLCLASS BoidsComponentData : public world::IEntityComponentData
 {
 	T_RTTI_CLASS;
 
 public:
-	BoidsEntityData();
+	BoidsComponentData();
 
-	Ref< BoidsEntity > createEntity(const world::IEntityBuilder* builder) const;
+	Ref< BoidsComponent > createComponent(const world::IEntityBuilder* builder) const;
 
 	virtual void serialize(ISerializer& s) override final;
 

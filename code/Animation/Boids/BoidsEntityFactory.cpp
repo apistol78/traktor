@@ -1,5 +1,5 @@
-#include "Animation/Boids/BoidsEntity.h"
-#include "Animation/Boids/BoidsEntityData.h"
+#include "Animation/Boids/BoidsComponent.h"
+#include "Animation/Boids/BoidsComponentData.h"
 #include "Animation/Boids/BoidsEntityFactory.h"
 
 namespace traktor
@@ -12,9 +12,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.animation.BoidsEntityFactory", BoidsEntityFacto
 
 const TypeInfoSet BoidsEntityFactory::getEntityTypes() const
 {
-	TypeInfoSet typeSet;
-	typeSet.insert< BoidsEntityData >();
-	return typeSet;
+	return makeTypeInfoSet< BoidsComponentData >();
 }
 
 const TypeInfoSet BoidsEntityFactory::getEntityEventTypes() const
@@ -29,17 +27,17 @@ const TypeInfoSet BoidsEntityFactory::getEntityComponentTypes() const
 
 Ref< world::Entity > BoidsEntityFactory::createEntity(const world::IEntityBuilder* builder, const world::EntityData& entityData) const
 {
-	return checked_type_cast< const BoidsEntityData* >(&entityData)->createEntity(builder);
+	return nullptr;
 }
 
 Ref< world::IEntityEvent > BoidsEntityFactory::createEntityEvent(const world::IEntityBuilder* builder, const world::IEntityEventData& entityEventData) const
 {
-	return 0;
+	return nullptr;
 }
 
 Ref< world::IEntityComponent > BoidsEntityFactory::createEntityComponent(const world::IEntityBuilder* builder, const world::IEntityComponentData& entityComponentData) const
 {
-	return 0;
+	return checked_type_cast< const BoidsComponentData* >(&entityComponentData)->createComponent(builder);
 }
 
 	}
