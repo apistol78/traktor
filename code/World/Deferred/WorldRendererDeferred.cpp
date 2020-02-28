@@ -625,8 +625,17 @@ render::handle_t WorldRendererDeferred::setupVelocityPass(
 	
 	if (m_motionBlurPrime)
 	{
+		render::ImageGraphParams ipd;
+		ipd.viewFrustum = worldRenderView.getViewFrustum();
+		ipd.lastView = worldRenderView.getLastView();
+		ipd.view = worldRenderView.getView();
+		ipd.projection = worldRenderView.getProjection();
+		ipd.deltaTime = 1.0f / 60.0f;
+
 		render::ImageGraphContext cx(m_screenRenderer);
 		cx.associateTextureTargetSet(s_handleInputDepth, gbufferTargetSetId, 0);
+		cx.setParams(ipd);
+
 		m_motionBlurPrime->addPasses(renderGraph, rp, cx);
 	}
 
