@@ -1,4 +1,4 @@
-#include "Animation/Boids/BoidsEntity.h"
+#include "Animation/Boids/BoidsComponent.h"
 #include "Animation/Boids/BoidsEntityRenderer.h"
 
 namespace traktor
@@ -10,7 +10,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.animation.BoidsEntityRenderer", BoidsEntityRend
 
 const TypeInfoSet BoidsEntityRenderer::getRenderableTypes() const
 {
-	return makeTypeInfoSet< BoidsEntity >();
+	return makeTypeInfoSet< BoidsComponent >();
 }
 
 void BoidsEntityRenderer::gather(
@@ -28,8 +28,8 @@ void BoidsEntityRenderer::build(
 	Object* renderable
 )
 {
-	BoidsEntity* boidsEntity = mandatory_non_null_type_cast< BoidsEntity* >(renderable);
-	boidsEntity->build(context, worldRenderView, worldRenderPass);
+	BoidsComponent* boidsComponent = mandatory_non_null_type_cast< BoidsComponent* >(renderable);
+	boidsComponent->build(context, worldRenderView, worldRenderPass);
 }
 
 void BoidsEntityRenderer::flush(

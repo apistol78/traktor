@@ -1,5 +1,6 @@
-#include "Animation/Boids/BoidsEntity.h"
+#include "Animation/Boids/BoidsComponent.h"
 #include "Core/Math/RandomGeometry.h"
+#include "World/Entity.h"
 #include "World/WorldBuildContext.h"
 
 namespace traktor
@@ -7,11 +8,10 @@ namespace traktor
 	namespace animation
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.animation.BoidsEntity", BoidsEntity, world::Entity)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.animation.BoidsComponent", BoidsComponent, world::Entity)
 
-BoidsEntity::BoidsEntity(
+BoidsComponent::BoidsComponent(
 	const RefArray< world::Entity >& boidEntities,
-	const Transform& transform,
 	const Vector4& spawnPositionDiagonal,
 	const Vector4& spawnVelocityDiagonal,
 	const Vector4& constrain,
@@ -23,7 +23,6 @@ BoidsEntity::BoidsEntity(
 	float maxVelocity
 )
 :	m_boidEntities(boidEntities)
-,	m_transform(transform)
 ,	m_constrain(constrain)
 ,	m_followForce(followForce)
 ,	m_repelDistance(repelDistance)
@@ -35,48 +34,37 @@ BoidsEntity::BoidsEntity(
 	RandomGeometry random;
 
 	m_boids.resize(m_boidEntities.size());
-	for (AlignedVector< Boid >::iterator i = m_boids.begin(); i != m_boids.end(); ++i)
+	for (auto& boid : m_boids)
 	{
-		i->position = m_transform * (random.nextUnit() * spawnPositionDiagonal + Vector4(0.0f, 0.0f, 0.0f, 1.0f));
-		i->velocity = random.nextUnit() * spawnVelocityDiagonal;
+		boid.position = m_transform * (random.nextUnit() * spawnPositionDiagonal + Vector4(0.0f, 0.0f, 0.0f, 1.0f));
+		boid.velocity = random.nextUnit() * spawnVelocityDiagonal;
 	}
 }
 
-BoidsEntity::~BoidsEntity()
+BoidsComponent::~BoidsComponent()
 {
 }
 
-void BoidsEntity::destroy()
+void BoidsComponent::destroy()
 {
-	for (RefArray< world::Entity >::iterator i = m_boidEntities.begin(); i != m_boidEntities.end(); ++i)
+	for (auto boidEntity : m_boidEntities)
 	{
-		if (*i)
-			(*i)->destroy();
+		if (boidEntity)
+			boidEntity->destroy();
 	}
 	m_boidEntities.resize(0);
 }
 
-void BoidsEntity::build(
-	const world::WorldBuildContext& context,
-	const world::WorldRenderView& worldRenderView,
-	const world::IWorldRenderPass& worldRenderPass
-)
+void BoidsComponent::setOwner(world::Entity* owner)
 {
-	for (RefArray< world::Entity >::iterator i = m_boidEntities.begin(); i != m_boidEntities.end(); ++i)
-		context.build(worldRenderView, worldRenderPass, *i);
 }
 
-void BoidsEntity::setTransform(const Transform& transform)
+void BoidsComponent::setTransform(const Transform& transform)
 {
 	m_transform = transform;
 }
 
-Transform BoidsEntity::getTransform() const
-{
-	return m_transform;
-}
-
-Aabb3 BoidsEntity::getBoundingBox() const
+Aabb3 BoidsComponent::getBoundingBox() const
 {
 	Transform transformInv = m_transform.inverse();
 
@@ -87,7 +75,7 @@ Aabb3 BoidsEntity::getBoundingBox() const
 	return aabb;
 }
 
-void BoidsEntity::update(const world::UpdateParams& update)
+void BoidsComponent::update(const world::UpdateParams& update)
 {
 	Scalar deltaTime(min(update.deltaTime, 1.0f / 30.0f));
 	Vector4 attraction = m_transform.translation().xyz1();
@@ -153,6 +141,16 @@ void BoidsEntity::update(const world::UpdateParams& update)
 			m_boidEntities[i]->update(update);
 		}
 	}
+}
+
+void BoidsComponent::build(
+	const world::WorldBuildContext& context,
+	const world::WorldRenderView& worldRenderView,
+	const world::IWorldRenderPass& worldRenderPass
+)
+{
+	for (auto boidEntity : m_boidEntities)
+		context.build(worldRenderView, worldRenderPass, boidEntity);
 }
 
 	}

@@ -1,7 +1,7 @@
 #include "Animation/AnimationClassFactory.h"
 #include "Animation/AnimatedMeshComponent.h"
 #include "Animation/Animation/StatePoseController.h"
-#include "Animation/Boids/BoidsEntity.h"
+#include "Animation/Boids/BoidsComponent.h"
 #include "Animation/Cloth/ClothEntity.h"
 #include "Animation/IK/IKPoseController.h"
 #include "Animation/PathEntity/PathEntity.h"
@@ -155,8 +155,8 @@ void AnimationClassFactory::createClasses(IRuntimeClassRegistrar* registrar) con
 	classStatePoseController->addMethod("getTimeFactor", &StatePoseController::getTimeFactor);
 	registrar->registerClass(classStatePoseController);
 
-	auto classBoidsEntity = new AutoRuntimeClass< BoidsEntity >();
-	registrar->registerClass(classBoidsEntity);
+	auto classBoidsComponent = new AutoRuntimeClass< BoidsComponent >();
+	registrar->registerClass(classBoidsComponent);
 
 	auto classClothEntity = new AutoRuntimeClass< ClothEntity >();
 	classClothEntity->addMethod("reset", &ClothEntity::reset);

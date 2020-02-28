@@ -2,7 +2,7 @@
 
 #include "Core/RefArray.h"
 #include "Core/Containers/AlignedVector.h"
-#include "World/Entity.h"
+#include "World/IEntityComponent.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -26,17 +26,16 @@ class WorldRenderView;
 	namespace animation
 	{
 
-/*! \brief
+/*!
  * \ingroup Animation
  */
-class T_DLLCLASS BoidsEntity : public world::Entity
+class T_DLLCLASS BoidsComponent : public world::IEntityComponent
 {
 	T_RTTI_CLASS;
 
 public:
-	BoidsEntity(
+	BoidsComponent(
 		const RefArray< world::Entity >& boidEntities,
-		const Transform& transform,
 		const Vector4& spawnPositionDiagonal,
 		const Vector4& spawnVelocityDiagonal,
 		const Vector4& constrain,
@@ -48,23 +47,23 @@ public:
 		float maxVelocity
 	);
 
-	virtual ~BoidsEntity();
+	virtual ~BoidsComponent();
 
 	virtual void destroy() override final;
+
+	virtual void setOwner(world::Entity* owner) override final;
+
+	virtual void setTransform(const Transform& transform) override final;
+
+	virtual Aabb3 getBoundingBox() const override final;
+
+	virtual void update(const world::UpdateParams& update) override final;
 
 	void build(
 		const world::WorldBuildContext& context,
 		const world::WorldRenderView& worldRenderView,
 		const world::IWorldRenderPass& worldRenderPass
 	);
-
-	virtual void setTransform(const Transform& transform) override final;
-
-	virtual Transform getTransform() const override final;
-
-	virtual Aabb3 getBoundingBox() const override final;
-
-	virtual void update(const world::UpdateParams& update) override final;
 
 private:
 	struct Boid
