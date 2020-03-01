@@ -59,6 +59,7 @@ ProbeRenderer::ProbeRenderer(
 :	m_resourceManager(resourceManager)
 ,	m_renderSystem(renderSystem)
 ,	m_worldRendererType(worldRendererType)
+,	m_captureState(0)
 {
 	resourceManager->bind(c_probeShader, m_probeShader);
 	resourceManager->bind(c_idFilterShader, m_filterShader);
@@ -168,25 +169,27 @@ void ProbeRenderer::build(
 	if (!m_probeShader)
 		return;
 
-	// Add to capture queue if probe is "dirty".
-	if (probeComponent->getDirty())
-	{
-		m_captureQueue.push_back(probeComponent);
-		probeComponent->setDirty(false);
-	}
+	// Do not render probe which is being captured.
+	if (probeComponent == m_capture)
+		return;
 
 	// Cull local probes to frustum.
 	if (probeComponent->getLocal())
 	{
 		const Transform& transform = probeComponent->getTransform();
-
 		Matrix44 worldView = worldRenderView.getView() * transform.toMatrix44();
-
 		Vector4 center = worldView * probeComponent->getVolume().getCenter().xyz1();
 		Scalar radius = probeComponent->getVolume().getExtent().length();
-
 		if (worldRenderView.getCullFrustum().inside(center, radius) == Frustum::IrOutside)
 			return;
+	}
+
+	// Add to capture queue if probe is "dirty".
+	if (probeComponent->getDirty())
+	{
+		m_captureQueue.push_back(probeComponent);
+		probeComponent->setDirty(false);
+		return;
 	}
 
 	render::RenderContext* renderContext = context.getRenderContext();
@@ -194,7 +197,6 @@ void ProbeRenderer::build(
 
 	const Matrix44& projection = worldRenderView.getProjection();
 	const Matrix44& view = worldRenderView.getView();
-
 	const Scalar p11 = projection.get(0, 0);
 	const Scalar p22 = projection.get(1, 1);
 	const Vector4 magicCoeffs(1.0f / p11, 1.0f / p22, 0.0f, 0.0f);
@@ -270,15 +272,16 @@ void ProbeRenderer::setup(const WorldSetupContext& context)
 {
 	render::RenderGraph& renderGraph = context.getRenderGraph();
 
-	// Get dirty probe which needs to be updated.
-	if (m_captureQueue.empty())
-		return;
-
-	Ref< ProbeComponent > capture = m_captureQueue.front();
-	m_captureQueue.pop_front();
+	if (!m_capture)
+	{
+		// Get probe which needs to be updated.
+		if (m_captureQueue.empty())
+			return;
+		m_capture = m_captureQueue.front();
+		m_captureQueue.pop_front();
+		m_captureState = 0;
+	}
 	T_ASSERT(capture);
-
-	capture->setDirty(false);
 
 	// Lazy create world renderer, need to access entity renderers.
 	if (!m_worldRenderer)
@@ -329,15 +332,16 @@ void ProbeRenderer::setup(const WorldSetupContext& context)
 		}
 	}
 
-	render::ICubeTexture* probeTexture = capture->getTexture();
+	render::ICubeTexture* probeTexture = m_capture->getTexture();
 	if (!probeTexture)
 		return;
 
-	Vector4 pivot = capture->getTransform().translation().xyz1();
-
-	// Render world into first mip of reflection cube.
-	for (int32_t face = 0; face < 6; ++face)
+	if (m_captureState < 6)
 	{
+		Vector4 pivot = m_capture->getTransform().translation().xyz1();
+		int32_t face = m_captureState;
+
+		// Render world into first mip of reflection cube.
 		Matrix44 view;
 		switch (face)
 		{
@@ -418,13 +422,16 @@ void ProbeRenderer::setup(const WorldSetupContext& context)
 			}
 		);
 		renderGraph.addPass(rp);
-	}
 
-	// Generate mips by roughness filtering.
-	const int32_t mipCount = (int32_t)log2(c_faceSize) + 1;
-    for (int32_t mip = 1; mip < mipCount; ++mip)
-    {
-		for (int32_t side = 0; side < 6; ++side)
+		++m_captureState;
+	}
+	else if (m_captureState < 12)
+	{
+		// Generate mips by roughness filtering.
+		const int32_t mipCount = (int32_t)log2(c_faceSize) + 1;
+		const int32_t side = m_captureState - 6;
+
+		for (int32_t mip = 1; mip < mipCount; ++mip)
 		{
 			// Create intermediate target.
 			render::RenderGraphTargetSetDesc rgtsd;
@@ -519,7 +526,7 @@ void ProbeRenderer::setup(const WorldSetupContext& context)
 				}
 			);
 			renderGraph.addPass(filterPass);
-	
+
 			// Write back filtered targets into cube map mip level.
 			Ref< render::RenderPass > copyPass = new render::RenderPass(L"Probe copy filtered");
 			copyPass->addInput(filteredTargetSetId);
@@ -543,7 +550,14 @@ void ProbeRenderer::setup(const WorldSetupContext& context)
 				}
 			);
 			renderGraph.addPass(copyPass);
-        }
+		}
+
+		++m_captureState;
+	}
+	else
+	{
+		m_capture = nullptr;
+		m_captureState = 0;
 	}
 }
 

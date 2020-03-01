@@ -148,7 +148,7 @@ bool PerspectiveRenderControl::create(ui::Widget* parent, SceneEditorContext* co
 	if (!m_renderView)
 		return false;
 
-	m_renderContext = new render::RenderContext(4 * 1024 * 1024);
+	m_renderContext = new render::RenderContext(16 * 1024 * 1024);
 	m_renderGraph = new render::RenderGraph(m_context->getRenderSystem());
 
 	m_primitiveRenderer = new render::PrimitiveRenderer();
