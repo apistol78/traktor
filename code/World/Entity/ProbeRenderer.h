@@ -79,21 +79,18 @@ public:
 private:
 	Ref< resource::IResourceManager > m_resourceManager;
 	Ref< render::IRenderSystem > m_renderSystem;
-
 	const TypeInfo& m_worldRendererType;
 	Ref< IWorldRenderer > m_worldRenderer;
-
 	resource::Proxy< render::Shader > m_probeShader;
 	resource::Proxy< render::Shader > m_filterShader;
-
 	Ref< render::VertexBuffer > m_vertexBuffer;
 	Ref< render::IndexBuffer > m_indexBuffer;
-
 	Ref< render::ScreenRenderer > m_screenRenderer;
-
 	Ref< render::IRenderTargetSet > m_depthTargetSet;
 
 	RefArray< ProbeComponent > m_captureQueue;	//!< Probes queued for capture.
+	Ref< ProbeComponent > m_capture;			//!< Probe being captured.
+	int32_t m_captureState;
 };
 
 	}

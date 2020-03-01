@@ -209,6 +209,7 @@ void ProgramParameters::setStencilReference(uint32_t stencilReference)
 void ProgramParameters::attachParameters(const ProgramParameters* programParameters)
 {
 	T_ASSERT(m_parameterLast);
+	T_ASSERT(programParameters);
 	align< handle_t >(m_parameterLast);
 	write< handle_t >(m_parameterLast, 0);
 	write< int8_t >(m_parameterLast, PmtAttachedParameters);

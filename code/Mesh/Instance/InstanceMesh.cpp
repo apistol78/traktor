@@ -117,7 +117,10 @@ void InstanceMesh::build(
 		// Setup batch shared parameters.
 		render::ProgramParameters* batchParameters = renderContext->alloc< render::ProgramParameters >();
 		batchParameters->beginParameters(renderContext);
-		batchParameters->attachParameters(extraParameters);
+
+		if (extraParameters)
+			batchParameters->attachParameters(extraParameters);
+
 		worldRenderPass.setProgramParameters(
 			batchParameters,
 			Transform::identity(),
@@ -182,7 +185,10 @@ void InstanceMesh::build(
 			// Setup batch shared parameters.
 			render::ProgramParameters* batchParameters = renderContext->alloc< render::ProgramParameters >();
 			batchParameters->beginParameters(renderContext);
-			batchParameters->attachParameters(extraParameters);
+
+			if (extraParameters)
+				batchParameters->attachParameters(extraParameters);
+
 			worldRenderPass.setProgramParameters(
 				batchParameters,
 				Transform::identity(),
