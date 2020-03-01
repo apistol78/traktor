@@ -2,11 +2,15 @@
 #include "Core/Log/Log.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Serialization/DeepClone.h"
+#include "Database/Database.h"
+#include "Database/Instance.h"
 #include "Editor/IDocument.h"
+#include "Editor/IEditor.h"
 #include "Editor/IEditorPageSite.h"
 #include "Render/Editor/Edge.h"
 #include "Render/Editor/Image2/IImgStep.h"
 #include "Render/Editor/Image2/ImageGraphAsset.h"
+#include "Render/Editor/Image2/ImageGraphClipboardData.h"
 #include "Render/Editor/Image2/ImageGraphEditorPage.h"
 #include "Render/Editor/Image2/ImgInput.h"
 #include "Render/Editor/Image2/ImgOutput.h"
@@ -14,6 +18,7 @@
 #include "Render/Editor/Image2/ImgTargetSet.h"
 #include "Render/Editor/Image2/ImgTexture.h"
 #include "Ui/Application.h"
+#include "Ui/Clipboard.h"
 #include "Ui/Container.h"
 #include "Ui/Menu.h"
 #include "Ui/MenuItem.h"
@@ -128,108 +133,104 @@ bool ImageGraphEditorPage::handleCommand(const ui::Command& command)
 	}
 	else if (command == L"Editor.Cut" || command == L"Editor.Copy")
 	{
-		// RefArray< ui::Node > selectedNodes;
-		// if (m_editorGraph->getSelectedNodes(selectedNodes) > 0)
-		// {
-		// 	// Also copy edges which are affected by selected nodes.
-		// 	RefArray< ui::Edge > selectedEdges;
-		// 	m_editorGraph->getConnectedEdges(selectedNodes, true, selectedEdges);
+		 RefArray< ui::Node > selectedNodes;
+		 if (m_editorGraph->getSelectedNodes(selectedNodes) > 0)
+		 {
+		 	// Also copy edges which are affected by selected nodes.
+		 	RefArray< ui::Edge > selectedEdges;
+		 	m_editorGraph->getConnectedEdges(selectedNodes, true, selectedEdges);
 
-		// 	Ref< ImageGraphEditorClipboardData > data = new ImageGraphEditorClipboardData();
+		 	Ref< ImageGraphClipboardData > data = new ImageGraphClipboardData();
 
-		// 	ui::Rect bounds(0, 0, 0, 0);
-		// 	for (auto i = selectedNodes.begin(); i != selectedNodes.end(); ++i)
-		// 	{
-		// 		Ref< Node > shaderNode = (*i)->getData< Node >(L"SHADERNODE");
-		// 		T_ASSERT(shaderNode);
-		// 		data->addNode(shaderNode);
+		 	ui::Rect bounds(0, 0, 0, 0);
+		 	for (auto i = selectedNodes.begin(); i != selectedNodes.end(); ++i)
+		 	{
+		 		Ref< Node > shaderNode = (*i)->getData< Node >(L"IMGNODE");
+		 		T_ASSERT(shaderNode);
+		 		data->addNode(shaderNode);
 
-		// 		if (i != selectedNodes.begin())
-		// 		{
-		// 			ui::Rect rc = (*i)->calculateRect();
-		// 			bounds.left = std::min(bounds.left, rc.left);
-		// 			bounds.top = std::min(bounds.top, rc.top);
-		// 			bounds.right = std::max(bounds.right, rc.right);
-		// 			bounds.bottom = std::max(bounds.bottom, rc.bottom);
-		// 		}
-		// 		else
-		// 			bounds = (*i)->calculateRect();
-		// 	}
+		 		if (i != selectedNodes.begin())
+		 		{
+		 			ui::Rect rc = (*i)->calculateRect();
+		 			bounds.left = std::min(bounds.left, rc.left);
+		 			bounds.top = std::min(bounds.top, rc.top);
+		 			bounds.right = std::max(bounds.right, rc.right);
+		 			bounds.bottom = std::max(bounds.bottom, rc.bottom);
+		 		}
+		 		else
+		 			bounds = (*i)->calculateRect();
+		 	}
 
-		// 	data->setBounds(bounds);
+		 	data->setBounds(bounds);
 
-		// 	for (auto selectedEdge : selectedEdges)
-		// 	{
-		// 		Ref< Edge > edge = selectedEdge->getData< Edge >(L"SHADEREDGE");
-		// 		T_ASSERT(edge);
-		// 		data->addEdge(edge);
-		// 	}
+		 	for (auto selectedEdge : selectedEdges)
+		 	{
+		 		Ref< Edge > edge = selectedEdge->getData< Edge >(L"IMGEDGE");
+		 		T_ASSERT(edge);
+		 		data->addEdge(edge);
+		 	}
 
-		// 	ui::Application::getInstance()->getClipboard()->setObject(data);
+		 	ui::Application::getInstance()->getClipboard()->setObject(data);
 
-		// 	// Remove edges and nodes from graphs if user cuts.
-		// 	if (command == L"Editor.Cut")
-		// 	{
-		// 		// Save undo state.
-		// 		m_document->push();
+		 	// Remove edges and nodes from graphs if user cuts.
+		 	if (command == L"Editor.Cut")
+		 	{
+		 		// Save undo state.
+		 		m_document->push();
 
-		// 		// Remove edges which are connected to any selected node, not only those who connects to both selected end nodes.
-		// 		selectedEdges.resize(0);
-		// 		m_editorGraph->getConnectedEdges(selectedNodes, false, selectedEdges);
+		 		// Remove edges which are connected to any selected node, not only those who connects to both selected end nodes.
+		 		selectedEdges.resize(0);
+		 		m_editorGraph->getConnectedEdges(selectedNodes, false, selectedEdges);
 
-		// 		for (auto selectedEdge : selectedEdges)
-		// 		{
-		// 			m_imageGraph->removeEdge(selectedEdge->getData< Edge >(L"SHADEREDGE"));
-		// 			m_editorGraph->removeEdge(selectedEdge);
-		// 		}
+		 		for (auto selectedEdge : selectedEdges)
+		 		{
+		 			m_imageGraph->removeEdge(selectedEdge->getData< Edge >(L"IMGEDGE"));
+		 			m_editorGraph->removeEdge(selectedEdge);
+		 		}
 
-		// 		for (auto selectedNode : selectedNodes)
-		// 		{
-		// 			m_imageGraph->removeNode(selectedNode->getData< Node >(L"SHADERNODE"));
-		// 			m_editorGraph->removeNode(selectedNode);
-		// 		}
-		// 	}
-		// }
+		 		for (auto selectedNode : selectedNodes)
+		 		{
+		 			m_imageGraph->removeNode(selectedNode->getData< Node >(L"IMGNODE"));
+		 			m_editorGraph->removeNode(selectedNode);
+		 		}
+		 	}
+		 }
 	}
 	else if (command == L"Editor.Paste")
 	{
-		// Ref< ImageGraphEditorClipboardData > data = dynamic_type_cast< ImageGraphEditorClipboardData* >(
-		// 	ui::Application::getInstance()->getClipboard()->getObject()
-		// );
-		// if (data)
-		// {
-		// 	// Save undo state.
-		// 	m_document->push();
+		 Ref< ImageGraphClipboardData > data = dynamic_type_cast< ImageGraphClipboardData* >(
+		 	ui::Application::getInstance()->getClipboard()->getObject()
+		 );
+		 if (data)
+		 {
+		 	// Save undo state.
+		 	m_document->push();
 
-		// 	const ui::Rect& bounds = data->getBounds();
+		 	const ui::Rect& bounds = data->getBounds();
 
-		// 	ui::Rect rcClient = m_editorGraph->getInnerRect();
-		// 	ui::Point center = m_editorGraph->clientToVirtual(rcClient.getCenter());
+		 	ui::Rect rcClient = m_editorGraph->getInnerRect();
+		 	ui::Point center = m_editorGraph->clientToVirtual(rcClient.getCenter());
 
-		// 	for (RefArray< Node >::const_iterator i = data->getNodes().begin(); i != data->getNodes().end(); ++i)
-		// 	{
-		// 		// Create new unique instance ID.
-		// 		(*i)->setId(Guid::create());
+			for (auto node : data->getNodes())
+		 	{
+		 		// Create new unique instance ID.
+		 		node->setId(Guid::create());
 
-		// 		// Place node in view.
-		// 		std::pair< int, int > position = (*i)->getPosition();
-		// 		position.first = ui::invdpi96(center.x + ui::dpi96(position.first) - bounds.left - bounds.getWidth() / 2);
-		// 		position.second = ui::invdpi96(center.y + ui::dpi96(position.second) - bounds.top - bounds.getHeight() / 2);
-		// 		(*i)->setPosition(position);
+		 		// Place node in view.
+		 		std::pair< int, int > position = node->getPosition();
+		 		position.first = ui::invdpi96(center.x + ui::dpi96(position.first) - bounds.left - bounds.getWidth() / 2);
+		 		position.second = ui::invdpi96(center.y + ui::dpi96(position.second) - bounds.top - bounds.getHeight() / 2);
+		 		node->setPosition(position);
 
-		// 		// Add node to graph.
-		// 		m_imageGraph->addNode(*i);
-		// 	}
+		 		// Add node to graph.
+		 		m_imageGraph->addNode(node);
+		 	}
 
-		// 	for (RefArray< Edge >::const_iterator i = data->getEdges().begin(); i != data->getEdges().end(); ++i)
-		// 		m_imageGraph->addEdge(*i);
+			for (auto edge : data->getEdges())
+		 		m_imageGraph->addEdge(edge);
 
-		// 	createEditorNodes(
-		// 		data->getNodes(),
-		// 		data->getEdges()
-		// 	);
-		// 	updateGraph();
-		// }
+		 	createEditorGraph();
+		 }
 	}
 	else if (command == L"Editor.SelectAll")
 	{
@@ -418,9 +419,10 @@ Ref< ui::Node > ImageGraphEditorPage::createEditorNode(Node* node) const
 	}
 	else if (auto texture = dynamic_type_cast< ImgTexture* >(node))
 	{
+		Ref< db::Instance > textureInstance = m_editor->getSourceDatabase()->getInstance(texture->getTexture());
 		editorNode = new ui::Node(
 			L"Texture",
-			Guid(texture->getTexture()).format(),
+			textureInstance ? textureInstance->getName() : Guid(texture->getTexture()).format(),
 			position,
 			new ui::InputNodeShape(m_editorGraph)
 		);
