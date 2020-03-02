@@ -1,10 +1,6 @@
-#include "Physics/World/ArticulatedEntity.h"
-#include "Physics/World/ArticulatedEntityData.h"
 #include "Physics/World/EntityFactory.h"
 #include "Physics/World/RigidBodyComponent.h"
 #include "Physics/World/RigidBodyComponentData.h"
-#include "Physics/World/RigidEntity.h"
-#include "Physics/World/RigidEntityData.h"
 #include "Physics/World/Character/CharacterComponent.h"
 #include "Physics/World/Character/CharacterComponentData.h"
 #include "Physics/World/Vehicle/VehicleComponent.h"
@@ -30,10 +26,7 @@ EntityFactory::EntityFactory(
 
 const TypeInfoSet EntityFactory::getEntityTypes() const
 {
-	TypeInfoSet typeSet;
-	typeSet.insert< ArticulatedEntityData >();
-	typeSet.insert< RigidEntityData >();
-	return typeSet;
+	return TypeInfoSet();
 }
 
 const TypeInfoSet EntityFactory::getEntityEventTypes() const
@@ -55,32 +48,24 @@ Ref< world::Entity > EntityFactory::createEntity(
 	const world::EntityData& entityData
 ) const
 {
-	if (const ArticulatedEntityData* articulatedEntityData = dynamic_type_cast< const ArticulatedEntityData* >(&entityData))
-		return articulatedEntityData->createEntity(builder, m_physicsManager);
-
-	if (const RigidEntityData* rigidEntityData = dynamic_type_cast< const RigidEntityData* >(&entityData))
-		return rigidEntityData->createEntity(builder, m_eventManager, m_resourceManager, m_physicsManager);
-
-	return 0;
+	return nullptr;
 }
 
 Ref< world::IEntityEvent > EntityFactory::createEntityEvent(const world::IEntityBuilder* builder, const world::IEntityEventData& entityEventData) const
 {
-	return 0;
+	return nullptr;
 }
 
 Ref< world::IEntityComponent > EntityFactory::createEntityComponent(const world::IEntityBuilder* builder, const world::IEntityComponentData& entityComponentData) const
 {
-	if (const CharacterComponentData* characterComponentData = dynamic_type_cast< const CharacterComponentData* >(&entityComponentData))
+	if (auto characterComponentData = dynamic_type_cast< const CharacterComponentData* >(&entityComponentData))
 		return characterComponentData->createComponent(builder, m_resourceManager, m_physicsManager);
-
-	if (const RigidBodyComponentData* rigidBodyComponentData = dynamic_type_cast< const RigidBodyComponentData* >(&entityComponentData))
+	else if (auto rigidBodyComponentData = dynamic_type_cast< const RigidBodyComponentData* >(&entityComponentData))
 		return rigidBodyComponentData->createComponent(builder, m_eventManager, m_resourceManager, m_physicsManager);
-
-	if (const VehicleComponentData* vehicleComponentData = dynamic_type_cast< const VehicleComponentData* >(&entityComponentData))
+	else if (auto vehicleComponentData = dynamic_type_cast< const VehicleComponentData* >(&entityComponentData))
 		return vehicleComponentData->createComponent(builder, m_resourceManager, m_physicsManager);
-
-	return 0;
+	else
+		return nullptr;
 }
 
 	}

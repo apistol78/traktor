@@ -54,6 +54,10 @@ public:
 
 	virtual void update(const world::UpdateParams& update) override final;
 
+	const TransformPath& getPath() const { return m_path; }
+
+	TimeMode getTimeMode() const { return m_timeMode; }
+
 private:
 	world::Entity* m_owner;
 	Transform m_transform;

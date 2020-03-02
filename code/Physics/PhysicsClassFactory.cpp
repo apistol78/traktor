@@ -13,9 +13,7 @@
 #include "Physics/HingeJoint.h"
 #include "Physics/PhysicsClassFactory.h"
 #include "Physics/PhysicsManager.h"
-#include "Physics/World/ArticulatedEntity.h"
 #include "Physics/World/RigidBodyComponent.h"
-#include "Physics/World/RigidEntity.h"
 #include "Physics/World/Character/CharacterComponent.h"
 #include "Physics/World/Vehicle/VehicleComponent.h"
 #include "Physics/World/Vehicle/Wheel.h"
@@ -200,7 +198,7 @@ Ref< QueryResultWrapper > PhysicsManager_queryPoint(PhysicsManager* self, const 
 	if (self->queryPoint(at, margin, result))
 		return new QueryResultWrapper(result);
 	else
-		return 0;
+		return nullptr;
 }
 
 Ref< QueryResultWrapper > PhysicsManager_queryRay(
@@ -216,7 +214,7 @@ Ref< QueryResultWrapper > PhysicsManager_queryRay(
 	if (self->queryRay(at, direction, maxLength, *queryFilter, ignoreBackFace, result))
 		return new QueryResultWrapper(result);
 	else
-		return 0;
+		return nullptr;
 }
 
 bool PhysicsManager_queryShadowRay(
@@ -257,7 +255,7 @@ Ref< QueryResultWrapper > PhysicsManager_querySweep_1(
 	if (self->querySweep(at, direction, maxLength, radius, *queryFilter, result))
 		return new QueryResultWrapper(result);
 	else
-		return 0;
+		return nullptr;
 }
 
 Ref< QueryResultWrapper > PhysicsManager_querySweep_2(
@@ -274,7 +272,7 @@ Ref< QueryResultWrapper > PhysicsManager_querySweep_2(
 	if (self->querySweep(body, orientation, at, direction, maxLength, *queryFilter, result))
 		return new QueryResultWrapper(result);
 	else
-		return 0;
+		return nullptr;
 }
 
 bool Body_setState(Body* self, const BodyStateWrapper* state)
@@ -379,16 +377,6 @@ void PhysicsClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classHingeJoint->addProperty("angle", &HingeJoint::getAngle);
 	classHingeJoint->addProperty("angleVelocity", &HingeJoint::getAngleVelocity);
 	registrar->registerClass(classHingeJoint);
-
-	auto classArticulatedEntity = new AutoRuntimeClass< ArticulatedEntity >();
-	classArticulatedEntity->addProperty("entities", &ArticulatedEntity::getEntities);
-	classArticulatedEntity->addProperty("joints", &ArticulatedEntity::getJoints);
-	registrar->registerClass(classArticulatedEntity);
-
-	auto classRigidEntity = new AutoRuntimeClass< RigidEntity >();
-	classRigidEntity->addProperty("body", &RigidEntity::getBody);
-	classRigidEntity->addProperty("entity", &RigidEntity::getEntity);
-	registrar->registerClass(classRigidEntity);
 
 	auto classCharacterComponent = new AutoRuntimeClass< CharacterComponent >();
 	classCharacterComponent->addProperty("grounded", &CharacterComponent::grounded);
