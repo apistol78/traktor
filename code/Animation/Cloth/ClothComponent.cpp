@@ -1,4 +1,4 @@
-#include "Animation/Cloth/ClothEntity.h"
+#include "Animation/Cloth/ClothComponent.h"
 #include "Core/Math/Const.h"
 #include "Core/Math/Plane.h"
 #include "Core/Misc/SafeDestroy.h"
@@ -23,9 +23,9 @@ struct ClothVertex
 
 		}
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.animation.ClothEntity", ClothEntity, world::Entity)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.animation.ClothComponent", ClothComponent, world::IEntityComponent)
 
-ClothEntity::ClothEntity()
+ClothComponent::ClothComponent()
 :	m_time(0.0f)
 ,	m_updateTime(0.0f)
 ,	m_scale(0.0f)
@@ -38,11 +38,11 @@ ClothEntity::ClothEntity()
 {
 }
 
-ClothEntity::~ClothEntity()
+ClothComponent::~ClothComponent()
 {
 }
 
-bool ClothEntity::create(
+bool ClothComponent::create(
 	render::IRenderSystem* renderSystem,
 	const resource::Proxy< render::Shader >& shader,
 	uint32_t resolutionX,
@@ -152,7 +152,7 @@ bool ClothEntity::create(
 	return true;
 }
 
-void ClothEntity::build(
+void ClothComponent::build(
 	const world::WorldBuildContext& context,
 	const world::WorldRenderView& worldRenderView,
 	const world::IWorldRenderPass& worldRenderPass
@@ -232,28 +232,27 @@ void ClothEntity::build(
 	);
 }
 
-void ClothEntity::destroy()
+void ClothComponent::destroy()
 {
 	safeDestroy(m_vertexBuffer);
 	safeDestroy(m_indexBuffer);
 }
 
-void ClothEntity::setTransform(const Transform& transform)
+void ClothComponent::setOwner(world::Entity* owner)
+{
+}
+
+void ClothComponent::setTransform(const Transform& transform)
 {
 	m_transform = transform;
 }
 
-Transform ClothEntity::getTransform() const
-{
-	return m_transform;
-}
-
-Aabb3 ClothEntity::getBoundingBox() const
+Aabb3 ClothComponent::getBoundingBox() const
 {
 	return m_aabb;
 }
 
-void ClothEntity::update(const world::UpdateParams& update)
+void ClothComponent::update(const world::UpdateParams& update)
 {
 #if !TARGET_OS_IPHONE
 	const float c_updateDeltaTime = 1.0f / 30.0f;
@@ -357,7 +356,7 @@ void ClothEntity::update(const world::UpdateParams& update)
 	}
 }
 
-void ClothEntity::reset()
+void ClothComponent::reset()
 {
 	Vector4 positionBase(-m_scale / 2.0f, m_scale / 2.0f, 0.0f, 1.0f);
 	Vector4 positionScale(m_scale / m_resolutionX, -m_scale / m_resolutionY, 0.0f, 0.0f);
@@ -372,7 +371,7 @@ void ClothEntity::reset()
 	}
 }
 
-void ClothEntity::setNodeInvMass(uint32_t x, uint32_t y, float invMass)
+void ClothComponent::setNodeInvMass(uint32_t x, uint32_t y, float invMass)
 {
 	uint32_t index = x + y * m_resolutionX;
 	if (index < m_resolutionX * m_resolutionY)

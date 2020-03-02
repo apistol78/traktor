@@ -1,4 +1,4 @@
-#include "Animation/Cloth/ClothEntity.h"
+#include "Animation/Cloth/ClothComponent.h"
 #include "Animation/Cloth/ClothEntityRenderer.h"
 
 namespace traktor
@@ -10,7 +10,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.animation.ClothEntityRenderer", ClothEntityRend
 
 const TypeInfoSet ClothEntityRenderer::getRenderableTypes() const
 {
-	return makeTypeInfoSet< ClothEntity >();
+	return makeTypeInfoSet< ClothComponent >();
 }
 
 void ClothEntityRenderer::gather(
@@ -28,7 +28,7 @@ void ClothEntityRenderer::build(
 	Object* renderable
 )
 {
-	ClothEntity* clothEntity = mandatory_non_null_type_cast< ClothEntity* >(renderable);
+	ClothComponent* clothEntity = mandatory_non_null_type_cast< ClothComponent* >(renderable);
 	clothEntity->build(context, worldRenderView, worldRenderPass);
 }
 

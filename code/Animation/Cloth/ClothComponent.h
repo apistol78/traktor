@@ -7,7 +7,7 @@
 #include "Render/Shader.h"
 #include "Render/VertexBuffer.h"
 #include "Resource/Proxy.h"
-#include "World/Entity.h"
+#include "World/IEntityComponent.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -34,7 +34,7 @@ class WorldRenderView;
 /*! \brief
  * \ingroup Animation
  */
-class T_DLLCLASS ClothEntity : public world::Entity
+class T_DLLCLASS ClothComponent : public world::IEntityComponent
 {
 	T_RTTI_CLASS;
 
@@ -52,9 +52,9 @@ public:
 		Scalar length;
 	};
 
-	ClothEntity();
+	ClothComponent();
 
-	virtual ~ClothEntity();
+	virtual ~ClothComponent();
 
 	bool create(
 		render::IRenderSystem* renderSystem,
@@ -74,9 +74,9 @@ public:
 
 	virtual void destroy() override final;
 
-	virtual void setTransform(const Transform& transform) override final;
+	virtual void setOwner(world::Entity* owner) override final;
 
-	virtual Transform getTransform() const override final;
+	virtual void setTransform(const Transform& transform) override final;
 
 	virtual Aabb3 getBoundingBox() const override final;
 

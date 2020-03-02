@@ -1,4 +1,4 @@
-#include "Animation/Cloth/ClothEntityData.h"
+#include "Animation/Cloth/ClothComponentData.h"
 #include "Animation/Editor/Cloth/ClothEntityPipeline.h"
 #include "Editor/IPipelineDepends.h"
 
@@ -11,9 +11,7 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.animation.ClothEntityPipeline", 0, Clot
 
 TypeInfoSet ClothEntityPipeline::getAssetTypes() const
 {
-	TypeInfoSet TypeInfoSet;
-	TypeInfoSet.insert(&type_of< ClothEntityData >());
-	return TypeInfoSet;
+	return makeTypeInfoSet< ClothComponentData >();
 }
 
 bool ClothEntityPipeline::buildDependencies(
@@ -24,8 +22,8 @@ bool ClothEntityPipeline::buildDependencies(
 	const Guid& outputGuid
 ) const
 {
-	if (const ClothEntityData* clothEntityData = dynamic_type_cast< const ClothEntityData* >(sourceAsset))
-		pipelineDepends->addDependency(clothEntityData->getShader(), editor::PdfBuild | editor::PdfResource);
+	if (auto clothComponentData = dynamic_type_cast< const ClothComponentData* >(sourceAsset))
+		pipelineDepends->addDependency(clothComponentData->getShader(), editor::PdfBuild | editor::PdfResource);
 	return true;
 }
 

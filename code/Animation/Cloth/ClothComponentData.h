@@ -3,7 +3,7 @@
 #include <vector>
 #include "Core/Ref.h"
 #include "Resource/Id.h"
-#include "World/EntityData.h"
+#include "World/IEntityComponentData.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -33,12 +33,12 @@ class IResourceManager;
 	namespace animation
 	{
 
-class ClothEntity;
+class ClothComponent;
 
 /*! \brief
  * \ingroup Animation
  */
-class T_DLLCLASS ClothEntityData : public world::EntityData
+class T_DLLCLASS ClothComponentData : public world::IEntityComponentData
 {
 	T_RTTI_CLASS;
 
@@ -51,9 +51,9 @@ public:
 		void serialize(ISerializer& s);
 	};
 
-	ClothEntityData();
+	ClothComponentData();
 
-	Ref< ClothEntity > createEntity(
+	Ref< ClothComponent > createComponent(
 		resource::IResourceManager* resourceManager,
 		render::IRenderSystem* renderSystem
 	) const;

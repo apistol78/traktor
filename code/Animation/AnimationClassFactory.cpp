@@ -2,7 +2,7 @@
 #include "Animation/AnimatedMeshComponent.h"
 #include "Animation/Animation/StatePoseController.h"
 #include "Animation/Boids/BoidsComponent.h"
-#include "Animation/Cloth/ClothEntity.h"
+#include "Animation/Cloth/ClothComponent.h"
 #include "Animation/IK/IKPoseController.h"
 #include "Animation/PathEntity/PathEntity.h"
 #include "Animation/PathEntity/PathEntityData.h"
@@ -158,10 +158,10 @@ void AnimationClassFactory::createClasses(IRuntimeClassRegistrar* registrar) con
 	auto classBoidsComponent = new AutoRuntimeClass< BoidsComponent >();
 	registrar->registerClass(classBoidsComponent);
 
-	auto classClothEntity = new AutoRuntimeClass< ClothEntity >();
-	classClothEntity->addMethod("reset", &ClothEntity::reset);
-	classClothEntity->addMethod("setNodeInvMass", &ClothEntity::setNodeInvMass);
-	registrar->registerClass(classClothEntity);
+	auto classClothComponent = new AutoRuntimeClass< ClothComponent >();
+	classClothComponent->addMethod("reset", &ClothComponent::reset);
+	classClothComponent->addMethod("setNodeInvMass", &ClothComponent::setNodeInvMass);
+	registrar->registerClass(classClothComponent);
 
 	auto classPathEntity = new AutoRuntimeClass< PathEntity >();
 	classPathEntity->addMethod("setTimeMode", &animation_PathEntity_setTimeMode);
