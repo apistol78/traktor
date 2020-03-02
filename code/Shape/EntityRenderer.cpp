@@ -1,5 +1,6 @@
 #include "Shape/EntityRenderer.h"
-#include "Shape/Spline/SplineEntity.h"
+#include "Shape/Spline/CloneLayer.h"
+#include "Shape/Spline/ExtrudeShapeLayer.h"
 #include "World/WorldBuildContext.h"
 
 namespace traktor
@@ -11,7 +12,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.shape.EntityRenderer", EntityRenderer, world::I
 
 const TypeInfoSet EntityRenderer::getRenderableTypes() const
 {
-	return makeTypeInfoSet< SplineEntity >();
+	return makeTypeInfoSet< CloneLayer, ExtrudeShapeLayer >();
 }
 
 void EntityRenderer::gather(
@@ -29,9 +30,17 @@ void EntityRenderer::build(
 	Object* renderable
 )
 {
-	if (SplineEntity* splineEntity = dynamic_type_cast< SplineEntity* >(renderable))
+	if (auto cloneLayer = dynamic_type_cast< CloneLayer* >(renderable))
 	{
-		splineEntity->build(
+		cloneLayer->build(
+			context,
+			worldRenderView,
+			worldRenderPass
+		);
+	}
+	else if (auto extrudeShapeLayer = dynamic_type_cast< ExtrudeShapeLayer* >(renderable))
+	{
+		extrudeShapeLayer->build(
 			context,
 			worldRenderView,
 			worldRenderPass

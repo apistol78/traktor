@@ -11,17 +11,16 @@ namespace traktor
 	namespace shape
 	{
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.shape.CloneLayerData", 0, CloneLayerData, ISplineLayerData)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.shape.CloneLayerData", 0, CloneLayerData, LayerComponentData)
 
 CloneLayerData::CloneLayerData()
 :	m_distance(1.0f)
 {
 }
 
-Ref< ISplineLayer > CloneLayerData::createLayer(SplineEntity* owner, const world::IEntityBuilder* builder, resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem) const
+Ref< LayerComponent > CloneLayerData::createComponent(const world::IEntityBuilder* builder, resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem) const
 {
 	return new CloneLayer(
-		owner,
 		builder->getCompositeEntityBuilder(),
 		m_entity,
 		m_distance

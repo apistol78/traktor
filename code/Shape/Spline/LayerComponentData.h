@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Core/Ref.h"
-#include "Core/Serialization/ISerializable.h"
+#include "World/IEntityComponentData.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -37,15 +37,14 @@ class IEntityBuilder;
 	namespace shape
 	{
 
-class ISplineLayer;
-class SplineEntity;
+class LayerComponent;
 
-class T_DLLCLASS ISplineLayerData : public ISerializable
+class T_DLLCLASS LayerComponentData : public world::IEntityComponentData
 {
 	T_RTTI_CLASS;
 
 public:
-	virtual Ref< ISplineLayer > createLayer(SplineEntity* owner, const world::IEntityBuilder* builder, resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem) const = 0;
+	virtual Ref< LayerComponent > createComponent(const world::IEntityBuilder* builder, resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem) const = 0;
 };
 
 	}

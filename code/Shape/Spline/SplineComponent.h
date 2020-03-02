@@ -2,7 +2,7 @@
 
 #include "Core/RefArray.h"
 #include "Core/Math/TransformPath.h"
-#include "World/Entity/ComponentEntity.h"
+#include "World/IEntityComponent.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -17,6 +17,7 @@ namespace traktor
 	namespace world
 	{
 
+class ComponentEntity;
 class IWorldRenderPass;
 class WorldBuildContext;
 class WorldRenderView;
@@ -26,26 +27,25 @@ class WorldRenderView;
 	namespace shape
 	{
 
-class ControlPointEntity;
-class ISplineLayer;
-
 /*! Spline entity.
  * \ingroup Shape
  */
-class T_DLLCLASS SplineEntity : public world::ComponentEntity
+class T_DLLCLASS SplineComponent : public world::IEntityComponent
 {
 	T_RTTI_CLASS;
 
 public:
-	explicit SplineEntity(const Transform& transform);
+	SplineComponent();
 
-	void addControlPointEntity(ControlPointEntity* controlPointEntity);
+	virtual void destroy() override final;
 
-	void addLayer(ISplineLayer* layer);
+	virtual void setOwner(world::Entity* owner) override final;
 
-	virtual void setTransform(const Transform& transform) override;
+	virtual void setTransform(const Transform& transform) override final;
 
-	virtual void update(const world::UpdateParams& update) override;
+	virtual Aabb3 getBoundingBox() const override final;
+
+	virtual void update(const world::UpdateParams& update) override final;
 
 	void build(
 		const world::WorldBuildContext& context,
@@ -56,8 +56,7 @@ public:
 	const TransformPath& getPath() const { return m_path; }
 
 private:
-	RefArray< ControlPointEntity > m_controlPointEntities;
-	RefArray< ISplineLayer > m_layers;
+	world::ComponentEntity* m_owner;
 	TransformPath m_path;
 	bool m_dirty;
 };

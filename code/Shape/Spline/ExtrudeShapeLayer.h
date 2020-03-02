@@ -3,7 +3,7 @@
 #include "Core/Ref.h"
 #include "Render/Types.h"
 #include "Resource/Proxy.h"
-#include "Shape/Spline/ISplineLayer.h"
+#include "Shape/Spline/LayerComponent.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -25,39 +25,52 @@ class VertexBuffer;
 
 	}
 
+	namespace world
+	{
+
+class IWorldRenderPass;
+class WorldBuildContext;
+class WorldRenderView;
+
+	}
+
 	namespace shape
 	{
 
-class SplineEntity;
-
-/*! \brief
+/*!
  * \ingroup Shape
  */
-class T_DLLCLASS ExtrudeShapeLayer : public ISplineLayer
+class T_DLLCLASS ExtrudeShapeLayer : public LayerComponent
 {
 	T_RTTI_CLASS;
 
 public:
 	ExtrudeShapeLayer(
-		SplineEntity* owner,
 		render::IRenderSystem* renderSystem,
 		const resource::Proxy< render::Shader >& shader,
 		bool automaticOrientation,
 		float detail
 	);
 
+	virtual void destroy() override final;
+
+	virtual void setOwner(world::Entity* owner) override final;
+
+	virtual void setTransform(const Transform& transform) override final;
+
+	virtual Aabb3 getBoundingBox() const override final;
+
 	virtual void update(const world::UpdateParams& update) override final;
 
-	virtual void pathChanged() override final;
+	virtual void pathChanged(const TransformPath& path) override final;
 
-	virtual void build(
+	void build(
 		const world::WorldBuildContext& context,
 		const world::WorldRenderView& worldRenderView,
 		const world::IWorldRenderPass& worldRenderPass
-	) override final;
+	);
 
 private:
-	SplineEntity* m_owner;
 	Ref< render::IRenderSystem > m_renderSystem;
 	resource::Proxy< render::Shader > m_shader;
 	bool m_automaticOrientation;

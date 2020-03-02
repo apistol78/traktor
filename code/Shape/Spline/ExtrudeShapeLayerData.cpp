@@ -16,7 +16,7 @@ const resource::Id< render::Shader > c_defaultShader(Guid(L"{1B199356-39EB-43E9-
 
 		}
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.shape.ExtrudeShapeLayerData", 0, ExtrudeShapeLayerData, ISplineLayerData)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.shape.ExtrudeShapeLayerData", 0, ExtrudeShapeLayerData, LayerComponentData)
 
 ExtrudeShapeLayerData::ExtrudeShapeLayerData()
 :	m_shader(c_defaultShader)
@@ -25,13 +25,13 @@ ExtrudeShapeLayerData::ExtrudeShapeLayerData()
 {
 }
 
-Ref< ISplineLayer > ExtrudeShapeLayerData::createLayer(SplineEntity* owner, const world::IEntityBuilder* builder, resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem) const
+Ref< LayerComponent > ExtrudeShapeLayerData::createComponent(const world::IEntityBuilder* builder, resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem) const
 {
 	resource::Proxy< render::Shader > shader;
 	if (!resourceManager->bind(m_shader, shader))
 		return nullptr;
 
-	return new ExtrudeShapeLayer(owner, renderSystem, shader, m_automaticOrientation, m_detail);
+	return new ExtrudeShapeLayer(renderSystem, shader, m_automaticOrientation, m_detail);
 }
 
 void ExtrudeShapeLayerData::serialize(ISerializer& s)

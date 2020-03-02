@@ -7,7 +7,6 @@
 #include "Animation/Editor/AnimationEditorProfile.h"
 #include "Animation/Editor/AnimatedMeshComponentEditorFactory.h"
 #include "Animation/Editor/Cloth/ClothEntityEditorFactory.h"
-#include "Animation/Editor/PathEntity/PathEntityEditorFactory.h"
 #include "Animation/PathEntity/PathEntityFactory.h"
 #include "Core/Serialization/ISerializable.h"
 #include "Scene/Editor/SceneEditorContext.h"
@@ -59,7 +58,6 @@ void AnimationEditorProfile::createEntityFactories(
 	outEntityFactories.push_back(new AnimatedMeshComponentFactory(context->getResourceManager(), context->getPhysicsManager()));
 	outEntityFactories.push_back(new BoidsEntityFactory());
 	outEntityFactories.push_back(new ClothEntityFactory(context->getResourceManager(), context->getRenderSystem()));
-	outEntityFactories.push_back(new PathEntityFactory());
 }
 
 void AnimationEditorProfile::createEntityRenderers(
@@ -86,7 +84,6 @@ void AnimationEditorProfile::createEntityEditorFactories(
 ) const
 {
 	outEntityEditorFactories.push_back(new ClothEntityEditorFactory());
-	outEntityEditorFactories.push_back(new PathEntityEditorFactory());
 }
 
 void AnimationEditorProfile::createComponentEditorFactories(
@@ -102,7 +99,7 @@ Ref< world::EntityData > AnimationEditorProfile::createEntityData(
 	db::Instance* instance
 ) const
 {
-	return 0;
+	return nullptr;
 }
 
 void AnimationEditorProfile::getDebugTargets(

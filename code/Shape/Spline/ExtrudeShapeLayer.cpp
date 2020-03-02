@@ -1,6 +1,7 @@
 #include <numeric>
 #include "Core/Log/Log.h"
 #include "Core/Math/Const.h"
+#include "Core/Math/TransformPath.h"
 #include "Core/Math/Vector2.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Render/IndexBuffer.h"
@@ -10,7 +11,6 @@
 #include "Render/VertexElement.h"
 #include "Render/Context/RenderContext.h"
 #include "Shape/Spline/ExtrudeShapeLayer.h"
-#include "Shape/Spline/SplineEntity.h"
 #include "World/IWorldRenderPass.h"
 #include "World/WorldBuildContext.h"
 
@@ -32,17 +32,15 @@ struct ExtrudeVertex
 
 		}
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.shape.ExtrudeShapeLayer", ExtrudeShapeLayer, ISplineLayer)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.shape.ExtrudeShapeLayer", ExtrudeShapeLayer, LayerComponent)
 
 ExtrudeShapeLayer::ExtrudeShapeLayer(
-	SplineEntity* owner,
 	render::IRenderSystem* renderSystem,
 	const resource::Proxy< render::Shader >& shader,
 	bool automaticOrientation,
 	float detail
 )
-:	m_owner(owner)
-,	m_renderSystem(renderSystem)
+:	m_renderSystem(renderSystem)
 ,	m_shader(shader)
 ,	m_automaticOrientation(automaticOrientation)
 ,	m_detail(detail)
@@ -53,10 +51,8 @@ void ExtrudeShapeLayer::update(const world::UpdateParams& update)
 {
 }
 
-void ExtrudeShapeLayer::pathChanged()
+void ExtrudeShapeLayer::pathChanged(const TransformPath& path)
 {
-	const auto& path = m_owner->getPath();
-
 	const auto& keys = path.getKeys();
 	if (keys.size() < 2)
 		return;

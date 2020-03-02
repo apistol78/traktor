@@ -2,7 +2,7 @@
 
 #include "Core/Ref.h"
 #include "Core/RefArray.h"
-#include "Shape/Spline/ISplineLayer.h"
+#include "Shape/Spline/LayerComponent.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -20,41 +20,48 @@ namespace traktor
 class Entity;
 class EntityData;
 class IEntityBuilder;
+class IWorldRenderPass;
+class WorldBuildContext;
+class WorldRenderView;
 
 	}
 
 	namespace shape
 	{
 
-class SplineEntity;
-
 /*! \brief
  * \ingroup Shape
  */
-class T_DLLCLASS CloneLayer : public ISplineLayer
+class T_DLLCLASS CloneLayer : public LayerComponent
 {
 	T_RTTI_CLASS;
 
 public:
 	CloneLayer(
-		SplineEntity* owner,
 		const world::IEntityBuilder* builder,
 		world::EntityData* entity,
 		float distance
 	);
 
+	virtual void destroy() override final;
+
+	virtual void setOwner(world::Entity* owner) override final;
+
+	virtual void setTransform(const Transform& transform) override final;
+
+	virtual Aabb3 getBoundingBox() const override final;
+
 	virtual void update(const world::UpdateParams& update) override final;
 
-	virtual void pathChanged() override final;
+	virtual void pathChanged(const TransformPath& path) override final;
 
-	virtual void build(
+	void build(
 		const world::WorldBuildContext& context,
 		const world::WorldRenderView& worldRenderView,
 		const world::IWorldRenderPass& worldRenderPass
-	) override final;
+	);
 
 private:
-	SplineEntity* m_owner;
 	Ref< const world::IEntityBuilder > m_builder;
 	Ref< world::EntityData > m_entity;
 	float m_distance;
