@@ -40,6 +40,20 @@ void LightRenderer::gather(
 	}
 }
 
+void LightRenderer::setup(
+	const WorldSetupContext& context
+)
+{
+}
+
+void LightRenderer::setup(
+	const WorldSetupContext& context,
+	const WorldRenderView& worldRenderView,
+	Object* renderable
+)
+{
+}
+
 void LightRenderer::build(
 	const WorldBuildContext& context,
 	const WorldRenderView& worldRenderView,
@@ -49,7 +63,7 @@ void LightRenderer::build(
 {
 }
 
-void LightRenderer::flush(
+void LightRenderer::build(
 	const WorldBuildContext& context,
 	const WorldRenderView& worldRenderView,
 	const IWorldRenderPass& worldRenderPass
@@ -57,9 +71,6 @@ void LightRenderer::flush(
 {
 }
 
-void LightRenderer::setup(const WorldSetupContext& context)
-{
-}
 
 	}
 }

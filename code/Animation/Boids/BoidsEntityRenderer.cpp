@@ -21,6 +21,20 @@ void BoidsEntityRenderer::gather(
 {
 }
 
+void BoidsEntityRenderer::setup(
+	const world::WorldSetupContext& context,
+	const world::WorldRenderView& worldRenderView,
+	Object* renderable
+)
+{
+}
+
+void BoidsEntityRenderer::setup(
+	const world::WorldSetupContext& context
+)
+{
+}
+
 void BoidsEntityRenderer::build(
 	const world::WorldBuildContext& context,
 	const world::WorldRenderView& worldRenderView,
@@ -32,15 +46,11 @@ void BoidsEntityRenderer::build(
 	boidsComponent->build(context, worldRenderView, worldRenderPass);
 }
 
-void BoidsEntityRenderer::flush(
+void BoidsEntityRenderer::build(
 	const world::WorldBuildContext& context,
 	const world::WorldRenderView& worldRenderView,
 	const world::IWorldRenderPass& worldRenderPass
 )
-{
-}
-
-void BoidsEntityRenderer::setup(const world::WorldSetupContext& context)
 {
 }
 

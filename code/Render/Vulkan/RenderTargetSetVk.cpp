@@ -401,21 +401,12 @@ bool RenderTargetSetVk::prepareAsTarget(
 					passAttachment.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
 			}
 
-			if (!m_setDesc.storeDepthStencil)
-			{
-				// Most commonly we shouldn't store depth/stencil.
-				passAttachment.storeOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
-				passAttachment.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
-			}
+			// Need to keep depth/stencil so store them.
+			passAttachment.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
+			if (!m_setDesc.ignoreStencil)
+				passAttachment.stencilStoreOp = VK_ATTACHMENT_STORE_OP_STORE;
 			else
-			{
-				// Need to keep depth/stencil so store them.
-				passAttachment.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
-				if (!m_setDesc.ignoreStencil)
-					passAttachment.stencilStoreOp = VK_ATTACHMENT_STORE_OP_STORE;
-				else
-					passAttachment.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
-			}
+				passAttachment.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
 
 			passAttachment.initialLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
 			passAttachment.finalLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;

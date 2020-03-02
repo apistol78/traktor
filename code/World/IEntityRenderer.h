@@ -56,6 +56,18 @@ public:
 		AlignedVector< Light >& outLights
 	) = 0;
 
+	/*! Setup pass. */
+	virtual void setup(
+		const WorldSetupContext& context,
+		const WorldRenderView& worldRenderView,
+		Object* renderable
+	) = 0;
+
+	/*! Setup pass. */
+	virtual void setup(
+		const WorldSetupContext& context
+	) = 0;
+
 	/*! Build pass.
 	 *
 	 * Build entity render blocks into render context.
@@ -67,19 +79,16 @@ public:
 		Object* renderable
 	) = 0;
 
-	/*! Render flush.
+	/*! Build pass.
 	 *
 	 * Flush whatever queues that the entity
 	 * renderer might have used.
 	 */
-	virtual void flush(
+	virtual void build(
 		const WorldBuildContext& context,
 		const WorldRenderView& worldRenderView,
 		const IWorldRenderPass& worldRenderPass
 	) = 0;
-
-	/*! Render flush, last of frame. */
-	virtual void setup(const WorldSetupContext& context) = 0;
 };
 
 	}

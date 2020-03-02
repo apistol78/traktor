@@ -37,7 +37,9 @@ class T_DLLCLASS WorldSetupContext : public Object
 public:
 	WorldSetupContext(const WorldEntityRenderers* entityRenderers, const Entity* rootEntity, render::RenderGraph& renderGraph);
 
-	void setup() const;
+	void setup(const WorldRenderView& worldRenderView, const Object* renderable) const;
+
+	void flush() const;
 
 	const WorldEntityRenderers* getEntityRenderers() const { return m_entityRenderers; }
 

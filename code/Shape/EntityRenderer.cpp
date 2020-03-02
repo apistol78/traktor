@@ -23,6 +23,20 @@ void EntityRenderer::gather(
 {
 }
 
+void EntityRenderer::setup(
+	const world::WorldSetupContext& context,
+	const world::WorldRenderView& worldRenderView,
+	Object* renderable
+)
+{
+}
+
+void EntityRenderer::setup(
+	const world::WorldSetupContext& context
+)
+{
+}
+
 void EntityRenderer::build(
 	const world::WorldBuildContext& context,
 	const world::WorldRenderView& worldRenderView,
@@ -48,15 +62,11 @@ void EntityRenderer::build(
 	}
 }
 
-void EntityRenderer::flush(
+void EntityRenderer::build(
 	const world::WorldBuildContext& context,
 	const world::WorldRenderView& worldRenderView,
 	const world::IWorldRenderPass& worldRenderPass
 )
-{
-}
-
-void EntityRenderer::setup(const world::WorldSetupContext& context)
 {
 }
 

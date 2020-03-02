@@ -22,6 +22,27 @@ CloneLayer::CloneLayer(
 {
 }
 
+void CloneLayer::destroy()
+{
+	for (auto entity : m_entities)
+		entity->destroy();
+
+	m_entities.clear();
+}
+
+void CloneLayer::setOwner(world::Entity* owner)
+{
+}
+
+void CloneLayer::setTransform(const Transform& transform)
+{
+}
+
+Aabb3 CloneLayer::getBoundingBox() const
+{
+	return Aabb3();
+}
+
 void CloneLayer::update(const world::UpdateParams& update)
 {
 	for (auto entity : m_entities)

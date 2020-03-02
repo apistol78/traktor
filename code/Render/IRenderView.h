@@ -89,8 +89,6 @@ public:
 
 	virtual void setViewport(const Viewport& viewport) = 0;
 
-	virtual Viewport getViewport() = 0;
-
 	virtual SystemWindow getSystemWindow() = 0;
 
 	//@}
@@ -98,14 +96,21 @@ public:
 	/*! \name Rendering methods. */
 	//@{
 
+	/*! Begin rendering frame. */
+	virtual bool beginFrame() = 0;
+
+	/*! End rendering frame. */
+	virtual void endFrame() = 0;
+
+	/*! Swap back and front buffers. */
+	virtual void present() = 0;
+
 	/*! Begin rendering to back buffer.
 	 *
 	 * \param clear Optional clear parameters.
 	 * \return True if successful.
 	 */
-	virtual bool begin(
-		const Clear* clear
-	) = 0;
+	virtual bool beginPass(const Clear* clear) = 0;
 
 	/*! Begin rendering to all render targets in set.
 	 *
@@ -113,10 +118,7 @@ public:
 	 * \param clear Optional clear parameters.
 	 * \return True if successful.
 	 */
-	virtual bool begin(
-		IRenderTargetSet* renderTargetSet,
-		const Clear* clear
-	) = 0;
+	virtual bool beginPass(IRenderTargetSet* renderTargetSet, const Clear* clear) = 0;
 
 	/*! Begin rendering to a render target set.
 	 *
@@ -125,11 +127,10 @@ public:
 	 * \param clear Optional clear parameters.
 	 * \return True if successful.
 	 */
-	virtual bool begin(
-		IRenderTargetSet* renderTargetSet,
-		int32_t renderTarget,
-		const Clear* clear
-	) = 0;
+	virtual bool beginPass(IRenderTargetSet* renderTargetSet, int32_t renderTarget, const Clear* clear) = 0;
+
+	/*! End rendering to pass. */
+	virtual void endPass() = 0;
 
 	/*! Draw primitives.
 	 *
@@ -166,15 +167,6 @@ public:
 	 * \param sourceLevel Source mip level.
 	 */
 	virtual bool copy(ITexture* destinationTexture, int32_t destinationSide, int32_t destinationLevel, ITexture* sourceTexture, int32_t sourceSide, int32_t sourceLevel) = 0;
-
-	/*! End rendering. */
-	virtual void end() = 0;
-
-	/*! Flush all queues and wait for rendering to complete. */
-	virtual void flush() = 0;
-
-	/*! Swap back and front buffers. */
-	virtual void present() = 0;
 
 	/*! \name Statistics. */
 	//@{

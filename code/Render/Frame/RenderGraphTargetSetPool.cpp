@@ -32,7 +32,6 @@ IRenderTargetSet* RenderGraphTargetSetPool::acquire(
 	rtscd.createDepthStencil = targetSetDesc.createDepthStencil;
 	rtscd.usingPrimaryDepthStencil = targetSetDesc.usingPrimaryDepthStencil;
 	rtscd.usingDepthStencilAsTexture = targetSetDesc.usingDepthStencilAsTexture;
-	rtscd.storeDepthStencil = true;
 	rtscd.ignoreStencil = false;
 	rtscd.generateMips = targetSetDesc.generateMips;
 

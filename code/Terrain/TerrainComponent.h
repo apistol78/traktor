@@ -49,6 +49,7 @@ class IResourceManager;
 class IWorldRenderPass;
 class WorldBuildContext;
 class WorldRenderView;
+class WorldSetupContext;
 
 	}
 
@@ -101,9 +102,25 @@ public:
 		Vector4 surfaceOffset;
 	};
 
+	struct CullPatch
+	{
+		float error[4];
+		float distance;
+		float area;
+		uint32_t patchId;
+		Vector4 patchOrigin;
+	};
+
 	TerrainComponent(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem);
 
 	bool create(const TerrainComponentData& data);
+
+	void setup(
+		const world::WorldSetupContext& context,
+		const world::WorldRenderView& worldRenderView,
+		float detailDistance,
+		uint32_t cacheSize
+	);
 
 	void build(
 		const world::WorldBuildContext& context,
@@ -164,25 +181,12 @@ private:
 	float m_surfaceLodExponent;
 	VisualizeMode m_visualizeMode;
 	RefArray< ITerrainLayer > m_layers;
+	AlignedVector< CullPatch > m_visiblePatches;
+#if defined(T_USE_TERRAIN_VERTEX_TEXTURE_FETCH)
+	 AlignedVector< const CullPatch* > m_patchLodInstances[LodCount];
+#endif
 
-	render::handle_t m_handleSurface;
-	render::handle_t m_handleSurfaceOffset;
-	render::handle_t m_handleHeightfield;
-	render::handle_t m_handleColorMap;
-	render::handle_t m_handleSplatMap;
-	render::handle_t m_handleCutMap;
-	render::handle_t m_handleMaterialMap;
-	render::handle_t m_handleNormals;
-	render::handle_t m_handleEye;
-	render::handle_t m_handleWorldOrigin;
-	render::handle_t m_handleWorldExtent;
-	render::handle_t m_handlePatchOrigin;
-	render::handle_t m_handlePatchExtent;
-	render::handle_t m_handleDetailDistance;
-	render::handle_t m_handleDebugPatchColor;
-	render::handle_t m_handleDebugMap;
-	render::handle_t m_handleCutEnable;
-	render::handle_t m_handleColorEnable;
+	bool validate(uint32_t cacheSize);
 
 	bool updatePatches(const uint32_t* region);
 

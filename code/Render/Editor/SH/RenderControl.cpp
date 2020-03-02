@@ -111,7 +111,7 @@ void RenderControl::eventPaint(ui::PaintEvent* event)
 	cl.colors[0] = Color4f(0.25f, 0.25f, 0.25f, 1.0f);
 	cl.depth = 1.0f;
 
-	if (!m_renderView->begin(&cl))
+	if (!m_renderView->beginPass(&cl))
 		return;
 
 	ui::Rect innerRect = getInnerRect();
@@ -135,7 +135,7 @@ void RenderControl::eventPaint(ui::PaintEvent* event)
 	m_primitiveRenderer->end(0);
 	m_primitiveRenderer->render(m_renderView, 0);
 
-	m_renderView->end();
+	m_renderView->endPass();
 	m_renderView->present();
 
 	event->consume();

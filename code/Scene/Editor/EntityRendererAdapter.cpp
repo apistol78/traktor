@@ -27,7 +27,41 @@ void EntityRendererAdapter::gather(
 	AlignedVector< world::Light >& outLights
 )
 {
-	m_entityRenderer->gather(context, renderable, outLights);
+	EntityAdapter* entityAdapter = m_cache->begin(renderable);
+	if (!entityAdapter || m_filter(entityAdapter))
+	{
+		m_entityRenderer->gather(
+			context,
+			renderable,
+			outLights
+		);
+	}
+	m_cache->end();
+}
+
+void EntityRendererAdapter::setup(
+	const world::WorldSetupContext& context
+)
+{
+	m_entityRenderer->setup(context);
+}
+
+void EntityRendererAdapter::setup(
+	const world::WorldSetupContext& context,
+	const world::WorldRenderView& worldRenderView,
+	Object* renderable
+)
+{
+	EntityAdapter* entityAdapter = m_cache->begin(renderable);
+	if (!entityAdapter || m_filter(entityAdapter))
+	{
+		m_entityRenderer->setup(
+			context,
+			worldRenderView,
+			renderable
+		);
+	}
+	m_cache->end();
 }
 
 void EntityRendererAdapter::build(
@@ -50,22 +84,17 @@ void EntityRendererAdapter::build(
 	m_cache->end();
 }
 
-void EntityRendererAdapter::flush(
+void EntityRendererAdapter::build(
 	const world::WorldBuildContext& context,
 	const world::WorldRenderView& worldRenderView,
 	const world::IWorldRenderPass& worldRenderPass
 )
 {
-	m_entityRenderer->flush(
+	m_entityRenderer->build(
 		context,
 		worldRenderView,
 		worldRenderPass
 	);
-}
-
-void EntityRendererAdapter::setup(const world::WorldSetupContext& context)
-{
-	m_entityRenderer->setup(context);
 }
 
 	}

@@ -5,6 +5,7 @@
 #include "World/WorldBuildContext.h"
 #include "World/WorldHandles.h"
 #include "World/WorldRenderView.h"
+#include "World/WorldSetupContext.h"
 #include "World/Simple/WorldRendererSimple.h"
 #include "World/Simple/WorldRenderPassSimple.h"
 
@@ -37,6 +38,14 @@ void WorldRendererSimple::setup(
 	render::handle_t outputTargetSetId
 )
 {
+	// Add additional passes by entity renderers.
+	{
+		WorldSetupContext context(m_entityRenderers, rootEntity, renderGraph);
+		context.setup(worldRenderView, rootEntity);
+		context.flush();
+	}
+
+	// Add passes to render graph.
 	Ref< render::RenderPass > rp = new render::RenderPass(L"Visual");
 	rp->setOutput(outputTargetSetId);
 	rp->addBuild(

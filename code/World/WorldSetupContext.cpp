@@ -16,7 +16,16 @@ WorldSetupContext::WorldSetupContext(const WorldEntityRenderers* entityRenderers
 {
 }
 
-void WorldSetupContext::setup() const
+void WorldSetupContext::setup(const WorldRenderView& worldRenderView, const Object* renderable) const
+{
+	if (!renderable)
+		return;
+	IEntityRenderer* renderer = m_entityRenderers->find(type_of(renderable));
+	if (renderer)
+		renderer->setup(*this, worldRenderView, const_cast< Object* >(renderable));
+}
+
+void WorldSetupContext::flush() const
 {
 	for (auto entityRenderer : m_entityRenderers->get())
 		entityRenderer->setup(*this);

@@ -77,24 +77,21 @@ public:
 
 	virtual void setViewport(const Viewport& viewport) override final;
 
-	virtual Viewport getViewport() override final;
-
 	virtual SystemWindow getSystemWindow() override final;
 
-	virtual bool begin(
-		const Clear* clear
-	) override final;
+	virtual bool beginFrame() override final;
 
-	virtual bool begin(
-		IRenderTargetSet* renderTargetSet,
-		const Clear* clear
-	) override final;
+	virtual void endFrame() override final;
 
-	virtual bool begin(
-		IRenderTargetSet* renderTargetSet,
-		int32_t renderTarget,
-		const Clear* clear
-	) override final;
+	virtual void present() override final;
+
+	virtual bool beginPass(const Clear* clear) override final;
+
+	virtual bool beginPass(IRenderTargetSet* renderTargetSet, const Clear* clear) override final;
+
+	virtual bool beginPass(IRenderTargetSet* renderTargetSet, int32_t renderTarget, const Clear* clear) override final;
+
+	virtual void endPass() override final;
 
 	virtual void draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, IProgram* program, const Primitives& primitives) override final;
 
@@ -103,12 +100,6 @@ public:
 	virtual void compute(IProgram* program, const int32_t* workSize) override final;
 
 	virtual bool copy(ITexture* destinationTexture, int32_t destinationSide, int32_t destinationLevel, ITexture* sourceTexture, int32_t sourceSide, int32_t sourceLevel) override final;
-
-	virtual void end() override final;
-
-	virtual void flush() override final;
-
-	virtual void present() override final;
 
 	virtual void pushMarker(const char* const marker) override final;
 
@@ -126,7 +117,6 @@ private:
 		Ref< RenderTargetSetVk > rts;
 		int32_t colorIndex;
 		Clear clear;
-		Viewport viewport;
 	};
 
 	VkInstance m_instance;
@@ -153,9 +143,12 @@ private:
 	RefArray< RenderTargetSetVk > m_primaryTargets;
 	std::list< RenderEvent > m_eventQueue;
 	uint32_t m_currentImageIndex;
-	Viewport m_viewport;
-	AlignedVector< TargetState > m_targetStateStack;
-	bool m_targetStateDirty;
+	
+	//Viewport m_viewport;
+	//AlignedVector< TargetState > m_targetStateStack;
+	//bool m_targetStateDirty;
+	TargetState m_targetState;
+
 	uint32_t m_targetId;
 	VkRenderPass m_targetRenderPass;
 	VkFramebuffer m_targetFrameBuffer;
@@ -166,8 +159,6 @@ private:
 	uint32_t m_primitiveCount;
 
 	bool create(uint32_t width, uint32_t height);
-
-	void validateTargetState();
 
 	bool validatePipeline(VertexBufferDynamicVk* vb, ProgramVk* p, PrimitiveType pt);
 

@@ -1,6 +1,7 @@
 #include "World/IEntityComponent.h"
 #include "World/WorldBuildContext.h"
 #include "World/WorldGatherContext.h"
+#include "World/WorldSetupContext.h"
 #include "World/Entity/ComponentEntity.h"
 #include "World/Entity/ComponentEntityRenderer.h"
 
@@ -27,6 +28,23 @@ void ComponentEntityRenderer::gather(
 		context.gather(component, outLights);
 }
 
+void ComponentEntityRenderer::setup(
+	const WorldSetupContext& context,
+	const WorldRenderView& worldRenderView,
+	Object* renderable
+)
+{
+	ComponentEntity* componentEntity = mandatory_non_null_type_cast< ComponentEntity* >(renderable);
+	for (auto component : componentEntity->getComponents())
+		context.setup(worldRenderView, component);
+}
+
+void ComponentEntityRenderer::setup(
+	const WorldSetupContext& context
+)
+{
+}
+
 void ComponentEntityRenderer::build(
 	const WorldBuildContext& context,
 	const WorldRenderView& worldRenderView,
@@ -39,15 +57,11 @@ void ComponentEntityRenderer::build(
 		context.build(worldRenderView, worldRenderPass, component);
 }
 
-void ComponentEntityRenderer::flush(
+void ComponentEntityRenderer::build(
 	const WorldBuildContext& context,
 	const WorldRenderView& worldRenderView,
 	const IWorldRenderPass& worldRenderPass
 )
-{
-}
-
-void ComponentEntityRenderer::setup(const WorldSetupContext& context)
 {
 }
 

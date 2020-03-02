@@ -851,11 +851,10 @@ void ModelToolDialog::eventRenderPaint(ui::PaintEvent* event)
 	cl.depth = 1.0f;
 	cl.stencil = 0;
 
-	if (!m_renderView->begin(&cl))
+	if (!m_renderView->beginPass(&cl))
 		return;
 
-	render::Viewport viewport = m_renderView->getViewport();
-	float aspect = float(viewport.width) / viewport.height;
+	float aspect = float(rc.getWidth()) / rc.getHeight();
 
 	Matrix44 viewTransform = translate(0.0f, 0.0f, m_cameraZ) * rotateX(m_cameraPitch) * rotateY(m_cameraHead);
 	Matrix44 projectionTransform = perspectiveLh(
@@ -1210,7 +1209,7 @@ void ModelToolDialog::eventRenderPaint(ui::PaintEvent* event)
 		m_primitiveRenderer->render(m_renderView, 0);
 	}
 
-	m_renderView->end();
+	m_renderView->endPass();
 	m_renderView->present();
 
 	event->consume();

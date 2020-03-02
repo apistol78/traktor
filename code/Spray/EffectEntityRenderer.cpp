@@ -40,6 +40,20 @@ void EffectEntityRenderer::gather(
 {
 }
 
+void EffectEntityRenderer::setup(
+	const world::WorldSetupContext& context,
+	const world::WorldRenderView& worldRenderView,
+	Object* renderable
+)
+{
+}
+
+void EffectEntityRenderer::setup(
+	const world::WorldSetupContext& context
+)
+{
+}
+
 void EffectEntityRenderer::build(
 	const world::WorldBuildContext& context,
 	const world::WorldRenderView& worldRenderView,
@@ -78,7 +92,7 @@ void EffectEntityRenderer::build(
 	}
 }
 
-void EffectEntityRenderer::flush(
+void EffectEntityRenderer::build(
 	const world::WorldBuildContext& context,
 	const world::WorldRenderView& worldRenderView,
 	const world::IWorldRenderPass& worldRenderPass
@@ -87,10 +101,6 @@ void EffectEntityRenderer::flush(
 	m_pointRenderer->flush(context.getRenderContext(), worldRenderPass);
 	m_meshRenderer->flush(context.getRenderContext(), worldRenderPass);
 	m_trailRenderer->flush(context.getRenderContext(), worldRenderPass);
-}
-
-void EffectEntityRenderer::setup(const world::WorldSetupContext& context)
-{
 }
 
 	}

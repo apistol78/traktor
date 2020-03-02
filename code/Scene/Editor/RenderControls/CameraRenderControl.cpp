@@ -324,8 +324,15 @@ void CameraRenderControl::eventPaint(ui::PaintEvent* event)
 	float colorClear[4]; m_colorClear.getRGBA32F(colorClear);
 	float deltaTime = float(m_timer.getDeltaTime());
 	float scaledTime = m_context->getTime();
+	Matrix44 projection = m_worldRenderView.getProjection();
+	Matrix44 view = m_cameraEntities[0]->getTransform().inverse().toMatrix44();
 
-	// Create world render view.
+	// Build a root entity by gathering entities from containers.
+	world::GroupEntity rootEntity;
+	m_context->getEntityEventManager()->gather([&](world::Entity* entity) { rootEntity.addEntity(entity); });
+	rootEntity.addEntity(sceneInstance->getRootEntity());
+
+	// Setup world render passes.
 	const world::WorldRenderSettings* worldRenderSettings = sceneInstance->getWorldRenderSettings();
 	if (cameraComponent->getCameraType() == world::CtOrthographic)
 	{
@@ -348,17 +355,6 @@ void CameraRenderControl::eventPaint(ui::PaintEvent* event)
 			worldRenderSettings->viewFarZ
 		);
 	}
-
-	// Get current transformations.
-	Matrix44 projection = m_worldRenderView.getProjection();
-	Matrix44 view = m_cameraEntities[0]->getTransform().inverse().toMatrix44();
-
-	// Build a root entity by gathering entities from containers.
-	world::GroupEntity rootEntity;
-	m_context->getEntityEventManager()->gather([&](world::Entity* entity) { rootEntity.addEntity(entity); });
-	rootEntity.addEntity(sceneInstance->getRootEntity());
-
-	// Setup world render passes.
 	m_worldRenderView.setTimes(scaledTime, deltaTime, 1.0f);
 	m_worldRenderView.setView(m_worldRenderView.getView(), view);
 	m_worldRenderer->setup(m_worldRenderView, &rootEntity, *m_renderGraph, 0);
@@ -372,16 +368,10 @@ void CameraRenderControl::eventPaint(ui::PaintEvent* event)
 	m_renderGraph->build(m_renderContext);
 
 	// Render frame.
-	render::Clear clear = { 0 };
-	clear.mask = render::CfColor | render::CfDepth | render::CfStencil;
-	clear.colors[0] = Color4f(colorClear[0], colorClear[1], colorClear[2], colorClear[3]);
-	clear.depth = 1.0f;
-	clear.stencil = 0;
-	if (m_renderView->begin(&clear))
+	if (m_renderView->beginFrame())
 	{
-		// Render context.
 		m_renderContext->render(m_renderView);
-		m_renderView->end();
+		m_renderView->endFrame();
 		m_renderView->present();
 	}
 

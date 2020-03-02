@@ -109,11 +109,26 @@ bool RenderGraph::validate(int32_t width, int32_t height)
 	StaticVector< uint32_t, 256 > order;
 	for (int32_t i = 0; i < (int32_t)m_passes.size(); ++i)
 	{
-		if (m_passes[i]->getOutput().targetSetId == 0)
+		const auto& output = m_passes[i]->getOutput();
+		if (output.targetSetId == 0)
 		{
 			traverse(i, [&](int32_t index) {
 				order.push_back(index);
 			});
+		}
+		else
+		{
+			// A bit of a hack for now, non-transient outputs
+			// indicate some sort of caching scheme, such
+			// as terrain surface cache, so we need to ensure
+			// they are executed regardless of dependencies.
+			auto it = m_targets.find(output.targetSetId);
+			if (!it->second.transient)
+			{
+				traverse(i, [&](int32_t index) {
+					order.push_back(index);
+				});
+			}
 		}
 	}
 
@@ -152,12 +167,22 @@ bool RenderGraph::build(RenderContext* renderContext)
 			auto it = m_targets.find(output.targetSetId);
 			T_FATAL_ASSERT(it != m_targets.end());
 
-			auto tb = renderContext->alloc< TargetBeginRenderBlock >(
+			auto tb = renderContext->alloc< BeginPassRenderBlock >(
 #if defined(_DEBUG)
 				str(L"Begin \"%s\"", pass->getName().c_str())
 #endif
 			);
 			tb->renderTargetSet = it->second.rts;
+			tb->clear = output.clear;
+			renderContext->enqueue(tb);
+		}
+		else
+		{
+			auto tb = renderContext->alloc< BeginPassRenderBlock >(
+#if defined(_DEBUG)
+				str(L"Begin \"%s\"", pass->getName().c_str())
+#endif
+			);
 			tb->clear = output.clear;
 			renderContext->enqueue(tb);			
 		}
@@ -180,15 +205,12 @@ bool RenderGraph::build(RenderContext* renderContext)
 		}
 
 		// End render pass.
-		if (output.targetSetId != 0)
-		{
-			auto te = renderContext->alloc< TargetEndRenderBlock >(
+		auto te = renderContext->alloc< EndPassRenderBlock >(
 #if defined(_DEBUG)
-				str(L"End \"%s\"", pass->getName().c_str())
+			str(L"End \"%s\"", pass->getName().c_str())
 #endif
-			);
-			renderContext->enqueue(te);
-		}
+		);
+		renderContext->enqueue(te);
 	}
 
 	T_FATAL_ASSERT(!renderContext->havePendingDraws());

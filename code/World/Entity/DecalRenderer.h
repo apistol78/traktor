@@ -35,7 +35,7 @@ class T_DLLCLASS DecalRenderer : public IEntityRenderer
 	T_RTTI_CLASS;
 
 public:
-	DecalRenderer(render::IRenderSystem* renderSystem);
+	explicit DecalRenderer(render::IRenderSystem* renderSystem);
 
 	virtual const TypeInfoSet getRenderableTypes() const override final;
 
@@ -45,6 +45,16 @@ public:
 		AlignedVector< Light >& outLights
 	) override final;
 
+	virtual void setup(
+		const WorldSetupContext& context,
+		const WorldRenderView& worldRenderView,
+		Object* renderable
+	) override final;
+
+	virtual void setup(
+		const WorldSetupContext& context
+	) override final;
+
 	virtual void build(
 		const WorldBuildContext& context,
 		const WorldRenderView& worldRenderView,
@@ -52,13 +62,11 @@ public:
 		Object* renderable
 	) override final;
 
-	virtual void flush(
+	virtual void build(
 		const WorldBuildContext& context,
 		const WorldRenderView& worldRenderView,
 		const IWorldRenderPass& worldRenderPass
 	) override final;
-
-	virtual void setup(const WorldSetupContext& context) override final;
 
 private:
 	Ref< render::VertexBuffer > m_vertexBuffer;

@@ -242,7 +242,7 @@ void WidgetPreviewControl::eventPaint(ui::PaintEvent* event)
 	cl.depth = 1.0f;
 	cl.stencil = 0;
 
-	if (m_renderView->begin(&cl))
+	if (m_renderView->beginPass(&cl))
 	{
 		if (m_scaffoldingObject)
 		{
@@ -268,7 +268,7 @@ void WidgetPreviewControl::eventPaint(ui::PaintEvent* event)
 		if (m_debugWires)
 			m_displayRendererWire->render(m_renderView, uint32_t(0));
 
-		m_renderView->end();
+		m_renderView->endPass();
 		m_renderView->present();
 	}
 

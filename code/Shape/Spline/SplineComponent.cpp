@@ -31,6 +31,11 @@ void SplineComponent::setTransform(const Transform& transform)
 {
 }
 
+Aabb3 SplineComponent::getBoundingBox() const
+{
+	return Aabb3();
+}
+
 void SplineComponent::update(const world::UpdateParams& update)
 {
 	auto groupComponent = m_owner->getComponent< world::GroupComponent >();

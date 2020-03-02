@@ -26,6 +26,20 @@ void InstanceMeshComponentRenderer::gather(
 {
 }
 
+void InstanceMeshComponentRenderer::setup(
+	const world::WorldSetupContext& context,
+	const world::WorldRenderView& worldRenderView,
+	Object* renderable
+)
+{
+}
+
+void InstanceMeshComponentRenderer::setup(
+	const world::WorldSetupContext& context
+)
+{
+}
+
 void InstanceMeshComponentRenderer::build(
 	const world::WorldBuildContext& context,
 	const world::WorldRenderView& worldRenderView,
@@ -62,7 +76,7 @@ void InstanceMeshComponentRenderer::build(
 	));
 }
 
-void InstanceMeshComponentRenderer::flush(
+void InstanceMeshComponentRenderer::build(
 	const world::WorldBuildContext& context,
 	const world::WorldRenderView& worldRenderView,
 	const world::IWorldRenderPass& worldRenderPass
@@ -83,10 +97,6 @@ void InstanceMeshComponentRenderer::flush(
 
 		i->second.resize(0);
 	}
-}
-
-void InstanceMeshComponentRenderer::setup(const world::WorldSetupContext& context)
-{
 }
 
 	}

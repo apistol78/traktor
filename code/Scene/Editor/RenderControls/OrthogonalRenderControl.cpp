@@ -510,24 +510,10 @@ void OrthogonalRenderControl::eventPaint(ui::PaintEvent* event)
 	worldRenderView.setView(view, view);
 	m_worldRenderer->setup(worldRenderView, &rootEntity, *m_renderGraph, 0);
 
-	// Validate render graph.
-	if (!m_renderGraph->validate(m_dirtySize.cx, m_dirtySize.cy))
-		return;
-
-	// Build render context.
-	m_renderContext->flush();
-	m_renderGraph->build(m_renderContext);
-
-	// Render frame.
-	render::Clear clear = {};
-	clear.mask = render::CfColor | render::CfDepth | render::CfStencil;
-	clear.colors[0] = Color4f(colorClear[0], colorClear[1], colorClear[2], colorClear[3]);
-	clear.depth = 1.0f;
-	clear.stencil = 0;
-	if (m_renderView->begin(&clear))
-	{
-		// Render context.
-		m_renderContext->render(m_renderView);
+	// Draw debug wires.
+	Ref< render::RenderPass > rp = new render::RenderPass(L"Debug");
+	rp->setOutput(0);
+	rp->addBuild([&](const render::RenderGraph&, render::RenderContext* renderContext) {
 
 		// Draw wire guides.
 		m_primitiveRenderer->begin(0, worldRenderView.getProjection());
@@ -687,9 +673,27 @@ void OrthogonalRenderControl::eventPaint(ui::PaintEvent* event)
 		}
 
 		m_primitiveRenderer->end(0);
-		m_primitiveRenderer->render(m_renderView, 0);
 
-		m_renderView->end();
+		auto rb = renderContext->alloc< render::LambdaRenderBlock >();
+		rb->lambda = [&](render::IRenderView* renderView) {
+			m_primitiveRenderer->render(m_renderView, 0);
+		};
+		renderContext->enqueue(rb);
+	});
+
+	// Validate render graph.
+	if (!m_renderGraph->validate(m_dirtySize.cx, m_dirtySize.cy))
+		return;
+
+	// Build render context.
+	m_renderContext->flush();
+	m_renderGraph->build(m_renderContext);
+
+	// Render frame.
+	if (m_renderView->beginFrame())
+	{
+		m_renderContext->render(m_renderView);
+		m_renderView->endFrame();
 		m_renderView->present();
 	}
 

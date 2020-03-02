@@ -21,16 +21,30 @@ void SpriteEntityRenderer::gather(
 {
 }
 
-void SpriteEntityRenderer::build(
-	const world::WorldBuildContext& context,
+void SpriteEntityRenderer::setup(
+	const world::WorldSetupContext& context,
 	const world::WorldRenderView& worldRenderView,
-	const world::IWorldRenderPass& worldRenderPass,
-	world::Entity* entity
+	Object* renderable
 )
 {
 }
 
-void SpriteEntityRenderer::flush(
+void SpriteEntityRenderer::setup(
+	const world::WorldSetupContext& context
+)
+{
+}
+
+void SpriteEntityRenderer::build(
+	const world::WorldBuildContext& context,
+	const world::WorldRenderView& worldRenderView,
+	const world::IWorldRenderPass& worldRenderPass,
+	Object* renderable
+)
+{
+}
+
+void SpriteEntityRenderer::build(
 	const world::WorldBuildContext& context,
 	const world::WorldRenderView& worldRenderView,
 	const world::IWorldRenderPass& worldRenderPass
