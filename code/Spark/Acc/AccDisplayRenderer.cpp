@@ -306,7 +306,7 @@ void AccDisplayRenderer::begin(
 
 	if (m_frameTarget)
 	{
-		render::TargetBeginRenderBlock* renderBlock = m_renderContext->alloc< render::TargetBeginRenderBlock >(L"Flash begin target");
+		auto renderBlock = m_renderContext->alloc< render::BeginPassRenderBlock >(L"Flash begin target");
 		renderBlock->renderTargetSet = m_frameTarget;
 		renderBlock->renderTargetIndex = 0;
 		m_renderContext->enqueue(renderBlock);
@@ -639,7 +639,7 @@ void AccDisplayRenderer::renderGlyph(
 			-cachePixelDy * c_cacheGlyphMargin * 2.0f
 		);
 
-		render::TargetBeginRenderBlock* renderBlockBegin = m_renderContext->alloc< render::TargetBeginRenderBlock >(L"Flash glyph render begin");
+		auto renderBlockBegin = m_renderContext->alloc< render::BeginPassRenderBlock >(L"Flash glyph render begin");
 		renderBlockBegin->renderTargetSet = m_renderTargetGlyphs;
 		renderBlockBegin->renderTargetIndex = 0;
 		m_renderContext->enqueue(renderBlockBegin);
@@ -672,7 +672,7 @@ void AccDisplayRenderer::renderGlyph(
 			SbmDefault
 		);
 
-		render::TargetEndRenderBlock* renderBlockEnd = m_renderContext->alloc< render::TargetEndRenderBlock >(L"Flash glyph render end");
+		auto renderBlockEnd = m_renderContext->alloc< render::EndPassRenderBlock >(L"Flash glyph render end");
 		m_renderContext->enqueue(renderBlockEnd);
 
 		it1->second.index = index;
@@ -833,7 +833,7 @@ void AccDisplayRenderer::end()
 
 	if (m_frameTarget)
 	{
-		render::TargetEndRenderBlock* renderBlock = m_renderContext->alloc< render::TargetEndRenderBlock >(L"Flash end target");
+		auto renderBlock = m_renderContext->alloc< render::EndPassRenderBlock >(L"Flash end target");
 		m_renderContext->enqueue(renderBlock);
 		m_quad->blit(m_renderContext, m_frameTarget->getColorTexture(0));
 	}

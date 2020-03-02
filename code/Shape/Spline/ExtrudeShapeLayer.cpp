@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <numeric>
 #include "Core/Log/Log.h"
 #include "Core/Math/Const.h"
@@ -45,6 +46,23 @@ ExtrudeShapeLayer::ExtrudeShapeLayer(
 ,	m_automaticOrientation(automaticOrientation)
 ,	m_detail(detail)
 {
+}
+
+void ExtrudeShapeLayer::destroy()
+{
+}
+
+void ExtrudeShapeLayer::setOwner(world::Entity* owner)
+{
+}
+
+void ExtrudeShapeLayer::setTransform(const Transform& transform)
+{
+}
+
+Aabb3 ExtrudeShapeLayer::getBoundingBox() const
+{
+	return Aabb3();
 }
 
 void ExtrudeShapeLayer::update(const world::UpdateParams& update)

@@ -33,6 +33,20 @@ void WeatherRenderer::gather(
 {
 }
 
+void WeatherRenderer::setup(
+	const world::WorldSetupContext& context,
+	const world::WorldRenderView& worldRenderView,
+	Object* renderable
+)
+{
+}
+
+void WeatherRenderer::setup(
+	const world::WorldSetupContext& context
+)
+{
+}
+
 void WeatherRenderer::build(
 	const world::WorldBuildContext& context,
 	const world::WorldRenderView& worldRenderView,
@@ -48,15 +62,11 @@ void WeatherRenderer::build(
 		skyComponent->build(context.getRenderContext(), worldRenderView, worldRenderPass);
 }
 
-void WeatherRenderer::flush(
+void WeatherRenderer::build(
 	const world::WorldBuildContext& context,
 	const world::WorldRenderView& worldRenderView,
 	const world::IWorldRenderPass& worldRenderPass
 )
-{
-}
-
-void WeatherRenderer::setup(const world::WorldSetupContext& context)
 {
 }
 

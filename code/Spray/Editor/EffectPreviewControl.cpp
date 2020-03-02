@@ -437,11 +437,11 @@ void EffectPreviewControl::eventPaint(ui::PaintEvent* event)
 
 	if (!m_renderView)
 		return;
-	if (!m_renderView->begin(&cl))
+	if (!m_renderView->beginPass(&cl))
 		return;
 
-	render::Viewport viewport = m_renderView->getViewport();
-	float aspect = float(viewport.width) / viewport.height;
+	ui::Size sz = getInnerRect().getSize();
+	float aspect = float(sz.cx) / sz.cy;
 
 	Matrix44 viewTransform = translate(m_effectPosition) * rotateX(m_anglePitch) * rotateY(m_angleHead);
 	Matrix44 projectionTransform = perspectiveLh(
@@ -504,7 +504,7 @@ void EffectPreviewControl::eventPaint(ui::PaintEvent* event)
 
 	if (
 		m_depthTexture &&
-		m_renderView->begin(m_depthTexture, 0, &cl)
+		m_renderView->beginPass(m_depthTexture, 0, &cl)
 	)
 	{
 		if (m_groundClip && m_primitiveRenderer->begin(0, projectionTransform))
@@ -526,7 +526,7 @@ void EffectPreviewControl::eventPaint(ui::PaintEvent* event)
 			m_primitiveRenderer->render(m_renderView, 0);
 		}
 
-		m_renderView->end();
+		m_renderView->endPass();
 	}
 
 	//if (m_postProcess)
@@ -584,7 +584,7 @@ void EffectPreviewControl::eventPaint(ui::PaintEvent* event)
 		world::WorldRenderView worldRenderView;
 		worldRenderView.setProjection(projectionTransform);
 		worldRenderView.setView(viewTransform, viewTransform);
-		worldRenderView.setViewSize(Vector2(float(viewport.width), float(viewport.height)));
+		worldRenderView.setViewSize(Vector2(float(sz.cx), float(sz.cy)));
 		worldRenderView.setCullFrustum(viewFrustum);
 		worldRenderView.setViewFrustum(viewFrustum);
 		worldRenderView.setTimes(time, deltaTime, 0.0f);
@@ -694,7 +694,7 @@ void EffectPreviewControl::eventPaint(ui::PaintEvent* event)
 	m_primitiveRenderer->end(0);
 	m_primitiveRenderer->render(m_renderView, 0);
 
-	m_renderView->end();
+	m_renderView->endPass();
 	m_renderView->present();
 
 	event->consume();

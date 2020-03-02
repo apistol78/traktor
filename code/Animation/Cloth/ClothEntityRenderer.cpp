@@ -21,6 +21,20 @@ void ClothEntityRenderer::gather(
 {
 }
 
+void ClothEntityRenderer::setup(
+	const world::WorldSetupContext& context,
+	const world::WorldRenderView& worldRenderView,
+	Object* renderable
+)
+{
+}
+
+void ClothEntityRenderer::setup(
+	const world::WorldSetupContext& context
+)
+{
+}
+
 void ClothEntityRenderer::build(
 	const world::WorldBuildContext& context,
 	const world::WorldRenderView& worldRenderView,
@@ -32,15 +46,11 @@ void ClothEntityRenderer::build(
 	clothEntity->build(context, worldRenderView, worldRenderPass);
 }
 
-void ClothEntityRenderer::flush(
+void ClothEntityRenderer::build(
 	const world::WorldBuildContext& context,
 	const world::WorldRenderView& worldRenderView,
 	const world::IWorldRenderPass& worldRenderPass
 )
-{
-}
-
-void ClothEntityRenderer::setup(const world::WorldSetupContext& context)
 {
 }
 

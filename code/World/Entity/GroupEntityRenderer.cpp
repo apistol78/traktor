@@ -1,5 +1,6 @@
 #include "World/WorldBuildContext.h"
 #include "World/WorldGatherContext.h"
+#include "World/WorldSetupContext.h"
 #include "World/Entity/GroupComponent.h"
 #include "World/Entity/GroupEntity.h"
 #include "World/Entity/GroupEntityRenderer.h"
@@ -45,6 +46,33 @@ void GroupEntityRenderer::gather(
 	}
 }
 
+void GroupEntityRenderer::setup(
+	const WorldSetupContext& context,
+	const WorldRenderView& worldRenderView,
+	Object* renderable
+)
+{
+	if (auto groupComponent = dynamic_type_cast< GroupComponent* >(renderable))
+	{
+		for (auto childEntity : groupComponent->getEntities())
+			context.setup(worldRenderView, childEntity);
+	}
+	else if (auto groupEntity = dynamic_type_cast< GroupEntity* >(renderable))
+	{
+		if ((groupEntity->getMask() & m_filter) != 0)
+		{
+			for (auto childEntity : groupEntity->getEntities())
+				context.setup(worldRenderView, childEntity);
+		}
+	}
+}
+
+void GroupEntityRenderer::setup(
+	const WorldSetupContext& context
+)
+{
+}
+
 void GroupEntityRenderer::build(
 	const WorldBuildContext& context,
 	const WorldRenderView& worldRenderView,
@@ -67,15 +95,11 @@ void GroupEntityRenderer::build(
 	}
 }
 
-void GroupEntityRenderer::flush(
+void GroupEntityRenderer::build(
 	const WorldBuildContext& context,
 	const WorldRenderView& worldRenderView,
 	const IWorldRenderPass& worldRenderPass
 )
-{
-}
-
-void GroupEntityRenderer::setup(const WorldSetupContext& context)
 {
 }
 

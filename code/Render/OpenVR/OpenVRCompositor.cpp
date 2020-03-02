@@ -138,15 +138,15 @@ bool OpenVRCompositor::beginRenderEye(IRenderView* renderView, int32_t eye)
 	cl.depth = 1.0f;
 	cl.stencil = 0;
 
-	if (!renderView->begin(m_targetSet, &cl))
+	//if (!renderView->begin(m_targetSet, &cl))
 		return false;
 
-	return true;
+	//return true;
 }
 
 bool OpenVRCompositor::endRenderEye(IRenderView* renderView, int32_t eye)
 {
-	renderView->end();
+	//renderView->end();
 	return true;
 }
 

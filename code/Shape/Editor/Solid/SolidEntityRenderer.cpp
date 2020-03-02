@@ -22,6 +22,20 @@ void SolidEntityRenderer::gather(
 {
 }
 
+void SolidEntityRenderer::setup(
+	const world::WorldSetupContext& context,
+	const world::WorldRenderView& worldRenderView,
+	Object* renderable
+)
+{
+}
+
+void SolidEntityRenderer::setup(
+	const world::WorldSetupContext& context
+)
+{
+}
+
 void SolidEntityRenderer::build(
 	const world::WorldBuildContext& context,
 	const world::WorldRenderView& worldRenderView,
@@ -39,15 +53,11 @@ void SolidEntityRenderer::build(
 	}
 }
 
-void SolidEntityRenderer::flush(
+void SolidEntityRenderer::build(
 	const world::WorldBuildContext& context,
 	const world::WorldRenderView& worldRenderView,
 	const world::IWorldRenderPass& worldRenderPass
 )
-{
-}
-
-void SolidEntityRenderer::setup(const world::WorldSetupContext& context)
 {
 }
 

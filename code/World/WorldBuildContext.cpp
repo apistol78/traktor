@@ -28,7 +28,7 @@ void WorldBuildContext::build(const WorldRenderView& worldRenderView, const IWor
 void WorldBuildContext::flush(const WorldRenderView& worldRenderView, const IWorldRenderPass& worldRenderPass) const
 {
 	for (auto entityRenderer : m_entityRenderers->get())
-		entityRenderer->flush(*this, worldRenderView, worldRenderPass);
+		entityRenderer->build(*this, worldRenderView, worldRenderPass);
 }
 
 	}

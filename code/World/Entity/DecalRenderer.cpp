@@ -89,6 +89,20 @@ void DecalRenderer::gather(
 {
 }
 
+void DecalRenderer::setup(
+	const WorldSetupContext& context
+)
+{
+}
+
+void DecalRenderer::setup(
+	const WorldSetupContext& context,
+	const WorldRenderView& worldRenderView,
+	Object* renderable
+)
+{
+}
+
 void DecalRenderer::build(
 	const WorldBuildContext& context,
 	const WorldRenderView& worldRenderView,
@@ -114,7 +128,7 @@ void DecalRenderer::build(
 	m_decalComponents.push_back(decalComponent);
 }
 
-void DecalRenderer::flush(
+void DecalRenderer::build(
 	const WorldBuildContext& context,
 	const WorldRenderView& worldRenderView,
 	const IWorldRenderPass& worldRenderPass
@@ -186,10 +200,6 @@ void DecalRenderer::flush(
 
 	// Flush all queued decals.
 	m_decalComponents.resize(0);
-}
-
-void DecalRenderer::setup(const WorldSetupContext& context)
-{
 }
 
 	}

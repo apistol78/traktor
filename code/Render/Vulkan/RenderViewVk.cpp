@@ -75,7 +75,6 @@ RenderViewVk::RenderViewVk(
 ,	m_renderFence(0)
 ,	m_presentCompleteSemaphore(0)
 ,	m_haveDebugMarkers(false)
-,	m_targetStateDirty(false)
 ,	m_targetId(0)
 ,	m_targetRenderPass(0)
 ,	m_targetFrameBuffer(0)
@@ -416,31 +415,14 @@ void RenderViewVk::setViewport(const Viewport& viewport)
 	T_ASSERT(viewport.width > 0);
 	T_ASSERT(viewport.height > 0);
 
-	if (m_targetStateStack.empty())
-	{
-		m_viewport = viewport;
-	}
-	else
-	{
-		m_targetStateStack.back().viewport = viewport;
-
-		if (!m_targetStateDirty)
-		{
-			VkViewport vp = {};
-			vp.x = viewport.left;
-			vp.y = viewport.top;
-			vp.width = viewport.width;
-			vp.height = viewport.height;
-			vp.minDepth = viewport.nearZ;
-			vp.maxDepth = viewport.farZ;
-			vkCmdSetViewport(m_graphicsCommandBuffer, 0, 1, &vp);
-		}
-	}
-}
-
-Viewport RenderViewVk::getViewport()
-{
-	return m_targetStateStack.empty() ? m_viewport : m_targetStateStack.back().viewport;
+	VkViewport vp = {};
+	vp.x = viewport.left;
+	vp.y = viewport.top;
+	vp.width = viewport.width;
+	vp.height = viewport.height;
+	vp.minDepth = viewport.nearZ;
+	vp.maxDepth = viewport.farZ;
+	vkCmdSetViewport(m_graphicsCommandBuffer, 0, 1, &vp);
 }
 
 SystemWindow RenderViewVk::getSystemWindow()
@@ -454,9 +436,7 @@ SystemWindow RenderViewVk::getSystemWindow()
 #endif
 }
 
-bool RenderViewVk::begin(
-	const Clear* clear
-)
+bool RenderViewVk::beginFrame()
 {
 	// Might reach here with a non-created instance, pending reset, so
 	// we need to make sure we have an instance first.
@@ -485,74 +465,325 @@ bool RenderViewVk::begin(
 	beginInfo.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
 	if (vkBeginCommandBuffer(m_graphicsCommandBuffer, &beginInfo) != VK_SUCCESS)
 		return false;
+	
+	return true;
+}
+
+void RenderViewVk::endFrame()
+{
+	VkResult result;
+
+	// Prepare primary color for presentation.
+	m_primaryTargets[m_currentImageIndex]->getColorTargetVk(0)->prepareForPresentation(m_graphicsCommandBuffer);
+
+	// End recording command buffer.
+	result = vkEndCommandBuffer(m_graphicsCommandBuffer);
+	if (result != VK_SUCCESS)
+	{
+		log::warning << L"Vulkan error reported, \"" << getHumanResult(result) << L"\"; need to reset renderer (1)." << Endl;
+		
+		// Issue an event in order to reset view.
+		RenderEvent evt;
+		evt.type = ReLost;
+		m_eventQueue.push_back(evt);
+		return;
+	}
+
+	// Wait until GPU has finished rendering all commands.
+    VkPipelineStageFlags waitStageMash = { VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT };
+
+    VkSubmitInfo si = {};
+    si.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+    si.waitSemaphoreCount = 1;
+    si.pWaitSemaphores = &m_presentCompleteSemaphore;
+    si.pWaitDstStageMask = &waitStageMash;
+    si.commandBufferCount = 1;
+    si.pCommandBuffers = &m_graphicsCommandBuffer;
+    si.signalSemaphoreCount = 0;
+    si.pSignalSemaphores = nullptr;
+
+	vkResetFences(m_logicalDevice, 1, &m_renderFence);
+    vkQueueSubmit(m_presentQueue, 1, &si, m_renderFence);
+    result = vkWaitForFences(m_logicalDevice, 1, &m_renderFence, VK_TRUE, 5 * 60 * 1000ull * 1000ull * 1000ull);
+	if (result != VK_SUCCESS)
+	{
+		log::warning << L"Vulkan error reported, \"" << getHumanResult(result) << L"\"; need to reset renderer (2)." << Endl;
+		
+		// Issue an event in order to reset view.
+		RenderEvent evt;
+		evt.type = ReLost;
+		m_eventQueue.push_back(evt);
+		return;
+	}
+
+	// Collect, or cycle, released buffers.
+	m_uniformBufferPool->collect();
+}
+
+void RenderViewVk::present()
+{
+	VkResult result;
+
+	// Queue presentation of current primary target.
+    VkPresentInfoKHR pi = {};
+    pi.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
+    pi.swapchainCount = 1;
+    pi.pSwapchains = &m_swapChain;
+    pi.pImageIndices = &m_currentImageIndex;
+    pi.waitSemaphoreCount = 0;
+    pi.pWaitSemaphores = nullptr;
+    pi.pResults = nullptr;
+
+    result = vkQueuePresentKHR(m_presentQueue, &pi);
+	if (result != VK_SUCCESS)
+	{
+		log::warning << L"Vulkan error reported, \"" << getHumanResult(result) << L"\"; need to reset renderer (3)." << Endl;
+
+		// Issue an event in order to reset view.
+		RenderEvent evt;
+		evt.type = ReLost;
+		m_eventQueue.push_back(evt);
+		return;
+	}
+}
+
+bool RenderViewVk::beginPass(const Clear* clear)
+{
+	T_FATAL_ASSERT(m_targetRenderPass == 0);
 
 	// Push primary target onto stack.
-	TargetState ts;
+	TargetState& ts = m_targetState;
 	ts.rts = m_primaryTargets[m_currentImageIndex];
 	ts.colorIndex = 0;
 	ts.clear.mask = 0;
-	ts.viewport = m_viewport;
-
 	if (clear)
 		ts.clear = *clear;
 
-	m_targetStateStack.push_back(ts);
-	m_targetStateDirty = true;
+	// Prepare render target set as targets.
+	if (!ts.rts->prepareAsTarget(
+		m_graphicsCommandBuffer,
+		ts.colorIndex,
+		ts.clear,
+		m_primaryTargets[m_currentImageIndex]->getDepthTargetVk(),
+		
+		// Out
+		m_targetId,
+		m_targetRenderPass,
+		m_targetFrameBuffer
+	))
+		return false;
+
+	// Transform clear values.
+	StaticVector< VkClearValue, 8+1 > clearValues;
+	if (ts.colorIndex >= 0)
+	{
+		auto& cv = clearValues.push_back();
+		ts.clear.colors[0].storeUnaligned(cv.color.float32);
+	}
+	else
+	{
+		for (int32_t i = 0; i < ts.rts->getColorTargetCount(); ++i)
+		{
+			auto& cv = clearValues.push_back();
+			ts.clear.colors[i].storeUnaligned(cv.color.float32);
+		}
+	}
+	if (ts.rts->getDepthTargetVk() || ts.rts->usingPrimaryDepthStencil())
+	{
+		auto& cv = clearValues.push_back();
+		cv.depthStencil.depth = ts.clear.depth;
+		cv.depthStencil.stencil = ts.clear.stencil;
+	}
+
+	// Begin render pass.
+	VkRenderPassBeginInfo rpbi = {};
+	rpbi.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
+	rpbi.renderPass = m_targetRenderPass;
+	rpbi.framebuffer = m_targetFrameBuffer;
+	rpbi.renderArea.offset.x = 0;
+	rpbi.renderArea.offset.y = 0;
+	rpbi.renderArea.extent.width = ts.rts->getWidth();
+	rpbi.renderArea.extent.height = ts.rts->getHeight();
+	rpbi.clearValueCount = (uint32_t)clearValues.size();
+	rpbi.pClearValues = clearValues.c_ptr();
+	vkCmdBeginRenderPass(m_graphicsCommandBuffer, &rpbi,  VK_SUBPASS_CONTENTS_INLINE);
+
+	// Set viewport.
+	VkViewport vp = {};
+	vp.x = 0;
+	vp.y = 0;
+	vp.width = ts.rts->getWidth();
+	vp.height = ts.rts->getHeight();
+	vp.minDepth = 0.0f;
+	vp.maxDepth = 1.0f;
+	vkCmdSetViewport(m_graphicsCommandBuffer, 0, 1, &vp);
 
 	m_drawCalls = 0;
 	m_primitiveCount = 0;
 	return true;
 }
 
-bool RenderViewVk::begin(
-	IRenderTargetSet* renderTargetSet,
-	const Clear* clear
-)
+bool RenderViewVk::beginPass(IRenderTargetSet* renderTargetSet, const Clear* clear)
 {
-	// We cannot interleave render passes:
-	// 1) Too expensive to store/load.
-	// 2) Unable to determine store/load before begin/end.
-	T_FATAL_ASSERT(m_targetStateDirty);
-	T_FATAL_ASSERT(renderTargetSet != nullptr);
+	T_FATAL_ASSERT(m_targetRenderPass == 0);
 
-	TargetState ts;
+	TargetState& ts = m_targetState;
 	ts.rts = mandatory_non_null_type_cast< RenderTargetSetVk* >(renderTargetSet);
 	ts.colorIndex = -1;
 	ts.clear.mask = 0;
-	ts.viewport = Viewport(0, 0, ts.rts->getWidth(), ts.rts->getHeight(), 0.0f, 1.0f);
-
 	if (clear)
 		ts.clear = *clear;
 
-	m_targetStateStack.push_back(ts);
-	m_targetStateDirty = true;
+	// Prepare render target set as targets.
+	if (!ts.rts->prepareAsTarget(
+		m_graphicsCommandBuffer,
+		ts.colorIndex,
+		ts.clear,
+		m_primaryTargets[m_currentImageIndex]->getDepthTargetVk(),
+		
+		// Out
+		m_targetId,
+		m_targetRenderPass,
+		m_targetFrameBuffer
+	))
+		return false;
+
+	// Transform clear values.
+	StaticVector< VkClearValue, 8+1 > clearValues;
+	if (ts.colorIndex >= 0)
+	{
+		auto& cv = clearValues.push_back();
+		ts.clear.colors[0].storeUnaligned(cv.color.float32);
+	}
+	else
+	{
+		for (int32_t i = 0; i < ts.rts->getColorTargetCount(); ++i)
+		{
+			auto& cv = clearValues.push_back();
+			ts.clear.colors[i].storeUnaligned(cv.color.float32);
+		}
+	}
+	if (ts.rts->getDepthTargetVk() || ts.rts->usingPrimaryDepthStencil())
+	{
+		auto& cv = clearValues.push_back();
+		cv.depthStencil.depth = ts.clear.depth;
+		cv.depthStencil.stencil = ts.clear.stencil;
+	}
+
+	// Begin render pass.
+	VkRenderPassBeginInfo rpbi = {};
+	rpbi.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
+	rpbi.renderPass = m_targetRenderPass;
+	rpbi.framebuffer = m_targetFrameBuffer;
+	rpbi.renderArea.offset.x = 0;
+	rpbi.renderArea.offset.y = 0;
+	rpbi.renderArea.extent.width = ts.rts->getWidth();
+	rpbi.renderArea.extent.height = ts.rts->getHeight();
+	rpbi.clearValueCount = (uint32_t)clearValues.size();
+	rpbi.pClearValues = clearValues.c_ptr();
+	vkCmdBeginRenderPass(m_graphicsCommandBuffer, &rpbi,  VK_SUBPASS_CONTENTS_INLINE);
+
+	// Set viewport.
+	VkViewport vp = {};
+	vp.x = 0;
+	vp.y = 0;
+	vp.width = ts.rts->getWidth();
+	vp.height = ts.rts->getHeight();
+	vp.minDepth = 0.0f;
+	vp.maxDepth = 1.0f;
+	vkCmdSetViewport(m_graphicsCommandBuffer, 0, 1, &vp);
 	return true;
 }
 
-bool RenderViewVk::begin(
-	IRenderTargetSet* renderTargetSet,
-	int32_t renderTarget,
-	const Clear* clear
-)
+bool RenderViewVk::beginPass(IRenderTargetSet* renderTargetSet, int32_t renderTarget, const Clear* clear)
 {
-	// We cannot interleave render passes:
-	// 1) Too expensive to store/load.
-	// 2) Unable to determine store/load before begin/end.
-	T_FATAL_ASSERT(m_targetStateDirty);
-	T_FATAL_ASSERT(renderTargetSet != nullptr);
+	T_FATAL_ASSERT(m_targetRenderPass == 0);
 
-	TargetState ts;
+	TargetState& ts = m_targetState;
 	ts.rts = mandatory_non_null_type_cast< RenderTargetSetVk* >(renderTargetSet);
 	ts.colorIndex = renderTarget;
 	ts.clear.mask = 0;
-	ts.viewport = Viewport(0, 0, ts.rts->getWidth(), ts.rts->getHeight(), 0.0f, 1.0f);
-
 	if (clear)
 		ts.clear = *clear;
 
-	m_targetStateStack.push_back(ts);
-	m_targetStateDirty = true;
+	// Prepare render target set as targets.
+	if (!ts.rts->prepareAsTarget(
+		m_graphicsCommandBuffer,
+		ts.colorIndex,
+		ts.clear,
+		m_primaryTargets[m_currentImageIndex]->getDepthTargetVk(),
+		
+		// Out
+		m_targetId,
+		m_targetRenderPass,
+		m_targetFrameBuffer
+	))
+		return false;
+
+	// Transform clear values.
+	StaticVector< VkClearValue, 8+1 > clearValues;
+	if (ts.colorIndex >= 0)
+	{
+		auto& cv = clearValues.push_back();
+		ts.clear.colors[0].storeUnaligned(cv.color.float32);
+	}
+	else
+	{
+		for (int32_t i = 0; i < ts.rts->getColorTargetCount(); ++i)
+		{
+			auto& cv = clearValues.push_back();
+			ts.clear.colors[i].storeUnaligned(cv.color.float32);
+		}
+	}
+	if (ts.rts->getDepthTargetVk() || ts.rts->usingPrimaryDepthStencil())
+	{
+		auto& cv = clearValues.push_back();
+		cv.depthStencil.depth = ts.clear.depth;
+		cv.depthStencil.stencil = ts.clear.stencil;
+	}
+
+	// Begin render pass.
+	VkRenderPassBeginInfo rpbi = {};
+	rpbi.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
+	rpbi.renderPass = m_targetRenderPass;
+	rpbi.framebuffer = m_targetFrameBuffer;
+	rpbi.renderArea.offset.x = 0;
+	rpbi.renderArea.offset.y = 0;
+	rpbi.renderArea.extent.width = ts.rts->getWidth();
+	rpbi.renderArea.extent.height = ts.rts->getHeight();
+	rpbi.clearValueCount = (uint32_t)clearValues.size();
+	rpbi.pClearValues = clearValues.c_ptr();
+	vkCmdBeginRenderPass(m_graphicsCommandBuffer, &rpbi,  VK_SUBPASS_CONTENTS_INLINE);
+
+	// Set viewport.
+	VkViewport vp = {};
+	vp.x = 0;
+	vp.y = 0;
+	vp.width = ts.rts->getWidth();
+	vp.height = ts.rts->getHeight();
+	vp.minDepth = 0.0f;
+	vp.maxDepth = 1.0f;
+	vkCmdSetViewport(m_graphicsCommandBuffer, 0, 1, &vp);
 	return true;
+}
+
+void RenderViewVk::endPass()
+{
+	// Close current render pass.
+	vkCmdEndRenderPass(m_graphicsCommandBuffer);
+
+	// Transition target to texture if necessary.
+	if (m_targetState.rts != m_primaryTargets[m_currentImageIndex])
+	{
+		m_targetState.rts->prepareAsTexture(
+			m_graphicsCommandBuffer,
+			m_targetState.colorIndex
+		);
+	}
+
+	m_targetId = 0;
+	m_targetRenderPass = 0;
+	m_targetFrameBuffer = 0;
 }
 
 void RenderViewVk::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, IProgram* program, const Primitives& primitives)
@@ -562,12 +793,11 @@ void RenderViewVk::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, IP
 
 void RenderViewVk::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, IProgram* program, const Primitives& primitives, uint32_t instanceCount)
 {
-	TargetState& ts = m_targetStateStack.back();
+	const TargetState& ts = m_targetState;
 
 	VertexBufferDynamicVk* vb = mandatory_non_null_type_cast< VertexBufferDynamicVk* >(vertexBuffer);
 	ProgramVk* p = mandatory_non_null_type_cast< ProgramVk* >(program);
 
-	validateTargetState();
 	validatePipeline(vb, p, primitives.type);
 
 	float targetSize[] =
@@ -817,123 +1047,6 @@ bool RenderViewVk::copy(ITexture* destinationTexture, int32_t destinationSide, i
 	}
 
 	return true;
-}
-
-void RenderViewVk::end()
-{
-	validateTargetState();
-
-	// Close current render pass.
-	vkCmdEndRenderPass(m_graphicsCommandBuffer);
-
-	// Transition target to texture if necessary.
-	if (m_targetStateStack.size() >= 2)
-	{
-		TargetState& ts = m_targetStateStack.back();
-		ts.rts->prepareAsTexture(
-			m_graphicsCommandBuffer,
-			ts.colorIndex
-		);
-	}
-
-	// Pop previous render pass from stack.
-	m_targetStateStack.pop_back();
-	m_targetStateDirty = true;
-}
-
-void RenderViewVk::flush()
-{
-	// End recording command buffer.
-	vkEndCommandBuffer(m_graphicsCommandBuffer);
-
-	// Wait until GPU has finished rendering all commands.
-	VkSubmitInfo si = {};
-	si.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
-	si.commandBufferCount = 1;
-	si.pCommandBuffers = &m_graphicsCommandBuffer;
-
-    vkQueueSubmit(m_presentQueue, 1, &si, VK_NULL_HANDLE);
-	vkQueueWaitIdle(m_presentQueue);
-
-	// Restart recording command buffer.
-	VkCommandBufferBeginInfo beginInfo = {};
-	beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
-	beginInfo.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
-	vkBeginCommandBuffer(m_graphicsCommandBuffer, &beginInfo);
-}
-
-void RenderViewVk::present()
-{
-	T_FATAL_ASSERT (m_targetStateStack.empty());
-	VkResult result;
-
-	// Prepare primary color for presentation.
-	m_primaryTargets[m_currentImageIndex]->getColorTargetVk(0)->prepareForPresentation(m_graphicsCommandBuffer);
-
-	// End recording command buffer.
-	result = vkEndCommandBuffer(m_graphicsCommandBuffer);
-	if (result != VK_SUCCESS)
-	{
-		log::warning << L"Vulkan error reported, \"" << getHumanResult(result) << L"\"; need to reset renderer (1)." << Endl;
-		
-		// Issue an event in order to reset view.
-		RenderEvent evt;
-		evt.type = ReLost;
-		m_eventQueue.push_back(evt);
-		return;
-	}
-
-	// Wait until GPU has finished rendering all commands.
-    VkPipelineStageFlags waitStageMash = { VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT };
-
-    VkSubmitInfo si = {};
-    si.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
-    si.waitSemaphoreCount = 1;
-    si.pWaitSemaphores = &m_presentCompleteSemaphore;
-    si.pWaitDstStageMask = &waitStageMash;
-    si.commandBufferCount = 1;
-    si.pCommandBuffers = &m_graphicsCommandBuffer;
-    si.signalSemaphoreCount = 0;
-    si.pSignalSemaphores = nullptr;
-
-	vkResetFences(m_logicalDevice, 1, &m_renderFence);
-    vkQueueSubmit(m_presentQueue, 1, &si, m_renderFence);
-    result = vkWaitForFences(m_logicalDevice, 1, &m_renderFence, VK_TRUE, 5 * 60 * 1000ull * 1000ull * 1000ull);
-	if (result != VK_SUCCESS)
-	{
-		log::warning << L"Vulkan error reported, \"" << getHumanResult(result) << L"\"; need to reset renderer (2)." << Endl;
-		
-		// Issue an event in order to reset view.
-		RenderEvent evt;
-		evt.type = ReLost;
-		m_eventQueue.push_back(evt);
-		return;
-	}
-
-	// Queue presentation of current primary target.
-    VkPresentInfoKHR pi = {};
-    pi.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
-    pi.swapchainCount = 1;
-    pi.pSwapchains = &m_swapChain;
-    pi.pImageIndices = &m_currentImageIndex;
-    pi.waitSemaphoreCount = 0;
-    pi.pWaitSemaphores = nullptr;
-    pi.pResults = nullptr;
-
-    result = vkQueuePresentKHR(m_presentQueue, &pi);
-	if (result != VK_SUCCESS)
-	{
-		log::warning << L"Vulkan error reported, \"" << getHumanResult(result) << L"\"; need to reset renderer (3)." << Endl;
-
-		// Issue an event in order to reset view.
-		RenderEvent evt;
-		evt.type = ReLost;
-		m_eventQueue.push_back(evt);
-		return;
-	}
-
-	// Collect, or cycle, released buffers.
-	m_uniformBufferPool->collect();
 }
 
 void RenderViewVk::pushMarker(const char* const marker)
@@ -1247,14 +1360,6 @@ bool RenderViewVk::create(uint32_t width, uint32_t height)
 	sci.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
     vkCreateSemaphore(m_logicalDevice, &sci, nullptr, &m_presentCompleteSemaphore);
 
-	// Set default viewport.
-	m_viewport.left = 0;
-	m_viewport.top = 0;
-	m_viewport.width = width;
-	m_viewport.height = height;
-	m_viewport.nearZ = 0.0f;
-	m_viewport.farZ = 1.0f;
-
 	// Check if debug marker extension is available.
 	uint32_t extensionCount;
 	vkEnumerateDeviceExtensionProperties(m_physicalDevice, nullptr, &extensionCount, nullptr);
@@ -1278,77 +1383,6 @@ bool RenderViewVk::create(uint32_t width, uint32_t height)
 	return true;
 }
 
-void RenderViewVk::validateTargetState()
-{
-	if (!m_targetStateDirty)
-		return;
-
-	T_FATAL_ASSERT (!m_targetStateStack.empty());
-	TargetState& ts = m_targetStateStack.back();
-
-	// Prepare render target set as targets.
-	if (!ts.rts->prepareAsTarget(
-		m_graphicsCommandBuffer,
-		ts.colorIndex,
-		ts.clear,
-		m_primaryTargets[m_currentImageIndex]->getDepthTargetVk(),
-		
-		// Out
-		m_targetId,
-		m_targetRenderPass,
-		m_targetFrameBuffer
-	))
-		return;
-
-	// Transform clear values.
-	StaticVector< VkClearValue, 8+1 > clearValues;
-	if (ts.colorIndex >= 0)
-	{
-		auto& cv = clearValues.push_back();
-		ts.clear.colors[0].storeUnaligned(cv.color.float32);
-	}
-	else
-	{
-		for (int32_t i = 0; i < ts.rts->getColorTargetCount(); ++i)
-		{
-			auto& cv = clearValues.push_back();
-			ts.clear.colors[i].storeUnaligned(cv.color.float32);
-		}
-	}
-	if (ts.rts->getDepthTargetVk() || ts.rts->usingPrimaryDepthStencil())
-	{
-		auto& cv = clearValues.push_back();
-		cv.depthStencil.depth = ts.clear.depth;
-		cv.depthStencil.stencil = ts.clear.stencil;
-	}
-
-	// Begin render pass.
-	VkRenderPassBeginInfo rpbi = {};
-	rpbi.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
-	rpbi.renderPass = m_targetRenderPass;
-	rpbi.framebuffer = m_targetFrameBuffer;
-	rpbi.renderArea.offset.x = 0;
-	rpbi.renderArea.offset.y = 0;
-	rpbi.renderArea.extent.width = ts.rts->getWidth();
-	rpbi.renderArea.extent.height = ts.rts->getHeight();
-	rpbi.clearValueCount = (uint32_t)clearValues.size();
-	rpbi.pClearValues = clearValues.c_ptr();
-	vkCmdBeginRenderPass(m_graphicsCommandBuffer, &rpbi,  VK_SUBPASS_CONTENTS_INLINE);
-
-	// Set viewport.
-	VkViewport vp = {};
-	vp.x = ts.viewport.left;
-	vp.y = ts.viewport.top;
-	vp.width = ts.viewport.width;
-	vp.height = ts.viewport.height;
-	vp.minDepth = ts.viewport.nearZ;
-	vp.maxDepth = ts.viewport.farZ;
-	vkCmdSetViewport(m_graphicsCommandBuffer, 0, 1, &vp);
-
-	ts.clear.mask = 0;
-	m_targetStateDirty = false;
-}
-
 bool RenderViewVk::validatePipeline(VertexBufferDynamicVk* vb, ProgramVk* p, PrimitiveType pt)
 {
 	uint32_t primitiveId = (uint32_t)pt;
@@ -1364,8 +1398,7 @@ bool RenderViewVk::validatePipeline(VertexBufferDynamicVk* vb, ProgramVk* p, Pri
 		pipeline = it->second;
 	else
 	{
-		T_FATAL_ASSERT (!m_targetStateStack.empty());
-		const TargetState& ts = m_targetStateStack.back();
+		const TargetState& ts = m_targetState;
 		const RenderState& rs = p->getRenderState();
 
 		uint32_t colorAttachmentCount = ts.rts->getColorTargetCount();

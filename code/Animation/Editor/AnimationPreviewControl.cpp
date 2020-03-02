@@ -313,8 +313,7 @@ void AnimationPreviewControl::eventPaint(ui::PaintEvent* event)
 	m_colorClear.getRGBA32F(tmp);
 	Color4f clearColor(tmp[0], tmp[1], tmp[2], tmp[3]);
 
-	render::Viewport viewport = m_renderView->getViewport();
-	float aspect = float(viewport.width) / viewport.height;
+	float aspect = float(sz.cx) / sz.cy;
 
 	Matrix44 viewTransform = translate(m_position) * rotateX(m_anglePitch) * rotateY(m_angleHead);
 	Matrix44 projectionTransform = perspectiveLh(
@@ -375,7 +374,7 @@ void AnimationPreviewControl::eventPaint(ui::PaintEvent* event)
 	cl.mask = render::CfColor | render::CfDepth;
 	cl.colors[0] = clearColor;
 	cl.depth = 1.0f;
-	if (m_renderView->begin(&cl))
+	if (m_renderView->beginPass(&cl))
 	{
 		// Render context.
 		m_renderContext->render(m_renderView);
@@ -463,7 +462,7 @@ void AnimationPreviewControl::eventPaint(ui::PaintEvent* event)
 			m_primitiveRenderer->render(m_renderView, 0);
 		}
 
-		m_renderView->end();
+		m_renderView->endPass();
 		m_renderView->present();
 	}
 

@@ -522,11 +522,6 @@ void PerspectiveRenderControl::eventPaint(ui::PaintEvent* event)
 	float colorClear[4]; m_colorClear.getRGBA32F(colorClear);
 	float deltaTime = float(m_timer.getDeltaTime());
 	float scaledTime = m_context->getTime();
-
-	const world::WorldRenderSettings* worldRenderSettings = sceneInstance->getWorldRenderSettings();
-	ui::Size sz = m_renderWidget->getInnerRect().getSize();
-
-	// Get current transformations.
 	Matrix44 projection = getProjectionTransform();
 	Matrix44 view = getViewTransform();
 
@@ -536,6 +531,8 @@ void PerspectiveRenderControl::eventPaint(ui::PaintEvent* event)
 	rootEntity.addEntity(sceneInstance->getRootEntity());
 
 	// Setup world render passes.
+	const world::WorldRenderSettings* worldRenderSettings = sceneInstance->getWorldRenderSettings();
+	ui::Size sz = m_renderWidget->getInnerRect().getSize();
 	m_worldRenderView.setPerspective(
 		float(sz.cx),
 		float(sz.cy),
@@ -548,33 +545,10 @@ void PerspectiveRenderControl::eventPaint(ui::PaintEvent* event)
 	m_worldRenderView.setView(m_worldRenderView.getView(), view);
 	m_worldRenderer->setup(m_worldRenderView, &rootEntity, *m_renderGraph, 0);
 
-	// Validate render graph.
-	if (!m_renderGraph->validate(m_dirtySize.cx, m_dirtySize.cy))
-		return;
-
-	// Build render context.
-	m_renderContext->flush();
-	m_renderGraph->build(m_renderContext);
-
-	// Render frame.
-	render::Clear clear = {};
-	clear.mask = render::CfColor | render::CfDepth | render::CfStencil;
-	clear.colors[0] = Color4f(colorClear[0], colorClear[1], colorClear[2], colorClear[3]);
-	clear.depth = 1.0f;
-	clear.stencil = 0;
-	if (m_renderView->begin(&clear))
-	{
-		// Render context.
-		m_renderContext->render(m_renderView);
-
-		// \fixme Render debug target.
-		// if (m_debugTarget.texture)
-		// {
-		// 	m_debugShader->setTechnique(c_visualizeTechniques[m_debugTarget.visualize]);
-		// 	m_debugShader->setTextureParameter(L"Scene_DebugTexture", m_debugTarget.texture);
-		// 	m_debugShader->setFloatParameter(L"Scene_DebugAlpha", m_debugAlpha);
-		// 	m_screenRenderer->draw(m_renderView, m_debugShader);
-		// }
+	// Draw debug wires.
+	Ref< render::RenderPass > rp = new render::RenderPass(L"Debug");
+	rp->setOutput(0);
+	rp->addBuild([&](const render::RenderGraph&, render::RenderContext* renderContext) {
 
 		// Render wire guides.
 		m_primitiveRenderer->begin(0, projection);
@@ -722,9 +696,28 @@ void PerspectiveRenderControl::eventPaint(ui::PaintEvent* event)
 		}
 
 		m_primitiveRenderer->end(0);
-		m_primitiveRenderer->render(m_renderView, 0);
 
-		m_renderView->end();
+		auto rb = renderContext->alloc< render::LambdaRenderBlock >();
+		rb->lambda = [&](render::IRenderView* renderView) {
+			m_primitiveRenderer->render(m_renderView, 0);
+		};
+		renderContext->enqueue(rb);
+	});
+	m_renderGraph->addPass(rp);
+
+	// Validate render graph.
+	if (!m_renderGraph->validate(m_dirtySize.cx, m_dirtySize.cy))
+		return;
+
+	// Build render context.
+	m_renderContext->flush();
+	m_renderGraph->build(m_renderContext);
+
+	// Render frame.
+	if (m_renderView->beginFrame())
+	{
+		m_renderContext->render(m_renderView);
+		m_renderView->endFrame();
 		m_renderView->present();
 	}
 

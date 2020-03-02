@@ -402,9 +402,8 @@ void FinalRenderControl::eventPaint(ui::PaintEvent* event)
 	float deltaTime = float(m_timer.getDeltaTime());
 	float scaledTime = m_context->getTime();
 	float scaledDeltaTime = m_context->isPlaying() ? deltaTime * m_context->getTimeScale() : 0.0f;
-
-	const world::WorldRenderSettings* worldRenderSettings = m_sceneInstance->getWorldRenderSettings();
-	ui::Size sz = m_renderWidget->getInnerRect().getSize();
+	Matrix44 projection = getProjectionTransform();
+	Matrix44 view = getViewTransform();
 
 	// Update scene entities; final render control has it's own set of entities thus
 	// need to manually update those.
@@ -415,7 +414,14 @@ void FinalRenderControl::eventPaint(ui::PaintEvent* event)
 	m_sceneInstance->updateController(update);
 	m_sceneInstance->updateEntity(update);
 
-	// Update world render view.
+	// Build a root entity by gathering entities from containers.
+	world::GroupEntity rootEntity;
+	m_context->getEntityEventManager()->gather([&](world::Entity* entity) { rootEntity.addEntity(entity); });
+	rootEntity.addEntity(m_sceneInstance->getRootEntity());
+
+	// Setup world render passes.
+	const world::WorldRenderSettings* worldRenderSettings = m_sceneInstance->getWorldRenderSettings();
+	ui::Size sz = m_renderWidget->getInnerRect().getSize();
 	m_worldRenderView.setPerspective(
 		float(sz.cx),
 		float(sz.cy),
@@ -424,17 +430,6 @@ void FinalRenderControl::eventPaint(ui::PaintEvent* event)
 		worldRenderSettings->viewNearZ,
 		worldRenderSettings->viewFarZ
 	);
-
-	// Get current transformations.
-	Matrix44 projection = getProjectionTransform();
-	Matrix44 view = getViewTransform();
-
-	// Build a root entity by gathering entities from containers.
-	world::GroupEntity rootEntity;
-	m_context->getEntityEventManager()->gather([&](world::Entity* entity) { rootEntity.addEntity(entity); });
-	rootEntity.addEntity(m_sceneInstance->getRootEntity());
-
-	// Setup world render passes.
 	m_worldRenderView.setTimes(scaledTime, deltaTime, 1.0f);
 	m_worldRenderView.setView(m_worldRenderView.getView(), view);
 	m_worldRenderer->setup(m_worldRenderView, &rootEntity, *m_renderGraph, 0);
@@ -448,15 +443,10 @@ void FinalRenderControl::eventPaint(ui::PaintEvent* event)
 	m_renderGraph->build(m_renderContext);
 
 	// Render frame.
-	render::Clear clear = { 0 };
-	clear.mask = render::CfColor | render::CfDepth | render::CfStencil;
-	clear.colors[0] = Color4f(colorClear[0], colorClear[1], colorClear[2], colorClear[3]);
-	clear.depth = 1.0f;
-	clear.stencil = 0;
-	if (m_renderView->begin(&clear))
+	if (m_renderView->beginFrame())
 	{
 		m_renderContext->render(m_renderView);
-		m_renderView->end();
+		m_renderView->endFrame();
 		m_renderView->present();
 	}
 

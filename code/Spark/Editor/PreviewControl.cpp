@@ -118,8 +118,6 @@ bool PreviewControl::create(
 	if (!m_renderView)
 		return false;
 
-	render::Viewport viewport = m_renderView->getViewport();
-
 	m_displayRenderer = new AccDisplayRenderer();
 	m_displayRenderer->create(
 		resourceManager,
@@ -314,7 +312,7 @@ void PreviewControl::eventPaint(ui::PaintEvent* event)
 	cl.depth = 1.0f;
 	cl.stencil = 0;
 
-	if (m_renderView->begin(&cl))
+	if (m_renderView->beginPass(&cl))
 	{
 		// Build render context.
 		if (m_movie)
@@ -326,7 +324,7 @@ void PreviewControl::eventPaint(ui::PaintEvent* event)
 		// Flush render context.
 		m_displayRenderer->render(m_renderView, 0, Vector2(0.0f, 0.0f), 1.0f);
 
-		m_renderView->end();
+		m_renderView->endPass();
 		m_renderView->present();
 	}
 

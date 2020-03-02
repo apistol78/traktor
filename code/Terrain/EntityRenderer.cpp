@@ -57,6 +57,22 @@ void EntityRenderer::gather(
 {
 }
 
+void EntityRenderer::setup(
+	const world::WorldSetupContext& context,
+	const world::WorldRenderView& worldRenderView,
+	Object* renderable
+)
+{
+	if (TerrainComponent* terrainComponent = dynamic_type_cast< TerrainComponent* >(renderable))
+		terrainComponent->setup(context, worldRenderView, m_terrainDetailDistance, m_terrainCacheSize);
+}
+
+void EntityRenderer::setup(
+	const world::WorldSetupContext& context
+)
+{
+}
+
 void EntityRenderer::build(
 	const world::WorldBuildContext& context,
 	const world::WorldRenderView& worldRenderView,
@@ -76,15 +92,11 @@ void EntityRenderer::build(
 		riverComponent->build(context.getRenderContext(), worldRenderView, worldRenderPass);
 }
 
-void EntityRenderer::flush(
+void EntityRenderer::build(
 	const world::WorldBuildContext& context,
 	const world::WorldRenderView& worldRenderView,
 	const world::IWorldRenderPass& worldRenderPass
 )
-{
-}
-
-void EntityRenderer::setup(const world::WorldSetupContext& context)
 {
 }
 

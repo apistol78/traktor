@@ -61,6 +61,16 @@ public:
 		AlignedVector< Light >& outLights
 	) override final;
 
+	virtual void setup(
+		const WorldSetupContext& context,
+		const WorldRenderView& worldRenderView,
+		Object* renderable
+	) override final;
+
+	virtual void setup(
+		const WorldSetupContext& context
+	) override final;
+
 	virtual void build(
 		const WorldBuildContext& context,
 		const WorldRenderView& worldRenderView,
@@ -68,13 +78,11 @@ public:
 		Object* renderable
 	) override final;
 
-	virtual void flush(
+	virtual void build(
 		const WorldBuildContext& context,
 		const WorldRenderView& worldRenderView,
 		const IWorldRenderPass& worldRenderPass
 	) override final;
-
-	void setup(const WorldSetupContext& context) override final;
 
 private:
 	Ref< resource::IResourceManager > m_resourceManager;

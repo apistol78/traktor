@@ -118,34 +118,28 @@ void IndexedRenderBlock::render(IRenderView* renderView) const
 	T_CONTEXT_POP_MARKER(renderView);
 }
 
-void TargetBeginRenderBlock::render(IRenderView* renderView) const
+void BeginPassRenderBlock::render(IRenderView* renderView) const
 {
 	T_CONTEXT_PUSH_MARKER(renderView, name);
 
-	if (renderTargetIndex >= 0)
+	if (renderTargetSet)
 	{
-		renderView->begin(
-			renderTargetSet,
-			renderTargetIndex,
-			&clear
-		);
+		if (renderTargetIndex >= 0)
+			renderView->beginPass(renderTargetSet, renderTargetIndex, &clear);
+		else
+			renderView->beginPass(renderTargetSet, &clear);
 	}
 	else
-	{
-		renderView->begin(
-			renderTargetSet,
-			&clear
-		);
-	}
+		renderView->beginPass(&clear);
 
 	T_CONTEXT_POP_MARKER(renderView);
 }
 
-void TargetEndRenderBlock::render(IRenderView* renderView) const
+void EndPassRenderBlock::render(IRenderView* renderView) const
 {
 	T_CONTEXT_PUSH_MARKER(renderView, name);
 
-	renderView->end();
+	renderView->endPass();
 
 	T_CONTEXT_POP_MARKER(renderView);
 }

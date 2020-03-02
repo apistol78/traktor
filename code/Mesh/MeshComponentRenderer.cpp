@@ -21,6 +21,20 @@ void MeshComponentRenderer::gather(
 {
 }
 
+void MeshComponentRenderer::setup(
+	const world::WorldSetupContext& context,
+	const world::WorldRenderView& worldRenderView,
+	Object* renderable
+)
+{
+}
+
+void MeshComponentRenderer::setup(
+	const world::WorldSetupContext& context
+)
+{
+}
+
 void MeshComponentRenderer::build(
 	const world::WorldBuildContext& context,
 	const world::WorldRenderView& worldRenderView,
@@ -32,15 +46,11 @@ void MeshComponentRenderer::build(
 	meshComponent->build(context, worldRenderView, worldRenderPass);
 }
 
-void MeshComponentRenderer::flush(
+void MeshComponentRenderer::build(
 	const world::WorldBuildContext& context,
 	const world::WorldRenderView& worldRenderView,
 	const world::IWorldRenderPass& worldRenderPass
 )
-{
-}
-
-void MeshComponentRenderer::setup(const world::WorldSetupContext& context)
 {
 }
 

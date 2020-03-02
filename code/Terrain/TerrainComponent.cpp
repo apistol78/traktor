@@ -19,6 +19,7 @@
 #include "World/IWorldRenderPass.h"
 #include "World/WorldBuildContext.h"
 #include "World/WorldRenderView.h"
+#include "World/WorldSetupContext.h"
 
 namespace traktor
 {
@@ -29,6 +30,24 @@ namespace traktor
 
 const render::Handle c_handleVisualizeLods(L"VisualizeLods");
 const render::Handle c_handleVisualizeMap(L"VisualizeMap");
+const render::Handle c_handleSurface(L"Surface");
+const render::Handle c_handleSurfaceOffset(L"SurfaceOffset");
+const render::Handle c_handleHeightfield(L"Heightfield");
+const render::Handle c_handleColorMap(L"ColorMap");
+const render::Handle c_handleSplatMap(L"SplatMap");
+const render::Handle c_handleCutMap(L"CutMap");
+const render::Handle c_handleMaterialMap(L"MaterialMap");
+const render::Handle c_handleNormals(L"Normals");
+const render::Handle c_handleEye(L"Eye");
+const render::Handle c_handleWorldOrigin(L"WorldOrigin");
+const render::Handle c_handleWorldExtent(L"WorldExtent");
+const render::Handle c_handlePatchOrigin(L"PatchOrigin");
+const render::Handle c_handlePatchExtent(L"PatchExtent");
+const render::Handle c_handleDetailDistance(L"DetailDistance");
+const render::Handle c_handleDebugPatchColor(L"DebugPatchColor");
+const render::Handle c_handleDebugMap(L"DebugMap");
+const render::Handle c_handleCutEnable(L"CutEnable");
+const render::Handle c_handleColorEnable(L"ColorEnable");
 
 const int32_t c_patchLodSteps = 3;
 const int32_t c_surfaceLodSteps = 3;
@@ -52,14 +71,6 @@ struct CullPatch
 
 typedef std::pair< float, const TerrainComponent::Patch* > cull_patch_t;
 
-struct PatchFrontToBackPredicate
-{
-	bool operator () (const CullPatch& lh, const CullPatch& rh) const
-	{
-		return lh.distance < rh.distance;
-	}
-};
-
 		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.terrain.TerrainComponent", TerrainComponent, world::IEntityComponent)
@@ -69,24 +80,6 @@ TerrainComponent::TerrainComponent(resource::IResourceManager* resourceManager, 
 ,	m_renderSystem(renderSystem)
 ,	m_cacheSize(0)
 ,	m_visualizeMode(VmDefault)
-,	m_handleSurface(render::getParameterHandle(L"Surface"))
-,	m_handleSurfaceOffset(render::getParameterHandle(L"SurfaceOffset"))
-,	m_handleHeightfield(render::getParameterHandle(L"Heightfield"))
-,	m_handleColorMap(render::getParameterHandle(L"ColorMap"))
-,	m_handleSplatMap(render::getParameterHandle(L"SplatMap"))
-,	m_handleCutMap(render::getParameterHandle(L"CutMap"))
-,	m_handleMaterialMap(render::getParameterHandle(L"MaterialMap"))
-,	m_handleNormals(render::getParameterHandle(L"Normals"))
-,	m_handleEye(render::getParameterHandle(L"Eye"))
-,	m_handleWorldOrigin(render::getParameterHandle(L"WorldOrigin"))
-,	m_handleWorldExtent(render::getParameterHandle(L"WorldExtent"))
-,	m_handlePatchOrigin(render::getParameterHandle(L"PatchOrigin"))
-,	m_handlePatchExtent(render::getParameterHandle(L"PatchExtent"))
-,	m_handleDetailDistance(render::getParameterHandle(L"DetailDistance"))
-,	m_handleDebugPatchColor(render::getParameterHandle(L"DebugPatchColor"))
-,	m_handleDebugMap(render::getParameterHandle(L"DebugMap"))
-,	m_handleCutEnable(render::getParameterHandle(L"CutEnable"))
-,	m_handleColorEnable(render::getParameterHandle(L"ColorEnable"))
 {
 }
 
@@ -117,67 +110,15 @@ bool TerrainComponent::create(const TerrainComponentData& data)
 	return true;
 }
 
-void TerrainComponent::build(
-	const world::WorldBuildContext& context,
+void TerrainComponent::setup(
+	const world::WorldSetupContext& context,
 	const world::WorldRenderView& worldRenderView,
-	const world::IWorldRenderPass& worldRenderPass,
 	float detailDistance,
 	uint32_t cacheSize
 )
 {
-	if (
-		m_terrain.changed() ||
-		m_heightfield.changed()
-	)
-	{
-		m_heightfield.consume();
-		m_terrain.consume();
-
-		if (!createPatches())
-			return;
-	}
-
-	if (!m_surfaceCache || cacheSize != m_cacheSize)
-	{
-		safeDestroy(m_surfaceCache);
-		m_surfaceCache = new TerrainSurfaceCache();
-		if (!m_surfaceCache->create(m_resourceManager, m_renderSystem, cacheSize))
-			return;
-
-		m_cacheSize = cacheSize;
-	}
-
-	render::Shader* coarseShader = m_terrain->getTerrainCoarseShader();
-	render::Shader* detailShader = m_terrain->getTerrainDetailShader();
-
-	auto coarsePerm = worldRenderPass.getPermutation(coarseShader);
-	auto detailPerm = worldRenderPass.getPermutation(detailShader);
-
-	coarseShader->setCombination(m_handleCutEnable, m_terrain->getCutMap(), coarsePerm);
-	detailShader->setCombination(m_handleCutEnable, m_terrain->getCutMap(), detailPerm);
-
-	coarseShader->setCombination(m_handleColorEnable, m_terrain->getColorMap(), coarsePerm);
-	detailShader->setCombination(m_handleColorEnable, m_terrain->getColorMap(), detailPerm);
-
-	if (m_visualizeMode >= VmSurfaceLod && m_visualizeMode <= VmPatchLod)
-	{
-		coarseShader->setCombination(c_handleVisualizeLods, true, coarsePerm);
-		detailShader->setCombination(c_handleVisualizeLods, true, detailPerm);
-	}
-	else if (m_visualizeMode >= VmColorMap && m_visualizeMode <= VmMaterialMap)
-	{
-		coarseShader->setCombination(c_handleVisualizeMap, true, coarsePerm);
-		detailShader->setCombination(c_handleVisualizeMap, true, detailPerm);
-	}
-
-	render::IProgram* coarseProgram = coarseShader->getProgram(coarsePerm).program;
-	render::IProgram* detailProgram = detailShader->getProgram(detailPerm).program;
-
-	if (!coarseProgram || !detailProgram)
+	if (!validate(cacheSize))
 		return;
-
-	// Update cache only once per frame and when rendering from camera.
-	bool updateCache = bool((worldRenderPass.getPassFlags() & world::IWorldRenderPass::PfFirst) != 0);
 
 	const Vector4& worldExtent = m_heightfield->getWorldExtent();
 
@@ -185,10 +126,6 @@ void TerrainComponent::build(
 	Matrix44 viewProj = worldRenderView.getProjection() * worldRenderView.getView();
 	Vector4 eyePosition = worldRenderView.getEyePosition();
 	Vector4 eyeDirection = worldRenderView.getEyeDirection();
-
-	// Cull patches.
-	static AlignedVector< CullPatch > visiblePatches;
-	visiblePatches.resize(0);
 
 	Vector4 patchExtent(worldExtent.x() / float(m_patchCount), worldExtent.y(), worldExtent.z() / float(m_patchCount), 0.0f);
 	Vector4 patchTopLeft = (-worldExtent * Scalar(0.5f)).xyz1();
@@ -203,6 +140,7 @@ void TerrainComponent::build(
 		worldCullFrustum.planes[i] = viewInv * worldCullFrustum.planes[i];
 
 	// Cull patches to world frustum.
+	m_visiblePatches.resize(0);
 	for (uint32_t pz = 0; pz < m_patchCount; ++pz)
 	{
 		Vector4 patchOrigin = patchTopLeft;
@@ -309,14 +247,13 @@ void TerrainComponent::build(
 				cp.patchId = patchId;
 				cp.patchOrigin = patchOrigin;
 
-				visiblePatches.push_back(cp);
+				m_visiblePatches.push_back(cp);
 			}
-			else if (updateCache)
+			else
 			{
 				m_patches[patchId].lastPatchLod = c_patchLodSteps;
 				m_patches[patchId].lastSurfaceLod = c_surfaceLodSteps;
-
-				m_surfaceCache->flush(patchId);
+				// m_surfaceCache->flush(patchId);
 			}
 
 			patchOrigin += patchDeltaX;
@@ -325,89 +262,123 @@ void TerrainComponent::build(
 	}
 
 	// Sort patches front to back to maximize best use of surface cache and rendering.
-	std::sort(visiblePatches.begin(), visiblePatches.end(), PatchFrontToBackPredicate());
+	std::sort(m_visiblePatches.begin(), m_visiblePatches.end(), [](const CullPatch& lh, const CullPatch& rh) {
+		return lh.distance < rh.distance;
+	});
 
 #if defined(T_USE_TERRAIN_VERTEX_TEXTURE_FETCH)
-	static AlignedVector< const CullPatch* > patchLodInstances[LodCount];
 	for (uint32_t i = 0; i < LodCount; ++i)
-		patchLodInstances[i].resize(0);
+		m_patchLodInstances[i].resize(0);
 #endif
 
 	// Update all patch surfaces.
-	if (updateCache)
+	for (const auto& visiblePatch : m_visiblePatches)
 	{
-		m_surfaceCache->begin(
-			context.getRenderContext(),
-			m_terrain,
-			-worldExtent * Scalar(0.5f),
-			worldExtent
-		);
+		Patch& patch = m_patches[visiblePatch.patchId];
+		const Vector4& patchOrigin = visiblePatch.patchOrigin;
 
-		for (const auto& visiblePatch : visiblePatches)
+		// Calculate which surface lod to use based one distance to patch center.
+		float distance = max(visiblePatch.distance - detailDistance, 0.0f);
+		float surfaceLodDistance = std::pow(clamp(distance / m_surfaceLodDistance + m_surfaceLodBias, 0.0f, 1.0f), m_surfaceLodExponent);
+		float surfaceLodF = surfaceLodDistance * c_surfaceLodSteps;
+		int32_t surfaceLod = int32_t(surfaceLodF + 0.5f);
+
+		const float c_lodHysteresisThreshold = 0.5f;
+		if (surfaceLod != patch.lastSurfaceLod)
 		{
-			Patch& patch = m_patches[visiblePatch.patchId];
-			const Vector4& patchOrigin = visiblePatch.patchOrigin;
-
-			// Calculate which surface lod to use based one distance to patch center.
-			float distance = max(visiblePatch.distance - detailDistance, 0.0f);
-			float surfaceLodDistance = std::pow(clamp(distance / m_surfaceLodDistance + m_surfaceLodBias, 0.0f, 1.0f), m_surfaceLodExponent);
-			float surfaceLodF = surfaceLodDistance * c_surfaceLodSteps;
-			int32_t surfaceLod = int32_t(surfaceLodF + 0.5f);
-
-			const float c_lodHysteresisThreshold = 0.5f;
-			if (surfaceLod != patch.lastSurfaceLod)
-			{
-				if (std::abs(surfaceLodF - patch.lastSurfaceLod) < c_lodHysteresisThreshold)
-					surfaceLod = patch.lastSurfaceLod;
-			}
-
-			// Find patch lod based on screen space error.
-			int32_t patchLod = 0;
-			for (int32_t j = 3; j > 0; --j)
-			{
-				if (visiblePatch.error[j] <= 1.0f)
-				{
-					patchLod = j;
-					break;
-				}
-			}
-
-			patch.lastPatchLod = patchLod;
-			patch.lastSurfaceLod = surfaceLod;
-
-			// Update surface cache.
-			m_surfaceCache->get(
-				context.getRenderContext(),
-				m_terrain,
-				-worldExtent * Scalar(0.5f),
-				worldExtent,
-				patchOrigin,
-				patchExtent,
-				patch.lastSurfaceLod,
-				visiblePatch.patchId,
-				// Out
-				patch.surfaceOffset
-			);
-
-			// Queue patch instance.
-#if defined(T_USE_TERRAIN_VERTEX_TEXTURE_FETCH)
-			patchLodInstances[patchLod].push_back(&visiblePatch);
-#endif
+			if (std::abs(surfaceLodF - patch.lastSurfaceLod) < c_lodHysteresisThreshold)
+				surfaceLod = patch.lastSurfaceLod;
 		}
-	}
+
+		// Find patch lod based on screen space error.
+		int32_t patchLod = 0;
+		for (int32_t j = 3; j > 0; --j)
+		{
+			if (visiblePatch.error[j] <= 1.0f)
+			{
+				patchLod = j;
+				break;
+			}
+		}
+
+		patch.lastPatchLod = patchLod;
+		patch.lastSurfaceLod = surfaceLod;
+		patch.surfaceOffset = Vector4::zero();
+
+		// Update surface cache.
+		 m_surfaceCache->setupPatch(
+		 	context.getRenderGraph(),
+		 	m_terrain,
+		 	-worldExtent * Scalar(0.5f),
+		 	worldExtent,
+		 	patchOrigin,
+		 	patchExtent,
+		 	patch.lastSurfaceLod,
+		 	visiblePatch.patchId,
+		 	// Out
+		 	patch.surfaceOffset
+		 );
+
+		// Queue patch instance.
 #if defined(T_USE_TERRAIN_VERTEX_TEXTURE_FETCH)
-	else
+		m_patchLodInstances[patchLod].push_back(&visiblePatch);
+#endif
+	}
+
+	// Update base color texture.
+	m_surfaceCache->setupBaseColor(
+		context.getRenderGraph(),
+		m_terrain,
+		-worldExtent * Scalar(0.5f),
+		worldExtent
+	);
+}
+
+void TerrainComponent::build(
+	const world::WorldBuildContext& context,
+	const world::WorldRenderView& worldRenderView,
+	const world::IWorldRenderPass& worldRenderPass,
+	float detailDistance,
+	uint32_t cacheSize
+)
+{
+	if (!validate(cacheSize))
+		return;
+
+	render::Shader* coarseShader = m_terrain->getTerrainCoarseShader();
+	render::Shader* detailShader = m_terrain->getTerrainDetailShader();
+
+	auto coarsePerm = worldRenderPass.getPermutation(coarseShader);
+	auto detailPerm = worldRenderPass.getPermutation(detailShader);
+
+	coarseShader->setCombination(c_handleCutEnable, m_terrain->getCutMap(), coarsePerm);
+	detailShader->setCombination(c_handleCutEnable, m_terrain->getCutMap(), detailPerm);
+
+	coarseShader->setCombination(c_handleColorEnable, m_terrain->getColorMap(), coarsePerm);
+	detailShader->setCombination(c_handleColorEnable, m_terrain->getColorMap(), detailPerm);
+
+	if (m_visualizeMode >= VmSurfaceLod && m_visualizeMode <= VmPatchLod)
 	{
-		for (const auto& visiblePatch : visiblePatches)
-		{
-			Patch& patch = m_patches[visiblePatch.patchId];
-			patchLodInstances[patch.lastPatchLod].push_back(&visiblePatch);
-		}
+		coarseShader->setCombination(c_handleVisualizeLods, true, coarsePerm);
+		detailShader->setCombination(c_handleVisualizeLods, true, detailPerm);
 	}
-#endif
+	else if (m_visualizeMode >= VmColorMap && m_visualizeMode <= VmMaterialMap)
+	{
+		coarseShader->setCombination(c_handleVisualizeMap, true, coarsePerm);
+		detailShader->setCombination(c_handleVisualizeMap, true, detailPerm);
+	}
+
+	render::IProgram* coarseProgram = coarseShader->getProgram(coarsePerm).program;
+	render::IProgram* detailProgram = detailShader->getProgram(detailPerm).program;
+
+	if (!coarseProgram || !detailProgram)
+		return;
+
+	const Vector4& worldExtent = m_heightfield->getWorldExtent();
+	Vector4 eyePosition = worldRenderView.getEyePosition();
+	Vector4 patchExtent(worldExtent.x() / float(m_patchCount), worldExtent.y(), worldExtent.z() / float(m_patchCount), 0.0f);
 
 #if defined(T_USE_TERRAIN_VERTEX_TEXTURE_FETCH)
-
 	for (const auto& visiblePatch : visiblePatches)
 	{
 		Patch& patch = m_patches[visiblePatch.patchId];
@@ -424,33 +395,31 @@ void TerrainComponent::build(
 		rb->programParams->beginParameters(context.getRenderContext());
 		worldRenderPass.setProgramParameters(rb->programParams, render::RpOpaque);
 
-		rb->programParams->setTextureParameter(m_handleHeightfield, m_terrain->getHeightMap());
-		rb->programParams->setTextureParameter(m_handleSurface, m_surfaceCache->getVirtualTexture());
-		rb->programParams->setTextureParameter(m_handleColorMap, m_terrain->getColorMap());
-		rb->programParams->setTextureParameter(m_handleNormals, m_terrain->getNormalMap());
-		rb->programParams->setTextureParameter(m_handleSplatMap, m_terrain->getSplatMap());
-		rb->programParams->setTextureParameter(m_handleCutMap, m_terrain->getCutMap());
-		rb->programParams->setTextureParameter(m_handleMaterialMap, m_terrain->getMaterialMap());
-		rb->programParams->setVectorParameter(m_handleEye, eyePosition);
-		rb->programParams->setVectorParameter(m_handleWorldOrigin, -worldExtent * Scalar(0.5f));
-		rb->programParams->setVectorParameter(m_handleWorldExtent, worldExtent);
-		rb->programParams->setVectorParameter(m_handlePatchExtent, patchExtent);
-		rb->programParams->setVectorParameter(m_handleSurfaceOffset, patch.surfaceOffset);
-		rb->programParams->setVectorParameter(m_handlePatchOrigin, visiblePatch.patchOrigin);
-		rb->programParams->setFloatParameter(m_handleDetailDistance, detailDistance);
+		rb->programParams->setTextureParameter(c_handleHeightfield, m_terrain->getHeightMap());
+		rb->programParams->setTextureParameter(c_handleSurface, m_surfaceCache->getVirtualTexture());
+		rb->programParams->setTextureParameter(c_handleColorMap, m_terrain->getColorMap());
+		rb->programParams->setTextureParameter(c_handleNormals, m_terrain->getNormalMap());
+		rb->programParams->setTextureParameter(c_handleSplatMap, m_terrain->getSplatMap());
+		rb->programParams->setTextureParameter(c_handleCutMap, m_terrain->getCutMap());
+		rb->programParams->setTextureParameter(c_handleMaterialMap, m_terrain->getMaterialMap());
+		rb->programParams->setVectorParameter(c_handleEye, eyePosition);
+		rb->programParams->setVectorParameter(c_handleWorldOrigin, -worldExtent * Scalar(0.5f));
+		rb->programParams->setVectorParameter(c_handleWorldExtent, worldExtent);
+		rb->programParams->setVectorParameter(c_handlePatchExtent, patchExtent);
+		rb->programParams->setVectorParameter(c_handleSurfaceOffset, patch.surfaceOffset);
+		rb->programParams->setVectorParameter(c_handlePatchOrigin, visiblePatch.patchOrigin);
+		rb->programParams->setFloatParameter(c_handleDetailDistance, detailDistance);
 
 		if (m_visualizeMode == VmSurfaceLod)
-			rb->programParams->setVectorParameter(m_handleDebugPatchColor, c_lodColor[patch.lastSurfaceLod]);
+			rb->programParams->setVectorParameter(c_handleDebugPatchColor, c_lodColor[patch.lastSurfaceLod]);
 		else if (m_visualizeMode == VmPatchLod)
-			rb->programParams->setVectorParameter(m_handleDebugPatchColor, c_lodColor[patch.lastPatchLod]);
+			rb->programParams->setVectorParameter(c_handleDebugPatchColor, c_lodColor[patch.lastPatchLod]);
 
 		rb->programParams->endParameters(context.getRenderContext());
 
 		context.getRenderContext()->draw(render::RpOpaque, rb);
 	}
-
 #else
-
 	render::RenderContext* renderContext = context.getRenderContext();
 
 	// Setup shared shader parameters.
@@ -463,30 +432,30 @@ void TerrainComponent::build(
 
 		rb->programParams->beginParameters(renderContext);
 
-		rb->programParams->setTextureParameter(m_handleHeightfield, m_terrain->getHeightMap());
-		rb->programParams->setTextureParameter(m_handleSurface, m_surfaceCache->getVirtualTexture());
-		rb->programParams->setTextureParameter(m_handleColorMap, m_terrain->getColorMap());
-		rb->programParams->setTextureParameter(m_handleNormals, m_terrain->getNormalMap());
-		rb->programParams->setTextureParameter(m_handleSplatMap, m_terrain->getSplatMap());
-		rb->programParams->setTextureParameter(m_handleCutMap, m_terrain->getCutMap());
-		rb->programParams->setTextureParameter(m_handleMaterialMap, m_terrain->getMaterialMap());
-		rb->programParams->setVectorParameter(m_handleEye, eyePosition);
-		rb->programParams->setVectorParameter(m_handleWorldOrigin, -worldExtent * Scalar(0.5f));
-		rb->programParams->setVectorParameter(m_handleWorldExtent, worldExtent);
-		rb->programParams->setFloatParameter(m_handleDetailDistance, detailDistance);
+		rb->programParams->setTextureParameter(c_handleHeightfield, m_terrain->getHeightMap());
+		rb->programParams->setTextureParameter(c_handleSurface, m_surfaceCache->getVirtualTexture());
+		rb->programParams->setTextureParameter(c_handleColorMap, m_terrain->getColorMap());
+		rb->programParams->setTextureParameter(c_handleNormals, m_terrain->getNormalMap());
+		rb->programParams->setTextureParameter(c_handleSplatMap, m_terrain->getSplatMap());
+		rb->programParams->setTextureParameter(c_handleCutMap, m_terrain->getCutMap());
+		rb->programParams->setTextureParameter(c_handleMaterialMap, m_terrain->getMaterialMap());
+		rb->programParams->setVectorParameter(c_handleEye, eyePosition);
+		rb->programParams->setVectorParameter(c_handleWorldOrigin, -worldExtent * Scalar(0.5f));
+		rb->programParams->setVectorParameter(c_handleWorldExtent, worldExtent);
+		rb->programParams->setFloatParameter(c_handleDetailDistance, detailDistance);
 
 		if (m_visualizeMode == VmColorMap)
-			rb->programParams->setTextureParameter(m_handleDebugMap, m_terrain->getColorMap());
+			rb->programParams->setTextureParameter(c_handleDebugMap, m_terrain->getColorMap());
 		else if (m_visualizeMode == VmNormalMap)
-			rb->programParams->setTextureParameter(m_handleDebugMap, m_terrain->getNormalMap());
+			rb->programParams->setTextureParameter(c_handleDebugMap, m_terrain->getNormalMap());
 		else if (m_visualizeMode == VmHeightMap)
-			rb->programParams->setTextureParameter(m_handleDebugMap, m_terrain->getHeightMap());
+			rb->programParams->setTextureParameter(c_handleDebugMap, m_terrain->getHeightMap());
 		else if (m_visualizeMode == VmSplatMap)
-			rb->programParams->setTextureParameter(m_handleDebugMap, m_terrain->getSplatMap());
+			rb->programParams->setTextureParameter(c_handleDebugMap, m_terrain->getSplatMap());
 		else if (m_visualizeMode == VmCutMap)
-			rb->programParams->setTextureParameter(m_handleDebugMap, m_terrain->getCutMap());
+			rb->programParams->setTextureParameter(c_handleDebugMap, m_terrain->getCutMap());
 		else if (m_visualizeMode == VmMaterialMap)
-			rb->programParams->setTextureParameter(m_handleDebugMap, m_terrain->getMaterialMap());
+			rb->programParams->setTextureParameter(c_handleDebugMap, m_terrain->getMaterialMap());
 
 		worldRenderPass.setProgramParameters(rb->programParams);
 
@@ -496,7 +465,7 @@ void TerrainComponent::build(
 	}
 
 	// Render each visible patch.
-	for (const auto& visiblePatch : visiblePatches)
+	for (const auto& visiblePatch : m_visiblePatches)
 	{
 		const Patch& patch = m_patches[visiblePatch.patchId];
 		const Vector4& patchOrigin = visiblePatch.patchOrigin;
@@ -512,20 +481,19 @@ void TerrainComponent::build(
 
 		rb->programParams->beginParameters(renderContext);
 
-		rb->programParams->setVectorParameter(m_handlePatchOrigin, patchOrigin);
-		rb->programParams->setVectorParameter(m_handleSurfaceOffset, patch.surfaceOffset);
-		rb->programParams->setVectorParameter(m_handlePatchExtent, patchExtent);
+		rb->programParams->setVectorParameter(c_handlePatchOrigin, patchOrigin);
+		rb->programParams->setVectorParameter(c_handleSurfaceOffset, patch.surfaceOffset);
+		rb->programParams->setVectorParameter(c_handlePatchExtent, patchExtent);
 
 		if (m_visualizeMode == VmSurfaceLod)
-			rb->programParams->setVectorParameter(m_handleDebugPatchColor, c_lodColor[patch.lastSurfaceLod]);
+			rb->programParams->setVectorParameter(c_handleDebugPatchColor, c_lodColor[patch.lastSurfaceLod]);
 		else if (m_visualizeMode == VmPatchLod)
-			rb->programParams->setVectorParameter(m_handleDebugPatchColor, c_lodColor[patch.lastPatchLod]);
+			rb->programParams->setVectorParameter(c_handleDebugPatchColor, c_lodColor[patch.lastPatchLod]);
 
 		rb->programParams->endParameters(renderContext);
 
 		renderContext->draw(render::RpOpaque, rb);
 	}
-
 #endif
 }
 
@@ -571,6 +539,33 @@ void TerrainComponent::update(const world::UpdateParams& update)
 {
 	for (const auto layer : m_layers)
 		layer->update(update);
+}
+
+bool TerrainComponent::validate(uint32_t cacheSize)
+{
+	if (
+		m_terrain.changed() ||
+		m_heightfield.changed()
+	)
+	{
+		m_heightfield.consume();
+		m_terrain.consume();
+
+		if (!createPatches())
+			return false;
+	}
+
+	if (!m_surfaceCache || cacheSize != m_cacheSize)
+	{
+		safeDestroy(m_surfaceCache);
+		m_surfaceCache = new TerrainSurfaceCache();
+		if (!m_surfaceCache->create(m_resourceManager, m_renderSystem, cacheSize))
+			return false;
+
+		m_cacheSize = cacheSize;
+	}
+
+	return true;
 }
 
 bool TerrainComponent::updatePatches(const uint32_t* region)

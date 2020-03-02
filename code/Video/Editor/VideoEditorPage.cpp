@@ -147,7 +147,7 @@ void VideoEditorPage::eventPaint(ui::PaintEvent* event)
 	cl.mask = render::CfColor;
 	cl.colors[0] = Color4f(0.8f, 0.8f, 0.8f, 0.0);
 
-	if (m_renderView->begin(&cl))
+	if (m_renderView->beginPass(&cl))
 	{
 		if (m_video)
 		{
@@ -160,7 +160,7 @@ void VideoEditorPage::eventPaint(ui::PaintEvent* event)
 				// m_screenRenderer->draw(m_renderView, m_shader);
 			}
 		}
-		m_renderView->end();
+		m_renderView->endPass();
 	}
 
 	m_renderView->present();

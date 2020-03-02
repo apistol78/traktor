@@ -30,6 +30,16 @@ public:
 		AlignedVector< world::Light >& outLights
 	) override final;
 
+	virtual void setup(
+		const world::WorldSetupContext& context,
+		const world::WorldRenderView& worldRenderView,
+		Object* renderable
+	) override final;
+
+	virtual void setup(
+		const world::WorldSetupContext& context
+	) override final;
+
 	virtual void build(
 		const world::WorldBuildContext& context,
 		const world::WorldRenderView& worldRenderView,
@@ -37,13 +47,11 @@ public:
 		Object* renderable
 	) override final;
 
-	virtual void flush(
+	virtual void build(
 		const world::WorldBuildContext& context,
 		const world::WorldRenderView& worldRenderView,
 		const world::IWorldRenderPass& worldRenderPass
 	) override final;
-
-	virtual void setup(const world::WorldSetupContext& context) override final;
 };
 
 	}

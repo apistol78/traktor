@@ -32,6 +32,7 @@ class ISimpleTexture;
 class ScreenRenderer;
 class RenderContext;
 class RenderBlock;
+class RenderGraph;
 
 	}
 
@@ -60,15 +61,15 @@ public:
 
 	void flush();
 
-	void begin(
-		render::RenderContext* renderContext,
+	void setupBaseColor(
+		render::RenderGraph& renderGraph,
 		Terrain* terrain,
 		const Vector4& worldOrigin,
 		const Vector4& worldExtent
 	);
 
-	void get(
-		render::RenderContext* renderContext,
+	void setupPatch(
+		render::RenderGraph& renderGraph,
 		Terrain* terrain,
 		const Vector4& worldOrigin,
 		const Vector4& worldExtent,
@@ -100,17 +101,7 @@ private:
 	AlignedVector< Entry > m_entries;
 	bool m_haveBase;
 	bool m_clearCache;
-	uint32_t m_updateCount;
 	uint32_t m_size;
-	render::handle_t m_handleColorEnable;
-	render::handle_t m_handleHeightfield;
-	render::handle_t m_handleColorMap;
-	render::handle_t m_handleSplatMap;
-	render::handle_t m_handleWorldOrigin;
-	render::handle_t m_handleWorldExtent;
-	render::handle_t m_handlePatchOrigin;
-	render::handle_t m_handlePatchExtent;
-	render::handle_t m_handleTextureOffset;
 };
 
 	}

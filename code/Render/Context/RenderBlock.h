@@ -188,17 +188,17 @@ public:
 	virtual void render(IRenderView* renderView) const override final;
 };
 
-/*! Begin target render block.
+/*! Begin pass render block.
  * \ingroup Render
  */
-class T_DLLCLASS TargetBeginRenderBlock : public RenderBlock
+class T_DLLCLASS BeginPassRenderBlock : public RenderBlock
 {
 public:
 	Ref< IRenderTargetSet > renderTargetSet;
 	int32_t renderTargetIndex;
 	Clear clear;
 
-	TargetBeginRenderBlock()
+	BeginPassRenderBlock()
 	:	RenderBlock()
 	,	renderTargetIndex(-1)
 	{
@@ -208,10 +208,10 @@ public:
 	virtual void render(IRenderView* renderView) const override final;
 };
 
-/*! End target render block.
+/*! End pass render block.
  * \ingroup Render
  */
-class T_DLLCLASS TargetEndRenderBlock : public RenderBlock
+class T_DLLCLASS EndPassRenderBlock : public RenderBlock
 {
 public:
 	virtual void render(IRenderView* renderView) const override final;

@@ -138,7 +138,6 @@ ProbeRenderer::ProbeRenderer(
 	rtscd.createDepthStencil = true;
 	rtscd.usingPrimaryDepthStencil = false;
 	rtscd.usingDepthStencilAsTexture = false;
-	rtscd.storeDepthStencil = true;
 	rtscd.ignoreStencil = true;
 	rtscd.generateMips = false;
 	m_depthTargetSet = m_renderSystem->createRenderTargetSet(rtscd, nullptr, T_FILE_LINE_W);
@@ -157,117 +156,6 @@ void ProbeRenderer::gather(
 {
 }
 
-void ProbeRenderer::build(
-	const WorldBuildContext& context,
-	const WorldRenderView& worldRenderView,
-	const IWorldRenderPass& worldRenderPass,
-	Object* renderable
-)
-{
-	ProbeComponent* probeComponent = mandatory_non_null_type_cast< ProbeComponent* >(renderable);
-
-	if (!m_probeShader)
-		return;
-
-	// Do not render probe which is being captured.
-	if (probeComponent == m_capture)
-		return;
-
-	// Cull local probes to frustum.
-	if (probeComponent->getLocal())
-	{
-		const Transform& transform = probeComponent->getTransform();
-		Matrix44 worldView = worldRenderView.getView() * transform.toMatrix44();
-		Vector4 center = worldView * probeComponent->getVolume().getCenter().xyz1();
-		Scalar radius = probeComponent->getVolume().getExtent().length();
-		if (worldRenderView.getCullFrustum().inside(center, radius) == Frustum::IrOutside)
-			return;
-	}
-
-	// Add to capture queue if probe is "dirty".
-	if (probeComponent->getDirty())
-	{
-		m_captureQueue.push_back(probeComponent);
-		probeComponent->setDirty(false);
-		return;
-	}
-
-	render::RenderContext* renderContext = context.getRenderContext();
-	T_ASSERT(renderContext);
-
-	const Matrix44& projection = worldRenderView.getProjection();
-	const Matrix44& view = worldRenderView.getView();
-	const Scalar p11 = projection.get(0, 0);
-	const Scalar p22 = projection.get(1, 1);
-	const Vector4 magicCoeffs(1.0f / p11, 1.0f / p22, 0.0f, 0.0f);
-
-	render::IProgram* program = worldRenderPass.getProgram(m_probeShader).program;
-	if (!program)
-		return;
-
-	const Transform& transform = probeComponent->getTransform();
-
-	Matrix44 worldView = view * transform.toMatrix44();
-	Matrix44 worldViewInv = worldView.inverse();
-
-	auto rb = renderContext->alloc< render::IndexedRenderBlock >(L"Probe");
-
-	rb->distance = 0.0f;
-	rb->program = program;
-	rb->programParams = renderContext->alloc< render::ProgramParameters >();
-	rb->indexBuffer = m_indexBuffer;
-	rb->vertexBuffer = m_vertexBuffer;
-	rb->primitive = render::PtTriangles;
-		
-	if (!probeComponent->getLocal())
-	{
-		rb->offset = 0;
-		rb->count = 2;
-		rb->minIndex = 0;
-		rb->maxIndex = 3;
-	}
-	else
-	{
-		rb->offset = 6;
-		rb->count = 12;
-		rb->minIndex = 4;
-		rb->maxIndex = 11;
-	}
-
-	rb->programParams->beginParameters(renderContext);
-
-	worldRenderPass.setProgramParameters(
-		rb->programParams,
-		transform,
-		transform,
-		probeComponent->getBoundingBox()
-	);
-
-	if (probeComponent->getLocal())
-	{
-		rb->programParams->setVectorParameter(s_handleProbeVolumeCenter, probeComponent->getVolume().getCenter());
-		rb->programParams->setVectorParameter(s_handleProbeVolumeExtent, probeComponent->getVolume().getExtent());
-	}
-
-	rb->programParams->setFloatParameter(s_handleProbeIntensity, probeComponent->getIntensity());
-	rb->programParams->setFloatParameter(s_handleProbeTextureMips, probeComponent->getTexture() != nullptr ? (float)probeComponent->getTexture()->getMips() : 0.0f);
-	rb->programParams->setVectorParameter(s_handleMagicCoeffs, magicCoeffs);
-	rb->programParams->setMatrixParameter(s_handleWorldViewInv, worldViewInv);
-	rb->programParams->setTextureParameter(s_handleProbeTexture, probeComponent->getTexture());
-
-	rb->programParams->endParameters(renderContext);
-
-	renderContext->draw(render::RpOverlay, rb);
-}
-
-void ProbeRenderer::flush(
-	const WorldBuildContext& context,
-	const WorldRenderView& worldRenderView,
-	const IWorldRenderPass& worldRenderPass
-)
-{
-}
-
 void ProbeRenderer::setup(const WorldSetupContext& context)
 {
 	render::RenderGraph& renderGraph = context.getRenderGraph();
@@ -281,7 +169,7 @@ void ProbeRenderer::setup(const WorldSetupContext& context)
 		m_captureQueue.pop_front();
 		m_captureState = 0;
 	}
-	T_ASSERT(capture);
+	T_ASSERT(m_capture);
 
 	// Lazy create world renderer, need to access entity renderers.
 	if (!m_worldRenderer)
@@ -559,6 +447,125 @@ void ProbeRenderer::setup(const WorldSetupContext& context)
 		m_capture = nullptr;
 		m_captureState = 0;
 	}
+}
+
+void ProbeRenderer::setup(
+	const WorldSetupContext& context,
+	const WorldRenderView& worldRenderView,
+	Object* renderable
+)
+{
+}
+
+void ProbeRenderer::build(
+	const WorldBuildContext& context,
+	const WorldRenderView& worldRenderView,
+	const IWorldRenderPass& worldRenderPass,
+	Object* renderable
+)
+{
+	ProbeComponent* probeComponent = mandatory_non_null_type_cast< ProbeComponent* >(renderable);
+
+	if (!m_probeShader)
+		return;
+
+	// Do not render probe which is being captured.
+	if (probeComponent == m_capture)
+		return;
+
+	// Cull local probes to frustum.
+	if (probeComponent->getLocal())
+	{
+		const Transform& transform = probeComponent->getTransform();
+		Matrix44 worldView = worldRenderView.getView() * transform.toMatrix44();
+		Vector4 center = worldView * probeComponent->getVolume().getCenter().xyz1();
+		Scalar radius = probeComponent->getVolume().getExtent().length();
+		if (worldRenderView.getCullFrustum().inside(center, radius) == Frustum::IrOutside)
+			return;
+	}
+
+	// Add to capture queue if probe is "dirty".
+	if (probeComponent->getDirty())
+	{
+		m_captureQueue.push_back(probeComponent);
+		probeComponent->setDirty(false);
+		return;
+	}
+
+	render::RenderContext* renderContext = context.getRenderContext();
+	T_ASSERT(renderContext);
+
+	const Matrix44& projection = worldRenderView.getProjection();
+	const Matrix44& view = worldRenderView.getView();
+	const Scalar p11 = projection.get(0, 0);
+	const Scalar p22 = projection.get(1, 1);
+	const Vector4 magicCoeffs(1.0f / p11, 1.0f / p22, 0.0f, 0.0f);
+
+	render::IProgram* program = worldRenderPass.getProgram(m_probeShader).program;
+	if (!program)
+		return;
+
+	const Transform& transform = probeComponent->getTransform();
+
+	Matrix44 worldView = view * transform.toMatrix44();
+	Matrix44 worldViewInv = worldView.inverse();
+
+	auto rb = renderContext->alloc< render::IndexedRenderBlock >(L"Probe");
+
+	rb->distance = 0.0f;
+	rb->program = program;
+	rb->programParams = renderContext->alloc< render::ProgramParameters >();
+	rb->indexBuffer = m_indexBuffer;
+	rb->vertexBuffer = m_vertexBuffer;
+	rb->primitive = render::PtTriangles;
+		
+	if (!probeComponent->getLocal())
+	{
+		rb->offset = 0;
+		rb->count = 2;
+		rb->minIndex = 0;
+		rb->maxIndex = 3;
+	}
+	else
+	{
+		rb->offset = 6;
+		rb->count = 12;
+		rb->minIndex = 4;
+		rb->maxIndex = 11;
+	}
+
+	rb->programParams->beginParameters(renderContext);
+
+	worldRenderPass.setProgramParameters(
+		rb->programParams,
+		transform,
+		transform,
+		probeComponent->getBoundingBox()
+	);
+
+	if (probeComponent->getLocal())
+	{
+		rb->programParams->setVectorParameter(s_handleProbeVolumeCenter, probeComponent->getVolume().getCenter());
+		rb->programParams->setVectorParameter(s_handleProbeVolumeExtent, probeComponent->getVolume().getExtent());
+	}
+
+	rb->programParams->setFloatParameter(s_handleProbeIntensity, probeComponent->getIntensity());
+	rb->programParams->setFloatParameter(s_handleProbeTextureMips, probeComponent->getTexture() != nullptr ? (float)probeComponent->getTexture()->getMips() : 0.0f);
+	rb->programParams->setVectorParameter(s_handleMagicCoeffs, magicCoeffs);
+	rb->programParams->setMatrixParameter(s_handleWorldViewInv, worldViewInv);
+	rb->programParams->setTextureParameter(s_handleProbeTexture, probeComponent->getTexture());
+
+	rb->programParams->endParameters(renderContext);
+
+	renderContext->draw(render::RpOverlay, rb);
+}
+
+void ProbeRenderer::build(
+	const WorldBuildContext& context,
+	const WorldRenderView& worldRenderView,
+	const IWorldRenderPass& worldRenderPass
+)
+{
 }
 
 	}

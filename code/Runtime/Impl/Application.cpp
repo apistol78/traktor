@@ -844,12 +844,12 @@ bool Application::update()
 					cl.mask = render::CfColor | render::CfDepth;
 					cl.colors[0] = Color4f(0.0f, 0.0f, 0.0f, 0.0f);;
 					cl.depth = 1.0f;
-					if (renderView->begin(&cl))
+					if (renderView->beginPass(&cl))
 					{
 						if (currentState)
 							currentState->render(m_frameBuild, m_updateInfo);
 
-						renderView->end();
+						renderView->endPass();
 						renderView->present();
 					}
 				}
@@ -1057,11 +1057,11 @@ void Application::threadRender()
 					cl.mask = render::CfColor | render::CfDepth;
 					cl.colors[0] = Color4f(0.0f, 0.0f, 0.0f, 0.0f);;
 					cl.depth = 1.0f;
-					if (renderView->begin(&cl))
+					if (renderView->beginPass(&cl))
 					{
 						if (m_stateRender)
 							m_stateRender->render(m_frameRender, m_updateInfoRender);
-						renderView->end();
+						renderView->endPass();
 					}
 					T_PROFILER_END();
 

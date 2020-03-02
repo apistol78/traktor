@@ -8,8 +8,8 @@
 #include "Shape/Editor/Solid/SolidEntityEditorFactory.h"
 #include "Shape/Editor/Solid/SolidEntityFactory.h"
 #include "Shape/Editor/Solid/SolidEntityRenderer.h"
-#include "Shape/Editor/Spline/ControlPointEntityEditorFactory.h"
-#include "Shape/Editor/Spline/SplineEntityEditorFactory.h"
+#include "Shape/Editor/Spline/ControlPointComponentEditorFactory.h"
+#include "Shape/Editor/Spline/SplineComponentEditorFactory.h"
 
 namespace traktor
 {
@@ -81,10 +81,8 @@ void EditorProfile::createEntityEditorFactories(
 	RefArray< const scene::IEntityEditorFactory >& outEntityEditorFactories
 ) const
 {
-	outEntityEditorFactories.push_back(new ControlPointEntityEditorFactory());
 	outEntityEditorFactories.push_back(new PrefabEntityEditorFactory());
 	outEntityEditorFactories.push_back(new SolidEntityEditorFactory());
-	outEntityEditorFactories.push_back(new SplineEntityEditorFactory());
 }
 
 void EditorProfile::createComponentEditorFactories(
@@ -92,6 +90,8 @@ void EditorProfile::createComponentEditorFactories(
 	RefArray< const scene::IComponentEditorFactory >& outComponentEditorFactories
 ) const
 {
+	outComponentEditorFactories.push_back(new ControlPointComponentEditorFactory());
+	outComponentEditorFactories.push_back(new SplineComponentEditorFactory());
 }
 
 Ref< world::EntityData > EditorProfile::createEntityData(
