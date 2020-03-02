@@ -11,7 +11,6 @@
 #include "Animation/Cloth/ClothEntityFactory.h"
 #include "Animation/Cloth/ClothEntityRenderer.h"
 #include "Animation/PathEntity/PathEntityFactory.h"
-#include "Animation/PathEntity/PathEntityRenderer.h"
 #include "Core/Log/Log.h"
 #include "Core/Settings/PropertyBoolean.h"
 #include "Core/Settings/PropertyFloat.h"
@@ -207,7 +206,6 @@ void WorldServer::createEntityRenderers(IEnvironment* environment)
 	m_entityRenderers->add(m_effectEntityRenderer);
 	m_entityRenderers->add(new animation::BoidsEntityRenderer());
 	m_entityRenderers->add(new animation::ClothEntityRenderer());
-	m_entityRenderers->add(new animation::PathEntityRenderer());
 	m_entityRenderers->add(new physics::EntityRenderer());
 	m_entityRenderers->add(new weather::WeatherRenderer());
 	m_entityRenderers->add(m_terrainEntityRenderer);

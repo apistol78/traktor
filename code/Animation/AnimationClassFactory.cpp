@@ -4,8 +4,6 @@
 #include "Animation/Boids/BoidsComponent.h"
 #include "Animation/Cloth/ClothComponent.h"
 #include "Animation/IK/IKPoseController.h"
-#include "Animation/PathEntity/PathEntity.h"
-#include "Animation/PathEntity/PathEntityData.h"
 #include "Animation/PathEntity/PathComponent.h"
 #include "Animation/PathEntity/PathComponentData.h"
 #include "Animation/RagDoll/RagDollPoseController.h"
@@ -63,61 +61,6 @@ void AnimatedMeshComponent_setPoseTransform(AnimatedMeshComponent* self, const s
 	);
 }
 
-void animation_PathEntity_setTimeMode(PathEntity* self, const std::wstring& timeMode)
-{
-	if (timeMode == L"manual")
-		self->setTimeMode(PathEntity::TmManual);
-	else if (timeMode == L"once")
-		self->setTimeMode(PathEntity::TmOnce);
-	else if (timeMode == L"loop")
-		self->setTimeMode(PathEntity::TmLoop);
-	else if (timeMode == L"pingPong")
-		self->setTimeMode(PathEntity::TmPingPong);
-}
-
-std::wstring animation_PathEntity_getTimeMode(PathEntity* self)
-{
-	switch (self->getTimeMode())
-	{
-	case PathEntity::TmManual:
-		return L"manual";
-	case PathEntity::TmOnce:
-		return L"once";
-	case PathEntity::TmLoop:
-		return L"loop";
-	case PathEntity::TmPingPong:
-		return L"pingPong";
-	default:
-		return L"";
-	}
-}
-
-class DelegatePathEntityListener : public RefCountImpl< PathEntity::IListener >
-{
-public:
-	DelegatePathEntityListener(IRuntimeDelegate* delegate)
-	:	m_delegate(delegate)
-	{
-	}
-
-	virtual void notifyPathFinished(PathEntity* entity)
-	{
-		Any argv[] =
-		{
-			CastAny< PathEntity* >::set(entity)
-		};
-		m_delegate->call(sizeof_array(argv), argv);
-	}
-
-private:
-	Ref< IRuntimeDelegate > m_delegate;
-};
-
-void animation_PathEntity_setListener(PathEntity* self, IRuntimeDelegate* listener)
-{
-	self->setListener(new DelegatePathEntityListener(listener));
-}
-
 		}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.animation.AnimationClassFactory", 0, AnimationClassFactory, IRuntimeClassFactory)
@@ -162,21 +105,6 @@ void AnimationClassFactory::createClasses(IRuntimeClassRegistrar* registrar) con
 	classClothComponent->addMethod("reset", &ClothComponent::reset);
 	classClothComponent->addMethod("setNodeInvMass", &ClothComponent::setNodeInvMass);
 	registrar->registerClass(classClothComponent);
-
-	auto classPathEntity = new AutoRuntimeClass< PathEntity >();
-	classPathEntity->addMethod("setTimeMode", &animation_PathEntity_setTimeMode);
-	classPathEntity->addMethod("getTimeMode", &animation_PathEntity_getTimeMode);
-	classPathEntity->addMethod("setTimeScale", &PathEntity::setTimeScale);
-	classPathEntity->addMethod("getTimeScale", &PathEntity::getTimeScale);
-	classPathEntity->addMethod("setTime", &PathEntity::setTime);
-	classPathEntity->addMethod("getTime", &PathEntity::getTime);
-	classPathEntity->addMethod("getEntity", &PathEntity::getEntity);
-	classPathEntity->addMethod("setListener", &animation_PathEntity_setListener);
-	registrar->registerClass(classPathEntity);
-
-	auto classPathEntityData = new AutoRuntimeClass< PathEntityData >();
-	classPathEntityData->addConstructor();
-	registrar->registerClass(classPathEntityData);
 
 	auto classPathComponent = new AutoRuntimeClass< PathComponent >();
 	registrar->registerClass(classPathComponent);

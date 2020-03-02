@@ -18,7 +18,7 @@ namespace traktor
 
 class PathComponent;
 
-/*! \brief
+/*!
  * \ingroup Animation
  */
 class T_DLLCLASS PathComponentData : public world::IEntityComponentData

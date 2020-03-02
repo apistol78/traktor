@@ -22,7 +22,7 @@ class Entity;
 	namespace animation
 	{
 
-/*! \brief
+/*!
  * \ingroup Animation
  */
 class T_DLLCLASS PathComponent : public world::IEntityComponent

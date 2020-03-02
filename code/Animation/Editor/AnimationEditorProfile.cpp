@@ -9,7 +9,6 @@
 #include "Animation/Editor/Cloth/ClothEntityEditorFactory.h"
 #include "Animation/Editor/PathEntity/PathEntityEditorFactory.h"
 #include "Animation/PathEntity/PathEntityFactory.h"
-#include "Animation/PathEntity/PathEntityRenderer.h"
 #include "Core/Serialization/ISerializable.h"
 #include "Scene/Editor/SceneEditorContext.h"
 #include "Ui/Command.h"
@@ -72,7 +71,6 @@ void AnimationEditorProfile::createEntityRenderers(
 {
 	outEntityRenderers.push_back(new BoidsEntityRenderer());
 	outEntityRenderers.push_back(new ClothEntityRenderer());
-	outEntityRenderers.push_back(new PathEntityRenderer());
 }
 
 void AnimationEditorProfile::createControllerEditorFactories(
