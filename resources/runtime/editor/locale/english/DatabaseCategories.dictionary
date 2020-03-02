@@ -106,10 +106,6 @@
       <second>Physics meshes</second>
     </item>
     <item>
-      <first>DATABASE_CATEGORY_TRAKTOR_PHYSICS_RIGIDENTITYDATA</first>
-      <second>Rigid physics entities</second>
-    </item>
-    <item>
       <first>DATABASE_CATEGORY_TRAKTOR_RENDER_BFNTEXTUREASSET</first>
       <second>BFN texture assets</second>
     </item>

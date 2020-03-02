@@ -20,7 +20,6 @@
 #include "Mesh/MeshComponentRenderer.h"
 #include "Mesh/MeshEntityFactory.h"
 #include "Mesh/Instance/InstanceMeshComponentRenderer.h"
-#include "Physics/World/EntityRenderer.h"
 #include "Resource/IResourceManager.h"
 #include "Scene/SceneFactory.h"
 #include "Spray/EffectEntityFactory.h"
@@ -206,7 +205,6 @@ void WorldServer::createEntityRenderers(IEnvironment* environment)
 	m_entityRenderers->add(m_effectEntityRenderer);
 	m_entityRenderers->add(new animation::BoidsEntityRenderer());
 	m_entityRenderers->add(new animation::ClothEntityRenderer());
-	m_entityRenderers->add(new physics::EntityRenderer());
 	m_entityRenderers->add(new weather::WeatherRenderer());
 	m_entityRenderers->add(m_terrainEntityRenderer);
 }

@@ -2,9 +2,7 @@
 #include "Physics/PhysicsFactory.h"
 #include "Physics/Editor/PhysicsComponentEditorFactory.h"
 #include "Physics/Editor/PhysicsEditorProfile.h"
-#include "Physics/Editor/PhysicsEntityEditorFactory.h"
 #include "Physics/World/EntityFactory.h"
-#include "Physics/World/EntityRenderer.h"
 #include "Scene/Editor/SceneEditorContext.h"
 #include "Ui/Command.h"
 
@@ -60,7 +58,6 @@ void PhysicsEditorProfile::createEntityRenderers(
 	RefArray< world::IEntityRenderer >& outEntityRenderers
 ) const
 {
-	outEntityRenderers.push_back(new EntityRenderer());
 }
 
 void PhysicsEditorProfile::createControllerEditorFactories(
@@ -75,7 +72,6 @@ void PhysicsEditorProfile::createEntityEditorFactories(
 	RefArray< const scene::IEntityEditorFactory >& outEntityEditorFactories
 ) const
 {
-	outEntityEditorFactories.push_back(new PhysicsEntityEditorFactory());
 }
 
 void PhysicsEditorProfile::createComponentEditorFactories(

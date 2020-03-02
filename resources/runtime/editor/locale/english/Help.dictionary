@@ -150,15 +150,6 @@ ie moved by animation.
 			</second>
 		</item>
 		<item>
-			<first>HELP_TRAKTOR_PHYSICS_RIGIDENTITYDATA_ENTITY_DATA</first>
-			<second>
-				<![CDATA[
-Controlled entity
-Entity which is controlled by the rigid body.
-	    	]]>
-			</second>
-		</item>
-		<item>
 			<first>HELP_TRAKTOR_MESH_MESHENTITYDATA_MESH</first>
 			<second>
 				<![CDATA[
