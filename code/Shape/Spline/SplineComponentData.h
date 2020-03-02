@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Core/Ref.h"
-#include "World/Entity/ComponentEntityData.h"
+#include "World/IEntityComponentData.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -13,27 +13,20 @@
 
 namespace traktor
 {
-	namespace world
-	{
-
-class IEntityBuilder;
-
-	}
-
 	namespace shape
 	{
 
-class ControlPointEntity;
+class SplineComponent;
 
-/*! \brief
+/*!
  * \ingroup Shape
  */
-class T_DLLCLASS ControlPointEntityData : public world::ComponentEntityData
+class T_DLLCLASS SplineComponentData : public world::IEntityComponentData
 {
 	T_RTTI_CLASS;
 
 public:
-	Ref< ControlPointEntity > createEntity(const world::IEntityBuilder* builder) const;
+	Ref< SplineComponent > createComponent() const;
 
 	virtual void serialize(ISerializer& s) override final;
 };

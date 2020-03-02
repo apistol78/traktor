@@ -1,5 +1,6 @@
+#include "Core/Math/TransformPath.h"
 #include "Shape/Spline/CloneLayer.h"
-#include "Shape/Spline/SplineEntity.h"
+#include "World/Entity.h"
 #include "World/IEntityBuilder.h"
 #include "World/WorldBuildContext.h"
 
@@ -8,16 +9,14 @@ namespace traktor
 	namespace shape
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.shape.CloneLayer", CloneLayer, ISplineLayer)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.shape.CloneLayer", CloneLayer, LayerComponent)
 
 CloneLayer::CloneLayer(
-	SplineEntity* owner,
 	const world::IEntityBuilder* builder,
 	world::EntityData* entity,
 	float distance
 )
-:	m_owner(owner)
-,	m_builder(builder)
+:	m_builder(builder)
 ,	m_entity(entity)
 ,	m_distance(distance)
 {
@@ -29,10 +28,8 @@ void CloneLayer::update(const world::UpdateParams& update)
 		entity->update(update);
 }
 
-void CloneLayer::pathChanged()
+void CloneLayer::pathChanged(const TransformPath& path)
 {
-	const auto& path = m_owner->getPath();
-
 	m_entities.clear();
 
 	Vector4 last = path.evaluate(0.0f).position;

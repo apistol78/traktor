@@ -1,8 +1,10 @@
 #include "Shape/EntityFactory.h"
-#include "Shape/Spline/ControlPointEntity.h"
-#include "Shape/Spline/ControlPointEntityData.h"
-#include "Shape/Spline/SplineEntity.h"
-#include "Shape/Spline/SplineEntityData.h"
+#include "Shape/Spline/ControlPointComponent.h"
+#include "Shape/Spline/ControlPointComponentData.h"
+#include "Shape/Spline/LayerComponent.h"
+#include "Shape/Spline/LayerComponentData.h"
+#include "Shape/Spline/SplineComponent.h"
+#include "Shape/Spline/SplineComponentData.h"
 
 namespace traktor
 {
@@ -19,10 +21,7 @@ EntityFactory::EntityFactory(resource::IResourceManager* resourceManager, render
 
 const TypeInfoSet EntityFactory::getEntityTypes() const
 {
-	return makeTypeInfoSet(
-		type_of< ControlPointEntityData >(),
-		type_of< SplineEntityData >()
-	);
+	return TypeInfoSet();
 }
 
 const TypeInfoSet EntityFactory::getEntityEventTypes() const
@@ -32,17 +31,16 @@ const TypeInfoSet EntityFactory::getEntityEventTypes() const
 
 const TypeInfoSet EntityFactory::getEntityComponentTypes() const
 {
-	return TypeInfoSet();
+	return makeTypeInfoSet<
+		ControlPointComponentData,
+		LayerComponentData,
+		SplineComponentData
+	>();
 }
 
 Ref< world::Entity > EntityFactory::createEntity(const world::IEntityBuilder* builder, const world::EntityData& entityData) const
 {
-	if (const SplineEntityData* splineEntityData = dynamic_type_cast< const SplineEntityData* >(&entityData))
-		return splineEntityData->createEntity(builder, m_resourceManager, m_renderSystem);
-	else if (const ControlPointEntityData* controlEntityData = dynamic_type_cast< const ControlPointEntityData* >(&entityData))
-		return controlEntityData->createEntity(builder);
-	else
-		return nullptr;
+	return nullptr;
 }
 
 Ref< world::IEntityEvent > EntityFactory::createEntityEvent(const world::IEntityBuilder* builder, const world::IEntityEventData& entityEventData) const
@@ -52,7 +50,10 @@ Ref< world::IEntityEvent > EntityFactory::createEntityEvent(const world::IEntity
 
 Ref< world::IEntityComponent > EntityFactory::createEntityComponent(const world::IEntityBuilder* builder, const world::IEntityComponentData& entityComponentData) const
 {
-	return nullptr;
+	if (auto controlPointData = dynamic_type_cast< const ControlPointComponentData* >(&entityComponentData))
+		return controlPointData->createComponent();
+	else
+		return nullptr;
 }
 
 	}
