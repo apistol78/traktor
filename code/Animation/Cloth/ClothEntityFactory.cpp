@@ -1,5 +1,5 @@
-#include "Animation/Cloth/ClothEntity.h"
-#include "Animation/Cloth/ClothEntityData.h"
+#include "Animation/Cloth/ClothComponent.h"
+#include "Animation/Cloth/ClothComponentData.h"
 #include "Animation/Cloth/ClothEntityFactory.h"
 
 namespace traktor
@@ -17,9 +17,7 @@ ClothEntityFactory::ClothEntityFactory(resource::IResourceManager* resourceManag
 
 const TypeInfoSet ClothEntityFactory::getEntityTypes() const
 {
-	TypeInfoSet typeSet;
-	typeSet.insert< ClothEntityData >();
-	return typeSet;
+	return makeTypeInfoSet< ClothComponentData >();
 }
 
 const TypeInfoSet ClothEntityFactory::getEntityEventTypes() const
@@ -34,17 +32,17 @@ const TypeInfoSet ClothEntityFactory::getEntityComponentTypes() const
 
 Ref< world::Entity > ClothEntityFactory::createEntity(const world::IEntityBuilder* builder, const world::EntityData& entityData) const
 {
-	return checked_type_cast< const ClothEntityData* >(&entityData)->createEntity(m_resourceManager, m_renderSystem);
+	return nullptr;
 }
 
 Ref< world::IEntityEvent > ClothEntityFactory::createEntityEvent(const world::IEntityBuilder* builder, const world::IEntityEventData& entityEventData) const
 {
-	return 0;
+	return nullptr;
 }
 
 Ref< world::IEntityComponent > ClothEntityFactory::createEntityComponent(const world::IEntityBuilder* builder, const world::IEntityComponentData& entityComponentData) const
 {
-	return 0;
+	return checked_type_cast< const ClothComponentData* >(&entityComponentData)->createComponent(m_resourceManager, m_renderSystem);
 }
 
 	}

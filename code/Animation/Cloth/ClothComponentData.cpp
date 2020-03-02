@@ -1,5 +1,5 @@
-#include "Animation/Cloth/ClothEntity.h"
-#include "Animation/Cloth/ClothEntityData.h"
+#include "Animation/Cloth/ClothComponent.h"
+#include "Animation/Cloth/ClothComponentData.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
 #include "Core/Serialization/MemberStl.h"
@@ -13,9 +13,9 @@ namespace traktor
 	namespace animation
 	{
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.animation.ClothEntityData", 0, ClothEntityData, world::EntityData)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.animation.ClothComponentData", 0, ClothComponentData, world::IEntityComponentData)
 
-ClothEntityData::ClothEntityData()
+ClothComponentData::ClothComponentData()
 :	m_resolutionX(10)
 ,	m_resolutionY(10)
 ,	m_scale(1.0f)
@@ -24,16 +24,16 @@ ClothEntityData::ClothEntityData()
 {
 }
 
-Ref< ClothEntity > ClothEntityData::createEntity(
+Ref< ClothComponent > ClothComponentData::createComponent(
 	resource::IResourceManager* resourceManager,
 	render::IRenderSystem* renderSystem
 ) const
 {
 	resource::Proxy< render::Shader > shader;
 	if (!resourceManager->bind(m_shader, shader))
-		return 0;
+		return nullptr;
 
-	Ref< ClothEntity > clothEntity = new ClothEntity();
+	Ref< ClothComponent > clothEntity = new ClothComponent();
 	if (!clothEntity->create(
 		renderSystem,
 		shader,
@@ -43,21 +43,17 @@ Ref< ClothEntity > ClothEntityData::createEntity(
 		m_damping,
 		m_solverIterations
 	))
-		return 0;
+		return nullptr;
 
 	// Fixate nodes by setting infinite mass.
 	for (std::vector< Anchor >::const_iterator i = m_anchors.begin(); i != m_anchors.end(); ++i)
 		clothEntity->setNodeInvMass(i->x, i->y, 0.0f);
 
-	clothEntity->setTransform(getTransform());
-
 	return clothEntity;
 }
 
-void ClothEntityData::serialize(ISerializer& s)
+void ClothComponentData::serialize(ISerializer& s)
 {
-	world::EntityData::serialize(s);
-
 	s >> resource::Member< render::Shader >(L"shader", m_shader);
 	s >> Member< uint32_t >(L"resolutionX", m_resolutionX);
 	s >> Member< uint32_t >(L"resolutionY", m_resolutionY);
@@ -67,7 +63,7 @@ void ClothEntityData::serialize(ISerializer& s)
 	s >> Member< float >(L"damping", m_damping);
 }
 
-void ClothEntityData::Anchor::serialize(ISerializer& s)
+void ClothComponentData::Anchor::serialize(ISerializer& s)
 {
 	s >> Member< uint32_t >(L"x", x);
 	s >> Member< uint32_t >(L"y", y);

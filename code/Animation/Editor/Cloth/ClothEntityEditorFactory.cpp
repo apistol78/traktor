@@ -1,4 +1,4 @@
-#include "Animation/Cloth/ClothEntityData.h"
+#include "Animation/Cloth/ClothComponentData.h"
 #include "Animation/Editor/Cloth/ClothEntityEditor.h"
 #include "Animation/Editor/Cloth/ClothEntityEditorFactory.h"
 
@@ -11,7 +11,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.animation.ClothEntityEditorFactory", ClothEntit
 
 const TypeInfoSet ClothEntityEditorFactory::getEntityDataTypes() const
 {
-	return makeTypeInfoSet< ClothEntityData >();
+	return makeTypeInfoSet< ClothComponentData >();
 }
 
 Ref< scene::IEntityEditor > ClothEntityEditorFactory::createEntityEditor(scene::SceneEditorContext* context, scene::EntityAdapter* entityAdapter) const
