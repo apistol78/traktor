@@ -33,7 +33,7 @@ bool MeshAssetWizardTool::launch(ui::Widget* parent, editor::IEditor* editor, db
 	// Select source model.
 	ui::FileDialog fileDialog;
 	if (!fileDialog.create(parent, type_name(this), i18n::Text(L"MESHASSET_WIZARDTOOL_FILE_TITLE"), L"All files;*.*"))
-		return 0;
+		return false;
 
 	Path fileName;
 	if (fileDialog.showModal(fileName) != ui::DrOk)
