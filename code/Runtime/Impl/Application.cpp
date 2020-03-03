@@ -838,20 +838,27 @@ bool Application::update()
 
 				// Single threaded rendering; perform rendering here.
 				render::IRenderView* renderView = m_renderServer->getRenderView();
-				if (renderView)
+				if (renderView && !renderView->isMinimized())
 				{
-					render::Clear cl;
-					cl.mask = render::CfColor | render::CfDepth;
-					cl.colors[0] = Color4f(0.0f, 0.0f, 0.0f, 0.0f);;
-					cl.depth = 1.0f;
-					if (renderView->beginPass(&cl))
+					T_PROFILER_BEGIN(L"Application render");
+					if (renderView->beginFrame())
 					{
-						if (currentState)
-							currentState->render(m_frameBuild, m_updateInfo);
-
-						renderView->endPass();
-						renderView->present();
+						if (m_stateRender)
+							m_stateRender->render(m_frameRender, m_updateInfoRender);
+						renderView->endFrame();
 					}
+					T_PROFILER_END();
+
+					T_PROFILER_BEGIN(L"Application render present");
+					renderView->present();
+					T_PROFILER_END();
+
+					renderView->getStatistics(m_renderViewStats);
+				}
+				else
+				{
+					// Yield main thread.
+					m_threadRender->sleep(10);
 				}
 
 				double renderEnd = m_timer.getElapsedTime();
@@ -1053,15 +1060,11 @@ void Application::threadRender()
 				if (renderView && !renderView->isMinimized())
 				{
 					T_PROFILER_BEGIN(L"Application render");
-					render::Clear cl;
-					cl.mask = render::CfColor | render::CfDepth;
-					cl.colors[0] = Color4f(0.0f, 0.0f, 0.0f, 0.0f);;
-					cl.depth = 1.0f;
-					if (renderView->beginPass(&cl))
+					if (renderView->beginFrame())
 					{
 						if (m_stateRender)
 							m_stateRender->render(m_frameRender, m_updateInfoRender);
-						renderView->endPass();
+						renderView->endFrame();
 					}
 					T_PROFILER_END();
 

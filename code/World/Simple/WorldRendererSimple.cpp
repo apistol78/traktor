@@ -47,7 +47,13 @@ void WorldRendererSimple::setup(
 
 	// Add passes to render graph.
 	Ref< render::RenderPass > rp = new render::RenderPass(L"Visual");
-	rp->setOutput(outputTargetSetId);
+
+	render::Clear cl;
+	cl.mask = render::CfColor | render::CfDepth;
+	cl.colors[0] = Color4f(0.0f, 0.0f, 0.0f, 0.0f);
+	cl.depth = 1.0f;
+	rp->setOutput(outputTargetSetId, cl);
+
 	rp->addBuild(
 		[=](const render::RenderGraph& renderGraph, render::RenderContext* renderContext)
 		{
