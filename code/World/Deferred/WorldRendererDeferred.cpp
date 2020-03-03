@@ -1195,12 +1195,11 @@ render::handle_t WorldRendererDeferred::setupReflectionsPass(
 	rgtd.createDepthStencil = false;
 	rgtd.usingPrimaryDepthStencil = (m_sharedDepthStencil == nullptr) ? true : false;
 	rgtd.ignoreStencil = true;
+	rgtd.targets[0].colorFormat = render::TfR11G11B10F;
 #if !defined(__ANDROID__) && !defined(__IOS__)
-	rgtd.targets[0].colorFormat = render::TfR16G16B16A16F;
 	rgtd.referenceWidthDenom = 1;
 	rgtd.referenceHeightDenom = 1;
 #else
-	rgtd.targets[0].colorFormat = render::TfR11G11B10F;
 	rgtd.referenceWidthDenom = 2;
 	rgtd.referenceHeightDenom = 2;
 #endif
@@ -1481,7 +1480,13 @@ void WorldRendererDeferred::setupProcessPass(
 			rp->setOutput(intermediateTargetSetId);
 		}
 		else
-			rp->setOutput(outputTargetSetId);
+		{
+			render::Clear cl;
+			cl.mask = render::CfColor | render::CfDepth;
+			cl.colors[0] = Color4f(0.0f, 0.0f, 0.0f, 0.0f);
+			cl.depth = 1.0f;
+			rp->setOutput(outputTargetSetId, cl);
+		}
 
 		process->addPasses(renderGraph, rp, cx);
 

@@ -470,21 +470,12 @@ Generated texture from surface cache.
 				</item>
 			</values>
 		</item>
-		<item type="traktor.render.Vector" version="traktor.render.Node:1">
-			<id>{187FF8DE-2485-8748-A475-826179C53280}</id>
-			<comment/>
-			<position>
-				<first>1039</first>
-				<second>240</second>
-			</position>
-			<value>0, 0, 0, 0</value>
-		</item>
 		<item type="traktor.render.External" version="2,traktor.render.Node:1">
-			<id>{4A59E292-0B4C-AA46-BBEE-7E49AD8CE7C5}</id>
+			<id>{E54E4D2C-E63E-B844-9D3A-7AF05BECD7D1}</id>
 			<comment/>
 			<position>
-				<first>1269</first>
-				<second>161</second>
+				<first>1198</first>
+				<second>166</second>
 			</position>
 			<fragmentGuid>{E8573411-AD4D-EA43-9593-5433C6598063}</fragmentGuid>
 			<inputPins>
@@ -501,7 +492,7 @@ Generated texture from surface cache.
 				<item>
 					<id>{2E88C633-F2D2-9641-BD25-02B259FF8DBE}</id>
 					<name>ViewVelocity</name>
-					<optional>false</optional>
+					<optional>true</optional>
 				</item>
 			</inputPins>
 			<outputPins/>
@@ -841,42 +832,32 @@ Generated texture from surface cache.
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[29]"/>
-				<name>ViewNormal</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[32]"/>
-				<name>ViewNormal</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[31]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[32]"/>
-				<name>ViewVelocity</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[29]"/>
-				<name>ViewPosition</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[32]"/>
-				<name>ViewPosition</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
 				<node ref="/object/nodes/item[26]"/>
 				<name>Output</name>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[30]"/>
 				<name>SurfaceColor</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[29]"/>
+				<name>ViewNormal</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[31]"/>
+				<name>ViewNormal</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[29]"/>
+				<name>ViewPosition</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[31]"/>
+				<name>ViewPosition</name>
 			</destination>
 		</item>
 	</edges>

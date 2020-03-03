@@ -478,21 +478,12 @@ Age
 			</position>
 			<value>0, 0, -1, 0</value>
 		</item>
-		<item type="traktor.render.Vector" version="traktor.render.Node:1">
-			<id>{1AD568B4-FF5F-0943-A74F-302A31D8376B}</id>
-			<comment/>
-			<position>
-				<first>1094</first>
-				<second>267</second>
-			</position>
-			<value>0, 0, 0, 0</value>
-		</item>
 		<item type="traktor.render.External" version="2,traktor.render.Node:1">
-			<id>{5B8EABD1-B327-C544-8667-9533BB5DE287}</id>
+			<id>{6EA48471-79D0-774E-BA0A-C855104AE271}</id>
 			<comment/>
 			<position>
-				<first>1369</first>
-				<second>203</second>
+				<first>1321</first>
+				<second>197</second>
 			</position>
 			<fragmentGuid>{E8573411-AD4D-EA43-9593-5433C6598063}</fragmentGuid>
 			<inputPins>
@@ -509,7 +500,7 @@ Age
 				<item>
 					<id>{2E88C633-F2D2-9641-BD25-02B259FF8DBE}</id>
 					<name>ViewVelocity</name>
-					<optional>false</optional>
+					<optional>true</optional>
 				</item>
 			</inputPins>
 			<outputPins/>
@@ -939,21 +930,11 @@ Age
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[43]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[44]"/>
-				<name>ViewVelocity</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
 				<node ref="/object/nodes/item[42]"/>
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[44]"/>
+				<node ref="/object/nodes/item[43]"/>
 				<name>ViewNormal</name>
 			</destination>
 		</item>
@@ -963,7 +944,7 @@ Age
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[44]"/>
+				<node ref="/object/nodes/item[43]"/>
 				<name>ViewPosition</name>
 			</destination>
 		</item>

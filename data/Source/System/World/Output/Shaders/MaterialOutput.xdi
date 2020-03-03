@@ -261,8 +261,8 @@ World_VelocityWrite
 			]]>
 			</comment>
 			<position>
-				<first>-328</first>
-				<second>722</second>
+				<first>-307</first>
+				<second>745</second>
 			</position>
 			<fragmentGuid>{E3C34875-BEFA-3C4E-BB51-8D334C1FD4D6}</fragmentGuid>
 			<inputPins>
@@ -330,8 +330,8 @@ Opaque
 			]]>
 			</comment>
 			<position>
-				<first>-474</first>
-				<second>774</second>
+				<first>-711</first>
+				<second>841</second>
 			</position>
 			<name>E_Opaque</name>
 			<global>false</global>
@@ -568,8 +568,8 @@ Opaque
 			<id>{755BF05A-439B-A247-9710-C8332954F171}</id>
 			<comment/>
 			<position>
-				<first>-522</first>
-				<second>726</second>
+				<first>-767</first>
+				<second>764</second>
 			</position>
 			<name>World_ViewVelocity</name>
 			<global>true</global>
@@ -995,6 +995,14 @@ Forward / Opaque
 			<name>V_Alpha</name>
 			<global>false</global>
 		</item>
+		<item type="traktor.render.Connected" version="traktor.render.Node:1">
+			<id>{47775996-FDB3-EA4F-89F8-7E9275A46AA8}</id>
+			<comment/>
+			<position>
+				<first>-502</first>
+				<second>799</second>
+			</position>
+		</item>
 	</nodes>
 	<edges>
 		<item type="traktor.render.Edge">
@@ -1025,16 +1033,6 @@ Forward / Opaque
 			<destination>
 				<node ref="/object/nodes/item[7]"/>
 				<name>Input</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[15]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[11]"/>
-				<name>Enable</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
@@ -1475,6 +1473,36 @@ Forward / Opaque
 			<destination>
 				<node ref="/object/nodes/item[52]"/>
 				<name>Alpha</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[36]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[67]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[15]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[67]"/>
+				<name>True</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[67]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[11]"/>
+				<name>Enable</name>
 			</destination>
 		</item>
 	</edges>

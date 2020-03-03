@@ -178,7 +178,7 @@ void ForestLayer::updatePatches(const TerrainComponent& terrainComponent)
 			float rx = (random.nextFloat() * 2.0f - 1.0f) * m_data.m_randomTilt;
 			float rz = (random.nextFloat() * 2.0f - 1.0f) * m_data.m_randomTilt;
 			float head = random.nextFloat() * TWO_PI;
-			Quaternion Qu = slerp(Quaternion::identity(), Quaternion(Vector4(0.0f, 1.0f, 0.0f), normal), m_data.m_upness);
+			Quaternion Qu = slerp(Quaternion(Vector4(0.0f, 1.0f, 0.0f), normal), Quaternion::identity(), m_data.m_upness);
 			Quaternion Qr = Quaternion::fromAxisAngle(Vector4(1.0f, 0.0f, 0.0f), rx) * Quaternion::fromAxisAngle(Vector4(0.0f, 0.0f, 1.0f), rz);
 			Quaternion Qh = Quaternion::fromAxisAngle(Vector4(0.0f, 1.0f, 0.0f), head);
 

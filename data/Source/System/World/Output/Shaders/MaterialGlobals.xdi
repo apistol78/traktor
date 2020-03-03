@@ -40,7 +40,7 @@
 			</position>
 			<name>ViewVelocity</name>
 			<connectable>true</connectable>
-			<optional>false</optional>
+			<optional>true</optional>
 			<haveDefaultValue>false</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>

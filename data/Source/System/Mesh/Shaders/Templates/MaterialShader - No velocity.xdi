@@ -391,11 +391,11 @@
 			<values/>
 		</item>
 		<item type="traktor.render.External" version="2,traktor.render.Node:1">
-			<id>{EE0C8176-54FB-CE4C-89A6-C3C03B0F23B8}</id>
+			<id>{987F043E-C6D9-E544-8E17-DE890077D885}</id>
 			<comment/>
 			<position>
-				<first>1007</first>
-				<second>380</second>
+				<first>993</first>
+				<second>458</second>
 			</position>
 			<fragmentGuid>{E8573411-AD4D-EA43-9593-5433C6598063}</fragmentGuid>
 			<inputPins>
@@ -412,20 +412,11 @@
 				<item>
 					<id>{2E88C633-F2D2-9641-BD25-02B259FF8DBE}</id>
 					<name>ViewVelocity</name>
-					<optional>false</optional>
+					<optional>true</optional>
 				</item>
 			</inputPins>
 			<outputPins/>
 			<values/>
-		</item>
-		<item type="traktor.render.Vector" version="traktor.render.Node:1">
-			<id>{704641AE-EB76-834A-9F87-FBDA58E27C9F}</id>
-			<comment/>
-			<position>
-				<first>797</first>
-				<second>456</second>
-			</position>
-			<value>0, 0, 0, 0</value>
 		</item>
 	</nodes>
 	<edges>
@@ -732,16 +723,6 @@
 		<item type="traktor.render.Edge">
 			<source>
 				<node ref="/object/nodes/item[1]"/>
-				<name>T_ViewNormal</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[10]"/>
-				<name>ViewNormal</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[1]"/>
 				<name>T_ViewPosition</name>
 			</source>
 			<destination>
@@ -751,12 +732,12 @@
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[11]"/>
-				<name>Output</name>
+				<node ref="/object/nodes/item[1]"/>
+				<name>T_ViewNormal</name>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[10]"/>
-				<name>ViewVelocity</name>
+				<name>ViewNormal</name>
 			</destination>
 		</item>
 	</edges>
