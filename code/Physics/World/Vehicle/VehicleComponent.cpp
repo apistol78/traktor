@@ -221,18 +221,30 @@ void VehicleComponent::updateSuspension(float dT)
 			wheel->suspensionLength = suspensionLength;
 
 			// Contact attributes.
-			Vector4 wheelVelocity = m_body->getVelocityAt(result.position.xyz1(), false);
-			Vector4 groundVelocity = result.body->getVelocityAt(result.position.xyz1(), false);
-			Vector4 velocity = wheelVelocity - groundVelocity;
-
+			Vector4 contactVelocity;
+			if (!wheel->contact)
+			{
+				// If no previous contact then we estimate velocity by projecting onto ground.
+				Vector4 wheelVelocity = m_body->getVelocityAt(result.position.xyz1(), false);
+				Vector4 groundVelocity = result.body->getVelocityAt(result.position.xyz1(), false);
+				Vector4 velocity = wheelVelocity - groundVelocity;
+				Scalar k = dot3(normal, velocity);
+				contactVelocity = velocity - normal * (-k);
+			}
+			else
+			{
+				// Calculate explicit velocity based on contact movement.
+				Vector4 groundVelocity = result.body->getVelocityAt(result.position.xyz1(), false);
+				Vector4 contactMovement = (result.position - wheel->contactPosition - groundVelocity * Scalar(dT)).xyz0();
+				contactVelocity = contactMovement / Scalar(dT);
+			}
+			
 			wheel->contact = true;
 			wheel->contactFudge = contactFudge;
 			wheel->contactMaterial = result.material;
 			wheel->contactPosition = result.position.xyz1();
 			wheel->contactNormal = normal;
-
-			Scalar k = dot3(normal, velocity);
-			wheel->contactVelocity = velocity - normal * (-k);
+			wheel->contactVelocity = contactVelocity;
 
 			m_airBorn = false;
 		}
@@ -282,8 +294,6 @@ void VehicleComponent::updateFriction(float dT)
 		// Determine velocities and percent of maximum velocity.
 		Scalar forwardVelocity = dot3(directionW, wheel->contactVelocity);
 		Scalar sideVelocity = dot3(directionPerpW, wheel->contactVelocity);
-
-		// \tbd Should use absolute contact position movement to determine velocity; this will introduce error creep.
 		if (abs(forwardVelocity) > 0.05f)
 		{
 			// Calculate slip angle.
@@ -299,7 +309,7 @@ void VehicleComponent::updateFriction(float dT)
 			// Less grip from fudge.
 			grip *= Scalar(wheel->contactFudge);
 
-			// Calculate amount of force from slip angle. \tbd Should use curves.
+			// Calculate amount of force from slip angle. \fixme Should use curves.
 			const float peakSlipFriction = data->getSlipCornerForce();
 			const float maxSlipAngle = data->getPeakSlipAngle();
 
