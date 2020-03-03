@@ -432,8 +432,12 @@ void WorldRendererDeferred::setup(
 	}
 
 	// Add additional passes by entity renderers.
-	WorldSetupContext(m_entityRenderers, rootEntity, renderGraph).setup();
-
+	{
+		WorldSetupContext context(m_entityRenderers, rootEntity, renderGraph);
+		context.setup(worldRenderView, rootEntity);
+		context.flush();
+	}
+	
 	// Add passes to render graph.
 	auto gbufferTargetSetId = setupGBufferPass(
 		worldRenderView,

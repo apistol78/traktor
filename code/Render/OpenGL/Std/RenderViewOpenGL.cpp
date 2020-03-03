@@ -377,27 +377,6 @@ void RenderViewOpenGL::setViewport(const Viewport& viewport)
 	));
 }
 
-Viewport RenderViewOpenGL::getViewport()
-{
-	T_ANONYMOUS_VAR(ContextOpenGL::Scope)(m_renderContext);
-
-	GLint ext[4];
-	T_OGL_SAFE(glGetIntegerv(GL_VIEWPORT, ext));
-
-	GLfloat range[2];
-	T_OGL_SAFE(glGetFloatv(GL_DEPTH_RANGE, range));
-
-	Viewport viewport;
-	viewport.left = ext[0];
-	viewport.top = ext[1];
-	viewport.width = ext[2];
-	viewport.height = ext[3];
-	viewport.nearZ = range[0];
-	viewport.farZ = range[1];
-
-	return viewport;
-}
-
 SystemWindow RenderViewOpenGL::getSystemWindow()
 {
 	SystemWindow sw;
@@ -412,7 +391,7 @@ SystemWindow RenderViewOpenGL::getSystemWindow()
 	return sw;
 }
 
-bool RenderViewOpenGL::begin(const Clear* clear)
+bool RenderViewOpenGL::beginFrame()
 {
 	T_ASSERT(!m_targetsDirty);
 
@@ -427,10 +406,32 @@ bool RenderViewOpenGL::begin(const Clear* clear)
 	m_drawCalls = 0;
 	m_primitiveCount = 0;
 
-	return begin(m_primaryTarget, 0, clear);
+	return true;
 }
 
-bool RenderViewOpenGL::begin(IRenderTargetSet* renderTargetSet, const Clear* clear)
+void RenderViewOpenGL::endFrame()
+{
+}
+
+void RenderViewOpenGL::present()
+{
+	m_renderContext->swapBuffers(m_waitVBlanks);
+	m_renderContext->leave();
+
+	// Clean pending resources.
+	if (m_resourceContext->enter())
+	{
+		m_resourceContext->deleteResources();
+		m_resourceContext->leave();
+	}
+}
+
+bool RenderViewOpenGL::beginPass(const Clear* clear)
+{
+	return beginPass(m_primaryTarget, 0, clear);
+}
+
+bool RenderViewOpenGL::beginPass(IRenderTargetSet* renderTargetSet, const Clear* clear)
 {
 	// Ensure deferred clears on targets are executed.
 	if (m_targetsDirty && !m_targetStack.empty())
@@ -454,7 +455,7 @@ bool RenderViewOpenGL::begin(IRenderTargetSet* renderTargetSet, const Clear* cle
 	return true;
 }
 
-bool RenderViewOpenGL::begin(IRenderTargetSet* renderTargetSet, int32_t renderTarget, const Clear* clear)
+bool RenderViewOpenGL::beginPass(IRenderTargetSet* renderTargetSet, int32_t renderTarget, const Clear* clear)
 {
 	// Ensure deferred clears on targets are executed.
 	if (m_targetsDirty && !m_targetStack.empty())
@@ -476,6 +477,35 @@ bool RenderViewOpenGL::begin(IRenderTargetSet* renderTargetSet, int32_t renderTa
 	m_targetsDirty = true;
 
 	return true;
+}
+
+void RenderViewOpenGL::endPass()
+{
+	T_ASSERT(!m_targetStack.empty());
+
+	TargetScope ts = m_targetStack.back();
+
+	// Ensure deferred clears on targets are executed.
+	if (m_targetsDirty && ts.clear.mask != 0)
+		bindTargets();
+
+	if (!m_targetsDirty)
+		m_targetStack.back().rts->unbind();
+
+	m_targetStack.pop_back();
+
+	if (!m_targetStack.empty())
+	{
+		m_targetsDirty = true;
+	}
+	else
+	{
+		T_ASSERT(ts.rts == m_primaryTarget);
+		ts.rts->blit(m_renderContext);
+		T_OGL_SAFE(glBindFramebuffer(GL_FRAMEBUFFER, 0));
+	}
+
+	ts.rts->setContentValid(true);
 }
 
 void RenderViewOpenGL::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, IProgram* program, const Primitives& primitives)
@@ -707,52 +737,6 @@ void RenderViewOpenGL::compute(IProgram* program, const int32_t* workSize)
 bool RenderViewOpenGL::copy(ITexture* destinationTexture, int32_t destinationSide, int32_t destinationLevel, ITexture* sourceTexture, int32_t sourceSide, int32_t sourceLevel)
 {
 	return false;
-}
-
-void RenderViewOpenGL::end()
-{
-	T_ASSERT(!m_targetStack.empty());
-
-	TargetScope ts = m_targetStack.back();
-
-	// Ensure deferred clears on targets are executed.
-	if (m_targetsDirty && ts.clear.mask != 0)
-		bindTargets();
-
-	if (!m_targetsDirty)
-		m_targetStack.back().rts->unbind();
-
-	m_targetStack.pop_back();
-
-	if (!m_targetStack.empty())
-	{
-		m_targetsDirty = true;
-	}
-	else
-	{
-		T_ASSERT(ts.rts == m_primaryTarget);
-		ts.rts->blit(m_renderContext);
-		T_OGL_SAFE(glBindFramebuffer(GL_FRAMEBUFFER, 0));
-	}
-
-	ts.rts->setContentValid(true);
-}
-
-void RenderViewOpenGL::flush()
-{
-}
-
-void RenderViewOpenGL::present()
-{
-	m_renderContext->swapBuffers(m_waitVBlanks);
-	m_renderContext->leave();
-
-	// Clean pending resources.
-	if (m_resourceContext->enter())
-	{
-		m_resourceContext->deleteResources();
-		m_resourceContext->leave();
-	}
 }
 
 void RenderViewOpenGL::pushMarker(const char* const marker)

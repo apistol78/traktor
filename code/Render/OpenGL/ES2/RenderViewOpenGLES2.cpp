@@ -245,14 +245,6 @@ void RenderViewOpenGLES2::setViewport(const Viewport& viewport)
 	));
 }
 
-Viewport RenderViewOpenGLES2::getViewport()
-{
-	if (m_renderTargetStack.empty())
-		return m_viewport;
-	else
-		return m_renderTargetStack.top().viewport;
-}
-
 SystemWindow RenderViewOpenGLES2::getSystemWindow()
 {
 #if defined(_WIN32)
@@ -269,13 +261,31 @@ SystemWindow RenderViewOpenGLES2::getSystemWindow()
 #endif
 }
 
-bool RenderViewOpenGLES2::begin(const Clear* clear)
+bool RenderViewOpenGLES2::beginFrame()
 {
 	if (!m_context->enter())
 		return false;
 
 	m_stateCache->reset();
+	m_drawCalls = 0;
+	m_primitiveCount = 0;
 
+	return true;
+}
+
+void RenderViewOpenGLES2::endFrame()
+{
+}
+
+void RenderViewOpenGLES2::present()
+{
+	m_context->swapBuffers();
+	m_context->leave();
+	m_context->deleteResources();
+}
+
+bool RenderViewOpenGLES2::beginPass(const Clear* clear)
+{
 	m_context->bindPrimary();
 
 	T_OGL_SAFE(glViewport(
@@ -290,18 +300,15 @@ bool RenderViewOpenGLES2::begin(const Clear* clear)
 		m_viewport.farZ
 	));
 
-	m_drawCalls = 0;
-	m_primitiveCount = 0;
-
 	return true;
 }
 
-bool RenderViewOpenGLES2::begin(IRenderTargetSet* renderTargetSet, const Clear* clear)
+bool RenderViewOpenGLES2::beginPass(IRenderTargetSet* renderTargetSet, const Clear* clear)
 {
-	return begin(renderTargetSet, 0, clear);
+	return beginPass(renderTargetSet, 0, clear);
 }
 
-bool RenderViewOpenGLES2::begin(IRenderTargetSet* renderTargetSet, int32_t renderTarget, const Clear* clear)
+bool RenderViewOpenGLES2::beginPass(IRenderTargetSet* renderTargetSet, int32_t renderTarget, const Clear* clear)
 {
 	RenderTargetSetOpenGLES2* rts = checked_type_cast< RenderTargetSetOpenGLES2* >(renderTargetSet);
 
@@ -366,6 +373,50 @@ bool RenderViewOpenGLES2::begin(IRenderTargetSet* renderTargetSet, int32_t rende
 	}
 
 	return true;
+}
+
+void RenderViewOpenGLES2::endPass()
+{
+	if (m_renderTargetStack.empty())
+		return;
+
+	m_renderTargetStack.top().renderTargetSet->setContentValid(true);
+	m_renderTargetStack.pop();
+
+	if (!m_renderTargetStack.empty())
+	{
+		RenderTargetStack& s = m_renderTargetStack.top();
+
+		s.renderTargetSet->bind(m_context->getPrimaryDepth(), s.renderTarget);
+
+		T_OGL_SAFE(glViewport(
+			s.viewport.left,
+			s.viewport.top,
+			s.viewport.width,
+			s.viewport.height
+		));
+
+		T_OGL_SAFE(glDepthRangef(
+			s.viewport.nearZ,
+			s.viewport.farZ
+		));
+	}
+	else
+	{
+		m_context->bindPrimary();
+
+		T_OGL_SAFE(glViewport(
+			m_viewport.left,
+			m_viewport.top,
+			m_viewport.width,
+			m_viewport.height
+		));
+
+		T_OGL_SAFE(glDepthRangef(
+			m_viewport.nearZ,
+			m_viewport.farZ
+		));
+	}
 }
 
 void RenderViewOpenGLES2::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, IProgram* program, const Primitives& primitives)
@@ -725,61 +776,6 @@ void RenderViewOpenGLES2::compute(IProgram* program, const int32_t* workSize)
 bool RenderViewOpenGLES2::copy(ITexture* destinationTexture, int32_t destinationSide, int32_t destinationLevel, ITexture* sourceTexture, int32_t sourceSide, int32_t sourceLevel)
 {
 	return false;
-}
-
-void RenderViewOpenGLES2::end()
-{
-	if (m_renderTargetStack.empty())
-		return;
-
-	m_renderTargetStack.top().renderTargetSet->setContentValid(true);
-	m_renderTargetStack.pop();
-
-	if (!m_renderTargetStack.empty())
-	{
-		RenderTargetStack& s = m_renderTargetStack.top();
-
-		s.renderTargetSet->bind(m_context->getPrimaryDepth(), s.renderTarget);
-
-		T_OGL_SAFE(glViewport(
-			s.viewport.left,
-			s.viewport.top,
-			s.viewport.width,
-			s.viewport.height
-		));
-
-		T_OGL_SAFE(glDepthRangef(
-			s.viewport.nearZ,
-			s.viewport.farZ
-		));
-	}
-	else
-	{
-		m_context->bindPrimary();
-
-		T_OGL_SAFE(glViewport(
-			m_viewport.left,
-			m_viewport.top,
-			m_viewport.width,
-			m_viewport.height
-		));
-
-		T_OGL_SAFE(glDepthRangef(
-			m_viewport.nearZ,
-			m_viewport.farZ
-		));
-	}
-}
-
-void RenderViewOpenGLES2::flush()
-{
-}
-
-void RenderViewOpenGLES2::present()
-{
-	m_context->swapBuffers();
-	m_context->leave();
-	m_context->deleteResources();
 }
 
 void RenderViewOpenGLES2::pushMarker(const char* const marker)
