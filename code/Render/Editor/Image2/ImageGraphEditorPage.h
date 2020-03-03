@@ -33,6 +33,8 @@ class Menu;
 class Node;
 class NodeMovedEvent;
 class SelectEvent;
+class ToolBar;
+class ToolBarButtonClickEvent;
 
 	}
 
@@ -65,6 +67,7 @@ private:
 	editor::IEditor* m_editor;
 	editor::IEditorPageSite* m_site;
 	editor::IDocument* m_document;
+	Ref< ui::ToolBar > m_toolBar;
 	Ref< ImageGraphAsset > m_imageGraph;
 	Ref< ui::GraphControl > m_editorGraph;
     Ref< ui::Menu > m_menuPopup;
@@ -73,6 +76,8 @@ private:
 	Ref< ui::Node > createEditorNode(Node* node) const;
 
 	void createEditorGraph();
+
+	void eventToolClick(ui::ToolBarButtonClickEvent* event);
 
     void eventButtonDown(ui::MouseButtonDownEvent* event);
 
