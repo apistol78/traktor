@@ -30,6 +30,7 @@
 #include "Ui/DropDown.h"
 #include "Ui/FileDialog.h"
 #include "Ui/InputDialog.h"
+#include "Ui/MessageBox.h"
 #include "Ui/GridView/GridColumn.h"
 #include "Ui/GridView/GridItem.h"
 #include "Ui/GridView/GridRow.h"
@@ -44,21 +45,6 @@ namespace traktor
 	{
 		namespace
 		{
-
-struct FindMaterialPred
-{
-	std::wstring m_name;
-
-	FindMaterialPred(const std::wstring& name)
-	:	m_name(name)
-	{
-	}
-
-	bool operator () (const model::Material& material) const
-	{
-		return material.getName() == m_name;
-	}
-};
 
 bool haveVertexColors(const model::Model& model)
 {
@@ -360,44 +346,50 @@ void MeshAssetEditor::updateMaterialList()
 		const std::map< std::wstring, Guid >& materialTemplates = m_asset->getMaterialTemplates();
 		const std::map< std::wstring, Guid >& materialShaders = m_asset->getMaterialShaders();
 
-		for (AlignedVector< model::Material >::const_iterator i = materials.begin(); i != materials.end(); ++i)
+		for (const auto& material : materials)
 		{
 			Ref< ui::GridRow > shaderItem = new ui::GridRow();
-			shaderItem->add(new ui::GridItem(i->getName()));
+			shaderItem->add(new ui::GridItem(material.getName()));
 
 			std::wstring materialTemplate = i18n::Text(L"MESHASSET_EDITOR_TEMPLATE_NOT_ASSIGNED");
 			std::wstring materialShader = i18n::Text(L"MESHASSET_EDITOR_SHADER_NOT_ASSIGNED");
 
-			std::map< std::wstring, Guid >::const_iterator it = materialTemplates.find(i->getName());
-			if (it != materialTemplates.end())
+			// Find template for material.
 			{
-				if (!it->second.isNull())
+				auto it = materialTemplates.find(material.getName());
+				if (it != materialTemplates.end())
 				{
-					Ref< db::Instance > materialTemplateInstance = m_editor->getSourceDatabase()->getInstance(it->second);
-					if (materialTemplateInstance)
+					if (!it->second.isNull())
 					{
-						materialTemplate = materialTemplateInstance->getName();
-						shaderItem->setData(L"TEMPLATE", materialTemplateInstance);
+						Ref< db::Instance > materialTemplateInstance = m_editor->getSourceDatabase()->getInstance(it->second);
+						if (materialTemplateInstance)
+						{
+							materialTemplate = materialTemplateInstance->getName();
+							shaderItem->setData(L"TEMPLATE", materialTemplateInstance);
+						}
 					}
+					else
+						materialTemplate = i18n::Text(L"MESHASSET_EDITOR_DISABLED");
 				}
-				else
-					materialTemplate = i18n::Text(L"MESHASSET_EDITOR_DISABLED");
 			}
 
-			std::map< std::wstring, Guid >::const_iterator it2 = materialShaders.find(i->getName());
-			if (it2 != materialShaders.end())
+			// Find shader for material.
 			{
-				if (!it2->second.isNull())
+				auto it = materialShaders.find(material.getName());
+				if (it != materialShaders.end())
 				{
-					Ref< db::Instance > materialShaderInstance = m_editor->getSourceDatabase()->getInstance(it2->second);
-					if (materialShaderInstance)
+					if (!it->second.isNull())
 					{
-						materialShader = materialShaderInstance->getName();
-						shaderItem->setData(L"INSTANCE", materialShaderInstance);
+						Ref< db::Instance > materialShaderInstance = m_editor->getSourceDatabase()->getInstance(it->second);
+						if (materialShaderInstance)
+						{
+							materialShader = materialShaderInstance->getName();
+							shaderItem->setData(L"INSTANCE", materialShaderInstance);
+						}
 					}
+					else
+						materialShader = i18n::Text(L"MESHASSET_EDITOR_DISABLED");
 				}
-				else
-					materialShader = i18n::Text(L"MESHASSET_EDITOR_DISABLED");
 			}
 
 			shaderItem->add(new ui::GridItem(materialTemplate));
@@ -496,7 +488,7 @@ void MeshAssetEditor::removeMaterialTemplate()
 		return;
 
 	selectedItem->set(1, new ui::GridItem(i18n::Text(L"MESHASSET_EDITOR_TEMPLATE_NOT_ASSIGNED")));
-	selectedItem->setData(L"TEMPLATE", 0);
+	selectedItem->setData(L"TEMPLATE", nullptr);
 	m_materialShaderList->requestUpdate();
 }
 
@@ -507,41 +499,56 @@ void MeshAssetEditor::createMaterialShader()
 		return;
 
 	std::wstring materialName = selectedItem->get(0)->getText();
+	std::wstring outputName = materialName;
 
 	// Find model material to associate shader with.
-	const AlignedVector< model::Material >& materials = m_model->getMaterials();
-	AlignedVector< model::Material >::const_iterator it = std::find_if(materials.begin(), materials.end(), FindMaterialPred(materialName));
+	const auto& materials = m_model->getMaterials();
+	auto it = std::find_if(materials.begin(), materials.end(), [&](const model::Material& material) {
+		return material.getName() == materialName;
+	});
 	if (it == materials.end())
 		return;
 
 	// Query user about material name; default model's material name.
 	ui::InputDialog::Field materialNameField(
 		L"",
-		materialName
+		outputName
 	);
 
 	ui::InputDialog materialNameDialog;
 	if (materialNameDialog.create(m_materialShaderList, i18n::Text(L"MESHASSET_EDITOR_ENTER_NAME"), i18n::Text(L"MESHASSET_EDITOR_ENTER_NAME"), &materialNameField, 1))
 	{
 		if (materialNameDialog.showModal() == ui::DrOk)
-			materialName = materialNameField.value;
+			outputName = materialNameField.value;
 		else
-			materialName.clear();
+			outputName.clear();
 
 		materialNameDialog.destroy();
 	}
 
-	if (materialName.empty())
+	if (outputName.empty())
 		return;
 
-	const std::map< std::wstring, Guid >& materialTemplates = m_asset->getMaterialTemplates();
+	// Ensure no existing instance with given name.
+	if (m_instance->getParent()->getInstance(outputName) != nullptr)
+	{
+		ui::MessageBox::show(
+			m_materialShaderList,
+			i18n::Text(L"MESHASSET_EDITOR_MESSAGE_ALREADY_EXIST"),
+			i18n::Text(L"MESHASSET_EDITOR_CAPTION_ALREADY_EXIST"),
+			ui::MbOk | ui::MbIconExclamation
+		);
+		return;
+	}
 
+	// Use material template if specified.
 	Guid materialTemplate;
-	std::map< std::wstring, Guid >::const_iterator it2 = materialTemplates.find(materialName);
+	const auto& materialTemplates = m_asset->getMaterialTemplates();
+	auto it2 = materialTemplates.find(materialName);
 	if (it2 != materialTemplates.end())
 		materialTemplate = it2->second;
 
-	// \tbd Use textures specified in MeshAsset.
+	// \fixme Use textures specified in MeshAsset.
 
 	Ref< render::ShaderGraph > materialShader = MaterialShaderGenerator().generate(
 		m_editor->getSourceDatabase(),
@@ -551,7 +558,7 @@ void MeshAssetEditor::createMaterialShader()
 	);
 	if (materialShader)
 	{
-		Ref< db::Instance > materialShaderInstance = m_instance->getParent()->createInstance(materialName);
+		Ref< db::Instance > materialShaderInstance = m_instance->getParent()->createInstance(outputName);
 		if (materialShaderInstance)
 		{
 			materialShaderInstance->setObject(materialShader);
