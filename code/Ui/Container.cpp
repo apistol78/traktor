@@ -115,7 +115,7 @@ void Container::setLayout(Layout* layout)
 
 void Container::eventSize(SizeEvent* event)
 {
-	update(0, false);
+	update(nullptr, false);
 }
 
 void Container::eventPaint(PaintEvent* event)

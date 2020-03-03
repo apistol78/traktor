@@ -20,9 +20,9 @@ void CharacterSetEditValidator::addRange(wchar_t from, wchar_t to)
 
 EditValidator::Result CharacterSetEditValidator::validate(const std::wstring& text) const
 {
-	for (std::wstring::const_iterator i = text.begin(); i != text.end(); ++i)
+	for (auto ch : text)
 	{
-		if (m_set.find(*i) == m_set.end())
+		if (m_set.find(ch) == m_set.end())
 			return VrInvalid;
 	}
 	return VrOk;
