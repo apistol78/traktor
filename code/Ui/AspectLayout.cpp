@@ -22,12 +22,12 @@ bool AspectLayout::fit(Widget* widget, const Size& bounds, Size& result)
 	Size sz = child->getPreferedSize();
 	float ratio = m_ratio > 0.0f ? m_ratio : float(sz.cx) / sz.cy;
 
-	int width = bounds.cx;
-	int height = int(width / ratio);
+	int32_t width = bounds.cx;
+	int32_t height = (int32_t)(width / ratio);
 	if (height > bounds.cy)
 	{
 		height = bounds.cy;
-		width = int(height * ratio);
+		width = (int32_t)(height * ratio);
 	}
 
 	result.cx = width;
@@ -45,16 +45,16 @@ void AspectLayout::update(Widget* widget)
 
 		Rect rc = widget->getInnerRect();
 
-		int width = rc.getWidth();
-		int height = int(width / ratio);
+		int32_t width = rc.getWidth();
+		int32_t height = (int32_t)(width / ratio);
 		if (height > rc.getHeight())
 		{
 			height = rc.getHeight();
-			width = int(height * ratio);
+			width = (int32_t)(height * ratio);
 		}
 
-		int x = rc.left + (rc.getWidth() - width) / 2;
-		int y = rc.top + (rc.getHeight() - height) / 2;
+		int32_t x = rc.left + (rc.getWidth() - width) / 2;
+		int32_t y = rc.top + (rc.getHeight() - height) / 2;
 
 		child->setRect(Rect(x, y, x + width, y + height));
 	}

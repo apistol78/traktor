@@ -55,7 +55,7 @@ bool BackgroundWorkerDialog::execute(IWaitable* waitable, IWorkerStatus* status)
 
 	showModal();
 
-	m_status = 0;
+	m_status = nullptr;
 	m_waitables.resize(0);
 	return true;
 }
@@ -67,7 +67,7 @@ bool BackgroundWorkerDialog::execute(const std::vector< IWaitable* >& waitables,
 
 	showModal();
 
-	m_status = 0;
+	m_status = nullptr;
 	m_waitables.resize(0);
 	return true;
 }
@@ -111,13 +111,13 @@ void BackgroundWorkerDialog::eventTimer(TimerEvent* event)
 			else
 				m_progressBar->setRange(0, 0);
 
-			update(0, true);
+			update(nullptr, true);
 		}
 	}
 	else
 	{
 		// No status callback; just keep updating progress bar.
-		update(0, true);
+		update(nullptr, true);
 	}
 
 	// End dialog if all job threads are finished.

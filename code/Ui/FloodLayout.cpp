@@ -46,7 +46,7 @@ Ref< Widget > FloodLayout::getFirstVisibleChild(Widget* widget)
 		if (child->acceptLayout() && child->isVisible(false))
 			return child;
 	}
-	return 0;
+	return nullptr;
 }
 
 	}

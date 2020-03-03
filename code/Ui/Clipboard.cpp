@@ -1,3 +1,4 @@
+#include "Core/Misc/SafeDestroy.h"
 #include "Ui/Clipboard.h"
 #include "Ui/Itf/IClipboard.h"
 
@@ -20,11 +21,7 @@ Clipboard::~Clipboard()
 
 void Clipboard::destroy()
 {
-	if (m_clipboard)
-	{
-		m_clipboard->destroy();
-		m_clipboard = 0;
-	}
+	safeDestroy(m_clipboard);
 }
 
 bool Clipboard::setObject(ISerializable* object)
