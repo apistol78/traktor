@@ -59,6 +59,8 @@ private:
 		float scale;
 	};
 
+	ForestLayerData m_data;
+
 	resource::Proxy< mesh::InstanceMesh > m_lod0mesh;
 	resource::Proxy< mesh::InstanceMesh > m_lod1mesh;
 

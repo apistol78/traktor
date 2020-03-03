@@ -49,6 +49,7 @@ bool ForestLayer::create(
 	if (!resourceManager->bind(layerData.m_lod1mesh, m_lod1mesh))
 		return false;
 
+	m_data = layerData;
 	updatePatches(terrainComponent);
 	return true;
 }
@@ -83,9 +84,9 @@ void ForestLayer::build(
 		{
 			const auto& tree = m_trees[i];
 			Scalar distance = (tree.position - eye).length();
-			if (distance < 50.0_simd)
+			if (distance < m_data.m_lod0distance)
 				m_lod0indices.push_back(i);
-			else if (distance < 200.0_simd)
+			else if (distance < m_data.m_lod1distance)
 				m_lod1indices.push_back(i);
 		}
 	}
@@ -149,44 +150,43 @@ void ForestLayer::updatePatches(const TerrainComponent& terrainComponent)
 {
 	const auto& terrain = terrainComponent.getTerrain();
 	const auto& heightfield = terrain->getHeightfield();
-
+	const float densityInv = 1.0f / m_data.m_density;
 	const int32_t size = heightfield->getSize();
 	const Vector4 extentPerGrid = heightfield->getWorldExtent() / Scalar(float(size));
-
-	const float density = 12.0f;	// 1 tree per meter.
 	Random random;
 
 	m_trees.resize(0);
-
-	for (float z = 0; z < size; z += density)
+	for (float z = 0; z < size; z += densityInv)
 	{
-		for (float x = 0; x < size; x += density)
+		for (float x = 0; x < size; x += densityInv)
 		{
 			// Check if trees are allowed on this position.
-			if (heightfield->getGridMaterial(x, z) != /*m_material*/1)
+			if (heightfield->getGridMaterial(x, z) != m_data.m_material)
 				continue;
 
 			// Get world position.
-			float wx, wz;
+			float wx, wy, wz;
 			heightfield->gridToWorld(x, z, wx, wz);
-			float wy = heightfield->getWorldHeight(wx, wz);
-
-			wx += extentPerGrid.x() * density * (random.nextFloat() - 0.5f);
-			wz += extentPerGrid.z() * density * (random.nextFloat() - 0.5f);
+			wy = heightfield->getWorldHeight(wx, wz);
+			wx += extentPerGrid.x() * densityInv * (random.nextFloat() - 0.5f);
+			wz += extentPerGrid.z() * densityInv * (random.nextFloat() - 0.5f);
 
 			// Calculate rotation.
-			float rx = (random.nextFloat() * 2.0f - 1.0f) * (PI / 20.0f);
-			float rz = (random.nextFloat() * 2.0f - 1.0f) * (PI / 20.0f);
+			float gx, gz;
+			heightfield->worldToGrid(wx, wz, gx, gz);
+			Vector4 normal = heightfield->normalAt(gx, gz);
+			float rx = (random.nextFloat() * 2.0f - 1.0f) * m_data.m_randomTilt;
+			float rz = (random.nextFloat() * 2.0f - 1.0f) * m_data.m_randomTilt;
 			float head = random.nextFloat() * TWO_PI;
+			Quaternion Qu = slerp(Quaternion::identity(), Quaternion(Vector4(0.0f, 1.0f, 0.0f), normal), m_data.m_upness);
+			Quaternion Qr = Quaternion::fromAxisAngle(Vector4(1.0f, 0.0f, 0.0f), rx) * Quaternion::fromAxisAngle(Vector4(0.0f, 0.0f, 1.0f), rz);
+			Quaternion Qh = Quaternion::fromAxisAngle(Vector4(0.0f, 1.0f, 0.0f), head);
 
 			// Add tree on position.
 			auto& tree = m_trees.push_back();
 			tree.position = Vector4(wx, wy, wz, 1.0f);
-			tree.rotation = 
-				Quaternion::fromAxisAngle(Vector4(1.0f, 0.0f, 0.0f), rx) *
-				Quaternion::fromAxisAngle(Vector4(0.0f, 0.0f, 1.0f), rz) *
-				Quaternion::fromAxisAngle(Vector4(0.0f, 1.0f, 0.0f), head);
-			tree.scale = random.nextFloat() * 0.2f + 0.8f;
+			tree.rotation = Qr * Qu * Qh;
+			tree.scale = random.nextFloat() * m_data.m_randomScale + (1.0f - m_data.m_randomScale);
 		}
 	}
 }
