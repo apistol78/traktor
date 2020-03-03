@@ -7,6 +7,7 @@
 #include "Editor/IDocument.h"
 #include "Editor/IEditor.h"
 #include "Editor/IEditorPageSite.h"
+#include "I18N/Text.h"
 #include "Render/Editor/Edge.h"
 #include "Render/Editor/Image2/IImgStep.h"
 #include "Render/Editor/Image2/ImageGraphAsset.h"
@@ -22,6 +23,7 @@
 #include "Ui/Container.h"
 #include "Ui/Menu.h"
 #include "Ui/MenuItem.h"
+#include "Ui/StyleBitmap.h"
 #include "Ui/TableLayout.h"
 #include "Ui/Graph/DefaultNodeShape.h"
 #include "Ui/Graph/Edge.h"
@@ -34,6 +36,10 @@
 #include "Ui/Graph/OutputNodeShape.h"
 #include "Ui/Graph/Pin.h"
 #include "Ui/Graph/SelectEvent.h"
+#include "Ui/ToolBar/ToolBar.h"
+#include "Ui/ToolBar/ToolBarButton.h"
+#include "Ui/ToolBar/ToolBarButtonClickEvent.h"
+#include "Ui/ToolBar/ToolBarSeparator.h"
 
 namespace traktor
 {
@@ -56,7 +62,22 @@ bool ImageGraphEditorPage::create(ui::Container* parent)
 		return false;
 
 	Ref< ui::Container > container = new ui::Container();
-	container->create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"100%", 0, 0));
+	container->create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%", 0, 0));
+
+	// Create our custom toolbar.
+	m_toolBar = new ui::ToolBar();
+	m_toolBar->create(container);
+	m_toolBar->addImage(new ui::StyleBitmap(L"Shader.Tools"), 14);
+	m_toolBar->addItem(new ui::ToolBarButton(i18n::Text(L"IMAGEGRAPH_CENTER"), 7, ui::Command(L"ImageGraph.Editor.Center")));
+	m_toolBar->addItem(new ui::ToolBarSeparator());
+	m_toolBar->addItem(new ui::ToolBarButton(i18n::Text(L"IMAGEGRAPH_ALIGN_LEFT"), 0, ui::Command(L"ImageGraph.Editor.AlignLeft")));
+	m_toolBar->addItem(new ui::ToolBarButton(i18n::Text(L"IMAGEGRAPH_ALIGN_RIGHT"), 1, ui::Command(L"ImageGraph.Editor.AlignRight")));
+	m_toolBar->addItem(new ui::ToolBarButton(i18n::Text(L"IMAGEGRAPH_ALIGN_TOP"), 2, ui::Command(L"ImageGraph.Editor.AlignTop")));
+	m_toolBar->addItem(new ui::ToolBarButton(i18n::Text(L"IMAGEGRAPH_ALIGN_BOTTOM"), 3, ui::Command(L"ImageGraph.Editor.AlignBottom")));
+	m_toolBar->addItem(new ui::ToolBarSeparator());
+	m_toolBar->addItem(new ui::ToolBarButton(i18n::Text(L"IMAGEGRAPH_EVEN_VERTICALLY"), 4, ui::Command(L"ImageGraph.Editor.EvenSpaceVertically")));
+	m_toolBar->addItem(new ui::ToolBarButton(i18n::Text(L"IMAGEGRAPH_EVEN_HORIZONTALLY"), 5, ui::Command(L"ImageGraph.Editor.EventSpaceHorizontally")));
+	m_toolBar->addEventHandler< ui::ToolBarButtonClickEvent >(this, &ImageGraphEditorPage::eventToolClick);
 
 	m_editorGraph = new ui::GraphControl();
 	m_editorGraph->create(container);
@@ -67,14 +88,14 @@ bool ImageGraphEditorPage::create(ui::Container* parent)
 	m_editorGraph->addEventHandler< ui::EdgeDisconnectEvent >(this, &ImageGraphEditorPage::eventEdgeDisconnect);
 
 	m_menuPopup = new ui::Menu();
-	Ref< ui::MenuItem > menuItemCreate = new ui::MenuItem(L"Create...");
-	menuItemCreate->add(new ui::MenuItem(ui::Command(L"ImageGraph.Editor.AddInput"), L"Input"));
-	menuItemCreate->add(new ui::MenuItem(ui::Command(L"ImageGraph.Editor.AddOutput"), L"Output"));
-	menuItemCreate->add(new ui::MenuItem(ui::Command(L"ImageGraph.Editor.AddPass"), L"Pass"));
-	menuItemCreate->add(new ui::MenuItem(ui::Command(L"ImageGraph.Editor.AddTargetSet"), L"TargetSet"));
-	menuItemCreate->add(new ui::MenuItem(ui::Command(L"ImageGraph.Editor.AddTexture"), L"Texture"));
+	Ref< ui::MenuItem > menuItemCreate = new ui::MenuItem(i18n::Text(L"IMAGEGRAPH_CREATE"));
+	menuItemCreate->add(new ui::MenuItem(ui::Command(L"ImageGraph.Editor.AddInput"), i18n::Text(L"IMAGEGRAPH_CREATE_INPUT")));
+	menuItemCreate->add(new ui::MenuItem(ui::Command(L"ImageGraph.Editor.AddOutput"), i18n::Text(L"IMAGEGRAPH_CREATE_OUTPUT")));
+	menuItemCreate->add(new ui::MenuItem(ui::Command(L"ImageGraph.Editor.AddPass"), i18n::Text(L"IMAGEGRAPH_CREATE_PASS")));
+	menuItemCreate->add(new ui::MenuItem(ui::Command(L"ImageGraph.Editor.AddTargetSet"), i18n::Text(L"IMAGEGRAPH_CREATE_TARGETSET")));
+	menuItemCreate->add(new ui::MenuItem(ui::Command(L"ImageGraph.Editor.AddTexture"), i18n::Text(L"IMAGEGRAPH_CREATE_TEXTURE")));
 	m_menuPopup->add(menuItemCreate);
-	m_menuPopup->add(new ui::MenuItem(ui::Command(L"Editor.Delete"), L"Delete"));
+	m_menuPopup->add(new ui::MenuItem(ui::Command(L"Editor.Delete"), i18n::Text(L"IMAGEGRAPH_DELETE")));
 
 	createEditorGraph();
 	return true;
@@ -271,7 +292,7 @@ bool ImageGraphEditorPage::handleCommand(const ui::Command& command)
 			m_imageGraph = m_document->getObject< ImageGraphAsset >(0);
 			T_ASSERT(m_imageGraph);
 
-			// createEditorGraph();
+			createEditorGraph();
 		}
 	}
 	else if (command == L"Editor.Redo")
@@ -281,7 +302,7 @@ bool ImageGraphEditorPage::handleCommand(const ui::Command& command)
 			m_imageGraph = m_document->getObject< ImageGraphAsset >(0);
 			T_ASSERT(m_imageGraph);
 
-			// createEditorGraph();
+			createEditorGraph();
 		}
 	}
 	else if (command == L"ImageGraph.Editor.Center")
@@ -518,6 +539,12 @@ void ImageGraphEditorPage::createEditorGraph()
 	}
 
 	m_editorGraph->update();
+}
+
+void ImageGraphEditorPage::eventToolClick(ui::ToolBarButtonClickEvent* event)
+{
+	const ui::Command& command = event->getCommand();
+	handleCommand(command);
 }
 
 void ImageGraphEditorPage::eventButtonDown(ui::MouseButtonDownEvent* event)
