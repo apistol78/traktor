@@ -24,6 +24,8 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderViewCapture", RenderViewCapture, I
 RenderViewCapture::RenderViewCapture(IRenderSystem* renderSystem, IRenderView* renderView)
 :	m_renderSystem(renderSystem)
 ,	m_renderView(renderView)
+,	m_insideFrame(false)
+,	m_insidePass(false)
 {
 	m_timeQuery = renderSystem->createTimeQuery();
 }
@@ -98,67 +100,87 @@ void RenderViewCapture::setViewport(const Viewport& viewport)
 	m_renderView->setViewport(viewport);
 }
 
-Viewport RenderViewCapture::getViewport()
-{
-	return m_renderView->getViewport();
-}
-
 SystemWindow RenderViewCapture::getSystemWindow()
 {
 	return m_renderView->getSystemWindow();
 }
 
-bool RenderViewCapture::begin(
-	const Clear* clear
-)
+bool RenderViewCapture::beginFrame()
 {
-	if (!m_renderView->begin(clear))
+	T_CAPTURE_ASSERT(!m_insideFrame, L"Frame already begun.");
+	if (!m_renderView->beginFrame())
 		return false;
 
-	m_targetDepth = 1;
+	m_insideFrame = true;
 	return true;
 }
 
-bool RenderViewCapture::begin(
-	IRenderTargetSet* renderTargetSet,
-	const Clear* clear
-)
+void RenderViewCapture::endFrame()
 {
-	RenderTargetSetCapture* rtsc = mandatory_non_null_type_cast< RenderTargetSetCapture* >(renderTargetSet);
+	T_CAPTURE_ASSERT(m_insideFrame, L"Frame not begun.");
+	m_renderView->endFrame();
+	m_insideFrame = false;
+}
 
-	if (!m_renderView->begin(
+void RenderViewCapture::present()
+{
+	T_CAPTURE_ASSERT (!m_insideFrame, L"Cannot present inside beginFrame/endFrame.");
+	m_renderView->present();
+}
+
+bool RenderViewCapture::beginPass(const Clear* clear)
+{
+	T_CAPTURE_ASSERT(!m_insidePass, L"Already inside pass.");
+	if (!m_renderView->beginPass(clear))
+		return false;
+
+	m_insidePass = true;
+	return true;
+}
+
+bool RenderViewCapture::beginPass(IRenderTargetSet* renderTargetSet, const Clear* clear)
+{
+	T_CAPTURE_ASSERT(!m_insidePass, L"Already inside pass.");
+
+	RenderTargetSetCapture* rtsc = mandatory_non_null_type_cast< RenderTargetSetCapture* >(renderTargetSet);
+	if (!m_renderView->beginPass(
 		rtsc->getRenderTargetSet(),
 		clear
 	))
 		return false;
 
-	++m_targetDepth;
+	m_insidePass = true;
 	return true;
 }
 
-bool RenderViewCapture::begin(
-	IRenderTargetSet* renderTargetSet,
-	int32_t renderTarget,
-	const Clear* clear
-)
+bool RenderViewCapture::beginPass(IRenderTargetSet* renderTargetSet, int32_t renderTarget, const Clear* clear)
 {
+	T_CAPTURE_ASSERT(!m_insidePass, L"Already inside pass.");
+
 	RenderTargetSetCapture* rtsc = mandatory_non_null_type_cast< RenderTargetSetCapture* >(renderTargetSet);
 	T_CAPTURE_ASSERT (rtsc->haveColorTexture(renderTarget), L"No such render target.");
 
-	if (!m_renderView->begin(
+	if (!m_renderView->beginPass(
 		rtsc->getRenderTargetSet(),
 		renderTarget,
 		clear
 	))
 		return false;
 
-	++m_targetDepth;
+	m_insidePass = true;
 	return true;
+}
+
+void RenderViewCapture::endPass()
+{
+	T_CAPTURE_ASSERT(m_insidePass, L"Not inside pass.");
+	m_renderView->endPass();
+	m_insidePass = false;
 }
 
 void RenderViewCapture::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, IProgram* program, const Primitives& primitives)
 {
-	T_CAPTURE_ASSERT (m_targetDepth >= 1, L"Cannot draw outside of begin/end.");
+	T_CAPTURE_ASSERT (m_insidePass, L"Cannot draw outside of beginPass/endPass.");
 
 	ProgramCapture* programCapture = dynamic_type_cast< ProgramCapture* >(program);
 	T_CAPTURE_ASSERT (programCapture, L"Incorrect program type.");
@@ -229,7 +251,7 @@ void RenderViewCapture::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffe
 
 void RenderViewCapture::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, IProgram* program, const Primitives& primitives, uint32_t instanceCount)
 {
-	T_CAPTURE_ASSERT (m_targetDepth >= 1, L"Cannot draw outside of begin/end.");
+	T_CAPTURE_ASSERT (m_insidePass, L"Cannot draw outside of beginPass/endPass.");
 
 	ProgramCapture* programCapture = dynamic_type_cast< ProgramCapture* >(program);
 	T_CAPTURE_ASSERT (programCapture, L"Incorrect program type.");
@@ -300,7 +322,7 @@ void RenderViewCapture::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffe
 
 void RenderViewCapture::compute(IProgram* program, const int32_t* workSize)
 {
-	T_CAPTURE_ASSERT (m_targetDepth >= 1, L"Cannot compute outside of begin/end.");
+	T_CAPTURE_ASSERT (m_insidePass, L"Cannot compute outside of beginPass/endPass.");
 	T_CAPTURE_ASSERT (workSize != nullptr, L"Incorrect argument; workSize null.");
 
 	ProgramCapture* programCapture = dynamic_type_cast< ProgramCapture* >(program);
@@ -316,28 +338,11 @@ void RenderViewCapture::compute(IProgram* program, const int32_t* workSize)
 
 bool RenderViewCapture::copy(ITexture* destinationTexture, int32_t destinationSide, int32_t destinationLevel, ITexture* sourceTexture, int32_t sourceSide, int32_t sourceLevel)
 {
-	T_CAPTURE_ASSERT (m_targetDepth >= 1, L"Cannot copy outside of begin/end.");
+	T_CAPTURE_ASSERT (m_insidePass, L"Cannot copy outside of beginPass/endPass.");
 	T_CAPTURE_ASSERT (destinationTexture, L"Invalid destination texture.");
 	T_CAPTURE_ASSERT (sourceTexture, L"Invalid destination texture.");
 
 	return m_renderView->copy(destinationTexture, destinationSide, destinationLevel, sourceTexture, sourceSide, sourceLevel);
-}
-
-void RenderViewCapture::end()
-{
-	T_CAPTURE_ASSERT (m_targetDepth >= 1, L"Cannot end without begin.");
-	m_renderView->end();
-}
-
-void RenderViewCapture::flush()
-{
-	m_renderView->flush();
-}
-
-void RenderViewCapture::present()
-{
-	T_CAPTURE_ASSERT (m_targetDepth >= 1, L"Cannot present inside begin/end.");
-	m_renderView->present();
 }
 
 void RenderViewCapture::pushMarker(const char* const marker)
