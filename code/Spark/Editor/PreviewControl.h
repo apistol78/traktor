@@ -1,7 +1,5 @@
 #pragma once
 
-#define T_USE_ACCELERATED_RENDERER 1
-
 #include "Core/Timer/Timer.h"
 #include "Ui/Widget.h"
 
@@ -49,6 +47,8 @@ class IResourceManager;
 class IRenderSystem;
 class IRenderTargetSet;
 class IRenderView;
+class RenderContext;
+class RenderGraph;
 class Shader;
 
 	}
@@ -60,13 +60,6 @@ class ISoundPlayer;
 
 	}
 
-	namespace graphics
-	{
-
-class IGraphicsSystem;
-
-	}
-
 	namespace spark
 	{
 
@@ -75,7 +68,6 @@ class Movie;
 class MoviePlayer;
 class MovieRenderer;
 class SoundRenderer;
-class SwDisplayRenderer;
 
 class T_DLLCLASS PreviewControl : public ui::Widget
 {
@@ -115,14 +107,10 @@ private:
 	editor::IEditor* m_editor;
 	Ref< ui::EventSubject::IEventHandler > m_idleEventHandler;
 	Ref< db::Database > m_database;
-#if T_USE_ACCELERATED_RENDERER
 	Ref< render::IRenderView > m_renderView;
+	Ref< render::RenderContext > m_renderContext;
+	Ref< render::RenderGraph > m_renderGraph;
 	Ref< AccDisplayRenderer > m_displayRenderer;
-#else
-	Ref< graphics::IGraphicsSystem > m_graphicsSystem;
-	Ref< drawing::Image > m_image;
-	Ref< SwDisplayRenderer > m_displayRenderer;
-#endif
 	Ref< SoundRenderer > m_soundRenderer;
 	Ref< MovieRenderer > m_movieRenderer;
 	Ref< MoviePlayer > m_moviePlayer;
@@ -155,4 +143,3 @@ private:
 
 	}
 }
-

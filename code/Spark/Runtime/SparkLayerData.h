@@ -39,10 +39,7 @@ private:
 	resource::Id< Movie > m_movie;
 	std::map< std::wstring, resource::Id< Movie > > m_externalMovies;
 	bool m_clearBackground;
-	bool m_enableShapeCache;
-	bool m_enableDirtyRegions;
 	bool m_enableSound;
-	uint32_t m_contextSize;
 };
 
 	}

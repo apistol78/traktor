@@ -36,7 +36,7 @@ public:
 		if (m_texture)
 		{
 			m_cache->freeTexture(m_texture);
-			m_texture = 0;
+			m_texture = nullptr;
 		}
 	}
 
@@ -104,8 +104,8 @@ AccTextureCache::~AccTextureCache()
 
 void AccTextureCache::destroy()
 {
-	m_resourceManager = 0;
-	m_renderSystem = 0;
+	m_resourceManager = nullptr;
+	m_renderSystem = nullptr;
 }
 
 void AccTextureCache::clear()
@@ -119,7 +119,7 @@ Ref< AccBitmapRect > AccTextureCache::getBitmapTexture(const Bitmap& bitmap)
 	if (bmr)
 		return bmr;
 
-	if (const BitmapResource* bitmapResource = dynamic_type_cast< const BitmapResource* >(&bitmap))
+	if (auto bitmapResource = dynamic_type_cast< const BitmapResource* >(&bitmap))
 	{
 		resource::Proxy< render::ISimpleTexture > texture;
 
@@ -142,7 +142,7 @@ Ref< AccBitmapRect > AccTextureCache::getBitmapTexture(const Bitmap& bitmap)
 		bitmap.setCacheObject(br);
 		return br;
 	}
-	else if (const BitmapTexture* bitmapTexture = dynamic_type_cast< const BitmapTexture* >(&bitmap))
+	else if (auto bitmapTexture = dynamic_type_cast< const BitmapTexture* >(&bitmap))
 	{
 		Ref< AccBitmapRect > br = new AccBitmapRect(
 			resource::Proxy< render::ISimpleTexture >(bitmapTexture->getTexture()),
@@ -155,14 +155,14 @@ Ref< AccBitmapRect > AccTextureCache::getBitmapTexture(const Bitmap& bitmap)
 		bitmap.setCacheObject(br);
 		return br;
 	}
-	else if (const BitmapImage* bitmapData = dynamic_type_cast< const BitmapImage* >(&bitmap))
+	else if (auto bitmapData = dynamic_type_cast< const BitmapImage* >(&bitmap))
 	{
 		Ref< render::ISimpleTexture > texture;
 
 		// Check if any free texture matching requested size.
 		if (m_reuseTextures)
 		{
-			for (RefArray< render::ISimpleTexture >::iterator i = m_freeTextures.begin(); i != m_freeTextures.end(); ++i)
+			for (auto i = m_freeTextures.begin(); i != m_freeTextures.end(); ++i)
 			{
 				if (i->getWidth() == bitmapData->getWidth() && i->getHeight() == bitmapData->getHeight())
 				{
@@ -188,7 +188,7 @@ Ref< AccBitmapRect > AccTextureCache::getBitmapTexture(const Bitmap& bitmap)
 		}
 
 		if (!texture)
-			return 0;
+			return nullptr;
 
 		render::ITexture::Lock tl;
 		if (texture->lock(0, tl))
@@ -218,7 +218,7 @@ Ref< AccBitmapRect > AccTextureCache::getBitmapTexture(const Bitmap& bitmap)
 		return br;
 	}
 
-	return 0;
+	return nullptr;
 }
 
 void AccTextureCache::freeTexture(render::ISimpleTexture* texture)

@@ -14,7 +14,7 @@ class ISimpleTexture;
 	namespace spark
 	{
 
-/*! \brief
+/*!
  * \ingroup Spark
  */
 class AccBitmapRect : public RefCountImpl< IRefCount >

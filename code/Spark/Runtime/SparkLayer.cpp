@@ -121,20 +121,14 @@ SparkLayer::SparkLayer(
 	const resource::Proxy< Movie >& movie,
 	const std::map< std::wstring, resource::Proxy< Movie > >& externalMovies,
 	bool clearBackground,
-	bool enableShapeCache,
-	bool enableDirtyRegions,
-	bool enableSound,
-	uint32_t contextSize
+	bool enableSound
 )
 :	Layer(stage, name, permitTransition)
 ,	m_environment(environment)
 ,	m_movie(movie)
 ,	m_externalMovies(externalMovies)
 ,	m_clearBackground(clearBackground)
-,	m_enableShapeCache(enableShapeCache)
-,	m_enableDirtyRegions(enableDirtyRegions)
 ,	m_enableSound(enableSound)
-,	m_contextSize(contextSize)
 ,	m_visible(true)
 ,	m_offset(0.0f, 0.0f)
 ,	m_scale(1.0f)
@@ -181,12 +175,7 @@ void SparkLayer::transition(Layer* fromLayer)
 	bool shouldFlush = true;
 
 	// Ensure matching settings.
-	if (
-		m_clearBackground != fromSparkLayer->m_clearBackground ||
-		m_enableShapeCache != fromSparkLayer->m_enableShapeCache ||
-		m_enableDirtyRegions != fromSparkLayer->m_enableDirtyRegions ||
-		m_contextSize != fromSparkLayer->m_contextSize
-	)
+	if (m_clearBackground != fromSparkLayer->m_clearBackground)
 		return;
 
 	// Pass movie as well, if it's the same movie and we're allowed.
@@ -435,29 +424,9 @@ void SparkLayer::update(const runtime::UpdateInfo& info)
 
 void SparkLayer::setup(const runtime::UpdateInfo& info, render::RenderGraph& renderGraph)
 {
-	// T_PROFILER_SCOPE(L"SparkLayer setup");
-	// if (!m_displayRenderer || !m_movieRenderer || !m_moviePlayer || !m_visible)
-	// 	return;
-
-	// m_displayRenderer->build(frame);
-	// m_moviePlayer->render(m_movieRenderer);
-
-	// render::IRenderView* renderView = m_environment->getRender()->getRenderView();
-	// T_ASSERT(renderView);
-
-	Ref< render::RenderPass > rp = new render::RenderPass(L"Spark");
-	rp->setOutput(0);
-
-	rp->addBuild([this](const render::RenderGraph& renderGraph, render::RenderContext* renderContext) {
-		// m_displayRenderer->render(
-		// 	renderView,
-		// 	frame,
-		// 	m_offset,
-		// 	m_scale
-		// );
-	});
-
-	renderGraph.addPass(rp);
+	m_displayRenderer->setup(&renderGraph);
+	m_moviePlayer->render(m_movieRenderer);
+	m_displayRenderer->setup(nullptr);
 }
 
 void SparkLayer::preReconfigured()
@@ -583,11 +552,7 @@ void SparkLayer::createMoviePlayer()
 			m_environment->getResource()->getResourceManager(),
 			m_environment->getRender()->getRenderSystem(),
 			m_environment->getRender()->getThreadFrameQueueCount(),
-			m_contextSize * 1024 * 1024,
-			m_clearBackground,
-			m_enableShapeCache,
-			m_enableDirtyRegions,
-			0.006f
+			m_clearBackground
 		))
 		{
 			log::error << L"Unable to create display renderer." << Endl;

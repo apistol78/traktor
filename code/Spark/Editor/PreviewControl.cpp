@@ -7,6 +7,13 @@
 #include "Drawing/Image.h"
 #include "Drawing/PixelFormat.h"
 #include "Editor/IEditor.h"
+#include "Render/IRenderSystem.h"
+#include "Render/IRenderTargetSet.h"
+#include "Render/IRenderView.h"
+#include "Render/ScreenRenderer.h"
+#include "Render/Shader.h"
+#include "Render/Context/RenderContext.h"
+#include "Render/Frame/RenderGraph.h"
 #include "Spark/DefaultCharacterFactory.h"
 #include "Spark/Movie.h"
 #include "Spark/MovieLoader.h"
@@ -22,19 +29,6 @@
 #include "Sound/Player/SoundPlayer.h"
 #include "Ui/Itf/IWidget.h"
 #include "Ui/Application.h"
-#if T_USE_ACCELERATED_RENDERER
-#	include "Render/IRenderSystem.h"
-#	include "Render/IRenderTargetSet.h"
-#	include "Render/IRenderView.h"
-#	include "Render/ScreenRenderer.h"
-#	include "Render/Shader.h"
-#else
-#	include "Graphics/IGraphicsSystem.h"
-#	if defined(_WIN32)
-#		include "Graphics/Gdi/GraphicsSystemGdi.h"
-#	endif
-#	include "Graphics/ISurface.h"
-#endif
 
 namespace traktor
 {
@@ -106,7 +100,6 @@ bool PreviewControl::create(
 	if (!Widget::create(parent, style))
 		return false;
 
-#if T_USE_ACCELERATED_RENDERER
 	render::RenderViewEmbeddedDesc desc;
 	desc.depthBits = 16;
 	desc.stencilBits = 8;
@@ -118,38 +111,18 @@ bool PreviewControl::create(
 	if (!m_renderView)
 		return false;
 
+	m_renderContext = new render::RenderContext(4 * 1024 * 1024);
+	m_renderGraph = new render::RenderGraph(renderSystem);
+
 	m_displayRenderer = new AccDisplayRenderer();
 	m_displayRenderer->create(
 		resourceManager,
 		renderSystem,
 		1,
-		16 * 1024 * 1024,
-		true,
-		false,
-		false,
-		0.0f
+		true
 	);
 
 	m_movieRenderer = new MovieRenderer(m_displayRenderer, nullptr);
-
-#else
-	graphics::CreateDesc desc;
-	desc.syswin = getIWidget()->getSystemWindow();
-	desc.fullScreen = false;
-	desc.displayMode.width = 16;
-	desc.displayMode.height = 16;
-	desc.displayMode.bits = 32;
-	desc.pixelFormat = graphics::PfeA8R8G8B8;
-
-#if defined(_WIN32)
-	m_graphicsSystem = new graphics::GraphicsSystemGdi();
-#endif
-	if (!m_graphicsSystem->create(desc))
-		return false;
-
-	m_image = new drawing::Image(drawing::PixelFormat::getA8R8G8B8(), 16, 16);
-	m_displayRenderer = new SwDisplayRenderer(m_image, true);
-#endif
 
 	if (soundPlayer)
 	{
@@ -182,15 +155,10 @@ void PreviewControl::destroy()
 
 	safeDestroy(m_moviePlayer);
 	safeDestroy(m_soundRenderer);
-
-#if T_USE_ACCELERATED_RENDERER
 	safeDestroy(m_displayRenderer);
 	safeClose(m_renderView);
-#else
-	safeDestroy(m_graphicsSystem);
-#endif
 
-	m_movieRenderer = 0;
+	m_movieRenderer = nullptr;
 
 	Widget::destroy();
 }
@@ -276,25 +244,11 @@ void PreviewControl::eventSize(ui::SizeEvent* event)
 {
 	ui::Size sz = event->getSize();
 
-#if T_USE_ACCELERATED_RENDERER
 	if (m_renderView)
 	{
 		m_renderView->reset(sz.cx, sz.cy);
 		m_renderView->setViewport(render::Viewport(0, 0, sz.cx, sz.cy, 0, 1));
 	}
-#else
-	if (!m_graphicsSystem)
-		return;
-
-	m_graphicsSystem->resize(
-		sz.cx,
-		sz.cy
-	);
-
-	m_image = new drawing::Image(drawing::PixelFormat::getA8R8G8B8(), sz.cx, sz.cy);
-	m_displayRenderer->setImage(m_image);
-
-#endif
 
 	if (m_moviePlayer)
 		m_moviePlayer->postViewResize(sz.cx, sz.cy);
@@ -302,59 +256,31 @@ void PreviewControl::eventSize(ui::SizeEvent* event)
 
 void PreviewControl::eventPaint(ui::PaintEvent* event)
 {
-#if T_USE_ACCELERATED_RENDERER
 	if (!m_renderView)
 		return;
 
-	render::Clear cl;
-	cl.mask = render::CfColor | render::CfDepth | render::CfStencil;
-	cl.colors[0] = Color4f(0.8f, 0.8f, 0.8f, 0.0);
-	cl.depth = 1.0f;
-	cl.stencil = 0;
+	ui::Size sz = getInnerRect().getSize();
 
-	if (m_renderView->beginPass(&cl))
-	{
-		// Build render context.
-		if (m_movie)
-		{
-			m_displayRenderer->build(uint32_t(0));
-			m_moviePlayer->render(m_movieRenderer);
-		}
+	// Add passes to render graph.
+	m_displayRenderer->setup(m_renderGraph);
+	m_moviePlayer->render(m_movieRenderer);
+	m_displayRenderer->setup(nullptr);
 
-		// Flush render context.
-		m_displayRenderer->render(m_renderView, 0, Vector2(0.0f, 0.0f), 1.0f);
-
-		m_renderView->endPass();
-		m_renderView->present();
-	}
-
-#else
-	if (!m_graphicsSystem)
+	// Validate render graph.
+	if (!m_renderGraph->validate(sz.cx, sz.cy))
 		return;
 
-	Ref< graphics::ISurface > surface = m_graphicsSystem->getSecondarySurface();
+	// Build render context.
+	m_renderContext->flush();
+	m_renderGraph->build(m_renderContext);
 
-	graphics::SurfaceDesc desc;
-	void* bits = surface->lock(desc);
-	if (bits)
+	// Render frame.
+	if (m_renderView->beginFrame())
 	{
-		m_moviePlayer->renderFrame();
-
-		const uint32_t* s = reinterpret_cast< const uint32_t* >(m_image->getData());
-		uint32_t* d = reinterpret_cast< uint32_t* >(bits);
-
-		for (uint32_t y = 0; y < desc.height; ++y)
-		{
-			std::memcpy(d, s, desc.width * 4);
-			s += m_image->getWidth();
-			d += desc.pitch / 4;
-		}
-
-		surface->unlock();
+		m_renderContext->render(m_renderView);
+		m_renderView->endFrame();
+		m_renderView->present();
 	}
-
-	m_graphicsSystem->flip(false);
-#endif
 
 	event->consume();
 }

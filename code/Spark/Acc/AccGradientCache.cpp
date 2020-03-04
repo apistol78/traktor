@@ -77,7 +77,7 @@ AccGradientCache::~AccGradientCache()
 void AccGradientCache::destroy()
 {
 	clear();
-	m_renderSystem = 0;
+	m_renderSystem = nullptr;
 }
 
 void AccGradientCache::clear()
@@ -109,7 +109,7 @@ Ref< AccBitmapRect > AccGradientCache::getGradientTexture(const FillStyle& style
 		{
 			m_nextGradient = 0;
 			if ((m_currentGradientColumn += c_gradientsSize) > c_gradientsWidth)
-				return 0;
+				return nullptr;
 		}
 
 		const float invGradWidth = 1.0f / float(c_gradientsWidth);
@@ -160,7 +160,7 @@ Ref< AccBitmapRect > AccGradientCache::getGradientTexture(const FillStyle& style
 		{
 			m_nextGradient = 0;
 			if ((m_currentGradientColumn += c_gradientsSize) > c_gradientsWidth)
-				return 0;
+				return nullptr;
 		}
 
 		const float s = float(c_gradientsSize) / 2.0f;
@@ -199,7 +199,7 @@ Ref< AccBitmapRect > AccGradientCache::getGradientTexture(const FillStyle& style
 		return m_cache[hash];
 	}
 
-	return 0;
+	return nullptr;
 }
 
 void AccGradientCache::synchronize()

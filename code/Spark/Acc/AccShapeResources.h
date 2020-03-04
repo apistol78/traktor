@@ -35,19 +35,6 @@ private:
 	resource::Proxy< render::Shader > m_shaderLine;
 	resource::Proxy< render::Shader > m_shaderIncrementMask;
 	resource::Proxy< render::Shader > m_shaderDecrementMask;
-
-	render::handle_t m_handleTransform;
-	render::handle_t m_handleClipBounds;
-	render::handle_t m_handleFrameBounds;
-	render::handle_t m_handleFrameTransform;
-	render::handle_t m_handleCxFormMul;
-	render::handle_t m_handleCxFormAdd;
-	render::handle_t m_handleTexture;
-	render::handle_t m_handleTextureClamp;
-	render::handle_t m_handleLineData;
-	render::handle_t m_handleLineWidth;
-	render::handle_t m_handleLineColor;
-	render::handle_t m_handleTechniques[SbmLast];
 };
 
 	}
