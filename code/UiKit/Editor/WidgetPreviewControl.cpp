@@ -5,6 +5,11 @@
 #include "Core/Settings/PropertyInteger.h"
 #include "Database/Database.h"
 #include "Editor/IEditor.h"
+#include "Render/IRenderSystem.h"
+#include "Render/IRenderView.h"
+#include "Render/Context/RenderContext.h"
+#include "Render/Frame/RenderGraph.h"
+#include "Resource/ResourceManager.h"
 #include "Spark/DefaultCharacterFactory.h"
 #include "Spark/Frame.h"
 #include "Spark/Movie.h"
@@ -15,9 +20,6 @@
 #include "Spark/Acc/AccDisplayRenderer.h"
 #include "Spark/Action/Common/Classes/AsKey.h"
 #include "Spark/Debug/WireDisplayRenderer.h"
-#include "Render/IRenderSystem.h"
-#include "Render/IRenderView.h"
-#include "Resource/ResourceManager.h"
 #include "Ui/Application.h"
 #include "Ui/Itf/IWidget.h"
 #include "UiKit/Editor/WidgetPreviewControl.h"
@@ -105,17 +107,16 @@ bool WidgetPreviewControl::create(ui::Widget* parent)
 	if (!m_renderView)
 		return false;
 
+	m_renderContext = new render::RenderContext(4 * 1024 * 1024);
+	m_renderGraph = new render::RenderGraph(m_renderSystem);
+
 	// Create flash display renderer.
 	m_displayRenderer = new spark::AccDisplayRenderer();
 	if (!m_displayRenderer->create(
 		m_resourceManager,
 		m_renderSystem,
 		1,
-		4 * 1024 * 1024,
-		true,
-		false,
-		false,
-		0.0f
+		true
 	))
 		return false;
 
@@ -135,15 +136,12 @@ bool WidgetPreviewControl::create(ui::Widget* parent)
 	m_movieRendererWire = new spark::MovieRenderer(m_displayRendererWire, nullptr);
 
 	// Create flash movie player.
-	int32_t width = m_renderView->getWidth();
-	int32_t height = m_renderView->getHeight();
-
 	m_moviePlayer = new spark::MoviePlayer(
 		new spark::DefaultCharacterFactory(),
 		nullptr,
 		nullptr
 	);
-	if (!m_moviePlayer->create(m_movie, width, height, nullptr))
+	if (!m_moviePlayer->create(m_movie, 1280, 720, nullptr))
 		return false;
 
 	while (!m_moviePlayer->progress(1.0f / 60.0f, nullptr));
@@ -204,6 +202,11 @@ void WidgetPreviewControl::eventSize(ui::SizeEvent* event)
 
 void WidgetPreviewControl::eventPaint(ui::PaintEvent* event)
 {
+	if (!m_renderView || !m_moviePlayer)
+		return;
+
+	ui::Size sz = getInnerRect().getSize();
+
 	// Initialize scaffolding.
 	if (m_scaffoldingClass.changed())
 	{
@@ -233,42 +236,31 @@ void WidgetPreviewControl::eventPaint(ui::PaintEvent* event)
 		m_scaffoldingClass.consume();
 	}
 
-	if (!m_renderView || !m_moviePlayer)
+	if (m_scaffoldingObject)
+	{
+		const IRuntimeDispatch* method = findRuntimeClassMethod(m_scaffoldingClass, "update");
+		if (method != 0)
+			method->invoke(m_scaffoldingObject, 0, 0);
+	}
+
+	// Add passes to render graph.
+	m_displayRenderer->setup(m_renderGraph);
+	m_moviePlayer->render(m_movieRenderer);
+	m_displayRenderer->setup(nullptr);
+
+	// Validate render graph.
+	if (!m_renderGraph->validate(sz.cx, sz.cy))
 		return;
 
-	render::Clear cl;
-	cl.mask = render::CfColor | render::CfDepth | render::CfStencil;
-	cl.colors[0] = Color4f(1.0f, 1.0f, 1.0f, 0.0);
-	cl.depth = 1.0f;
-	cl.stencil = 0;
+	// Build render context.
+	m_renderContext->flush();
+	m_renderGraph->build(m_renderContext);
 
-	if (m_renderView->beginPass(&cl))
+	// Render frame.
+	if (m_renderView->beginFrame())
 	{
-		if (m_scaffoldingObject)
-		{
-			const IRuntimeDispatch* method = findRuntimeClassMethod(m_scaffoldingClass, "update");
-			if (method != 0)
-				method->invoke(m_scaffoldingObject, 0, 0);
-		}
-
-		// Build render context.
-		m_displayRenderer->build(uint32_t(0));
-		if (m_debugWires)
-			m_displayRendererWire->begin(uint32_t(0));
-
-		m_moviePlayer->render(m_movieRenderer);
-		if (m_debugWires)
-			m_moviePlayer->render(m_movieRendererWire);
-
-		if (m_debugWires)
-			m_displayRendererWire->end(uint32_t(0));
-
-		// Flush render context.
-		m_displayRenderer->render(m_renderView, 0, Vector2(0.0f, 0.0f), 1.0f);
-		if (m_debugWires)
-			m_displayRendererWire->render(m_renderView, uint32_t(0));
-
-		m_renderView->endPass();
+		m_renderContext->render(m_renderView);
+		m_renderView->endFrame();
 		m_renderView->present();
 	}
 

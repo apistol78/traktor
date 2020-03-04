@@ -39,6 +39,8 @@ class WireDisplayRenderer;
 
 class IRenderSystem;
 class IRenderView;
+class RenderContext;
+class RenderGraph;
 
 	}
 
@@ -77,6 +79,8 @@ private:
 	Ref< resource::IResourceManager > m_resourceManager;
 	Ref< render::IRenderSystem > m_renderSystem;
 	Ref< render::IRenderView > m_renderView;
+	Ref< render::RenderContext > m_renderContext;
+	Ref< render::RenderGraph > m_renderGraph;
 	Ref< spark::AccDisplayRenderer > m_displayRenderer;
 	Ref< spark::WireDisplayRenderer > m_displayRendererWire;
 	Ref< spark::MovieRenderer > m_movieRenderer;

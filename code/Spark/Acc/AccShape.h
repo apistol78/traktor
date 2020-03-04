@@ -18,7 +18,7 @@ namespace traktor
 
 class IRenderSystem;
 class ITexture;
-class RenderContext;
+class RenderPass;
 class Shader;
 class VertexBuffer;
 
@@ -116,7 +116,7 @@ public:
 	void destroy();
 
 	void render(
-		render::RenderContext* renderContext,
+		render::RenderPass* renderPass,
 		const Matrix33& transform,
 		const Vector4& clipBounds,
 		const Vector4& frameBounds,

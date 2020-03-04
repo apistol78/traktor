@@ -62,10 +62,7 @@ public:
 		const resource::Proxy< Movie >& movie,
 		const std::map< std::wstring, resource::Proxy< Movie > >& externalMovies,
 		bool clearBackground,
-		bool enableShapeCache,
-		bool enableDirtyRegions,
-		bool enableSound,
-		uint32_t contextSize
+		bool enableSound
 	);
 
 	virtual void destroy() override;
@@ -161,10 +158,7 @@ private:
 	Ref< AccDisplayRenderer > m_displayRenderer;
 	Ref< ISoundRenderer > m_soundRenderer;
 	bool m_clearBackground;
-	bool m_enableShapeCache;
-	bool m_enableDirtyRegions;
 	bool m_enableSound;
-	uint32_t m_contextSize;
 	bool m_visible;
 	Vector2 m_offset;
 	float m_scale;

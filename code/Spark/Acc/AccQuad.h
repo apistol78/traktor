@@ -19,7 +19,7 @@ class IResourceManager;
 
 class IRenderSystem;
 class ITexture;
-class RenderContext;
+class RenderPass;
 class Shader;
 class VertexBuffer;
 
@@ -44,7 +44,7 @@ public:
 	void destroy();
 
 	void render(
-		render::RenderContext* renderContext,
+		render::RenderPass* renderPass,
 		const Aabb2& bounds,
 		const Matrix33& transform,
 		const Vector4& frameSize,
@@ -58,7 +58,7 @@ public:
 	);
 
 	void blit(
-		render::RenderContext* renderContext,
+		render::RenderPass* renderPass,
 		render::ITexture* texture
 	);
 

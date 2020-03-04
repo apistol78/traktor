@@ -7,6 +7,7 @@
 #include "Render/VertexBuffer.h"
 #include "Render/VertexElement.h"
 #include "Render/Context/RenderContext.h"
+#include "Render/Frame/RenderPass.h"
 #include "Resource/IResourceManager.h"
 #include "Spark/SwfTypes.h"
 #include "Spark/Acc/AccGlyph.h"
@@ -43,15 +44,14 @@ c_glyphTemplate[4] =
 	{ Vector4(-0.1f,  1.1f, 1.0f, 0.0f), Vector2(-0.1f,  1.1f) }
 };
 
-bool s_handleInitialized = false;
-render::handle_t s_handleFrameBounds;
-render::handle_t s_handleFrameTransform;
-render::handle_t s_handleTexture;
-render::handle_t s_handleColor;
-render::handle_t s_handleFilterColor;
-render::handle_t s_handleTechniqueDefault;
-render::handle_t s_handleTechniqueDropShadow;
-render::handle_t s_handleTechniqueGlow;
+const render::Handle s_handleTechniqueDefault(L"Default");
+const render::Handle s_handleTechniqueDropShadow(L"DropShadow");
+const render::Handle s_handleTechniqueGlow(L"Glow");
+const render::Handle s_handleFrameBounds(L"Spark_FrameBounds");
+const render::Handle s_handleFrameTransform(L"Spark_FrameTransform");
+const render::Handle s_handleTexture(L"Spark_Texture");
+const render::Handle s_handleColor(L"Spark_Color");
+const render::Handle s_handleFilterColor(L"Spark_FilterColor");
 
 		}
 
@@ -69,19 +69,6 @@ bool AccGlyph::create(
 	render::IRenderSystem* renderSystem
 )
 {
-	if (!s_handleInitialized)
-	{
-		s_handleFrameBounds = render::getParameterHandle(L"Spark_FrameBounds");
-		s_handleFrameTransform = render::getParameterHandle(L"Spark_FrameTransform");
-		s_handleTexture = render::getParameterHandle(L"Spark_Texture");
-		s_handleColor = render::getParameterHandle(L"Spark_Color");
-		s_handleFilterColor = render::getParameterHandle(L"Spark_FilterColor");
-		s_handleTechniqueDefault = render::getParameterHandle(L"Default");
-		s_handleTechniqueDropShadow = render::getParameterHandle(L"DropShadow");
-		s_handleTechniqueGlow = render::getParameterHandle(L"Glow");
-		s_handleInitialized = true;
-	}
-
 	if (!resourceManager->bind(c_idShaderGlyphMask, m_shaderGlyph))
 		return false;
 
@@ -154,7 +141,7 @@ void AccGlyph::add(
 	const Vector4& textureOffset
 )
 {
-	T_FATAL_ASSERT (m_vertex != 0);
+	T_FATAL_ASSERT (m_vertex != nullptr);
 
 	if (m_count + m_offset >= c_glyphCount)
 	{
@@ -205,7 +192,7 @@ void AccGlyph::add(
 }
 
 void AccGlyph::render(
-	render::RenderContext* renderContext,
+	render::RenderPass* renderPass,
 	const Vector4& frameBounds,
 	const Vector4& frameTransform,
 	render::ITexture* texture,
@@ -227,30 +214,38 @@ void AccGlyph::render(
 	if (!sp)
 		return;
 
-	render::IndexedRenderBlock* renderBlock = renderContext->alloc< render::IndexedRenderBlock >(L"Flash AccGlyph");
-	renderBlock->program = sp.program;
-	renderBlock->indexBuffer = m_indexBuffer;
-	renderBlock->vertexBuffer = m_vertexBuffers[m_currentVertexBuffer];
-	renderBlock->primitive = render::PtTriangles;
-	renderBlock->offset = m_offset * 6;
-	renderBlock->count = m_count * 2;
-	renderBlock->minIndex = 0;
-	renderBlock->maxIndex = c_glyphCount * 4 - 1;
+	uint32_t currentVertexBuffer = m_currentVertexBuffer;
+	uint32_t offset = m_offset;
+	uint32_t count = m_count;
 
-	renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
-	renderBlock->programParams->beginParameters(renderContext);
-	renderBlock->programParams->setVectorParameter(s_handleFrameBounds, frameBounds);
-	renderBlock->programParams->setVectorParameter(s_handleFrameTransform, frameTransform);
-	renderBlock->programParams->setStencilReference(maskReference);
-	renderBlock->programParams->setTextureParameter(s_handleTexture, texture);
-	renderBlock->programParams->setVectorParameter(s_handleColor, glyphColor);
+	renderPass->addBuild([=](const render::RenderGraph&, render::RenderContext* renderContext) {
 
-	if (glyphFilter != 0)
-		renderBlock->programParams->setVectorParameter(s_handleFilterColor, glyphFilterColor);
+		render::IndexedRenderBlock* renderBlock = renderContext->alloc< render::IndexedRenderBlock >(L"Flash AccGlyph");
+		renderBlock->program = sp.program;
+		renderBlock->indexBuffer = m_indexBuffer;
+		renderBlock->vertexBuffer = m_vertexBuffers[currentVertexBuffer];
+		renderBlock->primitive = render::PtTriangles;
+		renderBlock->offset = offset * 6;
+		renderBlock->count = count * 2;
+		renderBlock->minIndex = 0;
+		renderBlock->maxIndex = c_glyphCount * 4 - 1;
 
-	renderBlock->programParams->endParameters(renderContext);
+		renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
+		renderBlock->programParams->beginParameters(renderContext);
+		renderBlock->programParams->setVectorParameter(s_handleFrameBounds, frameBounds);
+		renderBlock->programParams->setVectorParameter(s_handleFrameTransform, frameTransform);
+		renderBlock->programParams->setStencilReference(maskReference);
+		renderBlock->programParams->setTextureParameter(s_handleTexture, texture);
+		renderBlock->programParams->setVectorParameter(s_handleColor, glyphColor);
 
-	renderContext->enqueue(renderBlock);
+		if (glyphFilter != 0)
+			renderBlock->programParams->setVectorParameter(s_handleFilterColor, glyphFilterColor);
+
+		renderBlock->programParams->endParameters(renderContext);
+
+		renderContext->enqueue(renderBlock);
+
+	});
 
 	m_offset += m_count;
 	m_count = 0;

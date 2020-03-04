@@ -5,6 +5,7 @@
 #include "Render/VertexBuffer.h"
 #include "Render/VertexElement.h"
 #include "Render/Context/RenderContext.h"
+#include "Render/Frame/RenderPass.h"
 #include "Resource/IResourceManager.h"
 #include "Spark/ColorTransform.h"
 #include "Spark/Acc/AccQuad.h"
@@ -29,15 +30,14 @@ struct Vertex
 };
 #pragma pack()
 
-bool s_handleInitialized = false;
-render::handle_t s_handleTransform;
-render::handle_t s_handleFrameBounds;
-render::handle_t s_handleFrameTransform;
-render::handle_t s_handleScreenOffsetScale;
-render::handle_t s_handleCxFormMul;
-render::handle_t s_handleCxFormAdd;
-render::handle_t s_handleTexture;
-render::handle_t s_handleTextureOffset;
+const render::Handle s_handleTransform(L"Spark_Transform");
+const render::Handle s_handleFrameBounds(L"Spark_FrameBounds");
+const render::Handle s_handleFrameTransform(L"Spark_FrameTransform");
+const render::Handle s_handleScreenOffsetScale(L"Spark_ScreenOffsetScale");
+const render::Handle s_handleCxFormMul(L"Spark_CxFormMul");
+const render::Handle s_handleCxFormAdd(L"Spark_CxFormAdd");
+const render::Handle s_handleTexture(L"Spark_Texture");
+const render::Handle s_handleTextureOffset(L"Spark_TextureOffset");
 
 		}
 
@@ -46,19 +46,6 @@ bool AccQuad::create(
 	render::IRenderSystem* renderSystem
 )
 {
-	if (!s_handleInitialized)
-	{
-		s_handleTransform = render::getParameterHandle(L"Spark_Transform");
-		s_handleFrameBounds = render::getParameterHandle(L"Spark_FrameBounds");
-		s_handleFrameTransform = render::getParameterHandle(L"Spark_FrameTransform");
-		s_handleScreenOffsetScale = render::getParameterHandle(L"Spark_ScreenOffsetScale");
-		s_handleCxFormMul = render::getParameterHandle(L"Spark_CxFormMul");
-		s_handleCxFormAdd = render::getParameterHandle(L"Spark_CxFormAdd");
-		s_handleTexture = render::getParameterHandle(L"Spark_Texture");
-		s_handleTextureOffset = render::getParameterHandle(L"Spark_TextureOffset");
-		s_handleInitialized = true;
-	}
-
 	if (!resourceManager->bind(c_idShaderSolid, m_shaderSolid))
 		return false;
 	if (!resourceManager->bind(c_idShaderTextured, m_shaderTextured))
@@ -88,7 +75,6 @@ bool AccQuad::create(
 	vertex->pos[0] = 1.0f; vertex->pos[1] = 1.0f; ++vertex;
 
 	m_vertexBuffer->unlock();
-
 	return true;
 }
 
@@ -98,7 +84,7 @@ void AccQuad::destroy()
 }
 
 void AccQuad::render(
-	render::RenderContext* renderContext,
+	render::RenderPass* renderPass,
 	const Aabb2& bounds,
 	const Matrix33& transform,
 	const Vector4& frameBounds,
@@ -147,52 +133,60 @@ void AccQuad::render(
 		}
 	}
 
-	render::NonIndexedRenderBlock* renderBlock = renderContext->alloc< render::NonIndexedRenderBlock >(L"Flash AccQuad");
-	renderBlock->program = (texture ? shaderTextured : shaderSolid)->getProgram().program;
-	renderBlock->vertexBuffer = m_vertexBuffer;
-	renderBlock->primitive = render::PtTriangleStrip;
-	renderBlock->offset = 0;
-	renderBlock->count = 2;
+	renderPass->addBuild([=](const render::RenderGraph&, render::RenderContext* renderContext) {
 
-	renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
-	renderBlock->programParams->beginParameters(renderContext);
-	renderBlock->programParams->setMatrixParameter(s_handleTransform, m);
-	renderBlock->programParams->setVectorParameter(s_handleFrameBounds, frameBounds);
-	renderBlock->programParams->setVectorParameter(s_handleFrameTransform, frameTransform);
-	renderBlock->programParams->setFloatParameter(s_handleScreenOffsetScale, 0.0f);
-	renderBlock->programParams->setVectorParameter(s_handleCxFormMul, cxform.mul);
-	renderBlock->programParams->setVectorParameter(s_handleCxFormAdd, cxform.add);
-	renderBlock->programParams->setStencilReference(maskReference);
+		render::NonIndexedRenderBlock* renderBlock = renderContext->alloc< render::NonIndexedRenderBlock >(L"Flash AccQuad");
+		renderBlock->program = (texture ? shaderTextured : shaderSolid)->getProgram().program;
+		renderBlock->vertexBuffer = m_vertexBuffer;
+		renderBlock->primitive = render::PtTriangleStrip;
+		renderBlock->offset = 0;
+		renderBlock->count = 2;
 
-	if (texture)
-	{
-		renderBlock->programParams->setTextureParameter(s_handleTexture, texture);
-		renderBlock->programParams->setVectorParameter(s_handleTextureOffset, textureOffset);
-	}
+		renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
+		renderBlock->programParams->beginParameters(renderContext);
+		renderBlock->programParams->setMatrixParameter(s_handleTransform, m);
+		renderBlock->programParams->setVectorParameter(s_handleFrameBounds, frameBounds);
+		renderBlock->programParams->setVectorParameter(s_handleFrameTransform, frameTransform);
+		renderBlock->programParams->setFloatParameter(s_handleScreenOffsetScale, 0.0f);
+		renderBlock->programParams->setVectorParameter(s_handleCxFormMul, cxform.mul);
+		renderBlock->programParams->setVectorParameter(s_handleCxFormAdd, cxform.add);
+		renderBlock->programParams->setStencilReference(maskReference);
 
-	renderBlock->programParams->endParameters(renderContext);
+		if (texture)
+		{
+			renderBlock->programParams->setTextureParameter(s_handleTexture, texture);
+			renderBlock->programParams->setVectorParameter(s_handleTextureOffset, textureOffset);
+		}
 
-	renderContext->enqueue(renderBlock);
+		renderBlock->programParams->endParameters(renderContext);
+
+		renderContext->enqueue(renderBlock);
+
+	});
 }
 
 void AccQuad::blit(
-	render::RenderContext* renderContext,
+	render::RenderPass* renderPass,
 	render::ITexture* texture
 )
 {
-	render::NonIndexedRenderBlock* renderBlock = renderContext->alloc< render::NonIndexedRenderBlock >(L"Flash AccQuad (blit)");
-	renderBlock->program = m_shaderBlit->getProgram().program;
-	renderBlock->vertexBuffer = m_vertexBuffer;
-	renderBlock->primitive = render::PtTriangleStrip;
-	renderBlock->offset = 0;
-	renderBlock->count = 2;
+	renderPass->addBuild([=](const render::RenderGraph&, render::RenderContext* renderContext) {
 
-	renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
-	renderBlock->programParams->beginParameters(renderContext);
-	renderBlock->programParams->setTextureParameter(s_handleTexture, texture);
-	renderBlock->programParams->endParameters(renderContext);
+		render::NonIndexedRenderBlock* renderBlock = renderContext->alloc< render::NonIndexedRenderBlock >(L"Flash AccQuad (blit)");
+		renderBlock->program = m_shaderBlit->getProgram().program;
+		renderBlock->vertexBuffer = m_vertexBuffer;
+		renderBlock->primitive = render::PtTriangleStrip;
+		renderBlock->offset = 0;
+		renderBlock->count = 2;
 
-	renderContext->enqueue(renderBlock);
+		renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
+		renderBlock->programParams->beginParameters(renderContext);
+		renderBlock->programParams->setTextureParameter(s_handleTexture, texture);
+		renderBlock->programParams->endParameters(renderContext);
+
+		renderContext->enqueue(renderBlock);
+
+	});
 }
 
 	}

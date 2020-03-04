@@ -19,7 +19,7 @@ class IResourceManager;
 class IndexBuffer;
 class IRenderSystem;
 class ITexture;
-class RenderContext;
+class RenderPass;
 class Shader;
 class VertexBuffer;
 
@@ -53,7 +53,7 @@ public:
 	);
 
 	void render(
-		render::RenderContext* renderContext,
+		render::RenderPass* renderPass,
 		const Vector4& frameSize,
 		const Vector4& frameTransform,
 		render::ITexture* texture,

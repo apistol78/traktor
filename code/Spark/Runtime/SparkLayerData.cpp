@@ -12,14 +12,11 @@ namespace traktor
 	namespace spark
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spark.SparkLayerData", 0, SparkLayerData, runtime::LayerData)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spark.SparkLayerData", 1, SparkLayerData, runtime::LayerData)
 
 SparkLayerData::SparkLayerData()
 :	m_clearBackground(false)
-,	m_enableShapeCache(false)
-,	m_enableDirtyRegions(false)
 ,	m_enableSound(true)
-,	m_contextSize(1)
 {
 }
 
@@ -49,10 +46,7 @@ Ref< runtime::Layer > SparkLayerData::createInstance(runtime::Stage* stage, runt
 		movie,
 		externalMovies,
 		m_clearBackground,
-		m_enableShapeCache,
-		m_enableDirtyRegions,
-		m_enableSound,
-		m_contextSize
+		m_enableSound
 	);
 }
 
@@ -75,9 +69,18 @@ void SparkLayerData::serialize(ISerializer& s)
 
 	s >> Member< bool >(L"clearBackground", m_clearBackground);
 	s >> Member< bool >(L"enableSound", m_enableSound);
-	s >> Member< bool >(L"enableShapeCache", m_enableShapeCache);
-	s >> Member< bool >(L"enableDirtyRegions", m_enableDirtyRegions);
-	s >> Member< uint32_t >(L"contextSize", m_contextSize);
+
+	if (s.getVersion< SparkLayerData >() < 1)
+	{
+		bool enableShapeCache;
+		s >> Member< bool >(L"enableShapeCache", enableShapeCache);
+
+		bool enableDirtyRegions;
+		s >> Member< bool >(L"enableDirtyRegions", enableDirtyRegions);
+
+		uint32_t contextSize;
+		s >> Member< uint32_t >(L"contextSize", contextSize);
+	}
 }
 
 	}

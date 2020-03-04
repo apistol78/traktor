@@ -30,29 +30,27 @@ void AccShapeVertexPool::destroy()
 	for (uint32_t i = 0; i < uint32_t(m_garbageRanges.size()); ++i)
 		cycleGarbage();
 
-	for (std::list< VertexRange >::iterator i = m_freeRanges.begin(); i != m_freeRanges.end(); ++i)
-		safeDestroy(i->vertexBuffer);
+	for (auto& freeRange : m_freeRanges)
+		safeDestroy(freeRange.vertexBuffer);
 
-	for (std::list< VertexRange >::iterator i = m_usedRanges.begin(); i != m_usedRanges.end(); ++i)
-		safeDestroy(i->vertexBuffer);
+	for (auto& usedRange : m_usedRanges)
+		safeDestroy(usedRange.vertexBuffer);
 
 	m_freeRanges.clear();
 	m_usedRanges.clear();
 
-	m_renderSystem = 0;
+	m_renderSystem = nullptr;
 }
 
 bool AccShapeVertexPool::acquireRange(int32_t vertexCount, Range& outRange)
 {
-	for (std::list< VertexRange >::iterator i = m_freeRanges.begin(); i != m_freeRanges.end(); ++i)
+	for (auto i = m_freeRanges.begin(); i != m_freeRanges.end(); ++i)
 	{
 		if (i->vertexCount >= vertexCount)
 		{
 			outRange.vertexBuffer = i->vertexBuffer;
-
 			m_usedRanges.push_back(*i);
 			m_freeRanges.erase(i);
-
 			return true;
 		}
 	}
@@ -71,7 +69,6 @@ bool AccShapeVertexPool::acquireRange(int32_t vertexCount, Range& outRange)
 	m_usedRanges.push_back(range);
 
 	outRange.vertexBuffer = vertexBuffer;
-
 	return true;
 }
 
@@ -80,7 +77,7 @@ void AccShapeVertexPool::releaseRange(const Range& range)
 	if (!range.vertexBuffer)
 		return;
 
-	for (std::list< VertexRange >::iterator i = m_usedRanges.begin(); i != m_usedRanges.end(); ++i)
+	for (auto i = m_usedRanges.begin(); i != m_usedRanges.end(); ++i)
 	{
 		if (i->vertexBuffer == range.vertexBuffer)
 		{
