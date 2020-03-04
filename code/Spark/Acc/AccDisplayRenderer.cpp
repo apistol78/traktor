@@ -7,6 +7,7 @@
 #include "Render/IRenderTargetSet.h"
 #include "Render/IRenderView.h"
 #include "Render/Context/RenderContext.h"
+#include "Render/Frame/RenderGraph.h"
 #include "Spark/Bitmap.h"
 #include "Spark/Canvas.h"
 #include "Spark/Dictionary.h"
@@ -22,7 +23,6 @@
 #include "Spark/Acc/AccGlyph.h"
 #include "Spark/Acc/AccTextureCache.h"
 #include "Spark/Acc/AccShape.h"
-#include "Spark/Acc/AccShapeRenderer.h"
 #include "Spark/Acc/AccShapeResources.h"
 #include "Spark/Acc/AccShapeVertexPool.h"
 #include "Spark/Acc/AccQuad.h"
@@ -100,11 +100,7 @@ bool AccDisplayRenderer::create(
 	resource::IResourceManager* resourceManager,
 	render::IRenderSystem* renderSystem,
 	uint32_t frameCount,
-	uint32_t renderContextSize,
-	bool clearBackground,
-	bool shapeCache,
-	bool clipToDirtyRegion,
-	float /*stereoscopicOffset*/
+	bool clearBackground
 )
 {
 	m_resourceManager = resourceManager;
@@ -112,7 +108,6 @@ bool AccDisplayRenderer::create(
 	m_gradientCache = new AccGradientCache(m_renderSystem);
 	m_textureCache = new AccTextureCache(m_resourceManager, m_renderSystem, false);
 	m_clearBackground = clearBackground;
-	m_clipToDirtyRegion = clipToDirtyRegion;
 
 	m_shapeResources = new AccShapeResources();
 	if (!m_shapeResources->create(resourceManager))
@@ -167,11 +162,7 @@ bool AccDisplayRenderer::create(
 	rtscd.width = c_cacheGlyphDimX;
 	rtscd.height = c_cacheGlyphDimY;
 	rtscd.multiSample = 0;
-#if !defined(__PS3__)
 	rtscd.createDepthStencil = false;
-#else
-	rtscd.createDepthStencil = true;	// RSX crash without depth buffer, why?
-#endif
 	rtscd.usingPrimaryDepthStencil = false;
 	rtscd.targets[0].format = render::TfR8;
 
@@ -182,26 +173,12 @@ bool AccDisplayRenderer::create(
 		return false;
 	}
 
-	if (shapeCache)
-	{
-		m_shapeRenderer = new AccShapeRenderer();
-		if (!m_shapeRenderer->create(renderSystem, resourceManager))
-		{
-			log::error << L"Unable to create accelerated display renderer; failed to shape renderer." << Endl;
-			return false;
-		}
-	}
-
-	m_renderContexts.resize(frameCount);
-	for (uint32_t i = 0; i < frameCount; ++i)
-		m_renderContexts[i] = new render::RenderContext(renderContextSize);
-
 	return true;
 }
 
 void AccDisplayRenderer::destroy()
 {
-	m_renderSystem = 0;
+	m_renderSystem = nullptr;
 
 	safeDestroy(m_glyph);
 	safeDestroy(m_quad);
@@ -209,48 +186,58 @@ void AccDisplayRenderer::destroy()
 	safeDestroy(m_textureCache);
 	safeDestroy(m_renderTargetGlyphs);
 
-	for (SmallMap< int32_t, ShapeCache >::iterator i = m_shapeCache.begin(); i != m_shapeCache.end(); ++i)
+	for (auto i = m_shapeCache.begin(); i != m_shapeCache.end(); ++i)
 		safeDestroy(i->second.shape);
 
-	for (SmallMap< int32_t, GlyphCache >::iterator i = m_glyphCache.begin(); i != m_glyphCache.end(); ++i)
+	for (auto i = m_glyphCache.begin(); i != m_glyphCache.end(); ++i)
 		safeDestroy(i->second.shape);
 
 	m_shapeCache.clear();
 	m_glyphCache.clear();
 
-	safeDestroy(m_shapeRenderer);
 	safeDestroy(m_shapeResources);
 	safeDestroy(m_fillVertexPool);
 	safeDestroy(m_lineVertexPool);
-
-	m_renderContexts.clear();
-	m_renderContext = nullptr;
 }
 
-void AccDisplayRenderer::build(uint32_t frame)
+void AccDisplayRenderer::setup(render::RenderGraph* renderGraph)
 {
-	m_renderContext = m_renderContexts[frame];
-	m_renderContext->flush();
+	if (renderGraph)
+	{
+		m_renderGraph = renderGraph;
+
+		auto glyphsTargetSetId = m_renderGraph->addTargetSet(m_renderTargetGlyphs);
+
+		m_renderPassOutput = new render::RenderPass(L"Spark");
+		if (m_clearBackground)
+		{
+			render::Clear cl;
+			cl.mask = render::CfColor | render::CfStencil;
+			cl.colors[0] = Color4f(0.8f, 0.8f, 0.8f, 0.0);
+			cl.stencil = 0;
+			m_renderPassOutput->setOutput(0, cl);
+		}
+		else
+		{
+			render::Clear cl;
+			cl.mask = render::CfStencil;
+			cl.stencil = 0;
+			m_renderPassOutput->setOutput(0, cl);
+		}
+		m_renderGraph->addPass(m_renderPassOutput);
+
+		m_renderPassGlyph = new render::RenderPass(L"Spark Glyphs");
+		m_renderPassGlyph->setOutput(glyphsTargetSetId);
+		m_renderGraph->addPass(m_renderPassGlyph);
+	}
+	else
+	{
+		m_renderGraph = nullptr;
+		m_renderPassOutput = nullptr;
+		m_renderPassGlyph = nullptr;
+	}
 
 	m_frameTransform.set(0.0f, 0.0f, 1.0f, 1.0f);
-}
-
-void AccDisplayRenderer::build(render::RenderContext* renderContext, uint32_t frame)
-{
-	m_renderContext = renderContext;
-}
-
-void AccDisplayRenderer::render(render::IRenderView* renderView, uint32_t frame, const Vector2& offset, float scale)
-{
-	T_RENDER_PUSH_MARKER(renderView, "Flash: Render");
-	m_renderContexts[frame]->render(renderView);
-	T_RENDER_POP_MARKER(renderView);
-}
-
-void AccDisplayRenderer::flush()
-{
-	for (auto renderContext : m_renderContexts)
-		renderContext->flush();
 }
 
 void AccDisplayRenderer::flushCaches()
@@ -258,10 +245,10 @@ void AccDisplayRenderer::flushCaches()
 	m_gradientCache->clear();
 	m_textureCache->clear();
 
-	for (SmallMap< int32_t, ShapeCache >::iterator i = m_shapeCache.begin(); i != m_shapeCache.end(); ++i)
+	for (auto i = m_shapeCache.begin(); i != m_shapeCache.end(); ++i)
 		safeDestroy(i->second.shape);
 
-	for (SmallMap< int32_t, GlyphCache >::iterator i = m_glyphCache.begin(); i != m_glyphCache.end(); ++i)
+	for (auto i = m_glyphCache.begin(); i != m_glyphCache.end(); ++i)
 		safeDestroy(i->second.shape);
 
 	m_shapeCache.clear();
@@ -270,9 +257,11 @@ void AccDisplayRenderer::flushCaches()
 	m_nextIndex = 0;
 }
 
+// IDisplayRenderer
+
 bool AccDisplayRenderer::wantDirtyRegion() const
 {
-	return m_clipToDirtyRegion;
+	return false;
 }
 
 void AccDisplayRenderer::begin(
@@ -287,31 +276,6 @@ void AccDisplayRenderer::begin(
 {
 	bool viewSizeChanged = bool(viewWidth != m_viewSize.x() || viewHeight != m_viewSize.y());
 
-	if (m_clipToDirtyRegion && (viewSizeChanged || !m_frameTarget))
-	{
-		safeDestroy(m_frameTarget);
-
-		render::RenderTargetSetCreateDesc rtscd;
-		rtscd.count = 1;
-		rtscd.width = int32_t(viewWidth);
-		rtscd.height = int32_t(viewHeight);
-		rtscd.multiSample = 0;
-		rtscd.createDepthStencil = true;
-		rtscd.usingPrimaryDepthStencil = false;
-		rtscd.ignoreStencil = false;
-		rtscd.targets[0].format = render::TfR8G8B8A8;
-
-		m_frameTarget = m_renderSystem->createRenderTargetSet(rtscd, nullptr, T_FILE_LINE_W);
-	}
-
-	if (m_frameTarget)
-	{
-		auto renderBlock = m_renderContext->alloc< render::BeginPassRenderBlock >(L"Flash begin target");
-		renderBlock->renderTargetSet = m_frameTarget;
-		renderBlock->renderTargetIndex = 0;
-		m_renderContext->enqueue(renderBlock);
-	}
-
 	m_frameBounds.set(frameBounds.mn.x, frameBounds.mn.y, frameBounds.mx.x, frameBounds.mx.y);
 	m_frameTransform = frameTransform;
 	m_viewSize.set(viewWidth, viewHeight, 1.0f / viewWidth, 1.0f / viewHeight);
@@ -320,21 +284,6 @@ void AccDisplayRenderer::begin(
 	const Vector2 Ft_scale(frameTransform.z(), frameTransform.w());
 	m_frameBoundsVisible.mn = frameBounds.mn + (frameBounds.mx - frameBounds.mn) * (Ft_offset / Ft_scale);
 	m_frameBoundsVisible.mx = frameBounds.mn + (frameBounds.mx - frameBounds.mn) * ((Vector2::one() - Ft_offset) / Ft_scale);
-
-	// \tbd
-	// if (m_clearBackground && !m_clipToDirtyRegion)
-	// {
-	// 	render::TargetClearRenderBlock* renderBlock = m_renderContext->alloc< render::TargetClearRenderBlock >("Flash clear (color+stencil)");
-	// 	renderBlock->clearMask = render::CfColor | render::CfStencil;
-	// 	renderBlock->clearColor = backgroundColor;
-	// 	m_renderContext->enqueue(renderBlock);
-	// }
-	// else
-	// {
-	// 	render::TargetClearRenderBlock* renderBlock = m_renderContext->alloc< render::TargetClearRenderBlock >("Flash clear (stencil)");
-	// 	renderBlock->clearMask = render::CfStencil;
-	// 	m_renderContext->enqueue(renderBlock);
-	// }
 
 	// Flush glyph cache is RT has become invalid.
 	if (!m_renderTargetGlyphs->isContentValid())
@@ -345,94 +294,41 @@ void AccDisplayRenderer::begin(
 
 	m_glyph->beginFrame();
 
-	if (m_shapeRenderer)
-		m_shapeRenderer->beginFrame();
-
 	m_maskWrite = false;
 	m_maskIncrement = false;
 	m_maskReference = 0;
 
-	// Setup stencil for dirty region.
-	if (m_clipToDirtyRegion)
-	{
-		// If size of output view has changed then we disregard given dirty region as we need to clear entire frame.
-		if (!viewSizeChanged)
-			m_dirtyRegion = !dirtyRegion.empty() ? m_frameBoundsVisible.overlapped(dirtyRegion) : Aabb2();
-		else
-			m_dirtyRegion = m_frameBoundsVisible;
-
-		if (!m_dirtyRegion.empty())
-		{
-			// Draw quad in stencil for dirty region.
-			beginMask(true);
-			renderQuad(Matrix33::identity(), m_dirtyRegion, c_cxfWhite);
-			endMask();
-
-			// Clear background by drawing a solid quad with given color; cannot clear as it doesn't handle stencil.
-			if (m_clearBackground)
-			{
-				ColorTransform clearCxForm(Color4f(0.0f, 0.0f, 0.0f, 0.0f), backgroundColor.rgb1());
-				renderQuad(Matrix33::identity(), m_dirtyRegion, clearCxForm);
-			}
-		}
-	}
-	else
-	{
-		// Dirty regions not used but set region to entire frame so we can
-		// cull shapes trivially later.
-		m_dirtyRegion = m_frameBoundsVisible;
-	}
+	// Dirty regions not used but set region to entire frame so we can
+	// cull shapes trivially later.
+	m_dirtyRegion = m_frameBoundsVisible;
 }
 
 void AccDisplayRenderer::beginSprite(const SpriteInstance& sprite, const Matrix33& transform)
 {
-	if (m_shapeRenderer)
-		m_shapeRenderer->beginSprite(
-			m_renderContext,
-			sprite,
-			m_frameBounds,
-			m_frameTransform,
-			m_viewSize,
-			transform,
-			m_maskReference
-		);
 }
 
 void AccDisplayRenderer::endSprite(const SpriteInstance& sprite, const Matrix33& transform)
 {
-	if (m_shapeRenderer)
-		m_shapeRenderer->endSprite(
-			m_renderContext,
-			sprite,
-			m_frameBounds,
-			m_frameTransform,
-			transform,
-			m_maskReference
-		);
 }
 
 void AccDisplayRenderer::beginEdit(const EditInstance& edit, const Matrix33& transform)
 {
-#if !defined(__ANDROID__)
 	if (edit.getRenderClipMask())
 	{
 		beginMask(true);
 		renderQuad(transform, edit.getTextBounds(), c_cxfWhite);
 		endMask();
 	}
-#endif
 }
 
 void AccDisplayRenderer::endEdit(const EditInstance& edit, const Matrix33& transform)
 {
-#if !defined(__ANDROID__)
 	if (edit.getRenderClipMask())
 	{
 		beginMask(false);
 		renderQuad(transform, edit.getTextBounds(), c_cxfWhite);
 		endMask();
 	}
-#endif
 }
 
 void AccDisplayRenderer::beginMask(bool increment)
@@ -464,12 +360,9 @@ void AccDisplayRenderer::renderShape(const Dictionary& dictionary, const Matrix3
 {
 	Ref< AccShape > accShape;
 
-	// Check if shape is within frame bounds, don't cull if we're in the middle of rendering cached bitmap.
-	if (!m_shapeRenderer || m_shapeRenderer->shouldCull())
-	{
-		if (!rectangleVisible(m_dirtyRegion, transform * shape.getShapeBounds()))
-			return;
-	}
+	// Check if shape is within frame bounds.
+	if (!rectangleVisible(m_dirtyRegion, transform * shape.getShapeBounds()))
+		return;
 
 	// Get accelerated shape.
 	int32_t tag = shape.getCacheTag();
@@ -497,39 +390,18 @@ void AccDisplayRenderer::renderShape(const Dictionary& dictionary, const Matrix3
 	// Flush queued glyph shapes, must do this to ensure proper draw order.
 	renderEnqueuedGlyphs();
 
-	if (m_shapeRenderer)
-	{
-		// Render shape through shape cache.
-		m_shapeRenderer->render(
-			m_renderContext,
-			accShape,
-			tag,
-			cxform,
-			m_frameBounds,
-			m_frameTransform,
-			transform,
-			m_maskWrite,
-			m_maskIncrement,
-			m_maskReference,
-			blendMode
-		);
-	}
-	else
-	{
-		// No shape cache; render directly.
-		accShape->render(
-			m_renderContext,
-			transform,
-			Vector4(clipBounds.mn.x, clipBounds.mn.y, clipBounds.mx.x, clipBounds.mx.y),
-			m_frameBounds,
-			m_frameTransform,
-			cxform,
-			m_maskWrite,
-			m_maskIncrement,
-			m_maskReference,
-			blendMode
-		);
-	}
+	accShape->render(
+		m_renderPassOutput,
+		transform,
+		Vector4(clipBounds.mn.x, clipBounds.mn.y, clipBounds.mx.x, clipBounds.mx.y),
+		m_frameBounds,
+		m_frameTransform,
+		cxform,
+		m_maskWrite,
+		m_maskIncrement,
+		m_maskReference,
+		blendMode
+	);
 }
 
 void AccDisplayRenderer::renderMorphShape(const Dictionary& dictionary, const Matrix33& transform, const Aabb2& clipBounds, const MorphShape& shape, const ColorTransform& cxform)
@@ -559,12 +431,9 @@ void AccDisplayRenderer::renderGlyph(
 	Matrix33 glyphTransform = transform * scale(fontScale, fontScale);
 	Color4f glyphColor = color * cxform.mul + cxform.add;
 
-	// Check if shape is within frame bounds, don't cull if we're in the middle of rendering cached bitmap.
-	if (!m_shapeRenderer || m_shapeRenderer->shouldCull())
-	{
-		if (!rectangleVisible(m_dirtyRegion, glyphTransform * glyph->getShapeBounds()))
-			return;
-	}
+	// Check if shape is within frame bounds.
+	if (!rectangleVisible(m_dirtyRegion, glyphTransform * glyph->getShapeBounds()))
+		return;
 
 	if (m_glyphFilter != filter || !colorsEqual(glyphColor, m_glyphColor))
 	{
@@ -639,14 +508,9 @@ void AccDisplayRenderer::renderGlyph(
 			-cachePixelDy * c_cacheGlyphMargin * 2.0f
 		);
 
-		auto renderBlockBegin = m_renderContext->alloc< render::BeginPassRenderBlock >(L"Flash glyph render begin");
-		renderBlockBegin->renderTargetSet = m_renderTargetGlyphs;
-		renderBlockBegin->renderTargetIndex = 0;
-		m_renderContext->enqueue(renderBlockBegin);
-
 		// Clear previous glyph by drawing a solid quad at it's place.
 		m_quad->render(
-			m_renderContext,
+			m_renderPassGlyph,
 			bounds,
 			Matrix33::identity(),
 			frameSize,
@@ -660,7 +524,7 @@ void AccDisplayRenderer::renderGlyph(
 		);
 
 		accShape->render(
-			m_renderContext,
+			m_renderPassGlyph,
 			Matrix33::identity(),
 			Vector4(bounds.mn.x, bounds.mn.y, bounds.mx.x, bounds.mx.y),
 			frameSize,
@@ -671,9 +535,6 @@ void AccDisplayRenderer::renderGlyph(
 			false,
 			SbmDefault
 		);
-
-		auto renderBlockEnd = m_renderContext->alloc< render::EndPassRenderBlock >(L"Flash glyph render end");
-		m_renderContext->enqueue(renderBlockEnd);
 
 		it1->second.index = index;
 	}
@@ -695,14 +556,11 @@ void AccDisplayRenderer::renderGlyph(
 
 void AccDisplayRenderer::renderQuad(const Matrix33& transform, const Aabb2& bounds, const ColorTransform& cxform)
 {
-	if (!m_shapeRenderer || m_shapeRenderer->shouldCull())
-	{
-		if (!rectangleVisible(m_dirtyRegion, transform * bounds))
-			return;
-	}
+	if (!rectangleVisible(m_dirtyRegion, transform * bounds))
+		return;
 
 	m_quad->render(
-		m_renderContext,
+		m_renderPassOutput,
 		bounds,
 		transform,
 		m_frameBounds,
@@ -727,7 +585,7 @@ void AccDisplayRenderer::renderCanvas(const Matrix33& transform, const Canvas& c
 		if (it != m_shapeCache.end() && it->second.shape)
 		{
 			it->second.shape->destroy();
-			it->second.shape = 0;
+			it->second.shape = nullptr;
 		}
 
 		accShape = new AccShape(m_renderSystem, m_shapeResources, m_fillVertexPool, m_lineVertexPool);
@@ -748,71 +606,36 @@ void AccDisplayRenderer::renderCanvas(const Matrix33& transform, const Canvas& c
 		accShape = it->second.shape;
 	}
 
-	if (!m_shapeRenderer || m_shapeRenderer->shouldCull())
-	{
-		if (!rectangleVisible(m_dirtyRegion, transform * accShape->getBounds()))
-			return;
-	}
+	if (!rectangleVisible(m_dirtyRegion, transform * accShape->getBounds()))
+		return;
 
 	renderEnqueuedGlyphs();
 
-		if (m_shapeRenderer)
-	{
-		// Render shape through shape cache.
-		m_shapeRenderer->render(
-			m_renderContext,
-			accShape,
-			tag,
-			cxform,
-			m_frameBounds,
-			m_frameTransform,
-			transform,
-			m_maskWrite,
-			m_maskIncrement,
-			m_maskReference,
-			blendMode
-		);
-	}
-	else
-	{
-		// No shape cache; render directly.
-		accShape->render(
-			m_renderContext,
-			transform,
-			m_frameBounds,
-			m_frameBounds,
-			m_frameTransform,
-			cxform,
-			m_maskWrite,
-			m_maskIncrement,
-			m_maskReference,
-			blendMode
-		);
-	}
+	accShape->render(
+		m_renderPassOutput,
+		transform,
+		m_frameBounds,
+		m_frameBounds,
+		m_frameTransform,
+		cxform,
+		m_maskWrite,
+		m_maskIncrement,
+		m_maskReference,
+		blendMode
+	);
 }
 
 void AccDisplayRenderer::end()
 {
 	renderEnqueuedGlyphs();
 
-	if (m_shapeRenderer)
-		m_shapeRenderer->endFrame();
-
 	m_glyph->endFrame();
-
-	// Clear dirty region to ensure stencil is reset properly.
-	if (m_clipToDirtyRegion)
-	{
-		beginMask(false);
-		renderQuad(Matrix33::identity(), m_dirtyRegion, c_cxfWhite);
-		endMask();
-	}
 
 	// Don't flush cache if it doesn't contain that many shapes.
 	if (m_shapeCache.size() >= c_maxCacheSize)
 	{
 		// Nuke cached shapes which hasn't been used for X number of frames.
-		for (SmallMap< int32_t, ShapeCache >::iterator i = m_shapeCache.begin(); i != m_shapeCache.end(); )
+		for (auto i = m_shapeCache.begin(); i != m_shapeCache.end(); )
 		{
 			if (i->second.unusedCount++ >= c_maxUnusedCount)
 			{
@@ -827,27 +650,19 @@ void AccDisplayRenderer::end()
 	else
 	{
 		// Increment "unused" counter still.
-		for (SmallMap< int32_t, ShapeCache >::iterator i = m_shapeCache.begin(); i != m_shapeCache.end(); ++i)
+		for (auto i = m_shapeCache.begin(); i != m_shapeCache.end(); ++i)
 			i->second.unusedCount++;
-	}
-
-	if (m_frameTarget)
-	{
-		auto renderBlock = m_renderContext->alloc< render::EndPassRenderBlock >(L"Flash end target");
-		m_renderContext->enqueue(renderBlock);
-		m_quad->blit(m_renderContext, m_frameTarget->getColorTexture(0));
 	}
 
 	m_gradientCache->synchronize();
 	m_fillVertexPool->cycleGarbage();
 	m_lineVertexPool->cycleGarbage();
-	m_renderContext = nullptr;
 }
 
 void AccDisplayRenderer::renderEnqueuedGlyphs()
 {
 	m_glyph->render(
-		m_renderContext,
+		m_renderPassOutput,
 		m_frameBounds,
 		m_frameTransform,
 		m_renderTargetGlyphs->getColorTexture(0),
