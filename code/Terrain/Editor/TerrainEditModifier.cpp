@@ -23,7 +23,6 @@
 #include "Terrain/TerrainComponent.h"
 #include "Terrain/TerrainComponentData.h"
 #include "Terrain/TerrainUtilities.h"
-#include "Terrain/Editor/AverageBrush.h"
 #include "Terrain/Editor/ColorBrush.h"
 #include "Terrain/Editor/CutBrush.h"
 #include "Terrain/Editor/ElevateBrush.h"
@@ -916,9 +915,7 @@ void TerrainEditModifier::draw(render::PrimitiveRenderer* primitiveRenderer) con
 
 void TerrainEditModifier::setBrush(const TypeInfo& brushType)
 {
-	if (is_type_a< AverageBrush >(brushType))
-		m_drawBrush = new AverageBrush(m_heightfield);
-	else if (is_type_a< ColorBrush >(brushType))
+	if (is_type_a< ColorBrush >(brushType))
 		m_drawBrush = new ColorBrush(m_colorImage);
 	else if (is_type_a< EmissiveBrush >(brushType))
 		m_drawBrush = new EmissiveBrush(m_colorImage);

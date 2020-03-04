@@ -4,7 +4,6 @@
 #include "Scene/Editor/SceneEditorContext.h"
 #include "Scene/Editor/Events/ModifierChangedEvent.h"
 #include "Terrain/TerrainComponent.h"
-#include "Terrain/Editor/AverageBrush.h"
 #include "Terrain/Editor/ColorBrush.h"
 #include "Terrain/Editor/CutBrush.h"
 #include "Terrain/Editor/ElevateBrush.h"
@@ -58,7 +57,6 @@ bool TerrainEditorPlugin::create(ui::Widget* parent, ui::ToolBar* toolBar)
 	m_toolToggleEmissive = new ui::ToolBarButton(i18n::Text(L"TERRAIN_EDITOR_EMISSIVE_BRUSH"), image + 14, ui::Command(L"Terrain.Editor.EmissiveBrush"), ui::ToolBarButton::BsDefaultToggle);
 	m_toolToggleElevate = new ui::ToolBarButton(i18n::Text(L"TERRAIN_EDITOR_ELEVATE_BRUSH"), image + 0, ui::Command(L"Terrain.Editor.ElevateBrush"), ui::ToolBarButton::BsDefaultToggle);
 	m_toolToggleFlatten = new ui::ToolBarButton(i18n::Text(L"TERRAIN_EDITOR_FLATTEN_BRUSH"), image + 1, ui::Command(L"Terrain.Editor.FlattenBrush"), ui::ToolBarButton::BsDefaultToggle);
-	m_toolToggleAverage = new ui::ToolBarButton(i18n::Text(L"TERRAIN_EDITOR_AVERAGE_BRUSH"), image + 3, ui::Command(L"Terrain.Editor.AverageBrush"), ui::ToolBarButton::BsDefaultToggle);
 	m_toolToggleSmooth = new ui::ToolBarButton(i18n::Text(L"TERRAIN_EDITOR_SMOOTH_BRUSH"), image + 2, ui::Command(L"Terrain.Editor.SmoothBrush"), ui::ToolBarButton::BsDefaultToggle);
 	m_toolToggleNoise = new ui::ToolBarButton(i18n::Text(L"TERRAIN_EDITOR_NOISE_BRUSH"), image + 10, ui::Command(L"Terrain.Editor.NoiseBrush"), ui::ToolBarButton::BsDefaultToggle);
 	m_toolToggleCut = new ui::ToolBarButton(i18n::Text(L"TERRAIN_EDITOR_CUT_BRUSH"), image + 7, ui::Command(L"Terrain.Editor.CutBrush"), ui::ToolBarButton::BsDefaultToggle);
@@ -123,7 +121,6 @@ bool TerrainEditorPlugin::create(ui::Widget* parent, ui::ToolBar* toolBar)
 	toolBar->addItem(m_toolGroup->addItem(m_toolToggleEmissive));
 	toolBar->addItem(m_toolGroup->addItem(m_toolToggleElevate));
 	toolBar->addItem(m_toolGroup->addItem(m_toolToggleFlatten));
-	toolBar->addItem(m_toolGroup->addItem(m_toolToggleAverage));
 	toolBar->addItem(m_toolGroup->addItem(m_toolToggleSmooth));
 	toolBar->addItem(m_toolGroup->addItem(m_toolToggleNoise));
 	toolBar->addItem(m_toolGroup->addItem(m_toolToggleCut));
@@ -175,8 +172,6 @@ bool TerrainEditorPlugin::handleCommand(const ui::Command& command)
 			toolSelected = m_toolToggleElevate;
 		else if (command == L"Terrain.Editor.FlattenBrush")
 			toolSelected = m_toolToggleFlatten;
-		else if (command == L"Terrain.Editor.AverageBrush")
-			toolSelected = m_toolToggleAverage;
 		else if (command == L"Terrain.Editor.SmoothBrush")
 			toolSelected = m_toolToggleSmooth;
 		else if (command == L"Terrain.Editor.NoiseBrush")
@@ -193,7 +188,6 @@ bool TerrainEditorPlugin::handleCommand(const ui::Command& command)
 			m_toolToggleEmissive->setToggled(m_toolToggleEmissive == toolSelected);
 			m_toolToggleElevate->setToggled(m_toolToggleElevate == toolSelected);
 			m_toolToggleFlatten->setToggled(m_toolToggleFlatten == toolSelected);
-			m_toolToggleAverage->setToggled(m_toolToggleAverage == toolSelected);
 			m_toolToggleSmooth->setToggled(m_toolToggleSmooth == toolSelected);
 			m_toolToggleNoise->setToggled(m_toolToggleNoise == toolSelected);
 			m_toolToggleCut->setToggled(m_toolToggleCut == toolSelected);
@@ -287,8 +281,6 @@ void TerrainEditorPlugin::updateModifierState()
 		m_terrainEditModifier->setBrush(type_of< ElevateBrush >());
 	else if (m_toolToggleFlatten->isToggled())
 		m_terrainEditModifier->setBrush(type_of< FlattenBrush >());
-	else if (m_toolToggleAverage->isToggled())
-		m_terrainEditModifier->setBrush(type_of< AverageBrush >());
 	else if (m_toolToggleSmooth->isToggled())
 		m_terrainEditModifier->setBrush(type_of< SmoothBrush >());
 	else if (m_toolToggleNoise->isToggled())

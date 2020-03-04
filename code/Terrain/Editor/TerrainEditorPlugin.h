@@ -51,7 +51,6 @@ private:
 	Ref< ui::ToolBarButton > m_toolToggleEmissive;
 	Ref< ui::ToolBarButton > m_toolToggleElevate;
 	Ref< ui::ToolBarButton > m_toolToggleFlatten;
-	Ref< ui::ToolBarButton > m_toolToggleAverage;
 	Ref< ui::ToolBarButton > m_toolToggleSmooth;
 	Ref< ui::ToolBarButton > m_toolToggleNoise;
 	Ref< ui::ToolBarButton > m_toolToggleCut;

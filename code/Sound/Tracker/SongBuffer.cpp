@@ -35,7 +35,7 @@ public:
 	,	m_currentPattern(0)
 	,	m_currentRow(-1)
 	{
-		m_outputSamples[0] = 0;
+		m_outputSamples[0] = nullptr;
 	}
 
 	virtual ~SoundBufferCursor()
