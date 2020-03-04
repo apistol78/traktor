@@ -27,18 +27,18 @@ Heightfield::Heightfield(
 
 void Heightfield::setGridHeight(int32_t gridX, int32_t gridZ, float unitY)
 {
-	if (gridX < 0 || gridX >= int32_t(m_size))
+	if (gridX < 0 || gridX >= (int32_t)m_size)
 		return;
-	if (gridZ < 0 || gridZ >= int32_t(m_size))
+	if (gridZ < 0 || gridZ >= (int32_t)m_size)
 		return;
 	m_heights[gridX + gridZ * m_size] = height_t(clamp(unitY, 0.0f, 1.0f) * 65535.0f);
 }
 
 void Heightfield::setGridCut(int32_t gridX, int32_t gridZ, bool cut)
 {
-	if (gridX < 0 || gridX >= int32_t(m_size))
+	if (gridX < 0 || gridX >= (int32_t)m_size)
 		return;
-	if (gridZ < 0 || gridZ >= int32_t(m_size))
+	if (gridZ < 0 || gridZ >= (int32_t)m_size)
 		return;
 
 	int32_t offset = gridX + gridZ * m_size;
@@ -50,9 +50,9 @@ void Heightfield::setGridCut(int32_t gridX, int32_t gridZ, bool cut)
 
 void Heightfield::setGridMaterial(int32_t gridX, int32_t gridZ, uint8_t material)
 {
-	if (gridX < 0 || gridX >= int32_t(m_size))
+	if (gridX < 0 || gridX >= (int32_t)m_size)
 		return;
-	if (gridZ < 0 || gridZ >= int32_t(m_size))
+	if (gridZ < 0 || gridZ >= (int32_t)m_size)
 		return;
 
 	int32_t offset = gridX + gridZ * m_size;
@@ -63,31 +63,31 @@ float Heightfield::getGridHeightNearest(int32_t gridX, int32_t gridZ) const
 {
 	if (gridX < 0)
 		gridX = 0;
-	else if (gridX >= int32_t(m_size))
-		gridX = int32_t(m_size) - 1;
+	else if (gridX >= (int32_t)m_size)
+		gridX = (int32_t)m_size - 1;
 
 	if (gridZ < 0)
 		gridZ = 0;
-	else if (gridZ >= int32_t(m_size))
-		gridZ = int32_t(m_size) - 1;
+	else if (gridZ >= (int32_t)m_size)
+		gridZ = (int32_t)m_size - 1;
 
 	return m_heights[gridX + gridZ * m_size] / 65535.0f;
 }
 
 float Heightfield::getGridHeightBilinear(float gridX, float gridZ) const
 {
-	int32_t igridX = int32_t(gridX);
-	int32_t igridZ = int32_t(gridZ);
+	int32_t igridX = (int32_t)gridX;
+	int32_t igridZ = (int32_t)gridZ;
 
 	if (igridX < 0)
 		igridX = 0;
-	else if (igridX >= int32_t(m_size) - 1)
-		igridX = int32_t(m_size) - 2;
+	else if (igridX >= (int32_t)m_size - 1)
+		igridX = (int32_t)m_size - 2;
 
 	if (igridZ < 0)
 		igridZ = 0;
-	else if (igridZ >= int32_t(m_size) - 1)
-		igridZ = int32_t(m_size) - 2;
+	else if (igridZ >= (int32_t)m_size - 1)
+		igridZ = (int32_t)m_size - 2;
 
 	int32_t offset = igridX + igridZ * m_size;
 
@@ -98,6 +98,30 @@ float Heightfield::getGridHeightBilinear(float gridX, float gridZ) const
 		m_heights[offset + m_size],
 		m_heights[offset + 1 + m_size]
 	};
+
+/*
+
+0,1      1,1
+   +----+
+   |\   |
+   | \  |
+   |  \ |
+   |   \|
+   +----+
+0,0      1,0
+
+*/
+	float k = 1.0f - (gridX + gridZ);
+	if (k >= 0.0f)
+	{
+		// Left
+		hts[3] = hts[2] + (hts[1] - hts[0]);
+	}
+	else
+	{
+		// Right
+		hts[0] = hts[1] + (hts[2] - hts[3]);
+	}
 
 	float fgridX = gridX - igridX;
 	float fgridZ = gridZ - igridZ;
@@ -120,13 +144,13 @@ bool Heightfield::getGridCut(int32_t gridX, int32_t gridZ) const
 {
 	if (gridX < 0)
 		gridX = 0;
-	else if (gridX >= int32_t(m_size))
-		gridX = int32_t(m_size) - 1;
+	else if (gridX >= (int32_t)m_size)
+		gridX = (int32_t)m_size - 1;
 
 	if (gridZ < 0)
 		gridZ = 0;
-	else if (gridZ >= int32_t(m_size))
-		gridZ = int32_t(m_size) - 1;
+	else if (gridZ >= (int32_t)m_size)
+		gridZ = (int32_t)m_size - 1;
 
 	int32_t offset = gridX + gridZ * m_size;
 	return (m_cuts[offset / 8] & (1 << (offset & 7))) != 0;
@@ -143,13 +167,13 @@ uint8_t Heightfield::getGridMaterial(int32_t gridX, int32_t gridZ) const
 {
 	if (gridX < 0)
 		gridX = 0;
-	else if (gridX >= int32_t(m_size))
-		gridX = int32_t(m_size) - 1;
+	else if (gridX >= (int32_t)m_size)
+		gridX = (int32_t)m_size - 1;
 
 	if (gridZ < 0)
 		gridZ = 0;
-	else if (gridZ >= int32_t(m_size))
-		gridZ = int32_t(m_size) - 1;
+	else if (gridZ >= (int32_t)m_size)
+		gridZ = (int32_t)m_size - 1;
 
 	int32_t offset = gridX + gridZ * m_size;
 	return m_material[offset];
@@ -177,8 +201,8 @@ void Heightfield::worldToGrid(float worldX, float worldZ, int32_t& outGridX, int
 {
 	float gridX, gridZ;
 	worldToGrid(worldX, worldZ, gridX, gridZ);
-	outGridX = int32_t(gridX);
-	outGridZ = int32_t(gridZ);
+	outGridX = (int32_t)gridX;
+	outGridZ = (int32_t)gridZ;
 }
 
 void Heightfield::worldToGrid(float worldX, float worldZ, float& outGridX, float& outGridZ) const

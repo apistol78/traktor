@@ -211,28 +211,28 @@ bool TargetEditor::create(ui::Widget* parent, db::Instance* instance, ISerializa
 		featureInstances
 	);
 
-	for (RefArray< db::Instance >::const_iterator i = featureInstances.begin(); i != featureInstances.end(); ++i)
+	for (auto featureInstance : featureInstances)
 	{
-		if (*i)
+		if (featureInstance)
 		{
 			EditFeature ef;
-			ef.feature = (*i)->getObject< Feature >();
-			ef.featureInstance = (*i);
+			ef.feature = featureInstance->getObject< Feature >();
+			ef.featureInstance = featureInstance;
 			if (ef.feature)
 				m_features.push_back(ef);
 			else
-				log::error << L"Unable to read feature \"" << (*i)->getName() << L"\"" << Endl;
+				log::error << L"Unable to read feature \"" << featureInstance->getName() << L"\"." << Endl;
 		}
 	}
 
 	m_features.sort();
 
 	// Add all entries of platform drop down.
-	for (RefArray< db::Instance >::const_iterator i = m_platformInstances.begin(); i != m_platformInstances.end(); ++i)
+	for (auto platformInstance : m_platformInstances)
 	{
 		m_dropDownPlatform->add(
-			(*i)->getName(),
-			*i
+			platformInstance->getName(),
+			platformInstance
 		);
 	}
 

@@ -347,7 +347,7 @@ bool PerforceClient::getChangeLists(RefArray< PerforceChangeList >& outChangeLis
 Ref< PerforceChangeList > PerforceClient::createChangeList(const std::wstring& description)
 {
 	if (!establishConnection())
-		return 0;
+		return nullptr;
 
 	CreateChangeListAdapter createChangeListAdapter(m_lastError, m_clientDesc.m_client, m_clientDesc.m_user, description);
 
