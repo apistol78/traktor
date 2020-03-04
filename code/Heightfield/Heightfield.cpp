@@ -99,19 +99,21 @@ float Heightfield::getGridHeightBilinear(float gridX, float gridZ) const
 		m_heights[offset + 1 + m_size]
 	};
 
-/*
+	float fgridX = gridX - igridX;
+	float fgridZ = gridZ - igridZ;
 
-0,1      1,1
+#if 0
+/*
+0,1(2)  1,1(3)
    +----+
    |\   |
    | \  |
    |  \ |
    |   \|
    +----+
-0,0      1,0
-
+0,0(0)  1,0(1)
 */
-	float k = 1.0f - (gridX + gridZ);
+	float k = 1.0f - (fgridX + fgridZ);
 	if (k >= 0.0f)
 	{
 		// Left
@@ -122,9 +124,29 @@ float Heightfield::getGridHeightBilinear(float gridX, float gridZ) const
 		// Right
 		hts[0] = hts[1] + (hts[2] - hts[3]);
 	}
-
-	float fgridX = gridX - igridX;
-	float fgridZ = gridZ - igridZ;
+#else
+/*
+0,1(2)  1,1(3)
+   +----+
+   |   /|
+   |  / |
+   | /  |
+   |/   |
+   +----+
+0,0(0)  1,0(1)
+*/
+	float k = fgridX - fgridZ;
+	if (k < 0.0f)
+	{
+		// Left
+		hts[1] = hts[0] + (hts[3] - hts[2]);
+	}
+	else
+	{
+		// Right
+		hts[2] = hts[3] + (hts[0] - hts[1]);
+	}
+#endif
 
 	float hl = hts[0] + (hts[2] - hts[0]) * fgridZ;
 	float hr = hts[1] + (hts[3] - hts[1]) * fgridZ;

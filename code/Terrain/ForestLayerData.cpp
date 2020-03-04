@@ -13,7 +13,7 @@ namespace traktor
 	namespace terrain
 	{
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.terrain.ForestLayerData", 0, ForestLayerData, ITerrainLayerData)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.terrain.ForestLayerData", 1, ForestLayerData, ITerrainLayerData)
 
 ForestLayerData::ForestLayerData()
 :	m_material(0)
@@ -23,6 +23,7 @@ ForestLayerData::ForestLayerData()
 ,	m_upness(0.8f)
 ,	m_randomScale(0.2f)
 ,	m_randomTilt(deg2rad(4.0f))
+,	m_slopeAngleThreshold(deg2rad(45.0f))
 {
 }
 
@@ -49,7 +50,10 @@ void ForestLayerData::serialize(ISerializer& s)
 	s >> Member< float >(L"lod1distance", m_lod1distance, AttributeRange(0.0f) | AttributeUnit(AuMetres));
 	s >> Member< float >(L"upness", m_upness, AttributeRange(0.0f, 1.0f) | AttributeUnit(AuPercent));
 	s >> Member< float >(L"randomScale", m_randomScale, AttributeRange(0.0f, 1.0f) | AttributeUnit(AuPercent));
-	s >> Member< float >(L"randomTilt", m_randomTilt, AttributeRange(0.0f, HALF_PI) | AttributeUnit(AuDegrees));
+	s >> Member< float >(L"randomTilt", m_randomTilt, AttributeRange(0.0f, HALF_PI) | AttributeUnit(AuRadians));
+
+	if (s.getVersion< ForestLayerData >() >= 1)
+		s >> Member< float >(L"slopeAngleThreshold", m_slopeAngleThreshold, AttributeRange(0.0f, HALF_PI) | AttributeUnit(AuRadians));
 }
 
 	}
