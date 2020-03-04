@@ -27,8 +27,8 @@ class IResourceManager;
 
 class IRenderSystem;
 class IRenderTargetSet;
-class IRenderView;
-class RenderContext;
+class RenderGraph;
+class RenderPass;
 
 	}
 
@@ -39,7 +39,6 @@ class AccGlyph;
 class AccGradientCache;
 class AccQuad;
 class AccShape;
-class AccShapeRenderer;
 class AccShapeResources;
 class AccShapeVertexPool;
 class AccTextureCache;
@@ -63,22 +62,12 @@ public:
 		resource::IResourceManager* resourceManager,
 		render::IRenderSystem* renderSystem,
 		uint32_t frameCount,
-		uint32_t renderContextSize,
-		bool clearBackground,
-		bool shapeCache,
-		bool clipToDirtyRegion,
-		float stereoscopicOffset
+		bool clearBackground
 	);
 
 	void destroy();
 
-	void build(uint32_t frame);
-
-	void build(render::RenderContext* renderContext, uint32_t frame);
-
-	void render(render::IRenderView* renderView, uint32_t frame, const Vector2& offset, float scale);
-
-	void flush();
+	void setup(render::RenderGraph* renderGraph);
 
 	void flushCaches();
 
@@ -151,14 +140,15 @@ private:
 
 	resource::IResourceManager* m_resourceManager;
 	render::IRenderSystem* m_renderSystem;
-	RefArray< render::RenderContext > m_renderContexts;
-	Ref< render::RenderContext > m_renderContext;
+
+	Ref< render::RenderGraph > m_renderGraph;
+	Ref< render::RenderPass > m_renderPassOutput;
+	Ref< render::RenderPass > m_renderPassGlyph;
+
 	Ref< render::IRenderTargetSet > m_renderTargetGlyphs;
-	Ref< render::IRenderTargetSet > m_frameTarget;
 	Ref< AccShapeResources > m_shapeResources;
 	Ref< AccShapeVertexPool > m_fillVertexPool;
 	Ref< AccShapeVertexPool > m_lineVertexPool;
-	Ref< AccShapeRenderer > m_shapeRenderer;
 	Ref< AccGradientCache > m_gradientCache;
 	Ref< AccTextureCache > m_textureCache;
 	Ref< AccGlyph > m_glyph;
@@ -172,7 +162,6 @@ private:
 	Aabb2 m_frameBoundsVisible;		//!< Part of frame visible on screen, in twips and in "frame" space.
 	Aabb2 m_dirtyRegion;
 	bool m_clearBackground;
-	bool m_clipToDirtyRegion;
 	bool m_maskWrite;
 	bool m_maskIncrement;
 	uint8_t m_maskReference;
