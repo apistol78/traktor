@@ -167,14 +167,21 @@ void ForestLayer::updatePatches(const TerrainComponent& terrainComponent)
 			// Get world position.
 			float wx, wy, wz;
 			heightfield->gridToWorld(x, z, wx, wz);
-			wy = heightfield->getWorldHeight(wx, wz);
 			wx += extentPerGrid.x() * densityInv * (random.nextFloat() - 0.5f);
 			wz += extentPerGrid.z() * densityInv * (random.nextFloat() - 0.5f);
+			wy = heightfield->getWorldHeight(wx, wz);
 
-			// Calculate rotation.
+			// Get ground normal.
 			float gx, gz;
 			heightfield->worldToGrid(wx, wz, gx, gz);
 			Vector4 normal = heightfield->normalAt(gx, gz);
+
+			// Check slope angle threshold.
+			float slopeAngle = acos(normal.y());
+			if (slopeAngle > m_data.m_slopeAngleThreshold)
+				continue;
+
+			// Calculate rotation.
 			float rx = (random.nextFloat() * 2.0f - 1.0f) * m_data.m_randomTilt;
 			float rz = (random.nextFloat() * 2.0f - 1.0f) * m_data.m_randomTilt;
 			float head = random.nextFloat() * TWO_PI;

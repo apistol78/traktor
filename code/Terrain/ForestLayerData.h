@@ -53,6 +53,7 @@ private:
 	float m_upness;		//!< Upness of tree, 0 means follow normal of terrain and 1 means completely straight up.
 	float m_randomScale;
 	float m_randomTilt;
+	float m_slopeAngleThreshold;
 };
 
 	}
