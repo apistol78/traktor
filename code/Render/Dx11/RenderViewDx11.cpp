@@ -56,7 +56,6 @@ RenderViewDx11::RenderViewDx11(
 ,	m_fullScreen(false)
 ,	m_waitVBlanks(1)
 ,	m_cursorVisible(true)
-,	m_targetsDirty(false)
 ,	m_drawCalls(0)
 ,	m_primitiveCount(0)
 ,	m_currentVertexBuffer(0)
@@ -77,7 +76,6 @@ RenderViewDx11::RenderViewDx11(
 ,	m_fullScreen(false)
 ,	m_waitVBlanks(1)
 ,	m_cursorVisible(true)
-,	m_targetsDirty(false)
 ,	m_drawCalls(0)
 ,	m_primitiveCount(0)
 ,	m_currentVertexBuffer(0)
@@ -272,13 +270,6 @@ bool RenderViewDx11::reset(const RenderViewDefaultDesc& desc)
 		return false;
 	}
 
-	m_d3dViewport.TopLeftX = 0;
-	m_d3dViewport.TopLeftY = 0;
-	m_d3dViewport.Width = scd.BufferDesc.Width;
-	m_d3dViewport.Height = scd.BufferDesc.Height;
-	m_d3dViewport.MinDepth = 0.0f;
-	m_d3dViewport.MaxDepth = 1.0f;
-
 	m_targetSize[0] = scd.BufferDesc.Width;
 	m_targetSize[1] = scd.BufferDesc.Height;
 
@@ -367,13 +358,6 @@ bool RenderViewDx11::reset(int32_t width, int32_t height)
 		return false;
 	}
 
-	m_d3dViewport.TopLeftX = 0;
-	m_d3dViewport.TopLeftY = 0;
-	m_d3dViewport.Width = width;
-	m_d3dViewport.Height = height;
-	m_d3dViewport.MinDepth = 0.0f;
-	m_d3dViewport.MaxDepth = 1.0f;
-
 	m_targetSize[0] = width;
 	m_targetSize[1] = height;
 
@@ -458,43 +442,14 @@ bool RenderViewDx11::setGamma(float gamma)
 
 void RenderViewDx11::setViewport(const Viewport& viewport)
 {
-	if (m_renderStateStack.empty())
-	{
-		m_d3dViewport.TopLeftX = viewport.left;
-		m_d3dViewport.TopLeftY = viewport.top;
-		m_d3dViewport.Width = viewport.width;
-		m_d3dViewport.Height = viewport.height;
-		m_d3dViewport.MinDepth = viewport.nearZ;
-		m_d3dViewport.MaxDepth = viewport.farZ;
-	}
-	else
-	{
-		D3D11_VIEWPORT& d3dViewport = m_renderStateStack.back().d3dViewport;
-
-		d3dViewport.TopLeftX = viewport.left;
-		d3dViewport.TopLeftY = viewport.top;
-		d3dViewport.Width = viewport.width;
-		d3dViewport.Height = viewport.height;
-		d3dViewport.MinDepth = viewport.nearZ;
-		d3dViewport.MaxDepth = viewport.farZ;
-
-		if (!m_targetsDirty)
-			m_context->getD3DDeviceContext()->RSSetViewports(1, &d3dViewport);
-	}
-}
-
-Viewport RenderViewDx11::getViewport()
-{
-	const D3D11_VIEWPORT& d3dViewport = m_renderStateStack.empty() ? m_d3dViewport : m_renderStateStack.back().d3dViewport;
-
-	return Viewport(
-		d3dViewport.TopLeftX,
-		d3dViewport.TopLeftY,
-		d3dViewport.Width,
-		d3dViewport.Height,
-		d3dViewport.MinDepth,
-		d3dViewport.MaxDepth
-	);
+	D3D11_VIEWPORT d3dViewport;
+	d3dViewport.TopLeftX = viewport.left;
+	d3dViewport.TopLeftY = viewport.top;
+	d3dViewport.Width = viewport.width;
+	d3dViewport.Height = viewport.height;
+	d3dViewport.MinDepth = viewport.nearZ;
+	d3dViewport.MaxDepth = viewport.farZ;
+	m_context->getD3DDeviceContext()->RSSetViewports(1, &d3dViewport);
 }
 
 SystemWindow RenderViewDx11::getSystemWindow()
@@ -504,21 +459,55 @@ SystemWindow RenderViewDx11::getSystemWindow()
 	return sw;
 }
 
-bool RenderViewDx11::begin(
-	const Clear* clear
-)
+bool RenderViewDx11::beginFrame()
 {
-	T_ASSERT(m_renderStateStack.empty());
-
 	if (!m_context)
 		return false;
 
 	if (!m_context->getLock().wait(1000))
 		return false;
 
-	RenderState rs =
+	m_drawCalls = 0;
+	m_primitiveCount = 0;
+	return true;
+}
+
+void RenderViewDx11::endFrame()
+{
+	m_context->deleteResources();
+	m_context->getLock().release();
+}
+
+void RenderViewDx11::present()
+{
+	m_dxgiSwapChain->Present(m_waitVBlanks, 0);
+
+	// Check if swap chain is still in same mode as window.
+	BOOL fullScreen = FALSE;
+	if (SUCCEEDED(m_dxgiSwapChain->GetFullscreenState(&fullScreen, 0)))
 	{
-		m_d3dViewport,
+		if (m_fullScreen != (fullScreen != FALSE))
+		{
+			if (m_fullScreen)
+				log::warning << L"Unexpected transition, DXGI no longer in fullscreen; need to reset render view." << Endl;
+			else
+				log::warning << L"Unexpected transition, DXGI in fullscreen; need to reset render view." << Endl;
+
+			m_fullScreen = !m_fullScreen;
+
+			// Issue an event in order to reset view back into either fullscreen or windowed mode.
+			RenderEvent evt;
+			evt.type = fullScreen ? ReSetWindowed: ReSetFullScreen;
+			m_eventQueue.push_back(evt);
+		}
+	}
+}
+
+bool RenderViewDx11::beginPass(const Clear* clear)
+{
+	RenderState& rs = m_renderState;
+
+	rs = RenderState {
 		0,
 		{ 0, 0 },
 		{ m_d3dRenderTargetView, 0 },
@@ -552,23 +541,30 @@ bool RenderViewDx11::begin(
 		}
 	}
 
-	m_renderStateStack.push_back(rs);
+	ID3D11ShaderResourceView* nullViews[] = { 0, 0, 0, 0, 0, 0, 0, 0 };
+	m_context->getD3DDeviceContext()->VSSetShaderResources(0, sizeof_array(nullViews), (ID3D11ShaderResourceView**)nullViews);
+	m_context->getD3DDeviceContext()->PSSetShaderResources(0, sizeof_array(nullViews), (ID3D11ShaderResourceView**)nullViews);
 
-	m_drawCalls = 0;
-	m_primitiveCount = 0;
-	m_targetsDirty = true;
+	m_context->getD3DDeviceContext()->OMSetRenderTargets(4, rs.d3dRenderView, rs.d3dDepthStencilView);
+
+	D3D11_VIEWPORT d3dViewport;
+	d3dViewport.TopLeftX = 0;
+	d3dViewport.TopLeftY = 0;
+	d3dViewport.Width = m_targetSize[0];
+	d3dViewport.Height = m_targetSize[1];
+	d3dViewport.MinDepth = 0.0f;
+	d3dViewport.MaxDepth = 1.0f;
+	m_context->getD3DDeviceContext()->RSSetViewports(1, &d3dViewport);
+
 	return true;
 }
 
-bool RenderViewDx11::begin(
-	IRenderTargetSet* renderTargetSet,
-	const Clear* clear
-)
+bool RenderViewDx11::beginPass(IRenderTargetSet* renderTargetSet, const Clear* clear)
 {
-	T_ASSERT(!m_renderStateStack.empty());
-
 	if (!m_context)
 		return false;
+
+	RenderState& rs = m_renderState;
 
 	RenderTargetSetDx11* rts = checked_type_cast< RenderTargetSetDx11*, false >(renderTargetSet);
 	RenderTargetDepthDx11* rtd = checked_type_cast< RenderTargetDepthDx11*, true >(rts->getDepthTexture());
@@ -579,9 +575,7 @@ bool RenderViewDx11::begin(
 
 	if (rt0 && rt1 && rt2 && rt3)
 	{
-		RenderState rs =
-		{
-			{ 0, 0, rts->getWidth(), rts->getHeight(), 0.0f, 1.0f },
+		rs = RenderState {
 			rts,
 			{ rt0, rt1, rt2, rt3 },
 			{ rt0->getD3D11RenderTargetView(), rt1->getD3D11RenderTargetView(), rt2->getD3D11RenderTargetView(), rt3->getD3D11RenderTargetView() },
@@ -591,15 +585,10 @@ bool RenderViewDx11::begin(
 
 		if (rts->usingPrimaryDepthStencil())
 			rs.d3dDepthStencilView = m_d3dDepthStencilView;
-
-		m_renderStateStack.push_back(rs);
-		m_targetsDirty = true;
 	}
 	else if (rt0 && rt1 && rt2)
 	{
-		RenderState rs =
-		{
-			{ 0, 0, rts->getWidth(), rts->getHeight(), 0.0f, 1.0f },
+		rs = RenderState {
 			rts,
 			{ rt0, rt1, rt2, 0 },
 			{ rt0->getD3D11RenderTargetView(), rt1->getD3D11RenderTargetView(), rt2->getD3D11RenderTargetView(), 0 },
@@ -609,15 +598,10 @@ bool RenderViewDx11::begin(
 
 		if (rts->usingPrimaryDepthStencil())
 			rs.d3dDepthStencilView = m_d3dDepthStencilView;
-
-		m_renderStateStack.push_back(rs);
-		m_targetsDirty = true;
 	}
 	else if (rt0 && rt1)
 	{
-		RenderState rs =
-		{
-			{ 0, 0, rts->getWidth(), rts->getHeight(), 0.0f, 1.0f },
+		rs = RenderState {
 			rts,
 			{ rt0, rt1, 0, 0 },
 			{ rt0->getD3D11RenderTargetView(), rt1->getD3D11RenderTargetView(), 0, 0 },
@@ -627,15 +611,10 @@ bool RenderViewDx11::begin(
 
 		if (rts->usingPrimaryDepthStencil())
 			rs.d3dDepthStencilView = m_d3dDepthStencilView;
-
-		m_renderStateStack.push_back(rs);
-		m_targetsDirty = true;
 	}
 	else if (rt0)
 	{
-		RenderState rs =
-		{
-			{ 0, 0, rts->getWidth(), rts->getHeight(), 0.0f, 1.0f },
+		rs = RenderState {
 			rts,
 			{ rt0, 0, 0, 0 },
 			{ rt0->getD3D11RenderTargetView(), 0, 0, 0 },
@@ -645,15 +624,10 @@ bool RenderViewDx11::begin(
 
 		if (rts->usingPrimaryDepthStencil())
 			rs.d3dDepthStencilView = m_d3dDepthStencilView;
-
-		m_renderStateStack.push_back(rs);
-		m_targetsDirty = true;
 	}
 	else if (rtd)
 	{
-		RenderState rs =
-		{
-			{ 0, 0, rts->getWidth(), rts->getHeight(), 0.0f, 1.0f },
+		rs = RenderState {
 			rts,
 			{ 0, 0, 0, 0 },
 			{ 0, 0, 0, 0 },
@@ -663,16 +637,12 @@ bool RenderViewDx11::begin(
 
 		if (rts->usingPrimaryDepthStencil())
 			rs.d3dDepthStencilView = m_d3dDepthStencilView;
-
-		m_renderStateStack.push_back(rs);
-		m_targetsDirty = true;
 	}
 	else
 		return false;
 
 	if (clear)
 	{
-		const RenderState& rs = m_renderStateStack.back();
 		if ((clear->mask & CfColor) == CfColor)
 		{
 			float T_MATH_ALIGN16 tmp[4];
@@ -712,26 +682,36 @@ bool RenderViewDx11::begin(
 		}
 	}
 
+	ID3D11ShaderResourceView* nullViews[] = { 0, 0, 0, 0, 0, 0, 0, 0 };
+	m_context->getD3DDeviceContext()->VSSetShaderResources(0, sizeof_array(nullViews), (ID3D11ShaderResourceView**)nullViews);
+	m_context->getD3DDeviceContext()->PSSetShaderResources(0, sizeof_array(nullViews), (ID3D11ShaderResourceView**)nullViews);
+
+	m_context->getD3DDeviceContext()->OMSetRenderTargets(4, rs.d3dRenderView, rs.d3dDepthStencilView);
+
+	D3D11_VIEWPORT d3dViewport;
+	d3dViewport.TopLeftX = 0;
+	d3dViewport.TopLeftY = 0;
+	d3dViewport.Width = rts->getWidth();
+	d3dViewport.Height = rts->getHeight();
+	d3dViewport.MinDepth = 0.0f;
+	d3dViewport.MaxDepth = 1.0f;
+	m_context->getD3DDeviceContext()->RSSetViewports(1, &d3dViewport);
+
 	return true;
 }
 
-bool RenderViewDx11::begin(
-	IRenderTargetSet* renderTargetSet,
-	int32_t renderTarget,
-	const Clear* clear
-)
+bool RenderViewDx11::beginPass(IRenderTargetSet* renderTargetSet, int32_t renderTarget, const Clear* clear)
 {
-	T_ASSERT(!m_renderStateStack.empty());
-
 	if (!m_context)
 		return false;
+
+	RenderState& rs = m_renderState;
 
 	RenderTargetSetDx11* rts = checked_type_cast< RenderTargetSetDx11*, false >(renderTargetSet);
 	RenderTargetDepthDx11* rtd = checked_type_cast< RenderTargetDepthDx11*, true >(rts->getDepthTexture());
 	RenderTargetDx11* rt = checked_type_cast< RenderTargetDx11*, false >(rts->getColorTexture(renderTarget));
-	RenderState rs =
-	{
-		{ 0, 0, rts->getWidth(), rts->getHeight(), 0.0f, 1.0f },
+
+	rs = RenderState {
 		rts,
 		{ rt, 0, 0, 0 },
 		{ rt->getD3D11RenderTargetView(), 0, 0, 0 },
@@ -768,19 +748,40 @@ bool RenderViewDx11::begin(
 		}
 	}
 
-	m_renderStateStack.push_back(rs);
-	m_targetsDirty = true;
+	ID3D11ShaderResourceView* nullViews[] = { 0, 0, 0, 0, 0, 0, 0, 0 };
+	m_context->getD3DDeviceContext()->VSSetShaderResources(0, sizeof_array(nullViews), (ID3D11ShaderResourceView**)nullViews);
+	m_context->getD3DDeviceContext()->PSSetShaderResources(0, sizeof_array(nullViews), (ID3D11ShaderResourceView**)nullViews);
+
+	m_context->getD3DDeviceContext()->OMSetRenderTargets(4, rs.d3dRenderView, rs.d3dDepthStencilView);
+
+	D3D11_VIEWPORT d3dViewport;
+	d3dViewport.TopLeftX = 0;
+	d3dViewport.TopLeftY = 0;
+	d3dViewport.Width = rts->getWidth();
+	d3dViewport.Height = rts->getHeight();
+	d3dViewport.MinDepth = 0.0f;
+	d3dViewport.MaxDepth = 1.0f;
+	m_context->getD3DDeviceContext()->RSSetViewports(1, &d3dViewport);
 
 	return true;
 }
 
+void RenderViewDx11::endPass()
+{
+	RenderState& rs = m_renderState;
+
+	if (rs.renderTargetSet)
+		rs.renderTargetSet->setContentValid(true);
+
+	if (rs.renderTarget[0])
+		rs.renderTarget[0]->unbind();
+	if (rs.renderTarget[1])
+		rs.renderTarget[1]->unbind();
+}
+
 void RenderViewDx11::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, IProgram* program, const Primitives& primitives)
 {
-	T_ASSERT(!m_renderStateStack.empty());
-
-	bindTargets();
-
-	const RenderState& rs = m_renderStateStack.back();
+	const RenderState& rs = m_renderState;
 
 	m_currentVertexBuffer = checked_type_cast< VertexBufferDx11* >(vertexBuffer);
 	m_currentIndexBuffer = checked_type_cast< IndexBufferDx11* >(indexBuffer);
@@ -848,12 +849,9 @@ void RenderViewDx11::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, 
 
 void RenderViewDx11::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, IProgram* program, const Primitives& primitives, uint32_t instanceCount)
 {
-	T_ASSERT(!m_renderStateStack.empty());
 	T_ASSERT(instanceCount > 0);
 
-	bindTargets();
-
-	const RenderState& rs = m_renderStateStack.back();
+	const RenderState& rs = m_renderState;
 
 	m_currentVertexBuffer = checked_type_cast< VertexBufferDx11* >(vertexBuffer);
 	m_currentIndexBuffer = checked_type_cast< IndexBufferDx11* >(indexBuffer);
@@ -959,61 +957,6 @@ bool RenderViewDx11::copy(ITexture* destinationTexture, int32_t destinationSide,
 	return true;
 }
 
-void RenderViewDx11::end()
-{
-	T_ASSERT(!m_renderStateStack.empty());
-
-	RenderState& rs = m_renderStateStack.back();
-	if (rs.renderTargetSet)
-		rs.renderTargetSet->setContentValid(true);
-
-	if (!m_targetsDirty)
-	{
-		if (rs.renderTarget[0])
-			rs.renderTarget[0]->unbind();
-		if (rs.renderTarget[1])
-			rs.renderTarget[1]->unbind();
-	}
-
-	m_renderStateStack.pop_back();
-	if (!m_renderStateStack.empty())
-		m_targetsDirty = true;
-	else
-		m_targetsDirty = false;
-}
-
-void RenderViewDx11::flush()
-{
-}
-
-void RenderViewDx11::present()
-{
-	m_dxgiSwapChain->Present(m_waitVBlanks, 0);
-	m_context->deleteResources();
-
-	// Check if swap chain is still in same mode as window.
-	BOOL fullScreen = FALSE;
-	if (SUCCEEDED(m_dxgiSwapChain->GetFullscreenState(&fullScreen, 0)))
-	{
-		if (m_fullScreen != (fullScreen != FALSE))
-		{
-			if (m_fullScreen)
-				log::warning << L"Unexpected transition, DXGI no longer in fullscreen; need to reset render view." << Endl;
-			else
-				log::warning << L"Unexpected transition, DXGI in fullscreen; need to reset render view." << Endl;
-
-			m_fullScreen = !m_fullScreen;
-
-			// Issue an event in order to reset view back into either fullscreen or windowed mode.
-			RenderEvent evt;
-			evt.type = fullScreen ? ReSetWindowed: ReSetFullScreen;
-			m_eventQueue.push_back(evt);
-		}
-	}
-
-	m_context->getLock().release();
-}
-
 void RenderViewDx11::pushMarker(const char* const marker)
 {
 #if defined(T_USE_D3DPERF)
@@ -1077,24 +1020,6 @@ bool RenderViewDx11::getBackBufferContent(void* buffer) const
 
 	m_context->getD3DDeviceContext()->Unmap(d3dReadBackTexture, 0);
 	return true;
-}
-
-void RenderViewDx11::bindTargets()
-{
-	if (!m_targetsDirty)
-		return;
-
-	RenderState& rs = m_renderStateStack.back();
-
-	ID3D11ShaderResourceView* nullViews[] = { 0, 0, 0, 0, 0, 0, 0, 0 };
-	m_context->getD3DDeviceContext()->VSSetShaderResources(0, sizeof_array(nullViews), (ID3D11ShaderResourceView**)nullViews);
-	m_context->getD3DDeviceContext()->PSSetShaderResources(0, sizeof_array(nullViews), (ID3D11ShaderResourceView**)nullViews);
-
-	m_context->getD3DDeviceContext()->OMSetRenderTargets(4, rs.d3dRenderView, rs.d3dDepthStencilView);
-	m_context->getD3DDeviceContext()->RSSetViewports(1, &rs.d3dViewport);
-
-	m_stateCache.reset();
-	m_targetsDirty = false;
 }
 
 bool RenderViewDx11::windowListenerEvent(Window* window, UINT message, WPARAM wParam, LPARAM lParam, LRESULT& outResult)

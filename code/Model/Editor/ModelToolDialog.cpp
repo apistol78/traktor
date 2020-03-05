@@ -709,6 +709,7 @@ void ModelToolDialog::eventModelTreeSelect(ui::SelectionChangeEvent* event)
 		const AlignedVector< Material >& materials = m_model->getMaterials();
 		for (AlignedVector< Material >::const_iterator i = materials.begin(); i != materials.end(); ++i)
 		{
+			const wchar_t* const c_blendModes[] = { L"Decal", L"Add", L"Multiply", L"Alpha", L"AlphaTest" };
 			const auto& cl = i->getColor();
 
 			Ref< ui::GridRow > row = new ui::GridRow();
@@ -731,7 +732,7 @@ void ModelToolDialog::eventModelTreeSelect(ui::SelectionChangeEvent* event)
 			row->add(new ui::GridItem(toString(i->getEmissive())));
 			row->add(new ui::GridItem(toString(i->getReflective())));
 			row->add(new ui::GridItem(toString(i->getRimLightIntensity())));
-			row->add(new ui::GridItem(L"Default"));
+			row->add(new ui::GridItem(c_blendModes[(int32_t)i->getBlendOperator()]));
 			row->add(new ui::GridItem(i->isDoubleSided() ? L"Yes" : L"No"));
 			m_materialGrid->addRow(row);
 		}

@@ -228,6 +228,8 @@ void SongEditor::eventTimer(ui::TimerEvent* event)
 		return;
 
 	const auto cursor = m_audioChannel->getCursor();
+	if (!cursor)
+		return;
 
 	int32_t pattern = m_songBuffer->getCurrentPattern(cursor);
 	int32_t row = m_songBuffer->getCurrentRow(cursor);

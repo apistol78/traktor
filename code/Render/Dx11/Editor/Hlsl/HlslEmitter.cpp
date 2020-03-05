@@ -88,8 +88,12 @@ bool emitColor(HlslContext& cx, Color* node)
 	Ref< HlslVariable > out = cx.emitOutput(node, L"Output", HtFloat4);
 	if (!out)
 		return false;
-	Vector4 color = node->getColor();
-	f << L"const float4 " << out->getName() << L" = float4(" << color.x() << L", " << color.y() << L", " << color.z() << L", " << color.w() << L");" << Endl;
+
+	Color4f color = node->getColor();
+	if (!node->getLinear())
+		color = color.linear();
+		
+	f << L"const float4 " << out->getName() << L" = float4(" << color.getRed() << L", " << color.getGreen() << L", " << color.getBlue() << L", " << color.getAlpha() << L");" << Endl;
 	return true;
 }
 

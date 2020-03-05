@@ -70,24 +70,21 @@ public:
 
 	virtual void setViewport(const Viewport& viewport) override final;
 
-	virtual Viewport getViewport() override final;
-
 	virtual SystemWindow getSystemWindow() override final;
 
-	virtual bool begin(
-		const Clear* clear
-	) override final;
+	virtual bool beginFrame() override final;
 
-	virtual bool begin(
-		IRenderTargetSet* renderTargetSet,
-		const Clear* clear
-	) override final;
+	virtual void endFrame() override final;
 
-	virtual bool begin(
-		IRenderTargetSet* renderTargetSet,
-		int32_t renderTarget,
-		const Clear* clear
-	) override final;
+	virtual void present() override final;
+
+	virtual bool beginPass(const Clear* clear) override final;
+
+	virtual bool beginPass(IRenderTargetSet* renderTargetSet, const Clear* clear) override final;
+
+	virtual bool beginPass(IRenderTargetSet* renderTargetSet, int32_t renderTarget, const Clear* clear) override final;
+
+	virtual void endPass() override final;
 
 	virtual void draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, IProgram* program, const Primitives& primitives) override final;
 
@@ -96,12 +93,6 @@ public:
 	virtual void compute(IProgram* program, const int32_t* workSize) override final;
 
 	virtual bool copy(ITexture* destinationTexture, int32_t destinationSide, int32_t destinationLevel, ITexture* sourceTexture, int32_t sourceSide, int32_t sourceLevel) override final;
-
-	virtual void end() override final;
-
-	virtual void flush() override final;
-
-	virtual void present() override final;
 
 	virtual void pushMarker(const char* const marker) override final;
 
@@ -120,7 +111,6 @@ private:
 
 	struct RenderState
 	{
-		D3D11_VIEWPORT d3dViewport;
 		RenderTargetSetDx11* renderTargetSet;
 		RenderTargetDx11* renderTarget[4];
 		ID3D11RenderTargetView* d3dRenderView[4];
@@ -134,22 +124,18 @@ private:
 	ComRef< ID3D11RenderTargetView > m_d3dRenderTargetView;
 	ComRef< ID3D11Texture2D > m_d3dDepthStencil;
 	ComRef< ID3D11DepthStencilView > m_d3dDepthStencilView;
-	D3D11_VIEWPORT m_d3dViewport;
 	StateCache m_stateCache;
 	bool m_fullScreen;
 	int32_t m_waitVBlanks;
 	bool m_cursorVisible;
-	bool m_targetsDirty;
 	uint32_t m_drawCalls;
 	uint32_t m_primitiveCount;
 	Ref< VertexBufferDx11 > m_currentVertexBuffer;
 	Ref< IndexBufferDx11 > m_currentIndexBuffer;
 	Ref< ProgramDx11 > m_currentProgram;
-	std::list< RenderState > m_renderStateStack;
+	RenderState m_renderState;
 	int32_t m_targetSize[2];
 	std::list< RenderEvent > m_eventQueue;
-
-	void bindTargets();
 
 	// \name IWindowListener implementation.
 	// \{

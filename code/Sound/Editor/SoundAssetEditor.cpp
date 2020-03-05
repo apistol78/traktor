@@ -13,6 +13,7 @@
 #include "Sound/Decoders/FlacStreamDecoder.h"
 #include "Sound/Decoders/Mp3StreamDecoder.h"
 #include "Sound/Decoders/OggStreamDecoder.h"
+#include "Sound/Decoders/TssStreamDecoder.h"
 #include "Sound/Decoders/WavStreamDecoder.h"
 #include "Sound/Sound.h"
 #include "Sound/StreamSoundBuffer.h"
@@ -144,6 +145,8 @@ void SoundAssetEditor::eventToolBarClick(ui::ToolBarButtonClickEvent* event)
 		decoder = new sound::Mp3StreamDecoder();
 	else if (compareIgnoreCase(fileName.getExtension(), L"ogg") == 0)
 		decoder = new sound::OggStreamDecoder();
+	else if (compareIgnoreCase(fileName.getExtension(), L"tss") == 0)
+		decoder = new sound::TssStreamDecoder();
 	else
 	{
 		log::error << L"Failed to preview sound asset; unable to determine decoder from extension." << Endl;

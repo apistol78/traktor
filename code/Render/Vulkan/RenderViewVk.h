@@ -20,7 +20,7 @@ namespace traktor
 class ProgramVk;
 class RenderTargetSetVk;
 class UniformBufferPoolVk;
-class VertexBufferDynamicVk;
+class VertexBufferVk;
 
 /*!
  * \ingroup Vulkan
@@ -143,12 +143,7 @@ private:
 	RefArray< RenderTargetSetVk > m_primaryTargets;
 	std::list< RenderEvent > m_eventQueue;
 	uint32_t m_currentImageIndex;
-	
-	//Viewport m_viewport;
-	//AlignedVector< TargetState > m_targetStateStack;
-	//bool m_targetStateDirty;
 	TargetState m_targetState;
-
 	uint32_t m_targetId;
 	VkRenderPass m_targetRenderPass;
 	VkFramebuffer m_targetFrameBuffer;
@@ -160,7 +155,7 @@ private:
 
 	bool create(uint32_t width, uint32_t height);
 
-	bool validatePipeline(VertexBufferDynamicVk* vb, ProgramVk* p, PrimitiveType pt);
+	bool validatePipeline(VertexBufferVk* vb, ProgramVk* p, PrimitiveType pt);
 
 #if defined(_WIN32)
 	// \name IWindowListener implementation.

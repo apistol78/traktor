@@ -15,7 +15,7 @@
 #include "Render/Vulkan/SimpleTextureVk.h"
 #include "Render/Vulkan/UniformBufferPoolVk.h"
 #include "Render/Vulkan/UtilitiesVk.h"
-#include "Render/Vulkan/VertexBufferDynamicVk.h"
+#include "Render/Vulkan/VertexBufferVk.h"
 
 #if defined(__MAC__)
 #	include "Render/Vulkan/macOS/Metal.h"
@@ -320,6 +320,11 @@ bool RenderViewVk::reset(const RenderViewDefaultDesc& desc)
 
 	m_window->setTitle(!desc.title.empty() ? desc.title.c_str() : L"Traktor - Vulkan Renderer");
 
+	if (desc.fullscreen)
+		m_window->setFullScreenStyle(desc.displayMode.width, desc.displayMode.height);
+	else
+		m_window->setWindowedStyle(desc.displayMode.width, desc.displayMode.height);
+
 #	if defined(_WIN32)
 	m_window->addListener(this);
 #	endif
@@ -416,10 +421,10 @@ void RenderViewVk::setViewport(const Viewport& viewport)
 	T_ASSERT(viewport.height > 0);
 
 	VkViewport vp = {};
-	vp.x = viewport.left;
-	vp.y = viewport.top;
-	vp.width = viewport.width;
-	vp.height = viewport.height;
+	vp.x = (float)viewport.left;
+	vp.y = (float)viewport.top;
+	vp.width = (float)viewport.width;
+	vp.height = (float)viewport.height;
 	vp.minDepth = viewport.nearZ;
 	vp.maxDepth = viewport.farZ;
 	vkCmdSetViewport(m_graphicsCommandBuffer, 0, 1, &vp);
@@ -582,7 +587,7 @@ bool RenderViewVk::beginPass(const Clear* clear)
 	}
 	else
 	{
-		for (int32_t i = 0; i < ts.rts->getColorTargetCount(); ++i)
+		for (int32_t i = 0; i < (int32_t)ts.rts->getColorTargetCount(); ++i)
 		{
 			auto& cv = clearValues.push_back();
 			ts.clear.colors[i].storeUnaligned(cv.color.float32);
@@ -610,10 +615,10 @@ bool RenderViewVk::beginPass(const Clear* clear)
 
 	// Set viewport.
 	VkViewport vp = {};
-	vp.x = 0;
-	vp.y = 0;
-	vp.width = ts.rts->getWidth();
-	vp.height = ts.rts->getHeight();
+	vp.x = 0.0f;
+	vp.y = 0.0f;
+	vp.width = (float)ts.rts->getWidth();
+	vp.height = (float)ts.rts->getHeight();
 	vp.minDepth = 0.0f;
 	vp.maxDepth = 1.0f;
 	vkCmdSetViewport(m_graphicsCommandBuffer, 0, 1, &vp);
@@ -657,7 +662,7 @@ bool RenderViewVk::beginPass(IRenderTargetSet* renderTargetSet, const Clear* cle
 	}
 	else
 	{
-		for (int32_t i = 0; i < ts.rts->getColorTargetCount(); ++i)
+		for (int32_t i = 0; i < (int32_t)ts.rts->getColorTargetCount(); ++i)
 		{
 			auto& cv = clearValues.push_back();
 			ts.clear.colors[i].storeUnaligned(cv.color.float32);
@@ -685,10 +690,10 @@ bool RenderViewVk::beginPass(IRenderTargetSet* renderTargetSet, const Clear* cle
 
 	// Set viewport.
 	VkViewport vp = {};
-	vp.x = 0;
-	vp.y = 0;
-	vp.width = ts.rts->getWidth();
-	vp.height = ts.rts->getHeight();
+	vp.x = 0.0f;
+	vp.y = 0.0f;
+	vp.width = (float)ts.rts->getWidth();
+	vp.height = (float)ts.rts->getHeight();
 	vp.minDepth = 0.0f;
 	vp.maxDepth = 1.0f;
 	vkCmdSetViewport(m_graphicsCommandBuffer, 0, 1, &vp);
@@ -729,7 +734,7 @@ bool RenderViewVk::beginPass(IRenderTargetSet* renderTargetSet, int32_t renderTa
 	}
 	else
 	{
-		for (int32_t i = 0; i < ts.rts->getColorTargetCount(); ++i)
+		for (int32_t i = 0; i < (int32_t)ts.rts->getColorTargetCount(); ++i)
 		{
 			auto& cv = clearValues.push_back();
 			ts.clear.colors[i].storeUnaligned(cv.color.float32);
@@ -757,10 +762,10 @@ bool RenderViewVk::beginPass(IRenderTargetSet* renderTargetSet, int32_t renderTa
 
 	// Set viewport.
 	VkViewport vp = {};
-	vp.x = 0;
-	vp.y = 0;
-	vp.width = ts.rts->getWidth();
-	vp.height = ts.rts->getHeight();
+	vp.x = 0.0f;
+	vp.y = 0.0f;
+	vp.width = (float)ts.rts->getWidth();
+	vp.height = (float)ts.rts->getHeight();
 	vp.minDepth = 0.0f;
 	vp.maxDepth = 1.0f;
 	vkCmdSetViewport(m_graphicsCommandBuffer, 0, 1, &vp);
@@ -795,7 +800,7 @@ void RenderViewVk::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, IP
 {
 	const TargetState& ts = m_targetState;
 
-	VertexBufferDynamicVk* vb = mandatory_non_null_type_cast< VertexBufferDynamicVk* >(vertexBuffer);
+	VertexBufferVk* vb = mandatory_non_null_type_cast< VertexBufferVk* >(vertexBuffer);
 	ProgramVk* p = mandatory_non_null_type_cast< ProgramVk* >(program);
 
 	validatePipeline(vb, p, primitives.type);
@@ -1383,7 +1388,7 @@ bool RenderViewVk::create(uint32_t width, uint32_t height)
 	return true;
 }
 
-bool RenderViewVk::validatePipeline(VertexBufferDynamicVk* vb, ProgramVk* p, PrimitiveType pt)
+bool RenderViewVk::validatePipeline(VertexBufferVk* vb, ProgramVk* p, PrimitiveType pt)
 {
 	uint32_t primitiveId = (uint32_t)pt;
 	uint32_t declHash = vb->getHash();
@@ -1426,7 +1431,7 @@ bool RenderViewVk::validatePipeline(VertexBufferDynamicVk* vb, ProgramVk* p, Pri
 		visci.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
 		visci.vertexBindingDescriptionCount = 1;
 		visci.pVertexBindingDescriptions = &vb->getVkVertexInputBindingDescription();
-		visci.vertexAttributeDescriptionCount = vb->getVkVertexInputAttributeDescriptions().size();
+		visci.vertexAttributeDescriptionCount = (uint32_t)vb->getVkVertexInputAttributeDescriptions().size();
 		visci.pVertexAttributeDescriptions = vb->getVkVertexInputAttributeDescriptions().c_ptr();
 
 		VkPipelineShaderStageCreateInfo ssci[2] = {};

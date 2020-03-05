@@ -278,6 +278,7 @@ void Material::serialize(ISerializer& s)
 		{ L"BoAdd", BoAdd },
 		{ L"BoMultiply", BoMultiply },
 		{ L"BoAlpha", BoAlpha },
+		{ L"BoAlphaTest", BoAlphaTest },
 		{ 0 }
 	};
 

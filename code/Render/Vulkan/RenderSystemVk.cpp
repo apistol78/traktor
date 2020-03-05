@@ -25,6 +25,7 @@
 #include "Render/Vulkan/UtilitiesVk.h"
 #include "Render/Vulkan/VertexAttributesVk.h"
 #include "Render/Vulkan/VertexBufferDynamicVk.h"
+#include "Render/Vulkan/VertexBufferStaticVk.h"
 #include "Render/Vulkan/VolumeTextureVk.h"
 #include "Render/Vulkan/Editor/Glsl/GlslType.h"
 
@@ -463,7 +464,7 @@ Ref< VertexBuffer > RenderSystemVk::createVertexBuffer(const AlignedVector< Vert
 	bci.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
 
 	VmaAllocationCreateInfo aci = {};
-	aci.usage = VMA_MEMORY_USAGE_CPU_TO_GPU; // \tbd VMA_MEMORY_USAGE_GPU_ONLY;
+	aci.usage = dynamic ? VMA_MEMORY_USAGE_CPU_TO_GPU : VMA_MEMORY_USAGE_GPU_ONLY;
 
 	VmaAllocation allocation;
 	if (vmaCreateBuffer(m_allocator, &bci, &aci, &vertexBuffer, &allocation, nullptr) != VK_SUCCESS)
@@ -490,15 +491,29 @@ Ref< VertexBuffer > RenderSystemVk::createVertexBuffer(const AlignedVector< Vert
 	cs.feed(vertexElements.c_ptr(), vertexElements.size() * sizeof(VertexElement));
 	cs.end();
 
-	return new VertexBufferDynamicVk(
-		bufferSize,
-		m_allocator,
-		allocation,
-		vertexBuffer,
-		vibd,
-		vads,
-		cs.get()
-	);
+	if (dynamic)
+		return new VertexBufferDynamicVk(
+			bufferSize,
+			m_allocator,
+			allocation,
+			vertexBuffer,
+			vibd,
+			vads,
+			cs.get()
+		);
+	else
+		return new VertexBufferStaticVk(
+			m_logicalDevice,
+			m_graphicsCommandPool,
+			m_graphicsQueue,
+			bufferSize,
+			m_allocator,
+			allocation,
+			vertexBuffer,
+			vibd,
+			vads,
+			cs.get()
+		);
 }
 
 Ref< IndexBuffer > RenderSystemVk::createIndexBuffer(IndexType indexType, uint32_t bufferSize, bool dynamic)

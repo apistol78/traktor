@@ -125,7 +125,6 @@ void FormWin32::showProgress(int32_t current, int32_t total)
 	m_taskBarList->SetProgressValue(m_hWnd, current, total);
 }
 
-
 LRESULT FormWin32::eventClose(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, bool& pass)
 {
 	CloseEvent closeEvent(m_owner);

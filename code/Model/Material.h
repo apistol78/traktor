@@ -29,10 +29,11 @@ class T_DLLCLASS Material : public PropertyGroup
 public:
 	enum BlendOperator
 	{
-		BoDecal,
-		BoAdd,
-		BoMultiply,
-		BoAlpha
+		BoDecal = 0,
+		BoAdd = 1,
+		BoMultiply = 2,
+		BoAlpha = 3,
+		BoAlphaTest = 4
 	};
 
 	struct Map
