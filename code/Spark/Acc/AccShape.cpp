@@ -111,20 +111,20 @@ bool AccShape::createFromTriangles(
 	Aabb2 lineBounds;
 
 	// Update shape's bounds from all triangles and lines.
-	for (AlignedVector< Triangle >::const_iterator j = triangles.begin(); j != triangles.end(); ++j)
+	for (const auto& triangle : triangles)
 	{
 		for (int32_t k = 0; k < 3; ++k)
-			triangleBounds.contain(j->v[k]);
+			triangleBounds.contain(triangle.v[k]);
 	}
 
-	for (AlignedVector< Line >::const_iterator j = lines.begin(); j != lines.end(); ++j)
+	for (const auto& line : lines)
 	{
-		const LineStyle& lineStyle = lineStyles[j->lineStyle - 1];
+		const LineStyle& lineStyle = lineStyles[line.lineStyle - 1];
 		float width = lineStyle.getLineWidth() / 2.0f;
 
 		for (int32_t k = 0; k < 2; ++k)
 		{
-			const Vector2& pt = j->v[k];
+			const Vector2& pt = line.v[k];
 			lineBounds.contain(pt - width);
 			lineBounds.contain(pt + width);
 		}
@@ -569,12 +569,12 @@ bool AccShape::createFromCanvas(
 
 void AccShape::destroy()
 {
-	m_shapeResources = 0;
+	m_shapeResources = nullptr;
 
 	if (m_fillVertexPool)
 	{
 		m_fillVertexPool->releaseRange(m_fillVertexRange);
-		m_fillVertexPool = 0;
+		m_fillVertexPool = nullptr;
 	}
 
 	m_fillRenderBatches.clear();
@@ -688,18 +688,18 @@ void AccShape::render(
 			renderContext->enqueue(renderBlockLine);
 		}
 
-		for (AlignedVector< FillRenderBatch >::iterator j = m_fillRenderBatches.begin(); j != m_fillRenderBatches.end(); ++j)
+		for (const auto& batch : m_fillRenderBatches)
 		{
-			if (!j->texture)
+			if (!batch.texture)
 			{
 				if (programSolid)
 				{
 					render::NonIndexedRenderBlock* renderBlock = renderContext->alloc< render::NonIndexedRenderBlock >(L"Flash AccShape; draw solid batch");
 					renderBlock->program = programSolid;
 					renderBlock->vertexBuffer = m_fillVertexRange.vertexBuffer;
-					renderBlock->primitive = j->primitives.type;
-					renderBlock->offset = j->primitives.offset;
-					renderBlock->count = j->primitives.count;
+					renderBlock->primitive = batch.primitives.type;
+					renderBlock->offset = batch.primitives.offset;
+					renderBlock->count = batch.primitives.count;
 					renderContext->enqueue(renderBlock);
 				}
 			}
@@ -710,34 +710,34 @@ void AccShape::render(
 					render::NonIndexedRenderBlock* renderBlock = renderContext->alloc< render::NonIndexedRenderBlock >(L"Flash AccShape; draw textured batch");
 					renderBlock->program = programTextured;
 					renderBlock->vertexBuffer = m_fillVertexRange.vertexBuffer;
-					renderBlock->primitive = j->primitives.type;
-					renderBlock->offset = j->primitives.offset;
-					renderBlock->count = j->primitives.count;
+					renderBlock->primitive = batch.primitives.type;
+					renderBlock->offset = batch.primitives.offset;
+					renderBlock->count = batch.primitives.count;
 					renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
 					renderBlock->programParams->beginParameters(renderContext);
-					renderBlock->programParams->setTextureParameter(s_handleTexture, j->texture->texture);
-					renderBlock->programParams->setFloatParameter(s_handleTextureClamp, j->textureClamp ? 1.0f : 0.0f);
+					renderBlock->programParams->setTextureParameter(s_handleTexture, batch.texture->texture);
+					renderBlock->programParams->setFloatParameter(s_handleTextureClamp, batch.textureClamp ? 1.0f : 0.0f);
 					renderBlock->programParams->endParameters(renderContext);
 					renderContext->enqueue(renderBlock);
 				}
 			}
 		}
 
-		for (AlignedVector< LineRenderBatch >::const_iterator i = m_lineRenderBatches.begin(); i != m_lineRenderBatches.end(); ++i)
+		for (const auto& batch : m_lineRenderBatches)
 		{
 			if (programLine)
 			{
 				render::NonIndexedRenderBlock* renderBlock = renderContext->alloc< render::NonIndexedRenderBlock >(L"Flash AccShape; draw line batch");
 				renderBlock->program = programLine;
-				renderBlock->vertexBuffer = i->vertexRange.vertexBuffer;
-				renderBlock->primitive = i->primitives.type;
-				renderBlock->offset = i->primitives.offset;
-				renderBlock->count = i->primitives.count;
+				renderBlock->vertexBuffer = batch.vertexRange.vertexBuffer;
+				renderBlock->primitive = batch.primitives.type;
+				renderBlock->offset = batch.primitives.offset;
+				renderBlock->count = batch.primitives.count;
 				renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
 				renderBlock->programParams->beginParameters(renderContext);
-				renderBlock->programParams->setTextureParameter(s_handleLineData, i->lineTexture);
-				renderBlock->programParams->setVectorParameter(s_handleLineColor, i->color);
-				renderBlock->programParams->setFloatParameter(s_handleLineWidth, i->width);
+				renderBlock->programParams->setTextureParameter(s_handleLineData, batch.lineTexture);
+				renderBlock->programParams->setVectorParameter(s_handleLineColor, batch.color);
+				renderBlock->programParams->setFloatParameter(s_handleLineWidth, batch.width);
 				renderBlock->programParams->endParameters(renderContext);
 				renderContext->enqueue(renderBlock);
 			}
