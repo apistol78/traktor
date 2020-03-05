@@ -424,6 +424,9 @@ void SparkLayer::update(const runtime::UpdateInfo& info)
 
 void SparkLayer::setup(const runtime::UpdateInfo& info, render::RenderGraph& renderGraph)
 {
+	if (!m_movieRenderer)
+		return;
+
 	m_displayRenderer->setup(&renderGraph);
 	m_moviePlayer->render(m_movieRenderer);
 	m_displayRenderer->setup(nullptr);

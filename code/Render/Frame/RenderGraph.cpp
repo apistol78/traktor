@@ -106,7 +106,7 @@ bool RenderGraph::validate(int32_t width, int32_t height)
 	m_pool->cleanup();
 
 	// Append passes depth-first.
-	StaticSet< uint32_t, 256 > added;
+	StaticSet< uint32_t, 512 > added;
 	m_order.resize(0);	
 	for (int32_t i = 0; i < (int32_t)m_passes.size(); ++i)
 	{

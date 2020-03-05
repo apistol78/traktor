@@ -104,7 +104,7 @@ private:
 	Ref< RenderGraphTargetSetPool > m_pool;
 	SmallMap< handle_t, Target > m_targets;
 	RefArray< const RenderPass > m_passes;
-	StaticVector< uint32_t, 256 > m_order;
+	StaticVector< uint32_t, 512 > m_order;
 	handle_t m_nextTargetSetId;
 
 	void traverse(int32_t index, const std::function< void(int32_t) >& fn) const;
