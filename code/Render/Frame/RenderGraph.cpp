@@ -106,14 +106,16 @@ bool RenderGraph::validate(int32_t width, int32_t height)
 	m_pool->cleanup();
 
 	// Append passes depth-first.
-	StaticVector< uint32_t, 256 > order;
+	StaticSet< uint32_t, 256 > added;
+	m_order.resize(0);	
 	for (int32_t i = 0; i < (int32_t)m_passes.size(); ++i)
 	{
 		const auto& output = m_passes[i]->getOutput();
 		if (output.targetSetId == 0)
 		{
 			traverse(i, [&](int32_t index) {
-				order.push_back(index);
+				if (added.insert(index))
+					m_order.push_back(index);
 			});
 		}
 		else
@@ -126,28 +128,13 @@ bool RenderGraph::validate(int32_t width, int32_t height)
 			if (!it->second.transient)
 			{
 				traverse(i, [&](int32_t index) {
-					order.push_back(index);
+					if (added.insert(index))
+						m_order.push_back(index);
 				});
 			}
 		}
 	}
 
-	m_order.resize(0);
-
-	StaticSet< uint32_t, 256 > added;
-	for (auto index : order)
-	{
-		if (added.insert(index))
-			m_order.push_back(index);
-	}
-
-#if defined(_DEBUG)
-	for (int32_t i = 0; i < (int32_t)m_order.size(); ++i)
-	{
-		const auto pass = m_passes[m_order[i]];
-		log::info << i << L". " << pass->getName() << L" -> " << pass->getOutput().targetSetId << Endl;
-	}
-#endif
 	return true;
 }
 
