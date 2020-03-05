@@ -6774,6 +6774,15 @@
 												</item>
 											</items>
 										</item>
+										<item type="Filter">
+											<name>Tracker</name>
+											<items>
+												<item type="File">
+													<fileName>Tracker/*.*</fileName>
+													<items/>
+												</item>
+											</items>
+										</item>
 									</items>
 									<dependencies>
 										<item type="ProjectDependency" version="3">
@@ -8776,6 +8785,15 @@
 									</item>
 								</items>
 							</item>
+							<item type="Filter">
+								<name>Tracker</name>
+								<items>
+									<item type="File">
+										<fileName>Tracker/*.*</fileName>
+										<items/>
+									</item>
+								</items>
+							</item>
 						</items>
 						<dependencies>
 							<item type="ProjectDependency" version="3">
@@ -10443,7 +10461,7 @@
 		<item ref="/object/projects/item/dependencies/item[1]/project/dependencies/item[1]/project"/>
 		<item ref="/object/projects/item[1]/dependencies/item[7]/project/dependencies/item[12]/project/dependencies/item[7]/project"/>
 		<item type="Project" version="1">
-			<enable>false</enable>
+			<enable>true</enable>
 			<name>Traktor.Render.OpenGL</name>
 			<sourcePath>$(TRAKTOR_HOME)/code/Render/OpenGL/Std</sourcePath>
 			<configurations>
@@ -12950,7 +12968,7 @@
 			</dependencies>
 		</item>
 		<item type="Project" version="1">
-			<enable>false</enable>
+			<enable>true</enable>
 			<name>Traktor.Render.Capture</name>
 			<sourcePath>$(TRAKTOR_HOME)/code/Render/Capture</sourcePath>
 			<configurations>
@@ -13292,7 +13310,7 @@
 			</dependencies>
 		</item>
 		<item type="Project" version="1">
-			<enable>false</enable>
+			<enable>true</enable>
 			<name>Traktor.Render.Dx11</name>
 			<sourcePath>$(TRAKTOR_HOME)/code/Render/Dx11</sourcePath>
 			<configurations>
@@ -16672,7 +16690,7 @@
 			</dependencies>
 		</item>
 		<item type="Project" version="1">
-			<enable>false</enable>
+			<enable>true</enable>
 			<name>Traktor.Render.OpenGL.ES2</name>
 			<sourcePath>$(TRAKTOR_HOME)/code/Render/OpenGL/ES2</sourcePath>
 			<configurations>
@@ -20738,7 +20756,7 @@
 			</dependencies>
 		</item>
 		<item type="Project" version="1">
-			<enable>false</enable>
+			<enable>true</enable>
 			<name>Traktor.Render.Capture.Editor</name>
 			<sourcePath>$(TRAKTOR_HOME)/code/Render/Capture/Editor</sourcePath>
 			<configurations>
@@ -20908,7 +20926,7 @@
 			</dependencies>
 		</item>
 		<item type="Project" version="1">
-			<enable>false</enable>
+			<enable>true</enable>
 			<name>Traktor.Render.Dx11.Editor</name>
 			<sourcePath>$(TRAKTOR_HOME)/code/Render/Dx11/Editor</sourcePath>
 			<configurations>
@@ -21111,7 +21129,7 @@
 			</dependencies>
 		</item>
 		<item type="Project" version="1">
-			<enable>false</enable>
+			<enable>true</enable>
 			<name>Traktor.Render.OpenGL.Editor</name>
 			<sourcePath>$(TRAKTOR_HOME)/code/Render/OpenGL/Std/Editor</sourcePath>
 			<configurations>
@@ -21290,7 +21308,7 @@
 			</dependencies>
 		</item>
 		<item type="Project" version="1">
-			<enable>false</enable>
+			<enable>true</enable>
 			<name>Traktor.Render.OpenGL.ES2.Editor</name>
 			<sourcePath>$(TRAKTOR_HOME)/code/Render/OpenGL/ES2/Editor</sourcePath>
 			<configurations>
@@ -21469,7 +21487,7 @@
 			</dependencies>
 		</item>
 		<item type="Project" version="1">
-			<enable>false</enable>
+			<enable>true</enable>
 			<name>Traktor.Render.Ps3.Editor</name>
 			<sourcePath>$(TRAKTOR_HOME)/code/Render/Ps3/Editor</sourcePath>
 			<configurations>
@@ -21700,7 +21718,7 @@
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
 					<project type="Project" version="1">
-						<enable>false</enable>
+						<enable>true</enable>
 						<name>Traktor.Render.Ps3</name>
 						<sourcePath>$(TRAKTOR_HOME)/code/Render/Ps3</sourcePath>
 						<configurations>

@@ -1,5 +1,6 @@
 #include "Core/Io/IStream.h"
 #include "Core/Io/Writer.h"
+#include "Core/Math/MathUtils.h"
 #include "Sound/Editor/Encoders/TssStreamEncoder.h"
 
 namespace traktor
@@ -24,19 +25,24 @@ bool TssStreamEncoder::putBlock(SoundBlock& block)
 {
 	Writer wr(m_stream);
 
-	wr << block.samplesCount;
-	wr << block.sampleRate;
-	wr << block.maxChannel;
-
-	for (uint32_t i = 0; i < block.maxChannel; ++i)
+	for (uint32_t offset = 0; offset < block.samplesCount; offset += 65535)
 	{
-		if (block.samples[i])
+		uint32_t samplesCount = min< uint32_t >(block.samplesCount - offset, 65535);
+
+		wr << samplesCount;
+		wr << block.sampleRate;
+		wr << block.maxChannel;
+
+		for (uint32_t i = 0; i < block.maxChannel; ++i)
 		{
-			wr << uint8_t(0xff);
-			wr.write(block.samples[i], block.samplesCount, sizeof(float));
+			if (block.samples[i])
+			{
+				wr << uint8_t(0xff);
+				wr.write(block.samples[i] + offset, samplesCount, sizeof(float));
+			}
+			else
+				wr << uint8_t(0x00);
 		}
-		else
-			wr << uint8_t(0x00);
 	}
 
 	return true;

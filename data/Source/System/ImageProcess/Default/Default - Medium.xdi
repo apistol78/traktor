@@ -14,8 +14,8 @@
 			<id>{5F023E12-CBE9-C749-99E2-55C58E424706}</id>
 			<comment/>
 			<position>
-				<first>3712</first>
-				<second>571</second>
+				<first>3358</first>
+				<second>559</second>
 			</position>
 		</item>
 		<item type="traktor.render.ImgPass" version="traktor.render.Node:1">
@@ -578,53 +578,21 @@
 				</item>
 			</steps>
 		</item>
-		<item type="traktor.render.ImgPass" version="traktor.render.Node:1">
-			<id>{E5B3C820-21CE-6643-9801-9044F20B8542}</id>
+		<item type="traktor.render.ImgTexture" version="traktor.render.Node:1">
+			<id>{93788A5D-BDD9-4945-B347-664110B43F64}</id>
 			<comment/>
 			<position>
-				<first>2606</first>
-				<second>767</second>
+				<first>2563</first>
+				<second>589</second>
 			</position>
-			<name>Radial blur</name>
-			<steps>
-				<item type="traktor.render.ImgStepSimple">
-					<shader>{5010FD92-D23F-8842-8125-FF736878A720}</shader>
-					<parameters>
-						<item>Source</item>
-					</parameters>
-				</item>
-			</steps>
-		</item>
-		<item type="traktor.render.ImgTargetSet" version="traktor.render.Node:1">
-			<id>{43CDC62A-4127-284B-A05C-4B08E41339C0}</id>
-			<comment/>
-			<position>
-				<first>2877</first>
-				<second>728</second>
-			</position>
-			<targetSetId>Merged 2</targetSetId>
-			<width>0</width>
-			<height>0</height>
-			<screenWidthDenom>1</screenWidthDenom>
-			<screenHeightDenom>1</screenHeightDenom>
-			<maxWidth>0</maxWidth>
-			<maxHeight>0</maxHeight>
-			<createDepthStencil>false</createDepthStencil>
-			<ignoreStencil>false</ignoreStencil>
-			<generateMips>false</generateMips>
-			<targets>
-				<item>
-					<textureId>Output</textureId>
-					<colorFormat>TfR11G11B10F</colorFormat>
-				</item>
-			</targets>
+			<texture>{3DEEC673-EDF5-364A-B796-BAC7EF575258}</texture>
 		</item>
 		<item type="traktor.render.ImgPass" version="traktor.render.Node:1">
 			<id>{629AA5F1-E7FF-B548-B686-28EFD5A49717}</id>
 			<comment/>
 			<position>
-				<first>3311</first>
-				<second>586</second>
+				<first>2957</first>
+				<second>574</second>
 			</position>
 			<name>Final</name>
 			<steps>
@@ -634,25 +602,21 @@
 						<item>Base</item>
 						<item>ColorCorrection</item>
 						<item>Blur</item>
-						<item>RadialBlur</item>
+					</parameters>
+				</item>
+				<item type="traktor.render.ImgStepSimple">
+					<shader>{5010FD92-D23F-8842-8125-FF736878A720}</shader>
+					<parameters>
+						<item>Source</item>
 					</parameters>
 				</item>
 			</steps>
-		</item>
-		<item type="traktor.render.ImgTexture" version="traktor.render.Node:1">
-			<id>{93788A5D-BDD9-4945-B347-664110B43F64}</id>
-			<comment/>
-			<position>
-				<first>2917</first>
-				<second>601</second>
-			</position>
-			<texture>{3DEEC673-EDF5-364A-B796-BAC7EF575258}</texture>
 		</item>
 	</nodes>
 	<edges>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[30]"/>
+				<node ref="/object/nodes/item[29]"/>
 				<name>Output</name>
 			</source>
 			<destination>
@@ -662,11 +626,11 @@
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[31]"/>
+				<node ref="/object/nodes/item[28]"/>
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[30]"/>
+				<node ref="/object/nodes/item[29]"/>
 				<name>ColorCorrection</name>
 			</destination>
 		</item>
@@ -962,31 +926,11 @@
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[28]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[29]"/>
-				<name>Input</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[29]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[30]"/>
-				<name>RadialBlur</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
 				<node ref="/object/nodes/item[6]"/>
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[30]"/>
+				<node ref="/object/nodes/item[29]"/>
 				<name>Blur</name>
 			</destination>
 		</item>
@@ -996,7 +940,7 @@
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[30]"/>
+				<node ref="/object/nodes/item[29]"/>
 				<name>Base</name>
 			</destination>
 		</item>
@@ -1006,7 +950,7 @@
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[28]"/>
+				<node ref="/object/nodes/item[29]"/>
 				<name>Source</name>
 			</destination>
 		</item>

@@ -88,8 +88,12 @@ bool emitColor(PsslContext& cx, Color* node)
 	PsslVariable* out = cx.emitOutput(node, L"Output", PsslFloat4);
 	if (!out)
 		return false;
-	traktor::Color4ub color = node->getColor();
-	f << L"const float4 " << out->getName() << L" = float4(" << (color.r / 255.0f) << L", " << (color.g / 255.0f) << L", " << (color.b / 255.0f) << L", " << (color.a / 255.0f) << L");" << Endl;
+
+	Color4f color = node->getColor();
+	if (!node->getLinear())
+		color = color.linear();
+
+	f << L"const float4 " << out->getName() << L" = float4(" << color.getRed() << L", " << color.getGreen() << L", " << color.getBlue() << L", " << color.getAlpha() << L");" << Endl;
 	return true;
 }
 
@@ -492,7 +496,7 @@ bool emitIterate(PsslContext& cx, Iterate* node)
 	dependentOutputPins[0] = node->findOutputPin(L"N");
 	dependentOutputPins[1] = node->findOutputPin(L"Output");
 	cx.findNonDependentOutputs(node, L"Input", dependentOutputPins, outputPins);
-	for (outputPin : outputPins)
+	for (auto outputPin : outputPins)
 		cx.emit(outputPin->getNode());
 
 	// Write input branch in a temporary output stream.
@@ -575,7 +579,7 @@ bool emitIterate2d(PsslContext& cx, Iterate2d* node)
 	dependentOutputPins[1] = node->findOutputPin(L"Y");
 	dependentOutputPins[2] = node->findOutputPin(L"Output");
 	cx.findNonDependentOutputs(node, L"Input", dependentOutputPins, outputPins);
-	for (outputPin : outputPins)
+	for (auto outputPin : outputPins)
 		cx.emit(outputPin->getNode());
 
 	// Write input branch in a temporary output stream.
@@ -1199,7 +1203,7 @@ bool emitRepeat(PsslContext& cx, Repeat* node)
 	dependentOutputPins[0] = node->findOutputPin(L"N");
 	dependentOutputPins[1] = node->findOutputPin(L"Output");
 	cx.findNonDependentOutputs(node, L"Input", dependentOutputPins, outputPins);
-	for (outputPin : outputPins)
+	for (auto outputPin : outputPins)
 		cx.emit(outputPin->getNode());
 
 	// Write input branch in a temporary output stream.
@@ -1758,7 +1762,7 @@ bool emitSum(PsslContext& cx, Sum* node)
 	dependentOutputPins[0] = node->findOutputPin(L"N");
 	dependentOutputPins[1] = node->findOutputPin(L"Output");
 	cx.findNonDependentOutputs(node, L"Input", dependentOutputPins, outputPins);
-	for (outputPin : outputPins)
+	for (auto outputPin : outputPins)
 		cx.emit(outputPin->getNode());
 
 	// Write input branch in a temporary output stream.
@@ -1944,7 +1948,7 @@ bool emitSwitch(PsslContext& cx, Switch* node)
 	if (!in)
 		return false;
 
-	const std::vector< int32_t >& caseConditions = node->getCases();
+	const auto& caseConditions = node->getCases();
 	std::vector< std::wstring > caseBranches;
 	std::vector< PsslVariable > caseInputs;
 	PsslType outputType = PsslVoid;

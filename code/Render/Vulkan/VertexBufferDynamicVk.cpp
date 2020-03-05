@@ -6,7 +6,7 @@ namespace traktor
 	namespace render
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.render.VertexBufferDynamicVk", VertexBufferDynamicVk, VertexBuffer)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.render.VertexBufferDynamicVk", VertexBufferDynamicVk, VertexBufferVk)
 
 VertexBufferDynamicVk::VertexBufferDynamicVk(
 	uint32_t bufferSize,
@@ -17,18 +17,8 @@ VertexBufferDynamicVk::VertexBufferDynamicVk(
 	const AlignedVector< VkVertexInputAttributeDescription >& vertexAttributeDescriptions,
 	uint32_t hash
 )
-:	VertexBuffer(bufferSize)
-,	m_allocator(allocator)
-,	m_allocation(allocation)
-,	m_vertexBuffer(vertexBuffer)
-,	m_vertexBindingDescription(vertexBindingDescription)
-,	m_vertexAttributeDescriptions(vertexAttributeDescriptions)
-,	m_hash(hash)
+:	VertexBufferVk(bufferSize, allocator, allocation, vertexBuffer, vertexBindingDescription, vertexAttributeDescriptions, hash)
 ,	m_locked(false)
-{
-}
-
-void VertexBufferDynamicVk::destroy()
 {
 }
 

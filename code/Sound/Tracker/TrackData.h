@@ -34,7 +34,7 @@ class T_DLLCLASS TrackData : public ISerializable
 	T_RTTI_CLASS;
 
 public:
-	struct Key
+	struct T_DLLCLASS Key
 	{
 		int32_t at;
 		Ref< PlayData > play;

@@ -152,7 +152,7 @@ void Window::setTitle(const wchar_t* title)
 	XSetWMName(m_display, m_window, &tp);
 }
 
-void Window::setFullScreenStyle()
+void Window::setFullScreenStyle(int32_t /*width*/, int32_t /*height*/)
 {
 	int32_t width = XDisplayWidth(m_display, m_screen);
 	int32_t height = XDisplayHeight(m_display, m_screen);

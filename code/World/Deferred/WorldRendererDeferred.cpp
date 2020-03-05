@@ -280,6 +280,35 @@ bool WorldRendererDeferred::create(
 		}
 	}
 
+	// Create shadow maps.
+	if (m_shadowsQuality > QuDisabled)
+	{
+		const auto& shadowSettings = m_settings.shadowSettings[m_shadowsQuality];
+		render::RenderTargetSetCreateDesc rtscd;
+
+		// Cascading shadow map.
+		rtscd.count = 0;
+		rtscd.width = shadowSettings.resolution;
+		rtscd.height = shadowSettings.cascadingSlices * shadowSettings.resolution;
+		rtscd.multiSample = 0;
+		rtscd.createDepthStencil = true;
+		rtscd.usingDepthStencilAsTexture = true;
+		rtscd.usingPrimaryDepthStencil = false;
+		rtscd.ignoreStencil = true;
+		m_shadowMapCascadeTargetSet = renderSystem->createRenderTargetSet(rtscd, nullptr, T_FILE_LINE_W);
+
+		// Atlas shadow map.
+		rtscd.count = 0;
+		rtscd.width =
+		rtscd.height = 4096;
+		rtscd.multiSample = 0;
+		rtscd.createDepthStencil = true;
+		rtscd.usingDepthStencilAsTexture = true;
+		rtscd.usingPrimaryDepthStencil = false;
+		rtscd.ignoreStencil = true;
+		m_shadowMapAtlasTargetSet = renderSystem->createRenderTargetSet(rtscd, nullptr, T_FILE_LINE_W);
+	}
+
 	// Allocate light lists.
 	for (auto& frame : m_frames)
 	{
@@ -358,6 +387,8 @@ void WorldRendererDeferred::destroy()
 	}
 	m_frames.clear();
 
+	safeDestroy(m_shadowMapCascadeTargetSet);
+	safeDestroy(m_shadowMapAtlasTargetSet);
 	safeDestroy(m_screenRenderer);
 
 	m_irradianceGrid.clear();
@@ -745,15 +776,7 @@ render::handle_t WorldRendererDeferred::setupCascadeShadowMapPass(
 	Frustum viewFrustum = worldRenderView.getViewFrustum();
 
 	// Add cascading shadow map target.
-	render::RenderGraphTargetSetDesc rgtd = {};
-	rgtd.count = 0;
-	rgtd.width = shadowSettings.resolution;
-	rgtd.height = shadowSettings.cascadingSlices * shadowSettings.resolution;
-	rgtd.createDepthStencil = true;
-	rgtd.usingPrimaryDepthStencil = false;
-	rgtd.usingDepthStencilAsTexture = true;
-	rgtd.ignoreStencil = true;
-	auto shadowMapCascadeTargetSetId = renderGraph.addTargetSet(rgtd);
+	auto shadowMapCascadeTargetSetId = renderGraph.addTargetSet(m_shadowMapCascadeTargetSet);
 
 	// Add cascading shadow map render pass.
 	Ref< render::RenderPass > rp = new render::RenderPass(L"Shadow cascade");
@@ -874,15 +897,7 @@ render::handle_t WorldRendererDeferred::setupAtlasShadowMapPass(
 	Frustum viewFrustum = worldRenderView.getViewFrustum();
 
 	// Add atlas shadow map target.
-	render::RenderGraphTargetSetDesc rgtd = {};
-	rgtd.count = 0;
-	rgtd.width =
-	rgtd.height = 4096;
-	rgtd.createDepthStencil = true;
-	rgtd.usingPrimaryDepthStencil = false;
-	rgtd.usingDepthStencilAsTexture = true;
-	rgtd.ignoreStencil = true;
-	auto shadowMapAtlasTargetSetId = renderGraph.addTargetSet(rgtd);
+	auto shadowMapAtlasTargetSetId = renderGraph.addTargetSet(m_shadowMapAtlasTargetSet);
 
 	// Add atlas shadow map render pass.
 	int32_t atlasIndex = 0;

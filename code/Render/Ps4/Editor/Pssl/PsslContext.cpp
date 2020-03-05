@@ -142,7 +142,7 @@ void PsslContext::findNonDependentOutputs(Node* node, const std::wstring& inputP
 	getNonDependentOutputs(m_shaderGraph, node->findInputPin(inputPinName), dependentOutputPins, outOutputPins);
 }
 
-void PsslContext::findCommonOutputs(Node* node, const std::wstring& inputPin1, const std::wstring& inputPin2, std::vector< const OutputPin* >& outOutputPins) const
+void PsslContext::findCommonOutputs(Node* node, const std::wstring& inputPin1, const std::wstring& inputPin2, AlignedVector< const OutputPin* >& outOutputPins) const
 {
 	AlignedVector< const InputPin* > inputPins(2);
 	inputPins[0] = node->findInputPin(inputPin1);

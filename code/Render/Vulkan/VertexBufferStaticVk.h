@@ -10,12 +10,15 @@ namespace traktor
 /*!
  * \ingroup Vulkan
  */
-class VertexBufferDynamicVk : public VertexBufferVk
+class VertexBufferStaticVk : public VertexBufferVk
 {
 	T_RTTI_CLASS;
 
 public:
-	VertexBufferDynamicVk(
+	VertexBufferStaticVk(
+		VkDevice logicalDevice,
+		VkCommandPool setupCommandPool,
+		VkQueue setupQueue,
 		uint32_t bufferSize,
 		VmaAllocator allocator,
 		VmaAllocation allocation,
@@ -32,7 +35,11 @@ public:
 	virtual void unlock() override final;
 
 private:
-	bool m_locked;
+	VkDevice m_logicalDevice;
+	VkCommandPool m_setupCommandPool;
+	VkQueue m_setupQueue;
+	VmaAllocation m_stagingBufferAllocation;
+	VkBuffer m_stagingBuffer;
 };
 
 	}

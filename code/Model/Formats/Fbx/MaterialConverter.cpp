@@ -160,6 +160,14 @@ bool convertMaterials(Model& outModel, std::map< int32_t, int32_t >& outMaterial
 			mm.setBlendOperator(Material::BoAlpha);
 		}
 
+		const FbxTexture* transparencyFactorTexture = getTexture(material, FbxSurfaceMaterial::sTransparencyFactor);
+		if (transparencyFactorTexture)
+		{
+			uint32_t channel = uvChannel(outModel, transparencyFactorTexture->UVSet.Get().Buffer());
+			mm.setTransparencyMap(Material::Map(getTextureName(transparencyFactorTexture), channel, false));
+			mm.setBlendOperator(Material::BoAlphaTest);
+		}
+
 		const FbxTexture* emissiveTexture = getTexture(material, /*mayaExported ? FbxSurfaceMaterial::sAmbient :*/ FbxSurfaceMaterial::sEmissive);
 		if (emissiveTexture)
 		{

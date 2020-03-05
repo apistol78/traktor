@@ -45,6 +45,7 @@ const Guid c_implNormalMap0(L"{8CA655BD-E17B-5A48-B6C6-3FDBC1D4F97D}");
 const Guid c_implNormalMap1(L"{C9B1BA07-716A-0349-8A34-BDEAAB818714}");
 const Guid c_implOutputAdd(L"{321B8969-32D7-D44A-BF91-B056E4728DE2}");
 const Guid c_implOutputAlpha(L"{1CDA749C-D713-974F-8E84-895AFEE8D552}");
+const Guid c_implOutputAlphaTest(L"{902D6E55-9B18-774A-874B-76F55CAC2E4C}");
 const Guid c_implOutputDecal(L"{31FD2B2B-3D3C-024F-9AA6-544B73D6009C}");
 const Guid c_implOutputMultiply(L"{C635E09A-8DFD-BF40-A863-81301D2388AC}");
 const Guid c_implOutputLightMapDecal(L"{4FFCDA64-4B42-DA46-973E-63C740B06A16}");
@@ -182,6 +183,10 @@ Ref< render::ShaderGraph > MaterialShaderGenerator::generate(
 
 				case model::Material::BoAlpha:
 					externalNode->setFragmentGuid(c_implOutputAlpha);
+					break;
+
+				case model::Material::BoAlphaTest:
+					externalNode->setFragmentGuid(c_implOutputAlphaTest);
 					break;
 				}
 			}
@@ -364,6 +369,7 @@ void MaterialShaderGenerator::addDependencies(editor::IPipelineDepends* pipeline
 	pipelineDepends->addDependency(c_implNormalMap1, editor::PdfUse);
 	pipelineDepends->addDependency(c_implOutputAdd, editor::PdfUse);
 	pipelineDepends->addDependency(c_implOutputAlpha, editor::PdfUse);
+	pipelineDepends->addDependency(c_implOutputAlphaTest, editor::PdfUse);
 	pipelineDepends->addDependency(c_implOutputDecal, editor::PdfUse);
 	pipelineDepends->addDependency(c_implOutputMultiply, editor::PdfUse);
 	pipelineDepends->addDependency(c_implOutputLightMapDecal, editor::PdfUse);

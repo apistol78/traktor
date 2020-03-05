@@ -65,7 +65,8 @@ void ScreenRenderer::destroy()
 
 void ScreenRenderer::draw(IRenderView* renderView, IProgram* program)
 {
-	renderView->draw(m_vertexBuffer, nullptr, program, m_primitives);
+	if (program)
+		renderView->draw(m_vertexBuffer, nullptr, program, m_primitives);
 }
 
 void ScreenRenderer::draw(IRenderView* renderView, const Shader* shader)
@@ -77,13 +78,18 @@ void ScreenRenderer::draw(IRenderView* renderView, const Shader* shader)
 
 void ScreenRenderer::draw(IRenderView* renderView, const Shader* shader, const Shader::Permutation& permutation)
 {
+	if (!shader)
+		return;
+
 	IProgram* program = shader->getProgram(permutation).program;
-	if (program)
-		draw(renderView, program);
+	draw(renderView, program);
 }
 
 void ScreenRenderer::draw(RenderContext* renderContext, IProgram* program, ProgramParameters* programParams)
 {
+	if (!program)
+		return;
+
 	auto rb = renderContext->alloc< SimpleRenderBlock >(T_FILE_LINE_W);
 	rb->program = program;
 	rb->programParams = programParams;
@@ -95,13 +101,18 @@ void ScreenRenderer::draw(RenderContext* renderContext, IProgram* program, Progr
 
 void ScreenRenderer::draw(RenderContext* renderContext, const Shader* shader, ProgramParameters* programParams)
 {
+	if (!shader)
+		return;
+
 	IProgram* program = shader->getProgram().program;
-	if (program)
-		draw(renderContext, program, programParams);
+	draw(renderContext, program, programParams);
 }
 
 void ScreenRenderer::draw(RenderContext* renderContext, const Shader* shader, const Shader::Permutation& permutation, ProgramParameters* programParams)
 {
+	if (!shader)
+		return;
+
 	IProgram* program = shader->getProgram(permutation).program;
 	if (program)
 		draw(renderContext, program, programParams);

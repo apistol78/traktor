@@ -37,16 +37,16 @@ Tag_TransparencyMap
 			<id>{434450BD-87B9-CA48-AD2B-B8E5B3C5812E}</id>
 			<comment/>
 			<position>
-				<first>687</first>
+				<first>766</first>
 				<second>169</second>
 			</position>
-			<swizzle>x</swizzle>
+			<swizzle>w</swizzle>
 		</item>
 		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
 			<id>{A3D28610-88C7-5D46-8BAF-E377C2891D0A}</id>
 			<comment/>
 			<position>
-				<first>843</first>
+				<first>922</first>
 				<second>149</second>
 			</position>
 			<name>T_Transparency</name>

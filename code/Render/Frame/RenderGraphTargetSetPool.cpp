@@ -32,7 +32,7 @@ IRenderTargetSet* RenderGraphTargetSetPool::acquire(
 	rtscd.createDepthStencil = targetSetDesc.createDepthStencil;
 	rtscd.usingPrimaryDepthStencil = targetSetDesc.usingPrimaryDepthStencil;
 	rtscd.usingDepthStencilAsTexture = targetSetDesc.usingDepthStencilAsTexture;
-	rtscd.ignoreStencil = false;
+	rtscd.ignoreStencil = targetSetDesc.usingDepthStencilAsTexture;	// Cannot have stencil on read-back depth targets.
 	rtscd.generateMips = targetSetDesc.generateMips;
 
 	for (int32_t i = 0; i < targetSetDesc.count; ++i)

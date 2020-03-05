@@ -24,7 +24,7 @@ public:
 
 	void setTitle(const wchar_t* title);
 
-	void setFullScreenStyle();
+	void setFullScreenStyle(int32_t width, int32_t height);
 
 	void setWindowedStyle(int32_t width, int32_t height);
 
