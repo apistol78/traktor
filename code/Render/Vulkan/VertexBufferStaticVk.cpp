@@ -46,7 +46,7 @@ void* VertexBufferStaticVk::lock()
 	aci.usage = VMA_MEMORY_USAGE_CPU_TO_GPU;
 
 	if (vmaCreateBuffer(m_allocator, &bufferInfo, &aci, &m_stagingBuffer, &m_stagingBufferAllocation, nullptr) != VK_SUCCESS)
-		return false;	
+		return nullptr;	
 
 	// Get pointer to staging buffer.
 	uint8_t* data = nullptr;
