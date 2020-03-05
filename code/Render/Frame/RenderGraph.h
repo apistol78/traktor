@@ -6,6 +6,7 @@
 #include "Core/Object.h"
 #include "Core/RefArray.h"
 #include "Core/Containers/SmallMap.h"
+#include "Core/Containers/StaticVector.h"
 #include "Render/Frame/RenderGraphTypes.h"
 #include "Render/Frame/RenderPass.h"
 
@@ -103,7 +104,7 @@ private:
 	Ref< RenderGraphTargetSetPool > m_pool;
 	SmallMap< handle_t, Target > m_targets;
 	RefArray< const RenderPass > m_passes;
-	AlignedVector< uint32_t > m_order;
+	StaticVector< uint32_t, 256 > m_order;
 	handle_t m_nextTargetSetId;
 
 	void traverse(int32_t index, const std::function< void(int32_t) >& fn) const;

@@ -42,7 +42,7 @@ public:
 
 	bool create(ui::Widget* parent, IRenderSystem* renderSystem, db::Database* database);
 
-	virtual void destroy();
+	virtual void destroy() override final;
 
 private:
 	Ref< resource::IResourceManager > m_resourceManager;
