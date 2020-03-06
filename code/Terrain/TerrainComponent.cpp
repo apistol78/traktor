@@ -568,7 +568,7 @@ bool TerrainComponent::validate(uint32_t cacheSize)
 	return true;
 }
 
-bool TerrainComponent::updatePatches(const uint32_t* region)
+void TerrainComponent::updatePatches(const uint32_t* region)
 {
 	uint32_t patchDim = m_terrain->getPatchDim();
 	uint32_t heightfieldSize = m_heightfield->getSize();
@@ -629,11 +629,12 @@ bool TerrainComponent::updatePatches(const uint32_t* region)
 				m_surfaceCache->flush(patchId);
 		}
 	}
+}
 
+void TerrainComponent::updateLayers()
+{
 	for (const auto layer : m_layers)
 		layer->updatePatches(*this);
-
-	return true;
 }
 
 bool TerrainComponent::createPatches()
@@ -710,6 +711,7 @@ bool TerrainComponent::createPatches()
 	}
 
 	updatePatches(nullptr);
+	updateLayers();
 
 	AlignedVector< uint32_t > indices;
 	for (uint32_t lod = 0; lod < LodCount; ++lod)

@@ -117,7 +117,7 @@ bool OrthogonalRenderControl::create(ui::Widget* parent, SceneEditorContext* con
 	if (!m_renderView)
 		return false;
 
-	m_renderContext = new render::RenderContext(4 * 1024 * 1024);
+	m_renderContext = new render::RenderContext(16 * 1024 * 1024);
 	m_renderGraph = new render::RenderGraph(m_context->getRenderSystem());
 
 	m_primitiveRenderer = new render::PrimitiveRenderer();
@@ -680,6 +680,8 @@ void OrthogonalRenderControl::eventPaint(ui::PaintEvent* event)
 		};
 		renderContext->enqueue(rb);
 	});
+
+	m_renderGraph->addPass(rp);
 
 	// Validate render graph.
 	if (!m_renderGraph->validate(m_dirtySize.cx, m_dirtySize.cy))

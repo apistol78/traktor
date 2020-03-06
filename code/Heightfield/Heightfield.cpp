@@ -219,6 +219,18 @@ void Heightfield::gridToWorld(float gridX, float gridZ, float& outWorldX, float&
 	outWorldZ = m_worldExtentFloats[2] * (gridZ / m_size - 0.5f) + 0.5f;
 }
 
+Vector4 Heightfield::gridToWorld(float gridX, float gridZ) const
+{
+	float worldX, worldZ;
+	gridToWorld(gridX, gridZ, worldX, worldZ);
+	return Vector4(
+		worldX,
+		getWorldHeight(worldX, worldZ),
+		worldZ,
+		1.0f
+	);
+}
+
 void Heightfield::worldToGrid(float worldX, float worldZ, int32_t& outGridX, int32_t& outGridZ) const
 {
 	float gridX, gridZ;
