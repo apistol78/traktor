@@ -188,7 +188,9 @@ private:
 
 	bool validate(uint32_t cacheSize);
 
-	bool updatePatches(const uint32_t* region);
+	void updatePatches(const uint32_t* region);
+
+	void updateLayers();
 
 	bool createPatches();
 };

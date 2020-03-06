@@ -5,6 +5,13 @@
 
 namespace traktor
 {
+	namespace drawing
+	{
+
+class Image;
+
+	}
+
 	namespace hf
 	{
 
@@ -20,7 +27,7 @@ class ElevateBrush : public IBrush
 	T_RTTI_CLASS;
 
 public:
-	ElevateBrush(const resource::Proxy< hf::Heightfield >& heightfield);
+	ElevateBrush(const resource::Proxy< hf::Heightfield >& heightfield, drawing::Image* splatImage);
 
 	virtual uint32_t begin(int32_t x, int32_t y, int32_t radius, const IFallOff* fallOff, float strength, const Color4f& color, int32_t material) override final;
 
@@ -32,9 +39,11 @@ public:
 
 private:
 	resource::Proxy< hf::Heightfield > m_heightfield;
+	Ref< drawing::Image > m_splatImage;
 	int32_t m_radius;
 	const IFallOff* m_fallOff;
 	float m_strength;
+	int32_t m_material;
 };
 
 	}

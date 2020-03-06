@@ -85,9 +85,15 @@ void ForestLayer::build(
 			const auto& tree = m_trees[i];
 			Scalar distance = (tree.position - eye).length();
 			if (distance < m_data.m_lod0distance)
-				m_lod0indices.push_back(i);
+			{
+				if (m_lod0indices.size() < 100)
+					m_lod0indices.push_back(i);
+			}
 			else if (distance < m_data.m_lod1distance)
-				m_lod1indices.push_back(i);
+			{
+				if (m_lod1indices.size() < 400)
+					m_lod1indices.push_back(i);
+			}
 		}
 	}
 

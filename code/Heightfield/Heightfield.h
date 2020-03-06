@@ -55,6 +55,8 @@ public:
 
 	void gridToWorld(float gridX, float gridZ, float& outWorldX, float& outWorldZ) const;
 
+	Vector4 gridToWorld(float gridX, float gridZ) const;
+
 	void worldToGrid(float worldX, float worldZ, int32_t& outGridX, int32_t& outGridZ) const;
 
 	void worldToGrid(float worldX, float worldZ, float& outGridX, float& outGridZ) const;

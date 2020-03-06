@@ -15,6 +15,7 @@ MaterialBrush::MaterialBrush(const resource::Proxy< hf::Heightfield >& heightfie
 ,	m_radius(0)
 ,	m_fallOff(0)
 ,	m_strength(0.0f)
+,	m_material(0)
 {
 }
 

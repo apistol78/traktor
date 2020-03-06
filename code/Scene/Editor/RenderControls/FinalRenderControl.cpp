@@ -101,7 +101,7 @@ bool FinalRenderControl::create(ui::Widget* parent, SceneEditorContext* context,
 	if (!m_renderView)
 		return false;
 
-	m_renderContext = new render::RenderContext(4 * 1024 * 1024);
+	m_renderContext = new render::RenderContext(16 * 1024 * 1024);
 	m_renderGraph = new render::RenderGraph(m_context->getRenderSystem());
 
 	m_renderWidget->addEventHandler< ui::MouseButtonDownEvent >(this, &FinalRenderControl::eventButtonDown);

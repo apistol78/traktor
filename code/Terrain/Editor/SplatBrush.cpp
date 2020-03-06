@@ -2,8 +2,11 @@
 #include "Core/Math/Const.h"
 #include "Core/Math/MathUtils.h"
 #include "Drawing/Image.h"
+#include "Heightfield/Heightfield.h"
 #include "Terrain/Editor/SplatBrush.h"
 #include "Terrain/Editor/IFallOff.h"
+
+#include "Core/Log/Log.h"
 
 namespace traktor
 {
@@ -24,11 +27,13 @@ const int32_t c_others[4][3] =
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.terrain.SplatBrush", SplatBrush, IBrush)
 
-SplatBrush::SplatBrush(drawing::Image* splatImage)
-:	m_splatImage(splatImage)
+SplatBrush::SplatBrush(const resource::Proxy< hf::Heightfield >& heightfield, drawing::Image* splatImage)
+:	m_heightfield(heightfield)
+,	m_splatImage(splatImage)
 ,	m_radius(0)
 ,	m_fallOff(0)
 ,	m_strength(0.0f)
+,	m_inverse(false)
 {
 }
 
@@ -38,6 +43,7 @@ uint32_t SplatBrush::begin(int32_t x, int32_t y, int32_t radius, const IFallOff*
 	m_fallOff = fallOff;
 	m_strength = abs(strength) / 10.0f;
 	m_material = material;
+	m_inverse = (bool)(strength < 0.0f);
 	return MdSplat;
 }
 
@@ -54,6 +60,18 @@ void SplatBrush::apply(int32_t x, int32_t y)
 			float fy = float(iy) / m_radius;
 
 			float a = m_fallOff->evaluate(fx, fy) * m_strength;
+
+			Vector4 normal = m_heightfield->normalAt(x + ix, y + iy);
+			float slope = abs(acos(normal.y()) / HALF_PI);
+
+			slope = slope * 2.0f - 0.5f;
+
+			float fact = 1.0f / (1.0f + exp(-8.0f * (slope - 0.5f)));
+			if (!m_inverse)
+				a *= clamp(1.0f - fact, 0.0f, 1.0f);
+			else
+				a *= clamp(fact, 0.0f, 1.0f);
+
 			if (abs(a) <= FUZZY_EPSILON)
 				continue;
 
@@ -91,7 +109,7 @@ void SplatBrush::end(int32_t x, int32_t y)
 
 Ref< IBrush > SplatBrush::clone() const
 {
-	return new SplatBrush(m_splatImage);
+	return new SplatBrush(m_heightfield, m_splatImage);
 }
 
 	}

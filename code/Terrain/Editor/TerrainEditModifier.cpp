@@ -142,16 +142,6 @@ void line_dda(float x0, float y0, float x1, float y1, Visitor& visitor)
 	}
 }
 
-struct BrushVisitor
-{
-	IBrush* brush;
-
-	void operator () (int32_t x, int32_t y)
-	{
-		brush->apply(x, y);
-	}
-};
-
 		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.terrain.TerrainEditModifier", TerrainEditModifier, scene::IModifier)
@@ -437,7 +427,7 @@ void TerrainEditModifier::selectionChanged()
 		setBrush(type_of(m_drawBrush));
 
 	if (!m_drawBrush)
-		m_drawBrush = new ElevateBrush(m_heightfield);
+		m_drawBrush = new ElevateBrush(m_heightfield, m_splatImage);
 
 	T_ASSERT(m_drawBrush);
 	m_spatialBrush = m_drawBrush;
@@ -531,15 +521,26 @@ void TerrainEditModifier::apply(
 	if (!terrain)
 		return;
 
-	Scalar distance;
-	if (!m_heightfield->queryRay(
-		worldRayOrigin,
-		worldRayDirection,
-		distance
-	))
-		return;
+	// Find furthest intersection which allows for editing around hills etc.
+	Vector4 center = worldRayOrigin;
+	bool found = false;
+	for (;;)
+	{
+		center += worldRayDirection * 0.01_simd;
 
-	Vector4 center = (worldRayOrigin + worldRayDirection * distance).xyz1();
+		Scalar distance;
+		if (!m_heightfield->queryRay(
+			center,
+			worldRayDirection,
+			distance
+		))
+			break;
+
+		center = (center + worldRayDirection * distance).xyz1();
+		found = true;
+	}
+	if (!found)
+		return;
 
 	float gx0, gz0;
 	float gx1, gz1;
@@ -547,9 +548,13 @@ void TerrainEditModifier::apply(
 	m_heightfield->worldToGrid(m_center.x(), m_center.z(), gx0, gz0);
 	m_heightfield->worldToGrid(center.x(), center.z(), gx1, gz1);
 
-	BrushVisitor visitor;
-	visitor.brush = m_spatialBrush;
-	line_dda(gx0, gz0, gx1, gz1, visitor);
+	// Apply brush along entire line.
+	line_dda(gx0, gz0, gx1, gz1, [&](int32_t x, int32_t y) {
+		Vector4 normal = m_heightfield->normalAt(x, y);
+		Vector4 direction = m_heightfield->gridToWorld(x, y) - worldRayOrigin;
+		if (dot3(normal, direction) < 0.0f)
+			m_spatialBrush->apply(x, y);
+	});
 
 	m_center = center;
 
@@ -726,6 +731,10 @@ void TerrainEditModifier::end(const scene::TransformChain& transformChain)
 {
 	db::Database* sourceDatabase = m_context->getEditor()->getSourceDatabase();
 	T_ASSERT(sourceDatabase);
+
+	// Only update layers once editing ends since we cannot be sure
+	// how expensive this is as it's user configurable.
+	m_terrainComponent->updateLayers();
 
 	int32_t gx, gz;
 	m_heightfield->worldToGrid(m_center.x(), m_center.z(), gx, gz);
@@ -922,11 +931,11 @@ void TerrainEditModifier::setBrush(const TypeInfo& brushType)
 	else if (is_type_a< CutBrush >(brushType))
 		m_drawBrush = new CutBrush(m_heightfield);
 	else if (is_type_a< ElevateBrush >(brushType))
-		m_drawBrush = new ElevateBrush(m_heightfield);
+		m_drawBrush = new ElevateBrush(m_heightfield, m_splatImage);
 	else if (is_type_a< FlattenBrush >(brushType))
 		m_drawBrush = new FlattenBrush(m_heightfield);
 	else if (is_type_a< SplatBrush >(brushType))
-		m_drawBrush = new SplatBrush(m_splatImage);
+		m_drawBrush = new SplatBrush(m_heightfield, m_splatImage);
 	else if (is_type_a< NoiseBrush >(brushType))
 		m_drawBrush = new NoiseBrush(m_heightfield);
 	else if (is_type_a< SmoothBrush >(brushType))

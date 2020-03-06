@@ -33,41 +33,40 @@ Ref< Object > TerrainFactory::create(resource::IResourceManager* resourceManager
 {
 	Ref< const TerrainResource > terrainResource = instance->getObject< TerrainResource >();
 	if (!terrainResource)
-		return 0;
+		return nullptr;
 
 	Ref< Terrain > terrain = new Terrain();
-
 	terrain->m_detailSkip = terrainResource->getDetailSkip();
 	terrain->m_patchDim = terrainResource->getPatchDim();
 
 	if (!resourceManager->bind(terrainResource->getHeightfield(), terrain->m_heightfield))
-		return 0;
+		return nullptr;
 
 	if (terrainResource->getColorMap())
 	{
 		if (!resourceManager->bind(terrainResource->getColorMap(), terrain->m_colorMap))
-			return 0;
+			return nullptr;
 	}
 
 	if (!resourceManager->bind(terrainResource->getNormalMap(), terrain->m_normalMap))
-		return 0;
+		return nullptr;
 	if (!resourceManager->bind(terrainResource->getHeightMap(), terrain->m_heightMap))
-		return 0;
+		return nullptr;
 	if (!resourceManager->bind(terrainResource->getSplatMap(), terrain->m_splatMap))
-		return 0;
+		return nullptr;
 
 	if (terrainResource->getCutMap())
 	{
 		if (!resourceManager->bind(terrainResource->getCutMap(), terrain->m_cutMap))
-			return 0;
+			return nullptr;
 	}
 
 	if (!resourceManager->bind(terrainResource->getTerrainCoarseShader(), terrain->m_terrainCoarseShader))
-		return 0;
+		return nullptr;
 	if (!resourceManager->bind(terrainResource->getTerrainDetailShader(), terrain->m_terrainDetailShader))
-		return 0;
+		return nullptr;
 	if (!resourceManager->bind(terrainResource->getSurfaceShader(), terrain->m_surfaceShader))
-		return 0;
+		return nullptr;
 
 	terrain->m_patches.resize(terrainResource->getPatches().size());
 	for (uint32_t i = 0; i < terrainResource->getPatches().size(); ++i)
