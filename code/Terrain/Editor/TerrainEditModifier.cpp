@@ -48,7 +48,7 @@ namespace traktor
 		{
 
 template < typename Visitor >
-void line_dda(float x0, float y0, float x1, float y1, Visitor& visitor)
+void line_dda(float x0, float y0, float x1, float y1, const Visitor& visitor)
 {
 	float dx = x1 - x0;
 	float dy = y1 - y0;
