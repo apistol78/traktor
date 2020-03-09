@@ -76,6 +76,7 @@ void ForestLayer::build(
 	if (updateClusters)
 	{
 		// Brute force test.
+		Frustum viewFrustum = worldRenderView.getViewFrustum();
 
 		m_lod0indices.resize(0);
 		m_lod1indices.resize(0);
@@ -86,13 +87,14 @@ void ForestLayer::build(
 			Scalar distance = (tree.position - eye).length();
 			if (distance < m_data.m_lod0distance)
 			{
-				if (m_lod0indices.size() < 100)
+				if (viewFrustum.inside(view * tree.position))
 					m_lod0indices.push_back(i);
+				else
+					m_lod1indices.push_back(i);
 			}
 			else if (distance < m_data.m_lod1distance)
 			{
-				if (m_lod1indices.size() < 400)
-					m_lod1indices.push_back(i);
+				m_lod1indices.push_back(i);
 			}
 		}
 	}
