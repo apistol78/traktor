@@ -95,7 +95,6 @@ private:
 	Ref< render::IndexBuffer > m_indexBuffer;
 	Ref< render::ScreenRenderer > m_screenRenderer;
 	Ref< render::IRenderTargetSet > m_depthTargetSet;
-
 	RefArray< ProbeComponent > m_captureQueue;	//!< Probes queued for capture.
 	Ref< ProbeComponent > m_capture;			//!< Probe being captured.
 	int32_t m_captureState;

@@ -210,6 +210,10 @@ void TerrainSurfaceCache::setupBaseColor(
 	renderGraph.addPass(rp);
 
 	m_haveBase = true;
+
+	// Since this method is called after patches has been
+	// setup it's safe to clear reference to patch pass here.
+	m_surfacePass = nullptr;
 }
 
 void TerrainSurfaceCache::setupPatch(
@@ -278,21 +282,26 @@ void TerrainSurfaceCache::setupPatch(
 		-2.0f * tile.dim / 4096.0f
 	);
 
-	auto poolTargetSetId = renderGraph.addTargetSet(m_pool);
-
-	Ref< render::RenderPass > rp = new render::RenderPass(L"Terrain surface");
-	if (!m_clearCache)
-		rp->setOutput(poolTargetSetId);
-	else
+	// Allocate pass for this frame.
+	if (!m_surfacePass)
 	{
-		render::Clear clear;
-		clear.mask = render::CfColor;
-		clear.colors[0] = Color4f(0.0f, 0.0f, 0.0f, 0.0f);
-		rp->setOutput(poolTargetSetId, clear);
-		m_clearCache = false;
+		auto poolTargetSetId = renderGraph.addTargetSet(m_pool);
+		m_surfacePass = new render::RenderPass(L"Terrain surface");
+		if (!m_clearCache)
+			m_surfacePass->setOutput(poolTargetSetId);
+		else
+		{
+			render::Clear clear;
+			clear.mask = render::CfColor;
+			clear.colors[0] = Color4f(0.0f, 0.0f, 0.0f, 0.0f);
+			m_surfacePass->setOutput(poolTargetSetId, clear);
+			m_clearCache = false;
+		}
+		renderGraph.addPass(m_surfacePass);
 	}
 
-	rp->addBuild([=](const render::RenderGraph&, render::RenderContext* renderContext) {
+	// Add build step to pass.
+	m_surfacePass->addBuild([=](const render::RenderGraph&, render::RenderContext* renderContext) {
 		render::Shader* shader = terrain->getSurfaceShader();
 		if (!shader)
 			return;
@@ -325,7 +334,6 @@ void TerrainSurfaceCache::setupPatch(
 		rb->programParams->endParameters(renderContext);
 		renderContext->enqueue(rb);
 	});
-	renderGraph.addPass(rp);
 
 	// Update cache entry.
 	m_entries[patchId].lod = surfaceLod;
