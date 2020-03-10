@@ -28,7 +28,7 @@
 #include "Terrain/Editor/ElevateBrush.h"
 #include "Terrain/Editor/FlattenBrush.h"
 #include "Terrain/Editor/ImageFallOff.h"
-#include "Terrain/Editor/MaterialBrush.h"
+#include "Terrain/Editor/AttributeBrush.h"
 #include "Terrain/Editor/NoiseBrush.h"
 #include "Terrain/Editor/SharpFallOff.h"
 #include "Terrain/Editor/SmoothBrush.h"
@@ -149,7 +149,7 @@ TerrainEditModifier::TerrainEditModifier(scene::SceneEditorContext* context)
 ,	m_brushMode(0)
 ,	m_strength(1.0f)
 ,	m_color(Color4f(0.5f, 0.5f, 0.5f, 1.0f))
-,	m_material(0)
+,	m_attribute(0)
 ,	m_center(Vector4::zero())
 ,	m_applied(false)
 {
@@ -387,12 +387,12 @@ void TerrainEditModifier::selectionChanged()
 	}
 
 	// Create material mask texture data.
-	m_materialData.reset(new uint8_t [size * size]);
+	m_attributeData.reset(new uint8_t [size * size]);
 	for (int32_t v = 0; v < size; ++v)
 	{
 		for (int32_t u = 0; u < size; ++u)
 		{
-			m_materialData[u + v * size] = m_heightfield->getGridMaterial(u, v);
+			m_attributeData[u + v * size] = m_heightfield->getGridMaterial(u, v);
 		}
 	}
 
@@ -404,19 +404,19 @@ void TerrainEditModifier::selectionChanged()
 	desc.sRGB = false;
 	desc.immutable = false;
 
-	m_materialMap = m_context->getRenderSystem()->createSimpleTexture(desc, T_FILE_LINE_W);
-	if (m_materialMap)
+	m_attributeMap = m_context->getRenderSystem()->createSimpleTexture(desc, T_FILE_LINE_W);
+	if (m_attributeMap)
 	{
 		// Transfer material mask to texture.
 		render::ITexture::Lock nl;
-		if (m_materialMap->lock(0, nl))
+		if (m_attributeMap->lock(0, nl))
 		{
-			std::memcpy(nl.bits, m_materialData.c_ptr(), size * size);
-			m_materialMap->unlock(0);
+			std::memcpy(nl.bits, m_attributeData.c_ptr(), size * size);
+			m_attributeMap->unlock(0);
 		}
 
 		// Replace material mask map in resource with our texture.
-		m_terrainComponent->m_terrain->m_materialMap = resource::Proxy< render::ISimpleTexture >(m_materialMap);
+		m_terrainComponent->m_terrain->m_materialMap = resource::Proxy< render::ISimpleTexture >(m_attributeMap);
 	}
 
 	// Create default brush; try set same brush type as before.
@@ -487,7 +487,7 @@ bool TerrainEditModifier::begin(
 		m_fallOff,
 		m_strength * (mouseButton == 1 ? 1.0f : -1.0f),
 		m_color,
-		m_material
+		m_attribute
 	);
 
 	m_updateRegion[0] =
@@ -697,25 +697,25 @@ void TerrainEditModifier::apply(
 		{
 			for (int32_t u = mnx; u <= mxx; ++u)
 			{
-				m_materialData[u + v * size] = m_heightfield->getGridMaterial(u, v);
+				m_attributeData[u + v * size] = m_heightfield->getGridMaterial(u, v);
 			}
 		}
 
 		// Transfer cuts to texture.
 		render::ITexture::Lock cl;
-		if (m_materialMap->lock(0, cl))
+		if (m_attributeMap->lock(0, cl))
 		{
-			const uint8_t* src = static_cast< const uint8_t* >(m_materialData.c_ptr());
+			const uint8_t* src = static_cast< const uint8_t* >(m_attributeData.c_ptr());
 			uint8_t* dst = static_cast< uint8_t* >(cl.bits);
 
 			for (int32_t y = 0; y < size; ++y)
 				std::memcpy(&dst[y * cl.pitch], &src[y * size], size);
 
-			m_materialMap->unlock(0);
+			m_attributeMap->unlock(0);
 		}
 
 		// Replace material mask map in resource with our texture.
-		m_terrainComponent->m_terrain->m_materialMap = resource::Proxy< render::ISimpleTexture >(m_materialMap);
+		m_terrainComponent->m_terrain->m_materialMap = resource::Proxy< render::ISimpleTexture >(m_attributeMap);
 	}
 
 	m_applied = true;
@@ -932,8 +932,8 @@ void TerrainEditModifier::setBrush(const TypeInfo& brushType)
 		m_brush = new NoiseBrush(m_heightfield);
 	else if (is_type_a< SmoothBrush >(brushType))
 		m_brush = new SmoothBrush(m_heightfield);
-	else if (is_type_a< MaterialBrush >(brushType))
-		m_brush = new MaterialBrush(m_heightfield);
+	else if (is_type_a< AttributeBrush >(brushType))
+		m_brush = new AttributeBrush(m_heightfield);
 }
 
 void TerrainEditModifier::setFallOff(const std::wstring& fallOff)
@@ -957,9 +957,9 @@ void TerrainEditModifier::setColor(const Color4f& color)
 	m_color.setAlpha(Scalar(1.0f));
 }
 
-void TerrainEditModifier::setMaterial(int32_t material)
+void TerrainEditModifier::setAttribute(int32_t attribute)
 {
-	m_material = material;
+	m_attribute = attribute;
 }
 
 void TerrainEditModifier::setVisualizeMode(TerrainComponent::VisualizeMode visualizeMode)

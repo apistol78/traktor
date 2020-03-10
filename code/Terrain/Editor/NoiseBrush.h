@@ -22,7 +22,7 @@ class NoiseBrush : public IBrush
 public:
 	NoiseBrush(const resource::Proxy< hf::Heightfield >& heightfield);
 
-	virtual uint32_t begin(int32_t x, int32_t y, int32_t radius, const IFallOff* fallOff, float strength, const Color4f& color, int32_t material) override final;
+	virtual uint32_t begin(int32_t x, int32_t y, int32_t radius, const IFallOff* fallOff, float strength, const Color4f& color, int32_t attribute) override final;
 
 	virtual void apply(int32_t x, int32_t y) override final;
 

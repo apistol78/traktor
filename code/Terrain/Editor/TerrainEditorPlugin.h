@@ -53,7 +53,7 @@ private:
 	Ref< ui::ToolBarButton > m_toolToggleSmooth;
 	Ref< ui::ToolBarButton > m_toolToggleNoise;
 	Ref< ui::ToolBarButton > m_toolToggleCut;
-	Ref< ui::ToolBarButton > m_toolToggleMaterial;
+	Ref< ui::ToolBarButton > m_toolToggleAttribute;
 	Ref< ui::ToolBarButton > m_toolToggleFallOffSmooth;
 	Ref< ui::ToolBarButton > m_toolToggleFallOffSharp;
 	Ref< ui::ToolBarButton > m_toolToggleFallOffImage;
@@ -62,7 +62,7 @@ private:
 	Ref< ui::ToolBarEmbed > m_toolStrength;
 	Ref< ui::ColorControl > m_colorControl;
 	Ref< ui::ToolBarEmbed > m_toolColor;
-	Ref< ui::ToolBarDropDown > m_toolMaterial;
+	Ref< ui::ToolBarDropDown > m_toolAttribute;
 	Ref< ui::ToolBarDropDown > m_toolVisualize;
 	Ref< ui::ToolBarItemGroup > m_toolGroup;
 
