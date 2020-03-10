@@ -20,11 +20,11 @@ FlattenBrush::FlattenBrush(const resource::Proxy< hf::Heightfield >& heightfield
 {
 }
 
-uint32_t FlattenBrush::begin(int32_t x, int32_t y, int32_t radius, const IFallOff* fallOff, float strength, const Color4f& color, int32_t attribute)
+uint32_t FlattenBrush::begin(int32_t x, int32_t y, const State& state)
 {
-	m_radius = radius;
-	m_fallOff = fallOff;
-	m_strength = abs(strength) * 0.5f;
+	m_radius = state.radius;
+	m_fallOff = state.falloff;
+	m_strength = abs(state.strength) * 0.5f;
 	m_height = m_heightfield->getGridHeightNearest(x, y);
 	return MdHeight;
 }

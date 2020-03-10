@@ -37,13 +37,13 @@ SplatBrush::SplatBrush(const resource::Proxy< hf::Heightfield >& heightfield, dr
 {
 }
 
-uint32_t SplatBrush::begin(int32_t x, int32_t y, int32_t radius, const IFallOff* fallOff, float strength, const Color4f& color, int32_t attribute)
+uint32_t SplatBrush::begin(int32_t x, int32_t y, const State& state)
 {
-	m_radius = radius;
-	m_fallOff = fallOff;
-	m_strength = abs(strength) / 10.0f;
-	m_attribute = attribute;
-	m_inverse = (bool)(strength < 0.0f);
+	m_radius = state.radius;
+	m_fallOff = state.falloff;
+	m_strength = abs(state.strength) / 10.0f;
+	m_material = state.material;
+	m_inverse = (bool)(state.strength < 0.0f);
 	return MdSplat;
 }
 
@@ -79,21 +79,21 @@ void SplatBrush::apply(int32_t x, int32_t y)
 
 			targetColor.storeAligned(weights);
 
-			float w = clamp(weights[m_attribute] + a, 0.0f, 1.0f);
+			float w = clamp(weights[m_material] + a, 0.0f, 1.0f);
 
-			weights[m_attribute] = w;
+			weights[m_material] = w;
 
 			float s[3], st = 0.0f;
 			for (int32_t i = 0; i < 3; ++i)
 			{
-				float& other = weights[c_others[m_attribute][i]];
+				float& other = weights[c_others[m_material][i]];
 				st += (s[i] = other);
 			}
 			if (st > FUZZY_EPSILON)
 			{
 				for (int32_t i = 0; i < 3; ++i)
 				{
-					float& other = weights[c_others[m_attribute][i]];
+					float& other = weights[c_others[m_material][i]];
 					other = clamp(other, 0.0f, (s[i] / st) * (1.0f - w));
 				}
 			}
