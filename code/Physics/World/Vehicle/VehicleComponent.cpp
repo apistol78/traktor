@@ -53,7 +53,7 @@ void VehicleComponent::destroy()
 	m_owner = nullptr;
 }
 
-void VehicleComponent::setOwner(world::Entity* owner)
+void VehicleComponent::setOwner(world::ComponentEntity* owner)
 {
 	m_owner = dynamic_type_cast< world::ComponentEntity* >(owner);
 }

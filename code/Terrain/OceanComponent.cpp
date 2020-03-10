@@ -16,7 +16,7 @@
 #include "Terrain/OceanComponent.h"
 #include "Terrain/OceanComponentData.h"
 #include "Terrain/Terrain.h"
-#include "World/Entity.h"
+#include "World/Entity/ComponentEntity.h"
 #include "World/IWorldRenderPass.h"
 #include "World/WorldRenderView.h"
 
@@ -200,7 +200,7 @@ void OceanComponent::destroy()
 	m_shader.clear();
 }
 
-void OceanComponent::setOwner(world::Entity* owner)
+void OceanComponent::setOwner(world::ComponentEntity* owner)
 {
 	m_owner = owner;
 }

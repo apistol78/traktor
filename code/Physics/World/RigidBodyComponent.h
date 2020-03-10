@@ -14,7 +14,6 @@ namespace traktor
 	namespace world
 	{
 
-class Entity;
 class IEntityEvent;
 class EntityEventManager;
 
@@ -42,7 +41,7 @@ public:
 
 	virtual void destroy() override final;
 
-	virtual void setOwner(world::Entity* owner) override final;
+	virtual void setOwner(world::ComponentEntity* owner) override final;
 
 	virtual void setTransform(const Transform& transform) override final;
 
@@ -53,7 +52,7 @@ public:
 	Body* getBody() const { return m_body; }
 
 private:
-	world::Entity* m_owner;
+	world::ComponentEntity* m_owner;
 	Ref< Body > m_body;
 	Ref< world::EntityEventManager > m_eventManager;
 	Ref< world::IEntityEvent > m_eventCollide;

@@ -23,8 +23,6 @@ class ICubeTexture;
 	namespace world
 	{
 
-class Entity;
-
 /*! Reflection probe component.
  * \ingroup World
  */
@@ -43,7 +41,7 @@ public:
 
 	virtual void destroy() override final;
 
-	virtual void setOwner(Entity* owner) override final;
+	virtual void setOwner(ComponentEntity* owner) override final;
 
 	virtual void update(const UpdateParams& update) override final;
 
@@ -68,7 +66,7 @@ public:
 	bool getDirty() const { return m_dirty; }
 
 private:
-	Entity* m_owner;
+	ComponentEntity* m_owner;
 	resource::Proxy< render::ICubeTexture > m_texture;
 	float m_intensity;
 	bool m_local;

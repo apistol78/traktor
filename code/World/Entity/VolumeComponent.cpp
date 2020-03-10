@@ -1,4 +1,4 @@
-#include "World/Entity.h"
+#include "World/Entity/ComponentEntity.h"
 #include "World/Entity/VolumeComponent.h"
 #include "World/Entity/VolumeComponentData.h"
 
@@ -21,7 +21,7 @@ void VolumeComponent::destroy()
 {
 }
 
-void VolumeComponent::setOwner(Entity* owner)
+void VolumeComponent::setOwner(ComponentEntity* owner)
 {
 	m_owner = owner;
 }

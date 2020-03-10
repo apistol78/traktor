@@ -24,6 +24,13 @@ class SkinnedMesh;
 
 	}
 
+	namespace world
+	{
+
+class Entity;
+
+	}
+
 	namespace animation
 	{
 

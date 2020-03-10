@@ -38,7 +38,6 @@ class IResourceManager;
 	namespace world
 	{
 
-class Entity;
 class IWorldRenderPass;
 class WorldRenderView;
 
@@ -68,7 +67,7 @@ public:
 
 	virtual void destroy() override final;
 
-	virtual void setOwner(world::Entity* owner) override final;
+	virtual void setOwner(world::ComponentEntity* owner) override final;
 
 	virtual void setTransform(const Transform& transform) override final;
 
@@ -106,7 +105,7 @@ public:
 	float getMaxAmplitude() const { return m_maxAmplitude; }
 
 private:
-	world::Entity* m_owner;
+	world::ComponentEntity* m_owner;
 	resource::Proxy< render::Shader > m_shader;
 	resource::Proxy< render::ITexture > m_reflectionMap;
 	resource::Proxy< Terrain > m_terrain;

@@ -16,7 +16,6 @@ namespace traktor
 	namespace world
 	{
 
-class Entity;
 class VolumeComponentData;
 
 /*! Bounding volume component for spatial queries.
@@ -31,7 +30,7 @@ public:
 
 	virtual void destroy() override final;
 
-	virtual void setOwner(Entity* owner) override final;
+	virtual void setOwner(ComponentEntity* owner) override final;
 
 	virtual void setTransform(const Transform& transform) override final;
 
@@ -42,7 +41,7 @@ public:
 	bool inside(const Vector4& point) const;
 
 private:
-	Entity* m_owner;
+	ComponentEntity* m_owner;
 	Ref< const VolumeComponentData > m_data;
 	Aabb3 m_boundingBox;
 };

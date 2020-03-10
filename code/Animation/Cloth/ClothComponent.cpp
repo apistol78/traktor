@@ -238,7 +238,7 @@ void ClothComponent::destroy()
 	safeDestroy(m_indexBuffer);
 }
 
-void ClothComponent::setOwner(world::Entity* owner)
+void ClothComponent::setOwner(world::ComponentEntity* owner)
 {
 }
 

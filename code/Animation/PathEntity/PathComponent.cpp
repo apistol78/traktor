@@ -1,5 +1,5 @@
 #include "Animation/PathEntity/PathComponent.h"
-#include "World/Entity.h"
+#include "World/Entity/ComponentEntity.h"
 
 namespace traktor
 {
@@ -28,7 +28,7 @@ void PathComponent::destroy()
 	m_owner = nullptr;
 }
 
-void PathComponent::setOwner(world::Entity* owner)
+void PathComponent::setOwner(world::ComponentEntity* owner)
 {
 	if ((m_owner = owner) != nullptr)
 		m_transform = m_owner->getTransform();

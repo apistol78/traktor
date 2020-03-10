@@ -55,7 +55,7 @@ void BoidsComponent::destroy()
 	m_boidEntities.resize(0);
 }
 
-void BoidsComponent::setOwner(world::Entity* owner)
+void BoidsComponent::setOwner(world::ComponentEntity* owner)
 {
 }
 
