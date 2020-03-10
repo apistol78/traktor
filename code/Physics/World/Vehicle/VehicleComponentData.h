@@ -32,7 +32,6 @@ class IEntityBuilder;
 	namespace physics
 	{
 
-class BodyDesc;
 class CollisionSpecification;
 class PhysicsManager;
 class VehicleComponent;
@@ -48,8 +47,6 @@ class T_DLLCLASS VehicleComponentData : public world::IEntityComponentData
 public:
 	VehicleComponentData();
 
-	explicit VehicleComponentData(const BodyDesc* bodyDesc);
-
 	Ref< VehicleComponent > createComponent(
 		const world::IEntityBuilder* entityBuilder,
 		resource::IResourceManager* resourceManager,
@@ -57,8 +54,6 @@ public:
 	) const;
 
 	virtual void serialize(ISerializer& s) override final;
-
-	const BodyDesc* getBodyDesc() const { return m_bodyDesc; }
 
 	const RefArray< const WheelData >& getWheels() const { return m_wheels; }
 
@@ -77,7 +72,6 @@ public:
 	float getEngineForce() const { return m_engineForce; }
 
 private:
-	Ref< const BodyDesc > m_bodyDesc;
 	RefArray< const WheelData > m_wheels;
 	std::set< resource::Id< CollisionSpecification > > m_traceInclude;
 	std::set< resource::Id< CollisionSpecification > > m_traceIgnore;

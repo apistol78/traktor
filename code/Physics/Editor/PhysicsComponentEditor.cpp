@@ -50,10 +50,6 @@ void PhysicsComponentEditor::drawGuide(render::PrimitiveRenderer* primitiveRende
 
 	if (const VehicleComponentData* vehicleComponent = dynamic_type_cast< const VehicleComponentData* >(m_componentData))
 	{
-		auto bodyDesc = vehicleComponent->getBodyDesc();
-		if (bodyDesc)
-			shapeDesc = bodyDesc->getShape();
-
 		primitiveRenderer->pushWorld(body1Transform.toMatrix44());
 
 		auto vehicle = m_entityAdapter->getComponent< VehicleComponent >();

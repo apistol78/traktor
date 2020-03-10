@@ -2,11 +2,12 @@
 #include "Core/Misc/SafeDestroy.h"
 #include "Physics/Body.h"
 #include "Physics/PhysicsManager.h"
+#include "Physics/World/RigidBodyComponent.h"
 #include "Physics/World/Vehicle/VehicleComponent.h"
 #include "Physics/World/Vehicle/VehicleComponentData.h"
 #include "Physics/World/Vehicle/Wheel.h"
 #include "Physics/World/Vehicle/WheelData.h"
-#include "World/Entity.h"
+#include "World/Entity/ComponentEntity.h"
 
 namespace traktor
 {
@@ -30,7 +31,6 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.physics.VehicleComponent", VehicleComponent, wo
 VehicleComponent::VehicleComponent(
 	PhysicsManager* physicsManager,
 	const VehicleComponentData* data,
-	Body* body,
 	const RefArray< Wheel >& wheels,
 	uint32_t traceInclude,
 	uint32_t traceIgnore
@@ -38,38 +38,28 @@ VehicleComponent::VehicleComponent(
 :	m_owner(nullptr)
 ,	m_physicsManager(physicsManager)
 ,	m_data(data)
-,	m_body(body)
 ,	m_wheels(wheels)
 ,	m_traceInclude(traceInclude)
 ,	m_traceIgnore(traceIgnore)
-,	m_totalMass(0.0_simd)
 ,	m_steerAngle(0.0f)
 ,	m_steerAngleTarget(0.0f)
 ,	m_engineThrottle(0.0f)
 ,	m_airBorn(true)
 {
-	m_totalMass = 1.0_simd / Scalar(m_body->getInverseMass());
 }
 
 void VehicleComponent::destroy()
 {
-	safeDestroy(m_body);
 	m_owner = nullptr;
 }
 
 void VehicleComponent::setOwner(world::Entity* owner)
 {
-	if ((m_owner = owner) != nullptr)
-	{
-		Transform transform = m_owner->getTransform();
-		m_body->setTransform(transform);
-		m_body->setEnable(true);
-	}
+	m_owner = dynamic_type_cast< world::ComponentEntity* >(owner);
 }
 
 void VehicleComponent::setTransform(const Transform& transform)
 {
-	m_body->setTransform(transform);
 }
 
 Aabb3 VehicleComponent::getBoundingBox() const
@@ -79,21 +69,23 @@ Aabb3 VehicleComponent::getBoundingBox() const
 
 void VehicleComponent::update(const world::UpdateParams& update)
 {
-	if (m_owner)
-		m_owner->setTransform(m_body->getTransform());
+	T_ASSERT(m_owner != nullptr);
+
+	RigidBodyComponent* bodyComponent = m_owner->getComponent< RigidBodyComponent >();
+	if (!bodyComponent)
+		return;
+
+	Body* body = bodyComponent->getBody();
+	if (!body)
+		return;
 
 	float dT = update.deltaTime;
 
-	updateSteering(dT);
-	updateSuspension(dT);
-	updateFriction(dT);
-	updateEngine(dT);
-	updateWheels(dT);
-}
-
-Body* VehicleComponent::getBody() const
-{
-	return m_body;
+	updateSteering(body, dT);
+	updateSuspension(body, dT);
+	updateFriction(body, dT);
+	updateEngine(body, dT);
+	updateWheels(body, dT);
 }
 
 void VehicleComponent::setSteerAngle(float steerAngle)
@@ -121,7 +113,7 @@ float VehicleComponent::getEngineThrottle() const
 	return m_engineThrottle;
 }
 
-void VehicleComponent::updateSteering(float dT)
+void VehicleComponent::updateSteering(Body* body, float dT)
 {
 	// Update steer angle, aiming for target angle.
 	if (m_steerAngle < m_steerAngleTarget)
@@ -148,11 +140,11 @@ void VehicleComponent::updateSteering(float dT)
 	}
 }
 
-void VehicleComponent::updateSuspension(float dT)
+void VehicleComponent::updateSuspension(Body* body, float dT)
 {
 	physics::QueryResult result;
 
-	Transform bodyT = m_body->getTransform();
+	Transform bodyT = body->getTransform();
 	Transform bodyTinv = bodyT.inverse();
 
 	m_airBorn = true;
@@ -204,14 +196,14 @@ void VehicleComponent::updateSuspension(float dT)
 			float dampingForce = clamp(suspensionVelocity * data->getSuspensionDamping(), -c_maxDampingForce, c_maxDampingForce);
 
 			// Apply forces.
-			m_body->addForceAt(
+			body->addForceAt(
 				anchorW,
 				normal * Scalar(springForce + dampingForce),
 				false
 			);
 
 			// Apply sway-bar force on the opposite side.
-			m_body->addForceAt(
+			body->addForceAt(
 				bodyT * (data->getAnchor() * Vector4(-1.0f, 1.0f, 1.0f, 1.0f)),
 				normal * -Scalar((springForce + dampingForce) * m_data->getSwayBarForce()),
 				false
@@ -225,7 +217,7 @@ void VehicleComponent::updateSuspension(float dT)
 			if (!wheel->contact)
 			{
 				// If no previous contact then we estimate velocity by projecting onto ground.
-				Vector4 wheelVelocity = m_body->getVelocityAt(result.position.xyz1(), false);
+				Vector4 wheelVelocity = body->getVelocityAt(result.position.xyz1(), false);
 				Vector4 groundVelocity = result.body->getVelocityAt(result.position.xyz1(), false);
 				Vector4 velocity = wheelVelocity - groundVelocity;
 				Scalar k = dot3(normal, velocity);
@@ -262,13 +254,14 @@ void VehicleComponent::updateSuspension(float dT)
 	}
 }
 
-void VehicleComponent::updateFriction(float dT)
+void VehicleComponent::updateFriction(Body* body, float dT)
 {
-	Transform bodyT = m_body->getTransform();
+	Transform bodyT = body->getTransform();
 	Transform bodyTinv = bodyT.inverse();
 
 	Scalar rollingFriction = 0.0_simd;
-	Scalar massPerWheel = m_totalMass / Scalar(m_wheels.size());
+	Scalar totalMass = 1.0_simd / Scalar(body->getInverseMass());
+	Scalar massPerWheel = totalMass / Scalar(m_wheels.size());
 
 	for (auto wheel : m_wheels)
 	{
@@ -328,7 +321,7 @@ void VehicleComponent::updateFriction(float dT)
 			}
 
 			// Apply friction force.
-			m_body->addForceAt(
+			body->addForceAt(
 				wheel->contactPosition,
 				directionPerpW * Scalar(force * sign(-sideVelocity)) * grip,
 				false
@@ -340,7 +333,7 @@ void VehicleComponent::updateFriction(float dT)
 		else
 		{
 			Scalar f = Scalar(1.0f - abs(forwardVelocity) / 0.05f);
-			m_body->addImpulse(
+			body->addImpulse(
 				wheel->contactPosition,
 				wheel->contactVelocity * -massPerWheel * f * 0.2_simd,
 				false
@@ -350,7 +343,7 @@ void VehicleComponent::updateFriction(float dT)
 
 	if (abs(rollingFriction) > FUZZY_EPSILON)
 	{
-		m_body->addForceAt(
+		body->addForceAt(
 			Vector4::origo(),
 			Vector4(0.0f, 0.0f, -rollingFriction, 0.0f),
 			true
@@ -358,12 +351,12 @@ void VehicleComponent::updateFriction(float dT)
 	}
 }
 
-void VehicleComponent::updateEngine(float /*dT*/)
+void VehicleComponent::updateEngine(Body* body, float /*dT*/)
 {
-	Transform bodyT = m_body->getTransform();
+	Transform bodyT = body->getTransform();
 	Transform bodyTinv = bodyT.inverse();
 
-	Scalar forwardVelocity = dot3(m_body->getLinearVelocity(), bodyT.axisZ());
+	Scalar forwardVelocity = dot3(body->getLinearVelocity(), bodyT.axisZ());
 	Scalar engineForce = Scalar(m_engineThrottle * m_data->getEngineForce()) * (1.0_simd - clamp(abs(forwardVelocity) / Scalar(m_data->getMaxVelocity()), 0.0_simd, 1.0_simd));
 
 	for (auto wheel : m_wheels)
@@ -382,7 +375,7 @@ void VehicleComponent::updateEngine(float /*dT*/)
 
 		Scalar grip = clamp(wheel->contactNormal.y(), 0.0_simd, 1.0_simd) * Scalar(wheel->contactFudge);
 
-		m_body->addForceAt(
+		body->addForceAt(
 			bodyTinv * wheel->contactPosition,
 			direction * engineForce * grip,
 			true
@@ -390,9 +383,9 @@ void VehicleComponent::updateEngine(float /*dT*/)
 	}
 }
 
-void VehicleComponent::updateWheels(float dT)
+void VehicleComponent::updateWheels(Body* body, float dT)
 {
-	Transform bodyT = m_body->getTransform();
+	Transform bodyT = body->getTransform();
 
 	for (auto wheel : m_wheels)
 	{

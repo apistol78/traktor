@@ -3,10 +3,7 @@
 #include "Core/Serialization/MemberRef.h"
 #include "Core/Serialization/MemberRefArray.h"
 #include "Core/Serialization/MemberStl.h"
-#include "Physics/Body.h"
-#include "Physics/BodyDesc.h"
 #include "Physics/CollisionSpecification.h"
-#include "Physics/PhysicsManager.h"
 #include "Physics/World/Vehicle/VehicleComponent.h"
 #include "Physics/World/Vehicle/VehicleComponentData.h"
 #include "Physics/World/Vehicle/Wheel.h"
@@ -32,28 +29,12 @@ VehicleComponentData::VehicleComponentData()
 {
 }
 
-VehicleComponentData::VehicleComponentData(const BodyDesc* bodyDesc)
-:	m_bodyDesc(bodyDesc)
-,	m_steerAngleVelocity(deg2rad(150.0f))
-,	m_fudgeDistance(0.2f)
-,	m_swayBarForce(0.15f)
-,	m_maxVelocity(30.0f)
-,	m_engineForce(140.0f)
-{
-}
-
 Ref< VehicleComponent > VehicleComponentData::createComponent(
 	const world::IEntityBuilder* entityBuilder,
 	resource::IResourceManager* resourceManager,
 	PhysicsManager* physicsManager
 ) const
 {
-	Ref< Body > body = physicsManager->createBody(resourceManager, m_bodyDesc);
-	if (!body)
-		return nullptr;
-
-	body->setEnable(false);
-
 	RefArray< Wheel > wheels(m_wheels.size());
 	for (uint32_t i = 0; i < m_wheels.size(); ++i)
 		wheels[i] = new Wheel(m_wheels[i]);
@@ -79,7 +60,6 @@ Ref< VehicleComponent > VehicleComponentData::createComponent(
 	return new VehicleComponent(
 		physicsManager,
 		this,
-		body,
 		wheels,
 		traceInclude,
 		traceIgnore
@@ -88,7 +68,6 @@ Ref< VehicleComponent > VehicleComponentData::createComponent(
 
 void VehicleComponentData::serialize(ISerializer& s)
 {
-	s >> MemberRef< const BodyDesc >(L"bodyDesc", m_bodyDesc);
 	s >> MemberRefArray< const WheelData >(L"wheels", m_wheels);
 	s >> MemberStlSet< resource::Id< CollisionSpecification >, resource::Member< CollisionSpecification > >(L"traceInclude", m_traceInclude);
 	s >> MemberStlSet< resource::Id< CollisionSpecification >, resource::Member< CollisionSpecification > >(L"traceIgnore", m_traceIgnore);
