@@ -95,8 +95,6 @@ public:
 
 	void setFallOff(const std::wstring& fallOff);
 
-	void setSymmetry(uint32_t symmetry);
-
 	void setStrength(float strength);
 
 	void setColor(const Color4f& color);
@@ -126,12 +124,10 @@ private:
 	Ref< render::ISimpleTexture > m_cutMap;
 	AutoArrayPtr< uint8_t > m_materialData;
 	Ref< render::ISimpleTexture > m_materialMap;
-	Ref< IBrush > m_drawBrush;
-	Ref< IBrush > m_spatialBrush;
+	Ref< IBrush > m_brush;
 	uint32_t m_brushMode;
 	Ref< IFallOff > m_fallOff;
 	Ref< drawing::Image > m_fallOffImage;
-	uint32_t m_symmetry;
 	float m_strength;
 	Color4f m_color;
 	int32_t m_material;

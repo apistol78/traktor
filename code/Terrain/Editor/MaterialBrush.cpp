@@ -50,10 +50,5 @@ void MaterialBrush::end(int32_t x, int32_t y)
 {
 }
 
-Ref< IBrush > MaterialBrush::clone() const
-{
-	return new MaterialBrush(m_heightfield);
-}
-
 	}
 }

@@ -29,15 +29,12 @@ void TerrainEditorProfile::getCommands(
 	outCommands.push_back(ui::Command(L"Terrain.Editor.ColorBrush"));
 	outCommands.push_back(ui::Command(L"Terrain.Editor.CutBrush"));
 	outCommands.push_back(ui::Command(L"Terrain.Editor.ElevateBrush"));
-	outCommands.push_back(ui::Command(L"Terrain.Editor.EmissiveBrush"));
 	outCommands.push_back(ui::Command(L"Terrain.Editor.FlattenBrush"));
 	outCommands.push_back(ui::Command(L"Terrain.Editor.NoiseBrush"));
 	outCommands.push_back(ui::Command(L"Terrain.Editor.SmoothBrush"));
 	outCommands.push_back(ui::Command(L"Terrain.Editor.SmoothFallOff"));
 	outCommands.push_back(ui::Command(L"Terrain.Editor.SplatBrush"));
 	outCommands.push_back(ui::Command(L"Terrain.Editor.SharpFallOff"));
-	outCommands.push_back(ui::Command(L"Terrain.Editor.SymmetryX"));
-	outCommands.push_back(ui::Command(L"Terrain.Editor.SymmetryZ"));
 }
 
 void TerrainEditorProfile::getGuideDrawIds(
@@ -110,7 +107,7 @@ Ref< world::EntityData > TerrainEditorProfile::createEntityData(
 	db::Instance* instance
 ) const
 {
-	return 0;
+	return nullptr;
 }
 
 void TerrainEditorProfile::getDebugTargets(

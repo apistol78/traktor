@@ -32,8 +32,6 @@ public:
 	virtual void apply(int32_t x, int32_t y) = 0;
 
 	virtual void end(int32_t x, int32_t y) = 0;
-
-	virtual Ref< IBrush > clone() const = 0;
 };
 
 	}

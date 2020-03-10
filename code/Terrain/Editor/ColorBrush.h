@@ -28,8 +28,6 @@ public:
 
 	virtual void end(int32_t x, int32_t y) override final;
 
-	virtual Ref< IBrush > clone() const override final;
-
 private:
 	Ref< drawing::Image > m_colorImage;
 	int32_t m_radius;

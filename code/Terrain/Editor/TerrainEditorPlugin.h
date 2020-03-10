@@ -48,7 +48,6 @@ private:
 	Ref< ui::ToolBarButton > m_toolToggleEditTerrain;
 	Ref< ui::ToolBarButton > m_toolToggleSplat;
 	Ref< ui::ToolBarButton > m_toolToggleColor;
-	Ref< ui::ToolBarButton > m_toolToggleEmissive;
 	Ref< ui::ToolBarButton > m_toolToggleElevate;
 	Ref< ui::ToolBarButton > m_toolToggleFlatten;
 	Ref< ui::ToolBarButton > m_toolToggleSmooth;
@@ -58,8 +57,6 @@ private:
 	Ref< ui::ToolBarButton > m_toolToggleFallOffSmooth;
 	Ref< ui::ToolBarButton > m_toolToggleFallOffSharp;
 	Ref< ui::ToolBarButton > m_toolToggleFallOffImage;
-	Ref< ui::ToolBarButton > m_toolToggleSymmetryX;
-	Ref< ui::ToolBarButton > m_toolToggleSymmetryZ;
 	Ref< ui::Slider > m_sliderStrength;
 	Ref< ui::Static > m_staticStrength;
 	Ref< ui::ToolBarEmbed > m_toolStrength;
