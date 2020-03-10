@@ -149,6 +149,7 @@ TerrainEditModifier::TerrainEditModifier(scene::SceneEditorContext* context)
 ,	m_brushMode(0)
 ,	m_strength(1.0f)
 ,	m_color(Color4f(0.5f, 0.5f, 0.5f, 1.0f))
+,	m_material(0)
 ,	m_attribute(0)
 ,	m_center(Vector4::zero())
 ,	m_applied(false)
@@ -480,15 +481,15 @@ bool TerrainEditModifier::begin(
 	int32_t gx, gz;
 	m_heightfield->worldToGrid(m_center.x(), m_center.z(), gx, gz);
 
-	m_brushMode = m_brush->begin(
-		gx,
-		gz,
-		gridRadius,
-		m_fallOff,
-		m_strength * (mouseButton == 1 ? 1.0f : -1.0f),
-		m_color,
-		m_attribute
-	);
+	IBrush::State state;
+	state.radius = gridRadius;
+	state.falloff = m_fallOff;
+	state.strength = m_strength * (mouseButton == 1 ? 1.0f : -1.0f);
+	state.color = m_color;
+	state.material = m_material;
+	state.attribute = m_attribute;
+
+	m_brushMode = m_brush->begin(gx, gz, state);
 
 	m_updateRegion[0] =
 	m_updateRegion[1] =
@@ -955,6 +956,11 @@ void TerrainEditModifier::setColor(const Color4f& color)
 {
 	m_color = color;
 	m_color.setAlpha(Scalar(1.0f));
+}
+
+void TerrainEditModifier::setMaterial(int32_t material)
+{
+	m_material = material;
 }
 
 void TerrainEditModifier::setAttribute(int32_t attribute)

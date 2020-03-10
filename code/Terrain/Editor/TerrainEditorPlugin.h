@@ -62,6 +62,7 @@ private:
 	Ref< ui::ToolBarEmbed > m_toolStrength;
 	Ref< ui::ColorControl > m_colorControl;
 	Ref< ui::ToolBarEmbed > m_toolColor;
+	Ref< ui::ToolBarDropDown > m_toolMaterial;
 	Ref< ui::ToolBarDropDown > m_toolAttribute;
 	Ref< ui::ToolBarDropDown > m_toolVisualize;
 	Ref< ui::ToolBarItemGroup > m_toolGroup;

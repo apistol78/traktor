@@ -84,6 +84,13 @@ bool TerrainEditorPlugin::create(ui::Widget* parent, ui::ToolBar* toolBar)
 
 	m_toolColor = new ui::ToolBarEmbed(m_colorControl, 32);
 
+	m_toolMaterial = new ui::ToolBarDropDown(ui::Command(L"Terrain.Editor.SelectMaterial"), ui::dpi96(80), i18n::Text(L"TERRAIN_EDITOR_MATERIAL"));
+	m_toolMaterial->add(L"1");
+	m_toolMaterial->add(L"2");
+	m_toolMaterial->add(L"3");
+	m_toolMaterial->add(L"4");
+	m_toolMaterial->select(0);
+
 	m_toolAttribute = new ui::ToolBarDropDown(ui::Command(L"Terrain.Editor.SelectAttribute"), ui::dpi96(80), i18n::Text(L"TERRAIN_EDITOR_ATTRIBUTE"));
 	m_toolAttribute->add(L"1");
 	m_toolAttribute->add(L"2");
@@ -233,6 +240,14 @@ bool TerrainEditorPlugin::handleCommand(const ui::Command& command)
 	}
 
 	{
+		if (command == L"Terrain.Editor.SelectAttribute")
+		{
+			updateModifierState();
+			return true;
+		}
+	}
+
+	{
 		if (command == L"Terrain.Editor.SelectVisualize")
 		{
 			updateModifierState();
@@ -268,6 +283,10 @@ void TerrainEditorPlugin::updateModifierState()
 		m_terrainEditModifier->setFallOff(L"Terrain.Editor.SharpFallOff");
 	else if (m_toolToggleFallOffImage->isToggled())
 		m_terrainEditModifier->setFallOff(L"Terrain.Editor.ImageFallOff");
+
+	int32_t material = m_toolMaterial->getSelected();
+	if (material >= 0)
+		m_terrainEditModifier->setMaterial(material);
 
 	int32_t attribute = m_toolAttribute->getSelected();
 	if (attribute >= 0)

@@ -99,6 +99,8 @@ public:
 
 	void setColor(const Color4f& color);
 
+	void setMaterial(int32_t material);
+
 	void setAttribute(int32_t attribute);
 
 	void setVisualizeMode(TerrainComponent::VisualizeMode visualizeMode);
@@ -130,6 +132,7 @@ private:
 	Ref< drawing::Image > m_fallOffImage;
 	float m_strength;
 	Color4f m_color;
+	int32_t m_material;
 	int32_t m_attribute;
 	TerrainComponent::VisualizeMode m_visualizeMode;
 	Vector4 m_center;
