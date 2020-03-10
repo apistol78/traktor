@@ -28,8 +28,6 @@ public:
 
 	virtual void end(int32_t x, int32_t y) override final;
 
-	virtual Ref< IBrush > clone() const override final;
-
 private:
 	resource::Proxy< hf::Heightfield > m_heightfield;
 	int32_t m_radius;

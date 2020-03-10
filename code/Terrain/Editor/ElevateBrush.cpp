@@ -39,13 +39,16 @@ void ElevateBrush::apply(int32_t x, int32_t y)
 			float fx = float(ix) / m_radius;
 			float fy = float(iy) / m_radius;
 
+			int32_t gx = x + ix;
+			int32_t gy = y + iy;
+
 			float a = m_fallOff->evaluate(fx, fy) * m_strength;
 
 			// Check material mask.
 			if (m_material >= 0)
 			{
 				Color4f targetColor;
-				m_splatImage->getPixel(x + ix, y + iy, targetColor);
+				m_splatImage->getPixel(gx, gy, targetColor);
 
 				float T_MATH_ALIGN16 weights[4];
 				targetColor.storeAligned(weights);
@@ -56,19 +59,14 @@ void ElevateBrush::apply(int32_t x, int32_t y)
 			if (abs(a) <= FUZZY_EPSILON)
 				continue;
 
-			float h = m_heightfield->getGridHeightNearest(x + ix, y + iy);
-			m_heightfield->setGridHeight(x + ix, y + iy, h + a);
+			float h = m_heightfield->getGridHeightNearest(gx, gy);
+			m_heightfield->setGridHeight(gx, gy, h + a);
 		}
 	}
 }
 
 void ElevateBrush::end(int32_t x, int32_t y)
 {
-}
-
-Ref< IBrush > ElevateBrush::clone() const
-{
-	return new ElevateBrush(m_heightfield, m_splatImage);
 }
 
 	}

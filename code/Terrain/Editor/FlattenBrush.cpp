@@ -52,10 +52,5 @@ void FlattenBrush::end(int32_t x, int32_t y)
 {
 }
 
-Ref< IBrush > FlattenBrush::clone() const
-{
-	return new FlattenBrush(m_heightfield);
-}
-
 	}
 }

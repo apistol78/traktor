@@ -20,15 +20,13 @@ class MaterialBrush : public IBrush
 	T_RTTI_CLASS;
 
 public:
-	MaterialBrush(const resource::Proxy< hf::Heightfield >& heightfiel);
+	MaterialBrush(const resource::Proxy< hf::Heightfield >& heightfield);
 
 	virtual uint32_t begin(int32_t x, int32_t y, int32_t radius, const IFallOff* fallOff, float strength, const Color4f& color, int32_t material) override final;
 
 	virtual void apply(int32_t x, int32_t y) override final;
 
 	virtual void end(int32_t x, int32_t y) override final;
-
-	virtual Ref< IBrush > clone() const override final;
 
 private:
 	resource::Proxy< hf::Heightfield > m_heightfield;

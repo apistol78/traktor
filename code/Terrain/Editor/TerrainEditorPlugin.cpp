@@ -7,7 +7,6 @@
 #include "Terrain/Editor/ColorBrush.h"
 #include "Terrain/Editor/CutBrush.h"
 #include "Terrain/Editor/ElevateBrush.h"
-#include "Terrain/Editor/EmissiveBrush.h"
 #include "Terrain/Editor/FlattenBrush.h"
 #include "Terrain/Editor/MaterialBrush.h"
 #include "Terrain/Editor/NoiseBrush.h"
@@ -54,7 +53,6 @@ bool TerrainEditorPlugin::create(ui::Widget* parent, ui::ToolBar* toolBar)
 	m_toolToggleEditTerrain = new ui::ToolBarButton(i18n::Text(L"TERRAIN_EDITOR_EDIT_TERRAIN"), image + 6, ui::Command(L"Terrain.Editor.EditTerrain"), ui::ToolBarButton::BsDefaultToggle);
 	m_toolToggleSplat = new ui::ToolBarButton(i18n::Text(L"TERRAIN_EDITOR_SPLAT_BRUSH"), image + 16, ui::Command(L"Terrain.Editor.SplatBrush"), ui::ToolBarButton::BsDefaultToggle);
 	m_toolToggleColor = new ui::ToolBarButton(i18n::Text(L"TERRAIN_EDITOR_COLOR_BRUSH"), image + 8, ui::Command(L"Terrain.Editor.ColorBrush"), ui::ToolBarButton::BsDefaultToggle);
-	m_toolToggleEmissive = new ui::ToolBarButton(i18n::Text(L"TERRAIN_EDITOR_EMISSIVE_BRUSH"), image + 14, ui::Command(L"Terrain.Editor.EmissiveBrush"), ui::ToolBarButton::BsDefaultToggle);
 	m_toolToggleElevate = new ui::ToolBarButton(i18n::Text(L"TERRAIN_EDITOR_ELEVATE_BRUSH"), image + 0, ui::Command(L"Terrain.Editor.ElevateBrush"), ui::ToolBarButton::BsDefaultToggle);
 	m_toolToggleFlatten = new ui::ToolBarButton(i18n::Text(L"TERRAIN_EDITOR_FLATTEN_BRUSH"), image + 1, ui::Command(L"Terrain.Editor.FlattenBrush"), ui::ToolBarButton::BsDefaultToggle);
 	m_toolToggleSmooth = new ui::ToolBarButton(i18n::Text(L"TERRAIN_EDITOR_SMOOTH_BRUSH"), image + 2, ui::Command(L"Terrain.Editor.SmoothBrush"), ui::ToolBarButton::BsDefaultToggle);
@@ -64,8 +62,6 @@ bool TerrainEditorPlugin::create(ui::Widget* parent, ui::ToolBar* toolBar)
 	m_toolToggleFallOffSmooth = new ui::ToolBarButton(i18n::Text(L"TERRAIN_EDITOR_SMOOTH_FALLOFF"), image + 4, ui::Command(L"Terrain.Editor.SmoothFallOff"), ui::ToolBarButton::BsDefaultToggle);
 	m_toolToggleFallOffSharp = new ui::ToolBarButton(i18n::Text(L"TERRAIN_EDITOR_SHARP_FALLOFF"), image + 5, ui::Command(L"Terrain.Editor.SharpFallOff"), ui::ToolBarButton::BsDefaultToggle);
 	m_toolToggleFallOffImage = new ui::ToolBarButton(i18n::Text(L"TERRAIN_EDITOR_SHARP_IMAGE"), image + 15, ui::Command(L"Terrain.Editor.ImageFallOff"), ui::ToolBarButton::BsDefaultToggle);
-	m_toolToggleSymmetryX = new ui::ToolBarButton(i18n::Text(L"TERRAIN_EDITOR_SYMMETRY_X"), image + 11, ui::Command(L"Terrain.Editor.SymmetryX"), ui::ToolBarButton::BsDefaultToggle);
-	m_toolToggleSymmetryZ = new ui::ToolBarButton(i18n::Text(L"TERRAIN_EDITOR_SYMMETRY_Z"), image + 12, ui::Command(L"Terrain.Editor.SymmetryZ"), ui::ToolBarButton::BsDefaultToggle);
 
 	Ref< ui::Container > containerStrength = new ui::Container();
 	containerStrength->create(toolBar, ui::WsNone, new ui::TableLayout(L"100,35", L"24", 2, 2));
@@ -118,7 +114,6 @@ bool TerrainEditorPlugin::create(ui::Widget* parent, ui::ToolBar* toolBar)
 	toolBar->addItem(m_toolToggleEditTerrain);
 	toolBar->addItem(m_toolGroup->addItem(m_toolToggleSplat));
 	toolBar->addItem(m_toolGroup->addItem(m_toolToggleColor));
-	toolBar->addItem(m_toolGroup->addItem(m_toolToggleEmissive));
 	toolBar->addItem(m_toolGroup->addItem(m_toolToggleElevate));
 	toolBar->addItem(m_toolGroup->addItem(m_toolToggleFlatten));
 	toolBar->addItem(m_toolGroup->addItem(m_toolToggleSmooth));
@@ -129,9 +124,6 @@ bool TerrainEditorPlugin::create(ui::Widget* parent, ui::ToolBar* toolBar)
 	toolBar->addItem(m_toolGroup->addItem(m_toolToggleFallOffSmooth));
 	toolBar->addItem(m_toolGroup->addItem(m_toolToggleFallOffSharp));
 	toolBar->addItem(m_toolGroup->addItem(m_toolToggleFallOffImage));
-	toolBar->addItem(new ui::ToolBarSeparator());
-	toolBar->addItem(m_toolGroup->addItem(m_toolToggleSymmetryX));
-	toolBar->addItem(m_toolGroup->addItem(m_toolToggleSymmetryZ));
 	toolBar->addItem(new ui::ToolBarSeparator());
 	toolBar->addItem(m_toolGroup->addItem(m_toolStrength));
 	toolBar->addItem(m_toolGroup->addItem(m_toolColor));
@@ -160,14 +152,12 @@ bool TerrainEditorPlugin::handleCommand(const ui::Command& command)
 	}
 
 	{
-		ui::ToolBarButton* toolSelected = 0;
+		ui::ToolBarButton* toolSelected = nullptr;
 
 		if (command == L"Terrain.Editor.SplatBrush")
 			toolSelected = m_toolToggleSplat;
 		else if (command == L"Terrain.Editor.ColorBrush")
 			toolSelected = m_toolToggleColor;
-		else if (command == L"Terrain.Editor.EmissiveBrush")
-			toolSelected = m_toolToggleEmissive;
 		else if (command == L"Terrain.Editor.ElevateBrush")
 			toolSelected = m_toolToggleElevate;
 		else if (command == L"Terrain.Editor.FlattenBrush")
@@ -185,7 +175,6 @@ bool TerrainEditorPlugin::handleCommand(const ui::Command& command)
 		{
 			m_toolToggleSplat->setToggled(m_toolToggleSplat == toolSelected);
 			m_toolToggleColor->setToggled(m_toolToggleColor == toolSelected);
-			m_toolToggleEmissive->setToggled(m_toolToggleEmissive == toolSelected);
 			m_toolToggleElevate->setToggled(m_toolToggleElevate == toolSelected);
 			m_toolToggleFlatten->setToggled(m_toolToggleFlatten == toolSelected);
 			m_toolToggleSmooth->setToggled(m_toolToggleSmooth == toolSelected);
@@ -198,7 +187,7 @@ bool TerrainEditorPlugin::handleCommand(const ui::Command& command)
 	}
 
 	{
-		ui::ToolBarButton* toolSelected = 0;
+		ui::ToolBarButton* toolSelected = nullptr;
 
 		if (command == L"Terrain.Editor.SmoothFallOff")
 			toolSelected = m_toolToggleFallOffSmooth;
@@ -236,21 +225,6 @@ bool TerrainEditorPlugin::handleCommand(const ui::Command& command)
 	}
 
 	{
-		ui::ToolBarButton* toolSelected = 0;
-
-		if (command == L"Terrain.Editor.SymmetryX")
-			toolSelected = m_toolToggleSymmetryX;
-		else if (command == L"Terrain.Editor.SymmetryZ")
-			toolSelected = m_toolToggleSymmetryZ;
-
-		if (toolSelected)
-		{
-			updateModifierState();
-			return true;
-		}
-	}
-
-	{
 		if (command == L"Terrain.Editor.SelectMaterial")
 		{
 			updateModifierState();
@@ -275,8 +249,6 @@ void TerrainEditorPlugin::updateModifierState()
 		m_terrainEditModifier->setBrush(type_of< SplatBrush >());
 	else if (m_toolToggleColor->isToggled())
 		m_terrainEditModifier->setBrush(type_of< ColorBrush >());
-	else if (m_toolToggleEmissive->isToggled())
-		m_terrainEditModifier->setBrush(type_of< EmissiveBrush >());
 	else if (m_toolToggleElevate->isToggled())
 		m_terrainEditModifier->setBrush(type_of< ElevateBrush >());
 	else if (m_toolToggleFlatten->isToggled())
@@ -296,13 +268,6 @@ void TerrainEditorPlugin::updateModifierState()
 		m_terrainEditModifier->setFallOff(L"Terrain.Editor.SharpFallOff");
 	else if (m_toolToggleFallOffImage->isToggled())
 		m_terrainEditModifier->setFallOff(L"Terrain.Editor.ImageFallOff");
-
-	uint32_t symmetry = 0;
-	if (m_toolToggleSymmetryX->isToggled())
-		symmetry |= 1;
-	if (m_toolToggleSymmetryZ->isToggled())
-		symmetry |= 2;
-	m_terrainEditModifier->setSymmetry(symmetry);
 
 	int32_t material = m_toolMaterial->getSelected();
 	if (material >= 0)

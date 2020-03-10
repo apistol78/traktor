@@ -107,10 +107,5 @@ void SplatBrush::end(int32_t x, int32_t y)
 {
 }
 
-Ref< IBrush > SplatBrush::clone() const
-{
-	return new SplatBrush(m_heightfield, m_splatImage);
-}
-
 	}
 }
