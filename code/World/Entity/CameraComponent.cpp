@@ -20,7 +20,7 @@ void CameraComponent::destroy()
 {
 }
 
-void CameraComponent::setOwner(Entity* owner)
+void CameraComponent::setOwner(ComponentEntity* owner)
 {
 }
 

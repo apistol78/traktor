@@ -7,6 +7,7 @@
 #include "Spray/EffectLayer.h"
 #include "Spray/Emitter.h"
 #include "Spray/Trail.h"
+#include "World/Entity/ComponentEntity.h"
 
 namespace traktor
 {
@@ -50,7 +51,7 @@ void EffectComponent::destroy()
 	m_context.virtualSourceCallback = nullptr;
 }
 
-void EffectComponent::setOwner(world::Entity* owner)
+void EffectComponent::setOwner(world::ComponentEntity* owner)
 {
 	m_context.owner = owner;
 }

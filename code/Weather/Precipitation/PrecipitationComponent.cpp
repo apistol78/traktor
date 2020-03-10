@@ -66,7 +66,7 @@ void PrecipitationComponent::destroy()
 	m_mesh.clear();
 }
 
-void PrecipitationComponent::setOwner(world::Entity* owner)
+void PrecipitationComponent::setOwner(world::ComponentEntity* owner)
 {
 }
 

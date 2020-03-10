@@ -15,7 +15,7 @@
 #include "Render/Context/RenderContext.h"
 #include "Weather/Clouds/CloudComponent.h"
 #include "Weather/Clouds/CloudMask.h"
-#include "World/Entity.h"
+#include "World/Entity/ComponentEntity.h"
 #include "World/IWorldRenderPass.h"
 #include "World/WorldRenderView.h"
 
@@ -293,7 +293,7 @@ void CloudComponent::destroy()
 	safeDestroy(m_indexBuffer);
 }
 
-void CloudComponent::setOwner(world::Entity* owner)
+void CloudComponent::setOwner(world::ComponentEntity* owner)
 {
 	m_owner = owner;
 }

@@ -17,9 +17,7 @@ namespace traktor
 	namespace world
 	{
 
-class Entity;
-
-/*! \brief
+/*!
  * \ingroup World
  */
 class T_DLLCLASS LightComponent : public IEntityComponent
@@ -39,7 +37,7 @@ public:
 
 	virtual void destroy() override final;
 
-	virtual void setOwner(Entity* owner) override final;
+	virtual void setOwner(ComponentEntity* owner) override final;
 
 	virtual void update(const UpdateParams& update) override final;
 
@@ -80,7 +78,7 @@ public:
 	float getFlickerCoeff() const { return m_flickerCoeff; }
 
 private:
-	Entity* m_owner;
+	ComponentEntity* m_owner;
 	LightType m_lightType;
 	Vector4 m_color;
 	bool m_castShadow;

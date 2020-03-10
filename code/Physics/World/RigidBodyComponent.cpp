@@ -2,7 +2,7 @@
 #include "Physics/Body.h"
 #include "Physics/CollisionListener.h"
 #include "Physics/World/RigidBodyComponent.h"
-#include "World/Entity.h"
+#include "World/Entity/ComponentEntity.h"
 #include "World/EntityEventManager.h"
 
 namespace traktor
@@ -17,7 +17,7 @@ RigidBodyComponent::RigidBodyComponent(
 	world::EntityEventManager* eventManager,
 	world::IEntityEvent* eventCollide
 )
-:	m_owner(0)
+:	m_owner(nullptr)
 ,	m_body(body)
 ,	m_eventManager(eventManager)
 ,	m_eventCollide(eventCollide)
@@ -34,7 +34,7 @@ void RigidBodyComponent::destroy()
 	m_owner = nullptr;
 }
 
-void RigidBodyComponent::setOwner(world::Entity* owner)
+void RigidBodyComponent::setOwner(world::ComponentEntity* owner)
 {
 	if ((m_owner = owner) != nullptr)
 	{

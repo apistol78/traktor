@@ -1,5 +1,5 @@
 #include "Core/Misc/Save.h"
-#include "World/Entity.h"
+#include "World/Entity/ComponentEntity.h"
 #include "World/Entity/GroupComponent.h"
 
 namespace traktor
@@ -27,7 +27,7 @@ void GroupComponent::destroy()
 	m_entities.resize(0);
 }
 
-void GroupComponent::setOwner(Entity* owner)
+void GroupComponent::setOwner(ComponentEntity* owner)
 {
 	T_ASSERT(m_owner == nullptr);
 	if ((m_owner = owner) != nullptr)

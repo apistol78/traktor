@@ -17,7 +17,7 @@ void ControlPointComponent::destroy()
 {
 }
 
-void ControlPointComponent::setOwner(world::Entity* owner)
+void ControlPointComponent::setOwner(world::ComponentEntity* owner)
 {
 }
 

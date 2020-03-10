@@ -22,7 +22,7 @@ void SplineComponent::destroy()
 	m_owner = nullptr;
 }
 
-void SplineComponent::setOwner(world::Entity* owner)
+void SplineComponent::setOwner(world::ComponentEntity* owner)
 {
 	m_owner = dynamic_type_cast< world::ComponentEntity* >(owner);
 }

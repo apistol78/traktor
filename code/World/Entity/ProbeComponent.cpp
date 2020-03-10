@@ -1,4 +1,4 @@
-#include "World/Entity.h"
+#include "World/Entity/ComponentEntity.h"
 #include "World/Entity/ProbeComponent.h"
 
 namespace traktor
@@ -28,7 +28,7 @@ void ProbeComponent::destroy()
 {
 }
 
-void ProbeComponent::setOwner(Entity* owner)
+void ProbeComponent::setOwner(ComponentEntity* owner)
 {
 	m_owner = owner;
 	m_dirty = true;

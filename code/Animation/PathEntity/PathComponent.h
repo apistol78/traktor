@@ -12,13 +12,6 @@
 
 namespace traktor
 {
-	namespace world
-	{
-
-class Entity;
-
-	}
-
 	namespace animation
 	{
 
@@ -46,7 +39,7 @@ public:
 
 	virtual void destroy() override final;
 
-	virtual void setOwner(world::Entity* owner) override final;
+	virtual void setOwner(world::ComponentEntity* owner) override final;
 
 	virtual void setTransform(const Transform& transform) override final;
 
@@ -59,7 +52,7 @@ public:
 	TimeMode getTimeMode() const { return m_timeMode; }
 
 private:
-	world::Entity* m_owner;
+	world::ComponentEntity* m_owner;
 	Transform m_transform;
 	TransformPath m_path;
 	TimeMode m_timeMode;

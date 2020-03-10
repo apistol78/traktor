@@ -30,7 +30,7 @@ public:
 
 	virtual void destroy() override final;
 
-	virtual void setOwner(Entity* owner) override final;
+	virtual void setOwner(ComponentEntity* owner) override final;
 
 	virtual void update(const UpdateParams& update) override final;
 
@@ -64,7 +64,7 @@ public:
 	}
 
 private:
-	Entity* m_owner;
+	ComponentEntity* m_owner;
 	Transform m_transform;
 	RefArray< Entity > m_entities;
 	bool m_update;
