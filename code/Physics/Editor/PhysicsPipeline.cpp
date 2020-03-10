@@ -73,7 +73,6 @@ bool PhysicsPipeline::buildDependencies(
 	}
 	else if (auto vehicleData = dynamic_type_cast< const VehicleComponentData* >(sourceAsset))
 	{
-		pipelineDepends->addDependency(vehicleData->getBodyDesc());
 		for (auto id : vehicleData->getTraceInclude())
 			pipelineDepends->addDependency(id, editor::PdfBuild | editor::PdfResource);
 		for (auto id : vehicleData->getTraceIgnore())

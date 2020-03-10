@@ -12,6 +12,13 @@
 
 namespace traktor
 {
+	namespace world
+	{
+
+class ComponentEntity;
+
+	}
+
 	namespace physics
 	{
 
@@ -32,7 +39,6 @@ public:
 	VehicleComponent(
 		PhysicsManager* physicsManager,
 		const VehicleComponentData* data,
-		Body* body,
 		const RefArray< Wheel >& wheels,
 		uint32_t traceInclude,
 		uint32_t traceIgnore
@@ -48,8 +54,6 @@ public:
 
 	virtual void update(const world::UpdateParams& update) override final;
 
-	Body* getBody() const;
-
 	void setSteerAngle(float steerAngle);
 
 	float getSteerAngle() const;
@@ -63,28 +67,26 @@ public:
 	const RefArray< Wheel >& getWheels() const { return m_wheels; }
 
 private:
-	world::Entity* m_owner;
+	world::ComponentEntity* m_owner;
 	Ref< PhysicsManager > m_physicsManager;
 	Ref< const VehicleComponentData > m_data;
-	Ref< Body > m_body;
 	RefArray< Wheel > m_wheels;
 	uint32_t m_traceInclude;
 	uint32_t m_traceIgnore;
-	Scalar m_totalMass;
 	float m_steerAngle;
 	float m_steerAngleTarget;
 	float m_engineThrottle;
 	bool m_airBorn;
 
-	void updateSteering(float dT);
+	void updateSteering(Body* body, float dT);
 
-	void updateSuspension(float dT);
+	void updateSuspension(Body* body, float dT);
 
-	void updateFriction(float dT);
+	void updateFriction(Body* body, float dT);
 
-	void updateEngine(float dT);
+	void updateEngine(Body* body, float dT);
 
-	void updateWheels(float dT);
+	void updateWheels(Body* body, float dT);
 };
 
 	}

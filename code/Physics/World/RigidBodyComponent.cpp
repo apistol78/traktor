@@ -28,8 +28,8 @@ RigidBodyComponent::RigidBodyComponent(
 
 void RigidBodyComponent::destroy()
 {
-	m_eventCollide = 0;
-	m_eventManager = 0;
+	m_eventCollide = nullptr;
+	m_eventManager = nullptr;
 	safeDestroy(m_body);
 	m_owner = nullptr;
 }
