@@ -17,16 +17,16 @@ ElevateBrush::ElevateBrush(const resource::Proxy< hf::Heightfield >& heightfield
 ,	m_radius(0)
 ,	m_fallOff(0)
 ,	m_strength(0.0f)
-,	m_material(-1)
+,	m_attribute(-1)
 {
 }
 
-uint32_t ElevateBrush::begin(int32_t x, int32_t y, int32_t radius, const IFallOff* fallOff, float strength, const Color4f& color, int32_t material)
+uint32_t ElevateBrush::begin(int32_t x, int32_t y, int32_t radius, const IFallOff* fallOff, float strength, const Color4f& color, int32_t attribute)
 {
 	m_radius = radius;
 	m_fallOff = fallOff;
 	m_strength = strength * 0.256f / m_heightfield->getWorldExtent().y();
-	m_material = material;
+	m_attribute = attribute;
 	return MdHeight;
 }
 
@@ -45,7 +45,7 @@ void ElevateBrush::apply(int32_t x, int32_t y)
 			float a = m_fallOff->evaluate(fx, fy) * m_strength;
 
 			// Check material mask.
-			if (m_material >= 0)
+			if (m_attribute >= 0)
 			{
 				Color4f targetColor;
 				m_splatImage->getPixel(gx, gy, targetColor);
@@ -53,7 +53,7 @@ void ElevateBrush::apply(int32_t x, int32_t y)
 				float T_MATH_ALIGN16 weights[4];
 				targetColor.storeAligned(weights);
 
-				a *= 1.0f - weights[m_material];
+				a *= 1.0f - weights[m_attribute];
 			}
 
 			if (abs(a) <= FUZZY_EPSILON)

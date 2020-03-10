@@ -8,7 +8,7 @@
 #include "Terrain/Editor/CutBrush.h"
 #include "Terrain/Editor/ElevateBrush.h"
 #include "Terrain/Editor/FlattenBrush.h"
-#include "Terrain/Editor/MaterialBrush.h"
+#include "Terrain/Editor/AttributeBrush.h"
 #include "Terrain/Editor/NoiseBrush.h"
 #include "Terrain/Editor/SmoothBrush.h"
 #include "Terrain/Editor/SplatBrush.h"
@@ -58,7 +58,7 @@ bool TerrainEditorPlugin::create(ui::Widget* parent, ui::ToolBar* toolBar)
 	m_toolToggleSmooth = new ui::ToolBarButton(i18n::Text(L"TERRAIN_EDITOR_SMOOTH_BRUSH"), image + 2, ui::Command(L"Terrain.Editor.SmoothBrush"), ui::ToolBarButton::BsDefaultToggle);
 	m_toolToggleNoise = new ui::ToolBarButton(i18n::Text(L"TERRAIN_EDITOR_NOISE_BRUSH"), image + 10, ui::Command(L"Terrain.Editor.NoiseBrush"), ui::ToolBarButton::BsDefaultToggle);
 	m_toolToggleCut = new ui::ToolBarButton(i18n::Text(L"TERRAIN_EDITOR_CUT_BRUSH"), image + 7, ui::Command(L"Terrain.Editor.CutBrush"), ui::ToolBarButton::BsDefaultToggle);
-	m_toolToggleMaterial = new ui::ToolBarButton(i18n::Text(L"TERRAIN_EDITOR_MATERIAL_BRUSH"), image + 9, ui::Command(L"Terrain.Editor.MaterialBrush"), ui::ToolBarButton::BsDefaultToggle);
+	m_toolToggleAttribute = new ui::ToolBarButton(i18n::Text(L"TERRAIN_EDITOR_ATTRIBUTE_BRUSH"), image + 9, ui::Command(L"Terrain.Editor.AttributeBrush"), ui::ToolBarButton::BsDefaultToggle);
 	m_toolToggleFallOffSmooth = new ui::ToolBarButton(i18n::Text(L"TERRAIN_EDITOR_SMOOTH_FALLOFF"), image + 4, ui::Command(L"Terrain.Editor.SmoothFallOff"), ui::ToolBarButton::BsDefaultToggle);
 	m_toolToggleFallOffSharp = new ui::ToolBarButton(i18n::Text(L"TERRAIN_EDITOR_SHARP_FALLOFF"), image + 5, ui::Command(L"Terrain.Editor.SharpFallOff"), ui::ToolBarButton::BsDefaultToggle);
 	m_toolToggleFallOffImage = new ui::ToolBarButton(i18n::Text(L"TERRAIN_EDITOR_SHARP_IMAGE"), image + 15, ui::Command(L"Terrain.Editor.ImageFallOff"), ui::ToolBarButton::BsDefaultToggle);
@@ -84,12 +84,12 @@ bool TerrainEditorPlugin::create(ui::Widget* parent, ui::ToolBar* toolBar)
 
 	m_toolColor = new ui::ToolBarEmbed(m_colorControl, 32);
 
-	m_toolMaterial = new ui::ToolBarDropDown(ui::Command(L"Terrain.Editor.SelectMaterial"), ui::dpi96(80), i18n::Text(L"TERRAIN_EDITOR_MATERIAL"));
-	m_toolMaterial->add(L"Material 1");
-	m_toolMaterial->add(L"Material 2");
-	m_toolMaterial->add(L"Material 3");
-	m_toolMaterial->add(L"Material 4");
-	m_toolMaterial->select(0);
+	m_toolAttribute = new ui::ToolBarDropDown(ui::Command(L"Terrain.Editor.SelectAttribute"), ui::dpi96(80), i18n::Text(L"TERRAIN_EDITOR_ATTRIBUTE"));
+	m_toolAttribute->add(L"1");
+	m_toolAttribute->add(L"2");
+	m_toolAttribute->add(L"3");
+	m_toolAttribute->add(L"4");
+	m_toolAttribute->select(0);
 
 	m_toolVisualize = new ui::ToolBarDropDown(ui::Command(L"Terrain.Editor.SelectVisualize"), ui::dpi96(100), i18n::Text(L"TERRAIN_EDITOR_VISUALIZE"));
 	m_toolVisualize->add(L"Default");
@@ -100,7 +100,7 @@ bool TerrainEditorPlugin::create(ui::Widget* parent, ui::ToolBar* toolBar)
 	m_toolVisualize->add(L"Height Map");
 	m_toolVisualize->add(L"Splat Map");
 	m_toolVisualize->add(L"Cut Map");
-	m_toolVisualize->add(L"Material Map");
+	m_toolVisualize->add(L"Attribute Map");
 	m_toolVisualize->select(0);
 
 	m_toolToggleElevate->setToggled(true);
@@ -119,7 +119,7 @@ bool TerrainEditorPlugin::create(ui::Widget* parent, ui::ToolBar* toolBar)
 	toolBar->addItem(m_toolGroup->addItem(m_toolToggleSmooth));
 	toolBar->addItem(m_toolGroup->addItem(m_toolToggleNoise));
 	toolBar->addItem(m_toolGroup->addItem(m_toolToggleCut));
-	toolBar->addItem(m_toolGroup->addItem(m_toolToggleMaterial));
+	toolBar->addItem(m_toolGroup->addItem(m_toolToggleAttribute));
 	toolBar->addItem(new ui::ToolBarSeparator());
 	toolBar->addItem(m_toolGroup->addItem(m_toolToggleFallOffSmooth));
 	toolBar->addItem(m_toolGroup->addItem(m_toolToggleFallOffSharp));
@@ -127,7 +127,7 @@ bool TerrainEditorPlugin::create(ui::Widget* parent, ui::ToolBar* toolBar)
 	toolBar->addItem(new ui::ToolBarSeparator());
 	toolBar->addItem(m_toolGroup->addItem(m_toolStrength));
 	toolBar->addItem(m_toolGroup->addItem(m_toolColor));
-	toolBar->addItem(m_toolGroup->addItem(m_toolMaterial));
+	toolBar->addItem(m_toolGroup->addItem(m_toolAttribute));
 	toolBar->addItem(new ui::ToolBarSeparator());
 	toolBar->addItem(m_toolGroup->addItem(m_toolVisualize));
 
@@ -168,8 +168,8 @@ bool TerrainEditorPlugin::handleCommand(const ui::Command& command)
 			toolSelected = m_toolToggleNoise;
 		else if (command == L"Terrain.Editor.CutBrush")
 			toolSelected = m_toolToggleCut;
-		else if (command == L"Terrain.Editor.MaterialBrush")
-			toolSelected = m_toolToggleMaterial;
+		else if (command == L"Terrain.Editor.AttributeBrush")
+			toolSelected = m_toolToggleAttribute;
 
 		if (toolSelected)
 		{
@@ -180,7 +180,7 @@ bool TerrainEditorPlugin::handleCommand(const ui::Command& command)
 			m_toolToggleSmooth->setToggled(m_toolToggleSmooth == toolSelected);
 			m_toolToggleNoise->setToggled(m_toolToggleNoise == toolSelected);
 			m_toolToggleCut->setToggled(m_toolToggleCut == toolSelected);
-			m_toolToggleMaterial->setToggled(m_toolToggleMaterial == toolSelected);
+			m_toolToggleAttribute->setToggled(m_toolToggleAttribute == toolSelected);
 			updateModifierState();
 			return true;
 		}
@@ -259,8 +259,8 @@ void TerrainEditorPlugin::updateModifierState()
 		m_terrainEditModifier->setBrush(type_of< NoiseBrush >());
 	else if (m_toolToggleCut->isToggled())
 		m_terrainEditModifier->setBrush(type_of< CutBrush >());
-	else if (m_toolToggleMaterial->isToggled())
-		m_terrainEditModifier->setBrush(type_of< MaterialBrush >());
+	else if (m_toolToggleAttribute->isToggled())
+		m_terrainEditModifier->setBrush(type_of< AttributeBrush >());
 
 	if (m_toolToggleFallOffSmooth->isToggled())
 		m_terrainEditModifier->setFallOff(L"Terrain.Editor.SmoothFallOff");
@@ -269,9 +269,9 @@ void TerrainEditorPlugin::updateModifierState()
 	else if (m_toolToggleFallOffImage->isToggled())
 		m_terrainEditModifier->setFallOff(L"Terrain.Editor.ImageFallOff");
 
-	int32_t material = m_toolMaterial->getSelected();
-	if (material >= 0)
-		m_terrainEditModifier->setMaterial(material);
+	int32_t attribute = m_toolAttribute->getSelected();
+	if (attribute >= 0)
+		m_terrainEditModifier->setAttribute(attribute);
 
 	int32_t visualize = m_toolVisualize->getSelected();
 	if (visualize >= 0)

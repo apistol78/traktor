@@ -99,7 +99,7 @@ public:
 
 	void setColor(const Color4f& color);
 
-	void setMaterial(int32_t material);
+	void setAttribute(int32_t attribute);
 
 	void setVisualizeMode(TerrainComponent::VisualizeMode visualizeMode);
 
@@ -122,15 +122,15 @@ private:
 	Ref< render::ISimpleTexture > m_normalMap;
 	AutoArrayPtr< uint8_t > m_cutData;
 	Ref< render::ISimpleTexture > m_cutMap;
-	AutoArrayPtr< uint8_t > m_materialData;
-	Ref< render::ISimpleTexture > m_materialMap;
+	AutoArrayPtr< uint8_t > m_attributeData;
+	Ref< render::ISimpleTexture > m_attributeMap;
 	Ref< IBrush > m_brush;
 	uint32_t m_brushMode;
 	Ref< IFallOff > m_fallOff;
 	Ref< drawing::Image > m_fallOffImage;
 	float m_strength;
 	Color4f m_color;
-	int32_t m_material;
+	int32_t m_attribute;
 	TerrainComponent::VisualizeMode m_visualizeMode;
 	Vector4 m_center;
 	uint32_t m_updateRegion[4];

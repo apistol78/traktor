@@ -1,6 +1,6 @@
 #include "Core/Math/Const.h"
 #include "Heightfield/Heightfield.h"
-#include "Terrain/Editor/MaterialBrush.h"
+#include "Terrain/Editor/AttributeBrush.h"
 #include "Terrain/Editor/IFallOff.h"
 
 namespace traktor
@@ -8,27 +8,27 @@ namespace traktor
 	namespace terrain
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.terrain.MaterialBrush", MaterialBrush, IBrush)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.terrain.AttributeBrush", AttributeBrush, IBrush)
 
-MaterialBrush::MaterialBrush(const resource::Proxy< hf::Heightfield >& heightfield)
+AttributeBrush::AttributeBrush(const resource::Proxy< hf::Heightfield >& heightfield)
 :	m_heightfield(heightfield)
 ,	m_radius(0)
 ,	m_fallOff(0)
 ,	m_strength(0.0f)
-,	m_material(0)
+,	m_attribute(0)
 {
 }
 
-uint32_t MaterialBrush::begin(int32_t x, int32_t y, int32_t radius, const IFallOff* fallOff, float strength, const Color4f& color, int32_t material)
+uint32_t AttributeBrush::begin(int32_t x, int32_t y, int32_t radius, const IFallOff* fallOff, float strength, const Color4f& color, int32_t attribute)
 {
 	m_radius = radius;
 	m_fallOff = fallOff;
 	m_strength = powf(abs(strength), 2.0f);
-	m_material = material;
+	m_attribute = attribute;
 	return MdMaterial;
 }
 
-void MaterialBrush::apply(int32_t x, int32_t y)
+void AttributeBrush::apply(int32_t x, int32_t y)
 {
 	for (int32_t iy = -m_radius; iy <= m_radius; ++iy)
 	{
@@ -41,12 +41,12 @@ void MaterialBrush::apply(int32_t x, int32_t y)
 			if (abs(a) <= FUZZY_EPSILON)
 				continue;
 
-			m_heightfield->setGridMaterial(x + ix, y + iy, m_material);
+			m_heightfield->setGridMaterial(x + ix, y + iy, m_attribute);
 		}
 	}
 }
 
-void MaterialBrush::end(int32_t x, int32_t y)
+void AttributeBrush::end(int32_t x, int32_t y)
 {
 }
 

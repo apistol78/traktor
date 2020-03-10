@@ -27,7 +27,7 @@ public:
 		MdMaterial = 16
 	};
 
-	virtual uint32_t begin(int32_t x, int32_t y, int32_t radius, const IFallOff* fallOff, float strength, const Color4f& color, int32_t material) = 0;
+	virtual uint32_t begin(int32_t x, int32_t y, int32_t radius, const IFallOff* fallOff, float strength, const Color4f& color, int32_t attribute) = 0;
 
 	virtual void apply(int32_t x, int32_t y) = 0;
 
