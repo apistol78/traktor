@@ -134,6 +134,7 @@ bool TerrainEditorPlugin::create(ui::Widget* parent, ui::ToolBar* toolBar)
 	toolBar->addItem(new ui::ToolBarSeparator());
 	toolBar->addItem(m_toolGroup->addItem(m_toolStrength));
 	toolBar->addItem(m_toolGroup->addItem(m_toolColor));
+	toolBar->addItem(m_toolGroup->addItem(m_toolMaterial));
 	toolBar->addItem(m_toolGroup->addItem(m_toolAttribute));
 	toolBar->addItem(new ui::ToolBarSeparator());
 	toolBar->addItem(m_toolGroup->addItem(m_toolVisualize));

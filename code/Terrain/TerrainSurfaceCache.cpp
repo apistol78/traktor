@@ -160,56 +160,56 @@ void TerrainSurfaceCache::setupBaseColor(
 	const Vector4& worldExtent
 )
 {
-	if (m_haveBase)
-		return;
+	if (!m_haveBase)
+	{
+		auto baseTargetSetId = renderGraph.addTargetSet(m_base);
 
-	auto baseTargetSetId = renderGraph.addTargetSet(m_base);
-
-	Ref< render::RenderPass > rp = new render::RenderPass(L"Terrain surface base");
+		Ref< render::RenderPass > rp = new render::RenderPass(L"Terrain surface base");
 	
-	render::Clear clear;
-	clear.mask = render::CfColor;
-	clear.colors[0] = Color4f(0.0f, 0.0f, 0.0f, 0.0f);
-	rp->setOutput(baseTargetSetId, clear);
+		render::Clear clear;
+		clear.mask = render::CfColor;
+		clear.colors[0] = Color4f(0.0f, 0.0f, 0.0f, 0.0f);
+		rp->setOutput(baseTargetSetId, clear);
 
-	rp->addBuild([=](const render::RenderGraph&, render::RenderContext* renderContext) {
-		const static Vector4 c_textureOffset(-1.0f, 1.0f, 2.0f, -2.0f);
+		rp->addBuild([=](const render::RenderGraph&, render::RenderContext* renderContext) {
+			const static Vector4 c_textureOffset(-1.0f, 1.0f, 2.0f, -2.0f);
 
-		render::Shader* shader = terrain->getSurfaceShader();
-		if (!shader)
-			return;
+			render::Shader* shader = terrain->getSurfaceShader();
+			if (!shader)
+				return;
 
-		render::ISimpleTexture* heightMap = terrain->getHeightMap();
-		render::ISimpleTexture* colorMap = terrain->getColorMap();
-		render::ISimpleTexture* splatMap = terrain->getSplatMap();
+			render::ISimpleTexture* heightMap = terrain->getHeightMap();
+			render::ISimpleTexture* colorMap = terrain->getColorMap();
+			render::ISimpleTexture* splatMap = terrain->getSplatMap();
 
-		render::Shader::Permutation perm;
-		shader->setCombination(c_handleColorEnable, colorMap != nullptr, perm);
+			render::Shader::Permutation perm;
+			shader->setCombination(c_handleColorEnable, colorMap != nullptr, perm);
 
-		auto sp = shader->getProgram(perm);
-		if (!sp)
-			return;
+			auto sp = shader->getProgram(perm);
+			if (!sp)
+				return;
 
-		auto rb = renderContext->alloc< TerrainSurfaceRenderBlock >(L"Terrain surface, base");
-		rb->screenRenderer = m_screenRenderer;
-		rb->distance = 0.0f;
-		rb->program = sp.program;
-		rb->programParams = renderContext->alloc< render::ProgramParameters >();
-		rb->programParams->beginParameters(renderContext);
-		rb->programParams->setTextureParameter(c_handleHeightfield, heightMap);
-		rb->programParams->setTextureParameter(c_handleColorMap, colorMap);
-		rb->programParams->setTextureParameter(c_handleSplatMap, splatMap);
-		rb->programParams->setVectorParameter(c_handleWorldOrigin, worldOrigin);
-		rb->programParams->setVectorParameter(c_handleWorldExtent, worldExtent);
-		rb->programParams->setVectorParameter(c_handlePatchOrigin, worldOrigin);
-		rb->programParams->setVectorParameter(c_handlePatchExtent, worldExtent);
-		rb->programParams->setVectorParameter(c_handleTextureOffset, c_textureOffset);
-		rb->programParams->endParameters(renderContext);
-		renderContext->enqueue(rb);
-	});
-	renderGraph.addPass(rp);
+			auto rb = renderContext->alloc< TerrainSurfaceRenderBlock >(L"Terrain surface, base");
+			rb->screenRenderer = m_screenRenderer;
+			rb->distance = 0.0f;
+			rb->program = sp.program;
+			rb->programParams = renderContext->alloc< render::ProgramParameters >();
+			rb->programParams->beginParameters(renderContext);
+			rb->programParams->setTextureParameter(c_handleHeightfield, heightMap);
+			rb->programParams->setTextureParameter(c_handleColorMap, colorMap);
+			rb->programParams->setTextureParameter(c_handleSplatMap, splatMap);
+			rb->programParams->setVectorParameter(c_handleWorldOrigin, worldOrigin);
+			rb->programParams->setVectorParameter(c_handleWorldExtent, worldExtent);
+			rb->programParams->setVectorParameter(c_handlePatchOrigin, worldOrigin);
+			rb->programParams->setVectorParameter(c_handlePatchExtent, worldExtent);
+			rb->programParams->setVectorParameter(c_handleTextureOffset, c_textureOffset);
+			rb->programParams->endParameters(renderContext);
+			renderContext->enqueue(rb);
+		});
+		renderGraph.addPass(rp);
 
-	m_haveBase = true;
+		m_haveBase = true;
+	}
 
 	// Since this method is called after patches has been
 	// setup it's safe to clear reference to patch pass here.
