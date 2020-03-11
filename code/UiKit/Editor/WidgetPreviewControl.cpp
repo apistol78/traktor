@@ -249,12 +249,12 @@ void WidgetPreviewControl::eventPaint(ui::PaintEvent* event)
 	m_displayRenderer->setup(nullptr);
 
 	// Validate render graph.
-	if (!m_renderGraph->validate(sz.cx, sz.cy))
+	if (!m_renderGraph->validate())
 		return;
 
 	// Build render context.
 	m_renderContext->flush();
-	m_renderGraph->build(m_renderContext);
+	m_renderGraph->build(m_renderContext, sz.cx, sz.cy);
 
 	// Render frame.
 	if (m_renderView->beginFrame())

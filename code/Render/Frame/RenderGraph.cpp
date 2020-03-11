@@ -40,6 +40,7 @@ handle_t RenderGraph::addTargetSet(
 	target.targetSetDesc = targetSetDesc;
 	target.sharedDepthStencilTargetSet = sharedDepthStencilTargetSet;
 	target.sizeReferenceTargetSetId = sizeReferenceTargetSetId;
+	target.referenceCount = 0;
 	target.transient = true;
 	return targetSetId;
 }
@@ -49,6 +50,8 @@ handle_t RenderGraph::addTargetSet(IRenderTargetSet* targetSet)
 	handle_t targetSetId = m_nextTargetSetId++;
 	auto& target = m_targets[targetSetId];
 	target.rts = targetSet;
+	target.sizeReferenceTargetSetId = 0;
+	target.referenceCount = 0;
 	target.transient = false;
 	return targetSetId;
 }
@@ -67,45 +70,9 @@ void RenderGraph::addPass(const RenderPass* pass)
 	m_passes.push_back(pass);
 }
 
-bool RenderGraph::validate(int32_t width, int32_t height)
+bool RenderGraph::validate()
 {
-	// Acquire targets.
-	for (auto& tm : m_targets)
-	{
-		if (!tm.second.transient)
-			continue;
-
-		int32_t referenceWidth = width;
-		int32_t referenceHeight = height;
-
-		if (tm.second.sizeReferenceTargetSetId != 0)
-		{
-			auto it = m_targets.find(tm.second.sizeReferenceTargetSetId);
-			if (it == m_targets.end())
-				return false;
-
-			referenceWidth = it->second.targetSetDesc.width;
-			referenceHeight = it->second.targetSetDesc.height;
-		}
-
-		tm.second.rts = m_pool->acquire(
-			tm.second.targetSetDesc,
-			tm.second.sharedDepthStencilTargetSet,
-			referenceWidth,
-			referenceHeight
-		);
-		if (!tm.second.rts)
-			return false;
-	}
-
-	// Cleanup pools which doesn't have any acquired
-	// targets, i.e. not used no more.
-	// Only pools are cleared, we need to keep
-	// references alive to targets previously acquired
-	// into deferred render contexts.
-	m_pool->cleanup();
-
-	// Append passes depth-first.
+	// Collect order of passes, depth-first.
 	StaticSet< uint32_t, 512 > added;
 	m_order.resize(0);	
 	for (int32_t i = 0; i < (int32_t)m_passes.size(); ++i)
@@ -135,10 +102,34 @@ bool RenderGraph::validate(int32_t width, int32_t height)
 		}
 	}
 
+	// Calculate target reference counts.
+	for (auto index : m_order)
+	{
+		const auto pass = m_passes[index];
+		auto inputs = pass->getInputs();
+		for (const auto& input : inputs)
+		{
+			if (input.targetSetId == 0)
+				continue;
+
+			auto it = m_targets.find(input.targetSetId);
+			if (it == m_targets.end())
+				return false;
+
+			auto& target = it->second;
+			target.referenceCount++;
+		}
+	}	
+
+#if defined(_DEBUG)
+	// Check so all targets is referenced.
+	for (auto& tm : m_targets)
+		T_FATAL_ASSERT(tm.second.referenceCount > 0);
+#endif
 	return true;
 }
 
-bool RenderGraph::build(RenderContext* renderContext)
+bool RenderGraph::build(RenderContext* renderContext, int32_t width, int32_t height)
 {
 	T_FATAL_ASSERT(!renderContext->havePendingDraws());
 
@@ -146,6 +137,7 @@ bool RenderGraph::build(RenderContext* renderContext)
 	for (auto index : m_order)
 	{
 		const auto pass = m_passes[index];
+		const auto inputs = pass->getInputs();
 		const auto& output = pass->getOutput();
 
 		// Begin render pass.
@@ -154,22 +146,48 @@ bool RenderGraph::build(RenderContext* renderContext)
 			auto it = m_targets.find(output.targetSetId);
 			T_FATAL_ASSERT(it != m_targets.end());
 
-			auto tb = renderContext->alloc< BeginPassRenderBlock >(
-#if defined(_DEBUG)
-				str(L"Begin \"%s\"", pass->getName().c_str())
-#endif
-			);
-			tb->renderTargetSet = it->second.rts;
+			auto& target = it->second;
+			if (target.rts == nullptr)
+			{
+				int32_t referenceWidth = width;
+				int32_t referenceHeight = height;
+
+				// Use size of reference target.
+				if (target.sizeReferenceTargetSetId != 0)
+				{
+					auto it2 = m_targets.find(target.sizeReferenceTargetSetId);
+					if (it2 == m_targets.end())
+						return false;
+
+					referenceWidth = it2->second.targetSetDesc.width;
+					referenceHeight = it2->second.targetSetDesc.height;
+				}
+
+				// Use size of shared depth/stencil target since they must match.
+				if (target.sharedDepthStencilTargetSet != nullptr)
+				{
+					referenceWidth = target.sharedDepthStencilTargetSet->getWidth();
+					referenceHeight = target.sharedDepthStencilTargetSet->getHeight();
+				}
+
+				target.rts = m_pool->acquire(
+					target.targetSetDesc,
+					target.sharedDepthStencilTargetSet,
+					referenceWidth,
+					referenceHeight
+				);
+				if (!target.rts)
+					return false;
+			}	
+
+			auto tb = renderContext->alloc< BeginPassRenderBlock >();
+			tb->renderTargetSet = target.rts;
 			tb->clear = output.clear;
 			renderContext->enqueue(tb);
 		}
 		else
 		{
-			auto tb = renderContext->alloc< BeginPassRenderBlock >(
-#if defined(_DEBUG)
-				str(L"Begin \"%s\"", pass->getName().c_str())
-#endif
-			);
+			auto tb = renderContext->alloc< BeginPassRenderBlock >();
 			tb->clear = output.clear;
 			renderContext->enqueue(tb);			
 		}
@@ -192,25 +210,36 @@ bool RenderGraph::build(RenderContext* renderContext)
 		}
 
 		// End render pass.
-		auto te = renderContext->alloc< EndPassRenderBlock >(
-#if defined(_DEBUG)
-			str(L"End \"%s\"", pass->getName().c_str())
-#endif
-		);
+		auto te = renderContext->alloc< EndPassRenderBlock >();
 		renderContext->enqueue(te);
+
+		// Decrement reference counts on input targets; release if last reference.
+		for (const auto& input : inputs)
+		{
+			if (input.targetSetId == 0)
+				continue;
+
+			auto it = m_targets.find(input.targetSetId);
+			if (it == m_targets.end())
+				return false;
+
+			auto& target = it->second;
+			if (--target.referenceCount <= 0)
+			{
+				if (target.transient)
+					m_pool->release(target.rts);
+				target.rts = nullptr;
+			}
+		}
 	}
 
 	T_FATAL_ASSERT(!renderContext->havePendingDraws());
 
-	// Release transient targets.
+#if defined(_DEBUG)
+	// Check so all targets have been released.
 	for (auto& tm : m_targets)
-	{
-		if (tm.second.transient && tm.second.rts)
-		{
-			m_pool->release(tm.second.rts);
-			tm.second.rts = nullptr;
-		}
-	}
+		T_FATAL_ASSERT(tm.second.rts == nullptr);
+#endif
 
 	// Remove all data; keep memory allocated for arrays
 	// since it's very likely this will be identically

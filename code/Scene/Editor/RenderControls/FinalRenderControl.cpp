@@ -435,12 +435,12 @@ void FinalRenderControl::eventPaint(ui::PaintEvent* event)
 	m_worldRenderer->setup(m_worldRenderView, &rootEntity, *m_renderGraph, 0);
 
 	// Validate render graph.
-	if (!m_renderGraph->validate(m_dirtySize.cx, m_dirtySize.cy))
+	if (!m_renderGraph->validate())
 		return;
 
 	// Build render context.
 	m_renderContext->flush();
-	m_renderGraph->build(m_renderContext);
+	m_renderGraph->build(m_renderContext, m_dirtySize.cx, m_dirtySize.cy);
 
 	// Render frame.
 	if (m_renderView->beginFrame())

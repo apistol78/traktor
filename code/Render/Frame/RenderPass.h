@@ -4,6 +4,7 @@
 #include "Core/Object.h"
 #include "Core/RefArray.h"
 #include "Core/Containers/AlignedVector.h"
+#include "Core/Containers/StaticVector.h"
 #include "Render/Types.h"
 
 // import/export mechanism.
@@ -64,7 +65,7 @@ public:
 
 	void addInput(handle_t targetSetId);
 
-	AlignedVector< Input > getInputs() const;
+	StaticVector< Input, 16 > getInputs() const;
 
 	//! \}
 
@@ -96,7 +97,7 @@ public:
 
 protected:
 	std::wstring m_name;
-	AlignedVector< Input > m_inputs;
+	StaticVector< Input, 16 > m_inputs;
 	Output m_output;
     AlignedVector< fn_build_t > m_builds;
 	RefArray< const RenderPass > m_subPasses;
