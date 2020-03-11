@@ -1,3 +1,4 @@
+#include <string>
 #include "World/Entity.h"
 #include "World/EntitySchema.h"
 
