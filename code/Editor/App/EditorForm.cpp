@@ -2971,50 +2971,50 @@ void EditorForm::threadAssetMonitor()
 				assetInstances
 			);
 
-			if (!assetInstances.empty())
+			std::vector< Guid > modifiedAssets;
+			RefArray< const File > modifiedFiles;
+
+			std::wstring assetPath = m_mergedSettings->getProperty< std::wstring >(L"Pipeline.AssetPath", L"");
+
+			// Find all assets which have archive flag set.
+			for (auto assetInstance : assetInstances)
 			{
-				std::vector< Guid > modifiedAssets;
-				RefArray< const File > modifiedFiles;
+				Ref< Asset > asset = assetInstance->getObject< Asset >();
+				if (!asset)
+					continue;
 
-				std::wstring assetPath = m_mergedSettings->getProperty< std::wstring >(L"Pipeline.AssetPath", L"");
+				Path fileName = FileSystem::getInstance().getAbsolutePath(assetPath, asset->getFileName());
 
-				for (auto assetInstance : assetInstances)
+				RefArray< File > files;
+				FileSystem::getInstance().find(fileName, files);
+
+				for (auto file : files)
 				{
-					Ref< Asset > asset = assetInstance->getObject< Asset >();
-					if (!asset)
-						continue;
-
-					Path fileName = FileSystem::getInstance().getAbsolutePath(assetPath, asset->getFileName());
-
-					RefArray< File > files;
-					FileSystem::getInstance().find(fileName, files);
-
-					for (auto file : files)
+					uint32_t flags = file->getFlags();
+					if ((flags & File::FfArchive) == File::FfArchive)
 					{
-						uint32_t flags = file->getFlags();
-						if ((flags & File::FfArchive) == File::FfArchive)
-						{
-							log::info << L"Source asset \"" << file->getPath().getPathName() << L"\" modified" << Endl;
-							modifiedFiles.push_back(file);
-							modifiedAssets.push_back(assetInstance->getGuid());
-						}
+						log::info << L"Source asset \"" << file->getPath().getPathName() << L"\" modified." << Endl;
+						modifiedFiles.push_back(file);
+						modifiedAssets.push_back(assetInstance->getGuid());
 					}
 				}
+			}
 
-				for (auto modifiedFile : modifiedFiles)
-					FileSystem::getInstance().modify(modifiedFile->getPath(), modifiedFile->getFlags() & ~File::FfArchive);
+			// Reset archive flag on all found assets.
+			for (auto modifiedFile : modifiedFiles)
+				FileSystem::getInstance().modify(modifiedFile->getPath(), modifiedFile->getFlags() & ~File::FfArchive);
 
-				m_lockBuild.release();
+			m_lockBuild.release();
 
-				if (!modifiedAssets.empty())
-				{
-					log::info << L"Modified source asset(s) detected; building asset(s)..." << Endl;
-					buildAssets(modifiedAssets, false);
+			// Build assets.
+			if (!modifiedAssets.empty())
+			{
+				log::info << L"Modified source asset(s) detected; building asset(s)..." << Endl;
+				buildAssets(modifiedAssets, false);
 
-					// Notify all plugins of automatic build.
-					for (auto editorPluginSite : m_editorPluginSites)
-						editorPluginSite->handleCommand(ui::Command(L"Editor.AutoBuild"), false);
-				}
+				// Notify all plugins of automatic build.
+				for (auto editorPluginSite : m_editorPluginSites)
+					editorPluginSite->handleCommand(ui::Command(L"Editor.AutoBuild"), false);
 			}
 		}
 
