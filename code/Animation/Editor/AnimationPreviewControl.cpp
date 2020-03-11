@@ -362,12 +362,12 @@ void AnimationPreviewControl::eventPaint(ui::PaintEvent* event)
 	}
 
 	// Validate render graph.
-	if (!m_renderGraph->validate(sz.cx, sz.cy))
+	if (!m_renderGraph->validate())
 		return;
 
 	// Build render context.
 	m_renderContext->flush();
-	m_renderGraph->build(m_renderContext);
+	m_renderGraph->build(m_renderContext, sz.cx, sz.cy);
 
 	// Render frame.
 	render::Clear cl = {};

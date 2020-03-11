@@ -684,12 +684,12 @@ void OrthogonalRenderControl::eventPaint(ui::PaintEvent* event)
 	m_renderGraph->addPass(rp);
 
 	// Validate render graph.
-	if (!m_renderGraph->validate(m_dirtySize.cx, m_dirtySize.cy))
+	if (!m_renderGraph->validate())
 		return;
 
 	// Build render context.
 	m_renderContext->flush();
-	m_renderGraph->build(m_renderContext);
+	m_renderGraph->build(m_renderContext, m_dirtySize.cx, m_dirtySize.cy);
 
 	// Render frame.
 	if (m_renderView->beginFrame())

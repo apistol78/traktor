@@ -23,11 +23,14 @@ void RenderPass::addInput(handle_t targetSetId)
 	input.colorIndex = 0;
 }
 
-AlignedVector< RenderPass::Input > RenderPass::getInputs() const
+StaticVector< RenderPass::Input, 16 > RenderPass::getInputs() const
 {
-	AlignedVector< Input > inputs = m_inputs;
+	auto inputs = m_inputs;
 	for (auto subPass : m_subPasses)
-		inputs.insert(inputs.end(), subPass->m_inputs.begin(), subPass->m_inputs.end());
+	{
+		for (const auto& subInput : subPass->m_inputs)
+			inputs.push_back(subInput);
+	}
 	return inputs;
 }
 

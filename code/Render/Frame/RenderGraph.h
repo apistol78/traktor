@@ -83,10 +83,10 @@ public:
 	void addPass(const RenderPass* pass);
 
 	/*! */
-	bool validate(int32_t width, int32_t height);
+	bool validate();
 
 	/*! */
-	bool build(RenderContext* renderContext);
+	bool build(RenderContext* renderContext, int32_t width, int32_t height);
 
 	/*! */
 	void getDebugTargets(std::vector< render::DebugTarget >& outTargets) const;
@@ -98,6 +98,7 @@ private:
 		Ref< IRenderTargetSet > sharedDepthStencilTargetSet;
 		Ref< IRenderTargetSet > rts;
 		handle_t sizeReferenceTargetSetId;
+		int32_t referenceCount;
 		bool transient;
 	};
 

@@ -83,12 +83,12 @@ StageState::BuildResult StageState::build(uint32_t frame, const UpdateInfo& info
 		return BrFailed;
 
 	// Validate render graph.
-	if (!m_renderGraph->validate(width, height))
+	if (!m_renderGraph->validate())
 		return BrFailed;
 
 	// Build render context.
 	renderContext->flush();
-	m_renderGraph->build(renderContext);		
+	m_renderGraph->build(renderContext, width, height);		
 	return BrOk;
 }
 
