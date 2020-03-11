@@ -211,7 +211,6 @@ void WorldClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	auto classEntity = new AutoRuntimeClass< Entity >();
 	classEntity->addProperty("transform", &Entity_setTransform, &Entity_getTransform);
 	classEntity->addProperty("boundingBox", &Entity::getBoundingBox);
-	classEntity->addProperty("worldBoundingBox", &Entity::getWorldBoundingBox);
 	classEntity->addMethod("destroy", &Entity::destroy);
 	classEntity->addMethod("update", &Entity_update);
 	registrar->registerClass(classEntity);

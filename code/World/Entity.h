@@ -57,13 +57,6 @@ public:
 	 */
 	virtual Aabb3 getBoundingBox() const = 0;
 
-	/*! Get entity bounding box.
-	 * Return entity bounding box in world space.
-	 *
-	 * \return Entity bounding box.
-	 */
-	virtual Aabb3 getWorldBoundingBox() const;
-
 	/*! Update entity.
 	 *
 	 * \param update Update parameters.

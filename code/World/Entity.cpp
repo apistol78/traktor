@@ -23,15 +23,5 @@ Transform Entity::getTransform() const
 	return Transform::identity();
 }
 
-Aabb3 Entity::getWorldBoundingBox() const
-{
-	Aabb3 boundingBox = getBoundingBox();
-	if (boundingBox.empty())
-		return Aabb3();
-
-	Transform transform = getTransform();
-	return boundingBox.transform(transform);
-}
-
 	}
 }
