@@ -243,5 +243,25 @@ uint32_t getTextureSize(TextureFormat format, uint32_t textureWidth, uint32_t te
 	return textureSize;
 }
 
+uint32_t getTargetSetMemoryEstimate(const RenderTargetSetCreateDesc& rtscd)
+{
+	uint32_t estimate = 0;
+
+	// Sum estimates of all color attachments.
+	for (int32_t i = 0; i < rtscd.count; ++i)
+	{
+		uint32_t mipLevels = 1;
+		if (rtscd.generateMips)
+			mipLevels = log2(std::max(rtscd.width, rtscd.height)) + 1;
+		estimate += getTextureSize(rtscd.targets[i].format, rtscd.width, rtscd.height, mipLevels);
+	}
+
+	// Assume (24+8)-bit depth/stencil targets.
+	if (rtscd.createDepthStencil)
+		estimate += 4 * rtscd.width * rtscd.height;
+
+	return estimate;
+}
+
 	}
 }

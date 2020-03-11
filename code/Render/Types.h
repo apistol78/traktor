@@ -883,6 +883,19 @@ uint32_t T_DLLCLASS getTextureMipPitch(TextureFormat format, uint32_t textureWid
  */
 uint32_t T_DLLCLASS getTextureSize(TextureFormat format, uint32_t textureWidth, uint32_t textureHeight, uint32_t mipLevels);
 
+/*! Estimate memory usage of a render target set.
+ *
+ * \note
+ * This is purely for debugging purposes and might
+ * be grossly inaccurate. Alignment and other system
+ * specifics are ignored and everything is assumed
+ * to be perfectly packed.
+ *
+ * \param rtscd Render target set create description.
+ * \return Estimate of how much memory such target set use.
+ */
+uint32_t T_DLLCLASS getTargetSetMemoryEstimate(const RenderTargetSetCreateDesc& rtscd);
+
 /*! Automatically resolved handles from literal. */
 class T_DLLCLASS Handle
 {
