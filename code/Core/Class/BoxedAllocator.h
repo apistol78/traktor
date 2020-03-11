@@ -1,6 +1,6 @@
 #pragma once
 
-#include <vector>
+#include "Core/Containers/AlignedVector.h"
 #include "Core/Memory/Alloc.h"
 #include "Core/Memory/BlockAllocator.h"
 #include "Core/Misc/Align.h"
@@ -8,7 +8,7 @@
 namespace traktor
 {
 
-/*!
+/*! Specialized allocator for boxed values.
  * \ingroup Core
  */
 template < typename BoxedType, int BoxesPerBlock >
@@ -64,7 +64,7 @@ private:
 #if defined(T_BOXES_USE_MT_LOCK)
 	SpinLock m_lock;
 #endif
-	std::vector< BlockAllocator* > m_allocators;
+	AlignedVector< BlockAllocator* > m_allocators;
 };
 
 }

@@ -725,33 +725,6 @@
 											</items>
 										</item>
 										<item type="Filter">
-											<name>Image</name>
-											<items>
-												<item type="Filter">
-													<name>Steps</name>
-													<items>
-														<item type="File">
-															<fileName>Image/Steps/*.*</fileName>
-															<items/>
-														</item>
-													</items>
-												</item>
-												<item type="Filter">
-													<name>Defines</name>
-													<items>
-														<item type="File">
-															<fileName>Image/Defines/*.*</fileName>
-															<items/>
-														</item>
-													</items>
-												</item>
-												<item type="File">
-													<fileName>Image/*.*</fileName>
-													<items/>
-												</item>
-											</items>
-										</item>
-										<item type="Filter">
 											<name>Image2</name>
 											<items>
 												<item type="File">
