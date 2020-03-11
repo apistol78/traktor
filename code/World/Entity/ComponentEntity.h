@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Core/RefArray.h"
-#include "Core/Math/IntervalTransform.h"
 #include "World/Entity.h"
 
 // import/export mechanism.
@@ -18,9 +17,6 @@ namespace traktor
 	{
 
 class IEntityComponent;
-class IWorldRenderPass;
-class WorldBuildContext;
-class WorldRenderView;
 
 /*! \brief
  * \ingroup World
