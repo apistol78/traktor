@@ -15,12 +15,17 @@ class Heightfield;
 	namespace terrain
 	{
 
+/*! Flatten heights brush.
+ * \ingroup Terrain
+ */
 class FlattenBrush : public IBrush
 {
 	T_RTTI_CLASS;
 
 public:
-	FlattenBrush(const resource::Proxy< hf::Heightfield >& heightfield);
+	explicit FlattenBrush(const resource::Proxy< hf::Heightfield >& heightfield);
+
+	explicit FlattenBrush(const resource::Proxy< hf::Heightfield >& heightfield, float height);
 
 	virtual uint32_t begin(float x, float y, const State& state) override final;
 
@@ -34,6 +39,7 @@ private:
 	const IFallOff* m_fallOff;
 	float m_strength;
 	float m_height;
+	bool m_explicit;
 };
 
 	}
