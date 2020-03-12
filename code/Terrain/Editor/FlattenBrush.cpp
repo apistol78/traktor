@@ -17,6 +17,17 @@ FlattenBrush::FlattenBrush(const resource::Proxy< hf::Heightfield >& heightfield
 ,	m_fallOff(0)
 ,	m_strength(0.0f)
 ,	m_height(0.0f)
+,	m_explicit(false)
+{
+}
+
+FlattenBrush::FlattenBrush(const resource::Proxy< hf::Heightfield >& heightfield, float height)
+:	m_heightfield(heightfield)
+,	m_radius(0)
+,	m_fallOff(0)
+,	m_strength(0.0f)
+,	m_height(height)
+,	m_explicit(true)
 {
 }
 
@@ -25,7 +36,10 @@ uint32_t FlattenBrush::begin(float x, float y, const State& state)
 	m_radius = state.radius;
 	m_fallOff = state.falloff;
 	m_strength = abs(state.strength) * 0.5f;
-	m_height = m_heightfield->getGridHeightNearest(x, y);
+
+	if (!m_explicit)
+		m_height = m_heightfield->getGridHeightNearest(x, y);
+
 	return MdHeight;
 }
 
