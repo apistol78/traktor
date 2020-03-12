@@ -22,11 +22,11 @@ class ColorBrush : public IBrush
 public:
 	ColorBrush(drawing::Image* colorImage);
 
-	virtual uint32_t begin(int32_t x, int32_t y, const State& state) override final;
+	virtual uint32_t begin(float x, float y, const State& state) override final;
 
-	virtual void apply(int32_t x, int32_t y) override final;
+	virtual void apply(float x, float y) override final;
 
-	virtual void end(int32_t x, int32_t y) override final;
+	virtual void end(float x, float y) override final;
 
 private:
 	Ref< drawing::Image > m_colorImage;

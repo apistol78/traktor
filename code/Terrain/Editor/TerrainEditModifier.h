@@ -138,6 +138,14 @@ private:
 	Vector4 m_center;
 	uint32_t m_updateRegion[4];
 	bool m_applied;
+
+	bool begin(bool inverted);
+
+	void apply(const Vector4& center);
+
+	void end();
+
+	void applySpline(bool alignToGround);
 };
 
 	}

@@ -44,11 +44,11 @@ public:
 		}
 	};
 
-	virtual uint32_t begin(int32_t x, int32_t y, const State& state) = 0;
+	virtual uint32_t begin(float x, float y, const State& state) = 0;
 
-	virtual void apply(int32_t x, int32_t y) = 0;
+	virtual void apply(float x, float y) = 0;
 
-	virtual void end(int32_t x, int32_t y) = 0;
+	virtual void end(float x, float y) = 0;
 };
 
 	}
