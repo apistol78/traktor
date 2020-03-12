@@ -37,7 +37,7 @@ SplatBrush::SplatBrush(const resource::Proxy< hf::Heightfield >& heightfield, dr
 {
 }
 
-uint32_t SplatBrush::begin(int32_t x, int32_t y, const State& state)
+uint32_t SplatBrush::begin(float x, float y, const State& state)
 {
 	m_radius = state.radius;
 	m_fallOff = state.falloff;
@@ -47,7 +47,7 @@ uint32_t SplatBrush::begin(int32_t x, int32_t y, const State& state)
 	return MdSplat;
 }
 
-void SplatBrush::apply(int32_t x, int32_t y)
+void SplatBrush::apply(float x, float y)
 {
 	float T_MATH_ALIGN16 weights[4];
 	Color4f targetColor;
@@ -103,7 +103,7 @@ void SplatBrush::apply(int32_t x, int32_t y)
 	}
 }
 
-void SplatBrush::end(int32_t x, int32_t y)
+void SplatBrush::end(float x, float y)
 {
 }
 

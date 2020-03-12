@@ -20,7 +20,7 @@ FlattenBrush::FlattenBrush(const resource::Proxy< hf::Heightfield >& heightfield
 {
 }
 
-uint32_t FlattenBrush::begin(int32_t x, int32_t y, const State& state)
+uint32_t FlattenBrush::begin(float x, float y, const State& state)
 {
 	m_radius = state.radius;
 	m_fallOff = state.falloff;
@@ -29,7 +29,7 @@ uint32_t FlattenBrush::begin(int32_t x, int32_t y, const State& state)
 	return MdHeight;
 }
 
-void FlattenBrush::apply(int32_t x, int32_t y)
+void FlattenBrush::apply(float x, float y)
 {
 	for (int32_t iy = -m_radius; iy <= m_radius; ++iy)
 	{
@@ -48,7 +48,7 @@ void FlattenBrush::apply(int32_t x, int32_t y)
 	}
 }
 
-void FlattenBrush::end(int32_t x, int32_t y)
+void FlattenBrush::end(float x, float y)
 {
 }
 

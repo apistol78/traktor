@@ -19,7 +19,7 @@ CutBrush::CutBrush(const resource::Proxy< hf::Heightfield >& heightfield)
 {
 }
 
-uint32_t CutBrush::begin(int32_t x, int32_t y, const State& state)
+uint32_t CutBrush::begin(float x, float y, const State& state)
 {
 	m_radius = state.radius;
 	m_fallOff = state.falloff;
@@ -27,7 +27,7 @@ uint32_t CutBrush::begin(int32_t x, int32_t y, const State& state)
 	return MdCut;
 }
 
-void CutBrush::apply(int32_t x, int32_t y)
+void CutBrush::apply(float x, float y)
 {
 	for (int32_t iy = -m_radius; iy <= m_radius; ++iy)
 	{
@@ -45,7 +45,7 @@ void CutBrush::apply(int32_t x, int32_t y)
 	}
 }
 
-void CutBrush::end(int32_t x, int32_t y)
+void CutBrush::end(float x, float y)
 {
 }
 

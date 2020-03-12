@@ -19,7 +19,7 @@ SmoothBrush::SmoothBrush(const resource::Proxy< hf::Heightfield >& heightfield)
 {
 }
 
-uint32_t SmoothBrush::begin(int32_t x, int32_t y, const State& state)
+uint32_t SmoothBrush::begin(float x, float y, const State& state)
 {
 	m_radius = state.radius;
 	m_fallOff = state.falloff;
@@ -27,7 +27,7 @@ uint32_t SmoothBrush::begin(int32_t x, int32_t y, const State& state)
 	return MdHeight;
 }
 
-void SmoothBrush::apply(int32_t x, int32_t y)
+void SmoothBrush::apply(float x, float y)
 {
 	for (int32_t iy = -m_radius; iy <= m_radius; ++iy)
 	{
@@ -56,7 +56,7 @@ void SmoothBrush::apply(int32_t x, int32_t y)
 	}
 }
 
-void SmoothBrush::end(int32_t x, int32_t y)
+void SmoothBrush::end(float x, float y)
 {
 }
 

@@ -19,7 +19,7 @@ AttributeBrush::AttributeBrush(const resource::Proxy< hf::Heightfield >& heightf
 {
 }
 
-uint32_t AttributeBrush::begin(int32_t x, int32_t y, const State& state)
+uint32_t AttributeBrush::begin(float x, float y, const State& state)
 {
 	m_radius = state.radius;
 	m_fallOff = state.falloff;
@@ -28,7 +28,7 @@ uint32_t AttributeBrush::begin(int32_t x, int32_t y, const State& state)
 	return MdMaterial;
 }
 
-void AttributeBrush::apply(int32_t x, int32_t y)
+void AttributeBrush::apply(float x, float y)
 {
 	for (int32_t iy = -m_radius; iy <= m_radius; ++iy)
 	{
@@ -46,7 +46,7 @@ void AttributeBrush::apply(int32_t x, int32_t y)
 	}
 }
 
-void AttributeBrush::end(int32_t x, int32_t y)
+void AttributeBrush::end(float x, float y)
 {
 }
 

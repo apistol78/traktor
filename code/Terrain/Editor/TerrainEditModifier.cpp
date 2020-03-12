@@ -38,6 +38,8 @@
 #include "Terrain/Editor/TerrainEditModifier.h"
 #include "Ui/Command.h"
 
+#include "Shape/Spline/SplineComponent.h"
+
 namespace traktor
 {
 	namespace terrain
@@ -172,7 +174,11 @@ void TerrainEditModifier::selectionChanged()
 
 	// Get terrain component from selection.
 	RefArray< scene::EntityAdapter > entityAdapters;
-	if (m_context->getEntities(entityAdapters, scene::SceneEditorContext::GfDefault | scene::SceneEditorContext::GfSelectedOnly | scene::SceneEditorContext::GfNoExternalChild) != 1)
+	if (m_context->findAdaptersOfType(
+		type_of< TerrainComponent >(),
+		entityAdapters,
+		scene::SceneEditorContext::GfDefault | scene::SceneEditorContext::GfSelectedOnly | scene::SceneEditorContext::GfNoExternalChild
+	) != 1)
 		return;
 
 	m_terrainComponent = entityAdapters[0]->getComponent< TerrainComponent >();
@@ -459,7 +465,13 @@ bool TerrainEditModifier::cursorMoved(
 
 bool TerrainEditModifier::handleCommand(const ui::Command& command)
 {
-	return false;
+	if (command == L"Terrain.Editor.FlattenUnderSpline")
+	{
+		applySpline(false);
+		return true;
+	}
+	else
+		return false;	
 }
 
 bool TerrainEditModifier::begin(
@@ -470,34 +482,8 @@ bool TerrainEditModifier::begin(
 	int32_t mouseButton
 )
 {
-	if (!m_heightfield)
-		return false;
-
-	m_context->setPlaying(false);
-
-	float worldRadius = m_context->getGuideSize();
-	int32_t gridRadius = int32_t(m_heightfield->getSize() * worldRadius / m_heightfield->getWorldExtent().x());
-
-	int32_t gx, gz;
-	m_heightfield->worldToGrid(m_center.x(), m_center.z(), gx, gz);
-
-	IBrush::State state;
-	state.radius = gridRadius;
-	state.falloff = m_fallOff;
-	state.strength = m_strength * (mouseButton == 1 ? 1.0f : -1.0f);
-	state.color = m_color;
-	state.material = m_material;
-	state.attribute = m_attribute;
-
-	m_brushMode = m_brush->begin(gx, gz, state);
-
-	m_updateRegion[0] =
-	m_updateRegion[1] =
-	m_updateRegion[2] =
-	m_updateRegion[3] = 0;
-	m_applied = false;
-
-	return true;
+	bool inverted = (bool)(mouseButton != 1);
+	return begin(inverted);
 }
 
 void TerrainEditModifier::apply(
@@ -510,10 +496,6 @@ void TerrainEditModifier::apply(
 )
 {
 	if (!m_terrainComponent || m_center.w() <= FUZZY_EPSILON)
-		return;
-
-	Terrain* terrain = m_terrainComponent->getTerrain();
-	if (!terrain)
 		return;
 
 	// Find furthest intersection which allows for editing around hills etc.
@@ -537,18 +519,160 @@ void TerrainEditModifier::apply(
 	if (!found)
 		return;
 
+	apply(center);
+}
+
+void TerrainEditModifier::end(const scene::TransformChain& transformChain)
+{
+	end();
+}
+
+void TerrainEditModifier::draw(render::PrimitiveRenderer* primitiveRenderer) const
+{
+	if (!m_terrainComponent || !m_heightfield || m_center.w() <= FUZZY_EPSILON)
+		return;
+
+	float radius = m_context->getGuideSize();
+
+	primitiveRenderer->drawSolidPoint(m_center, 8, Color4ub(255, 0, 0, 255));
+	primitiveRenderer->pushDepthState(false, false, false);
+
+	float x0 = m_center.x() + cosf(0.0f) * radius;
+	float z0 = m_center.z() + sinf(0.0f) * radius;
+	float y0 = m_heightfield->getWorldHeight(x0, z0);
+
+	for (int32_t i = 1; i <= 32; ++i)
+	{
+		const float a = TWO_PI * i / 32.0f;
+
+		float x1 = m_center.x() + cosf(a) * radius;
+		float z1 = m_center.z() + sinf(a) * radius;
+		float y1 = m_heightfield->getWorldHeight(x1, z1);
+
+		primitiveRenderer->drawLine(
+			Vector4(x0, y0 + FUZZY_EPSILON, z0, 1.0f),
+			Vector4(x1, y1 + FUZZY_EPSILON, z1, 1.0f),
+			1.0f,
+			Color4ub(255, 0, 0, 180)
+		);
+
+		x0 = x1;
+		z0 = z1;
+		y0 = y1;
+	}
+
+	primitiveRenderer->popDepthState();
+}
+
+void TerrainEditModifier::setBrush(const TypeInfo& brushType)
+{
+	if (is_type_a< ColorBrush >(brushType))
+		m_brush = new ColorBrush(m_colorImage);
+	else if (is_type_a< CutBrush >(brushType))
+		m_brush = new CutBrush(m_heightfield);
+	else if (is_type_a< ElevateBrush >(brushType))
+		m_brush = new ElevateBrush(m_heightfield, m_splatImage);
+	else if (is_type_a< FlattenBrush >(brushType))
+		m_brush = new FlattenBrush(m_heightfield);
+	else if (is_type_a< SplatBrush >(brushType))
+		m_brush = new SplatBrush(m_heightfield, m_splatImage);
+	else if (is_type_a< NoiseBrush >(brushType))
+		m_brush = new NoiseBrush(m_heightfield);
+	else if (is_type_a< SmoothBrush >(brushType))
+		m_brush = new SmoothBrush(m_heightfield);
+	else if (is_type_a< AttributeBrush >(brushType))
+		m_brush = new AttributeBrush(m_heightfield);
+}
+
+void TerrainEditModifier::setFallOff(const std::wstring& fallOff)
+{
+	if (fallOff == L"Terrain.Editor.SmoothFallOff")
+		m_fallOff = new SmoothFallOff();
+	else if (fallOff == L"Terrain.Editor.SharpFallOff")
+		m_fallOff = new SharpFallOff();
+	else if (fallOff == L"Terrain.Editor.ImageFallOff")
+		m_fallOff = new ImageFallOff(m_fallOffImage);
+}
+
+void TerrainEditModifier::setStrength(float strength)
+{
+	m_strength = strength;
+}
+
+void TerrainEditModifier::setColor(const Color4f& color)
+{
+	m_color = color;
+	m_color.setAlpha(Scalar(1.0f));
+}
+
+void TerrainEditModifier::setMaterial(int32_t material)
+{
+	m_material = material;
+}
+
+void TerrainEditModifier::setAttribute(int32_t attribute)
+{
+	m_attribute = attribute;
+}
+
+void TerrainEditModifier::setVisualizeMode(TerrainComponent::VisualizeMode visualizeMode)
+{
+	m_visualizeMode = visualizeMode;
+	if (m_terrainComponent)
+		m_terrainComponent->setVisualizeMode(m_visualizeMode);
+}
+
+void TerrainEditModifier::setFallOffImage(drawing::Image* fallOffImage)
+{
+	m_fallOffImage = fallOffImage;
+}
+
+bool TerrainEditModifier::begin(bool inverted)
+{
+	if (!m_heightfield)
+		return false;
+
+	m_context->setPlaying(false);
+
+	float worldRadius = m_context->getGuideSize();
+	int32_t gridRadius = int32_t(m_heightfield->getSize() * worldRadius / m_heightfield->getWorldExtent().x());
+
+	float gx, gz;
+	m_heightfield->worldToGrid(m_center.x(), m_center.z(), gx, gz);
+
+	IBrush::State state;
+	state.radius = gridRadius;
+	state.falloff = m_fallOff;
+	state.strength = m_strength * (inverted ? -1.0f : 1.0f);
+	state.color = m_color;
+	state.material = m_material;
+	state.attribute = m_attribute;
+
+	m_brushMode = m_brush->begin(gx, gz, state);
+
+	m_updateRegion[0] =
+	m_updateRegion[1] =
+	m_updateRegion[2] =
+	m_updateRegion[3] = 0;
+	m_applied = false;
+	return true;
+}
+
+void TerrainEditModifier::apply(const Vector4& center)
+{
+	Terrain* terrain = m_terrainComponent->getTerrain();
+	if (!terrain)
+		return;
+
 	float gx0, gz0;
-	float gx1, gz1;
+	float gx1, gz1;	
 
 	m_heightfield->worldToGrid(m_center.x(), m_center.z(), gx0, gz0);
 	m_heightfield->worldToGrid(center.x(), center.z(), gx1, gz1);
 
 	// Apply brush along entire line.
 	line_dda(gx0, gz0, gx1, gz1, [&](int32_t x, int32_t y) {
-		Vector4 normal = m_heightfield->normalAt(x, y);
-		Vector4 direction = m_heightfield->gridToWorld(x, y) - worldRayOrigin;
-		if (dot3(normal, direction) < 0.0f)
-			m_brush->apply(x, y);
+		m_brush->apply(x, y);
 	});
 
 	m_center = center;
@@ -719,10 +843,10 @@ void TerrainEditModifier::apply(
 		m_terrainComponent->m_terrain->m_materialMap = resource::Proxy< render::ISimpleTexture >(m_attributeMap);
 	}
 
-	m_applied = true;
+	m_applied = true;	
 }
 
-void TerrainEditModifier::end(const scene::TransformChain& transformChain)
+void TerrainEditModifier::end()
 {
 	db::Database* sourceDatabase = m_context->getEditor()->getSourceDatabase();
 	T_ASSERT(sourceDatabase);
@@ -731,7 +855,7 @@ void TerrainEditModifier::end(const scene::TransformChain& transformChain)
 	// how expensive this is as it's user configurable.
 	m_terrainComponent->updateLayers();
 
-	int32_t gx, gz;
+	float gx, gz;
 	m_heightfield->worldToGrid(m_center.x(), m_center.z(), gx, gz);
 	m_brush->end(gx, gz);
 
@@ -877,107 +1001,48 @@ void TerrainEditModifier::end(const scene::TransformChain& transformChain)
 		}
 		else
 			log::error << L"Unable to write heights" << Endl;
-	}
+	}	
 }
 
-void TerrainEditModifier::draw(render::PrimitiveRenderer* primitiveRenderer) const
+void TerrainEditModifier::applySpline(bool alignToGround)
 {
-	if (!m_terrainComponent || !m_heightfield || m_center.w() <= FUZZY_EPSILON)
+	if (!m_brush)
 		return;
 
-	float radius = m_context->getGuideSize();
+	RefArray< scene::EntityAdapter > entityAdapters;
+	m_context->findAdaptersOfType(
+		type_of< shape::SplineComponent >(),
+		entityAdapters,
+		scene::SceneEditorContext::GfDefault | scene::SceneEditorContext::GfSelectedOnly | scene::SceneEditorContext::GfNoExternalChild
+	);
 
-	primitiveRenderer->drawSolidPoint(m_center, 8, Color4ub(255, 0, 0, 255));
-	primitiveRenderer->pushDepthState(false, false, false);
+	if (!begin(false))
+		return;
 
-	float x0 = m_center.x() + cosf(0.0f) * radius;
-	float z0 = m_center.z() + sinf(0.0f) * radius;
-	float y0 = m_heightfield->getWorldHeight(x0, z0);
-
-	for (int32_t i = 1; i <= 32; ++i)
+	float gx, gz;
+	for (auto entityAdapter : entityAdapters)
 	{
-		const float a = TWO_PI * i / 32.0f;
+		auto spline = entityAdapter->getComponent< shape::SplineComponent >();
 
-		float x1 = m_center.x() + cosf(a) * radius;
-		float z1 = m_center.z() + sinf(a) * radius;
-		float y1 = m_heightfield->getWorldHeight(x1, z1);
+		const auto& path = spline->getPath();
 
-		primitiveRenderer->drawLine(
-			Vector4(x0, y0 + FUZZY_EPSILON, z0, 1.0f),
-			Vector4(x1, y1 + FUZZY_EPSILON, z1, 1.0f),
-			1.0f,
-			Color4ub(255, 0, 0, 180)
-		);
+		float st = path.getStartTime();
+		float en = path.getEndTime();
+		float duration = en - st;
 
-		x0 = x1;
-		z0 = z1;
-		y0 = y1;
+		int32_t steps = (int32_t)(duration * 10.0f);
+		if (steps < 2)
+			continue;
+
+		for (int32_t i = 0; i < steps; ++i)
+		{
+			float t = st + (en - st) * ((float)i / (steps - 1));
+			auto v = path.evaluate(t);
+			apply(v.position);
+		}
+
+		end();
 	}
-
-	primitiveRenderer->popDepthState();
-}
-
-void TerrainEditModifier::setBrush(const TypeInfo& brushType)
-{
-	if (is_type_a< ColorBrush >(brushType))
-		m_brush = new ColorBrush(m_colorImage);
-	else if (is_type_a< CutBrush >(brushType))
-		m_brush = new CutBrush(m_heightfield);
-	else if (is_type_a< ElevateBrush >(brushType))
-		m_brush = new ElevateBrush(m_heightfield, m_splatImage);
-	else if (is_type_a< FlattenBrush >(brushType))
-		m_brush = new FlattenBrush(m_heightfield);
-	else if (is_type_a< SplatBrush >(brushType))
-		m_brush = new SplatBrush(m_heightfield, m_splatImage);
-	else if (is_type_a< NoiseBrush >(brushType))
-		m_brush = new NoiseBrush(m_heightfield);
-	else if (is_type_a< SmoothBrush >(brushType))
-		m_brush = new SmoothBrush(m_heightfield);
-	else if (is_type_a< AttributeBrush >(brushType))
-		m_brush = new AttributeBrush(m_heightfield);
-}
-
-void TerrainEditModifier::setFallOff(const std::wstring& fallOff)
-{
-	if (fallOff == L"Terrain.Editor.SmoothFallOff")
-		m_fallOff = new SmoothFallOff();
-	else if (fallOff == L"Terrain.Editor.SharpFallOff")
-		m_fallOff = new SharpFallOff();
-	else if (fallOff == L"Terrain.Editor.ImageFallOff")
-		m_fallOff = new ImageFallOff(m_fallOffImage);
-}
-
-void TerrainEditModifier::setStrength(float strength)
-{
-	m_strength = strength;
-}
-
-void TerrainEditModifier::setColor(const Color4f& color)
-{
-	m_color = color;
-	m_color.setAlpha(Scalar(1.0f));
-}
-
-void TerrainEditModifier::setMaterial(int32_t material)
-{
-	m_material = material;
-}
-
-void TerrainEditModifier::setAttribute(int32_t attribute)
-{
-	m_attribute = attribute;
-}
-
-void TerrainEditModifier::setVisualizeMode(TerrainComponent::VisualizeMode visualizeMode)
-{
-	m_visualizeMode = visualizeMode;
-	if (m_terrainComponent)
-		m_terrainComponent->setVisualizeMode(m_visualizeMode);
-}
-
-void TerrainEditModifier::setFallOffImage(drawing::Image* fallOffImage)
-{
-	m_fallOffImage = fallOffImage;
 }
 
 	}

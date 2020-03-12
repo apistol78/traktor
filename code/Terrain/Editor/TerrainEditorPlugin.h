@@ -69,6 +69,8 @@ private:
 
 	void updateModifierState();
 
+	void flattenUnderSpline();
+
 	void eventSliderStrengthChange(ui::ContentChangeEvent* event);
 
 	void eventColorClick(ui::MouseButtonUpEvent* event);
