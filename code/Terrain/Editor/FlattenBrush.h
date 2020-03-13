@@ -25,13 +25,13 @@ class FlattenBrush : public IBrush
 public:
 	explicit FlattenBrush(const resource::Proxy< hf::Heightfield >& heightfield);
 
-	explicit FlattenBrush(const resource::Proxy< hf::Heightfield >& heightfield, float height);
-
 	virtual uint32_t begin(float x, float y, const State& state) override final;
 
 	virtual void apply(float x, float y) override final;
 
 	virtual void end(float x, float y) override final;
+
+	void setHeight(float height);
 
 private:
 	resource::Proxy< hf::Heightfield > m_heightfield;

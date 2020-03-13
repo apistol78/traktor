@@ -59,6 +59,10 @@ class TerrainEditModifier : public scene::IModifier
 public:
 	TerrainEditModifier(scene::SceneEditorContext* context);
 
+	virtual bool activate() override final;
+
+	virtual void deactivate() override final;
+
 	virtual void selectionChanged() override final;
 
 	virtual bool cursorMoved(
@@ -146,6 +150,8 @@ private:
 	void end();
 
 	void applySpline(bool alignToGround);
+
+	void flattenUnderSpline();
 };
 
 	}

@@ -158,28 +158,27 @@ TerrainEditModifier::TerrainEditModifier(scene::SceneEditorContext* context)
 {
 }
 
-void TerrainEditModifier::selectionChanged()
+bool TerrainEditModifier::activate()
 {
 	db::Database* sourceDatabase = m_context->getEditor()->getSourceDatabase();
 	T_ASSERT(sourceDatabase);
 
 	render::SimpleTextureCreateDesc desc;
 
-	m_terrainInstance = nullptr;
-	m_heightfieldInstance = nullptr;
-	m_heightfieldAsset = nullptr;
-	m_heightfield.clear();
-	m_splatImage = nullptr;
-	m_colorImage = nullptr;
+	// Call deactivate again to make sure everything is fresh.
+	deactivate();
 
-	// Get terrain component from selection.
+	// Get terrain component from scene.
 	RefArray< scene::EntityAdapter > entityAdapters;
 	if (m_context->findAdaptersOfType(
 		type_of< TerrainComponent >(),
 		entityAdapters,
-		scene::SceneEditorContext::GfDefault | scene::SceneEditorContext::GfSelectedOnly | scene::SceneEditorContext::GfNoExternalChild
+		scene::SceneEditorContext::GfDefault | scene::SceneEditorContext::GfNoExternalChild
 	) != 1)
-		return;
+	{
+		// Must exist only one terrain in scene.
+		return false;
+	}
 
 	m_terrainComponent = entityAdapters[0]->getComponent< TerrainComponent >();
 	m_terrainComponentData = entityAdapters[0]->getComponentData< TerrainComponentData >();
@@ -189,7 +188,7 @@ void TerrainEditModifier::selectionChanged()
 	{
 		m_terrainComponent = nullptr;
 		m_terrainComponentData = nullptr;
-		return;
+		return false;
 	}
 
 	// Get runtime heightfield.
@@ -198,7 +197,7 @@ void TerrainEditModifier::selectionChanged()
 	{
 		m_terrainComponent = nullptr;
 		m_terrainComponentData = nullptr;
-		return;
+		return false;
 	}
 
 	int32_t size = m_heightfield->getSize();
@@ -438,6 +437,31 @@ void TerrainEditModifier::selectionChanged()
 
 	// Set visualize mode.
 	m_terrainComponent->setVisualizeMode(m_visualizeMode);
+	return true;
+}
+
+void TerrainEditModifier::deactivate()
+{
+	m_terrainComponent = nullptr;
+	m_terrainComponentData = nullptr;
+	m_terrainInstance = nullptr;
+	m_heightfieldInstance = nullptr;
+	m_heightfieldAsset = nullptr;
+	m_heightfield.clear();
+	m_splatImage = nullptr;
+	m_colorImage = nullptr;
+	m_colorImageLowPrecision = nullptr;
+	m_colorMap = nullptr;
+	m_normalMap = nullptr;
+	m_cutMap = nullptr;
+	m_attributeMap = nullptr;
+	m_brush = nullptr;
+	m_fallOff = nullptr;
+	m_fallOffImage = nullptr;
+}
+
+void TerrainEditModifier::selectionChanged()
+{
 }
 
 bool TerrainEditModifier::cursorMoved(
@@ -467,7 +491,7 @@ bool TerrainEditModifier::handleCommand(const ui::Command& command)
 {
 	if (command == L"Terrain.Editor.FlattenUnderSpline")
 	{
-		applySpline(false);
+		flattenUnderSpline();
 		return true;
 	}
 	else
@@ -663,6 +687,9 @@ void TerrainEditModifier::apply(const Vector4& center)
 	Terrain* terrain = m_terrainComponent->getTerrain();
 	if (!terrain)
 		return;
+
+	if (!m_applied)
+		m_center = center;
 
 	float gx0, gz0;
 	float gx1, gz1;	
@@ -1016,33 +1043,77 @@ void TerrainEditModifier::applySpline(bool alignToGround)
 		scene::SceneEditorContext::GfDefault | scene::SceneEditorContext::GfSelectedOnly | scene::SceneEditorContext::GfNoExternalChild
 	);
 
-	if (!begin(false))
-		return;
-
-	float gx, gz;
 	for (auto entityAdapter : entityAdapters)
 	{
 		auto spline = entityAdapter->getComponent< shape::SplineComponent >();
 
 		const auto& path = spline->getPath();
+		const auto& keys = path.getKeys();
+		if (keys.empty())
+			return;
 
-		float st = path.getStartTime();
-		float en = path.getEndTime();
-		float duration = en - st;
-
-		int32_t steps = (int32_t)(duration * 10.0f);
-		if (steps < 2)
+		if (!begin(false))
 			continue;
 
-		for (int32_t i = 0; i < steps; ++i)
+		float st = keys.front().T;
+		float et = keys.back().T;
+
+		uint32_t nsteps = keys.size() * 20;
+		for (uint32_t i = 0; i <= nsteps; ++i)
 		{
-			float t = st + (en - st) * ((float)i / (steps - 1));
+			float t = st + (float)(i * (et - st)) / nsteps;
 			auto v = path.evaluate(t);
-			apply(v.position);
+			Vector4 center = v.position.xyz1();
+			apply(center);
 		}
 
 		end();
 	}
+}
+
+void TerrainEditModifier::flattenUnderSpline()
+{
+	Ref< IBrush > currentBrush = m_brush;
+
+	RefArray< scene::EntityAdapter > entityAdapters;
+	m_context->findAdaptersOfType(
+		type_of< shape::SplineComponent >(),
+		entityAdapters,
+		scene::SceneEditorContext::GfDefault | scene::SceneEditorContext::GfSelectedOnly | scene::SceneEditorContext::GfNoExternalChild
+	);
+
+	FlattenBrush flattenBrush(m_heightfield);
+	m_brush = &flattenBrush;
+
+	for (auto entityAdapter : entityAdapters)
+	{
+		auto spline = entityAdapter->getComponent< shape::SplineComponent >();
+
+		const auto& path = spline->getPath();
+		const auto& keys = path.getKeys();
+		if (keys.empty())
+			return;
+
+		if (!begin(false))
+			continue;
+
+		float st = keys.front().T;
+		float et = keys.back().T;
+
+		uint32_t nsteps = keys.size() * 20;
+		for (uint32_t i = 0; i <= nsteps; ++i)
+		{
+			float t = st + (float)(i * (et - st)) / nsteps;
+			auto v = path.evaluate(t);
+			Vector4 center = v.position.xyz1();
+			flattenBrush.setHeight(center.y());
+			apply(center);
+		}
+
+		end();
+	}
+
+	m_brush = currentBrush;
 }
 
 	}

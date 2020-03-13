@@ -35,6 +35,15 @@ RotateModifier::RotateModifier(SceneEditorContext* context)
 {
 }
 
+bool RotateModifier::activate()
+{
+	return true;
+}
+
+void RotateModifier::deactivate()
+{
+}
+
 void RotateModifier::selectionChanged()
 {
 	m_entityAdapters.clear();

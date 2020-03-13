@@ -104,9 +104,16 @@ void SceneEditorContext::destroy()
 	m_entityEditorFactories.clear();
 	m_componentEditorFactories.clear();
 	m_controllerEditor = nullptr;
-	m_modifier = nullptr;
+
+	if (m_modifier != nullptr)
+	{
+		m_modifier->deactivate();
+		m_modifier = nullptr;
+	}
+
 	for (int32_t i = 0; i < sizeof_array(m_cameras); ++i)
 		m_cameras[i] = nullptr;
+
 	m_sceneAsset = nullptr;
 	m_scene = nullptr;
 	m_layerEntityAdapters.clear();
@@ -144,11 +151,18 @@ void SceneEditorContext::setControllerEditor(ISceneControllerEditor* controllerE
 
 void SceneEditorContext::setModifier(IModifier* modifier)
 {
+	if (m_modifier != nullptr)
+		m_modifier->deactivate();
+
 	if ((m_modifier = modifier) != nullptr)
 	{
-		m_modifier->selectionChanged();
-		raiseModifierChanged();
+		if (m_modifier->activate())
+			m_modifier->selectionChanged();
+		else
+			m_modifier = nullptr;
 	}
+
+	raiseModifierChanged();
 }
 
 IModifier* SceneEditorContext::getModifier() const

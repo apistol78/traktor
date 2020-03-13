@@ -23,6 +23,10 @@ public:
 	/*! \name Notifications */
 	//\{
 
+	virtual bool activate() override final;
+
+	virtual void deactivate() override final;
+
 	virtual void selectionChanged() override final;
 
 	virtual bool cursorMoved(

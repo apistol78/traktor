@@ -23,7 +23,8 @@ Ref< ControlPointComponent > ControlPointComponentData::createComponent() const
 
 void ControlPointComponentData::serialize(ISerializer& s)
 {
-	s >> Member< float >(L"scale", m_scale, AttributeUnit(AuPercent));
+	if (s.getVersion< ControlPointComponentData >() >= 1)
+		s >> Member< float >(L"scale", m_scale, AttributeUnit(AuPercent));
 }
 
 	}
