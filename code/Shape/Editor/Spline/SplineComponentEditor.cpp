@@ -25,6 +25,8 @@ void SplineComponentEditor::drawGuide(render::PrimitiveRenderer* primitiveRender
 
 	const auto& path = splineComponent->getPath();
 	const auto& keys = path.getKeys();
+	if (keys.empty())
+		return;
 
 	float st = keys.front().T;
 	float et = keys.back().T;

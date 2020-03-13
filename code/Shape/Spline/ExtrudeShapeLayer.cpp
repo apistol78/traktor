@@ -27,7 +27,7 @@ struct ExtrudeVertex
 {
 	float position[3];
 	float normal[3];
-	float where;
+	float uvw[3];
 };
 #pragma pack()
 
@@ -112,16 +112,16 @@ void ExtrudeShapeLayer::pathChanged(const TransformPath& path)
 		return;
 
 	// Extrude shape.
-	const float c_scale = 0.1f;
 	AlignedVector< Vector2 > shape;
-	for (int32_t i = 0; i < 16; ++i)
-	{
-		float a = ((float)i / 16) * TWO_PI;
-		shape.push_back(Vector2(
-			cos(a) * c_scale,
-			sin(a) * c_scale
-		));
-	}
+	shape.push_back(Vector2( 4.0f, 0.0f));
+	shape.push_back(Vector2( 3.0f, 0.5f));
+	shape.push_back(Vector2(-3.0f, 0.5f));
+	shape.push_back(Vector2(-4.0f, 0.0f));
+
+	const bool closed = false;
+
+	const float minX = -4.0f;
+	const float maxX = 4.0f;
 
 	uint32_t nedges = (uint32_t)shape.size();
 	uint32_t nvertices = nsteps * nedges;
@@ -131,7 +131,7 @@ void ExtrudeShapeLayer::pathChanged(const TransformPath& path)
 	AlignedVector< render::VertexElement > vertexElements;
 	vertexElements.push_back(render::VertexElement(render::DuPosition, render::DtFloat3, offsetof(ExtrudeVertex, position)));
 	vertexElements.push_back(render::VertexElement(render::DuNormal, render::DtFloat3, offsetof(ExtrudeVertex, normal)));
-	vertexElements.push_back(render::VertexElement(render::DuCustom, render::DtFloat1, offsetof(ExtrudeVertex, where)));
+	vertexElements.push_back(render::VertexElement(render::DuCustom, render::DtFloat3, offsetof(ExtrudeVertex, uvw), 0));
 
 	m_vertexBuffer = m_renderSystem->createVertexBuffer(
 		vertexElements,
@@ -142,6 +142,10 @@ void ExtrudeShapeLayer::pathChanged(const TransformPath& path)
 	ExtrudeVertex* vertex = (ExtrudeVertex*)m_vertexBuffer->lock();
 
 	uint32_t baseStep = 0;
+
+	Vector4 lastPosition = path.evaluate(0.0f).position;
+	float travel = 0.0f;
+
 	for (uint32_t segment = 0; segment < nsegments; ++segment)
 	{
 		for (uint32_t step = 0; step < stepsPerSegment[segment]; ++step)
@@ -174,10 +178,15 @@ void ExtrudeShapeLayer::pathChanged(const TransformPath& path)
 				vertex->normal[1] = en.y();
 				vertex->normal[2] = en.z();
 
-				vertex->where = at;
+				vertex->uvw[0] = (p.x - minX) / (maxX - minX);
+				vertex->uvw[1] = travel;
+				vertex->uvw[2] = at;
 
 				vertex++;
 			}
+
+			travel += (T.translation() - lastPosition).xyz0().length();
+			lastPosition = T.translation();
 		}
 		baseStep += stepsPerSegment[segment];
 	}

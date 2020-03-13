@@ -52,6 +52,10 @@ Ref< world::IEntityComponent > EntityFactory::createEntityComponent(const world:
 {
 	if (auto controlPointData = dynamic_type_cast< const ControlPointComponentData* >(&entityComponentData))
 		return controlPointData->createComponent();
+	else if (auto layerData = dynamic_type_cast< const LayerComponentData* >(&entityComponentData))
+		return layerData->createComponent(builder, m_resourceManager, m_renderSystem);
+	else if (auto splineData = dynamic_type_cast< const SplineComponentData* >(&entityComponentData))
+		return splineData->createComponent();
 	else
 		return nullptr;
 }
