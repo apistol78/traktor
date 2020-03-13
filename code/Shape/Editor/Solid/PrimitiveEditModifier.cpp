@@ -26,6 +26,15 @@ PrimitiveEditModifier::PrimitiveEditModifier(scene::SceneEditorContext* context)
 {
 }
 
+bool PrimitiveEditModifier::activate()
+{
+	return true;
+}
+
+void PrimitiveEditModifier::deactivate()
+{
+}
+
 void PrimitiveEditModifier::selectionChanged()
 {
     m_entityAdapters.clear();
@@ -172,9 +181,9 @@ void PrimitiveEditModifier::draw(render::PrimitiveRenderer* primitiveRenderer) c
             for (const auto& triangle : triangles)
             {
                 primitiveRenderer->drawSolidTriangle(
-                    w[triangle.indices[0]],
-                    w[triangle.indices[1]],
-                    w[triangle.indices[2]],
+                    w[(uint32_t)triangle.indices[0]],
+                    w[(uint32_t)triangle.indices[1]],
+                    w[(uint32_t)triangle.indices[2]],
                     Color4ub(80, 120, 255, 120)
                 );
             }

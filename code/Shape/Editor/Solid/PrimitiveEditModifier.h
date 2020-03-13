@@ -26,6 +26,10 @@ class PrimitiveEditModifier : public scene::IModifier
 public:
 	PrimitiveEditModifier(scene::SceneEditorContext* context);
 
+	virtual bool activate() override final;
+
+	virtual void deactivate() override final;
+
 	virtual void selectionChanged() override final;
 
 	virtual bool cursorMoved(

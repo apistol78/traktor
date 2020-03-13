@@ -32,6 +32,15 @@ ScaleModifier::ScaleModifier(SceneEditorContext* context)
 {
 }
 
+bool ScaleModifier::activate()
+{
+	return true;
+}
+
+void ScaleModifier::deactivate()
+{
+}
+
 void ScaleModifier::selectionChanged()
 {
 	m_entityAdapters.clear();

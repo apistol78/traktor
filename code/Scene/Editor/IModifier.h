@@ -42,6 +42,10 @@ public:
 	/*! \name Notifications */
 	//\{
 
+	virtual bool activate() = 0;
+
+	virtual void deactivate() = 0;
+
 	virtual void selectionChanged() = 0;
 
 	virtual bool cursorMoved(

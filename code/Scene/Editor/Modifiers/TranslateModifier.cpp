@@ -32,6 +32,15 @@ TranslateModifier::TranslateModifier(SceneEditorContext* context)
 {
 }
 
+bool TranslateModifier::activate()
+{
+	return true;
+}
+
+void TranslateModifier::deactivate()
+{
+}
+
 void TranslateModifier::selectionChanged()
 {
 	m_entityAdapters.clear();

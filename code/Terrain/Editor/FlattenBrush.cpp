@@ -21,16 +21,6 @@ FlattenBrush::FlattenBrush(const resource::Proxy< hf::Heightfield >& heightfield
 {
 }
 
-FlattenBrush::FlattenBrush(const resource::Proxy< hf::Heightfield >& heightfield, float height)
-:	m_heightfield(heightfield)
-,	m_radius(0)
-,	m_fallOff(0)
-,	m_strength(0.0f)
-,	m_height(height)
-,	m_explicit(true)
-{
-}
-
 uint32_t FlattenBrush::begin(float x, float y, const State& state)
 {
 	m_radius = state.radius;
@@ -64,6 +54,12 @@ void FlattenBrush::apply(float x, float y)
 
 void FlattenBrush::end(float x, float y)
 {
+}
+
+void FlattenBrush::setHeight(float height)
+{
+	m_explicit = true;
+	m_height = m_heightfield->worldToUnit(height);
 }
 
 	}
