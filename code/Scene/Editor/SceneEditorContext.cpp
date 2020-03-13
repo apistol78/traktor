@@ -314,51 +314,49 @@ void SceneEditorContext::setSceneAsset(SceneAsset* sceneAsset)
 const IEntityEditorFactory* SceneEditorContext::findEntityEditorFactory(const TypeInfo& entityDataType) const
 {
 	uint32_t minClassDifference = std::numeric_limits< uint32_t >::max();
-	const IEntityEditorFactory* entityEditorFactory = 0;
+	const IEntityEditorFactory* foundEntityEditorFactory = nullptr;
 
-	for (RefArray< const IEntityEditorFactory >::const_iterator i = m_entityEditorFactories.begin(); i != m_entityEditorFactories.end(); ++i)
+	for (auto entityEditorFactory : m_entityEditorFactories)
 	{
-		TypeInfoSet entityDataTypes = (*i)->getEntityDataTypes();
-		for (TypeInfoSet::const_iterator j = entityDataTypes.begin(); j != entityDataTypes.end(); ++j)
+		for (const auto& entityEditorDataType : entityEditorFactory->getEntityDataTypes())
 		{
-			if (is_type_of(**j, entityDataType))
+			if (is_type_of(*entityEditorDataType, entityDataType))
 			{
-				uint32_t classDifference = type_difference(**j, entityDataType);
+				uint32_t classDifference = type_difference(*entityEditorDataType, entityDataType);
 				if (classDifference < minClassDifference)
 				{
-					entityEditorFactory = *i;
+					foundEntityEditorFactory = entityEditorFactory;
 					minClassDifference = classDifference;
 				}
 			}
 		}
 	}
 
-	return entityEditorFactory;
+	return foundEntityEditorFactory;
 }
 
 const IComponentEditorFactory* SceneEditorContext::findComponentEditorFactory(const TypeInfo& componentDataType) const
 {
 	uint32_t minClassDifference = std::numeric_limits< uint32_t >::max();
-	const IComponentEditorFactory* componentEditorFactory = 0;
+	const IComponentEditorFactory* foundComponentEditorFactory = nullptr;
 
-	for (RefArray< const IComponentEditorFactory >::const_iterator i = m_componentEditorFactories.begin(); i != m_componentEditorFactories.end(); ++i)
+	for (auto componentEditorFactory : m_componentEditorFactories)
 	{
-		TypeInfoSet componentDataTypes = (*i)->getComponentDataTypes();
-		for (TypeInfoSet::const_iterator j = componentDataTypes.begin(); j != componentDataTypes.end(); ++j)
+		for (const auto& componentEditorDataType : componentEditorFactory->getComponentDataTypes())
 		{
-			if (is_type_of(**j, componentDataType))
+			if (is_type_of(*componentEditorDataType, componentDataType))
 			{
-				uint32_t classDifference = type_difference(**j, componentDataType);
+				uint32_t classDifference = type_difference(*componentEditorDataType, componentDataType);
 				if (classDifference < minClassDifference)
 				{
-					componentEditorFactory = *i;
+					foundComponentEditorFactory = componentEditorFactory;
 					minClassDifference = classDifference;
 				}
 			}
 		}
 	}
 
-	return componentEditorFactory;
+	return foundComponentEditorFactory;
 }
 
 void SceneEditorContext::buildEntities()
@@ -627,7 +625,7 @@ uint32_t SceneEditorContext::findAdaptersOfType(const TypeInfo& entityType, RefA
 EntityAdapter* SceneEditorContext::findAdapterFromEntity(const world::Entity* entity) const
 {
 	SmallMap< const world::Entity*, EntityAdapter* >::const_iterator i = m_entityAdapterMap.find(entity);
-	return i != m_entityAdapterMap.end() ? i->second : 0;
+	return i != m_entityAdapterMap.end() ? i->second : nullptr;
 }
 
 EntityAdapter* SceneEditorContext::queryRay(const Vector4& worldRayOrigin, const Vector4& worldRayDirection, bool onlyPickable) const
@@ -635,21 +633,21 @@ EntityAdapter* SceneEditorContext::queryRay(const Vector4& worldRayOrigin, const
 	RefArray< EntityAdapter > entityAdapters;
 	getEntities(entityAdapters);
 
-	EntityAdapter* minEntityAdapter = 0;
+	EntityAdapter* minEntityAdapter = nullptr;
 	Scalar minDistance(1e8f);
 
-	for (RefArray< EntityAdapter >::iterator i = entityAdapters.begin(); i != entityAdapters.end(); ++i)
+	for (auto entityAdapter : entityAdapters)
 	{
 		// Must be public, unlocked, visible and no child of external.
 		if (
-			(*i)->isPrivate() ||
-			(*i)->isLocked() ||
-			!(*i)->isVisible() ||
-			(*i)->isChildOfExternal()
+			entityAdapter->isPrivate() ||
+			entityAdapter->isLocked() ||
+			!entityAdapter->isVisible() ||
+			entityAdapter->isChildOfExternal()
 		)
 			continue;
 
-		IEntityEditor* entityEditor = (*i)->getEntityEditor();
+		IEntityEditor* entityEditor = entityAdapter->getEntityEditor();
 		if (!entityEditor)
 			continue;
 
@@ -663,7 +661,7 @@ EntityAdapter* SceneEditorContext::queryRay(const Vector4& worldRayOrigin, const
 		{
 			if (distance < minDistance)
 			{
-				minEntityAdapter = *i;
+				minEntityAdapter = entityAdapter;
 				minDistance = distance;
 			}
 		}
@@ -677,18 +675,18 @@ uint32_t SceneEditorContext::queryFrustum(const Frustum& worldFrustum, RefArray<
 	RefArray< EntityAdapter > entityAdapters;
 	getEntities(entityAdapters);
 
-	for (RefArray< EntityAdapter >::iterator i = entityAdapters.begin(); i != entityAdapters.end(); ++i)
+	for (auto entityAdapter : entityAdapters)
 	{
 		// Must be public, unlocked, visible and no child of external.
 		if (
-			(*i)->isPrivate() ||
-			(*i)->isLocked() ||
-			!(*i)->isVisible() ||
-			(*i)->isChildOfExternal()
+			entityAdapter->isPrivate() ||
+			entityAdapter->isLocked() ||
+			!entityAdapter->isVisible() ||
+			entityAdapter->isChildOfExternal()
 		)
 			continue;
 
-		IEntityEditor* entityEditor = (*i)->getEntityEditor();
+		IEntityEditor* entityEditor = entityAdapter->getEntityEditor();
 		if (!entityEditor)
 			continue;
 
@@ -698,7 +696,7 @@ uint32_t SceneEditorContext::queryFrustum(const Frustum& worldFrustum, RefArray<
 
 		// Query if entity inside frustum.
 		if (entityEditor->queryFrustum(worldFrustum))
-			outEntityAdapters.push_back(*i);
+			outEntityAdapters.push_back(entityAdapter);
 	}
 
 	return (uint32_t)outEntityAdapters.size();

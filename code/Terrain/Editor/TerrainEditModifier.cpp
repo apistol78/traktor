@@ -489,7 +489,12 @@ bool TerrainEditModifier::cursorMoved(
 
 bool TerrainEditModifier::handleCommand(const ui::Command& command)
 {
-	if (command == L"Terrain.Editor.FlattenUnderSpline")
+	if (command == L"Terrain.Editor.ApplySpline")
+	{
+		applySpline(false);
+		return true;
+	}
+	else if (command == L"Terrain.Editor.FlattenUnderSpline")
 	{
 		flattenUnderSpline();
 		return true;

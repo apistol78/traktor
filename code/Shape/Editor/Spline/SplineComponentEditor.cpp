@@ -39,7 +39,7 @@ void SplineComponentEditor::drawGuide(render::PrimitiveRenderer* primitiveRender
 		primitiveRenderer->drawLine(
 			path.evaluate(t1).position,
 			path.evaluate(t2).position,
-			Color4ub(170, 170, 255, 255)
+			m_entityAdapter->isSelected() ? Color4ub(100, 100, 255, 220) : Color4ub(255, 255, 255, 80)
 		);
 	}
 
