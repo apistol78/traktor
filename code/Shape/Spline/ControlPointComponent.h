@@ -23,7 +23,7 @@ class T_DLLCLASS ControlPointComponent : public world::IEntityComponent
 	T_RTTI_CLASS;
 
 public:
-	explicit ControlPointComponent();
+	explicit ControlPointComponent(float scale);
 
 	virtual void destroy() override final;
 
@@ -39,9 +39,12 @@ public:
 
 	const Transform& getTransform() const { return m_transform; }
 
+	float getScale() const { return m_scale; }
+
 private:
 	bool m_dirty;
 	Transform m_transform;
+	float m_scale;
 };
 
 	}

@@ -118,6 +118,12 @@ void ExtrudeShapeLayer::pathChanged(const TransformPath& path)
 	shape.push_back(Vector2(-3.0f, 0.5f));
 	shape.push_back(Vector2(-4.0f, 0.0f));
 
+	AlignedVector< Vector2 > normals;
+	normals.push_back(Vector2(0.0f, 1.0f));
+	normals.push_back(Vector2(0.0f, 1.0f));
+	normals.push_back(Vector2(0.0f, 1.0f));
+	normals.push_back(Vector2(0.0f, 1.0f));
+
 	const bool closed = false;
 
 	const float minX = -4.0f;
@@ -152,7 +158,8 @@ void ExtrudeShapeLayer::pathChanged(const TransformPath& path)
 		{
 			const float at = (float)(baseStep + step) / (nsteps - 1);
 
-			Matrix44 T = path.evaluate(at).transform().toMatrix44();
+			auto v = path.evaluate(at);
+			Matrix44 T = v.transform().toMatrix44();
 
 			if (m_automaticOrientation)
 			{
@@ -164,8 +171,8 @@ void ExtrudeShapeLayer::pathChanged(const TransformPath& path)
 
 			for (uint32_t i = 0; i < nedges; ++i)
 			{
-				Vector2 p = shape[i];
-				Vector2 n = shape[i].normalized();
+				Vector2 p = shape[i] * v.values[0];
+				Vector2 n = normals[i];
 
 				Vector4 ep = T * Vector4(p.x, p.y, 0.0f, 1.0f);
 				Vector4 en = T * Vector4(n.x, n.y, 0.0f, 0.0f);

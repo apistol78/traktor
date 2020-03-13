@@ -32,6 +32,7 @@ public:
 		Vector4 tcb;
 		Vector4 position;
 		Vector4 orientation;
+		float values[4];
 
 		Key()
 		:	T(0.0f)
@@ -39,6 +40,10 @@ public:
 		,	position(Vector4::origo())
 		,	orientation(Vector4::zero())
 		{
+			values[0] =
+			values[1] =
+			values[2] =
+			values[3] = 0.0f;
 		}
 
 		virtual ~Key() {}
