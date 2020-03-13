@@ -26,9 +26,14 @@ class T_DLLCLASS ControlPointComponentData : public world::IEntityComponentData
 	T_RTTI_CLASS;
 
 public:
+	ControlPointComponentData();
+
 	Ref< ControlPointComponent > createComponent() const;
 
 	virtual void serialize(ISerializer& s) override final;
+
+private:
+	float m_scale;
 };
 
 	}

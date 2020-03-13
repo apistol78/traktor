@@ -83,6 +83,7 @@ void SplineComponent::update(const world::UpdateParams& update)
 			k.T = (float)i / (controlPoints.size() - 1);
 			k.position = T.translation();
 			k.orientation = T.rotation().toEulerAngles();
+			k.values[0] = controlPoints[i]->getScale();
 			m_path.insert(k);
 		}
 

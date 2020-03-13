@@ -8,6 +8,7 @@
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberAlignedVector.h"
 #include "Core/Serialization/MemberComposite.h"
+#include "Core/Serialization/MemberStaticArray.h"
 
 namespace traktor
 {
@@ -27,8 +28,8 @@ public:
 
 	virtual void serialize(ISerializer& s) const override final
 	{
-		s >> Member< Vector4 >(L"position", m_refPosition, AttributePoint());
-		s >> Member< Vector4 >(L"orientation", m_refOrientation, AttributeUnit(AuRadians));
+		s >> Member< Vector4 >(L"position", m_refPosition);
+		s >> Member< Vector4 >(L"orientation", m_refOrientation);
 	}
 
 private:
@@ -120,10 +121,16 @@ public:
 	) const
 	{
 		TransformPath::Key f;
+		
 		f.T = t;
 		f.tcb = v0.tcb;
+
 		f.position = v0.position * Scalar(w0) + v1.position * Scalar(w1) + v2.position * Scalar(w2) + v3.position * Scalar(w3);
 		f.orientation = v0.orientation * Scalar(w0) + v1.orientation * Scalar(w1) + v2.orientation * Scalar(w2) + v3.orientation * Scalar(w3);
+
+		for (int32_t i = 0; i < 4; ++i)
+			f.values[i] = v0.values[i] * w0 + v1.values[i] * w1 + v2.values[i] * w2 + v3.values[i] * w3;
+
 		return f;
 	}
 
@@ -291,10 +298,16 @@ public:
 	) const
 	{
 		TransformPath::Key f;
+		
 		f.T = t;
 		f.tcb = v0.tcb;
+
 		f.position = v0.position * Scalar(w0) + v1.position * Scalar(w1) + v2.position * Scalar(w2) + v3.position * Scalar(w3);
 		f.orientation = v0.orientation * Scalar(w0) + v1.orientation * Scalar(w1) + v2.orientation * Scalar(w2) + v3.orientation * Scalar(w3);
+
+		for (int32_t i = 0; i < 4; ++i)
+			f.values[i] = v0.values[i] * w0 + v1.values[i] * w1 + v2.values[i] * w2 + v3.values[i] * w3;
+
 		return f;
 	}
 
@@ -307,7 +320,7 @@ private:
 
 	}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.TransformPath", 0, TransformPath, ISerializable)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.TransformPath", 1, TransformPath, ISerializable)
 
 TransformPath::TransformPath()
 {
@@ -519,7 +532,15 @@ void TransformPath::Key::serialize(ISerializer& s)
 {
 	s >> Member< float >(L"T", T, AttributeRange(0.0f));
 	s >> Member< Vector4 >(L"tcb", tcb);
-	s >> MemberKeyValue(L"value", position, orientation);
+
+	if (s.getVersion< TransformPath >() >= 1)
+	{
+		s >> Member< Vector4 >(L"position", position, AttributePoint());
+		s >> Member< Vector4 >(L"orientation", orientation, AttributeUnit(AuRadians));
+		s >> MemberStaticArray< float, 4 >(L"values", values);
+	}
+	else
+		s >> MemberKeyValue(L"value", position, orientation);
 }
 
 TransformPath& TransformPath::operator = (const TransformPath& path)
