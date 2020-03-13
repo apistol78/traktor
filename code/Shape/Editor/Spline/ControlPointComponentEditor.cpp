@@ -18,8 +18,14 @@ void ControlPointComponentEditor::drawGuide(render::PrimitiveRenderer* primitive
 {
 	primitiveRenderer->pushDepthState(false, false, false);
 
+	bool selected = m_entityAdapter->isSelected() || m_entityAdapter->getParent()->isSelected();
+
 	const auto& T = m_entityAdapter->getTransform();
-	primitiveRenderer->drawSolidPoint(T.translation(), 4.0f, Color4ub(255, 255, 255, 200));
+	primitiveRenderer->drawSolidPoint(
+		T.translation(),
+		4.0f,
+		selected ? Color4ub(100, 100, 255, 220) : Color4ub(255, 255, 255, 100)
+	);
 
 	primitiveRenderer->popDepthState();
 }
