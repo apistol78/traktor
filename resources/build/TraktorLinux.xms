@@ -14428,7 +14428,15 @@
 								<debugWorkingDirectory/>
 								<aggregationItems>
 									<item type="AggregationItem">
-										<sourceFile>libTraktor.Shape.so</sourceFile>
+										<sourceFile>libTraktor.Shape.so =&gt; debugshared</sourceFile>
+										<targetPath>debugshared</targetPath>
+									</item>
+									<item type="AggregationItem">
+										<sourceFile>$(EMBREE_SDK)/lib/*.*</sourceFile>
+										<targetPath>debugshared</targetPath>
+									</item>
+									<item type="AggregationItem">
+										<sourceFile>$(OIDN_SDK)/lib/*.*</sourceFile>
 										<targetPath>debugshared</targetPath>
 									</item>
 								</aggregationItems>
@@ -14460,6 +14468,14 @@
 										<sourceFile>libTraktor.Shape.so</sourceFile>
 										<targetPath>releaseshared</targetPath>
 									</item>
+									<item type="AggregationItem">
+										<sourceFile>$(EMBREE_SDK)/lib/*.*</sourceFile>
+										<targetPath>releaseshared</targetPath>
+									</item>
+									<item type="AggregationItem">
+										<sourceFile>$(OIDN_SDK)/lib/*.*</sourceFile>
+										<targetPath>releaseshared</targetPath>
+									</item>
 								</aggregationItems>
 								<consumerLibraryPath>releaseshared</consumerLibraryPath>
 							</item>
@@ -14489,6 +14505,14 @@
 										<sourceFile>libTraktor.Shape.a</sourceFile>
 										<targetPath>debugstatic</targetPath>
 									</item>
+									<item type="AggregationItem">
+										<sourceFile>$(EMBREE_SDK)/lib/*.*</sourceFile>
+										<targetPath>debugstatic</targetPath>
+									</item>
+									<item type="AggregationItem">
+										<sourceFile>$(OIDN_SDK)/lib/*.*</sourceFile>
+										<targetPath>debugstatic</targetPath>
+									</item>
 								</aggregationItems>
 								<consumerLibraryPath>debugstatic</consumerLibraryPath>
 							</item>
@@ -14516,6 +14540,14 @@
 								<aggregationItems>
 									<item type="AggregationItem">
 										<sourceFile>libTraktor.Shape.a</sourceFile>
+										<targetPath>releasestatic</targetPath>
+									</item>
+									<item type="AggregationItem">
+										<sourceFile>$(EMBREE_SDK)/lib/*.*</sourceFile>
+										<targetPath>releasestatic</targetPath>
+									</item>
+									<item type="AggregationItem">
+										<sourceFile>$(OIDN_SDK)/lib/*.*</sourceFile>
 										<targetPath>releasestatic</targetPath>
 									</item>
 								</aggregationItems>
