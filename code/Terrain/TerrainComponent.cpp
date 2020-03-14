@@ -378,48 +378,6 @@ void TerrainComponent::build(
 	Vector4 eyePosition = worldRenderView.getEyePosition();
 	Vector4 patchExtent(worldExtent.x() / float(m_patchCount), worldExtent.y(), worldExtent.z() / float(m_patchCount), 0.0f);
 
-#if defined(T_USE_TERRAIN_VERTEX_TEXTURE_FETCH)
-	for (const auto& visiblePatch : visiblePatches)
-	{
-		Patch& patch = m_patches[visiblePatch.patchId];
-
-		auto rb = context.getRenderContext()->alloc< render::SimpleRenderBlock >("Terrain patch");
-
-		rb->distance = visiblePatch.distance;
-		rb->program = (patch.lastSurfaceLod == 0) ? detailProgram : coarseProgram;
-		rb->programParams = context.getRenderContext()->alloc< render::ProgramParameters >();
-		rb->indexBuffer = m_indexBuffer;
-		rb->vertexBuffer = m_vertexBuffer;
-		rb->primitives = m_primitives[patch.lastPatchLod];
-
-		rb->programParams->beginParameters(context.getRenderContext());
-		worldRenderPass.setProgramParameters(rb->programParams, render::RpOpaque);
-
-		rb->programParams->setTextureParameter(c_handleHeightfield, m_terrain->getHeightMap());
-		rb->programParams->setTextureParameter(c_handleSurface, m_surfaceCache->getVirtualTexture());
-		rb->programParams->setTextureParameter(c_handleColorMap, m_terrain->getColorMap());
-		rb->programParams->setTextureParameter(c_handleNormals, m_terrain->getNormalMap());
-		rb->programParams->setTextureParameter(c_handleSplatMap, m_terrain->getSplatMap());
-		rb->programParams->setTextureParameter(c_handleCutMap, m_terrain->getCutMap());
-		rb->programParams->setTextureParameter(c_handleMaterialMap, m_terrain->getMaterialMap());
-		rb->programParams->setVectorParameter(c_handleEye, eyePosition);
-		rb->programParams->setVectorParameter(c_handleWorldOrigin, -worldExtent * Scalar(0.5f));
-		rb->programParams->setVectorParameter(c_handleWorldExtent, worldExtent);
-		rb->programParams->setVectorParameter(c_handlePatchExtent, patchExtent);
-		rb->programParams->setVectorParameter(c_handleSurfaceOffset, patch.surfaceOffset);
-		rb->programParams->setVectorParameter(c_handlePatchOrigin, visiblePatch.patchOrigin);
-		rb->programParams->setFloatParameter(c_handleDetailDistance, detailDistance);
-
-		if (m_visualizeMode == VmSurfaceLod)
-			rb->programParams->setVectorParameter(c_handleDebugPatchColor, c_lodColor[patch.lastSurfaceLod]);
-		else if (m_visualizeMode == VmPatchLod)
-			rb->programParams->setVectorParameter(c_handleDebugPatchColor, c_lodColor[patch.lastPatchLod]);
-
-		rb->programParams->endParameters(context.getRenderContext());
-
-		context.getRenderContext()->draw(render::RpOpaque, rb);
-	}
-#else
 	render::RenderContext* renderContext = context.getRenderContext();
 
 	// Setup shared shader parameters.
@@ -465,6 +423,37 @@ void TerrainComponent::build(
 	}
 
 	// Render each visible patch.
+#if defined(T_USE_TERRAIN_VERTEX_TEXTURE_FETCH)
+	for (const auto& visiblePatch : m_visiblePatches)
+	{
+		const Patch& patch = m_patches[visiblePatch.patchId];
+		const Vector4& patchOrigin = visiblePatch.patchOrigin;
+
+		auto rb = renderContext->alloc< render::SimpleRenderBlock >(L"Terrain patch");
+
+		rb->distance = visiblePatch.distance;
+		rb->program = (patch.lastSurfaceLod == 0) ? detailProgram : coarseProgram;
+		rb->programParams = renderContext->alloc< render::ProgramParameters >();
+		rb->indexBuffer = m_indexBuffer;
+		rb->vertexBuffer = m_vertexBuffer;
+		rb->primitives = m_primitives[patch.lastPatchLod];
+
+		rb->programParams->beginParameters(renderContext);
+
+		rb->programParams->setVectorParameter(c_handlePatchExtent, patchExtent);
+		rb->programParams->setVectorParameter(c_handleSurfaceOffset, patch.surfaceOffset);
+		rb->programParams->setVectorParameter(c_handlePatchOrigin, patchOrigin);
+
+		if (m_visualizeMode == VmSurfaceLod)
+			rb->programParams->setVectorParameter(c_handleDebugPatchColor, c_lodColor[patch.lastSurfaceLod]);
+		else if (m_visualizeMode == VmPatchLod)
+			rb->programParams->setVectorParameter(c_handleDebugPatchColor, c_lodColor[patch.lastPatchLod]);
+
+		rb->programParams->endParameters(renderContext);
+
+		renderContext->draw(render::RpOpaque, rb);
+	}
+#else
 	for (const auto& visiblePatch : m_visiblePatches)
 	{
 		const Patch& patch = m_patches[visiblePatch.patchId];
@@ -716,7 +705,7 @@ bool TerrainComponent::createPatches()
 	AlignedVector< uint32_t > indices;
 	for (uint32_t lod = 0; lod < LodCount; ++lod)
 	{
-		uint32_t indexOffset = uint32_t(indices.size());
+		size_t indexOffset = indices.size();
 		uint32_t lodSkip = 1 << lod;
 
 #if defined(T_USE_TERRAIN_VERTEX_TEXTURE_FETCH)
@@ -817,7 +806,7 @@ bool TerrainComponent::createPatches()
 			}
 		}
 
-		uint32_t indexEndOffset = uint32_t(indices.size());
+		size_t indexEndOffset = indices.size();
 		T_ASSERT((indexEndOffset - indexOffset) % 3 == 0);
 
 		uint32_t minIndex = *std::min_element(indices.begin() + indexOffset, indices.begin() + indexEndOffset);
@@ -828,8 +817,8 @@ bool TerrainComponent::createPatches()
 
 		m_primitives[lod].setIndexed(
 			render::PtTriangles,
-			indexOffset,
-			(indexEndOffset - indexOffset) / 3,
+			(uint32_t)indexOffset,
+			(uint32_t)(indexEndOffset - indexOffset) / 3,
 			minIndex,
 			maxIndex
 		);

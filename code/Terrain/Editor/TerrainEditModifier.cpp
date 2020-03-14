@@ -204,6 +204,37 @@ bool TerrainEditModifier::activate()
 
 	m_terrainInstance = sourceDatabase->getInstance(m_terrainComponentData->getTerrain());
 
+	// Create non-compressed texture for heights.
+	desc.width = size;
+	desc.height = size;
+	desc.mipCount = 1;
+	desc.format = render::TfR32F;
+	desc.sRGB = false;
+	desc.immutable = false;
+
+	m_heightMap = m_context->getRenderSystem()->createSimpleTexture(desc, T_FILE_LINE_W);
+	if (m_heightMap)
+	{
+		// Transfer heights to texture.
+		render::ITexture::Lock nl;
+		if (m_heightMap->lock(0, nl))
+		{
+			float* ptr = (float*)nl.bits;
+			for (int32_t v = 0; v < size; ++v)
+			{
+				for (int32_t u = 0; u < size; ++u)
+				{
+					float height = m_heightfield->getGridHeightNearest(u, v); // * asset->m_scale;
+					*ptr++ = height;
+				}
+			}
+			m_heightMap->unlock(0);
+		}
+
+		// Replace height map in resource with our texture.
+		m_terrainComponent->m_terrain->m_heightMap = resource::Proxy< render::ISimpleTexture >(m_heightMap);
+	}
+
 	// Get splat image from terrain asset.
 	if (m_terrainInstance)
 	{
@@ -745,6 +776,29 @@ void TerrainEditModifier::apply(const Vector4& center)
 	{
 		for (int32_t i = 0; i < 4; ++i)
 			m_updateRegion[i] = region[i];
+	}
+
+	// Update heights.
+	if ((m_brushMode & IBrush::MdHeight) != 0)
+	{
+		// Transfer heights to texture.
+		render::ITexture::Lock nl;
+		if (m_heightMap->lock(0, nl))
+		{
+			float* ptr = (float*)nl.bits;
+			for (int32_t v = 0; v < size; ++v)
+			{
+				for (int32_t u = 0; u < size; ++u)
+				{
+					float height = m_heightfield->getGridHeightNearest(u, v); // * asset->m_scale;
+					*ptr++ = height;
+				}
+			}
+			m_heightMap->unlock(0);
+		}
+
+		// Replace height map in resource with our texture.
+		m_terrainComponent->m_terrain->m_heightMap = resource::Proxy< render::ISimpleTexture >(m_heightMap);
 	}
 
 	// Update splats.

@@ -119,6 +119,7 @@ private:
 	Ref< db::Instance > m_heightfieldInstance;
 	Ref< hf::HeightfieldAsset > m_heightfieldAsset;
 	resource::Proxy< hf::Heightfield > m_heightfield;
+	Ref< render::ISimpleTexture > m_heightMap;
 	Ref< drawing::Image > m_splatImage;
 	Ref< render::ISimpleTexture > m_splatMap;
 	Ref< drawing::Image > m_colorImage;
