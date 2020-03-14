@@ -218,7 +218,7 @@ void WidgetPreviewControl::eventPaint(ui::PaintEvent* event)
 			{
 				const IRuntimeDispatch* method = findRuntimeClassMethod(m_scaffoldingClass, "remove");
 				if (method != nullptr)
-					method->invoke(m_scaffoldingObject, 0, 0);
+					method->invoke(m_scaffoldingObject, 0, nullptr);
 			}
 
 			// Construct new scaffolding.
@@ -231,7 +231,7 @@ void WidgetPreviewControl::eventPaint(ui::PaintEvent* event)
 			m_scaffoldingObject = createRuntimeClassInstance(m_scaffoldingClass, nullptr, sizeof_array(argv), argv);
 		}
 		else
-			m_scaffoldingObject = 0;
+			m_scaffoldingObject = nullptr;
 
 		m_scaffoldingClass.consume();
 	}
@@ -239,8 +239,8 @@ void WidgetPreviewControl::eventPaint(ui::PaintEvent* event)
 	if (m_scaffoldingObject)
 	{
 		const IRuntimeDispatch* method = findRuntimeClassMethod(m_scaffoldingClass, "update");
-		if (method != 0)
-			method->invoke(m_scaffoldingObject, 0, 0);
+		if (method != nullptr)
+			method->invoke(m_scaffoldingObject, 0, nullptr);
 	}
 
 	// Add passes to render graph.

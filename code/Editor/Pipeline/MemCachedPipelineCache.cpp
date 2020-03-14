@@ -1,6 +1,7 @@
 #include <sstream>
 #include "Core/Io/IStream.h"
 #include "Core/Log/Log.h"
+#include "Core/Misc/SafeDestroy.h"
 #include "Core/Misc/TString.h"
 #include "Core/Settings/PropertyBoolean.h"
 #include "Core/Settings/PropertyGroup.h"
@@ -60,13 +61,8 @@ bool MemCachedPipelineCache::create(const PropertyGroup* settings)
 
 void MemCachedPipelineCache::destroy()
 {
-	if (m_socket)
-	{
-		m_socket->close();
-		m_socket = 0;
-	}
-
-	m_proto = 0;
+	safeClose(m_socket);
+	m_proto = nullptr;
 }
 
 Ref< IStream > MemCachedPipelineCache::get(const Guid& guid, const PipelineDependencyHash& hash)
@@ -77,16 +73,16 @@ Ref< IStream > MemCachedPipelineCache::get(const Guid& guid, const PipelineDepen
 
 		// Request end block; do not try to open non-finished cache streams.
 		if (!stream->requestEndBlock())
-			return 0;
+			return nullptr;
 
 		// Request first block of data.
 		if (!stream->requestNextBlock())
-			return 0;
+			return nullptr;
 
 		return stream;
 	}
 	else
-		return 0;
+		return nullptr;
 }
 
 Ref< IStream > MemCachedPipelineCache::put(const Guid& guid, const PipelineDependencyHash& hash)
@@ -94,7 +90,7 @@ Ref< IStream > MemCachedPipelineCache::put(const Guid& guid, const PipelineDepen
 	if (m_accessWrite)
 		return new MemCachedPutStream(m_proto, generateKey(guid, hash));
 	else
-		return 0;
+		return nullptr;
 }
 
 	}
