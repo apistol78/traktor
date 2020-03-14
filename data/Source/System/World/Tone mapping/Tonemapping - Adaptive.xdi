@@ -19,27 +19,10 @@
 			</position>
 		</item>
 		<item type="traktor.render.ImgPass" version="traktor.render.Node:1">
-			<id>{DB09FFB6-7207-5947-A15B-8026A5683991}</id>
-			<comment/>
-			<position>
-				<first>391</first>
-				<second>108</second>
-			</position>
-			<name>Tone mapping</name>
-			<steps>
-				<item type="traktor.render.ImgStepSimple">
-					<shader>{697DF682-AF08-9A44-A189-2DA42C020A2D}</shader>
-					<parameters>
-						<item>ColorTexture</item>
-					</parameters>
-				</item>
-			</steps>
-		</item>
-		<item type="traktor.render.ImgPass" version="traktor.render.Node:1">
 			<id>{B8EDE013-A426-F44E-8BFF-85FCE0AD62F5}</id>
 			<comment/>
 			<position>
-				<first>336</first>
+				<first>337</first>
 				<second>315</second>
 			</position>
 			<name>Initial luminance</name>
@@ -56,7 +39,7 @@
 			<id>{3DD789DA-9DFE-694E-A135-C290CA5BCE09}</id>
 			<comment/>
 			<position>
-				<first>624</first>
+				<first>641</first>
 				<second>338</second>
 			</position>
 			<targetSetId>Initial luminance</targetSetId>
@@ -80,8 +63,8 @@
 			<id>{FA8D6FCB-3331-394F-ABC2-5ECD01970E80}</id>
 			<comment/>
 			<position>
-				<first>330</first>
-				<second>475</second>
+				<first>337</first>
+				<second>463</second>
 			</position>
 			<name>Downsample -&gt; 64</name>
 			<steps>
@@ -97,8 +80,8 @@
 			<id>{A73A24F1-D4CA-8C42-B7D6-57319A0B626C}</id>
 			<comment/>
 			<position>
-				<first>643</first>
-				<second>493</second>
+				<first>657</first>
+				<second>489</second>
 			</position>
 			<targetSetId>Illum64</targetSetId>
 			<width>64</width>
@@ -121,8 +104,8 @@
 			<id>{8DF2AFDB-83A6-2B4A-B8F8-206D2880ED70}</id>
 			<comment/>
 			<position>
-				<first>336</first>
-				<second>621</second>
+				<first>337</first>
+				<second>611</second>
 			</position>
 			<name>Downsample -&gt; 16</name>
 			<steps>
@@ -138,8 +121,8 @@
 			<id>{A9EBAEA7-960D-554D-A447-12B173CC2CF2}</id>
 			<comment/>
 			<position>
-				<first>645</first>
-				<second>639</second>
+				<first>657</first>
+				<second>640</second>
 			</position>
 			<targetSetId>Illum16</targetSetId>
 			<width>16</width>
@@ -163,7 +146,7 @@
 			<comment/>
 			<position>
 				<first>337</first>
-				<second>761</second>
+				<second>759</second>
 			</position>
 			<name>Downsample -&gt; 4</name>
 			<steps>
@@ -179,7 +162,7 @@
 			<id>{F008E0FF-3011-7D4F-8A9B-055C6DFC8FAD}</id>
 			<comment/>
 			<position>
-				<first>645</first>
+				<first>657</first>
 				<second>791</second>
 			</position>
 			<targetSetId>Illum4</targetSetId>
@@ -203,8 +186,8 @@
 			<id>{4551D26C-E6C5-314C-A5E3-FC751E5067F2}</id>
 			<comment/>
 			<position>
-				<first>331</first>
-				<second>910</second>
+				<first>337</first>
+				<second>907</second>
 			</position>
 			<name>Downsample -&gt; 1</name>
 			<steps>
@@ -332,18 +315,28 @@
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[3]"/>
+				<node ref="/object/nodes/item[2]"/>
 				<name>ColorTexture</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
+				<node ref="/object/nodes/item[2]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[3]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
 				<node ref="/object/nodes/item[3]"/>
 				<name>Output</name>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[4]"/>
-				<name>Input</name>
+				<name>SourceTexture</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
@@ -353,7 +346,7 @@
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[5]"/>
-				<name>SourceTexture</name>
+				<name>Input</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
@@ -363,7 +356,7 @@
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[6]"/>
-				<name>Input</name>
+				<name>SourceTexture</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
@@ -373,7 +366,7 @@
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[7]"/>
-				<name>SourceTexture</name>
+				<name>Input</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
@@ -383,7 +376,7 @@
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[8]"/>
-				<name>Input</name>
+				<name>SourceTexture</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
@@ -393,7 +386,7 @@
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[9]"/>
-				<name>SourceTexture</name>
+				<name>Input</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
@@ -403,7 +396,7 @@
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[10]"/>
-				<name>Input</name>
+				<name>SourceTexture</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
@@ -413,7 +406,7 @@
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[11]"/>
-				<name>SourceTexture</name>
+				<name>Input</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
@@ -423,7 +416,17 @@
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[12]"/>
-				<name>Input</name>
+				<name>SourceTexture</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[13]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[12]"/>
+				<name>CurrentIllumTexture</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
@@ -432,8 +435,8 @@
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[13]"/>
-				<name>SourceTexture</name>
+				<node ref="/object/nodes/item[14]"/>
+				<name>Input</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
@@ -442,27 +445,7 @@
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[13]"/>
-				<name>CurrentIllumTexture</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[13]"/>
-				<name>Output</name>
-			</source>
-			<destination>
 				<node ref="/object/nodes/item[15]"/>
-				<name>Input</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[15]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[16]"/>
 				<name>CurrentIllumTexture</name>
 			</destination>
 		</item>
@@ -472,13 +455,13 @@
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[16]"/>
+				<node ref="/object/nodes/item[15]"/>
 				<name>ColorTexture</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[16]"/>
+				<node ref="/object/nodes/item[15]"/>
 				<name>Output</name>
 			</source>
 			<destination>
