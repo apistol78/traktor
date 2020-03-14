@@ -46,8 +46,11 @@ void FlattenBrush::apply(float x, float y)
 			if (abs(a) <= FUZZY_EPSILON)
 				continue;
 
-			float h = m_heightfield->getGridHeightNearest(x + ix, y + iy);
-			m_heightfield->setGridHeight(x + ix, y + iy, lerp(h, m_height, a));
+			float gx = x + ix;
+			float gy = y + iy;
+
+			float h = m_heightfield->getGridHeightNearest(gx, gy);
+			m_heightfield->setGridHeight(gx, gy, lerp(h, m_height, a));
 		}
 	}
 }

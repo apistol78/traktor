@@ -113,10 +113,10 @@ void ExtrudeShapeLayer::pathChanged(const TransformPath& path)
 
 	// Extrude shape.
 	AlignedVector< Vector2 > shape;
+	shape.push_back(Vector2( 5.0f, -0.3f));
 	shape.push_back(Vector2( 4.0f, 0.0f));
-	shape.push_back(Vector2( 3.0f, 0.5f));
-	shape.push_back(Vector2(-3.0f, 0.5f));
 	shape.push_back(Vector2(-4.0f, 0.0f));
+	shape.push_back(Vector2(-5.0f, -0.3f));
 
 	AlignedVector< Vector2 > normals;
 	normals.push_back(Vector2(0.0f, 1.0f));
@@ -185,7 +185,7 @@ void ExtrudeShapeLayer::pathChanged(const TransformPath& path)
 				vertex->normal[1] = en.y();
 				vertex->normal[2] = en.z();
 
-				vertex->uvw[0] = (p.x - minX) / (maxX - minX);
+				vertex->uvw[0] = (shape[i].x - minX) / (maxX - minX);
 				vertex->uvw[1] = travel;
 				vertex->uvw[2] = at;
 
