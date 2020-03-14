@@ -23,7 +23,8 @@ public:
 	ProgramVk(
 		VkPhysicalDevice physicalDevice,
 		VkDevice logicalDevice,
-		VmaAllocator allocator
+		VmaAllocator allocator,
+		int32_t maxAnistropy
 	);
 
 	virtual ~ProgramVk();
@@ -130,6 +131,7 @@ private:
 	VkPhysicalDevice m_physicalDevice;
 	VkDevice m_logicalDevice;
 	VmaAllocator m_allocator;
+	int32_t m_maxAnistropy;
 	RenderState m_renderState;
 	VkShaderModule m_vertexShaderModule;
 	VkShaderModule m_fragmentShaderModule;
