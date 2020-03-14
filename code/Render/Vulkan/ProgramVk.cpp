@@ -60,11 +60,13 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ProgramVk", ProgramVk, IProgram)
 ProgramVk::ProgramVk(
 	VkPhysicalDevice physicalDevice,
 	VkDevice logicalDevice,
-	VmaAllocator allocator
+	VmaAllocator allocator,
+	int32_t maxAnistropy
 )
 :	m_physicalDevice(physicalDevice)
 ,	m_logicalDevice(logicalDevice)
 ,	m_allocator(allocator)
+,	m_maxAnistropy(maxAnistropy)
 ,	m_vertexShaderModule(0)
 ,	m_fragmentShaderModule(0)
 ,	m_computeShaderModule(0)
@@ -212,8 +214,13 @@ bool ProgramVk::create(const ProgramResourceVk* resource, const wchar_t* const t
 		sci.addressModeV = c_addressModes[resourceSampler.state.addressV];
 		sci.addressModeW = c_addressModes[resourceSampler.state.addressW];
 		sci.mipLodBias = resourceSampler.state.mipBias;
-		sci.anisotropyEnable = VK_FALSE; // resourceSampler.state.useAnisotropic ? VK_TRUE : VK_FALSE;
-		sci.maxAnisotropy = 0.0f;
+		
+		if (m_maxAnistropy > 0)
+			sci.anisotropyEnable = resourceSampler.state.useAnisotropic ? VK_TRUE : VK_FALSE;
+		else
+			sci.anisotropyEnable = VK_FALSE;
+
+		sci.maxAnisotropy = m_maxAnistropy;
 		sci.compareEnable = (resourceSampler.state.compare != CfNone) ? VK_TRUE : VK_FALSE;
 		sci.compareOp = c_compareOperations[resourceSampler.state.compare];
 		sci.minLod = 0.0f;

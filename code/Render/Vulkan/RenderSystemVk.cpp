@@ -97,6 +97,7 @@ RenderSystemVk::RenderSystemVk()
 ,	m_computeQueue(0)
 ,	m_graphicsCommandPool(0)
 ,	m_allocator(0)
+,	m_maxAnisotropy(0)
 {
 #if defined(__ANDROID__)
 	m_screenWidth = 0;
@@ -314,6 +315,8 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
 		log::error << L"Failed to create Vulkan; failed to create allocator." << Endl;
 		return false;
 	}
+
+	m_maxAnisotropy = desc.maxAnisotropy;
 
 	log::info << L"Vulkan render system created successfully." << Endl;
 	return true;
@@ -630,7 +633,8 @@ Ref< IProgram > RenderSystemVk::createProgram(const ProgramResource* programReso
 	Ref< ProgramVk > program = new ProgramVk(
 		m_physicalDevice,
 		m_logicalDevice,
-		m_allocator
+		m_allocator,
+		m_maxAnisotropy
 	);
 	if (program->create(resource, tag))
 		return program;
