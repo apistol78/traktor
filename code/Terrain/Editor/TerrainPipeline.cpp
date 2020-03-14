@@ -336,14 +336,14 @@ bool TerrainPipeline::buildOutput(
 	Ref< render::ShaderGraph > surfaceShaderImpl = DeepClone(assetSurfaceShader).create< render::ShaderGraph >();
 
 	// Read shader templates.
-	Ref< const render::ShaderGraph > terrainCoarseShaderTemplate = pipelineBuilder->getObjectReadOnly< render::ShaderGraph >(c_guidTerrainCoarseShaderTemplate/*_VFetch*/);
+	Ref< const render::ShaderGraph > terrainCoarseShaderTemplate = pipelineBuilder->getObjectReadOnly< render::ShaderGraph >(c_guidTerrainCoarseShaderTemplate_VFetch);
 	if (!terrainCoarseShaderTemplate)
 	{
 		log::error << L"Terrain pipeline failed; unable to get terrain coarse template shader" << Endl;
 		return false;
 	}
 
-	Ref< const render::ShaderGraph > terrainDetailShaderTemplate = pipelineBuilder->getObjectReadOnly< render::ShaderGraph >(c_guidTerrainDetailShaderTemplate/*_VFetch*/);
+	Ref< const render::ShaderGraph > terrainDetailShaderTemplate = pipelineBuilder->getObjectReadOnly< render::ShaderGraph >(c_guidTerrainDetailShaderTemplate_VFetch);
 	if (!terrainDetailShaderTemplate)
 	{
 		log::error << L"Terrain pipeline failed; unable to get terrain detail template shader" << Endl;

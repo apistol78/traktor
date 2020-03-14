@@ -60,7 +60,7 @@ class ITerrainLayer;
 class TerrainSurfaceCache;
 
 //#if !TARGET_OS_IPHONE
-//#	define T_USE_TERRAIN_VERTEX_TEXTURE_FETCH
+#	define T_USE_TERRAIN_VERTEX_TEXTURE_FETCH
 //#endif
 
 /*! Terrain entity.
