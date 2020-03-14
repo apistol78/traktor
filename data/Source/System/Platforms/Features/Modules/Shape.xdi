@@ -16,6 +16,7 @@
 								<item>Traktor.Render</item>
 								<item>Traktor.Resource</item>
 								<item>Traktor.Shape</item>
+								<item>Traktor.Shape.Runtime</item>
 								<item>Traktor.World</item>
 							</value>
 						</second>
@@ -50,6 +51,7 @@
 								<item>libTraktor.Render.a</item>
 								<item>libTraktor.Resource.a</item>
 								<item>libTraktor.Shape.a</item>
+								<item>libTraktor.Shape.Runtime.a</item>
 								<item>libTraktor.World.a</item>
 							</value>
 						</second>
@@ -86,6 +88,7 @@
 								<item>Traktor.Render</item>
 								<item>Traktor.Resource</item>
 								<item>Traktor.Shape</item>
+								<item>Traktor.Shape.Runtime</item>
 								<item>Traktor.World</item>
 							</value>
 						</second>
@@ -98,6 +101,7 @@
 								<item>libTraktor.Render.so</item>
 								<item>libTraktor.Resource.so</item>
 								<item>libTraktor.Shape.so</item>
+								<item>libTraktor.Shape.Runtime.so</item>
 								<item>libTraktor.World.so</item>
 							</value>
 						</second>
@@ -163,6 +167,7 @@
 								<item>Traktor.Render</item>
 								<item>Traktor.Resource</item>
 								<item>Traktor.Shape</item>
+								<item>Traktor.Shape.Runtime</item>
 								<item>Traktor.World</item>
 							</value>
 						</second>
@@ -175,6 +180,7 @@
 								<item>libTraktor.Render.dylib</item>
 								<item>libTraktor.Resource.dylib</item>
 								<item>libTraktor.Shape.dylib</item>
+								<item>libTraktor.Shape.Runtime.dylib</item>
 								<item>libTraktor.World.dylib</item>
 							</value>
 						</second>
@@ -233,6 +239,7 @@
 								<item>Traktor.Render</item>
 								<item>Traktor.Resource</item>
 								<item>Traktor.Shape</item>
+								<item>Traktor.Shape.Runtime</item>
 								<item>Traktor.World</item>
 							</value>
 						</second>
@@ -269,6 +276,7 @@
 								<item>Traktor.Render.lib</item>
 								<item>Traktor.Resource.lib</item>
 								<item>Traktor.Shape.lib</item>
+								<item>Traktor.Shape.Runtime.lib</item>
 								<item>Traktor.World.lib</item>
 							</value>
 						</second>
@@ -307,6 +315,7 @@
 								<item>Traktor.Render</item>
 								<item>Traktor.Resource</item>
 								<item>Traktor.Shape</item>
+								<item>Traktor.Shape.Runtime</item>
 								<item>Traktor.World</item>
 							</value>
 						</second>
@@ -319,6 +328,7 @@
 								<item>Traktor.Render.dll</item>
 								<item>Traktor.Resource.dll</item>
 								<item>Traktor.Shape.dll</item>
+								<item>Traktor.Shape.Runtime.dll</item>
 								<item>Traktor.World.dll</item>
 							</value>
 						</second>
@@ -383,6 +393,7 @@
 								<item>Traktor.Render</item>
 								<item>Traktor.Resource</item>
 								<item>Traktor.Shape</item>
+								<item>Traktor.Shape.Runtime</item>
 								<item>Traktor.World</item>
 							</value>
 						</second>
@@ -395,6 +406,7 @@
 								<item>Traktor.Render.dll</item>
 								<item>Traktor.Resource.dll</item>
 								<item>Traktor.Shape.dll</item>
+								<item>Traktor.Shape.Runtime.dll</item>
 								<item>Traktor.World.dll</item>
 							</value>
 						</second>
@@ -459,6 +471,7 @@
 								<item>Traktor.Render</item>
 								<item>Traktor.Resource</item>
 								<item>Traktor.Shape</item>
+								<item>Traktor.Shape.Runtime</item>
 								<item>Traktor.World</item>
 							</value>
 						</second>
@@ -493,6 +506,7 @@
 								<item>Traktor.Render.lib</item>
 								<item>Traktor.Resource.lib</item>
 								<item>Traktor.Shape.lib</item>
+								<item>Traktor.Shape.Runtime.lib</item>
 								<item>Traktor.World.lib</item>
 							</value>
 						</second>
@@ -529,6 +543,7 @@
 								<item>Traktor.Render</item>
 								<item>Traktor.Resource</item>
 								<item>Traktor.Shape</item>
+								<item>Traktor.Shape.Runtime</item>
 								<item>Traktor.World</item>
 							</value>
 						</second>
@@ -563,6 +578,7 @@
 								<item>libTraktor.Render.a</item>
 								<item>libTraktor.Resource.a</item>
 								<item>libTraktor.Shape.a</item>
+								<item>libTraktor.Shape.Runtime.a</item>
 								<item>libTraktor.World.a</item>
 							</value>
 						</second>
@@ -599,6 +615,7 @@
 								<item>Traktor.Render</item>
 								<item>Traktor.Resource</item>
 								<item>Traktor.Shape</item>
+								<item>Traktor.Shape.Runtime</item>
 								<item>Traktor.World</item>
 							</value>
 						</second>
@@ -633,6 +650,7 @@
 								<item>libTraktor.Render.a</item>
 								<item>libTraktor.Resource.a</item>
 								<item>libTraktor.Shape.a</item>
+								<item>libTraktor.Shape.Runtime.a</item>
 								<item>libTraktor.World.a</item>
 							</value>
 						</second>
@@ -700,6 +718,7 @@
 				<second type="traktor.PropertyStringSet">
 					<value>
 						<item>Traktor.Shape</item>
+						<item>Traktor.Shape.Runtime</item>
 					</value>
 				</second>
 			</item>
