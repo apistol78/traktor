@@ -1458,6 +1458,8 @@ void ShaderGraphEditorPage::eventVariableDoubleClick(ui::GridRowDoubleClickEvent
 	}
 
 	m_editorGraph->center(true);
+	m_editorGraph->update();
+
 	event->consume();
 }
 
