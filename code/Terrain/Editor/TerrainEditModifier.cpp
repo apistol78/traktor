@@ -22,6 +22,7 @@
 #include "Terrain/Terrain.h"
 #include "Terrain/TerrainComponent.h"
 #include "Terrain/TerrainComponentData.h"
+#include "Terrain/TerrainLayerComponent.h"
 #include "Terrain/TerrainUtilities.h"
 #include "Terrain/Editor/ColorBrush.h"
 #include "Terrain/Editor/CutBrush.h"
@@ -189,6 +190,13 @@ bool TerrainEditModifier::activate()
 		m_terrainComponent = nullptr;
 		m_terrainComponentData = nullptr;
 		return false;
+	}
+
+	// Get terrain layer components.
+	for (auto component : entityAdapters[0]->getComponents())
+	{
+		if (auto terrainLayer = dynamic_type_cast< TerrainLayerComponent* >(component))
+			m_terrainLayers.push_back(terrainLayer);
 	}
 
 	// Get runtime heightfield.
@@ -937,9 +945,10 @@ void TerrainEditModifier::end()
 	db::Database* sourceDatabase = m_context->getEditor()->getSourceDatabase();
 	T_ASSERT(sourceDatabase);
 
-	// Only update layers once editing ends since we cannot be sure
+	// Only update layers's patches once editing ends since we cannot be sure
 	// how expensive this is as it's user configurable.
-	m_terrainComponent->updateLayers();
+	for (auto terrainLayer : m_terrainLayers)
+		terrainLayer->updatePatches();
 
 	float gx, gz;
 	m_heightfield->worldToGrid(m_center.x(), m_center.z(), gx, gz);

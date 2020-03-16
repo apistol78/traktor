@@ -51,6 +51,7 @@ class SceneEditorContext;
 class IBrush;
 class IFallOff;
 class TerrainComponentData;
+class TerrainLayerComponent;
 
 class TerrainEditModifier : public scene::IModifier
 {
@@ -113,8 +114,9 @@ public:
 
 private:
 	scene::SceneEditorContext* m_context;
-	Ref< terrain::TerrainComponent > m_terrainComponent;
-	Ref< terrain::TerrainComponentData > m_terrainComponentData;
+	Ref< TerrainComponent > m_terrainComponent;
+	Ref< TerrainComponentData > m_terrainComponentData;
+	RefArray< TerrainLayerComponent > m_terrainLayers;
 	Ref< db::Instance > m_terrainInstance;
 	Ref< db::Instance > m_heightfieldInstance;
 	Ref< hf::HeightfieldAsset > m_heightfieldAsset;

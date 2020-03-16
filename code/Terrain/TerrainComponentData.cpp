@@ -2,7 +2,6 @@
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberRefArray.h"
 #include "Resource/Member.h"
-#include "Terrain/ITerrainLayerData.h"
 #include "Terrain/Terrain.h"
 #include "Terrain/TerrainComponentData.h"
 
@@ -32,7 +31,6 @@ void TerrainComponentData::serialize(ISerializer& s)
 	s >> Member< float >(L"surfaceLodDistance", m_surfaceLodDistance, AttributeUnit(AuMetres));
 	s >> Member< float >(L"surfaceLodBias", m_surfaceLodBias);
 	s >> Member< float >(L"surfaceLodExponent", m_surfaceLodExponent);
-	s >> MemberRefArray< ITerrainLayerData >(L"layers", m_layers);
 }
 
 	}

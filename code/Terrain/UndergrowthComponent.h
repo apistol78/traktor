@@ -4,8 +4,8 @@
 #include "Core/Containers/BitVector.h"
 #include "Core/Math/Vector4.h"
 #include "Resource/Proxy.h"
-#include "Terrain/ITerrainLayer.h"
-#include "Terrain/UndergrowthLayerData.h"
+#include "Terrain/TerrainLayerComponent.h"
+#include "Terrain/UndergrowthComponentData.h"
 
 namespace traktor
 {
@@ -29,30 +29,36 @@ class IResourceManager;
 	namespace terrain
 	{
 
-class UndergrowthLayer : public ITerrainLayer
+class UndergrowthComponent : public TerrainLayerComponent
 {
 	T_RTTI_CLASS;
 
 public:
-	UndergrowthLayer();
+	UndergrowthComponent();
 
 	bool create(
 		resource::IResourceManager* resourceManager,
 		render::IRenderSystem* renderSystem,
-		const UndergrowthLayerData& layerData,
-		const TerrainComponent& terrainEntity
+		const UndergrowthComponentData& layerData
 	);
+
+	virtual void destroy() override final;
+
+	virtual void setOwner(world::ComponentEntity* owner) override final;
+
+	virtual void setTransform(const Transform& transform) override final;
+
+	virtual Aabb3 getBoundingBox() const override final;
 
 	virtual void update(const world::UpdateParams& update) override final;
 
 	virtual void build(
-		TerrainComponent& terrainComponent,
 		const world::WorldBuildContext& context,
 		const world::WorldRenderView& worldRenderView,
 		const world::IWorldRenderPass& worldRenderPass
 	) override final;
 
-	virtual void updatePatches(const TerrainComponent& terrainComponent) override final;
+	virtual void updatePatches() override final;
 
 private:
 	struct Cluster
@@ -72,7 +78,9 @@ private:
 		uint32_t count;
 	};
 
-	UndergrowthLayerData m_layerData;
+	world::ComponentEntity* m_owner;
+
+	UndergrowthComponentData m_layerData;
 
 	Ref< render::VertexBuffer > m_vertexBuffer;
 	Ref< render::IndexBuffer > m_indexBuffer;

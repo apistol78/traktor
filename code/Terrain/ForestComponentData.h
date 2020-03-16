@@ -2,7 +2,7 @@
 
 #include "Core/Containers/AlignedVector.h"
 #include "Resource/Id.h"
-#include "Terrain/ITerrainLayerData.h"
+#include "Terrain/TerrainLayerComponentData.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -24,23 +24,17 @@ class InstanceMesh;
 	namespace terrain
 	{
 
-class T_DLLCLASS ForestLayerData : public ITerrainLayerData
+class T_DLLCLASS ForestComponentData : public TerrainLayerComponentData
 {
 	T_RTTI_CLASS;
 
 public:
-	ForestLayerData();
-
-	virtual Ref< ITerrainLayer > createLayerInstance(
-		resource::IResourceManager* resourceManager,
-		render::IRenderSystem* renderSystem,
-		const TerrainComponent& terrainComponent
-	) const override;
+	ForestComponentData();
 
 	virtual void serialize(ISerializer& s) override final;
 
 private:
-	friend class ForestLayer;
+	friend class ForestComponent;
 	friend class TerrainEntityPipeline;
 
 	resource::Id< mesh::InstanceMesh > m_lod0mesh;

@@ -15,11 +15,12 @@
 #include "Terrain/Terrain.h"
 #include "Terrain/TerrainComponent.h"
 #include "Terrain/TerrainSurfaceCache.h"
-#include "Terrain/UndergrowthLayer.h"
-#include "Terrain/UndergrowthLayerData.h"
+#include "Terrain/UndergrowthComponent.h"
+#include "Terrain/UndergrowthComponentData.h"
 #include "World/IWorldRenderPass.h"
 #include "World/WorldBuildContext.h"
 #include "World/WorldRenderView.h"
+#include "World/Entity/ComponentEntity.h"
 
 namespace traktor
 {
@@ -63,10 +64,11 @@ Vertex packVertex(const Vector4& position, float u, float v)
 
 		}
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.terrain.UndergrowthLayer", UndergrowthLayer, ITerrainLayer)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.terrain.UndergrowthComponent", UndergrowthComponent, TerrainLayerComponent)
 
-UndergrowthLayer::UndergrowthLayer()
-:	m_clusterSize(0.0f)
+UndergrowthComponent::UndergrowthComponent()
+:	m_owner(nullptr)
+,	m_clusterSize(0.0f)
 ,	m_plantsCount(0)
 {
 	s_handleNormals = render::getParameterHandle(L"Normals");
@@ -79,11 +81,10 @@ UndergrowthLayer::UndergrowthLayer()
 	s_handleInstances2 = render::getParameterHandle(L"Instances2");
 }
 
-bool UndergrowthLayer::create(
+bool UndergrowthComponent::create(
 	resource::IResourceManager* resourceManager,
 	render::IRenderSystem* renderSystem,
-	const UndergrowthLayerData& layerData,
-	const TerrainComponent& terrainComponent
+	const UndergrowthComponentData& layerData
 )
 {
 	m_layerData = layerData;
@@ -146,23 +147,44 @@ bool UndergrowthLayer::create(
 	*index++ = 0;
 
 	m_indexBuffer->unlock();
-
-	updatePatches(terrainComponent);
 	return true;
 }
 
-void UndergrowthLayer::update(const world::UpdateParams& update)
+void UndergrowthComponent::destroy()
 {
 }
 
-void UndergrowthLayer::build(
-	TerrainComponent& terrainComponent,
+void UndergrowthComponent::setOwner(world::ComponentEntity* owner)
+{
+	TerrainLayerComponent::setOwner(owner);
+	m_owner = owner;
+}
+
+void UndergrowthComponent::setTransform(const Transform& transform)
+{
+}
+
+Aabb3 UndergrowthComponent::getBoundingBox() const
+{
+	return Aabb3();
+}
+
+void UndergrowthComponent::update(const world::UpdateParams& update)
+{
+	TerrainLayerComponent::update(update);
+}
+
+void UndergrowthComponent::build(
 	const world::WorldBuildContext& context,
 	const world::WorldRenderView& worldRenderView,
 	const world::IWorldRenderPass& worldRenderPass
 )
 {
-	const resource::Proxy< Terrain >& terrain = terrainComponent.getTerrain();
+	auto terrainComponent = m_owner->getComponent< TerrainComponent >();
+	if (!terrainComponent)
+		return;
+
+	const auto& terrain = terrainComponent->getTerrain();
 
 	// Update clusters at first pass from eye pow.
 	bool updateClusters = bool((worldRenderPass.getPassFlags() & world::IWorldRenderPass::PfFirst) != 0);
@@ -177,7 +199,7 @@ void UndergrowthLayer::build(
 	{
 		vs.plants.resize(m_plantsCount * 2, Vector4::zero());
 		vs.distances.resize(m_clusters.size(), 0.0f);
-		vs.pvs.assign(m_clusters.size(), false);
+		vs.pvs.assign((uint32_t)m_clusters.size(), false);
 		updateClusters = true;
 	}
 
@@ -275,7 +297,7 @@ void UndergrowthLayer::build(
 			worldRenderPass.setProgramParameters(renderBlock->programParams);
 			renderBlock->programParams->setTextureParameter(s_handleNormals, terrain->getNormalMap());
 			renderBlock->programParams->setTextureParameter(s_handleHeightfield, terrain->getHeightMap());
-			renderBlock->programParams->setTextureParameter(s_handleSurface, terrainComponent.getSurfaceCache()->getBaseTexture());
+			renderBlock->programParams->setTextureParameter(s_handleSurface, terrainComponent->getSurfaceCache()->getBaseTexture());
 			renderBlock->programParams->setVectorParameter(s_handleWorldExtent, terrain->getHeightfield()->getWorldExtent());
 			renderBlock->programParams->setVectorParameter(s_handleEye, eye);
 			renderBlock->programParams->setFloatParameter(s_handleMaxDistance, m_layerData.m_spreadDistance + m_clusterSize);
@@ -291,12 +313,16 @@ void UndergrowthLayer::build(
 	}
 }
 
-void UndergrowthLayer::updatePatches(const TerrainComponent& terrainComponent)
+void UndergrowthComponent::updatePatches()
 {
 	m_clusters.resize(0);
 	m_plantsCount = 0;
 
-	const resource::Proxy< Terrain >& terrain = terrainComponent.getTerrain();
+	auto terrainComponent = m_owner->getComponent< TerrainComponent >();
+	if (!terrainComponent)
+		return;
+
+	const resource::Proxy< Terrain >& terrain = terrainComponent->getTerrain();
 	const resource::Proxy< hf::Heightfield >& heightfield = terrain->getHeightfield();
 
 	// Get set of materials which have undergrowth.

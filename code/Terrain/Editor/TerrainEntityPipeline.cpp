@@ -1,12 +1,11 @@
 #include "Editor/IPipelineDepends.h"
 #include "Terrain/Editor/TerrainEntityPipeline.h"
-#include "Terrain/ForestLayerData.h"
-#include "Terrain/ITerrainLayerData.h"
+#include "Terrain/ForestComponentData.h"
 #include "Terrain/OceanComponentData.h"
 #include "Terrain/RiverComponentData.h"
-#include "Terrain/RubbleLayerData.h"
+#include "Terrain/RubbleComponentData.h"
 #include "Terrain/TerrainComponentData.h"
-#include "Terrain/UndergrowthLayerData.h"
+#include "Terrain/UndergrowthComponentData.h"
 
 namespace traktor
 {
@@ -17,11 +16,14 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.terrain.TerrainEntityPipeline", 0, Terr
 
 TypeInfoSet TerrainEntityPipeline::getAssetTypes() const
 {
-	return makeTypeInfoSet<
-		OceanComponentData,
-		RiverComponentData,
-		TerrainComponentData
-	>();
+	TypeInfoSet typeSet;
+	typeSet.insert< ForestComponentData >();
+	typeSet.insert< OceanComponentData >();
+	typeSet.insert< RiverComponentData >();
+	typeSet.insert< RubbleComponentData >();
+	typeSet.insert< TerrainComponentData >();
+	typeSet.insert< UndergrowthComponentData >();
+	return typeSet;
 }
 
 bool TerrainEntityPipeline::buildDependencies(
@@ -32,7 +34,12 @@ bool TerrainEntityPipeline::buildDependencies(
 	const Guid& outputGuid
 ) const
 {
-	if (const OceanComponentData* oceanComponentData = dynamic_type_cast< const OceanComponentData* >(sourceAsset))
+	if (const ForestComponentData* forestComponentData = dynamic_type_cast< const ForestComponentData* >(sourceAsset))
+	{
+		pipelineDepends->addDependency(forestComponentData->m_lod0mesh, editor::PdfBuild | editor::PdfResource);
+		pipelineDepends->addDependency(forestComponentData->m_lod1mesh, editor::PdfBuild | editor::PdfResource);
+	}
+	else if (const OceanComponentData* oceanComponentData = dynamic_type_cast< const OceanComponentData* >(sourceAsset))
 	{
 		pipelineDepends->addDependency(oceanComponentData->getShader(), editor::PdfBuild | editor::PdfResource);
 		pipelineDepends->addDependency(oceanComponentData->getReflectionMap(), editor::PdfBuild | editor::PdfResource);
@@ -42,26 +49,18 @@ bool TerrainEntityPipeline::buildDependencies(
 	{
 		pipelineDepends->addDependency(riverComponentData->getShader(), editor::PdfBuild | editor::PdfResource);
 	}
+	else if (const RubbleComponentData* rubbleComponentData = dynamic_type_cast< const RubbleComponentData* >(sourceAsset))
+	{
+		for (const auto& rubble : rubbleComponentData->m_rubble)
+			pipelineDepends->addDependency(rubble.mesh, editor::PdfBuild | editor::PdfResource);
+	}
 	else if (const TerrainComponentData* terrainComponentData = dynamic_type_cast< const TerrainComponentData* >(sourceAsset))
 	{
 		pipelineDepends->addDependency(terrainComponentData->getTerrain(), editor::PdfBuild | editor::PdfResource);
-		for (auto layer : terrainComponentData->getLayers())
-		{
-			if (const ForestLayerData* forestLayerData = dynamic_type_cast< const ForestLayerData* >(layer))
-			{
-				pipelineDepends->addDependency(forestLayerData->m_lod0mesh, editor::PdfBuild | editor::PdfResource);
-				pipelineDepends->addDependency(forestLayerData->m_lod1mesh, editor::PdfBuild | editor::PdfResource);
-			}
-			else if (const RubbleLayerData* rubbleLayerData = dynamic_type_cast< const RubbleLayerData* >(layer))
-			{
-				for (const auto& rubble : rubbleLayerData->m_rubble)
-					pipelineDepends->addDependency(rubble.mesh, editor::PdfBuild | editor::PdfResource);
-			}
-			else if (const UndergrowthLayerData* undergrowthLayerData = dynamic_type_cast< const UndergrowthLayerData* >(layer))
-			{
-				pipelineDepends->addDependency(undergrowthLayerData->m_shader, editor::PdfBuild | editor::PdfResource);
-			}
-		}
+	}
+	else if (const UndergrowthComponentData* undergrowthComponentData = dynamic_type_cast< const UndergrowthComponentData* >(sourceAsset))
+	{
+		pipelineDepends->addDependency(undergrowthComponentData->m_shader, editor::PdfBuild | editor::PdfResource);
 	}
 	return true;
 }

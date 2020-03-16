@@ -56,7 +56,6 @@ class WorldSetupContext;
 	namespace terrain
 	{
 
-class ITerrainLayer;
 class TerrainSurfaceCache;
 
 //#if !TARGET_OS_IPHONE
@@ -130,12 +129,6 @@ public:
 		uint32_t cacheSize
 	);
 
-	void buildLayers(
-		const world::WorldBuildContext& context,
-		const world::WorldRenderView& worldRenderView,
-		const world::IWorldRenderPass& worldRenderPass
-	);
-
 	void setVisualizeMode(VisualizeMode visualizeMode);
 
 	const resource::Proxy< Terrain >& getTerrain() const { return m_terrain; }
@@ -162,6 +155,7 @@ private:
 
 	Ref< resource::IResourceManager > m_resourceManager;
 	Ref< render::IRenderSystem > m_renderSystem;
+	world::ComponentEntity* m_owner;
 	resource::Proxy< Terrain > m_terrain;
 	resource::Proxy< hf::Heightfield > m_heightfield;
 	Ref< TerrainSurfaceCache > m_surfaceCache;
@@ -180,7 +174,6 @@ private:
 	float m_surfaceLodBias;
 	float m_surfaceLodExponent;
 	VisualizeMode m_visualizeMode;
-	RefArray< ITerrainLayer > m_layers;
 	AlignedVector< CullPatch > m_visiblePatches;
 #if defined(T_USE_TERRAIN_VERTEX_TEXTURE_FETCH)
 	 AlignedVector< const CullPatch* > m_patchLodInstances[LodCount];
@@ -189,8 +182,6 @@ private:
 	bool validate(uint32_t cacheSize);
 
 	void updatePatches(const uint32_t* region);
-
-	void updateLayers();
 
 	bool createPatches();
 };

@@ -10,11 +10,12 @@
 #include "Terrain/Terrain.h"
 #include "Terrain/TerrainComponent.h"
 #include "Terrain/TerrainSurfaceCache.h"
-#include "Terrain/RubbleLayer.h"
-#include "Terrain/RubbleLayerData.h"
+#include "Terrain/RubbleComponent.h"
+#include "Terrain/RubbleComponentData.h"
 #include "World/IWorldRenderPass.h"
 #include "World/WorldBuildContext.h"
 #include "World/WorldRenderView.h"
+#include "World/Entity/ComponentEntity.h"
 
 namespace traktor
 {
@@ -32,10 +33,11 @@ render::handle_t s_handleMaxDistance;
 
 		}
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.terrain.RubbleLayer", RubbleLayer, ITerrainLayer)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.terrain.RubbleComponent", RubbleComponent, TerrainLayerComponent)
 
-RubbleLayer::RubbleLayer()
-:	m_spreadDistance(0.0f)
+RubbleComponent::RubbleComponent()
+:	m_owner(nullptr)
+,	m_spreadDistance(0.0f)
 ,	m_clusterSize(0.0f)
 ,	m_eye(Vector4::zero())
 {
@@ -47,11 +49,10 @@ RubbleLayer::RubbleLayer()
 	s_handleMaxDistance = render::getParameterHandle(L"MaxDistance");
 }
 
-bool RubbleLayer::create(
+bool RubbleComponent::create(
 	resource::IResourceManager* resourceManager,
 	render::IRenderSystem* renderSystem,
-	const RubbleLayerData& layerData,
-	const TerrainComponent& terrainComponent
+	const RubbleComponentData& layerData
 )
 {
 	m_spreadDistance = layerData.m_spreadDistance;
@@ -67,22 +68,44 @@ bool RubbleLayer::create(
 		m_rubble[i].randomScaleAmount = layerData.m_rubble[i].randomScaleAmount;
 	}
 
-	updatePatches(terrainComponent);
 	return true;
 }
 
-void RubbleLayer::update(const world::UpdateParams& update)
+void RubbleComponent::destroy()
 {
 }
 
-void RubbleLayer::build(
-	TerrainComponent& terrainComponent,
+void RubbleComponent::setOwner(world::ComponentEntity* owner)
+{
+	TerrainLayerComponent::setOwner(owner);
+	m_owner = owner;
+}
+
+void RubbleComponent::setTransform(const Transform& transform)
+{
+}
+
+Aabb3 RubbleComponent::getBoundingBox() const
+{
+	return Aabb3();
+}
+
+void RubbleComponent::update(const world::UpdateParams& update)
+{
+	TerrainLayerComponent::update(update);
+}
+
+void RubbleComponent::build(
 	const world::WorldBuildContext& context,
 	const world::WorldRenderView& worldRenderView,
 	const world::IWorldRenderPass& worldRenderPass
 )
 {
-	const resource::Proxy< Terrain >& terrain = terrainComponent.getTerrain();
+	auto terrainComponent = m_owner->getComponent< TerrainComponent >();
+	if (!terrainComponent)
+		return;
+
+	const auto& terrain = terrainComponent->getTerrain();
 
 	// Update clusters at first pass from eye pow.
 	bool updateClusters = bool((worldRenderPass.getPassFlags() & world::IWorldRenderPass::PfFirst) != 0);
@@ -140,7 +163,7 @@ void RubbleLayer::build(
 	extraParameters->beginParameters(renderContext);
 	extraParameters->setTextureParameter(s_handleNormals, terrain->getNormalMap());
 	extraParameters->setTextureParameter(s_handleHeightfield, terrain->getHeightMap());
-	extraParameters->setTextureParameter(s_handleSurface, terrainComponent.getSurfaceCache()->getBaseTexture());
+	extraParameters->setTextureParameter(s_handleSurface, terrainComponent->getSurfaceCache()->getBaseTexture());
 	extraParameters->setVectorParameter(s_handleWorldExtent, terrain->getHeightfield()->getWorldExtent());
 	extraParameters->setVectorParameter(s_handleEye, eye);
 	extraParameters->setFloatParameter(s_handleMaxDistance, m_spreadDistance + m_clusterSize);
@@ -175,12 +198,16 @@ void RubbleLayer::build(
 	}
 }
 
-void RubbleLayer::updatePatches(const TerrainComponent& terrainComponent)
+void RubbleComponent::updatePatches()
 {
 	m_instances.resize(0);
 	m_clusters.resize(0);
 
-	const auto& terrain = terrainComponent.getTerrain();
+	auto terrainComponent = m_owner->getComponent< TerrainComponent >();
+	if (!terrainComponent)
+		return;
+
+	const auto& terrain = terrainComponent->getTerrain();
 	const auto& heightfield = terrain->getHeightfield();
 
 	// Get set of materials which have undergrowth.

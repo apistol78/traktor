@@ -7,14 +7,15 @@
 #include "Render/ISimpleTexture.h"
 #include "Render/Context/RenderContext.h"
 #include "Resource/IResourceManager.h"
-#include "Terrain/ForestLayer.h"
-#include "Terrain/ForestLayerData.h"
+#include "Terrain/ForestComponent.h"
+#include "Terrain/ForestComponentData.h"
 #include "Terrain/Terrain.h"
 #include "Terrain/TerrainComponent.h"
 #include "Terrain/TerrainSurfaceCache.h"
 #include "World/IWorldRenderPass.h"
 #include "World/WorldBuildContext.h"
 #include "World/WorldRenderView.h"
+#include "World/Entity/ComponentEntity.h"
 
 namespace traktor
 {
@@ -31,17 +32,17 @@ const render::Handle s_handleEye(L"Eye");
 
 		}
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.terrain.ForestLayer", ForestLayer, ITerrainLayer)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.terrain.ForestComponent", ForestComponent, TerrainLayerComponent)
 
-ForestLayer::ForestLayer()
+ForestComponent::ForestComponent()
+:	m_owner(nullptr)
 {
 }
 
-bool ForestLayer::create(
+bool ForestComponent::create(
 	resource::IResourceManager* resourceManager,
 	render::IRenderSystem* renderSystem,
-	const ForestLayerData& layerData,
-	const TerrainComponent& terrainComponent
+	const ForestComponentData& layerData
 )
 {
 	if (!resourceManager->bind(layerData.m_lod0mesh, m_lod0mesh))
@@ -50,22 +51,44 @@ bool ForestLayer::create(
 		return false;
 
 	m_data = layerData;
-	updatePatches(terrainComponent);
 	return true;
 }
 
-void ForestLayer::update(const world::UpdateParams& update)
+void ForestComponent::destroy()
 {
 }
 
-void ForestLayer::build(
-	TerrainComponent& terrainComponent,
+void ForestComponent::setOwner(world::ComponentEntity* owner)
+{
+	TerrainLayerComponent::setOwner(owner);
+	m_owner = owner;
+}
+
+void ForestComponent::setTransform(const Transform& transform)
+{
+}
+
+Aabb3 ForestComponent::getBoundingBox() const
+{
+	return Aabb3();
+}
+
+void ForestComponent::update(const world::UpdateParams& update)
+{
+	TerrainLayerComponent::update(update);
+}
+
+void ForestComponent::build(
 	const world::WorldBuildContext& context,
 	const world::WorldRenderView& worldRenderView,
 	const world::IWorldRenderPass& worldRenderPass
 )
 {
-	const resource::Proxy< Terrain >& terrain = terrainComponent.getTerrain();
+	auto terrainComponent = m_owner->getComponent< TerrainComponent >();
+	if (!terrainComponent)
+		return;
+
+	const resource::Proxy< Terrain >& terrain = terrainComponent->getTerrain();
 
 	// Update clusters at first pass from eye pow.
 	bool updateClusters = bool((worldRenderPass.getPassFlags() & world::IWorldRenderPass::PfFirst) != 0);
@@ -106,7 +129,7 @@ void ForestLayer::build(
 	extraParameters->beginParameters(renderContext);
 	extraParameters->setTextureParameter(s_handleNormals, terrain->getNormalMap());
 	extraParameters->setTextureParameter(s_handleHeightfield, terrain->getHeightMap());
-	extraParameters->setTextureParameter(s_handleSurface, terrainComponent.getSurfaceCache()->getBaseTexture());
+	extraParameters->setTextureParameter(s_handleSurface, terrainComponent->getSurfaceCache()->getBaseTexture());
 	extraParameters->setVectorParameter(s_handleWorldExtent, terrain->getHeightfield()->getWorldExtent());
 	extraParameters->setVectorParameter(s_handleEye, eye);
 	extraParameters->endParameters(renderContext);
@@ -154,9 +177,13 @@ void ForestLayer::build(
 	}
 }
 
-void ForestLayer::updatePatches(const TerrainComponent& terrainComponent)
+void ForestComponent::updatePatches()
 {
-	const auto& terrain = terrainComponent.getTerrain();
+	auto terrainComponent = m_owner->getComponent< TerrainComponent >();
+	if (!terrainComponent)
+		return;
+
+	const auto& terrain = terrainComponent->getTerrain();
 	const auto& heightfield = terrain->getHeightfield();
 	const float densityInv = 1.0f / m_data.m_density;
 	const int32_t size = heightfield->getSize();
