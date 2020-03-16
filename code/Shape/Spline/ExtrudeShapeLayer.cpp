@@ -33,7 +33,7 @@ struct ExtrudeVertex
 
 		}
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.shape.ExtrudeShapeLayer", ExtrudeShapeLayer, LayerComponent)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.shape.ExtrudeShapeLayer", ExtrudeShapeLayer, SplineLayerComponent)
 
 ExtrudeShapeLayer::ExtrudeShapeLayer(
 	render::IRenderSystem* renderSystem,

@@ -2,7 +2,7 @@
 
 #include "Core/Ref.h"
 #include "Core/RefArray.h"
-#include "Shape/Spline/LayerComponent.h"
+#include "Shape/Spline/SplineLayerComponent.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -29,10 +29,10 @@ class WorldRenderView;
 	namespace shape
 	{
 
-/*! \brief
+/*!
  * \ingroup Shape
  */
-class T_DLLCLASS CloneLayer : public LayerComponent
+class T_DLLCLASS CloneLayer : public SplineLayerComponent
 {
 	T_RTTI_CLASS;
 

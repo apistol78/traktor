@@ -2,7 +2,7 @@
 
 #include "Core/Ref.h"
 #include "Resource/Id.h"
-#include "Shape/Spline/LayerComponentData.h"
+#include "Shape/Spline/SplineLayerComponentData.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -27,14 +27,14 @@ class Shader;
 /*!
  * \ingroup Shape
  */
-class T_DLLCLASS ExtrudeShapeLayerData : public LayerComponentData
+class T_DLLCLASS ExtrudeShapeLayerData : public SplineLayerComponentData
 {
 	T_RTTI_CLASS;
 
 public:
 	ExtrudeShapeLayerData();
 
-	virtual Ref< LayerComponent > createComponent(const world::IEntityBuilder* builder, resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem) const override final;
+	virtual Ref< SplineLayerComponent > createComponent(const world::IEntityBuilder* builder, resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem) const override final;
 
 	virtual void serialize(ISerializer& s) override final;
 

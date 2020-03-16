@@ -37,14 +37,14 @@ class IEntityBuilder;
 	namespace shape
 	{
 
-class LayerComponent;
+class SplineLayerComponent;
 
-class T_DLLCLASS LayerComponentData : public world::IEntityComponentData
+class T_DLLCLASS SplineLayerComponentData : public world::IEntityComponentData
 {
 	T_RTTI_CLASS;
 
 public:
-	virtual Ref< LayerComponent > createComponent(const world::IEntityBuilder* builder, resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem) const = 0;
+	virtual Ref< SplineLayerComponent > createComponent(const world::IEntityBuilder* builder, resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem) const = 0;
 };
 
 	}

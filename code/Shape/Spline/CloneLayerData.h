@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Core/Ref.h"
-#include "Shape/Spline/LayerComponentData.h"
+#include "Shape/Spline/SplineLayerComponentData.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -26,14 +26,14 @@ class EntityData;
 /*!
  * \ingroup Shape
  */
-class T_DLLCLASS CloneLayerData : public LayerComponentData
+class T_DLLCLASS CloneLayerData : public SplineLayerComponentData
 {
 	T_RTTI_CLASS;
 
 public:
 	CloneLayerData();
 
-	virtual Ref< LayerComponent > createComponent(const world::IEntityBuilder* builder, resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem) const override final;
+	virtual Ref< SplineLayerComponent > createComponent(const world::IEntityBuilder* builder, resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem) const override final;
 
 	virtual void serialize(ISerializer& s) override final;
 

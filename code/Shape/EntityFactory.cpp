@@ -1,10 +1,10 @@
 #include "Shape/EntityFactory.h"
 #include "Shape/Spline/ControlPointComponent.h"
 #include "Shape/Spline/ControlPointComponentData.h"
-#include "Shape/Spline/LayerComponent.h"
-#include "Shape/Spline/LayerComponentData.h"
 #include "Shape/Spline/SplineComponent.h"
 #include "Shape/Spline/SplineComponentData.h"
+#include "Shape/Spline/SplineLayerComponent.h"
+#include "Shape/Spline/SplineLayerComponentData.h"
 
 namespace traktor
 {
@@ -33,8 +33,8 @@ const TypeInfoSet EntityFactory::getEntityComponentTypes() const
 {
 	return makeTypeInfoSet<
 		ControlPointComponentData,
-		LayerComponentData,
-		SplineComponentData
+		SplineComponentData,
+		SplineLayerComponentData
 	>();
 }
 
@@ -52,10 +52,10 @@ Ref< world::IEntityComponent > EntityFactory::createEntityComponent(const world:
 {
 	if (auto controlPointData = dynamic_type_cast< const ControlPointComponentData* >(&entityComponentData))
 		return controlPointData->createComponent();
-	else if (auto layerData = dynamic_type_cast< const LayerComponentData* >(&entityComponentData))
-		return layerData->createComponent(builder, m_resourceManager, m_renderSystem);
 	else if (auto splineData = dynamic_type_cast< const SplineComponentData* >(&entityComponentData))
 		return splineData->createComponent();
+	else if (auto splineLayerData = dynamic_type_cast< const SplineLayerComponentData* >(&entityComponentData))
+		return splineLayerData->createComponent(builder, m_resourceManager, m_renderSystem);
 	else
 		return nullptr;
 }

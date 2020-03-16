@@ -45,21 +45,9 @@ void EntityRenderer::build(
 )
 {
 	if (auto cloneLayer = dynamic_type_cast< CloneLayer* >(renderable))
-	{
-		cloneLayer->build(
-			context,
-			worldRenderView,
-			worldRenderPass
-		);
-	}
+		cloneLayer->build(context, worldRenderView, worldRenderPass);
 	else if (auto extrudeShapeLayer = dynamic_type_cast< ExtrudeShapeLayer* >(renderable))
-	{
-		extrudeShapeLayer->build(
-			context,
-			worldRenderView,
-			worldRenderPass
-		);
-	}
+		extrudeShapeLayer->build(context, worldRenderView, worldRenderPass);
 }
 
 void EntityRenderer::build(
