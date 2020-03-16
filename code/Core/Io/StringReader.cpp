@@ -41,8 +41,10 @@ wchar_t StringReader::readChar()
 
 int64_t StringReader::readLine(std::wstring& out)
 {
-	AlignedVector< wchar_t > buf;
 	wchar_t ch;
+
+	m_line.reserve(200);
+	m_line.resize(0);
 
 	for (;;)
 	{
@@ -51,13 +53,13 @@ int64_t StringReader::readLine(std::wstring& out)
 			int64_t result = -1;
 			if (m_stream)
 			{
-				result = m_stream->read(&m_buffer[m_count], 1);
+				result = m_stream->read(&m_buffer[m_count], sizeof(m_buffer) - m_count);
 				if (result < 0)
 					m_stream = nullptr;
 			}
 			if (result > 0)
 				m_count += result;
-			else if (m_count <= 0 && buf.empty())
+			else if (m_count <= 0 && m_line.empty())
 			{
 				out.clear();
 				return -1;
@@ -83,11 +85,11 @@ int64_t StringReader::readLine(std::wstring& out)
 		if (ch == L'\n')
 			break;
 		else if (ch != L'\r')
-			buf.push_back(ch);
+			m_line.push_back(ch);
 	}
 
-	out = std::wstring(buf.begin(), buf.end());
-	return int64_t(out.length());
+	out = std::wstring(m_line.begin(), m_line.end());
+	return (int64_t)out.length();
 }
 
 }
