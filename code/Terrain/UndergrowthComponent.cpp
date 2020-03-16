@@ -43,14 +43,14 @@ struct Vertex
 };
 #pragma pack()
 
-render::handle_t s_handleNormals;
-render::handle_t s_handleHeightfield;
-render::handle_t s_handleSurface;
-render::handle_t s_handleWorldExtent;
-render::handle_t s_handleEye;
-render::handle_t s_handleMaxDistance;
-render::handle_t s_handleInstances1;
-render::handle_t s_handleInstances2;
+const render::Handle s_handleNormals(L"Normals");
+const render::Handle s_handleHeightfield(L"Heightfield");
+const render::Handle s_handleSurface(L"Surface");
+const render::Handle s_handleWorldExtent(L"WorldExtent");
+const render::Handle s_handleEye(L"Eye");
+const render::Handle s_handleMaxDistance(L"MaxDistance");
+const render::Handle s_handleInstances1(L"Instances1");
+const render::Handle s_handleInstances2(L"Instances2");
 
 Vertex packVertex(const Vector4& position, float u, float v)
 {
@@ -71,14 +71,6 @@ UndergrowthComponent::UndergrowthComponent()
 ,	m_clusterSize(0.0f)
 ,	m_plantsCount(0)
 {
-	s_handleNormals = render::getParameterHandle(L"Normals");
-	s_handleHeightfield = render::getParameterHandle(L"Heightfield");
-	s_handleSurface = render::getParameterHandle(L"Surface");
-	s_handleWorldExtent = render::getParameterHandle(L"WorldExtent");
-	s_handleEye = render::getParameterHandle(L"Eye");
-	s_handleMaxDistance = render::getParameterHandle(L"MaxDistance");
-	s_handleInstances1 = render::getParameterHandle(L"Instances1");
-	s_handleInstances2 = render::getParameterHandle(L"Instances2");
 }
 
 bool UndergrowthComponent::create(
