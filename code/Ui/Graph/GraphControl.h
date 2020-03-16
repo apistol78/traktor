@@ -124,7 +124,7 @@ public:
 
 	float getScale() const;
 
-	void center();
+	void center(bool selectedOnly = false);
 
 	void alignNodes(Alignment align);
 

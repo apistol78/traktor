@@ -73,6 +73,7 @@
 #include "Ui/GridView/GridItem.h"
 #include "Ui/GridView/GridItemContentChangeEvent.h"
 #include "Ui/GridView/GridRow.h"
+#include "Ui/GridView/GridRowDoubleClickEvent.h"
 #include "Ui/GridView/GridView.h"
 
 // Resources
@@ -249,6 +250,7 @@ bool ShaderGraphEditorPage::create(ui::Container* parent)
 	m_variablesGrid->addColumn(new ui::GridColumn(i18n::Text(L"SHADERGRAPH_VARIABLES_N_READ"), ui::dpi96(80), false));
 	m_variablesGrid->addColumn(new ui::GridColumn(i18n::Text(L"SHADERGRAPH_VARIABLES_TYPE"), ui::dpi96(80), false));
 	m_variablesGrid->addEventHandler< ui::GridItemContentChangeEvent >(this, &ShaderGraphEditorPage::eventVariableEdit);
+	m_variablesGrid->addEventHandler< ui::GridRowDoubleClickEvent >(this, &ShaderGraphEditorPage::eventVariableDoubleClick);
 
 	// Build popup menu.
 	m_menuPopup = new ui::Menu();
@@ -1423,6 +1425,39 @@ void ShaderGraphEditorPage::eventVariableEdit(ui::GridItemContentChangeEvent* ev
 	refreshGraph();
 
 	m_editorGraph->update();
+	event->consume();
+}
+
+void ShaderGraphEditorPage::eventVariableDoubleClick(ui::GridRowDoubleClickEvent* event)
+{
+	std::wstring variableName = event->getRow()->get(0)->getText();
+
+	RefArray< Variable > variableNodes;
+	m_shaderGraph->findNodesOf< Variable >(variableNodes);
+
+	auto it = std::find_if(variableNodes.begin(), variableNodes.end(), [&](const Variable* v) {
+		if (v->getName() != variableName)
+			return false;
+
+		if (m_shaderGraph->findEdge(v->getInputPin(0)) == nullptr)
+			return false;
+
+		return true;
+	});
+	if (it == variableNodes.end())
+		return;
+
+	Variable* variable = *it;
+	T_ASSERT(variable);
+
+	m_editorGraph->deselectAllNodes();
+	for (auto editorNode : m_editorGraph->getNodes())
+	{
+		if (editorNode->getData< Node >(L"SHADERNODE") == variable)
+			editorNode->setSelected(true);
+	}
+
+	m_editorGraph->center(true);
 	event->consume();
 }
 

@@ -311,9 +311,14 @@ float GraphControl::getScale() const
 	return m_scale;
 }
 
-void GraphControl::center()
+void GraphControl::center(bool selectedOnly)
 {
-	if (m_nodes.empty())
+	RefArray< Node > nodes;
+	if (!selectedOnly)
+		nodes = m_nodes;
+	else
+		getSelectedNodes(nodes);
+	if (nodes.empty())
 		return;
 
 	Rect inner = getInnerRect();
@@ -324,7 +329,7 @@ void GraphControl::center()
 		-std::numeric_limits< int >::max(),
 		-std::numeric_limits< int >::max()
 	);
-	for (auto node : m_nodes)
+	for (auto node : nodes)
 	{
 		Rect rc = node->calculateRect();
 		bounds.left = std::min(bounds.left, rc.left);

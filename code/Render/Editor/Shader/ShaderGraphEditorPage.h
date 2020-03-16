@@ -32,6 +32,7 @@ class EdgeConnectEvent;
 class EdgeDisconnectEvent;
 class GraphControl;
 class GridItemContentChangeEvent;
+class GridRowDoubleClickEvent;
 class GridView;
 class Menu;
 class Node;
@@ -121,6 +122,8 @@ private:
 	void eventEdgeDisconnect(ui::EdgeDisconnectEvent* event);
 
 	void eventVariableEdit(ui::GridItemContentChangeEvent* event);
+
+	void eventVariableDoubleClick(ui::GridRowDoubleClickEvent* event);
 };
 
 	}
