@@ -531,7 +531,6 @@ void CanvasDirect2DWin32::drawLines(const Point* pnts, int npnts)
 		m_d2dForegroundBrush,
 		m_strokeWidth
 	);
-	m_d2dRenderTarget->SetAntialiasMode(D2D1_ANTIALIAS_MODE_ALIASED);
 }
 
 void CanvasDirect2DWin32::fillCircle(int x, int y, float radius)
@@ -541,7 +540,6 @@ void CanvasDirect2DWin32::fillCircle(int x, int y, float radius)
 		D2D1::Ellipse(D2D1::Point2F(x, y), radius, radius),
 		m_d2dBackgroundBrush
 	);
-	m_d2dRenderTarget->SetAntialiasMode(D2D1_ANTIALIAS_MODE_ALIASED);
 }
 
 void CanvasDirect2DWin32::drawCircle(int x, int y, float radius)
@@ -552,7 +550,6 @@ void CanvasDirect2DWin32::drawCircle(int x, int y, float radius)
 		m_d2dForegroundBrush,
 		m_strokeWidth
 	);
-	m_d2dRenderTarget->SetAntialiasMode(D2D1_ANTIALIAS_MODE_ALIASED);
 }
 
 void CanvasDirect2DWin32::drawEllipticArc(int x, int y, int w, int h, float start, float end)
