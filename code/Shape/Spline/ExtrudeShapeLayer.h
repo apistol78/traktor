@@ -3,7 +3,7 @@
 #include "Core/Ref.h"
 #include "Render/Types.h"
 #include "Resource/Proxy.h"
-#include "Shape/Spline/LayerComponent.h"
+#include "Shape/Spline/SplineLayerComponent.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -40,7 +40,7 @@ class WorldRenderView;
 /*!
  * \ingroup Shape
  */
-class T_DLLCLASS ExtrudeShapeLayer : public LayerComponent
+class T_DLLCLASS ExtrudeShapeLayer : public SplineLayerComponent
 {
 	T_RTTI_CLASS;
 

@@ -18,7 +18,7 @@ class TransformPath;
 	namespace shape
 	{
 
-class T_DLLCLASS LayerComponent : public world::IEntityComponent
+class T_DLLCLASS SplineLayerComponent : public world::IEntityComponent
 {
 	T_RTTI_CLASS;
 

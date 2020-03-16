@@ -16,7 +16,7 @@ const resource::Id< render::Shader > c_defaultShader(Guid(L"{1B199356-39EB-43E9-
 
 		}
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.shape.ExtrudeShapeLayerData", 0, ExtrudeShapeLayerData, LayerComponentData)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.shape.ExtrudeShapeLayerData", 0, ExtrudeShapeLayerData, SplineLayerComponentData)
 
 ExtrudeShapeLayerData::ExtrudeShapeLayerData()
 :	m_shader(c_defaultShader)
@@ -25,7 +25,7 @@ ExtrudeShapeLayerData::ExtrudeShapeLayerData()
 {
 }
 
-Ref< LayerComponent > ExtrudeShapeLayerData::createComponent(const world::IEntityBuilder* builder, resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem) const
+Ref< SplineLayerComponent > ExtrudeShapeLayerData::createComponent(const world::IEntityBuilder* builder, resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem) const
 {
 	resource::Proxy< render::Shader > shader;
 	if (!resourceManager->bind(m_shader, shader))

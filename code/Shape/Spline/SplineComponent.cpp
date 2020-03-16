@@ -1,5 +1,5 @@
 #include "Shape/Spline/ControlPointComponent.h"
-#include "Shape/Spline/LayerComponent.h"
+#include "Shape/Spline/SplineLayerComponent.h"
 #include "Shape/Spline/SplineComponent.h"
 #include "World/Entity/ComponentEntity.h"
 #include "World/Entity/GroupComponent.h"
@@ -44,7 +44,7 @@ void SplineComponent::update(const world::UpdateParams& update)
 
 	// Get control points and layers.
 	RefArray< ControlPointComponent > controlPoints;
-	RefArray< LayerComponent > layers;
+	RefArray< SplineLayerComponent > layers;
 	for (auto entity : groupComponent->getEntities())
 	{
 		auto cmpent = dynamic_type_cast< world::ComponentEntity* >(entity);
@@ -55,7 +55,7 @@ void SplineComponent::update(const world::UpdateParams& update)
 		if (controlPoint)
 			controlPoints.push_back(controlPoint);
 
-		auto layer = cmpent->getComponent< LayerComponent >();
+		auto layer = cmpent->getComponent< SplineLayerComponent >();
 		if (layer)
 			layers.push_back(layer);
 	}

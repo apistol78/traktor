@@ -9,7 +9,7 @@ namespace traktor
 	namespace shape
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.shape.CloneLayer", CloneLayer, LayerComponent)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.shape.CloneLayer", CloneLayer, SplineLayerComponent)
 
 CloneLayer::CloneLayer(
 	const world::IEntityBuilder* builder,
