@@ -4,8 +4,8 @@
 #include "Core/Math/Vector4.h"
 #include "Mesh/Instance/InstanceMesh.h"
 #include "Resource/Proxy.h"
-#include "Terrain/ITerrainLayer.h"
-#include "Terrain/RubbleLayerData.h"
+#include "Terrain/TerrainLayerComponent.h"
+#include "Terrain/RubbleComponentData.h"
 
 namespace traktor
 {
@@ -26,30 +26,36 @@ class IResourceManager;
 	namespace terrain
 	{
 
-class RubbleLayer : public ITerrainLayer
+class RubbleComponent : public TerrainLayerComponent
 {
 	T_RTTI_CLASS;
 
 public:
-	RubbleLayer();
+	RubbleComponent();
 
 	bool create(
 		resource::IResourceManager* resourceManager,
 		render::IRenderSystem* renderSystem,
-		const RubbleLayerData& layerData,
-		const TerrainComponent& terrainComponent
+		const RubbleComponentData& layerData
 	);
+
+	virtual void destroy() override final;
+
+	virtual void setOwner(world::ComponentEntity* owner) override final;
+
+	virtual void setTransform(const Transform& transform) override final;
+
+	virtual Aabb3 getBoundingBox() const override final;
 
 	virtual void update(const world::UpdateParams& update) override final;
 
 	virtual void build(
-		TerrainComponent& terrainComponent,
 		const world::WorldBuildContext& context,
 		const world::WorldRenderView& worldRenderView,
 		const world::IWorldRenderPass& worldRenderPass
 	) override final;
 
-	virtual void updatePatches(const TerrainComponent& terrainComponent) override final;
+	virtual void updatePatches() override final;
 
 private:
 	struct RubbleMesh
@@ -77,6 +83,7 @@ private:
 		int32_t to;
 	};
 
+	world::ComponentEntity* m_owner;
 	AlignedVector< RubbleMesh > m_rubble;
 	AlignedVector< Instance > m_instances;
 	AlignedVector< Cluster > m_clusters;
