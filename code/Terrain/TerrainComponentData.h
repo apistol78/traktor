@@ -17,7 +17,6 @@ namespace traktor
 	namespace terrain
 	{
 
-class ITerrainLayerData;
 class Terrain;
 
 /*! Terrain entity data.
@@ -46,8 +45,6 @@ public:
 
 	float getSurfaceLodExponent() const { return m_surfaceLodExponent; }
 
-	const RefArray< ITerrainLayerData >& getLayers() const { return m_layers; }
-
 private:
 	resource::Id< Terrain > m_terrain;
 	float m_patchLodDistance;
@@ -56,7 +53,6 @@ private:
 	float m_surfaceLodDistance;
 	float m_surfaceLodBias;
 	float m_surfaceLodExponent;
-	RefArray< ITerrainLayerData > m_layers;
 };
 
 	}

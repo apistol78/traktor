@@ -11,8 +11,6 @@
 #include "Render/VertexElement.h"
 #include "Render/Context/RenderContext.h"
 #include "Resource/IResourceManager.h"
-#include "Terrain/ITerrainLayer.h"
-#include "Terrain/ITerrainLayerData.h"
 #include "Terrain/Terrain.h"
 #include "Terrain/TerrainComponent.h"
 #include "Terrain/TerrainSurfaceCache.h"
@@ -78,6 +76,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.terrain.TerrainComponent", TerrainComponent, wo
 TerrainComponent::TerrainComponent(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem)
 :	m_resourceManager(resourceManager)
 ,	m_renderSystem(renderSystem)
+,	m_owner(nullptr)
 ,	m_cacheSize(0)
 ,	m_visualizeMode(VmDefault)
 {
@@ -99,13 +98,6 @@ bool TerrainComponent::create(const TerrainComponentData& data)
 
 	if (!createPatches())
 		return false;
-
-	for (const auto layerData : data.getLayers())
-	{
-		Ref< ITerrainLayer > layer = layerData->createLayerInstance(m_resourceManager, m_renderSystem, *this);
-		if (layer)
-			m_layers.push_back(layer);
-	}
 
 	return true;
 }
@@ -486,21 +478,6 @@ void TerrainComponent::build(
 #endif
 }
 
-void TerrainComponent::buildLayers(
-	const world::WorldBuildContext& context,
-	const world::WorldRenderView& worldRenderView,
-	const world::IWorldRenderPass& worldRenderPass
-)
-{
-	for (const auto layer : m_layers)
-		layer->build(
-			*this,
-			context,
-			worldRenderView,
-			worldRenderPass
-		);
-}
-
 void TerrainComponent::setVisualizeMode(VisualizeMode visualizeMode)
 {
 	m_visualizeMode = visualizeMode;
@@ -512,6 +489,7 @@ void TerrainComponent::destroy()
 
 void TerrainComponent::setOwner(world::ComponentEntity* owner)
 {
+	m_owner = owner;
 }
 
 void TerrainComponent::setTransform(const Transform& transform)
@@ -526,8 +504,6 @@ Aabb3 TerrainComponent::getBoundingBox() const
 
 void TerrainComponent::update(const world::UpdateParams& update)
 {
-	for (const auto layer : m_layers)
-		layer->update(update);
 }
 
 bool TerrainComponent::validate(uint32_t cacheSize)
@@ -620,12 +596,6 @@ void TerrainComponent::updatePatches(const uint32_t* region)
 	}
 }
 
-void TerrainComponent::updateLayers()
-{
-	for (const auto layer : m_layers)
-		layer->updatePatches(*this);
-}
-
 bool TerrainComponent::createPatches()
 {
 	m_patches.clear();
@@ -700,7 +670,6 @@ bool TerrainComponent::createPatches()
 	}
 
 	updatePatches(nullptr);
-	updateLayers();
 
 	AlignedVector< uint32_t > indices;
 	for (uint32_t lod = 0; lod < LodCount; ++lod)

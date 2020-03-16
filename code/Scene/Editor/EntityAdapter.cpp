@@ -88,6 +88,15 @@ world::Entity* EntityAdapter::getEntity() const
 	return m_entity;
 }
 
+RefArray< world::IEntityComponent > EntityAdapter::getComponents() const
+{
+	world::ComponentEntity* componentEntity = dynamic_type_cast< world::ComponentEntity* >(m_entity);
+	if (componentEntity)
+		return componentEntity->getComponents();
+	else
+		return RefArray< world::IEntityComponent >();
+}
+
 world::IEntityComponentData* EntityAdapter::getComponentData(const TypeInfo& componentDataType) const
 {
 	world::ComponentEntityData* componentEntityData = dynamic_type_cast< world::ComponentEntityData* >(m_entityData);

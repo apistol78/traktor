@@ -3,6 +3,7 @@
 #include "Terrain/OceanComponent.h"
 #include "Terrain/RiverComponent.h"
 #include "Terrain/TerrainComponent.h"
+#include "Terrain/TerrainLayerComponent.h"
 #include "World/WorldBuildContext.h"
 
 namespace traktor
@@ -46,6 +47,7 @@ const TypeInfoSet EntityRenderer::getRenderableTypes() const
 	typeSet.insert< OceanComponent >();
 	typeSet.insert< RiverComponent >();
 	typeSet.insert< TerrainComponent >();
+	typeSet.insert< TerrainLayerComponent >();
 	return typeSet;
 }
 
@@ -63,7 +65,7 @@ void EntityRenderer::setup(
 	Object* renderable
 )
 {
-	if (TerrainComponent* terrainComponent = dynamic_type_cast< TerrainComponent* >(renderable))
+	if (auto terrainComponent = dynamic_type_cast< TerrainComponent* >(renderable))
 		terrainComponent->setup(context, worldRenderView, m_terrainDetailDistance, m_terrainCacheSize);
 }
 
@@ -80,15 +82,13 @@ void EntityRenderer::build(
 	Object* renderable
 )
 {
-	if (TerrainComponent* terrainComponent = dynamic_type_cast< TerrainComponent* >(renderable))
-	{
+	if (auto terrainComponent = dynamic_type_cast< TerrainComponent* >(renderable))
 		terrainComponent->build(context, worldRenderView, worldRenderPass, m_terrainDetailDistance, m_terrainCacheSize);
-		if (m_terrainLayersEnable)
-			terrainComponent->buildLayers(context, worldRenderView, worldRenderPass);
-	}
-	else if (OceanComponent* oceanComponent = dynamic_type_cast< OceanComponent* >(renderable))
+	else if (auto terrainLayerComponent = dynamic_type_cast< TerrainLayerComponent* >(renderable))
+		terrainLayerComponent->build(context, worldRenderView, worldRenderPass);
+	else if (auto oceanComponent = dynamic_type_cast< OceanComponent* >(renderable))
 		oceanComponent->build(context.getRenderContext(), worldRenderView, worldRenderPass, m_oceanReflectionEnable);
-	else if (RiverComponent* riverComponent = dynamic_type_cast< RiverComponent* >(renderable))
+	else if (auto riverComponent = dynamic_type_cast< RiverComponent* >(renderable))
 		riverComponent->build(context.getRenderContext(), worldRenderView, worldRenderPass);
 }
 

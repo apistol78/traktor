@@ -5,17 +5,16 @@
 #include "Core/Serialization/Member.h"
 #include "Mesh/Instance/InstanceMesh.h"
 #include "Resource/Member.h"
-#include "Terrain/ForestLayer.h"
-#include "Terrain/ForestLayerData.h"
+#include "Terrain/ForestComponentData.h"
 
 namespace traktor
 {
 	namespace terrain
 	{
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.terrain.ForestLayerData", 1, ForestLayerData, ITerrainLayerData)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.terrain.ForestComponentData", 1, ForestComponentData, TerrainLayerComponentData)
 
-ForestLayerData::ForestLayerData()
+ForestComponentData::ForestComponentData()
 :	m_material(0)
 ,	m_density(0.1f)
 ,	m_lod0distance(50.0f)
@@ -27,20 +26,7 @@ ForestLayerData::ForestLayerData()
 {
 }
 
-Ref< ITerrainLayer > ForestLayerData::createLayerInstance(
-	resource::IResourceManager* resourceManager,
-	render::IRenderSystem* renderSystem,
-	const TerrainComponent& terrainComponent
-) const
-{
-	Ref< ForestLayer > layer = new ForestLayer();
-	if (layer->create(resourceManager, renderSystem, *this, terrainComponent))
-		return layer;
-	else
-		return nullptr;
-}
-
-void ForestLayerData::serialize(ISerializer& s)
+void ForestComponentData::serialize(ISerializer& s)
 {
 	s >> resource::Member< mesh::InstanceMesh >(L"lod0mesh", m_lod0mesh);
 	s >> resource::Member< mesh::InstanceMesh >(L"lod1mesh", m_lod1mesh);
@@ -52,7 +38,7 @@ void ForestLayerData::serialize(ISerializer& s)
 	s >> Member< float >(L"randomScale", m_randomScale, AttributeRange(0.0f, 1.0f) | AttributeUnit(AuPercent));
 	s >> Member< float >(L"randomTilt", m_randomTilt, AttributeRange(0.0f, HALF_PI) | AttributeUnit(AuRadians));
 
-	if (s.getVersion< ForestLayerData >() >= 1)
+	if (s.getVersion< ForestComponentData >() >= 1)
 		s >> Member< float >(L"slopeAngleThreshold", m_slopeAngleThreshold, AttributeRange(0.0f, HALF_PI) | AttributeUnit(AuRadians));
 }
 

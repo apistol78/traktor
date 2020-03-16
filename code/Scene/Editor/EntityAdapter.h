@@ -72,6 +72,8 @@ public:
 
 	world::Entity* getEntity() const;
 
+	RefArray< world::IEntityComponent > getComponents() const;
+
 	world::IEntityComponentData* getComponentData(const TypeInfo& componentDataType) const;
 
 	world::IEntityComponent* getComponent(const TypeInfo& componentType) const;

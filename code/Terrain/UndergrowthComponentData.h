@@ -2,7 +2,7 @@
 
 #include "Core/Containers/AlignedVector.h"
 #include "Resource/Id.h"
-#include "Terrain/ITerrainLayerData.h"
+#include "Terrain/TerrainLayerComponentData.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -17,23 +17,17 @@ namespace traktor
 	namespace terrain
 	{
 
-class T_DLLCLASS UndergrowthLayerData : public ITerrainLayerData
+class T_DLLCLASS UndergrowthComponentData : public TerrainLayerComponentData
 {
 	T_RTTI_CLASS;
 
 public:
-	UndergrowthLayerData();
-
-	virtual Ref< ITerrainLayer > createLayerInstance(
-		resource::IResourceManager* resourceManager,
-		render::IRenderSystem* renderSystem,
-		const TerrainComponent& terrainComponent
-	) const override final;
+	UndergrowthComponentData();
 
 	virtual void serialize(ISerializer& s) override final;
 
 private:
-	friend class UndergrowthLayer;
+	friend class UndergrowthComponent;
 	friend class TerrainEntityPipeline;
 
 	struct Plant
