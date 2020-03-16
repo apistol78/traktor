@@ -27,21 +27,21 @@ namespace traktor
 		namespace
 		{
 
-render::handle_t s_handleReflectionMap;
-render::handle_t s_handleReflectionMapAvailable;
-render::handle_t s_handleReflectionEnable;
-render::handle_t s_handleTerrainAvailable;
-render::handle_t s_handleHeightfield;
-render::handle_t s_handleWorldOrigin;
-render::handle_t s_handleWorldExtent;
-render::handle_t s_handleEye;
-render::handle_t s_handleShallowTint;
-render::handle_t s_handleReflectionTint;
-render::handle_t s_handleShadowTint;
-render::handle_t s_handleDeepColor;
-render::handle_t s_handleOpacity;
-render::handle_t s_handleWavesA;
-render::handle_t s_handleWavesB;
+const render::Handle s_handleReflectionMap(L"ReflectionMap");
+const render::Handle s_handleReflectionMapAvailable(L"ReflectionMapAvailable");
+const render::Handle s_handleReflectionEnable(L"ReflectionEnable");
+const render::Handle s_handleTerrainAvailable(L"TerrainAvailable");
+const render::Handle s_handleHeightfield(L"Heightfield");
+const render::Handle s_handleWorldOrigin(L"WorldOrigin");
+const render::Handle s_handleWorldExtent(L"WorldExtent");
+const render::Handle s_handleEye(L"Eye");
+const render::Handle s_handleShallowTint(L"ShallowTint");
+const render::Handle s_handleReflectionTint(L"ReflectionTint");
+const render::Handle s_handleShadowTint(L"ShadowTint");
+const render::Handle s_handleDeepColor(L"DeepColor");
+const render::Handle s_handleOpacity(L"Opacity");
+const render::Handle s_handleWavesA(L"WavesA");
+const render::Handle s_handleWavesB(L"WavesB");
 
 #pragma pack(1)
 struct OceanVertex
@@ -65,21 +65,6 @@ OceanComponent::OceanComponent()
 ,	m_maxAmplitude(0.0f)
 ,	m_allowSSReflections(true)
 {
-	s_handleReflectionMap = render::getParameterHandle(L"ReflectionMap");
-	s_handleReflectionMapAvailable = render::getParameterHandle(L"ReflectionMapAvailable");
-	s_handleReflectionEnable = render::getParameterHandle(L"ReflectionEnable");
-	s_handleTerrainAvailable = render::getParameterHandle(L"TerrainAvailable");
-	s_handleHeightfield = render::getParameterHandle(L"Heightfield");
-	s_handleWorldOrigin = render::getParameterHandle(L"WorldOrigin");
-	s_handleWorldExtent = render::getParameterHandle(L"WorldExtent");
-	s_handleEye = render::getParameterHandle(L"Eye");
-	s_handleShallowTint = render::getParameterHandle(L"ShallowTint");
-	s_handleReflectionTint = render::getParameterHandle(L"ReflectionTint");
-	s_handleShadowTint = render::getParameterHandle(L"ShadowTint");
-	s_handleDeepColor = render::getParameterHandle(L"DeepColor");
-	s_handleOpacity = render::getParameterHandle(L"Opacity");
-	s_handleWavesA = render::getParameterHandle(L"WavesA");
-	s_handleWavesB = render::getParameterHandle(L"WavesB");
 }
 
 OceanComponent::~OceanComponent()

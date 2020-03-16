@@ -24,12 +24,12 @@ namespace traktor
 		namespace
 		{
 
-render::handle_t s_handleNormals;
-render::handle_t s_handleHeightfield;
-render::handle_t s_handleSurface;
-render::handle_t s_handleWorldExtent;
-render::handle_t s_handleEye;
-render::handle_t s_handleMaxDistance;
+const render::Handle s_handleNormals(L"Normals");
+const render::Handle s_handleHeightfield(L"Heightfield");
+const render::Handle s_handleSurface(L"Surface");
+const render::Handle s_handleWorldExtent(L"WorldExtent");
+const render::Handle s_handleEye(L"Eye");
+const render::Handle s_handleMaxDistance(L"MaxDistance");
 
 		}
 
@@ -41,12 +41,6 @@ RubbleComponent::RubbleComponent()
 ,	m_clusterSize(0.0f)
 ,	m_eye(Vector4::zero())
 {
-	s_handleNormals = render::getParameterHandle(L"Normals");
-	s_handleHeightfield = render::getParameterHandle(L"Heightfield");
-	s_handleSurface = render::getParameterHandle(L"Surface");
-	s_handleWorldExtent = render::getParameterHandle(L"WorldExtent");
-	s_handleEye = render::getParameterHandle(L"Eye");
-	s_handleMaxDistance = render::getParameterHandle(L"MaxDistance");
 }
 
 bool RubbleComponent::create(
