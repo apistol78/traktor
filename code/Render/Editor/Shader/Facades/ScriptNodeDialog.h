@@ -38,7 +38,7 @@ public:
 
 	bool create(ui::Widget* parent);
 
-	std::wstring getText() const;
+	virtual std::wstring getText() const override final;
 
 	int32_t getInputPinCount() const;
 
