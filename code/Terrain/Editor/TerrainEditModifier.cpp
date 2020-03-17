@@ -19,6 +19,7 @@
 #include "Scene/Editor/EntityAdapter.h"
 #include "Scene/Editor/SceneEditorContext.h"
 #include "Scene/Editor/TransformChain.h"
+#include "Shape/Editor/Spline/SplineComponent.h"
 #include "Terrain/Terrain.h"
 #include "Terrain/TerrainComponent.h"
 #include "Terrain/TerrainComponentData.h"
@@ -38,8 +39,6 @@
 #include "Terrain/Editor/TerrainAsset.h"
 #include "Terrain/Editor/TerrainEditModifier.h"
 #include "Ui/Command.h"
-
-#include "Shape/Spline/SplineComponent.h"
 
 namespace traktor
 {

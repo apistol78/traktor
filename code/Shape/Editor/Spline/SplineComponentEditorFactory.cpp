@@ -1,6 +1,6 @@
 #include "Shape/Editor/Spline/SplineComponentEditor.h"
 #include "Shape/Editor/Spline/SplineComponentEditorFactory.h"
-#include "Shape/Spline/SplineComponentData.h"
+#include "Shape/Editor/Spline/SplineComponentData.h"
 
 namespace traktor
 {

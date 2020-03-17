@@ -2,8 +2,8 @@
 #include "Render/Shader.h"
 #include "Resource/IResourceManager.h"
 #include "Resource/Member.h"
-#include "Shape/Spline/ExtrudeShapeLayer.h"
-#include "Shape/Spline/ExtrudeShapeLayerData.h"
+#include "Shape/Editor/Spline/ExtrudeShapeLayer.h"
+#include "Shape/Editor/Spline/ExtrudeShapeLayerData.h"
 
 namespace traktor
 {

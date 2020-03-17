@@ -1,4 +1,4 @@
-#include "Shape/Spline/ControlPointComponent.h"
+#include "Shape/Editor/Spline/ControlPointComponent.h"
 
 namespace traktor
 {

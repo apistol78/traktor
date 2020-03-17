@@ -1,6 +1,6 @@
 #include "Render/PrimitiveRenderer.h"
 #include "Scene/Editor/EntityAdapter.h"
-#include "Shape/Spline/SplineComponent.h"
+#include "Shape/Editor/Spline/SplineComponent.h"
 #include "Shape/Editor/Spline/SplineComponentEditor.h"
 
 namespace traktor

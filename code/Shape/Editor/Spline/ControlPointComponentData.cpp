@@ -1,8 +1,8 @@
 #include "Core/Serialization/AttributeUnit.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
-#include "Shape/Spline/ControlPointComponent.h"
-#include "Shape/Spline/ControlPointComponentData.h"
+#include "Shape/Editor/Spline/ControlPointComponent.h"
+#include "Shape/Editor/Spline/ControlPointComponentData.h"
 
 namespace traktor
 {

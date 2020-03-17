@@ -1,4 +1,4 @@
-#include "Shape/Spline/SplineLayerComponent.h"
+#include "Shape/Editor/Spline/SplineLayerComponent.h"
 
 namespace traktor
 {

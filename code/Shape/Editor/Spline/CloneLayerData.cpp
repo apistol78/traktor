@@ -1,8 +1,8 @@
 #include "Core/Serialization/AttributeUnit.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberRef.h"
-#include "Shape/Spline/CloneLayer.h"
-#include "Shape/Spline/CloneLayerData.h"
+#include "Shape/Editor/Spline/CloneLayer.h"
+#include "Shape/Editor/Spline/CloneLayerData.h"
 #include "World/EntityData.h"
 #include "World/IEntityBuilder.h"
 

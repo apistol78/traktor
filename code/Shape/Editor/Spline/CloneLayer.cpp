@@ -1,5 +1,5 @@
 #include "Core/Math/TransformPath.h"
-#include "Shape/Spline/CloneLayer.h"
+#include "Shape/Editor/Spline/CloneLayer.h"
 #include "World/Entity.h"
 #include "World/IEntityBuilder.h"
 #include "World/WorldBuildContext.h"

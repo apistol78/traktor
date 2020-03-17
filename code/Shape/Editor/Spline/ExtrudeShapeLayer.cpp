@@ -11,7 +11,7 @@
 #include "Render/VertexBuffer.h"
 #include "Render/VertexElement.h"
 #include "Render/Context/RenderContext.h"
-#include "Shape/Spline/ExtrudeShapeLayer.h"
+#include "Shape/Editor/Spline/ExtrudeShapeLayer.h"
 #include "World/IWorldRenderPass.h"
 #include "World/WorldBuildContext.h"
 
