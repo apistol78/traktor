@@ -16,7 +16,7 @@
 #include "Shape/Editor/Solid/SolidEntityPipeline.h"
 #include "Shape/Editor/Solid/SolidEntityReplicator.h"
 #include "Shape/Editor/Solid/SolidMaterial.h"
-#include "World/Entity/ComponentEntityData.h"
+#include "World/EntityData.h"
 
 namespace traktor
 {
@@ -100,7 +100,7 @@ Ref< ISerializable > SolidEntityPipeline::buildOutput(
 		std::wstring outputCollisionShapePath = L"Generated/" + outputCollisionShapeGuid.format();
 
 		// Create our output entity which will only contain the merged meshes.
-		Ref< world::ComponentEntityData > outputEntityData = new world::ComponentEntityData();
+		Ref< world::EntityData > outputEntityData = new world::EntityData();
 		outputEntityData->setName(solidEntityData->getName());
 		outputEntityData->setTransform(solidEntityData->getTransform());
 

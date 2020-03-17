@@ -7,7 +7,7 @@
 #include "Physics/World/Vehicle/VehicleComponentData.h"
 #include "Physics/World/Vehicle/Wheel.h"
 #include "Physics/World/Vehicle/WheelData.h"
-#include "World/Entity/ComponentEntity.h"
+#include "World/Entity.h"
 
 namespace traktor
 {
@@ -53,9 +53,9 @@ void VehicleComponent::destroy()
 	m_owner = nullptr;
 }
 
-void VehicleComponent::setOwner(world::ComponentEntity* owner)
+void VehicleComponent::setOwner(world::Entity* owner)
 {
-	m_owner = dynamic_type_cast< world::ComponentEntity* >(owner);
+	m_owner = owner;
 }
 
 void VehicleComponent::setTransform(const Transform& transform)

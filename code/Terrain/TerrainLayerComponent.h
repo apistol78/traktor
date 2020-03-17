@@ -33,7 +33,7 @@ class T_DLLCLASS TerrainLayerComponent : public world::IEntityComponent
 public:
 	TerrainLayerComponent();
 
-	virtual void setOwner(world::ComponentEntity* owner) override;
+	virtual void setOwner(world::Entity* owner) override;
 
 	virtual void update(const world::UpdateParams& update) override;
 

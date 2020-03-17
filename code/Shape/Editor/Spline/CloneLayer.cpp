@@ -30,7 +30,7 @@ void CloneLayer::destroy()
 	m_entities.clear();
 }
 
-void CloneLayer::setOwner(world::ComponentEntity* owner)
+void CloneLayer::setOwner(world::Entity* owner)
 {
 }
 

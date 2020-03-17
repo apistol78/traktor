@@ -13,7 +13,7 @@
 #include "Scene/Editor/Traverser.h"
 #include "Shape/Editor/Prefab/PrefabEntityData.h"
 #include "Shape/Editor/Prefab/PrefabEntityReplicator.h"
-#include "World/Entity/ComponentEntityData.h"
+#include "World/EntityData.h"
 
 namespace traktor
 {
@@ -41,38 +41,35 @@ Ref< model::Model > PrefabEntityReplicator::createModel(
     // Collect all models and remove all mesh components from prefab.
     scene::Traverser::visit(prefabEntityData, [&](const world::EntityData* inoutEntityData) -> scene::Traverser::VisitorResult
     {
-        if (auto componentEntityData = dynamic_type_cast< const world::ComponentEntityData* >(inoutEntityData))
+        if (auto meshComponentData = inoutEntityData->getComponent< mesh::MeshComponentData >())
         {
-            if (auto meshComponentData = componentEntityData->getComponent< mesh::MeshComponentData >())
-            {
-                Ref< mesh::MeshAsset > meshAsset = pipelineBuilder->getSourceDatabase()->getObjectReadOnly< mesh::MeshAsset >(
-                    meshComponentData->getMesh()
-                );
-                if (!meshAsset)
-                    return scene::Traverser::VrFailed;
+            Ref< mesh::MeshAsset > meshAsset = pipelineBuilder->getSourceDatabase()->getObjectReadOnly< mesh::MeshAsset >(
+                meshComponentData->getMesh()
+            );
+            if (!meshAsset)
+                return scene::Traverser::VrFailed;
 
-                // \tbd We should probably ignore mesh assets with custom shaders.
+            // \tbd We should probably ignore mesh assets with custom shaders.
 
-                Ref< model::Model > model = model::ModelFormat::readAny(meshAsset->getFileName(), [&](const Path& p) {
-                    return pipelineBuilder->openFile(Path(assetPath), p.getOriginal());
-                });
-                if (!model)
-                    return scene::Traverser::VrFailed;
+            Ref< model::Model > model = model::ModelFormat::readAny(meshAsset->getFileName(), [&](const Path& p) {
+                return pipelineBuilder->openFile(Path(assetPath), p.getOriginal());
+            });
+            if (!model)
+                return scene::Traverser::VrFailed;
 
-                // Transform model into world space.
-                model::Transform(inoutEntityData->getTransform().toMatrix44()).apply(*model);
+            // Transform model into world space.
+            model::Transform(inoutEntityData->getTransform().toMatrix44()).apply(*model);
 
-                model->clear(model::Model::CfColors | model::Model::CfJoints);
-                models.push_back(model);
+            model->clear(model::Model::CfColors | model::Model::CfJoints);
+            models.push_back(model);
 
-                materialTextures.insert(
-                    meshAsset->getMaterialTextures().begin(),
-                    meshAsset->getMaterialTextures().end()
-                );
+            materialTextures.insert(
+                meshAsset->getMaterialTextures().begin(),
+                meshAsset->getMaterialTextures().end()
+            );
 
-                //componentEntityData->removeComponent(meshComponentData);
-            }			
-        }
+            //inoutEntityData->removeComponent(meshComponentData);
+        }			
         return scene::Traverser::VrContinue;
     });
 

@@ -44,7 +44,7 @@ public:
 
 	virtual void destroy() override final;
 
-	virtual void setOwner(world::ComponentEntity* owner) override final;
+	virtual void setOwner(world::Entity* owner) override final;
 
 	virtual void setTransform(const Transform& transform) override final;
 
@@ -78,7 +78,7 @@ private:
 		uint32_t count;
 	};
 
-	world::ComponentEntity* m_owner;
+	world::Entity* m_owner;
 
 	UndergrowthComponentData m_layerData;
 

@@ -27,8 +27,8 @@
 #include "Ui/Itf/IWidget.h"
 #include "World/WorldEntityRenderers.h"
 #include "World/WorldRenderSettings.h"
-#include "World/Entity/ComponentEntity.h"
-#include "World/Entity/ComponentEntityRenderer.h"
+#include "World/Entity.h"
+#include "World/EntityRenderer.h"
 #include "World/Entity/GroupEntityRenderer.h"
 #include "World/Entity/LightComponent.h"
 #include "World/Entity/LightRenderer.h"
@@ -190,7 +190,7 @@ void AnimationPreviewControl::updatePreview()
 		false
 	);
 
-	m_entity = new world::ComponentEntity();
+	m_entity = new world::Entity();
 	m_entity->setComponent(meshComponent);
 }
 
@@ -203,7 +203,7 @@ void AnimationPreviewControl::updateWorldRenderer()
 		return;
 
 	Ref< world::WorldEntityRenderers > worldEntityRenderers = new world::WorldEntityRenderers();
-	worldEntityRenderers->add(new world::ComponentEntityRenderer());
+	worldEntityRenderers->add(new world::EntityRenderer());
 	worldEntityRenderers->add(new world::GroupEntityRenderer(world::EmAll));
 	worldEntityRenderers->add(new world::LightRenderer());
 	worldEntityRenderers->add(new mesh::MeshComponentRenderer());
@@ -348,7 +348,7 @@ void AnimationPreviewControl::eventPaint(ui::PaintEvent* event)
 			0.0f
 		);
 
-		world::ComponentEntity lightEntity;
+		world::Entity lightEntity;
 		lightEntity.setComponent(&lightComponent);
 		lightEntity.update(up);
 

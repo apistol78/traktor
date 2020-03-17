@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include "Core/RefArray.h"
 #include "Core/Math/Transform.h"
 #include "Core/Serialization/ISerializable.h"
 
@@ -16,6 +17,8 @@ namespace traktor
 {
 	namespace world
 	{
+
+class IEntityComponentData;
 
 /*! Entity data.
  * \ingroup World
@@ -38,13 +41,52 @@ public:
 
 	virtual const Transform& getTransform() const;
 
+	/*! Set component.
+	 *
+	 * Only one component instance of each type is supported,
+	 * thus existing instance will be replaced.
+	 *
+	 * \param component Component instance to set.
+	 */
+	void setComponent(IEntityComponentData* component);
+
+	/*! Remove component.
+	 *
+	 * \param component Component instance to remove.
+	 */
+	void removeComponent(IEntityComponentData* component);
+
+	/*! Get component of type.
+	 *
+	 * \param componentType Type of component.
+	 * \return Component instance matching type.
+	 */
+	IEntityComponentData* getComponent(const TypeInfo& componentType) const;
+
+	/*! Get component of type.
+	 *
+	 * \param ComponentDataType Type of component.
+	 * \return Component instance matching type.
+	 */
+	template < typename ComponentDataType >
+	ComponentDataType* getComponent() const
+	{
+		return checked_type_cast< ComponentDataType* >(getComponent(type_of< ComponentDataType >()));
+	}
+
+	/*! Get components.
+	 *
+	 * \return Array of all components.
+	 */
+	const RefArray< IEntityComponentData >& getComponents() const;
+
 	virtual void serialize(ISerializer& s) override;
 
 private:
 	std::wstring m_name;
 	Transform m_transform;
+	RefArray< IEntityComponentData > m_components;
 };
 
 	}
 }
-

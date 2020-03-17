@@ -48,10 +48,10 @@
 #include "Shape/Editor/Bake/TracerOutput.h"
 #include "Shape/Editor/Bake/TracerProcessor.h"
 #include "Shape/Editor/Bake/TracerTask.h"
+#include "World/EntityData.h"
 #include "World/IrradianceGridResource.h"
 #include "World/WorldRenderSettings.h"
 #include "World/Editor/LayerEntityData.h"
-#include "World/Entity/ComponentEntityData.h"
 #include "World/Entity/ExternalEntityData.h"
 #include "World/Entity/LightComponentData.h"
 #include "Weather/Sky/SkyComponentData.h"
@@ -428,110 +428,29 @@ bool BakePipelineOperator::build(
 		// Traverse and visit all entities in layer.
 		scene::Traverser::visit(flattenedLayer, [&](Ref< world::EntityData >& inoutEntityData) -> scene::Traverser::VisitorResult
 		{
-			if (auto componentEntityData = dynamic_type_cast< world::ComponentEntityData* >(inoutEntityData))
+			if (auto lightComponentData = inoutEntityData->getComponent< world::LightComponentData >())
 			{
-				if (auto lightComponentData = componentEntityData->getComponent< world::LightComponentData >())
-				{
-					if (addLight(lightComponentData, inoutEntityData->getTransform(), tracerTask))
-						componentEntityData->removeComponent(lightComponentData);
-				}
-
-				if (auto skyComponentData = componentEntityData->getComponent< weather::SkyComponentData >())
-					addSky(pipelineBuilder, m_assetPath, skyComponentData, tracerTask);
-
-				RefArray< world::IEntityComponentData > componentDatas = componentEntityData->getComponents();
-				for (auto componentData : componentDatas)
-				{
-					// Find model synthesizer which can generate from current entity.
-					Ref< const scene::IEntityReplicator > entityReplicator = scene::IEntityReplicator::createEntityReplicator(type_of(componentData));
-					if (!entityReplicator)
-						continue;
-
-					// Synthesize a model which we can trace.
-					Ref< model::Model > model = entityReplicator->createModel(pipelineBuilder, m_assetPath, componentData);
-					if (!model)
-						continue;
-
-					Guid lightmapId = lightmapSeedId.permutate();
-
-					// Ensure model is fit for tracing.
-					model->clear(model::Model::CfColors | model::Model::CfJoints);
-					model::Triangulate().apply(*model);
-					model::CleanDuplicates(0.0f).apply(*model);
-					model::CleanDegenerate().apply(*model);
-					model::CalculateTangents(false).apply(*model);
-
-					// Calculate size of lightmap from geometry.
-					int32_t lightmapSize = calculateLightmapSize(
-						model,
-						configuration->getLumelDensity(),
-						configuration->getMinimumLightMapSize(),
-						configuration->getMaximumLightMapSize()
-					);
-
-					// Check if model already contain lightmap UV or if we need to unwrap.
-					uint32_t channel = model->getTexCoordChannel(L"Lightmap");
-					if (channel == model::c_InvalidIndex)
-					{
-						// No lightmap UV channel, need to add and unwrap automatically.
-						channel = model->addUniqueTexCoordChannel(L"Lightmap");
-						model::UnwrapUV(channel, lightmapSize).apply(*model);
-					}
-
-					// Modify all materials to contain reference to lightmap channel.
-					AlignedVector< model::Material > materials = model->getMaterials();
-					for (auto& material : materials)
-					{
-						material.setBlendOperator(model::Material::BoDecal);
-						material.setLightMap(model::Material::Map(L"Lightmap", channel, false, lightmapId));
-					}
-					model->setMaterials(materials);
-
-					// Write model for debugging into temporary folder.
-					model::ModelFormat::writeAny(L"data/Temp/Bake/" + inoutEntityData->getName() + L".tmd", model);
-
-					// Add model to raytracing task.
-					if (!addModel(
-						model,
-						inoutEntityData->getTransform(),
-						inoutEntityData->getName(),
-						lightmapId,
-						lightmapSize,
-						pipelineBuilder,
-						tracerTask
-					))
-						continue;
-
-					// Let model generator consume altered model and modify entity in ways
-					// which make sense for entity data.
-					Ref< world::IEntityComponentData > replaceComponentData = checked_type_cast< world::IEntityComponentData* >(entityReplicator->modifyOutput(
-						pipelineBuilder,
-						m_assetPath,
-						componentData,
-						model
-					));
-					if (replaceComponentData == nullptr)
-						componentEntityData->removeComponent(componentData);
-					else if (replaceComponentData != componentData)
-					{
-						componentEntityData->removeComponent(componentData);
-						componentEntityData->setComponent(replaceComponentData);
-					}
-				}
+				if (addLight(lightComponentData, inoutEntityData->getTransform(), tracerTask))
+					inoutEntityData->removeComponent(lightComponentData);
 			}
-			else	// non-component entity type.
-			{
-				Guid lightmapId = lightmapSeedId.permutate();
 
+			if (auto skyComponentData = inoutEntityData->getComponent< weather::SkyComponentData >())
+				addSky(pipelineBuilder, m_assetPath, skyComponentData, tracerTask);
+
+			RefArray< world::IEntityComponentData > componentDatas = inoutEntityData->getComponents();
+			for (auto componentData : componentDatas)
+			{
 				// Find model synthesizer which can generate from current entity.
-				Ref< const scene::IEntityReplicator > entityReplicator = scene::IEntityReplicator::createEntityReplicator(type_of(inoutEntityData));
+				Ref< const scene::IEntityReplicator > entityReplicator = scene::IEntityReplicator::createEntityReplicator(type_of(componentData));
 				if (!entityReplicator)
-					return scene::Traverser::VrContinue;
+					continue;
 
 				// Synthesize a model which we can trace.
-				Ref< model::Model > model = entityReplicator->createModel(pipelineBuilder, m_assetPath, inoutEntityData);
+				Ref< model::Model > model = entityReplicator->createModel(pipelineBuilder, m_assetPath, componentData);
 				if (!model)
-					return scene::Traverser::VrFailed;
+					continue;
+
+				Guid lightmapId = lightmapSeedId.permutate();
 
 				// Ensure model is fit for tracing.
 				model->clear(model::Model::CfColors | model::Model::CfJoints);
@@ -579,16 +498,23 @@ bool BakePipelineOperator::build(
 					pipelineBuilder,
 					tracerTask
 				))
-					return scene::Traverser::VrFailed;
+					continue;
 
 				// Let model generator consume altered model and modify entity in ways
 				// which make sense for entity data.
-				inoutEntityData = checked_type_cast< world::EntityData* >(entityReplicator->modifyOutput(
+				Ref< world::IEntityComponentData > replaceComponentData = checked_type_cast< world::IEntityComponentData* >(entityReplicator->modifyOutput(
 					pipelineBuilder,
 					m_assetPath,
-					inoutEntityData,
+					componentData,
 					model
 				));
+				if (replaceComponentData == nullptr)
+					inoutEntityData->removeComponent(componentData);
+				else if (replaceComponentData != componentData)
+				{
+					inoutEntityData->removeComponent(componentData);
+					inoutEntityData->setComponent(replaceComponentData);
+				}
 			}
 			return scene::Traverser::VrContinue;
 		});

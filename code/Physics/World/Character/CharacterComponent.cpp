@@ -3,7 +3,7 @@
 #include "Physics/PhysicsManager.h"
 #include "Physics/World/Character/CharacterComponent.h"
 #include "Physics/World/Character/CharacterComponentData.h"
-#include "World/Entity/ComponentEntity.h"
+#include "World/Entity.h"
 
 namespace traktor
 {
@@ -48,7 +48,7 @@ void CharacterComponent::destroy()
 	m_owner = nullptr;
 }
 
-void CharacterComponent::setOwner(world::ComponentEntity* owner)
+void CharacterComponent::setOwner(world::Entity* owner)
 {
 	if ((m_owner = owner) != nullptr)
 	{

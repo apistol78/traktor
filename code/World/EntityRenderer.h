@@ -15,10 +15,10 @@ namespace traktor
 	namespace world
 	{
 
-/*! Component entity renderer.
+/*! Plain entity renderer.
  * \ingroup World
  */
-class T_DLLCLASS ComponentEntityRenderer : public IEntityRenderer
+class T_DLLCLASS EntityRenderer : public IEntityRenderer
 {
 	T_RTTI_CLASS;
 

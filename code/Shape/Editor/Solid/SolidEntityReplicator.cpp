@@ -16,7 +16,7 @@
 #include "Shape/Editor/Solid/SolidEntityData.h"
 #include "Shape/Editor/Solid/SolidMaterial.h"
 #include "Shape/Editor/Solid/SolidEntityReplicator.h"
-#include "World/Entity/ComponentEntityData.h"
+#include "World/EntityData.h"
 
 namespace traktor
 {
@@ -235,7 +235,7 @@ Ref< Object > SolidEntityReplicator::modifyOutput(
 	outputShapeDesc->setCollisionMask(solidEntityData->getCollisionMask());
 
 	// Create our output entity which will replace the solid entity.
-	Ref< world::ComponentEntityData > outputEntityData = new world::ComponentEntityData();
+	Ref< world::EntityData > outputEntityData = new world::EntityData();
 	outputEntityData->setName(solidEntityData->getName());
 	outputEntityData->setTransform(solidEntityData->getTransform());
 	outputEntityData->setComponent(new mesh::MeshComponentData(resource::Id< mesh::IMesh >(outputRenderMeshGuid)));

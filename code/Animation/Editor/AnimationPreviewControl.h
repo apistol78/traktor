@@ -43,7 +43,7 @@ class IResourceManager;
 	namespace world
 	{
 
-class ComponentEntity;
+class Entity;
 class IWorldRenderer;
 
 	}
@@ -93,7 +93,7 @@ private:
 	resource::Proxy< mesh::SkinnedMesh > m_mesh;
 	resource::Proxy< Skeleton > m_skeleton;
 	Ref< IPoseController > m_poseController;
-	Ref< world::ComponentEntity > m_entity;
+	Ref< world::Entity > m_entity;
 	Color4ub m_colorClear;
 	Color4ub m_colorGrid;
 	Timer m_timer;

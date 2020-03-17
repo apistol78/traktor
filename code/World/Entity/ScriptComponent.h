@@ -32,7 +32,7 @@ public:
 
 	virtual void destroy() override final;
 
-	virtual void setOwner(ComponentEntity* owner) override final;
+	virtual void setOwner(Entity* owner) override final;
 
 	virtual void setTransform(const Transform& transform) override final;
 
@@ -41,7 +41,7 @@ public:
 	virtual void update(const UpdateParams& update) override final;
 
 private:
-	ComponentEntity* m_owner;
+	Entity* m_owner;
 	resource::Proxy< IRuntimeClass > m_class;
 	Ref< ITypedObject > m_object;
 	Ref< const IRuntimeDispatch > m_methodUpdate;

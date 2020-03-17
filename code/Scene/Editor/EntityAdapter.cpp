@@ -10,8 +10,6 @@
 #include "World/Entity.h"
 #include "World/EntityData.h"
 #include "World/IEntityComponentData.h"
-#include "World/Entity/ComponentEntity.h"
-#include "World/Entity/ComponentEntityData.h"
 #include "World/Entity/ExternalEntityData.h"
 
 namespace traktor
@@ -62,19 +60,16 @@ void EntityAdapter::prepare(
 	}
 
 	// Create component editors.
-	if (const world::ComponentEntityData* componentEntityData = dynamic_type_cast< const world::ComponentEntityData* >(m_entityData))
+	m_componentEditors.resize(0);
+	for (auto componentData : entityData->getComponents())
 	{
-		m_componentEditors.resize(0);
-		for (auto componentData : componentEntityData->getComponents())
-		{
-			const IComponentEditorFactory* factory = m_context->findComponentEditorFactory(type_of(componentData));
-			T_FATAL_ASSERT (factory);
+		const IComponentEditorFactory* factory = m_context->findComponentEditorFactory(type_of(componentData));
+		T_FATAL_ASSERT (factory);
 
-			Ref< IComponentEditor > componentEditor = factory->createComponentEditor(m_context, this, componentData);
-			T_FATAL_ASSERT (componentEditor);
+		Ref< IComponentEditor > componentEditor = factory->createComponentEditor(m_context, this, componentData);
+		T_FATAL_ASSERT (componentEditor);
 
-			m_componentEditors.push_back(componentEditor);
-		}
+		m_componentEditors.push_back(componentEditor);
 	}
 }
 
@@ -90,29 +85,17 @@ world::Entity* EntityAdapter::getEntity() const
 
 RefArray< world::IEntityComponent > EntityAdapter::getComponents() const
 {
-	world::ComponentEntity* componentEntity = dynamic_type_cast< world::ComponentEntity* >(m_entity);
-	if (componentEntity)
-		return componentEntity->getComponents();
-	else
-		return RefArray< world::IEntityComponent >();
+	return m_entity->getComponents();
 }
 
 world::IEntityComponentData* EntityAdapter::getComponentData(const TypeInfo& componentDataType) const
 {
-	world::ComponentEntityData* componentEntityData = dynamic_type_cast< world::ComponentEntityData* >(m_entityData);
-	if (componentEntityData)
-		return componentEntityData->getComponent(componentDataType);
-	else
-		return nullptr;
+	return m_entityData->getComponent(componentDataType);
 }
 
 world::IEntityComponent* EntityAdapter::getComponent(const TypeInfo& componentType) const
 {
-	world::ComponentEntity* componentEntity = dynamic_type_cast< world::ComponentEntity* >(m_entity);
-	if (componentEntity)
-		return componentEntity->getComponent(componentType);
-	else
-		return nullptr;
+	return m_entity->getComponent(componentType);
 }
 
 void EntityAdapter::dropHash()
@@ -312,10 +295,10 @@ void EntityAdapter::unlinkChild(EntityAdapter* child)
 	T_FATAL_ASSERT (child);
 	T_FATAL_ASSERT_M (child->m_parent == this, L"Entity adapter not child if this");
 
-	RefArray< EntityAdapter >::iterator i = std::find(m_children.begin(), m_children.end(), child);
-	T_ASSERT(i != m_children.end());
+	auto it = std::find(m_children.begin(), m_children.end(), child);
+	T_ASSERT(it != m_children.end());
 
-	m_children.erase(i);
+	m_children.erase(it);
 	m_childMap.remove(child->getEntity());
 
 	child->m_parent = nullptr;

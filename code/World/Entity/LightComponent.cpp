@@ -3,7 +3,7 @@
 #else
 #	include <time_ce.h>
 #endif
-#include "World/Entity/ComponentEntity.h"
+#include "World/Entity.h"
 #include "World/Entity/LightComponent.h"
 
 namespace traktor
@@ -44,7 +44,7 @@ void LightComponent::destroy()
 {
 }
 
-void LightComponent::setOwner(ComponentEntity* owner)
+void LightComponent::setOwner(Entity* owner)
 {
 	m_owner = owner;
 }

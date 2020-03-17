@@ -91,12 +91,13 @@
 				<translation>0, 0, 0, 0</translation>
 				<rotation>0, 0, 0, 1</rotation>
 			</transform>
+			<components/>
 			<mask>
 				<static>true</static>
 				<dynamic>true</dynamic>
 			</mask>
 			<entityData>
-				<item type="traktor.world.ComponentEntityData">
+				<item type="traktor.world.EntityData">
 					<name>Sky</name>
 					<transform>
 						<translation>0, 0, 0, 0</translation>
@@ -110,7 +111,7 @@
 						</item>
 					</components>
 				</item>
-				<item type="traktor.world.ComponentEntityData">
+				<item type="traktor.world.EntityData">
 					<name>Light</name>
 					<transform>
 						<translation>0, 0, 0, 0</translation>
@@ -130,7 +131,7 @@
 						</item>
 					</components>
 				</item>
-				<item type="traktor.world.ComponentEntityData">
+				<item type="traktor.world.EntityData">
 					<name>Reflections</name>
 					<transform>
 						<translation>0, 10, 0, 0</translation>
@@ -161,6 +162,7 @@
 				<translation>0, 0, 0, 0</translation>
 				<rotation>0, 0, 0, 1</rotation>
 			</transform>
+			<components/>
 			<mask>
 				<static>true</static>
 				<dynamic>true</dynamic>

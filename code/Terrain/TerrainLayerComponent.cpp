@@ -12,7 +12,7 @@ TerrainLayerComponent::TerrainLayerComponent()
 {
 }
 
-void TerrainLayerComponent::setOwner(world::ComponentEntity* owner)
+void TerrainLayerComponent::setOwner(world::Entity* owner)
 {
 	m_dirty = true;
 }

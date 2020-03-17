@@ -25,7 +25,7 @@
 #include "Shape/Editor/Prefab/PrefabEntityData.h"
 #include "Shape/Editor/Prefab/PrefabEntityPipeline.h"
 #include "Shape/Editor/Prefab/PrefabMerge.h"
-#include "World/Entity/ComponentEntityData.h"
+#include "World/EntityData.h"
 #include "World/Entity/ExternalEntityData.h"
 
 namespace traktor
@@ -77,7 +77,7 @@ Ref< ISerializable > resolveAllExternal(editor::IPipelineCommon* pipeline, const
 	return reflection->clone();
 }
 
-void collectComponentEntities(const ISerializable* object, RefArray< world::ComponentEntityData >& outComponentEntities)
+void collectComponentEntities(const ISerializable* object, RefArray< world::EntityData >& outComponentEntities)
 {
 	Ref< Reflection > reflection = Reflection::create(object);
 
@@ -89,9 +89,9 @@ void collectComponentEntities(const ISerializable* object, RefArray< world::Comp
 		Ref< RfmObject > objectMember = checked_type_cast< RfmObject*, false >(objectMembers.front());
 		objectMembers.pop_front();
 
-		if (world::ComponentEntityData* componentEntityData = dynamic_type_cast< world::ComponentEntityData* >(objectMember->get()))
+		if (world::EntityData* entityData = dynamic_type_cast< world::EntityData* >(objectMember->get()))
 		{
-			outComponentEntities.push_back(componentEntityData);
+			outComponentEntities.push_back(entityData);
 		}
 		else if (objectMember->get())
 		{
@@ -146,8 +146,8 @@ Ref< ISerializable > PrefabEntityPipeline::buildOutput(
 	std::wstring outputCollisionShapePath = L"Generated/" + outputCollisionShapeGuid.format();
 
 	// Get all component entities which contain visual and/or physics meshes.
-	RefArray< world::ComponentEntityData > componentEntityDatas;
-	collectComponentEntities(prefabEntityData, componentEntityDatas);
+	RefArray< world::EntityData > entityDatas;
+	collectComponentEntities(prefabEntityData, entityDatas);
 
 	Ref< PrefabMerge > merge = new PrefabMerge();
 
@@ -157,9 +157,9 @@ Ref< ISerializable > PrefabEntityPipeline::buildOutput(
 	Transform Tprefab = prefabEntityData->getTransform();
 	Transform TprefabInv = Tprefab.inverse();
 
-	for (auto componentEntityData : componentEntityDatas)
+	for (auto entityData : entityDatas)
 	{
-		const mesh::MeshComponentData* meshComponent = componentEntityData->getComponent< mesh::MeshComponentData >();
+		const mesh::MeshComponentData* meshComponent = entityData->getComponent< mesh::MeshComponentData >();
 		if (meshComponent)
 		{
 			Ref< const mesh::MeshAsset > meshAsset = pipelineBuilder->getObjectReadOnly< mesh::MeshAsset >(meshComponent->getMesh());
@@ -167,14 +167,14 @@ Ref< ISerializable > PrefabEntityPipeline::buildOutput(
 			{
 				merge->addVisualMesh(
 					meshAsset,
-					TprefabInv * componentEntityData->getTransform()
+					TprefabInv * entityData->getTransform()
 				);
 			}
 			else
-				log::warning << L"Skipped visual mesh of \"" << componentEntityData->getName() << L"\"; unable to read visual mesh asset." << Endl;
+				log::warning << L"Skipped visual mesh of \"" << entityData->getName() << L"\"; unable to read visual mesh asset." << Endl;
 		}
 
-		const physics::RigidBodyComponentData* rigidBodyComponent = componentEntityData->getComponent< physics::RigidBodyComponentData >();
+		const physics::RigidBodyComponentData* rigidBodyComponent = entityData->getComponent< physics::RigidBodyComponentData >();
 		if (rigidBodyComponent)
 		{
 			const physics::BodyDesc* bodyDesc = rigidBodyComponent->getBodyDesc();
@@ -188,21 +188,21 @@ Ref< ISerializable > PrefabEntityPipeline::buildOutput(
 					{
 						merge->addShapeMesh(
 							meshShapeAsset,
-							TprefabInv * componentEntityData->getTransform()
+							TprefabInv * entityData->getTransform()
 						);
 
 						shapeCollisionGroup.insert(meshShapeDesc->getCollisionGroup().begin(), meshShapeDesc->getCollisionGroup().end());
 						shapeCollisionMask.insert(meshShapeDesc->getCollisionMask().begin(), meshShapeDesc->getCollisionMask().end());
 					}
 					else
-						log::warning << L"Skipped physics mesh of \"" << componentEntityData->getName() << L"\"; unable to read collision mesh asset." << Endl;
+						log::warning << L"Skipped physics mesh of \"" << entityData->getName() << L"\"; unable to read collision mesh asset." << Endl;
 				}
 			}
 		}
 	}
 
 	// Create our output entity which will only contain the merged meshes.
-	Ref< world::ComponentEntityData > outputEntityData = new world::ComponentEntityData();
+	Ref< world::EntityData > outputEntityData = new world::EntityData();
 	outputEntityData->setName(prefabEntityData->getName());
 	outputEntityData->setTransform(prefabEntityData->getTransform());
 

@@ -487,7 +487,7 @@ void TerrainComponent::destroy()
 {
 }
 
-void TerrainComponent::setOwner(world::ComponentEntity* owner)
+void TerrainComponent::setOwner(world::Entity* owner)
 {
 	m_owner = owner;
 }

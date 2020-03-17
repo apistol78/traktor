@@ -52,7 +52,7 @@ void ExtrudeShapeLayer::destroy()
 {
 }
 
-void ExtrudeShapeLayer::setOwner(world::ComponentEntity* owner)
+void ExtrudeShapeLayer::setOwner(world::Entity* owner)
 {
 }
 

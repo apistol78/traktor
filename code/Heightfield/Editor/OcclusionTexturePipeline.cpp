@@ -32,8 +32,8 @@
 #include "Model/ModelFormat.h"
 #include "Model/Operations/Triangulate.h"
 #include "Render/Editor/Texture/TextureOutput.h"
+#include "World/EntityData.h"
 #include "World/Editor/LayerEntityData.h"
-#include "World/Entity/ComponentEntityData.h"
 #include "World/Entity/ExternalEntityData.h"
 
 namespace traktor
@@ -99,18 +99,7 @@ void collectMeshes(const ISerializable* object, AlignedVector< MeshAndTransform 
 		Ref< RfmObject > objectMember = checked_type_cast< RfmObject*, false >(objectMembers.front());
 		objectMembers.pop_front();
 
-		if (world::ComponentEntityData* componentEntityData = dynamic_type_cast< world::ComponentEntityData* >(objectMember->get()))
-		{
-			mesh::MeshComponentData* meshComponentData = componentEntityData->getComponent< mesh::MeshComponentData >();
-			if (meshComponentData)
-			{
-				MeshAndTransform mat;
-				mat.mesh = meshComponentData->getMesh();
-				mat.transform = componentEntityData->getTransform();
-				outMeshes.push_back(mat);
-			}
-		}
-		else if (world::LayerEntityData* layerEntityData = dynamic_type_cast< world::LayerEntityData* >(objectMember->get()))
+		if (world::LayerEntityData* layerEntityData = dynamic_type_cast< world::LayerEntityData* >(objectMember->get()))
 		{
 			if (!layerEntityData->isInclude())
 				continue;
@@ -126,6 +115,15 @@ void collectMeshes(const ISerializable* object, AlignedVector< MeshAndTransform 
 		}
 		else if (world::EntityData* entityData = dynamic_type_cast< world::EntityData* >(objectMember->get()))
 		{
+			mesh::MeshComponentData* meshComponentData = entityData->getComponent< mesh::MeshComponentData >();
+			if (meshComponentData)
+			{
+				MeshAndTransform mat;
+				mat.mesh = meshComponentData->getMesh();
+				mat.transform = entityData->getTransform();
+				outMeshes.push_back(mat);
+			}
+
 			collectMeshes(
 				objectMember->get(),
 				outMeshes

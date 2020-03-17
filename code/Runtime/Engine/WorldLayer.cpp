@@ -24,7 +24,6 @@
 #include "World/EntitySchema.h"
 #include "World/EntityEventManager.h"
 #include "World/Entity/CameraComponent.h"
-#include "World/Entity/ComponentEntity.h"
 #include "World/Entity/GroupEntity.h"
 
 namespace traktor
@@ -154,9 +153,11 @@ void WorldLayer::prepare(const UpdateInfo& info)
 		m_scene->getWorldRenderSettings()->viewFarZ
 	);
 
-	if (const world::ComponentEntity* cameraEntity = dynamic_type_cast< const world::ComponentEntity* >(m_cameraEntity))
+	// Use transform from camera initially, camera can change during update so
+	// it's reset in "build".
+	if (m_cameraEntity)
 	{
-		const world::CameraComponent* camera = cameraEntity->getComponent< world::CameraComponent >();
+		const world::CameraComponent* camera = m_cameraEntity->getComponent< world::CameraComponent >();
 		if (camera)
 		{
 			if (camera->getCameraType() == world::CtOrthographic)
@@ -180,12 +181,7 @@ void WorldLayer::prepare(const UpdateInfo& info)
 				);
 			}
 		}
-	}
 
-	// Use transform from camera initially, camera can change during update so
-	// it's reset in "build".
-	if (m_cameraEntity)
-	{
 		Transform cameraTransform = m_cameraEntity->getTransform();
 
 		m_cameraTransform.step();

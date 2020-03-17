@@ -37,7 +37,7 @@ public:
 
 	virtual void destroy() override final;
 
-	virtual void setOwner(world::ComponentEntity* owner) override final;
+	virtual void setOwner(world::Entity* owner) override final;
 
 	virtual void setTransform(const Transform& transform) override final;
 
@@ -84,7 +84,7 @@ public:
 	const Vector4& getVelocity() const;
 
 private:
-	world::ComponentEntity* m_owner;
+	world::Entity* m_owner;
 	Ref< PhysicsManager > m_physicsManager;
 	Ref< const CharacterComponentData > m_data;
 	Ref< Body > m_bodyWide;

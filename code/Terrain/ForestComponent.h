@@ -41,7 +41,7 @@ public:
 
 	virtual void destroy() override final;
 
-	virtual void setOwner(world::ComponentEntity* owner) override final;
+	virtual void setOwner(world::Entity* owner) override final;
 
 	virtual void setTransform(const Transform& transform) override final;
 
@@ -65,7 +65,7 @@ private:
 		float scale;
 	};
 
-	world::ComponentEntity* m_owner;
+	world::Entity* m_owner;
 	ForestComponentData m_data;
 	resource::Proxy< mesh::InstanceMesh > m_lod0mesh;
 	resource::Proxy< mesh::InstanceMesh > m_lod1mesh;

@@ -57,7 +57,7 @@ void SkyComponent::destroy()
 	safeDestroy(m_vertexBuffer);
 }
 
-void SkyComponent::setOwner(world::ComponentEntity* owner)
+void SkyComponent::setOwner(world::Entity* owner)
 {
 }
 

@@ -17,7 +17,7 @@ namespace traktor
 	namespace world
 	{
 
-class ComponentEntity;
+class Entity;
 class IWorldRenderPass;
 class WorldBuildContext;
 class WorldRenderView;
@@ -39,7 +39,7 @@ public:
 
 	virtual void destroy() override final;
 
-	virtual void setOwner(world::ComponentEntity* owner) override final;
+	virtual void setOwner(world::Entity* owner) override final;
 
 	virtual void setTransform(const Transform& transform) override final;
 
@@ -56,7 +56,7 @@ public:
 	const TransformPath& getPath() const { return m_path; }
 
 private:
-	world::ComponentEntity* m_owner;
+	world::Entity* m_owner;
 	TransformPath m_path;
 	bool m_dirty;
 };

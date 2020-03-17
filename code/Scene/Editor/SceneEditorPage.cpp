@@ -65,12 +65,12 @@
 #include "Ui/GridView/GridItem.h"
 #include "World/Entity.h"
 #include "World/EntityBuilder.h"
+#include "World/EntityData.h"
 #include "World/EntityEventManager.h"
 #include "World/IEntityComponent.h"
 #include "World/IEntityComponentData.h"
 #include "World/WorldRenderSettings.h"
 #include "World/Editor/LayerEntityData.h"
-#include "World/Entity/ComponentEntityData.h"
 
 namespace traktor
 {
@@ -270,7 +270,6 @@ bool SceneEditorPage::create(ui::Container* parent)
 	m_entityMenuGroup->add(new ui::MenuItem(ui::Command(L"Scene.Editor.CreateExternal"), i18n::Text(L"SCENE_EDITOR_CREATE_EXTERNAL")));
 	m_entityMenuGroup->add(new ui::MenuItem(L"-"));
 	m_entityMenuGroup->add(new ui::MenuItem(ui::Command(L"Scene.Editor.AddEntity"), i18n::Text(L"SCENE_EDITOR_ADD_ENTITY")));
-	m_entityMenuGroup->add(new ui::MenuItem(ui::Command(L"Scene.Editor.AddComponentEntity"), i18n::Text(L"SCENE_EDITOR_ADD_COMPONENT_ENTITY")));
 	m_entityMenuGroup->add(new ui::MenuItem(ui::Command(L"Scene.Editor.AddGroupEntity"), i18n::Text(L"SCENE_EDITOR_ADD_GROUP_ENTITY")));
 	m_entityMenuGroup->add(new ui::MenuItem(ui::Command(L"Editor.Delete"), i18n::Text(L"SCENE_EDITOR_REMOVE_ENTITY")));
 
@@ -666,8 +665,6 @@ bool SceneEditorPage::handleCommand(const ui::Command& command)
 		result = resolveExternal();
 	else if (command == L"Scene.Editor.AddEntity")
 		result = addEntity(nullptr);
-	else if (command == L"Scene.Editor.AddComponentEntity")
-		result = addEntity(&type_of< world::ComponentEntityData >());
 	else if (command == L"Scene.Editor.AddGroupEntity")
 		result = addEntity(&type_of< world::GroupEntityData >());
 	else if (command == L"Scene.Editor.MoveToEntity")
@@ -1099,16 +1096,13 @@ bool SceneEditorPage::addEntity(const TypeInfo* entityType)
 	Ref< world::EntityData > entityData = checked_type_cast< world::EntityData* >(entityType->createInstance());
 	T_ASSERT(entityData);
 
-	// If we're adding a component entity then browse for first component data also.
-	if (auto componentEntityData = dynamic_type_cast< world::ComponentEntityData* >(entityData))
+	// Browse for first component data also.
+	const TypeInfo* componentType = m_context->getEditor()->browseType(makeTypeInfoSet< world::IEntityComponentData >(), false, true);
+	if (componentType)
 	{
-		const TypeInfo* componentType = m_context->getEditor()->browseType(makeTypeInfoSet< world::IEntityComponentData >(), false, true);
-		if (componentType)
-		{
-			Ref< world::IEntityComponentData > componentData = dynamic_type_cast< world::IEntityComponentData* >(componentType->createInstance());
-			if (componentData)
-				componentEntityData->setComponent(componentData);
-		}
+		Ref< world::IEntityComponentData > componentData = dynamic_type_cast< world::IEntityComponentData* >(componentType->createInstance());
+		if (componentData)
+			entityData->setComponent(componentData);
 	}
 
 	m_context->getDocument()->push();

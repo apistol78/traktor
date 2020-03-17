@@ -8,7 +8,7 @@ namespace traktor
 	namespace world
 	{
 
-class ComponentEntity;
+class Entity;
 class Entity;
 
 	}
@@ -45,7 +45,7 @@ private:
 	Ref< world::Entity > m_sender;
 	Transform m_Toffset;
 	Ref< EffectComponent > m_effectComponent;
-	Ref< world::ComponentEntity > m_effectEntity;
+	Ref< world::Entity > m_effectEntity;
 };
 
 	}
