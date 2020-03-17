@@ -3,7 +3,7 @@
 #include "Spray/SpawnEffectEvent.h"
 #include "Spray/SpawnEffectEventInstance.h"
 #include "World/IWorldRenderer.h"
-#include "World/Entity/ComponentEntity.h"
+#include "World/Entity.h"
 
 namespace traktor
 {
@@ -29,7 +29,7 @@ SpawnEffectEventInstance::SpawnEffectEventInstance(
 	else
 		T = m_Toffset;
 
-	m_effectEntity = new world::ComponentEntity();
+	m_effectEntity = new world::Entity();
 	m_effectEntity->setComponent(m_effectComponent);
 
 	if (m_spawnEffect->m_useRotation)

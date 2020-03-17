@@ -1,7 +1,7 @@
 #include "Shape/Editor/Spline/ControlPointComponent.h"
 #include "Shape/Editor/Spline/SplineLayerComponent.h"
 #include "Shape/Editor/Spline/SplineComponent.h"
-#include "World/Entity/ComponentEntity.h"
+#include "World/Entity.h"
 #include "World/Entity/GroupComponent.h"
 
 namespace traktor
@@ -22,9 +22,9 @@ void SplineComponent::destroy()
 	m_owner = nullptr;
 }
 
-void SplineComponent::setOwner(world::ComponentEntity* owner)
+void SplineComponent::setOwner(world::Entity* owner)
 {
-	m_owner = dynamic_type_cast< world::ComponentEntity* >(owner);
+	m_owner = dynamic_type_cast< world::Entity* >(owner);
 }
 
 void SplineComponent::setTransform(const Transform& transform)
@@ -47,15 +47,11 @@ void SplineComponent::update(const world::UpdateParams& update)
 	RefArray< SplineLayerComponent > layers;
 	for (auto entity : groupComponent->getEntities())
 	{
-		auto cmpent = dynamic_type_cast< world::ComponentEntity* >(entity);
-		if (!cmpent)
-			continue;
-
-		auto controlPoint = cmpent->getComponent< ControlPointComponent >();
+		auto controlPoint = entity->getComponent< ControlPointComponent >();
 		if (controlPoint)
 			controlPoints.push_back(controlPoint);
 
-		auto layer = cmpent->getComponent< SplineLayerComponent >();
+		auto layer = entity->getComponent< SplineLayerComponent >();
 		if (layer)
 			layers.push_back(layer);
 	}

@@ -29,7 +29,7 @@
 #include "Ui/TableLayout.h"
 #include "Ui/FileDialog.h"
 #include "Ui/MiniButton.h"
-#include "World/Entity/ComponentEntityData.h"
+#include "World/EntityData.h"
 #include "World/Entity/GroupEntityData.h"
 #include "World/Entity/ScriptComponentData.h"
 
@@ -253,7 +253,7 @@ void GameEntityWizardDialog::eventDialogClick(ui::ButtonClickEvent* event)
 			return;
 		}
 
-		Ref< world::ComponentEntityData > entityData = new world::ComponentEntityData();
+		Ref< world::EntityData > entityData = new world::EntityData();
 		entityData->setName(name);
 
 		if (!visualMesh.empty())
@@ -365,7 +365,7 @@ void GameEntityWizardDialog::eventDialogClick(ui::ButtonClickEvent* event)
 			StringOutputStream ss;
 			ss << L"-- " << name << Endl;
 			ss << Endl;
-			ss << name << L" = " << name << L" or class(\"" << name << L"\", traktor.world.ComponentEntity)" << Endl;
+			ss << name << L" = " << name << L" or class(\"" << name << L"\", traktor.world.Entity)" << Endl;
 			ss << Endl;
 			ss << L"function " << name << L":new()" << Endl;
 			ss << L"end" << Endl;

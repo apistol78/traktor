@@ -41,7 +41,7 @@ public:
 
 	virtual void destroy() override final;
 
-	virtual void setOwner(world::ComponentEntity* owner) override final;
+	virtual void setOwner(world::Entity* owner) override final;
 
 	virtual void setTransform(const Transform& transform) override final;
 
@@ -83,7 +83,7 @@ private:
 		int32_t to;
 	};
 
-	world::ComponentEntity* m_owner;
+	world::Entity* m_owner;
 	AlignedVector< RubbleMesh > m_rubble;
 	AlignedVector< Instance > m_instances;
 	AlignedVector< Cluster > m_clusters;

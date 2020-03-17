@@ -18,8 +18,8 @@
 #include "World/WorldClassFactory.h"
 #include "World/Entity/CameraComponent.h"
 #include "World/Entity/CameraComponentData.h"
-#include "World/Entity/ComponentEntity.h"
-#include "World/Entity/ComponentEntityData.h"
+#include "World/Entity.h"
+#include "World/EntityData.h"
 #include "World/Entity/GroupComponent.h"
 #include "World/Entity/GroupEntity.h"
 #include "World/Entity/LightComponent.h"
@@ -134,12 +134,12 @@ void Entity_update(Entity* self, float totalTime, float deltaTime)
 	self->update(up);
 }
 
-IEntityComponentData* ComponentEntityData_getComponent(ComponentEntityData* self, const TypeInfo& componentDataType)
+IEntityComponentData* EntityData_getComponent(EntityData* self, const TypeInfo& componentDataType)
 {
 	return self->getComponent(componentDataType);
 }
 
-IEntityComponent* ComponentEntity_getComponent(ComponentEntity* self, const TypeInfo& componentType)
+IEntityComponent* Entity_getComponent(Entity* self, const TypeInfo& componentType)
 {
 	return self->getComponent(componentType);
 }
@@ -204,15 +204,22 @@ void WorldClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	registrar->registerClass(classIEntityRenderer);
 
 	auto classEntityData = new AutoRuntimeClass< EntityData >();
+	classEntityData->addConstructor();
 	classEntityData->addProperty("name", &EntityData::setName, &EntityData::getName);
 	classEntityData->addProperty("transform", &EntityData::setTransform, &EntityData::getTransform);
+	classEntityData->addMethod("setComponent", &EntityData::setComponent);
+	classEntityData->addMethod("getComponent", &EntityData_getComponent);
 	registrar->registerClass(classEntityData);
 
 	auto classEntity = new AutoRuntimeClass< Entity >();
+	classEntity->addConstructor();
+	classEntity->addConstructor< const Transform& >();
 	classEntity->addProperty("transform", &Entity_setTransform, &Entity_getTransform);
 	classEntity->addProperty("boundingBox", &Entity::getBoundingBox);
 	classEntity->addMethod("destroy", &Entity::destroy);
 	classEntity->addMethod("update", &Entity_update);
+	classEntity->addMethod("setComponent", &Entity::setComponent);
+	classEntity->addMethod("getComponent", &Entity_getComponent);
 	registrar->registerClass(classEntity);
 
 	auto classGroupComponent = new AutoRuntimeClass< GroupComponent >();
@@ -293,19 +300,6 @@ void WorldClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	auto classVolumeComponent = new AutoRuntimeClass< VolumeComponent >();
 	classVolumeComponent->addMethod("inside", &VolumeComponent::inside);
 	registrar->registerClass(classVolumeComponent);
-
-	auto classComponentEntityData = new AutoRuntimeClass< ComponentEntityData >();
-	classComponentEntityData->addConstructor();
-	classComponentEntityData->addMethod("setComponent", &ComponentEntityData::setComponent);
-	classComponentEntityData->addMethod("getComponent", &ComponentEntityData_getComponent);
-	registrar->registerClass(classComponentEntityData);
-
-	auto classComponentEntity = new AutoRuntimeClass< ComponentEntity >();
-	classComponentEntity->addConstructor();
-	classComponentEntity->addConstructor< const Transform& >();
-	classComponentEntity->addMethod("setComponent", &ComponentEntity::setComponent);
-	classComponentEntity->addMethod("getComponent", &ComponentEntity_getComponent);
-	registrar->registerClass(classComponentEntity);
 
 	auto classIWorldRenderer = new AutoRuntimeClass< IWorldRenderer >();
 	classIWorldRenderer->addConstant("QuDisabled", Any::fromInt32(Quality::QuDisabled));

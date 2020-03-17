@@ -1,6 +1,6 @@
 #include "Core/Misc/SafeDestroy.h"
 #include "World/IWorldRenderer.h"
-#include "World/Entity/ComponentEntity.h"
+#include "World/Entity.h"
 #include "World/Entity/DecalComponent.h"
 #include "World/Entity/DecalEvent.h"
 #include "World/Entity/DecalEventInstance.h"
@@ -14,7 +14,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.world.DecalEventInstance", DecalEventInstance, 
 
 DecalEventInstance::DecalEventInstance(const DecalEvent* event, const Transform& Toffset)
 {
-	m_entity = new ComponentEntity();
+	m_entity = new Entity();
 	m_entity->setComponent(new DecalComponent(
 		event->getSize(),
 		event->getThickness(),

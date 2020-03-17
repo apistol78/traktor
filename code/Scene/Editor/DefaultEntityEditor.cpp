@@ -12,7 +12,7 @@
 #include "Scene/Editor/IModifier.h"
 #include "Scene/Editor/SceneEditorContext.h"
 #include "Ui/Command.h"
-#include "World/Entity/ComponentEntityData.h"
+#include "World/EntityData.h"
 #include "World/Entity/GroupComponentData.h"
 #include "World/Entity/GroupEntityData.h"
 #include "World/Entity/LightComponentData.h"
@@ -42,10 +42,8 @@ bool DefaultEntityEditor::isGroup() const
 	const world::EntityData* entityData = m_entityAdapter->getEntityData();
 	if (is_a< world::GroupEntityData >(entityData))
 		return true;
-	else if (auto componentEntityData = dynamic_type_cast< const world::ComponentEntityData* >(entityData))
-		return (bool)(componentEntityData->getComponent< world::GroupComponentData >() != nullptr);
 	else
-		return false;
+		return (bool)(entityData->getComponent< world::GroupComponentData >() != nullptr);
 }
 
 bool DefaultEntityEditor::isChildrenPrivate() const
@@ -63,13 +61,11 @@ bool DefaultEntityEditor::addChildEntity(EntityAdapter* childEntityAdapter) cons
 		groupEntityData->addEntityData(childEntityData);
 		return true;
 	}
-	else if (auto componentEntityData = dynamic_type_cast< world::ComponentEntityData* >(entityData))
+	else
 	{
-		componentEntityData->getComponent< world::GroupComponentData >()->addEntityData(childEntityData);
+		entityData->getComponent< world::GroupComponentData >()->addEntityData(childEntityData);
 		return true;
 	}
-
-	return false;
 }
 
 bool DefaultEntityEditor::removeChildEntity(EntityAdapter* childEntityAdapter) const
@@ -78,11 +74,11 @@ bool DefaultEntityEditor::removeChildEntity(EntityAdapter* childEntityAdapter) c
 	world::EntityData* childEntityData = childEntityAdapter->getEntityData();
 
 	Ref< Reflection > r;
-	if (auto componentEntityData = dynamic_type_cast< world::ComponentEntityData* >(entityData))
-	 	r = Reflection::create(componentEntityData->getComponent< world::GroupComponentData >());
-	else
-	 	r = Reflection::create(entityData);
-	
+	if (auto groupEntityData = dynamic_type_cast< world::GroupEntityData* >(entityData))
+		r = Reflection::create(groupEntityData);
+	else	
+	 	r = Reflection::create(entityData->getComponent< world::GroupComponentData >());
+
 	if (!r)
 		return false;
 
@@ -113,10 +109,10 @@ bool DefaultEntityEditor::removeChildEntity(EntityAdapter* childEntityAdapter) c
 
 	if (removedCount > 0)
 	{
-		if (auto componentEntityData = dynamic_type_cast< world::ComponentEntityData* >(entityData))
-			r->apply(componentEntityData->getComponent< world::GroupComponentData >());
-		else
+		if (auto groupEntityData = dynamic_type_cast< world::GroupEntityData* >(entityData))
 			r->apply(entityData);
+		else
+			r->apply(entityData->getComponent< world::GroupComponentData >());
 		return true;
 	}
 

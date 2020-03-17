@@ -165,7 +165,7 @@ void RiverComponent::destroy()
 	safeDestroy(m_indexBuffer);
 }
 
-void RiverComponent::setOwner(world::ComponentEntity* owner)
+void RiverComponent::setOwner(world::Entity* owner)
 {
 }
 

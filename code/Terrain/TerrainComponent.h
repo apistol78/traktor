@@ -141,7 +141,7 @@ public:
 
 	virtual void destroy() override final;
 
-	virtual void setOwner(world::ComponentEntity* owner) override final;
+	virtual void setOwner(world::Entity* owner) override final;
 
 	virtual void setTransform(const Transform& transform) override final;
 
@@ -155,7 +155,7 @@ private:
 
 	Ref< resource::IResourceManager > m_resourceManager;
 	Ref< render::IRenderSystem > m_renderSystem;
-	world::ComponentEntity* m_owner;
+	world::Entity* m_owner;
 	resource::Proxy< Terrain > m_terrain;
 	resource::Proxy< hf::Heightfield > m_heightfield;
 	Ref< TerrainSurfaceCache > m_surfaceCache;

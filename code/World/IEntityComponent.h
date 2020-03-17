@@ -17,7 +17,7 @@ namespace traktor
 	namespace world
 	{
 
-class ComponentEntity;
+class Entity;
 
 /*! Entity component.
  * \ingroup World
@@ -29,7 +29,7 @@ class T_DLLCLASS IEntityComponent : public Object
 public:
 	virtual void destroy() = 0;
 
-	virtual void setOwner(ComponentEntity* owner) = 0;
+	virtual void setOwner(Entity* owner) = 0;
 
 	virtual void setTransform(const Transform& transform) = 0;
 

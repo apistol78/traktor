@@ -7,7 +7,7 @@
 #include "Mesh/Editor/MeshAsset.h"
 #include "Mesh/Editor/MeshEntityWizardTool.h"
 #include "Ui/MessageBox.h"
-#include "World/Entity/ComponentEntityData.h"
+#include "World/EntityData.h"
 
 namespace traktor
 {
@@ -35,7 +35,7 @@ bool MeshEntityWizardTool::launch(ui::Widget* parent, editor::IEditor* editor, d
 	}
 
 	// Create mesh entity data.
-	Ref< world::ComponentEntityData > entityData = new world::ComponentEntityData();
+	Ref< world::EntityData > entityData = new world::EntityData();
 	entityData->setName(instance->getName());
 	entityData->setComponent(new MeshComponentData(resource::Id< IMesh >(instance->getGuid())));
 

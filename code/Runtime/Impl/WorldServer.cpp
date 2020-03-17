@@ -32,10 +32,10 @@
 #include "Weather/WeatherRenderer.h"
 #include "World/EntityBuilder.h"
 #include "World/EntityEventManager.h"
+#include "World/EntityRenderer.h"
 #include "World/IWorldRenderer.h"
 #include "World/WorldEntityRenderers.h"
 #include "World/WorldResourceFactory.h"
-#include "World/Entity/ComponentEntityRenderer.h"
 #include "World/Entity/DecalRenderer.h"
 #include "World/Entity/GroupEntityRenderer.h"
 #include "World/Entity/LightRenderer.h"
@@ -195,7 +195,7 @@ void WorldServer::createEntityRenderers(IEnvironment* environment)
 		bool(m_oceanQuality >= world::QuHigh)
 	);
 
-	m_entityRenderers->add(new world::ComponentEntityRenderer());
+	m_entityRenderers->add(new world::EntityRenderer());
 	m_entityRenderers->add(new world::DecalRenderer(renderSystem));
 	m_entityRenderers->add(new world::GroupEntityRenderer(world::EmAll));
 	m_entityRenderers->add(new world::LightRenderer());

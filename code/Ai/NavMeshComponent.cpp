@@ -20,7 +20,7 @@ void NavMeshComponent::destroy()
 {
 }
 
-void NavMeshComponent::setOwner(world::ComponentEntity* owner)
+void NavMeshComponent::setOwner(world::Entity* owner)
 {
 }
 

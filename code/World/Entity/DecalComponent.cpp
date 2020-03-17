@@ -27,7 +27,7 @@ void DecalComponent::destroy()
 {
 }
 
-void DecalComponent::setOwner(ComponentEntity* owner)
+void DecalComponent::setOwner(Entity* owner)
 {
 }
 

@@ -5,8 +5,8 @@
 #include "World/IEntityBuilder.h"
 #include "World/Entity/CameraComponent.h"
 #include "World/Entity/CameraComponentData.h"
-#include "World/Entity/ComponentEntity.h"
-#include "World/Entity/ComponentEntityData.h"
+#include "World/Entity.h"
+#include "World/EntityData.h"
 #include "World/Entity/DecalComponent.h"
 #include "World/Entity/DecalComponentData.h"
 #include "World/Entity/DecalEvent.h"
@@ -43,7 +43,7 @@ WorldEntityFactory::WorldEntityFactory(resource::IResourceManager* resourceManag
 const TypeInfoSet WorldEntityFactory::getEntityTypes() const
 {
 	TypeInfoSet typeSet;
-	typeSet.insert< ComponentEntityData >();
+	typeSet.insert< EntityData >();
 	typeSet.insert< ExternalEntityData >();
 	typeSet.insert< GroupEntityData >();
 	return typeSet;
@@ -93,8 +93,7 @@ Ref< Entity > WorldEntityFactory::createEntity(const IEntityBuilder* builder, co
 		else
 			return builder->create(resolvedEntityData.getResource());
 	}
-
-	if (const GroupEntityData* groupData = dynamic_type_cast< const GroupEntityData* >(&entityData))
+	else if (const GroupEntityData* groupData = dynamic_type_cast< const GroupEntityData* >(&entityData))
 	{
 		Ref< GroupEntity > groupEntity = new GroupEntity(
 			groupData->getTransform(),
@@ -108,13 +107,12 @@ Ref< Entity > WorldEntityFactory::createEntity(const IEntityBuilder* builder, co
 		}
 		return groupEntity;
 	}
-
-	if (const ComponentEntityData* componentData = dynamic_type_cast< const ComponentEntityData* >(&entityData))
+	else
 	{
-		Ref< ComponentEntity > componentEntity = new ComponentEntity(componentData->getTransform());
-		for (uint32_t i = 0; i < componentData->m_components.size(); ++i)
+		Ref< Entity > entity = new Entity(entityData.getTransform());
+		for (auto componentData : entityData.getComponents())
 		{
-			Ref< IEntityComponent > component = builder->create(componentData->m_components[i]);
+			Ref< IEntityComponent > component = builder->create(componentData);
 			if (!component)
 			{
 				if (!m_editor)
@@ -122,11 +120,10 @@ Ref< Entity > WorldEntityFactory::createEntity(const IEntityBuilder* builder, co
 				else
 					continue;
 			}
-			componentEntity->setComponent(component);
+			entity->setComponent(component);
 		}
-		return componentEntity;
+		return entity;
 	}
-
 	return nullptr;
 }
 
@@ -212,7 +209,7 @@ Ref< IEntityComponent > WorldEntityFactory::createEntityComponent(const world::I
 #else
 			ctcd.side = 128;
 #endif
-			ctcd.mipCount = log2(ctcd.side ) + 1;
+			ctcd.mipCount = (int32_t)(log2(ctcd.side ) + 1.0f);
 			ctcd.format = render::TfR11G11B10F;
 			ctcd.sRGB = false;
 			ctcd.immutable = false;

@@ -15,7 +15,7 @@ namespace traktor
 	namespace world
 	{
 
-class ComponentEntity;
+class Entity;
 
 	}
 
@@ -46,7 +46,7 @@ public:
 
 	virtual void destroy() override final;
 
-	virtual void setOwner(world::ComponentEntity* owner) override final;
+	virtual void setOwner(world::Entity* owner) override final;
 
 	virtual void setTransform(const Transform& transform) override final;
 
@@ -67,7 +67,7 @@ public:
 	const RefArray< Wheel >& getWheels() const { return m_wheels; }
 
 private:
-	world::ComponentEntity* m_owner;
+	world::Entity* m_owner;
 	Ref< PhysicsManager > m_physicsManager;
 	Ref< const VehicleComponentData > m_data;
 	RefArray< Wheel > m_wheels;

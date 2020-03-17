@@ -17,10 +17,10 @@
 #include "Terrain/TerrainSurfaceCache.h"
 #include "Terrain/UndergrowthComponent.h"
 #include "Terrain/UndergrowthComponentData.h"
+#include "World/Entity.h"
 #include "World/IWorldRenderPass.h"
 #include "World/WorldBuildContext.h"
 #include "World/WorldRenderView.h"
-#include "World/Entity/ComponentEntity.h"
 
 namespace traktor
 {
@@ -146,7 +146,7 @@ void UndergrowthComponent::destroy()
 {
 }
 
-void UndergrowthComponent::setOwner(world::ComponentEntity* owner)
+void UndergrowthComponent::setOwner(world::Entity* owner)
 {
 	TerrainLayerComponent::setOwner(owner);
 	m_owner = owner;

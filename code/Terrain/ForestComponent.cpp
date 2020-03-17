@@ -15,7 +15,7 @@
 #include "World/IWorldRenderPass.h"
 #include "World/WorldBuildContext.h"
 #include "World/WorldRenderView.h"
-#include "World/Entity/ComponentEntity.h"
+#include "World/Entity.h"
 
 namespace traktor
 {
@@ -58,7 +58,7 @@ void ForestComponent::destroy()
 {
 }
 
-void ForestComponent::setOwner(world::ComponentEntity* owner)
+void ForestComponent::setOwner(world::Entity* owner)
 {
 	TerrainLayerComponent::setOwner(owner);
 	m_owner = owner;

@@ -1,5 +1,5 @@
 #include "Mesh/MeshComponent.h"
-#include "World/Entity/ComponentEntity.h"
+#include "World/Entity.h"
 
 namespace traktor
 {
@@ -20,7 +20,7 @@ void MeshComponent::destroy()
 	m_owner = nullptr;
 }
 
-void MeshComponent::setOwner(world::ComponentEntity* owner)
+void MeshComponent::setOwner(world::Entity* owner)
 {
 	if ((m_owner = owner) != nullptr)
 	{

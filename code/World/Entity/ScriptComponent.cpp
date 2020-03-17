@@ -1,6 +1,6 @@
 #include "Core/Class/IRuntimeClass.h"
 #include "Core/Class/IRuntimeDispatch.h"
-#include "World/Entity/ComponentEntity.h"
+#include "World/Entity.h"
 #include "World/Entity/ScriptComponent.h"
 
 namespace traktor
@@ -24,7 +24,7 @@ void ScriptComponent::destroy()
 	m_methodUpdate = nullptr;
 }
 
-void ScriptComponent::setOwner(ComponentEntity* owner)
+void ScriptComponent::setOwner(Entity* owner)
 {
 	T_ASSERT(m_owner == nullptr);
 	m_owner = owner;

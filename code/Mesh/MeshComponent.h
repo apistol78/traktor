@@ -40,7 +40,7 @@ public:
 
 	virtual void destroy() override;
 
-	virtual void setOwner(world::ComponentEntity* owner) override final;
+	virtual void setOwner(world::Entity* owner) override final;
 
 	virtual void setTransform(const Transform& transform) override;
 
@@ -57,7 +57,7 @@ public:
 	IntervalTransform& getTransform() { return m_transform; }
 
 protected:
-	world::ComponentEntity* m_owner;
+	world::Entity* m_owner;
 	Ref< const IMeshParameterCallback > m_parameterCallback;
 	bool m_screenSpaceCulling;
 	IntervalTransform m_transform;
