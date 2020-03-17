@@ -19,7 +19,7 @@
 #include "Scene/Editor/EntityAdapter.h"
 #include "Scene/Editor/SceneEditorContext.h"
 #include "Scene/Editor/TransformChain.h"
-#include "Shape/Editor/Spline/SplineComponent.h"
+#include "Shape/Editor/Spline/SplineEntity.h"
 #include "Terrain/Terrain.h"
 #include "Terrain/TerrainComponent.h"
 #include "Terrain/TerrainComponentData.h"
@@ -1105,14 +1105,14 @@ void TerrainEditModifier::applySpline(bool alignToGround)
 
 	RefArray< scene::EntityAdapter > entityAdapters;
 	m_context->findAdaptersOfType(
-		type_of< shape::SplineComponent >(),
+		type_of< shape::SplineEntity >(),
 		entityAdapters,
 		scene::SceneEditorContext::GfDefault | scene::SceneEditorContext::GfSelectedOnly | scene::SceneEditorContext::GfNoExternalChild
 	);
 
 	for (auto entityAdapter : entityAdapters)
 	{
-		auto spline = entityAdapter->getComponent< shape::SplineComponent >();
+		auto spline = mandatory_non_null_type_cast< shape::SplineEntity* >(entityAdapter->getEntity());
 
 		const auto& path = spline->getPath();
 		const auto& keys = path.getKeys();
@@ -1144,7 +1144,7 @@ void TerrainEditModifier::flattenUnderSpline()
 
 	RefArray< scene::EntityAdapter > entityAdapters;
 	m_context->findAdaptersOfType(
-		type_of< shape::SplineComponent >(),
+		type_of< shape::SplineEntity >(),
 		entityAdapters,
 		scene::SceneEditorContext::GfDefault | scene::SceneEditorContext::GfSelectedOnly | scene::SceneEditorContext::GfNoExternalChild
 	);
@@ -1154,7 +1154,7 @@ void TerrainEditModifier::flattenUnderSpline()
 
 	for (auto entityAdapter : entityAdapters)
 	{
-		auto spline = entityAdapter->getComponent< shape::SplineComponent >();
+		auto spline = mandatory_non_null_type_cast< shape::SplineEntity* >(entityAdapter->getEntity());
 
 		const auto& path = spline->getPath();
 		const auto& keys = path.getKeys();

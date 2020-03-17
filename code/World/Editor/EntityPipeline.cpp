@@ -131,20 +131,24 @@ Ref< ISerializable > EntityPipeline::buildOutput(
 		Ref< RfmObject > objectMember = checked_type_cast< RfmObject*, false >(objectMembers.front());
 		objectMembers.pop_front();
 
-		if (const EntityData* entityData = dynamic_type_cast< const EntityData* >(objectMember->get()))
+		if (auto entityData = dynamic_type_cast< const EntityData* >(objectMember->get()))
 		{
+			// Build entity trough pipeline; replace entity with product.
 			objectMember->set(pipelineBuilder->buildOutput(sourceInstance, entityData));
 		}
-		else if (const IEntityComponentData* entityComponentData = dynamic_type_cast< const IEntityComponentData* >(objectMember->get()))
+		else if (auto entityComponentData = dynamic_type_cast< const IEntityComponentData* >(objectMember->get()))
 		{
+			// Build component trough pipeline; replace component with product.
 			objectMember->set(pipelineBuilder->buildOutput(sourceInstance, entityComponentData));
 		}
-		else if (const IEntityEventData* entityEventData = dynamic_type_cast< const IEntityEventData* >(objectMember->get()))
+		else if (auto entityEventData = dynamic_type_cast< const IEntityEventData* >(objectMember->get()))
 		{
+			// Build event trough pipeline; replace event with product.
 			objectMember->set(pipelineBuilder->buildOutput(sourceInstance, entityEventData));
 		}
 		else if (objectMember->get())
 		{
+			// Scan recursively through object references; add to member list.
 			Ref< Reflection > childReflection = Reflection::create(objectMember->get());
 			if (childReflection)
 				childReflection->findMembers(RfpMemberType(type_of< RfmObject >()), objectMembers);

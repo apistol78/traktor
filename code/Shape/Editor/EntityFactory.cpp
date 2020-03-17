@@ -1,10 +1,11 @@
 #include "Shape/Editor/EntityFactory.h"
 #include "Shape/Editor/Spline/ControlPointComponent.h"
 #include "Shape/Editor/Spline/ControlPointComponentData.h"
-#include "Shape/Editor/Spline/SplineComponent.h"
-#include "Shape/Editor/Spline/SplineComponentData.h"
+#include "Shape/Editor/Spline/SplineEntity.h"
+#include "Shape/Editor/Spline/SplineEntityData.h"
 #include "Shape/Editor/Spline/SplineLayerComponent.h"
 #include "Shape/Editor/Spline/SplineLayerComponentData.h"
+#include "World/IEntityBuilder.h"
 
 namespace traktor
 {
@@ -21,7 +22,9 @@ EntityFactory::EntityFactory(resource::IResourceManager* resourceManager, render
 
 const TypeInfoSet EntityFactory::getEntityTypes() const
 {
-	return TypeInfoSet();
+	return makeTypeInfoSet<
+		SplineEntityData
+	>();
 }
 
 const TypeInfoSet EntityFactory::getEntityEventTypes() const
@@ -33,14 +36,26 @@ const TypeInfoSet EntityFactory::getEntityComponentTypes() const
 {
 	return makeTypeInfoSet<
 		ControlPointComponentData,
-		SplineComponentData,
 		SplineLayerComponentData
 	>();
 }
 
 Ref< world::Entity > EntityFactory::createEntity(const world::IEntityBuilder* builder, const world::EntityData& entityData) const
 {
-	return nullptr;
+	if (auto splineEntityData = dynamic_type_cast< const SplineEntityData* >(&entityData))
+	{
+		Ref< SplineEntity > entity = new SplineEntity();
+		entity->setTransform(entityData.getTransform());
+		for (auto componentData : entityData.getComponents())
+		{
+			Ref< world::IEntityComponent > component = builder->create(componentData);
+			if (component)
+				entity->setComponent(component);
+		}
+		return entity;
+	}
+	else
+		return nullptr;
 }
 
 Ref< world::IEntityEvent > EntityFactory::createEntityEvent(const world::IEntityBuilder* builder, const world::IEntityEventData& entityEventData) const
@@ -52,8 +67,6 @@ Ref< world::IEntityComponent > EntityFactory::createEntityComponent(const world:
 {
 	if (auto controlPointData = dynamic_type_cast< const ControlPointComponentData* >(&entityComponentData))
 		return controlPointData->createComponent();
-	else if (auto splineData = dynamic_type_cast< const SplineComponentData* >(&entityComponentData))
-		return splineData->createComponent();
 	else if (auto splineLayerData = dynamic_type_cast< const SplineLayerComponentData* >(&entityComponentData))
 		return splineLayerData->createComponent(builder, m_resourceManager, m_renderSystem);
 	else

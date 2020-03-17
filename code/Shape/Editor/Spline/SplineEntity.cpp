@@ -1,6 +1,6 @@
 #include "Shape/Editor/Spline/ControlPointComponent.h"
+#include "Shape/Editor/Spline/SplineEntity.h"
 #include "Shape/Editor/Spline/SplineLayerComponent.h"
-#include "Shape/Editor/Spline/SplineComponent.h"
 #include "World/Entity.h"
 #include "World/Entity/GroupComponent.h"
 
@@ -9,36 +9,16 @@ namespace traktor
 	namespace shape
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.shape.SplineComponent", SplineComponent, world::IEntityComponent)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.shape.SplineEntity", SplineEntity, world::Entity)
 
-SplineComponent::SplineComponent()
-:	m_owner(nullptr)
-,	m_dirty(true)
+SplineEntity::SplineEntity()
+:	m_dirty(true)
 {
 }
 
-void SplineComponent::destroy()
+void SplineEntity::update(const world::UpdateParams& update)
 {
-	m_owner = nullptr;
-}
-
-void SplineComponent::setOwner(world::Entity* owner)
-{
-	m_owner = dynamic_type_cast< world::Entity* >(owner);
-}
-
-void SplineComponent::setTransform(const Transform& transform)
-{
-}
-
-Aabb3 SplineComponent::getBoundingBox() const
-{
-	return Aabb3();
-}
-
-void SplineComponent::update(const world::UpdateParams& update)
-{
-	auto groupComponent = m_owner->getComponent< world::GroupComponent >();
+	auto groupComponent = getComponent< world::GroupComponent >();
 	if (!groupComponent)
 		return;
 
