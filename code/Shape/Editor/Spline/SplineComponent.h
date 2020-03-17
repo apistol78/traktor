@@ -1,10 +1,12 @@
 #pragma once
 
+#include "Core/RefArray.h"
+#include "Core/Math/TransformPath.h"
 #include "World/IEntityComponent.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
-#if defined(T_SHAPE_EXPORT)
+#if defined(T_SHAPE_EDITOR_EXPORT)
 #	define T_DLLCLASS T_DLLEXPORT
 #else
 #	define T_DLLCLASS T_DLLIMPORT
@@ -12,18 +14,28 @@
 
 namespace traktor
 {
+	namespace world
+	{
+
+class ComponentEntity;
+class IWorldRenderPass;
+class WorldBuildContext;
+class WorldRenderView;
+
+	}
+
 	namespace shape
 	{
 
-/*! \brief
+/*! Spline entity.
  * \ingroup Shape
  */
-class T_DLLCLASS ControlPointComponent : public world::IEntityComponent
+class T_DLLCLASS SplineComponent : public world::IEntityComponent
 {
 	T_RTTI_CLASS;
 
 public:
-	explicit ControlPointComponent(float scale);
+	SplineComponent();
 
 	virtual void destroy() override final;
 
@@ -35,16 +47,18 @@ public:
 
 	virtual void update(const world::UpdateParams& update) override final;
 
-	bool checkDirty();
+	void build(
+		const world::WorldBuildContext& context,
+		const world::WorldRenderView& worldRenderView,
+		const world::IWorldRenderPass& worldRenderPass
+	);
 
-	const Transform& getTransform() const { return m_transform; }
-
-	float getScale() const { return m_scale; }
+	const TransformPath& getPath() const { return m_path; }
 
 private:
+	world::ComponentEntity* m_owner;
+	TransformPath m_path;
 	bool m_dirty;
-	Transform m_transform;
-	float m_scale;
 };
 
 	}

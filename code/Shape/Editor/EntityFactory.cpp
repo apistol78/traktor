@@ -1,10 +1,10 @@
-#include "Shape/EntityFactory.h"
-#include "Shape/Spline/ControlPointComponent.h"
-#include "Shape/Spline/ControlPointComponentData.h"
-#include "Shape/Spline/SplineComponent.h"
-#include "Shape/Spline/SplineComponentData.h"
-#include "Shape/Spline/SplineLayerComponent.h"
-#include "Shape/Spline/SplineLayerComponentData.h"
+#include "Shape/Editor/EntityFactory.h"
+#include "Shape/Editor/Spline/ControlPointComponent.h"
+#include "Shape/Editor/Spline/ControlPointComponentData.h"
+#include "Shape/Editor/Spline/SplineComponent.h"
+#include "Shape/Editor/Spline/SplineComponentData.h"
+#include "Shape/Editor/Spline/SplineLayerComponent.h"
+#include "Shape/Editor/Spline/SplineLayerComponentData.h"
 
 namespace traktor
 {

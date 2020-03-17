@@ -1,6 +1,6 @@
-#include "Shape/Spline/ControlPointComponent.h"
-#include "Shape/Spline/SplineLayerComponent.h"
-#include "Shape/Spline/SplineComponent.h"
+#include "Shape/Editor/Spline/ControlPointComponent.h"
+#include "Shape/Editor/Spline/SplineLayerComponent.h"
+#include "Shape/Editor/Spline/SplineComponent.h"
 #include "World/Entity/ComponentEntity.h"
 #include "World/Entity/GroupComponent.h"
 

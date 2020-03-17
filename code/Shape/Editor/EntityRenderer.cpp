@@ -1,6 +1,6 @@
-#include "Shape/EntityRenderer.h"
-#include "Shape/Spline/CloneLayer.h"
-#include "Shape/Spline/ExtrudeShapeLayer.h"
+#include "Shape/Editor/EntityRenderer.h"
+#include "Shape/Editor/Spline/CloneLayer.h"
+#include "Shape/Editor/Spline/ExtrudeShapeLayer.h"
 #include "World/WorldBuildContext.h"
 
 namespace traktor

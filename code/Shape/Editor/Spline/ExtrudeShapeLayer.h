@@ -3,11 +3,11 @@
 #include "Core/Ref.h"
 #include "Render/Types.h"
 #include "Resource/Proxy.h"
-#include "Shape/Spline/SplineLayerComponent.h"
+#include "Shape/Editor/Spline/SplineLayerComponent.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
-#if defined(T_SHAPE_EXPORT)
+#if defined(T_SHAPE_EDITOR_EXPORT)
 #	define T_DLLCLASS T_DLLEXPORT
 #else
 #	define T_DLLCLASS T_DLLIMPORT
