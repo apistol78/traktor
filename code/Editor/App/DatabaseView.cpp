@@ -287,21 +287,21 @@ bool replaceIdentifiers(RfmCompound* reflection, const std::list< InstanceClipbo
 		ReflectionMember* member = reflection->getMember(i);
 		T_ASSERT(member);
 
-		if (RfmPrimitiveGuid* idMember = dynamic_type_cast< RfmPrimitiveGuid* >(member))
+		if (auto idMember = dynamic_type_cast< RfmPrimitiveGuid* >(member))
 		{
 			if (idMember->get().isNotNull())
 			{
-				for (std::list< InstanceClipboardData::Instance >::const_iterator k = instances.begin(); k != instances.end(); ++k)
+				for (const auto& instance : instances)
 				{
-					if (idMember->get() == k->originalId)
+					if (idMember->get() == instance.originalId)
 					{
-						idMember->set(k->pasteId);
+						idMember->set(instance.pasteId);
 						modified = true;
 					}
 				}
 			}
 		}
-		else if (RfmObject* objectMember = dynamic_type_cast< RfmObject* >(member))
+		else if (auto objectMember = dynamic_type_cast< RfmObject* >(member))
 		{
 			Ref< Reflection > objectReflection = Reflection::create(objectMember->get());
 			if (objectReflection)
@@ -313,7 +313,7 @@ bool replaceIdentifiers(RfmCompound* reflection, const std::list< InstanceClipbo
 				}
 			}
 		}
-		else if (RfmCompound* compoundMember = dynamic_type_cast< RfmCompound* >(member))
+		else if (auto compoundMember = dynamic_type_cast< RfmCompound* >(member))
 		{
 			modified |= replaceIdentifiers(compoundMember, instances);
 		}
@@ -498,9 +498,9 @@ bool DatabaseView::create(ui::Widget* parent)
 		Ref< ui::MenuItem > menuInstanceWizards = new ui::MenuItem(i18n::Text(L"DATABASE_WIZARDS"));
 
 		// Create instances of all found wizards.
-		for (TypeInfoSet::iterator i = wizardToolTypes.begin(); i != wizardToolTypes.end(); ++i)
+		for (const auto& wizardToolType : wizardToolTypes)
 		{
-			Ref< IWizardTool > wizard = dynamic_type_cast< IWizardTool* >((*i)->createInstance());
+			Ref< IWizardTool > wizard = dynamic_type_cast< IWizardTool* >(wizardToolType->createInstance());
 			if (wizard)
 				m_wizardTools.push_back(wizard);
 		}
@@ -510,16 +510,16 @@ bool DatabaseView::create(ui::Widget* parent)
 
 		// Populate menus.
 		int32_t nextWizardId = 0;
-		for (RefArray< IWizardTool >::iterator i = m_wizardTools.begin(); i != m_wizardTools.end(); ++i)
+		for (auto wizardTool : m_wizardTools)
 		{
-			std::wstring wizardDescription = (*i)->getDescription();
+			std::wstring wizardDescription = wizardTool->getDescription();
 			T_ASSERT(!wizardDescription.empty());
 
 			int32_t wizardId = nextWizardId++;
 
-			if (((*i)->getFlags() & IWizardTool::WfGroup) != 0)
+			if ((wizardTool->getFlags() & IWizardTool::WfGroup) != 0)
 				menuGroupWizards->add(new ui::MenuItem(ui::Command(wizardId, L"Editor.Database.Wizard"), wizardDescription));
-			if (((*i)->getFlags() & IWizardTool::WfInstance) != 0)
+			if ((wizardTool->getFlags() & IWizardTool::WfInstance) != 0)
 				menuInstanceWizards->add(new ui::MenuItem(ui::Command(wizardId, L"Editor.Database.Wizard"), wizardDescription));
 		}
 
@@ -590,33 +590,28 @@ void DatabaseView::updateView()
 
 			TypeInfoSet instanceTypes;
 			db::recursiveFindChildInstance(m_db->getRootGroup(), CollectInstanceTypes(instanceTypes));
-
-			for (TypeInfoSet::const_iterator i = instanceTypes.begin(); i != instanceTypes.end(); ++i)
+			for (const auto& instanceType : instanceTypes)
 			{
-				const TypeInfo* instanceType = *i;
-				T_ASSERT(instanceType);
-
 				Ref< ui::TreeViewItem > instanceTypeItem = m_treeDatabase->createItem(0, getCategoryText(instanceType), 1);
 				instanceTypeItem->setImage(0, 0, 1);
 
 				RefArray< db::Instance > instances;
 				db::recursiveFindChildInstances(m_db->getRootGroup(), db::FindInstanceByType(*instanceType), instances);
-
-				for (RefArray< db::Instance >::const_iterator j = instances.begin(); j != instances.end(); ++j)
+				for (auto instance : instances)
 				{
-					const TypeInfo* primaryType = (*j)->getPrimaryType();
+					const TypeInfo* primaryType = instance->getPrimaryType();
 					if (!primaryType)
 						continue;
 
 					if (showFavorites)
 					{
-						if (m_favoriteInstances.find((*j)->getGuid()) == m_favoriteInstances.end())
+						if (m_favoriteInstances.find(instance->getGuid()) == m_favoriteInstances.end())
 							continue;
 					}
 
 					if (!showPrivate)
 					{
-						if (isInstanceInPrivate(*j))
+						if (isInstanceInPrivate(instance))
 							continue;
 					}
 
@@ -624,24 +619,24 @@ void DatabaseView::updateView()
 
 					if (!showFiltered)
 					{
-						if (!m_filter->acceptInstance((*j)))
+						if (!m_filter->acceptInstance(instance))
 							continue;
 					}
 					else
 					{
-						if (!m_filter->acceptInstance((*j)))
+						if (!m_filter->acceptInstance(instance))
 							iconIndex += 23;
 					}
 
-					Ref< ui::TreeViewItem > instanceItem = m_treeDatabase->createItem(instanceTypeItem, (*j)->getName(), 2);
+					Ref< ui::TreeViewItem > instanceItem = m_treeDatabase->createItem(instanceTypeItem, instance->getName(), 2);
 					instanceItem->setImage(0, -1);
 					instanceItem->setImage(1, iconIndex);
 
-					if (m_rootInstances.find((*j)->getGuid()) != m_rootInstances.end())
+					if (m_rootInstances.find(instance->getGuid()) != m_rootInstances.end())
 						instanceItem->setBold(true);
 
-					instanceItem->setData(L"GROUP", (*j)->getParent());
-					instanceItem->setData(L"INSTANCE", (*j));
+					instanceItem->setData(L"GROUP", instance->getParent());
+					instanceItem->setData(L"INSTANCE", instance);
 				}
 
 				if (!instanceTypeItem->hasChildren())
@@ -672,17 +667,15 @@ bool DatabaseView::highlight(const db::Instance* instance)
 {
 	RefArray< ui::TreeViewItem > items;
 	m_treeDatabase->getItems(items, ui::TreeView::GfDescendants);
-
-	for (RefArray< ui::TreeViewItem >::iterator i = items.begin(); i != items.end(); ++i)
+	for (auto item : items)
 	{
-		if ((*i)->getData< db::Instance >(L"INSTANCE") == instance)
+		if (item->getData< db::Instance >(L"INSTANCE") == instance)
 		{
-			(*i)->show();
-			(*i)->select();
+			item->show();
+			item->select();
 			return true;
 		}
 	}
-
 	return false;
 }
 
@@ -737,10 +730,10 @@ bool DatabaseView::handleCommand(const ui::Command& command)
 						m_treeDatabase->update();
 					}
 					else
-						log::error << L"Unable to commit instance" << Endl;
+						log::error << L"Unable to commit instance." << Endl;
 				}
 				else
-					log::error << L"Unable to checkout instance" << Endl;
+					log::error << L"Unable to checkout instance." << Endl;
 			}
 
 			browseTypeDlg.destroy();
@@ -771,21 +764,21 @@ bool DatabaseView::handleCommand(const ui::Command& command)
 			Ref< ISerializable > object = instance->getObject< ISerializable >();
 			if (!object)
 			{
-				log::error << L"Unable to checkout instance" << Endl;
+				log::error << L"Unable to checkout instance." << Endl;
 				return false;
 			}
 
 			object = DeepClone(object).create();
 			if (!object)
 			{
-				log::error << L"Unable to create clone" << Endl;
+				log::error << L"Unable to create clone." << Endl;
 				return false;
 			}
 
 			Ref< db::Instance > instanceClone = group->createInstance(instance->getName() + L" (clone)");
 			if (!instanceClone)
 			{
-				log::error << L"Unable to create clone instance" << Endl;
+				log::error << L"Unable to create clone instance." << Endl;
 				return false;
 			}
 
@@ -793,7 +786,7 @@ bool DatabaseView::handleCommand(const ui::Command& command)
 
 			if (!instanceClone->commit())
 			{
-				log::error << L"Unable to commit clone instance" << Endl;
+				log::error << L"Unable to commit clone instance." << Endl;
 				return false;
 			}
 
@@ -815,14 +808,14 @@ bool DatabaseView::handleCommand(const ui::Command& command)
 			Ref< ISerializable > object = instance->getObject< ISerializable >();
 			if (!object)
 			{
-				log::error << L"Unable to read instance object" << Endl;
+				log::error << L"Unable to read instance object." << Endl;
 				return false;
 			}
 
 			object = DeepClone(object).create();
 			if (!object)
 			{
-				log::error << L"Unable to create clone" << Endl;
+				log::error << L"Unable to create clone." << Endl;
 				return false;
 			}
 
@@ -836,14 +829,14 @@ bool DatabaseView::handleCommand(const ui::Command& command)
 			Ref< ISerializable > object = instance->getObject< ISerializable >();
 			if (!object)
 			{
-				log::error << L"Unable to read instance object" << Endl;
+				log::error << L"Unable to read instance object." << Endl;
 				return false;
 			}
 
 			object = DeepClone(object).create();
 			if (!object)
 			{
-				log::error << L"Unable to create clone" << Endl;
+				log::error << L"Unable to create clone." << Endl;
 				return false;
 			}
 
@@ -867,14 +860,14 @@ bool DatabaseView::handleCommand(const ui::Command& command)
 					Ref< ISerializable > dependentObject = dependentInstance->getObject();
 					if (!dependentObject)
 					{
-						log::error << L"Unable to read instance object" << Endl;
+						log::error << L"Unable to read instance object." << Endl;
 						return false;
 					}
 
 					dependentObject = DeepClone(dependentObject).create();
 					if (!dependentObject)
 					{
-						log::error << L"Unable to create clone" << Endl;
+						log::error << L"Unable to create clone." << Endl;
 						return false;
 					}
 
@@ -909,15 +902,15 @@ bool DatabaseView::handleCommand(const ui::Command& command)
 		{
 			Guid instanceGuid = instance->getGuid();
 
-			std::set< Guid >::iterator i = m_rootInstances.find(instanceGuid);
-			if (i == m_rootInstances.end())
+			auto it = m_rootInstances.find(instanceGuid);
+			if (it == m_rootInstances.end())
 				m_rootInstances.insert(instanceGuid);
 			else
-				m_rootInstances.erase(i);
+				m_rootInstances.erase(it);
 
 			std::vector< std::wstring > rootInstances;
-			for (std::set< Guid >::iterator i = m_rootInstances.begin(); i != m_rootInstances.end(); ++i)
-				rootInstances.push_back(i->format());
+			for (const auto& rootInstance : m_rootInstances)
+				rootInstances.push_back(rootInstance.format());
 
 			Ref< PropertyGroup > workspaceSettings = m_editor->checkoutWorkspaceSettings();
 			workspaceSettings->setProperty< PropertyStringArray >(L"Editor.RootInstances", rootInstances);
@@ -929,15 +922,15 @@ bool DatabaseView::handleCommand(const ui::Command& command)
 		{
 			Guid instanceGuid = instance->getGuid();
 
-			std::set< Guid >::iterator i = m_favoriteInstances.find(instanceGuid);
-			if (i == m_favoriteInstances.end())
+			auto it = m_favoriteInstances.find(instanceGuid);
+			if (it == m_favoriteInstances.end())
 				m_favoriteInstances.insert(instanceGuid);
 			else
-				m_favoriteInstances.erase(i);
+				m_favoriteInstances.erase(it);
 
 			std::vector< std::wstring > favoriteInstances;
-			for (std::set< Guid >::iterator i = m_favoriteInstances.begin(); i != m_favoriteInstances.end(); ++i)
-				favoriteInstances.push_back(i->format());
+			for (const auto& favoriteInstance : m_favoriteInstances)
+				favoriteInstances.push_back(favoriteInstance.format());
 
 			Ref< PropertyGroup > globalSettings = m_editor->checkoutGlobalSettings();
 			globalSettings->setProperty< PropertyStringArray >(L"Editor.FavoriteInstances", favoriteInstances);
@@ -1044,40 +1037,40 @@ bool DatabaseView::handleCommand(const ui::Command& command)
 			std::list< InstanceClipboardData::Instance > pasteInstances = instanceClipboardData->getInstances();
 
 			// Create unique identifiers for each pasted instance.
-			for (std::list< InstanceClipboardData::Instance >::iterator i = pasteInstances.begin(); i != pasteInstances.end(); ++i)
-				i->pasteId = Guid::create();
+			for (auto& pasteInstance : pasteInstances)
+				pasteInstance.pasteId = Guid::create();
 
 			// Replace all occurances of original identifiers with new identifiers.
-			for (std::list< InstanceClipboardData::Instance >::iterator i = pasteInstances.begin(); i != pasteInstances.end(); ++i)
+			for (auto& pasteInstance : pasteInstances)
 			{
-				Ref< Reflection > reflection = Reflection::create(i->object);
+				Ref< Reflection > reflection = Reflection::create(pasteInstance.object);
 				if (!reflection)
 					return false;
 
 				if (replaceIdentifiers(reflection, pasteInstances))
-					reflection->apply(i->object);
+					reflection->apply(pasteInstance.object);
 			}
 
-			for (std::list< InstanceClipboardData::Instance >::const_iterator i = pasteInstances.begin(); i != pasteInstances.end(); ++i)
+			for (const auto& pasteInstance : pasteInstances)
 			{
-				std::wstring pasteName = getUniqueInstanceName(i->name, group);
+				std::wstring pasteName = getUniqueInstanceName(pasteInstance.name, group);
 
-				Ref< db::Instance > instanceCopy = group->createInstance(pasteName, db::CifDefault, &i->pasteId);
+				Ref< db::Instance > instanceCopy = group->createInstance(pasteName, db::CifDefault, &pasteInstance.pasteId);
 				if (!instanceCopy)
 				{
-					log::error << L"Unable to create instance copy" << Endl;
+					log::error << L"Unable to create instance copy." << Endl;
 					return false;
 				}
 
-				instanceCopy->setObject(i->object);
+				instanceCopy->setObject(pasteInstance.object);
 
 				if (!instanceCopy->commit())
 				{
-					log::error << L"Unable to commit instance copy" << Endl;
+					log::error << L"Unable to commit instance copy." << Endl;
 					return false;
 				}
 
-				int32_t iconIndex = getIconIndex(&type_of(i->object));
+				int32_t iconIndex = getIconIndex(&type_of(pasteInstance.object));
 
 				Ref< ui::TreeViewItem > treeCloneItem = m_treeDatabase->createItem(treeItem, pasteName, 2);
 				treeCloneItem->setImage(0, -1);
@@ -1095,23 +1088,22 @@ bool DatabaseView::handleCommand(const ui::Command& command)
 
 			RefArray< db::Instance > instances;
 			db::recursiveFindChildInstances(group, db::FindInstanceAll(), instances);
-
-			for (RefArray< db::Instance >::iterator i = instances.begin(); i != instances.end(); ++i)
+			for (auto instance : instances)
 			{
-				Guid instanceGuid = (*i)->getGuid();
+				Guid instanceGuid = instance->getGuid();
 				if (addToFavorites)
 					m_favoriteInstances.insert(instanceGuid);
 				else
 				{
-					std::set< Guid >::iterator i = m_favoriteInstances.find(instanceGuid);
-					if (i != m_favoriteInstances.end())
-						m_favoriteInstances.erase(i);
+					auto it = m_favoriteInstances.find(instanceGuid);
+					if (it != m_favoriteInstances.end())
+						m_favoriteInstances.erase(it);
 				}
 			}
 
 			std::vector< std::wstring > favoriteInstances;
-			for (std::set< Guid >::iterator i = m_favoriteInstances.begin(); i != m_favoriteInstances.end(); ++i)
-				favoriteInstances.push_back(i->format());
+			for (const auto& favoriteInstance : m_favoriteInstances)
+				favoriteInstances.push_back(favoriteInstance.format());
 
 			Ref< PropertyGroup > globalSettings = m_editor->checkoutGlobalSettings();
 			globalSettings->setProperty< PropertyStringArray >(L"Editor.FavoriteInstances", favoriteInstances);
@@ -1260,7 +1252,6 @@ void DatabaseView::updateTreeColors()
 {
 	RefArray< ui::TreeViewItem > items;
 	m_treeDatabase->getItems(items, ui::TreeView::GfDescendants | ui::TreeView::GfExpandedOnly);
-
 	for (auto item : items)
 	{
 		db::Instance* instance = item->getData< db::Instance >(L"INSTANCE");
@@ -1464,11 +1455,11 @@ void DatabaseView::eventToolSelectionClicked(ui::ToolBarButtonClickEvent* event)
 			);
 
 			std::set< Guid > guidSet;
-			for (RefArray< db::Instance >::iterator i = assetsInstances.begin(); i != assetsInstances.end(); ++i)
+			for (auto assetsInstance : assetsInstances)
 			{
-				guidSet.insert((*i)->getGuid());
+				guidSet.insert(assetsInstance->getGuid());
 
-				Ref< IPipelineDependencySet > dependencySet = m_editor->buildAssetDependencies((*i)->getObject(), ~0U);
+				Ref< IPipelineDependencySet > dependencySet = m_editor->buildAssetDependencies(assetsInstance->getObject(), ~0U);
 				if (!dependencySet)
 					continue;
 
@@ -1644,12 +1635,9 @@ void DatabaseView::eventInstanceDrag(ui::TreeViewDragEvent* event)
 void DatabaseView::eventInstanceGridActivate(ui::GridRowDoubleClickEvent* event)
 {
 	Ref< ui::GridRow > row = event->getRow();
-
 	Ref< db::Instance > instance = row->getData< db::Instance >(L"INSTANCE");
-	if (!instance)
-		return;
-
-	m_editor->openEditor(instance);
+	if (instance)
+		m_editor->openEditor(instance);
 
 }
 

@@ -1614,7 +1614,6 @@ void EditorForm::createAdditionalPanel(ui::Widget* widget, int size, int32_t dir
 void EditorForm::destroyAdditionalPanel(ui::Widget* widget)
 {
 	T_ASSERT(widget);
-
 	m_paneWest->undock(widget);
 	m_paneEast->undock(widget);
 	m_paneSouth->undock(widget);
@@ -1955,8 +1954,8 @@ void EditorForm::setStoreObject(const std::wstring& name, Object* object)
 
 Object* EditorForm::getStoreObject(const std::wstring& name) const
 {
-	std::map< std::wstring, Ref< Object > >::const_iterator i = m_objectStore.find(name);
-	return i != m_objectStore.end() ? i->second : 0;
+	auto it = m_objectStore.find(name);
+	return it != m_objectStore.end() ? it->second : nullptr;
 }
 
 void EditorForm::beginBuild(int32_t core, int32_t index, int32_t count, const PipelineDependency* dependency)
@@ -1978,10 +1977,9 @@ void EditorForm::updateMRU()
 
 	std::vector< Path > recentFiles;
 	m_mru->getUsedFiles(recentFiles);
-
-	for (std::vector< Path >::const_iterator i = recentFiles.begin(); i != recentFiles.end(); ++i)
+	for (const auto& recentFile : recentFiles)
 	{
-		Ref< ui::MenuItem > menuItem = new ui::MenuItem(ui::Command(L"Editor.OpenRecentWorkspace", new Path(*i)), i->getPathName());
+		Ref< ui::MenuItem > menuItem = new ui::MenuItem(ui::Command(L"Editor.OpenRecentWorkspace", new Path(recentFile)), recentFile.getPathName());
 		m_menuItemRecent->add(menuItem);
 	}
 }
@@ -1989,40 +1987,33 @@ void EditorForm::updateMRU()
 void EditorForm::updateTitle()
 {
 	StringOutputStream ss;
-
 	if (m_mergedSettings)
 	{
 		std::wstring targetTitle = m_mergedSettings->getProperty< std::wstring >(L"Editor.TargetTitle");
 		if (!targetTitle.empty())
 			ss << targetTitle << L" - ";
 	}
-
 	ss << c_title;
-
 	if (m_activeDocument && m_activeDocument->getInstanceCount() > 0)
 		ss << L" - " << m_activeDocument->getInstance(0)->getPath();
-
 	setText(ss.str());
 }
 
 void EditorForm::updateShortcutTable()
 {
 	m_shortcutTable->removeAllCommands();
-
-	for (std::list< ui::Command >::iterator i = m_shortcutCommands.begin(); i != m_shortcutCommands.end(); ++i)
+	for (const auto& shortcutCommand : m_shortcutCommands)
 	{
 		int keyState;
 		ui::VirtualKey virtualKey;
-
-		if (!findShortcutCommandMapping(m_mergedSettings, i->getName(), keyState, virtualKey))
+		if (!findShortcutCommandMapping(m_mergedSettings, shortcutCommand.getName(), keyState, virtualKey))
 		{
 #if defined(_DEBUG)
-			log::info << L"No shortcut mapping for \"" << i->getName() << L"\"" << Endl;
+			log::info << L"No shortcut mapping for \"" << shortcutCommand.getName() << L"\" found." << Endl;
 #endif
 			continue;
 		}
-
-		m_shortcutTable->addCommand(keyState, virtualKey, *i);
+		m_shortcutTable->addCommand(keyState, virtualKey, shortcutCommand);
 	}
 }
 
