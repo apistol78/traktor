@@ -38,8 +38,6 @@ public:
 
     virtual void setTransform(const Transform& transform) override final;
 
-    virtual Transform getTransform() const override final;
-
 	virtual Aabb3 getBoundingBox() const override final;
 
     virtual void update(const world::UpdateParams& update) override final;
@@ -60,7 +58,6 @@ protected:
     friend class PrimitiveEntityData;
 
 	Ref< const PrimitiveEntityData > m_data;
-    Transform m_transform;
 	Ref< const model::Model > m_model;
 	Aabb3 m_boundingBox;
     uint32_t m_selectedMaterial;

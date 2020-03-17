@@ -9,8 +9,8 @@ namespace traktor
 T_IMPLEMENT_RTTI_CLASS(L"traktor.shape.PrimitiveEntity", PrimitiveEntity, world::Entity)
 
 PrimitiveEntity::PrimitiveEntity(const PrimitiveEntityData* data, const Transform& transform)
-:	m_data(data)
-,   m_transform(transform)
+:	world::Entity(transform)
+,	m_data(data)
 ,   m_selectedMaterial(model::c_InvalidIndex)
 ,   m_dirty(true)
 {
@@ -18,16 +18,11 @@ PrimitiveEntity::PrimitiveEntity(const PrimitiveEntityData* data, const Transfor
 
 void PrimitiveEntity::setTransform(const Transform& transform)
 {
-	if (m_transform != transform)
+	if (getTransform() != transform)
 	{
-		m_transform = transform;
+		setTransform(transform);
 		m_dirty = true;
 	}
-}
-
-Transform PrimitiveEntity::getTransform() const
-{
-	return m_transform;
 }
 
 Aabb3 PrimitiveEntity::getBoundingBox() const
