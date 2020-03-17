@@ -53,7 +53,6 @@ class Database;
 	namespace editor
 	{
 
-class BuildView;
 class DatabaseView;
 class Document;
 class EditorPageSite;
@@ -201,7 +200,6 @@ private:
 	Ref< ui::Tab > m_tabOutput;
 	std::map< std::wstring, Ref< ILogTarget > > m_logTargets;
 	Ref< LogView > m_logView;
-	Ref< BuildView > m_buildView;
 	Ref< db::Database > m_sourceDatabase;
 	Ref< db::Database > m_outputDatabase;
 	Ref< IEditorPage > m_activeEditorPage;
