@@ -1,7 +1,7 @@
 #include "Core/Serialization/DeepClone.h"
 #include "Core/Settings/PropertyBoolean.h"
 #include "Shape/Editor/Spline/ExtrudeShapeLayerData.h"
-#include "Shape/Editor/Spline/SplineComponentData.h"
+#include "Shape/Editor/Spline/SplineEntityData.h"
 #include "Shape/Editor/Spline/SplineEntityPipeline.h"
 #include "Editor/IPipelineDepends.h"
 #include "Editor/IPipelineSettings.h"
@@ -31,7 +31,7 @@ TypeInfoSet SplineEntityPipeline::getAssetTypes() const
 {
 	return makeTypeInfoSet<
 		ExtrudeShapeLayerData,
-		SplineComponentData
+		SplineEntityData
 	>();
 }
 

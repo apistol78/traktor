@@ -2,7 +2,7 @@
 
 #include "Core/RefArray.h"
 #include "Core/Math/TransformPath.h"
-#include "World/IEntityComponent.h"
+#include "World/Entity.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -30,20 +30,12 @@ class WorldRenderView;
 /*! Spline entity.
  * \ingroup Shape
  */
-class T_DLLCLASS SplineComponent : public world::IEntityComponent
+class T_DLLCLASS SplineEntity : public world::Entity
 {
 	T_RTTI_CLASS;
 
 public:
-	SplineComponent();
-
-	virtual void destroy() override final;
-
-	virtual void setOwner(world::Entity* owner) override final;
-
-	virtual void setTransform(const Transform& transform) override final;
-
-	virtual Aabb3 getBoundingBox() const override final;
+	SplineEntity();
 
 	virtual void update(const world::UpdateParams& update) override final;
 
