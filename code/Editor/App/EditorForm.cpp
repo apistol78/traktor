@@ -42,7 +42,6 @@
 #include "Editor/App/BrowseGroupDialog.h"
 #include "Editor/App/BrowseInstanceDialog.h"
 #include "Editor/App/BrowseTypeDialog.h"
-#include "Editor/App/BuildView.h"
 #include "Editor/App/DatabaseView.h"
 #include "Editor/App/DefaultObjectEditorFactory.h"
 #include "Editor/App/Document.h"
@@ -624,14 +623,7 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	log::warning.setGlobalTarget(new LogRedirectTarget(defaultWarningLog, m_logView->getLogTarget()));
 	log::error.setGlobalTarget(new LogRedirectTarget(defaultErrorLog, m_logView->getLogTarget()));
 
-	Ref< ui::TabPage > tabPageBuild = new ui::TabPage();
-	tabPageBuild->create(m_tabOutput, i18n::Text(L"TITLE_BUILD"), new ui::FloodLayout());
-
-	m_buildView = new BuildView();
-	m_buildView->create(tabPageBuild);
-
 	m_tabOutput->addPage(tabPageLog);
-	m_tabOutput->addPage(tabPageBuild);
 	m_tabOutput->setActivePage(tabPageLog);
 
 	paneLog->dock(m_tabOutput, true);
@@ -1782,8 +1774,6 @@ void EditorForm::buildAssetsThread(std::vector< Guid > assetGuids, bool rebuild)
 		log::info << L"Collected " << dependencySet.size() << L" dependencies from " << assetGuids.size() << L" root(s) in " << elapsedDependencies << L" second(s)." << Endl;
 	}
 
-	m_buildView->beginBuild();
-
 	// Build output.
 	Ref< IPipelineBuilder > pipelineBuilder;
 
@@ -1820,8 +1810,6 @@ void EditorForm::buildAssetsThread(std::vector< Guid > assetGuids, bool rebuild)
 	pipelineBuilder->build(&dependencySet, rebuild);
 
 	m_pipelineDb->endTransaction();
-
-	m_buildView->endBuild();
 
 	if (pipelineCache)
 		pipelineCache->destroy();
@@ -1974,7 +1962,6 @@ Object* EditorForm::getStoreObject(const std::wstring& name) const
 void EditorForm::beginBuild(int32_t core, int32_t index, int32_t count, const PipelineDependency* dependency)
 {
 	showProgress(c_offsetBuildingAsset + (index * (c_offsetFinished - c_offsetBuildingAsset)) / count, 100);
-	m_buildView->beginBuild(core, dependency->outputPath);
 	m_buildProgress->setProgress(c_offsetBuildingAsset + (index * (c_offsetFinished - c_offsetBuildingAsset)) / count);
 	m_buildStep = (index * 1000) / count;
 	m_buildStepMessage = dependency->outputPath;
@@ -1983,7 +1970,6 @@ void EditorForm::beginBuild(int32_t core, int32_t index, int32_t count, const Pi
 void EditorForm::endBuild(int32_t core, int32_t index, int32_t count, const PipelineDependency* dependency, IPipelineBuilder::BuildResult result)
 {
 	hideProgress();
-	m_buildView->endBuild(core, result);
 }
 
 void EditorForm::updateMRU()
