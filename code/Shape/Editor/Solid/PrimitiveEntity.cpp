@@ -20,7 +20,7 @@ void PrimitiveEntity::setTransform(const Transform& transform)
 {
 	if (getTransform() != transform)
 	{
-		setTransform(transform);
+		world::Entity::setTransform(transform);
 		m_dirty = true;
 	}
 }
