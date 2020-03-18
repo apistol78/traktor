@@ -1,6 +1,7 @@
 #ifndef traktor_PipelineParameters_H
 #define traktor_PipelineParameters_H
 
+#include "Core/Guid.h"
 #include "Core/Serialization/ISerializer.h"
 
 namespace traktor

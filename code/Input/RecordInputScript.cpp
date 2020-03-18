@@ -1,7 +1,8 @@
-#include "Input/RecordInputScript.h"
+#include "Core/Math/MathUtils.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberStl.h"
 #include "Core/Serialization/MemberComposite.h"
+#include "Input/RecordInputScript.h"
 
 namespace traktor
 {

@@ -13,6 +13,9 @@
 
 namespace traktor
 {
+
+class Path;
+
 	namespace sb
 	{
 

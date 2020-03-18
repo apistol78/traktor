@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Core/Guid.h"
 #include "Core/Serialization/ISerializable.h"
 
 // import/export mechanism.

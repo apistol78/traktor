@@ -1,3 +1,4 @@
+#include "Core/Guid.h"
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/DynamicMemoryStream.h"
 #include "Core/Io/FileOutputStream.h"

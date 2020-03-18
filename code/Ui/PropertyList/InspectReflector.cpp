@@ -1,6 +1,14 @@
 #include <limits>
 #include <sstream>
+#include "Core/Guid.h"
+#include "Core/Io/Path.h"
 #include "Core/Io/StringOutputStream.h"
+#include "Core/Math/Color4ub.h"
+#include "Core/Math/Color4f.h"
+#include "Core/Math/Half.h"
+#include "Core/Math/Matrix33.h"
+#include "Core/Math/Matrix44.h"
+#include "Core/Math/Quaternion.h"
 #include "Core/Misc/Split.h"
 #include "Core/Serialization/AttributeDirection.h"
 #include "Core/Serialization/AttributeHdr.h"

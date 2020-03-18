@@ -1,6 +1,8 @@
 #include <cstring>
 #include "Core/Containers/CircularVector.h"
 #include "Core/Math/Const.h"
+#include "Core/Math/MathUtils.h"
+#include "Core/Math/Vector4.h"
 #include "Core/Memory/Alloc.h"
 #include "Core/Memory/BlockAllocator.h"
 #include "Core/Memory/IAllocator.h"

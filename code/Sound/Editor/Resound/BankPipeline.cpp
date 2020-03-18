@@ -1,5 +1,6 @@
 #include "Core/Log/Log.h"
 #include "Core/Math/Const.h"
+#include "Core/Math/MathUtils.h"
 #include "Database/Instance.h"
 #include "Editor/IPipelineBuilder.h"
 #include "Editor/IPipelineDepends.h"

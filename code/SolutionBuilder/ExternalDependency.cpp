@@ -1,3 +1,4 @@
+#include "Core/Io/Path.h"
 #include "Core/Log/Log.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberRef.h"

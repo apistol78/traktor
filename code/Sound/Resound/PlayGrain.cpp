@@ -1,4 +1,6 @@
 #include "Core/Math/Const.h"
+#include "Core/Math/MathUtils.h"
+#include "Core/Math/Vector4.h"
 #include "Sound/IAudioMixer.h"
 #include "Sound/IFilter.h"
 #include "Sound/ISoundBuffer.h"
