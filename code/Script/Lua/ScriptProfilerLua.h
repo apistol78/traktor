@@ -1,7 +1,6 @@
 #pragma once
 
-#include <set>
-#include <stack>
+#include "Core/Containers/SmallSet.h"
 #include "Core/Timer/Timer.h"
 #include "Script/IScriptProfiler.h"
 
@@ -43,8 +42,8 @@ private:
 
 	ScriptManagerLua* m_scriptManager;
 	lua_State* m_luaState;
-	std::vector< ProfileStack > m_stack;
-	std::set< IListener* > m_listeners;
+	AlignedVector< ProfileStack > m_stack;
+	SmallSet< IListener* > m_listeners;
 	Timer m_timer;
 
 	void hookCallback(lua_State* L, lua_Debug* ar);

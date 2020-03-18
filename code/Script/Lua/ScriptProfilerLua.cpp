@@ -38,18 +38,16 @@ void ScriptProfilerLua::notifyCallEnter()
 {
 	Guid scriptId;
 	std::wstring name;
-
-	for (std::set< IListener* >::const_iterator i = m_listeners.begin(); i != m_listeners.end(); ++i)
-		(*i)->callEnter(scriptId, name);
+	for (auto listener : m_listeners)
+		listener->callEnter(scriptId, name);
 }
 
 void ScriptProfilerLua::notifyCallLeave()
 {
 	Guid scriptId;
 	std::wstring name;
-
-	for (std::set< IListener* >::const_iterator i = m_listeners.begin(); i != m_listeners.end(); ++i)
-		(*i)->callLeave(scriptId, name);
+	for (auto listener : m_listeners)
+		listener->callLeave(scriptId, name);
 }
 
 void ScriptProfilerLua::hookCallback(lua_State* L, lua_Debug* ar)
@@ -108,8 +106,8 @@ void ScriptProfilerLua::hookCallback(lua_State* L, lua_Debug* ar)
 		double exclusiveDuration = inclusiveDuration - ps.childDuration;
 
 		// Notify all listeners about new measurement.
-		for (std::set< IListener* >::const_iterator i = m_listeners.begin(); i != m_listeners.end(); ++i)
-			(*i)->callMeasured(scriptId, name, 1, inclusiveDuration, exclusiveDuration);
+		for (auto listener : m_listeners)
+			listener->callMeasured(scriptId, name, 1, inclusiveDuration, exclusiveDuration);
 
 		m_stack.pop_back();
 
