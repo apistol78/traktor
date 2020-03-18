@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Core/Math/Range.h"
+#include "Core/Math/Vector4.h"
 #include "Spray/SourceData.h"
 
 // import/export mechanism.

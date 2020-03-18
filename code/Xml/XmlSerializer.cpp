@@ -1,14 +1,22 @@
 #include <sstream>
-#include "Xml/XmlSerializer.h"
+#include "Core/Guid.h"
 #include "Core/Io/IStream.h"
+#include "Core/Io/Path.h"
 #include "Core/Io/Utf8Encoding.h"
+#include "Core/Math/Color4ub.h"
+#include "Core/Math/Color4f.h"
+#include "Core/Math/Half.h"
+#include "Core/Math/Matrix33.h"
+#include "Core/Math/Matrix44.h"
+#include "Core/Math/Quaternion.h"
+#include "Core/Misc/TString.h"
+#include "Core/Misc/String.h"
+#include "Core/Misc/Base64.h"
 #include "Core/Serialization/AttributeMultiLine.h"
 #include "Core/Serialization/MemberArray.h"
 #include "Core/Serialization/MemberComplex.h"
 #include "Core/Serialization/ISerializable.h"
-#include "Core/Misc/TString.h"
-#include "Core/Misc/String.h"
-#include "Core/Misc/Base64.h"
+#include "Xml/XmlSerializer.h"
 
 namespace traktor
 {

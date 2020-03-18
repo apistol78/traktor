@@ -70,27 +70,25 @@ bool SolutionBuilderMake2::generate(Solution* solution)
 			return false;
 
 		// Generate project makefile.
-		{
-			std::wstring projectOut;
-			if (!m_scriptProcessor->generate(solution, project, projectPath, projectOut))
-				return false;
+		std::wstring projectOut;
+		if (!m_scriptProcessor->generate(solution, project, projectPath, projectOut))
+			return false;
 
-			Ref< IStream > file = FileSystem::getInstance().open(
-				projectPath + L"/makefile",
-				File::FmWrite
-			);
-			if (!file)
-				return false;
+		Ref< IStream > file = FileSystem::getInstance().open(
+			projectPath + L"/makefile",
+			File::FmWrite
+		);
+		if (!file)
+			return false;
 
-			buf.resize(IEncoding::MaxEncodingSize * projectOut.length());
-			int32_t nbuf = Utf8Encoding().translate(projectOut.c_str(), projectOut.length(), buf.ptr());
-			file->write(buf.c_ptr(), nbuf);
+		buf.resize(IEncoding::MaxEncodingSize * projectOut.length());
+		int32_t nbuf = Utf8Encoding().translate(projectOut.c_str(), projectOut.length(), buf.ptr());
+		file->write(buf.c_ptr(), nbuf);
 
-			file->close();
-		}
+		file->close();
 
 		double timeEnd = timer.getElapsedTime();
-		log::info << L" (" << int32_t((timeEnd - timeStart) * 1000.0 + 0.5) << L" ms)" << Endl;
+		log::info << L" (" << int32_t((timeEnd - timeStart) * 1000.0 + 0.5) << L" ms, " << nbuf << L" bytes)" << Endl;
 	}
 
 	log::info << DecreaseIndent;
@@ -123,7 +121,7 @@ bool SolutionBuilderMake2::generate(Solution* solution)
 		buf.resize(IEncoding::MaxEncodingSize * cprojectOut.length());
 		int32_t nbuf = Utf8Encoding().translate(cprojectOut.c_str(), cprojectOut.length(), buf.ptr());
 		file->write(buf.c_ptr(), nbuf);
-		
+
 		file->close();
 
 		double timeEnd = timer.getElapsedTime();

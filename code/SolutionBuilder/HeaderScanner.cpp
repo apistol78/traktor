@@ -49,10 +49,8 @@ bool HeaderScanner::get(const std::wstring& fileName, const std::wstring& projec
 			if (FileSystem::getInstance().getRelativePath(Path(includedFile), Path(projectPath), relativePath))
 			{
 				std::wstring pn = relativePath.getPathName();
-				if (outHeaderFiles.find(pn) != outHeaderFiles.end())
-					continue;
-				outHeaderFiles.insert(pn);
-				fileNames.push_back(includedFile);
+				if (outHeaderFiles.insert(pn))
+					fileNames.push_back(includedFile);
 			}
 		}
 	}
@@ -81,11 +79,11 @@ const HeaderScanner::Includes* HeaderScanner::scan(const std::wstring& fileName)
 	std::wstring line;
 	while (sr.readLine(line) >= 0)
 	{
-		line = trim(line);
-		if (line.empty() || line[0] != L'#')
+		auto hp = line.find_first_of(L'#');
+		if (hp == line.npos)
 			continue;
 
-		size_t s = line.find(L"include \"");
+		size_t s = line.find(L"include \"", hp + 1);
 		if (s == line.npos)
 			continue;
 		s += 9;

@@ -2,6 +2,7 @@
 #include <cstring>
 #include "Core/Io/IStream.h"
 #include "Core/Log/Log.h"
+#include "Core/Math/MathUtils.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"

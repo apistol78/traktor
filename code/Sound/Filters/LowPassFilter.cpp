@@ -1,5 +1,6 @@
 #include <cstring>
 #include "Core/Math/Const.h"
+#include "Core/Math/Vector4.h"
 #include "Core/Memory/IAllocator.h"
 #include "Core/Memory/MemoryConfig.h"
 #include "Core/Serialization/ISerializer.h"

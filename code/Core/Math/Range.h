@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Core/Math/MathConfig.h"
 #include "Core/Math/Random.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"

@@ -1,13 +1,5 @@
 #pragma once
 
-#include "Core/Guid.h"
-#include "Core/Io/Path.h"
-#include "Core/Math/Color4f.h"
-#include "Core/Math/Color4ub.h"
-#include "Core/Math/Matrix33.h"
-#include "Core/Math/Matrix44.h"
-#include "Core/Math/Quaternion.h"
-#include "Core/Object.h"
 #include "Core/Serialization/ISerializable.h"
 #include "Core/Serialization/Member.h"
 
@@ -22,9 +14,19 @@
 namespace traktor
 {
 
+class Color4f;
+class Color4ub;
+class Guid;
+class Matrix33;
+class Matrix44;
 class MemberArray;
 class MemberComplex;
 class MemberEnumBase;
+class Path;
+class Quaternion;
+class Scalar;
+class Vector2;
+class Vector4;
 
 /*! Serializer interface.
  * \ingroup Core

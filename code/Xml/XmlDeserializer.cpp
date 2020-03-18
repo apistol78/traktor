@@ -1,8 +1,16 @@
 #include <cstring>
 #include <map>
+#include "Core/Guid.h"
 #include "Core/Io/IStream.h"
+#include "Core/Io/Path.h"
 #include "Core/Io/StringOutputStream.h"
 #include "Core/Log/Log.h"
+#include "Core/Math/Color4ub.h"
+#include "Core/Math/Color4f.h"
+#include "Core/Math/Half.h"
+#include "Core/Math/Matrix33.h"
+#include "Core/Math/Matrix44.h"
+#include "Core/Math/Quaternion.h"
 #include "Core/Misc/Base64.h"
 #include "Core/Misc/Split.h"
 #include "Core/Misc/String.h"
