@@ -42,6 +42,7 @@ bool SolutionBuilderMake2::create(const CommandLine& cmdLine)
 
 bool SolutionBuilderMake2::generate(Solution* solution)
 {
+	AlignedVector< uint8_t > buf;
 	Timer timer;
 
 	// Create root path.
@@ -81,7 +82,9 @@ bool SolutionBuilderMake2::generate(Solution* solution)
 			if (!file)
 				return false;
 
-			FileOutputStream(file, new Utf8Encoding()) << projectOut;
+			buf.resize(IEncoding::MaxEncodingSize * projectOut.length());
+			int32_t nbuf = Utf8Encoding().translate(projectOut.c_str(), projectOut.length(), buf.ptr());
+			file->write(buf.c_ptr(), nbuf);
 
 			file->close();
 		}
@@ -117,8 +120,10 @@ bool SolutionBuilderMake2::generate(Solution* solution)
 		if (!file)
 			return false;
 
-		FileOutputStream(file, new Utf8Encoding()) << cprojectOut;
-
+		buf.resize(IEncoding::MaxEncodingSize * cprojectOut.length());
+		int32_t nbuf = Utf8Encoding().translate(cprojectOut.c_str(), cprojectOut.length(), buf.ptr());
+		file->write(buf.c_ptr(), nbuf);
+		
 		file->close();
 
 		double timeEnd = timer.getElapsedTime();

@@ -10,8 +10,10 @@
 #include "Core/Io/StringOutputStream.h"
 #include "Core/Io/StringReader.h"
 #include "Core/Io/Utf8Encoding.h"
+#include "Core/Log/Log.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Script/IScriptContext.h"
+#include "Script/IScriptProfiler.h"
 #include "Script/Lua/ScriptCompilerLua.h"
 #include "Script/Lua/ScriptManagerLua.h"
 #include "SolutionBuilder/AggregationItem.h"
@@ -26,12 +28,35 @@
 #include "SolutionBuilder/ProjectItem.h"
 #include "SolutionBuilder/Solution.h"
 
+#define T_PROFILER_ENABLE 0
+
 namespace traktor
 {
 	namespace sb
 	{
 		namespace
 		{
+
+#if T_PROFILER_ENABLE
+class ScriptProfilerListener : public script::IScriptProfiler::IListener
+{
+public:
+	std::map< std::wstring, double > m_durations;
+
+	virtual void callEnter(const Guid& scriptId, const std::wstring& function) override final
+	{
+	}
+
+	virtual void callLeave(const Guid& scriptId, const std::wstring& function) override final
+	{
+	}
+
+	virtual void callMeasured(const Guid& scriptId, const std::wstring& function, uint32_t callCount, double inclusiveDuration, double exclusiveDuration) override final
+	{
+		m_durations[function] += exclusiveDuration;
+	}
+};
+#endif
 
 class Output : public Object
 {
@@ -378,7 +403,27 @@ bool ScriptProcessor::generate(const Solution* solution, const Project* project,
 	m_scriptContext->setGlobal("project", Any::fromObject(const_cast< Project* >(project)));
 	m_scriptContext->setGlobal("projectPath", Any::fromObject(new Path(projectPath)));
 	m_scriptContext->setGlobal("fileSystem", Any::fromObject(&FileSystem::getInstance()));
+
+#if T_PROFILER_ENABLE
+	ScriptProfilerListener pl;
+
+	Ref< script::IScriptProfiler > profiler = m_scriptManager->createProfiler();
+	if (profiler)
+		profiler->addListener(&pl);
+#endif
+
 	m_scriptContext->executeFunction("__main__");
+
+#if T_PROFILER_ENABLE
+	if (profiler)
+	{
+		profiler->removeListener(&pl);
+		for (auto it : pl.m_durations)
+		{
+			log::info << it.first << L" : " << (int32_t)(it.second * 1000.0) << L" ms" << Endl;
+		}
+	}
+#endif
 
 	output = o->getProduct();
 	return true;
