@@ -13,12 +13,13 @@ namespace traktor
 	namespace physics
 	{
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.physics.WheelData", 1, WheelData, ISerializable)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.physics.WheelData", 2, WheelData, ISerializable)
 
 WheelData::WheelData()
 :	m_steer(false)
 ,	m_drive(false)
 ,	m_radius(1.0f)
+,	m_breakFactor(0.0f)
 ,	m_anchor(0.0f, 1.0f, 0.0f, 1.0f)
 ,	m_axis(0.0f, 1.0f, 0.0f, 0.0f)
 ,	m_suspensionLength(0.1f, 1.0f)
@@ -34,6 +35,10 @@ void WheelData::serialize(ISerializer& s)
 {
 	s >> Member< bool >(L"steer", m_steer);
 	s >> Member< bool >(L"drive", m_drive);
+
+	if (s.getVersion< WheelData >() >= 2)
+		s >> Member< float >(L"breakFactor", m_breakFactor, AttributeUnit(AuPercent) | AttributeRange(0.0f));
+
 	s >> Member< float >(L"radius", m_radius, AttributeUnit(AuMetres));
 	s >> Member< Vector4 >(L"anchor", m_anchor, AttributePoint());
 	s >> Member< Vector4 >(L"axis", m_axis, AttributeDirection());

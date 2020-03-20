@@ -32,6 +32,8 @@ public:
 
 	float getRadius() const { return m_radius; }
 
+	float getBreakFactor() const { return m_breakFactor; }
+
 	const Vector4& getAnchor() const { return m_anchor; }
 
 	const Vector4& getAxis() const { return m_axis; }
@@ -56,6 +58,7 @@ private:
 	bool m_steer;
 	bool m_drive;
 	float m_radius;
+	float m_breakFactor;
 	Vector4 m_anchor;
 	Vector4 m_axis;
 	Range< float > m_suspensionLength;

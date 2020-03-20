@@ -9,6 +9,8 @@
 #include "Physics/World/Vehicle/WheelData.h"
 #include "World/Entity.h"
 
+#include "Core/Log/Log.h"
+
 namespace traktor
 {
 	namespace physics
@@ -44,6 +46,7 @@ VehicleComponent::VehicleComponent(
 ,	m_steerAngle(0.0f)
 ,	m_steerAngleTarget(0.0f)
 ,	m_engineThrottle(0.0f)
+,	m_breaking(0.0f)
 ,	m_airBorn(true)
 {
 }
@@ -111,6 +114,16 @@ void VehicleComponent::setEngineThrottle(float engineThrottle)
 float VehicleComponent::getEngineThrottle() const
 {
 	return m_engineThrottle;
+}
+
+void VehicleComponent::setBreaking(float breaking)
+{
+	m_breaking = breaking;
+}
+
+float VehicleComponent::getBreaking() const
+{
+	return m_breaking;
 }
 
 void VehicleComponent::updateSteering(Body* body, float dT)
@@ -262,9 +275,13 @@ void VehicleComponent::updateFriction(Body* body, float dT)
 	Scalar rollingFriction = 0.0_simd;
 	Scalar totalMass = 1.0_simd / Scalar(body->getInverseMass());
 	Scalar massPerWheel = totalMass / Scalar(m_wheels.size());
+	Scalar breakingForce(m_data->getBreakingForce());
 
 	for (auto wheel : m_wheels)
 	{
+		wheel->sliding = false;
+
+		// Do not apply friction if wheel is not in contact with ground.
 		if (!wheel->contact)
 			continue;
 
@@ -278,64 +295,74 @@ void VehicleComponent::updateFriction(Body* body, float dT)
 		Vector4 directionW = bodyT * wheel->direction;
 		Vector4 directionPerpW = bodyT * wheel->directionPerp;
 
+#if 0
 		// Project wheel directions onto contact plane.
 		directionW -= wheel->contactNormal * dot3(wheel->contactNormal, directionW);
 		directionPerpW -= wheel->contactNormal * dot3(wheel->contactNormal, directionPerpW);
+#endif
 		directionW = directionW.normalized();
 		directionPerpW = directionPerpW.normalized();
+
+		// Calculate grip.
+		Scalar grip = 1.0_simd;
+		grip *= abs(dot3(axisW, wheel->contactNormal));
+		grip *= Scalar(wheel->contactFudge);
 
 		// Determine velocities and percent of maximum velocity.
 		Scalar forwardVelocity = dot3(directionW, wheel->contactVelocity);
 		Scalar sideVelocity = dot3(directionPerpW, wheel->contactVelocity);
-		if (abs(forwardVelocity) > 0.05f)
-		{
-			// Calculate slip angle.
-			float k = std::atan2(forwardVelocity, sideVelocity);
-			float slipAngle = abs(k - HALF_PI);
 
-			// Calculate grip factor of this wheel.
-			Scalar grip = 1.0_simd;
+		// Method factor lerps between slip angle based friction and purely perpendicular friction.
+		const Scalar c_methodLimit = 4.0_simd;
+		Scalar method = clamp(1.0_simd - abs(forwardVelocity) / c_methodLimit, 0.0_simd, 1.0_simd);
 
-			// Less grip if wheel is less aligned to contact plane.
-			grip *= abs(dot3(axisW, wheel->contactNormal));
+		// Calculate slip angle.
+		float k = std::atan2(sideVelocity, forwardVelocity);
+		float slipAngle = abs(k);
 
-			// Less grip from fudge.
-			grip *= Scalar(wheel->contactFudge);
+		// Calculate amount of force from slip angle. \fixme Should use curves.
+		const float peakSlipFriction = data->getSlipCornerForce();
+		const float maxSlipAngle = data->getPeakSlipAngle();
 
-			// Calculate amount of force from slip angle. \fixme Should use curves.
-			const float peakSlipFriction = data->getSlipCornerForce();
-			const float maxSlipAngle = data->getPeakSlipAngle();
-
-			float force = 0.0f;
-			if (slipAngle < maxSlipAngle)
-			{
-				force = (slipAngle / maxSlipAngle) * peakSlipFriction;
-				wheel->sliding = false;
-			}
-			else
-			{
-				const float c_fallOff = 2.0f;
-				float f = clamp(rad2deg(slipAngle - maxSlipAngle) / c_fallOff, 0.0f, 1.0f);
-				force = peakSlipFriction * f;
-				wheel->sliding = true;
-			}
-
-			// Apply friction force.
-			body->addForceAt(
-				wheel->contactPosition,
-				directionPerpW * Scalar(force * sign(-sideVelocity)) * grip,
-				false
-			);
-
-			// Accumulate rolling friction, applied at center of mass for simplicity.
-			rollingFriction += forwardVelocity * Scalar(data->getRollingFriction()) * grip;
-		}
+		float force = 0.0f;
+		if (slipAngle < maxSlipAngle)
+			force = (slipAngle / maxSlipAngle) * peakSlipFriction;
 		else
 		{
-			Scalar f = Scalar(1.0f - abs(forwardVelocity) / 0.05f);
-			body->addImpulse(
+			const float c_fallOff = 2.0f;
+			float f = clamp(rad2deg(slipAngle - maxSlipAngle) / c_fallOff, 0.0f, 1.0f);
+			force = peakSlipFriction * f;
+
+			// Do not tag sliding if going too slow.
+			if (abs(forwardVelocity) > 1.0f)
+				wheel->sliding = true;
+		}
+
+		// Apply friction force.
+		body->addForceAt(
+			wheel->contactPosition,
+			directionPerpW * Scalar(force * sign(-sideVelocity)) * grip * (1.0_simd - method),
+			false
+		);
+	
+		// Apply perpendicular friction force if going slow.
+		body->addForceAt(
+			wheel->contactPosition,
+			directionPerpW * -sideVelocity * Scalar(peakSlipFriction) * grip * method,
+			false
+		);
+
+		// Accumulate rolling friction, applied at center of mass for simplicity.
+		rollingFriction += forwardVelocity * Scalar(data->getRollingFriction()) * grip;
+
+		// Calculate breaking force.
+		if (m_breaking > FUZZY_EPSILON)
+		{
+			Scalar f = Scalar(m_breaking * data->getBreakFactor());
+			Scalar mag = sign(forwardVelocity) * breakingForce * f * grip;
+			body->addForceAt(
 				wheel->contactPosition,
-				wheel->contactVelocity * -massPerWheel * f * 0.2_simd,
+				directionW * -mag,
 				false
 			);
 		}

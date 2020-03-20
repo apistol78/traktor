@@ -19,7 +19,7 @@ namespace traktor
 	namespace physics
 	{
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.physics.VehicleComponentData", 0, VehicleComponentData, world::IEntityComponentData)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.physics.VehicleComponentData", 1, VehicleComponentData, world::IEntityComponentData)
 
 VehicleComponentData::VehicleComponentData()
 :	m_steerAngleVelocity(deg2rad(150.0f))
@@ -27,6 +27,7 @@ VehicleComponentData::VehicleComponentData()
 ,	m_swayBarForce(0.15f)
 ,	m_maxVelocity(30.0f)
 ,	m_engineForce(140.0f)
+,	m_breakingForce(20.0f)
 {
 }
 
@@ -77,6 +78,8 @@ void VehicleComponentData::serialize(ISerializer& s)
 	s >> Member< float >(L"swayBarForce", m_swayBarForce);
 	s >> Member< float >(L"maxVelocity", m_maxVelocity, AttributeUnit(AuMetres, true));
 	s >> Member< float >(L"engineForce", m_engineForce);
+		if (s.getVersion< VehicleComponentData >() >= 1)
+		s >> Member< float >(L"breakingForce", m_breakingForce);
 }
 
 	}
