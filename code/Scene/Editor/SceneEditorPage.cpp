@@ -2,9 +2,12 @@
 #include "Core/Log/Log.h"
 #include "Core/Misc/EnterLeave.h"
 #include "Core/Misc/SafeDestroy.h"
+#include "Core/Misc/Split.h"
+#include "Core/Misc/String.h"
 #include "Core/Serialization/DeepHash.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberRef.h"
+#include "Core/Settings/PropertyArray.h"
 #include "Core/Settings/PropertyBoolean.h"
 #include "Core/Settings/PropertyGroup.h"
 #include "Core/Settings/PropertyString.h"
@@ -377,6 +380,19 @@ bool SceneEditorPage::create(ui::Container* parent)
 	m_context->addEventHandler< CameraMovedEvent >(this, &SceneEditorPage::eventContextCameraMoved);
 	m_context->addEventHandler< PostFrameEvent >(this, &SceneEditorPage::eventContextPostFrame);
 
+	// Load last used camera transforms.
+	for (int32_t i = 0; i < 4; ++i)
+	{
+		std::wstring str = m_editor->getSettings()->getProperty< std::wstring >(L"SceneEditor.LastCameras/" + m_context->getDocument()->getInstance(0)->getGuid().format() + L"/" + toString(i));
+		std::vector< float > values;
+		Split< std::wstring, float >::any(str, L",", values);
+		if (values.size() >= 7)
+		{
+			m_context->getCamera(i)->setPosition(Vector4(values[0], values[1], values[2], 1.0f));
+			m_context->getCamera(i)->setOrientation(Quaternion(values[3], values[4], values[5], values[6]));
+		}
+	}
+
 	// Finally realize the scene.
 	createSceneAsset();
 	updateScene();
@@ -390,6 +406,19 @@ bool SceneEditorPage::create(ui::Container* parent)
 
 void SceneEditorPage::destroy()
 {
+	// Save cameras.
+	auto settings = m_editor->checkoutGlobalSettings();
+	for (int32_t i = 0; i < 4; ++i)
+	{
+		auto p = m_context->getCamera(i)->getPosition();
+		auto o = m_context->getCamera(i)->getOrientation();
+		settings->setProperty< PropertyString >(
+			L"SceneEditor.LastCameras/" + m_context->getDocument()->getInstance(0)->getGuid().format() + L"/" + toString(i),
+			str(L"%f, %f, %f, %f, %f, %f, %f", (float)p.x(), (float)p.y(), (float)p.z(), (float)o.e.x(), (float)o.e.y(), (float)o.e.z(), (float)o.e.w())
+		);
+	}
+	m_editor->commitGlobalSettings();
+
 	// Destroy controller editor.
 	if (m_context->getControllerEditor())
 		m_context->getControllerEditor()->destroy();
