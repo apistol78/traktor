@@ -85,16 +85,6 @@ bool WidgetPreviewControl::create(ui::Widget* parent)
 	if (!ui::Widget::create(parent, ui::WsNone))
 		return false;
 
-	// Create an empty flash movie.
-	Ref< spark::Sprite > movieClip = new spark::Sprite(0, 60);
-	Ref< spark::Frame > frame = new spark::Frame();
-	frame->changeBackgroundColor(Color4f(0.2f, 0.2f, 0.2f, 1.0f));
-	movieClip->addFrame(frame);
-	m_movie = new spark::Movie(
-		Aabb2(Vector2(0.0f, 0.0f), Vector2(1280.0f * 20.0f, 720.0f * 20.0f)),
-		movieClip
-	);
-
 	// Create render view.
 	render::RenderViewEmbeddedDesc desc;
 	desc.depthBits = 16;
@@ -109,6 +99,16 @@ bool WidgetPreviewControl::create(ui::Widget* parent)
 
 	m_renderContext = new render::RenderContext(4 * 1024 * 1024);
 	m_renderGraph = new render::RenderGraph(m_renderSystem);
+
+	// Create an empty flash movie.
+	Ref< spark::Sprite > movieClip = new spark::Sprite(0, 60);
+	Ref< spark::Frame > frame = new spark::Frame();
+	frame->changeBackgroundColor(Color4f(0.2f, 0.2f, 0.2f, 1.0f));
+	movieClip->addFrame(frame);
+	m_movie = new spark::Movie(
+		Aabb2(Vector2(0.0f, 0.0f), Vector2(1280.0f * 20.0f, 720.0f * 20.0f)),
+		movieClip
+	);
 
 	// Create flash display renderer.
 	m_displayRenderer = new spark::AccDisplayRenderer();
@@ -174,8 +174,8 @@ void WidgetPreviewControl::destroy()
 
 void WidgetPreviewControl::setScaffolding(const WidgetScaffolding* scaffolding)
 {
-	m_scaffoldingObject = 0;
-	if ((m_scaffolding = scaffolding) != 0)
+	m_scaffoldingObject = nullptr;
+	if ((m_scaffolding = scaffolding) != nullptr)
 		m_resourceManager->bind(m_scaffolding->getScaffoldingClass(), m_scaffoldingClass);
 	else
 		m_scaffoldingClass.clear();
@@ -188,7 +188,7 @@ void WidgetPreviewControl::setDebugWires(bool debugWires)
 
 void WidgetPreviewControl::eventSize(ui::SizeEvent* event)
 {
-	ui::Size sz = event->getSize();
+	ui::Size sz = getInnerRect().getSize();
 
 	if (m_renderView)
 	{
@@ -197,7 +197,14 @@ void WidgetPreviewControl::eventSize(ui::SizeEvent* event)
 	}
 
 	if (m_moviePlayer)
+	{
 		m_moviePlayer->postViewResize(sz.cx, sz.cy);
+
+		// Update movie player while resizing; no idle messages are triggered while resizing.
+		float deltaTime = float(m_timer.getDeltaTime());
+		if (m_moviePlayer->progress(deltaTime, nullptr))
+			update();
+	}
 }
 
 void WidgetPreviewControl::eventPaint(ui::PaintEvent* event)

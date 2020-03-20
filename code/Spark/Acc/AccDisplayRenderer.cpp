@@ -212,8 +212,9 @@ void AccDisplayRenderer::setup(render::RenderGraph* renderGraph)
 		if (m_clearBackground)
 		{
 			render::Clear cl;
-			cl.mask = render::CfColor | render::CfStencil;
+			cl.mask = render::CfColor | render::CfDepth | render::CfStencil;
 			cl.colors[0] = Color4f(0.8f, 0.8f, 0.8f, 0.0);
+			cl.depth = 1.0f;
 			cl.stencil = 0;
 			m_renderPassOutput->setOutput(0, cl);
 		}

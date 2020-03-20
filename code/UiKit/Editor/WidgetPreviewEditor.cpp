@@ -1,4 +1,5 @@
 #include "Core/Class/IRuntimeClass.h"
+#include "Core/Io/StringOutputStream.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Settings/PropertyBoolean.h"
 #include "Core/Settings/PropertyGroup.h"
@@ -15,6 +16,7 @@
 #include "Ui/Application.h"
 #include "Ui/Container.h"
 #include "Ui/TableLayout.h"
+#include "Ui/StatusBar/StatusBar.h"
 #include "Ui/ToolBar/ToolBar.h"
 #include "Ui/ToolBar/ToolBarButton.h"
 #include "Ui/ToolBar/ToolBarButtonClickEvent.h"
@@ -65,11 +67,11 @@ bool WidgetPreviewEditor::create(ui::Widget* parent, db::Instance* instance, ISe
 	m_resourceManager->addFactory(new spark::MovieResourceFactory());
 	m_resourceManager->addFactory(new video::VideoFactory(renderSystem));
 
-	Ref< ui::Container > container = new ui::Container();
-	container->create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%", 0, 0));
+	m_container = new ui::Container();
+	m_container->create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%,*", 0, 0));
 
 	Ref< ui::ToolBar > toolBar = new ui::ToolBar();
-	toolBar->create(container);
+	toolBar->create(m_container);
 	toolBar->addItem(new ui::ToolBarButton(
 		L"Debug wires",
 		ui::Command(L"UiKit.ToggleDebugWires"),
@@ -86,8 +88,13 @@ bool WidgetPreviewEditor::create(ui::Widget* parent, db::Instance* instance, ISe
 
 	// Create preview control.
 	m_previewControl = new WidgetPreviewControl(m_editor, m_resourceManager, renderSystem);
-	if (!m_previewControl->create(container))
+	if (!m_previewControl->create(m_container))
 		return false;
+	m_previewControl->addEventHandler< ui::SizeEvent >(this, &WidgetPreviewEditor::eventPreviewSize);
+
+	// Create status bar.
+	m_statusBar = new ui::StatusBar();
+	m_statusBar->create(m_container, ui::WsDoubleBuffer);
 
 	// Bind widget scaffolding.
 	m_previewControl->setScaffolding(ws);
@@ -125,6 +132,15 @@ ui::Size WidgetPreviewEditor::getPreferredSize() const
 		ui::dpi96(1280),
 		ui::dpi96(720)
 	);
+}
+
+void WidgetPreviewEditor::eventPreviewSize(ui::SizeEvent* event)
+{
+	ui::Size innerSize = m_previewControl->getInnerRect().getSize();
+
+	StringOutputStream ss;
+	ss << innerSize.cx << L" * " << innerSize.cy;
+	m_statusBar->setText(ss.str());
 }
 
 	}
