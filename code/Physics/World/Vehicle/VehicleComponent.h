@@ -64,6 +64,10 @@ public:
 
 	float getEngineThrottle() const;
 
+	void setBreaking(float breaking);
+
+	float getBreaking() const;
+
 	const RefArray< Wheel >& getWheels() const { return m_wheels; }
 
 private:
@@ -76,6 +80,7 @@ private:
 	float m_steerAngle;
 	float m_steerAngleTarget;
 	float m_engineThrottle;
+	float m_breaking;
 	bool m_airBorn;
 
 	void updateSteering(Body* body, float dT);

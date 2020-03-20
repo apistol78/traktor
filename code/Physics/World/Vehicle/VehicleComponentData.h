@@ -71,6 +71,8 @@ public:
 
 	float getEngineForce() const { return m_engineForce; }
 
+	float getBreakingForce() const { return m_breakingForce; }
+
 private:
 	RefArray< const WheelData > m_wheels;
 	std::set< resource::Id< CollisionSpecification > > m_traceInclude;
@@ -80,6 +82,7 @@ private:
 	float m_swayBarForce;
 	float m_maxVelocity;
 	float m_engineForce;
+	float m_breakingForce;
 };
 
 	}
