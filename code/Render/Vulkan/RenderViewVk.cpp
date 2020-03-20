@@ -1515,10 +1515,10 @@ bool RenderViewVk::validatePipeline(VertexBufferVk* vb, ProgramVk* p, PrimitiveT
 		cbsci.blendConstants[2] = 0.0;
 		cbsci.blendConstants[3] = 0.0;
 
-		VkDynamicState ds[1] = { VK_DYNAMIC_STATE_VIEWPORT };
+		VkDynamicState ds[2] = { VK_DYNAMIC_STATE_VIEWPORT, VK_DYNAMIC_STATE_STENCIL_REFERENCE };
 		VkPipelineDynamicStateCreateInfo dsci = {};
 		dsci.sType = VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO;
-		dsci.dynamicStateCount = sizeof_array(ds);
+		dsci.dynamicStateCount = rs.stencilEnable ? 2 : 1;
 		dsci.pDynamicStates = ds;
 
 		VkPipelineInputAssemblyStateCreateInfo iasci = {};

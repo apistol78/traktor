@@ -20,7 +20,7 @@ function Scaffolding:new(database, resourceManager, root)
 	self._frame = Frame(
 		root,
 		1280, 720,
-		FloodLayout(16, 16)
+		FloodLayout(0, 0)
 	)
 	self._frame:update()
 
@@ -49,6 +49,7 @@ function Scaffolding:remove()
 		self._frame = nil
 	end
 end
+
 	]]>
 	</text>
 </object>

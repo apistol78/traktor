@@ -26,6 +26,15 @@ class IScriptContext;
 
 	}
 
+	namespace ui
+	{
+	
+class Container;
+class SizeEvent;
+class StatusBar;
+	
+	}
+
 	namespace uikit
 	{
 
@@ -55,6 +64,10 @@ private:
 	Ref< script::IScriptContext > m_scriptContext;
 	Ref< resource::IResourceManager > m_resourceManager;
 	Ref< WidgetPreviewControl > m_previewControl;
+	Ref< ui::Container > m_container;
+	Ref< ui::StatusBar > m_statusBar;
+
+	void eventPreviewSize(ui::SizeEvent* event);
 };
 
 	}

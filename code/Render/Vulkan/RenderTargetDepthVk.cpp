@@ -89,11 +89,24 @@ bool RenderTargetDepthVk::create(const RenderTargetSetCreateDesc& setDesc, const
 	VkImageCreateInfo imageCreateInfo = {};
 	imageCreateInfo.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
 	imageCreateInfo.imageType = VK_IMAGE_TYPE_2D;
+
+	if (setDesc.ignoreStencil)
+	{
 #if !defined(__ANDROID__)
-	imageCreateInfo.format = VK_FORMAT_D32_SFLOAT;
+		imageCreateInfo.format = VK_FORMAT_D32_SFLOAT;
 #else
-	imageCreateInfo.format = VK_FORMAT_D16_UNORM;
+		imageCreateInfo.format = VK_FORMAT_D16_UNORM;
 #endif
+	}
+	else
+	{
+#if !defined(__ANDROID__)
+		imageCreateInfo.format = VK_FORMAT_D24_UNORM_S8_UINT;
+#else
+		imageCreateInfo.format = VK_FORMAT_D16_UNORM_S8_UINT;
+#endif
+	}
+
 	imageCreateInfo.extent.width = setDesc.width;
 	imageCreateInfo.extent.height = setDesc.height;
 	imageCreateInfo.extent.depth = 1;
@@ -122,7 +135,12 @@ bool RenderTargetDepthVk::create(const RenderTargetSetCreateDesc& setDesc, const
 	ivci.viewType = VK_IMAGE_VIEW_TYPE_2D;
 	ivci.format = imageCreateInfo.format;
 	ivci.components = { VK_COMPONENT_SWIZZLE_IDENTITY, VK_COMPONENT_SWIZZLE_IDENTITY, VK_COMPONENT_SWIZZLE_IDENTITY, VK_COMPONENT_SWIZZLE_IDENTITY };
-	ivci.subresourceRange.aspectMask = VK_IMAGE_ASPECT_DEPTH_BIT; // | VK_IMAGE_ASPECT_STENCIL_BIT;
+
+	if (setDesc.ignoreStencil)
+		ivci.subresourceRange.aspectMask = VK_IMAGE_ASPECT_DEPTH_BIT;
+	else
+		ivci.subresourceRange.aspectMask = VK_IMAGE_ASPECT_DEPTH_BIT | VK_IMAGE_ASPECT_STENCIL_BIT;
+
 	ivci.subresourceRange.baseMipLevel = 0;
 	ivci.subresourceRange.levelCount = 1;
 	ivci.subresourceRange.baseArrayLayer = 0;
@@ -155,7 +173,7 @@ bool RenderTargetDepthVk::create(const RenderTargetSetCreateDesc& setDesc, const
 			m_setupCommandPool
 		);
 
-		VkClearDepthStencilValue cdsv = { 0 };
+		VkClearDepthStencilValue cdsv = {};
 		cdsv.depth = 0.0f;
 		cdsv.stencil = 0;
 
@@ -281,6 +299,7 @@ void RenderTargetDepthVk::prepareAsTarget(VkCommandBuffer cmdBuffer)
 		layoutTransitionBarrier.subresourceRange = { VK_IMAGE_ASPECT_DEPTH_BIT, 0, 1, 0, 1 };
 		break;
 
+	case VK_FORMAT_D16_UNORM_S8_UINT:
 	case VK_FORMAT_D24_UNORM_S8_UINT:
     case VK_FORMAT_D32_SFLOAT_S8_UINT:
 		layoutTransitionBarrier.subresourceRange = { VK_IMAGE_ASPECT_DEPTH_BIT | VK_IMAGE_ASPECT_STENCIL_BIT, 0, 1, 0, 1 };
@@ -328,7 +347,9 @@ void RenderTargetDepthVk::prepareAsTexture(VkCommandBuffer cmdBuffer)
 		layoutTransitionBarrier.subresourceRange = { VK_IMAGE_ASPECT_DEPTH_BIT, 0, 1, 0, 1 };
 		break;
 
+	case VK_FORMAT_D16_UNORM_S8_UINT:
 	case VK_FORMAT_D24_UNORM_S8_UINT:
+    case VK_FORMAT_D32_SFLOAT_S8_UINT:
 		layoutTransitionBarrier.subresourceRange = { VK_IMAGE_ASPECT_DEPTH_BIT | VK_IMAGE_ASPECT_STENCIL_BIT, 0, 1, 0, 1 };
 		break;
 

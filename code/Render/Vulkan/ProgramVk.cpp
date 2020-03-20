@@ -72,6 +72,7 @@ ProgramVk::ProgramVk(
 ,	m_computeShaderModule(0)
 ,	m_descriptorSetLayout(0)
 ,	m_pipelineLayout(0)
+,	m_stencilReference(0)
 ,	m_hash(0)
 {
 	s_handleTargetSize = getParameterHandle(L"_vk_targetSize");
@@ -448,6 +449,13 @@ bool ProgramVk::validateGraphics(VkDescriptorPool descriptorPool, VkCommandBuffe
 		0, nullptr
 	);
 
+	if (m_renderState.stencilEnable)
+		vkCmdSetStencilReference(
+			commandBuffer,
+			VK_STENCIL_FRONT_AND_BACK,
+			m_stencilReference
+		);
+
 	return true;
 }
 
@@ -731,6 +739,7 @@ void ProgramVk::setStructBufferParameter(handle_t handle, StructBuffer* structBu
 
 void ProgramVk::setStencilReference(uint32_t stencilReference)
 {
+	m_stencilReference = stencilReference;
 }
 
 	}
