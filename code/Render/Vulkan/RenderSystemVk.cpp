@@ -258,6 +258,7 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
 
     VkPhysicalDeviceFeatures features = {};
     features.shaderClipDistance = VK_TRUE;
+	features.samplerAnisotropy = VK_TRUE;
     dci.pEnabledFeatures = &features;
 
     if (vkCreateDevice(m_physicalDevice, &dci, 0, &m_logicalDevice) != VK_SUCCESS)

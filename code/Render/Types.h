@@ -763,6 +763,18 @@ struct Primitives
 	}
 };
 
+/*! Copy region. */
+struct Region
+{
+	int32_t x;
+	int32_t y;
+	int32_t z;		//!< Also cubemap side.
+	int32_t mip;
+	int32_t width;
+	int32_t height;
+	int32_t depth;
+};
+
 /*! Shader parameter handle. */
 typedef uint32_t handle_t;
 

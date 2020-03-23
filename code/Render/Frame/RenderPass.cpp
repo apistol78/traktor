@@ -10,6 +10,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderPass", RenderPass, Object)
 RenderPass::RenderPass(const std::wstring& name)
 :   m_name(name)
 {
+	m_output.targetSetId = ~0;
 }
 
 void RenderPass::addInput(handle_t targetSetId)
@@ -37,7 +38,7 @@ StaticVector< RenderPass::Input, 16 > RenderPass::getInputs() const
 void RenderPass::setOutput(handle_t targetSetId)
 {
 	m_output.targetSetId = targetSetId;
-	 m_output.clear.mask = 0;
+	m_output.clear.mask = 0;
 }
 
 void RenderPass::setOutput(handle_t targetSetId, const Clear& clear)

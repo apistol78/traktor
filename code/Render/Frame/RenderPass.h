@@ -75,6 +75,8 @@ public:
 
 	void setOutput(handle_t targetSetId, const Clear& clear);
 
+	bool haveOutput() const { return m_output.targetSetId != ~0; }
+
 	const Output& getOutput() const { return m_output; }
 
 	//! \}

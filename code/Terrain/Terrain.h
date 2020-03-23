@@ -102,17 +102,11 @@ public:
 	 */
 	const resource::Proxy< render::ISimpleTexture >& getMaterialMap() const { return m_materialMap; }
 
-	/*! Get terrain coarse shader resource.
+	/*! Get terrain shader resource.
 	 *
-	 * \return Terrain coarse shader resource.
+	 * \return Terrain shader resource.
 	 */
-	const resource::Proxy< render::Shader >& getTerrainCoarseShader() const { return m_terrainCoarseShader; }
-
-	/*! Get terrain detail shader resource.
-	 *
-	 * \return Terrain detail shader resource.
-	 */
-	const resource::Proxy< render::Shader >& getTerrainDetailShader() const { return m_terrainDetailShader; }
+	const resource::Proxy< render::Shader >& getTerrainShader() const { return m_terrainShader; }
 
 	/*! Get terrain surface shader resource.
 	 *
@@ -145,8 +139,7 @@ private:
 	resource::Proxy< render::ISimpleTexture > m_splatMap;
 	resource::Proxy< render::ISimpleTexture > m_cutMap;
 	resource::Proxy< render::ISimpleTexture > m_materialMap;
-	resource::Proxy< render::Shader > m_terrainCoarseShader;
-	resource::Proxy< render::Shader > m_terrainDetailShader;
+	resource::Proxy< render::Shader > m_terrainShader;
 	resource::Proxy< render::Shader > m_surfaceShader;
 	AlignedVector< Patch > m_patches;
 };

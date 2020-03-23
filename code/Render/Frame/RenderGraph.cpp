@@ -77,28 +77,39 @@ bool RenderGraph::validate()
 	m_order.resize(0);	
 	for (int32_t i = 0; i < (int32_t)m_passes.size(); ++i)
 	{
-		const auto& output = m_passes[i]->getOutput();
-		if (output.targetSetId == 0)
+		if (m_passes[i]->haveOutput())
 		{
-			traverse(i, [&](int32_t index) {
-				if (added.insert(index))
-					m_order.push_back(index);
-			});
-		}
-		else
-		{
-			// A bit of a hack for now, non-transient outputs
-			// indicate some sort of caching scheme, such
-			// as terrain surface cache, so we need to ensure
-			// they are executed regardless of dependencies.
-			auto it = m_targets.find(output.targetSetId);
-			if (!it->second.transient)
+			const auto& output = m_passes[i]->getOutput();
+			if (output.targetSetId == 0)
 			{
+				// Render to backbuffer passes is included as roots.
 				traverse(i, [&](int32_t index) {
 					if (added.insert(index))
 						m_order.push_back(index);
 				});
 			}
+			else
+			{
+				// Non-transient outputs indicate some sort of caching scheme, such
+				// as offscreen caching etc, so we need to ensure they are executed
+				// regardless of dependencies.
+				auto it = m_targets.find(output.targetSetId);
+				if (!it->second.transient)
+				{
+					traverse(i, [&](int32_t index) {
+						if (added.insert(index))
+							m_order.push_back(index);
+					});
+				}
+			}
+		}
+		else
+		{
+			// Passes which doesn't have an output need to be included as roots.
+			traverse(i, [&](int32_t index) {
+				if (added.insert(index))
+					m_order.push_back(index);
+			});
 		}
 	}
 
@@ -141,55 +152,58 @@ bool RenderGraph::build(RenderContext* renderContext, int32_t width, int32_t hei
 		const auto& output = pass->getOutput();
 
 		// Begin render pass.
-		if (output.targetSetId != 0)
+		if (pass->haveOutput())
 		{
-			auto it = m_targets.find(output.targetSetId);
-			T_FATAL_ASSERT(it != m_targets.end());
-
-			auto& target = it->second;
-			if (target.rts == nullptr)
+			if (output.targetSetId != 0)
 			{
-				int32_t referenceWidth = width;
-				int32_t referenceHeight = height;
+				auto it = m_targets.find(output.targetSetId);
+				T_FATAL_ASSERT(it != m_targets.end());
 
-				// Use size of reference target.
-				if (target.sizeReferenceTargetSetId != 0)
+				auto& target = it->second;
+				if (target.rts == nullptr)
 				{
-					auto it2 = m_targets.find(target.sizeReferenceTargetSetId);
-					if (it2 == m_targets.end())
+					int32_t referenceWidth = width;
+					int32_t referenceHeight = height;
+
+					// Use size of reference target.
+					if (target.sizeReferenceTargetSetId != 0)
+					{
+						auto it2 = m_targets.find(target.sizeReferenceTargetSetId);
+						if (it2 == m_targets.end())
+							return false;
+
+						referenceWidth = it2->second.targetSetDesc.width;
+						referenceHeight = it2->second.targetSetDesc.height;
+					}
+
+					// Use size of shared depth/stencil target since they must match.
+					if (target.sharedDepthStencilTargetSet != nullptr)
+					{
+						referenceWidth = target.sharedDepthStencilTargetSet->getWidth();
+						referenceHeight = target.sharedDepthStencilTargetSet->getHeight();
+					}
+
+					target.rts = m_pool->acquire(
+						target.targetSetDesc,
+						target.sharedDepthStencilTargetSet,
+						referenceWidth,
+						referenceHeight
+					);
+					if (!target.rts)
 						return false;
+				}	
 
-					referenceWidth = it2->second.targetSetDesc.width;
-					referenceHeight = it2->second.targetSetDesc.height;
-				}
-
-				// Use size of shared depth/stencil target since they must match.
-				if (target.sharedDepthStencilTargetSet != nullptr)
-				{
-					referenceWidth = target.sharedDepthStencilTargetSet->getWidth();
-					referenceHeight = target.sharedDepthStencilTargetSet->getHeight();
-				}
-
-				target.rts = m_pool->acquire(
-					target.targetSetDesc,
-					target.sharedDepthStencilTargetSet,
-					referenceWidth,
-					referenceHeight
-				);
-				if (!target.rts)
-					return false;
-			}	
-
-			auto tb = renderContext->alloc< BeginPassRenderBlock >();
-			tb->renderTargetSet = target.rts;
-			tb->clear = output.clear;
-			renderContext->enqueue(tb);
-		}
-		else
-		{
-			auto tb = renderContext->alloc< BeginPassRenderBlock >();
-			tb->clear = output.clear;
-			renderContext->enqueue(tb);			
+				auto tb = renderContext->alloc< BeginPassRenderBlock >();
+				tb->renderTargetSet = target.rts;
+				tb->clear = output.clear;
+				renderContext->enqueue(tb);
+			}
+			else
+			{
+				auto tb = renderContext->alloc< BeginPassRenderBlock >();
+				tb->clear = output.clear;
+				renderContext->enqueue(tb);			
+			}
 		}
 
 		// Build sub passes first.
@@ -210,8 +224,11 @@ bool RenderGraph::build(RenderContext* renderContext, int32_t width, int32_t hei
 		}
 
 		// End render pass.
-		auto te = renderContext->alloc< EndPassRenderBlock >();
-		renderContext->enqueue(te);
+		if (pass->haveOutput())
+		{
+			auto te = renderContext->alloc< EndPassRenderBlock >();
+			renderContext->enqueue(te);
+		}
 
 		// Decrement reference counts on input targets; release if last reference.
 		for (const auto& input : inputs)

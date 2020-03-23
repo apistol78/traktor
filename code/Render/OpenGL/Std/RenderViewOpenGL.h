@@ -111,7 +111,7 @@ public:
 
 	virtual void compute(IProgram* program, const int32_t* workSize) override final;
 
-	virtual bool copy(ITexture* destinationTexture, int32_t destinationSide, int32_t destinationLevel, ITexture* sourceTexture, int32_t sourceSide, int32_t sourceLevel) override final;
+	virtual bool copy(ITexture* destinationTexture, const Region& destinationRegion, ITexture* sourceTexture, const Region& sourceRegion) override final;
 
 	virtual void pushMarker(const char* const marker) override final;
 

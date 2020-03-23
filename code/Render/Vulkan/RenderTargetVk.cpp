@@ -114,65 +114,6 @@ bool RenderTargetVk::create(const RenderTargetSetCreateDesc& setDesc, const Rend
 		return false;
 	}
 
-	//// Initially clear render target to a known state.
-	//changeImageLayout(
-	//	m_logicalDevice,
-	//	m_setupCommandPool,
-	//	m_setupQueue,
-	//	m_image,
-	//	VK_IMAGE_LAYOUT_UNDEFINED,
-	//	VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
-	//	0,
-	//	1,
-	//	0,
-	//	1,
-	//	VK_IMAGE_ASPECT_COLOR_BIT
-	//);
-
-	//VkCommandBuffer commandBuffer = beginSingleTimeCommands(
-	//	m_logicalDevice,
-	//	m_setupCommandPool
-	//);
-
-	//VkClearColorValue ccv = { 0 };
-
-	//VkImageSubresourceRange isr = {};
-	//isr.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
-	//isr.baseMipLevel = 0;
-	//isr.levelCount = 1;
-	//isr.baseArrayLayer = 0;
-	//isr.layerCount = 1;
-
-	//vkCmdClearColorImage(
-	//	commandBuffer,
-	//	m_image,
-	//	VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
-	//	&ccv,
-	//	1,
-	//	&isr
-	//);
-
-	//endSingleTimeCommands(
-	//	m_logicalDevice,
-	//	m_setupCommandPool,
-	//	commandBuffer,
-	//	m_setupQueue
-	//);
-
-	//changeImageLayout(
-	//	m_logicalDevice,
-	//	m_setupCommandPool,
-	//	m_setupQueue,
-	//	m_image,
-	//	VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
-	//	VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
-	//	0,
-	//	1,
-	//	0,
-	//	1,
-	//	VK_IMAGE_ASPECT_COLOR_BIT
-	//);
-
 	m_format = imageCreateInfo.format;
 	m_width = setDesc.width;
 	m_height = setDesc.height;

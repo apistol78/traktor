@@ -69,19 +69,11 @@ const float c_terrainDetailDistances[] =
 
 const uint32_t c_terrainSurfaceCacheSizes[] =
 {
-#if !defined(__PS3__)
 	0,
-	1024,
 	2048,
 	4096,
-	4096
-#else
-	0,
-	1024,
-	1024,
-	2048,
-	2048
-#endif
+	8192,
+	8192
 };
 
 		}

@@ -33,7 +33,6 @@ class ScreenRenderer;
 class RenderContext;
 class RenderBlock;
 class RenderGraph;
-class RenderPass;
 
 	}
 
@@ -97,13 +96,12 @@ private:
 	render::IRenderSystem* m_renderSystem;
 	Ref< render::ScreenRenderer > m_screenRenderer;
 	TerrainSurfaceAlloc m_alloc;
-	Ref< render::IRenderTargetSet > m_pool;
+	Ref< render::ISimpleTexture > m_pool;
 	Ref< render::IRenderTargetSet > m_base;
-	Ref< render::RenderPass > m_surfacePass;
 	AlignedVector< Entry > m_entries;
 	bool m_haveBase;
 	bool m_clearCache;
-	uint32_t m_size;
+	uint32_t m_updateCount;
 };
 
 	}

@@ -67,9 +67,7 @@ public:
 
 	const resource::Id< render::ISimpleTexture >& getCutMap() const { return m_cutMap; }
 
-	const resource::Id< render::Shader >& getTerrainCoarseShader() const { return m_terrainCoarseShader; }
-
-	const resource::Id< render::Shader >& getTerrainDetailShader() const { return m_terrainDetailShader; }
+	const resource::Id< render::Shader >& getTerrainShader() const { return m_terrainShader; }
 
 	const resource::Id< render::Shader >& getSurfaceShader() const { return m_surfaceShader; }
 
@@ -86,8 +84,7 @@ private:
 	resource::Id< render::ISimpleTexture > m_heightMap;
 	resource::Id< render::ISimpleTexture > m_splatMap;
 	resource::Id< render::ISimpleTexture > m_cutMap;
-	resource::Id< render::Shader > m_terrainCoarseShader;
-	resource::Id< render::Shader > m_terrainDetailShader;
+	resource::Id< render::Shader > m_terrainShader;
 	resource::Id< render::Shader > m_surfaceShader;
 	std::vector< Patch > m_patches;
 };
