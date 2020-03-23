@@ -38,13 +38,10 @@ const Guid c_guidColorMapSeed(L"{E2A97254-B596-4665-900B-FB70A2267AF7}");
 const Guid c_guidNormalMapSeed(L"{84F74E7F-4D02-40f6-A07A-EE9F5EF3CDB4}");
 const Guid c_guidHeightMapSeed(L"{EA932687-BC1E-477f-BF70-A8715991258D}");
 const Guid c_guidCutMapSeed(L"{CFB69515-9263-4611-93B1-658D8CA6D861}");
-const Guid c_guidTerrainCoarseShaderSeed(L"{6643B92A-6676-41b9-9427-3569B2EA481B}");
-const Guid c_guidTerrainDetailShaderSeed(L"{1AC67694-4CF8-44ac-B78E-B1E79C9632C8}");
+const Guid c_guidTerrainShaderSeed(L"{6643B92A-6676-41b9-9427-3569B2EA481B}");
 const Guid c_guidSurfaceShaderSeed(L"{8481FC82-A8E8-49b8-906F-9F8F6365B1F5}");
-const Guid c_guidTerrainCoarseShaderTemplate(L"{E18056AF-BC95-4349-A98F-17DCF37607D3}");
-const Guid c_guidTerrainDetailShaderTemplate(L"{F08984BF-AC87-9A4E-B739-B6F574393F8F}");
-const Guid c_guidTerrainCoarseShaderTemplate_VFetch(L"{A6C4532A-0540-4D42-93FC-964C7BFDD1FD}");
-const Guid c_guidTerrainDetailShaderTemplate_VFetch(L"{68565BF3-8F72-8848-8FBA-395B9699F108}");
+const Guid c_guidTerrainShaderTemplate(L"{E18056AF-BC95-4349-A98F-17DCF37607D3}");
+const Guid c_guidTerrainShaderTemplate_VFetch(L"{A6C4532A-0540-4D42-93FC-964C7BFDD1FD}");
 const Guid c_guidSurfaceShaderTemplate(L"{BAD675B3-9799-7D49-A045-BDA471DD5A3E}");
 const Guid c_guidSurfaceShaderPlaceholder(L"{23790224-9E2A-4C43-9C3B-F659BE962E10}");
 
@@ -101,17 +98,15 @@ void calculatePatches(const TerrainAsset* terrainAsset, const hf::Heightfield* h
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.terrain.TerrainPipeline", 12, TerrainPipeline, editor::DefaultPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.terrain.TerrainPipeline", 13, TerrainPipeline, editor::DefaultPipeline)
 
 TerrainPipeline::TerrainPipeline()
-:	m_suppressDetailShader(false)
 {
 }
 
 bool TerrainPipeline::create(const editor::IPipelineSettings* settings)
 {
 	m_assetPath = settings->getProperty< std::wstring >(L"Pipeline.AssetPath", L"");
-	m_suppressDetailShader = settings->getProperty< bool >(L"TerrainPipeline.SuppressDetailShader", false);
 	return editor::DefaultPipeline::create(settings);
 }
 
@@ -133,14 +128,8 @@ bool TerrainPipeline::buildDependencies(
 	pipelineDepends->addDependency(terrainAsset->getHeightfield(), editor::PdfUse | editor::PdfBuild | editor::PdfResource);
 	pipelineDepends->addDependency(terrainAsset->getSurfaceShader(), editor::PdfUse);
 
-	pipelineDepends->addDependency(c_guidTerrainCoarseShaderTemplate, editor::PdfUse);
-	pipelineDepends->addDependency(c_guidTerrainCoarseShaderTemplate_VFetch, editor::PdfUse);
-
-	if (!m_suppressDetailShader)
-	{
-		pipelineDepends->addDependency(c_guidTerrainDetailShaderTemplate, editor::PdfUse);
-		pipelineDepends->addDependency(c_guidTerrainDetailShaderTemplate_VFetch, editor::PdfUse);
-	}
+	pipelineDepends->addDependency(c_guidTerrainShaderTemplate, editor::PdfUse);
+	pipelineDepends->addDependency(c_guidTerrainShaderTemplate_VFetch, editor::PdfUse);
 
 	pipelineDepends->addDependency(c_guidSurfaceShaderTemplate, editor::PdfUse);
 	pipelineDepends->addDependency(c_guidSurfaceShaderPlaceholder, editor::PdfUse);
@@ -245,8 +234,7 @@ bool TerrainPipeline::buildOutput(
 	Guid normalMapGuid = combineGuids(c_guidNormalMapSeed, outputGuid);
 	Guid heightMapGuid = combineGuids(c_guidHeightMapSeed, outputGuid);
 	Guid cutMapGuid = (cutsCount >= c_cutsCountThreshold) ? combineGuids(c_guidCutMapSeed, outputGuid) : Guid();
-	Guid terrainCoarseShaderGuid = combineGuids(c_guidTerrainCoarseShaderSeed, outputGuid);
-	Guid terrainDetailShaderGuid = combineGuids(c_guidTerrainDetailShaderSeed, outputGuid);
+	Guid terrainShaderGuid = combineGuids(c_guidTerrainShaderSeed, outputGuid);
 	Guid surfaceShaderGuid = combineGuids(c_guidSurfaceShaderSeed, outputGuid);
 
 	// Create color texture.
@@ -336,51 +324,28 @@ bool TerrainPipeline::buildOutput(
 	Ref< render::ShaderGraph > surfaceShaderImpl = DeepClone(assetSurfaceShader).create< render::ShaderGraph >();
 
 	// Read shader templates.
-	Ref< const render::ShaderGraph > terrainCoarseShaderTemplate = pipelineBuilder->getObjectReadOnly< render::ShaderGraph >(c_guidTerrainCoarseShaderTemplate_VFetch);
-	if (!terrainCoarseShaderTemplate)
+	Ref< const render::ShaderGraph > terrainShaderTemplate = pipelineBuilder->getObjectReadOnly< render::ShaderGraph >(c_guidTerrainShaderTemplate_VFetch);
+	if (!terrainShaderTemplate)
 	{
-		log::error << L"Terrain pipeline failed; unable to get terrain coarse template shader" << Endl;
-		return false;
-	}
-
-	Ref< const render::ShaderGraph > terrainDetailShaderTemplate = pipelineBuilder->getObjectReadOnly< render::ShaderGraph >(c_guidTerrainDetailShaderTemplate_VFetch);
-	if (!terrainDetailShaderTemplate)
-	{
-		log::error << L"Terrain pipeline failed; unable to get terrain detail template shader" << Endl;
+		log::error << L"Terrain pipeline failed; unable to get terrain template shader-" << Endl;
 		return false;
 	}
 
 	Ref< const render::ShaderGraph > surfaceShaderTemplate = pipelineBuilder->getObjectReadOnly< render::ShaderGraph >(c_guidSurfaceShaderTemplate);
 	if (!surfaceShaderTemplate)
 	{
-		log::error << L"Terrain pipeline failed; unable to get surface template shader" << Endl;
+		log::error << L"Terrain pipeline failed; unable to get surface template shader." << Endl;
 		return false;
 	}
 
 	// Resolve fragments in templates and insert surface shader at placeholders.
 	FragmentReaderAdapter fragmentReader(pipelineBuilder, surfaceShaderImpl);
 
-	Ref< render::ShaderGraph > terrainCoarseShader = render::FragmentLinker(fragmentReader).resolve(terrainCoarseShaderTemplate, true);
-	if (!terrainCoarseShader)
+	Ref< render::ShaderGraph > terrainShader = render::FragmentLinker(fragmentReader).resolve(terrainShaderTemplate, true);
+	if (!terrainShader)
 	{
-		log::error << L"Terrain pipeline failed; unable to link terrain coarse shader" << Endl;
+		log::error << L"Terrain pipeline failed; unable to link terrain shader." << Endl;
 		return false;
-	}
-
-	Ref< render::ShaderGraph > terrainDetailShader;
-	if (!m_suppressDetailShader)
-	{
-		terrainDetailShader = render::FragmentLinker(fragmentReader).resolve(terrainDetailShaderTemplate, true);
-		if (!terrainDetailShader)
-		{
-			log::error << L"Terrain pipeline failed; unable to link terrain detail shader" << Endl;
-			return false;
-		}
-	}
-	else
-	{
-		terrainDetailShader = DeepClone(terrainCoarseShader).create< render::ShaderGraph >();
-		T_ASSERT(terrainDetailShader);
 	}
 
 	Ref< render::ShaderGraph > surfaceShader = render::FragmentLinker(fragmentReader).resolve(surfaceShaderTemplate, true);
@@ -395,23 +360,12 @@ bool TerrainPipeline::buildOutput(
 
 	if (!pipelineBuilder->buildOutput(
 		sourceInstance,
-		terrainCoarseShader,
-		shaderPath + L"/Coarse",
-		terrainCoarseShaderGuid
+		terrainShader,
+		shaderPath,
+		terrainShaderGuid
 	))
 	{
-		log::error << L"Terrain pipeline failed; unable to build coarse shader" << Endl;
-		return false;
-	}
-
-	if (!pipelineBuilder->buildOutput(
-		sourceInstance,
-		terrainDetailShader,
-		shaderPath + L"/Detail",
-		terrainDetailShaderGuid
-	))
-	{
-		log::error << L"Terrain pipeline failed; unable to build detail shader" << Endl;
+		log::error << L"Terrain pipeline failed; unable to build shader." << Endl;
 		return false;
 	}
 
@@ -435,8 +389,7 @@ bool TerrainPipeline::buildOutput(
 	terrainResource->m_normalMap = resource::Id< render::ISimpleTexture >(normalMapGuid);
 	terrainResource->m_heightMap = resource::Id< render::ISimpleTexture >(heightMapGuid);
 	terrainResource->m_splatMap = resource::Id< render::ISimpleTexture >(splatMapGuid);
-	terrainResource->m_terrainCoarseShader = resource::Id< render::Shader >(terrainCoarseShaderGuid);
-	terrainResource->m_terrainDetailShader = resource::Id< render::Shader >(terrainDetailShaderGuid);
+	terrainResource->m_terrainShader = resource::Id< render::Shader >(terrainShaderGuid);
 	terrainResource->m_surfaceShader = resource::Id< render::Shader >(surfaceShaderGuid);
 
 	if (cutsCount >= c_cutsCountThreshold)

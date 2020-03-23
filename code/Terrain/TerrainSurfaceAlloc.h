@@ -1,7 +1,7 @@
 #pragma once
 
-#include <list>
 #include "Core/Object.h"
+#include "Core/Containers/AlignedVector.h"
 
 namespace traktor
 {
@@ -18,13 +18,13 @@ class TerrainSurfaceAlloc : public Object
 public:
 	struct Tile
 	{
-		uint32_t size;
+		uint32_t lod;
 		uint32_t x;
 		uint32_t y;
 		uint32_t dim;
 
 		Tile()
-		:	size(0)
+		:	lod(0)
 		,	x(0)
 		,	y(0)
 		,	dim(0)
@@ -32,18 +32,24 @@ public:
 		}
 	};
 
-	TerrainSurfaceAlloc();
+	TerrainSurfaceAlloc(uint32_t size);
 
 	/*! Alloc tile.
 	 *
-	 * \param size Tile size, 0 = 1024, 1 = 512, 2 = 256, 3 = 128
+	 * \param lod Tile lod, 0-3.
 	 */
-	bool alloc(uint32_t size, Tile& outTile);
+	bool alloc(uint32_t lod, Tile& outTile);
 
 	void free(const Tile& tile);
 
+	uint32_t getVirtualSize() const { return m_size; }
+
+	uint32_t getTileDim(uint32_t lod) const { return m_tileDims[lod]; }
+
 private:
-	std::list< Tile > m_free[5];
+	uint32_t m_size;
+	uint32_t m_tileDims[4];
+	AlignedVector< Tile > m_free[4];
 };
 
 	}

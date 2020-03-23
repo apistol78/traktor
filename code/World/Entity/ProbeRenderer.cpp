@@ -297,14 +297,20 @@ void ProbeRenderer::setup(const WorldSetupContext& context)
 				auto lrb = renderContext->alloc< render::LambdaRenderBlock >(L"Probe transfer RT -> cube");
 				lrb->lambda = [=](render::IRenderView* renderView)
 				{
-					renderView->copy(
-						probeTexture,
-						face,
-						0,
-						faceTargetSet->getColorTexture(0),
-						0,
-						0
-					);
+					render::Region sr = {};
+					sr.x = 0;
+					sr.y = 0;
+					sr.mip = 0;
+					sr.width = probeTexture->getSide();
+					sr.height = probeTexture->getSide();
+
+					render::Region dr = {};
+					dr.x = 0;
+					dr.y = 0;
+					dr.z = face;
+					dr.mip = 0;
+
+					renderView->copy(probeTexture, dr, faceTargetSet->getColorTexture(0), sr);
 				};
 				renderContext->enqueue(lrb);
 			}
@@ -425,14 +431,20 @@ void ProbeRenderer::setup(const WorldSetupContext& context)
 					auto lrb = renderContext->alloc< render::LambdaRenderBlock >(L"Probe transfer filtered -> cube");
 					lrb->lambda = [=](render::IRenderView* renderView)
 					{
-						renderView->copy(
-							probeTexture,
-							side,
-							mip,
-							filteredTargetSet->getColorTexture(0),
-							0,
-							0
-						);
+						render::Region sr = {};
+						sr.x = 0;
+						sr.y = 0;
+						sr.mip = 0;
+						sr.width = probeTexture->getSide() >> mip;
+						sr.height = probeTexture->getSide() >> mip;
+
+						render::Region dr = {};
+						dr.x = 0;
+						dr.y = 0;
+						dr.z = side;
+						dr.mip = mip;
+
+						renderView->copy(probeTexture, dr, filteredTargetSet->getColorTexture(0), sr);
 					};
 					renderContext->enqueue(lrb);
 				}

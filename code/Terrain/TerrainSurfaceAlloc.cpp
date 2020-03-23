@@ -1,54 +1,58 @@
+#include <algorithm>
 #include "Terrain/TerrainSurfaceAlloc.h"
 
 namespace traktor
 {
 	namespace terrain
 	{
-		namespace
-		{
-
-const uint32_t c_tileDims[] = { 512, 512, 256, 128 };
-
-		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.terrain.TerrainSurfaceAlloc", TerrainSurfaceAlloc, Object)
 
-TerrainSurfaceAlloc::TerrainSurfaceAlloc()
+TerrainSurfaceAlloc::TerrainSurfaceAlloc(uint32_t size)
+:	m_size(size)
 {
-	for (uint32_t i = 0; i < sizeof_array(c_tileDims); ++i)
+	m_tileDims[0] = std::max< uint32_t >(size / 4, 1);
+	m_tileDims[1] = std::max< uint32_t >(size / 8, 1);
+	m_tileDims[2] = std::max< uint32_t >(size / 16, 1);
+	m_tileDims[3] = std::max< uint32_t >(size / 64, 1);
+
+	for (uint32_t i = 0; i < sizeof_array(m_tileDims); ++i)
 	{
-		uint32_t dim = c_tileDims[i];
-		uint32_t rows = 1024 / dim;
+		uint32_t dim = m_tileDims[i];
+		uint32_t rows = m_tileDims[0] / dim;
 		for (uint32_t row = 0; row < rows; ++row)
 		{
-			uint32_t columns = 4096 / dim;
+			uint32_t columns = size / dim;
 			for (uint32_t col = 0; col < columns; ++col)
 			{
-				Tile t;
-				t.size = i;
+				Tile& t = m_free[i].push_back();
+				t.lod = i;
 				t.x = col * dim;
-				t.y = row * dim + i * 1024;
+				t.y = row * dim + i * m_tileDims[0];
 				t.dim = dim;
-				m_free[i].push_back(t);
 			}
 		}
 	}
 }
 
-bool TerrainSurfaceAlloc::alloc(uint32_t size, Tile& outTile)
+bool TerrainSurfaceAlloc::alloc(uint32_t lod, Tile& outTile)
 {
-	if (m_free[size].empty())
+	if (m_free[lod].empty())
+	{
+		outTile.dim = 0;
 		return false;
+	}
 
-	outTile = m_free[size].back();
-	m_free[size].pop_back();
+	outTile = m_free[lod].back();
+	m_free[lod].pop_back();
 
+	T_FATAL_ASSERT(outTile.lod == lod);
 	return true;
 }
 
 void TerrainSurfaceAlloc::free(const Tile& tile)
 {
-	m_free[tile.size].push_back(tile);
+	m_free[tile.lod].push_back(tile);
 }
 
 	}

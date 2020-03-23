@@ -160,13 +160,11 @@ public:
 	/*! Copy texture.
 	 *
 	 * \param destinationTexture Destination texture.
-	 * \param destinationSide Destination cube side if cube map.
-	 * \param destinationLevel Destination mip level.
+	 * \param destinationRegion Destination region.
 	 * \param sourceTexture Source texture.
-	 * \param sourceSide Source cube side if cube map.
-	 * \param sourceLevel Source mip level.
+	 * \param sourceRegion Source region.
 	 */
-	virtual bool copy(ITexture* destinationTexture, int32_t destinationSide, int32_t destinationLevel, ITexture* sourceTexture, int32_t sourceSide, int32_t sourceLevel) = 0;
+	virtual bool copy(ITexture* destinationTexture, const Region& destinationRegion, ITexture* sourceTexture, const Region& sourceRegion) = 0;
 
 	/*! \name Statistics. */
 	//@{

@@ -863,7 +863,7 @@ void RenderViewVk::compute(IProgram* program, const int32_t* workSize)
 	vkCmdDispatch(m_computeCommandBuffer, workSize[0], workSize[1], workSize[2]);
 }
 
-bool RenderViewVk::copy(ITexture* destinationTexture, int32_t destinationSide, int32_t destinationLevel, ITexture* sourceTexture, int32_t sourceSide, int32_t sourceLevel)
+bool RenderViewVk::copy(ITexture* destinationTexture, const Region& destinationRegion, ITexture* sourceTexture, const Region& sourceRegion)
 {
 	VkImage sourceImage = 0;
 	VkImageLayout sourceImageLayout = VK_IMAGE_LAYOUT_UNDEFINED;
@@ -873,38 +873,38 @@ bool RenderViewVk::copy(ITexture* destinationTexture, int32_t destinationSide, i
 
 	VkImageCopy region = {};
 	region.srcSubresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
-	region.srcSubresource.mipLevel = sourceLevel;
+	region.srcSubresource.mipLevel = sourceRegion.mip;
 	region.srcSubresource.baseArrayLayer = 0;
 	region.srcSubresource.layerCount = 1;
 	region.srcOffset = { 0, 0, 0 };
+	region.srcOffset.x = sourceRegion.x;
+	region.srcOffset.y = sourceRegion.y;
 	region.dstSubresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
-	region.dstSubresource.mipLevel = destinationLevel;
+	region.dstSubresource.mipLevel = destinationRegion.mip;
 	region.dstSubresource.baseArrayLayer = 0;
 	region.dstSubresource.layerCount = 1;
 	region.dstOffset = { 0, 0, 0 };
+	region.dstOffset.x = destinationRegion.x;
+	region.dstOffset.y = destinationRegion.y;
 	region.extent = { 0, 0, 1 };
+	region.extent.width = sourceRegion.width;
+	region.extent.height = sourceRegion.height;
 
 	if (auto sourceRenderTarget = dynamic_type_cast< RenderTargetVk* >(sourceTexture))
 	{
 		sourceImage = sourceRenderTarget->getVkImage();
 		sourceImageLayout = sourceRenderTarget->getVkImageLayout();
-		region.extent.width = getTextureMipSize(sourceRenderTarget->getWidth(), sourceLevel);
-		region.extent.height = getTextureMipSize(sourceRenderTarget->getHeight(), sourceLevel);
 	}
 	else if (auto sourceSimpleTexture = dynamic_type_cast< SimpleTextureVk* >(sourceTexture))
 	{
 		sourceImage = sourceSimpleTexture->getVkImage();
 		sourceImageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-		region.extent.width = getTextureMipSize(sourceSimpleTexture->getWidth(), sourceLevel);
-		region.extent.height = getTextureMipSize(sourceSimpleTexture->getHeight(), sourceLevel);
 	}
 	else if (auto sourceCubeTexture = dynamic_type_cast< CubeTextureVk* >(sourceTexture))
 	{
 		sourceImage = sourceCubeTexture->getVkImage();
 		sourceImageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-		region.srcSubresource.baseArrayLayer = sourceSide;
-		region.extent.width = getTextureMipSize(sourceCubeTexture->getSide(), sourceLevel);
-		region.extent.height = getTextureMipSize(sourceCubeTexture->getSide(), sourceLevel);
+		region.srcSubresource.baseArrayLayer = sourceRegion.z;
 	}
 	else
 		return false;
@@ -923,7 +923,7 @@ bool RenderViewVk::copy(ITexture* destinationTexture, int32_t destinationSide, i
 	{
 		destinationImage = destinationCubeTexture->getVkImage();
 		destinationImageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-		region.dstSubresource.baseArrayLayer = destinationSide;
+		region.dstSubresource.baseArrayLayer = destinationRegion.z;
 	}
 	else
 		return false;
@@ -938,7 +938,7 @@ bool RenderViewVk::copy(ITexture* destinationTexture, int32_t destinationSide, i
 		imb.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
 		imb.image = sourceImage;
 		imb.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
-		imb.subresourceRange.baseMipLevel = sourceLevel;
+		imb.subresourceRange.baseMipLevel = sourceRegion.mip;
 		imb.subresourceRange.levelCount = 1;
 		imb.subresourceRange.baseArrayLayer = region.srcSubresource.baseArrayLayer;
 		imb.subresourceRange.layerCount = 1;
@@ -966,7 +966,7 @@ bool RenderViewVk::copy(ITexture* destinationTexture, int32_t destinationSide, i
 		imb.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
 		imb.image = destinationImage;
 		imb.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
-		imb.subresourceRange.baseMipLevel = destinationLevel;
+		imb.subresourceRange.baseMipLevel = destinationRegion.mip;
 		imb.subresourceRange.levelCount = 1;
 		imb.subresourceRange.baseArrayLayer = region.dstSubresource.baseArrayLayer;
 		imb.subresourceRange.layerCount = 1;
@@ -1005,7 +1005,7 @@ bool RenderViewVk::copy(ITexture* destinationTexture, int32_t destinationSide, i
 		imb.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
 		imb.image = sourceImage;
 		imb.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
-		imb.subresourceRange.baseMipLevel = sourceLevel;
+		imb.subresourceRange.baseMipLevel = sourceRegion.mip;
 		imb.subresourceRange.levelCount = 1;
 		imb.subresourceRange.baseArrayLayer = region.srcSubresource.baseArrayLayer;
 		imb.subresourceRange.layerCount = 1;
@@ -1033,7 +1033,7 @@ bool RenderViewVk::copy(ITexture* destinationTexture, int32_t destinationSide, i
 		imb.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
 		imb.image = destinationImage;
 		imb.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
-		imb.subresourceRange.baseMipLevel = destinationLevel;
+		imb.subresourceRange.baseMipLevel = destinationRegion.mip;
 		imb.subresourceRange.levelCount = 1;
 		imb.subresourceRange.baseArrayLayer = region.dstSubresource.baseArrayLayer;
 		imb.subresourceRange.layerCount = 1;
@@ -1349,7 +1349,7 @@ bool RenderViewVk::create(uint32_t width, uint32_t height)
 	VkDescriptorPoolCreateInfo dpci = {};
 	dpci.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
 	dpci.pNext = nullptr;
-	dpci.maxSets = 1024;
+	dpci.maxSets = 4096;
 	dpci.poolSizeCount = sizeof_array(dps);
 	dpci.pPoolSizes = dps;
 

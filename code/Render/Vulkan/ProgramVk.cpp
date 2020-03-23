@@ -23,11 +23,11 @@ namespace traktor
 		namespace
 		{
 
-handle_t s_handleTargetSize = 0;
+render::Handle s_handleTargetSize(L"_vk_targetSize");
 
-bool storeIfNotEqual(const float* source, int length, float* dest)
+bool storeIfNotEqual(const float* source, int32_t length, float* dest)
 {
-	for (int i = 0; i < length; ++i)
+	for (int32_t i = 0; i < length; ++i)
 	{
 		if (dest[i] != source[i])
 		{
@@ -39,9 +39,9 @@ bool storeIfNotEqual(const float* source, int length, float* dest)
 	return false;
 }
 
-bool storeIfNotEqual(const Vector4* source, int length, float* dest)
+bool storeIfNotEqual(const Vector4* source, int32_t length, float* dest)
 {
-	for (int i = 0; i < length; ++i)
+	for (int32_t i = 0; i < length; ++i)
 	{
 		if (Vector4::loadAligned(&dest[i * 4]) != source[i])
 		{
@@ -75,7 +75,6 @@ ProgramVk::ProgramVk(
 ,	m_stencilReference(0)
 ,	m_hash(0)
 {
-	s_handleTargetSize = getParameterHandle(L"_vk_targetSize");
 }
 
 ProgramVk::~ProgramVk()

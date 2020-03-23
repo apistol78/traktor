@@ -336,13 +336,13 @@ void RenderViewCapture::compute(IProgram* program, const int32_t* workSize)
 	m_renderView->compute(programCapture->m_program, workSize);
 }
 
-bool RenderViewCapture::copy(ITexture* destinationTexture, int32_t destinationSide, int32_t destinationLevel, ITexture* sourceTexture, int32_t sourceSide, int32_t sourceLevel)
+bool RenderViewCapture::copy(ITexture* destinationTexture, const Region& destinationRegion, ITexture* sourceTexture, const Region& sourceRegion)
 {
 	T_CAPTURE_ASSERT (m_insidePass, L"Cannot copy outside of beginPass/endPass.");
 	T_CAPTURE_ASSERT (destinationTexture, L"Invalid destination texture.");
 	T_CAPTURE_ASSERT (sourceTexture, L"Invalid destination texture.");
 
-	return m_renderView->copy(destinationTexture, destinationSide, destinationLevel, sourceTexture, sourceSide, sourceLevel);
+	return m_renderView->copy(destinationTexture, destinationRegion, sourceTexture, sourceRegion);
 }
 
 void RenderViewCapture::pushMarker(const char* const marker)

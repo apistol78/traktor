@@ -61,9 +61,7 @@ Ref< Object > TerrainFactory::create(resource::IResourceManager* resourceManager
 			return nullptr;
 	}
 
-	if (!resourceManager->bind(terrainResource->getTerrainCoarseShader(), terrain->m_terrainCoarseShader))
-		return nullptr;
-	if (!resourceManager->bind(terrainResource->getTerrainDetailShader(), terrain->m_terrainDetailShader))
+	if (!resourceManager->bind(terrainResource->getTerrainShader(), terrain->m_terrainShader))
 		return nullptr;
 	if (!resourceManager->bind(terrainResource->getSurfaceShader(), terrain->m_surfaceShader))
 		return nullptr;
