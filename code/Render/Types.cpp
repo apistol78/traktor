@@ -104,12 +104,12 @@ handle_t getParameterHandle(const std::wstring& name)
 	return getParameterHandle(name.c_str());
 }
 
-const wchar_t* getParameterName(handle_t handle)
+std::wstring getParameterName(handle_t handle)
 {
 	if (handle > 0 && handle <= s_handleCount)
 		return s_handles[handle - 1];
 	else
-		return nullptr;
+		return L"";
 }
 
 std::wstring getParameterNameFromTextureReferenceIndex(int32_t index)

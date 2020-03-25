@@ -800,7 +800,7 @@ handle_t T_DLLCLASS getParameterHandle(const std::wstring& name);
  * \param handle Parameter handle.
  * \return Parameter name.
  */
-const wchar_t* T_DLLCLASS getParameterName(handle_t handle);
+std::wstring T_DLLCLASS getParameterName(handle_t handle);
 
 /*! Synthesize parameter name from index.
  *
