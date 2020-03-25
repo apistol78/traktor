@@ -95,7 +95,7 @@ strip_whitespace:
 			ss << ch;
 			ch = peekChar();
 			chtype = characterType(ch);
-			if ((chtype & CtDigit) != 0 || (std::tolower(ch) >= L'a' && std::tolower(ch) <= L'f'))
+			if ((chtype & CtDigit) != 0 || (tolower(ch) >= L'a' && tolower(ch) <= L'f'))
 				readChar();
 			else
 				break;
