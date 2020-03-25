@@ -94,6 +94,7 @@ PFN_vkDestroyCommandPool vkDestroyCommandPool = nullptr;
 PFN_vkDestroyDescriptorPool vkDestroyDescriptorPool = nullptr;
 PFN_vkCmdClearColorImage vkCmdClearColorImage = nullptr;
 PFN_vkCmdClearDepthStencilImage vkCmdClearDepthStencilImage = nullptr;
+PFN_vkCmdSetStencilReference vkCmdSetStencilReference = nullptr;
 
 PFN_vkCreateMacOSSurfaceMVK vkCreateMacOSSurfaceMVK = nullptr;
 PFN_vkGetPhysicalDeviceSurfaceSupportKHR vkGetPhysicalDeviceSurfaceSupportKHR = nullptr;
@@ -685,6 +686,13 @@ bool initializeVulkanApi()
 		log::error << L"Failed to resolve Vulkan entry point \"vkCmdClearDepthStencilImage\"." << Endl;
 		return false;
 	}				
+
+	vkCmdSetStencilReference = (PFN_vkCmdSetStencilReference)dlsym(s_hVulkanModule, "vkCmdSetStencilReference");
+	if (vkCmdSetStencilReference == nullptr)
+	{
+		log::error << L"Failed to resolve Vulkan entry point \"vkCmdSetStencilReference\"." << Endl;
+		return false;
+	}
 
 	return true;
 }

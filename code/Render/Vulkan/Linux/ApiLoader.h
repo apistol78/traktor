@@ -90,6 +90,7 @@ extern PFN_vkDestroyCommandPool vkDestroyCommandPool;
 extern PFN_vkDestroyDescriptorPool vkDestroyDescriptorPool;
 extern PFN_vkCmdClearColorImage vkCmdClearColorImage;
 extern PFN_vkCmdClearDepthStencilImage vkCmdClearDepthStencilImage;
+extern PFN_vkCmdSetStencilReference vkCmdSetStencilReference;
 
 // Linux Vulkan extensions.
 extern PFN_vkCreateXlibSurfaceKHR vkCreateXlibSurfaceKHR;
