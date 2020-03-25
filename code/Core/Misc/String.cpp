@@ -1,5 +1,5 @@
 #include <algorithm>
-
+#include <locale>
 #include <stdio.h>
 #include <stdarg.h>
 #include <wchar.h>
@@ -61,22 +61,22 @@ std::wstring transform(const std::wstring& str, int (*func)(int c))
 
 std::string toUpper(const std::string& str)
 {
-	return transform(str, std::toupper);
+	return transform(str, toupper);
 }
 
 std::wstring toUpper(const std::wstring& str)
 {
-	return transform(str, std::toupper);
+	return transform(str, toupper);
 }
 
 std::string toLower(const std::string& str)
 {
-	return transform(str, std::tolower);
+	return transform(str, tolower);
 }
 
 std::wstring toLower(const std::wstring& str)
 {
-	return transform(str, std::tolower);
+	return transform(str, tolower);
 }
 
 bool startsWith(const std::string& str, const std::string& start)

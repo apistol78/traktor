@@ -77,7 +77,7 @@ bool isDigit(wchar_t ch)
 
 bool isCommand(wchar_t ch)
 {
-	return bool(std::wstring(L"MLVHQTCSAZ").find(std::toupper(ch)) != std::wstring::npos);
+	return bool(std::wstring(L"MLVHQTCSAZ").find(toupper(ch)) != std::wstring::npos);
 }
 
 void skipUntil(std::wstring::iterator& i, std::wstring::iterator end, bool (*isProc)(wchar_t))
@@ -361,12 +361,12 @@ Ref< Shape > Parser::parsePath(xml::Element* elm)
 		if (!isCommand(cmd))
 		{
 			// No command; assume shorthand expressions.
-			if (std::toupper(cmdLead) == L'M')
-				cmd = std::isupper(cmdLead) ? L'L' : L'l';
-			else if (std::toupper(cmdLead) == L'C')
-				cmd = std::isupper(cmdLead) ? L'C' : L'c';
-			else if (std::toupper(cmdLead) == L'L')
-				cmd = std::isupper(cmdLead) ? L'L' : L'l';
+			if (toupper(cmdLead) == L'M')
+				cmd = isupper(cmdLead) ? L'L' : L'l';
+			else if (toupper(cmdLead) == L'C')
+				cmd = isupper(cmdLead) ? L'C' : L'c';
+			else if (toupper(cmdLead) == L'L')
+				cmd = isupper(cmdLead) ? L'L' : L'l';
 			else
 				return nullptr;
 		}
@@ -376,8 +376,8 @@ Ref< Shape > Parser::parsePath(xml::Element* elm)
 			++i;
 		}
 
-		bool relative = (cmd != std::toupper(cmd));
-		switch (std::toupper(cmd))
+		bool relative = (cmd != toupper(cmd));
+		switch (toupper(cmd))
 		{
 		case L'M':	// Move to
 			{
