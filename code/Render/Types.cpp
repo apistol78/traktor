@@ -1,5 +1,4 @@
 #include <algorithm>
-#include "Core/Containers/SmallMap.h"
 #include "Core/Misc/String.h"
 #include "Core/Singleton/ISingleton.h"
 #include "Core/Singleton/SingletonManager.h"
@@ -12,14 +11,8 @@ namespace traktor
 		namespace
 		{
 
-// Ensure parameter registry is initialized early.
-#if defined(_MSC_VER)
-#	pragma warning(disable : 4073)
-#	pragma init_seg(lib)
-#endif
-
-SmallMap< std::wstring, handle_t > m_handles;
-handle_t m_nextUnusedHandle = 1;
+uint32_t s_handleCount = 0;
+wchar_t* s_handles[32768];
 
 struct TextureFormatInfo
 {
@@ -91,33 +84,32 @@ c_textureFormatInfo[] =
 
 		}
 
+handle_t getParameterHandle(const wchar_t* name)
+{
+	for (uint32_t i = 0; i < s_handleCount; ++i)
+	{
+		if (wcscmp(name, s_handles[i]) == 0)
+			return (handle_t)(i + 1);
+	}
+	
+	T_FATAL_ASSERT(s_handleCount < sizeof_array(s_handles));
+	s_handles[s_handleCount] = wcsdup(name);
+	s_handleCount++;
+
+	return (handle_t)s_handleCount;
+}
+
 handle_t getParameterHandle(const std::wstring& name)
 {
-	SmallMap< std::wstring, handle_t >::const_iterator i = m_handles.find(name);
-	if (i != m_handles.end())
-	{
-		T_ASSERT(i->second > 0);
-		return i->second;
-	}
-
-	handle_t handle = m_nextUnusedHandle++;
-	m_handles.insert(std::make_pair(name, handle));
-	return handle;
+	return getParameterHandle(name.c_str());
 }
 
-std::wstring getParameterName(handle_t handle)
+const wchar_t* getParameterName(handle_t handle)
 {
-	for (auto m : m_handles)
-	{
-		if (m.second == handle)
-			return m.first;
-	}
-	return L"";
-}
-
-void getParameterHandles(SmallMap< std::wstring, handle_t >& outHandles)
-{
-	outHandles = m_handles;
+	if (handle > 0 && handle <= s_handleCount)
+		return s_handles[handle - 1];
+	else
+		return nullptr;
 }
 
 std::wstring getParameterNameFromTextureReferenceIndex(int32_t index)

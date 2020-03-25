@@ -783,6 +783,13 @@ typedef uint32_t handle_t;
  * \param name Parameter name.
  * \return Parameter handle.
  */
+handle_t T_DLLCLASS getParameterHandle(const wchar_t* name);
+
+/*! Return handle from parameter name.
+ *
+ * \param name Parameter name.
+ * \return Parameter handle.
+ */
 handle_t T_DLLCLASS getParameterHandle(const std::wstring& name);
 
 /*! Get name of handle.
@@ -793,13 +800,7 @@ handle_t T_DLLCLASS getParameterHandle(const std::wstring& name);
  * \param handle Parameter handle.
  * \return Parameter name.
  */
-std::wstring T_DLLCLASS getParameterName(handle_t handle);
-
-/*! Get map of all currently used parameters.
- *
- * \param outHandles Map of all used parameters.
- */
-void getParameterHandles(SmallMap< std::wstring, handle_t >& outHandles);
+const wchar_t* T_DLLCLASS getParameterName(handle_t handle);
 
 /*! Synthesize parameter name from index.
  *
