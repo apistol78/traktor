@@ -1,3 +1,5 @@
+#include "Core/Math/Vector4.h"
+#include "Core/Math/Matrix44.h"
 #include "Render/IProgram.h"
 #include "Render/Context/ProgramParameters.h"
 #include "Render/Context/RenderContext.h"

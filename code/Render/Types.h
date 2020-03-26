@@ -783,13 +783,6 @@ typedef uint32_t handle_t;
  * \param name Parameter name.
  * \return Parameter handle.
  */
-handle_t T_DLLCLASS getParameterHandle(const wchar_t* name);
-
-/*! Return handle from parameter name.
- *
- * \param name Parameter name.
- * \return Parameter handle.
- */
 handle_t T_DLLCLASS getParameterHandle(const std::wstring& name);
 
 /*! Get name of handle.
