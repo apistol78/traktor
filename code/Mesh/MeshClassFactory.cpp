@@ -51,22 +51,26 @@ public:
 
 	void setFloatParameter(const std::wstring& name, float param)
 	{
-		m_programParameters->setFloatParameter(name, param);
+		auto handle = render::getParameterHandle(name);
+		m_programParameters->setFloatParameter(handle, param);
 	}
 
 	void setVectorParameter(const std::wstring& name, const Vector4& param)
 	{
-		m_programParameters->setVectorParameter(name, param);
+		auto handle = render::getParameterHandle(name);
+		m_programParameters->setVectorParameter(handle, param);
 	}
 
 	void setVectorArrayParameter(const std::wstring& name, const AlignedVector< Vector4 >& param)
 	{
-		m_programParameters->setVectorArrayParameter(name, param.c_ptr(), (int)param.size());
+		auto handle = render::getParameterHandle(name);
+		m_programParameters->setVectorArrayParameter(handle, param.c_ptr(), (int)param.size());
 	}
 
 	void setTextureParameter(const std::wstring& name, render::ITexture* texture)
 	{
-		m_programParameters->setTextureParameter(name, texture);
+		auto handle = render::getParameterHandle(name);
+		m_programParameters->setTextureParameter(handle, texture);
 	}
 
 	void setStencilReference(uint32_t stencilReference)

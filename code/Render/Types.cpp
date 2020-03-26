@@ -1,4 +1,5 @@
 #include <algorithm>
+#include "Core/Containers/SmallMap.h"
 #include "Core/Misc/String.h"
 #include "Core/Singleton/ISingleton.h"
 #include "Core/Singleton/SingletonManager.h"
@@ -11,8 +12,43 @@ namespace traktor
 		namespace
 		{
 
-uint32_t s_handleCount = 0;
-wchar_t* s_handles[32768];
+class HandleRegistry : public RefCountImpl< IRefCount >
+{
+public:
+	HandleRegistry()
+	:	m_nextUnusedHandle(1)
+	{
+	}
+
+	handle_t getHandle(const std::wstring& name)
+	{
+		auto it = m_handles.find(name);
+		if (it != m_handles.end())
+		{
+			T_ASSERT(it->second > 0);
+			return it->second;
+		}
+		handle_t handle = m_nextUnusedHandle++;
+		m_handles.insert(std::make_pair(name, handle));
+		return handle;
+	}
+
+	std::wstring getName(handle_t handle) const
+	{
+		for (const auto it : m_handles)
+		{
+			if (it.second == handle)
+				return it.first;
+		}
+		return L"";
+	}
+
+private:
+	SmallMap< std::wstring, handle_t > m_handles;
+	handle_t m_nextUnusedHandle;
+};
+
+Ref< HandleRegistry > s_handleRegistry;
 
 struct TextureFormatInfo
 {
@@ -84,32 +120,26 @@ c_textureFormatInfo[] =
 
 		}
 
-handle_t getParameterHandle(const wchar_t* name)
-{
-	for (uint32_t i = 0; i < s_handleCount; ++i)
-	{
-		if (wcscmp(name, s_handles[i]) == 0)
-			return (handle_t)(i + 1);
-	}
-	
-	T_FATAL_ASSERT(s_handleCount < sizeof_array(s_handles));
-	s_handles[s_handleCount] = wcsdup(name);
-	s_handleCount++;
-
-	return (handle_t)s_handleCount;
-}
-
 handle_t getParameterHandle(const std::wstring& name)
 {
-	return getParameterHandle(name.c_str());
+	if (s_handleRegistry)
+		return s_handleRegistry->getHandle(name);
+	else
+	{
+		s_handleRegistry = new HandleRegistry();
+		return s_handleRegistry->getHandle(name);
+	}
 }
 
 std::wstring getParameterName(handle_t handle)
 {
-	if (handle > 0 && handle <= s_handleCount)
-		return s_handles[handle - 1];
+	if (s_handleRegistry)
+		return s_handleRegistry->getName(handle);
 	else
-		return L"";
+	{
+		s_handleRegistry = new HandleRegistry();
+		return s_handleRegistry->getName(handle);
+	}
 }
 
 std::wstring getParameterNameFromTextureReferenceIndex(int32_t index)

@@ -65,6 +65,11 @@ const float c_deltaMoveScale = 0.025f;
 const float c_deltaScaleHead = 0.015f;
 const float c_deltaScalePitch = 0.005f;
 
+const render::Handle c_handleTime(L"World_Time");
+const render::Handle c_handleView(L"World_View");
+const render::Handle c_handleProjection(L"World_Projection");
+const render::Handle c_handleSimpleColor(L"World_SimpleColor");
+
 		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.spray.EffectPreviewControl", EffectPreviewControl, ui::Widget)
@@ -599,13 +604,13 @@ void EffectPreviewControl::eventPaint(ui::PaintEvent* event)
 
 		render::ProgramParameters visualProgramParams;
 		visualProgramParams.beginParameters(m_globalContext);
-		visualProgramParams.setFloatParameter(L"World_Time", time);
-		visualProgramParams.setMatrixParameter(L"World_View", viewTransform);
-		visualProgramParams.setMatrixParameter(L"World_Projection", projectionTransform);
+		visualProgramParams.setFloatParameter(c_handleTime, time);
+		visualProgramParams.setMatrixParameter(c_handleView, viewTransform);
+		visualProgramParams.setMatrixParameter(c_handleProjection, projectionTransform);
 		visualProgramParams.endParameters(m_globalContext);
 
 		world::WorldRenderPassSimple defaultPass(
-			render::getParameterHandle(L"World_SimpleColor"),
+			c_handleSimpleColor,
 			&visualProgramParams,
 			viewTransform
 		);

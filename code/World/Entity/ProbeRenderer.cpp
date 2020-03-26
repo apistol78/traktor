@@ -40,6 +40,11 @@ const int32_t c_sampleCount = 1000;
 const resource::Id< render::Shader > c_probeShader(Guid(L"{99BB18CB-A744-D845-9A17-D0E586E4D9EA}"));
 const resource::Id< render::Shader > c_idFilterShader(Guid(L"{D9CC2267-0BDF-4A19-A970-856112821734}"));
 
+const render::Handle c_handleProbeTexture(L"World_ProbeTexture");
+const render::Handle c_handleProbeSampleTangent(L"World_ProbeSampleTangent");
+const render::Handle c_handleProbeSampleDirections(L"World_ProbeSampleDirections");
+const render::Handle c_handleProbeFilterCorners(L"World_ProbeFilterCorners");
+
 #pragma pack(1)
 struct Vertex
 {
@@ -410,10 +415,10 @@ void ProbeRenderer::setup(const WorldSetupContext& context)
 
 					auto pp = renderContext->alloc< render::ProgramParameters >();
 					pp->beginParameters(renderContext);
-					pp->setTextureParameter(L"World_ProbeTexture", probeTexture);
-					pp->setVectorParameter(L"World_ProbeSampleTangent", tangent);
-					pp->setVectorArrayParameter(L"World_ProbeSampleDirections", sampleDirections, sizeof_array(sampleDirections));
-					pp->setVectorArrayParameter(L"World_ProbeFilterCorners", corners, sizeof_array(corners));
+					pp->setTextureParameter(c_handleProbeTexture, probeTexture);
+					pp->setVectorParameter(c_handleProbeSampleTangent, tangent);
+					pp->setVectorArrayParameter(c_handleProbeSampleDirections, sampleDirections, sizeof_array(sampleDirections));
+					pp->setVectorArrayParameter(c_handleProbeFilterCorners, corners, sizeof_array(corners));
 					pp->endParameters(renderContext);
 
 					m_screenRenderer->draw(renderContext, m_filterShader, pp);

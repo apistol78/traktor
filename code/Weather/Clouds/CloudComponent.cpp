@@ -50,6 +50,17 @@ struct Vertex
 	float index;
 };
 
+const render::Handle c_handleParticleDensity(L"ParticleDensity");
+const render::Handle c_handleSunInfluence(L"SunInfluence");
+const render::Handle c_handleProjection(L"Projection");
+const render::Handle c_handleSkyColor(L"SkyColor");
+const render::Handle c_handleGroundColor(L"GroundColor");
+const render::Handle c_handleInstanceData1(L"InstanceData1");
+const render::Handle c_handleInstanceData2(L"InstanceData2");
+const render::Handle c_handleParticleTexture(L"ParticleTexture");
+const render::Handle c_handleView(L"View");
+const render::Handle c_handleSliceDistance(L"SliceDistance");
+
 const uint32_t c_instanceCount = 16;
 
 void calculateVSQuad(
@@ -495,14 +506,14 @@ void CloudComponent::buildCluster(
 
 					worldRenderPass.setProgramParameters(particleRenderBlock->programParams, transform, transform, clusterBoundingBox);
 
-					particleRenderBlock->programParams->setFloatParameter(L"ParticleDensity", m_particleData.getDensity());
-					particleRenderBlock->programParams->setFloatParameter(L"SunInfluence", m_particleData.getSunInfluence());
-					particleRenderBlock->programParams->setMatrixParameter(L"Projection", clusterProjection);
-					particleRenderBlock->programParams->setVectorParameter(L"SkyColor", colorAsVector4(m_particleData.getSkyColor()));
-					particleRenderBlock->programParams->setVectorParameter(L"GroundColor", colorAsVector4(m_particleData.getGroundColor()));
-					particleRenderBlock->programParams->setVectorArrayParameter(L"InstanceData1", instanceData1, instanceCount);
-					particleRenderBlock->programParams->setVectorArrayParameter(L"InstanceData2", instanceData2, instanceCount);
-					particleRenderBlock->programParams->setTextureParameter(L"ParticleTexture", m_particleTexture);
+					particleRenderBlock->programParams->setFloatParameter(c_handleParticleDensity, m_particleData.getDensity());
+					particleRenderBlock->programParams->setFloatParameter(c_handleSunInfluence, m_particleData.getSunInfluence());
+					particleRenderBlock->programParams->setMatrixParameter(c_handleProjection, clusterProjection);
+					particleRenderBlock->programParams->setVectorParameter(c_handleSkyColor, colorAsVector4(m_particleData.getSkyColor()));
+					particleRenderBlock->programParams->setVectorParameter(c_handleGroundColor, colorAsVector4(m_particleData.getGroundColor()));
+					particleRenderBlock->programParams->setVectorArrayParameter(c_handleInstanceData1, instanceData1, instanceCount);
+					particleRenderBlock->programParams->setVectorArrayParameter(c_handleInstanceData2, instanceData2, instanceCount);
+					particleRenderBlock->programParams->setTextureParameter(c_handleParticleTexture, m_particleTexture);
 
 					particleRenderBlock->programParams->endParameters(renderContext);
 
@@ -553,8 +564,8 @@ void CloudComponent::buildCluster(
 
 		renderBlock->programParams->beginParameters(renderContext);
 		worldRenderPass.setProgramParameters(renderBlock->programParams, transform, transform, clusterBoundingBox);
-		renderBlock->programParams->setMatrixParameter(L"View", billboardView);
-		renderBlock->programParams->setFloatParameter(L"SliceDistance", sliceDistance);
+		renderBlock->programParams->setMatrixParameter(c_handleView, billboardView);
+		renderBlock->programParams->setFloatParameter(c_handleSliceDistance, sliceDistance);
 		renderBlock->programParams->setTextureParameter(m_handleImpostorTarget, m_impostorTargets[slice]->getColorTexture(0));
 		renderBlock->programParams->endParameters(renderContext);
 

@@ -14,7 +14,6 @@
 namespace traktor
 {
 
-
 class Vector4;
 class Matrix44;
 

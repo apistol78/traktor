@@ -15,6 +15,12 @@ namespace traktor
 		namespace
 		{
 
+const render::Handle c_handleFrustumEdges(L"Precipitation_FrustumEdges");
+const render::Handle c_handleParallaxDistance(L"Precipitation_ParallaxDistance");
+const render::Handle c_handleDepthDistance(L"Precipitation_DepthDistance");
+const render::Handle c_handleOpacity(L"Precipitation_Opacity");
+const render::Handle c_handleLayerAngle(L"Precipitation_LayerAngle");
+
 class PrecipitationMeshCallback : public RefCountImpl< mesh::IMeshParameterCallback >
 {
 public:
@@ -28,11 +34,11 @@ public:
 
 	virtual void setParameters(render::ProgramParameters* programParameters) const final
 	{
-		programParameters->setVectorArrayParameter(L"Precipitation_FrustumEdges", m_frustumEdges, sizeof_array(m_frustumEdges));
-		programParameters->setFloatParameter(L"Precipitation_ParallaxDistance", m_parallaxDistance);
-		programParameters->setFloatParameter(L"Precipitation_DepthDistance", m_depthDistance);
-		programParameters->setFloatParameter(L"Precipitation_Opacity", m_opacity);
-		programParameters->setFloatArrayParameter(L"Precipitation_LayerAngle", m_layerAngle, 4);
+		programParameters->setVectorArrayParameter(c_handleFrustumEdges, m_frustumEdges, sizeof_array(m_frustumEdges));
+		programParameters->setFloatParameter(c_handleParallaxDistance, m_parallaxDistance);
+		programParameters->setFloatParameter(c_handleDepthDistance, m_depthDistance);
+		programParameters->setFloatParameter(c_handleOpacity, m_opacity);
+		programParameters->setFloatArrayParameter(c_handleLayerAngle, m_layerAngle, 4);
 	}
 };
 
