@@ -38,7 +38,7 @@ public:
 		programParameters->setFloatParameter(c_handleParallaxDistance, m_parallaxDistance);
 		programParameters->setFloatParameter(c_handleDepthDistance, m_depthDistance);
 		programParameters->setFloatParameter(c_handleOpacity, m_opacity);
-		programParameters->setFloatArrayParameter(c_handleLayerAngle, m_layerAngle, 4);
+		programParameters->setVectorParameter(c_handleLayerAngle, Vector4::loadUnaligned(m_layerAngle));
 	}
 };
 
@@ -127,7 +127,7 @@ void PrecipitationComponent::build(const world::WorldBuildContext& context, cons
 	if (movement.length2() > Scalar(FUZZY_EPSILON))
 	{
 		pivot = cross(movement, Vector4(0.0f, 1.0f, 0.0f)).normalized();
-		angle = clamp(movement.length() * Scalar(0.8f), Scalar(-HALF_PI / 2.0f), Scalar(HALF_PI / 2.0f));
+		angle = clamp(movement.length() * 0.8_simd, Scalar(-HALF_PI / 2.0f), Scalar(HALF_PI / 2.0f));
 	}
 
 	m_lastEyePosition = eyePosition;

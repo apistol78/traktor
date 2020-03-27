@@ -11,11 +11,18 @@ namespace traktor
 {
 	namespace weather
 	{
+		namespace
+		{
+		
+const resource::Id< mesh::StaticMesh > c_defaultMesh(Guid(L"{C07C9EBA-22DF-2148-B045-34BD4F84AC09}"));
+		
+		}
 
 T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.weather.PrecipitationComponentData", 0, PrecipitationComponentData, world::IEntityComponentData)
 
 PrecipitationComponentData::PrecipitationComponentData()
-:	m_tiltRate(6.0f)
+:	m_mesh(c_defaultMesh)
+,	m_tiltRate(6.0f)
 ,	m_parallaxDistance(1.0f)
 ,	m_depthDistance(1.0f)
 ,	m_opacity(0.1f)
@@ -25,10 +32,10 @@ PrecipitationComponentData::PrecipitationComponentData()
 Ref< PrecipitationComponent > PrecipitationComponentData::createComponent(resource::IResourceManager* resourceManager) const
 {
 	resource::Proxy< mesh::StaticMesh > mesh;
-	if (!resourceManager->bind(m_mesh, mesh))
-		return 0;
-
-	return new PrecipitationComponent(mesh, m_tiltRate, m_parallaxDistance, m_depthDistance, m_opacity);
+	if (resourceManager->bind(m_mesh, mesh))
+		return new PrecipitationComponent(mesh, m_tiltRate, m_parallaxDistance, m_depthDistance, m_opacity);
+	else
+		return nullptr;
 }
 
 void PrecipitationComponentData::serialize(ISerializer& s)
