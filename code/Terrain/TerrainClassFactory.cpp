@@ -46,8 +46,8 @@ void TerrainClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 
 	auto classTerrainComponent = new AutoRuntimeClass< TerrainComponent >();
 	classTerrainComponent->addProperty("terrain", &TerrainComponent::getTerrain);
-	classTerrainComponent->addProperty("surfaceCache", &TerrainComponent::getSurfaceCache);
 	classTerrainComponent->addProperty("patchCount", &TerrainComponent::getPatchCount);
+	classTerrainComponent->addMethod("getSurfaceCache", &TerrainComponent::getSurfaceCache);
 	registrar->registerClass(classTerrainComponent);
 }
 

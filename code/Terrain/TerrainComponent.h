@@ -133,7 +133,7 @@ public:
 
 	const resource::Proxy< Terrain >& getTerrain() const { return m_terrain; }
 
-	TerrainSurfaceCache* getSurfaceCache() const { return m_surfaceCache; }
+	TerrainSurfaceCache* getSurfaceCache(int32_t viewIndex) const { return m_surfaceCache[viewIndex]; }
 
 	const AlignedVector< Patch >& getPatches() const { return m_patches; }
 
@@ -158,7 +158,7 @@ private:
 	world::Entity* m_owner;
 	resource::Proxy< Terrain > m_terrain;
 	resource::Proxy< hf::Heightfield > m_heightfield;
-	Ref< TerrainSurfaceCache > m_surfaceCache;
+	Ref< TerrainSurfaceCache > m_surfaceCache[4];
 	AlignedVector< Patch > m_patches;
 	uint32_t m_patchCount;
 	uint32_t m_cacheSize;
@@ -179,7 +179,7 @@ private:
 	 AlignedVector< const CullPatch* > m_patchLodInstances[LodCount];
 #endif
 
-	bool validate(uint32_t cacheSize);
+	bool validate(int32_t viewIndex, uint32_t cacheSize);
 
 	void updatePatches(const uint32_t* region);
 

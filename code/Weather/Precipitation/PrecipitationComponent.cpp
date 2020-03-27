@@ -58,13 +58,17 @@ PrecipitationComponent::PrecipitationComponent(
 ,	m_parallaxDistance(parallaxDistance)
 ,	m_depthDistance(depthDistance)
 ,	m_opacity(opacity)
-,	m_lastEyePosition(Vector4::origo())
-,	m_rotation(Quaternion::identity())
 {
 	m_layerAngle[0] =
 	m_layerAngle[1] =
 	m_layerAngle[2] =
 	m_layerAngle[3] = 0.0f;
+
+	for (int32_t i = 0; i < sizeof_array(m_lastEyePosition); ++i)
+		m_lastEyePosition[i] = Vector4::origo();
+
+	for (int32_t i = 0; i < sizeof_array(m_rotation); ++i)
+		m_rotation[i] = Quaternion::identity();
 }
 
 void PrecipitationComponent::destroy()
@@ -116,10 +120,13 @@ void PrecipitationComponent::build(const world::WorldBuildContext& context, cons
 	if (!m_mesh->supportTechnique(worldRenderPass.getTechnique()))
 		return;
 
+	Vector4& lastEyePosition = m_lastEyePosition[worldRenderView.getIndex()];
+	Quaternion& rotation = m_rotation[worldRenderView.getIndex()];
+
 	Matrix44 view = worldRenderView.getView();
 	Matrix44 viewInv = view.inverse();
 	Vector4 eyePosition = viewInv.translation().xyz1();
-	Vector4 movement = m_lastEyePosition - eyePosition;
+	Vector4 movement = lastEyePosition - eyePosition;
 
 	Vector4 pivot = Vector4::zero();
 	Scalar angle(0.0f);
@@ -130,10 +137,10 @@ void PrecipitationComponent::build(const world::WorldBuildContext& context, cons
 		angle = clamp(movement.length() * 0.8_simd, Scalar(-HALF_PI / 2.0f), Scalar(HALF_PI / 2.0f));
 	}
 
-	m_lastEyePosition = eyePosition;
+	lastEyePosition = eyePosition;
 
-	m_rotation = lerp(
-		m_rotation,
+	rotation = lerp(
+		rotation,
 		Quaternion::fromAxisAngle(pivot, angle),
 		m_tiltRate / 60.0f
 	);
@@ -153,8 +160,8 @@ void PrecipitationComponent::build(const world::WorldBuildContext& context, cons
 	m_mesh->build(
 		context.getRenderContext(),
 		worldRenderPass,
-		Transform(m_rotation),
-		Transform(m_rotation),
+		Transform(rotation),
+		Transform(rotation),
 		0.0f,
 		&mc
 	);

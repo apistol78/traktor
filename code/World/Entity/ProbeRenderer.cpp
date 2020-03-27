@@ -263,6 +263,7 @@ void ProbeRenderer::setup(const WorldSetupContext& context)
 
 		// Render entities.
 		world::WorldRenderView worldRenderView;
+		worldRenderView.setSnapshot(true);
 		worldRenderView.setPerspective(
 			c_faceSize,
 			c_faceSize,

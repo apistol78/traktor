@@ -157,7 +157,7 @@ void RubbleComponent::build(
 	extraParameters->beginParameters(renderContext);
 	extraParameters->setTextureParameter(s_handleNormals, terrain->getNormalMap());
 	extraParameters->setTextureParameter(s_handleHeightfield, terrain->getHeightMap());
-	extraParameters->setTextureParameter(s_handleSurface, terrainComponent->getSurfaceCache()->getBaseTexture());
+	extraParameters->setTextureParameter(s_handleSurface, terrainComponent->getSurfaceCache(worldRenderView.getIndex())->getBaseTexture());
 	extraParameters->setVectorParameter(s_handleWorldExtent, terrain->getHeightfield()->getWorldExtent());
 	extraParameters->setVectorParameter(s_handleEye, eye);
 	extraParameters->setFloatParameter(s_handleMaxDistance, m_spreadDistance + m_clusterSize);

@@ -32,7 +32,24 @@ class T_DLLCLASS WorldRenderView : public Object
 public:
 	WorldRenderView();
 
+	/*! Set view index.
+	 *
+	 * Index is used to differentiate, for example,
+	 * if split screen is used etc.
+	 *
+	 * It's a way for renderers to keep frame to frame
+	 * caching schemes separate for each view.
+	 */
 	void setIndex(int32_t index);
+
+	/*! Set snapshot requirement.
+	 *
+	 * Snapshot is used, for example, when rendering
+	 * reflection probes etc. No frame caching can 
+	 * be used, especially those who require multiple
+	 * frames to "catch up".
+	 */
+	void setSnapshot(bool snapshot);
 
 	void setOrthogonal(float width, float height, float nearZ, float farZ);
 
@@ -52,6 +69,10 @@ public:
 
 	T_FORCE_INLINE int getIndex() const {
 		return m_index;
+	}
+
+	T_FORCE_INLINE bool getSnapshot() const {
+		return m_snapshot;
 	}
 
 	T_FORCE_INLINE const Frustum& getViewFrustum() const {
@@ -100,6 +121,7 @@ public:
 
 private:
 	int32_t m_index;
+	bool m_snapshot;
 	Frustum m_viewFrustum;
 	Frustum m_cullFrustum;
 	Matrix44 m_projection;
