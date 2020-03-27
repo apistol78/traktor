@@ -67,8 +67,8 @@ private:
 	float m_parallaxDistance;
 	float m_depthDistance;
 	float m_opacity;
-	Vector4 m_lastEyePosition;
-	Quaternion m_rotation;
+	Vector4 m_lastEyePosition[4];
+	Quaternion m_rotation[4];
 	float m_layerAngle[4];
 };
 

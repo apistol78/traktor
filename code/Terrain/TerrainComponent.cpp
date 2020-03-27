@@ -109,7 +109,10 @@ void TerrainComponent::setup(
 	uint32_t cacheSize
 )
 {
-	if (!validate(cacheSize))
+	const int32_t viewIndex = worldRenderView.getIndex();
+	bool snapshot = worldRenderView.getSnapshot();
+
+	if (!validate(viewIndex, cacheSize))
 		return;
 
 	const Vector4& worldExtent = m_heightfield->getWorldExtent();
@@ -245,7 +248,9 @@ void TerrainComponent::setup(
 			{
 				m_patches[patchId].lastPatchLod = c_patchLodSteps;
 				m_patches[patchId].lastSurfaceLod = c_surfaceLodSteps;
-				m_surfaceCache->flush(patchId);
+
+				if (!snapshot)
+					m_surfaceCache[viewIndex]->flush(patchId);
 			}
 
 			patchOrigin += patchDeltaX;
@@ -298,18 +303,21 @@ void TerrainComponent::setup(
 		patch.surfaceOffset = Vector4::zero();
 
 		// Update surface cache.
-		 m_surfaceCache->setupPatch(
-		 	context.getRenderGraph(),
-		 	m_terrain,
-		 	-worldExtent * Scalar(0.5f),
-		 	worldExtent,
-		 	patchOrigin,
-		 	patchExtent,
-		 	patch.lastSurfaceLod,
-		 	visiblePatch.patchId,
-		 	// Out
-		 	patch.surfaceOffset
-		 );
+		if (!snapshot)
+		{
+			m_surfaceCache[viewIndex]->setupPatch(
+		 		context.getRenderGraph(),
+		 		m_terrain,
+		 		-worldExtent * Scalar(0.5f),
+		 		worldExtent,
+		 		patchOrigin,
+		 		patchExtent,
+		 		patch.lastSurfaceLod,
+		 		visiblePatch.patchId,
+		 		// Out
+		 		patch.surfaceOffset
+			 );
+		}
 
 		// Queue patch instance.
 #if defined(T_USE_TERRAIN_VERTEX_TEXTURE_FETCH)
@@ -318,7 +326,7 @@ void TerrainComponent::setup(
 	}
 
 	// Update base color texture.
-	m_surfaceCache->setupBaseColor(
+	m_surfaceCache[viewIndex]->setupBaseColor(
 		context.getRenderGraph(),
 		m_terrain,
 		-worldExtent * Scalar(0.5f),
@@ -334,7 +342,10 @@ void TerrainComponent::build(
 	uint32_t cacheSize
 )
 {
-	if (!validate(cacheSize))
+	const int32_t viewIndex = worldRenderView.getIndex();
+	const bool snapshot = worldRenderView.getSnapshot();
+
+	if (!validate(viewIndex, cacheSize))
 		return;
 
 	render::Shader* shader = m_terrain->getTerrainShader();
@@ -372,7 +383,12 @@ void TerrainComponent::build(
 	rb->programParams->beginParameters(renderContext);
 
 	rb->programParams->setTextureParameter(c_handleHeightfield, m_terrain->getHeightMap());
-	rb->programParams->setTextureParameter(c_handleSurface, m_surfaceCache->getVirtualTexture());
+	
+	if (!snapshot)
+		rb->programParams->setTextureParameter(c_handleSurface, m_surfaceCache[viewIndex]->getVirtualTexture());
+	else
+		rb->programParams->setTextureParameter(c_handleSurface, m_surfaceCache[viewIndex]->getBaseTexture());
+
 	rb->programParams->setTextureParameter(c_handleColorMap, m_terrain->getColorMap());
 	rb->programParams->setTextureParameter(c_handleNormals, m_terrain->getNormalMap());
 	rb->programParams->setTextureParameter(c_handleSplatMap, m_terrain->getSplatMap());
@@ -421,8 +437,19 @@ void TerrainComponent::build(
 		rb->programParams->beginParameters(renderContext);
 
 		rb->programParams->setVectorParameter(c_handlePatchExtent, patchExtent);
-		rb->programParams->setVectorParameter(c_handleSurfaceOffset, patch.surfaceOffset);
 		rb->programParams->setVectorParameter(c_handlePatchOrigin, patchOrigin);
+
+		if (!snapshot)
+			rb->programParams->setVectorParameter(c_handleSurfaceOffset, patch.surfaceOffset);
+		else
+		{
+			rb->programParams->setVectorParameter(c_handleSurfaceOffset, Vector4(
+				patchOrigin.x() / worldExtent.x() + 0.5f,
+				patchOrigin.z() / worldExtent.z() + 0.5f,
+				patchExtent.x() / worldExtent.x(),
+				patchExtent.z() / worldExtent.z()
+			));
+		}
 
 		if (m_visualizeMode == VmSurfaceLod)
 			rb->programParams->setVectorParameter(c_handleDebugPatchColor, c_lodColor[patch.lastSurfaceLod]);
@@ -451,8 +478,19 @@ void TerrainComponent::build(
 		rb->programParams->beginParameters(renderContext);
 
 		rb->programParams->setVectorParameter(c_handlePatchOrigin, patchOrigin);
-		rb->programParams->setVectorParameter(c_handleSurfaceOffset, patch.surfaceOffset);
-		rb->programParams->setVectorParameter(c_handlePatchExtent, patchExtent);
+		rb->programParams->setVectorParameter(c_handlePatchOrigin, patchOrigin);
+
+		if (!snapshot)
+			rb->programParams->setVectorParameter(c_handleSurfaceOffset, patch.surfaceOffset);
+		else
+		{
+			rb->programParams->setVectorParameter(c_handleSurfaceOffset, Vector4(
+				patchOrigin.x() / worldExtent.x() + 0.5f,
+				patchOrigin.z() / worldExtent.z() + 0.5f,
+				patchExtent.x() / worldExtent.x(),
+				patchExtent.z() / worldExtent.z()
+			));
+		}		
 
 		if (m_visualizeMode == VmSurfaceLod)
 			rb->programParams->setVectorParameter(c_handleDebugPatchColor, c_lodColor[patch.lastSurfaceLod]);
@@ -494,7 +532,7 @@ void TerrainComponent::update(const world::UpdateParams& update)
 {
 }
 
-bool TerrainComponent::validate(uint32_t cacheSize)
+bool TerrainComponent::validate(int32_t viewIndex, uint32_t cacheSize)
 {
 	if (
 		m_terrain.changed() ||
@@ -508,14 +546,21 @@ bool TerrainComponent::validate(uint32_t cacheSize)
 			return false;
 	}
 
-	if (!m_surfaceCache || cacheSize != m_cacheSize)
+	if (cacheSize != m_cacheSize)
 	{
-		safeDestroy(m_surfaceCache);
-		m_surfaceCache = new TerrainSurfaceCache();
-		if (!m_surfaceCache->create(m_resourceManager, m_renderSystem, cacheSize))
-			return false;
-
+		for (uint32_t i = 0; i < sizeof_array(m_surfaceCache); ++i)
+			safeDestroy(m_surfaceCache[i]);
 		m_cacheSize = cacheSize;
+	}
+
+	if (!m_surfaceCache[viewIndex])
+	{
+		m_surfaceCache[viewIndex] = new TerrainSurfaceCache();
+		if (!m_surfaceCache[viewIndex]->create(m_resourceManager, m_renderSystem, cacheSize))
+		{
+			m_surfaceCache[viewIndex] = nullptr;
+			return false;
+		}
 	}
 
 	return true;
@@ -578,8 +623,11 @@ void TerrainComponent::updatePatches(const uint32_t* region)
 			patch.error[2] = patchData.error[1];
 			patch.error[3] = patchData.error[2];
 
-			if (m_surfaceCache)
-				m_surfaceCache->flush(patchId);
+			for (int32_t i = 0; i < sizeof_array(m_surfaceCache); ++i)
+			{
+				if (m_surfaceCache[i])
+					m_surfaceCache[i]->flush(patchId);
+			}
 		}
 	}
 }

@@ -122,7 +122,7 @@ void TerrainEditorProfile::getDebugTargets(
 		auto terrainComponent = entity->getComponent< TerrainComponent >();
 		if (terrainComponent)
 		{
-			auto surfaceCache = terrainComponent->getSurfaceCache();
+			auto surfaceCache = terrainComponent->getSurfaceCache(0);
 			if (surfaceCache)
 			{
 				outDebugTargets.push_back(render::DebugTarget(L"Terrain, surface (base)", render::DtvDefault, surfaceCache->getBaseTexture()));

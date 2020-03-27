@@ -9,6 +9,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.world.WorldRenderView", WorldRenderView, Object
 
 WorldRenderView::WorldRenderView()
 :	m_index(0)
+,	m_snapshot(false)
 ,	m_projection(Matrix44::identity())
 ,	m_lastView(Matrix44::identity())
 ,	m_view(Matrix44::identity())
@@ -22,6 +23,11 @@ WorldRenderView::WorldRenderView()
 void WorldRenderView::setIndex(int32_t index)
 {
 	m_index = index;
+}
+
+void WorldRenderView::setSnapshot(bool snapshot)
+{
+	m_snapshot = snapshot;
 }
 
 void WorldRenderView::setOrthogonal(float width, float height, float nearZ, float farZ)
