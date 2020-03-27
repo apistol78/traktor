@@ -1905,7 +1905,7 @@ bool emitScript(GlslContext& cx, Script* node)
 			ss << L"out " << glsl_type_name(outs[i]->getType()) << L" " << node->getOutputPin(i)->getName();
 		}
 
-		ss << L")" << Endl;
+		ss << L")";
 
 		std::wstring processedScript = replaceAll(script, L"ENTRY", ss.str());
 		T_ASSERT(!processedScript.empty());
