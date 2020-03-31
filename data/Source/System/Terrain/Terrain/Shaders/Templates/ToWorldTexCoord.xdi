@@ -5,8 +5,8 @@
 			<id>{20F9C204-67A2-934F-BE12-8F7EA04381C2}</id>
 			<comment/>
 			<position>
-				<first>878</first>
-				<second>464</second>
+				<first>924</first>
+				<second>457</second>
 			</position>
 			<swizzle>xz</swizzle>
 		</item>
@@ -25,7 +25,7 @@
 				<first>512</first>
 				<second>471</second>
 			</position>
-			<parameterName>WorldExtent</parameterName>
+			<parameterName>Terrain_WorldExtent</parameterName>
 			<type>PtVector</type>
 			<frequency>UfDraw</frequency>
 		</item>
@@ -33,18 +33,18 @@
 			<id>{1A91F6A6-D41E-F948-9E0A-94D5190DFAF7}</id>
 			<comment/>
 			<position>
-				<first>555</first>
-				<second>385</second>
+				<first>518</first>
+				<second>387</second>
 			</position>
 		</item>
 		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
 			<id>{5D8FB29B-3812-5041-B96E-0B23EF11D62F}</id>
 			<comment/>
 			<position>
-				<first>353</first>
-				<second>434</second>
+				<first>316</first>
+				<second>436</second>
 			</position>
-			<parameterName>WorldOrigin</parameterName>
+			<parameterName>Terrain_WorldOrigin</parameterName>
 			<type>PtVector</type>
 			<frequency>UfDraw</frequency>
 		</item>
@@ -52,8 +52,8 @@
 			<id>{A7C58665-DE2C-1B4B-90BA-E27FCE2CA687}</id>
 			<comment/>
 			<position>
-				<first>324</first>
-				<second>372</second>
+				<first>268</first>
+				<second>382</second>
 			</position>
 			<name>WorldPosition</name>
 			<connectable>true</connectable>
@@ -65,8 +65,8 @@
 			<id>{D9A0E443-C5DA-B742-9179-9B9EEC290E1B}</id>
 			<comment/>
 			<position>
-				<first>1022</first>
-				<second>464</second>
+				<first>1068</first>
+				<second>457</second>
 			</position>
 			<name>TexCoord</name>
 		</item>

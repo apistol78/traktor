@@ -91,7 +91,7 @@
 				<opaque>false</opaque>
 				<postOpaque>false</postOpaque>
 				<alphaBlend>false</alphaBlend>
-				<postAlphaBlend>false</postAlphaBlend>
+				<postAlphaBlend>true</postAlphaBlend>
 				<overlay>false</overlay>
 			</priority>
 			<cullMode>CmNever</cullMode>
@@ -526,7 +526,6 @@ ENTRY
 {
 	Output = Input[int(Index)];
 }
-
 			]]>
 			</script>
 		</item>

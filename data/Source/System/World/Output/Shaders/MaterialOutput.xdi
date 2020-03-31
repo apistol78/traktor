@@ -5,8 +5,8 @@
 			<id>{4E318C19-B4F1-9242-A467-D16E881C0D92}</id>
 			<comment/>
 			<position>
-				<first>-1944</first>
-				<second>-137</second>
+				<first>-2205</first>
+				<second>-366</second>
 			</position>
 			<name>SurfaceColor</name>
 			<connectable>true</connectable>
@@ -448,8 +448,8 @@ Opaque
 			<id>{61CC0258-A5B9-AF47-8B8E-F384B0F9DBA2}</id>
 			<comment/>
 			<position>
-				<first>-1669</first>
-				<second>-122</second>
+				<first>-1419</first>
+				<second>-317</second>
 			</position>
 			<name>V_SurfaceColor</name>
 			<global>false</global>
@@ -1023,6 +1023,33 @@ Forward / Opaque
 			<name>V_Alpha</name>
 			<global>false</global>
 		</item>
+		<item type="traktor.render.Type" version="traktor.render.Node:1">
+			<id>{A8CC679B-B261-514E-854B-2806E6E1B0BD}</id>
+			<comment/>
+			<position>
+				<first>-1686</first>
+				<second>-353</second>
+			</position>
+		</item>
+		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
+			<id>{F40A442A-877E-1040-B712-4054A3178F0F}</id>
+			<comment/>
+			<position>
+				<first>-1914</first>
+				<second>-318</second>
+			</position>
+			<swizzle>xxx1</swizzle>
+		</item>
+		<item type="traktor.render.Color" version="2,traktor.render.Node:1">
+			<id>{DA5FB83B-E63B-3841-AF27-D4481450B7AF}</id>
+			<comment/>
+			<position>
+				<first>-2023</first>
+				<second>-237</second>
+			</position>
+			<color>1, 0, 0, 1</color>
+			<linear>false</linear>
+		</item>
 	</nodes>
 	<edges>
 		<item type="traktor.render.Edge">
@@ -1093,16 +1120,6 @@ Forward / Opaque
 			<destination>
 				<node ref="/object/nodes/item[10]"/>
 				<name>Enable</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[23]"/>
-				<name>Input</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
@@ -1533,6 +1550,66 @@ Forward / Opaque
 			<destination>
 				<node ref="/object/nodes/item[10]"/>
 				<name>Alpha</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[69]"/>
+				<name>Type</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[69]"/>
+				<name>Vector</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[69]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[23]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[70]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[70]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[69]"/>
+				<name>Scalar</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[71]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[69]"/>
+				<name>Default</name>
 			</destination>
 		</item>
 	</edges>

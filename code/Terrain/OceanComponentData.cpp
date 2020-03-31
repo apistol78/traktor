@@ -11,41 +11,39 @@ namespace traktor
 {
 	namespace terrain
 	{
+		namespace
+		{
+		
+const resource::Id< render::Shader > c_defaultShader(Guid(L"{FB9B7138-B7B2-E341-82EB-453BE2B558A8}"));
+		
+		}
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.terrain.OceanComponentData", 2, OceanComponentData, world::IEntityComponentData)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.terrain.OceanComponentData", 0, OceanComponentData, world::IEntityComponentData)
 
 OceanComponentData::OceanComponentData()
 :	m_shallowTint(1.0f, 1.0f, 1.0f, 1.0f)
 ,	m_reflectionTint(1.0f, 1.0f, 1.0f, 1.0f)
 ,	m_shadowTint(1.0f, 1.0f, 1.0f, 1.0f)
 ,	m_deepColor(0.0f, 0.0f, 0.0f, 1.0f)
+,	m_elevation(0.0f)
 ,	m_opacity(0.04f)
-,	m_allowSSReflections(true)
 {
 }
 
 void OceanComponentData::serialize(ISerializer& s)
 {
 	s >> resource::Member< render::Shader >(L"shader", m_shader);
-	s >> resource::Member< render::ITexture >(L"reflectionMap", m_reflectionMap);
-
-	if (s.getVersion() >= 2)
-		s >> resource::Member< Terrain >(L"terrain", m_terrain);
-
 	s >> Member< Color4f >(L"shallowTint", m_shallowTint);
 	s >> Member< Color4f >(L"reflectionTint", m_reflectionTint);
-
-	if (s.getVersion() >= 1)
-		s >> Member< Color4f >(L"shadowTint", m_shadowTint);
-
+	s >> Member< Color4f >(L"shadowTint", m_shadowTint);
 	s >> Member< Color4f >(L"deepColor", m_deepColor);
 	s >> Member< float >(L"opacity", m_opacity);
-	s >> Member< bool >(L"allowSSReflections", m_allowSSReflections);
+	s >> Member< float >(L"elevation", m_elevation);
 	s >> MemberStaticArray< Wave, 4, MemberComposite< Wave > >(L"waves", m_waves);
 }
 
 OceanComponentData::Wave::Wave()
-:	center(0.0f, 0.0f)
+:	direction(0.0f)
 ,	amplitude(0.0f)
 ,	frequency(0.25f)
 ,	phase(0.0f)
@@ -56,7 +54,7 @@ OceanComponentData::Wave::Wave()
 
 void OceanComponentData::Wave::serialize(ISerializer& s)
 {
-	s >> Member< Vector2 >(L"center", center);
+	s >> Member< float >(L"direction", direction);
 	s >> Member< float >(L"amplitude", amplitude);
 	s >> Member< float >(L"frequency", frequency);
 	s >> Member< float >(L"phase", phase);

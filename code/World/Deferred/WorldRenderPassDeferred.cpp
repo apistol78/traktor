@@ -23,7 +23,8 @@ WorldRenderPassDeferred::WorldRenderPassDeferred(
 	const WorldRenderView& worldRenderView,
 	uint32_t passFlags,
 	bool fogEnabled,
-	bool depthEnable
+	bool depthEnable,
+	bool irradianceEnable
 )
 :	m_technique(technique)
 ,	m_sharedParams(sharedParams)
@@ -31,23 +32,6 @@ WorldRenderPassDeferred::WorldRenderPassDeferred(
 ,	m_passFlags(passFlags)
 ,	m_fogEnabled(fogEnabled)
 ,	m_depthEnable(depthEnable)
-,	m_irradianceEnable(false)
-{
-}
-
-WorldRenderPassDeferred::WorldRenderPassDeferred(
-	render::handle_t technique,
-	render::ProgramParameters* sharedParams,
-	const WorldRenderView& worldRenderView,
-	uint32_t passFlags,
-	bool irradianceEnable
-)
-:	m_technique(technique)
-,	m_sharedParams(sharedParams)
-,	m_worldRenderView(worldRenderView)
-,	m_passFlags(passFlags)
-,	m_fogEnabled(false)
-,	m_depthEnable(false)
 ,	m_irradianceEnable(irradianceEnable)
 {
 }
@@ -70,6 +54,7 @@ render::Shader::Permutation WorldRenderPassDeferred::getPermutation(const render
 	{
 		shader->setCombination(s_handleFogEnable, m_fogEnabled, perm);
 		shader->setCombination(s_handleDepthEnable, m_depthEnable, perm);
+		shader->setCombination(s_handleIrradianceEnable, m_irradianceEnable, perm);
 	}
 	else
 		shader->setCombination(s_handleIrradianceEnable, m_irradianceEnable, perm);

@@ -117,8 +117,8 @@ private:
 	Color4f m_shadowTint;
 	Color4f m_deepColor;
 	float m_opacity;
+	float m_elevation;
 	float m_maxAmplitude;
-	bool m_allowSSReflections;
 	Vector4 m_wavesA[4];
 	Vector4 m_wavesB[4];
 };

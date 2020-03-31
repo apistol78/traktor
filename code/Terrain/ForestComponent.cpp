@@ -24,11 +24,11 @@ namespace traktor
 		namespace
 		{
 
-const render::Handle s_handleNormals(L"Normals");
-const render::Handle s_handleHeightfield(L"Heightfield");
-const render::Handle s_handleSurface(L"Surface");
-const render::Handle s_handleWorldExtent(L"WorldExtent");
-const render::Handle s_handleEye(L"Eye");
+const render::Handle s_handleTerrain_Normals(L"Terrain_Normals");
+const render::Handle s_handleTerrain_Heightfield(L"Terrain_Heightfield");
+const render::Handle s_handleTerrain_Surface(L"Terrain_Surface");
+const render::Handle s_handleTerrain_WorldExtent(L"Terrain_WorldExtent");
+const render::Handle s_handleForest_Eye(L"Forest_Eye");
 
 		}
 
@@ -127,11 +127,11 @@ void ForestComponent::build(
 	// Expose some more shader parameters, such as terrain color etc.
 	render::ProgramParameters* extraParameters = renderContext->alloc< render::ProgramParameters >();
 	extraParameters->beginParameters(renderContext);
-	extraParameters->setTextureParameter(s_handleNormals, terrain->getNormalMap());
-	extraParameters->setTextureParameter(s_handleHeightfield, terrain->getHeightMap());
-	extraParameters->setTextureParameter(s_handleSurface, terrainComponent->getSurfaceCache(worldRenderView.getIndex())->getBaseTexture());
-	extraParameters->setVectorParameter(s_handleWorldExtent, terrain->getHeightfield()->getWorldExtent());
-	extraParameters->setVectorParameter(s_handleEye, eye);
+	extraParameters->setTextureParameter(s_handleTerrain_Normals, terrain->getNormalMap());
+	extraParameters->setTextureParameter(s_handleTerrain_Heightfield, terrain->getHeightMap());
+	extraParameters->setTextureParameter(s_handleTerrain_Surface, terrainComponent->getSurfaceCache(worldRenderView.getIndex())->getBaseTexture());
+	extraParameters->setVectorParameter(s_handleTerrain_WorldExtent, terrain->getHeightfield()->getWorldExtent());
+	extraParameters->setVectorParameter(s_handleForest_Eye, eye);
 	extraParameters->endParameters(renderContext);
 
 	for (uint32_t i = 0; i < m_lod1indices.size(); )

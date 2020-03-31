@@ -74,7 +74,7 @@
 				<first>610</first>
 				<second>1688</second>
 			</position>
-			<parameterName>SplatMap</parameterName>
+			<parameterName>Terrain_SplatMap</parameterName>
 			<type>PtTexture2D</type>
 			<frequency>UfFrame</frequency>
 		</item>

@@ -81,7 +81,9 @@ public:
 		Vector4& outTextureOffset
 	);
 
-	render::ISimpleTexture* getVirtualTexture() const;
+	render::ISimpleTexture* getVirtualAlbedo() const;
+
+	render::ISimpleTexture* getVirtualNormals() const;
 
 	render::ISimpleTexture* getBaseTexture() const;
 
@@ -96,7 +98,8 @@ private:
 	render::IRenderSystem* m_renderSystem;
 	Ref< render::ScreenRenderer > m_screenRenderer;
 	TerrainSurfaceAlloc m_alloc;
-	Ref< render::ISimpleTexture > m_pool;
+	Ref< render::ISimpleTexture > m_virtualAlbedo;
+	Ref< render::ISimpleTexture > m_virtualNormals;
 	Ref< render::IRenderTargetSet > m_base;
 	AlignedVector< Entry > m_entries;
 	bool m_haveBase;

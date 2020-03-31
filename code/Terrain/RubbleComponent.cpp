@@ -24,12 +24,12 @@ namespace traktor
 		namespace
 		{
 
-const render::Handle s_handleNormals(L"Normals");
-const render::Handle s_handleHeightfield(L"Heightfield");
-const render::Handle s_handleSurface(L"Surface");
-const render::Handle s_handleWorldExtent(L"WorldExtent");
-const render::Handle s_handleEye(L"Eye");
-const render::Handle s_handleMaxDistance(L"MaxDistance");
+const render::Handle s_handleTerrain_Normals(L"Terrain_Normals");
+const render::Handle s_handleTerrain_Heightfield(L"Terrain_Heightfield");
+const render::Handle s_handleTerrain_Surface(L"Terrain_Surface");
+const render::Handle s_handleTerrain_WorldExtent(L"Terrain_WorldExtent");
+const render::Handle s_handleRubble_Eye(L"Rubble_Eye");
+const render::Handle s_handleRubble_MaxDistance(L"Rubble_MaxDistance");
 
 		}
 
@@ -95,14 +95,17 @@ void RubbleComponent::build(
 	const world::IWorldRenderPass& worldRenderPass
 )
 {
+	// Get terrain from owner.
 	auto terrainComponent = m_owner->getComponent< TerrainComponent >();
 	if (!terrainComponent)
 		return;
 
 	const auto& terrain = terrainComponent->getTerrain();
+	if (!terrain)
+		return;
 
 	// Update clusters at first pass from eye pow.
-	bool updateClusters = bool((worldRenderPass.getPassFlags() & world::IWorldRenderPass::PfFirst) != 0);
+	bool updateClusters = (bool)((worldRenderPass.getPassFlags() & world::IWorldRenderPass::PfFirst) != 0);
 
 	Matrix44 view = worldRenderView.getView();
 	Vector4 eye = view.inverse().translation();
@@ -155,12 +158,12 @@ void RubbleComponent::build(
 	// Expose some more shader parameters, such as terrain color etc.
 	render::ProgramParameters* extraParameters = renderContext->alloc< render::ProgramParameters >();
 	extraParameters->beginParameters(renderContext);
-	extraParameters->setTextureParameter(s_handleNormals, terrain->getNormalMap());
-	extraParameters->setTextureParameter(s_handleHeightfield, terrain->getHeightMap());
-	extraParameters->setTextureParameter(s_handleSurface, terrainComponent->getSurfaceCache(worldRenderView.getIndex())->getBaseTexture());
-	extraParameters->setVectorParameter(s_handleWorldExtent, terrain->getHeightfield()->getWorldExtent());
-	extraParameters->setVectorParameter(s_handleEye, eye);
-	extraParameters->setFloatParameter(s_handleMaxDistance, m_spreadDistance + m_clusterSize);
+	extraParameters->setTextureParameter(s_handleTerrain_Normals, terrain->getNormalMap());
+	extraParameters->setTextureParameter(s_handleTerrain_Heightfield, terrain->getHeightMap());
+	extraParameters->setTextureParameter(s_handleTerrain_Surface, terrainComponent->getSurfaceCache(worldRenderView.getIndex())->getBaseTexture());
+	extraParameters->setVectorParameter(s_handleTerrain_WorldExtent, terrain->getHeightfield()->getWorldExtent());
+	extraParameters->setVectorParameter(s_handleRubble_Eye, eye);
+	extraParameters->setFloatParameter(s_handleRubble_MaxDistance, m_spreadDistance + m_clusterSize);
 	extraParameters->endParameters(renderContext);
 
 	for (const auto& cluster : m_clusters)

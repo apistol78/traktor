@@ -620,6 +620,8 @@ render::handle_t WorldRendererDeferred::setupGBufferPass(
 				sharedParams,
 				worldRenderView,
 				IWorldRenderPass::PfFirst,
+				false,
+				false,
 				false
 			);
 
@@ -698,6 +700,8 @@ render::handle_t WorldRendererDeferred::setupVelocityPass(
 				sharedParams,
 				worldRenderView,
 				IWorldRenderPass::PfNone,
+				false,
+				false,
 				false
 			);
 
@@ -863,6 +867,8 @@ render::handle_t WorldRendererDeferred::setupCascadeShadowMapPass(
 					sharedParams,
 					shadowRenderView,
 					IWorldRenderPass::PfNone,
+					false,
+					false,
 					false
 				);
 
@@ -987,6 +993,8 @@ render::handle_t WorldRendererDeferred::setupAtlasShadowMapPass(
 					sharedParams,
 					shadowRenderView,
 					IWorldRenderPass::PfNone,
+					false,
+					false,
 					false
 				);
 
@@ -1261,6 +1269,8 @@ render::handle_t WorldRendererDeferred::setupReflectionsPass(
 				sharedParams,
 				worldRenderView,
 				IWorldRenderPass::PfNone,
+				false,
+				false,
 				false
 			);
 
@@ -1397,7 +1407,9 @@ render::handle_t WorldRendererDeferred::setupVisualPass(
 				sharedParams,
 				worldRenderView,
 				IWorldRenderPass::PfNone,
-				(bool)m_irradianceGrid
+				false,
+				false,
+				(bool)(m_irradianceGrid != nullptr)
 			);
 
 			T_ASSERT(!renderContext->havePendingDraws());
@@ -1423,7 +1435,8 @@ render::handle_t WorldRendererDeferred::setupVisualPass(
 				worldRenderView,
 				IWorldRenderPass::PfLast,
 				m_settings.fog,
-				gbufferTargetSet->getColorTexture(0) != nullptr
+				(bool)(gbufferTargetSet->getColorTexture(0) != nullptr),
+				(bool)(m_irradianceGrid != nullptr)
 			);
 
 			T_ASSERT(!renderContext->havePendingDraws());
