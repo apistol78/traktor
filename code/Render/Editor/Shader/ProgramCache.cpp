@@ -1,5 +1,5 @@
 #include "Core/Io/FileSystem.h"
-#include "Core/Io/IStream.h"
+#include "Core/Io/BufferedStream.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Misc/String.h"
 #include "Core/Serialization/BinarySerializer.h"
@@ -45,10 +45,11 @@ Ref< ProgramResource > ProgramCache::get(
 	// Try to read pre-compiled resource from cache.
 	if ((f = FileSystem::getInstance().open(cachedFileName, File::FmRead)) != nullptr)
 	{
-		Ref< ProgramResource > cachedResource = BinarySerializer(f).readObject< ProgramResource >();
+		BufferedStream bufferedStream(f);
+		Ref< ProgramResource > cachedResource = BinarySerializer(&bufferedStream).readObject< ProgramResource >();
+		bufferedStream.close();
 		if (cachedResource)
 			return cachedResource;
-		safeClose(f);
 	}
 
 	// No cached pre-compiled resource found; need to compile resource.
@@ -60,8 +61,9 @@ Ref< ProgramResource > ProgramCache::get(
 	FileSystem::getInstance().makeAllDirectories(cachedFileName.getPathOnly());
 	if ((f = FileSystem::getInstance().open(cachedFileName, File::FmWrite)) != nullptr)
 	{
-		BinarySerializer(f).writeObject(resource);
-		safeClose(f);
+		BufferedStream bufferedStream(f);
+		BinarySerializer(&bufferedStream).writeObject(resource);
+		bufferedStream.close();
 	}
 
 	return resource;

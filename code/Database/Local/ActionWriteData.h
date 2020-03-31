@@ -1,12 +1,12 @@
 #pragma once
 
-#include "Core/Containers/AlignedVector.h"
 #include "Core/Io/Path.h"
 #include "Database/Local/Action.h"
 
 namespace traktor
 {
 
+class ChunkMemory;
 class IStream;
 
 	namespace db
@@ -32,15 +32,14 @@ public:
 
 	const std::wstring& getName() const { return m_dataName; }
 
-	const AlignedVector< uint8_t >& getBuffer() const { return m_dataBuffer; }
+	Ref< IStream > getWriteStream() const;
 
-	const Ref< IStream >& getStream() const { return m_dataStream; }
+	Ref< IStream > getReadStream() const;
 
 private:
 	Path m_instancePath;
 	std::wstring m_dataName;
-	AlignedVector< uint8_t > m_dataBuffer;
-	Ref< IStream > m_dataStream;
+	Ref< ChunkMemory > m_dataMemory;
 	bool m_existingBlob;
 };
 

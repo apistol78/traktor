@@ -627,7 +627,6 @@ bool PhysicsManagerBullet::create(const PhysicsCreateDesc& desc)
 
 void PhysicsManagerBullet::destroy()
 {
-	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 	T_ANONYMOUS_VAR(RefArray< Joint >)(m_joints);
 	T_ANONYMOUS_VAR(RefArray< BodyBullet >)(m_bodies);
 
@@ -660,8 +659,6 @@ Vector4 PhysicsManagerBullet::getGravity() const
 
 Ref< Body > PhysicsManagerBullet::createBody(resource::IResourceManager* resourceManager, const BodyDesc* desc, const wchar_t* const tag)
 {
-	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-
 	if (!desc)
 		return nullptr;
 
@@ -924,8 +921,6 @@ Ref< Body > PhysicsManagerBullet::createBody(resource::IResourceManager* resourc
 
 Ref< Joint > PhysicsManagerBullet::createJoint(const JointDesc* desc, const Transform& transform, Body* body1, Body* body2)
 {
-	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-
 	if (!desc)
 		return nullptr;
 
@@ -1198,7 +1193,6 @@ void PhysicsManagerBullet::update(float simulationDeltaTime, bool issueCollision
 {
 	T_ASSERT(m_dynamicsWorld);
 
-	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 	T_ANONYMOUS_VAR(Save< PhysicsManagerBullet* >)(ms_this, this);
 
 	// Step simulation.
@@ -1281,8 +1275,6 @@ void PhysicsManagerBullet::update(float simulationDeltaTime, bool issueCollision
 
 void PhysicsManagerBullet::solveConstraints(const RefArray< Body >& bodies, const RefArray< Joint >& joints)
 {
-	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-
 	btCollisionObject* btBodies[32];
 	btTypedConstraint* btConstraints[32];
 
@@ -1310,14 +1302,11 @@ void PhysicsManagerBullet::solveConstraints(const RefArray< Body >& bodies, cons
 
 RefArray< Body > PhysicsManagerBullet::getBodies() const
 {
-	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 	return (RefArray< Body >&)m_bodies;
 }
 
 uint32_t PhysicsManagerBullet::getCollidingPairs(std::vector< CollisionPair >& outCollidingPairs) const
 {
-	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-
 	int manifoldCount = m_dispatcher->getNumManifolds();
 
 	outCollidingPairs.reserve(manifoldCount);
@@ -1368,7 +1357,6 @@ bool PhysicsManagerBullet::queryRay(
 	QueryResult& outResult
 ) const
 {
-	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 	++m_queryCount;
 
 	btVector3 from = toBtVector3(at);
@@ -1446,7 +1434,6 @@ bool PhysicsManagerBullet::queryShadowRay(
 	uint32_t queryTypes
 ) const
 {
-	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 	++m_queryCount;
 
 	btVector3 from = toBtVector3(at);
@@ -1468,7 +1455,6 @@ uint32_t PhysicsManagerBullet::querySphere(
 	RefArray< Body >& outBodies
 ) const
 {
-	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 	++m_queryCount;
 
 	outBodies.resize(0);
@@ -1520,7 +1506,6 @@ bool PhysicsManagerBullet::querySweep(
 	QueryResult& outResult
 ) const
 {
-	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 	++m_queryCount;
 
 	btSphereShape sphereShape(radius);
@@ -1565,7 +1550,6 @@ bool PhysicsManagerBullet::querySweep(
 	QueryResult& outResult
 ) const
 {
-	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 	++m_queryCount;
 
 	btRigidBody* rigidBody = checked_type_cast< const BodyBullet* >(body)->getBtRigidBody();
@@ -1629,7 +1613,6 @@ void PhysicsManagerBullet::querySweep(
 	AlignedVector< QueryResult >& outResult
 ) const
 {
-	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 	++m_queryCount;
 
 	btSphereShape sphereShape(radius);
@@ -1658,7 +1641,6 @@ void PhysicsManagerBullet::queryOverlap(
 	RefArray< Body >& outResult
 ) const
 {
-	//T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 	//++m_queryCount;
 
 	//btRigidBody* rigidBody = checked_type_cast< const BodyBullet* >(body)->getBtRigidBody();
@@ -1720,8 +1702,6 @@ void PhysicsManagerBullet::queryTriangles(const Vector4& center, float radius, A
 
 void PhysicsManagerBullet::getStatistics(PhysicsStatistics& outStatistics) const
 {
-	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-
 	outStatistics.bodyCount = 0;
 	outStatistics.activeCount = 0;
 	outStatistics.manifoldCount = 0;
@@ -1740,32 +1720,26 @@ void PhysicsManagerBullet::getStatistics(PhysicsStatistics& outStatistics) const
 
 void PhysicsManagerBullet::insertBody(btRigidBody* rigidBody, uint16_t collisionGroup, uint16_t collisionFilter)
 {
-	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 	m_dynamicsWorld->addRigidBody(rigidBody, collisionGroup, collisionFilter);
 }
 
 void PhysicsManagerBullet::removeBody(btRigidBody* rigidBody)
 {
-	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 	m_dynamicsWorld->removeRigidBody(rigidBody);
 }
 
 void PhysicsManagerBullet::insertConstraint(btTypedConstraint* constraint)
 {
-	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 	m_dynamicsWorld->addConstraint(constraint);
 }
 
 void PhysicsManagerBullet::removeConstraint(btTypedConstraint* constraint)
 {
-	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 	m_dynamicsWorld->removeConstraint(constraint);
 }
 
 void PhysicsManagerBullet::destroyBody(BodyBullet* body, btRigidBody* rigidBody, btCollisionShape* shape)
 {
-	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-
 	m_dynamicsWorld->removeRigidBody(rigidBody);
 
 	RefArray< BodyBullet >::iterator i = std::find(m_bodies.begin(), m_bodies.end(), body);
@@ -1779,8 +1753,6 @@ void PhysicsManagerBullet::destroyBody(BodyBullet* body, btRigidBody* rigidBody,
 
 void PhysicsManagerBullet::destroyConstraint(Joint* joint, btTypedConstraint* constraint)
 {
-	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-
 	m_dynamicsWorld->removeConstraint(constraint);
 
 	RefArray< Joint >::iterator i = std::find(m_joints.begin(), m_joints.end(), joint);
