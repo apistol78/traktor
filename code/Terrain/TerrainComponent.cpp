@@ -26,26 +26,26 @@ namespace traktor
 		namespace
 		{
 
-const render::Handle c_handleVisualizeLods(L"VisualizeLods");
-const render::Handle c_handleVisualizeMap(L"VisualizeMap");
-const render::Handle c_handleSurface(L"Surface");
-const render::Handle c_handleSurfaceOffset(L"SurfaceOffset");
-const render::Handle c_handleHeightfield(L"Heightfield");
-const render::Handle c_handleColorMap(L"ColorMap");
-const render::Handle c_handleSplatMap(L"SplatMap");
-const render::Handle c_handleCutMap(L"CutMap");
-const render::Handle c_handleMaterialMap(L"MaterialMap");
-const render::Handle c_handleNormals(L"Normals");
-const render::Handle c_handleEye(L"Eye");
-const render::Handle c_handleWorldOrigin(L"WorldOrigin");
-const render::Handle c_handleWorldExtent(L"WorldExtent");
-const render::Handle c_handlePatchOrigin(L"PatchOrigin");
-const render::Handle c_handlePatchExtent(L"PatchExtent");
-const render::Handle c_handleDetailDistance(L"DetailDistance");
-const render::Handle c_handleDebugPatchColor(L"DebugPatchColor");
-const render::Handle c_handleDebugMap(L"DebugMap");
-const render::Handle c_handleCutEnable(L"CutEnable");
-const render::Handle c_handleColorEnable(L"ColorEnable");
+const render::Handle c_handleTerrain_VisualizeLods(L"Terrain_VisualizeLods");
+const render::Handle c_handleTerrain_VisualizeMap(L"Terrain_VisualizeMap");
+const render::Handle c_handleTerrain_SurfaceAlbedo(L"Terrain_SurfaceAlbedo");
+const render::Handle c_handleTerrain_SurfaceNormals(L"Terrain_SurfaceNormals");
+const render::Handle c_handleTerrain_SurfaceOffset(L"Terrain_SurfaceOffset");
+const render::Handle c_handleTerrain_Heightfield(L"Terrain_Heightfield");
+const render::Handle c_handleTerrain_ColorMap(L"Terrain_ColorMap");
+const render::Handle c_handleTerrain_SplatMap(L"Terrain_SplatMap");
+const render::Handle c_handleTerrain_CutMap(L"Terrain_CutMap");
+const render::Handle c_handleTerrain_MaterialMap(L"Terrain_MaterialMap");
+const render::Handle c_handleTerrain_Normals(L"Terrain_Normals");
+const render::Handle c_handleTerrain_Eye(L"Terrain_Eye");
+const render::Handle c_handleTerrain_WorldOrigin(L"Terrain_WorldOrigin");
+const render::Handle c_handleTerrain_WorldExtent(L"Terrain_WorldExtent");
+const render::Handle c_handleTerrain_PatchOrigin(L"Terrain_PatchOrigin");
+const render::Handle c_handleTerrain_PatchExtent(L"Terrain_PatchExtent");
+const render::Handle c_handleTerrain_DebugPatchColor(L"Terrain_DebugPatchColor");
+const render::Handle c_handleTerrain_DebugMap(L"Terrain_DebugMap");
+const render::Handle c_handleTerrain_CutEnable(L"Terrain_CutEnable");
+const render::Handle c_handleTerrain_ColorEnable(L"Terrain_ColorEnable");
 
 const int32_t c_patchLodSteps = 3;
 const int32_t c_surfaceLodSteps = 3;
@@ -352,16 +352,16 @@ void TerrainComponent::build(
 
 	auto perm = worldRenderPass.getPermutation(shader);
 
-	shader->setCombination(c_handleCutEnable, m_terrain->getCutMap(), perm);
-	shader->setCombination(c_handleColorEnable, m_terrain->getColorMap(), perm);
+	shader->setCombination(c_handleTerrain_CutEnable, m_terrain->getCutMap(), perm);
+	shader->setCombination(c_handleTerrain_ColorEnable, m_terrain->getColorMap(), perm);
 
 	if (m_visualizeMode >= VmSurfaceLod && m_visualizeMode <= VmPatchLod)
 	{
-		shader->setCombination(c_handleVisualizeLods, true, perm);
+		shader->setCombination(c_handleTerrain_VisualizeLods, true, perm);
 	}
 	else if (m_visualizeMode >= VmColorMap && m_visualizeMode <= VmMaterialMap)
 	{
-		shader->setCombination(c_handleVisualizeMap, true, perm);
+		shader->setCombination(c_handleTerrain_VisualizeMap, true, perm);
 	}
 
 	render::IProgram* program = shader->getProgram(perm).program;
@@ -382,35 +382,39 @@ void TerrainComponent::build(
 
 	rb->programParams->beginParameters(renderContext);
 
-	rb->programParams->setTextureParameter(c_handleHeightfield, m_terrain->getHeightMap());
+	rb->programParams->setTextureParameter(c_handleTerrain_Heightfield, m_terrain->getHeightMap());
 	
 	if (!snapshot)
-		rb->programParams->setTextureParameter(c_handleSurface, m_surfaceCache[viewIndex]->getVirtualTexture());
+	{
+		rb->programParams->setTextureParameter(c_handleTerrain_SurfaceAlbedo, m_surfaceCache[viewIndex]->getVirtualAlbedo());
+		rb->programParams->setTextureParameter(c_handleTerrain_SurfaceNormals, m_surfaceCache[viewIndex]->getVirtualNormals());
+	}
 	else
-		rb->programParams->setTextureParameter(c_handleSurface, m_surfaceCache[viewIndex]->getBaseTexture());
+	{
+		rb->programParams->setTextureParameter(c_handleTerrain_SurfaceAlbedo, m_surfaceCache[viewIndex]->getBaseTexture());
+	}
 
-	rb->programParams->setTextureParameter(c_handleColorMap, m_terrain->getColorMap());
-	rb->programParams->setTextureParameter(c_handleNormals, m_terrain->getNormalMap());
-	rb->programParams->setTextureParameter(c_handleSplatMap, m_terrain->getSplatMap());
-	rb->programParams->setTextureParameter(c_handleCutMap, m_terrain->getCutMap());
-	rb->programParams->setTextureParameter(c_handleMaterialMap, m_terrain->getMaterialMap());
-	rb->programParams->setVectorParameter(c_handleEye, eyePosition);
-	rb->programParams->setVectorParameter(c_handleWorldOrigin, -worldExtent * Scalar(0.5f));
-	rb->programParams->setVectorParameter(c_handleWorldExtent, worldExtent);
-	rb->programParams->setFloatParameter(c_handleDetailDistance, detailDistance);
+	rb->programParams->setTextureParameter(c_handleTerrain_ColorMap, m_terrain->getColorMap());
+	rb->programParams->setTextureParameter(c_handleTerrain_Normals, m_terrain->getNormalMap());
+	rb->programParams->setTextureParameter(c_handleTerrain_SplatMap, m_terrain->getSplatMap());
+	rb->programParams->setTextureParameter(c_handleTerrain_CutMap, m_terrain->getCutMap());
+	rb->programParams->setTextureParameter(c_handleTerrain_MaterialMap, m_terrain->getMaterialMap());
+	rb->programParams->setVectorParameter(c_handleTerrain_Eye, eyePosition);
+	rb->programParams->setVectorParameter(c_handleTerrain_WorldOrigin, -worldExtent * Scalar(0.5f));
+	rb->programParams->setVectorParameter(c_handleTerrain_WorldExtent, worldExtent);
 
 	if (m_visualizeMode == VmColorMap)
-		rb->programParams->setTextureParameter(c_handleDebugMap, m_terrain->getColorMap());
+		rb->programParams->setTextureParameter(c_handleTerrain_DebugMap, m_terrain->getColorMap());
 	else if (m_visualizeMode == VmNormalMap)
-		rb->programParams->setTextureParameter(c_handleDebugMap, m_terrain->getNormalMap());
+		rb->programParams->setTextureParameter(c_handleTerrain_DebugMap, m_terrain->getNormalMap());
 	else if (m_visualizeMode == VmHeightMap)
-		rb->programParams->setTextureParameter(c_handleDebugMap, m_terrain->getHeightMap());
+		rb->programParams->setTextureParameter(c_handleTerrain_DebugMap, m_terrain->getHeightMap());
 	else if (m_visualizeMode == VmSplatMap)
-		rb->programParams->setTextureParameter(c_handleDebugMap, m_terrain->getSplatMap());
+		rb->programParams->setTextureParameter(c_handleTerrain_DebugMap, m_terrain->getSplatMap());
 	else if (m_visualizeMode == VmCutMap)
-		rb->programParams->setTextureParameter(c_handleDebugMap, m_terrain->getCutMap());
+		rb->programParams->setTextureParameter(c_handleTerrain_DebugMap, m_terrain->getCutMap());
 	else if (m_visualizeMode == VmMaterialMap)
-		rb->programParams->setTextureParameter(c_handleDebugMap, m_terrain->getMaterialMap());
+		rb->programParams->setTextureParameter(c_handleTerrain_DebugMap, m_terrain->getMaterialMap());
 
 	worldRenderPass.setProgramParameters(rb->programParams);
 
@@ -436,14 +440,14 @@ void TerrainComponent::build(
 
 		rb->programParams->beginParameters(renderContext);
 
-		rb->programParams->setVectorParameter(c_handlePatchExtent, patchExtent);
-		rb->programParams->setVectorParameter(c_handlePatchOrigin, patchOrigin);
+		rb->programParams->setVectorParameter(c_handleTerrain_PatchExtent, patchExtent);
+		rb->programParams->setVectorParameter(c_handleTerrain_PatchOrigin, patchOrigin);
 
 		if (!snapshot)
-			rb->programParams->setVectorParameter(c_handleSurfaceOffset, patch.surfaceOffset);
+			rb->programParams->setVectorParameter(c_handleTerrain_SurfaceOffset, patch.surfaceOffset);
 		else
 		{
-			rb->programParams->setVectorParameter(c_handleSurfaceOffset, Vector4(
+			rb->programParams->setVectorParameter(c_handleTerrain_SurfaceOffset, Vector4(
 				patchOrigin.x() / worldExtent.x() + 0.5f,
 				patchOrigin.z() / worldExtent.z() + 0.5f,
 				patchExtent.x() / worldExtent.x(),
@@ -452,9 +456,9 @@ void TerrainComponent::build(
 		}
 
 		if (m_visualizeMode == VmSurfaceLod)
-			rb->programParams->setVectorParameter(c_handleDebugPatchColor, c_lodColor[patch.lastSurfaceLod]);
+			rb->programParams->setVectorParameter(c_handleTerrain_DebugPatchColor, c_lodColor[patch.lastSurfaceLod]);
 		else if (m_visualizeMode == VmPatchLod)
-			rb->programParams->setVectorParameter(c_handleDebugPatchColor, c_lodColor[patch.lastPatchLod]);
+			rb->programParams->setVectorParameter(c_handleTerrain_DebugPatchColor, c_lodColor[patch.lastPatchLod]);
 
 		rb->programParams->endParameters(renderContext);
 
@@ -477,14 +481,14 @@ void TerrainComponent::build(
 
 		rb->programParams->beginParameters(renderContext);
 
-		rb->programParams->setVectorParameter(c_handlePatchOrigin, patchOrigin);
-		rb->programParams->setVectorParameter(c_handlePatchOrigin, patchOrigin);
+		rb->programParams->setVectorParameter(c_handleTerrain_PatchOrigin, patchOrigin);
+		rb->programParams->setVectorParameter(c_handleTerrain_PatchOrigin, patchOrigin);
 
 		if (!snapshot)
-			rb->programParams->setVectorParameter(c_handleSurfaceOffset, patch.surfaceOffset);
+			rb->programParams->setVectorParameter(c_handleTerrain_SurfaceOffset, patch.surfaceOffset);
 		else
 		{
-			rb->programParams->setVectorParameter(c_handleSurfaceOffset, Vector4(
+			rb->programParams->setVectorParameter(c_handleTerrain_SurfaceOffset, Vector4(
 				patchOrigin.x() / worldExtent.x() + 0.5f,
 				patchOrigin.z() / worldExtent.z() + 0.5f,
 				patchExtent.x() / worldExtent.x(),
@@ -493,9 +497,9 @@ void TerrainComponent::build(
 		}		
 
 		if (m_visualizeMode == VmSurfaceLod)
-			rb->programParams->setVectorParameter(c_handleDebugPatchColor, c_lodColor[patch.lastSurfaceLod]);
+			rb->programParams->setVectorParameter(c_handleTerrain_DebugPatchColor, c_lodColor[patch.lastSurfaceLod]);
 		else if (m_visualizeMode == VmPatchLod)
-			rb->programParams->setVectorParameter(c_handleDebugPatchColor, c_lodColor[patch.lastPatchLod]);
+			rb->programParams->setVectorParameter(c_handleTerrain_DebugPatchColor, c_lodColor[patch.lastPatchLod]);
 
 		rb->programParams->endParameters(renderContext);
 

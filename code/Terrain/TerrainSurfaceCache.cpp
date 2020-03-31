@@ -19,36 +19,18 @@ namespace traktor
 		namespace
 		{
 
-const render::Handle c_handleColorEnable(L"ColorEnable");
-const render::Handle c_handleHeightfield(L"Heightfield");
-const render::Handle c_handleColorMap(L"ColorMap");
-const render::Handle c_handleSplatMap(L"SplatMap");
-const render::Handle c_handleWorldOrigin(L"WorldOrigin");
-const render::Handle c_handleWorldExtent(L"WorldExtent");
-const render::Handle c_handlePatchOrigin(L"PatchOrigin");
-const render::Handle c_handlePatchExtent(L"PatchExtent");
-const render::Handle c_handleTextureOffset(L"TextureOffset");
+const render::Handle c_handleTerrain_ColorEnable(L"Terrain_ColorEnable");
+const render::Handle c_handleTerrain_Heightfield(L"Terrain_Heightfield");
+const render::Handle c_handleTerrain_ColorMap(L"Terrain_ColorMap");
+const render::Handle c_handleTerrain_SplatMap(L"Terrain_SplatMap");
+const render::Handle c_handleTerrain_WorldOrigin(L"Terrain_WorldOrigin");
+const render::Handle c_handleTerrain_WorldExtent(L"Terrain_WorldExtent");
+const render::Handle c_handleTerrain_PatchOrigin(L"Terrain_PatchOrigin");
+const render::Handle c_handleTerrain_PatchExtent(L"Terrain_PatchExtent");
+const render::Handle c_handleTerrain_TextureOffset(L"Terrain_TextureOffset");
 
 const uint32_t c_maxUpdatePerFrame = 1;
 const int32_t c_margin = 2;
-
-struct TerrainSurfaceRenderBlock : public render::DrawableRenderBlock
-{
-	render::ScreenRenderer* screenRenderer;
-
-	TerrainSurfaceRenderBlock()
-	:	screenRenderer(nullptr)
-	{
-	}
-
-	virtual void render(render::IRenderView* renderView) const
-	{
-		if (programParams)
-			programParams->fixup(program);
-
-		screenRenderer->draw(renderView, program);
-	}
-};
 
 Vector4 offsetFromTile(const TerrainSurfaceAlloc& alloc, const TerrainSurfaceAlloc::Tile& tile)
 {
@@ -89,7 +71,7 @@ bool TerrainSurfaceCache::create(resource::IResourceManager* resourceManager, re
 
 	m_alloc = TerrainSurfaceAlloc(size);
 
-	// Create virtual terrain surface texture.
+	// Create virtual terrain albedo texture.
 	{
 		const int32_t mipCount = (int32_t)log2(size) + 1;
 
@@ -100,8 +82,24 @@ bool TerrainSurfaceCache::create(resource::IResourceManager* resourceManager, re
 		desc.format = render::TfR8G8B8A8;
 		desc.sRGB = false;
 		desc.immutable = false;
-		m_pool = renderSystem->createSimpleTexture(desc, T_FILE_LINE_W);
-		if (!m_pool)
+		m_virtualAlbedo = renderSystem->createSimpleTexture(desc, T_FILE_LINE_W);
+		if (!m_virtualAlbedo)
+			return false;
+	}
+
+	// Create virtual terrain normals texture.
+	{
+		const int32_t mipCount = (int32_t)log2(size) + 1;
+
+		render::SimpleTextureCreateDesc desc = {};
+		desc.width = size;
+		desc.height = size;
+		desc.mipCount = mipCount;
+		desc.format = render::TfR8G8B8A8;
+		desc.sRGB = false;
+		desc.immutable = false;
+		m_virtualNormals = renderSystem->createSimpleTexture(desc, T_FILE_LINE_W);
+		if (!m_virtualNormals)
 			return false;
 	}
 
@@ -133,7 +131,8 @@ void TerrainSurfaceCache::destroy()
 
 	flush();
 
-	safeDestroy(m_pool);
+	safeDestroy(m_virtualAlbedo);
+	safeDestroy(m_virtualNormals);
 	safeDestroy(m_base);
 	safeDestroy(m_screenRenderer);
 }
@@ -190,28 +189,25 @@ void TerrainSurfaceCache::setupBaseColor(
 			render::ISimpleTexture* splatMap = terrain->getSplatMap();
 
 			render::Shader::Permutation perm;
-			shader->setCombination(c_handleColorEnable, colorMap != nullptr, perm);
+			shader->setCombination(c_handleTerrain_ColorEnable, colorMap != nullptr, perm);
 
 			auto sp = shader->getProgram(perm);
 			if (!sp)
 				return;
 
-			auto rb = renderContext->alloc< TerrainSurfaceRenderBlock >(L"Terrain surface, base");
-			rb->screenRenderer = m_screenRenderer;
-			rb->distance = 0.0f;
-			rb->program = sp.program;
-			rb->programParams = renderContext->alloc< render::ProgramParameters >();
-			rb->programParams->beginParameters(renderContext);
-			rb->programParams->setTextureParameter(c_handleHeightfield, heightMap);
-			rb->programParams->setTextureParameter(c_handleColorMap, colorMap);
-			rb->programParams->setTextureParameter(c_handleSplatMap, splatMap);
-			rb->programParams->setVectorParameter(c_handleWorldOrigin, worldOrigin);
-			rb->programParams->setVectorParameter(c_handleWorldExtent, worldExtent);
-			rb->programParams->setVectorParameter(c_handlePatchOrigin, worldOrigin);
-			rb->programParams->setVectorParameter(c_handlePatchExtent, worldExtent);
-			rb->programParams->setVectorParameter(c_handleTextureOffset, c_textureOffset);
-			rb->programParams->endParameters(renderContext);
-			renderContext->enqueue(rb);
+			auto programParams = renderContext->alloc< render::ProgramParameters >();
+			programParams->beginParameters(renderContext);
+			programParams->setTextureParameter(c_handleTerrain_Heightfield, heightMap);
+			programParams->setTextureParameter(c_handleTerrain_ColorMap, colorMap);
+			programParams->setTextureParameter(c_handleTerrain_SplatMap, splatMap);
+			programParams->setVectorParameter(c_handleTerrain_WorldOrigin, worldOrigin);
+			programParams->setVectorParameter(c_handleTerrain_WorldExtent, worldExtent);
+			programParams->setVectorParameter(c_handleTerrain_PatchOrigin, worldOrigin);
+			programParams->setVectorParameter(c_handleTerrain_PatchExtent, worldExtent);
+			programParams->setVectorParameter(c_handleTerrain_TextureOffset, c_textureOffset);
+			programParams->endParameters(renderContext);
+
+			m_screenRenderer->draw(renderContext, sp.program, programParams);
 		});
 		renderGraph.addPass(rp);
 
@@ -239,7 +235,7 @@ void TerrainSurfaceCache::setupPatch(
 	// If the cache is already valid we just reuse it.
 	if (patchId < m_entries.size())
 	{
-		if (m_updateCount >= c_maxUpdatePerFrame || (m_entries[patchId].lod == surfaceLod && m_entries[patchId].tile.dim > 0))
+		if (m_entries[patchId].lod == surfaceLod && m_entries[patchId].tile.dim > 0)
 		{
 			outTextureOffset = offsetFromTile(m_alloc, m_entries[patchId].tile);
 			return;
@@ -250,17 +246,15 @@ void TerrainSurfaceCache::setupPatch(
 	}
 	else
 	{
-		if (m_updateCount >= c_maxUpdatePerFrame)
-		{
-			outTextureOffset = Vector4::zero();
-			return;
-		}
-
 		// Patch hasn't been cached before, allocate a new entry.
 		m_entries.resize(patchId + 1);
 	}
 
-	++m_updateCount;
+	if (m_updateCount++ >= c_maxUpdatePerFrame)
+	{
+		outTextureOffset = Vector4::zero();
+		return;
+	}
 
 	// Allocate tile for this patch; first try to allocate proper size
 	// then fall back on smaller and smaller tiles.
@@ -295,18 +289,20 @@ void TerrainSurfaceCache::setupPatch(
 	{
 		// Intermediate target.
 		render::RenderGraphTargetSetDesc rgtsd;
-		rgtsd.count = 1;
+		rgtsd.count = 2;
 		rgtsd.width = std::max< int32_t >(tile.dim >> mip, 1);
 		rgtsd.height = std::max< int32_t >(tile.dim >> mip, 1);
 		rgtsd.createDepthStencil = false;
 		rgtsd.usingPrimaryDepthStencil = false;
-		rgtsd.targets[0].colorFormat = render::TfR8G8B8A8;
+		rgtsd.targets[0].colorFormat = render::TfR8G8B8A8;	// Albedo
+		rgtsd.targets[1].colorFormat = render::TfR8G8B8A8;	// Normals
 		auto updateTargetSetId = renderGraph.addTargetSet(rgtsd);
 
 		// Render patch surface.
 		render::Clear clear;
 		clear.mask = render::CfColor;
 		clear.colors[0] = Color4f(0.0f, 0.0f, 0.0f, 0.0f);
+		clear.colors[1] = Color4f(0.5f, 0.5f, 1.0f, 0.0f);
 
 		Ref< render::RenderPass > updatePass = new render::RenderPass(L"Terrain surface update");
 		updatePass->setOutput(updateTargetSetId, clear);
@@ -320,27 +316,24 @@ void TerrainSurfaceCache::setupPatch(
 			render::ISimpleTexture* splatMap = terrain->getSplatMap();
 
 			render::Shader::Permutation perm;
-			shader->setCombination(c_handleColorEnable, colorMap != nullptr, perm);
+			shader->setCombination(c_handleTerrain_ColorEnable, colorMap != nullptr, perm);
 
 			auto sp = shader->getProgram(perm);
 			if (!sp)
 				return;
 
-			auto rb = renderContext->alloc< TerrainSurfaceRenderBlock >(L"Terrain surface");
-			rb->screenRenderer = m_screenRenderer;
-			rb->distance = 0.0f;
-			rb->program = sp.program;
-			rb->programParams = renderContext->alloc< render::ProgramParameters >();
-			rb->programParams->beginParameters(renderContext);
-			rb->programParams->setTextureParameter(c_handleHeightfield, heightMap);
-			rb->programParams->setTextureParameter(c_handleColorMap, colorMap);
-			rb->programParams->setTextureParameter(c_handleSplatMap, splatMap);
-			rb->programParams->setVectorParameter(c_handleWorldOrigin, worldOriginM);
-			rb->programParams->setVectorParameter(c_handleWorldExtent, worldExtentM);
-			rb->programParams->setVectorParameter(c_handlePatchOrigin, patchOriginM);
-			rb->programParams->setVectorParameter(c_handlePatchExtent, patchExtentM);
-			rb->programParams->endParameters(renderContext);
-			renderContext->enqueue(rb);
+			auto programParams = renderContext->alloc< render::ProgramParameters >();
+			programParams->beginParameters(renderContext);
+			programParams->setTextureParameter(c_handleTerrain_Heightfield, heightMap);
+			programParams->setTextureParameter(c_handleTerrain_ColorMap, colorMap);
+			programParams->setTextureParameter(c_handleTerrain_SplatMap, splatMap);
+			programParams->setVectorParameter(c_handleTerrain_WorldOrigin, worldOriginM);
+			programParams->setVectorParameter(c_handleTerrain_WorldExtent, worldExtentM);
+			programParams->setVectorParameter(c_handleTerrain_PatchOrigin, patchOriginM);
+			programParams->setVectorParameter(c_handleTerrain_PatchExtent, patchExtentM);
+			programParams->endParameters(renderContext);
+
+			m_screenRenderer->draw(renderContext, sp.program, programParams);
 		});
 		renderGraph.addPass(updatePass);
 
@@ -364,7 +357,8 @@ void TerrainSurfaceCache::setupPatch(
 				dr.y = tile.y >> mip;
 				dr.mip = mip;
 
-				renderView->copy(m_pool, dr, updateTargetSet->getColorTexture(0), sr);
+				renderView->copy(m_virtualAlbedo, dr, updateTargetSet->getColorTexture(0), sr);
+				renderView->copy(m_virtualNormals, dr, updateTargetSet->getColorTexture(1), sr);
 			};
 			renderContext->enqueue(lrb);
 		});
@@ -378,9 +372,14 @@ void TerrainSurfaceCache::setupPatch(
 	outTextureOffset = offsetFromTile(m_alloc, tile);
 }
 
-render::ISimpleTexture* TerrainSurfaceCache::getVirtualTexture() const
+render::ISimpleTexture* TerrainSurfaceCache::getVirtualAlbedo() const
 {
-	return m_pool;
+	return m_virtualAlbedo;
+}
+
+render::ISimpleTexture* TerrainSurfaceCache::getVirtualNormals() const
+{
+	return m_virtualNormals;
 }
 
 render::ISimpleTexture* TerrainSurfaceCache::getBaseTexture() const

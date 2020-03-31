@@ -82,10 +82,10 @@
 			<id>{2FB54AE6-EBB7-E241-9028-7C943106196A}</id>
 			<comment/>
 			<position>
-				<first>-279</first>
-				<second>400</second>
+				<first>-283</first>
+				<second>440</second>
 			</position>
-			<parameterName>WorldExtent</parameterName>
+			<parameterName>Terrain_WorldExtent</parameterName>
 			<type>PtVector</type>
 			<frequency>UfOnce</frequency>
 		</item>
@@ -126,10 +126,10 @@
 			<id>{EDA54323-45F7-BD48-968E-265D74B49654}</id>
 			<comment/>
 			<position>
-				<first>638</first>
-				<second>176</second>
+				<first>711</first>
+				<second>253</second>
 			</position>
-			<parameterName>Heightfield</parameterName>
+			<parameterName>Terrain_Heightfield</parameterName>
 			<type>PtTexture2D</type>
 			<frequency>UfOnce</frequency>
 		</item>
@@ -177,8 +177,8 @@
 			<id>{F0403C19-C18F-1849-9737-B979B135C58E}</id>
 			<comment/>
 			<position>
-				<first>2225</first>
-				<second>640</second>
+				<first>2171</first>
+				<second>638</second>
 			</position>
 			<name>xyz</name>
 		</item>
@@ -186,8 +186,8 @@
 			<id>{4162C2B0-8DB8-AD43-B521-4AB5AC04CF87}</id>
 			<comment/>
 			<position>
-				<first>1804</first>
-				<second>596</second>
+				<first>1799</first>
+				<second>611</second>
 			</position>
 			<swizzle>0x0</swizzle>
 		</item>
@@ -195,16 +195,16 @@
 			<id>{EAA9182A-DA65-1C45-A8B2-1E44B2FDD1F8}</id>
 			<comment/>
 			<position>
-				<first>1983</first>
-				<second>612</second>
+				<first>1968</first>
+				<second>608</second>
 			</position>
 		</item>
 		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
 			<id>{4F33F4F0-AF5A-184C-B0E3-AF0D62240FFE}</id>
 			<comment/>
 			<position>
-				<first>1807</first>
-				<second>679</second>
+				<first>1802</first>
+				<second>654</second>
 			</position>
 			<swizzle>x0z</swizzle>
 		</item>
@@ -212,8 +212,8 @@
 			<id>{41725196-BEAF-B44F-ABF7-4B4B4AAD6C29}</id>
 			<comment/>
 			<position>
-				<first>1151</first>
-				<second>828</second>
+				<first>1152</first>
+				<second>705</second>
 			</position>
 			<fragmentGuid>{53930A33-0CD2-0247-838C-3561FD095306}</fragmentGuid>
 			<inputPins>
@@ -235,8 +235,8 @@
 			<id>{01CD9BE4-992F-CA4E-AD4F-D20FE28BE893}</id>
 			<comment/>
 			<position>
-				<first>1377</first>
-				<second>848</second>
+				<first>1383</first>
+				<second>742</second>
 			</position>
 			<name>Normal</name>
 		</item>
@@ -244,8 +244,8 @@
 			<id>{31FDEA6E-5FF8-6940-96E7-1E49F4313334}</id>
 			<comment/>
 			<position>
-				<first>976</first>
-				<second>3</second>
+				<first>942</first>
+				<second>133</second>
 			</position>
 			<minFilter>FtLinear</minFilter>
 			<mipFilter>FtLinear</mipFilter>
@@ -262,10 +262,10 @@
 			<id>{D0C9FA1E-59C2-1641-823B-7C3197E6FA69}</id>
 			<comment/>
 			<position>
-				<first>670</first>
-				<second>-95</second>
+				<first>709</first>
+				<second>136</second>
 			</position>
-			<parameterName>Surface</parameterName>
+			<parameterName>Terrain_SurfaceAlbedo</parameterName>
 			<type>PtTexture2D</type>
 			<frequency>UfOnce</frequency>
 		</item>
@@ -273,8 +273,8 @@
 			<id>{3FB9D546-6F49-9548-86F2-45E9B9C8F50A}</id>
 			<comment/>
 			<position>
-				<first>1272</first>
-				<second>81</second>
+				<first>1238</first>
+				<second>211</second>
 			</position>
 			<name>Color</name>
 		</item>

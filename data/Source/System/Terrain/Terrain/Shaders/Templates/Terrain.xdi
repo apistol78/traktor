@@ -5,8 +5,8 @@
 			<id>{C76E8339-C134-C546-B7B0-5A5CF7C2725E}</id>
 			<comment/>
 			<position>
-				<first>1004</first>
-				<second>72</second>
+				<first>1046</first>
+				<second>98</second>
 			</position>
 			<technique/>
 		</item>
@@ -43,10 +43,10 @@
 			<id>{64F76742-54BD-614F-99DA-9FAC29D840D7}</id>
 			<comment/>
 			<position>
-				<first>-358</first>
+				<first>-402</first>
 				<second>254</second>
 			</position>
-			<parameterName>PatchExtent</parameterName>
+			<parameterName>Terrain_PatchExtent</parameterName>
 			<type>PtVector</type>
 			<frequency>UfDraw</frequency>
 		</item>
@@ -54,10 +54,10 @@
 			<id>{2A363D96-BCEE-3145-8591-7AF2334E8748}</id>
 			<comment/>
 			<position>
-				<first>-356</first>
-				<second>298</second>
+				<first>-400</first>
+				<second>302</second>
 			</position>
-			<parameterName>PatchOrigin</parameterName>
+			<parameterName>Terrain_PatchOrigin</parameterName>
 			<type>PtVector</type>
 			<frequency>UfDraw</frequency>
 		</item>
@@ -77,7 +77,7 @@
 				<first>1739</first>
 				<second>-130</second>
 			</position>
-			<parameterName>DebugPatchColor</parameterName>
+			<parameterName>Terrain_DebugPatchColor</parameterName>
 			<type>PtVector</type>
 			<frequency>UfDraw</frequency>
 		</item>
@@ -107,10 +107,10 @@ Generated texture from surface cache.
 			<id>{23C7A27A-2F37-2D48-8A54-DAA42407CBC6}</id>
 			<comment/>
 			<position>
-				<first>1451</first>
-				<second>-110</second>
+				<first>1430</first>
+				<second>-93</second>
 			</position>
-			<parameterName>Surface</parameterName>
+			<parameterName>Terrain_SurfaceAlbedo</parameterName>
 			<type>PtTexture2D</type>
 			<frequency>UfDraw</frequency>
 		</item>
@@ -155,7 +155,7 @@ Generated texture from surface cache.
 				<first>794</first>
 				<second>-17</second>
 			</position>
-			<parameterName>SurfaceOffset</parameterName>
+			<parameterName>Terrain_SurfaceOffset</parameterName>
 			<type>PtVector</type>
 			<frequency>UfDraw</frequency>
 		</item>
@@ -235,10 +235,10 @@ Generated texture from surface cache.
 			<id>{23FE9303-F7E1-1446-BC82-E5E457C4C78F}</id>
 			<comment/>
 			<position>
-				<first>1337</first>
-				<second>-412</second>
+				<first>1263</first>
+				<second>-405</second>
 			</position>
-			<parameterName>CutMap</parameterName>
+			<parameterName>Terrain_CutMap</parameterName>
 			<type>PtTexture2D</type>
 			<frequency>UfFrame</frequency>
 		</item>
@@ -309,10 +309,10 @@ Generated texture from surface cache.
 			<id>{60CA7A57-EA7E-5743-A608-B524F26E1A82}</id>
 			<comment/>
 			<position>
-				<first>1345</first>
-				<second>-534</second>
+				<first>1263</first>
+				<second>-538</second>
 			</position>
-			<parameterName>DebugMap</parameterName>
+			<parameterName>Terrain_DebugMap</parameterName>
 			<type>PtTexture2D</type>
 			<frequency>UfFrame</frequency>
 		</item>

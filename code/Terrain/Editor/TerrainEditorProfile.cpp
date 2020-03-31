@@ -126,7 +126,8 @@ void TerrainEditorProfile::getDebugTargets(
 			if (surfaceCache)
 			{
 				outDebugTargets.push_back(render::DebugTarget(L"Terrain, surface (base)", render::DtvDefault, surfaceCache->getBaseTexture()));
-				outDebugTargets.push_back(render::DebugTarget(L"Terrain, surface (virtual)", render::DtvDefault, surfaceCache->getVirtualTexture()));
+				outDebugTargets.push_back(render::DebugTarget(L"Terrain, surface (albedo)", render::DtvDefault, surfaceCache->getVirtualAlbedo()));
+				outDebugTargets.push_back(render::DebugTarget(L"Terrain, surface (normals)", render::DtvDefault, surfaceCache->getVirtualNormals()));
 			}
 
 			auto terrain = terrainComponent->getTerrain();

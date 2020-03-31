@@ -31,14 +31,7 @@ public:
 		const WorldRenderView& worldRenderView,
 		uint32_t passFlags,
 		bool fogEnabled,
-		bool depthEnable
-	);
-
-	WorldRenderPassDeferred(
-		render::handle_t technique,
-		render::ProgramParameters* sharedParams,
-		const WorldRenderView& worldRenderView,
-		uint32_t passFlags,
+		bool depthEnable,
 		bool irradianceEnable
 	);
 

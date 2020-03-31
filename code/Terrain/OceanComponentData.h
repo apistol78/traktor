@@ -52,7 +52,7 @@ private:
 
 	struct Wave
 	{
-		Vector2 center;
+		float direction;
 		float amplitude;
 		float frequency;
 		float phase;
@@ -72,7 +72,7 @@ private:
 	Color4f m_shadowTint;
 	Color4f m_deepColor;
 	float m_opacity;
-	bool m_allowSSReflections;
+	float m_elevation;
 	Wave m_waves[4];
 };
 
