@@ -1,6 +1,5 @@
 #include <algorithm>
 #include <cstring>
-#include "Core/Io/DynamicMemoryStream.h"
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/MemoryStream.h"
 #include "Core/Log/Log.h"
@@ -182,11 +181,7 @@ Ref< IStream > LocalInstance::readObject(const TypeInfo*& outSerializerType) con
 	{
 		RefArray< ActionWriteObject > actions;
 		if (m_transaction->get< ActionWriteObject >(actions) > 0)
-		{
-			const AlignedVector< uint8_t >& buffer = actions[0]->getBuffer();
-			if (!buffer.empty())
-				objectStream = new MemoryStream(&buffer[0], buffer.size());
-		}
+			return actions.back()->getReadStream();
 	}
 
 	if (!objectStream)
@@ -231,7 +226,7 @@ Ref< IStream > LocalInstance::writeObject(const std::wstring& primaryTypeName, c
 	);
 	m_transaction->add(action);
 
-	return action->getStream();
+	return action->getWriteStream();
 }
 
 uint32_t LocalInstance::getDataNames(std::vector< std::wstring >& outDataNames) const
@@ -274,21 +269,12 @@ bool LocalInstance::removeAllData()
 
 Ref< IStream > LocalInstance::readData(const std::wstring& dataName) const
 {
+	// Read data from transaction if pending.
 	if (m_transaction)
 	{
 		RefArray< ActionWriteData > actions;
 		if (m_transaction->get< ActionWriteData >(actions) > 0)
-		{
-			for (auto action : actions)
-			{
-				if (action->getName() == dataName)
-				{
-					const AlignedVector< uint8_t >& buffer = action->getBuffer();
-					if (!buffer.empty())
-						return new MemoryStream(&buffer[0], buffer.size());
-				}
-			}
-		}
+			return actions.back()->getReadStream();
 	}
 
 	Path instanceDataPath = getInstanceDataPath(m_instancePath, dataName);
@@ -303,7 +289,7 @@ Ref< IStream > LocalInstance::writeData(const std::wstring& dataName)
 	Ref< ActionWriteData > action = new ActionWriteData(m_instancePath, dataName);
 	m_transaction->add(action);
 
-	return action->getStream();
+	return action->getWriteStream();
 }
 
 	}

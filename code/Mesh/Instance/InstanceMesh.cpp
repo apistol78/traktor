@@ -77,22 +77,10 @@ void InstanceMesh::build(
 	// Calculate bounding box of all instances.
 	Aabb3 boundingBoxLocal = m_renderMesh->getBoundingBox();
 	Aabb3 boundingBoxWorld;
-	for (AlignedVector< RenderInstance >::const_iterator i = instanceWorld.begin(); i != instanceWorld.end(); ++i)
+	for (const auto& instance : instanceWorld)
 	{
-		Vector4 translation(
-			i->data.translation[0],
-			i->data.translation[1],
-			i->data.translation[2],
-			0.0f
-		);
-
-		Quaternion rotation(
-			i->data.rotation[0],
-			i->data.rotation[1],
-			i->data.rotation[2],
-			i->data.rotation[3]
-		);
-
+		Vector4 translation = Vector4::loadAligned(instance.data.translation).xyz0();
+		Quaternion rotation = Quaternion(Vector4::loadAligned(instance.data.rotation));
 		boundingBoxWorld.contain(boundingBoxLocal.transform(Transform(
 			translation,
 			rotation

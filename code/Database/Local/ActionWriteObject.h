@@ -1,12 +1,12 @@
 #pragma once
 
-#include "Core/Containers/AlignedVector.h"
 #include "Core/Io/Path.h"
 #include "Database/Local/Action.h"
 
 namespace traktor
 {
 
+class ChunkMemory;
 class IStream;
 
 	namespace db
@@ -30,15 +30,14 @@ public:
 
 	virtual bool redundant(const Action* action) const override final;
 
-	const AlignedVector< uint8_t >& getBuffer() const { return m_objectBuffer; }
+	Ref< IStream > getWriteStream() const;
 
-	const Ref< IStream >& getStream() const { return m_objectStream; }
+	Ref< IStream > getReadStream() const;
 
 private:
 	Path m_instancePath;
 	std::wstring m_primaryTypeName;
-	AlignedVector< uint8_t > m_objectBuffer;
-	Ref< IStream > m_objectStream;
+	Ref< ChunkMemory > m_objectMemory;
 	bool m_editObject;
 	bool m_editMeta;
 };

@@ -1,4 +1,5 @@
-#include "Core/Io/DynamicMemoryStream.h"
+#include "Core/Io/ChunkMemory.h"
+#include "Core/Io/ChunkMemoryStream.h"
 #include "Core/Io/FileSystem.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/SafeDestroy.h"
@@ -23,13 +24,7 @@ ActionWriteData::ActionWriteData(const Path& instancePath, const std::wstring& d
 ,	m_dataName(dataName)
 ,	m_existingBlob(false)
 {
-	m_dataBuffer.reserve(1 * 1024 * 1024);
-	m_dataStream = new DynamicMemoryStream(
-		m_dataBuffer,
-		false,
-		true,
-		T_FILE_LINE
-	);
+	m_dataMemory = new ChunkMemory();
 }
 
 bool ActionWriteData::execute(Context* context)
@@ -57,8 +52,6 @@ bool ActionWriteData::execute(Context* context)
 		}
 	}
 
-	safeClose(m_dataStream);
-
 	// Create output, physical, stream. Retry one time if initially locked.
 	Ref< IStream > writeStream = FileSystem::getInstance().open(instanceDataPath, File::FmWrite);
 	if (!writeStream)
@@ -75,18 +68,21 @@ bool ActionWriteData::execute(Context* context)
 	// Calculate SHA1 hash of data while writing data.
 	SHA1 sha1;
 	sha1.begin();
-
-	int64_t dataBufferSize = int64_t(m_dataBuffer.size());
-	if (dataBufferSize > 0)
+	for (size_t offset = 0; offset < m_dataMemory->size(); )
 	{
-		sha1.feed(&m_dataBuffer[0], dataBufferSize);
-		if (writeStream->write(&m_dataBuffer[0], dataBufferSize) != dataBufferSize)
+		const auto chunk = m_dataMemory->getChunk(offset);
+		if (!chunk.ptr)
+			break;
+
+		sha1.feed(chunk.ptr, chunk.size);
+		if (writeStream->write(chunk.ptr, chunk.size) != chunk.size)
 		{
-			log::error << L"Unable to write " << dataBufferSize << L" byte(s) to file \"" << instanceDataPath.getPathName() << L"\"." << Endl;
+			log::error << L"Unable to write " << chunk.size << L" byte(s) to file \"" << instanceDataPath.getPathName() << L"\"." << Endl;
 			return false;
 		}
-	}
 
+		offset += chunk.size;
+	}
 	sha1.end();
 
 	safeClose(writeStream);
@@ -125,13 +121,9 @@ bool ActionWriteData::undo(Context* context)
 	Path instanceDataPath = getInstanceDataPath(m_instancePath, m_dataName);
 
 	if (m_existingBlob)
-	{
 		fileStore->rollback(instanceDataPath);
-	}
 	else
-	{
 		fileStore->rollback(instanceMetaPath);
-	}
 
 	return true;
 }
@@ -143,13 +135,9 @@ void ActionWriteData::clean(Context* context)
 	Path instanceDataPath = getInstanceDataPath(m_instancePath, m_dataName);
 
 	if (m_existingBlob)
-	{
 		fileStore->clean(instanceDataPath);
-	}
 	else
-	{
 		fileStore->clean(instanceMetaPath);
-	}
 }
 
 bool ActionWriteData::redundant(const Action* action) const
@@ -163,6 +151,16 @@ bool ActionWriteData::redundant(const Action* action) const
 	}
 	else
 		return false;
+}
+
+Ref< IStream > ActionWriteData::getWriteStream() const
+{
+	return new ChunkMemoryStream(m_dataMemory, false, true);
+}
+
+Ref< IStream > ActionWriteData::getReadStream() const
+{
+	return new ChunkMemoryStream(m_dataMemory, true, false);
 }
 
 	}

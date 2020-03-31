@@ -1,6 +1,8 @@
-#include "Core/Io/DynamicMemoryStream.h"
+#include "Core/Io/ChunkMemory.h"
+#include "Core/Io/ChunkMemoryStream.h"
 #include "Core/Io/FileSystem.h"
 #include "Core/Log/Log.h"
+#include "Core/Misc/SafeDestroy.h"
 #include "Database/Local/ActionWriteObject.h"
 #include "Database/Local/Context.h"
 #include "Database/Local/IFileStore.h"
@@ -20,12 +22,7 @@ ActionWriteObject::ActionWriteObject(const Path& instancePath, const std::wstrin
 ,	m_editObject(false)
 ,	m_editMeta(false)
 {
-	m_objectStream = new DynamicMemoryStream(
-		m_objectBuffer,
-		false,
-		true,
-		T_FILE_LINE
-	);
+	m_objectMemory = new ChunkMemory();
 }
 
 bool ActionWriteObject::execute(Context* context)
@@ -55,21 +52,22 @@ bool ActionWriteObject::execute(Context* context)
 		return false;
 	}
 
-	m_objectStream->close();
-	m_objectStream = 0;
-
-	int64_t objectBufferSize = int64_t(m_objectBuffer.size());
-	if (objectBufferSize > 0)
+	for (size_t offset = 0; offset < m_objectMemory->size(); )
 	{
-		if (instanceStream->write(&m_objectBuffer[0], objectBufferSize) != objectBufferSize)
+		const auto chunk = m_objectMemory->getChunk(offset);
+		if (!chunk.ptr)
+			break;
+
+		if (instanceStream->write(chunk.ptr, chunk.size) != chunk.size)
 		{
-			log::error << L"Failed to write instance object" << Endl;
-			instanceStream->close();
+			log::error << L"Unable to write " << chunk.size << L" byte(s) to file \"" << instanceObjectPath.getPathName() << L"\"." << Endl;
 			return false;
 		}
+
+		offset += chunk.size;
 	}
 
-	instanceStream->close();
+	safeClose(instanceStream);
 
 	if (instanceMeta->getPrimaryType() != m_primaryTypeName)
 	{
@@ -128,6 +126,16 @@ bool ActionWriteObject::redundant(const Action* action) const
 		return m_instancePath == actionWriteObject->m_instancePath;
 	else
 		return false;
+}
+
+Ref< IStream > ActionWriteObject::getWriteStream() const
+{
+	return new ChunkMemoryStream(m_objectMemory, false, true);
+}
+
+Ref< IStream > ActionWriteObject::getReadStream() const
+{
+	return new ChunkMemoryStream(m_objectMemory, true, false);
 }
 
 	}
