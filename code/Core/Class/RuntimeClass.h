@@ -93,7 +93,7 @@ protected:
 	AlignedVector< MethodInfo > m_methods;
 	AlignedVector< MethodInfo > m_staticMethods;
 	AlignedVector< PropertyInfo > m_properties;
-	Ref< IRuntimeDispatch > m_operators[Operator::Count];
+	Ref< IRuntimeDispatch > m_operators[(int32_t)Operator::Count];
 	Ref< IRuntimeDispatch > m_unknown;
 
 	void addConstructor(uint32_t argc, IRuntimeDispatch* constructor);

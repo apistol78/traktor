@@ -226,7 +226,7 @@ public:
 
 		reference operator [] (int offset) const
 		{
-			return *(m_ptr + offset);
+			return *(_O::m_ptr + offset);
 		}
 
 		iterator operator + (int offset) const

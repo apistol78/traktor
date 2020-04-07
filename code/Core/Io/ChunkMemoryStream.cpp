@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <cstring>
 #include "Core/Io/ChunkMemory.h"
 #include "Core/Io/ChunkMemoryStream.h"
 
