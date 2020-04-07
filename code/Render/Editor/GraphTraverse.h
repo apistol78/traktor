@@ -118,13 +118,14 @@ private:
 			const InputPin* inputPin = node->getInputPin(i);
 			T_ASSERT(inputPin);
 
-			Edge* edge = m_graph->findEdge(inputPin);
+			Ref< Edge > edge = m_graph->findEdge(inputPin);
 			if (edge)
 			{
 				if (!visitor(edge))
 					continue;
 
-				preorderImpl(edge->getSource()->getNode(), visitor, visited);
+				if (edge->getSource() != nullptr && edge->getDestination() != nullptr)
+					preorderImpl(edge->getSource()->getNode(), visitor, visited);
 			}
 		}
 	}
@@ -142,13 +143,14 @@ private:
 			const InputPin* inputPin = node->getInputPin(i);
 			T_ASSERT(inputPin);
 
-			Edge* edge = m_graph->findEdge(inputPin);
+			Ref< Edge > edge = m_graph->findEdge(inputPin);
 			if (edge)
 			{
 				if (!visitor(edge))
 					continue;
 
-				postorderImpl(edge->getSource()->getNode(), visitor, visited);
+				if (edge->getSource() != nullptr && edge->getDestination() != nullptr)
+					postorderImpl(edge->getSource()->getNode(), visitor, visited);
 			}
 		}
 
@@ -175,13 +177,14 @@ private:
 				const InputPin* inputPin = (*i)->getInputPin(j);
 				T_ASSERT(inputPin);
 
-				Edge* edge = m_graph->findEdge(inputPin);
+				Ref< Edge > edge = m_graph->findEdge(inputPin);
 				if (edge)
 				{
 					if (!visitor(edge))
 						continue;
 
-					children.push_back(edge->getSource()->getNode());
+					if (edge->getSource() != nullptr && edge->getDestination() != nullptr)
+						children.push_back(edge->getSource()->getNode());
 				}
 			}
 		}

@@ -32,7 +32,7 @@ private:
 
 	struct Plant
 	{
-		uint8_t material;
+		uint8_t attribute;
 		int32_t density;
 		int32_t plant;
 		float scale;

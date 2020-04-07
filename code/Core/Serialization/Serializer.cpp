@@ -13,7 +13,7 @@ Serializer::Serializer()
 
 Ref< ISerializable > Serializer::readObject()
 {
-	if (getDirection() != SdRead)
+	if (getDirection() != Direction::Read)
 		return nullptr;
 
 	Ref< ISerializable > object;
@@ -23,7 +23,7 @@ Ref< ISerializable > Serializer::readObject()
 
 bool Serializer::writeObject(const ISerializable* o)
 {
-	if (getDirection() != SdWrite)
+	if (getDirection() != Direction::Write)
 		return false;
 
 	Ref< ISerializable > mutableObject = const_cast< ISerializable* >(o);

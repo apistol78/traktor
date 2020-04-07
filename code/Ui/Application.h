@@ -42,6 +42,8 @@ class T_DLLCLASS Application : public EventSubject
 	T_RTTI_CLASS;
 
 public:
+	Application();
+
 	static Application* getInstance();
 
 	/*! Initialize UI application.

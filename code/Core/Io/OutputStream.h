@@ -26,17 +26,17 @@ class T_DLLCLASS OutputStream : public Object
 	T_RTTI_CLASS;
 
 public:
-	enum LineEnd
+	enum class LineEnd
 	{
-		LeAuto = 0,
-		LeWin = 1,
-		LeMac = 2,
-		LeUnix = 3
+		Auto = 0,
+		Win = 1,
+		Mac = 2,
+		Unix = 3
 	};
 
 	typedef OutputStream& (*manipulator_t)(OutputStream& s);
 
-	OutputStream(IOutputStreamBuffer* buffer = 0, LineEnd lineEnd = LeAuto);
+	OutputStream(IOutputStreamBuffer* buffer = 0, LineEnd lineEnd = LineEnd::Auto);
 
 	void setBuffer(IOutputStreamBuffer* buffer);
 

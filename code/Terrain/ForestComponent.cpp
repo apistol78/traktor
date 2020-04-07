@@ -196,7 +196,7 @@ void ForestComponent::updatePatches()
 		for (float x = 0; x < size; x += densityInv)
 		{
 			// Check if trees are allowed on this position.
-			if (heightfield->getGridMaterial(x, z) != m_data.m_material)
+			if (heightfield->getGridAttribute(x, z) != m_data.m_attribute)
 				continue;
 
 			// Get world position.

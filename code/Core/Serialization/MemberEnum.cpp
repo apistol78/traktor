@@ -11,13 +11,13 @@ MemberEnumBase::MemberEnumBase(const wchar_t* const name)
 
 void MemberEnumBase::serialize(ISerializer& s) const
 {
-	if (s.getDirection() == ISerializer::SdRead)
+	if (s.getDirection() == ISerializer::Direction::Read)
 	{
 		std::wstring id;
 		s >> Member< std::wstring >(getName(), id);
 		s.ensure(set(id));
 	}
-	else	/* ISerializer::SdWrite */
+	else	/* ISerializer::Direction::Write */
 	{
 		const wchar_t* id = get();
 		if (!s.ensure(id != 0))

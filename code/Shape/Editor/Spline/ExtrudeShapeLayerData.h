@@ -34,14 +34,16 @@ class T_DLLCLASS ExtrudeShapeLayerData : public SplineLayerComponentData
 public:
 	ExtrudeShapeLayerData();
 
-	virtual Ref< SplineLayerComponent > createComponent(const world::IEntityBuilder* builder, resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem) const override final;
+	virtual Ref< SplineLayerComponent > createComponent(db::Database* database) const override final;
+
+	virtual Ref< model::Model > createModel(db::Database* database, const TransformPath& path) const override final;
 
 	virtual void serialize(ISerializer& s) override final;
 
-	const resource::Id< render::Shader >& getShader() const { return m_shader; }
+	const Guid& getMaterial() const { return m_material; }
 
 private:
-	resource::Id< render::Shader > m_shader;
+	Guid m_material;
 	bool m_automaticOrientation;
 	float m_detail;
 };

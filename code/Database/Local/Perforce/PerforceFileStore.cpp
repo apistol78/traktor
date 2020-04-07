@@ -32,7 +32,7 @@ bool PerforceFileStore::create(const ConnectionString& connectionString)
 	// Create change list description.
 	std::wstring changeListDescription = connectionString.get(L"p4changelist");
 	if (changeListDescription.empty())
-		changeListDescription = L"** CREATED %x **";
+		changeListDescription = L"** CREATED **";
 
 	time(&rawtime);
 	timeinfo = localtime(&rawtime);

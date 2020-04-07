@@ -674,19 +674,19 @@ public:
 		switch (operation)
 		{
 		case '+':
-			opindex = OptAdd;
+			opindex = (int32_t)Operator::Add;
 			break;
 
 		case '-':
-			opindex = OptSubtract;
+			opindex = (int32_t)Operator::Subtract;
 			break;
 
 		case '*':
-			opindex = OptMultiply;
+			opindex = (int32_t)Operator::Multiply;
 			break;
 
 		case '/':
-			opindex = OptDivide;
+			opindex = (int32_t)Operator::Divide;
 			break;
 
 		default:
@@ -699,11 +699,11 @@ public:
 		{
 			Ref< OperatorDispatch > opd = new OperatorDispatch();
 			opd->add(op);
-			opd->add(new Operator< ClassType, ReturnType, Argument1Type >(method));
+			opd->add(new traktor::Operator< ClassType, ReturnType, Argument1Type >(method));
 			op = opd;
 		}
 		else
-			op = new Operator< ClassType, ReturnType, Argument1Type >(method);
+			op = new traktor::Operator< ClassType, ReturnType, Argument1Type >(method);
 	}
 
 	virtual const TypeInfo& getExportType() const override final

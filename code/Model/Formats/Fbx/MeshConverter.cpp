@@ -23,16 +23,6 @@ Matrix44 normalize(const Matrix44& m)
 	);
 }
 
-uint32_t uvChannel(Model& outModel, const std::string& uvSet)
-{
-	// In case "default" uv set requested then assume first but do NOT add to inoutChannels
-	// in order to when first named UVSet is extracted it will get 0 index.
-	if (uvSet != "default")
-		return outModel.addUniqueTexCoordChannel(mbstows(uvSet));
-	else
-		return 0;
-}
-
 		}
 
 bool convertMesh(
@@ -48,12 +38,12 @@ bool convertMesh(
 	if (!mesh)
 		return false;
 
-	uint32_t positionBase = uint32_t(outModel.getPositions().size());
-
 	// Convert materials.
 	std::map< int32_t, int32_t > materialMap;
 	if (!convertMaterials(outModel, materialMap, meshNode))
 		return false;
+
+	uint32_t positionBase = uint32_t(outModel.getPositions().size());
 
 	FbxAMatrix nodeTransform = meshNode->EvaluateGlobalTransform();
 
@@ -222,7 +212,8 @@ bool convertMesh(
 				FbxLayerElementUV* layerUVs = mesh->GetLayer(k)->GetUVs();
 				if (layerUVs)
 				{
-					uint32_t channel = uvChannel(outModel, layerUVs->GetName());
+					std::wstring channelName = mbstows(layerUVs->GetName());
+					uint32_t channel = outModel.addUniqueTexCoordChannel(channelName);
 
 					switch (layerUVs->GetMappingMode())
 					{
@@ -378,6 +369,8 @@ bool convertMesh(
 
 		outModel.addPolygon(polygon);
 	}
+
+	fixMaterialUvSets(outModel);
 
 	return true;
 }

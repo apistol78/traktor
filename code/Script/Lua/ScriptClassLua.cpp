@@ -217,7 +217,7 @@ std::string ScriptClassLua::getStaticMethodName(uint32_t methodId) const
 
 const IRuntimeDispatch* ScriptClassLua::getStaticMethodDispatch(uint32_t methodId) const
 {
-	return 0;
+	return nullptr;
 }
 
 uint32_t ScriptClassLua::getPropertiesCount() const
@@ -232,22 +232,22 @@ std::string ScriptClassLua::getPropertyName(uint32_t propertyId) const
 
 const IRuntimeDispatch* ScriptClassLua::getPropertyGetDispatch(uint32_t propertyId) const
 {
-	return 0;
+	return nullptr;
 }
 
 const IRuntimeDispatch* ScriptClassLua::getPropertySetDispatch(uint32_t propertyId) const
 {
-	return 0;
+	return nullptr;
 }
 
 const IRuntimeDispatch* ScriptClassLua::getUnknownDispatch() const
 {
-	return 0;
+	return nullptr;
 }
 
-const IRuntimeDispatch* ScriptClassLua::getOperatorDispatch(OperatorType op) const
+const IRuntimeDispatch* ScriptClassLua::getOperatorDispatch(Operator op) const
 {
-	return 0;
+	return nullptr;
 }
 
 ScriptClassLua::ScriptClassLua(ScriptManagerLua* scriptManager, ScriptContextLua* scriptContext, lua_State*& luaState)

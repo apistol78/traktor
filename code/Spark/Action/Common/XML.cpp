@@ -108,12 +108,12 @@ void XML::threadLoad(std::wstring url_)
 
 		xml::XmlPullParser::EventType eventType = parser.next();
 
-		if (eventType == xml::XmlPullParser::EtEndDocument)
+		if (eventType == xml::XmlPullParser::EventType::EndDocument)
 			break;
-		else if (eventType == xml::XmlPullParser::EtInvalid)
+		else if (eventType == xml::XmlPullParser::EventType::Invalid)
 			break;
 
-		if (eventType == xml::XmlPullParser::EtStartElement)
+		if (eventType == xml::XmlPullParser::EventType::StartElement)
 		{
 			Ref< XMLNode > element = new XMLNode(
 				"XMLNode",
@@ -124,7 +124,7 @@ void XML::threadLoad(std::wstring url_)
 
 			elementStack.push_back(element);
 		}
-		else if (eventType == xml::XmlPullParser::EtEndElement)
+		else if (eventType == xml::XmlPullParser::EventType::EndElement)
 		{
 			if (elementStack.empty())
 				return;
@@ -137,7 +137,7 @@ void XML::threadLoad(std::wstring url_)
 
 			elementStack.back()->appendChild(element);
 		}
-		else if (eventType == xml::XmlPullParser::EtText)
+		else if (eventType == xml::XmlPullParser::EventType::Text)
 		{
 			if (elementStack.empty())
 				return;

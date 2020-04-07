@@ -82,7 +82,7 @@ bool SahTree::queryClosestIntersection(const Vector4& origin, const Vector4& dir
 		nearT = Scalar(0.0f);
 
 	BitVector& tags = inoutCache.tags;
-	tags.assign(m_polygons.size(), false);
+	tags.assign((uint32_t)m_polygons.size(), false);
 
 	if (ignore >= 0)
 		tags.set(ignore);
@@ -177,7 +177,7 @@ bool SahTree::queryAnyIntersection(const Vector4& origin, const Vector4& directi
 		nearT = Scalar(0.0f);
 
 	BitVector& tags = inoutCache.tags;
-	tags.assign(m_polygons.size(), false);
+	tags.assign((uint32_t)m_polygons.size(), false);
 
 	if (ignore >= 0)
 		tags.set(ignore);

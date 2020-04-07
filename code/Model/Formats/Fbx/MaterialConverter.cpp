@@ -55,14 +55,9 @@ std::wstring getTextureName(const FbxTexture* texture)
 		return std::wstring(mbstows(texture->GetName()));
 }
 
-uint32_t uvChannel(Model& outModel, const std::string& uvSet)
+std::wstring uvChannel(Model& outModel, const std::string& name)
 {
-	// In case "default" uv set requested then assume first but do NOT add to inoutChannels
-	// in order to when first named UVSet is extracted it will get 0 index.
-	if (uvSet != "default")
-		return outModel.addUniqueTexCoordChannel(mbstows(uvSet));
-	else
-		return 0;
+	return mbstows(name);
 }
 
 		}
@@ -120,59 +115,83 @@ bool convertMaterials(Model& outModel, std::map< int32_t, int32_t >& outMaterial
 		const FbxTexture* diffuseTexture = getTexture(material, FbxSurfaceMaterial::sDiffuse);
 		if (diffuseTexture)
 		{
-			uint32_t channel = uvChannel(outModel, diffuseTexture->UVSet.Get().Buffer());
-			mm.setDiffuseMap(Material::Map(getTextureName(diffuseTexture), channel, true));
+			mm.setDiffuseMap(Material::Map(
+				getTextureName(diffuseTexture),
+				uvChannel(outModel, diffuseTexture->UVSet.Get().Buffer()),
+				true
+			));
 		}
 
 		const FbxTexture* specularTexture = getTexture(material, FbxSurfaceMaterial::sSpecular);
 		if (specularTexture)
 		{
-			uint32_t channel = uvChannel(outModel, specularTexture->UVSet.Get().Buffer());
-			mm.setSpecularMap(Material::Map(getTextureName(specularTexture), channel, false));
+			mm.setSpecularMap(Material::Map(
+				getTextureName(specularTexture),
+				uvChannel(outModel, specularTexture->UVSet.Get().Buffer()),
+				false
+			));
 		}
 
 		const FbxTexture* shininessTexture = getTexture(material, FbxSurfaceMaterial::sShininess);
 		if (shininessTexture)
 		{
-			uint32_t channel = uvChannel(outModel, shininessTexture->UVSet.Get().Buffer());
-			mm.setRoughnessMap(Material::Map(getTextureName(shininessTexture), channel, false));
+			mm.setRoughnessMap(Material::Map(
+				getTextureName(shininessTexture),
+				uvChannel(outModel, shininessTexture->UVSet.Get().Buffer()),
+				false
+			));
 		}
 
 		const FbxTexture* reflectionFactorTexture = getTexture(material, FbxSurfaceMaterial::sReflectionFactor);
 		if (reflectionFactorTexture)
 		{
-			uint32_t channel = uvChannel(outModel, reflectionFactorTexture->UVSet.Get().Buffer());
-			mm.setMetalnessMap(Material::Map(getTextureName(reflectionFactorTexture), channel, false));
+			mm.setMetalnessMap(Material::Map(
+				getTextureName(reflectionFactorTexture),
+				uvChannel(outModel, reflectionFactorTexture->UVSet.Get().Buffer()),
+				false
+			));
 		}
 
 		const FbxTexture* normalTexture = getTexture(material, FbxSurfaceMaterial::sNormalMap);
 		if (normalTexture)
 		{
-			uint32_t channel = uvChannel(outModel, normalTexture->UVSet.Get().Buffer());
-			mm.setNormalMap(Material::Map(getTextureName(normalTexture), channel, false));
+			mm.setNormalMap(Material::Map(
+				getTextureName(normalTexture),
+				uvChannel(outModel, normalTexture->UVSet.Get().Buffer()),
+				false
+			));
 		}
 
 		const FbxTexture* transparencyTexture = getTexture(material, FbxSurfaceMaterial::sTransparentColor);
 		if (transparencyTexture)
 		{
-			uint32_t channel = uvChannel(outModel, transparencyTexture->UVSet.Get().Buffer());
-			mm.setTransparencyMap(Material::Map(getTextureName(transparencyTexture), channel, false));
+			mm.setTransparencyMap(Material::Map(
+				getTextureName(transparencyTexture),
+				uvChannel(outModel, transparencyTexture->UVSet.Get().Buffer()),
+				false
+			));
 			mm.setBlendOperator(Material::BoAlpha);
 		}
 
 		const FbxTexture* transparencyFactorTexture = getTexture(material, FbxSurfaceMaterial::sTransparencyFactor);
 		if (transparencyFactorTexture)
 		{
-			uint32_t channel = uvChannel(outModel, transparencyFactorTexture->UVSet.Get().Buffer());
-			mm.setTransparencyMap(Material::Map(getTextureName(transparencyFactorTexture), channel, false));
+			mm.setTransparencyMap(Material::Map(
+				getTextureName(transparencyFactorTexture),
+				uvChannel(outModel, transparencyFactorTexture->UVSet.Get().Buffer()),
+				false
+			));
 			mm.setBlendOperator(Material::BoAlphaTest);
 		}
 
 		const FbxTexture* emissiveTexture = getTexture(material, /*mayaExported ? FbxSurfaceMaterial::sAmbient :*/ FbxSurfaceMaterial::sEmissive);
 		if (emissiveTexture)
 		{
-			uint32_t channel = uvChannel(outModel, emissiveTexture->UVSet.Get().Buffer());
-			mm.setEmissiveMap(Material::Map(getTextureName(emissiveTexture), channel, false));
+			mm.setEmissiveMap(Material::Map(
+				getTextureName(emissiveTexture),
+				uvChannel(outModel, emissiveTexture->UVSet.Get().Buffer()),
+				false
+			));
 		}
 
 		if (material->GetClassId().Is(FbxSurfacePhong::ClassId))
@@ -286,6 +305,78 @@ bool convertMaterials(Model& outModel, std::map< int32_t, int32_t >& outMaterial
 	}
 
 	return true;
+}
+
+void fixMaterialUvSets(Model& outModel)
+{
+	// Since FBX sometimes reference "default" UV set we need to patch
+	// this after everything has been extracted.
+
+	const auto& channels = outModel.getTexCoordChannels();
+	if (channels.empty())
+		return;
+
+	const std::wstring& channel = channels[0];
+
+	auto materials = outModel.getMaterials();
+	for (auto& material : materials)
+	{
+		{
+			auto map = material.getDiffuseMap();
+			if (map.channel == L"default")
+				map.channel = channel;
+			material.setDiffuseMap(map);
+		}
+		{
+			auto map = material.getSpecularMap();
+			if (map.channel == L"default")
+				map.channel = channel;
+			material.setSpecularMap(map);
+		}
+		{
+			auto map = material.getRoughnessMap();
+			if (map.channel == L"default")
+				map.channel = channel;
+			material.setRoughnessMap(map);
+		}
+		{
+			auto map = material.getMetalnessMap();
+			if (map.channel == L"default")
+				map.channel = channel;
+			material.setMetalnessMap(map);
+		}
+		{
+			auto map = material.getTransparencyMap();
+			if (map.channel == L"default")
+				map.channel = channel;
+			material.setTransparencyMap(map);
+		}
+		{
+			auto map = material.getEmissiveMap();
+			if (map.channel == L"default")
+				map.channel = channel;
+			material.setEmissiveMap(map);
+		}
+		{
+			auto map = material.getReflectiveMap();
+			if (map.channel == L"default")
+				map.channel = channel;
+			material.setReflectiveMap(map);
+		}
+		{
+			auto map = material.getNormalMap();
+			if (map.channel == L"default")
+				map.channel = channel;
+			material.setNormalMap(map);
+		}
+		{
+			auto map = material.getLightMap();
+			if (map.channel == L"default")
+				map.channel = channel;
+			material.setLightMap(map);
+		}
+	}
+	outModel.setMaterials(materials);
 }
 
 	}

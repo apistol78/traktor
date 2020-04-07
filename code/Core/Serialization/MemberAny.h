@@ -8,7 +8,7 @@
 namespace traktor
 {
 
-/*! \brief
+/*!
  * \ingroup Core
  */
 class MemberAny : public MemberComplex
@@ -22,55 +22,55 @@ public:
 
 	virtual void serialize(ISerializer& s) const override final
 	{
-		const MemberEnum< Any::AnyType >::Key c_AnyType_Keys[] =
+		const MemberEnum< Any::Type >::Key c_AnyType_Keys[] =
 		{
-			{ L"AtVoid", Any::AtVoid },
-			{ L"AtBoolean", Any::AtBoolean },
-			{ L"AtInteger", Any::AtInteger },
-			{ L"AtFloat", Any::AtFloat },
-			{ L"AtString", Any::AtString },
-			{ L"AtObject", Any::AtObject },
+			{ L"Void", Any::Type::Void },
+			{ L"Boolean", Any::Type::Boolean },
+			{ L"Integer", Any::Type::Integer },
+			{ L"Float", Any::Type::Float },
+			{ L"String", Any::Type::String },
+			{ L"Object", Any::Type::Object },
 			{ 0 }
 		};
 
 		Any::AnyType type = m_ref.getType();
-		s >> MemberEnum< Any::AnyType >(L"type", type, c_AnyType_Keys);
+		s >> MemberEnum< Any::Type >(L"type", type, c_AnyType_Keys);
 
-		if (s.getDirection() == ISerializer::SdRead)
+		if (s.getDirection() == ISerializer::Direction::Read)
 		{
 			switch (type)
 			{
-			case Any::AtVoid:
+			case Any::Type::Void:
 				break;
-			case Any::AtBoolean:
+			case Any::Type::Boolean:
 				{
 					bool value;
 					s >> Member< bool >(L"value", value);
 					m_ref = Any::fromBoolean(value);
 				}
 				break;
-			case Any::AtInteger:
+			case Any::Type::Integer:
 				{
 					int32_t value;
 					s >> Member< int32_t >(L"value", value);
 					m_ref = Any::fromInteger(value);
 				}
 				break;
-			case Any::AtFloat:
+			case Any::Type::Float:
 				{
 					float value;
 					s >> Member< float >(L"value", value);
 					m_ref = Any::fromFloat(value);
 				}
 				break;
-			case Any::AtString:
+			case Any::Type::String:
 				{
 					std::wstring value;
 					s >> Member< std::wstring >(L"value", value);
 					m_ref = Any::fromString(value);
 				}
 				break;
-			case Any::AtObject:
+			case Any::Type::Object:
 				{
 					Ref< ISerializable > value;
 					s >> Member< ISerializable* >(L"value", value);
@@ -83,33 +83,33 @@ public:
 		{
 			switch (type)
 			{
-			case Any::AtVoid:
+			case Any::Type::Void:
 				break;
-			case Any::AtBoolean:
+			case Any::Type::Boolean:
 				{
 					bool value = m_ref.getBoolean();
 					s >> Member< bool >(L"value", value);
 				}
 				break;
-			case Any::AtInteger:
+			case Any::Type::Integer:
 				{
 					int32_t value = m_ref.getInteger();
 					s >> Member< int32_t >(L"value", value);
 				}
 				break;
-			case Any::AtFloat:
+			case Any::Type::Float:
 				{
 					float value = m_ref.getFloat();
 					s >> Member< float >(L"value", value);
 				}
 				break;
-			case Any::AtString:
+			case Any::Type::String:
 				{
 					std::wstring value = m_ref.getWideString();
 					s >> Member< std::wstring >(L"value", value);
 				}
 				break;
-			case Any::AtObject:
+			case Any::Type::Object:
 				{
 					Ref< ISerializable > value = dynamic_type_cast< ISerializable* >(m_ref.getObject());
 					s >> Member< ISerializable* >(L"value", value);

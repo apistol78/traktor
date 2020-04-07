@@ -63,7 +63,7 @@ void ImgPass::serialize(ISerializer& s)
 	Node::serialize(s);
 	s >> Member< std::wstring >(L"name", m_name);
 	s >> MemberRefArray< IImgStep >(L"steps", m_steps);
-	if (s.getDirection() == ISerializer::SdRead)
+	if (s.getDirection() == ISerializer::Direction::Read)
 		refresh();
 }
 

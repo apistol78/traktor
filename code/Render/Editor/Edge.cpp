@@ -38,7 +38,7 @@ public:
 
 	virtual void serialize(ISerializer& s) const
 	{
-		if (s.getDirection() == ISerializer::SdWrite)
+		if (s.getDirection() == ISerializer::Direction::Write)
 		{
 			Ref< Node > node = m_pin ? m_pin->getNode() : 0;
 			std::wstring name = m_pin ? m_pin->getName() : L"";
@@ -46,7 +46,7 @@ public:
 			s >> MemberRef< Node >(L"node", node);
 			s >> Member< std::wstring >(L"name", name);
 		}
-		else	// SdRead
+		else	// Direction::Read
 		{
 			Ref< Node > node;
 			std::wstring name;

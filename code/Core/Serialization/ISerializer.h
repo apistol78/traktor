@@ -36,10 +36,10 @@ class T_DLLCLASS ISerializer : public Object
 	T_RTTI_CLASS;
 
 public:
-	enum Direction
+	enum class Direction
 	{
-		SdRead,
-		SdWrite
+		Read,
+		Write
 	};
 
 	/*! Get, serialized class, data version.

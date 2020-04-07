@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Core/Ref.h"
+#include "Core/Thread/Semaphore.h"
 #include "Render/IRenderSystem.h"
 #include "Render/Vulkan/ApiHeader.h"
 
@@ -86,6 +87,7 @@ private:
 	int32_t m_screenWidth;
 	int32_t m_screenHeight;
 #endif
+	Semaphore m_lock;
 	VkInstance m_instance;
 	VkPhysicalDevice m_physicalDevice;
 	VkDevice m_logicalDevice;

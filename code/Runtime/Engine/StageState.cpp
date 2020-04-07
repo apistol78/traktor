@@ -34,7 +34,7 @@ StageState::StageState(
 
 	m_frames.resize(frameCount);
 	for (auto& frame : m_frames)
-		frame.renderContext = new render::RenderContext(32 * 1024 * 124);
+		frame.renderContext = new render::RenderContext(16 * 1024 * 1024);
 
 	m_renderGraph = new render::RenderGraph(
 		environment->getRender()->getRenderSystem()

@@ -49,16 +49,16 @@ char* refStringDec(char* s)
 	}
 
 Any::Any()
-:	m_type(AtVoid)
+:	m_type(Type::Void)
 {
 }
 
 Any::Any(const Any& src)
 :	m_type(src.m_type)
 {
-	if (m_type == AtString)
+	if (m_type == Type::String)
 		m_data.m_string = refStringInc(src.m_data.m_string);
-	else if (m_type == AtObject)
+	else if (m_type == Type::Object)
 	{
 		T_SAFE_ADDREF(src.m_data.m_object);
 		m_data.m_object = src.m_data.m_object;
@@ -67,22 +67,20 @@ Any::Any(const Any& src)
 		m_data = src.m_data;
 }
 
-#if defined(T_CXX11)
-Any::Any(Any&& src)
+Any::Any(Any&& src) noexcept
 :	m_type(src.m_type)
 ,	m_data(src.m_data)
 {
-	src.m_type = AtVoid;
+	src.m_type = Type::Void;
 }
-#endif
 
 Any::~Any()
 {
 	T_EXCEPTION_GUARD_BEGIN
 
-	if (m_type == AtString)
+	if (m_type == Type::String)
 		refStringDec(m_data.m_string);
-	else if (m_type == AtObject)
+	else if (m_type == Type::Object)
 		T_SAFE_RELEASE(m_data.m_object);
 
 	T_EXCEPTION_GUARD_END
@@ -91,7 +89,7 @@ Any::~Any()
 Any Any::fromBoolean(bool value)
 {
 	Any any;
-	any.m_type = AtBoolean;
+	any.m_type = Type::Boolean;
 	any.m_data.m_boolean = value;
 	return any;
 }
@@ -99,7 +97,7 @@ Any Any::fromBoolean(bool value)
 Any Any::fromInt32(int32_t value)
 {
 	Any any;
-	any.m_type = AtInt32;
+	any.m_type = Type::Int32;
 	any.m_data.m_int32 = value;
 	return any;
 }
@@ -107,7 +105,7 @@ Any Any::fromInt32(int32_t value)
 Any Any::fromInt64(int64_t value)
 {
 	Any any;
-	any.m_type = AtInt64;
+	any.m_type = Type::Int64;
 	any.m_data.m_int64 = value;
 	return any;
 }
@@ -115,7 +113,7 @@ Any Any::fromInt64(int64_t value)
 Any Any::fromFloat(float value)
 {
 	Any any;
-	any.m_type = AtFloat;
+	any.m_type = Type::Float;
 	any.m_data.m_float = value;
 	return any;
 }
@@ -123,7 +121,7 @@ Any Any::fromFloat(float value)
 Any Any::fromString(const char* value)
 {
 	Any any;
-	any.m_type = AtString;
+	any.m_type = Type::String;
 	any.m_data.m_string = refStringCreate(value);
 	return any;
 }
@@ -131,7 +129,7 @@ Any Any::fromString(const char* value)
 Any Any::fromString(const std::string& value)
 {
 	Any any;
-	any.m_type = AtString;
+	any.m_type = Type::String;
 	any.m_data.m_string = refStringCreate(value.c_str());
 	return any;
 }
@@ -139,7 +137,7 @@ Any Any::fromString(const std::string& value)
 Any Any::fromString(const wchar_t* value)
 {
 	Any any;
-	any.m_type = AtString;
+	any.m_type = Type::String;
 	any.m_data.m_string = refStringCreate(wstombs(Utf8Encoding(), value).c_str());
 	return any;
 }
@@ -147,7 +145,7 @@ Any Any::fromString(const wchar_t* value)
 Any Any::fromString(const std::wstring& value)
 {
 	Any any;
-	any.m_type = AtString;
+	any.m_type = Type::String;
 	any.m_data.m_string = refStringCreate(wstombs(Utf8Encoding(), value).c_str());
 	return any;
 }
@@ -156,7 +154,7 @@ Any Any::fromObject(ITypedObject* value)
 {
 	T_SAFE_ANONYMOUS_ADDREF(value);
 	Any any;
-	any.m_type = AtObject;
+	any.m_type = Type::Object;
 	any.m_data.m_object = value;
 	return any;
 }
@@ -165,17 +163,17 @@ bool Any::getBoolean() const
 {
 	switch (m_type)
 	{
-	case AtBoolean:
+	case Type::Boolean:
 		return m_data.m_boolean;
-	case AtInt32:
+	case Type::Int32:
 		return m_data.m_int32 != 0;
-	case AtInt64:
+	case Type::Int64:
 		return m_data.m_int64 != 0;
-	case AtFloat:
+	case Type::Float:
 		return m_data.m_float != 0.0f;
-	case AtString:
+	case Type::String:
 		return parseString< int32_t >(m_data.m_string) != 0;
-	case AtObject:
+	case Type::Object:
 		return m_data.m_object != nullptr;
 	default:
 		break;
@@ -187,15 +185,15 @@ int32_t Any::getInt32() const
 {
 	switch (m_type)
 	{
-	case AtBoolean:
+	case Type::Boolean:
 		return m_data.m_boolean ? 1 : 0;
-	case AtInt32:
+	case Type::Int32:
 		return m_data.m_int32;
-	case AtInt64:
+	case Type::Int64:
 		return int32_t(m_data.m_int64);
-	case AtFloat:
+	case Type::Float:
 		return int32_t(m_data.m_float);
-	case AtString:
+	case Type::String:
 		return parseString< int32_t >(m_data.m_string);
 	default:
 		break;
@@ -207,15 +205,15 @@ int64_t Any::getInt64() const
 {
 	switch (m_type)
 	{
-	case AtBoolean:
+	case Type::Boolean:
 		return m_data.m_boolean ? 1 : 0;
-	case AtInt32:
+	case Type::Int32:
 		return m_data.m_int32;
-	case AtInt64:
+	case Type::Int64:
 		return m_data.m_int64;
-	case AtFloat:
+	case Type::Float:
 		return int64_t(m_data.m_float);
-	case AtString:
+	case Type::String:
 		return parseString< int64_t >(m_data.m_string);
 	default:
 		break;
@@ -227,15 +225,15 @@ float Any::getFloat() const
 {
 	switch (m_type)
 	{
-	case AtBoolean:
+	case Type::Boolean:
 		return m_data.m_boolean ? 1.0f : 0.0f;
-	case AtInt32:
+	case Type::Int32:
 		return float(m_data.m_int32);
-	case AtInt64:
+	case Type::Int64:
 		return float(m_data.m_int64);
-	case AtFloat:
+	case Type::Float:
 		return m_data.m_float;
-	case AtString:
+	case Type::String:
 		return parseString< float >(m_data.m_string);
 	default:
 		break;
@@ -247,15 +245,15 @@ std::string Any::getString() const
 {
 	switch (m_type)
 	{
-	case AtBoolean:
+	case Type::Boolean:
 		return m_data.m_boolean ? "true" : "false";
-	case AtInt32:
+	case Type::Int32:
 		return wstombs(Utf8Encoding(), toString(m_data.m_int32));
-	case AtInt64:
+	case Type::Int64:
 		return wstombs(Utf8Encoding(), toString(m_data.m_int64));
-	case AtFloat:
+	case Type::Float:
 		return wstombs(Utf8Encoding(), toString(m_data.m_float));
-	case AtString:
+	case Type::String:
 		return m_data.m_string;
 	default:
 		break;
@@ -267,15 +265,15 @@ std::wstring Any::getWideString() const
 {
 	switch (m_type)
 	{
-	case AtBoolean:
+	case Type::Boolean:
 		return m_data.m_boolean ? L"true" : L"false";
-	case AtInt32:
+	case Type::Int32:
 		return toString(m_data.m_int32);
-	case AtInt64:
+	case Type::Int64:
 		return toString(m_data.m_int64);
-	case AtFloat:
+	case Type::Float:
 		return toString(m_data.m_float);
-	case AtString:
+	case Type::String:
 		return mbstows(Utf8Encoding(), m_data.m_string);
 	default:
 		break;
@@ -285,43 +283,41 @@ std::wstring Any::getWideString() const
 
 Any& Any::operator = (const Any& src)
 {
-	if (m_type == AtString)
+	if (m_type == Type::String)
 		refStringDec(m_data.m_string);
-	else if (m_type == AtObject)
+	else if (m_type == Type::Object)
 		T_SAFE_RELEASE(m_data.m_object);
 
 	m_type = src.m_type;
 	m_data = src.m_data;
 
-	if (m_type == AtString)
+	if (m_type == Type::String)
 		refStringInc(m_data.m_string);
-	else if (m_type == AtObject)
+	else if (m_type == Type::Object)
 		T_SAFE_ADDREF(m_data.m_object);
 
 	return *this;
 }
 
-#if defined(T_CXX11)
-Any& Any::operator = (Any&& src)
+Any& Any::operator = (Any&& src) noexcept
 {
-	if (m_type == AtString)
+	if (m_type == Type::String)
 	{
-		if (src.m_type != AtString || m_data.m_string != src.m_data.m_string)
+		if (src.m_type != Type::String || m_data.m_string != src.m_data.m_string)
 			refStringDec(m_data.m_string);
 	}
-	else if (m_type == AtObject)
+	else if (m_type == Type::Object)
 	{
-		if (src.m_type != AtObject || m_data.m_object != src.m_data.m_object)
+		if (src.m_type != Type::Object || m_data.m_object != src.m_data.m_object)
 			T_SAFE_RELEASE(m_data.m_object);
 	}
 
 	m_type = src.m_type;
 	m_data = src.m_data;
 
-	src.m_type = AtVoid;
+	src.m_type = Type::Void;
 	return *this;
 }
-#endif
 
 std::wstring Any::format() const
 {
@@ -331,19 +327,19 @@ std::wstring Any::format() const
 
 	switch (m_type)
 	{
-	case AtBoolean:
+	case Type::Boolean:
 		ss << L"bool";
 		break;
-	case AtInt32:
+	case Type::Int32:
 		ss << L"int32";
 		break;
-	case AtInt64:
+	case Type::Int64:
 		ss << L"int64";
 		break;
-	case AtFloat:
+	case Type::Float:
 		ss << L"float";
 		break;
-	case AtString:
+	case Type::String:
 		ss << L"string";
 		break;
 	default:

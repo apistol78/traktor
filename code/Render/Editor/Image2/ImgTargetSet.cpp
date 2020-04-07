@@ -154,7 +154,7 @@ void ImgTargetSet::serialize(ISerializer& s)
 	s >> Member< bool >(L"generateMips", m_generateMips);
 	s >> MemberAlignedVector< TargetDesc, MemberComposite< TargetDesc > >(L"targets", m_targets);
 
-	if (s.getDirection() == ISerializer::SdRead)
+	if (s.getDirection() == ISerializer::Direction::Read)
 		refresh();
 }
 

@@ -23,31 +23,31 @@ bool JsonMember::write(OutputStream& os) const
 	os << L"\"" << m_name << L"\": ";
 	switch (m_value.getType())
 	{
-	case Any::AtVoid:
+	case Any::Type::Void:
 		os << L"nil" << Endl;
 		break;
 
-	case Any::AtBoolean:
+	case Any::Type::Boolean:
 		os << (m_value.getBooleanUnsafe() ? L"true" : L"false");
 		break;
 
-	case Any::AtInt32:
+	case Any::Type::Int32:
 		os << m_value.getInt32Unsafe();
 		break;
 
-	case Any::AtInt64:
+	case Any::Type::Int64:
 		os << m_value.getInt64Unsafe();
 		break;
 
-	case Any::AtFloat:
+	case Any::Type::Float:
 		os << m_value.getFloatUnsafe();
 		break;
 
-	case Any::AtString:
+	case Any::Type::String:
 		os << L"\"" << m_value.getWideString() << L"\"";
 		break;
 
-	case Any::AtObject:
+	case Any::Type::Object:
 		{
 			if (const JsonNode* node = dynamic_type_cast< const JsonNode* >(m_value.getObjectUnsafe()))
 				node->write(os);

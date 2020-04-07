@@ -32,7 +32,7 @@ public:
 	}
 
 #if defined(T_CXX11) && !defined(__PS3__)
-	SmallSet(SmallSet&& src)
+	SmallSet(SmallSet&& src) noexcept
 	{
 		m_data = std::move(src.m_data);
 	}
@@ -175,7 +175,7 @@ public:
 	}
 
 #if defined(T_CXX11) && !defined(__PS3__)
-	SmallSet& operator = (SmallSet&& src)
+	SmallSet& operator = (SmallSet&& src) noexcept
 	{
 		m_data = std::move(src.m_data);
 		return *this;

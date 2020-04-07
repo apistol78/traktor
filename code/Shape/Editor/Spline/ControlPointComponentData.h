@@ -32,6 +32,8 @@ public:
 
 	virtual void serialize(ISerializer& s) override final;
 
+	float getScale() const { return m_scale; }
+
 private:
 	float m_scale;
 };

@@ -133,10 +133,14 @@ void AccQuad::render(
 		}
 	}
 
+	Ref< render::IProgram > program = (texture ? shaderTextured : shaderSolid)->getProgram().program;
+	if (!program)
+		return;
+
 	renderPass->addBuild([=](const render::RenderGraph&, render::RenderContext* renderContext) {
 
 		render::NonIndexedRenderBlock* renderBlock = renderContext->alloc< render::NonIndexedRenderBlock >(L"Flash AccQuad");
-		renderBlock->program = (texture ? shaderTextured : shaderSolid)->getProgram().program;
+		renderBlock->program = program;
 		renderBlock->vertexBuffer = m_vertexBuffer;
 		renderBlock->primitive = render::PtTriangleStrip;
 		renderBlock->offset = 0;

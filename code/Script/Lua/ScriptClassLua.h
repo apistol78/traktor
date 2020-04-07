@@ -52,7 +52,7 @@ public:
 
 	virtual const IRuntimeDispatch* getUnknownDispatch() const override final;
 
-	virtual const IRuntimeDispatch* getOperatorDispatch(OperatorType op) const override final;
+	virtual const IRuntimeDispatch* getOperatorDispatch(Operator op) const override final;
 
 private:
 	struct Method

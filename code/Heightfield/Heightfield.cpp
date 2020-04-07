@@ -21,7 +21,7 @@ Heightfield::Heightfield(
 {
 	m_heights.reset(new height_t [m_size * m_size]);
 	m_cuts.reset(new uint8_t [(m_size * m_size) / 8]);
-	m_material.reset(new uint8_t [m_size * m_size]);
+	m_attributes.reset(new uint8_t [m_size * m_size]);
 	m_worldExtent.storeUnaligned(m_worldExtentFloats);
 }
 
@@ -48,7 +48,7 @@ void Heightfield::setGridCut(int32_t gridX, int32_t gridZ, bool cut)
 		m_cuts[offset / 8] &= ~(1 << (offset & 7));
 }
 
-void Heightfield::setGridMaterial(int32_t gridX, int32_t gridZ, uint8_t material)
+void Heightfield::setGridAttribute(int32_t gridX, int32_t gridZ, uint8_t attribute)
 {
 	if (gridX < 0 || gridX >= (int32_t)m_size)
 		return;
@@ -56,7 +56,7 @@ void Heightfield::setGridMaterial(int32_t gridX, int32_t gridZ, uint8_t material
 		return;
 
 	int32_t offset = gridX + gridZ * m_size;
-	m_material[offset] = material;
+	m_attributes[offset] = attribute;
 }
 
 float Heightfield::getGridHeightNearest(int32_t gridX, int32_t gridZ) const
@@ -185,7 +185,7 @@ bool Heightfield::getWorldCut(float worldX, float worldZ) const
 	return getGridCut(gridX, gridZ);
 }
 
-uint8_t Heightfield::getGridMaterial(int32_t gridX, int32_t gridZ) const
+uint8_t Heightfield::getGridAttribute(int32_t gridX, int32_t gridZ) const
 {
 	if (gridX < 0)
 		gridX = 0;
@@ -198,14 +198,14 @@ uint8_t Heightfield::getGridMaterial(int32_t gridX, int32_t gridZ) const
 		gridZ = (int32_t)m_size - 1;
 
 	int32_t offset = gridX + gridZ * m_size;
-	return m_material[offset];
+	return m_attributes[offset];
 }
 
-uint8_t Heightfield::getWorldMaterial(float worldX, float worldZ) const
+uint8_t Heightfield::getWorldAttribute(float worldX, float worldZ) const
 {
 	int32_t gridX, gridZ;
 	worldToGrid(worldX, worldZ, gridX, gridZ);
-	return getGridMaterial(gridX, gridZ);
+	return getGridAttribute(gridX, gridZ);
 }
 
 void Heightfield::gridToWorld(int32_t gridX, int32_t gridZ, float& outWorldX, float& outWorldZ) const

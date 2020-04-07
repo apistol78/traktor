@@ -25,7 +25,7 @@ void EventSubject::raiseEvent(Event* event)
 		// Invoke event handlers reversed as the most prioritized are at the end and they should
 		// be able to "consume" the event so it wont reach other, less prioritized, handlers.
 		auto eventHandlers = i->second;
-		for (int32_t j = eventHandlers.size() - 1; j >= 0; --j)
+		for (int32_t j = (int32_t)eventHandlers.size() - 1; j >= 0; --j)
 		{
 			const auto& eventHandler = eventHandlers[j];
 			for (EventHandlers::const_iterator j = eventHandler.begin(); j != eventHandler.end(); ++j)

@@ -13,25 +13,21 @@
 
 namespace traktor
 {
-	namespace resource
-	{
 
-class IResourceManager;
+class TransformPath;
+
+	namespace db
+	{
+	
+class Database;
 
 	}
 
-	namespace render
+	namespace model
 	{
-
-class IRenderSystem;
-
-	}
-
-	namespace world
-	{
-
-class IEntityBuilder;
-
+	
+class Model;
+	
 	}
 
 	namespace shape
@@ -44,7 +40,9 @@ class T_DLLCLASS SplineLayerComponentData : public world::IEntityComponentData
 	T_RTTI_CLASS;
 
 public:
-	virtual Ref< SplineLayerComponent > createComponent(const world::IEntityBuilder* builder, resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem) const = 0;
+	virtual Ref< SplineLayerComponent > createComponent(db::Database* database) const = 0;
+
+	virtual Ref< model::Model > createModel(db::Database* database, const TransformPath& path) const = 0;
 };
 
 	}

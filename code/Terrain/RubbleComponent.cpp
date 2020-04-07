@@ -57,7 +57,7 @@ bool RubbleComponent::create(
 		if (!resourceManager->bind(layerData.m_rubble[i].mesh, m_rubble[i].mesh))
 			return false;
 
-		m_rubble[i].material = layerData.m_rubble[i].material;
+		m_rubble[i].attribute = layerData.m_rubble[i].attribute;
 		m_rubble[i].density = layerData.m_rubble[i].density;
 		m_rubble[i].randomScaleAmount = layerData.m_rubble[i].randomScaleAmount;
 	}
@@ -132,10 +132,7 @@ void RubbleComponent::build(
 
 				const float randomScaleAmount = cluster.rubbleDef->randomScaleAmount;
 
-				// Use cluster center as random seed.
-				RandomGeometry random(
-					(int32_t)(cluster.center.x() * 919.0f + cluster.center.z() * 463.0f)
-				);
+				RandomGeometry random(cluster.seed);
 				for (int32_t j = cluster.from; j < cluster.to; ++j)
 				{
 					float dx = (random.nextFloat() * 2.0f - 1.0f) * m_clusterSize;
@@ -211,7 +208,7 @@ void RubbleComponent::updatePatches()
 	StaticVector< uint8_t, 16 > um(16, 0);
 	uint8_t maxMaterialIndex = 0;
 	for (const auto& rubble : m_rubble)
-		um[rubble.material] = ++maxMaterialIndex;
+		um[rubble.attribute] = ++maxMaterialIndex;
 
 	int32_t size = heightfield->getSize();
 	Vector4 extentPerGrid = heightfield->getWorldExtent() / Scalar(float(size));
@@ -219,7 +216,7 @@ void RubbleComponent::updatePatches()
 	m_clusterSize = (16.0f / 2.0f) * max< float >(extentPerGrid.x(), extentPerGrid.z());
 
 	// Create clusters.
-	RandomGeometry random;
+	Random random;
 	for (int32_t z = 0; z < size; z += 16)
 	{
 		for (int32_t x = 0; x < size; x += 16)
@@ -230,8 +227,8 @@ void RubbleComponent::updatePatches()
 			{
 				for (int32_t cx = 0; cx < 16; ++cx)
 				{
-					uint8_t material = heightfield->getGridMaterial(x + cx, z + cz);
-					uint8_t index = um[material];
+					uint8_t attribute = heightfield->getGridAttribute(x + cx, z + cz);
+					uint8_t index = um[attribute];
 					if (index > 0)
 					{
 						cm[index - 1]++;
@@ -253,7 +250,7 @@ void RubbleComponent::updatePatches()
 
 				for (auto& rubble : m_rubble)
 				{
-					if (um[rubble.material] != i + 1)
+					if (um[rubble.attribute] != i + 1)
 						continue;
 
 					int32_t densityFactor = cm[i];
@@ -276,9 +273,10 @@ void RubbleComponent::updatePatches()
 					c.rubbleDef = &rubble;
 					c.center = Vector4(wx, wy, wz, 1.0f);
 					c.distance = std::numeric_limits< float >::max();
-					c.visible = false;
+					c.seed = (int32_t)random.next();
 					c.from = from;
 					c.to = to;
+					c.visible = false;
 				}
 			}
 		}

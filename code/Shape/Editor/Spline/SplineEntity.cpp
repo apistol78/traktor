@@ -1,7 +1,6 @@
 #include "Shape/Editor/Spline/ControlPointComponent.h"
 #include "Shape/Editor/Spline/SplineEntity.h"
 #include "Shape/Editor/Spline/SplineLayerComponent.h"
-#include "World/Entity.h"
 #include "World/Entity/GroupComponent.h"
 
 namespace traktor
@@ -9,7 +8,7 @@ namespace traktor
 	namespace shape
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.shape.SplineEntity", SplineEntity, world::Entity)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.shape.SplineEntity", SplineEntity, world::GroupEntity)
 
 SplineEntity::SplineEntity()
 :	m_dirty(true)
@@ -18,14 +17,12 @@ SplineEntity::SplineEntity()
 
 void SplineEntity::update(const world::UpdateParams& update)
 {
-	auto groupComponent = getComponent< world::GroupComponent >();
-	if (!groupComponent)
-		return;
+	world::GroupEntity::update(update);
 
 	// Get control points and layers.
 	RefArray< ControlPointComponent > controlPoints;
 	RefArray< SplineLayerComponent > layers;
-	for (auto entity : groupComponent->getEntities())
+	for (auto entity : getEntities())
 	{
 		auto controlPoint = entity->getComponent< ControlPointComponent >();
 		if (controlPoint)

@@ -79,6 +79,7 @@ RenderViewVk::RenderViewVk(
 ,	m_targetRenderPass(0)
 ,	m_targetFrameBuffer(0)
 ,	m_cursorVisible(true)
+,	m_passCount(0)
 ,	m_drawCalls(0)
 ,	m_primitiveCount(0)
 {
@@ -471,6 +472,9 @@ bool RenderViewVk::beginFrame()
 	if (vkBeginCommandBuffer(m_graphicsCommandBuffer, &beginInfo) != VK_SUCCESS)
 		return false;
 	
+	m_passCount = 0;
+	m_drawCalls = 0;
+	m_primitiveCount = 0;
 	return true;
 }
 
@@ -623,8 +627,7 @@ bool RenderViewVk::beginPass(const Clear* clear)
 	vp.maxDepth = 1.0f;
 	vkCmdSetViewport(m_graphicsCommandBuffer, 0, 1, &vp);
 
-	m_drawCalls = 0;
-	m_primitiveCount = 0;
+	m_passCount++;
 	return true;
 }
 
@@ -697,6 +700,8 @@ bool RenderViewVk::beginPass(IRenderTargetSet* renderTargetSet, const Clear* cle
 	vp.minDepth = 0.0f;
 	vp.maxDepth = 1.0f;
 	vkCmdSetViewport(m_graphicsCommandBuffer, 0, 1, &vp);
+
+	m_passCount++;
 	return true;
 }
 
@@ -769,6 +774,8 @@ bool RenderViewVk::beginPass(IRenderTargetSet* renderTargetSet, int32_t renderTa
 	vp.minDepth = 0.0f;
 	vp.maxDepth = 1.0f;
 	vkCmdSetViewport(m_graphicsCommandBuffer, 0, 1, &vp);
+
+	m_passCount++;
 	return true;
 }
 
@@ -867,9 +874,11 @@ bool RenderViewVk::copy(ITexture* destinationTexture, const Region& destinationR
 {
 	VkImage sourceImage = 0;
 	VkImageLayout sourceImageLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+	uint32_t sourceSrcAccessMask = 0;
 
 	VkImage destinationImage = 0;
 	VkImageLayout destinationImageLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+	uint32_t destinationSrcAccessMask = 0;
 
 	VkImageCopy region = {};
 	region.srcSubresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
@@ -894,17 +903,29 @@ bool RenderViewVk::copy(ITexture* destinationTexture, const Region& destinationR
 	{
 		sourceImage = sourceRenderTarget->getVkImage();
 		sourceImageLayout = sourceRenderTarget->getVkImageLayout();
+
+		// Last used as an render target.
+		if (sourceImageLayout == VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL)
+			sourceSrcAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
+		// Last used as a texture.
+		else if (sourceImageLayout == VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL)
+			sourceSrcAccessMask = VK_ACCESS_SHADER_READ_BIT;
+		// Last unknown use.
+		else
+			sourceSrcAccessMask = 0;
 	}
 	else if (auto sourceSimpleTexture = dynamic_type_cast< SimpleTextureVk* >(sourceTexture))
 	{
 		sourceImage = sourceSimpleTexture->getVkImage();
 		sourceImageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+		sourceSrcAccessMask = VK_ACCESS_SHADER_READ_BIT;
 	}
 	else if (auto sourceCubeTexture = dynamic_type_cast< CubeTextureVk* >(sourceTexture))
 	{
 		sourceImage = sourceCubeTexture->getVkImage();
 		sourceImageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
 		region.srcSubresource.baseArrayLayer = sourceRegion.z;
+		sourceSrcAccessMask = VK_ACCESS_SHADER_READ_BIT;
 	}
 	else
 		return false;
@@ -913,17 +934,29 @@ bool RenderViewVk::copy(ITexture* destinationTexture, const Region& destinationR
 	{
 		destinationImage = destinationRenderTarget->getVkImage();
 		destinationImageLayout = destinationRenderTarget->getVkImageLayout();
+
+		// Last used as an render target.
+		if (destinationImageLayout == VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL)
+			destinationSrcAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
+		// Last used as a texture.
+		else if (destinationImageLayout == VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL)
+			destinationSrcAccessMask = VK_ACCESS_SHADER_READ_BIT;
+		// Last unknown use.
+		else
+			destinationSrcAccessMask = 0;
 	}
 	else if (auto destinationSimpleTexture = dynamic_type_cast< SimpleTextureVk* >(destinationTexture))
 	{
 		destinationImage = destinationSimpleTexture->getVkImage();
 		destinationImageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+		destinationSrcAccessMask = VK_ACCESS_SHADER_READ_BIT;
 	}
 	else if (auto destinationCubeTexture = dynamic_type_cast< CubeTextureVk* >(destinationTexture))
 	{
 		destinationImage = destinationCubeTexture->getVkImage();
 		destinationImageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
 		region.dstSubresource.baseArrayLayer = destinationRegion.z;
+		destinationSrcAccessMask = VK_ACCESS_SHADER_READ_BIT;
 	}
 	else
 		return false;
@@ -942,8 +975,8 @@ bool RenderViewVk::copy(ITexture* destinationTexture, const Region& destinationR
 		imb.subresourceRange.levelCount = 1;
 		imb.subresourceRange.baseArrayLayer = region.srcSubresource.baseArrayLayer;
 		imb.subresourceRange.layerCount = 1;
-		imb.srcAccessMask = 0;
-		imb.dstAccessMask = 0;
+		imb.srcAccessMask = sourceSrcAccessMask;
+		imb.dstAccessMask = VK_ACCESS_TRANSFER_READ_BIT;
 
 		vkCmdPipelineBarrier(
 			m_graphicsCommandBuffer,
@@ -970,8 +1003,8 @@ bool RenderViewVk::copy(ITexture* destinationTexture, const Region& destinationR
 		imb.subresourceRange.levelCount = 1;
 		imb.subresourceRange.baseArrayLayer = region.dstSubresource.baseArrayLayer;
 		imb.subresourceRange.layerCount = 1;
-		imb.srcAccessMask = 0;
-		imb.dstAccessMask = 0;
+		imb.srcAccessMask = destinationSrcAccessMask;
+		imb.dstAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
 
 		vkCmdPipelineBarrier(
 			m_graphicsCommandBuffer,
@@ -1009,8 +1042,8 @@ bool RenderViewVk::copy(ITexture* destinationTexture, const Region& destinationR
 		imb.subresourceRange.levelCount = 1;
 		imb.subresourceRange.baseArrayLayer = region.srcSubresource.baseArrayLayer;
 		imb.subresourceRange.layerCount = 1;
-		imb.srcAccessMask = 0;
-		imb.dstAccessMask = 0;
+		imb.srcAccessMask = VK_ACCESS_TRANSFER_READ_BIT;
+		imb.dstAccessMask = sourceSrcAccessMask;
 
 		vkCmdPipelineBarrier(
 			m_graphicsCommandBuffer,
@@ -1037,8 +1070,8 @@ bool RenderViewVk::copy(ITexture* destinationTexture, const Region& destinationR
 		imb.subresourceRange.levelCount = 1;
 		imb.subresourceRange.baseArrayLayer = region.dstSubresource.baseArrayLayer;
 		imb.subresourceRange.layerCount = 1;
-		imb.srcAccessMask = 0;
-		imb.dstAccessMask = 0;
+		imb.srcAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
+		imb.dstAccessMask = destinationSrcAccessMask;
 
 		vkCmdPipelineBarrier(
 			m_graphicsCommandBuffer,
@@ -1079,6 +1112,7 @@ void RenderViewVk::popMarker()
 
 void RenderViewVk::getStatistics(RenderViewStatistics& outStatistics) const
 {
+	outStatistics.passCount = m_passCount;
 	outStatistics.drawCalls = m_drawCalls;
 	outStatistics.primitiveCount = m_primitiveCount;
 }
@@ -1338,13 +1372,13 @@ bool RenderViewVk::create(uint32_t width, uint32_t height)
 	// Create descriptor pool.
 	VkDescriptorPoolSize dps[4];
 	dps[0].type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-	dps[0].descriptorCount = 4000;
+	dps[0].descriptorCount = 10000;
 	dps[1].type = VK_DESCRIPTOR_TYPE_SAMPLER;
-	dps[1].descriptorCount = 3000;
+	dps[1].descriptorCount = 10000;
 	dps[2].type = VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE;
-	dps[2].descriptorCount = 3000;
+	dps[2].descriptorCount = 10000;
 	dps[3].type = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
-	dps[3].descriptorCount = 2000;
+	dps[3].descriptorCount = 10000;
 
 	VkDescriptorPoolCreateInfo dpci = {};
 	dpci.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;

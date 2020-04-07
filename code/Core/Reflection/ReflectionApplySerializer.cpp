@@ -19,7 +19,7 @@ ReflectionApplySerializer::ReflectionApplySerializer(const RfmCompound* compound
 
 Serializer::Direction ReflectionApplySerializer::getDirection() const
 {
-	return SdRead;
+	return Direction::Read;
 }
 
 void ReflectionApplySerializer::operator >> (const Member< bool >& m)

@@ -35,7 +35,7 @@ public:
 
 	void setGridCut(int32_t gridX, int32_t gridZ, bool cut);
 
-	void setGridMaterial(int32_t gridX, int32_t gridZ, uint8_t material);
+	void setGridAttribute(int32_t gridX, int32_t gridZ, uint8_t attribute);
 
 	float getGridHeightNearest(int32_t gridX, int32_t gridZ) const;
 
@@ -47,9 +47,9 @@ public:
 
 	bool getWorldCut(float worldX, float worldZ) const;
 
-	uint8_t getGridMaterial(int32_t gridX, int32_t gridZ) const;
+	uint8_t getGridAttribute(int32_t gridX, int32_t gridZ) const;
 
-	uint8_t getWorldMaterial(float worldX, float worldZ) const;
+	uint8_t getWorldAttribute(float worldX, float worldZ) const;
 
 	void gridToWorld(int32_t gridX, int32_t gridZ, float& outWorldX, float& outWorldZ) const;
 
@@ -81,9 +81,9 @@ public:
 
 	const uint8_t* getCuts() const { return m_cuts.c_ptr(); }
 
-	uint8_t* getMaterial() { return m_material.ptr(); }
+	uint8_t* getAttributes() { return m_attributes.ptr(); }
 
-	const uint8_t* getMaterial() const { return m_material.c_ptr(); }
+	const uint8_t* getAttributes() const { return m_attributes.c_ptr(); }
 
 private:
 	int32_t m_size;
@@ -91,7 +91,7 @@ private:
 	float m_worldExtentFloats[4];
 	AutoArrayPtr< height_t > m_heights;
 	AutoArrayPtr< uint8_t > m_cuts;
-	AutoArrayPtr< uint8_t > m_material;
+	AutoArrayPtr< uint8_t > m_attributes;
 };
 
 	}

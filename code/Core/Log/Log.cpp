@@ -250,7 +250,7 @@ private:
 	}
 
 LogStream::LogStream(int32_t level, ILogTarget* globalTarget)
-:	OutputStream(new LogStreamGlobalBuffer(level, globalTarget), LeUnix)
+:	OutputStream(new LogStreamGlobalBuffer(level, globalTarget), LineEnd::Unix)
 {
 }
 

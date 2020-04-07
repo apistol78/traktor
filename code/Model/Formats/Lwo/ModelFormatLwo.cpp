@@ -82,19 +82,7 @@ const lwVMapPt* findLwVMapPt(const lwVMapPt* vmaps, int nvmaps, const std::strin
 	return 0;
 }
 
-uint32_t uvChannel(AlignedVector< std::string >& inoutChannels, const std::string vmap)
-{
-	AlignedVector< std::string >::iterator i = std::find(inoutChannels.begin(), inoutChannels.end(), vmap);
-	if (i != inoutChannels.end())
-		return uint32_t(std::distance(inoutChannels.begin(), i));
-
-	uint32_t channel = uint32_t(inoutChannels.size());
-	inoutChannels.push_back(vmap);
-
-	return channel;
-}
-
-bool createMaterials(const lwObject* lwo, Model* outModel, AlignedVector< std::string >& outChannels)
+bool createMaterials(const lwObject* lwo, Model* outModel)
 {
 	uint32_t channel = 0;
 
@@ -106,7 +94,7 @@ bool createMaterials(const lwObject* lwo, Model* outModel, AlignedVector< std::s
 		const lwTexture* texDiffuse = getLwTexture(surface->color.tex);
 		if (texDiffuse)
 		{
-			uint32_t channel = uvChannel(outChannels, texDiffuse->param.imap.vmap_name);
+			std::wstring channel = mbstows(texDiffuse->param.imap.vmap_name);
 
 			const lwClip* clip = findLwClip(lwo, texDiffuse->param.imap.cindex);
 			if (clip)
@@ -141,7 +129,7 @@ bool createMaterials(const lwObject* lwo, Model* outModel, AlignedVector< std::s
 		const lwTexture* texSpecular = getLwTexture(surface->specularity.tex);
 		if (texSpecular)
 		{
-			uint32_t channel = uvChannel(outChannels, texSpecular->param.imap.vmap_name);
+			std::wstring channel = mbstows(texSpecular->param.imap.vmap_name);
 
 			const lwClip* clip = findLwClip(lwo, texSpecular->param.imap.cindex);
 			if (clip)
@@ -156,7 +144,7 @@ bool createMaterials(const lwObject* lwo, Model* outModel, AlignedVector< std::s
 		const lwTexture* texTransparency = getLwTexture(surface->transparency.val.tex);
 		if (texTransparency)
 		{
-			uint32_t channel = uvChannel(outChannels, texTransparency->param.imap.vmap_name);
+			std::wstring channel = mbstows(texTransparency->param.imap.vmap_name);
 
 			const lwClip* clip = findLwClip(lwo, texTransparency->param.imap.cindex);
 			if (clip)
@@ -173,7 +161,7 @@ bool createMaterials(const lwObject* lwo, Model* outModel, AlignedVector< std::s
 		const lwTexture* texEmissive = getLwTexture(surface->luminosity.tex);
 		if (texEmissive)
 		{
-			uint32_t channel = uvChannel(outChannels, texEmissive->param.imap.vmap_name);
+			std::wstring channel = mbstows(texEmissive->param.imap.vmap_name);
 
 			const lwClip* clip = findLwClip(lwo, texEmissive->param.imap.cindex);
 			if (clip)
@@ -188,7 +176,7 @@ bool createMaterials(const lwObject* lwo, Model* outModel, AlignedVector< std::s
 		const lwTexture* texReflective = getLwTexture(surface->reflection.val.tex);
 		if (texReflective)
 		{
-			uint32_t channel = uvChannel(outChannels, texReflective->param.imap.vmap_name);
+			std::wstring channel = mbstows(texReflective->param.imap.vmap_name);
 
 			const lwClip* clip = findLwClip(lwo, texReflective->param.imap.cindex);
 			if (clip)
@@ -203,7 +191,7 @@ bool createMaterials(const lwObject* lwo, Model* outModel, AlignedVector< std::s
 		const lwTexture* texBump = getLwTexture(surface->bump.tex);
 		if (texBump)
 		{
-			uint32_t channel = uvChannel(outChannels, texBump->param.imap.vmap_name);
+			std::wstring channel = mbstows(texBump->param.imap.vmap_name);
 
 			const lwClip* clip = findLwClip(lwo, texBump->param.imap.cindex);
 			if (clip)
@@ -253,7 +241,7 @@ bool createMaterials(const lwObject* lwo, Model* outModel, AlignedVector< std::s
 	return true;
 }
 
-bool createMesh(const lwObject* lwo, Model* outModel, AlignedVector< std::string >& inoutChannels)
+bool createMesh(const lwObject* lwo, Model* outModel)
 {
 	uint32_t pointCount;
 	uint32_t polygonCount;
@@ -390,7 +378,7 @@ bool createMesh(const lwObject* lwo, Model* outModel, AlignedVector< std::string
 				for (int32_t k = 0; k < pnt->nvmaps; ++k)
 				{
 					const lwVMapPt* vpt = &pnt->vm[k];
-					uint32_t channel = uvChannel(inoutChannels, vpt->vmap->name);
+					uint32_t channel = outModel->addUniqueTexCoordChannel(mbstows(vpt->vmap->name));
 
 					float u = vpt->vmap->val[vpt->index][0];
 					float v = vpt->vmap->val[vpt->index][1];
@@ -404,7 +392,7 @@ bool createMesh(const lwObject* lwo, Model* outModel, AlignedVector< std::string
 				for (int32_t k = 0; k < pol->v[j].nvmaps; ++k)
 				{
 					const lwVMapPt* ppt = &pol->v[j].vm[k];
-					uint32_t channel = uvChannel(inoutChannels, ppt->vmap->name);
+					uint32_t channel = outModel->addUniqueTexCoordChannel(mbstows(ppt->vmap->name));
 
 					float u = ppt->vmap->val[ppt->index][0];
 					float v = ppt->vmap->val[ppt->index][1];
@@ -495,15 +483,14 @@ Ref< Model > ModelFormatLwo::read(const Path& filePath, const std::function< Ref
 		return nullptr;
 
 	Ref< Model > md = new Model();
-	AlignedVector< std::string > channels;
 
-	if (!createMaterials(lwo, md, channels))
+	if (!createMaterials(lwo, md))
 	{
 		lwFreeObject(lwo);
 		return nullptr;
 	}
 
-	if (!createMesh(lwo, md, channels))
+	if (!createMesh(lwo, md))
 	{
 		lwFreeObject(lwo);
 		return nullptr;

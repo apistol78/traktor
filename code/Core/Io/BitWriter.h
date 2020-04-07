@@ -32,10 +32,10 @@ public:
 	void writeBit(bool bit);
 
 	/*! Write variable bit-length unsigned number to stream. */
-	void writeUnsigned(int32_t nbits, uint32_t value);
+	void writeUnsigned(int32_t nbits, uint64_t value);
 
 	/*! Write variable bit-length signed number to stream. */
-	void writeSigned(int32_t nbits, int32_t value);
+	void writeSigned(int32_t nbits, int64_t value);
 
 	/*! Write signed 8 bit number. */
 	bool writeInt8(int8_t v);

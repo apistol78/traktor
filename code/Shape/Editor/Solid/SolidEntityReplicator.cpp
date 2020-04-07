@@ -14,7 +14,6 @@
 #include "Shape/Editor/Solid/IShape.h"
 #include "Shape/Editor/Solid/PrimitiveEntityData.h"
 #include "Shape/Editor/Solid/SolidEntityData.h"
-#include "Shape/Editor/Solid/SolidMaterial.h"
 #include "Shape/Editor/Solid/SolidEntityReplicator.h"
 #include "World/EntityData.h"
 
@@ -22,64 +21,34 @@ namespace traktor
 {
 	namespace shape
 	{
-		namespace
-		{
-
-void associateMaterials(
-	db::Database* database,
-	model::Model* model,
-	const SmallMap< int32_t, Guid >& materialMap
-)
-{
-	uint32_t tc = model->addUniqueTexCoordChannel(L"UVMap");
-
-	AlignedVector< model::Material > materials = model->getMaterials();
-	for (const auto& m : materialMap)
-	{
-		if (m.first >= materials.size())
-			continue;
-
-		Ref< SolidMaterial > sm = database->getObjectReadOnly< SolidMaterial >(
-			m.second
-		);
-		if (!sm)
-			continue;
-
-		auto& material = materials[m.first];
-
-		if (sm->getAlbedo().isValid())
-			material.setDiffuseMap(model::Material::Map(
-				L"Albedo",
-				tc,
-				true,
-				sm->getAlbedo()
-			));
-		if (sm->getNormal().isValid())
-			material.setNormalMap(model::Material::Map(
-				L"Normal",
-				tc,
-				true,
-				sm->getNormal()
-			));
-		if (sm->getRoughness().isValid())
-			material.setRoughnessMap(model::Material::Map(
-				L"Roughness",
-				tc,
-				true,
-				sm->getRoughness()
-			));
-		if (sm->getMetalness().isValid())
-			material.setMetalnessMap(model::Material::Map(
-				L"Metalness",
-				tc,
-				true,
-				sm->getMetalness()
-			));
-	}
-	model->setMaterials(materials);	
-}
-
-		}
+//		namespace
+//		{
+//
+//void associateMaterials(
+//	db::Database* database,
+//	model::Model* model,
+//	const SmallMap< int32_t, Guid >& materialMap
+//)
+//{
+//	uint32_t tc = model->addUniqueTexCoordChannel(L"UVMap");
+//
+//	AlignedVector< model::Material > materials = model->getMaterials();
+//	for (const auto& m : materialMap)
+//	{
+//		if (m.first >= materials.size())
+//			continue;
+//
+//		Ref< Material > sm = database->getObjectReadOnly< Material >(m.second);
+//		if (!sm)
+//			continue;
+//
+//		auto& material = materials[m.first];
+//		sm->prepareMaterial(tc, material);
+//	}
+//	model->setMaterials(materials);	
+//}
+//
+//		}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.shape.SolidEntityReplicator", 0, SolidEntityReplicator, scene::IEntityReplicator)
 
@@ -117,11 +86,11 @@ Ref< model::Model > SolidEntityReplicator::createModel(
 		if (!model)
 			return nullptr;
 
-		associateMaterials(
-			pipelineBuilder->getSourceDatabase(),
-			model,
-			(*it)->getMaterials()
-		);
+		//associateMaterials(
+		//	pipelineBuilder->getSourceDatabase(),
+		//	model,
+		//	(*it)->getMaterials()
+		//);
 
 		current = *model;
 		model::Transform((*it)->getTransform().toMatrix44()).apply(current);
@@ -132,11 +101,11 @@ Ref< model::Model > SolidEntityReplicator::createModel(
 			if (!other)
 				continue;
 
-			associateMaterials(
-				pipelineBuilder->getSourceDatabase(),
-				other,
-				(*it)->getMaterials()
-			);
+			//associateMaterials(
+			//	pipelineBuilder->getSourceDatabase(),
+			//	other,
+			//	(*it)->getMaterials()
+			//);
 
 			model::Model result;
 

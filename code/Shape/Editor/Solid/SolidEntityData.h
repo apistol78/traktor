@@ -27,7 +27,6 @@ class CollisionSpecification;
 	{
 
 class IRenderSystem;
-class Shader;
 
 	}
 
@@ -67,8 +66,6 @@ public:
 
     virtual void serialize(ISerializer& s) override final;
 
-    const resource::Id< render::Shader >& getShader() const { return m_shader; }
-
 	void setCollisionGroup(const std::set< resource::Id< physics::CollisionSpecification > >& collisionGroup);
 
 	const std::set< resource::Id< physics::CollisionSpecification > >& getCollisionGroup() const;
@@ -78,7 +75,6 @@ public:
 	const std::set< resource::Id< physics::CollisionSpecification > >& getCollisionMask() const;
 
 private:
-    resource::Id< render::Shader > m_shader;
 	std::set< resource::Id< physics::CollisionSpecification > > m_collisionGroup;
 	std::set< resource::Id< physics::CollisionSpecification > > m_collisionMask;
 };

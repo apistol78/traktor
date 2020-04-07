@@ -82,9 +82,9 @@ const IRuntimeDispatch* RuntimeClass::getPropertySetDispatch(uint32_t propertyId
 	return m_properties[propertyId].setter;
 }
 
-const IRuntimeDispatch* RuntimeClass::getOperatorDispatch(OperatorType op) const
+const IRuntimeDispatch* RuntimeClass::getOperatorDispatch(Operator op) const
 {
-	return m_operators[op];
+	return m_operators[(int32_t)op];
 }
 
 const IRuntimeDispatch* RuntimeClass::getUnknownDispatch() const

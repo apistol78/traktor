@@ -2,7 +2,7 @@
 
 #include "Core/RefArray.h"
 #include "Core/Math/TransformPath.h"
-#include "World/Entity.h"
+#include "World/Entity/GroupEntity.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -30,7 +30,7 @@ class WorldRenderView;
 /*! Spline entity.
  * \ingroup Shape
  */
-class T_DLLCLASS SplineEntity : public world::Entity
+class T_DLLCLASS SplineEntity : public world::GroupEntity
 {
 	T_RTTI_CLASS;
 

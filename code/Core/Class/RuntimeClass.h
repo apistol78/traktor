@@ -23,6 +23,7 @@ public:
 	T_NO_COPY_CLASS(RuntimeClass);
 
 	RuntimeClass()
+	:	m_constructorArgc(0)
 	{
 	}
 
@@ -61,7 +62,7 @@ public:
 
 	const IRuntimeDispatch* getPropertySetDispatch(uint32_t propertyId) const override final;
 
-	virtual const IRuntimeDispatch* getOperatorDispatch(OperatorType op) const override final;
+	virtual const IRuntimeDispatch* getOperatorDispatch(Operator op) const override final;
 
 	virtual const IRuntimeDispatch* getUnknownDispatch() const override final;
 
@@ -92,7 +93,7 @@ protected:
 	AlignedVector< MethodInfo > m_methods;
 	AlignedVector< MethodInfo > m_staticMethods;
 	AlignedVector< PropertyInfo > m_properties;
-	Ref< IRuntimeDispatch > m_operators[OptCount];
+	Ref< IRuntimeDispatch > m_operators[Operator::Count];
 	Ref< IRuntimeDispatch > m_unknown;
 
 	void addConstructor(uint32_t argc, IRuntimeDispatch* constructor);

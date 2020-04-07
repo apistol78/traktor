@@ -11,7 +11,6 @@
 #include "Shape/Editor/Solid/PrimitiveEditModifier.h"
 #include "Shape/Editor/Solid/PrimitiveEntity.h"
 #include "Shape/Editor/Solid/PrimitiveEntityData.h"
-#include "Shape/Editor/Solid/SolidMaterial.h"
 #include "Ui/Command.h"
 
 namespace traktor
@@ -55,7 +54,7 @@ bool PrimitiveEditModifier::handleCommand(const ui::Command& command)
 {
     if (command == L"Shape.Editor.BrowseMaterial")
     {
-        Ref< db::Instance > materialInstance = m_context->getEditor()->browseInstance(type_of< SolidMaterial >());
+        Ref< db::Instance > materialInstance = m_context->getEditor()->browseInstance(type_of< model::Material >());
         if (materialInstance)
         {
             for (auto entityAdapter : m_entityAdapters)

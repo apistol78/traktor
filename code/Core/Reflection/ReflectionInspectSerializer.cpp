@@ -19,7 +19,7 @@ ReflectionInspectSerializer::ReflectionInspectSerializer(RfmCompound* compound)
 
 Serializer::Direction ReflectionInspectSerializer::getDirection() const
 {
-	return SdWrite;
+	return Direction::Write;
 }
 
 void ReflectionInspectSerializer::operator >> (const Member< bool >& m)

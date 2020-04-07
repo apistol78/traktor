@@ -56,7 +56,7 @@ XmlDeserializer::XmlDeserializer(IStream* stream, const std::wstring& name)
 
 Serializer::Direction XmlDeserializer::getDirection() const
 {
-	return Serializer::SdRead;
+	return Serializer::Direction::Read;
 }
 
 void XmlDeserializer::operator >> (const Member< bool >& m)
@@ -371,7 +371,7 @@ void XmlDeserializer::operator >> (const Member< void* >& m)
 	if (!ensure(enterElement(m.getName())))
 		return;
 
-	if (!ensure(m_xpp.next() == XmlPullParser::EtText))
+	if (!ensure(m_xpp.next() == XmlPullParser::EventType::Text))
 		return;
 
 	AlignedVector< uint8_t > data = Base64().decode(m_xpp.getEvent().value);
@@ -400,18 +400,18 @@ void XmlDeserializer::operator >> (const MemberArray& m)
 	{
 		T_CHECK_STATUS;
 
-		while (m_xpp.next() != XmlPullParser::EtEndDocument)
+		while (m_xpp.next() != XmlPullParser::EventType::EndDocument)
 		{
-			if (m_xpp.getEvent().type == XmlPullParser::EtStartElement)
+			if (m_xpp.getEvent().type == XmlPullParser::EventType::StartElement)
 				break;
 			if (
-				m_xpp.getEvent().type == XmlPullParser::EtEndElement &&
+				m_xpp.getEvent().type == XmlPullParser::EventType::EndElement &&
 				m_xpp.getEvent().value == m.getName()
 			)
 				break;
 		}
 
-		if (m_xpp.getEvent().type != XmlPullParser::EtStartElement)
+		if (m_xpp.getEvent().type != XmlPullParser::EventType::StartElement)
 			break;
 
 		m_xpp.push();
@@ -472,14 +472,14 @@ bool XmlDeserializer::enterElement(const std::wstring& name)
 	e.index = index;
 
 	XmlPullParser::EventType eventType;
-	while ((eventType = m_xpp.next()) != XmlPullParser::EtEndDocument)
+	while ((eventType = m_xpp.next()) != XmlPullParser::EventType::EndDocument)
 	{
 		if (
-			eventType == XmlPullParser::EtStartElement &&
+			eventType == XmlPullParser::EventType::StartElement &&
 			m_xpp.getEvent().value == name
 		)
 			return true;
-		else if (eventType == XmlPullParser::EtInvalid)
+		else if (eventType == XmlPullParser::EventType::Invalid)
 		{
 			log::error << L"Invalid response from parser when entering element \"" << name << L"\"" << Endl;
 			return false;
@@ -496,10 +496,10 @@ bool XmlDeserializer::leaveElement(const std::wstring& name)
 	T_ASSERT(m_stack[m_stackPointer - 1].name == name);
 	m_stack[--m_stackPointer].dups.reset();
 
-	while (m_xpp.next() != XmlPullParser::EtEndDocument)
+	while (m_xpp.next() != XmlPullParser::EventType::EndDocument)
 	{
 		if (
-			m_xpp.getEvent().type == XmlPullParser::EtEndElement &&
+			m_xpp.getEvent().type == XmlPullParser::EventType::EndElement &&
 			m_xpp.getEvent().value == name
 		)
 			return true;
@@ -519,7 +519,7 @@ bool XmlDeserializer::nextElementValue(const std::wstring& name, std::wstring& v
 		return false;
 
 	m_xpp.next();
-	if (m_xpp.getEvent().type == XmlPullParser::EtText)
+	if (m_xpp.getEvent().type == XmlPullParser::EventType::Text)
 		value = m_xpp.getEvent().value;
 	else
 	{

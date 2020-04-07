@@ -8,6 +8,7 @@
 #include "Core/Misc/AutoPtr.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Misc/TString.h"
+#include "Core/Thread/Acquire.h"
 #include "Render/VertexElement.h"
 #include "Render/Vulkan/ApiLoader.h"
 #include "Render/Vulkan/CubeTextureVk.h"
@@ -459,6 +460,8 @@ Ref< IRenderView > RenderSystemVk::createRenderView(const RenderViewEmbeddedDesc
 
 Ref< VertexBuffer > RenderSystemVk::createVertexBuffer(const AlignedVector< VertexElement >& vertexElements, uint32_t bufferSize, bool dynamic)
 {
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+
 	VkBuffer vertexBuffer = 0;
 
 	VkBufferCreateInfo bci = {};
@@ -522,6 +525,8 @@ Ref< VertexBuffer > RenderSystemVk::createVertexBuffer(const AlignedVector< Vert
 
 Ref< IndexBuffer > RenderSystemVk::createIndexBuffer(IndexType indexType, uint32_t bufferSize, bool dynamic)
 {
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+
 	VkBuffer indexBuffer = 0;
 
 	VkBufferCreateInfo bci = {};
@@ -542,6 +547,8 @@ Ref< IndexBuffer > RenderSystemVk::createIndexBuffer(IndexType indexType, uint32
 
 Ref< StructBuffer > RenderSystemVk::createStructBuffer(const AlignedVector< StructElement >& structElements, uint32_t bufferSize)
 {
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+
 	VkBuffer storageBuffer = 0;
 
 	VkBufferCreateInfo bci = {};
@@ -562,6 +569,8 @@ Ref< StructBuffer > RenderSystemVk::createStructBuffer(const AlignedVector< Stru
 
 Ref< ISimpleTexture > RenderSystemVk::createSimpleTexture(const SimpleTextureCreateDesc& desc, const wchar_t* const tag)
 {
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+
 	Ref< SimpleTextureVk > texture = new SimpleTextureVk(
 		m_physicalDevice,
 		m_logicalDevice,
@@ -580,6 +589,8 @@ Ref< ISimpleTexture > RenderSystemVk::createSimpleTexture(const SimpleTextureCre
 
 Ref< ICubeTexture > RenderSystemVk::createCubeTexture(const CubeTextureCreateDesc& desc, const wchar_t* const tag)
 {
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+
 	Ref< CubeTextureVk > texture = new CubeTextureVk(
 		m_physicalDevice,
 		m_logicalDevice,
@@ -596,6 +607,8 @@ Ref< ICubeTexture > RenderSystemVk::createCubeTexture(const CubeTextureCreateDes
 
 Ref< IVolumeTexture > RenderSystemVk::createVolumeTexture(const VolumeTextureCreateDesc& desc, const wchar_t* const tag)
 {
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+
 	Ref< VolumeTextureVk > texture = new VolumeTextureVk();
 	if (texture->create(
 		m_physicalDevice,
@@ -612,6 +625,8 @@ Ref< IVolumeTexture > RenderSystemVk::createVolumeTexture(const VolumeTextureCre
 
 Ref< IRenderTargetSet > RenderSystemVk::createRenderTargetSet(const RenderTargetSetCreateDesc& desc, IRenderTargetSet* sharedDepthStencil, const wchar_t* const tag)
 {
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+
 	Ref< RenderTargetSetVk > renderTargetSet = new RenderTargetSetVk(
 		m_physicalDevice,
 		m_logicalDevice,
@@ -627,6 +642,8 @@ Ref< IRenderTargetSet > RenderSystemVk::createRenderTargetSet(const RenderTarget
 
 Ref< IProgram > RenderSystemVk::createProgram(const ProgramResource* programResource, const wchar_t* const tag)
 {
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+
 	Ref< const ProgramResourceVk > resource = dynamic_type_cast< const ProgramResourceVk* >(programResource);
 	if (!resource)
 		return nullptr;

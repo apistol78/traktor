@@ -4,7 +4,7 @@
 #include "Database/Database.h"
 #include "Editor/IPipelineDepends.h"
 #include "Mesh/Editor/MaterialShaderGenerator.h"
-#include "Model/Material.h"
+#include "Model/Model.h"
 #include "Render/Editor/Shader/ShaderGraphValidator.h"
 #include "Render/Editor/Shader/External.h"
 #include "Render/Editor/Shader/FragmentLinker.h"
@@ -105,6 +105,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.mesh.MaterialShaderGenerator", MaterialShaderGe
 
 Ref< render::ShaderGraph > MaterialShaderGenerator::generate(
 	db::Database* database,
+	const model::Model& model,
 	const model::Material& material,
 	const Guid& materialTemplate,
 	bool vertexColor
@@ -146,21 +147,30 @@ Ref< render::ShaderGraph > MaterialShaderGenerator::generate(
 					externalNode->setFragmentGuid(c_implDiffuseVertex);
 			}
 			else
-				externalNode->setFragmentGuid(material.getDiffuseMap().channel == 0 ? c_implDiffuseMap0 : c_implDiffuseMap1);
+			{
+				uint32_t channel = model.getTexCoordChannel(material.getDiffuseMap().channel);
+				externalNode->setFragmentGuid(channel == 0 ? c_implDiffuseMap0 : c_implDiffuseMap1);
+			}
 		}
 		else if (fragmentGuid == c_tplEmissiveParams)
 		{
 			if (emissiveTexture.isNull())
 				externalNode->setFragmentGuid(c_implEmissiveConst);
 			else
-				externalNode->setFragmentGuid(material.getEmissiveMap().channel == 0 ? c_implEmissiveMap0 : c_implEmissiveMap1);
+			{
+				uint32_t channel = model.getTexCoordChannel(material.getEmissiveMap().channel);
+				externalNode->setFragmentGuid(channel == 0 ? c_implEmissiveMap0 : c_implEmissiveMap1);
+			}
 		}
 		else if (fragmentGuid == c_tplNormalParams)
 		{
 			if (normalTexture.isNull())
 				externalNode->setFragmentGuid(c_implNormalConst);
 			else
-				externalNode->setFragmentGuid(material.getNormalMap().channel == 0 ? c_implNormalMap0 : c_implNormalMap1);
+			{
+				uint32_t channel = model.getTexCoordChannel(material.getNormalMap().channel);
+				externalNode->setFragmentGuid(channel == 0 ? c_implNormalMap0 : c_implNormalMap1);
+			}
 		}
 		else if (fragmentGuid == c_tplOutput)
 		{
@@ -198,35 +208,50 @@ Ref< render::ShaderGraph > MaterialShaderGenerator::generate(
 			if (transparencyTexture.isNull())
 				externalNode->setFragmentGuid(c_implTransparencyConst);
 			else
-				externalNode->setFragmentGuid(material.getTransparencyMap().channel == 0 ? c_implTransparencyMap0 : c_implTransparencyMap1);
+			{
+				uint32_t channel = model.getTexCoordChannel(material.getTransparencyMap().channel);
+				externalNode->setFragmentGuid(channel == 0 ? c_implTransparencyMap0 : c_implTransparencyMap1);
+			}
 		}
 		else if (fragmentGuid == c_tplLightMapParams)
 		{
 			if (lightMapTexture.isNull())
 				externalNode->setFragmentGuid(c_implLightMapNull);
 			else
-				externalNode->setFragmentGuid(material.getLightMap().channel == 0 ? c_implLightMap0 : c_implLightMap1);
+			{
+				uint32_t channel = model.getTexCoordChannel(material.getLightMap().channel);
+				externalNode->setFragmentGuid(channel == 0 ? c_implLightMap0 : c_implLightMap1);
+			}
 		}
 		else if (fragmentGuid == c_tplRoughnessParams)
 		{
 			if (roughnessTexture.isNull())
 				externalNode->setFragmentGuid(c_implRoughnessConst);
 			else
-				externalNode->setFragmentGuid(material.getRoughnessMap().channel == 0 ? c_implRoughnessMap0 : c_implRoughnessMap1);
+			{
+				uint32_t channel = model.getTexCoordChannel(material.getRoughnessMap().channel);
+				externalNode->setFragmentGuid(channel == 0 ? c_implRoughnessMap0 : c_implRoughnessMap1);
+			}
 		}
 		else if (fragmentGuid == c_tplSpecularParams)
 		{
 			if (specularTexture.isNull())
 				externalNode->setFragmentGuid(c_implSpecularConst);
 			else
-				externalNode->setFragmentGuid(material.getSpecularMap().channel == 0 ? c_implSpecularMap0 : c_implSpecularMap1);
+			{
+				uint32_t channel = model.getTexCoordChannel(material.getSpecularMap().channel);
+				externalNode->setFragmentGuid(channel == 0 ? c_implSpecularMap0 : c_implSpecularMap1);
+			}
 		}
 		else if (fragmentGuid == c_tplMetalnessParams)
 		{
 			if (metalnessTexture.isNull())
 				externalNode->setFragmentGuid(c_implMetalnessConst);
 			else
-				externalNode->setFragmentGuid(material.getMetalnessMap().channel == 0 ? c_implMetalnessMap0 : c_implMetalnessMap1);
+			{
+				uint32_t channel = model.getTexCoordChannel(material.getMetalnessMap().channel);
+				externalNode->setFragmentGuid(channel == 0 ? c_implMetalnessMap0 : c_implMetalnessMap1);
+			}
 		}
 		else if (fragmentGuid == c_tplVertexParams)
 			externalNode->setFragmentGuid(c_implVertex);

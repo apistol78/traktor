@@ -2036,7 +2036,7 @@ void Switch::serialize(ISerializer& s)
 
 	s >> MemberAlignedVector< int32_t >(L"cases", m_cases);
 
-	if (s.getDirection() == ISerializer::SdRead)
+	if (s.getDirection() == ISerializer::Direction::Read)
 	{
 		const Guid c_null;
 		m_inputPins.resize(2 + m_cases.size());

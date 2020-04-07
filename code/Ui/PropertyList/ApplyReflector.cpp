@@ -42,7 +42,7 @@ ApplyReflector::ApplyReflector(AutoPropertyList* propertyList)
 
 Serializer::Direction ApplyReflector::getDirection() const
 {
-	return Serializer::SdRead;
+	return Serializer::Direction::Read;
 }
 
 void ApplyReflector::operator >> (const Member< bool >& m)

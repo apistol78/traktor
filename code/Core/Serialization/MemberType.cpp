@@ -12,7 +12,7 @@ MemberType::MemberType(const wchar_t* const name, const TypeInfo*& type)
 
 void MemberType::serialize(ISerializer& s) const
 {
-	if (s.getDirection() == ISerializer::SdRead)
+	if (s.getDirection() == ISerializer::Direction::Read)
 	{
 		std::wstring name;
 		s >> Member< std::wstring >(getName(), name);
@@ -24,7 +24,7 @@ void MemberType::serialize(ISerializer& s) const
 		else
 			m_type = 0;
 	}
-	else	// SdWrite
+	else	// Direction::Write
 	{
 		std::wstring name = m_type ? m_type->getName() : L"";
 		s >> Member< std::wstring >(getName(), name);

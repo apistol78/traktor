@@ -15,7 +15,6 @@
 #include "Shape/Editor/Solid/SolidEntityData.h"
 #include "Shape/Editor/Solid/SolidEntityPipeline.h"
 #include "Shape/Editor/Solid/SolidEntityReplicator.h"
-#include "Shape/Editor/Solid/SolidMaterial.h"
 #include "World/EntityData.h"
 
 namespace traktor
@@ -39,7 +38,6 @@ TypeInfoSet SolidEntityPipeline::getAssetTypes() const
 	TypeInfoSet typeInfoSet;
 	typeInfoSet.insert< PrimitiveEntityData >();
 	typeInfoSet.insert< SolidEntityData >();
-	typeInfoSet.insert< SolidMaterial >();
 	return typeInfoSet;
 }
 
@@ -59,18 +57,6 @@ bool SolidEntityPipeline::buildDependencies(
 		const auto& materials = primitiveEntityData->getMaterials();
 		for (const auto& pair : materials)
 			pipelineDepends->addDependency(pair.second, editor::PdfUse);
-	}
-	else if (auto solidEntityData = dynamic_type_cast< const SolidEntityData* >(sourceAsset))
-	{
-		// \tbd Add only shader for editor preview...
-		pipelineDepends->addDependency(solidEntityData->getShader(), editor::PdfResource | editor::PdfBuild);
-	}
-	else if (auto solidMaterial = dynamic_type_cast< const SolidMaterial* >(sourceAsset))
-	{
-		pipelineDepends->addDependency(solidMaterial->getAlbedo(), editor::PdfResource | editor::PdfBuild);
-		pipelineDepends->addDependency(solidMaterial->getNormal(), editor::PdfResource | editor::PdfBuild);
-		pipelineDepends->addDependency(solidMaterial->getRoughness(), editor::PdfResource | editor::PdfBuild);
-		pipelineDepends->addDependency(solidMaterial->getMetalness(), editor::PdfResource | editor::PdfBuild);
 	}
 	else
 		return false;

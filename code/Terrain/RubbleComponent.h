@@ -61,7 +61,7 @@ private:
 	struct RubbleMesh
 	{
 		resource::Proxy< mesh::InstanceMesh > mesh;
-		uint8_t material;
+		uint8_t attribute;
 		int32_t density;
 		float randomScaleAmount;
 	};
@@ -78,9 +78,10 @@ private:
 		RubbleMesh* rubbleDef;
 		Vector4 center;
 		float distance;
-		bool visible;
+		int32_t seed;
 		int32_t from;
 		int32_t to;
+		bool visible;
 	};
 
 	world::Entity* m_owner;

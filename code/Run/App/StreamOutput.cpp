@@ -10,15 +10,15 @@ namespace traktor
 OutputStream::LineEnd translateLineEnding(const std::wstring& lineEnding)
 {
 	if (lineEnding == L"auto")
-		return OutputStream::LeAuto;
+		return OutputStream::LineEnd::Auto;
 	else if (lineEnding == L"win")
-		return OutputStream::LeWin;
+		return OutputStream::LineEnd::Win;
 	else if (lineEnding == L"mac")
-		return OutputStream::LeMac;
+		return OutputStream::LineEnd::Mac;
 	else if (lineEnding == L"unix")
-		return OutputStream::LeUnix;
+		return OutputStream::LineEnd::Unix;
 	else
-		return OutputStream::LeAuto;
+		return OutputStream::LineEnd::Auto;
 }
 
 		}

@@ -55,7 +55,7 @@ void EditorProfile::createEntityFactories(
 {
 	outEntityFactories.push_back(new PrefabEntityFactory());
 	outEntityFactories.push_back(new SolidEntityFactory(context->getResourceManager(), context->getRenderSystem()));
-	outEntityFactories.push_back(new EntityFactory(context->getResourceManager(), context->getRenderSystem()));
+	outEntityFactories.push_back(new EntityFactory(context->getSourceDatabase()));
 }
 
 void EditorProfile::createEntityRenderers(

@@ -93,6 +93,11 @@ public:
 			return m_ptr;
 		}
 
+		reference operator [] (int offset) const
+		{
+			return *(m_ptr + offset);
+		}
+
 		const_iterator operator + (int offset) const
 		{
 			return const_iterator(m_ptr + offset);
@@ -217,6 +222,11 @@ public:
 		pointer operator -> () const
 		{
 			return _O::m_ptr;
+		}
+
+		reference operator [] (int offset) const
+		{
+			return *(m_ptr + offset);
 		}
 
 		iterator operator + (int offset) const
@@ -533,7 +543,7 @@ public:
 	}
 
 #if defined(T_CXX11)
-	AlignedVector(AlignedVector< ItemType >&& src)
+	AlignedVector(AlignedVector< ItemType >&& src) noexcept
 	:	m_data(src.m_data)
 	,	m_size(src.m_size)
 	,	m_capacity(src.m_capacity)
@@ -1003,7 +1013,7 @@ public:
 	}
 
 #if defined(T_CXX11)
-	AlignedVector< ItemType >& operator = (AlignedVector< ItemType >&& src)
+	AlignedVector< ItemType >& operator = (AlignedVector< ItemType >&& src) noexcept
 	{
 		clear();
 

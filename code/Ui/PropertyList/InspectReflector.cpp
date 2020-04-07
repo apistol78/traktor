@@ -119,7 +119,7 @@ InspectReflector::InspectReflector(AutoPropertyList* propertyList, PropertyItem*
 
 Serializer::Direction InspectReflector::getDirection() const
 {
-	return Serializer::SdWrite;
+	return Serializer::Direction::Write;
 }
 
 void InspectReflector::operator >> (const Member< bool >& m)

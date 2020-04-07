@@ -25,13 +25,13 @@ class T_DLLCLASS IRuntimeClass : public Object
 
 public:
 	/*! Operator types. */
-	enum OperatorType
+	enum class Operator
 	{
-		OptAdd = 0,
-		OptSubtract = 1,
-		OptMultiply = 2,
-		OptDivide = 3,
-		OptCount = 4
+		Add = 0,
+		Subtract = 1,
+		Multiply = 2,
+		Divide = 3,
+		Count = 4
 	};
 
 	/*! Get exported native type. */
@@ -80,7 +80,7 @@ public:
 	virtual const IRuntimeDispatch* getPropertySetDispatch(uint32_t propertyId) const = 0;
 
 	/*! Get math operator. */
-	virtual const IRuntimeDispatch* getOperatorDispatch(OperatorType op) const = 0;
+	virtual const IRuntimeDispatch* getOperatorDispatch(Operator op) const = 0;
 
 	/*! Invoke unknown method. */
 	virtual const IRuntimeDispatch* getUnknownDispatch() const = 0;

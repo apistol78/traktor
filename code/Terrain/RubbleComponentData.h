@@ -40,7 +40,7 @@ private:
 	struct RubbleMesh
 	{
 		resource::Id< mesh::InstanceMesh > mesh;
-		uint8_t material;
+		uint8_t attribute;
 		int32_t density;
 		float randomScaleAmount;
 

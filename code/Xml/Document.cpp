@@ -38,15 +38,15 @@ bool Document::loadFromStream(IStream* stream, const std::wstring& name)
 	for (;;)
 	{
 		XmlPullParser::EventType et = xpp.next();
-		if (et == XmlPullParser::EtEndDocument)
+		if (et == XmlPullParser::EventType::EndDocument)
 			break;
-		else if (et == XmlPullParser::EtInvalid)
+		else if (et == XmlPullParser::EventType::Invalid)
 			return false;
 
 		const XmlPullParser::Event& e = xpp.getEvent();
 		switch (e.type)
 		{
-		case XmlPullParser::EtStartElement:
+		case XmlPullParser::EventType::StartElement:
 			{
 				Ref< Element > element = new Element(e.value);
 				for (XmlPullParser::Attributes::const_iterator i = e.attr.begin(); i != e.attr.end(); ++i)
@@ -61,7 +61,7 @@ bool Document::loadFromStream(IStream* stream, const std::wstring& name)
 			}
 			break;
 
-		case XmlPullParser::EtText:
+		case XmlPullParser::EventType::Text:
 			{
 				if (!stack.empty() && !trim(e.value).empty())
 				{
@@ -71,7 +71,7 @@ bool Document::loadFromStream(IStream* stream, const std::wstring& name)
 			}
 			break;
 
-		case XmlPullParser::EtEndElement:
+		case XmlPullParser::EventType::EndElement:
 			{
 				T_ASSERT(!stack.empty());
 				T_ASSERT(stack.back()->getName() == e.value);

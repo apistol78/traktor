@@ -28,6 +28,7 @@ Splitter::Splitter()
 :	m_vertical(true)
 ,	m_position(0)
 ,	m_negative(false)
+,	m_relative(false)
 ,	m_border(0)
 ,	m_drag(false)
 {

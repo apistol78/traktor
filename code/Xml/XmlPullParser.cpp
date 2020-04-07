@@ -18,12 +18,12 @@ namespace traktor
 
 const Utf8Encoding c_utf8enc;
 
-inline std::wstring xmltows(const XML_Char* xmlstr, const XML_Char* term)
+std::wstring xmltows(const XML_Char* xmlstr, const XML_Char* term)
 {
 	return mbstows(c_utf8enc, std::string(xmlstr, term));
 }
 
-inline std::wstring xmltows(const XML_Char* xmlstr)
+std::wstring xmltows(const XML_Char* xmlstr)
 {
 	return mbstows((const char*)xmlstr);
 }
@@ -83,7 +83,7 @@ XmlPullParserImpl::XmlPullParserImpl(IStream* stream, const std::wstring& name)
 	XML_SetCharacterDataHandler(m_parser, characterData);
 	XML_SetUnknownEncodingHandler(m_parser, unknownEncoding, 0);
 
-	m_eventQueue[0].type = XmlPullParser::EtStartDocument;
+	m_eventQueue[0].type = XmlPullParser::EventType::StartDocument;
 	m_eventQueueTail++;
 }
 
@@ -126,7 +126,7 @@ bool XmlPullParserImpl::parse()
 			if (!evt)
 				return false;
 
-			evt->type = XmlPullParser::EtInvalid;
+			evt->type = XmlPullParser::EventType::Invalid;
 			pushEvent();
 
 			return true;
@@ -141,7 +141,7 @@ bool XmlPullParserImpl::parse()
 		if (!evt)
 			return false;
 
-		evt->type = XmlPullParser::EtEndDocument;
+		evt->type = XmlPullParser::EventType::EndDocument;
 		pushEvent();
 
 		XML_ParserFree(m_parser);
@@ -153,7 +153,7 @@ bool XmlPullParserImpl::parse()
 XmlPullParser::Event* XmlPullParserImpl::allocEvent()
 {
 	XmlPullParser::Event& evt = m_eventQueue[m_eventQueueTail];
-	evt.type = XmlPullParser::EtInvalid;
+	evt.type = XmlPullParser::EventType::Invalid;
 	evt.value.clear();
 	evt.attr.clear();
 	return &evt;
@@ -184,7 +184,7 @@ void XmlPullParserImpl::pushCharacterData()
 		XmlPullParser::Event* evt = allocEvent();
 		if (evt)
 		{
-			evt->type = XmlPullParser::EtText;
+			evt->type = XmlPullParser::EventType::Text;
 			evt->value = std::wstring(ss, es + 1);
 			pushEvent();
 		}
@@ -203,7 +203,7 @@ void XMLCALL XmlPullParserImpl::startElement(void* userData, const XML_Char* nam
 	XmlPullParser::Event* evt = pp->allocEvent();
 	if (evt)
 	{
-		evt->type = XmlPullParser::EtStartElement;
+		evt->type = XmlPullParser::EventType::StartElement;
 		evt->value = xmltows(name);
 
 		for (int i = 0; atts[i]; i += 2)
@@ -223,7 +223,7 @@ void XMLCALL XmlPullParserImpl::endElement(void* userData, const XML_Char* name)
 	XmlPullParser::Event* evt = pp->allocEvent();
 	if (evt)
 	{
-		evt->type = XmlPullParser::EtEndElement;
+		evt->type = XmlPullParser::EventType::EndElement;
 		evt->value = xmltows(name);
 		pp->pushEvent();
 	}
@@ -245,7 +245,7 @@ int XMLCALL XmlPullParserImpl::unknownEncoding(void* userData, const XML_Char* n
 	// @fixme Should use IEncoding classes from Core.
 	if (compareIgnoreCase(xmltows(name), L"Windows-1252") == 0)
 	{
-		for (int i = 0; i < 256; ++i)
+		for (int32_t i = 0; i < 256; ++i)
 			info->map[i] = i;
 
 		info->data = 0;
@@ -278,16 +278,16 @@ XmlPullParser::EventType XmlPullParser::next()
 		return m_event.type;
 	}
 
-	if (m_event.type == EtEndDocument)
+	if (m_event.type == EventType::EndDocument)
 		return m_event.type;
 
 	if (!m_impl)
-		return EtInvalid;
+		return EventType::Invalid;
 
 	if (!m_impl->get(m_event))
 	{
-		delete m_impl; m_impl = 0;
-		return EtInvalid;
+		delete m_impl; m_impl = nullptr;
+		return EventType::Invalid;
 	}
 
 	return m_event.type;

@@ -33,7 +33,7 @@ public:
 
 	virtual void serialize(ISerializer& s) const
 	{
-		if (s.getDirection() == ISerializer::SdWrite)
+		if (s.getDirection() == ISerializer::Direction::Write)
 		{
 			Guid id = m_pin->getId();
 			std::wstring name = m_pin->getName();
@@ -47,7 +47,7 @@ public:
 			if (s.getVersion() >= 1)
 				s >> Member< bool >(L"optional", optional);
 		}
-		else	// SdRead
+		else	// Direction::Read
 		{
 			Guid id;
 			std::wstring name = L"";
@@ -101,7 +101,7 @@ public:
 
 	virtual void serialize(ISerializer& s) const
 	{
-		if (s.getDirection() == ISerializer::SdWrite)
+		if (s.getDirection() == ISerializer::Direction::Write)
 		{
 			Guid id = m_pin->getId();
 			std::wstring name = m_pin->getName();
@@ -111,7 +111,7 @@ public:
 
 			s >> Member< std::wstring >(L"name", name);
 		}
-		else	// SdRead
+		else	// Direction::Read
 		{
 			Guid id;
 			std::wstring name;

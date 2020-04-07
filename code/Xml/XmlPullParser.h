@@ -29,14 +29,14 @@ class T_DLLCLASS XmlPullParser : public Object
 	T_RTTI_CLASS;
 
 public:
-	enum EventType
+	enum class EventType
 	{
-		EtInvalid,
-		EtStartDocument,
-		EtStartElement,
-		EtText,
-		EtEndElement,
-		EtEndDocument
+		Invalid,
+		StartDocument,
+		StartElement,
+		Text,
+		EndElement,
+		EndDocument
 	};
 
 	typedef std::pair< std::wstring, std::wstring > Attribute;
@@ -49,7 +49,7 @@ public:
 		Attributes attr;
 
 		Event()
-		:	type(EtInvalid)
+		:	type(EventType::Invalid)
 		{
 		}
 	};
@@ -67,7 +67,7 @@ public:
 private:
 	XmlPullParserImpl* m_impl;	/**< Parser implementation. */
 	Event m_event;				/**< Current event. */
-	int m_pushed;				/**< If current event is being pushed. */
+	int32_t m_pushed;			/**< If current event is being pushed. */
 };
 
 	}

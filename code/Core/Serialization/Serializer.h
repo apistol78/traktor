@@ -57,6 +57,11 @@ private:
 	{
 		int32_t v;
 		dataVersionMap_t dvm;
+
+		Version()
+		:	v(0)
+		{
+		}
 	};
 
 	AlignedVector< Version > m_versions;

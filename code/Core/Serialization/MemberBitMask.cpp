@@ -14,7 +14,7 @@ MemberBitMask::MemberBitMask(const wchar_t* const name, uint32_t& bm, const Bit*
 
 void MemberBitMask::serialize(ISerializer& s) const
 {
-	if (s.getDirection() == ISerializer::SdRead)
+	if (s.getDirection() == ISerializer::Direction::Read)
 		m_bm = 0;
 	for (int i = 0; m_bits[i].id; ++i)
 	{

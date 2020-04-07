@@ -392,7 +392,7 @@ void ActionValue::serialize(ISerializer& s)
 
 	case AvtString:
 		{
-			if (s.getDirection() == ISerializer::SdRead)
+			if (s.getDirection() == ISerializer::Direction::Read)
 			{
 				std::string str;
 				s >> Member< std::string >(L"value", str);

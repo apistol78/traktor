@@ -25,7 +25,7 @@ uint32_t AttributeBrush::begin(float x, float y, const State& state)
 	m_fallOff = state.falloff;
 	m_strength = powf(abs(state.strength), 2.0f);
 	m_attribute = state.attribute;
-	return MdMaterial;
+	return MdAttribute;
 }
 
 void AttributeBrush::apply(float x, float y)
@@ -41,7 +41,7 @@ void AttributeBrush::apply(float x, float y)
 			if (abs(a) <= FUZZY_EPSILON)
 				continue;
 
-			m_heightfield->setGridMaterial(x + ix, y + iy, m_attribute);
+			m_heightfield->setGridAttribute(x + ix, y + iy, m_attribute);
 		}
 	}
 }

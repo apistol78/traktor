@@ -8,6 +8,11 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.TabPage", TabPage, Container)
 
+TabPage::TabPage()
+:	m_tab(nullptr)
+{
+}
+
 bool TabPage::create(Tab* tab, const std::wstring& text, int32_t imageIndex, Layout* layout)
 {
 	m_tab = tab;
