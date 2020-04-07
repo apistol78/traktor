@@ -22,7 +22,7 @@ public:
 		MdColor = 2,
 		MdHeight = 4,
 		MdCut = 8,
-		MdMaterial = 16
+		MdAttribute = 16
 	};
 
 	struct State

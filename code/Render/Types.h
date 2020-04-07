@@ -394,11 +394,13 @@ struct RenderSystemStatistics
 struct RenderViewStatistics
 {
 	// Last frame.
+	uint32_t passCount;
 	uint32_t drawCalls;
 	uint32_t primitiveCount;
 
 	RenderViewStatistics()
-	:	drawCalls(0)
+	:	passCount(0)
+	,	drawCalls(0)
 	,	primitiveCount(0)
 	{
 	}

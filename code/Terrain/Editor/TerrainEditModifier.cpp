@@ -436,7 +436,7 @@ bool TerrainEditModifier::activate()
 	{
 		for (int32_t u = 0; u < size; ++u)
 		{
-			m_attributeData[u + v * size] = m_heightfield->getGridMaterial(u, v);
+			m_attributeData[u + v * size] = m_heightfield->getGridAttribute(u, v);
 		}
 	}
 
@@ -909,13 +909,13 @@ void TerrainEditModifier::apply(const Vector4& center)
 	}
 
 	// Update material mask.
-	if ((m_brushMode & IBrush::MdMaterial) != 0)
+	if ((m_brushMode & IBrush::MdAttribute) != 0)
 	{
 		for (int32_t v = mnz; v <= mxz; ++v)
 		{
 			for (int32_t u = mnx; u <= mxx; ++u)
 			{
-				m_attributeData[u + v * size] = m_heightfield->getGridMaterial(u, v);
+				m_attributeData[u + v * size] = m_heightfield->getGridAttribute(u, v);
 			}
 		}
 
@@ -1040,7 +1040,7 @@ void TerrainEditModifier::end()
 
 	// Checkout heightfield asset.
 	if (
-		(m_brushMode & (IBrush::MdHeight | IBrush::MdCut | IBrush::MdMaterial)) != 0 &&
+		(m_brushMode & (IBrush::MdHeight | IBrush::MdCut | IBrush::MdAttribute)) != 0 &&
 		!m_heightfieldInstance
 	)
 	{
@@ -1079,7 +1079,7 @@ void TerrainEditModifier::end()
 
 	// Write modifications to heightfield.
 	if (
-		(m_brushMode & (IBrush::MdHeight | IBrush::MdCut | IBrush::MdMaterial)) != 0 &&
+		(m_brushMode & (IBrush::MdHeight | IBrush::MdCut | IBrush::MdAttribute)) != 0 &&
 		m_heightfieldInstance
 	)
 	{

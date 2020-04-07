@@ -358,6 +358,9 @@ void TargetInstanceListItem::paint(ui::Canvas& canvas, const ui::Rect& rect)
 		middleRect2.bottom = middleRect2.top + ui::dpi96(c_performanceLineHeight);
 
 		middleRect2.left += ui::dpi96(26);
+		canvas.drawText(middleRect2, L"Pass: " + toString(performance.passCount), ui::AnLeft, ui::AnCenter);
+
+		middleRect2.left += ui::dpi96(100);
 		canvas.drawText(middleRect2, L"Draw: " + toString(performance.drawCalls), ui::AnLeft, ui::AnCenter);
 
 		middleRect2.left += ui::dpi96(100);

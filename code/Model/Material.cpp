@@ -10,10 +10,10 @@ namespace traktor
 	namespace model
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.model.Material", 0, Material, PropertyGroup)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.model.Material", 0, Material, PropertyGroup)
 
 Material::Material()
-:	m_name(L"")
+:	m_name(L"Unnamed")
 ,	m_color(1.0f, 1.0f, 1.0f, 1.0f)
 ,	m_diffuseTerm(1.0f)
 ,	m_specularTerm(1.0f)
@@ -310,7 +310,7 @@ void Material::serialize(ISerializer& s)
 void Material::Map::serialize(ISerializer& s)
 {
 	s >> Member< std::wstring >(L"name", name);
-	s >> Member< uint32_t >(L"channel", channel);
+	s >> Member< std::wstring >(L"channel", channel);
 	s >> Member< bool >(L"anisotropic", anisotropic);
 	s >> Member< Guid >(L"texture", texture);
 }

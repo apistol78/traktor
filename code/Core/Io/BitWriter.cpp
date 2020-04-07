@@ -29,18 +29,18 @@ void BitWriter::writeBit(bool bit)
 		flush();
 }
 
-void BitWriter::writeUnsigned(int32_t nbits, uint32_t value)
+void BitWriter::writeUnsigned(int32_t nbits, uint64_t value)
 {
 	for (int32_t i = 0; i < nbits; ++i)
 	{
-		uint32_t bit = 1 << (nbits - i - 1);
+		uint64_t bit = 1ULL << (nbits - i - 1);
 		writeBit((value & bit) == bit);
 	}
 }
 
-void BitWriter::writeSigned(int32_t nbits, int32_t value)
+void BitWriter::writeSigned(int32_t nbits, int64_t value)
 {
-	writeUnsigned(nbits, *(uint32_t*)&value);
+	writeUnsigned(nbits, *(uint64_t*)&value);
 }
 
 bool BitWriter::writeInt8(int8_t v)

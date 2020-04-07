@@ -928,6 +928,7 @@ bool Application::update()
 			m_targetPerformance.heapObjects = Object::getHeapObjectCount();
 			m_targetPerformance.build = float(buildTimeEnd - buildTimeStart);
 			m_targetPerformance.render = m_renderDuration;
+			m_targetPerformance.passCount = m_renderViewStats.passCount;
 			m_targetPerformance.drawCalls = m_renderViewStats.drawCalls;
 			m_targetPerformance.primitiveCount = m_renderViewStats.primitiveCount;
 			m_targetPerformance.residentResourcesCount = rms.residentCount;

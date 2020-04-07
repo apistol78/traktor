@@ -37,7 +37,7 @@ void Sound::serialize(ISerializer& s)
 
 	for (uint8_t i = 0; i < m_channels; ++i)
 	{
-		if (s.getDirection() == ISerializer::SdRead)
+		if (s.getDirection() == ISerializer::Direction::Read)
 			m_samples[i].reset(new int16_t [m_samplesCount]);
 
 		void* data = m_samples[i].ptr();

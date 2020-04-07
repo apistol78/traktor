@@ -36,7 +36,7 @@ bool DropDown::create(Widget* parent, int32_t style)
 
 int32_t DropDown::add(const std::wstring& item, Object* data)
 {
-	m_items.push_back({ item, data });
+	m_items.push_back({ item, data, false });
 	return (int32_t)m_items.size() - 1;
 }
 

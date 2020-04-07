@@ -93,6 +93,11 @@ private:
 		std::wstring name;
 		int index;
 		SmallMap< std::wstring, int > dups;
+
+		Entry()
+		:	index(0)
+		{
+		}
 	};
 
 	AlignedVector< Entry > m_stack;

@@ -60,7 +60,7 @@ XmlSerializer::XmlSerializer(IStream* stream)
 
 Serializer::Direction XmlSerializer::getDirection() const
 {
-	return ISerializer::SdWrite;
+	return ISerializer::Direction::Write;
 }
 
 void XmlSerializer::operator >> (const Member< bool >& m)

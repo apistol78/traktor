@@ -30,6 +30,7 @@ ScrollBar::ScrollBar()
 ,	m_range(100)
 ,	m_page(10)
 ,	m_position(0)
+,	m_trackOffset(0)
 {
 }
 

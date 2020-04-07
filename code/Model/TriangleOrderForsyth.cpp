@@ -182,7 +182,7 @@ void optimizeFaces(const AlignedVector< uint32_t >& indexList, uint32_t vertexCo
 
 	std::vector< uint32_t > activeFaceList;
 
-	const uint32_t kEvictedCacheIndex = std::numeric_limits< uint32_t >::max();
+	constexpr uint32_t kEvictedCacheIndex = std::numeric_limits< uint32_t >::max();
 
 	{
 		// Allocate face list per vertex

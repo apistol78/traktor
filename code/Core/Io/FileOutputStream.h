@@ -24,7 +24,7 @@ class T_DLLCLASS FileOutputStream : public OutputStream
 	T_RTTI_CLASS;
 
 public:
-	FileOutputStream(IStream* stream, IEncoding* encoding, LineEnd lineEnd = LeAuto);
+	FileOutputStream(IStream* stream, IEncoding* encoding, LineEnd lineEnd = LineEnd::Auto);
 
 	void close();
 };

@@ -27,7 +27,7 @@ public:
 		uint8_t blob[131072];
 		uint32_t blobSize;
 
-		if (s.getDirection() == ISerializer::SdRead)
+		if (s.getDirection() == ISerializer::Direction::Read)
 		{
 			blobSize = sizeof(blob);
 			s >> Member< void* >(getName(), blob, blobSize);
@@ -41,7 +41,7 @@ public:
 
 			std::memcpy(m_ref->getData(), blob, blobSize);
 		}
-		else	// SdWrite
+		else	// Direction::Write
 		{
 			blobSize = m_ref ? m_ref->getSize() : 0;
 			T_ASSERT(blobSize < sizeof(blob));

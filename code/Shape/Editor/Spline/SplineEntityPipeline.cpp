@@ -1,3 +1,4 @@
+#include "Core/Log/Log.h"
 #include "Core/Serialization/DeepClone.h"
 #include "Core/Settings/PropertyBoolean.h"
 #include "Editor/IPipelineBuilder.h"
@@ -6,6 +7,12 @@
 #include "Mesh/MeshComponentData.h"
 #include "Mesh/Editor/MeshAsset.h"
 #include "Model/Model.h"
+#include "Model/ModelFormat.h"
+#include "Physics/MeshShapeDesc.h"
+#include "Physics/StaticBodyDesc.h"
+#include "Physics/Editor/MeshAsset.h"
+#include "Physics/World/RigidBodyComponentData.h"
+#include "Shape/Editor/Spline/ControlPointComponentData.h"
 #include "Shape/Editor/Spline/ExtrudeShapeLayerData.h"
 #include "Shape/Editor/Spline/SplineEntityData.h"
 #include "Shape/Editor/Spline/SplineEntityPipeline.h"
@@ -16,7 +23,7 @@ namespace traktor
 	namespace shape
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.shape.SplineEntityPipeline", 0, SplineEntityPipeline, world::EntityPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.shape.SplineEntityPipeline", 1, SplineEntityPipeline, world::EntityPipeline)
 
 SplineEntityPipeline::SplineEntityPipeline()
 :	m_targetEditor(false)
@@ -28,13 +35,14 @@ bool SplineEntityPipeline::create(const editor::IPipelineSettings* settings)
 	if (!world::EntityPipeline::create(settings))
 		return false;
 
-	m_targetEditor = settings->getProperty< bool >(L"Pipeline.TargetEditor");
+	//m_targetEditor = settings->getProperty< bool >(L"Pipeline.TargetEditor");
 	return true;
 }
 
 TypeInfoSet SplineEntityPipeline::getAssetTypes() const
 {
 	return makeTypeInfoSet<
+		ControlPointComponentData,
 		ExtrudeShapeLayerData,
 		SplineEntityData
 	>();
@@ -48,12 +56,10 @@ bool SplineEntityPipeline::buildDependencies(
 	const Guid& outputGuid
 ) const
 {
-	if (auto extrudeShapeData = dynamic_type_cast< const ExtrudeShapeLayerData* >(sourceAsset))
-	{
-		if (m_targetEditor)
-			pipelineDepends->addDependency(extrudeShapeData->getShader(), editor::PdfResource | editor::PdfBuild);
-	}
-	return true;
+	if (auto extrudeShapeLayerData = dynamic_type_cast< const ExtrudeShapeLayerData* >(sourceAsset))
+		pipelineDepends->addDependency(extrudeShapeLayerData->getMaterial(), editor::PdfBuild);
+
+	return world::EntityPipeline::buildDependencies(pipelineDepends, sourceInstance, sourceAsset, outputPath, outputGuid);
 }
 
 Ref< ISerializable > SplineEntityPipeline::buildOutput(
@@ -63,47 +69,72 @@ Ref< ISerializable > SplineEntityPipeline::buildOutput(
 	const Object* buildParams
 ) const
 {
-	if (m_targetEditor)
-	{
-		// Editor support runtime editing of splines.
-		return DeepClone(sourceAsset).create();
-	}
-	else if (auto splineEntityData = dynamic_type_cast< const SplineEntityData* >(sourceAsset))
+	if (auto splineEntityData = dynamic_type_cast< const SplineEntityData* >(sourceAsset))
 	{
 		// Create model from spline.
-		Ref< model::Model > model = SplineEntityReplicator().createModel(pipelineBuilder, L"", splineEntityData);
-		if (!model)
+		Ref< model::Model > outputModel = SplineEntityReplicator().createModel(pipelineBuilder, L"", splineEntityData);
+		if (!outputModel)
+		{
+			log::warning << L"Unable to create model from spline \"" << splineEntityData->getName() << L"\"." << Endl;
 			return nullptr;
+		}
 
-		// Create our output entity which will only contain the mesh.
-		Ref< world::EntityData > entityData = new world::EntityData();
-		entityData->setName(splineEntityData->getName());
-		entityData->setTransform(splineEntityData->getTransform());
+		Guid outputRenderMeshGuid = pipelineBuilder->synthesizeOutputGuid(1);
+		Guid outputCollisionShapeGuid = pipelineBuilder->synthesizeOutputGuid(1);
 
-		// Build output mesh from model.
-		Ref< mesh::MeshAsset > meshAsset = new mesh::MeshAsset();
-		meshAsset->setMeshType(mesh::MeshAsset::MtStatic);
+		std::wstring outputRenderMeshPath = L"Generated/" + outputRenderMeshGuid.format();
+		std::wstring outputCollisionShapePath = L"Generated/" + outputCollisionShapeGuid.format();
 
-		Guid outputmMeshGuid = pipelineBuilder->synthesizeOutputGuid(1);
-		std::wstring outputMeshPath = L"Generated/" + outputmMeshGuid.format();
+		// Create our output entity which will only contain the merged meshes.
+		Ref< world::EntityData > outputEntityData = new world::EntityData();
+		outputEntityData->setName(splineEntityData->getName());
+		outputEntityData->setTransform(splineEntityData->getTransform());
 
+		// Build output mesh from merged model.
+		Ref< mesh::MeshAsset > visualMeshAsset = new mesh::MeshAsset();
+		visualMeshAsset->setMeshType(mesh::MeshAsset::MtPartition);
 		pipelineBuilder->buildOutput(
 			sourceInstance,
-			meshAsset,
-			outputMeshPath,
-			outputmMeshGuid,
-			model
+			visualMeshAsset,
+			outputRenderMeshPath,
+			outputRenderMeshGuid,
+			outputModel
 		);
 
-		// Add mesh component to reference our mesh.
-		entityData->setComponent(new mesh::MeshComponentData(
-			resource::Id< mesh::IMesh >(outputmMeshGuid)
+		// Replace mesh component referencing our merged mesh.
+		outputEntityData->setComponent(new mesh::MeshComponentData(
+			resource::Id< mesh::IMesh >(outputRenderMeshGuid)
 		));
 
-		return entityData;
+		// Build output mesh from merged model.
+		Ref< physics::MeshAsset > physicsMeshAsset = new physics::MeshAsset();
+		physicsMeshAsset->setMargin(0.0f);
+		physicsMeshAsset->setCalculateConvexHull(false);
+		pipelineBuilder->buildOutput(
+			sourceInstance,
+			physicsMeshAsset,
+			outputCollisionShapePath,
+			outputCollisionShapeGuid,
+			outputModel
+		);
+
+		// Replace mesh component referencing our merged physics mesh.
+		Ref< physics::MeshShapeDesc > outputShapeDesc = new physics::MeshShapeDesc();
+		outputShapeDesc->setMesh(resource::Id< physics::Mesh >(outputCollisionShapeGuid));
+		outputShapeDesc->setCollisionGroup(splineEntityData->getCollisionGroup());
+		outputShapeDesc->setCollisionMask(splineEntityData->getCollisionMask());
+
+		Ref< physics::StaticBodyDesc > outputBodyDesc = new physics::StaticBodyDesc();
+		outputBodyDesc->setShape(outputShapeDesc);
+
+		outputEntityData->setComponent(new physics::RigidBodyComponentData(
+			outputBodyDesc
+		));
+
+		return outputEntityData;
 	}
 	else
-		return nullptr;
+		return world::EntityPipeline::buildOutput(pipelineBuilder, sourceInstance, sourceAsset, buildParams);
 }
 
 	}

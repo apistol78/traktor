@@ -26,7 +26,7 @@ public:
 	virtual void serialize(ISerializer& s) const
 	{
 		std::wstring url;
-		if (s.getDirection() == ISerializer::SdRead)
+		if (s.getDirection() == ISerializer::Direction::Read)
 		{
 			s >> Member< std::wstring >(getName(), url);
 			m_ref = Url(url);

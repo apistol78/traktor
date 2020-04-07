@@ -361,7 +361,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.CompactSerializer", CompactSerializer, Serializ
 CompactSerializer::CompactSerializer(IStream* stream, const TypeInfo** types, uint32_t ntypes)
 :	m_types(types)
 ,	m_ntypes(ntypes)
-,	m_direction(stream->canRead() ? SdRead : SdWrite)
+,	m_direction(stream->canRead() ? Direction::Read : Direction::Write)
 ,	m_reader(stream)
 ,	m_writer(stream)
 {
@@ -369,7 +369,7 @@ CompactSerializer::CompactSerializer(IStream* stream, const TypeInfo** types, ui
 
 void CompactSerializer::flush()
 {
-	if (m_direction == SdWrite)
+	if (m_direction == Direction::Write)
 		m_writer.flush();
 }
 
@@ -381,7 +381,7 @@ Serializer::Direction CompactSerializer::getDirection() const
 void CompactSerializer::operator >> (const Member< bool >& m)
 {
 	T_CHECK_STATUS;
-	if (m_direction == SdRead)
+	if (m_direction == Direction::Read)
 		read_bool(m_reader, m);
 	else
 		write_bool(m_writer, m);
@@ -390,7 +390,7 @@ void CompactSerializer::operator >> (const Member< bool >& m)
 void CompactSerializer::operator >> (const Member< int8_t >& m)
 {
 	T_CHECK_STATUS;
-	if (m_direction == SdRead)
+	if (m_direction == Direction::Read)
 		read_int8(m_reader, m);
 	else
 		write_int8(m_writer, m);
@@ -399,7 +399,7 @@ void CompactSerializer::operator >> (const Member< int8_t >& m)
 void CompactSerializer::operator >> (const Member< uint8_t >& m)
 {
 	T_CHECK_STATUS;
-	if (m_direction == SdRead)
+	if (m_direction == Direction::Read)
 		read_uint8(m_reader, m);
 	else
 		write_uint8(m_writer, m);
@@ -408,7 +408,7 @@ void CompactSerializer::operator >> (const Member< uint8_t >& m)
 void CompactSerializer::operator >> (const Member< int16_t >& m)
 {
 	T_CHECK_STATUS;
-	if (m_direction == SdRead)
+	if (m_direction == Direction::Read)
 		read_int16(m_reader, m);
 	else
 		write_int16(m_writer, m);
@@ -417,7 +417,7 @@ void CompactSerializer::operator >> (const Member< int16_t >& m)
 void CompactSerializer::operator >> (const Member< uint16_t >& m)
 {
 	T_CHECK_STATUS;
-	if (m_direction == SdRead)
+	if (m_direction == Direction::Read)
 		read_uint16(m_reader, m);
 	else
 		write_uint16(m_writer, m);
@@ -426,7 +426,7 @@ void CompactSerializer::operator >> (const Member< uint16_t >& m)
 void CompactSerializer::operator >> (const Member< int32_t >& m)
 {
 	T_CHECK_STATUS;
-	if (m_direction == SdRead)
+	if (m_direction == Direction::Read)
 		read_int32(m_reader, m);
 	else
 		write_int32(m_writer, m);
@@ -435,7 +435,7 @@ void CompactSerializer::operator >> (const Member< int32_t >& m)
 void CompactSerializer::operator >> (const Member< uint32_t >& m)
 {
 	T_CHECK_STATUS;
-	if (m_direction == SdRead)
+	if (m_direction == Direction::Read)
 		read_uint32(m_reader, m);
 	else
 		write_uint32(m_writer, m);
@@ -444,7 +444,7 @@ void CompactSerializer::operator >> (const Member< uint32_t >& m)
 void CompactSerializer::operator >> (const Member< int64_t >& m)
 {
 	T_CHECK_STATUS;
-	if (m_direction == SdRead)
+	if (m_direction == Direction::Read)
 		read_int64(m_reader, m);
 	else
 		write_int64(m_writer, m);
@@ -453,7 +453,7 @@ void CompactSerializer::operator >> (const Member< int64_t >& m)
 void CompactSerializer::operator >> (const Member< uint64_t >& m)
 {
 	T_CHECK_STATUS;
-	if (m_direction == SdRead)
+	if (m_direction == Direction::Read)
 		read_uint64(m_reader, m);
 	else
 		write_uint64(m_writer, m);
@@ -466,7 +466,7 @@ void CompactSerializer::operator >> (const Member< float >& m)
 	const AttributeRange* range = findAttribute< AttributeRange >(m);
 	if (range)
 	{
-		if (m_direction == SdRead)
+		if (m_direction == Direction::Read)
 		{
 			uint8_t uv;
 			if (!ensure(read_uint8(m_reader, uv)))
@@ -483,7 +483,7 @@ void CompactSerializer::operator >> (const Member< float >& m)
 	}
 	else
 	{
-		if (m_direction == SdRead)
+		if (m_direction == Direction::Read)
 			read_float(m_reader, m);
 		else
 			write_float(m_writer, m);
@@ -493,7 +493,7 @@ void CompactSerializer::operator >> (const Member< float >& m)
 void CompactSerializer::operator >> (const Member< double >& m)
 {
 	T_CHECK_STATUS;
-	if (m_direction == SdRead)
+	if (m_direction == Direction::Read)
 		read_double(m_reader, m);
 	else
 		write_double(m_writer, m);
@@ -502,7 +502,7 @@ void CompactSerializer::operator >> (const Member< double >& m)
 void CompactSerializer::operator >> (const Member< std::string >& m)
 {
 	T_CHECK_STATUS;
-	if (m_direction == SdRead)
+	if (m_direction == Direction::Read)
 		read_string(m_reader, m);
 	else
 		write_string(m_writer, m);
@@ -511,7 +511,7 @@ void CompactSerializer::operator >> (const Member< std::string >& m)
 void CompactSerializer::operator >> (const Member< std::wstring >& m)
 {
 	T_CHECK_STATUS;
-	if (m_direction == SdRead)
+	if (m_direction == Direction::Read)
 		read_string(m_reader, m);
 	else
 		write_string(m_writer, m);
@@ -522,7 +522,7 @@ void CompactSerializer::operator >> (const Member< Guid >& m)
 	T_CHECK_STATUS;
 
 	Guid& guid = m;
-	if (m_direction == SdRead)
+	if (m_direction == Direction::Read)
 	{
 		bool validGuid = false;
 		if (!ensure(read_bool(m_reader, validGuid)))
@@ -556,7 +556,7 @@ void CompactSerializer::operator >> (const Member< Guid >& m)
 void CompactSerializer::operator >> (const Member< Path >& m)
 {
 	T_CHECK_STATUS;
-	if (m_direction == SdRead)
+	if (m_direction == Direction::Read)
 	{
 		std::wstring path;
 		read_string(m_reader, path);
@@ -572,7 +572,7 @@ void CompactSerializer::operator >> (const Member< Path >& m)
 void CompactSerializer::operator >> (const Member< Color4ub >& m)
 {
 	T_CHECK_STATUS;
-	if (m_direction == SdRead)
+	if (m_direction == Direction::Read)
 	{
 		read_uint8(m_reader, m->r);
 		read_uint8(m_reader, m->g);
@@ -593,7 +593,7 @@ void CompactSerializer::operator >> (const Member< Color4f >& m)
 	T_CHECK_STATUS;
 
 	float T_MATH_ALIGN16 e[4];
-	if (m_direction == SdRead)
+	if (m_direction == Direction::Read)
 	{
 		for (uint32_t i = 0; i < 4; ++i)
 			read_float(m_reader, e[i]);
@@ -612,7 +612,7 @@ void CompactSerializer::operator >> (const Member< Scalar >& m)
 	T_CHECK_STATUS;
 
 	Scalar& v = m;
-	if (m_direction == SdRead)
+	if (m_direction == Direction::Read)
 	{
 		float tmp;
 		read_float(m_reader, tmp);
@@ -625,7 +625,7 @@ void CompactSerializer::operator >> (const Member< Scalar >& m)
 void CompactSerializer::operator >> (const Member< Vector2 >& m)
 {
 	T_CHECK_STATUS;
-	if (m_direction == SdRead)
+	if (m_direction == Direction::Read)
 	{
 		read_float(m_reader, m->x);
 		read_float(m_reader, m->y);
@@ -651,7 +651,7 @@ void CompactSerializer::operator >> (const Member< Vector4 >& m)
 		// If unit direction then serialize in packed form.
 		if (attrDirection->getUnit())
 		{
-			if (m_direction == SdRead)
+			if (m_direction == Direction::Read)
 			{
 				uint16_t u = m_reader.readUnsigned(16);
 				(*m) = PackedUnitVector(u).unpack();
@@ -679,7 +679,7 @@ void CompactSerializer::operator >> (const Member< Vector4 >& m)
 	if (attrPrecision)
 		precision = attrPrecision->getPrecision();
 
-	if (m_direction == SdRead)
+	if (m_direction == Direction::Read)
 	{
 		if (precision == AttributePrecision::AtFull)
 		{
@@ -719,7 +719,7 @@ void CompactSerializer::operator >> (const Member< Vector4 >& m)
 void CompactSerializer::operator >> (const Member< Matrix33 >& m)
 {
 	T_CHECK_STATUS;
-	if (m_direction == SdRead)
+	if (m_direction == Direction::Read)
 	{
 		for (uint32_t i = 0; i < 3 * 3; ++i)
 			read_float(m_reader, m->m[i]);
@@ -736,7 +736,7 @@ void CompactSerializer::operator >> (const Member< Matrix44 >& m)
 	T_CHECK_STATUS;
 
 	float T_MATH_ALIGN16 e[16];
-	if (m_direction == SdRead)
+	if (m_direction == Direction::Read)
 	{
 		for (uint32_t i = 0; i < 4 * 4; ++i)
 			read_float(m_reader, e[i]);
@@ -755,7 +755,7 @@ void CompactSerializer::operator >> (const Member< Quaternion >& m)
 	T_CHECK_STATUS;
 
 	float T_MATH_ALIGN16 e[4];
-	if (m_direction == SdRead)
+	if (m_direction == Direction::Read)
 	{
 		for (uint32_t i = 0; i < 4; ++i)
 			read_float(m_reader, e[i]);
@@ -773,7 +773,7 @@ void CompactSerializer::operator >> (const Member< ISerializable* >& m)
 {
 	T_CHECK_STATUS;
 
-	if (m_direction == SdRead)
+	if (m_direction == Direction::Read)
 	{
 		ISerializable* object = 0;
 		uint8_t typeId = m_reader.readUnsigned(5);
@@ -853,7 +853,7 @@ void CompactSerializer::operator >> (const Member< void* >& m)
 {
 	T_CHECK_STATUS;
 
-	if (m_direction == SdRead)
+	if (m_direction == Direction::Read)
 	{
 		uint32_t size;
 
@@ -892,7 +892,7 @@ void CompactSerializer::operator >> (const MemberArray& m)
 {
 	T_CHECK_STATUS;
 
-	if (m_direction == SdRead)
+	if (m_direction == Direction::Read)
 	{
 		uint32_t size;
 		if (!ensure(read_uint32(m_reader, size)))

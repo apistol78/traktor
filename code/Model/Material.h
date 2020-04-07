@@ -39,18 +39,18 @@ public:
 	struct Map
 	{
 		std::wstring name;
-		uint32_t channel;
+		std::wstring channel;
 		bool anisotropic;
 		Guid texture;
 
 		Map()
 		:	name(L"")
-		,	channel(0)
+		,	channel(L"")
 		,	anisotropic(false)
 		{
 		}
 
-		Map(const std::wstring& name_, uint32_t channel_, bool anisotropic_ = true, const Guid& texture_ = Guid())
+		Map(const std::wstring& name_, const std::wstring& channel_, bool anisotropic_ = true, const Guid& texture_ = Guid())
 		:	name(name_)
 		,	channel(channel_)
 		,	anisotropic(anisotropic_)
@@ -164,7 +164,6 @@ private:
 	Map m_reflectiveMap;
 	Map m_normalMap;
 	Map m_lightMap;
-	uint32_t m_lightMapFlags;
 	Color4f m_color;
 	float m_diffuseTerm;
 	float m_specularTerm;

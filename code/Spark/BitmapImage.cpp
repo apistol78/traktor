@@ -44,7 +44,7 @@ void BitmapImage::serialize(ISerializer& s)
 {
 	Bitmap::serialize(s);
 
-	if (s.getDirection() == ISerializer::SdRead)
+	if (s.getDirection() == ISerializer::Direction::Read)
 #if defined(T_LITTLE_ENDIAN)
 		m_image = new drawing::Image(drawing::PixelFormat::getA8B8G8R8(), m_width, m_height);
 #else

@@ -52,7 +52,7 @@ bool Blob::serialize(ISerializer& s)
 {
 	s >> Member< uint32_t >(L"size", m_size);
 
-	if (s.getDirection() == ISerializer::SdRead)
+	if (s.getDirection() == ISerializer::Direction::Read)
 	{
 		delete[] m_data;
 		m_data = new uint8_t [m_size];

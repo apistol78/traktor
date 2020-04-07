@@ -42,12 +42,12 @@ Ref< Heightfield > HeightfieldFormat::read(IStream* stream, const Vector4& world
 	T_ASSERT_M (cuts, L"No cuts in heightfield");
 	Reader(stream).read(cuts, size * size / 8, sizeof(uint8_t));
 
-	uint8_t* material = heightfield->getMaterial();
-	T_ASSERT_M (material, L"No material in heightfield");
+	uint8_t* attributes = heightfield->getAttributes();
+	T_ASSERT_M (attributes, L"No attributes in heightfield");
 	if (version == 2)
-		Reader(stream).read(material, size * size, sizeof(uint8_t));
+		Reader(stream).read(attributes, size * size, sizeof(uint8_t));
 	else
-		std::memset(material, 0, size * size * sizeof(uint8_t));
+		std::memset(attributes, 0, size * size * sizeof(uint8_t));
 
 	stream->close();
 	return heightfield;
@@ -71,7 +71,7 @@ bool HeightfieldFormat::write(IStream* stream, const Heightfield* heightfield) c
 	);
 
 	Writer(stream).write(
-		heightfield->getMaterial(),
+		heightfield->getAttributes(),
 		heightfield->getSize() * heightfield->getSize(),
 		sizeof(uint8_t)
 	);

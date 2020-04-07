@@ -12,10 +12,10 @@ namespace traktor
 	namespace terrain
 	{
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.terrain.ForestComponentData", 1, ForestComponentData, TerrainLayerComponentData)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.terrain.ForestComponentData", 2, ForestComponentData, TerrainLayerComponentData)
 
 ForestComponentData::ForestComponentData()
-:	m_material(0)
+:	m_attribute(0)
 ,	m_density(0.1f)
 ,	m_lod0distance(50.0f)
 ,	m_lod1distance(200.0f)
@@ -30,7 +30,12 @@ void ForestComponentData::serialize(ISerializer& s)
 {
 	s >> resource::Member< mesh::InstanceMesh >(L"lod0mesh", m_lod0mesh);
 	s >> resource::Member< mesh::InstanceMesh >(L"lod1mesh", m_lod1mesh);
-	s >> Member< uint8_t >(L"material", m_material);
+
+	if (s.getVersion< ForestComponentData >() >= 2)
+		s >> Member< uint8_t >(L"attribute", m_attribute);
+	else
+		s >> Member< uint8_t >(L"material", m_attribute);
+
 	s >> Member< float >(L"density", m_density, AttributeRange(0.0f));
 	s >> Member< float >(L"lod0distance", m_lod0distance, AttributeRange(0.0f) | AttributeUnit(AuMetres));
 	s >> Member< float >(L"lod1distance", m_lod1distance, AttributeRange(0.0f) | AttributeUnit(AuMetres));

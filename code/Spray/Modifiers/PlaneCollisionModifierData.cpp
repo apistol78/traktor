@@ -24,7 +24,7 @@ public:
 
 	virtual void serialize(ISerializer& s) const
 	{
-		if (s.getDirection() == ISerializer::SdRead)
+		if (s.getDirection() == ISerializer::Direction::Read)
 		{
 			Vector4 normal;
 			float distance;
@@ -34,7 +34,7 @@ public:
 
 			m_value.set(normal, Scalar(distance));
 		}
-		else	// SdWrite
+		else	// Direction::Write
 		{
 			Vector4 normal = m_value.normal();
 			float distance = m_value.distance();

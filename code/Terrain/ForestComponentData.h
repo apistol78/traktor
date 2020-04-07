@@ -40,7 +40,7 @@ private:
 	resource::Id< mesh::InstanceMesh > m_lod0mesh;
 	resource::Id< mesh::InstanceMesh > m_lod1mesh;
 
-	uint8_t m_material;
+	uint8_t m_attribute;
 	float m_density;
 	float m_lod0distance;
 	float m_lod1distance;

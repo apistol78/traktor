@@ -185,7 +185,7 @@ void Graph::serialize(ISerializer& s)
 	s >> MemberRefArray< Node >(L"nodes", m_nodes);
 	s >> MemberRefArray< Edge >(L"edges", m_edges);
 
-	if (s.getDirection() == ISerializer::SdRead)
+	if (s.getDirection() == ISerializer::Direction::Read)
 		updateAdjacency();
 }
 

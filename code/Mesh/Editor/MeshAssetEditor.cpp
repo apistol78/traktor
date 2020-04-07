@@ -502,7 +502,7 @@ void MeshAssetEditor::createMaterialShader()
 	std::wstring outputName = materialName;
 
 	// Find model material to associate shader with.
-	const auto& materials = m_model->getMaterials();
+	auto materials = m_model->getMaterials();
 	auto it = std::find_if(materials.begin(), materials.end(), [&](const model::Material& material) {
 		return material.getName() == materialName;
 	});
@@ -548,10 +548,46 @@ void MeshAssetEditor::createMaterialShader()
 	if (it2 != materialTemplates.end())
 		materialTemplate = it2->second;
 
-	// \fixme Use textures specified in MeshAsset.
+	// Set textures specified in MeshAsset into material maps.
+	const auto& materialTextures = m_asset->getMaterialTextures();
+	for (auto& m : materials)
+	{
+		model::Material::Map maps[] =
+		{
+			m.getDiffuseMap(),
+			m.getSpecularMap(),
+			m.getRoughnessMap(),
+			m.getMetalnessMap(),
+			m.getTransparencyMap(),
+			m.getEmissiveMap(),
+			m.getReflectiveMap(),
+			m.getNormalMap(),
+			m.getLightMap()
+		};
+			
+		for (auto& map : maps)
+		{
+			auto it = materialTextures.find(map.name);
+			if (it != materialTextures.end())
+				map.texture = it->second;
+		}
 
+		m.setDiffuseMap(maps[0]);
+		m.setSpecularMap(maps[1]);
+		m.setRoughnessMap(maps[2]);
+		m.setMetalnessMap(maps[3]);
+		m.setTransparencyMap(maps[4]);
+		m.setEmissiveMap(maps[5]);
+		m.setReflectiveMap(maps[6]);
+		m.setNormalMap(maps[7]);
+		m.setLightMap(maps[8]);
+	}
+	m_model->setMaterials(materials);
+
+	// Generate shader.
 	Ref< render::ShaderGraph > materialShader = MaterialShaderGenerator().generate(
 		m_editor->getSourceDatabase(),
+		*m_model,
 		*it,
 		materialTemplate,
 		haveVertexColors(*m_model)

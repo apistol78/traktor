@@ -13,17 +13,11 @@
 
 namespace traktor
 {
-	namespace resource
+	namespace db
 	{
 
-class IResourceManager;
+class Database;
 
-	}
-
-	namespace render
-	{
-
-class IRenderSystem;
 	}
 
 	namespace shape
@@ -37,7 +31,7 @@ class T_DLLCLASS EntityFactory : public world::IEntityFactory
 	T_RTTI_CLASS;
 
 public:
-	EntityFactory(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem);
+	EntityFactory(db::Database* database);
 
 	virtual const TypeInfoSet getEntityTypes() const override final;
 
@@ -52,8 +46,7 @@ public:
 	virtual Ref< world::IEntityComponent > createEntityComponent(const world::IEntityBuilder* builder, const world::IEntityComponentData& entityComponentData) const override final;
 
 private:
-	Ref< resource::IResourceManager > m_resourceManager;
-	Ref< render::IRenderSystem > m_renderSystem;
+	Ref< db::Database > m_database;
 };
 
 	}

@@ -337,7 +337,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.BinarySerializer", BinarySerializer, Serializer
 
 BinarySerializer::BinarySerializer(IStream* stream)
 :	m_stream(stream)
-,	m_direction(m_stream->canRead() ? SdRead : SdWrite)
+,	m_direction(m_stream->canRead() ? Direction::Read : Direction::Write)
 ,	m_nextCacheId(1)
 ,	m_nextTypeCacheId(0)
 {
@@ -351,7 +351,7 @@ Serializer::Direction BinarySerializer::getDirection() const
 void BinarySerializer::operator >> (const Member< bool >& m)
 {
 	T_CHECK_STATUS;
-	if (m_direction == SdRead)
+	if (m_direction == Direction::Read)
 		read_primitive< bool >(m_stream, m);
 	else
 		write_primitive< bool >(m_stream, m);
@@ -360,7 +360,7 @@ void BinarySerializer::operator >> (const Member< bool >& m)
 void BinarySerializer::operator >> (const Member< int8_t >& m)
 {
 	T_CHECK_STATUS;
-	if (m_direction == SdRead)
+	if (m_direction == Direction::Read)
 		read_primitive< int8_t >(m_stream, m);
 	else
 		write_primitive< int8_t >(m_stream, m);
@@ -369,7 +369,7 @@ void BinarySerializer::operator >> (const Member< int8_t >& m)
 void BinarySerializer::operator >> (const Member< uint8_t >& m)
 {
 	T_CHECK_STATUS;
-	if (m_direction == SdRead)
+	if (m_direction == Direction::Read)
 		read_primitive< uint8_t >(m_stream, m);
 	else
 		write_primitive< uint8_t >(m_stream, m);
@@ -378,7 +378,7 @@ void BinarySerializer::operator >> (const Member< uint8_t >& m)
 void BinarySerializer::operator >> (const Member< int16_t >& m)
 {
 	T_CHECK_STATUS;
-	if (m_direction == SdRead)
+	if (m_direction == Direction::Read)
 		read_primitive< int16_t >(m_stream, m);
 	else
 		write_primitive< int16_t >(m_stream, m);
@@ -387,7 +387,7 @@ void BinarySerializer::operator >> (const Member< int16_t >& m)
 void BinarySerializer::operator >> (const Member< uint16_t >& m)
 {
 	T_CHECK_STATUS;
-	if (m_direction == SdRead)
+	if (m_direction == Direction::Read)
 		read_primitive< uint16_t >(m_stream, m);
 	else
 		write_primitive< uint16_t >(m_stream, m);
@@ -396,7 +396,7 @@ void BinarySerializer::operator >> (const Member< uint16_t >& m)
 void BinarySerializer::operator >> (const Member< int32_t >& m)
 {
 	T_CHECK_STATUS;
-	if (m_direction == SdRead)
+	if (m_direction == Direction::Read)
 		read_primitive< int32_t >(m_stream, m);
 	else
 		write_primitive< int32_t >(m_stream, m);
@@ -405,7 +405,7 @@ void BinarySerializer::operator >> (const Member< int32_t >& m)
 void BinarySerializer::operator >> (const Member< uint32_t >& m)
 {
 	T_CHECK_STATUS;
-	if (m_direction == SdRead)
+	if (m_direction == Direction::Read)
 		read_primitive< uint32_t >(m_stream, m);
 	else
 		write_primitive< uint32_t >(m_stream, m);
@@ -414,7 +414,7 @@ void BinarySerializer::operator >> (const Member< uint32_t >& m)
 void BinarySerializer::operator >> (const Member< int64_t >& m)
 {
 	T_CHECK_STATUS;
-	if (m_direction == SdRead)
+	if (m_direction == Direction::Read)
 		read_primitive< int64_t >(m_stream, m);
 	else
 		write_primitive< int64_t >(m_stream, m);
@@ -423,7 +423,7 @@ void BinarySerializer::operator >> (const Member< int64_t >& m)
 void BinarySerializer::operator >> (const Member< uint64_t >& m)
 {
 	T_CHECK_STATUS;
-	if (m_direction == SdRead)
+	if (m_direction == Direction::Read)
 		read_primitive< uint64_t >(m_stream, m);
 	else
 		write_primitive< uint64_t >(m_stream, m);
@@ -432,7 +432,7 @@ void BinarySerializer::operator >> (const Member< uint64_t >& m)
 void BinarySerializer::operator >> (const Member< float >& m)
 {
 	T_CHECK_STATUS;
-	if (m_direction == SdRead)
+	if (m_direction == Direction::Read)
 		read_primitive< float >(m_stream, m);
 	else
 		write_primitive< float >(m_stream, m);
@@ -441,7 +441,7 @@ void BinarySerializer::operator >> (const Member< float >& m)
 void BinarySerializer::operator >> (const Member< double >& m)
 {
 	T_CHECK_STATUS;
-	if (m_direction == SdRead)
+	if (m_direction == Direction::Read)
 		read_primitive< double >(m_stream, m);
 	else
 		write_primitive< double >(m_stream, m);
@@ -450,7 +450,7 @@ void BinarySerializer::operator >> (const Member< double >& m)
 void BinarySerializer::operator >> (const Member< std::string >& m)
 {
 	T_CHECK_STATUS;
-	if (m_direction == SdRead)
+	if (m_direction == Direction::Read)
 		read_string(m_stream, m);
 	else
 		write_string(m_stream, m);
@@ -459,7 +459,7 @@ void BinarySerializer::operator >> (const Member< std::string >& m)
 void BinarySerializer::operator >> (const Member< std::wstring >& m)
 {
 	T_CHECK_STATUS;
-	if (m_direction == SdRead)
+	if (m_direction == Direction::Read)
 		read_string(m_stream, m);
 	else
 		write_string(m_stream, m);
@@ -470,7 +470,7 @@ void BinarySerializer::operator >> (const Member< Guid >& m)
 	T_CHECK_STATUS;
 
 	Guid& guid = m;
-	if (m_direction == SdRead)
+	if (m_direction == Direction::Read)
 	{
 		bool validGuid = false;
 
@@ -500,7 +500,7 @@ void BinarySerializer::operator >> (const Member< Guid >& m)
 void BinarySerializer::operator >> (const Member< Path >& m)
 {
 	T_CHECK_STATUS;
-	if (m_direction == SdRead)
+	if (m_direction == Direction::Read)
 	{
 		std::wstring path;
 		read_string(m_stream, path);
@@ -516,7 +516,7 @@ void BinarySerializer::operator >> (const Member< Path >& m)
 void BinarySerializer::operator >> (const Member< Color4ub >& m)
 {
 	T_CHECK_STATUS;
-	if (m_direction == SdRead)
+	if (m_direction == Direction::Read)
 	{
 		read_primitive< uint8_t >(m_stream, m->r);
 		read_primitive< uint8_t >(m_stream, m->g);
@@ -537,7 +537,7 @@ void BinarySerializer::operator >> (const Member< Color4f >& m)
 	T_CHECK_STATUS;
 
 	float T_MATH_ALIGN16 e[4];
-	if (m_direction == SdRead)
+	if (m_direction == Direction::Read)
 	{
 		read_primitives< float >(m_stream, e, 4);
 		(*m) = Color4f::loadUnaligned(e);
@@ -554,7 +554,7 @@ void BinarySerializer::operator >> (const Member< Scalar >& m)
 	T_CHECK_STATUS;
 
 	Scalar& v = m;
-	if (m_direction == SdRead)
+	if (m_direction == Direction::Read)
 	{
 		float tmp;
 		read_primitive< float >(m_stream, tmp);
@@ -567,7 +567,7 @@ void BinarySerializer::operator >> (const Member< Scalar >& m)
 void BinarySerializer::operator >> (const Member< Vector2 >& m)
 {
 	T_CHECK_STATUS;
-	if (m_direction == SdRead)
+	if (m_direction == Direction::Read)
 	{
 		read_primitive< float >(m_stream, m->x);
 		read_primitive< float >(m_stream, m->y);
@@ -584,7 +584,7 @@ void BinarySerializer::operator >> (const Member< Vector4 >& m)
 	T_CHECK_STATUS;
 
 	float T_MATH_ALIGN16 e[4];
-	if (m_direction == SdRead)
+	if (m_direction == Direction::Read)
 	{
 		read_primitives< float >(m_stream, e, 4);
 		(*m) = Vector4::loadUnaligned(e);
@@ -600,7 +600,7 @@ void BinarySerializer::operator >> (const Member< Matrix33 >& m)
 {
 	T_CHECK_STATUS;
 
-	if (m_direction == SdRead)
+	if (m_direction == Direction::Read)
 	{
 		for (int i = 0; i < 3 * 3; ++i)
 			read_primitive< float >(m_stream, m->m[i]);
@@ -617,7 +617,7 @@ void BinarySerializer::operator >> (const Member< Matrix44 >& m)
 	T_CHECK_STATUS;
 
 	float T_MATH_ALIGN16 values[16];
-	if (m_direction == SdRead)
+	if (m_direction == Direction::Read)
 	{
 		read_primitives< float >(m_stream, values, 16);
 		(*m) = Matrix44::loadUnaligned(values);
@@ -634,7 +634,7 @@ void BinarySerializer::operator >> (const Member< Quaternion >& m)
 	T_CHECK_STATUS;
 
 	float T_MATH_ALIGN16 e[4];
-	if (m_direction == SdRead)
+	if (m_direction == Direction::Read)
 	{
 		read_primitives< float >(m_stream, e, 4);
 		m->e = Vector4::loadUnaligned(e);
@@ -650,7 +650,7 @@ void BinarySerializer::operator >> (const Member< ISerializable* >& m)
 {
 	T_CHECK_STATUS;
 
-	if (m_direction == SdRead)
+	if (m_direction == Direction::Read)
 	{
 		bool reference = false;
 		uint64_t hash = 0;
@@ -867,7 +867,7 @@ void BinarySerializer::operator >> (const Member< void* >& m)
 {
 	T_CHECK_STATUS;
 
-	if (m_direction == SdRead)
+	if (m_direction == Direction::Read)
 	{
 		uint32_t size;
 
@@ -898,7 +898,7 @@ void BinarySerializer::operator >> (const MemberArray& m)
 {
 	T_CHECK_STATUS;
 
-	if (m_direction == SdRead)
+	if (m_direction == Direction::Read)
 	{
 		uint32_t size;
 

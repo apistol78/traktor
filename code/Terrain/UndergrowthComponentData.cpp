@@ -11,7 +11,7 @@ namespace traktor
 	namespace terrain
 	{
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.terrain.UndergrowthComponentData", 0, UndergrowthComponentData, TerrainLayerComponentData)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.terrain.UndergrowthComponentData", 1, UndergrowthComponentData, TerrainLayerComponentData)
 
 UndergrowthComponentData::UndergrowthComponentData()
 :	m_spreadDistance(100.0f)
@@ -26,7 +26,7 @@ void UndergrowthComponentData::serialize(ISerializer& s)
 }
 
 UndergrowthComponentData::Plant::Plant()
-:	material(1)
+:	attribute(1)
 ,	density(100)
 ,	plant(0)
 ,	scale(1.0f)
@@ -35,7 +35,11 @@ UndergrowthComponentData::Plant::Plant()
 
 void UndergrowthComponentData::Plant::serialize(ISerializer& s)
 {
-	s >> Member< uint8_t >(L"material", material);
+	if (s.getVersion< UndergrowthComponentData >() >= 1)
+		s >> Member< uint8_t >(L"attribute", attribute);
+	else
+		s >> Member< uint8_t >(L"material", attribute);
+
 	s >> Member< int32_t >(L"density", density);
 	s >> Member< int32_t >(L"plant", plant);
 	s >> Member< float >(L"scale", scale);

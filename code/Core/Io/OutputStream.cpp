@@ -154,12 +154,12 @@ OutputStream::OutputStream(IOutputStreamBuffer* buffer, LineEnd lineEnd)
 :	m_buffer(buffer)
 ,	m_lineEnd(lineEnd)
 {
-	if (m_lineEnd == LeAuto)
+	if (m_lineEnd == LineEnd::Auto)
 	{
 #if defined(_WIN32)
-		m_lineEnd = LeWin;
+		m_lineEnd = LineEnd::Win;
 #else
-		m_lineEnd = LeUnix;
+		m_lineEnd = LineEnd::Unix;
 #endif
 	}
 }
@@ -371,16 +371,16 @@ bool OutputStream::isEol(wchar_t ch) const
 	bool eol = false;
 	switch (m_lineEnd)
 	{
-	case LeWin:
-	case LeUnix:
+	case LineEnd::Win:
+	case LineEnd::Unix:
 		eol = bool(ch == L'\n');
 		break;
 
-	case LeMac:
+	case LineEnd::Mac:
 		eol = bool(ch == L'\r');
 		break;
 
-	case LeAuto:
+	case LineEnd::Auto:
 	default:
 		break;
 	}
@@ -402,15 +402,15 @@ OutputStream& Endl(OutputStream& s)
 {
 	switch (s.getLineEnd())
 	{
-	case OutputStream::LeWin:
+	case OutputStream::LineEnd::Win:
 		s.puts(L"\r\n");
 		break;
 
-	case OutputStream::LeMac:
+	case OutputStream::LineEnd::Mac:
 		s.put(L'\r');
 		break;
 
-	case OutputStream::LeUnix:
+	case OutputStream::LineEnd::Unix:
 		s.put(L'\n');
 		break;
 

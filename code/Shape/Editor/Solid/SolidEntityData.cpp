@@ -23,10 +23,9 @@ const resource::Id< physics::CollisionSpecification > c_interactableCollision(Gu
 
 		}
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.shape.SolidEntityData", 0, SolidEntityData, world::GroupEntityData)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.shape.SolidEntityData", 1, SolidEntityData, world::GroupEntityData)
 
 SolidEntityData::SolidEntityData()
-:	m_shader(c_defaultShader)
 {
 	m_collisionGroup.insert(c_defaultCollision);
 	m_collisionMask.insert(c_defaultCollision);
@@ -36,7 +35,7 @@ SolidEntityData::SolidEntityData()
 Ref< SolidEntity > SolidEntityData::createEntity(const world::IEntityBuilder* builder, resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem) const
 {
 	resource::Proxy< render::Shader > shader;
-	if (!resourceManager->bind(m_shader, shader))
+	if (!resourceManager->bind(c_defaultShader, shader))
 		return nullptr;
 
     Ref< SolidEntity > solidEntity = new SolidEntity(renderSystem, shader, getTransform());
@@ -75,7 +74,6 @@ void SolidEntityData::serialize(ISerializer& s)
 {
 	world::GroupEntityData::serialize(s);
 
-	s >> resource::Member< render::Shader >(L"shader", m_shader);
     s >> MemberStlSet< resource::Id< physics::CollisionSpecification >, resource::Member< physics::CollisionSpecification > >(L"collisionGroup", m_collisionGroup);
     s >> MemberStlSet< resource::Id< physics::CollisionSpecification >, resource::Member< physics::CollisionSpecification > >(L"collisionMask", m_collisionMask);
 }

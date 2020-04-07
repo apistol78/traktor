@@ -58,7 +58,7 @@ public:
 			{ 0 }
 		};
 
-		if (s.getDirection() == ISerializer::SdWrite)
+		if (s.getDirection() == ISerializer::Direction::Write)
 		{
 			Guid id = m_pin->getId();
 			std::wstring name = m_pin->getName();
@@ -72,7 +72,7 @@ public:
 			s >> MemberEnum< ParameterType >(L"type", type, c_ParameterType_Keys);
 			s >> Member< std::wstring >(L"samplerId", samplerId);
 		}
-		else	// SdRead
+		else	// Direction::Read
 		{
 			Guid id;
 			std::wstring name = L"";
@@ -142,7 +142,7 @@ public:
 			{ 0 }
 		};
 
-		if (s.getDirection() == ISerializer::SdWrite)
+		if (s.getDirection() == ISerializer::Direction::Write)
 		{
 			Guid id = m_pin->getId();
 			std::wstring name = m_pin->getName();
@@ -154,7 +154,7 @@ public:
 			s >> Member< std::wstring >(L"name", name);
 			s >> MemberEnum< ParameterType >(L"type", type, c_ParameterType_Keys);
 		}
-		else	// SdRead
+		else	// Direction::Read
 		{
 			Guid id;
 			std::wstring name;

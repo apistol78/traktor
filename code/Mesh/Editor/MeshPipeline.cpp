@@ -466,6 +466,7 @@ bool MeshPipeline::buildOutput(
 
 			materialShaderGraph = generator.generate(
 				pipelineBuilder->getSourceDatabase(),
+				*models[0],
 				materialPair.second,
 				materialTemplate,
 				vertexColor

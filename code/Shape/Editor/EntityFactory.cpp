@@ -14,9 +14,8 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.shape.EntityFactory", EntityFactory, world::IEntityFactory)
 
-EntityFactory::EntityFactory(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem)
-:	m_resourceManager(resourceManager)
-,	m_renderSystem(renderSystem)
+EntityFactory::EntityFactory(db::Database* database)
+:	m_database(database)
 {
 }
 
@@ -46,12 +45,14 @@ Ref< world::Entity > EntityFactory::createEntity(const world::IEntityBuilder* bu
 	{
 		Ref< SplineEntity > entity = new SplineEntity();
 		entity->setTransform(entityData.getTransform());
-		for (auto componentData : entityData.getComponents())
+
+		for (auto childEntityData : splineEntityData->getEntityData())
 		{
-			Ref< world::IEntityComponent > component = builder->create(componentData);
-			if (component)
-				entity->setComponent(component);
+			Ref< world::Entity > childEntity = builder->create< world::Entity >(childEntityData);
+			if (childEntity)
+				entity->addEntity(childEntity);
 		}
+
 		return entity;
 	}
 	else
@@ -68,7 +69,7 @@ Ref< world::IEntityComponent > EntityFactory::createEntityComponent(const world:
 	if (auto controlPointData = dynamic_type_cast< const ControlPointComponentData* >(&entityComponentData))
 		return controlPointData->createComponent();
 	else if (auto splineLayerData = dynamic_type_cast< const SplineLayerComponentData* >(&entityComponentData))
-		return splineLayerData->createComponent(builder, m_resourceManager, m_renderSystem);
+		return splineLayerData->createComponent(m_database);
 	else
 		return nullptr;
 }

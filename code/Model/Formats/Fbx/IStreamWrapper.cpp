@@ -53,7 +53,7 @@ int IStreamWrapper::Write(const void* /*pData*/, int /*pSize*/)
 int IStreamWrapper::Read(void* pData, int pSize) const
 {
 	T_ASSERT(m_stream);
-	return m_stream->read(pData, pSize);
+	return (int)m_stream->read(pData, pSize);
 }
 
 int IStreamWrapper::GetReaderID() const
@@ -80,7 +80,7 @@ void IStreamWrapper::Seek(const FbxInt64& pOffset, const FbxFile::ESeekPos& pSee
 long IStreamWrapper::GetPosition() const
 {
 	T_ASSERT(m_stream);
-	return m_stream->tell();
+	return (long)m_stream->tell();
 }
 
 void IStreamWrapper::SetPosition(long pPosition)

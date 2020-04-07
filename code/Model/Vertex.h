@@ -35,6 +35,8 @@ public:
 
 	explicit Vertex(uint32_t position, uint32_t normal);
 
+	explicit Vertex(uint32_t position, uint32_t normal, uint32_t texCoord);
+
 	void setPosition(uint32_t position) { m_position = position; }
 
 	uint32_t getPosition() const { return m_position; }

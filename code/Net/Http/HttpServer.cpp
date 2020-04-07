@@ -155,7 +155,7 @@ public:
 					}
 				}
 
-				FileOutputStream os(&clientStream, new Utf8Encoding(), OutputStream::LeWin);
+				FileOutputStream os(&clientStream, new Utf8Encoding(), OutputStream::LineEnd::Win);
 				if (result >= 200 && result < 300)
 					os << L"HTTP/1.1 " << result << L" OK" << Endl;
 				else

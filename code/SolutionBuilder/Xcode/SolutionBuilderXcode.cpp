@@ -511,7 +511,7 @@ bool SolutionBuilderXcode::generate(Solution* solution)
 	if (!file)
 		return false;
 
-	FileOutputStream s(file, new Utf8Encoding(), OutputStream::LeUnix);
+	FileOutputStream s(file, new Utf8Encoding(), OutputStream::LineEnd::Unix);
 
 	s << L"// !$*UTF8*$!" << Endl;
 	s << L"{" << Endl;

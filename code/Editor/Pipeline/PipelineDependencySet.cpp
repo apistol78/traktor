@@ -14,7 +14,7 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.editor.PipelineDependencySet", 0, Pipel
 
 uint32_t PipelineDependencySet::add(PipelineDependency* dependency)
 {
-	uint32_t index = m_dependencies.size();
+	uint32_t index = (uint32_t)m_dependencies.size();
 	m_dependencies.push_back(dependency);
 	return index;
 }
@@ -42,7 +42,7 @@ uint32_t PipelineDependencySet::get(const Guid& dependencyGuid) const
 
 uint32_t PipelineDependencySet::size() const
 {
-	return m_dependencies.size();
+	return (uint32_t)m_dependencies.size();
 }
 
 void PipelineDependencySet::dump(OutputStream& os) const

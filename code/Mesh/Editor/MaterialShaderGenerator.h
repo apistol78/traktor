@@ -37,6 +37,7 @@ class ShaderGraph;
 	{
 
 class Material;
+class Model;
 
 	}
 
@@ -50,6 +51,7 @@ class T_DLLCLASS MaterialShaderGenerator : public Object
 public:
 	Ref< render::ShaderGraph > generate(
 		db::Database* database,
+		const model::Model& model,
 		const model::Material& material,
 		const Guid& materialTemplate,
 		bool vertexColor

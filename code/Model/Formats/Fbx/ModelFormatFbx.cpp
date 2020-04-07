@@ -293,11 +293,11 @@ Ref< Model > ModelFormatFbx::read(const Path& filePath, const std::function< Ref
 
 				if (true /* has uv */)
 				{
-					material.setNormalMap(Material::Map(L"Normals", 0, false));
-					material.setDiffuseMap(Material::Map(L"Albedo", 0, true));
-					material.setMetalnessMap(Material::Map(L"Metalness", 0, false));
-					material.setRoughnessMap(Material::Map(L"Roughness", 0, false));
-					material.setSpecularMap(Material::Map(L"Specular", 0, false));
+					material.setNormalMap(Material::Map(L"Normals", L"default", false));
+					material.setDiffuseMap(Material::Map(L"Albedo", L"default", true));
+					material.setMetalnessMap(Material::Map(L"Metalness", L"default", false));
+					material.setRoughnessMap(Material::Map(L"Roughness", L"default", false));
+					material.setSpecularMap(Material::Map(L"Specular", L"default", false));
 				}
 
 				defaultMaterialIndex = model->addMaterial(material);

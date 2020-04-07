@@ -481,7 +481,7 @@ bool BakePipelineOperator::build(
 				for (auto& material : materials)
 				{
 					material.setBlendOperator(model::Material::BoDecal);
-					material.setLightMap(model::Material::Map(L"Lightmap", channel, false, lightmapId));
+					material.setLightMap(model::Material::Map(L"Lightmap", L"Lightmap", false, lightmapId));
 				}
 				model->setMaterials(materials);
 

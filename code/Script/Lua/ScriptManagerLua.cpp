@@ -319,7 +319,7 @@ void ScriptManagerLua::registerClass(IRuntimeClass* runtimeClass)
 	lua_setfield(m_luaState, -2, "__eq");
 
 	{
-		const IRuntimeDispatch* addDispatch = runtimeClass->getOperatorDispatch(IRuntimeClass::OptAdd);
+		const IRuntimeDispatch* addDispatch = runtimeClass->getOperatorDispatch(IRuntimeClass::Operator::Add);
 		if (addDispatch)
 		{
 			lua_pushlightuserdata(m_luaState, (void*)runtimeClass);
@@ -330,7 +330,7 @@ void ScriptManagerLua::registerClass(IRuntimeClass* runtimeClass)
 	}
 
 	{
-		const IRuntimeDispatch* subDispatch = runtimeClass->getOperatorDispatch(IRuntimeClass::OptSubtract);
+		const IRuntimeDispatch* subDispatch = runtimeClass->getOperatorDispatch(IRuntimeClass::Operator::Subtract);
 		if (subDispatch)
 		{
 			lua_pushlightuserdata(m_luaState, (void*)runtimeClass);
@@ -341,7 +341,7 @@ void ScriptManagerLua::registerClass(IRuntimeClass* runtimeClass)
 	}
 
 	{
-		const IRuntimeDispatch* mulDispatch = runtimeClass->getOperatorDispatch(IRuntimeClass::OptMultiply);
+		const IRuntimeDispatch* mulDispatch = runtimeClass->getOperatorDispatch(IRuntimeClass::Operator::Multiply);
 		if (mulDispatch)
 		{
 			lua_pushlightuserdata(m_luaState, (void*)runtimeClass);
@@ -352,7 +352,7 @@ void ScriptManagerLua::registerClass(IRuntimeClass* runtimeClass)
 	}
 
 	{
-		const IRuntimeDispatch* divDispatch = runtimeClass->getOperatorDispatch(IRuntimeClass::OptDivide);
+		const IRuntimeDispatch* divDispatch = runtimeClass->getOperatorDispatch(IRuntimeClass::Operator::Divide);
 		if (divDispatch)
 		{
 			lua_pushlightuserdata(m_luaState, (void*)runtimeClass);

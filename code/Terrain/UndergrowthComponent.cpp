@@ -101,9 +101,9 @@ bool UndergrowthComponent::create(
 	if (!vertex)
 		return false;
 
-	Vector4 position(0.0f, 0.0f, 0.0f);
-	Vector4 axisX(1.0f, 0.0f, 0.0f);
-	Vector4 axisY(0.0f, 1.0f, 0.0f);
+	const Vector4 position(0.0f, 0.0f, 0.0f);
+	const Vector4 axisX(1.0f, 0.0f, 0.0f);
+	const Vector4 axisY(0.0f, 1.0f, 0.0f);
 
 	*vertex++ = packVertex(position - axisX - axisY, 0.0f, 1.0f);
 	*vertex++ = packVertex(position - axisX + axisY, 0.0f, 0.0f);
@@ -179,7 +179,7 @@ void UndergrowthComponent::build(
 	const auto& terrain = terrainComponent->getTerrain();
 
 	// Update clusters at first pass from eye pow.
-	bool updateClusters = bool((worldRenderPass.getPassFlags() & world::IWorldRenderPass::PfFirst) != 0);
+	bool updateClusters = (bool)((worldRenderPass.getPassFlags() & world::IWorldRenderPass::PfFirst) != 0);
 
 	Matrix44 view = worldRenderView.getView();
 	Matrix44 viewInv = view.inverse();
@@ -321,7 +321,7 @@ void UndergrowthComponent::updatePatches()
 	StaticVector< uint8_t, 16 > um(16, 0);
 	uint8_t maxMaterialIndex = 0;
 	for (const auto& plant : m_layerData.m_plants)
-		um[plant.material] = ++maxMaterialIndex;
+		um[plant.attribute] = ++maxMaterialIndex;
 
 	int32_t size = heightfield->getSize();
 	Vector4 extentPerGrid = heightfield->getWorldExtent() / Scalar(float(size));
@@ -341,8 +341,8 @@ void UndergrowthComponent::updatePatches()
 			{
 				for (int32_t cx = 0; cx < 16; ++cx)
 				{
-					uint8_t material = heightfield->getGridMaterial(x + cx, z + cz);
-					uint8_t index = um[material];
+					uint8_t attribute = heightfield->getGridAttribute(x + cx, z + cz);
+					uint8_t index = um[attribute];
 					if (index > 0)
 					{
 						cm[index - 1]++;
@@ -366,7 +366,7 @@ void UndergrowthComponent::updatePatches()
 
 				for (const auto& plant : m_layerData.m_plants)
 				{
-					if (um[plant.material] == i + 1)
+					if (um[plant.attribute] == i + 1)
 					{
 						int32_t densityFactor = cm[i];
 

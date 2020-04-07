@@ -39,6 +39,7 @@ public:
 	int32_t memCount;
 	int32_t memDeltaCount;
 	uint32_t heapObjects;
+	uint32_t passCount;
 	uint32_t drawCalls;
 	uint32_t primitiveCount;
 	uint32_t residentResourcesCount;

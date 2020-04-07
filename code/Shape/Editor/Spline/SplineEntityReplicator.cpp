@@ -1,6 +1,13 @@
+#include "Core/Log/Log.h"
+#include "Core/Math/TransformPath.h"
+#include "Editor/IPipelineBuilder.h"
 #include "Model/Model.h"
+#include "Model/Operations/MergeModel.h"
+#include "Shape/Editor/Spline/ControlPointComponentData.h"
 #include "Shape/Editor/Spline/SplineEntityData.h"
 #include "Shape/Editor/Spline/SplineEntityReplicator.h"
+#include "Shape/Editor/Spline/SplineLayerComponentData.h"
+#include "World/Entity/GroupComponentData.h"
 
 namespace traktor
 {
@@ -20,9 +27,72 @@ Ref< model::Model > SplineEntityReplicator::createModel(
     const Object* source
 ) const
 {
-	const SplineEntityData* splineEntityData = mandatory_non_null_type_cast< const SplineEntityData* >(source);
+	auto splineEntityData = mandatory_non_null_type_cast< const SplineEntityData* >(source);
+	TransformPath path;
 
+	// Count number of control points as we need to estimate fraction of each.
+	int32_t controlPointCount = 0;
+	int32_t layerCount = 0;
+	for (auto entityData : splineEntityData->getEntityData())
+	{
+		for (auto componentData : entityData->getComponents())
+		{
+			if (is_a< ControlPointComponentData >(componentData))
+				controlPointCount++;
+			if (is_a< SplineLayerComponentData >(componentData))
+				layerCount++;
+		}
+	}
+	if (controlPointCount <= 0)
+	{
+		log::error << L"Invalid spline; no control points found." << Endl;
+		return nullptr;	
+	}
+	if (layerCount <= 0)
+	{
+		log::error << L"Invalid spline; no layers found." << Endl;
+		return nullptr;	
+	}
+
+	// Create transformation path.
+	int32_t controlPointIndex = 0;
+	for (auto entityData : splineEntityData->getEntityData())
+	{
+		auto controlPointData = entityData->getComponent< ControlPointComponentData >();
+		if (!controlPointData)
+			continue;
+
+		Transform T = entityData->getTransform();
+
+		TransformPath::Key k;
+		k.T = (float)controlPointIndex / (controlPointCount - 1);
+		k.position = T.translation();
+		k.orientation = T.rotation().toEulerAngles();
+		k.values[0] = controlPointData->getScale();
+		path.insert(k);
+
+		++controlPointIndex;
+	}
+
+	// Create model, add geometry for each layer.
     Ref< model::Model > outputModel = new model::Model();
+
+	for (auto entityData : splineEntityData->getEntityData())
+	{
+		for (auto componentData : entityData->getComponents())
+		{
+			auto layerData = dynamic_type_cast< SplineLayerComponentData* >(componentData);
+			if (!layerData)
+				continue;
+
+			Ref< model::Model > layerModel = layerData->createModel(pipelineBuilder->getSourceDatabase(), path);
+			if (!layerModel)
+				continue;
+
+			model::MergeModel merge(*layerModel, entityData->getTransform().inverse(), 0.01f);
+			merge.apply(*outputModel);
+		}
+	}
 
     return outputModel;
 }

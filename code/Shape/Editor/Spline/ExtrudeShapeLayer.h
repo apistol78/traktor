@@ -1,8 +1,6 @@
 #pragma once
 
 #include "Core/Ref.h"
-#include "Render/Types.h"
-#include "Resource/Proxy.h"
 #include "Shape/Editor/Spline/SplineLayerComponent.h"
 
 // import/export mechanism.
@@ -15,27 +13,10 @@
 
 namespace traktor
 {
-	namespace render
-	{
-
-class IndexBuffer;
-class IRenderSystem;
-class Shader;
-class VertexBuffer;
-
-	}
-
-	namespace world
-	{
-
-class IWorldRenderPass;
-class WorldBuildContext;
-class WorldRenderView;
-
-	}
-
 	namespace shape
 	{
+
+class ExtrudeShapeLayerData;
 
 /*!
  * \ingroup Shape
@@ -45,12 +26,7 @@ class T_DLLCLASS ExtrudeShapeLayer : public SplineLayerComponent
 	T_RTTI_CLASS;
 
 public:
-	ExtrudeShapeLayer(
-		render::IRenderSystem* renderSystem,
-		const resource::Proxy< render::Shader >& shader,
-		bool automaticOrientation,
-		float detail
-	);
+	ExtrudeShapeLayer(const ExtrudeShapeLayerData* data);
 
 	virtual void destroy() override final;
 
@@ -64,21 +40,8 @@ public:
 
 	virtual void pathChanged(const TransformPath& path) override final;
 
-	void build(
-		const world::WorldBuildContext& context,
-		const world::WorldRenderView& worldRenderView,
-		const world::IWorldRenderPass& worldRenderPass
-	);
-
 private:
-	Ref< render::IRenderSystem > m_renderSystem;
-	resource::Proxy< render::Shader > m_shader;
-	bool m_automaticOrientation;
-	float m_detail;
-
-	Ref< render::VertexBuffer > m_vertexBuffer;
-	Ref< render::IndexBuffer > m_indexBuffer;
-	render::Primitives m_primitives;
+	Ref< const ExtrudeShapeLayerData > m_data;
 };
 
 	}
