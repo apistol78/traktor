@@ -154,9 +154,6 @@ bool GameEntityWizardDialog::create(ui::Widget* parent)
 	m_editFriction = new ui::Edit();
 	m_editFriction->create(containerPhysics, L"0.75");
 
-	m_checkBoxCreateGroup = new ui::CheckBox();
-	m_checkBoxCreateGroup->create(this, i18n::Text(L"GAMEENTITY_WIZARD_CREATE_GROUP"));
-
 	// Script
 	m_checkBoxCreateScript = new ui::CheckBox();
 	m_checkBoxCreateScript->create(this, i18n::Text(L"GAMEENTITY_WIZARD_CREATE_SCRIPT"));
@@ -401,14 +398,6 @@ void GameEntityWizardDialog::eventDialogClick(ui::ButtonClickEvent* event)
 		}
 
 		Ref< world::EntityData > instanceEntityData = entityData;
-
-		if (m_checkBoxCreateGroup->isChecked())
-		{
-			Ref< world::GroupEntityData > groupEntityData = new world::GroupEntityData();
-			groupEntityData->setName(name);
-			groupEntityData->addEntityData(entityData);
-			instanceEntityData = groupEntityData;
-		}
 
 		// Create entity asset instance.
 		Ref< db::Instance > entityDataInstance = m_group->createInstance(

@@ -107,26 +107,19 @@ void ToolBarMenu::buttonDown(ToolBar* toolBar, MouseButtonDownEvent* mouseEvent)
 	if (m_items.empty())
 		return;
 
-	if (!m_menu)
+	Ref< Menu > menu = new Menu();
+
+	for (size_t i = 0; i < m_items.size(); ++i)
+		menu->add(m_items[i]);
+
+	const MenuItem* item = menu->showModal(toolBar, m_menuPosition);
+	if (item)
 	{
-		m_menu = new Menu();
-
-		for (size_t i = 0; i < m_items.size(); ++i)
-			m_menu->add(m_items[i]);
-
-		const MenuItem* item = m_menu->showModal(toolBar, m_menuPosition);
-		if (item)
-		{
-			ToolBarButtonClickEvent clickEvent(toolBar, this, item->getCommand(), item);
-			toolBar->raiseEvent(&clickEvent);
-		}
-
-		toolBar->update();
+		ToolBarButtonClickEvent clickEvent(toolBar, this, item->getCommand(), item);
+		toolBar->raiseEvent(&clickEvent);
 	}
-	else
-	{
-		m_menu = nullptr;
-	}
+
+	toolBar->update();
 }
 
 void ToolBarMenu::buttonUp(ToolBar* toolBar, MouseButtonUpEvent* mouseEvent)

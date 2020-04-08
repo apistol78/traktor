@@ -18,7 +18,6 @@ namespace traktor
 	namespace ui
 	{
 
-class Menu;
 class MenuItem;
 
 /*! Tool bar menu item.
@@ -63,7 +62,6 @@ private:
 	RefArray< MenuItem > m_items;
 	bool m_hover;
 	Point m_menuPosition;
-	Ref< Menu > m_menu;
 };
 
 	}
