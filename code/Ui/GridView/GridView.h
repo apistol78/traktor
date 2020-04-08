@@ -1,5 +1,6 @@
 #pragma once
 
+#include <functional>
 #include "Core/RefArray.h"
 #include "Ui/Auto/AutoWidget.h"
 
@@ -51,6 +52,8 @@ public:
 		SmNumerical = 1
 	};
 
+	typedef std::function< bool (const GridRow*, const GridRow*) > sort_fn_t;
+
 	GridView();
 
 	bool create(Widget* parent, uint32_t style);
@@ -62,6 +65,8 @@ public:
 	const RefArray< GridColumn >& getColumns() const;
 
 	void setSortColumn(int32_t columnIndex, bool ascending, SortMode mode);
+
+	void setSort(const sort_fn_t& sortFn);
 
 	int32_t getColumnIndex(int32_t x) const;
 
@@ -97,6 +102,7 @@ private:
 	int32_t m_sortColumnIndex;
 	bool m_sortAscending;
 	SortMode m_sortMode;
+	sort_fn_t m_sortFn;
 	bool m_autoEdit;
 	bool m_multiSelect;
 	Ref< Edit > m_itemEditor;

@@ -48,7 +48,23 @@ bool FileDialog::create(Widget* parent, const std::wstring& key, const std::wstr
 	m_gridFiles->addColumn(new GridColumn(L"Filename", dpi96(300)));
 	m_gridFiles->addColumn(new GridColumn(L"Size", dpi96(100)));
 	m_gridFiles->addColumn(new GridColumn(L"Modified", dpi96(180)));
-	m_gridFiles->setSortColumn(1, false, GridView::SmLexical);
+
+	// Sort by directory first then name.
+	m_gridFiles->setSort([](const GridRow* r1, const GridRow* r2) -> bool {
+		auto f1 = r1->getData< File >(L"FILE");
+		T_FATAL_ASSERT(f1 != nullptr);
+		auto f2 = r2->getData< File >(L"FILE");
+		T_FATAL_ASSERT(f2 != nullptr);
+
+		if (f1->isDirectory() && !f2->isDirectory())
+			return true;
+		if (!f1->isDirectory() && f2->isDirectory())
+			return false;
+
+		auto fn1 = f1->getPath().getFileNameNoExtension();
+		auto fn2 = f2->getPath().getFileNameNoExtension();
+		return compareIgnoreCase(fn1, fn2) < 0;
+	});
 
 	m_gridFiles->addEventHandler< SelectionChangeEvent >([&](SelectionChangeEvent* event) {
 		auto selectedRow = m_gridFiles->getSelectedRow();

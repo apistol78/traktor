@@ -138,6 +138,11 @@ void GridView::setSortColumn(int32_t columnIndex, bool ascending, SortMode mode)
 	m_sortMode = mode;
 }
 
+void GridView::setSort(const sort_fn_t& sortFn)
+{
+	m_sortFn = sortFn;
+}
+
 int32_t GridView::getColumnIndex(int32_t x) const
 {
 	int32_t left = 0;
@@ -280,6 +285,9 @@ void GridView::layoutCells(const Rect& rc)
 			rows.sort(sortPredicate);
 		}
 	}
+
+	if (m_sortFn)
+		rows.sort(m_sortFn);
 
 	Rect rcRow(rcLayout.left, rcLayout.top, rcLayout.right, rcLayout.top);
 	for (auto row : rows)

@@ -50,7 +50,6 @@ private:
 	Ref< ui::DropDown > m_dropCollisionMask;
 	Ref< ui::Edit > m_editMaterial;
 	Ref< ui::Edit > m_editFriction;
-	Ref< ui::CheckBox > m_checkBoxCreateGroup;
 	Ref< ui::CheckBox > m_checkBoxCreateScript;
 	bool m_nameEdited;
 
