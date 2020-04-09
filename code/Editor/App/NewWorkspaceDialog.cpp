@@ -148,7 +148,7 @@ void NewWorkspaceDialog::eventDialogClick(ui::ButtonClickEvent* event)
 				file->getPath().getPathOnly(),
 				env,
 				true,
-				true,
+				false,
 				false
 			);
 			if (process)
@@ -178,7 +178,7 @@ void NewWorkspaceDialog::eventDialogClick(ui::ButtonClickEvent* event)
 				if (process->exitCode() == 0)
 					m_workspacePath = outputPath + L"/" + name + L".workspace";
 
-				process = 0;
+				process = nullptr;
 			}
 			else
 				log::error << L"Unable to create workspace; failed to launch process." << Endl;
