@@ -36,7 +36,7 @@ int32_t executeRun(const std::wstring& text, const Path& fileName, const Command
 	Ref< script::IScriptBlob > scriptBlob = g_scriptCompiler->compile(fileName.getPathName(), text, nullptr);
 	if (!scriptBlob)
 	{
-		log::error << L"Unable to compile script" << Endl;
+		log::error << L"Unable to compile script \"" << fileName.getPathName() << L"\"." << Endl;
 		return 1;
 	}
 
@@ -96,7 +96,7 @@ int32_t executeTemplate(const std::wstring& text, const Path& fileName, const Co
 		size_t e = text.find(L"--!>", s);
 		if (e == text.npos)
 		{
-			log::error << L"Template syntax error; missing end" << Endl;
+			log::error << L"Template syntax error; missing end." << Endl;
 			return 1;
 		}
 
@@ -113,7 +113,7 @@ int32_t executeTemplate(const std::wstring& text, const Path& fileName, const Co
 	Ref< script::IScriptBlob > scriptBlob = g_scriptCompiler->compile(fileName.getPathName(), ss.str(), nullptr);
 	if (!scriptBlob)
 	{
-		log::error << L"Unable to compile script" << Endl;
+		log::error << L"Unable to compile script \"" << fileName.getPathName() << L"\"." << Endl;
 		return 1;
 	}
 
@@ -140,7 +140,8 @@ int32_t executeTemplate(const std::wstring& text, const Path& fileName, const Co
 	scriptContext->setGlobal("output", Any::fromObject(o));
 	scriptContext->setGlobal("args", CastAny< std::vector< std::wstring > >::set(args));
 
-	scriptContext->load(scriptBlob);
+	if (!scriptContext->load(scriptBlob))
+		return 1;
 
 	safeDestroy(scriptContext);
 

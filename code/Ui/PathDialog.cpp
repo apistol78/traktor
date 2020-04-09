@@ -12,7 +12,7 @@ namespace traktor
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.PathDialog", PathDialog, EventSubject)
 
 PathDialog::PathDialog()
-:	m_pathDialog(0)
+:	m_pathDialog(nullptr)
 {
 }
 
@@ -30,7 +30,7 @@ bool PathDialog::create(Widget* parent, const std::wstring& title)
 		return false;
 	}
 
-	if (!m_pathDialog->create(parent ? parent->getIWidget() : 0, title))
+	if (!m_pathDialog->create(parent ? parent->getIWidget() : nullptr, title))
 		return false;
 
 	return true;
@@ -41,7 +41,7 @@ void PathDialog::destroy()
 	if (m_pathDialog)
 	{
 		m_pathDialog->destroy();
-		m_pathDialog = 0;
+		m_pathDialog = nullptr;
 	}
 }
 
