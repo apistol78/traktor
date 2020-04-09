@@ -25,6 +25,8 @@ public:
 
 	virtual void setMinSize(const Size& minSize) override final;
 
+	virtual void setText(const std::wstring& text) override final;
+
 	virtual void setVisible(bool visible) override final;
 
 private:

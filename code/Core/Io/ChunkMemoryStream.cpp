@@ -94,6 +94,9 @@ int64_t ChunkMemoryStream::read(void* block, int64_t nbytes)
 			break;
 
 		int64_t chunkRead = std::min< int64_t >(nbytes - nread, chunk.avail);
+		if (chunkRead <= 0)
+			break;
+
 		std::memcpy(blockPtr, chunk.ptr, chunkRead);
 
 		blockPtr += chunkRead;

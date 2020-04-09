@@ -175,6 +175,17 @@ void DialogX11::setMinSize(const Size& minSize)
 	XSetWMNormalHints(m_context->getDisplay(), m_data.window, &sh);
 }
 
+void DialogX11::setText(const std::wstring& text)
+{
+	std::string cs = wstombs(text);
+	const char* csp = cs.c_str();
+
+	XTextProperty tp;
+	XStringListToTextProperty((char**)&csp, 1, &tp);
+
+	XSetWMName(m_context->getDisplay(), m_data.window, &tp);
+}
+
 void DialogX11::setVisible(bool visible)
 {
 	WidgetX11Impl< IDialog >::setVisible(visible);

@@ -111,10 +111,12 @@ bool ObjectEditorDialog::apply(bool keep)
 void ObjectEditorDialog::cancel()
 {
 	destroy();
+
+	// Revert changes from instance when cancelling dialog.
 	if (m_instance)
 	{
 		m_instance->revert();
-		m_instance = 0;
+		m_instance = nullptr;
 	}
 }
 

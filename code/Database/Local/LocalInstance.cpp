@@ -177,13 +177,15 @@ Ref< IStream > LocalInstance::readObject(const TypeInfo*& outSerializerType) con
 {
 	Ref< IStream > objectStream;
 
+	// Get stream from transaction if pending.
 	if (m_transaction)
 	{
 		RefArray< ActionWriteObject > actions;
 		if (m_transaction->get< ActionWriteObject >(actions) > 0)
-			return actions.back()->getReadStream();
+			objectStream = actions.back()->getReadStream();
 	}
 
+	// Open physical stream if no transaction.
 	if (!objectStream)
 	{
 		Path instanceObjectPath = getInstanceObjectPath(m_instancePath);
