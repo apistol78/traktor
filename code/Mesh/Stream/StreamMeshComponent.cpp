@@ -82,5 +82,10 @@ void StreamMeshComponent::setFrame(uint32_t frame)
 	m_frame = frame;
 }
 
+uint32_t StreamMeshComponent::getFrame() const
+{
+	return m_frame;
+}
+
 	}
 }

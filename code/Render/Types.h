@@ -675,6 +675,13 @@ struct RenderTargetSetCreateDesc
 	}
 };
 
+/*! Target transfer flags. */
+enum TransferFlags
+{
+	TfColor = 1,
+	TfDepth = 2
+};
+
 /*! Preferred debuggable target visualization method. */
 enum DebugTargetVisualize
 {

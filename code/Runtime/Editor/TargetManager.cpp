@@ -43,7 +43,7 @@ bool TargetManager::create()
 
 	m_port = dynamic_type_cast< net::SocketAddressIPv4* >(m_listenSocket->getLocalAddress())->getPort();
 
-	log::info << L"Target manager @" << m_port << L" created" << Endl;
+	log::info << L"Target manager @" << m_port << L" created." << Endl;
 	return true;
 }
 

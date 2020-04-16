@@ -162,14 +162,19 @@ public:
 		typedef value_type* pointer;
 		typedef value_type& reference;
 
-		reference operator * ()
+		reference operator * () const
 		{
 			return *_O::m_ptr;
 		}
 
-		pointer operator -> ()
+		pointer operator -> () const
 		{
 			return _O::m_ptr;
+		}
+
+		reference operator [] (int offset) const
+		{
+			return *(_O::m_ptr + offset);
 		}
 
 		iterator operator + (int offset) const
@@ -261,11 +266,12 @@ public:
 	{
 	}
 
-	StaticVector(size_t size, const ItemType& value)
-	:	m_size(size)
+	template < typename IteratorType >
+	StaticVector(const IteratorType& from, const IteratorType& to)
+	:	m_size(0)
 	{
-		for (size_t i = 0; i < m_size; ++i)
-			m_items[i] = value;
+		for (IteratorType i = from; i != to; ++i)
+			push_back(*i);
 	}
 
 	/*! Get number of elements in vector.
@@ -281,10 +287,10 @@ public:
 	 *
 	 * \param size New number of elements.
 	 */
-	void resize(size_t size)
+	void resize(size_t size, const_reference init = value_type())
 	{
 		for (size_t i = m_size; i < size; ++i)
-			m_items[i] = value_type();
+			m_items[i] = init;
 
 		m_size = size;
 	}

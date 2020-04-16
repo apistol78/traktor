@@ -32,10 +32,11 @@ namespace traktor
 
 #if !defined(__ANDROID__)
 const int32_t c_faceSize = 1024;
+const int32_t c_sampleCount = 1000;
 #else
 const int32_t c_faceSize = 128;
+const int32_t c_sampleCount = 100;
 #endif
-const int32_t c_sampleCount = 1000;
 
 const resource::Id< render::Shader > c_probeShader(Guid(L"{99BB18CB-A744-D845-9A17-D0E586E4D9EA}"));
 const resource::Id< render::Shader > c_idFilterShader(Guid(L"{D9CC2267-0BDF-4A19-A970-856112821734}"));

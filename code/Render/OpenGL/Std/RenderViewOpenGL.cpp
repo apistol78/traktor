@@ -428,10 +428,10 @@ void RenderViewOpenGL::present()
 
 bool RenderViewOpenGL::beginPass(const Clear* clear)
 {
-	return beginPass(m_primaryTarget, 0, clear);
+	return beginPass(m_primaryTarget, 0, clear, TfColor | TfDepth, TfColor | TfDepth);
 }
 
-bool RenderViewOpenGL::beginPass(IRenderTargetSet* renderTargetSet, const Clear* clear)
+bool RenderViewOpenGL::beginPass(IRenderTargetSet* renderTargetSet, const Clear* clear, uint32_t load, uint32_t store)
 {
 	// Ensure deferred clears on targets are executed.
 	if (m_targetsDirty && !m_targetStack.empty())
@@ -455,7 +455,7 @@ bool RenderViewOpenGL::beginPass(IRenderTargetSet* renderTargetSet, const Clear*
 	return true;
 }
 
-bool RenderViewOpenGL::beginPass(IRenderTargetSet* renderTargetSet, int32_t renderTarget, const Clear* clear)
+bool RenderViewOpenGL::beginPass(IRenderTargetSet* renderTargetSet, int32_t renderTarget, const Clear* clear, uint32_t load, uint32_t store)
 {
 	// Ensure deferred clears on targets are executed.
 	if (m_targetsDirty && !m_targetStack.empty())

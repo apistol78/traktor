@@ -36,7 +36,7 @@ public:
 	bool create(
 		resource::IResourceManager* resourceManager,
 		render::IRenderSystem* renderSystem,
-		const RubbleComponentData& layerData
+		const RubbleComponentData& data
 	);
 
 	virtual void destroy() override final;
@@ -64,6 +64,8 @@ private:
 		uint8_t attribute;
 		int32_t density;
 		float randomScaleAmount;
+		float randomTilt;
+		float upness;
 	};
 
 	struct Instance
@@ -85,10 +87,12 @@ private:
 	};
 
 	world::Entity* m_owner;
+	RubbleComponentData m_data;
+
 	AlignedVector< RubbleMesh > m_rubble;
 	AlignedVector< Instance > m_instances;
 	AlignedVector< Cluster > m_clusters;
-	float m_spreadDistance;
+	//float m_spreadDistance;
 	float m_clusterSize;
 	Vector4 m_eye;
 	AlignedVector< mesh::InstanceMesh::RenderInstance > m_instanceData;

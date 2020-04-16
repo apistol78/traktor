@@ -267,6 +267,8 @@ bool RenderTargetSetVk::prepareAsTarget(
 	VkCommandBuffer commandBuffer,
 	int32_t colorIndex,
 	const Clear& clear,
+	uint32_t load,
+	uint32_t store,
 	RenderTargetDepthVk* primaryDepthTarget,
 	uint32_t& outId,
 	VkRenderPass& outRenderPass,
@@ -294,18 +296,16 @@ bool RenderTargetSetVk::prepareAsTarget(
 			passAttachment.samples = VK_SAMPLE_COUNT_1_BIT;
 
 			if ((clear.mask & CfColor) != 0)
-			{
-				// Clearing target; do not load.
 				passAttachment.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
-			}
-			else
-			{
-				// Since no clearing of target we need to load color.
+			else if ((load & TfColor) != 0)
 				passAttachment.loadOp = VK_ATTACHMENT_LOAD_OP_LOAD;
-			}
+			else
+				passAttachment.loadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
 			
-			// Always store color target.
-			passAttachment.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
+			if ((store & TfColor) != 0)
+				passAttachment.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
+			else
+				passAttachment.storeOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
 
 			// Not used in color targets.
 			passAttachment.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
@@ -336,18 +336,16 @@ bool RenderTargetSetVk::prepareAsTarget(
 				passAttachment.samples = VK_SAMPLE_COUNT_1_BIT;
 
 				if ((clear.mask & CfColor) != 0)
-				{
-					// Clearing target; do not load.
 					passAttachment.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
-				}
-				else
-				{
-					// Since no clearing of target we need to load color.
+				else if ((load & TfColor) != 0)
 					passAttachment.loadOp = VK_ATTACHMENT_LOAD_OP_LOAD;
-				}
-				
-				// Always store color target.
-				passAttachment.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
+				else
+					passAttachment.loadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
+			
+				if ((store & TfColor) != 0)
+					passAttachment.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
+				else
+					passAttachment.storeOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
 
 				// Not used in color targets.
 				passAttachment.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
@@ -377,33 +375,25 @@ bool RenderTargetSetVk::prepareAsTarget(
 			passAttachment.samples = VK_SAMPLE_COUNT_1_BIT;
 
 			if ((clear.mask & CfDepth) != 0)
-			{
-				// Clearing depth target; do not load.
 				passAttachment.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
-			}
-			else
-			{
-				// Since no clearing of depth target we need to load depth.
+			else if ((load & TfDepth) != 0)
 				passAttachment.loadOp = VK_ATTACHMENT_LOAD_OP_LOAD;
-			}
+			else
+				passAttachment.loadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
+			
+			if ((store & TfDepth) != 0)
+				passAttachment.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
+			else
+				passAttachment.storeOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
 
 			if ((clear.mask & CfStencil) != 0)
-			{
-				// Clearing stencil target; do not load.
 				passAttachment.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
-			}
+			else if ((load & TfDepth) != 0)
+				passAttachment.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_LOAD;
 			else
-			{
-				// Since no clearing of stencil target we determine if we need stencil at all.
-				if (!m_setDesc.ignoreStencil)
-					passAttachment.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_LOAD;
-				else
-					passAttachment.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
-			}
+				passAttachment.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
 
-			// Need to keep depth/stencil so store them.
-			passAttachment.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
-			if (!m_setDesc.ignoreStencil)
+			if ((store & TfDepth) != 0)
 				passAttachment.stencilStoreOp = VK_ATTACHMENT_STORE_OP_STORE;
 			else
 				passAttachment.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
@@ -419,30 +409,28 @@ bool RenderTargetSetVk::prepareAsTarget(
 			passAttachment.samples = VK_SAMPLE_COUNT_1_BIT;
 
 			if ((clear.mask & CfDepth) != 0)
-			{
-				// Clearing depth target; do not load.
 				passAttachment.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
-			}
-			else
-			{
-				// Since no clearing of depth target we need to load depth.
+			else if ((load & TfDepth) != 0)
 				passAttachment.loadOp = VK_ATTACHMENT_LOAD_OP_LOAD;
-			}
+			else
+				passAttachment.loadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
+			
+			if ((store & TfDepth) != 0)
+				passAttachment.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
+			else
+				passAttachment.storeOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
 
 			if ((clear.mask & CfStencil) != 0)
-			{
-				// Clearing stencil target; do not load.
 				passAttachment.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
-			}
-			else
-			{
-				// Since no clearing of stencil target we need to load stencil.
+			else if ((load & TfDepth) != 0)
 				passAttachment.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_LOAD;
-			}
+			else
+				passAttachment.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
 
-			// Store depth/stencil of primary target.
-			passAttachment.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
-			passAttachment.stencilStoreOp = VK_ATTACHMENT_STORE_OP_STORE;
+			if ((store & TfDepth) != 0)
+				passAttachment.stencilStoreOp = VK_ATTACHMENT_STORE_OP_STORE;
+			else
+				passAttachment.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
 
 			passAttachment.initialLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
 			passAttachment.finalLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;

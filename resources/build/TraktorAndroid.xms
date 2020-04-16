@@ -4161,8 +4161,8 @@
 		<item ref="/object/projects/item/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[2]/project"/>
 		<item type="Project" version="1">
 			<enable>true</enable>
-			<name>Traktor.Render.Capture</name>
-			<sourcePath>$(TRAKTOR_HOME)/code/Render/Capture</sourcePath>
+			<name>Traktor.Render.Vrfy</name>
+			<sourcePath>$(TRAKTOR_HOME)/code/Render/Vrfy</sourcePath>
 			<configurations>
 				<item type="Configuration" version="5">
 					<name>DebugStatic</name>
@@ -4188,7 +4188,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>libTraktor.Render.Capture.a</sourceFile>
+							<sourceFile>libTraktor.Render.Vrfy.a</sourceFile>
 							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -4218,7 +4218,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>libTraktor.Render.Capture.a</sourceFile>
+							<sourceFile>libTraktor.Render.Vrfy.a</sourceFile>
 							<targetPath>releasestatic</targetPath>
 						</item>
 					</aggregationItems>

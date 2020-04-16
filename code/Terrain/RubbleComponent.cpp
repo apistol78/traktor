@@ -37,7 +37,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.terrain.RubbleComponent", RubbleComponent, Terr
 
 RubbleComponent::RubbleComponent()
 :	m_owner(nullptr)
-,	m_spreadDistance(0.0f)
+//,	m_spreadDistance(0.0f)
 ,	m_clusterSize(0.0f)
 ,	m_eye(Vector4::zero())
 {
@@ -46,22 +46,25 @@ RubbleComponent::RubbleComponent()
 bool RubbleComponent::create(
 	resource::IResourceManager* resourceManager,
 	render::IRenderSystem* renderSystem,
-	const RubbleComponentData& layerData
+	const RubbleComponentData& data
 )
 {
-	m_spreadDistance = layerData.m_spreadDistance;
+	//m_spreadDistance = data.m_spreadDistance;
 
-	m_rubble.resize(layerData.m_rubble.size());
+	m_rubble.resize(data.m_rubble.size());
 	for (size_t i = 0; i < m_rubble.size(); ++i)
 	{
-		if (!resourceManager->bind(layerData.m_rubble[i].mesh, m_rubble[i].mesh))
+		if (!resourceManager->bind(data.m_rubble[i].mesh, m_rubble[i].mesh))
 			return false;
 
-		m_rubble[i].attribute = layerData.m_rubble[i].attribute;
-		m_rubble[i].density = layerData.m_rubble[i].density;
-		m_rubble[i].randomScaleAmount = layerData.m_rubble[i].randomScaleAmount;
+		m_rubble[i].attribute = data.m_rubble[i].attribute;
+		m_rubble[i].density = data.m_rubble[i].density;
+		m_rubble[i].randomScaleAmount = data.m_rubble[i].randomScaleAmount;
+		m_rubble[i].randomTilt = data.m_rubble[i].randomTilt;
+		m_rubble[i].upness = data.m_rubble[i].upness;
 	}
 
+	m_data = data;
 	return true;
 }
 
@@ -104,6 +107,10 @@ void RubbleComponent::build(
 	if (!terrain)
 		return;
 
+	const auto& heightfield = terrain->getHeightfield();
+	if (!heightfield)
+		return;
+
 	// Update clusters at first pass from eye pow.
 	bool updateClusters = (bool)((worldRenderPass.getPassFlags() & world::IWorldRenderPass::PfFirst) != 0);
 
@@ -113,7 +120,7 @@ void RubbleComponent::build(
 	if (updateClusters)
 	{
 		Frustum viewFrustum = worldRenderView.getViewFrustum();
-		viewFrustum.setFarZ(Scalar(m_spreadDistance + m_clusterSize));
+		viewFrustum.setFarZ(Scalar(m_data.m_spreadDistance + m_clusterSize));
 
 		// Only perform "replanting" when moved more than one unit.
 		if ((eye - m_eye).length() >= m_clusterSize / 2.0f)
@@ -131,6 +138,8 @@ void RubbleComponent::build(
 					continue;
 
 				const float randomScaleAmount = cluster.rubbleDef->randomScaleAmount;
+				const float randomTilt = cluster.rubbleDef->randomTilt;
+				const float upness = cluster.rubbleDef->upness;
 
 				RandomGeometry random(cluster.seed);
 				for (int32_t j = cluster.from; j < cluster.to; ++j)
@@ -138,12 +147,27 @@ void RubbleComponent::build(
 					float dx = (random.nextFloat() * 2.0f - 1.0f) * m_clusterSize;
 					float dz = (random.nextFloat() * 2.0f - 1.0f) * m_clusterSize;
 
+					// Calculate world position.
 					float px = cluster.center.x() + dx;
 					float pz = cluster.center.z() + dz;
 					float py = terrain->getHeightfield()->getWorldHeight(px, pz);
 
+					// Get ground normal.
+					float gx, gz;
+					heightfield->worldToGrid(px, pz, gx, gz);
+					Vector4 normal = heightfield->normalAt(gx, gz);
+
+					// Calculate rotation.
+					float rx = (random.nextFloat() * 2.0f - 1.0f) * randomTilt;
+					float rz = (random.nextFloat() * 2.0f - 1.0f) * randomTilt;
+					float head = random.nextFloat() * TWO_PI;
+					Quaternion Qu = slerp(Quaternion(Vector4(0.0f, 1.0f, 0.0f), normal), Quaternion::identity(), upness);
+					Quaternion Qr = Quaternion::fromAxisAngle(Vector4(1.0f, 0.0f, 0.0f), rx) * Quaternion::fromAxisAngle(Vector4(0.0f, 0.0f, 1.0f), rz);
+					Quaternion Qh = Quaternion::fromAxisAngle(Vector4(0.0f, 1.0f, 0.0f), head);
+
+					// Update instance data.
 					m_instances[j].position = Vector4(px, py, pz, 0.0f);
-					m_instances[j].rotation = Quaternion::fromEulerAngles(random.nextFloat() * TWO_PI, (random.nextFloat() * 2.0f - 1.0f) * deg2rad(10.0f), 0.0f);
+					m_instances[j].rotation = Qr * Qu * Qh;
 					m_instances[j].scale = random.nextFloat() * randomScaleAmount + (1.0f - randomScaleAmount);
 				}
 			}
@@ -160,7 +184,7 @@ void RubbleComponent::build(
 	extraParameters->setTextureParameter(s_handleTerrain_Surface, terrainComponent->getSurfaceCache(worldRenderView.getIndex())->getBaseTexture());
 	extraParameters->setVectorParameter(s_handleTerrain_WorldExtent, terrain->getHeightfield()->getWorldExtent());
 	extraParameters->setVectorParameter(s_handleRubble_Eye, eye);
-	extraParameters->setFloatParameter(s_handleRubble_MaxDistance, m_spreadDistance + m_clusterSize);
+	extraParameters->setFloatParameter(s_handleRubble_MaxDistance, m_data.m_spreadDistance + m_clusterSize);
 	extraParameters->endParameters(renderContext);
 
 	for (const auto& cluster : m_clusters)
@@ -205,7 +229,9 @@ void RubbleComponent::updatePatches()
 	const auto& heightfield = terrain->getHeightfield();
 
 	// Get set of materials which have undergrowth.
-	StaticVector< uint8_t, 16 > um(16, 0);
+	StaticVector< uint8_t, 16 > um;
+	um.resize(16, 0);
+
 	uint8_t maxMaterialIndex = 0;
 	for (const auto& rubble : m_rubble)
 		um[rubble.attribute] = ++maxMaterialIndex;
@@ -221,7 +247,9 @@ void RubbleComponent::updatePatches()
 	{
 		for (int32_t x = 0; x < size; x += 16)
 		{
-			StaticVector< int32_t, 16 > cm(16, 0);
+			StaticVector< int32_t, 16 > cm;
+			cm.resize(16, 0);
+
 			int32_t totalDensity = 0;
 			for (int32_t cz = 0; cz < 16; ++cz)
 			{
@@ -258,16 +286,15 @@ void RubbleComponent::updatePatches()
 					if (density <= 4)
 						continue;
 
-					int32_t from = int32_t(m_instances.size());
+					int32_t from = (int32_t)m_instances.size();
 					for (int32_t k = 0; k < density; ++k)
 					{
-						Instance instance;
+						Instance& instance = m_instances.push_back();
 						instance.position = Vector4::zero();
 						instance.rotation = Quaternion::identity();
 						instance.scale = 0.0f;
-						m_instances.push_back(instance);
 					}
-					int32_t to = int32_t(m_instances.size());
+					int32_t to = (int32_t)m_instances.size();
 
 					Cluster& c = m_clusters.push_back();
 					c.rubbleDef = &rubble;

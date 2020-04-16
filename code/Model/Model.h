@@ -161,7 +161,9 @@ public:
 
 	uint32_t getTexCoordChannel(const std::wstring& channelId) const;
 
-	const AlignedVector< std::wstring >& getTexCoordChannels() const;
+	void setTexCoordChannels(const AlignedVector< std::wstring >& texCoordChannels) { m_texCoordChannels = texCoordChannels; }
+
+	const AlignedVector< std::wstring >& getTexCoordChannels() const { return m_texCoordChannels; }
 
 	/*! \name Skeleton joints. */
 	//!@{

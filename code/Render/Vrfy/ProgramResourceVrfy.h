@@ -1,5 +1,5 @@
-#ifndef traktor_render_ProgramResourceCapture_H
-#define traktor_render_ProgramResourceCapture_H
+#ifndef traktor_render_ProgramResourceVrfy_H
+#define traktor_render_ProgramResourceVrfy_H
 
 #include <string>
 #include "Core/Ref.h"
@@ -7,7 +7,7 @@
 
 // import/export mechanism.
 #undef T_DLLCLASS
-#if defined(T_RENDER_CAPTURE_EXPORT)
+#if defined(T_RENDER_VRFY_EXPORT)
 #	define T_DLLCLASS T_DLLEXPORT
 #else
 #	define T_DLLCLASS T_DLLIMPORT
@@ -21,7 +21,7 @@ namespace traktor
 /*! \brief
  * \ingroup Render
  */
-class T_DLLCLASS ProgramResourceCapture : public ProgramResource
+class T_DLLCLASS ProgramResourceVrfy : public ProgramResource
 {
 	T_RTTI_CLASS;
 
@@ -29,8 +29,8 @@ public:
 	virtual void serialize(ISerializer& s) override;
 
 private:
-	friend class ProgramCompilerCapture;
-	friend class RenderSystemCapture;
+	friend class ProgramCompilerVrfy;
+	friend class RenderSystemVrfy;
 
 	Ref< ProgramResource > m_embedded;
 	std::wstring m_vertexShader;
@@ -41,5 +41,5 @@ private:
 	}
 }
 
-#endif	// traktor_render_ProgramResourceCapture_H
+#endif	// traktor_render_ProgramResourceVrfy_H
 

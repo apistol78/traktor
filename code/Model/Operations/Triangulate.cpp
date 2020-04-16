@@ -20,7 +20,7 @@ bool Triangulate::apply(Model& model) const
 
 	for (const auto& polygon : polygons)
 	{
-		const AlignedVector< uint32_t >& vertices = polygon.getVertices();
+		const auto& vertices = polygon.getVertices();
 		if (vertices.size() > 3)
 		{
 			Winding3 polygonWinding;

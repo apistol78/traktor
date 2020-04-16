@@ -11,12 +11,12 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.model.CleanDegenerate", CleanDegenerate, IModel
 
 bool CleanDegenerate::apply(Model& model) const
 {
-	AlignedVector< Polygon >& polygons = model.getPolygons();
+	auto& polygons = model.getPolygons();
 	for (size_t i = 0; i < polygons.size(); )
 	{
 		Polygon& polygon = polygons[i];
 
-		AlignedVector< uint32_t >& vertices = polygon.getVertices();
+		auto& vertices = polygon.getVertices();
 		if (vertices.size() > 1)
 		{
 			for (size_t j = 0; j < vertices.size(); )

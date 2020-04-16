@@ -7,17 +7,17 @@ namespace traktor
 	namespace render
 	{
 
-class SimpleTextureCapture;
+class SimpleTextureVrfy;
 
 /*!
- * \ingroup Capture
+ * \ingroup Vrfy
  */
-class RenderTargetSetCapture : public IRenderTargetSet
+class RenderTargetSetVrfy : public IRenderTargetSet
 {
 	T_RTTI_CLASS;
 
 public:
-	RenderTargetSetCapture(IRenderTargetSet* renderTargetSet);
+	RenderTargetSetVrfy(IRenderTargetSet* renderTargetSet);
 
 	virtual void destroy() override final;
 
@@ -41,8 +41,8 @@ public:
 
 private:
 	Ref< IRenderTargetSet > m_renderTargetSet;
-	mutable Ref< SimpleTextureCapture > m_colorTextures[4];
-	mutable Ref< SimpleTextureCapture > m_depthTexture;
+	mutable Ref< SimpleTextureVrfy > m_colorTextures[4];
+	mutable Ref< SimpleTextureVrfy > m_depthTexture;
 };
 
 	}

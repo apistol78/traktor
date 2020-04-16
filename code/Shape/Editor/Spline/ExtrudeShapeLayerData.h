@@ -14,6 +14,13 @@
 
 namespace traktor
 {
+	namespace model
+	{
+	
+class Model;
+
+	}
+
 	namespace render
 	{
 
@@ -36,16 +43,17 @@ public:
 
 	virtual Ref< SplineLayerComponent > createComponent(db::Database* database) const override final;
 
-	virtual Ref< model::Model > createModel(db::Database* database, const TransformPath& path) const override final;
+	virtual Ref< model::Model > createModel(db::Database* database, const std::wstring& assetPath, const TransformPath& path) const override final;
 
 	virtual void serialize(ISerializer& s) override final;
 
-	const Guid& getMaterial() const { return m_material; }
+	const Guid& getMesh() const { return m_mesh; }
 
 private:
-	Guid m_material;
+	Guid m_mesh;
 	bool m_automaticOrientation;
 	float m_detail;
+	mutable Ref< model::Model > m_model;	// \fixme Caching this here isn't pretty.
 };
 
 	}

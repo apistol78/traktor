@@ -306,7 +306,7 @@ bool MeshPipeline::buildOutput(
 
 		if (model->getPolygonCount() == 0)
 		{
-			log::error << L"Mesh pipeline failed; no polygons in parameter source model" << Endl;
+			log::error << L"Mesh pipeline failed; no polygons in parametric source model." << Endl;
 			return false;
 		}
 
@@ -348,7 +348,7 @@ bool MeshPipeline::buildOutput(
 
 	if (models.empty())
 	{
-		log::error << L"Mesh pipeline failed; no models" << Endl;
+		log::error << L"Mesh pipeline failed; no model." << Endl;
 		return false;
 	}
 
@@ -364,7 +364,7 @@ bool MeshPipeline::buildOutput(
 		const AlignedVector< model::Material >& modelMaterials = model->getMaterials();
 		if (model->getMaterials().empty())
 		{
-			log::error << L"Mesh pipeline failed; no materials in source model(s)" << Endl;
+			log::error << L"Mesh pipeline failed; no materials in source model(s)." << Endl;
 			return false;
 		}
 

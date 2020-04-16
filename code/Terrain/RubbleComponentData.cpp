@@ -1,4 +1,6 @@
+#include "Core/Math/Const.h"
 #include "Core/Serialization/AttributeRange.h"
+#include "Core/Serialization/AttributeUnit.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
 #include "Core/Serialization/MemberAlignedVector.h"
@@ -12,7 +14,7 @@ namespace traktor
 	namespace terrain
 	{
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.terrain.RubbleComponentData", 2, RubbleComponentData, TerrainLayerComponentData)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.terrain.RubbleComponentData", 3, RubbleComponentData, TerrainLayerComponentData)
 
 RubbleComponentData::RubbleComponentData()
 :	m_spreadDistance(100.0f)
@@ -31,6 +33,8 @@ RubbleComponentData::RubbleMesh::RubbleMesh()
 :	attribute(1)
 ,	density(10)
 ,	randomScaleAmount(0.5f)
+,	randomTilt(0.0f)
+,	upness(1.0f)
 {
 }
 
@@ -45,6 +49,12 @@ void RubbleComponentData::RubbleMesh::serialize(ISerializer& s)
 
 	s >> Member< int32_t >(L"density", density, AttributeRange(0.0f));
 	s >> Member< float >(L"randomScaleAmount", randomScaleAmount, AttributeRange(0.0f, 1.0f));
+
+	if (s.getVersion< RubbleComponentData >() >= 3)
+	{
+		s >> Member< float >(L"randomTilt", randomTilt, AttributeRange(0.0f, HALF_PI) | AttributeUnit(AuRadians));
+		s >> Member< float >(L"upness", upness, AttributeRange(0.0f, 1.0f) | AttributeUnit(AuPercent));
+	}
 }
 
 	}

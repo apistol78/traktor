@@ -110,7 +110,6 @@
 #	pragma warning( disable : 4251 )	// <identifier> : class foo needs to have dll-interface to be used by clients of class bar
 #	pragma warning( disable : 4190 )	// 'foo' has C-linkage specified, but returns UDT 'bar' which is incompatible with C
 #	pragma warning( disable : 4345 )	// behavior change: an object of POD type constructed with an initializer of the form () will be default-initialized
-#	pragma deprecated("null")
 #endif
 
 // Cross platform type definitions.

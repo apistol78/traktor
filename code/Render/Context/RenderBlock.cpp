@@ -125,9 +125,9 @@ void BeginPassRenderBlock::render(IRenderView* renderView) const
 	if (renderTargetSet)
 	{
 		if (renderTargetIndex >= 0)
-			renderView->beginPass(renderTargetSet, renderTargetIndex, &clear);
+			renderView->beginPass(renderTargetSet, renderTargetIndex, &clear, load, store);
 		else
-			renderView->beginPass(renderTargetSet, &clear);
+			renderView->beginPass(renderTargetSet, &clear, load, store);
 	}
 	else
 		renderView->beginPass(&clear);

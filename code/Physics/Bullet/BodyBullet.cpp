@@ -58,9 +58,9 @@ void BodyBullet::destroy()
 {
 	invokeOnce< IWorldCallback, BodyBullet*, btRigidBody*, btCollisionShape* >(m_callback, &IWorldCallback::destroyBody, this, m_body, m_shape);
 
-	m_dynamicsWorld = 0;
-	m_body = 0;
-	m_shape = 0;
+	m_dynamicsWorld = nullptr;
+	m_body = nullptr;
+	m_shape = nullptr;
 
 	Body::destroy();
 }
@@ -74,7 +74,7 @@ void BodyBullet::setTransform(const Transform& transform)
 	m_body->setWorldTransform(bt);
 
 	// Update motion state's transform as well in case if kinematic body.
-	if (m_body->isKinematicObject())
+	if (m_body->isKinematicObject() && m_body->getMotionState())
 		m_body->getMotionState()->setWorldTransform(bt);
 }
 
@@ -129,15 +129,15 @@ void BodyBullet::setEnable(bool enable)
 
 	if (!enable)
 	{
-		for (std::vector< btTypedConstraint* >::iterator i = m_constraints.begin(); i != m_constraints.end(); ++i)
-			m_callback->removeConstraint(*i);
+		for (auto constraint : m_constraints)
+			m_callback->removeConstraint(constraint);
 		m_callback->removeBody(m_body);
 	}
 	else
 	{
 		m_callback->insertBody(m_body, (uint16_t)m_collisionGroup, (uint16_t)m_collisionMask);
-		for (std::vector< btTypedConstraint* >::iterator i = m_constraints.begin(); i != m_constraints.end(); ++i)
-			m_callback->insertConstraint(*i);
+		for (auto constraint : m_constraints)
+			m_callback->insertConstraint(constraint);
 	}
 
 	m_enable = enable;
@@ -317,12 +317,12 @@ void BodyBullet::addConstraint(btTypedConstraint* constraint)
 
 void BodyBullet::removeConstraint(btTypedConstraint* constraint)
 {
-	std::vector< btTypedConstraint* >::iterator i = std::find(m_constraints.begin(), m_constraints.end(), constraint);
-	if (i != m_constraints.end())
+	auto it = std::find(m_constraints.begin(), m_constraints.end(), constraint);
+	if (it != m_constraints.end())
 	{
 		if (m_enable)
 			m_callback->removeConstraint(constraint);
-		m_constraints.erase(i);
+		m_constraints.erase(it);
 	}
 }
 

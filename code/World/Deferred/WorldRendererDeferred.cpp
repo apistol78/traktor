@@ -590,12 +590,13 @@ render::handle_t WorldRendererDeferred::setupGBufferPass(
 	Ref< render::RenderPass > rp = new render::RenderPass(L"GBuffer");
 
 	render::Clear clear;
-	clear.mask = render::CfColor | render::CfDepth;
+	clear.mask = render::CfColor | render::CfDepth | render::CfStencil;
 	clear.colors[0] = Color4f(clearZ, clearZ, clearZ, clearZ);	// depth
 	clear.colors[1] = Color4f(0.0f, 0.0f, 1.0f, 0.0f);	// normal
 	clear.colors[2] = Color4f(0.0f, 1.0f, 0.0f, 1.0f);	// misc
 	clear.colors[3] = Color4f(0.0f, 0.0f, 0.0f, 0.0f);	// surface
 	clear.depth = 1.0f;	
+	clear.stencil = 0;
 	rp->setOutput(gbufferTargetSetId, clear);
 
 	rp->addBuild(
@@ -731,7 +732,7 @@ render::handle_t WorldRendererDeferred::setupAmbientOcclusionPass(
 	rgtd.targets[0].colorFormat = render::TfR8;			// Ambient occlusion (R)
 	rgtd.referenceWidthDenom = 1;
 	rgtd.referenceHeightDenom = 1;
-	auto ambientOcclusionTargetSetId = renderGraph.addTargetSet(rgtd, m_sharedDepthStencil, outputTargetSetId);
+	auto ambientOcclusionTargetSetId = renderGraph.addTargetSet(rgtd, nullptr, outputTargetSetId);
 
 	// Add ambient occlusion render pass.
 	Ref< render::RenderPass > rp = new render::RenderPass(L"Ambient occlusion");
@@ -1219,13 +1220,8 @@ render::handle_t WorldRendererDeferred::setupReflectionsPass(
 	rgtd.usingPrimaryDepthStencil = (m_sharedDepthStencil == nullptr) ? true : false;
 	rgtd.ignoreStencil = true;
 	rgtd.targets[0].colorFormat = render::TfR11G11B10F;
-#if !defined(__ANDROID__) && !defined(__IOS__)
 	rgtd.referenceWidthDenom = 1;
 	rgtd.referenceHeightDenom = 1;
-#else
-	rgtd.referenceWidthDenom = 2;
-	rgtd.referenceHeightDenom = 2;
-#endif
 	auto reflectionsTargetSetId = renderGraph.addTargetSet(rgtd, m_sharedDepthStencil, outputTargetSetId);
 
 	// Add Reflections render pass.
@@ -1339,7 +1335,7 @@ render::handle_t WorldRendererDeferred::setupVisualPass(
 	if (shadowsEnable)
 	{
 		rp->addInput(shadowMaskTargetSetId);
-		rp->addInput(shadowMapAtlasTargetSetId);
+		rp->addInput(shadowMapAtlasTargetSetId, true);
 	}
 
 	render::Clear clear;

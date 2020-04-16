@@ -8,14 +8,14 @@ namespace traktor
 	{
 
 /*!
- * \ingroup Capture
+ * \ingroup Vrfy
  */
-class VolumeTextureCapture : public IVolumeTexture
+class VolumeTextureVrfy : public IVolumeTexture
 {
 	T_RTTI_CLASS;
 
 public:
-	VolumeTextureCapture(IVolumeTexture* texture);
+	VolumeTextureVrfy(IVolumeTexture* texture);
 
 	virtual void destroy() override final;
 

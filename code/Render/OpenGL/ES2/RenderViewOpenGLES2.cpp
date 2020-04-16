@@ -303,12 +303,12 @@ bool RenderViewOpenGLES2::beginPass(const Clear* clear)
 	return true;
 }
 
-bool RenderViewOpenGLES2::beginPass(IRenderTargetSet* renderTargetSet, const Clear* clear)
+bool RenderViewOpenGLES2::beginPass(IRenderTargetSet* renderTargetSet, const Clear* clear, uint32_t load, uint32_t store)
 {
-	return beginPass(renderTargetSet, 0, clear);
+	return beginPass(renderTargetSet, 0, clear, load, store);
 }
 
-bool RenderViewOpenGLES2::beginPass(IRenderTargetSet* renderTargetSet, int32_t renderTarget, const Clear* clear)
+bool RenderViewOpenGLES2::beginPass(IRenderTargetSet* renderTargetSet, int32_t renderTarget, const Clear* clear, uint32_t load, uint32_t store)
 {
 	RenderTargetSetOpenGLES2* rts = checked_type_cast< RenderTargetSetOpenGLES2* >(renderTargetSet);
 

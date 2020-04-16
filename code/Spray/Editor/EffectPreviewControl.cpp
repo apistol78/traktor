@@ -508,8 +508,8 @@ void EffectPreviewControl::eventPaint(ui::PaintEvent* event)
 	cl.stencil = 0;
 
 	if (
-		m_depthTexture &&
-		m_renderView->beginPass(m_depthTexture, 0, &cl)
+		m_depthTexture/* &&
+		m_renderView->beginPass(m_depthTexture, 0, &cl)*/
 	)
 	{
 		if (m_groundClip && m_primitiveRenderer->begin(0, projectionTransform))

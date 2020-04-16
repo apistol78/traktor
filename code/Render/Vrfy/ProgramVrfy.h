@@ -8,12 +8,12 @@ namespace traktor
 	namespace render
 	{
 
-class ProgramCapture : public IProgram
+class ProgramVrfy : public IProgram
 {
 	T_RTTI_CLASS;
 
 public:
-	ProgramCapture(IProgram* program, const wchar_t* const tag);
+	ProgramVrfy(IProgram* program, const wchar_t* const tag);
 
 	virtual void destroy() override final;
 
@@ -38,8 +38,8 @@ public:
 	void verify();
 
 private:
-	friend class RenderSystemCapture;
-	friend class RenderViewCapture;
+	friend class RenderSystemVrfy;
+	friend class RenderViewVrfy;
 
 	struct Parameter
 	{

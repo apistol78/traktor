@@ -74,9 +74,18 @@ bool ModelFormat_writeAny(const Path& filePath, const Model* model)
     return ModelFormat::writeAny(filePath, model);
 }
 
-const AlignedVector< uint32_t >& Polygon_getVertices(Polygon* self)
+void Polygon_setVertices(Polygon* self, const AlignedVector< uint32_t >& vertices)
 {
-    return self->getVertices();
+    self->setVertices(Polygon::vertices_t(
+        vertices.begin(),
+        vertices.end()
+    ));
+}
+
+AlignedVector< uint32_t > Polygon_getVertices(Polygon* self)
+{
+    const auto& vertices = self->getVertices();
+    return AlignedVector< uint32_t >(vertices.begin(), vertices.end());
 }
 
 Ref< ModelAdjacency > ModelAdjacency_ctor_2(const Model* model, int32_t mode)
@@ -307,7 +316,7 @@ void ModelClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
     classPolygon->addMethod("addVertex", &Polygon::addVertex);
     classPolygon->addMethod("setVertex", &Polygon::setVertex);
     classPolygon->addMethod("getVertex", &Polygon::getVertex);
-    classPolygon->addMethod("setVertices", &Polygon::setVertices);
+    classPolygon->addMethod("setVertices", &Polygon_setVertices);
     classPolygon->addMethod("getVertices", &Polygon_getVertices);
     registrar->registerClass(classPolygon);
 

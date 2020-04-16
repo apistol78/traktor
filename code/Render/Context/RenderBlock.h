@@ -197,10 +197,14 @@ public:
 	Ref< IRenderTargetSet > renderTargetSet;
 	int32_t renderTargetIndex;
 	Clear clear;
+	uint32_t load;
+	uint32_t store;
 
 	BeginPassRenderBlock()
 	:	RenderBlock()
 	,	renderTargetIndex(-1)
+	,	load(0)
+	,	store(0)
 	{
 		clear.mask = 0;
 	}

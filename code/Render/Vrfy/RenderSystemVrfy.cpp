@@ -1,25 +1,25 @@
 #include "Render/StructElement.h"
 #include "Render/VertexElement.h"
-#include "Render/Capture/CubeTextureCapture.h"
-#include "Render/Capture/Error.h"
-#include "Render/Capture/IndexBufferCapture.h"
-#include "Render/Capture/ProgramCapture.h"
-#include "Render/Capture/ProgramResourceCapture.h"
-#include "Render/Capture/RenderSystemCapture.h"
-#include "Render/Capture/RenderTargetSetCapture.h"
-#include "Render/Capture/RenderViewCapture.h"
-#include "Render/Capture/SimpleTextureCapture.h"
-#include "Render/Capture/VertexBufferCapture.h"
-#include "Render/Capture/VolumeTextureCapture.h"
+#include "Render/Vrfy/CubeTextureVrfy.h"
+#include "Render/Vrfy/Error.h"
+#include "Render/Vrfy/IndexBufferVrfy.h"
+#include "Render/Vrfy/ProgramVrfy.h"
+#include "Render/Vrfy/ProgramResourceVrfy.h"
+#include "Render/Vrfy/RenderSystemVrfy.h"
+#include "Render/Vrfy/RenderTargetSetVrfy.h"
+#include "Render/Vrfy/RenderViewVrfy.h"
+#include "Render/Vrfy/SimpleTextureVrfy.h"
+#include "Render/Vrfy/VertexBufferVrfy.h"
+#include "Render/Vrfy/VolumeTextureVrfy.h"
 
 namespace traktor
 {
 	namespace render
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.RenderSystemCapture", 0, RenderSystemCapture, IRenderSystem)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.RenderSystemVrfy", 0, RenderSystemVrfy, IRenderSystem)
 
-bool RenderSystemCapture::create(const RenderSystemDesc& desc)
+bool RenderSystemVrfy::create(const RenderSystemDesc& desc)
 {
 	if ((m_renderSystem = desc.capture) == nullptr)
 		return false;
@@ -27,60 +27,60 @@ bool RenderSystemCapture::create(const RenderSystemDesc& desc)
 	return m_renderSystem->create(desc);
 }
 
-void RenderSystemCapture::destroy()
+void RenderSystemVrfy::destroy()
 {
 	m_renderSystem->destroy();
 }
 
-bool RenderSystemCapture::reset(const RenderSystemDesc& desc)
+bool RenderSystemVrfy::reset(const RenderSystemDesc& desc)
 {
 	return m_renderSystem->reset(desc);
 }
 
-void RenderSystemCapture::getInformation(RenderSystemInformation& outInfo) const
+void RenderSystemVrfy::getInformation(RenderSystemInformation& outInfo) const
 {
 	m_renderSystem->getInformation(outInfo);
 }
 
-uint32_t RenderSystemCapture::getDisplayModeCount() const
+uint32_t RenderSystemVrfy::getDisplayModeCount() const
 {
 	return m_renderSystem->getDisplayModeCount();
 }
 
-DisplayMode RenderSystemCapture::getDisplayMode(uint32_t index) const
+DisplayMode RenderSystemVrfy::getDisplayMode(uint32_t index) const
 {
 	return m_renderSystem->getDisplayMode(index);
 }
 
-DisplayMode RenderSystemCapture::getCurrentDisplayMode() const
+DisplayMode RenderSystemVrfy::getCurrentDisplayMode() const
 {
 	return m_renderSystem->getCurrentDisplayMode();
 }
 
-float RenderSystemCapture::getDisplayAspectRatio() const
+float RenderSystemVrfy::getDisplayAspectRatio() const
 {
 	return m_renderSystem->getDisplayAspectRatio();
 }
 
-Ref< IRenderView > RenderSystemCapture::createRenderView(const RenderViewDefaultDesc& desc)
+Ref< IRenderView > RenderSystemVrfy::createRenderView(const RenderViewDefaultDesc& desc)
 {
 	Ref< IRenderView > renderView = m_renderSystem->createRenderView(desc);
 	if (!renderView)
 		return nullptr;
 
-	return new RenderViewCapture(m_renderSystem, renderView);
+	return new RenderViewVrfy(m_renderSystem, renderView);
 }
 
-Ref< IRenderView > RenderSystemCapture::createRenderView(const RenderViewEmbeddedDesc& desc)
+Ref< IRenderView > RenderSystemVrfy::createRenderView(const RenderViewEmbeddedDesc& desc)
 {
 	Ref< IRenderView > renderView = m_renderSystem->createRenderView(desc);
 	if (!renderView)
 		return nullptr;
 
-	return new RenderViewCapture(m_renderSystem, renderView);
+	return new RenderViewVrfy(m_renderSystem, renderView);
 }
 
-Ref< VertexBuffer > RenderSystemCapture::createVertexBuffer(const AlignedVector< VertexElement >& vertexElements, uint32_t bufferSize, bool dynamic)
+Ref< VertexBuffer > RenderSystemVrfy::createVertexBuffer(const AlignedVector< VertexElement >& vertexElements, uint32_t bufferSize, bool dynamic)
 {
 	T_CAPTURE_ASSERT(bufferSize > 0, L"Invalid vertex buffer size.");
 
@@ -91,10 +91,10 @@ Ref< VertexBuffer > RenderSystemCapture::createVertexBuffer(const AlignedVector<
 	if (!vertexBuffer)
 		return nullptr;
 
-	return new VertexBufferCapture(vertexBuffer, bufferSize, vertexSize);
+	return new VertexBufferVrfy(vertexBuffer, bufferSize, vertexSize);
 }
 
-Ref< IndexBuffer > RenderSystemCapture::createIndexBuffer(IndexType indexType, uint32_t bufferSize, bool dynamic)
+Ref< IndexBuffer > RenderSystemVrfy::createIndexBuffer(IndexType indexType, uint32_t bufferSize, bool dynamic)
 {
 	T_CAPTURE_ASSERT(bufferSize > 0, L"Invalid index buffer size.");
 
@@ -102,10 +102,10 @@ Ref< IndexBuffer > RenderSystemCapture::createIndexBuffer(IndexType indexType, u
 	if (!indexBuffer)
 		return nullptr;
 
-	return new IndexBufferCapture(indexBuffer, indexType, bufferSize);
+	return new IndexBufferVrfy(indexBuffer, indexType, bufferSize);
 }
 
-Ref< StructBuffer > RenderSystemCapture::createStructBuffer(const AlignedVector< StructElement >& structElements, uint32_t bufferSize)
+Ref< StructBuffer > RenderSystemVrfy::createStructBuffer(const AlignedVector< StructElement >& structElements, uint32_t bufferSize)
 {
 	T_CAPTURE_ASSERT(bufferSize > 0, L"Invalid structure buffer size.");
 
@@ -116,10 +116,10 @@ Ref< StructBuffer > RenderSystemCapture::createStructBuffer(const AlignedVector<
 	if (!structBuffer)
 		return nullptr;
 
-	return nullptr; // new StructBufferCapture(structBuffer, bufferSize, structSize);	
+	return nullptr; // new StructBufferVrfy(structBuffer, bufferSize, structSize);	
 }
 
-Ref< ISimpleTexture > RenderSystemCapture::createSimpleTexture(const SimpleTextureCreateDesc& desc, const wchar_t* const tag)
+Ref< ISimpleTexture > RenderSystemVrfy::createSimpleTexture(const SimpleTextureCreateDesc& desc, const wchar_t* const tag)
 {
 	T_CAPTURE_ASSERT(desc.width > 0, L"Invalid texture width.");
 	T_CAPTURE_ASSERT(desc.height > 0, L"Invalid texture height.");
@@ -138,10 +138,10 @@ Ref< ISimpleTexture > RenderSystemCapture::createSimpleTexture(const SimpleTextu
 	if (!texture)
 		return nullptr;
 
-	return new SimpleTextureCapture(texture);
+	return new SimpleTextureVrfy(texture);
 }
 
-Ref< ICubeTexture > RenderSystemCapture::createCubeTexture(const CubeTextureCreateDesc& desc, const wchar_t* const tag)
+Ref< ICubeTexture > RenderSystemVrfy::createCubeTexture(const CubeTextureCreateDesc& desc, const wchar_t* const tag)
 {
 	T_CAPTURE_ASSERT(desc.side > 0, L"Invalid cube texture size.");
 	T_CAPTURE_ASSERT(desc.mipCount >= 1, L"Invalid number of mips.");
@@ -159,10 +159,10 @@ Ref< ICubeTexture > RenderSystemCapture::createCubeTexture(const CubeTextureCrea
 	if (!texture)
 		return nullptr;
 
-	return new CubeTextureCapture(texture);
+	return new CubeTextureVrfy(texture);
 }
 
-Ref< IVolumeTexture > RenderSystemCapture::createVolumeTexture(const VolumeTextureCreateDesc& desc, const wchar_t* const tag)
+Ref< IVolumeTexture > RenderSystemVrfy::createVolumeTexture(const VolumeTextureCreateDesc& desc, const wchar_t* const tag)
 {
 	T_CAPTURE_ASSERT(desc.width > 0, L"Invalid volume texture width.");
 	T_CAPTURE_ASSERT(desc.height > 0, L"Invalid volume texture height.");
@@ -182,10 +182,10 @@ Ref< IVolumeTexture > RenderSystemCapture::createVolumeTexture(const VolumeTextu
 	if (!texture)
 		return nullptr;
 
-	return new VolumeTextureCapture(texture);
+	return new VolumeTextureVrfy(texture);
 }
 
-Ref< IRenderTargetSet > RenderSystemCapture::createRenderTargetSet(const RenderTargetSetCreateDesc& desc, IRenderTargetSet* sharedDepthStencil, const wchar_t* const tag)
+Ref< IRenderTargetSet > RenderSystemVrfy::createRenderTargetSet(const RenderTargetSetCreateDesc& desc, IRenderTargetSet* sharedDepthStencil, const wchar_t* const tag)
 {
 	T_CAPTURE_ASSERT(desc.count >= 0, L"Negative number of targets.");
 	T_CAPTURE_ASSERT(desc.count <= 4, L"Too many targets.");
@@ -216,17 +216,17 @@ Ref< IRenderTargetSet > RenderSystemCapture::createRenderTargetSet(const RenderT
 	if (!renderTargetSet)
 		return nullptr;
 
-	return new RenderTargetSetCapture(renderTargetSet);
+	return new RenderTargetSetVrfy(renderTargetSet);
 }
 
-Ref< IProgram > RenderSystemCapture::createProgram(const ProgramResource* programResource, const wchar_t* const tag)
+Ref< IProgram > RenderSystemVrfy::createProgram(const ProgramResource* programResource, const wchar_t* const tag)
 {
 	T_CAPTURE_ASSERT(programResource, L"No program resource.");
 
 	if (!programResource)
 		return nullptr;
 
-	const ProgramResourceCapture* resource = dynamic_type_cast< const ProgramResourceCapture* >(programResource);
+	const ProgramResourceVrfy* resource = dynamic_type_cast< const ProgramResourceVrfy* >(programResource);
 	T_CAPTURE_ASSERT(resource, L"Incorrect program resource type.");
 
 	if (!resource)
@@ -238,36 +238,36 @@ Ref< IProgram > RenderSystemCapture::createProgram(const ProgramResource* progra
 	if (!program)
 		return nullptr;
 
-	Ref< ProgramCapture > programCapture = new ProgramCapture(program, tag);
+	Ref< ProgramVrfy > programVrfy = new ProgramVrfy(program, tag);
 
 	// for (RefArray< Uniform >::const_iterator i = resource->m_uniforms.begin(); i != resource->m_uniforms.end(); ++i)
 	// {
 	// 	handle_t handle = getParameterHandle(i->getParameterName());
-	// 	programCapture->m_shadow[handle].uniform = *i;
-	// 	programCapture->m_shadow[handle].undefined = (i->getParameterType() <= PtMatrix) ? true : false;	// Textures are allowed to be unset, should sample black.
+	// 	programVrfy->m_shadow[handle].uniform = *i;
+	// 	programVrfy->m_shadow[handle].undefined = (i->getParameterType() <= PtMatrix) ? true : false;	// Textures are allowed to be unset, should sample black.
 	// }
 
 	// for (RefArray< IndexedUniform >::const_iterator i = resource->m_indexedUniforms.begin(); i != resource->m_indexedUniforms.end(); ++i)
 	// {
 	// 	handle_t handle = getParameterHandle(i->getParameterName());
-	// 	programCapture->m_shadow[handle].indexedUniform = *i;
-	// 	programCapture->m_shadow[handle].undefined = (i->getParameterType() <= PtMatrix) ? true : false;	// Textures are allowed to be unset, should sample black.
+	// 	programVrfy->m_shadow[handle].indexedUniform = *i;
+	// 	programVrfy->m_shadow[handle].undefined = (i->getParameterType() <= PtMatrix) ? true : false;	// Textures are allowed to be unset, should sample black.
 	// }
 
-	return programCapture;
+	return programVrfy;
 }
 
-Ref< ITimeQuery > RenderSystemCapture::createTimeQuery() const
+Ref< ITimeQuery > RenderSystemVrfy::createTimeQuery() const
 {
 	return m_renderSystem->createTimeQuery();
 }
 
-void RenderSystemCapture::purge()
+void RenderSystemVrfy::purge()
 {
 	m_renderSystem->purge();
 }
 
-void RenderSystemCapture::getStatistics(RenderSystemStatistics& outStatistics) const
+void RenderSystemVrfy::getStatistics(RenderSystemStatistics& outStatistics) const
 {
 	m_renderSystem->getStatistics(outStatistics);
 }

@@ -32,25 +32,17 @@ Ref< model::Model > SplineEntityReplicator::createModel(
 
 	// Count number of control points as we need to estimate fraction of each.
 	int32_t controlPointCount = 0;
-	int32_t layerCount = 0;
 	for (auto entityData : splineEntityData->getEntityData())
 	{
 		for (auto componentData : entityData->getComponents())
 		{
 			if (is_a< ControlPointComponentData >(componentData))
 				controlPointCount++;
-			if (is_a< SplineLayerComponentData >(componentData))
-				layerCount++;
 		}
 	}
 	if (controlPointCount <= 0)
 	{
 		log::error << L"Invalid spline; no control points found." << Endl;
-		return nullptr;	
-	}
-	if (layerCount <= 0)
-	{
-		log::error << L"Invalid spline; no layers found." << Endl;
 		return nullptr;	
 	}
 
@@ -77,21 +69,18 @@ Ref< model::Model > SplineEntityReplicator::createModel(
 	// Create model, add geometry for each layer.
     Ref< model::Model > outputModel = new model::Model();
 
-	for (auto entityData : splineEntityData->getEntityData())
+	for (auto componentData : splineEntityData->getComponents())
 	{
-		for (auto componentData : entityData->getComponents())
-		{
-			auto layerData = dynamic_type_cast< SplineLayerComponentData* >(componentData);
-			if (!layerData)
-				continue;
+		auto layerData = dynamic_type_cast< SplineLayerComponentData* >(componentData);
+		if (!layerData)
+			continue;
 
-			Ref< model::Model > layerModel = layerData->createModel(pipelineBuilder->getSourceDatabase(), path);
-			if (!layerModel)
-				continue;
+		Ref< model::Model > layerModel = layerData->createModel(pipelineBuilder->getSourceDatabase(), assetPath, path);
+		if (!layerModel)
+			continue;
 
-			model::MergeModel merge(*layerModel, entityData->getTransform().inverse(), 0.01f);
-			merge.apply(*outputModel);
-		}
+		model::MergeModel merge(*layerModel, splineEntityData->getTransform().inverse(), 0.01f);
+		merge.apply(*outputModel);
 	}
 
     return outputModel;

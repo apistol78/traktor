@@ -71,8 +71,8 @@ bool MergeCoplanarAdjacents::apply(Model& model) const
 				{
 					Polygon& rightPolygon = polygons[sharedPolygon];
 
-					AlignedVector< uint32_t > leftVertices = leftPolygon.getVertices();
-					AlignedVector< uint32_t > rightVertices = rightPolygon.getVertices();
+					auto leftVertices = leftPolygon.getVertices();
+					auto rightVertices = rightPolygon.getVertices();
 
 					if (leftVertices.size() < 3 || rightVertices.size() < 3)
 						continue;
@@ -132,7 +132,7 @@ bool MergeCoplanarAdjacents::apply(Model& model) const
 					}
 
 					// Set all vertices in left polygon and null out right polygon.
-					leftPolygon.setVertices(mergedVertices);
+					leftPolygon.setVertices(Polygon::vertices_t(mergedVertices.begin(), mergedVertices.end()));
 					rightPolygon.clearVertices();
 
 					// Re-build adjacency.

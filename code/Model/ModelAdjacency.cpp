@@ -28,7 +28,7 @@ ModelAdjacency::ModelAdjacency(const Model* model, const AlignedVector< uint32_t
 
 void ModelAdjacency::add(uint32_t polygon)
 {
-	const AlignedVector< uint32_t >& polygonVertices = m_model->getPolygon(polygon).getVertices();
+	const auto& polygonVertices = m_model->getPolygon(polygon).getVertices();
 	for (uint32_t i = 0; i < polygonVertices.size(); ++i)
 	{
 		Edge e;
@@ -228,7 +228,7 @@ void ModelAdjacency::getEdgeIndices(uint32_t edge, uint32_t& outIndex0, uint32_t
 	const Edge& e = m_edges[edge];
 	const Polygon& polygon = m_model->getPolygon(e.polygon);
 
-	const AlignedVector< uint32_t >& polygonVertices = polygon.getVertices();
+	const auto& polygonVertices = polygon.getVertices();
 	if (polygonVertices.size() < 2)
 	{
 		outIndex0 =

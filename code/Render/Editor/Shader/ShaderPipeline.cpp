@@ -23,7 +23,7 @@
 #include "Editor/IPipelineBuilder.h"
 #include "Editor/IPipelineDepends.h"
 #include "Editor/IPipelineSettings.h"
-//#include "Render/Capture/Editor/ProgramCompilerCapture.h"
+#include "Render/Vrfy/Editor/ProgramCompilerVrfy.h"
 #include "Render/Editor/Edge.h"
 #include "Render/Editor/IProgramCompiler.h"
 #include "Render/Editor/Shader/External.h"
@@ -708,22 +708,25 @@ IProgramCompiler* ShaderPipeline::getProgramCompiler() const
 	if (m_programCompiler)
 		return m_programCompiler;
 
+	// Find compiler class type from configured name.
 	const TypeInfo* programCompilerType = TypeInfo::find(m_programCompilerTypeName.c_str());
 	if (!programCompilerType)
 	{
-		log::error << L"Shader pipeline; unable to find program compiler type \"" << m_programCompilerTypeName << L"\"" << Endl;
+		log::error << L"Shader pipeline; unable to find program compiler type \"" << m_programCompilerTypeName << L"\"." << Endl;
 		return nullptr;
 	}
 
+	// Create instance of compiler class.
 	m_programCompiler = dynamic_type_cast< IProgramCompiler* >(programCompilerType->createInstance());
 	if (!m_programCompiler)
 	{
-		log::error << L"Shader pipeline; unable to instanciate program compiler \"" << m_programCompilerTypeName << L"\"" << Endl;
+		log::error << L"Shader pipeline; unable to instanciate program compiler \"" << m_programCompilerTypeName << L"\"." << Endl;
 		return nullptr;
 	}
 
+	// In case we're building for the editor we wrap into verification compiler.
 	//if (m_editor)
-	//	m_programCompiler = new ProgramCompilerCapture(m_programCompiler);
+	//	m_programCompiler = new ProgramCompilerVrfy(m_programCompiler);
 
 	return m_programCompiler;
 }

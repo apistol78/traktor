@@ -1,4 +1,6 @@
 #include "Shape/Editor/EntityRenderer.h"
+#include "Shape/Editor/Solid/SolidEntity.h"
+#include "Shape/Editor/Spline/SplineEntity.h"
 
 namespace traktor
 {
@@ -9,7 +11,10 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.shape.EntityRenderer", EntityRenderer, world::I
 
 const TypeInfoSet EntityRenderer::getRenderableTypes() const
 {
-	return TypeInfoSet();
+	return makeTypeInfoSet<
+		SolidEntity,
+		SplineEntity
+	>();
 }
 
 void EntityRenderer::gather(
@@ -41,6 +46,22 @@ void EntityRenderer::build(
 	Object* renderable
 )
 {
+	if (auto solidEntity = dynamic_type_cast< SolidEntity* >(renderable))
+	{
+		solidEntity->build(
+			context,
+			worldRenderView,
+			worldRenderPass
+		);
+	}
+	else if (auto splineEntity = dynamic_type_cast< SplineEntity* >(renderable))
+	{
+		splineEntity->build(
+			context,
+			worldRenderView,
+			worldRenderPass
+		);
+	}
 }
 
 void EntityRenderer::build(

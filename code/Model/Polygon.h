@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Core/Containers/AlignedVector.h"
+#include "Core/Containers/StaticVector.h"
 #include "Core/Serialization/ISerializable.h"
 #include "Model/Types.h"
 
@@ -28,6 +28,8 @@ class T_DLLCLASS Polygon : public ISerializable
 	T_RTTI_CLASS;
 
 public:
+	typedef StaticVector< uint32_t, 16 > vertices_t;
+
 	Polygon();
 
 	Polygon(uint32_t material, uint32_t vertex1, uint32_t vertex2);
@@ -63,11 +65,11 @@ public:
 
 	uint32_t getVertexCount() const;
 
-	void setVertices(const AlignedVector< uint32_t >& vertices);
+	void setVertices(const vertices_t& vertices);
 
-	const AlignedVector< uint32_t >& getVertices() const;
+	const vertices_t& getVertices() const;
 
-	AlignedVector< uint32_t >& getVertices();
+	vertices_t& getVertices();
 
 	virtual void serialize(ISerializer& s) override final;
 
@@ -77,7 +79,7 @@ private:
 	uint32_t m_material;
 	uint32_t m_normal;
 	uint32_t m_smoothGroup;
-	AlignedVector< uint32_t > m_vertices;
+	vertices_t m_vertices;
 };
 
 	}

@@ -51,7 +51,7 @@ void ShadowProject::setup(const ImageGraph* /*imageGraph*/, const ImageGraphCont
 	{
 		auto targetSetId = cx.findTextureTargetSetId(source.textureId);
 		if (targetSetId != 0)
-			pass.addInput(targetSetId);
+			pass.addInput(targetSetId, true);
 	}
 }
 

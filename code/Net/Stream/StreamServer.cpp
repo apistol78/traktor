@@ -54,7 +54,7 @@ bool StreamServer::create()
 
 	m_serverThread->start();
 
-	log::info << L"Stream server @" << m_listenPort << L" created" << Endl;
+	log::info << L"Stream server @" << m_listenPort << L" created." << Endl;
 	return true;
 }
 
@@ -64,11 +64,11 @@ void StreamServer::destroy()
 	{
 		m_serverThread->stop();
 		ThreadManager::getInstance().destroy(m_serverThread);
-		m_serverThread = 0;
+		m_serverThread = nullptr;
 	}
 
-	for (std::list< Thread* >::iterator i = m_clientThreads.begin(); i != m_clientThreads.end(); ++i)
-		ThreadPool::getInstance().stop(*i);
+	for (auto thread : m_clientThreads)
+		ThreadPool::getInstance().stop(thread);
 
 	m_clientThreads.clear();
 	m_streams.clear();
@@ -103,13 +103,13 @@ void StreamServer::threadServer()
 			Ref< TcpSocket > clientSocket = m_listenSocket->accept();
 			if (!clientSocket)
 			{
-				log::error << L"StreamServer; unable to accept client" << Endl;
+				log::error << L"StreamServer; unable to accept client." << Endl;
 				continue;
 			}
 
 			clientSocket->setNoDelay(true);
 
-			Thread* clientThread = 0;
+			Thread* clientThread = nullptr;
 			ThreadPool::getInstance().spawn(
 				makeFunctor< StreamServer, Ref< TcpSocket > >(this, &StreamServer::threadClient, clientSocket),
 				clientThread,
@@ -117,7 +117,7 @@ void StreamServer::threadServer()
 			);
 			if (!clientThread)
 			{
-				log::error << L"StreamServer; unable to allocate client thread" << Endl;
+				log::error << L"StreamServer; unable to allocate client thread." << Endl;
 				continue;
 			}
 
@@ -169,10 +169,10 @@ void StreamServer::threadClient(Ref< TcpSocket > clientSocket)
 					if (i != m_streams.end())
 						stream = i->second;
 					else
-						stream = 0;
+						stream = nullptr;
 				}
 
-				if (stream != 0)
+				if (stream != nullptr)
 				{
 					uint8_t status = 0x00;
 					if (stream->canRead())
@@ -229,7 +229,7 @@ void StreamServer::threadClient(Ref< TcpSocket > clientSocket)
 					log::info << L"TX " << totalTx << L" -- " << int32_t(totalTx / (end - start)) << L" bytes/s (" << countTx << L")" << Endl;
 #endif
 
-					stream = 0;
+					stream = nullptr;
 					streamId = 0;
 				}
 			}

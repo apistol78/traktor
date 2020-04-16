@@ -1,5 +1,5 @@
-#include "Render/Capture/ProgramResourceCapture.h"
-#include "Render/Capture/Editor/ProgramCompilerCapture.h"
+#include "Render/Vrfy/ProgramResourceVrfy.h"
+#include "Render/Vrfy/Editor/ProgramCompilerVrfy.h"
 #include "Render/Editor/Shader/Nodes.h"
 #include "Render/Editor/Shader/ShaderGraph.h"
 
@@ -8,19 +8,19 @@ namespace traktor
 	namespace render
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ProgramCompilerCapture", ProgramCompilerCapture, IProgramCompiler)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ProgramCompilerVrfy", ProgramCompilerVrfy, IProgramCompiler)
 
-ProgramCompilerCapture::ProgramCompilerCapture(IProgramCompiler* compiler)
+ProgramCompilerVrfy::ProgramCompilerVrfy(IProgramCompiler* compiler)
 :	m_compiler(compiler)
 {
 }
 
-const wchar_t* ProgramCompilerCapture::getRendererSignature() const
+const wchar_t* ProgramCompilerVrfy::getRendererSignature() const
 {
 	return m_compiler->getRendererSignature();
 }
 
-Ref< ProgramResource > ProgramCompilerCapture::compile(
+Ref< ProgramResource > ProgramCompilerVrfy::compile(
 	const ShaderGraph* shaderGraph,
 	const PropertyGroup* settings,
 	const std::wstring& name,
@@ -29,16 +29,18 @@ Ref< ProgramResource > ProgramCompilerCapture::compile(
 	Stats* outStats
 ) const
 {
+	// Compile program using wrapped compiler.
 	Ref< ProgramResource > resource = m_compiler->compile(shaderGraph, settings, name, optimize, validate, outStats);
 	if (!resource)
-		return 0;
+		return nullptr;
 
-	Ref< ProgramResourceCapture > resourceCapture = new ProgramResourceCapture();
-	resourceCapture->m_embedded = resource;
+	// Embed into custom resource, append debug data to program useful for capturing.
+	Ref< ProgramResourceVrfy > resourceVrfy = new ProgramResourceVrfy();
+	resourceVrfy->m_embedded = resource;
 
 	// Record all uniforms used in shader.
-	// shaderGraph->findNodesOf< Uniform >(resourceCapture->m_uniforms);
-	// shaderGraph->findNodesOf< IndexedUniform >(resourceCapture->m_indexedUniforms);
+	// shaderGraph->findNodesOf< Uniform >(resourceVrfy->m_uniforms);
+	// shaderGraph->findNodesOf< IndexedUniform >(resourceVrfy->m_indexedUniforms);
 
 	// Keep copy of readable shader in capture.
 	m_compiler->generate(
@@ -46,15 +48,15 @@ Ref< ProgramResource > ProgramCompilerCapture::compile(
 		settings,
 		name,
 		optimize,
-		resourceCapture->m_vertexShader,
-		resourceCapture->m_pixelShader,
-		resourceCapture->m_computeShader
+		resourceVrfy->m_vertexShader,
+		resourceVrfy->m_pixelShader,
+		resourceVrfy->m_computeShader
 	);
 
-	return resourceCapture;
+	return resourceVrfy;
 }
 
-bool ProgramCompilerCapture::generate(
+bool ProgramCompilerVrfy::generate(
 	const ShaderGraph* shaderGraph,
 	const PropertyGroup* settings,
 	const std::wstring& name,
@@ -64,6 +66,7 @@ bool ProgramCompilerCapture::generate(
 	std::wstring& outComputeShader
 ) const
 {
+	// Just let the wrapped compiler generate source.
 	return m_compiler->generate(shaderGraph, settings, name, optimize, outVertexShader, outPixelShader, outComputeShader);
 }
 

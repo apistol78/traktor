@@ -177,7 +177,7 @@ struct ImpostorUpdateRenderBlock : public render::RenderBlock
 		clear.mask = render::CfColor;
 		clear.colors[0] = impostorClearColor;
 
-		renderView->beginPass(impostorTargetSet, 0, &clear);
+		renderView->beginPass(impostorTargetSet, 0, &clear, render::TfColor, render::TfColor);
 
 		for (uint32_t i = 0; i < particlePassCount; ++i)
 			particlePass[i]->render(renderView);

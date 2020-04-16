@@ -55,7 +55,7 @@ bool PipelineAgentsManager::create(
 	m_threadUpdate = ThreadManager::getInstance().create(makeFunctor(this, &PipelineAgentsManager::threadUpdate), L"Pipeline agents manager");
 	m_threadUpdate->start();
 
-	log::info << L"Pipeline agent manager created" << Endl;
+	log::info << L"Pipeline agent manager created." << Endl;
 	return true;
 }
 
@@ -65,7 +65,7 @@ void PipelineAgentsManager::destroy()
 	{
 		m_threadUpdate->stop();
 		ThreadManager::getInstance().destroy(m_threadUpdate);
-		m_threadUpdate = 0;
+		m_threadUpdate = nullptr;
 	}
 
 	{
@@ -77,11 +77,11 @@ void PipelineAgentsManager::destroy()
 	{
 		m_dbConnectionManager->removeConnectionString(m_sessionId.format() + L"|Source");
 		m_dbConnectionManager->removeConnectionString(m_sessionId.format() + L"|Output");
-		m_dbConnectionManager = 0;
+		m_dbConnectionManager = nullptr;
 	}
 
-	m_streamServer = 0;
-	m_discoveryManager = 0;
+	m_streamServer = nullptr;
+	m_discoveryManager = nullptr;
 }
 
 int32_t PipelineAgentsManager::getAgentCount() const
@@ -116,7 +116,7 @@ PipelineAgent* PipelineAgentsManager::getIdleAgent()
 		}
 		m_eventAgentsUpdated.wait(1000);
 	}
-	return 0;
+	return nullptr;
 }
 
 int32_t PipelineAgentsManager::getAgentIndex(const PipelineAgent* agent) const
@@ -166,15 +166,17 @@ void PipelineAgentsManager::threadUpdate()
 	{
 		// Find agents; establish local agent proxies for each new agent found.
 		m_discoveryManager->findServices< net::NetworkService >(services);
-		for (RefArray< net::NetworkService >::const_iterator i = services.begin(); i != services.end(); ++i)
+		for (auto service : services)
 		{
-			if ((*i)->getType() != L"Pipeline/Agent2")
+			if (service->getType() != L"Pipeline/Agent2")
 				continue;
 
-			std::wstring description = (*i)->getProperties()->getProperty< std::wstring >(L"Description", L"");
-			std::wstring host = (*i)->getProperties()->getProperty< std::wstring >(L"Host", L"");
-			int32_t port = (*i)->getProperties()->getProperty< int32_t >(L"Port", 0);
-			int32_t agents = (*i)->getProperties()->getProperty< int32_t >(L"Agents", 0);
+			auto properties = service->getProperties();
+
+			std::wstring description = properties->getProperty< std::wstring >(L"Description", L"");
+			std::wstring host = properties->getProperty< std::wstring >(L"Host", L"");
+			int32_t port = properties->getProperty< int32_t >(L"Port", 0);
+			int32_t agents = properties->getProperty< int32_t >(L"Agents", 0);
 
 			for (int32_t j = 0; j < agents; ++j)
 			{
@@ -182,8 +184,8 @@ void PipelineAgentsManager::threadUpdate()
 
 				{
 					T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-					std::map< std::wstring, Ref< PipelineAgent > >::const_iterator j = m_agents.find(hostAndAgent);
-					if (j != m_agents.end() && j->second->isConnected())
+					auto it = m_agents.find(hostAndAgent);
+					if (it != m_agents.end() && it->second->isConnected())
 						continue;
 				}
 

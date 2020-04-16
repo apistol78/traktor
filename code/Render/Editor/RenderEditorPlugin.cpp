@@ -6,7 +6,7 @@
 #include "Core/Settings/PropertyString.h"
 #include "Editor/IEditor.h"
 #include "Render/IRenderSystem.h"
-//#include "Render/Capture/RenderSystemCapture.h"
+#include "Render/Vrfy/RenderSystemVrfy.h"
 #include "Render/Editor/RenderEditorPlugin.h"
 #include "Render/Editor/Shader/ShaderDependencyTracker.h"
 #include "Ui/MessageBox.h"
@@ -25,8 +25,10 @@ RenderEditorPlugin::RenderEditorPlugin(editor::IEditor* editor)
 
 bool RenderEditorPlugin::create(ui::Widget* parent, editor::IEditorPageSite* site)
 {
+	auto settings = m_editor->getSettings();
+
 	// Create render system.
-	std::wstring renderSystemTypeName = m_editor->getSettings()->getProperty< std::wstring >(L"Editor.RenderSystem");
+	std::wstring renderSystemTypeName = settings->getProperty< std::wstring >(L"Editor.RenderSystem");
 
 	const TypeInfo* renderSystemType = TypeInfo::find(renderSystemTypeName.c_str());
 	if (!renderSystemType)
@@ -38,25 +40,22 @@ bool RenderEditorPlugin::create(ui::Widget* parent, editor::IEditorPageSite* sit
 	Ref< IRenderSystem > renderSystem = dynamic_type_cast< IRenderSystem* >(renderSystemType->createInstance());
 	T_ASSERT(renderSystem);
 
-	//Ref< RenderSystemCapture > renderSystemCapture = new RenderSystemCapture();
+	Ref< IRenderSystem > renderSystemVrfy = renderSystem; // new RenderSystemVrfy();
 
 	RenderSystemDesc desc;
 	desc.capture = renderSystem;
-	desc.mipBias = m_editor->getSettings()->getProperty< float >(L"Editor.MipBias", 0.0f);
-	desc.maxAnisotropy = m_editor->getSettings()->getProperty< int32_t >(L"Editor.MaxAnisotropy", 1);
+	desc.mipBias = settings->getProperty< float >(L"Editor.MipBias", 0.0f);
+	desc.maxAnisotropy = settings->getProperty< int32_t >(L"Editor.MaxAnisotropy", 1);
 	desc.maxAnisotropy = std::max(desc.maxAnisotropy, 1);
-	desc.useProgramCache = m_editor->getSettings()->getProperty< bool >(L"Editor.UseProgramCache", false);
+	desc.useProgramCache = settings->getProperty< bool >(L"Editor.UseProgramCache", false);
 
-	//if (!renderSystemCapture->create(desc))
-	if (!renderSystem->create(desc))
+	if (!renderSystemVrfy->create(desc))
 	{
 		ui::MessageBox::show(parent, std::wstring(L"Unable to create render system \"") + renderSystemTypeName + std::wstring(L"\""), L"Error", ui::MbIconError | ui::MbOk);
 		return false;
 	}
 
-	//m_editor->setStoreObject(L"RenderSystem", renderSystemCapture);
-	m_editor->setStoreObject(L"RenderSystem", renderSystem);
-
+	m_editor->setStoreObject(L"RenderSystem", renderSystemVrfy);
 	return true;
 }
 

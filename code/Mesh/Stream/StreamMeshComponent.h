@@ -37,6 +37,8 @@ public:
 
 	void setFrame(uint32_t frame);
 
+	uint32_t getFrame() const;
+
 private:
 	resource::Proxy< StreamMesh > m_mesh;
 	Ref< StreamMesh::Instance > m_instance;

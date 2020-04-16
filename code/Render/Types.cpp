@@ -1,8 +1,10 @@
 #include <algorithm>
-#include "Core/Containers/SmallMap.h"
+#include "Core/Containers/StaticMap.h"
 #include "Core/Misc/String.h"
 #include "Core/Singleton/ISingleton.h"
 #include "Core/Singleton/SingletonManager.h"
+#include "Core/Thread/Acquire.h"
+#include "Core/Thread/SpinLock.h"
 #include "Render/Types.h"
 
 namespace traktor
@@ -22,12 +24,10 @@ public:
 
 	handle_t getHandle(const std::wstring& name)
 	{
+		T_ANONYMOUS_VAR(Acquire< SpinLock >)(m_lock);
 		auto it = m_handles.find(name);
 		if (it != m_handles.end())
-		{
-			T_ASSERT(it->second > 0);
 			return it->second;
-		}
 		handle_t handle = m_nextUnusedHandle++;
 		m_handles.insert(std::make_pair(name, handle));
 		return handle;
@@ -35,6 +35,7 @@ public:
 
 	std::wstring getName(handle_t handle) const
 	{
+		T_ANONYMOUS_VAR(Acquire< SpinLock >)(m_lock);
 		for (const auto it : m_handles)
 		{
 			if (it.second == handle)
@@ -44,7 +45,8 @@ public:
 	}
 
 private:
-	SmallMap< std::wstring, handle_t > m_handles;
+	mutable SpinLock m_lock;
+	StaticMap< std::wstring, handle_t, 4096 > m_handles;
 	handle_t m_nextUnusedHandle;
 };
 
@@ -274,7 +276,7 @@ uint32_t getTargetSetMemoryEstimate(const RenderTargetSetCreateDesc& rtscd)
 	{
 		uint32_t mipLevels = 1;
 		if (rtscd.generateMips)
-			mipLevels = log2(std::max(rtscd.width, rtscd.height)) + 1;
+			mipLevels = (uint32_t)(log2(std::max(rtscd.width, rtscd.height)) + 1);
 		estimate += getTextureSize(rtscd.targets[i].format, rtscd.width, rtscd.height, mipLevels);
 	}
 

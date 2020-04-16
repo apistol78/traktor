@@ -116,18 +116,22 @@ public:
 	 *
 	 * \param renderTargetSet Set of render targets.
 	 * \param clear Optional clear parameters.
+	 * \param load Load flags.
+	 * \param store Store flags.
 	 * \return True if successful.
 	 */
-	virtual bool beginPass(IRenderTargetSet* renderTargetSet, const Clear* clear) = 0;
+	virtual bool beginPass(IRenderTargetSet* renderTargetSet, const Clear* clear, uint32_t load, uint32_t store) = 0;
 
 	/*! Begin rendering to a render target set.
 	 *
 	 * \param renderTargetSet Set of render targets.
 	 * \param renderTarget Index of render target in set.
 	 * \param clear Optional clear parameters.
+	 * \param load Load flags.
+	 * \param store Store flags.
 	 * \return True if successful.
 	 */
-	virtual bool beginPass(IRenderTargetSet* renderTargetSet, int32_t renderTarget, const Clear* clear) = 0;
+	virtual bool beginPass(IRenderTargetSet* renderTargetSet, int32_t renderTarget, const Clear* clear, uint32_t load, uint32_t store) = 0;
 
 	/*! End rendering to pass. */
 	virtual void endPass() = 0;

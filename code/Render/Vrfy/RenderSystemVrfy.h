@@ -4,7 +4,7 @@
 
 // import/export mechanism.
 #undef T_DLLCLASS
-#if defined(T_RENDER_CAPTURE_EXPORT)
+#if defined(T_RENDER_VRFY_EXPORT)
 #	define T_DLLCLASS T_DLLEXPORT
 #else
 #	define T_DLLCLASS T_DLLIMPORT
@@ -15,15 +15,17 @@ namespace traktor
 	namespace render
 	{
 
-/*! Performance capture render system.
- * \ingroup RenderCapture
+/*! Verification render system.
+ * \ingroup Render
  *
  * This render system is only a wrapper around
  * a "real" render system implementation.
- * It will record statistics and frame captures for
- * debugging purposes only.
+ * Main purpose of this render system is to
+ * verify usage, help track bad usage
+ * patterns and maintain consistent use
+ * from all systems.
  */
-class T_DLLCLASS RenderSystemCapture : public IRenderSystem
+class T_DLLCLASS RenderSystemVrfy : public IRenderSystem
 {
 	T_RTTI_CLASS;
 
