@@ -8,14 +8,14 @@ namespace traktor
 	{
 
 /*!
- * \ingroup Capture
+ * \ingroup Vrfy
  */
-class SimpleTextureCapture : public ISimpleTexture
+class SimpleTextureVrfy : public ISimpleTexture
 {
 	T_RTTI_CLASS;
 
 public:
-	SimpleTextureCapture(ISimpleTexture* texture);
+	SimpleTextureVrfy(ISimpleTexture* texture);
 
 	virtual void destroy() override final;
 

@@ -1,6 +1,7 @@
 #include "Core/Log/Log.h"
 #include "Core/Serialization/DeepClone.h"
 #include "Core/Settings/PropertyBoolean.h"
+#include "Core/Settings/PropertyString.h"
 #include "Editor/IPipelineBuilder.h"
 #include "Editor/IPipelineDepends.h"
 #include "Editor/IPipelineSettings.h"
@@ -35,7 +36,8 @@ bool SplineEntityPipeline::create(const editor::IPipelineSettings* settings)
 	if (!world::EntityPipeline::create(settings))
 		return false;
 
-	//m_targetEditor = settings->getProperty< bool >(L"Pipeline.TargetEditor");
+	m_assetPath = settings->getProperty< std::wstring >(L"Pipeline.AssetPath");
+	m_targetEditor = settings->getProperty< bool >(L"Pipeline.TargetEditor");
 	return true;
 }
 
@@ -56,8 +58,16 @@ bool SplineEntityPipeline::buildDependencies(
 	const Guid& outputGuid
 ) const
 {
+	if (auto splineEntityData = dynamic_type_cast< const SplineEntityData* >(sourceAsset))
+	{
+		for (auto id : splineEntityData->getCollisionGroup())
+			pipelineDepends->addDependency(id, editor::PdfBuild | editor::PdfResource);
+		for (auto id : splineEntityData->getCollisionMask())
+			pipelineDepends->addDependency(id, editor::PdfBuild | editor::PdfResource);	
+	}
+
 	if (auto extrudeShapeLayerData = dynamic_type_cast< const ExtrudeShapeLayerData* >(sourceAsset))
-		pipelineDepends->addDependency(extrudeShapeLayerData->getMaterial(), editor::PdfBuild);
+		pipelineDepends->addDependency(extrudeShapeLayerData->getMesh(), editor::PdfBuild);
 
 	return world::EntityPipeline::buildDependencies(pipelineDepends, sourceInstance, sourceAsset, outputPath, outputGuid);
 }
@@ -69,10 +79,17 @@ Ref< ISerializable > SplineEntityPipeline::buildOutput(
 	const Object* buildParams
 ) const
 {
+	if (m_targetEditor)
+	{
+		// In editor we generate spline geometry dynamically thus
+		// not necessary to explicitly build mesh when building for editor.
+		return world::EntityPipeline::buildOutput(pipelineBuilder, sourceInstance, sourceAsset, buildParams);
+	}
+
 	if (auto splineEntityData = dynamic_type_cast< const SplineEntityData* >(sourceAsset))
 	{
 		// Create model from spline.
-		Ref< model::Model > outputModel = SplineEntityReplicator().createModel(pipelineBuilder, L"", splineEntityData);
+		Ref< model::Model > outputModel = SplineEntityReplicator().createModel(pipelineBuilder, m_assetPath, splineEntityData);
 		if (!outputModel)
 		{
 			log::warning << L"Unable to create model from spline \"" << splineEntityData->getName() << L"\"." << Endl;

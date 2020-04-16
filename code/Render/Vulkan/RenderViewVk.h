@@ -87,9 +87,9 @@ public:
 
 	virtual bool beginPass(const Clear* clear) override final;
 
-	virtual bool beginPass(IRenderTargetSet* renderTargetSet, const Clear* clear) override final;
+	virtual bool beginPass(IRenderTargetSet* renderTargetSet, const Clear* clear, uint32_t load, uint32_t store) override final;
 
-	virtual bool beginPass(IRenderTargetSet* renderTargetSet, int32_t renderTarget, const Clear* clear) override final;
+	virtual bool beginPass(IRenderTargetSet* renderTargetSet, int32_t renderTarget, const Clear* clear, uint32_t load, uint32_t store) override final;
 
 	virtual void endPass() override final;
 
@@ -112,13 +112,6 @@ public:
 private:
 	typedef std::tuple< uint32_t, uint32_t, uint32_t, uint32_t > pipeline_key_t;
 
-	struct TargetState
-	{
-		Ref< RenderTargetSetVk > rts;
-		int32_t colorIndex;
-		Clear clear;
-	};
-
 	VkInstance m_instance;
 	VkPhysicalDevice m_physicalDevice;
 	VkDevice m_logicalDevice;
@@ -140,15 +133,26 @@ private:
 	VkFence m_renderFence;
 	VkSemaphore m_presentCompleteSemaphore;
 	bool m_haveDebugMarkers;
+
+	// Swap chain.
 	RefArray< RenderTargetSetVk > m_primaryTargets;
 	std::list< RenderEvent > m_eventQueue;
 	uint32_t m_currentImageIndex;
-	TargetState m_targetState;
+	
+	// Current pass's target.
+	Ref< RenderTargetSetVk > m_targetSet;
+	int32_t m_targetColorIndex;
 	uint32_t m_targetId;
 	VkRenderPass m_targetRenderPass;
 	VkFramebuffer m_targetFrameBuffer;
+
+	// Pipelines.
 	SmallMap< pipeline_key_t, VkPipeline > m_pipelines;
+
+	// Uniform buffer pool.
 	Ref< UniformBufferPoolVk > m_uniformBufferPool;
+
+	// Stats.
 	bool m_cursorVisible;
 	uint32_t m_passCount;
 	uint32_t m_drawCalls;

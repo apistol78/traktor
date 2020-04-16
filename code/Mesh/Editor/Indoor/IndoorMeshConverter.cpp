@@ -82,12 +82,12 @@ void createHulls(const model::Model& model, std::map< std::wstring, Hull >& outH
 		Hull& hull = outHulls[materialName];
 		hull.polygons.push_back(Hull::polygon_t());
 
-		for (AlignedVector< uint32_t >::const_iterator j = i->getVertices().begin(); j != i->getVertices().end(); ++j)
+		for (auto index : i->getVertices())
 		{
-			const model::Vertex& vertex = model.getVertex(*j);
+			const model::Vertex& vertex = model.getVertex(index);
 			const Vector4& position = model.getPosition(vertex.getPosition());
 
-			AlignedVector< Vector4 >::iterator it = std::find(hull.points.begin(), hull.points.end(), position);
+			auto it = std::find(hull.points.begin(), hull.points.end(), position);
 			if (it == hull.points.end())
 				it = hull.points.insert(hull.points.end(), position);
 
@@ -284,16 +284,16 @@ void createSectors(
 		polygons.push_back(Polygon());
 		polygons.back().material = i->getMaterial();
 
-		for (AlignedVector< uint32_t >::const_iterator j = i->getVertices().begin(); j != i->getVertices().end(); ++j)
+		for (auto index : i->getVertices())
 		{
-			const model::Vertex& mv = model.getVertex(*j);
+			const model::Vertex& mv = model.getVertex(index);
 
 			Vertex v;
 			v.position = model.getPosition(mv.getPosition());
 			v.normal = mv.getNormal() != model::c_InvalidIndex ? model.getNormal(mv.getNormal()) : Vector4(0.0f, 1.0f, 0.0f, 0.0f);
 			v.texCoord = mv.getTexCoord(0) != model::c_InvalidIndex ? model.getTexCoord(mv.getTexCoord(0)) : Vector2(0.0f, 0.0f);
 
-			AlignedVector< Vertex >::iterator it = pushUnique(vertices, v);
+			auto it = pushUnique(vertices, v);
 			polygons.back().indices.push_back(uint32_t(std::distance(vertices.begin(), it)));
 		}
 	}
@@ -441,7 +441,7 @@ void createSectors(
 		outPortals.push_back(Portal());
 		for (portal_t::const_iterator i = portal.second.begin(); i != portal.second.end(); ++i)
 		{
-			AlignedVector< Vector4 >::iterator it = points.begin(); std::advance(it, *i);
+			auto it = points.begin(); std::advance(it, *i);
 			outPortals.back().winding.push(*it);
 		}
 

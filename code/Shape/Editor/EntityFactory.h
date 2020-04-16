@@ -20,10 +20,24 @@ class Database;
 
 	}
 
+	namespace resource
+	{
+
+class IResourceManager;
+
+	}
+
+	namespace render
+	{
+
+class IRenderSystem;
+
+	}
+
 	namespace shape
 	{
 
-/*! \brief
+/*!
  * \ingroup Spray
  */
 class T_DLLCLASS EntityFactory : public world::IEntityFactory
@@ -31,7 +45,12 @@ class T_DLLCLASS EntityFactory : public world::IEntityFactory
 	T_RTTI_CLASS;
 
 public:
-	EntityFactory(db::Database* database);
+	EntityFactory(
+		db::Database* database,
+		resource::IResourceManager* resourceManager,
+		render::IRenderSystem* renderSystem,
+		const std::wstring& assetPath
+	);
 
 	virtual const TypeInfoSet getEntityTypes() const override final;
 
@@ -47,6 +66,9 @@ public:
 
 private:
 	Ref< db::Database > m_database;
+	Ref< resource::IResourceManager > m_resourceManager;
+	Ref< render::IRenderSystem > m_renderSystem;
+	std::wstring m_assetPath;
 };
 
 	}

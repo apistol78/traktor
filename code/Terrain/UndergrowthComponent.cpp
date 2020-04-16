@@ -318,7 +318,9 @@ void UndergrowthComponent::updatePatches()
 	const resource::Proxy< hf::Heightfield >& heightfield = terrain->getHeightfield();
 
 	// Get set of materials which have undergrowth.
-	StaticVector< uint8_t, 16 > um(16, 0);
+	StaticVector< uint8_t, 16 > um;
+	um.resize(16, 0);
+
 	uint8_t maxMaterialIndex = 0;
 	for (const auto& plant : m_layerData.m_plants)
 		um[plant.attribute] = ++maxMaterialIndex;
@@ -334,9 +336,10 @@ void UndergrowthComponent::updatePatches()
 	{
 		for (int32_t x = 0; x < size; x += 16)
 		{
-			StaticVector< int32_t, 16 > cm(16, 0);
-			int32_t totalDensity = 0;
+			StaticVector< int32_t, 16 > cm;
+			cm.resize(16, 0);
 
+			int32_t totalDensity = 0;
 			for (int32_t cz = 0; cz < 16; ++cz)
 			{
 				for (int32_t cx = 0; cx < 16; ++cx)
@@ -350,7 +353,6 @@ void UndergrowthComponent::updatePatches()
 					}
 				}
 			}
-
 			if (totalDensity <= 0)
 				continue;
 

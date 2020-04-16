@@ -412,10 +412,10 @@ bool OcclusionTexturePipeline::buildOutput(
 				{
 					Winding3& w = windings[j];
 
-					const AlignedVector< uint32_t >& vertexIndices = polygons[j].getVertices();
-					for (AlignedVector< uint32_t >::const_iterator k = vertexIndices.begin(); k != vertexIndices.end(); ++k)
+					const auto& vertexIndices = polygons[j].getVertices();
+					for (auto index : vertexIndices)
 					{
-						const model::Vertex& polyVertex = vertices[*k];
+						const model::Vertex& polyVertex = vertices[index];
 						Vector4 polyVertexPosition = model->getPosition(polyVertex.getPosition()).xyz1();
 						w.push(polyVertexPosition);
 					}

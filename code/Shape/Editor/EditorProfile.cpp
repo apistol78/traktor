@@ -1,3 +1,6 @@
+#include "Core/Settings/PropertyGroup.h"
+#include "Core/Settings/PropertyString.h"
+#include "Editor/IEditor.h"
 #include "Scene/Editor/SceneEditorContext.h"
 #include "Shape/Editor/EditorProfile.h"
 #include "Shape/Editor/EntityFactory.h"
@@ -6,8 +9,6 @@
 #include "Shape/Editor/Prefab/PrefabEntityEditorFactory.h"
 #include "Shape/Editor/Solid/SolidEditorPlugin.h"
 #include "Shape/Editor/Solid/SolidEntityEditorFactory.h"
-#include "Shape/Editor/Solid/SolidEntityFactory.h"
-#include "Shape/Editor/Solid/SolidEntityRenderer.h"
 #include "Shape/Editor/Spline/ControlPointComponentEditorFactory.h"
 #include "Shape/Editor/Spline/SplineEntityEditorFactory.h"
 
@@ -53,9 +54,15 @@ void EditorProfile::createEntityFactories(
 	RefArray< const world::IEntityFactory >& outEntityFactories
 ) const
 {
+	std::wstring assetPath = context->getEditor()->getSettings()->getProperty< std::wstring >(L"Pipeline.AssetPath", L"");
+
 	outEntityFactories.push_back(new PrefabEntityFactory());
-	outEntityFactories.push_back(new SolidEntityFactory(context->getResourceManager(), context->getRenderSystem()));
-	outEntityFactories.push_back(new EntityFactory(context->getSourceDatabase()));
+	outEntityFactories.push_back(new EntityFactory(
+		context->getSourceDatabase(),
+		context->getResourceManager(),
+		context->getRenderSystem(),
+		assetPath
+	));
 }
 
 void EditorProfile::createEntityRenderers(
@@ -66,7 +73,6 @@ void EditorProfile::createEntityRenderers(
 ) const
 {
 	outEntityRenderers.push_back(new EntityRenderer());
-	outEntityRenderers.push_back(new SolidEntityRenderer());
 }
 
 void EditorProfile::createControllerEditorFactories(

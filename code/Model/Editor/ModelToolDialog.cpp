@@ -918,7 +918,7 @@ void ModelToolDialog::eventRenderPaint(ui::PaintEvent* event)
 				m_primitiveRenderer->pushDepthState(true, true, false);
 				for (AlignedVector< Polygon >::const_iterator i = polygons.begin(); i != polygons.end(); ++i)
 				{
-					const AlignedVector< uint32_t >& indices = i->getVertices();
+					const auto& indices = i->getVertices();
 					T_ASSERT(indices.size() == 3);
 
 					Vector4 p[3];
@@ -997,7 +997,7 @@ void ModelToolDialog::eventRenderPaint(ui::PaintEvent* event)
 				m_primitiveRenderer->pushDepthState(true, false, false);
 				for (const auto& polygon : polygons)
 				{
-					const AlignedVector< uint32_t >& indices = polygon.getVertices();
+					const auto& indices = polygon.getVertices();
 					for (uint32_t i = 0; i < indices.size(); ++i)
 					{
 						const Vertex& vx0 = vertices[indices[i]];
@@ -1183,7 +1183,7 @@ void ModelToolDialog::eventRenderPaint(ui::PaintEvent* event)
 				for (uint32_t i = 0; i < polygons.size(); ++i)
 				{
 					const Polygon& polygon = polygons[i];
-					const AlignedVector< uint32_t >& indices = polygon.getVertices();
+					const auto& indices = polygon.getVertices();
 
 					for (uint32_t j = 0; j < indices.size(); ++j)
 					{

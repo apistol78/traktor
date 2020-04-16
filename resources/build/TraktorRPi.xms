@@ -6655,8 +6655,8 @@
 											<link>LnkYes</link>
 											<project type="Project" version="1">
 												<enable>true</enable>
-												<name>Traktor.Render.Capture</name>
-												<sourcePath>$(TRAKTOR_HOME)/code/Render/Capture</sourcePath>
+												<name>Traktor.Render.Vrfy</name>
+												<sourcePath>$(TRAKTOR_HOME)/code/Render/Vrfy</sourcePath>
 												<configurations>
 													<item type="Configuration" version="5">
 														<name>DebugShared</name>
@@ -6667,7 +6667,7 @@
 															<item>$(TRAKTOR_HOME)/code</item>
 														</includePaths>
 														<definitions>
-															<item>T_RENDER_CAPTURE_EXPORT</item>
+															<item>T_RENDER_VRFY_EXPORT</item>
 															<item>_DEBUG</item>
 														</definitions>
 														<libraryPaths/>
@@ -6681,7 +6681,7 @@
 														<debugWorkingDirectory/>
 														<aggregationItems>
 															<item type="AggregationItem">
-																<sourceFile>libTraktor.Render.Capture.so</sourceFile>
+																<sourceFile>libTraktor.Render.Vrfy.so</sourceFile>
 																<targetPath>debugshared</targetPath>
 															</item>
 														</aggregationItems>
@@ -6696,7 +6696,7 @@
 															<item>$(TRAKTOR_HOME)/code</item>
 														</includePaths>
 														<definitions>
-															<item>T_RENDER_CAPTURE_EXPORT</item>
+															<item>T_RENDER_VRFY_EXPORT</item>
 															<item>NDEBUG</item>
 														</definitions>
 														<libraryPaths/>
@@ -6710,7 +6710,7 @@
 														<debugWorkingDirectory/>
 														<aggregationItems>
 															<item type="AggregationItem">
-																<sourceFile>libTraktor.Render.Capture.so</sourceFile>
+																<sourceFile>libTraktor.Render.Vrfy.so</sourceFile>
 																<targetPath>releaseshared</targetPath>
 															</item>
 														</aggregationItems>
@@ -6739,7 +6739,7 @@
 														<debugWorkingDirectory/>
 														<aggregationItems>
 															<item type="AggregationItem">
-																<sourceFile>libTraktor.Render.Capture.a</sourceFile>
+																<sourceFile>libTraktor.Render.Vrfy.a</sourceFile>
 																<targetPath>debugstatic</targetPath>
 															</item>
 														</aggregationItems>
@@ -6768,7 +6768,7 @@
 														<debugWorkingDirectory/>
 														<aggregationItems>
 															<item type="AggregationItem">
-																<sourceFile>libTraktor.Render.Capture.a</sourceFile>
+																<sourceFile>libTraktor.Render.Vrfy.a</sourceFile>
 																<targetPath>releasestatic</targetPath>
 															</item>
 														</aggregationItems>
@@ -16674,8 +16674,8 @@
 		</item>
 		<item type="Project" version="1">
 			<enable>true</enable>
-			<name>Traktor.Render.Capture.Editor</name>
-			<sourcePath>$(TRAKTOR_HOME)/code/Render/Capture/Editor</sourcePath>
+			<name>Traktor.Render.Vrfy.Editor</name>
+			<sourcePath>$(TRAKTOR_HOME)/code/Render/Vrfy/Editor</sourcePath>
 			<configurations>
 				<item type="Configuration" version="5">
 					<name>DebugShared</name>
@@ -16686,7 +16686,7 @@
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
 					<definitions>
-						<item>T_RENDER_CAPTURE_EDITOR_EXPORT</item>
+						<item>T_RENDER_VRFY_EDITOR_EXPORT</item>
 						<item>_DEBUG</item>
 					</definitions>
 					<libraryPaths/>
@@ -16700,7 +16700,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>libTraktor.Render.Capture.Editor.so</sourceFile>
+							<sourceFile>libTraktor.Render.Vrfy.Editor.so</sourceFile>
 							<targetPath>debugshared</targetPath>
 						</item>
 					</aggregationItems>
@@ -16715,7 +16715,7 @@
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
 					<definitions>
-						<item>T_RENDER_CAPTURE_EDITOR_EXPORT</item>
+						<item>T_RENDER_VRFY_EDITOR_EXPORT</item>
 						<item>NDEBUG</item>
 					</definitions>
 					<libraryPaths/>
@@ -16729,7 +16729,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>libTraktor.Render.Capture.Editor.so</sourceFile>
+							<sourceFile>libTraktor.Render.Vrfy.Editor.so</sourceFile>
 							<targetPath>releaseshared</targetPath>
 						</item>
 					</aggregationItems>
@@ -16758,7 +16758,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>libTraktor.Render.Capture.Editor.a</sourceFile>
+							<sourceFile>libTraktor.Render.Vrfy.Editor.a</sourceFile>
 							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -16787,7 +16787,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>libTraktor.Render.Capture.Editor.a</sourceFile>
+							<sourceFile>libTraktor.Render.Vrfy.Editor.a</sourceFile>
 							<targetPath>releasestatic</targetPath>
 						</item>
 					</aggregationItems>

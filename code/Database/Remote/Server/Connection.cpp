@@ -48,16 +48,16 @@ void Connection::destroy()
 	if (m_thread)
 	{
 		ThreadPool::getInstance().stop(m_thread);
-		m_thread = 0;
+		m_thread = nullptr;
 	}
 
 	if (m_transport)
-		m_transport = 0;
+		m_transport = nullptr;
 
 	if (m_clientSocket)
 	{
 		m_clientSocket->close();
-		m_clientSocket = 0;
+		m_clientSocket = nullptr;
 	}
 
 	m_objectStore.clear();
@@ -65,14 +65,14 @@ void Connection::destroy()
 
 bool Connection::alive() const
 {
-	return m_thread != 0;
+	return m_thread != nullptr;
 }
 
 void Connection::sendReply(const IMessage& message)
 {
 	if (!m_transport->send(&message))
 	{
-		log::error << L"Unable to send reply (" << type_name(&message) << L"); connection terminated" << Endl;
+		log::error << L"Unable to send reply (" << type_name(&message) << L"); connection terminated." << Endl;
 		destroy();
 	}
 }
@@ -87,7 +87,7 @@ uint32_t Connection::putObject(Object* object)
 Ref< Object > Connection::getObject(uint32_t handle)
 {
 	std::map< uint32_t, Ref< Object > >::iterator i = m_objectStore.find(handle);
-	return i != m_objectStore.end() ? i->second : 0;
+	return i != m_objectStore.end() ? i->second : nullptr;
 }
 
 void Connection::releaseObject(uint32_t handle)
@@ -121,22 +121,22 @@ void Connection::messageThread()
 		if (!message)
 			continue;
 
-		for (RefArray< IMessageListener >::iterator i = m_messageListeners.begin(); i != m_messageListeners.end(); ++i)
+		for (auto listener : m_messageListeners)
 		{
-			if ((*i)->notify(message))
+			if (listener->notify(message))
 			{
-				message = 0;
+				message = nullptr;
 				break;
 			}
 		}
 
 		if (message)
 		{
-			log::error << L"Unhandled message \"" << type_name(message) << L"\"; connection terminated" << Endl;
+			log::error << L"Unhandled message \"" << type_name(message) << L"\"; connection terminated." << Endl;
 			break;
 		}
 	}
-	m_thread = 0;
+	m_thread = nullptr;
 }
 
 	}

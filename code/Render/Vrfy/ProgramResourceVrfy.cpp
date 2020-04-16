@@ -2,16 +2,16 @@
 #include "Core/Serialization/Member.h"
 #include "Core/Serialization/MemberRef.h"
 #include "Core/Serialization/MemberRefArray.h"
-#include "Render/Capture/ProgramResourceCapture.h"
+#include "Render/Vrfy/ProgramResourceVrfy.h"
 
 namespace traktor
 {
 	namespace render
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ProgramResourceCapture", 0, ProgramResourceCapture, ProgramResource)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ProgramResourceVrfy", 0, ProgramResourceVrfy, ProgramResource)
 
-void ProgramResourceCapture::serialize(ISerializer& s)
+void ProgramResourceVrfy::serialize(ISerializer& s)
 {
 	s >> MemberRef< ProgramResource >(L"embedded", m_embedded);
 	s >> Member< std::wstring >(L"vertexShader", m_vertexShader);

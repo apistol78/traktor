@@ -1,29 +1,29 @@
 #include "Core/Misc/SafeDestroy.h"
-#include "Render/Capture/CubeTextureCapture.h"
-#include "Render/Capture/Error.h"
-#include "Render/Capture/ProgramCapture.h"
-#include "Render/Capture/SimpleTextureCapture.h"
-#include "Render/Capture/VolumeTextureCapture.h"
+#include "Render/Vrfy/CubeTextureVrfy.h"
+#include "Render/Vrfy/Error.h"
+#include "Render/Vrfy/ProgramVrfy.h"
+#include "Render/Vrfy/SimpleTextureVrfy.h"
+#include "Render/Vrfy/VolumeTextureVrfy.h"
 
 namespace traktor
 {
 	namespace render
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ProgramCapture", ProgramCapture, IProgram)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ProgramVrfy", ProgramVrfy, IProgram)
 
-ProgramCapture::ProgramCapture(IProgram* program, const wchar_t* const tag)
+ProgramVrfy::ProgramVrfy(IProgram* program, const wchar_t* const tag)
 :	m_program(program)
 ,	m_tag(tag)
 {
 }
 
-void ProgramCapture::destroy()
+void ProgramVrfy::destroy()
 {
 	safeDestroy(m_program);
 }
 
-void ProgramCapture::setFloatParameter(handle_t handle, float param)
+void ProgramVrfy::setFloatParameter(handle_t handle, float param)
 {
 	T_CAPTURE_ASSERT(m_program, L"Program destroyed.");
 	T_CAPTURE_ASSERT(handle, L"Null parameter handle.");
@@ -42,7 +42,7 @@ void ProgramCapture::setFloatParameter(handle_t handle, float param)
 	// }
 }
 
-void ProgramCapture::setFloatArrayParameter(handle_t handle, const float* param, int length)
+void ProgramVrfy::setFloatArrayParameter(handle_t handle, const float* param, int length)
 {
 	T_CAPTURE_ASSERT(m_program, L"Program destroyed.");
 	T_CAPTURE_ASSERT(handle, L"Null parameter handle.");
@@ -64,7 +64,7 @@ void ProgramCapture::setFloatArrayParameter(handle_t handle, const float* param,
 	// }
 }
 
-void ProgramCapture::setVectorParameter(handle_t handle, const Vector4& param)
+void ProgramVrfy::setVectorParameter(handle_t handle, const Vector4& param)
 {
 	T_CAPTURE_ASSERT(m_program, L"Program destroyed.");
 	T_CAPTURE_ASSERT(handle, L"Null parameter handle.");
@@ -83,7 +83,7 @@ void ProgramCapture::setVectorParameter(handle_t handle, const Vector4& param)
 	// }
 }
 
-void ProgramCapture::setVectorArrayParameter(handle_t handle, const Vector4* param, int length)
+void ProgramVrfy::setVectorArrayParameter(handle_t handle, const Vector4* param, int length)
 {
 	T_CAPTURE_ASSERT(m_program, L"Program destroyed.");
 	T_CAPTURE_ASSERT(handle, L"Null parameter handle.");
@@ -105,7 +105,7 @@ void ProgramCapture::setVectorArrayParameter(handle_t handle, const Vector4* par
 	// }
 }
 
-void ProgramCapture::setMatrixParameter(handle_t handle, const Matrix44& param)
+void ProgramVrfy::setMatrixParameter(handle_t handle, const Matrix44& param)
 {
 	T_CAPTURE_ASSERT(m_program, L"Program destroyed.");
 	T_CAPTURE_ASSERT(handle, L"Null parameter handle.");
@@ -124,7 +124,7 @@ void ProgramCapture::setMatrixParameter(handle_t handle, const Matrix44& param)
 	// }
 }
 
-void ProgramCapture::setMatrixArrayParameter(handle_t handle, const Matrix44* param, int length)
+void ProgramVrfy::setMatrixArrayParameter(handle_t handle, const Matrix44* param, int length)
 {
 	T_CAPTURE_ASSERT(m_program, L"Program destroyed.");
 	T_CAPTURE_ASSERT(handle, L"Null parameter handle.");
@@ -146,7 +146,7 @@ void ProgramCapture::setMatrixArrayParameter(handle_t handle, const Matrix44* pa
 	// }
 }
 
-void ProgramCapture::setTextureParameter(handle_t handle, ITexture* texture)
+void ProgramVrfy::setTextureParameter(handle_t handle, ITexture* texture)
 {
 	T_CAPTURE_ASSERT(m_program, L"Program destroyed.");
 
@@ -155,7 +155,7 @@ void ProgramCapture::setTextureParameter(handle_t handle, ITexture* texture)
 
 	if (texture)
 	{
-		if (CubeTextureCapture* cubeTexture = dynamic_type_cast< CubeTextureCapture* >(texture->resolve()))
+		if (CubeTextureVrfy* cubeTexture = dynamic_type_cast< CubeTextureVrfy* >(texture->resolve()))
 		{
 			T_CAPTURE_ASSERT(cubeTexture->getTexture(), L"Trying to set destroyed texture as shader parameter.");
 
@@ -169,7 +169,7 @@ void ProgramCapture::setTextureParameter(handle_t handle, ITexture* texture)
 			// 	it->second.undefined = false;
 			// }
 		}
-		else if (SimpleTextureCapture* simpleTexture = dynamic_type_cast< SimpleTextureCapture* >(texture->resolve()))
+		else if (SimpleTextureVrfy* simpleTexture = dynamic_type_cast< SimpleTextureVrfy* >(texture->resolve()))
 		{
 			T_CAPTURE_ASSERT(simpleTexture->getTexture(), L"Trying to set destroyed texture as shader parameter.");
 
@@ -183,7 +183,7 @@ void ProgramCapture::setTextureParameter(handle_t handle, ITexture* texture)
 			// 	it->second.undefined = false;
 			// }
 		}
-		else if (VolumeTextureCapture* volumeTexture = dynamic_type_cast< VolumeTextureCapture* >(texture->resolve()))
+		else if (VolumeTextureVrfy* volumeTexture = dynamic_type_cast< VolumeTextureVrfy* >(texture->resolve()))
 		{
 			T_CAPTURE_ASSERT(volumeTexture->getTexture(), L"Trying to set destroyed texture as shader parameter.");
 
@@ -206,21 +206,21 @@ void ProgramCapture::setTextureParameter(handle_t handle, ITexture* texture)
 	m_boundTextures[handle] = texture;
 }
 
-void ProgramCapture::setStructBufferParameter(handle_t handle, StructBuffer* structBuffer)
+void ProgramVrfy::setStructBufferParameter(handle_t handle, StructBuffer* structBuffer)
 {
 	T_CAPTURE_ASSERT(m_program, L"Program destroyed.");
 	if (m_program)
 		m_program->setStructBufferParameter(handle, structBuffer);
 }
 
-void ProgramCapture::setStencilReference(uint32_t stencilReference)
+void ProgramVrfy::setStencilReference(uint32_t stencilReference)
 {
 	T_CAPTURE_ASSERT(m_program, L"Program destroyed.");
 	if (m_program)
 		m_program->setStencilReference(stencilReference);
 }
 
-void ProgramCapture::verify()
+void ProgramVrfy::verify()
 {
 	T_CAPTURE_ASSERT(m_program, L"Program destroyed.");
 
@@ -234,15 +234,15 @@ void ProgramCapture::verify()
 		if (!i->second)
 			continue;
 
-		if (CubeTextureCapture* cubeTexture = dynamic_type_cast< CubeTextureCapture* >(i->second->resolve()))
+		if (CubeTextureVrfy* cubeTexture = dynamic_type_cast< CubeTextureVrfy* >(i->second->resolve()))
 		{
 			T_CAPTURE_ASSERT(cubeTexture->getTexture(), L"Trying to draw with destroyed texture (" << m_tag << L").");
 		}
-		else if (SimpleTextureCapture* simpleTexture = dynamic_type_cast< SimpleTextureCapture* >(i->second->resolve()))
+		else if (SimpleTextureVrfy* simpleTexture = dynamic_type_cast< SimpleTextureVrfy* >(i->second->resolve()))
 		{
 			T_CAPTURE_ASSERT(simpleTexture->getTexture(), L"Trying to draw with destroyed texture (" << m_tag << L").");
 		}
-		else if (VolumeTextureCapture* volumeTexture = dynamic_type_cast< VolumeTextureCapture* >(i->second->resolve()))
+		else if (VolumeTextureVrfy* volumeTexture = dynamic_type_cast< VolumeTextureVrfy* >(i->second->resolve()))
 		{
 			T_CAPTURE_ASSERT(volumeTexture->getTexture(), L"Trying to draw with destroyed texture (" << m_tag << L").");
 		}
@@ -251,7 +251,7 @@ void ProgramCapture::verify()
 	}
 }
 
-// std::wstring ProgramCapture::Parameter::getName() const
+// std::wstring ProgramVrfy::Parameter::getName() const
 // {
 // 	if (indexedUniform)
 // 		return indexedUniform->getParameterName();

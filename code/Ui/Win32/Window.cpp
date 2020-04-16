@@ -332,8 +332,14 @@ LRESULT CALLBACK Window::dlgProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM 
 		}
 	}
 
-	// Call default dialog procedure.
-	return DefDlgProc(hWnd, message, wParam, lParam);
+	// Call default window procedure; note cannot call DefDlgProc since
+	// it will dead-lock application.
+	return DefWindowProc(
+		hWnd,
+		message,
+		wParam,
+		lParam
+	);
 }
 
 LRESULT CALLBACK Window::wndProcSubClass(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)

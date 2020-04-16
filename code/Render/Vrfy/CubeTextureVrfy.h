@@ -9,14 +9,14 @@ namespace traktor
 	{
 
 /*!
- * \ingroup Capture
+ * \ingroup Vrfy
  */
-class CubeTextureCapture : public ICubeTexture
+class CubeTextureVrfy : public ICubeTexture
 {
 	T_RTTI_CLASS;
 
 public:
-	CubeTextureCapture(ICubeTexture* texture);
+	CubeTextureVrfy(ICubeTexture* texture);
 
 	virtual void destroy() override final;
 

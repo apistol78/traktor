@@ -1,17 +1,55 @@
+#include "Core/Misc/SafeDestroy.h"
+#include "Model/Model.h"
+#include "Model/Operations/MergeModel.h"
+//#include "Model/Operations/Triangulate.h"
+#include "Render/IndexBuffer.h"
+#include "Render/IRenderSystem.h"
+#include "Render/Shader.h"
+#include "Render/VertexBuffer.h"
+#include "Render/VertexElement.h"
+#include "Render/Context/RenderContext.h"
 #include "Shape/Editor/Spline/ControlPointComponent.h"
 #include "Shape/Editor/Spline/SplineEntity.h"
+#include "Shape/Editor/Spline/SplineEntityData.h"
 #include "Shape/Editor/Spline/SplineLayerComponent.h"
+#include "Shape/Editor/Spline/SplineLayerComponentData.h"
+#include "World/IWorldRenderPass.h"
+#include "World/WorldBuildContext.h"
 #include "World/Entity/GroupComponent.h"
 
 namespace traktor
 {
 	namespace shape
 	{
+        namespace
+        {
+
+#pragma pack(1)
+struct Vertex
+{
+	float position[3];
+	float normal[3];
+	float texCoord[2];
+};
+#pragma pack()
+
+        }
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.shape.SplineEntity", SplineEntity, world::GroupEntity)
 
-SplineEntity::SplineEntity()
-:	m_dirty(true)
+SplineEntity::SplineEntity(
+	const SplineEntityData* data,
+	db::Database* database,
+    render::IRenderSystem* renderSystem,
+	const std::wstring& assetPath,
+    const resource::Proxy< render::Shader >& shader
+)
+:	m_data(data)
+,	m_database(database)
+,	m_renderSystem(renderSystem)
+,	m_assetPath(assetPath)
+,	m_shader(shader)
+,	m_dirty(true)
 {
 }
 
@@ -19,18 +57,13 @@ void SplineEntity::update(const world::UpdateParams& update)
 {
 	world::GroupEntity::update(update);
 
-	// Get control points and layers.
+	// Get control points.
 	RefArray< ControlPointComponent > controlPoints;
-	RefArray< SplineLayerComponent > layers;
 	for (auto entity : getEntities())
 	{
 		auto controlPoint = entity->getComponent< ControlPointComponent >();
 		if (controlPoint)
 			controlPoints.push_back(controlPoint);
-
-		auto layer = entity->getComponent< SplineLayerComponent >();
-		if (layer)
-			layers.push_back(layer);
 	}
 
 	// Check if any control point is dirty.
@@ -60,10 +93,164 @@ void SplineEntity::update(const world::UpdateParams& update)
 			m_path.insert(k);
 		}
 
-		for (auto layer : layers)
-			layer->pathChanged(m_path);
+		// Generate geometry from path.
+		Ref< model::Model > outputModel;
+		for (auto component : m_data->getComponents())
+		{
+			if (const auto layerData = dynamic_type_cast< const SplineLayerComponentData* >(component))
+			{
+				Ref< model::Model > layerModel = layerData->createModel(m_database, m_assetPath, m_path);
+				if (!layerModel)
+					continue;
+
+				if (outputModel)
+				{
+					model::MergeModel merge(*layerModel, Transform::identity(), 0.01f);
+					merge.apply(*outputModel);
+				}
+				else
+					outputModel = layerModel;
+			}
+		}
+
+		// In case no layers has been added yet.
+		if (!outputModel)
+		{
+			safeDestroy(m_vertexBuffer);
+			safeDestroy(m_indexBuffer);	
+			m_dirty = false;
+			return;
+		}
+
+		//// Create runtime render mesh from model.
+		//model::Triangulate().apply(*outputModel);
+
+		m_batches.resize(0);
+
+        const uint32_t nvertices = outputModel->getVertexCount();
+		const uint32_t nindices = outputModel->getPolygonCount() * 3;
+
+        if (nvertices > 0 && nindices > 0)
+        {
+			if (m_vertexBuffer == nullptr || m_vertexBuffer->getBufferSize() < nvertices * sizeof(Vertex))
+			{
+				safeDestroy(m_vertexBuffer);
+
+				AlignedVector< render::VertexElement > vertexElements;
+				vertexElements.push_back(render::VertexElement(render::DuPosition, render::DtFloat3, offsetof(Vertex, position)));
+				vertexElements.push_back(render::VertexElement(render::DuNormal, render::DtFloat3, offsetof(Vertex, normal)));
+				vertexElements.push_back(render::VertexElement(render::DuCustom, render::DtFloat2, offsetof(Vertex, texCoord)));
+
+				m_vertexBuffer = m_renderSystem->createVertexBuffer(
+					vertexElements,
+					(nvertices + 4 * 128) * sizeof(Vertex),
+					false
+				);
+			}
+
+            Vertex* vertex = (Vertex*)m_vertexBuffer->lock();
+			for (const auto& v : outputModel->getVertices())
+            {
+				Vector4 p = outputModel->getPosition(v.getPosition());
+				Vector4 n = (v.getNormal() != model::c_InvalidIndex) ? outputModel->getNormal(v.getNormal()) : Vector4::zero();
+				Vector2 uv = (v.getTexCoord(0) != model::c_InvalidIndex) ? outputModel->getTexCoord(v.getTexCoord(0)) : Vector2::zero();
+
+				p.storeUnaligned(vertex->position);
+				n.storeUnaligned(vertex->normal);
+
+				vertex->texCoord[0] = uv.x;
+				vertex->texCoord[1] = uv.y;
+                    
+				++vertex;
+            }
+            m_vertexBuffer->unlock();
+
+            // Create indices and material batches.
+			if (m_indexBuffer == nullptr || m_indexBuffer->getBufferSize() < nindices * sizeof(uint16_t))
+			{
+				safeDestroy(m_indexBuffer);
+            	m_indexBuffer = m_renderSystem->createIndexBuffer(render::ItUInt16, (nindices + 3 * 128) * sizeof(uint16_t), false);
+			}
+
+            uint16_t* index = (uint16_t*)m_indexBuffer->lock();
+			uint32_t offset = 0;
+			for (uint32_t i = 0; i < outputModel->getMaterialCount(); ++i)
+			{
+				uint32_t count = 0;
+				for (const auto& p : outputModel->getPolygons())
+				{
+					if (p.getMaterial() == i)
+					{
+						*index++ = (uint16_t)p.getVertex(0);
+						*index++ = (uint16_t)p.getVertex(1);
+						*index++ = (uint16_t)p.getVertex(2);
+						++count;
+					}
+				}
+
+				if (!count)
+					continue;
+
+				auto& batch = m_batches.push_back();
+				batch.primitives.setIndexed(
+					render::PtTriangles,
+					offset,
+					count,
+					0,
+					nvertices - 1
+				);
+
+				offset += count * 3;
+			}
+            m_indexBuffer->unlock();
+        }
+		else
+		{
+			safeDestroy(m_vertexBuffer);
+			safeDestroy(m_indexBuffer);			
+		}
 
 		m_dirty = false;
+	}
+}
+
+void SplineEntity::build(
+	const world::WorldBuildContext& context,
+	const world::WorldRenderView& worldRenderView,
+	const world::IWorldRenderPass& worldRenderPass
+)
+{
+	if (!m_indexBuffer || !m_vertexBuffer)
+		return;
+
+	auto sp = worldRenderPass.getProgram(m_shader);
+	if (!sp)
+		return;
+
+	auto renderContext = context.getRenderContext();
+	for (const auto& batch : m_batches)
+	{
+		render::SimpleRenderBlock* renderBlock = renderContext->alloc< render::SimpleRenderBlock >(L"Solid");
+
+		renderBlock->distance = std::numeric_limits< float >::max();
+		renderBlock->program = sp.program;
+		renderBlock->indexBuffer = m_indexBuffer;
+		renderBlock->vertexBuffer = m_vertexBuffer;
+		renderBlock->primitives = batch.primitives;
+
+		renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
+		renderBlock->programParams->beginParameters(renderContext);
+
+		worldRenderPass.setProgramParameters(
+			renderBlock->programParams
+		);
+
+		renderBlock->programParams->endParameters(renderContext);
+
+		renderContext->draw(
+			sp.priority,
+			renderBlock
+		);
 	}
 }
 

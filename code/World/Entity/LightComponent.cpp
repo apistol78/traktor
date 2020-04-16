@@ -1,8 +1,4 @@
-#if !defined(WINCE)
-#	include <ctime>
-#else
-#	include <time_ce.h>
-#endif
+#include "Core/Math/Random.h"
 #include "World/Entity.h"
 #include "World/Entity/LightComponent.h"
 
@@ -10,6 +6,12 @@ namespace traktor
 {
 	namespace world
 	{
+		namespace
+		{
+
+Random s_random;
+		
+		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.world.LightComponent", LightComponent, IEntityComponent)
 
@@ -32,11 +34,6 @@ LightComponent::LightComponent(
 ,	m_flickerFilter(flickerFilter)
 ,	m_flickerValue(0.0f)
 ,	m_flickerCoeff(0.0f)
-#if !defined(WINCE)
-,	m_random(uint32_t(clock()))
-#else
-,	m_random(uint32_t(clock_ce()))
-#endif
 {
 }
 
@@ -51,7 +48,7 @@ void LightComponent::setOwner(Entity* owner)
 
 void LightComponent::update(const UpdateParams& update)
 {
-	m_flickerValue = m_random.nextFloat() * (1.0f - m_flickerFilter) + m_flickerValue * m_flickerFilter;
+	m_flickerValue = s_random.nextFloat() * (1.0f - m_flickerFilter) + m_flickerValue * m_flickerFilter;
 	m_flickerCoeff = 1.0f - m_flickerValue * m_flickerAmount;
 }
 

@@ -203,8 +203,8 @@ void MeshClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 
 	auto classStreamMeshComponent = new AutoRuntimeClass< StreamMeshComponent >();
 	classStreamMeshComponent->addConstructor< const resource::Proxy< StreamMesh >&, bool >();
-	classStreamMeshComponent->addMethod("getFrameCount", &StreamMeshComponent::getFrameCount);
-	classStreamMeshComponent->addMethod("setFrame", &StreamMeshComponent::setFrame);
+	classStreamMeshComponent->addProperty("frameCount", &StreamMeshComponent::getFrameCount);
+	classStreamMeshComponent->addProperty("frame", &StreamMeshComponent::setFrame, &StreamMeshComponent::getFrame);
 	registrar->registerClass(classStreamMeshComponent);
 }
 

@@ -62,9 +62,9 @@ Ref< ui::Bitmap > MeshBrowsePreview::generate(const editor::IEditor* editor, db:
 
 	AlignedVector< Vector2 > screenVertices;
 
-	for (AlignedVector< model::Polygon >::const_iterator i = polygons.begin(); i != polygons.end(); ++i)
+	for (const auto& polygon : polygons)
 	{
-		const AlignedVector< uint32_t >& polygonVertices = i->getVertices();
+		const auto& polygonVertices = polygon.getVertices();
 		if (polygonVertices.empty())
 			continue;
 
@@ -98,8 +98,8 @@ Ref< ui::Bitmap > MeshBrowsePreview::generate(const editor::IEditor* editor, db:
 		raster.close();
 
 		float shade = 1.0f;
-		if (i->getNormal() != model::c_InvalidIndex)
-			shade = abs(normals[i->getNormal()].z() * 0.3f) + 0.7f;
+		if (polygon.getNormal() != model::c_InvalidIndex)
+			shade = abs(normals[polygon.getNormal()].z() * 0.3f) + 0.7f;
 
 		raster.clearStyles();
 		raster.stroke(raster.defineSolidStyle(Color4f(shade, shade, shade, 1.0f)), 1.0f, drawing::Raster::ScRound);

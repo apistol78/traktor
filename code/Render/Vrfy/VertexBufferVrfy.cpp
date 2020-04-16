@@ -1,15 +1,15 @@
 #include "Core/Misc/SafeDestroy.h"
-#include "Render/Capture/Error.h"
-#include "Render/Capture/VertexBufferCapture.h"
+#include "Render/Vrfy/Error.h"
+#include "Render/Vrfy/VertexBufferVrfy.h"
 
 namespace traktor
 {
 	namespace render
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.render.VertexBufferCapture", VertexBufferCapture, VertexBuffer)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.render.VertexBufferVrfy", VertexBufferVrfy, VertexBuffer)
 
-VertexBufferCapture::VertexBufferCapture(VertexBuffer* vertexBuffer, uint32_t bufferSize, uint32_t vertexSize)
+VertexBufferVrfy::VertexBufferVrfy(VertexBuffer* vertexBuffer, uint32_t bufferSize, uint32_t vertexSize)
 :	VertexBuffer(bufferSize)
 ,	m_vertexBuffer(vertexBuffer)
 ,	m_vertexSize(vertexSize)
@@ -17,14 +17,14 @@ VertexBufferCapture::VertexBufferCapture(VertexBuffer* vertexBuffer, uint32_t bu
 {
 }
 
-void VertexBufferCapture::destroy()
+void VertexBufferVrfy::destroy()
 {
 	T_CAPTURE_ASSERT (m_vertexBuffer, L"Vertex buffer already destroyed.");
 	T_CAPTURE_ASSERT (!m_locked, L"Cannot destroy locked vertex buffer.");
 	safeDestroy(m_vertexBuffer);
 }
 
-void* VertexBufferCapture::lock()
+void* VertexBufferVrfy::lock()
 {
 	T_CAPTURE_ASSERT (m_vertexBuffer, L"Vertex buffer destroyed.");
 	T_CAPTURE_ASSERT (!m_locked, L"Vertex buffer already locked.");
@@ -39,7 +39,7 @@ void* VertexBufferCapture::lock()
 	return p;
 }
 
-void* VertexBufferCapture::lock(uint32_t vertexOffset, uint32_t vertexCount)
+void* VertexBufferVrfy::lock(uint32_t vertexOffset, uint32_t vertexCount)
 {
 	T_CAPTURE_ASSERT (m_vertexBuffer, L"Vertex buffer destroyed.");
 	T_CAPTURE_ASSERT (!m_locked, L"Vertex buffer already locked.");
@@ -55,7 +55,7 @@ void* VertexBufferCapture::lock(uint32_t vertexOffset, uint32_t vertexCount)
 	return p;
 }
 
-void VertexBufferCapture::unlock()
+void VertexBufferVrfy::unlock()
 {
 	T_CAPTURE_ASSERT (m_vertexBuffer, L"Vertex buffer destroyed.");
 	T_CAPTURE_ASSERT (m_locked, L"Vertex buffer not locked.");

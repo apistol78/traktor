@@ -17,15 +17,15 @@ class Image;
 class IRenderSystem;
 class IRenderTargetSet;
 
-/*! Performance capture render view.
- * \ingroup RenderCapture
+/*! Verification render view.
+ * \ingroup Render
  */
-class RenderViewCapture : public IRenderView
+class RenderViewVrfy : public IRenderView
 {
 	T_RTTI_CLASS;
 
 public:
-	RenderViewCapture(IRenderSystem* renderSystem, IRenderView* renderView);
+	RenderViewVrfy(IRenderSystem* renderSystem, IRenderView* renderView);
 
 	virtual bool nextEvent(RenderEvent& outEvent) override final;
 
@@ -65,9 +65,9 @@ public:
 
 	virtual bool beginPass(const Clear* clear) override final;
 
-	virtual bool beginPass(IRenderTargetSet* renderTargetSet, const Clear* clear) override final;
+	virtual bool beginPass(IRenderTargetSet* renderTargetSet, const Clear* clear, uint32_t load, uint32_t store) override final;
 
-	virtual bool beginPass(IRenderTargetSet* renderTargetSet, int32_t renderTarget, const Clear* clear) override final;
+	virtual bool beginPass(IRenderTargetSet* renderTargetSet, int32_t renderTarget, const Clear* clear, uint32_t load, uint32_t store) override final;
 
 	virtual void endPass() override final;
 
@@ -88,7 +88,7 @@ public:
 	virtual bool getBackBufferContent(void* buffer) const override final;
 
 private:
-	struct ProfileCapture
+	struct ProfileVrfy
 	{
 		const wchar_t* name;
 		intptr_t begin;
@@ -100,7 +100,7 @@ private:
 	Ref< ITimeQuery > m_timeQuery;
 	bool m_insideFrame;
 	bool m_insidePass;
-	std::vector< ProfileCapture > m_timeStamps;
+	std::vector< ProfileVrfy > m_timeStamps;
 };
 
 	}

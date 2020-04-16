@@ -259,11 +259,6 @@ uint32_t Model::getTexCoordChannel(const std::wstring& channelId) const
 	return it != m_texCoordChannels.end() ? (uint32_t)std::distance(m_texCoordChannels.begin(), it) : c_InvalidIndex;
 }
 
-const AlignedVector< std::wstring >& Model::getTexCoordChannels() const
-{
-	return m_texCoordChannels;
-}
-
 uint32_t Model::addJoint(const Joint& joint)
 {
 	return addId(m_joints, joint);

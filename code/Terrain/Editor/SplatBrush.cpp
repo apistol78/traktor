@@ -61,6 +61,7 @@ void SplatBrush::apply(float x, float y)
 
 			float a = m_fallOff->evaluate(fx, fy) * m_strength;
 
+			/*
 			Vector4 normal = m_heightfield->normalAt(x + ix, y + iy);
 			float slope = abs(acos(normal.y()) / HALF_PI);
 
@@ -71,6 +72,7 @@ void SplatBrush::apply(float x, float y)
 				a *= clamp(1.0f - fact, 0.0f, 1.0f);
 			else
 				a *= clamp(fact, 0.0f, 1.0f);
+			*/
 
 			if (abs(a) <= FUZZY_EPSILON)
 				continue;

@@ -2297,11 +2297,11 @@ void EditorForm::loadModules()
 		Ref< Library > library = new Library();
 		if (library->open(*i, modulePathsFlatten, true))
 		{
-			log::info << L"Module \"" << *i << L"\" loaded successfully" << Endl;
+			log::info << L"Module \"" << *i << L"\" loaded successfully." << Endl;
 			library->detach();
 		}
 		else
-			log::error << L"Unable to load module \"" << *i << L"\"" << Endl;
+			log::error << L"Unable to load module \"" << *i << L"\"." << Endl;
 	}
 #endif
 }

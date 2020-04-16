@@ -36,23 +36,36 @@ handle_t RenderGraph::addTargetSet(
 )
 {
 	handle_t targetSetId = m_nextTargetSetId++;
+
 	auto& target = m_targets[targetSetId];
 	target.targetSetDesc = targetSetDesc;
 	target.sharedDepthStencilTargetSet = sharedDepthStencilTargetSet;
 	target.sizeReferenceTargetSetId = sizeReferenceTargetSetId;
 	target.referenceCount = 0;
+	target.storeDepth = false;
 	target.transient = true;
+
+	if (sharedDepthStencilTargetSet != nullptr || targetSetDesc.createDepthStencil || targetSetDesc.usingPrimaryDepthStencil)
+		target.storeDepth = true;
+
 	return targetSetId;
 }
 
 handle_t RenderGraph::addTargetSet(IRenderTargetSet* targetSet)
 {
+	T_FATAL_ASSERT(targetSet != nullptr);
+	T_ASSERT(targetSet->getWidth() > 0);
+	T_ASSERT(targetSet->getHeight() > 0);
+
 	handle_t targetSetId = m_nextTargetSetId++;
+
 	auto& target = m_targets[targetSetId];
 	target.rts = targetSet;
 	target.sizeReferenceTargetSetId = 0;
 	target.referenceCount = 0;
+	target.storeDepth = true;
 	target.transient = false;
+
 	return targetSetId;
 }
 
@@ -113,7 +126,8 @@ bool RenderGraph::validate()
 		}
 	}
 
-	// Calculate target reference counts.
+	// Calculate target reference counts,
+	// and set storage atttribute of each pass's output.
 	for (auto index : m_order)
 	{
 		const auto pass = m_passes[index];
@@ -129,14 +143,10 @@ bool RenderGraph::validate()
 
 			auto& target = it->second;
 			target.referenceCount++;
+			target.storeDepth |= input.useDepth;
 		}
-	}	
+	}
 
-#if defined(_DEBUG)
-	// Check so all targets is referenced.
-	for (auto& tm : m_targets)
-		T_FATAL_ASSERT(tm.second.referenceCount > 0);
-#endif
 	return true;
 }
 
@@ -196,12 +206,16 @@ bool RenderGraph::build(RenderContext* renderContext, int32_t width, int32_t hei
 				auto tb = renderContext->alloc< BeginPassRenderBlock >();
 				tb->renderTargetSet = target.rts;
 				tb->clear = output.clear;
+				tb->load = TfColor | TfDepth;
+				tb->store = TfColor | (target.storeDepth ? TfDepth : 0);
 				renderContext->enqueue(tb);
 			}
 			else
 			{
 				auto tb = renderContext->alloc< BeginPassRenderBlock >();
 				tb->clear = output.clear;
+				tb->load = TfColor | TfDepth;
+				tb->store = TfColor | TfDepth;
 				renderContext->enqueue(tb);			
 			}
 		}
@@ -251,12 +265,6 @@ bool RenderGraph::build(RenderContext* renderContext, int32_t width, int32_t hei
 	}
 
 	T_FATAL_ASSERT(!renderContext->havePendingDraws());
-
-#if defined(_DEBUG)
-	// Check so all targets have been released.
-	for (auto& tm : m_targets)
-		T_FATAL_ASSERT(tm.second.rts == nullptr);
-#endif
 
 	// Remove all data; keep memory allocated for arrays
 	// since it's very likely this will be identically

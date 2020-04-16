@@ -30,7 +30,7 @@ Vector4 triangleNormal(const Model& model, uint32_t triangleId)
 	if (polygon.getVertexCount() < 3)
 		return Vector4::zero();
 
-	const AlignedVector< uint32_t >& vertices = polygon.getVertices();
+	const auto& vertices = polygon.getVertices();
 	const Vertex* v[] =
 	{
 		&model.getVertex(vertices[0]),
@@ -166,7 +166,7 @@ void triangleSingleVertexNeighbors(const Model& model, uint32_t triangleId, Alig
 		if (i == triangleId)
 			continue;
 
-		const AlignedVector< uint32_t >& vertices = model.getPolygon(i).getVertices();
+		const auto& vertices = model.getPolygon(i).getVertices();
 		if (vertices.size() != 3)
 			continue;
 

@@ -1,51 +1,51 @@
 #include "Core/Misc/SafeDestroy.h"
-#include "Render/Capture/Error.h"
-#include "Render/Capture/SimpleTextureCapture.h"
+#include "Render/Vrfy/Error.h"
+#include "Render/Vrfy/SimpleTextureVrfy.h"
 
 namespace traktor
 {
 	namespace render
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.render.SimpleTextureCapture", SimpleTextureCapture, ISimpleTexture)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.render.SimpleTextureVrfy", SimpleTextureVrfy, ISimpleTexture)
 
-SimpleTextureCapture::SimpleTextureCapture(ISimpleTexture* texture)
+SimpleTextureVrfy::SimpleTextureVrfy(ISimpleTexture* texture)
 :	m_texture(texture)
 ,	m_locked(-1)
 {
 }
 
-void SimpleTextureCapture::destroy()
+void SimpleTextureVrfy::destroy()
 {
 	T_CAPTURE_ASSERT (m_texture, L"Simple texture already destroyed.");
 	safeDestroy(m_texture);
 }
 
-ITexture* SimpleTextureCapture::resolve()
+ITexture* SimpleTextureVrfy::resolve()
 {
 	T_CAPTURE_ASSERT (m_texture, L"Simple texture destroyed.");
 	return this;
 }
 
-int32_t SimpleTextureCapture::getMips() const
+int32_t SimpleTextureVrfy::getMips() const
 {
 	T_CAPTURE_ASSERT (m_texture, L"Simple texture destroyed.");
 	return m_texture ? m_texture->getMips() : 0;
 }
 
-int32_t SimpleTextureCapture::getWidth() const
+int32_t SimpleTextureVrfy::getWidth() const
 {
 	T_CAPTURE_ASSERT (m_texture, L"Simple texture destroyed.");
 	return m_texture ? m_texture->getWidth() : 0;
 }
 
-int32_t SimpleTextureCapture::getHeight() const
+int32_t SimpleTextureVrfy::getHeight() const
 {
 	T_CAPTURE_ASSERT (m_texture, L"Simple texture destroyed.");
 	return m_texture ? m_texture->getHeight() : 0;
 }
 
-bool SimpleTextureCapture::lock(int32_t level, Lock& lock)
+bool SimpleTextureVrfy::lock(int32_t level, Lock& lock)
 {
 	T_CAPTURE_ASSERT (m_texture, L"Simple texture destroyed.");
 	T_CAPTURE_ASSERT (level >= 0, L"Invalid mip level.");
@@ -53,7 +53,7 @@ bool SimpleTextureCapture::lock(int32_t level, Lock& lock)
 	return m_texture ? m_texture->lock(level, lock) : false;
 }
 
-void SimpleTextureCapture::unlock(int32_t level)
+void SimpleTextureVrfy::unlock(int32_t level)
 {
 	T_CAPTURE_ASSERT (m_texture, L"Simple texture destroyed.");
 	T_CAPTURE_ASSERT (level >= 0, L"Invalid mip level.");
@@ -63,10 +63,10 @@ void SimpleTextureCapture::unlock(int32_t level)
 	m_locked = -1;
 }
 
-void* SimpleTextureCapture::getInternalHandle()
+void* SimpleTextureVrfy::getInternalHandle()
 {
 	T_CAPTURE_ASSERT (m_texture, L"Simple texture destroyed.");
-	return m_texture ? m_texture->getInternalHandle() : 0;
+	return m_texture ? m_texture->getInternalHandle() : nullptr;
 }
 
 	}

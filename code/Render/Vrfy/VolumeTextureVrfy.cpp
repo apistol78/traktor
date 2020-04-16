@@ -1,50 +1,50 @@
 #include "Core/Misc/SafeDestroy.h"
-#include "Render/Capture/Error.h"
-#include "Render/Capture/VolumeTextureCapture.h"
+#include "Render/Vrfy/Error.h"
+#include "Render/Vrfy/VolumeTextureVrfy.h"
 
 namespace traktor
 {
 	namespace render
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.render.VolumeTextureCapture", VolumeTextureCapture, IVolumeTexture)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.render.VolumeTextureVrfy", VolumeTextureVrfy, IVolumeTexture)
 
-VolumeTextureCapture::VolumeTextureCapture(IVolumeTexture* texture)
+VolumeTextureVrfy::VolumeTextureVrfy(IVolumeTexture* texture)
 :	m_texture(texture)
 {
 }
 
-void VolumeTextureCapture::destroy()
+void VolumeTextureVrfy::destroy()
 {
 	T_CAPTURE_ASSERT (m_texture, L"Volume texture already destroyed.");
 	safeDestroy(m_texture);
 }
 
-ITexture* VolumeTextureCapture::resolve()
+ITexture* VolumeTextureVrfy::resolve()
 {
 	T_CAPTURE_ASSERT (m_texture, L"Volume texture destroyed.");
 	return this;
 }
 
-int32_t VolumeTextureCapture::getMips() const
+int32_t VolumeTextureVrfy::getMips() const
 {
 	T_CAPTURE_ASSERT (m_texture, L"Volume texture destroyed.");
 	return m_texture ? m_texture->getMips() : 0;
 }
 
-int32_t VolumeTextureCapture::getWidth() const
+int32_t VolumeTextureVrfy::getWidth() const
 {
 	T_CAPTURE_ASSERT (m_texture, L"Volume texture destroyed.");
 	return m_texture ? m_texture->getWidth() : 0;
 }
 
-int32_t VolumeTextureCapture::getHeight() const
+int32_t VolumeTextureVrfy::getHeight() const
 {
 	T_CAPTURE_ASSERT (m_texture, L"Volume texture destroyed.");
 	return m_texture ? m_texture->getHeight() : 0;
 }
 
-int32_t VolumeTextureCapture::getDepth() const
+int32_t VolumeTextureVrfy::getDepth() const
 {
 	T_CAPTURE_ASSERT (m_texture, L"Volume texture destroyed.");
 	return m_texture ? m_texture->getDepth() : 0;

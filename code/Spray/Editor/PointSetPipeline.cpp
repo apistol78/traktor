@@ -105,7 +105,7 @@ bool PointSetPipeline::buildOutput(
 	{
 		for (const auto& polygon : model->getPolygons())
 		{
-			const AlignedVector< uint32_t >& vertices = polygon.getVertices();
+			const auto& vertices = polygon.getVertices();
 
 			PointSet::Point point;
 			point.position = Vector4::zero();

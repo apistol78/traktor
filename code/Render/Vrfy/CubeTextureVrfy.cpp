@@ -1,47 +1,46 @@
 #include "Core/Misc/SafeDestroy.h"
-#include "Render/Capture/CubeTextureCapture.h"
-#include "Render/Capture/Error.h"
+#include "Render/Vrfy/CubeTextureVrfy.h"
+#include "Render/Vrfy/Error.h"
 
 namespace traktor
 {
 	namespace render
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.render.CubeTextureCapture", CubeTextureCapture, ICubeTexture)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.render.CubeTextureVrfy", CubeTextureVrfy, ICubeTexture)
 
-CubeTextureCapture::CubeTextureCapture(ICubeTexture* texture)
+CubeTextureVrfy::CubeTextureVrfy(ICubeTexture* texture)
 :	m_texture(texture)
 {
 	m_locked[0] =
 	m_locked[1] = -1;
 }
 
-void CubeTextureCapture::destroy()
+void CubeTextureVrfy::destroy()
 {
-
 	T_CAPTURE_ASSERT (m_texture, L"Cube texture already destroyed.");
 	safeDestroy(m_texture);
 }
 
-ITexture* CubeTextureCapture::resolve()
+ITexture* CubeTextureVrfy::resolve()
 {
 	T_CAPTURE_ASSERT (m_texture, L"Cube texture destroyed.");
 	return this;
 }
 
-int32_t CubeTextureCapture::getMips() const
+int32_t CubeTextureVrfy::getMips() const
 {
 	T_CAPTURE_ASSERT (m_texture, L"Cube texture destroyed.");
 	return m_texture ? m_texture->getMips() : 0;
 }
 
-int32_t CubeTextureCapture::getSide() const
+int32_t CubeTextureVrfy::getSide() const
 {
 	T_CAPTURE_ASSERT (m_texture, L"Cube texture destroyed.");
 	return m_texture ? m_texture->getSide() : 0;
 }
 
-bool CubeTextureCapture::lock(int32_t side, int32_t level, Lock& lock)
+bool CubeTextureVrfy::lock(int32_t side, int32_t level, Lock& lock)
 {
 	T_CAPTURE_ASSERT (m_texture, L"Cube texture destroyed.");
 	T_CAPTURE_ASSERT (side >= 0, L"Invalid side index.");
@@ -56,7 +55,7 @@ bool CubeTextureCapture::lock(int32_t side, int32_t level, Lock& lock)
 		return false;
 }
 
-void CubeTextureCapture::unlock(int32_t side, int32_t level)
+void CubeTextureVrfy::unlock(int32_t side, int32_t level)
 {
 	T_CAPTURE_ASSERT (m_texture, L"Cube texture destroyed.");
 	T_CAPTURE_ASSERT (side >= 0, L"Invalid side index.");

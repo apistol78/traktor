@@ -1,6 +1,5 @@
 #pragma once
 
-#include "Core/Math/Random.h"
 #include "Resource/Proxy.h"
 #include "World/IEntityComponent.h"
 
@@ -88,7 +87,6 @@ private:
 	float m_flickerFilter;
 	float m_flickerValue;
 	float m_flickerCoeff;
-	Random m_random;
 };
 
 	}

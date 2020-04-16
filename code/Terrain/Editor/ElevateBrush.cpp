@@ -44,6 +44,7 @@ void ElevateBrush::apply(float x, float y)
 
 			float a = m_fallOff->evaluate(fx, fy) * m_strength;
 
+			/*
 			// Check material mask.
 			if (m_attribute >= 0)
 			{
@@ -55,6 +56,7 @@ void ElevateBrush::apply(float x, float y)
 
 				a *= 1.0f - weights[m_attribute];
 			}
+			*/
 
 			if (abs(a) <= FUZZY_EPSILON)
 				continue;

@@ -172,9 +172,9 @@ bool ModelFormatObj::write(IStream* stream, const Model* model) const
 
 				s << L"f";
 				const auto& vertices = polygon.getVertices();
-				for (auto it = vertices.rbegin(); it != vertices.rend(); ++it)
+				for (int32_t i = (int32_t)vertices.size() - 1; i >= 0; --i)
 				{
-					const Vertex& vertex = model->getVertex(*it);
+					const Vertex& vertex = model->getVertex(vertices[i]);
 
 					s << L" " << vertex.getPosition() + 1;
 					if (vertex.getTexCoord(1) != c_InvalidIndex)
@@ -200,9 +200,9 @@ bool ModelFormatObj::write(IStream* stream, const Model* model) const
 		{
 			s << L"f";
 			const auto& vertices = polygon.getVertices();
-			for (auto it = vertices.rbegin(); it != vertices.rend(); ++it)
+			for (int32_t i = (int32_t)vertices.size() - 1; i >= 0; --i)
 			{
-				const Vertex& vertex = model->getVertex(*it);
+				const Vertex& vertex = model->getVertex(vertices[i]);
 
 				s << L" " << vertex.getPosition() + 1;
 				if (vertex.getTexCoord(0) != c_InvalidIndex)

@@ -45,6 +45,7 @@ public:
 	) const override final;
 
 private:
+	std::wstring m_assetPath;
 	bool m_targetEditor;
 };
 

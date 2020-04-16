@@ -1,5 +1,5 @@
-#ifndef traktor_render_VertexBufferCapture_H
-#define traktor_render_VertexBufferCapture_H
+#ifndef traktor_render_VertexBufferVrfy_H
+#define traktor_render_VertexBufferVrfy_H
 
 #include "Render/VertexBuffer.h"
 
@@ -9,14 +9,14 @@ namespace traktor
 	{
 
 /*!
- * \ingroup Capture
+ * \ingroup Vrfy
  */
-class VertexBufferCapture : public VertexBuffer
+class VertexBufferVrfy : public VertexBuffer
 {
 	T_RTTI_CLASS;
 
 public:
-	VertexBufferCapture(VertexBuffer* vertexBuffer, uint32_t bufferSize, uint32_t vertexSize);
+	VertexBufferVrfy(VertexBuffer* vertexBuffer, uint32_t bufferSize, uint32_t vertexSize);
 
 	virtual void destroy() override final;
 
@@ -39,5 +39,5 @@ protected:
 	}
 }
 
-#endif	// traktor_render_VertexBufferCapture_H
+#endif	// traktor_render_VertexBufferVrfy_H
 

@@ -99,7 +99,16 @@ private:
 		Ref< IRenderTargetSet > rts;
 		handle_t sizeReferenceTargetSetId;
 		int32_t referenceCount;
+		bool storeDepth;
 		bool transient;
+
+		Target()
+		:	sizeReferenceTargetSetId(0)
+		,	referenceCount(0)
+		,	storeDepth(false)
+		,	transient(false)
+		{
+		}
 	};
 
 	Ref< RenderGraphTargetSetPool > m_pool;

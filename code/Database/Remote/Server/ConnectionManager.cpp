@@ -46,7 +46,7 @@ bool ConnectionManager::create()
 	if (!m_serverThread)
 		return false;
 
-	log::info << L"Remote database connection manager @" << m_listenPort << L" created" << Endl;
+	log::info << L"Remote database connection manager @" << m_listenPort << L" created." << Endl;
 	return true;
 }
 
@@ -55,21 +55,21 @@ void ConnectionManager::destroy()
 	if (m_serverThread)
 	{
 		ThreadPool::getInstance().stop(m_serverThread);
-		m_serverThread = 0;
+		m_serverThread = nullptr;
 	}
 
 	if (m_listenSocket)
 	{
 		m_listenSocket->close();
-		m_listenSocket = 0;
+		m_listenSocket = nullptr;
 	}
 
-	for (RefArray< Connection >::iterator i = m_connections.begin(); i != m_connections.end(); ++i)
-		(*i)->destroy();
+	for (auto connection : m_connections)
+		connection->destroy();
 
-	m_connections.resize(0);
+	m_connections.clear();
 
-	m_streamServer = 0;
+	m_streamServer = nullptr;
 }
 
 void ConnectionManager::setConnectionString(const std::wstring& name, const std::wstring& connectionString)
@@ -104,9 +104,9 @@ void ConnectionManager::threadServer()
 
 			Ref< net::SocketAddress > remoteAddress = clientSocket->getRemoteAddress();
 			if (remoteAddress)
-				log::info << L"Remote database connection accepted from " << remoteAddress->getHostName() << Endl;
+				log::info << L"Remote database connection accepted from " << remoteAddress->getHostName() << L"." << Endl;
 			else
-				log::info << L"Remote database connection accepted" << Endl;
+				log::info << L"Remote database connection accepted." << Endl;
 		}
 		else
 		{
@@ -120,7 +120,7 @@ void ConnectionManager::threadServer()
 			}
 			count -= uint32_t(m_connections.size());
 			if (count)
-				log::info << count << L" remote database connection(s) removed" << Endl;
+				log::info << count << L" remote database connection(s) removed." << Endl;
 		}
 	}
 }

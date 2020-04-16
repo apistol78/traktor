@@ -1,7 +1,7 @@
 #include <algorithm>
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
-#include "Core/Serialization/MemberAlignedVector.h"
+#include "Core/Serialization/MemberStaticVector.h"
 #include "Model/Polygon.h"
 
 namespace traktor
@@ -118,17 +118,17 @@ uint32_t Polygon::getVertexCount() const
 	return uint32_t(m_vertices.size());
 }
 
-void Polygon::setVertices(const AlignedVector< uint32_t >& vertices)
+void Polygon::setVertices(const vertices_t& vertices)
 {
 	m_vertices = vertices;
 }
 
-const AlignedVector< uint32_t >& Polygon::getVertices() const
+const Polygon::vertices_t& Polygon::getVertices() const
 {
 	return m_vertices;
 }
 
-AlignedVector< uint32_t >& Polygon::getVertices()
+Polygon::vertices_t& Polygon::getVertices()
 {
 	return m_vertices;
 }
@@ -138,7 +138,7 @@ void Polygon::serialize(ISerializer& s)
 	s >> Member< uint32_t >(L"material", m_material);
 	s >> Member< uint32_t >(L"normal", m_normal);
 	s >> Member< uint32_t >(L"smoothGroup", m_smoothGroup);
-	s >> MemberAlignedVector< uint32_t >(L"vertices", m_vertices);
+	s >> MemberStaticVector< uint32_t, 16 >(L"vertices", m_vertices);
 }
 
 bool Polygon::operator == (const Polygon& r) const

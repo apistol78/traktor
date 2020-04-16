@@ -56,6 +56,8 @@ public:
 		VkCommandBuffer commandBuffer,
 		int32_t colorIndex,
 		const Clear& clear,
+		uint32_t load,
+		uint32_t store,
 		RenderTargetDepthVk* primaryDepthTarget,
 		uint32_t& outId,
 		VkRenderPass& outRenderPass,

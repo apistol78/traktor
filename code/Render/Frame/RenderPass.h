@@ -36,11 +36,11 @@ public:
 	struct Input
 	{
 		handle_t targetSetId;	//!< Resource name.
-		int32_t colorIndex;		//!< Index of target's color attachment.
+		bool useDepth;			//!< If pass uses depth attachment of target set.
 
 		Input()
 		:	targetSetId(0)
-		,	colorIndex(0)
+		,	useDepth(false)
 		{
 		}
 	};
@@ -63,7 +63,7 @@ public:
 
 	//! \{
 
-	void addInput(handle_t targetSetId);
+	void addInput(handle_t targetSetId, bool useDepth = false);
 
 	StaticVector< Input, 16 > getInputs() const;
 

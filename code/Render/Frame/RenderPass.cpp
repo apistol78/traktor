@@ -13,7 +13,7 @@ RenderPass::RenderPass(const std::wstring& name)
 	m_output.targetSetId = ~0;
 }
 
-void RenderPass::addInput(handle_t targetSetId)
+void RenderPass::addInput(handle_t targetSetId, bool useDepth)
 {
 	// Just ignore invalid target set id; convenient when setting up passes.
 	if (targetSetId == 0)
@@ -21,7 +21,7 @@ void RenderPass::addInput(handle_t targetSetId)
 
 	auto& input = m_inputs.push_back();
 	input.targetSetId = targetSetId;
-	input.colorIndex = 0;
+	input.useDepth = useDepth;
 }
 
 StaticVector< RenderPass::Input, 16 > RenderPass::getInputs() const

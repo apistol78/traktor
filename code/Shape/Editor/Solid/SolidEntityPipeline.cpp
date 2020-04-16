@@ -29,7 +29,6 @@ bool SolidEntityPipeline::create(const editor::IPipelineSettings* settings)
     if (!world::EntityPipeline::create(settings))
         return false;
 
-    FileSystem::getInstance().makeAllDirectories(L"data/Temp/Solid");
     return true;
 }
 
@@ -52,7 +51,14 @@ bool SolidEntityPipeline::buildDependencies(
 	if (!world::EntityPipeline::buildDependencies(pipelineDepends, sourceInstance, sourceAsset, outputPath, outputGuid))
 		return false;
 
-	if (auto primitiveEntityData = dynamic_type_cast< const PrimitiveEntityData* >(sourceAsset))
+	if (auto solidEntityData = dynamic_type_cast< const SolidEntityData* >(sourceAsset))
+	{
+		for (auto id : solidEntityData->getCollisionGroup())
+			pipelineDepends->addDependency(id, editor::PdfBuild | editor::PdfResource);
+		for (auto id : solidEntityData->getCollisionMask())
+			pipelineDepends->addDependency(id, editor::PdfBuild | editor::PdfResource);	
+	}
+	else if (auto primitiveEntityData = dynamic_type_cast< const PrimitiveEntityData* >(sourceAsset))
 	{
 		const auto& materials = primitiveEntityData->getMaterials();
 		for (const auto& pair : materials)
@@ -76,8 +82,6 @@ Ref< ISerializable > SolidEntityPipeline::buildOutput(
 		Ref< model::Model > outputModel = SolidEntityReplicator().createModel(pipelineBuilder, L"", solidEntityData);
 		if (!outputModel)
 			return nullptr;
-
-		model::ModelFormat::writeAny(L"data/Temp/Solid/" + solidEntityData->getName() + L".tmd", outputModel);
 
 		Guid outputRenderMeshGuid = pipelineBuilder->synthesizeOutputGuid(1);
 		Guid outputCollisionShapeGuid = pipelineBuilder->synthesizeOutputGuid(1);

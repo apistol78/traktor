@@ -43,6 +43,8 @@ private:
 		uint8_t attribute;
 		int32_t density;
 		float randomScaleAmount;
+		float randomTilt;
+		float upness;
 
 		RubbleMesh();
 

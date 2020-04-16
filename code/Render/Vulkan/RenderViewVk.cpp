@@ -560,19 +560,20 @@ bool RenderViewVk::beginPass(const Clear* clear)
 {
 	T_FATAL_ASSERT(m_targetRenderPass == 0);
 
-	// Push primary target onto stack.
-	TargetState& ts = m_targetState;
-	ts.rts = m_primaryTargets[m_currentImageIndex];
-	ts.colorIndex = 0;
-	ts.clear.mask = 0;
+	Clear cl = {};
 	if (clear)
-		ts.clear = *clear;
+		cl = *clear;
+
+	m_targetSet = m_primaryTargets[m_currentImageIndex];
+	m_targetColorIndex = 0;
 
 	// Prepare render target set as targets.
-	if (!ts.rts->prepareAsTarget(
+	if (!m_targetSet->prepareAsTarget(
 		m_graphicsCommandBuffer,
-		ts.colorIndex,
-		ts.clear,
+		m_targetColorIndex,
+		cl,
+		TfColor | TfDepth,
+		TfColor | TfDepth,
 		m_primaryTargets[m_currentImageIndex]->getDepthTargetVk(),
 		
 		// Out
@@ -584,24 +585,24 @@ bool RenderViewVk::beginPass(const Clear* clear)
 
 	// Transform clear values.
 	StaticVector< VkClearValue, 8+1 > clearValues;
-	if (ts.colorIndex >= 0)
+	if (m_targetColorIndex >= 0)
 	{
 		auto& cv = clearValues.push_back();
-		ts.clear.colors[0].storeUnaligned(cv.color.float32);
+		cl.colors[0].storeUnaligned(cv.color.float32);
 	}
 	else
 	{
-		for (int32_t i = 0; i < (int32_t)ts.rts->getColorTargetCount(); ++i)
+		for (int32_t i = 0; i < (int32_t)m_targetSet->getColorTargetCount(); ++i)
 		{
 			auto& cv = clearValues.push_back();
-			ts.clear.colors[i].storeUnaligned(cv.color.float32);
+			cl.colors[i].storeUnaligned(cv.color.float32);
 		}
 	}
-	if (ts.rts->getDepthTargetVk() || ts.rts->usingPrimaryDepthStencil())
+	if (m_targetSet->getDepthTargetVk() || m_targetSet->usingPrimaryDepthStencil())
 	{
 		auto& cv = clearValues.push_back();
-		cv.depthStencil.depth = ts.clear.depth;
-		cv.depthStencil.stencil = ts.clear.stencil;
+		cv.depthStencil.depth = cl.depth;
+		cv.depthStencil.stencil = cl.stencil;
 	}
 
 	// Begin render pass.
@@ -611,8 +612,8 @@ bool RenderViewVk::beginPass(const Clear* clear)
 	rpbi.framebuffer = m_targetFrameBuffer;
 	rpbi.renderArea.offset.x = 0;
 	rpbi.renderArea.offset.y = 0;
-	rpbi.renderArea.extent.width = ts.rts->getWidth();
-	rpbi.renderArea.extent.height = ts.rts->getHeight();
+	rpbi.renderArea.extent.width = m_targetSet->getWidth();
+	rpbi.renderArea.extent.height = m_targetSet->getHeight();
 	rpbi.clearValueCount = (uint32_t)clearValues.size();
 	rpbi.pClearValues = clearValues.c_ptr();
 	vkCmdBeginRenderPass(m_graphicsCommandBuffer, &rpbi,  VK_SUBPASS_CONTENTS_INLINE);
@@ -621,8 +622,8 @@ bool RenderViewVk::beginPass(const Clear* clear)
 	VkViewport vp = {};
 	vp.x = 0.0f;
 	vp.y = 0.0f;
-	vp.width = (float)ts.rts->getWidth();
-	vp.height = (float)ts.rts->getHeight();
+	vp.width = (float)m_targetSet->getWidth();
+	vp.height = (float)m_targetSet->getHeight();
 	vp.minDepth = 0.0f;
 	vp.maxDepth = 1.0f;
 	vkCmdSetViewport(m_graphicsCommandBuffer, 0, 1, &vp);
@@ -631,22 +632,24 @@ bool RenderViewVk::beginPass(const Clear* clear)
 	return true;
 }
 
-bool RenderViewVk::beginPass(IRenderTargetSet* renderTargetSet, const Clear* clear)
+bool RenderViewVk::beginPass(IRenderTargetSet* renderTargetSet, const Clear* clear, uint32_t load, uint32_t store)
 {
 	T_FATAL_ASSERT(m_targetRenderPass == 0);
 
-	TargetState& ts = m_targetState;
-	ts.rts = mandatory_non_null_type_cast< RenderTargetSetVk* >(renderTargetSet);
-	ts.colorIndex = -1;
-	ts.clear.mask = 0;
+	Clear cl = {};
 	if (clear)
-		ts.clear = *clear;
+		cl = *clear;
+
+	m_targetSet = mandatory_non_null_type_cast< RenderTargetSetVk* >(renderTargetSet);
+	m_targetColorIndex = -1;
 
 	// Prepare render target set as targets.
-	if (!ts.rts->prepareAsTarget(
+	if (!m_targetSet->prepareAsTarget(
 		m_graphicsCommandBuffer,
-		ts.colorIndex,
-		ts.clear,
+		m_targetColorIndex,
+		cl,
+		load,
+		store,
 		m_primaryTargets[m_currentImageIndex]->getDepthTargetVk(),
 		
 		// Out
@@ -658,24 +661,24 @@ bool RenderViewVk::beginPass(IRenderTargetSet* renderTargetSet, const Clear* cle
 
 	// Transform clear values.
 	StaticVector< VkClearValue, 8+1 > clearValues;
-	if (ts.colorIndex >= 0)
+	if (m_targetColorIndex >= 0)
 	{
 		auto& cv = clearValues.push_back();
-		ts.clear.colors[0].storeUnaligned(cv.color.float32);
+		cl.colors[0].storeUnaligned(cv.color.float32);
 	}
 	else
 	{
-		for (int32_t i = 0; i < (int32_t)ts.rts->getColorTargetCount(); ++i)
+		for (int32_t i = 0; i < (int32_t)m_targetSet->getColorTargetCount(); ++i)
 		{
 			auto& cv = clearValues.push_back();
-			ts.clear.colors[i].storeUnaligned(cv.color.float32);
+			cl.colors[i].storeUnaligned(cv.color.float32);
 		}
 	}
-	if (ts.rts->getDepthTargetVk() || ts.rts->usingPrimaryDepthStencil())
+	if (m_targetSet->getDepthTargetVk() || m_targetSet->usingPrimaryDepthStencil())
 	{
 		auto& cv = clearValues.push_back();
-		cv.depthStencil.depth = ts.clear.depth;
-		cv.depthStencil.stencil = ts.clear.stencil;
+		cv.depthStencil.depth = cl.depth;
+		cv.depthStencil.stencil = cl.stencil;
 	}
 
 	// Begin render pass.
@@ -685,8 +688,8 @@ bool RenderViewVk::beginPass(IRenderTargetSet* renderTargetSet, const Clear* cle
 	rpbi.framebuffer = m_targetFrameBuffer;
 	rpbi.renderArea.offset.x = 0;
 	rpbi.renderArea.offset.y = 0;
-	rpbi.renderArea.extent.width = ts.rts->getWidth();
-	rpbi.renderArea.extent.height = ts.rts->getHeight();
+	rpbi.renderArea.extent.width = m_targetSet->getWidth();
+	rpbi.renderArea.extent.height = m_targetSet->getHeight();
 	rpbi.clearValueCount = (uint32_t)clearValues.size();
 	rpbi.pClearValues = clearValues.c_ptr();
 	vkCmdBeginRenderPass(m_graphicsCommandBuffer, &rpbi,  VK_SUBPASS_CONTENTS_INLINE);
@@ -695,8 +698,8 @@ bool RenderViewVk::beginPass(IRenderTargetSet* renderTargetSet, const Clear* cle
 	VkViewport vp = {};
 	vp.x = 0.0f;
 	vp.y = 0.0f;
-	vp.width = (float)ts.rts->getWidth();
-	vp.height = (float)ts.rts->getHeight();
+	vp.width = (float)m_targetSet->getWidth();
+	vp.height = (float)m_targetSet->getHeight();
 	vp.minDepth = 0.0f;
 	vp.maxDepth = 1.0f;
 	vkCmdSetViewport(m_graphicsCommandBuffer, 0, 1, &vp);
@@ -705,22 +708,24 @@ bool RenderViewVk::beginPass(IRenderTargetSet* renderTargetSet, const Clear* cle
 	return true;
 }
 
-bool RenderViewVk::beginPass(IRenderTargetSet* renderTargetSet, int32_t renderTarget, const Clear* clear)
+bool RenderViewVk::beginPass(IRenderTargetSet* renderTargetSet, int32_t renderTarget, const Clear* clear, uint32_t load, uint32_t store)
 {
 	T_FATAL_ASSERT(m_targetRenderPass == 0);
 
-	TargetState& ts = m_targetState;
-	ts.rts = mandatory_non_null_type_cast< RenderTargetSetVk* >(renderTargetSet);
-	ts.colorIndex = renderTarget;
-	ts.clear.mask = 0;
+	Clear cl = {};
 	if (clear)
-		ts.clear = *clear;
+		cl = *clear;
+
+	m_targetSet = mandatory_non_null_type_cast< RenderTargetSetVk* >(renderTargetSet);
+	m_targetColorIndex = renderTarget;
 
 	// Prepare render target set as targets.
-	if (!ts.rts->prepareAsTarget(
+	if (!m_targetSet->prepareAsTarget(
 		m_graphicsCommandBuffer,
-		ts.colorIndex,
-		ts.clear,
+		m_targetColorIndex,
+		cl,
+		load,
+		store,
 		m_primaryTargets[m_currentImageIndex]->getDepthTargetVk(),
 		
 		// Out
@@ -732,24 +737,24 @@ bool RenderViewVk::beginPass(IRenderTargetSet* renderTargetSet, int32_t renderTa
 
 	// Transform clear values.
 	StaticVector< VkClearValue, 8+1 > clearValues;
-	if (ts.colorIndex >= 0)
+	if (m_targetColorIndex >= 0)
 	{
 		auto& cv = clearValues.push_back();
-		ts.clear.colors[0].storeUnaligned(cv.color.float32);
+		cl.colors[0].storeUnaligned(cv.color.float32);
 	}
 	else
 	{
-		for (int32_t i = 0; i < (int32_t)ts.rts->getColorTargetCount(); ++i)
+		for (int32_t i = 0; i < (int32_t)m_targetSet->getColorTargetCount(); ++i)
 		{
 			auto& cv = clearValues.push_back();
-			ts.clear.colors[i].storeUnaligned(cv.color.float32);
+			cl.colors[i].storeUnaligned(cv.color.float32);
 		}
 	}
-	if (ts.rts->getDepthTargetVk() || ts.rts->usingPrimaryDepthStencil())
+	if (m_targetSet->getDepthTargetVk() || m_targetSet->usingPrimaryDepthStencil())
 	{
 		auto& cv = clearValues.push_back();
-		cv.depthStencil.depth = ts.clear.depth;
-		cv.depthStencil.stencil = ts.clear.stencil;
+		cv.depthStencil.depth = cl.depth;
+		cv.depthStencil.stencil = cl.stencil;
 	}
 
 	// Begin render pass.
@@ -759,8 +764,8 @@ bool RenderViewVk::beginPass(IRenderTargetSet* renderTargetSet, int32_t renderTa
 	rpbi.framebuffer = m_targetFrameBuffer;
 	rpbi.renderArea.offset.x = 0;
 	rpbi.renderArea.offset.y = 0;
-	rpbi.renderArea.extent.width = ts.rts->getWidth();
-	rpbi.renderArea.extent.height = ts.rts->getHeight();
+	rpbi.renderArea.extent.width = m_targetSet->getWidth();
+	rpbi.renderArea.extent.height = m_targetSet->getHeight();
 	rpbi.clearValueCount = (uint32_t)clearValues.size();
 	rpbi.pClearValues = clearValues.c_ptr();
 	vkCmdBeginRenderPass(m_graphicsCommandBuffer, &rpbi,  VK_SUBPASS_CONTENTS_INLINE);
@@ -769,8 +774,8 @@ bool RenderViewVk::beginPass(IRenderTargetSet* renderTargetSet, int32_t renderTa
 	VkViewport vp = {};
 	vp.x = 0.0f;
 	vp.y = 0.0f;
-	vp.width = (float)ts.rts->getWidth();
-	vp.height = (float)ts.rts->getHeight();
+	vp.width = (float)m_targetSet->getWidth();
+	vp.height = (float)m_targetSet->getHeight();
 	vp.minDepth = 0.0f;
 	vp.maxDepth = 1.0f;
 	vkCmdSetViewport(m_graphicsCommandBuffer, 0, 1, &vp);
@@ -785,14 +790,15 @@ void RenderViewVk::endPass()
 	vkCmdEndRenderPass(m_graphicsCommandBuffer);
 
 	// Transition target to texture if necessary.
-	if (m_targetState.rts != m_primaryTargets[m_currentImageIndex])
+	if (m_targetSet != m_primaryTargets[m_currentImageIndex])
 	{
-		m_targetState.rts->prepareAsTexture(
+		m_targetSet->prepareAsTexture(
 			m_graphicsCommandBuffer,
-			m_targetState.colorIndex
+			m_targetColorIndex
 		);
 	}
 
+	m_targetSet = nullptr;
 	m_targetId = 0;
 	m_targetRenderPass = 0;
 	m_targetFrameBuffer = 0;
@@ -805,8 +811,6 @@ void RenderViewVk::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, IP
 
 void RenderViewVk::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, IProgram* program, const Primitives& primitives, uint32_t instanceCount)
 {
-	const TargetState& ts = m_targetState;
-
 	VertexBufferVk* vb = mandatory_non_null_type_cast< VertexBufferVk* >(vertexBuffer);
 	ProgramVk* p = mandatory_non_null_type_cast< ProgramVk* >(program);
 
@@ -814,8 +818,8 @@ void RenderViewVk::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, IP
 
 	float targetSize[] =
 	{
-		(float)ts.rts->getWidth(),
-		(float)ts.rts->getHeight()
+		(float)m_targetSet->getWidth(),
+		(float)m_targetSet->getHeight()
 	};
 	p->validateGraphics(m_descriptorPool, m_graphicsCommandBuffer, m_uniformBufferPool, targetSize);
 
@@ -874,11 +878,9 @@ bool RenderViewVk::copy(ITexture* destinationTexture, const Region& destinationR
 {
 	VkImage sourceImage = 0;
 	VkImageLayout sourceImageLayout = VK_IMAGE_LAYOUT_UNDEFINED;
-	uint32_t sourceSrcAccessMask = 0;
 
 	VkImage destinationImage = 0;
 	VkImageLayout destinationImageLayout = VK_IMAGE_LAYOUT_UNDEFINED;
-	uint32_t destinationSrcAccessMask = 0;
 
 	VkImageCopy region = {};
 	region.srcSubresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
@@ -903,29 +905,17 @@ bool RenderViewVk::copy(ITexture* destinationTexture, const Region& destinationR
 	{
 		sourceImage = sourceRenderTarget->getVkImage();
 		sourceImageLayout = sourceRenderTarget->getVkImageLayout();
-
-		// Last used as an render target.
-		if (sourceImageLayout == VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL)
-			sourceSrcAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
-		// Last used as a texture.
-		else if (sourceImageLayout == VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL)
-			sourceSrcAccessMask = VK_ACCESS_SHADER_READ_BIT;
-		// Last unknown use.
-		else
-			sourceSrcAccessMask = 0;
 	}
 	else if (auto sourceSimpleTexture = dynamic_type_cast< SimpleTextureVk* >(sourceTexture))
 	{
 		sourceImage = sourceSimpleTexture->getVkImage();
 		sourceImageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-		sourceSrcAccessMask = VK_ACCESS_SHADER_READ_BIT;
 	}
 	else if (auto sourceCubeTexture = dynamic_type_cast< CubeTextureVk* >(sourceTexture))
 	{
 		sourceImage = sourceCubeTexture->getVkImage();
 		sourceImageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
 		region.srcSubresource.baseArrayLayer = sourceRegion.z;
-		sourceSrcAccessMask = VK_ACCESS_SHADER_READ_BIT;
 	}
 	else
 		return false;
@@ -934,29 +924,17 @@ bool RenderViewVk::copy(ITexture* destinationTexture, const Region& destinationR
 	{
 		destinationImage = destinationRenderTarget->getVkImage();
 		destinationImageLayout = destinationRenderTarget->getVkImageLayout();
-
-		// Last used as an render target.
-		if (destinationImageLayout == VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL)
-			destinationSrcAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
-		// Last used as a texture.
-		else if (destinationImageLayout == VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL)
-			destinationSrcAccessMask = VK_ACCESS_SHADER_READ_BIT;
-		// Last unknown use.
-		else
-			destinationSrcAccessMask = 0;
 	}
 	else if (auto destinationSimpleTexture = dynamic_type_cast< SimpleTextureVk* >(destinationTexture))
 	{
 		destinationImage = destinationSimpleTexture->getVkImage();
 		destinationImageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-		destinationSrcAccessMask = VK_ACCESS_SHADER_READ_BIT;
 	}
 	else if (auto destinationCubeTexture = dynamic_type_cast< CubeTextureVk* >(destinationTexture))
 	{
 		destinationImage = destinationCubeTexture->getVkImage();
 		destinationImageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
 		region.dstSubresource.baseArrayLayer = destinationRegion.z;
-		destinationSrcAccessMask = VK_ACCESS_SHADER_READ_BIT;
 	}
 	else
 		return false;
@@ -975,8 +953,8 @@ bool RenderViewVk::copy(ITexture* destinationTexture, const Region& destinationR
 		imb.subresourceRange.levelCount = 1;
 		imb.subresourceRange.baseArrayLayer = region.srcSubresource.baseArrayLayer;
 		imb.subresourceRange.layerCount = 1;
-		imb.srcAccessMask = sourceSrcAccessMask;
-		imb.dstAccessMask = VK_ACCESS_TRANSFER_READ_BIT;
+		imb.srcAccessMask = 0;
+		imb.dstAccessMask = 0;
 
 		vkCmdPipelineBarrier(
 			m_graphicsCommandBuffer,
@@ -1003,8 +981,8 @@ bool RenderViewVk::copy(ITexture* destinationTexture, const Region& destinationR
 		imb.subresourceRange.levelCount = 1;
 		imb.subresourceRange.baseArrayLayer = region.dstSubresource.baseArrayLayer;
 		imb.subresourceRange.layerCount = 1;
-		imb.srcAccessMask = destinationSrcAccessMask;
-		imb.dstAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
+		imb.srcAccessMask = 0;
+		imb.dstAccessMask = 0;
 
 		vkCmdPipelineBarrier(
 			m_graphicsCommandBuffer,
@@ -1042,8 +1020,8 @@ bool RenderViewVk::copy(ITexture* destinationTexture, const Region& destinationR
 		imb.subresourceRange.levelCount = 1;
 		imb.subresourceRange.baseArrayLayer = region.srcSubresource.baseArrayLayer;
 		imb.subresourceRange.layerCount = 1;
-		imb.srcAccessMask = VK_ACCESS_TRANSFER_READ_BIT;
-		imb.dstAccessMask = sourceSrcAccessMask;
+		imb.srcAccessMask = 0;
+		imb.dstAccessMask = 0;
 
 		vkCmdPipelineBarrier(
 			m_graphicsCommandBuffer,
@@ -1070,8 +1048,8 @@ bool RenderViewVk::copy(ITexture* destinationTexture, const Region& destinationR
 		imb.subresourceRange.levelCount = 1;
 		imb.subresourceRange.baseArrayLayer = region.dstSubresource.baseArrayLayer;
 		imb.subresourceRange.layerCount = 1;
-		imb.srcAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
-		imb.dstAccessMask = destinationSrcAccessMask;
+		imb.srcAccessMask = 0;
+		imb.dstAccessMask = 0;
 
 		vkCmdPipelineBarrier(
 			m_graphicsCommandBuffer,
@@ -1437,11 +1415,10 @@ bool RenderViewVk::validatePipeline(VertexBufferVk* vb, ProgramVk* p, PrimitiveT
 		pipeline = it->second;
 	else
 	{
-		const TargetState& ts = m_targetState;
 		const RenderState& rs = p->getRenderState();
 
-		uint32_t colorAttachmentCount = ts.rts->getColorTargetCount();
-		if (ts.colorIndex >= 0)
+		uint32_t colorAttachmentCount = m_targetSet->getColorTargetCount();
+		if (m_targetColorIndex >= 0)
 			colorAttachmentCount = 1;
 
 		VkViewport vp = {};

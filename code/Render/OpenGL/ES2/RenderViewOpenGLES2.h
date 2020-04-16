@@ -80,9 +80,9 @@ public:
 
 	virtual bool beginPass(const Clear* clear) override final;
 
-	virtual bool beginPass(IRenderTargetSet* renderTargetSet, const Clear* clear) override final;
+	virtual bool beginPass(IRenderTargetSet* renderTargetSet, const Clear* clear, uint32_t load, uint32_t store) override final;
 
-	virtual bool beginPass(IRenderTargetSet* renderTargetSet, int32_t renderTarget, const Clear* clear) override final;
+	virtual bool beginPass(IRenderTargetSet* renderTargetSet, int32_t renderTarget, const Clear* clear, uint32_t load, uint32_t store) override final;
 
 	virtual void endPass() override final;
 

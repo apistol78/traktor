@@ -123,10 +123,10 @@ bool MergeModel::apply(Model& model) const
 	for (size_t i = 0; i < sourcePolygons.size(); ++i)
 	{
 		const Polygon& sourcePolygon = sourcePolygons[i];
-		const AlignedVector< uint32_t >& sourceVertices = sourcePolygon.getVertices();
+		const auto& sourceVertices = sourcePolygon.getVertices();
 
 		// Remap vertices.
-		AlignedVector< uint32_t > outputVertices(sourceVertices.size());
+		Polygon::vertices_t outputVertices(sourceVertices.size());
 		for (size_t j = 0; j < sourceVertices.size(); ++j)
 			outputVertices[j] = vertexMap[sourceVertices[j]];
 

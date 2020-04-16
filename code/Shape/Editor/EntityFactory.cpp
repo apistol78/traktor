@@ -1,4 +1,10 @@
+#include "Render/Shader.h"
+#include "Resource/IResourceManager.h"
 #include "Shape/Editor/EntityFactory.h"
+#include "Shape/Editor/Solid/PrimitiveEntity.h"
+#include "Shape/Editor/Solid/PrimitiveEntityData.h"
+#include "Shape/Editor/Solid/SolidEntity.h"
+#include "Shape/Editor/Solid/SolidEntityData.h"
 #include "Shape/Editor/Spline/ControlPointComponent.h"
 #include "Shape/Editor/Spline/ControlPointComponentData.h"
 #include "Shape/Editor/Spline/SplineEntity.h"
@@ -11,17 +17,33 @@ namespace traktor
 {
 	namespace shape
 	{
+		namespace
+		{
+		
+const resource::Id< render::Shader > c_defaultShader(Guid(L"{F01DE7F1-64CE-4613-9A17-899B44D5414E}"));
+
+		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.shape.EntityFactory", EntityFactory, world::IEntityFactory)
 
-EntityFactory::EntityFactory(db::Database* database)
+EntityFactory::EntityFactory(
+	db::Database* database,
+	resource::IResourceManager* resourceManager,
+	render::IRenderSystem* renderSystem,
+	const std::wstring& assetPath
+)
 :	m_database(database)
+,	m_resourceManager(resourceManager)
+,	m_renderSystem(renderSystem)
+,	m_assetPath(assetPath)
 {
 }
 
 const TypeInfoSet EntityFactory::getEntityTypes() const
 {
 	return makeTypeInfoSet<
+		PrimitiveEntityData,
+		SolidEntityData,
 		SplineEntityData
 	>();
 }
@@ -41,9 +63,24 @@ const TypeInfoSet EntityFactory::getEntityComponentTypes() const
 
 Ref< world::Entity > EntityFactory::createEntity(const world::IEntityBuilder* builder, const world::EntityData& entityData) const
 {
-	if (auto splineEntityData = dynamic_type_cast< const SplineEntityData* >(&entityData))
+	if (auto primitiveEntityData = dynamic_type_cast< const PrimitiveEntityData* >(&entityData))
+		return primitiveEntityData->createEntity();
+	else if (auto solidEntityData = dynamic_type_cast< const SolidEntityData* >(&entityData))
+		return solidEntityData->createEntity(builder, m_resourceManager, m_renderSystem);
+	else if (auto splineEntityData = dynamic_type_cast< const SplineEntityData* >(&entityData))
 	{
-		Ref< SplineEntity > entity = new SplineEntity();
+		resource::Proxy< render::Shader > shader;
+		if (!m_resourceManager->bind(c_defaultShader, shader))
+			return nullptr;
+
+		Ref< SplineEntity > entity = new SplineEntity(
+			splineEntityData,
+			m_database,
+			m_renderSystem,
+			m_assetPath,
+			shader
+		);
+
 		entity->setTransform(entityData.getTransform());
 
 		for (auto childEntityData : splineEntityData->getEntityData())

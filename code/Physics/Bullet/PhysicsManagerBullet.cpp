@@ -791,24 +791,24 @@ Ref< Body > PhysicsManagerBullet::createBody(resource::IResourceManager* resourc
 
 		// Resolve collision group and mask value.
 		uint32_t mergedCollisionGroup = 0;
-		for (std::set< resource::Id< CollisionSpecification > >::const_iterator i = shapeDesc->getCollisionGroup().begin(); i != shapeDesc->getCollisionGroup().end(); ++i)
+		for (const auto& group : shapeDesc->getCollisionGroup())
 		{
 			resource::Proxy< CollisionSpecification > collisionGroup;
-			if (!resourceManager->bind(*i, collisionGroup))
+			if (!resourceManager->bind(group, collisionGroup))
 			{
-				log::error << L"Unable to bind collision group specification" << Endl;
+				log::error << L"Unable to bind collision group specification." << Endl;
 				return nullptr;
 			}
 			mergedCollisionGroup |= collisionGroup->getBitMask();
 		}
 
 		uint32_t mergedCollisionMask = 0;
-		for (std::set< resource::Id< CollisionSpecification > >::const_iterator i = shapeDesc->getCollisionMask().begin(); i != shapeDesc->getCollisionMask().end(); ++i)
+		for (const auto& mask : shapeDesc->getCollisionMask())
 		{
 			resource::Proxy< CollisionSpecification > collisionMask;
-			if (!resourceManager->bind(*i, collisionMask))
+			if (!resourceManager->bind(mask, collisionMask))
 			{
-				log::error << L"Unable to bind collision mask specification" << Endl;
+				log::error << L"Unable to bind collision mask specification." << Endl;
 				return nullptr;
 			}
 			mergedCollisionMask |= collisionMask->getBitMask();
@@ -864,24 +864,24 @@ Ref< Body > PhysicsManagerBullet::createBody(resource::IResourceManager* resourc
 
 		// Resolve collision group and mask value.
 		uint32_t mergedCollisionGroup = 0;
-		for (std::set< resource::Id< CollisionSpecification > >::const_iterator i = shapeDesc->getCollisionGroup().begin(); i != shapeDesc->getCollisionGroup().end(); ++i)
+		for (const auto& group : shapeDesc->getCollisionGroup())
 		{
 			resource::Proxy< CollisionSpecification > collisionGroup;
-			if (!resourceManager->bind(*i, collisionGroup))
+			if (!resourceManager->bind(group, collisionGroup))
 			{
-				log::error << L"Unable to bind collision group specification" << Endl;
+				log::error << L"Unable to bind collision group specification." << Endl;
 				return nullptr;
 			}
 			mergedCollisionGroup |= collisionGroup->getBitMask();
 		}
 
 		uint32_t mergedCollisionMask = 0;
-		for (std::set< resource::Id< CollisionSpecification > >::const_iterator i = shapeDesc->getCollisionMask().begin(); i != shapeDesc->getCollisionMask().end(); ++i)
+		for (const auto& mask : shapeDesc->getCollisionMask())
 		{
 			resource::Proxy< CollisionSpecification > collisionMask;
-			if (!resourceManager->bind(*i, collisionMask))
+			if (!resourceManager->bind(mask, collisionMask))
 			{
-				log::error << L"Unable to bind collision mask specification" << Endl;
+				log::error << L"Unable to bind collision mask specification." << Endl;
 				return nullptr;
 			}
 			mergedCollisionMask |= collisionMask->getBitMask();
@@ -907,8 +907,8 @@ Ref< Body > PhysicsManagerBullet::createBody(resource::IResourceManager* resourc
 	}
 	else
 	{
-		log::error << L"Unsupported body type \"" << type_name(desc) << L"\"" << Endl;
-		return 0;
+		log::error << L"Unsupported body type \"" << type_name(desc) << L"\"." << Endl;
+		return nullptr;
 	}
 
 	// Ensure wrapper body is placed at origo in order

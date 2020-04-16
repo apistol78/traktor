@@ -1,21 +1,21 @@
 #include "Core/Misc/SafeDestroy.h"
-#include "Render/Capture/Error.h"
-#include "Render/Capture/RenderTargetSetCapture.h"
-#include "Render/Capture/SimpleTextureCapture.h"
+#include "Render/Vrfy/Error.h"
+#include "Render/Vrfy/RenderTargetSetVrfy.h"
+#include "Render/Vrfy/SimpleTextureVrfy.h"
 
 namespace traktor
 {
 	namespace render
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderTargetSetCapture", RenderTargetSetCapture, IRenderTargetSet)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderTargetSetVrfy", RenderTargetSetVrfy, IRenderTargetSet)
 
-RenderTargetSetCapture::RenderTargetSetCapture(IRenderTargetSet* renderTargetSet)
+RenderTargetSetVrfy::RenderTargetSetVrfy(IRenderTargetSet* renderTargetSet)
 :	m_renderTargetSet(renderTargetSet)
 {
 }
 
-void RenderTargetSetCapture::destroy()
+void RenderTargetSetVrfy::destroy()
 {
 	T_CAPTURE_ASSERT (m_renderTargetSet, L"Render target set already destroyed.");
 
@@ -28,19 +28,19 @@ void RenderTargetSetCapture::destroy()
 	safeDestroy(m_renderTargetSet);
 }
 
-int32_t RenderTargetSetCapture::getWidth() const
+int32_t RenderTargetSetVrfy::getWidth() const
 {
 	T_CAPTURE_ASSERT (m_renderTargetSet, L"Render target set destroyed.");
 	return m_renderTargetSet ? m_renderTargetSet->getWidth() : 0;
 }
 
-int32_t RenderTargetSetCapture::getHeight() const
+int32_t RenderTargetSetVrfy::getHeight() const
 {
 	T_CAPTURE_ASSERT (m_renderTargetSet, L"Render target set destroyed.");
 	return m_renderTargetSet ? m_renderTargetSet->getHeight() : 0;
 }
 
-ISimpleTexture* RenderTargetSetCapture::getColorTexture(int32_t index) const
+ISimpleTexture* RenderTargetSetVrfy::getColorTexture(int32_t index) const
 {
 	T_CAPTURE_ASSERT (m_renderTargetSet, L"Render target set destroyed.");
 
@@ -53,13 +53,13 @@ ISimpleTexture* RenderTargetSetCapture::getColorTexture(int32_t index) const
 		if (!colorTexture)
 			return nullptr;
 
-		m_colorTextures[index] = new SimpleTextureCapture(colorTexture);
+		m_colorTextures[index] = new SimpleTextureVrfy(colorTexture);
 	}
 
 	return m_colorTextures[index];
 }
 
-ISimpleTexture* RenderTargetSetCapture::getDepthTexture() const
+ISimpleTexture* RenderTargetSetVrfy::getDepthTexture() const
 {
 	T_CAPTURE_ASSERT (m_renderTargetSet, L"Render target set destroyed.");
 
@@ -72,35 +72,35 @@ ISimpleTexture* RenderTargetSetCapture::getDepthTexture() const
 		if (!depthTexture)
 			return nullptr;
 
-		m_depthTexture = new SimpleTextureCapture(depthTexture);
+		m_depthTexture = new SimpleTextureVrfy(depthTexture);
 	}
 
 	return m_depthTexture;
 }
 
-bool RenderTargetSetCapture::isContentValid() const
+bool RenderTargetSetVrfy::isContentValid() const
 {
 	T_CAPTURE_ASSERT (m_renderTargetSet, L"Render target set destroyed.");
 	return m_renderTargetSet ? m_renderTargetSet->isContentValid() : false;
 }
 
-bool RenderTargetSetCapture::read(int32_t index, void* buffer) const
+bool RenderTargetSetVrfy::read(int32_t index, void* buffer) const
 {
 	T_CAPTURE_ASSERT (m_renderTargetSet, L"Render target set destroyed.");
 	T_CAPTURE_ASSERT (index >= 0, L"Incorrect read-back index.");
 	return m_renderTargetSet ? m_renderTargetSet->read(index, buffer) : false;
 }
 
-bool RenderTargetSetCapture::haveColorTexture(int32_t index) const
+bool RenderTargetSetVrfy::haveColorTexture(int32_t index) const
 {
 	T_CAPTURE_ASSERT (m_renderTargetSet, L"Render target set destroyed.");
-	return m_renderTargetSet ? m_renderTargetSet->getColorTexture(index) != 0 : false;
+	return m_renderTargetSet ? m_renderTargetSet->getColorTexture(index) != nullptr : false;
 }
 
-bool RenderTargetSetCapture::haveDepthTexture() const
+bool RenderTargetSetVrfy::haveDepthTexture() const
 {
 	T_CAPTURE_ASSERT (m_renderTargetSet, L"Render target set destroyed.");
-	return m_renderTargetSet ? m_renderTargetSet->getDepthTexture() != 0 : false;
+	return m_renderTargetSet ? m_renderTargetSet->getDepthTexture() != nullptr : false;
 }
 
 	}

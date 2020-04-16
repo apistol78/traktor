@@ -8,14 +8,14 @@ namespace traktor
 	{
 
 /*!
- * \ingroup Capture
+ * \ingroup Vrfy
  */
-class IndexBufferCapture : public IndexBuffer
+class IndexBufferVrfy : public IndexBuffer
 {
 	T_RTTI_CLASS;
 
 public:
-	IndexBufferCapture(IndexBuffer* indexBuffer, IndexType indexType, uint32_t bufferSize);
+	IndexBufferVrfy(IndexBuffer* indexBuffer, IndexType indexType, uint32_t bufferSize);
 
 	virtual void destroy() override final;
 

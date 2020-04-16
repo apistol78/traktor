@@ -4,7 +4,7 @@
 
 // import/export mechanism.
 #undef T_DLLCLASS
-#if defined(T_RENDER_CAPTURE_EDITOR_EXPORT)
+#if defined(T_RENDER_VRFY_EDITOR_EXPORT)
 #	define T_DLLCLASS T_DLLEXPORT
 #else
 #	define T_DLLCLASS T_DLLIMPORT
@@ -18,12 +18,12 @@ namespace traktor
 /*! Wrapped program compiler.
  * \ingroup Render
  */
-class T_DLLCLASS ProgramCompilerCapture : public IProgramCompiler
+class T_DLLCLASS ProgramCompilerVrfy : public IProgramCompiler
 {
 	T_RTTI_CLASS;
 
 public:
-	ProgramCompilerCapture(IProgramCompiler* compiler);
+	ProgramCompilerVrfy(IProgramCompiler* compiler);
 
 	virtual const wchar_t* getRendererSignature() const override final;
 

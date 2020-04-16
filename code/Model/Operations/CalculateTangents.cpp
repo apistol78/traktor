@@ -30,7 +30,7 @@ bool findBaseIndex(const Model& model, const Polygon& polygon, uint32_t& outBase
 {
 	outBaseIndex = c_InvalidIndex;
 
-	const AlignedVector< uint32_t >& vertices = polygon.getVertices();
+	const auto& vertices = polygon.getVertices();
 	for (uint32_t i = 0; i < uint32_t(vertices.size()); ++i)
 	{
 		const Vertex* v[] =
@@ -91,7 +91,7 @@ bool CalculateTangents::apply(Model& model) const
 			continue;
 		}
 
-		const AlignedVector< uint32_t >& vertices = polygon.getVertices();
+		const auto& vertices = polygon.getVertices();
 		const Vertex* v[] =
 		{
 			&model.getVertex(vertices[baseIndex]),
@@ -197,15 +197,15 @@ bool CalculateTangents::apply(Model& model) const
 	{
 		Polygon polygon = polygons[i];
 
-		const AlignedVector< uint32_t >& vertices = polygon.getVertices();
-		for (AlignedVector< uint32_t >::const_iterator j = vertices.begin(); j != vertices.end(); ++j)
+		const auto& vertices = polygon.getVertices();
+		for (auto vertex : vertices)
 		{
 			if (polygonTangentBases[i].normal.length() > FUZZY_EPSILON)
-				vertexTangentBases[*j].normal += polygonTangentBases[i].normal;
+				vertexTangentBases[vertex].normal += polygonTangentBases[i].normal;
 			if (polygonTangentBases[i].tangent.length() > FUZZY_EPSILON)
-				vertexTangentBases[*j].tangent += polygonTangentBases[i].tangent;
+				vertexTangentBases[vertex].tangent += polygonTangentBases[i].tangent;
 			if (polygonTangentBases[i].binormal.length() > FUZZY_EPSILON)
-				vertexTangentBases[*j].binormal += polygonTangentBases[i].binormal;
+				vertexTangentBases[vertex].binormal += polygonTangentBases[i].binormal;
 		}
 
 		polygon.setNormal(model.addUniqueNormal(polygonTangentBases[i].normal));
