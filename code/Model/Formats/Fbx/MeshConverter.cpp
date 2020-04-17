@@ -364,7 +364,8 @@ bool convertMesh(
 				}
 			}
 
-			polygon.addVertex(outModel.addVertex(vertex));
+			if (polygon.getVertexCount() < 16)
+				polygon.addVertex(outModel.addVertex(vertex));
 		}
 
 		outModel.addPolygon(polygon);

@@ -2221,12 +2221,28 @@ bool emitSwitch(GlslContext& cx, Switch* node)
 		return false;
 
 	const auto& caseConditions = node->getCases();
-	std::vector< std::wstring > caseBranches;
-	std::vector< GlslVariable > caseInputs;
+
+	// Find common output pins from both sides of switch;
+	// emit those before condition in order to have them evaluated outside of conditional.
+	AlignedVector< const InputPin* > caseInputPins;
+	for (uint32_t i = 0; i < (uint32_t)caseConditions.size(); ++i)
+	{
+		const InputPin* caseInput = node->getInputPin(i + 2);
+		T_ASSERT(caseInput);
+		caseInputPins.push_back(caseInput);
+	}
+
+	AlignedVector< const OutputPin* > outputPins;
+	cx.findCommonOutputs(caseInputPins, outputPins);
+	for (auto outputPin : outputPins)
+		cx.emit(outputPin->getNode());
+
+	AlignedVector< std::wstring > caseBranches;
+	AlignedVector< GlslVariable > caseInputs;
 	GlslType outputType = GtVoid;
 
 	// Conditional branches.
-	for (uint32_t i = 0; i < uint32_t(caseConditions.size()); ++i)
+	for (uint32_t i = 0; i < (uint32_t)caseConditions.size(); ++i)
 	{
 		StringOutputStream fs;
 
@@ -2274,7 +2290,7 @@ bool emitSwitch(GlslContext& cx, Switch* node)
 	const auto& cases = node->getCases();
 
 	comment(f, node);
-	for (uint32_t i = 0; i < uint32_t(cases.size()); ++i)
+	for (uint32_t i = 0; i < (uint32_t)cases.size(); ++i)
 	{
 		f << (i == 0 ? L"if (" : L"else if (") << L"int(" << in->cast(GtFloat) << L") == " << cases[i] << L")" << Endl;
 		f << L"{" << Endl;

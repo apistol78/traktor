@@ -420,7 +420,9 @@ bool createMesh(const lwObject* lwo, Model* outModel)
 				}
 
 				int32_t vertexId = outModel->addUniqueVertex(vertex);
-				polygon.addVertex(vertexId);
+
+				if (polygon.getVertexCount() < 16)
+					polygon.addVertex(vertexId);
 			}
 
 			outModel->addPolygon(polygon);
