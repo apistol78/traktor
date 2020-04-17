@@ -3,8 +3,6 @@
 #include "Core/Misc/String.h"
 #include "Core/Singleton/ISingleton.h"
 #include "Core/Singleton/SingletonManager.h"
-#include "Core/Thread/Acquire.h"
-#include "Core/Thread/SpinLock.h"
 #include "Render/Types.h"
 
 namespace traktor
@@ -14,7 +12,7 @@ namespace traktor
 		namespace
 		{
 
-class HandleRegistry : public RefCountImpl< IRefCount >
+class HandleRegistry
 {
 public:
 	HandleRegistry()
@@ -24,7 +22,6 @@ public:
 
 	handle_t getHandle(const std::wstring& name)
 	{
-		T_ANONYMOUS_VAR(Acquire< SpinLock >)(m_lock);
 		auto it = m_handles.find(name);
 		if (it != m_handles.end())
 			return it->second;
@@ -35,7 +32,6 @@ public:
 
 	std::wstring getName(handle_t handle) const
 	{
-		T_ANONYMOUS_VAR(Acquire< SpinLock >)(m_lock);
 		for (const auto it : m_handles)
 		{
 			if (it.second == handle)
@@ -45,12 +41,11 @@ public:
 	}
 
 private:
-	mutable SpinLock m_lock;
 	StaticMap< std::wstring, handle_t, 4096 > m_handles;
 	handle_t m_nextUnusedHandle;
 };
 
-Ref< HandleRegistry > s_handleRegistry;
+HandleRegistry* s_handleRegistry = nullptr;
 
 struct TextureFormatInfo
 {

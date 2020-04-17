@@ -9,6 +9,8 @@
 #include <SPIRV/doc.h>
 #include <SPIRV/disassemble.h>
 
+#include <spirv-tools/optimizer.hpp>
+
 #include "Core/Log/Log.h"
 #include "Core/Misc/Adler32.h"
 #include "Core/Misc/Align.h"
@@ -143,6 +145,99 @@ const TBuiltInResource c_defaultTBuiltInResource =
 };
 
 const uint32_t c_parameterTypeWidths[] = { 1, 4, 16, 0, 0, 0 };
+
+void performOptimization(AlignedVector< uint32_t >& spirv)
+{
+	spv_target_env target_env = SPV_ENV_UNIVERSAL_1_2;
+
+	spvtools::Optimizer optimizer(target_env);
+	optimizer.SetMessageConsumer([](spv_message_level_t level, const char* source, const spv_position_t& position, const char* message) {
+		switch (level)
+		{
+		case SPV_MSG_FATAL:
+		case SPV_MSG_INTERNAL_ERROR:
+		case SPV_MSG_ERROR:
+			log::error << L"SPIRV optimization error: ";
+			if (source)
+				log::error << mbstows(source) << L":";
+			log::error << position.line << L":" << position.column << L":" << position.index << L":";
+			if (message)
+				log::error << L" " << mbstows(message);
+			log::error << Endl;
+			break;
+
+		case SPV_MSG_WARNING:
+			log::warning << L"SPIRV optimization warning: ";
+			if (source)
+				log::warning << mbstows(source) << L":";
+			log::warning << position.line << L":" << position.column << L":" << position.index << L":";
+			if (message)
+				log::warning << L" " << mbstows(message);
+			log::warning << Endl;
+			break;
+
+		case SPV_MSG_INFO:
+		case SPV_MSG_DEBUG:
+				log::info << L"SPIRV optimization info: ";
+			if (source)
+				log::info << mbstows(source) << L":";
+			log::info << position.line << L":" << position.column << L":" << position.index << L":";
+			if (message)
+				log::info << L" " << mbstows(message);
+			log::info << Endl;
+			break;
+
+		default:
+			break;
+		}
+	});
+
+	// If debug (specifically source line info) is being generated, propagate
+	// line information into all SPIR-V instructions. This avoids loss of
+	// information when instructions are deleted or moved. Later, remove
+	// redundant information to minimize final SPRIR-V size.
+	//if (options->generateDebugInfo) {
+	//	optimizer.RegisterPass(spvtools::CreatePropagateLineInfoPass());
+	//}
+	optimizer.RegisterPass(spvtools::CreateWrapOpKillPass());
+	optimizer.RegisterPass(spvtools::CreateDeadBranchElimPass());
+	optimizer.RegisterPass(spvtools::CreateMergeReturnPass());
+	optimizer.RegisterPass(spvtools::CreateInlineExhaustivePass());
+	optimizer.RegisterPass(spvtools::CreateEliminateDeadFunctionsPass());
+	optimizer.RegisterPass(spvtools::CreateScalarReplacementPass());
+	optimizer.RegisterPass(spvtools::CreateLocalAccessChainConvertPass());
+	optimizer.RegisterPass(spvtools::CreateLocalSingleBlockLoadStoreElimPass());
+	optimizer.RegisterPass(spvtools::CreateLocalSingleStoreElimPass());
+	optimizer.RegisterPass(spvtools::CreateSimplificationPass());
+	optimizer.RegisterPass(spvtools::CreateAggressiveDCEPass());
+	optimizer.RegisterPass(spvtools::CreateVectorDCEPass());
+	optimizer.RegisterPass(spvtools::CreateDeadInsertElimPass());
+	optimizer.RegisterPass(spvtools::CreateAggressiveDCEPass());
+	optimizer.RegisterPass(spvtools::CreateDeadBranchElimPass());
+	optimizer.RegisterPass(spvtools::CreateBlockMergePass());
+	optimizer.RegisterPass(spvtools::CreateLocalMultiStoreElimPass());
+	optimizer.RegisterPass(spvtools::CreateIfConversionPass());
+	optimizer.RegisterPass(spvtools::CreateSimplificationPass());
+	optimizer.RegisterPass(spvtools::CreateAggressiveDCEPass());
+	optimizer.RegisterPass(spvtools::CreateVectorDCEPass());
+	optimizer.RegisterPass(spvtools::CreateDeadInsertElimPass());
+	//if (options->optimizeSize) {
+	//	optimizer.RegisterPass(spvtools::CreateRedundancyEliminationPass());
+	//}
+	optimizer.RegisterPass(spvtools::CreateAggressiveDCEPass());
+	optimizer.RegisterPass(spvtools::CreateCFGCleanupPass());
+	//if (options->generateDebugInfo) {
+	//	optimizer.RegisterPass(spvtools::CreateRedundantLineInfoElimPass());
+	//}
+
+	spvtools::OptimizerOptions spvOptOptions;
+	//optimizer.SetTargetEnv(MapToSpirvToolsEnv(intermediate.getSpv(), logger));
+	//spvOptOptions.set_run_validator(false); // The validator may run as a separate step later on
+
+	std::vector< uint32_t > opted;
+	if (optimizer.Run(spirv.c_ptr(), spirv.size(), &opted, spvOptOptions))
+		spirv = AlignedVector< uint32_t >(opted.begin(), opted.end());
+}
 
 		}
 
@@ -297,6 +392,7 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 		std::vector< uint32_t > vs;
 		glslang::GlslangToSpv(*vsi, vs);
 		programResource->m_vertexShader = AlignedVector< uint32_t >(vs.begin(), vs.end());
+		performOptimization(programResource->m_vertexShader);
 	}
 
 	auto fsi = program->getIntermediate(EShLangFragment);
@@ -305,6 +401,7 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 		std::vector< uint32_t > fs;
 		glslang::GlslangToSpv(*fsi, fs);
 		programResource->m_fragmentShader = AlignedVector< uint32_t >(fs.begin(), fs.end());
+		performOptimization(programResource->m_fragmentShader);
 	}
 
 	auto csi = program->getIntermediate(EShLangCompute);
@@ -313,6 +410,7 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 		std::vector< uint32_t > cs;
 		glslang::GlslangToSpv(*csi, cs);
 		programResource->m_computeShader = AlignedVector< uint32_t >(cs.begin(), cs.end());
+		performOptimization(programResource->m_computeShader);
 	}
 
 	// Map parameters to uniforms.

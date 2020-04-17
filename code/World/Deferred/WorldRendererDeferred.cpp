@@ -34,7 +34,11 @@ namespace traktor
 		namespace
 		{
 
+#if defined(__ANDROID__) || defined(__IOS__)
+const int32_t c_maxLightCount = 16;
+#else
 const int32_t c_maxLightCount = 1024;
+#endif
 
 const resource::Id< render::Shader > c_lightShader(L"{707DE0B0-0E2B-A44A-9441-9B1FCFD428AA}");
 const resource::Id< render::Shader > c_reflectionShader(L"{F04EEA34-85E0-974F-BE97-79D24C6ACFBD}");
@@ -49,13 +53,13 @@ const resource::Id< render::ImageGraph > c_antiAliasMedium(L"{D03B9566-EFA3-7A43
 const resource::Id< render::ImageGraph > c_antiAliasHigh(L"{C0316981-FA73-A34E-8135-1F596425688F}");
 const resource::Id< render::ImageGraph > c_antiAliasUltra(L"{88E329C8-A2F3-7443-B73E-4E85C6ECACBE}");
 const resource::Id< render::ImageGraph > c_gammaCorrection(L"{B1E8367D-91DD-D648-A44F-B86492169771}");
-const resource::Id< render::ImageGraph > c_motionBlurPrime(L"{CB34E98B-55C9-E447-BD59-5A1D91DCA88E}") ; // L"{73C2C7DC-BD77-F348-A6B7-06E0EFB633D9}");
-const resource::Id< render::ImageGraph > c_motionBlurLow(L"{E813C1A0-D27D-AE4F-9EE4-637529ECCD69}") ; // L"{BDFEFBE0-C5E9-2643-B445-DB02AC5C7687}");
-const resource::Id< render::ImageGraph > c_motionBlurMedium(L"{E813C1A0-D27D-AE4F-9EE4-637529ECCD69}") ; // L"{A70CBA02-B75A-E246-A9B6-99B8B2B98D2A}");
-const resource::Id< render::ImageGraph > c_motionBlurHigh(L"{E813C1A0-D27D-AE4F-9EE4-637529ECCD69}") ; // L"{E893B98C-90A3-9848-B4F3-3D8C0CE57CE8}");
-const resource::Id< render::ImageGraph > c_motionBlurUltra(L"{E813C1A0-D27D-AE4F-9EE4-637529ECCD69}") ; // L"{CD4A0939-233B-2E43-988D-DA6E0DB7A6E6}");
+const resource::Id< render::ImageGraph > c_motionBlurPrime(L"{CB34E98B-55C9-E447-BD59-5A1D91DCA88E}");
+const resource::Id< render::ImageGraph > c_motionBlurLow(L"{E813C1A0-D27D-AE4F-9EE4-637529ECCD69}");
+const resource::Id< render::ImageGraph > c_motionBlurMedium(L"{E813C1A0-D27D-AE4F-9EE4-637529ECCD69}");
+const resource::Id< render::ImageGraph > c_motionBlurHigh(L"{E813C1A0-D27D-AE4F-9EE4-637529ECCD69}");
+const resource::Id< render::ImageGraph > c_motionBlurUltra(L"{E813C1A0-D27D-AE4F-9EE4-637529ECCD69}");
 const resource::Id< render::ImageGraph > c_toneMapFixed(L"{1F20DAB5-22EB-B84C-92B0-71E94C1CE261}");
-const resource::Id< render::ImageGraph > c_toneMapAdaptive(L"{1F20DAB5-22EB-B84C-92B0-71E94C1CE261}") ; // L"{BC4FA128-A976-4023-A422-637581ADFD7E}");
+const resource::Id< render::ImageGraph > c_toneMapAdaptive(L"{1F20DAB5-22EB-B84C-92B0-71E94C1CE261}");
 
 resource::Id< render::ImageGraph > getAmbientOcclusionId(Quality quality)
 {

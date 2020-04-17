@@ -160,6 +160,11 @@ void GlslContext::findCommonOutputs(Node* node, const std::wstring& inputPin1, c
 	getMergingOutputs(m_shaderGraph, inputPins, outOutputPins);
 }
 
+void GlslContext::findCommonOutputs(const AlignedVector< const InputPin* >& inputPins, AlignedVector< const OutputPin* >& outOutputPins) const
+{
+	getMergingOutputs(m_shaderGraph, inputPins, outOutputPins);
+}
+
 void GlslContext::enterVertex()
 {
 	m_currentShader = &m_vertexShader;

@@ -22,6 +22,7 @@ export VULKAN_SDK=$TRAKTOR_HOME/3rdp/vulkan/Vulkan-Headers-master-190605
 export MOLTEN_SDK=$TRAKTOR_HOME/3rdp/vulkan/vulkansdk-macos-1.1.121.1/MoltenVK 
 export VMA_SDK=$TRAKTOR_HOME/3rdp/VulkanMemoryAllocator-master
 export ASTC_SDK=$TRAKTOR_HOME/3rdp/astc-encoder-master-190814
+export SPIRVTOOLS_SDK=$TRAKTOR_HOME/3rdp/spirv-tools
 
 # Platform specific 3rd party dependencies.
 if [[ `uname -s` == Linux* ]]; then
