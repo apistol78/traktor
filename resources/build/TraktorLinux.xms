@@ -17649,6 +17649,12 @@
 					<solutionFileName>ExternLinux.xms</solutionFileName>
 					<projectName>Extern.vulkan.glslang</projectName>
 				</item>
+				<item type="ExternalDependency" version="3">
+					<inheritIncludePaths>true</inheritIncludePaths>
+					<link>LnkYes</link>
+					<solutionFileName>ExternLinux.xms</solutionFileName>
+					<projectName>Extern.spirvtools</projectName>
+				</item>
 			</dependencies>
 		</item>
 		<item type="Project" version="1">
