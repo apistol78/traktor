@@ -83,7 +83,7 @@ public:
 	PasswordAdapter(std::wstring& outLastError, const std::wstring& password)
 	:	ClientUserAdapter(outLastError)
 	{
-		strcpy_s(m_password, wstombs(password).c_str());
+		strcpy(m_password, wstombs(password).c_str());
 	}
 
 	virtual void InputData(StrBuf* strBuf, Error* e) override final
@@ -144,10 +144,10 @@ public:
 		{
 			char buf[256];
 
-			sprintf_s(buf, "action%d", i);
+			sprintf(buf, "action%d", i);
 			StrPtr* action = varList->GetVar(buf);
 
-			sprintf_s(buf, "depotFile%d", i);
+			sprintf(buf, "depotFile%d", i);
 			StrPtr* depotFile = varList->GetVar(buf);
 
 			if (!action || !depotFile)
@@ -266,7 +266,7 @@ public:
 		ss << L"Description:" << Endl;
 		ss << L"	" << description << Endl;
 
-		strcpy_s(m_description, wstombs(ss.str()).c_str());
+		strcpy(m_description, wstombs(ss.str()).c_str());
 	}
 
 	virtual void OutputInfo(char level, const char *data) override final
@@ -324,7 +324,7 @@ bool PerforceClient::getChangeLists(RefArray< PerforceChangeList >& outChangeLis
 		ChangeListAdapter changeListAdapter(m_lastError, outChangeLists);
 
 		char client[256];
-		strcpy_s(client, wstombs(m_clientDesc.m_client).c_str());
+		strcpy(client, wstombs(m_clientDesc.m_client).c_str());
 
 		char* const argv[] = { "-s", "pending", "-c", client };
 
@@ -377,7 +377,7 @@ bool PerforceClient::revertChangeList(PerforceChangeList* changeList)
 	ClientUserAdapter userAdapter(m_lastError);
 
 	char change[256];
-	sprintf_s(change, "%d", changeList->getChange());
+	sprintf(change, "%d", changeList->getChange());
 
 	{
 		char* const argv[] = { "-d", change };
@@ -397,7 +397,7 @@ bool PerforceClient::whereIsLocalFile(const std::wstring& depotFile, std::wstrin
 		return false;
 
 	char file[256];
-	strcpy_s(file, wstombs(depotFile).c_str());
+	strcpy(file, wstombs(depotFile).c_str());
 
 	DepotToWorkspaceFileAdapter changeListFileAdapter(m_lastError, outLocalPath);
 
@@ -419,7 +419,7 @@ bool PerforceClient::isOpened(const std::wstring& localFile, PerforceAction& out
 		return false;
 
 	char file[256];
-	strcpy_s(file, wstombs(localFile).c_str());
+	strcpy(file, wstombs(localFile).c_str());
 
 	FileStatusAdapter fileStatusAdapter(m_lastError, outAction);
 
@@ -443,10 +443,10 @@ bool PerforceClient::addFile(PerforceChangeList* changeList, const std::wstring&
 	ClientUserAdapter userAdapter(m_lastError);
 
 	char change[256];
-	sprintf_s(change, "%d", changeList->getChange());
+	sprintf(change, "%d", changeList->getChange());
 
 	char file[256];
-	strcpy_s(file, wstombs(localFile).c_str());
+	strcpy(file, wstombs(localFile).c_str());
 
 	{
 		char* const argv[] = { "-c", change, file };
@@ -468,10 +468,10 @@ bool PerforceClient::openForEdit(PerforceChangeList* changeList, const std::wstr
 	ClientUserAdapter userAdapter(m_lastError);
 
 	char change[256];
-	sprintf_s(change, "%d", changeList->getChange());
+	sprintf(change, "%d", changeList->getChange());
 
 	char file[256];
-	strcpy_s(file, wstombs(localFile).c_str());
+	strcpy(file, wstombs(localFile).c_str());
 
 	{
 		char* const argv[] = { "-c", change, file };
@@ -493,10 +493,10 @@ bool PerforceClient::openForDelete(PerforceChangeList* changeList, const std::ws
 	ClientUserAdapter userAdapter(m_lastError);
 
 	char change[256];
-	sprintf_s(change, "%d", changeList->getChange());
+	sprintf(change, "%d", changeList->getChange());
 
 	char file[256];
-	strcpy_s(file, wstombs(localFile).c_str());
+	strcpy(file, wstombs(localFile).c_str());
 
 	{
 		char* const argv[] = { "-c", change, file };
@@ -518,10 +518,10 @@ bool PerforceClient::revertFile(PerforceChangeList* changeList, const std::wstri
 	ClientUserAdapter userAdapter(m_lastError);
 
 	char change[256];
-	sprintf_s(change, "%d", changeList->getChange());
+	sprintf(change, "%d", changeList->getChange());
 
 	char file[256];
-	strcpy_s(file, wstombs(localFile).c_str());
+	strcpy(file, wstombs(localFile).c_str());
 
 	{
 		char* const argv[] = { "-c", change, file };
@@ -543,7 +543,7 @@ bool PerforceClient::revertUnmodifiedFiles(PerforceChangeList* changeList)
 	ClientUserAdapter userAdapter(m_lastError);
 
 	char change[256];
-	sprintf_s(change, "%d", changeList->getChange());
+	sprintf(change, "%d", changeList->getChange());
 
 	{
 		char* const argv[] = { "-a", "-c", change };
@@ -658,7 +658,7 @@ bool PerforceClient::establishConnection()
 		PasswordAdapter passwordAdapter(m_lastError, m_clientDesc.m_password);
 
 		char user[256];
-		strcpy_s(user, wstombs(m_clientDesc.m_user).c_str());
+		strcpy(user, wstombs(m_clientDesc.m_user).c_str());
 
 		char* const argv[] = { user };
 		m_p4client->SetArgv(sizeof_array(argv), argv);
@@ -689,7 +689,7 @@ bool PerforceClient::refreshChangeList(PerforceChangeList* changeList)
 		ChangeListDepotFilesAdapter depotFilesAdapter(m_lastError, changeListFiles);
 
 		char change[256];
-		sprintf_s(change, "%d", changeList->getChange());
+		sprintf(change, "%d", changeList->getChange());
 
 		char* const argv[] = { "-s", change };
 
@@ -708,7 +708,7 @@ bool PerforceClient::refreshChangeList(PerforceChangeList* changeList)
 			DepotToWorkspaceFileAdapter changeListFileAdapter(m_lastError, localPath);
 
 			char depotFile[256];
-			strcpy_s(depotFile, wstombs(changeListFile->getDepotPath()).c_str());
+			strcpy(depotFile, wstombs(changeListFile->getDepotPath()).c_str());
 
 			char* const argv[] = { depotFile };
 			m_p4client->SetArgv(sizeof_array(argv), argv);
