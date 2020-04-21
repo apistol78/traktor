@@ -138,7 +138,7 @@ void Polygon::serialize(ISerializer& s)
 	s >> Member< uint32_t >(L"material", m_material);
 	s >> Member< uint32_t >(L"normal", m_normal);
 	s >> Member< uint32_t >(L"smoothGroup", m_smoothGroup);
-	s >> MemberStaticVector< uint32_t, 16 >(L"vertices", m_vertices);
+	s >> MemberStaticVector< uint32_t, vertices_t::Capacity >(L"vertices", m_vertices);
 }
 
 bool Polygon::operator == (const Polygon& r) const

@@ -23,6 +23,8 @@ class T_DLLCLASS SolidEntityPipeline : public world::EntityPipeline
 	T_RTTI_CLASS;
 
 public:
+	SolidEntityPipeline();
+
 	virtual bool create(const editor::IPipelineSettings* settings) override final;
 	
 	virtual TypeInfoSet getAssetTypes() const override final;
@@ -41,6 +43,9 @@ public:
 		const ISerializable* sourceAsset,
 		const Object* buildParams
 	) const override final;
+
+private:
+	bool m_targetEditor;
 };
 
 	}

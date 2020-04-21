@@ -55,12 +55,12 @@ Ref< ShaderGraph > replaceBranch(const ShaderGraph* shaderGraph, Branch* branch,
 	shaderGraphResult->findEdges(outputPin, destinationEdges);
 
 	shaderGraphResult->removeEdge(sourceEdge);
-	for (RefSet< Edge >::const_iterator j = destinationEdges.begin(); j != destinationEdges.end(); ++j)
+	for (auto destinationEdge : destinationEdges)
 	{
-		shaderGraphResult->removeEdge(*j);
+		shaderGraphResult->removeEdge(destinationEdge);
 		shaderGraphResult->addEdge(new Edge(
 			sourceEdge->getSource(),
-			(*j)->getDestination()
+			destinationEdge->getDestination()
 		));
 	}
 
@@ -87,8 +87,8 @@ void buildCombinations(
 		Branch* branch = branchNodes.front();
 		T_ASSERT(branch);
 
-		std::vector< std::wstring >::const_iterator parameterIter = std::find(parameterNames.begin(), parameterNames.end(), branch->getParameterName());
-		uint32_t parameterBit = 1 << uint32_t(std::distance(parameterNames.begin(), parameterIter));
+		auto parameterIter = std::find(parameterNames.begin(), parameterNames.end(), branch->getParameterName());
+		uint32_t parameterBit = 1 << (uint32_t)std::distance(parameterNames.begin(), parameterIter);
 
 		Ref< ShaderGraph > shaderGraphBranchTrue = replaceBranch(shaderGraph, branch, true);
 		if (shaderGraphBranchTrue)
@@ -174,7 +174,7 @@ std::vector< std::wstring > ShaderGraphCombinations::getParameterNames(uint32_t 
 
 uint32_t ShaderGraphCombinations::getCombinationCount() const
 {
-	return m_combinations.size();
+	return (uint32_t)m_combinations.size();
 }
 
 uint32_t ShaderGraphCombinations::getCombinationMask(uint32_t index) const

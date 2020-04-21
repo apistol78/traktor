@@ -9,7 +9,7 @@ namespace traktor
 /*! Static vector container.
  * \ingroup Core
  */
-template < typename ItemType, size_t Capacity >
+template < typename ItemType, size_t Capacity_ >
 class StaticVector
 {
 public:
@@ -255,6 +255,8 @@ public:
 		{
 		}
 	};
+
+	enum { Capacity = Capacity_ };
 
 	StaticVector()
 	:	m_size(0)

@@ -273,8 +273,8 @@
 			<id>{AFB9AF2F-4D59-AE43-865B-1E16374089EB}</id>
 			<comment/>
 			<position>
-				<first>313</first>
-				<second>0</second>
+				<first>-80</first>
+				<second>-113</second>
 			</position>
 			<parameterName>World_ProbeSampleDirections</parameterName>
 			<type>PtVector</type>
@@ -414,8 +414,8 @@
 			<id>{8FEAAB8F-1F71-624F-BCE1-B7971F1B6342}</id>
 			<comment/>
 			<position>
-				<first>136</first>
-				<second>60</second>
+				<first>-269</first>
+				<second>-156</second>
 			</position>
 			<name>L_N</name>
 			<global>false</global>
@@ -436,7 +436,7 @@
 				<second>-465</second>
 			</position>
 		</item>
-		<item type="traktor.render.Color" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Color" version="2,traktor.render.Node:1">
 			<id>{4E133128-C003-3343-9C3A-1A06B95FDF85}</id>
 			<comment/>
 			<position>
@@ -444,6 +444,7 @@
 				<second>-546</second>
 			</position>
 			<color>0, 0, 0, 0</color>
+			<linear>false</linear>
 		</item>
 		<item type="traktor.render.Transpose" version="traktor.render.Node:1">
 			<id>{A34F8203-209B-6548-AC75-9588D68A71FC}</id>
@@ -548,6 +549,26 @@
 				<second>-567</second>
 			</position>
 			<value>99</value>
+		</item>
+		<item type="traktor.render.Platform" version="traktor.render.Node:1">
+			<id>{3406BA8D-6E7C-294C-8F69-EF4929760384}</id>
+			<comment/>
+			<position>
+				<first>354</first>
+				<second>-260</second>
+			</position>
+		</item>
+		<item type="traktor.render.IndexedUniform" version="1,traktor.render.Node:1">
+			<id>{0F91DDE9-19B4-0048-990B-8880E4576AA0}</id>
+			<comment/>
+			<position>
+				<first>-70</first>
+				<second>-257</second>
+			</position>
+			<parameterName>World_ProbeSampleDirections</parameterName>
+			<type>PtVector</type>
+			<frequency>UfFrame</frequency>
+			<length>100</length>
 		</item>
 	</nodes>
 	<edges>
@@ -783,16 +804,6 @@
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[22]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[38]"/>
-				<name>Input</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
 				<node ref="/object/nodes/item[38]"/>
 				<name>Output</name>
 			</source>
@@ -983,16 +994,6 @@
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[22]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[46]"/>
-				<name>Input</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
 				<node ref="/object/nodes/item[46]"/>
 				<name>Output</name>
 			</source>
@@ -1138,6 +1139,66 @@
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[51]"/>
+				<name>iOS</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[53]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[46]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[53]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[38]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[22]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[53]"/>
+				<name>Other</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[37]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[54]"/>
+				<name>Index</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[54]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[53]"/>
+				<name>Android</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[54]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[53]"/>
 				<name>iOS</name>
 			</destination>
 		</item>

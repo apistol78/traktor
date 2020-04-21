@@ -1889,6 +1889,8 @@ void EditorForm::buildAssets(bool rebuild)
 
 void EditorForm::buildCancel()
 {
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lockBuild);
+
 	if (!m_threadBuild)
 		return;
 

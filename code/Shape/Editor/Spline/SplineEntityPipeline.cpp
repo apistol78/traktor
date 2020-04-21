@@ -23,6 +23,12 @@ namespace traktor
 {
 	namespace shape
 	{
+		namespace
+		{
+
+const resource::Id< render::Shader > c_defaultShader(Guid(L"{F01DE7F1-64CE-4613-9A17-899B44D5414E}"));
+
+		}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.shape.SplineEntityPipeline", 1, SplineEntityPipeline, world::EntityPipeline)
 
@@ -58,6 +64,9 @@ bool SplineEntityPipeline::buildDependencies(
 	const Guid& outputGuid
 ) const
 {
+	if (m_targetEditor)
+		pipelineDepends->addDependency(c_defaultShader, editor::PdfBuild | editor::PdfResource);
+
 	if (auto splineEntityData = dynamic_type_cast< const SplineEntityData* >(sourceAsset))
 	{
 		for (auto id : splineEntityData->getCollisionGroup())
