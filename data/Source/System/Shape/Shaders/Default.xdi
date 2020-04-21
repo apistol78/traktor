@@ -5,8 +5,8 @@
 			<id>{75BF7920-CD17-474C-8CE1-C7C657D72EBD}</id>
 			<comment/>
 			<position>
-				<first>80</first>
-				<second>69</second>
+				<first>147</first>
+				<second>42</second>
 			</position>
 			<name>Position</name>
 			<usage>DuPosition</usage>
@@ -17,7 +17,7 @@
 			<id>{82BB1D65-5A8F-42F9-936E-DCA4B0C3F693}</id>
 			<comment/>
 			<position>
-				<first>404</first>
+				<first>414</first>
 				<second>56</second>
 			</position>
 			<swizzle>xyz1</swizzle>
@@ -93,8 +93,8 @@
 			<id>{08B7E934-2728-485C-9F02-6A3C05C2577C}</id>
 			<comment/>
 			<position>
-				<first>78</first>
-				<second>129</second>
+				<first>145</first>
+				<second>102</second>
 			</position>
 			<name>Normal</name>
 			<usage>DuNormal</usage>
@@ -105,8 +105,8 @@
 			<id>{9E5F384E-EF15-6346-9AFE-1A42D921DF8A}</id>
 			<comment/>
 			<position>
-				<first>1456</first>
-				<second>-108</second>
+				<first>854</first>
+				<second>367</second>
 			</position>
 			<fragmentGuid>{A99D362F-D713-471B-A2A9-EF57C0C21145}</fragmentGuid>
 			<inputPins>
@@ -167,7 +167,7 @@
 				</item>
 				<item>
 					<first>Roughness</first>
-					<second>0.8</second>
+					<second>0.6</second>
 				</item>
 				<item>
 					<first>Specular</first>
@@ -183,8 +183,8 @@
 			<id>{19A2CC14-3E5E-4BB1-A4BF-43DD8B448F6F}</id>
 			<comment/>
 			<position>
-				<first>876</first>
-				<second>-225</second>
+				<first>293</first>
+				<second>263</second>
 			</position>
 			<external>{D9663E74-01FF-E04A-9C69-C78C4A5C7A1B}</external>
 			<type>PtTexture2D</type>
@@ -193,8 +193,8 @@
 			<id>{54543BF6-520B-4A26-872C-A1BDBD511ABA}</id>
 			<comment/>
 			<position>
-				<first>815</first>
-				<second>-64</second>
+				<first>203</first>
+				<second>390</second>
 			</position>
 			<name>TexCoord</name>
 			<usage>DuCustom</usage>
@@ -205,8 +205,8 @@
 			<id>{A4ECC95B-7178-4064-9E2C-99A65AFBF1CC}</id>
 			<comment/>
 			<position>
-				<first>1121</first>
-				<second>-135</second>
+				<first>519</first>
+				<second>340</second>
 			</position>
 			<minFilter>FtLinear</minFilter>
 			<mipFilter>FtLinear</mipFilter>
@@ -223,8 +223,8 @@
 			<id>{5C4DDA4E-9490-3542-8600-E8919C82186C}</id>
 			<comment/>
 			<position>
-				<first>901</first>
-				<second>130</second>
+				<first>919</first>
+				<second>85</second>
 			</position>
 			<fragmentGuid>{E8573411-AD4D-EA43-9593-5433C6598063}</fragmentGuid>
 			<inputPins>
@@ -246,15 +246,6 @@
 			</inputPins>
 			<outputPins/>
 			<values/>
-		</item>
-		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
-			<id>{C97CCBA7-261D-FE49-A4D7-658193EA9E73}</id>
-			<comment/>
-			<position>
-				<first>1259</first>
-				<second>21</second>
-			</position>
-			<value>0.5</value>
 		</item>
 	</nodes>
 	<edges>
@@ -356,16 +347,6 @@
 			<destination>
 				<node ref="/object/nodes/item[9]"/>
 				<name>ViewVelocity</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[10]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[5]"/>
-				<name>Specular</name>
 			</destination>
 		</item>
 	</edges>

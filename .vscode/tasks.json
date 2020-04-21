@@ -4,20 +4,38 @@
 		{
 			"label": "DebugShared",
 			"type": "shell",
+
 			"command": "${workspaceRoot}/scripts/build-vscode.sh DebugShared",
 			"group": "build",
 			"problemMatcher": [
 				"$gcc"
-			]
+			],
+
+			"windows": {
+				"command": "${workspaceRoot}/scripts/build-vscode.bat DebugShared",
+				"group": "build",
+				"problemMatcher": [
+					"$mscompile"
+				]			
+			}
 		},
 		{
 			"label": "ReleaseShared",
 			"type": "shell",
+			
 			"command": "${workspaceRoot}/scripts/build-vscode.sh ReleaseShared",
 			"group": "build",
 			"problemMatcher": [
 				"$gcc"
-			]
+			],
+
+			"windows": {
+				"command": "${workspaceRoot}/scripts/build-vscode.bat ReleaseShared",
+				"group": "build",
+				"problemMatcher": [
+					"$mscompile"
+				]			
+			}			
 		}
 	]
 }

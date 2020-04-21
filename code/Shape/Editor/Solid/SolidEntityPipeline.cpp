@@ -1,8 +1,10 @@
 #include "Core/Io/FileSystem.h"
 #include "Core/Log/Log.h"
+#include "Core/Settings/PropertyBoolean.h"
 #include "Database/Database.h"
 #include "Editor/IPipelineBuilder.h"
 #include "Editor/IPipelineDepends.h"
+#include "Editor/IPipelineSettings.h"
 #include "Mesh/MeshComponentData.h"
 #include "Mesh/Editor/MeshAsset.h"
 #include "Model/Model.h"
@@ -11,6 +13,7 @@
 #include "Physics/StaticBodyDesc.h"
 #include "Physics/Editor/MeshAsset.h"
 #include "Physics/World/RigidBodyComponentData.h"
+#include "Render/Shader.h"
 #include "Shape/Editor/Solid/PrimitiveEntityData.h"
 #include "Shape/Editor/Solid/SolidEntityData.h"
 #include "Shape/Editor/Solid/SolidEntityPipeline.h"
@@ -21,23 +24,35 @@ namespace traktor
 {
 	namespace shape
 	{
+		namespace
+		{
+
+const resource::Id< render::Shader > c_defaultShader(Guid(L"{F01DE7F1-64CE-4613-9A17-899B44D5414E}"));
+
+		}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.shape.SolidEntityPipeline", 1, SolidEntityPipeline, world::EntityPipeline)
+
+SolidEntityPipeline::SolidEntityPipeline()
+:	m_targetEditor(false)
+{
+}
 
 bool SolidEntityPipeline::create(const editor::IPipelineSettings* settings)
 {
     if (!world::EntityPipeline::create(settings))
         return false;
 
+	m_targetEditor = settings->getProperty< bool >(L"Pipeline.TargetEditor");
     return true;
 }
 
 TypeInfoSet SolidEntityPipeline::getAssetTypes() const
 {
-	TypeInfoSet typeInfoSet;
-	typeInfoSet.insert< PrimitiveEntityData >();
-	typeInfoSet.insert< SolidEntityData >();
-	return typeInfoSet;
+	return makeTypeInfoSet<
+		PrimitiveEntityData,
+		SolidEntityData
+	>();
 }
 
 bool SolidEntityPipeline::buildDependencies(
@@ -48,8 +63,8 @@ bool SolidEntityPipeline::buildDependencies(
 	const Guid& outputGuid
 ) const
 {
-	if (!world::EntityPipeline::buildDependencies(pipelineDepends, sourceInstance, sourceAsset, outputPath, outputGuid))
-		return false;
+	if (m_targetEditor)
+		pipelineDepends->addDependency(c_defaultShader, editor::PdfBuild | editor::PdfResource);
 
 	if (auto solidEntityData = dynamic_type_cast< const SolidEntityData* >(sourceAsset))
 	{
@@ -67,7 +82,7 @@ bool SolidEntityPipeline::buildDependencies(
 	else
 		return false;
 
-	return true;
+	return world::EntityPipeline::buildDependencies(pipelineDepends, sourceInstance, sourceAsset, outputPath, outputGuid);
 }
 
 Ref< ISerializable > SolidEntityPipeline::buildOutput(

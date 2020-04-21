@@ -100,7 +100,7 @@ Application::Application()
 ,	m_renderCollisions(0)
 ,	m_frameBuild(0)
 ,	m_frameRender(0)
-,	m_stateRender(0)
+,	m_stateRender(nullptr)
 {
 }
 
@@ -528,10 +528,10 @@ bool Application::update()
 		// Ensure state transition is safe.
 		{
 			T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lockRender);
-			T_FATAL_ASSERT (m_stateRender == 0);
+			T_FATAL_ASSERT (m_stateRender == nullptr);
 
 			// Leave current state.
-			T_ASSERT_M (m_stateManager->getCurrent() == 0 || m_stateManager->getCurrent()->getReferenceCount() == 1, L"Current state must have one reference only");
+			T_ASSERT_M (m_stateManager->getCurrent() == nullptr || m_stateManager->getCurrent()->getReferenceCount() == 1, L"Current state must have one reference only");
 			log::debug << L"Leaving state \"" << type_name(m_stateManager->getCurrent()) << L"\"..." << Endl;
 			m_stateManager->leaveCurrent();
 
@@ -819,7 +819,7 @@ bool Application::update()
 
 					{
 						T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lockRender);
-						T_ASSERT(m_stateRender == 0);
+						T_ASSERT(m_stateRender == nullptr);
 
 						m_frameRender = m_frameBuild;
 						m_stateRender = currentState;
@@ -843,8 +843,8 @@ bool Application::update()
 					T_PROFILER_BEGIN(L"Application render");
 					if (renderView->beginFrame())
 					{
-						if (m_stateRender)
-							m_stateRender->render(m_frameRender, m_updateInfoRender);
+						if (currentState)
+							currentState->render(m_frameRender, m_updateInfoRender);
 						renderView->endFrame();
 					}
 					T_PROFILER_END();
@@ -1085,7 +1085,7 @@ void Application::threadRender()
 				m_renderDuration = float(renderEnd - renderBegin);
 
 				m_renderServer->setFrameRate(int32_t(1.0f / m_renderDuration));
-				m_stateRender = 0;
+				m_stateRender = nullptr;
 			}
 
 			// Frame finished.

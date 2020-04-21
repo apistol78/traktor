@@ -133,11 +133,13 @@ bool convertMesh(
 			}
 		}
 
-		// // If no material found but mesh have a material defined then set first material.
-		// if (materialCount > 0 && polygon.getMaterial() == c_InvalidIndex)
-		// 	polygon.setMaterial(materialBase);
-
 		int32_t polygonSize = mesh->GetPolygonSize(i);
+		if (polygonSize > Polygon::vertices_t::Capacity)
+		{
+			log::warning << L"Too many vertices (" << polygonSize << L", max " << Polygon::vertices_t::Capacity << L") in polygon, skipped." << Endl;
+			continue;
+		}
+
 		for (int32_t j = 0; j < polygonSize; ++j, ++vertexId)
 		{
 			int32_t pointIndex = mesh->GetPolygonVertex(i, j);
@@ -151,7 +153,6 @@ bool convertMesh(
 					vertex.setJointInfluence(k->first, k->second);
 			}
 
-			//for (int32_t k = 0; k < mesh->GetLayerCount(); ++k)
 			for (int32_t k = mesh->GetLayerCount() - 1; k >= 0; --k)
 			{
 				FbxLayerElementVertexColor* layerVertexColors = mesh->GetLayer(k)->GetVertexColors();
@@ -364,15 +365,13 @@ bool convertMesh(
 				}
 			}
 
-			if (polygon.getVertexCount() < 16)
-				polygon.addVertex(outModel.addVertex(vertex));
+			polygon.addVertex(outModel.addVertex(vertex));
 		}
 
 		outModel.addPolygon(polygon);
 	}
 
 	fixMaterialUvSets(outModel);
-
 	return true;
 }
 

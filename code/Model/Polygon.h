@@ -28,7 +28,7 @@ class T_DLLCLASS Polygon : public ISerializable
 	T_RTTI_CLASS;
 
 public:
-	typedef StaticVector< uint32_t, 16 > vertices_t;
+	typedef StaticVector< uint32_t, 32 > vertices_t;
 
 	Polygon();
 
