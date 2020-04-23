@@ -27,6 +27,7 @@ class StructBuffer;
 	namespace world
 	{
 
+class IrradianceGrid;
 class WorldEntityRenderers;
 struct LightShaderData;
 
@@ -91,6 +92,8 @@ private:
 	resource::Proxy< render::ImageGraph > m_visual;
 	resource::Proxy< render::ImageGraph > m_gammaCorrection;
 	resource::Proxy< render::ImageGraph > m_toneMap;
+
+	resource::Proxy< IrradianceGrid > m_irradianceGrid;
 
 	Ref< WorldEntityRenderers > m_entityRenderers;
 	AlignedVector< Frame > m_frames;

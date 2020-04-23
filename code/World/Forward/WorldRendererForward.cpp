@@ -15,6 +15,7 @@
 #include "Render/Image2/ImageGraphData.h"
 #include "Resource/IResourceManager.h"
 #include "World/Entity.h"
+#include "World/IrradianceGrid.h"
 #include "World/WorldBuildContext.h"
 #include "World/WorldGatherContext.h"
 #include "World/WorldHandles.h"
@@ -216,6 +217,13 @@ bool WorldRendererForward::create(
 			return false;
 	}
 
+	// Create irradiance grid.
+	if (!m_settings.irradianceGrid.isNull())
+	{
+		if (!resourceManager->bind(m_settings.irradianceGrid, m_irradianceGrid))
+			return false;
+	}
+
 	// Determine slice distances.
 	const auto& shadowSettings = m_settings.shadowSettings[m_shadowsQuality];
 	for (int32_t i = 0; i < shadowSettings.cascadingSlices; ++i)
@@ -242,7 +250,10 @@ void WorldRendererForward::destroy()
 	for (auto& frame : m_frames)
 		safeDestroy(frame.lightSBuffer);
 	m_frames.clear();
+
 	safeDestroy(m_screenRenderer);
+
+	m_irradianceGrid.clear();
 }
 
 void WorldRendererForward::setup(
@@ -347,10 +358,11 @@ render::handle_t WorldRendererForward::setupGBufferPass(
 	Ref< render::RenderPass > rp = new render::RenderPass(L"GBuffer");
 	
 	render::Clear clear;
-	clear.mask = render::CfColor | render::CfDepth;
+	clear.mask = render::CfColor | render::CfDepth | render::CfStencil;
 	clear.colors[0] = Color4f(clearZ, clearZ, clearZ, clearZ);
 	clear.colors[1] = Color4f(0.0f, 0.0f, 0.0f, 0.0f);
-	clear.depth = 1.0f;	
+	clear.depth = 1.0f;
+	clear.stencil = 0;
 	rp->setOutput(gbufferTargetSetId, clear);
 
 	rp->addBuild(
@@ -798,7 +810,7 @@ render::handle_t WorldRendererForward::setupVisualPass(
 
 	// Create render pass.
 	Ref< render::RenderPass > rp = new render::RenderPass(L"Visual");
-	rp->addInput(gbufferTargetSetId);
+	rp->addInput(gbufferTargetSetId, true);
 	rp->addInput(ambientOcclusionTargetSetId);
 
 	if (shadowsEnable)
@@ -808,7 +820,7 @@ render::handle_t WorldRendererForward::setupVisualPass(
 	}
 
 	render::Clear clear;
-	clear.mask = render::CfColor | render::CfDepth;
+	clear.mask = render::CfColor; //  | render::CfDepth;
 	clear.colors[0] = Color4f(0.0f, 0.0f, 0.0f, 1.0f);
 	clear.depth = 1.0f;
 	rp->setOutput(visualTargetSetId, clear);
@@ -831,6 +843,16 @@ render::handle_t WorldRendererForward::setupVisualPass(
 			sharedParams->beginParameters(wc.getRenderContext());
 			sharedParams->setFloatParameter(s_handleTime, worldRenderView.getTime());
 			sharedParams->setMatrixParameter(s_handleProjection, worldRenderView.getProjection());
+
+			if (m_irradianceGrid)
+			{
+				const auto size = m_irradianceGrid->getSize();
+				sharedParams->setVectorParameter(s_handleIrradianceGridSize, Vector4((float)size[0], (float)size[1], (float)size[2], 0.0f));
+				sharedParams->setVectorParameter(s_handleIrradianceGridBoundsMin, m_irradianceGrid->getBoundingBox().mn);
+				sharedParams->setVectorParameter(s_handleIrradianceGridBoundsMax, m_irradianceGrid->getBoundingBox().mx);
+				sharedParams->setStructBufferParameter(s_handleIrradianceGridSBuffer, m_irradianceGrid->getBuffer());
+			}
+
 			sharedParams->endParameters(wc.getRenderContext());
 
 			WorldRenderPassForward defaultPass(
@@ -840,6 +862,7 @@ render::handle_t WorldRendererForward::setupVisualPass(
 				worldRenderView.getView(),
 				m_frames[frame].lightSBuffer,
 				lightCount,
+				(bool)(m_irradianceGrid != nullptr),
 				m_settings.fog,
 				m_settings.fogDistanceY,
 				m_settings.fogDistanceZ,

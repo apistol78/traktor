@@ -18,6 +18,11 @@ Entity::Entity(const Transform& transform)
 {
 }
 
+Entity::~Entity()
+{
+	destroy();
+}
+
 void Entity::destroy()
 {
 	for (auto component : m_components)

@@ -33,6 +33,8 @@ public:
 
 	explicit Entity(const Transform& transform);
 
+	virtual ~Entity();
+
 	/*! Destroy entity resources.
 	 *
 	 * Called automatically from Entity destructor
