@@ -38,6 +38,7 @@ public:
 		const Matrix44& view,
 		render::StructBuffer* lightSBuffer,
 		uint32_t lightCount,
+		bool irradianceEnable,
 		bool fogEnabled,
 		float fogDistanceY,
 		float fogDistanceZ,
@@ -79,6 +80,7 @@ private:
 	Matrix44 m_viewInverse;
 	render::StructBuffer* m_lightSBuffer;
 	uint32_t m_lightCount;
+	bool m_irradianceEnable;
 	bool m_fogEnabled;
 	float m_fogDistanceY;
 	float m_fogDistanceZ;

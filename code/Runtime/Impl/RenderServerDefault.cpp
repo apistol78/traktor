@@ -61,6 +61,16 @@ int32_t skipMipsFromQuality(int32_t quality)
 
 int32_t maxAnisotropyFromQuality(int32_t quality)
 {
+#if defined(__ANDROID__) || defined(__IOS__)
+	const int32_t c_maxAnisotropy[] =
+	{
+		1,	// Disabled
+		1,	// Low
+		1,	// Medium
+		4,	// High
+		8	// Ultra
+	};
+#else
 	const int32_t c_maxAnisotropy[] =
 	{
 		1,	// Disabled
@@ -69,6 +79,7 @@ int32_t maxAnisotropyFromQuality(int32_t quality)
 		8,	// High
 		16	// Ultra
 	};
+#endif
 	return c_maxAnisotropy[quality];
 }
 

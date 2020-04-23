@@ -18,6 +18,7 @@ WorldRenderPassForward::WorldRenderPassForward(
 	const Matrix44& view,
 	render::StructBuffer* lightSBuffer,
 	uint32_t lightCount,
+	bool irradianceEnable,
 	bool fogEnabled,
 	float fogDistanceY,
 	float fogDistanceZ,
@@ -38,6 +39,7 @@ WorldRenderPassForward::WorldRenderPassForward(
 ,	m_lightSBuffer(lightSBuffer)
 ,	m_lightCount(lightCount)
 ,	m_fogEnabled(fogEnabled)
+,	m_irradianceEnable(irradianceEnable)
 ,	m_fogDistanceY(fogDistanceY)
 ,	m_fogDistanceZ(fogDistanceZ)
 ,	m_fogDensityY(fogDensityY)
@@ -94,6 +96,7 @@ render::Shader::Permutation WorldRenderPassForward::getPermutation(const render:
 {
 	render::Shader::Permutation perm(m_technique);
 	shader->setCombination(s_handleFogEnable, m_fogEnabled, perm);
+	shader->setCombination(s_handleIrradianceEnable, m_irradianceEnable, perm);
 	shader->setCombination(s_handleShadowEnable, m_shadowCascade != nullptr && m_shadowAtlas != nullptr, perm);
 	return perm;
 }
