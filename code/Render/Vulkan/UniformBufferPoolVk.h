@@ -21,7 +21,8 @@ public:
 	bool acquire(
 		uint32_t size,
 		VkBuffer& inoutBuffer,
-		VmaAllocation& inoutAllocation
+		VmaAllocation& inoutAllocation,
+		void*& inoutMappedPtr
 	);
 
 	void collect();
@@ -32,11 +33,12 @@ private:
 		uint32_t size;
 		VkBuffer buffer;
 		VmaAllocation allocation;
+		void* mappedPtr;
 	};
 
 	VkDevice m_logicalDevice;
 	VmaAllocator m_allocator;
-	AlignedVector< BufferChain > m_free;
+	AlignedVector< BufferChain > m_free[64];
 	AlignedVector< BufferChain > m_released[MaxPendingFrames];
 	uint32_t m_counter;
 };

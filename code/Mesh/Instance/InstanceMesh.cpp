@@ -74,20 +74,17 @@ void InstanceMesh::build(
 	// Sort instances by ascending distance; note we're sorting caller's vector.
 	std::sort(instanceWorld.begin(), instanceWorld.end(), SortRenderInstance());
 
-	// Calculate bounding box of all instances.
-	Aabb3 boundingBoxLocal = m_renderMesh->getBoundingBox();
+	// Calculate bounding box of all instances, only including
+	// center of each instance since transforming each bounding box is too expensive.
 	Aabb3 boundingBoxWorld;
 	for (const auto& instance : instanceWorld)
 	{
-		Vector4 translation = Vector4::loadAligned(instance.data.translation).xyz0();
-		Quaternion rotation = Quaternion(Vector4::loadAligned(instance.data.rotation));
-		boundingBoxWorld.contain(boundingBoxLocal.transform(Transform(
-			translation,
-			rotation
-		)));
+		boundingBoxWorld.contain(
+			Vector4::loadAligned(instance.data.translation).xyz1()
+		);
 	}
 
-	const AlignedVector< render::Mesh::Part >& meshParts = m_renderMesh->getParts();
+	const auto& meshParts = m_renderMesh->getParts();
 
 	// Render opaque parts front-to-back.
 	for (const auto& part : it->second)

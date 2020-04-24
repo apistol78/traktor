@@ -127,6 +127,20 @@ resource::Id< render::ImageGraph > getToneMapId(WorldRenderSettings::ExposureMod
 	}
 }
 
+Ref< render::ITexture > create1x1Texture(render::IRenderSystem* renderSystem, uint32_t value)
+{
+	render::SimpleTextureCreateDesc stcd = {};
+	stcd.width = 1;
+	stcd.height = 1;
+	stcd.mipCount = 1;
+	stcd.format = render::TfR8G8B8A8;
+	stcd.sRGB = false;
+	stcd.immutable = true;
+	stcd.initialData[0].data = &value;
+	stcd.initialData[0].pitch = 4;
+	return renderSystem->createSimpleTexture(stcd, T_FILE_LINE_W);
+}
+
 		}
 
 #pragma pack(1)
@@ -379,6 +393,10 @@ bool WorldRendererDeferred::create(
 	if (!m_screenRenderer->create(renderSystem))
 		return false;
 
+	// Misc resources.
+	m_blackTexture = create1x1Texture(renderSystem, 0x00000000);
+	m_whiteTexture = create1x1Texture(renderSystem, 0xffffffff);
+
 	return true;
 }
 
@@ -394,6 +412,8 @@ void WorldRendererDeferred::destroy()
 	safeDestroy(m_shadowMapCascadeTargetSet);
 	safeDestroy(m_shadowMapAtlasTargetSet);
 	safeDestroy(m_screenRenderer);
+	safeDestroy(m_blackTexture);
+	safeDestroy(m_whiteTexture);
 
 	m_irradianceGrid.clear();
 }
@@ -1335,12 +1355,8 @@ render::handle_t WorldRendererDeferred::setupVisualPass(
 	rp->addInput(gbufferTargetSetId);
 	rp->addInput(ambientOcclusionTargetSetId);
 	rp->addInput(reflectionsTargetSetId);
-
-	if (shadowsEnable)
-	{
-		rp->addInput(shadowMaskTargetSetId);
-		rp->addInput(shadowMapAtlasTargetSetId, true);
-	}
+	rp->addInput(shadowMaskTargetSetId);
+	rp->addInput(shadowMapAtlasTargetSetId, true);
 
 	render::Clear clear;
 	clear.mask = render::CfColor;
@@ -1383,12 +1399,9 @@ render::handle_t WorldRendererDeferred::setupVisualPass(
 			sharedParams->setTextureParameter(s_handleMiscMap, gbufferTargetSet->getColorTexture(2));
 			sharedParams->setTextureParameter(s_handleColorMap, gbufferTargetSet->getColorTexture(3));
 			sharedParams->setTextureParameter(s_handleOcclusionMap, ambientOcclusionTargetSet->getColorTexture(0));
-			if (shadowMaskTargetSet)
-				sharedParams->setTextureParameter(s_handleShadowMask, shadowMaskTargetSet->getColorTexture(0));
-			if (shadowAtlasTargetSet)
-				sharedParams->setTextureParameter(s_handleShadowMapAtlas, shadowAtlasTargetSet->getDepthTexture());
-			if (reflectionsTargetSet)
-				sharedParams->setTextureParameter(s_handleReflectionMap, reflectionsTargetSet->getColorTexture(0));
+			sharedParams->setTextureParameter(s_handleShadowMask, (shadowMaskTargetSet != nullptr) ? shadowMaskTargetSet->getColorTexture(0) : m_whiteTexture);
+			sharedParams->setTextureParameter(s_handleShadowMapAtlas, (shadowAtlasTargetSet != nullptr) ? shadowAtlasTargetSet->getDepthTexture() : m_whiteTexture);
+			sharedParams->setTextureParameter(s_handleReflectionMap, (reflectionsTargetSet != nullptr) ? reflectionsTargetSet->getColorTexture(0) : m_whiteTexture);
 			sharedParams->setStructBufferParameter(s_handleLightSBuffer, m_frames[frame].lightSBuffer);
 			sharedParams->setStructBufferParameter(s_handleTileSBuffer, m_frames[frame].tileSBuffer);
 			if (m_irradianceGrid)

@@ -22,6 +22,7 @@ namespace traktor
 
 class ImageGraph;
 class IRenderTargetSet;
+class ITexture;
 class ScreenRenderer;
 class Shader;
 class StructBuffer;
@@ -96,6 +97,9 @@ private:
 
 	Ref< render::ScreenRenderer > m_screenRenderer;
 	Ref< LightRendererDeferred > m_lightRenderer;
+
+	Ref< render::ITexture > m_blackTexture;
+	Ref< render::ITexture > m_whiteTexture;
 
 	render::Handle m_handleShadowMapCascade;
 	render::Handle m_handleShadowMapAtlas;

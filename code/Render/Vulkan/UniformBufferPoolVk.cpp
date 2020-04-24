@@ -8,6 +8,18 @@ namespace traktor
 {
 	namespace render
 	{
+		namespace
+		{
+
+int32_t freeIndex(uint32_t size)
+{
+	int32_t index = (int32_t)(size / 16);
+	if (index > 63)
+		index = 63;
+	return index;
+}
+
+		}
 	
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.UniformBufferPoolVk", UniformBufferPoolVk, Object)
 
@@ -21,7 +33,8 @@ UniformBufferPoolVk::UniformBufferPoolVk(VkDevice logicalDevice, VmaAllocator al
 bool UniformBufferPoolVk::acquire(
 	uint32_t size,
 	VkBuffer& inoutBuffer,
-	VmaAllocation& inoutAllocation
+	VmaAllocation& inoutAllocation,
+	void*& inoutMappedPtr
 )
 {
 	if (inoutBuffer != 0)
@@ -32,17 +45,28 @@ bool UniformBufferPoolVk::acquire(
 		bc.size = size;
 		bc.buffer = inoutBuffer;
 		bc.allocation = inoutAllocation;
+		bc.mappedPtr = inoutMappedPtr;
 
 		inoutBuffer = 0;
 		inoutAllocation = 0;
+		inoutMappedPtr = nullptr;
 	}
 
-	auto it = std::find_if(m_free.begin(), m_free.end(), [=](const BufferChain& bc) { return bc.size == size; });
-	if (it != m_free.end())
+	// Get free list from size.
+	auto& free = m_free[freeIndex(size)];
+
+	// Find matching buffer from free list.
+	auto it = std::find_if(free.begin(), free.end(), [=](const BufferChain& bc) { return bc.size == size; });
+	if (it != free.end())
 	{
 		inoutBuffer = it->buffer;
 		inoutAllocation = it->allocation;
-		m_free.erase(it);
+		inoutMappedPtr = it->mappedPtr;
+		
+		if (it != free.end() - 1)
+			*it = free.back();
+
+		free.pop_back();
 	}
 	else
 	{
@@ -54,12 +78,15 @@ bool UniformBufferPoolVk::acquire(
 
 		VmaAllocationCreateInfo aci = {};
 		aci.usage = VMA_MEMORY_USAGE_CPU_TO_GPU;
+		aci.flags = VMA_ALLOCATION_CREATE_MAPPED_BIT;
 
-		if (vmaCreateBuffer(m_allocator, &bci, &aci, &inoutBuffer, &inoutAllocation, nullptr) != VK_SUCCESS)
+		VmaAllocationInfo ai = {};
+		if (vmaCreateBuffer(m_allocator, &bci, &aci, &inoutBuffer, &inoutAllocation, &ai) != VK_SUCCESS)
 			return false;
 
-		// Set debug name of uniform buffer.
 		setObjectDebugName(m_logicalDevice, L"Uniform buffer", (uint64_t)inoutBuffer, VK_OBJECT_TYPE_BUFFER);
+
+		inoutMappedPtr = ai.pMappedData;
 	}
 
 	return true;
@@ -70,7 +97,11 @@ void UniformBufferPoolVk::collect()
 	uint32_t c = (m_counter + 1) % MaxPendingFrames;
 	if (!m_released[c].empty())
 	{
-		m_free.insert(m_free.end(), m_released[c].begin(), m_released[c].end());
+		for (const auto& released : m_released[c])
+		{
+			auto& free = m_free[freeIndex(released.size)];
+			free.push_back(released);
+		}
 		m_released[c].resize(0);
 	}
 	m_counter = c;
