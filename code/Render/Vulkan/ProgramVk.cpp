@@ -313,21 +313,17 @@ bool ProgramVk::validateGraphics(VkDescriptorPool descriptorPool, VkCommandBuffe
 			if (!uniformBufferPool->acquire(
 				m_uniformBuffers[i].size,
 				m_uniformBuffers[i].buffer,
-				m_uniformBuffers[i].allocation
+				m_uniformBuffers[i].allocation,
+				m_uniformBuffers[i].ptr
 			))
 				return false;
 
-			uint8_t* ptr = nullptr;
-			if (vmaMapMemory(m_allocator, m_uniformBuffers[i].allocation, (void**)&ptr) != VK_SUCCESS)
-				return false;
-
 			std::memcpy(
-				ptr,
+				m_uniformBuffers[i].ptr,
 				m_uniformBuffers[i].data.c_ptr(),
 				m_uniformBuffers[i].size
 			);
 
-			vmaUnmapMemory(m_allocator, m_uniformBuffers[i].allocation);
 			m_uniformBuffers[i].dirty = false;
 		}
 
@@ -489,21 +485,17 @@ bool ProgramVk::validateCompute(VkDescriptorPool descriptorPool, VkCommandBuffer
 			if (!uniformBufferPool->acquire(
 				m_uniformBuffers[i].size,
 				m_uniformBuffers[i].buffer,
-				m_uniformBuffers[i].allocation
+				m_uniformBuffers[i].allocation,
+				m_uniformBuffers[i].ptr
 			))
 				return false;
 
-			uint8_t* ptr = nullptr;
-			if (vmaMapMemory(m_allocator, m_uniformBuffers[i].allocation, (void**)&ptr) != VK_SUCCESS)
-				return false;
-
 			std::memcpy(
-				ptr,
+				m_uniformBuffers[i].ptr,
 				m_uniformBuffers[i].data.c_ptr(),
 				m_uniformBuffers[i].size
 			);
 
-			vmaUnmapMemory(m_allocator, m_uniformBuffers[i].allocation);
 			m_uniformBuffers[i].dirty = false;
 		}
 

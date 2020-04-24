@@ -89,12 +89,14 @@ private:
 		AlignedVector< float > data;
 		VkBuffer buffer;
 		VmaAllocation allocation;
+		void* ptr;
 		bool dirty;
 
 		UniformBuffer()
 		:	size(0)
 		,	buffer(0)
 		,	allocation(0)
+		,	ptr(nullptr)
 		,	dirty(true)
 		{
 		}
