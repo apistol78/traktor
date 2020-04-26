@@ -29,7 +29,6 @@ GridRow::GridRow(uint32_t initialState)
 ,	m_parent(0)
 ,	m_editMode(0)
 {
-	m_expand = new ui::StyleBitmap(L"UI.GridView", c_ResourceGridView, sizeof(c_ResourceGridView));
 }
 
 GridRow::~GridRow()
@@ -165,7 +164,8 @@ void GridRow::placeCells(AutoWidget* widget, const Rect& rect)
 	if (!m_children.empty())
 		++depth;
 
-	int32_t size = m_expand->getSize().cy;
+	auto expand = gridView->getBitmap(L"UI.GridView", c_ResourceGridView, sizeof(c_ResourceGridView));
+	int32_t size = expand->getSize().cy;
 
 	Rect rcCell(rect.left, rect.top, rect.left, rect.bottom);
 	for (uint32_t i = 0; i < columns.size(); ++i)
@@ -202,11 +202,13 @@ void GridRow::interval()
 
 void GridRow::mouseDown(MouseButtonDownEvent* event, const Point& position)
 {
+	auto expand = getWidget< GridView >()->getBitmap(L"UI.GridView", c_ResourceGridView, sizeof(c_ResourceGridView));
+
 	// Handle expand/collapse.
 	if (!m_children.empty())
 	{
 		int32_t depth = getDepth();
-		int32_t size = m_expand->getSize().cy;
+		int32_t size = expand->getSize().cy;
 		int32_t rx = depth * size + size;
 		if (position.x <= rx)
 		{
@@ -277,6 +279,7 @@ void GridRow::mouseMove(MouseMoveEvent* event, const Point& position)
 void GridRow::paint(Canvas& canvas, const Rect& rect)
 {
 	const StyleSheet* ss = Application::getInstance()->getStyleSheet();
+	auto expand = getWidget< GridView >()->getBitmap(L"UI.GridView", c_ResourceGridView, sizeof(c_ResourceGridView));
 
 	const RefArray< GridColumn >& columns = getWidget< GridView >()->getColumns();
 	Rect rowRect(0, rect.top, rect.getWidth(), rect.bottom);
@@ -298,12 +301,12 @@ void GridRow::paint(Canvas& canvas, const Rect& rect)
 	if (!m_children.empty())
 	{
 		int32_t depth = getDepth();
-		int32_t size = m_expand->getSize().cy;
+		int32_t size = expand->getSize().cy;
 		canvas.drawBitmap(
 			Point(rect.left + 2 + depth * size, rect.top + (rect.getHeight() - size) / 2),
 			Point((m_state & GridRow::RsExpanded) ? size : 0, 0),
 			Size(size, size),
-			m_expand,
+			expand,
 			BmAlpha
 		);
 	}

@@ -18,7 +18,6 @@ namespace traktor
 	{
 
 class GridItem;
-class IBitmap;
 
 /*! Grid row.
  * \ingroup UI
@@ -87,7 +86,6 @@ private:
 	uint32_t m_state;
 	Color4ub m_background;
 	int32_t m_minimumHeight;
-	Ref< IBitmap > m_expand;
 	RefArray< GridItem > m_items;
 	GridRow* m_parent;
 	RefArray< GridRow > m_children;

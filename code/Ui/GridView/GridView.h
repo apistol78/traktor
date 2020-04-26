@@ -107,8 +107,11 @@ private:
 	bool m_multiSelect;
 	Ref< Edit > m_itemEditor;
 	Ref< GridItem > m_editItem;
+	SmallMap< std::wstring, Ref< IBitmap > > m_bitmaps;
 
 	virtual void layoutCells(const Rect& rc) override final;
+
+	IBitmap* getBitmap(const wchar_t* const name, const void* defaultBitmapResource, uint32_t defaultBitmapResourceSize);
 
 	void beginEdit(GridItem* item);
 
