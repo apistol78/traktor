@@ -2,6 +2,7 @@
 #include "Core/Misc/String.h"
 #include "Ui/Application.h"
 #include "Ui/Edit.h"
+#include "Ui/StyleBitmap.h"
 #include "Ui/GridView/GridColumn.h"
 #include "Ui/GridView/GridColumnClickEvent.h"
 #include "Ui/GridView/GridHeader.h"
@@ -297,6 +298,14 @@ void GridView::layoutCells(const Rect& rc)
 		placeCell(row, rcRow);
 		rcRow.top = rcRow.bottom;
 	}
+}
+
+IBitmap* GridView::getBitmap(const wchar_t* const name, const void* defaultBitmapResource, uint32_t defaultBitmapResourceSize)
+{
+	auto it = m_bitmaps.find(name);
+	if (it == m_bitmaps.end())
+		m_bitmaps[name] = new ui::StyleBitmap(name, defaultBitmapResource, defaultBitmapResourceSize);
+	return m_bitmaps[name];
 }
 
 void GridView::beginEdit(GridItem* item)
