@@ -145,6 +145,9 @@ private:
 	AlignedVector< Sampler > m_samplers;
 	AlignedVector< Texture > m_textures;
 	AlignedVector< SBuffer > m_sbuffers;
+	AlignedVector< VkDescriptorBufferInfo > m_bufferInfos;
+	AlignedVector< VkDescriptorImageInfo > m_imageInfos;
+	AlignedVector< VkWriteDescriptorSet > m_writes;
 	uint32_t m_stencilReference;
 	uint32_t m_hash;
 };
