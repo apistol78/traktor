@@ -297,10 +297,10 @@ bool ProgramVk::validateGraphics(VkDescriptorPool descriptorPool, VkCommandBuffe
 	setObjectDebugName(m_logicalDevice, m_tag.c_str(), (uint64_t)descriptorSet, VK_OBJECT_TYPE_DESCRIPTOR_SET);
 #endif
 
-	AlignedVector< VkDescriptorBufferInfo > bufferInfos;
-	AlignedVector< VkDescriptorImageInfo > imageInfos;
-	AlignedVector< VkWriteDescriptorSet > writes;
-	
+	m_bufferInfos.resize(0);
+	m_imageInfos.resize(0);
+	m_writes.resize(0);
+
 	// Update scalar uniform buffers.
 	for (uint32_t i = 0; i < 3; ++i)
 	{
@@ -327,12 +327,12 @@ bool ProgramVk::validateGraphics(VkDescriptorPool descriptorPool, VkCommandBuffe
 			m_uniformBuffers[i].dirty = false;
 		}
 
-		auto& bufferInfo = bufferInfos.push_back();
+		auto& bufferInfo = m_bufferInfos.push_back();
 		bufferInfo.buffer = m_uniformBuffers[i].buffer;
 		bufferInfo.offset = 0;
 		bufferInfo.range = m_uniformBuffers[i].size;
 
-		auto& write = writes.push_back();
+		auto& write = m_writes.push_back();
 		write = {};
 		write.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
 		write.pNext = nullptr;
@@ -347,12 +347,12 @@ bool ProgramVk::validateGraphics(VkDescriptorPool descriptorPool, VkCommandBuffe
 	// Update sampler bindings.
 	for (const auto& sampler : m_samplers)
 	{
-		auto& imageInfo = imageInfos.push_back();
+		auto& imageInfo = m_imageInfos.push_back();
 		imageInfo.sampler = sampler.sampler;
 		imageInfo.imageView = 0;
 		imageInfo.imageLayout = VK_IMAGE_LAYOUT_UNDEFINED;
 
-		auto& write = writes.push_back();
+		auto& write = m_writes.push_back();
 		write = {};
 		write.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
 		write.pNext = nullptr;
@@ -389,12 +389,12 @@ bool ProgramVk::validateGraphics(VkDescriptorPool descriptorPool, VkCommandBuffe
 		if (!imageView)
 			continue;
 
-		auto& imageInfo = imageInfos.push_back();
+		auto& imageInfo = m_imageInfos.push_back();
 		imageInfo.sampler = 0;
 		imageInfo.imageView = imageView;
 		imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
 
-		auto& write = writes.push_back();
+		auto& write = m_writes.push_back();
 		write = {};
 		write.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
 		write.pNext = nullptr;
@@ -414,12 +414,12 @@ bool ProgramVk::validateGraphics(VkDescriptorPool descriptorPool, VkCommandBuffe
 
 		auto sbvk = static_cast< StructBufferVk* >(sbuffer.sbuffer.ptr());
 
-		auto& bufferInfo = bufferInfos.push_back();
+		auto& bufferInfo = m_bufferInfos.push_back();
 		bufferInfo.buffer = sbvk->getVkBuffer();
 		bufferInfo.offset = 0;
 		bufferInfo.range = sbvk->getBufferSize();
 
-		auto& write = writes.push_back();
+		auto& write = m_writes.push_back();
 		write = {};
 		write.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
 		write.pNext = nullptr;
@@ -431,8 +431,8 @@ bool ProgramVk::validateGraphics(VkDescriptorPool descriptorPool, VkCommandBuffe
 		write.dstBinding = sbuffer.binding;
 	}
 
-	if (!writes.empty())
-		vkUpdateDescriptorSets(m_logicalDevice, (uint32_t)writes.size(), writes.c_ptr(), 0, nullptr);
+	if (!m_writes.empty())
+		vkUpdateDescriptorSets(m_logicalDevice, (uint32_t)m_writes.size(), m_writes.c_ptr(), 0, nullptr);
 
 	// Push command.
 	vkCmdBindDescriptorSets(
@@ -469,9 +469,14 @@ bool ProgramVk::validateCompute(VkDescriptorPool descriptorPool, VkCommandBuffer
 	if (vkAllocateDescriptorSets(m_logicalDevice, &allocateInfo, &descriptorSet) != VK_SUCCESS)
 		return false;
 
-	AlignedVector< VkDescriptorBufferInfo > bufferInfos;
-	AlignedVector< VkDescriptorImageInfo > imageInfos;
-	AlignedVector< VkWriteDescriptorSet > writes;
+#if defined(_DEBUG)
+	// Set debug name of descriptor set.
+	setObjectDebugName(m_logicalDevice, m_tag.c_str(), (uint64_t)descriptorSet, VK_OBJECT_TYPE_DESCRIPTOR_SET);
+#endif
+
+	m_bufferInfos.resize(0);
+	m_imageInfos.resize(0);
+	m_writes.resize(0);
 	
 	// Update scalar uniform buffers.
 	for (uint32_t i = 0; i < 3; ++i)
@@ -499,12 +504,12 @@ bool ProgramVk::validateCompute(VkDescriptorPool descriptorPool, VkCommandBuffer
 			m_uniformBuffers[i].dirty = false;
 		}
 
-		auto& bufferInfo = bufferInfos.push_back();
+		auto& bufferInfo = m_bufferInfos.push_back();
 		bufferInfo.buffer = m_uniformBuffers[i].buffer;
 		bufferInfo.offset = 0;
 		bufferInfo.range = m_uniformBuffers[i].size;
 
-		auto& write = writes.push_back();
+		auto& write = m_writes.push_back();
 		write = {};
 		write.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
 		write.pNext = nullptr;
@@ -519,12 +524,12 @@ bool ProgramVk::validateCompute(VkDescriptorPool descriptorPool, VkCommandBuffer
 	// Update sampler bindings.
 	for (const auto& sampler : m_samplers)
 	{
-		auto& imageInfo = imageInfos.push_back();
+		auto& imageInfo = m_imageInfos.push_back();
 		imageInfo.sampler = sampler.sampler;
 		imageInfo.imageView = 0;
 		imageInfo.imageLayout = VK_IMAGE_LAYOUT_UNDEFINED;
 
-		auto& write = writes.push_back();
+		auto& write = m_writes.push_back();
 		write = {};
 		write.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
 		write.pNext = nullptr;
@@ -561,12 +566,12 @@ bool ProgramVk::validateCompute(VkDescriptorPool descriptorPool, VkCommandBuffer
 		if (!imageView)
 			continue;
 
-		auto& imageInfo = imageInfos.push_back();
+		auto& imageInfo = m_imageInfos.push_back();
 		imageInfo.sampler = 0;
 		imageInfo.imageView = imageView;
 		imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
 
-		auto& write = writes.push_back();
+		auto& write = m_writes.push_back();
 		write = {};
 		write.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
 		write.pNext = nullptr;
@@ -586,12 +591,12 @@ bool ProgramVk::validateCompute(VkDescriptorPool descriptorPool, VkCommandBuffer
 
 		auto sbvk = static_cast< StructBufferVk* >(sbuffer.sbuffer.ptr());
 
-		auto& bufferInfo = bufferInfos.push_back();
+		auto& bufferInfo = m_bufferInfos.push_back();
 		bufferInfo.buffer = sbvk->getVkBuffer();
 		bufferInfo.offset = 0;
 		bufferInfo.range = sbvk->getBufferSize();
 
-		auto& write = writes.push_back();
+		auto& write = m_writes.push_back();
 		write = {};
 		write.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
 		write.pNext = nullptr;
@@ -603,8 +608,8 @@ bool ProgramVk::validateCompute(VkDescriptorPool descriptorPool, VkCommandBuffer
 		write.dstBinding = sbuffer.binding;
 	}
 
-	if (!writes.empty())
-		vkUpdateDescriptorSets(m_logicalDevice, (uint32_t)writes.size(), writes.c_ptr(), 0, nullptr);
+	if (!m_writes.empty())
+		vkUpdateDescriptorSets(m_logicalDevice, (uint32_t)m_writes.size(), m_writes.c_ptr(), 0, nullptr);
 
 	// Push command.
 	vkCmdBindDescriptorSets(
