@@ -29,7 +29,8 @@ public:
 	enum Style
 	{
 		StDefault = 0,
-		StUniform = 1
+		StUniform = 1,
+		StVariable = 2
 	};
 
 	InOutNodeShape(GraphControl* graphControl, Style style);
