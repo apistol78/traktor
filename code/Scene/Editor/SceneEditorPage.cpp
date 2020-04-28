@@ -738,7 +738,7 @@ bool SceneEditorPage::handleCommand(const ui::Command& command)
 		m_context->setGuideSize(std::max(guideSize - 0.5f, 0.5f));
 	}
 	else if (command == L"Scene.Editor.ResetGuide")
-		m_context->setGuideSize(2.0f);
+		m_context->setGuideSize(1.0f);
 	else if (command == L"Scene.Editor.FindInDatabase")
 	{
 		RefArray< EntityAdapter > selectedEntities;

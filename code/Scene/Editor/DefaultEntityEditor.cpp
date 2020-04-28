@@ -285,10 +285,10 @@ void DefaultEntityEditor::drawGuide(render::PrimitiveRenderer* primitiveRenderer
 			if (m_entityAdapter->isSelected() && m_context->getSnapMode() == SceneEditorContext::SmNeighbour)
 			{
 				AlignedVector< EntityAdapter::SnapPoint > snapPoints = m_entityAdapter->getSnapPoints();
-				for (AlignedVector< EntityAdapter::SnapPoint >::const_iterator i = snapPoints.begin(); i != snapPoints.end(); ++i)
+				for (const auto& snapPoint : snapPoints)
 				{
 					primitiveRenderer->drawSolidPoint(
-						i->position,
+						snapPoint.position,
 						4.0f,
 						m_colorSnap
 					);

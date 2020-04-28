@@ -67,7 +67,7 @@ SceneEditorContext::SceneEditorContext(
 ,	m_renderSystem(renderSystem)
 ,	m_physicsManager(physicsManager)
 ,	m_scriptContext(scriptContext)
-,	m_guideSize(2.0f)
+,	m_guideSize(1.0f)
 ,	m_pickEnable(true)
 ,	m_snapMode(SmNone)
 ,	m_snapSpacing(0.0f)
