@@ -50,6 +50,13 @@ InOutNodeShape::InOutNodeShape(GraphControl* graphControl, Style style)
 		m_imageNode[2] = new ui::StyleBitmap(L"UI.Graph.UniformError");
 		m_imageNode[3] = new ui::StyleBitmap(L"UI.Graph.UniformErrorSelected");
 	}
+	else if (style == StVariable)
+	{
+		m_imageNode[0] = new ui::StyleBitmap(L"UI.Graph.Variable");
+		m_imageNode[1] = new ui::StyleBitmap(L"UI.Graph.VariableSelected");
+		m_imageNode[2] = new ui::StyleBitmap(L"UI.Graph.VariableError");
+		m_imageNode[3] = new ui::StyleBitmap(L"UI.Graph.VariableErrorSelected");
+	}
 
 	m_imagePin = new ui::StyleBitmap(L"UI.Graph.Pin");
 	m_imagePinHot = new ui::StyleBitmap(L"UI.Graph.PinHot");

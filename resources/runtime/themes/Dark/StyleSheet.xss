@@ -1410,6 +1410,22 @@
 			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Dark/Images/UI/Graph/UniformErrorSelected.image</value>
 		</item>
 		<item>
+			<name>UI.Graph.Variable</name>
+			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Dark/Images/UI/Graph/Variable.image</value>
+		</item>
+		<item>
+			<name>UI.Graph.VariableSelected</name>
+			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Dark/Images/UI/Graph/VariableSelected.image</value>
+		</item>
+		<item>
+			<name>UI.Graph.VariableError</name>
+			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Dark/Images/UI/Graph/VariableError.image</value>
+		</item>
+		<item>
+			<name>UI.Graph.VariableErrorSelected</name>
+			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Dark/Images/UI/Graph/VariableErrorSelected.image</value>
+		</item>
+		<item>
 			<name>UI.Graph.Output</name>
 			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Dark/Images/UI/Graph/Output.image</value>
 		</item>

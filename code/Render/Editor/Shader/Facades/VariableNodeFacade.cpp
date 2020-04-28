@@ -15,7 +15,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.render.VariableNodeFacade", VariableNodeFacade,
 
 VariableNodeFacade::VariableNodeFacade(ui::GraphControl* graphControl)
 {
-	m_nodeShape = new ui::InOutNodeShape(graphControl, ui::InOutNodeShape::StDefault);
+	m_nodeShape = new ui::InOutNodeShape(graphControl, ui::InOutNodeShape::StVariable);
 }
 
 Ref< Node > VariableNodeFacade::createShaderNode(

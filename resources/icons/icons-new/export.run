@@ -120,6 +120,19 @@ local outputs =
 	},	
 
 	{
+		source = "Variable.svg",
+		name = "UI_Graph_Variable",
+		path = "../../runtime/themes/%s/Images/UI/Graph",
+		resources =
+		{
+			{ name = "Variable", column = 0, row = 0, width = 3, height = 2 }, -- , base = 16*96/45 },
+			{ name = "VariableSelected", column = 3, row = 0, width = 3, height = 2 }, -- , base = 16*96/45 },
+			{ name = "VariableError", column = 0, row = 2, width = 3, height = 2 }, -- , base = 16*96/45 },
+			{ name = "VariableErrorSelected", column = 3, row = 2, width = 3, height = 2 }, -- , base = 16*96/45 },
+		}
+	},	
+
+	{
 		source = "Output.svg",
 		name = "UI_Graph_Output",
 		path = "../../runtime/themes/%s/Images/UI/Graph",
