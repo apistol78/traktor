@@ -97,12 +97,8 @@ BidirectionalObjectTransport::Result BidirectionalObjectTransport::recv(const Ty
 				continue;
 
 			// Receive object from socket.
-			Ref< ISerializable > object;
-			{
-				T_ANONYMOUS_VAR(Release< Semaphore >)(m_lock);
-				net::SocketStream ss(m_socket, true, false, timeout);
-				object = BinarySerializer(&ss).readObject();
-			}
+			net::SocketStream ss(m_socket, true, false, timeout);
+			Ref< ISerializable > object = BinarySerializer(&ss).readObject();
 			if (!object)
 			{
 				m_socket = nullptr;
@@ -128,9 +124,9 @@ BidirectionalObjectTransport::Result BidirectionalObjectTransport::recv(const Ty
 	{
 		// If no connection return either timeout or disconnected, if any pending
 		// object is queued then we timeout.
-		for (SmallMap< const TypeInfo*, RefArray< ISerializable > >::const_iterator i = m_inQueue.begin(); i != m_inQueue.end(); ++i)
+		for (const auto& it : m_inQueue)
 		{
-			if (!i->second.empty())
+			if (!it.second.empty())
 				return RtTimeout;
 		}
 		return RtDisconnected;
