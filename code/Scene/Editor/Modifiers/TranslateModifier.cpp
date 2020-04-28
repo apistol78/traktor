@@ -75,14 +75,17 @@ bool TranslateModifier::cursorMoved(
 	if (m_entityAdapters.empty())
 		return false;
 
-	float axisLength = m_context->getGuideSize();
+	Vector4 eye = transformChain.getView().inverse().translation();
+	Scalar distance = (m_center - eye).xyz0().length();
+
+	float axisLength = (distance / 4.0f) * m_context->getGuideSize();
 	float arrowLength = axisLength / 8.0f;
 	float squareLength = axisLength / 3.0f;
 
 	TransformChain tc = transformChain;
 	tc.pushWorld(translate(m_center));
 
-	Vector4 viewDirection = m_center - tc.getView().inverse().translation();
+	Vector4 viewDirection = m_center - eye;
 	float sx = viewDirection.x() < 0.0f ? 1.0f : -1.0f;
 	float sy = viewDirection.y() < 0.0f ? 1.0f : -1.0f;
 	float sz = viewDirection.z() < 0.0f ? 1.0f : -1.0f;
@@ -278,7 +281,10 @@ void TranslateModifier::draw(render::PrimitiveRenderer* primitiveRenderer) const
 	if (m_entityAdapters.empty())
 		return;
 
-	float axisLength = m_context->getGuideSize();
+	Vector4 eye = primitiveRenderer->getView().inverse().translation();
+	Scalar distance = (m_center - eye).xyz0().length();
+
+	float axisLength = (distance / 4.0f) * m_context->getGuideSize();
 	float arrowLength = axisLength / 8.0f;
 	float squareLength = axisLength / 3.0f;
 

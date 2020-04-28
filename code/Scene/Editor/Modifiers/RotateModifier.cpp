@@ -52,9 +52,9 @@ void RotateModifier::selectionChanged()
 	m_baseTransforms.clear();
 	m_center = Vector4::zero();
 
-	for (RefArray< EntityAdapter >::const_iterator i = m_entityAdapters.begin(); i != m_entityAdapters.end(); ++i)
+	for (auto entityAdapter : m_entityAdapters)
 	{
-		Transform T = (*i)->getTransform();
+		Transform T = entityAdapter->getTransform();
 		m_baseTransforms.push_back(T);
 		m_center += T.translation();
 	}
@@ -94,7 +94,9 @@ bool RotateModifier::cursorMoved(
 	Matrix44 mp = rotateX(m_basePitch + m_deltaPitch);
 	Matrix44 mb = rotateZ(m_baseBank + m_deltaBank);
 
-	Scalar radius = Scalar(m_context->getGuideSize());
+	Vector4 eye = transformChain.getView().inverse().translation();
+	Scalar distance = (m_center - eye).xyz0().length();
+	Scalar radius = Scalar((distance / 6.0_simd) * m_context->getGuideSize());
 
 	m_axisEnable = 0;
 
@@ -285,7 +287,9 @@ void RotateModifier::draw(render::PrimitiveRenderer* primitiveRenderer) const
 	if (m_entityAdapters.empty())
 		return;
 
-	Scalar radius = Scalar(m_context->getGuideSize());
+	Vector4 eye = primitiveRenderer->getView().inverse().translation();
+	Scalar distance = (m_center - eye).xyz0().length();
+	Scalar radius = Scalar((distance / 6.0_simd) * m_context->getGuideSize());
 
 	Matrix44 mh = rotateY(m_baseHead + m_deltaHead);
 	Matrix44 mp = rotateX(m_basePitch + m_deltaPitch);
