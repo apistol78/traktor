@@ -694,6 +694,30 @@
 			<second>Type</second>
 		</item>
 		<item>
+			<first>SHADERGRAPH_EVALUATE_CONNECTED</first>
+			<second>Evaluate connected</second>
+		</item>
+		<item>
+			<first>SHADERGRAPH_EVALUATE_TYPE</first>
+			<second>Evaluate type</second>
+		</item>
+		<item>
+			<first>SHADERGRAPH_RESOLVE_VARIABLES</first>
+			<second>Resolve variables</second>
+		</item>
+		<item>
+			<first>SHADERGRAPH_RESOLVE_EXTERNALS</first>
+			<second>Resolve externals</second>
+		</item>
+		<item>
+			<first>SHADERGRAPH_PLATFORM_PERMUTATION</first>
+			<second>Platform permutation</second>
+		</item>	
+		<item>
+			<first>SHADERGRAPH_RENDERER_TECHNIQUE</first>
+			<second>Renderer technique</second>
+		</item>	
+		<item>
 			<first>TEXTURE_BATCH_ADD</first>
 			<second>Add textures...</second>
 		</item>
