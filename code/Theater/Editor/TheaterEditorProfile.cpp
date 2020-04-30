@@ -86,14 +86,7 @@ Ref< world::EntityData > TheaterEditorProfile::createEntityData(
 	db::Instance* instance
 ) const
 {
-	return 0;
-}
-
-void TheaterEditorProfile::getDebugTargets(
-	scene::SceneEditorContext* context,
-	std::vector< render::DebugTarget >& outDebugTargets
-) const
-{
+	return nullptr;
 }
 
 	}

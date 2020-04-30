@@ -253,6 +253,10 @@ void OrthogonalRenderControl::setQuality(world::Quality imageProcessQuality, wor
 	updateWorldRenderer();
 }
 
+void OrthogonalRenderControl::setDebugOverlay(world::IDebugOverlay* overlay)
+{
+}
+
 bool OrthogonalRenderControl::handleCommand(const ui::Command& command)
 {
 	bool result = false;
@@ -353,16 +357,6 @@ void OrthogonalRenderControl::moveCamera(MoveCameraMode mode, const Vector4& mou
 void OrthogonalRenderControl::showSelectionRectangle(const ui::Rect& rect)
 {
 	m_selectionRectangle = rect;
-}
-
-void OrthogonalRenderControl::getDebugTargets(std::vector< render::DebugTarget >& outDebugTargets)
-{
-	// if (m_worldRenderer)
-	// 	m_worldRenderer->getDebugTargets(outDebugTargets);
-}
-
-void OrthogonalRenderControl::setDebugTarget(const render::DebugTarget* debugTarget, float alpha)
-{
 }
 
 void OrthogonalRenderControl::updateSettings()

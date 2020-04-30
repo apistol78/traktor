@@ -67,6 +67,8 @@ public:
 
 	virtual void setQuality(world::Quality imageProcessQuality, world::Quality shadowQuality, world::Quality reflectionsQuality, world::Quality motionBlurQuality, world::Quality ambientOcclusionQuality, world::Quality antiAliasQuality) override final;
 
+	virtual void setDebugOverlay(world::IDebugOverlay* overlay) override final;
+
 	virtual bool handleCommand(const ui::Command& command) override final;
 
 	virtual void update() override final;
@@ -81,10 +83,6 @@ public:
 
 	virtual void showSelectionRectangle(const ui::Rect& rect) override final;
 
-	virtual void getDebugTargets(std::vector< render::DebugTarget >& outDebugTargets) override final;
-
-	virtual void setDebugTarget(const render::DebugTarget* debugTarget, float alpha) override final;
-
 private:
 	Ref< SceneEditorContext > m_context;
 	Ref< ui::Container > m_containerAspect;
@@ -95,8 +93,6 @@ private:
 	Ref< render::PrimitiveRenderer > m_primitiveRenderer;
 	Ref< render::ScreenRenderer > m_screenRenderer;
 	resource::Proxy< render::Shader > m_debugShader;
-	render::DebugTarget m_debugTarget;
-	float m_debugAlpha;
 	const TypeInfo* m_worldRendererType;
 	Ref< world::IWorldRenderer > m_worldRenderer;
 	world::WorldRenderView m_worldRenderView;
@@ -108,6 +104,7 @@ private:
 	world::Quality m_ambientOcclusionQuality;
 	world::Quality m_antiAliasQuality;
 	RenderControlModel m_model;
+	Ref< world::IDebugOverlay > m_overlay;
 	bool m_gridEnable;
 	bool m_guideEnable;
 	Color4ub m_colorClear;

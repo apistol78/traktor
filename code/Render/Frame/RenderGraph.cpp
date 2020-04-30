@@ -29,7 +29,8 @@ void RenderGraph::destroy()
 	m_pool = nullptr;
 }
 
-handle_t RenderGraph::addTargetSet(
+handle_t RenderGraph::addTransientTargetSet(
+	const wchar_t* const name,
 	const RenderGraphTargetSetDesc& targetSetDesc,
 	IRenderTargetSet* sharedDepthStencilTargetSet,
 	handle_t sizeReferenceTargetSetId
@@ -38,6 +39,7 @@ handle_t RenderGraph::addTargetSet(
 	handle_t targetSetId = m_nextTargetSetId++;
 
 	auto& target = m_targets[targetSetId];
+	target.name = name;
 	target.targetSetDesc = targetSetDesc;
 	target.sharedDepthStencilTargetSet = sharedDepthStencilTargetSet;
 	target.sizeReferenceTargetSetId = sizeReferenceTargetSetId;
@@ -51,7 +53,31 @@ handle_t RenderGraph::addTargetSet(
 	return targetSetId;
 }
 
-handle_t RenderGraph::addTargetSet(IRenderTargetSet* targetSet)
+handle_t RenderGraph::addPersistentTargetSet(
+	const wchar_t* const name,
+	const RenderGraphTargetSetDesc& targetSetDesc,
+	IRenderTargetSet* sharedDepthStencilTargetSet,
+	handle_t sizeReferenceTargetSetId
+)
+{
+	handle_t targetSetId = m_nextTargetSetId++;
+
+	auto& target = m_targets[targetSetId];
+	target.name = name;
+	target.targetSetDesc = targetSetDesc;
+	target.sharedDepthStencilTargetSet = sharedDepthStencilTargetSet;
+	target.sizeReferenceTargetSetId = sizeReferenceTargetSetId;
+	target.referenceCount = 0;
+	target.storeDepth = false;
+	target.transient = false;
+
+	if (sharedDepthStencilTargetSet != nullptr || targetSetDesc.createDepthStencil || targetSetDesc.usingPrimaryDepthStencil)
+		target.storeDepth = true;
+
+	return targetSetId;
+}
+
+handle_t RenderGraph::addExternalTargetSet(const wchar_t* const name, IRenderTargetSet* targetSet)
 {
 	T_FATAL_ASSERT(targetSet != nullptr);
 	T_ASSERT(targetSet->getWidth() > 0);
@@ -60,6 +86,7 @@ handle_t RenderGraph::addTargetSet(IRenderTargetSet* targetSet)
 	handle_t targetSetId = m_nextTargetSetId++;
 
 	auto& target = m_targets[targetSetId];
+	target.name = name;
 	target.rts = targetSet;
 	target.sizeReferenceTargetSetId = 0;
 	target.referenceCount = 0;
@@ -67,6 +94,16 @@ handle_t RenderGraph::addTargetSet(IRenderTargetSet* targetSet)
 	target.transient = false;
 
 	return targetSetId;
+}
+
+handle_t RenderGraph::findTargetByName(const wchar_t* const name) const
+{
+	for (const auto& tm : m_targets)
+	{
+		if (wcscmp(tm.second.name, name) == 0)
+			return tm.first;
+	}
+	return 0;
 }
 
 IRenderTargetSet* RenderGraph::getTargetSet(handle_t targetSetId) const
@@ -85,8 +122,9 @@ void RenderGraph::addPass(const RenderPass* pass)
 
 bool RenderGraph::validate()
 {
-	// Collect order of passes, depth-first.
 	StaticSet< uint32_t, 512 > added;
+
+	// Collect order of passes, depth-first.
 	m_order.resize(0);	
 	for (int32_t i = 0; i < (int32_t)m_passes.size(); ++i)
 	{
@@ -95,7 +133,7 @@ bool RenderGraph::validate()
 			const auto& output = m_passes[i]->getOutput();
 			if (output.targetSetId == 0)
 			{
-				// Render to backbuffer passes is included as roots.
+				// "Render to primary" passes is included as roots.
 				traverse(i, [&](int32_t index) {
 					if (added.insert(index))
 						m_order.push_back(index);
@@ -266,6 +304,9 @@ bool RenderGraph::build(RenderContext* renderContext, int32_t width, int32_t hei
 
 	T_FATAL_ASSERT(!renderContext->havePendingDraws());
 
+	// Cleanup pool data structure.
+	m_pool->cleanup();
+
 	// Remove all data; keep memory allocated for arrays
 	// since it's very likely this will be identically
 	// re-populated next frame.
@@ -275,17 +316,9 @@ bool RenderGraph::build(RenderContext* renderContext, int32_t width, int32_t hei
 	return true;
 }
 
-void RenderGraph::getDebugTargets(std::vector< render::DebugTarget >& outTargets) const
+const SmallMap< handle_t, RenderGraph::Target >& RenderGraph::getTargets() const
 {
-	for (auto it : m_targets)
-	{
-		if (it.second.rts)
-			outTargets.push_back(render::DebugTarget(
-				getParameterName(it.first),
-				render::DtvDefault,
-				it.second.rts->getColorTexture(0)
-			));
-	}
+	return m_targets;
 }
 
 void RenderGraph::traverse(int32_t index, const std::function< void(int32_t) >& fn) const

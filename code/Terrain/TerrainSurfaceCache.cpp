@@ -168,7 +168,7 @@ void TerrainSurfaceCache::setupBaseColor(
 {
 	if (!m_haveBase)
 	{
-		auto baseTargetSetId = renderGraph.addTargetSet(m_base);
+		auto baseTargetSetId = renderGraph.addExternalTargetSet(L"Terrain base", m_base);
 
 		Ref< render::RenderPass > rp = new render::RenderPass(L"Terrain surface base");
 	
@@ -296,7 +296,7 @@ void TerrainSurfaceCache::setupPatch(
 		rgtsd.usingPrimaryDepthStencil = false;
 		rgtsd.targets[0].colorFormat = render::TfR8G8B8A8;	// Albedo
 		rgtsd.targets[1].colorFormat = render::TfR8G8B8A8;	// Normals
-		auto updateTargetSetId = renderGraph.addTargetSet(rgtsd);
+		auto updateTargetSetId = renderGraph.addTransientTargetSet(L"Terrain surface intermediate", rgtsd);
 
 		// Render patch surface.
 		render::Clear clear;

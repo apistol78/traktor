@@ -230,6 +230,10 @@ void FinalRenderControl::setQuality(world::Quality imageProcessQuality, world::Q
 	updateWorldRenderer();
 }
 
+void FinalRenderControl::setDebugOverlay(world::IDebugOverlay* overlay)
+{
+}
+
 bool FinalRenderControl::handleCommand(const ui::Command& command)
 {
 	if (command == L"Editor.SettingsChanged")
@@ -283,14 +287,6 @@ void FinalRenderControl::moveCamera(MoveCameraMode mode, const Vector4& mouseDel
 }
 
 void FinalRenderControl::showSelectionRectangle(const ui::Rect& rect)
-{
-}
-
-void FinalRenderControl::getDebugTargets(std::vector< render::DebugTarget >& outDebugTargets)
-{
-}
-
-void FinalRenderControl::setDebugTarget(const render::DebugTarget* debugTarget, float alpha)
 {
 }
 

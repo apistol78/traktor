@@ -35,7 +35,8 @@ void ImageGraph::addPasses(RenderGraph& renderGraph, RenderPass* parentPass, con
 
 	for (int32_t i = 0; i < (int32_t)m_targetSets.size(); ++i)
 	{
-		targetSetIds[i] = renderGraph.addTargetSet(
+		targetSetIds[i] = renderGraph.addTransientTargetSet(
+			L"Image graph",
 			m_targetSets[i]->getTargetSetDesc()
 		);
 

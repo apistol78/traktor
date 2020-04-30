@@ -87,14 +87,7 @@ Ref< world::EntityData > PhysicsEditorProfile::createEntityData(
 	db::Instance* instance
 ) const
 {
-	return 0;
-}
-
-void PhysicsEditorProfile::getDebugTargets(
-	scene::SceneEditorContext* context,
-	std::vector< render::DebugTarget >& outDebugTargets
-) const
-{
+	return nullptr;
 }
 
 	}

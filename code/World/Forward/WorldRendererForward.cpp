@@ -352,7 +352,7 @@ render::handle_t WorldRendererForward::setupGBufferPass(
 	rgtd.targets[1].colorFormat = render::TfR16G16F;	// Normals (RG)
 	rgtd.referenceWidthDenom = 1;
 	rgtd.referenceHeightDenom = 1;
-	auto gbufferTargetSetId = renderGraph.addTargetSet(rgtd, m_sharedDepthStencil, outputTargetSetId);
+	auto gbufferTargetSetId = renderGraph.addTransientTargetSet(L"GBuffer", rgtd, m_sharedDepthStencil, outputTargetSetId);
 
 	// Add GBuffer render pass.
 	Ref< render::RenderPass > rp = new render::RenderPass(L"GBuffer");
@@ -417,7 +417,7 @@ render::handle_t WorldRendererForward::setupAmbientOcclusionPass(
 	rgtd.targets[0].colorFormat = render::TfR8;			// Ambient occlusion (R)
 	rgtd.referenceWidthDenom = 1;
 	rgtd.referenceHeightDenom = 1;
-	auto ambientOcclusionTargetSetId = renderGraph.addTargetSet(rgtd, m_sharedDepthStencil, outputTargetSetId);
+	auto ambientOcclusionTargetSetId = renderGraph.addTransientTargetSet(L"Ambient occlusion", rgtd, m_sharedDepthStencil, outputTargetSetId);
 
 	// Add ambient occlusion render pass.
 	Ref< render::RenderPass > rp = new render::RenderPass(L"Ambient occlusion");
@@ -526,7 +526,7 @@ void WorldRendererForward::setupLightPass(
 		rgtd.usingPrimaryDepthStencil = false;
 		rgtd.usingDepthStencilAsTexture = true;
 		rgtd.ignoreStencil = true;
-		outShadowMapCascadeTargetSetId = renderGraph.addTargetSet(rgtd);
+		outShadowMapCascadeTargetSetId = renderGraph.addTransientTargetSet(L"Shadow map cascade", rgtd);
 
 		// Add cascading shadow map render pass.
 		Ref< render::RenderPass > rp = new render::RenderPass(L"Shadow cascade");
@@ -657,7 +657,7 @@ void WorldRendererForward::setupLightPass(
 		rgtd.usingPrimaryDepthStencil = false;
 		rgtd.usingDepthStencilAsTexture = true;
 		rgtd.ignoreStencil = true;
-		outShadowMapAtlasTargetSetId = renderGraph.addTargetSet(rgtd);
+		outShadowMapAtlasTargetSetId = renderGraph.addTransientTargetSet(L"Shadow map atlas", rgtd);
 
 		// Add atlas shadow map render pass.
 		int32_t atlasIndex = 0;
@@ -806,7 +806,7 @@ render::handle_t WorldRendererForward::setupVisualPass(
 	rgtd.targets[0].colorFormat = render::TfR11G11B10F;
 	rgtd.referenceWidthDenom = 1;
 	rgtd.referenceHeightDenom = 1;
-	auto visualTargetSetId = renderGraph.addTargetSet(rgtd, m_sharedDepthStencil, outputTargetSetId);
+	auto visualTargetSetId = renderGraph.addTransientTargetSet(L"Visual", rgtd, m_sharedDepthStencil, outputTargetSetId);
 
 	// Create render pass.
 	Ref< render::RenderPass > rp = new render::RenderPass(L"Visual");
@@ -936,7 +936,7 @@ void WorldRendererForward::setupProcessPass(
 			rgtd.targets[0].colorFormat = render::TfR11G11B10F;
 			rgtd.referenceWidthDenom = 1;
 			rgtd.referenceHeightDenom = 1;
-			intermediateTargetSetId = renderGraph.addTargetSet(rgtd, m_sharedDepthStencil, outputTargetSetId);
+			intermediateTargetSetId = renderGraph.addTransientTargetSet(L"Process intermediate", rgtd, m_sharedDepthStencil, outputTargetSetId);
 
 			rp->setOutput(intermediateTargetSetId);
 		}

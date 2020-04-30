@@ -72,11 +72,6 @@ public:
 		scene::SceneEditorContext* context,
 		db::Instance* instance
 	) const override final;
-
-	virtual void getDebugTargets(
-		scene::SceneEditorContext* context,
-		std::vector< render::DebugTarget >& outDebugTargets
-	) const override final;
 };
 
 	}

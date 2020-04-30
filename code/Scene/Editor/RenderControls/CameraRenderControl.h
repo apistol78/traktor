@@ -63,6 +63,8 @@ public:
 
 	virtual void setQuality(world::Quality imageProcessQuality, world::Quality shadowQuality, world::Quality reflectionsQuality, world::Quality motionBlurQuality, world::Quality ambientOcclusionQuality, world::Quality antiAliasQuality) override final;
 
+	virtual void setDebugOverlay(world::IDebugOverlay* overlay) override final;
+
 	virtual bool handleCommand(const ui::Command& command) override final;
 
 	virtual void update() override final;
@@ -76,10 +78,6 @@ public:
 	virtual void moveCamera(MoveCameraMode mode, const Vector4& mouseDelta, const Vector4& viewDelta) override final;
 
 	virtual void showSelectionRectangle(const ui::Rect& rect) override final;
-
-	virtual void getDebugTargets(std::vector< render::DebugTarget >& outDebugTargets) override final;
-
-	virtual void setDebugTarget(const render::DebugTarget* debugTarget, float alpha) override final;
 
 private:
 	Ref< SceneEditorContext > m_context;
