@@ -15,7 +15,7 @@
 				"command": "${workspaceRoot}/scripts/build-vscode.bat DebugShared",
 				"group": "build",
 				"problemMatcher": [
-					"$mscompile"
+					"$msCompile"
 				]			
 			}
 		},
@@ -33,7 +33,7 @@
 				"command": "${workspaceRoot}/scripts/build-vscode.bat ReleaseShared",
 				"group": "build",
 				"problemMatcher": [
-					"$mscompile"
+					"$msCompile"
 				]			
 			}			
 		}

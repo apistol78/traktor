@@ -6,23 +6,21 @@
 			"name": "Editor - DebugShared",
 			"request": "launch",
 
-			"linux": {
-				"type": "cppdbg",
-				"program": "${workspaceRoot}/bin/latest/linux/debugshared/Traktor.Editor.App",
-				"args": [],
-				"stopAtEntry": false,
-				"cwd": "${workspaceRoot}",
-				"environment": [{"name":"TRAKTOR_HOME", "value":"${workspaceRoot}"}],
-				"externalConsole": false,
-				"MIMode": "gdb",
-				"setupCommands": [
-					{
-						"description": "Enable pretty-printing for gdb",
-						"text": "-enable-pretty-printing",
-						"ignoreFailures": true
-					}
-				]
-			},
+			"type": "cppdbg",
+			"program": "${workspaceRoot}/bin/latest/linux/debugshared/Traktor.Editor.App",
+			"args": [],
+			"stopAtEntry": false,
+			"cwd": "${workspaceRoot}",
+			"environment": [{"name":"TRAKTOR_HOME", "value":"${workspaceRoot}"}],
+			"externalConsole": false,
+			"MIMode": "gdb",
+			"setupCommands": [
+				{
+					"description": "Enable pretty-printing for gdb",
+					"text": "-enable-pretty-printing",
+					"ignoreFailures": true
+				}
+			],
 
 			"windows": {
 				"type": "cppvsdbg",
@@ -39,23 +37,21 @@
 			"name": "Editor - ReleaseShared",
 			"request": "launch",
 
-			"linux": {
-				"type": "cppdbg",
-				"program": "${workspaceRoot}/bin/latest/linux/releaseshared/Traktor.Editor.App",
-				"args": [],
-				"stopAtEntry": false,
-				"cwd": "${workspaceRoot}",
-				"environment": [{"name":"TRAKTOR_HOME", "value":"${workspaceRoot}"}],
-				"externalConsole": false,
-				"MIMode": "gdb",
-				"setupCommands": [
-					{
-						"description": "Enable pretty-printing for gdb",
-						"text": "-enable-pretty-printing",
-						"ignoreFailures": true
-					}
-				]
-			},
+			"type": "cppdbg",
+			"program": "${workspaceRoot}/bin/latest/linux/releaseshared/Traktor.Editor.App",
+			"args": [],
+			"stopAtEntry": false,
+			"cwd": "${workspaceRoot}",
+			"environment": [{"name":"TRAKTOR_HOME", "value":"${workspaceRoot}"}],
+			"externalConsole": false,
+			"MIMode": "gdb",
+			"setupCommands": [
+				{
+					"description": "Enable pretty-printing for gdb",
+					"text": "-enable-pretty-printing",
+					"ignoreFailures": true
+				}
+			],
 
 			"windows": {
 				"type": "cppvsdbg",
