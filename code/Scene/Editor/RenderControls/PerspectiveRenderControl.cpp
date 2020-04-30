@@ -47,6 +47,7 @@
 #include "World/WorldEntityRenderers.h"
 #include "World/WorldRenderSettings.h"
 #include "World/WorldRenderView.h"
+#include "World/Editor/IDebugOverlay.h"
 #include "World/Entity/GroupEntity.h"
 
 namespace traktor
@@ -55,8 +56,6 @@ namespace traktor
 	{
 		namespace
 		{
-
-const resource::Id< render::Shader > c_debugShader(Guid(L"{949B3C96-0196-F24E-B36E-98DD504BCE9D}"));
 
 const float c_defaultFieldOfView = 80.0f;
 const float c_defaultMouseWheelRate = 10.0f;
@@ -67,21 +66,6 @@ const float c_cameraTranslateDeltaScale = 0.025f;
 const float c_cameraRotateDeltaScale = 0.01f;
 const float c_deltaAdjust = 0.05f;
 const float c_deltaAdjustSmall = 0.01f;
-
-const wchar_t* c_visualizeTechniques[] =
-{
-	L"Default",
-	L"UnitDepth",
-	L"ViewDepth",
-	L"Normals",
-	L"Velocity",
-	L"Roughness",
-	L"Metalness",
-	L"Specular",
-	L"LightMask",
-	L"ShadowMap",
-	L"ShadowMask"
-};
 
 Vector4 projectUnit(const ui::Rect& rc, const ui::Point& pnt)
 {
@@ -98,8 +82,7 @@ Vector4 projectUnit(const ui::Rect& rc, const ui::Point& pnt)
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.PerspectiveRenderControl", PerspectiveRenderControl, ISceneRenderControl)
 
 PerspectiveRenderControl::PerspectiveRenderControl()
-:	m_debugAlpha(1.0f)
-,	m_worldRendererType(nullptr)
+:	m_worldRendererType(nullptr)
 ,	m_imageProcessQuality(world::QuDisabled)
 ,	m_shadowQuality(world::QuDisabled)
 ,	m_reflectionsQuality(world::QuDisabled)
@@ -163,9 +146,6 @@ bool PerspectiveRenderControl::create(ui::Widget* parent, SceneEditorContext* co
 	if (!m_screenRenderer->create(
 		m_context->getRenderSystem()
 	))
-		return false;
-
-	if (!m_context->getResourceManager()->bind(c_debugShader, m_debugShader))
 		return false;
 
 	m_renderWidget->addEventHandler< ui::MouseButtonDownEvent >(this, &PerspectiveRenderControl::eventButtonDown);
@@ -279,6 +259,11 @@ void PerspectiveRenderControl::setQuality(world::Quality imageProcessQuality, wo
 	m_ambientOcclusionQuality = ambientOcclusionQuality;
 	m_antiAliasQuality = antiAliasQuality;
 	updateWorldRenderer();
+}
+
+void PerspectiveRenderControl::setDebugOverlay(world::IDebugOverlay* overlay)
+{
+	m_overlay = overlay;
 }
 
 bool PerspectiveRenderControl::handleCommand(const ui::Command& command)
@@ -401,22 +386,6 @@ void PerspectiveRenderControl::moveCamera(MoveCameraMode mode, const Vector4& mo
 void PerspectiveRenderControl::showSelectionRectangle(const ui::Rect& rect)
 {
 	m_selectionRectangle = rect;
-}
-
-void PerspectiveRenderControl::getDebugTargets(std::vector< render::DebugTarget >& outDebugTargets)
-{
-	if (m_renderGraph)
-		m_renderGraph->getDebugTargets(outDebugTargets);
-}
-
-void PerspectiveRenderControl::setDebugTarget(const render::DebugTarget* debugTarget, float alpha)
-{
-	if (debugTarget)
-		m_debugTarget = *debugTarget;
-	else
-		m_debugTarget.texture = nullptr;
-
-	m_debugAlpha = alpha;
 }
 
 void PerspectiveRenderControl::updateSettings()
@@ -543,165 +512,179 @@ void PerspectiveRenderControl::eventPaint(ui::PaintEvent* event)
 	m_worldRenderView.setView(m_worldRenderView.getView(), view);
 	m_worldRenderer->setup(m_worldRenderView, &rootEntity, *m_renderGraph, 0);
 
+	// Draw debug overlay, content of any target from render graph as an overlay.
+	if (m_overlay)
+	{
+		m_overlay->setup(
+			*m_renderGraph,
+			m_screenRenderer,
+			m_worldRenderer,
+			m_worldRenderView,
+			1.0f
+		);
+	}
+
 	// Draw debug wires.
-	Ref< render::RenderPass > rp = new render::RenderPass(L"Debug");
-	rp->setOutput(0);
-	rp->addBuild([&](const render::RenderGraph&, render::RenderContext* renderContext) {
+	{
+		Ref< render::RenderPass > rp = new render::RenderPass(L"Debug wire");
+		rp->setOutput(0);
+		rp->addBuild([&](const render::RenderGraph&, render::RenderContext* renderContext) {
 
-		// Render wire guides.
-		m_primitiveRenderer->begin(0, projection);
-		m_primitiveRenderer->setClipDistance(m_worldRenderView.getViewFrustum().getNearZ());
-		m_primitiveRenderer->pushView(view);
+			// Render wire guides.
+			m_primitiveRenderer->begin(0, projection);
+			m_primitiveRenderer->setClipDistance(m_worldRenderView.getViewFrustum().getNearZ());
+			m_primitiveRenderer->pushView(view);
 
-		// Render XZ grid.
-		if (m_gridEnable)
-		{
-			Vector4 viewPosition = view.inverse().translation();
-			float vx = floorf(viewPosition.x());
-			float vz = floorf(viewPosition.z());
-
-			for (int32_t x = -20; x <= 20; ++x)
+			// Render XZ grid.
+			if (m_gridEnable)
 			{
-				float fx = float(x);
-				m_primitiveRenderer->drawLine(
-					Vector4(fx + vx, 0.0f, -20.0f + vz, 1.0f),
-					Vector4(fx + vx, 0.0f, 20.0f + vz, 1.0f),
-					(int(fx + vx) == 0) ? 2.0f : 0.0f,
-					m_colorGrid
+				Vector4 viewPosition = view.inverse().translation();
+				float vx = floorf(viewPosition.x());
+				float vz = floorf(viewPosition.z());
+
+				for (int32_t x = -20; x <= 20; ++x)
+				{
+					float fx = float(x);
+					m_primitiveRenderer->drawLine(
+						Vector4(fx + vx, 0.0f, -20.0f + vz, 1.0f),
+						Vector4(fx + vx, 0.0f, 20.0f + vz, 1.0f),
+						(int(fx + vx) == 0) ? 2.0f : 0.0f,
+						m_colorGrid
+					);
+					m_primitiveRenderer->drawLine(
+						Vector4(-20.0f + vx, 0.0f, fx + vz, 1.0f),
+						Vector4(20.0f + vx, 0.0f, fx + vz, 1.0f),
+						(int(fx + vz) == 0) ? 2.0f : 0.0f,
+						m_colorGrid
+					);
+				}
+
+				// Draw frame.
+				const float c_arrowLength = 0.4f;
+				const float c_frameSize = 0.2f;
+
+				float w = 2.0f * float(sz.cx) / sz.cy;
+				float h = 2.0f;
+
+				m_primitiveRenderer->setProjection(orthoLh(-w / 2.0f, -h / 2.0f, w / 2.0f, h / 2.0f, -1.0f, 1.0f));
+				m_primitiveRenderer->pushWorld(Matrix44::identity());
+				m_primitiveRenderer->pushView(
+					translate(w / 2.0f - c_frameSize, h / 2.0f - c_frameSize, 0.0f) *
+					scale(c_frameSize, c_frameSize, c_frameSize)
 				);
-				m_primitiveRenderer->drawLine(
-					Vector4(-20.0f + vx, 0.0f, fx + vz, 1.0f),
-					Vector4(20.0f + vx, 0.0f, fx + vz, 1.0f),
-					(int(fx + vz) == 0) ? 2.0f : 0.0f,
-					m_colorGrid
+
+				m_primitiveRenderer->pushDepthState(false, true, false);
+				m_primitiveRenderer->drawSolidQuad(
+					Vector4(-1.0f, 1.0f, 1.0f, 1.0f),
+					Vector4(1.0f, 1.0f, 1.0f, 1.0f),
+					Vector4(1.0f, -1.0f, 1.0f, 1.0f),
+					Vector4(-1.0f, -1.0f, 1.0f, 1.0f),
+					Color4ub(0, 0, 0, 32)
 				);
+				m_primitiveRenderer->popDepthState();
+
+				m_primitiveRenderer->pushDepthState(true, true, false);
+
+				m_primitiveRenderer->drawLine(
+					Vector4::origo(),
+					Vector4::origo() + view.axisX() * Scalar(1.0f - c_arrowLength),
+					Color4ub(255, 0, 0, 255)
+				);
+				m_primitiveRenderer->drawArrowHead(
+					Vector4::origo() + view.axisX() * Scalar(1.0f - c_arrowLength),
+					Vector4::origo() + view.axisX(),
+					0.8f,
+					Color4ub(255, 0, 0, 255)
+				);
+
+				m_primitiveRenderer->drawLine(
+					Vector4::origo(),
+					Vector4::origo() + view.axisY() * Scalar(1.0f - c_arrowLength),
+					Color4ub(0, 255, 0, 255)
+				);
+				m_primitiveRenderer->drawArrowHead(
+					Vector4::origo() + view.axisY() * Scalar(1.0f - c_arrowLength),
+					Vector4::origo() + view.axisY(),
+					0.8f,
+					Color4ub(0, 255, 0, 255)
+				);
+
+				m_primitiveRenderer->drawLine(
+					Vector4::origo(),
+					Vector4::origo() + view.axisZ() * Scalar(1.0f - c_arrowLength),
+					Color4ub(0, 0, 255, 255)
+				);
+				m_primitiveRenderer->drawArrowHead(
+					Vector4::origo() + view.axisZ() * Scalar(1.0f - c_arrowLength),
+					Vector4::origo() + view.axisZ(),
+					0.8f,
+					Color4ub(0, 0, 255, 255)
+				);
+
+				m_primitiveRenderer->popWorld();
+				m_primitiveRenderer->popView();
+				m_primitiveRenderer->popDepthState();
+				m_primitiveRenderer->setProjection(projection);
 			}
 
-			// Draw frame.
-			const float c_arrowLength = 0.4f;
-			const float c_frameSize = 0.2f;
+			// Draw guides.
+			if (m_guideEnable)
+			{
+				RefArray< EntityAdapter > entityAdapters;
+				m_context->getEntities(entityAdapters, SceneEditorContext::GfDefault);
+				for (auto entityAdapter : entityAdapters)
+					entityAdapter->drawGuides(m_primitiveRenderer);
 
-			float w = 2.0f * float(sz.cx) / sz.cy;
-			float h = 2.0f;
+				// Draw controller guides.
+				ISceneControllerEditor* controllerEditor = m_context->getControllerEditor();
+				if (controllerEditor)
+					controllerEditor->draw(m_primitiveRenderer);
+			}
 
-			m_primitiveRenderer->setProjection(orthoLh(-w / 2.0f, -h / 2.0f, w / 2.0f, h / 2.0f, -1.0f, 1.0f));
-			m_primitiveRenderer->pushWorld(Matrix44::identity());
-			m_primitiveRenderer->pushView(
-				translate(w / 2.0f - c_frameSize, h / 2.0f - c_frameSize, 0.0f) *
-				scale(c_frameSize, c_frameSize, c_frameSize)
-			);
+			// Draw modifier.
+			IModifier* modifier = m_context->getModifier();
+			if (modifier)
+				modifier->draw(m_primitiveRenderer);
 
-			m_primitiveRenderer->pushDepthState(false, true, false);
-			m_primitiveRenderer->drawSolidQuad(
-				Vector4(-1.0f, 1.0f, 1.0f, 1.0f),
-				Vector4(1.0f, 1.0f, 1.0f, 1.0f),
-				Vector4(1.0f, -1.0f, 1.0f, 1.0f),
-				Vector4(-1.0f, -1.0f, 1.0f, 1.0f),
-				Color4ub(0, 0, 0, 32)
-			);
-			m_primitiveRenderer->popDepthState();
+			// Draw selection rectangle if non-empty.
+			if (m_selectionRectangle.area() > 0)
+			{
+				ui::Rect innerRect = m_renderWidget->getInnerRect();
 
-			m_primitiveRenderer->pushDepthState(true, true, false);
+				m_primitiveRenderer->setProjection(orthoLh(-1.0f, -1.0f, 1.0f, 1.0f, 0.0f, 1.0f));
 
-			m_primitiveRenderer->drawLine(
-				Vector4::origo(),
-				Vector4::origo() + view.axisX() * Scalar(1.0f - c_arrowLength),
-				Color4ub(255, 0, 0, 255)
-			);
-			m_primitiveRenderer->drawArrowHead(
-				Vector4::origo() + view.axisX() * Scalar(1.0f - c_arrowLength),
-				Vector4::origo() + view.axisX(),
-				0.8f,
-				Color4ub(255, 0, 0, 255)
-			);
+				m_primitiveRenderer->pushView(Matrix44::identity());
+				m_primitiveRenderer->pushDepthState(false, false, false);
 
-			m_primitiveRenderer->drawLine(
-				Vector4::origo(),
-				Vector4::origo() + view.axisY() * Scalar(1.0f - c_arrowLength),
-				Color4ub(0, 255, 0, 255)
-			);
-			m_primitiveRenderer->drawArrowHead(
-				Vector4::origo() + view.axisY() * Scalar(1.0f - c_arrowLength),
-				Vector4::origo() + view.axisY(),
-				0.8f,
-				Color4ub(0, 255, 0, 255)
-			);
+				m_primitiveRenderer->drawSolidQuad(
+					projectUnit(innerRect, m_selectionRectangle.getTopLeft()),
+					projectUnit(innerRect, m_selectionRectangle.getTopRight()),
+					projectUnit(innerRect, m_selectionRectangle.getBottomRight()),
+					projectUnit(innerRect, m_selectionRectangle.getBottomLeft()),
+					Color4ub(0, 64, 128, 128)
+				);
+				m_primitiveRenderer->drawWireQuad(
+					projectUnit(innerRect, m_selectionRectangle.getTopLeft()),
+					projectUnit(innerRect, m_selectionRectangle.getTopRight()),
+					projectUnit(innerRect, m_selectionRectangle.getBottomRight()),
+					projectUnit(innerRect, m_selectionRectangle.getBottomLeft()),
+					Color4ub(120, 190, 250, 255)
+				);
 
-			m_primitiveRenderer->drawLine(
-				Vector4::origo(),
-				Vector4::origo() + view.axisZ() * Scalar(1.0f - c_arrowLength),
-				Color4ub(0, 0, 255, 255)
-			);
-			m_primitiveRenderer->drawArrowHead(
-				Vector4::origo() + view.axisZ() * Scalar(1.0f - c_arrowLength),
-				Vector4::origo() + view.axisZ(),
-				0.8f,
-				Color4ub(0, 0, 255, 255)
-			);
+				m_primitiveRenderer->popDepthState();
+				m_primitiveRenderer->popView();
+			}
 
-			m_primitiveRenderer->popWorld();
-			m_primitiveRenderer->popView();
-			m_primitiveRenderer->popDepthState();
-			m_primitiveRenderer->setProjection(projection);
-		}
+			m_primitiveRenderer->end(0);
 
-		// Draw guides.
-		if (m_guideEnable)
-		{
-			RefArray< EntityAdapter > entityAdapters;
-			m_context->getEntities(entityAdapters, SceneEditorContext::GfDefault);
-			for (auto entityAdapter : entityAdapters)
-				entityAdapter->drawGuides(m_primitiveRenderer);
-
-			// Draw controller guides.
-			ISceneControllerEditor* controllerEditor = m_context->getControllerEditor();
-			if (controllerEditor)
-				controllerEditor->draw(m_primitiveRenderer);
-		}
-
-		// Draw modifier.
-		IModifier* modifier = m_context->getModifier();
-		if (modifier)
-			modifier->draw(m_primitiveRenderer);
-
-		// Draw selection rectangle if non-empty.
-		if (m_selectionRectangle.area() > 0)
-		{
-			ui::Rect innerRect = m_renderWidget->getInnerRect();
-
-			m_primitiveRenderer->setProjection(orthoLh(-1.0f, -1.0f, 1.0f, 1.0f, 0.0f, 1.0f));
-
-			m_primitiveRenderer->pushView(Matrix44::identity());
-			m_primitiveRenderer->pushDepthState(false, false, false);
-
-			m_primitiveRenderer->drawSolidQuad(
-				projectUnit(innerRect, m_selectionRectangle.getTopLeft()),
-				projectUnit(innerRect, m_selectionRectangle.getTopRight()),
-				projectUnit(innerRect, m_selectionRectangle.getBottomRight()),
-				projectUnit(innerRect, m_selectionRectangle.getBottomLeft()),
-				Color4ub(0, 64, 128, 128)
-			);
-			m_primitiveRenderer->drawWireQuad(
-				projectUnit(innerRect, m_selectionRectangle.getTopLeft()),
-				projectUnit(innerRect, m_selectionRectangle.getTopRight()),
-				projectUnit(innerRect, m_selectionRectangle.getBottomRight()),
-				projectUnit(innerRect, m_selectionRectangle.getBottomLeft()),
-				Color4ub(120, 190, 250, 255)
-			);
-
-			m_primitiveRenderer->popDepthState();
-			m_primitiveRenderer->popView();
-		}
-
-		m_primitiveRenderer->end(0);
-
-		auto rb = renderContext->alloc< render::LambdaRenderBlock >();
-		rb->lambda = [&](render::IRenderView* renderView) {
-			m_primitiveRenderer->render(m_renderView, 0);
-		};
-		renderContext->enqueue(rb);
-	});
-	m_renderGraph->addPass(rp);
+			auto rb = renderContext->alloc< render::LambdaRenderBlock >();
+			rb->lambda = [&](render::IRenderView* renderView) {
+				m_primitiveRenderer->render(m_renderView, 0);
+			};
+			renderContext->enqueue(rb);
+		});
+		m_renderGraph->addPass(rp);
+	}
 
 	// Validate render graph.
 	if (!m_renderGraph->validate())

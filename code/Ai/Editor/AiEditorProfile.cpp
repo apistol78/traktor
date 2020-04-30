@@ -86,12 +86,5 @@ Ref< world::EntityData > AiEditorProfile::createEntityData(
 	return nullptr;
 }
 
-void AiEditorProfile::getDebugTargets(
-	scene::SceneEditorContext* context,
-	std::vector< render::DebugTarget >& outDebugTargets
-) const
-{
-}
-
 	}
 }

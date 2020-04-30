@@ -28,7 +28,6 @@ class Instance;
 	namespace render
 	{
 
-struct DebugTarget;
 class IRenderView;
 class PrimitiveRenderer;
 
@@ -174,13 +173,6 @@ public:
 	virtual Ref< world::EntityData > createEntityData(
 		SceneEditorContext* context,
 		db::Instance* instance
-	) const = 0;
-
-	/*! Get debug targets.
-	 */
-	virtual void getDebugTargets(
-		SceneEditorContext* context,
-		std::vector< render::DebugTarget >& outDebugTargets
 	) const = 0;
 };
 

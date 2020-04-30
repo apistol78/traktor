@@ -43,6 +43,8 @@ public:
 
 	virtual void setQuality(world::Quality imageProcessQuality, world::Quality shadowQuality, world::Quality reflectionsQuality, world::Quality motionBlurQuality, world::Quality ambientOcclusionQuality, world::Quality antiAliasQuality) override final;
 
+	virtual void setDebugOverlay(world::IDebugOverlay* overlay) override final;
+	
 	virtual bool handleCommand(const ui::Command& command) override final;
 
 	virtual void update() override final;
@@ -57,10 +59,6 @@ public:
 
 	virtual void showSelectionRectangle(const ui::Rect& rect) override final;
 
-	virtual void getDebugTargets(std::vector< render::DebugTarget >& outDebugTargets) override final;
-
-	virtual void setDebugTarget(const render::DebugTarget* debugTarget, float alpha) override final;
-
 private:
 	Ref< SceneEditorContext > m_context;
 	int32_t m_cameraId;
@@ -73,7 +71,7 @@ private:
 	Ref< ui::ToolBarDropDown > m_toolAspect;
 	Ref< ui::ToolBarDropMenu > m_toolQualityMenu;
 	Ref< ui::ToolBarDropDown > m_toolWorldRenderer;
-	Ref< ui::ToolBarDropDown > m_toolDebugMode;
+	Ref< ui::ToolBarDropDown > m_toolDebugOverlay;
 	Ref< ui::Slider > m_sliderDebugAlpha;
 	Ref< ui::MenuItem > m_menuPostProcess;
 	Ref< ui::MenuItem > m_menuMotionBlur;

@@ -17,6 +17,13 @@ class Rect;
 
 	}
 
+	namespace world
+	{
+
+class IDebugOverlay;
+
+	}
+
 	namespace scene
 	{
 
@@ -49,6 +56,8 @@ public:
 		world::Quality antiAliasQuality
 	) = 0;
 
+	virtual void setDebugOverlay(world::IDebugOverlay* overlay) = 0;
+
 	virtual bool handleCommand(const ui::Command& command) = 0;
 
 	virtual void update() = 0;
@@ -62,10 +71,6 @@ public:
 	virtual void moveCamera(MoveCameraMode mode, const Vector4& mouseDelta, const Vector4& viewDelta) = 0;
 
 	virtual void showSelectionRectangle(const ui::Rect& rect) = 0;
-
-	virtual void getDebugTargets(std::vector< render::DebugTarget >& outDebugTargets) = 0;
-
-	virtual void setDebugTarget(const render::DebugTarget* debugTarget, float alpha) = 0;
 };
 
 	}

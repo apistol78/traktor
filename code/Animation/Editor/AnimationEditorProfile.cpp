@@ -102,12 +102,5 @@ Ref< world::EntityData > AnimationEditorProfile::createEntityData(
 	return nullptr;
 }
 
-void AnimationEditorProfile::getDebugTargets(
-	scene::SceneEditorContext* context,
-	std::vector< render::DebugTarget >& outDebugTargets
-) const
-{
-}
-
 	}
 }

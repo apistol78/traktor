@@ -108,12 +108,5 @@ Ref< world::EntityData > EditorProfile::createEntityData(
 	return nullptr;
 }
 
-void EditorProfile::getDebugTargets(
-	scene::SceneEditorContext* context,
-	std::vector< render::DebugTarget >& outDebugTargets
-) const
-{
-}
-
 	}
 }

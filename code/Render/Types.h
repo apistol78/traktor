@@ -682,42 +682,6 @@ enum TransferFlags
 	TfDepth = 2
 };
 
-/*! Preferred debuggable target visualization method. */
-enum DebugTargetVisualize
-{
-	DtvDefault = 0,
-	DtvUnitDepth = 1,
-	DtvViewDepth = 2,
-	DtvNormals = 3,
-	DtvVelocity = 4,
-	DtvDeferredRoughness = 5,
-	DtvDeferredMetalness = 6,
-	DtvDeferredSpecular = 7,
-	DtvDeferredLightMask = 8,
-	DtvShadowMap = 9,
-	DtvShadowMask = 10
-};
-
-/*! Debuggable target. */
-struct DebugTarget
-{
-	std::wstring name;
-	DebugTargetVisualize visualize;
-	Ref< class ITexture > texture;
-
-	DebugTarget()
-	:	visualize(DtvDefault)
-	{
-	}
-
-	DebugTarget(const std::wstring& name_, DebugTargetVisualize visualize_, render::ITexture* texture_)
-	:	name(name_)
-	,	visualize(visualize_)
-	,	texture(texture_)
-	{
-	}
-};
-
 /*! Clear parameters. */
 struct Clear
 {

@@ -284,7 +284,7 @@ void ProbeRenderer::setup(const WorldSetupContext& context)
 		rgtsd.createDepthStencil = true;
 		rgtsd.usingPrimaryDepthStencil = false;
 		rgtsd.targets[0].colorFormat = render::TfR11G11B10F;
-		auto faceTargetSetId = renderGraph.addTargetSet(rgtsd);
+		auto faceTargetSetId = renderGraph.addTransientTargetSet(L"Probe render intermediate", rgtsd);
 
 		// Render world to intermediate target.
 		m_worldRenderer->setup(
@@ -342,7 +342,7 @@ void ProbeRenderer::setup(const WorldSetupContext& context)
 			rgtsd.createDepthStencil = false;
 			rgtsd.usingPrimaryDepthStencil = false;
 			rgtsd.targets[0].colorFormat = render::TfR11G11B10F;
-			auto filteredTargetSetId = renderGraph.addTargetSet(rgtsd);
+			auto filteredTargetSetId = renderGraph.addTransientTargetSet(L"Probe filter intermediate", rgtsd);
 
 			Ref< render::RenderPass > filterPass = new render::RenderPass(L"Probe filter");
 			filterPass->setOutput(filteredTargetSetId);

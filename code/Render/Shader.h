@@ -32,6 +32,15 @@ class T_DLLCLASS Shader : public Object
 	T_RTTI_CLASS;
 
 public:
+	/*! Shader permutation.
+	 *
+	 * A shader permutation is defined as
+	 * being both technique and mask of
+	 * enabled combinations.
+	 * 
+	 * Use Shader::setCombination to setup
+	 * combination mask from handles.
+	 */
 	struct Permutation
 	{
 		handle_t technique;

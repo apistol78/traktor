@@ -110,39 +110,5 @@ Ref< world::EntityData > TerrainEditorProfile::createEntityData(
 	return nullptr;
 }
 
-void TerrainEditorProfile::getDebugTargets(
-	scene::SceneEditorContext* context,
-	std::vector< render::DebugTarget >& outDebugTargets
-) const
-{
-	RefArray< scene::EntityAdapter > selectedEntities;
-	context->getEntities(selectedEntities, scene::SceneEditorContext::GfDescendants);
-	for (auto entity : selectedEntities)
-	{
-		auto terrainComponent = entity->getComponent< TerrainComponent >();
-		if (terrainComponent)
-		{
-			auto surfaceCache = terrainComponent->getSurfaceCache(0);
-			if (surfaceCache)
-			{
-				outDebugTargets.push_back(render::DebugTarget(L"Terrain, surface (base)", render::DtvDefault, surfaceCache->getBaseTexture()));
-				outDebugTargets.push_back(render::DebugTarget(L"Terrain, surface (albedo)", render::DtvDefault, surfaceCache->getVirtualAlbedo()));
-				outDebugTargets.push_back(render::DebugTarget(L"Terrain, surface (normals)", render::DtvDefault, surfaceCache->getVirtualNormals()));
-			}
-
-			auto terrain = terrainComponent->getTerrain();
-			if (terrain)
-			{
-				outDebugTargets.push_back(render::DebugTarget(L"Terrain, color map", render::DtvDefault, terrain->getColorMap()));
-				outDebugTargets.push_back(render::DebugTarget(L"Terrain, normal map", render::DtvNormals, terrain->getNormalMap()));
-				outDebugTargets.push_back(render::DebugTarget(L"Terrain, height map", render::DtvUnitDepth, terrain->getHeightMap()));
-				outDebugTargets.push_back(render::DebugTarget(L"Terrain, splat map", render::DtvDefault, terrain->getSplatMap()));
-				outDebugTargets.push_back(render::DebugTarget(L"Terrain, cut map", render::DtvDefault, terrain->getCutMap()));
-				outDebugTargets.push_back(render::DebugTarget(L"Terrain, material map", render::DtvDefault, terrain->getMaterialMap()));
-			}
-		}
-	}
-}
-
 	}
 }

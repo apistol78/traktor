@@ -87,12 +87,5 @@ Ref< world::EntityData > SprayEditorProfile::createEntityData(
 	return nullptr;
 }
 
-void SprayEditorProfile::getDebugTargets(
-	scene::SceneEditorContext* context,
-	std::vector< render::DebugTarget >& outDebugTargets
-) const
-{
-}
-
 	}
 }

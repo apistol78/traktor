@@ -43,6 +43,27 @@ class T_DLLCLASS RenderGraph : public Object
 	T_RTTI_CLASS;
 
 public:
+	struct Target
+	{
+		const wchar_t* name;
+		RenderGraphTargetSetDesc targetSetDesc;
+		Ref< IRenderTargetSet > sharedDepthStencilTargetSet;
+		Ref< IRenderTargetSet > rts;
+		handle_t sizeReferenceTargetSetId;
+		int32_t referenceCount;
+		bool storeDepth;
+		bool transient;
+
+		Target()
+		:	name(nullptr)
+		,	sizeReferenceTargetSetId(0)
+		,	referenceCount(0)
+		,	storeDepth(false)
+		,	transient(false)
+		{
+		}
+	};
+
 	/*! */
 	explicit RenderGraph(IRenderSystem* renderSystem);
 
@@ -51,12 +72,29 @@ public:
 
 	/*! Add transient target set.
 	 *
+	 * \param name Name of target set, used for debugging only.
 	 * \param targetSetDesc Render target set create description.
 	 * \param sharedDepthStencil Share depth/stencil with target set.
 	 * \param sizeReferenceTargetSetId Target to get reference size from when determine target set.
 	 * \return Opaque handle of transient target set.
 	 */
-	handle_t addTargetSet(
+	handle_t addTransientTargetSet(
+		const wchar_t* const name,
+		const RenderGraphTargetSetDesc& targetSetDesc,
+		IRenderTargetSet* sharedDepthStencil = nullptr,
+		handle_t sizeReferenceTargetSetId = 0
+	);
+
+	/*! Add persistent target set.
+	 *
+	 * \param name Name of target set, used for debugging only.
+	 * \param targetSetDesc Render target set create description.
+	 * \param sharedDepthStencil Share depth/stencil with target set.
+	 * \param sizeReferenceTargetSetId Target to get reference size from when determine target set.
+	 * \return Opaque handle of transient target set.
+	 */
+	handle_t addPersistentTargetSet(
+		const wchar_t* const name,
 		const RenderGraphTargetSetDesc& targetSetDesc,
 		IRenderTargetSet* sharedDepthStencil = nullptr,
 		handle_t sizeReferenceTargetSetId = 0
@@ -64,10 +102,18 @@ public:
 
 	/*! Add external target set.
 	 *
+	 * \param name Name of target set, used for debugging only.
 	 * \param targetSet Render target set.
 	 * \return Opaque handle of target set.
 	 */
-	handle_t addTargetSet(IRenderTargetSet* targetSet);
+	handle_t addExternalTargetSet(const wchar_t* const name, IRenderTargetSet* targetSet);
+
+	/*! Find target ID by name.
+	 *
+	 * \param name Name of target set, used for debugging only.
+	 * \return ID of target set.
+	 */
+	handle_t findTargetByName(const wchar_t* const name) const;
 
 	/*! Get transient target set from target identifier.
 	 *
@@ -89,28 +135,9 @@ public:
 	bool build(RenderContext* renderContext, int32_t width, int32_t height);
 
 	/*! */
-	void getDebugTargets(std::vector< render::DebugTarget >& outTargets) const;
+	const SmallMap< handle_t, Target >& getTargets() const;
 
 private:
-	struct Target
-	{
-		RenderGraphTargetSetDesc targetSetDesc;
-		Ref< IRenderTargetSet > sharedDepthStencilTargetSet;
-		Ref< IRenderTargetSet > rts;
-		handle_t sizeReferenceTargetSetId;
-		int32_t referenceCount;
-		bool storeDepth;
-		bool transient;
-
-		Target()
-		:	sizeReferenceTargetSetId(0)
-		,	referenceCount(0)
-		,	storeDepth(false)
-		,	transient(false)
-		{
-		}
-	};
-
 	Ref< RenderGraphTargetSetPool > m_pool;
 	SmallMap< handle_t, Target > m_targets;
 	RefArray< const RenderPass > m_passes;

@@ -28,6 +28,7 @@
 #include "Ui/ToolBar/ToolBarDropMenu.h"
 #include "Ui/ToolBar/ToolBarEmbed.h"
 #include "Ui/ToolBar/ToolBarSeparator.h"
+#include "World/Editor/IDebugOverlay.h"
 
 namespace traktor
 {
@@ -184,9 +185,15 @@ bool DefaultRenderControl::create(ui::Widget* parent, SceneEditorContext* contex
 			m_toolWorldRenderer->select(i);
 	}
 
-	m_toolDebugMode = new ui::ToolBarDropDown(ui::Command(1, L"Scene.Editor.DebugMode"), ui::dpi96(140), i18n::Text(L"SCENE_EDITOR_DEBUG_MODE"));
-	m_toolDebugMode->add(L"Default");
-	m_toolDebugMode->select(0);
+	m_toolDebugOverlay = new ui::ToolBarDropDown(ui::Command(1, L"Scene.Editor.DebugOverlay"), ui::dpi96(140), i18n::Text(L"SCENE_EDITOR_DEBUG_OVERLAY"));
+	m_toolDebugOverlay->add(L"None");
+	
+	TypeInfoSet overlayTypes;
+	type_of< world::IDebugOverlay >().findAllOf(overlayTypes, false);
+	for (const auto& overlayType : overlayTypes)
+		m_toolDebugOverlay->add(overlayType->getName());
+
+	m_toolDebugOverlay->select(0);
 
 	m_sliderDebugAlpha = new ui::Slider();
 	m_sliderDebugAlpha->create(m_toolBar);
@@ -203,7 +210,7 @@ bool DefaultRenderControl::create(ui::Widget* parent, SceneEditorContext* contex
 	m_toolBar->addItem(new ui::ToolBarSeparator());
 	m_toolBar->addItem(m_toolWorldRenderer);
 	m_toolBar->addItem(new ui::ToolBarSeparator());
-	m_toolBar->addItem(m_toolDebugMode);
+	m_toolBar->addItem(m_toolDebugOverlay);
 	m_toolBar->addItem(new ui::ToolBarEmbed(m_sliderDebugAlpha, ui::dpi96(70)));
 
 	m_toolBar->addEventHandler< ui::ToolBarButtonClickEvent >(this, &DefaultRenderControl::eventToolClick);
@@ -268,6 +275,12 @@ void DefaultRenderControl::setQuality(world::Quality imageProcessQuality, world:
 		);
 }
 
+void DefaultRenderControl::setDebugOverlay(world::IDebugOverlay* overlay)
+{
+	if (m_renderControl)
+		m_renderControl->setDebugOverlay(overlay);
+}
+
 bool DefaultRenderControl::handleCommand(const ui::Command& command)
 {
 	if (m_renderControl)
@@ -280,35 +293,6 @@ void DefaultRenderControl::update()
 {
 	if (m_renderControl)
 		m_renderControl->update();
-
-	// Update available debug modes.
-	std::vector< render::DebugTarget > debugTargets;
-
-	int32_t selected = m_toolDebugMode->getSelected();
-	m_toolDebugMode->removeAll();
-	m_toolDebugMode->add(L"Default");
-
-	if (m_renderControl)
-	{
-		m_renderControl->getDebugTargets(debugTargets);
-		for (auto profile : m_context->getEditorProfiles())
-			profile->getDebugTargets(m_context, debugTargets);
-
-		for (const auto& debugTarget : debugTargets)
-			m_toolDebugMode->add(debugTarget.name);
-	}
-
-	if (!(selected >= 0 && selected < m_toolDebugMode->count()))
-		selected = 0;
-
-	m_toolDebugMode->select(selected);
-
-	float alpha = m_sliderDebugAlpha->getValue() / 100.0f;
-
-	if (selected >= 1)
-		m_renderControl->setDebugTarget(&debugTargets[selected - 1], alpha);
-	else
-		m_renderControl->setDebugTarget(nullptr, 1.0f);
 }
 
 bool DefaultRenderControl::hitTest(const ui::Point& position) const
@@ -336,18 +320,6 @@ void DefaultRenderControl::showSelectionRectangle(const ui::Rect& rect)
 {
 	if (m_renderControl)
 		m_renderControl->showSelectionRectangle(rect);
-}
-
-void DefaultRenderControl::getDebugTargets(std::vector< render::DebugTarget >& outDebugTargets)
-{
-	if (m_renderControl)
-		m_renderControl->getDebugTargets(outDebugTargets);
-}
-
-void DefaultRenderControl::setDebugTarget(const render::DebugTarget* debugTarget, float alpha)
-{
-	if (m_renderControl)
-		m_renderControl->setDebugTarget(debugTarget, alpha);
 }
 
 bool DefaultRenderControl::createRenderControl(int32_t type)
@@ -580,6 +552,23 @@ void DefaultRenderControl::eventToolClick(ui::ToolBarButtonClickEvent* event)
 		const TypeInfo* worldRendererType = TypeInfo::find(c_worldRendererTypes[m_toolWorldRenderer->getSelected()]);
 		if (worldRendererType)
 			m_renderControl->setWorldRendererType(*worldRendererType);
+	}
+	else if (event->getCommand() == L"Scene.Editor.DebugOverlay")
+	{
+		const TypeInfo* overlayType = TypeInfo::find(m_toolDebugOverlay->getSelectedItem().c_str());
+		if (overlayType)
+		{
+			Ref< world::IDebugOverlay > overlay = mandatory_non_null_type_cast< world::IDebugOverlay* >(overlayType->createInstance());
+			if (overlay->create(m_context->getResourceManager()))
+				m_renderControl->setDebugOverlay(overlay);
+			else
+			{
+				m_renderControl->setDebugOverlay(nullptr);
+				m_toolDebugOverlay->select(0);
+			}
+		}
+		else
+			m_renderControl->setDebugOverlay(nullptr);
 	}
 
 	if (updateQuality)

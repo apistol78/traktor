@@ -419,13 +419,21 @@ void WorldRendererDeferred::destroy()
 }
 
 void WorldRendererDeferred::setup(
-	const WorldRenderView& worldRenderView,
+	const WorldRenderView& worldRenderView_,
 	const Entity* rootEntity,
 	render::RenderGraph& renderGraph,
 	render::handle_t outputTargetSetId
 )
 {
 	int32_t frame = m_count % (int32_t)m_frames.size();
+
+	WorldRenderView worldRenderView = worldRenderView_;
+
+	Vector2 r = Vector2((m_count / 2) & 1, m_count & 1) / worldRenderView_.getViewSize();
+
+	Matrix44 proj = worldRenderView_.getProjection();
+	proj = translate(r.x, r.y, 0.0f) * proj;
+	worldRenderView.setProjection(proj);
 
 	// Gather active lights.
 	m_lights.resize(0);
@@ -575,6 +583,8 @@ void WorldRendererDeferred::setup(
 		frame
 	);
 
+	// \fixme Keep history frames...
+
 	setupProcessPass(
 		worldRenderView,
 		rootEntity,
@@ -608,7 +618,7 @@ render::handle_t WorldRendererDeferred::setupGBufferPass(
 	rgtd.targets[3].colorFormat = render::TfR11G11B10F;	// Surface color (RGB)
 	rgtd.referenceWidthDenom = 1;
 	rgtd.referenceHeightDenom = 1;
-	auto gbufferTargetSetId = renderGraph.addTargetSet(rgtd, m_sharedDepthStencil, outputTargetSetId);
+	auto gbufferTargetSetId = renderGraph.addTransientTargetSet(L"GBuffer", rgtd, m_sharedDepthStencil, outputTargetSetId);
 
 	// Add GBuffer render pass.
 	Ref< render::RenderPass > rp = new render::RenderPass(L"GBuffer");
@@ -680,7 +690,7 @@ render::handle_t WorldRendererDeferred::setupVelocityPass(
 	rgtd.targets[0].colorFormat = render::TfR16G16F;
 	rgtd.referenceWidthDenom = 1;
 	rgtd.referenceHeightDenom = 1;
-	auto velocityTargetSetId = renderGraph.addTargetSet(rgtd, m_sharedDepthStencil, outputTargetSetId);
+	auto velocityTargetSetId = renderGraph.addTransientTargetSet(L"Velocity", rgtd, m_sharedDepthStencil, outputTargetSetId);
 
 	// Add Velocity render pass.
 	Ref< render::RenderPass > rp = new render::RenderPass(L"Velocity");
@@ -756,7 +766,7 @@ render::handle_t WorldRendererDeferred::setupAmbientOcclusionPass(
 	rgtd.targets[0].colorFormat = render::TfR8;			// Ambient occlusion (R)
 	rgtd.referenceWidthDenom = 1;
 	rgtd.referenceHeightDenom = 1;
-	auto ambientOcclusionTargetSetId = renderGraph.addTargetSet(rgtd, nullptr, outputTargetSetId);
+	auto ambientOcclusionTargetSetId = renderGraph.addTransientTargetSet(L"Ambient occlusion", rgtd, nullptr, outputTargetSetId);
 
 	// Add ambient occlusion render pass.
 	Ref< render::RenderPass > rp = new render::RenderPass(L"Ambient occlusion");
@@ -805,7 +815,7 @@ render::handle_t WorldRendererDeferred::setupCascadeShadowMapPass(
 	Frustum viewFrustum = worldRenderView.getViewFrustum();
 
 	// Add cascading shadow map target.
-	auto shadowMapCascadeTargetSetId = renderGraph.addTargetSet(m_shadowMapCascadeTargetSet);
+	auto shadowMapCascadeTargetSetId = renderGraph.addExternalTargetSet(L"Shadow map cascade", m_shadowMapCascadeTargetSet);
 
 	// Add cascading shadow map render pass.
 	Ref< render::RenderPass > rp = new render::RenderPass(L"Shadow cascade");
@@ -928,7 +938,7 @@ render::handle_t WorldRendererDeferred::setupAtlasShadowMapPass(
 	Frustum viewFrustum = worldRenderView.getViewFrustum();
 
 	// Add atlas shadow map target.
-	auto shadowMapAtlasTargetSetId = renderGraph.addTargetSet(m_shadowMapAtlasTargetSet);
+	auto shadowMapAtlasTargetSetId = renderGraph.addExternalTargetSet(L"Shadow map atlas", m_shadowMapAtlasTargetSet);
 
 	// Add atlas shadow map render pass.
 	int32_t atlasIndex = 0;
@@ -1157,7 +1167,7 @@ render::handle_t WorldRendererDeferred::setupShadowMaskPass(
 	rgtd.targets[0].colorFormat = render::TfR8;
 	rgtd.referenceWidthDenom = m_shadowSettings.maskDenominator;
 	rgtd.referenceHeightDenom = m_shadowSettings.maskDenominator;
-	auto shadowMaskTargetSetId = renderGraph.addTargetSet(rgtd, m_sharedDepthStencil, outputTargetSetId);
+	auto shadowMaskTargetSetId = renderGraph.addTransientTargetSet(L"Shadow mask", rgtd, m_sharedDepthStencil, outputTargetSetId);
 
 	// Add screen space shadow mask render pass.
 	Ref< render::RenderPass > rp = new render::RenderPass(L"Shadow mask");
@@ -1246,7 +1256,7 @@ render::handle_t WorldRendererDeferred::setupReflectionsPass(
 	rgtd.targets[0].colorFormat = render::TfR11G11B10F;
 	rgtd.referenceWidthDenom = 1;
 	rgtd.referenceHeightDenom = 1;
-	auto reflectionsTargetSetId = renderGraph.addTargetSet(rgtd, m_sharedDepthStencil, outputTargetSetId);
+	auto reflectionsTargetSetId = renderGraph.addTransientTargetSet(L"Reflections", rgtd, m_sharedDepthStencil, outputTargetSetId);
 
 	// Add Reflections render pass.
 	Ref< render::RenderPass > rp = new render::RenderPass(L"Reflections");
@@ -1348,7 +1358,7 @@ render::handle_t WorldRendererDeferred::setupVisualPass(
 	rgtd.targets[0].colorFormat = render::TfR11G11B10F;
 	rgtd.referenceWidthDenom = 1;
 	rgtd.referenceHeightDenom = 1;
-	auto visualTargetSetId = renderGraph.addTargetSet(rgtd, m_sharedDepthStencil, outputTargetSetId);
+	auto visualTargetSetId = renderGraph.addTransientTargetSet(L"Visual", rgtd, m_sharedDepthStencil, outputTargetSetId);
 
 	// Add visual[0] render pass.
 	Ref< render::RenderPass > rp = new render::RenderPass(L"Visual");
@@ -1516,7 +1526,7 @@ void WorldRendererDeferred::setupProcessPass(
 			rgtd.targets[0].colorFormat = render::TfR11G11B10F;
 			rgtd.referenceWidthDenom = 1;
 			rgtd.referenceHeightDenom = 1;
-			intermediateTargetSetId = renderGraph.addTargetSet(rgtd, m_sharedDepthStencil, outputTargetSetId);
+			intermediateTargetSetId = renderGraph.addTransientTargetSet(L"Process intermediate", rgtd, m_sharedDepthStencil, outputTargetSetId);
 
 			rp->setOutput(intermediateTargetSetId);
 		}

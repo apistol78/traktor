@@ -217,6 +217,10 @@ void CameraRenderControl::setQuality(world::Quality imageProcessQuality, world::
 	updateWorldRenderer();
 }
 
+void CameraRenderControl::setDebugOverlay(world::IDebugOverlay* overlay)
+{
+}
+
 bool CameraRenderControl::handleCommand(const ui::Command& command)
 {
 	bool result = false;
@@ -262,14 +266,6 @@ void CameraRenderControl::moveCamera(MoveCameraMode mode, const Vector4& mouseDe
 void CameraRenderControl::showSelectionRectangle(const ui::Rect& rect)
 {
 	m_selectionRectangle = rect;
-}
-
-void CameraRenderControl::getDebugTargets(std::vector< render::DebugTarget >& outDebugTargets)
-{
-}
-
-void CameraRenderControl::setDebugTarget(const render::DebugTarget* debugTarget, float alpha)
-{
 }
 
 void CameraRenderControl::updateSettings()
