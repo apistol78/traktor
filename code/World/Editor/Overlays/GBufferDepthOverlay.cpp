@@ -4,6 +4,7 @@
 #include "Render/Context/RenderContext.h"
 #include "Render/Frame/RenderGraph.h"
 #include "Resource/IResourceManager.h"
+#include "World/WorldRenderView.h"
 #include "World/Editor/Overlays/GBufferDepthOverlay.h"
 
 namespace traktor
@@ -17,6 +18,7 @@ const resource::Id< render::Shader > c_debugShader(Guid(L"{949B3C96-0196-F24E-B3
 const render::Handle c_handleDebugTechnique(L"ViewDepth");
 const render::Handle c_handleDebugAlpha(L"Scene_DebugAlpha");
 const render::Handle c_handleDebugTexture(L"Scene_DebugTexture");
+const render::Handle c_handleViewDistance(L"Scene_ViewDistance");
 
         }
 
@@ -36,6 +38,9 @@ void GBufferDepthOverlay::setup(render::RenderGraph& renderGraph, render::Screen
 	if (!gbufferId)
 		return;
 
+	float nearZ = worldRenderView.getViewFrustum().getNearZ();
+	float farZ = worldRenderView.getViewFrustum().getFarZ();
+
 	Ref< render::RenderPass > rp = new render::RenderPass(L"GBuffer depth overlay");
 	rp->setOutput(0);
 	rp->addInput(gbufferId);
@@ -49,6 +54,7 @@ void GBufferDepthOverlay::setup(render::RenderGraph& renderGraph, render::Screen
 		auto pp = renderContext->alloc< render::ProgramParameters >();
 		pp->beginParameters(renderContext);
 		pp->setFloatParameter(c_handleDebugAlpha, alpha);
+		pp->setVectorParameter(c_handleViewDistance, Vector4(nearZ, farZ, 0.0f, 0.0f));
 		pp->setTextureParameter(c_handleDebugTexture, gbufferTargetSet->getColorTexture(0));
 		pp->endParameters(renderContext);
 
