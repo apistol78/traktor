@@ -45,7 +45,7 @@ public:
 
 	void gather(const std::function< void(Entity*) >& fn) const;
 
-	void cancelAll(CancelType when);
+	void cancelAll(Cancel when);
 
 private:
 	uint32_t m_maxEventInstances;

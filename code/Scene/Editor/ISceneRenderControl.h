@@ -48,12 +48,12 @@ public:
 	virtual void setAspect(float aspect) = 0;
 
 	virtual void setQuality(
-		world::Quality imageProcessQuality,
-		world::Quality shadowQuality,
-		world::Quality reflectionsQuality,
-		world::Quality motionBlurQuality,
-		world::Quality ambientOcclusionQuality,
-		world::Quality antiAliasQuality
+		world::Quality imageProcess,
+		world::Quality shadows,
+		world::Quality reflections,
+		world::Quality motionBlur,
+		world::Quality ambientOcclusion,
+		world::Quality antiAlias
 	) = 0;
 
 	virtual void setDebugOverlay(world::IDebugOverlay* overlay) = 0;

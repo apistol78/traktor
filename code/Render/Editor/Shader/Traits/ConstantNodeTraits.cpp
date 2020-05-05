@@ -104,10 +104,10 @@ bool ConstantNodeTraits::evaluatePartial(
 			value = value.linear();
 
 		outputConstant = Constant(
-			color->getColor().getRed(),
-			color->getColor().getGreen(),
-			color->getColor().getBlue(),
-			color->getColor().getAlpha()
+			value.getRed(),
+			value.getGreen(),
+			value.getBlue(),
+			value.getAlpha()
 		);
 	}
 	else if (const Vector* vectr = dynamic_type_cast< const Vector* >(node))

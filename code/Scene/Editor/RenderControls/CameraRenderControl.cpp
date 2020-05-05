@@ -60,12 +60,12 @@ const int32_t c_defaultMultiSample = 0;
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.CameraRenderControl", CameraRenderControl, ISceneRenderControl)
 
 CameraRenderControl::CameraRenderControl()
-:	m_imageProcessQuality(world::QuDisabled)
-,	m_shadowQuality(world::QuDisabled)
-,	m_reflectionsQuality(world::QuDisabled)
-,	m_motionBlurQuality(world::QuDisabled)
-,	m_ambientOcclusionQuality(world::QuDisabled)
-,	m_antiAliasQuality(world::QuDisabled)
+:	m_imageProcessQuality(world::Quality::Disabled)
+,	m_shadowQuality(world::Quality::Disabled)
+,	m_reflectionsQuality(world::Quality::Disabled)
+,	m_motionBlurQuality(world::Quality::Disabled)
+,	m_ambientOcclusionQuality(world::Quality::Disabled)
+,	m_antiAliasQuality(world::Quality::Disabled)
 ,	m_gridEnable(true)
 ,	m_guideEnable(true)
 ,	m_multiSample(c_defaultMultiSample)
@@ -173,12 +173,12 @@ void CameraRenderControl::updateWorldRenderer()
 	world::WorldCreateDesc wcd;
 	wcd.worldRenderSettings = &m_worldRenderSettings;
 	wcd.entityRenderers = worldEntityRenderers;
-	wcd.motionBlurQuality = m_motionBlurQuality;
-	wcd.reflectionsQuality = m_reflectionsQuality;
-	wcd.shadowsQuality = m_shadowQuality;
-	wcd.ambientOcclusionQuality = m_ambientOcclusionQuality;
-	wcd.antiAliasQuality = m_antiAliasQuality;
-	wcd.imageProcessQuality = m_imageProcessQuality;
+	wcd.quality.motionBlur = m_motionBlurQuality;
+	wcd.quality.reflections = m_reflectionsQuality;
+	wcd.quality.shadows = m_shadowQuality;
+	wcd.quality.ambientOcclusion = m_ambientOcclusionQuality;
+	wcd.quality.antiAlias = m_antiAliasQuality;
+	wcd.quality.imageProcess = m_imageProcessQuality;
 	wcd.multiSample = m_multiSample;
 	wcd.frameCount = 1;
 
@@ -206,14 +206,14 @@ void CameraRenderControl::setAspect(float aspect)
 	m_containerAspect->update();
 }
 
-void CameraRenderControl::setQuality(world::Quality imageProcessQuality, world::Quality shadowQuality, world::Quality reflectionsQuality, world::Quality motionBlurQuality, world::Quality ambientOcclusionQuality, world::Quality antiAliasQuality)
+void CameraRenderControl::setQuality(world::Quality imageProcess, world::Quality shadows, world::Quality reflections, world::Quality motionBlur, world::Quality ambientOcclusion, world::Quality antiAlias)
 {
-	m_imageProcessQuality = imageProcessQuality;
-	m_shadowQuality = shadowQuality;
-	m_reflectionsQuality = reflectionsQuality;
-	m_motionBlurQuality = motionBlurQuality;
-	m_ambientOcclusionQuality = ambientOcclusionQuality;
-	m_antiAliasQuality = antiAliasQuality;
+	m_imageProcessQuality = imageProcess;
+	m_shadowQuality = shadows;
+	m_reflectionsQuality = reflections;
+	m_motionBlurQuality = motionBlur;
+	m_ambientOcclusionQuality = ambientOcclusion;
+	m_antiAliasQuality = antiAlias;
 	updateWorldRenderer();
 }
 
@@ -330,7 +330,7 @@ void CameraRenderControl::eventPaint(ui::PaintEvent* event)
 
 	// Setup world render passes.
 	const world::WorldRenderSettings* worldRenderSettings = sceneInstance->getWorldRenderSettings();
-	if (cameraComponent->getCameraType() == world::CtOrthographic)
+	if (cameraComponent->getProjection() == world::Projection::Orthographic)
 	{
 		m_worldRenderView.setOrthogonal(
 			cameraComponent->getWidth(),
@@ -339,7 +339,7 @@ void CameraRenderControl::eventPaint(ui::PaintEvent* event)
 			worldRenderSettings->viewFarZ
 		);
 	}
-	else // CtPerspective
+	else // Projection::Perspective
 	{
 		ui::Size sz = m_renderWidget->getInnerRect().getSize();
 		m_worldRenderView.setPerspective(

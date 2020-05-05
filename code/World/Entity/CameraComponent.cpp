@@ -9,7 +9,7 @@ namespace traktor
 T_IMPLEMENT_RTTI_CLASS(L"traktor.world.CameraComponent", CameraComponent, IEntityComponent)
 
 CameraComponent::CameraComponent(const CameraComponentData* cameraData)
-:	m_type(cameraData->getCameraType())
+:	m_projection(cameraData->getProjection())
 ,	m_fov(cameraData->getFieldOfView())
 ,	m_width(cameraData->getWidth())
 ,	m_height(cameraData->getHeight())
@@ -37,14 +37,14 @@ Aabb3 CameraComponent::getBoundingBox() const
 	return Aabb3();
 }
 
-void CameraComponent::setCameraType(CameraType type)
+void CameraComponent::setProjection(Projection projection)
 {
-	m_type = type;
+	m_projection = projection;
 }
 
-CameraType CameraComponent::getCameraType() const
+Projection CameraComponent::getProjection() const
 {
-	return m_type;
+	return m_projection;
 }
 
 void CameraComponent::setFieldOfView(float fov)

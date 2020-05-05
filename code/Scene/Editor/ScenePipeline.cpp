@@ -180,13 +180,13 @@ bool ScenePipeline::buildOutput(
 		log::info << L"Linear lighting suppressed." << Endl;
 	}
 
-	for (uint32_t i = 0; i < world::QuLast; ++i)
+	for (uint32_t i = 0; i < (int32_t)world::Quality::Last; ++i)
 	{
 		if (m_suppressImageProcess)
 			sceneResource->getWorldRenderSettings()->imageProcess[i] = resource::Id< render::ImageGraph >();
 	}
 
-	for (uint32_t i = 0; i < world::QuLast; ++i)
+	for (uint32_t i = 0; i < (int32_t)world::Quality::Last; ++i)
 	{
 		world::WorldRenderSettings::ShadowSettings& shadowSetting = sceneResource->getWorldRenderSettings()->shadowSettings[i];
 		if (!m_suppressShadows)

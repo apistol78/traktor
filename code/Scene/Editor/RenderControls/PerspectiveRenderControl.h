@@ -65,7 +65,7 @@ public:
 
 	virtual void setAspect(float aspect) override final;
 
-	virtual void setQuality(world::Quality imageProcessQuality, world::Quality shadowQuality, world::Quality reflectionsQuality, world::Quality motionBlurQuality, world::Quality ambientOcclusionQuality, world::Quality antiAliasQuality) override final;
+	virtual void setQuality(world::Quality imageProcess, world::Quality shadows, world::Quality reflections, world::Quality motionBlur, world::Quality ambientOcclusion, world::Quality antiAlias) override final;
 
 	virtual void setDebugOverlay(world::IDebugOverlay* overlay) override final;
 

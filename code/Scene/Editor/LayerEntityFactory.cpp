@@ -12,9 +12,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.scene.LayerEntityFactory", LayerEntityFactory, 
 
 const TypeInfoSet LayerEntityFactory::getEntityTypes() const
 {
-	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< world::LayerEntityData >());
-	return typeSet;
+	return makeTypeInfoSet< world::LayerEntityData >();
 }
 
 const TypeInfoSet LayerEntityFactory::getEntityEventTypes() const
@@ -32,8 +30,7 @@ Ref< world::Entity > LayerEntityFactory::createEntity(const world::IEntityBuilde
 	const world::LayerEntityData* layerData = checked_type_cast< const world::LayerEntityData*, false >(&entityData);
 	
 	Ref< world::GroupEntity > groupEntity = new world::GroupEntity(
-		layerData->getTransform(),
-		world::EmAll
+		layerData->getTransform()
 	);
 
 	for (auto childEntityData : layerData->getEntityData())

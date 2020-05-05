@@ -29,7 +29,7 @@
 #include "World/WorldRenderSettings.h"
 #include "World/Entity.h"
 #include "World/EntityRenderer.h"
-#include "World/Entity/GroupEntityRenderer.h"
+#include "World/Entity/GroupRenderer.h"
 #include "World/Entity/LightComponent.h"
 #include "World/Entity/LightRenderer.h"
 #include "World/Forward/WorldRendererForward.h"
@@ -204,7 +204,7 @@ void AnimationPreviewControl::updateWorldRenderer()
 
 	Ref< world::WorldEntityRenderers > worldEntityRenderers = new world::WorldEntityRenderers();
 	worldEntityRenderers->add(new world::EntityRenderer());
-	worldEntityRenderers->add(new world::GroupEntityRenderer(world::EmAll));
+	worldEntityRenderers->add(new world::GroupRenderer());
 	worldEntityRenderers->add(new world::LightRenderer());
 	worldEntityRenderers->add(new mesh::MeshComponentRenderer());
 

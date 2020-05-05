@@ -96,8 +96,8 @@ Ref< Entity > WorldEntityFactory::createEntity(const IEntityBuilder* builder, co
 	else if (const GroupEntityData* groupData = dynamic_type_cast< const GroupEntityData* >(&entityData))
 	{
 		Ref< GroupEntity > groupEntity = new GroupEntity(
-			groupData->getTransform(),
-			groupData->getMask()
+			groupData->getTransform()/*,
+			groupData->getMask()*/
 		);
 		for (auto entityData : groupData->getEntityData())
 		{

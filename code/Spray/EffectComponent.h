@@ -49,6 +49,8 @@ class T_DLLCLASS EffectComponent : public world::IEntityComponent
 public:
 	EffectComponent(const resource::Proxy< Effect >& effect, world::EntityEventManager* eventManager, sound::ISoundPlayer* soundPlayer);
 
+	EffectComponent(const resource::Proxy< Effect >& effect, EffectInstance* effectInstance, const Context& context);
+
 	virtual void destroy() override final;
 
 	virtual void setOwner(world::Entity* owner) override final;
@@ -78,6 +80,8 @@ public:
 
 	const resource::Proxy< Effect >& getEffect() const { return m_effect; }
 
+	EffectInstance* getEffectInstance() const { return m_effectInstance; }
+
 	void setEnable(bool enable) { m_enable = enable; }
 
 	bool isEnable() const { return m_enable; }
@@ -94,6 +98,8 @@ private:
 	Context m_context;
 	uint32_t m_counter;
 	bool m_enable;
+
+	void updateTechniques();
 };
 
 	}

@@ -109,6 +109,8 @@ bool IrradianceGridPipeline::buildOutput(
 		return false;
 	}
 
+	const Scalar intensity(asset->getIntensity());
+
 	Random random;
 	WrappedSHFunction shFunction([&] (const Vector4& unit) -> Vector4 {
 		Color4f cl(0.0f, 0.0f, 0.0f, 0.0f);
@@ -116,7 +118,7 @@ bool IrradianceGridPipeline::buildOutput(
 		{
 			Vector2 uv = Quasirandom::hammersley(i, 100, random);
 			Vector4 direction = Quasirandom::uniformHemiSphere(uv, unit);
-			cl += cubeMap->get(direction);
+			cl += cubeMap->get(direction) * intensity;
 		}
 		return cl / Scalar(100.0f);
 	});

@@ -26,9 +26,9 @@ class T_DLLCLASS CameraComponentData : public IEntityComponentData
 public:
 	CameraComponentData();
 
-	void setCameraType(CameraType type);
+	void setProjection(Projection projection);
 
-	CameraType getCameraType() const;
+	Projection getProjection() const;
 
 	void setFieldOfView(float fov);
 
@@ -45,7 +45,7 @@ public:
 	virtual void serialize(ISerializer& s) override final;
 
 private:
-	CameraType m_type;
+	Projection m_projection;
 	float m_fov;
 	float m_width;
 	float m_height;

@@ -349,8 +349,8 @@ bool NavMeshPipeline::buildOutput(
 
 			if (!indices.empty())
 			{
-				rcMarkWalkableTriangles(&ctx, cfg.walkableSlopeAngle, vertices.c_ptr(), vertexCount, &indices[0], indices.size() / 3, triAreaPtr);
-				rcRasterizeTriangles(&ctx, vertices.c_ptr(), vertexCount, &indices[0], triAreaPtr, indices.size() / 3, *solid, cfg.walkableClimb);
+				rcMarkWalkableTriangles(&ctx, cfg.walkableSlopeAngle, vertices.c_ptr(), vertexCount, &indices[0], (int)(indices.size() / 3), triAreaPtr);
+				rcRasterizeTriangles(&ctx, vertices.c_ptr(), vertexCount, &indices[0], triAreaPtr, (int)(indices.size() / 3), *solid, cfg.walkableClimb);
 			}
 
 			navModel.model = nullptr;
@@ -587,7 +587,7 @@ bool NavMeshPipeline::buildOutput(
 		{
 			const uint16_t* p = &pmesh->polys[i * pmesh->nvp * 2];
 
-			uint32_t nvp = 0;
+			int32_t nvp = 0;
 			for (; nvp < pmesh->nvp; ++nvp)
 			{
 				if (p[nvp] == RC_MESH_NULL_IDX)

@@ -64,7 +64,7 @@ void EntityEventManager::gather(const std::function< void(Entity*) >& fn) const
 		eventInstance->gather(fn);
 }
 
-void EntityEventManager::cancelAll(CancelType when)
+void EntityEventManager::cancelAll(Cancel when)
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 
@@ -73,7 +73,7 @@ void EntityEventManager::cancelAll(CancelType when)
 		eventInstance->cancel(when);
 
 	// Remove all instances directly instead of waiting for next update.
-	if (when == CtImmediate)
+	if (when == Cancel::Immediate)
 		m_eventInstances.resize(0);
 }
 

@@ -67,9 +67,9 @@ void SpawnEffectEventInstance::gather(const std::function< void(world::Entity*) 
 	fn(m_effectEntity);
 }
 
-void SpawnEffectEventInstance::cancel(world::CancelType when)
+void SpawnEffectEventInstance::cancel(world::Cancel when)
 {
-	if (when == world::CtImmediate)
+	if (when == world::Cancel::Immediate)
 		safeDestroy(m_effectEntity);
 	else
 	{

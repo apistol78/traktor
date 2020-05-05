@@ -12,21 +12,21 @@ namespace traktor
 T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.world.CameraComponentData", 0, CameraComponentData, IEntityComponentData)
 
 CameraComponentData::CameraComponentData()
-:	m_type(CtOrthographic)
+:	m_projection(Projection::Orthographic)
 ,	m_fov(deg2rad(70.0f))
 ,	m_width(1.0f)
 ,	m_height(1.0f)
 {
 }
 
-void CameraComponentData::setCameraType(CameraType type)
+void CameraComponentData::setProjection(Projection projection)
 {
-	m_type = type;
+	m_projection = projection;
 }
 
-CameraType CameraComponentData::getCameraType() const
+Projection CameraComponentData::getProjection() const
 {
-	return m_type;
+	return m_projection;
 }
 
 void CameraComponentData::setFieldOfView(float fov)
@@ -61,14 +61,14 @@ float CameraComponentData::getHeight() const
 
 void CameraComponentData::serialize(ISerializer& s)
 {
-	const MemberEnum< CameraType >::Key kCameraType[] =
+	const MemberEnum< Projection >::Key kProjection[] =
 	{
-		{ L"CtOrthographic", CtOrthographic },
-		{ L"CtPerspective", CtPerspective },
+		{ L"Orthographic", Projection::Orthographic },
+		{ L"Perspective", Projection::Perspective },
 		{ 0 }
 	};
 
-	s >> MemberEnum< CameraType >(L"type", m_type, kCameraType);
+	s >> MemberEnum< Projection >(L"projection", m_projection, kProjection);
 	s >> Member< float >(L"fov", m_fov, AttributeUnit(AuRadians));
 	s >> Member< float >(L"width", m_width);
 	s >> Member< float >(L"height", m_height);

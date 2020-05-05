@@ -46,9 +46,8 @@ SolidEntity::SolidEntity(
     const resource::Proxy< render::Shader >& shader,
     const Transform& transform
 )
-:   world::GroupEntity(transform, world::EmAll)
-,   m_renderSystem(renderSystem)
-,   m_shader(shader)
+:	m_renderSystem(renderSystem)
+,	m_shader(shader)
 ,	m_dirty(true)
 {
 }

@@ -73,7 +73,7 @@ void EnvelopeFeedbackEventInstance::gather(const std::function< void(world::Enti
 {
 }
 
-void EnvelopeFeedbackEventInstance::cancel(world::CancelType when)
+void EnvelopeFeedbackEventInstance::cancel(world::Cancel when)
 {
 }
 

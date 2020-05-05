@@ -1,5 +1,5 @@
 #include <algorithm>
-#include "Core/Serialization/AttributeReadOnly.h"
+#include "Core/Serialization/AttributePrivate.h"
 #include "Core/Serialization/AttributeType.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberComplex.h"
@@ -189,7 +189,7 @@ public:
 	}
 
 private:
-	AttributeReadOnly m_attribute;
+	AttributePrivate m_attribute;
 	Node* m_node;
 	value_type& m_pins;
 	mutable size_t m_index;
@@ -373,12 +373,12 @@ void External::serialize(ISerializer& s)
 {
 	Node::serialize(s);
 
-	s >> Member< Guid >(L"fragmentGuid", m_fragmentGuid, AttributeType(type_of< ShaderGraph >()));
+	s >> Member< Guid >(L"fragmentGuid", m_fragmentGuid, AttributeType(type_of< ShaderGraph >()) | AttributePrivate());
 	s >> MemberPinArray< MemberInputPin >(L"inputPins", this, m_inputPins);
 	s >> MemberPinArray< MemberOutputPin >(L"outputPins", this, m_outputPins);
 
 	if (s.getVersion() >= 1)
-		s >> MemberStlMap< std::wstring, float >(L"values", m_values, AttributeReadOnly());
+		s >> MemberStlMap< std::wstring, float >(L"values", m_values, AttributePrivate());
 }
 
 	}

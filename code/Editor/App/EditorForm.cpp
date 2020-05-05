@@ -2962,6 +2962,9 @@ void EditorForm::threadAssetMonitor()
 				if (!asset)
 					continue;
 
+				if (m_threadAssetMonitor->stopped())
+					break;
+
 				Path fileName = FileSystem::getInstance().getAbsolutePath(assetPath, asset->getFileName());
 
 				RefArray< File > files;
@@ -2977,6 +2980,14 @@ void EditorForm::threadAssetMonitor()
 						modifiedAssets.push_back(assetInstance->getGuid());
 					}
 				}
+			}
+
+			// In case asset monitor thread has been stopped while scanning resources we
+			// abort early before issuing another build.
+			if (m_threadAssetMonitor->stopped())
+			{
+				m_lockBuild.release();
+				break;
 			}
 
 			// Reset archive flag on all found assets.

@@ -18,6 +18,16 @@ namespace traktor
 class T_DLLCLASS IrradianceGridAsset : public editor::Asset
 {
 	T_RTTI_CLASS;
+
+public:
+	IrradianceGridAsset();
+
+	virtual void serialize(ISerializer& s) override final;
+
+	float getIntensity() const { return m_intensity; }
+
+private:
+	float m_intensity;
 };
 	
 	}

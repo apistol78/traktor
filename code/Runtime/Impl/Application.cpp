@@ -542,7 +542,7 @@ bool Application::update()
 
 			// Cancel all running events.
 			if (m_worldServer)
-				m_worldServer->getEntityEventManager()->cancelAll(world::CtImmediate);
+				m_worldServer->getEntityEventManager()->cancelAll(world::Cancel::Immediate);
 
 			// Cleanup resources used by former state.
 			log::debug << L"Cleaning resident resources..." << Endl;

@@ -10,21 +10,10 @@ namespace traktor
 	namespace world
 	{
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.world.GroupEntityData", 1, GroupEntityData, EntityData)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.world.GroupEntityData", 2, GroupEntityData, EntityData)
 
 GroupEntityData::GroupEntityData()
-:	m_mask(world::EmAll)
 {
-}
-
-void GroupEntityData::setMask(uint32_t mask)
-{
-	m_mask = mask;
-}
-
-uint32_t GroupEntityData::getMask() const
-{
-	return m_mask;
 }
 
 void GroupEntityData::addEntityData(EntityData* entityData)
@@ -78,19 +67,8 @@ void GroupEntityData::setTransform(const Transform& transform)
 
 void GroupEntityData::serialize(ISerializer& s)
 {
+	T_ASSERT(s.getVersion< GroupEntityData >() >= 2);
 	EntityData::serialize(s);
-	
-	if (s.getVersion< GroupEntityData >() >= 1)
-	{
-		const MemberBitMask::Bit kMaskBits[] =
-		{
-			{ L"static", EmStatic },
-			{ L"dynamic", EmDynamic },
-			{ 0 }
-		};		
-		s >> MemberBitMask(L"mask", m_mask, kMaskBits);
-	}
-
 	s >> MemberRefArray< EntityData >(L"entityData", m_entityData, AttributePrivate());
 }
 

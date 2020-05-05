@@ -13,26 +13,26 @@ enum
 	MaxLightShadowCount = 2
 };
 
-enum CancelType
+enum class Cancel
 {
-	CtImmediate = 0,
-	CtEnd = 1
+	Immediate = 0,
+	End = 1
 };
 
-enum Quality
+enum class Quality
 {
-	QuDisabled = 0,
-	QuLow = 1,
-	QuMedium = 2,
-	QuHigh = 3,
-	QuUltra = 4,
-	QuLast = 5
+	Disabled = 0,
+	Low = 1,
+	Medium = 2,
+	High = 3,
+	Ultra = 4,
+	Last = 5
 };
 
-enum CameraType
+enum class Projection
 {
-	CtOrthographic = 0,
-	CtPerspective = 1
+	Orthographic = 0,
+	Perspective = 1
 };
 
 enum LightType
@@ -41,13 +41,6 @@ enum LightType
 	LtDirectional = 1,
 	LtPoint = 2,
 	LtSpot = 3
-};
-
-enum EntityMask
-{
-	EmStatic = 1,
-	EmDynamic = 2,
-	EmAll = (EmStatic | EmDynamic)
 };
 
 struct Light

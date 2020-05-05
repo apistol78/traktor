@@ -29,7 +29,7 @@ Ref< world::Entity > PrefabEntityFactory::createEntity(const world::IEntityBuild
 {
 	const PrefabEntityData* prefabEntityData = checked_type_cast< const PrefabEntityData* >(&entityData);
 
-	Ref< world::GroupEntity > batchEntity = new world::GroupEntity(prefabEntityData->getTransform(), world::EmAll);
+	Ref< world::GroupEntity > batchEntity = new world::GroupEntity(prefabEntityData->getTransform());
 	for (auto childEntityData : prefabEntityData->getEntityData())
 	{
 		Ref< world::Entity > childEntity = builder->create(childEntityData);

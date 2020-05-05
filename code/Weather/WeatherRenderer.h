@@ -28,7 +28,7 @@ class T_DLLCLASS WeatherRenderer : public world::IEntityRenderer
 	T_RTTI_CLASS;
 
 public:
-	WeatherRenderer(render::PrimitiveRenderer* primitiveRenderer = 0);
+	WeatherRenderer(render::PrimitiveRenderer* primitiveRenderer = nullptr);
 
 	virtual const TypeInfoSet getRenderableTypes() const override final;
 

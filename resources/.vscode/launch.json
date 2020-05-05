@@ -1,0 +1,67 @@
+{
+	"version": "0.2.0",
+	"configurations": [
+
+		{
+			"name": "Editor - DebugShared",
+			"request": "launch",
+
+			"type": "cppdbg",
+			"program": "${workspaceRoot}/../bin/latest/linux/debugshared/Traktor.Editor.App",
+			"args": [],
+			"stopAtEntry": false,
+			"cwd": "${workspaceRoot}/..",
+			"environment": [{"name":"TRAKTOR_HOME", "value":"${workspaceRoot}/.."}],
+			"externalConsole": false,
+			"MIMode": "gdb",
+			"setupCommands": [
+				{
+					"description": "Enable pretty-printing for gdb",
+					"text": "-enable-pretty-printing",
+					"ignoreFailures": true
+				}
+			],
+
+			"windows": {
+				"type": "cppvsdbg",
+				"program": "${workspaceRoot}/../bin/latest/win64/debugshared/Traktor.Editor.App.exe",
+				"args": [],
+				"stopAtEntry": false,
+				"cwd": "${workspaceRoot}/..",
+				"environment": [{"name":"TRAKTOR_HOME", "value":"${workspaceRoot}/.."}],
+				"externalConsole": true
+			}
+		},
+
+		{
+			"name": "Editor - ReleaseShared",
+			"request": "launch",
+
+			"type": "cppdbg",
+			"program": "${workspaceRoot}/../bin/latest/linux/releaseshared/Traktor.Editor.App",
+			"args": [],
+			"stopAtEntry": false,
+			"cwd": "${workspaceRoot}/..",
+			"environment": [{"name":"TRAKTOR_HOME", "value":"${workspaceRoot}/.."}],
+			"externalConsole": false,
+			"MIMode": "gdb",
+			"setupCommands": [
+				{
+					"description": "Enable pretty-printing for gdb",
+					"text": "-enable-pretty-printing",
+					"ignoreFailures": true
+				}
+			],
+
+			"windows": {
+				"type": "cppvsdbg",
+				"program": "${workspaceRoot}/../bin/latest/win64/releaseshared/Traktor.Editor.App.exe",
+				"args": [],
+				"stopAtEntry": false,
+				"cwd": "${workspaceRoot}/..",
+				"environment": [{"name":"TRAKTOR_HOME", "value":"${workspaceRoot}/.."}],
+				"externalConsole": true
+			}
+		}
+	]
+}
