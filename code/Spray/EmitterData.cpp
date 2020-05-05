@@ -92,7 +92,7 @@ void EmitterData::serialize(ISerializer& s)
 	s >> MemberRef< EffectData >(L"effect", m_effect);
 	s >> Member< float >(L"middleAge", m_middleAge, AttributeUnit(AuSeconds));
 	s >> Member< float >(L"cullNearDistance", m_cullNearDistance, AttributeUnit(AuMetres));
-	s >> Member< float >(L"cullMeshDistance", m_cullMeshDistance);
+	s >> Member< float >(L"cullMeshDistance", m_cullMeshDistance, AttributeUnit(AuMetres));
 	s >> Member< float >(L"fadeNearRange", m_fadeNearRange, AttributeUnit(AuMetres));
 	s >> Member< float >(L"viewOffset", m_viewOffset, AttributeUnit(AuMetres));
 	s >> Member< float >(L"warmUp", m_warmUp, AttributeUnit(AuSeconds));

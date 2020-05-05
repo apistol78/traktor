@@ -50,15 +50,15 @@ resource::Id< render::ImageGraph > getAmbientOcclusionId(Quality quality)
 	switch (quality)
 	{
 	default:
-	case QuDisabled:
+	case Quality::Disabled:
 		return resource::Id< render::ImageGraph >();
-	case QuLow:
+	case Quality::Low:
 		return c_ambientOcclusionLow;
-	case QuMedium:
+	case Quality::Medium:
 		return c_ambientOcclusionMedium;
-	case QuHigh:
+	case Quality::High:
 		return c_ambientOcclusionHigh;
-	case QuUltra:
+	case Quality::Ultra:
 		return c_ambientOcclusionUltra;
 	}
 }
@@ -68,15 +68,15 @@ resource::Id< render::ImageGraph > getAntiAliasId(Quality quality)
 	switch (quality)
 	{
 	default:
-	case QuDisabled:
+	case Quality::Disabled:
 		return resource::Id< render::ImageGraph >();
-	case QuLow:
+	case Quality::Low:
 		return c_antiAliasLow;
-	case QuMedium:
+	case Quality::Medium:
 		return c_antiAliasMedium;
-	case QuHigh:
+	case Quality::High:
 		return c_antiAliasHigh;
-	case QuUltra:
+	case Quality::Ultra:
 		return c_antiAliasUltra;
 	}
 }
@@ -113,10 +113,10 @@ struct LightShaderData
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.WorldRendererForward", 0, WorldRendererForward, IWorldRenderer)
 
 WorldRendererForward::WorldRendererForward()
-:	m_toneMapQuality(QuDisabled)
-,	m_shadowsQuality(QuDisabled)
-,	m_ambientOcclusionQuality(QuDisabled)
-,	m_antiAliasQuality(QuDisabled)
+:	m_toneMapQuality(Quality::Disabled)
+,	m_shadowsQuality(Quality::Disabled)
+,	m_ambientOcclusionQuality(Quality::Disabled)
+,	m_antiAliasQuality(Quality::Disabled)
 ,	m_count(0)
 {
 }
@@ -129,17 +129,17 @@ bool WorldRendererForward::create(
 {
 	// Store settings.
 	m_settings = *desc.worldRenderSettings;
-	m_toneMapQuality = desc.toneMapQuality;
-	m_shadowsQuality = desc.shadowsQuality;
-	m_ambientOcclusionQuality = desc.ambientOcclusionQuality;
-	m_antiAliasQuality = desc.antiAliasQuality;
+	m_toneMapQuality = desc.quality.toneMap;
+	m_shadowsQuality = desc.quality.shadows;
+	m_ambientOcclusionQuality = desc.quality.ambientOcclusion;
+	m_antiAliasQuality = desc.quality.antiAlias;
 	m_sharedDepthStencil = desc.sharedDepthStencil;
 
 	// Allocate frames, one for each queued frame.
 	m_frames.resize(desc.frameCount);
 
 	// Create ambient occlusion processing.
-	if (m_ambientOcclusionQuality > QuDisabled)
+	if (m_ambientOcclusionQuality > Quality::Disabled)
 	{
 		resource::Id< render::ImageGraph > ambientOcclusion = getAmbientOcclusionId(m_ambientOcclusionQuality);
 		if (!resourceManager->bind(ambientOcclusion, m_ambientOcclusion))
@@ -147,7 +147,7 @@ bool WorldRendererForward::create(
 	}
 
 	// Create antialias processing.
-	if (m_antiAliasQuality > QuDisabled)
+	if (m_antiAliasQuality > Quality::Disabled)
 	{
 		resource::Id< render::ImageGraph > antiAlias = getAntiAliasId(m_antiAliasQuality);
 		if (!resourceManager->bind(antiAlias, m_antiAlias))
@@ -155,9 +155,9 @@ bool WorldRendererForward::create(
 	}
 
 	// Create "visual" post processing filter.
-	if (desc.imageProcessQuality > QuDisabled)
+	if (desc.quality.imageProcess > Quality::Disabled)
 	{
-		const auto& visualImageGraph = desc.worldRenderSettings->imageProcess[desc.imageProcessQuality];
+		const auto& visualImageGraph = desc.worldRenderSettings->imageProcess[(int32_t)desc.quality.imageProcess];
 		if (!resourceManager->bind(visualImageGraph, m_visual))
 			log::warning << L"Unable to create visual post processing; post processing disabled." << Endl;
 	}
@@ -178,7 +178,7 @@ bool WorldRendererForward::create(
 	}
 
 	// Create tone map processing.
-	if (m_toneMapQuality > QuDisabled)
+	if (m_toneMapQuality > Quality::Disabled)
 	{
 		resource::Id< render::ImageGraph > toneMap = getToneMapId(m_settings.exposureMode);
 		if (resourceManager->bind(toneMap, m_toneMap))
@@ -186,7 +186,7 @@ bool WorldRendererForward::create(
 		else
 		{
 			log::warning << L"Unable to create tone map process." << Endl;
-			m_toneMapQuality = QuDisabled;
+			m_toneMapQuality = Quality::Disabled;
 		}		
 	}
 
@@ -225,7 +225,7 @@ bool WorldRendererForward::create(
 	}
 
 	// Determine slice distances.
-	const auto& shadowSettings = m_settings.shadowSettings[m_shadowsQuality];
+	const auto& shadowSettings = m_settings.shadowSettings[(int32_t)m_shadowsQuality];
 	for (int32_t i = 0; i < shadowSettings.cascadingSlices; ++i)
 	{
 		float ii = float(i) / shadowSettings.cascadingSlices;
@@ -458,8 +458,8 @@ void WorldRendererForward::setupLightPass(
 ) const
 {
 	const UniformShadowProjection shadowProjection(1024);
-	const auto& shadowSettings = m_settings.shadowSettings[m_shadowsQuality];
-	const bool shadowsEnable = (bool)(m_shadowsQuality != QuDisabled);
+	const auto& shadowSettings = m_settings.shadowSettings[(int32_t)m_shadowsQuality];
+	const bool shadowsEnable = (bool)(m_shadowsQuality != Quality::Disabled);
 
 	Matrix44 view = worldRenderView.getView();
 	Matrix44 viewInverse = worldRenderView.getView().inverse();
@@ -795,7 +795,7 @@ render::handle_t WorldRendererForward::setupVisualPass(
 	int32_t frame
 ) const
 {
-	const bool shadowsEnable = (bool)(m_shadowsQuality != QuDisabled);
+	const bool shadowsEnable = (bool)(m_shadowsQuality != Quality::Disabled);
 	int32_t lightCount = (int32_t)m_lights.size();
 
 	// Add visual[0] target set.

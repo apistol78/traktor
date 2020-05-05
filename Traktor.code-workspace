@@ -1,0 +1,15 @@
+{
+	"folders": [
+		{
+			"path": "code"
+		},
+		{
+			"path": "resources"
+		}
+	],
+	"settings": {
+		"files.associations": {
+			"functional": "cpp"
+		}
+	}
+}

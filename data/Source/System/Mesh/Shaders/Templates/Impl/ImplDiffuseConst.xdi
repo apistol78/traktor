@@ -5,12 +5,12 @@
 			<id>{1C406491-8E2C-2B45-971D-00B1D72F0623}</id>
 			<comment/>
 			<position>
-				<first>904</first>
-				<second>324</second>
+				<first>913</first>
+				<second>295</second>
 			</position>
 			<name>T_DiffuseColor</name>
 		</item>
-		<item type="traktor.render.Color" version="traktor.render.Node:1">
+		<item type="traktor.render.Color" version="2,traktor.render.Node:1">
 			<id>{6D6E3E5B-EFA2-7F4E-8040-F35BAA88199E}</id>
 			<comment>
 			<![CDATA[
@@ -18,10 +18,11 @@ Tag_DiffuseColor
 			]]>
 			</comment>
 			<position>
-				<first>515</first>
-				<second>276</second>
+				<first>446</first>
+				<second>262</second>
 			</position>
 			<color>0, 0, 0, 0</color>
+			<linear>true</linear>
 		</item>
 		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
 			<id>{16815465-4E22-514C-9E23-58398275B1B4}</id>

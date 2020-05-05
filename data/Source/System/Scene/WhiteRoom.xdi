@@ -5,7 +5,7 @@
 		<viewFarZ>10000</viewFarZ>
 		<linearLighting>true</linearLighting>
 		<exposureMode>EmFixed</exposureMode>
-		<exposure>0</exposure>
+		<exposure>-0.5</exposure>
 		<shadowSettings>
 			<disabled>
 				<projection>SpUniform</projection>
@@ -21,23 +21,23 @@
 			</disabled>
 			<low>
 				<projection>SpUniform</projection>
-				<farZ>60</farZ>
+				<farZ>20</farZ>
 				<resolution>1024</resolution>
-				<bias>0.15</bias>
+				<bias>0.05</bias>
 				<biasCoeff>0</biasCoeff>
-				<cascadingSlices>3</cascadingSlices>
-				<cascadingLambda>1</cascadingLambda>
+				<cascadingSlices>2</cascadingSlices>
+				<cascadingLambda>1.55</cascadingLambda>
 				<quantizeProjection>false</quantizeProjection>
 				<maskDenominator>2</maskDenominator>
 				<maskProject>{D8A7B76E-AB55-8E43-AB60-A35F3135DB3D}</maskProject>
 			</low>
 			<medium>
 				<projection>SpUniform</projection>
-				<farZ>60</farZ>
-				<resolution>2048</resolution>
-				<bias>0.15</bias>
+				<farZ>20</farZ>
+				<resolution>4096</resolution>
+				<bias>0.05</bias>
 				<biasCoeff>0</biasCoeff>
-				<cascadingSlices>3</cascadingSlices>
+				<cascadingSlices>2</cascadingSlices>
 				<cascadingLambda>1</cascadingLambda>
 				<quantizeProjection>true</quantizeProjection>
 				<maskDenominator>2</maskDenominator>
@@ -45,24 +45,24 @@
 			</medium>
 			<high>
 				<projection>SpUniform</projection>
-				<farZ>60</farZ>
+				<farZ>20</farZ>
 				<resolution>2048</resolution>
-				<bias>0.15</bias>
+				<bias>0.05</bias>
 				<biasCoeff>0</biasCoeff>
 				<cascadingSlices>3</cascadingSlices>
-				<cascadingLambda>1</cascadingLambda>
+				<cascadingLambda>1.5</cascadingLambda>
 				<quantizeProjection>true</quantizeProjection>
 				<maskDenominator>1</maskDenominator>
 				<maskProject>{D8A7B76E-AB55-8E43-AB60-A35F3135DB3D}</maskProject>
 			</high>
 			<ultra>
 				<projection>SpUniform</projection>
-				<farZ>60</farZ>
-				<resolution>2048</resolution>
-				<bias>0.15</bias>
+				<farZ>20</farZ>
+				<resolution>4096</resolution>
+				<bias>0.05</bias>
 				<biasCoeff>0</biasCoeff>
 				<cascadingSlices>3</cascadingSlices>
-				<cascadingLambda>1</cascadingLambda>
+				<cascadingLambda>3</cascadingLambda>
 				<quantizeProjection>true</quantizeProjection>
 				<maskDenominator>1</maskDenominator>
 				<maskProject>{D8A7B76E-AB55-8E43-AB60-A35F3135DB3D}</maskProject>
@@ -74,7 +74,7 @@
 		<fogDensityY>0</fogDensityY>
 		<fogDensityZ>0</fogDensityZ>
 		<fogColor>1, 1, 1, 1</fogColor>
-		<irradianceGrid>{6CBAE4B1-7E14-FC44-8F46-4F39D9A6DE84}</irradianceGrid>
+		<irradianceGrid>{8F500C87-6146-A44F-B102-01BFDE65F9B9}</irradianceGrid>
 		<imageProcess>
 			<disabled>{00000000-0000-0000-0000-000000000000}</disabled>
 			<low>{00000000-0000-0000-0000-000000000000}</low>
@@ -85,17 +85,13 @@
 	</worldRenderSettings>
 	<imageProcessParams/>
 	<layers>
-		<item type="traktor.world.LayerEntityData" version="1,traktor.world.GroupEntityData:1">
+		<item type="traktor.world.LayerEntityData" version="1,traktor.world.GroupEntityData:2">
 			<name>Environment</name>
 			<transform>
 				<translation>0, 0, 0, 0</translation>
 				<rotation>0, 0, 0, 1</rotation>
 			</transform>
 			<components/>
-			<mask>
-				<static>true</static>
-				<dynamic>true</dynamic>
-			</mask>
 			<entityData>
 				<item type="traktor.world.EntityData">
 					<name>Sky</name>
@@ -106,7 +102,7 @@
 					<components>
 						<item type="traktor.weather.SkyComponentData" version="2">
 							<shader>{4CF929EB-3A8B-C340-AA0A-0C5C80625BF1}</shader>
-							<texture>{6B82B195-D88E-7845-BDC3-AF813E924CE1}</texture>
+							<texture>{25A95985-F006-4D43-AD9E-BDAA4E56C8DD}</texture>
 							<offset>0</offset>
 						</item>
 					</components>
@@ -115,7 +111,7 @@
 					<name>Light</name>
 					<transform>
 						<translation>0, 0, 0, 0</translation>
-						<rotation>-0.391854, -0.323839, -0.149635, 0.84805</rotation>
+						<rotation>-0.402506, 0.255425, 0.118023, 0.871101</rotation>
 					</transform>
 					<components>
 						<item type="traktor.world.LightComponentData" version="10">
@@ -149,6 +145,19 @@
 						</item>
 					</components>
 				</item>
+				<item type="traktor.world.EntityData">
+					<name>Ground</name>
+					<transform>
+						<translation>0, 0, 0, 0</translation>
+						<rotation>0, 0, 0, 1</rotation>
+					</transform>
+					<components>
+						<item type="traktor.mesh.MeshComponentData">
+							<mesh>{61BC1ACE-C134-F24F-AAE5-086829108C90}</mesh>
+							<screenSpaceCulling>false</screenSpaceCulling>
+						</item>
+					</components>
+				</item>
 			</entityData>
 			<visible>true</visible>
 			<locked>false</locked>
@@ -156,17 +165,13 @@
 			<dynamic>false</dynamic>
 			<attributes/>
 		</item>
-		<item type="traktor.world.LayerEntityData" version="1,traktor.world.GroupEntityData:1">
+		<item type="traktor.world.LayerEntityData" version="1,traktor.world.GroupEntityData:2">
 			<name>Entity</name>
 			<transform>
 				<translation>0, 0, 0, 0</translation>
 				<rotation>0, 0, 0, 1</rotation>
 			</transform>
 			<components/>
-			<mask>
-				<static>true</static>
-				<dynamic>true</dynamic>
-			</mask>
 			<entityData/>
 			<visible>true</visible>
 			<locked>false</locked>

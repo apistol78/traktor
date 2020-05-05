@@ -41,7 +41,7 @@ void DecalEventInstance::gather(const std::function< void(Entity*) >& fn) const
 	fn(m_entity);
 }
 
-void DecalEventInstance::cancel(CancelType when)
+void DecalEventInstance::cancel(Cancel when)
 {
 	safeDestroy(m_entity);
 }

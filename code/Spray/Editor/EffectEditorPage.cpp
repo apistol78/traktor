@@ -11,7 +11,10 @@
 #include "Editor/IEditor.h"
 #include "Editor/IEditorPageSite.h"
 #include "I18N/Text.h"
+
+#include "Mesh/MeshEntityFactory.h"
 #include "Mesh/MeshFactory.h"
+
 #include "Render/IRenderSystem.h"
 #include "Render/ITexture.h"
 #include "Render/Image2/ImageGraphFactory.h"
@@ -19,6 +22,9 @@
 #include "Render/Resource/ShaderFactory.h"
 #include "Render/Resource/TextureFactory.h"
 #include "Resource/ResourceManager.h"
+
+#include "Scene/SceneFactory.h"
+
 #include "Sound/AudioSystem.h"
 #include "Sound/SoundFactory.h"
 #include "Spray/Effect.h"
@@ -54,6 +60,12 @@
 #include "Ui/Sequencer/Range.h"
 #include "Ui/Sequencer/Tick.h"
 #include "Ui/Splitter.h"
+
+#include "Weather/WeatherFactory.h"
+
+#include "World/EntityBuilder.h"
+#include "World/WorldResourceFactory.h"
+#include "World/Entity/WorldEntityFactory.h"
 
 // Resources
 #include "Resources/BrowseBackground.h"
@@ -107,7 +119,6 @@ EffectEditorPage::EffectEditorPage(editor::IEditor* editor, editor::IEditorPageS
 ,	m_velocityVisible(false)
 ,	m_guideVisible(true)
 ,	m_moveEmitter(false)
-,	m_groundClip(false)
 {
 }
 
@@ -123,12 +134,20 @@ bool EffectEditorPage::create(ui::Container* parent)
 	T_ASSERT(database);
 
 	m_resourceManager = new resource::ResourceManager(database, m_editor->getSettings()->getProperty< bool >(L"Resource.Verbose", false));
+
+	Ref< world::IEntityBuilder > entityBuilder = new world::EntityBuilder();
+	entityBuilder->addFactory(new world::WorldEntityFactory(m_resourceManager, renderSystem, true));
+	entityBuilder->addFactory(new weather::WeatherFactory(m_resourceManager, renderSystem));
+	entityBuilder->addFactory(new mesh::MeshEntityFactory(m_resourceManager));
+
 	m_resourceManager->addFactory(new mesh::MeshFactory(renderSystem));
-	m_resourceManager->addFactory(new render::TextureFactory(renderSystem, 0));
+	m_resourceManager->addFactory(new render::ImageGraphFactory(renderSystem));
 	m_resourceManager->addFactory(new render::SequenceTextureFactory());
 	m_resourceManager->addFactory(new render::ShaderFactory(renderSystem));
+	m_resourceManager->addFactory(new render::TextureFactory(renderSystem, 0));
+	m_resourceManager->addFactory(new scene::SceneFactory(renderSystem, entityBuilder));
 	m_resourceManager->addFactory(new sound::SoundFactory());
-	m_resourceManager->addFactory(new render::ImageGraphFactory(renderSystem));
+	m_resourceManager->addFactory(new world::WorldResourceFactory(renderSystem, nullptr));
 	m_resourceManager->addFactory(new EffectFactory(nullptr));
 
 	m_effectData = m_document->getObject< EffectData >(0);
@@ -140,7 +159,6 @@ bool EffectEditorPage::create(ui::Container* parent)
 
 	m_toolToggleGuide = new ui::ToolBarButton(i18n::Text(L"EFFECT_EDITOR_TOGGLE_GUIDE"), 6, ui::Command(L"Effect.Editor.ToggleGuide"), ui::ToolBarButton::BsDefaultToggle);
 	m_toolToggleMove = new ui::ToolBarButton(i18n::Text(L"EFFECT_EDITOR_TOGGLE_MOVE"), 7, ui::Command(L"Effect.Editor.ToggleMove"), ui::ToolBarButton::BsDefaultToggle);
-	m_toolToggleGroundClip = new ui::ToolBarButton(i18n::Text(L"EFFECT_EDITOR_TOGGLE_GROUND_CLIP"), 8, ui::Command(L"Effect.Editor.ToggleGroundClip"), ui::ToolBarButton::BsDefaultToggle);
 
 	Ref< const PropertyGroup > settings = m_editor->getSettings();
 	T_ASSERT(settings);
@@ -151,17 +169,12 @@ bool EffectEditorPage::create(ui::Container* parent)
 	m_moveEmitter = settings->getProperty< bool >(L"EffectEditor.ToggleMove", m_moveEmitter);
 	m_toolToggleMove->setToggled(m_moveEmitter);
 
-	m_groundClip = settings->getProperty< bool >(L"EffectEditor.ToggleGroundClip", m_groundClip);
-	m_toolToggleGroundClip->setToggled(m_groundClip);
-
 	m_toolBar = new ui::ToolBar();
 	m_toolBar->create(container);
 	m_toolBar->addImage(new ui::StyleBitmap(L"Spray.Playback"), 6);
 	m_toolBar->addImage(new ui::StyleBitmap(L"Spray.ToggleGuideLines"), 1);
 	m_toolBar->addImage(new ui::StyleBitmap(L"Spray.ToggleMoveEmitter"), 1);
 	m_toolBar->addImage(new ui::StyleBitmap(L"Spray.ToggleGroundClip"), 1);
-	m_toolBar->addImage(new ui::StyleBitmap(L"Spray.BrowseBackground"), 1);
-	m_toolBar->addImage(new ui::StyleBitmap(L"Spray.BrowseImageProcess"), 1);
 	m_toolBar->addImage(new ui::StyleBitmap(L"Spray.Randomize"), 1);
 	m_toolBar->addItem(new ui::ToolBarButton(i18n::Text(L"EFFECT_EDITOR_REWIND"), 0, ui::Command(L"Effect.Editor.Rewind")));
 	m_toolBar->addItem(new ui::ToolBarButton(i18n::Text(L"EFFECT_EDITOR_PLAY"), 1, ui::Command(L"Effect.Editor.Play")));
@@ -169,18 +182,13 @@ bool EffectEditorPage::create(ui::Container* parent)
 	m_toolBar->addItem(new ui::ToolBarSeparator());
 	m_toolBar->addItem(m_toolToggleGuide);
 	m_toolBar->addItem(m_toolToggleMove);
-	m_toolBar->addItem(m_toolToggleGroundClip);
 	m_toolBar->addItem(new ui::ToolBarButton(i18n::Text(L"EFFECT_EDITOR_RANDOMIZE_SEED"), 11, ui::Command(L"Effect.Editor.RandomizeSeed")));
-	m_toolBar->addItem(new ui::ToolBarSeparator());
-	m_toolBar->addItem(new ui::ToolBarButton(i18n::Text(L"EFFECT_EDITOR_BROWSE_BACKGROUND"), 9, ui::Command(L"Effect.Editor.BrowseBackground")));
-	m_toolBar->addItem(new ui::ToolBarButton(i18n::Text(L"EFFECT_EDITOR_BROWSE_POSTPROCESS"), 10, ui::Command(L"Effect.Editor.BrowseImageProcess")));
 	m_toolBar->addEventHandler< ui::ToolBarButtonClickEvent >(this, &EffectEditorPage::eventToolClick);
 
 	m_previewControl = new EffectPreviewControl(m_editor);
 	m_previewControl->create(container, ui::WsNone, m_resourceManager, renderSystem, m_audioSystem);
 	m_previewControl->showGuide(m_guideVisible);
 	m_previewControl->setMoveEmitter(m_moveEmitter);
-	m_previewControl->setGroundClip(m_groundClip);
 
 	m_sequencer = new ui::SequencerControl();
 	m_sequencer->create(parent, ui::WsDoubleBuffer);
@@ -212,7 +220,6 @@ void EffectEditorPage::destroy()
 
 	settings->setProperty< PropertyBoolean >(L"EffectEditor.ToggleGuide", m_guideVisible);
 	settings->setProperty< PropertyBoolean >(L"EffectEditor.ToggleMove", m_moveEmitter);
-	settings->setProperty< PropertyBoolean >(L"EffectEditor.ToggleGroundClip", m_groundClip);
 
 	m_editor->commitGlobalSettings();
 	m_audioSystem = nullptr;
@@ -268,12 +275,6 @@ bool EffectEditorPage::handleCommand(const ui::Command& command)
 		m_previewControl->syncEffect();
 		m_toolToggleMove->setToggled(m_moveEmitter);
 	}
-	else if (command == L"Effect.Editor.ToggleGroundClip")
-	{
-		m_groundClip = !m_groundClip;
-		m_previewControl->setGroundClip(m_groundClip);
-		m_toolToggleGroundClip->setToggled(m_groundClip);
-	}
 	else if (command == L"Effect.Editor.ToggleVelocity")
 	{
 		m_velocityVisible = !m_velocityVisible;
@@ -283,24 +284,6 @@ bool EffectEditorPage::handleCommand(const ui::Command& command)
 	{
 		m_previewControl->randomizeSeed();
 		m_previewControl->syncEffect();
-	}
-	else if (command == L"Effect.Editor.BrowseBackground")
-	{
-		Ref< db::Instance > textureInstance = m_editor->browseInstance(type_of< render::ITexture >());
-		if (textureInstance)
-		{
-			m_editor->buildAsset(textureInstance->getGuid(), false);
-			m_previewControl->setBackground(resource::Id< render::ISimpleTexture >(textureInstance->getGuid()));
-		}
-	}
-	else if (command == L"Effect.Editor.BrowseImageProcess")
-	{
-		//Ref< db::Instance > postProcessInstance = m_editor->browseInstance(type_of< render::ImageProcessData >());
-		//if (postProcessInstance)
-		//{
-		//	m_editor->buildAsset(postProcessInstance->getGuid(), false);
-		//	m_previewControl->setImageProcess(resource::Id< render::ImageProcessData >(postProcessInstance->getGuid()));
-		//}
 	}
 	else if (command == L"Effect.Editor.ReplaceEmitterSource")
 	{

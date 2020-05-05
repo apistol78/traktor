@@ -57,7 +57,7 @@ void OscillateFeedbackEventInstance::gather(const std::function< void(world::Ent
 {
 }
 
-void OscillateFeedbackEventInstance::cancel(world::CancelType when)
+void OscillateFeedbackEventInstance::cancel(world::Cancel when)
 {
 }
 

@@ -31,7 +31,7 @@ public:
 
 	virtual void gather(const std::function< void(Entity*) >& fn) const = 0;
 
-	virtual void cancel(CancelType when) = 0;
+	virtual void cancel(Cancel when) = 0;
 };
 
 	}

@@ -1559,8 +1559,8 @@ Directional
 			<id>{C746744F-F618-EC45-A00A-6197730841A4}</id>
 			<comment/>
 			<position>
-				<first>6924</first>
-				<second>348</second>
+				<first>6890</first>
+				<second>332</second>
 			</position>
 			<name>F0</name>
 			<global>false</global>
@@ -1569,8 +1569,8 @@ Directional
 			<id>{08F28469-C6DF-9849-BE0B-7EFB7CFD8972}</id>
 			<comment/>
 			<position>
-				<first>6712</first>
-				<second>340</second>
+				<first>6686</first>
+				<second>295</second>
 			</position>
 		</item>
 		<item type="traktor.render.Mul" version="traktor.render.Node:1">
@@ -1685,8 +1685,8 @@ Directional
 			<id>{70146730-687A-B043-A200-F90668659AD0}</id>
 			<comment/>
 			<position>
-				<first>6524</first>
-				<second>343</second>
+				<first>6463</first>
+				<second>265</second>
 			</position>
 			<value>0.025</value>
 		</item>
@@ -1775,8 +1775,8 @@ Directional
 			<id>{FCA23D41-99B3-AA43-94CA-18EFED4C30B3}</id>
 			<comment/>
 			<position>
-				<first>6565</first>
-				<second>385</second>
+				<first>6504</first>
+				<second>319</second>
 			</position>
 			<name>L_Albedo</name>
 			<global>false</global>
@@ -1795,8 +1795,8 @@ Directional
 			<id>{482C9736-F7D8-F245-B27A-D2E5328516C6}</id>
 			<comment/>
 			<position>
-				<first>6548</first>
-				<second>425</second>
+				<first>6493</first>
+				<second>368</second>
 			</position>
 			<name>L_Metalness</name>
 			<global>false</global>
@@ -3766,16 +3766,6 @@ Directional
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[148]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[144]"/>
-				<name>Input</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
 				<node ref="/object/nodes/item[143]"/>
 				<name>Output</name>
 			</source>
@@ -3852,16 +3842,6 @@ Directional
 			<destination>
 				<node ref="/object/nodes/item[133]"/>
 				<name>Input1</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[133]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[132]"/>
-				<name>Input</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
@@ -3976,31 +3956,11 @@ Directional
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[120]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[121]"/>
-				<name>Input1</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
 				<node ref="/object/nodes/item[122]"/>
 				<name>Output</name>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[121]"/>
-				<name>Input2</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[119]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[130]"/>
 				<name>Input2</name>
 			</destination>
 		</item>
@@ -4892,6 +4852,46 @@ Directional
 			<destination>
 				<node ref="/object/nodes/item[1]"/>
 				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[133]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[132]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[148]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[144]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[120]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[121]"/>
+				<name>Input1</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[119]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[130]"/>
+				<name>Input2</name>
 			</destination>
 		</item>
 	</edges>

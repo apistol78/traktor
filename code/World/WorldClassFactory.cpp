@@ -38,12 +38,12 @@ namespace traktor
 
 void IEntityEventInstance_cancelImmediate(IEntityEventInstance* self)
 {
-	self->cancel(CtImmediate);
+	self->cancel(Cancel::Immediate);
 }
 
 void IEntityEventInstance_cancelEnd(IEntityEventInstance* self)
 {
-	self->cancel(CtEnd);
+	self->cancel(Cancel::End);
 }
 
 IEntityEventInstance* EntityEventManager_raise_1(EntityEventManager* self, const IEntityEvent* event, Entity* sender, const Transform& Toffset)
@@ -58,12 +58,12 @@ IEntityEventInstance* EntityEventManager_raise_2(EntityEventManager* self, const
 
 void EntityEventManager_cancelAllImmediate(EntityEventManager* self)
 {
-	self->cancelAll(CtImmediate);
+	self->cancelAll(Cancel::Immediate);
 }
 
 void EntityEventManager_cancelAllEnd(EntityEventManager* self)
 {
-	self->cancelAll(CtEnd);
+	self->cancelAll(Cancel::End);
 }
 
 Ref< Entity > IEntityBuilder_create(IEntityBuilder* self, const EntityData* entityData)
@@ -81,24 +81,24 @@ Transform Entity_getTransform(Entity* self)
 	return self->getTransform();
 }
 
-void CameraComponentData_setCameraType(CameraComponentData* self, int32_t type)
+void CameraComponentData_setProjection(CameraComponentData* self, int32_t type)
 {
-	self->setCameraType((CameraType)type);
+	self->setProjection((Projection)type);
 }
 
-int32_t CameraComponentData_getCameraType(CameraComponentData* self)
+int32_t CameraComponentData_getProjection(CameraComponentData* self)
 {
-	return (int32_t)self->getCameraType();
+	return (int32_t)self->getProjection();
 }
 
-void CameraComponent_setCameraType(CameraComponent* self, int32_t type)
+void CameraComponent_setProjection(CameraComponent* self, int32_t type)
 {
-	self->setCameraType((CameraType)type);
+	self->setProjection((Projection)type);
 }
 
-int32_t CameraComponent_getCameraType(CameraComponent* self)
+int32_t CameraComponent_getProjection(CameraComponent* self)
 {
-	return (int32_t)self->getCameraType();
+	return (int32_t)self->getProjection();
 }
 
 RefArray< Entity > GroupComponent_getEntitiesOf(GroupComponent* self, const TypeInfo& entityType)
@@ -234,7 +234,7 @@ void WorldClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 
 	auto classGroupEntity = new AutoRuntimeClass< GroupEntity >();
 	classGroupEntity->addConstructor();
-	classGroupEntity->addConstructor< const Transform&, uint32_t >();
+	classGroupEntity->addConstructor< const Transform&/*, uint32_t*/ >();
 	classGroupEntity->addMethod("addEntity", &GroupEntity::addEntity);
 	classGroupEntity->addMethod("removeEntity", &GroupEntity::removeEntity);
 	classGroupEntity->addMethod("removeAllEntities", &GroupEntity::removeAllEntities);
@@ -252,19 +252,19 @@ void WorldClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	registrar->registerClass(classIEntityComponent);
 
 	auto classCameraComponentData = new AutoRuntimeClass< CameraComponentData >();
-	classCameraComponentData->addConstant("CtOrthographic", Any::fromInt32(CameraType::CtOrthographic));
-	classCameraComponentData->addConstant("CtPerspective", Any::fromInt32(CameraType::CtPerspective));
+	classCameraComponentData->addConstant("Orthographic", Any::fromInt32((int32_t)Projection::Orthographic));
+	classCameraComponentData->addConstant("Perspective", Any::fromInt32((int32_t)Projection::Perspective));
 	classCameraComponentData->addConstructor();
-	classCameraComponentData->addProperty("cameraType", &CameraComponentData_setCameraType, &CameraComponentData_getCameraType);
+	classCameraComponentData->addProperty("projection", &CameraComponentData_setProjection, &CameraComponentData_getProjection);
 	classCameraComponentData->addProperty("fieldOfView", &CameraComponentData::setFieldOfView, &CameraComponentData::getFieldOfView);
 	classCameraComponentData->addProperty("width", &CameraComponentData::setWidth, &CameraComponentData::getWidth);
 	classCameraComponentData->addProperty("height", &CameraComponentData::setHeight, &CameraComponentData::getHeight);
 	registrar->registerClass(classCameraComponentData);
 
 	auto classCameraComponent = new AutoRuntimeClass< CameraComponent >();
-	classCameraComponent->addConstant("CtOrthographic", Any::fromInt32(CameraType::CtOrthographic));
-	classCameraComponent->addConstant("CtPerspective", Any::fromInt32(CameraType::CtPerspective));
-	classCameraComponent->addProperty("cameraType", &CameraComponent_setCameraType, &CameraComponent_getCameraType);
+	classCameraComponent->addConstant("Orthographic", Any::fromInt32((int32_t)Projection::Orthographic));
+	classCameraComponent->addConstant("Perspective", Any::fromInt32((int32_t)Projection::Perspective));
+	classCameraComponent->addProperty("projection", &CameraComponent_setProjection, &CameraComponent_getProjection);
 	classCameraComponent->addProperty("fieldOfView", &CameraComponent::setFieldOfView, &CameraComponent::getFieldOfView);
 	classCameraComponent->addProperty("width", &CameraComponent::setWidth, &CameraComponent::getWidth);
 	classCameraComponent->addProperty("height", &CameraComponent::setHeight, &CameraComponent::getHeight);
@@ -302,11 +302,11 @@ void WorldClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	registrar->registerClass(classVolumeComponent);
 
 	auto classIWorldRenderer = new AutoRuntimeClass< IWorldRenderer >();
-	classIWorldRenderer->addConstant("QuDisabled", Any::fromInt32(Quality::QuDisabled));
-	classIWorldRenderer->addConstant("QuLow", Any::fromInt32(Quality::QuLow));
-	classIWorldRenderer->addConstant("QuMedium", Any::fromInt32(Quality::QuMedium));
-	classIWorldRenderer->addConstant("QuHigh", Any::fromInt32(Quality::QuHigh));
-	classIWorldRenderer->addConstant("QuUltra", Any::fromInt32(Quality::QuUltra));
+	classIWorldRenderer->addConstant("Disabled", Any::fromInt32((int32_t)Quality::Disabled));
+	classIWorldRenderer->addConstant("Low", Any::fromInt32((int32_t)Quality::Low));
+	classIWorldRenderer->addConstant("Medium", Any::fromInt32((int32_t)Quality::Medium));
+	classIWorldRenderer->addConstant("High", Any::fromInt32((int32_t)Quality::High));
+	classIWorldRenderer->addConstant("Ultra", Any::fromInt32((int32_t)Quality::Ultra));
 	registrar->registerClass(classIWorldRenderer);
 }
 

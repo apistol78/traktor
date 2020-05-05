@@ -160,7 +160,7 @@ void WorldLayer::prepare(const UpdateInfo& info)
 		const world::CameraComponent* camera = m_cameraEntity->getComponent< world::CameraComponent >();
 		if (camera)
 		{
-			if (camera->getCameraType() == world::CtOrthographic)
+			if (camera->getProjection() == world::Projection::Orthographic)
 			{
 				m_worldRenderView.setOrthogonal(
 					camera->getWidth(),
@@ -169,7 +169,7 @@ void WorldLayer::prepare(const UpdateInfo& info)
 					m_scene->getWorldRenderSettings()->viewFarZ
 				);
 			}
-			else // CtPerspective
+			else // Projection::Perspective
 			{
 				m_worldRenderView.setPerspective(
 					float(width),

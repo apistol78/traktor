@@ -57,12 +57,12 @@ const float c_deltaAdjustSmall = 0.01f;
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.FinalRenderControl", FinalRenderControl, ISceneRenderControl)
 
 FinalRenderControl::FinalRenderControl()
-:	m_imageProcessQuality(world::QuDisabled)
-,	m_shadowQuality(world::QuDisabled)
-,	m_reflectionsQuality(world::QuDisabled)
-,	m_motionBlurQuality(world::QuDisabled)
-,	m_ambientOcclusionQuality(world::QuDisabled)
-,	m_antiAliasQuality(world::QuDisabled)
+:	m_imageProcessQuality(world::Quality::Disabled)
+,	m_shadowQuality(world::Quality::Disabled)
+,	m_reflectionsQuality(world::Quality::Disabled)
+,	m_motionBlurQuality(world::Quality::Disabled)
+,	m_ambientOcclusionQuality(world::Quality::Disabled)
+,	m_antiAliasQuality(world::Quality::Disabled)
 ,	m_fieldOfView(c_defaultFieldOfView)
 ,	m_mouseWheelRate(c_defaultMouseWheelRate)
 ,	m_multiSample(c_defaultMultiSample)
@@ -186,12 +186,12 @@ void FinalRenderControl::updateWorldRenderer()
 	world::WorldCreateDesc wcd;
 	wcd.worldRenderSettings = &m_worldRenderSettings;
 	wcd.entityRenderers = worldEntityRenderers;
-	wcd.motionBlurQuality = m_motionBlurQuality;
-	wcd.shadowsQuality = m_shadowQuality;
-	wcd.reflectionsQuality = m_reflectionsQuality;
-	wcd.ambientOcclusionQuality = m_ambientOcclusionQuality;
-	wcd.antiAliasQuality = m_antiAliasQuality;
-	wcd.imageProcessQuality = m_imageProcessQuality;
+	wcd.quality.motionBlur = m_motionBlurQuality;
+	wcd.quality.shadows = m_shadowQuality;
+	wcd.quality.reflections = m_reflectionsQuality;
+	wcd.quality.ambientOcclusion = m_ambientOcclusionQuality;
+	wcd.quality.antiAlias = m_antiAliasQuality;
+	wcd.quality.imageProcess = m_imageProcessQuality;
 	wcd.multiSample = m_multiSample;
 	wcd.frameCount = 1;
 
@@ -219,14 +219,14 @@ void FinalRenderControl::setAspect(float aspect)
 	m_containerAspect->update();
 }
 
-void FinalRenderControl::setQuality(world::Quality imageProcessQuality, world::Quality shadowQuality, world::Quality reflectionsQuality, world::Quality motionBlurQuality, world::Quality ambientOcclusionQuality, world::Quality antiAliasQuality)
+void FinalRenderControl::setQuality(world::Quality imageProcess, world::Quality shadows, world::Quality reflections, world::Quality motionBlur, world::Quality ambientOcclusion, world::Quality antiAlias)
 {
-	m_imageProcessQuality = imageProcessQuality;
-	m_shadowQuality = shadowQuality;
-	m_reflectionsQuality = reflectionsQuality;
-	m_motionBlurQuality = motionBlurQuality;
-	m_ambientOcclusionQuality = ambientOcclusionQuality;
-	m_antiAliasQuality = antiAliasQuality;
+	m_imageProcessQuality = imageProcess;
+	m_shadowQuality = shadows;
+	m_reflectionsQuality = reflections;
+	m_motionBlurQuality = motionBlur;
+	m_ambientOcclusionQuality = ambientOcclusion;
+	m_antiAliasQuality = antiAlias;
 	updateWorldRenderer();
 }
 

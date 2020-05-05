@@ -37,9 +37,9 @@ public:
 
 	virtual Aabb3 getBoundingBox() const override final;
 
-	void setCameraType(CameraType type);
+	void setProjection(Projection projection);
 
-	CameraType getCameraType() const;
+	Projection getProjection() const;
 
 	void setFieldOfView(float fov);
 
@@ -54,7 +54,7 @@ public:
 	float getHeight() const;
 
 private:
-	CameraType m_type;
+	Projection m_projection;
 	float m_fov;
 	float m_width;
 	float m_height;

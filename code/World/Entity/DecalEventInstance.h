@@ -24,7 +24,7 @@ public:
 
 	virtual void gather(const std::function< void(Entity*) >& fn) const override final;
 
-	virtual void cancel(CancelType when) override final;
+	virtual void cancel(Cancel when) override final;
 
 private:
 	Ref< Entity > m_entity;

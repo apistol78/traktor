@@ -16,11 +16,11 @@
 	<scaleWidth>0</scaleWidth>
 	<scaleHeight>0</scaleHeight>
 	<flipX>false</flipX>
-	<flipY>false</flipY>
+	<flipY>true</flipY>
 	<enableCompression>false</enableCompression>
 	<enableNormalMapCompression>false</enableNormalMapCompression>
 	<inverseNormalMapY>false</inverseNormalMapY>
-	<linearGamma>true</linearGamma>
+	<linearGamma>false</linearGamma>
 	<generateSphereMap>false</generateSphereMap>
 	<preserveAlphaCoverage>false</preserveAlphaCoverage>
 	<alphaCoverageReference>0.5</alphaCoverageReference>

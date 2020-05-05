@@ -62,7 +62,7 @@ void SoundEventInstance::gather(const std::function< void(world::Entity*) >& fn)
 {
 }
 
-void SoundEventInstance::cancel(world::CancelType when)
+void SoundEventInstance::cancel(world::Cancel when)
 {
 	if (m_handle)
 	{

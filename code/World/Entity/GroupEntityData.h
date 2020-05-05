@@ -26,10 +26,6 @@ class T_DLLCLASS GroupEntityData : public EntityData
 public:
 	GroupEntityData();
 
-	void setMask(uint32_t mask);
-
-	uint32_t getMask() const;
-
 	void addEntityData(EntityData* entityData);
 
 	void removeEntityData(EntityData* entityData);
@@ -47,7 +43,6 @@ public:
 	virtual void serialize(ISerializer& s) override;
 
 private:
-	uint32_t m_mask;
 	RefArray< EntityData > m_entityData;
 };
 

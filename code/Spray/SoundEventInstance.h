@@ -47,7 +47,7 @@ public:
 
 	virtual void gather(const std::function< void(world::Entity*) >& fn) const override final;
 
-	virtual void cancel(world::CancelType when) override final;
+	virtual void cancel(world::Cancel when) override final;
 
 private:
 	Ref< world::Entity > m_sender;

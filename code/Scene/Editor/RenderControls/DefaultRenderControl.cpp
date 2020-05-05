@@ -262,16 +262,16 @@ void DefaultRenderControl::setAspect(float aspect)
 		m_renderControl->setAspect(aspect);
 }
 
-void DefaultRenderControl::setQuality(world::Quality imageProcessQuality, world::Quality shadowQuality, world::Quality reflectionsQuality, world::Quality motionBlurQuality, world::Quality ambientOcclusionQuality, world::Quality antiAliasQuality)
+void DefaultRenderControl::setQuality(world::Quality imageProcess, world::Quality shadows, world::Quality reflections, world::Quality motionBlur, world::Quality ambientOcclusion, world::Quality antiAlias)
 {
 	if (m_renderControl)
 		m_renderControl->setQuality(
-			imageProcessQuality,
-			shadowQuality,
-			reflectionsQuality,
-			motionBlurQuality,
-			ambientOcclusionQuality,
-			antiAliasQuality
+			imageProcess,
+			shadows,
+			reflections,
+			motionBlur,
+			ambientOcclusion,
+			antiAlias
 		);
 }
 

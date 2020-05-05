@@ -7,6 +7,7 @@
 #include "Spray/Point.h"
 #include "Spray/Types.h"
 #include "Ui/Widget.h"
+#include "World/WorldRenderView.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -39,7 +40,15 @@ class IRenderSystem;
 class IRenderView;
 class ISimpleTexture;
 class RenderContext;
+class RenderGraph;
 class PrimitiveRenderer;
+
+	}
+
+	namespace scene
+	{
+	
+class Scene;
 
 	}
 
@@ -51,17 +60,20 @@ class AudioSystem;
 
 	}
 
+	namespace world
+	{
+	
+class IWorldRenderer;
+
+	}
+
 	namespace spray
 	{
 
 class Effect;
 class EffectData;
-class EffectInstance;
 class EffectLayer;
-class MeshRenderer;
-class PointRenderer;
 class SourceRenderer;
-class TrailRenderer;
 
 class T_DLLCLASS EffectPreviewControl : public ui::Widget
 {
@@ -88,17 +100,11 @@ public:
 
 	void setTotalTime(float totalTime);
 
-	void setBackground(const resource::Id< render::ISimpleTexture >& background);
-
-	//void setImageProcess(const resource::Id< render::ImageProcessData >& postProcess);
-
 	void showGuide(bool guideVisible);
 
 	void showVelocity(bool velocityVisible);
 
 	void setMoveEmitter(bool moveEmitter);
-
-	void setGroundClip(bool groundClip);
 
 	void randomizeSeed();
 
@@ -112,26 +118,20 @@ private:
 	Ref< resource::IResourceManager > m_resourceManager;
 	Ref< render::IRenderSystem > m_renderSystem;
 	Ref< render::IRenderView > m_renderView;
-	Ref< render::IRenderTargetSet > m_depthTexture;
-	//Ref< render::IRenderTargetSet > m_postTargetSet;
-	Ref< render::RenderContext > m_globalContext;
-	resource::Proxy< render::ISimpleTexture > m_background;
-	//resource::Proxy< render::ImageProcessData > m_postProcessSettings;
-	//Ref< render::ImageProcess > m_postProcess;
-	Ref< render::PrimitiveRenderer > m_primitiveRenderer;
+	Ref< render::RenderGraph > m_renderGraph;
 	Ref< render::RenderContext > m_renderContext;
+	Ref< render::PrimitiveRenderer > m_primitiveRenderer;
 	Ref< sound::AudioSystem > m_audioSystem;
 	Ref< sound::SoundPlayer > m_soundPlayer;
-	Ref< PointRenderer > m_pointRenderer;
-	Ref< MeshRenderer > m_meshRenderer;
-	Ref< TrailRenderer > m_trailRenderer;
+	resource::Proxy< scene::Scene > m_sceneInstance;
+	Ref< world::IWorldRenderer > m_worldRenderer;
+	world::WorldRenderView m_worldRenderView;
 	Ref< const EffectData > m_effectData;
 	Ref< Effect > m_effect;
-	Ref< EffectInstance > m_effectInstance;
+	Ref< world::Entity > m_effectEntity;
 	Color4ub m_colorClear;
 	Color4ub m_colorGrid;
 	uint32_t m_randomSeed;
-	Context m_context;
 	Timer m_timer;
 	std::map< const TypeInfo*, Ref< SourceRenderer > > m_sourceRenderers;
 	Vector4 m_effectPosition;
@@ -143,9 +143,8 @@ private:
 	bool m_guideVisible;
 	bool m_velocityVisible;
 	bool m_moveEmitter;
-	bool m_groundClip;
 
-	void updateRenderer();
+	void updateWorldRenderer();
 
 	void eventButtonDown(ui::MouseButtonDownEvent* event);
 

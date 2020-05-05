@@ -37,7 +37,7 @@
 #include "World/WorldEntityRenderers.h"
 #include "World/WorldResourceFactory.h"
 #include "World/Entity/DecalRenderer.h"
-#include "World/Entity/GroupEntityRenderer.h"
+#include "World/Entity/GroupRenderer.h"
 #include "World/Entity/LightRenderer.h"
 #include "World/Entity/ProbeRenderer.h"
 #include "World/Entity/WorldEntityFactory.h"
@@ -82,15 +82,15 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.runtime.WorldServer", WorldServer, IWorldServer
 
 WorldServer::WorldServer()
 :	m_worldType(0)
-,	m_motionBlurQuality(world::QuMedium)
-,	m_shadowQuality(world::QuMedium)
-,	m_reflectionsQuality(world::QuMedium)
-,	m_ambientOcclusionQuality(world::QuMedium)
-,	m_antiAliasQuality(world::QuMedium)
-,	m_imageProcessQuality(world::QuMedium)
-,	m_particleQuality(world::QuMedium)
-,	m_terrainQuality(world::QuMedium)
-,	m_oceanQuality(world::QuMedium)
+,	m_motionBlurQuality(world::Quality::Medium)
+,	m_shadowQuality(world::Quality::Medium)
+,	m_reflectionsQuality(world::Quality::Medium)
+,	m_ambientOcclusionQuality(world::Quality::Medium)
+,	m_antiAliasQuality(world::Quality::Medium)
+,	m_imageProcessQuality(world::Quality::Medium)
+,	m_particleQuality(world::Quality::Medium)
+,	m_terrainQuality(world::Quality::Medium)
+,	m_oceanQuality(world::Quality::Medium)
 ,	m_gamma(2.2f)
 {
 }
@@ -106,15 +106,15 @@ bool WorldServer::create(const PropertyGroup* defaultSettings, const PropertyGro
 		return false;
 	}
 
-	m_motionBlurQuality = (world::Quality)settings->getProperty< int32_t >(L"World.MotionBlurQuality", world::QuMedium);
-	m_shadowQuality = (world::Quality)settings->getProperty< int32_t >(L"World.ShadowQuality", world::QuMedium);
-	m_reflectionsQuality = (world::Quality)settings->getProperty< int32_t >(L"World.ReflectionsQuality", world::QuMedium);
-	m_ambientOcclusionQuality = (world::Quality)settings->getProperty< int32_t >(L"World.AmbientOcclusionQuality", world::QuMedium);
-	m_antiAliasQuality = (world::Quality)settings->getProperty< int32_t >(L"World.AntiAliasQuality", world::QuMedium);
-	m_imageProcessQuality = (world::Quality)settings->getProperty< int32_t >(L"World.ImageProcessQuality", world::QuMedium);
-	m_particleQuality = (world::Quality)settings->getProperty< int32_t >(L"World.ParticleQuality", world::QuMedium);
-	m_terrainQuality = (world::Quality)settings->getProperty< int32_t >(L"World.TerrainQuality", world::QuMedium);
-	m_oceanQuality = (world::Quality)settings->getProperty< int32_t >(L"World.OceanQuality", world::QuMedium);
+	m_motionBlurQuality = (world::Quality)settings->getProperty< int32_t >(L"World.MotionBlurQuality", (int32_t)world::Quality::Medium);
+	m_shadowQuality = (world::Quality)settings->getProperty< int32_t >(L"World.ShadowQuality", (int32_t)world::Quality::Medium);
+	m_reflectionsQuality = (world::Quality)settings->getProperty< int32_t >(L"World.ReflectionsQuality", (int32_t)world::Quality::Medium);
+	m_ambientOcclusionQuality = (world::Quality)settings->getProperty< int32_t >(L"World.AmbientOcclusionQuality", (int32_t)world::Quality::Medium);
+	m_antiAliasQuality = (world::Quality)settings->getProperty< int32_t >(L"World.AntiAliasQuality", (int32_t)world::Quality::Medium);
+	m_imageProcessQuality = (world::Quality)settings->getProperty< int32_t >(L"World.ImageProcessQuality", (int32_t)world::Quality::Medium);
+	m_particleQuality = (world::Quality)settings->getProperty< int32_t >(L"World.ParticleQuality", (int32_t)world::Quality::Medium);
+	m_terrainQuality = (world::Quality)settings->getProperty< int32_t >(L"World.TerrainQuality", (int32_t)world::Quality::Medium);
+	m_oceanQuality = (world::Quality)settings->getProperty< int32_t >(L"World.OceanQuality", (int32_t)world::Quality::Medium);
 	m_gamma = settings->getProperty< float >(L"World.Gamma", 2.2f);
 
 	m_renderServer = renderServer;
@@ -176,20 +176,20 @@ void WorldServer::createEntityRenderers(IEnvironment* environment)
 	render::IRenderSystem* renderSystem = environment->getRender()->getRenderSystem();
 	resource::IResourceManager* resourceManager = environment->getResource()->getResourceManager();
 
-	float sprayLod1Distance = c_sprayLodDistances[m_particleQuality][0];
-	float sprayLod2Distance = c_sprayLodDistances[m_particleQuality][1];
+	float sprayLod1Distance = c_sprayLodDistances[(int32_t)m_particleQuality][0];
+	float sprayLod2Distance = c_sprayLodDistances[(int32_t)m_particleQuality][1];
 	m_effectEntityRenderer = new spray::EffectEntityRenderer(renderSystem, sprayLod1Distance, sprayLod2Distance);
 
 	m_terrainEntityRenderer = new terrain::EntityRenderer(
-		c_terrainDetailDistances[m_terrainQuality],
-		c_terrainSurfaceCacheSizes[m_terrainQuality],
-		bool(m_terrainQuality >= world::QuMedium),
-		bool(m_oceanQuality >= world::QuHigh)
+		c_terrainDetailDistances[(int32_t)m_terrainQuality],
+		c_terrainSurfaceCacheSizes[(int32_t)m_terrainQuality],
+		bool(m_terrainQuality >= world::Quality::Medium),
+		bool(m_oceanQuality >= world::Quality::High)
 	);
 
 	m_entityRenderers->add(new world::EntityRenderer());
 	m_entityRenderers->add(new world::DecalRenderer(renderSystem));
-	m_entityRenderers->add(new world::GroupEntityRenderer(world::EmAll));
+	m_entityRenderers->add(new world::GroupRenderer());
 	m_entityRenderers->add(new world::LightRenderer());
 	m_entityRenderers->add(new world::ProbeRenderer(resourceManager, renderSystem, *m_worldType));
 	m_entityRenderers->add(new mesh::MeshComponentRenderer());
@@ -203,15 +203,15 @@ void WorldServer::createEntityRenderers(IEnvironment* environment)
 
 int32_t WorldServer::reconfigure(const PropertyGroup* settings)
 {
-	world::Quality motionBlurQuality = (world::Quality)settings->getProperty< int32_t >(L"World.MotionBlurQuality", world::QuMedium);
-	world::Quality shadowQuality = (world::Quality)settings->getProperty< int32_t >(L"World.ShadowQuality", world::QuMedium);
-	world::Quality reflectionsQuality = (world::Quality)settings->getProperty< int32_t >(L"World.ReflectionsQuality", world::QuMedium);
-	world::Quality ambientOcclusionQuality = (world::Quality)settings->getProperty< int32_t >(L"World.AmbientOcclusionQuality", world::QuMedium);
-	world::Quality antiAliasQuality = (world::Quality)settings->getProperty< int32_t >(L"World.AntiAliasQuality", world::QuMedium);
-	world::Quality imageProcessQuality = (world::Quality)settings->getProperty< int32_t >(L"World.ImageProcessQuality", world::QuMedium);
-	world::Quality particleQuality = (world::Quality)settings->getProperty< int32_t >(L"World.ParticleQuality", world::QuMedium);
-	world::Quality terrainQuality = (world::Quality)settings->getProperty< int32_t >(L"World.TerrainQuality", world::QuMedium);
-	world::Quality oceanQuality = (world::Quality)settings->getProperty< int32_t >(L"World.OceanQuality", world::QuMedium);
+	world::Quality motionBlurQuality = (world::Quality)settings->getProperty< int32_t >(L"World.MotionBlurQuality", (int32_t)world::Quality::Medium);
+	world::Quality shadowQuality = (world::Quality)settings->getProperty< int32_t >(L"World.ShadowQuality", (int32_t)world::Quality::Medium);
+	world::Quality reflectionsQuality = (world::Quality)settings->getProperty< int32_t >(L"World.ReflectionsQuality", (int32_t)world::Quality::Medium);
+	world::Quality ambientOcclusionQuality = (world::Quality)settings->getProperty< int32_t >(L"World.AmbientOcclusionQuality", (int32_t)world::Quality::Medium);
+	world::Quality antiAliasQuality = (world::Quality)settings->getProperty< int32_t >(L"World.AntiAliasQuality", (int32_t)world::Quality::Medium);
+	world::Quality imageProcessQuality = (world::Quality)settings->getProperty< int32_t >(L"World.ImageProcessQuality", (int32_t)world::Quality::Medium);
+	world::Quality particleQuality = (world::Quality)settings->getProperty< int32_t >(L"World.ParticleQuality", (int32_t)world::Quality::Medium);
+	world::Quality terrainQuality = (world::Quality)settings->getProperty< int32_t >(L"World.TerrainQuality", (int32_t)world::Quality::Medium);
+	world::Quality oceanQuality = (world::Quality)settings->getProperty< int32_t >(L"World.OceanQuality", (int32_t)world::Quality::Medium);
 	float gamma = settings->getProperty< float >(L"World.Gamma", 2.2f);
 
 	// Check if we need to be reconfigured.
@@ -230,14 +230,14 @@ int32_t WorldServer::reconfigure(const PropertyGroup* settings)
 		return CrUnaffected;
 
 	// Adjust in-place systems.
-	float sprayLod1Distance = c_sprayLodDistances[m_particleQuality][0];
-	float sprayLod2Distance = c_sprayLodDistances[m_particleQuality][1];
+	float sprayLod1Distance = c_sprayLodDistances[(int32_t)m_particleQuality][0];
+	float sprayLod2Distance = c_sprayLodDistances[(int32_t)m_particleQuality][1];
 	m_effectEntityRenderer->setLodDistances(sprayLod1Distance, sprayLod2Distance);
 
-	m_terrainEntityRenderer->setTerrainDetailDistance(c_terrainDetailDistances[terrainQuality]);
-	m_terrainEntityRenderer->setTerrainCacheSize(c_terrainSurfaceCacheSizes[terrainQuality]);
-	m_terrainEntityRenderer->setTerrainLayersEnable(bool(terrainQuality >= world::QuMedium));
-	m_terrainEntityRenderer->setOceanDynamicReflectionEnable(bool(oceanQuality >= world::QuHigh));
+	m_terrainEntityRenderer->setTerrainDetailDistance(c_terrainDetailDistances[(int32_t)terrainQuality]);
+	m_terrainEntityRenderer->setTerrainCacheSize(c_terrainSurfaceCacheSizes[(int32_t)terrainQuality]);
+	m_terrainEntityRenderer->setTerrainLayersEnable((bool)(terrainQuality >= world::Quality::Medium));
+	m_terrainEntityRenderer->setOceanDynamicReflectionEnable((bool)(oceanQuality >= world::Quality::High));
 
 	// Save ghost configuration state.
 	m_motionBlurQuality = motionBlurQuality;
@@ -298,12 +298,12 @@ Ref< world::IWorldRenderer > WorldServer::createWorldRenderer(const world::World
 	world::WorldCreateDesc wcd;
 	wcd.worldRenderSettings = worldRenderSettings;
 	wcd.entityRenderers = m_entityRenderers;
-	wcd.motionBlurQuality = m_motionBlurQuality;
-	wcd.shadowsQuality = m_shadowQuality;
-	wcd.reflectionsQuality = m_reflectionsQuality;
-	wcd.ambientOcclusionQuality = m_ambientOcclusionQuality;
-	wcd.antiAliasQuality = m_antiAliasQuality;
-	wcd.imageProcessQuality = m_imageProcessQuality;
+	wcd.quality.motionBlur = m_motionBlurQuality;
+	wcd.quality.shadows = m_shadowQuality;
+	wcd.quality.reflections = m_reflectionsQuality;
+	wcd.quality.ambientOcclusion = m_ambientOcclusionQuality;
+	wcd.quality.antiAlias = m_antiAliasQuality;
+	wcd.quality.imageProcess = m_imageProcessQuality;
 	wcd.multiSample = m_renderServer->getMultiSample();
 	wcd.frameCount = m_renderServer->getThreadFrameQueueCount();
 	wcd.gamma = m_gamma;

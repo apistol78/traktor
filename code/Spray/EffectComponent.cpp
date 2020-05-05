@@ -36,6 +36,21 @@ EffectComponent::EffectComponent(const resource::Proxy< Effect >& effect, world:
 	m_context.soundPlayer = soundPlayer;
 }
 
+EffectComponent::EffectComponent(const resource::Proxy< Effect >& effect, EffectInstance* effectInstance, const Context& context)
+:	m_transform(Transform::identity())
+,	m_effect(effect)
+,	m_effectInstance(effectInstance)
+,	m_context(context)
+,	m_counter(0)
+,	m_enable(true)
+{
+	// Do not recreate instance if we've been provided one.
+	if (effectInstance != nullptr)
+		m_effect.consume();
+
+	updateTechniques();
+}
+
 void EffectComponent::destroy()
 {
 	if (m_effectInstance)
@@ -82,35 +97,7 @@ void EffectComponent::update(const world::UpdateParams& update)
 	{
 		m_effectInstance = m_effect->createInstance();
 		if (m_effectInstance)
-		{
-			// Collect set of techniques used by this effect; we store
-			// these in a local set as we want to check against rendering
-			// as fast as possible without going through every layer each time.
-			m_techniques.clear();
-
-			for (auto layer : m_effect->getLayers())
-			{
-				const Emitter* emitter = layer->getEmitter();
-				if (emitter)
-				{
-					const resource::Proxy< render::Shader >& emitterShader = emitter->getShader();
-					if (emitterShader)
-						emitterShader->getTechniques(m_techniques);
-
-					const resource::Proxy< mesh::InstanceMesh >& emitterMesh = emitter->getMesh();
-					if (emitterMesh)
-						emitterMesh->getTechniques(m_techniques);
-				}
-
-				const Trail* trail = layer->getTrail();
-				if (trail)
-				{
-					const resource::Proxy< render::Shader >& trailShader = trail->getShader();
-					if (trailShader)
-						trailShader->getTechniques(m_techniques);
-				}
-			}
-		}
+			updateTechniques();
 		m_effect.consume();
 	}
 
@@ -170,6 +157,40 @@ bool EffectComponent::isFinished() const
 		return false;
 
 	return m_effectInstance->getTime() >= m_effect->getDuration();
+}
+
+void EffectComponent::updateTechniques()
+{
+	// Collect set of techniques used by this effect; we store
+	// these in a local set as we want to check against rendering
+	// as fast as possible without going through every layer each time.
+	m_techniques.clear();
+
+	if (!m_effect)
+		return;
+
+	for (auto layer : m_effect->getLayers())
+	{
+		const Emitter* emitter = layer->getEmitter();
+		if (emitter)
+		{
+			const resource::Proxy< render::Shader >& emitterShader = emitter->getShader();
+			if (emitterShader)
+				emitterShader->getTechniques(m_techniques);
+
+			const resource::Proxy< mesh::InstanceMesh >& emitterMesh = emitter->getMesh();
+			if (emitterMesh)
+				emitterMesh->getTechniques(m_techniques);
+		}
+
+		const Trail* trail = layer->getTrail();
+		if (trail)
+		{
+			const resource::Proxy< render::Shader >& trailShader = trail->getShader();
+			if (trailShader)
+				trailShader->getTechniques(m_techniques);
+		}
+	}
 }
 
 	}
