@@ -31,9 +31,7 @@ public:
 
 	virtual void destroy() override;
 
-	DockPane* getPane();
-
-	void dumpLayout();
+	DockPane* getPane() const;
 
 	virtual void update(const Rect* rc = 0, bool immediate = false) override;
 

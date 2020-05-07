@@ -47,6 +47,9 @@ public:
 		return dynamic_type_cast< DataType* >(data);
 	}
 
+	/*! Copy all data from another object. */
+	void copyData(const Associative* source);
+
 private:
 	class Impl;
 

@@ -8,11 +8,17 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.ChildEvent", ChildEvent, Event)
 
-ChildEvent::ChildEvent(EventSubject* sender, Widget* child, bool link)
+ChildEvent::ChildEvent(EventSubject* sender, Widget* parent, Widget* child, bool link)
 :	Event(sender)
+,	m_parent(parent)
 ,	m_child(child)
 ,	m_link(link)
 {
+}
+
+Widget* ChildEvent::getParent() const
+{
+	return m_parent;
 }
 
 Widget* ChildEvent::getChild() const

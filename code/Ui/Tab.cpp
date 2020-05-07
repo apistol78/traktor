@@ -322,6 +322,11 @@ void Tab::eventButtonDown(MouseButtonDownEvent* event)
 				TabCloseEvent closeEvent(this, selectedPageState->page);
 				raiseEvent(&closeEvent);
 				closed = true;
+
+				// User are allowed to destroy the tab when the last page is closed
+				// thus we need to check if widget has been destroyed before continue.
+				if (getIWidget() == nullptr)
+					return;
 			}
 		}
 

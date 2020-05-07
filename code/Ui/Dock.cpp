@@ -92,15 +92,9 @@ void Dock::destroy()
 	ui::Widget::destroy();
 }
 
-DockPane* Dock::getPane()
+DockPane* Dock::getPane() const
 {
 	return m_pane;
-}
-
-void Dock::dumpLayout()
-{
-	if (m_pane)
-		m_pane->dump();
 }
 
 void Dock::update(const Rect* rc, bool immediate)

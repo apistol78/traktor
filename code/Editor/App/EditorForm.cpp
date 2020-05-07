@@ -9,6 +9,7 @@
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Serialization/BinarySerializer.h"
 #include "Core/Serialization/DeepClone.h"
+#include "Core/Serialization/DeepHash.h"
 #include "Core/Settings/PropertyBoolean.h"
 #include "Core/Settings/PropertyGroup.h"
 #include "Core/Settings/PropertyInteger.h"
@@ -88,6 +89,7 @@
 #include "Ui/DockPane.h"
 #include "Ui/Menu.h"
 #include "Ui/MenuItem.h"
+#include "Ui/MultiSplitter.h"
 #include "Ui/StyleBitmap.h"
 #include "Ui/StyleSheet.h"
 #include "Ui/Tab.h"
@@ -407,9 +409,10 @@ ui::Size getDesktopSizeEstimate()
 T_IMPLEMENT_RTTI_CLASS(L"traktor.editor.EditorForm", EditorForm, ui::Form)
 
 EditorForm::EditorForm()
-:	m_threadAssetMonitor(0)
-,	m_threadBuild(0)
+:	m_threadAssetMonitor(nullptr)
+,	m_threadBuild(nullptr)
 ,	m_buildStep(0)
+,	m_propertiesHash(0)
 {
 }
 
@@ -598,7 +601,7 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	if (!m_mergedSettings->getProperty< bool >(L"Editor.PropertiesVisible"))
 		m_propertiesView->hide();
 
-	m_paneWest->dock(m_propertiesView, true, ui::DockPane::DrSouth, ui::dpi96(300));
+	m_paneEast->dock(m_propertiesView, true, ui::DockPane::DrSouth, ui::dpi96(450));
 
 	// Create output panel.
 	m_tabOutput = new ui::Tab();
@@ -628,20 +631,27 @@ bool EditorForm::create(const CommandLine& cmdLine)
 
 	paneLog->dock(m_tabOutput, true);
 
-	m_tab = new ui::Tab();
-	m_tab->create(m_dock, ui::Tab::WsLine | ui::Tab::WsCloseButton);
-	m_tab->addImage(new ui::StyleBitmap(L"Editor.Database.Types"), 23);
-	m_tab->addEventHandler< ui::MouseButtonDownEvent >(this, &EditorForm::eventTabButtonDown);
-	m_tab->addEventHandler< ui::TabSelectionChangeEvent >(this, &EditorForm::eventTabSelChange);
-	m_tab->addEventHandler< ui::TabCloseEvent >(this, &EditorForm::eventTabClose);
+	// Create tab groups; only add one by default, user needs to add more groups manually.
+	m_tabGroupContainer = new ui::MultiSplitter();
+	m_tabGroupContainer->create(m_dock);
 
-	paneCenter->dock(m_tab, false);
+	Ref< ui::Tab > tab = new ui::Tab();
+	tab->create(m_tabGroupContainer, ui::Tab::WsLine | ui::Tab::WsCloseButton);
+	tab->addImage(new ui::StyleBitmap(L"Editor.Database.Types"), 23);
+	tab->addEventHandler< ui::MouseButtonDownEvent >(this, &EditorForm::eventTabButtonDown);
+	tab->addEventHandler< ui::TabSelectionChangeEvent >(this, &EditorForm::eventTabSelChange);
+	tab->addEventHandler< ui::TabCloseEvent >(this, &EditorForm::eventTabClose);
+	tab->addEventHandler< ui::ChildEvent >(this, &EditorForm::eventTabChild);
+	m_tabGroups.push_back(tab);
+
+	paneCenter->dock(m_tabGroupContainer, false);
 
 	// Create tab pop up.
 	m_menuTab = new ui::Menu();
 	m_menuTab->add(new ui::MenuItem(ui::Command(L"Editor.CloseEditor"), i18n::Text(L"CLOSE")));
 	m_menuTab->add(new ui::MenuItem(ui::Command(L"Editor.CloseAllOtherEditors"), i18n::Text(L"CLOSE_ALL_BUT_THIS")));
 	m_menuTab->add(new ui::MenuItem(ui::Command(L"Editor.FindInDatabase"), i18n::Text(L"FIND_IN_DATABASE")));
+	m_menuTab->add(new ui::MenuItem(ui::Command(L"Editor.MoveNewTabGroup"), i18n::Text(L"MOVE_TO_NEW_TAB_GROUP")));
 
 	// Create status bar.
 	m_statusBar = new ui::StatusBar();
@@ -662,9 +672,9 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	type_of< IEditorPageFactory >().findAllOf(editorPageFactoryTypes, false);
 	if (!editorPageFactoryTypes.empty())
 	{
-		for (TypeInfoSet::const_iterator i = editorPageFactoryTypes.begin(); i != editorPageFactoryTypes.end(); ++i)
+		for (const auto& editorPageFactoryType : editorPageFactoryTypes)
 		{
-			Ref< IEditorPageFactory > editorPageFactory = dynamic_type_cast< IEditorPageFactory* >((*i)->createInstance());
+			Ref< IEditorPageFactory > editorPageFactory = dynamic_type_cast< IEditorPageFactory* >(editorPageFactoryType->createInstance());
 			if (editorPageFactory)
 				m_editorPageFactories.push_back(editorPageFactory);
 		}
@@ -675,9 +685,9 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	type_of< IObjectEditorFactory >().findAllOf(objectEditorFactoryTypes, false);
 	if (!objectEditorFactoryTypes.empty())
 	{
-		for (TypeInfoSet::const_iterator i = objectEditorFactoryTypes.begin(); i != objectEditorFactoryTypes.end(); ++i)
+		for (const auto& objectEditorFactoryType : objectEditorFactoryTypes)
 		{
-			Ref< IObjectEditorFactory > objectEditorFactory = dynamic_type_cast< IObjectEditorFactory* >((*i)->createInstance());
+			Ref< IObjectEditorFactory > objectEditorFactory = dynamic_type_cast< IObjectEditorFactory* >(objectEditorFactoryType->createInstance());
 			if (objectEditorFactory)
 				m_objectEditorFactories.push_back(objectEditorFactory);
 		}
@@ -688,9 +698,9 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	type_of< IEditorPluginFactory >().findAllOf(editorPluginFactoryTypes, false);
 	if (!editorPluginFactoryTypes.empty())
 	{
-		for (TypeInfoSet::iterator i = editorPluginFactoryTypes.begin(); i != editorPluginFactoryTypes.end(); ++i)
+		for (const auto& editorPluginFactoryType : editorPluginFactoryTypes)
 		{
-			Ref< IEditorPluginFactory > editorPluginFactory = dynamic_type_cast< IEditorPluginFactory* >((*i)->createInstance());
+			Ref< IEditorPluginFactory > editorPluginFactory = dynamic_type_cast< IEditorPluginFactory* >(editorPluginFactoryType->createInstance());
 			if (editorPluginFactory)
 				m_editorPluginFactories.push_back(editorPluginFactory);
 		}
@@ -715,9 +725,9 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	{
 		m_menuTools = new ui::ToolBarMenu(i18n::Text(L"MENU_TOOLS"), L"");
 
-		for (TypeInfoSet::iterator i = toolTypes.begin(); i != toolTypes.end(); ++i)
+		for (const auto& toolType : toolTypes)
 		{
-			Ref< IEditorTool > tool = dynamic_type_cast< IEditorTool* >((*i)->createInstance());
+			Ref< IEditorTool > tool = dynamic_type_cast< IEditorTool* >(toolType->createInstance());
 			if (tool)
 				m_editorTools.push_back(tool);
 		}
@@ -1073,18 +1083,21 @@ bool EditorForm::openEditor(db::Instance* instance)
 	);
 
 	// Activate page if already opened for this instance.
-	for (int i = 0; i < m_tab->getPageCount(); ++i)
+	for (auto tab : m_tabGroups)
 	{
-		Ref< ui::TabPage > tabPage = m_tab->getPage(i);
-		T_ASSERT(tabPage);
-
-		Ref< Document > document = tabPage->getData< Document >(L"DOCUMENT");
-		if (document && document->containInstance(instance))
+		for (int i = 0; i < tab->getPageCount(); ++i)
 		{
-			Ref< IEditorPage > editorPage = tabPage->getData< IEditorPage >(L"EDITORPAGE");
-			setActiveEditorPage(editorPage);
-			m_tab->setActivePage(tabPage);
-			return true;
+			Ref< ui::TabPage > tabPage = tab->getPage(i);
+			T_ASSERT(tabPage);
+
+			Ref< Document > document = tabPage->getData< Document >(L"DOCUMENT");
+			if (document && document->containInstance(instance))
+			{
+				Ref< IEditorPage > editorPage = tabPage->getData< IEditorPage >(L"EDITORPAGE");
+				setActiveEditorPage(editorPage);
+				tab->setActivePage(tabPage);
+				return true;
+			}
 		}
 	}
 
@@ -1183,23 +1196,37 @@ bool EditorForm::openEditor(db::Instance* instance)
 			}
 		}
 
+		// Add to same group as active tab page.
+		ui::Tab* tab = m_tabGroups.front();
+		if (m_activeTabPage != nullptr)
+		{
+			for (auto tabGroup : m_tabGroups)
+			{
+				if (tabGroup == m_activeTabPage->getTab())
+				{
+					tab = tabGroup;
+					break;
+				}
+			}
+		}
+
 		// Create tab page container.
 		Ref< ui::TabPage > tabPage = new ui::TabPage();
-		if (!tabPage->create(m_tab, instance->getName(), iconIndex, new ui::FloodLayout()))
+		if (!tabPage->create(tab, instance->getName(), iconIndex, new ui::FloodLayout()))
 		{
-			log::error << L"Failed to create editor; unable to create tab page" << Endl;
+			log::error << L"Failed to create editor; unable to create tab page." << Endl;
 			instance->revert();
 			return false;
 		}
 
 		// Add tab page to tab container.
-		m_tab->addPage(tabPage);
-		m_tab->update(0, true);
+		tab->addPage(tabPage);
+		tab->update(0, true);
 
 		// Create editor page.
 		if (!editorPage->create(tabPage))
 		{
-			log::error << L"Failed to create editor" << Endl;
+			log::error << L"Failed to create editor." << Endl;
 			document->close();
 			return false;
 		}
@@ -1296,19 +1323,19 @@ bool EditorForm::openDefaultEditor(db::Instance* instance)
 
 bool EditorForm::openTool(const std::wstring& toolType, const PropertyGroup* param)
 {
-	for (RefArray< IEditorTool >::const_iterator i = m_editorTools.begin(); i != m_editorTools.end(); ++i)
+	for (auto editorTool : m_editorTools)
 	{
-		if (type_name(*i) == toolType)
+		if (type_name(editorTool) == toolType)
 		{
 			// Issue a build if resources need to be up-to-date.
 			std::set< Guid > dependencies;
-			if ((*i)->needOutputResources(dependencies))
+			if (editorTool->needOutputResources(dependencies))
 			{
 				buildAssets(std::vector< Guid >(dependencies.begin(), dependencies.end()), false);
 				buildWaitUntilFinished();
 			}
 
-			if ((*i)->launch(this, this, param))
+			if (editorTool->launch(this, this, param))
 				m_dataBaseView->updateView();
 
 			return true;
@@ -1319,19 +1346,20 @@ bool EditorForm::openTool(const std::wstring& toolType, const PropertyGroup* par
 
 bool EditorForm::openBrowser(const net::Url& url)
 {
+	ui::Tab* tab = m_tabGroups.front();
+
 	Ref< ui::TabPage > tabPage = new ui::TabPage();
-	tabPage->create(m_tab, url.getString(), 0, new ui::FloodLayout());
+	tabPage->create(tab, url.getString(), 0, new ui::FloodLayout());
 
 	Ref< WebBrowserPage > homePage = new WebBrowserPage(this);
 	homePage->create(tabPage, url);
 
-	m_tab->addPage(tabPage);
-	m_tab->update(0, true);
-
+	tab->addPage(tabPage);
+	tab->update(0, true);
 	return true;
 }
 
-Ref< IEditorPage > EditorForm::getActiveEditorPage()
+IEditorPage* EditorForm::getActiveEditorPage()
 {
 	return m_activeEditorPage;
 }
@@ -1341,33 +1369,33 @@ void EditorForm::setActiveEditorPage(IEditorPage* editorPage)
 	if (editorPage == m_activeEditorPage)
 		return;
 
-	int pageCount = m_tab->getPageCount();
-
 	if (m_activeEditorPageSite)
 		m_activeEditorPageSite->hide();
 
-	setPropertyObject(0);
+	setPropertyObject(nullptr);
 
+	m_activeTabPage = nullptr;
 	m_activeEditorPage = editorPage;
 	m_activeEditorPageSite = nullptr;
 	m_activeDocument = nullptr;
 
 	if (m_activeEditorPage)
 	{
-		for (int i = 0; i < pageCount; ++i)
+		for (auto tab : m_tabGroups)
 		{
-			Ref< ui::TabPage > page = m_tab->getPage(i);
-			if (page->getData< IEditorPage >(L"EDITORPAGE") == m_activeEditorPage)
+			int32_t pageCount = tab->getPageCount();
+			for (int32_t i = 0; i < pageCount; ++i)
 			{
-				m_tab->setActivePage(page);
+				Ref< ui::TabPage > page = tab->getPage(i);
+				if (page->getData< IEditorPage >(L"EDITORPAGE") == m_activeEditorPage)
+				{
+					tab->setActivePage(page);
 
-				m_activeEditorPageSite = page->getData< EditorPageSite >(L"EDITORPAGESITE");
-				T_ASSERT(m_activeEditorPageSite);
-
-				m_activeDocument = page->getData< Document >(L"DOCUMENT");
-				T_ASSERT(m_activeDocument);
-
-				break;
+					m_activeTabPage = page;
+					m_activeEditorPageSite = page->getData< EditorPageSite >(L"EDITORPAGESITE");
+					m_activeDocument = page->getData< Document >(L"DOCUMENT");
+					break;
+				}
 			}
 		}
 
@@ -1499,16 +1527,7 @@ bool EditorForm::openWorkspace(const Path& workspacePath)
 	// Create "Home" page.
 	std::wstring url = m_mergedSettings->getProperty< std::wstring >(L"Editor.HomeUrl", L"");
 	if (!url.empty())
-	{
-		Ref< ui::TabPage > tabPage = new ui::TabPage();
-		tabPage->create(m_tab, i18n::Text(L"EDITOR_HOME"), 0, new ui::FloodLayout());
-
-		Ref< WebBrowserPage > homePage = new WebBrowserPage(this);
-		homePage->create(tabPage, url);
-
-		m_tab->addPage(tabPage);
-		m_tab->update(nullptr, true);
-	}
+		openBrowser(url);
 
 	saveRecent(OS::getInstance().getWritableFolderPath() + L"/Traktor/Editor/Traktor.Editor.mru", m_mru);
 	updateMRU();
@@ -1528,7 +1547,15 @@ void EditorForm::closeWorkspace()
 	closeAllEditors();
 
 	// Ensure all tabs are closed, home tab isn't closed automatically by "close all editors".
-	m_tab->removeAllPages();
+	for (auto tab : m_tabGroups)
+		tab->removeAllPages();
+
+	// Close all other tab groups.
+	while (m_tabGroups.size() > 1)
+	{
+		m_tabGroups.back()->destroy();
+		m_tabGroups.pop_back();
+	}
 
 	// Remove store objects.
 	setStoreObject(L"StreamServer", nullptr);
@@ -1563,6 +1590,14 @@ void EditorForm::setPropertyObject(Object* properties)
 		dynamic_type_cast< ISerializable* >(properties)
 	);
 
+	uint32_t hash = DeepHash(dynamic_type_cast< ISerializable* >(properties)).get();
+	if (hash != m_propertiesHash)
+	{
+		m_dock->update();
+		m_propertiesHash = hash;
+	}
+
+#if defined(_DEBUG)
 	std::wstring previousTitle = m_propertiesView->getText();
 	if (properties)
 	{
@@ -1572,8 +1607,7 @@ void EditorForm::setPropertyObject(Object* properties)
 	}
 	else
 		m_propertiesView->setText(i18n::Text(L"TITLE_PROPERTIES"));
-	if (previousTitle != m_propertiesView->getText())
-		m_dock->update();
+#endif
 }
 
 void EditorForm::createAdditionalPanel(ui::Widget* widget, int size, int32_t direction)
@@ -1659,31 +1693,34 @@ void EditorForm::buildAssetsForOpenedEditors()
 	PipelineFactory pipelineFactory(m_mergedSettings);
 	PipelineInstanceCache pipelineInstanceCache(m_sourceDatabase, cachePath);
 
-	for (int i = 0; i < m_tab->getPageCount(); ++i)
+	for (auto tab : m_tabGroups)
 	{
-		Ref< ui::TabPage > tabPage = m_tab->getPage(i);
-		T_ASSERT(tabPage);
+		for (int i = 0; i < tab->getPageCount(); ++i)
+		{
+			ui::TabPage* tabPage = tab->getPage(i);
+			T_ASSERT(tabPage);
 
-		Ref< PropertyBoolean > needOutputResources = tabPage->getData< PropertyBoolean >(L"NEEDOUTPUTRESOURCES");
-		if (!needOutputResources || !*needOutputResources)
-			continue;
+			PropertyBoolean* needOutputResources = tabPage->getData< PropertyBoolean >(L"NEEDOUTPUTRESOURCES");
+			if (!needOutputResources || !*needOutputResources)
+				continue;
 
-		Ref< IEditorPageFactory > editorPageFactory = tabPage->getData< IEditorPageFactory >(L"EDITORPAGEFACTORY");
-		Ref< IEditorPage > editorPage = tabPage->getData< IEditorPage >(L"EDITORPAGE");
-		Ref< Document > document = tabPage->getData< Document >(L"DOCUMENT");
-		if (!editorPageFactory || !editorPage || !document)
-			continue;
+			IEditorPageFactory* editorPageFactory = tabPage->getData< IEditorPageFactory >(L"EDITORPAGEFACTORY");
+			IEditorPage* editorPage = tabPage->getData< IEditorPage >(L"EDITORPAGE");
+			Document* document = tabPage->getData< Document >(L"DOCUMENT");
+			if (!editorPageFactory || !editorPage || !document)
+				continue;
 
-		std::set< Guid > dependencies;
+			std::set< Guid > dependencies;
 
-		// First add pre-defined resources.
-		editorPageFactory->needOutputResources(type_of(document->getInstance(0)), dependencies);
+			// First add pre-defined resources.
+			editorPageFactory->needOutputResources(type_of(document->getInstance(0)), dependencies);
 
-		// Add document instances.
-		for (auto instance : document->getInstances())
-			dependencies.insert(instance->getGuid());
+			// Add document instances.
+			for (auto instance : document->getInstances())
+				dependencies.insert(instance->getGuid());
 
-		assetGuids.insert(assetGuids.end(), dependencies.begin(), dependencies.end());
+			assetGuids.insert(assetGuids.end(), dependencies.begin(), dependencies.end());
+		}
 	}
 
 	if (!assetGuids.empty())
@@ -2019,6 +2056,40 @@ void EditorForm::updateShortcutTable()
 	}
 }
 
+void EditorForm::moveNewTabGroup()
+{
+	if (!m_activeTabPage)
+		return;
+
+	// Cannot move away from a tab group with only a single page.
+	if (m_activeTabPage->getTab()->getPageCount() <= 1)
+		return;
+
+	Ref< ui::Tab > tab = new ui::Tab();
+	tab->create(m_tabGroupContainer, ui::Tab::WsLine | ui::Tab::WsCloseButton);
+	tab->addImage(new ui::StyleBitmap(L"Editor.Database.Types"), 23);
+	tab->addEventHandler< ui::MouseButtonDownEvent >(this, &EditorForm::eventTabButtonDown);
+	tab->addEventHandler< ui::TabSelectionChangeEvent >(this, &EditorForm::eventTabSelChange);
+	tab->addEventHandler< ui::TabCloseEvent >(this, &EditorForm::eventTabClose);
+	tab->addEventHandler< ui::ChildEvent >(this, &EditorForm::eventTabChild);
+	m_tabGroups.push_back(tab);
+
+	Ref< ui::TabPage > tabPage = new ui::TabPage();
+	tabPage->create(tab, m_activeTabPage->getText(), m_activeTabPage->getImageIndex(), new ui::FloodLayout());
+	tabPage->copyData(m_activeTabPage);
+
+	tab->addPage(tabPage);
+	tab->update(nullptr, true);
+
+	Ref< ui::Widget > child = m_activeTabPage->getFirstChild();
+	child->setParent(tabPage);
+
+	m_activeTabPage->getTab()->removePage(m_activeTabPage);
+	m_activeTabPage = tabPage;
+
+	m_tabGroupContainer->update();
+}
+
 void EditorForm::saveCurrentDocument()
 {
 	T_ANONYMOUS_VAR(EnterLeave)(
@@ -2028,9 +2099,9 @@ void EditorForm::saveCurrentDocument()
 
 	// First iterate all object editor dialogs to see if focus is in any of those,
 	// if so then we simulate an "Apply" in active one.
-	for (Ref< Widget > child = getFirstChild(); child; child = child->getNextSibling())
+	for (ui::Widget* child = getFirstChild(); child; child = child->getNextSibling())
 	{
-		Ref< ObjectEditorDialog > objectEditorDialog = dynamic_type_cast< ObjectEditorDialog* >(child);
+		ObjectEditorDialog* objectEditorDialog = dynamic_type_cast< ObjectEditorDialog* >(child);
 		if (objectEditorDialog && objectEditorDialog->containFocus())
 		{
 			objectEditorDialog->apply(true);
@@ -2039,21 +2110,12 @@ void EditorForm::saveCurrentDocument()
 	}
 
 	// Get active editor page and commit it's primary instance.
-	Ref< ui::TabPage > tabPage = m_tab->getActivePage();
-	if (tabPage)
+	if (m_activeEditorPage != nullptr)
 	{
-		Ref< IEditorPage > editorPage = tabPage->getData< IEditorPage >(L"EDITORPAGE");
-		if (!editorPage)
-			return;
-
-		Ref< Document > document = tabPage->getData< Document >(L"DOCUMENT");
-		if (!document)
-			return;
-
 		ui::Command shouldSave(L"Editor.ShouldSave");
-		editorPage->handleCommand(shouldSave);
+		m_activeEditorPage->handleCommand(shouldSave);
 
-		bool result = document->save();
+		bool result = m_activeDocument->save();
 		checkModified();
 
 		if (result)
@@ -2081,22 +2143,25 @@ void EditorForm::saveAllDocuments()
 	);
 
 	bool allSuccessfull = true;
-	for (int i = 0; i < m_tab->getPageCount(); ++i)
+	for (auto tab : m_tabGroups)
 	{
-		Ref< ui::TabPage > tabPage = m_tab->getPage(i);
-		T_ASSERT(tabPage);
+		for (int32_t i = 0; i < tab->getPageCount(); ++i)
+		{
+			ui::TabPage* tabPage = tab->getPage(i);
+			T_ASSERT(tabPage);
 
-		Ref< IEditorPage > editorPage = tabPage->getData< IEditorPage >(L"EDITORPAGE");
-		if (!editorPage)
-			continue;
+			Ref< IEditorPage > editorPage = tabPage->getData< IEditorPage >(L"EDITORPAGE");
+			if (!editorPage)
+				continue;
 
-		Ref< Document > document = tabPage->getData< Document >(L"DOCUMENT");
-		T_ASSERT(document);
+			Ref< Document > document = tabPage->getData< Document >(L"DOCUMENT");
+			T_ASSERT(document);
 
-		ui::Command shouldSave(L"Editor.ShouldSave");
-		editorPage->handleCommand(shouldSave);
+			ui::Command shouldSave(L"Editor.ShouldSave");
+			editorPage->handleCommand(shouldSave);
 
-		allSuccessfull &= document->save();
+			allSuccessfull &= document->save();
+		}
 	}
 
 	if (allSuccessfull)
@@ -2135,9 +2200,9 @@ void EditorForm::closeCurrentEditor()
 			return;
 	}
 
-	Ref< ui::TabPage > tabPage = m_tab->getActivePage();
-	T_ASSERT(tabPage);
-	T_ASSERT(tabPage->getData(L"EDITORPAGE") == m_activeEditorPage);
+	//Ref< ui::TabPage > tabPage = m_tab->getActivePage();
+	//T_ASSERT(tabPage);
+	//T_ASSERT(tabPage->getData(L"EDITORPAGE") == m_activeEditorPage);
 
 	if (m_activeEditorPageSite)
 		m_activeEditorPageSite->hide();
@@ -2150,17 +2215,17 @@ void EditorForm::closeCurrentEditor()
 	m_activeDocument->close();
 	m_activeDocument = nullptr;
 
-	m_tab->removePage(tabPage);
-	m_tab->update();
+	//m_tab->removePage(tabPage);
+	//m_tab->update();
 
-	tabPage->destroy();
-	tabPage = nullptr;
+	//tabPage->destroy();
+	//tabPage = nullptr;
 
-	tabPage = m_tab->getActivePage();
-	if (tabPage)
-		setActiveEditorPage(tabPage->getData< IEditorPage >(L"EDITORPAGE"));
-	else
-		setActiveEditorPage(nullptr);
+	//tabPage = m_tab->getActivePage();
+	//if (tabPage)
+	//	setActiveEditorPage(tabPage->getData< IEditorPage >(L"EDITORPAGE"));
+	//else
+	//	setActiveEditorPage(nullptr);
 }
 
 void EditorForm::closeAllEditors()
@@ -2172,39 +2237,39 @@ void EditorForm::closeAllEditors()
 	);
 #endif
 
-	// Get all other pages to close; ignore home.
-	RefArray< ui::TabPage > closePages;
-	for (int32_t i = 0; i < m_tab->getPageCount(); ++i)
-	{
-		Ref< ui::TabPage > tabPage = m_tab->getPage(i);
-		if (tabPage->getData< IEditorPage >(L"EDITORPAGE") == nullptr)
-			continue;
+	//// Get all other pages to close; ignore home.
+	//RefArray< ui::TabPage > closePages;
+	//for (int32_t i = 0; i < m_tab->getPageCount(); ++i)
+	//{
+	//	Ref< ui::TabPage > tabPage = m_tab->getPage(i);
+	//	if (tabPage->getData< IEditorPage >(L"EDITORPAGE") == nullptr)
+	//		continue;
 
-		closePages.push_back(tabPage);
-	}
+	//	closePages.push_back(tabPage);
+	//}
 
-	// Close found pages.
-	while (!closePages.empty())
-	{
-		Ref< ui::TabPage > tabPage = closePages.back();
-		closePages.pop_back();
+	//// Close found pages.
+	//while (!closePages.empty())
+	//{
+	//	Ref< ui::TabPage > tabPage = closePages.back();
+	//	closePages.pop_back();
 
-		T_ASSERT(tabPage);
-		m_tab->removePage(tabPage);
+	//	T_ASSERT(tabPage);
+	//	m_tab->removePage(tabPage);
 
-		Ref< IEditorPage > editorPage = tabPage->getData< IEditorPage >(L"EDITORPAGE");
-		if (editorPage)
-		{
-			T_ASSERT(editorPage != m_activeEditorPage);
-			editorPage->destroy();
-		}
+	//	Ref< IEditorPage > editorPage = tabPage->getData< IEditorPage >(L"EDITORPAGE");
+	//	if (editorPage)
+	//	{
+	//		T_ASSERT(editorPage != m_activeEditorPage);
+	//		editorPage->destroy();
+	//	}
 
-		Ref< Document > document = tabPage->getData< Document >(L"DOCUMENT");
-		if (document)
-			document->close();
-	}
+	//	Ref< Document > document = tabPage->getData< Document >(L"DOCUMENT");
+	//	if (document)
+	//		document->close();
+	//}
 
-	m_tab->update();
+	//m_tab->update();
 
 	m_activeEditorPage = nullptr;
 	m_activeEditorPageSite = nullptr;
@@ -2222,69 +2287,69 @@ void EditorForm::closeAllOtherEditors()
 	);
 #endif
 
-	// Get all other pages to close; ignore active page and home.
-	RefArray< ui::TabPage > closePages;
-	for (int32_t i = 0; i < m_tab->getPageCount(); ++i)
-	{
-		Ref< ui::TabPage > tabPage = m_tab->getPage(i);
-		if (tabPage == m_tab->getActivePage() || tabPage->getData< IEditorPage >(L"EDITORPAGE") == nullptr)
-			continue;
+	//// Get all other pages to close; ignore active page and home.
+	//RefArray< ui::TabPage > closePages;
+	//for (int32_t i = 0; i < m_tab->getPageCount(); ++i)
+	//{
+	//	Ref< ui::TabPage > tabPage = m_tab->getPage(i);
+	//	if (tabPage == m_tab->getActivePage() || tabPage->getData< IEditorPage >(L"EDITORPAGE") == nullptr)
+	//		continue;
 
-		closePages.push_back(tabPage);
-	}
+	//	closePages.push_back(tabPage);
+	//}
 
-	// Close found pages.
-	while (!closePages.empty())
-	{
-		Ref< ui::TabPage > tabPage = closePages.back();
-		closePages.pop_back();
+	//// Close found pages.
+	//while (!closePages.empty())
+	//{
+	//	Ref< ui::TabPage > tabPage = closePages.back();
+	//	closePages.pop_back();
 
-		T_ASSERT(tabPage);
-		m_tab->removePage(tabPage);
+	//	T_ASSERT(tabPage);
+	//	m_tab->removePage(tabPage);
 
-		Ref< IEditorPage > editorPage = tabPage->getData< IEditorPage >(L"EDITORPAGE");
-		if (editorPage)
-		{
-			T_ASSERT(editorPage != m_activeEditorPage);
-			editorPage->destroy();
-		}
+	//	Ref< IEditorPage > editorPage = tabPage->getData< IEditorPage >(L"EDITORPAGE");
+	//	if (editorPage)
+	//	{
+	//		T_ASSERT(editorPage != m_activeEditorPage);
+	//		editorPage->destroy();
+	//	}
 
-		Ref< Document > document = tabPage->getData< Document >(L"DOCUMENT");
-		if (document)
-			document->close();
-	}
+	//	Ref< Document > document = tabPage->getData< Document >(L"DOCUMENT");
+	//	if (document)
+	//		document->close();
+	//}
 
-	m_tab->update();
+	//m_tab->update();
 }
 
 void EditorForm::findInDatabase()
 {
-	Ref< ui::TabPage > tabPage = m_tab->getActivePage();
-	T_ASSERT(tabPage);
+	if (!m_activeDocument)
+		return;
 
-	Ref< db::Instance > instance = tabPage->getData< db::Instance >(L"PRIMARY");
+	db::Instance* instance = m_activeDocument->getInstance(0);
 	if (instance)
 		highlightInstance(instance);
 }
 
 void EditorForm::activatePreviousEditor()
 {
-	Ref< ui::TabPage > previousTabPage = m_tab->cycleActivePage(false);
-	if (previousTabPage)
-	{
-		Ref< IEditorPage > editorPage = previousTabPage->getData< IEditorPage >(L"EDITORPAGE");
-		setActiveEditorPage(editorPage);
-	}
+	//Ref< ui::TabPage > previousTabPage = m_tab->cycleActivePage(false);
+	//if (previousTabPage)
+	//{
+	//	Ref< IEditorPage > editorPage = previousTabPage->getData< IEditorPage >(L"EDITORPAGE");
+	//	setActiveEditorPage(editorPage);
+	//}
 }
 
 void EditorForm::activateNextEditor()
 {
-	Ref< ui::TabPage > nextTabPage = m_tab->cycleActivePage(true);
-	if (nextTabPage)
-	{
-		Ref< IEditorPage > editorPage = nextTabPage->getData< IEditorPage >(L"EDITORPAGE");
-		setActiveEditorPage(editorPage);
-	}
+	//Ref< ui::TabPage > nextTabPage = m_tab->cycleActivePage(true);
+	//if (nextTabPage)
+	//{
+	//	Ref< IEditorPage > editorPage = nextTabPage->getData< IEditorPage >(L"EDITORPAGE");
+	//	setActiveEditorPage(editorPage);
+	//}
 }
 
 void EditorForm::loadModules()
@@ -2294,16 +2359,16 @@ void EditorForm::loadModules()
 	std::set< std::wstring > modules = m_mergedSettings->getProperty< std::set< std::wstring > >(L"Editor.Modules");
 
 	std::vector< Path > modulePathsFlatten(modulePaths.begin(), modulePaths.end());
-	for (std::set< std::wstring >::const_iterator i = modules.begin(); i != modules.end(); ++i)
+	for (const auto& module : modules)
 	{
 		Ref< Library > library = new Library();
-		if (library->open(*i, modulePathsFlatten, true))
+		if (library->open(module, modulePathsFlatten, true))
 		{
-			log::info << L"Module \"" << *i << L"\" loaded successfully." << Endl;
+			log::info << L"Module \"" << module << L"\" loaded successfully." << Endl;
 			library->detach();
 		}
 		else
-			log::error << L"Unable to load module \"" << *i << L"\"." << Endl;
+			log::error << L"Unable to load module \"" << module << L"\"." << Endl;
 	}
 #endif
 }
@@ -2335,55 +2400,57 @@ void EditorForm::loadLanguageDictionaries()
 
 void EditorForm::checkModified()
 {
-	bool needUpdate = false;
-
-	int pageCount = m_tab->getPageCount();
-	for (int i = 0; i < pageCount; ++i)
+	for (auto tab : m_tabGroups)
 	{
-		Ref< ui::TabPage > tabPage = m_tab->getPage(i);
-		T_ASSERT(tabPage);
+		bool needUpdate = false;
 
-		Ref< IEditorPage > editorPage = tabPage->getData< IEditorPage >(L"EDITORPAGE");
-		if (!editorPage)
-			continue;
-
-		Ref< Document > document = tabPage->getData< Document >(L"DOCUMENT");
-		if (!document)
-			continue;
-
-		// Add or remove asterix on tab.
-		std::wstring tabName = tabPage->getText();
-		if (document->modified())
+		int32_t pageCount = tab->getPageCount();
+		for (int32_t i = 0; i < pageCount; ++i)
 		{
-			if (tabName[tabName.length() - 1] != L'*')
+			ui::TabPage* tabPage = tab->getPage(i);
+			T_ASSERT(tabPage);
+
+			IEditorPage* editorPage = tabPage->getData< IEditorPage >(L"EDITORPAGE");
+			if (!editorPage)
+				continue;
+
+			Document* document = tabPage->getData< Document >(L"DOCUMENT");
+			if (!document)
+				continue;
+
+			// Add or remove asterix on tab.
+			std::wstring tabName = tabPage->getText();
+			if (document->modified())
 			{
-				tabPage->setText(tabName + L"*");
-				needUpdate = true;
+				if (tabName[tabName.length() - 1] != L'*')
+				{
+					tabPage->setText(tabName + L"*");
+					needUpdate = true;
+				}
+			}
+			else
+			{
+				if (tabName[tabName.length() - 1] == L'*')
+				{
+					tabPage->setText(tabName.substr(0, tabName.length() - 1));
+					needUpdate = true;
+				}
 			}
 		}
-		else
-		{
-			if (tabName[tabName.length() - 1] == L'*')
-			{
-				tabPage->setText(tabName.substr(0, tabName.length() - 1));
-				needUpdate = true;
-			}
-		}
+
+		if (needUpdate)
+			tab->update();
 	}
-
-	if (needUpdate)
-		m_tab->update();
 }
 
 bool EditorForm::currentModified()
 {
-	Ref< ui::TabPage > tabPage = m_tab->getActivePage();
-	if (!tabPage)
+	if (!m_activeTabPage)
 		return false;
 
 	checkModified();
 
-	std::wstring tabName = tabPage->getText();
+	std::wstring tabName = m_activeTabPage->getText();
 	return tabName[tabName.length() - 1] == L'*';
 }
 
@@ -2392,14 +2459,19 @@ bool EditorForm::anyModified()
 	checkModified();
 
 	bool unsavedInstances = false;
-	for (int i = 0; i < m_tab->getPageCount(); ++i)
+	for (auto tab : m_tabGroups)
 	{
-		std::wstring tabName = m_tab->getPage(i)->getText();
-		if (tabName[tabName.length() - 1] == L'*')
+		for (int32_t i = 0; i < tab->getPageCount(); ++i)
 		{
-			unsavedInstances = true;
-			break;
+			std::wstring tabName = tab->getPage(i)->getText();
+			if (tabName[tabName.length() - 1] == L'*')
+			{
+				unsavedInstances = true;
+				break;
+			}
 		}
+		if (unsavedInstances)
+			break;
 	}
 
 	return unsavedInstances;
@@ -2429,6 +2501,8 @@ bool EditorForm::handleCommand(const ui::Command& command)
 		closeAllOtherEditors();
 	else if (command == L"Editor.FindInDatabase")
 		findInDatabase();
+	else if (command == L"Editor.MoveNewTabGroup")
+		moveNewTabGroup();
 	else if (command == L"Editor.Build")
 		buildAssets(false);
 	else if (command == L"Editor.Rebuild")
@@ -2508,12 +2582,15 @@ bool EditorForm::handleCommand(const ui::Command& command)
 				if (saveUserSettings(m_settingsPath, userSettings))
 				{
 					updateShortcutTable();
-					for (int i = 0; i < m_tab->getPageCount(); ++i)
+					for (auto tab : m_tabGroups)
 					{
-						Ref< ui::TabPage > tabPage = m_tab->getPage(i);
-						Ref< IEditorPage > editorPage = tabPage->getData< IEditorPage >(L"EDITORPAGE");
-						if (editorPage)
-							editorPage->handleCommand(ui::Command(L"Editor.SettingsChanged"));
+						for (int32_t i = 0; i < tab->getPageCount(); ++i)
+						{
+							Ref< ui::TabPage > tabPage = tab->getPage(i);
+							Ref< IEditorPage > editorPage = tabPage->getData< IEditorPage >(L"EDITORPAGE");
+							if (editorPage)
+								editorPage->handleCommand(ui::Command(L"Editor.SettingsChanged"));
+						}
 					}
 					m_propertiesView->handleCommand(ui::Command(L"Editor.SettingsChanged"));
 				}
@@ -2528,16 +2605,7 @@ bool EditorForm::handleCommand(const ui::Command& command)
 	{
 		std::wstring url = m_mergedSettings->getProperty< std::wstring >(L"Editor.HomeUrl", L"");
 		if (!url.empty())
-		{
-			Ref< ui::TabPage > tabPage = new ui::TabPage();
-			tabPage->create(m_tab, i18n::Text(L"EDITOR_HOME"), 0, new ui::FloodLayout());
-
-			Ref< WebBrowserPage > homePage = new WebBrowserPage(this);
-			homePage->create(tabPage, url);
-
-			m_tab->addPage(tabPage);
-			m_tab->update(0, true);
-		}
+			openBrowser(url);
 	}
 	else if (command == L"Editor.ViewDatabase")
 	{
@@ -2617,8 +2685,7 @@ bool EditorForm::handleCommand(const ui::Command& command)
 		{
 			bool activeEditorFocus = false;
 
-			Ref< ui::TabPage > tabPage = m_tab->getActivePage();
-			if (tabPage && tabPage->containFocus())
+			if (m_activeTabPage != nullptr && m_activeTabPage->containFocus())
 				activeEditorFocus = true;
 
 			if (!activeEditorFocus && m_activeEditorPageSite)
@@ -2643,7 +2710,7 @@ bool EditorForm::handleCommand(const ui::Command& command)
 
 		if (!result)
 		{
-			for (Ref< Widget > child = getFirstChild(); child; child = child->getNextSibling())
+			for (ui::Widget* child = getFirstChild(); child; child = child->getNextSibling())
 			{
 				ObjectEditorDialog* editorDialog = dynamic_type_cast< ObjectEditorDialog* >(child);
 				if (editorDialog && editorDialog->containFocus())
@@ -2656,8 +2723,8 @@ bool EditorForm::handleCommand(const ui::Command& command)
 	}
 
 	// Propagate commands to plugins; even if it's already consumed.
-	for (RefArray< EditorPluginSite >::iterator i = m_editorPluginSites.begin(); i != m_editorPluginSites.end(); ++i)
-		result |= (*i)->handleCommand(command, result);
+	for (auto editorPluginSite : m_editorPluginSites)
+		result |= editorPluginSite->handleCommand(command, result);
 
 	return result;
 }
@@ -2685,27 +2752,33 @@ void EditorForm::eventToolClicked(ui::ToolBarButtonClickEvent* event)
 
 void EditorForm::eventTabButtonDown(ui::MouseButtonDownEvent* event)
 {
-	if (event->getButton() == ui::MbtRight)
-	{
-		if (m_tab->getPageAt(event->getPosition()) != nullptr)
-		{
-			const ui::MenuItem* selectedItem = m_menuTab->showModal(m_tab, event->getPosition());
-			if (selectedItem)
-				handleCommand(selectedItem->getCommand());
-		}
-	}
+	ui::Tab* tab = mandatory_non_null_type_cast< ui::Tab* >(event->getSender());
+
+	if (event->getButton() != ui::MbtRight)
+		return;
+	if (tab->getPageAt(event->getPosition()) == nullptr)
+		return;
+
+	const ui::MenuItem* selectedItem = m_menuTab->showModal(tab, event->getPosition());
+	if (selectedItem)
+		handleCommand(selectedItem->getCommand());
 }
 
 void EditorForm::eventTabSelChange(ui::TabSelectionChangeEvent* event)
 {
-	Ref< ui::TabPage > tabPage = event->getTabPage();
-	Ref< IEditorPage > editorPage = tabPage->getData< IEditorPage >(L"EDITORPAGE");
+	ui::TabPage* tabPage = event->getTabPage();
+	IEditorPage* editorPage = tabPage->getData< IEditorPage >(L"EDITORPAGE");
 	setActiveEditorPage(editorPage);
 }
 
 void EditorForm::eventTabClose(ui::TabCloseEvent* event)
 {
 	Ref< ui::TabPage > tabPage = event->getTabPage();
+	Ref< ui::Tab > tab = tabPage->getTab();
+
+	// Get associated objects from closing tab page.
+	Ref< IEditorPage > editorPage = tabPage->getData< IEditorPage >(L"EDITORPAGE");
+	Ref< Document > document = tabPage->getData< Document >(L"DOCUMENT");
 
 	// Ask user when trying to close an editor which contains unsaved data.
 	if (currentModified())
@@ -2724,9 +2797,20 @@ void EditorForm::eventTabClose(ui::TabCloseEvent* event)
 		}
 	}
 
-	m_tab->removePage(tabPage);
+	tab->removePage(tabPage);
 
-	Ref< IEditorPage > editorPage = tabPage->getData< IEditorPage >(L"EDITORPAGE");
+	// If more than one group and this is the last page in a group then
+	// also collapse the group.
+	if (m_tabGroups.size() > 1)
+	{
+		m_tabGroups.remove(tab);
+		
+		tab->destroy();
+		tab = m_tabGroups.front();
+
+		m_tabGroupContainer->update();
+	}
+
 	if (editorPage)
 	{
 		T_ASSERT(m_activeEditorPage == editorPage);
@@ -2735,7 +2819,6 @@ void EditorForm::eventTabClose(ui::TabCloseEvent* event)
 		m_activeEditorPage = nullptr;
 	}
 
-	Ref< Document > document = tabPage->getData< Document >(L"DOCUMENT");
 	if (document)
 	{
 		T_ASSERT(m_activeDocument == document);
@@ -2747,16 +2830,61 @@ void EditorForm::eventTabClose(ui::TabCloseEvent* event)
 	tabPage->destroy();
 	tabPage = nullptr;
 
-	setPropertyObject(0);
+	setPropertyObject(nullptr);
 
-	tabPage = m_tab->getActivePage();
+	tabPage = tab->getActivePage();
 	if (tabPage)
 	{
-		Ref< IEditorPage > editorPage = tabPage->getData< IEditorPage >(L"EDITORPAGE");
+		IEditorPage* editorPage = tabPage->getData< IEditorPage >(L"EDITORPAGE");
 		setActiveEditorPage(editorPage);
 	}
 
-	m_tab->update();
+	tab->update();
+}
+
+void EditorForm::eventTabChild(ui::ChildEvent* event)
+{
+	// Add focus event handler to each child added to a tab.
+	ui::Tab* childTab = nullptr;
+	for (auto tab : m_tabGroups)
+	{
+		if (tab == event->getSender())
+		{
+			childTab = tab;
+			break;
+		}
+	}
+	if (childTab != nullptr)
+	{
+		if (event->link())
+			event->getChild()->addEventHandler< ui::FocusEvent >(this, &EditorForm::eventTabFocus);
+	}
+}
+
+void EditorForm::eventTabFocus(ui::FocusEvent* event)
+{
+	if (!event->gotFocus())
+		return;
+
+	// Check which tab group contain active editor, determined by focus.
+	ui::Tab* focusTab = nullptr;
+	for (auto tab : m_tabGroups)
+	{
+		if (tab->containFocus())
+		{
+			focusTab = tab;
+			break;
+		}
+	}
+	if (focusTab != nullptr)
+	{
+		ui::TabPage* tabPage = focusTab->getActivePage();
+		if (tabPage != nullptr)
+		{
+			IEditorPage* editorPage = tabPage->getData< IEditorPage >(L"EDITORPAGE");
+			setActiveEditorPage(editorPage);
+		}
+	}
 }
 
 void EditorForm::eventClose(ui::CloseEvent* event)
@@ -2777,23 +2905,26 @@ void EditorForm::eventClose(ui::CloseEvent* event)
 		}
 	}
 
-	while (m_tab->getPageCount() > 0)
+	for (auto tab : m_tabGroups)
 	{
-		Ref< ui::TabPage > tabPage = m_tab->getPage(0);
-		m_tab->removePage(tabPage);
-
-		Ref< IEditorPage > editorPage = tabPage->getData< IEditorPage >(L"EDITORPAGE");
-		if (editorPage)
+		while (tab->getPageCount() > 0)
 		{
-			editorPage->destroy();
-			editorPage = nullptr;
-		}
+			Ref< ui::TabPage > tabPage = tab->getPage(0);
+			tab->removePage(tabPage);
 
-		Ref< Document > document = tabPage->getData< Document >(L"DOCUMENT");
-		if (document)
-		{
-			document->close();
-			document = nullptr;
+			Ref< IEditorPage > editorPage = tabPage->getData< IEditorPage >(L"EDITORPAGE");
+			if (editorPage)
+			{
+				editorPage->destroy();
+				editorPage = nullptr;
+			}
+
+			Ref< Document > document = tabPage->getData< Document >(L"DOCUMENT");
+			if (document)
+			{
+				document->close();
+				document = nullptr;
+			}
 		}
 	}
 
@@ -2883,14 +3014,18 @@ void EditorForm::eventTimer(ui::TimerEvent* /*event*/)
 		)
 		{
 			// Propagate database event to editor pages in order for them to flush resources.
-			for (int i = 0; i < m_tab->getPageCount(); ++i)
+			for (auto tab : m_tabGroups)
 			{
-				Ref< ui::TabPage > tabPage = m_tab->getPage(i);
-				Ref< IEditorPage > editorPage = tabPage->getData< IEditorPage >(L"EDITORPAGE");
-				if (editorPage)
+				const int32_t pageCount = tab->getPageCount();
+				for (int32_t i = 0; i < pageCount; ++i)
 				{
-					for (auto eventId : eventIds)
-						editorPage->handleDatabaseEvent(eventId.first, eventId.second);
+					ui::TabPage* tabPage = tab->getPage(i);
+					IEditorPage* editorPage = tabPage->getData< IEditorPage >(L"EDITORPAGE");
+					if (editorPage)
+					{
+						for (auto eventId : eventIds)
+							editorPage->handleDatabaseEvent(eventId.first, eventId.second);
+					}
 				}
 			}
 

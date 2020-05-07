@@ -112,7 +112,7 @@ public:
 	virtual bool openBrowser(const net::Url& url) = 0;
 
 	/*! Get active editor. */
-	virtual Ref< IEditorPage > getActiveEditorPage() = 0;
+	virtual IEditorPage* getActiveEditorPage() = 0;
 
 	/*! Set active editor. */
 	virtual void setActiveEditorPage(IEditorPage* editorPage) = 0;

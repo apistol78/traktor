@@ -1,3 +1,4 @@
+#include "Core/Serialization/AttributePrivate.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberComposite.h"
 #include "Core/Serialization/MemberRef.h"
@@ -79,7 +80,7 @@ void SceneAsset::serialize(ISerializer& s)
 
 	s >> MemberRef< world::WorldRenderSettings >(L"worldRenderSettings", m_worldRenderSettings);
 	s >> MemberSmallMap< std::wstring, resource::Id< render::ITexture >, Member< std::wstring >, resource::Member< render::ITexture > >(L"imageProcessParams", m_imageProcessParams);
-	s >> MemberRefArray< world::LayerEntityData >(L"layers", m_layers);
+	s >> MemberRefArray< world::LayerEntityData >(L"layers", m_layers, AttributePrivate());
 	s >> MemberRef< ISceneControllerData >(L"controllerData", m_controllerData);
 
 	if (s.getVersion() >= 8)

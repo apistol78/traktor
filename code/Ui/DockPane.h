@@ -47,11 +47,11 @@ public:
 
 	void detach();
 
-	Ref< DockPane > findWidgetPane(Widget* widget);
+	DockPane* findWidgetPane(Widget* widget);
 
-	Ref< DockPane > getPaneFromPosition(const Point& position);
+	DockPane* getPaneFromPosition(const Point& position);
 
-	Ref< DockPane > getSplitterFromPosition(const Point& position);
+	DockPane* getSplitterFromPosition(const Point& position);
 
 	bool hitGripper(const Point& position) const;
 
@@ -61,13 +61,11 @@ public:
 
 	void setSplitterPosition(const Point& position);
 
-	bool isSplitter() const { return m_child[0] != 0 && m_child[1] != 0; }
+	bool isSplitter() const { return m_child[0] != nullptr && m_child[1] != nullptr; }
 
 	const Rect& getPaneRect() const { return m_rect; }
 
 	bool isVisible() const;
-
-	void dump();
 
 private:
 	friend class Dock;

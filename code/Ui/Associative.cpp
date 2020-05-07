@@ -9,6 +9,8 @@ namespace traktor
 class Associative::Impl
 {
 public:
+	std::map< std::wstring, Ref< Object > > m_data;
+
 	void setData(const std::wstring& key, Object* data)
 	{
 		if (data)
@@ -27,8 +29,11 @@ public:
 		return (it != m_data.end()) ? it->second.ptr() : nullptr;
 	}
 
-private:
-	std::map< std::wstring, Ref< Object > > m_data;
+	void copyData(const Associative* source)
+	{
+		for (const auto& kv : source->m_impl->m_data)
+			setData(kv.first, kv.second);
+	}
 };
 
 Associative::Associative()
@@ -61,6 +66,14 @@ Object* Associative::getData(const std::wstring& key) const
 		return m_impl->getData(key);
 	else
 		return nullptr;
+}
+
+void Associative::copyData(const Associative* source)
+{
+	if (!m_impl)
+		m_impl = new Impl();
+
+	m_impl->copyData(source);
 }
 
 	}

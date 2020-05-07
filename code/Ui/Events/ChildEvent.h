@@ -5,9 +5,9 @@
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_UI_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -25,13 +25,16 @@ class T_DLLCLASS ChildEvent : public Event
 	T_RTTI_CLASS;
 
 public:
-	ChildEvent(EventSubject* sender, Widget* child, bool link);
+	ChildEvent(EventSubject* sender, Widget* parent, Widget* child, bool link);
+
+	Widget* getParent() const;
 
 	Widget* getChild() const;
 
 	bool link() const;
 
 private:
+	Ref< Widget > m_parent;
 	Ref< Widget > m_child;
 	bool m_link;
 };
