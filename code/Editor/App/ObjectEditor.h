@@ -66,7 +66,7 @@ public:
 
 	virtual bool openBrowser(const net::Url& url) override final;
 
-	virtual Ref< IEditorPage > getActiveEditorPage() override final;
+	virtual IEditorPage* getActiveEditorPage() override final;
 
 	virtual void setActiveEditorPage(IEditorPage* editorPage) override final;
 

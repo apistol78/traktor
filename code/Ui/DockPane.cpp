@@ -1,4 +1,3 @@
-#include "Core/Log/Log.h"
 #include "Core/Math/MathUtils.h"
 #include "Ui/Application.h"
 #include "Ui/Bitmap.h"
@@ -77,7 +76,7 @@ void DockPane::split(bool vertical, int split, Ref< DockPane >& outLeftPane, Ref
 	if (m_widget)
 		removeEventHandlers< FocusEvent >(m_widget, m_focusEventHandler);
 
-	m_widget = 0;
+	m_widget = nullptr;
 	m_split = split;
 	m_vertical = vertical;
 
@@ -96,7 +95,7 @@ void DockPane::dock(Widget* widget, bool detachable)
 	m_detachable = detachable;
 
 	m_child[0] =
-	m_child[1] = 0;
+	m_child[1] = nullptr;
 
 	addEventHandlers< FocusEvent >(m_widget, m_focusEventHandler);
 }
@@ -202,9 +201,9 @@ void DockPane::undock(Widget* widget)
 		if (m_widget)
 			removeEventHandlers< FocusEvent >(m_widget, m_focusEventHandler);
 
-		m_widget = 0;
-		m_child[0] = 0;
-		m_child[1] = 0;
+		m_widget = nullptr;
+		m_child[0] = nullptr;
+		m_child[1] = nullptr;
 		m_detachable = false;
 	}
 	else if (m_child[0])
@@ -216,47 +215,47 @@ void DockPane::undock(Widget* widget)
 		m_child[1]->undock(widget);
 
 		if (
-			m_child[0]->m_widget == 0 &&
-			m_child[1]->m_widget == 0 &&
-			m_child[0]->m_child[0] == 0 &&
-			m_child[1]->m_child[0] == 0
+			m_child[0]->m_widget == nullptr &&
+			m_child[1]->m_widget == nullptr &&
+			m_child[0]->m_child[0] == nullptr &&
+			m_child[1]->m_child[0] == nullptr
 		)
 		{
-			T_ASSERT(m_child[0]->m_child[1] == 0);
-			T_ASSERT(m_child[1]->m_child[1] == 0);
+			T_ASSERT(m_child[0]->m_child[1] == nullptr);
+			T_ASSERT(m_child[1]->m_child[1] == nullptr);
 
 			m_detachable = false;
 
-			m_child[0] = 0;
-			m_child[1] = 0;
+			m_child[0] = nullptr;
+			m_child[1] = nullptr;
 		}
 		else if (
 			m_child[1]->m_widget &&
-			m_child[0]->m_widget == 0 &&
-			m_child[0]->m_child[0] == 0
+			m_child[0]->m_widget == nullptr &&
+			m_child[0]->m_child[0] == nullptr
 		)
 		{
-			T_ASSERT(m_child[0]->m_child[1] == 0);
+			T_ASSERT(m_child[0]->m_child[1] == nullptr);
 
 			m_widget = m_child[1]->m_widget;
 			m_detachable = m_child[1]->m_detachable;
 
-			m_child[0] = 0;
-			m_child[1] = 0;
+			m_child[0] = nullptr;
+			m_child[1] = nullptr;
 		}
 		else if (
 			m_child[0]->m_widget &&
-			m_child[1]->m_widget == 0 &&
-			m_child[1]->m_child[0] == 0
+			m_child[1]->m_widget == nullptr &&
+			m_child[1]->m_child[0] == nullptr
 		)
 		{
-			T_ASSERT(m_child[1]->m_child[1] == 0);
+			T_ASSERT(m_child[1]->m_child[1] == nullptr);
 
 			m_widget = m_child[0]->m_widget;
 			m_detachable = m_child[0]->m_detachable;
 
-			m_child[0] = 0;
-			m_child[1] = 0;
+			m_child[0] = nullptr;
+			m_child[1] = nullptr;
 		}
 	}
 }
@@ -292,10 +291,10 @@ void DockPane::detach()
 			m_parent->m_child[1]->m_parent = m_parent;
 	}
 
-	m_parent = 0;
-	m_widget = 0;
-	m_child[0] = 0;
-	m_child[1] = 0;
+	m_parent = nullptr;
+	m_widget = nullptr;
+	m_child[0] = nullptr;
+	m_child[1] = nullptr;
 	m_detachable = false;
 }
 
@@ -426,7 +425,7 @@ void DockPane::draw(Canvas& canvas)
 			int32_t w = min(gw, gx1 - gx);
 			canvas.drawBitmap(
 				Point(gx, captionRect.getCenter().y - gh / 2),
-				Point(0, 0), //m_focus ? 5 : 0),
+				Point(0, 0),
 				Size(w, gh),
 				m_bitmapGripper,
 				BmAlpha
@@ -450,7 +449,7 @@ void DockPane::draw(Canvas& canvas)
 		m_child[1]->draw(canvas);
 }
 
-Ref< DockPane > DockPane::findWidgetPane(Widget* widget)
+DockPane* DockPane::findWidgetPane(Widget* widget)
 {
 	if (m_widget == widget)
 		return this;
@@ -460,24 +459,24 @@ Ref< DockPane > DockPane::findWidgetPane(Widget* widget)
 		if (!m_child[i])
 			continue;
 
-		Ref< DockPane > pane = m_child[i]->findWidgetPane(widget);
+		DockPane* pane = m_child[i]->findWidgetPane(widget);
 		if (pane)
 			return pane;
 	}
 
-	return 0;
+	return nullptr;
 }
 
-Ref< DockPane > DockPane::getPaneFromPosition(const Point& position)
+DockPane* DockPane::getPaneFromPosition(const Point& position)
 {
 	if (!m_rect.inside(position))
-		return 0;
+		return nullptr;
 
 	for (int i = 0; i < 2; ++i)
 	{
 		if (m_child[i])
 		{
-			Ref< DockPane > childPane = m_child[i]->getPaneFromPosition(position);
+			DockPane* childPane = m_child[i]->getPaneFromPosition(position);
 			if (childPane)
 				return childPane;
 		}
@@ -486,26 +485,26 @@ Ref< DockPane > DockPane::getPaneFromPosition(const Point& position)
 	if (m_widget && m_widget->isVisible(false))
 		return this;
 	else
-		return 0;
+		return nullptr;
 }
 
-Ref< DockPane > DockPane::getSplitterFromPosition(const Point& position)
+DockPane* DockPane::getSplitterFromPosition(const Point& position)
 {
 	if (!m_rect.inside(position))
-		return 0;
+		return nullptr;
 
 	for (int i = 0; i < 2; ++i)
 	{
 		if (m_child[i])
 		{
-			Ref< DockPane > childPane = m_child[i]->getSplitterFromPosition(position);
+			DockPane* childPane = m_child[i]->getSplitterFromPosition(position);
 			if (childPane)
 				return childPane;
 		}
 	}
 
 	if (m_widget && m_widget->isVisible(false))
-		return 0;
+		return nullptr;
 	else
 		return this;
 }
@@ -538,7 +537,7 @@ bool DockPane::hitSplitter(const Point& position) const
 	if (!isSplitter())
 		return false;
 
-	int pos, split;
+	int32_t pos, split;
 	if (m_vertical)
 	{
 		pos = position.y;
@@ -555,8 +554,8 @@ bool DockPane::hitSplitter(const Point& position) const
 
 void DockPane::setSplitterPosition(const Point& position)
 {
-	int pos = m_vertical ? (position.y - m_rect.top) : (position.x - m_rect.left);
-	int extent = m_vertical ? m_rect.getHeight() : m_rect.getWidth();
+	int32_t pos = m_vertical ? (position.y - m_rect.top) : (position.x - m_rect.left);
+	int32_t extent = m_vertical ? m_rect.getHeight() : m_rect.getWidth();
 
 	pos = std::max(0, pos);
 	pos = std::min(extent, pos);
@@ -573,31 +572,6 @@ bool DockPane::isVisible() const
 		return m_child[0]->isVisible() || m_child[1]->isVisible();
 
 	return m_widget ? m_widget->isVisible(false) : false;
-}
-
-void DockPane::dump()
-{
-	log::info << L"Pane \"" << (m_widget ? m_widget->getText().c_str() : L"null") << L"\"" << Endl;
-	log::info << L" \"" << (m_widget ? type_name(m_widget) : L"NA") << L"\"" << Endl;
-	log::info << L" m_detachable " << m_detachable << Endl;
-	log::info << L" m_vertical " << m_vertical << Endl;
-	log::info << L" m_split " << m_split << Endl;
-	log::info << L" m_focus " << m_focus << Endl;
-	log::info << L" m_child[0]" << Endl;
-	log::info << IncreaseIndent;
-	if (m_child[0])
-		m_child[0]->dump();
-	else
-		log::info << L"<null>" << Endl;
-	log::info << DecreaseIndent;
-
-	log::info << L" m_child[1]" << Endl;
-	log::info << IncreaseIndent;
-	if (m_child[1])
-		m_child[1]->dump();
-	else
-		log::info << L"<null>" << Endl;
-	log::info << DecreaseIndent;
 }
 
 void DockPane::eventFocus(FocusEvent* event)

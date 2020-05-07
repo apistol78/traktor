@@ -372,9 +372,15 @@ void Widget::link(Widget* parent)
 			parent->m_firstChild = this;
 		parent->m_lastChild = this;
 
-		// Invoke event on parent.
-		ChildEvent childEvent(m_parent, this, true);
-		m_parent->raiseEvent(&childEvent);
+		// Invoke event on parent and it's ancestors.
+		Widget* ancestor = m_parent;
+		do
+		{
+			ChildEvent childEvent(ancestor, m_parent, this, true);
+			ancestor->raiseEvent(&childEvent);
+			ancestor = ancestor->getParent();
+		}
+		while (ancestor != nullptr);
 	}
 }
 
@@ -393,11 +399,13 @@ void Widget::unlink()
 	if (m_previousSibling)
 		m_previousSibling->m_nextSibling = m_nextSibling;
 
-	// Invoke event on parent.
-	if (m_parent)
+	// Invoke event on parent and it's ancestors.
+	Widget* ancestor = m_parent;
+	while (ancestor != nullptr)
 	{
-		ChildEvent childEvent(m_parent, this, false);
-		m_parent->raiseEvent(&childEvent);
+		ChildEvent childEvent(ancestor, m_parent, this, false);
+		ancestor->raiseEvent(&childEvent);
+		ancestor = ancestor->getParent();
 	}
 
 	m_parent = nullptr;

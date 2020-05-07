@@ -33,6 +33,7 @@ class Dock;
 class DockPane;
 class Menu;
 class MenuItem;
+class MultiSplitter;
 class ProgressBar;
 class StatusBar;
 class Tab;
@@ -133,7 +134,7 @@ public:
 
 	virtual bool openBrowser(const net::Url& url) override final;
 
-	virtual Ref< IEditorPage > getActiveEditorPage() override final;
+	virtual IEditorPage* getActiveEditorPage() override final;
 
 	virtual void setActiveEditorPage(IEditorPage* editorPage) override final;
 
@@ -192,7 +193,8 @@ private:
 	Ref< ui::ToolBar > m_toolBar;
 	Ref< ui::StatusBar > m_statusBar;
 	Ref< ui::ProgressBar > m_buildProgress;
-	Ref< ui::Tab > m_tab;
+	Ref< ui::MultiSplitter > m_tabGroupContainer;
+	RefArray< ui::Tab > m_tabGroups;
 	Ref< ui::Menu > m_menuTab;
 	Ref< ui::ToolBarMenu > m_menuTools;
 	Ref< DatabaseView > m_dataBaseView;
@@ -202,6 +204,7 @@ private:
 	Ref< LogView > m_logView;
 	Ref< db::Database > m_sourceDatabase;
 	Ref< db::Database > m_outputDatabase;
+	Ref< ui::TabPage > m_activeTabPage;
 	Ref< IEditorPage > m_activeEditorPage;
 	Ref< Document > m_activeDocument;
 	Ref< EditorPageSite > m_activeEditorPageSite;
@@ -216,6 +219,7 @@ private:
 	Ref< PropertyGroup > m_mergedSettings;		//!< Traktor.Editor.config + Traktor.Editor.<platform>.config + Traktor.Editor.<user>.config + <Application>.workspace
 	int32_t m_buildStep;
 	std::wstring m_buildStepMessage;
+	uint32_t m_propertiesHash;
 
 	bool createWorkspace();
 
@@ -246,6 +250,8 @@ private:
 	void updateTitle();
 
 	void updateShortcutTable();
+
+	void moveNewTabGroup();
 
 	void saveCurrentDocument();
 
@@ -289,6 +295,10 @@ private:
 	void eventTabSelChange(ui::TabSelectionChangeEvent* event);
 
 	void eventTabClose(ui::TabCloseEvent* event);
+
+	void eventTabChild(ui::ChildEvent* event);
+
+	void eventTabFocus(ui::FocusEvent* event);
 
 	void eventClose(ui::CloseEvent* event);
 

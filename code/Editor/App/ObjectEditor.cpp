@@ -134,7 +134,7 @@ bool ObjectEditor::openBrowser(const net::Url& url)
 	return m_editor->openBrowser(url);
 }
 
-Ref< IEditorPage > ObjectEditor::getActiveEditorPage()
+IEditorPage* ObjectEditor::getActiveEditorPage()
 {
 	return m_editor->getActiveEditorPage();
 }

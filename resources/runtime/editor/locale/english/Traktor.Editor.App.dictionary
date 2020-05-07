@@ -550,6 +550,10 @@
 			<second>Properties</second>
 		</item>
 		<item>
+			<first>MOVE_TO_NEW_TAB_GROUP</first>
+			<second>Move to new tab group</second>
+		</item>
+		<item>
 			<first>NEW_INSTANCE_CATEGORY</first>
 			<second>Category</second>
 		</item>
