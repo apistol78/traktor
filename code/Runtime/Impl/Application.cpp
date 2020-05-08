@@ -899,6 +899,9 @@ bool Application::update()
 			int32_t lastAllocCount = m_targetPerformance.memCount;
 			int32_t allocCount = Alloc::count();
 
+			render::RenderSystemStatistics rss;
+			m_renderServer->getRenderSystem()->getStatistics(rss);
+
 			resource::ResourceManagerStatistics rms;
 			m_resourceServer->getResourceManager()->getStatistics(rms);
 
@@ -907,9 +910,9 @@ bool Application::update()
 
 			if (updateCount > 0)
 			{
-				m_targetPerformance.update = float(updateDuration / updateCount);
-				m_targetPerformance.physics = float(physicsDuration / updateCount);
-				m_targetPerformance.input = float(inputDuration / updateCount);
+				m_targetPerformance.update = (float)(updateDuration / updateCount);
+				m_targetPerformance.physics = (float)(physicsDuration / updateCount);
+				m_targetPerformance.input = (float)(inputDuration / updateCount);
 			}
 			else
 			{
@@ -918,19 +921,24 @@ bool Application::update()
 				m_targetPerformance.input = 0.0f;
 			}
 
-			m_targetPerformance.garbageCollect = float(gcDuration);
-			m_targetPerformance.steps = float(updateCount);
+			m_targetPerformance.build = (float)(buildTimeEnd - buildTimeStart);
+			m_targetPerformance.render = m_renderDuration;
+
+			m_targetPerformance.garbageCollect = (float)gcDuration;
+			m_targetPerformance.steps = (float)updateCount;
 			m_targetPerformance.interval = updateInterval;
 			m_targetPerformance.collisions = m_renderCollisions;
-			m_targetPerformance.memInUse = uint32_t(Alloc::allocated());
+			
+			m_targetPerformance.memInUse = (uint32_t)Alloc::allocated();
 			m_targetPerformance.memCount = allocCount;
 			m_targetPerformance.memDeltaCount = allocCount - lastAllocCount;
 			m_targetPerformance.heapObjects = Object::getHeapObjectCount();
-			m_targetPerformance.build = float(buildTimeEnd - buildTimeStart);
-			m_targetPerformance.render = m_renderDuration;
+
+			m_targetPerformance.gpuMemInUse = (uint32_t)rss.memoryUsage;
 			m_targetPerformance.passCount = m_renderViewStats.passCount;
 			m_targetPerformance.drawCalls = m_renderViewStats.drawCalls;
 			m_targetPerformance.primitiveCount = m_renderViewStats.primitiveCount;
+
 			m_targetPerformance.residentResourcesCount = rms.residentCount;
 			m_targetPerformance.exclusiveResourcesCount = rms.exclusiveCount;
 

@@ -371,6 +371,10 @@ struct RenderEvent
 /*! Render system statistics. */
 struct RenderSystemStatistics
 {
+	// Memory usage.
+	uint64_t memoryAvailable;
+	uint64_t memoryUsage;
+
 	// Number of alive resources.
 	uint32_t vertexBuffers;
 	uint32_t simpleTextures;
@@ -380,7 +384,9 @@ struct RenderSystemStatistics
 	uint32_t programs;
 
 	RenderSystemStatistics()
-	:	vertexBuffers(0)
+	:	memoryAvailable(0)
+	,	memoryUsage(0)
+	,	vertexBuffers(0)
 	,	simpleTextures(0)
 	,	cubeTextures(0)
 	,	volumeTextures(0)
