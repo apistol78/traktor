@@ -98,6 +98,9 @@ void MultiSplitter::update(const Rect* rc, bool immediate)
 
 void MultiSplitter::eventChild(ChildEvent* event)
 {
+	if (event->getParent() != this)
+		return;
+
 	int32_t childCount = 0;
 	for (auto child = getFirstChild(); child != nullptr; child = child->getNextSibling())
 		++childCount;
