@@ -2,40 +2,83 @@
     "version": "2.0.0",
 	"tasks": [
 		{
-			"label": "DebugShared",
 			"type": "shell",
-
-			"command": "${workspaceRoot}/../scripts/build-vscode.sh DebugShared",
+			"label": "Platform - DebugShared",
 			"group": "build",
-			"problemMatcher": [
-				"$gcc"
-			],
+
+			"linux": {
+				"command": "${workspaceRoot}/../scripts/build-vscode.sh DebugShared",
+				"problemMatcher": [
+					"$gcc"
+				]
+			},
 
 			"windows": {
-				"command": "${workspaceRoot}/../scripts/build-vscode.bat DebugShared",
-				"group": "build",
+				"command": "${workspaceRoot}/../scripts/build-vscode.bat Windows DebugShared",
 				"problemMatcher": [
 					"$msCompile"
 				]			
 			}
 		},
+
 		{
-			"label": "ReleaseShared",
 			"type": "shell",
-			
-			"command": "${workspaceRoot}/../scripts/build-vscode.sh ReleaseShared",
+			"label": "Platform - ReleaseShared",
 			"group": "build",
-			"problemMatcher": [
-				"$gcc"
-			],
+
+			"linux": {
+				"command": "${workspaceRoot}/../scripts/build-vscode.sh ReleaseShared",
+				"problemMatcher": [
+					"$gcc"
+				]
+			},
 
 			"windows": {
-				"command": "${workspaceRoot}/../scripts/build-vscode.bat ReleaseShared",
-				"group": "build",
+				"command": "${workspaceRoot}/../scripts/build-vscode.bat Windows ReleaseShared",
 				"problemMatcher": [
 					"$msCompile"
 				]			
 			}			
-		}
+		},
+
+		{
+			"type": "shell",
+			"label": "Android - DebugStatic",
+			"group": "build",
+
+			"linux": {
+				"command": "${workspaceRoot}/../scripts/build-vscode.sh DebugStatic",
+				"problemMatcher": [
+					"$gcc"
+				]
+			},
+
+			"windows": {
+				"command": "${workspaceRoot}/../scripts/build-vscode.bat Android DebugStatic",
+				"problemMatcher": [
+					"$gcc"
+				]			
+			}			
+		},
+
+		{
+			"type": "shell",
+			"label": "Android - ReleaseStatic",
+			"group": "build",
+
+			"linux": {
+				"command": "${workspaceRoot}/../scripts/build-vscode.sh ReleaseStatic",
+				"problemMatcher": [
+					"$gcc"
+				]
+			},
+
+			"windows": {
+				"command": "${workspaceRoot}/../scripts/build-vscode.bat Android ReleaseStatic",
+				"problemMatcher": [
+					"$gcc"
+				]			
+			}			
+		}		
 	]
 }
