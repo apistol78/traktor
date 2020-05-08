@@ -419,21 +419,22 @@ void WorldRendererDeferred::destroy()
 }
 
 void WorldRendererDeferred::setup(
-	const WorldRenderView& worldRenderView_,
+	const WorldRenderView& immutableWorldRenderView,
 	const Entity* rootEntity,
 	render::RenderGraph& renderGraph,
 	render::handle_t outputTargetSetId
 )
 {
 	int32_t frame = m_count % (int32_t)m_frames.size();
+	WorldRenderView worldRenderView = immutableWorldRenderView;
 
-	WorldRenderView worldRenderView = worldRenderView_;
-
+#if 0
+	// Jitter projection for TSAA.
 	Vector2 r = Vector2((m_count / 2) & 1, m_count & 1) / worldRenderView_.getViewSize();
-
 	Matrix44 proj = worldRenderView_.getProjection();
 	proj = translate(r.x, r.y, 0.0f) * proj;
 	worldRenderView.setProjection(proj);
+#endif
 
 	// Gather active lights.
 	m_lights.resize(0);
