@@ -77,7 +77,7 @@ public:
 	bool linearLighting;
 	ExposureMode exposureMode;
 	float exposure;
-	ShadowSettings shadowSettings[Quality::Last];
+	ShadowSettings shadowSettings[(int)Quality::Last];
 	bool fog;
 	float fogDistanceY;
 	float fogDistanceZ;
@@ -85,7 +85,7 @@ public:
 	float fogDensityZ;
 	Color4f fogColor;
 	resource::Id< IrradianceGrid > irradianceGrid;
-	resource::Id< render::ImageGraph > imageProcess[Quality::Last];
+	resource::Id< render::ImageGraph > imageProcess[(int)Quality::Last];
 
 	WorldRenderSettings();
 
