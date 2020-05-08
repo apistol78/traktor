@@ -108,7 +108,7 @@ bool Dialog::acceptLayout() const
 
 void Dialog::eventChild(ChildEvent* event)
 {
-	if (!getLayout())
+	if (event->getParent() != this || getLayout() == nullptr)
 		return;
 
 	Size bounds = getInnerRect().getSize();

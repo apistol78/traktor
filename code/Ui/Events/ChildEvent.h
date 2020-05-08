@@ -34,8 +34,8 @@ public:
 	bool link() const;
 
 private:
-	Ref< Widget > m_parent;
-	Ref< Widget > m_child;
+	Widget* m_parent;
+	Widget* m_child;
 	bool m_link;
 };
 
