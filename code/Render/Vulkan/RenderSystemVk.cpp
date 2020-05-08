@@ -675,6 +675,9 @@ void RenderSystemVk::purge()
 
 void RenderSystemVk::getStatistics(RenderSystemStatistics& outStatistics) const
 {
+	VmaStats stats = {};
+	vmaCalculateStats(m_allocator, &stats);
+	outStatistics.memoryUsage = stats.total.usedBytes;
 }
 
 	}

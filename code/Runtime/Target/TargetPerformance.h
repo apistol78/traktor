@@ -33,21 +33,32 @@ public:
 	float garbageCollect;
 	float steps;
 	float interval;
-	uint32_t collisions;
+	uint32_t collisions;	// Render collisions, when update and render threads collide.
+
+	// CPU memory usage.
 	uint32_t memInUse;
 	uint32_t memInUseScript;
 	int32_t memCount;
 	int32_t memDeltaCount;
 	uint32_t heapObjects;
+
+	// Render usage.
+	uint32_t gpuMemInUse;
 	uint32_t passCount;
 	uint32_t drawCalls;
 	uint32_t primitiveCount;
+
+	// Resource usage.
 	uint32_t residentResourcesCount;
 	uint32_t exclusiveResourcesCount;
+
+	// Physics usage.
 	uint32_t bodyCount;
 	uint32_t activeBodyCount;
 	uint32_t manifoldCount;
 	uint32_t queryCount;
+
+	// Audio usage.
 	uint32_t activeSoundChannels;
 
 	TargetPerformance();

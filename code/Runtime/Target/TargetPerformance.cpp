@@ -28,6 +28,7 @@ TargetPerformance::TargetPerformance()
 ,	memCount(0)
 ,	memDeltaCount(0)
 ,	heapObjects(0)
+,	gpuMemInUse(0)
 ,	passCount(0)
 ,	drawCalls(0)
 ,	primitiveCount(0)
@@ -59,6 +60,7 @@ void TargetPerformance::serialize(ISerializer& s)
 	s >> Member< int32_t >(L"memCount", memCount);
 	s >> Member< int32_t >(L"memDeltaCount", memDeltaCount);
 	s >> Member< uint32_t >(L"heapObjects", heapObjects);
+	s >> Member< uint32_t >(L"gpuMemInUse", gpuMemInUse);
 	s >> Member< uint32_t >(L"passCount", passCount);
 	s >> Member< uint32_t >(L"drawCalls", drawCalls);
 	s >> Member< uint32_t >(L"primitiveCount", primitiveCount);

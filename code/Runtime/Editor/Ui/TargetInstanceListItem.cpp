@@ -386,6 +386,9 @@ void TargetInstanceListItem::paint(ui::Canvas& canvas, const ui::Rect& rect)
 		canvas.drawText(bottomRect, L"Smem: " + toString(performance.memInUseScript / 1024) + L" KiB", ui::AnLeft, ui::AnCenter);
 
 		bottomRect.left += ui::dpi96(100);
+		canvas.drawText(bottomRect, L"Gmem: " + toString(performance.gpuMemInUse / 1024) + L" KiB", ui::AnLeft, ui::AnCenter);
+
+		bottomRect.left += ui::dpi96(100);
 		canvas.drawText(bottomRect, L"Res: " + toString(performance.residentResourcesCount) + L", " + toString(performance.exclusiveResourcesCount), ui::AnLeft, ui::AnCenter);
 
 		performanceRect = performanceRect.offset(0, ui::dpi96(c_performanceHeight + c_commandHeight));
