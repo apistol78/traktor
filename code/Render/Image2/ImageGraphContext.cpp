@@ -36,13 +36,13 @@ void ImageGraphContext::associateTextureTargetSetDepth(handle_t textureId, handl
 	txts.texture = nullptr;
 }
 
-handle_t ImageGraphContext::findTextureTargetSetId(handle_t textureId) const
+std::pair< handle_t, bool > ImageGraphContext::findTextureTargetSetId(handle_t textureId) const
 {
 	auto it = m_textureTargetSet.find(textureId);
 	if (it != m_textureTargetSet.end())
-		return it->second.targetSetId;
+		return { it->second.targetSetId, (bool)(it->second.colorIndex < 0) };
 	else
-		return 0;
+		return { 0, false };
 }
 
 ITexture* ImageGraphContext::findTexture(const RenderGraph& renderGraph, handle_t textureId) const

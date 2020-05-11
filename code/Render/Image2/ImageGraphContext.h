@@ -74,7 +74,7 @@ public:
 
     void associateTextureTargetSetDepth(handle_t textureId, handle_t targetSetId);
 
-    handle_t findTextureTargetSetId(handle_t textureId) const;
+    std::pair< handle_t, bool > findTextureTargetSetId(handle_t textureId) const;
 
     ITexture* findTexture(const RenderGraph& renderGraph, handle_t textureId) const;
 
