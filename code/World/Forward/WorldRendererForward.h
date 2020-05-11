@@ -19,6 +19,7 @@ namespace traktor
 	{
 
 class ImageGraph;
+class ISimpleTexture;
 class ScreenRenderer;
 class StructBuffer;
 

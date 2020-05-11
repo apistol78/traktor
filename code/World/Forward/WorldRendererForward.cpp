@@ -897,7 +897,7 @@ render::handle_t WorldRendererForward::setupVisualPass(
 				m_settings.fogColor,
 				nullptr,
 				gbufferTargetSet->getColorTexture(0),
-				(ambientOcclusionTargetSet != nullptr) ? ambientOcclusionTargetSet->getColorTexture(0) : m_whiteTexture,
+				(ambientOcclusionTargetSet != nullptr) ? ambientOcclusionTargetSet->getColorTexture(0) : m_whiteTexture.ptr(),
 				(shadowCascadeTargetSet != nullptr) ? shadowCascadeTargetSet->getDepthTexture() : nullptr,
 				(shadowAtlasTargetSet != nullptr) ? shadowAtlasTargetSet->getDepthTexture() : nullptr
 			);
