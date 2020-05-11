@@ -31,7 +31,11 @@ namespace traktor
 		namespace
 		{
 
+#if defined(__ANDROID__) || defined(__IOS__)
+const int32_t c_maxLightCount = 16;
+#else
 const int32_t c_maxLightCount = 1024;
+#endif
 
 const resource::Id< render::ImageGraph > c_ambientOcclusionLow(L"{416745F9-93C7-8D45-AE28-F2823DEE636A}");
 const resource::Id< render::ImageGraph > c_ambientOcclusionMedium(L"{5A3B0260-32F9-B343-BBA4-88BD932F917A}");
@@ -91,6 +95,20 @@ resource::Id< render::ImageGraph > getToneMapId(WorldRenderSettings::ExposureMod
 	case WorldRenderSettings::EmAdaptive:
 		return c_toneMapAdaptive;
 	}
+}
+
+Ref< render::ISimpleTexture > create1x1Texture(render::IRenderSystem* renderSystem, uint32_t value)
+{
+	render::SimpleTextureCreateDesc stcd = {};
+	stcd.width = 1;
+	stcd.height = 1;
+	stcd.mipCount = 1;
+	stcd.format = render::TfR8G8B8A8;
+	stcd.sRGB = false;
+	stcd.immutable = true;
+	stcd.initialData[0].data = &value;
+	stcd.initialData[0].pitch = 4;
+	return renderSystem->createSimpleTexture(stcd, T_FILE_LINE_W);
 }
 
 		}
@@ -241,6 +259,10 @@ bool WorldRendererForward::create(
 	if (!m_screenRenderer->create(renderSystem))
 		return false;
 
+	// Misc resources.
+	m_blackTexture = create1x1Texture(renderSystem, 0x00000000);
+	m_whiteTexture = create1x1Texture(renderSystem, 0xffffffff);
+
 	m_count = 0;
 	return true;
 }
@@ -252,6 +274,8 @@ void WorldRendererForward::destroy()
 	m_frames.clear();
 
 	safeDestroy(m_screenRenderer);
+	safeDestroy(m_blackTexture);
+	safeDestroy(m_whiteTexture);
 
 	m_irradianceGrid.clear();
 }
@@ -409,6 +433,9 @@ render::handle_t WorldRendererForward::setupAmbientOcclusionPass(
 	render::handle_t gbufferTargetSetId
 ) const
 {
+	if (m_ambientOcclusion == nullptr)
+		return 0;
+
 	// Add ambient occlusion target set.
 	render::RenderGraphTargetSetDesc rgtd;
 	rgtd.count = 1;
@@ -422,20 +449,17 @@ render::handle_t WorldRendererForward::setupAmbientOcclusionPass(
 	// Add ambient occlusion render pass.
 	Ref< render::RenderPass > rp = new render::RenderPass(L"Ambient occlusion");
 
-	if (m_ambientOcclusion != nullptr)
-	{
-		render::ImageGraphParams ipd;
-		ipd.viewFrustum = worldRenderView.getViewFrustum();
-		ipd.view = worldRenderView.getView();
-		ipd.projection = worldRenderView.getProjection();
+	render::ImageGraphParams ipd;
+	ipd.viewFrustum = worldRenderView.getViewFrustum();
+	ipd.view = worldRenderView.getView();
+	ipd.projection = worldRenderView.getProjection();
 
-		render::ImageGraphContext cx(m_screenRenderer);
-		cx.associateTextureTargetSet(s_handleInputDepth, gbufferTargetSetId, 0);
-		cx.associateTextureTargetSet(s_handleInputNormal, gbufferTargetSetId, 1);
-		cx.setParams(ipd);
+	render::ImageGraphContext cx(m_screenRenderer);
+	cx.associateTextureTargetSet(s_handleInputDepth, gbufferTargetSetId, 0);
+	cx.associateTextureTargetSet(s_handleInputNormal, gbufferTargetSetId, 1);
+	cx.setParams(ipd);
 
-		m_ambientOcclusion->addPasses(renderGraph, rp, cx);
-	}
+	m_ambientOcclusion->addPasses(renderGraph, rp, cx);
 
 	render::Clear clear;
 	clear.mask = render::CfColor;
@@ -811,7 +835,9 @@ render::handle_t WorldRendererForward::setupVisualPass(
 	// Create render pass.
 	Ref< render::RenderPass > rp = new render::RenderPass(L"Visual");
 	rp->addInput(gbufferTargetSetId, true);
-	rp->addInput(ambientOcclusionTargetSetId);
+
+	if (ambientOcclusionTargetSetId != 0)
+		rp->addInput(ambientOcclusionTargetSetId);
 
 	if (shadowsEnable)
 	{
@@ -835,7 +861,7 @@ render::handle_t WorldRendererForward::setupVisualPass(
 			);
 
 			auto gbufferTargetSet = renderGraph.getTargetSet(gbufferTargetSetId);
-			auto ambientOcclusionTargetSet = renderGraph.getTargetSet(ambientOcclusionTargetSetId);
+ 			auto ambientOcclusionTargetSet = (ambientOcclusionTargetSetId != 0) ? renderGraph.getTargetSet(ambientOcclusionTargetSetId) : nullptr;
 			auto shadowCascadeTargetSet = renderGraph.getTargetSet(shadowMapCascadeTargetSetId);
 			auto shadowAtlasTargetSet = renderGraph.getTargetSet(shadowMapAtlasTargetSetId);
 
@@ -871,7 +897,7 @@ render::handle_t WorldRendererForward::setupVisualPass(
 				m_settings.fogColor,
 				nullptr,
 				gbufferTargetSet->getColorTexture(0),
-				(ambientOcclusionTargetSet != nullptr) ? ambientOcclusionTargetSet->getColorTexture(0) : nullptr,
+				(ambientOcclusionTargetSet != nullptr) ? ambientOcclusionTargetSet->getColorTexture(0) : m_whiteTexture,
 				(shadowCascadeTargetSet != nullptr) ? shadowCascadeTargetSet->getDepthTexture() : nullptr,
 				(shadowAtlasTargetSet != nullptr) ? shadowAtlasTargetSet->getDepthTexture() : nullptr
 			);
@@ -932,20 +958,21 @@ void WorldRendererForward::setupProcessPass(
 			render::RenderGraphTargetSetDesc rgtd = {};
 			rgtd.count = 1;
 			rgtd.createDepthStencil = false;
-			rgtd.usingPrimaryDepthStencil = (m_sharedDepthStencil == nullptr) ? true : false;
+			rgtd.usingPrimaryDepthStencil = false;
 			rgtd.targets[0].colorFormat = render::TfR11G11B10F;
 			rgtd.referenceWidthDenom = 1;
 			rgtd.referenceHeightDenom = 1;
-			intermediateTargetSetId = renderGraph.addTransientTargetSet(L"Process intermediate", rgtd, m_sharedDepthStencil, outputTargetSetId);
+			intermediateTargetSetId = renderGraph.addTransientTargetSet(L"Process intermediate", rgtd, nullptr, outputTargetSetId);
 
 			rp->setOutput(intermediateTargetSetId);
 		}
 		else
 		{
 			render::Clear cl;
-			cl.mask = render::CfColor | render::CfDepth;
+			cl.mask = render::CfColor | render::CfDepth | render::CfStencil;
 			cl.colors[0] = Color4f(0.0f, 0.0f, 0.0f, 0.0f);
 			cl.depth = 1.0f;
+			cl.stencil = 0;
 			rp->setOutput(outputTargetSetId, cl);
 		}
 

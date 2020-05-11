@@ -87,6 +87,9 @@ private:
 	Ref< render::IRenderTargetSet > m_sharedDepthStencil;
 	Ref< render::ScreenRenderer > m_screenRenderer;
 	
+	Ref< render::ISimpleTexture > m_blackTexture;
+	Ref< render::ISimpleTexture > m_whiteTexture;
+
 	resource::Proxy< render::ImageGraph > m_ambientOcclusion;
 	resource::Proxy< render::ImageGraph > m_antiAlias;
 	resource::Proxy< render::ImageGraph > m_visual;

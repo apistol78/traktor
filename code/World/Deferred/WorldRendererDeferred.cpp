@@ -1523,11 +1523,11 @@ void WorldRendererDeferred::setupProcessPass(
 			render::RenderGraphTargetSetDesc rgtd = {};
 			rgtd.count = 1;
 			rgtd.createDepthStencil = false;
-			rgtd.usingPrimaryDepthStencil = (m_sharedDepthStencil == nullptr) ? true : false;
+			rgtd.usingPrimaryDepthStencil = false;
 			rgtd.targets[0].colorFormat = render::TfR11G11B10F;
 			rgtd.referenceWidthDenom = 1;
 			rgtd.referenceHeightDenom = 1;
-			intermediateTargetSetId = renderGraph.addTransientTargetSet(L"Process intermediate", rgtd, m_sharedDepthStencil, outputTargetSetId);
+			intermediateTargetSetId = renderGraph.addTransientTargetSet(L"Process intermediate", rgtd, nullptr, outputTargetSetId);
 
 			rp->setOutput(intermediateTargetSetId);
 		}
