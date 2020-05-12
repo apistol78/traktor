@@ -21,7 +21,6 @@ namespace traktor
 	{
 
 class Entity;
-class EntityEventSet;
 class IEntityEvent;
 class IEntityEventInstance;
 
@@ -38,8 +37,6 @@ public:
 	explicit EntityEventManager(uint32_t maxEventsInstances);
 
 	IEntityEventInstance* raise(const IEntityEvent* event, Entity* sender, const Transform& Toffset);
-
-	IEntityEventInstance* raise(const EntityEventSet* eventSet, const std::wstring& eventId, Entity* sender, const Transform& Toffset);
 
 	void update(const UpdateParams& update);
 

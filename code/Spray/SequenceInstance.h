@@ -19,7 +19,6 @@ namespace traktor
 	{
 
 struct Context;
-class ITriggerInstance;
 
 /*! Sequence instance.
  * \ingroup Spray
@@ -33,12 +32,6 @@ public:
 
 private:
 	friend class Sequence;
-
-	struct Key
-	{
-		float T;
-		Ref< ITriggerInstance > trigger;
-	};
 
 	Ref< const Sequence > m_sequence;
 	int32_t m_index;

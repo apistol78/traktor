@@ -6,8 +6,6 @@
 #include "Render/StructBuffer.h"
 #include "Render/StructElement.h"
 #include "World/EntityData.h"
-#include "World/EntityEventSet.h"
-#include "World/EntityEventSetData.h"
 #include "World/IEntityBuilder.h"
 #include "World/IEntityEvent.h"
 #include "World/IEntityEventData.h"
@@ -32,7 +30,6 @@ const TypeInfoSet WorldResourceFactory::getResourceTypes() const
 {
 	TypeInfoSet typeInfoSet;
 	typeInfoSet.insert< EntityData >();
-	typeInfoSet.insert< EntityEventSetData >();
 	typeInfoSet.insert< IEntityEventData >();
 	typeInfoSet.insert< IrradianceGridResource >();
 	return typeInfoSet;
@@ -42,8 +39,6 @@ const TypeInfoSet WorldResourceFactory::getProductTypes(const TypeInfo& resource
 {
 	if (is_type_a< EntityData >(resourceType))
 		return makeTypeInfoSet< EntityData >();
-	else if (is_type_a< EntityEventSetData >(resourceType))
-		return makeTypeInfoSet< EntityEventSet >();
 	else if (is_type_a< IEntityEventData >(resourceType))
 		return makeTypeInfoSet< IEntityEvent >();
 	else if (is_type_a< IrradianceGridResource >(resourceType))
@@ -62,21 +57,6 @@ Ref< Object > WorldResourceFactory::create(resource::IResourceManager* resourceM
 	if (is_type_a< EntityData >(productType))
 	{
 		return instance->getObject< EntityData >();
-	}
-	else if (is_type_a< EntityEventSet >(productType))
-	{
-		if (!m_entityBuilder)
-			return nullptr;
-
-		Ref< const EntityEventSetData > eventSetData = instance->getObject< EntityEventSetData >();
-		if (!eventSetData)
-			return nullptr;
-
-		Ref< EntityEventSet > eventSet = eventSetData->create(m_entityBuilder);
-		if (!eventSet)
-			return nullptr;
-
-		return eventSet;
 	}
 	else if (is_type_a< IEntityEvent >(productType))
 	{

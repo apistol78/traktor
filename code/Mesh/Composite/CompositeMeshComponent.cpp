@@ -24,12 +24,12 @@ Aabb3 CompositeMeshComponent::getBoundingBox() const
 	Transform invTransform = m_transform.get().inverse();
 
 	Aabb3 boundingBox;
-	for (RefArray< MeshComponent >::const_iterator i = m_meshComponents.begin(); i != m_meshComponents.end(); ++i)
+	for (auto meshComponent : m_meshComponents)
 	{
-		Aabb3 childBoundingBox = (*i)->getBoundingBox();
+		Aabb3 childBoundingBox = meshComponent->getBoundingBox();
 		if (!childBoundingBox.empty())
 		{
-			Transform childTransform = (*i)->getTransform().get();
+			Transform childTransform = meshComponent->getTransform().get();
 			Transform intoParentTransform = invTransform * childTransform;
 			boundingBox.contain(childBoundingBox.transform(intoParentTransform));
 		}
@@ -41,27 +41,27 @@ Aabb3 CompositeMeshComponent::getBoundingBox() const
 void CompositeMeshComponent::setTransform(const Transform& transform)
 {
 	Transform invTransform = m_transform.get().inverse();
-	for (RefArray< MeshComponent >::iterator i = m_meshComponents.begin(); i != m_meshComponents.end(); ++i)
+	for (auto meshComponent : m_meshComponents)
 	{
-		Transform currentTransform = (*i)->getTransform().get();
+		Transform currentTransform = meshComponent->getTransform().get();
 		Transform Tlocal = invTransform * currentTransform;
 		Transform Tworld = transform * Tlocal;
-		(*i)->setTransform(Tworld);
+		meshComponent->setTransform(Tworld);
 	}
 	MeshComponent::setTransform(transform);
 }
 
 void CompositeMeshComponent::update(const world::UpdateParams& update)
 {
-	for (RefArray< MeshComponent >::iterator i = m_meshComponents.begin(); i != m_meshComponents.end(); ++i)
-		(*i)->update(update);
+	for (auto meshComponent : m_meshComponents)
+		meshComponent->update(update);
 	MeshComponent::update(update);
 }
 
 void CompositeMeshComponent::build(const world::WorldBuildContext& context, const world::WorldRenderView& worldRenderView, const world::IWorldRenderPass& worldRenderPass)
 {
-	for (RefArray< MeshComponent >::iterator i = m_meshComponents.begin(); i != m_meshComponents.end(); ++i)
-		(*i)->build(context, worldRenderView, worldRenderPass);
+	for (auto meshComponent : m_meshComponents)
+		meshComponent->build(context, worldRenderView, worldRenderPass);
 }
 
 void CompositeMeshComponent::removeAll()
