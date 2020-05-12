@@ -32,7 +32,7 @@ namespace traktor
 		{
 
 #if defined(__ANDROID__) || defined(__IOS__)
-const int32_t c_maxLightCount = 16;
+const int32_t c_maxLightCount = 4;
 #else
 const int32_t c_maxLightCount = 1024;
 #endif
@@ -827,7 +827,11 @@ render::handle_t WorldRendererForward::setupVisualPass(
 	rgtd.count = 1;
 	rgtd.createDepthStencil = false;
 	rgtd.usingPrimaryDepthStencil = (m_sharedDepthStencil == nullptr) ? true : false;
+#if defined(__ANDROID__)
+	rgtd.targets[0].colorFormat = render::TfR8G8B8A8;
+#else
 	rgtd.targets[0].colorFormat = render::TfR11G11B10F;
+#endif
 	rgtd.referenceWidthDenom = 1;
 	rgtd.referenceHeightDenom = 1;
 	auto visualTargetSetId = renderGraph.addTransientTargetSet(L"Visual", rgtd, m_sharedDepthStencil, outputTargetSetId);
@@ -959,7 +963,11 @@ void WorldRendererForward::setupProcessPass(
 			rgtd.count = 1;
 			rgtd.createDepthStencil = false;
 			rgtd.usingPrimaryDepthStencil = false;
+#if defined(__ANDROID__)
+			rgtd.targets[0].colorFormat = render::TfR8G8B8A8;
+#else
 			rgtd.targets[0].colorFormat = render::TfR11G11B10F;
+#endif
 			rgtd.referenceWidthDenom = 1;
 			rgtd.referenceHeightDenom = 1;
 			intermediateTargetSetId = renderGraph.addTransientTargetSet(L"Process intermediate", rgtd, nullptr, outputTargetSetId);

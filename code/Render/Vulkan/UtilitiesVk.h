@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Core/Config.h"
+#include "Render/Types.h"
 #include "Render/Vulkan/ApiHeader.h"
 
 namespace traktor
@@ -47,6 +48,8 @@ bool changeImageLayout(
 const wchar_t* getHumanResult(VkResult result);
 
 void setObjectDebugName(VkDevice device, const wchar_t* const tag, uint64_t object, VkObjectType objectType);
+
+VkFormat determineSupportedTargetFormat(VkPhysicalDevice physicalDevice, TextureFormat textureFormat);
 
 	}
 }

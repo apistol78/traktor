@@ -241,7 +241,7 @@ bool RenderGraph::build(RenderContext* renderContext, int32_t width, int32_t hei
 						return false;
 				}	
 
-				auto tb = renderContext->alloc< BeginPassRenderBlock >();
+				auto tb = renderContext->alloc< BeginPassRenderBlock >(pass->getName());
 				tb->renderTargetSet = target.rts;
 				tb->clear = output.clear;
 				tb->load = TfColor | TfDepth;
@@ -250,7 +250,7 @@ bool RenderGraph::build(RenderContext* renderContext, int32_t width, int32_t hei
 			}
 			else
 			{
-				auto tb = renderContext->alloc< BeginPassRenderBlock >();
+				auto tb = renderContext->alloc< BeginPassRenderBlock >(pass->getName());
 				tb->clear = output.clear;
 				tb->load = TfColor | TfDepth;
 				tb->store = TfColor | TfDepth;

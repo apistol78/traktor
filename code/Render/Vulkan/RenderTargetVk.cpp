@@ -74,10 +74,14 @@ bool RenderTargetVk::create(const RenderTargetSetCreateDesc& setDesc, const Rend
 {
 	VkResult result;
 
+	VkFormat format = determineSupportedTargetFormat(m_physicalDevice, desc.format);
+	if (format == VK_FORMAT_UNDEFINED)
+		return false;
+
 	VkImageCreateInfo imageCreateInfo = {};
 	imageCreateInfo.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
 	imageCreateInfo.imageType = VK_IMAGE_TYPE_2D;
-	imageCreateInfo.format = c_vkTextureFormats[desc.format];
+	imageCreateInfo.format = format;
 	imageCreateInfo.extent.width = setDesc.width;
 	imageCreateInfo.extent.height = setDesc.height;
 	imageCreateInfo.extent.depth = 1;
@@ -85,7 +89,7 @@ bool RenderTargetVk::create(const RenderTargetSetCreateDesc& setDesc, const Rend
 	imageCreateInfo.arrayLayers = 1;
 	imageCreateInfo.samples = VK_SAMPLE_COUNT_1_BIT;
 	imageCreateInfo.tiling = VK_IMAGE_TILING_OPTIMAL;
-	imageCreateInfo.usage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT | /*VK_IMAGE_USAGE_STORAGE_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT |*/ VK_IMAGE_USAGE_TRANSFER_SRC_BIT;
+	imageCreateInfo.usage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT;
 	imageCreateInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
 	imageCreateInfo.queueFamilyIndexCount = 0;
 	imageCreateInfo.pQueueFamilyIndices = nullptr;
