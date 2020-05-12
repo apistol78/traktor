@@ -20,13 +20,13 @@ class T_DLLCLASS WidgetPreviewEditorFactory : public editor::IObjectEditorFactor
 	T_RTTI_CLASS;
 
 public:
-	virtual const TypeInfoSet getEditableTypes() const;
+	virtual const TypeInfoSet getEditableTypes() const override final;
 
-	virtual bool needOutputResources(const TypeInfo& typeInfo, std::set< Guid >& outDependencies) const;
+	virtual bool needOutputResources(const TypeInfo& typeInfo, std::set< Guid >& outDependencies) const override final;
 
-	virtual Ref< editor::IObjectEditor > createObjectEditor(editor::IEditor* editor) const;
+	virtual Ref< editor::IObjectEditor > createObjectEditor(editor::IEditor* editor) const override final;
 
-	virtual void getCommands(std::list< ui::Command >& outCommands) const;
+	virtual void getCommands(std::list< ui::Command >& outCommands) const override final;
 };
 
 	}

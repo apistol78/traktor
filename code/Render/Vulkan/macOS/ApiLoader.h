@@ -16,6 +16,7 @@ extern PFN_vkEnumeratePhysicalDevices vkEnumeratePhysicalDevices;
 extern PFN_vkGetPhysicalDeviceProperties vkGetPhysicalDeviceProperties;
 extern PFN_vkGetPhysicalDeviceQueueFamilyProperties vkGetPhysicalDeviceQueueFamilyProperties;
 extern PFN_vkGetPhysicalDeviceMemoryProperties vkGetPhysicalDeviceMemoryProperties;
+extern PFN_vkGetPhysicalDeviceFormatProperties vkGetPhysicalDeviceFormatProperties;
 extern PFN_vkCreateDevice vkCreateDevice;
 extern PFN_vkGetDeviceQueue vkGetDeviceQueue;
 extern PFN_vkGetInstanceProcAddr vkGetInstanceProcAddr;
@@ -105,6 +106,8 @@ extern PFN_vkQueuePresentKHR vkQueuePresentKHR;
 extern PFN_vkDestroySwapchainKHR vkDestroySwapchainKHR;
 extern PFN_vkCreateDebugUtilsMessengerEXT vkCreateDebugUtilsMessengerEXT;
 extern PFN_vkSetDebugUtilsObjectNameEXT vkSetDebugUtilsObjectNameEXT;
+extern PFN_vkCmdBeginDebugUtilsLabelEXT vkCmdBeginDebugUtilsLabelEXT;
+extern PFN_vkCmdEndDebugUtilsLabelEXT vkCmdEndDebugUtilsLabelEXT;
 
 bool initializeVulkanApi();
 
