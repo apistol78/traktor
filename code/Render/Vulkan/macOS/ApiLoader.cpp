@@ -20,6 +20,7 @@ PFN_vkEnumeratePhysicalDevices vkEnumeratePhysicalDevices = nullptr;
 PFN_vkGetPhysicalDeviceProperties vkGetPhysicalDeviceProperties = nullptr;
 PFN_vkGetPhysicalDeviceQueueFamilyProperties vkGetPhysicalDeviceQueueFamilyProperties = nullptr;
 PFN_vkGetPhysicalDeviceMemoryProperties vkGetPhysicalDeviceMemoryProperties = nullptr;
+PFN_vkGetPhysicalDeviceFormatProperties vkGetPhysicalDeviceFormatProperties = nullptr;
 PFN_vkCreateDevice vkCreateDevice = nullptr;
 PFN_vkGetDeviceQueue vkGetDeviceQueue = nullptr;
 PFN_vkGetInstanceProcAddr vkGetInstanceProcAddr = nullptr;
@@ -108,6 +109,8 @@ PFN_vkQueuePresentKHR vkQueuePresentKHR = nullptr;
 PFN_vkDestroySwapchainKHR vkDestroySwapchainKHR = nullptr;
 PFN_vkCreateDebugUtilsMessengerEXT vkCreateDebugUtilsMessengerEXT = nullptr;
 PFN_vkSetDebugUtilsObjectNameEXT vkSetDebugUtilsObjectNameEXT = nullptr;
+PFN_vkCmdBeginDebugUtilsLabelEXT vkCmdBeginDebugUtilsLabelEXT = nullptr;
+PFN_vkCmdEndDebugUtilsLabelEXT vkCmdEndDebugUtilsLabelEXT = nullptr;
 
 bool initializeVulkanApi()
 {
@@ -169,6 +172,13 @@ bool initializeVulkanApi()
 		return false;
 	}
 
+	vkGetPhysicalDeviceFormatProperties = (PFN_vkGetPhysicalDeviceFormatProperties)dlsym(s_hVulkanModule, "vkGetPhysicalDeviceFormatProperties");
+	if (vkGetPhysicalDeviceFormatProperties == nullptr)
+	{
+		log::error << L"Failed to resolve Vulkan entry point \"vkGetPhysicalDeviceFormatProperties\"." << Endl;
+		return false;
+	}
+	
 	vkCreateDevice = (PFN_vkCreateDevice)dlsym(s_hVulkanModule, "vkCreateDevice");
 	if (vkCreateDevice == nullptr)
 	{
@@ -783,6 +793,20 @@ bool initializeVulkanExtensions(VkInstance instance)
 		return false;
 	}
 	
+	vkCmdBeginDebugUtilsLabelEXT = (PFN_vkCmdBeginDebugUtilsLabelEXT)vkGetInstanceProcAddr(instance, "vkCmdBeginDebugUtilsLabelEXT");
+	if (vkCmdBeginDebugUtilsLabelEXT == nullptr)
+	{
+		log::error << L"Failed to resolve Vulkan entry point \"vkCmdBeginDebugUtilsLabelEXT\"." << Endl;
+		return false;
+	}
+
+	vkCmdEndDebugUtilsLabelEXT = (PFN_vkCmdEndDebugUtilsLabelEXT)vkGetInstanceProcAddr(instance, "vkCmdEndDebugUtilsLabelEXT");
+	if (vkCmdEndDebugUtilsLabelEXT == nullptr)
+	{
+		log::error << L"Failed to resolve Vulkan entry point \"vkCmdEndDebugUtilsLabelEXT\"." << Endl;
+		return false;
+	}
+
 	return true;
 }
 

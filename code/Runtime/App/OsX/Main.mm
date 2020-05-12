@@ -195,7 +195,7 @@ int main(int argc, const char** argv)
 	// Initialize native UI.
 	ui::Application::getInstance()->initialize(
 		new ui::WidgetFactoryCocoa(),
-		0
+		nullptr
 	);
 
 	Path settingsPath = L"$(BUNDLE_PATH)/Contents/Resources/Application.config";
@@ -258,7 +258,7 @@ int main(int argc, const char** argv)
 		defaultSettings,
 		settings,
 		sysapp,
-		0
+		nullptr
 	))
 	{
 		for (;;)
@@ -289,7 +289,7 @@ int main(int argc, const char** argv)
 		{
 			Path userSettingsPath = writablePath + L"/" + settingsPath.getFileNameNoExtension() + L"." + OS::getInstance().getCurrentUser() + L"." + settingsPath.getExtension();
 			if (!saveSettings(settings, userSettingsPath))
-				log::error << L"Unable to save user settings; user changes not saved" << Endl;
+				log::error << L"Unable to save user settings; user changes not saved." << Endl;
 		}
 	}
 	else
@@ -298,8 +298,8 @@ int main(int argc, const char** argv)
 		showErrorDialog(logTail->m_tail);
 	}
 
-	settings = 0;
-	defaultSettings = 0;
+	settings = nullptr;
+	defaultSettings = nullptr;
 
 	ui::Application::getInstance()->finalize();
 
@@ -307,13 +307,13 @@ int main(int argc, const char** argv)
 	if (logFile)
 	{
 		logFile->close();
-		logFile;
+		logFile = nullptr;
 	}
 #endif
 
-	log::info   .setGlobalTarget(0);
-	log::warning.setGlobalTarget(0);
-	log::error  .setGlobalTarget(0);
+	log::info   .setGlobalTarget(nullptr);
+	log::warning.setGlobalTarget(nullptr);
+	log::error  .setGlobalTarget(nullptr);
 
 #if defined(_DEBUG)
 	SingletonManager::getInstance().destroy();

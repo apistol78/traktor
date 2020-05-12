@@ -22,7 +22,7 @@ public:
 		Project* project,
 		Configuration* configuration,
 		OutputStream& os
-	) const;
+	) const override;
 
 	virtual void serialize(ISerializer& s) override final;
 
