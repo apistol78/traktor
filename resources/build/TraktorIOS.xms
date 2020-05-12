@@ -5906,6 +5906,10 @@
 							<sourceFile>libTraktor.Render.Vulkan.a</sourceFile>
 							<targetPath>debugstatic</targetPath>
 						</item>
+						<item type="AggregationItem">
+							<sourceFile>$(MOLTEN_SDK)/iOS/static/libMoltenVK.a</sourceFile>
+							<targetPath>debugstatic</targetPath>
+						</item>
 					</aggregationItems>
 					<consumerLibraryPath>debugstatic</consumerLibraryPath>
 				</item>
@@ -5939,6 +5943,10 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>libTraktor.Render.Vulkan.a</sourceFile>
+							<targetPath>releasestatic</targetPath>
+						</item>
+						<item type="AggregationItem">
+							<sourceFile>$(MOLTEN_SDK)/iOS/static/libMoltenVK.a</sourceFile>
 							<targetPath>releasestatic</targetPath>
 						</item>
 					</aggregationItems>
