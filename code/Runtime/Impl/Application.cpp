@@ -441,6 +441,7 @@ void Application::destroy()
 bool Application::update()
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lockUpdate);
+	T_PROFILER_SCOPE(L"Application update");
 	Ref< IState > currentState;
 
 	// Update target manager connection.
@@ -458,7 +459,7 @@ bool Application::update()
 	// Update render server.
 	RenderServer::UpdateResult updateResult;
 	{
-		T_PROFILER_SCOPE(L"Application update renderServer");
+		T_PROFILER_SCOPE(L"Application update - Render server");
 		if ((updateResult = m_renderServer->update(m_settings)) == RenderServer::UrTerminate)
 			return false;
 	}
@@ -499,7 +500,7 @@ bool Application::update()
 		online::ISessionManager* sessionManager = m_onlineServer->getSessionManager();
 		if (sessionManager)
 		{
-			T_PROFILER_SCOPE(L"Application update sessionManager");
+			T_PROFILER_SCOPE(L"Application update - Session manager");
 			sessionManager->update();
 		}
 	}
@@ -628,14 +629,14 @@ bool Application::update()
 		// Update audio.
 		if (m_audioServer)
 		{
-			T_PROFILER_SCOPE(L"Application update audioServer");
+			T_PROFILER_SCOPE(L"Application update - Audio server");
 			m_audioServer->update(m_updateInfo.m_frameDeltaTime, m_renderViewActive);
 		}
 
 		// Update rumble.
 		if (m_inputServer)
 		{
-			T_PROFILER_SCOPE(L"Application update rumble");
+			T_PROFILER_SCOPE(L"Application update - Rumble");
 			m_inputServer->updateRumble(m_updateInfo.m_frameDeltaTime, m_updateControl.m_pause);
 		}
 
@@ -683,7 +684,7 @@ bool Application::update()
 				double inputTimeStart = m_timer.getElapsedTime();
 				if (m_inputServer)
 				{
-					T_PROFILER_SCOPE(L"Application update inputServer");
+					T_PROFILER_SCOPE(L"Application update - Input server");
 					m_inputServer->update(m_updateInfo.m_simulationDeltaTime, inputEnabled);
 				}
 				double inputTimeEnd = m_timer.getElapsedTime();
@@ -693,7 +694,7 @@ bool Application::update()
 				double updateTimeStart = m_timer.getElapsedTime();
 				IState::UpdateResult result;
 				{
-					T_PROFILER_SCOPE(L"Application update state");
+					T_PROFILER_SCOPE(L"Application update - State");
 					result = currentState->update(m_stateManager, m_updateInfo);
 				}
 				double updateTimeEnd = m_timer.getElapsedTime();
@@ -702,7 +703,7 @@ bool Application::update()
 				// Update physics.
 				double physicsTimeStart = m_timer.getElapsedTime();
 				{
-					T_PROFILER_SCOPE(L"Application update physicsServer");
+					T_PROFILER_SCOPE(L"Application update - Physics server");
 					m_physicsServer->update(m_updateInfo.m_simulationDeltaTime);
 				}
 				double physicsTimeEnd = m_timer.getElapsedTime();
@@ -739,7 +740,7 @@ bool Application::update()
 			// Update input.
 			if (m_inputServer)
 			{
-				T_PROFILER_SCOPE(L"Application update inputServer");
+				T_PROFILER_SCOPE(L"Application update - Input server");
 				m_inputServer->update(m_updateInfo.m_frameDeltaTime, inputEnabled);
 			}
 
@@ -750,7 +751,7 @@ bool Application::update()
 			double updateTimeStart = m_timer.getElapsedTime();
 			IState::UpdateResult updateResult;
 			{
-				T_PROFILER_SCOPE(L"Application update state");
+				T_PROFILER_SCOPE(L"Application update - State");
 				updateResult = currentState->update(m_stateManager, m_updateInfo);
 			}
 			double updateTimeEnd = m_timer.getElapsedTime();
@@ -788,7 +789,7 @@ bool Application::update()
 		double buildTimeStart = m_timer.getElapsedTime();
 		IState::BuildResult buildResult;
 		{
-			T_PROFILER_SCOPE(L"Application build state");
+			T_PROFILER_SCOPE(L"Application build - State");
 			buildResult = currentState->build(m_frameBuild, m_updateInfo);
 		}
 		double buildTimeEnd = m_timer.getElapsedTime();
@@ -1002,7 +1003,7 @@ IStateManager* Application::getStateManager()
 
 void Application::pollDatabase()
 {
-	T_PROFILER_SCOPE(L"Application pollDatabase");
+	T_PROFILER_SCOPE(L"Application poll database");
 	std::vector< Guid > eventIds;
 	Ref< const db::IEvent > event;
 	bool remote;

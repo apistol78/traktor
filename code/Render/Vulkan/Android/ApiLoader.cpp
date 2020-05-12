@@ -20,6 +20,7 @@ PFN_vkEnumeratePhysicalDevices vkEnumeratePhysicalDevices = nullptr;
 PFN_vkGetPhysicalDeviceProperties vkGetPhysicalDeviceProperties = nullptr;
 PFN_vkGetPhysicalDeviceQueueFamilyProperties vkGetPhysicalDeviceQueueFamilyProperties = nullptr;
 PFN_vkGetPhysicalDeviceMemoryProperties vkGetPhysicalDeviceMemoryProperties = nullptr;
+PFN_vkGetPhysicalDeviceFormatProperties vkGetPhysicalDeviceFormatProperties = nullptr;
 PFN_vkCreateDevice vkCreateDevice = nullptr;
 PFN_vkGetDeviceQueue vkGetDeviceQueue = nullptr;
 PFN_vkGetInstanceProcAddr vkGetInstanceProcAddr = nullptr;
@@ -164,6 +165,13 @@ bool initializeVulkanApi()
 	if (vkGetPhysicalDeviceMemoryProperties == nullptr)
 	{
 		log::error << L"Failed to resolve Vulkan entry point \"vkGetPhysicalDeviceMemoryProperties\"." << Endl;
+		return false;
+	}
+
+	vkGetPhysicalDeviceFormatProperties = (PFN_vkGetPhysicalDeviceFormatProperties)dlsym(s_hVulkanModule, "vkGetPhysicalDeviceFormatProperties");
+	if (vkGetPhysicalDeviceFormatProperties == nullptr)
+	{
+		log::error << L"Failed to resolve Vulkan entry point \"vkGetPhysicalDeviceFormatProperties\"." << Endl;
 		return false;
 	}
 

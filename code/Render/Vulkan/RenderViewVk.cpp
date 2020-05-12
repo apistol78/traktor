@@ -78,6 +78,7 @@ RenderViewVk::RenderViewVk(
 ,	m_targetId(0)
 ,	m_targetRenderPass(0)
 ,	m_targetFrameBuffer(0)
+,	m_counter(0)
 ,	m_cursorVisible(true)
 ,	m_passCount(0)
 ,	m_drawCalls(0)
@@ -268,7 +269,7 @@ void RenderViewVk::close()
 	}
 
 	for (auto& pipeline : m_pipelines)
-		vkDestroyPipeline(m_logicalDevice, pipeline.second, nullptr);
+		vkDestroyPipeline(m_logicalDevice, pipeline.second.pipeline, nullptr);
 	m_pipelines.clear();
 
 	// Destroy primary targets.
@@ -472,6 +473,7 @@ bool RenderViewVk::beginFrame()
 	if (vkBeginCommandBuffer(m_graphicsCommandBuffer, &beginInfo) != VK_SUCCESS)
 		return false;
 	
+	m_counter++;
 	m_passCount = 0;
 	m_drawCalls = 0;
 	m_primitiveCount = 0;
@@ -523,6 +525,18 @@ void RenderViewVk::endFrame()
 		evt.type = ReLost;
 		m_eventQueue.push_back(evt);
 		return;
+	}
+
+	// Release unused pipelines.
+	for (auto it = m_pipelines.begin(); it != m_pipelines.end(); )
+	{
+		if ((m_counter - it->second.lastAcquired) >= 16)	// Pipelines are kept for X number of frames before getting collected.
+		{
+			vkDestroyPipeline(m_logicalDevice, it->second.pipeline, nullptr);
+			it = m_pipelines.erase(it);
+		}
+		else
+			it++;
 	}
 
 	// Collect, or cycle, released buffers.
@@ -1285,11 +1299,7 @@ bool RenderViewVk::create(uint32_t width, uint32_t height)
 	VkImageCreateInfo ici = {};
 	ici.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
 	ici.imageType = VK_IMAGE_TYPE_2D;
-#if !defined(__ANDROID__)
-	ici.format = VK_FORMAT_D32_SFLOAT_S8_UINT;
-#else
 	ici.format = VK_FORMAT_D24_UNORM_S8_UINT;
-#endif
 	ici.extent = { width, height, 1 };
 	ici.mipLevels = 1;
 	ici.arrayLayers = 1;
@@ -1336,11 +1346,7 @@ bool RenderViewVk::create(uint32_t width, uint32_t height)
 			height,
 			colorFormat,
 			presentImages[i],
-#if !defined(__ANDROID__)
-            VK_FORMAT_D32_SFLOAT_S8_UINT,
-#else
-			 VK_FORMAT_D24_UNORM_S8_UINT,
-#endif
+			ici.format,
 			depthImage,
 			(L"Primary " + toString(i)).c_str()
 		))
@@ -1412,7 +1418,10 @@ bool RenderViewVk::validatePipeline(VertexBufferVk* vb, ProgramVk* p, PrimitiveT
 
 	auto it = m_pipelines.find(key);
 	if (it != m_pipelines.end())
-		pipeline = it->second;
+	{
+		it->second.lastAcquired = m_counter;
+		pipeline = it->second.pipeline;
+	}
 	else
 	{
 		const RenderState& rs = p->getRenderState();
@@ -1562,7 +1571,7 @@ bool RenderViewVk::validatePipeline(VertexBufferVk* vb, ProgramVk* p, PrimitiveT
 			return false;
 		}
 
-		m_pipelines[key] = pipeline;
+		m_pipelines[key] = { m_counter, pipeline };
 	}
 
 	if (!pipeline)

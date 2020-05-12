@@ -112,6 +112,12 @@ public:
 private:
 	typedef std::tuple< uint32_t, uint32_t, uint32_t, uint32_t > pipeline_key_t;
 
+	struct PipelineEntry
+	{
+		uint32_t lastAcquired;
+		VkPipeline pipeline;
+	};
+
 	VkInstance m_instance;
 	VkPhysicalDevice m_physicalDevice;
 	VkDevice m_logicalDevice;
@@ -147,7 +153,8 @@ private:
 	VkFramebuffer m_targetFrameBuffer;
 
 	// Pipelines.
-	SmallMap< pipeline_key_t, VkPipeline > m_pipelines;
+	SmallMap< pipeline_key_t, PipelineEntry > m_pipelines;
+	uint32_t m_counter;
 
 	// Uniform buffer pool.
 	Ref< UniformBufferPoolVk > m_uniformBufferPool;
