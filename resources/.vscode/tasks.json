@@ -7,7 +7,14 @@
 			"group": "build",
 
 			"linux": {
-				"command": "${workspaceRoot}/../scripts/build-vscode.sh DebugShared",
+				"command": "${workspaceRoot}/../scripts/build-vscode.sh Linux DebugShared",
+				"problemMatcher": [
+					"$gcc"
+				]
+			},
+
+			"osx": {
+				"command": "${workspaceRoot}/../scripts/build-vscode.sh macOS DebugShared",
 				"problemMatcher": [
 					"$gcc"
 				]
@@ -27,7 +34,14 @@
 			"group": "build",
 
 			"linux": {
-				"command": "${workspaceRoot}/../scripts/build-vscode.sh ReleaseShared",
+				"command": "${workspaceRoot}/../scripts/build-vscode.sh Linux ReleaseShared",
+				"problemMatcher": [
+					"$gcc"
+				]
+			},
+
+			"osx": {
+				"command": "${workspaceRoot}/../scripts/build-vscode.sh macOS ReleaseShared",
 				"problemMatcher": [
 					"$gcc"
 				]
@@ -47,7 +61,14 @@
 			"group": "build",
 
 			"linux": {
-				"command": "${workspaceRoot}/../scripts/build-vscode.sh DebugStatic",
+				"command": "${workspaceRoot}/../scripts/build-vscode.sh Android DebugStatic",
+				"problemMatcher": [
+					"$gcc"
+				]
+			},
+
+			"osx": {
+				"command": "${workspaceRoot}/../scripts/build-vscode.sh Android DebugStatic",
 				"problemMatcher": [
 					"$gcc"
 				]
@@ -67,7 +88,14 @@
 			"group": "build",
 
 			"linux": {
-				"command": "${workspaceRoot}/../scripts/build-vscode.sh ReleaseStatic",
+				"command": "${workspaceRoot}/../scripts/build-vscode.sh Android ReleaseStatic",
+				"problemMatcher": [
+					"$gcc"
+				]
+			},
+
+			"osx": {
+				"command": "${workspaceRoot}/../scripts/build-vscode.sh Android DebugStatic",
 				"problemMatcher": [
 					"$gcc"
 				]
@@ -79,6 +107,32 @@
 					"$gcc"
 				]			
 			}			
-		}		
+		},
+		
+		{
+			"type": "shell",
+			"label": "iOS - DebugStatic",
+			"group": "build",
+
+			"osx": {
+				"command": "${workspaceRoot}/../scripts/build-vscode.sh iOS DebugStatic",
+				"problemMatcher": [
+					"$gcc"
+				]
+			}		
+		},
+
+		{
+			"type": "shell",
+			"label": "iOS - ReleaseStatic",
+			"group": "build",
+
+			"osx": {
+				"command": "${workspaceRoot}/../scripts/build-vscode.sh iOS ReleaseStatic",
+				"problemMatcher": [
+					"$gcc"
+				]
+			}
+		}
 	]
 }
