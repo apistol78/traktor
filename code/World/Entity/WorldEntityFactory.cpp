@@ -11,6 +11,8 @@
 #include "World/Entity/DecalComponentData.h"
 #include "World/Entity/DecalEvent.h"
 #include "World/Entity/DecalEventData.h"
+#include "World/Entity/EventSetComponent.h"
+#include "World/Entity/EventSetComponentData.h"
 #include "World/Entity/ExternalEntityData.h"
 #include "World/Entity/GroupComponent.h"
 #include "World/Entity/GroupComponentData.h"
@@ -61,6 +63,7 @@ const TypeInfoSet WorldEntityFactory::getEntityComponentTypes() const
 	TypeInfoSet typeSet;
 	typeSet.insert< CameraComponentData >();
 	typeSet.insert< DecalComponentData >();
+	typeSet.insert< EventSetComponentData >();
 	typeSet.insert< GroupComponentData >();
 	typeSet.insert< LightComponentData >();
 	typeSet.insert< ProbeComponentData >();
@@ -164,6 +167,11 @@ Ref< IEntityComponent > WorldEntityFactory::createEntityComponent(const world::I
 		);
 
 		return decalComponent;
+	}
+
+	if (const EventSetComponentData* eventSetComponentData = dynamic_type_cast< const EventSetComponentData* >(&entityComponentData))
+	{
+		return eventSetComponentData->createComponent(builder);
 	}
 
 	if (const GroupComponentData* groupComponentData = dynamic_type_cast< const GroupComponentData* >(&entityComponentData))

@@ -1,7 +1,7 @@
 #pragma once
 
-#include <map>
-#include "Core/Serialization/ISerializable.h"
+#include "Core/Containers/SmallMap.h"
+#include "World/IEntityComponentData.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -16,26 +16,26 @@ namespace traktor
 	namespace world
 	{
 
-class EntityEventSet;
+class EventSetComponent;
 class IEntityBuilder;
 class IEntityEventData;
 
 /*! \brief
  * \ingroup World
  */
-class T_DLLCLASS EntityEventSetData : public ISerializable
+class T_DLLCLASS EventSetComponentData : public IEntityComponentData
 {
 	T_RTTI_CLASS;
 
 public:
-	virtual Ref< EntityEventSet > create(const IEntityBuilder* entityBuilder) const;
+	Ref< EventSetComponent > createComponent(const IEntityBuilder* entityBuilder) const;
 
 	virtual void serialize(ISerializer& s) override final;
 
 private:
-	friend class EntityEventSetPipeline;
+	friend class WorldEntityPipeline;
 
-	std::map< std::wstring, Ref< IEntityEventData > > m_eventData;
+	SmallMap< std::wstring, Ref< IEntityEventData > > m_eventData;
 };
 
 	}

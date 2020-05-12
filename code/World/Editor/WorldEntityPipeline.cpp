@@ -4,6 +4,7 @@
 #include "World/Entity/ScriptComponentData.h"
 #include "World/Entity/DecalComponentData.h"
 #include "World/Entity/DecalEventData.h"
+#include "World/Entity/EventSetComponentData.h"
 #include "World/Entity/ExternalEntityData.h"
 #include "World/Entity/GroupComponentData.h"
 #include "World/Entity/GroupEntityData.h"
@@ -23,6 +24,7 @@ TypeInfoSet WorldEntityPipeline::getAssetTypes() const
 	typeSet.insert< ScriptComponentData >();
 	typeSet.insert< DecalComponentData >();
 	typeSet.insert< DecalEventData >();
+	typeSet.insert< EventSetComponentData >();
 	typeSet.insert< ExternalEntityData >();
 	typeSet.insert< GroupComponentData >();
 	typeSet.insert< GroupEntityData >();
@@ -45,6 +47,11 @@ bool WorldEntityPipeline::buildDependencies(
 		pipelineDepends->addDependency(decalComponentData->getShader(), editor::PdfBuild | editor::PdfResource);
 	else if (const DecalEventData* decalEventData = dynamic_type_cast< const DecalEventData* >(sourceAsset))
 		pipelineDepends->addDependency(decalEventData->getShader(), editor::PdfBuild | editor::PdfResource);
+	else if (const EventSetComponentData* eventSetComponentData = dynamic_type_cast< const EventSetComponentData* >(sourceAsset))
+	{
+		for (auto eventData : eventSetComponentData->m_eventData)
+			pipelineDepends->addDependency(eventData.second);
+	}
 	else if (const ExternalEntityData* externalEntityData = dynamic_type_cast< const ExternalEntityData* >(sourceAsset))
 		pipelineDepends->addDependency(externalEntityData->getEntityData(), editor::PdfBuild);
 	else if (const GroupComponentData* groupComponentData = dynamic_type_cast< const GroupComponentData* >(sourceAsset))

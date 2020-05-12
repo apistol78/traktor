@@ -1,6 +1,5 @@
 #include "Core/Thread/Acquire.h"
 #include "World/EntityEventManager.h"
-#include "World/EntityEventSet.h"
 #include "World/IEntityEvent.h"
 #include "World/IEntityEventInstance.h"
 
@@ -29,20 +28,6 @@ IEntityEventInstance* EntityEventManager::raise(const IEntityEvent* event, Entit
 		m_eventInstances.push_back(eventInstance);
 
 	return eventInstance;
-}
-
-IEntityEventInstance* EntityEventManager::raise(const EntityEventSet* eventSet, const std::wstring& eventId, Entity* sender, const Transform& Toffset)
-{
-	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-
-	if (!eventSet || eventId.empty())
-		return nullptr;
-
-	const IEntityEvent* event = eventSet->getEvent(eventId);
-	if (!event)
-		return nullptr;
-
-	return raise(event, sender, Toffset);
 }
 
 void EntityEventManager::update(const UpdateParams& update)

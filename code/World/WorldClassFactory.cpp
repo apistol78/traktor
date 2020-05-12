@@ -6,7 +6,6 @@
 #include "Core/Class/IRuntimeClassRegistrar.h"
 #include "World/EntityBuilder.h"
 #include "World/EntityBuilderWithSchema.h"
-#include "World/EntityEventSet.h"
 #include "World/EntitySchema.h"
 #include "World/IEntityEvent.h"
 #include "World/IEntityEventData.h"
@@ -20,6 +19,8 @@
 #include "World/Entity/CameraComponentData.h"
 #include "World/Entity.h"
 #include "World/EntityData.h"
+#include "World/Entity/EventSetComponent.h"
+#include "World/Entity/EventSetComponentData.h"
 #include "World/Entity/GroupComponent.h"
 #include "World/Entity/GroupEntity.h"
 #include "World/Entity/LightComponent.h"
@@ -49,11 +50,6 @@ void IEntityEventInstance_cancelEnd(IEntityEventInstance* self)
 IEntityEventInstance* EntityEventManager_raise_1(EntityEventManager* self, const IEntityEvent* event, Entity* sender, const Transform& Toffset)
 {
 	return self->raise(event, sender, Toffset);
-}
-
-IEntityEventInstance* EntityEventManager_raise_2(EntityEventManager* self, const EntityEventSet* eventSet, const std::wstring& eventId, Entity* sender, const Transform& Toffset)
-{
-	return self->raise(eventSet, eventId, sender, Toffset);
 }
 
 void EntityEventManager_cancelAllImmediate(EntityEventManager* self)
@@ -163,14 +159,9 @@ void WorldClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 
 	auto classEntityEventManager = new AutoRuntimeClass< EntityEventManager >();
 	classEntityEventManager->addMethod("raise", &EntityEventManager_raise_1);
-	classEntityEventManager->addMethod("raise", &EntityEventManager_raise_2);
 	classEntityEventManager->addMethod("cancelAllImmediate", &EntityEventManager_cancelAllImmediate);
 	classEntityEventManager->addMethod("cancelAllEnd", &EntityEventManager_cancelAllEnd);
 	registrar->registerClass(classEntityEventManager);
-
-	auto classEntityEventSet = new AutoRuntimeClass< EntityEventSet >();
-	classEntityEventSet->addMethod("getEvent", &EntityEventSet::getEvent);
-	registrar->registerClass(classEntityEventSet);
 
 	auto classEntitySchema = new AutoRuntimeClass< EntitySchema >();
 	classEntitySchema->addMethod< Entity*, uint32_t >("getEntity", &EntitySchema::getEntity);
@@ -300,6 +291,13 @@ void WorldClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	auto classVolumeComponent = new AutoRuntimeClass< VolumeComponent >();
 	classVolumeComponent->addMethod("inside", &VolumeComponent::inside);
 	registrar->registerClass(classVolumeComponent);
+
+	auto classEventSetComponentData = new AutoRuntimeClass< EventSetComponentData >();
+	registrar->registerClass(classEventSetComponentData);
+
+	auto classEventSetComponent = new AutoRuntimeClass< EventSetComponent >();
+	classEventSetComponent->addMethod("getEvent", &EventSetComponent::getEvent);
+	registrar->registerClass(classEventSetComponent);
 
 	auto classIWorldRenderer = new AutoRuntimeClass< IWorldRenderer >();
 	classIWorldRenderer->addConstant("Disabled", Any::fromInt32((int32_t)Quality::Disabled));
