@@ -68,8 +68,6 @@ RenderViewVk::RenderViewVk(
 ,	m_presentQueue(0)
 ,	m_graphicsCommandPool(0)
 ,	m_computeCommandPool(0)
-,	m_graphicsCommandBuffer(0)
-,	m_computeCommandBuffer(0)
 ,	m_swapChain(0)
 ,	m_descriptorPool(0)
 ,	m_haveDebugMarkers(false)
@@ -281,16 +279,13 @@ void RenderViewVk::close()
 	}
 
 	// Free command buffers.
-	if (m_computeCommandBuffer != 0)
-	{
-		vkFreeCommandBuffers(m_logicalDevice, m_computeCommandPool, 1, &m_computeCommandBuffer);
-		m_computeCommandBuffer = 0;
-	}
-	if (m_graphicsCommandBuffer != 0)
-	{
-		vkFreeCommandBuffers(m_logicalDevice, m_graphicsCommandPool, 1, &m_graphicsCommandBuffer);
-		m_graphicsCommandBuffer = 0;
-	}
+	for (auto& computeCommandBuffer : m_computeCommandBuffers)
+		vkFreeCommandBuffers(m_logicalDevice, m_computeCommandPool, 1, &computeCommandBuffer);
+	for (auto& graphicsCommandBuffer : m_graphicsCommandBuffers)
+		vkFreeCommandBuffers(m_logicalDevice, m_graphicsCommandPool, 1, &graphicsCommandBuffer);
+
+	m_computeCommandBuffers.clear();
+	m_graphicsCommandBuffers.clear();
 
 	// Free command pools.
 	if (m_computeCommandPool != 0)
@@ -418,6 +413,8 @@ void RenderViewVk::setViewport(const Viewport& viewport)
 	T_ASSERT(viewport.width > 0);
 	T_ASSERT(viewport.height > 0);
 
+	const uint32_t syncIndex = m_counter % m_primaryTargets.size();
+
 	VkViewport vp = {};
 	vp.x = (float)viewport.left;
 	vp.y = (float)viewport.top;
@@ -425,7 +422,7 @@ void RenderViewVk::setViewport(const Viewport& viewport)
 	vp.height = (float)viewport.height;
 	vp.minDepth = viewport.nearZ;
 	vp.maxDepth = viewport.farZ;
-	vkCmdSetViewport(m_graphicsCommandBuffer, 0, 1, &vp);
+	vkCmdSetViewport(m_graphicsCommandBuffers[syncIndex], 0, 1, &vp);
 }
 
 SystemWindow RenderViewVk::getSystemWindow()
@@ -481,7 +478,7 @@ bool RenderViewVk::beginFrame()
 	VkCommandBufferBeginInfo beginInfo = {};
 	beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
 	beginInfo.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
-	if (vkBeginCommandBuffer(m_graphicsCommandBuffer, &beginInfo) != VK_SUCCESS)
+	if (vkBeginCommandBuffer(m_graphicsCommandBuffers[syncIndex], &beginInfo) != VK_SUCCESS)
 		return false;
 	
 	m_passCount = 0;
@@ -496,10 +493,10 @@ void RenderViewVk::endFrame()
 	VkResult result;
 
 	// Prepare primary color for presentation.
-	m_primaryTargets[m_currentImageIndex]->getColorTargetVk(0)->prepareForPresentation(m_graphicsCommandBuffer);
+	m_primaryTargets[m_currentImageIndex]->getColorTargetVk(0)->prepareForPresentation(m_graphicsCommandBuffers[syncIndex]);
 
 	// End recording command buffer.
-	result = vkEndCommandBuffer(m_graphicsCommandBuffer);
+	result = vkEndCommandBuffer(m_graphicsCommandBuffers[syncIndex]);
 	if (result != VK_SUCCESS)
 	{
 		log::warning << L"Vulkan error reported, \"" << getHumanResult(result) << L"\"; need to reset renderer (1)." << Endl;
@@ -520,7 +517,7 @@ void RenderViewVk::endFrame()
     si.pWaitSemaphores = &m_imageAvailableSemaphores[syncIndex];
     si.pWaitDstStageMask = &waitStageMash;
     si.commandBufferCount = 1;
-    si.pCommandBuffers = &m_graphicsCommandBuffer;
+    si.pCommandBuffers = &m_graphicsCommandBuffers[syncIndex];
     si.signalSemaphoreCount = 1;
     si.pSignalSemaphores = &m_renderFinishedSemaphores[syncIndex];
     vkQueueSubmit(m_presentQueue, 1, &si, m_inFlightFences[m_currentImageIndex]);
@@ -575,6 +572,8 @@ bool RenderViewVk::beginPass(const Clear* clear)
 {
 	T_FATAL_ASSERT(m_targetRenderPass == 0);
 
+	const uint32_t syncIndex = m_counter % m_primaryTargets.size();
+
 	Clear cl = {};
 	if (clear)
 		cl = *clear;
@@ -584,7 +583,7 @@ bool RenderViewVk::beginPass(const Clear* clear)
 
 	// Prepare render target set as targets.
 	if (!m_targetSet->prepareAsTarget(
-		m_graphicsCommandBuffer,
+		m_graphicsCommandBuffers[syncIndex],
 		m_targetColorIndex,
 		cl,
 		TfColor | TfDepth,
@@ -631,7 +630,7 @@ bool RenderViewVk::beginPass(const Clear* clear)
 	rpbi.renderArea.extent.height = m_targetSet->getHeight();
 	rpbi.clearValueCount = (uint32_t)clearValues.size();
 	rpbi.pClearValues = clearValues.c_ptr();
-	vkCmdBeginRenderPass(m_graphicsCommandBuffer, &rpbi,  VK_SUBPASS_CONTENTS_INLINE);
+	vkCmdBeginRenderPass(m_graphicsCommandBuffers[syncIndex], &rpbi,  VK_SUBPASS_CONTENTS_INLINE);
 
 	// Set viewport.
 	VkViewport vp = {};
@@ -641,7 +640,7 @@ bool RenderViewVk::beginPass(const Clear* clear)
 	vp.height = (float)m_targetSet->getHeight();
 	vp.minDepth = 0.0f;
 	vp.maxDepth = 1.0f;
-	vkCmdSetViewport(m_graphicsCommandBuffer, 0, 1, &vp);
+	vkCmdSetViewport(m_graphicsCommandBuffers[syncIndex], 0, 1, &vp);
 
 	m_passCount++;
 	return true;
@@ -650,6 +649,8 @@ bool RenderViewVk::beginPass(const Clear* clear)
 bool RenderViewVk::beginPass(IRenderTargetSet* renderTargetSet, const Clear* clear, uint32_t load, uint32_t store)
 {
 	T_FATAL_ASSERT(m_targetRenderPass == 0);
+
+	const uint32_t syncIndex = m_counter % m_primaryTargets.size();
 
 	Clear cl = {};
 	if (clear)
@@ -660,7 +661,7 @@ bool RenderViewVk::beginPass(IRenderTargetSet* renderTargetSet, const Clear* cle
 
 	// Prepare render target set as targets.
 	if (!m_targetSet->prepareAsTarget(
-		m_graphicsCommandBuffer,
+		m_graphicsCommandBuffers[syncIndex],
 		m_targetColorIndex,
 		cl,
 		load,
@@ -707,7 +708,7 @@ bool RenderViewVk::beginPass(IRenderTargetSet* renderTargetSet, const Clear* cle
 	rpbi.renderArea.extent.height = m_targetSet->getHeight();
 	rpbi.clearValueCount = (uint32_t)clearValues.size();
 	rpbi.pClearValues = clearValues.c_ptr();
-	vkCmdBeginRenderPass(m_graphicsCommandBuffer, &rpbi,  VK_SUBPASS_CONTENTS_INLINE);
+	vkCmdBeginRenderPass(m_graphicsCommandBuffers[syncIndex], &rpbi,  VK_SUBPASS_CONTENTS_INLINE);
 
 	// Set viewport.
 	VkViewport vp = {};
@@ -717,7 +718,7 @@ bool RenderViewVk::beginPass(IRenderTargetSet* renderTargetSet, const Clear* cle
 	vp.height = (float)m_targetSet->getHeight();
 	vp.minDepth = 0.0f;
 	vp.maxDepth = 1.0f;
-	vkCmdSetViewport(m_graphicsCommandBuffer, 0, 1, &vp);
+	vkCmdSetViewport(m_graphicsCommandBuffers[syncIndex], 0, 1, &vp);
 
 	m_passCount++;
 	return true;
@@ -726,6 +727,8 @@ bool RenderViewVk::beginPass(IRenderTargetSet* renderTargetSet, const Clear* cle
 bool RenderViewVk::beginPass(IRenderTargetSet* renderTargetSet, int32_t renderTarget, const Clear* clear, uint32_t load, uint32_t store)
 {
 	T_FATAL_ASSERT(m_targetRenderPass == 0);
+
+	const uint32_t syncIndex = m_counter % m_primaryTargets.size();
 
 	Clear cl = {};
 	if (clear)
@@ -736,7 +739,7 @@ bool RenderViewVk::beginPass(IRenderTargetSet* renderTargetSet, int32_t renderTa
 
 	// Prepare render target set as targets.
 	if (!m_targetSet->prepareAsTarget(
-		m_graphicsCommandBuffer,
+		m_graphicsCommandBuffers[syncIndex],
 		m_targetColorIndex,
 		cl,
 		load,
@@ -783,7 +786,7 @@ bool RenderViewVk::beginPass(IRenderTargetSet* renderTargetSet, int32_t renderTa
 	rpbi.renderArea.extent.height = m_targetSet->getHeight();
 	rpbi.clearValueCount = (uint32_t)clearValues.size();
 	rpbi.pClearValues = clearValues.c_ptr();
-	vkCmdBeginRenderPass(m_graphicsCommandBuffer, &rpbi,  VK_SUBPASS_CONTENTS_INLINE);
+	vkCmdBeginRenderPass(m_graphicsCommandBuffers[syncIndex], &rpbi,  VK_SUBPASS_CONTENTS_INLINE);
 
 	// Set viewport.
 	VkViewport vp = {};
@@ -793,7 +796,7 @@ bool RenderViewVk::beginPass(IRenderTargetSet* renderTargetSet, int32_t renderTa
 	vp.height = (float)m_targetSet->getHeight();
 	vp.minDepth = 0.0f;
 	vp.maxDepth = 1.0f;
-	vkCmdSetViewport(m_graphicsCommandBuffer, 0, 1, &vp);
+	vkCmdSetViewport(m_graphicsCommandBuffers[syncIndex], 0, 1, &vp);
 
 	m_passCount++;
 	return true;
@@ -801,14 +804,16 @@ bool RenderViewVk::beginPass(IRenderTargetSet* renderTargetSet, int32_t renderTa
 
 void RenderViewVk::endPass()
 {
+	const uint32_t syncIndex = m_counter % m_primaryTargets.size();
+
 	// Close current render pass.
-	vkCmdEndRenderPass(m_graphicsCommandBuffer);
+	vkCmdEndRenderPass(m_graphicsCommandBuffers[syncIndex]);
 
 	// Transition target to texture if necessary.
 	if (m_targetSet != m_primaryTargets[m_currentImageIndex])
 	{
 		m_targetSet->prepareAsTexture(
-			m_graphicsCommandBuffer,
+			m_graphicsCommandBuffers[syncIndex],
 			m_targetColorIndex
 		);
 	}
@@ -829,6 +834,8 @@ void RenderViewVk::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, IP
 	VertexBufferVk* vb = mandatory_non_null_type_cast< VertexBufferVk* >(vertexBuffer);
 	ProgramVk* p = mandatory_non_null_type_cast< ProgramVk* >(program);
 
+	const uint32_t syncIndex = m_counter % m_primaryTargets.size();
+
 	validatePipeline(vb, p, primitives.type);
 
 	float targetSize[] =
@@ -836,14 +843,14 @@ void RenderViewVk::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, IP
 		(float)m_targetSet->getWidth(),
 		(float)m_targetSet->getHeight()
 	};
-	p->validateGraphics(m_descriptorPool, m_graphicsCommandBuffer, m_uniformBufferPool, targetSize);
+	p->validateGraphics(m_descriptorPool, m_graphicsCommandBuffers[syncIndex], m_uniformBufferPool, targetSize);
 
 	const uint32_t c_primitiveMul[] = { 1, 0, 2, 2, 3 };
 	uint32_t vertexCount = primitives.count * c_primitiveMul[primitives.type];
 
 	VkBuffer vbb = vb->getVkBuffer();
 	VkDeviceSize offsets = {};
-	vkCmdBindVertexBuffers(m_graphicsCommandBuffer, 0, 1, &vbb, &offsets);
+	vkCmdBindVertexBuffers(m_graphicsCommandBuffers[syncIndex], 0, 1, &vbb, &offsets);
 
 	if (indexBuffer && primitives.indexed)
 	{
@@ -852,14 +859,14 @@ void RenderViewVk::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, IP
 
 		VkDeviceSize offset = {};
 		vkCmdBindIndexBuffer(
-			m_graphicsCommandBuffer,
+			m_graphicsCommandBuffers[syncIndex],
 			ibb,
 			offset,
 			(ib->getIndexType() == ItUInt16) ? VK_INDEX_TYPE_UINT16 : VK_INDEX_TYPE_UINT32
 		);
 
 		vkCmdDrawIndexed(
-			m_graphicsCommandBuffer,
+			m_graphicsCommandBuffers[syncIndex],
 			vertexCount,	// index count
 			instanceCount,	// instance count
 			primitives.offset,	// first index
@@ -870,7 +877,7 @@ void RenderViewVk::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, IP
 	else
 	{
 		vkCmdDraw(
-			m_graphicsCommandBuffer,
+			m_graphicsCommandBuffers[syncIndex],
 			vertexCount,   // vertex count
 			instanceCount,   // instance count
 			primitives.offset,   // first vertex
@@ -884,13 +891,17 @@ void RenderViewVk::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, IP
 
 void RenderViewVk::compute(IProgram* program, const int32_t* workSize)
 {
+	const uint32_t syncIndex = m_counter % m_primaryTargets.size();
+
 	ProgramVk* p = mandatory_non_null_type_cast< ProgramVk* >(program);
-	p->validateCompute(m_descriptorPool, m_computeCommandBuffer, m_uniformBufferPool);
-	vkCmdDispatch(m_computeCommandBuffer, workSize[0], workSize[1], workSize[2]);
+	p->validateCompute(m_descriptorPool, m_computeCommandBuffers[syncIndex], m_uniformBufferPool);
+	vkCmdDispatch(m_computeCommandBuffers[syncIndex], workSize[0], workSize[1], workSize[2]);
 }
 
 bool RenderViewVk::copy(ITexture* destinationTexture, const Region& destinationRegion, ITexture* sourceTexture, const Region& sourceRegion)
 {
+	const uint32_t syncIndex = m_counter % m_primaryTargets.size();
+
 	VkImage sourceImage = 0;
 	VkImageLayout sourceImageLayout = VK_IMAGE_LAYOUT_UNDEFINED;
 
@@ -972,7 +983,7 @@ bool RenderViewVk::copy(ITexture* destinationTexture, const Region& destinationR
 		imb.dstAccessMask = 0;
 
 		vkCmdPipelineBarrier(
-			m_graphicsCommandBuffer,
+			m_graphicsCommandBuffers[syncIndex],
 			VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
 			VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
 			0,
@@ -1000,7 +1011,7 @@ bool RenderViewVk::copy(ITexture* destinationTexture, const Region& destinationR
 		imb.dstAccessMask = 0;
 
 		vkCmdPipelineBarrier(
-			m_graphicsCommandBuffer,
+			m_graphicsCommandBuffers[syncIndex],
 			VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
 			VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
 			0,
@@ -1012,7 +1023,7 @@ bool RenderViewVk::copy(ITexture* destinationTexture, const Region& destinationR
 
 	// Perform texture image copy.
 	vkCmdCopyImage(
-		m_graphicsCommandBuffer,
+		m_graphicsCommandBuffers[syncIndex],
 		sourceImage,
 		VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,
 		destinationImage,
@@ -1039,7 +1050,7 @@ bool RenderViewVk::copy(ITexture* destinationTexture, const Region& destinationR
 		imb.dstAccessMask = 0;
 
 		vkCmdPipelineBarrier(
-			m_graphicsCommandBuffer,
+			m_graphicsCommandBuffers[syncIndex],
 			VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
 			VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
 			0,
@@ -1067,7 +1078,7 @@ bool RenderViewVk::copy(ITexture* destinationTexture, const Region& destinationR
 		imb.dstAccessMask = 0;
 
 		vkCmdPipelineBarrier(
-			m_graphicsCommandBuffer,
+			m_graphicsCommandBuffers[syncIndex],
 			VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
 			VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
 			0,
@@ -1085,10 +1096,12 @@ void RenderViewVk::pushMarker(const char* const marker)
 #if !defined(__ANDROID__)
 	if (m_haveDebugMarkers)
 	{
+		const uint32_t syncIndex = m_counter % m_primaryTargets.size();
+
 		VkDebugUtilsLabelEXT dul = {};
 		dul.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_LABEL_EXT;
 		dul.pLabelName = marker;
-		vkCmdBeginDebugUtilsLabelEXT(m_graphicsCommandBuffer, &dul);
+		vkCmdBeginDebugUtilsLabelEXT(m_graphicsCommandBuffers[syncIndex], &dul);
 	}
 #endif
 }
@@ -1098,7 +1111,8 @@ void RenderViewVk::popMarker()
 #if !defined(__ANDROID__)
 	if (m_haveDebugMarkers)
 	{
-		vkCmdEndDebugUtilsLabelEXT(m_graphicsCommandBuffer);
+		const uint32_t syncIndex = m_counter % m_primaryTargets.size();
+		vkCmdEndDebugUtilsLabelEXT(m_graphicsCommandBuffers[syncIndex]);
 	}
 #endif
 }
@@ -1169,32 +1183,6 @@ bool RenderViewVk::create(uint32_t width, uint32_t height)
 	if (vkCreateCommandPool(m_logicalDevice, &cpci, 0, &m_computeCommandPool) != VK_SUCCESS)
 	{
 		log::error << L"Failed to create Vulkan; unable to create compute command pool." << Endl;
-		return false;
-	}
-
-	// Create graphics command buffers from pool.
-	VkCommandBufferAllocateInfo cbai = {};
-	cbai.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
-	cbai.commandPool = m_graphicsCommandPool;
-	cbai.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
-	cbai.commandBufferCount = 1;
-
-	if (vkAllocateCommandBuffers(m_logicalDevice, &cbai, &m_graphicsCommandBuffer) != VK_SUCCESS)
-	{
-		log::error << L"Failed to create Vulkan; failed to allocate graphics command buffer." << Endl;
-		return false;
-	}
-
-	// Create compute command buffers from pool.
-	cbai = {};
-	cbai.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
-	cbai.commandPool = m_computeCommandPool;
-	cbai.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
-	cbai.commandBufferCount = 1;
-
-	if (vkAllocateCommandBuffers(m_logicalDevice, &cbai, &m_computeCommandBuffer) != VK_SUCCESS)
-	{
-		log::error << L"Failed to create Vulkan; failed to allocate compute command buffer." << Endl;
 		return false;
 	}
 
@@ -1367,6 +1355,34 @@ bool RenderViewVk::create(uint32_t width, uint32_t height)
 		vkCreateFence(m_logicalDevice, &fci, nullptr, &m_inFlightFences[i]);		
 	}
 
+	// Create graphics command buffers from pool.
+	m_graphicsCommandBuffers.resize(imageCount);
+
+	VkCommandBufferAllocateInfo cbai = {};
+	cbai.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
+	cbai.commandPool = m_graphicsCommandPool;
+	cbai.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
+	cbai.commandBufferCount = imageCount;
+	if (vkAllocateCommandBuffers(m_logicalDevice, &cbai, m_graphicsCommandBuffers.ptr()) != VK_SUCCESS)
+	{
+		log::error << L"Failed to create Vulkan; failed to allocate graphics command buffer." << Endl;
+		return false;
+	}
+
+	// Create compute command buffers from pool.
+	m_computeCommandBuffers.resize(imageCount);
+
+	cbai = {};
+	cbai.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
+	cbai.commandPool = m_computeCommandPool;
+	cbai.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
+	cbai.commandBufferCount = imageCount;
+	if (vkAllocateCommandBuffers(m_logicalDevice, &cbai, m_computeCommandBuffers.ptr()) != VK_SUCCESS)
+	{
+		log::error << L"Failed to create Vulkan; failed to allocate compute command buffer." << Endl;
+		return false;
+	}
+
 	// Create descriptor pool.
 	VkDescriptorPoolSize dps[4];
 	dps[0].type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
@@ -1413,6 +1429,8 @@ bool RenderViewVk::create(uint32_t width, uint32_t height)
 
 bool RenderViewVk::validatePipeline(VertexBufferVk* vb, ProgramVk* p, PrimitiveType pt)
 {
+	const uint32_t syncIndex = m_counter % m_primaryTargets.size();
+	
 	uint32_t primitiveId = (uint32_t)pt;
 	uint32_t declHash = vb->getHash();
 	uint32_t programHash = p->getHash();
@@ -1582,7 +1600,7 @@ bool RenderViewVk::validatePipeline(VertexBufferVk* vb, ProgramVk* p, PrimitiveT
 	if (!pipeline)
 		return false;
 
-	vkCmdBindPipeline(m_graphicsCommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline);
+	vkCmdBindPipeline(m_graphicsCommandBuffers[syncIndex], VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline);
 	return true;
 }
 
