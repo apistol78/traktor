@@ -136,12 +136,13 @@ private:
 	VkCommandBuffer m_computeCommandBuffer;
 	VkSwapchainKHR m_swapChain;
 	VkDescriptorPool m_descriptorPool;
-	VkFence m_renderFence;
-	VkSemaphore m_presentCompleteSemaphore;
 	bool m_haveDebugMarkers;
 
 	// Swap chain.
 	RefArray< RenderTargetSetVk > m_primaryTargets;
+	AlignedVector< VkSemaphore > m_imageAvailableSemaphores;
+	AlignedVector< VkSemaphore > m_renderFinishedSemaphores;
+	AlignedVector< VkFence > m_inFlightFences;
 	std::list< RenderEvent > m_eventQueue;
 	uint32_t m_currentImageIndex;
 	
