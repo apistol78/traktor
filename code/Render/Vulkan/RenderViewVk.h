@@ -132,8 +132,8 @@ private:
 	VkQueue m_presentQueue;
 	VkCommandPool m_graphicsCommandPool;
 	VkCommandPool m_computeCommandPool;
-	VkCommandBuffer m_graphicsCommandBuffer;
-	VkCommandBuffer m_computeCommandBuffer;
+	AlignedVector< VkCommandBuffer > m_graphicsCommandBuffers;
+	AlignedVector< VkCommandBuffer > m_computeCommandBuffers;
 	VkSwapchainKHR m_swapChain;
 	VkDescriptorPool m_descriptorPool;
 	bool m_haveDebugMarkers;
