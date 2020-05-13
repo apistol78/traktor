@@ -72,8 +72,6 @@ RenderViewVk::RenderViewVk(
 ,	m_computeCommandBuffer(0)
 ,	m_swapChain(0)
 ,	m_descriptorPool(0)
-,	m_renderFence(0)
-,	m_presentCompleteSemaphore(0)
 ,	m_haveDebugMarkers(false)
 ,	m_targetId(0)
 ,	m_targetRenderPass(0)
@@ -248,18 +246,16 @@ void RenderViewVk::close()
 	// Ensure event queue doesn't contain stale events.
 	m_eventQueue.clear();
 
-	// Destroy sync primitives.
-	if (m_presentCompleteSemaphore != 0)
-	{
-		vkDestroySemaphore(m_logicalDevice, m_presentCompleteSemaphore, nullptr);
-		m_presentCompleteSemaphore = 0;
-	}
+	for (auto& imageAvailableSemaphore : m_imageAvailableSemaphores)
+		vkDestroySemaphore(m_logicalDevice, imageAvailableSemaphore, nullptr);
+	for (auto& renderFinishedSemaphore : m_renderFinishedSemaphores)
+		vkDestroySemaphore(m_logicalDevice, renderFinishedSemaphore, nullptr);
+	for (auto& inFlightFence : m_inFlightFences)
+		vkDestroyFence(m_logicalDevice, inFlightFence, nullptr);
 
-	if (m_renderFence != 0)
-	{
-		vkDestroyFence(m_logicalDevice, m_renderFence, nullptr);
-		m_renderFence = 0;
-	}
+	m_imageAvailableSemaphores.clear();
+	m_renderFinishedSemaphores.clear();
+	m_inFlightFences.clear();
 
 	// Destroy descriptor pool.
 	if (m_descriptorPool != 0)
@@ -275,7 +271,7 @@ void RenderViewVk::close()
 	// Destroy primary targets.
 	for (auto primaryTarget : m_primaryTargets)
 		primaryTarget->destroy();
-	m_primaryTargets.resize(0);
+	m_primaryTargets.clear();
 
 	// Destroy previous swap chain.
 	if (m_swapChain != 0)
@@ -445,17 +441,34 @@ SystemWindow RenderViewVk::getSystemWindow()
 
 bool RenderViewVk::beginFrame()
 {
+	const uint32_t syncIndex = m_counter % m_primaryTargets.size();
+	VkResult result;
+
 	// Might reach here with a non-created instance, pending reset, so
 	// we need to make sure we have an instance first.
 	if (m_primaryTargets.empty())
 		return false;
+
+    result = vkWaitForFences(m_logicalDevice, 1, &m_inFlightFences[syncIndex], VK_TRUE, 5 * 60 * 1000ull * 1000ull * 1000ull);
+	if (result != VK_SUCCESS)
+	{
+		log::warning << L"Vulkan error reported, \"" << getHumanResult(result) << L"\"; need to reset renderer (2)." << Endl;
+		
+		// Issue an event in order to reset view.
+		RenderEvent evt;
+		evt.type = ReLost;
+		m_eventQueue.push_back(evt);
+		return false;
+	}
+
+	vkResetFences(m_logicalDevice, 1, &m_inFlightFences[syncIndex]);
 
 	// Get next target from swap chain.
     vkAcquireNextImageKHR(
 		m_logicalDevice,
 		m_swapChain,
 		UINT64_MAX,
-		m_presentCompleteSemaphore,
+		m_imageAvailableSemaphores[syncIndex],
 		VK_NULL_HANDLE,
 		&m_currentImageIndex
 	);
@@ -473,7 +486,6 @@ bool RenderViewVk::beginFrame()
 	if (vkBeginCommandBuffer(m_graphicsCommandBuffer, &beginInfo) != VK_SUCCESS)
 		return false;
 	
-	m_counter++;
 	m_passCount = 0;
 	m_drawCalls = 0;
 	m_primitiveCount = 0;
@@ -482,6 +494,7 @@ bool RenderViewVk::beginFrame()
 
 void RenderViewVk::endFrame()
 {
+	const uint32_t syncIndex = m_counter % m_primaryTargets.size();
 	VkResult result;
 
 	// Prepare primary color for presentation.
@@ -500,32 +513,17 @@ void RenderViewVk::endFrame()
 		return;
 	}
 
-	// Wait until GPU has finished rendering all commands.
-    VkPipelineStageFlags waitStageMash = { VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT };
-
+	VkPipelineStageFlags waitStageMash = { VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT };
     VkSubmitInfo si = {};
     si.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
     si.waitSemaphoreCount = 1;
-    si.pWaitSemaphores = &m_presentCompleteSemaphore;
+    si.pWaitSemaphores = &m_imageAvailableSemaphores[syncIndex];
     si.pWaitDstStageMask = &waitStageMash;
     si.commandBufferCount = 1;
     si.pCommandBuffers = &m_graphicsCommandBuffer;
-    si.signalSemaphoreCount = 0;
-    si.pSignalSemaphores = nullptr;
-
-	vkResetFences(m_logicalDevice, 1, &m_renderFence);
-    vkQueueSubmit(m_presentQueue, 1, &si, m_renderFence);
-    result = vkWaitForFences(m_logicalDevice, 1, &m_renderFence, VK_TRUE, 5 * 60 * 1000ull * 1000ull * 1000ull);
-	if (result != VK_SUCCESS)
-	{
-		log::warning << L"Vulkan error reported, \"" << getHumanResult(result) << L"\"; need to reset renderer (2)." << Endl;
-		
-		// Issue an event in order to reset view.
-		RenderEvent evt;
-		evt.type = ReLost;
-		m_eventQueue.push_back(evt);
-		return;
-	}
+    si.signalSemaphoreCount = 1;
+    si.pSignalSemaphores = &m_renderFinishedSemaphores[syncIndex];
+    vkQueueSubmit(m_presentQueue, 1, &si, m_inFlightFences[syncIndex]);
 
 	// Release unused pipelines.
 	for (auto it = m_pipelines.begin(); it != m_pipelines.end(); )
@@ -545,6 +543,7 @@ void RenderViewVk::endFrame()
 
 void RenderViewVk::present()
 {
+	const uint32_t syncIndex = m_counter % m_primaryTargets.size();
 	VkResult result;
 
 	// Queue presentation of current primary target.
@@ -553,8 +552,8 @@ void RenderViewVk::present()
     pi.swapchainCount = 1;
     pi.pSwapchains = &m_swapChain;
     pi.pImageIndices = &m_currentImageIndex;
-    pi.waitSemaphoreCount = 0;
-    pi.pWaitSemaphores = nullptr;
+    pi.waitSemaphoreCount = 1;
+    pi.pWaitSemaphores = &m_renderFinishedSemaphores[syncIndex];
     pi.pResults = nullptr;
 
     result = vkQueuePresentKHR(m_presentQueue, &pi);
@@ -568,6 +567,8 @@ void RenderViewVk::present()
 		m_eventQueue.push_back(evt);
 		return;
 	}
+
+	m_counter++;
 }
 
 bool RenderViewVk::beginPass(const Clear* clear)
@@ -1288,7 +1289,7 @@ bool RenderViewVk::create(uint32_t width, uint32_t height)
 
 	// Get primary color images.
 	uint32_t imageCount = 0;
-	vkGetSwapchainImagesKHR(m_logicalDevice, m_swapChain, &imageCount, 0);
+	vkGetSwapchainImagesKHR(m_logicalDevice, m_swapChain, &imageCount, nullptr);
 
 	AlignedVector< VkImage > presentImages(imageCount);
 	vkGetSwapchainImagesKHR(m_logicalDevice, m_swapChain, &imageCount, presentImages.ptr());
@@ -1330,8 +1331,11 @@ bool RenderViewVk::create(uint32_t width, uint32_t height)
 	if (vkBindImageMemory(m_logicalDevice, depthImage, imageMemory, 0) != VK_SUCCESS)
 		return false;
 
-	// Create primary targets.
+	// Create primary targets and synchronization primitives.
 	m_primaryTargets.resize(imageCount);
+	m_imageAvailableSemaphores.resize(imageCount);
+	m_renderFinishedSemaphores.resize(imageCount);
+	m_inFlightFences.resize(imageCount);
 	for (uint32_t i = 0; i < imageCount; ++i)
 	{
 		m_primaryTargets[i] = new RenderTargetSetVk(
@@ -1351,6 +1355,16 @@ bool RenderViewVk::create(uint32_t width, uint32_t height)
 			(L"Primary " + toString(i)).c_str()
 		))
 			return false;
+
+		VkSemaphoreCreateInfo sci = {};
+		sci.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
+		vkCreateSemaphore(m_logicalDevice, &sci, nullptr, &m_imageAvailableSemaphores[i]);
+		vkCreateSemaphore(m_logicalDevice, &sci, nullptr, &m_renderFinishedSemaphores[i]);
+
+		VkFenceCreateInfo fci = {};
+		fci.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
+		fci.flags = VK_FENCE_CREATE_SIGNALED_BIT;
+		vkCreateFence(m_logicalDevice, &fci, nullptr, &m_inFlightFences[i]);		
 	}
 
 	// Create descriptor pool.
@@ -1373,15 +1387,6 @@ bool RenderViewVk::create(uint32_t width, uint32_t height)
 
 	if (vkCreateDescriptorPool(m_logicalDevice, &dpci, nullptr, &m_descriptorPool) != VK_SUCCESS)
 		return false;
-
-	// Create synchronization primitives.
-    VkFenceCreateInfo fci = {};
-    fci.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
-    vkCreateFence(m_logicalDevice, &fci, nullptr, &m_renderFence);
-
-	VkSemaphoreCreateInfo sci = {};
-	sci.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
-    vkCreateSemaphore(m_logicalDevice, &sci, nullptr, &m_presentCompleteSemaphore);
 
 	// Check if debug marker extension is available.
 	uint32_t extensionCount;
