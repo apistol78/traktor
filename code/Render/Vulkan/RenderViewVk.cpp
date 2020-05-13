@@ -449,20 +449,6 @@ bool RenderViewVk::beginFrame()
 	if (m_primaryTargets.empty())
 		return false;
 
-    result = vkWaitForFences(m_logicalDevice, 1, &m_inFlightFences[syncIndex], VK_TRUE, 5 * 60 * 1000ull * 1000ull * 1000ull);
-	if (result != VK_SUCCESS)
-	{
-		log::warning << L"Vulkan error reported, \"" << getHumanResult(result) << L"\"; need to reset renderer (2)." << Endl;
-		
-		// Issue an event in order to reset view.
-		RenderEvent evt;
-		evt.type = ReLost;
-		m_eventQueue.push_back(evt);
-		return false;
-	}
-
-	vkResetFences(m_logicalDevice, 1, &m_inFlightFences[syncIndex]);
-
 	// Get next target from swap chain.
     vkAcquireNextImageKHR(
 		m_logicalDevice,
@@ -474,6 +460,18 @@ bool RenderViewVk::beginFrame()
 	);
 	if (m_currentImageIndex >= m_primaryTargets.size())
 		return false;
+
+    result = vkWaitForFences(m_logicalDevice, 1, &m_inFlightFences[m_currentImageIndex], VK_TRUE, 5 * 60 * 1000ull * 1000ull * 1000ull);
+	if (result != VK_SUCCESS)
+	{
+		log::warning << L"Vulkan error reported, \"" << getHumanResult(result) << L"\"; need to reset renderer (2)." << Endl;
+		
+		// Issue an event in order to reset view.
+		RenderEvent evt;
+		evt.type = ReLost;
+		m_eventQueue.push_back(evt);
+		return false;
+	}
 
 	// Reset descriptor pool.
 	if (vkResetDescriptorPool(m_logicalDevice, m_descriptorPool, 0) != VK_SUCCESS)
@@ -513,6 +511,8 @@ void RenderViewVk::endFrame()
 		return;
 	}
 
+	vkResetFences(m_logicalDevice, 1, &m_inFlightFences[m_currentImageIndex]);
+
 	VkPipelineStageFlags waitStageMash = { VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT };
     VkSubmitInfo si = {};
     si.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
@@ -523,7 +523,7 @@ void RenderViewVk::endFrame()
     si.pCommandBuffers = &m_graphicsCommandBuffer;
     si.signalSemaphoreCount = 1;
     si.pSignalSemaphores = &m_renderFinishedSemaphores[syncIndex];
-    vkQueueSubmit(m_presentQueue, 1, &si, m_inFlightFences[syncIndex]);
+    vkQueueSubmit(m_presentQueue, 1, &si, m_inFlightFences[m_currentImageIndex]);
 
 	// Release unused pipelines.
 	for (auto it = m_pipelines.begin(); it != m_pipelines.end(); )
