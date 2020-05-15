@@ -1551,8 +1551,8 @@ Fall off
 			<id>{A9FE5EB6-D726-5C46-BC7D-255421BF10EB}</id>
 			<comment/>
 			<position>
-				<first>3818</first>
-				<second>-594</second>
+				<first>4002</first>
+				<second>-589</second>
 			</position>
 			<name>L_Irradiance</name>
 			<global>false</global>
@@ -1561,8 +1561,8 @@ Fall off
 			<id>{5F00F136-F0D7-824B-A1A5-45F66245BE72}</id>
 			<comment/>
 			<position>
-				<first>3503</first>
-				<second>-608</second>
+				<first>3687</first>
+				<second>-603</second>
 			</position>
 			<parameterName>World_IrradianceEnable</parameterName>
 		</item>
@@ -1718,6 +1718,16 @@ Fall off
 				<first>3190</first>
 				<second>-664</second>
 			</position>
+		</item>
+		<item type="traktor.render.Color" version="2,traktor.render.Node:1">
+			<id>{44A2D5C7-FCF8-FA48-AB87-E68B51C2B992}</id>
+			<comment/>
+			<position>
+				<first>3418</first>
+				<second>-511</second>
+			</position>
+			<color>0, 0, 0, 0</color>
+			<linear>false</linear>
 		</item>
 	</nodes>
 	<edges>
@@ -1969,16 +1979,6 @@ Fall off
 			<destination>
 				<node ref="/object/nodes/item[35]"/>
 				<name>Case 2</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[36]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[45]"/>
-				<name>Input</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
@@ -3073,16 +3073,6 @@ Fall off
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[133]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[10]"/>
-				<name>Input</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
 				<node ref="/object/nodes/item[132]"/>
 				<name>Output</name>
 			</source>
@@ -3203,16 +3193,6 @@ Fall off
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[146]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[5]"/>
-				<name>Input</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
 				<node ref="/object/nodes/item[136]"/>
 				<name>Output</name>
 			</source>
@@ -3293,11 +3273,41 @@ Fall off
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[35]"/>
+				<node ref="/object/nodes/item[135]"/>
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[46]"/>
+				<node ref="/object/nodes/item[134]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[149]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[135]"/>
+				<name>False</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[146]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[5]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[133]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[10]"/>
 				<name>Input</name>
 			</destination>
 		</item>
@@ -3313,11 +3323,21 @@ Fall off
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[135]"/>
+				<node ref="/object/nodes/item[35]"/>
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[134]"/>
+				<node ref="/object/nodes/item[46]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[36]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[45]"/>
 				<name>Input</name>
 			</destination>
 		</item>
