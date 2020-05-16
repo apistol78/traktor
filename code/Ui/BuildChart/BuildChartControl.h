@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Core/Containers/AlignedVector.h"
-#include "Core/Thread/Semaphore.h"
 #include "Core/Timer/Timer.h"
 #include "Ui/Widget.h"
 
@@ -28,6 +27,8 @@ public:
 	bool create(Widget* parent, uint32_t laneCount, int style = WsDoubleBuffer);
 
 	void showRange(double fromTime, double toTime);
+
+	void showTime(double time);
 
 	double positionToTime(int32_t x) const;
 
@@ -73,7 +74,6 @@ private:
 	typedef AlignedVector< Task > taskVector_t;
 
 	Timer m_timer;
-	Semaphore m_lanesLock;
 	AlignedVector< taskVector_t > m_lanes;
 	bool m_running;
 	bool m_selecting;

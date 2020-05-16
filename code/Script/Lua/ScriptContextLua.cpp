@@ -387,7 +387,11 @@ Any ScriptContextLua::executeMethod(ScriptObjectLua* self, int32_t methodRef, ui
 			m_scriptManager->m_profiler->notifyCallEnter();
 
 		// Call script function.
-		int32_t err = lua_pcall(m_luaState, argc + (self ? 1 : 0), 1, errfunc);
+		int32_t err;
+		{
+			T_PROFILER_SCOPE(L"lua_pcall");
+			err = lua_pcall(m_luaState, argc + (self ? 1 : 0), 1, errfunc);
+		}
 		if (err == 0)
 			returnValue = m_scriptManager->toAny(-1);
 

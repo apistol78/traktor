@@ -4,6 +4,7 @@
 #include "Core/Math/Float.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Misc/String.h"
+#include "Core/Timer/Profiler.h"
 #include "Render/IRenderSystem.h"
 #include "Render/IRenderTargetSet.h"
 #include "Render/IRenderView.h"
@@ -606,6 +607,7 @@ render::handle_t WorldRendererDeferred::setupGBufferPass(
 	render::handle_t outputTargetSetId
 ) const
 {
+	T_PROFILER_SCOPE(L"World setup gbuffer");
 	const float clearZ = m_settings.viewFarZ;
 
 	// Add GBuffer target set.
@@ -683,6 +685,8 @@ render::handle_t WorldRendererDeferred::setupVelocityPass(
 	if (m_motionBlurQuality == Quality::Disabled)
 		return 0;
 
+	T_PROFILER_SCOPE(L"World setup velocity");
+
 	// Add Velocity target set.
 	render::RenderGraphTargetSetDesc rgtd = {};
 	rgtd.count = 1;
@@ -759,6 +763,8 @@ render::handle_t WorldRendererDeferred::setupAmbientOcclusionPass(
 	render::handle_t gbufferTargetSetId
 ) const
 {
+	T_PROFILER_SCOPE(L"World setup ambient occlusion");
+
 	// Add ambient occlusion target set.
 	render::RenderGraphTargetSetDesc rgtd;
 	rgtd.count = 1;
@@ -807,6 +813,8 @@ render::handle_t WorldRendererDeferred::setupCascadeShadowMapPass(
 {
 	if (lightCascadeIndex < 0)
 		return 0;
+
+	T_PROFILER_SCOPE(L"World setup cascade shadow map");
 
 	const auto& shadowSettings = m_settings.shadowSettings[(int32_t)m_shadowsQuality];
 	const UniformShadowProjection shadowProjection(shadowSettings.resolution);
@@ -931,6 +939,8 @@ render::handle_t WorldRendererDeferred::setupAtlasShadowMapPass(
 {
 	if (lightAtlasIndices.empty())
 		return 0;
+
+	T_PROFILER_SCOPE(L"World setup atlas shadow map");
 
 	const auto shadowSettings = m_settings.shadowSettings[(int32_t)m_shadowsQuality];
 
@@ -1073,6 +1083,7 @@ void WorldRendererDeferred::setupTileDataPass(
 	TileShaderData* tileShaderData
 ) const
 {
+	T_PROFILER_SCOPE(L"World setup light tiles");
 	const Frustum& viewFrustum = worldRenderView.getViewFrustum();
 
 	// Update tile data.
@@ -1148,6 +1159,8 @@ render::handle_t WorldRendererDeferred::setupShadowMaskPass(
 {
 	if (m_shadowsQuality == Quality::Disabled || lightCascadeIndex < 0)
 		return 0;
+
+	T_PROFILER_SCOPE(L"World setup shadow mask");
 
 	const auto shadowSettings = m_settings.shadowSettings[(int32_t)m_shadowsQuality];
 	const UniformShadowProjection shadowProjection(shadowSettings.resolution);
@@ -1247,6 +1260,8 @@ render::handle_t WorldRendererDeferred::setupReflectionsPass(
 {
 	if (m_reflectionsQuality == Quality::Disabled)
 		return 0;
+
+	T_PROFILER_SCOPE(L"World setup reflections");
 
 	// Add Reflections target.
 	render::RenderGraphTargetSetDesc rgtd = {};
@@ -1348,6 +1363,8 @@ render::handle_t WorldRendererDeferred::setupVisualPass(
 	int32_t frame
 ) const
 {
+	T_PROFILER_SCOPE(L"World setup visual");
+
 	const bool shadowsEnable = (bool)(m_shadowsQuality != Quality::Disabled);
 	int32_t lightCount = (int32_t)m_lights.size();
 
@@ -1484,6 +1501,8 @@ void WorldRendererDeferred::setupProcessPass(
 	render::handle_t visualTargetSetId
 ) const
 {
+	T_PROFILER_SCOPE(L"World setup process");
+
 	render::ImageGraphParams ipd;
 	ipd.viewFrustum = worldRenderView.getViewFrustum();
 	ipd.viewToLight = Matrix44::identity();

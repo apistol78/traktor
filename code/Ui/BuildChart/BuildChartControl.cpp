@@ -1,5 +1,5 @@
 #include "Core/Math/MathUtils.h"
-#include "Core/Thread/Acquire.h"
+#include "Core/Misc/String.h"
 #include "Ui/Application.h"
 #include "Ui/Canvas.h"
 #include "Ui/BuildChart/BuildChartControl.h"
@@ -50,6 +50,14 @@ void BuildChartControl::showRange(double fromTime, double toTime)
 	update();
 }
 
+void BuildChartControl::showTime(double time)
+{
+	double duration = m_toTime - m_fromTime;
+	m_fromTime = time - duration;
+	m_toTime = time;
+	update();
+}
+
 double BuildChartControl::positionToTime(int32_t x) const
 {
 	return m_fromTime + (m_toTime - m_fromTime) * double(x) / m_lastSize;
@@ -87,16 +95,15 @@ void BuildChartControl::addTask(int32_t lane, const std::wstring& text, const Co
 	if (lane < 0 || lane >= m_lanes.size())
 		return;
 
-	m_lanes[lane].push_back(Task());
-	m_lanes[lane].back().time0 = timeStart;
-	m_lanes[lane].back().time1 = timeEnd;
-	m_lanes[lane].back().text = text;
-	m_lanes[lane].back().color = color;
+	auto& task = m_lanes[lane].push_back();
+	task.time0 = timeStart;
+	task.time1 = timeEnd;
+	task.text = text;
+	task.color = color;
 }
 
 void BuildChartControl::begin()
 {
-	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lanesLock);
 	for (int32_t lane = 0; lane < m_lanes.size(); ++lane)
 		m_lanes[lane].resize(0);
 
@@ -114,26 +121,23 @@ void BuildChartControl::end()
 
 void BuildChartControl::beginTask(int32_t lane, const std::wstring& text, const Color4ub& color)
 {
-	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lanesLock);
-
 	if (lane < 0 || lane >= m_lanes.size())
 		return;
 
-	m_lanes[lane].push_back(Task());
-	m_lanes[lane].back().time0 = m_timer.getElapsedTime();
-	m_lanes[lane].back().text = text;
-	m_lanes[lane].back().color = color;
+	auto& task = m_lanes[lane].push_back();
+	task.time0 = m_timer.getElapsedTime();
+	task.text = text;
+	task.color = color;
 }
 
 void BuildChartControl::endTask(int32_t lane, const Color4ub& color)
 {
-	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lanesLock);
-
 	if (lane < 0 || lane >= m_lanes.size())
 		return;
 
-	m_lanes[lane].back().time1 = m_timer.getElapsedTime();
-	m_lanes[lane].back().color = color;
+	auto& task = m_lanes[lane].back();
+	task.time1 = m_timer.getElapsedTime();
+	task.color = color;
 }
 
 void BuildChartControl::eventPaint(PaintEvent* event)
@@ -143,49 +147,56 @@ void BuildChartControl::eventPaint(PaintEvent* event)
 	if (m_running)
 		m_time = m_timer.getElapsedTime();
 
+	Rect rcUpdate = event->getUpdateRect();
 	Rect rc = getInnerRect();
 
 	// Clear background.
 	canvas.setBackground(Color4ub(255, 255, 255, 255));
-	canvas.fillRect(rc);
+	canvas.fillRect(rcUpdate);
 
 	// Draw tasks.
 	{
-		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lanesLock);
+		const int32_t c_two = dpi96(2);
+		const int32_t c_four = dpi96(4);
+		const int32_t c_twenty = dpi96(20);
+
 		Rect rcLane(rc.left, rc.top, rc.right, rc.top + dpi96(24));
 		for (int32_t lane = 0; lane < m_lanes.size(); ++lane)
 		{
 			canvas.setForeground(Color4ub(0, 0, 0, 40));
 			canvas.drawLine(rcLane.left, rcLane.getCenter().y, rcLane.right, rcLane.getCenter().y);
 
-			const taskVector_t& tasks = m_lanes[lane];
-			for (taskVector_t::const_iterator i = tasks.begin(); i != tasks.end(); ++i)
+			for (const auto& task : m_lanes[lane])
 			{
-				int32_t x0 = timeToPosition(i->time0);
-				int32_t x1 = timeToPosition(i->time1 >= 0.0 ? i->time1 : m_time);
+				int32_t x0 = timeToPosition(task.time0);
+				int32_t x1 = timeToPosition(task.time1 >= 0.0 ? task.time1 : m_time);
 
-				if (x1 < x0 + dpi96(4))
-					x1 = x0 + dpi96(4);
+				if (x1 < x0 + c_four)
+					x1 = x0 + c_four;
 
 				if (x0 >= rcLane.right || x1 <= rcLane.left)
 					continue;
 
 				Rect rcTask(
 					rcLane.left + x0,
-					rcLane.top + dpi96(2),
+					rcLane.top + c_two,
 					rcLane.left + x1,
-					rcLane.bottom - dpi96(2)
+					rcLane.bottom - c_two
 				);
 
-				canvas.setForeground(Color4ub(220, 255, 220, 255));
-				canvas.setBackground(i->color);
-				canvas.fillGradientRect(rcTask);
+				canvas.setBackground(task.color);
+				canvas.fillRect(rcTask);
 
 				canvas.setForeground(Color4ub(0, 0, 0, 80));
 				canvas.drawRect(rcTask);
 
-				canvas.setForeground(Color4ub(0, 0, 0, 128));
-				canvas.drawText(rcTask, i->text, AnLeft, AnCenter);
+				if (rcTask.getWidth() > c_twenty)
+				{
+					canvas.setForeground(Color4ub(0, 0, 0, 128));
+					canvas.setClipRect(rcTask);
+					canvas.drawText(rcTask, task.text, AnLeft, AnCenter);
+					canvas.resetClipRect();
+				}
 			}
 
 			rcLane = rcLane.offset(0, dpi96(24));
@@ -202,17 +213,23 @@ void BuildChartControl::eventPaint(PaintEvent* event)
 	canvas.drawLine(rcTime.left, rcTime.top, rcTime.right, rcTime.top);
 
 	double duration = m_toTime - m_fromTime;
-
-	double l = std::log10(duration);
-	double f = std::floor(l);
-	double d = std::pow(10.0, f);
-	double a = std::fmod(m_fromTime, d);
-
-	for (double t = m_fromTime - a; t <= m_toTime; t += d / 10.0)
+	if (duration > 0.01)
 	{
-		int32_t x = timeToPosition(t);
-		canvas.drawLine(x, rcTime.bottom - dpi96(8), x, rcTime.bottom);
+		double l = std::log10(duration);
+		double f = std::floor(l);
+		double d = std::pow(10.0, f);
+		double a = std::fmod(m_fromTime, d);
+
+		for (double t = m_fromTime - a; t <= m_toTime; t += d / 10.0)
+		{
+			int32_t x = timeToPosition(t);
+			canvas.drawLine(x, rcTime.bottom - dpi96(8), x, rcTime.bottom);
+		}
 	}
+
+	canvas.setForeground(Color4ub(0, 0, 0, 128));
+	canvas.drawText(rcTime, str(L"%.3f", (float)m_fromTime), AnLeft, AnCenter);
+	canvas.drawText(rcTime, str(L"%.3f", (float)m_toTime), AnRight, AnCenter);
 
 	if (m_selecting)
 	{

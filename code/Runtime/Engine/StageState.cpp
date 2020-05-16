@@ -1,6 +1,7 @@
 #include "Core/Log/Log.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Misc/TString.h"
+#include "Core/Timer/Profiler.h"
 #include "Render/IRenderView.h"
 #include "Render/Context/RenderContext.h"
 #include "Render/Frame/RenderGraph.h"
@@ -68,6 +69,8 @@ StageState::UpdateResult StageState::update(IStateManager* stateManager, const U
 
 StageState::BuildResult StageState::build(uint32_t frame, const UpdateInfo& info)
 {
+	T_PROFILER_SCOPE(L"Stage build");
+
 	render::RenderContext* renderContext = m_frames[frame].renderContext;
 	T_FATAL_ASSERT(renderContext);
 
@@ -94,6 +97,8 @@ StageState::BuildResult StageState::build(uint32_t frame, const UpdateInfo& info
 
 bool StageState::render(uint32_t frame, const UpdateInfo& info)
 {
+	T_PROFILER_SCOPE(L"Stage render");
+
 	render::RenderContext* renderContext = m_frames[frame].renderContext;
 	T_FATAL_ASSERT(renderContext);
 
