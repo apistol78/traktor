@@ -1,6 +1,6 @@
 #include "Runtime/Editor/ProfilerDialog.h"
 #include "Runtime/Editor/TargetConnection.h"
-#include "Core/Io/StringOutputStream.h"
+#include "Core/Misc/String.h"
 #include "Ui/Application.h"
 #include "Ui/TableLayout.h"
 #include "Ui/BuildChart/BuildChartControl.h"
@@ -48,7 +48,7 @@ bool ProfilerDialog::create(ui::Widget* parent)
 
 	m_chart = new ui::BuildChartControl();
 	m_chart->create(this, 4 * 8);
-	m_chart->begin();
+	m_chart->showRange(0.0, 1.0 / 60.0);
 
 	addEventHandler< ui::CloseEvent >(this, &ProfilerDialog::eventClose);
 
@@ -61,7 +61,7 @@ bool ProfilerDialog::create(ui::Widget* parent)
 
 void ProfilerDialog::destroy()
 {
-	m_connection->setProfilerEventsCallback(0);
+	m_connection->setProfilerEventsCallback(nullptr);
 	ui::Dialog::destroy();
 }
 
@@ -70,10 +70,9 @@ void ProfilerDialog::receivedProfilerEvents(double currentTime, const AlignedVec
 	if (!m_recording)
 		return;
 
-	const double c_width = 8.0 / 60.0;
-	const double c_eventAge = 2.0;
+	const double c_eventAge = 10.0;
 
-	m_chart->showRange(currentTime - c_width, currentTime);
+	m_chart->showTime(currentTime);
 	m_chart->removeTasksOlderThan(currentTime - c_eventAge);
 
 	for (size_t i = 0; i < events.size(); ++i)
@@ -86,13 +85,9 @@ void ProfilerDialog::receivedProfilerEvents(double currentTime, const AlignedVec
 			m_nextThreadLane++;
 		}
 
-		StringOutputStream ss;
-		ss.setDecimals(1);
-		ss << e.name << L" (" << ((e.end - e.start) * 1000.0f) << L" ms , " << e.alloc << L")";
-
 		m_chart->addTask(
 			m_threadIdToLane[e.threadId] * 8 + e.depth,
-			ss.str(),
+			str(L"%s (%.2f ms)", e.name.c_str(), (e.end - e.start) * 1000.0f),
 			c_threadColors[m_threadIdToLane[e.threadId] % sizeof_array(c_threadColors)],
 			e.start,
 			e.end

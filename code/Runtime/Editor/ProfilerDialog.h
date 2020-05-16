@@ -1,6 +1,6 @@
 #pragma once
 
-#include <map>
+#include "Core/Containers/SmallMap.h"
 #include "Runtime/Editor/TargetConnection.h"
 #include "Ui/Dialog.h"
 
@@ -38,7 +38,7 @@ private:
 	Ref< TargetConnection > m_connection;
 	Ref< ui::ToolBar > m_toolBar;
 	Ref< ui::BuildChartControl > m_chart;
-	std::map< uint32_t, int32_t > m_threadIdToLane;
+	SmallMap< uint32_t, int32_t > m_threadIdToLane;
 	int32_t m_nextThreadLane;
 	bool m_recording;
 

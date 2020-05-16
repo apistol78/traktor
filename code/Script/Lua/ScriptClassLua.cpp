@@ -1,5 +1,4 @@
 #include "Core/Class/IRuntimeDispatch.h"
-#include "Core/Timer/Profiler.h"
 #include "Script/Lua/ScriptClassLua.h"
 #include "Script/Lua/ScriptContextLua.h"
 #include "Script/Lua/ScriptManagerLua.h"
@@ -39,8 +38,6 @@ public:
 
 	virtual Any invoke(ITypedObject* self, uint32_t argc, const Any* argv) const override final
 	{
-		T_PROFILER_SCOPE(L"Script invoke");
-
 		// Allocate table for script side object.
 		if (self)
 			m_scriptManager->pushObject(self);
@@ -106,7 +103,6 @@ public:
 
 	virtual Any invoke(ITypedObject* self, uint32_t argc, const Any* argv) const override final
 	{
-		T_PROFILER_SCOPE(L"Script invoke");
 		return m_scriptContext->executeMethod(
 			mandatory_non_null_type_cast< ScriptObjectLua* >(self),
 			m_ref,
