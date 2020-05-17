@@ -36,4 +36,8 @@ elif [[ "$1" == "iOS" ]]; then
 	make -s -j6 -f 'Traktor iOS.mak' $2
 	popd
 
+else
+
+	echo "Invalid argument $1"
+
 fi
