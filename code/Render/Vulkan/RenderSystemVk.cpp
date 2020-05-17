@@ -243,7 +243,7 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
     VkDeviceQueueCreateInfo dqci = {};
     dqci.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
     dqci.queueFamilyIndex = m_graphicsQueueIndex;
-    dqci.queueCount = 1;
+    dqci.queueCount = 3;
     float queuePriorities[] = { 1.0f };
     dqci.pQueuePriorities = queuePriorities;
 

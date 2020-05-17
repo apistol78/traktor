@@ -122,14 +122,21 @@ private:
 	VkPhysicalDevice m_physicalDevice;
 	VkDevice m_logicalDevice;
 	VmaAllocator m_allocator;
-	uint32_t m_graphicsQueueIndex;
-	uint32_t m_computeQueueIndex;
+
 #if defined(_WIN32) || defined(__LINUX__)
 	Ref< Window > m_window;
 #endif
 	VkSurfaceKHR m_surface;
+
+	uint32_t m_graphicsQueueIndex;
+	VkQueue m_graphicsQueue;
+
+	uint32_t m_computeQueueIndex;
+	VkQueue m_computeQueue;
+
 	uint32_t m_presentQueueIndex;
 	VkQueue m_presentQueue;
+
 	VkCommandPool m_graphicsCommandPool;
 	VkCommandPool m_computeCommandPool;
 	AlignedVector< VkCommandBuffer > m_graphicsCommandBuffers;

@@ -4,6 +4,7 @@
 #include "Core/Misc/AutoPtr.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Misc/String.h"
+#include "Core/Timer/Profiler.h"
 #include "Render/Vulkan/ApiLoader.h"
 #include "Render/Vulkan/CubeTextureVk.h"
 #include "Render/Vulkan/IndexBufferVk.h"
@@ -45,6 +46,20 @@ struct RenderEventTypePred
 	}
 };
 
+bool presentationModeSupported(VkPhysicalDevice physicalDevice, VkSurfaceKHR surface, VkPresentModeKHR presentationMode)
+{
+	uint32_t presentModeCount = 0;
+	vkGetPhysicalDeviceSurfacePresentModesKHR(physicalDevice, surface, &presentModeCount, 0);
+	AutoArrayPtr< VkPresentModeKHR > presentModes(new VkPresentModeKHR[presentModeCount]);
+	vkGetPhysicalDeviceSurfacePresentModesKHR(physicalDevice, surface, &presentModeCount, presentModes.ptr());
+	for (uint32_t i = 0; i < presentModeCount; ++i)
+	{
+		if (presentModes[i] == presentationMode)
+			return true;
+	}
+	return false;
+}
+
 		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderViewVk", RenderViewVk, IRenderView)
@@ -61,9 +76,9 @@ RenderViewVk::RenderViewVk(
 ,	m_physicalDevice(physicalDevice)
 ,	m_logicalDevice(logicalDevice)
 ,	m_allocator(allocator)
+,	m_surface(0)
 ,	m_graphicsQueueIndex(graphicsQueueIndex)
 ,	m_computeQueueIndex(computeQueueIndex)
-,	m_surface(0)
 ,	m_presentQueueIndex(~0)
 ,	m_presentQueue(0)
 ,	m_graphicsCommandPool(0)
@@ -179,7 +194,7 @@ bool RenderViewVk::create(const RenderViewEmbeddedDesc& desc)
 
 	width = ANativeWindow_getWidth(sci.window);
 	height = ANativeWindow_getHeight(sci.window);
-#elif defined(__MACO__MAC__S__)
+#elif defined(__MAC__)
 
 	// Attach Metal layer to provided view.
 	attachMetalLayer(desc.syswin.view);
@@ -438,6 +453,7 @@ SystemWindow RenderViewVk::getSystemWindow()
 
 bool RenderViewVk::beginFrame()
 {
+	const uint64_t timeOut = 5 * 60 * 1000ull * 1000ull * 1000ull;
 	const uint32_t syncIndex = m_counter % m_primaryTargets.size();
 	VkResult result;
 
@@ -447,18 +463,27 @@ bool RenderViewVk::beginFrame()
 		return false;
 
 	// Get next target from swap chain.
+	T_PROFILER_BEGIN(L"vkAcquireNextImageKHR");
     vkAcquireNextImageKHR(
 		m_logicalDevice,
 		m_swapChain,
-		UINT64_MAX,
+		timeOut,
 		m_imageAvailableSemaphores[syncIndex],
 		VK_NULL_HANDLE,
 		&m_currentImageIndex
 	);
+	T_PROFILER_END();
 	if (m_currentImageIndex >= m_primaryTargets.size())
 		return false;
 
-    result = vkWaitForFences(m_logicalDevice, 1, &m_inFlightFences[m_currentImageIndex], VK_TRUE, 5 * 60 * 1000ull * 1000ull * 1000ull);
+#if 0
+	log::info << L"begin frame, syncIndex " << syncIndex << L", image index " << m_currentImageIndex << Endl;
+	log::info << L"wait for fence " << m_currentImageIndex << L"..." << Endl;
+#endif
+
+	T_PROFILER_BEGIN(L"vkWaitForFences");
+    result = vkWaitForFences(m_logicalDevice, 1, &m_inFlightFences[m_currentImageIndex], VK_TRUE, UINT64_MAX);
+	T_PROFILER_END();
 	if (result != VK_SUCCESS)
 	{
 		log::warning << L"Vulkan error reported, \"" << getHumanResult(result) << L"\"; need to reset renderer (2)." << Endl;
@@ -471,14 +496,20 @@ bool RenderViewVk::beginFrame()
 	}
 
 	// Reset descriptor pool.
-	if (vkResetDescriptorPool(m_logicalDevice, m_descriptorPool, 0) != VK_SUCCESS)
+	T_PROFILER_BEGIN(L"vkResetDescriptorPool");
+	result = vkResetDescriptorPool(m_logicalDevice, m_descriptorPool, 0);
+	T_PROFILER_END();
+	if (result != VK_SUCCESS)
 		return false;
 
 	// Begin recording command buffer.
 	VkCommandBufferBeginInfo beginInfo = {};
 	beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
 	beginInfo.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
-	if (vkBeginCommandBuffer(m_graphicsCommandBuffers[syncIndex], &beginInfo) != VK_SUCCESS)
+	T_PROFILER_BEGIN(L"vkBeginCommandBuffer");
+	result = vkBeginCommandBuffer(m_graphicsCommandBuffers[syncIndex], &beginInfo);
+	T_PROFILER_END();
+	if (result != VK_SUCCESS)
 		return false;
 	
 	m_passCount = 0;
@@ -491,6 +522,12 @@ void RenderViewVk::endFrame()
 {
 	const uint32_t syncIndex = m_counter % m_primaryTargets.size();
 	VkResult result;
+
+#if 0
+	log::info << L"end frame, syncIndex " << syncIndex << L", image index " << m_currentImageIndex << Endl;
+	log::info << L"reset fence " << m_currentImageIndex << Endl;
+	log::info << L"queue submit " << m_currentImageIndex << Endl;
+#endif
 
 	// Prepare primary color for presentation.
 	m_primaryTargets[m_currentImageIndex]->getColorTargetVk(0)->prepareForPresentation(m_graphicsCommandBuffers[syncIndex]);
@@ -513,14 +550,14 @@ void RenderViewVk::endFrame()
 	VkPipelineStageFlags waitStageMash = { VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT };
     VkSubmitInfo si = {};
     si.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
-    si.waitSemaphoreCount = 1;
-    si.pWaitSemaphores = &m_imageAvailableSemaphores[syncIndex];
+    si.waitSemaphoreCount = 0; // 1;
+    si.pWaitSemaphores = nullptr; // &m_imageAvailableSemaphores[syncIndex];
     si.pWaitDstStageMask = &waitStageMash;
     si.commandBufferCount = 1;
     si.pCommandBuffers = &m_graphicsCommandBuffers[syncIndex];
     si.signalSemaphoreCount = 1;
     si.pSignalSemaphores = &m_renderFinishedSemaphores[syncIndex];
-    vkQueueSubmit(m_presentQueue, 1, &si, m_inFlightFences[m_currentImageIndex]);
+    vkQueueSubmit(m_graphicsQueue, 1, &si, m_inFlightFences[m_currentImageIndex]);
 
 	// Release unused pipelines.
 	for (auto it = m_pipelines.begin(); it != m_pipelines.end(); )
@@ -542,6 +579,10 @@ void RenderViewVk::present()
 {
 	const uint32_t syncIndex = m_counter % m_primaryTargets.size();
 	VkResult result;
+
+#if 0
+	log::info << L"present, syncIndex " << syncIndex << L", image index " << m_currentImageIndex << Endl;
+#endif
 
 	// Queue presentation of current primary target.
     VkPresentInfoKHR pi = {};
@@ -573,6 +614,10 @@ bool RenderViewVk::beginPass(const Clear* clear)
 	T_FATAL_ASSERT(m_targetRenderPass == 0);
 
 	const uint32_t syncIndex = m_counter % m_primaryTargets.size();
+
+#if 0
+	log::info << L"begin pass, syncIndex " << syncIndex << L", image index " << m_currentImageIndex << Endl;
+#endif
 
 	Clear cl = {};
 	if (clear)
@@ -652,6 +697,10 @@ bool RenderViewVk::beginPass(IRenderTargetSet* renderTargetSet, const Clear* cle
 
 	const uint32_t syncIndex = m_counter % m_primaryTargets.size();
 
+#if 0
+	log::info << L"begin pass, syncIndex " << syncIndex << L", image index " << m_currentImageIndex << Endl;
+#endif
+
 	Clear cl = {};
 	if (clear)
 		cl = *clear;
@@ -730,6 +779,10 @@ bool RenderViewVk::beginPass(IRenderTargetSet* renderTargetSet, int32_t renderTa
 
 	const uint32_t syncIndex = m_counter % m_primaryTargets.size();
 
+#if 0
+	log::info << L"begin pass, syncIndex " << syncIndex << L", image index " << m_currentImageIndex << Endl;
+#endif
+
 	Clear cl = {};
 	if (clear)
 		cl = *clear;
@@ -805,6 +858,10 @@ bool RenderViewVk::beginPass(IRenderTargetSet* renderTargetSet, int32_t renderTa
 void RenderViewVk::endPass()
 {
 	const uint32_t syncIndex = m_counter % m_primaryTargets.size();
+
+#if 0
+	log::info << L"end pass, syncIndex " << syncIndex << L", image index " << m_currentImageIndex << Endl;
+#endif
 
 	// Close current render pass.
 	vkCmdEndRenderPass(m_graphicsCommandBuffers[syncIndex]);
@@ -1160,7 +1217,9 @@ bool RenderViewVk::create(uint32_t width, uint32_t height)
 	}
 
 	// Get opaque queues.
-	vkGetDeviceQueue(m_logicalDevice, m_presentQueueIndex, 0, &m_presentQueue);
+	vkGetDeviceQueue(m_logicalDevice, m_graphicsQueueIndex, 0, &m_graphicsQueue);
+	vkGetDeviceQueue(m_logicalDevice, m_computeQueueIndex, 1, &m_computeQueue);
+	vkGetDeviceQueue(m_logicalDevice, m_presentQueueIndex, 2, &m_presentQueue);
 
 	// Create graphics command pool.
 	VkCommandPoolCreateInfo cpci = {};
@@ -1208,11 +1267,13 @@ bool RenderViewVk::create(uint32_t width, uint32_t height)
 	VkSurfaceCapabilitiesKHR surfaceCapabilities = {};
 	vkGetPhysicalDeviceSurfaceCapabilitiesKHR(m_physicalDevice, m_surface, &surfaceCapabilities);
 
-	uint32_t desiredImageCount = 2;
+	uint32_t desiredImageCount = 3;
 	if (desiredImageCount < surfaceCapabilities.minImageCount)
 		desiredImageCount = surfaceCapabilities.minImageCount;
 	else if (surfaceCapabilities.maxImageCount != 0 && desiredImageCount > surfaceCapabilities.maxImageCount)
 		desiredImageCount = surfaceCapabilities.maxImageCount;
+
+	log::info << L"Using " << desiredImageCount << L" images in swap chain." << Endl;
 
 	VkExtent2D surfaceResolution =  surfaceCapabilities.currentExtent;
 	if (surfaceResolution.width <= -1)
@@ -1226,23 +1287,18 @@ bool RenderViewVk::create(uint32_t width, uint32_t height)
 		preTransform = VK_SURFACE_TRANSFORM_IDENTITY_BIT_KHR;
 
 	// Determine presentation mode.
-	uint32_t presentModeCount = 0;
-	vkGetPhysicalDeviceSurfacePresentModesKHR(m_physicalDevice, m_surface, &presentModeCount, 0);
+	VkPresentModeKHR presentationMode = VK_PRESENT_MODE_FIFO_KHR;
+	if (presentationModeSupported(m_physicalDevice, m_surface, VK_PRESENT_MODE_IMMEDIATE_KHR))
+		presentationMode = VK_PRESENT_MODE_IMMEDIATE_KHR;
+	else if (presentationModeSupported(m_physicalDevice, m_surface, VK_PRESENT_MODE_MAILBOX_KHR))
+		presentationMode = VK_PRESENT_MODE_MAILBOX_KHR;
 
-	AutoArrayPtr< VkPresentModeKHR > presentModes(new VkPresentModeKHR[presentModeCount]);
-	vkGetPhysicalDeviceSurfacePresentModesKHR(m_physicalDevice, m_surface, &presentModeCount, presentModes.ptr());
-
-	VkPresentModeKHR presentationMode = VK_PRESENT_MODE_FIFO_KHR;   // Always supported,
-#if defined(__IOS__) || defined(__ANDROID__)						// other present modes might not be vsync;ed.
-	for (uint32_t i = 0; i < presentModeCount; ++i)
-	{
-		if (presentModes[i] == VK_PRESENT_MODE_MAILBOX_KHR)
-		{
-			presentationMode = VK_PRESENT_MODE_MAILBOX_KHR;
-			break;
-		}
-	}
-#endif
+	if (presentationMode == VK_PRESENT_MODE_FIFO_KHR)
+		log::info << L"Using FIFO presentation mode." << Endl;
+	else if (presentationMode == VK_PRESENT_MODE_IMMEDIATE_KHR)
+		log::info << L"Using IMMEDIATE presentation mode." << Endl;
+	else if (presentationMode == VK_PRESENT_MODE_MAILBOX_KHR)
+		log::info << L"Using MAILBOX presentation mode." << Endl;
 
 	// Create swap chain.
 	VkSwapchainCreateInfoKHR scci = {};
@@ -1331,7 +1387,7 @@ bool RenderViewVk::create(uint32_t width, uint32_t height)
 			m_logicalDevice,
 			0,
 			m_graphicsCommandPool,
-			m_presentQueue
+			m_graphicsQueue
 		);
 		if (!m_primaryTargets[i]->createPrimary(
 			width,
