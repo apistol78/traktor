@@ -51,7 +51,7 @@ void CaseJob::run()
 		CASE_ASSERT(correct);
 	}
 
-	// Add job on by on and wait.
+	// Add job one by one and then wait.
 	{
 		g_job = 0;
 		g_active = 0;
@@ -63,10 +63,10 @@ void CaseJob::run()
 		}
 
 		bool result = JobManager::getInstance().wait();
+		CASE_ASSERT(result);
 
 		CASE_ASSERT_EQUAL(g_active, 0);
 		CASE_ASSERT_EQUAL(g_job, 1000);
-		CASE_ASSERT(result);
 
 		bool correct = true;
 		for (int32_t i = 0; i < 1000; ++i)
