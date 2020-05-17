@@ -42,6 +42,8 @@ MouseDeviceX11::MouseDeviceX11(Display* display, Window window, int deviceId)
 ,	m_deviceId(deviceId)
 ,	m_connected(true)
 ,	m_exclusive(false)
+,	m_focus(false)
+,	m_haveGrab(false)
 ,	m_width(0)
 ,	m_height(0)
 {
@@ -246,7 +248,13 @@ void MouseDeviceX11::setRumble(const InputRumble& /*rumble*/)
 
 void MouseDeviceX11::setExclusive(bool exclusive)
 {
-	if (exclusive && m_focus)
+	m_exclusive = exclusive;
+
+	bool shouldGrab = (exclusive && m_focus);
+	if (shouldGrab == m_haveGrab)
+		return;
+
+	if (shouldGrab)
 	{
 		uint8_t mask[8] = { 0, 0, 0, 0, 0, 0, 0, 0 };
 		XIEventMask evmask;
@@ -279,8 +287,9 @@ void MouseDeviceX11::setExclusive(bool exclusive)
 		XIUngrabDevice(m_display, m_deviceId, CurrentTime);
 #endif
 	}
+
 	XFlush(m_display);
-	m_exclusive = exclusive;
+	m_haveGrab = shouldGrab;
 }
 
 void MouseDeviceX11::consumeEvent(XEvent& evt)
