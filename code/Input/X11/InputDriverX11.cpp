@@ -1,5 +1,6 @@
 #include "Core/Log/Log.h"
 #include "Core/Misc/TString.h"
+#include "Core/Timer/Profiler.h"
 #include "Input/X11/InputDriverX11.h"
 #include "Input/X11/KeyboardDeviceX11.h"
 #include "Input/X11/MouseDeviceX11.h"
@@ -79,6 +80,8 @@ Ref< IInputDevice > InputDriverX11::getDevice(int index)
 
 InputDriverX11::UpdateResult InputDriverX11::update()
 {
+	T_PROFILER_SCOPE(L"InputDriverX11 update");
+
 	XEvent evt;
 	while (XCheckTypedEvent(m_display, GenericEvent, &evt))
 	{
@@ -86,8 +89,8 @@ InputDriverX11::UpdateResult InputDriverX11::update()
 		{
 			if (XGetEventData(m_display, &evt.xcookie))
 			{
-				for (RefArray< InputDeviceX11 >::iterator i = m_devices.begin(); i != m_devices.end(); ++i)
-					(*i)->consumeEvent(evt);
+				for (auto device : m_devices)
+					device->consumeEvent(evt);
 
 				XFreeEventData(m_display, &evt.xcookie);
 			}
@@ -100,8 +103,8 @@ InputDriverX11::UpdateResult InputDriverX11::update()
 
 	XGetInputFocus(m_display, &focusWindow, &focusState);
 
-	for (RefArray< InputDeviceX11 >::iterator i = m_devices.begin(); i != m_devices.end(); ++i)
-		(*i)->setFocus(focusWindow == m_window);
+	for (auto device : m_devices)
+		device->setFocus(focusWindow == m_window);
 
 	return UrOk;
 }

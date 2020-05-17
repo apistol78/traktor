@@ -29,13 +29,13 @@ class T_DLLCLASS InputDriverX11 : public IInputDriver
 public:
 	InputDriverX11();
 
-	virtual bool create(const SystemApplication& sysapp, const SystemWindow& syswin, uint32_t inputCategories);
+	virtual bool create(const SystemApplication& sysapp, const SystemWindow& syswin, uint32_t inputCategories) override;
 
-	virtual int getDeviceCount();
+	virtual int getDeviceCount() override;
 
-	virtual Ref< IInputDevice > getDevice(int index);
+	virtual Ref< IInputDevice > getDevice(int index) override;
 
-	virtual UpdateResult update();
+	virtual UpdateResult update() override;
 
 private:
 	Display* m_display;

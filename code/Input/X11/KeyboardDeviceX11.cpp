@@ -19,6 +19,7 @@ KeyboardDeviceX11::KeyboardDeviceX11(Display* display, Window window, int device
 ,	m_connected(true)
 ,	m_exclusive(false)
 ,	m_focus(true)
+,	m_haveGrab(false)
 {
 	uint8_t mask[2] = { 0, 0 };
 	XIEventMask evmask;
@@ -139,7 +140,13 @@ void KeyboardDeviceX11::setRumble(const InputRumble& /*rumble*/)
 
 void KeyboardDeviceX11::setExclusive(bool exclusive)
 {
-	if (exclusive && m_focus)
+	m_exclusive = exclusive;
+
+	bool shouldGrab = (exclusive && m_focus);
+	if (shouldGrab == m_haveGrab)
+		return;
+
+	if (shouldGrab)
 	{
 		uint8_t mask[2] = { 0, 0 };
 		XIEventMask evmask;
@@ -171,8 +178,9 @@ void KeyboardDeviceX11::setExclusive(bool exclusive)
 		XIUngrabDevice(m_display, m_deviceId, CurrentTime);
 #endif
 	}
+
 	XFlush(m_display);
-	m_exclusive = exclusive;
+	m_haveGrab = shouldGrab;
 }
 
 void KeyboardDeviceX11::consumeEvent(XEvent& evt)

@@ -1,3 +1,4 @@
+#include "Core/Timer/Profiler.h"
 #include "Input/InputSystem.h"
 #include "Input/IInputDriver.h"
 #include "Input/IInputDevice.h"
@@ -17,10 +18,10 @@ void InputSystem::addDriver(IInputDriver* inputDriver)
 
 void InputSystem::removeDriver(IInputDriver* inputDriver)
 {
-	RefArray< IInputDriver >::iterator i = std::find(m_drivers.begin(), m_drivers.end(), inputDriver);
-	if (i != m_drivers.end())
+	auto it = std::find(m_drivers.begin(), m_drivers.end(), inputDriver);
+	if (it != m_drivers.end())
 	{
-		m_drivers.erase(i);
+		m_drivers.erase(it);
 		updateDevices();
 	}
 }
@@ -32,9 +33,9 @@ void InputSystem::addDevice(IInputDevice* inputDevice)
 
 void InputSystem::removeDevice(IInputDevice* inputDevice)
 {
-	RefArray< IInputDevice >::iterator i = std::find(m_devices.begin(), m_devices.end(), inputDevice);
-	if (i != m_devices.end())
-		m_devices.erase(i);
+	auto it = std::find(m_devices.begin(), m_devices.end(), inputDevice);
+	if (it != m_devices.end())
+		m_devices.erase(it);
 }
 
 int32_t InputSystem::getDeviceCount() const
@@ -80,6 +81,8 @@ void InputSystem::setExclusive(bool exclusive)
 
 bool InputSystem::update()
 {
+	T_PROFILER_SCOPE(L"InputSystem update");
+
 	// Update drivers.
 	bool shouldUpdateDevices = false;
 	for (auto driver : m_drivers)
@@ -100,6 +103,8 @@ bool InputSystem::update()
 
 void InputSystem::updateDevices()
 {
+	T_PROFILER_SCOPE(L"InputSystem updateDevices");
+
 	m_devices.resize(0);
 	for (auto driver : m_drivers)
 	{
