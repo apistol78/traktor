@@ -841,20 +841,27 @@ bool Application::update()
 				render::IRenderView* renderView = m_renderServer->getRenderView();
 				if (renderView && !renderView->isMinimized())
 				{
-					T_PROFILER_BEGIN(L"Application render");
-					if (renderView->beginFrame())
+					T_PROFILER_BEGIN(L"Application render beginFrame");
+					bool frameBegun = renderView->beginFrame();
+					T_PROFILER_END();
+
+					if (frameBegun)
 					{
 						if (currentState)
 							currentState->render(m_frameRender, m_updateInfoRender);
-						renderView->endFrame();
-					}
-					T_PROFILER_END();
 
+						T_PROFILER_BEGIN(L"Application render endFrame");
+						renderView->endFrame();
+						T_PROFILER_END();
+					}
+					
 					T_PROFILER_BEGIN(L"Application render present");
 					renderView->present();
 					T_PROFILER_END();
 
+					T_PROFILER_BEGIN(L"Application render stats");
 					renderView->getStatistics(m_renderViewStats);
+					T_PROFILER_END();
 				}
 				else
 				{
@@ -1070,19 +1077,30 @@ void Application::threadRender()
 				if (renderView && !renderView->isMinimized())
 				{
 					T_PROFILER_BEGIN(L"Application render");
-					if (renderView->beginFrame())
+
+					T_PROFILER_BEGIN(L"Application render beginFrame");
+					bool frameBegun = renderView->beginFrame();
+					T_PROFILER_END();
+
+					if (frameBegun)
 					{
 						if (m_stateRender)
 							m_stateRender->render(m_frameRender, m_updateInfoRender);
+
+						T_PROFILER_BEGIN(L"Application render endFrame");
 						renderView->endFrame();
+						T_PROFILER_END();
 					}
-					T_PROFILER_END();
 
 					T_PROFILER_BEGIN(L"Application render present");
 					renderView->present();
 					T_PROFILER_END();
 
+					T_PROFILER_BEGIN(L"Application render stats");
 					renderView->getStatistics(m_renderViewStats);
+					T_PROFILER_END();
+
+					T_PROFILER_END();
 				}
 				else
 				{
