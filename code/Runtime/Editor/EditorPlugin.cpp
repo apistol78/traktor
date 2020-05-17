@@ -407,7 +407,12 @@ void EditorPlugin::updateTargetLists()
 			et.guid = targetInstance->getGuid();
 			et.name = targetInstance->getName();
 			et.target = targetInstance->getObject< Target >();
-			T_ASSERT(et.target);
+			
+			if (!et.target)
+			{
+				log::error << L"Unable to register target instance \"" << targetInstance->getName() << L"\"; unable to read target." << Endl;
+				continue;
+			}
 
 			m_targets.push_back(et);
 
@@ -427,10 +432,13 @@ void EditorPlugin::updateTargetLists()
 					continue;
 				}
 
-				Ref< TargetInstance > targetInstance = new TargetInstance(et.name, et.target, targetConfiguration, platformInstance->getName(), platform);
-				T_ASSERT(targetInstance);
-
-				m_targetInstances.push_back(targetInstance);
+				m_targetInstances.push_back(new TargetInstance(
+					et.name,
+					et.target,
+					targetConfiguration,
+					platformInstance->getName(),
+					platform
+				));
 			}
 		}
 	}
