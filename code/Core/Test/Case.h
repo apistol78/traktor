@@ -54,8 +54,8 @@ private:
 #define CASE_ASSERT(condition) \
 	{ \
 		StringOutputStream ss; \
-		bool result = false; { result = (bool)(condition); } \
-		if (result) \
+		bool __case__result__ = false; { __case__result__ = (bool)(condition); } \
+		if (__case__result__) \
 		{ \
 			ss << T_FILE_LINE_W << L" \"" << mbstows(#condition) << L"\" succeeded."; \
 			succeeded(ss.str()); \
