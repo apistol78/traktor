@@ -16,12 +16,15 @@ namespace traktor
 struct Internal
 {
 	pthread_t thread;
+	Functor* functor;
+	uint32_t* id;
 };
 
 void* trampoline(void* data)
 {
-	Functor* functor = reinterpret_cast< Functor* >(data);
-	(functor->operator())();
+	Internal* in = reinterpret_cast< Internal* >(data);
+	*in->id = (uint32_t)in->thread;
+	(in->functor->operator())();
 	pthread_exit(0);
 	return nullptr;
 }
@@ -36,6 +39,8 @@ bool Thread::start(Priority priority)
 
 	Internal* in = new Internal();
 	in->thread = 0;
+	in->functor = m_functor;
+	in->id = &m_id;
 
 	m_handle = in;
 
@@ -72,7 +77,7 @@ bool Thread::start(Priority priority)
 		&in->thread,
 		&attr,
 		trampoline,
-		(void*)m_functor
+		(void*)in
 	);
 
 	pthread_attr_destroy(&attr);
