@@ -15,7 +15,6 @@
 #include "Render/OpenGL/Std/RenderViewOpenGL.h"
 #include "Render/OpenGL/Std/SimpleTextureOpenGL.h"
 #include "Render/OpenGL/Std/StructBufferOpenGL.h"
-#include "Render/OpenGL/Std/TimeQueryOpenGL.h"
 #include "Render/OpenGL/Std/VertexBufferDynamicVBO.h"
 #include "Render/OpenGL/Std/VertexBufferStaticVBO.h"
 #include "Render/OpenGL/Std/VolumeTextureOpenGL.h"
@@ -832,12 +831,6 @@ Ref< IProgram > RenderSystemOpenGL::createProgram(const ProgramResource* program
 {
 	T_ANONYMOUS_VAR(ContextOpenGL::Scope)(m_resourceContext);
 	return ProgramOpenGL::create(m_resourceContext, programResource, m_useProgramCache);
-}
-
-Ref< ITimeQuery > RenderSystemOpenGL::createTimeQuery() const
-{
-	T_ANONYMOUS_VAR(ContextOpenGL::Scope)(m_resourceContext);
-	return TimeQueryOpenGL::create();
 }
 
 void RenderSystemOpenGL::purge()

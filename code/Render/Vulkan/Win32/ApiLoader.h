@@ -92,6 +92,11 @@ extern PFN_vkDestroyDescriptorPool vkDestroyDescriptorPool;
 extern PFN_vkCmdClearColorImage vkCmdClearColorImage;
 extern PFN_vkCmdClearDepthStencilImage vkCmdClearDepthStencilImage;
 extern PFN_vkCmdSetStencilReference vkCmdSetStencilReference;
+extern PFN_vkCreateQueryPool vkCreateQueryPool;
+extern PFN_vkDestroyQueryPool vkDestroyQueryPool;
+extern PFN_vkCmdResetQueryPool vkCmdResetQueryPool;
+extern PFN_vkCmdWriteTimestamp vkCmdWriteTimestamp;
+extern PFN_vkGetQueryPoolResults vkGetQueryPoolResults;
 
 // Win32 Vulkan extensions.
 extern PFN_vkCreateWin32SurfaceKHR vkCreateWin32SurfaceKHR;

@@ -6,7 +6,6 @@
 #include "Render/IndexBuffer.h"
 #include "Render/IRenderSystem.h"
 #include "Render/IRenderTargetSet.h"
-#include "Render/ITimeQuery.h"
 #include "Render/Vrfy/Error.h"
 #include "Render/Vrfy/IndexBufferVrfy.h"
 #include "Render/Vrfy/ProgramVrfy.h"
@@ -27,7 +26,6 @@ RenderViewVrfy::RenderViewVrfy(IRenderSystem* renderSystem, IRenderView* renderV
 ,	m_insideFrame(false)
 ,	m_insidePass(false)
 {
-	m_timeQuery = renderSystem->createTimeQuery();
 }
 
 bool RenderViewVrfy::nextEvent(RenderEvent& outEvent)
@@ -347,6 +345,21 @@ bool RenderViewVrfy::copy(ITexture* destinationTexture, const Region& destinatio
 	T_CAPTURE_ASSERT (sourceTexture, L"Invalid destination texture.");
 
 	return m_renderView->copy(destinationTexture, destinationRegion, sourceTexture, sourceRegion);
+}
+
+int32_t RenderViewVrfy::beginTimeQuery()
+{
+	return m_renderView->beginTimeQuery();
+}
+
+void RenderViewVrfy::endTimeQuery(int32_t query)
+{
+	m_renderView->endTimeQuery(query);
+}
+
+bool RenderViewVrfy::getTimeQuery(int32_t query, bool wait, double& outDuration) const
+{
+	return m_renderView->getTimeQuery(query, wait, outDuration);
 }
 
 void RenderViewVrfy::pushMarker(const char* const marker)

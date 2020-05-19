@@ -24,7 +24,6 @@ class IProgram;
 class IRenderTargetSet;
 class IRenderView;
 class ISimpleTexture;
-class ITimeQuery;
 class IVolumeTexture;
 class ProgramResource;
 class StructBuffer;
@@ -158,12 +157,6 @@ public:
 	 * \return Program suitable for rendering with this render system.
 	 */
 	virtual Ref< IProgram > createProgram(const ProgramResource* programResource, const wchar_t* const tag) = 0;
-
-	/*! Create GPU time query object.
-	 *
-	 * \return Time query object.
-	 */
-	virtual Ref< ITimeQuery > createTimeQuery() const = 0;
 
 	/*! Purge any resource which might be pending destruction.
 	 */

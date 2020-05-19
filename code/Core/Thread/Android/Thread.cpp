@@ -1,8 +1,10 @@
 #include <cstring>
 #include <pthread.h>
 #include <sched.h>
+#include <unistd.h>
 #include <sys/time.h>
 #include "Core/Thread/Thread.h"
+#include "Core/Thread/Android/Utilities.h"
 #include "Core/Functor/Functor.h"
 
 namespace traktor
@@ -16,6 +18,7 @@ struct Internal
 	pthread_mutex_t mutex;
 	pthread_cond_t signal;
 	Functor* functor;
+	uint32_t* id;
 	bool finished;
 };
 
@@ -23,6 +26,7 @@ void* trampoline(void* data)
 {
 	Internal* in = reinterpret_cast< Internal* >(data);
 
+	*in->id = (uint32_t)in->thread;
 	(in->functor->operator())();
 	in->finished = true;
 
@@ -40,8 +44,9 @@ bool Thread::start(Priority priority)
 	int rc;
 
 	Internal* in = new Internal();
-
+	in->thread = 0;
 	in->functor = m_functor;
+	in->id = &m_id;
 	in->finished = false;
 
 	pthread_mutex_init(&in->mutex, NULL);
@@ -49,6 +54,7 @@ bool Thread::start(Priority priority)
 
 	pthread_attr_init(&attr);
 	pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_JOINABLE);
+	pthread_attr_setinheritsched(&attr, PTHREAD_EXPLICIT_SCHED);
 
 	std::memset(&param, 0, sizeof(param));
 	switch (priority)
@@ -103,14 +109,9 @@ bool Thread::wait(int timeout)
 	{
 		pthread_mutex_lock(&in->mutex);
 
-		timeval now;
 		timespec ts;
-
-		gettimeofday(&now, 0);
-		ts.tv_sec = now.tv_sec + timeout / 1000;
-		ts.tv_nsec = (now.tv_usec + (timeout % 1000) * 1000) * 1000;
-		ts.tv_sec += ts.tv_nsec / 1000000000;
-		ts.tv_nsec = ts.tv_nsec % 1000000000;
+		clock_gettime(CLOCK_REALTIME, &ts);
+		addMilliSecToTimeSpec(&ts, timeout);
 
 		for (rc = 0; rc == 0 && !in->finished; )
 		{
@@ -159,11 +160,7 @@ bool Thread::resume(Priority priority)
 
 void Thread::sleep(int duration)
 {
-	const timespec time = {
-		0,							// 0 seconds.
-		duration * 1000L * 1000L,	// And n ms.
-	};
-	nanosleep(&time, NULL);
+	usleep(long(duration) * 1000);
 }
 
 void Thread::yield()

@@ -22,7 +22,6 @@
 #include "Render/Vulkan/RenderViewVk.h"
 #include "Render/Vulkan/SimpleTextureVk.h"
 #include "Render/Vulkan/StructBufferVk.h"
-#include "Render/Vulkan/TimeQueryVk.h"
 #include "Render/Vulkan/UtilitiesVk.h"
 #include "Render/Vulkan/VertexAttributesVk.h"
 #include "Render/Vulkan/VertexBufferDynamicVk.h"
@@ -243,7 +242,7 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
     VkDeviceQueueCreateInfo dqci = {};
     dqci.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
     dqci.queueFamilyIndex = m_graphicsQueueIndex;
-    dqci.queueCount = 3;
+    dqci.queueCount = 1;
     float queuePriorities[] = { 1.0f };
     dqci.pQueuePriorities = queuePriorities;
 
@@ -656,15 +655,6 @@ Ref< IProgram > RenderSystemVk::createProgram(const ProgramResource* programReso
 	);
 	if (program->create(resource, tag))
 		return program;
-	else
-		return nullptr;
-}
-
-Ref< ITimeQuery > RenderSystemVk::createTimeQuery() const
-{
-	Ref< TimeQueryVk > timeQuery = new TimeQueryVk();
-	if (timeQuery->create())
-		return timeQuery;
 	else
 		return nullptr;
 }

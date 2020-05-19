@@ -10,7 +10,7 @@ namespace traktor
 	namespace
 	{
 
-const size_t c_eventQueueThreshold = 16;
+const size_t c_eventQueueThreshold = 64;
 
 	}
 
@@ -56,7 +56,6 @@ void Profiler::beginEvent(const wchar_t* const name)
 	e.depth = uint16_t(te->events.size() - 1);
 	e.start = m_timer.getElapsedTime();
 	e.end = 0.0;
-	e.alloc = Alloc::count();
 }
 
 void Profiler::endEvent()
@@ -72,7 +71,6 @@ void Profiler::endEvent()
 	T_FATAL_ASSERT(!te->events.empty());
 	Event& e = te->events.back();
 	e.end = m_timer.getElapsedTime();
-	e.alloc = Alloc::count() - e.alloc;
 
 	{
 		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
@@ -87,6 +85,25 @@ void Profiler::endEvent()
 			m_listener->reportProfilerEvents(m_timer.getElapsedTime(), m_events);
 			m_events.resize(0);
 		}
+	}
+}
+
+void Profiler::addEvent(const wchar_t* const name, double duration)
+{
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+
+	auto& e = m_events.push_back();
+	e.name = name;
+	e.threadId = -1;
+	e.depth = 0;
+	e.start = m_timer.getElapsedTime();
+	e.end = e.start + duration;
+
+	// Report events if we've queued enough.
+	if (m_events.size() >= c_eventQueueThreshold)
+	{
+		m_listener->reportProfilerEvents(m_timer.getElapsedTime(), m_events);
+		m_events.resize(0);
 	}
 }
 

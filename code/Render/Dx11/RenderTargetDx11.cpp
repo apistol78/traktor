@@ -7,8 +7,6 @@
 #include "Render/Dx11/TypesDx11.h"
 #include "Render/Dx11/Utilities.h"
 
-#include "Render/Dx11/TimeQueryDx11.h"
-
 namespace traktor
 {
 	namespace render
@@ -248,13 +246,7 @@ void RenderTargetDx11::unbind()
 
 bool RenderTargetDx11::read(void* buffer) const
 {
-	TimeQueryDx11 query(m_context);
-	query.create();
-	query.begin();
 	m_context->getD3DDeviceContext()->Flush();
-	query.end();
-	while (!query.ready())
-		Sleep(0);
 
 	D3D11_BOX sr;
 	sr.left = 0;

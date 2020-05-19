@@ -236,11 +236,6 @@ Ref< IProgram > RenderSystemOpenGLES2::createProgram(const ProgramResource* prog
 	return ProgramOpenGLES2::create(m_context, programResource);
 }
 
-Ref< ITimeQuery > RenderSystemOpenGLES2::createTimeQuery() const
-{
-	return nullptr;
-}
-
 void RenderSystemOpenGLES2::purge()
 {
 }

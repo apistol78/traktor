@@ -738,6 +738,20 @@ bool RenderViewOpenGL::copy(ITexture* destinationTexture, const Region& destinat
 	return false;
 }
 
+int32_t RenderViewOpenGL::beginTimeQuery()
+{
+	return 0;
+}
+
+void RenderViewOpenGL::endTimeQuery(int32_t query)
+{
+}
+
+bool RenderViewOpenGL::getTimeQuery(int32_t query, bool wait, double& outDuration) const
+{
+	return false;
+}
+
 void RenderViewOpenGL::pushMarker(const char* const marker)
 {
 #if !defined(__APPLE__)

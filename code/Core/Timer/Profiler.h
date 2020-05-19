@@ -20,7 +20,9 @@ namespace traktor
 {
 
 // Uncomment this line if you want scope profiling enabled.
-#define T_PROFILER_ENABLE
+#if !defined(__ANDROID__)
+#	define T_PROFILER_ENABLE
+#endif
 
 /*! \ingroup Core */
 //@{
@@ -48,7 +50,6 @@ public:
 		uint16_t depth;
 		double start;
 		double end;
-		int32_t alloc;
 	};
 
 	/*! Profiler report listener.
@@ -91,6 +92,9 @@ public:
 	/*! End recording event.
 	 */
 	void endEvent();
+
+	/*! Add manual event. */
+	void addEvent(const wchar_t* const name, double duration);
 
 	/*! Get current time.
 	 */

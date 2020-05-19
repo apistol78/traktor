@@ -377,14 +377,14 @@ bool Application::create(
 		if (m_threadRender)
 		{
 			m_threadRender->start(Thread::Above);
-			if (m_signalRenderFinish.wait(1000))
-				log::info << L"Render thread started successfully" << Endl;
+			if (m_signalRenderFinish.wait(60 * 1000))
+				log::info << L"Render thread started successfully." << Endl;
 			else
-				log::warning << L"Unable to synchronize render thread" << Endl;
+				log::warning << L"Unable to synchronize render thread." << Endl;
 		}
 	}
 	else
-		log::info << L"Using single threaded rendering" << Endl;
+		log::info << L"Using single threaded rendering." << Endl;
 
 #endif
 
@@ -1084,17 +1084,31 @@ void Application::threadRender()
 
 					if (frameBegun)
 					{
+#if defined(T_PROFILER_ENABLE)
+						int32_t frameQuery = renderView->beginTimeQuery();
+#endif
+
 						if (m_stateRender)
 							m_stateRender->render(m_frameRender, m_updateInfoRender);
+
+#if defined(T_PROFILER_ENABLE)
+						renderView->endTimeQuery(frameQuery);
+#endif
 
 						T_PROFILER_BEGIN(L"Application render endFrame");
 						renderView->endFrame();
 						T_PROFILER_END();
-					}
 
-					T_PROFILER_BEGIN(L"Application render present");
-					renderView->present();
-					T_PROFILER_END();
+						T_PROFILER_BEGIN(L"Application render present");
+						renderView->present();
+						T_PROFILER_END();
+
+#if defined(T_PROFILER_ENABLE)
+						double duration = 0.0;
+						if (renderView->getTimeQuery(frameQuery, false, duration))
+							Profiler::getInstance().addEvent(L"GPU render", duration);
+#endif
+					}
 
 					T_PROFILER_BEGIN(L"Application render stats");
 					renderView->getStatistics(m_renderViewStats);

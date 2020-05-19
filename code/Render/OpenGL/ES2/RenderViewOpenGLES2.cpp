@@ -778,6 +778,20 @@ bool RenderViewOpenGLES2::copy(ITexture* destinationTexture, const Region& desti
 	return false;
 }
 
+int32_t RenderViewOpenGLES2::beginTimeQuery()
+{
+	return 0;
+}
+
+void RenderViewOpenGLES2::endTimeQuery(int32_t query)
+{
+}
+
+bool RenderViewOpenGLES2::getTimeQuery(int32_t query, bool wait, double& outDuration) const
+{
+	return false;
+}
+
 void RenderViewOpenGLES2::pushMarker(const char* const marker)
 {
 #if defined(__IOS__)
