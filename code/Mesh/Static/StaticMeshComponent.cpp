@@ -12,7 +12,7 @@ namespace traktor
 		namespace
 		{
 
-static render::handle_t s_techniqueVelocityWrite = 0;
+static const render::Handle s_techniqueVelocityWrite(L"World_VelocityWrite");
 
 		}
 
@@ -22,7 +22,6 @@ StaticMeshComponent::StaticMeshComponent(const resource::Proxy< StaticMesh >& me
 :	MeshComponent(screenSpaceCulling)
 ,	m_mesh(mesh)
 {
-	s_techniqueVelocityWrite = render::getParameterHandle(L"World_VelocityWrite");
 }
 
 void StaticMeshComponent::destroy()

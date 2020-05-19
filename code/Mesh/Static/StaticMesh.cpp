@@ -30,12 +30,12 @@ void StaticMesh::build(
 	const IMeshParameterCallback* parameterCallback
 )
 {
-	SmallMap< render::handle_t, AlignedVector< Part > >::const_iterator it = m_parts.find(worldRenderPass.getTechnique());
+	auto it = m_parts.find(worldRenderPass.getTechnique());
 	T_ASSERT(it != m_parts.end());
 
 	Aabb3 boundingBox = m_renderMesh->getBoundingBox();
 
-	const AlignedVector< render::Mesh::Part >& meshParts = m_renderMesh->getParts();
+	const auto& meshParts = m_renderMesh->getParts();
 	for (const auto& part : it->second)
 	{
 		auto sp = worldRenderPass.getProgram(m_shader, part.shaderTechnique);

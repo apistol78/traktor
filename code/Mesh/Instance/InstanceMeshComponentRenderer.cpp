@@ -10,6 +10,12 @@ namespace traktor
 {
 	namespace mesh
 	{
+		namespace
+		{
+
+static const render::Handle s_techniqueVelocityWrite(L"World_VelocityWrite");
+
+		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.mesh.InstanceMeshComponentRenderer", InstanceMeshComponentRenderer, world::IEntityRenderer)
 
@@ -67,7 +73,14 @@ void InstanceMeshComponentRenderer::build(
 	))
 		return;
 
-	Transform transformLast = meshComponent->getTransform().get(0);
+	Transform transformLast = meshComponent->getTransform().get(worldRenderView.getInterval() - 1.0f);
+
+	// Skip rendering velocities if mesh hasn't moved since last frame.
+	if (worldRenderPass.getTechnique() == s_techniqueVelocityWrite)
+	{
+		if (transform == transformLast)
+			return;
+	}
 
 	m_meshInstances[mesh].push_back(InstanceMesh::RenderInstance(
 		packInstanceMeshData(transform),
@@ -82,20 +95,19 @@ void InstanceMeshComponentRenderer::build(
 	const world::IWorldRenderPass& worldRenderPass
 )
 {
-	for (SmallMap< InstanceMesh*, AlignedVector< InstanceMesh::RenderInstance > >::iterator i = m_meshInstances.begin(); i != m_meshInstances.end(); ++i)
+	for (auto it : m_meshInstances)
 	{
-		if (i->second.empty())
+		if (it.second.empty())
 			continue;
 
-		T_ASSERT(i->first);
-		i->first->build(
+		it.first->build(
 			context.getRenderContext(),
 			worldRenderPass,
-			i->second,
-			0
+			it.second,
+			nullptr
 		);
 
-		i->second.resize(0);
+		it.second.resize(0);
 	}
 }
 

@@ -65,8 +65,8 @@
 			<id>{402BEABF-3110-F341-B938-F607AA2BFD06}</id>
 			<comment/>
 			<position>
-				<first>1701</first>
-				<second>174</second>
+				<first>1693</first>
+				<second>218</second>
 			</position>
 		</item>
 		<item type="traktor.render.ImgTargetSet" version="traktor.render.Node:1">
@@ -209,22 +209,22 @@
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[7]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[4]"/>
-				<name>Input</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
 				<node ref="/object/nodes/item[5]"/>
 				<name>Output</name>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[6]"/>
 				<name>Source</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[7]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[4]"/>
+				<name>Input</name>
 			</destination>
 		</item>
 	</edges>
