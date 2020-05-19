@@ -215,12 +215,12 @@ bool DefaultRenderControl::create(ui::Widget* parent, SceneEditorContext* contex
 
 	m_toolBar->addEventHandler< ui::ToolBarButtonClickEvent >(this, &DefaultRenderControl::eventToolClick);
 
-	m_menuPostProcess->get(0)->setChecked(true);
-	m_menuMotionBlur->get(0)->setChecked(true);
-	m_menuShadows->get(0)->setChecked(true);
-	m_menuReflections->get(0)->setChecked(true);
-	m_menuAO->get(0)->setChecked(true);
-	m_menuAA->get(0)->setChecked(true);
+	m_menuPostProcess->get(4)->setChecked(true);
+	m_menuMotionBlur->get(4)->setChecked(true);
+	m_menuShadows->get(4)->setChecked(true);
+	m_menuReflections->get(4)->setChecked(true);
+	m_menuAO->get(4)->setChecked(true);
+	m_menuAA->get(4)->setChecked(true);
 
 	if (!createRenderControl(viewType))
 		return false;

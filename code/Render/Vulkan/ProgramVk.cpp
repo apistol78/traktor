@@ -132,6 +132,9 @@ bool ProgramVk::create(const ProgramResourceVk* resource, const wchar_t* const t
 	// Each program has 3 uniform buffer bindings (Once, Frame and Draw cbuffers).
 	for (int32_t i = 0; i < 3; ++i)
 	{
+		if (resource->m_uniformBufferSizes[i] <= 0)
+			continue;
+
 		auto& lb = dslb.push_back();
 		lb = {};
 		lb.binding = i;

@@ -114,8 +114,10 @@ int64_t NativeStream::write(const void* block, int64_t nbytes)
 
 void NativeStream::flush()
 {
+#if 0
 	if (m_hFile != 0)
 		FlushFileBuffers(m_hFile);
+#endif
 }
 
 }

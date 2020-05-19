@@ -1407,18 +1407,18 @@ bool RenderViewVk::create(uint32_t width, uint32_t height, int32_t vblanks)
 
 		VkDescriptorPoolSize dps[4];
 		dps[0].type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-		dps[0].descriptorCount = 20000;
+		dps[0].descriptorCount = 10000;
 		dps[1].type = VK_DESCRIPTOR_TYPE_SAMPLER;
-		dps[1].descriptorCount = 10000;
+		dps[1].descriptorCount = 1000;
 		dps[2].type = VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE;
-		dps[2].descriptorCount = 10000;
+		dps[2].descriptorCount = 1000;
 		dps[3].type = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
-		dps[3].descriptorCount = 1000;
+		dps[3].descriptorCount = 10;
 
 		VkDescriptorPoolCreateInfo dpci = {};
 		dpci.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
 		dpci.pNext = nullptr;
-		dpci.maxSets = 8192;
+		dpci.maxSets = 4096;
 		dpci.poolSizeCount = sizeof_array(dps);
 		dpci.pPoolSizes = dps;
 		if (vkCreateDescriptorPool(m_logicalDevice, &dpci, nullptr, &frame.descriptorPool) != VK_SUCCESS)
@@ -1455,7 +1455,7 @@ bool RenderViewVk::create(uint32_t width, uint32_t height, int32_t vblanks)
 			presentImages[i],
 			ici.format,
 			depthImage,
-			(L"Primary " + toString(i)).c_str()
+			str(L"Primary %d", i).c_str()
 		))
 			return false;
 	}
