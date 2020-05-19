@@ -257,11 +257,6 @@ Ref< IProgram > RenderSystemVrfy::createProgram(const ProgramResource* programRe
 	return programVrfy;
 }
 
-Ref< ITimeQuery > RenderSystemVrfy::createTimeQuery() const
-{
-	return m_renderSystem->createTimeQuery();
-}
-
 void RenderSystemVrfy::purge()
 {
 	m_renderSystem->purge();

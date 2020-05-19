@@ -170,6 +170,20 @@ public:
 	 */
 	virtual bool copy(ITexture* destinationTexture, const Region& destinationRegion, ITexture* sourceTexture, const Region& sourceRegion) = 0;
 
+	/*! \name Time queries. */
+	//@{
+
+	/*! Insert a beginning of time query into the recording command buffer. */
+	virtual int32_t beginTimeQuery() = 0;
+
+	/*! Insert an end of a time query into the recording command buffer. */
+	virtual void endTimeQuery(int32_t query) = 0;
+
+	/*! Get duration of a time query. */
+	virtual bool getTimeQuery(int32_t query, bool wait, double& outDuration) const = 0;
+
+	//@}
+
 	/*! \name Statistics. */
 	//@{
 

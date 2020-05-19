@@ -79,6 +79,12 @@ public:
 
 	virtual bool copy(ITexture* destinationTexture, const Region& destinationRegion, ITexture* sourceTexture, const Region& sourceRegion) override final;
 
+	virtual int32_t beginTimeQuery() override final;
+
+	virtual void endTimeQuery(int32_t query) override final;
+
+	virtual bool getTimeQuery(int32_t query, bool wait, double& outDuration) const override final;
+
 	virtual void pushMarker(const char* const marker) override final;
 
 	virtual void popMarker() override final;
@@ -97,7 +103,6 @@ private:
 
 	Ref< IRenderSystem > m_renderSystem;
 	Ref< IRenderView > m_renderView;
-	Ref< ITimeQuery > m_timeQuery;
 	bool m_insideFrame;
 	bool m_insidePass;
 	std::vector< ProfileVrfy > m_timeStamps;

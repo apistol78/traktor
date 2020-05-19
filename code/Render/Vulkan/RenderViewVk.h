@@ -101,6 +101,12 @@ public:
 
 	virtual bool copy(ITexture* destinationTexture, const Region& destinationRegion, ITexture* sourceTexture, const Region& sourceRegion) override final;
 
+	virtual int32_t beginTimeQuery() override final;
+
+	virtual void endTimeQuery(int32_t query) override final;
+
+	virtual bool getTimeQuery(int32_t query, bool wait, double& outDuration) const override final;
+
 	virtual void pushMarker(const char* const marker) override final;
 
 	virtual void popMarker() override final;
@@ -111,6 +117,17 @@ public:
 
 private:
 	typedef std::tuple< uint32_t, uint32_t, uint32_t, uint32_t > pipeline_key_t;
+
+	struct Frame
+	{
+		VkCommandBuffer graphicsCommandBuffer;
+		VkCommandBuffer computeCommandBuffer;
+		VkDescriptorPool descriptorPool;
+		VkSemaphore renderFinishedSemaphore;
+		VkFence inFlightFence;
+		VkQueryPool queryPool;
+		Ref< RenderTargetSetVk > primaryTarget;
+	};
 
 	struct PipelineEntry
 	{
@@ -130,28 +147,22 @@ private:
 
 	uint32_t m_graphicsQueueIndex;
 	VkQueue m_graphicsQueue;
-
 	uint32_t m_computeQueueIndex;
 	VkQueue m_computeQueue;
-
 	uint32_t m_presentQueueIndex;
 	VkQueue m_presentQueue;
-
 	VkCommandPool m_graphicsCommandPool;
 	VkCommandPool m_computeCommandPool;
-	AlignedVector< VkCommandBuffer > m_graphicsCommandBuffers;
-	AlignedVector< VkCommandBuffer > m_computeCommandBuffers;
-	VkSwapchainKHR m_swapChain;
-	VkDescriptorPool m_descriptorPool;
-	bool m_haveDebugMarkers;
 
 	// Swap chain.
-	RefArray< RenderTargetSetVk > m_primaryTargets;
-	AlignedVector< VkSemaphore > m_imageAvailableSemaphores;
-	AlignedVector< VkSemaphore > m_renderFinishedSemaphores;
-	AlignedVector< VkFence > m_inFlightFences;
-	std::list< RenderEvent > m_eventQueue;
+	VkSwapchainKHR m_swapChain;
+	VkSemaphore m_imageAvailableSemaphore;
+	AlignedVector< Frame > m_frames;
 	uint32_t m_currentImageIndex;
+	int32_t m_vblanks;
+
+	// Event queue.
+	std::list< RenderEvent > m_eventQueue;
 	
 	// Current pass's target.
 	Ref< RenderTargetSetVk > m_targetSet;
@@ -162,18 +173,20 @@ private:
 
 	// Pipelines.
 	SmallMap< pipeline_key_t, PipelineEntry > m_pipelines;
-	uint32_t m_counter;
 
 	// Uniform buffer pool.
 	Ref< UniformBufferPoolVk > m_uniformBufferPool;
 
 	// Stats.
+	bool m_haveDebugMarkers;
 	bool m_cursorVisible;
+	int32_t m_nextQueryIndex;
+	uint32_t m_counter;
 	uint32_t m_passCount;
 	uint32_t m_drawCalls;
 	uint32_t m_primitiveCount;
 
-	bool create(uint32_t width, uint32_t height);
+	bool create(uint32_t width, uint32_t height, int32_t vblanks);
 
 	bool validatePipeline(VertexBufferVk* vb, ProgramVk* p, PrimitiveType pt);
 

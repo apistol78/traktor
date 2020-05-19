@@ -76,7 +76,7 @@ bool TargetConnection::update()
 
 	{
 		Ref< TargetPerformance > performance;
-		if (m_transport->recv< TargetPerformance >(0, performance) == net::BidirectionalObjectTransport::RtSuccess)
+		while (m_transport->recv< TargetPerformance >(0, performance) == net::BidirectionalObjectTransport::RtSuccess)
 		{
 			m_performance = *performance;
 			m_transport->flush< TargetPerformance >();
@@ -85,7 +85,7 @@ bool TargetConnection::update()
 
 	{
 		Ref< TargetProfilerEvents > profilerEvents;
-		if (m_transport->recv< TargetProfilerEvents >(0, profilerEvents) == net::BidirectionalObjectTransport::RtSuccess)
+		while (m_transport->recv< TargetProfilerEvents >(0, profilerEvents) == net::BidirectionalObjectTransport::RtSuccess)
 		{
 			if (m_profilerEventsCallback)
 				m_profilerEventsCallback->receivedProfilerEvents(profilerEvents->getCurrentTime(), profilerEvents->getEvents());

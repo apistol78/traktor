@@ -957,6 +957,20 @@ bool RenderViewDx11::copy(ITexture* destinationTexture, const Region& destinatio
 	return true;
 }
 
+int32_t RenderViewDx11::beginTimeQuery()
+{
+	return 0;
+}
+
+void RenderViewDx11::endTimeQuery(int32_t query)
+{
+}
+
+bool RenderViewDx11::getTimeQuery(int32_t query, bool wait, double& outDuration) const
+{
+	return false;
+}
+
 void RenderViewDx11::pushMarker(const char* const marker)
 {
 #if defined(T_USE_D3DPERF)

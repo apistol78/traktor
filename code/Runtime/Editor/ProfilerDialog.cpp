@@ -87,7 +87,7 @@ void ProfilerDialog::receivedProfilerEvents(double currentTime, const AlignedVec
 
 		m_chart->addTask(
 			m_threadIdToLane[e.threadId] * 8 + e.depth,
-			str(L"%S (%.2f ms)", e.name.c_str(), (e.end - e.start) * 1000.0f),
+			str(L"%ls (%.2f ms)", e.name.c_str(), (e.end - e.start) * 1000.0f),
 			c_threadColors[m_threadIdToLane[e.threadId] % sizeof_array(c_threadColors)],
 			e.start,
 			e.end

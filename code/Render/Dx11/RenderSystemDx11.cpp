@@ -15,7 +15,6 @@
 #include "Render/Dx11/SimpleBufferHeapDx11.h"
 #include "Render/Dx11/SimpleTextureDx11.h"
 #include "Render/Dx11/StructBufferDx11.h"
-#include "Render/Dx11/TimeQueryDx11.h"
 #include "Render/Dx11/TypesDx11.h"
 #include "Render/Dx11/Utilities.h"
 #include "Render/Dx11/VertexBufferDynamicDx11.h"
@@ -566,16 +565,6 @@ Ref< IProgram > RenderSystemDx11::createProgram(const ProgramResource* programRe
 		return nullptr;
 
 	return program;
-}
-
-Ref< ITimeQuery > RenderSystemDx11::createTimeQuery() const
-{
-	T_ANONYMOUS_VAR(ConditionalAcquire< Semaphore >)(m_context->getLock(), m_resourceCreateLock);
-	Ref< TimeQueryDx11 > timeQuery = new TimeQueryDx11(m_context);
-	if (timeQuery->create())
-		return timeQuery;
-	else
-		return nullptr;
 }
 
 void RenderSystemDx11::purge()
