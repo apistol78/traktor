@@ -29,7 +29,7 @@ void ScriptComponent::setOwner(Entity* owner)
 	T_ASSERT(m_owner == nullptr);
 	m_owner = owner;
 	m_object = nullptr;
-	m_methodUpdate = findRuntimeClassMethod(m_class, "update");
+	m_methodUpdate = nullptr;
 	m_class.consume();
 }
 
@@ -49,7 +49,7 @@ void ScriptComponent::update(const UpdateParams& update)
 	// Check if class has changed, hot-reload new class.
 	if (m_class.changed() || m_object == nullptr)
 	{
-		m_object = createRuntimeClassInstance(m_class, m_owner, 0, 0);
+		m_object = createRuntimeClassInstance(m_class, m_owner, 0, nullptr);
 		m_methodUpdate = findRuntimeClassMethod(m_class, "update");
 		m_class.consume();
 	}

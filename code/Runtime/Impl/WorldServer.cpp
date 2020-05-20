@@ -37,6 +37,7 @@
 #include "World/WorldEntityRenderers.h"
 #include "World/WorldResourceFactory.h"
 #include "World/Entity/DecalRenderer.h"
+#include "World/Entity/FacadeRenderer.h"
 #include "World/Entity/GroupRenderer.h"
 #include "World/Entity/LightRenderer.h"
 #include "World/Entity/ProbeRenderer.h"
@@ -189,6 +190,7 @@ void WorldServer::createEntityRenderers(IEnvironment* environment)
 
 	m_entityRenderers->add(new world::EntityRenderer());
 	m_entityRenderers->add(new world::DecalRenderer(renderSystem));
+	m_entityRenderers->add(new world::FacadeRenderer());
 	m_entityRenderers->add(new world::GroupRenderer());
 	m_entityRenderers->add(new world::LightRenderer());
 	m_entityRenderers->add(new world::ProbeRenderer(resourceManager, renderSystem, *m_worldType));

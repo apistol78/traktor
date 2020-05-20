@@ -174,6 +174,12 @@ public:
 		return m_data[index];
 	}
 
+	SmallSet& operator = (const SmallSet& src)
+	{
+		m_data = src.m_data;
+		return *this;
+	}
+
 #if defined(T_CXX11) && !defined(__PS3__)
 	SmallSet& operator = (SmallSet&& src) noexcept
 	{

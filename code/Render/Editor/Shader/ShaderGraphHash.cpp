@@ -1,4 +1,5 @@
 #include <list>
+#include <set>
 #include "Core/Serialization/DeepClone.h"
 #include "Core/Serialization/DeepHash.h"
 #include "Render/Editor/Node.h"

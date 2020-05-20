@@ -1,5 +1,6 @@
 #pragma once
 
+#include <set>
 #include "Core/Guid.h"
 #include "Core/Object.h"
 #include "Core/Thread/Semaphore.h"

@@ -13,6 +13,7 @@
 #include "Scene/Editor/SceneEditorContext.h"
 #include "Ui/Command.h"
 #include "World/EntityData.h"
+#include "World/Entity/FacadeComponentData.h"
 #include "World/Entity/GroupComponentData.h"
 #include "World/Entity/GroupEntityData.h"
 #include "World/Entity/LightComponentData.h"
@@ -42,8 +43,12 @@ bool DefaultEntityEditor::isGroup() const
 	const world::EntityData* entityData = m_entityAdapter->getEntityData();
 	if (is_a< world::GroupEntityData >(entityData))
 		return true;
+	else if (entityData->getComponent< world::GroupComponentData >() != nullptr)
+		return true;
+	else if (entityData->getComponent< world::FacadeComponentData >() != nullptr)
+		return true;
 	else
-		return (bool)(entityData->getComponent< world::GroupComponentData >() != nullptr);
+		return false;
 }
 
 bool DefaultEntityEditor::isChildrenPrivate() const
@@ -61,11 +66,18 @@ bool DefaultEntityEditor::addChildEntity(EntityAdapter* childEntityAdapter) cons
 		groupEntityData->addEntityData(childEntityData);
 		return true;
 	}
-	else
+	else if (auto groupComponentData = entityData->getComponent< world::GroupComponentData >())
 	{
-		entityData->getComponent< world::GroupComponentData >()->addEntityData(childEntityData);
+		groupComponentData->addEntityData(childEntityData);
 		return true;
 	}
+	else if (auto facadeComponentData = entityData->getComponent< world::FacadeComponentData >())
+	{
+		facadeComponentData->addEntityData(childEntityData);
+		return true;
+	}
+	else
+		return false;
 }
 
 bool DefaultEntityEditor::removeChildEntity(EntityAdapter* childEntityAdapter) const
@@ -73,35 +85,34 @@ bool DefaultEntityEditor::removeChildEntity(EntityAdapter* childEntityAdapter) c
 	world::EntityData* entityData = m_entityAdapter->getEntityData();
 	world::EntityData* childEntityData = childEntityAdapter->getEntityData();
 
-	Ref< Reflection > r;
-	if (auto groupEntityData = dynamic_type_cast< world::GroupEntityData* >(entityData))
-		r = Reflection::create(groupEntityData);
-	else	
-	 	r = Reflection::create(entityData->getComponent< world::GroupComponentData >());
-
-	if (!r)
-		return false;
+	RefArray< Reflection > rs;
+	rs.push_back(Reflection::create(entityData));
+	for (auto componentData : entityData->getComponents())
+		rs.push_back(Reflection::create(componentData));
 
 	uint32_t removedCount = 0;
-	for (uint32_t j = 0; j < r->getMemberCount(); ++j)
+	for (auto r : rs)
 	{
-		RfmObject* ro = dynamic_type_cast< RfmObject* >(r->getMember(j));
-		if (ro != nullptr && ro->get() == childEntityData)
+		for (uint32_t i = 0; i < r->getMemberCount(); ++i)
 		{
-			ro->set(nullptr);
-			removedCount++;
-		}
-
-		RfmArray* ra = dynamic_type_cast< RfmArray* >(r->getMember(j));
-		if (ra != nullptr)
-		{
-			for (uint32_t k = 0; k < ra->getMemberCount(); ++k)
+			RfmObject* ro = dynamic_type_cast< RfmObject* >(r->getMember(i));
+			if (ro != nullptr && ro->get() == childEntityData)
 			{
-				RfmObject* ro = dynamic_type_cast< RfmObject* >(ra->getMember(k));
-				if (ro != nullptr && ro->get() == childEntityData)
+				ro->set(nullptr);
+				removedCount++;
+			}
+
+			RfmArray* ra = dynamic_type_cast< RfmArray* >(r->getMember(i));
+			if (ra != nullptr)
+			{
+				for (uint32_t j = 0; j < ra->getMemberCount(); ++j)
 				{
-					ra->removeMember(ro);
-					removedCount++;
+					RfmObject* ro = dynamic_type_cast< RfmObject* >(ra->getMember(j));
+					if (ro != nullptr && ro->get() == childEntityData)
+					{
+						ra->removeMember(ro);
+						removedCount++;
+					}
 				}
 			}
 		}
@@ -109,10 +120,10 @@ bool DefaultEntityEditor::removeChildEntity(EntityAdapter* childEntityAdapter) c
 
 	if (removedCount > 0)
 	{
-		if (auto groupEntityData = dynamic_type_cast< world::GroupEntityData* >(entityData))
-			r->apply(entityData);
-		else
-			r->apply(entityData->getComponent< world::GroupComponentData >());
+		auto it = rs.begin();
+		(*it++)->apply(entityData);
+		for (auto componentData : entityData->getComponents())
+			(*it++)->apply(componentData);
 		return true;
 	}
 

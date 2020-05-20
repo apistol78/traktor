@@ -1,6 +1,7 @@
 #pragma once
 
 #include <map>
+#include <set>
 #include "SolutionBuilder/Msvc/SolutionBuilderMsvcTool.h"
 
 namespace traktor

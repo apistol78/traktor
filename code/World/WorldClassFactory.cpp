@@ -21,6 +21,8 @@
 #include "World/EntityData.h"
 #include "World/Entity/EventSetComponent.h"
 #include "World/Entity/EventSetComponentData.h"
+#include "World/Entity/FacadeComponent.h"
+#include "World/Entity/FacadeComponentData.h"
 #include "World/Entity/GroupComponent.h"
 #include "World/Entity/GroupEntity.h"
 #include "World/Entity/LightComponent.h"
@@ -298,6 +300,18 @@ void WorldClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	auto classEventSetComponent = new AutoRuntimeClass< EventSetComponent >();
 	classEventSetComponent->addMethod("getEvent", &EventSetComponent::getEvent);
 	registrar->registerClass(classEventSetComponent);
+
+	auto classFacadeComponentData = new AutoRuntimeClass< FacadeComponentData >();
+	registrar->registerClass(classFacadeComponentData);
+
+	auto classFacadeComponent = new AutoRuntimeClass< FacadeComponent >();
+	classFacadeComponent->addMethod("addEntity", &FacadeComponent::addEntity);
+	classFacadeComponent->addMethod("removeEntity", &FacadeComponent::removeEntity);
+	classFacadeComponent->addMethod("show", &FacadeComponent::show);
+	classFacadeComponent->addMethod("hide", &FacadeComponent::hide);
+	classFacadeComponent->addMethod("hideAll", &FacadeComponent::hideAll);
+	classFacadeComponent->addMethod("isVisible", &FacadeComponent::isVisible);
+	registrar->registerClass(classFacadeComponent);
 
 	auto classIWorldRenderer = new AutoRuntimeClass< IWorldRenderer >();
 	classIWorldRenderer->addConstant("Disabled", Any::fromInt32((int32_t)Quality::Disabled));
