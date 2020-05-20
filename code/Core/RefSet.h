@@ -1,8 +1,8 @@
 #pragma once
 
 #include <algorithm>
-#include <set>
 #include "Core/Ref.h"
+#include "Core/Containers/SmallSet.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -22,7 +22,7 @@ template < typename Class >
 class RefSet
 {
 public:
-	typedef std::set< Class* > set_t;
+	typedef SmallSet< Class* > set_t;
 	typedef typename set_t::const_iterator const_iterator;
 
 	RefSet()
@@ -32,8 +32,8 @@ public:
 	RefSet(const RefSet< Class >& rs)
 	:	m_items(rs.m_items)
 	{
-		for (typename set_t::iterator i = m_items.begin(); i != m_items.end(); ++i)
-			T_SAFE_ADDREF(*i);
+		for (auto item : m_items)
+			T_SAFE_ADDREF(item);
 	}
 
 	virtual ~RefSet()
@@ -43,8 +43,8 @@ public:
 
 	void clear()
 	{
-		for (typename set_t::iterator i = m_items.begin(); i != m_items.end(); ++i)
-			T_SAFE_RELEASE(*i);
+		for (auto item : m_items)
+			T_SAFE_RELEASE(item);
 		m_items.clear();
 	}
 
@@ -61,8 +61,7 @@ public:
 	bool insert(Class* item)
 	{
 		T_ASSERT(item);
-		std::pair< typename set_t::iterator, bool > ins = m_items.insert(item);
-		if (ins.second)
+		if (m_items.insert(item))
 		{
 			T_SAFE_ADDREF(item);
 			return true;
@@ -71,13 +70,16 @@ public:
 			return false;
 	}
 
-	size_t erase(Class* item)
+	bool erase(Class* item)
 	{
 		T_ASSERT(item);
-		size_t x = m_items.erase(item);
-		if (x)
+		if (m_items.erase(item))
+		{
 			T_SAFE_RELEASE(item);
-		return x;
+			return true;
+		}
+		else
+			return false;
 	}
 
 	const_iterator find(Class* item) const
@@ -99,8 +101,8 @@ public:
 	{
 		clear();
 		m_items = rs.m_items;
-		for (typename set_t::iterator i = m_items.begin(); i != m_items.end(); ++i)
-			T_SAFE_ADDREF(*i);
+		for (auto item : m_items)
+			T_SAFE_ADDREF(item);
 		return *this;
 	}
 

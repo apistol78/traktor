@@ -432,10 +432,10 @@ void ShaderViewer::jobReflect(Ref< ShaderGraph > shaderGraph, Ref< const IProgra
 
 					std::vector< Guid >::iterator it = std::find(textureIds.begin(), textureIds.end(), textureGuid);
 					if (it != textureIds.end())
-						textureIndex = std::distance(textureIds.begin(), it);
+						textureIndex = (int32_t)std::distance(textureIds.begin(), it);
 					else
 					{
-						textureIndex = int32_t(textureIds.size());
+						textureIndex = (int32_t)textureIds.size();
 						textureIds.push_back(textureGuid);
 					}
 

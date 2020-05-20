@@ -14,6 +14,8 @@
 #include "World/Entity/EventSetComponent.h"
 #include "World/Entity/EventSetComponentData.h"
 #include "World/Entity/ExternalEntityData.h"
+#include "World/Entity/FacadeComponent.h"
+#include "World/Entity/FacadeComponentData.h"
 #include "World/Entity/GroupComponent.h"
 #include "World/Entity/GroupComponentData.h"
 #include "World/Entity/GroupEntity.h"
@@ -64,6 +66,7 @@ const TypeInfoSet WorldEntityFactory::getEntityComponentTypes() const
 	typeSet.insert< CameraComponentData >();
 	typeSet.insert< DecalComponentData >();
 	typeSet.insert< EventSetComponentData >();
+	typeSet.insert< FacadeComponentData >();
 	typeSet.insert< GroupComponentData >();
 	typeSet.insert< LightComponentData >();
 	typeSet.insert< ProbeComponentData >();
@@ -74,7 +77,7 @@ const TypeInfoSet WorldEntityFactory::getEntityComponentTypes() const
 
 Ref< Entity > WorldEntityFactory::createEntity(const IEntityBuilder* builder, const EntityData& entityData) const
 {
-	if (const ExternalEntityData* externalEntityData = dynamic_type_cast< const ExternalEntityData* >(&entityData))
+	if (auto externalEntityData = dynamic_type_cast< const ExternalEntityData* >(&entityData))
 	{
 		resource::Proxy< EntityData > resolvedEntityData;
 		if (!m_resourceManager->bind(externalEntityData->getEntityData(), resolvedEntityData))
@@ -96,12 +99,9 @@ Ref< Entity > WorldEntityFactory::createEntity(const IEntityBuilder* builder, co
 		else
 			return builder->create(resolvedEntityData.getResource());
 	}
-	else if (const GroupEntityData* groupData = dynamic_type_cast< const GroupEntityData* >(&entityData))
+	else if (auto groupData = dynamic_type_cast< const GroupEntityData* >(&entityData))
 	{
-		Ref< GroupEntity > groupEntity = new GroupEntity(
-			groupData->getTransform()/*,
-			groupData->getMask()*/
-		);
+		Ref< GroupEntity > groupEntity = new GroupEntity(groupData->getTransform());
 		for (auto entityData : groupData->getEntityData())
 		{
 			Ref< Entity > childEntity = builder->create(entityData);
@@ -132,7 +132,7 @@ Ref< Entity > WorldEntityFactory::createEntity(const IEntityBuilder* builder, co
 
 Ref< IEntityEvent > WorldEntityFactory::createEntityEvent(const IEntityBuilder* builder, const IEntityEventData& entityEventData) const
 {
-	if (const DecalEventData* decalData = dynamic_type_cast< const DecalEventData* >(&entityEventData))
+	if (auto decalData = dynamic_type_cast< const DecalEventData* >(&entityEventData))
 	{
 		Ref< DecalEvent > decal = new DecalEvent();
 
@@ -149,10 +149,10 @@ Ref< IEntityEvent > WorldEntityFactory::createEntityEvent(const IEntityBuilder* 
 
 Ref< IEntityComponent > WorldEntityFactory::createEntityComponent(const world::IEntityBuilder* builder, const IEntityComponentData& entityComponentData) const
 {
-	if (const CameraComponentData* cameraComponentData = dynamic_type_cast< const CameraComponentData* >(&entityComponentData))
+	if (auto cameraComponentData = dynamic_type_cast< const CameraComponentData* >(&entityComponentData))
 		return new CameraComponent(cameraComponentData);
 
-	if (const DecalComponentData* decalComponentData = dynamic_type_cast< const DecalComponentData* >(&entityComponentData))
+	if (auto decalComponentData = dynamic_type_cast< const DecalComponentData* >(&entityComponentData))
 	{
 		resource::Proxy< render::Shader > shader;
 		if (!m_resourceManager->bind(decalComponentData->getShader(), shader))
@@ -169,12 +169,26 @@ Ref< IEntityComponent > WorldEntityFactory::createEntityComponent(const world::I
 		return decalComponent;
 	}
 
-	if (const EventSetComponentData* eventSetComponentData = dynamic_type_cast< const EventSetComponentData* >(&entityComponentData))
+	if (auto eventSetComponentData = dynamic_type_cast< const EventSetComponentData* >(&entityComponentData))
 	{
 		return eventSetComponentData->createComponent(builder);
 	}
 
-	if (const GroupComponentData* groupComponentData = dynamic_type_cast< const GroupComponentData* >(&entityComponentData))
+	if (auto facadeComponentData = dynamic_type_cast< const FacadeComponentData* >(&entityComponentData))
+	{
+		Ref< FacadeComponent > facadeComponent = new FacadeComponent();
+		for (auto entityData : facadeComponentData->getEntityData())
+		{
+			Ref< Entity > childEntity = builder->create(entityData);
+			if (childEntity)
+				facadeComponent->addEntity(entityData->getName(), childEntity);
+		}
+		if (!facadeComponentData->getShow().empty())
+			facadeComponent->show(facadeComponentData->getShow());
+		return facadeComponent;
+	}
+
+	if (auto groupComponentData = dynamic_type_cast< const GroupComponentData* >(&entityComponentData))
 	{
 		Ref< GroupComponent > groupComponent = new GroupComponent();
 		for (auto entityData : groupComponentData->getEntityData())
@@ -186,7 +200,7 @@ Ref< IEntityComponent > WorldEntityFactory::createEntityComponent(const world::I
 		return groupComponent;
 	}
 
-	if (const LightComponentData* lightComponentData = dynamic_type_cast<const LightComponentData*>(&entityComponentData))
+	if (auto lightComponentData = dynamic_type_cast<const LightComponentData*>(&entityComponentData))
 	{
 		return new LightComponent(
 			lightComponentData->getLightType(),
@@ -199,7 +213,7 @@ Ref< IEntityComponent > WorldEntityFactory::createEntityComponent(const world::I
 		);
 	}
 
-	if (const ProbeComponentData* probeComponentData = dynamic_type_cast< const ProbeComponentData* >(&entityComponentData))
+	if (auto probeComponentData = dynamic_type_cast< const ProbeComponentData* >(&entityComponentData))
 	{
 		resource::Proxy< render::ICubeTexture > texture;
 		bool dirty = false;
@@ -238,7 +252,7 @@ Ref< IEntityComponent > WorldEntityFactory::createEntityComponent(const world::I
 		);
 	}
 
-	if (const ScriptComponentData* scriptComponentData = dynamic_type_cast< const ScriptComponentData* >(&entityComponentData))
+	if (auto scriptComponentData = dynamic_type_cast< const ScriptComponentData* >(&entityComponentData))
 	{
 		if (!m_editor || scriptComponentData->getEditorSupport())
 			return scriptComponentData->createComponent(m_resourceManager);
@@ -246,7 +260,7 @@ Ref< IEntityComponent > WorldEntityFactory::createEntityComponent(const world::I
 			return nullptr;
 	}
 
-	if (const VolumeComponentData* volumeComponentData = dynamic_type_cast< const VolumeComponentData* >(&entityComponentData))
+	if (auto volumeComponentData = dynamic_type_cast< const VolumeComponentData* >(&entityComponentData))
 		return new VolumeComponent(volumeComponentData);
 
 	return nullptr;

@@ -1,6 +1,7 @@
 #include <algorithm>
 #include <cctype>
 #include <map>
+#include <set>
 #include <stack>
 #include "Core/Log/Log.h"
 #include "Render/Editor/Edge.h"

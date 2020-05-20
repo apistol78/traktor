@@ -26,6 +26,7 @@
 #include "World/EntityRenderer.h"
 #include "World/Entity/DecalRenderer.h"
 #include "World/Entity/LightRenderer.h"
+#include "World/Entity/FacadeRenderer.h"
 #include "World/Entity/GroupRenderer.h"
 #include "World/Entity/ProbeRenderer.h"
 #include "Weather/WeatherRenderer.h"
@@ -104,6 +105,7 @@ void DefaultEditorProfile::createEntityRenderers(
 	outEntityRenderers.push_back(new world::DecalRenderer(context->getRenderSystem()));
 	outEntityRenderers.push_back(new world::ProbeRenderer(context->getResourceManager(), context->getRenderSystem(), type_of< world::WorldRendererDeferred >()));
 	outEntityRenderers.push_back(new world::LightRenderer());
+	outEntityRenderers.push_back(new world::FacadeRenderer());
 	outEntityRenderers.push_back(new world::GroupRenderer());
 	outEntityRenderers.push_back(new weather::WeatherRenderer(primitiveRenderer));
 }
