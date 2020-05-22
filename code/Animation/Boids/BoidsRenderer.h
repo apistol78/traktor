@@ -15,10 +15,10 @@ namespace traktor
 	namespace animation
 	{
 
-/*! Cloth entity renderer.
+/*! Boids renderer.
  * \ingroup Animation
  */
-class T_DLLCLASS ClothEntityRenderer : public world::IEntityRenderer
+class T_DLLCLASS BoidsRenderer : public world::IEntityRenderer
 {
 	T_RTTI_CLASS;
 

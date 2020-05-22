@@ -86,6 +86,12 @@ bool FacadeComponent::show(const std::wstring& id)
 	return true;
 }
 
+bool FacadeComponent::showOnly(const std::wstring& id)
+{
+	hideAll();
+	return show(id);
+}
+
 bool FacadeComponent::hide(const std::wstring& id)
 {
 	auto it = m_entities.find(id);

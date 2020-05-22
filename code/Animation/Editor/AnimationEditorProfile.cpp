@@ -1,13 +1,13 @@
 #include "Animation/AnimatedMeshComponentFactory.h"
 #include "Animation/Animation/AnimationFactory.h"
-#include "Animation/Boids/BoidsEntityFactory.h"
-#include "Animation/Boids/BoidsEntityRenderer.h"
-#include "Animation/Cloth/ClothEntityFactory.h"
-#include "Animation/Cloth/ClothEntityRenderer.h"
+#include "Animation/Boids/BoidsFactory.h"
+#include "Animation/Boids/BoidsRenderer.h"
+#include "Animation/Cloth/ClothFactory.h"
+#include "Animation/Cloth/ClothRenderer.h"
 #include "Animation/Editor/AnimationEditorProfile.h"
 #include "Animation/Editor/AnimatedMeshComponentEditorFactory.h"
 #include "Animation/Editor/Cloth/ClothEntityEditorFactory.h"
-#include "Animation/PathEntity/PathEntityFactory.h"
+#include "Animation/PathEntity/PathFactory.h"
 #include "Core/Serialization/ISerializable.h"
 #include "Scene/Editor/SceneEditorContext.h"
 #include "Ui/Command.h"
@@ -56,8 +56,8 @@ void AnimationEditorProfile::createEntityFactories(
 ) const
 {
 	outEntityFactories.push_back(new AnimatedMeshComponentFactory(context->getResourceManager(), context->getPhysicsManager()));
-	outEntityFactories.push_back(new BoidsEntityFactory());
-	outEntityFactories.push_back(new ClothEntityFactory(context->getResourceManager(), context->getRenderSystem()));
+	outEntityFactories.push_back(new BoidsFactory());
+	outEntityFactories.push_back(new ClothFactory(context->getResourceManager(), context->getRenderSystem()));
 }
 
 void AnimationEditorProfile::createEntityRenderers(
@@ -67,8 +67,8 @@ void AnimationEditorProfile::createEntityRenderers(
 	RefArray< world::IEntityRenderer >& outEntityRenderers
 ) const
 {
-	outEntityRenderers.push_back(new BoidsEntityRenderer());
-	outEntityRenderers.push_back(new ClothEntityRenderer());
+	outEntityRenderers.push_back(new BoidsRenderer());
+	outEntityRenderers.push_back(new ClothRenderer());
 }
 
 void AnimationEditorProfile::createControllerEditorFactories(

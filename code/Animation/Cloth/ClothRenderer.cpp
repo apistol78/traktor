@@ -1,19 +1,19 @@
 #include "Animation/Cloth/ClothComponent.h"
-#include "Animation/Cloth/ClothEntityRenderer.h"
+#include "Animation/Cloth/ClothRenderer.h"
 
 namespace traktor
 {
 	namespace animation
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.animation.ClothEntityRenderer", ClothEntityRenderer, world::IEntityRenderer)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.animation.ClothRenderer", ClothRenderer, world::IEntityRenderer)
 
-const TypeInfoSet ClothEntityRenderer::getRenderableTypes() const
+const TypeInfoSet ClothRenderer::getRenderableTypes() const
 {
 	return makeTypeInfoSet< ClothComponent >();
 }
 
-void ClothEntityRenderer::gather(
+void ClothRenderer::gather(
 	const world::WorldGatherContext& context,
 	const Object* renderable,
 	AlignedVector< world::Light >& outLights
@@ -21,7 +21,7 @@ void ClothEntityRenderer::gather(
 {
 }
 
-void ClothEntityRenderer::setup(
+void ClothRenderer::setup(
 	const world::WorldSetupContext& context,
 	const world::WorldRenderView& worldRenderView,
 	Object* renderable
@@ -29,13 +29,13 @@ void ClothEntityRenderer::setup(
 {
 }
 
-void ClothEntityRenderer::setup(
+void ClothRenderer::setup(
 	const world::WorldSetupContext& context
 )
 {
 }
 
-void ClothEntityRenderer::build(
+void ClothRenderer::build(
 	const world::WorldBuildContext& context,
 	const world::WorldRenderView& worldRenderView,
 	const world::IWorldRenderPass& worldRenderPass,
@@ -46,7 +46,7 @@ void ClothEntityRenderer::build(
 	clothEntity->build(context, worldRenderView, worldRenderPass);
 }
 
-void ClothEntityRenderer::build(
+void ClothRenderer::build(
 	const world::WorldBuildContext& context,
 	const world::WorldRenderView& worldRenderView,
 	const world::IWorldRenderPass& worldRenderPass

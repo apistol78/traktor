@@ -15,10 +15,10 @@ namespace traktor
 	namespace animation
 	{
 
-/*! Movement path entity factory.
+/*! Movement path factory.
  * \ingroup Animation
  */
-class T_DLLCLASS PathEntityFactory : public world::IEntityFactory
+class T_DLLCLASS PathFactory : public world::IEntityFactory
 {
 	T_RTTI_CLASS;
 
