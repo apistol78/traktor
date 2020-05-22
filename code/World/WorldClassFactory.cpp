@@ -308,6 +308,7 @@ void WorldClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classFacadeComponent->addMethod("addEntity", &FacadeComponent::addEntity);
 	classFacadeComponent->addMethod("removeEntity", &FacadeComponent::removeEntity);
 	classFacadeComponent->addMethod("show", &FacadeComponent::show);
+	classFacadeComponent->addMethod("showOnly", &FacadeComponent::showOnly);
 	classFacadeComponent->addMethod("hide", &FacadeComponent::hide);
 	classFacadeComponent->addMethod("hideAll", &FacadeComponent::hideAll);
 	classFacadeComponent->addMethod("isVisible", &FacadeComponent::isVisible);

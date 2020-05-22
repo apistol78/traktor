@@ -47,6 +47,8 @@ public:
 
     bool show(const std::wstring& id);
 
+	bool showOnly(const std::wstring& id);
+
     bool hide(const std::wstring& id);
 
     void hideAll();

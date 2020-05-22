@@ -1,19 +1,19 @@
 #include "Animation/Boids/BoidsComponent.h"
-#include "Animation/Boids/BoidsEntityRenderer.h"
+#include "Animation/Boids/BoidsRenderer.h"
 
 namespace traktor
 {
 	namespace animation
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.animation.BoidsEntityRenderer", BoidsEntityRenderer, world::IEntityRenderer)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.animation.BoidsRenderer", BoidsRenderer, world::IEntityRenderer)
 
-const TypeInfoSet BoidsEntityRenderer::getRenderableTypes() const
+const TypeInfoSet BoidsRenderer::getRenderableTypes() const
 {
 	return makeTypeInfoSet< BoidsComponent >();
 }
 
-void BoidsEntityRenderer::gather(
+void BoidsRenderer::gather(
 	const world::WorldGatherContext& context,
 	const Object* renderable,
 	AlignedVector< world::Light >& outLights
@@ -21,7 +21,7 @@ void BoidsEntityRenderer::gather(
 {
 }
 
-void BoidsEntityRenderer::setup(
+void BoidsRenderer::setup(
 	const world::WorldSetupContext& context,
 	const world::WorldRenderView& worldRenderView,
 	Object* renderable
@@ -29,24 +29,24 @@ void BoidsEntityRenderer::setup(
 {
 }
 
-void BoidsEntityRenderer::setup(
+void BoidsRenderer::setup(
 	const world::WorldSetupContext& context
 )
 {
 }
 
-void BoidsEntityRenderer::build(
+void BoidsRenderer::build(
 	const world::WorldBuildContext& context,
 	const world::WorldRenderView& worldRenderView,
 	const world::IWorldRenderPass& worldRenderPass,
 	Object* renderable
 )
 {
-	BoidsComponent* boidsComponent = mandatory_non_null_type_cast< BoidsComponent* >(renderable);
+	auto boidsComponent = mandatory_non_null_type_cast< BoidsComponent* >(renderable);
 	boidsComponent->build(context, worldRenderView, worldRenderPass);
 }
 
-void BoidsEntityRenderer::build(
+void BoidsRenderer::build(
 	const world::WorldBuildContext& context,
 	const world::WorldRenderView& worldRenderView,
 	const world::IWorldRenderPass& worldRenderPass
