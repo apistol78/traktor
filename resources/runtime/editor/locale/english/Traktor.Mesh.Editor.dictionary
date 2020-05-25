@@ -218,6 +218,10 @@
 			<second>Unable to create shader instance; another instance already exists.</second>
 		</item>
 		<item>
+			<first>MESHASSET_EDITOR_IMPORT_FILTER</first>
+			<second>Import filter</second>
+		</item>
+		<item>
 			<first>MESHASSET_WIZARDTOOL_FILE_TITLE</first>
 			<second>Select source model</second>
 		</item>

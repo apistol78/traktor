@@ -3,6 +3,7 @@
 #include "Core/Misc/HashStream.h"
 #include "Core/Misc/String.h"
 #include "Core/Serialization/BinarySerializer.h"
+#include "Core/Thread/Acquire.h"
 #include "Model/IModelOperation.h"
 #include "Model/Model.h"
 #include "Model/ModelCache.h"
@@ -14,6 +15,8 @@ namespace traktor
 	{
 		namespace
 		{
+
+const Guid c_globalLockId(L"{BF9144AA-FA5C-49D6-8E5B-9593EEE92148}");
 
 uint32_t hash(const std::wstring& text)
 {
@@ -36,15 +39,16 @@ ModelCache::ModelCache(
 :	m_cachePath(cachePath)
 ,	m_getFile(getFile)
 ,	m_openStream(openStream)
+,	m_lock(c_globalLockId)
 {
 }
 
-Ref< Model > ModelCache::get(const Path& fileName)
+Ref< Model > ModelCache::get(const Path& fileName, const std::wstring& filter)
 {
-	return get(fileName, RefArray< const IModelOperation >());
+	return get(fileName, filter, RefArray< const IModelOperation >());
 }
 
-Ref< Model > ModelCache::get(const Path& fileName, const RefArray< const IModelOperation >& operations)
+Ref< Model > ModelCache::get(const Path& fileName, const std::wstring& filter, const RefArray< const IModelOperation >& operations)
 {
 	// Get information about source file.
 	Ref< File > file = m_getFile(fileName);
@@ -52,7 +56,7 @@ Ref< Model > ModelCache::get(const Path& fileName, const RefArray< const IModelO
 		return nullptr;
 
 	// Calculate hash of resolved file name.
-	uint32_t fileNameHash = hash(fileName.getPathName());
+	uint32_t fileNameHash = hash(fileName.getPathName() + L"!" + filter);
 
 	// Calculate hash of all operations.
 	Adler32 cs;
@@ -65,15 +69,22 @@ Ref< Model > ModelCache::get(const Path& fileName, const RefArray< const IModelO
 	Path cachedFileName = m_cachePath.getPathName() + L"/" + toString(fileNameHash) + L"/" + toString(operationHash) + L".tmd";
 
 	// Check if cached file exist and if it's time stamp match source file's.
-	Ref< File > cachedFile = FileSystem::getInstance().get(cachedFileName);
-	if (cachedFile != nullptr && file->getLastWriteTime() <= cachedFile->getLastWriteTime())
+	bool haveCachedFile = false;
 	{
-		// Valid cache entry found; read from model from cache.
-		return ModelFormat::readAny(cachedFileName);
+		T_ANONYMOUS_VAR(Acquire< Mutex >)(m_lock);
+		Ref< File > cachedFile = FileSystem::getInstance().get(cachedFileName);
+		if (cachedFile != nullptr && file->getLastWriteTime() <= cachedFile->getLastWriteTime())
+			haveCachedFile = true;
+	}
+	if (haveCachedFile)
+	{
+		// Valid cache entry found; read from model from cache,
+		// do not use filter as it's written into cache after filter has been applied.
+		return ModelFormat::readAny(cachedFileName, L"");
 	}
 
 	// No cached file exist; need to read source model and apply all operations.
-	Ref< Model > model = ModelFormat::readAny(fileName, m_openStream);
+	Ref< Model > model = ModelFormat::readAny(fileName, filter, m_openStream);
 	if (!model)
 		return nullptr;
 
@@ -81,19 +92,22 @@ Ref< Model > ModelCache::get(const Path& fileName, const RefArray< const IModelO
 		operation->apply(*model);
 
 	// Write cached copy of post-operation model.
-	FileSystem::getInstance().makeAllDirectories(cachedFileName.getPathOnly());
-	ModelFormat::writeAny(cachedFileName, model);
+	{
+		T_ANONYMOUS_VAR(Acquire< Mutex >)(m_lock);
+		FileSystem::getInstance().makeAllDirectories(cachedFileName.getPathOnly());
+		ModelFormat::writeAny(cachedFileName, model);
+	}
 
 	// Return model; should be same as one we've written to cache.
 	return model;
 }
 
-Ref< Model > ModelCache::get(const Path& fileName, uint32_t user)
+Ref< Model > ModelCache::get(const Path& fileName, const std::wstring& filter, uint32_t user)
 {
 	return nullptr;
 }
 
-void ModelCache::put(const Path& fileName, const Model* model, uint32_t user)
+void ModelCache::put(const Path& fileName, const std::wstring& filter, const Model* model, uint32_t user)
 {
 }
 

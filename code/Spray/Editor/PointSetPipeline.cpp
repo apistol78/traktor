@@ -70,7 +70,7 @@ bool PointSetPipeline::buildOutput(
 		return false;
 	}
 
-	Ref< model::Model > model = model::ModelFormat::readAny(pointSetAsset->getFileName(), [&](const Path& p) {
+	Ref< model::Model > model = model::ModelFormat::readAny(pointSetAsset->getFileName(), L"", [&](const Path& p) {
 		return pipelineBuilder->openFile(Path(m_assetPath), p.getOriginal());
 	});
 	if (!model)

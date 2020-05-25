@@ -54,7 +54,7 @@ public:
 	 * \param stream Source stream.
 	 * \return Read model.
 	 */
-	virtual Ref< Model > read(const Path& filePath, const std::function< Ref< IStream >(const Path&) >& openStream) const = 0;
+	virtual Ref< Model > read(const Path& filePath, const std::wstring& filter, const std::function< Ref< IStream >(const Path&) >& openStream) const = 0;
 
 	/*! Write model.
 	 *
@@ -67,9 +67,10 @@ public:
 	/*! Automatically read model using appropriate format.
 	 *
 	 * \param filePath Path to model file.
+	 * \param filter Import filter.
 	 * \return Read model.
 	 */
-	static Ref< Model > readAny(const Path& filePath);
+	static Ref< Model > readAny(const Path& filePath, const std::wstring& filter = L"");
 
 	/*! Automatically read model using appropriate format.
 	 *
@@ -77,7 +78,7 @@ public:
 	 * \param openStreamFn Open stream function.
 	 * \return Read model.
 	 */
-	static Ref< Model > readAny(const Path& filePath, const std::function< Ref< IStream >(const Path&) >& openStream);
+	static Ref< Model > readAny(const Path& filePath, const std::wstring& filter, const std::function< Ref< IStream >(const Path&) >& openStream);
 
 	/*! Automatically write model using format based on filename extension.
 	 *

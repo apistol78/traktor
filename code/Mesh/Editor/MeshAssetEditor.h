@@ -71,6 +71,7 @@ private:
 	Ref< MeshAsset > m_asset;
 	Ref< model::Model > m_model;
 	Ref< ui::Edit > m_editFileName;
+	Ref< ui::Edit > m_editImportFilter;
 	Ref< ui::Container > m_containerMaterials;
 	Ref< ui::DropDown > m_dropMeshType;
 	Ref< ui::CheckBox > m_checkRenormalize;

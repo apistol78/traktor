@@ -5,10 +5,10 @@
 #include "Core/Thread/Acquire.h"
 #include "Core/Thread/Thread.h"
 #include "Core/Thread/ThreadManager.h"
-#include "Core/Thread/ThreadPool.h"
 #include "Core/Timer/Timer.h"
 #include "Net/Batch.h"
 #include "Net/SocketAddressIPv4.h"
+#include "Net/SocketSet.h"
 #include "Net/SocketStream.h"
 #include "Net/TcpSocket.h"
 #include "Net/Stream/StreamServer.h"
@@ -67,10 +67,6 @@ void StreamServer::destroy()
 		m_serverThread = nullptr;
 	}
 
-	for (auto thread : m_clientThreads)
-		ThreadPool::getInstance().stop(thread);
-
-	m_clientThreads.clear();
 	m_streams.clear();
 }
 
@@ -96,9 +92,23 @@ TcpSocket* StreamServer::getListenSocket() const
 
 void StreamServer::threadServer()
 {
+#pragma pack(1)
+	struct { int64_t size; uint8_t data[65536]; } buffer;
+#pragma pack()
+
 	while (!m_serverThread->stopped())
 	{
-		if (m_listenSocket->select(true, false, false, 100) > 0)
+		SocketSet ss;
+		ss.add(m_listenSocket);
+		for (const auto& client : m_clients)
+			ss.add(client.socket);
+
+		SocketSet result;
+		if (ss.select(true, false, false, 100, result) <= 0)
+			continue;
+
+		// Accept new clients.
+		if (result.contain(m_listenSocket))
 		{
 			Ref< TcpSocket > clientSocket = m_listenSocket->accept();
 			if (!clientSocket)
@@ -109,242 +119,203 @@ void StreamServer::threadServer()
 
 			clientSocket->setNoDelay(true);
 
-			Thread* clientThread = nullptr;
-			ThreadPool::getInstance().spawn(
-				makeFunctor< StreamServer, Ref< TcpSocket > >(this, &StreamServer::threadClient, clientSocket),
-				clientThread,
-				Thread::Above
-			);
-			if (!clientThread)
+			auto& client = m_clients.push_back();
+			client.socket = clientSocket;
+			client.stream = nullptr;
+			client.streamId = 0;
+		}
+
+		// Serve clients.
+		for (int32_t i = 0; i < result.count(); ++i)
+		{
+			Ref< Socket > socket = result.get(i);
+			if (socket == m_listenSocket)
+				continue;
+
+			auto it = std::find_if(m_clients.begin(), m_clients.end(), [&](const Client& client) {
+				return client.socket == socket;
+			});
+			if (it == m_clients.end())
+				continue;
+
+			auto& client = *it;
+
+			uint8_t command = 0x00;
+			if (net::recvBatch< uint8_t >(client.socket, command) <= 0)
 			{
-				log::error << L"StreamServer; unable to allocate client thread." << Endl;
+				m_clients.erase(it);
 				continue;
 			}
 
-			m_clientThreads.push_back(clientThread);
-		}
-	}
-}
-
-void StreamServer::threadClient(Ref< TcpSocket > clientSocket)
-{
-#pragma pack(1)
-	struct { int64_t size; uint8_t data[65536]; } buffer;
-#pragma pack()
-	Ref< IStream > stream;
-	uint32_t streamId;
-	Timer timer;
-
-	timer.start();
-
-	double start = 0.0;
-	int64_t totalRx = 0;
-	int64_t totalTx = 0;
-	int64_t countRx = 0;
-	int64_t countTx = 0;
-
-	Thread* currentThread = ThreadManager::getInstance().getCurrentThread();
-	while (!currentThread->stopped())
-	{
-		int32_t result = clientSocket->select(true, false, false, 100);
-		if (result == 0)
-			continue;
-		else if (result < 0)
-			break;
-
-		uint8_t command = 0x00;
-		if (net::recvBatch< uint8_t >(clientSocket, command) <= 0)
-			break;
-
-		switch (command)
-		{
-		case 0x01:	// Acquire stream.
-		case 0x81:	// Acquire stream (no preload).
+			switch (command)
 			{
-				net::recvBatch< uint32_t >(clientSocket, streamId);
-
+			case 0x01:	// Acquire stream.
+			case 0x81:	// Acquire stream (no preload).
 				{
-					T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_streamsLock);
-					std::map< uint32_t, Ref< IStream > >::const_iterator i = m_streams.find(streamId);
-					if (i != m_streams.end())
-						stream = i->second;
-					else
-						stream = nullptr;
-				}
+					net::recvBatch< uint32_t >(client.socket, client.streamId);
 
-				if (stream != nullptr)
-				{
-					uint8_t status = 0x00;
-					if (stream->canRead())
-						status |= 0x01;
-					if (stream->canWrite())
-						status |= 0x02;
-					if (stream->canSeek())
-						status |= 0x04;
-
-					int64_t avail = 0;
-					if (command == 0x01 && (status & 0x03) == 0x01)
-					{
-						int64_t streamAvail = stream->available();
-						if (streamAvail <= c_preloadSmallStreamSize)
-							avail = streamAvail;
-					}
-
-					net::sendBatch< uint8_t, int64_t >(clientSocket, status, avail);
-
-					start = timer.getElapsedTime();
-					totalRx = 0;
-					totalTx = 0;
-					countRx = 0;
-					countTx = 0;
-
-					if (avail > 0)
-					{
-						SocketStream ss(clientSocket, false, true);
-						StreamCopy(&ss, stream).execute(avail);
-						totalTx += avail;
-						countTx++;
-					}
-				}
-				else
-					net::sendBatch< uint8_t, int64_t >(clientSocket, 0, 0);
-			}
-			break;
-
-		case 0x02:	// Release stream.
-			{
-				if (stream)
-				{
 					{
 						T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_streamsLock);
-						std::map< uint32_t, Ref< IStream > >::iterator i = m_streams.find(streamId);
-						if (i != m_streams.end())
-							m_streams.erase(i);
-					}
-
-#if T_MEASURE_THROUGHPUT
-					double end = timer.getElapsedTime();
-					log::info << L"Stream " << streamId << L", duration " << int32_t((end - start) * 1000) << L" ms" << Endl;
-					log::info << L"RX " << totalRx << L" -- " << int32_t(totalRx / (end - start)) << L" bytes/s (" << countRx << L")" << Endl;
-					log::info << L"TX " << totalTx << L" -- " << int32_t(totalTx / (end - start)) << L" bytes/s (" << countTx << L")" << Endl;
-#endif
-
-					stream = nullptr;
-					streamId = 0;
-				}
-			}
-			break;
-
-		case 0x03:	// Close
-			{
-				if (stream)
-				{
-					stream->close();
-					net::sendBatch< uint8_t >(clientSocket, 1);
-				}
-				else
-					net::sendBatch< uint8_t >(clientSocket, 0);
-			}
-			break;
-
-		case 0x04:	// Tell
-			{
-				if (stream)
-					net::sendBatch< int64_t >(clientSocket, stream->tell());
-				else
-					net::sendBatch< int64_t >(clientSocket, -1);
-			}
-			break;
-
-		case 0x05:	// Available
-			{
-				if (stream)
-					net::sendBatch< int64_t >(clientSocket, stream->available());
-				else
-					net::sendBatch< int64_t >(clientSocket, -1);
-			}
-			break;
-
-		case 0x06:	// Seek
-			{
-				if (stream)
-				{
-					int64_t origin = 0, offset = 0;
-					net::recvBatch< int64_t, int64_t >(clientSocket, origin, offset);
-					int64_t resultSeek = stream->seek((IStream::SeekOriginType)origin, offset);
-					net::sendBatch< int64_t >(clientSocket, resultSeek);
-				}
-			}
-			break;
-
-		case 0x07:	// Read
-			{
-				if (stream)
-				{
-					int64_t nrequest = 0;
-					net::recvBatch< int64_t >(clientSocket, nrequest);
-
-					while (nrequest > 0)
-					{
-						int64_t navail = min< int64_t >(nrequest, sizeof(buffer.data));
-						int64_t nread = stream->read(buffer.data, navail);
-
-						if (nread > 0)
-						{
-							buffer.size = nread;
-							clientSocket->send(&buffer, sizeof(int64_t) + nread);
-						}
+						auto it = m_streams.find(client.streamId);
+						if (it != m_streams.end())
+							client.stream = it->second;
 						else
+							client.stream = nullptr;
+					}
+
+					if (client.stream != nullptr)
+					{
+						uint8_t status = 0x00;
+						if (client.stream->canRead())
+							status |= 0x01;
+						if (client.stream->canWrite())
+							status |= 0x02;
+						if (client.stream->canSeek())
+							status |= 0x04;
+
+						int64_t avail = 0;
+						if (command == 0x01 && (status & 0x03) == 0x01)
 						{
-							clientSocket->send(&nread, sizeof(int64_t));
-							break;
+							int64_t streamAvail = client.stream->available();
+							if (streamAvail <= c_preloadSmallStreamSize)
+								avail = streamAvail;
 						}
 
-						nrequest -= nread;
-						totalRx += nread;
+						net::sendBatch< uint8_t, int64_t >(client.socket, status, avail);
+
+						if (avail > 0)
+						{
+							SocketStream ss(client.socket, false, true);
+							StreamCopy(&ss, client.stream).execute(avail);
+						}
 					}
-
-					++countRx;
+					else
+						net::sendBatch< uint8_t, int64_t >(client.socket, 0, 0);
 				}
-			}
-			break;
+				break;
 
-		case 0x08:	// Write
-			{
-				if (stream)
+			case 0x02:	// Release stream.
 				{
-					int64_t nbytes = 0;
-					net::recvBatch< int64_t >(clientSocket, nbytes);
-
-					while (nbytes > 0)
+					if (client.stream)
 					{
-						int64_t nread = min< int64_t >(nbytes, sizeof(buffer.data));
-						int32_t nrecv = clientSocket->recv(buffer.data, nread);
-						if (nrecv <= 0)
-							break;
+						{
+							T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_streamsLock);
+							auto it = m_streams.find(client.streamId);
+							if (it != m_streams.end())
+								m_streams.erase(it);
+						}
 
-						stream->write(buffer.data, nrecv);
-
-						totalTx += nrecv;
-						nbytes -= nrecv;
+						client.stream = nullptr;
+						client.streamId = 0;
 					}
-
-					++countTx;
 				}
-			}
-			break;
+				break;
 
-		case 0x09:	// Flush
-			{
-				if (stream)
+			case 0x03:	// Close
 				{
-					stream->flush();
-					net::sendBatch< uint8_t >(clientSocket, 1);
+					if (client.stream)
+					{
+						client.stream->close();
+						net::sendBatch< uint8_t >(client.socket, 1);
+					}
+					else
+						net::sendBatch< uint8_t >(client.socket, 0);
 				}
-				else
-					net::sendBatch< uint8_t >(clientSocket, 0);
+				break;
+
+			case 0x04:	// Tell
+				{
+					if (client.stream)
+						net::sendBatch< int64_t >(client.socket, client.stream->tell());
+					else
+						net::sendBatch< int64_t >(client.socket, -1);
+				}
+				break;
+
+			case 0x05:	// Available
+				{
+					if (client.stream)
+						net::sendBatch< int64_t >(client.socket, client.stream->available());
+					else
+						net::sendBatch< int64_t >(client.socket, -1);
+				}
+				break;
+
+			case 0x06:	// Seek
+				{
+					if (client.stream)
+					{
+						int64_t origin = 0, offset = 0;
+						net::recvBatch< int64_t, int64_t >(client.socket, origin, offset);
+						int64_t resultSeek = client.stream->seek((IStream::SeekOriginType)origin, offset);
+						net::sendBatch< int64_t >(client.socket, resultSeek);
+					}
+				}
+				break;
+
+			case 0x07:	// Read
+				{
+					if (client.stream)
+					{
+						int64_t nrequest = 0;
+						net::recvBatch< int64_t >(client.socket, nrequest);
+
+						while (nrequest > 0)
+						{
+							int64_t navail = min< int64_t >(nrequest, sizeof(buffer.data));
+							int64_t nread = client.stream->read(buffer.data, navail);
+
+							if (nread > 0)
+							{
+								buffer.size = nread;
+								client.socket->send(&buffer, sizeof(int64_t) + nread);
+							}
+							else
+							{
+								client.socket->send(&nread, sizeof(int64_t));
+								break;
+							}
+
+							nrequest -= nread;
+						}
+					}
+				}
+				break;
+
+			case 0x08:	// Write
+				{
+					if (client.stream)
+					{
+						int64_t nbytes = 0;
+						net::recvBatch< int64_t >(client.socket, nbytes);
+
+						while (nbytes > 0)
+						{
+							int64_t nread = min< int64_t >(nbytes, sizeof(buffer.data));
+							int32_t nrecv = client.socket->recv(buffer.data, nread);
+							if (nrecv <= 0)
+								break;
+
+							client.stream->write(buffer.data, nrecv);
+
+							nbytes -= nrecv;
+						}
+					}
+				}
+				break;
+
+			case 0x09:	// Flush
+				{
+					if (client.stream)
+					{
+						client.stream->flush();
+						net::sendBatch< uint8_t >(client.socket, 1);
+					}
+					else
+						net::sendBatch< uint8_t >(client.socket, 0);
+				}
+				break;
 			}
-			break;
 		}
 	}
 }

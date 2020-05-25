@@ -65,7 +65,7 @@ bool SkeletonPipeline::buildOutput(
 {
 	Ref< const SkeletonAsset > skeletonAsset = checked_type_cast< const SkeletonAsset* >(sourceAsset);
 
-	Ref< model::Model > model = model::ModelFormat::readAny(skeletonAsset->getFileName(), [&](const Path& p) {
+	Ref< model::Model > model = model::ModelFormat::readAny(skeletonAsset->getFileName(), L"", [&](const Path& p) {
 		return pipelineBuilder->openFile(Path(m_assetPath), p.getOriginal());
 	});
 	if (!model)
