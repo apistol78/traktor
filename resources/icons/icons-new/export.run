@@ -274,12 +274,13 @@ local outputs =
 		}
 	},
 	{
+		source = "Layers.svg",
 		name = "UI_Layer",
 		path = "../../runtime/themes/%s/Images/UI",
 		resources =
 		{
-			{ name = "LayerVisible", column = 5, row = 7, width = 1, height = 1 },
-			{ name = "LayerHidden", column = 6, row = 7, width = 1, height = 1 },
+			{ name = "LayerVisible", column = 0, row = 0, width = 1, height = 1 },
+			{ name = "LayerHidden", column = 1, row = 0, width = 1, height = 1 },
 		}
 	},	
 	{
@@ -342,8 +343,16 @@ local outputs =
 			{ name = "BrowseImageProcess", column = 5, row = 7, width = 1, height = 1 },
 			{ name = "Playback", column = 0, row = 14, width = 6, height = 1 },
 			{ name = "LayerVisible", column = 6, row = 7, width = 1, height = 1 },
-			{ name = "LayerHidden", column = 7, row = 7, width = 1, height = 1 },
-			{ name = "LayerDelete", column = 10, row = 7, width = 1, height = 1 },		
+		}
+	},
+	{
+		source = "Layers.svg",
+		name = "Spray",
+		path = "../../runtime/themes/%s/Images/Spray",
+		resources =
+		{
+			{ name = "LayerHidden", column = 1, row = 0, width = 1, height = 1 },
+			{ name = "LayerDelete", column = 4, row = 0, width = 1, height = 1 },		
 		}
 	},
 	{
@@ -364,35 +373,43 @@ local outputs =
 		}
 	},
 	{
+		source = "Scene.svg",
 		name = "Scene",
 		path = "../../runtime/themes/%s/Images/Scene",
 		resources =
 		{
-			{ name = "Pointer", column = 0, row = 9, width = 1, height = 1 },
-			{ name = "Translate", column = 1, row = 9, width = 1, height = 1 },
-			{ name = "Rotate", column = 2, row = 9, width = 1, height = 1 },
-			{ name = "Snap", column = 3, row = 9, width = 1, height = 1 },
-			{ name = "SingleView", column = 4, row = 9, width = 1, height = 1 },
-			{ name = "DualView", column = 5, row = 9, width = 1, height = 1 },
-			{ name = "QuadView", column = 6, row = 9, width = 1, height = 1 },
-			{ name = "Rewind", column = 7, row = 9, width = 1, height = 1 },
-			{ name = "Play", column = 8, row = 9, width = 1, height = 1 },
-			{ name = "Stop", column = 9, row = 9, width = 1, height = 1 },
-			{ name = "LayerVisible", column = 6, row = 7, width = 1, height = 1 },
-			{ name = "LayerHidden", column = 7, row = 7, width = 1, height = 1 },
-			{ name = "LayerLocked", column = 8, row = 7, width = 1, height = 1 },
-			{ name = "LayerUnlocked", column = 9, row = 7, width = 1, height = 1 },
-			{ name = "LayerDelete", column = 10, row = 7, width = 1, height = 1 },
-			{ name = "Types", column = 0, row = 2, width = 23, height = 1 },
-			{ name = "Folders", column = 0, row = 4, width = 2, height = 1 },
-			{ name = "RemoveEntity", column = 10, row = 9, width = 1, height = 1 },
-			{ name = "MoveToEntity", column = 11, row = 9, width = 1, height = 1 },
-			{ name = "ToggleGrid", column = 12, row = 9, width = 1, height = 1 },
-			{ name = "ToggleGuide", column = 13, row = 9, width = 1, height = 1 },	
-			{ name = "FilterEntity", column = 14, row = 9, width = 1, height = 1 },
-			{ name = "Scale", column = 15, row = 9, width = 1, height = 1 },
-			{ name = "MoveUp", column = 16, row = 9, width = 1, height = 1 },
-			{ name = "MoveDown", column = 17, row = 9, width = 1, height = 1 },
+			{ name = "Pointer", column = 0, row = 0, width = 1, height = 1 },
+			{ name = "Translate", column = 1, row = 0, width = 1, height = 1 },
+			{ name = "Rotate", column = 2, row = 0, width = 1, height = 1 },
+			{ name = "Snap", column = 3, row = 0, width = 1, height = 1 },
+			{ name = "SingleView", column = 4, row = 0, width = 1, height = 1 },
+			{ name = "DualView", column = 5, row = 0, width = 1, height = 1 },
+			{ name = "QuadView", column = 6, row = 0, width = 1, height = 1 },
+			{ name = "Rewind", column = 7, row = 0, width = 1, height = 1 },
+			{ name = "Play", column = 8, row = 0, width = 1, height = 1 },
+			{ name = "Stop", column = 9, row = 0, width = 1, height = 1 },
+			{ name = "RemoveEntity", column = 10, row = 0, width = 1, height = 1 },
+			{ name = "MoveToEntity", column = 11, row = 0, width = 1, height = 1 },
+			{ name = "ToggleGrid", column = 12, row = 0, width = 1, height = 1 },
+			{ name = "ToggleGuide", column = 13, row = 0, width = 1, height = 1 },	
+			{ name = "FilterEntity", column = 14, row = 0, width = 1, height = 1 },
+			{ name = "Scale", column = 15, row = 0, width = 1, height = 1 },
+			{ name = "MoveUp", column = 16, row = 0, width = 1, height = 1 },
+			{ name = "MoveDown", column = 17, row = 0, width = 1, height = 1 },
+			{ name = "AddLayer", column = 18, row = 0, width = 1, height = 1 },
+		}
+	},
+	{
+		source = "Layers.svg",
+		name = "Scene",
+		path = "../../runtime/themes/%s/Images/Scene",
+		resources =
+		{
+			{ name = "LayerVisible", column = 0, row = 0, width = 1, height = 1 },
+			{ name = "LayerHidden", column = 1, row = 0, width = 1, height = 1 },
+			{ name = "LayerLocked", column = 2, row = 0, width = 1, height = 1 },
+			{ name = "LayerUnlocked", column = 3, row = 0, width = 1, height = 1 },
+			{ name = "LayerDelete", column = 4, row = 0, width = 1, height = 1 },
 		}
 	},
 	{
@@ -520,8 +537,8 @@ local dpis =
 -- -j -i Dark
 local function export(input, x, y, width, height, dpi, output)
 	--local inkscape = "/usr/bin/inkscape"
-	local inkscape = "\"c:/program files/inkscape/inkscape.exe\""
-	local cmd = inkscape .. " --without-gui --export-png=" .. output .. " --export-area=" .. x .. ":" .. -y .. ":" .. (x + width) .. ":" .. -y + height .. " --export-dpi=" .. dpi .. " " .. input
+	local inkscape = "\"c:/program files/inkscape/bin/inkscape.exe\""
+	local cmd = inkscape .. " --export-filename=" .. output .. " --export-area=" .. x .. ":" .. -y .. ":" .. (x + width) .. ":" .. -y + height .. " --export-dpi=" .. string.format("%d", dpi) .. " " .. input
 	stdout:printLn(cmd)
 	local result = run:execute(cmd) --, nil)
 	stdout:printLn("  exitcode " .. result)
