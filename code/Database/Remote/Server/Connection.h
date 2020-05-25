@@ -1,15 +1,14 @@
 #pragma once
 
-#include <map>
 #include <string>
 #include "Core/Object.h"
 #include "Core/RefArray.h"
+#include "Core/Containers/SmallMap.h"
 
 namespace traktor
 {
 
 class Semaphore;
-class Thread;
 
 	namespace net
 	{
@@ -37,22 +36,20 @@ class Connection : public Object
 public:
 	Connection(
 		Semaphore& connectionStringsLock,
-		const std::map< std::wstring, std::wstring >& connectionStrings,
+		const SmallMap< std::wstring, std::wstring >& connectionStrings,
 		net::StreamServer* streamServer,
 		net::TcpSocket* clientSocket
 	);
 
 	void destroy();
 
-	bool update();
-
-	bool alive() const;
+	bool process();
 
 	void sendReply(const IMessage& message);
 
 	uint32_t putObject(Object* object);
 
-	Ref< Object > getObject(uint32_t handle);
+	Object* getObject(uint32_t handle);
 
 	void releaseObject(uint32_t handle);
 
@@ -62,6 +59,8 @@ public:
 
 	net::StreamServer* getStreamServer() const;
 
+	net::TcpSocket* getSocket() const;
+
 	template < typename ObjectType >
 	Ref< ObjectType > getObject(uint32_t handle)
 	{
@@ -69,12 +68,11 @@ public:
 	}
 
 private:
-	Thread* m_thread;
 	Ref< net::StreamServer > m_streamServer;
 	Ref< net::TcpSocket > m_clientSocket;
 	Ref< net::BidirectionalObjectTransport > m_transport;
 	RefArray< IMessageListener > m_messageListeners;
-	std::map< uint32_t, Ref< Object > > m_objectStore;
+	SmallMap< uint32_t, Ref< Object > > m_objectStore;
 	uint32_t m_nextHandle;
 	Ref< IProviderDatabase > m_database;
 

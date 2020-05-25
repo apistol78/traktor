@@ -3,10 +3,11 @@
 #include "Core/Log/Log.h"
 #include "Core/Thread/Acquire.h"
 #include "Core/Thread/Thread.h"
-#include "Core/Thread/ThreadPool.h"
+#include "Core/Thread/ThreadManager.h"
 #include "Database/Remote/Server/Connection.h"
 #include "Database/Remote/Server/ConnectionManager.h"
 #include "Net/SocketAddressIPv4.h"
+#include "Net/SocketSet.h"
 #include "Net/TcpSocket.h"
 
 namespace traktor
@@ -19,7 +20,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.db.ConnectionManager", ConnectionManager, Objec
 ConnectionManager::ConnectionManager(net::StreamServer* streamServer)
 :	m_streamServer(streamServer)
 ,	m_listenPort(0)
-,	m_serverThread(0)
+,	m_serverThread(nullptr)
 {
 }
 
@@ -39,12 +40,14 @@ bool ConnectionManager::create()
 
 	m_listenPort = dynamic_type_cast< net::SocketAddressIPv4* >(m_listenSocket->getLocalAddress())->getPort();
 
-	ThreadPool::getInstance().spawn(
+	m_serverThread = ThreadManager::getInstance().create(
 		makeFunctor(this, &ConnectionManager::threadServer),
-		m_serverThread
+		L"Database server"
 	);
 	if (!m_serverThread)
 		return false;
+
+	m_serverThread->start();
 
 	log::info << L"Remote database connection manager @" << m_listenPort << L" created." << Endl;
 	return true;
@@ -54,7 +57,8 @@ void ConnectionManager::destroy()
 {
 	if (m_serverThread)
 	{
-		ThreadPool::getInstance().stop(m_serverThread);
+		m_serverThread->stop();
+		ThreadManager::getInstance().destroy(m_serverThread);
 		m_serverThread = nullptr;
 	}
 
@@ -81,7 +85,7 @@ void ConnectionManager::setConnectionString(const std::wstring& name, const std:
 void ConnectionManager::removeConnectionString(const std::wstring& name)
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_connectionStringsLock);
-	m_connectionStrings.erase(name);
+	m_connectionStrings.remove(name);
 }
 
 uint16_t ConnectionManager::getListenPort() const
@@ -93,7 +97,17 @@ void ConnectionManager::threadServer()
 {
 	while (!m_serverThread->stopped())
 	{
-		if (m_listenSocket->select(true, false, false, 100) > 0)
+		net::SocketSet ss;
+		ss.add(m_listenSocket);
+		for (const auto& connection : m_connections)
+			ss.add(connection->getSocket());
+
+		net::SocketSet result;
+		if (ss.select(true, false, false, 100, result) <= 0)
+			continue;
+	
+		// Accept new connections.
+		if (result.contain(m_listenSocket))
 		{
 			Ref< net::TcpSocket > clientSocket = m_listenSocket->accept();
 			if (!clientSocket)
@@ -108,20 +122,30 @@ void ConnectionManager::threadServer()
 			else
 				log::info << L"Remote database connection accepted." << Endl;
 		}
-		else
+
+		// Serve connections.
+		uint32_t closed = 0;
+		for (int32_t i = 0; i < result.count(); ++i)
 		{
-			uint32_t count = uint32_t(m_connections.size());
-			for (RefArray< Connection >::iterator i = m_connections.begin(); i != m_connections.end(); )
+			Ref< net::Socket > socket = result.get(i);
+			if (socket == m_listenSocket)
+				continue;			
+
+			auto it = std::find_if(m_connections.begin(), m_connections.end(), [&](const Connection* connection) {
+				return connection->getSocket() == socket;
+			});
+			if (it == m_connections.end())
+				continue;
+
+			auto connection = *it;
+			if (!connection->process())
 			{
-				if (!(*i)->alive())
-					i = m_connections.erase(i);
-				else
-					++i;
+				m_connections.erase(it);
+				closed++;
 			}
-			count -= uint32_t(m_connections.size());
-			if (count)
-				log::info << count << L" remote database connection(s) removed." << Endl;
 		}
+		if (closed)
+			log::info << closed << L" remote database connection(s) removed." << Endl;
 	}
 }
 

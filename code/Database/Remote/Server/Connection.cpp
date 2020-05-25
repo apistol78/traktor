@@ -1,7 +1,5 @@
 #include "Core/Functor/Functor.h"
 #include "Core/Log/Log.h"
-#include "Core/Thread/Thread.h"
-#include "Core/Thread/ThreadPool.h"
 #include "Database/Remote/IMessage.h"
 #include "Database/Remote/Server/BusMessageListener.h"
 #include "Database/Remote/Server/Connection.h"
@@ -23,7 +21,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.db.Connection", Connection, Object)
 
 Connection::Connection(
 	Semaphore& connectionStringsLock,
-	const std::map< std::wstring, std::wstring >& connectionStrings,
+	const SmallMap< std::wstring, std::wstring >& connectionStrings,
 	net::StreamServer* streamServer,
 	net::TcpSocket* clientSocket
 )
@@ -38,19 +36,10 @@ Connection::Connection(
 	m_messageListeners.push_back(new DatabaseMessageListener(connectionStringsLock, connectionStrings, m_streamServer->getListenPort(), this));
 	m_messageListeners.push_back(new GroupMessageListener(this));
 	m_messageListeners.push_back(new InstanceMessageListener(this));
-
-	ThreadPool::getInstance().spawn(makeFunctor(this, &Connection::messageThread), m_thread, Thread::Above);
-	T_ASSERT(m_thread);
 }
 
 void Connection::destroy()
 {
-	if (m_thread)
-	{
-		ThreadPool::getInstance().stop(m_thread);
-		m_thread = nullptr;
-	}
-
 	if (m_transport)
 		m_transport = nullptr;
 
@@ -63,9 +52,34 @@ void Connection::destroy()
 	m_objectStore.clear();
 }
 
-bool Connection::alive() const
+bool Connection::process()
 {
-	return m_thread != nullptr;
+	if (!m_transport)
+		return false;
+
+	Ref< IMessage > message;
+	if (m_transport->recv< IMessage >(100, message) < 0)
+		return false;
+
+	if (!message)
+		return false;
+
+	for (auto listener : m_messageListeners)
+	{
+		if (listener->notify(message))
+		{
+			message = nullptr;
+			break;
+		}
+	}
+
+	if (message)
+	{
+		log::error << L"Unhandled message \"" << type_name(message) << L"\"; connection terminated." << Endl;
+		return false;
+	}
+
+	return true;
 }
 
 void Connection::sendReply(const IMessage& message)
@@ -84,15 +98,15 @@ uint32_t Connection::putObject(Object* object)
 	return handle;
 }
 
-Ref< Object > Connection::getObject(uint32_t handle)
+Object* Connection::getObject(uint32_t handle)
 {
-	std::map< uint32_t, Ref< Object > >::iterator i = m_objectStore.find(handle);
-	return i != m_objectStore.end() ? i->second : nullptr;
+	auto it = m_objectStore.find(handle);
+	return it != m_objectStore.end() ? it->second : nullptr;
 }
 
 void Connection::releaseObject(uint32_t handle)
 {
-	m_objectStore.erase(handle);
+	m_objectStore.remove(handle);
 }
 
 void Connection::setDatabase(IProviderDatabase* database)
@@ -110,33 +124,9 @@ net::StreamServer* Connection::getStreamServer() const
 	return m_streamServer;
 }
 
-void Connection::messageThread()
+net::TcpSocket* Connection::getSocket() const
 {
-	while (!m_thread->stopped())
-	{
-		Ref< IMessage > message;
-		if (m_transport->recv< IMessage >(100, message) < 0)
-			break;
-
-		if (!message)
-			continue;
-
-		for (auto listener : m_messageListeners)
-		{
-			if (listener->notify(message))
-			{
-				message = nullptr;
-				break;
-			}
-		}
-
-		if (message)
-		{
-			log::error << L"Unhandled message \"" << type_name(message) << L"\"; connection terminated." << Endl;
-			break;
-		}
-	}
-	m_thread = nullptr;
+	return m_clientSocket;
 }
 
 	}

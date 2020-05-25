@@ -26,7 +26,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.db.DatabaseMessageListener", DatabaseMessageLis
 
 DatabaseMessageListener::DatabaseMessageListener(
 	Semaphore& connectionStringsLock,
-	const std::map< std::wstring, std::wstring >& connectionStrings,
+	const SmallMap< std::wstring, std::wstring >& connectionStrings,
 	uint16_t streamServerPort,
 	Connection* connection
 )
@@ -51,14 +51,14 @@ bool DatabaseMessageListener::messageOpen(const DbmOpen* message)
 		return true;
 	}
 
-	std::map< std::wstring, std::wstring >::const_iterator i = m_connectionStrings.find(message->getName());
-	if (i == m_connectionStrings.end())
+	auto it = m_connectionStrings.find(message->getName());
+	if (it == m_connectionStrings.end())
 	{
 		m_connection->sendReply(MsgStatus(StFailure));
 		return true;
 	}
 
-	ConnectionString connectionString = i->second;
+	ConnectionString connectionString = it->second;
 
 	if (!connectionString.have(L"provider"))
 	{
@@ -90,7 +90,6 @@ bool DatabaseMessageListener::messageOpen(const DbmOpen* message)
 
 	log::info << L"Database \"" << message->getName() << L"\" opened successfully" << Endl;
 	m_connection->sendReply(MsgIntResult(m_streamServerPort));
-
 	return true;
 }
 

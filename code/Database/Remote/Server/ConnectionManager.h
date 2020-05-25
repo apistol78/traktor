@@ -1,8 +1,8 @@
 #pragma once
 
-#include <map>
 #include "Core/Object.h"
 #include "Core/RefArray.h"
+#include "Core/Containers/SmallMap.h"
 #include "Core/Thread/Semaphore.h"
 
 // import/export mechanism.
@@ -58,7 +58,7 @@ private:
 	Thread* m_serverThread;
 	RefArray< Connection > m_connections;
 	Semaphore m_connectionStringsLock;
-	std::map< std::wstring, std::wstring > m_connectionStrings;
+	SmallMap< std::wstring, std::wstring > m_connectionStrings;
 
 	void threadServer();
 

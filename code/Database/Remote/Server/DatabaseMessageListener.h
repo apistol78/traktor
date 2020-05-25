@@ -1,6 +1,6 @@
 #pragma once
 
-#include <map>
+#include "Core/Containers/SmallMap.h"
 #include "Database/Remote/Server/IMessageListenerImpl.h"
 
 namespace traktor
@@ -23,14 +23,14 @@ class DatabaseMessageListener : public IMessageListenerImpl< DatabaseMessageList
 public:
 	DatabaseMessageListener(
 		Semaphore& connectionStringsLock,
-		const std::map< std::wstring, std::wstring >& connectionStrings,
+		const SmallMap< std::wstring, std::wstring >& connectionStrings,
 		uint16_t streamServerPort,
 		Connection* connection
 	);
 
 private:
 	Semaphore& m_connectionStringsLock;
-	const std::map< std::wstring, std::wstring >& m_connectionStrings;
+	const SmallMap< std::wstring, std::wstring >& m_connectionStrings;
 	uint16_t m_streamServerPort;
 	Connection* m_connection;
 
