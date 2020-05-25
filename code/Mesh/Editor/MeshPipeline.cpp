@@ -330,7 +330,7 @@ bool MeshPipeline::buildOutput(
 			}
 		);
 
-		Ref< model::Model > model = modelCache.get(asset->getFileName(), operations);
+		Ref< model::Model > model = modelCache.get(asset->getFileName(), asset->getImportFilter(), operations);
 		if (!model)
 		{
 			log::error << L"Mesh pipeline failed; unable to read source model (" << asset->getFileName().getOriginal() << L")." << Endl;

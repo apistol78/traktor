@@ -42,6 +42,12 @@ public:
 
 	virtual void serialize(ISerializer& s) override final;
 
+	/*! Set import filter. */
+	void setImportFilter(const std::wstring& importFilter) { m_importFilter = importFilter; }
+
+	/*! Get import filter. */
+	const std::wstring& getImportFilter() const { return m_importFilter; }
+
 	/*! Set type of runtime mesh. */
 	void setMeshType(MeshType meshType) { m_meshType = meshType; }
 
@@ -103,6 +109,7 @@ public:
 	float getLodCullDistance() const { return m_lodCullDistance; }
 
 private:
+	std::wstring m_importFilter;
 	MeshType m_meshType;
 	std::map< std::wstring, Guid > m_materialTemplates;
 	std::map< std::wstring, Guid > m_materialShaders;

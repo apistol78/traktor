@@ -905,7 +905,7 @@ bool Application::update()
 		if (m_targetManagerConnection && m_targetManagerConnection->connected())
 		{
 			int32_t lastAllocCount = m_targetPerformance.memCount;
-			int32_t allocCount = Alloc::count();
+			int32_t allocCount = (int32_t)Alloc::count();
 
 			render::RenderSystemStatistics rss;
 			m_renderServer->getRenderSystem()->getStatistics(rss);
@@ -1011,7 +1011,7 @@ IStateManager* Application::getStateManager()
 void Application::pollDatabase()
 {
 	T_PROFILER_SCOPE(L"Application poll database");
-	std::vector< Guid > eventIds;
+	AlignedVector< Guid > eventIds;
 	Ref< const db::IEvent > event;
 	bool remote;
 
@@ -1029,9 +1029,10 @@ void Application::pollDatabase()
 		Ref< resource::IResourceManager > resourceManager = m_resourceServer->getResourceManager();
 		if (resourceManager)
 		{
+			std::reverse(eventIds.begin(), eventIds.end());
 			for (const auto& eventId : eventIds)
 			{
-				T_DEBUG(L"Data modified; reloading resource \"" << eventId.format() << L"\"");
+				log::info << L"Reloading resource \"" << eventId.format() << L"\"..." << Endl;
 				resourceManager->reload(eventId, false);
 			}
 		}

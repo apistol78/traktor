@@ -9,7 +9,7 @@ namespace traktor
 	namespace mesh
 	{
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.mesh.MeshAsset", 16, MeshAsset, editor::Asset)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.mesh.MeshAsset", 17, MeshAsset, editor::Asset)
 
 MeshAsset::MeshAsset()
 :	m_meshType(MtStatic)
@@ -39,6 +39,9 @@ void MeshAsset::serialize(ISerializer& s)
 	};
 
 	editor::Asset::serialize(s);
+
+	if (s.getVersion() >= 17)
+		s >> Member< std::wstring >(L"importFilter", m_importFilter);
 
 	s >> MemberEnum< MeshType >(L"meshType", m_meshType, c_MeshType_Keys);
 

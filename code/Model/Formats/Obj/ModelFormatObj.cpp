@@ -25,7 +25,7 @@ bool ModelFormatObj::supportFormat(const std::wstring& extension) const
 	return compareIgnoreCase(extension, L"obj") == 0;
 }
 
-Ref< Model > ModelFormatObj::read(const Path& filePath, const std::function< Ref< IStream >(const Path&) >& openStream) const
+Ref< Model > ModelFormatObj::read(const Path& filePath, const std::wstring& filter, const std::function< Ref< IStream >(const Path&) >& openStream) const
 {
 	Ref< IStream > stream = openStream(filePath);
 	if (!stream)

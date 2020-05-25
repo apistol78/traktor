@@ -45,17 +45,22 @@ public:
 	TcpSocket* getListenSocket() const;
 
 private:
+	struct Client
+	{
+		Ref< TcpSocket > socket;
+		Ref< IStream > stream;
+		uint32_t streamId;
+	};
+
 	uint16_t m_listenPort;
 	Ref< TcpSocket > m_listenSocket;
+	AlignedVector< Client > m_clients;
 	Semaphore m_streamsLock;
 	std::map< uint32_t, Ref< IStream > > m_streams;
 	Thread* m_serverThread;
-	std::list< Thread* > m_clientThreads;
 	uint32_t m_nextId;
 
 	void threadServer();
-
-	void threadClient(Ref< TcpSocket > clientSocket);
 };
 
 	}

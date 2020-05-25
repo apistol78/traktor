@@ -83,7 +83,7 @@ bool AnimationPipeline::buildOutput(
 	Ref< const AnimationAsset > animationAsset = checked_type_cast< const AnimationAsset* >(sourceAsset);
 
 	// Read source model.
-	Ref< model::Model > modelAnimation = model::ModelFormat::readAny(animationAsset->getFileName(), [&](const Path& p) {
+	Ref< model::Model > modelAnimation = model::ModelFormat::readAny(animationAsset->getFileName(), L"", [&](const Path& p) {
 		return pipelineBuilder->openFile(Path(m_assetPath), p.getOriginal());
 	});
 	if (!modelAnimation)
@@ -103,7 +103,7 @@ bool AnimationPipeline::buildOutput(
 			return false;
 		}
 
-		modelSkeleton = model::ModelFormat::readAny(skeletonAsset->getFileName(), [&](const Path& p) {
+		modelSkeleton = model::ModelFormat::readAny(skeletonAsset->getFileName(), L"", [&](const Path& p) {
 			return pipelineBuilder->openFile(Path(m_assetPath), p.getOriginal());
 		});
 		if (!modelSkeleton)

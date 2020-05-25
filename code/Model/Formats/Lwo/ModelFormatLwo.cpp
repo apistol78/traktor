@@ -452,7 +452,7 @@ bool ModelFormatLwo::supportFormat(const std::wstring& extension) const
 		compareIgnoreCase(extension, L"lw") == 0;
 }
 
-Ref< Model > ModelFormatLwo::read(const Path& filePath, const std::function< Ref< IStream >(const Path&) >& openStream) const
+Ref< Model > ModelFormatLwo::read(const Path& filePath, const std::wstring& filter, const std::function< Ref< IStream >(const Path&) >& openStream) const
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(s_lock);
 

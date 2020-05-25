@@ -111,6 +111,14 @@ bool MeshAssetEditor::create(ui::Widget* parent, db::Instance* instance, ISerial
 		return false;
 	editModelButton->addEventHandler< ui::ButtonClickEvent >(this, &MeshAssetEditor::eventEditModelClick);
 
+	Ref< ui::Static > staticImportFilter = new ui::Static();
+	if (!staticImportFilter->create(containerFile, i18n::Text(L"MESHASSET_EDITOR_IMPORT_FILTER")))
+		return false;
+
+	m_editImportFilter = new ui::Edit();
+	if (!m_editImportFilter->create(containerFile, L""))
+		return false;
+
 	Ref< ui::Static > staticMeshType = new ui::Static();
 	if (!staticMeshType->create(containerFile, i18n::Text(L"MESHASSET_EDITOR_MESH_TYPE")))
 		return false;
@@ -234,6 +242,7 @@ void MeshAssetEditor::destroy()
 void MeshAssetEditor::apply()
 {
 	m_asset->setFileName(m_editFileName->getText());
+	m_asset->setImportFilter(m_editImportFilter->getText());
 	m_asset->setMeshType(MeshAsset::MeshType(m_dropMeshType->getSelected()));
 	m_asset->setRenormalize(m_checkRenormalize->isChecked());
 	m_asset->setCenter(m_checkCenter->isChecked());
@@ -246,11 +255,8 @@ void MeshAssetEditor::apply()
 	std::map< std::wstring, Guid > materialShaders;
 
 	const RefArray< ui::GridRow >& shaderItems = m_materialShaderList->getRows();
-	for (RefArray< ui::GridRow >::const_iterator i = shaderItems.begin(); i != shaderItems.end(); ++i)
+	for (auto shaderItem : shaderItems)
 	{
-		Ref< ui::GridRow > shaderItem = *i;
-		T_ASSERT(shaderItem);
-
 		std::wstring materialName = shaderItem->get(0)->getText();
 		Ref< db::Instance > materialTemplateInstance = shaderItem->getData< db::Instance >(L"TEMPLATE");
 		Ref< db::Instance > materialShaderInstance = shaderItem->getData< db::Instance >(L"INSTANCE");
@@ -267,11 +273,8 @@ void MeshAssetEditor::apply()
 	std::map< std::wstring, Guid > materialTextures;
 
 	const RefArray< ui::GridRow >& textureItems = m_materialTextureList->getRows();
-	for (RefArray< ui::GridRow >::const_iterator i = textureItems.begin(); i != textureItems.end(); ++i)
+	for (auto textureItem : textureItems)
 	{
-		Ref< ui::GridRow > textureItem = *i;
-		T_ASSERT(textureItem);
-
 		std::wstring textureName = textureItem->get(0)->getText();
 		Ref< db::Instance > materialTextureInstance = textureItem->getData< db::Instance >(L"INSTANCE");
 
@@ -304,7 +307,8 @@ ui::Size MeshAssetEditor::getPreferredSize() const
 void MeshAssetEditor::updateModel()
 {
 	Path assetPath = FileSystem::getInstance().getAbsolutePath(m_assetPath, m_asset->getFileName());
-	m_model = model::ModelFormat::readAny(assetPath);
+	std::wstring importFilter = m_asset->getImportFilter();
+	m_model = model::ModelFormat::readAny(assetPath, importFilter);
 }
 
 void MeshAssetEditor::updateFile()
@@ -316,6 +320,7 @@ void MeshAssetEditor::updateFile()
 		assetRelPath = m_asset->getFileName().getOriginal();
 
 	m_editFileName->setText(assetRelPath.getPathName());
+	m_editImportFilter->setText(m_asset->getImportFilter());
 	m_dropMeshType->select(m_asset->getMeshType());
 	m_checkRenormalize->setChecked(m_asset->getRenormalize());
 	m_checkCenter->setChecked(m_asset->getCenter());

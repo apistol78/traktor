@@ -4,6 +4,7 @@
 #include "Core/Object.h"
 #include "Core/Ref.h"
 #include "Core/Io/Path.h"
+#include "Core/Thread/Mutex.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -38,21 +39,22 @@ public:
 	);
 
     /*! Get model without any operations. */
-    Ref< Model > get(const Path& fileName);
+    Ref< Model > get(const Path& fileName, const std::wstring& filter);
 
     /*! Get model with applied operations. */
-    Ref< Model > get(const Path& fileName, const RefArray< const IModelOperation >& operations);
+    Ref< Model > get(const Path& fileName, const std::wstring& filter, const RefArray< const IModelOperation >& operations);
 
     /*! Get model with user key. */
-    Ref< Model > get(const Path& fileName, uint32_t user);
+    Ref< Model > get(const Path& fileName, const std::wstring& filter, uint32_t user);
 
     /*! Put model with user key. */
-    void put(const Path& fileName, const Model* model, uint32_t user);
+    void put(const Path& fileName, const std::wstring& filter, const Model* model, uint32_t user);
 
 private:
     Path m_cachePath;
 	std::function< Ref< File >(const Path&) > m_getFile;
     std::function< Ref< IStream >(const Path&) > m_openStream;
+    Mutex m_lock;
 };
 
     }

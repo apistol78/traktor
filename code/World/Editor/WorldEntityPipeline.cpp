@@ -6,6 +6,7 @@
 #include "World/Entity/DecalEventData.h"
 #include "World/Entity/EventSetComponentData.h"
 #include "World/Entity/ExternalEntityData.h"
+#include "World/Entity/FacadeComponentData.h"
 #include "World/Entity/GroupComponentData.h"
 #include "World/Entity/GroupEntityData.h"
 #include "World/Entity/LightComponentData.h"
@@ -26,6 +27,7 @@ TypeInfoSet WorldEntityPipeline::getAssetTypes() const
 	typeSet.insert< DecalEventData >();
 	typeSet.insert< EventSetComponentData >();
 	typeSet.insert< ExternalEntityData >();
+	typeSet.insert< FacadeComponentData >();
 	typeSet.insert< GroupComponentData >();
 	typeSet.insert< GroupEntityData >();
 	typeSet.insert< LightComponentData >();
@@ -41,30 +43,35 @@ bool WorldEntityPipeline::buildDependencies(
 	const Guid& outputGuid
 ) const
 {
-	if (const ScriptComponentData* scriptComponentData = dynamic_type_cast< const ScriptComponentData* >(sourceAsset))
+	if (auto scriptComponentData = dynamic_type_cast< const ScriptComponentData* >(sourceAsset))
 		pipelineDepends->addDependency(scriptComponentData->getRuntimeClass(), editor::PdfBuild);
-	else if (const DecalComponentData* decalComponentData = dynamic_type_cast< const DecalComponentData* >(sourceAsset))
+	else if (auto decalComponentData = dynamic_type_cast< const DecalComponentData* >(sourceAsset))
 		pipelineDepends->addDependency(decalComponentData->getShader(), editor::PdfBuild | editor::PdfResource);
-	else if (const DecalEventData* decalEventData = dynamic_type_cast< const DecalEventData* >(sourceAsset))
+	else if (auto decalEventData = dynamic_type_cast< const DecalEventData* >(sourceAsset))
 		pipelineDepends->addDependency(decalEventData->getShader(), editor::PdfBuild | editor::PdfResource);
-	else if (const EventSetComponentData* eventSetComponentData = dynamic_type_cast< const EventSetComponentData* >(sourceAsset))
+	else if (auto eventSetComponentData = dynamic_type_cast< const EventSetComponentData* >(sourceAsset))
 	{
 		for (auto eventData : eventSetComponentData->m_eventData)
 			pipelineDepends->addDependency(eventData.second);
 	}
-	else if (const ExternalEntityData* externalEntityData = dynamic_type_cast< const ExternalEntityData* >(sourceAsset))
+	else if (auto externalEntityData = dynamic_type_cast< const ExternalEntityData* >(sourceAsset))
 		pipelineDepends->addDependency(externalEntityData->getEntityData(), editor::PdfBuild);
-	else if (const GroupComponentData* groupComponentData = dynamic_type_cast< const GroupComponentData* >(sourceAsset))
+	else if (auto facadeComponentData = dynamic_type_cast< const FacadeComponentData* >(sourceAsset))
+	{
+		for (auto entityData : facadeComponentData->getEntityData())
+			pipelineDepends->addDependency(entityData);
+	}
+	else if (auto groupComponentData = dynamic_type_cast< const GroupComponentData* >(sourceAsset))
 	{
 		for (auto entityData : groupComponentData->getEntityData())
 			pipelineDepends->addDependency(entityData);
 	}
-	else if (const GroupEntityData* groupEntityData = dynamic_type_cast< const GroupEntityData* >(sourceAsset))
+	else if (auto groupEntityData = dynamic_type_cast< const GroupEntityData* >(sourceAsset))
 	{
 		for (auto entityData : groupEntityData->getEntityData())
 			pipelineDepends->addDependency(entityData);
 	}
-	else if (const ProbeComponentData* probeComponentData = dynamic_type_cast<const ProbeComponentData*>(sourceAsset))
+	else if (auto probeComponentData = dynamic_type_cast<const ProbeComponentData*>(sourceAsset))
 		pipelineDepends->addDependency(probeComponentData->getTexture(), editor::PdfBuild | editor::PdfResource);
 	return true;
 }

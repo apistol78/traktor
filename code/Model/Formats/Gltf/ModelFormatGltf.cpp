@@ -123,7 +123,7 @@ bool ModelFormatGltf::supportFormat(const std::wstring& extension) const
 	return compareIgnoreCase(extension, L"gltf") == 0;
 }
 
-Ref< Model > ModelFormatGltf::read(const Path& filePath, const std::function< Ref< IStream >(const Path&) >& openStream) const
+Ref< Model > ModelFormatGltf::read(const Path& filePath, const std::wstring& filter, const std::function< Ref< IStream >(const Path&) >& openStream) const
 {
 	RefArray< IStream > bufferStreams;
 

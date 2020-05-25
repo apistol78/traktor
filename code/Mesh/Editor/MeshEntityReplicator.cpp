@@ -33,7 +33,7 @@ Ref< model::Model > MeshEntityReplicator::createModel(
 	if (!meshAsset)
 		return nullptr;
 
-	Ref< model::Model > model = model::ModelFormat::readAny(meshAsset->getFileName(), [&](const Path& p) {
+	Ref< model::Model > model = model::ModelFormat::readAny(meshAsset->getFileName(), meshAsset->getImportFilter(), [&](const Path& p) {
 		return pipelineBuilder->openFile(Path(assetPath), p.getOriginal());
 	});
 	if (!model)

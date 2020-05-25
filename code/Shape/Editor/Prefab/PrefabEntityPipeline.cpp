@@ -254,7 +254,7 @@ Ref< ISerializable > PrefabEntityPipeline::buildOutput(
 			}
 			else
 			{
-				Ref< model::Model > partModel = model::ModelFormat::readAny(meshAsset->getFileName(), [&](const Path& p) {
+				Ref< model::Model > partModel = model::ModelFormat::readAny(meshAsset->getFileName(), meshAsset->getImportFilter(), [&](const Path& p) {
 					return pipelineBuilder->openFile(Path(m_assetPath), p.getOriginal());
 				});
 				if (!partModel)
@@ -319,7 +319,7 @@ Ref< ISerializable > PrefabEntityPipeline::buildOutput(
 			}
 			else
 			{
-				Ref< model::Model > partModel = model::ModelFormat::readAny(meshShapeAsset->getFileName(), [&](const Path& p) {
+				Ref< model::Model > partModel = model::ModelFormat::readAny(meshShapeAsset->getFileName(), L"", [&](const Path& p) {
 					return pipelineBuilder->openFile(Path(m_assetPath), p.getOriginal());
 				});
 				if (!partModel)

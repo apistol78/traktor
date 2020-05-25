@@ -6,6 +6,7 @@
 #include "Core/Math/Const.h"
 #include "Core/Misc/AutoPtr.h"
 #include "Core/Misc/String.h"
+#include "Core/Misc/StringSplit.h"
 #include "Core/Misc/TString.h"
 #include "Core/Settings/PropertyBoolean.h"
 #include "Core/Thread/Acquire.h"
@@ -27,8 +28,39 @@ FbxManager* s_fbxManager = nullptr;
 FbxIOSettings* s_ioSettings = nullptr;
 FbxScene* s_scene = nullptr;
 
-FbxNode* search(FbxNode* node, const std::function< bool (FbxNode* node) >& predicate)
+bool include(FbxNode* node, const std::wstring& filter)
 {
+	if (!node)
+		return false;
+
+	// Always accept root nodes.
+	if (!node->GetParent())
+		return true;
+
+	// Only filter on first level of child nodes.
+	if (node->GetParent()->GetParent())
+		return true;
+
+	// Empty filter means everything is included.
+	if (filter.empty())
+		return true;
+
+	// Check if node's name match filter tag.
+	std::wstring name = mbstows(node->GetName());
+	for (auto s : StringSplit< std::wstring >(filter, L",;"))
+	{
+		if (s == name)
+			return true;
+	}
+
+	return false;
+}
+
+FbxNode* search(FbxNode* node, const std::wstring& filter, const std::function< bool (FbxNode* node) >& predicate)
+{
+	if (!include(node, filter))
+		return nullptr;
+
 	if (predicate(node))
 		return node;
 
@@ -38,7 +70,7 @@ FbxNode* search(FbxNode* node, const std::function< bool (FbxNode* node) >& pred
 		FbxNode* childNode = node->GetChild(i);
 		if (childNode)
 		{
-			FbxNode* foundNode = search(childNode, predicate);
+			FbxNode* foundNode = search(childNode, filter, predicate);
 			if (foundNode)
 				return foundNode;
 		}
@@ -47,9 +79,9 @@ FbxNode* search(FbxNode* node, const std::function< bool (FbxNode* node) >& pred
 	return nullptr;
 }
 
-bool traverse(FbxNode* node, const std::function< bool (FbxNode* node) >& visitor)
+bool traverse(FbxNode* node, const std::wstring& filter, const std::function< bool (FbxNode* node) >& visitor)
 {
-	if (!node)
+	if (!include(node, filter))
 		return true;
 
 	if (!visitor(node))
@@ -61,7 +93,7 @@ bool traverse(FbxNode* node, const std::function< bool (FbxNode* node) >& visito
 		FbxNode* childNode = node->GetChild(i);
 		if (childNode)
 		{
-			if (!traverse(childNode, visitor))
+			if (!traverse(childNode, filter, visitor))
 				return false;
 		}
 	}
@@ -111,11 +143,16 @@ void dump(FbxNode* node)
 		}
 	}
 
+	if (node->GetVisibility())
+		log::info << L"Visible" << Endl;
+	else
+		log::info << L"Hidden" << Endl;
+
 	int32_t childCount = node->GetChildCount();
 	for (int32_t i = 0; i < childCount; ++i)
 	{
 		FbxNode* childNode = node->GetChild(i);
-		if (!childNode) //  || !childNode->GetVisibility() || !childNode->GetNodeAttribute())
+		if (!childNode)
 			continue;
 
 		log::info << L"Child " << i << L":" << Endl;
@@ -142,7 +179,7 @@ bool ModelFormatFbx::supportFormat(const std::wstring& extension) const
 	return compareIgnoreCase(extension, L"fbx") == 0;
 }
 
-Ref< Model > ModelFormatFbx::read(const Path& filePath, const std::function< Ref< IStream >(const Path&) >& openStream) const
+Ref< Model > ModelFormatFbx::read(const Path& filePath, const std::wstring& filter, const std::function< Ref< IStream >(const Path&) >& openStream) const
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(g_fbxLock);
 
@@ -206,8 +243,10 @@ Ref< Model > ModelFormatFbx::read(const Path& filePath, const std::function< Ref
 	if (!rootNode)
 		return nullptr;
 
+#if defined(_DEBUG)
 	// Dump fbx hierarchy.
-	// dump(rootNode);
+	dump(rootNode);
+#endif
 
 	Matrix44 axisTransform = calculateAxisTransform(
 		s_scene->GetGlobalSettings().GetAxisSystem()
@@ -218,7 +257,7 @@ Ref< Model > ModelFormatFbx::read(const Path& filePath, const std::function< Ref
 	bool result = true;
 
 	// Convert skeleton and animations.
-	FbxNode* skeletonNode = search(rootNode, [&](FbxNode* node) {
+	FbxNode* skeletonNode = search(rootNode, filter, [&](FbxNode* node) {
 		return (node->GetNodeAttribute() != nullptr && node->GetNodeAttribute()->GetAttributeType() == FbxNodeAttribute::eSkeleton);
 	});
 	if (skeletonNode)
@@ -263,7 +302,7 @@ Ref< Model > ModelFormatFbx::read(const Path& filePath, const std::function< Ref
 	}
 
 	// Convert and merge all meshes.
-	result &= traverse(rootNode, [&](FbxNode* node) {
+	result &= traverse(rootNode, filter, [&](FbxNode* node) {
 		if (node->GetNodeAttribute() && node->GetVisibility())
 		{
 			FbxNodeAttribute::EType attributeType = node->GetNodeAttribute()->GetAttributeType();
