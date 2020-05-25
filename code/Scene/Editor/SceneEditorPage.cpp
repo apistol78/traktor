@@ -291,6 +291,7 @@ bool SceneEditorPage::create(ui::Container* parent)
 	m_entityToolBar->addImage(new ui::StyleBitmap(L"Scene.FilterEntity"), 1);
 	m_entityToolBar->addImage(new ui::StyleBitmap(L"Scene.MoveUpEntity"), 1);
 	m_entityToolBar->addImage(new ui::StyleBitmap(L"Scene.MoveDownEntity"), 1);
+	m_entityToolBar->addImage(new ui::StyleBitmap(L"Scene.AddLayer"), 1);
 	m_entityToolBar->addItem(new ui::ToolBarButton(i18n::Text(L"SCENE_EDITOR_REMOVE_ENTITY"), 0, ui::Command(L"Editor.Delete")));
 	m_entityToolBar->addItem(new ui::ToolBarSeparator());
 	m_entityToolBar->addItem(new ui::ToolBarButton(i18n::Text(L"SCENE_EDITOR_MOVE_TO_ENTITY"), 1, ui::Command(L"Scene.Editor.MoveToEntity")));
@@ -299,6 +300,8 @@ bool SceneEditorPage::create(ui::Container* parent)
 	m_entityToolBar->addItem(new ui::ToolBarSeparator());
 	m_entityToolBar->addItem(new ui::ToolBarButton(i18n::Text(L"SCENE_EDITOR_MOVE_UP"), 3, ui::Command(L"Scene.Editor.MoveUp")));
 	m_entityToolBar->addItem(new ui::ToolBarButton(i18n::Text(L"SCENE_EDITOR_MOVE_DOWN"), 4, ui::Command(L"Scene.Editor.MoveDown")));
+	m_entityToolBar->addItem(new ui::ToolBarSeparator());
+	m_entityToolBar->addItem(new ui::ToolBarButton(i18n::Text(L"SCENE_EDITOR_NEW_LAYER"), 5, ui::Command(L"Scene.Editor.NewLayer")));
 	m_entityToolBar->addEventHandler< ui::ToolBarButtonClickEvent >(this, &SceneEditorPage::eventEntityToolClick);
 
 	m_imageHidden = new ui::StyleBitmap(L"Scene.LayerHidden");
@@ -330,11 +333,11 @@ bool SceneEditorPage::create(ui::Container* parent)
 	m_tabMisc->setText(i18n::Text(L"SCENE_EDITOR_MISC"));
 
 	// Create dependency panel.
-	//Ref< ui::TabPage > tabPageDependencies = new ui::TabPage();
-	//tabPageDependencies->create(m_tabMisc, i18n::Text(L"SCENE_EDITOR_DEPENDENCY_INVESTIGATOR"), new ui::FloodLayout());
+	Ref< ui::TabPage > tabPageDependencies = new ui::TabPage();
+	tabPageDependencies->create(m_tabMisc, i18n::Text(L"SCENE_EDITOR_DEPENDENCY_INVESTIGATOR"), new ui::FloodLayout());
 
-	//m_entityDependencyPanel = new EntityDependencyInvestigator(m_context);
-	//m_entityDependencyPanel->create(tabPageDependencies);
+	m_entityDependencyPanel = new EntityDependencyInvestigator(m_context);
+	m_entityDependencyPanel->create(tabPageDependencies);
 
 	// Create guide visibility panel.
 	Ref< ui::TabPage > tabPageGuides = new ui::TabPage();
@@ -359,9 +362,9 @@ bool SceneEditorPage::create(ui::Container* parent)
 	m_gridGuides->addEventHandler< ui::GridColumnClickEvent >(this, &SceneEditorPage::eventGuideClick);
 
 	// Add pages.
-	//m_tabMisc->addPage(tabPageDependencies);
+	m_tabMisc->addPage(tabPageDependencies);
 	m_tabMisc->addPage(tabPageGuides);
-	//m_tabMisc->setActivePage(tabPageDependencies);
+	m_tabMisc->setActivePage(tabPageDependencies);
 
 	m_site->createAdditionalPanel(m_tabMisc, ui::dpi96(300), false);
 
@@ -400,7 +403,6 @@ bool SceneEditorPage::create(ui::Container* parent)
 	createControllerEditor();
 	updatePropertyObject();
 	updateStatusBar();
-
 	return true;
 }
 
@@ -713,6 +715,17 @@ bool SceneEditorPage::handleCommand(const ui::Command& command)
 			updateScene();
 			createInstanceGrid();
 		}
+	}
+	else if (command == L"Scene.Editor.NewLayer")
+	{
+		m_context->getDocument()->push();
+
+		auto layers = m_context->getSceneAsset()->getLayers();
+		layers.push_back(new world::LayerEntityData());
+		m_context->getSceneAsset()->setLayers(layers);
+
+		updateScene();
+		createInstanceGrid();
 	}
 	else if (command == L"Scene.Editor.FilterEntity")
 	{

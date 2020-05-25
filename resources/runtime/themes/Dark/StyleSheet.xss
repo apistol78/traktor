@@ -1032,7 +1032,11 @@
 		<item>
 			<name>Scene.MoveDownEntity</name>
 			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Dark/Images/Scene/MoveDown.image</value>
-		</item>		
+		</item>
+		<item>
+			<name>Scene.AddLayer</name>
+			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Dark/Images/Scene/AddLayer.image</value>
+		</item>
 		<item>
 			<name>Scene.LayerHidden</name>
 			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Dark/Images/Scene/LayerHidden.image</value>

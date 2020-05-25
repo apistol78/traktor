@@ -1007,6 +1007,10 @@
 			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Scene/MoveDown.image</value>
 		</item>
 		<item>
+			<name>Scene.AddLayer</name>
+			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Scene/AddLayer.image</value>
+		</item>
+		<item>
 			<name>Scene.LayerHidden</name>
 			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Scene/LayerHidden.image</value>
 		</item>

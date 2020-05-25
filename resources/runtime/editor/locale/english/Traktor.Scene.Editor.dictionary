@@ -381,5 +381,9 @@
 			<first>SCENE_EDITOR_VIEW_TOP</first>
 			<second>Top</second>
 		</item>
+		<item>
+			<first>SCENE_EDITOR_NEW_LAYER</first>
+			<second>New layer</second>
+		</item>
 	</map>
 </object>
