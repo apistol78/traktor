@@ -200,13 +200,18 @@ bool WorldRendererDeferred::create(
 	m_frames.resize(desc.frameCount);
 
 	// Pack fog parameters.
-	m_fogDistanceAndDensity = Vector4(
-		m_settings.fogDistanceY,
-		m_settings.fogDistanceZ,
-		m_settings.fogDensityY,
-		m_settings.fogDensityZ
-	);
-	m_fogColor = m_settings.fogColor;
+	if (m_settings.fog)
+	{
+		m_fogDistanceAndDensity = Vector4(
+			m_settings.fogDistanceY,
+			m_settings.fogDistanceZ,
+			m_settings.fogDensityY,
+			m_settings.fogDensityZ
+		);
+		m_fogColor = m_settings.fogColor;
+	}
+	else
+		m_fogDistanceAndDensity = Vector4::zero();
 
 	// Create light, reflection and fog shaders.
 	if (!resourceManager->bind(c_lightShader, m_lightShader))
