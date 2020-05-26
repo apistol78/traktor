@@ -42,17 +42,17 @@ void TargetConnection::destroy()
 	if (m_targetDebuggerSessions)
 	{
 		m_targetDebuggerSessions->endSession(m_targetDebugger, m_targetProfiler);
-		m_targetDebuggerSessions = 0;
-		m_targetProfiler = 0;
-		m_targetDebugger = 0;
+		m_targetDebuggerSessions = nullptr;
+		m_targetProfiler = nullptr;
+		m_targetDebugger = nullptr;
 	}
 
-	m_targetLog = 0;
+	m_targetLog = nullptr;
 
 	if (m_transport)
 	{
 		m_transport->close();
-		m_transport = 0;
+		m_transport = nullptr;
 	}
 }
 
