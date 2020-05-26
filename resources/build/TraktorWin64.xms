@@ -16519,21 +16519,24 @@
 					<targetProfile>TpDebug</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(P4_SDK)/include/p4</item>
+						<item>$(P4_DEBUG_SDK)/include/p4</item>
 					</includePaths>
 					<definitions>
 						<item>T_DATABASE_LOCAL_P4_EXPORT</item>
 						<item>_DEBUG</item>
 					</definitions>
 					<libraryPaths>
-						<item>$(P4_SDK)/lib</item>
+						<item>$(P4_DEBUG_SDK)/lib</item>
+						<item>$(OPENSSL_SDK)</item>
 					</libraryPaths>
 					<libraries>
 						<item>libclient.lib</item>
 						<item>librpc.lib</item>
 						<item>libsupp.lib</item>
 						<item>ws2_32.lib</item>
-						<item>libp4sslstub.lib</item>
+						<item>libp4api.lib</item>
+						<item>libeay32.lib</item>
+						<item>ssleay32.lib</item>
 					</libraries>
 					<warningLevel>WlCompilerDefault</warningLevel>
 					<additionalCompilerOptions/>
@@ -16564,21 +16567,24 @@
 					<targetProfile>TpRelease</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(P4_SDK)/include/p4</item>
+						<item>$(P4_RELEASE_SDK)/include/p4</item>
 					</includePaths>
 					<definitions>
 						<item>T_DATABASE_LOCAL_P4_EXPORT</item>
 						<item>NDEBUG</item>
 					</definitions>
 					<libraryPaths>
-						<item>$(P4_SDK)/lib</item>
+						<item>$(P4_RELEASE_SDK)/lib</item>
+						<item>$(OPENSSL_SDK)</item>
 					</libraryPaths>
 					<libraries>
 						<item>libclient.lib</item>
 						<item>librpc.lib</item>
 						<item>libsupp.lib</item>
 						<item>ws2_32.lib</item>
-						<item>libp4sslstub.lib</item>
+						<item>libp4api.lib</item>
+						<item>libeay32.lib</item>
+						<item>ssleay32.lib</item>
 					</libraries>
 					<warningLevel>WlCompilerDefault</warningLevel>
 					<additionalCompilerOptions/>
@@ -16609,21 +16615,24 @@
 					<targetProfile>TpDebug</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(P4_SDK)/include/p4</item>
+						<item>$(P4_DEBUG_SDK)/include/p4</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
 						<item>_DEBUG</item>
 					</definitions>
 					<libraryPaths>
-						<item>$(P4_SDK)/lib</item>
+						<item>$(P4_DEBUG_SDK)/lib</item>
+						<item>$(OPENSSL_SDK)</item>
 					</libraryPaths>
 					<libraries>
 						<item>libclient.lib</item>
 						<item>librpc.lib</item>
 						<item>libsupp.lib</item>
 						<item>ws2_32.lib</item>
-						<item>libp4sslstub.lib</item>
+						<item>libp4api.lib</item>
+						<item>libeay32.lib</item>
+						<item>ssleay32.lib</item>
 					</libraries>
 					<warningLevel>WlCompilerDefault</warningLevel>
 					<additionalCompilerOptions/>
@@ -16650,21 +16659,24 @@
 					<targetProfile>TpRelease</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(P4_SDK)/include/p4</item>
+						<item>$(P4_RELEASE_SDK)/include/p4</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
 						<item>NDEBUG</item>
 					</definitions>
 					<libraryPaths>
-						<item>$(P4_SDK)/lib</item>
+						<item>$(P4_RELEASE_SDK)/lib</item>
+						<item>$(OPENSSL_SDK)</item>
 					</libraryPaths>
 					<libraries>
 						<item>libclient.lib</item>
 						<item>librpc.lib</item>
 						<item>libsupp.lib</item>
 						<item>ws2_32.lib</item>
-						<item>libp4sslstub.lib</item>
+						<item>libp4api.lib</item>
+						<item>libeay32.lib</item>
+						<item>ssleay32.lib</item>
 					</libraries>
 					<warningLevel>WlCompilerDefault</warningLevel>
 					<additionalCompilerOptions/>
