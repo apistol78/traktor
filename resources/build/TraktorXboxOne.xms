@@ -4760,242 +4760,6 @@
 			</dependencies>
 		</item>
 		<item ref="/object/projects/item/dependencies/item[2]/project"/>
-		<item type="Project" version="1">
-			<enable>true</enable>
-			<name>Traktor.Model</name>
-			<sourcePath>$(TRAKTOR_HOME)/code/Model</sourcePath>
-			<configurations>
-				<item type="Configuration" version="5">
-					<name>DebugShared</name>
-					<targetFormat>TfSharedLibrary</targetFormat>
-					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(FBX_SDK)/include</item>
-						<item>$(SIMPLYGON_SDK)</item>
-					</includePaths>
-					<definitions>
-						<item>T_MODEL_EXPORT</item>
-						<item>_DEBUG</item>
-						<item>FBXSDK_NEW_API</item>
-						<item>FBXSDK_SHARED</item>
-						<item>T_USE_SIMPLYGON_SDK</item>
-					</definitions>
-					<libraryPaths>
-						<item>$(FBX_SDK)/lib/vs2008/x64</item>
-					</libraryPaths>
-					<libraries>
-						<item>fbxsdk-2013.1.lib</item>
-					</libraries>
-					<warningLevel>WlCompilerDefault</warningLevel>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-					<debugExecutable/>
-					<debugArguments/>
-					<debugEnvironment/>
-					<debugWorkingDirectory/>
-					<aggregationItems>
-						<item type="AggregationItem">
-							<sourceFile>Traktor.Model.pdb</sourceFile>
-							<targetPath>debugshared</targetPath>
-						</item>
-						<item type="AggregationItem">
-							<sourceFile>Traktor.Model.lib</sourceFile>
-							<targetPath>debugshared</targetPath>
-						</item>
-						<item type="AggregationItem">
-							<sourceFile>Traktor.Model.dll</sourceFile>
-							<targetPath>debugshared</targetPath>
-						</item>
-					</aggregationItems>
-					<consumerLibraryPath>debugshared</consumerLibraryPath>
-				</item>
-				<item type="Configuration" version="5">
-					<name>ReleaseShared</name>
-					<targetFormat>TfSharedLibrary</targetFormat>
-					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(FBX_SDK)/include</item>
-						<item>$(SIMPLYGON_SDK)</item>
-					</includePaths>
-					<definitions>
-						<item>T_MODEL_EXPORT</item>
-						<item>NDEBUG</item>
-						<item>FBXSDK_NEW_API</item>
-						<item>FBXSDK_SHARED</item>
-						<item>T_USE_SIMPLYGON_SDK</item>
-					</definitions>
-					<libraryPaths>
-						<item>$(FBX_SDK)/lib/vs2008/x64</item>
-					</libraryPaths>
-					<libraries>
-						<item>fbxsdk-2013.1.lib</item>
-					</libraries>
-					<warningLevel>WlCompilerDefault</warningLevel>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-					<debugExecutable/>
-					<debugArguments/>
-					<debugEnvironment/>
-					<debugWorkingDirectory/>
-					<aggregationItems>
-						<item type="AggregationItem">
-							<sourceFile>Traktor.Model.pdb</sourceFile>
-							<targetPath>releaseshared</targetPath>
-						</item>
-						<item type="AggregationItem">
-							<sourceFile>Traktor.Model.lib</sourceFile>
-							<targetPath>releaseshared</targetPath>
-						</item>
-						<item type="AggregationItem">
-							<sourceFile>Traktor.Model.dll</sourceFile>
-							<targetPath>releaseshared</targetPath>
-						</item>
-					</aggregationItems>
-					<consumerLibraryPath>releaseshared</consumerLibraryPath>
-				</item>
-				<item type="Configuration" version="5">
-					<name>DebugStatic</name>
-					<targetFormat>TfStaticLibrary</targetFormat>
-					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(FBX_SDK)/include</item>
-						<item>$(SIMPLYGON_SDK)</item>
-					</includePaths>
-					<definitions>
-						<item>T_STATIC</item>
-						<item>_DEBUG</item>
-						<item>FBXSDK_NEW_API</item>
-						<item>FBXSDK_SHARED</item>
-						<item>T_USE_SIMPLYGON_SDK</item>
-					</definitions>
-					<libraryPaths>
-						<item>$(FBX_SDK)/lib/vs2008/x64</item>
-					</libraryPaths>
-					<libraries>
-						<item>fbxsdk-2013.1.lib</item>
-					</libraries>
-					<warningLevel>WlCompilerDefault</warningLevel>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-					<debugExecutable/>
-					<debugArguments/>
-					<debugEnvironment/>
-					<debugWorkingDirectory/>
-					<aggregationItems>
-						<item type="AggregationItem">
-							<sourceFile>Traktor.Model.pdb</sourceFile>
-							<targetPath>debugstatic</targetPath>
-						</item>
-						<item type="AggregationItem">
-							<sourceFile>Traktor.Model.lib</sourceFile>
-							<targetPath>debugstatic</targetPath>
-						</item>
-					</aggregationItems>
-					<consumerLibraryPath>debugstatic</consumerLibraryPath>
-				</item>
-				<item type="Configuration" version="5">
-					<name>ReleaseStatic</name>
-					<targetFormat>TfStaticLibrary</targetFormat>
-					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(FBX_SDK)/include</item>
-						<item>$(SIMPLYGON_SDK)</item>
-					</includePaths>
-					<definitions>
-						<item>T_STATIC</item>
-						<item>NDEBUG</item>
-						<item>FBXSDK_NEW_API</item>
-						<item>FBXSDK_SHARED</item>
-						<item>T_USE_SIMPLYGON_SDK</item>
-					</definitions>
-					<libraryPaths>
-						<item>$(FBX_SDK)/lib/vs2008/x64</item>
-					</libraryPaths>
-					<libraries>
-						<item>fbxsdk-2013.1.lib</item>
-					</libraries>
-					<warningLevel>WlCompilerDefault</warningLevel>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-					<debugExecutable/>
-					<debugArguments/>
-					<debugEnvironment/>
-					<debugWorkingDirectory/>
-					<aggregationItems>
-						<item type="AggregationItem">
-							<sourceFile>Traktor.Model.pdb</sourceFile>
-							<targetPath>releasestatic</targetPath>
-						</item>
-						<item type="AggregationItem">
-							<sourceFile>Traktor.Model.lib</sourceFile>
-							<targetPath>releasestatic</targetPath>
-						</item>
-					</aggregationItems>
-					<consumerLibraryPath>releasestatic</consumerLibraryPath>
-				</item>
-			</configurations>
-			<items>
-				<item type="File">
-					<fileName>*.*</fileName>
-					<items/>
-				</item>
-				<item type="Filter">
-					<name>Formats</name>
-					<items>
-						<item type="File">
-							<fileName>Formats/*.*</fileName>
-							<items/>
-						</item>
-					</items>
-				</item>
-				<item type="Filter">
-					<name>Operations</name>
-					<items>
-						<item type="File">
-							<fileName>Operations/*.*</fileName>
-							<items/>
-						</item>
-					</items>
-				</item>
-				<item type="File">
-					<fileName>$(SIMPLYGON_SDK)/SimplygonSDKLoader.cpp</fileName>
-					<items/>
-				</item>
-			</items>
-			<dependencies>
-				<item type="ProjectDependency" version="3">
-					<inheritIncludePaths>true</inheritIncludePaths>
-					<link>LnkYes</link>
-					<project ref="/object/projects/item/dependencies/item/project"/>
-				</item>
-				<item type="ExternalDependency" version="3">
-					<inheritIncludePaths>true</inheritIncludePaths>
-					<link>LnkYes</link>
-					<solutionFileName>ExternXboxOne.xms</solutionFileName>
-					<projectName>Extern.lwObject</projectName>
-				</item>
-				<item type="ProjectDependency" version="3">
-					<inheritIncludePaths>true</inheritIncludePaths>
-					<link>LnkYes</link>
-					<project ref="/object/projects/item/dependencies/item[1]/project/dependencies/item[3]/project/dependencies/item[1]/project"/>
-				</item>
-				<item type="ProjectDependency" version="3">
-					<inheritIncludePaths>true</inheritIncludePaths>
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[5]"/>
-				</item>
-				<item type="ExternalDependency" version="3">
-					<inheritIncludePaths>true</inheritIncludePaths>
-					<link>LnkYes</link>
-					<solutionFileName>ExternXboxOne.xms</solutionFileName>
-					<projectName>Extern.RectangleBinPack</projectName>
-				</item>
-			</dependencies>
-		</item>
 		<item ref="/object/projects/item[6]/dependencies/item[2]/project"/>
 		<item ref="/object/projects/item/dependencies/item[5]/project"/>
 		<item type="Project" version="1">
@@ -5654,7 +5418,7 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[19]"/>
+					<project ref="/object/projects/item[18]"/>
 				</item>
 				<item type="ExternalDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
@@ -7177,12 +6941,12 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[18]"/>
+					<project ref="/object/projects/item[17]"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[19]"/>
+					<project ref="/object/projects/item[18]"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
@@ -7192,22 +6956,22 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
+					<project ref="/object/projects/item[21]"/>
+				</item>
+				<item type="ProjectDependency" version="3">
+					<inheritIncludePaths>true</inheritIncludePaths>
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[22]"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
+					<project ref="/object/projects/item[32]"/>
+				</item>
+				<item type="ProjectDependency" version="3">
+					<inheritIncludePaths>true</inheritIncludePaths>
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[23]"/>
-				</item>
-				<item type="ProjectDependency" version="3">
-					<inheritIncludePaths>true</inheritIncludePaths>
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[33]"/>
-				</item>
-				<item type="ProjectDependency" version="3">
-					<inheritIncludePaths>true</inheritIncludePaths>
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[24]"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
@@ -7755,7 +7519,7 @@
 							<item type="ProjectDependency" version="3">
 								<inheritIncludePaths>true</inheritIncludePaths>
 								<link>LnkYes</link>
-								<project ref="/object/projects/item[18]"/>
+								<project ref="/object/projects/item[17]"/>
 							</item>
 						</dependencies>
 					</project>
@@ -7924,7 +7688,7 @@
 							<item type="ProjectDependency" version="3">
 								<inheritIncludePaths>true</inheritIncludePaths>
 								<link>LnkYes</link>
-								<project ref="/object/projects/item[19]"/>
+								<project ref="/object/projects/item[18]"/>
 							</item>
 							<item type="ProjectDependency" version="3">
 								<inheritIncludePaths>true</inheritIncludePaths>
@@ -7936,7 +7700,7 @@
 				</item>
 			</dependencies>
 		</item>
-		<item ref="/object/projects/item[35]/dependencies/item[20]/project"/>
+		<item ref="/object/projects/item[34]/dependencies/item[20]/project"/>
 		<item type="Project" version="1">
 			<enable>true</enable>
 			<name>Traktor.Online.Local</name>
@@ -8090,7 +7854,7 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[35]/dependencies/item[20]/project"/>
+					<project ref="/object/projects/item[34]/dependencies/item[20]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
@@ -8105,7 +7869,7 @@
 			</dependencies>
 		</item>
 		<item ref="/object/projects/item/dependencies/item[5]/project/dependencies/item[4]/project"/>
-		<item ref="/object/projects/item[35]/dependencies/item[24]/project"/>
+		<item ref="/object/projects/item[34]/dependencies/item[24]/project"/>
 		<item type="Project" version="1">
 			<enable>true</enable>
 			<name>Traktor.Amalgam.Game.App</name>
@@ -8258,7 +8022,7 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[35]"/>
+					<project ref="/object/projects/item[34]"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
@@ -8268,11 +8032,11 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[19]"/>
+					<project ref="/object/projects/item[18]"/>
 				</item>
 			</dependencies>
 		</item>
-		<item ref="/object/projects/item[35]/dependencies/item[22]/project"/>
+		<item ref="/object/projects/item[34]/dependencies/item[22]/project"/>
 		<item type="Project" version="1">
 			<enable>true</enable>
 			<name>Traktor.Online.Lan</name>
@@ -8431,7 +8195,7 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[35]/dependencies/item[20]/project"/>
+					<project ref="/object/projects/item[34]/dependencies/item[20]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
@@ -8440,7 +8204,7 @@
 				</item>
 			</dependencies>
 		</item>
-		<item ref="/object/projects/item[35]/dependencies/item[25]/project"/>
+		<item ref="/object/projects/item[34]/dependencies/item[25]/project"/>
 		<item type="Project" version="1">
 			<enable>true</enable>
 			<name>Traktor.Svg</name>
