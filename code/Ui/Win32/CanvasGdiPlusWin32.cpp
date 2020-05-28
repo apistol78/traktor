@@ -165,7 +165,7 @@ int32_t CanvasGdiPlusWin32::getAdvance(Window& hWnd, wchar_t ch, wchar_t next) c
 {
 	if (m_hDC == NULL)
 	{
-		HDC hDC = GetDC(hWnd);
+		HDC hDC = GetDC(NULL);
 
 		Gdiplus::Graphics graphics(hDC);
 		Gdiplus::Font font(hDC, hWnd.getFont());
@@ -193,8 +193,7 @@ int32_t CanvasGdiPlusWin32::getAdvance(Window& hWnd, wchar_t ch, wchar_t next) c
 		Gdiplus::RectF rc;
 		region.GetBounds(&rc, &graphics);
 
-		ReleaseDC(hWnd, hDC);
-
+		ReleaseDC(NULL, hDC);
 		return rc.Width;
 	}
 	else	// Inside begin/end thus use current paint context.
@@ -207,7 +206,7 @@ int32_t CanvasGdiPlusWin32::getLineSpacing(Window& hWnd) const
 {
 	if (m_hDC == NULL)
 	{
-		HDC hDC = GetDC(hWnd);
+		HDC hDC = GetDC(NULL);
 
 		Gdiplus::Font font(hDC, hWnd.getFont());
 		Gdiplus::FontFamily fontFamily;
@@ -215,7 +214,7 @@ int32_t CanvasGdiPlusWin32::getLineSpacing(Window& hWnd) const
 
 		int32_t lineSpacing = font.GetSize() * fontFamily.GetLineSpacing(FontStyleRegular) / fontFamily.GetEmHeight(FontStyleRegular);
 
-		ReleaseDC(hWnd, hDC);
+		ReleaseDC(NULL, hDC);
 		return lineSpacing;
 	}
 	else	// Inside begin/end thus use current paint context.
@@ -230,7 +229,7 @@ Size CanvasGdiPlusWin32::getExtent(Window& hWnd, const std::wstring& text) const
 	{
 		Gdiplus::RectF boundingBox;
 
-		HDC hDC = GetDC(hWnd);
+		HDC hDC = GetDC(NULL);
 
 		Gdiplus::Graphics graphics(hDC);
 		Gdiplus::Font font(hDC, hWnd.getFont());
@@ -248,7 +247,7 @@ Size CanvasGdiPlusWin32::getExtent(Window& hWnd, const std::wstring& text) const
 			&boundingBox
 		);
 
-		ReleaseDC(hWnd, hDC);
+		ReleaseDC(NULL, hDC);
 		return Size(int(boundingBox.Width + 1), int(boundingBox.Height + 4));
 	}
 	else	// Inside begin/end thus use current paint context.
