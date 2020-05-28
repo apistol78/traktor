@@ -22,17 +22,17 @@ const int c_minimumSplit = c_gripperDim + 64;
 template < typename EventType >
 void addEventHandlers(Widget* widget, ui::EventSubject::IEventHandler* eventHandler)
 {
-	widget->addEventHandler< EventType >(eventHandler);
-	for (Ref< Widget > child = widget->getFirstChild(); child; child = child->getNextSibling())
-		addEventHandlers< EventType >(child, eventHandler);
+	//widget->addEventHandler< EventType >(eventHandler);
+	//for (Ref< Widget > child = widget->getFirstChild(); child; child = child->getNextSibling())
+	//	addEventHandlers< EventType >(child, eventHandler);
 }
 
 template < typename EventType >
 void removeEventHandlers(Widget* widget, ui::EventSubject::IEventHandler* eventHandler)
 {
-	widget->removeEventHandler< EventType >(eventHandler);
-	for (Ref< Widget > child = widget->getFirstChild(); child; child = child->getNextSibling())
-		removeEventHandlers< EventType >(child, eventHandler);
+	//widget->removeEventHandler< EventType >(eventHandler);
+	//for (Ref< Widget > child = widget->getFirstChild(); child; child = child->getNextSibling())
+	//	removeEventHandlers< EventType >(child, eventHandler);
 }
 
 int calculateRealSplit(const Rect& rc, int split, bool vertical)

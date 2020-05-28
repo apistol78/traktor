@@ -188,6 +188,13 @@ bool ScriptEditorPage::create(ui::Container* parent)
 	if (!m_edit->create(containerEdit, L"", ui::WsDoubleBuffer | ui::SyntaxRichEdit::WsNoClipboard))
 		return false;
 	m_edit->addImage(new ui::StyleBitmap(L"Script.Breakpoint"), 1);
+	m_edit->addEventHandler< ui::ContentChangeEvent >(this, &ScriptEditorPage::eventScriptChange);
+	m_edit->addEventHandler< ui::MouseButtonDownEvent >(this, &ScriptEditorPage::eventScriptButtonDown);
+	m_edit->addEventHandler< ui::MouseButtonUpEvent >(this, &ScriptEditorPage::eventScriptButtonUp);
+
+	std::wstring font = m_editor->getSettings()->getProperty< std::wstring >(L"Editor.Font", L"Consolas");
+	int32_t fontSize = m_editor->getSettings()->getProperty< int32_t >(L"Editor.FontSize", 11);
+	m_edit->setFont(ui::Font(font, fontSize));
 
 	if (m_script)
 	{
@@ -223,14 +230,6 @@ bool ScriptEditorPage::create(ui::Container* parent)
 		else
 			log::error << L"Unable to open external script (" << m_scriptAsset->getFileName().getOriginal() << L")" << Endl;
 	}
-
-	std::wstring font = m_editor->getSettings()->getProperty< std::wstring >(L"Editor.Font", L"Consolas");
-	int32_t fontSize = m_editor->getSettings()->getProperty< int32_t >(L"Editor.FontSize", 11);
-	m_edit->setFont(ui::Font(font, fontSize));
-
-	m_edit->addEventHandler< ui::ContentChangeEvent >(this, &ScriptEditorPage::eventScriptChange);
-	m_edit->addEventHandler< ui::MouseButtonDownEvent >(this, &ScriptEditorPage::eventScriptButtonDown);
-	m_edit->addEventHandler< ui::MouseButtonUpEvent >(this, &ScriptEditorPage::eventScriptButtonUp);
 
 	const ui::StyleSheet* ss = ui::Application::getInstance()->getStyleSheet();
 	m_debugLineAttribute = m_edit->addBackgroundAttribute(ss->getColor(this, L"background-debug-line"));
