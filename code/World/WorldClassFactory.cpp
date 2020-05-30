@@ -142,6 +142,22 @@ IEntityComponent* Entity_getComponent(Entity* self, const TypeInfo& componentTyp
 	return self->getComponent(componentType);
 }
 
+RefArray< Entity > FacadeComponent_entities(FacadeComponent* self)
+{
+	RefArray< Entity > entities;
+	for (auto entity : self->getEntities())
+		entities.push_back(entity.second);
+	return entities;
+}
+
+RefArray< Entity > FacadeComponent_visibleEntities(FacadeComponent* self)
+{
+	RefArray< Entity > entities;
+	for (auto entity : self->getVisibleEntities())
+		entities.push_back(entity);
+	return entities;
+}
+
 		}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.WorldClassFactory", 0, WorldClassFactory, IRuntimeClassFactory)
@@ -217,21 +233,21 @@ void WorldClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 
 	auto classGroupComponent = new AutoRuntimeClass< GroupComponent >();
 	classGroupComponent->addConstructor();
+	classGroupComponent->addProperty("entities", &GroupComponent::getEntities);
 	classGroupComponent->addMethod("addEntity", &GroupComponent::addEntity);
 	classGroupComponent->addMethod("removeEntity", &GroupComponent::removeEntity);
 	classGroupComponent->addMethod("removeAllEntities", &GroupComponent::removeAllEntities);
-	classGroupComponent->addMethod("getEntities", &GroupComponent::getEntities);
 	classGroupComponent->addMethod("getEntitiesOf", &GroupComponent_getEntitiesOf);
 	classGroupComponent->addMethod("getFirstEntityOf", &GroupComponent_getFirstEntityOf);
 	registrar->registerClass(classGroupComponent);
 
 	auto classGroupEntity = new AutoRuntimeClass< GroupEntity >();
 	classGroupEntity->addConstructor();
-	classGroupEntity->addConstructor< const Transform&/*, uint32_t*/ >();
+	classGroupEntity->addConstructor< const Transform& >();
+	classGroupEntity->addProperty("entities", &GroupEntity::getEntities);
 	classGroupEntity->addMethod("addEntity", &GroupEntity::addEntity);
 	classGroupEntity->addMethod("removeEntity", &GroupEntity::removeEntity);
 	classGroupEntity->addMethod("removeAllEntities", &GroupEntity::removeAllEntities);
-	classGroupEntity->addMethod("getEntities", &GroupEntity::getEntities);
 	classGroupEntity->addMethod("getEntitiesOf", &GroupEntity_getEntitiesOf);
 	classGroupEntity->addMethod("getFirstEntityOf", &GroupEntity_getFirstEntityOf);
 	registrar->registerClass(classGroupEntity);
@@ -305,6 +321,8 @@ void WorldClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	registrar->registerClass(classFacadeComponentData);
 
 	auto classFacadeComponent = new AutoRuntimeClass< FacadeComponent >();
+	classFacadeComponent->addProperty("entities", &FacadeComponent_entities);
+	classFacadeComponent->addProperty("visibleEntities", &FacadeComponent_visibleEntities);
 	classFacadeComponent->addMethod("addEntity", &FacadeComponent::addEntity);
 	classFacadeComponent->addMethod("removeEntity", &FacadeComponent::removeEntity);
 	classFacadeComponent->addMethod("show", &FacadeComponent::show);
