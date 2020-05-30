@@ -42,7 +42,7 @@ Ref< Model > ModelFormatBlend::read(const Path& filePath, const std::wstring& fi
 	// Determine working path.
 	std::wstring scratchPath = OS::getInstance().getWritableFolderPath() + L"/Traktor/Blender";
 	if (!FileSystem::getInstance().makeAllDirectories(scratchPath))
-		return false;
+		return nullptr;
 
 	// Copy source model into working path.
 	Ref< IStream > file = openStream(filePath);
@@ -62,7 +62,7 @@ Ref< Model > ModelFormatBlend::read(const Path& filePath, const std::wstring& fi
 	// Create export script.
 	file = FileSystem::getInstance().open(scratchPath + L"/__export__.py", File::FmWrite);
 	if (!file)
-		return false;
+		return nullptr;
 
 	FileOutputStream os(file, new Utf8Encoding());
 	os << L"import bpy" << Endl;
