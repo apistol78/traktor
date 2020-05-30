@@ -1,4 +1,5 @@
 #include "Core/Class/AutoRuntimeClass.h"
+#include "Core/Class/BoxedAllocator.h"
 #include "Core/Class/Boxes/BoxedAlignedVector.h"
 #include "Core/Class/Boxes/BoxedVector4.h"
 #include "Core/Class/IRuntimeClassRegistrar.h"
@@ -49,27 +50,23 @@ public:
 		m_programParameters = programParameters;
 	}
 
-	void setFloatParameter(const std::wstring& name, float param)
+	void setFloatParameter(const render::handle_t handle, float param)
 	{
-		auto handle = render::getParameterHandle(name);
 		m_programParameters->setFloatParameter(handle, param);
 	}
 
-	void setVectorParameter(const std::wstring& name, const Vector4& param)
+	void setVectorParameter(const render::handle_t handle, const Vector4& param)
 	{
-		auto handle = render::getParameterHandle(name);
 		m_programParameters->setVectorParameter(handle, param);
 	}
 
-	void setVectorArrayParameter(const std::wstring& name, const AlignedVector< Vector4 >& param)
+	void setVectorArrayParameter(const render::handle_t handle, const AlignedVector< Vector4 >& param)
 	{
-		auto handle = render::getParameterHandle(name);
 		m_programParameters->setVectorArrayParameter(handle, param.c_ptr(), (int)param.size());
 	}
 
-	void setTextureParameter(const std::wstring& name, render::ITexture* texture)
+	void setTextureParameter(const render::handle_t handle, render::ITexture* texture)
 	{
-		auto handle = render::getParameterHandle(name);
 		m_programParameters->setTextureParameter(handle, texture);
 	}
 
@@ -81,6 +78,18 @@ public:
 private:
 	render::ProgramParameters* m_programParameters;
 };
+
+BoxedAllocator< BoxedProgramParameters, 64 > s_allocBoxedProgramParameters;
+
+void* BoxedProgramParameters::operator new (size_t size)
+{
+	return s_allocBoxedProgramParameters.alloc();
+}
+
+void BoxedProgramParameters::operator delete (void* ptr)
+{
+	s_allocBoxedProgramParameters.free(ptr);
+}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.mesh.ProgramParameters", BoxedProgramParameters, Object)
 

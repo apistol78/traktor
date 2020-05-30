@@ -49,6 +49,11 @@ Ref< BoxedDisplayMode > IRenderSystem_getCurrentDisplayMode(IRenderSystem* this_
 	return new BoxedDisplayMode(this_->getCurrentDisplayMode());
 }
 
+handle_t IRenderSystem_getHandle(const std::wstring& id)
+{
+	return getParameterHandle(id);
+}
+
 		}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.RenderClassFactory", 0, RenderClassFactory, IRuntimeClassFactory)
@@ -82,6 +87,7 @@ void RenderClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	registrar->registerClass(classIVolumeTexture);
 
 	auto classIRenderSystem = new AutoRuntimeClass< IRenderSystem >();
+	classIRenderSystem->addStaticMethod("getParameterHandle", &IRenderSystem_getHandle);
 	classIRenderSystem->addProperty("displayModeCount", &IRenderSystem::getDisplayModeCount);
 	classIRenderSystem->addProperty("currentDisplayMode", &IRenderSystem_getCurrentDisplayMode);
 	classIRenderSystem->addProperty("displayAspectRatio", &IRenderSystem::getDisplayAspectRatio);

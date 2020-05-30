@@ -69,8 +69,6 @@ StageState::UpdateResult StageState::update(IStateManager* stateManager, const U
 
 StageState::BuildResult StageState::build(uint32_t frame, const UpdateInfo& info)
 {
-	T_PROFILER_SCOPE(L"Stage build");
-
 	render::RenderContext* renderContext = m_frames[frame].renderContext;
 	T_FATAL_ASSERT(renderContext);
 
@@ -82,16 +80,25 @@ StageState::BuildResult StageState::build(uint32_t frame, const UpdateInfo& info
 	int32_t height = renderView->getHeight();
 
 	// Setup stage passes.
-	if (!m_stage->setup(info, *m_renderGraph))
-		return BrFailed;
+	{
+		T_PROFILER_SCOPE(L"Stage setup");
+		if (!m_stage->setup(info, *m_renderGraph))
+			return BrFailed;
+	}
 
 	// Validate render graph.
-	if (!m_renderGraph->validate())
-		return BrFailed;
+	{
+		T_PROFILER_SCOPE(L"Stage validate");
+		if (!m_renderGraph->validate())
+			return BrFailed;
+	}
 
 	// Build render context.
-	renderContext->flush();
-	m_renderGraph->build(renderContext, width, height);		
+	{
+		T_PROFILER_SCOPE(L"Stage build");
+		renderContext->flush();
+		m_renderGraph->build(renderContext, width, height);		
+	}
 	return BrOk;
 }
 
