@@ -55,6 +55,8 @@ public:
 
     bool isVisible(const std::wstring& id);
 
+	const SmallMap< std::wstring, Ref< Entity > >& getEntities() const { return m_entities; }
+
     const SmallSet< Entity* >& getVisibleEntities() const { return m_visibleEntities; }
 
 private:

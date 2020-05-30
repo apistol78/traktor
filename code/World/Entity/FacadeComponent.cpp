@@ -1,5 +1,6 @@
 #include "World/Entity.h"
 #include "World/Entity/FacadeComponent.h"
+#include "World/Entity/ScriptComponent.h"
 
 namespace traktor
 {
@@ -82,7 +83,14 @@ bool FacadeComponent::show(const std::wstring& id)
 	auto it = m_entities.find(id);
 	if (it == m_entities.end())
 		return false;
-	m_visibleEntities.insert(it->second);
+
+	if (m_visibleEntities.insert(it->second))
+	{
+		auto script = it->second->getComponent< ScriptComponent >();
+		if (script)
+			script->execute("show");
+	}
+
 	return true;
 }
 
@@ -97,7 +105,14 @@ bool FacadeComponent::hide(const std::wstring& id)
 	auto it = m_entities.find(id);
 	if (it == m_entities.end())
 		return false;
-	m_visibleEntities.erase(it->second);
+
+	if (m_visibleEntities.erase(it->second))
+	{
+		auto script = it->second->getComponent< ScriptComponent >();
+		if (script)
+			script->execute("hide");
+	}
+
 	return true;
 }
 

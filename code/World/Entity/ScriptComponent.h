@@ -40,11 +40,15 @@ public:
 
 	virtual void update(const UpdateParams& update) override final;
 
+	void execute(const char* method);
+
 private:
 	Entity* m_owner;
 	resource::Proxy< IRuntimeClass > m_class;
 	Ref< ITypedObject > m_object;
 	Ref< const IRuntimeDispatch > m_methodUpdate;
+
+	bool validate();
 };
 
 	}
