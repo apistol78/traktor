@@ -75,6 +75,10 @@ public:
 		m_programParameters->setStencilReference(stencilReference);
 	}
 
+	void* operator new (size_t size);
+
+	void operator delete (void* ptr);
+
 private:
 	render::ProgramParameters* m_programParameters;
 };
