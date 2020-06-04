@@ -1,0 +1,754 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.render.ShaderGraph">
+	<nodes>
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+			<id>{2C5B1A15-D04F-664E-8A38-97E02FBE727A}</id>
+			<comment/>
+			<position>
+				<first>481</first>
+				<second>-66</second>
+			</position>
+			<fragmentGuid>{4AC7418D-FF43-FE40-ADDC-33A162636FDC}</fragmentGuid>
+			<inputPins>
+				<item>
+					<id>{265F5202-0985-B941-B026-F421DFDCED3C}</id>
+					<name>T_TexCoord0</name>
+					<optional>false</optional>
+				</item>
+				<item>
+					<id>{082395BD-AA55-2B4D-B9C5-3DBB1F5B9802}</id>
+					<name>T_TexCoord1</name>
+					<optional>false</optional>
+				</item>
+				<item>
+					<id>{45EE435A-4AC0-A746-8CA5-89C2DCDCB934}</id>
+					<name>T_VertexColor</name>
+					<optional>false</optional>
+				</item>
+			</inputPins>
+			<outputPins>
+				<item>
+					<id>{F4B09EBA-C01C-124B-927E-B4589CDFFFED}</id>
+					<name>T_DiffuseColor</name>
+				</item>
+			</outputPins>
+			<values/>
+		</item>
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+			<id>{2ED0BE69-9300-ED4D-9CB5-1245C5218DE0}</id>
+			<comment/>
+			<position>
+				<first>481</first>
+				<second>525</second>
+			</position>
+			<fragmentGuid>{77489017-FBE8-4A4F-B11A-FDE48C69E021}</fragmentGuid>
+			<inputPins>
+				<item>
+					<id>{A1BD7081-7260-FD44-A633-190BACC07A1B}</id>
+					<name>T_TexCoord0</name>
+					<optional>false</optional>
+				</item>
+				<item>
+					<id>{2CF107FE-DF90-2745-B231-32F6A03CA23E}</id>
+					<name>T_TexCoord1</name>
+					<optional>false</optional>
+				</item>
+				<item>
+					<id>{947AA0F9-60F6-E34A-B2AD-6D133425EB9B}</id>
+					<name>T_ViewBinormal</name>
+					<optional>false</optional>
+				</item>
+				<item>
+					<id>{A8B8CCDD-BD4E-8A45-8355-86F7958F7C48}</id>
+					<name>T_ViewNormal</name>
+					<optional>false</optional>
+				</item>
+				<item>
+					<id>{6D3E40F6-FC88-EB46-A0F6-AF8807F4BDDA}</id>
+					<name>T_ViewPosition</name>
+					<optional>false</optional>
+				</item>
+				<item>
+					<id>{3A154CB7-54D1-7E48-BF6E-A50A59320649}</id>
+					<name>T_ViewTangent</name>
+					<optional>false</optional>
+				</item>
+			</inputPins>
+			<outputPins>
+				<item>
+					<id>{66F62FA9-CA8C-C741-8D8D-D9E2B2409E6A}</id>
+					<name>T_ViewBinormal</name>
+				</item>
+				<item>
+					<id>{0F9656A3-52F8-BA49-922A-083B227CEC89}</id>
+					<name>T_ViewNormal</name>
+				</item>
+				<item>
+					<id>{B8496494-4662-8944-B86F-DE09D25832E1}</id>
+					<name>T_ViewPosition</name>
+				</item>
+				<item>
+					<id>{B4DCFDCF-602A-AA42-A983-2A96C1E5A990}</id>
+					<name>T_ViewTangent</name>
+				</item>
+			</outputPins>
+			<values/>
+		</item>
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+			<id>{9855CB64-63DB-D04E-87B5-6274094F5663}</id>
+			<comment/>
+			<position>
+				<first>66</first>
+				<second>142</second>
+			</position>
+			<fragmentGuid>{AEBE83FB-68D4-9D45-A672-0A8487A197CD}</fragmentGuid>
+			<inputPins/>
+			<outputPins>
+				<item>
+					<id>{CEB97E6D-A05A-4340-BD0A-CE6070940C2B}</id>
+					<name>T_Color</name>
+				</item>
+				<item>
+					<id>{8FFBFC6B-2B32-8D4A-A4EB-0BB18EA60079}</id>
+					<name>T_Position</name>
+				</item>
+				<item>
+					<id>{AE5867C5-3287-CD46-848D-7AF03E4617CF}</id>
+					<name>T_TexCoord0</name>
+				</item>
+				<item>
+					<id>{17F58DC9-C4AC-4346-9A00-7DF9E426EF3A}</id>
+					<name>T_TexCoord1</name>
+				</item>
+				<item>
+					<id>{944D48B5-26D7-5647-9058-D9A1A473CFF1}</id>
+					<name>T_ViewBinormal</name>
+				</item>
+				<item>
+					<id>{E9753668-472E-2F46-89D9-190EB5A3044F}</id>
+					<name>T_ViewNormal</name>
+				</item>
+				<item>
+					<id>{A21A3F82-DDA6-A541-9CDD-7A1210BA2C45}</id>
+					<name>T_ViewPosition</name>
+				</item>
+				<item>
+					<id>{3F6B1E16-CFCD-7A4D-91E8-4E33B1741B23}</id>
+					<name>T_ViewTangent</name>
+				</item>
+				<item>
+					<id>{2D07DFB8-DE2C-8145-97EA-12320C2FBDCE}</id>
+					<name>T_ViewVelocity</name>
+				</item>
+			</outputPins>
+			<values/>
+		</item>
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+			<id>{3251888A-1033-5048-A806-52F97FB71867}</id>
+			<comment/>
+			<position>
+				<first>481</first>
+				<second>27</second>
+			</position>
+			<fragmentGuid>{1E35F0A7-23A9-EA49-A518-125A77BAD564}</fragmentGuid>
+			<inputPins>
+				<item>
+					<id>{F9272C05-7D08-3141-A7D4-CBDE462A9728}</id>
+					<name>T_TexCoord0</name>
+					<optional>false</optional>
+				</item>
+				<item>
+					<id>{F6DDA384-8418-9344-9F9C-4D3713812035}</id>
+					<name>T_TexCoord1</name>
+					<optional>false</optional>
+				</item>
+			</inputPins>
+			<outputPins>
+				<item>
+					<id>{E62A8A7F-3A89-DE45-B4BF-F874F1971FDC}</id>
+					<name>T_Emissive</name>
+				</item>
+			</outputPins>
+			<values/>
+		</item>
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+			<id>{CAE65A0C-33E3-2E41-BC42-9AAD980EE132}</id>
+			<comment/>
+			<position>
+				<first>481</first>
+				<second>447</second>
+			</position>
+			<fragmentGuid>{052265E6-233C-754C-A297-9369803ADB88}</fragmentGuid>
+			<inputPins>
+				<item>
+					<id>{884E8DF3-305B-A942-9CBA-10C152BA5F50}</id>
+					<name>T_TexCoord0</name>
+					<optional>false</optional>
+				</item>
+				<item>
+					<id>{14DAD9EC-801E-AA4D-9213-15138EBBB0F9}</id>
+					<name>T_TexCoord1</name>
+					<optional>false</optional>
+				</item>
+			</inputPins>
+			<outputPins>
+				<item>
+					<id>{8A2A237F-D870-E045-9FCE-2243FBBE172B}</id>
+					<name>T_Transparency</name>
+				</item>
+			</outputPins>
+			<values/>
+		</item>
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+			<id>{8A603EBC-4BAF-0F4B-B571-9DDC6796C4BE}</id>
+			<comment/>
+			<position>
+				<first>481</first>
+				<second>105</second>
+			</position>
+			<fragmentGuid>{2449B257-5B2A-5242-86F9-32105E1F1771}</fragmentGuid>
+			<inputPins>
+				<item>
+					<id>{6720CA68-57EE-2244-839A-47C857E2387E}</id>
+					<name>T_TexCoord0</name>
+					<optional>false</optional>
+				</item>
+				<item>
+					<id>{50D52072-8CDD-3442-8D32-9A9649419684}</id>
+					<name>T_TexCoord1</name>
+					<optional>false</optional>
+				</item>
+				<item>
+					<id>{3263A226-A040-DF49-804F-26A68C0346DB}</id>
+					<name>T_ViewNormal</name>
+					<optional>false</optional>
+				</item>
+				<item>
+					<id>{D839A2B6-AA76-44F5-A8C6-A43D99EAF91E}</id>
+					<name>T_ViewPosition</name>
+					<optional>false</optional>
+				</item>
+			</inputPins>
+			<outputPins>
+				<item>
+					<id>{A5352BEE-ABAF-0045-96F8-0D340D11ED4A}</id>
+					<name>T_Irradiance</name>
+				</item>
+			</outputPins>
+			<values/>
+		</item>
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+			<id>{C701AB70-A758-0F47-8EE8-DBD9C4CD89F3}</id>
+			<comment/>
+			<position>
+				<first>996</first>
+				<second>156</second>
+			</position>
+			<fragmentGuid>{6DA4BE0A-BE19-4440-9B08-FC3FD1FFECDC}</fragmentGuid>
+			<inputPins>
+				<item>
+					<id>{8F02DF8B-04C2-3A4D-B01A-BCFEE8743B5D}</id>
+					<name>T_SurfaceColor</name>
+					<optional>false</optional>
+				</item>
+				<item>
+					<id>{F2F3D6AD-BADD-2A42-8297-A6FF361F03F9}</id>
+					<name>T_Emissive</name>
+					<optional>true</optional>
+				</item>
+				<item>
+					<id>{3873E558-13D0-C64A-8D21-E7165578246F}</id>
+					<name>T_Irradiance</name>
+					<optional>true</optional>
+				</item>
+				<item>
+					<id>{FCD5D007-47A3-F142-A150-E10536DC9338}</id>
+					<name>T_Metalness</name>
+					<optional>true</optional>
+				</item>
+				<item>
+					<id>{D2F21B79-F99E-3049-9BFE-587CC71EBD6E}</id>
+					<name>T_Roughness</name>
+					<optional>true</optional>
+				</item>
+				<item>
+					<id>{CA1399CE-CEED-5143-9272-FF0D174E484D}</id>
+					<name>T_Specular</name>
+					<optional>true</optional>
+				</item>
+				<item>
+					<id>{F104C1DD-C8E6-5F4B-B417-3F682412E174}</id>
+					<name>T_Transparency</name>
+					<optional>true</optional>
+				</item>
+			</inputPins>
+			<outputPins/>
+			<values>
+				<item>
+					<first>T_Emissive</first>
+					<second>0</second>
+				</item>
+				<item>
+					<first>T_Metalness</first>
+					<second>0</second>
+				</item>
+				<item>
+					<first>T_Roughness</first>
+					<second>0</second>
+				</item>
+				<item>
+					<first>T_Specular</first>
+					<second>0</second>
+				</item>
+				<item>
+					<first>T_Transparency</first>
+					<second>0</second>
+				</item>
+			</values>
+		</item>
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+			<id>{6D47FF33-1F1C-D24A-BBE2-EC01E27722B5}</id>
+			<comment/>
+			<position>
+				<first>481</first>
+				<second>291</second>
+			</position>
+			<fragmentGuid>{709A171A-6050-1249-AAA7-5AAE428B956C}</fragmentGuid>
+			<inputPins>
+				<item>
+					<id>{4ED91E46-072F-2C4A-BDD6-AE170BFFC68C}</id>
+					<name>T_TexCoord0</name>
+					<optional>false</optional>
+				</item>
+				<item>
+					<id>{497B3C86-9F5A-AF4F-8AD7-0396265DA354}</id>
+					<name>T_TexCoord1</name>
+					<optional>false</optional>
+				</item>
+			</inputPins>
+			<outputPins>
+				<item>
+					<id>{990E03F4-6CD9-4548-B2FD-84D42D5685B0}</id>
+					<name>T_Roughness</name>
+				</item>
+			</outputPins>
+			<values/>
+		</item>
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+			<id>{64D70C96-0D74-5F4B-9F56-F3D766A55A23}</id>
+			<comment/>
+			<position>
+				<first>481</first>
+				<second>213</second>
+			</position>
+			<fragmentGuid>{43E7FEE9-043B-A242-B031-BC274995A3A8}</fragmentGuid>
+			<inputPins>
+				<item>
+					<id>{4ED91E46-072F-2C4A-BDD6-AE170BFFC68C}</id>
+					<name>T_TexCoord0</name>
+					<optional>false</optional>
+				</item>
+				<item>
+					<id>{497B3C86-9F5A-AF4F-8AD7-0396265DA354}</id>
+					<name>T_TexCoord1</name>
+					<optional>false</optional>
+				</item>
+			</inputPins>
+			<outputPins>
+				<item>
+					<id>{0CECD540-DED6-5845-A81A-8A2CA3F1BB96}</id>
+					<name>T_Metalness</name>
+				</item>
+			</outputPins>
+			<values/>
+		</item>
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+			<id>{FC560390-8F6F-4F42-A358-70AC28D3C7B8}</id>
+			<comment/>
+			<position>
+				<first>481</first>
+				<second>369</second>
+			</position>
+			<fragmentGuid>{78C32C63-EE8D-AB4C-B2CF-E3FF242980DA}</fragmentGuid>
+			<inputPins>
+				<item>
+					<id>{4ED91E46-072F-2C4A-BDD6-AE170BFFC68C}</id>
+					<name>T_TexCoord0</name>
+					<optional>false</optional>
+				</item>
+				<item>
+					<id>{497B3C86-9F5A-AF4F-8AD7-0396265DA354}</id>
+					<name>T_TexCoord1</name>
+					<optional>false</optional>
+				</item>
+			</inputPins>
+			<outputPins>
+				<item>
+					<id>{990E03F4-6CD9-4548-B2FD-84D42D5685B0}</id>
+					<name>T_Specular</name>
+				</item>
+			</outputPins>
+			<values/>
+		</item>
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+			<id>{EE0C8176-54FB-CE4C-89A6-C3C03B0F23B8}</id>
+			<comment/>
+			<position>
+				<first>1007</first>
+				<second>380</second>
+			</position>
+			<fragmentGuid>{E8573411-AD4D-EA43-9593-5433C6598063}</fragmentGuid>
+			<inputPins>
+				<item>
+					<id>{0BCBD228-70F4-984B-B71D-34D4007143D4}</id>
+					<name>ViewNormal</name>
+					<optional>false</optional>
+				</item>
+				<item>
+					<id>{2516E79C-CCF8-3F42-9481-D5ED77016424}</id>
+					<name>ViewPosition</name>
+					<optional>false</optional>
+				</item>
+				<item>
+					<id>{2E88C633-F2D2-9641-BD25-02B259FF8DBE}</id>
+					<name>ViewVelocity</name>
+					<optional>false</optional>
+				</item>
+			</inputPins>
+			<outputPins/>
+			<values/>
+		</item>
+	</nodes>
+	<edges>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[2]"/>
+				<name>T_ViewBinormal</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[1]"/>
+				<name>T_ViewBinormal</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[2]"/>
+				<name>T_ViewNormal</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[1]"/>
+				<name>T_ViewNormal</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[2]"/>
+				<name>T_ViewPosition</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[1]"/>
+				<name>T_ViewPosition</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[2]"/>
+				<name>T_ViewTangent</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[1]"/>
+				<name>T_ViewTangent</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[2]"/>
+				<name>T_TexCoord0</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item"/>
+				<name>T_TexCoord0</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[2]"/>
+				<name>T_TexCoord0</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[3]"/>
+				<name>T_TexCoord0</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[2]"/>
+				<name>T_TexCoord0</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[1]"/>
+				<name>T_TexCoord0</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[2]"/>
+				<name>T_TexCoord1</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item"/>
+				<name>T_TexCoord1</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[2]"/>
+				<name>T_TexCoord1</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[3]"/>
+				<name>T_TexCoord1</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[2]"/>
+				<name>T_TexCoord1</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[1]"/>
+				<name>T_TexCoord1</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[2]"/>
+				<name>T_TexCoord0</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[4]"/>
+				<name>T_TexCoord0</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[2]"/>
+				<name>T_TexCoord1</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[4]"/>
+				<name>T_TexCoord1</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[2]"/>
+				<name>T_TexCoord0</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[5]"/>
+				<name>T_TexCoord0</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[2]"/>
+				<name>T_TexCoord1</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[5]"/>
+				<name>T_TexCoord1</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[2]"/>
+				<name>T_Color</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item"/>
+				<name>T_VertexColor</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[4]"/>
+				<name>T_Transparency</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[6]"/>
+				<name>T_Transparency</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[3]"/>
+				<name>T_Emissive</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[6]"/>
+				<name>T_Emissive</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item"/>
+				<name>T_DiffuseColor</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[6]"/>
+				<name>T_SurfaceColor</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[2]"/>
+				<name>T_TexCoord0</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[7]"/>
+				<name>T_TexCoord0</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[2]"/>
+				<name>T_TexCoord1</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[7]"/>
+				<name>T_TexCoord1</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[7]"/>
+				<name>T_Roughness</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[6]"/>
+				<name>T_Roughness</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[2]"/>
+				<name>T_TexCoord0</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[8]"/>
+				<name>T_TexCoord0</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[2]"/>
+				<name>T_TexCoord1</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[8]"/>
+				<name>T_TexCoord1</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[8]"/>
+				<name>T_Metalness</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[6]"/>
+				<name>T_Metalness</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[2]"/>
+				<name>T_ViewNormal</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[5]"/>
+				<name>T_ViewNormal</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[5]"/>
+				<name>T_Irradiance</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[6]"/>
+				<name>T_Irradiance</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[2]"/>
+				<name>T_TexCoord0</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[9]"/>
+				<name>T_TexCoord0</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[2]"/>
+				<name>T_TexCoord1</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[9]"/>
+				<name>T_TexCoord1</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[9]"/>
+				<name>T_Specular</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[6]"/>
+				<name>T_Specular</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[2]"/>
+				<name>T_ViewPosition</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[5]"/>
+				<name>T_ViewPosition</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[1]"/>
+				<name>T_ViewNormal</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[10]"/>
+				<name>ViewNormal</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[1]"/>
+				<name>T_ViewPosition</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[10]"/>
+				<name>ViewPosition</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[2]"/>
+				<name>T_ViewVelocity</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[10]"/>
+				<name>ViewVelocity</name>
+			</destination>
+		</item>
+	</edges>
+</object>

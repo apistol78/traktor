@@ -70,7 +70,7 @@
 			<registerCount>0</registerCount>
 			<precisionHint>PhUndefined</precisionHint>
 		</item>
-		<item type="traktor.render.Color" version="traktor.render.Node:1">
+		<item type="traktor.render.Color" version="2,traktor.render.Node:1">
 			<id>{D7230BF2-2BA2-8F43-80AF-ADFD5AC6F274}</id>
 			<comment/>
 			<position>
@@ -78,6 +78,7 @@
 				<second>309</second>
 			</position>
 			<color>0, 0, 0, 0</color>
+			<linear>false</linear>
 		</item>
 	</nodes>
 	<edges>

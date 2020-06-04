@@ -56,7 +56,7 @@
 				<second>142</second>
 			</position>
 		</item>
-		<item type="traktor.render.Variable" version="traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
 			<id>{DCAE23E9-991F-45E2-9A24-37A1B358A50B}</id>
 			<comment/>
 			<position>
@@ -64,8 +64,9 @@
 				<second>0</second>
 			</position>
 			<name>Lrefl</name>
+			<global>false</global>
 		</item>
-		<item type="traktor.render.Variable" version="traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
 			<id>{68CC336B-A62D-457A-9FD7-4F2E4B12D746}</id>
 			<comment/>
 			<position>
@@ -73,6 +74,7 @@
 				<second>123</second>
 			</position>
 			<name>Vrefl</name>
+			<global>false</global>
 		</item>
 		<item type="traktor.render.Add" version="traktor.render.Node:1">
 			<id>{DD88B149-2F29-4BB4-8BD2-11246DC3E09B}</id>
@@ -90,7 +92,7 @@
 				<second>282</second>
 			</position>
 		</item>
-		<item type="traktor.render.Variable" version="traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
 			<id>{CD227622-2E7F-4C4F-B7A8-D44036F08989}</id>
 			<comment/>
 			<position>
@@ -98,6 +100,7 @@
 				<second>247</second>
 			</position>
 			<name>H</name>
+			<global>false</global>
 		</item>
 		<item type="traktor.render.Neg" version="traktor.render.Node:1">
 			<id>{6A6701DF-7F6A-4CDE-ADEC-C0E1D2671633}</id>
@@ -290,7 +293,7 @@
 				<second>756</second>
 			</position>
 		</item>
-		<item type="traktor.render.Variable" version="traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
 			<id>{05D03672-9791-4424-8230-FD0F29FFC53D}</id>
 			<comment/>
 			<position>
@@ -298,8 +301,9 @@
 				<second>-162</second>
 			</position>
 			<name>N</name>
+			<global>false</global>
 		</item>
-		<item type="traktor.render.Variable" version="traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
 			<id>{960498C6-3DCB-4C40-996F-7A86DE6007B7}</id>
 			<comment/>
 			<position>
@@ -307,8 +311,9 @@
 				<second>500</second>
 			</position>
 			<name>N</name>
+			<global>false</global>
 		</item>
-		<item type="traktor.render.Variable" version="traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
 			<id>{207DD6BB-664C-47AD-858C-2BE232E58729}</id>
 			<comment/>
 			<position>
@@ -316,8 +321,9 @@
 				<second>-90</second>
 			</position>
 			<name>L</name>
+			<global>false</global>
 		</item>
-		<item type="traktor.render.Variable" version="traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
 			<id>{85011C3E-341C-4E86-8312-41CF26D401EA}</id>
 			<comment/>
 			<position>
@@ -325,8 +331,9 @@
 				<second>580</second>
 			</position>
 			<name>L</name>
+			<global>false</global>
 		</item>
-		<item type="traktor.render.Variable" version="traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
 			<id>{1D8DB2A3-3B67-4910-8A54-83DAD4A378C0}</id>
 			<comment/>
 			<position>
@@ -334,8 +341,9 @@
 				<second>714</second>
 			</position>
 			<name>N</name>
+			<global>false</global>
 		</item>
-		<item type="traktor.render.Variable" version="traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
 			<id>{F9DA2682-9B92-4020-993C-B8CC16D59096}</id>
 			<comment/>
 			<position>
@@ -343,8 +351,9 @@
 				<second>798</second>
 			</position>
 			<name>H</name>
+			<global>false</global>
 		</item>
-		<item type="traktor.render.Variable" version="traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
 			<id>{F40C5B97-DF8D-4FC2-91B5-037870F4EBB8}</id>
 			<comment/>
 			<position>
@@ -352,8 +361,9 @@
 				<second>934</second>
 			</position>
 			<name>N</name>
+			<global>false</global>
 		</item>
-		<item type="traktor.render.Variable" version="traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
 			<id>{B8A2D1B5-F039-48A2-9498-48FFEA45B714}</id>
 			<comment/>
 			<position>
@@ -361,8 +371,9 @@
 				<second>-18</second>
 			</position>
 			<name>V</name>
+			<global>false</global>
 		</item>
-		<item type="traktor.render.Variable" version="traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
 			<id>{23E94029-FF49-4C3B-B47A-D2A4D316C043}</id>
 			<comment/>
 			<position>
@@ -370,8 +381,9 @@
 				<second>1010</second>
 			</position>
 			<name>V</name>
+			<global>false</global>
 		</item>
-		<item type="traktor.render.Variable" version="traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
 			<id>{671121DB-9649-473D-A9D0-68E3D58DFBF5}</id>
 			<comment/>
 			<position>
@@ -379,8 +391,9 @@
 				<second>502</second>
 			</position>
 			<name>V</name>
+			<global>false</global>
 		</item>
-		<item type="traktor.render.Variable" version="traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
 			<id>{D22CC436-67EA-4FC5-A016-BF3E42B6E560}</id>
 			<comment/>
 			<position>
@@ -388,8 +401,9 @@
 				<second>576</second>
 			</position>
 			<name>H</name>
+			<global>false</global>
 		</item>
-		<item type="traktor.render.Variable" version="traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
 			<id>{EF683187-A137-449B-8777-5005DD2659A8}</id>
 			<comment/>
 			<position>
@@ -397,8 +411,9 @@
 				<second>706</second>
 			</position>
 			<name>L</name>
+			<global>false</global>
 		</item>
-		<item type="traktor.render.Variable" version="traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
 			<id>{2E02B49A-1A64-415E-949D-2F60687FE918}</id>
 			<comment/>
 			<position>
@@ -406,8 +421,9 @@
 				<second>792</second>
 			</position>
 			<name>H</name>
+			<global>false</global>
 		</item>
-		<item type="traktor.render.Variable" version="traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
 			<id>{B761635B-DD5A-F247-8DA9-CBBAC2C21C70}</id>
 			<comment/>
 			<position>
@@ -415,8 +431,9 @@
 				<second>934</second>
 			</position>
 			<name>L</name>
+			<global>false</global>
 		</item>
-		<item type="traktor.render.Variable" version="traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
 			<id>{FD9B8241-0C8E-2442-863E-10814B97906F}</id>
 			<comment/>
 			<position>
@@ -424,8 +441,9 @@
 				<second>1012</second>
 			</position>
 			<name>V</name>
+			<global>false</global>
 		</item>
-		<item type="traktor.render.Variable" version="traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
 			<id>{FE357880-1EB3-654A-826B-36C58D85C406}</id>
 			<comment/>
 			<position>
@@ -433,8 +451,9 @@
 				<second>578</second>
 			</position>
 			<name>V</name>
+			<global>false</global>
 		</item>
-		<item type="traktor.render.Variable" version="traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
 			<id>{C84A11FB-D400-6B45-BC58-60E93BE12B01}</id>
 			<comment/>
 			<position>
@@ -442,8 +461,9 @@
 				<second>494</second>
 			</position>
 			<name>Lrefl</name>
+			<global>false</global>
 		</item>
-		<item type="traktor.render.Variable" version="traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
 			<id>{EA47D7CC-3290-A945-8B27-5C9248E93F8B}</id>
 			<comment/>
 			<position>
@@ -451,8 +471,9 @@
 				<second>507</second>
 			</position>
 			<name>NdotL</name>
+			<global>false</global>
 		</item>
-		<item type="traktor.render.Variable" version="traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
 			<id>{D0361FF1-A45B-5D4A-9030-3A880B06B49C}</id>
 			<comment/>
 			<position>
@@ -460,8 +481,9 @@
 				<second>726</second>
 			</position>
 			<name>NdotH</name>
+			<global>false</global>
 		</item>
-		<item type="traktor.render.Variable" version="traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
 			<id>{26FD6517-50DB-624F-8BE0-CCCB7A5A4E28}</id>
 			<comment/>
 			<position>
@@ -469,8 +491,9 @@
 				<second>933</second>
 			</position>
 			<name>NdotV</name>
+			<global>false</global>
 		</item>
-		<item type="traktor.render.Variable" version="traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
 			<id>{7D8325A5-D17E-F74C-ACD1-29B08A851E1C}</id>
 			<comment/>
 			<position>
@@ -478,8 +501,9 @@
 				<second>502</second>
 			</position>
 			<name>VdotH</name>
+			<global>false</global>
 		</item>
-		<item type="traktor.render.Variable" version="traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
 			<id>{869CD1DF-CE4F-8A4B-92AD-DBA9BE1E05E1}</id>
 			<comment/>
 			<position>
@@ -487,8 +511,9 @@
 				<second>718</second>
 			</position>
 			<name>LdotH</name>
+			<global>false</global>
 		</item>
-		<item type="traktor.render.Variable" version="traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
 			<id>{E7E23B13-8678-F242-9C6F-E25B85EA515B}</id>
 			<comment/>
 			<position>
@@ -496,8 +521,9 @@
 				<second>935</second>
 			</position>
 			<name>LdotV</name>
+			<global>false</global>
 		</item>
-		<item type="traktor.render.Variable" version="traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
 			<id>{567FD09D-52D5-F244-AE34-3A36F21F9499}</id>
 			<comment/>
 			<position>
@@ -505,6 +531,7 @@
 				<second>510</second>
 			</position>
 			<name>LrdotV</name>
+			<global>false</global>
 		</item>
 		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
 			<id>{6F59A031-0778-424A-8DCF-9A0D7BE5A0C3}</id>

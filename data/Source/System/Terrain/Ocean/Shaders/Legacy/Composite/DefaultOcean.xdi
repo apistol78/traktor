@@ -29,7 +29,7 @@
 			<outputPins/>
 			<values/>
 		</item>
-		<item type="traktor.render.Color" version="traktor.render.Node:1">
+		<item type="traktor.render.Color" version="2,traktor.render.Node:1">
 			<id>{DEE6D509-00D3-104F-97A9-BBBB7A63CD5B}</id>
 			<comment>
 			<![CDATA[
@@ -40,7 +40,8 @@ Deep color
 				<first>1847</first>
 				<second>862</second>
 			</position>
-			<color>0, 88, 96, 255</color>
+			<color>0, 0.345098, 0.376471, 1</color>
+			<linear>false</linear>
 		</item>
 		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
 			<id>{7B84177B-3F52-4841-8EAF-B001E546369F}</id>

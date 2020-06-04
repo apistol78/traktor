@@ -212,14 +212,15 @@
 				<second>57</second>
 			</position>
 		</item>
-		<item type="traktor.render.Color" version="traktor.render.Node:1">
+		<item type="traktor.render.Color" version="2,traktor.render.Node:1">
 			<id>{F7461186-C7AF-B443-96A4-0486632E77E7}</id>
 			<comment/>
 			<position>
 				<first>609</first>
 				<second>82</second>
 			</position>
-			<color>46, 40, 0, 49</color>
+			<color>0.180392, 0.156863, 0, 0.192157</color>
+			<linear>false</linear>
 		</item>
 		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
 			<id>{ABBFBFBB-6B3E-AF44-9FE3-BA4B027A4E3A}</id>

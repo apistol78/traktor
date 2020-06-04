@@ -253,7 +253,7 @@
 			</outputPins>
 			<values/>
 		</item>
-		<item type="traktor.render.Variable" version="traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
 			<id>{8CF1AFF5-4B76-9C48-8104-E5A1A1E5737C}</id>
 			<comment/>
 			<position>
@@ -261,6 +261,7 @@
 				<second>155</second>
 			</position>
 			<name>MotionBlurAmount</name>
+			<global>false</global>
 		</item>
 		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
 			<id>{A4FD2A74-36C2-3E43-82C0-FFE5F6D65DB7}</id>
@@ -271,7 +272,7 @@
 			</position>
 			<value>0.85</value>
 		</item>
-		<item type="traktor.render.Variable" version="traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
 			<id>{8271BFE3-D55E-E546-9495-877D2460E2B3}</id>
 			<comment/>
 			<position>
@@ -279,6 +280,7 @@
 				<second>806</second>
 			</position>
 			<name>MotionBlurAmount</name>
+			<global>false</global>
 		</item>
 	</nodes>
 	<edges>

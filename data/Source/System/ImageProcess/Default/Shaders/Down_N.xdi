@@ -168,7 +168,7 @@
 			<fromY>0</fromY>
 			<toY>1</toY>
 		</item>
-		<item type="traktor.render.Variable" version="traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
 			<id>{EC1B071D-B694-4E75-ABB8-1F2BBEC2CF5B}</id>
 			<comment/>
 			<position>
@@ -176,8 +176,9 @@
 				<second>460</second>
 			</position>
 			<name>XY</name>
+			<global>false</global>
 		</item>
-		<item type="traktor.render.Variable" version="traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
 			<id>{FFA14B05-2318-42F4-AB21-0A15624EEABA}</id>
 			<comment/>
 			<position>
@@ -185,6 +186,7 @@
 				<second>435</second>
 			</position>
 			<name>XY</name>
+			<global>false</global>
 		</item>
 		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
 			<id>{2BBF56A4-E262-4C4D-85F3-49521DF070BE}</id>

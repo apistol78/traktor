@@ -82,7 +82,6 @@ ENTRY
     
     Output = vec4(Index / Count, radicalInverseVDC, 0, 0);
 }
-
 			]]>
 			</script>
 		</item>

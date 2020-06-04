@@ -1041,7 +1041,7 @@
 			</position>
 			<value>0.2</value>
 		</item>
-		<item type="traktor.render.Color" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Color" version="2,traktor.render.Node:1">
 			<id>{D07764B6-7905-4E41-AD02-C655C3EC88FD}</id>
 			<comment/>
 			<position>
@@ -1049,6 +1049,7 @@
 				<second>501</second>
 			</position>
 			<color>0, 0, 0, 0</color>
+			<linear>false</linear>
 		</item>
 		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
 			<id>{E7DFD484-6441-E84D-A5D7-AF16C8AD5C2C}</id>

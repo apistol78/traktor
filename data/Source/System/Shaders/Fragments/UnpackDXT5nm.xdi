@@ -134,7 +134,6 @@ http://developer.nvidia.com/object/real-time-normal-map-dxt-compression.html
 			<comment>
 			<![CDATA[
 Not using DXT compression on iOS.
-
 			]]>
 			</comment>
 			<position>

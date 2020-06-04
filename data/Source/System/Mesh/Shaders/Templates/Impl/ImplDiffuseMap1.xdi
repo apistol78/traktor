@@ -100,7 +100,7 @@ Tag_DiffuseMap
 			<type>PtVector</type>
 			<frequency>UfFrame</frequency>
 		</item>
-		<item type="traktor.render.Color" version="traktor.render.Node:1">
+		<item type="traktor.render.Color" version="2,traktor.render.Node:1">
 			<id>{AE49BC8D-CED3-2E47-B756-2556BECA652D}</id>
 			<comment>
 			<![CDATA[
@@ -112,6 +112,7 @@ Tag_DiffuseColor
 				<second>344</second>
 			</position>
 			<color>0, 0, 0, 0</color>
+			<linear>false</linear>
 		</item>
 	</nodes>
 	<edges>
