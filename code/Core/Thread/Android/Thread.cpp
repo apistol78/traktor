@@ -54,6 +54,10 @@ bool Thread::start(Priority priority)
 
 	pthread_attr_init(&attr);
 	pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_JOINABLE);
+
+	// Android pthreads doesn't work with explicit scheduling,
+	// seems threads doesn't start properly when explicitly scheduled.
+#if 0
 	pthread_attr_setinheritsched(&attr, PTHREAD_EXPLICIT_SCHED);
 
 	std::memset(&param, 0, sizeof(param));
@@ -80,6 +84,7 @@ bool Thread::start(Priority priority)
 		break;
 	}
 	pthread_attr_setschedparam(&attr, &param);
+#endif
 
 	rc = pthread_create(
 		&in->thread,

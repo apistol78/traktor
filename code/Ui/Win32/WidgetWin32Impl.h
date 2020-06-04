@@ -39,7 +39,7 @@ public:
 	WidgetWin32Impl(EventSubject* owner)
 	:	m_owner(owner)
 	,	m_doubleBuffer(false)
-	,	m_canvasImpl(0)
+	,	m_canvasImpl(nullptr)
 	,	m_hCursor(NULL)
 	,	m_ownCursor(false)
 	,	m_tracking(false)
@@ -443,21 +443,25 @@ public:
 
 	virtual void getAscentAndDescent(int32_t& outAscent, int32_t& outDescent) const override
 	{
+		T_FATAL_ASSERT(m_canvasImpl != nullptr);
 		m_canvasImpl->getAscentAndDescent(m_hWnd, outAscent, outDescent);
 	}
 
 	virtual int32_t getAdvance(wchar_t ch, wchar_t next) const override
 	{
+		T_FATAL_ASSERT(m_canvasImpl != nullptr);
 		return m_canvasImpl->getAdvance(m_hWnd, ch, next);
 	}
 
 	virtual int32_t getLineSpacing() const override
 	{
+		T_FATAL_ASSERT(m_canvasImpl != nullptr);
 		return m_canvasImpl->getLineSpacing(m_hWnd);
 	}
 
 	virtual Size getExtent(const std::wstring& text) const override
 	{
+		T_FATAL_ASSERT(m_canvasImpl != nullptr);
 		return m_canvasImpl->getExtent(m_hWnd, text);
 	}
 
@@ -504,18 +508,23 @@ protected:
 		if (style & WsDoubleBuffer)
 			m_doubleBuffer = true;
 
+		if ((style & WsNoCanvas) == 0)
+		{
 #if defined(T_USE_DIRECT2D)
-		if (style & WsAccelerated)
-			m_canvasImpl = new CanvasDirect2DWin32();
+#	if defined(T_USE_GDI_PLUS)
+			if (style & WsAccelerated)
+#	endif
+				m_canvasImpl = new CanvasDirect2DWin32();
 #endif
 
 #if defined(T_USE_GDI_PLUS)
-		if (!m_canvasImpl)
-			m_canvasImpl = new CanvasGdiPlusWin32();
+			if (!m_canvasImpl)
+				m_canvasImpl = new CanvasGdiPlusWin32();
 #endif
 
-		if (!m_canvasImpl)
-			m_canvasImpl = new CanvasGdiWin32();
+			if (!m_canvasImpl)
+				m_canvasImpl = new CanvasGdiWin32();
+		}
 
 		m_hWnd.registerMessageHandler(WM_CHAR,          new MethodMessageHandler< WidgetWin32Impl >(this, &WidgetWin32Impl::eventChar));
 		m_hWnd.registerMessageHandler(WM_KEYDOWN,       new MethodMessageHandler< WidgetWin32Impl >(this, &WidgetWin32Impl::eventKeyDown));
@@ -760,12 +769,12 @@ protected:
 
 	LRESULT eventPaint(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, bool& outPass)
 	{
-		if (m_owner->hasEventHandler< PaintEvent >() && m_canvasImpl)
+		if (m_owner->hasEventHandler< PaintEvent >())
 		{
 			RECT rcUpdate = { 0 };
 			GetUpdateRect(m_hWnd, &rcUpdate, FALSE);
 
-			if (m_canvasImpl->beginPaint(m_hWnd, m_doubleBuffer, NULL))
+			if (m_canvasImpl != nullptr && m_canvasImpl->beginPaint(m_hWnd, m_doubleBuffer, NULL))
 			{
 				Canvas canvas(m_canvasImpl);
 				PaintEvent p(
@@ -776,6 +785,18 @@ protected:
 				m_owner->raiseEvent(&p);
 				m_canvasImpl->endPaint(m_hWnd);
 				outPass = !p.consumed();
+			}
+			else if (m_canvasImpl == nullptr)
+			{
+				Canvas canvas(nullptr);
+				PaintEvent p(
+					m_owner,
+					canvas,
+					Rect(rcUpdate.left, rcUpdate.top, rcUpdate.right, rcUpdate.bottom)
+				);
+				m_owner->raiseEvent(&p);
+				outPass = !p.consumed();
+				ValidateRect(m_hWnd, &rcUpdate);
 			}
 		}
 		else

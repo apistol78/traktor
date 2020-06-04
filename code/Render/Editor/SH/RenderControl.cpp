@@ -27,7 +27,7 @@ RenderControl::RenderControl()
 
 bool RenderControl::create(ui::Widget* parent, IRenderSystem* renderSystem, db::Database* database)
 {
-	if (!ui::Widget::create(parent, ui::WsNone))
+	if (!ui::Widget::create(parent, ui::WsNoCanvas))
 		return false;
 
 	render::RenderViewEmbeddedDesc desc;

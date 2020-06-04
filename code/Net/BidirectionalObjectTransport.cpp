@@ -1,5 +1,6 @@
 #include "Core/Io/BufferedStream.h"
-#include "Core/Io/DynamicMemoryStream.h"
+#include "Core/Io/ChunkMemory.h"
+#include "Core/Io/ChunkMemoryStream.h"
 #include "Core/Misc/Endian.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Serialization/BinarySerializer.h"
@@ -22,8 +23,6 @@ BidirectionalObjectTransport::BidirectionalObjectTransport(TcpSocket* socket)
 
 BidirectionalObjectTransport::~BidirectionalObjectTransport()
 {
-	for (auto buffer : m_buffers)
-		delete[] buffer;
 }
 
 void BidirectionalObjectTransport::close()
@@ -38,16 +37,26 @@ bool BidirectionalObjectTransport::send(const ISerializable* object)
 		return false;
 
 	// Serialize into a memory blob.
-	DynamicMemoryStream ms(false, true);
+	ChunkMemory memory;
+	ChunkMemoryStream ms(&memory, false, true);
 	if (!BinarySerializer(&ms).writeObject(object))
 		return false;
 
 	// Send entire blob in one go.
 	{
 		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-		int32_t nsent = m_socket->send(ms.getBuffer().c_ptr(), (int32_t)ms.getBuffer().size());
-		if (nsent != (int32_t)ms.getBuffer().size())
-			return false;
+		for (size_t offset = 0; offset < memory.size(); )
+		{
+			const auto chunk = memory.getChunk(offset);
+			if (!chunk.ptr)
+				break;
+
+			int32_t nsent = m_socket->send(chunk.ptr, chunk.size);
+			if (nsent != (int32_t)chunk.size)
+				return false;
+
+			offset += chunk.size;
+		}
 	}
 
 	return true;

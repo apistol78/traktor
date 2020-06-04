@@ -44,6 +44,8 @@ public:
 
 	TcpSocket* getListenSocket() const;
 
+	uint32_t getStreamCount() const;
+
 private:
 	struct Client
 	{
@@ -55,7 +57,7 @@ private:
 	uint16_t m_listenPort;
 	Ref< TcpSocket > m_listenSocket;
 	AlignedVector< Client > m_clients;
-	Semaphore m_streamsLock;
+	mutable Semaphore m_streamsLock;
 	std::map< uint32_t, Ref< IStream > > m_streams;
 	Thread* m_serverThread;
 	uint32_t m_nextId;

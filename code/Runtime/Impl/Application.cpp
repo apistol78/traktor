@@ -893,7 +893,7 @@ bool Application::update()
 			Ref< IRemoteEvent > remoteEvent;
 			if (
 				m_targetManagerConnection->getTransport()->recv< IRemoteEvent >(0, remoteEvent) == net::BidirectionalObjectTransport::RtSuccess &&
-				remoteEvent != 0
+				remoteEvent != nullptr
 			)
 			{
 				currentState->take(remoteEvent);

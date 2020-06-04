@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Core/Config.h"
+
 namespace traktor
 {
 	namespace ui
@@ -8,7 +10,7 @@ namespace traktor
 /*! \ingroup UI */
 //@{
 
-enum WidgetStyles
+enum WidgetStyles : uint32_t
 {
 	WsNone				= 0,
 	WsBorder			= 1 << 0,
@@ -25,10 +27,11 @@ enum WidgetStyles
 	WsAcceptFileDrop	= 1 << 11,
 	WsTabStop			= 1 << 12,
 	WsWantAllInput		= 1 << 13,
-	WsUser				= 1 << 14
+	WsNoCanvas			= 1 << 14,	//!< Don't allocate a graphics canvas; useful for 3d rendering widgets etc.
+	WsUser				= 1 << 15
 };
 
-enum MessageBoxStyles
+enum MessageBoxStyles : uint32_t
 {
 	MbOk				= 1 << 0,
 	MbCancel			= 1 << 1,

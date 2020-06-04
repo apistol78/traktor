@@ -1212,6 +1212,10 @@ bool RenderViewVk::create(uint32_t width, uint32_t height, int32_t vblanks)
 	vkGetDeviceQueue(m_logicalDevice, m_computeQueueIndex, 0, &m_computeQueue);
 	vkGetDeviceQueue(m_logicalDevice, m_presentQueueIndex, 0, &m_presentQueue);
 
+	log::debug << L"Using graphics queue " << m_graphicsQueueIndex << L"." << Endl;
+	log::debug << L"Using compute queue " << m_computeQueueIndex << L"." << Endl;
+	log::debug << L"Using present queue " << m_presentQueueIndex << L"." << Endl;
+
 	// Create graphics command pool.
 	VkCommandPoolCreateInfo cpci = {};
 	cpci.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
@@ -1264,8 +1268,6 @@ bool RenderViewVk::create(uint32_t width, uint32_t height, int32_t vblanks)
 	else if (surfaceCapabilities.maxImageCount != 0 && desiredImageCount > surfaceCapabilities.maxImageCount)
 		desiredImageCount = surfaceCapabilities.maxImageCount;
 
-	log::debug << L"Using " << desiredImageCount << L" images in swap chain." << Endl;
-
 	VkExtent2D surfaceResolution =  surfaceCapabilities.currentExtent;
 	if (surfaceResolution.width <= -1)
 	{
@@ -1280,8 +1282,8 @@ bool RenderViewVk::create(uint32_t width, uint32_t height, int32_t vblanks)
 	// Determine presentation mode.
 	VkPresentModeKHR presentationMode = VK_PRESENT_MODE_FIFO_KHR;
 #if defined(__ANDROID__) || defined(__IOS__)
-	if (presentationModeSupported(m_physicalDevice, m_surface, VK_PRESENT_MODE_MAILBOX_KHR))
-		presentationMode = VK_PRESENT_MODE_MAILBOX_KHR;
+//	if (presentationModeSupported(m_physicalDevice, m_surface, VK_PRESENT_MODE_MAILBOX_KHR))
+//		presentationMode = VK_PRESENT_MODE_MAILBOX_KHR;
 #endif
 	if (vblanks <= 0)
 	{
@@ -1312,7 +1314,7 @@ bool RenderViewVk::create(uint32_t width, uint32_t height, int32_t vblanks)
 	scci.preTransform = preTransform;
 	scci.compositeAlpha = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR;
 	scci.presentMode = presentationMode;
-	scci.clipped = true;
+	scci.clipped = VK_TRUE;
 
 	uint32_t queueFamilyIndices[] = { m_graphicsQueueIndex, m_presentQueueIndex };
 	if (m_graphicsQueueIndex != m_presentQueueIndex)
@@ -1335,6 +1337,8 @@ bool RenderViewVk::create(uint32_t width, uint32_t height, int32_t vblanks)
 
 	AlignedVector< VkImage > presentImages(imageCount);
 	vkGetSwapchainImagesKHR(m_logicalDevice, m_swapChain, &imageCount, presentImages.ptr());
+
+	log::debug << L"Using " << imageCount << L" images in swap chain; requested " << desiredImageCount << L" image(s)." << Endl;
 
 	// Create primary depth image.
 	VkImage depthImage = 0;

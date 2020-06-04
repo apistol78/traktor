@@ -1,6 +1,5 @@
 #pragma once
 
-#include <vector>
 #include "Core/Object.h"
 #include "Core/Ref.h"
 #include "Core/RefArray.h"
@@ -79,7 +78,6 @@ public:
 private:
 	Ref< TcpSocket > m_socket;
 	SmallMap< const TypeInfo*, RefArray< ISerializable > > m_inQueue;
-	std::vector< uint8_t* > m_buffers;
 	ThreadLocal m_threadBuffer;
 	Semaphore m_lock;
 };

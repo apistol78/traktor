@@ -7780,7 +7780,6 @@
 								<definitions>
 									<item>T_UI_WIN32_EXPORT</item>
 									<item>_DEBUG</item>
-									<item>T_USE_GDI_PLUS</item>
 									<item>T_USE_DIRECT2D</item>
 								</definitions>
 								<libraryPaths/>
@@ -7821,7 +7820,6 @@
 								<definitions>
 									<item>T_UI_WIN32_EXPORT</item>
 									<item>NDEBUG</item>
-									<item>T_USE_GDI_PLUS</item>
 									<item>T_USE_DIRECT2D</item>
 								</definitions>
 								<libraryPaths/>
@@ -7862,7 +7860,6 @@
 								<definitions>
 									<item>T_STATIC</item>
 									<item>_DEBUG</item>
-									<item>T_USE_GDI_PLUS</item>
 									<item>T_USE_DIRECT2D</item>
 								</definitions>
 								<libraryPaths/>
@@ -7899,7 +7896,6 @@
 								<definitions>
 									<item>T_STATIC</item>
 									<item>NDEBUG</item>
-									<item>T_USE_GDI_PLUS</item>
 									<item>T_USE_DIRECT2D</item>
 								</definitions>
 								<libraryPaths/>

@@ -67,6 +67,8 @@ public:
 
 private:
 	editor::IEditor* m_editor;
+	std::wstring m_assetPath;
+	std::wstring m_modelCachePath;
 	Ref< db::Instance > m_instance;
 	Ref< MeshAsset > m_asset;
 	Ref< model::Model > m_model;
@@ -83,7 +85,6 @@ private:
 	Ref< ui::Edit > m_editScaleFactor;
 	Ref< ui::GridView > m_materialShaderList;
 	Ref< ui::GridView > m_materialTextureList;
-	std::wstring m_assetPath;
 
 	void updateModel();
 

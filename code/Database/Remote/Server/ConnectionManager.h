@@ -61,10 +61,6 @@ private:
 	SmallMap< std::wstring, std::wstring > m_connectionStrings;
 
 	void threadServer();
-
-	bool acceptConnections(int32_t waitTimeout);
-
-	bool cleanupConnections();
 };
 
 	}

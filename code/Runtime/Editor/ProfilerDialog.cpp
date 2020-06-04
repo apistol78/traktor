@@ -47,7 +47,7 @@ bool ProfilerDialog::create(ui::Widget* parent)
 	m_toolBar->addEventHandler< ui::ToolBarButtonClickEvent >(this, &ProfilerDialog::eventToolClick);
 
 	m_chart = new ui::BuildChartControl();
-	m_chart->create(this, 4 * 8);
+	m_chart->create(this, 4 * 8, ui::WsAccelerated);
 	m_chart->showRange(0.0, 1.0 / 60.0);
 
 	addEventHandler< ui::CloseEvent >(this, &ProfilerDialog::eventClose);

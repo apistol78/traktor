@@ -15,6 +15,8 @@ template < typename T >
 class Acquire
 {
 public:
+	Acquire< T >(const Acquire< T >&) = delete;
+
 	T_FORCE_INLINE Acquire< T >(T& lock)
 	:	m_lock(lock)
 	{
@@ -40,6 +42,8 @@ template < typename T >
 class Release
 {
 public:
+	Release< T >(const Release< T >&) = delete;
+
 	T_FORCE_INLINE Release< T >(T& lock)
 	:	m_lock(lock)
 	{

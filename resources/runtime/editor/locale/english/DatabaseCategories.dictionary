@@ -170,24 +170,12 @@
       <second>Sky entities</second>
     </item>
     <item>
-      <first>DATABASE_CATEGORY_TRAKTOR_WORLD_COMPONENTENTITYDATA</first>
-      <second>Component entities</second>
-    </item>
-    <item>
-      <first>DATABASE_CATEGORY_TRAKTOR_WORLD_DECALENTITYDATA</first>
-      <second>Decal entities</second>
-    </item>
-    <item>
-      <first>DATABASE_CATEGORY_TRAKTOR_WORLD_ENTITYEVENTSETDATA</first>
-      <second>Entity event sets</second>
+      <first>DATABASE_CATEGORY_TRAKTOR_WORLD_ENTITYDATA</first>
+      <second>Entities</second>
     </item>
     <item>
       <first>DATABASE_CATEGORY_TRAKTOR_WORLD_GROUPENTITYDATA</first>
       <second>Group entities</second>
-    </item>
-    <item>
-      <first>DATABASE_CATEGORY_TRAKTOR_WORLD_POSTPROCESSSETTINGS</first>
-      <second>Post processes</second>
     </item>
   </map>
 </object>

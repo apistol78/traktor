@@ -65,7 +65,46 @@ double BuildChartControl::positionToTime(int32_t x) const
 
 int32_t BuildChartControl::timeToPosition(double time) const
 {
-	return int32_t(m_lastSize * (time - m_fromTime) / (m_toTime - m_fromTime) + 0.5f);
+	return (int32_t)(m_lastSize * (time - m_fromTime) / (m_toTime - m_fromTime) + 0.5f);
+}
+
+const BuildChartControl::Task* BuildChartControl::getTaskFromPosition(const Point& position) const
+{
+	const Rect rc = getInnerRect();
+	const int32_t c_two = dpi96(2);
+	const int32_t c_four = dpi96(4);
+	const int32_t c_twenty = dpi96(20);
+
+	Rect rcLane(rc.left, rc.top, rc.right, rc.top + dpi96(24));
+	for (int32_t lane = 0; lane < m_lanes.size(); ++lane)
+	{
+		if (rcLane.inside(position))
+		{
+			for (const auto& task : m_lanes[lane])
+			{
+				int32_t x0 = timeToPosition(task.time0);
+				int32_t x1 = timeToPosition(task.time1 >= 0.0 ? task.time1 : m_time);
+
+				if (x1 < x0 + c_four)
+					x1 = x0 + c_four;
+
+				if (x0 >= rcLane.right || x1 <= rcLane.left)
+					continue;
+
+				Rect rcTask(
+					rcLane.left + x0,
+					rcLane.top + c_two,
+					rcLane.left + x1,
+					rcLane.bottom - c_two
+				);
+				if (rcTask.inside(position))
+					return &task;
+			}
+		}
+		rcLane = rcLane.offset(0, dpi96(24));
+	}
+
+	return nullptr;
 }
 
 void BuildChartControl::removeAllTasks()
@@ -81,12 +120,9 @@ void BuildChartControl::removeTasksOlderThan(double since)
 {
 	for (int32_t lane = 0; lane < m_lanes.size(); ++lane)
 	{
-		while (!m_lanes[lane].empty())
-		{
-			if (m_lanes[lane].front().time1 >= since)
-				break;
-			m_lanes[lane].erase(m_lanes[lane].begin());
-		}
+		auto& ln = m_lanes[lane];
+		while (!ln.empty() && ln.back().time1 < since)
+			ln.pop_back();
 	}
 }
 
@@ -95,11 +131,22 @@ void BuildChartControl::addTask(int32_t lane, const std::wstring& text, const Co
 	if (lane < 0 || lane >= m_lanes.size())
 		return;
 
-	auto& task = m_lanes[lane].push_back();
-	task.time0 = timeStart;
-	task.time1 = timeEnd;
-	task.text = text;
-	task.color = color;
+	Task t;
+	t.time0 = timeStart;
+	t.time1 = timeEnd;
+	t.text = text;
+	t.color = color;
+
+	auto& ln = m_lanes[lane];
+	for (size_t i = ln.size(); i > 0; --i)
+	{
+		if (ln[i - 1].time1 <= timeEnd)
+		{
+			ln.insert(ln.begin() + i, t);
+			return;
+		}
+	}
+	ln.push_back(t);
 }
 
 void BuildChartControl::begin()
@@ -150,16 +197,16 @@ void BuildChartControl::eventPaint(PaintEvent* event)
 	Rect rcUpdate = event->getUpdateRect();
 	Rect rc = getInnerRect();
 
+	const int32_t c_two = dpi96(2);
+	const int32_t c_four = dpi96(4);
+	const int32_t c_twenty = dpi96(20);
+
 	// Clear background.
 	canvas.setBackground(Color4ub(255, 255, 255, 255));
 	canvas.fillRect(rcUpdate);
 
 	// Draw tasks.
 	{
-		const int32_t c_two = dpi96(2);
-		const int32_t c_four = dpi96(4);
-		const int32_t c_twenty = dpi96(20);
-
 		Rect rcLane(rc.left, rc.top, rc.right, rc.top + dpi96(24));
 		for (int32_t lane = 0; lane < m_lanes.size(); ++lane)
 		{
@@ -230,6 +277,9 @@ void BuildChartControl::eventPaint(PaintEvent* event)
 	canvas.setForeground(Color4ub(0, 0, 0, 128));
 	canvas.drawText(rcTime, str(L"%.3f", (float)m_fromTime), AnLeft, AnCenter);
 	canvas.drawText(rcTime, str(L"%.3f", (float)m_toTime), AnRight, AnCenter);
+
+	if (!m_hover.empty())
+		canvas.drawText(rcTime, m_hover, AnCenter, AnCenter);
 
 	if (m_selecting)
 	{
@@ -336,6 +386,16 @@ void BuildChartControl::eventMouseMove(MouseMoveEvent* event)
 		}
 
 		m_selectionTo = event->getPosition().x;
+		update();
+	}
+	else
+	{
+		// Hover over task to show detailed information.
+		const Task* task = getTaskFromPosition(event->getPosition());
+		if (task)
+			m_hover = task->text;
+		else
+			m_hover = L"";
 		update();
 	}
 }
