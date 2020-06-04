@@ -90,6 +90,12 @@ TcpSocket* StreamServer::getListenSocket() const
 	return m_listenSocket;
 }
 
+uint32_t StreamServer::getStreamCount() const
+{
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_streamsLock);
+	return (uint32_t)m_streams.size();
+}
+
 void StreamServer::threadServer()
 {
 #pragma pack(1)

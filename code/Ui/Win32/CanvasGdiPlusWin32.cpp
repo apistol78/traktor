@@ -21,6 +21,9 @@ ULONG_PTR s_token = 0;
 
 		}
 
+HDC CanvasGdiPlusWin32::ms_hGlobalDC = NULL;
+AutoPtr< Gdiplus::Graphics > CanvasGdiPlusWin32::ms_globalGraphics;
+
 CanvasGdiPlusWin32::CanvasGdiPlusWin32()
 :	m_hDC(NULL)
 ,	m_hFont(NULL)
@@ -33,6 +36,11 @@ CanvasGdiPlusWin32::CanvasGdiPlusWin32()
 ,	m_pen(Gdiplus::Color(0x000000), 1.0f)
 ,	m_brush(Gdiplus::Color(0xc0c0c0))
 {
+	if (ms_hGlobalDC == NULL)
+	{
+		ms_hGlobalDC = GetDC(NULL);
+		ms_globalGraphics.reset(new Gdiplus::Graphics(ms_hGlobalDC));
+	}
 }
 
 CanvasGdiPlusWin32::~CanvasGdiPlusWin32()
@@ -140,9 +148,7 @@ void CanvasGdiPlusWin32::getAscentAndDescent(Window& hWnd, int32_t& outAscent, i
 {
 	if (m_hDC == NULL)
 	{
-		HDC hDC = GetDC(hWnd);
-
-		Gdiplus::Font font(hDC, hWnd.getFont());
+		Gdiplus::Font font(ms_hGlobalDC, hWnd.getFont());
 		Gdiplus::FontFamily fontFamily;
 		font.GetFamily(&fontFamily);
 
@@ -152,8 +158,6 @@ void CanvasGdiPlusWin32::getAscentAndDescent(Window& hWnd, int32_t& outAscent, i
 
 		outAscent = font.GetSize() * ascent / emHeight;
 		outDescent = font.GetSize() * descent / emHeight;
-
-		ReleaseDC(hWnd, hDC);
 	}
 	else	// Inside begin/end thus use current paint context.
 	{
@@ -165,10 +169,7 @@ int32_t CanvasGdiPlusWin32::getAdvance(Window& hWnd, wchar_t ch, wchar_t next) c
 {
 	if (m_hDC == NULL)
 	{
-		HDC hDC = GetDC(NULL);
-
-		Gdiplus::Graphics graphics(hDC);
-		Gdiplus::Font font(hDC, hWnd.getFont());
+		Gdiplus::Font font(ms_hGlobalDC, hWnd.getFont());
 		Gdiplus::RectF layoutRect(0.0f, 0.0f, std::numeric_limits< float >::max(), std::numeric_limits< float >::max());
 
 		wchar_t chs[3] = { ch, next, 0 };
@@ -180,7 +181,7 @@ int32_t CanvasGdiPlusWin32::getAdvance(Window& hWnd, wchar_t ch, wchar_t next) c
 		stringFormat.SetMeasurableCharacterRanges(1, &range);
 
 		Gdiplus::Region region;
-		graphics.MeasureCharacterRanges(
+		ms_globalGraphics->MeasureCharacterRanges(
 			chs,
 			-1,
 			&font,
@@ -191,9 +192,8 @@ int32_t CanvasGdiPlusWin32::getAdvance(Window& hWnd, wchar_t ch, wchar_t next) c
 		);
 
 		Gdiplus::RectF rc;
-		region.GetBounds(&rc, &graphics);
+		region.GetBounds(&rc, ms_globalGraphics.ptr());
 
-		ReleaseDC(NULL, hDC);
 		return rc.Width;
 	}
 	else	// Inside begin/end thus use current paint context.
@@ -206,16 +206,10 @@ int32_t CanvasGdiPlusWin32::getLineSpacing(Window& hWnd) const
 {
 	if (m_hDC == NULL)
 	{
-		HDC hDC = GetDC(NULL);
-
-		Gdiplus::Font font(hDC, hWnd.getFont());
+		Gdiplus::Font font(ms_hGlobalDC, hWnd.getFont());
 		Gdiplus::FontFamily fontFamily;
 		font.GetFamily(&fontFamily);
-
-		int32_t lineSpacing = font.GetSize() * fontFamily.GetLineSpacing(FontStyleRegular) / fontFamily.GetEmHeight(FontStyleRegular);
-
-		ReleaseDC(NULL, hDC);
-		return lineSpacing;
+		return font.GetSize() * fontFamily.GetLineSpacing(FontStyleRegular) / fontFamily.GetEmHeight(FontStyleRegular);
 	}
 	else	// Inside begin/end thus use current paint context.
 	{
@@ -229,16 +223,12 @@ Size CanvasGdiPlusWin32::getExtent(Window& hWnd, const std::wstring& text) const
 	{
 		Gdiplus::RectF boundingBox;
 
-		HDC hDC = GetDC(NULL);
-
-		Gdiplus::Graphics graphics(hDC);
-		Gdiplus::Font font(hDC, hWnd.getFont());
-
+		Gdiplus::Font font(ms_hGlobalDC, hWnd.getFont());
 		Gdiplus::StringFormat stringFormat(StringFormat::GenericTypographic());
 		stringFormat.SetFormatFlags(StringFormatFlagsNoWrap | StringFormatFlagsMeasureTrailingSpaces);
 		stringFormat.SetTrimming(StringTrimmingNone);
 
-		graphics.MeasureString(
+		ms_globalGraphics->MeasureString(
 			text.c_str(),
 			(INT)text.length(),
 			&font,
@@ -247,7 +237,6 @@ Size CanvasGdiPlusWin32::getExtent(Window& hWnd, const std::wstring& text) const
 			&boundingBox
 		);
 
-		ReleaseDC(NULL, hDC);
 		return Size(int(boundingBox.Width + 1), int(boundingBox.Height + 4));
 	}
 	else	// Inside begin/end thus use current paint context.

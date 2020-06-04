@@ -30,7 +30,7 @@ void ScriptComponent::setOwner(Entity* owner)
 	m_owner = owner;
 	m_object = nullptr;
 	m_methodUpdate = nullptr;
-	m_class.consume();
+	validate();
 }
 
 void ScriptComponent::setTransform(const Transform& transform)

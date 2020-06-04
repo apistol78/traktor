@@ -114,6 +114,7 @@ private:
 	ComRef< IDWriteFont > m_dwFont;
 	DWRITE_FONT_METRICS m_fontMetrics;
 	SmallMap< int32_t, ComRef< ID2D1Bitmap > > m_d2dBitmaps;
+	Font m_font;
 	float m_strokeWidth;
 	bool m_underline;
 	bool m_clip;

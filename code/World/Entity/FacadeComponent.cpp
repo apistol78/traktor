@@ -70,7 +70,7 @@ Aabb3 FacadeComponent::getBoundingBox() const
 
 void FacadeComponent::addEntity(const std::wstring& id, Entity* entity)
 {
-	m_entities[id] = entity;
+	m_entities.insert(id, entity);
 }
 
 void FacadeComponent::removeEntity(const std::wstring& id)

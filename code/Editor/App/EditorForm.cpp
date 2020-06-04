@@ -3062,7 +3062,10 @@ void EditorForm::eventTimer(ui::TimerEvent* /*event*/)
 	if (!building)
 	{
 		m_buildProgress->setVisible(false);
-		m_statusBar->setText(i18n::Format(L"STATUS_IDLE", (int32_t)(Alloc::allocated() + 1023) / 1024));
+		if (m_streamServer)
+			m_statusBar->setText(i18n::Format(L"STATUS_IDLE_WITH_STREAMS", (int32_t)(Alloc::allocated() + 1023) / 1024, (int32_t)m_streamServer->getStreamCount()));
+		else
+			m_statusBar->setText(i18n::Format(L"STATUS_IDLE", (int32_t)(Alloc::allocated() + 1023) / 1024));
 	}
 	else
 		m_buildProgress->setVisible(true);

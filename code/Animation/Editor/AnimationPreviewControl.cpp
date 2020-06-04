@@ -59,7 +59,7 @@ AnimationPreviewControl::AnimationPreviewControl(editor::IEditor* editor)
 
 bool AnimationPreviewControl::create(ui::Widget* parent)
 {
-	if (!Widget::create(parent, ui::WsNone))
+	if (!Widget::create(parent, ui::WsNoCanvas))
 		return false;
 
 	m_renderSystem = m_editor->getStoreObject< render::IRenderSystem >(L"RenderSystem");

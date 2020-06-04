@@ -72,6 +72,8 @@ namespace traktor
 		{
 		}
 
+		AutoPtr(const AutoPtr< Type, ReleasePolicy >&) = delete;
+
 		explicit AutoPtr(Type* ptr_)
 		:	m_ptr(ptr_)
 		{
@@ -152,6 +154,8 @@ namespace traktor
 		:	m_ptr(nullptr)
 		{
 		}
+
+		AutoArrayPtr(const AutoArrayPtr< Type, ReleasePolicy >&) = delete;
 
 		explicit AutoArrayPtr(Type* ptr_)
 		:	m_ptr(ptr_)

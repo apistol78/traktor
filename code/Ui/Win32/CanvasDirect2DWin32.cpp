@@ -72,15 +72,7 @@ bool CanvasDirect2DWin32::beginPaint(Window& hWnd, bool doubleBuffer, HDC hDC)
 		return false;
 	}
 
-	bool renderTargetValid = false;
-
-	if (m_d2dRenderTarget)
-	{
-		D2D1_SIZE_U size = m_d2dRenderTarget->GetPixelSize();
-		renderTargetValid = (size.width == width && size.height == height);
-	}
-
-	if (!renderTargetValid)
+	if (!m_d2dRenderTarget)
 	{
 		flushCachedBitmaps();
 
@@ -93,8 +85,13 @@ bool CanvasDirect2DWin32::beginPaint(Window& hWnd, bool doubleBuffer, HDC hDC)
 		if (FAILED(hr))
 			return false;
 	}
-
-	T_ASSERT(m_d2dRenderTarget);
+	else
+	{
+		D2D1_SIZE_U size = D2D1::SizeU(width, height);
+		hr = m_d2dRenderTarget->Resize(size);
+		if (FAILED(hr))
+			return false;
+	}
 
 	// Force DPI to be 96 as DPI handling is performed outside of Canvas.
 	m_d2dRenderTarget->SetDpi(96, 96);
@@ -128,10 +125,10 @@ bool CanvasDirect2DWin32::beginPaint(Window& hWnd, bool doubleBuffer, HDC hDC)
 
 	setFont(Font(
 		lf.lfFaceName,
-		int32_t(dip + 0.5f),
-		bool(lf.lfWeight == FW_BOLD),
-		bool(lf.lfItalic == TRUE),
-		bool(lf.lfUnderline == TRUE)
+		(int32_t)(dip + 0.5f),
+		(bool)(lf.lfWeight == FW_BOLD),
+		(bool)(lf.lfItalic == TRUE),
+		(bool)(lf.lfUnderline == TRUE)
 	));
 
 	return true;
@@ -146,7 +143,6 @@ void CanvasDirect2DWin32::endPaint(Window& hWnd)
 	m_d2dForegroundBrush.release();
 	m_d2dBackgroundBrush.release();
 	m_d2dGradientStops.release();
-	m_dwTextFormat.release();
 
 	hr = m_d2dRenderTarget->EndDraw();
 	if (FAILED(hr))
@@ -388,6 +384,9 @@ void CanvasDirect2DWin32::setBackground(const Color4ub& background)
 
 void CanvasDirect2DWin32::setFont(const Font& font)
 {
+	if (font == m_font)
+		return;
+
 	m_dwFont.release();
 
 	s_dwFactory->CreateTextFormat(
@@ -479,15 +478,10 @@ void CanvasDirect2DWin32::drawPixel(int x, int y, const Color4ub& c)
 
 void CanvasDirect2DWin32::drawLine(int x1, int y1, int x2, int y2)
 {
-	bool needAntiAlias = (bool)(x1 != x2 && y1 != y2);
-	if (needAntiAlias)
-		m_d2dRenderTarget->SetAntialiasMode(D2D1_ANTIALIAS_MODE_PER_PRIMITIVE);
-	else
-		m_d2dRenderTarget->SetAntialiasMode(D2D1_ANTIALIAS_MODE_ALIASED);
-
+	m_d2dRenderTarget->SetAntialiasMode(D2D1_ANTIALIAS_MODE_ALIASED);
 	m_d2dRenderTarget->DrawLine(
-		D2D1::Point2F(x1, y1),
-		D2D1::Point2F(x2, y2),
+		D2D1::Point2F(x1 + 0.5f, y1 + 0.5f),
+		D2D1::Point2F(x2 + 0.5f, y2 + 0.5f),
 		m_d2dForegroundBrush,
 		m_strokeWidth
 	);
@@ -511,21 +505,21 @@ void CanvasDirect2DWin32::drawLines(const Point* pnts, int npnts)
 		return;
 
 	d2dGeometrySink->BeginFigure(
-		D2D1::Point2F(pnts[0].x, pnts[0].y),
+		D2D1::Point2F(pnts[0].x + 0.5f, pnts[0].y + 0.5f),
 		D2D1_FIGURE_BEGIN_HOLLOW
 	);
 
 	for (int i = 1; i < npnts; ++i)
 	{
 		d2dGeometrySink->AddLine(
-			D2D1::Point2F(pnts[i].x, pnts[i].y)
+			D2D1::Point2F(pnts[i].x + 0.5f, pnts[i].y + 0.5f)
 		);
 	}
 
 	d2dGeometrySink->EndFigure(D2D1_FIGURE_END_OPEN);
 	d2dGeometrySink->Close();
 
-	m_d2dRenderTarget->SetAntialiasMode(D2D1_ANTIALIAS_MODE_PER_PRIMITIVE);
+	m_d2dRenderTarget->SetAntialiasMode(D2D1_ANTIALIAS_MODE_ALIASED);
 	m_d2dRenderTarget->DrawGeometry(
 		d2dPathGeometry,
 		m_d2dForegroundBrush,
@@ -626,7 +620,7 @@ void CanvasDirect2DWin32::drawRect(const Rect& rc)
 		return;
 
 	m_d2dRenderTarget->DrawRectangle(
-		D2D1::RectF(rc2.left, rc2.top, rc2.right, rc2.bottom),
+		D2D1::RectF(rc2.left + 0.5f, rc2.top + 0.5f, rc2.right - 0.5f, rc2.bottom - 0.5f),
 		m_d2dForegroundBrush,
 		m_strokeWidth
 	);
@@ -640,7 +634,7 @@ void CanvasDirect2DWin32::drawRoundRect(const Rect& rc, int radius)
 
 	m_d2dRenderTarget->DrawRoundedRectangle(
 		D2D1::RoundedRect(
-			D2D1::RectF(rc2.left, rc2.top, rc2.right, rc2.bottom),
+			D2D1::RectF(rc2.left + 0.5f, rc2.top + 0.5f, rc2.right - 0.5f, rc2.bottom - 0.5f),
 			radius,
 			radius
 		),
@@ -715,19 +709,18 @@ void CanvasDirect2DWin32::fillPolygon(const Point* pnts, int npnts)
 	for (int i = 1; i < npnts; ++i)
 	{
 		d2dGeometrySink->AddLine(
-			D2D1::Point2F(pnts[i].x, pnts[i].y)
+			D2D1::Point2F(pnts[i].x + 0.5f, pnts[i].y + 0.5f)
 		);
 	}
 
 	d2dGeometrySink->EndFigure(D2D1_FIGURE_END_CLOSED);
 	d2dGeometrySink->Close();
 
-	m_d2dRenderTarget->SetAntialiasMode(D2D1_ANTIALIAS_MODE_PER_PRIMITIVE);
+	m_d2dRenderTarget->SetAntialiasMode(D2D1_ANTIALIAS_MODE_ALIASED);
 	m_d2dRenderTarget->FillGeometry(
 		d2dPathGeometry,
 		m_d2dBackgroundBrush
 	);
-	m_d2dRenderTarget->SetAntialiasMode(D2D1_ANTIALIAS_MODE_ALIASED);
 }
 
 void CanvasDirect2DWin32::drawBitmap(const Point& dstAt, const Point& srcAt, const Size& size, ISystemBitmap* bitmap, uint32_t blendMode)

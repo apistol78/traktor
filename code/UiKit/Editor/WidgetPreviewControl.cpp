@@ -82,7 +82,7 @@ WidgetPreviewControl::WidgetPreviewControl(editor::IEditor* editor, resource::IR
 
 bool WidgetPreviewControl::create(ui::Widget* parent)
 {
-	if (!ui::Widget::create(parent, ui::WsNone))
+	if (!ui::Widget::create(parent, ui::WsNoCanvas))
 		return false;
 
 	// Create render view.

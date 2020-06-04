@@ -112,7 +112,8 @@ Ref< Entity > WorldEntityFactory::createEntity(const IEntityBuilder* builder, co
 	}
 	else
 	{
-		Ref< Entity > entity = new Entity(entityData.getTransform());
+		// Instantiate all components.
+		RefArray< IEntityComponent > components;
 		for (auto componentData : entityData.getComponents())
 		{
 			Ref< IEntityComponent > component = builder->create(componentData);
@@ -123,8 +124,10 @@ Ref< Entity > WorldEntityFactory::createEntity(const IEntityBuilder* builder, co
 				else
 					continue;
 			}
-			entity->setComponent(component);
+			components.push_back(component);
 		}
+		// Create entity and attach all components to it.
+		Ref< Entity > entity = new Entity(entityData.getTransform(), components);
 		return entity;
 	}
 	return nullptr;

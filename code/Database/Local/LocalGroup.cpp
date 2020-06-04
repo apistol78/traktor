@@ -60,7 +60,7 @@ Ref< IProviderInstance > LocalGroup::createInstance(const std::wstring& instance
 	if (!instance->internalCreateNew(instanceGuid))
 	{
 		log::error << L"Local instance internalCreateNew failed!" << Endl;
-		return 0;
+		return nullptr;
 	}
 
 	return instance;
@@ -78,18 +78,18 @@ bool LocalGroup::getChildren(RefArray< IProviderGroup >& outChildGroups, RefArra
 	outChildGroups.reserve(groupFiles.size());
 	outChildInstances.reserve(groupFiles.size());
 
-	for (RefArray< File >::iterator i = groupFiles.begin(); i != groupFiles.end(); ++i)
+	for (auto groupFile : groupFiles)
 	{
-		const Path& path = (*i)->getPath();
+		const Path& path = groupFile->getPath();
 
-		if ((*i)->isDirectory() && path.getFileName() != L"." && path.getFileName() != L"..")
+		if (groupFile->isDirectory() && path.getFileName() != L"." && path.getFileName() != L"..")
 		{
 			outChildGroups.push_back(new LocalGroup(
 				m_context,
 				path
 			));
 		}
-		else if (!(*i)->isDirectory())
+		else if (!groupFile->isDirectory())
 		{
 			if (compareIgnoreCase(path.getExtension(), L"xdm") == 0)
 			{

@@ -108,6 +108,8 @@ public:
 
 private:
 	PAINTSTRUCT m_ps;
+	static HDC ms_hGlobalDC;
+	static AutoPtr< Gdiplus::Graphics > ms_globalGraphics;
 	HDC m_hDC;
 	HFONT m_hFont;
 	bool m_ownDC;

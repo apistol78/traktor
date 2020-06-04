@@ -31,7 +31,11 @@ class T_DLLCLASS Entity : public Object
 public:
 	Entity();
 
+	Entity(const Entity&) = delete;
+
 	explicit Entity(const Transform& transform);
+
+	explicit Entity(const Transform& transform, const RefArray< IEntityComponent >& components);
 
 	virtual ~Entity();
 
@@ -72,7 +76,7 @@ public:
 	 */
 	virtual void update(const UpdateParams& update);
 
-	/*! Set component in character instance.
+	/*! Set component in entity.
 	 *
 	 * \param component Component instance.
 	 */

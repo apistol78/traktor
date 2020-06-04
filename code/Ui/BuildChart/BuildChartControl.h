@@ -22,6 +22,20 @@ class T_DLLCLASS BuildChartControl : public Widget
 	T_RTTI_CLASS;
 
 public:
+	struct Task
+	{
+		double time0;
+		double time1;
+		std::wstring text;
+		Color4ub color;
+
+		Task()
+		:	time0(-1.0)
+		,	time1(-1.0)
+		{
+		}
+	};
+
 	BuildChartControl();
 
 	bool create(Widget* parent, uint32_t laneCount, int style = WsDoubleBuffer);
@@ -33,6 +47,8 @@ public:
 	double positionToTime(int32_t x) const;
 
 	int32_t timeToPosition(double time) const;
+
+	const Task* getTaskFromPosition(const Point& position) const;
 
 	/*! \{ */
 
@@ -57,20 +73,6 @@ public:
 	/*! \} */
 
 private:
-	struct Task
-	{
-		double time0;
-		double time1;
-		std::wstring text;
-		Color4ub color;
-
-		Task()
-		:	time0(-1.0)
-		,	time1(-1.0)
-		{
-		}
-	};
-
 	typedef AlignedVector< Task > taskVector_t;
 
 	Timer m_timer;
@@ -84,6 +86,7 @@ private:
 	int32_t m_lastSize;
 	int32_t m_lastMouse;
 	int32_t m_selectionTo;
+	std::wstring m_hover;
 
 	void eventPaint(PaintEvent* event);
 

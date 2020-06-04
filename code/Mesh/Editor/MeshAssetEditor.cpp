@@ -1,4 +1,5 @@
 #include <algorithm>
+#include "Core/Io/BufferedStream.h"
 #include "Core/Io/FileSystem.h"
 #include "Core/Misc/String.h"
 #include "Core/Settings/PropertyFloat.h"
@@ -15,7 +16,7 @@
 #include "Mesh/Editor/MeshAssetEditor.h"
 #include "Mesh/Editor/MaterialShaderGenerator.h"
 #include "Model/Model.h"
-#include "Model/ModelFormat.h"
+#include "Model/ModelCache.h"
 #include "Render/ITexture.h"
 #include "Render/Editor/Shader/ShaderGraph.h"
 #include "Ui/Application.h"
@@ -64,6 +65,7 @@ MeshAssetEditor::MeshAssetEditor(editor::IEditor* editor)
 :	m_editor(editor)
 {
 	m_assetPath = m_editor->getSettings()->getProperty< std::wstring >(L"Pipeline.AssetPath", L"");
+	m_modelCachePath =  m_editor->getSettings()->getProperty< std::wstring >(L"Pipeline.ModelCachePath", L"");
 }
 
 bool MeshAssetEditor::create(ui::Widget* parent, db::Instance* instance, ISerializable* object)
@@ -308,7 +310,22 @@ void MeshAssetEditor::updateModel()
 {
 	Path assetPath = FileSystem::getInstance().getAbsolutePath(m_assetPath, m_asset->getFileName());
 	std::wstring importFilter = m_asset->getImportFilter();
-	m_model = model::ModelFormat::readAny(assetPath, importFilter);
+
+	model::ModelCache modelCache(
+		m_modelCachePath,
+		[&](const Path& p) {
+			return FileSystem::getInstance().get(p);
+		},
+		[&](const Path& p) -> Ref< IStream > {
+			Ref< IStream > file = FileSystem::getInstance().open(p, File::FmRead);
+			if (file)
+				return new BufferedStream(file);
+			else
+				return nullptr;
+		}
+	);
+
+	m_model = modelCache.get(assetPath, importFilter);
 }
 
 void MeshAssetEditor::updateFile()

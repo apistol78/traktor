@@ -18,6 +18,17 @@ Entity::Entity(const Transform& transform)
 {
 }
 
+Entity::Entity(const Transform& transform, const RefArray< IEntityComponent >& components)
+:	m_transform(transform)
+,	m_components(components)
+{
+	for (auto component : m_components)
+	{
+		component->setOwner(this);
+		component->setTransform(m_transform);
+	}
+}
+
 Entity::~Entity()
 {
 	destroy();

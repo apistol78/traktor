@@ -642,6 +642,10 @@
 			<second>Ready ({0} KiB allocated)</second>
 		</item>
 		<item>
+			<first>STATUS_IDLE_WITH_STREAMS</first>
+			<second>Ready ({0} KiB allocated), {1} stream(s) opened</second>
+		</item>		
+		<item>
 			<first>TEXT_EDIT</first>
 			<second>Edit</second>
 		</item>
