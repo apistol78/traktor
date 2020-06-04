@@ -35,7 +35,6 @@ ENTRY
 	uint y = uint(gl_FragCoord.y);
 	Output = (30u * x ^ y + 10u * x * y);
 }
-
 			]]>
 			</script>
 		</item>

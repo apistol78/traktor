@@ -58,7 +58,6 @@ ENTRY
 	n.xy += mix(tt, -tt, greaterThanEqual(n.xy, vec2(0.0, 0.0)));
 	Output = vec4(normalize(n), 0.0);
 }
-
 			]]>
 			</script>
 		</item>

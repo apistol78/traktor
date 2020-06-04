@@ -1054,14 +1054,15 @@ read-back color buffer.
 				<second>-278</second>
 			</position>
 		</item>
-		<item type="traktor.render.Color" version="traktor.render.Node:1">
+		<item type="traktor.render.Color" version="2,traktor.render.Node:1">
 			<id>{352797FD-4EB6-4E47-91E6-DE9AEE01236E}</id>
 			<comment/>
 			<position>
 				<first>4012</first>
 				<second>-200</second>
 			</position>
-			<color>0, 137, 255, 185</color>
+			<color>0, 0.537255, 1, 0.72549</color>
+			<linear>false</linear>
 		</item>
 		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{7258FE22-2951-1F4C-81FE-2D841563BC99}</id>
@@ -1249,14 +1250,15 @@ read-back color buffer.
 			<registerCount>0</registerCount>
 			<precisionHint>PhUndefined</precisionHint>
 		</item>
-		<item type="traktor.render.Color" version="traktor.render.Node:1">
+		<item type="traktor.render.Color" version="2,traktor.render.Node:1">
 			<id>{DD8A91F6-AA85-7F45-82B4-B22156E6AA3D}</id>
 			<comment/>
 			<position>
 				<first>4010</first>
 				<second>-502</second>
 			</position>
-			<color>0, 137, 255, 185</color>
+			<color>0, 0.537255, 1, 0.72549</color>
+			<linear>false</linear>
 		</item>
 		<item type="traktor.render.Renderer" version="traktor.render.Node:1">
 			<id>{C95D72ED-2C07-6D46-AB01-94C697191DC0}</id>

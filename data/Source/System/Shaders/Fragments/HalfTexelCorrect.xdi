@@ -97,8 +97,8 @@
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item"/>
-				<name>DX9</name>
+				<node/>
+				<name/>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">

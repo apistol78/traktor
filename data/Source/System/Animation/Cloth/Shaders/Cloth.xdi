@@ -80,7 +80,7 @@
 			</outputPins>
 			<values/>
 		</item>
-		<item type="traktor.render.Color" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Color" version="2,traktor.render.Node:1">
 			<id>{4E367554-5362-4F26-AB8B-C30BF039FF25}</id>
 			<comment/>
 			<position>
@@ -88,6 +88,7 @@
 				<second>421</second>
 			</position>
 			<color>1, 0, 0, 0</color>
+			<linear>false</linear>
 		</item>
 		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{EDE3B640-C01A-0A49-8E86-9310091D8194}</id>

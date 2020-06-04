@@ -130,7 +130,7 @@ TanNdotHSqr
 				<second>765</second>
 			</position>
 		</item>
-		<item type="traktor.render.Variable" version="traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
 			<id>{FC75F574-8827-45B6-B56A-1BB9BBD2EBB3}</id>
 			<comment/>
 			<position>
@@ -138,8 +138,9 @@ TanNdotHSqr
 				<second>81</second>
 			</position>
 			<name>RoughnessSqr</name>
+			<global>false</global>
 		</item>
-		<item type="traktor.render.Variable" version="traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
 			<id>{DAB1AC7F-16CD-475E-9E9A-CCE9842A438B}</id>
 			<comment/>
 			<position>
@@ -147,8 +148,9 @@ TanNdotHSqr
 				<second>718</second>
 			</position>
 			<name>RoughnessSqr</name>
+			<global>false</global>
 		</item>
-		<item type="traktor.render.Variable" version="traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
 			<id>{935C95A7-16AE-4C5A-A16D-EC996E6C85F1}</id>
 			<comment/>
 			<position>
@@ -156,8 +158,9 @@ TanNdotHSqr
 				<second>319</second>
 			</position>
 			<name>TanNdotHSqr</name>
+			<global>false</global>
 		</item>
-		<item type="traktor.render.Variable" version="traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
 			<id>{5A66ABAC-7461-4AF6-A2C5-E4BB44BD7172}</id>
 			<comment/>
 			<position>
@@ -165,6 +168,7 @@ TanNdotHSqr
 				<second>812</second>
 			</position>
 			<name>TanNdotHSqr</name>
+			<global>false</global>
 		</item>
 		<item type="traktor.render.Mul" version="traktor.render.Node:1">
 			<id>{394BB92A-70CD-4C38-8091-01251237A990}</id>
@@ -174,7 +178,7 @@ TanNdotHSqr
 				<second>730</second>
 			</position>
 		</item>
-		<item type="traktor.render.Variable" version="traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
 			<id>{EFA6FAC5-D410-4F43-B204-F3145C161B46}</id>
 			<comment/>
 			<position>
@@ -182,8 +186,9 @@ TanNdotHSqr
 				<second>405</second>
 			</position>
 			<name>NdotHSqr</name>
+			<global>false</global>
 		</item>
-		<item type="traktor.render.Variable" version="traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
 			<id>{5A7830FA-8ABE-4544-B0B1-C534F2EE5024}</id>
 			<comment/>
 			<position>
@@ -191,8 +196,9 @@ TanNdotHSqr
 				<second>667</second>
 			</position>
 			<name>NdotHSqr</name>
+			<global>false</global>
 		</item>
-		<item type="traktor.render.Variable" version="traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
 			<id>{29BCBCD4-BE8B-4DD2-B688-901DE80D940B}</id>
 			<comment/>
 			<position>
@@ -200,8 +206,9 @@ TanNdotHSqr
 				<second>-4</second>
 			</position>
 			<name>Roughness</name>
+			<global>false</global>
 		</item>
-		<item type="traktor.render.Variable" version="traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
 			<id>{C4F9E1E1-FDA3-480C-ABFF-9932D9B27587}</id>
 			<comment/>
 			<position>
@@ -209,6 +216,7 @@ TanNdotHSqr
 				<second>645</second>
 			</position>
 			<name>Roughness</name>
+			<global>false</global>
 		</item>
 		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
 			<id>{E2BD8065-B070-4D87-8DD0-01A016C458ED}</id>
