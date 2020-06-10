@@ -53,7 +53,9 @@ public:
 
 	inline float get_length() const { return m_value.length(); }
 
-	inline void set(float x, float y, float z, float w) { m_value.set(x, y, z, w); }
+	inline void set(int32_t index, float value) { m_value.set(index, Scalar(value)); }
+
+	inline void set_xyzw(float x, float y, float z, float w) { m_value.set(x, y, z, w); }
 
 	inline Vector4 add(const BoxedVector4* v) const { return m_value + v->m_value; }
 

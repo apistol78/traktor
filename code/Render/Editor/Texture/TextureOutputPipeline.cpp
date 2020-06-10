@@ -137,7 +137,7 @@ struct ScaleTextureTask : public Object
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.TextureOutputPipeline", 33, TextureOutputPipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.TextureOutputPipeline", 34, TextureOutputPipeline, editor::IPipeline)
 
 TextureOutputPipeline::TextureOutputPipeline()
 :	m_generateMipsThread(false)
@@ -756,7 +756,7 @@ bool TextureOutputPipeline::buildOutput(
 		}
 #else
 		if (
-			m_compressionMethod == CmDXTn &&
+			(m_compressionMethod == CmDXTn || m_compressionMethod == CmETC1) &&
 			textureOutput->m_enableNormalMapCompression
 		)
 			isNormalMap = true;

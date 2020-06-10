@@ -3,6 +3,7 @@
 #include "Runtime/Editor/TargetScriptProfiler.h"
 #include "Runtime/Target/ScriptProfilerCallMeasured.h"
 #include "Runtime/Target/TargetLog.h"
+#include "Runtime/Target/TargetProfilerDictionary.h"
 #include "Runtime/Target/TargetProfilerEvents.h"
 #include "Core/Log/Log.h"
 #include "Core/Thread/Acquire.h"
@@ -80,6 +81,15 @@ bool TargetConnection::update()
 		{
 			m_performance = *performance;
 			m_transport->flush< TargetPerformance >();
+		}
+	}
+
+	{
+		Ref< TargetProfilerDictionary > profilerDictionary;
+		while (m_transport->recv< TargetProfilerDictionary >(0, profilerDictionary) == net::BidirectionalObjectTransport::RtSuccess)
+		{
+			if (m_profilerEventsCallback)
+				m_profilerEventsCallback->receivedProfilerDictionary(profilerDictionary->getDictionary());
 		}
 	}
 

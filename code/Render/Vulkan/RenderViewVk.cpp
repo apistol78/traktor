@@ -1282,8 +1282,8 @@ bool RenderViewVk::create(uint32_t width, uint32_t height, int32_t vblanks)
 	// Determine presentation mode.
 	VkPresentModeKHR presentationMode = VK_PRESENT_MODE_FIFO_KHR;
 #if defined(__ANDROID__) || defined(__IOS__)
-//	if (presentationModeSupported(m_physicalDevice, m_surface, VK_PRESENT_MODE_MAILBOX_KHR))
-//		presentationMode = VK_PRESENT_MODE_MAILBOX_KHR;
+	if (presentationModeSupported(m_physicalDevice, m_surface, VK_PRESENT_MODE_MAILBOX_KHR))
+		presentationMode = VK_PRESENT_MODE_MAILBOX_KHR;
 #endif
 	if (vblanks <= 0)
 	{
@@ -1411,13 +1411,13 @@ bool RenderViewVk::create(uint32_t width, uint32_t height, int32_t vblanks)
 
 		VkDescriptorPoolSize dps[4];
 		dps[0].type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-		dps[0].descriptorCount = 10000;
+		dps[0].descriptorCount = 40000;
 		dps[1].type = VK_DESCRIPTOR_TYPE_SAMPLER;
-		dps[1].descriptorCount = 1000;
+		dps[1].descriptorCount = 40000;
 		dps[2].type = VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE;
-		dps[2].descriptorCount = 1000;
+		dps[2].descriptorCount = 40000;
 		dps[3].type = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
-		dps[3].descriptorCount = 10;
+		dps[3].descriptorCount = 1000;
 
 		VkDescriptorPoolCreateInfo dpci = {};
 		dpci.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;

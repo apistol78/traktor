@@ -2,9 +2,10 @@
 
 #include <string>
 #include "Core/Ref.h"
-#include "Core/Containers/AlignedVector.h"
+#include "Core/Containers/SmallMap.h"
 #include "Core/Singleton/ISingleton.h"
 #include "Core/Thread/Semaphore.h"
+#include "Core/Thread/SpinLock.h"
 #include "Core/Thread/ThreadLocal.h"
 #include "Core/Timer/Timer.h"
 
@@ -45,7 +46,7 @@ class T_DLLCLASS Profiler
 public:
 	struct Event
 	{
-		std::wstring name;
+		uint16_t name;
 		uint32_t threadId;
 		uint16_t depth;
 		double start;
@@ -57,24 +58,9 @@ public:
 	class IReportListener : public IRefCount
 	{
 	public:
+		virtual void reportProfilerDictionary(const SmallMap< uint16_t, std::wstring >& dictionary) = 0;
+
 		virtual void reportProfilerEvents(double currentTime, const AlignedVector< Event >& events) = 0;
-	};
-
-	/*! JSON report listener.
-	 *
-	 * Format of JSON is Chromium tracer compatible.
-	 */
-	class T_DLLCLASS JSONReportListener : public RefCountImpl< IReportListener >
-	{
-	public:
-		JSONReportListener(OutputStream* output);
-
-		virtual ~JSONReportListener();
-
-		virtual void reportProfilerEvents(double currentTime, const AlignedVector< Event >& events) override final;
-
-	private:
-		Ref< OutputStream > m_output;
 	};
 
 	typedef void* handle_t;
@@ -113,6 +99,10 @@ private:
 
 	Ref< IReportListener > m_listener;
 	Semaphore m_lock;
+	SpinLock m_nameIdsLock;
+	SmallMap< const wchar_t*, uint16_t > m_nameIds;
+	SmallMap< uint16_t, std::wstring > m_dictionary;
+	bool m_dictionaryDirty;
 	AlignedVector< Event > m_events;
 	AlignedVector< ThreadEvents* > m_threadEvents;
 	ThreadLocal m_localThreadEvents;

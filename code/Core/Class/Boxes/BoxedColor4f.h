@@ -51,6 +51,18 @@ public:
 
 	void setAlpha(float alpha) { m_value.setAlpha(Scalar(alpha)); }
 
+	inline Color4f add(const BoxedColor4f* v) const { return m_value + v->m_value; }
+
+	inline Color4f sub(const BoxedColor4f* v) const { return m_value - v->m_value; }
+
+	inline Color4f mul(const BoxedColor4f* v) const { return m_value * v->m_value; }
+
+	inline Color4f div(const BoxedColor4f* v) const { return m_value / v->m_value; }
+
+	inline Color4f mul(float v) const { return m_value * Scalar(v); }
+
+	inline Color4f div(float v) const { return m_value / Scalar(v); }
+
 	static Color4f lerp(const BoxedColor4f* a, const BoxedColor4f* b, float c) { return Color4f(traktor::lerp(a->m_value, b->m_value, Scalar(c))); }
 
 	const Color4f& unbox() const { return m_value; }

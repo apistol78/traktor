@@ -29,10 +29,10 @@
 				<red>true</red>
 				<green>true</green>
 				<blue>true</blue>
-				<alpha>true</alpha>
+				<alpha>false</alpha>
 			</colorWriteMask>
 			<depthEnable>true</depthEnable>
-			<depthWriteEnable>true</depthWriteEnable>
+			<depthWriteEnable>false</depthWriteEnable>
 			<depthFunction>CfLessEqual</depthFunction>
 			<alphaTestEnable>false</alphaTestEnable>
 			<alphaTestFunction>CfLess</alphaTestFunction>
@@ -47,7 +47,7 @@
 			<stencilReference>0</stencilReference>
 			<stencilMask>2147483648</stencilMask>
 			<registerCount>0</registerCount>
-			<precisionHint>PhUndefined</precisionHint>
+			<precisionHint>PhHigh</precisionHint>
 		</item>
 		<item type="traktor.render.Neg" version="traktor.render.Node:1">
 			<id>{E6830DD3-383D-6445-9469-65BC4340C607}</id>
@@ -246,8 +246,8 @@ Eye direction
 			<id>{D06FE992-E16E-4E32-AE97-90030243A595}</id>
 			<comment/>
 			<position>
-				<first>350</first>
-				<second>768</second>
+				<first>354</first>
+				<second>766</second>
 			</position>
 		</item>
 		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
@@ -289,8 +289,8 @@ Eye direction
 			<id>{ABCD2DF8-2A4C-484C-AB2D-DB9A170AA683}</id>
 			<comment/>
 			<position>
-				<first>584</first>
-				<second>1262</second>
+				<first>560</first>
+				<second>1265</second>
 			</position>
 			<swizzle>x</swizzle>
 		</item>
@@ -379,8 +379,8 @@ Eye direction
 			<id>{4BAD39E7-54DA-45EA-B095-7D8699ECBB16}</id>
 			<comment/>
 			<position>
-				<first>882</first>
-				<second>1194</second>
+				<first>923</first>
+				<second>1216</second>
 			</position>
 			<name>Specular</name>
 			<global>false</global>
@@ -390,7 +390,7 @@ Eye direction
 			<comment/>
 			<position>
 				<first>-272</first>
-				<second>1226</second>
+				<second>1280</second>
 			</position>
 			<name>F0</name>
 			<global>false</global>
@@ -462,8 +462,8 @@ Eye direction
 			<id>{F576288F-1517-48E0-BB9F-E880F3536EB0}</id>
 			<comment/>
 			<position>
-				<first>-646</first>
-				<second>1504</second>
+				<first>-593</first>
+				<second>1518</second>
 			</position>
 			<name>kS</name>
 			<global>false</global>
@@ -509,8 +509,8 @@ Eye direction
 			<id>{6AAC8BF8-C1F8-4A13-981F-F035F22A4BEA}</id>
 			<comment/>
 			<position>
-				<first>-578</first>
-				<second>1124</second>
+				<first>-608</first>
+				<second>1117</second>
 			</position>
 		</item>
 		<item type="traktor.render.External" version="2,traktor.render.Node:1">
@@ -560,8 +560,8 @@ Eye direction
 			<id>{A6B5D9E5-5700-49CE-AFBC-625D5D23283F}</id>
 			<comment/>
 			<position>
-				<first>-816</first>
-				<second>1068</second>
+				<first>-790</first>
+				<second>1119</second>
 			</position>
 			<name>L_EyeDirection</name>
 			<global>false</global>
@@ -782,6 +782,15 @@ Eye direction
 			</position>
 			<name>L_Occlusion</name>
 			<global>false</global>
+		</item>
+		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
+			<id>{07198419-E293-E14D-89DF-C7CC2DD6613B}</id>
+			<comment/>
+			<position>
+				<first>1217</first>
+				<second>-213</second>
+			</position>
+			<value>1</value>
 		</item>
 	</nodes>
 	<edges>
@@ -1347,16 +1356,6 @@ Eye direction
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[60]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[61]"/>
-				<name>Input</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
 				<node ref="/object/nodes/item[63]"/>
 				<name>Output</name>
 			</source>
@@ -1427,6 +1426,26 @@ Eye direction
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
+				<node ref="/object/nodes/item[65]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[67]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[61]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
 				<node ref="/object/nodes/item[52]"/>
 				<name>Output</name>
 			</source>
@@ -1447,12 +1466,12 @@ Eye direction
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[65]"/>
+				<node ref="/object/nodes/item[5]"/>
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item"/>
-				<name>Input</name>
+				<node ref="/object/nodes/item[25]"/>
+				<name>Y</name>
 			</destination>
 		</item>
 	</edges>

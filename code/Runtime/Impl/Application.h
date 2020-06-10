@@ -50,6 +50,7 @@ class ScriptServer;
 class WorldServer;
 
 class Environment;
+class IRuntimePlugin;
 class IState;
 class StateManager;
 class TargetManagerConnection;
@@ -86,6 +87,7 @@ public:
 private:
 	Ref< PropertyGroup > m_settings;
 	RefArray< Library > m_libraries;
+	RefArray< IRuntimePlugin > m_plugins;
 	Ref< TargetManagerConnection > m_targetManagerConnection;
 	Ref< db::Database > m_database;
 	Ref< AudioServer > m_audioServer;

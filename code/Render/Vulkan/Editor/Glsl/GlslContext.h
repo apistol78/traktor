@@ -69,6 +69,11 @@ public:
 
 	/*! \} */
 
+	/*! Requirements */
+	GlslRequirements& requirements();
+
+	/*! Requirements */
+	const GlslRequirements& requirements() const;
 
 	/*! Allocate interpolator variable. */
 	bool allocateInterpolator(int32_t width, int32_t& outId, int32_t& outOffset);
@@ -149,6 +154,7 @@ private:
 	GlslShader m_computeShader;
 	GlslShader* m_currentShader;
 	GlslEmitter m_emitter;
+	GlslRequirements m_requirements;
 	AlignedVector< uint8_t > m_interpolatorMap;
 	GlslLayout m_layout;
 	AlignedVector< Parameter > m_parameters;

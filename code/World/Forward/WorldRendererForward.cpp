@@ -827,11 +827,7 @@ render::handle_t WorldRendererForward::setupVisualPass(
 	rgtd.count = 1;
 	rgtd.createDepthStencil = false;
 	rgtd.usingPrimaryDepthStencil = (m_sharedDepthStencil == nullptr) ? true : false;
-#if defined(__ANDROID__)
-	rgtd.targets[0].colorFormat = render::TfR8G8B8A8;
-#else
 	rgtd.targets[0].colorFormat = render::TfR11G11B10F;
-#endif
 	rgtd.referenceWidthDenom = 1;
 	rgtd.referenceHeightDenom = 1;
 	auto visualTargetSetId = renderGraph.addTransientTargetSet(L"Visual", rgtd, m_sharedDepthStencil, outputTargetSetId);

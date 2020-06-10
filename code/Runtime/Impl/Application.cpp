@@ -16,6 +16,7 @@
 #include "Runtime/Impl/WorldServer.h"
 #include "Runtime/Target/IRemoteEvent.h"
 #include "Runtime/Target/TargetManagerConnection.h"
+#include "Runtime/Target/TargetProfilerDictionary.h"
 #include "Runtime/Target/TargetProfilerEvents.h"
 #include "Core/Platform.h"
 #include "Core/Library/Library.h"
@@ -69,10 +70,24 @@ public:
 	{
 	}
 
+	virtual void reportProfilerDictionary(const SmallMap< uint16_t, std::wstring >& dictionary) override final
+	{
+		auto transport = m_targetManagerConnection->getTransport();
+		if (transport)
+		{
+			TargetProfilerDictionary targetProfilerDictionary(dictionary);
+			transport->send(&targetProfilerDictionary);
+		}		
+	}
+
 	virtual void reportProfilerEvents(double currentTime, const AlignedVector< Profiler::Event >& events) override final
 	{
-		TargetProfilerEvents targetProfilerEvents(currentTime, events);
-		m_targetManagerConnection->getTransport()->send(&targetProfilerEvents);
+		auto transport = m_targetManagerConnection->getTransport();
+		if (transport)
+		{
+			TargetProfilerEvents targetProfilerEvents(currentTime, events);
+			transport->send(&targetProfilerEvents);
+		}
 	}
 
 private:
@@ -326,7 +341,6 @@ bool Application::create(
 
 	// Initial, startup, state.
 	T_DEBUG(L"Creating plugins...");
-	RefArray< IRuntimePlugin > plugins;
 
 	TypeInfoSet pluginTypes;
 	type_of< IRuntimePlugin >().findAllOf(pluginTypes, false);
@@ -343,18 +357,18 @@ bool Application::create(
 		}
 
 		T_DEBUG(L"Plugin \"" << type_name(plugin) << L"\" initialized successfully.");
-		plugins.push_back(plugin);
+		m_plugins.push_back(plugin);
 	}
 
 	Ref< IState > state;
-	for (const auto plugin : plugins)
+	for (const auto plugin : m_plugins)
 	{
 		if ((state = plugin->createInitialState(m_environment)) != nullptr)
 			break;
 	}
 	if (!state)
 	{
-		log::error << L"Application failed; unable to create initial state (scanned " << int32_t(plugins.size()) << L" plugins)." << Endl;
+		log::error << L"Application failed; unable to create initial state (scanned " << (int32_t)m_plugins.size() << L" plugins)." << Endl;
 		return false;
 	}
 
@@ -417,25 +431,33 @@ void Application::destroy()
 	JobManager::getInstance().stop();
 
 	safeDestroy(m_stateManager);
+
+	// Cleanup all pending garbage in script land.
+	m_scriptServer->cleanup(true);
+
+	// Shutdown plugins.
+	for (auto plugin : m_plugins)
+		plugin->destroy(m_environment);
+	m_plugins.clear();
+
+	// Destroy environment servers.
+	safeDestroy(m_scriptServer);
 	safeDestroy(m_audioServer);
 	safeDestroy(m_resourceServer);
 	safeDestroy(m_worldServer);
 	safeDestroy(m_physicsServer);
 	safeDestroy(m_inputServer);
 	safeDestroy(m_renderServer);
-	safeDestroy(m_scriptServer);
 	safeDestroy(m_onlineServer);
-
 	m_environment = nullptr;
 
-	if (m_database)
-	{
-		m_database->close();
-		m_database = nullptr;
-	}
+	// Close database.
+	safeClose(m_database);
 
-	for (RefArray< Library >::iterator i = m_libraries.begin(); i != m_libraries.end(); ++i)
-		(*i)->detach();
+	// Unload libraries.
+	for (auto library : m_libraries)
+		library->detach();
+	m_libraries.clear();
 }
 
 bool Application::update()

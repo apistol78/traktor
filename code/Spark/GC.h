@@ -4,6 +4,14 @@
 #include "Core/Singleton/ISingleton.h"
 #include "Core/Thread/Semaphore.h"
 
+// import/export mechanism.
+#undef T_DLLCLASS
+#if defined(T_SPARK_EXPORT)
+#	define T_DLLCLASS T_DLLEXPORT
+#else
+#	define T_DLLCLASS T_DLLIMPORT
+#endif
+
 namespace traktor
 {
 	namespace spark
@@ -19,7 +27,7 @@ class Collectable;
  * It uses a simple tracing algorithm in order
  * to find isolated reference cycles.
  */
-class GC : public ISingleton
+class T_DLLCLASS GC : public ISingleton
 {
 public:
 	static GC& getInstance();

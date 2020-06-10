@@ -26,6 +26,16 @@ enum GlslType
 	GtStructBuffer
 };
 
+struct GlslRequirements
+{
+	PrecisionHint precisionHint;
+
+	GlslRequirements()
+	:	precisionHint(PhUndefined)
+	{
+	}
+};
+
 std::wstring glsl_type_name(GlslType type);
 
 int32_t glsl_type_width(GlslType type);

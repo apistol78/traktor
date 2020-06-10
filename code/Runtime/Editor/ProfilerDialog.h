@@ -39,8 +39,11 @@ private:
 	Ref< ui::ToolBar > m_toolBar;
 	Ref< ui::BuildChartControl > m_chart;
 	SmallMap< uint32_t, int32_t > m_threadIdToLane;
+	SmallMap< uint16_t, std::wstring > m_dictionary;
 	int32_t m_nextThreadLane;
 	bool m_recording;
+
+	virtual void receivedProfilerDictionary(const SmallMap< uint16_t, std::wstring >& dictionary) override final;
 
 	virtual void receivedProfilerEvents(double currentTime, const AlignedVector< Profiler::Event >& events) override final;
 

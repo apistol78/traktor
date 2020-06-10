@@ -38,6 +38,18 @@ Timer s_timer;
 const int32_t c_tableKey_class = -1;
 const int32_t c_tableKey_instance = -2;
 
+#if defined(_DEBUG)
+std::wstring getObjectTypeName(lua_State* luaState, int32_t index)
+{
+	CHECK_LUA_STACK(luaState, 0);
+	lua_getfield(luaState, index, "__typename");
+	const char* tn = lua_tostring(luaState, -1);
+	std::wstring typeName = mbstows(tn != nullptr ? tn : "");
+	lua_pop(luaState, 1);
+	return typeName;
+}
+#endif
+
 inline ITypedObject* toTypedObject(lua_State* luaState, int32_t index)
 {
 	lua_rawgeti(luaState, index, c_tableKey_instance);
@@ -546,6 +558,8 @@ void ScriptManagerLua::pushObject(ITypedObject* object)
 #if defined(_DEBUG)
 	lua_pushstring(m_luaState, "native instance");
 	lua_setfield(m_luaState, -2, "__name");
+	lua_pushstring(m_luaState, wstombs(objectType.getName()).c_str());
+	lua_setfield(m_luaState, -2, "__typename");
 #endif
 
 	lua_rawgeti(m_luaState, LUA_REGISTRYINDEX, rc.classTableRef);
@@ -854,11 +868,22 @@ int ScriptManagerLua::classAlloc(lua_State* luaState)
 
 int ScriptManagerLua::classGc(lua_State* luaState)
 {
+#if defined(_DEBUG)
+	std::wstring typeName = getObjectTypeName(luaState, 1);
+	if (!typeName.empty())
+		log::debug << L"ScriptManagerLua::classGC; releasing \"" << typeName << L"\"." << Endl;
+#endif
+
 	ITypedObject* object = toTypedObject(luaState, 1);
 	if (object)
 	{
+#if defined(_DEBUG)
+		if (typeName.empty())
+			log::debug << L"ScriptManagerLua::classGC; releasing object without \"__typename\" tag, would be \"" << type_name(object) << L"\"." << Endl;
+#endif
 		T_SAFE_ANONYMOUS_RELEASE(object);
 	}
+
 	return 0;
 }
 
@@ -893,6 +918,12 @@ int ScriptManagerLua::classNew(lua_State* luaState)
 		lua_pushlightuserdata(luaState, (void*)object.ptr());
 		lua_rawseti(luaState, -2, c_tableKey_instance);
 		T_SAFE_ANONYMOUS_ADDREF(object);
+
+#if defined(_DEBUG)
+		const TypeInfo& objectType = type_of(object);
+		lua_pushstring(luaState, wstombs(objectType.getName()).c_str());
+		lua_setfield(luaState, -2, "__typename");
+#endif
 
 		// Store object instance in weak table.
 		putObjectRef(luaState, ms_instance->m_objectTableRef, object);

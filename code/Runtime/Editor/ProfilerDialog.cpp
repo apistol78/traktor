@@ -65,6 +65,11 @@ void ProfilerDialog::destroy()
 	ui::Dialog::destroy();
 }
 
+void ProfilerDialog::receivedProfilerDictionary(const SmallMap< uint16_t, std::wstring >& dictionary)
+{
+	m_dictionary = dictionary;
+}
+
 void ProfilerDialog::receivedProfilerEvents(double currentTime, const AlignedVector< Profiler::Event >& events)
 {
 	if (!m_recording)
@@ -85,13 +90,27 @@ void ProfilerDialog::receivedProfilerEvents(double currentTime, const AlignedVec
 			m_nextThreadLane++;
 		}
 
-		m_chart->addTask(
-			m_threadIdToLane[e.threadId] * 8 + e.depth,
-			str(L"%ls (%.2f ms)", e.name.c_str(), (e.end - e.start) * 1000.0f),
-			c_threadColors[m_threadIdToLane[e.threadId] % sizeof_array(c_threadColors)],
-			e.start,
-			e.end
-		);
+		auto it = m_dictionary.find(e.name);
+		if (it != m_dictionary.end())
+		{
+			m_chart->addTask(
+				m_threadIdToLane[e.threadId] * 8 + e.depth,
+				str(L"%ls (%.2f ms)", it->second.c_str(), (e.end - e.start) * 1000.0f),
+				c_threadColors[m_threadIdToLane[e.threadId] % sizeof_array(c_threadColors)],
+				e.start,
+				e.end
+			);
+		}
+		else
+		{
+			m_chart->addTask(
+				m_threadIdToLane[e.threadId] * 8 + e.depth,
+				str(L"%d (%.2f ms)", e.name, (e.end - e.start) * 1000.0f),
+				c_threadColors[m_threadIdToLane[e.threadId] % sizeof_array(c_threadColors)],
+				e.start,
+				e.end
+			);
+		}
 	}
 }
 
