@@ -131,7 +131,7 @@ const StringOutputStream& GlslShader::getOutputStream(BlockType blockType) const
 	return *(m_outputStreams[int(blockType)].back());
 }
 
-std::wstring GlslShader::getGeneratedShader(const GlslLayout& layout) const
+std::wstring GlslShader::getGeneratedShader(const GlslLayout& layout, const GlslRequirements& requirements) const
 {
 	StringOutputStream ss;
 
@@ -143,6 +143,25 @@ std::wstring GlslShader::getGeneratedShader(const GlslLayout& layout) const
 	ss << L"#extension GL_ARB_shading_language_420pack : enable" << Endl;
 	ss << L"#extension GL_EXT_samplerless_texture_functions : enable" << Endl;
 	ss << Endl;
+
+	switch (requirements.precisionHint)
+	{
+	case PhLow:
+		ss << L"precision lowp float;" << Endl;
+		ss << Endl;
+		break;
+
+	case PhMedium:
+		ss << L"precision mediump float;" << Endl;
+		ss << Endl;
+		break;
+
+	case PhHigh:
+	case PhUndefined:
+		ss << L"precision highp float;" << Endl;
+		ss << Endl;
+		break;
+	}
 
 	for (auto resource : layout.get())
 	{

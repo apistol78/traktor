@@ -570,9 +570,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR szCmdLine, int)
 	}
 #endif
 
-	log::info   .setGlobalTarget(0);
-	log::warning.setGlobalTarget(0);
-	log::error  .setGlobalTarget(0);
+	log::info   .setGlobalTarget(nullptr);
+	log::warning.setGlobalTarget(nullptr);
+	log::error  .setGlobalTarget(nullptr);
 
 #if defined(_DEBUG)
 	SingletonManager::getInstance().destroy();

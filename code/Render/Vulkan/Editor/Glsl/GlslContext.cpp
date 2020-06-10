@@ -195,6 +195,16 @@ bool GlslContext::inCompute() const
 	return bool(m_currentShader == &m_computeShader);
 }
 
+GlslRequirements& GlslContext::requirements()
+{
+	return m_requirements;
+}
+
+const GlslRequirements& GlslContext::requirements() const
+{
+	return m_requirements;
+}
+
 bool GlslContext::allocateInterpolator(int32_t width, int32_t& outId, int32_t& outOffset)
 {
 	int32_t lastId = int32_t(m_interpolatorMap.size());

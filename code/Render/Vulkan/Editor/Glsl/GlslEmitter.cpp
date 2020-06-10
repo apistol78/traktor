@@ -1363,6 +1363,7 @@ bool emitPixelOutput(GlslContext& cx, PixelOutput* node)
 	}
 
 	cx.setRenderState(rs);
+	cx.requirements().precisionHint = node->getPrecisionHint();
 	return true;
 }
 

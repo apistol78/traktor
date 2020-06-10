@@ -124,6 +124,12 @@ void BoxedClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classBoxedColor4f->addMethod("get", &BoxedColor4f::get);
 	classBoxedColor4f->addMethod("set", &BoxedColor4f::set);
 	classBoxedColor4f->addStaticMethod("lerp", &BoxedColor4f::lerp);
+	classBoxedColor4f->addOperator< Color4f, const BoxedColor4f* >('+', &BoxedColor4f::add);
+	classBoxedColor4f->addOperator< Color4f, const BoxedColor4f* >('-', &BoxedColor4f::sub);
+	classBoxedColor4f->addOperator< Color4f, const BoxedColor4f* >('*', &BoxedColor4f::mul);
+	classBoxedColor4f->addOperator< Color4f, float >('*', &BoxedColor4f::mul);
+	classBoxedColor4f->addOperator< Color4f, const BoxedColor4f* >('/', &BoxedColor4f::div);
+	classBoxedColor4f->addOperator< Color4f, float >('/', &BoxedColor4f::div);
 	registrar->registerClass(classBoxedColor4f);
 
 	auto classBoxedColor4ub = new AutoRuntimeClass< BoxedColor4ub >();
@@ -352,14 +358,6 @@ void BoxedClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classBoxedVector2->addProperty< float >("y", &BoxedVector2::set_y, &BoxedVector2::get_y);
 	classBoxedVector2->addProperty< float >("length", 0, &BoxedVector2::get_length);
 	classBoxedVector2->addMethod("set", &BoxedVector2::set);
-	classBoxedVector2->addMethod< Vector2, const BoxedVector2* >("add", &BoxedVector2::add);
-	classBoxedVector2->addMethod< Vector2, const BoxedVector2* >("sub", &BoxedVector2::sub);
-	classBoxedVector2->addMethod< Vector2, const BoxedVector2* >("mul", &BoxedVector2::mul);
-	classBoxedVector2->addMethod< Vector2, const BoxedVector2* >("div", &BoxedVector2::div);
-	classBoxedVector2->addMethod< Vector2, float >("addf", &BoxedVector2::add);
-	classBoxedVector2->addMethod< Vector2, float >("subf", &BoxedVector2::sub);
-	classBoxedVector2->addMethod< Vector2, float >("mulf", &BoxedVector2::mul);
-	classBoxedVector2->addMethod< Vector2, float >("divf", &BoxedVector2::div);
 	classBoxedVector2->addMethod("dot", &BoxedVector2::dot);
 	classBoxedVector2->addMethod("normalized", &BoxedVector2::normalized);
 	classBoxedVector2->addMethod("neg", &BoxedVector2::neg);
@@ -390,14 +388,7 @@ void BoxedClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classBoxedVector4->addProperty< Vector4 >("xyz1", &BoxedVector4::get_xyz1);
 	classBoxedVector4->addProperty< float >("length", &BoxedVector4::get_length);
 	classBoxedVector4->addMethod("set", &BoxedVector4::set);
-	classBoxedVector4->addMethod< Vector4, const BoxedVector4* >("add", &BoxedVector4::add);
-	classBoxedVector4->addMethod< Vector4, const BoxedVector4* >("sub", &BoxedVector4::sub);
-	classBoxedVector4->addMethod< Vector4, const BoxedVector4* >("mul", &BoxedVector4::mul);
-	classBoxedVector4->addMethod< Vector4, const BoxedVector4* >("div", &BoxedVector4::div);
-	classBoxedVector4->addMethod< Vector4, float >("addf", &BoxedVector4::add);
-	classBoxedVector4->addMethod< Vector4, float >("subf", &BoxedVector4::sub);
-	classBoxedVector4->addMethod< Vector4, float >("mulf", &BoxedVector4::mul);
-	classBoxedVector4->addMethod< Vector4, float >("divf", &BoxedVector4::div);
+	classBoxedVector4->addMethod("set", &BoxedVector4::set_xyzw);
 	classBoxedVector4->addMethod("dot", &BoxedVector4::dot);
 	classBoxedVector4->addMethod("cross", &BoxedVector4::cross);
 	classBoxedVector4->addMethod("normalized", &BoxedVector4::normalized);

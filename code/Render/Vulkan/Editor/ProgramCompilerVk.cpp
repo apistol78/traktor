@@ -35,114 +35,117 @@ namespace traktor
 		namespace
 		{
 
-const TBuiltInResource c_defaultTBuiltInResource =
+TBuiltInResource getDefaultBuiltInResource()
 {
-	/* .MaxLights = */ 32,
-	/* .MaxClipPlanes = */ 6,
-	/* .MaxTextureUnits = */ 32,
-	/* .MaxTextureCoords = */ 32,
-	/* .MaxVertexAttribs = */ 64,
-	/* .MaxVertexUniformComponents = */ 4096,
-	/* .MaxVaryingFloats = */ 64,
-	/* .MaxVertexTextureImageUnits = */ 32,
-	/* .MaxCombinedTextureImageUnits = */ 80,
-	/* .MaxTextureImageUnits = */ 32,
-	/* .MaxFragmentUniformComponents = */ 4096,
-	/* .MaxDrawBuffers = */ 32,
-	/* .MaxVertexUniformVectors = */ 128,
-	/* .MaxVaryingVectors = */ 8,
-	/* .MaxFragmentUniformVectors = */ 16,
-	/* .MaxVertexOutputVectors = */ 16,
-	/* .MaxFragmentInputVectors = */ 15,
-	/* .MinProgramTexelOffset = */ -8,
-	/* .MaxProgramTexelOffset = */ 7,
-	/* .MaxClipDistances = */ 8,
-	/* .MaxComputeWorkGroupCountX = */ 65535,
-	/* .MaxComputeWorkGroupCountY = */ 65535,
-	/* .MaxComputeWorkGroupCountZ = */ 65535,
-	/* .MaxComputeWorkGroupSizeX = */ 1024,
-	/* .MaxComputeWorkGroupSizeY = */ 1024,
-	/* .MaxComputeWorkGroupSizeZ = */ 64,
-	/* .MaxComputeUniformComponents = */ 1024,
-	/* .MaxComputeTextureImageUnits = */ 16,
-	/* .MaxComputeImageUniforms = */ 8,
-	/* .MaxComputeAtomicCounters = */ 8,
-	/* .MaxComputeAtomicCounterBuffers = */ 1,
-	/* .MaxVaryingComponents = */ 60,
-	/* .MaxVertexOutputComponents = */ 64,
-	/* .MaxGeometryInputComponents = */ 64,
-	/* .MaxGeometryOutputComponents = */ 128,
-	/* .MaxFragmentInputComponents = */ 128,
-	/* .MaxImageUnits = */ 8,
-	/* .MaxCombinedImageUnitsAndFragmentOutputs = */ 8,
-	/* .MaxCombinedShaderOutputResources = */ 8,
-	/* .MaxImageSamples = */ 0,
-	/* .MaxVertexImageUniforms = */ 0,
-	/* .MaxTessControlImageUniforms = */ 0,
-	/* .MaxTessEvaluationImageUniforms = */ 0,
-	/* .MaxGeometryImageUniforms = */ 0,
-	/* .MaxFragmentImageUniforms = */ 8,
-	/* .MaxCombinedImageUniforms = */ 8,
-	/* .MaxGeometryTextureImageUnits = */ 16,
-	/* .MaxGeometryOutputVertices = */ 256,
-	/* .MaxGeometryTotalOutputComponents = */ 1024,
-	/* .MaxGeometryUniformComponents = */ 1024,
-	/* .MaxGeometryVaryingComponents = */ 64,
-	/* .MaxTessControlInputComponents = */ 128,
-	/* .MaxTessControlOutputComponents = */ 128,
-	/* .MaxTessControlTextureImageUnits = */ 16,
-	/* .MaxTessControlUniformComponents = */ 1024,
-	/* .MaxTessControlTotalOutputComponents = */ 4096,
-	/* .MaxTessEvaluationInputComponents = */ 128,
-	/* .MaxTessEvaluationOutputComponents = */ 128,
-	/* .MaxTessEvaluationTextureImageUnits = */ 16,
-	/* .MaxTessEvaluationUniformComponents = */ 1024,
-	/* .MaxTessPatchComponents = */ 120,
-	/* .MaxPatchVertices = */ 32,
-	/* .MaxTessGenLevel = */ 64,
-	/* .MaxViewports = */ 16,
-	/* .MaxVertexAtomicCounters = */ 0,
-	/* .MaxTessControlAtomicCounters = */ 0,
-	/* .MaxTessEvaluationAtomicCounters = */ 0,
-	/* .MaxGeometryAtomicCounters = */ 0,
-	/* .MaxFragmentAtomicCounters = */ 8,
-	/* .MaxCombinedAtomicCounters = */ 8,
-	/* .MaxAtomicCounterBindings = */ 1,
-	/* .MaxVertexAtomicCounterBuffers = */ 0,
-	/* .MaxTessControlAtomicCounterBuffers = */ 0,
-	/* .MaxTessEvaluationAtomicCounterBuffers = */ 0,
-	/* .MaxGeometryAtomicCounterBuffers = */ 0,
-	/* .MaxFragmentAtomicCounterBuffers = */ 1,
-	/* .MaxCombinedAtomicCounterBuffers = */ 1,
-	/* .MaxAtomicCounterBufferSize = */ 16384,
-	/* .MaxTransformFeedbackBuffers = */ 4,
-	/* .MaxTransformFeedbackInterleavedComponents = */ 64,
-	/* .MaxCullDistances = */ 8,
-	/* .MaxCombinedClipAndCullDistances = */ 8,
-	/* .MaxSamples = */ 4,
+	TBuiltInResource bir = {};
 
-	/* .maxMeshOutputVerticesNV; =*/ 0,
-    /* .maxMeshOutputPrimitivesNV; =*/ 0,
-    /* .maxMeshWorkGroupSizeX_NV; =*/ 0,
-    /* .maxMeshWorkGroupSizeY_NV; =*/ 0,
-    /* .maxMeshWorkGroupSizeZ_NV; =*/ 0,
-    /* .maxTaskWorkGroupSizeX_NV; =*/ 0,
-    /* .maxTaskWorkGroupSizeY_NV; =*/ 0,
-    /* .maxTaskWorkGroupSizeZ_NV; =*/ 0,
-    /* .maxMeshViewCountNV; =*/ 0,
+	bir.maxLights = 32;
+	bir.maxClipPlanes = 6;
+	bir.maxTextureUnits = 32;
+	bir.maxTextureCoords = 32;
+	bir.maxVertexAttribs = 64;
+	bir.maxVertexUniformComponents = 4096;
+	bir.maxVaryingFloats = 64;
+	bir.maxVertexTextureImageUnits = 32;
+	bir.maxCombinedTextureImageUnits = 80;
+	bir.maxTextureImageUnits = 32;
+	bir.maxFragmentUniformComponents = 4096;
+	bir.maxDrawBuffers = 32;
+	bir.maxVertexUniformVectors = 128;
+	bir.maxVaryingVectors = 8;
+	bir.maxFragmentUniformVectors = 16;
+	bir.maxVertexOutputVectors = 16;
+	bir.maxFragmentInputVectors = 15;
+	bir.minProgramTexelOffset = -8;
+	bir.maxProgramTexelOffset = 7;
+	bir.maxClipDistances = 8;
+	bir.maxComputeWorkGroupCountX = 65535;
+	bir.maxComputeWorkGroupCountY = 65535;
+	bir.maxComputeWorkGroupCountZ = 65535;
+	bir.maxComputeWorkGroupSizeX = 1024;
+	bir.maxComputeWorkGroupSizeY = 1024;
+	bir.maxComputeWorkGroupSizeZ = 64;
+	bir.maxComputeUniformComponents = 1024;
+	bir.maxComputeTextureImageUnits = 16;
+	bir.maxComputeImageUniforms = 8;
+	bir.maxComputeAtomicCounters = 8;
+	bir.maxComputeAtomicCounterBuffers = 1;
+	bir.maxVaryingComponents = 60;
+	bir.maxVertexOutputComponents = 64;
+	bir.maxGeometryInputComponents = 64;
+	bir.maxGeometryOutputComponents = 128;
+	bir.maxFragmentInputComponents = 128;
+	bir.maxImageUnits = 8;
+	bir.maxCombinedImageUnitsAndFragmentOutputs = 8;
+	bir.maxCombinedShaderOutputResources = 8;
+	bir.maxImageSamples = 0;
+	bir.maxVertexImageUniforms = 0;
+	bir.maxTessControlImageUniforms = 0;
+	bir.maxTessEvaluationImageUniforms = 0;
+	bir.maxGeometryImageUniforms = 0;
+	bir.maxFragmentImageUniforms = 8;
+	bir.maxCombinedImageUniforms = 8;
+	bir.maxGeometryTextureImageUnits = 16;
+	bir.maxGeometryOutputVertices = 256;
+	bir.maxGeometryTotalOutputComponents = 1024;
+	bir.maxGeometryUniformComponents = 1024;
+	bir.maxGeometryVaryingComponents = 64;
+	bir.maxTessControlInputComponents = 128;
+	bir.maxTessControlOutputComponents = 128;
+	bir.maxTessControlTextureImageUnits = 16;
+	bir.maxTessControlUniformComponents = 1024;
+	bir.maxTessControlTotalOutputComponents = 4096;
+	bir.maxTessEvaluationInputComponents = 128;
+	bir.maxTessEvaluationOutputComponents = 128;
+	bir.maxTessEvaluationTextureImageUnits = 16;
+	bir.maxTessEvaluationUniformComponents = 1024;
+	bir.maxTessPatchComponents = 120;
+	bir.maxPatchVertices = 32;
+	bir.maxTessGenLevel = 64;
+	bir.maxViewports = 16;
+	bir.maxVertexAtomicCounters = 0;
+	bir.maxTessControlAtomicCounters = 0;
+	bir.maxTessEvaluationAtomicCounters = 0;
+	bir.maxGeometryAtomicCounters = 0;
+	bir.maxFragmentAtomicCounters = 8;
+	bir.maxCombinedAtomicCounters = 8;
+	bir.maxAtomicCounterBindings = 1;
+	bir.maxVertexAtomicCounterBuffers = 0;
+	bir.maxTessControlAtomicCounterBuffers = 0;
+	bir.maxTessEvaluationAtomicCounterBuffers = 0;
+	bir.maxGeometryAtomicCounterBuffers = 0;
+	bir.maxFragmentAtomicCounterBuffers = 1;
+	bir.maxCombinedAtomicCounterBuffers = 1;
+	bir.maxAtomicCounterBufferSize = 16384;
+	bir.maxTransformFeedbackBuffers = 4;
+	bir.maxTransformFeedbackInterleavedComponents = 64;
+	bir.maxCullDistances = 8;
+	bir.maxCombinedClipAndCullDistances = 8;
+	bir.maxSamples = 4;
 
-	/* .limits = */ {
-		/* .nonInductiveForLoops = */ 1,
-		/* .whileLoops = */ 1,
-		/* .doWhileLoops = */ 1,
-		/* .generalUniformIndexing = */ 1,
-		/* .generalAttributeMatrixVectorIndexing = */ 1,
-		/* .generalVaryingIndexing = */ 1,
-		/* .generalSamplerIndexing = */ 1,
-		/* .generalVariableIndexing = */ 1,
-		/* .generalConstantMatrixVectorIndexing = */ 1,
-    }
-};
+	bir.maxMeshOutputVerticesNV = 0;
+    bir.maxMeshOutputPrimitivesNV = 0;
+    bir.maxMeshWorkGroupSizeX_NV = 0;
+    bir.maxMeshWorkGroupSizeY_NV = 0;
+    bir.maxMeshWorkGroupSizeZ_NV = 0;
+    bir.maxTaskWorkGroupSizeX_NV = 0;
+    bir.maxTaskWorkGroupSizeY_NV = 0;
+    bir.maxTaskWorkGroupSizeZ_NV = 0;
+    bir.maxMeshViewCountNV = 0;
+	bir.maxDualSourceDrawBuffersEXT = 0;
+
+	bir.limits.nonInductiveForLoops = 1;
+	bir.limits.whileLoops = 1;
+	bir.limits.doWhileLoops = 1;
+	bir.limits.generalUniformIndexing = 1;
+	bir.limits.generalAttributeMatrixVectorIndexing = 1;
+	bir.limits.generalVaryingIndexing = 1;
+	bir.limits.generalSamplerIndexing = 1;
+	bir.limits.generalVariableIndexing = 1;
+	bir.limits.generalConstantMatrixVectorIndexing = 1;
+
+	return bir;
+}
 
 const uint32_t c_parameterTypeWidths[] = { 1, 4, 16, 0, 0, 0 };
 
@@ -237,6 +240,8 @@ void performOptimization(AlignedVector< uint32_t >& spirv)
 	std::vector< uint32_t > opted;
 	if (optimizer.Run(spirv.c_ptr(), spirv.size(), &opted, spvOptOptions))
 		spirv = AlignedVector< uint32_t >(opted.begin(), opted.end());
+	else
+		log::warning << L"SPIR-V optimizer failed; using unoptimized IL." << Endl;
 }
 
 		}
@@ -284,19 +289,26 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 
 	if (vertexOutputs.size() == 1 && pixelOutputs.size() == 1)
 	{
+		const auto defaultBuiltInResource = getDefaultBuiltInResource();
+
 		cx.getEmitter().emit(cx, pixelOutputs[0]);
 		cx.getEmitter().emit(cx, vertexOutputs[0]);
 
+		GlslRequirements vertexRequirements = cx.requirements();
+		vertexRequirements.precisionHint = PhHigh;
+
+		GlslRequirements fragmentRequirements = cx.requirements();
+
 		const auto& layout = cx.getLayout();
-		const char* vertexShaderText = strdup(wstombs(cx.getVertexShader().getGeneratedShader(layout)).c_str());
-		const char* fragmentShaderText = strdup(wstombs(cx.getFragmentShader().getGeneratedShader(layout)).c_str());
+		const char* vertexShaderText = strdup(wstombs(cx.getVertexShader().getGeneratedShader(layout, vertexRequirements)).c_str());
+		const char* fragmentShaderText = strdup(wstombs(cx.getFragmentShader().getGeneratedShader(layout, fragmentRequirements)).c_str());
 
 		// Vertex shader.
 		vertexShader = new glslang::TShader(EShLangVertex);
 		vertexShader->setStrings(&vertexShaderText, 1);
 		vertexShader->setEntryPoint("main");
 
-		bool vertexResult = vertexShader->parse(&c_defaultTBuiltInResource, 100, false, (EShMessages)(EShMsgVulkanRules | EShMsgSpvRules));
+		bool vertexResult = vertexShader->parse(&defaultBuiltInResource, 100, false, (EShMessages)(EShMsgVulkanRules | EShMsgSpvRules));
 
 		if (vertexShader->getInfoLog())
 		{
@@ -320,7 +332,7 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 		fragmentShader->setStrings(&fragmentShaderText, 1);
 		fragmentShader->setEntryPoint("main");
 
-		bool fragmentResult = fragmentShader->parse(&c_defaultTBuiltInResource, 100, false, (EShMessages)(EShMsgVulkanRules | EShMsgSpvRules));
+		bool fragmentResult = fragmentShader->parse(&defaultBuiltInResource, 100, false, (EShMessages)(EShMsgVulkanRules | EShMsgSpvRules));
 
 		if (fragmentShader->getInfoLog())
 		{
@@ -341,17 +353,21 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 	}
 	else if (computeOutputs.size() == 1)
 	{
+		const auto defaultBuiltInResource = getDefaultBuiltInResource();
+
 		cx.getEmitter().emit(cx, computeOutputs[0]);
 
+		GlslRequirements computeRequirements = cx.requirements();
+
 		const auto& layout = cx.getLayout();
-		const char* computeShaderText = strdup(wstombs(cx.getComputeShader().getGeneratedShader(layout)).c_str());
+		const char* computeShaderText = strdup(wstombs(cx.getComputeShader().getGeneratedShader(layout, computeRequirements)).c_str());
 
 		// Compute shader.
 		computeShader = new glslang::TShader(EShLangCompute);
 		computeShader->setStrings(&computeShaderText, 1);
 		computeShader->setEntryPoint("main");
 
-		bool computeResult = computeShader->parse(&c_defaultTBuiltInResource, 100, false, (EShMessages)(EShMsgVulkanRules | EShMsgSpvRules));
+		bool computeResult = computeShader->parse(&defaultBuiltInResource, 100, false, (EShMessages)(EShMsgVulkanRules | EShMsgSpvRules));
 
 		if (computeShader->getInfoLog())
 		{
@@ -635,10 +651,12 @@ bool ProgramCompilerVk::generate(
 		}
 	}
 
+	GlslRequirements requirements = cx.requirements();
+
 	// Vertex
 	{
 		StringOutputStream vss;
-		vss << cx.getVertexShader().getGeneratedShader(layout);
+		vss << cx.getVertexShader().getGeneratedShader(layout, requirements);
 		vss << Endl;
 		vss << ss.str();
 		vss << Endl;
@@ -648,7 +666,7 @@ bool ProgramCompilerVk::generate(
 	// Pixel
 	{
 		StringOutputStream fss;
-		fss << cx.getFragmentShader().getGeneratedShader(layout);
+		fss << cx.getFragmentShader().getGeneratedShader(layout, requirements);
 		fss << Endl;
 		fss << ss.str();
 		fss << Endl;
@@ -658,7 +676,7 @@ bool ProgramCompilerVk::generate(
 	// Compute
 	{
 		StringOutputStream css;
-		css << cx.getComputeShader().getGeneratedShader(layout);
+		css << cx.getComputeShader().getGeneratedShader(layout, requirements);
 		css << Endl;
 		css << ss.str();
 		css << Endl;

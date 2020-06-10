@@ -102,6 +102,7 @@ class DelegateMeshParameterCallback : public RefCountImpl< IMeshParameterCallbac
 public:
 	DelegateMeshParameterCallback(IRuntimeDelegate* callback)
 	:	m_callback(callback)
+	,	m_programParameters(new BoxedProgramParameters())
 	{
 	}
 
@@ -111,17 +112,18 @@ public:
 
 	virtual void setParameters(render::ProgramParameters* programParameters) const
 	{
-		m_programParameters.setProgramParameters(programParameters);
+		m_programParameters->setProgramParameters(programParameters);
 		Any argv[] =
 		{
-			CastAny< BoxedProgramParameters* >::set(&m_programParameters)
+			CastAny< BoxedProgramParameters* >::set(m_programParameters)
 		};
 		m_callback->call(sizeof_array(argv), argv);
+		m_programParameters->setProgramParameters(nullptr);
 	}
 
 private:
 	Ref< IRuntimeDelegate > m_callback;
-	mutable BoxedProgramParameters m_programParameters;
+	mutable Ref< BoxedProgramParameters > m_programParameters;
 };
 
 void MeshComponent_setParameterCallback(MeshComponent* self, IRuntimeDelegate* callback)

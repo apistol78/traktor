@@ -72,8 +72,8 @@
 			<id>{3DB96A00-6F0B-A149-99C1-7F01A7A92B28}</id>
 			<comment/>
 			<position>
-				<first>1640</first>
-				<second>579</second>
+				<first>2135</first>
+				<second>687</second>
 			</position>
 			<name>Diffuse</name>
 		</item>
@@ -206,6 +206,27 @@
 			</outputPins>
 			<values/>
 		</item>
+		<item type="traktor.render.Platform" version="traktor.render.Node:1">
+			<id>{138E034B-1BD1-8548-9395-1CA04950D762}</id>
+			<comment>
+			<![CDATA[
+Do classic Lambert on Mobile, disregard PBR.
+
+			]]>
+			</comment>
+			<position>
+				<first>1680</first>
+				<second>618</second>
+			</position>
+		</item>
+		<item type="traktor.render.Mul" version="traktor.render.Node:1">
+			<id>{F59DC7EA-6B38-F746-9A64-371BBC5D8049}</id>
+			<comment/>
+			<position>
+				<first>1084</first>
+				<second>779</second>
+			</position>
+		</item>
 	</nodes>
 	<edges>
 		<item type="traktor.render.Edge">
@@ -320,12 +341,62 @@
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item"/>
+				<node ref="/object/nodes/item[10]"/>
 				<name>Output</name>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[4]"/>
 				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[10]"/>
+				<name>Other</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[9]"/>
+				<name>NdotL</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[11]"/>
+				<name>Input2</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[11]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[10]"/>
+				<name>Android</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[11]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[10]"/>
+				<name>iOS</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[3]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[11]"/>
+				<name>Input1</name>
 			</destination>
 		</item>
 	</edges>

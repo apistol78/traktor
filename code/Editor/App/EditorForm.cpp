@@ -2801,7 +2801,7 @@ void EditorForm::eventTabClose(ui::TabCloseEvent* event)
 
 	// If more than one group and this is the last page in a group then
 	// also collapse the group.
-	if (m_tabGroups.size() > 1)
+	if (tab->getPageCount() == 0 && m_tabGroups.size() > 1)
 	{
 		m_tabGroups.remove(tab);
 		
@@ -2811,24 +2811,17 @@ void EditorForm::eventTabClose(ui::TabCloseEvent* event)
 		m_tabGroupContainer->update();
 	}
 
-	if (editorPage)
-	{
-		T_ASSERT(m_activeEditorPage == editorPage);
-		editorPage->destroy();
-		editorPage = nullptr;
-		m_activeEditorPage = nullptr;
-	}
+	bool closedActive = (bool)(m_activeEditorPage == editorPage);
 
-	if (document)
+	safeDestroy(editorPage);
+	safeClose(document);
+	safeDestroy(tabPage);
+
+	if (closedActive)
 	{
-		T_ASSERT(m_activeDocument == document);
-		document->close();
-		document = nullptr;
+		m_activeEditorPage = nullptr;
 		m_activeDocument = nullptr;
 	}
-
-	tabPage->destroy();
-	tabPage = nullptr;
 
 	setPropertyObject(nullptr);
 

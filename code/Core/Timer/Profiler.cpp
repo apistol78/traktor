@@ -38,6 +38,22 @@ void Profiler::beginEvent(const wchar_t* const name)
 	if (!m_listener)
 		return;
 
+	// Get ID of immutable name.
+	uint16_t id = 0;
+	{
+		T_ANONYMOUS_VAR(Acquire< SpinLock >)(m_nameIdsLock);
+		auto it = m_nameIds.find(name);
+		if (it != m_nameIds.end())
+			id = it->second;
+		else
+		{
+			id = (uint16_t)m_nameIds.size();
+			m_nameIds[name] = id;
+			m_dictionary[id] = name;
+			m_dictionaryDirty = true;
+		}
+	}
+
 	// Get event queue for calling thread.
 	ThreadEvents* te = static_cast< ThreadEvents* >(m_localThreadEvents.get());
 	if (!te)
@@ -51,7 +67,7 @@ void Profiler::beginEvent(const wchar_t* const name)
 
 	// Begin event.
 	Event& e = te->events.push_back();
-	e.name = name;
+	e.name = id;
 	e.threadId = ThreadManager::getInstance().getCurrentThread()->id();
 	e.depth = uint16_t(te->events.size() - 1);
 	e.start = m_timer.getElapsedTime();
@@ -82,6 +98,12 @@ void Profiler::endEvent()
 		// Report events if we've queued enough.
 		if (m_events.size() >= c_eventQueueThreshold)
 		{
+			if (m_dictionaryDirty)
+			{
+				m_listener->reportProfilerDictionary(m_dictionary);
+				m_dictionaryDirty = false;
+			}
+
 			m_listener->reportProfilerEvents(m_timer.getElapsedTime(), m_events);
 			m_events.resize(0);
 		}
@@ -90,20 +112,38 @@ void Profiler::endEvent()
 
 void Profiler::addEvent(const wchar_t* const name, double duration)
 {
-	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-
-	auto& e = m_events.push_back();
-	e.name = name;
-	e.threadId = -1;
-	e.depth = 0;
-	e.start = m_timer.getElapsedTime();
-	e.end = e.start + duration;
-
-	// Report events if we've queued enough.
-	if (m_events.size() >= c_eventQueueThreshold)
+	// Get ID of immutable name.
+	uint16_t id = 0;
 	{
-		m_listener->reportProfilerEvents(m_timer.getElapsedTime(), m_events);
-		m_events.resize(0);
+		T_ANONYMOUS_VAR(Acquire< SpinLock >)(m_nameIdsLock);
+		auto it = m_nameIds.find(name);
+		if (it != m_nameIds.end())
+			id = it->second;
+		else
+		{
+			id = (uint16_t)m_nameIds.size();
+			m_nameIds[name] = id;
+			m_dictionary[id] = name;
+			m_dictionaryDirty = true;
+		}
+	}
+
+	{
+		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+		
+		auto& e = m_events.push_back();
+		e.name = id;
+		e.threadId = -1;
+		e.depth = 0;
+		e.start = m_timer.getElapsedTime();
+		e.end = e.start + duration;
+
+		// Report events if we've queued enough.
+		if (m_events.size() >= c_eventQueueThreshold)
+		{
+			m_listener->reportProfilerEvents(m_timer.getElapsedTime(), m_events);
+			m_events.resize(0);
+		}
 	}
 }
 
@@ -113,6 +153,7 @@ double Profiler::getTime() const
 }
 
 Profiler::Profiler()
+:	m_dictionaryDirty(false)
 {
 	m_timer.start();
 }
@@ -137,48 +178,6 @@ void Profiler::destroy()
 		m_threadEvents.clear();
 	}
 	T_SAFE_RELEASE(this);
-}
-
-Profiler::JSONReportListener::JSONReportListener(OutputStream* output)
-:	m_output(output)
-{
-	*m_output << L"[" << Endl;
-	*m_output << IncreaseIndent;
-}
-
-Profiler::JSONReportListener::~JSONReportListener()
-{
-	*m_output << DecreaseIndent;
-	*m_output << L"]" << Endl;
-}
-
-void Profiler::JSONReportListener::reportProfilerEvents(double currentTime, const AlignedVector< Profiler::Event >& events)
-{
-	for (const auto& event : events)
-	{
-		*m_output << L"{" << Endl;
-		*m_output << IncreaseIndent;
-		*m_output << L"\"cat\": \"MAIN\"," << Endl;
-		*m_output << L"\"pid\": 0," << Endl;
-		*m_output << L"\"tid\": " << event.threadId << L"," << Endl;
-		*m_output << L"\"ts\": " << int64_t(event.start * 1000000.0) << L"," << Endl;
-		*m_output << L"\"ph\": \"B\"," << Endl;
-		*m_output << L"\"name\": \"" << event.name << L"\"," << Endl;
-		*m_output << L"\"args\": {}" << Endl;
-		*m_output << DecreaseIndent;
-		*m_output << L"}," << Endl;
-		*m_output << L"{" << Endl;
-		*m_output << IncreaseIndent;
-		*m_output << L"\"cat\": \"MAIN\"," << Endl;
-		*m_output << L"\"pid\": 0," << Endl;
-		*m_output << L"\"tid\": " << event.threadId << L"," << Endl;
-		*m_output << L"\"ts\": " << int64_t(event.end * 1000000.0) << L"," << Endl;
-		*m_output << L"\"ph\": \"E\"," << Endl;
-		*m_output << L"\"name\": \"" << event.name << L"\"," << Endl;
-		*m_output << L"\"args\": {}" << Endl;
-		*m_output << DecreaseIndent;
-		*m_output << L"}," << Endl;
-	}
 }
 
 }

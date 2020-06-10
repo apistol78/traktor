@@ -20,7 +20,7 @@ public:
 
 	virtual void serialize(ISerializer& s) const override final
 	{
-		s >> Member< std::wstring >(L"name", m_ref.name);
+		s >> Member< uint16_t >(L"name", m_ref.name);
 		s >> Member< uint32_t >(L"threadId", m_ref.threadId);
 		s >> Member< uint16_t >(L"depth", m_ref.depth);
 		s >> Member< double >(L"start", m_ref.start);

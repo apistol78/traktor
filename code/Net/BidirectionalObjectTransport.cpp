@@ -52,10 +52,10 @@ bool BidirectionalObjectTransport::send(const ISerializable* object)
 				break;
 
 			int32_t nsent = m_socket->send(chunk.ptr, chunk.size);
-			if (nsent != (int32_t)chunk.size)
+			if (nsent < 0)
 				return false;
 
-			offset += chunk.size;
+			offset += nsent;
 		}
 	}
 

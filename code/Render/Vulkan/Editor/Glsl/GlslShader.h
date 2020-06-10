@@ -79,7 +79,7 @@ public:
 	/*! \} */
 
 
-	std::wstring getGeneratedShader(const GlslLayout& layout) const;
+	std::wstring getGeneratedShader(const GlslLayout& layout, const GlslRequirements& requirements) const;
 
 private:
 	struct OutputPinVariable
