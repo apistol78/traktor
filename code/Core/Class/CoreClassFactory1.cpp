@@ -2,6 +2,7 @@
 #include "Core/Class/CoreClassFactory1.h"
 #include "Core/Class/IRuntimeClassRegistrar.h"
 #include "Core/Class/Boxes/BoxedColor4ub.h"
+#include "Core/Class/Boxes/BoxedPointer.h"
 #include "Core/Class/Boxes/BoxedRefArray.h"
 #include "Core/Io/AnsiEncoding.h"
 #include "Core/Io/BitReader.h"
@@ -9,6 +10,7 @@
 #include "Core/Io/BufferedStream.h"
 #include "Core/Io/DynamicMemoryStream.h"
 #include "Core/Io/FileSystem.h"
+#include "Core/Io/MemoryStream.h"
 #include "Core/Io/StreamCopy.h"
 #include "Core/Io/StringReader.h"
 #include "Core/Io/Utf8Encoding.h"
@@ -361,6 +363,11 @@ void CoreClassFactory1::createClasses(IRuntimeClassRegistrar* registrar) const
 	auto classDynamicMemoryStream = new AutoRuntimeClass< DynamicMemoryStream >();
 	classDynamicMemoryStream->addConstructor< bool, bool >();
 	registrar->registerClass(classDynamicMemoryStream);
+
+	auto classMemoryStream = new AutoRuntimeClass< MemoryStream >();
+	classMemoryStream->addConstructor< void*, int64_t, bool, bool, bool >();
+	classMemoryStream->addConstructor< const void*, int64_t >();
+	registrar->registerClass(classMemoryStream);
 
 	auto classBitReader = new AutoRuntimeClass< BitReader >();
 	classBitReader->addConstructor< IStream* >();
