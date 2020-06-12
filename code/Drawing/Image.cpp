@@ -73,7 +73,7 @@ Image::Image()
 :	m_width(0)
 ,	m_height(0)
 ,	m_pitch(0)
-,	m_data(0)
+,	m_data(nullptr)
 {
 }
 
@@ -84,7 +84,8 @@ Image::Image(const Image& src)
 ,	m_pitch(src.m_pitch)
 ,	m_palette(src.m_palette)
 ,	m_size(0)
-,	m_data(0)
+,	m_data(nullptr)
+,	m_own(true)
 ,	m_imageInfo(src.m_imageInfo)
 {
 	m_size = src.m_size;
@@ -99,15 +100,30 @@ Image::Image(const PixelFormat& pixelFormat, uint32_t width, uint32_t height, Pa
 ,	m_pitch(width * pixelFormat.getByteSize())
 ,	m_palette(palette)
 ,	m_size(0)
-,	m_data(0)
+,	m_data(nullptr)
+,	m_own(true)
 {
 	m_size = m_height * m_pitch;
 	m_data = allocData(m_size);
 }
 
+Image::Image(void* data, const PixelFormat& pixelFormat, uint32_t width, uint32_t height, Palette* palette)
+:	m_pixelFormat(pixelFormat)
+,	m_width(width)
+,	m_height(height)
+,	m_pitch(width * pixelFormat.getByteSize())
+,	m_palette(palette)
+,	m_size(0)
+,	m_data((uint8_t*)data)
+,	m_own(false)
+{
+	m_size = m_height * m_pitch;
+}
+
 Image::~Image()
 {
-	freeData(m_data, m_size);
+	if (m_own)
+		freeData(m_data, m_size);
 }
 
 Ref< Image > Image::clone(bool includeData) const

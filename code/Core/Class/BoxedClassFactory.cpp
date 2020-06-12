@@ -15,6 +15,7 @@
 #include "Core/Class/Boxes/BoxedMatrix33.h"
 #include "Core/Class/Boxes/BoxedMatrix44.h"
 #include "Core/Class/Boxes/BoxedPlane.h"
+#include "Core/Class/Boxes/BoxedPointer.h"
 #include "Core/Class/Boxes/BoxedQuaternion.h"
 #include "Core/Class/Boxes/BoxedRandomGeometry.h"
 #include "Core/Class/Boxes/BoxedRange.h"
@@ -233,6 +234,11 @@ void BoxedClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classBoxedPlane->addMethod("segmentIntersection", &BoxedPlane::segmentIntersection);
 	classBoxedPlane->addStaticMethod("uniqueIntersectionPoint", &BoxedPlane::uniqueIntersectionPoint);
 	registrar->registerClass(classBoxedPlane);
+
+	auto classBoxedPointer = new AutoRuntimeClass< BoxedPointer >();
+	classBoxedPointer->addConstructor();
+	classBoxedPointer->addProperty("null", &BoxedPointer::null);
+	registrar->registerClass(classBoxedPointer);
 
 	auto classBoxedQuaternion = new AutoRuntimeClass< BoxedQuaternion >();
 	classBoxedQuaternion->addConstructor();

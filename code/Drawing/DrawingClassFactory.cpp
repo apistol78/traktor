@@ -2,6 +2,7 @@
 #include "Core/Class/Boxes/BoxedAlignedVector.h"
 #include "Core/Class/Boxes/BoxedColor4f.h"
 #include "Core/Class/Boxes/BoxedMatrix33.h"
+#include "Core/Class/Boxes/BoxedPointer.h"
 #include "Core/Class/Boxes/BoxedVector2.h"
 #include "Core/Class/IRuntimeClassRegistrar.h"
 #include "Core/Io/IStream.h"
@@ -117,6 +118,11 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.drawing.PixelFormat", BoxedPixelFormat, Object)
 Ref< Image > Image_constructor_3(const BoxedPixelFormat* pixelFormat, uint32_t width, uint32_t height)
 {
 	return new Image(pixelFormat->unbox(), width, height);
+}
+
+Ref< Image > Image_constructor_4(BoxedPointer* pointer, const BoxedPixelFormat* pixelFormat, uint32_t width, uint32_t height)
+{
+	return new Image(pointer->ptr(), pixelFormat->unbox(), width, height);
 }
 
 Ref< CropFilter > CropFilter_constructor(int32_t anchorX, int32_t anchorY, int32_t width, int32_t height)
@@ -296,6 +302,7 @@ void DrawingClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classImage->addProperty("height", &Image::getHeight);
 	classImage->addConstructor();
 	classImage->addConstructor< const BoxedPixelFormat*, uint32_t, uint32_t >(&Image_constructor_3);
+	classImage->addConstructor< BoxedPointer*, const BoxedPixelFormat*, uint32_t, uint32_t >(&Image_constructor_4);
 	classImage->addMethod("clone", &Image::clone);
 	classImage->addMethod("copy", &Image_copy_1);
 	classImage->addMethod("copy", &Image_copy_2);

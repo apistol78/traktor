@@ -43,9 +43,11 @@ class T_DLLCLASS Image : public Object
 public:
 	Image();
 
-	Image(const Image& src);
+	explicit Image(const Image& src);
 
-	Image(const PixelFormat& pixelFormat, uint32_t width, uint32_t height, Palette* palette = 0);
+	explicit Image(const PixelFormat& pixelFormat, uint32_t width, uint32_t height, Palette* palette = nullptr);
+
+	explicit Image(void* data, const PixelFormat& pixelFormat, uint32_t width, uint32_t height, Palette* palette = nullptr);
 
 	virtual ~Image();
 
@@ -197,6 +199,7 @@ private:
 	Ref< Palette > m_palette;
 	size_t m_size;
 	uint8_t* m_data;
+	bool m_own;
 	Ref< ImageInfo > m_imageInfo;
 };
 
