@@ -168,7 +168,6 @@ Ref< IProcess > OS::execute(
 ) const
 {
 	posix_spawn_file_actions_t* fileActions = 0;
-	char cwd[512];
 	char* envv[4096];
 	char* argv[1024];
 	int envc = 0;
@@ -268,10 +267,8 @@ Ref< IProcess > OS::execute(
 	envv[envc] = nullptr;
 	argv[argc] = nullptr;
 
-	// Spawned process inherit working directory from our process; thus
-	// we need to temporarily change directory.
-	getcwd(cwd, sizeof(cwd));
-	chdir(wstombs(workingDirectory.getPathNameNoVolume()).c_str());
+	char wd[512];
+	strcpy(wd, wstombs(workingDirectory.getPathNameNoVolume()).c_str());
 
 	// Redirect standard IO.
 	if (redirect)
@@ -283,6 +280,7 @@ Ref< IProcess > OS::execute(
 
 			fileActions = new posix_spawn_file_actions_t;
 			posix_spawn_file_actions_init(fileActions);
+			posix_spawn_file_actions_addchdir_np(fileActions, wd);
 			posix_spawn_file_actions_adddup2(fileActions, childStdOut[1], STDOUT_FILENO);
 			posix_spawn_file_actions_addclose(fileActions, childStdOut[0]);
 			posix_spawn_file_actions_adddup2(fileActions, childStdErr[1], STDERR_FILENO);
@@ -292,6 +290,7 @@ Ref< IProcess > OS::execute(
 		{
 			fileActions = new posix_spawn_file_actions_t;
 			posix_spawn_file_actions_init(fileActions);
+			posix_spawn_file_actions_addchdir_np(fileActions, wd);
 			posix_spawn_file_actions_addopen(fileActions, STDOUT_FILENO, "/dev/null", O_RDONLY, 0);
 			posix_spawn_file_actions_addopen(fileActions, STDERR_FILENO, "/dev/null", O_RDONLY, 0);
 		}
@@ -301,12 +300,13 @@ Ref< IProcess > OS::execute(
 	}
 	else
 	{
+		fileActions = new posix_spawn_file_actions_t;
+		posix_spawn_file_actions_init(fileActions);
+		posix_spawn_file_actions_addchdir_np(fileActions, wd);
+		
 		// Spawn process.
-		err = posix_spawn(&pid, argv[0], 0, 0, argv, envv);
+		err = posix_spawn(&pid, argv[0], fileActions, 0, argv, envv);
 	}
-
-	// Restore our working directory before returning.
-	chdir(cwd);
 
 	// Free arguments.
 	for (char** arg = argv; *arg != nullptr; ++arg)

@@ -67,7 +67,7 @@ Ref< Model > ModelFormatBlend::read(const Path& filePath, const std::wstring& fi
 	FileOutputStream os(file, new Utf8Encoding());
 	os << L"import bpy" << Endl;
 	os << L"bpy.ops.export_scene.fbx(" << Endl;
-	os << L"	filepath=\"__intermediate__.fbx\"," << Endl;
+	os << L"	filepath=\"" << scratchPath << L"/__intermediate__.fbx\"," << Endl;
 	os << L"	axis_forward=\"Z\"," << Endl;
 	os << L"	axis_up=\"Y\"," << Endl;
 	os << L"	use_selection=False," << Endl;
@@ -78,14 +78,20 @@ Ref< Model > ModelFormatBlend::read(const Path& filePath, const std::wstring& fi
 	file = nullptr;
 
 	// Execute export script through headless blender process.
+#if defined(_WIN32)
 	std::wstring blender = L"c:\\Program Files\\Blender Foundation\\Blender 2.81\\blender.exe";
-	std::wstring commandLine = L"\"" + blender + L"\" -b __source__.blend -P __export__.py";
+#elif defined(__LINUX__)
+	std::wstring blender = L"/home/apistol/blender-2.81-115a5bf65a6b-linux-glibc217-x86_64/blender";
+#else
+	std::wstring blender = L"blender";
+#endif
+	std::wstring commandLine = L"\"" + blender + L"\" -b " + scratchPath + L"/__source__.blend -P " + scratchPath + L"/__export__.py";
 	Ref< IProcess > process = OS::getInstance().execute(
 		commandLine,
 		scratchPath,
 		nullptr,
-		true,
-		true,
+		false,
+		false,
 		false
 	);
 	if (!process)
