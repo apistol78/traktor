@@ -330,7 +330,7 @@ bool MeshPipeline::buildOutput(
 			}
 		);
 
-		Ref< model::Model > model = modelCache.get(asset->getFileName(), asset->getImportFilter(), operations);
+		Ref< model::Model > model = modelCache.get(asset->getFileName(), asset->getImportFilter());
 		if (!model)
 		{
 			log::error << L"Mesh pipeline failed; unable to read source model (" << asset->getFileName().getOriginal() << L")." << Endl;
@@ -342,6 +342,9 @@ bool MeshPipeline::buildOutput(
 			log::error << L"Mesh pipeline failed; no polygons in source model (" << asset->getFileName().getOriginal() << L")." << Endl;
 			return false;
 		}
+
+		for (auto operation : operations)
+			operation->apply(*model);		
 
 		models.push_back(model);
 	}
