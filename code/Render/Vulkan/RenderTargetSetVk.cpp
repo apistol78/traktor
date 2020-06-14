@@ -4,6 +4,8 @@
 #include "Core/Misc/SafeDestroy.h"
 #include "Render/Types.h"
 #include "Render/Vulkan/ApiLoader.h"
+#include "Render/Vulkan/CommandBufferPool.h"
+#include "Render/Vulkan/Queue.h"
 #include "Render/Vulkan/RenderTargetDepthVk.h"
 #include "Render/Vulkan/RenderTargetVk.h"
 #include "Render/Vulkan/RenderTargetSetVk.h"
@@ -26,14 +28,16 @@ RenderTargetSetVk::RenderTargetSetVk(
 	VkPhysicalDevice physicalDevice,
 	VkDevice logicalDevice,
 	VmaAllocator allocator,
-	VkCommandPool setupCommandPool,
-	VkQueue setupQueue
+
+	Queue* graphicsQueue,
+	CommandBufferPool* graphicsCommandPool
+
 )
 :	m_physicalDevice(physicalDevice)
 ,	m_logicalDevice(logicalDevice)
 ,	m_allocator(allocator)
-,	m_setupCommandPool(setupCommandPool)
-,	m_setupQueue(setupQueue)
+,	m_graphicsQueue(graphicsQueue)
+,	m_graphicsCommandPool(graphicsCommandPool)
 ,	m_depthTargetShared(false)
 {
 }
@@ -46,11 +50,11 @@ RenderTargetSetVk::~RenderTargetSetVk()
 bool RenderTargetSetVk::createPrimary(int32_t width, int32_t height, VkFormat colorFormat, VkImage colorImage, VkFormat depthFormat, VkImage depthImage, const wchar_t* const tag)
 {
 	m_colorTargets.resize(1);
-	m_colorTargets[0] = new RenderTargetVk(m_physicalDevice, m_logicalDevice, m_allocator, m_setupCommandPool, m_setupQueue);
+	m_colorTargets[0] = new RenderTargetVk(m_physicalDevice, m_logicalDevice, m_allocator, m_graphicsQueue, m_graphicsCommandPool);
 	if (!m_colorTargets[0]->createPrimary(width, height, colorFormat, colorImage, tag))
 		return false;
 
-	m_depthTarget = new RenderTargetDepthVk(m_physicalDevice, m_logicalDevice, m_allocator, m_setupCommandPool, m_setupQueue);
+	m_depthTarget = new RenderTargetDepthVk(m_physicalDevice, m_logicalDevice, m_allocator, m_graphicsQueue, m_graphicsCommandPool);
 	if (!m_depthTarget->createPrimary(width, height, depthFormat, depthImage, tag))
 		return false;
 
@@ -74,14 +78,14 @@ bool RenderTargetSetVk::create(const RenderTargetSetCreateDesc& setDesc, IRender
 	m_colorTargets.resize(setDesc.count);
 	for (int32_t i = 0; i < setDesc.count; ++i)
 	{
-		m_colorTargets[i] = new RenderTargetVk(m_physicalDevice, m_logicalDevice, m_allocator, m_setupCommandPool, m_setupQueue);
+		m_colorTargets[i] = new RenderTargetVk(m_physicalDevice, m_logicalDevice, m_allocator, m_graphicsQueue, m_graphicsCommandPool);
 		if (!m_colorTargets[i]->create(setDesc, setDesc.targets[i], tag))
 			return false;
 	}
 
 	if (setDesc.createDepthStencil)
 	{
-		m_depthTarget = new RenderTargetDepthVk(m_physicalDevice, m_logicalDevice, m_allocator, m_setupCommandPool, m_setupQueue);
+		m_depthTarget = new RenderTargetDepthVk(m_physicalDevice, m_logicalDevice, m_allocator, m_graphicsQueue, m_graphicsCommandPool);
 		if (!m_depthTarget->create(setDesc, tag))
 			return false;
 		m_depthTargetShared = false;
@@ -176,29 +180,38 @@ bool RenderTargetSetVk::read(int32_t index, void* buffer) const
 	vkAllocateMemory(m_logicalDevice, &mai, nullptr, &hostImageMemory);
 	vkBindImageMemory(m_logicalDevice, hostImage, hostImageMemory, 0);
 
+	// Allocate transient command buffer for transfer.
+	VkCommandBuffer commandBuffer = m_graphicsCommandPool->acquireAndBegin();
+
 	// Transfer color target into host image.
-	changeImageLayout(
-		m_logicalDevice,
-		m_setupCommandPool,
-		m_setupQueue,
-		hostImage,
-		VK_IMAGE_LAYOUT_UNDEFINED,
-		VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
+	VkImageMemoryBarrier imb = {};
+	imb.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
+	imb.oldLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+	imb.newLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
+	imb.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+	imb.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+	imb.image = hostImage;
+	imb.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+	imb.subresourceRange.baseMipLevel = 0;
+	imb.subresourceRange.levelCount = 1;
+	imb.subresourceRange.baseArrayLayer = 0;
+	imb.subresourceRange.layerCount = 1;
+	imb.srcAccessMask = 0;
+	imb.dstAccessMask = 0;
+	vkCmdPipelineBarrier(
+		commandBuffer,
+		VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
+		VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
 		0,
-		1,
-		0,
-		1,
-		VK_IMAGE_ASPECT_COLOR_BIT
+		0, nullptr,
+		0, nullptr,
+		1, &imb
 	);
 
 	// Convert target for optimal read.
-	VkCommandBuffer commandBuffer = beginSingleTimeCommands(m_logicalDevice, m_setupCommandPool);
 	m_colorTargets[index]->prepareForReadBack(commandBuffer);
-	endSingleTimeCommands(m_logicalDevice, m_setupCommandPool, commandBuffer, m_setupQueue);
 
 	// Copy target into host image.
-	commandBuffer = beginSingleTimeCommands(m_logicalDevice, m_setupCommandPool);
-
 	VkImageCopy ic = {};
 	ic.srcSubresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
 	ic.srcSubresource.layerCount = 1;
@@ -207,7 +220,6 @@ bool RenderTargetSetVk::read(int32_t index, void* buffer) const
 	ic.extent.width = m_setDesc.width;
 	ic.extent.height = m_setDesc.height;
 	ic.extent.depth = 1;
-
 	vkCmdCopyImage(
 		commandBuffer,
 		m_colorTargets[index]->getVkImage(), VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,
@@ -216,22 +228,42 @@ bool RenderTargetSetVk::read(int32_t index, void* buffer) const
 		&ic
 	);
 
-	endSingleTimeCommands(m_logicalDevice, m_setupCommandPool, commandBuffer, m_setupQueue);
-
 	// Convert host image into general layout; must be general to be mappable.
-	changeImageLayout(
-		m_logicalDevice,
-		m_setupCommandPool,
-		m_setupQueue,
-		hostImage,
-		VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
-		VK_IMAGE_LAYOUT_GENERAL,
+	imb = {};
+	imb.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
+	imb.oldLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
+	imb.newLayout = VK_IMAGE_LAYOUT_GENERAL;
+	imb.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+	imb.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+	imb.image = hostImage;
+	imb.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+	imb.subresourceRange.baseMipLevel = 0;
+	imb.subresourceRange.levelCount = 1;
+	imb.subresourceRange.baseArrayLayer = 0;
+	imb.subresourceRange.layerCount = 1;
+	imb.srcAccessMask = 0;
+	imb.dstAccessMask = 0;
+	vkCmdPipelineBarrier(
+		commandBuffer,
+		VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
+		VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
 		0,
-		1,
-		0,
-		1,
-		VK_IMAGE_ASPECT_COLOR_BIT
+		0, nullptr,
+		0, nullptr,
+		1, &imb
 	);
+
+	vkEndCommandBuffer(commandBuffer);
+
+	// Submit commands, and wait until finished.
+	VkSubmitInfo si = {};
+	si.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+	si.commandBufferCount = 1;
+	si.pCommandBuffers = &commandBuffer;
+	m_graphicsQueue->submitAndWait(si);
+
+	// Release command buffer back to pool.
+	m_graphicsCommandPool->release(commandBuffer);
 
 	// Get information about image.
 	VkImageSubresource isr = {};
@@ -248,7 +280,7 @@ bool RenderTargetSetVk::read(int32_t index, void* buffer) const
 	uint32_t fragmentSize = 4 * sizeof(float);
 
 	uint8_t* dst = (uint8_t*)buffer;
-	for (uint32_t y = 0; y < m_setDesc.height; ++y)
+	for (int32_t y = 0; y < m_setDesc.height; ++y)
 	{
 		std::memcpy(dst, src, m_setDesc.width * fragmentSize);
 		dst += m_setDesc.width * fragmentSize;
@@ -471,7 +503,7 @@ bool RenderTargetSetVk::prepareAsTarget(
 
 		VkRenderPassCreateInfo renderPassCreateInfo = {};
 		renderPassCreateInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;
-		renderPassCreateInfo.attachmentCount = passAttachments.size();
+		renderPassCreateInfo.attachmentCount = (uint32_t)passAttachments.size();
 		renderPassCreateInfo.pAttachments = passAttachments.ptr();
 		renderPassCreateInfo.subpassCount = 1;
 		renderPassCreateInfo.pSubpasses = &subpass;

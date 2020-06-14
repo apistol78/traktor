@@ -9,6 +9,9 @@ namespace traktor
 	namespace render
 	{
 
+class CommandBufferPool;
+class Queue;
+
 struct CubeTextureCreateDesc;
 
 /*!
@@ -23,8 +26,8 @@ public:
 		VkPhysicalDevice physicalDevice,
 		VkDevice logicalDevice,
 		VmaAllocator allocator,
-		VkCommandPool setupCommandPool,
-		VkQueue setupQueue,
+		Queue* graphicsQueue,
+		CommandBufferPool* graphicsCommandPool,
 		const CubeTextureCreateDesc& desc
 	);
 
@@ -52,8 +55,8 @@ private:
 	VkPhysicalDevice m_physicalDevice;
 	VkDevice m_logicalDevice;
 	VmaAllocator m_allocator;
-	VkCommandPool m_setupCommandPool;
-	VkQueue m_setupQueue;
+	Ref< Queue > m_graphicsQueue;
+	Ref< CommandBufferPool > m_graphicsCommandPool;
 	CubeTextureCreateDesc m_desc;
 	VmaAllocation m_textureImageAllocation;
 	VkImage m_textureImage;

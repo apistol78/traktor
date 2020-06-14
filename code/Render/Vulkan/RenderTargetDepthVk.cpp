@@ -2,6 +2,8 @@
 #include "Core/Misc/TString.h"
 #include "Render/Types.h"
 #include "Render/Vulkan/ApiLoader.h"
+#include "Render/Vulkan/CommandBufferPool.h"
+#include "Render/Vulkan/Queue.h"
 #include "Render/Vulkan/RenderTargetDepthVk.h"
 #include "Render/Vulkan/UtilitiesVk.h"
 
@@ -16,14 +18,14 @@ RenderTargetDepthVk::RenderTargetDepthVk(
 	VkPhysicalDevice physicalDevice,
 	VkDevice logicalDevice,
 	VmaAllocator allocator,
-	VkCommandPool setupCommandPool,
-	VkQueue setupQueue
+	Queue* graphicsQueue,
+	CommandBufferPool* graphicsCommandPool
 )
 :	m_physicalDevice(physicalDevice)
 ,	m_logicalDevice(logicalDevice)
 ,	m_allocator(allocator)
-,	m_setupCommandPool(setupCommandPool)
-,	m_setupQueue(setupQueue)
+,	m_graphicsQueue(graphicsQueue)
+,	m_graphicsCommandPool(graphicsCommandPool)
 ,	m_format(VK_FORMAT_UNDEFINED)
 ,	m_image(0)
 ,	m_allocation(0)
@@ -65,20 +67,19 @@ bool RenderTargetDepthVk::createPrimary(int32_t width, int32_t height, VkFormat 
 	setObjectDebugName(m_logicalDevice, tag, (uint64_t)m_image, VK_OBJECT_TYPE_IMAGE);
 
 	// Prepare for target.
-	VkCommandBuffer commandBuffer = beginSingleTimeCommands(
-		m_logicalDevice,
-		m_setupCommandPool
-	);
+	VkCommandBuffer commandBuffer = m_graphicsCommandPool->acquireAndBegin();
 
 	prepareAsTarget(commandBuffer);
 
-	endSingleTimeCommands(
-		m_logicalDevice,
-		m_setupCommandPool,
-		commandBuffer,
-		m_setupQueue
-	);
+	vkEndCommandBuffer(commandBuffer);
 
+	VkSubmitInfo si = {};
+	si.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+	si.commandBufferCount = 1;
+	si.pCommandBuffers = &commandBuffer;
+	m_graphicsQueue->submitAndWait(si);
+
+	m_graphicsCommandPool->release(commandBuffer);
 	return true;
 }
 
@@ -147,20 +148,19 @@ bool RenderTargetDepthVk::create(const RenderTargetSetCreateDesc& setDesc, const
 	setObjectDebugName(m_logicalDevice, tag, (uint64_t)m_image, VK_OBJECT_TYPE_IMAGE);
 
 	// Prepare for target.
-	VkCommandBuffer commandBuffer = beginSingleTimeCommands(
-		m_logicalDevice,
-		m_setupCommandPool
-	);
+	VkCommandBuffer commandBuffer = m_graphicsCommandPool->acquireAndBegin();
 
 	prepareAsTarget(commandBuffer);
 
-	endSingleTimeCommands(
-		m_logicalDevice,
-		m_setupCommandPool,
-		commandBuffer,
-		m_setupQueue
-	);
+	vkEndCommandBuffer(commandBuffer);
 
+	VkSubmitInfo si = {};
+	si.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+	si.commandBufferCount = 1;
+	si.pCommandBuffers = &commandBuffer;
+	m_graphicsQueue->submitAndWait(si);
+
+	m_graphicsCommandPool->release(commandBuffer);
 	return true;
 }
 

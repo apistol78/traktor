@@ -18,6 +18,9 @@ namespace traktor
 	namespace render
 	{
 
+class CommandBufferPool;
+class Queue;
+
 #if defined(_WIN32) || defined(__LINUX__)
 class Window;
 #endif
@@ -85,16 +88,15 @@ private:
 	int32_t m_screenWidth;
 	int32_t m_screenHeight;
 #endif
-	Semaphore m_lock;
 	VkInstance m_instance;
 	VkPhysicalDevice m_physicalDevice;
 	VkDevice m_logicalDevice;
 	VkDebugUtilsMessengerEXT m_debugMessenger;
 	uint32_t m_graphicsQueueIndex;
 	uint32_t m_computeQueueIndex;
-	VkQueue m_graphicsQueue;
-	VkQueue m_computeQueue;
-	VkCommandPool m_graphicsCommandPool;
+	Ref< Queue > m_graphicsQueue;
+	Ref< Queue > m_computeQueue;
+	Ref< CommandBufferPool > m_graphicsCommandPool;
 	VmaAllocator m_allocator;
 	int32_t m_maxAnisotropy;
 };

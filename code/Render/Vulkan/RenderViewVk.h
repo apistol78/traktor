@@ -17,7 +17,9 @@ namespace traktor
 	namespace render
 	{
 
+class CommandBufferPool;
 class ProgramVk;
+class Queue;
 class RenderTargetSetVk;
 class UniformBufferPoolVk;
 class VertexBufferVk;
@@ -39,8 +41,8 @@ public:
 		VkPhysicalDevice physicalDevice,
 		VkDevice device,
 		VmaAllocator allocator,
-		uint32_t graphicsQueueIndex,
-		uint32_t computeQueueIndex
+		Queue* graphicsQueue,
+		Queue* computeQueue
 	);
 
 	virtual ~RenderViewVk();
@@ -144,15 +146,12 @@ private:
 	Ref< Window > m_window;
 #endif
 	VkSurfaceKHR m_surface;
-
-	uint32_t m_graphicsQueueIndex;
-	VkQueue m_graphicsQueue;
-	uint32_t m_computeQueueIndex;
-	VkQueue m_computeQueue;
+	Ref< Queue > m_graphicsQueue;
+	Ref< Queue > m_computeQueue;
 	uint32_t m_presentQueueIndex;
 	VkQueue m_presentQueue;
-	VkCommandPool m_graphicsCommandPool;
-	VkCommandPool m_computeCommandPool;
+	Ref< CommandBufferPool > m_graphicsCommandPool;
+	Ref< CommandBufferPool > m_computeCommandPool;
 
 	// Swap chain.
 	VkSwapchainKHR m_swapChain;

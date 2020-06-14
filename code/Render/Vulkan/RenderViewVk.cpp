@@ -4,11 +4,14 @@
 #include "Core/Misc/AutoPtr.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Misc/String.h"
+#include "Core/Thread/Acquire.h"
 #include "Core/Timer/Profiler.h"
 #include "Render/Vulkan/ApiLoader.h"
+#include "Render/Vulkan/CommandBufferPool.h"
 #include "Render/Vulkan/CubeTextureVk.h"
 #include "Render/Vulkan/IndexBufferVk.h"
 #include "Render/Vulkan/ProgramVk.h"
+#include "Render/Vulkan/Queue.h"
 #include "Render/Vulkan/RenderTargetDepthVk.h"
 #include "Render/Vulkan/RenderTargetVk.h"
 #include "Render/Vulkan/RenderTargetSetVk.h"
@@ -69,20 +72,18 @@ RenderViewVk::RenderViewVk(
 	VkPhysicalDevice physicalDevice,
 	VkDevice logicalDevice,
 	VmaAllocator allocator,
-	uint32_t graphicsQueueIndex,
-	uint32_t computeQueueIndex
+	Queue* graphicsQueue,
+	Queue* computeQueue
 )
 :	m_instance(instance)
 ,	m_physicalDevice(physicalDevice)
 ,	m_logicalDevice(logicalDevice)
 ,	m_allocator(allocator)
 ,	m_surface(0)
-,	m_graphicsQueueIndex(graphicsQueueIndex)
-,	m_computeQueueIndex(computeQueueIndex)
+,	m_graphicsQueue(graphicsQueue)
+,	m_computeQueue(computeQueue)
 ,	m_presentQueueIndex(~0)
 ,	m_presentQueue(0)
-,	m_graphicsCommandPool(0)
-,	m_computeCommandPool(0)
 ,	m_swapChain(0)
 ,	m_imageAvailableSemaphore(0)
 ,	m_currentImageIndex(0)
@@ -270,8 +271,8 @@ void RenderViewVk::close()
 		vkDestroyFence(m_logicalDevice, frame.inFlightFence, nullptr);
 		vkDestroySemaphore(m_logicalDevice, frame.renderFinishedSemaphore, nullptr);
 		vkDestroyDescriptorPool(m_logicalDevice, frame.descriptorPool, nullptr);
-		vkFreeCommandBuffers(m_logicalDevice, m_computeCommandPool, 1, &frame.computeCommandBuffer);
-		vkFreeCommandBuffers(m_logicalDevice, m_graphicsCommandPool, 1, &frame.graphicsCommandBuffer);
+		m_computeCommandPool->release(frame.computeCommandBuffer);
+		m_graphicsCommandPool->release(frame.graphicsCommandBuffer);
 	}
 	m_frames.clear();
 
@@ -294,16 +295,8 @@ void RenderViewVk::close()
 	}
 
 	// Free command pools.
-	if (m_computeCommandPool != 0)
-	{
-		vkDestroyCommandPool(m_logicalDevice, m_computeCommandPool, nullptr);
-		m_computeCommandPool = 0;
-	}
-	if (m_graphicsCommandPool != 0)
-	{
-		vkDestroyCommandPool(m_logicalDevice, m_graphicsCommandPool, nullptr);
-		m_graphicsCommandPool = 0;
-	}
+	m_computeCommandPool = nullptr;
+	m_graphicsCommandPool = nullptr;
 }
 
 bool RenderViewVk::reset(const RenderViewDefaultDesc& desc)
@@ -528,17 +521,18 @@ void RenderViewVk::endFrame()
 
 	vkResetFences(m_logicalDevice, 1, &frame.inFlightFence);
 
+	// Submit commands to graphics queue.
 	VkPipelineStageFlags waitStageMash = { VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT };
-    VkSubmitInfo si = {};
-    si.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
-    si.waitSemaphoreCount = 1;
-    si.pWaitSemaphores = &m_imageAvailableSemaphore;
-    si.pWaitDstStageMask = &waitStageMash;
-    si.commandBufferCount = 1;
-    si.pCommandBuffers = &frame.graphicsCommandBuffer;
-    si.signalSemaphoreCount = 1;
-    si.pSignalSemaphores = &frame.renderFinishedSemaphore;
-    vkQueueSubmit(m_graphicsQueue, 1, &si, frame.inFlightFence);
+	VkSubmitInfo si = {};
+	si.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+	si.waitSemaphoreCount = 1;
+	si.pWaitSemaphores = &m_imageAvailableSemaphore;
+	si.pWaitDstStageMask = &waitStageMash;
+	si.commandBufferCount = 1;
+	si.pCommandBuffers = &frame.graphicsCommandBuffer;
+	si.signalSemaphoreCount = 1;
+	si.pSignalSemaphores = &frame.renderFinishedSemaphore;
+	m_graphicsQueue->submit(si, frame.inFlightFence);
 
 	// Release unused pipelines.
 	for (auto it = m_pipelines.begin(); it != m_pipelines.end(); )
@@ -1208,37 +1202,40 @@ bool RenderViewVk::create(uint32_t width, uint32_t height, int32_t vblanks)
 	}
 
 	// Get opaque queues.
-	vkGetDeviceQueue(m_logicalDevice, m_graphicsQueueIndex, 0, &m_graphicsQueue);
-	vkGetDeviceQueue(m_logicalDevice, m_computeQueueIndex, 0, &m_computeQueue);
+	//vkGetDeviceQueue(m_logicalDevice, m_graphicsQueueIndex, 0, &m_graphicsQueue);
+	//vkGetDeviceQueue(m_logicalDevice, m_computeQueueIndex, 0, &m_computeQueue);
 	vkGetDeviceQueue(m_logicalDevice, m_presentQueueIndex, 0, &m_presentQueue);
 
-	log::debug << L"Using graphics queue " << m_graphicsQueueIndex << L"." << Endl;
-	log::debug << L"Using compute queue " << m_computeQueueIndex << L"." << Endl;
+	//log::debug << L"Using graphics queue " << m_graphicsQueueIndex << L"." << Endl;
+	//log::debug << L"Using compute queue " << m_computeQueueIndex << L"." << Endl;
 	log::debug << L"Using present queue " << m_presentQueueIndex << L"." << Endl;
 
-	// Create graphics command pool.
-	VkCommandPoolCreateInfo cpci = {};
-	cpci.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
-	cpci.flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
-	cpci.queueFamilyIndex = m_graphicsQueueIndex;
+	//// Create graphics command pool.
+	//VkCommandPoolCreateInfo cpci = {};
+	//cpci.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
+	//cpci.flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
+	//cpci.queueFamilyIndex = m_graphicsQueueIndex;
 
-	if (vkCreateCommandPool(m_logicalDevice, &cpci, 0, &m_graphicsCommandPool) != VK_SUCCESS)
-	{
-		log::error << L"Failed to create Vulkan; unable to create command pool." << Endl;
-		return false;
-	}
+	//if (vkCreateCommandPool(m_logicalDevice, &cpci, 0, &m_graphicsCommandPool) != VK_SUCCESS)
+	//{
+	//	log::error << L"Failed to create Vulkan; unable to create command pool." << Endl;
+	//	return false;
+	//}
 
-	// Create compute command pool.
-	cpci = {};
-	cpci.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
-	cpci.flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
-	cpci.queueFamilyIndex = m_computeQueueIndex;
+	m_graphicsCommandPool = CommandBufferPool::create(m_logicalDevice, m_graphicsQueue);
+	m_computeCommandPool = CommandBufferPool::create(m_logicalDevice, m_computeQueue);
 
-	if (vkCreateCommandPool(m_logicalDevice, &cpci, 0, &m_computeCommandPool) != VK_SUCCESS)
-	{
-		log::error << L"Failed to create Vulkan; unable to create compute command pool." << Endl;
-		return false;
-	}
+	//// Create compute command pool.
+	//cpci = {};
+	//cpci.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
+	//cpci.flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
+	//cpci.queueFamilyIndex = m_computeQueueIndex;
+
+	//if (vkCreateCommandPool(m_logicalDevice, &cpci, 0, &m_computeCommandPool) != VK_SUCCESS)
+	//{
+	//	log::error << L"Failed to create Vulkan; unable to create compute command pool." << Endl;
+	//	return false;
+	//}
 
 	// Determine primary target color format/space.
 	uint32_t surfaceFormatCount = 0;
@@ -1316,8 +1313,8 @@ bool RenderViewVk::create(uint32_t width, uint32_t height, int32_t vblanks)
 	scci.presentMode = presentationMode;
 	scci.clipped = VK_TRUE;
 
-	uint32_t queueFamilyIndices[] = { m_graphicsQueueIndex, m_presentQueueIndex };
-	if (m_graphicsQueueIndex != m_presentQueueIndex)
+	uint32_t queueFamilyIndices[] = { m_graphicsQueue->getQueueIndex(), m_presentQueueIndex };
+	if (m_graphicsQueue->getQueueIndex() != m_presentQueueIndex)
 	{
 		// Need to be sharing between queues in order to be presentable.
 		scci.imageSharingMode = VK_SHARING_MODE_CONCURRENT;
@@ -1387,27 +1384,30 @@ bool RenderViewVk::create(uint32_t width, uint32_t height, int32_t vblanks)
 	{
 		auto& frame = m_frames[i];
 
-		VkCommandBufferAllocateInfo cbai = {};
-		cbai.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
-		cbai.commandPool = m_graphicsCommandPool;
-		cbai.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
-		cbai.commandBufferCount = 1;
-		if (vkAllocateCommandBuffers(m_logicalDevice, &cbai, &frame.graphicsCommandBuffer) != VK_SUCCESS)
-		{
-			log::error << L"Failed to create Vulkan; failed to allocate graphics command buffer." << Endl;
-			return false;
-		}
+		frame.graphicsCommandBuffer = m_graphicsCommandPool->acquire();
+		frame.computeCommandBuffer = m_computeCommandPool->acquire();
 
-		cbai = {};
-		cbai.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
-		cbai.commandPool = m_computeCommandPool;
-		cbai.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
-		cbai.commandBufferCount = 1;
-		if (vkAllocateCommandBuffers(m_logicalDevice, &cbai, &frame.computeCommandBuffer) != VK_SUCCESS)
-		{
-			log::error << L"Failed to create Vulkan; failed to allocate compute command buffer." << Endl;
-			return false;
-		}
+		//VkCommandBufferAllocateInfo cbai = {};
+		//cbai.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
+		//cbai.commandPool = m_graphicsCommandPool;
+		//cbai.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
+		//cbai.commandBufferCount = 1;
+		//if (vkAllocateCommandBuffers(m_logicalDevice, &cbai, &frame.graphicsCommandBuffer) != VK_SUCCESS)
+		//{
+		//	log::error << L"Failed to create Vulkan; failed to allocate graphics command buffer." << Endl;
+		//	return false;
+		//}
+
+		//cbai = {};
+		//cbai.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
+		//cbai.commandPool = m_computeCommandPool;
+		//cbai.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
+		//cbai.commandBufferCount = 1;
+		//if (vkAllocateCommandBuffers(m_logicalDevice, &cbai, &frame.computeCommandBuffer) != VK_SUCCESS)
+		//{
+		//	log::error << L"Failed to create Vulkan; failed to allocate compute command buffer." << Endl;
+		//	return false;
+		//}
 
 		VkDescriptorPoolSize dps[4];
 		dps[0].type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
@@ -1449,8 +1449,8 @@ bool RenderViewVk::create(uint32_t width, uint32_t height, int32_t vblanks)
 			m_physicalDevice,
 			m_logicalDevice,
 			0,
-			m_graphicsCommandPool,
-			m_graphicsQueue
+			m_graphicsQueue,
+			m_graphicsCommandPool
 		);
 		if (!frame.primaryTarget->createPrimary(
 			width,

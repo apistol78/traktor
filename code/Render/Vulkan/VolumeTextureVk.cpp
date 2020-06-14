@@ -2,6 +2,8 @@
 #include "Core/Misc/TString.h"
 #include "Render/Types.h"
 #include "Render/Vulkan/ApiLoader.h"
+#include "Render/Vulkan/CommandBufferPool.h"
+#include "Render/Vulkan/Queue.h"
 #include "Render/Vulkan/UtilitiesVk.h"
 #include "Render/Vulkan/VolumeTextureVk.h"
 
@@ -29,8 +31,8 @@ VolumeTextureVk::~VolumeTextureVk()
 bool VolumeTextureVk::create(
 	VkPhysicalDevice physicalDevice,
 	VkDevice device,
-	VkCommandPool commandPool,
-	VkQueue queue,
+	Queue* graphicsQueue,
+	CommandBufferPool* graphicsCommandPool,
 	const VolumeTextureCreateDesc& desc,
 	const wchar_t* const tag
 )
@@ -125,27 +127,37 @@ bool VolumeTextureVk::create(
 		if (vkCreateImageView(device, &ivci, NULL, &m_textureView) != VK_SUCCESS)
 			return false;
 
+		VkCommandBuffer commandBuffer = graphicsCommandPool->acquireAndBegin();
+
 		// Change layout of texture to be able to copy staging buffer into texture.
-		changeImageLayout(
-			device,
-			commandPool,
-			queue,
-			m_textureImage,
-			VK_IMAGE_LAYOUT_UNDEFINED,
-			VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
+		VkImageMemoryBarrier imb = {};
+		imb.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
+		imb.oldLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+		imb.newLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
+		imb.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+		imb.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+		imb.image = m_textureImage;
+		imb.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+		imb.subresourceRange.baseMipLevel = 0;
+		imb.subresourceRange.levelCount = 1;
+		imb.subresourceRange.baseArrayLayer = 0;
+		imb.subresourceRange.layerCount = 1;
+		imb.srcAccessMask = 0;
+		imb.dstAccessMask = 0;
+		vkCmdPipelineBarrier(
+			commandBuffer,
+			VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
+			VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
 			0,
-			1,
-			0,
-			1,
-			VK_IMAGE_ASPECT_COLOR_BIT
+			0, nullptr,
+			0, nullptr,
+			1, &imb
 		);
 
 		uint32_t offset = 0;
 		for (int32_t slice = 0; slice < desc.depth; ++slice)
 		{
 			// Copy staging buffer into texture.
-			VkCommandBuffer commandBuffer = beginSingleTimeCommands(device, commandPool);
-
 			uint32_t mipWidth = getTextureMipSize(desc.width, 0);
 			uint32_t mipHeight = getTextureMipSize(desc.height, 0);
 			uint32_t mipSize = getTextureMipPitch(desc.format, desc.width, desc.height, 0);
@@ -170,24 +182,45 @@ bool VolumeTextureVk::create(
 				&region
 			);
 
-			endSingleTimeCommands(device, commandPool, commandBuffer, queue);
 			offset += mipSize;
 		}
 
 		// Change layout of texture to optimal sampling.
-		changeImageLayout(
-			device,
-			commandPool,
-			queue,
-			m_textureImage,
-			VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
-			VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
+		imb = {};
+		imb.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
+		imb.oldLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
+		imb.newLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+		imb.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+		imb.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+		imb.image = m_textureImage;
+		imb.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+		imb.subresourceRange.baseMipLevel = 0;
+		imb.subresourceRange.levelCount = 1;
+		imb.subresourceRange.baseArrayLayer = 0;
+		imb.subresourceRange.layerCount = 1;
+		imb.srcAccessMask = 0;
+		imb.dstAccessMask = 0;
+		vkCmdPipelineBarrier(
+			commandBuffer,
+			VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
+			VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
 			0,
-			1,
-			0,
-			1,
-			VK_IMAGE_ASPECT_COLOR_BIT
+			0, nullptr,
+			0, nullptr,
+			1, &imb
 		);
+
+		// End recording command buffer.
+		vkEndCommandBuffer(commandBuffer);
+
+		// Submit and wait for commands to execute.
+		VkSubmitInfo si = {};
+		si.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+		si.commandBufferCount = 1;
+		si.pCommandBuffers = &commandBuffer;
+		graphicsQueue->submitAndWait(si);
+
+		graphicsCommandPool->release(commandBuffer);
 
 		// Free staging buffer.
 		vkDestroyBuffer(device, stagingBuffer, nullptr);

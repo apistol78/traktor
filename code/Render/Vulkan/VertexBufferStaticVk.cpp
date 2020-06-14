@@ -1,4 +1,6 @@
 #include "Render/Vulkan/ApiLoader.h"
+#include "Render/Vulkan/CommandBufferPool.h"
+#include "Render/Vulkan/Queue.h"
 #include "Render/Vulkan/UtilitiesVk.h"
 #include "Render/Vulkan/VertexBufferStaticVk.h"
 
@@ -11,8 +13,8 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.render.VertexBufferStaticVk", VertexBufferStati
 
 VertexBufferStaticVk::VertexBufferStaticVk(
 	VkDevice logicalDevice,
-	VkCommandPool setupCommandPool,
-	VkQueue setupQueue,
+	Queue* graphicsQueue,
+	CommandBufferPool* graphicsCommandPool,
 	uint32_t bufferSize,
 	VmaAllocator allocator,
 	VmaAllocation allocation,
@@ -23,8 +25,8 @@ VertexBufferStaticVk::VertexBufferStaticVk(
 )
 :	VertexBufferVk(bufferSize, allocator, allocation, vertexBuffer, vertexBindingDescription, vertexAttributeDescriptions, hash)
 ,	m_logicalDevice(logicalDevice)
-,	m_setupCommandPool(setupCommandPool)
-,	m_setupQueue(setupQueue)
+,	m_graphicsQueue(graphicsQueue)
+,	m_graphicsCommandPool(graphicsCommandPool)
 ,	m_stagingBufferAllocation(0)
 ,	m_stagingBuffer(0)
 {
@@ -69,20 +71,30 @@ void VertexBufferStaticVk::unlock()
 	// Unmap staging buffer.
 	vmaUnmapMemory(m_allocator, m_stagingBufferAllocation);
 
-	// Copy staging buffer into device buffer
-	VkCommandBuffer commandBuffer = beginSingleTimeCommands(m_logicalDevice, m_setupCommandPool);
+	VkCommandBuffer commandBuffer = m_graphicsCommandPool->acquireAndBegin();
 
-	VkBufferCopy bufferCopy = {};
-	bufferCopy.size = getBufferSize();
+	// Copy staging buffer into vertex buffer.
+	VkBufferCopy bc = {};
+	bc.size = getBufferSize();
 	vkCmdCopyBuffer(
 		commandBuffer,
 		m_stagingBuffer,
 		m_vertexBuffer,
 		1,
-		&bufferCopy
+		&bc
 	);
 
-	endSingleTimeCommands(m_logicalDevice, m_setupCommandPool, commandBuffer, m_setupQueue);
+	// End recording command buffer.
+	vkEndCommandBuffer(commandBuffer);
+
+	// Submit and wait for commands to execute.
+	VkSubmitInfo si = {};
+	si.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+	si.commandBufferCount = 1;
+	si.pCommandBuffers = &commandBuffer;
+	m_graphicsQueue->submitAndWait(si);
+
+	m_graphicsCommandPool->release(commandBuffer);
 
 	// Free staging buffer.
 	vkDestroyBuffer(m_logicalDevice, m_stagingBuffer, 0);
