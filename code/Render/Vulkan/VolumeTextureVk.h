@@ -8,6 +8,8 @@ namespace traktor
 	namespace render
 	{
 
+class CommandBufferPool;
+class Queue;
 struct VolumeTextureCreateDesc;
 
 /*!
@@ -25,8 +27,8 @@ public:
 	bool create(
 		VkPhysicalDevice physicalDevice,
 		VkDevice device,
-		VkCommandPool commandPool,
-		VkQueue queue,
+		Queue* graphicsQueue,
+		CommandBufferPool* graphicsCommandPool,
 		const VolumeTextureCreateDesc& desc,
 		const wchar_t* const tag
 	);

@@ -9,9 +9,14 @@
 
 namespace traktor
 {
+
+class Semaphore;
+
 	namespace render
 	{
 
+class CommandBufferPool;
+class Queue;
 class RenderTargetDepthVk;
 class RenderTargetVk;
 struct RenderTargetSetCreateDesc;
@@ -28,8 +33,8 @@ public:
 		VkPhysicalDevice physicalDevice,
 		VkDevice logicalDevice,
 		VmaAllocator allocator,
-		VkCommandPool setupCommandPool,
-		VkQueue setupQueue
+		Queue* graphicsQueue,
+		CommandBufferPool* graphicsCommandPool
 	);
 
 	virtual ~RenderTargetSetVk();
@@ -96,8 +101,8 @@ private:
 	VkPhysicalDevice m_physicalDevice;
 	VkDevice m_logicalDevice;
 	VmaAllocator m_allocator;
-	VkCommandPool m_setupCommandPool;
-	VkQueue m_setupQueue;
+	Ref< Queue > m_graphicsQueue;
+	Ref< CommandBufferPool > m_graphicsCommandPool;
 	RenderTargetSetCreateDesc m_setDesc;
 	RefArray< RenderTargetVk > m_colorTargets;
 	Ref< RenderTargetDepthVk > m_depthTarget;

@@ -3,8 +3,9 @@
 #include "Core/Misc/TString.h"
 #include "Render/Types.h"
 #include "Render/Vulkan/ApiLoader.h"
+#include "Render/Vulkan/CommandBufferPool.h"
+#include "Render/Vulkan/Queue.h"
 #include "Render/Vulkan/CubeTextureVk.h"
-#include "Render/Vulkan/RenderTargetVk.h"
 #include "Render/Vulkan/UtilitiesVk.h"
 
 namespace traktor
@@ -18,15 +19,15 @@ CubeTextureVk::CubeTextureVk(
 	VkPhysicalDevice physicalDevice,
 	VkDevice logicalDevice,
 	VmaAllocator allocator,
-	VkCommandPool setupCommandPool,
-	VkQueue setupQueue,
+	Queue* graphicsQueue,
+	CommandBufferPool* graphicsCommandPool,
 	const CubeTextureCreateDesc& desc
 )
 :	m_physicalDevice(physicalDevice)
 ,	m_logicalDevice(logicalDevice)
 ,	m_allocator(allocator)
-,	m_setupCommandPool(setupCommandPool)
-,	m_setupQueue(setupQueue)
+,	m_graphicsQueue(graphicsQueue)
+,	m_graphicsCommandPool(graphicsCommandPool)
 ,	m_desc(desc)
 ,	m_textureImageAllocation(0)
 ,	m_textureImage(0)
@@ -206,27 +207,34 @@ void CubeTextureVk::unlock(int32_t side, int32_t level)
 {
 	vmaUnmapMemory(m_allocator, m_stagingBufferAllocation);
 
+	VkCommandBuffer commandBuffer = m_graphicsCommandPool->acquireAndBegin();
+
 	// Change layout of texture to be able to copy staging buffer into texture.
-	changeImageLayout(
-		m_logicalDevice,
-		m_setupCommandPool,
-		m_setupQueue,
-		m_textureImage,
-		VK_IMAGE_LAYOUT_UNDEFINED,
-		VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
-		level,
-		1,
-		side,
-		1,
-		VK_IMAGE_ASPECT_COLOR_BIT
+	VkImageMemoryBarrier imb = {};
+	imb.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
+	imb.oldLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+	imb.newLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
+	imb.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+	imb.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+	imb.image = m_textureImage;
+	imb.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+	imb.subresourceRange.baseMipLevel = level;
+	imb.subresourceRange.levelCount = 1;
+	imb.subresourceRange.baseArrayLayer = side;
+	imb.subresourceRange.layerCount = 1;
+	imb.srcAccessMask = 0;
+	imb.dstAccessMask = 0;
+	vkCmdPipelineBarrier(
+		commandBuffer,
+		VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
+		VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
+		0,
+		0, nullptr,
+		0, nullptr,
+		1, &imb
 	);
 
 	// Copy staging buffer into texture.
-	VkCommandBuffer commandBuffer = beginSingleTimeCommands(
-		m_logicalDevice,
-		m_setupCommandPool
-	);
-
 	uint32_t mipSide = getTextureMipSize(m_desc.side, level);
 
 	VkBufferImageCopy region = {};
@@ -249,27 +257,42 @@ void CubeTextureVk::unlock(int32_t side, int32_t level)
 		&region
 	);
 
-	endSingleTimeCommands(
-		m_logicalDevice,
-		m_setupCommandPool,
+	// Change layout of texture to optimal sampling.
+	imb = {};
+	imb.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
+	imb.oldLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
+	imb.newLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+	imb.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+	imb.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+	imb.image = m_textureImage;
+	imb.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+	imb.subresourceRange.baseMipLevel = level;
+	imb.subresourceRange.levelCount = 1;
+	imb.subresourceRange.baseArrayLayer = side;
+	imb.subresourceRange.layerCount = 1;
+	imb.srcAccessMask = 0;
+	imb.dstAccessMask = 0;
+	vkCmdPipelineBarrier(
 		commandBuffer,
-		m_setupQueue
+		VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
+		VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
+		0,
+		0, nullptr,
+		0, nullptr,
+		1, &imb
 	);
 
-	// Change layout of texture to optimal sampling.
-	changeImageLayout(
-		m_logicalDevice,
-		m_setupCommandPool,
-		m_setupQueue,
-		m_textureImage,
-		VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
-		VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
-		level,
-		1,
-		side,
-		1,
-		VK_IMAGE_ASPECT_COLOR_BIT
-	);
+	// We're finished recording command buffer.
+	vkEndCommandBuffer(commandBuffer);
+
+	// Submit and wait for commands to execute.
+	VkSubmitInfo si = {};
+	si.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+	si.commandBufferCount = 1;
+	si.pCommandBuffers = &commandBuffer;
+	m_graphicsQueue->submitAndWait(si);
+
+	m_graphicsCommandPool->release(commandBuffer);
 
 	// Free staging buffer.
 	vkDestroyBuffer(m_logicalDevice, m_stagingBuffer, 0);

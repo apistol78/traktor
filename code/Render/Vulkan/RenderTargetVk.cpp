@@ -2,6 +2,8 @@
 #include "Core/Misc/TString.h"
 #include "Render/Types.h"
 #include "Render/Vulkan/ApiLoader.h"
+#include "Render/Vulkan/CommandBufferPool.h"
+#include "Render/Vulkan/Queue.h"
 #include "Render/Vulkan/RenderTargetVk.h"
 #include "Render/Vulkan/UtilitiesVk.h"
 
@@ -16,14 +18,14 @@ RenderTargetVk::RenderTargetVk(
 	VkPhysicalDevice physicalDevice,
 	VkDevice logicalDevice,
 	VmaAllocator allocator,
-	VkCommandPool setupCommandPool,
-	VkQueue setupQueue
+	Queue* graphicsQueue,
+	CommandBufferPool* graphicsCommandPool
 )
 :	m_physicalDevice(physicalDevice)
 ,	m_logicalDevice(logicalDevice)
 ,	m_allocator(allocator)
-,	m_setupCommandPool(setupCommandPool)
-,	m_setupQueue(setupQueue)
+,	m_graphicsQueue(graphicsQueue)
+,	m_graphicsCommandPool(graphicsCommandPool)
 ,	m_format(VK_FORMAT_UNDEFINED)
 ,	m_image(0)
 ,	m_allocation(0)

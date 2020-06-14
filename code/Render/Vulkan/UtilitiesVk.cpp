@@ -1,5 +1,6 @@
 #include <cstring>
 #include "Core/Misc/TString.h"
+#include "Core/Thread/Acquire.h"
 #include "Render/Vulkan/ApiLoader.h"
 #include "Render/Vulkan/UtilitiesVk.h"
 
@@ -340,91 +341,6 @@ bool createBuffer(VkPhysicalDevice physicalDevice, VkDevice device, VkDeviceSize
 		return false;
 
 	vkBindBufferMemory(device, outBuffer, outBufferMemory, 0);
-	return true;
-}
-
-VkCommandBuffer beginSingleTimeCommands(VkDevice device, VkCommandPool commandPool)
-{
-	// Allocate command buffer.
-	VkCommandBuffer commandBuffer = nullptr;
-
-	VkCommandBufferAllocateInfo cbai = {};
-	cbai.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
-	cbai.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
-	cbai.commandPool = commandPool;
-	cbai.commandBufferCount = 1;
-
-	vkAllocateCommandBuffers(device, &cbai, &commandBuffer);
-
-	// Begin recording command buffer.
-	VkCommandBufferBeginInfo cbbi = {};
-	cbbi.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
-	cbbi.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
-
-	vkBeginCommandBuffer(commandBuffer, &cbbi);
-
-	return commandBuffer;
-}
-
-void endSingleTimeCommands(VkDevice device, VkCommandPool commandPool, VkCommandBuffer commandBuffer, VkQueue queue)
-{
-	// End recording command buffer.
-	vkEndCommandBuffer(commandBuffer);
-
-	// Submit command buffer onto queue and wait until command has been executed.
-	VkSubmitInfo si = {};
-	si.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
-	si.commandBufferCount = 1;
-	si.pCommandBuffers = &commandBuffer;
-
-	vkQueueSubmit(queue, 1, &si, VK_NULL_HANDLE);
-	vkQueueWaitIdle(queue);
-
-	vkFreeCommandBuffers(device, commandPool, 1, &commandBuffer);
-}
-
-bool changeImageLayout(
-	VkDevice device,
-	VkCommandPool commandPool,
-	VkQueue queue,
-	VkImage image,
-	VkImageLayout oldLayout,
-	VkImageLayout newLayout,
-	int32_t mipLevel,
-	int32_t mipCount,
-	int32_t layer,
-	int32_t layerCount,
-	uint32_t aspect
-)
-{
-	auto commandBuffer = beginSingleTimeCommands(device, commandPool);
-
-	VkImageMemoryBarrier imb = {};
-	imb.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
-	imb.oldLayout = oldLayout;
-	imb.newLayout = newLayout;
-	imb.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
-	imb.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
-	imb.image = image;
-	imb.subresourceRange.aspectMask = aspect; //VK_IMAGE_ASPECT_COLOR_BIT;
-	imb.subresourceRange.baseMipLevel = mipLevel;
-	imb.subresourceRange.levelCount = mipCount;
-	imb.subresourceRange.baseArrayLayer = layer;
-	imb.subresourceRange.layerCount = layerCount;
-	imb.srcAccessMask = 0;
-	imb.dstAccessMask = 0;
-
-	vkCmdPipelineBarrier(
-		commandBuffer,
-		VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
-		VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
-		0,
-		0, nullptr,
-		0, nullptr,
-		1, &imb
-	);
-
-	endSingleTimeCommands(device, commandPool, commandBuffer, queue);
 	return true;
 }
 

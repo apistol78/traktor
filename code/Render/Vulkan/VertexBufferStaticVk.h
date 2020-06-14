@@ -7,6 +7,9 @@ namespace traktor
 	namespace render
 	{
 
+class CommandBufferPool;
+class Queue;
+
 /*!
  * \ingroup Vulkan
  */
@@ -17,8 +20,8 @@ class VertexBufferStaticVk : public VertexBufferVk
 public:
 	VertexBufferStaticVk(
 		VkDevice logicalDevice,
-		VkCommandPool setupCommandPool,
-		VkQueue setupQueue,
+		Queue* graphicsQueue,
+		CommandBufferPool* graphicsCommandPool,
 		uint32_t bufferSize,
 		VmaAllocator allocator,
 		VmaAllocation allocation,
@@ -36,8 +39,8 @@ public:
 
 private:
 	VkDevice m_logicalDevice;
-	VkCommandPool m_setupCommandPool;
-	VkQueue m_setupQueue;
+	Ref< Queue > m_graphicsQueue;
+	Ref< CommandBufferPool > m_graphicsCommandPool;
 	VmaAllocation m_stagingBufferAllocation;
 	VkBuffer m_stagingBuffer;
 };
