@@ -22,8 +22,6 @@ class IStream;
     namespace model
     {
 
-class IModelOperation;
-
 /*!
  * \ingroup Model
  */
@@ -38,11 +36,8 @@ public:
 		const std::function< Ref< IStream >(const Path&) >& openStream
 	);
 
-    /*! Get model without any operations. */
+    /*! Get model. */
     Ref< Model > get(const Path& fileName, const std::wstring& filter);
-
-    /*! Get model with applied operations. */
-    Ref< Model > get(const Path& fileName, const std::wstring& filter, const RefArray< const IModelOperation >& operations);
 
     /*! Get model with user key. */
     Ref< Model > get(const Path& fileName, const std::wstring& filter, uint32_t user);

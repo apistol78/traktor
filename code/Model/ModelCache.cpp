@@ -4,7 +4,6 @@
 #include "Core/Misc/String.h"
 #include "Core/Serialization/BinarySerializer.h"
 #include "Core/Thread/Acquire.h"
-#include "Model/IModelOperation.h"
 #include "Model/Model.h"
 #include "Model/ModelCache.h"
 #include "Model/ModelFormat.h"
@@ -45,11 +44,6 @@ ModelCache::ModelCache(
 
 Ref< Model > ModelCache::get(const Path& fileName, const std::wstring& filter)
 {
-	return get(fileName, filter, RefArray< const IModelOperation >());
-}
-
-Ref< Model > ModelCache::get(const Path& fileName, const std::wstring& filter, const RefArray< const IModelOperation >& operations)
-{
 	// Get information about source file.
 	Ref< File > file = m_getFile(fileName);
 	if (!file)
@@ -58,15 +52,8 @@ Ref< Model > ModelCache::get(const Path& fileName, const std::wstring& filter, c
 	// Calculate hash of resolved file name.
 	uint32_t fileNameHash = hash(fileName.getPathName() + L"!" + filter);
 
-	// Calculate hash of all operations.
-	Adler32 cs;
-	HashStream hs(&cs);
-	for (auto operation : operations)
-		BinarySerializer(&hs).writeObject(operation);
-	uint32_t operationHash = cs.get();
-
 	// Generate file name of cached model.
-	Path cachedFileName = m_cachePath.getPathName() + L"/" + toString(fileNameHash) + L"/" + toString(operationHash) + L".tmd";
+	Path cachedFileName = m_cachePath.getPathName() + L"/" + toString(fileNameHash) + L".tmd";
 
 	// Check if cached file exist and if it's time stamp match source file's.
 	bool haveCachedFile = false;
@@ -87,9 +74,6 @@ Ref< Model > ModelCache::get(const Path& fileName, const std::wstring& filter, c
 	Ref< Model > model = ModelFormat::readAny(fileName, filter, m_openStream);
 	if (!model)
 		return nullptr;
-
-	for (auto operation : operations)
-		operation->apply(*model);
 
 	// Write cached copy of post-operation model.
 	{
