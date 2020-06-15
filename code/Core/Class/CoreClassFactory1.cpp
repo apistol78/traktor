@@ -397,6 +397,7 @@ void CoreClassFactory1::createClasses(IRuntimeClassRegistrar* registrar) const
 	classBitWriter->addMethod("writeUInt16", &BitWriter::writeUInt16);
 	classBitWriter->addMethod("writeInt32", &BitWriter::writeInt32);
 	classBitWriter->addMethod("writeUInt32", &BitWriter::writeUInt32);
+	classBitWriter->addMethod("writeFloat", &BitWriter::writeFloat);
 	classBitWriter->addMethod("flush", &BitWriter::flush);
 	classBitWriter->addMethod("tell", &BitWriter::tell);
 	classBitWriter->addMethod("getStream", &BitWriter::getStream);

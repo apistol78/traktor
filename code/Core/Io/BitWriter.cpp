@@ -79,6 +79,12 @@ bool BitWriter::writeUInt32(uint32_t v)
 	return m_stream->write(&v, sizeof(v)) == sizeof(v);
 }
 
+bool BitWriter::writeFloat(float v)
+{
+	flush();
+	return m_stream->write(&v, sizeof(v)) == sizeof(v);
+}
+
 void BitWriter::flush()
 {
 	if (m_cnt <= 0)

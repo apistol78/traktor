@@ -330,18 +330,27 @@ std::wstring Any::format() const
 	case Type::Boolean:
 		ss << L"bool";
 		break;
+
 	case Type::Int32:
 		ss << L"int32";
 		break;
+
 	case Type::Int64:
 		ss << L"int64";
 		break;
+
 	case Type::Float:
 		ss << L"float";
 		break;
+
 	case Type::String:
 		ss << L"string";
 		break;
+
+	case Type::Object:
+		ss << L"object";
+		break;
+
 	default:
 		ss << L"void";
 		break;

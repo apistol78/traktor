@@ -413,7 +413,7 @@ struct CastAny < Ref< Type >, false >
 		if (!value.isVoid())
 			return static_cast< Type* >(value.getObjectUnsafe());
 		else
-			return 0;
+			return nullptr;
 	}
 };
 
@@ -434,7 +434,31 @@ struct CastAny < const Ref< Type >&, false >
 		if (!value.isVoid())
 			return static_cast< Type* >(value.getObjectUnsafe());
 		else
-			return 0;
+			return nullptr;
+	}
+};
+
+template < >
+struct CastAny < ITypedObject*, true >
+{
+	T_NO_COPY_CLASS(CastAny);
+
+	typedef typename IsConst< ITypedObject* >::type_t no_const_type_t;
+
+	static OutputStream& typeName(OutputStream& ss) {
+		return ss << type_name< ITypedObject >();
+	}
+	static bool accept(const Any& value) {
+		return value.isVoid() || value.isObject();
+	}
+	static Any set(ITypedObject* value) {
+		return Any::fromObject(value);
+	}
+	static ITypedObject* get(const Any& value) {
+		if (!value.isVoid())
+			return value.getObjectUnsafe();
+		else
+			return nullptr;
 	}
 };
 
@@ -479,7 +503,7 @@ struct CastAny < Type, true >
 		if (!value.isVoid())
 			return static_cast< Type >(value.getObjectUnsafe());
 		else
-			return 0;
+			return nullptr;
 	}
 };
 
