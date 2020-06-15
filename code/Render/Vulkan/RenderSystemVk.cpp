@@ -296,10 +296,8 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
 	vf.vkCreateImage = vkCreateImage;
 	vf.vkDestroyImage = vkDestroyImage;
 	vf.vkCmdCopyBuffer = vkCmdCopyBuffer;
-	// if (hasGetMemReq2 && hasDedicatedAllocation) {
-	// 	vf.vkGetBufferMemoryRequirements2KHR = reinterpret_cast<PFN_vkGetBufferMemoryRequirements2KHR>(vk::GetDeviceProcAddr(m_dev, "vkGetBufferMemoryRequirements2KHR"));
-	// 	vf.vkGetImageMemoryRequirements2KHR = reinterpret_cast<PFN_vkGetImageMemoryRequirements2KHR>(vk::GetDeviceProcAddr(m_dev, "vkGetImageMemoryRequirements2KHR"));
-	// }
+	vf.vkGetBufferMemoryRequirements2KHR = vkGetBufferMemoryRequirements2KHR;
+	vf.vkGetImageMemoryRequirements2KHR = vkGetImageMemoryRequirements2KHR;
 
 	VmaAllocatorCreateInfo aci = {};
 	aci.physicalDevice = m_physicalDevice;
