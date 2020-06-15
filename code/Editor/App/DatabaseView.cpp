@@ -386,11 +386,13 @@ bool DatabaseView::create(ui::Widget* parent)
 
 	m_toolSelection->addItem(new ui::ToolBarSeparator());
 
-	m_toolViewMode = new ui::ToolBarDropDown(ui::Command(L"Editor.ViewModes"), ui::dpi96(80), i18n::Text(L"DATABASE_VIEW_MODE"));
+	m_toolViewMode = new ui::ToolBarDropDown(ui::Command(L"Database.ViewModes"), ui::dpi96(80), i18n::Text(L"DATABASE_VIEW_MODE"));
 	m_toolViewMode->add(i18n::Text(L"DATABASE_VIEW_MODE_HIERARCHY"));
 	m_toolViewMode->add(i18n::Text(L"DATABASE_VIEW_MODE_CATEGORY"));
 	m_toolViewMode->add(i18n::Text(L"DATABASE_VIEW_MODE_SPLIT"));
-	m_toolViewMode->select(0);
+	m_toolViewMode->select(
+		m_editor->getSettings()->getProperty< int32_t >(L"Editor.DatabaseView", 0)
+	);
 	m_toolSelection->addItem(m_toolViewMode);
 
 	m_toolSelection->addEventHandler< ui::ToolBarButtonClickEvent >(this, &DatabaseView::eventToolSelectionClicked);
@@ -1479,6 +1481,11 @@ void DatabaseView::eventToolSelectionClicked(ui::ToolBarButtonClickEvent* event)
 		}
 		if (!m_toolFilterAssets->isToggled())
 			m_filter = new DefaultFilter();
+	}
+	else if (cmd == L"Database.ViewModes")
+	{
+		int32_t viewMode = m_toolViewMode->getSelected();
+		m_editor->checkoutGlobalSettings()->setProperty< PropertyInteger >(L"Editor.DatabaseView", viewMode);
 	}
 
 	updateView();
