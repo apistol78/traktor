@@ -55,6 +55,9 @@ public:
 	/*! Write unsigned 8 bit number. */
 	bool writeUInt32(uint32_t v);
 
+	/*! Write IEEE-32 float number. */
+	bool writeFloat(float v);
+
 	/*! Flush bits. */
 	void flush();
 

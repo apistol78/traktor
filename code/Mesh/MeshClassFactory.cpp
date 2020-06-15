@@ -25,6 +25,7 @@
 #include "Mesh/Stream/StreamMesh.h"
 #include "Mesh/Stream/StreamMeshComponent.h"
 #include "Render/ITexture.h"
+#include "Render/StructBuffer.h"
 #include "Render/Context/ProgramParameters.h"
 #include "Resource/ResourceCast.h"
 
@@ -68,6 +69,11 @@ public:
 	void setTextureParameter(const render::handle_t handle, render::ITexture* texture)
 	{
 		m_programParameters->setTextureParameter(handle, texture);
+	}
+
+	void setStructBufferParameter(const render::handle_t handle, render::StructBuffer* structBuffer)
+	{
+		m_programParameters->setStructBufferParameter(handle, structBuffer);
 	}
 
 	void setStencilReference(uint32_t stencilReference)
@@ -145,6 +151,7 @@ void MeshClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classBoxedProgramParameters->addMethod("setVectorParameter", &BoxedProgramParameters::setVectorParameter);
 	classBoxedProgramParameters->addMethod("setVectorArrayParameter", &BoxedProgramParameters::setVectorArrayParameter);
 	classBoxedProgramParameters->addMethod("setTextureParameter", &BoxedProgramParameters::setTextureParameter);
+	classBoxedProgramParameters->addMethod("setStructBufferParameter", &BoxedProgramParameters::setStructBufferParameter);
 	classBoxedProgramParameters->addMethod("setStencilReference", &BoxedProgramParameters::setStencilReference);
 	registrar->registerClass(classBoxedProgramParameters);
 

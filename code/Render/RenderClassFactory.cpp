@@ -1,6 +1,7 @@
 #include "Core/Class/AutoRuntimeClass.h"
 #include "Core/Class/IRuntimeClassRegistrar.h"
 #include "Core/Class/Boxes/BoxedPointer.h"
+#include "Core/Class/Boxes/BoxedRefArray.h"
 #include "Render/IRenderSystem.h"
 #include "Render/IRenderView.h"
 #include "Render/ITexture.h"
@@ -8,6 +9,8 @@
 #include "Render/ISimpleTexture.h"
 #include "Render/IVolumeTexture.h"
 #include "Render/RenderClassFactory.h"
+#include "Render/StructBuffer.h"
+#include "Render/StructElement.h"
 
 namespace traktor
 {
@@ -15,6 +18,13 @@ namespace traktor
 	{
 		namespace
 		{
+
+class BoxedDataType : public Object
+{
+	T_RTTI_CLASS;
+};
+
+T_IMPLEMENT_RTTI_CLASS(L"traktor.render.DataType", BoxedDataType, Object)
 
 class BoxedDisplayMode : public Object
 {
@@ -39,6 +49,39 @@ private:
 };
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.DisplayMode", BoxedDisplayMode, Object)
+
+class BoxedStructElement : public Object
+{
+	T_RTTI_CLASS;
+
+public:
+	BoxedStructElement()
+	{
+	}
+
+	BoxedStructElement(uint32_t dataType, uint32_t offset)
+	:	m_value((DataType)dataType, offset)
+	{
+	}
+
+	BoxedStructElement(const StructElement& structElement)
+	:	m_value(structElement)
+	{
+	}
+
+	uint32_t getSize() const { return m_value.getSize(); }
+
+	uint32_t getDataType() const { return (uint32_t)m_value.getDataType(); }
+
+	uint32_t getOffset() const { return m_value.getOffset(); }
+
+	const StructElement& unbox() const { return m_value; }
+
+private:
+	StructElement m_value;
+};
+
+T_IMPLEMENT_RTTI_CLASS(L"traktor.render.StructElement", BoxedStructElement, Object)
 
 class BoxedSimpleTextureCreateDesc : public Object
 {
@@ -84,6 +127,24 @@ private:
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.SimpleTextureCreateDesc", BoxedSimpleTextureCreateDesc, Object)
 
+Ref< BoxedPointer > StructBuffer_lock_1(StructBuffer* self)
+{
+	void* ptr = self->lock();
+	if (ptr)
+		return new BoxedPointer(ptr);
+	else
+		return nullptr;
+}
+
+Ref< BoxedPointer > StructBuffer_lock_2(StructBuffer* self, uint32_t structOffset, uint32_t structCount)
+{
+	void* ptr = self->lock(structOffset, structCount);
+	if (ptr)
+		return new BoxedPointer(ptr);
+	else
+		return nullptr;
+}
+
 Ref< BoxedPointer > ISimpleTexture_lock(ISimpleTexture* self, int32_t level)
 {
 	ITexture::Lock lock;
@@ -98,14 +159,25 @@ handle_t IRenderSystem_getHandle(const std::wstring& id)
 	return getParameterHandle(id);
 }
 
-Ref< BoxedDisplayMode > IRenderSystem_getCurrentDisplayMode(IRenderSystem* this_)
+Ref< BoxedDisplayMode > IRenderSystem_getCurrentDisplayMode(IRenderSystem* self)
 {
-	return new BoxedDisplayMode(this_->getCurrentDisplayMode());
+	return new BoxedDisplayMode(self->getCurrentDisplayMode());
 }
 
-Ref< BoxedDisplayMode > IRenderSystem_getDisplayMode(IRenderSystem* this_, uint32_t index)
+Ref< BoxedDisplayMode > IRenderSystem_getDisplayMode(IRenderSystem* self, uint32_t index)
 {
-	return new BoxedDisplayMode(this_->getDisplayMode(index));
+	return new BoxedDisplayMode(self->getDisplayMode(index));
+}
+
+Ref< StructBuffer > IRenderSystem_createStructBuffer(IRenderSystem* self, const RefArray< BoxedStructElement >& structElements, uint32_t bufferSize)
+{
+	AlignedVector< StructElement > se;
+
+	se.resize(structElements.size());
+	for (size_t i = 0; i < structElements.size(); ++i)
+		se[i] = structElements[i]->unbox();
+
+	return self->createStructBuffer(se, bufferSize);
 }
 
 Ref< ISimpleTexture > IRenderSystem_createSimpleTexture(IRenderSystem* self, const BoxedSimpleTextureCreateDesc* stcd)
@@ -119,12 +191,34 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.RenderClassFactory", 0, RenderCl
 
 void RenderClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 {
+	auto classBoxedDataType = new AutoRuntimeClass< BoxedDataType >();
+	classBoxedDataType->addConstant("DtFloat1", Any::fromInt32(DtFloat1));
+	classBoxedDataType->addConstant("DtFloat2", Any::fromInt32(DtFloat2));
+	classBoxedDataType->addConstant("DtFloat3", Any::fromInt32(DtFloat3));
+	classBoxedDataType->addConstant("DtFloat4", Any::fromInt32(DtFloat4));
+	classBoxedDataType->addConstant("DtByte4", Any::fromInt32(DtByte4));
+	classBoxedDataType->addConstant("DtByte4N", Any::fromInt32(DtByte4N));
+	classBoxedDataType->addConstant("DtShort2", Any::fromInt32(DtShort2));
+	classBoxedDataType->addConstant("DtShort4", Any::fromInt32(DtShort4));
+	classBoxedDataType->addConstant("DtShort2N", Any::fromInt32(DtShort2N));
+	classBoxedDataType->addConstant("DtShort4N", Any::fromInt32(DtShort4N));
+	classBoxedDataType->addConstant("DtHalf2", Any::fromInt32(DtHalf2));
+	classBoxedDataType->addConstant("DtHalf4", Any::fromInt32(DtHalf4));
+	registrar->registerClass(classBoxedDataType);
+
 	auto classBoxedDisplayMode = new AutoRuntimeClass< BoxedDisplayMode >();
 	classBoxedDisplayMode->addProperty("width", &BoxedDisplayMode::getWidth);
 	classBoxedDisplayMode->addProperty("height", &BoxedDisplayMode::getHeight);
 	classBoxedDisplayMode->addProperty("refreshRate", &BoxedDisplayMode::getRefreshRate);
 	classBoxedDisplayMode->addProperty("colorBits", &BoxedDisplayMode::getColorBits);
 	registrar->registerClass(classBoxedDisplayMode);
+
+	auto classBoxedStructElement = new AutoRuntimeClass< BoxedStructElement >();
+	classBoxedStructElement->addConstructor< uint32_t, uint32_t >();
+	classBoxedStructElement->addProperty("size", &BoxedStructElement::getSize);
+	classBoxedStructElement->addProperty("dataType", &BoxedStructElement::getDataType);
+	classBoxedStructElement->addProperty("offset", &BoxedStructElement::getOffset);
+	registrar->registerClass(classBoxedStructElement);
 
 	auto classBoxedSimpleTextureCreateDesc = new AutoRuntimeClass< BoxedSimpleTextureCreateDesc >();
 	classBoxedSimpleTextureCreateDesc->addConstructor();
@@ -134,6 +228,13 @@ void RenderClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classBoxedSimpleTextureCreateDesc->addProperty("sRGB", &BoxedSimpleTextureCreateDesc::set_sRGB, &BoxedSimpleTextureCreateDesc::get_sRGB);
 	classBoxedSimpleTextureCreateDesc->addProperty("immutable", &BoxedSimpleTextureCreateDesc::setImmutable, &BoxedSimpleTextureCreateDesc::getImmutable);
 	registrar->registerClass(classBoxedSimpleTextureCreateDesc);
+
+	auto classStructBuffer = new AutoRuntimeClass< StructBuffer >();
+	classStructBuffer->addProperty("bufferSize", &StructBuffer::getBufferSize);
+	classStructBuffer->addMethod("lock", &StructBuffer_lock_1);
+	classStructBuffer->addMethod("lock", &StructBuffer_lock_2);
+	classStructBuffer->addMethod("unlock", &StructBuffer::unlock);
+	registrar->registerClass(classStructBuffer);
 
 	auto classITexture = new AutoRuntimeClass< ITexture >();
 	classITexture->addProperty("mips", &ITexture::getMips);
@@ -164,7 +265,7 @@ void RenderClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classIRenderSystem->addMethod("getDisplayMode", &IRenderSystem_getDisplayMode);
 	// classIRenderSystem->addMethod("createVertexBuffer", &IRenderSystem_createVertexBuffer);
 	// classIRenderSystem->addMethod("createIndexBuffer", &IRenderSystem_createIndexBuffer);
-	// classIRenderSystem->addMethod("createStructBuffer", &IRenderSystem_createStructBuffer);
+	classIRenderSystem->addMethod("createStructBuffer", &IRenderSystem_createStructBuffer);
 	classIRenderSystem->addMethod("createSimpleTexture", &IRenderSystem_createSimpleTexture);
 	// classIRenderSystem->addMethod("createCubeTexture", &IRenderSystem_createCubeTexture);
 	// classIRenderSystem->addMethod("createVolumeTexture", &IRenderSystem_createVolumeTexture);
