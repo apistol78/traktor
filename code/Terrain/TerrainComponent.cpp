@@ -42,21 +42,13 @@ const render::Handle c_handleTerrain_WorldOrigin(L"Terrain_WorldOrigin");
 const render::Handle c_handleTerrain_WorldExtent(L"Terrain_WorldExtent");
 const render::Handle c_handleTerrain_PatchOrigin(L"Terrain_PatchOrigin");
 const render::Handle c_handleTerrain_PatchExtent(L"Terrain_PatchExtent");
-const render::Handle c_handleTerrain_DebugPatchColor(L"Terrain_DebugPatchColor");
+const render::Handle c_handleTerrain_DebugPatchIndex(L"Terrain_DebugPatchIndex");
 const render::Handle c_handleTerrain_DebugMap(L"Terrain_DebugMap");
 const render::Handle c_handleTerrain_CutEnable(L"Terrain_CutEnable");
 const render::Handle c_handleTerrain_ColorEnable(L"Terrain_ColorEnable");
 
 const int32_t c_patchLodSteps = 3;
 const int32_t c_surfaceLodSteps = 3;
-
-const Vector4 c_lodColor[] =
-{
-	Vector4(1.0f, 0.0f, 0.0f, 0.0f),
-	Vector4(0.0f, 1.0f, 0.0f, 0.0f),
-	Vector4(0.0f, 0.0f, 1.0f, 0.0f),
-	Vector4(1.0f, 1.0f, 0.0f, 0.0f)
-};
 
 struct CullPatch
 {
@@ -456,9 +448,9 @@ void TerrainComponent::build(
 		}
 
 		if (m_visualizeMode == VmSurfaceLod)
-			rb->programParams->setVectorParameter(c_handleTerrain_DebugPatchColor, c_lodColor[patch.lastSurfaceLod]);
+			rb->programParams->setFloatParameter(c_handleTerrain_DebugPatchIndex, patch.lastSurfaceLod);
 		else if (m_visualizeMode == VmPatchLod)
-			rb->programParams->setVectorParameter(c_handleTerrain_DebugPatchColor, c_lodColor[patch.lastPatchLod]);
+			rb->programParams->setFloatParameter(c_handleTerrain_DebugPatchIndex, patch.lastPatchLod);
 
 		rb->programParams->endParameters(renderContext);
 

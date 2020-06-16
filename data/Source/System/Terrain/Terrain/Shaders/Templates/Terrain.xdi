@@ -68,7 +68,7 @@
 				<first>1991</first>
 				<second>-126</second>
 			</position>
-			<parameterName>VisualizeLods</parameterName>
+			<parameterName>Terrain_VisualizeLods</parameterName>
 		</item>
 		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
 			<id>{BBB731B7-E117-944B-A571-888C401DC98E}</id>
@@ -303,7 +303,7 @@ Generated texture from surface cache.
 				<first>2914</first>
 				<second>-213</second>
 			</position>
-			<parameterName>VisualizeMap</parameterName>
+			<parameterName>Terrain_VisualizeMap</parameterName>
 		</item>
 		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
 			<id>{60CA7A57-EA7E-5743-A608-B524F26E1A82}</id>
