@@ -88,8 +88,9 @@ bool TargetConnection::update()
 		Ref< TargetProfilerDictionary > profilerDictionary;
 		while (m_transport->recv< TargetProfilerDictionary >(0, profilerDictionary) == net::BidirectionalObjectTransport::RtSuccess)
 		{
+			m_dictionary = profilerDictionary->getDictionary();
 			if (m_profilerEventsCallback)
-				m_profilerEventsCallback->receivedProfilerDictionary(profilerDictionary->getDictionary());
+				m_profilerEventsCallback->receivedProfilerDictionary(m_dictionary);
 		}
 	}
 
@@ -130,7 +131,8 @@ bool TargetConnection::update()
 
 void TargetConnection::setProfilerEventsCallback(IProfilerEventsCallback* profilerEventsCallback)
 {
-	m_profilerEventsCallback = profilerEventsCallback;
+	if ((m_profilerEventsCallback = profilerEventsCallback) != nullptr)
+		m_profilerEventsCallback->receivedProfilerDictionary(m_dictionary);
 }
 
 	}

@@ -76,6 +76,7 @@ private:
 	Ref< TargetScriptDebugger > m_targetDebugger;
 	Ref< TargetScriptProfiler > m_targetProfiler;
 	TargetPerformance m_performance;
+	SmallMap< uint16_t, std::wstring > m_dictionary;
 	IProfilerEventsCallback* m_profilerEventsCallback;
 	Semaphore m_lock;
 };
