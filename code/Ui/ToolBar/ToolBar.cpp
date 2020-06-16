@@ -100,7 +100,7 @@ uint32_t ToolBar::addImage(IBitmap* image, uint32_t imageCount)
 		drawing::GrayscaleFilter grayscaleFilter;
 		image->apply(&grayscaleFilter);
 
-		drawing::BrightnessContrastFilter brigtnessContrastFilter(0.4f, 0.6f);
+		drawing::BrightnessContrastFilter brigtnessContrastFilter(0.1f, 0.4f);
 		image->apply(&brigtnessContrastFilter);
 
 		m_imageDisabled = new ui::Bitmap(image);
