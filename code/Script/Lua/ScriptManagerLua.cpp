@@ -26,6 +26,8 @@
 #	define T_USE_ALLOCATOR 1
 #endif
 
+#define T_LOG_OBJECT_GC 0
+
 namespace traktor
 {
 	namespace script
@@ -868,7 +870,7 @@ int ScriptManagerLua::classAlloc(lua_State* luaState)
 
 int ScriptManagerLua::classGc(lua_State* luaState)
 {
-#if defined(_DEBUG)
+#if T_LOG_OBJECT_GC
 	std::wstring typeName = getObjectTypeName(luaState, 1);
 	if (!typeName.empty())
 		log::debug << L"ScriptManagerLua::classGC; releasing \"" << typeName << L"\"." << Endl;
@@ -877,13 +879,12 @@ int ScriptManagerLua::classGc(lua_State* luaState)
 	ITypedObject* object = toTypedObject(luaState, 1);
 	if (object)
 	{
-#if defined(_DEBUG)
+#if T_LOG_OBJECT_GC
 		if (typeName.empty())
 			log::debug << L"ScriptManagerLua::classGC; releasing object without \"__typename\" tag, would be \"" << type_name(object) << L"\"." << Endl;
 #endif
 		T_SAFE_ANONYMOUS_RELEASE(object);
 	}
-
 	return 0;
 }
 
