@@ -181,9 +181,16 @@ void Canvas::drawText(const Point& at, const std::wstring& text)
 
 void Canvas::drawText(const Rect& rc, const std::wstring& text, Align halign, Align valign)
 {
-	FontMetric fm = getFontMetric();
-	Size ex = fm.getExtent(text);
 	Point at = rc.getTopLeft();
+
+	// Measure text extent so we can properly align text in bounds,
+	// do not measure if top+left aligned since we can do it without extents.
+	Size ex(0, 0);
+	if (halign != AnLeft || valign != AnTop)
+	{
+		FontMetric fm = getFontMetric();
+		ex = fm.getExtent(text);
+	}
 
 	switch (halign)
 	{
