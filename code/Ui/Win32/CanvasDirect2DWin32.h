@@ -102,9 +102,7 @@ public:
 	static void shutdown();
 
 private:
-	PAINTSTRUCT m_ps;
-	HDC m_hDC;
-	bool m_ownDC;
+	bool m_inPaint;
 	ComRef< ID2D1HwndRenderTarget > m_d2dRenderTarget;
 	ComRef< ID2D1SolidColorBrush > m_d2dForegroundBrush;
 	ComRef< ID2D1SolidColorBrush > m_d2dBackgroundBrush;
