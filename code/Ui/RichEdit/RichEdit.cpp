@@ -1551,7 +1551,7 @@ void RichEdit::eventPaint(PaintEvent* event)
 		canvas.setForeground(ss->getColor(this, L"color-margin"));
 		for (uint32_t i = lineOffset; i < lineOffset + pageLines && i < lineCount; ++i)
 		{
-			canvas.drawText(lineRc, toString(i + 1), AnLeft, AnCenter);
+			canvas.drawText(lineRc, toString(i + 1), AnLeft, AnTop);
 
 			if (m_lines[i].image >= 0)
 			{
@@ -1640,7 +1640,7 @@ void RichEdit::eventPaint(PaintEvent* event)
 				if (k == m_specialCharacters.end())
 				{
 					if (m_text[j].ch != L'\t' && m_text[j].ch != L' ')
-						canvas.drawText(textRc, std::wstring(1, m_text[j].ch), AnLeft, AnCenter);
+						canvas.drawText(textRc, std::wstring(1, m_text[j].ch), AnLeft, AnTop);
 				}
 				else
 				{
