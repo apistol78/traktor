@@ -31,9 +31,10 @@ private:
 	VkDevice m_device;
 	VkQueue m_queue;
 	uint32_t m_queueIndex;
+	VkFence m_fence;
 	Semaphore m_lock;
 
-	Queue(VkDevice device, VkQueue queue, uint32_t queueIndex);
+	Queue(VkDevice device, VkQueue queue, uint32_t queueIndex, VkFence fence);
 };
 
 	}
