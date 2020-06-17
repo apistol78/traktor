@@ -796,8 +796,9 @@ protected:
 				);
 				m_owner->raiseEvent(&p);
 				outPass = !p.consumed();
-				ValidateRect(m_hWnd, &rcUpdate);
 			}
+
+			ValidateRect(m_hWnd, NULL);
 		}
 		else
 			outPass = true;

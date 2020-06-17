@@ -23,8 +23,7 @@ int32_t s_instanceCount = 0;
 		}
 
 CanvasDirect2DWin32::CanvasDirect2DWin32()
-:	m_hDC(0)
-,	m_ownDC(false)
+:	m_inPaint(false)
 ,	m_strokeWidth(1.0f)
 ,	m_underline(false)
 ,	m_clip(false)
@@ -45,20 +44,6 @@ CanvasDirect2DWin32::~CanvasDirect2DWin32()
 bool CanvasDirect2DWin32::beginPaint(Window& hWnd, bool doubleBuffer, HDC hDC)
 {
 	HRESULT hr;
-
-	if (hDC)
-	{
-		m_hDC = hDC;
-		m_ownDC = false;
-	}
-	else
-	{
-		m_hDC = BeginPaint(hWnd, &m_ps);
-		if (!m_hDC)
-			return false;
-
-		m_ownDC = true;
-	}
 
 	RECT rcClient;
 	GetClientRect(hWnd, &rcClient);
@@ -97,7 +82,6 @@ bool CanvasDirect2DWin32::beginPaint(Window& hWnd, bool doubleBuffer, HDC hDC)
 	m_d2dRenderTarget->SetDpi(96, 96);
 
 	m_d2dRenderTarget->BeginDraw();
-	m_d2dRenderTarget->Clear(D2D1::ColorF(D2D1::ColorF::White));
 	m_d2dRenderTarget->SetAntialiasMode(D2D1_ANTIALIAS_MODE_ALIASED);
 
 	setForeground(Color4ub(0, 0, 0, 255));
@@ -131,6 +115,7 @@ bool CanvasDirect2DWin32::beginPaint(Window& hWnd, bool doubleBuffer, HDC hDC)
 		(bool)(lf.lfUnderline == TRUE)
 	));
 
+	m_inPaint = true;
 	return true;
 }
 
@@ -151,15 +136,12 @@ void CanvasDirect2DWin32::endPaint(Window& hWnd)
 		m_d2dRenderTarget.release();
 	}
 
-	if (m_ownDC)
-		EndPaint(hWnd, &m_ps);
-
-	m_hDC = NULL;
+	m_inPaint = false;
 }
 
 void CanvasDirect2DWin32::getAscentAndDescent(Window& hWnd, int32_t& outAscent, int32_t& outDescent) const
 {
-	if (m_hDC == NULL)
+	if (!m_inPaint)
 	{
 		outAscent = 0;
 		outDescent = 0;
@@ -233,7 +215,7 @@ void CanvasDirect2DWin32::getAscentAndDescent(Window& hWnd, int32_t& outAscent, 
 
 int32_t CanvasDirect2DWin32::getAdvance(Window& hWnd, wchar_t ch, wchar_t next) const
 {
-	if (m_hDC == NULL)
+	if (!m_inPaint)
 	{
 		return getExtent(hWnd, std::wstring(1, ch)).cx;
 	}
@@ -250,7 +232,7 @@ int32_t CanvasDirect2DWin32::getLineSpacing(Window& hWnd) const
 
 Size CanvasDirect2DWin32::getExtent(Window& hWnd, const std::wstring& text) const
 {
-	if (m_hDC == NULL)
+	if (!m_inPaint)
 	{
 		LOGFONT lf;
 		if (!GetObject(hWnd.getFont(), sizeof(lf), &lf))
@@ -789,7 +771,7 @@ void CanvasDirect2DWin32::drawText(const Point& at, const std::wstring& text)
 
 void* CanvasDirect2DWin32::getSystemHandle()
 {
-	return m_hDC;
+	return NULL; // m_hDC;
 }
 
 bool CanvasDirect2DWin32::startup()
