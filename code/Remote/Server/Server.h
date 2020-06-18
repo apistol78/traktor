@@ -41,6 +41,7 @@ private:
     std::wstring m_scratchPath;
     std::wstring m_keyword;
     std::map< std::wstring, uint32_t > m_fileHashes;
+    bool m_verbose;
 
     uint8_t handleDeploy(net::TcpSocket* clientSocket);
 

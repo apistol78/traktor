@@ -162,9 +162,7 @@ Ref< IProcess > OS::execute(
 	const std::wstring& commandLine,
 	const Path& workingDirectory,
 	const Environment* env,
-	bool redirect,
-	bool mute,
-	bool detach
+	uint32_t flags
 ) const
 {
 	posix_spawn_file_actions_t* fileActions = 0;
@@ -252,14 +250,14 @@ Ref< IProcess > OS::execute(
 	if (env)
 	{
 		const std::map< std::wstring, std::wstring >& v = env->get();
-		for (std::map< std::wstring, std::wstring >::const_iterator i = v.begin(); i != v.end(); ++i)
+		for (auto i = v.begin(); i != v.end(); ++i)
 			envv[envc++] = strdup(wstombs(i->first + L"=" + i->second).c_str());
 	}
 	else
 	{
 		Ref< Environment > env2 = getEnvironment();
 		const std::map< std::wstring, std::wstring >& v = env2->get();
-		for (std::map< std::wstring, std::wstring >::const_iterator i = v.begin(); i != v.end(); ++i)
+		for (auto i = v.begin(); i != v.end(); ++i)
 			envv[envc++] = strdup(wstombs(i->first + L"=" + i->second).c_str());
 	}
 
@@ -271,9 +269,9 @@ Ref< IProcess > OS::execute(
 	strcpy(wd, wstombs(workingDirectory.getPathNameNoVolume()).c_str());
 
 	// Redirect standard IO.
-	if (redirect)
+	if ((flags & EfRedirectStdIO) != 0)
 	{
-		if (!mute)
+		// if ((flags & EfMute) == 0)
 		{
 			pipe(childStdOut);
 			pipe(childStdErr);
@@ -286,14 +284,14 @@ Ref< IProcess > OS::execute(
 			posix_spawn_file_actions_adddup2(fileActions, childStdErr[1], STDERR_FILENO);
 			posix_spawn_file_actions_addclose(fileActions, childStdErr[0]);
 		}
-		else
-		{
-			fileActions = new posix_spawn_file_actions_t;
-			posix_spawn_file_actions_init(fileActions);
-			posix_spawn_file_actions_addchdir_np(fileActions, wd);
-			posix_spawn_file_actions_addopen(fileActions, STDOUT_FILENO, "/dev/null", O_RDONLY, 0);
-			posix_spawn_file_actions_addopen(fileActions, STDERR_FILENO, "/dev/null", O_RDONLY, 0);
-		}
+		// else
+		// {
+		// 	fileActions = new posix_spawn_file_actions_t;
+		// 	posix_spawn_file_actions_init(fileActions);
+		// 	posix_spawn_file_actions_addchdir_np(fileActions, wd);
+		// 	posix_spawn_file_actions_addopen(fileActions, STDOUT_FILENO, "/dev/null", O_RDONLY, 0);
+		// 	posix_spawn_file_actions_addopen(fileActions, STDERR_FILENO, "/dev/null", O_RDONLY, 0);
+		// }
 
 		// Spawn process.
 		err = posix_spawn(&pid, argv[0], fileActions, 0, argv, envv);

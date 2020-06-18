@@ -351,10 +351,8 @@ void EditorPlugin::handleWorkspaceOpened()
 	m_pipelineSlaveProcess = OS::getInstance().execute(
 		systemRoot + L"/bin/latest/" + systemOs + L"/releaseshared/Traktor.Pipeline.App -slave",
 		L"",
-		0,
-		false,
-		hidden,
-		false
+		nullptr,
+		hidden ? OS::EfMute : OS::EfNone,
 	);
 #endif
 

@@ -253,7 +253,7 @@ bool MigrateTargetAction::execute(IProgressListener* progressListener)
 		deployTool.getExecutable() + L" migrate",
 		m_outputPath,
 		env,
-		true, true, false
+		OS::EfRedirectStdIO | OS::EfMute
 	);
 	if (!process)
 	{

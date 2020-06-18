@@ -147,9 +147,7 @@ void NewWorkspaceDialog::eventDialogClick(ui::ButtonClickEvent* event)
 #endif
 				file->getPath().getPathOnly(),
 				env,
-				true,
-				false,
-				false
+				OS::EfRedirectStdIO
 			);
 			if (process)
 			{

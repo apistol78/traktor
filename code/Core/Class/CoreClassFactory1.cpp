@@ -170,9 +170,9 @@ std::wstring OS_getEnvironment_1(OS* self, const std::wstring& key)
 		return L"";
 }
 
-Ref< IProcess > OS_execute(OS* self, const std::wstring& commandLine, const std::wstring& workingDirectory, const Environment* environment, bool redirect, bool mute, bool detach)
+Ref< IProcess > OS_execute(OS* self, const std::wstring& commandLine, const std::wstring& workingDirectory, const Environment* environment, uint32_t flags)
 {
-	return self->execute(commandLine, workingDirectory, environment, redirect, mute, detach);
+	return self->execute(commandLine, workingDirectory, environment, flags);
 }
 
 #if defined(_WIN32)
@@ -481,6 +481,9 @@ void CoreClassFactory1::createClasses(IRuntimeClassRegistrar* registrar) const
 	registrar->registerClass(classISharedMemory);
 
 	auto classOS = new AutoRuntimeClass< OS >();
+	classOS->addConstant("EfRedirectStdIO", Any::fromInt32(OS::EfRedirectStdIO));
+	classOS->addConstant("EfMute", Any::fromInt32(OS::EfMute));
+	classOS->addConstant("EfDetach", Any::fromInt32(OS::EfDetach));
 	classOS->addStaticMethod("getInstance", &OS_getInstance);
 	classOS->addProperty("cpuCoreCount", &OS::getCPUCoreCount);
 	classOS->addProperty("executable", &OS::getExecutable);
