@@ -352,7 +352,7 @@ void EditorPlugin::handleWorkspaceOpened()
 		systemRoot + L"/bin/latest/" + systemOs + L"/releaseshared/Traktor.Pipeline.App -slave",
 		L"",
 		nullptr,
-		hidden ? OS::EfMute : OS::EfNone,
+		hidden ? OS::EfMute : OS::EfNone
 	);
 #endif
 

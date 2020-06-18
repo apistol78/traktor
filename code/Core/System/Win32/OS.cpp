@@ -242,9 +242,7 @@ Ref< IProcess > OS::execute(
 	const std::wstring& commandLine,
 	const Path& workingDirectory,
 	const Environment* env,
-	bool redirect,
-	bool mute,
-	bool detach
+	uint32_t flags
 ) const
 {
 	TCHAR cmd[32768], cwd[MAX_PATH];
@@ -260,13 +258,13 @@ Ref< IProcess > OS::execute(
 
 	// Extract executable file from command line.
 	if (resolvedCommandLine.empty())
-		return 0;
+		return nullptr;
 
 	if (resolvedCommandLine[0] == L'\"')
 	{
 		size_t i = resolvedCommandLine.find(L'\"', 1);
 		if (i == resolvedCommandLine.npos)
-			return 0;
+			return nullptr;
 
 		executable = resolvedCommandLine.substr(1, i - 1);
 		arguments = resolvedCommandLine.substr(i + 1);
@@ -293,14 +291,14 @@ Ref< IProcess > OS::execute(
 
 		// Calculate how much space we need to allocate.
 		uint32_t size = 0;
-		for (std::map< std::wstring, std::wstring >::const_iterator i = e.begin(); i != e.end(); ++i)
+		for (auto i = e.begin(); i != e.end(); ++i)
 			size += i->first.length() + 1 + i->second.length() + 1;
 		size += 1;
 
 		environment.reset(new wchar_t [size]);
 
 		wchar_t* p = environment.ptr(); *p = 0;
-		for (std::map< std::wstring, std::wstring >::const_iterator i = e.begin(); i != e.end(); ++i)
+		for (auto i = e.begin(); i != e.end(); ++i)
 		{
 			wcscpy(p, i->first.c_str());
 			wcscat(p, L"=");
@@ -324,7 +322,7 @@ Ref< IProcess > OS::execute(
 	_tcscpy_s(cmd, wstots(ss.str()).c_str());
 	_tcscpy_s(cwd, wstots(workingDirectoryAbs.getPathName()).c_str());
 
-	if (redirect)
+	if ((flags & EfRedirectStdIO) != 0)
 	{
 		// Create IO objects.
 		SECURITY_DESCRIPTOR sd;
@@ -365,7 +363,7 @@ Ref< IProcess > OS::execute(
 	STARTUPINFO si;
 	std::memset(&si, 0, sizeof(si));
 	si.cb = sizeof(STARTUPINFO);
-	si.dwFlags = redirect ? STARTF_USESTDHANDLES : 0;
+	si.dwFlags = ((flags & EfRedirectStdIO) != 0) ? STARTF_USESTDHANDLES : 0;
 	si.hStdInput = hStdInRead;
 	si.hStdOutput = hStdOutWrite;
 	si.hStdError = hStdErrWrite;
@@ -375,10 +373,10 @@ Ref< IProcess > OS::execute(
 
 	DWORD dwCreationFlags = CREATE_NEW_PROCESS_GROUP;
 
-	if (mute)
+	if ((flags & EfMute) != 0)
 	{
 		dwCreationFlags = CREATE_NO_WINDOW;
-		if (detach)
+		if ((flags & EfDetach) != 0)
 			dwCreationFlags |= DETACHED_PROCESS;
 	}
 	else
@@ -402,7 +400,7 @@ Ref< IProcess > OS::execute(
 	if (result == FALSE)
 	{
 		T_DEBUG(L"Unable to create process, error = " << (int32_t)GetLastError());
-		return 0;
+		return nullptr;
 	}
 
 	return new ProcessWin32(
@@ -421,9 +419,10 @@ Ref< IProcess > OS::execute(
 Ref< ISharedMemory > OS::createSharedMemory(const std::wstring& name, uint32_t size) const
 {
 	Ref< SharedMemoryWin32 > sharedMemory = new SharedMemoryWin32();
-	if (!sharedMemory->create(name, size))
-		return 0;
-	return sharedMemory;
+	if (sharedMemory->create(name, size))
+		return sharedMemory;
+	else
+		return nullptr;
 }
 
 bool OS::setOwnProcessPriorityBias(int32_t priorityBias)
