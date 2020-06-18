@@ -25,7 +25,11 @@ bool LaunchPs3TargetManagerTool::needOutputResources(std::set< Guid >& outDepend
 
 bool LaunchPs3TargetManagerTool::launch(ui::Widget* parent, editor::IEditor* runtime, const PropertyGroup* param)
 {
-	return OS::getInstance().execute(L"\"$(SN_PS3_PATH)/bin/ps3tm.exe\"", L"$(SN_PS3_PATH)/bin", 0, false, false, false) != 0;
+	return OS::getInstance().execute(
+		L"\"$(SN_PS3_PATH)/bin/ps3tm.exe\"",
+		L"$(SN_PS3_PATH)/bin",
+		nullptr,
+		OS::EfNone) != 0;
 }
 
 	}

@@ -724,9 +724,7 @@ int master(const CommandLine& cmdLine)
 			executable.getPathName() + L" -slave",
 			L"",
 			OS::getInstance().getEnvironment(),
-			false,
-			false,
-			true
+			OS::EfDetach
 		);
 		if (!slaveProcess)
 			return 1;

@@ -155,7 +155,12 @@ int32_t Run::run(const std::wstring& command, const std::wstring& saveOutputAs, 
 
 int32_t Run::execute(const std::wstring& command, const std::wstring& saveOutputAs, const Environment* env)
 {
-	Ref< IProcess > process = OS::getInstance().execute(command, cwd(), env, true, true, false);
+	Ref< IProcess > process = OS::getInstance().execute(
+		command,
+		cwd(),
+		env,
+		OS::EfRedirectStdIO | OS::EfMute
+	);
 	if (!process)
 		return -1;
 

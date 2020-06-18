@@ -30,6 +30,14 @@ class T_DLLCLASS OS
 	T_RTTI_CLASS;
 
 public:
+	enum ExecuteFlags : uint32_t
+	{
+		EfNone = 0,
+		EfRedirectStdIO = (1 << 0),	//< Redirect standard I/O.
+		EfMute = (1 << 1),			//< Mute I/O of child process, still get redirected.
+		EfDetach = (1 << 2)			//< Detach process, not child of calling process.
+	};
+
 	static OS& getInstance();
 
 	/*! Get number of CPU cores.
@@ -128,18 +136,14 @@ public:
 	 * \param commandLine Execute command line.
 	 * \param workingDirectory Process's initial working directory.
 	 * \param env Optional environment.
-	 * \param redirect Redirect standard IO.
-	 * \param mute Mute spawn process's output.
-	 * \param detach Detach process from calling process.
+	 * \param flags Execute flags. \sa ExecuteFlags
 	 * \return Process instance, null if unable to execute.
 	 */
 	Ref< IProcess > execute(
 		const std::wstring& commandLine,
 		const Path& workingDirectory,
 		const Environment* env,
-		bool redirect,
-		bool mute,
-		bool detach
+		uint32_t flags
 	) const;
 
 	/*! Create shared memory object.

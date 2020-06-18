@@ -195,7 +195,7 @@ bool LaunchTargetAction::execute(IProgressListener* progressListener)
 		deployTool.getExecutable() + L" launch",
 		m_outputPath,
 		env,
-		true, true, false
+		OS::EfRedirectStdIO | OS::EfMute
 	);
 	if (!process)
 	{

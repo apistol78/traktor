@@ -305,7 +305,7 @@ bool BuildTargetAction::execute(IProgressListener* progressListener)
 		ss.str(),
 		m_outputPath,
 		env,
-		true, true, false
+		OS::EfRedirectStdIO | OS::EfMute
 	);
 	if (!process)
 	{

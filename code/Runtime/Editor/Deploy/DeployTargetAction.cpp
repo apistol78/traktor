@@ -257,7 +257,7 @@ bool DeployTargetAction::execute(IProgressListener* progressListener)
 		deployTool.getExecutable() + L" deploy",
 		m_outputPath,
 		env,
-		true, true, false
+		OS::EfRedirectStdIO | OS::EfMute
 	);
 	if (!process)
 	{

@@ -61,10 +61,8 @@ bool DroneToolShortcut::execute(ui::Widget* parent, const ui::MenuItem* menuItem
 	Ref< IProcess > process = OS::getInstance().execute(
 		commandLine,
 		m_workingDirectory,
-		0,
-		false,
-		false,
-		false
+		nullptr,
+		OS::EfNone
 	);
 	return process != nullptr;
 }

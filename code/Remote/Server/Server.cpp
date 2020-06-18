@@ -40,6 +40,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.remote.Server", Server, Object)
 
 Server::Server()
 :	m_listenPort(0)
+,	m_verbose(false)
 {
 }
 
@@ -104,7 +105,8 @@ bool Server::update()
 
     if (itf.addr->getHostName() != m_hostName)
     {
-        log::info << L"Discoverable as \"RemoteTools/Server\", host \"" << itf.addr->getHostName() << L"\"" << Endl;
+		if (m_verbose)
+        	log::info << L"Discoverable as \"RemoteTools/Server\", host \"" << itf.addr->getHostName() << L"\"" << Endl;
 
 	    std::vector< std::wstring > platforms;
 #if defined(_WIN32)
@@ -180,7 +182,8 @@ uint8_t Server::handleDeploy(net::TcpSocket* clientSocket)
 			// Hashes match; finally ensure file still exist, could have been manually removed.
 			if (FileSystem::getInstance().exist(path))
 			{
-				log::info << L"File up-to-date; skipping (1)" << Endl;
+				if (m_verbose)
+					log::info << L"File up-to-date; skipping (1)" << Endl;
 				outOfSync = false;
 			}
 		}
@@ -206,7 +209,8 @@ uint8_t Server::handleDeploy(net::TcpSocket* clientSocket)
 
 			if (adler.get() == hash)
 			{
-				log::info << L"File up-to-date; skipping (2)" << Endl;
+				if (m_verbose)
+					log::info << L"File up-to-date; skipping (2)" << Endl;
 				outOfSync = false;
 			}
 		}
@@ -232,7 +236,8 @@ uint8_t Server::handleDeploy(net::TcpSocket* clientSocket)
 			return c_errIoFailed;
 		}
 
-		log::info << L"File \"" << pathName << L"\" received successfully" << Endl;
+		if (m_verbose)
+			log::info << L"File \"" << pathName << L"\" received successfully." << Endl;
 
 		fileStream->close();
 		fileStream = nullptr;
@@ -262,13 +267,20 @@ uint8_t Server::handleLaunchProcess(net::TcpSocket* clientSocket)
 	reader >> wait;
 
 	log::info << L"Launching \"" << pathName << L"\"" << Endl;
-	log::info << L"\targuments \"" << arguments << L"\"" << Endl;
+
+	if (m_verbose)
+		log::info << L"\targuments \"" << arguments << L"\"" << Endl;
 
 	Path path(m_scratchPath + L"/" + user + L"/" + pathName);
-	Ref< IProcess > process = OS::getInstance().execute(L"\"" + path.getPathName() + L"\" " + arguments, m_scratchPath + L"/" + user, 0, false, false, false);
+	Ref< IProcess > process = OS::getInstance().execute(
+		L"\"" + path.getPathName() + L"\" " + arguments,
+		m_scratchPath + L"/" + user,
+		nullptr,
+		OS::EfNone
+	);
 	if (!process)
 	{
-		log::error << L"Unable to launch process \"" << pathName << L"\"" << Endl;
+		log::error << L"Unable to launch process \"" << pathName << L"\"." << Endl;
 		writer << uint8_t(c_errLaunchFailed);
 		return c_errLaunchFailed;
 	}
@@ -290,14 +302,14 @@ void Server::processClient(net::TcpSocket* clientSocket)
 
 	if (clientSocket->select(true, false, false, 5000) <= 0)
 	{
-		log::info << L"Client terminated unexpectedly (1)." << Endl;
+		log::warning << L"Client terminated unexpectedly (1)." << Endl;
 		return;
 	}
 
 	int32_t md = clientSocket->recv();
 	if (md < 0)
 	{
-		log::info << L"Client terminated unexpectedly (2)." << Endl;
+		log::warning << L"Client terminated unexpectedly (2)." << Endl;
 		return;
 	}
 
