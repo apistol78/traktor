@@ -132,6 +132,8 @@ T_DEFINE_VK(vkQueuePresentKHR);
 T_DEFINE_VK(vkDestroySwapchainKHR);
 //PFN_vkCreateDebugUtilsMessengerEXT vkCreateDebugUtilsMessengerEXT = nullptr;
 //PFN_vkSetDebugUtilsObjectNameEXT vkSetDebugUtilsObjectNameEXT = nullptr;
+T_DEFINE_VK(vkGetBufferMemoryRequirements2KHR);
+T_DEFINE_VK(vkGetImageMemoryRequirements2KHR);
 
 bool initializeVulkanApi()
 {
@@ -245,6 +247,8 @@ bool initializeVulkanExtensions(VkInstance instance)
 	T_RESOLVE_VK_EXT(vkAcquireNextImageKHR);
 	T_RESOLVE_VK_EXT(vkQueuePresentKHR);
 	T_RESOLVE_VK_EXT(vkDestroySwapchainKHR);
+	T_RESOLVE_VK_EXT(vkGetBufferMemoryRequirements2KHR);
+	T_RESOLVE_VK_EXT(vkGetImageMemoryRequirements2KHR);	
 	return true;
 }
 

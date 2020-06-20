@@ -134,9 +134,7 @@ Ref< IProcess > OS::execute(
 	const std::wstring& commandLine,
 	const Path& workingDirectory,
 	const Environment* env,
-	bool redirect,
-	bool mute,
-	bool detach
+	uint32_t flags
 ) const
 {
 	return 0;
