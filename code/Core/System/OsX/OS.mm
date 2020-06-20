@@ -264,9 +264,7 @@ Ref< IProcess > OS::execute(
 	const std::wstring& commandLine,
 	const Path& workingDirectory,
 	const Environment* env,
-	bool redirect,
-	bool mute,
-	bool detach
+	uint32_t flags
 ) const
 {
 #if !defined(__IOS__)
@@ -289,12 +287,12 @@ Ref< IProcess > OS::execute(
 
 	// Extract executable file from command line.
 	if (resolvedCommandLine.empty())
-		return 0;
+		return nullptr;
 	if (resolvedCommandLine[0] == L'\"')
 	{
 		size_t i = resolvedCommandLine.find(L'\"', 1);
 		if (i == resolvedCommandLine.npos)
-			return 0;
+			return nullptr;
 		executable = resolvedCommandLine.substr(1, i - 1);
 		arguments = trim(resolvedCommandLine.substr(i + 1));
 	}
@@ -384,7 +382,7 @@ Ref< IProcess > OS::execute(
 	chdir(wstombs(workingDirectory.getPathNameNoVolume()).c_str());
 
 	// Redirect standard IO.
-	if (redirect)
+	if ((flags & EfRedirectStdIO) != 0)
 	{
 		pipe(childStdOut);
 		pipe(childStdErr);
