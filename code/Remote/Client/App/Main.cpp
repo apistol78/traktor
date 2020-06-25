@@ -205,7 +205,7 @@ bool deployFile(const net::SocketAddressIPv4& addr, const Path& sourceFile, cons
 	return true;
 }
 
-bool deployFiles(const net::SocketAddressIPv4& addr, const Path& sourcePath, const Path& targetBase, bool recursive, bool verbose)
+bool deployFiles(const net::SocketAddressIPv4& addr, const Path& sourcePath, const Path& targetBase, bool recursive, bool verbose, int32_t& inoutDeployedFileCount)
 {
 	RefArray< File > files;
 	FileSystem::getInstance().find(sourcePath, files);
@@ -223,20 +223,21 @@ bool deployFiles(const net::SocketAddressIPv4& addr, const Path& sourcePath, con
 				if (sourceFile.getFileName() != L"." && sourceFile.getFileName() != L"..")
 				{
 					if (verbose)
-						log::info << L"Enter directory \"" << sourceFile.getPathName() << L"\"" << Endl;
-					if (!deployFiles(addr, sourceFile.getPathName() + L"/" + sourcePath.getFileName(), targetBase, true, verbose))
+						log::info << L"Enter directory \"" << sourceFile.getPathName() << L"\"." << Endl;
+					if (!deployFiles(addr, sourceFile.getPathName() + L"/" + sourcePath.getFileName(), targetBase, true, verbose, inoutDeployedFileCount))
 						return false;
 					if (verbose)
-						log::info << L"Leaving directory \"" << sourceFile.getPathName() << L"\"" << Endl;
+						log::info << L"Leaving directory \"" << sourceFile.getPathName() << L"\"." << Endl;
 				}
 			}
 			else if (verbose)
-				log::info << L"Directory \"" << sourceFile.getPathName() << L"\" skipped" << Endl;
+				log::info << L"Directory \"" << sourceFile.getPathName() << L"\" skipped." << Endl;
 		}
 		else
 		{
 			if (!deployFile(addr, sourceFile, targetBase, verbose))
 				return false;
+			++inoutDeployedFileCount;
 		}
 	}
 	return true;
@@ -256,6 +257,12 @@ int deploy(const CommandLine& cmdLine)
 		return 1;
 	}
 
+	if (cmdLine.getCount() <= 2)
+	{
+		log::error << L"No files to deploy." << Endl;
+		return 2;
+	}
+
 	if (verbose && base)
 		log::info << L"Using target base \"" << targetBase.getPathName() << L"\"" << Endl;
 
@@ -263,14 +270,21 @@ int deploy(const CommandLine& cmdLine)
 	net::SocketAddressIPv4 addr(host, port);
 
 	int32_t ret = 0;
+	int32_t deployedFileCount = 0;
 	for (int i = 2; i < cmdLine.getCount(); ++i)
 	{
 		Path sourcePath = cmdLine.getString(i);
-		if (!deployFiles(addr, sourcePath, targetBase, recursive, verbose))
+		if (!deployFiles(addr, sourcePath, targetBase, recursive, verbose, deployedFileCount))
 		{
 			ret = 3;
 			break;
 		}
+	}
+
+	if (ret == 0 && deployedFileCount <= 0)
+	{
+		log::error << L"No files deployed." << Endl;
+		return 4;
 	}
 
 	return ret;

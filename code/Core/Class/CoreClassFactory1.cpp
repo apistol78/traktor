@@ -60,6 +60,16 @@ int64_t IStream_seek(IStream* self, int64_t origin, int64_t offset)
 	return self->seek((IStream::SeekOriginType)origin, offset);
 }
 
+void FileSystem_setCurrentVolumeAndDirectory(FileSystem* self, const Path& directory)
+{
+	self->setCurrentVolumeAndDirectory(directory);
+}
+
+Path FileSystem_getCurrentVolumeAndDirectory(FileSystem* self)
+{
+	return self->getCurrentVolumeAndDirectory();
+}
+
 FileSystem* FileSystem_getInstance()
 {
 	return &FileSystem::getInstance();
@@ -404,15 +414,14 @@ void CoreClassFactory1::createClasses(IRuntimeClassRegistrar* registrar) const
 	registrar->registerClass(classBitWriter);
 
 	auto classFileSystem = new AutoRuntimeClass< FileSystem >();
+	classFileSystem->addProperty("volumeCount", &FileSystem::getVolumeCount);
+	classFileSystem->addProperty("currentVolume", &FileSystem::setCurrentVolume, &FileSystem::getCurrentVolume);
+	classFileSystem->addProperty("currentVolumeAndDirectory", &FileSystem_setCurrentVolumeAndDirectory, &FileSystem_getCurrentVolumeAndDirectory);
 	classFileSystem->addStaticMethod("getInstance", &FileSystem_getInstance);
 	classFileSystem->addMethod("mount", &FileSystem::mount);
 	classFileSystem->addMethod("umount", &FileSystem::umount);
-	classFileSystem->addMethod("getVolumeCount", &FileSystem::getVolumeCount);
 	classFileSystem->addMethod("getVolume", &FileSystem_getVolume);
 	classFileSystem->addMethod("getVolumeId", &FileSystem::getVolumeId);
-	classFileSystem->addMethod("setCurrentVolume", &FileSystem::setCurrentVolume);
-	classFileSystem->addMethod("getCurrentVolume", &FileSystem::getCurrentVolume);
-	classFileSystem->addMethod("setCurrentVolumeAndDirectory", &FileSystem::setCurrentVolumeAndDirectory);
 	classFileSystem->addMethod("get", &FileSystem::get);
 	classFileSystem->addMethod("find", &FileSystem_find);
 	classFileSystem->addMethod("modify", &FileSystem::modify);

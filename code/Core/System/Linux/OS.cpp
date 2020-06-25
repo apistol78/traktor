@@ -9,6 +9,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <pwd.h>
+#include "Core/Io/FileSystem.h"
 #include "Core/Misc/String.h"
 #include "Core/Misc/TString.h"
 #include "Core/Singleton/SingletonManager.h"
@@ -266,7 +267,8 @@ Ref< IProcess > OS::execute(
 	argv[argc] = nullptr;
 
 	char wd[512];
-	strcpy(wd, wstombs(workingDirectory.getPathNameNoVolume()).c_str());
+	Path awd = FileSystem::getInstance().getAbsolutePath(workingDirectory);
+	strcpy(wd, wstombs(awd.getPathNameNoVolume()).c_str());
 
 	// Redirect standard IO.
 	if ((flags & EfRedirectStdIO) != 0)
