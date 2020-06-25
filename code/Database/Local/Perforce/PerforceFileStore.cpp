@@ -8,6 +8,8 @@
 #include "Database/Local/Perforce/PerforceClient.h"
 #include "Database/Local/Perforce/PerforceFileStore.h"
 
+#include "Core/Log/Log.h"
+
 namespace traktor
 {
 	namespace db
@@ -82,10 +84,16 @@ void PerforceFileStore::destroy()
 
 uint32_t PerforceFileStore::flags(const Path& filePath)
 {
+#if defined(_WIN32)
+	std::wstring localFile = filePath.getPathName();
+#else
+	std::wstring localFile = filePath.getPathNameNoVolume();
+#endif
+
 	uint32_t flags = IfNormal;
 
 	PerforceAction action;
-	m_p4client->isOpened(filePath.getPathName(), action);
+	m_p4client->isOpened(localFile, action);
 	if (action == PerforceAction::AtNotOpened)
 		flags |= IfReadOnly;
 	else
@@ -96,12 +104,21 @@ uint32_t PerforceFileStore::flags(const Path& filePath)
 
 bool PerforceFileStore::add(const Path& filePath)
 {
-	return m_p4client->addFile(m_p4changeList, filePath.getPathName());
+#if defined(_WIN32)
+	std::wstring localFile = filePath.getPathName();
+#else
+	std::wstring localFile = filePath.getPathNameNoVolume();
+#endif
+	return m_p4client->addFile(m_p4changeList, localFile);
 }
 
 bool PerforceFileStore::remove(const Path& filePath)
 {
+#if defined(_WIN32)
 	std::wstring localFile = filePath.getPathName();
+#else
+	std::wstring localFile = filePath.getPathNameNoVolume();
+#endif
 
 	PerforceAction pa;
 	if (m_p4client->isOpened(localFile, pa))
@@ -140,7 +157,11 @@ bool PerforceFileStore::remove(const Path& filePath)
 
 bool PerforceFileStore::edit(const Path& filePath)
 {
+#if defined(_WIN32)
 	std::wstring localFile = filePath.getPathName();
+#else
+	std::wstring localFile = filePath.getPathNameNoVolume();
+#endif
 
 	PerforceAction pa;
 	if (m_p4client->isOpened(localFile, pa))
@@ -148,13 +169,13 @@ bool PerforceFileStore::edit(const Path& filePath)
 		if (pa == PerforceAction::AtAdd || pa == PerforceAction::AtEdit)
 			return true;
 
-		if (m_p4client->openForEdit(m_p4changeList, filePath.getPathName()))
+		if (m_p4client->openForEdit(m_p4changeList, localFile))
 			return true;
 	}
 	else
 	{
 		// File doesn't exist in P4; add local file.
-		if (m_p4client->addFile(m_p4changeList, filePath.getPathName()))
+		if (m_p4client->addFile(m_p4changeList, localFile))
 			return true;
 	}
 
@@ -163,7 +184,12 @@ bool PerforceFileStore::edit(const Path& filePath)
 
 bool PerforceFileStore::rollback(const Path& filePath)
 {
-	return m_p4client->revertFile(m_p4changeList, filePath.getPathName());
+#if defined(_WIN32)
+	std::wstring localFile = filePath.getPathName();
+#else
+	std::wstring localFile = filePath.getPathNameNoVolume();
+#endif
+	return m_p4client->revertFile(m_p4changeList, localFile);
 }
 
 bool PerforceFileStore::clean(const Path& filePath)

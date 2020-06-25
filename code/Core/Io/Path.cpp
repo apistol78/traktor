@@ -249,7 +249,7 @@ void Path::resolve()
 	}
 
 	m_relative = true;
-	if (!tmp.empty())
+	while (!tmp.empty())
 	{
 		if (tmp[0] == L'/')
 		{
@@ -258,6 +258,8 @@ void Path::resolve()
 		}
 		else if (tmp[0] == L'~')
 			m_relative = false;
+		else
+			break;
 	}
 
 	std::wstring::size_type sls = tmp.find_last_of(L'/');
