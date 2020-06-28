@@ -348,7 +348,10 @@ bool OS::whereIs(const std::wstring& executable, Path& outPath) const
 	{
 		Ref< File > file = FileSystem::getInstance().get(path + L"/" + executable);
 		if (file)
+		{
+			outPath = file->getPath();
 			return true;
+		}
 	}
 
 	return false;
