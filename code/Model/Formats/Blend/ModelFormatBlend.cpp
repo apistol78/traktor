@@ -78,13 +78,16 @@ Ref< Model > ModelFormatBlend::read(const Path& filePath, const std::wstring& fi
 	file = nullptr;
 
 	// Execute export script through headless blender process.
+	Path blenderPath;
+	if (!OS::getInstance().whereIs(L"blender", blenderPath))
+		return nullptr;
+
 #if defined(_WIN32)
-	std::wstring blender = L"c:\\Program Files\\Blender Foundation\\Blender 2.81\\blender.exe";
-#elif defined(__LINUX__)
-	std::wstring blender = L"/home/apistol/blender-2.81-115a5bf65a6b-linux-glibc217-x86_64/blender";
+	std::wstring blender = blenderPath.getPathName();
 #else
-	std::wstring blender = L"blender";
+	std::wstring blender = blenderPath.getPathNameNoVolume();
 #endif
+
 	std::wstring commandLine = L"\"" + blender + L"\" -b " + scratchPath + L"/__source__.blend -P " + scratchPath + L"/__export__.py";
 	Ref< IProcess > process = OS::getInstance().execute(
 		commandLine,

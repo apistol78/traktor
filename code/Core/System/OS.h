@@ -171,6 +171,14 @@ public:
 	bool getRegistry(const std::wstring& key, const std::wstring& subKey, const std::wstring& valueName, std::wstring& outValue) const;
 #endif
 
+	/*! Query OS about location of executable binary.
+	 *
+	 * \param executable Name of executable.
+	 * \param outPath Path to executable.
+	 * \return True if executable was found.
+	 */
+	bool whereIs(const std::wstring& executable, Path& outPath) const;
+
 protected:
 	OS();
 
