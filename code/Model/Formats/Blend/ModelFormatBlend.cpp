@@ -93,7 +93,7 @@ Ref< Model > ModelFormatBlend::read(const Path& filePath, const std::wstring& fi
 		commandLine,
 		scratchPath,
 		nullptr,
-		OS::EfNone
+		OS::EfMute
 	);
 	if (!process)
 		return nullptr;

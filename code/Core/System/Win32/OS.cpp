@@ -9,6 +9,7 @@
 #include "Core/Log/Log.h"
 #include "Core/Misc/AutoPtr.h"
 #include "Core/Misc/String.h"
+#include "Core/Misc/StringSplit.h"
 #include "Core/Misc/TString.h"
 #include "Core/Singleton/SingletonManager.h"
 #include "Core/System/Environment.h"
@@ -504,8 +505,30 @@ bool OS::getRegistry(const std::wstring& key, const std::wstring& subKey, const 
 		return true;
 
 	default:
-		log::error << L"Unsupported reg value type" << Endl;
+		log::error << L"Unsupported reg value type." << Endl;
 		break;
+	}
+
+	return false;
+}
+
+bool OS::whereIs(const std::wstring& executable, Path& outPath) const
+{
+	std::wstring paths;
+
+	// Get system "PATH" environment variable.
+	if (!getEnvironment(L"PATH", paths))
+		return false;
+
+	// Try to locate binary in any of the paths specified in "PATH".
+	for (auto path : StringSplit< std::wstring >(paths, L";:,"))
+	{
+		Ref< File > file = FileSystem::getInstance().get(path + L"/" + executable + L".exe");
+		if (file)
+		{
+			outPath = file->getPath();
+			return true;
+		}
 	}
 
 	return false;
