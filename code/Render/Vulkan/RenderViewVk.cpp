@@ -1202,40 +1202,10 @@ bool RenderViewVk::create(uint32_t width, uint32_t height, int32_t vblanks)
 	}
 
 	// Get opaque queues.
-	//vkGetDeviceQueue(m_logicalDevice, m_graphicsQueueIndex, 0, &m_graphicsQueue);
-	//vkGetDeviceQueue(m_logicalDevice, m_computeQueueIndex, 0, &m_computeQueue);
 	vkGetDeviceQueue(m_logicalDevice, m_presentQueueIndex, 0, &m_presentQueue);
-
-	//log::debug << L"Using graphics queue " << m_graphicsQueueIndex << L"." << Endl;
-	//log::debug << L"Using compute queue " << m_computeQueueIndex << L"." << Endl;
-	log::debug << L"Using present queue " << m_presentQueueIndex << L"." << Endl;
-
-	//// Create graphics command pool.
-	//VkCommandPoolCreateInfo cpci = {};
-	//cpci.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
-	//cpci.flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
-	//cpci.queueFamilyIndex = m_graphicsQueueIndex;
-
-	//if (vkCreateCommandPool(m_logicalDevice, &cpci, 0, &m_graphicsCommandPool) != VK_SUCCESS)
-	//{
-	//	log::error << L"Failed to create Vulkan; unable to create command pool." << Endl;
-	//	return false;
-	//}
 
 	m_graphicsCommandPool = CommandBufferPool::create(m_logicalDevice, m_graphicsQueue);
 	m_computeCommandPool = CommandBufferPool::create(m_logicalDevice, m_computeQueue);
-
-	//// Create compute command pool.
-	//cpci = {};
-	//cpci.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
-	//cpci.flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
-	//cpci.queueFamilyIndex = m_computeQueueIndex;
-
-	//if (vkCreateCommandPool(m_logicalDevice, &cpci, 0, &m_computeCommandPool) != VK_SUCCESS)
-	//{
-	//	log::error << L"Failed to create Vulkan; unable to create compute command pool." << Endl;
-	//	return false;
-	//}
 
 	// Determine primary target color format/space.
 	uint32_t surfaceFormatCount = 0;
@@ -1278,7 +1248,7 @@ bool RenderViewVk::create(uint32_t width, uint32_t height, int32_t vblanks)
 
 	// Determine presentation mode.
 	VkPresentModeKHR presentationMode = VK_PRESENT_MODE_FIFO_KHR;
-#if defined(__ANDROID__) || defined(__IOS__)
+#if defined(__ANDROID__) || defined(__IOS__) || defined(__LINUX__)
 	if (presentationModeSupported(m_physicalDevice, m_surface, VK_PRESENT_MODE_MAILBOX_KHR))
 		presentationMode = VK_PRESENT_MODE_MAILBOX_KHR;
 #endif
@@ -1386,28 +1356,6 @@ bool RenderViewVk::create(uint32_t width, uint32_t height, int32_t vblanks)
 
 		frame.graphicsCommandBuffer = m_graphicsCommandPool->acquire();
 		frame.computeCommandBuffer = m_computeCommandPool->acquire();
-
-		//VkCommandBufferAllocateInfo cbai = {};
-		//cbai.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
-		//cbai.commandPool = m_graphicsCommandPool;
-		//cbai.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
-		//cbai.commandBufferCount = 1;
-		//if (vkAllocateCommandBuffers(m_logicalDevice, &cbai, &frame.graphicsCommandBuffer) != VK_SUCCESS)
-		//{
-		//	log::error << L"Failed to create Vulkan; failed to allocate graphics command buffer." << Endl;
-		//	return false;
-		//}
-
-		//cbai = {};
-		//cbai.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
-		//cbai.commandPool = m_computeCommandPool;
-		//cbai.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
-		//cbai.commandBufferCount = 1;
-		//if (vkAllocateCommandBuffers(m_logicalDevice, &cbai, &frame.computeCommandBuffer) != VK_SUCCESS)
-		//{
-		//	log::error << L"Failed to create Vulkan; failed to allocate compute command buffer." << Endl;
-		//	return false;
-		//}
 
 		VkDescriptorPoolSize dps[4];
 		dps[0].type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
