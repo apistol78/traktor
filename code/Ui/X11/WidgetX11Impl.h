@@ -647,7 +647,7 @@ protected:
 				MouseWheelEvent mouseWheelEvent(
 					m_owner,
 					xe.xbutton.button == 4 ? 1 : -1,
-					Point(xe.xbutton.x, xe.xbutton.y)
+					clientToScreen(Point(xe.xbutton.x, xe.xbutton.y))
 				);
 				m_owner->raiseEvent(&mouseWheelEvent);
 			}

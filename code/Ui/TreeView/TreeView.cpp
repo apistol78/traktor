@@ -58,6 +58,8 @@ int32_t TreeView::addImage(IBitmap* image, int32_t imageCount)
 	{
 		uint32_t width = m_image->getSize().cx + image->getSize().cx;
 		uint32_t height = std::max(m_image->getSize().cy, image->getSize().cy);
+		if (width == 0 || height == 0)
+			return 0;
 
 		Ref< ui::Bitmap > newImage = new ui::Bitmap(width, height);
 		newImage->copyImage(m_image->getImage());

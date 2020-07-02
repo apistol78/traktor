@@ -636,8 +636,8 @@ Eye direction
 			<id>{5F5E8D5B-9842-D645-8574-C0EAE0355422}</id>
 			<comment/>
 			<position>
-				<first>732</first>
-				<second>-132</second>
+				<first>734</first>
+				<second>-90</second>
 			</position>
 			<parameterName>World_OcclusionMap</parameterName>
 			<type>PtTexture2D</type>
@@ -689,8 +689,8 @@ Eye direction
 			<id>{29AAFE09-9BE2-3348-BABE-6B484E0A6551}</id>
 			<comment/>
 			<position>
-				<first>1228</first>
-				<second>-46</second>
+				<first>1245</first>
+				<second>-40</second>
 			</position>
 			<swizzle>x</swizzle>
 		</item>
@@ -698,8 +698,8 @@ Eye direction
 			<id>{5FF0897F-0A11-2E41-A05B-674C94077CC3}</id>
 			<comment/>
 			<position>
-				<first>1395</first>
-				<second>-54</second>
+				<first>1412</first>
+				<second>-48</second>
 			</position>
 			<name>L_Occlusion</name>
 			<global>false</global>
@@ -782,15 +782,6 @@ Eye direction
 			</position>
 			<name>L_Occlusion</name>
 			<global>false</global>
-		</item>
-		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
-			<id>{07198419-E293-E14D-89DF-C7CC2DD6613B}</id>
-			<comment/>
-			<position>
-				<first>1217</first>
-				<second>-213</second>
-			</position>
-			<value>1</value>
 		</item>
 	</nodes>
 	<edges>
@@ -1436,16 +1427,6 @@ Eye direction
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[67]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[61]"/>
-				<name>Input</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
 				<node ref="/object/nodes/item[52]"/>
 				<name>Output</name>
 			</source>
@@ -1472,6 +1453,16 @@ Eye direction
 			<destination>
 				<node ref="/object/nodes/item[25]"/>
 				<name>Y</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[60]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[61]"/>
+				<name>Input</name>
 			</destination>
 		</item>
 	</edges>
