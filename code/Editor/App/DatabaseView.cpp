@@ -419,8 +419,8 @@ bool DatabaseView::create(ui::Widget* parent)
 	if (!m_gridInstances->create(m_splitter, ui::GridView::WsColumnHeader | ui::WsAccelerated))
 		return false;
 	m_gridInstances->addColumn(new ui::GridColumn(L"", ui::dpi96(20)));
-	m_gridInstances->addColumn(new ui::GridColumn(i18n::Text(L"DATABASE_INSTANCE_NAME"), ui::dpi96(240)));
-	m_gridInstances->addColumn(new ui::GridColumn(i18n::Text(L"DATABASE_INSTANCE_TYPE"), ui::dpi96(100)));
+	m_gridInstances->addColumn(new ui::GridColumn(i18n::Text(L"DATABASE_INSTANCE_NAME"), ui::dpi96(140)));
+	m_gridInstances->addColumn(new ui::GridColumn(i18n::Text(L"DATABASE_INSTANCE_TYPE"), ui::dpi96(140)));
 	m_gridInstances->addEventHandler< ui::GridRowDoubleClickEvent >(this, &DatabaseView::eventInstanceGridActivate);
 	m_gridInstances->setVisible(false);
 

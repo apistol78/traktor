@@ -125,24 +125,24 @@ void GridRow::insertChildAfter(GridRow* insertAfter, GridRow* row)
 {
 	T_ASSERT(insertAfter->m_parent == this);
 	T_ASSERT(!row->m_parent);
-	RefArray< GridRow >::iterator i = std::find(m_children.begin(), m_children.end(), insertAfter);
-	T_ASSERT(i != m_children.end());
-	m_children.insert(++i, row);
+	auto it = std::find(m_children.begin(), m_children.end(), insertAfter);
+	T_ASSERT(it != m_children.end());
+	m_children.insert(++it, row);
 	row->m_parent = this;
 }
 
 void GridRow::removeChild(GridRow* row)
 {
 	T_ASSERT(row->m_parent == this);
-	RefArray< GridRow >::iterator i = std::find(m_children.begin(), m_children.end(), row);
-	m_children.erase(i);
+	auto it = std::find(m_children.begin(), m_children.end(), row);
+	m_children.erase(it);
 	row->m_parent = nullptr;
 }
 
 void GridRow::removeAllChildren()
 {
-	for (RefArray< GridRow >::iterator i = m_children.begin(); i != m_children.end(); ++i)
-		(*i)->m_parent = nullptr;
+	for (auto child : m_children)
+		child->m_parent = nullptr;
 	m_children.clear();
 }
 

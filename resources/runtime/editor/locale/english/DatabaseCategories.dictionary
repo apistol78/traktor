@@ -177,5 +177,21 @@
       <first>DATABASE_CATEGORY_TRAKTOR_WORLD_GROUPENTITYDATA</first>
       <second>Group entities</second>
     </item>
+    <item>
+      <first>DATABASE_CATEGORY_TRAKTOR_MODEL_MATERIAL</first>
+      <second>Materials</second>
+    </item>
+    <item>
+      <first>DATABASE_CATEGORY_TRAKTOR_SPRAY_SPAWNEFFECTEVENTDATA</first>
+      <second>Effect spawns</second>
+    </item>
+    <item>
+      <first>DATABASE_CATEGORY_TRAKTOR_SOUND_SONGASSET</first>
+      <second>Songs</second>
+    </item>
+    <item>
+      <first>DATABASE_CATEGORY_TRAKTOR_UIKIT_WIDGETSCAFFOLDING</first>
+      <second>UI scaffoldings</second>
+    </item>
   </map>
 </object>
