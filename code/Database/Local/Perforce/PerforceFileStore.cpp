@@ -8,8 +8,6 @@
 #include "Database/Local/Perforce/PerforceClient.h"
 #include "Database/Local/Perforce/PerforceFileStore.h"
 
-#include "Core/Log/Log.h"
-
 namespace traktor
 {
 	namespace db
@@ -85,9 +83,9 @@ void PerforceFileStore::destroy()
 uint32_t PerforceFileStore::flags(const Path& filePath)
 {
 #if defined(_WIN32)
-	std::wstring localFile = filePath.getPathName();
+	std::wstring localFile = filePath.normalized().getPathName();
 #else
-	std::wstring localFile = filePath.getPathNameNoVolume();
+	std::wstring localFile = filePath.normalized().getPathNameNoVolume();
 #endif
 
 	uint32_t flags = IfNormal;
@@ -105,9 +103,9 @@ uint32_t PerforceFileStore::flags(const Path& filePath)
 bool PerforceFileStore::add(const Path& filePath)
 {
 #if defined(_WIN32)
-	std::wstring localFile = filePath.getPathName();
+	std::wstring localFile = filePath.normalized().getPathName();
 #else
-	std::wstring localFile = filePath.getPathNameNoVolume();
+	std::wstring localFile = filePath.normalized().getPathNameNoVolume();
 #endif
 	return m_p4client->addFile(m_p4changeList, localFile);
 }
@@ -115,9 +113,9 @@ bool PerforceFileStore::add(const Path& filePath)
 bool PerforceFileStore::remove(const Path& filePath)
 {
 #if defined(_WIN32)
-	std::wstring localFile = filePath.getPathName();
+	std::wstring localFile = filePath.normalized().getPathName();
 #else
-	std::wstring localFile = filePath.getPathNameNoVolume();
+	std::wstring localFile = filePath.normalized().getPathNameNoVolume();
 #endif
 
 	PerforceAction pa;
@@ -158,9 +156,9 @@ bool PerforceFileStore::remove(const Path& filePath)
 bool PerforceFileStore::edit(const Path& filePath)
 {
 #if defined(_WIN32)
-	std::wstring localFile = filePath.getPathName();
+	std::wstring localFile = filePath.normalized().getPathName();
 #else
-	std::wstring localFile = filePath.getPathNameNoVolume();
+	std::wstring localFile = filePath.normalized().getPathNameNoVolume();
 #endif
 
 	PerforceAction pa;
@@ -185,9 +183,9 @@ bool PerforceFileStore::edit(const Path& filePath)
 bool PerforceFileStore::rollback(const Path& filePath)
 {
 #if defined(_WIN32)
-	std::wstring localFile = filePath.getPathName();
+	std::wstring localFile = filePath.normalized().getPathName();
 #else
-	std::wstring localFile = filePath.getPathNameNoVolume();
+	std::wstring localFile = filePath.normalized().getPathNameNoVolume();
 #endif
 	return m_p4client->revertFile(m_p4changeList, localFile);
 }
