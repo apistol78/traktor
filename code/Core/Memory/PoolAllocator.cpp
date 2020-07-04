@@ -60,15 +60,15 @@ PoolAllocator::~PoolAllocator()
 
 void PoolAllocator::enter()
 {
-	m_scope.push(m_tail);
+	m_scope.push_back(m_tail);
 }
 
 void PoolAllocator::leave()
 {
 	T_ASSERT(!m_scope.empty());
 
-	uint8_t* tail = m_scope.top();
-	m_scope.pop();
+	uint8_t* tail = m_scope.back();
+	m_scope.pop_back();
 
 	// Free exceeding heaps.
 	if (m_allocator && !(tail >= m_head && tail <= m_head + m_totalSize))

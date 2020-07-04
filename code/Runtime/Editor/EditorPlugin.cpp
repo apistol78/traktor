@@ -810,10 +810,10 @@ void EditorPlugin::eventToolBarClick(ui::ToolBarButtonClickEvent* event)
 
 	m_targetList->removeAll();
 
-	for (RefArray< TargetInstance >::const_iterator i = m_targetInstances.begin(); i != m_targetInstances.end(); ++i)
+	for (auto targetInstance : m_targetInstances)
 	{
-		if ((*i)->getTarget() == et.target)
-			m_targetList->add(new TargetInstanceListItem(m_hostEnumerator, *i));
+		if (targetInstance->getTarget() == et.target)
+			m_targetList->add(new TargetInstanceListItem(m_hostEnumerator, targetInstance));
 	}
 
 	m_targetList->requestUpdate();
@@ -855,14 +855,14 @@ void EditorPlugin::threadHostEnumerator()
 		if (localDeployHostId >= 0)
 		{
 			bool needUpdate = false;
-			for (RefArray< TargetInstance >::const_iterator i = m_targetInstances.begin(); i != m_targetInstances.end(); ++i)
+			for (auto targetInstance : m_targetInstances)
 			{
-				if ((*i)->getDeployHostId() < 0)
+				if (targetInstance->getDeployHostId() < 0)
 				{
-					std::wstring platformName = (*i)->getPlatformName();
+					std::wstring platformName = targetInstance->getPlatformName();
 					if (m_hostEnumerator->supportPlatform(localDeployHostId, platformName))
 					{
-						(*i)->setDeployHostId(localDeployHostId);
+						targetInstance->setDeployHostId(localDeployHostId);
 						needUpdate = true;
 					}
 				}
@@ -896,12 +896,12 @@ void EditorPlugin::threadTargetActions()
 		}
 
 		bool success = true;
-		for (std::list< Action >::const_iterator i = chain.actions.begin(); i != chain.actions.end(); ++i)
+		for (const auto& action : chain.actions)
 		{
-			success &= i->action->execute(i->listener);
+			success &= action.action->execute(action.listener);
 			if (!success)
 			{
-				log::error << L"Deploy action \"" << type_name(i->action) << L"\" failed; unable to continue." << Endl;
+				log::error << L"Deploy action \"" << type_name(action.action) << L"\" failed; unable to continue." << Endl;
 				break;
 			}
 		}
@@ -912,7 +912,7 @@ void EditorPlugin::threadTargetActions()
 		m_targetList->requestUpdate();
 
 		chain.actions.resize(0);
-		chain.targetInstance = 0;
+		chain.targetInstance = nullptr;
 	}
 }
 

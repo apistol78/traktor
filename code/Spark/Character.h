@@ -1,5 +1,6 @@
 #pragma once
 
+#include <string>
 #include "Core/Ref.h"
 #include "Core/Containers/SmallMap.h"
 #include "Core/Math/Matrix33.h"

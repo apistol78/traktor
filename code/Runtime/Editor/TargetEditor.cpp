@@ -331,8 +331,19 @@ void TargetEditor::updateUsedFeatures()
 
 		features.sort();
 
+		TargetConfiguration* targetConfiguration = m_listBoxTargetConfigurations->getSelectedData< TargetConfiguration >();
 		for (const auto& feature : features)
-			m_listBoxUsedFeatures->add(feature.feature->getDescription(), feature.featureInstance);
+		{
+			bool validForPlatform = true;
+			if (targetConfiguration)
+				validForPlatform = (bool)(feature.feature->getPlatform(targetConfiguration->getPlatform()) != nullptr);
+
+			m_listBoxUsedFeatures->add(
+				feature.feature->getDescription(),
+				validForPlatform ? Color4ub(0, 0, 0, 0) : Color4ub(255, 0, 0, 255),
+				feature.featureInstance
+			);
+		}
 	}
 }
 

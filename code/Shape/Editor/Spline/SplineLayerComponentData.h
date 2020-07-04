@@ -1,5 +1,6 @@
 #pragma once
 
+#include <string>
 #include "Core/Ref.h"
 #include "World/IEntityComponentData.h"
 
