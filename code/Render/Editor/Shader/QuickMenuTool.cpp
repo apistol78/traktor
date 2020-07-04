@@ -57,8 +57,8 @@ const TypeInfo* QuickMenuTool::showMenu()
 	if (showModal() != ui::DrOk)
 		return 0;
 
-	Ref< TypeInfoWrapper > typeInfoWrapper = static_cast< TypeInfoWrapper* >(m_listBoxSuggestions->getSelectedData().ptr());
-	return typeInfoWrapper ? &typeInfoWrapper->m_typeInfo : 0;
+	Ref< TypeInfoWrapper > typeInfoWrapper = static_cast< TypeInfoWrapper* >(m_listBoxSuggestions->getSelectedData());
+	return typeInfoWrapper ? &typeInfoWrapper->m_typeInfo : nullptr;
 }
 
 void QuickMenuTool::updateSuggestions(const std::wstring& filter)

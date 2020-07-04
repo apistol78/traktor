@@ -1,5 +1,6 @@
 #pragma once
 
+#include <string>
 #include "Core/Object.h"
 #include "Core/Ref.h"
 #include "Core/Containers/SmallMap.h"

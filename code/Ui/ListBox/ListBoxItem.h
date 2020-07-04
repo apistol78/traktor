@@ -29,6 +29,10 @@ public:
 
 	const std::wstring& getText() const;
 
+	void setBackgroundColor(const Color4ub& bgcolor);
+
+	const Color4ub& getBackgroundColor() const;
+
 	bool setSelected(bool selected);
 
 	bool isSelected() const;
@@ -37,6 +41,7 @@ public:
 
 private:
 	std::wstring m_text;
+	Color4ub m_bgcolor;
 	bool m_selected;
 };
 

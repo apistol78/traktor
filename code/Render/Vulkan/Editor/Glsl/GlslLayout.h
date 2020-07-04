@@ -1,5 +1,6 @@
 #pragma once
 
+#include <string>
 #include "Core/Object.h"
 #include "Core/RefArray.h"
 

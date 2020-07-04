@@ -57,6 +57,18 @@ int32_t ListBox::add(const std::wstring& item, Object* data)
 	return int32_t(m_items.size() - 1);
 }
 
+int32_t ListBox::add(const std::wstring& item, const Color4ub& bgcolor, Object* data)
+{
+	Ref< ListBoxItem > lbi = new ListBoxItem();
+	lbi->setText(item);
+	lbi->setBackgroundColor(bgcolor);
+	lbi->setData(L"DATA", data);
+	m_items.push_back(lbi);
+	m_lastHitIndex = -1;
+	requestUpdate();
+	return int32_t(m_items.size() - 1);
+}
+
 bool ListBox::remove(int32_t index)
 {
 	if (index >= 0 && index < m_items.size())
@@ -105,7 +117,7 @@ std::wstring ListBox::getItem(int32_t index) const
 		return L"";
 }
 
-Ref< Object > ListBox::getData(int32_t index) const
+Object* ListBox::getData(int32_t index) const
 {
 	if (index >= 0 && index < (int32_t)m_items.size())
 		return m_items[index]->getData(L"DATA");
@@ -157,7 +169,7 @@ std::wstring ListBox::getSelectedItem() const
 		return L"";
 }
 
-Ref< Object > ListBox::getSelectedData() const
+Object* ListBox::getSelectedData() const
 {
 	int32_t index = getSelected();
 	if (index >= 0)

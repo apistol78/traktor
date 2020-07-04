@@ -41,7 +41,9 @@ public:
 
 	virtual Size getPreferedSize() const override;
 
-	int32_t add(const std::wstring& item, Object* data = 0);
+	int32_t add(const std::wstring& item, Object* data = nullptr);
+
+	int32_t add(const std::wstring& item, const Color4ub& bgcolor, Object* data = nullptr);
 
 	bool remove(int32_t index);
 
@@ -55,7 +57,7 @@ public:
 
 	std::wstring getItem(int32_t index) const;
 
-	Ref< Object > getData(int32_t index) const;
+	Object* getData(int32_t index) const;
 
 	void select(int32_t index);
 
@@ -67,20 +69,20 @@ public:
 
 	std::wstring getSelectedItem() const;
 
-	Ref< Object > getSelectedData() const;
+	Object* getSelectedData() const;
 
 	int32_t getItemHeight();
 
 	Rect getItemRect(int32_t index) const;
 
 	template < typename T >
-	Ref< T > getData(int index) const
+	T* getData(int index) const
 	{
 		return dynamic_type_cast< T* >(getData(index));
 	}
 
 	template < typename T >
-	Ref< T > getSelectedData() const
+	T* getSelectedData() const
 	{
 		return dynamic_type_cast< T* >(getSelectedData());
 	}

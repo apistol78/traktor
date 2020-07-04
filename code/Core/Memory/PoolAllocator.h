@@ -1,9 +1,8 @@
 #pragma once
 
-#include <list>
-#include <stack>
 #include "Core/Object.h"
 #include "Core/Ref.h"
+#include "Core/Containers/AlignedVector.h"
 #include "Core/Misc/Align.h"
 
 // import/export mechanism.
@@ -68,7 +67,7 @@ public:
 	template < typename Type >
 	Type* alloc()
 	{
-		void* ptr = alloc(sizeof(Type), alignOf< Type >());
+		void* ptr = alloc((uint32_t)sizeof(Type), (uint32_t)alignOf< Type >());
 		return new (ptr) Type();
 	}
 
@@ -83,7 +82,7 @@ public:
 		if (!count)
 			return nullptr;
 
-		void* ptr = alloc(sizeof(Type) * count, alignOf< Type >());
+		void* ptr = alloc((uint32_t)sizeof(Type) * count, (uint32_t)alignOf< Type >());
 		return new (ptr) Type [count];
 	}
 
@@ -98,7 +97,7 @@ public:
 		if (!count)
 			return nullptr;
 
-		void* ptr = alloc(sizeof(Type*) * count, alignOf< Type* >());
+		void* ptr = alloc((uint32_t)sizeof(Type*) * count, (uint32_t)alignOf< Type* >());
 		return static_cast< Type** >(ptr);
 	}
 
@@ -108,8 +107,8 @@ private:
 	uint32_t m_totalSize;
 	uint8_t* m_head;
 	uint8_t* m_tail;
-	std::stack< uint8_t* > m_scope;
-	std::list< uint8_t* > m_heaps;
+	AlignedVector< uint8_t* > m_scope;
+	AlignedVector< uint8_t* > m_heaps;
 };
 
 }

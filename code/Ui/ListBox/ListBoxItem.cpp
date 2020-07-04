@@ -12,7 +12,8 @@ namespace traktor
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.ListBoxItem", ListBoxItem, AutoWidgetCell)
 
 ListBoxItem::ListBoxItem()
-:	m_selected(false)
+:	m_bgcolor(0, 0, 0, 0)
+,	m_selected(false)
 {
 }
 
@@ -24,6 +25,16 @@ void ListBoxItem::setText(const std::wstring& text)
 const std::wstring& ListBoxItem::getText() const
 {
 	return m_text;
+}
+
+void ListBoxItem::setBackgroundColor(const Color4ub& bgcolor)
+{
+	m_bgcolor = bgcolor;
+}
+
+const Color4ub& ListBoxItem::getBackgroundColor() const
+{
+	return m_bgcolor;
 }
 
 bool ListBoxItem::setSelected(bool selected)
@@ -50,6 +61,11 @@ void ListBoxItem::paint(Canvas& canvas, const Rect& rect)
 	if (m_selected)
 	{
 		canvas.setBackground(ss->getColor(getWidget< ListBox >(), L"item-background-color-selected"));
+		canvas.fillRect(rect);
+	}
+	else if (m_bgcolor.a != 0)
+	{
+		canvas.setBackground(m_bgcolor);
 		canvas.fillRect(rect);
 	}
 
