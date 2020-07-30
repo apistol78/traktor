@@ -2,10 +2,7 @@
 
 #include "Core/Object.h"
 #include "Core/RefArray.h"
-#include "Core/Containers/SmallMap.h"
-#include "Core/Math/Vector4.h"
 #include "Render/Types.h"
-#include "Resource/Proxy.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -20,12 +17,11 @@ namespace traktor
     namespace render
     {
 
+class IImageStep;
 class ImageGraphContext;
-class ImagePass;
-class ImageStep;
+class ImagePassOp;
 class ImageTargetSet;
 class ImageTexture;
-class ITexture;
 class RenderGraph;
 class RenderPass;
 
@@ -37,24 +33,18 @@ class T_DLLCLASS ImageGraph : public Object
     T_RTTI_CLASS;
 
 public:
-    void addPasses(RenderGraph& renderGraph, RenderPass* parentPass, const ImageGraphContext& cx) const;
+    explicit ImageGraph(const std::wstring& name);
 
-	void setFloatParameter(handle_t handle, float value);
-
-	void setVectorParameter(handle_t handle, const Vector4& value);
-
-	void setTextureParameter(handle_t handle, const resource::Proxy< ITexture >& value);
+    void addPasses(RenderGraph& renderGraph, RenderPass* pass, const ImageGraphContext& cx) const;
 
 private:
     friend class ImageGraphData;
 
+    std::wstring m_name;
     RefArray< const ImageTexture > m_textures;
     RefArray< const ImageTargetSet > m_targetSets;
-    RefArray< const ImagePass > m_passes;
-    RefArray< const ImageStep > m_steps;
-	SmallMap< handle_t, float > m_scalarParameters;
-	SmallMap< handle_t, Vector4 > m_vectorParameters;
-	SmallMap< handle_t, resource::Proxy< ITexture > > m_textureParameters;
+    RefArray< const IImageStep > m_steps;
+    RefArray< const ImagePassOp > m_ops;
 };
 
     }

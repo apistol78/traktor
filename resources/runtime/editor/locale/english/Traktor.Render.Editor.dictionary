@@ -741,5 +741,61 @@
 			<first>TEXTURE_EDITOR_COLOR</first>
 			<second>Texture color</second>
 		</item>
+		<item>
+			<first>IMAGEGRAPH_CENTER</first>
+			<second>Center</second>
+		</item>
+		<item>
+			<first>IMAGEGRAPH_ALIGN_LEFT</first>
+			<second>Align left</second>
+		</item>
+		<item>
+			<first>IMAGEGRAPH_ALIGN_RIGHT</first>
+			<second>Align right</second>
+		</item>
+		<item>
+			<first>IMAGEGRAPH_ALIGN_TOP</first>
+			<second>Align top</second>
+		</item>
+		<item>
+			<first>IMAGEGRAPH_ALIGN_BOTTOM</first>
+			<second>Align bottom</second>
+		</item>
+		<item>
+			<first>IMAGEGRAPH_EVEN_VERTICALLY</first>
+			<second>Even vertically</second>
+		</item>
+		<item>
+			<first>IMAGEGRAPH_EVEN_HORIZONTALLY</first>
+			<second>Even horizontally</second>
+		</item>
+		<item>
+			<first>IMAGEGRAPH_CREATE</first>
+			<second>Create...</second>
+		</item>
+		<item>
+			<first>IMAGEGRAPH_CREATE_INPUT</first>
+			<second>Input</second>
+		</item>
+		<item>
+			<first>IMAGEGRAPH_CREATE_OUTPUT</first>
+			<second>Output</second>
+		</item>
+		<item>
+			<first>IMAGEGRAPH_CREATE_PASS</first>
+			<second>Pass</second>
+		</item>
+		<item>
+			<first>IMAGEGRAPH_CREATE_TARGETSET</first>
+			<second>Target set</second>
+		</item>
+		<item>
+			<first>IMAGEGRAPH_CREATE_TEXTURE</first>
+			<second>Texture</second>
+		</item>
+		<item>
+			<first>IMAGEGRAPH_DELETE</first>
+			<second>Delete</second>
+		</item>
 	</map>
 </object>

@@ -9,8 +9,6 @@ namespace traktor
 	namespace render
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderGraphTargetSetPool", RenderGraphTargetSetPool, Object)
-
 RenderGraphTargetSetPool::RenderGraphTargetSetPool(IRenderSystem* renderSystem)
 :	m_renderSystem(renderSystem)
 {
@@ -20,7 +18,8 @@ IRenderTargetSet* RenderGraphTargetSetPool::acquire(
 	const RenderGraphTargetSetDesc& targetSetDesc,
 	IRenderTargetSet* sharedDepthStencilTargetSet,
 	int32_t referenceWidth,
-	int32_t referenceHeight
+	int32_t referenceHeight,
+	handle_t persistentHandle
 )
 {
 	// Create descriptor for given reference size.
@@ -55,6 +54,9 @@ IRenderTargetSet* RenderGraphTargetSetPool::acquire(
         {
             if (p.sharedDepthStencilTargetSet != sharedDepthStencilTargetSet)
                 return false;
+
+			if (p.persistentHandle != persistentHandle)
+				return false;
 
             if (
 				p.rtscd.count != rtscd.count ||
@@ -92,6 +94,7 @@ IRenderTargetSet* RenderGraphTargetSetPool::acquire(
 		pool = &m_pool.back();
 		pool->rtscd = rtscd;
         pool->sharedDepthStencilTargetSet = sharedDepthStencilTargetSet;
+		pool->persistentHandle = persistentHandle;
 	}
 
 	// Acquire free target, if no one left we need to create a new target.
@@ -120,14 +123,6 @@ IRenderTargetSet* RenderGraphTargetSetPool::acquire(
 	}
 }
 
-void RenderGraphTargetSetPool::cleanup()
-{
-	//auto it = std::remove_if(m_pool.begin(), m_pool.end(), [](const Pool& pool) {
-	//	return pool.acquired.empty();
-	//});
-	//m_pool.erase(it, m_pool.end());
-}
-
 void RenderGraphTargetSetPool::release(IRenderTargetSet* targetSet)
 {
 	T_ANONYMOUS_VAR(Ref< IRenderTargetSet >)(targetSet);
@@ -139,6 +134,14 @@ void RenderGraphTargetSetPool::release(IRenderTargetSet* targetSet)
 			break;
 		}
 	}
+}
+
+void RenderGraphTargetSetPool::cleanup()
+{
+	//auto it = std::remove_if(m_pool.begin(), m_pool.end(), [](const Pool& pool) {
+	//	return pool.acquired.empty();
+	//});
+	//m_pool.erase(it, m_pool.end());
 }
 
 	}

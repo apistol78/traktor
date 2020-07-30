@@ -2,30 +2,31 @@
 <object type="traktor.render.ImageGraphAsset">
 	<nodes>
 		<item type="traktor.render.ImgInput" version="traktor.render.Node:1">
-			<id>{E0E59BDE-3C83-4E4D-BBC6-44739BCB4AE4}</id>
+			<id>{7AB9C7A2-130B-9B42-84DD-CCFADF451C6B}</id>
 			<comment/>
 			<position>
-				<first>72</first>
-				<second>169</second>
+				<first>-19</first>
+				<second>304</second>
 			</position>
 			<textureId>InputColor</textureId>
 		</item>
 		<item type="traktor.render.ImgOutput" version="traktor.render.Node:1">
-			<id>{B461A8C3-895E-9746-A0BC-F4A42A3DD806}</id>
+			<id>{36BA727B-AA6D-3345-8193-2BA385FC183A}</id>
 			<comment/>
 			<position>
-				<first>646</first>
-				<second>309</second>
+				<first>1442</first>
+				<second>412</second>
 			</position>
 		</item>
-		<item type="traktor.render.ImgTargetSet" version="traktor.render.Node:1">
-			<id>{17F6E862-91D3-9146-84DE-FE0DEFD566FF}</id>
+		<item type="traktor.render.ImgTargetSet" version="1,traktor.render.Node:1">
+			<id>{8EA8DB6F-C80E-1149-914F-6126229A71A1}</id>
 			<comment/>
 			<position>
-				<first>608</first>
-				<second>31</second>
+				<first>981</first>
+				<second>445</second>
 			</position>
-			<targetSetId>Edges</targetSetId>
+			<targetSetId>TSAA</targetSetId>
+			<persistent>true</persistent>
 			<width>0</width>
 			<height>0</height>
 			<screenWidthDenom>1</screenWidthDenom>
@@ -37,36 +38,54 @@
 			<generateMips>false</generateMips>
 			<targets>
 				<item>
-					<textureId>Output</textureId>
-					<colorFormat>TfR8G8B8A8</colorFormat>
+					<textureId>Color</textureId>
+					<colorFormat>TfR11G11B10F</colorFormat>
 				</item>
 			</targets>
 		</item>
 		<item type="traktor.render.ImgPass" version="traktor.render.Node:1">
-			<id>{0FDB023D-B48A-8C48-9D47-2071CC555984}</id>
+			<id>{D24AABB4-ED39-AF4E-8633-E684A7812413}</id>
 			<comment/>
 			<position>
-				<first>380</first>
-				<second>19</second>
+				<first>775</first>
+				<second>299</second>
 			</position>
-			<name>SMAA Pass 1</name>
+			<name>Copy 1</name>
 			<steps>
 				<item type="traktor.render.ImgStepSimple">
-					<shader>{5AEF4C24-AED0-FB41-A06E-9B047F7CFDDE}</shader>
+					<shader>{55173364-8794-A94B-85B0-849D15588251}</shader>
 					<parameters>
-						<item>Source</item>
+						<item>Input</item>
 					</parameters>
 				</item>
 			</steps>
 		</item>
-		<item type="traktor.render.ImgTargetSet" version="traktor.render.Node:1">
-			<id>{FE095CDB-667D-434B-9A8C-9F4386E69C11}</id>
+		<item type="traktor.render.ImgPass" version="traktor.render.Node:1">
+			<id>{EBEF9A29-6142-6E46-BA41-55FAD2EDF43C}</id>
 			<comment/>
 			<position>
-				<first>615</first>
-				<second>150</second>
+				<first>1213</first>
+				<second>412</second>
 			</position>
-			<targetSetId>Blend</targetSetId>
+			<name>Copy 2</name>
+			<steps>
+				<item type="traktor.render.ImgStepSimple">
+					<shader>{55173364-8794-A94B-85B0-849D15588251}</shader>
+					<parameters>
+						<item>Input</item>
+					</parameters>
+				</item>
+			</steps>
+		</item>
+		<item type="traktor.render.ImgTargetSet" version="1,traktor.render.Node:1">
+			<id>{C27F723B-0D0B-0B4B-B76D-4C3DD905A077}</id>
+			<comment/>
+			<position>
+				<first>516</first>
+				<second>243</second>
+			</position>
+			<targetSetId>Intermediate</targetSetId>
+			<persistent>false</persistent>
 			<width>0</width>
 			<height>0</height>
 			<screenWidthDenom>1</screenWidthDenom>
@@ -78,42 +97,35 @@
 			<generateMips>false</generateMips>
 			<targets>
 				<item>
-					<textureId>Output</textureId>
-					<colorFormat>TfR8G8B8A8</colorFormat>
+					<textureId>Color</textureId>
+					<colorFormat>TfR11G11B10F</colorFormat>
 				</item>
 			</targets>
 		</item>
-		<item type="traktor.render.ImgPass" version="traktor.render.Node:1">
-			<id>{E99FC033-AE82-864E-A801-17C12A9C670F}</id>
+		<item type="traktor.render.ImgInput" version="traktor.render.Node:1">
+			<id>{A927780D-D5EB-194C-B454-8AA4C48EDCD9}</id>
 			<comment/>
 			<position>
-				<first>406</first>
-				<second>142</second>
+				<first>-20</first>
+				<second>403</second>
 			</position>
-			<name>SMAA Pass 2</name>
-			<steps>
-				<item type="traktor.render.ImgStepSimple">
-					<shader>{B679C168-3995-4948-B108-B4A413040D74}</shader>
-					<parameters>
-						<item>Edges</item>
-					</parameters>
-				</item>
-			</steps>
+			<textureId>InputVelocity</textureId>
 		</item>
 		<item type="traktor.render.ImgPass" version="traktor.render.Node:1">
-			<id>{797A68FF-CF2E-B74B-AF2A-E536BED69102}</id>
+			<id>{13E22B51-0DE0-944D-9285-C9438C6316A7}</id>
 			<comment/>
 			<position>
-				<first>401</first>
-				<second>252</second>
+				<first>272</first>
+				<second>302</second>
 			</position>
-			<name>SMAA Pass 3</name>
+			<name>Taa</name>
 			<steps>
 				<item type="traktor.render.ImgStepSimple">
-					<shader>{22826F79-6C55-0847-9788-3BF932DC838C}</shader>
+					<shader>{380B6E43-BB30-C945-BE58-F0A4E8A427E6}</shader>
 					<parameters>
-						<item>Source</item>
-						<item>Blend</item>
+						<item>Current</item>
+						<item>Last</item>
+						<item>Velocity</item>
 					</parameters>
 				</item>
 			</steps>
@@ -122,12 +134,32 @@
 	<edges>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item"/>
+				<node ref="/object/nodes/item[2]"/>
+				<name>Color</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[7]"/>
+				<name>Last</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[7]"/>
 				<name>Output</name>
 			</source>
 			<destination>
+				<node ref="/object/nodes/item[5]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[5]"/>
+				<name>Color</name>
+			</source>
+			<destination>
 				<node ref="/object/nodes/item[3]"/>
-				<name>Source</name>
+				<name>Input</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
@@ -143,17 +175,7 @@
 		<item type="traktor.render.Edge">
 			<source>
 				<node ref="/object/nodes/item[2]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[5]"/>
-				<name>Edges</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[5]"/>
-				<name>Output</name>
+				<name>Color</name>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[4]"/>
@@ -162,32 +184,32 @@
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[6]"/>
-				<name>Source</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
 				<node ref="/object/nodes/item[4]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[6]"/>
-				<name>Blend</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[6]"/>
 				<name>Output</name>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[1]"/>
 				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[7]"/>
+				<name>Current</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[6]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[7]"/>
+				<name>Velocity</name>
 			</destination>
 		</item>
 	</edges>

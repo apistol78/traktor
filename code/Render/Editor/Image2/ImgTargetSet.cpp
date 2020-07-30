@@ -53,10 +53,11 @@ public:
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ImgTargetSet", 0, ImgTargetSet, Node)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ImgTargetSet", 1, ImgTargetSet, Node)
 
 ImgTargetSet::ImgTargetSet()
-:	m_width(0)
+:	m_persistent(false)
+,	m_width(0)
 ,	m_height(0)
 ,	m_screenWidthDenom(0)
 ,	m_screenHeightDenom(0)
@@ -81,6 +82,11 @@ ImgTargetSet::~ImgTargetSet()
 const std::wstring& ImgTargetSet::getTargetSetId() const
 {
 	return m_targetSetId;
+}
+
+bool ImgTargetSet::getPersistent() const
+{
+	return m_persistent;
 }
 
 int32_t ImgTargetSet::getTextureCount() const
@@ -143,6 +149,10 @@ void ImgTargetSet::serialize(ISerializer& s)
 	Node::serialize(s);
 	
 	s >> Member< std::wstring >(L"targetSetId", m_targetSetId);
+
+	if (s.getVersion< ImgTargetSet >() >= 1)
+		s >> Member< bool >(L"persistent", m_persistent);
+
 	s >> Member< int32_t >(L"width", m_width);
 	s >> Member< int32_t >(L"height", m_height);
 	s >> Member< int32_t >(L"screenWidthDenom", m_screenWidthDenom);

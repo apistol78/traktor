@@ -172,6 +172,7 @@ bool OrthogonalRenderControl::create(ui::Widget* parent, SceneEditorContext* con
 
 void OrthogonalRenderControl::destroy()
 {
+	safeDestroy(m_renderGraph);
 	safeDestroy(m_worldRenderer);
 	safeDestroy(m_primitiveRenderer);
 	safeClose(m_renderView);

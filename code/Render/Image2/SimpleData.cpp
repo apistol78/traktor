@@ -8,9 +8,9 @@ namespace traktor
     namespace render
     {
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.SimpleData", 0, SimpleData, ImageStepData)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.SimpleData", 0, SimpleData, ImagePassOpData)
 
-Ref< const ImageStep > SimpleData::createInstance(resource::IResourceManager* resourceManager, IRenderSystem* /*renderSystem*/) const
+Ref< const ImagePassOp > SimpleData::createInstance(resource::IResourceManager* resourceManager, IRenderSystem* /*renderSystem*/) const
 {
 	Ref< Simple > instance = new Simple();
 

@@ -1,17 +1,8 @@
 #pragma once
 
-#include "Core/Object.h"
 #include "Core/RefArray.h"
 #include "Core/Containers/AlignedVector.h"
 #include "Render/Frame/RenderGraphTypes.h"
-
-// import/export mechanism.
-#undef T_DLLCLASS
-#if defined(T_RENDER_EXPORT)
-#	define T_DLLCLASS T_DLLEXPORT
-#else
-#	define T_DLLCLASS T_DLLIMPORT
-#endif
 
 namespace traktor
 {
@@ -24,33 +15,46 @@ class IRenderTargetSet;
 /*!
  * \ingroup Render
  */
-class T_DLLCLASS RenderGraphTargetSetPool : public Object
+class RenderGraphTargetSetPool
 {
-	T_RTTI_CLASS;
-
 public:
-	struct Pool
-	{
-		RenderTargetSetCreateDesc rtscd;
-		Ref< IRenderTargetSet > sharedDepthStencilTargetSet;
-		RefArray< IRenderTargetSet > free;
-		RefArray< IRenderTargetSet > acquired;
-	};
+	explicit RenderGraphTargetSetPool(IRenderSystem* renderSystem);
 
-	RenderGraphTargetSetPool(IRenderSystem* renderSystem);
-
+	/*! Acquire target from pool.
+	 *
+	 * \param targetSetDesc Description of target required.
+	 * \param sharedDepthStencilTargetSet Optional shared depth/stencil target set.
+	 * \param referenceWidth Reference width of target required.
+	 * \param referenceHeight Reference height of target required.
+	 * \param persistentHandle Persistent handle; used to track persistent targets in pool, 0 means not persistent target.
+	 */
 	IRenderTargetSet* acquire(
 		const RenderGraphTargetSetDesc& targetSetDesc,
 		IRenderTargetSet* sharedDepthStencilTargetSet,
 		int32_t referenceWidth,
-		int32_t referenceHeight
+		int32_t referenceHeight,
+		handle_t persistentHandle
 	);
 
-	void cleanup();
-
+	/*! */
 	void release(IRenderTargetSet* targetSet);
 
+	/*! */
+	void cleanup();
+
 private:
+	struct Pool
+	{
+		// Pool identification.
+		RenderTargetSetCreateDesc rtscd;
+		Ref< IRenderTargetSet > sharedDepthStencilTargetSet;
+		handle_t persistentHandle;
+
+		// Pool targets.
+		RefArray< IRenderTargetSet > free;
+		RefArray< IRenderTargetSet > acquired;
+	};
+
 	Ref< IRenderSystem > m_renderSystem;
 	AlignedVector< Pool > m_pool;
 	int32_t m_width;

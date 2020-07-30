@@ -3,28 +3,28 @@
 #include "Core/Serialization/MemberRefArray.h"
 #include "Render/Image2/ImagePass.h"
 #include "Render/Image2/ImagePassData.h"
-#include "Render/Image2/ImageStepData.h"
+#include "Render/Image2/ImagePassOpData.h"
 
 namespace traktor
 {
     namespace render
     {
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ImagePassData", 0, ImagePassData, ISerializable)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ImagePassData", 0, ImagePassData, IImageStepData)
 
-Ref< const ImagePass > ImagePassData::createInstance(resource::IResourceManager* resourceManager, IRenderSystem* renderSystem) const
+Ref< const IImageStep > ImagePassData::createInstance(resource::IResourceManager* resourceManager, IRenderSystem* renderSystem) const
 {
     Ref< ImagePass > instance = new ImagePass();
 
     instance->m_name = m_name;
     instance->m_outputTargetSet = m_outputTargetSet;
 
-    for (auto stepData : m_steps)
+    for (auto opd : m_ops)
     {
-        Ref< const ImageStep > step = stepData->createInstance(resourceManager, renderSystem);
-        if (!step)
+        Ref< const ImagePassOp > op = opd->createInstance(resourceManager, renderSystem);
+        if (!op)
             return nullptr;
-        instance->m_steps.push_back(step);
+        instance->m_ops.push_back(op);
     }
 
     return instance;
@@ -34,7 +34,7 @@ void ImagePassData::serialize(ISerializer& s)
 {
     s >> Member< std::wstring >(L"name", m_name);
     s >> Member< int32_t >(L"outputTargetSet", m_outputTargetSet);
-    s >> MemberRefArray< ImageStepData >(L"steps", m_steps);
+    s >> MemberRefArray< ImagePassOpData >(L"ops", m_ops);
 }
 
     }

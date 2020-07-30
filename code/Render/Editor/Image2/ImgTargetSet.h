@@ -28,6 +28,8 @@ public:
 
 	const std::wstring& getTargetSetId() const;
 
+	bool getPersistent() const;
+
 	int32_t getTextureCount() const;
 
 	const std::wstring& getTextureId(int32_t colorIndex) const;
@@ -59,6 +61,7 @@ private:
 	AlignedVector< OutputPin* > m_outputPins;
 
 	std::wstring m_targetSetId;
+	bool m_persistent;
 	int32_t m_width;
 	int32_t m_height;
 	int32_t m_screenWidthDenom;

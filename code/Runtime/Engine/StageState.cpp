@@ -57,6 +57,7 @@ void StageState::leave()
 		m_stage->transition();
 		safeDestroy(m_stage);
 	}
+	safeDestroy(m_renderGraph);
 }
 
 StageState::UpdateResult StageState::update(IStateManager* stateManager, const UpdateInfo& info)

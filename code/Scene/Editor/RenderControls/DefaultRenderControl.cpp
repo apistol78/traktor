@@ -49,6 +49,12 @@ ui::MenuItem* getChecked(ui::MenuItem* menu)
 	return nullptr;
 }
 
+std::wstring getOverlayText(const TypeInfo* overlayType)
+{
+	std::wstring id = L"SCENE_EDITOR_OVERLAY_" + replaceAll(toUpper(std::wstring(overlayType->getName())), L".", L"_");
+	return i18n::Text(id, overlayType->getName());
+}
+
 		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.scene.DefaultRenderControl", DefaultRenderControl, ISceneRenderControl)
@@ -191,7 +197,7 @@ bool DefaultRenderControl::create(ui::Widget* parent, SceneEditorContext* contex
 	TypeInfoSet overlayTypes;
 	type_of< world::IDebugOverlay >().findAllOf(overlayTypes, false);
 	for (const auto& overlayType : overlayTypes)
-		m_toolDebugOverlay->add(overlayType->getName());
+		m_toolDebugOverlay->add(getOverlayText(overlayType));
 
 	m_toolDebugOverlay->select(0);
 
@@ -555,9 +561,15 @@ void DefaultRenderControl::eventToolClick(ui::ToolBarButtonClickEvent* event)
 	}
 	else if (event->getCommand() == L"Scene.Editor.DebugOverlay")
 	{
-		const TypeInfo* overlayType = TypeInfo::find(m_toolDebugOverlay->getSelectedItem().c_str());
-		if (overlayType)
+
+
+		int32_t index = m_toolDebugOverlay->getSelected();
+		if (index > 0)
 		{
+			TypeInfoSet overlayTypes;
+			type_of< world::IDebugOverlay >().findAllOf(overlayTypes, false);
+			auto overlayType = overlayTypes[index - 1];
+
 			Ref< world::IDebugOverlay > overlay = mandatory_non_null_type_cast< world::IDebugOverlay* >(overlayType->createInstance());
 			if (overlay->create(m_context->getResourceManager()))
 				m_renderControl->setDebugOverlay(overlay);

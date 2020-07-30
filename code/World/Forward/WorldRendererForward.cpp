@@ -47,7 +47,7 @@ const resource::Id< render::ImageGraph > c_antiAliasHigh(L"{C0316981-FA73-A34E-8
 const resource::Id< render::ImageGraph > c_antiAliasUltra(L"{88E329C8-A2F3-7443-B73E-4E85C6ECACBE}");
 const resource::Id< render::ImageGraph > c_gammaCorrection(L"{B1E8367D-91DD-D648-A44F-B86492169771}");
 const resource::Id< render::ImageGraph > c_toneMapFixed(L"{1F20DAB5-22EB-B84C-92B0-71E94C1CE261}");
-const resource::Id< render::ImageGraph > c_toneMapAdaptive(L"{1F20DAB5-22EB-B84C-92B0-71E94C1CE261}") ; // L"{BC4FA128-A976-4023-A422-637581ADFD7E}");
+const resource::Id< render::ImageGraph > c_toneMapAdaptive(L"{1F20DAB5-22EB-B84C-92B0-71E94C1CE261}");
 
 resource::Id< render::ImageGraph > getAmbientOcclusionId(Quality quality)
 {
@@ -135,6 +135,7 @@ WorldRendererForward::WorldRendererForward()
 ,	m_shadowsQuality(Quality::Disabled)
 ,	m_ambientOcclusionQuality(Quality::Disabled)
 ,	m_antiAliasQuality(Quality::Disabled)
+,	m_gamma(1.0f)
 ,	m_count(0)
 {
 }
@@ -151,6 +152,7 @@ bool WorldRendererForward::create(
 	m_shadowsQuality = desc.quality.shadows;
 	m_ambientOcclusionQuality = desc.quality.ambientOcclusion;
 	m_antiAliasQuality = desc.quality.antiAlias;
+	m_gamma = desc.gamma;
 	m_sharedDepthStencil = desc.sharedDepthStencil;
 
 	// Allocate frames, one for each queued frame.
@@ -183,15 +185,10 @@ bool WorldRendererForward::create(
 	// Create gamma correction processing.
 	if (
 		m_settings.linearLighting &&
-		std::abs(desc.gamma - 1.0f) > FUZZY_EPSILON
+		std::abs(m_gamma - 1.0f) > FUZZY_EPSILON
 	)
 	{
-		if (resourceManager->bind(c_gammaCorrection, m_gammaCorrection))
-		{
-			m_gammaCorrection->setFloatParameter(s_handleGamma, desc.gamma);
-			m_gammaCorrection->setFloatParameter(s_handleGammaInverse, 1.0f / desc.gamma);
-		}
-		else
+		if (!resourceManager->bind(c_gammaCorrection, m_gammaCorrection))
 			log::warning << L"Unable to create gamma correction process; gamma correction disabled." << Endl;
 	}
 
@@ -199,9 +196,7 @@ bool WorldRendererForward::create(
 	if (m_toneMapQuality > Quality::Disabled)
 	{
 		resource::Id< render::ImageGraph > toneMap = getToneMapId(m_settings.exposureMode);
-		if (resourceManager->bind(toneMap, m_toneMap))
-			m_toneMap->setFloatParameter(s_handleExposure, m_settings.exposure);
-		else
+		if (!resourceManager->bind(toneMap, m_toneMap))
 		{
 			log::warning << L"Unable to create tone map process." << Endl;
 			m_toneMapQuality = Quality::Disabled;
@@ -933,6 +928,9 @@ void WorldRendererForward::setupProcessPass(
 	cx.associateTextureTargetSet(s_handleInputColor, visualTargetSetId, 0);
 	cx.associateTextureTargetSet(s_handleInputDepth, gbufferTargetSetId, 0);
 	cx.associateTextureTargetSet(s_handleInputNormal, gbufferTargetSetId, 1);
+	cx.setFloatParameter(s_handleGamma, m_gamma);
+	cx.setFloatParameter(s_handleGammaInverse, 1.0f / m_gamma);
+	cx.setFloatParameter(s_handleExposure, m_settings.exposure);
 	cx.setParams(ipd);
 
 	StaticVector< render::ImageGraph*, 4 > processes;

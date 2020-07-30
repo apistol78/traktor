@@ -176,6 +176,7 @@ void PerspectiveRenderControl::destroy()
 		m_camera = nullptr;
 	}
 
+	safeDestroy(m_renderGraph);
 	safeDestroy(m_worldRenderer);
 	safeDestroy(m_primitiveRenderer);
 	safeClose(m_renderView);
@@ -689,6 +690,15 @@ void PerspectiveRenderControl::eventPaint(ui::PaintEvent* event)
 	// Validate render graph.
 	if (!m_renderGraph->validate())
 		return;
+
+	// Debug render graph.
+	//for (auto pass : m_renderGraph->getPasses())
+	//{
+	//	log::info << pass->getName() << Endl;
+	//	for (auto input : pass->getInputs())
+	//		log::info << L"\tInput " << input.targetSetId << Endl;
+	//	log::info << L"\tOutput " << pass->getOutput().targetSetId << Endl;
+	//}
 
 	// Build render context.
 	m_renderContext->flush();

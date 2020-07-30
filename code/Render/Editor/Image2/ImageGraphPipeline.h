@@ -17,7 +17,7 @@ namespace traktor
 	{
 
 class ImageGraphAsset;
-class ImageStepData;
+class ImagePassOpData;
 class ImgPass;
 
 class T_DLLCLASS ImageGraphPipeline : public editor::IPipeline
@@ -60,7 +60,7 @@ public:
 	) const override final;
 
 private:
-	bool convertAssetPassToSteps(const ImageGraphAsset* asset, const ImgPass* pass, RefArray< ImageStepData >& outSteps) const;
+	bool convertAssetPassToSteps(const ImageGraphAsset* asset, const ImgPass* pass, RefArray< ImagePassOpData >& outSteps) const;
 };
 
 	}

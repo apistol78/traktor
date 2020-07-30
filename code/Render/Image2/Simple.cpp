@@ -30,7 +30,7 @@ const static Handle s_handleMagicCoeffs(L"MagicCoeffs");
 
 		}
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.render.Simple", Simple, ImageStep)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.render.Simple", Simple, ImagePassOp)
 
 void Simple::setup(const ImageGraph* /*imageGraph*/, const ImageGraphContext& cx, RenderPass& pass) const
 {

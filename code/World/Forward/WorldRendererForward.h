@@ -85,6 +85,8 @@ private:
 	Quality m_ambientOcclusionQuality;
 	Quality m_antiAliasQuality;
 
+	float m_gamma;
+
 	Ref< render::IRenderTargetSet > m_sharedDepthStencil;
 	Ref< render::ScreenRenderer > m_screenRenderer;
 	

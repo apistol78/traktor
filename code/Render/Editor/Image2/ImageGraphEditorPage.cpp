@@ -67,7 +67,7 @@ bool ImageGraphEditorPage::create(ui::Container* parent)
 	// Create our custom toolbar.
 	m_toolBar = new ui::ToolBar();
 	m_toolBar->create(container);
-	m_toolBar->addImage(new ui::StyleBitmap(L"Shader.Tools"), 14);
+	m_toolBar->addImage(new ui::StyleBitmap(L"Shader.Tools"), 18);
 	m_toolBar->addItem(new ui::ToolBarButton(i18n::Text(L"IMAGEGRAPH_CENTER"), 7, ui::Command(L"ImageGraph.Editor.Center")));
 	m_toolBar->addItem(new ui::ToolBarSeparator());
 	m_toolBar->addItem(new ui::ToolBarButton(i18n::Text(L"IMAGEGRAPH_ALIGN_LEFT"), 0, ui::Command(L"ImageGraph.Editor.AlignLeft")));
@@ -614,6 +614,15 @@ void ImageGraphEditorPage::eventEdgeConnect(ui::EdgeConnectEvent* event)
 
 	Node* destinationNode = editorDestinationPin->getNode()->getData< Node >(L"IMGNODE");
 	T_ASSERT(destinationNode);
+
+	// Ensure compatible types of nodes are connected.
+	bool sourceTarget = is_a< ImgInput >(sourceNode) || is_a< ImgOutput >(sourceNode) || is_a< ImgTargetSet >(sourceNode);
+	bool destinationTarget = is_a< ImgInput >(destinationNode) || is_a< ImgOutput >(destinationNode) || is_a< ImgTargetSet >(destinationNode);
+	if (sourceTarget == destinationTarget)
+	{
+		log::warning << L"Only \"pass to target\" or \"target to pass\" can be connected." << Endl;
+		return;
+	}
 
 	const OutputPin* sourcePin = sourceNode->findOutputPin(editorSourcePin->getName());
 	T_ASSERT(sourcePin);

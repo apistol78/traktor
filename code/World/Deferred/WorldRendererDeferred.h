@@ -91,6 +91,8 @@ private:
 	Quality m_ambientOcclusionQuality;
 	Quality m_antiAliasQuality;
 
+	float m_gamma = 1.0f;
+
 	Ref< render::IRenderTargetSet > m_shadowMapCascadeTargetSet;
 	Ref< render::IRenderTargetSet > m_shadowMapAtlasTargetSet;
 	Ref< render::IRenderTargetSet > m_sharedDepthStencil;
@@ -195,14 +197,14 @@ private:
 		render::RenderGraph& renderGraph,
 		render::handle_t outputTargetSetId,
 		render::handle_t gbufferTargetSetId,
-		render::handle_t visualTargetSetId
+		render::handle_t visualReadTargetSetId
 	) const;
 
-	render::handle_t setupVisualPass(
+	void setupVisualPass(
 		const WorldRenderView& worldRenderView,
 		const Entity* rootEntity,
 		render::RenderGraph& renderGraph,
-		render::handle_t outputTargetSetId,
+		render::handle_t visualWriteTargetSetId,
 		render::handle_t gbufferTargetSetId,
 		render::handle_t ambientOcclusionTargetSetId,
 		render::handle_t reflectionsTargetSetId,
@@ -218,7 +220,8 @@ private:
 		render::handle_t outputTargetSetId,
 		render::handle_t gbufferTargetSetId,
 		render::handle_t velocityTargetSetId,
-		render::handle_t visualTargetSetId
+		render::handle_t visualWriteTargetSetId,
+		render::handle_t visualReadTargetSetId
 	) const;
 };
 

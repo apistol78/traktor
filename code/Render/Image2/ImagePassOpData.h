@@ -26,19 +26,19 @@ class IResourceManager;
     namespace render
     {
 
-class ImageStep;
+class ImagePassOp;
 class IRenderSystem;
 class Shader;
 
 /*!
  * \ingroup Render
  */
-class T_DLLCLASS ImageStepData : public ISerializable
+class T_DLLCLASS ImagePassOpData : public ISerializable
 {
     T_RTTI_CLASS;
 
 public:
-    virtual Ref< const ImageStep > createInstance(resource::IResourceManager* resourceManager, IRenderSystem* renderSystem) const = 0;
+    virtual Ref< const ImagePassOp > createInstance(resource::IResourceManager* resourceManager, IRenderSystem* renderSystem) const = 0;
 
     virtual void serialize(ISerializer& s) override;
 

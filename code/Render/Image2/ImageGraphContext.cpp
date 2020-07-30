@@ -64,5 +64,20 @@ ITexture* ImageGraphContext::findTexture(const RenderGraph& renderGraph, handle_
 		return targetSet->getDepthTexture();
 }
 
+void ImageGraphContext::setFloatParameter(handle_t handle, float value)
+{
+	m_scalarParameters[handle] = value;
+}
+
+void ImageGraphContext::setVectorParameter(handle_t handle, const Vector4& value)
+{
+	m_vectorParameters[handle] = value;
+}
+
+void ImageGraphContext::setTextureParameter(handle_t handle, const resource::Proxy< ITexture >& value)
+{
+	m_textureParameters[handle] = value;
+}
+
 	}
 }

@@ -58,6 +58,7 @@ void AnimationEditorProfile::createEntityFactories(
 	outEntityFactories.push_back(new AnimatedMeshComponentFactory(context->getResourceManager(), context->getPhysicsManager()));
 	outEntityFactories.push_back(new BoidsFactory());
 	outEntityFactories.push_back(new ClothFactory(context->getResourceManager(), context->getRenderSystem()));
+	outEntityFactories.push_back(new PathFactory());
 }
 
 void AnimationEditorProfile::createEntityRenderers(

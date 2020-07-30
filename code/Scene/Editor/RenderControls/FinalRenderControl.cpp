@@ -142,6 +142,7 @@ void FinalRenderControl::destroy()
 		m_camera = nullptr;
 	}
 
+	safeDestroy(m_renderGraph);
 	safeDestroy(m_worldRenderer);
 	safeClose(m_renderView);
 	safeDestroy(m_containerAspect);

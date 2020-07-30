@@ -66,7 +66,7 @@
 				<second>732</second>
 			</position>
 			<from>0</from>
-			<to>15</to>
+			<to>23</to>
 		</item>
 		<item type="traktor.render.Mul" version="traktor.render.Node:1">
 			<id>{526B6C89-1455-BF42-AB79-D79C7CA4F5EF}</id>
@@ -144,7 +144,7 @@ Sample shadow
 			<parameterName>GaussianOffsetWeights</parameterName>
 			<type>PtVector</type>
 			<frequency>UfOnce</frequency>
-			<length>16</length>
+			<length>24</length>
 		</item>
 		<item type="traktor.render.Div" version="traktor.render.Node:1">
 			<id>{4EAF9BA9-05E9-A748-98E0-3C445B0183C2}</id>
@@ -335,7 +335,7 @@ Shadow; adjusted for msaa.
 				<first>1040</first>
 				<second>412</second>
 			</position>
-			<value>2</value>
+			<value>2.5</value>
 		</item>
 		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
 			<id>{C72C5C23-4886-EF42-9291-C9D63BB0661E}</id>

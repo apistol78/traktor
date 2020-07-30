@@ -46,26 +46,31 @@ public:
 	struct Target
 	{
 		const wchar_t* name;
+		handle_t persistentHandle;
 		RenderGraphTargetSetDesc targetSetDesc;
 		Ref< IRenderTargetSet > sharedDepthStencilTargetSet;
 		Ref< IRenderTargetSet > rts;
 		handle_t sizeReferenceTargetSetId;
 		int32_t referenceCount;
 		bool storeDepth;
-		bool transient;
+		bool external;
 
 		Target()
 		:	name(nullptr)
+		,	persistentHandle(0)
 		,	sizeReferenceTargetSetId(0)
 		,	referenceCount(0)
 		,	storeDepth(false)
-		,	transient(false)
+		,	external(false)
 		{
 		}
 	};
 
 	/*! */
 	explicit RenderGraph(IRenderSystem* renderSystem);
+
+	/*! */
+	virtual ~RenderGraph();
 
 	/*! */
 	void destroy();
@@ -87,7 +92,15 @@ public:
 
 	/*! Add persistent target set.
 	 *
+	 * A persistent target set is a target set which is reused
+	 * for multiple frames, such as last frame etc.
+	 * The persistent handle is used to track target so
+	 * same target is reused (if possible).
+	 * First time target is requested it's created thus
+	 * algorithms should expect target's content to not always be valid.
+	 *
 	 * \param name Name of target set, used for debugging only.
+	 * \param persistentHandle Unique handle to track persistent targets.
 	 * \param targetSetDesc Render target set create description.
 	 * \param sharedDepthStencil Share depth/stencil with target set.
 	 * \param sizeReferenceTargetSetId Target to get reference size from when determine target set.
@@ -95,6 +108,7 @@ public:
 	 */
 	handle_t addPersistentTargetSet(
 		const wchar_t* const name,
+		handle_t persistentHandle,
 		const RenderGraphTargetSetDesc& targetSetDesc,
 		IRenderTargetSet* sharedDepthStencil = nullptr,
 		handle_t sizeReferenceTargetSetId = 0
@@ -128,23 +142,39 @@ public:
 	 */
 	void addPass(const RenderPass* pass);
 
-	/*! */
+	/*! Validate render graph.
+	 *
+	 * Walks through all registered passes to determine
+	 * which order they should be rendered and which
+	 * targets needs to be acquired etc.
+	 *
+	 * This must be called before build since order
+	 * of passes is calculated when validation.
+	 *
+	 * \return True if validation succeeded and graph is ready to be rendered.
+	 */
 	bool validate();
 
 	/*! */
 	bool build(RenderContext* renderContext, int32_t width, int32_t height);
 
 	/*! */
-	const SmallMap< handle_t, Target >& getTargets() const;
+	const SmallMap< handle_t, Target >& getTargets() const { return m_targets; }
+
+	/*! */
+	const RefArray< const RenderPass >& getPasses() const { return m_passes; }
+
+	/*! */
+	const StaticVector< uint32_t, 512 >& getOrder() const { return m_order; }
 
 private:
-	Ref< RenderGraphTargetSetPool > m_pool;
+	RenderGraphTargetSetPool* m_pool;
 	SmallMap< handle_t, Target > m_targets;
 	RefArray< const RenderPass > m_passes;
 	StaticVector< uint32_t, 512 > m_order;
 	handle_t m_nextTargetSetId;
 
-	void traverse(int32_t index, const std::function< void(int32_t) >& fn) const;
+	bool acquire(int32_t width, int32_t height, Target& outTarget);
 };
 
 	}

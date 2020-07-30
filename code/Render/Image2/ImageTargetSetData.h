@@ -35,6 +35,7 @@ private:
 	friend class ImageGraphPipeline;
 
 	std::wstring m_targetSetId;
+	std::wstring m_persistentHandle;
 	std::wstring m_textureIds[RenderGraphTargetSetDesc::MaxColorTargets];
 	RenderGraphTargetSetDesc m_targetSetDesc;
 };
