@@ -161,6 +161,7 @@ void EffectPreviewControl::destroy()
 	ui::Application::getInstance()->removeEventHandler< ui::IdleEvent >(m_idleEventHandler);
 
 	safeDestroy(m_primitiveRenderer);
+	safeDestroy(m_renderGraph);
 	safeClose(m_renderView);
 
 	safeDestroy(m_soundPlayer);
