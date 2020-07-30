@@ -281,7 +281,9 @@ Ref< IProcess > OS::execute(
 
 			fileActions = new posix_spawn_file_actions_t;
 			posix_spawn_file_actions_init(fileActions);
+#if !defined(__RPI__)
 			posix_spawn_file_actions_addchdir_np(fileActions, wd);
+#endif
 			posix_spawn_file_actions_adddup2(fileActions, childStdOut[1], STDOUT_FILENO);
 			posix_spawn_file_actions_addclose(fileActions, childStdOut[0]);
 			posix_spawn_file_actions_adddup2(fileActions, childStdErr[1], STDERR_FILENO);
@@ -303,8 +305,10 @@ Ref< IProcess > OS::execute(
 	{
 		fileActions = new posix_spawn_file_actions_t;
 		posix_spawn_file_actions_init(fileActions);
+#if !defined(__RPI__)
 		posix_spawn_file_actions_addchdir_np(fileActions, wd);
-		
+#endif
+	
 		// Spawn process.
 		err = posix_spawn(&pid, argv[0], fileActions, 0, argv, envv);
 	}
