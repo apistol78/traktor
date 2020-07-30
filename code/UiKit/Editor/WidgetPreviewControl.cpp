@@ -167,6 +167,7 @@ void WidgetPreviewControl::destroy()
 	ui::Application::getInstance()->removeEventHandler< ui::IdleEvent >(m_idleEventHandler);
 
 	safeDestroy(m_displayRenderer);
+	safeDestroy(m_renderGraph);
 	safeClose(m_renderView);
 
 	ui::Widget::destroy();

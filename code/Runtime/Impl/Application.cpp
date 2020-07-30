@@ -885,11 +885,13 @@ bool Application::update()
 					renderView->getStatistics(m_renderViewStats);
 					T_PROFILER_END();
 				}
+#if !defined(__EMSCRIPTEN__)
 				else
 				{
 					// Yield main thread.
 					m_threadRender->sleep(10);
 				}
+#endif
 
 				double renderEnd = m_timer.getElapsedTime();
 				m_renderDuration = float(renderEnd - renderBegin);

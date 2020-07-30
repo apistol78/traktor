@@ -79,6 +79,8 @@ function deploy(args)
 		emcc = emcc .. ".bat"
 	end
 
+	stdout:printLn("emcc = \"" .. emcc .. "\"")
+
 	-- Get library paths.
 	local libraryPaths = ""
 	local paths = ""

@@ -2956,7 +2956,7 @@
 		<item type="Project" version="1">
 			<enable>true</enable>
 			<name>Traktor.Render.OpenGL.ES2</name>
-			<sourcePath>$(TRAKTOR_HOME)/code/Render/OpenGL</sourcePath>
+			<sourcePath>$(TRAKTOR_HOME)/code/Render/OpenGL/ES2</sourcePath>
 			<configurations>
 				<item type="Configuration" version="5">
 					<name>DebugStatic</name>
@@ -2965,8 +2965,6 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/angle/include</item>
-						<item>$(TRAKTOR_HOME)/3rdp/glsl-optimizer-master/src/glsl</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
@@ -2998,8 +2996,6 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/angle/include</item>
-						<item>$(TRAKTOR_HOME)/3rdp/glsl-optimizer-master/src/glsl</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
@@ -3029,15 +3025,6 @@
 				<item type="File">
 					<fileName>*.*</fileName>
 					<items/>
-				</item>
-				<item type="Filter">
-					<name>Glsl</name>
-					<items>
-						<item type="File">
-							<fileName>Glsl/*.*</fileName>
-							<items/>
-						</item>
-					</items>
 				</item>
 			</items>
 			<dependencies>
