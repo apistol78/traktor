@@ -117,6 +117,8 @@ private:
 
 	void eventEditFocus(FocusEvent* event);
 
+	void eventEditKey(KeyDownEvent* event);
+
 	void eventButtonDown(MouseButtonDownEvent* event);
 
 	void eventButtonUp(MouseButtonUpEvent* event);

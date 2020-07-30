@@ -106,7 +106,7 @@ void QuickOpenDialog::eventFilterChange(ui::ContentChangeEvent* event)
 
 void QuickOpenDialog::eventFilterKey(ui::KeyDownEvent* event)
 {
-	if (event->getVirtualKey() == ui::VkReturn || event->getVirtualKey() == ui::VkSpace)
+	if (event->getVirtualKey() == ui::VkReturn)
 	{
 		endModal(ui::DrOk);
 		event->consume();
