@@ -12,13 +12,43 @@ namespace traktor
 {
 	namespace render
 	{
+		namespace
+		{
+
+typedef StaticSet< uint32_t, 512 > visitedSet_t;
+
+void traverse(const RefArray< const RenderPass >& passes, int32_t index, visitedSet_t& visited, const std::function< void(int32_t) >& fn)
+{
+	if (!visited.insert(index))
+		return;
+
+	// Traverse inputs first as we want to traverse passes depth-first.
+	for (const auto& input : passes[index]->getInputs())
+	{
+		for (int32_t i = 0; i < passes.size(); ++i)
+		{
+			if (i != index && passes[i]->getOutput().targetSetId == input.targetSetId)
+				traverse(passes, i, visited, fn);
+		}
+	}
+
+	// Call visitor for this pass.
+	fn(index);
+}
+
+		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderGraph", RenderGraph, Object)
 
 RenderGraph::RenderGraph(IRenderSystem* renderSystem)
-:	m_nextTargetSetId(1)
+:	m_pool(new RenderGraphTargetSetPool(renderSystem))
+,	m_nextTargetSetId(1)
 {
-	m_pool = new RenderGraphTargetSetPool(renderSystem);
+}
+
+RenderGraph::~RenderGraph()
+{
+	T_FATAL_ASSERT_M(m_pool == nullptr, L"Forgot to destroy RenderGraph instance.");
 }
 
 void RenderGraph::destroy()
@@ -26,7 +56,12 @@ void RenderGraph::destroy()
 	m_targets.clear();
 	m_passes.clear();
 	m_order.clear();
-	m_pool = nullptr;
+
+	if (m_pool != nullptr)
+	{
+		delete m_pool;
+		m_pool = nullptr;
+	}
 }
 
 handle_t RenderGraph::addTransientTargetSet(
@@ -40,12 +75,13 @@ handle_t RenderGraph::addTransientTargetSet(
 
 	auto& target = m_targets[targetSetId];
 	target.name = name;
+	target.persistentHandle = 0;
 	target.targetSetDesc = targetSetDesc;
 	target.sharedDepthStencilTargetSet = sharedDepthStencilTargetSet;
 	target.sizeReferenceTargetSetId = sizeReferenceTargetSetId;
 	target.referenceCount = 0;
 	target.storeDepth = false;
-	target.transient = true;
+	target.external = false;
 
 	if (sharedDepthStencilTargetSet != nullptr || targetSetDesc.createDepthStencil || targetSetDesc.usingPrimaryDepthStencil)
 		target.storeDepth = true;
@@ -55,6 +91,7 @@ handle_t RenderGraph::addTransientTargetSet(
 
 handle_t RenderGraph::addPersistentTargetSet(
 	const wchar_t* const name,
+	handle_t persistentHandle,
 	const RenderGraphTargetSetDesc& targetSetDesc,
 	IRenderTargetSet* sharedDepthStencilTargetSet,
 	handle_t sizeReferenceTargetSetId
@@ -64,12 +101,13 @@ handle_t RenderGraph::addPersistentTargetSet(
 
 	auto& target = m_targets[targetSetId];
 	target.name = name;
+	target.persistentHandle = persistentHandle;
 	target.targetSetDesc = targetSetDesc;
 	target.sharedDepthStencilTargetSet = sharedDepthStencilTargetSet;
 	target.sizeReferenceTargetSetId = sizeReferenceTargetSetId;
 	target.referenceCount = 0;
 	target.storeDepth = false;
-	target.transient = false;
+	target.external = false;
 
 	if (sharedDepthStencilTargetSet != nullptr || targetSetDesc.createDepthStencil || targetSetDesc.usingPrimaryDepthStencil)
 		target.storeDepth = true;
@@ -87,11 +125,12 @@ handle_t RenderGraph::addExternalTargetSet(const wchar_t* const name, IRenderTar
 
 	auto& target = m_targets[targetSetId];
 	target.name = name;
+	target.persistentHandle = 0;
 	target.rts = targetSet;
 	target.sizeReferenceTargetSetId = 0;
 	target.referenceCount = 0;
 	target.storeDepth = true;
-	target.transient = false;
+	target.external = true;
 
 	return targetSetId;
 }
@@ -122,7 +161,7 @@ void RenderGraph::addPass(const RenderPass* pass)
 
 bool RenderGraph::validate()
 {
-	StaticSet< uint32_t, 512 > added;
+	visitedSet_t added;
 
 	// Collect order of passes, depth-first.
 	m_order.resize(0);	
@@ -134,22 +173,20 @@ bool RenderGraph::validate()
 			if (output.targetSetId == 0)
 			{
 				// "Render to primary" passes is included as roots.
-				traverse(i, [&](int32_t index) {
-					if (added.insert(index))
-						m_order.push_back(index);
+				traverse(m_passes, i, added, [&](int32_t index) {
+					m_order.push_back(index);
 				});
 			}
 			else
 			{
-				// Non-transient outputs indicate some sort of caching scheme, such
+				// External outputs indicate some sort of caching scheme, such
 				// as offscreen caching etc, so we need to ensure they are executed
 				// regardless of dependencies.
 				auto it = m_targets.find(output.targetSetId);
-				if (!it->second.transient)
+				if (it->second.external)
 				{
-					traverse(i, [&](int32_t index) {
-						if (added.insert(index))
-							m_order.push_back(index);
+					traverse(m_passes, i, added, [&](int32_t index) {
+						m_order.push_back(index);
 					});
 				}
 			}
@@ -157,15 +194,14 @@ bool RenderGraph::validate()
 		else
 		{
 			// Passes which doesn't have an output need to be included as roots.
-			traverse(i, [&](int32_t index) {
-				if (added.insert(index))
-					m_order.push_back(index);
+			traverse(m_passes, i, added, [&](int32_t index) {
+				m_order.push_back(index);
 			});
 		}
 	}
 
 	// Calculate target reference counts,
-	// and set storage atttribute of each pass's output.
+	// also set storage flags of each pass's output.
 	for (auto index : m_order)
 	{
 		const auto pass = m_passes[index];
@@ -192,11 +228,24 @@ bool RenderGraph::build(RenderContext* renderContext, int32_t width, int32_t hei
 {
 	T_FATAL_ASSERT(!renderContext->havePendingDraws());
 
+	// Acquire all persistent targets first in case they are read from
+	// before being used as an output.
+	for (auto& it : m_targets)
+	{
+		auto& target = it.second;
+		if (target.rts == nullptr && target.persistentHandle != 0)
+		{
+			T_ASSERT(target.referenceCount > 0);
+			if (!acquire(width, height, target))
+				return false;
+		}
+	}
+
 	// Render passes in dependency order.
 	for (auto index : m_order)
 	{
 		const auto pass = m_passes[index];
-		const auto inputs = pass->getInputs();
+		const auto& inputs = pass->getInputs();
 		const auto& output = pass->getOutput();
 
 		// Begin render pass.
@@ -210,34 +259,8 @@ bool RenderGraph::build(RenderContext* renderContext, int32_t width, int32_t hei
 				auto& target = it->second;
 				if (target.rts == nullptr)
 				{
-					int32_t referenceWidth = width;
-					int32_t referenceHeight = height;
-
-					// Use size of reference target.
-					if (target.sizeReferenceTargetSetId != 0)
-					{
-						auto it2 = m_targets.find(target.sizeReferenceTargetSetId);
-						if (it2 == m_targets.end())
-							return false;
-
-						referenceWidth = it2->second.targetSetDesc.width;
-						referenceHeight = it2->second.targetSetDesc.height;
-					}
-
-					// Use size of shared depth/stencil target since they must match.
-					if (target.sharedDepthStencilTargetSet != nullptr)
-					{
-						referenceWidth = target.sharedDepthStencilTargetSet->getWidth();
-						referenceHeight = target.sharedDepthStencilTargetSet->getHeight();
-					}
-
-					target.rts = m_pool->acquire(
-						target.targetSetDesc,
-						target.sharedDepthStencilTargetSet,
-						referenceWidth,
-						referenceHeight
-					);
-					if (!target.rts)
+					T_ASSERT(!target.external);
+					if (!acquire(width, height, target))
 						return false;
 				}	
 
@@ -255,16 +278,6 @@ bool RenderGraph::build(RenderContext* renderContext, int32_t width, int32_t hei
 				tb->load = TfColor | TfDepth;
 				tb->store = TfColor | TfDepth;
 				renderContext->enqueue(tb);			
-			}
-		}
-
-		// Build sub passes first.
-		for (auto subPass : pass->getSubPasses())
-		{
-			for (const auto& build : subPass->getBuilds())
-			{
-				build(*this, renderContext);
-				T_FATAL_ASSERT(!renderContext->havePendingDraws());
 			}
 		}
 
@@ -295,7 +308,7 @@ bool RenderGraph::build(RenderContext* renderContext, int32_t width, int32_t hei
 			auto& target = it->second;
 			if (--target.referenceCount <= 0)
 			{
-				if (target.transient)
+				if (!target.external)
 					m_pool->release(target.rts);
 				target.rts = nullptr;
 			}
@@ -316,24 +329,41 @@ bool RenderGraph::build(RenderContext* renderContext, int32_t width, int32_t hei
 	return true;
 }
 
-const SmallMap< handle_t, RenderGraph::Target >& RenderGraph::getTargets() const
+bool RenderGraph::acquire(int32_t width, int32_t height, Target& outTarget)
 {
-	return m_targets;
-}
-
-void RenderGraph::traverse(int32_t index, const std::function< void(int32_t) >& fn) const
-{
-	for (const auto& input : m_passes[index]->getInputs())
+	// Use size of reference target.
+	if (outTarget.sizeReferenceTargetSetId != 0)
 	{
-		for (int32_t i = 0; i < m_passes.size(); ++i)
-		{
-			if (i == index)
-				continue;
-			if (m_passes[i]->getOutput().targetSetId == input.targetSetId)
-				traverse(i, fn);
-		}
+		T_ASSERT_M(outTarget.sharedDepthStencilTargetSet == nullptr, L"Cannot use both reference target and shared depth/stencil target for size reference.");
+
+		auto it = m_targets.find(outTarget.sizeReferenceTargetSetId);
+		if (it == m_targets.end())
+			return false;
+
+		width = it->second.targetSetDesc.width;
+		height = it->second.targetSetDesc.height;
 	}
-	fn(index);
+
+	// Use size of shared depth/stencil target since they must match.
+	if (outTarget.sharedDepthStencilTargetSet != nullptr)
+	{
+		T_ASSERT_M(outTarget.sizeReferenceTargetSetId == 0, L"Cannot use both reference target and shared depth/stencil target for size reference.");
+
+		width = outTarget.sharedDepthStencilTargetSet->getWidth();
+		height = outTarget.sharedDepthStencilTargetSet->getHeight();
+	}
+
+	outTarget.rts = m_pool->acquire(
+		outTarget.targetSetDesc,
+		outTarget.sharedDepthStencilTargetSet,
+		width,
+		height,
+		outTarget.persistentHandle
+	);
+	if (!outTarget.rts)
+		return false;
+
+	return true;
 }
 
 	}

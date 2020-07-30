@@ -1,9 +1,9 @@
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberRefArray.h"
+#include "Render/Image2/IImageStepData.h"
 #include "Render/Image2/ImageGraph.h"
 #include "Render/Image2/ImageGraphData.h"
-#include "Render/Image2/ImagePassData.h"
-#include "Render/Image2/ImageStepData.h"
+#include "Render/Image2/ImagePassOpData.h"
 #include "Render/Image2/ImageTargetSetData.h"
 #include "Render/Image2/ImageTextureData.h"
 
@@ -12,11 +12,11 @@ namespace traktor
     namespace render
     {
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ImageGraphData", 0, ImageGraphData, ISerializable)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ImageGraphData", 1, ImageGraphData, ISerializable)
 
 Ref< ImageGraph > ImageGraphData::createInstance(resource::IResourceManager* resourceManager, IRenderSystem* renderSystem) const
 {
-    Ref< ImageGraph > instance = new ImageGraph();
+    Ref< ImageGraph > instance = new ImageGraph(m_name);
 
     for (auto textureData : m_textures)
     {
@@ -34,20 +34,20 @@ Ref< ImageGraph > ImageGraphData::createInstance(resource::IResourceManager* res
         instance->m_targetSets.push_back(targetSet);
     }
 
-    for (auto passData : m_passes)
-    {
-        Ref< const ImagePass > pass = passData->createInstance(resourceManager, renderSystem);
-        if (!pass)
-            return nullptr;
-        instance->m_passes.push_back(pass);
-    }
-
     for (auto stepData : m_steps)
     {
-        Ref< const ImageStep > step = stepData->createInstance(resourceManager, renderSystem);
+        Ref< const IImageStep > step = stepData->createInstance(resourceManager, renderSystem);
         if (!step)
             return nullptr;
         instance->m_steps.push_back(step);
+    }
+
+    for (auto opd : m_ops)
+    {
+        Ref< const ImagePassOp > op = opd->createInstance(resourceManager, renderSystem);
+        if (!op)
+            return nullptr;
+        instance->m_ops.push_back(op);
     }
 
     return instance;
@@ -55,10 +55,13 @@ Ref< ImageGraph > ImageGraphData::createInstance(resource::IResourceManager* res
 
 void ImageGraphData::serialize(ISerializer& s)
 {
+    T_ASSERT(s.getVersion< ImageGraphData >() >= 1);
+
+    s >> Member< std::wstring >(L"name", m_name);
     s >> MemberRefArray< ImageTextureData >(L"textures", m_textures);
     s >> MemberRefArray< ImageTargetSetData >(L"targetSets", m_targetSets);
-    s >> MemberRefArray< ImagePassData >(L"passes", m_passes);
-    s >> MemberRefArray< ImageStepData >(L"steps", m_steps);
+    s >> MemberRefArray< IImageStepData >(L"steps", m_steps);
+    s >> MemberRefArray< ImagePassOpData >(L"ops", m_ops);
 }
 
     }

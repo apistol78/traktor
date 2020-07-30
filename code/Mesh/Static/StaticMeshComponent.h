@@ -30,12 +30,15 @@ public:
 
 	virtual void destroy() override final;
 
+	virtual void setOwner(world::Entity* owner) override final;
+
 	virtual Aabb3 getBoundingBox() const override final;
 
 	virtual void build(const world::WorldBuildContext& context, const world::WorldRenderView& worldRenderView, const world::IWorldRenderPass& worldRenderPass) override final;
 
 private:
 	resource::Proxy< StaticMesh > m_mesh;
+	Transform m_lastTransform;		//!< Last rendered transform.
 };
 
 	}

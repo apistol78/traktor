@@ -13,26 +13,20 @@ RenderPass::RenderPass(const std::wstring& name)
 	m_output.targetSetId = ~0;
 }
 
+void RenderPass::setName(const std::wstring& name)
+{
+	m_name = name;
+}
+
 void RenderPass::addInput(handle_t targetSetId, bool useDepth)
 {
-	// Just ignore invalid target set id; convenient when setting up passes.
+	// Just ignore invalid target set id; convenient when setting up passes to be able to add null inputs.
 	if (targetSetId == 0)
 		return;
 
 	auto& input = m_inputs.push_back();
 	input.targetSetId = targetSetId;
 	input.useDepth = useDepth;
-}
-
-StaticVector< RenderPass::Input, 16 > RenderPass::getInputs() const
-{
-	auto inputs = m_inputs;
-	for (auto subPass : m_subPasses)
-	{
-		for (const auto& subInput : subPass->m_inputs)
-			inputs.push_back(subInput);
-	}
-	return inputs;
 }
 
 void RenderPass::setOutput(handle_t targetSetId)
@@ -50,11 +44,6 @@ void RenderPass::setOutput(handle_t targetSetId, const Clear& clear)
 void RenderPass::addBuild(const fn_build_t& build)
 {
 	m_builds.push_back(build);
-}
-
-void RenderPass::addSubPass(const RenderPass* subPass)
-{
-	m_subPasses.push_back(subPass);
 }
 
 	}

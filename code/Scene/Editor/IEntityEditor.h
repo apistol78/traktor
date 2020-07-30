@@ -1,5 +1,6 @@
 #pragma once
 
+#include <string>
 #include "Core/Object.h"
 #include "Core/Math/Frustum.h"
 #include "Core/Math/Matrix44.h"

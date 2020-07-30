@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Core/Containers/AlignedVector.h"
-#include "Render/Image2/ImageStep.h"
+#include "Render/Image2/ImagePassOp.h"
 #include "Resource/Proxy.h"
 
 // import/export mechanism.
@@ -22,7 +22,7 @@ class Shader;
 /*!
  * \ingroup Render
  */
-class T_DLLCLASS DirectionalBlur : public ImageStep
+class T_DLLCLASS DirectionalBlur : public ImagePassOp
 {
 	T_RTTI_CLASS;
 

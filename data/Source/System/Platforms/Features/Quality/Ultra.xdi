@@ -86,7 +86,7 @@
 			<item>
 				<first>World.AntiAliasQuality</first>
 				<second type="traktor.PropertyInteger">
-					<value>4</value>
+					<value>2</value>
 				</second>
 			</item>
 			<item>
@@ -98,7 +98,7 @@
 			<item>
 				<first>World.MotionBlurQuality</first>
 				<second type="traktor.PropertyInteger">
-					<value>4</value>
+					<value>0</value>
 				</second>
 			</item>
 			<item>

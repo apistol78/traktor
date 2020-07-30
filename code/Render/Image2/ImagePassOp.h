@@ -28,10 +28,10 @@ class Shader;
 /*! Image pass step.
  * \ingroup Render
  * 
- * Each pass can have a sequence of steps
+ * Each pass can have a sequence of operations
  * to implement it's functionality.
  */
-class T_DLLCLASS ImageStep : public Object
+class T_DLLCLASS ImagePassOp : public Object
 {
 	T_RTTI_CLASS;
 
@@ -49,7 +49,7 @@ public:
 	) const = 0;
 
 protected:
-	friend class ImageStepData;
+	friend class ImagePassOpData;
 
 	struct Source
 	{

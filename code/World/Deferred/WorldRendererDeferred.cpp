@@ -41,6 +41,12 @@ const int32_t c_maxLightCount = 16;
 const int32_t c_maxLightCount = 1024;
 #endif
 
+const render::Handle s_handleVisualTargetSet[] =
+{
+	render::Handle(L"World_VisualTargetSet_Even"),
+	render::Handle(L"World_VisualTargetSet_Odd")
+};
+
 const resource::Id< render::Shader > c_lightShader(L"{707DE0B0-0E2B-A44A-9441-9B1FCFD428AA}");
 const resource::Id< render::Shader > c_reflectionShader(L"{F04EEA34-85E0-974F-BE97-79D24C6ACFBD}");
 const resource::Id< render::Shader > c_fogShader(L"{9453D74C-76C4-8748-9A5B-9E3D6D4F9406}");
@@ -194,6 +200,7 @@ bool WorldRendererDeferred::create(
 	m_reflectionsQuality = desc.quality.reflections;
 	m_ambientOcclusionQuality = desc.quality.ambientOcclusion;
 	m_antiAliasQuality = desc.quality.antiAlias;
+	m_gamma = desc.gamma;
 	m_sharedDepthStencil = desc.sharedDepthStencil;
 
 	// Allocate frames.
@@ -261,17 +268,15 @@ bool WorldRendererDeferred::create(
 		std::abs(desc.gamma - 1.0f) > FUZZY_EPSILON
 	)
 	{
-		if (resourceManager->bind(c_gammaCorrection, m_gammaCorrection))
-		{
-			m_gammaCorrection->setFloatParameter(s_handleGamma, desc.gamma);
-			m_gammaCorrection->setFloatParameter(s_handleGammaInverse, 1.0f / desc.gamma);
-		}
-		else
+		if (!resourceManager->bind(c_gammaCorrection, m_gammaCorrection))
 			log::warning << L"Unable to create gamma correction process; gamma correction disabled." << Endl;
 	}
 
-	// Create motion blur prime processing.
-	if (m_motionBlurQuality > Quality::Disabled)
+	// Create motion blur prime processing; priming is also used by TAA.
+	if (
+		m_motionBlurQuality > Quality::Disabled ||
+		m_antiAliasQuality >= Quality::Ultra
+	)
 	{
 		if (!resourceManager->bind(c_motionBlurPrime, m_motionBlurPrime))
 		{
@@ -295,9 +300,7 @@ bool WorldRendererDeferred::create(
 	if (m_toneMapQuality > Quality::Disabled)
 	{
 		resource::Id< render::ImageGraph > toneMap = getToneMapId(m_settings.exposureMode);
-		if (resourceManager->bind(toneMap, m_toneMap))
-			m_toneMap->setFloatParameter(s_handleExposure, m_settings.exposure);
-		else
+		if (!resourceManager->bind(toneMap, m_toneMap))
 		{
 			log::warning << L"Unable to create tone map process." << Endl;
 			m_toneMapQuality = Quality::Disabled;
@@ -434,13 +437,14 @@ void WorldRendererDeferred::setup(
 	int32_t frame = m_count % (int32_t)m_frames.size();
 	WorldRenderView worldRenderView = immutableWorldRenderView;
 
-#if 0
-	// Jitter projection for TSAA.
-	Vector2 r = Vector2((m_count / 2) & 1, m_count & 1) / worldRenderView_.getViewSize();
-	Matrix44 proj = worldRenderView_.getProjection();
-	proj = translate(r.x, r.y, 0.0f) * proj;
-	worldRenderView.setProjection(proj);
-#endif
+	// Jitter projection for TAA.
+	if (m_antiAliasQuality >= Quality::Ultra)
+	{
+		Vector2 r = Vector2((m_count / 2) & 1, m_count & 1) / immutableWorldRenderView.getViewSize();
+		Matrix44 proj = immutableWorldRenderView.getProjection();
+		proj = translate(r.x, r.y, 0.0f) * proj;
+		worldRenderView.setProjection(proj);
+	}
 
 	// Gather active lights.
 	m_lights.resize(0);
@@ -507,6 +511,17 @@ void WorldRendererDeferred::setup(
 		context.setup(worldRenderView, rootEntity);
 		context.flush();
 	}
+
+	// Add visual target sets.
+	render::RenderGraphTargetSetDesc rgtd = {};
+	rgtd.count = 1;
+	rgtd.createDepthStencil = false;
+	rgtd.usingPrimaryDepthStencil = (m_sharedDepthStencil == nullptr) ? true : false;
+	rgtd.targets[0].colorFormat = render::TfR11G11B10F;
+	rgtd.referenceWidthDenom = 1;
+	rgtd.referenceHeightDenom = 1;
+	auto visualReadTargetSetId = renderGraph.addPersistentTargetSet(L"History", s_handleVisualTargetSet[m_count % 2], rgtd, m_sharedDepthStencil, outputTargetSetId);
+	auto visualWriteTargetSetId = renderGraph.addPersistentTargetSet(L"Visual", s_handleVisualTargetSet[(m_count + 1) % 2], rgtd, m_sharedDepthStencil, outputTargetSetId);
 	
 	// Add passes to render graph.
 	auto gbufferTargetSetId = setupGBufferPass(
@@ -574,14 +589,14 @@ void WorldRendererDeferred::setup(
 		renderGraph,
 		outputTargetSetId,
 		gbufferTargetSetId,
-		0 // visualTargetSetId
+		visualReadTargetSetId
 	);
 
-	auto visualTargetSetId = setupVisualPass(
+	setupVisualPass(
 		worldRenderView,
 		rootEntity,
 		renderGraph,
-		outputTargetSetId,
+		visualWriteTargetSetId,
 		gbufferTargetSetId,
 		ambientOcclusionTargetSetId,
 		reflectionsTargetSetId,
@@ -590,8 +605,6 @@ void WorldRendererDeferred::setup(
 		frame
 	);
 
-	// \fixme Keep history frames...
-
 	setupProcessPass(
 		worldRenderView,
 		rootEntity,
@@ -599,7 +612,8 @@ void WorldRendererDeferred::setup(
 		outputTargetSetId,
 		gbufferTargetSetId,
 		velocityTargetSetId,
-		visualTargetSetId
+		visualWriteTargetSetId,
+		visualReadTargetSetId
 	);
 
 	m_count++;
@@ -687,8 +701,8 @@ render::handle_t WorldRendererDeferred::setupVelocityPass(
 	render::handle_t gbufferTargetSetId
 ) const
 {
-	if (m_motionBlurQuality == Quality::Disabled)
-		return 0;
+	//if (m_motionBlurQuality == Quality::Disabled)
+	//	return 0;
 
 	T_PROFILER_SCOPE(L"World setup velocity");
 
@@ -712,7 +726,7 @@ render::handle_t WorldRendererDeferred::setupVelocityPass(
 		ipd.lastView = worldRenderView.getLastView();
 		ipd.view = worldRenderView.getView();
 		ipd.projection = worldRenderView.getProjection();
-		ipd.deltaTime = 1.0f / 60.0f;
+		ipd.deltaTime = worldRenderView.getDeltaTime();
 
 		render::ImageGraphContext cx(m_screenRenderer);
 		cx.associateTextureTargetSet(s_handleInputDepth, gbufferTargetSetId, 0);
@@ -1260,7 +1274,7 @@ render::handle_t WorldRendererDeferred::setupReflectionsPass(
 	render::RenderGraph& renderGraph,
 	render::handle_t outputTargetSetId,
 	render::handle_t gbufferTargetSetId,
-	render::handle_t visualTargetSetId
+	render::handle_t visualReadTargetSetId
 ) const
 {
 	if (m_reflectionsQuality == Quality::Disabled)
@@ -1284,8 +1298,8 @@ render::handle_t WorldRendererDeferred::setupReflectionsPass(
 
 	rp->addInput(gbufferTargetSetId);
 
-	// if (m_reflectionsQuality >= Quality::High)
-	// 	rp->addInput(visualTargetSetId, 0, true);
+	if (m_reflectionsQuality >= Quality::High)
+		rp->addInput(visualReadTargetSetId);
 
 	render::Clear clear;
 	clear.mask = render::CfColor;
@@ -1331,23 +1345,23 @@ render::handle_t WorldRendererDeferred::setupReflectionsPass(
 			renderContext->merge(render::RpAll);
 
 			// Render screenspace reflections.
-			// if (m_reflectionsQuality >= Quality::High)
-			// {
-				//	auto visualTargetSet = renderGraph.getTargetSet(visualTargetSetId);
+			//if (m_reflectionsQuality >= Quality::High)
+			//{
+			//	auto visualTargetSet = renderGraph.getTargetSet(visualReadTargetSetId);
 
-				// auto lrb = renderContext->alloc< render::LambdaRenderBlock >(L"Reflections");
-				// lrb->lambda = [=](render::IRenderView* renderView)
-				// {
-				// 	Scalar p11 = projection.get(0, 0);
-				// 	Scalar p22 = projection.get(1, 1);
+			//	auto lrb = renderContext->alloc< render::LambdaRenderBlock >(L"Reflections");
+			//	lrb->lambda = [=](render::IRenderView* renderView)
+			//	{
+			//		Scalar p11 = projection.get(0, 0);
+			//		Scalar p22 = projection.get(1, 1);
 
-				// 	m_reflectionShader->setVectorParameter(s_handleMagicCoeffs, Vector4(1.0f / p11, 1.0f / p22, 0.0f, 0.0f));
-				// 	m_reflectionShader->setTextureParameter(s_handleScreenMap, visualTargetSet->getColorTexture(0));
+			//		m_reflectionShader->setVectorParameter(s_handleMagicCoeffs, Vector4(1.0f / p11, 1.0f / p22, 0.0f, 0.0f));
+			//		m_reflectionShader->setTextureParameter(s_handleScreenMap, visualTargetSet->getColorTexture(0));
 
-				// 	m_reflectionShader->draw(renderView, m_vertexBufferQuad, 0, m_primitivesQuad);
-				// };
-				// renderContext->enqueue(lrb);
-			// }
+			//		m_reflectionShader->draw(renderView, m_vertexBufferQuad, 0, m_primitivesQuad);
+			//	};
+			//	renderContext->enqueue(lrb);
+			//}
 		}
 	);
 
@@ -1355,11 +1369,11 @@ render::handle_t WorldRendererDeferred::setupReflectionsPass(
 	return reflectionsTargetSetId;
 }
 
-render::handle_t WorldRendererDeferred::setupVisualPass(
+void WorldRendererDeferred::setupVisualPass(
 	const WorldRenderView& worldRenderView,
 	const Entity* rootEntity,
 	render::RenderGraph& renderGraph,
-	render::handle_t outputTargetSetId,
+	render::handle_t visualWriteTargetSetId,
 	render::handle_t gbufferTargetSetId,
 	render::handle_t ambientOcclusionTargetSetId,
 	render::handle_t reflectionsTargetSetId,
@@ -1373,16 +1387,6 @@ render::handle_t WorldRendererDeferred::setupVisualPass(
 	const bool shadowsEnable = (bool)(m_shadowsQuality != Quality::Disabled);
 	int32_t lightCount = (int32_t)m_lights.size();
 
-	// Add visual[0] target set.
-	render::RenderGraphTargetSetDesc rgtd = {};
-	rgtd.count = 1;
-	rgtd.createDepthStencil = false;
-	rgtd.usingPrimaryDepthStencil = (m_sharedDepthStencil == nullptr) ? true : false;
-	rgtd.targets[0].colorFormat = render::TfR11G11B10F;
-	rgtd.referenceWidthDenom = 1;
-	rgtd.referenceHeightDenom = 1;
-	auto visualTargetSetId = renderGraph.addTransientTargetSet(L"Visual", rgtd, m_sharedDepthStencil, outputTargetSetId);
-
 	// Add visual[0] render pass.
 	Ref< render::RenderPass > rp = new render::RenderPass(L"Visual");
 	rp->addInput(gbufferTargetSetId);
@@ -1394,7 +1398,7 @@ render::handle_t WorldRendererDeferred::setupVisualPass(
 	render::Clear clear;
 	clear.mask = render::CfColor;
 	clear.colors[0] = Color4f(0.0f, 0.0f, 0.0f, 1.0f);
-	rp->setOutput(visualTargetSetId, clear);
+	rp->setOutput(visualWriteTargetSetId, clear);
 
 	rp->addBuild(
 		[=](const render::RenderGraph& renderGraph, render::RenderContext* renderContext)
@@ -1493,7 +1497,6 @@ render::handle_t WorldRendererDeferred::setupVisualPass(
 	);
 
 	renderGraph.addPass(rp);
-	return visualTargetSetId;
 }
 
 void WorldRendererDeferred::setupProcessPass(
@@ -1503,7 +1506,8 @@ void WorldRendererDeferred::setupProcessPass(
 	render::handle_t outputTargetSetId,
 	render::handle_t gbufferTargetSetId,
 	render::handle_t velocityTargetSetId,
-	render::handle_t visualTargetSetId
+	render::handle_t visualWriteTargetSetId,
+	render::handle_t visualReadTargetSetId
 ) const
 {
 	T_PROFILER_SCOPE(L"World setup process");
@@ -1516,10 +1520,14 @@ void WorldRendererDeferred::setupProcessPass(
 	ipd.deltaTime = 1.0f / 60.0f;				
 
 	render::ImageGraphContext cx(m_screenRenderer);
-	cx.associateTextureTargetSet(s_handleInputColor, visualTargetSetId, 0);
+	cx.associateTextureTargetSet(s_handleInputColor, visualWriteTargetSetId, 0);
+	cx.associateTextureTargetSet(s_handleInputColorLast, visualReadTargetSetId, 0);
 	cx.associateTextureTargetSet(s_handleInputDepth, gbufferTargetSetId, 0);
 	cx.associateTextureTargetSet(s_handleInputNormal, gbufferTargetSetId, 1);
 	cx.associateTextureTargetSet(s_handleInputVelocity, velocityTargetSetId, 0);
+	cx.setFloatParameter(s_handleGamma, m_gamma);
+	cx.setFloatParameter(s_handleGammaInverse, 1.0f / m_gamma);
+	cx.setFloatParameter(s_handleExposure, m_settings.exposure);
 	cx.setParams(ipd);
 
 	StaticVector< render::ImageGraph*, 5 > processes;

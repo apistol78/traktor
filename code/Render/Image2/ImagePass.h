@@ -1,9 +1,9 @@
 #pragma once
 
 #include <string>
-#include "Core/Object.h"
 #include "Core/RefArray.h"
 #include "Render/Types.h"
+#include "Render/Image2/IImageStep.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -18,24 +18,24 @@ namespace traktor
 	namespace render
 	{
 
-class ImageStep;
+class ImagePassOp;
 
 /*!
  * \ingroup Render
  */
-class T_DLLCLASS ImagePass : public Object
+class T_DLLCLASS ImagePass : public IImageStep
 {
 	T_RTTI_CLASS;
 
 public:
+	virtual void addPasses(const ImageGraph* graph, const ImageGraphContext& context, const targetSetVector_t& targetSetIds, RenderGraph& renderGraph) const override final;
 
 private:
-	friend class ImageGraph;
 	friend class ImagePassData;
 
 	std::wstring m_name;
 	int32_t m_outputTargetSet;
-	RefArray< const ImageStep > m_steps;
+	RefArray< const ImagePassOp > m_ops;
 };
 
 	}

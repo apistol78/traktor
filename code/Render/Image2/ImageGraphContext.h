@@ -4,6 +4,7 @@
 #include "Core/Math/Frustum.h"
 #include "Core/Math/Matrix44.h"
 #include "Render/Types.h"
+#include "Resource/Proxy.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -18,6 +19,7 @@ namespace traktor
 	namespace render
 	{
 
+class ITexture;
 class RenderGraph;
 class ScreenRenderer;
 
@@ -78,6 +80,18 @@ public:
 
     ITexture* findTexture(const RenderGraph& renderGraph, handle_t textureId) const;
 
+	void setFloatParameter(handle_t handle, float value);
+
+    const SmallMap< handle_t, float >& getFloatParameters() const { return m_scalarParameters; }
+
+	void setVectorParameter(handle_t handle, const Vector4& value);
+
+    const SmallMap< handle_t, Vector4 >& getVectorParameters() const { return m_vectorParameters; }
+
+	void setTextureParameter(handle_t handle, const resource::Proxy< ITexture >& value);
+
+    const SmallMap< handle_t, resource::Proxy< ITexture > >& getTextureParameters() const { return m_textureParameters; }
+
     void setParams(const ImageGraphParams& params) { m_params = params; }
 
     const ImageGraphParams& getParams() const { return m_params; }
@@ -92,6 +106,9 @@ private:
 
     Ref< ScreenRenderer > m_screenRenderer;
 	SmallMap< handle_t, TextureTargetSet > m_textureTargetSet;
+	SmallMap< handle_t, float > m_scalarParameters;
+	SmallMap< handle_t, Vector4 > m_vectorParameters;
+	SmallMap< handle_t, resource::Proxy< ITexture > > m_textureParameters;
     ImageGraphParams m_params;
 };
 

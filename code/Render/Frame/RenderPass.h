@@ -59,13 +59,15 @@ public:
 
 	explicit RenderPass(const std::wstring& name = L"Unnamed");
 
+	void setName(const std::wstring& name);
+
 	const std::wstring& getName() const { return m_name; }
 
 	//! \{
 
 	void addInput(handle_t targetSetId, bool useDepth = false);
 
-	StaticVector< Input, 16 > getInputs() const;
+	const StaticVector< Input, 16 >& getInputs() const { return m_inputs; }
 
 	//! \}
 
@@ -89,20 +91,11 @@ public:
 
 	//! \}
 
-	//! \{
-
-	void addSubPass(const RenderPass* subPass);
-
-	const RefArray< const RenderPass >& getSubPasses() const { return m_subPasses; }
-
-	//! \}
-
 protected:
 	std::wstring m_name;
 	StaticVector< Input, 16 > m_inputs;
 	Output m_output;
     AlignedVector< fn_build_t > m_builds;
-	RefArray< const RenderPass > m_subPasses;
 };
 
 	}

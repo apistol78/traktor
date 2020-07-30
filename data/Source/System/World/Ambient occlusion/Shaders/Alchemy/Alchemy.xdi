@@ -181,7 +181,7 @@ Normal in view space.
 				<first>-151</first>
 				<second>-1081</second>
 			</position>
-			<value>0.7</value>
+			<value>0.2</value>
 		</item>
 		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
 			<id>{CE3F65A1-DE6C-9C42-B898-4A0B0E4F0661}</id>
@@ -487,7 +487,7 @@ Heaveside
 				<first>-162</first>
 				<second>-977</second>
 			</position>
-			<value>-0.01</value>
+			<value>-0.015</value>
 		</item>
 		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
 			<id>{5EBCD85E-AA7A-F542-931D-AB015ED301CE}</id>
@@ -710,7 +710,7 @@ Heaveside
 				<second>-679</second>
 			</position>
 			<from>0</from>
-			<to>29</to>
+			<to>49</to>
 		</item>
 		<item type="traktor.render.Div" version="traktor.render.Node:1">
 			<id>{D63FC1AE-A079-0943-81BC-C39F9F18BA9D}</id>
@@ -727,7 +727,7 @@ Heaveside
 				<first>1493</first>
 				<second>-484</second>
 			</position>
-			<value>30</value>
+			<value>50</value>
 		</item>
 		<item type="traktor.render.Mul" version="traktor.render.Node:1">
 			<id>{B8324DFA-AC5F-3041-951D-4B83D8D8B654}</id>
@@ -758,7 +758,7 @@ Heaveside
 				<first>-167</first>
 				<second>-892</second>
 			</position>
-			<value>5</value>
+			<value>1</value>
 		</item>
 		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
 			<id>{E1369009-8C7B-0149-A2E7-98A906A409B7}</id>
@@ -806,7 +806,7 @@ Heaveside
 				<first>-174</first>
 				<second>-800</second>
 			</position>
-			<value>0.4</value>
+			<value>0.6</value>
 		</item>
 		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
 			<id>{A9C4313A-D65D-EF46-B90B-19B3F07FC281}</id>

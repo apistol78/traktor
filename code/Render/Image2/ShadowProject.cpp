@@ -43,7 +43,7 @@ const static Handle s_handleShadowMapDiscRotation(L"ShadowMapDiscRotation");
 
 		}
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ShadowProject", ShadowProject, ImageStep)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ShadowProject", ShadowProject, ImagePassOp)
 
 void ShadowProject::setup(const ImageGraph* /*imageGraph*/, const ImageGraphContext& cx, RenderPass& pass) const
 {

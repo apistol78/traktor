@@ -36,7 +36,6 @@ void PathComponent::setOwner(world::Entity* owner)
 
 void PathComponent::setTransform(const Transform& transform)
 {
-	m_transform = transform;
 }
 
 Aabb3 PathComponent::getBoundingBox() const

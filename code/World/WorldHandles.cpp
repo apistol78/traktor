@@ -71,6 +71,7 @@ const render::Handle s_handleWorldViewInv(L"World_WorldViewInv");
 
 // ImageGraph inputs.
 const render::Handle s_handleInputColor(L"InputColor");
+const render::Handle s_handleInputColorLast(L"InputColorLast");
 const render::Handle s_handleInputDepth(L"InputDepth");
 const render::Handle s_handleInputNormal(L"InputNormal");
 const render::Handle s_handleInputVelocity(L"InputVelocity");

@@ -73,6 +73,7 @@ extern const render::Handle s_handleWorldViewInv;
 
 // ImageGraph inputs.
 extern const render::Handle s_handleInputColor;
+extern const render::Handle s_handleInputColorLast;
 extern const render::Handle s_handleInputDepth;
 extern const render::Handle s_handleInputNormal;
 extern const render::Handle s_handleInputVelocity;

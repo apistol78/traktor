@@ -1,6 +1,7 @@
 #include "Mesh/MeshCulling.h"
 #include "Mesh/Static/StaticMesh.h"
 #include "Mesh/Static/StaticMeshComponent.h"
+#include "World/Entity.h"
 #include "World/IWorldRenderPass.h"
 #include "World/WorldBuildContext.h"
 #include "World/WorldRenderView.h"
@@ -21,6 +22,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.mesh.StaticMeshComponent", StaticMeshComponent,
 StaticMeshComponent::StaticMeshComponent(const resource::Proxy< StaticMesh >& mesh, bool screenSpaceCulling)
 :	MeshComponent(screenSpaceCulling)
 ,	m_mesh(mesh)
+,	m_lastTransform(Transform::identity())
 {
 }
 
@@ -28,6 +30,13 @@ void StaticMeshComponent::destroy()
 {
 	m_mesh.clear();
 	MeshComponent::destroy();
+}
+
+void StaticMeshComponent::setOwner(world::Entity* owner)
+{
+	if (owner != nullptr)
+		m_lastTransform = owner->getTransform();
+	MeshComponent::setOwner(owner);
 }
 
 Aabb3 StaticMeshComponent::getBoundingBox() const
@@ -41,12 +50,11 @@ void StaticMeshComponent::build(const world::WorldBuildContext& context, const w
 		return;
 
 	Transform worldTransform = m_transform.get(worldRenderView.getInterval());
-	Transform lastWorldTransform = m_transform.get(worldRenderView.getInterval() - 1.0f);
 
 	// Skip rendering velocities if mesh hasn't moved since last frame.
 	if (worldRenderPass.getTechnique() == s_techniqueVelocityWrite)
 	{
-		if (worldTransform == lastWorldTransform)
+		if (worldTransform == m_lastTransform)
 			return;
 	}
 
@@ -64,11 +72,15 @@ void StaticMeshComponent::build(const world::WorldBuildContext& context, const w
 	m_mesh->build(
 		context.getRenderContext(),
 		worldRenderPass,
-		lastWorldTransform,
+		m_lastTransform,
 		worldTransform,
 		distance,
 		m_parameterCallback
 	);
+
+	// Save last rendered transform so we can properly write velocities next frame.
+	if (worldRenderPass.getTechnique() == s_techniqueVelocityWrite)
+		m_lastTransform = worldTransform;
 }
 
 	}

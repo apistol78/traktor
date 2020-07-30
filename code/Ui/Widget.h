@@ -97,7 +97,7 @@ public:
 
 	virtual void resetCursor();
 
-	virtual void update(const Rect* rc = 0, bool immediate = false);
+	virtual void update(const Rect* rc = nullptr, bool immediate = false);
 
 	virtual void show();
 

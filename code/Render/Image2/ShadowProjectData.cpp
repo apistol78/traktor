@@ -50,9 +50,9 @@ Ref< ISimpleTexture > createRandomRotationTexture(IRenderSystem* renderSystem)
 		
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ShadowProjectData", 0, ShadowProjectData, ImageStepData)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ShadowProjectData", 0, ShadowProjectData, ImagePassOpData)
 
-Ref< const ImageStep > ShadowProjectData::createInstance(resource::IResourceManager* resourceManager, IRenderSystem* renderSystem) const
+Ref< const ImagePassOp > ShadowProjectData::createInstance(resource::IResourceManager* resourceManager, IRenderSystem* renderSystem) const
 {
 	Ref< ShadowProject > instance = new ShadowProject();
 

@@ -28,7 +28,7 @@ namespace traktor
 	namespace render
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ImageGraphPipeline", 2, ImageGraphPipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ImageGraphPipeline", 4, ImageGraphPipeline, editor::IPipeline)
 
 bool ImageGraphPipeline::create(const editor::IPipelineSettings* settings)
 {
@@ -123,16 +123,18 @@ bool ImageGraphPipeline::buildOutput(
 	T_ASSERT(is_a< ImgOutput >(nodes.front()));
 	nodes.pop_front();
 
+	auto rootPass = mandatory_non_null_type_cast< const ImgPass* >(nodes.front());
+
 	// Create output resource.
 	Ref< ImageGraphData > data = new ImageGraphData();
+	data->m_name = rootPass->getName();
 
 	// First node in array is the "main" pass of the output image graph.
 	T_ASSERT(is_a< ImgPass >(nodes.front()));
-	log::info << L"Pass" << Endl;
 	convertAssetPassToSteps(
 		asset,
-		mandatory_non_null_type_cast< const ImgPass* >(nodes.front()),
-		data->m_steps
+		rootPass,
+		data->m_ops
 	);
 
 	// Convert all textures and target sets.
@@ -152,8 +154,13 @@ bool ImageGraphPipeline::buildOutput(
 			Ref< ImageTargetSetData > tsd = new ImageTargetSetData();
 			
 			tsd->m_targetSetId = targetSetNode->getTargetSetId();
+
+			if (targetSetNode->getPersistent())
+				tsd->m_persistentHandle = Guid::create().format();
+
 			for (int32_t i = 0; i < targetSetNode->getTextureCount(); ++i)
 				tsd->m_textureIds[i] = targetSetNode->getTargetSetId() + L"/" + targetSetNode->getTextureId(i);
+
 			tsd->m_targetSetDesc = targetSetNode->getRenderGraphTargetSetDesc();
 
 			data->m_targetSets.push_back(tsd);
@@ -204,9 +211,9 @@ bool ImageGraphPipeline::buildOutput(
 			}
 
 			// Convert pass's steps.
-			convertAssetPassToSteps(asset, pass, passData->m_steps);
+			convertAssetPassToSteps(asset, pass, passData->m_ops);
 
-			data->m_passes.push_back(passData);
+			data->m_steps.push_back(passData);
 		}
 	}
 
@@ -233,18 +240,18 @@ Ref< ISerializable > ImageGraphPipeline::buildOutput(
 	return nullptr;
 }
 
-bool ImageGraphPipeline::convertAssetPassToSteps(const ImageGraphAsset* asset, const ImgPass* pass, RefArray< ImageStepData >& outSteps) const
+bool ImageGraphPipeline::convertAssetPassToSteps(const ImageGraphAsset* asset, const ImgPass* pass, RefArray< ImagePassOpData >& outOpData) const
 {
 	for (auto step : pass->getSteps())
 	{
-		Ref< ImageStepData > stepData;
+		Ref< ImagePassOpData > opData;
 
 		// Create step data instance.
 		if (auto ambientOcclusionStep = dynamic_type_cast< const ImgStepAmbientOcclusion* >(step))
 		{
 			Ref< AmbientOcclusionData > ao = new AmbientOcclusionData();
 			ao->m_shader = ambientOcclusionStep->m_shader;
-			stepData = ao;
+			opData = ao;
 		}
 		else if (auto directionalBlurStep = dynamic_type_cast< const ImgStepDirectionalBlur* >(step))
 		{
@@ -253,28 +260,60 @@ bool ImageGraphPipeline::convertAssetPassToSteps(const ImageGraphAsset* asset, c
 			db->m_blurType = (DirectionalBlurData::BlurType)directionalBlurStep->m_blurType;
 			db->m_direction = directionalBlurStep->m_direction;
 			db->m_taps = directionalBlurStep->m_taps;
-			stepData = db;
+			opData = db;
 		}
 		else if (auto shadowProjectStep = dynamic_type_cast< const ImgStepShadowProject* >(step))
 		{
 			Ref< ShadowProjectData > sp = new ShadowProjectData();
 			sp->m_shader = shadowProjectStep->m_shader;
-			stepData = sp;
+			opData = sp;
 		}
 		else if (auto simpleStep = dynamic_type_cast< const ImgStepSimple* >(step))
 		{
 			Ref< SimpleData > s = new SimpleData();
 			s->m_shader = simpleStep->m_shader;
-			stepData = s;
+			opData = s;
 		}
 		else
 		{
 			log::error << L"Image graph pipeline failed; unable to convert node of \"" << type_name(step) << L"\"." << Endl;
 			return false;
 		}
-		T_FATAL_ASSERT(stepData);
+		T_FATAL_ASSERT(opData);
 
-		log::info << L"\t\"" << type_name(stepData) << L"\", shader = \"" << Guid(stepData->m_shader).format() << L"\"." << Endl;
+		log::info << L"\tPass \"" << type_name(opData) << L"\", shader = \"" << Guid(opData->m_shader).format() << L"\"." << Endl;
+
+		// Log output.
+		{
+			const OutputPin* outputPin = pass->getOutputPin(0);
+			T_FATAL_ASSERT(outputPin != nullptr);
+
+			AlignedVector< const InputPin* > destinationPins;
+			asset->findDestinationPins(outputPin, destinationPins);
+			if (destinationPins.size() != 1)
+			{
+				log::error << L"Image graph pipeline failed; pass output not connected properly." << Endl;
+				return false;
+			}
+
+			if (auto targetSetNode = dynamic_type_cast< const ImgTargetSet* >(destinationPins.front()->getNode()))
+			{
+				std::wstring textureId = targetSetNode->getTargetSetId() + L"/" + outputPin->getName();
+				if (!targetSetNode->getPersistent())
+					log::info << L"\t\tOutput into transient target \"" << textureId << L"\"." << Endl;
+				else
+					log::info << L"\t\tOutput into persistent target \"" << textureId << L"\"." << Endl;
+			}
+			else if (auto outputNode = dynamic_type_cast< const ImgOutput* >(destinationPins.front()->getNode()))
+			{
+				log::info << L"\t\tOutput into backbuffer." << Endl;
+			}
+			else
+			{
+				log::error << L"Image graph pipeline failed; pass output not connected to a target." << Endl;
+				return false;
+			}
+		}
 
 		// Setup input parameters.
 		std::set< std::wstring > inputs;
@@ -294,26 +333,29 @@ bool ImageGraphPipeline::convertAssetPassToSteps(const ImageGraphAsset* asset, c
 			if (auto inputNode = dynamic_type_cast< const ImgInput* >(sourcePin->getNode()))
 			{
 				// Reading texture from input texture.
-				auto& sourceData = stepData->m_sources.push_back();
+				auto& sourceData = opData->m_sources.push_back();
 				sourceData.textureId = inputNode->getTextureId();
 				sourceData.parameter = input;
-				log::info << L"\tparameter \"" << sourceData.parameter << L"\" = input \"" << sourceData.textureId << L"\"." << Endl;
+				log::info << L"\t\tParameter \"" << sourceData.parameter << L"\" = input \"" << sourceData.textureId << L"\"." << Endl;
 			}
 			else if (auto targetSetNode = dynamic_type_cast< const ImgTargetSet* >(sourcePin->getNode()))
 			{
 				// Reading texture from transient target set.
-				auto& sourceData = stepData->m_sources.push_back();
+				auto& sourceData = opData->m_sources.push_back();
 				sourceData.textureId = targetSetNode->getTargetSetId() + L"/" + sourcePin->getName();
 				sourceData.parameter = input;
-				log::info << L"\tparameter \"" << sourceData.parameter << L"\" = transient target \"" << sourceData.textureId << L"\"." << Endl;
+				if (!targetSetNode->getPersistent())
+					log::info << L"\t\tParameter \"" << sourceData.parameter << L"\" = transient target \"" << sourceData.textureId << L"\"." << Endl;
+				else
+					log::info << L"\t\tParameter \"" << sourceData.parameter << L"\" = persistent target \"" << sourceData.textureId << L"\"." << Endl;
 			}
 			else if (auto textureNode = dynamic_type_cast< const ImgTexture* >(sourcePin->getNode()))
 			{
 				// Reading texture resource.
-				auto& sourceData = stepData->m_sources.push_back();
+				auto& sourceData = opData->m_sources.push_back();
 				sourceData.textureId = textureNode->getId().format();
 				sourceData.parameter = input;
-				log::info << L"\tparameter \"" << sourceData.parameter << L"\" = texture resource \"" << sourceData.textureId << L"\"." << Endl;
+				log::info << L"\t\tParameter \"" << sourceData.parameter << L"\" = texture resource \"" << sourceData.textureId << L"\"." << Endl;
 			}
 			else
 			{
@@ -322,7 +364,7 @@ bool ImageGraphPipeline::convertAssetPassToSteps(const ImageGraphAsset* asset, c
 			}
 		}
 
-		outSteps.push_back(stepData);
+		outOpData.push_back(opData);
 	}
 	return true;
 }

@@ -110,7 +110,7 @@ private:
 
         }
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ImageTargetSetData", 1, ImageTargetSetData, ISerializable)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ImageTargetSetData", 2, ImageTargetSetData, ISerializable)
 
 Ref< const ImageTargetSet > ImageTargetSetData::createInstance() const
 {
@@ -119,6 +119,7 @@ Ref< const ImageTargetSet > ImageTargetSetData::createInstance() const
 		textureIds[i] = getParameterHandle(m_textureIds[i]);
 
     return new ImageTargetSet(
+		!m_persistentHandle.empty() ? getParameterHandle(m_persistentHandle) : 0,
 		textureIds,
         m_targetSetDesc
     );
@@ -127,6 +128,10 @@ Ref< const ImageTargetSet > ImageTargetSetData::createInstance() const
 void ImageTargetSetData::serialize(ISerializer& s)
 {
 	s >> Member< std::wstring >(L"targetSetId", m_targetSetId);
+
+	if (s.getVersion() >= 2)
+		s >> Member< std::wstring >(L"persistentHandle", m_persistentHandle);
+
 	s >> MemberStaticArray< std::wstring, RenderGraphTargetSetDesc::MaxColorTargets >(L"textureIds", m_textureIds);
 	s >> MemberRenderGraphTargetSetDesc(L"targetSetDesc", m_targetSetDesc);
 }

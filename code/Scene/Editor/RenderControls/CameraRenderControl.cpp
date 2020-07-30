@@ -125,6 +125,7 @@ bool CameraRenderControl::create(ui::Widget* parent, SceneEditorContext* context
 
 void CameraRenderControl::destroy()
 {
+	safeDestroy(m_renderGraph);
 	safeDestroy(m_worldRenderer);
 	safeDestroy(m_primitiveRenderer);
 	safeClose(m_renderView);
