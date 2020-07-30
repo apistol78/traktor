@@ -66,6 +66,7 @@
 #include "Ui/GridView/GridRow.h"
 #include "Ui/GridView/GridRowStateChangeEvent.h"
 #include "Ui/GridView/GridItem.h"
+#include "Ui/GridView/GridItemContentChangeEvent.h"
 #include "World/Entity.h"
 #include "World/EntityBuilder.h"
 #include "World/EntityData.h"
@@ -310,15 +311,15 @@ bool SceneEditorPage::create(ui::Container* parent)
 	m_imageUnlocked = new ui::StyleBitmap(L"Scene.LayerUnlocked");
 
 	m_instanceGrid = new ui::GridView();
-	m_instanceGrid->create(m_entityPanel, ui::GridView::WsMultiSelect |ui::WsDoubleBuffer);
-	//m_instanceGrid->addImage(ui::Bitmap::load(c_ResourceEntityTypes, sizeof(c_ResourceEntityTypes), L"png"), 4);
-	m_instanceGrid->addColumn(new ui::GridColumn(L"", ui::dpi96(200)));
+	m_instanceGrid->create(m_entityPanel, ui::GridView::WsMultiSelect | ui::GridView::WsAutoEdit | ui::WsDoubleBuffer);
+	m_instanceGrid->addColumn(new ui::GridColumn(L"", ui::dpi96(200), true));
 	m_instanceGrid->addColumn(new ui::GridColumn(L"", ui::dpi96(30)));
 	m_instanceGrid->addColumn(new ui::GridColumn(L"", ui::dpi96(30)));
 	m_instanceGrid->addEventHandler< ui::SelectionChangeEvent >(this, &SceneEditorPage::eventInstanceSelect);
 	m_instanceGrid->addEventHandler< ui::GridRowStateChangeEvent >(this, &SceneEditorPage::eventInstanceExpand);
 	m_instanceGrid->addEventHandler< ui::MouseButtonDownEvent >(this, &SceneEditorPage::eventInstanceButtonDown);
 	m_instanceGrid->addEventHandler< ui::GridColumnClickEvent >(this, &SceneEditorPage::eventInstanceClick);
+	m_instanceGrid->addEventHandler< ui::GridItemContentChangeEvent >(this, &SceneEditorPage::eventInstanceRename);
 
 	m_instanceGridFontBold = new ui::Font(m_instanceGrid->getFont());
 	m_instanceGridFontBold->setBold(true);
@@ -1414,6 +1415,27 @@ void SceneEditorPage::eventInstanceClick(ui::GridColumnClickEvent* event)
 
 		m_instanceGrid->update();
 	}
+}
+
+void SceneEditorPage::eventInstanceRename(ui::GridItemContentChangeEvent* event)
+{
+	std::wstring renameFrom = event->getOriginalText();
+	std::wstring renameTo = event->getItem()->getText();
+
+	if (renameFrom == renameTo)
+		return;
+
+	ui::GridItem* item = event->getItem();
+	EntityAdapter* entityAdapter = item->getRow()->getData< EntityAdapter >(L"ENTITY");
+	T_ASSERT(entityAdapter);
+
+	m_context->getDocument()->push();
+
+	entityAdapter->getEntityData()->setName(renameTo);
+	updatePropertyObject();
+	updateStatusBar();
+
+	event->consume();
 }
 
 void SceneEditorPage::eventContextPostBuild(PostBuildEvent* event)

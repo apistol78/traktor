@@ -41,6 +41,13 @@ public:
 		uint32_t current;
 		uint32_t total;
 		std::wstring description;
+
+        Status()
+        :   active(false)
+        ,   current(0)
+        ,   total(0)
+        {
+        }
 	};
 
     TracerProcessor(const TypeInfo* rayTracerType, db::Database* outputDatabase, bool preview);

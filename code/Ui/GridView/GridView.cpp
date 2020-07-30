@@ -106,9 +106,10 @@ bool GridView::create(Widget* parent, uint32_t style)
 	addEventHandler< MouseDoubleClickEvent >(this, &GridView::eventDoubleClick);
 
 	m_itemEditor = new Edit();
-	m_itemEditor->create(this, L"", WsBorder);
+	m_itemEditor->create(this, L"", WsBorder | WsWantAllInput);
 	m_itemEditor->hide();
 	m_itemEditor->addEventHandler< FocusEvent >(this, &GridView::eventEditFocus);
+	m_itemEditor->addEventHandler< ui::KeyDownEvent >(this, &GridView::eventEditKey);
 
 	if ((style & WsColumnHeader) != 0)
 		m_header = new GridHeader();
@@ -330,15 +331,32 @@ void GridView::eventEditFocus(FocusEvent* event)
 
 		m_itemEditor->hide();
 
-		m_editItem->setText(newText);
+		if (originalText != newText)
+		{
+			m_editItem->setText(newText);
 
-		GridItemContentChangeEvent changeEvent(this, m_editItem, originalText);
-		raiseEvent(&changeEvent);
+			GridItemContentChangeEvent changeEvent(this, m_editItem, originalText);
+			raiseEvent(&changeEvent);
 
-		if (!changeEvent.consumed())
-			m_editItem->setText(originalText);
+			if (!changeEvent.consumed())
+				m_editItem->setText(originalText);
 
-		event->consume();
+			event->consume();
+		}
+	}
+}
+
+void GridView::eventEditKey(KeyDownEvent* event)
+{
+	if (event->getVirtualKey() == ui::VkReturn)
+	{
+		m_itemEditor->hide();
+	}
+	else if (event->getVirtualKey() == ui::VkEscape)
+	{
+		std::wstring originalText = m_editItem->getText();
+		m_itemEditor->setText(originalText);
+		m_itemEditor->hide();
 	}
 }
 
