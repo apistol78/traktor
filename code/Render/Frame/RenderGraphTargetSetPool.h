@@ -57,8 +57,6 @@ private:
 
 	Ref< IRenderSystem > m_renderSystem;
 	AlignedVector< Pool > m_pool;
-	int32_t m_width;
-	int32_t m_height;
 };
 
 	}

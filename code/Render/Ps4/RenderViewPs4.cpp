@@ -80,7 +80,6 @@ bool RenderViewPs4::reset(const RenderViewDefaultDesc& desc)
 	rtscd.createDepthStencil = true;
 	rtscd.usingDepthStencilAsTexture = false;
 	rtscd.usingPrimaryDepthStencil = false;
-	rtscd.preferTiled = false;
 	rtscd.ignoreStencil = false;
 	rtscd.generateMips = false;
 	rtscd.targets[0].format = TfR8G8B8A8;
@@ -177,100 +176,18 @@ void RenderViewPs4::setViewport(const Viewport& viewport)
 {
 }
 
-Viewport RenderViewPs4::getViewport()
-{
-	return Viewport();
-}
-
 SystemWindow RenderViewPs4::getSystemWindow()
 {
 	SystemWindow sw;
 	return sw;
 }
 
-bool RenderViewPs4::begin(const Clear* clear)
-{
-	RenderQueuePs4* queue = m_queues[m_currentQueue];
-	T_ASSERT (queue);
-
-	sce::Gnmx::GfxContext& gfxContext = queue->getGfxContext();
-
-	RenderTargetSetPs4* primaryTarget = m_primaryTargets[m_currentQueue];
-	T_ASSERT (primaryTarget);
-
-	// Wait until the context label has been written to make sure that the
-	// GPU finished parsing the command buffers before overwriting them
-	while (*queue->getEopLabel() != RenderQueuePs4::EopsFinished)
-	{
-		SceKernelEvent eopEvent; int count;
-		sceKernelWaitEqueue(m_eopEventQueue, &eopEvent, 1, &count, nullptr);
-	}
-
-	// Reset the EOP and flip GPU labels
-	*queue->getEopLabel() = RenderQueuePs4::EopsNotYet;
-	*queue->getContextLabel() = RenderQueuePs4::RcsInUse;
-
-	// Reset the graphical context and initialize the hardware state.
-	gfxContext.reset();
-	gfxContext.initializeDefaultHardwareState();
-
-	// The waitUntilSafeForRendering stalls the GPU until the scan-out
-	// operations on the current display buffer have been completed.
-	gfxContext.waitUntilSafeForRendering(
-		m_videoOutHandle,
-		0/*backBuffer->displayIndex*/
-	);
-
-	// Setup the viewport to match the entire screen.
-	// The z-scale and z-offset values are used to specify the transformation
-	// from clip-space to screen-space
-	gfxContext.setupScreenViewport(
-		0,
-		0,
-		m_width,
-		m_height,
-		0.5f,	// Z-scale
-		0.5f	// Z-offset
-	);
-
-	// Bind the render & depth targets to the context.
-	gfxContext.setRenderTarget(0, &primaryTarget->getColorTargetPs4(0)->getRenderTargetGnm());
-	gfxContext.setDepthRenderTarget(&primaryTarget->getDepthTargetPs4()->getDepthTargetGnm());
-	return true;
-}
-
-bool RenderViewPs4::begin(IRenderTargetSet* renderTargetSet, const Clear* clear)
+bool RenderViewPs4::beginFrame()
 {
 	return true;
 }
 
-bool RenderViewPs4::begin(IRenderTargetSet* renderTargetSet, int32_t renderTarget, const Clear* clear)
-{
-	return true;
-}
-
-void RenderViewPs4::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, IProgram* program, const Primitives& primitives)
-{
-}
-
-void RenderViewPs4::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, IProgram* program, const Primitives& primitives, uint32_t instanceCount)
-{
-}
-
-void RenderViewPs4::compute(IProgram* program, const int32_t* workSize)
-{
-}
-
-bool RenderViewPs4::copy(ITexture* destinationTexture, int32_t destinationSide, int32_t destinationLevel, ITexture* sourceTexture, int32_t sourceSide, int32_t sourceLevel)
-{
-	return false;
-}
-
-void RenderViewPs4::end()
-{
-}
-
-void RenderViewPs4::flush()
+void RenderViewPs4::endFrame()
 {
 }
 
@@ -322,6 +239,102 @@ void RenderViewPs4::present()
 	}
 
 	m_currentQueue = (m_currentQueue + 1) % FrameQueueCount;
+}
+
+bool RenderViewPs4::beginPass(const Clear* clear)
+{
+	RenderQueuePs4* queue = m_queues[m_currentQueue];
+	T_ASSERT (queue);
+
+	sce::Gnmx::GfxContext& gfxContext = queue->getGfxContext();
+
+	RenderTargetSetPs4* primaryTarget = m_primaryTargets[m_currentQueue];
+	T_ASSERT (primaryTarget);
+
+	// Wait until the context label has been written to make sure that the
+	// GPU finished parsing the command buffers before overwriting them
+	while (*queue->getEopLabel() != RenderQueuePs4::EopsFinished)
+	{
+		SceKernelEvent eopEvent; int count;
+		sceKernelWaitEqueue(m_eopEventQueue, &eopEvent, 1, &count, nullptr);
+	}
+
+	// Reset the EOP and flip GPU labels
+	*queue->getEopLabel() = RenderQueuePs4::EopsNotYet;
+	*queue->getContextLabel() = RenderQueuePs4::RcsInUse;
+
+	// Reset the graphical context and initialize the hardware state.
+	gfxContext.reset();
+	gfxContext.initializeDefaultHardwareState();
+
+	// The waitUntilSafeForRendering stalls the GPU until the scan-out
+	// operations on the current display buffer have been completed.
+	gfxContext.waitUntilSafeForRendering(
+		m_videoOutHandle,
+		0/*backBuffer->displayIndex*/
+	);
+
+	// Setup the viewport to match the entire screen.
+	// The z-scale and z-offset values are used to specify the transformation
+	// from clip-space to screen-space
+	gfxContext.setupScreenViewport(
+		0,
+		0,
+		m_width,
+		m_height,
+		0.5f,	// Z-scale
+		0.5f	// Z-offset
+	);
+
+	// Bind the render & depth targets to the context.
+	gfxContext.setRenderTarget(0, &primaryTarget->getColorTargetPs4(0)->getRenderTargetGnm());
+	gfxContext.setDepthRenderTarget(&primaryTarget->getDepthTargetPs4()->getDepthTargetGnm());
+	return true;
+}
+
+bool RenderViewPs4::beginPass(IRenderTargetSet* renderTargetSet, const Clear* clear, uint32_t load, uint32_t store)
+{
+	return true;
+}
+
+bool RenderViewPs4::beginPass(IRenderTargetSet* renderTargetSet, int32_t renderTarget, const Clear* clear, uint32_t load, uint32_t store)
+{
+	return true;
+}
+
+void RenderViewPs4::endPass()
+{
+}
+
+void RenderViewPs4::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, IProgram* program, const Primitives& primitives)
+{
+}
+
+void RenderViewPs4::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, IProgram* program, const Primitives& primitives, uint32_t instanceCount)
+{
+}
+
+void RenderViewPs4::compute(IProgram* program, const int32_t* workSize)
+{
+}
+
+bool RenderViewPs4::copy(ITexture* destinationTexture, const Region& destinationRegion, ITexture* sourceTexture, const Region& sourceRegion)
+{
+	return false;
+}
+
+int32_t RenderViewPs4::beginTimeQuery()
+{
+	return 0;
+}
+
+void RenderViewPs4::endTimeQuery(int32_t query)
+{
+}
+
+bool RenderViewPs4::getTimeQuery(int32_t query, bool wait, double& outDuration) const
+{
+	return false;
 }
 
 void RenderViewPs4::pushMarker(const char* const marker)

@@ -11,7 +11,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.OS", OS, Object)
 
 OS& OS::getInstance()
 {
-	static OS* s_instance = 0;
+	static OS* s_instance = nullptr;
 	if (!s_instance)
 	{
 		s_instance = new OS();
@@ -94,15 +94,15 @@ Ref< IProcess > OS::execute(
 	const std::wstring& commandLine,
 	const Path& workingDirectory,
 	const Environment* env,
-	flags
+	uint32_t flags
 ) const
 {
-	return 0;
+	return nullptr;
 }
 
 Ref< ISharedMemory > OS::createSharedMemory(const std::wstring& name, uint32_t size) const
 {
-	return 0;
+	return nullptr;
 }
 
 bool OS::setOwnProcessPriorityBias(int32_t priorityBias)
@@ -111,7 +111,7 @@ bool OS::setOwnProcessPriorityBias(int32_t priorityBias)
 }
 
 OS::OS()
-:	m_handle(0)
+:	m_handle(nullptr)
 {
 }
 

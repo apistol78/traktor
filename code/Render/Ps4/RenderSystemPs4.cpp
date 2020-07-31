@@ -14,7 +14,6 @@
 #include "Render/Ps4/RenderTargetSetPs4.h"
 #include "Render/Ps4/RenderViewPs4.h"
 #include "Render/Ps4/SimpleTexturePs4.h"
-#include "Render/Ps4/TimeQueryPs4.h"
 #include "Render/Ps4/VertexBufferDynamicPs4.h"
 #include "Render/Ps4/VertexBufferStaticPs4.h"
 #include "Render/Ps4/VolumeTexturePs4.h"
@@ -205,7 +204,7 @@ Ref< IVolumeTexture > RenderSystemPs4::createVolumeTexture(const VolumeTextureCr
 		return nullptr;
 }
 
-Ref< IRenderTargetSet > RenderSystemPs4::createRenderTargetSet(const RenderTargetSetCreateDesc& desc, const wchar_t* const tag)
+Ref< IRenderTargetSet > RenderSystemPs4::createRenderTargetSet(const RenderTargetSetCreateDesc& desc, IRenderTargetSet* sharedDepthStencil, const wchar_t* const tag)
 {
 	Ref< RenderTargetSetPs4 > renderTargetSet = new RenderTargetSetPs4(m_context);
 	if (renderTargetSet->create(desc))
@@ -225,15 +224,6 @@ Ref< IProgram > RenderSystemPs4::createProgram(const ProgramResource* programRes
 		return nullptr;
 
 	return program;
-}
-
-Ref< ITimeQuery > RenderSystemPs4::createTimeQuery() const
-{
-	Ref< TimeQueryPs4 > timeQuery = new TimeQueryPs4(m_context);
-	if (timeQuery->create())
-		return timeQuery;
-	else
-		return nullptr;
 }
 
 void RenderSystemPs4::purge()
