@@ -69,6 +69,8 @@ public:
 
 	virtual void setDebugOverlay(world::IDebugOverlay* overlay) override final;
 
+	virtual void setDebugOverlayAlpha(float alpha) override final;
+
 	virtual bool handleCommand(const ui::Command& command) override final;
 
 	virtual void update() override final;
@@ -93,32 +95,33 @@ private:
 	Ref< render::PrimitiveRenderer > m_primitiveRenderer;
 	Ref< render::ScreenRenderer > m_screenRenderer;
 	resource::Proxy< render::Shader > m_debugShader;
-	const TypeInfo* m_worldRendererType;
+	const TypeInfo* m_worldRendererType = nullptr;
 	Ref< world::IWorldRenderer > m_worldRenderer;
 	world::WorldRenderView m_worldRenderView;
 	world::WorldRenderSettings m_worldRenderSettings;
-	world::Quality m_imageProcessQuality;
-	world::Quality m_shadowQuality;
-	world::Quality m_reflectionsQuality;
-	world::Quality m_motionBlurQuality;
-	world::Quality m_ambientOcclusionQuality;
-	world::Quality m_antiAliasQuality;
+	world::Quality m_imageProcessQuality = world::Quality::Disabled;
+	world::Quality m_shadowQuality = world::Quality::Disabled;
+	world::Quality m_reflectionsQuality = world::Quality::Disabled;
+	world::Quality m_motionBlurQuality = world::Quality::Disabled;
+	world::Quality m_ambientOcclusionQuality = world::Quality::Disabled;
+	world::Quality m_antiAliasQuality = world::Quality::Disabled;
 	RenderControlModel m_model;
 	Ref< world::IDebugOverlay > m_overlay;
-	bool m_gridEnable;
-	bool m_guideEnable;
+	float m_overlayAlpha = 1.0f;
+	bool m_gridEnable = true;
+	bool m_guideEnable = true;
 	Color4ub m_colorClear;
 	Color4ub m_colorGrid;
 	Color4ub m_colorRef;
 	float m_fieldOfView;
 	float m_mouseWheelRate;
 	int32_t m_multiSample;
-	bool m_invertPanY;
+	bool m_invertPanY = false;
 	Timer m_timer;
 	Ref< Camera > m_camera;
 	Vector4 m_movement;
 	ui::Rect m_selectionRectangle;
-	ui::Size m_dirtySize;
+	ui::Size m_dirtySize = ui::Size(0, 0);
 
 	void updateSettings();
 

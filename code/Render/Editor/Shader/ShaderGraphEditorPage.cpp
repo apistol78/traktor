@@ -1061,6 +1061,9 @@ void ShaderGraphEditorPage::updateGraph()
 			Ref< Edge > shaderEdge = editorEdge->getData< Edge >(L"SHADEREDGE");
 			T_ASSERT(shaderEdge);
 
+			// Set default thickness first; override below for "fat" types.
+			editorEdge->setThickness(2);
+
 			StringOutputStream ss;
 			Constant value = ShaderGraphEvaluator(m_shaderGraph).evaluate(shaderEdge->getSource());
 			switch (value.getType())
@@ -1090,22 +1093,27 @@ void ShaderGraphEditorPage::updateGraph()
 
 			case PntTexture2D:
 				ss << L"Texture2d";
+				editorEdge->setThickness(4);
 				break;
 
 			case PntTexture3D:
 				ss << L"Texture3d";
+				editorEdge->setThickness(4);
 				break;
 
 			case PntTextureCube:
 				ss << L"TextureCube";
+				editorEdge->setThickness(4);
 				break;
 
 			case PntStructBuffer:
 				ss << L"StructBuffer";
+				editorEdge->setThickness(4);
 				break;
 
 			case PntState:
 				ss << L"State";
+				editorEdge->setThickness(4);
 				break;
 			}
 
@@ -1115,7 +1123,10 @@ void ShaderGraphEditorPage::updateGraph()
 	else
 	{
 		for (auto editorEdge : m_editorGraph->getEdges())
+		{
 			editorEdge->setText(L"");
+			editorEdge->setThickness(2);
+		}
 	}
 
 	// Redraw editor graph.

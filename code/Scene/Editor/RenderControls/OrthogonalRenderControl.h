@@ -71,6 +71,8 @@ public:
 	virtual void setQuality(world::Quality imageProcess, world::Quality shadows, world::Quality reflections, world::Quality motionBlur, world::Quality ambientOcclusion, world::Quality antiAlias) override final;
 
 	virtual void setDebugOverlay(world::IDebugOverlay* overlay) override final;
+
+	virtual void setDebugOverlayAlpha(float alpha) override final;
 	
 	virtual bool handleCommand(const ui::Command& command) override final;
 

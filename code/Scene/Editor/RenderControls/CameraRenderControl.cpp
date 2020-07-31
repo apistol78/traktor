@@ -222,6 +222,10 @@ void CameraRenderControl::setDebugOverlay(world::IDebugOverlay* overlay)
 {
 }
 
+void CameraRenderControl::setDebugOverlayAlpha(float alpha)
+{
+}
+
 bool CameraRenderControl::handleCommand(const ui::Command& command)
 {
 	bool result = false;

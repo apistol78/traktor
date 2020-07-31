@@ -82,20 +82,9 @@ Vector4 projectUnit(const ui::Rect& rc, const ui::Point& pnt)
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.PerspectiveRenderControl", PerspectiveRenderControl, ISceneRenderControl)
 
 PerspectiveRenderControl::PerspectiveRenderControl()
-:	m_worldRendererType(nullptr)
-,	m_imageProcessQuality(world::Quality::Disabled)
-,	m_shadowQuality(world::Quality::Disabled)
-,	m_reflectionsQuality(world::Quality::Disabled)
-,	m_motionBlurQuality(world::Quality::Disabled)
-,	m_ambientOcclusionQuality(world::Quality::Disabled)
-,	m_antiAliasQuality(world::Quality::Disabled)
-,	m_gridEnable(true)
-,	m_guideEnable(true)
-,	m_fieldOfView(c_defaultFieldOfView)
+:	m_fieldOfView(c_defaultFieldOfView)
 ,	m_mouseWheelRate(c_defaultMouseWheelRate)
 ,	m_multiSample(c_defaultMultiSample)
-,	m_invertPanY(false)
-,	m_dirtySize(0, 0)
 {
 }
 
@@ -265,6 +254,11 @@ void PerspectiveRenderControl::setQuality(world::Quality imageProcess, world::Qu
 void PerspectiveRenderControl::setDebugOverlay(world::IDebugOverlay* overlay)
 {
 	m_overlay = overlay;
+}
+
+void PerspectiveRenderControl::setDebugOverlayAlpha(float alpha)
+{
+	m_overlayAlpha = alpha;
 }
 
 bool PerspectiveRenderControl::handleCommand(const ui::Command& command)
@@ -521,7 +515,7 @@ void PerspectiveRenderControl::eventPaint(ui::PaintEvent* event)
 			m_screenRenderer,
 			m_worldRenderer,
 			m_worldRenderView,
-			1.0f
+			m_overlayAlpha
 		);
 	}
 

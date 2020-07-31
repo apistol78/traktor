@@ -48,21 +48,6 @@ const wchar_t* c_ImageProcess_elementNames[] =
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.WorldRenderSettings", 33, WorldRenderSettings, ISerializable)
 
-WorldRenderSettings::WorldRenderSettings()
-:	viewNearZ(1.0f)
-,	viewFarZ(100.0f)
-,	linearLighting(true)
-,	exposureMode(EmFixed)
-,	exposure(1.0f)
-,	fog(false)
-,	fogDistanceY(0.0f)
-,	fogDistanceZ(90.0f)
-,	fogDensityY(0.0f)
-,	fogDensityZ(0.0f)
-,	fogColor(1.0f, 1.0f, 1.0f)
-{
-}
-
 void WorldRenderSettings::serialize(ISerializer& s)
 {
 	T_ASSERT(s.getVersion() >= 17);
@@ -172,19 +157,6 @@ void WorldRenderSettings::serialize(ISerializer& s)
 
 	if (s.getVersion() >= 22)
 		s >> MemberStaticArray< resource::Id< render::ImageGraph >, sizeof_array(imageProcess), resource::Member< render::ImageGraph > >(L"imageProcess", imageProcess, c_ImageProcess_elementNames);
-}
-
-WorldRenderSettings::ShadowSettings::ShadowSettings()
-:	projection(SpUniform)
-,	farZ(0.0f)
-,	resolution(1024)
-,	bias(0.0f)
-,	biasCoeff(1.0f)
-,	cascadingSlices(1)
-,	cascadingLambda(0.0f)
-,	quantizeProjection(false)
-,	maskDenominator(1)
-{
 }
 
 void WorldRenderSettings::ShadowSettings::serialize(ISerializer& s)

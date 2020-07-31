@@ -175,16 +175,6 @@ struct TileShaderData
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.WorldRendererDeferred", 0, WorldRendererDeferred, IWorldRenderer)
 
-WorldRendererDeferred::WorldRendererDeferred()
-:	m_toneMapQuality(Quality::Disabled)
-,	m_motionBlurQuality(Quality::Disabled)
-,	m_shadowsQuality(Quality::Disabled)
-,	m_ambientOcclusionQuality(Quality::Disabled)
-,	m_antiAliasQuality(Quality::Disabled)
-,	m_count(0)
-{
-}
-
 bool WorldRendererDeferred::create(
 	resource::IResourceManager* resourceManager,
 	render::IRenderSystem* renderSystem,

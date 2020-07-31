@@ -49,6 +49,10 @@ public:
 
 	const std::wstring& getText() const;
 
+	void setThickness(int32_t thickness);
+
+	int32_t getThickness() const;
+
 	void setSelected(bool selected);
 
 	bool isSelected() const;
@@ -61,6 +65,7 @@ private:
 	Ref< Pin > m_source;
 	Ref< Pin > m_destination;
 	std::wstring m_text;
+	int32_t m_thickness;
 	bool m_selected;
 	std::map< std::wstring, Ref< Object > > m_data;
 	mutable std::vector< Point > m_spline;

@@ -44,7 +44,7 @@ class T_DLLCLASS MeshComponentData : public world::IEntityComponentData
 public:
 	MeshComponentData();
 
-	MeshComponentData(const resource::Id< IMesh >& mesh);
+	explicit MeshComponentData(const resource::Id< IMesh >& mesh);
 
 	Ref< MeshComponent > createComponent(resource::IResourceManager* resourceManager) const;
 
@@ -56,7 +56,7 @@ public:
 
 private:
 	resource::Id< IMesh > m_mesh;
-	bool m_screenSpaceCulling;
+	bool m_screenSpaceCulling = false;
 };
 
 	}

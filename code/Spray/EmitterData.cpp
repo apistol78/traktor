@@ -19,19 +19,6 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spray.EmitterData", 7, EmitterData, ISerializable)
 
-EmitterData::EmitterData()
-:	m_middleAge(0.2f)
-,	m_cullNearDistance(0.25f)
-,	m_cullMeshDistance(100.0f)
-,	m_fadeNearRange(1.0f)
-,	m_viewOffset(0.0f)
-,	m_warmUp(0.0f)
-,	m_sort(false)
-,	m_worldSpace(true)
-,	m_meshOrientationFromVelocity(true)
-{
-}
-
 Ref< Emitter > EmitterData::createEmitter(resource::IResourceManager* resourceManager, const world::IEntityBuilder* entityBuilder) const
 {
 	if (!m_source)

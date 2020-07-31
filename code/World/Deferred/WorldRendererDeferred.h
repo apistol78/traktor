@@ -55,8 +55,6 @@ class T_DLLCLASS WorldRendererDeferred : public IWorldRenderer
 	T_RTTI_CLASS;
 
 public:
-	WorldRendererDeferred();
-
 	virtual bool create(
 		resource::IResourceManager* resourceManager,
 		render::IRenderSystem* renderSystem,
@@ -84,12 +82,12 @@ private:
 	WorldRenderSettings m_settings;
 	WorldRenderSettings::ShadowSettings m_shadowSettings;
 
-	Quality m_toneMapQuality;
-	Quality m_motionBlurQuality;
-	Quality m_shadowsQuality;
-	Quality m_reflectionsQuality;
-	Quality m_ambientOcclusionQuality;
-	Quality m_antiAliasQuality;
+	Quality m_toneMapQuality = Quality::Disabled;
+	Quality m_motionBlurQuality = Quality::Disabled;
+	Quality m_shadowsQuality = Quality::Disabled;
+	Quality m_reflectionsQuality = Quality::Disabled;
+	Quality m_ambientOcclusionQuality = Quality::Disabled;
+	Quality m_antiAliasQuality = Quality::Disabled;
 
 	float m_gamma = 1.0f;
 
@@ -130,7 +128,7 @@ private:
 	Vector4 m_fogDistanceAndDensity;
 	Vector4 m_fogColor;
 
-	int32_t m_count;
+	int32_t m_count = 0;
 
 	render::handle_t setupGBufferPass(
 		const WorldRenderView& worldRenderView,

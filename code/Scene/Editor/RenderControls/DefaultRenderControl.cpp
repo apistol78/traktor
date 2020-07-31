@@ -217,7 +217,7 @@ bool DefaultRenderControl::create(ui::Widget* parent, SceneEditorContext* contex
 	m_toolBar->addItem(m_toolWorldRenderer);
 	m_toolBar->addItem(new ui::ToolBarSeparator());
 	m_toolBar->addItem(m_toolDebugOverlay);
-	m_toolBar->addItem(new ui::ToolBarEmbed(m_sliderDebugAlpha, ui::dpi96(70)));
+	m_toolBar->addItem(new ui::ToolBarEmbed(m_sliderDebugAlpha, ui::dpi96(50)));
 
 	m_toolBar->addEventHandler< ui::ToolBarButtonClickEvent >(this, &DefaultRenderControl::eventToolClick);
 
@@ -255,7 +255,6 @@ void DefaultRenderControl::updateWorldRenderer()
 		m_renderControl->updateWorldRenderer();
 }
 
-
 void DefaultRenderControl::setWorldRendererType(const TypeInfo& worldRendererType)
 {
 	if (m_renderControl)
@@ -287,6 +286,11 @@ void DefaultRenderControl::setDebugOverlay(world::IDebugOverlay* overlay)
 		m_renderControl->setDebugOverlay(overlay);
 }
 
+void DefaultRenderControl::setDebugOverlayAlpha(float alpha)
+{
+	m_sliderDebugAlpha->setValue((int32_t)(alpha * 100.0f));
+}
+
 bool DefaultRenderControl::handleCommand(const ui::Command& command)
 {
 	if (m_renderControl)
@@ -297,8 +301,12 @@ bool DefaultRenderControl::handleCommand(const ui::Command& command)
 
 void DefaultRenderControl::update()
 {
+	float alpha = m_sliderDebugAlpha->getValue() / 100.0f;
 	if (m_renderControl)
+	{
+		m_renderControl->setDebugOverlayAlpha(alpha);
 		m_renderControl->update();
+	}
 }
 
 bool DefaultRenderControl::hitTest(const ui::Point& position) const
@@ -561,8 +569,6 @@ void DefaultRenderControl::eventToolClick(ui::ToolBarButtonClickEvent* event)
 	}
 	else if (event->getCommand() == L"Scene.Editor.DebugOverlay")
 	{
-
-
 		int32_t index = m_toolDebugOverlay->getSelected();
 		if (index > 0)
 		{
