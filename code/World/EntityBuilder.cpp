@@ -24,10 +24,10 @@ void EntityBuilder::addFactory(const IEntityFactory* entityFactory)
 void EntityBuilder::removeFactory(const IEntityFactory* entityFactory)
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-	RefArray< const IEntityFactory >::iterator i = std::find(m_entityFactories.begin(), m_entityFactories.end(), entityFactory);
-	if (i != m_entityFactories.end())
+	auto it = std::find(m_entityFactories.begin(), m_entityFactories.end(), entityFactory);
+	if (it != m_entityFactories.end())
 	{
-		m_entityFactories.erase(i);
+		m_entityFactories.erase(it);
 		m_resolvedFactoryCache.clear();
 	}
 }
@@ -40,7 +40,7 @@ const IEntityFactory* EntityBuilder::getFactory(const EntityData* entityData) co
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 
 	const TypeInfo& entityDataType = type_of(entityData);
-	const IEntityFactory* entityFactory = 0;
+	const IEntityFactory* entityFactory = nullptr;
 
 	auto it = m_resolvedFactoryCache.find(&entityDataType);
 	if (it != m_resolvedFactoryCache.end())
@@ -91,7 +91,7 @@ const IEntityFactory* EntityBuilder::getFactory(const IEntityEventData* entityEv
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 
 	const TypeInfo& entityEventDataType = type_of(entityEventData);
-	const IEntityFactory* entityFactory = 0;
+	const IEntityFactory* entityFactory = nullptr;
 
 	auto it = m_resolvedFactoryCache.find(&entityEventDataType);
 	if (it != m_resolvedFactoryCache.end())
@@ -142,7 +142,7 @@ const IEntityFactory* EntityBuilder::getFactory(const IEntityComponentData* enti
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 
 	const TypeInfo& entityComponentDataType = type_of(entityComponentData);
-	const IEntityFactory* entityFactory = 0;
+	const IEntityFactory* entityFactory = nullptr;
 
 	auto it = m_resolvedFactoryCache.find(&entityComponentDataType);
 	if (it != m_resolvedFactoryCache.end())
@@ -187,19 +187,19 @@ const IEntityFactory* EntityBuilder::getFactory(const IEntityComponentData* enti
 
 Ref< Entity > EntityBuilder::create(const EntityData* entityData) const
 {
-	Ref< const IEntityFactory > entityFactory = getFactory(entityData);
+	const IEntityFactory* entityFactory = getFactory(entityData);
 	return entityFactory ? entityFactory->createEntity(this, *entityData) : nullptr;
 }
 
 Ref< IEntityEvent > EntityBuilder::create(const IEntityEventData* entityEventData) const
 {
-	Ref< const IEntityFactory > entityFactory = getFactory(entityEventData);
+	const IEntityFactory* entityFactory = getFactory(entityEventData);
 	return entityFactory ? entityFactory->createEntityEvent(this, *entityEventData) : nullptr;
 }
 
 Ref< IEntityComponent > EntityBuilder::create(const IEntityComponentData* entityComponentData) const
 {
-	Ref< const IEntityFactory > entityFactory = getFactory(entityComponentData);
+	const IEntityFactory* entityFactory = getFactory(entityComponentData);
 	return entityFactory ? entityFactory->createEntityComponent(this, *entityComponentData) : nullptr;
 }
 

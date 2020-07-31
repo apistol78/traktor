@@ -156,6 +156,7 @@ void PreviewControl::destroy()
 	safeDestroy(m_moviePlayer);
 	safeDestroy(m_soundRenderer);
 	safeDestroy(m_displayRenderer);
+	safeDestroy(m_renderGraph);
 	safeClose(m_renderView);
 
 	m_movieRenderer = nullptr;
