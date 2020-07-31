@@ -56,38 +56,34 @@ public:
 
 	struct ShadowSettings
 	{
-		ShadowProjection projection;
-		float farZ;
-		int32_t resolution;
-		float bias;
-		float biasCoeff;
-		int32_t cascadingSlices;
-		float cascadingLambda;
-		bool quantizeProjection;
-		int32_t maskDenominator;
+		ShadowProjection projection = SpUniform;
+		float farZ = 0.0f;
+		int32_t resolution = 1024;
+		float bias = 0.0f;
+		float biasCoeff = 1.0f;
+		int32_t cascadingSlices = 1;
+		float cascadingLambda = 0.0f;
+		bool quantizeProjection = false;
+		int32_t maskDenominator = 1;
 		resource::Id< render::ImageGraph > maskProject;
-
-		ShadowSettings();
 
 		void serialize(ISerializer& s);
 	};
 
-	float viewNearZ;
-	float viewFarZ;
-	bool linearLighting;
-	ExposureMode exposureMode;
-	float exposure;
+	float viewNearZ = 1.0f;
+	float viewFarZ = 100.0f;
+	bool linearLighting = true;
+	ExposureMode exposureMode = EmFixed;
+	float exposure = 1.0f;
 	ShadowSettings shadowSettings[(int)Quality::Last];
-	bool fog;
-	float fogDistanceY;
-	float fogDistanceZ;
-	float fogDensityY;
-	float fogDensityZ;
-	Color4f fogColor;
+	bool fog = false;
+	float fogDistanceY = 0.0f;
+	float fogDistanceZ = 90.0f;
+	float fogDensityY = 0.0f;
+	float fogDensityZ = 0.0f;
+	Color4f fogColor = Color4f(1.0f, 1.0f, 1.0f, 1.0f);
 	resource::Id< IrradianceGrid > irradianceGrid;
 	resource::Id< render::ImageGraph > imageProcess[(int)Quality::Last];
-
-	WorldRenderSettings();
 
 	virtual void serialize(ISerializer& s) override final;
 };

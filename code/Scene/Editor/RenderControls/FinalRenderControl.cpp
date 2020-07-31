@@ -235,6 +235,10 @@ void FinalRenderControl::setDebugOverlay(world::IDebugOverlay* overlay)
 {
 }
 
+void FinalRenderControl::setDebugOverlayAlpha(float alpha)
+{
+}
+
 bool FinalRenderControl::handleCommand(const ui::Command& command)
 {
 	if (command == L"Editor.SettingsChanged")

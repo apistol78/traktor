@@ -28,13 +28,11 @@ namespace traktor
 T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.mesh.MeshComponentData", 0, MeshComponentData, world::IEntityComponentData)
 
 MeshComponentData::MeshComponentData()
-:	m_screenSpaceCulling(false)
 {
 }
 
 MeshComponentData::MeshComponentData(const resource::Id< IMesh >& mesh)
 :	m_mesh(mesh)
-,	m_screenSpaceCulling(false)
 {
 }
 

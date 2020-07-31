@@ -40,19 +40,19 @@ void calculateLinearSpline(Point s1, Point d1, std::vector< Point >& outSpline)
 		if (ar.x >= ar.y)
 		{
 			m1 = Point(c.x - ar.y / 2, s.y);
-			m2 = Point(c.x + ar.y / 2, d.y);
+			m2 = Point(c.x + (ar.y + 1) / 2, d.y);
 		}
 		else
 		{
 			if (s.y < d.y)
 			{
 				m1 = Point(s.x, c.y - r.x / 2);
-				m2 = Point(d.x, c.y + r.x / 2);
+				m2 = Point(d.x, c.y + (r.x + 1) / 2);
 			}
 			else
 			{
 				m1 = Point(s.x, c.y + r.x / 2);
-				m2 = Point(d.x, c.y - r.x / 2);
+				m2 = Point(d.x, c.y - (r.x + 1) / 2);
 			}
 		}
 	}
@@ -68,12 +68,12 @@ void calculateLinearSpline(Point s1, Point d1, std::vector< Point >& outSpline)
 			if (s.y < d.y)
 			{
 				m1 = Point(s.x, c.y + r.x / 2);
-				m2 = Point(d.x, c.y - r.x / 2);
+				m2 = Point(d.x, c.y - (r.x + 1) / 2);
 			}
 			else
 			{
 				m1 = Point(s.x, c.y - r.x / 2);
-				m2 = Point(d.x, c.y + r.x / 2);
+				m2 = Point(d.x, c.y + (r.x + 1) / 2);
 			}
 		}
 	}
@@ -94,6 +94,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.Edge", Edge, Object)
 Edge::Edge(Pin* source, Pin* destination)
 :	m_source(source)
 ,	m_destination(destination)
+,	m_thickness(2)
 ,	m_selected(false)
 {
 }
@@ -126,6 +127,16 @@ void Edge::setText(const std::wstring& text)
 const std::wstring& Edge::getText() const
 {
 	return m_text;
+}
+
+void Edge::setThickness(int32_t thickness)
+{
+	m_thickness = thickness;
+}
+
+int32_t Edge::getThickness() const
+{
+	return m_thickness;
 }
 
 void Edge::setSelected(bool selected)
@@ -194,7 +205,7 @@ void Edge::paint(GraphCanvas* canvas, const Size& offset, IBitmap* imageLabel) c
 	Point d = m_destination->getPosition() + offset;
 
 	calculateLinearSpline(s, d, m_spline);
-	canvas->drawLines(m_spline, dpi96(2));
+	canvas->drawLines(m_spline, dpi96(m_thickness));
 
 	Point at = m_destination->getPosition() + offset;
 	Point arrow[] =

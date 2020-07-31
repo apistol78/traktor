@@ -130,16 +130,6 @@ struct LightShaderData
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.WorldRendererForward", 0, WorldRendererForward, IWorldRenderer)
 
-WorldRendererForward::WorldRendererForward()
-:	m_toneMapQuality(Quality::Disabled)
-,	m_shadowsQuality(Quality::Disabled)
-,	m_ambientOcclusionQuality(Quality::Disabled)
-,	m_antiAliasQuality(Quality::Disabled)
-,	m_gamma(1.0f)
-,	m_count(0)
-{
-}
-
 bool WorldRendererForward::create(
 	resource::IResourceManager* resourceManager,
 	render::IRenderSystem* renderSystem,

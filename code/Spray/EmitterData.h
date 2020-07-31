@@ -58,8 +58,6 @@ class T_DLLCLASS EmitterData : public ISerializable
 	T_RTTI_CLASS;
 
 public:
-	EmitterData();
-
 	Ref< Emitter > createEmitter(resource::IResourceManager* resourceManager, const world::IEntityBuilder* entityBuilder) const;
 
 	virtual void serialize(ISerializer& s) override final;
@@ -80,15 +78,15 @@ private:
 	resource::Id< render::Shader > m_shader;
 	resource::Id< mesh::InstanceMesh > m_mesh;
 	Ref< EffectData > m_effect;
-	float m_middleAge;
-	float m_cullNearDistance;
-	float m_cullMeshDistance;
-	float m_fadeNearRange;
-	float m_viewOffset;
-	float m_warmUp;
-	bool m_sort;
-	bool m_worldSpace;
-	bool m_meshOrientationFromVelocity;
+	float m_middleAge = 0.2f;
+	float m_cullNearDistance = 0.25f;
+	float m_cullMeshDistance = 100.0f;
+	float m_fadeNearRange = 1.0f;
+	float m_viewOffset = 0.0f;
+	float m_warmUp = 0.0f;
+	bool m_sort = false;
+	bool m_worldSpace = true;
+	bool m_meshOrientationFromVelocity = true;
 };
 
 	}

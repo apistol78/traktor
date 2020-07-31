@@ -55,8 +55,6 @@ class T_DLLCLASS WorldRendererForward : public IWorldRenderer
 	T_RTTI_CLASS;
 
 public:
-	WorldRendererForward();
-
 	virtual bool create(
 		resource::IResourceManager* resourceManager,
 		render::IRenderSystem* renderSystem,
@@ -80,12 +78,12 @@ private:
 	};
 
 	WorldRenderSettings m_settings;
-	Quality m_toneMapQuality;
-	Quality m_shadowsQuality;
-	Quality m_ambientOcclusionQuality;
-	Quality m_antiAliasQuality;
+	Quality m_toneMapQuality = Quality::Disabled;
+	Quality m_shadowsQuality = Quality::Disabled;
+	Quality m_ambientOcclusionQuality = Quality::Disabled;
+	Quality m_antiAliasQuality = Quality::Disabled;
 
-	float m_gamma;
+	float m_gamma = 1.0f;
 
 	Ref< render::IRenderTargetSet > m_sharedDepthStencil;
 	Ref< render::ScreenRenderer > m_screenRenderer;
@@ -106,7 +104,7 @@ private:
 	AlignedVector< Light > m_lights;
 
 	float m_slicePositions[MaxSliceCount + 1];
-	int32_t m_count;
+	int32_t m_count = 0;
 
 	render::handle_t setupGBufferPass(
 		const WorldRenderView& worldRenderView,

@@ -258,6 +258,10 @@ void OrthogonalRenderControl::setDebugOverlay(world::IDebugOverlay* overlay)
 {
 }
 
+void OrthogonalRenderControl::setDebugOverlayAlpha(float alpha)
+{
+}
+
 bool OrthogonalRenderControl::handleCommand(const ui::Command& command)
 {
 	bool result = false;

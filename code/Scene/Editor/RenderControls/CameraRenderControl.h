@@ -65,6 +65,8 @@ public:
 
 	virtual void setDebugOverlay(world::IDebugOverlay* overlay) override final;
 
+	virtual void setDebugOverlayAlpha(float alpha) override final;
+
 	virtual bool handleCommand(const ui::Command& command) override final;
 
 	virtual void update() override final;
