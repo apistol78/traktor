@@ -127,6 +127,15 @@
 						</item>
 					</items>
 				</item>
+				<item type="Filter">
+					<name>Rotator</name>
+					<items>
+						<item type="File">
+							<fileName>Rotator/*.*</fileName>
+							<items/>
+						</item>
+					</items>
+				</item>
 			</items>
 			<dependencies/>
 		</item>
@@ -1598,7 +1607,7 @@
 										<items/>
 									</item>
 								</items>
-							</item>										
+							</item>
 							<item type="Filter">
 								<name>Frame</name>
 								<items>
