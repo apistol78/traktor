@@ -6,6 +6,7 @@
 #include "Animation/Cloth/ClothComponent.h"
 #include "Animation/Cloth/ClothComponentData.h"
 #include "Animation/PathEntity/PathComponentData.h"
+#include "Animation/Rotator/RotatorComponentData.h"
 
 namespace traktor
 {
@@ -38,6 +39,7 @@ const TypeInfoSet AnimationEntityFactory::getEntityComponentTypes() const
 	typeSet.insert< BoidsComponentData >();
 	typeSet.insert< ClothComponentData >();
 	typeSet.insert< PathComponentData >();
+	typeSet.insert< RotatorComponentData >();
 	return typeSet;
 }
 
@@ -61,6 +63,8 @@ Ref< world::IEntityComponent > AnimationEntityFactory::createEntityComponent(con
 		return clothComponentData->createComponent(m_resourceManager, m_renderSystem);
 	else if (auto pathComponentData = dynamic_type_cast< const PathComponentData* >(&entityComponentData))
 		return pathComponentData->createComponent();
+	else if (auto rotatorComponentData = dynamic_type_cast< const RotatorComponentData* >(&entityComponentData))
+		return rotatorComponentData->createComponent();
 	else
 		return nullptr;
 }
