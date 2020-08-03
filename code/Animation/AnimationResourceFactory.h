@@ -15,10 +15,10 @@ namespace traktor
 	namespace animation
 	{
 
-/*! Key framed animation factory.
+/*! Animation resource factory.
  * \ingroup Animation
  */
-class T_DLLCLASS AnimationFactory : public resource::IResourceFactory
+class T_DLLCLASS AnimationResourceFactory : public resource::IResourceFactory
 {
 	T_RTTI_CLASS;
 
@@ -34,4 +34,3 @@ public:
 
 	}
 }
-

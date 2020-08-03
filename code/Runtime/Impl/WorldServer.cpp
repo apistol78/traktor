@@ -5,12 +5,8 @@
 #include "Runtime/Impl/RenderServer.h"
 #include "Runtime/Impl/ScriptServer.h"
 #include "Runtime/Impl/WorldServer.h"
-#include "Animation/AnimatedMeshComponentFactory.h"
-#include "Animation/Boids/BoidsFactory.h"
-#include "Animation/Boids/BoidsRenderer.h"
-#include "Animation/Cloth/ClothFactory.h"
-#include "Animation/Cloth/ClothRenderer.h"
-#include "Animation/PathEntity/PathFactory.h"
+#include "Animation/AnimationEntityFactory.h"
+#include "Animation/AnimationEntityRenderer.h"
 #include "Core/Log/Log.h"
 #include "Core/Settings/PropertyBoolean.h"
 #include "Core/Settings/PropertyFloat.h"
@@ -160,10 +156,7 @@ void WorldServer::createEntityFactories(IEnvironment* environment)
 	render::IRenderSystem* renderSystem = environment->getRender()->getRenderSystem();
 	resource::IResourceManager* resourceManager = environment->getResource()->getResourceManager();
 
-	m_entityBuilder->addFactory(new animation::AnimatedMeshComponentFactory(resourceManager, physicsManager));
-	m_entityBuilder->addFactory(new animation::BoidsFactory());
-	m_entityBuilder->addFactory(new animation::ClothFactory(resourceManager, renderSystem));
-	m_entityBuilder->addFactory(new animation::PathFactory());
+	m_entityBuilder->addFactory(new animation::AnimationEntityFactory(resourceManager, renderSystem, physicsManager));
 	m_entityBuilder->addFactory(new ai::NavMeshEntityFactory(resourceManager, false));
 	m_entityBuilder->addFactory(new mesh::MeshEntityFactory(resourceManager));
 	m_entityBuilder->addFactory(new spray::EffectEntityFactory(resourceManager, m_eventManager, soundPlayer, m_feedbackManager));
@@ -197,8 +190,7 @@ void WorldServer::createEntityRenderers(IEnvironment* environment)
 	m_entityRenderers->add(new mesh::MeshComponentRenderer());
 	m_entityRenderers->add(new mesh::InstanceMeshComponentRenderer());
 	m_entityRenderers->add(m_effectEntityRenderer);
-	m_entityRenderers->add(new animation::BoidsRenderer());
-	m_entityRenderers->add(new animation::ClothRenderer());
+	m_entityRenderers->add(new animation::AnimationEntityRenderer());
 	m_entityRenderers->add(new weather::WeatherRenderer());
 	m_entityRenderers->add(m_terrainEntityRenderer);
 }

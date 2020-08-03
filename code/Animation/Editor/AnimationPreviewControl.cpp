@@ -1,8 +1,8 @@
 #include "Animation/AnimatedMeshComponent.h"
+#include "Animation/AnimationResourceFactory.h"
 #include "Animation/Joint.h"
 #include "Animation/Skeleton.h"
 #include "Animation/SkeletonUtils.h"
-#include "Animation/Animation/AnimationFactory.h"
 #include "Animation/Editor/AnimationPreviewControl.h"
 #include "Core/Math/Plane.h"
 #include "Core/Misc/SafeDestroy.h"
@@ -71,7 +71,7 @@ bool AnimationPreviewControl::create(ui::Widget* parent)
 		return false;
 
 	m_resourceManager = new resource::ResourceManager(resourceDatabase, m_editor->getSettings()->getProperty< bool >(L"Resource.Verbose", false));
-	m_resourceManager->addFactory(new AnimationFactory());
+	m_resourceManager->addFactory(new AnimationResourceFactory());
 	m_resourceManager->addFactory(new mesh::MeshFactory(m_renderSystem));
 	m_resourceManager->addFactory(new render::ShaderFactory(m_renderSystem));
 	m_resourceManager->addFactory(new render::SequenceTextureFactory());

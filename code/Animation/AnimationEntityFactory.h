@@ -12,17 +12,40 @@
 
 namespace traktor
 {
+	namespace render
+	{
+
+class IRenderSystem;
+
+	}
+
+	namespace resource
+	{
+
+class IResourceManager;
+
+	}
+
+	namespace physics
+	{
+
+class PhysicsManager;
+
+	}
+
 	namespace animation
 	{
 
-/*! Movement path factory.
+/*! Animation entity factory.
  * \ingroup Animation
  */
-class T_DLLCLASS PathFactory : public world::IEntityFactory
+class T_DLLCLASS AnimationEntityFactory : public world::IEntityFactory
 {
 	T_RTTI_CLASS;
 
 public:
+	AnimationEntityFactory(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem, physics::PhysicsManager* physicsManager);
+
 	virtual const TypeInfoSet getEntityTypes() const override final;
 
 	virtual const TypeInfoSet getEntityEventTypes() const override final;
@@ -34,6 +57,11 @@ public:
 	virtual Ref< world::IEntityEvent > createEntityEvent(const world::IEntityBuilder* builder, const world::IEntityEventData& entityEventData) const override final;
 
 	virtual Ref< world::IEntityComponent > createEntityComponent(const world::IEntityBuilder* builder, const world::IEntityComponentData& entityComponentData) const override final;
+
+private:
+	resource::IResourceManager* m_resourceManager;
+	render::IRenderSystem* m_renderSystem;
+	physics::PhysicsManager* m_physicsManager;
 };
 
 	}

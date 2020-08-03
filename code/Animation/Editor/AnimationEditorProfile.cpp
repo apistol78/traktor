@@ -1,13 +1,9 @@
-#include "Animation/AnimatedMeshComponentFactory.h"
-#include "Animation/Animation/AnimationFactory.h"
-#include "Animation/Boids/BoidsFactory.h"
-#include "Animation/Boids/BoidsRenderer.h"
-#include "Animation/Cloth/ClothFactory.h"
-#include "Animation/Cloth/ClothRenderer.h"
+#include "Animation/AnimationEntityFactory.h"
+#include "Animation/AnimationEntityRenderer.h"
+#include "Animation/AnimationResourceFactory.h"
 #include "Animation/Editor/AnimationEditorProfile.h"
 #include "Animation/Editor/AnimatedMeshComponentEditorFactory.h"
 #include "Animation/Editor/Cloth/ClothEntityEditorFactory.h"
-#include "Animation/PathEntity/PathFactory.h"
 #include "Core/Serialization/ISerializable.h"
 #include "Scene/Editor/SceneEditorContext.h"
 #include "Ui/Command.h"
@@ -47,7 +43,7 @@ void AnimationEditorProfile::createResourceFactories(
 	RefArray< const resource::IResourceFactory >& outResourceFactories
 ) const
 {
-	outResourceFactories.push_back(new AnimationFactory());
+	outResourceFactories.push_back(new AnimationResourceFactory());
 }
 
 void AnimationEditorProfile::createEntityFactories(
@@ -55,10 +51,7 @@ void AnimationEditorProfile::createEntityFactories(
 	RefArray< const world::IEntityFactory >& outEntityFactories
 ) const
 {
-	outEntityFactories.push_back(new AnimatedMeshComponentFactory(context->getResourceManager(), context->getPhysicsManager()));
-	outEntityFactories.push_back(new BoidsFactory());
-	outEntityFactories.push_back(new ClothFactory(context->getResourceManager(), context->getRenderSystem()));
-	outEntityFactories.push_back(new PathFactory());
+	outEntityFactories.push_back(new AnimationEntityFactory(context->getResourceManager(), context->getRenderSystem(), context->getPhysicsManager()));
 }
 
 void AnimationEditorProfile::createEntityRenderers(
@@ -68,8 +61,7 @@ void AnimationEditorProfile::createEntityRenderers(
 	RefArray< world::IEntityRenderer >& outEntityRenderers
 ) const
 {
-	outEntityRenderers.push_back(new BoidsRenderer());
-	outEntityRenderers.push_back(new ClothRenderer());
+	outEntityRenderers.push_back(new AnimationEntityRenderer());
 }
 
 void AnimationEditorProfile::createControllerEditorFactories(
