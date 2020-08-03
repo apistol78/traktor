@@ -1,7 +1,7 @@
 #include "Ai/NavMeshFactory.h"
 #include "Runtime/IEnvironment.h"
 #include "Runtime/Impl/ResourceServer.h"
-#include "Animation/Animation/AnimationFactory.h"
+#include "Animation/AnimationResourceFactory.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Settings/PropertyBoolean.h"
 #include "Core/Settings/PropertyGroup.h"
@@ -36,7 +36,7 @@ void ResourceServer::createResourceFactories(IEnvironment* environment)
 	render::IRenderSystem* renderSystem = environment->getRender()->getRenderSystem();
 
 	m_resourceManager->addFactory(new ai::NavMeshFactory());
-	m_resourceManager->addFactory(new animation::AnimationFactory());
+	m_resourceManager->addFactory(new animation::AnimationResourceFactory());
 	m_resourceManager->addFactory(new mesh::MeshFactory(renderSystem));
 	m_resourceManager->addFactory(new hf::HeightfieldFactory());
 	m_resourceManager->addFactory(new video::VideoFactory(renderSystem));
