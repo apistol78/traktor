@@ -54,7 +54,7 @@ class FinalRenderControl : public ISceneRenderControl
 public:
 	FinalRenderControl();
 
-	bool create(ui::Widget* parent, SceneEditorContext* context, int32_t cameraId);
+	bool create(ui::Widget* parent, SceneEditorContext* context, int32_t cameraId, const TypeInfo& worldRendererType);
 
 	virtual void destroy() override final;
 
@@ -92,6 +92,7 @@ private:
 	Ref< render::RenderContext > m_renderContext;
 	Ref< render::RenderGraph > m_renderGraph;
 	resource::Proxy< scene::Scene > m_sceneInstance;
+	const TypeInfo* m_worldRendererType = nullptr;
 	Ref< world::IWorldRenderer > m_worldRenderer;
 	world::WorldRenderView m_worldRenderView;
 	world::WorldRenderSettings m_worldRenderSettings;
