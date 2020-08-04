@@ -5053,287 +5053,6 @@
 		</item>
 		<item type="Project" version="1">
 			<enable>true</enable>
-			<name>Extern.thekla_atlas</name>
-			<sourcePath>$(TRAKTOR_HOME)/3rdp/thekla_atlas-master</sourcePath>
-			<configurations>
-				<item type="Configuration" version="5">
-					<name>DebugShared</name>
-					<targetFormat>TfStaticLibrary</targetFormat>
-					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/thekla_atlas-master/src</item>
-						<item>$(TRAKTOR_HOME)/3rdp/thekla_atlas-master/src/nvmesh</item>
-						<item>$(TRAKTOR_HOME)/3rdp/thekla_atlas-master/extern/poshlib</item>
-						<item>$(TRAKTOR_HOME)/3rdp/thekla_atlas-master/extern/tinyobj</item>
-					</includePaths>
-					<definitions>
-						<item>_DEBUG</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<warningLevel>WlCompilerDefault</warningLevel>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-					<debugExecutable/>
-					<debugArguments/>
-					<debugEnvironment/>
-					<debugWorkingDirectory/>
-					<aggregationItems/>
-					<consumerLibraryPath/>
-				</item>
-				<item type="Configuration" version="5">
-					<name>ReleaseShared</name>
-					<targetFormat>TfStaticLibrary</targetFormat>
-					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/thekla_atlas-master/src</item>
-						<item>$(TRAKTOR_HOME)/3rdp/thekla_atlas-master/src/nvmesh</item>
-						<item>$(TRAKTOR_HOME)/3rdp/thekla_atlas-master/extern/poshlib</item>
-						<item>$(TRAKTOR_HOME)/3rdp/thekla_atlas-master/extern/tinyobj</item>
-					</includePaths>
-					<definitions>
-						<item>NDEBUG</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<warningLevel>WlCompilerDefault</warningLevel>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-					<debugExecutable/>
-					<debugArguments/>
-					<debugEnvironment/>
-					<debugWorkingDirectory/>
-					<aggregationItems/>
-					<consumerLibraryPath/>
-				</item>
-				<item type="Configuration" version="5">
-					<name>DebugStatic</name>
-					<targetFormat>TfStaticLibrary</targetFormat>
-					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/thekla_atlas-master/src</item>
-						<item>$(TRAKTOR_HOME)/3rdp/thekla_atlas-master/src/nvmesh</item>
-						<item>$(TRAKTOR_HOME)/3rdp/thekla_atlas-master/extern/poshlib</item>
-						<item>$(TRAKTOR_HOME)/3rdp/thekla_atlas-master/extern/tinyobj</item>
-					</includePaths>
-					<definitions>
-						<item>_DEBUG</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<warningLevel>WlCompilerDefault</warningLevel>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-					<debugExecutable/>
-					<debugArguments/>
-					<debugEnvironment/>
-					<debugWorkingDirectory/>
-					<aggregationItems>
-						<item type="AggregationItem">
-							<sourceFile>libExtern.thekla_atlas.a</sourceFile>
-							<targetPath>debugstatic</targetPath>
-						</item>
-					</aggregationItems>
-					<consumerLibraryPath>debugstatic</consumerLibraryPath>
-				</item>
-				<item type="Configuration" version="5">
-					<name>ReleaseStatic</name>
-					<targetFormat>TfStaticLibrary</targetFormat>
-					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/thekla_atlas-master/src</item>
-						<item>$(TRAKTOR_HOME)/3rdp/thekla_atlas-master/src/nvmesh</item>
-						<item>$(TRAKTOR_HOME)/3rdp/thekla_atlas-master/extern/poshlib</item>
-						<item>$(TRAKTOR_HOME)/3rdp/thekla_atlas-master/extern/tinyobj</item>
-					</includePaths>
-					<definitions>
-						<item>NDEBUG</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<warningLevel>WlCompilerDefault</warningLevel>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-					<debugExecutable/>
-					<debugArguments/>
-					<debugEnvironment/>
-					<debugWorkingDirectory/>
-					<aggregationItems>
-						<item type="AggregationItem">
-							<sourceFile>libExtern.thekla_atlas.a</sourceFile>
-							<targetPath>releasestatic</targetPath>
-						</item>
-					</aggregationItems>
-					<consumerLibraryPath>releasestatic</consumerLibraryPath>
-				</item>
-			</configurations>
-			<items>
-				<item type="Filter">
-					<name>src</name>
-					<items>
-						<item type="File">
-							<fileName>*.h</fileName>
-							<items/>
-						</item>
-						<item type="Filter">
-							<name>nvcore</name>
-							<items>
-								<item type="File">
-									<fileName>src/nvcore/*.cpp</fileName>
-									<items/>
-								</item>
-								<item type="File">
-									<fileName>src/nvcore/*.h</fileName>
-									<items/>
-								</item>
-							</items>
-						</item>
-						<item type="Filter">
-							<name>nvimage</name>
-							<items>
-								<item type="File">
-									<fileName>src/nvimage/*.cpp</fileName>
-									<items/>
-								</item>
-								<item type="File">
-									<fileName>src/nvimage/*.h</fileName>
-									<items/>
-								</item>
-							</items>
-						</item>
-						<item type="Filter">
-							<name>nvmath</name>
-							<items>
-								<item type="File">
-									<fileName>src/nvmath/*.cpp</fileName>
-									<items/>
-								</item>
-								<item type="File">
-									<fileName>src/nvmath/*.h</fileName>
-									<items/>
-								</item>
-							</items>
-						</item>
-						<item type="Filter">
-							<name>nvmesh</name>
-							<items>
-								<item type="Filter">
-									<name>geometry</name>
-									<items>
-										<item type="File">
-											<fileName>src/nvmesh/geometry/*.cpp</fileName>
-											<items/>
-										</item>
-										<item type="File">
-											<fileName>src/nvmesh/geometry/*.h</fileName>
-											<items/>
-										</item>
-									</items>
-								</item>
-								<item type="Filter">
-									<name>halfedge</name>
-									<items>
-										<item type="File">
-											<fileName>src/nvmesh/halfedge/*.cpp</fileName>
-											<items/>
-										</item>
-										<item type="File">
-											<fileName>src/nvmesh/halfedge/*.h</fileName>
-											<items/>
-										</item>
-									</items>
-								</item>
-								<item type="Filter">
-									<name>param</name>
-									<items>
-										<item type="File">
-											<fileName>src/nvmesh/param/*.cpp</fileName>
-											<items/>
-										</item>
-										<item type="File">
-											<fileName>src/nvmesh/param/*.h</fileName>
-											<items/>
-										</item>
-									</items>
-								</item>
-								<item type="Filter">
-									<name>raster</name>
-									<items>
-										<item type="File">
-											<fileName>src/nvmesh/raster/*.cpp</fileName>
-											<items/>
-										</item>
-										<item type="File">
-											<fileName>src/nvmesh/raster/*.h</fileName>
-											<items/>
-										</item>
-									</items>
-								</item>
-								<item type="Filter">
-									<name>weld</name>
-									<items>
-										<item type="File">
-											<fileName>src/nvmesh/weld/*.cpp</fileName>
-											<items/>
-										</item>
-										<item type="File">
-											<fileName>src/nvmesh/weld/*.h</fileName>
-											<items/>
-										</item>
-									</items>
-								</item>
-								<item type="File">
-									<fileName>src/nvmesh/*.cpp</fileName>
-									<items/>
-								</item>
-								<item type="File">
-									<fileName>src/nvmesh/*.h</fileName>
-									<items/>
-								</item>
-							</items>
-						</item>
-						<item type="Filter">
-							<name>thekla</name>
-							<items>
-								<item type="File">
-									<fileName>src/thekla/*.cpp</fileName>
-									<items/>
-								</item>
-								<item type="File">
-									<fileName>src/thekla/*.h</fileName>
-									<items/>
-								</item>
-							</items>
-						</item>
-					</items>
-				</item>
-				<item type="Filter">
-					<name>extern</name>
-					<items>
-						<item type="Filter">
-							<name>poshlib</name>
-							<items>
-								<item type="File">
-									<fileName>extern/poshlib/*.c</fileName>
-									<items/>
-								</item>
-								<item type="File">
-									<fileName>extern/poshlib/*.h</fileName>
-									<items/>
-								</item>
-							</items>
-						</item>
-					</items>
-				</item>
-			</items>
-			<dependencies/>
-		</item>
-		<item type="Project" version="1">
-			<enable>true</enable>
 			<name>Extern.vulkan.glslang</name>
 			<sourcePath>$(GLSLANG)</sourcePath>
 			<configurations>
@@ -6039,6 +5758,134 @@
 							<items/>
 						</item>
 					</items>
+				</item>
+			</items>
+			<dependencies/>
+		</item>
+		<item type="Project" version="1">
+			<enable>true</enable>
+			<name>Extern.xatlas</name>
+			<sourcePath>$(TRAKTOR_HOME)/3rdp/xatlas-master-200804</sourcePath>
+			<configurations>
+				<item type="Configuration" version="5">
+					<name>DebugShared</name>
+					<targetFormat>TfStaticLibrary</targetFormat>
+					<targetProfile>TpDebug</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/3rdp/xatlas-master-200804</item>
+					</includePaths>
+					<definitions>
+						<item>_DEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+					<warningLevel>WlCompilerDefault</warningLevel>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
+					<debugExecutable/>
+					<debugArguments/>
+					<debugEnvironment/>
+					<debugWorkingDirectory/>
+					<aggregationItems/>
+					<consumerLibraryPath/>
+				</item>
+				<item type="Configuration" version="5">
+					<name>ReleaseShared</name>
+					<targetFormat>TfStaticLibrary</targetFormat>
+					<targetProfile>TpRelease</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/3rdp/xatlas-master-200804</item>
+					</includePaths>
+					<definitions>
+						<item>NDEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+					<warningLevel>WlCompilerDefault</warningLevel>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
+					<debugExecutable/>
+					<debugArguments/>
+					<debugEnvironment/>
+					<debugWorkingDirectory/>
+					<aggregationItems/>
+					<consumerLibraryPath/>
+				</item>
+				<item type="Configuration" version="5">
+					<name>DebugStatic</name>
+					<targetFormat>TfStaticLibrary</targetFormat>
+					<targetProfile>TpDebug</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/3rdp/xatlas-master-200804</item>
+					</includePaths>
+					<definitions>
+						<item>_DEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+					<warningLevel>WlCompilerDefault</warningLevel>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
+					<debugExecutable/>
+					<debugArguments/>
+					<debugEnvironment/>
+					<debugWorkingDirectory/>
+					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>Extern.thekla_atlas.pdb</sourceFile>
+							<targetPath>debugstatic</targetPath>
+						</item>
+						<item type="AggregationItem">
+							<sourceFile>Extern.thekla_atlas.lib</sourceFile>
+							<targetPath>debugstatic</targetPath>
+						</item>
+					</aggregationItems>
+					<consumerLibraryPath>debugstatic</consumerLibraryPath>
+				</item>
+				<item type="Configuration" version="5">
+					<name>ReleaseStatic</name>
+					<targetFormat>TfStaticLibrary</targetFormat>
+					<targetProfile>TpRelease</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/3rdp/xatlas-master-200804</item>
+					</includePaths>
+					<definitions>
+						<item>NDEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+					<warningLevel>WlCompilerDefault</warningLevel>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
+					<debugExecutable/>
+					<debugArguments/>
+					<debugEnvironment/>
+					<debugWorkingDirectory/>
+					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>Extern.thekla_atlas.pdb</sourceFile>
+							<targetPath>releasestatic</targetPath>
+						</item>
+						<item type="AggregationItem">
+							<sourceFile>Extern.thekla_atlas.lib</sourceFile>
+							<targetPath>releasestatic</targetPath>
+						</item>
+					</aggregationItems>
+					<consumerLibraryPath>releasestatic</consumerLibraryPath>
+				</item>
+			</configurations>
+			<items>
+				<item type="File">
+					<fileName>*.cpp</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>*.h</fileName>
+					<items/>
 				</item>
 			</items>
 			<dependencies/>
