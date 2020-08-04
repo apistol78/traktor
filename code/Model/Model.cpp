@@ -102,32 +102,32 @@ void Model::clear(uint32_t clearFlags)
 	if (clearFlags & CfJoints)
 		m_joints.resize(0);
 
-	for (AlignedVector< Vertex >::iterator i = m_vertices.begin(); i != m_vertices.end(); ++i)
+	for (auto& vertex : m_vertices)
 	{
 		if (clearFlags & CfPositions)
-			i->setPosition(c_InvalidIndex);
+			vertex.setPosition(c_InvalidIndex);
 		if (clearFlags & CfColors)
-			i->setColor(c_InvalidIndex);
+			vertex.setColor(c_InvalidIndex);
 		if (clearFlags & CfNormals)
 		{
-			i->setNormal(c_InvalidIndex);
-			i->setTangent(c_InvalidIndex);
-			i->setBinormal(c_InvalidIndex);
+			vertex.setNormal(c_InvalidIndex);
+			vertex.setTangent(c_InvalidIndex);
+			vertex.setBinormal(c_InvalidIndex);
 		}
 		if (clearFlags & CfTexCoords)
-			i->clearTexCoords();
+			vertex.clearTexCoords();
 		if (clearFlags & CfJoints)
-			i->clearJointInfluences();
+			vertex.clearJointInfluences();
 	}
 
-	for (AlignedVector< Polygon >::iterator i = m_polygons.begin(); i != m_polygons.end(); ++i)
+	for (auto& polygon : m_polygons)
 	{
 		if (clearFlags & CfMaterials)
-			i->setMaterial(c_InvalidIndex);
+			polygon.setMaterial(c_InvalidIndex);
 		if (clearFlags & CfNormals)
-			i->setNormal(c_InvalidIndex);
+			polygon.setNormal(c_InvalidIndex);
 		if (clearFlags & CfVertices)
-			i->clearVertices();
+			polygon.clearVertices();
 	}
 }
 

@@ -5712,7 +5712,7 @@
 																	<inheritIncludePaths>true</inheritIncludePaths>
 																	<link>LnkYes</link>
 																	<solutionFileName>ExternOSX.xms</solutionFileName>
-																	<projectName>Extern.thekla_atlas</projectName>
+																	<projectName>Extern.xatlas</projectName>
 																</item>
 																<item type="ProjectDependency" version="3">
 																	<inheritIncludePaths>true</inheritIncludePaths>
