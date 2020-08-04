@@ -437,14 +437,13 @@ bool DefaultRenderControl::createRenderControl(int32_t type)
 	case 8: // Final
 		{
 			Ref< FinalRenderControl > renderControl = new FinalRenderControl();
-			if (!renderControl->create(m_container, m_context, m_cameraId))
+			if (!renderControl->create(m_container, m_context, m_cameraId, *worldRendererType))
 				return false;
 			m_renderControl = renderControl;
 
 			// Some tools not applicable to final view.
 			m_toolToggleGrid->setEnable(false);
 			m_toolToggleGuide->setEnable(false);
-			m_toolWorldRenderer->setEnable(false);
 		}
 		break;
 	}

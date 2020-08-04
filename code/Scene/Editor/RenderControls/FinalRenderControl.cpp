@@ -71,10 +71,12 @@ FinalRenderControl::FinalRenderControl()
 {
 }
 
-bool FinalRenderControl::create(ui::Widget* parent, SceneEditorContext* context, int32_t cameraId)
+bool FinalRenderControl::create(ui::Widget* parent, SceneEditorContext* context, int32_t cameraId, const TypeInfo& worldRendererType)
 {
 	m_context = context;
 	T_ASSERT(m_context);
+
+	m_worldRendererType = &worldRendererType;
 
 	const PropertyGroup* settings = m_context->getEditor()->getSettings();
 	T_ASSERT(settings);
@@ -174,13 +176,7 @@ void FinalRenderControl::updateWorldRenderer()
 	const PropertyGroup* settings = m_context->getEditor()->getSettings();
 	T_ASSERT(settings);
 
-	std::wstring worldRendererTypeName = settings->getProperty< std::wstring >(L"SceneEditor.WorldRendererType", L"traktor.world.WorldRendererDeferred");
-
-	const TypeInfo* worldRendererType = TypeInfo::find(worldRendererTypeName.c_str());
-	if (!worldRendererType)
-		return;
-
-	Ref< world::IWorldRenderer > worldRenderer = dynamic_type_cast< world::IWorldRenderer* >(worldRendererType->createInstance());
+	Ref< world::IWorldRenderer > worldRenderer = dynamic_type_cast< world::IWorldRenderer* >(m_worldRendererType->createInstance());
 	if (!worldRenderer)
 		return;
 
@@ -208,6 +204,8 @@ void FinalRenderControl::updateWorldRenderer()
 
 void FinalRenderControl::setWorldRendererType(const TypeInfo& worldRendererType)
 {
+	m_worldRendererType = &worldRendererType;
+	updateWorldRenderer();	
 }
 
 void FinalRenderControl::setAspect(float aspect)
