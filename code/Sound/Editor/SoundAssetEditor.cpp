@@ -47,7 +47,7 @@ SoundAssetEditor::SoundAssetEditor(editor::IEditor* editor)
 bool SoundAssetEditor::create(ui::Widget* parent, db::Instance* instance, ISerializable* object)
 {
 	m_instance = instance;
-	m_asset = checked_type_cast< SoundAsset* >(object);
+	m_asset = mandatory_non_null_type_cast< SoundAsset* >(object);
 
 	Ref< ui::Container > container = new ui::Container();
 	container->create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%", 0, 0));
@@ -84,15 +84,15 @@ void SoundAssetEditor::destroy()
 	if (m_audioChannel)
 	{
 		m_audioChannel->stop();
-		m_audioChannel = 0;
+		m_audioChannel = nullptr;
 	}
 
 	safeDestroy(m_propertyList);
 	safeDestroy(m_toolBar);
 
-	m_audioSystem = 0;
-	m_instance = 0;
-	m_asset = 0;
+	m_audioSystem = nullptr;
+	m_instance = nullptr;
+	m_asset = nullptr;
 }
 
 void SoundAssetEditor::apply()
