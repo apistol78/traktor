@@ -272,8 +272,8 @@ Ref< ShaderGraph > ShaderGraphOptimizer::insertInterpolators(bool frequentUnifor
 	shaderGraph->findNodesOf< PixelOutput >(pixelOutputNodes);
 
 	m_visited.clear();
-	for (RefArray< PixelOutput >::iterator i = pixelOutputNodes.begin(); i != pixelOutputNodes.end(); ++i)
-		insertInterpolators(shaderGraph, *i);
+	for (auto pixelOutputNode : pixelOutputNodes)
+		insertInterpolators(shaderGraph, pixelOutputNode);
 
 #if defined(_DEBUG)
 	T_DEBUG(L"Inserted " << m_insertedCount << L" interpolator(s).");
@@ -341,9 +341,9 @@ void ShaderGraphOptimizer::insertInterpolators(ShaderGraph* shaderGraph, Node* n
 				// If this output pin already connected to an interpolator node then we reuse it.
 				RefSet< Edge > outputEdges;
 				shaderGraph->findEdges(sourceOutputPin, outputEdges);
-				for (RefSet< Edge >::const_iterator i = outputEdges.begin(); i != outputEdges.end(); ++i)
+				for (auto outputEdge : outputEdges)
 				{
-					Ref< Node > targetNode = (*i)->getDestination()->getNode();
+					Ref< Node > targetNode = outputEdge->getDestination()->getNode();
 					if (is_a< Interpolator >(targetNode))
 					{
 						edge = new Edge(targetNode->getOutputPin(0), inputPin);

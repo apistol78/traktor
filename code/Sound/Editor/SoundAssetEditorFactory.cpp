@@ -11,9 +11,7 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.SoundAssetEditorFactory", 0, Soun
 
 const TypeInfoSet SoundAssetEditorFactory::getEditableTypes() const
 {
-	TypeInfoSet typeSet;
-	typeSet.insert< SoundAsset >();
-	return typeSet;
+	return makeTypeInfoSet< SoundAsset >();
 }
 
 bool SoundAssetEditorFactory::needOutputResources(const TypeInfo& typeInfo, std::set< Guid >& outDependencies) const

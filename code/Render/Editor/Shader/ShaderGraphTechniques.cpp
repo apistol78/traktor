@@ -69,9 +69,9 @@ ShaderGraphTechniques::ShaderGraphTechniques(const ShaderGraph* shaderGraph)
 			bool foundNamedVertexOutput = false;
 
 			// Find named output nodes.
-			for (RefArray< Node >::const_iterator j = nodes.begin(); j != nodes.end(); ++j)
+			for (auto node : nodes)
 			{
-				if (VertexOutput* vertexOutput = dynamic_type_cast< VertexOutput* >(*j))
+				if (VertexOutput* vertexOutput = dynamic_type_cast< VertexOutput* >(node))
 				{
 					if (vertexOutput->getTechnique() == name)
 					{
@@ -79,32 +79,32 @@ ShaderGraphTechniques::ShaderGraphTechniques(const ShaderGraph* shaderGraph)
 						foundNamedVertexOutput = true;
 					}
 				}
-				else if (PixelOutput* pixelOutput = dynamic_type_cast< PixelOutput* >(*j))
+				else if (PixelOutput* pixelOutput = dynamic_type_cast< PixelOutput* >(node))
 				{
 					if (pixelOutput->getTechnique() == name)
 						roots.push_back(pixelOutput);
 				}
-				else if (ComputeOutput* computeOutput = dynamic_type_cast< ComputeOutput* >(*j))
+				else if (ComputeOutput* computeOutput = dynamic_type_cast< ComputeOutput* >(node))
 				{
 					if (computeOutput->getTechnique() == name)
 						roots.push_back(computeOutput);
 				}
 				else
 				{
-					const INodeTraits* traits = INodeTraits::find(*j);
+					const INodeTraits* traits = INodeTraits::find(node);
 					T_FATAL_ASSERT (traits);
 
-					if (traits->isRoot(shaderGraphOpt, *j))
-						roots.push_back(*j);
+					if (traits->isRoot(shaderGraphOpt, node))
+						roots.push_back(node);
 				}
 			}
 
 			// If no explicit named vertex output we'll try to find an unnamed vertex output.
 			if (!foundNamedVertexOutput)
 			{
-				for (RefArray< Node >::const_iterator j = nodes.begin(); j != nodes.end(); ++j)
+				for (auto node : nodes)
 				{
-					VertexOutput* vertexOutput = dynamic_type_cast< VertexOutput* >(*j);
+					VertexOutput* vertexOutput = dynamic_type_cast< VertexOutput* >(node);
 					if (vertexOutput && vertexOutput->getTechnique().empty())
 						roots.push_back(vertexOutput);
 				}
@@ -121,15 +121,15 @@ ShaderGraphTechniques::ShaderGraphTechniques(const ShaderGraph* shaderGraph)
 std::set< std::wstring > ShaderGraphTechniques::getNames() const
 {
 	std::set< std::wstring > names;
-	for (std::map< std::wstring, Ref< const ShaderGraph > >::const_iterator i = m_techniques.begin(); i != m_techniques.end(); ++i)
-		names.insert(i->first);
+	for (auto technique : m_techniques)
+		names.insert(technique.first);
 	return names;
 }
 
 Ref< ShaderGraph > ShaderGraphTechniques::generate(const std::wstring& name) const
 {
-	std::map< std::wstring, Ref< const ShaderGraph > >::const_iterator i = m_techniques.find(name);
-	return i != m_techniques.end() ? DeepClone(i->second).create< ShaderGraph >() : 0;
+	auto it = m_techniques.find(name);
+	return it != m_techniques.end() ? DeepClone(it->second).create< ShaderGraph >() : nullptr;
 }
 
 	}
