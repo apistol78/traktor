@@ -239,7 +239,7 @@
 		</item>
 		<item>
 			<first>DATABASE_REPLACE_INSTANCE</first>
-			<second>Replace instance</second>
+			<second>Replace instance...</second>
 		</item>
 		<item>
 			<first>DATABASE_SHOW_EDITABLE</first>
@@ -283,7 +283,7 @@
 		</item>
 		<item>
 			<first>DATABASE_WIZARDS</first>
-			<second>Wizards</second>
+			<second>Wizards...</second>
 		</item>
 		<item>
 			<first>EDITOR_ABOUT_TITLE</first>
