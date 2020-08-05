@@ -11857,7 +11857,7 @@
 		<item ref="/object/projects/item[1]/dependencies/item[7]/project/dependencies/item[12]/project/dependencies/item[7]/project/dependencies/item[12]/project"/>
 		<item type="Project" version="1">
 			<enable>false</enable>
-			<name>Traktor.Render.OpenGL.ES2</name>
+			<name>Traktor.Render.OpenGL.ES</name>
 			<sourcePath>$(TRAKTOR_HOME)/code/Render/OpenGL</sourcePath>
 			<configurations>
 				<item type="Configuration" version="5">
@@ -11869,9 +11869,9 @@
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
 					<definitions>
-						<item>T_RENDER_OPENGL_ES2_EXPORT</item>
+						<item>T_RENDER_OPENGL_ES_EXPORT</item>
 						<item>_DEBUG</item>
-						<item>T_OPENGL_ES2</item>
+						<item>T_OPENGL_ES</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries>
@@ -11886,7 +11886,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>libTraktor.Render.OpenGL.ES2.dylib</sourceFile>
+							<sourceFile>libTraktor.Render.OpenGL.ES.dylib</sourceFile>
 							<targetPath>debugshared</targetPath>
 						</item>
 					</aggregationItems>
@@ -11901,9 +11901,9 @@
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
 					<definitions>
-						<item>T_RENDER_OPENGL_ES2_EXPORT</item>
+						<item>T_RENDER_OPENGL_ES_EXPORT</item>
 						<item>NDEBUG</item>
-						<item>T_OPENGL_ES2</item>
+						<item>T_OPENGL_ES</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries>
@@ -11918,7 +11918,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>libTraktor.Render.OpenGL.ES2.dylib</sourceFile>
+							<sourceFile>libTraktor.Render.OpenGL.ES.dylib</sourceFile>
 							<targetPath>releaseshared</targetPath>
 						</item>
 					</aggregationItems>
@@ -11935,7 +11935,7 @@
 					<definitions>
 						<item>T_STATIC</item>
 						<item>_DEBUG</item>
-						<item>T_OPENGL_ES2</item>
+						<item>T_OPENGL_ES</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries>
@@ -11950,7 +11950,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>libTraktor.Render.OpenGL.ES2.a</sourceFile>
+							<sourceFile>libTraktor.Render.OpenGL.ES.a</sourceFile>
 							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -11967,7 +11967,7 @@
 					<definitions>
 						<item>T_STATIC</item>
 						<item>NDEBUG</item>
-						<item>T_OPENGL_ES2</item>
+						<item>T_OPENGL_ES</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries>
@@ -11982,7 +11982,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>libTraktor.Render.OpenGL.ES2.a</sourceFile>
+							<sourceFile>libTraktor.Render.OpenGL.ES.a</sourceFile>
 							<targetPath>releasestatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -11991,10 +11991,10 @@
 			</configurations>
 			<items>
 				<item type="Filter">
-					<name>ES2</name>
+					<name>ES</name>
 					<items>
 						<item type="File">
-							<fileName>ES2/*.*</fileName>
+							<fileName>ES/*.*</fileName>
 							<items/>
 						</item>
 					</items>
