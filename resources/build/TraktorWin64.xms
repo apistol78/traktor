@@ -17107,8 +17107,8 @@
 		</item>
 		<item type="Project" version="1">
 			<enable>true</enable>
-			<name>Traktor.Render.OpenGL.ES2</name>
-			<sourcePath>$(TRAKTOR_HOME)/code/Render/OpenGL/ES2</sourcePath>
+			<name>Traktor.Render.OpenGL.ES</name>
+			<sourcePath>$(TRAKTOR_HOME)/code/Render/OpenGL/ES</sourcePath>
 			<configurations>
 				<item type="Configuration" version="5">
 					<name>DebugShared</name>
@@ -17117,9 +17117,9 @@
 					<precompiledHeader/>
 					<includePaths/>
 					<definitions>
-						<item>T_RENDER_OPENGL_ES2_EXPORT</item>
+						<item>T_RENDER_OPENGL_ES_EXPORT</item>
 						<item>_DEBUG</item>
-						<item>T_OPENGL_ES2</item>
+						<item>T_OPENGL_ES</item>
 						<item>GL_GLEXT_PROTOTYPES</item>
 					</definitions>
 					<libraryPaths/>
@@ -17133,15 +17133,15 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>Traktor.Render.OpenGL.ES2.pdb</sourceFile>
+							<sourceFile>Traktor.Render.OpenGL.ES.pdb</sourceFile>
 							<targetPath>debugshared</targetPath>
 						</item>
 						<item type="AggregationItem">
-							<sourceFile>Traktor.Render.OpenGL.ES2.lib</sourceFile>
+							<sourceFile>Traktor.Render.OpenGL.ES.lib</sourceFile>
 							<targetPath>debugshared</targetPath>
 						</item>
 						<item type="AggregationItem">
-							<sourceFile>Traktor.Render.OpenGL.ES2.dll</sourceFile>
+							<sourceFile>Traktor.Render.OpenGL.ES.dll</sourceFile>
 							<targetPath>debugshared</targetPath>
 						</item>
 					</aggregationItems>
@@ -17154,9 +17154,9 @@
 					<precompiledHeader/>
 					<includePaths/>
 					<definitions>
-						<item>T_RENDER_OPENGL_ES2_EXPORT</item>
+						<item>T_RENDER_OPENGL_ES_EXPORT</item>
 						<item>NDEBUG</item>
-						<item>T_OPENGL_ES2</item>
+						<item>T_OPENGL_ES</item>
 						<item>GL_GLEXT_PROTOTYPES</item>
 					</definitions>
 					<libraryPaths/>
@@ -17170,15 +17170,15 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>Traktor.Render.OpenGL.ES2.pdb</sourceFile>
+							<sourceFile>Traktor.Render.OpenGL.ES.pdb</sourceFile>
 							<targetPath>releaseshared</targetPath>
 						</item>
 						<item type="AggregationItem">
-							<sourceFile>Traktor.Render.OpenGL.ES2.lib</sourceFile>
+							<sourceFile>Traktor.Render.OpenGL.ES.lib</sourceFile>
 							<targetPath>releaseshared</targetPath>
 						</item>
 						<item type="AggregationItem">
-							<sourceFile>Traktor.Render.OpenGL.ES2.dll</sourceFile>
+							<sourceFile>Traktor.Render.OpenGL.ES.dll</sourceFile>
 							<targetPath>releaseshared</targetPath>
 						</item>
 					</aggregationItems>
@@ -17193,7 +17193,7 @@
 					<definitions>
 						<item>T_STATIC</item>
 						<item>_DEBUG</item>
-						<item>T_OPENGL_ES2</item>
+						<item>T_OPENGL_ES</item>
 						<item>GL_GLEXT_PROTOTYPES</item>
 					</definitions>
 					<libraryPaths/>
@@ -17207,11 +17207,11 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>Traktor.Render.OpenGL.ES2.pdb</sourceFile>
+							<sourceFile>Traktor.Render.OpenGL.ES.pdb</sourceFile>
 							<targetPath>debugstatic</targetPath>
 						</item>
 						<item type="AggregationItem">
-							<sourceFile>Traktor.Render.OpenGL.ES2.lib</sourceFile>
+							<sourceFile>Traktor.Render.OpenGL.ES.lib</sourceFile>
 							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -17226,7 +17226,7 @@
 					<definitions>
 						<item>T_STATIC</item>
 						<item>NDEBUG</item>
-						<item>T_OPENGL_ES2</item>
+						<item>T_OPENGL_ES</item>
 						<item>GL_GLEXT_PROTOTYPES</item>
 					</definitions>
 					<libraryPaths/>
@@ -17240,11 +17240,11 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>Traktor.Render.OpenGL.ES2.pdb</sourceFile>
+							<sourceFile>Traktor.Render.OpenGL.ES.pdb</sourceFile>
 							<targetPath>releasestatic</targetPath>
 						</item>
 						<item type="AggregationItem">
-							<sourceFile>Traktor.Render.OpenGL.ES2.lib</sourceFile>
+							<sourceFile>Traktor.Render.OpenGL.ES.lib</sourceFile>
 							<targetPath>releasestatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -21168,8 +21168,8 @@
 		</item>
 		<item type="Project" version="1">
 			<enable>true</enable>
-			<name>Traktor.Render.OpenGL.ES2.Editor</name>
-			<sourcePath>$(TRAKTOR_HOME)/code/Render/OpenGL/ES2/Editor</sourcePath>
+			<name>Traktor.Render.OpenGL.ES.Editor</name>
+			<sourcePath>$(TRAKTOR_HOME)/code/Render/OpenGL/ES/Editor</sourcePath>
 			<configurations>
 				<item type="Configuration" version="5">
 					<name>DebugShared</name>
@@ -21180,7 +21180,7 @@
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
 					<definitions>
-						<item>T_RENDER_OPENGL_ES2_EDITOR_EXPORT</item>
+						<item>T_RENDER_OPENGL_ES_EDITOR_EXPORT</item>
 						<item>_DEBUG</item>
 					</definitions>
 					<libraryPaths/>
@@ -21194,15 +21194,15 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>Traktor.Render.OpenGL.ES2.Editor.pdb</sourceFile>
+							<sourceFile>Traktor.Render.OpenGL.ES.Editor.pdb</sourceFile>
 							<targetPath>debugshared</targetPath>
 						</item>
 						<item type="AggregationItem">
-							<sourceFile>Traktor.Render.OpenGL.ES2.Editor.lib</sourceFile>
+							<sourceFile>Traktor.Render.OpenGL.ES.Editor.lib</sourceFile>
 							<targetPath>debugshared</targetPath>
 						</item>
 						<item type="AggregationItem">
-							<sourceFile>Traktor.Render.OpenGL.ES2.Editor.dll</sourceFile>
+							<sourceFile>Traktor.Render.OpenGL.ES.Editor.dll</sourceFile>
 							<targetPath>debugshared</targetPath>
 						</item>
 					</aggregationItems>
@@ -21217,7 +21217,7 @@
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
 					<definitions>
-						<item>T_RENDER_OPENGL_ES2_EDITOR_EXPORT</item>
+						<item>T_RENDER_OPENGL_ES_EDITOR_EXPORT</item>
 						<item>NDEBUG</item>
 					</definitions>
 					<libraryPaths/>
@@ -21231,15 +21231,15 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>Traktor.Render.OpenGL.ES2.Editor.pdb</sourceFile>
+							<sourceFile>Traktor.Render.OpenGL.ES.Editor.pdb</sourceFile>
 							<targetPath>releaseshared</targetPath>
 						</item>
 						<item type="AggregationItem">
-							<sourceFile>Traktor.Render.OpenGL.ES2.Editor.lib</sourceFile>
+							<sourceFile>Traktor.Render.OpenGL.ES.Editor.lib</sourceFile>
 							<targetPath>releaseshared</targetPath>
 						</item>
 						<item type="AggregationItem">
-							<sourceFile>Traktor.Render.OpenGL.ES2.Editor.dll</sourceFile>
+							<sourceFile>Traktor.Render.OpenGL.ES.Editor.dll</sourceFile>
 							<targetPath>releaseshared</targetPath>
 						</item>
 					</aggregationItems>
@@ -21268,11 +21268,11 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>Traktor.Render.OpenGL.ES2.Editor.pdb</sourceFile>
+							<sourceFile>Traktor.Render.OpenGL.ES.Editor.pdb</sourceFile>
 							<targetPath>debugstatic</targetPath>
 						</item>
 						<item type="AggregationItem">
-							<sourceFile>Traktor.Render.OpenGL.ES2.Editor.lib</sourceFile>
+							<sourceFile>Traktor.Render.OpenGL.ES.Editor.lib</sourceFile>
 							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -21301,11 +21301,11 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>Traktor.Render.OpenGL.ES2.Editor.pdb</sourceFile>
+							<sourceFile>Traktor.Render.OpenGL.ES.Editor.pdb</sourceFile>
 							<targetPath>releasestatic</targetPath>
 						</item>
 						<item type="AggregationItem">
-							<sourceFile>Traktor.Render.OpenGL.ES2.Editor.lib</sourceFile>
+							<sourceFile>Traktor.Render.OpenGL.ES.Editor.lib</sourceFile>
 							<targetPath>releasestatic</targetPath>
 						</item>
 					</aggregationItems>

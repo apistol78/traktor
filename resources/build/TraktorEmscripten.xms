@@ -2964,8 +2964,8 @@
 		<item ref="/object/projects/item/dependencies/item[1]/project/dependencies/item[1]/project"/>
 		<item type="Project" version="1">
 			<enable>true</enable>
-			<name>Traktor.Render.OpenGL.ES2</name>
-			<sourcePath>$(TRAKTOR_HOME)/code/Render/OpenGL/ES2</sourcePath>
+			<name>Traktor.Render.OpenGL.ES</name>
+			<sourcePath>$(TRAKTOR_HOME)/code/Render/OpenGL/ES</sourcePath>
 			<configurations>
 				<item type="Configuration" version="5">
 					<name>DebugStatic</name>
@@ -2978,7 +2978,7 @@
 					<definitions>
 						<item>T_STATIC</item>
 						<item>_DEBUG</item>
-						<item>T_OPENGL_ES2</item>
+						<item>T_OPENGL_ES</item>
 						<item>GL_GLEXT_PROTOTYPES</item>
 					</definitions>
 					<libraryPaths/>
@@ -2992,7 +2992,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>libTraktor.Render.OpenGL.ES2.a</sourceFile>
+							<sourceFile>libTraktor.Render.OpenGL.ES.a</sourceFile>
 							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -3009,7 +3009,7 @@
 					<definitions>
 						<item>T_STATIC</item>
 						<item>NDEBUG</item>
-						<item>T_OPENGL_ES2</item>
+						<item>T_OPENGL_ES</item>
 						<item>GL_GLEXT_PROTOTYPES</item>
 					</definitions>
 					<libraryPaths/>
@@ -3023,7 +3023,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>libTraktor.Render.OpenGL.ES2.a</sourceFile>
+							<sourceFile>libTraktor.Render.OpenGL.ES.a</sourceFile>
 							<targetPath>releasestatic</targetPath>
 						</item>
 					</aggregationItems>
