@@ -5,9 +5,9 @@
 #include "Core/Misc/Adler32.h"
 #include "Core/Misc/TString.h"
 #include "Core/Thread/Acquire.h"
-#include "Render/OpenGL/ES2/ExtensionsGLES2.h"
-#include "Render/OpenGL/ES2/Linux/ContextOpenGLES2.h"
-#include "Render/OpenGL/ES2/Linux/Window.h"
+#include "Render/OpenGL/ES/ExtensionsGLES.h"
+#include "Render/OpenGL/ES/Linux/ContextOpenGLES.h"
+#include "Render/OpenGL/ES/Linux/Window.h"
 
 namespace traktor
 {
@@ -18,23 +18,23 @@ namespace traktor
 
 const uint32_t c_maxMatchConfigs = 64;
 
-typedef RefArray< ContextOpenGLES2 > context_stack_t;
+typedef RefArray< ContextOpenGLES > context_stack_t;
 
 		}
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ContextOpenGLES2", ContextOpenGLES2, Object)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ContextOpenGLES", ContextOpenGLES, Object)
 
-ThreadLocal ContextOpenGLES2::ms_contextStack;
+ThreadLocal ContextOpenGLES::ms_contextStack;
 
-Ref< ContextOpenGLES2 > ContextOpenGLES2::createContext(const SystemApplication& sysapp, const RenderViewDefaultDesc& desc)
+Ref< ContextOpenGLES > ContextOpenGLES::createContext(const SystemApplication& sysapp, const RenderViewDefaultDesc& desc)
 {
-	Ref< ContextOpenGLES2 > context = new ContextOpenGLES2();
+	Ref< ContextOpenGLES > context = new ContextOpenGLES();
 
 	context->m_window = new Window();
 	if (!context->m_window->create(desc.displayMode.width, desc.displayMode.height))
-		return 0;
+		return nullptr;
 
-	context->m_window->setTitle(!desc.title.empty() ? desc.title.c_str() : L"Traktor - OpenGL ES 2.0 Renderer");
+	context->m_window->setTitle(!desc.title.empty() ? desc.title.c_str() : L"Traktor - OpenGL ES Renderer");
 	context->m_window->setWindowedStyle(desc.displayMode.width, desc.displayMode.height);
 	context->m_window->show();
 
@@ -45,16 +45,16 @@ Ref< ContextOpenGLES2 > ContextOpenGLES2::createContext(const SystemApplication&
 		if (context->m_display == EGL_NO_DISPLAY)
 		{
 			EGLint error = eglGetError();
-			log::error << L"Create OpenGL ES2.0 failed; unable to get EGL display (" << getEGLErrorString(error) << L")" << Endl;
-			return 0;
+			log::error << L"Create OpenGL ES failed; unable to get EGL display (" << getEGLErrorString(error) << L")." << Endl;
+			return nullptr;
 		}
 	}
 
 	if (!eglInitialize(context->m_display, 0, 0))
 	{
 		EGLint error = eglGetError();
-		log::error << L"Create OpenGL ES2.0 failed; unable to initialize EGL (" << getEGLErrorString(error) << L")" << Endl;
-		return 0;
+		log::error << L"Create OpenGL ES failed; unable to initialize EGL (" << getEGLErrorString(error) << L")." << Endl;
+		return nullptr;
 	}
 
 	EGLConfig matchingConfigs[c_maxMatchConfigs];
@@ -114,16 +114,16 @@ Ref< ContextOpenGLES2 > ContextOpenGLES2::createContext(const SystemApplication&
 		if (!success)
 		{
 			EGLint error = eglGetError();
-			log::error << L"Create OpenGL ES2.0 failed; unable to choose EGL config (" << getEGLErrorString(error) << L")." << Endl;
-			return 0;
+			log::error << L"Create OpenGL ES failed; unable to choose EGL config (" << getEGLErrorString(error) << L")." << Endl;
+			return nullptr;
 		}
 	}
 
 	if (numMatchingConfigs == 0)
 	{
 		EGLint error = eglGetError();
-		log::error << L"Create OpenGL ES2.0 failed; no matching configurations." << Endl;
-		return 0;
+		log::error << L"Create OpenGL ES failed; no matching configurations." << Endl;
+		return nullptr;
 	}
 
 	context->m_config = matchingConfigs[0];
@@ -131,8 +131,8 @@ Ref< ContextOpenGLES2 > ContextOpenGLES2::createContext(const SystemApplication&
 	if (context->m_surface == EGL_NO_SURFACE)
 	{
 		EGLint error = eglGetError();
-		log::error << L"Create OpenGL ES2.0 context failed; unable to create EGL surface (" << getEGLErrorString(error) << L")" << Endl;
-		return 0;
+		log::error << L"Create OpenGL ES context failed; unable to create EGL surface (" << getEGLErrorString(error) << L")" << Endl;
+		return nullptr;
 	}
 
 	eglBindAPI(EGL_OPENGL_ES_API);
@@ -152,7 +152,7 @@ Ref< ContextOpenGLES2 > ContextOpenGLES2::createContext(const SystemApplication&
 	if (context->m_context == EGL_NO_CONTEXT)
 	{
 		EGLint error = eglGetError();
-		log::error << L"Create OpenGL ES2.0 context failed (1); unable to create EGL context (" << getEGLErrorString(error) << L")" << Endl;
+		log::error << L"Create OpenGL ES context failed (1); unable to create EGL context (" << getEGLErrorString(error) << L")." << Endl;
 		return 0;
 	}
 
@@ -160,31 +160,31 @@ Ref< ContextOpenGLES2 > ContextOpenGLES2::createContext(const SystemApplication&
 	eglQuerySurface(context->m_display, context->m_surface, EGL_HEIGHT, &context->m_height);
 
 	if (!context->enter())
-		return 0;
+		return nullptr;
 	initializeExtensions();
 	context->leave();
 
-	log::info << L"OpenGL ES 2.0 render context created successfully" << Endl;
+	log::info << L"OpenGL ES render context created successfully." << Endl;
 	return context;
 }
 
-Ref< ContextOpenGLES2 > ContextOpenGLES2::createContext(const SystemApplication& sysapp, const RenderViewEmbeddedDesc& desc)
+Ref< ContextOpenGLES > ContextOpenGLES::createContext(const SystemApplication& sysapp, const RenderViewEmbeddedDesc& desc)
 {
-	Ref< ContextOpenGLES2 > context = new ContextOpenGLES2();
+	Ref< ContextOpenGLES > context = new ContextOpenGLES();
 
 	context->m_display = eglGetDisplay(EGL_DEFAULT_DISPLAY);
 	if (context->m_display == EGL_NO_DISPLAY)
 	{
 		EGLint error = eglGetError();
-		log::error << L"Create OpenGL ES2.0 failed; unable to get EGL display (" << getEGLErrorString(error) << L")" << Endl;
-		return 0;
+		log::error << L"Create OpenGL ES failed; unable to get EGL display (" << getEGLErrorString(error) << L")." << Endl;
+		return nullptr;
 	}
 
 	if (!eglInitialize(context->m_display, 0, 0))
 	{
 		EGLint error = eglGetError();
-		log::error << L"Create OpenGL ES2.0 failed; unable to initialize EGL (" << getEGLErrorString(error) << L")" << Endl;
-		return 0;
+		log::error << L"Create OpenGL ES failed; unable to initialize EGL (" << getEGLErrorString(error) << L")." << Endl;
+		return nullptr;
 	}
 
 	EGLConfig matchingConfigs[c_maxMatchConfigs];
@@ -238,16 +238,16 @@ Ref< ContextOpenGLES2 > ContextOpenGLES2::createContext(const SystemApplication&
 		if (!success)
 		{
 			EGLint error = eglGetError();
-			log::error << L"Create OpenGL ES2.0 failed; unable to create choose EGL config (" << getEGLErrorString(error) << L")." << Endl;
-			return 0;
+			log::error << L"Create OpenGL ES failed; unable to create choose EGL config (" << getEGLErrorString(error) << L")." << Endl;
+			return nullptr;
 		}
 	}
 
 	if (numMatchingConfigs == 0)
 	{
 		EGLint error = eglGetError();
-		log::error << L"Create OpenGL ES2.0 failed; no matching configurations." << Endl;
-		return 0;
+		log::error << L"Create OpenGL ES failed; no matching configurations." << Endl;
+		return nullptr;
 	}
 
 	context->m_config = matchingConfigs[0];
@@ -256,8 +256,8 @@ Ref< ContextOpenGLES2 > ContextOpenGLES2::createContext(const SystemApplication&
 	if (context->m_surface == EGL_NO_SURFACE)
 	{
 		EGLint error = eglGetError();
-		log::error << L"Create OpenGL ES2.0 context failed; unable to create EGL surface (" << getEGLErrorString(error) << L")" << Endl;
-		return 0;
+		log::error << L"Create OpenGL ES context failed; unable to create EGL surface (" << getEGLErrorString(error) << L")." << Endl;
+		return nullptr;
 	}
 
 	eglQuerySurface(context->m_display, context->m_surface, EGL_WIDTH, &context->m_width);
@@ -280,23 +280,23 @@ Ref< ContextOpenGLES2 > ContextOpenGLES2::createContext(const SystemApplication&
 	if (context->m_context == EGL_NO_CONTEXT)
 	{
 		EGLint error = eglGetError();
-		log::error << L"Create OpenGL ES2.0 context failed (2); unable to create EGL context (" << getEGLErrorString(error) << L")" << Endl;
-		return 0;
+		log::error << L"Create OpenGL ES context failed (2); unable to create EGL context (" << getEGLErrorString(error) << L")." << Endl;
+		return nullptr;
 	}
 
 	if (!eglSurfaceAttrib(context->m_display, context->m_surface, EGL_SWAP_BEHAVIOR, EGL_BUFFER_DESTROYED))
 		log::warning << L"Unable to specify swap behaviour on EGL surface; might affect performance." << Endl;
 
 	if (!context->enter())
-		return 0;
+		return nullptr;
 	initializeExtensions();
 	context->leave();
 
-	log::info << L"OpenGL ES 2.0 render context created successfully (embedded)" << Endl;
+	log::info << L"OpenGL ES render context created successfully (embedded)." << Endl;
 	return context;
 }
 
-bool ContextOpenGLES2::reset(int32_t width, int32_t height)
+bool ContextOpenGLES::reset(int32_t width, int32_t height)
 {
 	m_width = width;
 	m_height = height;
@@ -316,7 +316,7 @@ bool ContextOpenGLES2::reset(int32_t width, int32_t height)
 	return true;
 }
 
-bool ContextOpenGLES2::enter()
+bool ContextOpenGLES::enter()
 {
 	if (!m_lock.wait())
 		return false;
@@ -331,7 +331,7 @@ bool ContextOpenGLES2::enter()
 	if (!eglMakeCurrent(m_display, m_surface, m_surface, m_context))
 	{
 		EGLint error = eglGetError();
-		log::error << L"Enter OpenGL ES2.0 context failed; " << getEGLErrorString(error) << Endl;
+		log::error << L"Enter OpenGL ES context failed; " << getEGLErrorString(error) << Endl;
 		m_lock.release();
 		return false;
 	}
@@ -340,7 +340,7 @@ bool ContextOpenGLES2::enter()
 	return true;
 }
 
-void ContextOpenGLES2::leave()
+void ContextOpenGLES::leave()
 {
 	context_stack_t* stack = static_cast< context_stack_t* >(ms_contextStack.get());
 
@@ -359,13 +359,13 @@ void ContextOpenGLES2::leave()
 	m_lock.release();
 }
 
-void ContextOpenGLES2::deleteResource(IDeleteCallback* callback)
+void ContextOpenGLES::deleteResource(IDeleteCallback* callback)
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 	m_deleteResources.push_back(callback);
 }
 
-void ContextOpenGLES2::deleteResources()
+void ContextOpenGLES::deleteResources()
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 	if (!m_deleteResources.empty())
@@ -378,7 +378,7 @@ void ContextOpenGLES2::deleteResources()
 	}
 }
 
-GLuint ContextOpenGLES2::createShaderObject(const char* shader, GLenum shaderType)
+GLuint ContextOpenGLES::createShaderObject(const char* shader, GLenum shaderType)
 {
 	Adler32 adler;
 	adler.begin();
@@ -394,7 +394,7 @@ GLuint ContextOpenGLES2::createShaderObject(const char* shader, GLenum shaderTyp
 	GLuint shaderObject = glCreateShader(shaderType);
 	if (shaderObject == 0)
 	{
-		log::error << L"Failed to compile GLSL shader; glCreateShader returned 0" << Endl;
+		log::error << L"Failed to compile GLSL shader; glCreateShader returned 0." << Endl;
 		return 0;
 	}
 
@@ -419,27 +419,27 @@ GLuint ContextOpenGLES2::createShaderObject(const char* shader, GLenum shaderTyp
 	return shaderObject;
 }
 
-int32_t ContextOpenGLES2::getWidth() const
+int32_t ContextOpenGLES::getWidth() const
 {
 	return m_width;
 }
 
-int32_t ContextOpenGLES2::getHeight() const
+int32_t ContextOpenGLES::getHeight() const
 {
 	return m_height;
 }
 
-void ContextOpenGLES2::swapBuffers()
+void ContextOpenGLES::swapBuffers()
 {
 	eglSwapBuffers(m_display, m_surface);
 }
 
-Semaphore& ContextOpenGLES2::lock()
+Semaphore& ContextOpenGLES::lock()
 {
 	return m_lock;
 }
 
-void ContextOpenGLES2::bindPrimary()
+void ContextOpenGLES::bindPrimary()
 {
 	T_OGL_SAFE(glBindFramebuffer(GL_FRAMEBUFFER, 0));
 	T_OGL_SAFE(glViewport(
@@ -462,12 +462,12 @@ void ContextOpenGLES2::bindPrimary()
 	}
 }
 
-GLuint ContextOpenGLES2::getPrimaryDepth() const
+GLuint ContextOpenGLES::getPrimaryDepth() const
 {
 	return m_primaryDepth;
 }
 
-ContextOpenGLES2::ContextOpenGLES2()
+ContextOpenGLES::ContextOpenGLES()
 :	m_width(0)
 ,	m_height(0)
 ,	m_primaryDepth(0)

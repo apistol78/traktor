@@ -409,8 +409,6 @@ void RenderViewOpenGL::endFrame()
 
 void RenderViewOpenGL::present()
 {
-	m_primaryTarget->blit(m_renderContext);
-
 	m_renderContext->swapBuffers(m_waitVBlanks);
 	m_renderContext->leave();
 
@@ -433,7 +431,7 @@ bool RenderViewOpenGL::beginPass(IRenderTargetSet* renderTargetSet, const Clear*
 		return false;
 
 	m_activeTarget = mandatory_non_null_type_cast< RenderTargetSetOpenGL* >(renderTargetSet);
-	m_activeTarget->bind(m_renderContext, m_primaryTarget->getDepthBuffer());
+	m_activeTarget->bind(m_renderContext, m_primaryTarget->getDepthBuffer(), !m_primaryTargetDesc.ignoreStencil);
 
 	if (clear)
 	{
@@ -472,7 +470,7 @@ bool RenderViewOpenGL::beginPass(IRenderTargetSet* renderTargetSet, int32_t rend
 		return false;
 
 	m_activeTarget = mandatory_non_null_type_cast< RenderTargetSetOpenGL* >(renderTargetSet);
-	m_activeTarget->bind(m_renderContext, m_primaryTarget->getDepthBuffer(), renderTarget);
+	m_activeTarget->bind(m_renderContext, m_primaryTarget->getDepthBuffer(), !m_primaryTargetDesc.ignoreStencil, renderTarget);
 
 	if (clear)
 	{
@@ -508,8 +506,13 @@ bool RenderViewOpenGL::beginPass(IRenderTargetSet* renderTargetSet, int32_t rend
 void RenderViewOpenGL::endPass()
 {
 	T_FATAL_ASSERT(m_activeTarget != nullptr);
+
 	m_activeTarget->unbind();
 	m_activeTarget->setContentValid(true);
+
+	if (m_activeTarget == m_primaryTarget)
+		m_primaryTarget->blit(m_renderContext);
+
 	m_activeTarget = nullptr;
 }
 
@@ -782,7 +785,7 @@ bool RenderViewOpenGL::getBackBufferContent(void* buffer) const
 	if (!m_renderContext->enter())
 		return false;
 
-	m_primaryTarget->bind(m_renderContext, m_primaryTarget->getDepthBuffer(), 0);
+	m_primaryTarget->bind(m_renderContext, m_primaryTarget->getDepthBuffer(), !m_primaryTargetDesc.ignoreStencil, 0);
 
 	T_OGL_SAFE(glReadPixels(0, 0, m_primaryTargetDesc.width, m_primaryTargetDesc.height, GL_RGBA, GL_UNSIGNED_BYTE, buffer));
 
