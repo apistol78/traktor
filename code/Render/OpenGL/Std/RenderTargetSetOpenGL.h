@@ -45,9 +45,9 @@ public:
 
 	virtual bool read(int32_t index, void* buffer) const override final;
 
-	bool bind(RenderContextOpenGL* renderContext, GLuint primaryDepthBuffer);
+	bool bind(RenderContextOpenGL* renderContext, GLuint primaryDepthBuffer, bool havePrimaryStencil);
 
-	bool bind(RenderContextOpenGL* renderContext, GLuint primaryDepthBuffer, int32_t renderTarget);
+	bool bind(RenderContextOpenGL* renderContext, GLuint primaryDepthBuffer, bool havePrimaryStencil, int32_t renderTarget);
 
 	void unbind();
 
@@ -69,7 +69,7 @@ private:
 	bool m_depthTargetShared;
 	bool m_contentValid;
 
-	bool createFramebuffer(GLuint primaryDepthBuffer);
+	bool createFramebuffer(GLuint primaryDepthBuffer, bool havePrimaryStencil);
 };
 
 	}

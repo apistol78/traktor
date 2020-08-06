@@ -251,21 +251,12 @@ bool RenderTargetSetOpenGL::read(int32_t index, void* buffer) const
 #endif
 }
 
-bool RenderTargetSetOpenGL::bind(RenderContextOpenGL* renderContext, GLuint primaryDepthBuffer)
+bool RenderTargetSetOpenGL::bind(RenderContextOpenGL* renderContext, GLuint primaryDepthBuffer, bool havePrimaryStencil)
 {
-	if (!createFramebuffer(primaryDepthBuffer))
+	if (!createFramebuffer(primaryDepthBuffer, havePrimaryStencil))
 		return false;
 
 	T_OGL_SAFE(glBindFramebuffer(GL_FRAMEBUFFER, m_targetFBO));
-
-#if defined(_DEBUG)
-	GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
-	if (status != GL_FRAMEBUFFER_COMPLETE)
-	{
-		log::error << L"Framebuffer incomplete!" << Endl;
-		return false;
-	}
-#endif
 
 	const GLenum drawBuffers[] =
 	{
@@ -294,21 +285,12 @@ bool RenderTargetSetOpenGL::bind(RenderContextOpenGL* renderContext, GLuint prim
 	return true;
 }
 
-bool RenderTargetSetOpenGL::bind(RenderContextOpenGL* renderContext, GLuint primaryDepthBuffer, int32_t renderTarget)
+bool RenderTargetSetOpenGL::bind(RenderContextOpenGL* renderContext, GLuint primaryDepthBuffer, bool havePrimaryStencil, int32_t renderTarget)
 {
-	if (!createFramebuffer(primaryDepthBuffer))
+	if (!createFramebuffer(primaryDepthBuffer, havePrimaryStencil))
 		return false;
 
 	T_OGL_SAFE(glBindFramebuffer(GL_FRAMEBUFFER, m_targetFBO));
-
-#if defined(_DEBUG)
-	GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
-	if (status != GL_FRAMEBUFFER_COMPLETE)
-	{
-		log::error << L"Framebuffer incomplete!" << Endl;
-		return false;
-	}
-#endif
 
 	const GLenum drawBuffers[] =
 	{
@@ -364,7 +346,7 @@ void RenderTargetSetOpenGL::blit(RenderContextOpenGL* renderContext)
 	));
 }
 
-bool RenderTargetSetOpenGL::createFramebuffer(GLuint primaryDepthBuffer)
+bool RenderTargetSetOpenGL::createFramebuffer(GLuint primaryDepthBuffer, bool havePrimaryStencil)
 {
 	// Already created?
 	if (m_targetFBO != 0 && (!m_desc.usingPrimaryDepthStencil || m_currentTag == ms_primaryTargetTag))
@@ -421,7 +403,7 @@ bool RenderTargetSetOpenGL::createFramebuffer(GLuint primaryDepthBuffer)
 			GL_RENDERBUFFER,
 			primaryDepthBuffer
 		));
-		if (!m_desc.ignoreStencil)
+		if (!m_desc.ignoreStencil && havePrimaryStencil)
 		{
 			T_OGL_SAFE(glFramebufferRenderbuffer(
 				GL_FRAMEBUFFER,
@@ -444,9 +426,10 @@ bool RenderTargetSetOpenGL::createFramebuffer(GLuint primaryDepthBuffer)
 		));
 	}
 
-	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+	GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+	if (status != GL_FRAMEBUFFER_COMPLETE)
 	{
-		log::error << L"Unexpected renderer error; incomplete framebuffer object!" << Endl;
+		log::error << L"Unexpected renderer error; incomplete framebuffer object (" << getOpenGLErrorString(status) << L")!" << Endl;
 		return false;
 	}
 

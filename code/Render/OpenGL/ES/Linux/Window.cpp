@@ -6,7 +6,7 @@
 #include "Drawing/Image.h"
 #include "Drawing/PixelFormat.h"
 #include "Drawing/Filters/ScaleFilter.h"
-#include "Render/OpenGL/ES2/Linux/Window.h"
+#include "Render/OpenGL/ES/Linux/Window.h"
 
 namespace traktor
 {
