@@ -7,8 +7,8 @@
 #	include "Core/Misc/TString.h"
 #endif
 
-#if !defined(T_OPENGL_ES2)
-#	define T_OPENGL_ES2
+#if !defined(T_OPENGL_ES)
+#	define T_OPENGL_ES
 #endif
 
 #include <string>
@@ -26,7 +26,7 @@
 #	include <EGL/egl.h>
 #	include <GLES2/gl2.h>
 #	include <GLES2/gl2ext.h>
-#	define T_OPENGL_ES2_HAVE_EGL
+#	define T_OPENGL_ES_HAVE_EGL
 #endif
 
 /*! \ingroup OGL */
@@ -44,7 +44,7 @@ namespace traktor
 
 std::wstring getOpenGLErrorString(GLenum glError);
 
-#if defined(T_OPENGL_ES2_HAVE_EGL)
+#if defined(T_OPENGL_ES_HAVE_EGL)
 std::wstring getEGLErrorString(EGLint error);
 #endif
 

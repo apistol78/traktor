@@ -52,7 +52,6 @@ RenderViewOpenGL::RenderViewOpenGL(
 ,	m_resourceContext(resourceContext)
 ,	m_cursorVisible(true)
 ,	m_waitVBlanks(0)
-,	m_targetsDirty(false)
 ,	m_drawCalls(0)
 ,	m_primitiveCount(0)
 {
@@ -104,7 +103,6 @@ RenderViewOpenGL::RenderViewOpenGL(
 ,	m_resourceContext(resourceContext)
 ,	m_cursorVisible(true)
 ,	m_waitVBlanks(0)
-,	m_targetsDirty(false)
 {
 	m_primaryTargetDesc.count = 1;
 	m_primaryTargetDesc.width = 0;
@@ -156,7 +154,7 @@ void RenderViewOpenGL::close()
 	if (m_window)
 	{
 		m_window->removeListener(this);
-		m_window = 0;
+		m_window = nullptr;
 	}
 #endif
 
@@ -224,7 +222,6 @@ bool RenderViewOpenGL::reset(const RenderViewDefaultDesc& desc)
 	}
 
 	m_waitVBlanks = desc.waitVBlanks;
-	m_targetsDirty = false;
 	return true;
 }
 
@@ -264,13 +261,12 @@ bool RenderViewOpenGL::reset(int32_t width, int32_t height)
 			m_primaryTarget = new RenderTargetSetOpenGL(m_resourceContext);
 			if (!m_primaryTarget->create(m_primaryTargetDesc, nullptr))
 			{
-				log::error << L"Failed to create primary target" << Endl;
+				log::error << L"Failed to create primary target." << Endl;
 				return false;
 			}
 		}
 	}
 
-	m_targetsDirty = false;
 	return true;
 }
 
@@ -392,15 +388,14 @@ SystemWindow RenderViewOpenGL::getSystemWindow()
 
 bool RenderViewOpenGL::beginFrame()
 {
-	T_ASSERT(!m_targetsDirty);
-
 	if (!m_primaryTarget)
 		return false;
 
 	if (!m_renderContext->enter())
 		return false;
 
-	glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
+	T_OGL_SAFE(glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS));
+	T_OGL_SAFE(glBindFramebuffer(GL_FRAMEBUFFER, 0));
 
 	m_drawCalls = 0;
 	m_primitiveCount = 0;
@@ -414,6 +409,8 @@ void RenderViewOpenGL::endFrame()
 
 void RenderViewOpenGL::present()
 {
+	m_primaryTarget->blit(m_renderContext);
+
 	m_renderContext->swapBuffers(m_waitVBlanks);
 	m_renderContext->leave();
 
@@ -432,79 +429,88 @@ bool RenderViewOpenGL::beginPass(const Clear* clear)
 
 bool RenderViewOpenGL::beginPass(IRenderTargetSet* renderTargetSet, const Clear* clear, uint32_t load, uint32_t store)
 {
-	// Ensure deferred clears on targets are executed.
-	if (m_targetsDirty && !m_targetStack.empty())
-	{
-		TargetScope& ts = m_targetStack.back();
-		if (ts.clear.mask != 0)
-			bindTargets();
-	}
+	if (m_activeTarget)
+		return false;
 
-	TargetScope ts;
-	ts.rts = checked_type_cast< RenderTargetSetOpenGL* >(renderTargetSet);
-	ts.colorIndex = -1;
-	ts.clear.mask = 0;
+	m_activeTarget = mandatory_non_null_type_cast< RenderTargetSetOpenGL* >(renderTargetSet);
+	m_activeTarget->bind(m_renderContext, m_primaryTarget->getDepthBuffer());
 
 	if (clear)
-		ts.clear = *clear;
+	{
+		for (int32_t i = 0; i < 8; ++i)
+		{
+			if (!m_activeTarget->getColorTexture(i))
+				continue;
 
-	m_targetStack.push_back(ts);
-	m_targetsDirty = true;
+			float T_ALIGN16 cl[] = { 0.0f, 0.0f, 0.0f, 0.0f };
+			clear->colors[i].storeAligned(cl);
+
+			T_OGL_SAFE(glClearBufferfv(GL_COLOR, i, cl));
+		}
+
+		if (clear->mask & CfDepth)
+		{
+			T_OGL_SAFE(glDepthMask(GL_TRUE));
+			T_OGL_SAFE(glClearDepth(clear->depth));
+			T_OGL_SAFE(glClear(GL_DEPTH_BUFFER_BIT));
+		}
+
+		if (clear->mask & CfStencil)
+		{
+			T_OGL_SAFE(glStencilMask(~0U));
+			T_OGL_SAFE(glClearStencil(clear->stencil));
+			T_OGL_SAFE(glClear(GL_STENCIL_BUFFER_BIT));
+		}
+	}
 
 	return true;
 }
 
 bool RenderViewOpenGL::beginPass(IRenderTargetSet* renderTargetSet, int32_t renderTarget, const Clear* clear, uint32_t load, uint32_t store)
 {
-	// Ensure deferred clears on targets are executed.
-	if (m_targetsDirty && !m_targetStack.empty())
-	{
-		TargetScope& ts = m_targetStack.back();
-		if (ts.clear.mask != 0)
-			bindTargets();
-	}
+	if (m_activeTarget)
+		return false;
 
-	TargetScope ts;
-	ts.rts = checked_type_cast< RenderTargetSetOpenGL* >(renderTargetSet);
-	ts.colorIndex = renderTarget;
-	ts.clear.mask = 0;
+	m_activeTarget = mandatory_non_null_type_cast< RenderTargetSetOpenGL* >(renderTargetSet);
+	m_activeTarget->bind(m_renderContext, m_primaryTarget->getDepthBuffer(), renderTarget);
 
 	if (clear)
-		ts.clear = *clear;
+	{
+		for (int32_t i = 0; i < 8; ++i)
+		{
+			if (!m_activeTarget->getColorTexture(i))
+				continue;
 
-	m_targetStack.push_back(ts);
-	m_targetsDirty = true;
+			float T_ALIGN16 cl[] = { 0.0f, 0.0f, 0.0f, 0.0f };
+			clear->colors[i].storeAligned(cl);
+
+			T_OGL_SAFE(glClearBufferfv(GL_COLOR, i, cl));
+		}
+
+		if (clear->mask & CfDepth)
+		{
+			T_OGL_SAFE(glDepthMask(GL_TRUE));
+			T_OGL_SAFE(glClearDepth(clear->depth));
+			T_OGL_SAFE(glClear(GL_DEPTH_BUFFER_BIT));
+		}
+
+		if (clear->mask & CfStencil)
+		{
+			T_OGL_SAFE(glStencilMask(~0U));
+			T_OGL_SAFE(glClearStencil(clear->stencil));
+			T_OGL_SAFE(glClear(GL_STENCIL_BUFFER_BIT));
+		}
+	}
 
 	return true;
 }
 
 void RenderViewOpenGL::endPass()
 {
-	T_ASSERT(!m_targetStack.empty());
-
-	TargetScope ts = m_targetStack.back();
-
-	// Ensure deferred clears on targets are executed.
-	if (m_targetsDirty && ts.clear.mask != 0)
-		bindTargets();
-
-	if (!m_targetsDirty)
-		m_targetStack.back().rts->unbind();
-
-	m_targetStack.pop_back();
-
-	if (!m_targetStack.empty())
-	{
-		m_targetsDirty = true;
-	}
-	else
-	{
-		T_ASSERT(ts.rts == m_primaryTarget);
-		ts.rts->blit(m_renderContext);
-		T_OGL_SAFE(glBindFramebuffer(GL_FRAMEBUFFER, 0));
-	}
-
-	ts.rts->setContentValid(true);
+	T_FATAL_ASSERT(m_activeTarget != nullptr);
+	m_activeTarget->unbind();
+	m_activeTarget->setContentValid(true);
+	m_activeTarget = nullptr;
 }
 
 void RenderViewOpenGL::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, IProgram* program, const Primitives& primitives)
@@ -513,13 +519,10 @@ void RenderViewOpenGL::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer
 	IndexBufferIBO* indexBufferGL = checked_type_cast< IndexBufferIBO* >(indexBuffer);
 	ProgramOpenGL* programGL = checked_type_cast< ProgramOpenGL * >(program);
 
-	bindTargets();
-
-	const TargetScope& ts = m_targetStack.back();
 	float targetSize[] =
 	{
-		float(ts.rts->getWidth()),
-		float(ts.rts->getHeight())
+		(float)m_activeTarget->getWidth(),
+		(float)m_activeTarget->getHeight()
 	};
 
 	vertexBufferGL->activate(
@@ -618,13 +621,10 @@ void RenderViewOpenGL::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer
 	IndexBufferIBO* indexBufferGL = checked_type_cast< IndexBufferIBO* >(indexBuffer);
 	ProgramOpenGL* programGL = checked_type_cast< ProgramOpenGL * >(program);
 
-	bindTargets();
-
-	const TargetScope& ts = m_targetStack.back();
 	float targetSize[] =
 	{
-		float(ts.rts->getWidth()),
-		float(ts.rts->getHeight())
+		(float)m_activeTarget->getWidth(),
+		(float)m_activeTarget->getHeight()
 	};
 
 	vertexBufferGL->activate(
@@ -788,50 +788,6 @@ bool RenderViewOpenGL::getBackBufferContent(void* buffer) const
 
 	m_renderContext->leave();
 	return true;
-}
-
-void RenderViewOpenGL::bindTargets()
-{
-	if (!m_targetsDirty)
-		return;
-
-	TargetScope& ts = m_targetStack.back();
-	if (ts.colorIndex >= 0)
-		ts.rts->bind(m_renderContext, m_primaryTarget->getDepthBuffer(), ts.colorIndex);
-	else
-		ts.rts->bind(m_renderContext, m_primaryTarget->getDepthBuffer());
-
-	m_targetsDirty = false;
-
-	if (ts.clear.mask & CfColor)
-	{
-		for (int32_t i = 0; i < 8; ++i)
-		{
-			if (!ts.rts->getColorTexture(i))
-				continue;
-
-			float T_ALIGN16 cl[] = { 0.0f, 0.0f, 0.0f, 0.0f };
-			ts.clear.colors[i].storeAligned(cl);
-
-			T_OGL_SAFE(glClearBufferfv(GL_COLOR, i, cl));
-		}
-	}
-
-	if (ts.clear.mask & CfDepth)
-	{
-		T_OGL_SAFE(glDepthMask(GL_TRUE));
-		T_OGL_SAFE(glClearDepth(ts.clear.depth));
-		T_OGL_SAFE(glClear(GL_DEPTH_BUFFER_BIT));
-	}
-
-	if (ts.clear.mask & CfStencil)
-	{
-		T_OGL_SAFE(glStencilMask(~0U));
-		T_OGL_SAFE(glClearStencil(ts.clear.stencil));
-		T_OGL_SAFE(glClear(GL_STENCIL_BUFFER_BIT));
-	}
-
-	ts.clear.mask = 0;
 }
 
 #if defined(_WIN32)

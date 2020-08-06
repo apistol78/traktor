@@ -25,7 +25,7 @@ std::wstring getOpenGLErrorString(GLenum glError)
 	return L"Unknown GL error";
 }
 
-#if defined(T_OPENGL_ES2_HAVE_EGL)
+#if defined(T_OPENGL_ES_HAVE_EGL)
 std::wstring getEGLErrorString(EGLint error)
 {
 	switch (error)

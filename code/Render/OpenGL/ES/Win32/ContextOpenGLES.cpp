@@ -32,7 +32,7 @@ Ref< ContextOpenGLES > ContextOpenGLES::createContext(const SystemApplication& s
 
 	context->m_window = new Window();
 	if (!context->m_window->create())
-		return 0;
+		return nullptr;
 
 	context->m_window->setTitle(!desc.title.empty() ? desc.title.c_str() : L"Traktor - OpenGL ES Renderer");
 	context->m_window->setWindowedStyle(desc.displayMode.width, desc.displayMode.height);
@@ -45,7 +45,7 @@ Ref< ContextOpenGLES > ContextOpenGLES::createContext(const SystemApplication& s
 		{
 			EGLint error = eglGetError();
 			log::error << L"Create OpenGL ES failed; unable to get EGL display (" << getEGLErrorString(error) << L")" << Endl;
-			return 0;
+			return nullptr;
 		}
 	}
 
@@ -53,7 +53,7 @@ Ref< ContextOpenGLES > ContextOpenGLES::createContext(const SystemApplication& s
 	{
 		EGLint error = eglGetError();
 		log::error << L"Create OpenGL ES failed; unable to initialize EGL (" << getEGLErrorString(error) << L")" << Endl;
-		return 0;
+		return nullptr;
 	}
 
 	EGLConfig matchingConfigs[c_maxMatchConfigs];
@@ -114,7 +114,7 @@ Ref< ContextOpenGLES > ContextOpenGLES::createContext(const SystemApplication& s
 		{
 			EGLint error = eglGetError();
 			log::error << L"Create OpenGL ES failed; unable to choose EGL config (" << getEGLErrorString(error) << L")." << Endl;
-			return 0;
+			return nullptr;
 		}
 	}
 
@@ -122,7 +122,7 @@ Ref< ContextOpenGLES > ContextOpenGLES::createContext(const SystemApplication& s
 	{
 		EGLint error = eglGetError();
 		log::error << L"Create OpenGL ES failed; no matching configurations." << Endl;
-		return 0;
+		return nullptr;
 	}
 
 	context->m_config = matchingConfigs[0];
@@ -131,7 +131,7 @@ Ref< ContextOpenGLES > ContextOpenGLES::createContext(const SystemApplication& s
 	{
 		EGLint error = eglGetError();
 		log::error << L"Create OpenGL ES context failed; unable to create EGL surface (" << getEGLErrorString(error) << L")" << Endl;
-		return 0;
+		return nullptr;
 	}
 
 	eglBindAPI(EGL_OPENGL_ES_API);
@@ -152,7 +152,7 @@ Ref< ContextOpenGLES > ContextOpenGLES::createContext(const SystemApplication& s
 	{
 		EGLint error = eglGetError();
 		log::error << L"Create OpenGL ES context failed (1); unable to create EGL context (" << getEGLErrorString(error) << L")" << Endl;
-		return 0;
+		return nullptr;
 	}
 
 	eglQuerySurface(context->m_display, context->m_surface, EGL_WIDTH, &context->m_width);
@@ -176,14 +176,14 @@ Ref< ContextOpenGLES > ContextOpenGLES::createContext(const SystemApplication& s
 	{
 		EGLint error = eglGetError();
 		log::error << L"Create OpenGL ES failed; unable to get EGL display (" << getEGLErrorString(error) << L")" << Endl;
-		return 0;
+		return nullptr;
 	}
 
 	if (!eglInitialize(context->m_display, 0, 0))
 	{
 		EGLint error = eglGetError();
 		log::error << L"Create OpenGL ES failed; unable to initialize EGL (" << getEGLErrorString(error) << L")" << Endl;
-		return 0;
+		return nullptr;
 	}
 
 	EGLConfig matchingConfigs[c_maxMatchConfigs];
@@ -238,7 +238,7 @@ Ref< ContextOpenGLES > ContextOpenGLES::createContext(const SystemApplication& s
 		{
 			EGLint error = eglGetError();
 			log::error << L"Create OpenGL ES failed; unable to create choose EGL config (" << getEGLErrorString(error) << L")." << Endl;
-			return 0;
+			return nullptr;
 		}
 	}
 
@@ -246,7 +246,7 @@ Ref< ContextOpenGLES > ContextOpenGLES::createContext(const SystemApplication& s
 	{
 		EGLint error = eglGetError();
 		log::error << L"Create OpenGL ES failed; no matching configurations." << Endl;
-		return 0;
+		return nullptr;
 	}
 
 	context->m_config = matchingConfigs[0];
@@ -256,7 +256,7 @@ Ref< ContextOpenGLES > ContextOpenGLES::createContext(const SystemApplication& s
 	{
 		EGLint error = eglGetError();
 		log::error << L"Create OpenGL ES context failed; unable to create EGL surface (" << getEGLErrorString(error) << L")" << Endl;
-		return 0;
+		return nullptr;
 	}
 
 	eglQuerySurface(context->m_display, context->m_surface, EGL_WIDTH, &context->m_width);
@@ -280,14 +280,14 @@ Ref< ContextOpenGLES > ContextOpenGLES::createContext(const SystemApplication& s
 	{
 		EGLint error = eglGetError();
 		log::error << L"Create OpenGL ES context failed (2); unable to create EGL context (" << getEGLErrorString(error) << L")" << Endl;
-		return 0;
+		return nullptr;
 	}
 
 	if (!eglSurfaceAttrib(context->m_display, context->m_surface, EGL_SWAP_BEHAVIOR, EGL_BUFFER_DESTROYED))
 		log::warning << L"Unable to specify swap behaviour on EGL surface; might affect performance." << Endl;
 
 	if (!context->enter())
-		return 0;
+		return nullptr;
 	initializeExtensions();
 	context->leave();
 

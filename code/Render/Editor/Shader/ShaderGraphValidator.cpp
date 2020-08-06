@@ -330,6 +330,12 @@ ShaderGraphValidator::ShaderGraphValidator(const ShaderGraph* shaderGraph)
 {
 }
 
+ShaderGraphValidator::ShaderGraphValidator(const ShaderGraph* shaderGraph, const Guid& shaderGraphId)
+:	m_shaderGraph(shaderGraph)
+,	m_shaderGraphId(shaderGraphId)
+{
+}
+
 bool ShaderGraphValidator::validate(ShaderGraphType type, std::vector< const Node* >* outErrorNodes) const
 {
 	// Collect root nodes.
@@ -378,18 +384,22 @@ bool ShaderGraphValidator::validateIntegrity() const
 		const InputPin* destinationPin = edge->getDestination();
 		if (!sourcePin || !destinationPin)
 		{
-			log::error << L"Invalid edge found in shader graph." << Endl;
+			log::error << L"Invalid edge found in shader graph (" << m_shaderGraphId.format() << L")." << Endl;
+			if (sourcePin)
+				log::error << L"Source pin from a " << type_name(sourcePin->getNode()) << L" node; \"" << sourcePin->getName() << L"\"." << Endl;
+			if (destinationPin)
+				log::error << L"Destination pin to a " << type_name(destinationPin->getNode()) << L" node; \"" << destinationPin->getName() << L"\"." << Endl;
 			return false;
 		}
 
 		if (std::find(nodes.begin(), nodes.end(), sourcePin->getNode()) == nodes.end())
 		{
-			log::error << L"Source node " << sourcePin->getNode()->getId().format() << L" (" << type_name(sourcePin->getNode()) << L") of edge (pin \"" << sourcePin->getName() << L"\") not part of shader graph." << Endl;
+			log::error << L"Source node " << sourcePin->getNode()->getId().format() << L" (" << type_name(sourcePin->getNode()) << L") of edge (pin \"" << sourcePin->getName() << L"\") not part of shader graph (" << m_shaderGraphId.format() << L")." << Endl;
 			return false;
 		}
 		if (std::find(nodes.begin(), nodes.end(), destinationPin->getNode()) == nodes.end())
 		{
-			log::error << L"Destination node " << destinationPin->getNode()->getId().format() << L" (" << type_name(destinationPin->getNode()) << L") of edge (pin \"" << destinationPin->getName() << L"\") not part of shader graph." << Endl;
+			log::error << L"Destination node " << destinationPin->getNode()->getId().format() << L" (" << type_name(destinationPin->getNode()) << L") of edge (pin \"" << destinationPin->getName() << L"\") not part of shader graph (" << m_shaderGraphId.format() << L")." << Endl;
 			return false;
 		}
 	}
