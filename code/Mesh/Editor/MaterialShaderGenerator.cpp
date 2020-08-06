@@ -269,99 +269,101 @@ Ref< render::ShaderGraph > MaterialShaderGenerator::generate(
 		std::wstring comment = node->getComment();
 		if (comment == L"Tag_DiffuseColor")
 		{
-			render::Color* colorNode = checked_type_cast< render::Color* >(node);
+			render::Color* colorNode = mandatory_non_null_type_cast< render::Color* >(node);
 			colorNode->setComment(L"");
 			colorNode->setColor(material.getColor());
 		}
 		else if (comment == L"Tag_DiffuseMap")
 		{
-			render::Texture* diffuseTextureNode = checked_type_cast< render::Texture* >(node);
+			render::Texture* diffuseTextureNode = mandatory_non_null_type_cast< render::Texture* >(node);
 			diffuseTextureNode->setComment(L"");
 			diffuseTextureNode->setExternal(diffuseTexture);
 			propagateAnisotropic(materialShaderGraph, diffuseTextureNode, material.getDiffuseMap().anisotropic);
 		}
 		else if (comment == L"Tag_Emissive")
 		{
-			render::Scalar* emissiveNode = checked_type_cast< render::Scalar* >(node);
+			render::Scalar* emissiveNode = mandatory_non_null_type_cast< render::Scalar* >(node);
 			emissiveNode->setComment(L"");
 			emissiveNode->set(material.getEmissive());
 		}
 		else if (comment == L"Tag_EmissiveMap")
 		{
-			render::Texture* emissiveTextureNode = checked_type_cast< render::Texture* >(node);
+			render::Texture* emissiveTextureNode = mandatory_non_null_type_cast< render::Texture* >(node);
 			emissiveTextureNode->setComment(L"");
 			emissiveTextureNode->setExternal(emissiveTexture);
 			propagateAnisotropic(materialShaderGraph, emissiveTextureNode, material.getEmissiveMap().anisotropic);
 		}
 		else if (comment == L"Tag_NormalMap")
 		{
-			render::Texture* normalTextureNode = checked_type_cast< render::Texture* >(node);
+			render::Texture* normalTextureNode = mandatory_non_null_type_cast< render::Texture* >(node);
 			normalTextureNode->setComment(L"");
 			normalTextureNode->setExternal(normalTexture);
 			propagateAnisotropic(materialShaderGraph, normalTextureNode, material.getNormalMap().anisotropic);
 		}
 		else if (comment == L"Tag_Roughness")
 		{
-			render::Scalar* roughnessNode = checked_type_cast< render::Scalar* >(node);
+			render::Scalar* roughnessNode = mandatory_non_null_type_cast< render::Scalar* >(node);
 			roughnessNode->setComment(L"");
 			roughnessNode->set(material.getRoughness());
 		}
 		else if (comment == L"Tag_RoughnessMap")
 		{
-			render::Texture* roughnessTextureNode = checked_type_cast< render::Texture* >(node);
+			render::Texture* roughnessTextureNode = mandatory_non_null_type_cast< render::Texture* >(node);
 			roughnessTextureNode->setComment(L"");
 			roughnessTextureNode->setExternal(roughnessTexture);
 			propagateAnisotropic(materialShaderGraph, roughnessTextureNode, material.getRoughnessMap().anisotropic);
 		}
 		else if (comment == L"Tag_Specular")
 		{
-			render::Scalar* specularNode = checked_type_cast< render::Scalar* >(node);
+			render::Scalar* specularNode = mandatory_non_null_type_cast< render::Scalar* >(node);
 			specularNode->setComment(L"");
 			specularNode->set(material.getSpecularTerm());
 		}
 		else if (comment == L"Tag_SpecularMap")
 		{
-			render::Texture* specularTextureNode = checked_type_cast< render::Texture* >(node);
+			render::Texture* specularTextureNode = mandatory_non_null_type_cast< render::Texture* >(node);
 			specularTextureNode->setComment(L"");
 			specularTextureNode->setExternal(specularTexture);
 			propagateAnisotropic(materialShaderGraph, specularTextureNode, material.getSpecularMap().anisotropic);
 		}
 		else if (comment == L"Tag_Metalness")
 		{
-			render::Scalar* metalnessNode = checked_type_cast< render::Scalar* >(node);
+			render::Scalar* metalnessNode = mandatory_non_null_type_cast< render::Scalar* >(node);
 			metalnessNode->setComment(L"");
 			metalnessNode->set(material.getMetalness());
 		}
 		else if (comment == L"Tag_MetalnessMap")
 		{
-			render::Texture* metalnessTextureNode = checked_type_cast< render::Texture* >(node);
+			render::Texture* metalnessTextureNode = mandatory_non_null_type_cast< render::Texture* >(node);
 			metalnessTextureNode->setComment(L"");
 			metalnessTextureNode->setExternal(metalnessTexture);
 			propagateAnisotropic(materialShaderGraph, metalnessTextureNode, material.getRoughnessMap().anisotropic);
 		}
 		else if (comment == L"Tag_Transparency")
 		{
-			render::Scalar* transparencyNode = checked_type_cast< render::Scalar* >(node);
+			render::Scalar* transparencyNode = mandatory_non_null_type_cast< render::Scalar* >(node);
 			transparencyNode->setComment(L"");
 			transparencyNode->set(material.getTransparency());
 		}
 		else if (comment == L"Tag_TransparencyMap")
 		{
-			render::Texture* transparencyTextureNode = checked_type_cast< render::Texture* >(node);
+			render::Texture* transparencyTextureNode = mandatory_non_null_type_cast< render::Texture* >(node);
 			transparencyTextureNode->setComment(L"");
 			transparencyTextureNode->setExternal(transparencyTexture);
 			propagateAnisotropic(materialShaderGraph, transparencyTextureNode, material.getTransparencyMap().anisotropic);
 		}
 		else if (comment == L"Tag_LightMap")
 		{
-			render::Texture* lightMapTextureNode = checked_type_cast< render::Texture* >(node);
+			render::Texture* lightMapTextureNode = mandatory_non_null_type_cast< render::Texture* >(node);
 			lightMapTextureNode->setComment(L"");
 			lightMapTextureNode->setExternal(lightMapTexture);
 		}
 	}
 
 	// Validate integrity and then return complete mesh material shader.
-	render::ShaderGraphValidator(materialShaderGraph).validateIntegrity();
+	if (!render::ShaderGraphValidator(materialShaderGraph, templateGuid).validateIntegrity())
+		return nullptr;
+
 	return materialShaderGraph;
 }
 

@@ -6,9 +6,9 @@
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_RENDER_EDITOR_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -31,7 +31,9 @@ public:
 		SgtFragment
 	};
 
-	ShaderGraphValidator(const ShaderGraph* shaderGraph);
+	explicit ShaderGraphValidator(const ShaderGraph* shaderGraph);
+
+	explicit ShaderGraphValidator(const ShaderGraph* shaderGraph, const Guid& shaderGraphId);
 
 	bool validate(ShaderGraphType type, std::vector< const Node* >* outErrorNodes = 0) const;
 
@@ -39,6 +41,7 @@ public:
 
 private:
 	Ref< const ShaderGraph > m_shaderGraph;
+	Guid m_shaderGraphId;
 };
 
 	}

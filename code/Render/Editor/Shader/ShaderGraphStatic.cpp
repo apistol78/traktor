@@ -786,7 +786,7 @@ Ref< ShaderGraph > ShaderGraphStatic::removeDisabledOutputs() const
 				shaderGraph->removeNode(pixelOutputNode);
 			}
 		}
-		else
+		else if (!is_a< InputPort >(enableSource->getNode()))
 			log::warning << L"Unsupported node type of input; Only Scalar nodes can be connected to \"Enable\" of \"traktor.render.PixelOutput\". " << type_name(enableSource->getNode()) << L" not supported." << Endl;
 	}
 
@@ -812,7 +812,7 @@ Ref< ShaderGraph > ShaderGraphStatic::removeDisabledOutputs() const
 				shaderGraph->removeNode(computeOutputNode);
 			}
 		}
-		else
+		else if (!is_a< InputPort >(enableSource->getNode()))
 			log::warning << L"Unsupported node type of input; Only Scalar nodes can be connected to \"Enable\" of \"traktor.render.ComputeOutput\". " << type_name(enableSource->getNode()) << L" not supported." << Endl;
 	}
 

@@ -128,13 +128,6 @@ public:
 	virtual bool getBackBufferContent(void* buffer) const override final;
 
 private:
-	struct TargetScope
-	{
-		Ref< RenderTargetSetOpenGL > rts;
-		int32_t colorIndex;
-		Clear clear;
-	};
-
 #if defined(_WIN32)
 	Ref< Window > m_window;
 #elif defined(__APPLE__)
@@ -146,14 +139,11 @@ private:
 	Ref< ResourceContextOpenGL > m_resourceContext;
 	RenderTargetSetCreateDesc m_primaryTargetDesc;
 	Ref< RenderTargetSetOpenGL > m_primaryTarget;
-	AlignedVector< TargetScope > m_targetStack;
+	Ref< RenderTargetSetOpenGL > m_activeTarget;
 	bool m_cursorVisible;
 	int32_t m_waitVBlanks;
-	bool m_targetsDirty;
 	uint32_t m_drawCalls;
 	uint32_t m_primitiveCount;
-
-	void bindTargets();
 
 #if defined(_WIN32)
 

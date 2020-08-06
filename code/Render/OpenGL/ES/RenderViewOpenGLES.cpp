@@ -193,7 +193,7 @@ bool RenderViewOpenGLES::isMinimized() const
 
 bool RenderViewOpenGLES::isFullScreen() const
 {
-#if defined(T_OPENGL_ES2_HAVE_EGL) || defined(__PNACL__)
+#if defined(T_OPENGL_ES_HAVE_EGL) || defined(__PNACL__)
 	return false;
 #else
 	return true;

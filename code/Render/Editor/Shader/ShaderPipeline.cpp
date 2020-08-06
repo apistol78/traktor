@@ -86,7 +86,7 @@ public:
 		if (!shaderGraph)
 			return nullptr;
 
-		if (ShaderGraphValidator(shaderGraph).validateIntegrity())
+		if (ShaderGraphValidator(shaderGraph, fragmentGuid).validateIntegrity())
 			return shaderGraph;
 		else
 			return nullptr;
