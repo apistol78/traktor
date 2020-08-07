@@ -812,11 +812,6 @@ void RenderViewOpenGLES::getStatistics(RenderViewStatistics& outStatistics) cons
 	outStatistics.primitiveCount = m_primitiveCount;
 }
 
-bool RenderViewOpenGLES::getBackBufferContent(void* buffer) const
-{
-	return false;
-}
-
 #if defined(_WIN32)
 bool RenderViewOpenGLES::windowListenerEvent(Window* window, UINT message, WPARAM wParam, LPARAM lParam, LRESULT& outResult)
 {

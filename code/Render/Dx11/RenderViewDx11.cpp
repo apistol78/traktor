@@ -992,50 +992,6 @@ void RenderViewDx11::getStatistics(RenderViewStatistics& outStatistics) const
 	outStatistics.primitiveCount = m_primitiveCount;
 }
 
-bool RenderViewDx11::getBackBufferContent(void* buffer) const
-{
-	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_context->getLock());
-
-	ComRef< ID3D11Texture2D > d3dBackBuffer;
-	ComRef< ID3D11Texture2D > d3dReadBackTexture;
-	HRESULT hr;
-
-	hr = m_dxgiSwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (void**)&d3dBackBuffer.getAssign());
-	if (FAILED(hr))
-		return false;
-
-		D3D11_TEXTURE2D_DESC description;
-		d3dBackBuffer->GetDesc(&description);
-		description.BindFlags = 0;
-		description.CPUAccessFlags = D3D11_CPU_ACCESS_READ | D3D11_CPU_ACCESS_WRITE;
-		description.Usage = D3D11_USAGE_STAGING;
-
-	hr = m_context->getD3DDevice()->CreateTexture2D(&description, 0, &d3dReadBackTexture.getAssign());
-	if (FAILED(hr))
-		return false;
-
-	m_context->getD3DDeviceContext()->CopyResource(d3dReadBackTexture, d3dBackBuffer);
-
-	D3D11_MAPPED_SUBRESOURCE resource;
-	hr = m_context->getD3DDeviceContext()->Map(d3dReadBackTexture, 0, D3D11_MAP_READ_WRITE, 0, &resource);
-	if (FAILED(hr))
-		return false;
-
-	for (uint32_t y = 0; y < description.Height; ++y)
-	{
-		const uint8_t* sourceRow = static_cast< const uint8_t* >(resource.pData) + resource.RowPitch * y;
-		uint8_t* destinationRow = static_cast< uint8_t* >(buffer) + description.Width * sizeof(uint32_t) * y;
-		std::memcpy(
-			destinationRow,
-			sourceRow,
-			description.Width * sizeof(uint32_t)
-		);
-	}
-
-	m_context->getD3DDeviceContext()->Unmap(d3dReadBackTexture, 0);
-	return true;
-}
-
 bool RenderViewDx11::windowListenerEvent(Window* window, UINT message, WPARAM wParam, LPARAM lParam, LRESULT& outResult)
 {
 	if (message == WM_CLOSE)

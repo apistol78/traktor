@@ -1513,7 +1513,8 @@ bool emitSampler(GlslContext& cx, Sampler* node)
 		case GtTexture2D:
 			// assign(f, out) << L"texture2DBilinear(" << samplerName << L", " << texCoord->cast(GtFloat2) << L");" << Endl;
 			// cx.requirements().vertexBilinearSampler = true;
-			// break;
+			assign(f, out) << L"texture(" << samplerName << L", " << texCoord->cast(GtFloat2) << L");" << Endl;
+			break;
 
 		case GtTexture3D:
 		case GtTextureCube:

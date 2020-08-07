@@ -196,9 +196,6 @@ public:
 	/*! Get render view statistics. */
 	virtual void getStatistics(RenderViewStatistics& outStatistics) const = 0;
 
-	/*! Get backbuffer content. */
-	virtual bool getBackBufferContent(void* buffer) const = 0;
-
 	//@}
 };
 

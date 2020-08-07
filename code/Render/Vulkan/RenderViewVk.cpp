@@ -1166,11 +1166,6 @@ void RenderViewVk::getStatistics(RenderViewStatistics& outStatistics) const
 	outStatistics.primitiveCount = m_primitiveCount;
 }
 
-bool RenderViewVk::getBackBufferContent(void* buffer) const
-{
-	return false;
-}
-
 bool RenderViewVk::create(uint32_t width, uint32_t height, int32_t vblanks)
 {
 	// Do not fail if requested size, assume it will get reset later.

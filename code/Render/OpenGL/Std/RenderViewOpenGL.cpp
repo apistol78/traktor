@@ -1,13 +1,15 @@
 #include "Core/Log/Log.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Render/OpenGL/Std/Platform.h"
-#include "Render/OpenGL/Std/VertexBufferOpenGL.h"
+#include "Render/OpenGL/Std/CubeTextureOpenGL.h"
 #include "Render/OpenGL/Std/IndexBufferIBO.h"
+#include "Render/OpenGL/Std/ProgramOpenGL.h"
 #include "Render/OpenGL/Std/RenderViewOpenGL.h"
 #include "Render/OpenGL/Std/RenderSystemOpenGL.h"
-#include "Render/OpenGL/Std/ProgramOpenGL.h"
 #include "Render/OpenGL/Std/RenderTargetSetOpenGL.h"
 #include "Render/OpenGL/Std/RenderTargetOpenGL.h"
+#include "Render/OpenGL/Std/SimpleTextureOpenGL.h"
+#include "Render/OpenGL/Std/VertexBufferOpenGL.h"
 
 #if defined(__APPLE__)
 #	include "Render/OpenGL/Std/OsX/CGLWindow.h"
@@ -435,15 +437,18 @@ bool RenderViewOpenGL::beginPass(IRenderTargetSet* renderTargetSet, const Clear*
 
 	if (clear)
 	{
-		for (int32_t i = 0; i < 8; ++i)
+		if (clear->mask & CfColor)
 		{
-			if (!m_activeTarget->getColorTexture(i))
-				continue;
+			for (int32_t i = 0; i < 8; ++i)
+			{
+				if (!m_activeTarget->getColorTexture(i))
+					continue;
 
-			float T_ALIGN16 cl[] = { 0.0f, 0.0f, 0.0f, 0.0f };
-			clear->colors[i].storeAligned(cl);
+				float T_ALIGN16 cl[] = { 0.0f, 0.0f, 0.0f, 0.0f };
+				clear->colors[i].storeAligned(cl);
 
-			T_OGL_SAFE(glClearBufferfv(GL_COLOR, i, cl));
+				T_OGL_SAFE(glClearBufferfv(GL_COLOR, i, cl));
+			}
 		}
 
 		if (clear->mask & CfDepth)
@@ -474,15 +479,18 @@ bool RenderViewOpenGL::beginPass(IRenderTargetSet* renderTargetSet, int32_t rend
 
 	if (clear)
 	{
-		for (int32_t i = 0; i < 8; ++i)
+		if (clear->mask & CfColor)
 		{
-			if (!m_activeTarget->getColorTexture(i))
-				continue;
+			for (int32_t i = 0; i < 8; ++i)
+			{
+				if (!m_activeTarget->getColorTexture(i))
+					continue;
 
-			float T_ALIGN16 cl[] = { 0.0f, 0.0f, 0.0f, 0.0f };
-			clear->colors[i].storeAligned(cl);
+				float T_ALIGN16 cl[] = { 0.0f, 0.0f, 0.0f, 0.0f };
+				clear->colors[i].storeAligned(cl);
 
-			T_OGL_SAFE(glClearBufferfv(GL_COLOR, i, cl));
+				T_OGL_SAFE(glClearBufferfv(GL_COLOR, i, cl));
+			}
 		}
 
 		if (clear->mask & CfDepth)
@@ -738,7 +746,69 @@ void RenderViewOpenGL::compute(IProgram* program, const int32_t* workSize)
 
 bool RenderViewOpenGL::copy(ITexture* destinationTexture, const Region& destinationRegion, ITexture* sourceTexture, const Region& sourceRegion)
 {
+#if !defined(__APPLE__)
+	GLuint srcName = 0;
+	GLenum srcTarget = GL_INVALID_ENUM;
+	GLuint dstName = 0;
+	GLenum dstTarget = GL_INVALID_ENUM;
+
+	if (auto sourceRenderTarget = dynamic_type_cast< RenderTargetOpenGL* >(sourceTexture))
+	{
+		srcName = (GLuint)sourceRenderTarget->getInternalHandle();
+		srcTarget = GL_TEXTURE_2D;
+	}
+	else if (auto sourceSimpleTexture = dynamic_type_cast< SimpleTextureOpenGL* >(sourceTexture))
+	{
+		srcName = (GLuint)sourceSimpleTexture->getInternalHandle();
+		srcTarget = GL_TEXTURE_2D;
+	}
+	else if (auto sourceCubeTexture = dynamic_type_cast< CubeTextureOpenGL* >(sourceTexture))
+	{
+		srcName = (GLuint)sourceCubeTexture->getTextureName();
+		srcTarget = GL_TEXTURE_CUBE_MAP;
+	}
+	else
+		return false;
+
+	if (auto destinationRenderTarget = dynamic_type_cast< RenderTargetOpenGL* >(destinationTexture))
+	{
+		dstName = (GLuint)destinationRenderTarget->getInternalHandle();
+		dstTarget = GL_TEXTURE_2D;
+	}
+	else if (auto destinationSimpleTexture = dynamic_type_cast< SimpleTextureOpenGL* >(destinationTexture))
+	{
+		dstName = (GLuint)destinationSimpleTexture->getInternalHandle();
+		dstTarget = GL_TEXTURE_2D;
+	}
+	else if (auto destinationCubeTexture = dynamic_type_cast< CubeTextureOpenGL* >(destinationTexture))
+	{
+		dstName = (GLuint)destinationCubeTexture->getTextureName();
+		dstTarget = GL_TEXTURE_CUBE_MAP;
+	}
+	else
+		return false;
+
+	T_OGL_SAFE(glCopyImageSubData(
+		srcName,	// srcName
+		srcTarget,	// srcTarget
+		sourceRegion.mip,	// srcLevel
+		sourceRegion.x,	// srcX
+		sourceRegion.y,	// srcY,
+		sourceRegion.z,	// srcZ,
+		dstName,	// dstName
+		dstTarget,	// dstTarget
+		destinationRegion.mip,	// dstLevel
+		destinationRegion.x,	// dstX
+		destinationRegion.y,	// dstY
+		destinationRegion.z,	// dstZ
+		sourceRegion.width,		// srcWidth
+		sourceRegion.height,	// srcHeight
+		1	// srcDepth
+	));
+	return true;
+#else
 	return false;
+#endif
 }
 
 int32_t RenderViewOpenGL::beginTimeQuery()
@@ -778,19 +848,6 @@ void RenderViewOpenGL::getStatistics(RenderViewStatistics& outStatistics) const
 {
 	outStatistics.drawCalls = m_drawCalls;
 	outStatistics.primitiveCount = m_primitiveCount;
-}
-
-bool RenderViewOpenGL::getBackBufferContent(void* buffer) const
-{
-	if (!m_renderContext->enter())
-		return false;
-
-	m_primaryTarget->bind(m_renderContext, m_primaryTarget->getDepthBuffer(), !m_primaryTargetDesc.ignoreStencil, 0);
-
-	T_OGL_SAFE(glReadPixels(0, 0, m_primaryTargetDesc.width, m_primaryTargetDesc.height, GL_RGBA, GL_UNSIGNED_BYTE, buffer));
-
-	m_renderContext->leave();
-	return true;
 }
 
 #if defined(_WIN32)
