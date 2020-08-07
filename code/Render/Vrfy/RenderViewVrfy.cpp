@@ -377,10 +377,5 @@ void RenderViewVrfy::getStatistics(RenderViewStatistics& outStatistics) const
 	m_renderView->getStatistics(outStatistics);
 }
 
-bool RenderViewVrfy::getBackBufferContent(void* buffer) const
-{
-	return m_renderView->getBackBufferContent(buffer);
-}
-
 	}
 }

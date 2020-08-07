@@ -351,10 +351,5 @@ void RenderViewPs4::getStatistics(RenderViewStatistics& outStatistics) const
 	outStatistics.primitiveCount = 0;
 }
 
-bool RenderViewPs4::getBackBufferContent(void* buffer) const
-{
-	return false;
-}
-
 	}
 }

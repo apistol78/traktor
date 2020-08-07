@@ -90,8 +90,6 @@ public:
 
 	virtual void getStatistics(RenderViewStatistics& outStatistics) const override final;
 
-	virtual bool getBackBufferContent(void* buffer) const override final;
-
 private:
 	enum { FrameQueueCount = 2 };
 

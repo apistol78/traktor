@@ -1001,11 +1001,6 @@ void RenderViewPs3::getStatistics(RenderViewStatistics& outStatistics) const
 	outStatistics = m_statistics;
 }
 
-bool RenderViewPs3::getBackBufferContent(void* buffer) const
-{
-	return false;
-}
-
 void RenderViewPs3::setCurrentRenderState()
 {
 	T_ASSERT (m_renderTargetDirty);

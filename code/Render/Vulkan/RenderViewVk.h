@@ -115,8 +115,6 @@ public:
 
 	virtual void getStatistics(RenderViewStatistics& outStatistics) const override final;
 
-	virtual bool getBackBufferContent(void* buffer) const override final;
-
 private:
 	typedef std::tuple< uint32_t, uint32_t, uint32_t, uint32_t > pipeline_key_t;
 
