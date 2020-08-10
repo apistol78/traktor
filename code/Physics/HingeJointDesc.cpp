@@ -16,7 +16,7 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.physics.HingeJointDesc", 2, HingeJointD
 HingeJointDesc::HingeJointDesc()
 :	m_anchor(0.0f, 0.0f, 0.0f, 1.0f)
 ,	m_axis(1.0f, 0.0f, 0.0f, 0.0f)
-,	m_enableLimits(true)
+,	m_enableLimits(false)
 ,	m_minAngle(0.0f)
 ,	m_maxAngle(0.0f)
 ,	m_angularOnly(false)

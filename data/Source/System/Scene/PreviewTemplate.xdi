@@ -85,17 +85,13 @@
 	</worldRenderSettings>
 	<imageProcessParams/>
 	<layers>
-		<item type="traktor.world.LayerEntityData" version="1,traktor.world.GroupEntityData:1">
+		<item type="traktor.world.LayerEntityData" version="1,traktor.world.GroupEntityData:2">
 			<name>Environment</name>
 			<transform>
 				<translation>0, 0, 0, 0</translation>
 				<rotation>0, 0, 0, 1</rotation>
 			</transform>
 			<components/>
-			<mask>
-				<static>true</static>
-				<dynamic>true</dynamic>
-			</mask>
 			<entityData>
 				<item type="traktor.world.EntityData">
 					<name>Sky</name>
@@ -156,22 +152,18 @@
 			<dynamic>false</dynamic>
 			<attributes/>
 		</item>
-		<item type="traktor.world.LayerEntityData" version="1,traktor.world.GroupEntityData:1">
+		<item type="traktor.world.LayerEntityData" version="1,traktor.world.GroupEntityData:2">
 			<name>Entity</name>
 			<transform>
 				<translation>0, 0, 0, 0</translation>
 				<rotation>0, 0, 0, 1</rotation>
 			</transform>
 			<components/>
-			<mask>
-				<static>true</static>
-				<dynamic>true</dynamic>
-			</mask>
 			<entityData/>
 			<visible>true</visible>
 			<locked>false</locked>
 			<include>true</include>
-			<dynamic>false</dynamic>
+			<dynamic>true</dynamic>
 			<attributes/>
 		</item>
 	</layers>

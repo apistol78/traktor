@@ -50,18 +50,18 @@ private:
 
 	std::set< resource::Id< physics::CollisionSpecification > > m_collisionGroup;
 	std::set< resource::Id< physics::CollisionSpecification > > m_collisionMask;
-	bool m_autoDeactivate;
-	bool m_enabled;
-	bool m_fixateJoints;
-	float m_limbMass;
-	float m_linearDamping;
-	float m_angularDamping;
-	float m_linearThreshold;
-	float m_angularThreshold;
+	bool m_autoDeactivate = false;
+	bool m_enabled = true;
+	float m_limbMass = 1.0f;
+	float m_linearDamping = 0.1f;
+	float m_angularDamping = 0.1f;
+	float m_linearThreshold = 0.8f;
+	float m_angularThreshold = 1.0f;
+	uint32_t m_constraintAxises = 0;
 	Ref< const IPoseControllerData > m_trackPoseController;
-	float m_trackLinearTension;
-	float m_trackAngularTension;
-	float m_trackDuration;
+	float m_trackLinearTension = 0.0f;
+	float m_trackAngularTension = 0.0f;
+	float m_trackDuration = 0.0f;
 };
 
 	}

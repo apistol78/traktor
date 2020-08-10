@@ -36,6 +36,8 @@ public:
 
 	void findChildren(uint32_t index, AlignedVector< uint32_t >& outChildren) const;
 
+	void findAllChildren(uint32_t index, AlignedVector< uint32_t >& outChildren) const;
+
 	virtual void serialize(ISerializer& s) override final;
 
 	uint32_t getJointCount() const { return (uint32_t)m_joints.size(); }

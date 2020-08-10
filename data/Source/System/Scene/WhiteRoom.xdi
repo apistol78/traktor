@@ -199,7 +199,7 @@
 			<visible>true</visible>
 			<locked>false</locked>
 			<include>true</include>
-			<dynamic>false</dynamic>
+			<dynamic>true</dynamic>
 			<attributes/>
 		</item>
 	</layers>

@@ -1052,6 +1052,10 @@
 				<name>Object</name>
 				<fileType>obj</fileType>
 			</item>
+			<item type="SolutionBuilderMsvcVCXBuildTool">
+				<name>Natvis</name>
+				<fileType>natvis</fileType>
+			</item>			
 		</buildTools>
 	</project>
 </object>

@@ -324,7 +324,7 @@ bool AnimatedMeshComponent::setPoseTransform(render::handle_t jointName, const T
 		Transform delta = transform * m_jointTransforms[index].inverse();
 
 		AlignedVector< uint32_t > children;
-		m_skeleton->findChildren(index, children);
+		m_skeleton->findAllChildren(index, children);
 		for (auto child : children)
 			m_poseTransforms[child] = delta * m_jointTransforms[child];
 	}
