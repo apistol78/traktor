@@ -511,7 +511,7 @@ void SolutionForm::commandSave(bool saveAs)
 	if (saveAs || m_solutionFileName.empty())
 	{
 		ui::FileDialog fileDialog;
-		fileDialog.create(this, type_name(this), L"Save solution as", L"SolutionBuilder solutions;*.xms", true);
+		fileDialog.create(this, type_name(this), L"Save solution as", L"SolutionBuilder solutions;*.xms", L"", true);
 		cancelled = !(fileDialog.showModal(filePath) == ui::DrOk);
 		fileDialog.destroy();
 	}

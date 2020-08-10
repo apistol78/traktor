@@ -31,6 +31,15 @@ RagDollPoseControllerData::RagDollPoseControllerData()
 	m_collisionMask.insert(c_interactableCollision);
 }
 
+RagDollPoseControllerData::RagDollPoseControllerData(
+	const std::set< resource::Id< physics::CollisionSpecification > >& collisionGroup,
+	const std::set< resource::Id< physics::CollisionSpecification > >& collisionMask
+)
+:	m_collisionGroup(collisionGroup)
+,	m_collisionMask(collisionMask)
+{
+}
+
 Ref< IPoseController > RagDollPoseControllerData::createInstance(
 	resource::IResourceManager* resourceManager,
 	physics::PhysicsManager* physicsManager,

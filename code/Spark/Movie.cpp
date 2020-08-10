@@ -74,7 +74,7 @@ Ref< SpriteInstance > Movie::createMovieClipInstance(const ICharacterFactory* ch
 		m_movieClip->createInstance(context, dictionary, 0, "", Matrix33::identity(), 0, 0)
 	);
 	if (!spriteInstance)
-		return 0;
+		return nullptr;
 
 	global->setMember("_root", ActionValue(spriteInstance->getAsObject(context)));
 	global->setMember("_level0", ActionValue(spriteInstance->getAsObject(context)));
@@ -85,7 +85,7 @@ Ref< SpriteInstance > Movie::createMovieClipInstance(const ICharacterFactory* ch
 Ref< SpriteInstance > Movie::createExternalMovieClipInstance(SpriteInstance* containerInstance, int32_t depth) const
 {
 	if (!containerInstance)
-		return 0;
+		return nullptr;
 
 	Ref< Dictionary > dictionary = new Dictionary();
 	dictionary->m_fonts = m_fonts;
@@ -107,7 +107,7 @@ Ref< SpriteInstance > Movie::createExternalMovieClipInstance(SpriteInstance* con
 		)
 	);
 	if (!spriteInstance)
-		return 0;
+		return nullptr;
 
 	// Add instance to container's display list.
 	DisplayList& displayList = containerInstance->getDisplayList();
@@ -124,24 +124,24 @@ Ref< SpriteInstance > Movie::createExternalMovieClipInstance(SpriteInstance* con
 Ref< SpriteInstance > Movie::createExternalSpriteInstance(SpriteInstance* containerInstance, const std::string& characterName, int32_t depth) const
 {
 	if (!containerInstance)
-		return 0;
+		return nullptr;
 
 	// Get exported character identifier.
 	SmallMap< std::string, uint16_t >::const_iterator i = m_exports.find(characterName);
 	if (i == m_exports.end())
-		return 0;
+		return nullptr;
 
 	uint16_t characterId = i->second;
 
 	// Get exported character.
 	SmallMap< uint16_t, Ref< Character > >::const_iterator j = m_characters.find(characterId);
 	if (j == m_characters.end())
-		return 0;
+		return nullptr;
 
 	// Get exported sprite.
 	const Sprite* sprite = dynamic_type_cast< const Sprite* >(j->second);
 	if (!sprite)
-		return 0;
+		return nullptr;
 
 	Ref< Dictionary > dictionary = new Dictionary();
 	dictionary->m_fonts = m_fonts;
@@ -157,11 +157,11 @@ Ref< SpriteInstance > Movie::createExternalSpriteInstance(SpriteInstance* contai
 		containerInstance,
 		"",
 		Matrix33::identity(),
-		0,
-		0
+		nullptr,
+		nullptr
 	);
 	if (!movieInstance)
-		return 0;
+		return nullptr;
 
 	// Create instance of external sprite.
 	Ref< SpriteInstance > spriteInstance = checked_type_cast< SpriteInstance*, false >(
@@ -171,12 +171,12 @@ Ref< SpriteInstance > Movie::createExternalSpriteInstance(SpriteInstance* contai
 			containerInstance,
 			"",
 			Matrix33::identity(),
-			0,
-			0
+			nullptr,
+			nullptr
 		)
 	);
 	if (!spriteInstance)
-		return 0;
+		return nullptr;
 
 	// Add instance to container's display list.
 	DisplayList& displayList = containerInstance->getDisplayList();

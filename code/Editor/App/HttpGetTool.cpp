@@ -68,6 +68,7 @@ bool HttpGetTool::launch(ui::Widget* parent, IEditor* editor, const PropertyGrou
 		type_name(this),
 		i18n::Text(L"EDITOR_HTTP_GET_SAVE_AS"),
 		L"All files (*.*);*.*",
+		L"",
 		true
 	);
 	if (saveAsDialog.showModal(fileName) != ui::DrOk)

@@ -36,6 +36,7 @@ public:
 		const std::wstring& key,
 		const std::wstring& title,
 		const std::wstring& filters,
+		const std::wstring& defaultPath = L"",
 		bool save = false
 	);
 
@@ -52,6 +53,7 @@ private:
 	Ref< IBitmap > m_bitmapDirectory;
 	Ref< IBitmap > m_bitmapFile;
 	std::wstring m_key;
+	Path m_defaultPath;
 	Path m_currentPath;
 
 	void updatePath();

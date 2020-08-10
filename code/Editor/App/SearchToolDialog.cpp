@@ -361,7 +361,7 @@ void SearchToolDialog::eventButtonSearchClick(ui::ButtonClickEvent* event)
 void SearchToolDialog::eventButtonSaveAsClick(ui::ButtonClickEvent* event)
 {
 	ui::FileDialog fileDialog;
-	if (!fileDialog.create(this, type_name(this), i18n::Text(L"EDITOR_SEARCH_TOOL_SAVE_AS_TITLE"), L"All files;*.*", true))
+	if (!fileDialog.create(this, type_name(this), i18n::Text(L"EDITOR_SEARCH_TOOL_SAVE_AS_TITLE"), L"All files;*.*", L"", true))
 		return;
 
 	Path saveAsPath;
