@@ -1,8 +1,10 @@
 #include "Animation/SkeletonUtils.h"
 #include "Animation/RagDoll/RagDollPoseController.h"
 #include "Animation/RagDoll/RagDollPoseControllerData.h"
+#include "Core/Serialization/AttributeRange.h"
 #include "Core/Serialization/AttributeUnit.h"
 #include "Core/Serialization/ISerializer.h"
+#include "Core/Serialization/MemberBitMask.h"
 #include "Core/Serialization/MemberRef.h"
 #include "Core/Serialization/MemberStl.h"
 #include "Physics/CollisionSpecification.h"
@@ -20,20 +22,9 @@ const resource::Id< physics::CollisionSpecification > c_interactableCollision(Gu
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.animation.RagDollPoseControllerData", 5, RagDollPoseControllerData, IPoseControllerData)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.animation.RagDollPoseControllerData", 6, RagDollPoseControllerData, IPoseControllerData)
 
 RagDollPoseControllerData::RagDollPoseControllerData()
-:	m_autoDeactivate(true)
-,	m_enabled(true)
-,	m_fixateJoints(false)
-,	m_limbMass(1.0f)
-,	m_linearDamping(0.1f)
-,	m_angularDamping(0.1f)
-,	m_linearThreshold(0.8f)
-,	m_angularThreshold(1.0f)
-,	m_trackLinearTension(0.0f)
-,	m_trackAngularTension(0.0f)
-,	m_trackDuration(0.0f)
 {
 	m_collisionGroup.insert(c_defaultCollision);
 	m_collisionMask.insert(c_defaultCollision);
@@ -101,16 +92,36 @@ void RagDollPoseControllerData::serialize(ISerializer& s)
 	s >> MemberStlSet< resource::Id< physics::CollisionSpecification >, resource::Member< physics::CollisionSpecification > >(L"collisionMask", m_collisionMask);
 	s >> Member< bool >(L"autoDeactivate", m_autoDeactivate);
 	s >> Member< bool >(L"enabled", m_enabled);
-	s >> Member< bool >(L"fixateJoints", m_fixateJoints);
-	s >> Member< float >(L"limbMass", m_limbMass, AttributeUnit(AuKilograms));
-	s >> Member< float >(L"linearDamping", m_linearDamping, AttributeUnit(AuPercent));
-	s >> Member< float >(L"angularDamping", m_angularDamping, AttributeUnit(AuPercent));
-	s >> Member< float >(L"linearThreshold", m_linearThreshold, AttributeUnit(AuMetres, true));
-	s >> Member< float >(L"angularThreshold", m_angularThreshold, AttributeUnit(AuMetres, true));
+
+	if (s.getVersion< RagDollPoseControllerData >() < 6)
+	{
+		bool fixateJoints;
+		s >> Member< bool >(L"fixateJoints", fixateJoints);
+	}
+
+	s >> Member< float >(L"limbMass", m_limbMass, AttributeUnit(AuKilograms) | AttributeRange(0.0f));
+	s >> Member< float >(L"linearDamping", m_linearDamping, AttributeUnit(AuPercent) | AttributeRange(0.0f, 1.0f));
+	s >> Member< float >(L"angularDamping", m_angularDamping, AttributeUnit(AuPercent) | AttributeRange(0.0f, 1.0f));
+	s >> Member< float >(L"linearThreshold", m_linearThreshold, AttributeUnit(AuMetres, true) | AttributeRange(0.0f));
+	s >> Member< float >(L"angularThreshold", m_angularThreshold, AttributeUnit(AuMetres, true) | AttributeRange(0.0f));
+
+	if (s.getVersion< RagDollPoseControllerData >() >= 6)
+	{
+		const MemberBitMask::Bit c_constraintBits[] =
+		{
+			{ L"X", 1 },
+			{ L"Y", 2 },
+			{ L"Z", 4 },
+			{ 0 }
+		};
+
+		s >> MemberBitMask(L"constraintAxises", m_constraintAxises, c_constraintBits);
+	}
+
 	s >> MemberRef< const IPoseControllerData >(L"trackPoseController", m_trackPoseController);
-	s >> Member< float >(L"trackLinearTension", m_trackLinearTension);
-	s >> Member< float >(L"trackAngularTension", m_trackAngularTension);
-	s >> Member< float >(L"trackDuration", m_trackDuration, AttributeUnit(AuSeconds));
+	s >> Member< float >(L"trackLinearTension", m_trackLinearTension, AttributeUnit(AuPercent) | AttributeRange(0.0f, 1.0f));
+	s >> Member< float >(L"trackAngularTension", m_trackAngularTension, AttributeUnit(AuPercent) | AttributeRange(0.0f, 1.0f));
+	s >> Member< float >(L"trackDuration", m_trackDuration, AttributeUnit(AuSeconds) | AttributeRange(0.0f));
 }
 
 	}

@@ -87,6 +87,8 @@ public:
 
 	const RefArray< physics::Body >& getLimbs() const;
 
+	const RefArray< physics::Joint >& getJoints() const;
+
 private:
 	Ref< IPoseController > m_trackPoseController;
 	Scalar m_trackLinearTension;

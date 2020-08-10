@@ -2,6 +2,7 @@
 #include "Animation/Skeleton.h"
 #include "Animation/RagDoll/RagDollPoseController.h"
 #include "Animation/RagDoll/RagDollPoseControllerData.h"
+#include "Core/Log/Log.h"
 #include "Core/Math/Const.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Physics/BallJointDesc.h"
@@ -9,6 +10,8 @@
 #include "Physics/CapsuleShapeDesc.h"
 #include "Physics/ConeTwistJointDesc.h"
 #include "Physics/DynamicBodyDesc.h"
+#include "Physics/FixedJointDesc.h"
+#include "Physics/HingeJointDesc.h"
 #include "Physics/Joint.h"
 #include "Physics/PhysicsManager.h"
 #include "Physics/StaticBodyDesc.h"
@@ -116,18 +119,13 @@ bool RagDollPoseController::create(
 
 		Vector4 axisZ = (end - start).normalized();
 		Vector4 axisX, axisY;
-		orthogonalFrame(axisZ, axisX, axisY);
+		orthogonalFrame(axisZ, axisY, axisX);
 
-		Transform limbTransform(Matrix44(
-			axisX,
-			axisY,
-			axisZ,
-			centerOfMass
-		));
+		Matrix44 m1(axisX, axisY, axisZ, Vector4::origo());
+		Matrix44 m2 = translate(centerOfMass);
+		Transform limbTransform(m2 * m1);
 
-		const Transform r90(rotateX(deg2rad(90.0f)));
-
-		limb->setTransform(worldTransform * limbTransform * r90);
+		limb->setTransform(worldTransform * limbTransform);
 		if (!velocities.empty())
 		{
 			limb->setLinearVelocity(velocities[i].linear);
@@ -166,9 +164,6 @@ bool RagDollPoseController::create(
 	// Create joint constraints.
 	for (uint32_t i = 0; i < jointCount; ++i)
 	{
-		if (!m_limbs[i])
-			continue;
-
 		Joint* joint = skeleton->getJoint(i);
 		T_ASSERT(joint);
 
@@ -178,18 +173,53 @@ bool RagDollPoseController::create(
 		skeleton->findChildren(i, children);
 		for (uint32_t child : children)
 		{
-			if (!m_limbs[child])
+			if (m_deltaLimbs[child] == m_deltaLimbs[i])
 				continue;
 
-			Ref< physics::BallJointDesc > jointDesc = new physics::BallJointDesc();
-			jointDesc->setAnchor(anchor);
+			Ref< physics::Joint > limbJoint;
+			if (data->m_constraintAxises == 0)
+			{
+				Ref< physics::FixedJointDesc > jointDesc = new physics::FixedJointDesc();
+				limbJoint = physicsManager->createJoint(
+					jointDesc,
+					worldTransform,
+					m_deltaLimbs[i],
+					m_deltaLimbs[child]
+				);
+			}
+			else if (data->m_constraintAxises == (1 | 2 | 4))
+			{
+				Ref< physics::BallJointDesc > jointDesc = new physics::BallJointDesc();
+				jointDesc->setAnchor(anchor);
+				limbJoint = physicsManager->createJoint(
+					jointDesc,
+					worldTransform,
+					m_deltaLimbs[i],
+					m_deltaLimbs[child]
+				);
+			}
+			else
+			{
+				Ref< physics::HingeJointDesc > jointDesc = new physics::HingeJointDesc();
+				jointDesc->setAnchor(anchor);
 
-			Ref< physics::Joint > limbJoint = physicsManager->createJoint(
-				jointDesc,
-				worldTransform,
-				m_limbs[i],
-				m_limbs[child]
-			);
+				if (data->m_constraintAxises == 1)
+					jointDesc->setAxis(jointTransforms[i].axisX());
+				else if (data->m_constraintAxises == 2)
+					jointDesc->setAxis(jointTransforms[i].axisY());
+				else if (data->m_constraintAxises == 4)
+					jointDesc->setAxis(jointTransforms[i].axisZ());
+				else
+					return false;
+
+				limbJoint = physicsManager->createJoint(
+					jointDesc,
+					worldTransform,
+					m_deltaLimbs[i],
+					m_deltaLimbs[child]
+				);
+			}
+
 			if (!limbJoint)
 				return false;
 
@@ -388,6 +418,11 @@ bool RagDollPoseController::isEnable() const
 const RefArray< physics::Body >& RagDollPoseController::getLimbs() const
 {
 	return m_limbs;
+}
+
+const RefArray< physics::Joint >& RagDollPoseController::getJoints() const
+{
+	return m_joints;
 }
 
 	}

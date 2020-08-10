@@ -6,6 +6,7 @@
 #include "Animation/IPoseController.h"
 #include "Animation/Joint.h"
 #include "Animation/RagDoll/RagDollPoseController.h"
+#include "Physics/BallJoint.h"
 #include "Physics/Body.h"
 #include "Physics/CapsuleShapeDesc.h"
 #include "Render/PrimitiveRenderer.h"
@@ -41,7 +42,7 @@ void AnimatedMeshComponentEditor::drawGuide(render::PrimitiveRenderer* primitive
 			const auto& jointTransforms = animatedMeshComponent->getJointTransforms();
 
 			// Draw pose controllers.
-			primitiveRenderer->pushWorld(Matrix44::identity()); //m_entityAdapter->getTransform().toMatrix44());
+			primitiveRenderer->pushWorld(Matrix44::identity());
 			primitiveRenderer->pushDepthState(false, false, false);
 
 			if (auto ragDollPoseController = dynamic_type_cast< const RagDollPoseController* >(animatedMeshComponent->getPoseController()))
@@ -81,11 +82,24 @@ void AnimatedMeshComponentEditor::drawGuide(render::PrimitiveRenderer* primitive
 						&shapeDesc
 					);
 				}
+
+				for (auto joint : ragDollPoseController->getJoints())
+				{
+					primitiveRenderer->drawLine(
+						joint->getBody1()->getTransform().translation().xyz1(),
+						joint->getBody2()->getTransform().translation().xyz1(),
+						Color4ub(0, 0, 255, 255)
+					);
+
+					if (auto ballJoint = dynamic_type_cast< const physics::BallJoint* >(joint))
+					{
+						primitiveRenderer->drawSolidPoint(ballJoint->getAnchor(), 8.0f, Color4ub(0, 0, 255, 255));
+					}
+				}
 			}
 
 			primitiveRenderer->popDepthState();
 			primitiveRenderer->popWorld();
-
 
 			primitiveRenderer->pushWorld(m_entityAdapter->getTransform().toMatrix44());
 			primitiveRenderer->pushDepthState(false, false, false);
