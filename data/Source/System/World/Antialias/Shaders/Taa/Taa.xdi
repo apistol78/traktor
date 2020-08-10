@@ -34,8 +34,8 @@
 			<id>{563711FC-4CBE-D842-8C2C-91C25DD6891A}</id>
 			<comment/>
 			<position>
-				<first>1145</first>
-				<second>460</second>
+				<first>2076</first>
+				<second>556</second>
 			</position>
 			<technique>Default</technique>
 			<priority>
@@ -203,8 +203,8 @@
 			<id>{7DF48BE3-8E4D-7140-99CE-61F369E38A86}</id>
 			<comment/>
 			<position>
-				<first>930</first>
-				<second>882</second>
+				<first>1244</first>
+				<second>562</second>
 			</position>
 			<branch>BrAuto</branch>
 			<operator>CoLess</operator>
@@ -221,8 +221,8 @@
 			<id>{EC327188-018A-C645-8B3B-7B7C673FCCDF}</id>
 			<comment/>
 			<position>
-				<first>84</first>
-				<second>1098</second>
+				<first>1002</first>
+				<second>697</second>
 			</position>
 			<value>0.01</value>
 		</item>
@@ -245,6 +245,41 @@
 			</position>
 			<color>1, 0, 0, 0</color>
 			<linear>false</linear>
+		</item>
+		<item type="traktor.render.Sub" version="traktor.render.Node:1">
+			<id>{CD373AA7-E9AD-4690-B351-B11A4FFAC3CD}</id>
+			<comment/>
+			<position>
+				<first>898</first>
+				<second>267</second>
+			</position>
+		</item>
+		<item type="traktor.render.Length" version="traktor.render.Node:1">
+			<id>{30906D49-3F09-4ED6-9BCC-C1A2AC8EF1CC}</id>
+			<comment/>
+			<position>
+				<first>1158</first>
+				<second>284</second>
+			</position>
+		</item>
+		<item type="traktor.render.Conditional" version="1,traktor.render.Node:1">
+			<id>{0C606336-58D5-4BFD-AF14-4A4A4E04CF44}</id>
+			<comment/>
+			<position>
+				<first>1741</first>
+				<second>599</second>
+			</position>
+			<branch>BrAuto</branch>
+			<operator>CoLess</operator>
+		</item>
+		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
+			<id>{2BAAE61D-51B3-43B2-A87A-2CC7A601F102}</id>
+			<comment/>
+			<position>
+				<first>1499</first>
+				<second>734</second>
+			</position>
+			<value>0.55</value>
 		</item>
 	</nodes>
 	<edges>
@@ -430,7 +465,77 @@
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
+				<node ref="/object/nodes/item[1]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[18]"/>
+				<name>Input1</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[5]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[18]"/>
+				<name>Input2</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[18]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[19]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[21]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[20]"/>
+				<name>Reference</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
 				<node ref="/object/nodes/item[13]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[20]"/>
+				<name>CaseTrue</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[1]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[20]"/>
+				<name>CaseFalse</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[19]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[20]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[20]"/>
 				<name>Output</name>
 			</source>
 			<destination>
