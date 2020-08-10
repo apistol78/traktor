@@ -61,7 +61,8 @@ bool convertSkeleton(
 	if (!skeleton)
 		return false;
 
-	// Find bind pose.
+	// Find bind pose, if skeleton is animated then we cannot use
+	// global evaluation as it's the first frame of the animation.
 	FbxPose* bindPose = nullptr;
 	int32_t poseCount = scene->GetPoseCount();
     for (int32_t i = 0; i < poseCount; i++)
@@ -73,30 +74,33 @@ bool convertSkeleton(
 			break;
 		}
 	}
-	if (!bindPose)
-		return false;
 
 	bool result = traverse(nullptr, skeletonNode, [&](FbxNode* parent, FbxNode* node) {
 		std::wstring jointName = getJointName(node);
 
 		// Calculate joint transformation.
 		FbxMatrix nodeTransform;
-
-		int32_t id = bindPose->Find(node);
-		if (id >= 0)
-			nodeTransform = bindPose->GetMatrix(id);
+		if (bindPose)
+		{
+			int32_t id = bindPose->Find(node);
+			if (id >= 0)
+				nodeTransform = bindPose->GetMatrix(id);
+			else
+			{
+				id = bindPose->Find(parent);
+				if (id < 0)
+				{
+					log::error << L"Parent of \"" << jointName << L"\" doesn't have a bind pose matrix, cannot synthesize bind pose matrix." << Endl;
+					return true;
+				}
+				nodeTransform = bindPose->GetMatrix(id) * node->EvaluateLocalTransform();
+			}
+		}
 		else
 		{
-			id = bindPose->Find(parent);
-			if (id < 0)
-			{
-				log::error << L"Parent of \"" << jointName << L"\" doesn't have a bind pose matrix, cannot synthesize bind pose matrix." << Endl;
-				return true;
-			}
-			nodeTransform = bindPose->GetMatrix(id) * node->EvaluateLocalTransform();
+			// No bind pose available we use global transforms of each joint.
+			nodeTransform = node->EvaluateGlobalTransform();
 		}
-
-		// FbxAMatrix nodeTransform = node->EvaluateGlobalTransform();
 
 		Matrix44 Mnode = convertMatrix(nodeTransform);
 		Matrix44 Mrx90 = rotateX(deg2rad(-90.0f));

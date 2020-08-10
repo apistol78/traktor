@@ -162,12 +162,20 @@
 			<second>Kinematic - Movable</second>
 		</item>
 		<item>
+			<first>GAMEENTITY_WIZARD_PHYSICS_RAGDOLL</first>
+			<second>Rag doll</second>
+		</item>
+		<item>
 			<first>GAMEENTITY_WIZARD_PHYSICS_STATIC</first>
 			<second>Static - Non movable</second>
 		</item>
 		<item>
 			<first>GAMEENTITY_WIZARD_PHYSICS_TYPE</first>
 			<second>Type of physics</second>
+		</item>
+		<item>
+			<first>GAMEENTITY_WIZARD_SKELETON_MESH</first>
+			<second>Skeleton mesh</second>
 		</item>
 		<item>
 			<first>GAMEENTITY_WIZARD_UNNAMED</first>

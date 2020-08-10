@@ -27,6 +27,20 @@ AnimatedMeshComponentData::AnimatedMeshComponentData()
 {
 }
 
+AnimatedMeshComponentData::AnimatedMeshComponentData(
+	const resource::Id< mesh::SkinnedMesh >& mesh,
+	const resource::Id< Skeleton >& skeleton,
+	const IPoseControllerData* poseController
+)
+:	m_mesh(mesh)
+,	m_skeleton(skeleton)
+,	m_poseController(poseController)
+,	m_normalizePose(false)
+,	m_normalizeTransform(false)
+,	m_screenSpaceCulling(true)
+{
+}
+
 Ref< AnimatedMeshComponent > AnimatedMeshComponentData::createComponent(resource::IResourceManager* resourceManager, physics::PhysicsManager* physicsManager, const world::IEntityBuilder* entityBuilder) const
 {
 	resource::Proxy< mesh::SkinnedMesh > mesh;
