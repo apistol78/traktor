@@ -1,3 +1,6 @@
+#include "Animation/AnimatedMeshComponentData.h"
+#include "Animation/Editor/SkeletonAsset.h"
+#include "Animation/RagDoll/RagDollPoseControllerData.h"
 #include "Core/Class/IRuntimeClass.h"
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/StringOutputStream.h"
@@ -88,6 +91,24 @@ bool GameEntityWizardDialog::create(ui::Widget* parent)
 	buttonCopyVisualMesh->create(containerVisualMesh, L"Copy");
 	buttonCopyVisualMesh->addEventHandler< ui::ButtonClickEvent >(this, &GameEntityWizardDialog::eventCopyVisualMeshClick);
 
+	// Skeleton mesh
+	Ref< ui::Container > containerSkeletonMesh = new ui::Container();
+	containerSkeletonMesh->create(this, ui::WsNone, new ui::TableLayout(L"*,100%,*,*", L"*", 0, ui::dpi96(8)));
+
+	Ref< ui::Static > staticSkeletonMesh = new ui::Static();
+	staticSkeletonMesh->create(containerSkeletonMesh, i18n::Text(L"GAMEENTITY_WIZARD_SKELETON_MESH"));
+
+	m_editSkeletonMesh = new ui::Edit();
+	m_editSkeletonMesh->create(containerSkeletonMesh, L"");
+
+	Ref< ui::MiniButton > buttonBrowseSkeletonMesh = new ui::MiniButton();
+	buttonBrowseSkeletonMesh->create(containerSkeletonMesh, L"...");
+	buttonBrowseSkeletonMesh->addEventHandler< ui::ButtonClickEvent >(this, &GameEntityWizardDialog::eventBrowseSkeletonMeshClick);
+
+	Ref< ui::MiniButton > buttonCopySkeletonMesh = new ui::MiniButton();
+	buttonCopySkeletonMesh->create(containerSkeletonMesh, L"Copy");
+	buttonCopySkeletonMesh->addEventHandler< ui::ButtonClickEvent >(this, &GameEntityWizardDialog::eventCopySkeletonMeshClick);
+
 	// Collision mesh
 	Ref< ui::Container > containerCollisionMesh = new ui::Container();
 	containerCollisionMesh->create(this, ui::WsNone, new ui::TableLayout(L"*,100%,*,*", L"*", 0, ui::dpi96(8)));
@@ -118,6 +139,7 @@ bool GameEntityWizardDialog::create(ui::Widget* parent)
 	m_dropPhysicsType->add(i18n::Text(L"GAMEENTITY_WIZARD_PHYSICS_STATIC"));
 	m_dropPhysicsType->add(i18n::Text(L"GAMEENTITY_WIZARD_PHYSICS_KINEMATIC"));
 	m_dropPhysicsType->add(i18n::Text(L"GAMEENTITY_WIZARD_PHYSICS_DYNAMIC"));
+	m_dropPhysicsType->add(i18n::Text(L"GAMEENTITY_WIZARD_PHYSICS_RAGDOLL"));
 	m_dropPhysicsType->select(0);
 
 	// Get all collision specifications in the database.
@@ -204,6 +226,37 @@ void GameEntityWizardDialog::eventCopyVisualMeshClick(ui::ButtonClickEvent* even
 		m_editName->setText(Path(path).getFileNameNoExtension());
 }
 
+void GameEntityWizardDialog::eventBrowseSkeletonMeshClick(ui::ButtonClickEvent* event)
+{
+	ui::FileDialog fileDialog;
+	if (!fileDialog.create(this, type_name(this), i18n::Text(L"GAMEENTITY_WIZARD_FILE_TITLE"), L"All files;*.*"))
+		return;
+
+	Path fileName;
+	if (fileDialog.showModal(fileName) != ui::DrOk)
+	{
+		fileDialog.destroy();
+		return;
+	}
+	fileDialog.destroy();
+
+	// Create path relative to asset path.
+	std::wstring assetPath = m_editor->getSettings()->getProperty< std::wstring >(L"Pipeline.AssetPath", L"");
+	FileSystem::getInstance().getRelativePath(
+		FileSystem::getInstance().getAbsolutePath(fileName),
+		FileSystem::getInstance().getAbsolutePath(assetPath),
+		fileName
+	);
+
+	m_editSkeletonMesh->setText(fileName.getPathName());
+}
+
+void GameEntityWizardDialog::eventCopySkeletonMeshClick(ui::ButtonClickEvent* event)
+{
+	std::wstring path = m_editVisualMesh->getText();
+	m_editSkeletonMesh->setText(path);
+}
+
 void GameEntityWizardDialog::eventBrowseCollisionMeshClick(ui::ButtonClickEvent* event)
 {
 	ui::FileDialog fileDialog;
@@ -241,6 +294,7 @@ void GameEntityWizardDialog::eventDialogClick(ui::ButtonClickEvent* event)
 	{
 		std::wstring name = m_editName->getText();
 		std::wstring visualMesh = m_editVisualMesh->getText();
+		std::wstring skeletonMesh = m_editSkeletonMesh->getText();
 		std::wstring collisionMesh = m_editCollisionMesh->getText();
 		int32_t physics = m_dropPhysicsType->getSelected();
 
@@ -250,15 +304,51 @@ void GameEntityWizardDialog::eventDialogClick(ui::ButtonClickEvent* event)
 			return;
 		}
 
+		if (physics == 3 && skeletonMesh.empty())
+		{
+			log::error << L"Game entity wizard failed; rag dolls must have a skeleton." << Endl;
+			return;
+		}
+
 		Ref< world::EntityData > entityData = new world::EntityData();
 		entityData->setName(name);
+
+		Ref< db::Instance > skeletonAssetInstance;
+		if (!skeletonMesh.empty())
+		{
+			// Create skeleton mesh asset.
+			Ref< animation::SkeletonAsset > skeletonAsset = new animation::SkeletonAsset();
+			skeletonAsset->setFileName(skeletonMesh);
+
+			// Create asset instance.
+			skeletonAssetInstance = m_group->createInstance(
+				name + L"-Skeleton",
+				db::CifReplaceExisting | db::CifKeepExistingGuid
+			);
+			if (!skeletonAssetInstance)
+			{
+				log::error << L"Game entity wizard failed; unable to create skeleton asset instance." << Endl;
+				return;
+			}
+
+			skeletonAssetInstance->setObject(skeletonAsset);
+
+			if (!skeletonAssetInstance->commit())
+			{
+				log::error << L"Game entity wizard failed; unable to commit skeleton asset instance." << Endl;
+				return;
+			}
+		}
 
 		if (!visualMesh.empty())
 		{
 			// Create visual mesh asset.
 			Ref< mesh::MeshAsset > meshAsset = new mesh::MeshAsset();
 			meshAsset->setFileName(visualMesh);
-			meshAsset->setMeshType(mesh::MeshAsset::MtStatic);
+			if (physics == 3)
+				meshAsset->setMeshType(mesh::MeshAsset::MtSkinned);
+			else
+				meshAsset->setMeshType(mesh::MeshAsset::MtStatic);
 
 			// Create asset instance.
 			Ref< db::Instance > meshAssetInstance = m_group->createInstance(
@@ -279,9 +369,16 @@ void GameEntityWizardDialog::eventDialogClick(ui::ButtonClickEvent* event)
 				return;
 			}
 
-			entityData->setComponent(new mesh::MeshComponentData(
-				resource::Id< mesh::IMesh >(meshAssetInstance->getGuid())
-			));
+			if (physics == 3)
+				entityData->setComponent(new animation::AnimatedMeshComponentData(
+					resource::Id< mesh::SkinnedMesh >(meshAssetInstance->getGuid()),
+					resource::Id< animation::Skeleton >(skeletonAssetInstance->getGuid()),
+					new animation::RagDollPoseControllerData()
+				));
+			else
+				entityData->setComponent(new mesh::MeshComponentData(
+					resource::Id< mesh::IMesh >(meshAssetInstance->getGuid())
+				));
 		}
 
 		if (!collisionMesh.empty())
@@ -335,7 +432,7 @@ void GameEntityWizardDialog::eventDialogClick(ui::ButtonClickEvent* event)
 
 			meshShapeDesc->setMaterial(parseString< int32_t >(m_editMaterial->getText()));
 
-			if (physics == 0 || physics == 1)
+			if (physics == 0 || physics == 1 || physics == 3)
 			{
 				Ref< physics::StaticBodyDesc > bodyDesc = new physics::StaticBodyDesc();
 				bodyDesc->setFriction(parseString< float >(m_editFriction->getText()));
@@ -345,7 +442,7 @@ void GameEntityWizardDialog::eventDialogClick(ui::ButtonClickEvent* event)
 				Ref< physics::RigidBodyComponentData > componentData = new physics::RigidBodyComponentData();
 				entityData->setComponent(new physics::RigidBodyComponentData(bodyDesc));
 			}
-			else
+			else if (physics == 2)
 			{
 				Ref< physics::DynamicBodyDesc > bodyDesc = new physics::DynamicBodyDesc();
 				bodyDesc->setFriction(parseString< float >(m_editFriction->getText()));

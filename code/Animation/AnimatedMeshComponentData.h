@@ -69,6 +69,12 @@ public:
 
 	AnimatedMeshComponentData();
 
+	AnimatedMeshComponentData(
+		const resource::Id< mesh::SkinnedMesh >& mesh,
+		const resource::Id< Skeleton >& skeleton,
+		const IPoseControllerData* poseController
+	);
+
 	Ref< AnimatedMeshComponent > createComponent(resource::IResourceManager* resourceManager, physics::PhysicsManager* physicsManager, const world::IEntityBuilder* entityBuilder) const;
 
 	virtual void serialize(ISerializer& s) override final;

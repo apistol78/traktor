@@ -15185,6 +15185,16 @@
 					<link>LnkYes</link>
 					<project ref="/object/projects/item[1]/dependencies/item[7]/project/dependencies/item[12]/project/dependencies/item[7]/project/dependencies/item[6]/project"/>
 				</item>
+				<item type="ProjectDependency" version="3">
+					<inheritIncludePaths>true</inheritIncludePaths>
+					<link>LnkYes</link>
+					<project ref="/object/projects/item"/>
+				</item>
+				<item type="ProjectDependency" version="3">
+					<inheritIncludePaths>true</inheritIncludePaths>
+					<link>LnkYes</link>
+					<project ref="/object/projects/item[1]"/>
+				</item>
 			</dependencies>
 		</item>
 		<item ref="/object/projects/item[62]/dependencies/item[14]/project"/>

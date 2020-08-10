@@ -44,6 +44,7 @@ private:
 	Ref< db::Group > m_group;
 	Ref< ui::Edit > m_editName;
 	Ref< ui::Edit > m_editVisualMesh;
+	Ref< ui::Edit > m_editSkeletonMesh;
 	Ref< ui::Edit > m_editCollisionMesh;
 	Ref< ui::DropDown > m_dropPhysicsType;
 	Ref< ui::DropDown > m_dropCollisionGroup;
@@ -58,6 +59,10 @@ private:
 	void eventBrowseVisualMeshClick(ui::ButtonClickEvent* event);
 
 	void eventCopyVisualMeshClick(ui::ButtonClickEvent* event);
+
+	void eventBrowseSkeletonMeshClick(ui::ButtonClickEvent* event);
+
+	void eventCopySkeletonMeshClick(ui::ButtonClickEvent* event);
 
 	void eventBrowseCollisionMeshClick(ui::ButtonClickEvent* event);
 

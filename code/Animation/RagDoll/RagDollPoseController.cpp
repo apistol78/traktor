@@ -125,7 +125,9 @@ bool RagDollPoseController::create(
 			centerOfMass
 		));
 
-		limb->setTransform(worldTransform * limbTransform);
+		const Transform r90(rotateX(deg2rad(90.0f)));
+
+		limb->setTransform(worldTransform * limbTransform * r90);
 		if (!velocities.empty())
 		{
 			limb->setLinearVelocity(velocities[i].linear);
@@ -137,7 +139,7 @@ bool RagDollPoseController::create(
 	}
 	T_FATAL_ASSERT(m_limbs.size() == jointCount);
 
-	// Associate limbs for roots.
+	// Associate limbs of joints.
 	m_deltaLimbs.resize(jointCount);
 	for (uint32_t i = 0; i < jointCount; ++i)
 	{
@@ -158,7 +160,7 @@ bool RagDollPoseController::create(
 	for (uint32_t i = 0; i < jointCount; ++i)
 	{
 		Transform limbTransform = worldTransform.inverse() * m_deltaLimbs[i]->getTransform();
-		m_deltaTransforms[i] = jointTransforms[i] * limbTransform.inverse();
+		m_deltaTransforms[i] = limbTransform.inverse() * jointTransforms[i];
 	}
 
 	// Create joint constraints.
