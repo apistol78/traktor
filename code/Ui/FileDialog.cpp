@@ -27,7 +27,7 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.FileDialog", FileDialog, ConfigDialog)
 
-bool FileDialog::create(Widget* parent, const std::wstring& key, const std::wstring& title, const std::wstring& filters, bool save)
+bool FileDialog::create(Widget* parent, const std::wstring& key, const std::wstring& title, const std::wstring& filters, const std::wstring& defaultPath, bool save)
 {
 	if (!ConfigDialog::create(
 		parent,
@@ -105,6 +105,11 @@ bool FileDialog::create(Widget* parent, const std::wstring& key, const std::wstr
 	m_bitmapFile = new ui::StyleBitmap(L"UI.FileDialog.File");
 	m_key = key;
 
+	if (!defaultPath.empty())
+		m_defaultPath = defaultPath;
+	else
+		m_defaultPath = FileSystem::getInstance().getCurrentVolumeAndDirectory();
+
 	return true;
 }
 
@@ -121,7 +126,7 @@ int32_t FileDialog::showModal(Path& outPath)
 	else if (!outPath.empty())
 		m_currentPath = outPath.getPathName();
 	else
-		m_currentPath = FileSystem::getInstance().getCurrentVolumeAndDirectory();
+		m_currentPath = m_defaultPath;
 
 	if (m_editFileName)
 		m_editFileName->setText(outPath.getFileName());

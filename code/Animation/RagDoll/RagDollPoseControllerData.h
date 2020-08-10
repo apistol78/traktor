@@ -34,6 +34,11 @@ class T_DLLCLASS RagDollPoseControllerData : public IPoseControllerData
 public:
 	RagDollPoseControllerData();
 
+	RagDollPoseControllerData(
+		const std::set< resource::Id< physics::CollisionSpecification > >& collisionGroup,
+		const std::set< resource::Id< physics::CollisionSpecification > >& collisionMask
+	);
+
 	virtual Ref< IPoseController > createInstance(
 		resource::IResourceManager* resourceManager,
 		physics::PhysicsManager* physicsManager,

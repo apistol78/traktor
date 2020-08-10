@@ -248,7 +248,7 @@ void DictionaryEditorPage::eventToolClick(ui::ToolBarButtonClickEvent* event)
 	else if (cmd == L"I18N.Editor.Export")
 	{
 		ui::FileDialog fileDialog;
-		if (!fileDialog.create(m_gridDictionary, type_name(this), Text(L"DICTIONARY_EDITOR_EXPORT_DICTIONARY_DIALOG"), L"All files;*.*", true))
+		if (!fileDialog.create(m_gridDictionary, type_name(this), Text(L"DICTIONARY_EDITOR_EXPORT_DICTIONARY_DIALOG"), L"All files;*.*", L"", true))
 			return;
 
 		Path fileName;

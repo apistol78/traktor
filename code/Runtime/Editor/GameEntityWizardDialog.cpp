@@ -191,8 +191,10 @@ void GameEntityWizardDialog::eventNameChange(ui::ContentChangeEvent* event)
 
 void GameEntityWizardDialog::eventBrowseVisualMeshClick(ui::ButtonClickEvent* event)
 {
+	std::wstring assetPath = m_editor->getSettings()->getProperty< std::wstring >(L"Pipeline.AssetPath", L"");
+
 	ui::FileDialog fileDialog;
-	if (!fileDialog.create(this, type_name(this), i18n::Text(L"GAMEENTITY_WIZARD_FILE_TITLE"), L"All files;*.*"))
+	if (!fileDialog.create(this, type_name(this), i18n::Text(L"GAMEENTITY_WIZARD_FILE_TITLE"), L"All files;*.*", assetPath))
 		return;
 
 	Path fileName;
@@ -204,7 +206,6 @@ void GameEntityWizardDialog::eventBrowseVisualMeshClick(ui::ButtonClickEvent* ev
 	fileDialog.destroy();
 
 	// Create path relative to asset path.
-	std::wstring assetPath = m_editor->getSettings()->getProperty< std::wstring >(L"Pipeline.AssetPath", L"");
 	FileSystem::getInstance().getRelativePath(
 		FileSystem::getInstance().getAbsolutePath(fileName),
 		FileSystem::getInstance().getAbsolutePath(assetPath),
@@ -228,6 +229,8 @@ void GameEntityWizardDialog::eventCopyVisualMeshClick(ui::ButtonClickEvent* even
 
 void GameEntityWizardDialog::eventBrowseSkeletonMeshClick(ui::ButtonClickEvent* event)
 {
+	std::wstring assetPath = m_editor->getSettings()->getProperty< std::wstring >(L"Pipeline.AssetPath", L"");
+
 	ui::FileDialog fileDialog;
 	if (!fileDialog.create(this, type_name(this), i18n::Text(L"GAMEENTITY_WIZARD_FILE_TITLE"), L"All files;*.*"))
 		return;
@@ -241,7 +244,6 @@ void GameEntityWizardDialog::eventBrowseSkeletonMeshClick(ui::ButtonClickEvent* 
 	fileDialog.destroy();
 
 	// Create path relative to asset path.
-	std::wstring assetPath = m_editor->getSettings()->getProperty< std::wstring >(L"Pipeline.AssetPath", L"");
 	FileSystem::getInstance().getRelativePath(
 		FileSystem::getInstance().getAbsolutePath(fileName),
 		FileSystem::getInstance().getAbsolutePath(assetPath),
@@ -259,8 +261,10 @@ void GameEntityWizardDialog::eventCopySkeletonMeshClick(ui::ButtonClickEvent* ev
 
 void GameEntityWizardDialog::eventBrowseCollisionMeshClick(ui::ButtonClickEvent* event)
 {
+	std::wstring assetPath = m_editor->getSettings()->getProperty< std::wstring >(L"Pipeline.AssetPath", L"");
+
 	ui::FileDialog fileDialog;
-	if (!fileDialog.create(this, type_name(this), i18n::Text(L"GAMEENTITY_WIZARD_FILE_TITLE"), L"All files;*.*"))
+	if (!fileDialog.create(this, type_name(this), i18n::Text(L"GAMEENTITY_WIZARD_FILE_TITLE"), L"All files;*.*", assetPath))
 		return;
 
 	Path fileName;
@@ -272,7 +276,6 @@ void GameEntityWizardDialog::eventBrowseCollisionMeshClick(ui::ButtonClickEvent*
 	fileDialog.destroy();
 
 	// Create path relative to asset path.
-	std::wstring assetPath = m_editor->getSettings()->getProperty< std::wstring >(L"Pipeline.AssetPath", L"");
 	FileSystem::getInstance().getRelativePath(
 		FileSystem::getInstance().getAbsolutePath(fileName),
 		FileSystem::getInstance().getAbsolutePath(assetPath),
@@ -370,11 +373,29 @@ void GameEntityWizardDialog::eventDialogClick(ui::ButtonClickEvent* event)
 			}
 
 			if (physics == 3)
+			{
+				std::set< resource::Id< physics::CollisionSpecification > > group;
+				std::set< resource::Id< physics::CollisionSpecification > > mask;
+
+				auto groupInstance = m_dropCollisionGroup->getSelectedData< db::Instance >();
+				if (groupInstance)
+					group.insert(resource::Id< physics::CollisionSpecification >(groupInstance->getGuid()));
+
+				std::vector< int32_t > selectedMasks;
+				m_dropCollisionMask->getSelected(selectedMasks);
+				for (auto selectedMask : selectedMasks)
+				{
+					auto maskInstance = m_dropCollisionMask->getData< db::Instance >(selectedMask);
+					if (maskInstance)
+						mask.insert(resource::Id< physics::CollisionSpecification >(maskInstance->getGuid()));
+				}
+				
 				entityData->setComponent(new animation::AnimatedMeshComponentData(
 					resource::Id< mesh::SkinnedMesh >(meshAssetInstance->getGuid()),
 					resource::Id< animation::Skeleton >(skeletonAssetInstance->getGuid()),
-					new animation::RagDollPoseControllerData()
+					new animation::RagDollPoseControllerData(group, mask)
 				));
+			}
 			else
 				entityData->setComponent(new mesh::MeshComponentData(
 					resource::Id< mesh::IMesh >(meshAssetInstance->getGuid())

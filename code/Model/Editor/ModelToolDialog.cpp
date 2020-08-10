@@ -384,7 +384,7 @@ bool ModelToolDialog::loadTexture()
 bool ModelToolDialog::saveModel(Model* model)
 {
 	ui::FileDialog fileDialog;
-	if (!fileDialog.create(this, type_name(this), L"Save model as...", L"All files;*.*", true))
+	if (!fileDialog.create(this, type_name(this), L"Save model as...", L"All files;*.*", L"", true))
 		return false;
 
 	Path fileName;

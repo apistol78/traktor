@@ -52,6 +52,8 @@ public:
 
 	virtual bool haveMips() const override final;
 
+	GLuint getTextureName() const { return m_colorTexture; }
+
 private:
 	Ref< ResourceContextOpenGL > m_resourceContext;
 	GLuint m_colorTexture;

@@ -754,17 +754,17 @@ bool RenderViewOpenGL::copy(ITexture* destinationTexture, const Region& destinat
 
 	if (auto sourceRenderTarget = dynamic_type_cast< RenderTargetOpenGL* >(sourceTexture))
 	{
-		srcName = (GLuint)sourceRenderTarget->getInternalHandle();
+		srcName = sourceRenderTarget->getTextureName();
 		srcTarget = GL_TEXTURE_2D;
 	}
 	else if (auto sourceSimpleTexture = dynamic_type_cast< SimpleTextureOpenGL* >(sourceTexture))
 	{
-		srcName = (GLuint)sourceSimpleTexture->getInternalHandle();
+		srcName = sourceSimpleTexture->getTextureName();
 		srcTarget = GL_TEXTURE_2D;
 	}
 	else if (auto sourceCubeTexture = dynamic_type_cast< CubeTextureOpenGL* >(sourceTexture))
 	{
-		srcName = (GLuint)sourceCubeTexture->getTextureName();
+		srcName = sourceCubeTexture->getTextureName();
 		srcTarget = GL_TEXTURE_CUBE_MAP;
 	}
 	else
@@ -772,17 +772,17 @@ bool RenderViewOpenGL::copy(ITexture* destinationTexture, const Region& destinat
 
 	if (auto destinationRenderTarget = dynamic_type_cast< RenderTargetOpenGL* >(destinationTexture))
 	{
-		dstName = (GLuint)destinationRenderTarget->getInternalHandle();
+		dstName = destinationRenderTarget->getTextureName();
 		dstTarget = GL_TEXTURE_2D;
 	}
 	else if (auto destinationSimpleTexture = dynamic_type_cast< SimpleTextureOpenGL* >(destinationTexture))
 	{
-		dstName = (GLuint)destinationSimpleTexture->getInternalHandle();
+		dstName = destinationSimpleTexture->getTextureName();
 		dstTarget = GL_TEXTURE_2D;
 	}
 	else if (auto destinationCubeTexture = dynamic_type_cast< CubeTextureOpenGL* >(destinationTexture))
 	{
-		dstName = (GLuint)destinationCubeTexture->getTextureName();
+		dstName = destinationCubeTexture->getTextureName();
 		dstTarget = GL_TEXTURE_CUBE_MAP;
 	}
 	else
