@@ -111,8 +111,8 @@ ScriptEditorPage::ScriptEditorPage(editor::IEditor* editor, editor::IEditorPageS
 ,	m_site(site)
 ,	m_document(document)
 ,	m_compileCountDown(0)
-,	m_debugLineAttribute(0)
-,	m_debugLineLast(-1)
+,	m_debugBreadcrumbAttribute(0)
+,	m_debugCurrentAttribute(0)
 {
 	m_bitmapFunction = new ui::StyleBitmap(L"Script.DefineGlobalFunction");
 	m_bitmapFunctionLocal = new ui::StyleBitmap(L"Script.DefineLocalFunction");
@@ -232,7 +232,8 @@ bool ScriptEditorPage::create(ui::Container* parent)
 	}
 
 	const ui::StyleSheet* ss = ui::Application::getInstance()->getStyleSheet();
-	m_debugLineAttribute = m_edit->addBackgroundAttribute(ss->getColor(this, L"background-debug-line"));
+	m_debugBreadcrumbAttribute = m_edit->addBackgroundAttribute(ss->getColor(this, L"background-debug-breadcrumb-line"));
+	m_debugCurrentAttribute = m_edit->addBackgroundAttribute(ss->getColor(this, L"background-debug-current-line"));
 
 	m_editMenu = new ui::Menu();
 	m_editMenu->add(new ui::MenuItem(ui::Command(L"Script.Editor.AddUsingStatement"), i18n::Text(L"SCRIPT_EDITOR_ADD_USING")));
@@ -509,23 +510,30 @@ void ScriptEditorPage::otherError(const std::wstring& message)
 
 void ScriptEditorPage::debugeeStateChange(IScriptDebugger* scriptDebugger)
 {
-	if (m_debugLineLast >= 0)
-	{
-		m_edit->setBackgroundAttribute(m_debugLineLast, 0xffff);
-		m_debugLineLast = -1;
-	}
+	for (int32_t line = 0; line < m_edit->getLineCount(); ++line)
+		m_edit->setBackgroundAttribute(line, 0xffff);
+
 	if (!scriptDebugger->isRunning())
 	{
 		Guid instanceGuid = m_document->getInstance(0)->getGuid();
+
 		Ref< StackFrame > sf;
 		for (uint32_t depth = 0; scriptDebugger->captureStackFrame(depth, sf); ++depth)
 		{
 			T_FATAL_ASSERT (sf);
 			if (sf->getScriptId() == instanceGuid)
 			{
-				int32_t line = int32_t(sf->getLine());
-				m_edit->setBackgroundAttribute(line, m_debugLineAttribute);
-				m_debugLineLast = line;
+				// Set breadcrumb trail of execution.
+				AlignedVector< uint32_t > breadcrumbs;
+				if (scriptDebugger->captureBreadcrumbs(breadcrumbs))
+				{
+					for (auto line : breadcrumbs)
+						m_edit->setBackgroundAttribute(line, m_debugBreadcrumbAttribute);
+				}
+
+				// Highlight current, breaked, line.
+				int32_t line = (int32_t)sf->getLine();
+				m_edit->setBackgroundAttribute(line, m_debugCurrentAttribute);
 				break;
 			}
 		}

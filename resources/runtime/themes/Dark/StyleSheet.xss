@@ -742,7 +742,12 @@
 		<!-- Script editor -->
 		<item>
 			<type>traktor.script.ScriptEditorPage</type>
-			<element>background-debug-line</element>
+			<element>background-debug-breadcrumb-line</element>
+			<color>40, 40, 30, 255</color>
+		</item>
+		<item>
+			<type>traktor.script.ScriptEditorPage</type>
+			<element>background-debug-current-line</element>
 			<color>80, 80, 20, 255</color>
 		</item>
 	</groups>

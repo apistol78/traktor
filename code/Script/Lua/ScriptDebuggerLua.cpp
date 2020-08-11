@@ -351,6 +351,14 @@ bool ScriptDebuggerLua::captureObject(uint32_t object, RefArray< Variable >& out
 	return true;
 }
 
+bool ScriptDebuggerLua::captureBreadcrumbs(AlignedVector< uint32_t >& outBreadcrumbs)
+{
+	outBreadcrumbs.resize(m_breadcrumb.size());
+	for (uint32_t i = 0; i < m_breadcrumb.size(); ++i)
+		outBreadcrumbs[i] = m_breadcrumb[i];
+	return true;
+}
+
 bool ScriptDebuggerLua::isRunning() const
 {
 	return m_state == StRunning;
@@ -386,30 +394,32 @@ void ScriptDebuggerLua::analyzeState(lua_State* L, lua_Debug* ar)
 	if (!currentContext)
 		return;
 
+	int32_t currentLine = ar->currentline - 1;
+	m_breadcrumb.push_back(currentLine);
+
 	if (m_state == StRunning)
 	{
 		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-		int32_t currentLine = ar->currentline - 1;
 		Guid currentId;
 
 		// Any breakpoint defined with current line number?
-		SmallMap< int32_t, SmallSet< Guid > >::const_iterator i = m_breakpoints.find(currentLine);
-		if (i != m_breakpoints.end())
+		auto it = m_breakpoints.find(currentLine);
+		if (it != m_breakpoints.end())
 		{
 			// Get executing script's identifier.
 			lua_getinfo(L, "S", ar);
 			if (currentId.create(mbstows(ar->source)))
 			{
-				// If identifier also match then we halt and trigger "breakpoint reached".
-				if (i->second.find(currentId) != i->second.end())
+				// If script identifier also match then we're in the right script
+				// so we halt and trigger "breakpoint reached".
+				if (it->second.find(currentId) != it->second.end())
 				{
 					m_state = StHalted;
 					m_lastId = currentId;
 
-					for (SmallSet< IListener* >::const_iterator j = m_listeners.begin(); j != m_listeners.end(); ++j)
-						(*j)->debugeeStateChange(this);
+					for (auto listener : m_listeners)
+						listener->debugeeStateChange(this);
 				}
-
 			}
 		}
 	}
@@ -424,8 +434,8 @@ void ScriptDebuggerLua::analyzeState(lua_State* L, lua_Debug* ar)
 		{
 			m_state = StHalted;
 			m_lastId = currentId;
-			for (SmallSet< IListener* >::const_iterator i = m_listeners.begin(); i != m_listeners.end(); ++i)
-				(*i)->debugeeStateChange(this);
+			for (auto listener : m_listeners)
+				listener->debugeeStateChange(this);
 		}
 	}
 	else if (m_state == StStepInto)
@@ -439,8 +449,8 @@ void ScriptDebuggerLua::analyzeState(lua_State* L, lua_Debug* ar)
 		{
 			m_state = StHalted;
 			m_lastId = currentId;
-			for (SmallSet< IListener* >::const_iterator i = m_listeners.begin(); i != m_listeners.end(); ++i)
-				(*i)->debugeeStateChange(this);
+			for (auto listener : m_listeners)
+				listener->debugeeStateChange(this);
 		}
 	}
 	else if (m_state == StStepOver)
@@ -456,8 +466,8 @@ void ScriptDebuggerLua::analyzeState(lua_State* L, lua_Debug* ar)
 			{
 				m_state = StHalted;
 				m_lastId = currentId;
-				for (SmallSet< IListener* >::const_iterator i = m_listeners.begin(); i != m_listeners.end(); ++i)
-					(*i)->debugeeStateChange(this);
+				for (auto listener : m_listeners)
+					listener->debugeeStateChange(this);
 			}
 		}
 	}
@@ -472,8 +482,10 @@ void ScriptDebuggerLua::analyzeState(lua_State* L, lua_Debug* ar)
 		}
 		while (m_state == StHalted && !currentThread->stopped());
 
-		for (SmallSet< IListener* >::const_iterator i = m_listeners.begin(); i != m_listeners.end(); ++i)
-			(*i)->debugeeStateChange(this);
+		m_breadcrumb.clear();
+
+		for (auto listener : m_listeners)
+			listener->debugeeStateChange(this);
 	}
 }
 

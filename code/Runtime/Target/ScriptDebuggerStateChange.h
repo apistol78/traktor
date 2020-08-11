@@ -23,16 +23,16 @@ class T_DLLCLASS ScriptDebuggerStateChange : public ISerializable
 	T_RTTI_CLASS;
 
 public:
-	ScriptDebuggerStateChange();
+	ScriptDebuggerStateChange() = default;
 
-	ScriptDebuggerStateChange(bool running);
+	explicit ScriptDebuggerStateChange(bool running);
 
 	bool isRunning() const { return m_running;  }
 
 	virtual void serialize(ISerializer& s) override final;
 
 private:
-	bool m_running;
+	bool m_running = false;
 };
 
 	}

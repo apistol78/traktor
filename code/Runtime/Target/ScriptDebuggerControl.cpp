@@ -10,12 +10,6 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.runtime.ScriptDebuggerControl", 0, ScriptDebuggerControl, ISerializable)
 
-ScriptDebuggerControl::ScriptDebuggerControl()
-:	m_action(AcBreak)
-,	m_param(0)
-{
-}
-
 ScriptDebuggerControl::ScriptDebuggerControl(Action action)
 :	m_action(action)
 ,	m_param(0)

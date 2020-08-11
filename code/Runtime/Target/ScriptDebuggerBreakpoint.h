@@ -24,7 +24,7 @@ class T_DLLCLASS ScriptDebuggerBreakpoint : public ISerializable
 	T_RTTI_CLASS;
 
 public:
-	ScriptDebuggerBreakpoint();
+	ScriptDebuggerBreakpoint() = default;
 
 	ScriptDebuggerBreakpoint(bool add, const Guid& scriptId, uint32_t lineNumber);
 
@@ -37,9 +37,9 @@ public:
 	virtual void serialize(ISerializer& s) override final;
 
 private:
-	bool m_add;
+	bool m_add = false;
 	Guid m_scriptId;
-	uint32_t m_lineNumber;
+	uint32_t m_lineNumber = 0;
 };
 
 	}

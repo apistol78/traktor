@@ -31,7 +31,7 @@ class T_DLLCLASS ScriptDebuggerStackFrame : public ISerializable
 	T_RTTI_CLASS;
 
 public:
-	ScriptDebuggerStackFrame();
+	ScriptDebuggerStackFrame() = default;
 
 	ScriptDebuggerStackFrame(script::StackFrame* frame);
 

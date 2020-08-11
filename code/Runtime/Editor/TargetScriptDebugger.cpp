@@ -1,5 +1,6 @@
 #include "Runtime/Editor/TargetConnection.h"
 #include "Runtime/Editor/TargetScriptDebugger.h"
+#include "Runtime/Target/ScriptDebuggerBreadcrumbs.h"
 #include "Runtime/Target/ScriptDebuggerBreakpoint.h"
 #include "Runtime/Target/ScriptDebuggerControl.h"
 #include "Runtime/Target/ScriptDebuggerLocals.h"
@@ -118,6 +119,26 @@ bool TargetScriptDebugger::captureObject(uint32_t object, RefArray< script::Vari
 	}
 
 	outMembers = l->getLocals();
+	return true;
+}
+
+bool TargetScriptDebugger::captureBreadcrumbs(AlignedVector< uint32_t >& outBreadcrumbs)
+{
+	ScriptDebuggerControl ctrl(ScriptDebuggerControl::AcCaptureBreadcrumbs);
+	if (!m_transport->send(&ctrl))
+	{
+		log::error << L"Target script debugger error; Unable to send while requesting breadcrumbs capture." << Endl;
+		return false;
+	}
+
+	Ref< ScriptDebuggerBreadcrumbs> bc;
+	if (m_transport->recv< ScriptDebuggerBreadcrumbs >(c_timeout, bc) != net::BidirectionalObjectTransport::RtSuccess)
+	{
+		log::error << L"Target script debugger error; No response while requesting breadcrumbs capture." << Endl;
+		return false;
+	}
+
+	outBreadcrumbs = bc->getBreadcrumbs();
 	return true;
 }
 
