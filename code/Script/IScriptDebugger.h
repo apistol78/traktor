@@ -48,6 +48,8 @@ public:
 
 	virtual bool captureObject(uint32_t object, RefArray< Variable >& outMembers) = 0;
 
+	virtual bool captureBreadcrumbs(AlignedVector< uint32_t >& outBreadcrumbs) = 0;
+
 	virtual bool isRunning() const = 0;
 
 	virtual bool actionBreak() = 0;

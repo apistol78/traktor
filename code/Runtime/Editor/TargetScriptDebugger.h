@@ -37,6 +37,8 @@ public:
 
 	virtual bool captureObject(uint32_t object, RefArray< script::Variable >& outMembers) override final;
 
+	virtual bool captureBreadcrumbs(AlignedVector< uint32_t >& outBreadcrumbs) override final;
+
 	virtual bool isRunning() const override final;
 
 	virtual bool actionBreak() override final;

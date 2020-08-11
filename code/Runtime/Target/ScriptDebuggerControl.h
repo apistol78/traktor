@@ -32,14 +32,15 @@ public:
 		AcStepOver = 4,
 		AcCaptureStack = 5,
 		AcCaptureLocals = 6,
-		AcCaptureObject = 7
+		AcCaptureObject = 7,
+		AcCaptureBreadcrumbs = 8
 	};
 
-	ScriptDebuggerControl();
+	ScriptDebuggerControl() = default;
 
-	ScriptDebuggerControl(Action action);
+	explicit ScriptDebuggerControl(Action action);
 
-	ScriptDebuggerControl(Action action, uint32_t param);
+	explicit ScriptDebuggerControl(Action action, uint32_t param);
 
 	Action getAction() const { return m_action; }
 
@@ -48,8 +49,8 @@ public:
 	virtual void serialize(ISerializer& s) override final;
 
 private:
-	Action m_action;
-	uint32_t m_param;
+	Action m_action = AcBreak;
+	uint32_t m_param = 0;
 };
 
 	}

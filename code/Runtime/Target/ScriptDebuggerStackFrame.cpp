@@ -10,10 +10,6 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.runtime.ScriptDebuggerStackFrame", 0, ScriptDebuggerStackFrame, ISerializable)
 
-ScriptDebuggerStackFrame::ScriptDebuggerStackFrame()
-{
-}
-
 ScriptDebuggerStackFrame::ScriptDebuggerStackFrame(script::StackFrame* frame)
 :	m_frame(frame)
 {

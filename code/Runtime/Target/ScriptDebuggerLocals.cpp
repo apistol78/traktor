@@ -10,10 +10,6 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.runtime.ScriptDebuggerLocals", 0, ScriptDebuggerLocals, ISerializable)
 
-ScriptDebuggerLocals::ScriptDebuggerLocals()
-{
-}
-
 ScriptDebuggerLocals::ScriptDebuggerLocals(const RefArray< script::Variable >& locals)
 :	m_locals(locals)
 {

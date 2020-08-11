@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Core/Containers/CircularVector.h"
 #include "Core/Containers/SmallMap.h"
 #include "Core/Containers/SmallSet.h"
 #include "Core/Thread/Semaphore.h"
@@ -37,6 +38,8 @@ public:
 
 	virtual bool captureObject(uint32_t object, RefArray< Variable >& outMembers) override final;
 
+	virtual bool captureBreadcrumbs(AlignedVector< uint32_t >& outBreadcrumbs) override final;
+
 	virtual bool isRunning() const override final;
 
 	virtual bool actionBreak() override final;
@@ -68,6 +71,7 @@ private:
 	Semaphore m_lock;
 	SmallMap< int32_t, SmallSet< Guid > > m_breakpoints;
 	SmallSet< IListener* > m_listeners;
+	CircularVector< int32_t, 32 > m_breadcrumb;
 	Guid m_lastId;
 	State m_state;
 

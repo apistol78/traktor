@@ -98,8 +98,8 @@ private:
 	Ref< ui::Menu > m_editMenu;
 	Ref< ui::StatusBar > m_compileStatus;
 	int32_t m_compileCountDown;
-	int32_t m_debugLineAttribute;
-	int32_t m_debugLineLast;
+	int32_t m_debugBreadcrumbAttribute;
+	int32_t m_debugCurrentAttribute;
 
 	/*! \name IErrorCallback */
 	/*! \{ */

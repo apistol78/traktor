@@ -9,10 +9,6 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.runtime.ScriptDebuggerStatus", 0, ScriptDebuggerStatus, ISerializable)
 
-ScriptDebuggerStatus::ScriptDebuggerStatus()
-{
-}
-
 ScriptDebuggerStatus::ScriptDebuggerStatus(bool running)
 :	m_running(running)
 {

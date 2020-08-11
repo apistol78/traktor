@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Core/RefArray.h"
+#include "Core/Containers/AlignedVector.h"
 #include "Core/Serialization/ISerializable.h"
 
 // import/export mechanism.
@@ -23,24 +23,24 @@ class Variable;
 	namespace runtime
 	{
 
-/*! Response from running target when locals has been captured.
+/*! Response from running target when breadcrumbs has been captured.
  * \ingroup Runtime
  */
-class T_DLLCLASS ScriptDebuggerLocals : public ISerializable
+class T_DLLCLASS ScriptDebuggerBreadcrumbs : public ISerializable
 {
 	T_RTTI_CLASS;
 
 public:
-	ScriptDebuggerLocals() = default;
+	ScriptDebuggerBreadcrumbs() = default;
 
-	explicit ScriptDebuggerLocals(const RefArray< script::Variable >& locals);
+	explicit ScriptDebuggerBreadcrumbs(const AlignedVector< uint32_t >& breadcrumbs);
 
-	const RefArray< script::Variable >& getLocals() const { return m_locals; }
+	const AlignedVector< uint32_t >& getBreadcrumbs() const { return m_breadcrumbs; }
 
 	virtual void serialize(ISerializer& s) override final;
 
 private:
-	RefArray< script::Variable > m_locals;
+	AlignedVector< uint32_t > m_breadcrumbs;
 };
 
 	}

@@ -195,29 +195,29 @@ void ScriptDebuggerView::debugeeStateChange(IScriptDebugger* scriptDebugger)
 		bool autoOpenDebuggedScript = m_editor->getSettings()->getProperty< bool >(L"Editor.AutoOpenDebuggedScript", true);
 
 		int32_t depth = 0;
-		for (RefArray< StackFrame >::const_iterator i = m_stackFrames.begin(); i != m_stackFrames.end(); ++i)
+		for (auto stackFrame : m_stackFrames)
 		{
-			Ref< db::Instance > scriptInstance = m_editor->getSourceDatabase()->getInstance((*i)->getScriptId());
+			Ref< db::Instance > scriptInstance = m_editor->getSourceDatabase()->getInstance(stackFrame->getScriptId());
 
 			Ref< ui::GridRow > row = new ui::GridRow(0);
 
-			row->add(new ui::GridItem((*i)->getFunctionName()));
-			row->add(new ui::GridItem(toString((*i)->getLine() + 1)));
+			row->add(new ui::GridItem(stackFrame->getFunctionName()));
+			row->add(new ui::GridItem(toString(stackFrame->getLine() + 1)));
 			row->add(new ui::GridItem(scriptInstance ? scriptInstance->getName() : L"(Unknown script)"));
-			row->setData(L"SCRIPT_ID", new PropertyString((*i)->getScriptId().format()));
-			row->setData(L"SCRIPT_LINE", new PropertyInteger((*i)->getLine()));
+			row->setData(L"SCRIPT_ID", new PropertyString(stackFrame->getScriptId().format()));
+			row->setData(L"SCRIPT_LINE", new PropertyInteger(stackFrame->getLine()));
 			row->setData(L"FRAME_DEPTH", new PropertyInteger(depth++));
 
 			m_callStackGrid->addRow(row);
 
 			// Open debugged script and issue a "goto line" to scroll script editor to debugged line.
-			if (autoOpenDebuggedScript && scriptInstance && i == m_stackFrames.begin())
+			if (autoOpenDebuggedScript && scriptInstance && stackFrame == m_stackFrames.front())
 			{
 				m_editor->openEditor(scriptInstance);
 
 				editor::IEditorPage* activeEditorPage = m_editor->getActiveEditorPage();
 				if (activeEditorPage)
-					activeEditorPage->handleCommand(ui::Command((*i)->getLine(), L"Script.Editor.GotoLine"));
+					activeEditorPage->handleCommand(ui::Command(stackFrame->getLine(), L"Script.Editor.GotoLine"));
 			}
 		}
 

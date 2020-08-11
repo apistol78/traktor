@@ -9,12 +9,6 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.runtime.ScriptDebuggerBreakpoint", 0, ScriptDebuggerBreakpoint, ISerializable)
 
-ScriptDebuggerBreakpoint::ScriptDebuggerBreakpoint()
-:	m_add(false)
-,	m_lineNumber(0)
-{
-}
-
 ScriptDebuggerBreakpoint::ScriptDebuggerBreakpoint(bool add, const Guid& scriptId, uint32_t lineNumber)
 :	m_add(add)
 ,	m_scriptId(scriptId)

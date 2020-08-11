@@ -1,5 +1,6 @@
 #include "Runtime/IEnvironment.h"
 #include "Runtime/Impl/ScriptServer.h"
+#include "Runtime/Target/ScriptDebuggerBreadcrumbs.h"
 #include "Runtime/Target/ScriptDebuggerBreakpoint.h"
 #include "Runtime/Target/ScriptDebuggerControl.h"
 #include "Runtime/Target/ScriptDebuggerLocals.h"
@@ -234,7 +235,7 @@ void ScriptServer::threadDebugger()
 						{
 							Ref< script::StackFrame > sf;
 							if (!m_scriptDebugger->captureStackFrame(control->getParam(), sf))
-								sf = 0;
+								sf = nullptr;
 							ScriptDebuggerStackFrame capturedFrame(sf);
 							m_transport->send(&capturedFrame);
 						}
@@ -258,6 +259,17 @@ void ScriptServer::threadDebugger()
 							{
 								ScriptDebuggerLocals capturedLocals(l);
 								m_transport->send(&capturedLocals);
+							}
+						}
+						break;
+
+					case ScriptDebuggerControl::AcCaptureBreadcrumbs:
+						{
+							AlignedVector< uint32_t > breadcrumbs;
+							if (m_scriptDebugger->captureBreadcrumbs(breadcrumbs))
+							{
+								ScriptDebuggerBreadcrumbs capturedBreadcrumbs(breadcrumbs);
+								m_transport->send(&capturedBreadcrumbs);
 							}
 						}
 						break;
