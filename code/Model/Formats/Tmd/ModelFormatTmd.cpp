@@ -1,3 +1,4 @@
+#include "Core/Io/BufferedStream.h"
 #include "Core/Misc/String.h"
 #include "Core/Serialization/BinarySerializer.h"
 #include "Model/Model.h"
@@ -32,7 +33,11 @@ Ref< Model > ModelFormatTmd::read(const Path& filePath, const std::wstring& filt
 
 bool ModelFormatTmd::write(IStream* stream, const Model* model) const
 {
-	return BinarySerializer(stream).writeObject(model);
+	BufferedStream bs(stream);
+	if (!BinarySerializer(&bs).writeObject(model))
+		return false;
+	bs.flush();
+	return true;
 }
 
 	}

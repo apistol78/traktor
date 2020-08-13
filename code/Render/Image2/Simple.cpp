@@ -22,10 +22,7 @@ const static Handle s_handleViewEdgeBottomLeft(L"ViewEdgeBottomLeft");
 const static Handle s_handleViewEdgeBottomRight(L"ViewEdgeBottomRight");
 const static Handle s_handleProjection(L"Projection");
 const static Handle s_handleView(L"View");
-const static Handle s_handleViewLast(L"ViewLast");
 const static Handle s_handleViewInverse(L"ViewInverse");
-const static Handle s_handleDeltaView(L"DeltaView");
-const static Handle s_handleDeltaViewProj(L"DeltaViewProj");
 const static Handle s_handleMagicCoeffs(L"MagicCoeffs");
 
 		}
@@ -58,7 +55,6 @@ void Simple::build(
 	Vector4 viewEdgeTopRight = params.viewFrustum.corners[5];
 	Vector4 viewEdgeBottomLeft = params.viewFrustum.corners[7];
 	Vector4 viewEdgeBottomRight = params.viewFrustum.corners[6];
-	Matrix44 deltaView = params.lastView * params.view.inverse();
 
 	// Setup parameters for the shader.
 	auto pp = renderContext->alloc< ProgramParameters >();
@@ -74,10 +70,7 @@ void Simple::build(
 	pp->setVectorParameter(s_handleMagicCoeffs, Vector4(1.0f / p11, 1.0f / p22, 0.0f, 0.0f));
 	pp->setMatrixParameter(s_handleProjection, params.projection);
 	pp->setMatrixParameter(s_handleView, params.view);
-	pp->setMatrixParameter(s_handleViewLast, params.lastView);
 	pp->setMatrixParameter(s_handleViewInverse, params.view.inverse());
-	pp->setMatrixParameter(s_handleDeltaView, deltaView);
-	pp->setMatrixParameter(s_handleDeltaViewProj, params.projection * deltaView);
 
 	for (const auto& source : m_sources)
 	{

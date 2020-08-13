@@ -61,11 +61,17 @@ bool BrowseAssetDialog::create(ui::Widget* parent)
 
 	auto queryTags = httpClient->get(net::Url(L"http://" + m_serverHost + L"/tags"));
 	if (!queryTags->succeeded())
+	{
+		log::error << L"Unable to query store server \"" << m_serverHost << L"\"; check store server settings." << Endl;
 		return false;
+	}
 
 	xml::Document tagsDocument;
 	if (!tagsDocument.loadFromStream(queryTags->getStream()))
+	{
+		log::error << L"Unable to parse reply from store server; check store server settings." << Endl;
 		return false;
+	}
 
 	RefArray< xml::Element > tags;
 	tagsDocument.getDocumentElement()->get(L"tag", tags);

@@ -15,8 +15,8 @@
 			<id>{A672FEFF-950A-864D-B05D-90F2CEF40C9A}</id>
 			<comment/>
 			<position>
-				<first>763</first>
-				<second>287</second>
+				<first>836</first>
+				<second>305</second>
 			</position>
 			<branch>BrAuto</branch>
 			<operator>CoLess</operator>
@@ -38,12 +38,12 @@
 			<id>{51A8B0E1-E4A1-EB42-9D91-C335270EF42F}</id>
 			<comment/>
 			<position>
-				<first>274</first>
-				<second>295</second>
+				<first>268</first>
+				<second>286</second>
 			</position>
 			<name>Min</name>
-			<connectable>false</connectable>
-			<optional>false</optional>
+			<connectable>true</connectable>
+			<optional>true</optional>
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
@@ -52,11 +52,11 @@
 			<comment/>
 			<position>
 				<first>272</first>
-				<second>382</second>
+				<second>333</second>
 			</position>
 			<name>Max</name>
-			<connectable>false</connectable>
-			<optional>false</optional>
+			<connectable>true</connectable>
+			<optional>true</optional>
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>1</defaultValue>
 		</item>
@@ -64,8 +64,8 @@
 			<id>{09E4F2DA-8EF3-1F43-8773-0CFD1E660EFE}</id>
 			<comment/>
 			<position>
-				<first>407</first>
-				<second>353</second>
+				<first>367</first>
+				<second>470</second>
 			</position>
 			<value>0</value>
 		</item>
@@ -73,8 +73,8 @@
 			<id>{C58C8EAD-C246-4F4B-B10C-85F993C03C0B}</id>
 			<comment/>
 			<position>
-				<first>407</first>
-				<second>326</second>
+				<first>333</first>
+				<second>425</second>
 			</position>
 			<value>1</value>
 		</item>
@@ -82,8 +82,8 @@
 			<id>{43F3F252-C850-D84B-BC62-6D0D6D895D7B}</id>
 			<comment/>
 			<position>
-				<first>945</first>
-				<second>323</second>
+				<first>1074</first>
+				<second>335</second>
 			</position>
 			<name>Output</name>
 		</item>

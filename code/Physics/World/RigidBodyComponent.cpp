@@ -69,10 +69,10 @@ void RigidBodyComponent::collisionListener(const physics::CollisionInfo& collisi
 	Vector4 position = Vector4::zero();
 	Vector4 normal = Vector4::zero();
 
-	for (AlignedVector< physics::CollisionContact >::const_iterator i = collisionInfo.contacts.begin(); i != collisionInfo.contacts.end(); ++i)
+	for (const auto& contact : collisionInfo.contacts)
 	{
-		position += i->position;
-		normal += i->normal;
+		position += contact.position;
+		normal += contact.normal;
 	}
 
 	position = position / Scalar(float(collisionInfo.contacts.size()));

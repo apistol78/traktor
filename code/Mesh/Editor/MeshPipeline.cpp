@@ -712,7 +712,7 @@ bool MeshPipeline::buildOutput(
 		materialGuid
 	))
 	{
-		log::error << L"Mesh pipeline failed; unable to build material shader" << Endl;
+		log::error << L"Mesh pipeline failed; unable to build material shader." << Endl;
 		return false;
 	}
 
@@ -720,7 +720,7 @@ bool MeshPipeline::buildOutput(
 	Ref< IMeshResource > resource = converter->createResource();
 	if (!resource)
 	{
-		log::error << L"Mesh pipeline failed; unable to create mesh resource" << Endl;
+		log::error << L"Mesh pipeline failed; unable to create mesh resource." << Endl;
 		return false;
 	}
 
@@ -733,7 +733,7 @@ bool MeshPipeline::buildOutput(
 	);
 	if (!outputInstance)
 	{
-		log::error << L"Mesh pipeline failed; unable to create output instance" << Endl;
+		log::error << L"Mesh pipeline failed; unable to create output instance." << Endl;
 		return false;
 	}
 
@@ -741,7 +741,7 @@ bool MeshPipeline::buildOutput(
 	Ref< IStream > stream = outputInstance->writeData(L"Data");
 	if (!stream)
 	{
-		log::error << L"Mesh pipeline failed; unable to create mesh data stream" << Endl;
+		log::error << L"Mesh pipeline failed; unable to create mesh data stream." << Endl;
 		outputInstance->revert();
 		return false;
 	}
@@ -760,7 +760,7 @@ bool MeshPipeline::buildOutput(
 		stream
 	))
 	{
-		log::error << L"Mesh pipeline failed; unable to convert mesh" << Endl;
+		log::error << L"Mesh pipeline failed; unable to convert mesh." << Endl;
 		return false;
 	}
 
@@ -771,7 +771,7 @@ bool MeshPipeline::buildOutput(
 	outputInstance->setObject(resource);
 	if (!outputInstance->commit())
 	{
-		log::error << L"Mesh pipeline failed; unable to commit output instance" << Endl;
+		log::error << L"Mesh pipeline failed; unable to commit output instance." << Endl;
 		return false;
 	}
 
@@ -799,14 +799,14 @@ render::IProgramCompiler* MeshPipeline::getProgramCompiler() const
 	const TypeInfo* programCompilerType = TypeInfo::find(m_programCompilerTypeName.c_str());
 	if (!programCompilerType)
 	{
-		log::error << L"Mesh pipeline; unable to find program compiler type \"" << m_programCompilerTypeName << L"\"" << Endl;
+		log::error << L"Mesh pipeline; unable to find program compiler type \"" << m_programCompilerTypeName << L"\"." << Endl;
 		return nullptr;
 	}
 
 	m_programCompiler = dynamic_type_cast< render::IProgramCompiler* >(programCompilerType->createInstance());
 	if (!m_programCompiler)
 	{
-		log::error << L"Mesh pipeline; unable to instanciate program compiler \"" << m_programCompilerTypeName << L"\"" << Endl;
+		log::error << L"Mesh pipeline; unable to instanciate program compiler \"" << m_programCompilerTypeName << L"\"." << Endl;
 		return nullptr;
 	}
 

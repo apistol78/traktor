@@ -88,19 +88,17 @@ bool RagDollPoseController::create(
 		Vector4 start = jointTransforms[parent].translation();
 		Vector4 end = jointTransforms[i].translation();
 
-		Scalar length = (end - start).length();
-		if (length < joint->getRadius() * 2.0f)
-		{
-			m_limbs.push_back(nullptr);
-			continue;
-		}
+		float length = (end - start).length();
+		float radius = joint->getRadius();
+		if (radius > length / 2.0f)
+			radius = length / 2.0f;
 
 		Vector4 centerOfMass = (start + end) * Scalar(0.5f);
 
 		physics::CapsuleShapeDesc shapeDesc;
 		shapeDesc.setCollisionGroup(data->m_collisionGroup);
 		shapeDesc.setCollisionMask(data->m_collisionMask);
-		shapeDesc.setRadius(joint->getRadius());
+		shapeDesc.setRadius(radius);
 		shapeDesc.setLength(length);
 
 		physics::DynamicBodyDesc bodyDesc;

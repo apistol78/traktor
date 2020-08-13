@@ -94,6 +94,20 @@ void AnimatedMeshComponent::destroy()
 	mesh::MeshComponent::destroy();
 }
 
+void AnimatedMeshComponent::setOwner(world::Entity* owner)
+{
+	mesh::MeshComponent::setOwner(owner);
+}
+
+void AnimatedMeshComponent::setTransform(const Transform& transform)
+{
+	// Let pose controller know that entity has been manually repositioned.
+	if (m_poseController)
+		m_poseController->setTransform(transform);
+
+	mesh::MeshComponent::setTransform(transform);
+}
+
 Aabb3 AnimatedMeshComponent::getBoundingBox() const
 {
 	synchronize();
@@ -111,66 +125,6 @@ Aabb3 AnimatedMeshComponent::getBoundingBox() const
 	}
 
 	return boundingBox;
-}
-
-void AnimatedMeshComponent::build(const world::WorldBuildContext& context, const world::WorldRenderView& worldRenderView, const world::IWorldRenderPass& worldRenderPass)
-{
-	if (!m_mesh->supportTechnique(worldRenderPass.getTechnique()))
-		return;
-
-	synchronize();
-
-	Transform worldTransform = m_transform.get(worldRenderView.getInterval());
-	Transform lastWorldTransform = m_transform.get(worldRenderView.getInterval() - 1.0f);
-
-	float distance = 0.0f;
-	if (!mesh::isMeshVisible(
-		m_mesh->getBoundingBox(),
-		worldRenderView.getCullFrustum(),
-		worldRenderView.getView() * worldTransform.toMatrix44(),
-		worldRenderView.getProjection(),
-		m_screenSpaceCulling ? 0.0001f : 0.0f,
-		distance
-	))
-		return;
-
-	const AlignedVector< Vector4 >& skinTransforms0 = m_skinTransforms[1 - m_index];
-	const AlignedVector< Vector4 >& skinTransforms1 = m_skinTransforms[m_index];
-
-	if (skinTransforms0.size() == skinTransforms1.size())
-	{
-		for (uint32_t i = 0; i < skinTransforms0.size(); ++i)
-			m_skinTransforms[2][i] = lerp(
-				skinTransforms0[i],
-				skinTransforms1[i],
-				Scalar(worldRenderView.getInterval())
-			);
-	}
-
-	m_mesh->build(
-		context.getRenderContext(),
-		worldRenderPass,
-		lastWorldTransform,
-		worldTransform,
-		m_skinTransforms[2],
-		distance,
-		getParameterCallback()
-	);
-
-	for (auto binding : m_bindings)
-		context.build(worldRenderView, worldRenderPass, binding.entity);
-
-	// If only entity's shadow is visible then reduce frequency of controller updates.
-	if (m_updateController == 0 && worldRenderPass.getTechnique() == s_handleWorld_ShadowWrite)
-	{
-		m_updateController = 4;
-		m_updateTimeScale = 4.0f;
-	}
-	else
-	{
-		m_updateController = 1;
-		m_updateTimeScale = 1.0f;
-	}
 }
 
 void AnimatedMeshComponent::update(const world::UpdateParams& update)
@@ -239,13 +193,64 @@ void AnimatedMeshComponent::update(const world::UpdateParams& update)
 	mesh::MeshComponent::update(update);
 }
 
-void AnimatedMeshComponent::setTransform(const Transform& transform)
+void AnimatedMeshComponent::build(const world::WorldBuildContext& context, const world::WorldRenderView& worldRenderView, const world::IWorldRenderPass& worldRenderPass)
 {
-	// Let pose controller know that entity has been manually repositioned.
-	if (m_poseController)
-		m_poseController->setTransform(transform);
+	if (!m_mesh->supportTechnique(worldRenderPass.getTechnique()))
+		return;
 
-	mesh::MeshComponent::setTransform(transform);
+	synchronize();
+
+	Transform worldTransform = m_transform.get(worldRenderView.getInterval());
+	Transform lastWorldTransform = m_transform.get(worldRenderView.getInterval() - 1.0f);
+
+	float distance = 0.0f;
+	if (!mesh::isMeshVisible(
+		m_mesh->getBoundingBox(),
+		worldRenderView.getCullFrustum(),
+		worldRenderView.getView() * worldTransform.toMatrix44(),
+		worldRenderView.getProjection(),
+		m_screenSpaceCulling ? 0.0001f : 0.0f,
+		distance
+	))
+		return;
+
+	const AlignedVector< Vector4 >& skinTransforms0 = m_skinTransforms[1 - m_index];
+	const AlignedVector< Vector4 >& skinTransforms1 = m_skinTransforms[m_index];
+
+	if (skinTransforms0.size() == skinTransforms1.size())
+	{
+		for (uint32_t i = 0; i < skinTransforms0.size(); ++i)
+			m_skinTransforms[2][i] = lerp(
+				skinTransforms0[i],
+				skinTransforms1[i],
+				Scalar(worldRenderView.getInterval())
+			);
+	}
+
+	m_mesh->build(
+		context.getRenderContext(),
+		worldRenderPass,
+		lastWorldTransform,
+		worldTransform,
+		m_skinTransforms[2],
+		distance,
+		getParameterCallback()
+	);
+
+	for (auto binding : m_bindings)
+		context.build(worldRenderView, worldRenderPass, binding.entity);
+
+	// If only entity's shadow is visible then reduce frequency of controller updates.
+	if (m_updateController == 0 && worldRenderPass.getTechnique() == s_handleWorld_ShadowWrite)
+	{
+		m_updateController = 4;
+		m_updateTimeScale = 4.0f;
+	}
+	else
+	{
+		m_updateController = 1;
+		m_updateTimeScale = 1.0f;
+	}
 }
 
 bool AnimatedMeshComponent::getJointTransform(render::handle_t jointName, Transform& outTransform) const

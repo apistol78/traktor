@@ -64,53 +64,58 @@ bool SkinnedMeshConverter::convert(
 	IStream* meshResourceStream
 ) const
 {
-	// Create a copy of the first source model.
-	model::Model model = *models[0];
+	const model::Model* model = models[0];
+	T_FATAL_ASSERT(model != nullptr);
 
-	// Create vertex declaration.
+	// Create render mesh.
 	uint32_t vertexSize = render::getVertexSize(vertexElements);
 	T_ASSERT(vertexSize > 0);
 
-	// Create render mesh.
-	uint32_t vertexBufferSize = uint32_t(model.getVertices().size() * vertexSize);
-	uint32_t indexBufferSize = uint32_t(model.getPolygons().size() * 3 * sizeof(uint16_t));
+	bool useLargeIndices = (bool)(model->getVertexCount() >= 65536);
+	uint32_t indexSize = useLargeIndices ? sizeof(uint32_t) : sizeof(uint16_t);
+
+	if (useLargeIndices)
+		log::warning << L"Using 32-bit indices; might not work on all renderers." << Endl;
+
+	uint32_t vertexBufferSize = (uint32_t)(model->getVertices().size() * vertexSize);
+	uint32_t indexBufferSize = (uint32_t)(model->getPolygons().size() * 3 * indexSize);
 
 	Ref< render::Mesh > mesh = render::SystemMeshFactory().createMesh(
 		vertexElements,
 		vertexBufferSize,
-		render::ItUInt16,
+		useLargeIndices ? render::ItUInt32 : render::ItUInt16,
 		indexBufferSize
 	);
 
 	// Create vertex buffer.
 	uint8_t* vertex = static_cast< uint8_t* >(mesh->getVertexBuffer()->lock());
+	std::memset(vertex, 0, vertexBufferSize);
 
-	for (AlignedVector< model::Vertex >::const_iterator i = model.getVertices().begin(); i != model.getVertices().end(); ++i)
+	AlignedVector< std::pair< uint32_t, float > > jointInfluences;
+	for (const auto& v : model->getVertices())
 	{
-		std::memset(vertex, 0, vertexSize);
+		writeVertexData(vertexElements, vertex, render::DuPosition, 0, model->getPosition(v.getPosition()));
+		if (v.getNormal() != model::c_InvalidIndex)
+			writeVertexData(vertexElements, vertex, render::DuNormal, 0, model->getNormal(v.getNormal()));
+		if (v.getTangent() != model::c_InvalidIndex)
+			writeVertexData(vertexElements, vertex, render::DuTangent, 0, model->getNormal(v.getTangent()));
+		if (v.getBinormal() != model::c_InvalidIndex)
+			writeVertexData(vertexElements, vertex, render::DuBinormal, 0, model->getNormal(v.getBinormal()));
+		if (v.getColor() != model::c_InvalidIndex)
+			writeVertexData(vertexElements, vertex, render::DuColor, 0, model->getColor(v.getColor()));
+		if (v.getTexCoord(0) != model::c_InvalidIndex)
+			writeVertexData(vertexElements, vertex, render::DuCustom, 2, model->getTexCoord(v.getTexCoord(0)));
+		if (v.getTexCoord(1) != model::c_InvalidIndex)
+			writeVertexData(vertexElements, vertex, render::DuCustom, 3, model->getTexCoord(v.getTexCoord(1)));
 
-		writeVertexData(vertexElements, vertex, render::DuPosition, 0, model.getPosition(i->getPosition()));
-		if (i->getNormal() != model::c_InvalidIndex)
-			writeVertexData(vertexElements, vertex, render::DuNormal, 0, model.getNormal(i->getNormal()));
-		if (i->getTangent() != model::c_InvalidIndex)
-			writeVertexData(vertexElements, vertex, render::DuTangent, 0, model.getNormal(i->getTangent()));
-		if (i->getBinormal() != model::c_InvalidIndex)
-			writeVertexData(vertexElements, vertex, render::DuBinormal, 0, model.getNormal(i->getBinormal()));
-		if (i->getColor() != model::c_InvalidIndex)
-			writeVertexData(vertexElements, vertex, render::DuColor, 0, model.getColor(i->getColor()));
-		if (i->getTexCoord(0) != model::c_InvalidIndex)
-			writeVertexData(vertexElements, vertex, render::DuCustom, 2, model.getTexCoord(i->getTexCoord(0)));
-		if (i->getTexCoord(1) != model::c_InvalidIndex)
-			writeVertexData(vertexElements, vertex, render::DuCustom, 3, model.getTexCoord(i->getTexCoord(1)));
+		uint32_t jointCount = model->getJointCount();
 
-		uint32_t jointCount = model.getJointCount();
-
-		AlignedVector< std::pair< int, float > > jointInfluences;
-		for (int j = 0; j < jointCount; ++j)
+		jointInfluences.resize(0);
+		for (uint32_t i = 0; i < jointCount; ++i)
 		{
-			float w = i->getJointInfluence(j);
+			float w = v.getJointInfluence(i);
 			if (std::abs(w) > FUZZY_EPSILON)
-				jointInfluences.push_back(std::make_pair(j, w));
+				jointInfluences.push_back(std::make_pair(i, w));
 		}
 
 		std::sort(jointInfluences.begin(), jointInfluences.end(), InfluencePredicate());
@@ -129,24 +134,24 @@ bool SkinnedMeshConverter::convert(
 			if (jointCount <= 1)
 				totalInfluence = 1.0f;
 
-			for (uint32_t j = 0; j < jointCount; ++j)
+			for (uint32_t i = 0; i < jointCount; ++i)
 			{
-				blendIndices[j] = (float)jointInfluences[j].first;
-				blendWeights[j] = jointInfluences[j].second / totalInfluence;
+				blendIndices[i] = (float)jointInfluences[i].first;
+				blendWeights[i] = jointInfluences[i].second / totalInfluence;
 			}
 
-			for (uint32_t j = jointCount; j < 4; ++j)
+			for (uint32_t i = jointCount; i < 4; ++i)
 			{
-				blendIndices[j] =
-				blendWeights[j] = 0.0f;
+				blendIndices[i] =
+				blendWeights[i] = 0.0f;
 			}
 		}
 		else
 		{
-			for (uint32_t j = 0; j < 4; ++j)
+			for (uint32_t i = jointCount; i < 4; ++i)
 			{
-				blendIndices[j] =
-				blendWeights[j] = 0.0f;
+				blendIndices[i] =
+				blendWeights[i] = 0.0f;
 			}
 		}
 
@@ -161,41 +166,46 @@ bool SkinnedMeshConverter::convert(
 	// Create index buffer.
 	std::map< std::wstring, AlignedVector< IndexRange > > techniqueRanges;
 
-	uint16_t* index = static_cast< uint16_t* >(mesh->getIndexBuffer()->lock());
-	uint16_t* indexFirst = index;
+	uint8_t* index = (uint8_t*)mesh->getIndexBuffer()->lock();
+	uint8_t* indexFirst = index;
 
-	for (std::map< std::wstring, std::list< MeshMaterialTechnique > >::const_iterator i = materialTechniqueMap.begin(); i != materialTechniqueMap.end(); ++i)
+	for (const auto& mt : materialTechniqueMap)
 	{
 		IndexRange range;
 
-		range.offsetFirst = int32_t(index - indexFirst);
+		range.offsetFirst = uint32_t(index - indexFirst) / indexSize;
 		range.offsetLast = 0;
 		range.minIndex = std::numeric_limits< int32_t >::max();
 		range.maxIndex = -std::numeric_limits< int32_t >::max();
 
-		for (AlignedVector< model::Polygon >::const_iterator j = model.getPolygons().begin(); j != model.getPolygons().end(); ++j)
+		for (const auto& polygon : model->getPolygons())
 		{
-			const model::Polygon& polygon = *j;
 			T_ASSERT(polygon.getVertices().size() == 3);
 
-			if (model.getMaterial(polygon.getMaterial()).getName() != i->first)
+			if (model->getMaterial(polygon.getMaterial()).getName() != mt.first)
 				continue;
 
-			for (int k = 0; k < 3; ++k)
+			for (int32_t k = 0; k < 3; ++k)
 			{
-				*index++ = (uint16_t)(polygon.getVertex(k));
+				if (useLargeIndices)
+					*(uint32_t*)index = polygon.getVertex(k);
+				else
+					*(uint16_t*)index = polygon.getVertex(k);
+
 				range.minIndex = std::min< int32_t >(range.minIndex, polygon.getVertex(k));
 				range.maxIndex = std::max< int32_t >(range.maxIndex, polygon.getVertex(k));
+
+				index += indexSize;
 			}
 		}
 
-		range.offsetLast = int32_t(index - indexFirst);
+		range.offsetLast = uint32_t(index - indexFirst) / indexSize;
 		if (range.offsetLast <= range.offsetFirst)
 			continue;
 
-		for (std::list< MeshMaterialTechnique >::const_iterator j = i->second.begin(); j != i->second.end(); ++j)
+		for (const auto& mtt : mt.second)
 		{
-			std::wstring technique = j->worldTechnique + L"/" + j->shaderTechnique;
+			std::wstring technique = mtt.worldTechnique + L"/" + mtt.shaderTechnique;
 			range.mergeInto(techniqueRanges[technique]);
 		}
 	}
@@ -247,15 +257,15 @@ bool SkinnedMeshConverter::convert(
 	}
 
 	mesh->setParts(meshParts);
-	mesh->setBoundingBox(model.getBoundingBox());
+	mesh->setBoundingBox(model->getBoundingBox());
 
 	if (!render::MeshWriter().write(meshResourceStream, mesh))
 		return false;
 
 	checked_type_cast< SkinnedMeshResource* >(meshResource)->m_shader = resource::Id< render::Shader >(materialGuid);
 	checked_type_cast< SkinnedMeshResource* >(meshResource)->m_parts = parts;
-	for (uint32_t i = 0; i < model.getJointCount(); ++i)
-		checked_type_cast< SkinnedMeshResource* >(meshResource)->m_jointMap[model.getJoint(i).getName()] = i;
+	for (uint32_t i = 0; i < model->getJointCount(); ++i)
+		checked_type_cast< SkinnedMeshResource* >(meshResource)->m_jointMap[model->getJoint(i).getName()] = i;
 
 	return true;
 }

@@ -31,6 +31,8 @@
 #include "Model/Operations/Triangulate.h"
 #include "Model/Operations/MergeCoplanarAdjacents.h"
 #include "Model/Operations/MergeTVertices.h"
+#include "Model/Operations/SortCacheCoherency.h"
+#include "Model/Operations/SortProjectedArea.h"
 #include "Model/Operations/Unweld.h"
 #include "Model/Operations/UnwrapUV.h"
 #include "Render/IRenderSystem.h"
@@ -163,8 +165,11 @@ bool ModelToolDialog::create(ui::Widget* parent, const std::wstring& fileName, f
 	m_toolWeight = new ui::ToolBarButton(i18n::Text(L"MODEL_TOOL_WEIGHTS"), ui::Command(L"ModelTool.ToggleWeights"), ui::ToolBarButton::BsText | ui::ToolBarButton::BsToggle);
 	toolBar->addItem(m_toolWeight);
 
-	m_toolJointRest = new ui::ToolBarButton(i18n::Text(L"MODEL_TOOL_REST"), ui::Command(L"ModelTool.ToggleJointRest"), ui::ToolBarButton::BsText | ui::ToolBarButton::BsToggle);
-	toolBar->addItem(m_toolJointRest);
+	m_toolPose = new ui::ToolBarButton(i18n::Text(L"MODEL_TOOL_POSE"), ui::Command(L"ModelTool.TogglePose"), ui::ToolBarButton::BsText | ui::ToolBarButton::BsToggle);
+	toolBar->addItem(m_toolPose);
+
+	m_toolRest = new ui::ToolBarButton(i18n::Text(L"MODEL_TOOL_REST"), ui::Command(L"ModelTool.ToggleRest"), ui::ToolBarButton::BsText | ui::ToolBarButton::BsToggle);
+	toolBar->addItem(m_toolRest);
 
 	toolBar->addEventHandler< ui::ToolBarButtonClickEvent >(this, &ModelToolDialog::eventToolBarClick);
 
@@ -250,6 +255,8 @@ bool ModelToolDialog::create(ui::Widget* parent, const std::wstring& fileName, f
 	modelRootPopupAdd->add(new ui::MenuItem(ui::Command(L"ModelTool.Triangulate"), L"Triangulate"));
 	modelRootPopupAdd->add(new ui::MenuItem(ui::Command(L"ModelTool.Unweld"), L"Unweld"));
 	modelRootPopupAdd->add(new ui::MenuItem(ui::Command(L"ModelTool.UnwrapUV"), L"Unwrap UV"));
+	modelRootPopupAdd->add(new ui::MenuItem(ui::Command(L"ModelTool.SortCacheCoherency"), L"Sort Cache Coherency"));
+	modelRootPopupAdd->add(new ui::MenuItem(ui::Command(L"ModelTool.SortProjectedArea"), L"Sort Projected Area"));
 	modelRootPopupAdd->add(new ui::MenuItem(L"-"));
 	modelRootPopupAdd->add(new ui::MenuItem(ui::Command(L"ModelTool.ExecuteScript"), L"Execute script..."));
 	m_modelRootPopup->add(modelRootPopupAdd);
@@ -596,6 +603,18 @@ void ModelToolDialog::eventModelTreeButtonDown(ui::MouseButtonDownEvent* event)
 			{
 				Ref< ui::TreeViewItem > itemOperation = m_modelTree->createItem(itemModel, L"Unwrap UV", 0);
 				itemOperation->setData(L"OPERATION", new UnwrapUV(0, 1024));
+				updateOperations(itemModel);
+			}
+			else if (command == L"ModelTool.SortCacheCoherency")
+			{
+				Ref< ui::TreeViewItem > itemOperation = m_modelTree->createItem(itemModel, L"Sort Cache Coherency", 0);
+				itemOperation->setData(L"OPERATION", new SortCacheCoherency());
+				updateOperations(itemModel);
+			}
+			else if (command == L"ModelTool.SortProjectedArea")
+			{
+				Ref< ui::TreeViewItem > itemOperation = m_modelTree->createItem(itemModel, L"Sort Projected Area", 0);
+				itemOperation->setData(L"OPERATION", new SortProjectedArea(false));
 				updateOperations(itemModel);
 			}
 			else if (command == L"ModelTool.ExecuteScript")
@@ -1063,48 +1082,52 @@ void ModelToolDialog::eventRenderPaint(ui::PaintEvent* event)
 				m_primitiveRenderer->popDepthState();
 			}
 
-			if (true /*joints*/)
+			bool showRest = m_toolRest->isToggled();
+			bool showPose = m_toolPose->isToggled();
+			if (showRest || showPose)
 			{
 				AlignedVector< uint32_t > childJointIds;
 
 				m_primitiveRenderer->pushDepthState(false, false, false);
 
-				for (uint32_t i = 0; i < joints.size(); ++i)
+				if (showRest)
 				{
-					const Color4ub colorRest = (i == weightJoint) ? Color4ub(80, 80, 255, 255) : Color4ub(120, 255, 120, 255);
-					const float frameSize = (i == weightJoint) ? 0.5f : 0.25f;
-
-					childJointIds.resize(0);
-					m_modelTris->findChildJoints(i, childJointIds);
-
-					auto Tjoint = m_modelTris->getJointGlobalTransform(i);
-
-					m_primitiveRenderer->drawWireFrame(Tjoint.toMatrix44(), frameSize);
-
-					if (!childJointIds.empty())
+					for (uint32_t i = 0; i < joints.size(); ++i)
 					{
-						for (auto childId : childJointIds)
-						{
-							auto Tchild = m_modelTris->getJointGlobalTransform(childId);
+						const Color4ub colorRest = (i == weightJoint) ? Color4ub(80, 80, 255, 255) : Color4ub(120, 255, 120, 255);
+						const float frameSize = (i == weightJoint) ? 0.5f : 0.25f;
 
-							m_primitiveRenderer->drawLine(
+						childJointIds.resize(0);
+						m_modelTris->findChildJoints(i, childJointIds);
+
+						auto Tjoint = m_modelTris->getJointGlobalTransform(i);
+
+						m_primitiveRenderer->drawWireFrame(Tjoint.toMatrix44(), frameSize);
+
+						if (!childJointIds.empty())
+						{
+							for (auto childId : childJointIds)
+							{
+								auto Tchild = m_modelTris->getJointGlobalTransform(childId);
+
+								m_primitiveRenderer->drawLine(
+									Tjoint.translation(),
+									Tchild.translation(),
+									2.0f,
+									colorRest
+								);
+							}
+						}
+						else
+							m_primitiveRenderer->drawSolidPoint(
 								Tjoint.translation(),
-								Tchild.translation(),
 								2.0f,
 								colorRest
 							);
-						}
 					}
-					else
-						m_primitiveRenderer->drawSolidPoint(
-							Tjoint.translation(),
-							2.0f,
-							colorRest
-						);
 				}
 
-				bool showOnlyRest = m_toolJointRest->isToggled();
-				if (!showOnlyRest && m_modelTris->getAnimationCount() > 0)
+				if (showPose && m_modelTris->getAnimationCount() > 0)
 				{
 					const Animation* anim = m_modelTris->getAnimation(0);
 

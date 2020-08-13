@@ -102,22 +102,18 @@ bool convertSkeleton(
 			nodeTransform = node->EvaluateGlobalTransform();
 		}
 
+		const Matrix44 Mrx90 = rotateX(deg2rad(-90.0f));
+
 		Matrix44 Mnode = convertMatrix(nodeTransform);
-		Matrix44 Mrx90 = rotateX(deg2rad(-90.0f));
-		Matrix44 Mjoint = axisTransform * (Mnode * Mrx90) * axisTransform.inverse();
+		Matrix44 Mjoint = Mnode * Mrx90;
 
 		const Vector4 S(
 			1.0f / Mjoint.axisX().length(),
 			1.0f / Mjoint.axisY().length(),
 			1.0f / Mjoint.axisZ().length()
 		);
-		Transform Tjoint(Mjoint * scale(S));
-
-		// Normalize transformation in case scaling involved.
-		Tjoint = Transform(
-			Tjoint.translation(),
-			Tjoint.rotation().normalized()
-		);
+		Mjoint = Mjoint * scale(S);
+		Mjoint = axisTransform * Mjoint * axisTransform.inverse();
 
 		uint32_t parentId = c_InvalidIndex;
 		if (parent != nullptr)
@@ -126,8 +122,8 @@ bool convertSkeleton(
 			parentId = outModel.findJointIndex(parentJointName);
 			if (parentId != c_InvalidIndex)
 			{
-				Transform Tparent = outModel.getJointGlobalTransform(parentId);
-				Tjoint = Tparent.inverse() * Tjoint;	// Cl = Bg-1 * Cg
+				Matrix44 Mparent = outModel.getJointGlobalTransform(parentId).toMatrix44();
+				Mjoint = Mparent.inverse() * Mjoint;	// Cl = Bg-1 * Cg
 			}
 			else
 				log::warning << L"Unable to bind parent joint; no such joint \"" << parentJointName << L"\"." << Endl;
@@ -136,7 +132,7 @@ bool convertSkeleton(
 		Joint joint;
 		joint.setParent(parentId);
 		joint.setName(jointName);
-		joint.setTransform(Tjoint);
+		joint.setTransform(Transform(Mjoint));
 		outModel.addJoint(joint);
 		return true;
 	});
@@ -156,14 +152,14 @@ Ref< Pose > convertPose(
 	if (!skeleton)
 		return nullptr;
 
-	Ref< Pose > pose = new Pose();
+	const Matrix44 Mrx90 = rotateX(deg2rad(-90.0f));
 
-	bool result = traverse(nullptr, skeletonNode, [&](FbxNode* parent, FbxNode* node) {
-		FbxAMatrix nodeTransform = node->EvaluateGlobalTransform(time);
+	Ref< Pose > pose = new Pose();
+	traverse(nullptr, skeletonNode, [&](FbxNode* parent, FbxNode* node) {
+		FbxAMatrix nodeTransform = node->EvaluateGlobalTransform(time, FbxNode::eSourcePivot, true, true);
 
 		Matrix44 Mnode = convertMatrix(nodeTransform);
-		Matrix44 Mrx90 = rotateX(deg2rad(-90.0f));
-		Matrix44 Mjoint = axisTransform * (Mnode * Mrx90) * axisTransform.inverse();
+		Matrix44 Mjoint = Mnode * Mrx90;
 
 		std::wstring jointName = mbstows(node->GetName());
 
@@ -178,36 +174,28 @@ Ref< Pose > convertPose(
 			return true;
 		}
 
-		// const Joint& joint = model.getJoint(jointId);
-
 		const Vector4 S(
 			1.0f / Mjoint.axisX().length(),
 			1.0f / Mjoint.axisY().length(),
 			1.0f / Mjoint.axisZ().length()
 		);
-		Transform Tjoint(Mjoint * scale(S));
+		Mjoint = Mjoint * scale(S);
+		Mjoint = axisTransform * Mjoint * axisTransform.inverse();
 
-		// Normalize transformation in case scaling involved.
-		Tjoint = Transform(
-			Tjoint.translation(),
-			Tjoint.rotation().normalized()
-		);
-
-		uint32_t parentId = c_InvalidIndex;
 		if (parent != nullptr)
 		{
 			std::wstring parentJointName = getJointName(parent);
-			parentId = model.findJointIndex(parentJointName);
+			uint32_t parentId = model.findJointIndex(parentJointName);
 			if (parentId != c_InvalidIndex)
 			{
-				Transform Tparent = pose->getJointGlobalTransform(&model, parentId);
-				Tjoint = Tparent.inverse() * Tjoint;	// Cl = Bg-1 * Cg
+				Matrix44 Mparent = pose->getJointGlobalTransform(&model, parentId).toMatrix44();
+				Mjoint = Mparent.inverse() * Mjoint;	// Cl = Bg-1 * Cg
 			}
 			else
 				log::warning << L"Unable to bind parent joint; no such joint \"" << parentJointName << L"\"." << Endl;
 		}
 
-		pose->setJointTransform(jointId, Tjoint);
+		pose->setJointTransform(jointId, Transform(Mjoint));
 		return true;
 	});
 
