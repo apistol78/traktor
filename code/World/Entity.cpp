@@ -8,11 +8,6 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.world.Entity", Entity, Object)
 
-Entity::Entity()
-:	m_transform(Transform::identity())
-{
-}
-
 Entity::Entity(const Transform& transform)
 :	m_transform(transform)
 {
@@ -24,9 +19,11 @@ Entity::Entity(const Transform& transform, const RefArray< IEntityComponent >& c
 {
 	for (auto component : m_components)
 	{
+		m_updating = component;
 		component->setOwner(this);
 		component->setTransform(m_transform);
 	}
+	m_updating = nullptr;
 }
 
 Entity::~Entity()
@@ -43,10 +40,10 @@ void Entity::destroy()
 
 void Entity::setTransform(const Transform& transform)
 {
-	if (transform != m_transform)
+	m_transform = transform;
+	for (auto component : m_components)
 	{
-		m_transform = transform;
-		for (auto component : m_components)
+		if (component != m_updating)
 			component->setTransform(transform);
 	}
 }
@@ -67,7 +64,11 @@ Aabb3 Entity::getBoundingBox() const
 void Entity::update(const UpdateParams& update)
 {
 	for (auto component : m_components)
+	{
+		m_updating = component;
 		component->update(update);
+	}
+	m_updating = nullptr;
 }
 
 void Entity::setComponent(IEntityComponent* component)

@@ -28,10 +28,7 @@ const static Handle s_handleNoiseOffset(L"NoiseOffset");
 const static Handle s_handleGaussianOffsetWeights(L"GaussianOffsetWeights");
 const static Handle s_handleProjection(L"Projection");
 const static Handle s_handleView(L"View");
-const static Handle s_handleViewLast(L"ViewLast");
 const static Handle s_handleViewInverse(L"ViewInverse");
-const static Handle s_handleDeltaView(L"DeltaView");
-const static Handle s_handleDeltaViewProj(L"DeltaViewProj");
 
 Random s_random;
 
@@ -65,7 +62,6 @@ void DirectionalBlur::build(
 	Vector4 viewEdgeTopRight = params.viewFrustum.corners[5];
 	Vector4 viewEdgeBottomLeft = params.viewFrustum.corners[7];
 	Vector4 viewEdgeBottomRight = params.viewFrustum.corners[6];
-	Matrix44 deltaView = params.lastView * params.view.inverse();
 
 	// Setup parameters for the shader.
 	auto pp = renderContext->alloc< ProgramParameters >();
@@ -85,10 +81,7 @@ void DirectionalBlur::build(
 	pp->setVectorArrayParameter(s_handleGaussianOffsetWeights, &m_gaussianOffsetWeights[0], (uint32_t)m_gaussianOffsetWeights.size());
 	pp->setMatrixParameter(s_handleProjection, params.projection);
 	pp->setMatrixParameter(s_handleView, params.view);
-	pp->setMatrixParameter(s_handleViewLast, params.lastView);
 	pp->setMatrixParameter(s_handleViewInverse, params.view.inverse());
-	pp->setMatrixParameter(s_handleDeltaView, deltaView);
-	pp->setMatrixParameter(s_handleDeltaViewProj, params.projection * deltaView);
 
 	for (const auto& source : m_sources)
 	{

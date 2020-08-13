@@ -29,7 +29,7 @@ class T_DLLCLASS Entity : public Object
 	T_RTTI_CLASS;
 
 public:
-	Entity();
+	Entity() = default;
 
 	Entity(const Entity&) = delete;
 
@@ -110,8 +110,9 @@ public:
 	}
 
 private:
-	Transform m_transform;
+	Transform m_transform = Transform::identity();
 	RefArray< IEntityComponent > m_components;
+	const IEntityComponent* m_updating = nullptr;
 };
 
 	}

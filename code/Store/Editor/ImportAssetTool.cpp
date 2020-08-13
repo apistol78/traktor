@@ -190,13 +190,14 @@ bool ImportAssetTool::launch(ui::Widget* parent, editor::IEditor* editor, const 
 {
 	RefArray< net::Url > urls;
 
-	std::wstring serverHost = editor->getSettings()->getProperty< std::wstring >(L"Store.Server", L"127.0.0.1:8118");
+	std::wstring serverHost = editor->getSettings()->getProperty< std::wstring >(L"Store.Server", L"localhost:80");
 	if (serverHost.empty())
 		return false;
 
 	// Let user selected packages to import.
 	BrowseAssetDialog browseAssetDialog(serverHost);
-	browseAssetDialog.create(parent);
+	if (!browseAssetDialog.create(parent))
+		return false;
 	if (browseAssetDialog.showModal(urls) != ui::DrOk)
 	{
 		browseAssetDialog.destroy();

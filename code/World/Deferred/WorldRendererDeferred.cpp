@@ -430,7 +430,7 @@ void WorldRendererDeferred::setup(
 	// Jitter projection for TAA.
 	if (m_antiAliasQuality >= Quality::Ultra)
 	{
-		Vector2 r = Vector2((m_count / 2) & 1, m_count & 1) / immutableWorldRenderView.getViewSize();
+		Vector2 r = Vector2((float)((m_count / 2) & 1) - 0.5f, (float)(m_count & 1) - 0.5f) / immutableWorldRenderView.getViewSize();
 		Matrix44 proj = immutableWorldRenderView.getProjection();
 		proj = translate(r.x, r.y, 0.0f) * proj;
 		worldRenderView.setProjection(proj);
@@ -624,7 +624,7 @@ render::handle_t WorldRendererDeferred::setupGBufferPass(
 	rgtd.count = 4;
 	rgtd.createDepthStencil = false;
 	rgtd.usingPrimaryDepthStencil = (m_sharedDepthStencil == nullptr) ? true : false;
-	rgtd.targets[0].colorFormat = render::TfR16F;		// Depth (R)
+	rgtd.targets[0].colorFormat = render::TfR32F;		// Depth (R)
 	rgtd.targets[1].colorFormat = render::TfR16G16F;	// Normals (RG)
 	rgtd.targets[2].colorFormat = render::TfR11G11B10F;	// Metalness (R), Roughness (G), Specular (B)
 	rgtd.targets[3].colorFormat = render::TfR11G11B10F;	// Surface color (RGB)
@@ -701,7 +701,7 @@ render::handle_t WorldRendererDeferred::setupVelocityPass(
 	rgtd.count = 1;
 	rgtd.createDepthStencil = false;
 	rgtd.usingPrimaryDepthStencil = (m_sharedDepthStencil == nullptr) ? true : false;
-	rgtd.targets[0].colorFormat = render::TfR16G16F;
+	rgtd.targets[0].colorFormat = render::TfR32G32F;
 	rgtd.referenceWidthDenom = 1;
 	rgtd.referenceHeightDenom = 1;
 	auto velocityTargetSetId = renderGraph.addTransientTargetSet(L"Velocity", rgtd, m_sharedDepthStencil, outputTargetSetId);
@@ -713,8 +713,7 @@ render::handle_t WorldRendererDeferred::setupVelocityPass(
 	{
 		render::ImageGraphParams ipd;
 		ipd.viewFrustum = worldRenderView.getViewFrustum();
-		ipd.lastView = worldRenderView.getLastView();
-		ipd.view = worldRenderView.getView();
+		ipd.view = worldRenderView.getLastView() * worldRenderView.getView().inverse();
 		ipd.projection = worldRenderView.getProjection();
 		ipd.deltaTime = worldRenderView.getDeltaTime();
 

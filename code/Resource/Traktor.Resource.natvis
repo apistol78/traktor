@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AutoVisualizer xmlns="http://schemas.microsoft.com/vstudio/debugger/natvis/2010">
+  <Type Name="traktor::resource::Proxy&lt;*&gt;">
+    <DisplayString>{m_handle.m_ptr->m_object.m_ptr}</DisplayString>
+    <Expand>
+      <ExpandedItem>m_handle.m_ptr->m_object.m_ptr</ExpandedItem>
+    </Expand>
+  </Type>
+</AutoVisualizer>

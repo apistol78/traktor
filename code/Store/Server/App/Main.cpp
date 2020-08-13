@@ -4,6 +4,7 @@
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/StreamCopy.h"
 #include "Core/Log/Log.h"
+#include "Core/Misc/CommandLine.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Misc/StringSplit.h"
 #include "Core/Misc/TString.h"
@@ -209,20 +210,32 @@ private:
 
 int main(int argc, const char** argv)
 {
+	CommandLine cmdLine(argc, argv);
+
    	log::info << L"Traktor.Store.Server.App; Built '" << mbstows(__TIME__) << L" - " << mbstows(__DATE__) << L"'" << Endl;
  
-    const Path dataPath = FileSystem::getInstance().getAbsolutePath(L"$(TRAKTOR_HOME)/data/Store");
+	if (!cmdLine.hasOption(L's', L"store-path"))
+	{
+		log::error << L"Missing \"-store-path\" argument; need to specify location of store data." << Endl;
+		return 1;
+	}
+	if (!cmdLine.hasOption(L'p', L"listen-port"))
+	{
+		log::error << L"Missing \"-listen-port\" argument; need to specify server listen TCP port." << Endl;
+		return 1;
+	}
 
-    if (!FileSystem::getInstance().makeAllDirectories(dataPath))
+    const Path dataPath = FileSystem::getInstance().getAbsolutePath(cmdLine.getOption(L's', L"store-path").getString());
+    if (!FileSystem::getInstance().exist(dataPath))
     {
-        log::error << L"Data path \"" << dataPath.getPathName() << L"\" do not exist nor cannot it be created." << Endl;
+        log::error << L"Store data path \"" << dataPath.getPathName() << L"\" do not exist." << Endl;
         return 1;
     }
 
 	net::Network::initialize();
 
 	Ref< net::HttpServer > httpServer = new net::HttpServer();
-	if (!httpServer->create(net::SocketAddressIPv4(8118)))
+	if (!httpServer->create(net::SocketAddressIPv4(cmdLine.getOption(L'p', L"listen-port").getInteger())))
     {
         log::error << L"Unable to create HTTP server." << Endl;
         return 1;

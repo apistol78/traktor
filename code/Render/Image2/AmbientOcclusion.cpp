@@ -23,10 +23,7 @@ const static Handle s_handleViewEdgeBottomLeft(L"ViewEdgeBottomLeft");
 const static Handle s_handleViewEdgeBottomRight(L"ViewEdgeBottomRight");
 const static Handle s_handleProjection(L"Projection");
 const static Handle s_handleView(L"View");
-const static Handle s_handleViewLast(L"ViewLast");
 const static Handle s_handleViewInverse(L"ViewInverse");
-const static Handle s_handleDeltaView(L"DeltaView");
-const static Handle s_handleDeltaViewProj(L"DeltaViewProj");
 const static Handle s_handleMagicCoeffs(L"MagicCoeffs");
 const static Handle s_handleRandom(L"Random");
 const static Handle s_handleOffsets(L"Offsets");
@@ -66,7 +63,6 @@ void AmbientOcclusion::build(
 	Vector4 viewEdgeTopRight = params.viewFrustum.corners[5];
 	Vector4 viewEdgeBottomLeft = params.viewFrustum.corners[7];
 	Vector4 viewEdgeBottomRight = params.viewFrustum.corners[6];
-	Matrix44 deltaView = params.lastView * params.view.inverse();
 
 	// Setup parameters for the shader.
 	auto pp = renderContext->alloc< ProgramParameters >();
@@ -85,10 +81,7 @@ void AmbientOcclusion::build(
 	pp->setVectorArrayParameter(s_handleDirections, m_directions, sizeof_array(m_directions));
 	pp->setMatrixParameter(s_handleProjection, params.projection);
 	pp->setMatrixParameter(s_handleView, params.view);
-	pp->setMatrixParameter(s_handleViewLast, params.lastView);
 	pp->setMatrixParameter(s_handleViewInverse, params.view.inverse());
-	pp->setMatrixParameter(s_handleDeltaView, deltaView);
-	pp->setMatrixParameter(s_handleDeltaViewProj, params.projection * deltaView);
 	pp->setTextureParameter(s_handleRandomNormals, m_randomNormals);
 	pp->setTextureParameter(s_handleRandomRotations, m_randomRotations);
 

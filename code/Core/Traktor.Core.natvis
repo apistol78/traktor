@@ -13,6 +13,9 @@
   </Type>
   <Type Name="traktor::Ref&lt;*&gt;">
     <DisplayString>{m_ptr}</DisplayString>
+    <Expand>
+      <ExpandedItem>m_ptr</ExpandedItem>
+    </Expand>
   </Type>
   <Type Name="traktor::RefArray&lt;*&gt;">
     <DisplayString>{{ size={m_size} }}</DisplayString>

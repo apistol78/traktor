@@ -67,13 +67,15 @@ public:
 
 	virtual void destroy() override final;
 
-	virtual Aabb3 getBoundingBox() const override final;
+	virtual void setOwner(world::Entity* owner) override final;
 
-	virtual void build(const world::WorldBuildContext& context, const world::WorldRenderView& worldRenderView, const world::IWorldRenderPass& worldRenderPass) override final;
+	virtual void setTransform(const Transform& transform) override final;
+
+	virtual Aabb3 getBoundingBox() const override final;
 
 	virtual void update(const world::UpdateParams& update) override final;
 
-	virtual void setTransform(const Transform& transform) override final;
+	virtual void build(const world::WorldBuildContext& context, const world::WorldRenderView& worldRenderView, const world::IWorldRenderPass& worldRenderPass) override final;
 
 	/*! Get base transform of joint. */
 	bool getJointTransform(render::handle_t jointName, Transform& outTransform) const;

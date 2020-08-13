@@ -59,6 +59,12 @@ Ref< Object > MeshFactory::create(resource::IResourceManager* resourceManager, c
 		return nullptr;
 	}
 
+	if (!is_type_of(productType, type_of(mesh)))
+	{
+		log::error << L"Mesh factory failed; incorrect product type." << Endl;
+		return nullptr;
+	}
+
 	return mesh;
 }
 

@@ -29,35 +29,20 @@ class ScreenRenderer;
 struct ImageGraphParams
 {
     Frustum viewFrustum;
-    Matrix44 lastView;
     Matrix44 view;
     Matrix44 viewToLight;
     Matrix44 projection;
-    Vector4 godRayDirection;
-    Vector4 shadowMapUvTransform;
-    int32_t sliceCount;
-    int32_t sliceIndex;
-    float sliceNearZ;
-    float sliceFarZ;
-    float shadowFarZ;
-    float shadowMapBias;
-    float deltaTime;
-    float time;
-    int32_t frame;
-
-    ImageGraphParams()
-    :	shadowMapUvTransform(0.0f, 0.0f, 1.0f, 1.0f)
-    ,	sliceCount(0)
-    ,	sliceIndex(0)
-    ,	sliceNearZ(0.0f)
-    ,	sliceFarZ(0.0f)
-    ,	shadowFarZ(0.0f)
-    ,	shadowMapBias(0.0f)
-    ,	deltaTime(0.0f)
-    ,   time(0.0f)
-    ,   frame(0)
-    {
-    }
+    Vector4 godRayDirection = Vector4(0.0f, 0.0f, 1.0f, 1.0f);
+    Vector4 shadowMapUvTransform = Vector4(0.0f, 0.0f, 1.0f, 1.0f);
+    int32_t sliceCount = 0;
+    int32_t sliceIndex = 0;
+    float sliceNearZ = 0.0f;
+    float sliceFarZ = 0.0f;
+    float shadowFarZ = 0.0f;
+    float shadowMapBias = 0.0f;
+    float deltaTime = 0.0f;
+    float time = 0.0f;
+    int32_t frame = 0;
 };
 
 /*!

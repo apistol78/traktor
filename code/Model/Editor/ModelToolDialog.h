@@ -83,7 +83,8 @@ private:
 	Ref< ui::ToolBarButton > m_toolUV;
 	Ref< ui::ToolBarDropDown > m_toolChannel;
 	Ref< ui::ToolBarButton > m_toolWeight;
-	Ref< ui::ToolBarButton > m_toolJointRest;
+	Ref< ui::ToolBarButton > m_toolPose;
+	Ref< ui::ToolBarButton > m_toolRest;
 	Ref< ui::TreeView > m_modelTree;
 	Ref< ui::GridView > m_materialGrid;
 	Ref< ui::TreeView > m_skeletonTree;
