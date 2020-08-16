@@ -1144,8 +1144,8 @@ Vertex* PrimitiveRenderer::allocBatch(render::PrimitiveType primitiveType, uint3
 		T_ASSERT(!m_freeVertexBuffers.empty());
 
 		// Pick buffer from free list.
-		Ref< render::VertexBuffer > vertexBuffer = m_freeVertexBuffers.back();
-		m_freeVertexBuffers.pop_back();
+		Ref< render::VertexBuffer > vertexBuffer = m_freeVertexBuffers.front();
+		m_freeVertexBuffers.pop_front();
 
 		// Lock new buffer.
 		m_vertexHead =

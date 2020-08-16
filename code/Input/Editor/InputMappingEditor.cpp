@@ -197,7 +197,7 @@ bool InputMappingEditor::create(ui::Container* parent)
 	m_toolBarGraph->addEventHandler< ui::ToolBarButtonClickEvent >(this, &InputMappingEditor::eventToolBarGraphClick);
 
 	Ref< ui::Splitter > splitter = new ui::Splitter();
-	splitter->create(container, true, 10, true);
+	splitter->create(container, true, 20, true);
 
 	m_listValueSources = new ui::EditList();
 	m_listValueSources->create(splitter, ui::ListBox::WsSingle | ui::EditList::WsAutoAdd | ui::EditList::WsAutoRemove);
@@ -229,14 +229,14 @@ bool InputMappingEditor::create(ui::Container* parent)
 	Ref< ui::MenuItem > menuItem = new ui::MenuItem(ui::Command(L"Input.Editor.Create"), i18n::Text(L"INPUT_EDITOR_CREATE_NODE_STATE"));
 	menuItemCreate->add(menuItem);
 
-	for (std::map< const TypeInfo*, Ref< const InputNodeTraits > >::const_iterator i = m_traits.begin(); i != m_traits.end(); ++i)
+	for (auto it : m_traits)
 	{
-		std::wstring i18nId = i->first->getName();
+		std::wstring i18nId = it.first->getName();
 		i18nId = replaceAll(i18nId, L'.', L'_');
 		i18nId = toUpper(i18nId);
 
 		Ref< ui::MenuItem > menuItem = new ui::MenuItem(ui::Command(L"Input.Editor.Create"), i18n::Text(L"INPUT_EDITOR_CREATE_NODE_" + i18nId));
-		menuItem->setData(L"TRAITS", const_cast< InputNodeTraits* >(i->second.ptr()));
+		menuItem->setData(L"TRAITS", const_cast< InputNodeTraits* >(it.second.ptr()));
 		menuItemCreate->add(menuItem);
 	}
 

@@ -1533,6 +1533,7 @@ void DatabaseView::eventInstanceActivate(ui::TreeViewItemActivateEvent* event)
 		return;
 
 	m_editor->openEditor(instance);
+	event->consume();
 }
 
 void DatabaseView::eventInstanceStateChange(ui::TreeViewItemStateChangeEvent* event)

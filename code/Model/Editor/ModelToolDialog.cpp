@@ -305,6 +305,9 @@ bool ModelToolDialog::create(ui::Widget* parent, const std::wstring& fileName, f
 
 			Ref< ui::TreeViewItem > item = m_modelTree->createItem(0, fileName, 0);
 			item->setData(L"MODEL", model);
+			item->select();
+
+			updateModel();
 		}
 		else
 			log::error << L"Unable to load \"" << fileName << L"\"." << Endl;
@@ -419,6 +422,120 @@ bool ModelToolDialog::saveModel(Model* model)
 	}
 
 	return ModelFormat::writeAny(fileName, &clone);
+}
+
+void ModelToolDialog::updateModel()
+{
+	RefArray< ui::TreeViewItem > items;
+	m_modelTree->getItems(items, ui::TreeView::GfDescendants | ui::TreeView::GfSelectedOnly);
+
+	if (items.size() == 1)
+		m_model = items[0]->getData< Model >(L"MODEL");
+	else
+	{
+		m_model = nullptr;
+		m_modelTris = nullptr;
+		m_modelAdjacency = nullptr;
+	}
+
+	m_materialGrid->removeAllRows();
+	m_statisticGrid->removeAllRows();
+	m_toolChannel->removeAll();
+	m_skeletonTree->removeAllItems();
+
+	if (m_model)
+	{
+		m_modelTris = new Model(*m_model);
+		Triangulate().apply(*m_modelTris);
+
+		Aabb3 boundingBox = m_model->getBoundingBox();
+		Vector4 extent = boundingBox.getExtent();
+		float minExtent = extent[minorAxis3(extent)];
+		m_normalScale = minExtent / 10.0f;
+
+		const AlignedVector< Material >& materials = m_model->getMaterials();
+		for (AlignedVector< Material >::const_iterator i = materials.begin(); i != materials.end(); ++i)
+		{
+			const wchar_t* const c_blendModes[] = { L"Decal", L"Add", L"Multiply", L"Alpha", L"AlphaTest" };
+			const auto& cl = i->getColor();
+
+			Ref< ui::GridRow > row = new ui::GridRow();
+			row->add(new ui::GridItem(i->getName()));
+			row->add(new ui::GridItem(i->getDiffuseMap().name + L" [" + toString(i->getDiffuseMap().channel) + L"]"));
+			row->add(new ui::GridItem(i->getSpecularMap().name + L" [" + toString(i->getSpecularMap().channel) + L"]"));
+			row->add(new ui::GridItem(i->getRoughnessMap().name + L" [" + toString(i->getRoughnessMap().channel) + L"]"));
+			row->add(new ui::GridItem(i->getMetalnessMap().name + L" [" + toString(i->getMetalnessMap().channel) + L"]"));
+			row->add(new ui::GridItem(i->getTransparencyMap().name + L" [" + toString(i->getTransparencyMap().channel) + L"]"));
+			row->add(new ui::GridItem(i->getEmissiveMap().name + L" [" + toString(i->getEmissiveMap().channel) + L"]"));
+			row->add(new ui::GridItem(i->getReflectiveMap().name + L" [" + toString(i->getReflectiveMap().channel) + L"]"));
+			row->add(new ui::GridItem(i->getNormalMap().name + L" [" + toString(i->getNormalMap().channel) + L"]"));
+			row->add(new ui::GridItem(i->getLightMap().name + L" [" + toString(i->getLightMap().channel) + L"]"));
+			row->add(new ui::GridItem( toString(cl.getRed()) + L", " + toString(cl.getGreen()) + L", " + toString(cl.getBlue()) + L", " + toString(cl.getAlpha())));
+			row->add(new ui::GridItem(toString(i->getDiffuseTerm())));
+			row->add(new ui::GridItem(toString(i->getSpecularTerm())));
+			row->add(new ui::GridItem(toString(i->getRoughness())));
+			row->add(new ui::GridItem(toString(i->getMetalness())));
+			row->add(new ui::GridItem(toString(i->getTransparency())));
+			row->add(new ui::GridItem(toString(i->getEmissive())));
+			row->add(new ui::GridItem(toString(i->getReflective())));
+			row->add(new ui::GridItem(toString(i->getRimLightIntensity())));
+			row->add(new ui::GridItem(c_blendModes[(int32_t)i->getBlendOperator()]));
+			row->add(new ui::GridItem(i->isDoubleSided() ? L"Yes" : L"No"));
+			m_materialGrid->addRow(row);
+		}
+
+		{
+			addStatistic(L"# materials", toString(m_model->getMaterials().size()));
+			addStatistic(L"# vertices", toString(m_model->getVertexCount()));
+			addStatistic(L"# polygons", toString(m_model->getPolygonCount()));
+
+			SmallMap< uint32_t, uint32_t > polSizes;
+			for (const auto& pol : m_model->getPolygons())
+				polSizes[pol.getVertexCount()]++;
+
+			for (auto polSize : polSizes)
+				addStatistic(L"# " + toString(polSize.first) + L"-polygons", toString(polSize.second));
+
+			addStatistic(L"# positions", toString(m_model->getPositionCount()));
+			addStatistic(L"# colors", toString(m_model->getColorCount()));
+			addStatistic(L"# normals", toString(m_model->getNormalCount()));
+			addStatistic(L"# texcoords", toString(m_model->getTexCoords().size()));
+
+			addStatistic(L"# texture channels", toString(m_model->getTexCoordChannels().size()));
+			for (size_t i = 0; i < m_model->getTexCoordChannels().size(); ++i)
+			{
+				const auto& channel = m_model->getTexCoordChannels()[i];
+				addStatistic(L"  " + toString(i), channel);
+			}
+
+			addStatistic(L"# joints", toString(m_model->getJointCount()));
+
+			addStatistic(L"# animations ", toString(m_model->getAnimationCount()));
+			for (size_t i = 0; i < m_model->getAnimationCount(); ++i)
+			{
+				const auto animation = m_model->getAnimation(i);
+				addStatistic(L"  " + toString(i), animation->getName());
+			}
+
+			addStatistic(L"# blend targets", toString(m_model->getBlendTargetCount()));
+		}
+
+		uint32_t nextChannel = 8; // m_model->getAvailableTexCoordChannel();
+		if (nextChannel > 0)
+		{
+			for (uint32_t i = 0; i < nextChannel; ++i)
+				m_toolChannel->add(toString(i));
+
+			m_toolChannel->select(0);
+			m_toolChannel->setEnable(true);
+		}
+		else
+			m_toolChannel->setEnable(false);
+
+		updateSkeletonTree(m_model, m_skeletonTree, nullptr, c_InvalidIndex);
+	}
+
+	m_renderWidget->update();
 }
 
 void ModelToolDialog::updateOperations(ui::TreeViewItem* itemModel)
@@ -698,116 +815,7 @@ void ModelToolDialog::eventModelTreeButtonDown(ui::MouseButtonDownEvent* event)
 
 void ModelToolDialog::eventModelTreeSelect(ui::SelectionChangeEvent* event)
 {
-	RefArray< ui::TreeViewItem > items;
-	m_modelTree->getItems(items, ui::TreeView::GfDescendants | ui::TreeView::GfSelectedOnly);
-
-	if (items.size() == 1)
-		m_model = items[0]->getData< Model >(L"MODEL");
-	else
-	{
-		m_model = nullptr;
-		m_modelTris = nullptr;
-		m_modelAdjacency = nullptr;
-	}
-
-	m_materialGrid->removeAllRows();
-	m_statisticGrid->removeAllRows();
-	m_toolChannel->removeAll();
-	m_skeletonTree->removeAllItems();
-
-	if (m_model)
-	{
-		m_modelTris = new Model(*m_model);
-		Triangulate().apply(*m_modelTris);
-
-		Aabb3 boundingBox = m_model->getBoundingBox();
-		Vector4 extent = boundingBox.getExtent();
-		float minExtent = extent[minorAxis3(extent)];
-		m_normalScale = minExtent / 10.0f;
-
-		const AlignedVector< Material >& materials = m_model->getMaterials();
-		for (AlignedVector< Material >::const_iterator i = materials.begin(); i != materials.end(); ++i)
-		{
-			const wchar_t* const c_blendModes[] = { L"Decal", L"Add", L"Multiply", L"Alpha", L"AlphaTest" };
-			const auto& cl = i->getColor();
-
-			Ref< ui::GridRow > row = new ui::GridRow();
-			row->add(new ui::GridItem(i->getName()));
-			row->add(new ui::GridItem(i->getDiffuseMap().name + L" [" + toString(i->getDiffuseMap().channel) + L"]"));
-			row->add(new ui::GridItem(i->getSpecularMap().name + L" [" + toString(i->getSpecularMap().channel) + L"]"));
-			row->add(new ui::GridItem(i->getRoughnessMap().name + L" [" + toString(i->getRoughnessMap().channel) + L"]"));
-			row->add(new ui::GridItem(i->getMetalnessMap().name + L" [" + toString(i->getMetalnessMap().channel) + L"]"));
-			row->add(new ui::GridItem(i->getTransparencyMap().name + L" [" + toString(i->getTransparencyMap().channel) + L"]"));
-			row->add(new ui::GridItem(i->getEmissiveMap().name + L" [" + toString(i->getEmissiveMap().channel) + L"]"));
-			row->add(new ui::GridItem(i->getReflectiveMap().name + L" [" + toString(i->getReflectiveMap().channel) + L"]"));
-			row->add(new ui::GridItem(i->getNormalMap().name + L" [" + toString(i->getNormalMap().channel) + L"]"));
-			row->add(new ui::GridItem(i->getLightMap().name + L" [" + toString(i->getLightMap().channel) + L"]"));
-			row->add(new ui::GridItem( toString(cl.getRed()) + L", " + toString(cl.getGreen()) + L", " + toString(cl.getBlue()) + L", " + toString(cl.getAlpha())));
-			row->add(new ui::GridItem(toString(i->getDiffuseTerm())));
-			row->add(new ui::GridItem(toString(i->getSpecularTerm())));
-			row->add(new ui::GridItem(toString(i->getRoughness())));
-			row->add(new ui::GridItem(toString(i->getMetalness())));
-			row->add(new ui::GridItem(toString(i->getTransparency())));
-			row->add(new ui::GridItem(toString(i->getEmissive())));
-			row->add(new ui::GridItem(toString(i->getReflective())));
-			row->add(new ui::GridItem(toString(i->getRimLightIntensity())));
-			row->add(new ui::GridItem(c_blendModes[(int32_t)i->getBlendOperator()]));
-			row->add(new ui::GridItem(i->isDoubleSided() ? L"Yes" : L"No"));
-			m_materialGrid->addRow(row);
-		}
-
-		{
-			addStatistic(L"# materials", toString(m_model->getMaterials().size()));
-			addStatistic(L"# vertices", toString(m_model->getVertexCount()));
-			addStatistic(L"# polygons", toString(m_model->getPolygonCount()));
-
-			SmallMap< uint32_t, uint32_t > polSizes;
-			for (const auto& pol : m_model->getPolygons())
-				polSizes[pol.getVertexCount()]++;
-
-			for (auto polSize : polSizes)
-				addStatistic(L"# " + toString(polSize.first) + L"-polygons", toString(polSize.second));
-
-			addStatistic(L"# positions", toString(m_model->getPositionCount()));
-			addStatistic(L"# colors", toString(m_model->getColorCount()));
-			addStatistic(L"# normals", toString(m_model->getNormalCount()));
-			addStatistic(L"# texcoords", toString(m_model->getTexCoords().size()));
-
-			addStatistic(L"# texture channels", toString(m_model->getTexCoordChannels().size()));
-			for (size_t i = 0; i < m_model->getTexCoordChannels().size(); ++i)
-			{
-				const auto& channel = m_model->getTexCoordChannels()[i];
-				addStatistic(L"  " + toString(i), channel);
-			}
-
-			addStatistic(L"# joints", toString(m_model->getJointCount()));
-
-			addStatistic(L"# animations ", toString(m_model->getAnimationCount()));
-			for (size_t i = 0; i < m_model->getAnimationCount(); ++i)
-			{
-				const auto animation = m_model->getAnimation(i);
-				addStatistic(L"  " + toString(i), animation->getName());
-			}
-
-			addStatistic(L"# blend targets", toString(m_model->getBlendTargetCount()));
-		}
-
-		uint32_t nextChannel = 8; // m_model->getAvailableTexCoordChannel();
-		if (nextChannel > 0)
-		{
-			for (uint32_t i = 0; i < nextChannel; ++i)
-				m_toolChannel->add(toString(i));
-
-			m_toolChannel->select(0);
-			m_toolChannel->setEnable(true);
-		}
-		else
-			m_toolChannel->setEnable(false);
-
-		updateSkeletonTree(m_model, m_skeletonTree, nullptr, c_InvalidIndex);
-	}
-
-	m_renderWidget->update();
+	updateModel();
 }
 
 void ModelToolDialog::eventMouseDown(ui::MouseButtonDownEvent* event)

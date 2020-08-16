@@ -1,3 +1,4 @@
+#include "Core/Misc/SafeDestroy.h"
 #include "Ui/Application.h"
 #include "Ui/Clipboard.h"
 #include "Ui/Command.h"
@@ -63,17 +64,8 @@ void BrowsePropertyItem::createInPlaceControls(PropertyList* parent)
 
 void BrowsePropertyItem::destroyInPlaceControls()
 {
-	if (m_buttonEdit)
-	{
-		m_buttonEdit->destroy();
-		m_buttonEdit = 0;
-	}
-	if (m_buttonBrowse)
-	{
-		m_buttonBrowse->destroy();
-		m_buttonBrowse = 0;
-	}
-
+	safeDestroy(m_buttonEdit);
+	safeDestroy(m_buttonBrowse);
 	PropertyItem::destroyInPlaceControls();
 }
 
@@ -83,7 +75,7 @@ void BrowsePropertyItem::resizeInPlaceControls(const Rect& rc, std::vector< Widg
 	PropertyItem::resizeInPlaceControls(rc, childRects);
 
 	int32_t width = rc.getHeight();
-	int32_t right = rc.right - int32_t(childRects.size()) * width;
+	int32_t right = rc.right - (int32_t)childRects.size() * width;
 
 	outChildRects.insert(outChildRects.end(), childRects.begin(), childRects.end());
 
@@ -91,9 +83,9 @@ void BrowsePropertyItem::resizeInPlaceControls(const Rect& rc, std::vector< Widg
 		outChildRects.push_back(WidgetRect(
 			m_buttonEdit,
 			Rect(
-				right - width * 2,
+				right - width * 2 - 2,
 				rc.top,
-				right - width,
+				right - width - 2,
 				rc.bottom
 			)
 		));
