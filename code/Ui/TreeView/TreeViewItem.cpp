@@ -476,6 +476,17 @@ void TreeViewItem::mouseDoubleClick(MouseDoubleClickEvent* event, const Point& p
 	// Raise activation event.
 	TreeViewItemActivateEvent activateEvent(m_view, this);
 	m_view->raiseEvent(&activateEvent);
+
+	// If event hasn't been consumed and we have children then toggle expanded state.
+	if (!activateEvent.consumed())
+	{
+		if (m_expanded)
+			collapse();
+		else
+			expand();
+
+		m_view->requestUpdate();
+	}
 }
 
 void TreeViewItem::mouseMove(MouseMoveEvent* event, const Point& position)

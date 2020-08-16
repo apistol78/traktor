@@ -86,14 +86,5 @@ Ref< Model > ModelCache::get(const Path& fileName, const std::wstring& filter)
 	return model;
 }
 
-Ref< Model > ModelCache::get(const Path& fileName, const std::wstring& filter, uint32_t user)
-{
-	return nullptr;
-}
-
-void ModelCache::put(const Path& fileName, const std::wstring& filter, const Model* model, uint32_t user)
-{
-}
-
 	}
 }

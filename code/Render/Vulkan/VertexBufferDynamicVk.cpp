@@ -24,6 +24,8 @@ VertexBufferDynamicVk::VertexBufferDynamicVk(
 
 void* VertexBufferDynamicVk::lock()
 {
+	T_FATAL_ASSERT(!m_locked);
+
 	void* ptr = nullptr;
 	if (vmaMapMemory(m_allocator, m_allocation, &ptr) == VK_SUCCESS)
 	{

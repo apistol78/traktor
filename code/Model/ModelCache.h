@@ -39,12 +39,6 @@ public:
     /*! Get model. */
     Ref< Model > get(const Path& fileName, const std::wstring& filter);
 
-    /*! Get model with user key. */
-    Ref< Model > get(const Path& fileName, const std::wstring& filter, uint32_t user);
-
-    /*! Put model with user key. */
-    void put(const Path& fileName, const std::wstring& filter, const Model* model, uint32_t user);
-
 private:
     Path m_cachePath;
 	std::function< Ref< File >(const Path&) > m_getFile;
