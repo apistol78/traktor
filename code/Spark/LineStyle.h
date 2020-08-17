@@ -32,6 +32,8 @@ public:
 
 	bool create(const SwfLineStyle* lineStyle);
 
+	bool create(const Color4f& lineColor, uint16_t lineWidth);
+
 	void transform(const ColorTransform& cxform);
 
 	const Color4f& getLineColor() const;

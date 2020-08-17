@@ -32,9 +32,9 @@ class T_DLLCLASS Shape : public Character
 	T_RTTI_CLASS;
 
 public:
-	Shape();
+	Shape() = default;
 
-	Shape(uint16_t id);
+	explicit Shape(uint16_t id);
 
 	bool create(const Aabb2& shapeBounds, const SwfShape* shape, const SwfStyles* styles);
 
@@ -49,6 +49,12 @@ public:
 	void triangulate(bool oddEven);
 
 	void discardPaths();
+
+	void addPath(const Path& path);
+
+	uint16_t defineFillStyle(const Color4f& color);
+
+	uint16_t defineLineStyle(const Color4f& color, uint16_t width);
 
 	virtual Ref< CharacterInstance > createInstance(
 		ActionContext* context,

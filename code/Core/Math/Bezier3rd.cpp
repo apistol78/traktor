@@ -5,10 +5,6 @@
 namespace traktor
 {
 
-Bezier3rd::Bezier3rd()
-{
-}
-
 Bezier3rd::Bezier3rd(const Vector2& cp0_, const Vector2& cp1_, const Vector2& cp2_, const Vector2& cp3_)
 :	cp0(cp0_)
 ,	cp1(cp1_)

@@ -27,7 +27,7 @@ public:
 	Vector2 cp2;
 	Vector2 cp3;
 
-	Bezier3rd();
+	Bezier3rd() = default;
 
 	Bezier3rd(const Vector2& cp0, const Vector2& cp1, const Vector2& cp2, const Vector2& cp3);
 

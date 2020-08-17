@@ -7,6 +7,7 @@
 #include "Core/Settings/PropertyGroup.h"
 #include "Core/Settings/PropertyInteger.h"
 #include "Core/Settings/PropertyString.h"
+#include "Database/Database.h"
 #include "Database/Instance.h"
 #include "Editor/IDocument.h"
 #include "Editor/IEditor.h"
@@ -70,6 +71,7 @@ bool EditorPage::create(ui::Container* parent)
 
 	Ref< sound::ISoundPlayer > soundPlayer = m_editor->getStoreObject< sound::ISoundPlayer >(L"SoundPlayer");
 
+	/*
 	Ref< MovieAsset > asset = m_document->getObject< MovieAsset >(0);
 	if (!asset)
 		return false;
@@ -100,8 +102,17 @@ bool EditorPage::create(ui::Container* parent)
 	m_movie = MovieFactory(true).createMovie(swf);
 	if (!m_movie)
 		return false;
+	*/
 
 	Ref< db::Database > database = m_editor->getOutputDatabase();
+
+	// Read movie from output database.
+	m_movie = database->getObjectReadOnly< Movie >(
+		m_document->getInstance(0)->getGuid()
+	);
+	if (!m_movie)
+		return false;
+
 
 	m_resourceManager = new resource::ResourceManager(database, true);
 	m_resourceManager->addFactory(new render::ShaderFactory(renderSystem));
