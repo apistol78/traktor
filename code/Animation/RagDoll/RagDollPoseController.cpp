@@ -62,6 +62,7 @@ bool RagDollPoseController::create(
 		bool updateController = false;
 		trackPoseController->evaluate(
 			0.0f,
+			0.0f,
 			worldTransform,
 			skeleton,
 			jointTransformsImmutable,
@@ -283,6 +284,7 @@ void RagDollPoseController::setTransform(const Transform& transform)
 }
 
 bool RagDollPoseController::evaluate(
+	float time,
 	float deltaTime,
 	const Transform& worldTransform,
 	const Skeleton* skeleton,
@@ -304,6 +306,7 @@ bool RagDollPoseController::evaluate(
 		}
 		if (m_trackPoseController)
 			m_trackPoseController->evaluate(
+				time,
 				deltaTime,
 				worldTransform,
 				skeleton,

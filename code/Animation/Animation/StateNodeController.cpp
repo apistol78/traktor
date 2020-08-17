@@ -25,6 +25,7 @@ void StateNodeController::setTransform(const Transform& transform)
 }
 
 bool StateNodeController::evaluate(
+	float time,
 	float deltaTime,
 	const Transform& worldTransform,
 	const Skeleton* skeleton,
@@ -47,7 +48,7 @@ bool StateNodeController::evaluate(
 		currentPose
 	);
 
-	m_context.setTime(m_context.getTime() + deltaTime);
+	m_context.setTime(time);
 
 	float timeLeft = m_context.getDuration() - m_context.getTime();
 	if (timeLeft <= 0.0f)

@@ -48,7 +48,6 @@ const render::Handle s_handleVisualTargetSet[] =
 };
 
 const resource::Id< render::Shader > c_lightShader(L"{707DE0B0-0E2B-A44A-9441-9B1FCFD428AA}");
-const resource::Id< render::Shader > c_reflectionShader(L"{F04EEA34-85E0-974F-BE97-79D24C6ACFBD}");
 const resource::Id< render::Shader > c_fogShader(L"{9453D74C-76C4-8748-9A5B-9E3D6D4F9406}");
 
 const resource::Id< render::ImageGraph > c_ambientOcclusionLow(L"{416745F9-93C7-8D45-AE28-F2823DEE636A}");
@@ -67,6 +66,7 @@ const resource::Id< render::ImageGraph > c_motionBlurHigh(L"{E813C1A0-D27D-AE4F-
 const resource::Id< render::ImageGraph > c_motionBlurUltra(L"{E813C1A0-D27D-AE4F-9EE4-637529ECCD69}");
 const resource::Id< render::ImageGraph > c_toneMapFixed(L"{1F20DAB5-22EB-B84C-92B0-71E94C1CE261}");
 const resource::Id< render::ImageGraph > c_toneMapAdaptive(L"{1F20DAB5-22EB-B84C-92B0-71E94C1CE261}");
+const resource::Id< render::ImageGraph > c_screenReflections(L"{2F8EC56A-FD46-DF42-94B5-9DD676B8DD8A}");
 
 resource::Id< render::ImageGraph > getAmbientOcclusionId(Quality quality)
 {
@@ -213,8 +213,6 @@ bool WorldRendererDeferred::create(
 	// Create light, reflection and fog shaders.
 	if (!resourceManager->bind(c_lightShader, m_lightShader))
 		return false;
-	if (!resourceManager->bind(c_reflectionShader, m_reflectionShader))
-		return false;
 	if (!resourceManager->bind(c_fogShader, m_fogShader))
 		return false;
 
@@ -294,6 +292,16 @@ bool WorldRendererDeferred::create(
 		{
 			log::warning << L"Unable to create tone map process." << Endl;
 			m_toneMapQuality = Quality::Disabled;
+		}
+	}
+
+	// Create screen reflections processing.
+	if (m_reflectionsQuality >= Quality::High)
+	{
+		if (!resourceManager->bind(c_screenReflections, m_screenReflections))
+		{
+			log::warning << L"Unable to create screen space reflections process." << Endl;
+			m_reflectionsQuality = Quality::Disabled;
 		}
 	}
 
@@ -1332,27 +1340,27 @@ render::handle_t WorldRendererDeferred::setupReflectionsPass(
 			wc.build(worldRenderView, reflectionsPass, rootEntity);
 			wc.flush(worldRenderView, reflectionsPass);
 			renderContext->merge(render::RpAll);
-
-			// Render screenspace reflections.
-			//if (m_reflectionsQuality >= Quality::High)
-			//{
-			//	auto visualTargetSet = renderGraph.getTargetSet(visualReadTargetSetId);
-
-			//	auto lrb = renderContext->alloc< render::LambdaRenderBlock >(L"Reflections");
-			//	lrb->lambda = [=](render::IRenderView* renderView)
-			//	{
-			//		Scalar p11 = projection.get(0, 0);
-			//		Scalar p22 = projection.get(1, 1);
-
-			//		m_reflectionShader->setVectorParameter(s_handleMagicCoeffs, Vector4(1.0f / p11, 1.0f / p22, 0.0f, 0.0f));
-			//		m_reflectionShader->setTextureParameter(s_handleScreenMap, visualTargetSet->getColorTexture(0));
-
-			//		m_reflectionShader->draw(renderView, m_vertexBufferQuad, 0, m_primitivesQuad);
-			//	};
-			//	renderContext->enqueue(lrb);
-			//}
 		}
 	);
+
+	// Render screenspace reflections.
+	if (m_reflectionsQuality >= Quality::High)
+	{
+		render::ImageGraphParams ipd;
+		ipd.viewFrustum = worldRenderView.getViewFrustum();
+		ipd.view = worldRenderView.getView();
+		ipd.projection = worldRenderView.getProjection();
+		ipd.deltaTime = worldRenderView.getDeltaTime();
+
+		render::ImageGraphContext cx(m_screenRenderer);
+		cx.associateTextureTargetSet(s_handleInputColorLast, visualReadTargetSetId, 0);
+		cx.associateTextureTargetSet(s_handleInputDepth, gbufferTargetSetId, 0);
+		cx.associateTextureTargetSet(s_handleInputNormal, gbufferTargetSetId, 1);
+		cx.associateTextureTargetSet(s_handleInputRoughness, gbufferTargetSetId, 2);
+		cx.setParams(ipd);
+
+		m_screenReflections->addPasses(renderGraph, rp, cx);
+	}
 
 	renderGraph.addPass(rp);
 	return reflectionsTargetSetId;

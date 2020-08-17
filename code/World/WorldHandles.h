@@ -78,6 +78,7 @@ extern const render::Handle s_handleInputDepth;
 extern const render::Handle s_handleInputNormal;
 extern const render::Handle s_handleInputVelocity;
 extern const render::Handle s_handleInputShadowMap;
+extern const render::Handle s_handleInputRoughness;
 
     }
 }

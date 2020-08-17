@@ -50,6 +50,7 @@ public:
 	virtual void setTransform(const Transform& transform) override final;
 
 	virtual bool evaluate(
+		float time,
 		float deltaTime,
 		const Transform& worldTransform,
 		const Skeleton* skeleton,

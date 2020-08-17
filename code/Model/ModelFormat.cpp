@@ -1,3 +1,4 @@
+#include "Core/Io/BufferedStream.h"
 #include "Core/Io/FileSystem.h"
 #include "Core/Misc/String.h"
 #include "Model/ModelFormat.h"
@@ -12,7 +13,11 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.model.ModelFormat", ModelFormat, Object)
 Ref< Model > ModelFormat::readAny(const Path& filePath, const std::wstring& filter)
 {
 	return readAny(filePath, filter, [&](const Path& p) -> Ref< IStream >{
-		return FileSystem::getInstance().open(p, File::FmRead);
+		Ref< IStream > file = FileSystem::getInstance().open(p, File::FmRead);
+		if (file)
+			return new BufferedStream(file);
+		else
+			return nullptr;
 	});
 }
 
