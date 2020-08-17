@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.render.ImageGraphAsset">
+	<nodes>
+		<item type="traktor.render.ImgOutput" version="traktor.render.Node:1">
+			<id>{A24C08E3-CDBB-F540-A23E-D2DDEE8715EB}</id>
+			<comment/>
+			<position>
+				<first>1115</first>
+				<second>207</second>
+			</position>
+		</item>
+		<item type="traktor.render.ImgInput" version="traktor.render.Node:1">
+			<id>{6834F690-121C-C249-8191-A03A37AFC8F2}</id>
+			<comment/>
+			<position>
+				<first>549</first>
+				<second>202</second>
+			</position>
+			<textureId>InputDepth</textureId>
+		</item>
+		<item type="traktor.render.ImgInput" version="traktor.render.Node:1">
+			<id>{F45C816F-6B0C-2443-9179-2D3DDD6225CD}</id>
+			<comment/>
+			<position>
+				<first>545</first>
+				<second>286</second>
+			</position>
+			<textureId>InputNormal</textureId>
+		</item>
+		<item type="traktor.render.ImgInput" version="traktor.render.Node:1">
+			<id>{86DABBE0-B5B7-A947-8CFC-DEBB4F93249F}</id>
+			<comment/>
+			<position>
+				<first>515</first>
+				<second>355</second>
+			</position>
+			<textureId>InputRoughness</textureId>
+		</item>
+		<item type="traktor.render.ImgPass" version="traktor.render.Node:1">
+			<id>{DB09FFB6-7207-5947-A15B-8026A5683991}</id>
+			<comment/>
+			<position>
+				<first>800</first>
+				<second>187</second>
+			</position>
+			<name>Screen reflections</name>
+			<steps>
+				<item type="traktor.render.ImgStepSimple">
+					<shader>{F04EEA34-85E0-974F-BE97-79D24C6ACFBD}</shader>
+					<parameters>
+						<item>Depth</item>
+						<item>InputNormal</item>
+						<item>InputRoughness</item>
+						<item>Color</item>
+					</parameters>
+				</item>
+			</steps>
+		</item>
+		<item type="traktor.render.ImgInput" version="traktor.render.Node:1">
+			<id>{58AF53DD-58E0-9349-BCBE-9B285E5A292C}</id>
+			<comment/>
+			<position>
+				<first>557</first>
+				<second>115</second>
+			</position>
+			<textureId>InputColorLast</textureId>
+		</item>
+	</nodes>
+	<edges>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[4]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[1]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[4]"/>
+				<name>Depth</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[2]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[4]"/>
+				<name>InputNormal</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[3]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[4]"/>
+				<name>InputRoughness</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[5]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[4]"/>
+				<name>Color</name>
+			</destination>
+		</item>
+	</edges>
+</object>

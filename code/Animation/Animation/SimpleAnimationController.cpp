@@ -12,7 +12,6 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.animation.SimpleAnimationController", SimpleAni
 SimpleAnimationController::SimpleAnimationController(const resource::Proxy< Animation >& animation, bool linearInterpolation)
 :	m_animation(animation)
 ,	m_linearInterpolation(linearInterpolation)
-,	m_time(0.0f)
 ,	m_indexHint(-1)
 {
 }
@@ -26,6 +25,7 @@ void SimpleAnimationController::setTransform(const Transform& transform)
 }
 
 bool SimpleAnimationController::evaluate(
+	float time,
 	float deltaTime,
 	const Transform& worldTransform,
 	const Skeleton* skeleton,
@@ -37,19 +37,16 @@ bool SimpleAnimationController::evaluate(
 	if (!m_animation)
 		return false;
 
+	time = std::fmod(time, m_animation->getLastKeyPose().at);
+
 	Pose pose;
-	m_animation->getPose(m_time, m_linearInterpolation, m_indexHint, pose);
+	m_animation->getPose(time, m_linearInterpolation, m_indexHint, pose);
 
 	calculatePoseTransforms(
 		skeleton,
 		&pose,
 		outPoseTransforms
 	);
-
-	m_time += deltaTime;
-
-	if (m_time >= m_animation->getLastKeyPose().at)
-		m_time = 0.0f;
 
 	return true;
 }

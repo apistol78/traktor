@@ -106,7 +106,6 @@ private:
 	render::Handle m_handleVisual[7];
 
 	resource::Proxy< render::Shader > m_lightShader;
-	resource::Proxy< render::Shader > m_reflectionShader;
 	resource::Proxy< render::Shader > m_fogShader;
 
 	resource::Proxy< render::ImageGraph > m_ambientOcclusion;
@@ -116,6 +115,7 @@ private:
 	resource::Proxy< render::ImageGraph > m_motionBlurPrime;
 	resource::Proxy< render::ImageGraph > m_motionBlur;
 	resource::Proxy< render::ImageGraph > m_toneMap;
+	resource::Proxy< render::ImageGraph > m_screenReflections;
 	resource::Proxy< render::ImageGraph > m_shadowMaskProject;
 
 	resource::Proxy< IrradianceGrid > m_irradianceGrid;

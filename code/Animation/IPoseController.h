@@ -43,6 +43,7 @@ public:
 	 * \return True if pose is continuous since last evaluation.
 	 */
 	virtual bool evaluate(
+		float time,
 		float deltaTime,
 		const Transform& worldTransform,
 		const Skeleton* skeleton,

@@ -36,6 +36,7 @@ public:
 	virtual void setTransform(const Transform& transform) override final;
 
 	virtual bool evaluate(
+		float time,
 		float deltaTime,
 		const Transform& worldTransform,
 		const Skeleton* skeleton,
@@ -52,7 +53,6 @@ public:
 private:
 	resource::Proxy< Animation > m_animation;
 	bool m_linearInterpolation;
-	float m_time;
 	int32_t m_indexHint;
 };
 

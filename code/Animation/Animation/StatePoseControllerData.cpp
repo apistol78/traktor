@@ -44,6 +44,7 @@ Ref< IPoseController > StatePoseControllerData::createInstance(resource::IResour
 		bool dummyUpdate;
 
 		poseController->evaluate(
+			0.0f,
 			c_timeOffsetDeltaTime,
 			worldTransform,
 			skeleton,

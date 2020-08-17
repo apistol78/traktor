@@ -122,7 +122,7 @@ private:
 
 	void synchronize() const;
 
-	void updatePoseController(int32_t index, float deltaTime);
+	void updatePoseController(int32_t index, float time, float deltaTime);
 };
 
 	}

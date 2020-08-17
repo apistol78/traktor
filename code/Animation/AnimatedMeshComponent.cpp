@@ -70,7 +70,7 @@ AnimatedMeshComponent::AnimatedMeshComponent(
 		m_skinTransforms[1].resize(skinJointCount * 2, Vector4::origo());
 		m_skinTransforms[2].resize(skinJointCount * 2, Vector4::origo());
 
-		updatePoseController(m_index, 0.0f);
+		updatePoseController(m_index, 0.0f, 0.0f);
 
 		m_index = 1 - m_index;
 		m_updateController = 0;
@@ -162,14 +162,15 @@ void AnimatedMeshComponent::update(const world::UpdateParams& update)
 		m_index = 1 - m_index;
 
 #if defined(T_USE_UPDATE_JOBS)
-		m_updatePoseControllerJob = JobManager::getInstance().add(makeFunctor< AnimatedMeshComponent, int32_t, float >(
+		m_updatePoseControllerJob = JobManager::getInstance().add(makeFunctor< AnimatedMeshComponent, int32_t, float, float >(
 			this,
 			&AnimatedMeshComponent::updatePoseController,
 			m_index,
+			update.alternateTime,
 			update.deltaTime
 		));
 #else
-		updatePoseController(m_index, update.deltaTime);
+		updatePoseController(m_index, update.alternateTime, update.deltaTime);
 #endif
 	}
 	else
@@ -348,7 +349,7 @@ void AnimatedMeshComponent::synchronize() const
 #endif
 }
 
-void AnimatedMeshComponent::updatePoseController(int32_t index, float deltaTime)
+void AnimatedMeshComponent::updatePoseController(int32_t index, float time, float deltaTime)
 {
 	bool updateController = false;
 
@@ -359,6 +360,7 @@ void AnimatedMeshComponent::updatePoseController(int32_t index, float deltaTime)
 
 		// Evaluate pose transforms in object space.
 		m_poseController->evaluate(
+			time,
 			deltaTime * m_updateTimeScale,
 			m_transform.get(),
 			m_skeleton,

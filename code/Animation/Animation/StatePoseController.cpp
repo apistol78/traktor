@@ -84,6 +84,7 @@ void StatePoseController::setTransform(const Transform& transform)
 }
 
 bool StatePoseController::evaluate(
+	float time,
 	float deltaTime,
 	const Transform& worldTransform,
 	const Skeleton* skeleton,
@@ -99,7 +100,7 @@ bool StatePoseController::evaluate(
 
 	if (m_stateGraph.changed())
 	{
-		m_currentState = 0;
+		m_currentState = nullptr;
 		m_stateGraph.consume();
 	}
 
@@ -112,7 +113,7 @@ bool StatePoseController::evaluate(
 			if (!m_currentState->prepareContext(m_currentStateContext))
 				return false;
 		}
-		m_nextState = 0;
+		m_nextState = nullptr;
 		m_blendState = 0.0f;
 		m_blendDuration = 0.0f;
 	}

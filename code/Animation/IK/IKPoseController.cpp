@@ -33,6 +33,7 @@ void IKPoseController::setTransform(const Transform& transform)
 }
 
 bool IKPoseController::evaluate(
+	float time,
 	float deltaTime,
 	const Transform& worldTransform,
 	const Skeleton* skeleton,
@@ -47,6 +48,7 @@ bool IKPoseController::evaluate(
 	if (m_poseController)
 	{
 		m_poseController->evaluate(
+			time,
 			deltaTime,
 			worldTransform,
 			skeleton,
@@ -87,23 +89,23 @@ bool IKPoseController::evaluate(
 	{
 		for (uint32_t j = 0; j < jointCount; ++j)
 		{
-			const Joint* joint = skeleton->getJoint(i);
+			const Joint* joint = skeleton->getJoint(j);
 			if (joint->getParent() < 0)
 				continue;
 
 			Vector4& s = nodes[joint->getParent()];
-			Vector4& e = nodes[i];
+			Vector4& e = nodes[j];
 
 			// Constraint 1; keep length.
 			{
 				Vector4 d = e - s;
 				Scalar ln = d.length();
-				Scalar err = lengths[i] - ln;
+				Scalar err = lengths[j] - ln;
 				if (abs(err) > FUZZY_EPSILON)
 				{
 					d /= ln;
-					e += err * d * Scalar(0.5f);
-					s -= err * d * Scalar(0.5f);
+					e += err * d * 0.5_simd;
+					s -= err * d * 0.5_simd;
 				}
 			}
 		}
@@ -113,23 +115,24 @@ bool IKPoseController::evaluate(
 	for (uint32_t i = 0; i < jointCount; ++i)
 	{
 		const Joint* joint = skeleton->getJoint(i);
-		if (joint->getParent() >= 0)
-		{
-			const Vector4& s = nodes[joint->getParent()];
-			const Vector4& e = nodes[i];
+		//if (joint->getParent() >= 0)
+		//{
+		//	const Vector4& s = nodes[joint->getParent()];
+		//	const Vector4& e = nodes[i];
 
-			Vector4 axisZ = (e - s).normalized();
-			Vector4 axisY = cross(axisZ, outPoseTransforms[i].axisX()).normalized();
-			Vector4 axisX = cross(axisY, axisZ).normalized();
+		//	Vector4 axisZ = (e - s).normalized();
 
-			outPoseTransforms[i] = Transform(Matrix44(
-				axisX,
-				axisY,
-				axisZ,
-				s
-			));
-		}
-		else
+		//	Vector4 axisX, axisY;
+		//	orthogonalFrame(axisZ, axisY, axisX);
+
+		//	outPoseTransforms[i] = Transform(Matrix44(
+		//		axisX,
+		//		axisY,
+		//		axisZ,
+		//		e
+		//	));
+		//}
+		//else
 		{
 			outPoseTransforms[i] = Transform(
 				nodes[i],
