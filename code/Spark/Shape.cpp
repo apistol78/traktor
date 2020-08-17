@@ -60,10 +60,6 @@ private:
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spark.Shape", 0, Shape, Character)
 
-Shape::Shape()
-{
-}
-
 Shape::Shape(uint16_t id)
 :	Character(id)
 {
@@ -487,6 +483,26 @@ void Shape::triangulate(bool oddEven)
 void Shape::discardPaths()
 {
 	m_paths.clear();
+}
+
+void Shape::addPath(const Path& path)
+{
+	m_paths.push_back(path);
+	m_shapeBounds.contain(path.getBounds());
+}
+
+uint16_t Shape::defineFillStyle(const Color4f& color)
+{
+	auto& fs = m_fillStyles.push_back();
+	fs.create(color);
+	return (uint16_t)m_fillStyles.size();
+}
+
+uint16_t Shape::defineLineStyle(const Color4f& color, uint16_t width)
+{
+	auto& ls = m_lineStyles.push_back();
+	ls.create(color, width);
+	return (uint16_t)m_lineStyles.size();
 }
 
 Ref< CharacterInstance > Shape::createInstance(

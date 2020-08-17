@@ -25,6 +25,13 @@ bool LineStyle::create(const SwfLineStyle* lineStyle)
 	return true;
 }
 
+bool LineStyle::create(const Color4f& lineColor, uint16_t lineWidth)
+{
+	m_lineColor = lineColor;
+	m_lineWidth = lineWidth;
+	return true;
+}
+
 void LineStyle::transform(const ColorTransform& cxform)
 {
 	m_lineColor = m_lineColor * cxform.mul + cxform.add;

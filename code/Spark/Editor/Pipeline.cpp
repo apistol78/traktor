@@ -3,6 +3,8 @@
 #include <list>
 #include "Core/Io/IStream.h"
 #include "Core/Log/Log.h"
+#include "Core/Math/Bezier2nd.h"
+#include "Core/Math/Bezier3rd.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Misc/String.h"
 #include "Core/Settings/PropertyBoolean.h"
@@ -31,9 +33,11 @@
 #include "Spark/Editor/EmptyMovieAsset.h"
 #include "Spark/Editor/MovieAsset.h"
 #include "Spark/Editor/Pipeline.h"
+#include "Svg/Document.h"
 #include "Svg/IShapeVisitor.h"
 #include "Svg/Parser.h"
 #include "Svg/PathShape.h"
+#include "Svg/Style.h"
 #include "Xml/Document.h"
 
 namespace traktor
@@ -187,42 +191,136 @@ bool Pipeline::buildOutput(
 				return false;
 			}
 
+			svg::Document* document = dynamic_type_cast< svg::Document* >(shape);
+			if (!document)
+			{
+				log::error << L"Failed to import Spark movie; no document node." << Endl;
+				return false;
+			}
+
+			float width = document->getSize().x;
+			float height = document->getSize().y;
+
+			// Create a single frame and place shape.
+			Ref< Frame > frame = new Frame();
+
+			// Create sprite and add frame.
+			Ref< Sprite > sprite = new Sprite();
+			sprite->addFrame(frame);
+
+			// Create movie container.
+			movie = new Movie(Aabb2(Vector2(0.0f, 0.0f), Vector2(width * 20.0f, height * 20.0f)), sprite);
+
+			// Convert SVG shape into Spark shape.
+			Ref< Shape > outputShape = new Shape();
+
 			ShapeVisitor visitor(
 				[&](svg::Shape* svg) {
 
 					if (const auto ps = dynamic_type_cast< svg::PathShape* >(svg))
 					{
-						spark::Path path;
+						uint16_t fillStyle = 0;
+						uint16_t lineStyle = 0;
 
-						const auto& p = ps->getPath();
-						for (const auto& sp : p.getSubPaths())
+						auto style = ps->getStyle();
+						if (style)
 						{
+							if (style->getFillEnable())
+								fillStyle = outputShape->defineFillStyle(style->getFill());
+							if (style->getStrokeEnable())
+								lineStyle = outputShape->defineLineStyle(style->getStroke(), (uint16_t)(style->getStrokeWidth() * 20.0f));
+						}
+
+						Path path;
+						for (const auto& sp : ps->getPath().getSubPaths())
+						{
+							size_t ln = sp.points.size();
 							switch (sp.type)
 							{
 							case svg::SptLinear:
-								path.moveTo(0, 0, Path::CmAbsolute);
-								path.lineTo(0, 0, Path::CmAbsolute);
+								{
+									path.moveTo((int32_t)(sp.points[0].x * 20.0f), (int32_t)(sp.points[0].y * 20.0f), Path::CmAbsolute);
+									for (size_t i = 1; i < ln; ++i)
+										path.lineTo((int32_t)(sp.points[i].x * 20.0f), (int32_t)(sp.points[i].y * 20.0f), Path::CmAbsolute);
+									if (sp.closed)
+										path.lineTo((int32_t)(sp.points[0].x * 20.0f), (int32_t)(sp.points[0].y * 20.0f), Path::CmAbsolute);
+
+									path.end(fillStyle, fillStyle, lineStyle);
+								}
 								break;
 
 							case svg::SptQuadric:
+								{
+									path.moveTo((int32_t)(sp.points[0].x * 20.0f), (int32_t)(sp.points[0].y * 20.0f), Path::CmAbsolute);
+									for (size_t i = 1; i < ln; i += 2)
+										path.quadraticTo(
+											(int32_t)(sp.points[i].x * 20.0f), (int32_t)(sp.points[i].y * 20.0f),
+											(int32_t)(sp.points[i + 1].x * 20.0f), (int32_t)(sp.points[i + 1].y * 20.0f),
+											Path::CmAbsolute
+										);
+									if (sp.closed)
+										path.lineTo((int32_t)(sp.points[0].x * 20.0f), (int32_t)(sp.points[0].y * 20.0f), Path::CmAbsolute);
+
+									path.end(fillStyle, fillStyle, lineStyle);
+								}
 								break;
 
 							case svg::SptCubic:
-								// Since Spark doesn't support cubic paths we need to approximate with quadratic.
+								{
+									path.moveTo((int32_t)(sp.points[0].x * 20.0f), (int32_t)(sp.points[0].y * 20.0f), Path::CmAbsolute);
+									for (size_t i = 1; i < ln; i += 3)
+									{
+										Bezier3rd b(
+											sp.points[i - 1],
+											sp.points[i],
+											sp.points[i + 1],
+											sp.points[i + 2]
+										);
+
+										AlignedVector< Bezier2nd > b2s;
+										b.approximate(
+											1.0f,
+											4,
+											b2s
+										);
+
+										for (const auto& b2 : b2s)
+										{
+											path.quadraticTo(
+												(int32_t)(b2.cp1.x * 20.0f), (int32_t)(b2.cp1.y * 20.0f),
+												(int32_t)(b2.cp2.x * 20.0f), (int32_t)(b2.cp2.y * 20.0f),
+												Path::CmAbsolute
+											);
+										}
+									}
+									if (sp.closed)
+										path.lineTo((int32_t)(sp.points[0].x * 20.0f), (int32_t)(sp.points[0].y * 20.0f), Path::CmAbsolute);
+
+									path.end(fillStyle, fillStyle, lineStyle);
+								}
 								break;
 
 							default:
 								break;
 							}
 						}
+						outputShape->addPath(path);
 					}
-					// Ref< Shape > shape = new Shape();
-					// shape->create(1, image->getWidth() * 20, image->getHeight() * 20);
 				},
 				[&](svg::Shape*) {
 				}
 			);
 			shape->visit(&visitor);
+
+			// Place shape character on first frame.
+			Frame::PlaceObject p;
+			p.hasFlags = Frame::PfHasCharacterId;
+			p.depth = 1;
+			p.characterId = 1;
+			frame->placeObject(p);
+
+			// Add shape to dictionary.
+			movie->defineCharacter(1, outputShape);
 		}
 		else
 		{
