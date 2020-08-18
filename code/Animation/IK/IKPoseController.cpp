@@ -38,8 +38,7 @@ bool IKPoseController::evaluate(
 	const Transform& worldTransform,
 	const Skeleton* skeleton,
 	const AlignedVector< Transform >& jointTransforms,
-	AlignedVector< Transform >& outPoseTransforms,
-	bool& outUpdateController
+	AlignedVector< Transform >& outPoseTransforms
 )
 {
 	const uint32_t jointCount = skeleton->getJointCount();
@@ -53,8 +52,7 @@ bool IKPoseController::evaluate(
 			worldTransform,
 			skeleton,
 			jointTransforms,
-			outPoseTransforms,
-			outUpdateController
+			outPoseTransforms
 		);
 
 		// Ensure we've enough transforms.

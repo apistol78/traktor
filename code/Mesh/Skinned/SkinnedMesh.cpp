@@ -11,18 +11,12 @@ namespace traktor
 		namespace
 		{
 
-render::handle_t s_handleJoints = 0;
+const render::Handle s_handleLastJoints(L"Mesh_LastJoints");
+const render::Handle s_handleJoints(L"Mesh_Joints");
 
 		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.mesh.SkinnedMesh", SkinnedMesh, IMesh)
-
-SkinnedMesh::SkinnedMesh()
-:	m_jointCount(0)
-{
-	if (!s_handleJoints)
-		s_handleJoints = render::getParameterHandle(L"Joints");
-}
 
 const Aabb3& SkinnedMesh::getBoundingBox() const
 {
@@ -39,6 +33,7 @@ void SkinnedMesh::build(
 	const world::IWorldRenderPass& worldRenderPass,
 	const Transform& lastWorldTransform,
 	const Transform& worldTransform,
+	const AlignedVector< Vector4 >& lastJointTransforms,
 	const AlignedVector< Vector4 >& jointTransforms,
 	float distance,
 	const IMeshParameterCallback* parameterCallback
@@ -49,7 +44,7 @@ void SkinnedMesh::build(
 
 	const Aabb3& boundingBox = getBoundingBox();
 
-	const AlignedVector< render::Mesh::Part >& meshParts = m_mesh->getParts();
+	const auto& meshParts = m_mesh->getParts();
 	for (const auto& part : it->second)
 	{
 		auto sp = worldRenderPass.getProgram(m_shader, part.shaderTechnique);
@@ -71,10 +66,16 @@ void SkinnedMesh::build(
 			worldTransform,
 			boundingBox
 		);
+
 		if (parameterCallback)
 			parameterCallback->setParameters(renderBlock->programParams);
+
+		if (!lastJointTransforms.empty())
+			renderBlock->programParams->setVectorArrayParameter(s_handleLastJoints, lastJointTransforms.c_ptr(), (int)lastJointTransforms.size());
+
 		if (!jointTransforms.empty())
 			renderBlock->programParams->setVectorArrayParameter(s_handleJoints, jointTransforms.c_ptr(), (int)jointTransforms.size());
+
 		renderBlock->programParams->endParameters(renderContext);
 
 		renderContext->draw(

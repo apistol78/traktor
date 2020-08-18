@@ -67,7 +67,7 @@ public:
 		void serialize(ISerializer& s);
 	};
 
-	AnimatedMeshComponentData();
+	AnimatedMeshComponentData() = default;
 
 	AnimatedMeshComponentData(
 		const resource::Id< mesh::SkinnedMesh >& mesh,
@@ -91,9 +91,7 @@ private:
 	resource::Id< mesh::SkinnedMesh > m_mesh;
 	resource::Id< Skeleton > m_skeleton;
 	Ref< const IPoseControllerData > m_poseController;
-	bool m_normalizePose;
-	bool m_normalizeTransform;
-	bool m_screenSpaceCulling;
+	bool m_screenSpaceCulling = true;
 	AlignedVector< Binding > m_bindings;
 };
 

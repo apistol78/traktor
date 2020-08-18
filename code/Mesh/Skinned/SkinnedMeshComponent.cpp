@@ -12,7 +12,7 @@ namespace traktor
 		namespace
 		{
 
-static render::handle_t s_techniqueVelocityWrite = 0;
+const render::Handle s_techniqueVelocityWrite(L"World_VelocityWrite");
 
 		}
 
@@ -26,8 +26,6 @@ SkinnedMeshComponent::SkinnedMeshComponent(const resource::Proxy< SkinnedMesh >&
 	const auto& jointMap = m_mesh->getJointMap();
 	m_jointTransforms[0].resize(jointMap.size() * 2, Vector4::origo());
 	m_jointTransforms[1].resize(jointMap.size() * 2, Vector4::origo());
-
-	s_techniqueVelocityWrite = render::getParameterHandle(L"World_VelocityWrite");
 }
 
 void SkinnedMeshComponent::destroy()
@@ -74,6 +72,7 @@ void SkinnedMeshComponent::build(const world::WorldBuildContext& context, const 
 		worldRenderPass,
 		lastWorldTransform,
 		worldTransform,
+		m_jointTransforms[1 - m_count],
 		m_jointTransforms[m_count],
 		distance,
 		m_parameterCallback

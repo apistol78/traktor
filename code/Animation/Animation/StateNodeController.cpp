@@ -30,8 +30,7 @@ bool StateNodeController::evaluate(
 	const Transform& worldTransform,
 	const Skeleton* skeleton,
 	const AlignedVector< Transform >& jointTransforms,
-	AlignedVector< Transform >& outPoseTransforms,
-	bool& outUpdateController
+	AlignedVector< Transform >& outPoseTransforms
 )
 {
 	Pose currentPose;

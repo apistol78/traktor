@@ -73,8 +73,7 @@ public:
 		const Transform& worldTransform,
 		const Skeleton* skeleton,
 		const AlignedVector< Transform >& boneTransforms,
-		AlignedVector< Transform >& outPoseTransforms,
-		bool& outUpdateController
+		AlignedVector< Transform >& outPoseTransforms
 	) override final;
 
 	virtual void estimateVelocities(

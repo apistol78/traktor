@@ -2823,6 +2823,9 @@ void EditorForm::eventTabClose(ui::TabCloseEvent* event)
 		m_activeDocument = nullptr;
 	}
 
+	if (tabPage == m_activeTabPage)
+		m_activeTabPage = nullptr;
+
 	setPropertyObject(nullptr);
 
 	tabPage = tab->getActivePage();

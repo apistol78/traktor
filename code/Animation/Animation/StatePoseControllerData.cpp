@@ -41,16 +41,13 @@ Ref< IPoseController > StatePoseControllerData::createInstance(resource::IResour
 	for (float time = 0.0f; time < timeOffset; time += c_timeOffsetDeltaTime)
 	{
 		AlignedVector< Transform > dummyPose;
-		bool dummyUpdate;
-
 		poseController->evaluate(
 			0.0f,
 			c_timeOffsetDeltaTime,
 			worldTransform,
 			skeleton,
 			dummyPose,
-			dummyPose,
-			dummyUpdate
+			dummyPose
 		);
 	}
 

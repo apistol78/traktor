@@ -18,14 +18,7 @@ namespace traktor
 	namespace animation
 	{
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.animation.AnimatedMeshComponentData", 0, AnimatedMeshComponentData, world::IEntityComponentData)
-
-AnimatedMeshComponentData::AnimatedMeshComponentData()
-:	m_normalizePose(false)
-,	m_normalizeTransform(false)
-,	m_screenSpaceCulling(true)
-{
-}
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.animation.AnimatedMeshComponentData", 1, AnimatedMeshComponentData, world::IEntityComponentData)
 
 AnimatedMeshComponentData::AnimatedMeshComponentData(
 	const resource::Id< mesh::SkinnedMesh >& mesh,
@@ -35,9 +28,6 @@ AnimatedMeshComponentData::AnimatedMeshComponentData(
 :	m_mesh(mesh)
 ,	m_skeleton(skeleton)
 ,	m_poseController(poseController)
-,	m_normalizePose(false)
-,	m_normalizeTransform(false)
-,	m_screenSpaceCulling(true)
 {
 }
 
@@ -94,8 +84,6 @@ Ref< AnimatedMeshComponent > AnimatedMeshComponentData::createComponent(resource
 		poseController,
 		jointRemap,
 		bindings,
-		m_normalizePose,
-		m_normalizeTransform,
 		m_screenSpaceCulling
 	);
 }
@@ -105,8 +93,14 @@ void AnimatedMeshComponentData::serialize(ISerializer& s)
 	s >> resource::Member< mesh::SkinnedMesh >(L"mesh", m_mesh);
 	s >> resource::Member< Skeleton >(L"skeleton", m_skeleton);
 	s >> MemberRef< const IPoseControllerData >(L"poseController", m_poseController);
-	s >> Member< bool >(L"normalizePose", m_normalizePose);
-	s >> Member< bool >(L"normalizeTransform", m_normalizeTransform);
+
+	if (s.getVersion< AnimatedMeshComponentData >() < 1)
+	{
+		bool normalizePose, normalizeTransform;
+		s >> Member< bool >(L"normalizePose", normalizePose);
+		s >> Member< bool >(L"normalizeTransform", normalizeTransform);
+	}
+
 	s >> Member< bool >(L"screenSpaceCulling", m_screenSpaceCulling);
 	s >> MemberAlignedVector< Binding, MemberComposite< Binding > >(L"bindings", m_bindings);
 }
