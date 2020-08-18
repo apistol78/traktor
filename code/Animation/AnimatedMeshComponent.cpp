@@ -25,7 +25,8 @@ namespace traktor
 		namespace
 		{
 
-render::handle_t s_handleWorld_ShadowWrite;
+const render::Handle s_techniqueVelocityWrite(L"World_VelocityWrite");
+const render::Handle s_handleWorld_ShadowWrite(L"World_ShadowWrite");
 
 		}
 
@@ -38,8 +39,6 @@ AnimatedMeshComponent::AnimatedMeshComponent(
 	IPoseController* poseController,
 	const AlignedVector< int32_t >& jointRemap,
 	const AlignedVector< Binding >& bindings,
-	bool normalizePose,
-	bool normalizeTransform,
 	bool screenSpaceCulling
 )
 :	mesh::MeshComponent(screenSpaceCulling)
@@ -48,14 +47,8 @@ AnimatedMeshComponent::AnimatedMeshComponent(
 ,	m_poseController(poseController)
 ,	m_jointRemap(jointRemap)
 ,	m_bindings(bindings)
-,	m_normalizePose(normalizePose)
-,	m_normalizeTransform(normalizeTransform)
 ,	m_index(0)
-,	m_updateController(1)
-,	m_updateTimeScale(1.0f)
 {
-	s_handleWorld_ShadowWrite = render::getParameterHandle(L"World_ShadowWrite");
-
 	if (m_skeleton)
 	{
 		calculateJointTransforms(
@@ -69,11 +62,10 @@ AnimatedMeshComponent::AnimatedMeshComponent(
 		m_skinTransforms[0].resize(skinJointCount * 2, Vector4::origo());
 		m_skinTransforms[1].resize(skinJointCount * 2, Vector4::origo());
 		m_skinTransforms[2].resize(skinJointCount * 2, Vector4::origo());
+		m_skinTransforms[3].resize(skinJointCount * 2, Vector4::origo());
 
 		updatePoseController(m_index, 0.0f, 0.0f);
-
 		m_index = 1 - m_index;
-		m_updateController = 0;
 	}
 }
 
@@ -105,6 +97,8 @@ void AnimatedMeshComponent::setTransform(const Transform& transform)
 	if (m_poseController)
 		m_poseController->setTransform(transform);
 
+	m_transformOrigin = transform;
+
 	mesh::MeshComponent::setTransform(transform);
 }
 
@@ -129,55 +123,43 @@ Aabb3 AnimatedMeshComponent::getBoundingBox() const
 
 void AnimatedMeshComponent::update(const world::UpdateParams& update)
 {
-	if (m_updateController == 1)
+	synchronize();
+
+	// Calculate original bone transforms in object space.
+	if (m_skeleton.changed())
 	{
-		synchronize();
+		m_jointTransforms.resize(0);
+		m_poseTransforms.resize(0);
 
-		// Calculate original bone transforms in object space.
-		if (m_skeleton.changed())
-		{
-			m_jointTransforms.resize(0);
-			m_poseTransforms.resize(0);
+		if (m_skeleton)
+			calculateJointTransforms(
+				m_skeleton,
+				m_jointTransforms
+			);
 
-			if (m_skeleton)
-				calculateJointTransforms(
-					m_skeleton,
-					m_jointTransforms
-				);
+		m_poseTransforms.reserve(m_jointTransforms.size());
+		m_skeleton.consume();
+	}
 
-			m_poseTransforms.reserve(m_jointTransforms.size());
-			m_skeleton.consume();
-		}
-
-		size_t skinJointCount = m_mesh->getJointCount();
-		m_skinTransforms[0].resize(skinJointCount * 2, Vector4::origo());
-		m_skinTransforms[1].resize(skinJointCount * 2, Vector4::origo());
-		m_skinTransforms[2].resize(skinJointCount * 2, Vector4::origo());
-
-		// Prevent further updates from evaluating pose controller,
-		// each pose controller needs to set this flag if it's
-		// required to continue running even when this entity
-		// hasn't been rendered.
-		m_updateController = 0;
-		m_index = 1 - m_index;
+	// Always ensure skin arrays are same size as mesh joints.
+	size_t skinJointCount = m_mesh->getJointCount();
+	m_skinTransforms[0].resize(skinJointCount * 2, Vector4::origo());
+	m_skinTransforms[1].resize(skinJointCount * 2, Vector4::origo());
+	m_skinTransforms[2].resize(skinJointCount * 2, Vector4::origo());
+	m_skinTransforms[3].resize(skinJointCount * 2, Vector4::origo());
+	m_index = 1 - m_index;
 
 #if defined(T_USE_UPDATE_JOBS)
-		m_updatePoseControllerJob = JobManager::getInstance().add(makeFunctor< AnimatedMeshComponent, int32_t, float, float >(
-			this,
-			&AnimatedMeshComponent::updatePoseController,
-			m_index,
-			update.alternateTime,
-			update.deltaTime
-		));
+	m_updatePoseControllerJob = JobManager::getInstance().add(makeFunctor< AnimatedMeshComponent, int32_t, float, float >(
+		this,
+		&AnimatedMeshComponent::updatePoseController,
+		m_index,
+		update.alternateTime,
+		update.deltaTime
+	));
 #else
-		updatePoseController(m_index, update.alternateTime, update.deltaTime);
+	updatePoseController(m_index, update.alternateTime, update.deltaTime);
 #endif
-	}
-	else
-	{
-		m_index = 1 - m_index;
-		m_skinTransforms[m_index] = m_skinTransforms[1 - m_index];
-	}
 
 	// Update entity to joint bindings.
 	for (const auto& binding : m_bindings)
@@ -187,9 +169,6 @@ void AnimatedMeshComponent::update(const world::UpdateParams& update)
 			binding.entity->setTransform(m_transform.get() * T);
 		binding.entity->update(update);
 	}
-
-	if (m_updateController > 0)
-		--m_updateController;
 
 	mesh::MeshComponent::update(update);
 }
@@ -201,8 +180,10 @@ void AnimatedMeshComponent::build(const world::WorldBuildContext& context, const
 
 	synchronize();
 
-	Transform worldTransform = m_transform.get(worldRenderView.getInterval());
-	Transform lastWorldTransform = m_transform.get(worldRenderView.getInterval() - 1.0f);
+	const Scalar interval(worldRenderView.getInterval());
+
+	Transform worldTransform = m_transform.get(interval);
+	Transform lastWorldTransform = m_transform.get(interval - 1.0_simd);
 
 	float distance = 0.0f;
 	if (!mesh::isMeshVisible(
@@ -215,25 +196,26 @@ void AnimatedMeshComponent::build(const world::WorldBuildContext& context, const
 	))
 		return;
 
-	const AlignedVector< Vector4 >& skinTransforms0 = m_skinTransforms[1 - m_index];
-	const AlignedVector< Vector4 >& skinTransforms1 = m_skinTransforms[m_index];
+	const auto& skinTransformsLastUpdate = m_skinTransforms[1 - m_index];
+	const auto& skinTransformsCurrentUpdate = m_skinTransforms[m_index];
+	auto& skinTransformsLastBuild = m_skinTransforms[2];
+	auto& skinTransformsCurrentBuild = m_skinTransforms[3];
 
-	if (skinTransforms0.size() == skinTransforms1.size())
-	{
-		for (uint32_t i = 0; i < skinTransforms0.size(); ++i)
-			m_skinTransforms[2][i] = lerp(
-				skinTransforms0[i],
-				skinTransforms1[i],
-				Scalar(worldRenderView.getInterval())
-			);
-	}
+	// Interpolate between updates to get current build skin transforms.
+	for (uint32_t i = 0; i < skinTransformsCurrentUpdate.size(); ++i)
+		skinTransformsCurrentBuild[i] = lerp(
+			skinTransformsLastUpdate[i],
+			skinTransformsCurrentUpdate[i],
+			interval
+		);
 
 	m_mesh->build(
 		context.getRenderContext(),
 		worldRenderPass,
 		lastWorldTransform,
 		worldTransform,
-		m_skinTransforms[2],
+		skinTransformsLastBuild,
+		skinTransformsCurrentBuild,
 		distance,
 		getParameterCallback()
 	);
@@ -241,17 +223,9 @@ void AnimatedMeshComponent::build(const world::WorldBuildContext& context, const
 	for (auto binding : m_bindings)
 		context.build(worldRenderView, worldRenderPass, binding.entity);
 
-	// If only entity's shadow is visible then reduce frequency of controller updates.
-	if (m_updateController == 0 && worldRenderPass.getTechnique() == s_handleWorld_ShadowWrite)
-	{
-		m_updateController = 4;
-		m_updateTimeScale = 4.0f;
-	}
-	else
-	{
-		m_updateController = 1;
-		m_updateTimeScale = 1.0f;
-	}
+	// Save last rendered transform so we can properly write velocities next frame.
+	if (worldRenderPass.getTechnique() == s_techniqueVelocityWrite)
+		skinTransformsLastBuild = skinTransformsCurrentBuild;
 }
 
 bool AnimatedMeshComponent::getJointTransform(render::handle_t jointName, Transform& outTransform) const
@@ -351,53 +325,56 @@ void AnimatedMeshComponent::synchronize() const
 
 void AnimatedMeshComponent::updatePoseController(int32_t index, float time, float deltaTime)
 {
-	bool updateController = false;
-
 	// Calculate pose transforms and skinning transforms.
 	if (m_skeleton && m_poseController)
 	{
 		m_poseTransforms.resize(0);
 
 		// Evaluate pose transforms in object space.
-		m_poseController->evaluate(
+		bool continous = m_poseController->evaluate(
 			time,
-			deltaTime * m_updateTimeScale,
+			deltaTime,
 			m_transform.get(),
 			m_skeleton,
 			m_jointTransforms,
-			m_poseTransforms,
-			updateController
+			m_poseTransforms
 		);
 
 		size_t skeletonJointCount = m_jointTransforms.size();
 		size_t skinJointCount = m_mesh->getJointCount();
 
-		// Ensure we have same number of pose transforms as b/ones.
+		// Ensure we have same number of pose transforms as bones.
 		for (size_t i = m_poseTransforms.size(); i < skeletonJointCount; ++i)
 			m_poseTransforms.push_back(m_jointTransforms[i]);
 
-		if (m_normalizePose)
+		// Adjust pose and entity's transform from locomotion.
+		if (continous)
 		{
-			// Calculate pose offset in object space.
-			Vector4 poseOffset = Vector4::zero();
-			for (size_t i = 0; i < skeletonJointCount; ++i)
-				poseOffset += m_poseTransforms[i].translation();
-			poseOffset /= Scalar(float(skeletonJointCount));
+			Transform locomotionTarget = m_poseTransforms[0];
+			Vector4 locomotion = (locomotionTarget.translation() - m_locomotionOrigin.translation()) * Vector4(1.0f, 0.0f, 1.0f, 0.0f);
 
-			// Normalize pose transforms; update entity transform from offset.
+			m_poseTransforms.resize(skeletonJointCount);
 			for (size_t i = 0; i < skeletonJointCount; ++i)
 			{
 				m_poseTransforms[i] = Transform(
-					m_poseTransforms[i].translation() - poseOffset.xyz0(),
+					m_poseTransforms[i].translation() - locomotion,
 					m_poseTransforms[i].rotation()
 				);
 			}
 
-			if (m_normalizeTransform)
+			if (m_owner)
+			{
 				m_transform.set(Transform(
-					m_transform.get().translation() + poseOffset.xyz1(),
-					m_transform.get().rotation()
+					m_transformOrigin.translation() + m_transformOrigin.rotation() * locomotion,
+					m_transformOrigin.rotation()
 				));
+				mesh::MeshComponent::setTransform(m_transform.get());
+			}
+		}
+		else
+		{
+			m_locomotionOrigin = m_poseTransforms[0];
+			m_transformOrigin = m_transform.get();
 		}
 
 		// Calculate skin transforms in delta space.
@@ -428,12 +405,6 @@ void AnimatedMeshComponent::updatePoseController(int32_t index, float time, floa
 				m_skinTransforms[index][jointIndex * 2 + 1] = skinTransform.translation().xyz1();
 			}
 		}
-	}
-
-	if (updateController)
-	{
-		m_updateController = 1;
-		m_updateTimeScale = 1.0f;
 	}
 }
 

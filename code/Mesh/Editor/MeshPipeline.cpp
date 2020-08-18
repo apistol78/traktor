@@ -555,7 +555,10 @@ bool MeshPipeline::buildOutput(
 		{
 			if (render::IndexedUniform* indexedUniform = dynamic_type_cast< render::IndexedUniform* >(node))
 			{
-				if (indexedUniform->getParameterName() == L"Joints")
+				if (
+					indexedUniform->getParameterName() == L"Mesh_Joints" ||
+					indexedUniform->getParameterName() == L"Mesh_LastJoints"
+				)
 				{
 					// Quantize joint count to reduce number of vertex shader permutations as it
 					// will cost more than excessive parameters.

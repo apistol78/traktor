@@ -58,8 +58,6 @@ public:
 		IPoseController* poseController,
 		const AlignedVector< int32_t >& jointRemap,
 		const AlignedVector< Binding >& bindings,
-		bool normalizePose,
-		bool normalizeTransform,
 		bool screenSpaceCulling
 	);
 
@@ -110,14 +108,12 @@ private:
 	Ref< IPoseController > m_poseController;
 	AlignedVector< int32_t > m_jointRemap;
 	AlignedVector< Binding > m_bindings;
-	bool m_normalizePose;
-	bool m_normalizeTransform;
 	AlignedVector< Transform > m_jointTransforms;
 	AlignedVector< Transform > m_poseTransforms;
-	AlignedVector< Vector4 > m_skinTransforms[3];
+	AlignedVector< Vector4 > m_skinTransforms[4];
+	Transform m_transformOrigin;
+	Transform m_locomotionOrigin;
 	int32_t m_index;
-	int32_t m_updateController;
-	float m_updateTimeScale;
 	mutable Ref< Job > m_updatePoseControllerJob;
 
 	void synchronize() const;

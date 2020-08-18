@@ -59,15 +59,13 @@ bool RagDollPoseController::create(
 	// Evaluate initial poses with tracking controller.
 	if (trackPoseController)
 	{
-		bool updateController = false;
 		trackPoseController->evaluate(
 			0.0f,
 			0.0f,
 			worldTransform,
 			skeleton,
 			jointTransformsImmutable,
-			jointTransforms,
-			updateController
+			jointTransforms
 		);
 	}
 
@@ -289,8 +287,7 @@ bool RagDollPoseController::evaluate(
 	const Transform& worldTransform,
 	const Skeleton* skeleton,
 	const AlignedVector< Transform >& jointTransforms,
-	AlignedVector< Transform >& outPoseTransforms,
-	bool& outUpdateController
+	AlignedVector< Transform >& outPoseTransforms
 )
 {
 	T_ASSERT(jointTransforms.size() == m_limbs.size());
@@ -311,8 +308,7 @@ bool RagDollPoseController::evaluate(
 				worldTransform,
 				skeleton,
 				jointTransforms,
-				outPoseTransforms,
-				outUpdateController
+				outPoseTransforms
 			);
 	}
 
@@ -385,8 +381,6 @@ bool RagDollPoseController::evaluate(
 	}
 
 	m_worldTransform = worldTransform;
-
-	outUpdateController = true;
 	return true;
 }
 

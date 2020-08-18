@@ -30,14 +30,13 @@ bool StatePoseController::setState(const std::wstring& stateName)
 	if (m_currentState && m_currentState->getName() == stateName)
 		return true;
 
-	const RefArray< StateNode >& states = m_stateGraph->getStates();
-	for (RefArray< StateNode >::const_iterator i = states.begin(); i != states.end(); ++i)
+	for (auto state : m_stateGraph->getStates())
 	{
-		if ((*i)->getName() == stateName)
+		if (state->getName() == stateName)
 		{
-			m_currentState = *i;
+			m_currentState = state;
 			m_currentState->prepareContext(m_currentStateContext);
-			m_nextState = 0;
+			m_nextState = nullptr;
 			m_blendState = 0.0f;
 			m_blendDuration = 0.0f;
 			return true;
@@ -89,8 +88,7 @@ bool StatePoseController::evaluate(
 	const Transform& worldTransform,
 	const Skeleton* skeleton,
 	const AlignedVector< Transform >& jointTransforms,
-	AlignedVector< Transform >& outPoseTransforms,
-	bool& outUpdateController
+	AlignedVector< Transform >& outPoseTransforms
 )
 {
 	bool continous = true;
@@ -172,7 +170,7 @@ bool StatePoseController::evaluate(
 		{
 			m_currentState = m_nextState;
 			m_currentStateContext = m_nextStateContext;
-			m_nextState = 0;
+			m_nextState = nullptr;
 			m_blendState = 0.0f;
 			m_blendDuration = 0.0f;
 			continous = bool(m_blendDuration > FUZZY_EPSILON);
@@ -193,14 +191,14 @@ bool StatePoseController::evaluate(
 		const RefArray< Transition >& transitions = m_stateGraph->getTransitions();
 
 		// First try all transitions with explicit condition.
-		for (RefArray< Transition >::const_iterator i = transitions.begin(); i != transitions.end(); ++i)
+		for (auto transition : transitions)
 		{
-			if ((*i)->from() != m_currentState || (*i)->getCondition().empty())
+			if (transition->from() != m_currentState || transition->getCondition().empty())
 				continue;
 
 			// Is transition permitted?
 			bool transitionPermitted = false;
-			switch ((*i)->getMoment())
+			switch (transition->getMoment())
 			{
 			case Transition::TmImmediatly:
 				transitionPermitted = true;
@@ -209,7 +207,7 @@ bool StatePoseController::evaluate(
 			case Transition::TmEnd:
 				{
 					float timeLeft = max(m_currentStateContext.getDuration() - m_currentStateContext.getTime(), 0.0f);
-					if (timeLeft <= (*i)->getDuration())
+					if (timeLeft <= transition->getDuration())
 						transitionPermitted = true;
 				}
 				break;
@@ -220,7 +218,7 @@ bool StatePoseController::evaluate(
 			// Is condition satisfied?
 			bool value = false;
 
-			const std::wstring& condition = (*i)->getCondition();
+			const std::wstring& condition = transition->getCondition();
 			if (!condition.empty() && condition[0] == L'!')
 			{
 				std::pair< bool, bool >& cv = m_conditions[condition.substr(1)];
@@ -246,22 +244,22 @@ bool StatePoseController::evaluate(
 				continue;
 
 			// Begin transition to found state.
-			m_nextState = (*i)->to();
+			m_nextState = transition->to();
 			m_nextState->prepareContext(m_nextStateContext);
 			m_blendState = 0.0f;
-			m_blendDuration = (*i)->getDuration();
+			m_blendDuration = transition->getDuration();
 			break;
 		}
 
 		// Still no transition state found, we try all transitions without explicit condition.
-		for (RefArray< Transition >::const_iterator i = transitions.begin(); i != transitions.end(); ++i)
+		for (auto transition : transitions)
 		{
-			if ((*i)->from() != m_currentState || !(*i)->getCondition().empty())
+			if (transition->from() != m_currentState || !transition->getCondition().empty())
 				continue;
 
 			// Is transition permitted?
 			bool transitionPermitted = false;
-			switch ((*i)->getMoment())
+			switch (transition->getMoment())
 			{
 			case Transition::TmImmediatly:
 				transitionPermitted = true;
@@ -270,7 +268,7 @@ bool StatePoseController::evaluate(
 			case Transition::TmEnd:
 				{
 					float timeLeft = max(m_currentStateContext.getDuration() - m_currentStateContext.getTime(), 0.0f);
-					if (timeLeft <= (*i)->getDuration())
+					if (timeLeft <= transition->getDuration())
 						transitionPermitted = true;
 				}
 				break;
@@ -279,10 +277,10 @@ bool StatePoseController::evaluate(
 				continue;
 
 			// Begin transition to found state.
-			m_nextState = (*i)->to();
+			m_nextState = transition->to();
 			m_nextState->prepareContext(m_nextStateContext);
 			m_blendState = 0.0f;
-			m_blendDuration = (*i)->getDuration();
+			m_blendDuration = transition->getDuration();
 			break;
 		}
 	}

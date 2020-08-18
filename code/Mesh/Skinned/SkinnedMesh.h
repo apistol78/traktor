@@ -48,7 +48,7 @@ class T_DLLCLASS SkinnedMesh : public IMesh
 	T_RTTI_CLASS;
 
 public:
-	SkinnedMesh();
+	SkinnedMesh() = default;
 
 	const Aabb3& getBoundingBox() const;
 
@@ -59,6 +59,7 @@ public:
 		const world::IWorldRenderPass& worldRenderPass,
 		const Transform& lastWorldTransform,
 		const Transform& worldTransform,
+		const AlignedVector< Vector4 >& lastJointTransforms,
 		const AlignedVector< Vector4 >& jointTransforms,
 		float distance,
 		const IMeshParameterCallback* parameterCallback
@@ -81,7 +82,7 @@ private:
 	Ref< render::Mesh > m_mesh;
 	SmallMap< render::handle_t, AlignedVector< Part > > m_parts;
 	SmallMap< std::wstring, int32_t > m_jointMap;
-	int32_t m_jointCount;
+	int32_t m_jointCount = 0;
 #if defined(_DEBUG)
 	std::string m_name;
 #endif

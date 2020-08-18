@@ -41,8 +41,7 @@ public:
 		const Transform& worldTransform,
 		const Skeleton* skeleton,
 		const AlignedVector< Transform >& jointTransforms,
-		AlignedVector< Transform >& outPoseTransforms,
-		bool& outUpdateController
+		AlignedVector< Transform >& outPoseTransforms
 	) override final;
 
 	virtual void estimateVelocities(
@@ -54,6 +53,8 @@ private:
 	resource::Proxy< Animation > m_animation;
 	bool m_linearInterpolation;
 	int32_t m_indexHint;
+	float m_timeOffset;
+	float m_lastTime;
 };
 
 	}

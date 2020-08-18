@@ -5,8 +5,8 @@
 			<id>{0A5EA92B-C739-8A46-93DD-0400E4447593}</id>
 			<comment/>
 			<position>
-				<first>1697</first>
-				<second>244</second>
+				<first>1770</first>
+				<second>254</second>
 			</position>
 			<name>Output</name>
 		</item>
@@ -22,8 +22,8 @@
 			<id>{2480FAD0-108F-5347-A02B-A4F5B13D8EF5}</id>
 			<comment/>
 			<position>
-				<first>1201</first>
-				<second>275</second>
+				<first>1269</first>
+				<second>285</second>
 			</position>
 		</item>
 		<item type="traktor.render.Sub" version="traktor.render.Node:1">
@@ -46,8 +46,8 @@
 			<id>{790F5518-C2FD-614E-9014-67AF31FBA09D}</id>
 			<comment/>
 			<position>
-				<first>668</first>
-				<second>517</second>
+				<first>574</first>
+				<second>505</second>
 			</position>
 			<value>1</value>
 		</item>
@@ -55,8 +55,8 @@
 			<id>{ACD5126C-8D99-8543-A7BC-6F70B7695F5C}</id>
 			<comment/>
 			<position>
-				<first>675</first>
-				<second>457</second>
+				<first>639</first>
+				<second>444</second>
 			</position>
 			<swizzle>xyz</swizzle>
 		</item>
@@ -64,8 +64,8 @@
 			<id>{3D54914B-405D-EC46-A1B5-2A1D94DB7F60}</id>
 			<comment/>
 			<position>
-				<first>240</first>
-				<second>433</second>
+				<first>104</first>
+				<second>407</second>
 			</position>
 			<name>BlendWeights</name>
 			<usage>DuCustom</usage>
@@ -76,8 +76,8 @@
 			<id>{759598B4-EF7E-304F-9C7E-DD6B6E9EBFE5}</id>
 			<comment/>
 			<position>
-				<first>907</first>
-				<second>385</second>
+				<first>831</first>
+				<second>373</second>
 			</position>
 			<value>1</value>
 		</item>
@@ -98,31 +98,31 @@
 			<id>{4F5EA818-F7AD-AB4A-A5DA-DFD4E4BAE0B0}</id>
 			<comment/>
 			<position>
-				<first>1124</first>
-				<second>162</second>
+				<first>1143</first>
+				<second>86</second>
 			</position>
 		</item>
 		<item type="traktor.render.Mul" version="traktor.render.Node:1">
 			<id>{3BB61E1E-A8FF-814A-98CC-4CBF390B2C3B}</id>
 			<comment/>
 			<position>
-				<first>669</first>
-				<second>216</second>
+				<first>683</first>
+				<second>156</second>
 			</position>
 		</item>
 		<item type="traktor.render.MixOut" version="traktor.render.Node:1">
 			<id>{B43EF4A1-60F9-9846-94F6-D6B261DA37B1}</id>
 			<comment/>
 			<position>
-				<first>486</first>
-				<second>433</second>
+				<first>398</first>
+				<second>281</second>
 			</position>
 		</item>
 		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{EA30C519-150E-4A46-B7A0-9B378EC16257}</id>
 			<comment/>
 			<position>
-				<first>159</first>
+				<first>279</first>
 				<second>111</second>
 			</position>
 			<fragmentGuid>{F7A5C23E-B7AC-2D4E-9104-1FEE528490DD}</fragmentGuid>
@@ -160,8 +160,8 @@
 			<id>{5FEB60AB-9FBE-AD4B-BCDD-AE39F4F6E66B}</id>
 			<comment/>
 			<position>
-				<first>-88</first>
-				<second>108</second>
+				<first>-94</first>
+				<second>165</second>
 			</position>
 			<fragmentGuid>{DD51D5EE-6DDC-6044-A239-21CFEEEE8C75}</fragmentGuid>
 			<inputPins>
@@ -172,6 +172,14 @@
 				</item>
 			</inputPins>
 			<outputPins>
+				<item>
+					<id>{6137CE6D-B159-E445-9C2C-D14300DB527C}</id>
+					<name>LastRotation</name>
+				</item>
+				<item>
+					<id>{3339C073-C325-AE47-A9E2-5211D3B927AB}</id>
+					<name>LastTranslation</name>
+				</item>
 				<item>
 					<id>{DFB49558-B602-D747-BB05-FFB29423D121}</id>
 					<name>Rotation</name>
@@ -187,16 +195,16 @@
 			<id>{2506A3B8-65D5-A541-9EC8-46F27847792A}</id>
 			<comment/>
 			<position>
-				<first>-323</first>
-				<second>46</second>
+				<first>-365</first>
+				<second>17</second>
 			</position>
 		</item>
 		<item type="traktor.render.VertexInput" version="traktor.render.Node:1">
 			<id>{26EA9587-2E97-614C-80DA-EDB867115FD4}</id>
 			<comment/>
 			<position>
-				<first>-555</first>
-				<second>9</second>
+				<first>-649</first>
+				<second>-5</second>
 			</position>
 			<name>BlendIndices</name>
 			<usage>DuCustom</usage>
@@ -207,16 +215,16 @@
 			<id>{30CFFB27-E9A3-304F-B4F4-BE7F3BCCE31F}</id>
 			<comment/>
 			<position>
-				<first>909</first>
-				<second>104</second>
+				<first>905</first>
+				<second>18</second>
 			</position>
 		</item>
 		<item type="traktor.render.Mul" version="traktor.render.Node:1">
 			<id>{9DDBFC32-0996-A64C-A91A-1986B3E61987}</id>
 			<comment/>
 			<position>
-				<first>669</first>
-				<second>148</second>
+				<first>683</first>
+				<second>68</second>
 			</position>
 		</item>
 		<item type="traktor.render.External" version="2,traktor.render.Node:1">
@@ -261,8 +269,8 @@
 			<id>{D7A46975-AE28-1046-B024-3809346C5CD4}</id>
 			<comment/>
 			<position>
-				<first>-88</first>
-				<second>29</second>
+				<first>-94</first>
+				<second>38</second>
 			</position>
 			<fragmentGuid>{DD51D5EE-6DDC-6044-A239-21CFEEEE8C75}</fragmentGuid>
 			<inputPins>
@@ -273,6 +281,14 @@
 				</item>
 			</inputPins>
 			<outputPins>
+				<item>
+					<id>{6137CE6D-B159-E445-9C2C-D14300DB527C}</id>
+					<name>LastRotation</name>
+				</item>
+				<item>
+					<id>{3339C073-C325-AE47-A9E2-5211D3B927AB}</id>
+					<name>LastTranslation</name>
+				</item>
 				<item>
 					<id>{DFB49558-B602-D747-BB05-FFB29423D121}</id>
 					<name>Rotation</name>
@@ -288,15 +304,15 @@
 			<id>{10441949-BE98-0949-A92D-613817EA1D8E}</id>
 			<comment/>
 			<position>
-				<first>669</first>
-				<second>71</second>
+				<first>683</first>
+				<second>-20</second>
 			</position>
 		</item>
 		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{04F70A9F-A7F7-0240-A6A0-16840F134AF6}</id>
 			<comment/>
 			<position>
-				<first>159</first>
+				<first>279</first>
 				<second>-85</second>
 			</position>
 			<fragmentGuid>{F7A5C23E-B7AC-2D4E-9104-1FEE528490DD}</fragmentGuid>
@@ -334,8 +350,8 @@
 			<id>{CF6E1696-BBE2-D747-A0BF-30C78ED8169F}</id>
 			<comment/>
 			<position>
-				<first>-88</first>
-				<second>-50</second>
+				<first>-94</first>
+				<second>-89</second>
 			</position>
 			<fragmentGuid>{DD51D5EE-6DDC-6044-A239-21CFEEEE8C75}</fragmentGuid>
 			<inputPins>
@@ -346,6 +362,14 @@
 				</item>
 			</inputPins>
 			<outputPins>
+				<item>
+					<id>{6137CE6D-B159-E445-9C2C-D14300DB527C}</id>
+					<name>LastRotation</name>
+				</item>
+				<item>
+					<id>{3339C073-C325-AE47-A9E2-5211D3B927AB}</id>
+					<name>LastTranslation</name>
+				</item>
 				<item>
 					<id>{DFB49558-B602-D747-BB05-FFB29423D121}</id>
 					<name>Rotation</name>
