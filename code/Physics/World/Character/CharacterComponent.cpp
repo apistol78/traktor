@@ -53,14 +53,14 @@ void CharacterComponent::setOwner(world::Entity* owner)
 	if ((m_owner = owner) != nullptr)
 	{
 		Transform transform = m_owner->getTransform();
-		m_bodyWide->setTransform(transform);
+		m_bodyWide->setTransform(transform * Transform(Vector4(0.0f, m_data->getHeight() / 2.0f, 0.0f)));
 		m_bodyWide->setEnable(true);
 	}
 }
 
 void CharacterComponent::setTransform(const Transform& transform)
 {
-	m_bodyWide->setTransform(transform);
+	m_bodyWide->setTransform(transform * Transform(Vector4(0.0f, m_data->getHeight() / 2.0f, 0.0f)));
 }
 
 Aabb3 CharacterComponent::getBoundingBox() const
@@ -136,7 +136,7 @@ void CharacterComponent::update(const world::UpdateParams& update)
 	));
 	if (m_owner)
 		m_owner->setTransform(Transform(
-			position,
+			position - Vector4(0.0f, m_data->getHeight() / 2.0f, 0.0f),
 			rotation
 		));
 }
