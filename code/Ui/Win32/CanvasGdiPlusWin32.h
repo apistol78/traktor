@@ -11,6 +11,7 @@
 #undef min
 #undef max
 #include "Core/Misc/AutoPtr.h"
+#include "Core/Containers/SmallMap.h"
 #include "Ui/Win32/CanvasWin32.h"
 
 namespace traktor
@@ -123,6 +124,11 @@ private:
 	Gdiplus::Color m_backGround;
 	Gdiplus::Pen m_pen;
 	Gdiplus::SolidBrush m_brush;
+	SmallMap< int32_t, Gdiplus::Bitmap* > m_cachedBitmaps;
+
+	Gdiplus::Bitmap* getCachedBitmap(const ISystemBitmap* bm);
+
+	void flushCachedBitmaps();
 };
 
 	}
