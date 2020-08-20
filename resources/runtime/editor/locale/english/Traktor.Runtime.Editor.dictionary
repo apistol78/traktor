@@ -154,28 +154,36 @@
 			<second>Material</second>
 		</item>
 		<item>
-			<first>GAMEENTITY_WIZARD_PHYSICS_DYNAMIC</first>
+			<first>GAMEENTITY_WIZARD_TYPE_ANIMATED</first>
+			<second>Animated</second>
+		</item>
+		<item>
+			<first>GAMEENTITY_WIZARD_TYPE_DYNAMIC</first>
 			<second>Dynamic - Movable and simulated</second>
 		</item>
 		<item>
-			<first>GAMEENTITY_WIZARD_PHYSICS_KINEMATIC</first>
+			<first>GAMEENTITY_WIZARD_TYPE_KINEMATIC</first>
 			<second>Kinematic - Movable</second>
 		</item>
 		<item>
-			<first>GAMEENTITY_WIZARD_PHYSICS_RAGDOLL</first>
+			<first>GAMEENTITY_WIZARD_TYPE_RAGDOLL</first>
 			<second>Rag doll</second>
 		</item>
 		<item>
-			<first>GAMEENTITY_WIZARD_PHYSICS_STATIC</first>
+			<first>GAMEENTITY_WIZARD_TYPE_STATIC</first>
 			<second>Static - Non movable</second>
 		</item>
 		<item>
-			<first>GAMEENTITY_WIZARD_PHYSICS_TYPE</first>
-			<second>Type of physics</second>
+			<first>GAMEENTITY_WIZARD_TYPE</first>
+			<second>Type of entity</second>
 		</item>
 		<item>
 			<first>GAMEENTITY_WIZARD_SKELETON_MESH</first>
 			<second>Skeleton mesh</second>
+		</item>
+		<item>
+			<first>GAMEENTITY_WIZARD_ANIMATION_MESH</first>
+			<second>Animation mesh</second>
 		</item>
 		<item>
 			<first>GAMEENTITY_WIZARD_UNNAMED</first>

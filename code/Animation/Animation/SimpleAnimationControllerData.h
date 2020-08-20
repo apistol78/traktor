@@ -26,7 +26,9 @@ class T_DLLCLASS SimpleAnimationControllerData : public IPoseControllerData
 	T_RTTI_CLASS;
 
 public:
-	SimpleAnimationControllerData();
+	SimpleAnimationControllerData() = default;
+
+	explicit SimpleAnimationControllerData(const resource::Id< Animation >& animation);
 
 	virtual Ref< IPoseController > createInstance(
 		resource::IResourceManager* resourceManager,
@@ -41,7 +43,7 @@ public:
 
 private:
 	resource::Id< Animation > m_animation;
-	bool m_linearInterpolation;
+	bool m_linearInterpolation = true;
 };
 
 	}
