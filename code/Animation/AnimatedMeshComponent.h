@@ -111,8 +111,6 @@ private:
 	AlignedVector< Transform > m_jointTransforms;
 	AlignedVector< Transform > m_poseTransforms;
 	AlignedVector< Vector4 > m_skinTransforms[4];
-	Transform m_transformOrigin;
-	Transform m_locomotionOrigin;
 	int32_t m_index;
 	mutable Ref< Job > m_updatePoseControllerJob;
 

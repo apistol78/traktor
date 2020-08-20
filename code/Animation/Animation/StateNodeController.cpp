@@ -17,7 +17,7 @@ StateNodeController::StateNodeController(StateNode* node)
 
 void StateNodeController::destroy()
 {
-	m_node = 0;
+	m_node = nullptr;
 }
 
 void StateNodeController::setTransform(const Transform& transform)

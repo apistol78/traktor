@@ -33,7 +33,7 @@ public:
 		TmEnd
 	};
 
-	Transition();
+	Transition() = default;
 
 	Transition(StateNode* from, StateNode* to);
 
@@ -52,8 +52,8 @@ public:
 private:
 	Ref< StateNode > m_from;
 	Ref< StateNode > m_to;
-	Moment m_moment;
-	float m_duration;
+	Moment m_moment = TmEnd;
+	float m_duration = 0.0f;
 	std::wstring m_condition;
 };
 

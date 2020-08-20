@@ -9,14 +9,7 @@ namespace traktor
 	namespace animation
 	{
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.animation.AnimationAsset", 5, AnimationAsset, editor::Asset)
-
-AnimationAsset::AnimationAsset()
-:	m_take(L"Animation")
-,	m_scale(1.0f)
-,	m_translate(0.0f, 0.0f, 0.0f, 0.0f)
-{
-}
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.animation.AnimationAsset", 6, AnimationAsset, editor::Asset)
 
 void AnimationAsset::serialize(ISerializer& s)
 {
@@ -32,6 +25,9 @@ void AnimationAsset::serialize(ISerializer& s)
 
 	if (s.getVersion() >= 5)
 		s >> Member< Vector4 >(L"translate", m_translate);
+
+	if (s.getVersion() >= 6)
+		s >> Member< bool >(L"removeLocomotion", m_removeLocomotion);
 }
 
 	}

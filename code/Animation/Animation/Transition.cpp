@@ -12,17 +12,9 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.animation.Transition", 0, Transition, ISerializable)
 
-Transition::Transition()
-:	m_moment(TmImmediatly)
-,	m_duration(0.0f)
-{
-}
-
 Transition::Transition(StateNode* from, StateNode* to)
 :	m_from(from)
 ,	m_to(to)
-,	m_moment(TmImmediatly)
-,	m_duration(0.0f)
 {
 }
 

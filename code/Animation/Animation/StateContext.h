@@ -23,7 +23,7 @@ class T_DLLCLASS StateContext : public Object
 	T_RTTI_CLASS;
 
 public:
-	StateContext();
+	StateContext() = default;
 
 	void setTime(float time) { m_time = time; }
 
@@ -38,9 +38,9 @@ public:
 	int32_t getIndexHint() const { return m_indexHint; }
 
 private:
-	float m_time;
-	float m_duration;
-	int32_t m_indexHint;
+	float m_time = 0.0f;
+	float m_duration = 0.0f;
+	int32_t m_indexHint = -1;
 };
 
 	}

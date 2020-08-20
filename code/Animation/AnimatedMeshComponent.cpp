@@ -97,8 +97,6 @@ void AnimatedMeshComponent::setTransform(const Transform& transform)
 	if (m_poseController)
 		m_poseController->setTransform(transform);
 
-	m_transformOrigin = transform;
-
 	mesh::MeshComponent::setTransform(transform);
 }
 
@@ -346,36 +344,6 @@ void AnimatedMeshComponent::updatePoseController(int32_t index, float time, floa
 		// Ensure we have same number of pose transforms as bones.
 		for (size_t i = m_poseTransforms.size(); i < skeletonJointCount; ++i)
 			m_poseTransforms.push_back(m_jointTransforms[i]);
-
-		// Adjust pose and entity's transform from locomotion.
-		if (continous)
-		{
-			Transform locomotionTarget = m_poseTransforms[0];
-			Vector4 locomotion = (locomotionTarget.translation() - m_locomotionOrigin.translation()) * Vector4(1.0f, 0.0f, 1.0f, 0.0f);
-
-			m_poseTransforms.resize(skeletonJointCount);
-			for (size_t i = 0; i < skeletonJointCount; ++i)
-			{
-				m_poseTransforms[i] = Transform(
-					m_poseTransforms[i].translation() - locomotion,
-					m_poseTransforms[i].rotation()
-				);
-			}
-
-			if (m_owner)
-			{
-				m_transform.set(Transform(
-					m_transformOrigin.translation() + m_transformOrigin.rotation() * locomotion,
-					m_transformOrigin.rotation()
-				));
-				mesh::MeshComponent::setTransform(m_transform.get());
-			}
-		}
-		else
-		{
-			m_locomotionOrigin = m_poseTransforms[0];
-			m_transformOrigin = m_transform.get();
-		}
 
 		// Calculate skin transforms in delta space.
 		for (size_t i = 0; i < skeletonJointCount; ++i)

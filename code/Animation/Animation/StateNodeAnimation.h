@@ -26,7 +26,7 @@ class T_DLLCLASS StateNodeAnimation : public StateNode
 	T_RTTI_CLASS;
 
 public:
-	StateNodeAnimation();
+	StateNodeAnimation() = default;
 
 	StateNodeAnimation(const std::wstring& name, const resource::IdProxy< Animation >& animation, bool linearInterpolation);
 
@@ -44,7 +44,7 @@ public:
 
 private:
 	resource::IdProxy< Animation > m_animation;
-	bool m_linearInterpolation;
+	bool m_linearInterpolation = false;
 };
 
 	}

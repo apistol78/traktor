@@ -25,7 +25,7 @@ class T_DLLCLASS AnimationAsset : public editor::Asset
 	T_RTTI_CLASS;
 
 public:
-	AnimationAsset();
+	AnimationAsset() = default;
 
 	virtual void serialize(ISerializer& s) override final;
 
@@ -33,15 +33,18 @@ public:
 
 	const std::wstring& getTake() const { return m_take; }
 
+	float getScale() const { return m_scale; }
+
 	const Vector4& getTranslate() const { return m_translate; }
 
-	float getScale() const { return m_scale; }
+	bool getRemoveLocomotion() const { return m_removeLocomotion; }
 
 private:
 	Guid m_skeleton;
-	std::wstring m_take;
-	float m_scale;
-	Vector4 m_translate;
+	std::wstring m_take = L"Animation";
+	float m_scale = 1.0f;
+	Vector4 m_translate = Vector4::zero();
+	bool m_removeLocomotion = true;
 };
 
 	}

@@ -13,11 +13,6 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.animation.StateNodeAnimation", 1, StateNodeAnimation, StateNode)
 
-StateNodeAnimation::StateNodeAnimation()
-:	m_linearInterpolation(false)
-{
-}
-
 StateNodeAnimation::StateNodeAnimation(const std::wstring& name, const resource::IdProxy< Animation >& animation, bool linearInterpolation)
 :	StateNode(name)
 ,	m_animation(animation)
@@ -63,12 +58,12 @@ void StateNodeAnimation::evaluate(
 
 void StateNodeAnimation::serialize(ISerializer& s)
 {
+	T_FATAL_ASSERT(s.getVersion() >= 1);
+
 	StateNode::serialize(s);
 
 	s >> resource::MemberIdProxy< Animation >(L"animation", m_animation);
-
-	if (s.getVersion() >= 1)
-		s >> Member< bool >(L"linearInterpolation", m_linearInterpolation);
+	s >> Member< bool >(L"linearInterpolation", m_linearInterpolation);
 }
 
 	}
