@@ -2,6 +2,9 @@
 #include "Ai/NavMeshFactory.h"
 #include "Ai/Editor/AiEditorProfile.h"
 #include "Ai/Editor/NavMeshComponentEditorFactory.h"
+#include "Core/Settings/PropertyBoolean.h"
+#include "Core/Settings/PropertyGroup.h"
+#include "Editor/IEditor.h"
 #include "Scene/Editor/SceneEditorContext.h"
 
 namespace traktor
@@ -44,7 +47,8 @@ void AiEditorProfile::createEntityFactories(
 	RefArray< const world::IEntityFactory >& outEntityFactories
 ) const
 {
-	outEntityFactories.push_back(new NavMeshEntityFactory(context->getResourceManager(), true));
+	bool build = context->getEditor()->getSettings()->getProperty< bool >(L"NavMeshPipeline.Build", true);
+	outEntityFactories.push_back(new NavMeshEntityFactory(context->getResourceManager(), !build));
 }
 
 void AiEditorProfile::createEntityRenderers(
