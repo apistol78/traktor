@@ -12,8 +12,8 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.animation.SimpleAnimationControllerData", 0, SimpleAnimationControllerData, IPoseControllerData)
 
-SimpleAnimationControllerData::SimpleAnimationControllerData()
-:	m_linearInterpolation(false)
+SimpleAnimationControllerData::SimpleAnimationControllerData(const resource::Id< Animation >& animation)
+:	m_animation(animation)
 {
 }
 
