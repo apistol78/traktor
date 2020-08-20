@@ -12,12 +12,14 @@
 #include "Ui/Win32/SmartHandle.h"
 #include "Ui/Win32/UtilitiesWin32.h"
 
-#include "Ui/Win32/CanvasGdiWin32.h"
 #if defined(T_USE_DIRECT2D)
 #	include "Ui/Win32/CanvasDirect2DWin32.h"
 #endif
 #if defined(T_USE_GDI_PLUS)
 #	include "Ui/Win32/CanvasGdiPlusWin32.h"
+#endif
+#if defined(T_USE_GDI)
+#	include "Ui/Win32/CanvasGdiWin32.h"
 #endif
 
 extern HINSTANCE g_hInstance;
@@ -522,8 +524,13 @@ protected:
 				m_canvasImpl = new CanvasGdiPlusWin32();
 #endif
 
+#if defined(T_USE_GDI)
 			if (!m_canvasImpl)
 				m_canvasImpl = new CanvasGdiWin32();
+#endif
+
+			if (!m_canvasImpl)
+				return false;
 		}
 
 		m_hWnd.registerMessageHandler(WM_CHAR,          new MethodMessageHandler< WidgetWin32Impl >(this, &WidgetWin32Impl::eventChar));

@@ -1,5 +1,7 @@
 #pragma once
 
+#if defined(T_USE_GDI)
+
 #include "Ui/Win32/CanvasWin32.h"
 
 namespace traktor
@@ -124,3 +126,4 @@ private:
 	}
 }
 
+#endif

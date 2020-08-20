@@ -620,6 +620,49 @@ void CanvasGdiPlusWin32::shutdown()
 	GdiplusShutdown(s_token);
 }
 
+Gdiplus::Bitmap* CanvasGdiPlusWin32::getCachedBitmap(const ISystemBitmap* bm)
+{
+	const BitmapWin32* bmw32 = (const BitmapWin32*)bm;
+
+	auto it = m_cachedBitmaps.find(bmw32->getTag());
+	if (it != m_cachedBitmaps.end())
+		return it->second;
+
+	int32_t width = bm->getSize().cx;
+	int32_t height = bm->getSize().cy;
+
+	const uint32_t* srcColor = (const uint32_t*)bmw32->getBits();
+	const uint32_t* srcAlpha = (const uint32_t*)bmw32->getBitsPreMulAlpha();
+
+	const uint32_t alpha = (bmw32->getMask() & 0x000000ff);
+
+	AutoArrayPtr< uint32_t > bits(new uint32_t [width * height]);
+	for (int32_t y = 0; y < height; ++y)
+	{
+		int32_t srcOffset = (height - y - 1) * width;
+		int32_t dstOffset = y * width;
+
+		for (int32_t x = 0; x < width; ++x)
+			bits[dstOffset + x] = (srcColor[srcOffset + x] & 0x00ffffff) | (srcAlpha[srcOffset + x] & 0xff000000) | alpha;
+	}
+
+	Gdiplus::Bitmap* gdipbm = new Gdiplus::Bitmap(
+		width,
+		height,
+		width * 4,
+		PixelFormat32bppARGB,
+		(LPBYTE)bits.ptr()
+	));
+
+	m_cachedBitmaps[bmw32->getTag()] = gdipbm;
+	return gdipbm;
+}
+
+void CanvasGdiPlusWin32::flushCachedBitmaps()
+{
+	m_cachedBitmaps.clear();
+}
+
 	}
 }
 

@@ -1,3 +1,5 @@
+#if defined(T_USE_GDI)
+
 #include "Core/Log/Log.h"
 #include "Core/Math/Envelope.h"
 #include "Core/Math/Vector2.h"
@@ -650,3 +652,5 @@ void CanvasGdiWin32::updateFont()
 
 	}
 }
+
+#endif

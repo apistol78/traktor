@@ -799,13 +799,18 @@ ID2D1Bitmap* CanvasDirect2DWin32::getCachedBitmap(const ISystemBitmap* bm)
 {
 	const BitmapWin32* bmw32 = reinterpret_cast< const BitmapWin32* >(bm);
 
-	auto it = m_d2dBitmaps.find(bmw32->getTag());
-	if (it != m_d2dBitmaps.end())
-		return it->second;
+	auto it = m_cachedBitmaps.find(bmw32->getTag());
+	if (it != m_cachedBitmaps.end())
+	{
+		if (it->second.revision == bmw32->getRevision())
+			return it->second.bitmap;
+		else
+			m_cachedBitmaps.erase(it);
+	}
 
 	Size size = bmw32->getSize();
 
-	const uint32_t* colorBits = reinterpret_cast< const uint32_t* >(bmw32->getBitsPerMulAlpha());
+	const uint32_t* colorBits = (const uint32_t*)(bmw32->haveAlpha() ? bmw32->getBitsPreMulAlpha() : bmw32->getBits());
 	AutoArrayPtr< uint32_t > bits(new uint32_t [size.cx * size.cy]);
 
 	for (uint32_t y = 0; y < size.cy; ++y)
@@ -817,7 +822,7 @@ ID2D1Bitmap* CanvasDirect2DWin32::getCachedBitmap(const ISystemBitmap* bm)
 			bits[dstOffset + x] = colorBits[srcOffset + x];
 	}
 
-	D2D1_PIXEL_FORMAT pixelFormat = D2D1::PixelFormat(DXGI_FORMAT_B8G8R8A8_UNORM, D2D1_ALPHA_MODE_PREMULTIPLIED);
+	D2D1_PIXEL_FORMAT pixelFormat = D2D1::PixelFormat(DXGI_FORMAT_B8G8R8A8_UNORM, bmw32->haveAlpha() ? D2D1_ALPHA_MODE_PREMULTIPLIED : D2D1_ALPHA_MODE_IGNORE);
 	D2D1_BITMAP_PROPERTIES bitmapProps = D2D1::BitmapProperties(pixelFormat);
 
 	ComRef< ID2D1Bitmap > d2dBitmap;
@@ -831,13 +836,13 @@ ID2D1Bitmap* CanvasDirect2DWin32::getCachedBitmap(const ISystemBitmap* bm)
 	if (FAILED(hr))
 		return nullptr;
 
-	m_d2dBitmaps[bmw32->getTag()] = d2dBitmap;
+	m_cachedBitmaps[bmw32->getTag()] = { bmw32->getRevision(), d2dBitmap };
 	return d2dBitmap;
 }
 
 void CanvasDirect2DWin32::flushCachedBitmaps()
 {
-	m_d2dBitmaps.clear();
+	m_cachedBitmaps.clear();
 }
 
 	}

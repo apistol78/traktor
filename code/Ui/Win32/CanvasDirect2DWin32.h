@@ -102,6 +102,12 @@ public:
 	static void shutdown();
 
 private:
+	struct CachedBitmap
+	{
+		int32_t revision;
+		ComRef< ID2D1Bitmap > bitmap;
+	};
+
 	bool m_inPaint;
 	ComRef< ID2D1HwndRenderTarget > m_d2dRenderTarget;
 	ComRef< ID2D1SolidColorBrush > m_d2dForegroundBrush;
@@ -111,7 +117,7 @@ private:
 	ComRef< IDWriteTextFormat > m_dwTextFormat;
 	ComRef< IDWriteFont > m_dwFont;
 	DWRITE_FONT_METRICS m_fontMetrics;
-	SmallMap< int32_t, ComRef< ID2D1Bitmap > > m_d2dBitmaps;
+	SmallMap< int32_t, CachedBitmap > m_cachedBitmaps;
 	Font m_font;
 	float m_strokeWidth;
 	bool m_underline;
