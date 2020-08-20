@@ -1,4 +1,7 @@
 #include <limits>
+#include "Animation/Joint.h"
+#include "Animation/Skeleton.h"
+#include "Animation/SkeletonUtils.h"
 #include "Animation/Animation/Animation.h"
 #include "Animation/Editor/AnimationAsset.h"
 #include "Animation/Editor/AnimationPipeline.h"
@@ -12,6 +15,7 @@
 #include "Editor/IPipelineBuilder.h"
 #include "Editor/IPipelineDepends.h"
 #include "Editor/IPipelineSettings.h"
+#include "Model/Joint.h"
 #include "Model/Model.h"
 #include "Model/ModelFormat.h"
 #include "Model/Pose.h"
@@ -21,14 +25,6 @@ namespace traktor
 {
 	namespace animation
 	{
-
-
-void formatAngles(OutputStream& os, const Quaternion& q)
-{
-	Vector4 e = q.toEulerAngles();
-	os << rad2deg(e.x()) << L", " << rad2deg(e.y()) << L", " << rad2deg(e.z());
-}
-
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.animation.AnimationPipeline", 9, AnimationPipeline, editor::IPipeline)
 
@@ -148,12 +144,11 @@ bool AnimationPipeline::buildOutput(
 		return false;
 	}
 
+	Ref< Animation > anim = new Animation();
+
 	// Generate key poses; retarget animations onto skeleton mesh.
 	const AlignedVector< model::Joint >& skeletonMeshJoints = modelSkeleton->getJoints();
 	const AlignedVector< model::Joint >& skeletonAnimJoints = modelAnimation->getJoints();
-
-	Ref< Animation > anim = new Animation();
-
 	for (uint32_t i = 0; i < ma->getKeyFrameCount(); ++i)
 	{
 		float time = ma->getKeyFrameTime(i);
@@ -182,6 +177,62 @@ bool AnimationPipeline::buildOutput(
 		}
 
 		anim->addKeyPose(kp);
+	}
+
+	// Remove locomotion from animation.
+	//
+	// \notes
+	//   Currently assumes joint 0 is root joint and are
+	//   used to measure locomotion.
+	//
+	if (animationAsset->getRemoveLocomotion())
+	{
+		uint32_t keyPoseCount = anim->getKeyPoseCount();
+		if (keyPoseCount >= 2)
+		{
+			// Create skeleton from model.
+			Ref< Skeleton > skeleton = new Skeleton();
+			for (const auto& modelJoint : modelSkeleton->getJoints())
+			{
+				Ref< Joint > joint = new Joint();
+
+				if (modelJoint.getParent() != model::c_InvalidIndex)
+					joint->setParent(modelJoint.getParent());
+
+				joint->setName(modelJoint.getName());
+				joint->setTransform(modelJoint.getTransform());
+
+				skeleton->addJoint(joint);
+			}
+
+			AlignedVector< Transform > poseTransforms;
+			calculatePoseTransforms(skeleton, &anim->getKeyPose(0).pose, poseTransforms);
+
+			Transform origin = poseTransforms[0];
+			for (uint32_t i = 1; i < keyPoseCount; ++i)
+			{
+				auto& keyPose = anim->getKeyPose(i);
+
+				AlignedVector< Transform > targetPoseTransforms;
+				calculatePoseTransforms(skeleton, &keyPose.pose, targetPoseTransforms);
+
+				Transform target = targetPoseTransforms[0];
+				Vector4 locomotion = (target.translation() - origin.translation()) * Vector4(1.0f, 0.0f, 1.0f, 0.0f);
+
+				for (uint32_t i = 0; i < skeletonMeshJoints.size(); ++i)
+					targetPoseTransforms[i] = Transform(-locomotion) * targetPoseTransforms[i];
+
+				// Convert back from absolute to relative pose transforms.
+				for (uint32_t i = 0; i < skeletonMeshJoints.size(); ++i)
+				{
+					Transform parentTransform = Transform::identity();
+					int32_t parentIdx = skeleton->getJoint(i)->getParent();
+					if (parentIdx >= 0)
+						parentTransform = targetPoseTransforms[parentIdx];
+					keyPose.pose.setJointTransform(i, parentTransform.inverse() * targetPoseTransforms[i]);
+				}
+			}
+		}
 	}
 
 	/*
