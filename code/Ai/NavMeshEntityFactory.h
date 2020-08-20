@@ -30,7 +30,7 @@ class T_DLLCLASS NavMeshEntityFactory : public world::IEntityFactory
 	T_RTTI_CLASS;
 
 public:
-	NavMeshEntityFactory(resource::IResourceManager* resourceManager, bool editor);
+	NavMeshEntityFactory(resource::IResourceManager* resourceManager, bool suppress);
 
 	virtual const TypeInfoSet getEntityTypes() const override final;
 
@@ -46,7 +46,7 @@ public:
 
 private:
 	Ref< resource::IResourceManager > m_resourceManager;
-	bool m_editor;
+	bool m_suppress;
 };
 
 	}
