@@ -30,9 +30,11 @@ uint32_t MeshAssetWizardTool::getFlags() const
 
 bool MeshAssetWizardTool::launch(ui::Widget* parent, editor::IEditor* editor, db::Group* group, db::Instance* instance)
 {
+	std::wstring assetPath = editor->getSettings()->getProperty< std::wstring >(L"Pipeline.AssetPath", L"");
+
 	// Select source model.
 	ui::FileDialog fileDialog;
-	if (!fileDialog.create(parent, type_name(this), i18n::Text(L"MESHASSET_WIZARDTOOL_FILE_TITLE"), L"All files;*.*"))
+	if (!fileDialog.create(parent, type_name(this), i18n::Text(L"MESHASSET_WIZARDTOOL_FILE_TITLE"), L"All files;*.*", assetPath))
 		return false;
 
 	Path fileName;
@@ -44,7 +46,6 @@ bool MeshAssetWizardTool::launch(ui::Widget* parent, editor::IEditor* editor, db
 	fileDialog.destroy();
 
 	// Create path relative to asset path.
-	std::wstring assetPath = editor->getSettings()->getProperty< std::wstring >(L"Pipeline.AssetPath", L"");
 	FileSystem::getInstance().getRelativePath(
 		FileSystem::getInstance().getAbsolutePath(fileName),
 		FileSystem::getInstance().getAbsolutePath(assetPath),

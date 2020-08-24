@@ -6,7 +6,6 @@
 #include "Mesh/Static/StaticMeshResource.h"
 #include "Model/Model.h"
 #include "Model/Operations/Reduce.h"
-#include "Model/Operations/ReduceSimplygon.h"
 
 namespace traktor
 {
@@ -49,11 +48,7 @@ bool AutoLodMeshConverter::convert(
 		if (lod > 0)
 		{
 			float detailLevel = 1.0f - lod / float(meshAsset->getLodSteps());
-#if !defined(T_USE_SIMPLYGON_SDK)
 			model::Reduce(detailLevel).apply(lodModel);
-#else
-			model::ReduceSimplygon(detailLevel).apply(lodModel);
-#endif
 		}
 
 		StaticMeshConverter staticMeshConverter;

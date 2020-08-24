@@ -4,11 +4,14 @@
 #include "Core/Log/Log.h"
 #include "Core/Misc/Endian.h"
 #include "Core/Misc/String.h"
+#include "Core/Settings/PropertyGroup.h"
+#include "Core/Settings/PropertyString.h"
 #include "Database/Group.h"
 #include "Database/Instance.h"
 #include "Drawing/Image.h"
 #include "Drawing/Filters/MirrorFilter.h"
 #include "Drawing/Filters/ScaleFilter.h"
+#include "Editor/IEditor.h"
 #include "I18N/Text.h"
 #include "Heightfield/Heightfield.h"
 #include "Heightfield/HeightfieldFormat.h"
@@ -84,9 +87,11 @@ uint32_t ImportHeightfieldWizardTool::getFlags() const
 
 bool ImportHeightfieldWizardTool::launch(ui::Widget* parent, editor::IEditor* editor, db::Group* group, db::Instance* instance)
 {
+	std::wstring assetPath = editor->getSettings()->getProperty< std::wstring >(L"Pipeline.AssetPath", L"");
+
 	// Select source heightfield.
 	ui::FileDialog fileDialog;
-	if (!fileDialog.create(parent, type_name(this), i18n::Text(L"IMPORT_HEIGHTFIELD_WIZARDTOOL_FILE_TITLE"), L"All files;*.*"))
+	if (!fileDialog.create(parent, type_name(this), i18n::Text(L"IMPORT_HEIGHTFIELD_WIZARDTOOL_FILE_TITLE"), L"All files;*.*", assetPath))
 		return false;
 
 	Path fileName;

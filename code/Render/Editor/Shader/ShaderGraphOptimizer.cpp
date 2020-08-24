@@ -275,17 +275,6 @@ Ref< ShaderGraph > ShaderGraphOptimizer::insertInterpolators(bool frequentUnifor
 	for (auto pixelOutputNode : pixelOutputNodes)
 		insertInterpolators(shaderGraph, pixelOutputNode);
 
-#if defined(_DEBUG)
-	T_DEBUG(L"Inserted " << m_insertedCount << L" interpolator(s).");
-	T_DEBUG(L"  " << int32_t(m_visited.size()) << L" visited node(s).");
-	T_DEBUG(L"  " << int32_t(m_shaderGraph->getNodes().size()) << L" original node(s).");
-	for (auto node : m_shaderGraph->getNodes())
-	{
-		if (m_visited.find(node) == m_visited.end())
-			T_DEBUG(L"     " << type_name(node) << L" \"" << node->getInformation() << L"\" not visited.");
-	}
-#endif
-
 	return shaderGraph;
 }
 

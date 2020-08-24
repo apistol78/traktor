@@ -71,6 +71,7 @@ ShaderGraphTypePropagation::ShaderGraphTypePropagation(const ShaderGraph* shader
 		nodeSetInput.insert(node);
 
 	// Iteratively solve types until all types are stable.
+	AlignedVector< const InputPin* > destinationInputPins;
 	PinType currentInputPinTypes[32];
 	PinType outputPinTypes[32];
 	uint32_t iterationCount = 0;
@@ -151,7 +152,7 @@ ShaderGraphTypePropagation::ShaderGraphTypePropagation(const ShaderGraph* shader
 				const OutputPin* outputPin = node->getOutputPin(i);
 				T_ASSERT(outputPin);
 
-				AlignedVector< const InputPin* > destinationInputPins;
+				destinationInputPins.resize(0);
 				m_shaderGraph->findDestinationPins(outputPin, destinationInputPins);
 
 				PinType outputPinType = PntVoid;

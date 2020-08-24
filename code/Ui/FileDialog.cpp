@@ -171,7 +171,7 @@ int32_t FileDialog::showModal(std::vector< Path >& outPaths)
 	if (!path.empty())
 		m_currentPath = path;
 	else
-		m_currentPath = FileSystem::getInstance().getCurrentVolumeAndDirectory();
+		m_currentPath = m_defaultPath;
 
 	updatePath();
 	updateFiles();
