@@ -21,7 +21,7 @@ void ImagePass::addPasses(const ImageGraph* graph, const ImageGraphContext& cont
 		op->setup(graph, context, *rp);
 
 	if (m_outputTargetSet >= 0)
-		rp->setOutput(targetSetIds[m_outputTargetSet]);
+		rp->setOutput(targetSetIds[m_outputTargetSet], m_clear);
 
 	rp->addBuild(
 		[=](const RenderGraph& renderGraph, RenderContext* renderContext)

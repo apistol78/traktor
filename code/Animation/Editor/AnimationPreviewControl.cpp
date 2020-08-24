@@ -293,9 +293,7 @@ void AnimationPreviewControl::eventSize(ui::SizeEvent* event)
 		return;
 
 	ui::Size sz = event->getSize();
-
 	m_renderView->reset(sz.cx, sz.cy);
-	m_renderView->setViewport(render::Viewport(0, 0, sz.cx, sz.cy, 0, 1));
 }
 
 void AnimationPreviewControl::eventPaint(ui::PaintEvent* event)

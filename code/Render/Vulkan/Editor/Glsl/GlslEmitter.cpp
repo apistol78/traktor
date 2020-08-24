@@ -172,29 +172,6 @@ bool emitComputeOutput(GlslContext& cx, ComputeOutput* node)
 {
 	cx.enterCompute();
 
-	// Manually handle uniform set for "Storage" input as we need to treat it
-	// as an image rather than texture.
-	const Uniform* storageUniformNode = dynamic_type_cast< const Uniform* >(cx.getInputNode(node, L"Storage"));
-	if (!storageUniformNode)
-		return false;
-	if (storageUniformNode->getParameterType() != PtTexture2D)
-		return false;
-
-	auto existing = cx.getLayout().get(storageUniformNode->getParameterName());
-	if (existing != nullptr)
-	{
-		auto existingImage = dynamic_type_cast< const GlslImage* >(existing);
-		if (!existingImage)
-			return false;
-	}
-	else
-	{
-		// Image do not exist; add new image resource.
-		cx.getLayout().add(new GlslImage(
-			storageUniformNode->getParameterName()
-		));
-	}
-
 	GlslVariable* offset = cx.emitInput(node, L"Offset");
 	if (!offset)
 		return false;
@@ -203,20 +180,74 @@ bool emitComputeOutput(GlslContext& cx, ComputeOutput* node)
 	if (!in)
 		return false;
 
+	const Node* storage = cx.getInputNode(node, L"Storage");
+	if (!storage)
+		return false;
 
-	//auto& fu = cx.getShader().getOutputStream(GlslShader::BtUniform);
-	//fu << L"layout(rgba32f, binding = 0) uniform image2D " << storage->getName() << L";" << Endl;
+	if (const Uniform* storageUniformNode = dynamic_type_cast< const Uniform* >(storage))
+	{
+		if (storageUniformNode->getParameterType() != PtTexture2D)
+			return false;
 
-	auto& f = cx.getShader().getOutputStream(GlslShader::BtBody);
-	f << L"imageStore(" << storageUniformNode->getParameterName() << L", " << offset->castToInteger(GtFloat2) << L", " << in->cast(GtFloat4) << L");" << Endl;
+		// Check if image needs to be defined.
+		auto existing = cx.getLayout().get(storageUniformNode->getParameterName());
+		if (existing != nullptr)
+		{
+			auto existingImage = dynamic_type_cast< const GlslImage* >(existing);
+			if (!existingImage)
+				return false;
+		}
+		else
+		{
+			// Image do not exist; add new image resource.
+			cx.getLayout().add(new GlslImage(
+				storageUniformNode->getParameterName()
+			));
+		}
 
-	// Define parameter in context.
-	cx.addParameter(
-		storageUniformNode->getParameterName(),
-		PtTexture2D,
-		1,
-		UfDraw
-	);
+		auto& f = cx.getShader().getOutputStream(GlslShader::BtBody);
+		f << L"imageStore(" << storageUniformNode->getParameterName() << L", " << offset->castToInteger(GtFloat2) << L", " << in->cast(GtFloat4) << L");" << Endl;
+
+		// Define parameter in context.
+		cx.addParameter(
+			storageUniformNode->getParameterName(),
+			PtTexture2D,
+			1,
+			UfDraw
+		);
+	}
+	else if (const Struct* storageStructNode = dynamic_type_cast< const Struct* >(storage))
+	{
+		// Check if storage buffer needs to be defined.
+		auto existing = cx.getLayout().get(storageStructNode->getParameterName());
+		if (existing != nullptr)
+		{
+			auto existingBuffer = dynamic_type_cast< const GlslStorageBuffer* >(existing);
+			if (!existingBuffer)
+				return false;
+		}
+		else
+		{
+			// Storage buffer do not exist; add new storage buffer resource.
+			Ref< GlslStorageBuffer > storageBuffer = new GlslStorageBuffer(storageStructNode->getParameterName());
+			for (const auto& element : storageStructNode->getElements())
+				storageBuffer->add(element.name, glsl_from_data_type(element.type));
+			cx.getLayout().add(storageBuffer);
+
+			auto& f = cx.getShader().getOutputStream(GlslShader::BtBody);
+			f << storageStructNode->getParameterName() << L"_Data[int(" << offset->castToInteger(GtFloat) << L")]." << /*node->getName()*/L"fieldName" << L" = " << in->cast(GtFloat4) << L";" << Endl;
+
+			// Define parameter in context.
+			cx.addParameter(
+				storageStructNode->getParameterName(),
+				PtStructBuffer,
+				1,
+				UfDraw
+			);
+		}
+	}
+	else
+		return false;
 
 	return true;
 }
@@ -431,6 +462,21 @@ bool emitDiscard(GlslContext& cx, Discard* node)
 
 	Ref< GlslVariable > out = cx.emitOutput(node, L"Output", pass->getType());
 	assign(f, out) << pass->getName() << L";" << Endl;
+
+	return true;
+}
+
+bool emitDispatchIndex(GlslContext& cx, DispatchIndex* node)
+{
+	if (!cx.inCompute())
+		return false;
+
+	auto& f = cx.getShader().getOutputStream(GlslShader::BtBody);
+
+	Ref< GlslVariable > out = cx.emitOutput(node, L"Output", GtFloat3);
+
+	comment(f, node);
+	assign(f, out) << L"gl_GlobalInvocationID.xyz;" << Endl;
 
 	return true;
 }
@@ -2718,8 +2764,9 @@ GlslEmitter::GlslEmitter()
 	m_emitters[&type_of< Cos >()] = new EmitterCast< Cos >(emitCos);
 	m_emitters[&type_of< Cross >()] = new EmitterCast< Cross >(emitCross);
 	m_emitters[&type_of< Derivative >()] = new EmitterCast< Derivative >(emitDerivative);
-	m_emitters[&type_of< Div >()] = new EmitterCast< Div >(emitDiv);
 	m_emitters[&type_of< Discard >()] = new EmitterCast< Discard >(emitDiscard);
+	m_emitters[&type_of< DispatchIndex >()] = new EmitterCast< DispatchIndex >(emitDispatchIndex);
+	m_emitters[&type_of< Div >()] = new EmitterCast< Div >(emitDiv);
 	m_emitters[&type_of< Dot >()] = new EmitterCast< Dot >(emitDot);
 	m_emitters[&type_of< Exp >()] = new EmitterCast< Exp >(emitExp);
 	m_emitters[&type_of< Fraction >()] = new EmitterCast< Fraction >(emitFraction);

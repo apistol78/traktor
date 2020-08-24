@@ -144,6 +144,9 @@ void FinalRenderControl::destroy()
 		m_camera = nullptr;
 	}
 
+	if (m_sceneInstance)
+		m_sceneInstance->destroy();
+
 	safeDestroy(m_renderGraph);
 	safeDestroy(m_worldRenderer);
 	safeClose(m_renderView);
@@ -159,9 +162,13 @@ void FinalRenderControl::updateWorldRenderer()
 
 	m_worldRenderSettings = *(m_sceneInstance->getWorldRenderSettings());
 
-	// Use world render settings from non-baked scene.
+	// Use world render settings from non-baked scene, still need to
+	// keep irradiance grid in order to preview baked irradiance in editor.
 	if (m_context->getScene() != nullptr)
+	{
 		m_worldRenderSettings = *(m_context->getScene()->getWorldRenderSettings());
+		m_worldRenderSettings.irradianceGrid = m_sceneInstance->getWorldRenderSettings()->irradianceGrid;
+	}
 
 	// Create entity renderers.
 	Ref< world::WorldEntityRenderers > worldEntityRenderers = new world::WorldEntityRenderers();
@@ -372,8 +379,6 @@ void FinalRenderControl::eventSize(ui::SizeEvent* event)
 		return;
 
 	m_renderView->reset(sz.cx, sz.cy);
-	m_renderView->setViewport(render::Viewport(0, 0, sz.cx, sz.cy, 0, 1));
-
 	m_dirtySize = sz;
 }
 
@@ -408,8 +413,9 @@ void FinalRenderControl::eventPaint(ui::PaintEvent* event)
 	// need to manually update those.
 	world::UpdateParams update;
 	update.totalTime = scaledTime;
-	update.deltaTime = deltaTime;
+	update.deltaTime = scaledDeltaTime;
 	update.alternateTime = scaledTime;
+
 	m_sceneInstance->updateController(update);
 	m_sceneInstance->updateEntity(update);
 

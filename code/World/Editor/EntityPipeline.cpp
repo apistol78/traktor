@@ -31,6 +31,7 @@ TypeInfoSet EntityPipeline::getAssetTypes() const
 	TypeInfoSet typeSet;
 	typeSet.insert< EntityData >();
 	typeSet.insert< IEntityEventData >();
+	typeSet.insert< IEntityComponentData >();
 	return typeSet;
 }
 

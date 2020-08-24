@@ -36,6 +36,7 @@ private:
 
     std::wstring m_name;
     int32_t m_outputTargetSet;
+    Clear m_clear;
     RefArray< ImagePassOpData > m_ops;
 };
 

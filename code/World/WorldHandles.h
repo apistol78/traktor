@@ -70,6 +70,7 @@ extern const render::Handle s_handleViewInverse;
 extern const render::Handle s_handleWorld;
 extern const render::Handle s_handleWorldView;
 extern const render::Handle s_handleWorldViewInv;
+extern const render::Handle s_handleJitter;
 
 // ImageGraph inputs.
 extern const render::Handle s_handleInputColor;

@@ -36,7 +36,16 @@
 			</position>
 			<textureId>InputRoughness</textureId>
 		</item>
-		<item type="traktor.render.ImgPass" version="traktor.render.Node:1">
+		<item type="traktor.render.ImgInput" version="traktor.render.Node:1">
+			<id>{58AF53DD-58E0-9349-BCBE-9B285E5A292C}</id>
+			<comment/>
+			<position>
+				<first>557</first>
+				<second>115</second>
+			</position>
+			<textureId>InputColorLast</textureId>
+		</item>
+		<item type="traktor.render.ImgPass" version="1,traktor.render.Node:1">
 			<id>{DB09FFB6-7207-5947-A15B-8026A5683991}</id>
 			<comment/>
 			<position>
@@ -44,6 +53,25 @@
 				<second>187</second>
 			</position>
 			<name>Screen reflections</name>
+			<clear>
+				<mask>
+					<Color>true</Color>
+					<Depth>false</Depth>
+					<Stencil>false</Stencil>
+				</mask>
+				<colors>
+					<item>0, 0, 0, 1</item>
+					<item>0, 0, 0, 1</item>
+					<item>0, 0, 0, 1</item>
+					<item>0, 0, 0, 1</item>
+					<item>0, 0, 0, 1</item>
+					<item>0, 0, 0, 1</item>
+					<item>0, 0, 0, 1</item>
+					<item>0, 0, 0, 1</item>
+				</colors>
+				<depth>1</depth>
+				<stencil>0</stencil>
+			</clear>
 			<steps>
 				<item type="traktor.render.ImgStepSimple">
 					<shader>{F04EEA34-85E0-974F-BE97-79D24C6ACFBD}</shader>
@@ -56,20 +84,11 @@
 				</item>
 			</steps>
 		</item>
-		<item type="traktor.render.ImgInput" version="traktor.render.Node:1">
-			<id>{58AF53DD-58E0-9349-BCBE-9B285E5A292C}</id>
-			<comment/>
-			<position>
-				<first>557</first>
-				<second>115</second>
-			</position>
-			<textureId>InputColorLast</textureId>
-		</item>
 	</nodes>
 	<edges>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[4]"/>
+				<node ref="/object/nodes/item[5]"/>
 				<name>Output</name>
 			</source>
 			<destination>
@@ -83,7 +102,7 @@
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[4]"/>
+				<node ref="/object/nodes/item[5]"/>
 				<name>Depth</name>
 			</destination>
 		</item>
@@ -93,7 +112,7 @@
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[4]"/>
+				<node ref="/object/nodes/item[5]"/>
 				<name>InputNormal</name>
 			</destination>
 		</item>
@@ -103,17 +122,17 @@
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[4]"/>
+				<node ref="/object/nodes/item[5]"/>
 				<name>InputRoughness</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[5]"/>
+				<node ref="/object/nodes/item[4]"/>
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[4]"/>
+				<node ref="/object/nodes/item[5]"/>
 				<name>Color</name>
 			</destination>
 		</item>

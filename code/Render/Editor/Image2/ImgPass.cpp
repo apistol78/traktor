@@ -1,5 +1,7 @@
 #include "Core/Serialization/ISerializer.h"
+#include "Core/Serialization/MemberBitMask.h"
 #include "Core/Serialization/MemberRefArray.h"
+#include "Core/Serialization/MemberStaticArray.h"
 #include "Render/Editor/InputPin.h"
 #include "Render/Editor/OutputPin.h"
 #include "Render/Editor/Image2/IImgStep.h"
@@ -9,11 +11,52 @@ namespace traktor
 {
 	namespace render
 	{
+		namespace
+		{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ImgPass", 0, ImgPass, Node)
+class MemberClear : public MemberComplex
+{
+public:
+	MemberClear(const wchar_t* const name, Clear& ref)
+	:	MemberComplex(name, true)
+	,	m_ref(ref)
+	{
+	}
+
+	virtual void serialize(ISerializer& s) const override final
+	{
+		const MemberBitMask::Bit c_ClearFlag_bits[] =
+		{
+			{ L"Color", CfColor },
+			{ L"Depth", CfDepth },
+			{ L"Stencil", CfStencil },
+			{ 0 }
+		};
+
+		s >> MemberBitMask(L"mask", m_ref.mask, c_ClearFlag_bits);
+		s >> MemberStaticArray< Color4f, sizeof_array(m_ref.colors) >(L"colors", m_ref.colors);
+		s >> Member< float >(L"depth", m_ref.depth);
+		s >> Member< int32_t >(L"stencil", m_ref.stencil);
+	}
+
+private:
+	Clear& m_ref;
+};
+
+		}
+
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ImgPass", 1, ImgPass, Node)
 
 ImgPass::ImgPass()
 {
+	// Setup default clear parameters.
+	m_clear.mask = 0;
+	for (int32_t i = 0; i < sizeof_array(m_clear.colors); ++i)
+		m_clear.colors[i] = Color4f(0.0f, 0.0f, 0.0f, 1.0f);
+	m_clear.depth = 1.0f;
+	m_clear.stencil = 0;
+
+	// Create the output pin.
 	const Guid c_null;
 	m_outputPins.push_back(new OutputPin(this, c_null, L"Output"));
 }
@@ -29,6 +72,11 @@ ImgPass::~ImgPass()
 const std::wstring& ImgPass::getName() const
 {
 	return m_name;
+}
+
+const Clear& ImgPass::getClear() const
+{
+	return m_clear;
 }
 
 const RefArray< IImgStep >& ImgPass::getSteps() const
@@ -61,8 +109,14 @@ const OutputPin* ImgPass::getOutputPin(int index) const
 void ImgPass::serialize(ISerializer& s)
 {
 	Node::serialize(s);
+
 	s >> Member< std::wstring >(L"name", m_name);
+
+	if (s.getVersion< ImgPass >() >= 1)
+		s >> MemberClear(L"clear", m_clear);
+
 	s >> MemberRefArray< IImgStep >(L"steps", m_steps);
+
 	if (s.getDirection() == ISerializer::Direction::Read)
 		refresh();
 }

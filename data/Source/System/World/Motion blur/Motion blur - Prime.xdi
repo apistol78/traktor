@@ -9,23 +9,6 @@
 				<second>153</second>
 			</position>
 		</item>
-		<item type="traktor.render.ImgPass" version="traktor.render.Node:1">
-			<id>{DB09FFB6-7207-5947-A15B-8026A5683991}</id>
-			<comment/>
-			<position>
-				<first>382</first>
-				<second>151</second>
-			</position>
-			<name>Motion blur prime</name>
-			<steps>
-				<item type="traktor.render.ImgStepSimple">
-					<shader>{944AD06D-240F-4E4A-AF0C-3AEEB50A6FBC}</shader>
-					<parameters>
-						<item>Depth</item>
-					</parameters>
-				</item>
-			</steps>
-		</item>
 		<item type="traktor.render.ImgInput" version="traktor.render.Node:1">
 			<id>{6834F690-121C-C249-8191-A03A37AFC8F2}</id>
 			<comment/>
@@ -35,11 +18,47 @@
 			</position>
 			<textureId>InputDepth</textureId>
 		</item>
+		<item type="traktor.render.ImgPass" version="1,traktor.render.Node:1">
+			<id>{DB09FFB6-7207-5947-A15B-8026A5683991}</id>
+			<comment/>
+			<position>
+				<first>382</first>
+				<second>151</second>
+			</position>
+			<name>Motion blur prime</name>
+			<clear>
+				<mask>
+					<Color>true</Color>
+					<Depth>false</Depth>
+					<Stencil>false</Stencil>
+				</mask>
+				<colors>
+					<item>0, 0, 0, 1</item>
+					<item>0, 0, 0, 1</item>
+					<item>0, 0, 0, 1</item>
+					<item>0, 0, 0, 1</item>
+					<item>0, 0, 0, 1</item>
+					<item>0, 0, 0, 1</item>
+					<item>0, 0, 0, 1</item>
+					<item>0, 0, 0, 1</item>
+				</colors>
+				<depth>1</depth>
+				<stencil>0</stencil>
+			</clear>
+			<steps>
+				<item type="traktor.render.ImgStepSimple">
+					<shader>{944AD06D-240F-4E4A-AF0C-3AEEB50A6FBC}</shader>
+					<parameters>
+						<item>Depth</item>
+					</parameters>
+				</item>
+			</steps>
+		</item>
 	</nodes>
 	<edges>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[1]"/>
+				<node ref="/object/nodes/item[2]"/>
 				<name>Output</name>
 			</source>
 			<destination>
@@ -49,11 +68,11 @@
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[2]"/>
+				<node ref="/object/nodes/item[1]"/>
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[1]"/>
+				<node ref="/object/nodes/item[2]"/>
 				<name>Depth</name>
 			</destination>
 		</item>

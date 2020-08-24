@@ -2,6 +2,7 @@
 
 #include "Core/RefArray.h"
 #include "Core/Containers/AlignedVector.h"
+#include "Render/Types.h"
 #include "Render/Editor/Node.h"
 
 // import/export mechanism.
@@ -36,6 +37,8 @@ public:
 
 	const std::wstring& getName() const;
 
+	const Clear& getClear() const;
+
 	const RefArray< IImgStep >& getSteps() const;
 
 	virtual int getInputPinCount() const override final;
@@ -52,6 +55,7 @@ private:
 	std::wstring m_name;
 	AlignedVector< InputPin* > m_inputPins;
 	AlignedVector< OutputPin* > m_outputPins;
+	Clear m_clear;
 	RefArray< IImgStep > m_steps;
 
 	void refresh();

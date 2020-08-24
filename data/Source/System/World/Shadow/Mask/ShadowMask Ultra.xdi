@@ -27,7 +27,7 @@
 				<second>216</second>
 			</position>
 		</item>
-		<item type="traktor.render.ImgPass" version="traktor.render.Node:1">
+		<item type="traktor.render.ImgPass" version="1,traktor.render.Node:1">
 			<id>{B5AF2401-3C2C-F246-8DDC-616D2164F2B7}</id>
 			<comment/>
 			<position>
@@ -35,6 +35,25 @@
 				<second>189</second>
 			</position>
 			<name>Shadow mask project</name>
+			<clear>
+				<mask>
+					<Color>true</Color>
+					<Depth>false</Depth>
+					<Stencil>false</Stencil>
+				</mask>
+				<colors>
+					<item>0, 0, 0, 1</item>
+					<item>0, 0, 0, 1</item>
+					<item>0, 0, 0, 1</item>
+					<item>0, 0, 0, 1</item>
+					<item>0, 0, 0, 1</item>
+					<item>0, 0, 0, 1</item>
+					<item>0, 0, 0, 1</item>
+					<item>0, 0, 0, 1</item>
+				</colors>
+				<depth>1</depth>
+				<stencil>0</stencil>
+			</clear>
 			<steps>
 				<item type="traktor.render.ImgStepShadowProject">
 					<shader>{7B2027C7-D6F3-3542-B175-0A18ECAE5385}</shader>

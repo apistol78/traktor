@@ -24,6 +24,7 @@ class IEditor;
 
 class Image;
 class PropertyCommandEvent;
+class Static;
 
 	}
 
@@ -60,6 +61,7 @@ private:
 	Ref< ui::Image > m_imageTextureWithAlpha;
 	Ref< ui::Image > m_imageTextureNoAlpha;
 	Ref< ui::Image > m_imageTextureAlphaOnly;
+	Ref< ui::Static > m_imageInfo;
 	Ref< ui::AutoPropertyList > m_propertyList;
 
 	void updatePreview();
