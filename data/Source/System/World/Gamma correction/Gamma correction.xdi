@@ -18,7 +18,7 @@
 				<second>153</second>
 			</position>
 		</item>
-		<item type="traktor.render.ImgPass" version="traktor.render.Node:1">
+		<item type="traktor.render.ImgPass" version="1,traktor.render.Node:1">
 			<id>{DB09FFB6-7207-5947-A15B-8026A5683991}</id>
 			<comment/>
 			<position>
@@ -26,6 +26,25 @@
 				<second>151</second>
 			</position>
 			<name>Gamma correction</name>
+			<clear>
+				<mask>
+					<Color>true</Color>
+					<Depth>false</Depth>
+					<Stencil>false</Stencil>
+				</mask>
+				<colors>
+					<item>0, 0, 0, 1</item>
+					<item>0, 0, 0, 1</item>
+					<item>0, 0, 0, 1</item>
+					<item>0, 0, 0, 1</item>
+					<item>0, 0, 0, 1</item>
+					<item>0, 0, 0, 1</item>
+					<item>0, 0, 0, 1</item>
+					<item>0, 0, 0, 1</item>
+				</colors>
+				<depth>1</depth>
+				<stencil>0</stencil>
+			</clear>
 			<steps>
 				<item type="traktor.render.ImgStepSimple">
 					<shader>{FC562574-333A-264B-BBAC-531D00653824}</shader>

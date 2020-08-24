@@ -28,7 +28,7 @@ namespace traktor
 	namespace render
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ImageGraphPipeline", 4, ImageGraphPipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ImageGraphPipeline", 5, ImageGraphPipeline, editor::IPipeline)
 
 bool ImageGraphPipeline::create(const editor::IPipelineSettings* settings)
 {
@@ -193,6 +193,7 @@ bool ImageGraphPipeline::buildOutput(
 			Ref< ImagePassData > passData = new ImagePassData();
 			passData->m_name = pass->getName();
 			passData->m_outputTargetSet = -1;
+			passData->m_clear = pass->getClear();
 
 			// Find index of output target set.
 			int32_t targetSetIndex = 0;

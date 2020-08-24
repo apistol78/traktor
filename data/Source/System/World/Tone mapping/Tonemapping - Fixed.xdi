@@ -18,7 +18,7 @@
 				<second>167</second>
 			</position>
 		</item>
-		<item type="traktor.render.ImgPass" version="traktor.render.Node:1">
+		<item type="traktor.render.ImgPass" version="1,traktor.render.Node:1">
 			<id>{DB09FFB6-7207-5947-A15B-8026A5683991}</id>
 			<comment/>
 			<position>
@@ -26,6 +26,25 @@
 				<second>115</second>
 			</position>
 			<name>Tone mapping</name>
+			<clear>
+				<mask>
+					<Color>true</Color>
+					<Depth>false</Depth>
+					<Stencil>false</Stencil>
+				</mask>
+				<colors>
+					<item>0, 0, 0, 1</item>
+					<item>0, 0, 0, 1</item>
+					<item>0, 0, 0, 1</item>
+					<item>0, 0, 0, 1</item>
+					<item>0, 0, 0, 1</item>
+					<item>0, 0, 0, 1</item>
+					<item>0, 0, 0, 1</item>
+					<item>0, 0, 0, 1</item>
+				</colors>
+				<depth>1</depth>
+				<stencil>0</stencil>
+			</clear>
 			<steps>
 				<item type="traktor.render.ImgStepSimple">
 					<shader>{697DF682-AF08-9A44-A189-2DA42C020A2D}</shader>

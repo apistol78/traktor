@@ -1,3 +1,5 @@
+#pragma optimize( "", off )
+
 #include <limits>
 #include "Core/Log/Log.h"
 #include "Core/Math/Log2.h"
@@ -146,6 +148,15 @@ Ref< render::ITexture > create1x1Texture(render::IRenderSystem* renderSystem, ui
 	stcd.initialData[0].data = &value;
 	stcd.initialData[0].pitch = 4;
 	return renderSystem->createSimpleTexture(stcd, T_FILE_LINE_W);
+}
+
+Vector2 jitter(int32_t count)
+{
+	const Vector2 kernelSize(0.5f, 0.5f);
+	return Vector2(
+		(float)((count / 2) & 1) * kernelSize.x - kernelSize.x / 2.0f,
+		(float)(      count & 1) * kernelSize.y - kernelSize.y / 2.0f
+	);
 }
 
 		}
@@ -435,10 +446,10 @@ void WorldRendererDeferred::setup(
 	int32_t frame = m_count % (int32_t)m_frames.size();
 	WorldRenderView worldRenderView = immutableWorldRenderView;
 
-	// Jitter projection for TAA.
+	// Jitter projection for TAA, calculate jitter in clip space.
 	if (m_antiAliasQuality >= Quality::Ultra)
 	{
-		Vector2 r = Vector2((float)((m_count / 2) & 1) - 0.5f, (float)(m_count & 1) - 0.5f) / immutableWorldRenderView.getViewSize();
+		Vector2 r = (jitter(m_count) * 2.0f) / worldRenderView.getViewSize();
 		Matrix44 proj = immutableWorldRenderView.getProjection();
 		proj = translate(r.x, r.y, 0.0f) * proj;
 		worldRenderView.setProjection(proj);
@@ -1522,9 +1533,17 @@ void WorldRendererDeferred::setupProcessPass(
 	cx.associateTextureTargetSet(s_handleInputDepth, gbufferTargetSetId, 0);
 	cx.associateTextureTargetSet(s_handleInputNormal, gbufferTargetSetId, 1);
 	cx.associateTextureTargetSet(s_handleInputVelocity, velocityTargetSetId, 0);
+
+	// Expose gamma and exposure.
 	cx.setFloatParameter(s_handleGamma, m_gamma);
 	cx.setFloatParameter(s_handleGammaInverse, 1.0f / m_gamma);
 	cx.setFloatParameter(s_handleExposure, m_settings.exposure);
+
+	// Expose jitter; in texture space.
+	Vector2 rc = jitter(m_count) / worldRenderView.getViewSize();
+	Vector2 rp = jitter(m_count - 1) / worldRenderView.getViewSize();
+	cx.setVectorParameter(s_handleJitter, Vector4(rp.x, -rp.y, rc.x, -rc.y));
+
 	cx.setParams(ipd);
 
 	StaticVector< render::ImageGraph*, 5 > processes;

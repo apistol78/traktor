@@ -27,7 +27,7 @@
 			</position>
 			<textureId>InputVelocity</textureId>
 		</item>
-		<item type="traktor.render.ImgPass" version="traktor.render.Node:1">
+		<item type="traktor.render.ImgPass" version="1,traktor.render.Node:1">
 			<id>{DB09FFB6-7207-5947-A15B-8026A5683991}</id>
 			<comment/>
 			<position>
@@ -35,6 +35,25 @@
 				<second>149</second>
 			</position>
 			<name>Motion blur final</name>
+			<clear>
+				<mask>
+					<Color>true</Color>
+					<Depth>false</Depth>
+					<Stencil>false</Stencil>
+				</mask>
+				<colors>
+					<item>0, 0, 0, 1</item>
+					<item>0, 0, 0, 1</item>
+					<item>0, 0, 0, 1</item>
+					<item>0, 0, 0, 1</item>
+					<item>0, 0, 0, 1</item>
+					<item>0, 0, 0, 1</item>
+					<item>0, 0, 0, 1</item>
+					<item>0, 0, 0, 1</item>
+				</colors>
+				<depth>1</depth>
+				<stencil>0</stencil>
+			</clear>
 			<steps>
 				<item type="traktor.render.ImgStepSimple">
 					<shader>{438372D7-2801-1A49-9152-A9DD69BE73CB}</shader>

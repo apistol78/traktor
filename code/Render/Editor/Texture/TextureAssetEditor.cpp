@@ -6,6 +6,8 @@
 #include "Core/Settings/PropertyString.h"
 #include "Database/Database.h"
 #include "Database/Instance.h"
+#include "Drawing/Image.h"
+#include "Drawing/PixelFormat.h"
 #include "Editor/IEditor.h"
 #include "Editor/IThumbnailGenerator.h"
 #include "I18N/Text.h"
@@ -15,6 +17,7 @@
 #include "Ui/Bitmap.h"
 #include "Ui/Container.h"
 #include "Ui/Image.h"
+#include "Ui/Static.h"
 #include "Ui/TableLayout.h"
 #include "Ui/FileDialog.h"
 #include "Ui/PropertyList/ArrayPropertyItem.h"
@@ -55,6 +58,9 @@ bool TextureAssetEditor::create(ui::Widget* parent, db::Instance* instance, ISer
 	m_imageTextureAlphaOnly = new ui::Image();
 	m_imageTextureAlphaOnly->create(imageContainer, 0, ui::Image::WsTransparent | ui::WsDoubleBuffer);
 
+	m_imageInfo = new ui::Static();
+	m_imageInfo->create(imageContainer);
+
 	m_propertyList = new ui::AutoPropertyList();
 	m_propertyList->create(container, ui::WsDoubleBuffer | ui::AutoPropertyList::WsColumnHeader, this);
 	m_propertyList->addEventHandler< ui::PropertyCommandEvent >(this, &TextureAssetEditor::eventPropertyCommand);
@@ -71,8 +77,8 @@ void TextureAssetEditor::destroy()
 {
 	safeDestroy(m_propertyList);
 
-	m_instance = 0;
-	m_asset = 0;
+	m_instance = nullptr;
+	m_asset = nullptr;
 }
 
 void TextureAssetEditor::apply()
@@ -94,7 +100,7 @@ ui::Size TextureAssetEditor::getPreferredSize() const
 {
 	return ui::Size(
 		ui::dpi96(850),
-		ui::dpi96(550)
+		ui::dpi96(700)
 	);
 }
 
@@ -102,13 +108,27 @@ void TextureAssetEditor::updatePreview()
 {
 	Ref< drawing::Image > textureThumb;
 
+	std::wstring assetPath = m_editor->getSettings()->getProperty< std::wstring >(L"Pipeline.AssetPath", L"");
+	Path fileName = FileSystem::getInstance().getAbsolutePath(assetPath, m_asset->getFileName());
+	int32_t size = ui::dpi96(128);
+
+	Ref< drawing::Image > image = drawing::Image::load(fileName);
+	if (image)
+	{
+		StringOutputStream ss;
+		ss << L"Width " << image->getWidth() << Endl;
+		ss << L"Height " << image->getHeight() << Endl;
+		ss << L"Color bits " << image->getPixelFormat().getColorBits() << Endl;
+		ss << L"Alpha bits " << image->getPixelFormat().getAlphaBits() << Endl;
+		m_imageInfo->setText(ss.str());
+	}
+	else
+		m_imageInfo->setText(L"");
+
 	Ref< editor::IThumbnailGenerator > thumbnailGenerator = m_editor->getStoreObject< editor::IThumbnailGenerator >(L"ThumbnailGenerator");
 	if (!thumbnailGenerator)
 		return;
 
-	std::wstring assetPath = m_editor->getSettings()->getProperty< std::wstring >(L"Pipeline.AssetPath", L"");
-	Path fileName = FileSystem::getInstance().getAbsolutePath(assetPath, m_asset->getFileName());
-	int32_t size = ui::dpi96(128);
 
 	bool visibleAlpha = (m_asset->m_output.m_hasAlpha == true && m_asset->m_output.m_ignoreAlpha == false);
 	textureThumb = thumbnailGenerator->get(
@@ -123,7 +143,7 @@ void TextureAssetEditor::updatePreview()
 		m_imageTextureWithAlpha->setImage(textureBitmap, false);
 	}
 	else
-		m_imageTextureWithAlpha->setImage(0, false);
+		m_imageTextureWithAlpha->setImage(nullptr, false);
 
 	textureThumb = thumbnailGenerator->get(
 		fileName,
@@ -137,7 +157,7 @@ void TextureAssetEditor::updatePreview()
 		m_imageTextureNoAlpha->setImage(textureBitmap, false);
 	}
 	else
-		m_imageTextureNoAlpha->setImage(0, false);
+		m_imageTextureNoAlpha->setImage(nullptr, false);
 
 	textureThumb = thumbnailGenerator->get(
 		fileName,
@@ -151,7 +171,7 @@ void TextureAssetEditor::updatePreview()
 		m_imageTextureAlphaOnly->setImage(textureBitmap, false);
 	}
 	else
-		m_imageTextureAlphaOnly->setImage(0, false);
+		m_imageTextureAlphaOnly->setImage(nullptr, false);
 }
 
 void TextureAssetEditor::eventPropertyCommand(ui::PropertyCommandEvent* event)

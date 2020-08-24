@@ -1,23 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ImageGraphAsset">
 	<nodes>
-		<item type="traktor.render.ImgPass" version="traktor.render.Node:1">
-			<id>{5B33BE37-076E-1040-BB9A-9A0F9D5CEED0}</id>
-			<comment/>
-			<position>
-				<first>696</first>
-				<second>323</second>
-			</position>
-			<name>Fxaa</name>
-			<steps>
-				<item type="traktor.render.ImgStepSimple">
-					<shader>{D3F3B35B-F5C6-2747-9EE8-9FA9554D6300}</shader>
-					<parameters>
-						<item>Source</item>
-					</parameters>
-				</item>
-			</steps>
-		</item>
 		<item type="traktor.render.ImgOutput" version="traktor.render.Node:1">
 			<id>{5B3C6FF2-AE77-2344-80B3-60F175C29D8C}</id>
 			<comment/>
@@ -35,8 +18,54 @@
 			</position>
 			<textureId>InputColor</textureId>
 		</item>
+		<item type="traktor.render.ImgPass" version="1,traktor.render.Node:1">
+			<id>{5B33BE37-076E-1040-BB9A-9A0F9D5CEED0}</id>
+			<comment/>
+			<position>
+				<first>696</first>
+				<second>323</second>
+			</position>
+			<name>Fxaa</name>
+			<clear>
+				<mask>
+					<Color>true</Color>
+					<Depth>false</Depth>
+					<Stencil>false</Stencil>
+				</mask>
+				<colors>
+					<item>0, 0, 0, 1</item>
+					<item>0, 0, 0, 1</item>
+					<item>0, 0, 0, 1</item>
+					<item>0, 0, 0, 1</item>
+					<item>0, 0, 0, 1</item>
+					<item>0, 0, 0, 1</item>
+					<item>0, 0, 0, 1</item>
+					<item>0, 0, 0, 1</item>
+				</colors>
+				<depth>1</depth>
+				<stencil>0</stencil>
+			</clear>
+			<steps>
+				<item type="traktor.render.ImgStepSimple">
+					<shader>{D3F3B35B-F5C6-2747-9EE8-9FA9554D6300}</shader>
+					<parameters>
+						<item>Source</item>
+					</parameters>
+				</item>
+			</steps>
+		</item>
 	</nodes>
 	<edges>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[1]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[2]"/>
+				<name>Source</name>
+			</destination>
+		</item>
 		<item type="traktor.render.Edge">
 			<source>
 				<node ref="/object/nodes/item[2]"/>
@@ -44,16 +73,6 @@
 			</source>
 			<destination>
 				<node ref="/object/nodes/item"/>
-				<name>Source</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[1]"/>
 				<name>Input</name>
 			</destination>
 		</item>

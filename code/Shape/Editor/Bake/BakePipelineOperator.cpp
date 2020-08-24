@@ -588,7 +588,7 @@ bool BakePipelineOperator::build(
 
 			for (int32_t i = 0; i < 9; ++i)
 			{
-				writer << 0.0f;
+				writer << 1.0f;
 				writer << 0.0f;
 				writer << 0.0f;
 			}

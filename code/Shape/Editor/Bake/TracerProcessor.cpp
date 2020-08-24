@@ -388,6 +388,7 @@ bool TracerProcessor::process(const TracerTask* task) const
 		// Create GBuffer of mesh's geometry.
 		GBuffer gbuffer;
 		gbuffer.create(width, height, *renderModel, tracerOutput->getTransform(), channel);
+		gbuffer.saveAsImages(L"temp/Data/Bake/GBuffer");
 
 		// Preprocess GBuffer.
 		rayTracer->preprocess(&gbuffer);
@@ -540,6 +541,8 @@ bool TracerProcessor::process(const TracerTask* task) const
 
 		// Discard alpha.
 		lightmap->clearAlpha(1.0f);
+
+lightmap->save(L"data/Temp/Bake/Lightmap.png");
 
 		// Encode texture into RGBM.
 		if (false)

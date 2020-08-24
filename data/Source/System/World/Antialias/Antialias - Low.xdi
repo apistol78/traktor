@@ -18,7 +18,7 @@
 				<second>151</second>
 			</position>
 		</item>
-		<item type="traktor.render.ImgPass" version="traktor.render.Node:1">
+		<item type="traktor.render.ImgPass" version="1,traktor.render.Node:1">
 			<id>{F39C404A-A894-EC4E-955A-5B23ED3C6782}</id>
 			<comment/>
 			<position>
@@ -26,6 +26,25 @@
 				<second>138</second>
 			</position>
 			<name>Fxaa</name>
+			<clear>
+				<mask>
+					<Color>true</Color>
+					<Depth>false</Depth>
+					<Stencil>false</Stencil>
+				</mask>
+				<colors>
+					<item>0, 0, 0, 1</item>
+					<item>0, 0, 0, 1</item>
+					<item>0, 0, 0, 1</item>
+					<item>0, 0, 0, 1</item>
+					<item>0, 0, 0, 1</item>
+					<item>0, 0, 0, 1</item>
+					<item>0, 0, 0, 1</item>
+					<item>0, 0, 0, 1</item>
+				</colors>
+				<depth>1</depth>
+				<stencil>0</stencil>
+			</clear>
 			<steps>
 				<item type="traktor.render.ImgStepSimple">
 					<shader>{D3F3B35B-F5C6-2747-9EE8-9FA9554D6300}</shader>

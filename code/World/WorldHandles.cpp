@@ -68,6 +68,7 @@ const render::Handle s_handleViewInverse(L"World_ViewInverse");
 const render::Handle s_handleWorld(L"World_World");
 const render::Handle s_handleWorldView(L"World_WorldView");
 const render::Handle s_handleWorldViewInv(L"World_WorldViewInv");
+const render::Handle s_handleJitter(L"World_Jitter");
 
 // ImageGraph inputs.
 const render::Handle s_handleInputColor(L"InputColor");

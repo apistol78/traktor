@@ -1,3 +1,5 @@
+#pragma optimize( "", off )
+
 #include "Animation/Joint.h"
 #include "Animation/Skeleton.h"
 #include "Animation/SkeletonUtils.h"
@@ -63,17 +65,16 @@ bool IKPoseController::evaluate(
 		outPoseTransforms = jointTransforms;
 
 	AlignedVector< Vector4 > nodes(jointCount);
-	AlignedVector< Scalar > lengths(jointCount, Scalar(0.0f));
+	AlignedVector< Scalar > lengths(jointCount, 0.0_simd);
 
 	// Calculate skeleton bone lengths.
 	for (uint32_t i = 0; i < jointCount; ++i)
 	{
-		const Joint* joint = skeleton->getJoint(i);
-
 		// Node position.
-		nodes[i] = jointTransforms[i].translation();
+		nodes[i] = outPoseTransforms[i].translation().xyz1();
 
 		// Node to parent bone length.
+		const Joint* joint = skeleton->getJoint(i);
 		if (joint->getParent() >= 0)
 		{
 			Vector4 s = jointTransforms[joint->getParent()].translation();
@@ -107,34 +108,50 @@ bool IKPoseController::evaluate(
 				}
 			}
 		}
+
+		// Constraint 2; always above ground.
+		for (uint32_t j = 0; j < jointCount; ++j)
+		{
+			Vector4 n = worldTransform * nodes[j];
+			if (n.y() < 0.0_simd)
+			{
+				n *= Vector4(1.0f, 0.0f, 1.0f, 1.0f);
+				nodes[j] = worldTransform.inverse() * n;
+			}
+		}
 	}
 
 	// Update pose transforms from node system.
 	for (uint32_t i = 0; i < jointCount; ++i)
 	{
 		const Joint* joint = skeleton->getJoint(i);
-		//if (joint->getParent() >= 0)
-		//{
-		//	const Vector4& s = nodes[joint->getParent()];
-		//	const Vector4& e = nodes[i];
+		if (joint->getParent() >= 0)
+		{
+			const Vector4& sref = outPoseTransforms[joint->getParent()].translation();
+			const Vector4& eref = outPoseTransforms[i].translation();
 
-		//	Vector4 axisZ = (e - s).normalized();
+			Vector4 axisZref = (eref - sref).normalized();
 
-		//	Vector4 axisX, axisY;
-		//	orthogonalFrame(axisZ, axisY, axisX);
+			const Vector4& sik = nodes[joint->getParent()];
+			const Vector4& eik = nodes[i];
 
-		//	outPoseTransforms[i] = Transform(Matrix44(
-		//		axisX,
-		//		axisY,
-		//		axisZ,
-		//		e
-		//	));
-		//}
-		//else
+			Vector4 axisZik = (eik - sik).normalized();
+			Vector4 axisXik, axisYik;
+			orthogonalFrame(axisZik, axisYik, axisXik);
+
+			Quaternion Qr(
+				axisZref,
+				axisZik
+			);
+			Quaternion Qrr = outPoseTransforms[i].rotation() * Qr;
+
+			outPoseTransforms[i] = Transform(eik, Qrr);
+		}
+		else
 		{
 			outPoseTransforms[i] = Transform(
-				nodes[i],
-				jointTransforms[i].rotation()
+				nodes[i].xyz0(),
+				outPoseTransforms[i].rotation()
 			);
 		}
 	}

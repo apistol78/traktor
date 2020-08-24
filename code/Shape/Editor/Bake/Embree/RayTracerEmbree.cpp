@@ -239,6 +239,17 @@ Ref< render::SHCoeffs > RayTracerEmbree::traceProbe(const Vector4& position) con
 			Vector2 uv = Quasirandom::hammersley(i, sampleCount, random);
 			Vector4 direction = Quasirandom::uniformHemiSphere(uv, unit);
 
+			// Trace direct analytical illumination, only used for lights
+			// of which direct lighting is baked.
+			Color4f direct = sampleAnalyticalLights(
+				random,
+				position,
+				direction,
+				Light::LmDirect,
+				true
+			);
+
+			// Incoming indirect light.
 			Color4f incoming = tracePath(
 				position,
 				direction,
@@ -246,7 +257,7 @@ Ref< render::SHCoeffs > RayTracerEmbree::traceProbe(const Vector4& position) con
 				0
 			);
 
-			color += incoming /* * dot3(unit, direction) */;
+			color += incoming + direct /* * dot3(unit, direction) */;
 		}
 		color /= Scalar(sampleCount);
 		return color;
