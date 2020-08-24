@@ -25,7 +25,6 @@
 #include "Model/Operations/FlattenDoubleSided.h"
 #include "Model/Operations/Quantize.h"
 #include "Model/Operations/Reduce.h"
-#include "Model/Operations/ReduceSimplygon.h"
 #include "Model/Operations/ScaleAlongNormal.h"
 #include "Model/Operations/Transform.h"
 #include "Model/Operations/Triangulate.h"

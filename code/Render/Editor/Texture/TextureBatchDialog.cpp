@@ -89,8 +89,10 @@ bool TextureBatchDialog::showModal(RefArray< TextureAsset >& outAssets)
 
 void TextureBatchDialog::addTexture()
 {
+	std::wstring assetPath = m_editor->getSettings()->getProperty< std::wstring >(L"Pipeline.AssetPath", L"");
+
 	ui::FileDialog fileDialog;
-	if (!fileDialog.create(this, type_name(this), i18n::Text(L"TEXTURE_BATCH_FILE_TITLE"), L"All files;*.*"))
+	if (!fileDialog.create(this, type_name(this), i18n::Text(L"TEXTURE_BATCH_FILE_TITLE"), L"All files;*.*", assetPath))
 		return;
 
 	std::vector< Path > fileNames;
@@ -101,23 +103,21 @@ void TextureBatchDialog::addTexture()
 	}
 	fileDialog.destroy();
 
-	std::wstring assetPath = m_editor->getSettings()->getProperty< std::wstring >(L"Pipeline.AssetPath", L"");
-
-	for (std::vector< Path >::iterator i = fileNames.begin(); i != fileNames.end(); ++i)
+	for (const auto& fileName : fileNames)
 	{
 		Path texturePath;
 		if (!FileSystem::getInstance().getRelativePath(
-			FileSystem::getInstance().getAbsolutePath(*i),
+			FileSystem::getInstance().getAbsolutePath(fileName),
 			FileSystem::getInstance().getAbsolutePath(assetPath),
 			texturePath
 		))
-			texturePath = *i;
+			texturePath = fileName;
 
 		Ref< TextureAsset > asset = new TextureAsset();
 		asset->setFileName(texturePath);
 
 		m_textureList->add(
-			i->getFileName(),
+			fileName.getFileName(),
 			asset
 		);
 	}
@@ -125,7 +125,7 @@ void TextureBatchDialog::addTexture()
 
 void TextureBatchDialog::removeTexture()
 {
-	m_texturePropertyList->bind(0);
+	m_texturePropertyList->bind(nullptr);
 	m_texturePropertyList->update();
 
 	for (int index = m_textureList->getSelected(); index >= 0; index = m_textureList->getSelected())

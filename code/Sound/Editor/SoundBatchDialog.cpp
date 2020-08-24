@@ -89,8 +89,10 @@ bool SoundBatchDialog::showModal(RefArray< SoundAsset >& outAssets)
 
 void SoundBatchDialog::addSound()
 {
+	std::wstring assetPath = m_editor->getSettings()->getProperty< std::wstring >(L"Pipeline.AssetPath", L"");
+
 	ui::FileDialog fileDialog;
-	if (!fileDialog.create(this, type_name(this), i18n::Text(L"SOUND_BATCH_FILE_TITLE"), L"All files;*.*"))
+	if (!fileDialog.create(this, type_name(this), i18n::Text(L"SOUND_BATCH_FILE_TITLE"), L"All files;*.*", assetPath))
 		return;
 
 	std::vector< Path > fileNames;
@@ -101,23 +103,21 @@ void SoundBatchDialog::addSound()
 	}
 	fileDialog.destroy();
 
-	std::wstring assetPath = m_editor->getSettings()->getProperty< std::wstring >(L"Pipeline.AssetPath", L"");
-
-	for (std::vector< Path >::iterator i = fileNames.begin(); i != fileNames.end(); ++i)
+	for (const auto& fileName : fileNames)
 	{
 		Path soundPath;
 		if (!FileSystem::getInstance().getRelativePath(
-			FileSystem::getInstance().getAbsolutePath(*i),
+			FileSystem::getInstance().getAbsolutePath(fileName),
 			FileSystem::getInstance().getAbsolutePath(assetPath),
 			soundPath
 		))
-			soundPath = *i;
+			soundPath = fileName;
 
 		Ref< SoundAsset > asset = new SoundAsset();
 		asset->setFileName(soundPath);
 
 		m_soundList->add(
-			i->getFileName(),
+			fileName.getFileName(),
 			asset
 		);
 	}
@@ -125,7 +125,7 @@ void SoundBatchDialog::addSound()
 
 void SoundBatchDialog::removeSound()
 {
-	m_soundPropertyList->bind(0);
+	m_soundPropertyList->bind(nullptr);
 	m_soundPropertyList->update();
 
 	for (int index = m_soundList->getSelected(); index >= 0; index = m_soundList->getSelected())

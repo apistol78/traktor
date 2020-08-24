@@ -1,6 +1,8 @@
+#include <limits>
 #include "Animation/SkeletonUtils.h"
 #include "Animation/Animation/Animation.h"
 #include "Animation/Animation/SimpleAnimationController.h"
+#include "Core/Math/Const.h"
 #include "Core/Math/Random.h"
 
 namespace traktor

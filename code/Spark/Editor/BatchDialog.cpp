@@ -90,8 +90,10 @@ bool BatchDialog::showModal(RefArray< MovieAsset >& outAssets)
 
 void BatchDialog::addTexture()
 {
+	std::wstring assetPath = m_editor->getSettings()->getProperty< std::wstring >(L"Pipeline.AssetPath", L"");
+
 	ui::FileDialog fileDialog;
-	if (!fileDialog.create(this, type_name(this), i18n::Text(L"FLASH_BATCH_FILE_TITLE"), L"All files;*.*"))
+	if (!fileDialog.create(this, type_name(this), i18n::Text(L"FLASH_BATCH_FILE_TITLE"), L"All files;*.*", assetPath))
 		return;
 
 	std::vector< Path > fileNames;
@@ -102,23 +104,21 @@ void BatchDialog::addTexture()
 	}
 	fileDialog.destroy();
 
-	std::wstring assetPath = m_editor->getSettings()->getProperty< std::wstring >(L"Pipeline.AssetPath", L"");
-
-	for (std::vector< Path >::iterator i = fileNames.begin(); i != fileNames.end(); ++i)
+	for (const auto& fileName : fileNames)
 	{
-		Path texturePath;
+		Path moviePath;
 		if (!FileSystem::getInstance().getRelativePath(
-			FileSystem::getInstance().getAbsolutePath(*i),
+			FileSystem::getInstance().getAbsolutePath(fileName),
 			FileSystem::getInstance().getAbsolutePath(assetPath),
-			texturePath
+			moviePath
 		))
-			texturePath = *i;
+			moviePath = fileName;
 
 		Ref< MovieAsset > asset = new MovieAsset();
-		asset->setFileName(texturePath);
+		asset->setFileName(moviePath);
 
 		m_movieList->add(
-			i->getFileName(),
+			fileName.getFileName(),
 			asset
 		);
 	}
@@ -126,7 +126,7 @@ void BatchDialog::addTexture()
 
 void BatchDialog::removeTexture()
 {
-	m_moviePropertyList->bind(0);
+	m_moviePropertyList->bind(nullptr);
 	m_moviePropertyList->update();
 
 	for (int index = m_movieList->getSelected(); index >= 0; index = m_movieList->getSelected())
