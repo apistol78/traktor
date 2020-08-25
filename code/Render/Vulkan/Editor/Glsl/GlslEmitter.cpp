@@ -2554,7 +2554,7 @@ bool emitVector(GlslContext& cx, Vector* node)
 	Ref< GlslVariable > out = cx.emitOutput(node, L"Output", GtFloat4);
 
 	comment(f, node);
-	assign(f, out) << L"vec4(" << formatFloat(node->get().x()) << L", " << formatFloat(node->get().y()) << L", " << formatFloat(node->get().z()) << L", " << formatFloat(node->get().w()) << L");" << Endl;
+	f << L"const vec4 " << out->getName() << L" = vec4(" << formatFloat(node->get().x()) << L", " << formatFloat(node->get().y()) << L", " << formatFloat(node->get().z()) << L", " << formatFloat(node->get().w()) << L");" << Endl;
 
 	return true;
 }

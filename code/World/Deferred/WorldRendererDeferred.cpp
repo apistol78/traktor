@@ -1,5 +1,3 @@
-#pragma optimize( "", off )
-
 #include <limits>
 #include "Core/Log/Log.h"
 #include "Core/Math/Log2.h"
@@ -67,7 +65,7 @@ const resource::Id< render::ImageGraph > c_motionBlurMedium(L"{E813C1A0-D27D-AE4
 const resource::Id< render::ImageGraph > c_motionBlurHigh(L"{E813C1A0-D27D-AE4F-9EE4-637529ECCD69}");
 const resource::Id< render::ImageGraph > c_motionBlurUltra(L"{E813C1A0-D27D-AE4F-9EE4-637529ECCD69}");
 const resource::Id< render::ImageGraph > c_toneMapFixed(L"{1F20DAB5-22EB-B84C-92B0-71E94C1CE261}");
-const resource::Id< render::ImageGraph > c_toneMapAdaptive(L"{1F20DAB5-22EB-B84C-92B0-71E94C1CE261}");
+const resource::Id< render::ImageGraph > c_toneMapAdaptive(L"{BE19DE90-E010-A74D-AA3B-87FAC2A56946}");
 const resource::Id< render::ImageGraph > c_screenReflections(L"{2F8EC56A-FD46-DF42-94B5-9DD676B8DD8A}");
 
 resource::Id< render::ImageGraph > getAmbientOcclusionId(Quality quality)

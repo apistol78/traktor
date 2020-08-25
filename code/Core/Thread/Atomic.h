@@ -61,6 +61,12 @@ public:
 	 */
 	static T_ATOMIC_INLINE int32_t add(int32_t& value, int32_t delta);
 
+	/*! Add variable.
+	 *
+	 * \return Result value of variable.
+	 */
+	static T_ATOMIC_INLINE int64_t add(int64_t& value, int64_t delta);
+
 	/*! Set value of variable. */
 	static T_ATOMIC_INLINE uint32_t exchange(uint32_t& s, uint32_t v);
 

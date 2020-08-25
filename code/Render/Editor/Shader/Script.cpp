@@ -236,7 +236,7 @@ public:
 	}
 
 private:
-	AttributeReadOnly m_attribute;
+	AttributePrivate m_attribute;
 	Node* m_node;
 	value_type& m_pins;
 	mutable size_t m_index;
@@ -440,8 +440,8 @@ void Script::serialize(ISerializer& s)
 			Member< std::wstring >,
 			MemberSamplerState
 		>
-	>(L"samplers", m_samplers);
-	s >> Member< std::wstring >(L"script", m_script, AttributeMultiLine());
+	>(L"samplers", m_samplers, AttributePrivate());
+	s >> Member< std::wstring >(L"script", m_script, AttributeMultiLine() | AttributePrivate());
 }
 
 	}
