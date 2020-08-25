@@ -163,42 +163,60 @@ Size BitmapWin32::getSize() const
 
 HICON BitmapWin32::createIcon() const
 {
-	//HDC hScreenDC = GetDC(NULL);
-	//HDC hMaskDC = CreateCompatibleDC(hScreenDC);
-	//HBITMAP hMask = CreateCompatibleBitmap(hMaskDC, m_width, m_height);
-	//HBITMAP hMaskPrev = (HBITMAP)SelectObject(hMaskDC, hMask);
+	HDC hScreenDC = GetDC(NULL);
 
-	//const uint32_t* src = reinterpret_cast< const uint32_t* >(m_bitsPreMulAlpha);
-	//for (uint32_t y = 0; y < m_height; ++y)
-	//{
-	//	for (uint32_t x = 0; x < m_width; ++x)
-	//	{
-	//		uint32_t color = src[x + y * m_width];
-	//		if ((color & 0xff000000) != 0x00000000)
-	//			SetPixel(hMaskDC, x, m_height - y - 1, RGB(0, 0, 0));
-	//		else
-	//			SetPixel(hMaskDC, x, m_height - y - 1, RGB(255, 255, 255));
-	//	}
-	//}
+	// Create mask bitmap.
+	HDC hMaskDC = CreateCompatibleDC(hScreenDC);
+	HBITMAP hMask = CreateCompatibleBitmap(hMaskDC, m_width, m_height);
+	HBITMAP hMaskPrev = (HBITMAP)SelectObject(hMaskDC, hMask);
 
-	//SelectObject(hMaskDC, hMaskPrev);
+	const uint32_t* src = (const uint32_t*)m_bitsPreMulAlpha.c_ptr();
+	for (uint32_t y = 0; y < m_height; ++y)
+	{
+		for (uint32_t x = 0; x < m_width; ++x)
+		{
+			uint32_t color = src[x + y * m_width];
+			if ((color & 0xff000000) != 0x00000000)
+				SetPixel(hMaskDC, x, m_height - y - 1, RGB(0, 0, 0));
+			else
+				SetPixel(hMaskDC, x, m_height - y - 1, RGB(255, 255, 255));
+		}
+	}
 
-	//ICONINFO ii;
-	//ii.fIcon = TRUE;
-	//ii.hbmColor = m_hBitmapPreMulAlpha;
-	//ii.hbmMask = hMask;
-	//ii.xHotspot = 0;
-	//ii.yHotspot = 0;
+	SelectObject(hMaskDC, hMaskPrev);
 
-	//HICON hIcon = CreateIconIndirect(&ii);
+	// Create color bitmap.
+	BITMAPINFO bmi;
+	std::memset(&bmi, 0, sizeof(bmi));
+	bmi.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
+	bmi.bmiHeader.biWidth = m_width;
+	bmi.bmiHeader.biHeight = m_height;
+	bmi.bmiHeader.biPlanes = 1;
+	bmi.bmiHeader.biBitCount = 32;
+	bmi.bmiHeader.biCompression = BI_RGB;
+	bmi.bmiHeader.biSizeImage = m_width * m_height * 4;
 
-	//DeleteObject(hMask);
-	//DeleteDC(hMaskDC);
-	//ReleaseDC(NULL, hScreenDC);
+	LPVOID bitsPreMulAlpha = nullptr;
+	HBITMAP hBitmapPreMulAlpha = CreateDIBSection(hScreenDC, &bmi, DIB_RGB_COLORS, &bitsPreMulAlpha, NULL, 0);
+	std::memcpy(bitsPreMulAlpha, m_bitsPreMulAlpha.c_ptr(), m_width * m_height * 4);
 
-	//return hIcon;
+	// Create icon.
+	ICONINFO ii;
+	ii.fIcon = TRUE;
+	ii.hbmColor = hBitmapPreMulAlpha;
+	ii.hbmMask = hMask;
+	ii.xHotspot = 0;
+	ii.yHotspot = 0;
 
-	return NULL;
+	HICON hIcon = CreateIconIndirect(&ii);
+
+	// Cleanup
+	DeleteObject(hBitmapPreMulAlpha);
+	DeleteObject(hMask);
+	DeleteDC(hMaskDC);
+
+	ReleaseDC(NULL, hScreenDC);
+	return hIcon;
 }
 
 	}

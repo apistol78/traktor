@@ -175,6 +175,7 @@ bool ShaderGraphEditorPage::create(ui::Container* parent)
 	m_toolBar->addItem(new ui::ToolBarButton(i18n::Text(L"SHADERGRAPH_AUTO_MERGE_BRANCHES"), 9, ui::Command(L"ShaderGraph.Editor.AutoMergeBranches")));
 	m_toolBar->addItem(new ui::ToolBarButton(i18n::Text(L"SHADERGRAPH_UPDATE_FRAGMENTS"), 10, ui::Command(L"ShaderGraph.Editor.UpdateFragments")));
 	m_toolBar->addItem(new ui::ToolBarButton(i18n::Text(L"SHADERGRAPH_CONSTANT_FOLD"), 11, ui::Command(L"ShaderGraph.Editor.ConstantFold")));
+	m_toolBar->addItem(new ui::ToolBarButton(i18n::Text(L"SHADERGRAPH_SWIZZLED_PERMUTATION"), 12, ui::Command(L"ShaderGraph.Editor.SwizzledPermutation")));
 	m_toolBar->addItem(new ui::ToolBarButton(i18n::Text(L"SHADERGRAPH_CLEANUP_SWIZZLES"), 12, ui::Command(L"ShaderGraph.Editor.CleanupSwizzles")));
 	m_toolBar->addItem(new ui::ToolBarButton(i18n::Text(L"SHADERGRAPH_INSERT_INTERPOLATORS"), 13, ui::Command(L"ShaderGraph.Editor.InsertInterpolators")));
 	m_toolBar->addItem(new ui::ToolBarButton(i18n::Text(L"SHADERGRAPH_RESOLVE_VARIABLES"), 16, ui::Command(L"ShaderGraph.Editor.ResolveVariables")));
@@ -683,6 +684,17 @@ bool ShaderGraphEditorPage::handleCommand(const ui::Command& command)
 		T_ASSERT(m_shaderGraph);
 
 		m_shaderGraph = ShaderGraphStatic(m_shaderGraph).getConstantFolded();
+		T_ASSERT(m_shaderGraph);
+
+		m_document->setObject(0, m_shaderGraph);
+
+		createEditorGraph();
+	}
+	else if (command == L"ShaderGraph.Editor.SwizzledPermutation")
+	{
+		m_document->push();
+
+		m_shaderGraph = ShaderGraphStatic(m_shaderGraph).getSwizzledPermutation();
 		T_ASSERT(m_shaderGraph);
 
 		m_document->setObject(0, m_shaderGraph);

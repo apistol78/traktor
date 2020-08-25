@@ -270,7 +270,7 @@
 				<first>1172</first>
 				<second>168</second>
 			</position>
-			<value>2</value>
+			<value>0.85</value>
 		</item>
 		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
 			<id>{84E8E6E8-DBA8-424F-9941-1052B7AD76FB}</id>

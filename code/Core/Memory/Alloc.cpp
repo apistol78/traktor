@@ -13,18 +13,14 @@ namespace traktor
 #pragma pack(1)
 struct Block
 {
-#if defined(_DEBUG)
 	uint32_t magic;
-#endif
 	size_t size;
 };
 #pragma pack()
 
-#if defined(_DEBUG)
 const uint32_t c_magic = 'LIVE';
-#endif
 int32_t s_count = 0;
-int32_t s_allocated = 0;
+int64_t s_allocated = 0;
 
 	}
 
@@ -38,13 +34,11 @@ void* Alloc::acquire(size_t size, const char* tag)
 	}
 
 	Block* block = static_cast< Block* >(ptr);
-#if defined(_DEBUG)
 	block->magic = c_magic;
-#endif
 	block->size = size;
 
 	Atomic::increment(s_count);
-	Atomic::add(s_allocated, int32_t(size + sizeof(Block)));
+	Atomic::add(s_allocated, size + sizeof(Block));
 	return block + 1;
 }
 
@@ -53,8 +47,8 @@ void Alloc::free(void* ptr)
 	if (ptr)
 	{
 		Block* block = static_cast< Block* >(ptr) - 1;
-		T_ASSERT_M(block->magic == c_magic, L"Invalid free");
-		Atomic::add(s_allocated, -int32_t(block->size + sizeof(Block)));
+		T_FATAL_ASSERT_M(block->magic == c_magic, L"Invalid free");
+		Atomic::add(s_allocated, -(int64_t)(block->size + sizeof(Block)));
 		std::free(block);
 	}
 }
@@ -73,11 +67,9 @@ void* Alloc::acquireAlign(size_t size, size_t align, const char* tag)
 	uint8_t* alignedPtr = alignUp(ptr + sizeof(intptr_t), align);
 	*(intptr_t*)(alignedPtr - sizeof(intptr_t)) = intptr_t(ptr);
 
-#if defined(_DEBUG)
 	intptr_t originalPtr = *((intptr_t*)(alignedPtr) - 1);
 	Block* block = static_cast< Block* >((void*)originalPtr) - 1;
-	T_ASSERT_M(block->magic == c_magic, L"Invalid free");
-#endif
+	T_FATAL_ASSERT_M(block->magic == c_magic, L"Invalid free");
 
 	return alignedPtr;
 }
@@ -98,9 +90,7 @@ size_t Alloc::count()
 
 size_t Alloc::allocated()
 {
-	int32_t a = 0;
-	Atomic::exchange(a, s_allocated);
-	return (size_t)a;
+	return (size_t)s_allocated;
 }
 
 }

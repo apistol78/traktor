@@ -224,7 +224,7 @@ bool convertMesh(
 						case FbxLayerElement::eDirect:
 							{
 								Vector2 uv = convertVector2(layerUVs->GetDirectArray().GetAt(pointIndex)) * Vector2(1.0f, -1.0f) + Vector2(0.0f, 1.0f);
-								vertex.setTexCoord(channel, outModel.addTexCoord(uv));
+								vertex.setTexCoord(channel, outModel.addUniqueTexCoord(uv));
 							}
 							break;
 
@@ -232,7 +232,7 @@ bool convertMesh(
 							{
 								int32_t id = layerUVs->GetIndexArray().GetAt(pointIndex);
 								Vector2 uv = convertVector2(layerUVs->GetDirectArray().GetAt(id)) * Vector2(1.0f, -1.0f) + Vector2(0.0f, 1.0f);
-								vertex.setTexCoord(channel, outModel.addTexCoord(uv));
+								vertex.setTexCoord(channel, outModel.addUniqueTexCoord(uv));
 							}
 							break;
 
@@ -248,7 +248,7 @@ bool convertMesh(
 							case FbxLayerElement::eDirect:
 								{
 									Vector2 uv = convertVector2(layerUVs->GetDirectArray().GetAt(vertexId)) * Vector2(1.0f, -1.0f) + Vector2(0.0f, 1.0f);
-									vertex.setTexCoord(channel, outModel.addTexCoord(uv));
+									vertex.setTexCoord(channel, outModel.addUniqueTexCoord(uv));
 								}
 								break;
 
@@ -256,7 +256,7 @@ bool convertMesh(
 								{
 									int32_t id = layerUVs->GetIndexArray().GetAt(vertexId);
 									Vector2 uv = convertVector2(layerUVs->GetDirectArray().GetAt(id)) * Vector2(1.0f, -1.0f) + Vector2(0.0f, 1.0f);
-									vertex.setTexCoord(channel, outModel.addTexCoord(uv));
+									vertex.setTexCoord(channel, outModel.addUniqueTexCoord(uv));
 								}
 								break;
 
