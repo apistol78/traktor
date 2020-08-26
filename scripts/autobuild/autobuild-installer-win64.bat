@@ -10,6 +10,10 @@ pushd "%TRAKTOR_HOME%/build/installer"
 %TRAKTOR_HOME%/3rdp/wix/heat dir "%TRAKTOR_HOME%/bin/latest/win64/releaseshared" -gg -sfrag -sreg -cg cmp_bin_latest_win64 -dr bin_latest_win64 -var var.TRAKTOR_WHERE -template fragment -t "%TRAKTOR_HOME%/code/Installer/Filter.xslt" -out Traktor_Bin_Latest_Win64_ReleaseShared.wxs
 %TRAKTOR_HOME%/3rdp/wix/candle -arch x64 -dTRAKTOR_WHERE="%TRAKTOR_HOME%/bin/latest/win64/releaseshared" Traktor_Bin_Latest_Win64_ReleaseShared.wxs
 
+:: Create a file list of "android binaries".
+%TRAKTOR_HOME%/3rdp/wix/heat dir "%TRAKTOR_HOME%/bin/latest/android/releasestatic" -gg -sfrag -sreg -cg cmp_bin_latest_android -dr bin_latest_android -var var.TRAKTOR_WHERE -template fragment -t "%TRAKTOR_HOME%/code/Installer/Filter.xslt" -out Traktor_Bin_Latest_Android_ReleaseStatic.wxs
+%TRAKTOR_HOME%/3rdp/wix/candle -arch x64 -dTRAKTOR_WHERE="%TRAKTOR_HOME%/bin/latest/android/releasestatic" Traktor_Bin_Latest_Android_ReleaseStatic.wxs
+
 :: Create a file list of "data assets".
 %TRAKTOR_HOME%/3rdp/wix/heat dir "%TRAKTOR_HOME%/data/Assets" -gg -sfrag -sreg -cg cmp_data_assets -dr data -var var.TRAKTOR_WHERE -template fragment fragment -t "%TRAKTOR_HOME%/code/Installer/Filter.xslt" -out Traktor_Data_Assets.wxs
 %TRAKTOR_HOME%/3rdp/wix/candle -arch x64 -dTRAKTOR_WHERE="%TRAKTOR_HOME%/data/Assets" Traktor_Data_Assets.wxs
@@ -30,6 +34,15 @@ pushd "%TRAKTOR_HOME%/build/installer"
 %TRAKTOR_HOME%/3rdp/wix/candle -arch x64 %TRAKTOR_HOME%/code/Installer/Traktor.wxs
 
 :: Link as an installer.
-%TRAKTOR_HOME%/3rdp/wix/light -ext WixUIExtension Traktor.wixobj Traktor_Bin_Latest_Win64_ReleaseShared.wixobj Traktor_Data_Assets.wixobj Traktor_Data_Source.wixobj Traktor_Resources_Runtime.wixobj Traktor_Scripts_Runtime.wixobj -out Traktor.msi
+%TRAKTOR_HOME%/3rdp/wix/light ^
+	-ext WixUIExtension ^
+	Traktor.wixobj ^
+	Traktor_Bin_Latest_Win64_ReleaseShared.wixobj ^
+	Traktor_Bin_Latest_Android_ReleaseStatic.wixobj ^
+	Traktor_Data_Assets.wixobj ^
+	Traktor_Data_Source.wixobj ^
+	Traktor_Resources_Runtime.wixobj ^
+	Traktor_Scripts_Runtime.wixobj ^
+	-out Traktor.msi
 
 popd

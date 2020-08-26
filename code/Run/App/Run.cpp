@@ -150,7 +150,7 @@ std::wstring Run::cwd() const
 int32_t Run::run(const std::wstring& command, const std::wstring& saveOutputAs, const Environment* env)
 {
 	Path executable = OS::getInstance().getExecutable();
-	return execute(executable.getPathName() + L" " + command, saveOutputAs, env);
+	return execute(L"\"" + executable.getPathName() + L"\" " + command, saveOutputAs, env);
 }
 
 int32_t Run::execute(const std::wstring& command, const std::wstring& saveOutputAs, const Environment* env)
