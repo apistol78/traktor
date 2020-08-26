@@ -27,8 +27,8 @@
 			<Directory Id="INSTALLLOCATION" Name="Traktor">
 				<Directory Id="bin" Name="bin">
 					<Directory Id="bin_latest" Name="latest">
-						<!--
 						<Directory Id="bin_latest_android" Name="android"/>
+						<!--
 						<Directory Id="bin_latest_emscripten" Name="emscripten"/>
 						<Directory Id="bin_latest_ios" Name="ios"/>
 						<Directory Id="bin_latest_osx" Name="osx"/>
@@ -61,6 +61,7 @@
 	</Directory>
 
 	<Feature Id="ProductFeature" Title="Traktor" Level="1">
+		<ComponentGroupRef Id="cmp_bin_latest_android" />
 		<ComponentGroupRef Id="cmp_bin_latest_win64" />
 		<ComponentGroupRef Id="cmp_data_assets" />
 		<ComponentGroupRef Id="cmp_data_source" />
