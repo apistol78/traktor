@@ -296,7 +296,10 @@ void ScriptServer::threadDebugger()
 	}
 
 	if (m_scriptDebugger)
+	{
 		m_scriptDebugger->actionContinue();
+		m_scriptDebugger->removeListener(this);
+	}
 }
 
 void ScriptServer::debugeeStateChange(script::IScriptDebugger* scriptDebugger)

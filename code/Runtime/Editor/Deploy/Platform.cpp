@@ -8,7 +8,7 @@ namespace traktor
 	namespace runtime
 	{
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.runtime.Platform", 2, Platform, ISerializable)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.runtime.Platform", 3, Platform, ISerializable)
 
 Platform::Platform()
 :	m_iconIndex(0)
@@ -26,17 +26,20 @@ const DeployTool& Platform::getDeployTool() const
 	return m_deployToolOsX;
 #elif defined(__LINUX__)
 	return m_deployToolLinux;
-#elif defined(_WIN64)
-	return m_deployToolWin64;
 #else
-	return m_deployToolWin32;
+	return m_deployToolWin64;
 #endif
 }
 
 void Platform::serialize(ISerializer& s)
 {
 	s >> Member< int32_t >(L"iconIndex", m_iconIndex);
-	s >> MemberComposite< DeployTool >(L"deployToolWin32", m_deployToolWin32);
+
+	if (s.getVersion() < 3)
+	{
+		DeployTool deployToolWin32;
+		s >> MemberComposite< DeployTool >(L"deployToolWin32", deployToolWin32);
+	}
 
 	if (s.getVersion() >= 1)
 		s >> MemberComposite< DeployTool >(L"deployToolWin64", m_deployToolWin64);

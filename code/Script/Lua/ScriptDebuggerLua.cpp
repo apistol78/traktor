@@ -476,11 +476,11 @@ void ScriptDebuggerLua::analyzeState(lua_State* L, lua_Debug* ar)
 	{
 		// Wait until state is no longer halted.
 		Thread* currentThread = ThreadManager::getInstance().getCurrentThread();
-		do
-		{
+		while (m_state == StHalted && !m_listeners.empty() && !currentThread->stopped());
 			currentThread->sleep(100);
-		}
-		while (m_state == StHalted && !currentThread->stopped());
+
+		if (m_state == StHalted)
+			m_state = StRunning;
 
 		m_breadcrumb.clear();
 
