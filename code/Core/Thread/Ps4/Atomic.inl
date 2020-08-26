@@ -19,6 +19,11 @@ int32_t Atomic::add(int32_t& value, int32_t delta)
 	return sceAtomicAdd32(&value, delta);
 }
 
+int64_t Atomic::add(int64_t& value, int64_t delta)
+{
+	return sceAtomicAdd64(&value, delta);
+}
+
 uint32_t Atomic::exchange(uint32_t& s, uint32_t v)
 {
 	return sceAtomicExchange32((volatile int32_t*)&s, v);
