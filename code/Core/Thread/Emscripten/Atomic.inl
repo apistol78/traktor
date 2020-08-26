@@ -18,6 +18,11 @@ int32_t Atomic::add(int32_t& value, int32_t delta)
     return __sync_fetch_and_add(&value, delta) + delta;
 }
 
+int64_t Atomic::add(int64_t& value, int64_t delta)
+{
+	return __sync_fetch_and_add(&value, delta) + delta;
+}
+
 uint32_t Atomic::exchange(uint32_t& s, uint32_t v)
 {
 	return __sync_lock_test_and_set(&s, v);
