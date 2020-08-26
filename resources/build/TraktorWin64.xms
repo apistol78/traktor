@@ -7710,6 +7710,10 @@
 						</item>
 					</items>
 				</item>
+				<item type="File">
+					<fileName>$(TRAKTOR_HOME)/resources/build/windows/Traktor.rc</fileName>
+					<items/>
+				</item>
 			</items>
 			<dependencies>
 				<item type="ProjectDependency" version="3">
@@ -10275,6 +10279,10 @@
 							<items/>
 						</item>
 					</items>
+				</item>
+				<item type="File">
+					<fileName>$(TRAKTOR_HOME)/resources/build/windows/Traktor.rc</fileName>
+					<items/>
 				</item>
 			</items>
 			<dependencies>
@@ -13337,6 +13345,10 @@
 					<fileName>*.*</fileName>
 					<items/>
 				</item>
+				<item type="File">
+					<fileName>$(TRAKTOR_HOME)/resources/build/windows/Traktor.rc</fileName>
+					<items/>
+				</item>
 			</items>
 			<dependencies>
 				<item type="ProjectDependency" version="3">
@@ -15315,6 +15327,10 @@
 					<fileName>*.*</fileName>
 					<items/>
 				</item>
+				<item type="File">
+					<fileName>$(TRAKTOR_HOME)/resources/build/windows/Traktor.rc</fileName>
+					<items/>
+				</item>
 			</items>
 			<dependencies>
 				<item type="ProjectDependency" version="3">
@@ -16042,6 +16058,10 @@
 							<items/>
 						</item>
 					</items>
+				</item>
+				<item type="File">
+					<fileName>$(TRAKTOR_HOME)/resources/build/windows/Traktor.rc</fileName>
+					<items/>
 				</item>
 			</items>
 			<dependencies>
@@ -17922,6 +17942,10 @@
 					<fileName>*.*</fileName>
 					<items/>
 				</item>
+				<item type="File">
+					<fileName>$(TRAKTOR_HOME)/resources/build/windows/Traktor.rc</fileName>
+					<items/>
+				</item>
 			</items>
 			<dependencies>
 				<item type="ProjectDependency" version="3">
@@ -18132,6 +18156,10 @@
 					<fileName>*.*</fileName>
 					<items/>
 				</item>
+				<item type="File">
+					<fileName>$(TRAKTOR_HOME)/resources/build/windows/Traktor.rc</fileName>
+					<items/>
+				</item>
 			</items>
 			<dependencies>
 				<item type="ProjectDependency" version="3">
@@ -18289,6 +18317,10 @@
 					<fileName>*.*</fileName>
 					<items/>
 				</item>
+				<item type="File">
+					<fileName>$(TRAKTOR_HOME)/resources/build/windows/Traktor.rc</fileName>
+					<items/>
+				</item>
 			</items>
 			<dependencies>
 				<item type="ProjectDependency" version="3">
@@ -18443,6 +18475,10 @@
 							<items/>
 						</item>
 					</items>
+				</item>
+				<item type="File">
+					<fileName>$(TRAKTOR_HOME)/resources/build/windows/Traktor.rc</fileName>
+					<items/>
 				</item>
 			</items>
 			<dependencies>
@@ -19772,6 +19808,10 @@
 					<fileName>*.*</fileName>
 					<items/>
 				</item>
+				<item type="File">
+					<fileName>$(TRAKTOR_HOME)/resources/build/windows/Traktor.rc</fileName>
+					<items/>
+				</item>
 			</items>
 			<dependencies>
 				<item type="ProjectDependency" version="3">
@@ -19911,6 +19951,10 @@
 			<items>
 				<item type="File">
 					<fileName>*.*</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>$(TRAKTOR_HOME)/resources/build/windows/Traktor.rc</fileName>
 					<items/>
 				</item>
 			</items>
@@ -20072,6 +20116,10 @@
 			<items>
 				<item type="File">
 					<fileName>*.*</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>$(TRAKTOR_HOME)/resources/build/windows/Traktor.rc</fileName>
 					<items/>
 				</item>
 			</items>
@@ -20433,6 +20481,10 @@
 			<items>
 				<item type="File">
 					<fileName>*.*</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>$(TRAKTOR_HOME)/resources/build/windows/Traktor.rc</fileName>
 					<items/>
 				</item>
 			</items>
@@ -23252,6 +23304,10 @@
 			<items>
 				<item type="File">
 					<fileName>*.*</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>$(TRAKTOR_HOME)/resources/build/windows/Traktor.rc</fileName>
 					<items/>
 				</item>
 			</items>

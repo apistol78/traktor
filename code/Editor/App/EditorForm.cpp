@@ -226,12 +226,12 @@ bool loadSettings(const Path& pathName, Ref< PropertyGroup >& outOriginalSetting
 		file->close();
 
 		if (!outOriginalSettings)
-	        log::error << L"Error while parsing properties \"" << globalFile << L"\"" << Endl;
+	        log::error << L"Error while parsing properties \"" << globalFile << L"\"." << Endl;
         else
-            T_DEBUG(L"Successfully read properties from \"" << globalFile << L"\"");
+            T_DEBUG(L"Successfully read properties from \"" << globalFile << L"\".");
 	}
 	else
-        log::warning << L"Unable to read global properties \"" << globalFile << L"\"" << Endl;
+        log::warning << L"Unable to read global properties \"" << globalFile << L"\"." << Endl;
 
     // Read system properties.
     if ((file = FileSystem::getInstance().open(systemFile, File::FmRead)) != nullptr)
@@ -249,11 +249,11 @@ bool loadSettings(const Path& pathName, Ref< PropertyGroup >& outOriginalSetting
             else
                 outOriginalSettings = systemSettings;
 
-            T_DEBUG(L"Successfully read properties from \"" << systemFile << L"\"");
+            T_DEBUG(L"Successfully read properties from \"" << systemFile << L"\".");
         }
 		else
 		{
-            log::error << L"Error while parsing properties \"" << systemFile << L"\"" << Endl;
+            log::error << L"Error while parsing properties \"" << systemFile << L"\"." << Endl;
 			return false;
 		}
     }
@@ -263,7 +263,7 @@ bool loadSettings(const Path& pathName, Ref< PropertyGroup >& outOriginalSetting
 
 	if (outSettings)
 	{
-		std::wstring userFile = pathName.getPathNameNoExtension() + L"." + OS::getInstance().getCurrentUser() + L"." + pathName.getExtension();
+		std::wstring userFile = OS::getInstance().getWritableFolderPath() + L"/Traktor/Editor/" + pathName.getFileName();
 
 		*outSettings = DeepClone(outOriginalSettings).create< PropertyGroup >();
 		T_FATAL_ASSERT (*outSettings);
@@ -307,12 +307,12 @@ bool saveGlobalSettings(const Path& pathName, const PropertyGroup* properties)
 
 bool saveUserSettings(const Path& pathName, const PropertyGroup* properties)
 {
-	std::wstring userFile = pathName.getPathNameNoExtension() + L"." + OS::getInstance().getCurrentUser() + L"." + pathName.getExtension();
+	std::wstring userFile = OS::getInstance().getWritableFolderPath() + L"/Traktor/Editor/" + pathName.getFileName();
 
 	Ref< IStream > file = FileSystem::getInstance().open(userFile, File::FmWrite);
 	if (!file)
 	{
-		log::warning << L"Unable to save properties; changes will be lost" << Endl;
+		log::warning << L"Unable to save properties; changes will be lost." << Endl;
 		return false;
 	}
 
@@ -3107,7 +3107,7 @@ void EditorForm::threadAssetMonitor()
 				for (auto file : files)
 				{
 					uint32_t flags = file->getFlags();
-					if ((flags & File::FfArchive) == File::FfArchive)
+					if ((flags & (File::FfReadOnly | File::FfArchive)) == File::FfArchive)
 					{
 						log::info << L"Source asset \"" << file->getPath().getPathName() << L"\" modified." << Endl;
 						modifiedFiles.push_back(file);
@@ -3173,7 +3173,7 @@ void EditorForm::threadOpenWorkspace(const Path& workspacePath, int32_t& progres
 	Ref< db::Database > sourceDatabase = openDatabase(sourceDatabaseCs, false);
 	if (!sourceDatabase)
 	{
-		log::error << L"Unable to open source database \"" << sourceDatabaseCs << L"\"" << Endl;
+		log::error << L"Unable to open source database \"" << sourceDatabaseCs << L"\"." << Endl;
 		return;
 	}
 
@@ -3183,7 +3183,7 @@ void EditorForm::threadOpenWorkspace(const Path& workspacePath, int32_t& progres
 	Ref< db::Database > outputDatabase = openDatabase(outputDatabaseCs, true);
 	if (!outputDatabase)
 	{
-		log::error << L"Unable to open output database \"" << outputDatabaseCs << L"\"" << Endl;
+		log::error << L"Unable to open output database \"" << outputDatabaseCs << L"\"." << Endl;
 		return;
 	}
 

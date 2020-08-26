@@ -56,9 +56,9 @@
 				<first>492</first>
 				<second>404</second>
 			</position>
-			<minFilter>FtPoint</minFilter>
-			<mipFilter>FtPoint</mipFilter>
-			<magFilter>FtPoint</magFilter>
+			<minFilter>FtLinear</minFilter>
+			<mipFilter>FtLinear</mipFilter>
+			<magFilter>FtLinear</magFilter>
 			<addressU>AdClamp</addressU>
 			<addressV>AdClamp</addressV>
 			<addressW>AdClamp</addressW>
@@ -114,9 +114,9 @@
 				<first>483</first>
 				<second>564</second>
 			</position>
-			<minFilter>FtPoint</minFilter>
-			<mipFilter>FtPoint</mipFilter>
-			<magFilter>FtPoint</magFilter>
+			<minFilter>FtLinear</minFilter>
+			<mipFilter>FtLinear</mipFilter>
+			<magFilter>FtLinear</magFilter>
 			<addressU>AdClamp</addressU>
 			<addressV>AdClamp</addressV>
 			<addressW>AdClamp</addressW>
@@ -213,8 +213,8 @@
 			<id>{2ECBECBE-88A0-A441-8DAE-938B5723D766}</id>
 			<comment/>
 			<position>
-				<first>2170</first>
-				<second>-502</second>
+				<first>2176</first>
+				<second>-524</second>
 			</position>
 			<name>L_SampleOffset</name>
 			<global>false</global>
@@ -223,16 +223,16 @@
 			<id>{67C77454-3972-174C-BFFA-61A5D8512B8F}</id>
 			<comment/>
 			<position>
-				<first>1923</first>
-				<second>-469</second>
+				<first>1929</first>
+				<second>-491</second>
 			</position>
 		</item>
 		<item type="traktor.render.Iterate2d" version="traktor.render.Node:1">
 			<id>{3700E8D6-5E9F-2345-9A47-296440663250}</id>
 			<comment/>
 			<position>
-				<first>1612</first>
-				<second>-431</second>
+				<first>1621</first>
+				<second>-448</second>
 			</position>
 			<fromX>-1</fromX>
 			<toX>1</toX>
@@ -254,9 +254,9 @@
 				<first>270</first>
 				<second>-470</second>
 			</position>
-			<minFilter>FtPoint</minFilter>
-			<mipFilter>FtPoint</mipFilter>
-			<magFilter>FtPoint</magFilter>
+			<minFilter>FtLinear</minFilter>
+			<mipFilter>FtLinear</mipFilter>
+			<magFilter>FtLinear</magFilter>
 			<addressU>AdClamp</addressU>
 			<addressV>AdClamp</addressV>
 			<addressW>AdClamp</addressW>
@@ -352,8 +352,8 @@
 			<id>{7FD222AD-8997-4B48-8AA6-F03CB2127070}</id>
 			<comment/>
 			<position>
-				<first>1295</first>
-				<second>-350</second>
+				<first>1286</first>
+				<second>-342</second>
 			</position>
 			<value>1000, 1000, -1000, -1000</value>
 		</item>
