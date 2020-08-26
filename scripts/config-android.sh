@@ -8,4 +8,4 @@ elif [[ `uname -s` == Darwin* ]]; then
 fi
 
 # Android NDK
-export ANDROID_NDK_ROOT=$TRAKTOR_HOME/3rdp/android-ndk-r20
+export ANDROID_NDK_ROOT=$TRAKTOR_HOME/3rdp/android-ndk-r21

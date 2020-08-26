@@ -87,7 +87,7 @@ local function linkApplication()
 	local paths = ""
 	if not debug then paths = os:getEnvironment("DEPLOY_STATIC_PATH_RELEASE"):split("\n") else paths = os:getEnvironment("DEPLOY_STATIC_PATH_DEBUG"):split("\n") end
 	for _, p in pairs(paths) do
-		libraryPaths = libraryPaths .. " -L " .. Path(p).pathName
+		libraryPaths = libraryPaths .. " -L \"" .. Path(p).pathName .. "\""
 	end
 
 	-- Collect libraries to link.
@@ -107,7 +107,7 @@ local function linkApplication()
 
 	-- Create the module initialization file.
 	stdout:printLn("Generating Linkage.cpp...")
-	if run:run("$(DEPLOY_SYSTEM_ROOT)/resources/runtime/deploy/android/Linkage.cpp.template", "Linkage.cpp") ~= 0 then
+	if run:run("\"$(DEPLOY_SYSTEM_ROOT)/resources/runtime/deploy/android/Linkage.cpp.template\"", "Linkage.cpp") ~= 0 then
 		stderr:printLn("Failed to generate Linkage.cpp")
 		return false
 	end	
@@ -183,11 +183,21 @@ function deploy(args)
 		return 1
 	end
 
+	local debug = (os:getEnvironment("DEPLOY_DEBUG") ~= "")
+
 	local apilevel = os:getEnvironment("DEPLOY_ANDROID_APILEVEL")
 	if apilevel == nil or apilevel == "" then apilevel = "29" end
 
 	local architecture = "aarch64" -- "arch-arm"
 	local abi = "arm64-v8a"	-- armeabi-v7a
+	local validations = {
+		"libVkLayer_core_validation.so",
+		"libVkLayer_khronos_validation.so",
+		"libVkLayer_object_tracker.so",
+		"libVkLayer_parameter_validation.so",
+		"libVkLayer_threading.so",
+		"libVkLayer_unique_objects.so"
+	}
 
 	-- Create android project.
 	run:mkdir("assets")
@@ -205,6 +215,13 @@ function deploy(args)
 	run:run("$(DEPLOY_SYSTEM_ROOT)/resources/runtime/deploy/android/splash_drawable.xml.template", "res/drawable/splash_drawable.xml")
 	run:run("$(DEPLOY_SYSTEM_ROOT)/resources/runtime/deploy/android/splash_theme.xml.template", "res/values/splash_theme.xml")
 	run:run("$(DEPLOY_SYSTEM_ROOT)/resources/runtime/deploy/android/strings.xml.template", "res/values/strings.xml")
+
+	-- Include Vulkan validation layers.
+	if debug then
+		for _, validation in ipairs(validations) do
+			run:replace("$(DEPLOY_ANDROID_NDK_ROOT)/sources/third_party/vulkan/src/build-android/jniLibs/" .. abi .. "/" .. validation, "lib/" .. abi .. "/" .. validation)
+		end
+	end
 
 	-- Cleanup intermediate files.
 	run:rm("Application.config")
@@ -242,6 +259,13 @@ function deploy(args)
 		result = result and (run:execute("$(DEPLOY_ANDROID_HOME)/build-tools/29.0.1/aapt.exe add \"$(DEPLOY_PROJECT_NAME).unsigned.apk\" lib/" .. abi .. "/libApplication.so", nil) == 0)
 		result = result and (run:execute("$(DEPLOY_ANDROID_HOME)/build-tools/29.0.1/aapt.exe add \"$(DEPLOY_PROJECT_NAME).unsigned.apk\" lib/" .. abi .. "/libc++_shared.so", nil) == 0)
 		result = result and (run:execute("$(DEPLOY_ANDROID_HOME)/build-tools/29.0.1/aapt.exe add \"$(DEPLOY_PROJECT_NAME).unsigned.apk\" assets/Application.config", nil) == 0)
+
+		if debug then
+			for _, validation in ipairs(validations) do
+				result = result and (run:execute("$(DEPLOY_ANDROID_HOME)/build-tools/29.0.1/aapt.exe add \"$(DEPLOY_PROJECT_NAME).unsigned.apk\" lib/" .. abi .. "/" .. validation, nil) == 0)
+			end
+		end
+
 		result = result and (run:execute("$(DEPLOY_ANDROID_HOME)/build-tools/29.0.1/zipalign.exe -f -p 4 \"$(DEPLOY_PROJECT_NAME).unsigned.apk\" \"$(DEPLOY_PROJECT_NAME).aligned.apk\"", nil) == 0)
 		result = result and (run:execute("$(DEPLOY_ANDROID_HOME)/build-tools/29.0.1/apksigner.bat sign --ks $(DEPLOY_SYSTEM_ROOT)/resources/runtime/deploy/android/keystore.jks --ks-key-alias androidkey --ks-pass pass:android --key-pass pass:android --out \"$(DEPLOY_PROJECT_NAME).apk\" \"$(DEPLOY_PROJECT_NAME).aligned.apk\"", nil) == 0)
 	elseif host == "linux" or host == "osx" then
@@ -250,6 +274,13 @@ function deploy(args)
 		result = result and (run:execute("$(DEPLOY_ANDROID_HOME)/build-tools/29.0.1/aapt add $(DEPLOY_PROJECT_NAME).unsigned.apk lib/" .. abi .. "/libApplication.so", nil) == 0)
 		result = result and (run:execute("$(DEPLOY_ANDROID_HOME)/build-tools/29.0.1/aapt add $(DEPLOY_PROJECT_NAME).unsigned.apk lib/" .. abi .. "/libc++_shared.so", nil) == 0)
 		result = result and (run:execute("$(DEPLOY_ANDROID_HOME)/build-tools/29.0.1/aapt add $(DEPLOY_PROJECT_NAME).unsigned.apk assets/Application.config", nil) == 0)
+
+		if debug then
+			for _, validation in ipairs(validations) do
+				result = result and (run:execute("$(DEPLOY_ANDROID_HOME)/build-tools/29.0.1/aapt add \"$(DEPLOY_PROJECT_NAME).unsigned.apk\" lib/" .. abi .. "/" .. validation, nil) == 0)
+			end
+		end
+		
 		result = result and (run:execute("$(DEPLOY_ANDROID_HOME)/build-tools/29.0.1/zipalign -f -p 4 $(DEPLOY_PROJECT_NAME).unsigned.apk $(DEPLOY_PROJECT_NAME).aligned.apk", nil) == 0)
 		result = result and (run:execute("$(DEPLOY_ANDROID_HOME)/build-tools/29.0.1/apksigner sign --ks $(DEPLOY_SYSTEM_ROOT)/resources/runtime/deploy/android/keystore.jks --ks-key-alias androidkey --ks-pass pass:android --key-pass pass:android --out $(DEPLOY_PROJECT_NAME).apk $(DEPLOY_PROJECT_NAME).aligned.apk", nil) == 0)
 	else
@@ -285,10 +316,11 @@ function launch(args)
 	if host == "win32" or host == "win64" then
 		launchVS = true
 	end	
+
 	if not launchVS then
 		-- Launch application on attached device.
 		stdout:printLn("Installing package...")
-		local result = run:execute("$(DEPLOY_ANDROID_HOME)/platform-tools/adb -d install -r \"$(DEPLOY_PROJECT_NAME).apk\"", nil)
+		local result = run:execute("$(DEPLOY_ANDROID_HOME)/platform-tools/adb -d install --no-streaming -r \"$(DEPLOY_PROJECT_NAME).apk\"", nil)
 		if result ~= 0 then
 			stderr:printLn("Failed to install package on device; Please ensure device is attached and in developer mode (1).")
 			return 1
