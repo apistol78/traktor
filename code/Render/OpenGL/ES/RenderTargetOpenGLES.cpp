@@ -6,8 +6,6 @@
 #	include "Render/OpenGL/ES/iOS/ContextOpenGLES.h"
 #elif defined(__EMSCRIPTEN__)
 #	include "Render/OpenGL/ES/Emscripten/ContextOpenGLES.h"
-#elif defined(__PNACL__)
-#	include "Render/OpenGL/ES/PNaCl/ContextOpenGLES.h"
 #elif defined(_WIN32)
 #	include "Render/OpenGL/ES/Win32/ContextOpenGLES.h"
 #elif defined(__LINUX__) || defined(__RPI__)

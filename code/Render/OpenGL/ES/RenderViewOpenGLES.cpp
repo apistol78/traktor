@@ -15,8 +15,6 @@
 #	include "Render/OpenGL/ES/iOS/ContextOpenGLES.h"
 #elif defined(__EMSCRIPTEN__)
 #	include "Render/OpenGL/ES/Emscripten/ContextOpenGLES.h"
-#elif defined(__PNACL__)
-#	include "Render/OpenGL/ES/PNaCl/ContextOpenGLES.h"
 #elif defined(_WIN32)
 #	include "Render/OpenGL/ES/Win32/ContextOpenGLES.h"
 #elif defined(__LINUX__) || defined(__RPI__)
@@ -152,7 +150,7 @@ void RenderViewOpenGLES::close()
 bool RenderViewOpenGLES::reset(const RenderViewDefaultDesc& desc)
 {
 #if defined(_WIN32) || defined(__LINUX__)
-	m_context->getWindow()->setTitle(!desc.title.empty() ? desc.title.c_str() : L"Traktor - OpenGL ES 2.0 Renderer");
+	m_context->getWindow()->setTitle(!desc.title.empty() ? desc.title.c_str() : L"Traktor - OpenGL ES Renderer");
 	if (desc.fullscreen)
 		m_context->getWindow()->setFullScreenStyle();
 	else
@@ -193,7 +191,7 @@ bool RenderViewOpenGLES::isMinimized() const
 
 bool RenderViewOpenGLES::isFullScreen() const
 {
-#if defined(T_OPENGL_ES_HAVE_EGL) || defined(__PNACL__)
+#if defined(T_OPENGL_ES_HAVE_EGL)
 	return false;
 #else
 	return true;

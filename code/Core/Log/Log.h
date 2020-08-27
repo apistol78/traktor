@@ -54,7 +54,7 @@ extern T_DLLCLASS LogStream debug;
 
 //@}
 
-#if defined(_DEBUG) || defined(__PNACL__)
+#if defined(_DEBUG)
 #	define T_DEBUG(x) traktor::log::debug << x << traktor::Endl
 #	define T_TRACE_WIDEN2__(x) L ## #x
 #	define T_TRACE_WIDEN__(x) T_TRACE_WIDEN2__(x)

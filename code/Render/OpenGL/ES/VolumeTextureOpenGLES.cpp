@@ -8,8 +8,6 @@
 #	include "Render/OpenGL/ES/iOS/ContextOpenGLES.h"
 #elif defined(__EMSCRIPTEN__)
 #	include "Render/OpenGL/ES/Emscripten/ContextOpenGLES.h"
-#elif defined(__PNACL__)
-#	include "Render/OpenGL/ES/PNaCl/ContextOpenGLES.h"
 #elif defined(_WIN32)
 #	include "Render/OpenGL/ES/Win32/ContextOpenGLES.h"
 #elif defined(__LINUX__) || defined(__RPI__)
@@ -160,7 +158,7 @@ bool VolumeTextureOpenGLES::create(const VolumeTextureCreateDesc& desc)
 
 	convertTextureFormat(desc.format, m_pixelSize, m_components, m_format, m_type);
 
-#if !defined(_WIN32) && !defined(__IOS__) && !defined(__PNACL__) && !defined(__EMSCRIPTEN__)
+#if !defined(_WIN32) && !defined(__IOS__) && !defined(__EMSCRIPTEN__)
 
 	T_OGL_SAFE(glGenTextures(1, &m_textureName));
 
@@ -247,7 +245,7 @@ int32_t VolumeTextureOpenGLES::getDepth() const
 
 void VolumeTextureOpenGLES::bindSampler(GLuint unit, const SamplerStateOpenGL& samplerState, GLint locationTexture)
 {
-#if !defined(__IOS__) && !defined(__PNACL__)
+#if !defined(__IOS__)
 
 	T_OGL_SAFE(glActiveTexture(GL_TEXTURE0 + unit));
 	T_OGL_SAFE(glBindTexture(GL_TEXTURE_3D_OES, m_textureName));
