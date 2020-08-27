@@ -68,7 +68,7 @@ local function linkStaticProduct()
 	end
 
 	-- Generate resource script.
-	if run:run("$(TRAKTOR_HOME)/resources/runtime/deploy/win64/Traktor.Runtime.App.rc.template", "Traktor.Runtime.App.rc") ~= 0 then
+	if run:run("\"$(TRAKTOR_HOME)/resources/runtime/deploy/win64/Traktor.Runtime.App.rc.template\"", "Traktor.Runtime.App.rc") ~= 0 then
 		stderr:printLn("Unable to generate resource script.")
 		return 1
 	end
