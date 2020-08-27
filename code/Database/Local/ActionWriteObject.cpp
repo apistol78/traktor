@@ -60,7 +60,7 @@ bool ActionWriteObject::execute(Context* context)
 
 		if (instanceStream->write(chunk.ptr, chunk.size) != chunk.size)
 		{
-			log::error << L"Unable to write " << chunk.size << L" byte(s) to file \"" << instanceObjectPath.getPathName() << L"\"." << Endl;
+			log::error << L"Unable to write " << (uint32_t)chunk.size << L" byte(s) to file \"" << instanceObjectPath.getPathName() << L"\"." << Endl;
 			return false;
 		}
 

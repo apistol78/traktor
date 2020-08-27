@@ -592,6 +592,15 @@
 									</item>
 								</items>
 							</item>
+							<item type="Filter">
+								<name>Simple</name>
+								<items>
+									<item type="File">
+										<fileName>Simple/*.*</fileName>
+										<items/>
+									</item>
+								</items>
+							</item>
 						</items>
 						<dependencies>
 							<item type="ProjectDependency" version="3">
@@ -2965,7 +2974,7 @@
 		<item type="Project" version="1">
 			<enable>true</enable>
 			<name>Traktor.Render.OpenGL.ES</name>
-			<sourcePath>$(TRAKTOR_HOME)/code/Render/OpenGL/ES</sourcePath>
+			<sourcePath>$(TRAKTOR_HOME)/code/Render/OpenGL</sourcePath>
 			<configurations>
 				<item type="Configuration" version="5">
 					<name>DebugStatic</name>
@@ -3034,6 +3043,24 @@
 				<item type="File">
 					<fileName>*.*</fileName>
 					<items/>
+				</item>
+				<item type="Filter">
+					<name>ES</name>
+					<items>
+						<item type="File">
+							<fileName>ES/*.*</fileName>
+							<items/>
+						</item>
+						<item type="Filter">
+							<name>Emscripten</name>
+							<items>
+								<item type="File">
+									<fileName>ES/Emscripten/*.*</fileName>
+									<items/>
+								</item>
+							</items>
+						</item>
+					</items>
 				</item>
 			</items>
 			<dependencies>

@@ -205,8 +205,8 @@ bool OptionInfo::load(SwfReader& swf)
 
 void OptionInfo::dump(const ConstantPool& cpool) const
 {
-	log::info << L"optionCount = " << options.size() << Endl;
-	for (uint32_t i = 0; i < options.size(); ++i)
+	log::info << L"optionCount = " << (uint32_t)options.size() << Endl;
+	for (uint32_t i = 0; i < (uint32_t)options.size(); ++i)
 	{
 		log::info << L"options[" << i << L"] = {" << Endl;
 		log::info << IncreaseIndent;
