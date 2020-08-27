@@ -79,14 +79,12 @@ function deploy(args)
 		emcc = emcc .. ".bat"
 	end
 
-	stdout:printLn("emcc = \"" .. emcc .. "\"")
-
 	-- Get library paths.
 	local libraryPaths = ""
 	local paths = ""
 	if not debug then paths = os:getEnvironment("DEPLOY_STATIC_PATH_RELEASE"):split("\n") else paths = os:getEnvironment("DEPLOY_STATIC_PATH_DEBUG"):split("\n") end
 	 for _, p in pairs(paths) do
-		libraryPaths = libraryPaths .. " -L " .. Path(p).pathName .. ""
+		libraryPaths = libraryPaths .. " -L \"" .. Path(p).pathName .. "\""
 	end
 
 	-- Collect libraries to link.
@@ -106,7 +104,7 @@ function deploy(args)
 
 	-- Create the module initialization file.
 	stdout:printLn("Generating Linkage.cpp...")
-	if run:run("$(DEPLOY_SYSTEM_ROOT)/resources/runtime/deploy/emscripten/Linkage.cpp.template", "Linkage.cpp") ~= 0 then
+	if run:run("\"$(DEPLOY_SYSTEM_ROOT)/resources/runtime/deploy/emscripten/Linkage.cpp.template\"", "Linkage.cpp") ~= 0 then
 		stderr:printLn("Failed to generate Linkage.cpp")
 		return 1
 	end	
@@ -114,7 +112,7 @@ function deploy(args)
 	-- Compile linkage file.
 	stdout:printLn("Compiling Linkage.cpp...")
 	local cmd = "\"" .. emcc .. "\" -s WASM=1 Linkage.cpp -o Linkage.o"
-	local result = run:execute(cmd) --, nil)
+	local result = run:execute(cmd, nil)
 	if result ~= 0 then
 		stderr:printLn("Unable to compile file.")
 		return 1
@@ -137,7 +135,7 @@ function deploy(args)
 	cmd = cmd .. " -o $(DEPLOY_EXECUTABLE).html --preload-file Application.config"
 
 	-- Link files into an executable product.
-	local result = run:execute(cmd, nil)
+	local result = run:execute(cmd) --, nil)
 	if result ~= 0 then
 		stderr:printLn("Unable to build executable product.")
 		stderr:printLn(cmd)
@@ -148,7 +146,7 @@ function deploy(args)
 	run:rm("Linkage.*")
 
 	-- Create html loader.
-	if run:run("$(DEPLOY_SYSTEM_ROOT)/resources/runtime/deploy/emscripten/Index.html.template", os:getEnvironment("DEPLOY_EXECUTABLE") .. ".html") ~= 0 then
+	if run:run("\"$(DEPLOY_SYSTEM_ROOT)/resources/runtime/deploy/emscripten/Index.html.template\"", os:getEnvironment("DEPLOY_EXECUTABLE") .. ".html") ~= 0 then
 		stderr:printLn("Failed to generate HTML loader.")
 		return 1
 	end
@@ -216,7 +214,7 @@ function migrate(args)
 
 	-- Create the module initialization file.
 	stdout:printLn("Generating Linkage.cpp...")
-	if run:run("$(DEPLOY_SYSTEM_ROOT)/resources/runtime/deploy/emscripten/Linkage.cpp.template", "Linkage.cpp") ~= 0 then
+	if run:run("\"$(DEPLOY_SYSTEM_ROOT)/resources/runtime/deploy/emscripten/Linkage.cpp.template\"", "Linkage.cpp") ~= 0 then
 		stderr:printLn("Failed to generate Linkage.cpp")
 		return 1
 	end	
@@ -258,7 +256,7 @@ function migrate(args)
 	run:rm("Linkage.*")
 
 	-- Create html loader.
-	if run:run("$(DEPLOY_SYSTEM_ROOT)/resources/runtime/deploy/emscripten/Index.html.template", os:getEnvironment("DEPLOY_EXECUTABLE") .. ".html") ~= 0 then
+	if run:run("\"$(DEPLOY_SYSTEM_ROOT)/resources/runtime/deploy/emscripten/Index.html.template\"", os:getEnvironment("DEPLOY_EXECUTABLE") .. ".html") ~= 0 then
 		stderr:printLn("Failed to generate HTML loader.")
 		return 1
 	end

@@ -211,10 +211,10 @@ function deploy(args)
 	run:replace("Application.config", "assets/Application.config")
 	run:replace("libApplication.so", "lib/" .. abi .. "/libApplication.so")
 	run:replace("$(DEPLOY_ANDROID_NDK_ROOT)/sources/cxx-stl/llvm-libc++/libs/" .. abi .. "/libc++_shared.so", "lib/" .. abi .. "/libc++_shared.so")
-	run:run("$(DEPLOY_SYSTEM_ROOT)/resources/runtime/deploy/android/AndroidManifest.xml.template", "AndroidManifest.xml")
-	run:run("$(DEPLOY_SYSTEM_ROOT)/resources/runtime/deploy/android/splash_drawable.xml.template", "res/drawable/splash_drawable.xml")
-	run:run("$(DEPLOY_SYSTEM_ROOT)/resources/runtime/deploy/android/splash_theme.xml.template", "res/values/splash_theme.xml")
-	run:run("$(DEPLOY_SYSTEM_ROOT)/resources/runtime/deploy/android/strings.xml.template", "res/values/strings.xml")
+	run:run("\"$(DEPLOY_SYSTEM_ROOT)/resources/runtime/deploy/android/AndroidManifest.xml.template\"", "AndroidManifest.xml")
+	run:run("\"$(DEPLOY_SYSTEM_ROOT)/resources/runtime/deploy/android/splash_drawable.xml.template\"", "res/drawable/splash_drawable.xml")
+	run:run("\"$(DEPLOY_SYSTEM_ROOT)/resources/runtime/deploy/android/splash_theme.xml.template\"", "res/values/splash_theme.xml")
+	run:run("\"$(DEPLOY_SYSTEM_ROOT)/resources/runtime/deploy/android/strings.xml.template\"", "res/values/strings.xml")
 
 	-- Include Vulkan validation layers.
 	if debug then
@@ -255,19 +255,19 @@ function deploy(args)
 	local host = os:getEnvironment("DEPLOY_HOST_OS")
 	if host == "win32" or host == "win64" then
 		result = true
-		result = result and (run:execute("$(DEPLOY_ANDROID_HOME)/build-tools/29.0.1/aapt.exe package -f -M AndroidManifest.xml -S res -I \"$(DEPLOY_ANDROID_HOME)/platforms/android-" .. apilevel .. "/android.jar\" -F \"$(DEPLOY_PROJECT_NAME).unsigned.apk\"") == 0)
-		result = result and (run:execute("$(DEPLOY_ANDROID_HOME)/build-tools/29.0.1/aapt.exe add \"$(DEPLOY_PROJECT_NAME).unsigned.apk\" lib/" .. abi .. "/libApplication.so", nil) == 0)
-		result = result and (run:execute("$(DEPLOY_ANDROID_HOME)/build-tools/29.0.1/aapt.exe add \"$(DEPLOY_PROJECT_NAME).unsigned.apk\" lib/" .. abi .. "/libc++_shared.so", nil) == 0)
-		result = result and (run:execute("$(DEPLOY_ANDROID_HOME)/build-tools/29.0.1/aapt.exe add \"$(DEPLOY_PROJECT_NAME).unsigned.apk\" assets/Application.config", nil) == 0)
+		result = result and (run:execute("\"$(DEPLOY_ANDROID_HOME)/build-tools/29.0.1/aapt.exe\" package -f -M AndroidManifest.xml -S res -I \"$(DEPLOY_ANDROID_HOME)/platforms/android-" .. apilevel .. "/android.jar\" -F \"$(DEPLOY_PROJECT_NAME).unsigned.apk\"") == 0)
+		result = result and (run:execute("\"$(DEPLOY_ANDROID_HOME)/build-tools/29.0.1/aapt.exe\" add \"$(DEPLOY_PROJECT_NAME).unsigned.apk\" lib/" .. abi .. "/libApplication.so", nil) == 0)
+		result = result and (run:execute("\"$(DEPLOY_ANDROID_HOME)/build-tools/29.0.1/aapt.exe\" add \"$(DEPLOY_PROJECT_NAME).unsigned.apk\" lib/" .. abi .. "/libc++_shared.so", nil) == 0)
+		result = result and (run:execute("\"$(DEPLOY_ANDROID_HOME)/build-tools/29.0.1/aapt.exe\" add \"$(DEPLOY_PROJECT_NAME).unsigned.apk\" assets/Application.config", nil) == 0)
 
 		if debug then
 			for _, validation in ipairs(validations) do
-				result = result and (run:execute("$(DEPLOY_ANDROID_HOME)/build-tools/29.0.1/aapt.exe add \"$(DEPLOY_PROJECT_NAME).unsigned.apk\" lib/" .. abi .. "/" .. validation, nil) == 0)
+				result = result and (run:execute("\"$(DEPLOY_ANDROID_HOME)/build-tools/29.0.1/aapt.exe\" add \"$(DEPLOY_PROJECT_NAME).unsigned.apk\" lib/" .. abi .. "/" .. validation, nil) == 0)
 			end
 		end
 
-		result = result and (run:execute("$(DEPLOY_ANDROID_HOME)/build-tools/29.0.1/zipalign.exe -f -p 4 \"$(DEPLOY_PROJECT_NAME).unsigned.apk\" \"$(DEPLOY_PROJECT_NAME).aligned.apk\"", nil) == 0)
-		result = result and (run:execute("$(DEPLOY_ANDROID_HOME)/build-tools/29.0.1/apksigner.bat sign --ks $(DEPLOY_SYSTEM_ROOT)/resources/runtime/deploy/android/keystore.jks --ks-key-alias androidkey --ks-pass pass:android --key-pass pass:android --out \"$(DEPLOY_PROJECT_NAME).apk\" \"$(DEPLOY_PROJECT_NAME).aligned.apk\"", nil) == 0)
+		result = result and (run:execute("\"$(DEPLOY_ANDROID_HOME)/build-tools/29.0.1/zipalign.exe\" -f -p 4 \"$(DEPLOY_PROJECT_NAME).unsigned.apk\" \"$(DEPLOY_PROJECT_NAME).aligned.apk\"", nil) == 0)
+		result = result and (run:execute("\"$(DEPLOY_ANDROID_HOME)/build-tools/29.0.1/apksigner.bat\" sign --ks \"$(DEPLOY_SYSTEM_ROOT)/resources/runtime/deploy/android/keystore.jks\" --ks-key-alias androidkey --ks-pass pass:android --key-pass pass:android --out \"$(DEPLOY_PROJECT_NAME).apk\" \"$(DEPLOY_PROJECT_NAME).aligned.apk\"", nil) == 0)
 	elseif host == "linux" or host == "osx" then
 		result = true
 		result = result and (run:execute("$(DEPLOY_ANDROID_HOME)/build-tools/29.0.1/aapt package -f -M AndroidManifest.xml -S res -I $(DEPLOY_ANDROID_HOME)/platforms/android-" .. apilevel .. "/android.jar -F $(DEPLOY_PROJECT_NAME).unsigned.apk") == 0)
@@ -312,33 +312,36 @@ function launch(args)
 	end
 
 	local launchVS = false
+
+	--[[
 	local host = os:getEnvironment("DEPLOY_HOST_OS")
 	if host == "win32" or host == "win64" then
 		launchVS = true
 	end	
+	]]
 
 	if not launchVS then
 		-- Launch application on attached device.
 		stdout:printLn("Installing package...")
 		local result = run:execute("$(DEPLOY_ANDROID_HOME)/platform-tools/adb -d install --no-streaming -r \"$(DEPLOY_PROJECT_NAME).apk\"", nil)
 		if result ~= 0 then
-			stderr:printLn("Failed to install package on device; Please ensure device is attached and in developer mode (1).")
+			stderr:printLn("Failed to install package on device; Please ensure device is attached and in developer mode.")
 			return 1
 		end
 
 		stdout:printLn("Launching...")
 		local result = run:execute("$(DEPLOY_ANDROID_HOME)/platform-tools/adb -d shell am start -S -n $(DEPLOY_PROJECT_IDENTIFIER)/android.app.NativeActivity", nil)
 		if result ~= 0 then
-			stderr:printLn("Failed to launch package on device; Please ensure device is attached and in developer mode (2).")
+			stderr:printLn("Failed to launch package on device; Please ensure device is attached and in developer mode.")
 			return 1
 		end
 	else
 		run:mkdir("vs")
 
 		-- Generate Visual Studio solution.
-		run:run("$(DEPLOY_SYSTEM_ROOT)/resources/runtime/deploy/android/vs/project.vcxproj.template", "vs/$(DEPLOY_PROJECT_NAME).vcxproj")
-		run:run("$(DEPLOY_SYSTEM_ROOT)/resources/runtime/deploy/android/vs/project.vcxproj.user.template", "vs/$(DEPLOY_PROJECT_NAME).vcxproj.user")
-		run:run("$(DEPLOY_SYSTEM_ROOT)/resources/runtime/deploy/android/vs/solution.sln.template", "vs/$(DEPLOY_PROJECT_NAME).sln")
+		run:run("\"$(DEPLOY_SYSTEM_ROOT)/resources/runtime/deploy/android/vs/project.vcxproj.template\"", "vs/$(DEPLOY_PROJECT_NAME).vcxproj")
+		run:run("\"$(DEPLOY_SYSTEM_ROOT)/resources/runtime/deploy/android/vs/project.vcxproj.user.template\"", "vs/$(DEPLOY_PROJECT_NAME).vcxproj.user")
+		run:run("\"$(DEPLOY_SYSTEM_ROOT)/resources/runtime/deploy/android/vs/solution.sln.template\"", "vs/$(DEPLOY_PROJECT_NAME).sln")
 
 		-- Open generated solution in Visual Studio.
 		local projectName = os:getEnvironment("DEPLOY_PROJECT_NAME")
@@ -385,10 +388,10 @@ function migrate(args)
 	run:replace("Content.compact", "assets/Content.compact")
 	run:replace("libApplication.so", "lib/" .. abi .. "/libApplication.so")
 	run:replace("$(DEPLOY_ANDROID_NDK_ROOT)/sources/cxx-stl/llvm-libc++/libs/" .. abi .. "/libc++_shared.so", "lib/" .. abi .. "/libc++_shared.so")
-	run:run("$(DEPLOY_SYSTEM_ROOT)/resources/runtime/deploy/android/AndroidManifest.xml.template", "AndroidManifest.xml")
-	run:run("$(DEPLOY_SYSTEM_ROOT)/resources/runtime/deploy/android/splash_drawable.xml.template", "res/drawable/splash_drawable.xml")
-	run:run("$(DEPLOY_SYSTEM_ROOT)/resources/runtime/deploy/android/splash_theme.xml.template", "res/values/splash_theme.xml")
-	run:run("$(DEPLOY_SYSTEM_ROOT)/resources/runtime/deploy/android/strings.xml.template", "res/values/strings.xml")
+	run:run("\"$(DEPLOY_SYSTEM_ROOT)/resources/runtime/deploy/android/AndroidManifest.xml.template\"", "AndroidManifest.xml")
+	run:run("\"$(DEPLOY_SYSTEM_ROOT)/resources/runtime/deploy/android/splash_drawable.xml.template\"", "res/drawable/splash_drawable.xml")
+	run:run("\"$(DEPLOY_SYSTEM_ROOT)/resources/runtime/deploy/android/splash_theme.xml.template\"", "res/values/splash_theme.xml")
+	run:run("\"$(DEPLOY_SYSTEM_ROOT)/resources/runtime/deploy/android/strings.xml.template\"", "res/values/strings.xml")
 
 	-- Cleanup intermediate files.
 	run:rm("Application.config")

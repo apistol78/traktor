@@ -5,9 +5,9 @@ import(traktor.drawing)
 -- Tools
 tools =
 {
-	pipeline = "$(DEPLOY_SYSTEM_ROOT)/bin/latest/$(DEPLOY_HOST_OS)/releaseshared/Traktor.Pipeline.App",
-	migrate = "$(DEPLOY_SYSTEM_ROOT)/bin/latest/$(DEPLOY_HOST_OS)/releaseshared/Traktor.Database.Migrate.App",
-	remote = "$(DEPLOY_SYSTEM_ROOT)/bin/latest/$(DEPLOY_HOST_OS)/releaseshared/Traktor.Remote.Client.App"
+	pipeline = "\"$(DEPLOY_SYSTEM_ROOT)/bin/latest/$(DEPLOY_HOST_OS)/releaseshared/Traktor.Pipeline.App\"",
+	migrate = "\"$(DEPLOY_SYSTEM_ROOT)/bin/latest/$(DEPLOY_HOST_OS)/releaseshared/Traktor.Database.Migrate.App\"",
+	remote = "\"$(DEPLOY_SYSTEM_ROOT)/bin/latest/$(DEPLOY_HOST_OS)/releaseshared/Traktor.Remote.Client.App\""
 }
 
 
