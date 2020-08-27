@@ -43,7 +43,7 @@ void CaseThreadId::run()
 	for (int32_t i = 0; i < 16; ++i)
 		unique.insert(g_ids[i]);
 
-	CASE_ASSERT_EQUAL(unique.size(), 16);
+	CASE_ASSERT_EQUAL((int32_t)unique.size(), 16);
 	CASE_ASSERT(unique.find(-1) == unique.end());
 }
 

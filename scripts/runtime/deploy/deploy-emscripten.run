@@ -9,43 +9,7 @@ end
 
 
 -- Total amount of memory allocated by Emscripten product at runtime.
-local totalMemory = 128 * 1024 * 1024
-
-
--- Setup environment for emscripten; we need to ensure we're using emscripten specified in our configuration.
-local function setupEmscriptenEnvironment()
-	local emsdk = os:getEnvironment("DEPLOY_EMSCRIPTEN")
-	if #emsdk <= 0 then
-		stderr:printLn("DEPLOY_EMSCRIPTEN not set; ensure Emscripten SDK is properly installed and try again.")
-		return nil
-	end
-
-	local emscripten = emsdk .. "/emscripten/1.37.36"
-	local clang = emsdk .. "/clang/e1.37.36_64bit"
-	local binaryen = emsdk .. "/clang/e1.37.36_64bit/binaryen"
-	local java = emsdk .. "/java/8.152_64bit"
-	local python = emsdk .. "/python/2.7.13.1_64bit"
-	local node = emsdk .. "/node/8.9.1_64bit"
-
-	os:setEnvironment("EMSCRIPTEN", emscripten)
-	os:setEnvironment("BINARYEN_ROOT", binaryen)
-	os:setEnvironment("BINARYEN", binaryen)
-	os:setEnvironment("JAVA_HOME", java)
-
-	local p = os:getEnvironment("PATH")
-	os:setEnvironment(
-		"PATH",
-		clang .. ";" ..
-		node .. "/bin;" ..
-		python .. "/python-2.7.13.amd64;" ..
-		java .. "/bin;" ..
-		emsdk .. ";" ..
-		emscripten .. ";" ..
-		p
-	)
-
-	return emscripten
-end
+local totalMemory = 256 * 1024 * 1024
 
 
 function build(args)
@@ -64,17 +28,9 @@ function deploy(args)
 	local host = os:getEnvironment("DEPLOY_HOST_OS")
 	local debug = (os:getEnvironment("DEPLOY_DEBUG") ~= "")
 
-	local emscripten = setupEmscriptenEnvironment()
-	if emscripten == nil then return 1 end
-
-	-- Get toolchain binaries.
-	local emcc = emscripten .. "/emcc" 
-	if #emcc <= 0 then
-		stderr:printLn("Unable to determine toolchain binaries; ensure Emscripten SDK is properly installed and try again.")
-		return 1
-	end
-
-	-- As toolchain binaries on Windows are actually bat-file wrappers we need to append suffix.
+	-- Get toolchain binaries,
+	-- toolchain binaries on Windows are actually bat-file wrappers we need to append suffix.
+	local emcc = "emcc" 
 	if host == "win32" or host == "win64" then
 		emcc = emcc .. ".bat"
 	end
@@ -111,21 +67,22 @@ function deploy(args)
 
 	-- Compile linkage file.
 	stdout:printLn("Compiling Linkage.cpp...")
-	local cmd = "\"" .. emcc .. "\" -s WASM=1 Linkage.cpp -o Linkage.o"
-	local result = run:execute(cmd, nil)
+	local cmd = emcc .. " -c -s WASM=1 Linkage.cpp -o Linkage.o"
+	local result = run:execute(cmd) -- , nil)
 	if result ~= 0 then
-		stderr:printLn("Unable to compile file.")
+		stderr:printLn("Unable to compile \"Linkage\" file.")
 		return 1
 	end
 
 	-- Build linker command line.
-	local cmd = "\"" .. emcc .. "\" "
+	local cmd = emcc .. " "
 	cmd = cmd .. " -s WASM=1"
-	cmd = cmd .. " -s BINARYEN_TRAP_MODE='clamp'"
+	-- cmd = cmd .. " -s BINARYEN_TRAP_MODE='clamp'"
 	-- cmd = cmd .. " -s ERROR_ON_UNDEFINED_SYMBOLS=0"
 	cmd = cmd .. " -s USE_PTHREADS=0"
 	cmd = cmd .. " -s TOTAL_MEMORY=" .. totalMemory
 	-- cmd = cmd .. " -Wl,-s,ERROR_ON_UNDEFINED_SYMBOLS=0"
+	cmd = cmd .. " -s LLD_REPORT_UNDEFINED=1"
 	-- cmd = cmd .. " -g"
 	cmd = cmd .. " -O2"
 	cmd = cmd .. " Linkage.o"
@@ -146,10 +103,10 @@ function deploy(args)
 	run:rm("Linkage.*")
 
 	-- Create html loader.
-	if run:run("\"$(DEPLOY_SYSTEM_ROOT)/resources/runtime/deploy/emscripten/Index.html.template\"", os:getEnvironment("DEPLOY_EXECUTABLE") .. ".html") ~= 0 then
-		stderr:printLn("Failed to generate HTML loader.")
-		return 1
-	end
+--	if run:run("\"$(DEPLOY_SYSTEM_ROOT)/resources/runtime/deploy/emscripten/Index.html.template\"", os:getEnvironment("DEPLOY_EXECUTABLE") .. ".html") ~= 0 then
+--		stderr:printLn("Failed to generate HTML loader.")
+--		return 1
+--	end
 
 	return 0
 end
@@ -174,17 +131,9 @@ function migrate(args)
 	local host = os:getEnvironment("DEPLOY_HOST_OS")
 	local debug = (os:getEnvironment("DEPLOY_DEBUG") ~= "")
 
-	local emscripten = setupEmscriptenEnvironment()
-	if emscripten == nil then return 1 end
-
-	-- Get toolchain binaries.
-	local emcc = emscripten .. "/emcc" 
-	if #emcc <= 0 then
-		stderr:printLn("Unable to determine toolchain binaries; ensure Emscripten SDK is properly installed and try again.")
-		return 1
-	end
-
-	-- As toolchain binaries on Windows are actually bat-file wrappers we need to append suffix.
+	-- Get toolchain binaries,
+	-- toolchain binaries on Windows are actually bat-file wrappers we need to append suffix.
+	local emcc = "emcc" 
 	if host == "win32" or host == "win64" then
 		emcc = emcc .. ".bat"
 	end
@@ -221,17 +170,17 @@ function migrate(args)
 
 	-- Compile linkage file.
 	stdout:printLn("Compiling Linkage.cpp...")
-	local cmd = "\"" .. emcc .. "\" -s WASM=1 Linkage.cpp -o Linkage.o"
+	local cmd = emcc .. " -c -s WASM=1 Linkage.cpp -o Linkage.o"
 	local result = run:execute(cmd) --, nil)
 	if result ~= 0 then
-		stderr:printLn("Unable to compile file.")
+		stderr:printLn("Unable to compile \"Linkage\" file.")
 		return 1
 	end
 
 	-- Build linker command line.
-	local cmd = "\"" .. emcc .. "\" "
+	local cmd = emcc .. " "
 	cmd = cmd .. " -s WASM=1"
-	cmd = cmd .. " -s BINARYEN_TRAP_MODE='clamp'"
+	-- cmd = cmd .. " -s BINARYEN_TRAP_MODE='clamp'"
 	-- cmd = cmd .. " -s ERROR_ON_UNDEFINED_SYMBOLS=0"
 	cmd = cmd .. " -s USE_PTHREADS=0"
 	cmd = cmd .. " -s TOTAL_MEMORY=" .. totalMemory
@@ -245,7 +194,7 @@ function migrate(args)
 	cmd = cmd .. " -o $(DEPLOY_EXECUTABLE).html --preload-file Application.config --preload-file Content.compact"
 
 	-- Link files into an executable product.
-	local result = run:execute(cmd, nil)
+	local result = run:execute(cmd) -- , nil)
 	if result ~= 0 then
 		stderr:printLn("Unable to build executable product.")
 		stderr:printLn(cmd)
@@ -256,10 +205,10 @@ function migrate(args)
 	run:rm("Linkage.*")
 
 	-- Create html loader.
-	if run:run("\"$(DEPLOY_SYSTEM_ROOT)/resources/runtime/deploy/emscripten/Index.html.template\"", os:getEnvironment("DEPLOY_EXECUTABLE") .. ".html") ~= 0 then
-		stderr:printLn("Failed to generate HTML loader.")
-		return 1
-	end
+--	if run:run("\"$(DEPLOY_SYSTEM_ROOT)/resources/runtime/deploy/emscripten/Index.html.template\"", os:getEnvironment("DEPLOY_EXECUTABLE") .. ".html") ~= 0 then
+--		stderr:printLn("Failed to generate HTML loader.")
+--		return 1
+--	end
 
 	stdout:printLn("Done")
 	return 0

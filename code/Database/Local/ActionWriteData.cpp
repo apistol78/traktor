@@ -77,7 +77,7 @@ bool ActionWriteData::execute(Context* context)
 		sha1.feed(chunk.ptr, chunk.size);
 		if (writeStream->write(chunk.ptr, chunk.size) != chunk.size)
 		{
-			log::error << L"Unable to write " << chunk.size << L" byte(s) to file \"" << instanceDataPath.getPathName() << L"\"." << Endl;
+			log::error << L"Unable to write " << (uint32_t)chunk.size << L" byte(s) to file \"" << instanceDataPath.getPathName() << L"\"." << Endl;
 			return false;
 		}
 

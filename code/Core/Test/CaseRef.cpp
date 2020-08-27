@@ -23,7 +23,7 @@ void CaseRef::run()
 	RefArray< A > ra;
 	for (int i = 0; i < 10; ++i)
 		ra.push_back(new A());
-	CASE_ASSERT_EQUAL(ra.size(), 10);
+	CASE_ASSERT_EQUAL((int32_t)ra.size(), 10);
 
 #if defined(T_CXX11)
 	int c = 0;
