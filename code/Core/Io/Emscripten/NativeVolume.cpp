@@ -1,4 +1,5 @@
 #include <cstdio>
+#include <emscripten.h>
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/Linux/NativeVolume.h"
 #include "Core/Io/Linux/NativeStream.h"
@@ -12,6 +13,11 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.NativeVolume", NativeVolume, IVolume)
 NativeVolume::NativeVolume(const Path& currentDirectory)
 :	m_currentDirectory(currentDirectory)
 {
+	// Mount current directory as a NODEFS instance inside of Emscripten.
+	EM_ASM(
+		FS.mkdir('/nodefs');
+		FS.mount(NODEFS, { root: '.' }, '/nodefs');
+	);
 }
 
 std::wstring NativeVolume::getDescription() const
@@ -21,7 +27,7 @@ std::wstring NativeVolume::getDescription() const
 
 Ref< File > NativeVolume::get(const Path& path)
 {
-	return 0;
+	return nullptr;
 }
 
 int NativeVolume::find(const Path& mask, RefArray< File >& out)
@@ -108,7 +114,10 @@ void NativeVolume::mountVolumes(FileSystem& fileSystem)
 
 std::wstring NativeVolume::getSystemPath(const Path& path) const
 {
-	return path.getPathNameNoVolume();
+	if (path.isRelative())
+		return L"nodefs/" + path.getPathNameNoVolume();
+	else
+		return L"nodefs" + path.getPathNameNoVolume();
 }
 
 }
