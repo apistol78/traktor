@@ -79,17 +79,24 @@ function deploy(args)
 	cmd = cmd .. " -s WASM=1"
 	-- cmd = cmd .. " -s BINARYEN_TRAP_MODE='clamp'"
 	-- cmd = cmd .. " -s ERROR_ON_UNDEFINED_SYMBOLS=0"
-	cmd = cmd .. " -s USE_PTHREADS=0"
+	cmd = cmd .. " -s USE_PTHREADS=1"
 	cmd = cmd .. " -s TOTAL_MEMORY=" .. totalMemory
+	cmd = cmd .. " -s FORCE_FILESYSTEM=1"
+	cmd = cmd .. " -s FULL_ES3=1"
+	-- cmd = cmd .. " -s NODERAWFS=1"
 	-- cmd = cmd .. " -Wl,-s,ERROR_ON_UNDEFINED_SYMBOLS=0"
-	cmd = cmd .. " -s LLD_REPORT_UNDEFINED=1"
-	-- cmd = cmd .. " -g"
+	-- cmd = cmd .. " -s LLD_REPORT_UNDEFINED=1"
+	if debug then
+		cmd = cmd .. " -g"
+	end
 	cmd = cmd .. " -O2"
 	cmd = cmd .. " Linkage.o"
+	cmd = cmd .. " -lnodefs.js"
 	cmd = cmd .. libraryPaths
 	cmd = cmd .. libraries
 	cmd = cmd .. libraries
-	cmd = cmd .. " -o $(DEPLOY_EXECUTABLE).html --preload-file Application.config"
+	-- cmd = cmd .. " -o $(DEPLOY_EXECUTABLE).html --preload-file Application.config"
+	cmd = cmd .. " -o $(DEPLOY_EXECUTABLE).js"
 
 	-- Link files into an executable product.
 	local result = run:execute(cmd) --, nil)
@@ -107,6 +114,13 @@ function deploy(args)
 --		stderr:printLn("Failed to generate HTML loader.")
 --		return 1
 --	end
+
+	-- Launch product using Node.
+	local result = run:execute("node --experimental-wasm-threads --experimental-wasm-bulk-memory $(DEPLOY_EXECUTABLE).js")
+	if result ~= 0 then
+		stderr:printLn("Unable to launch product.")
+		return 1
+	end
 
 	return 0
 end
@@ -182,16 +196,23 @@ function migrate(args)
 	cmd = cmd .. " -s WASM=1"
 	-- cmd = cmd .. " -s BINARYEN_TRAP_MODE='clamp'"
 	-- cmd = cmd .. " -s ERROR_ON_UNDEFINED_SYMBOLS=0"
-	cmd = cmd .. " -s USE_PTHREADS=0"
+	cmd = cmd .. " -s USE_PTHREADS=1"
 	cmd = cmd .. " -s TOTAL_MEMORY=" .. totalMemory
+	cmd = cmd .. " -s FORCE_FILESYSTEM=1"
+	cmd = cmd .. " -s FULL_ES3=1"
+	-- cmd = cmd .. " -s NODERAWFS=1"
 	-- cmd = cmd .. " -Wl,-s,ERROR_ON_UNDEFINED_SYMBOLS=0"
-	-- cmd = cmd .. " -g"
+	if debug then
+		cmd = cmd .. " -g"
+	end
 	cmd = cmd .. " -O2"
 	cmd = cmd .. " Linkage.o"
+	cmd = cmd .. " -lnodefs.js"
 	cmd = cmd .. libraryPaths
 	cmd = cmd .. libraries
 	cmd = cmd .. libraries
-	cmd = cmd .. " -o $(DEPLOY_EXECUTABLE).html --preload-file Application.config --preload-file Content.compact"
+	-- cmd = cmd .. " -o $(DEPLOY_EXECUTABLE).html --preload-file Application.config --preload-file Content.compact"
+	cmd = cmd .. " -o $(DEPLOY_EXECUTABLE).js"
 
 	-- Link files into an executable product.
 	local result = run:execute(cmd) -- , nil)

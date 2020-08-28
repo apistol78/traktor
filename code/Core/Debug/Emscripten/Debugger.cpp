@@ -1,6 +1,4 @@
-#if !defined(_WIN32)
-#include <cassert>
-#endif
+#include <cstdlib>
 #include <iostream>
 #include "Core/Debug/Debugger.h"
 
@@ -19,12 +17,7 @@ void Debugger::assertionFailed(const char* const expression, const char* const f
 	if (message)
 		std::wcerr << L"               " << message << std::endl;
 
-#if defined(_WIN32)
-	__debugbreak();
-#else
-	// Fall back on assert macro
-	assert (0);
-#endif
+	std::abort();
 }
 
 bool Debugger::isDebuggerAttached() const
@@ -34,12 +27,7 @@ bool Debugger::isDebuggerAttached() const
 
 void Debugger::breakDebugger()
 {
-#if defined(_WIN32)
-	__debugbreak();
-#else
-	// Fall back on assert macro
-	assert (0);
-#endif
+	std::abort();
 }
 
 void Debugger::reportEvent(const wchar_t* const text, ...)

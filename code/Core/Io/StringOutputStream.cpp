@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <cstring>
 #include "Core/Io/StringOutputStream.h"
 
@@ -5,10 +6,11 @@ namespace traktor
 {
 
 StringOutputStreamBuffer::StringOutputStreamBuffer(size_t initialCapacity)
-:	m_buffer((wchar_t*)getAllocator()->alloc(initialCapacity * sizeof(wchar_t), 16, T_FILE_LINE))
-,	m_capacity(initialCapacity)
+:	m_capacity(0)
 ,	m_tail(0)
 {
+	m_capacity = std::max< size_t >(initialCapacity, 16);
+	m_buffer.reset((wchar_t*)getAllocator()->alloc(m_capacity * sizeof(wchar_t), 16, T_FILE_LINE));
 	m_buffer[0] = L'\0';
 }
 
