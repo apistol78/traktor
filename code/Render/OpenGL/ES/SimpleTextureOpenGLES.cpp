@@ -4,6 +4,7 @@
 #include "Core/Math/Log2.h"
 #include "Render/OpenGL/ES/Platform.h"
 #include "Render/OpenGL/ES/SimpleTextureOpenGLES.h"
+#include "Render/OpenGL/ES/UtilitiesOpenGLES.h"
 #if defined(__ANDROID__)
 #	include "Render/OpenGL/ES/Android/ContextOpenGLES.h"
 #elif defined(__IOS__)
@@ -43,98 +44,6 @@ struct DeleteTextureCallback : public ContextOpenGLES::IDeleteCallback
 	}
 };
 
-bool convertTextureFormat(TextureFormat textureFormat, int& outPixelSize, GLint& outComponents, GLenum& outFormat, GLenum& outType)
-{
-	switch (textureFormat)
-	{
-	case TfR8:
-		outPixelSize = 1;
-		outComponents = GL_RED;
-		outFormat = GL_RED;
-		outType = GL_UNSIGNED_BYTE;
-		break;
-
-	case TfR8G8B8A8:
-		outPixelSize = 4;
-		outComponents = GL_RGBA;
-		outFormat = GL_RGBA;
-		outType = GL_UNSIGNED_BYTE;
-		break;
-
-	case TfR16G16B16A16F:
-		outPixelSize = 8;
-		outComponents = GL_RGBA;
-		outFormat = GL_RGBA;
-		outType = GL_HALF_FLOAT;
-		break;
-
-	case TfR32G32B32A32F:
-		outPixelSize = 16;
-		outComponents = 4;
-		outFormat = GL_RGBA;
-		outType = GL_FLOAT;
-		break;
-
-	case TfR16F:
-		outPixelSize = 2;
-		outComponents = GL_RED;
-		outFormat = GL_RED;
-		outType = GL_HALF_FLOAT;
-		break;
-
-	case TfR32F:
-		outPixelSize = 4;
-		outComponents = GL_RED;
-		outFormat = GL_RED;
-		outType = GL_FLOAT;
-		break;
-
-#if defined(GL_IMG_texture_compression_pvrtc)
-	case TfPVRTC1:
-		outPixelSize = 0;
-		outComponents = GL_COMPRESSED_RGB_PVRTC_4BPPV1_IMG;
-		outFormat = GL_RGBA;
-		outType = GL_UNSIGNED_BYTE;
-		break;
-
-	case TfPVRTC2:
-		outPixelSize = 0;
-		outComponents = GL_COMPRESSED_RGB_PVRTC_2BPPV1_IMG;
-		outFormat = GL_RGBA;
-		outType = GL_UNSIGNED_BYTE;
-		break;
-
-	case TfPVRTC3:
-		outPixelSize = 0;
-		outComponents = GL_COMPRESSED_RGBA_PVRTC_4BPPV1_IMG;
-		outFormat = GL_RGBA;
-		outType = GL_UNSIGNED_BYTE;
-		break;
-
-	case TfPVRTC4:
-		outPixelSize = 0;
-		outComponents = GL_COMPRESSED_RGBA_PVRTC_2BPPV1_IMG;
-		outFormat = GL_RGBA;
-		outType = GL_UNSIGNED_BYTE;
-		break;
-#endif
-
-#if defined(GL_OES_compressed_ETC1_RGB8_texture)
-	case TfETC1:
-		outPixelSize = 0;
-		outComponents = GL_ETC1_RGB8_OES; // GL_OES_compressed_ETC1_RGB8_texture;
-		outFormat = GL_RGBA;
-		outType = GL_UNSIGNED_BYTE;
-		break;
-#endif
-
-	default:
-		return false;
-	}
-
-	return true;
-}
-
 		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.SimpleTextureOpenGLES", SimpleTextureOpenGLES, ISimpleTexture)
@@ -165,7 +74,7 @@ bool SimpleTextureOpenGLES::create(const SimpleTextureCreateDesc& desc)
 
 	if (!convertTextureFormat(desc.format, m_pixelSize, m_components, m_format, m_type))
 	{
-		log::error << L"Unable to convert texture format" << Endl;
+		log::error << L"Unable to create simple texture; unsupported format \"L" << getTextureFormatName(desc.format) << L"\"." << Endl;
 		return false;
 	}
 

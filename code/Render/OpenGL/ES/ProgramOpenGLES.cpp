@@ -8,10 +8,11 @@
 #include "Render/OpenGL/ES/ProgramResourceOpenGLES.h"
 #include "Render/OpenGL/ES/CubeTextureOpenGLES.h"
 #include "Render/OpenGL/ES/ProgramOpenGLES.h"
-#include "Render/OpenGL/ES/SimpleTextureOpenGLES.h"
 #include "Render/OpenGL/ES/RenderTargetDepthOpenGLES.h"
 #include "Render/OpenGL/ES/RenderTargetOpenGLES.h"
+#include "Render/OpenGL/ES/SimpleTextureOpenGLES.h"
 #include "Render/OpenGL/ES/StateCache.h"
+#include "Render/OpenGL/ES/StructBufferOpenGLES.h"
 #include "Render/OpenGL/ES/VolumeTextureOpenGLES.h"
 #if defined(__ANDROID__)
 #	include "Render/OpenGL/ES/Android/ContextOpenGLES.h"
@@ -133,15 +134,15 @@ Ref< ProgramOpenGLES > ProgramOpenGLES::create(ContextOpenGLES* resourceContext,
 	GLuint vertexObject = resourceContext->createShaderObject(vertexShader.c_str(), GL_VERTEX_SHADER);
 	if (!vertexObject)
 	{
-		log::error << L"Unable to create vertex object" << Endl;
-		return 0;
+		log::error << L"Unable to create vertex object." << Endl;
+		return nullptr;
 	}
 
 	GLuint fragmentObject = resourceContext->createShaderObject(fragmentShader.c_str(), GL_FRAGMENT_SHADER);
 	if (!fragmentObject)
 	{
-		log::error << L"Unable to create fragment object" << Endl;
-		return 0;
+		log::error << L"Unable to create fragment object." << Endl;
+		return nullptr;
 	}
 
 	GLuint programObject = glCreateProgram();
@@ -170,7 +171,7 @@ Ref< ProgramOpenGLES > ProgramOpenGLES::create(ContextOpenGLES* resourceContext,
 		{
 			log::error << L"GLSL program link failed :" << Endl;
 			log::error << mbstows(errorBuf) << Endl;
-			return 0;
+			return nullptr;
 		}
 	}
 
@@ -183,7 +184,7 @@ Ref< ProgramOpenGLES > ProgramOpenGLES::create(ContextOpenGLES* resourceContext,
 	glDrawArrays(GL_TRIANGLES, 0, 0);
 
 	if (glGetError() != GL_NO_ERROR)
-		log::warning << L"Prewarming shader failed; might cause stall during normal render" << Endl;
+		log::warning << L"Prewarming shader failed; might cause stall during normal render." << Endl;
 #endif
 
 	return new ProgramOpenGLES(resourceContext, programObject, resource);
@@ -192,7 +193,7 @@ Ref< ProgramOpenGLES > ProgramOpenGLES::create(ContextOpenGLES* resourceContext,
 void ProgramOpenGLES::destroy()
 {
 	if (ms_current == this)
-		ms_current = 0;
+		ms_current = nullptr;
 
 	if (m_program)
 	{
@@ -382,7 +383,7 @@ bool ProgramOpenGLES::activate(StateCache* stateCache, float targetSize[2], floa
 		if (!resolved)
 			continue;
 
-		ITextureBinding* binding = 0;
+		ITextureBinding* binding = nullptr;
 
 		if (SimpleTextureOpenGLES* st = dynamic_type_cast< SimpleTextureOpenGLES* >(resolved))
 			binding = static_cast< ITextureBinding* >(st);

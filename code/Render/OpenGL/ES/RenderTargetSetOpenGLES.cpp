@@ -7,6 +7,7 @@
 #include "Render/OpenGL/ES/RenderTargetDepthOpenGLES.h"
 #include "Render/OpenGL/ES/RenderTargetOpenGLES.h"
 #include "Render/OpenGL/ES/RenderTargetSetOpenGLES.h"
+#include "Render/OpenGL/ES/UtilitiesOpenGLES.h"
 #if defined(__ANDROID__)
 #	include "Render/OpenGL/ES/Android/ContextOpenGLES.h"
 #elif defined(__IOS__)
@@ -167,72 +168,13 @@ bool RenderTargetSetOpenGLES::create(const RenderTargetSetCreateDesc& desc, IRen
 		GLint format;
 		GLenum type;
 
-		switch (desc.targets[i].format)
+		if (!convertTargetFormat(
+			desc.targets[i].format,
+			internalFormat,
+			format,
+			type
+		))
 		{
-		case TfR8:
-			internalFormat = GL_RED;
-			format = GL_RED;
-			type = GL_UNSIGNED_BYTE;
-			break;
-
-		case TfR8G8B8A8:
-			internalFormat = GL_RGBA;
-			format = GL_RGBA;
-			type = GL_UNSIGNED_BYTE;
-			break;
-
-		case TfR5G6B5:
-		case TfR5G5B5A1:
-		case TfR4G4B4A4:
-		case TfR10G10B10A2:
-			internalFormat = GL_RGBA;
-			format = GL_RGBA;
-			type = GL_UNSIGNED_BYTE;
-			break;
-
-		case TfR11G11B10F:
-			internalFormat = GL_RGBA;
-			format = GL_RGBA;
-			type = GL_UNSIGNED_BYTE;
-			break;
-
-		case TfR16G16B16A16F:
-			internalFormat = GL_RGBA;
-			format = GL_RGBA;
-			type = GL_HALF_FLOAT;
-			break;
-
-		case TfR32G32B32A32F:
-			internalFormat = GL_RGBA;
-			format = GL_RGBA;
-			type = GL_FLOAT;
-			break;
-
-		case TfR16G16F:
-			internalFormat = GL_RG;
-			format = GL_RGBA;
-			type = GL_HALF_FLOAT;
-			break;
-
-		case TfR32G32F:
-			internalFormat = GL_RG;
-			format = GL_RGBA;
-			type = GL_FLOAT;
-			break;
-
-		case TfR16F:
-			internalFormat = GL_RED;
-			format = GL_RED;
-			type = GL_HALF_FLOAT;
-			break;
-
-		case TfR32F:
-			internalFormat = GL_RED;
-			format = GL_RED;
-			type = GL_FLOAT;
-			break;
-
-		default:
 			log::error << L"Unable to create render target, unsupported format \"" << getTextureFormatName(desc.targets[i].format) << L"\"." << Endl;
 			return false;
 		}
@@ -284,7 +226,7 @@ void RenderTargetSetOpenGLES::destroy()
 		m_targetFBO[i] = 0;
 	}
 
-	m_context = 0;
+	m_context = nullptr;
 }
 
 int32_t RenderTargetSetOpenGLES::getWidth() const

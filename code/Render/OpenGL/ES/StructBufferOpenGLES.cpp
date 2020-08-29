@@ -20,28 +20,26 @@ namespace traktor
 {
 	namespace render
 	{
-//		namespace
-//		{
-//
-//struct DeleteBufferCallback : public ResourceContextOpenGL::IDeleteCallback
-//{
-//	GLuint m_buffer;
-//
-//	DeleteBufferCallback(GLuint buffer)
-//	:	m_buffer(buffer)
-//	{
-//	}
-//
-//	virtual void deleteResource()
-//	{
-//#if !defined(__APPLE__)
-//		T_OGL_SAFE(glDeleteBuffers(1, &m_buffer));
-//#endif
-//		delete this;
-//	}
-//};
-//
-//		}
+		namespace
+		{
+
+struct DeleteBufferCallback : public ContextOpenGLES::IDeleteCallback
+{
+	GLuint m_buffer;
+
+	DeleteBufferCallback(GLuint buffer)
+	:	m_buffer(buffer)
+	{
+	}
+
+	virtual void deleteResource()
+	{
+		T_OGL_SAFE(glDeleteBuffers(1, &m_buffer));
+		delete this;
+	}
+};
+
+		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.StructBufferOpenGLES", StructBufferOpenGLES, StructBuffer)
 
@@ -53,8 +51,8 @@ StructBufferOpenGLES::StructBufferOpenGLES(ContextOpenGLES* context, const Align
 {
 	T_OGL_SAFE(glGenBuffers(1, &m_buffer));
 	T_OGL_SAFE(glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_buffer));
-	//T_OGL_SAFE(glBufferData(GL_SHADER_STORAGE_BUFFER, bufferSize, nullptr, GL_DYNAMIC_COPY));
-	//T_OGL_SAFE(glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0));
+	T_OGL_SAFE(glBufferData(GL_SHADER_STORAGE_BUFFER, bufferSize, nullptr, GL_DYNAMIC_COPY));
+	T_OGL_SAFE(glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0));
 }
 
 StructBufferOpenGLES::~StructBufferOpenGLES()
@@ -64,21 +62,21 @@ StructBufferOpenGLES::~StructBufferOpenGLES()
 
 void StructBufferOpenGLES::destroy()
 {
-	//if (m_buffer)
-	//{
-	//	if (m_resourceContext)
-	//		m_resourceContext->deleteResource(new DeleteBufferCallback(m_buffer));
-	//	m_buffer = 0;
-	//}
+	if (m_buffer)
+	{
+		if (m_context)
+			m_context->deleteResource(new DeleteBufferCallback(m_buffer));
+		m_buffer = 0;
+	}
 }
 
 void* StructBufferOpenGLES::lock()
 {
-	//T_ASSERT_M(!m_lock, L"Struct buffer already locked");
-	//T_ANONYMOUS_VAR(ContextOpenGL::Scope)(m_resourceContext);
+	T_ASSERT_M(!m_lock, L"Struct buffer already locked");
+	T_ANONYMOUS_VAR(ContextOpenGLES::Scope)(m_context);
 
-	//T_OGL_SAFE(glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_buffer));
-	//m_lock = (uint8_t*)glMapBuffer(GL_SHADER_STORAGE_BUFFER, GL_WRITE_ONLY);
+	T_OGL_SAFE(glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_buffer));
+	m_lock = (uint8_t*)glMapBufferRange(GL_SHADER_STORAGE_BUFFER, 0, getBufferSize(), GL_WRITE_ONLY);
 
 	return m_lock;
 }
@@ -90,13 +88,11 @@ void* StructBufferOpenGLES::lock(uint32_t structOffset, uint32_t structCount)
 
 void StructBufferOpenGLES::unlock()
 {
-//	T_ASSERT_M(m_lock, L"Struct buffer not locked");
-//	T_ANONYMOUS_VAR(ContextOpenGL::Scope)(m_resourceContext);
-//
-//#if !defined(__APPLE__)
-//	T_OGL_SAFE(glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_buffer));
-//	T_OGL_SAFE(glUnmapBuffer(GL_SHADER_STORAGE_BUFFER));
-//#endif
+	T_ASSERT_M(m_lock, L"Struct buffer not locked");
+	T_ANONYMOUS_VAR(ContextOpenGLES::Scope)(m_context);
+
+	T_OGL_SAFE(glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_buffer));
+	T_OGL_SAFE(glUnmapBuffer(GL_SHADER_STORAGE_BUFFER));
 
 	m_lock = nullptr;
 }
