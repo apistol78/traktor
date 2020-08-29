@@ -157,7 +157,7 @@ Ref< ContextOpenGLES > ContextOpenGLES::createContext(const SystemApplication& s
 	else
 		context->m_primaryDepthFormat = (desc.stencilBits > 0) ? GL_DEPTH24_STENCIL8_OES : GL_DEPTH_COMPONENT16;
 
-	log::info << L"OpenGL ES render context created successfully (embedded)" << Endl;
+	log::info << L"OpenGL ES render context created successfully (embedded)." << Endl;
 	return context;
 }
 
@@ -222,8 +222,8 @@ void ContextOpenGLES::deleteResources()
 	if (!m_deleteResources.empty())
 	{
 		enter();
-		for (std::vector< IDeleteCallback* >::iterator i = m_deleteResources.begin(); i != m_deleteResources.end(); ++i)
-			(*i)->deleteResource();
+		for (auto resource : m_deleteResources)
+			resource->deleteResource();
 		m_deleteResources.resize(0);
 		leave();
 	}
@@ -238,9 +238,9 @@ GLuint ContextOpenGLES::createShaderObject(const char* shader, GLenum shaderType
 
 	uint32_t hash = adler.get();
 
-	std::map< uint32_t, GLuint >::const_iterator i = m_shaderObjects.find(hash);
-	if (i != m_shaderObjects.end())
-		return i->second;
+	auto it = m_shaderObjects.find(hash);
+	if (it != m_shaderObjects.end())
+		return it->second;
 
 	GLuint shaderObject = glCreateShader(shaderType);
 	if (shaderObject == 0)
@@ -297,13 +297,6 @@ Semaphore& ContextOpenGLES::lock()
 void ContextOpenGLES::bindPrimary()
 {
 	T_OGL_SAFE(glBindFramebuffer(GL_FRAMEBUFFER, 0));
-	T_OGL_SAFE(glViewport(
-		0,
-		0,
-		getWidth(),
-		getHeight()
-	));
-
 	if (!m_primaryDepth)
 	{
 		T_OGL_SAFE(glGenRenderbuffers(1, &m_primaryDepth));
