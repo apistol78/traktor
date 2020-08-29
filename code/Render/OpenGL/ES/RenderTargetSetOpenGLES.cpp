@@ -19,10 +19,6 @@
 #	include "Render/OpenGL/ES/Linux/ContextOpenGLES.h"
 #endif
 
-#if !defined(GL_RED_EXT)
-#	define GL_RED_EXT 0x1903
-#endif
-
 namespace traktor
 {
 	namespace render
@@ -110,10 +106,8 @@ bool RenderTargetSetOpenGLES::create(const RenderTargetSetCreateDesc& desc, IRen
 			T_OGL_SAFE(glBindRenderbuffer(GL_RENDERBUFFER, m_depthBufferOrTexture));
 
 			GLenum format = GL_DEPTH_COMPONENT16;
-#if GL_OES_packed_depth_stencil
 			if (!m_desc.ignoreStencil)
-				format = GL_DEPTH24_STENCIL8_OES;
-#endif
+				format = GL_DEPTH24_STENCIL8;
 
 			T_OGL_SAFE(glRenderbufferStorage(
 				GL_RENDERBUFFER,
@@ -135,10 +129,9 @@ bool RenderTargetSetOpenGLES::create(const RenderTargetSetCreateDesc& desc, IRen
 			T_OGL_SAFE(glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST));
 
 			GLenum format = GL_DEPTH_COMPONENT16;
-#if GL_OES_packed_depth_stencil
 			if (!m_desc.ignoreStencil)
-				format = GL_DEPTH24_STENCIL8_OES;
-#endif
+				format = GL_DEPTH24_STENCIL8;
+
 			T_OGL_SAFE(glTexImage2D(
 				GL_TEXTURE_2D,
 				0,
@@ -177,25 +170,9 @@ bool RenderTargetSetOpenGLES::create(const RenderTargetSetCreateDesc& desc, IRen
 		switch (desc.targets[i].format)
 		{
 		case TfR8:
-#if defined(GL_RED_EXT)
-			if (haveExtension("GL_EXT_texture_rg"))
-			{
-				internalFormat = GL_RED_EXT;
-				format = GL_RED_EXT;
-				type = GL_UNSIGNED_BYTE;
-			}
-			else
-			{
-				log::warning << L"Extension \"GL_EXT_texture_rg\" not supported; using different format which may cause performance issues (TfR8 requested)." << Endl;
-				internalFormat = GL_RGBA;
-				format = GL_RGBA;
-				type = GL_UNSIGNED_BYTE;
-			}
-#else
-			internalFormat = GL_RGBA;
-			format = GL_RGBA;
+			internalFormat = GL_RED;
+			format = GL_RED;
 			type = GL_UNSIGNED_BYTE;
-#endif
 			break;
 
 		case TfR8G8B8A8:
@@ -220,12 +197,10 @@ bool RenderTargetSetOpenGLES::create(const RenderTargetSetCreateDesc& desc, IRen
 			break;
 
 		case TfR16G16B16A16F:
-#if defined(GL_HALF_FLOAT_OES)
 			internalFormat = GL_RGBA;
 			format = GL_RGBA;
-			type = GL_HALF_FLOAT_OES;
+			type = GL_HALF_FLOAT;
 			break;
-#endif
 
 		case TfR32G32B32A32F:
 			internalFormat = GL_RGBA;
@@ -233,61 +208,32 @@ bool RenderTargetSetOpenGLES::create(const RenderTargetSetCreateDesc& desc, IRen
 			type = GL_FLOAT;
 			break;
 
-#if !defined(__RPI__) && !defined(__IOS__)
 		case TfR16G16F:
-#	if defined(GL_HALF_FLOAT_OES)
-			internalFormat = GL_RG16_EXT;
+			internalFormat = GL_RG;
 			format = GL_RGBA;
-			type = GL_HALF_FLOAT_OES;
+			type = GL_HALF_FLOAT;
 			break;
-#	endif
 
 		case TfR32G32F:
-			internalFormat = GL_RG16_EXT;
+			internalFormat = GL_RG;
 			format = GL_RGBA;
 			type = GL_FLOAT;
 			break;
-#endif
 
 		case TfR16F:
-			if (haveExtension("GL_EXT_texture_rg"))
-			{
-				internalFormat = GL_RED_EXT;
-				format = GL_RED_EXT;
-			}
-			else
-			{
-				log::warning << L"Extension \"GL_EXT_texture_rg\" not supported; using different format which may cause performance issues (TfR16F requested)." << Endl;
-				internalFormat = GL_RGBA;
-				format = GL_RGBA;
-			}
-			if (haveExtension("GL_OES_texture_half_float"))
-				type = GL_HALF_FLOAT_OES;
-			else
-			{
-				log::warning << L"Extension \"GL_OES_texture_half_float\" not supported; using different format (TfR32F) which may cause performance issues (TfR16F requested)." << Endl;
-				type = GL_FLOAT;
-			}
+			internalFormat = GL_RED;
+			format = GL_RED;
+			type = GL_HALF_FLOAT;
 			break;
 
 		case TfR32F:
-			if (haveExtension("GL_EXT_texture_rg"))
-			{
-				internalFormat = GL_RED_EXT;
-				format = GL_RED_EXT;
-				type = GL_FLOAT;
-			}
-			else
-			{
-				log::warning << L"Extension \"GL_EXT_texture_rg\" not supported; using different format which may cause performance issues (TfR32F requested)." << Endl;
-				internalFormat = GL_RGBA;
-				format = GL_RGBA;
-				type = GL_FLOAT;
-			}
+			internalFormat = GL_RED;
+			format = GL_RED;
+			type = GL_FLOAT;
 			break;
 
 		default:
-			log::error << L"Unable to create render target, unsupported format " << int32_t(desc.targets[i].format) << Endl;
+			log::error << L"Unable to create render target, unsupported format \"" << getTextureFormatName(desc.targets[i].format) << L"\"." << Endl;
 			return false;
 		}
 
