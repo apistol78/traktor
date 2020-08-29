@@ -50,9 +50,6 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderViewOpenGLES", RenderViewOpenGLES,
 RenderViewOpenGLES::RenderViewOpenGLES(ContextOpenGLES* context)
 :	m_context(context)
 ,	m_stateCache(new StateCache())
-,	m_width(0)
-,	m_height(0)
-,	m_cursorVisible(true)
 {
 #if defined(_WIN32)
 	m_context->getWindow()->addListener(this);
@@ -60,15 +57,6 @@ RenderViewOpenGLES::RenderViewOpenGLES(ContextOpenGLES* context)
 
 	m_width = m_context->getWidth();
 	m_height = m_context->getHeight();
-
-	m_viewport = Viewport(
-		0,
-		0,
-		m_width,
-		m_height,
-		0.0f,
-		1.0f
-	);
 }
 
 RenderViewOpenGLES::~RenderViewOpenGLES()
@@ -117,15 +105,6 @@ bool RenderViewOpenGLES::nextEvent(RenderEvent& outEvent)
 		m_width = width;
 		m_height = height;
 
-		m_viewport = Viewport(
-			0,
-			0,
-			m_width,
-			m_height,
-			0.0f,
-			1.0f
-		);
-
 		// Post a resize event as we need all systems to re-create
 		// resources if necessary.
 		outEvent.type = ReResize;
@@ -144,7 +123,7 @@ void RenderViewOpenGLES::close()
 	if (m_context->getWindow())
 		m_context->getWindow()->removeListener(this);
 #endif
-	m_context = 0;
+	m_context = nullptr;
 }
 
 bool RenderViewOpenGLES::reset(const RenderViewDefaultDesc& desc)
@@ -220,22 +199,12 @@ bool RenderViewOpenGLES::setGamma(float gamma)
 
 void RenderViewOpenGLES::setViewport(const Viewport& viewport)
 {
-	T_ANONYMOUS_VAR(ContextOpenGLES::Scope)(m_context);
-
-	if (m_renderTargetStack.empty())
-		m_viewport = viewport;
-	else
-		m_renderTargetStack.top().viewport = viewport;
-
-	if (m_renderTargetStack.empty())
-	{
-		T_OGL_SAFE(glViewport(
-			viewport.left,
-			viewport.top,
-			viewport.width,
-			viewport.height
-		));
-	}
+	T_OGL_SAFE(glViewport(
+		viewport.left,
+		viewport.top,
+		viewport.width,
+		viewport.height
+	));
 
 	T_OGL_SAFE(glDepthRangef(
 		viewport.nearZ,
@@ -286,17 +255,57 @@ bool RenderViewOpenGLES::beginPass(const Clear* clear)
 {
 	m_context->bindPrimary();
 
+	m_activeRenderTargetSet = nullptr;
+
 	T_OGL_SAFE(glViewport(
-		m_viewport.left,
-		m_viewport.top,
-		m_viewport.width,
-		m_viewport.height
+		0,
+		0,
+		m_context->getWidth(),
+		m_context->getHeight()
 	));
 
 	T_OGL_SAFE(glDepthRangef(
-		m_viewport.nearZ,
-		m_viewport.farZ
+		0.0f,
+		1.0f
 	));
+
+	if (clear && clear->mask != 0)
+	{
+		const GLuint c_clearMask[] =
+		{
+			0,
+			GL_COLOR_BUFFER_BIT,
+			GL_DEPTH_BUFFER_BIT,
+			GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT,
+			GL_STENCIL_BUFFER_BIT,
+			GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT,
+			GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT,
+			GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT
+		};
+
+		GLuint cm = c_clearMask[clear->mask];
+
+		if (cm & GL_COLOR_BUFFER_BIT)
+		{
+			m_stateCache->setColorMask(RenderStateOpenGL::CmAll);
+			float r = clear->colors[0].getRed();
+			float g = clear->colors[0].getGreen();
+			float b = clear->colors[0].getBlue();
+			float a = clear->colors[0].getAlpha();
+			T_OGL_SAFE(glClearColor(r, g, b, a));
+		}
+
+		if (cm & GL_DEPTH_BUFFER_BIT)
+		{
+			m_stateCache->setDepthMask(GL_TRUE);
+			T_OGL_SAFE(glClearDepthf(clear->depth));
+		}
+
+		if (cm & GL_STENCIL_BUFFER_BIT)
+			T_OGL_SAFE(glClearStencil(clear->stencil));
+
+		T_OGL_SAFE(glClear(cm));
+	}
 
 	return true;
 }
@@ -313,24 +322,19 @@ bool RenderViewOpenGLES::beginPass(IRenderTargetSet* renderTargetSet, int32_t re
 	if (!rts->bind(m_context->getPrimaryDepth(), renderTarget))
 		return false;
 
-	RenderTargetStack s;
-	s.renderTargetSet = rts;
-	s.renderTarget = renderTarget;
-	s.viewport = Viewport(0, 0, rts->getWidth(), rts->getHeight(), 0.0f, 1.0f);
+	m_activeRenderTargetSet = rts;
 
 	T_OGL_SAFE(glViewport(
-		s.viewport.left,
-		s.viewport.top,
-		s.viewport.width,
-		s.viewport.height
+		0,
+		0,
+		rts->getWidth(),
+		rts->getHeight()
 	));
 
 	T_OGL_SAFE(glDepthRangef(
-		s.viewport.nearZ,
-		s.viewport.farZ
+		0.0f,
+		1.0f
 	));
-
-	m_renderTargetStack.push(s);
 
 	if (clear && clear->mask != 0)
 	{
@@ -375,45 +379,10 @@ bool RenderViewOpenGLES::beginPass(IRenderTargetSet* renderTargetSet, int32_t re
 
 void RenderViewOpenGLES::endPass()
 {
-	if (m_renderTargetStack.empty())
-		return;
-
-	m_renderTargetStack.top().renderTargetSet->setContentValid(true);
-	m_renderTargetStack.pop();
-
-	if (!m_renderTargetStack.empty())
+	if (m_activeRenderTargetSet)
 	{
-		RenderTargetStack& s = m_renderTargetStack.top();
-
-		s.renderTargetSet->bind(m_context->getPrimaryDepth(), s.renderTarget);
-
-		T_OGL_SAFE(glViewport(
-			s.viewport.left,
-			s.viewport.top,
-			s.viewport.width,
-			s.viewport.height
-		));
-
-		T_OGL_SAFE(glDepthRangef(
-			s.viewport.nearZ,
-			s.viewport.farZ
-		));
-	}
-	else
-	{
-		m_context->bindPrimary();
-
-		T_OGL_SAFE(glViewport(
-			m_viewport.left,
-			m_viewport.top,
-			m_viewport.width,
-			m_viewport.height
-		));
-
-		T_OGL_SAFE(glDepthRangef(
-			m_viewport.nearZ,
-			m_viewport.farZ
-		));
+		m_activeRenderTargetSet->setContentValid(true);
+		m_activeRenderTargetSet = nullptr;
 	}
 }
 
@@ -429,7 +398,7 @@ void RenderViewOpenGLES::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuff
 	float postTransform[4];
 	bool invertCull;
 
-	if (m_renderTargetStack.empty())
+	if (!m_activeRenderTargetSet)
 	{
 		targetSize[0] = float(getWidth());
 		targetSize[1] = float(getHeight());
@@ -443,9 +412,8 @@ void RenderViewOpenGLES::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuff
 	}
 	else
 	{
-		const RenderTargetSetOpenGLES* rts = m_renderTargetStack.top().renderTargetSet;
-		targetSize[0] = float(rts->getWidth());
-		targetSize[1] = float(rts->getHeight());
+		targetSize[0] = (float)m_activeRenderTargetSet->getWidth();
+		targetSize[1] = (float)m_activeRenderTargetSet->getHeight();
 
 		postTransform[0] = 1.0f;
 		postTransform[1] = 0.0f;
@@ -548,7 +516,7 @@ void RenderViewOpenGLES::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuff
 	float postTransform[4];
 	bool invertCull;
 
-	if (m_renderTargetStack.empty())
+	if (!m_activeRenderTargetSet)
 	{
 		targetSize[0] = float(getWidth());
 		targetSize[1] = float(getHeight());
@@ -562,9 +530,8 @@ void RenderViewOpenGLES::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuff
 	}
 	else
 	{
-		const RenderTargetSetOpenGLES* rts = m_renderTargetStack.top().renderTargetSet;
-		targetSize[0] = float(rts->getWidth());
-		targetSize[1] = float(rts->getHeight());
+		targetSize[0] = (float)m_activeRenderTargetSet->getWidth();
+		targetSize[1] = (float)m_activeRenderTargetSet->getHeight();
 
 		postTransform[0] = 1.0f;
 		postTransform[1] = 0.0f;

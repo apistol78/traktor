@@ -107,23 +107,15 @@ public:
 	virtual void getStatistics(RenderViewStatistics& outStatistics) const override final;
 
 private:
-	struct RenderTargetStack
-	{
-		RenderTargetSetOpenGLES* renderTargetSet;
-		int32_t renderTarget;
-		Viewport viewport;
-	};
-
 	Ref< ContextOpenGLES > m_context;
 	Ref< StateCache > m_stateCache;
-	std::stack< RenderTargetStack > m_renderTargetStack;
-	Viewport m_viewport;
-	int32_t m_width;
-	int32_t m_height;
-	bool m_cursorVisible;
+	Ref< RenderTargetSetOpenGLES > m_activeRenderTargetSet;
+	int32_t m_width = 0;
+	int32_t m_height = 0;
+	bool m_cursorVisible = true;
 	std::list< RenderEvent > m_eventQueue;
-	uint32_t m_drawCalls;
-	uint32_t m_primitiveCount;
+	uint32_t m_drawCalls = 0;
+	uint32_t m_primitiveCount = 0;
 
 #if defined(_WIN32)
 	bool windowListenerEvent(Window* window, UINT message, WPARAM wParam, LPARAM lParam, LRESULT& outResult);

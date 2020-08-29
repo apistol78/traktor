@@ -1,4 +1,5 @@
 #include <cstring>
+#include "Core/Log/Log.h"
 #include "Render/OpenGL/ES/Platform.h"
 #include "Render/OpenGL/ES/CubeTextureOpenGLES.h"
 #if defined(__ANDROID__)
@@ -70,6 +71,13 @@ bool convertTextureFormat(TextureFormat textureFormat, int& outPixelSize, GLint&
 		outType = GL_UNSIGNED_BYTE;
 		break;
 
+	case TfR16G16B16A16F:
+		outPixelSize = 8;
+		outComponents = GL_RGBA;
+		outFormat = GL_RGBA;
+		outType = GL_HALF_FLOAT_OES;
+		break;
+
 	case TfR32G32B32A32F:
 		outPixelSize = 16;
 		outComponents = 4;
@@ -125,8 +133,8 @@ bool convertTextureFormat(TextureFormat textureFormat, int& outPixelSize, GLint&
 		break;
 #endif
 
-	case TfETC1:
-		break;
+	//case TfETC1:
+	//	break;
 
 	default:
 		return false;
@@ -160,7 +168,11 @@ bool CubeTextureOpenGLES::create(const CubeTextureCreateDesc& desc)
 {
 	m_side = desc.side;
 
-	convertTextureFormat(desc.format, m_pixelSize, m_components, m_format, m_type);
+	if (!convertTextureFormat(desc.format, m_pixelSize, m_components, m_format, m_type))
+	{
+		log::error << L"Unable to create cube texture; unsupported format L" << getTextureFormatName(desc.format) << L"." << Endl;
+		return false;
+	}
 
 	T_OGL_SAFE(glGenTextures(1, &m_textureName));
 
