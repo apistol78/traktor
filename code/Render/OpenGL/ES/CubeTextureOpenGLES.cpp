@@ -55,14 +55,12 @@ bool convertTextureFormat(TextureFormat textureFormat, int& outPixelSize, GLint&
 {
 	switch (textureFormat)
 	{
-#if defined(GL_RED_EXT)
 	case TfR8:
 		outPixelSize = 1;
-		outComponents = GL_RED_EXT;
-		outFormat = GL_RED_EXT;
+		outComponents = GL_RED;
+		outFormat = GL_RED;
 		outType = GL_UNSIGNED_BYTE;
 		break;
-#endif
 
 	case TfR8G8B8A8:
 		outPixelSize = 4;
@@ -75,7 +73,7 @@ bool convertTextureFormat(TextureFormat textureFormat, int& outPixelSize, GLint&
 		outPixelSize = 8;
 		outComponents = GL_RGBA;
 		outFormat = GL_RGBA;
-		outType = GL_HALF_FLOAT_OES;
+		outType = GL_HALF_FLOAT;
 		break;
 
 	case TfR32G32B32A32F:
@@ -85,23 +83,19 @@ bool convertTextureFormat(TextureFormat textureFormat, int& outPixelSize, GLint&
 		outType = GL_FLOAT;
 		break;
 
-#if defined(GL_RED_EXT)
 	case TfR16F:
 		outPixelSize = 2;
-		outComponents = GL_RED_EXT;
-		outFormat = GL_RED_EXT;
-		outType = GL_HALF_FLOAT_OES;
+		outComponents = GL_RED;
+		outFormat = GL_RED;
+		outType = GL_HALF_FLOAT;
 		break;
-#endif
 
-#if defined(GL_RED_EXT)
 	case TfR32F:
 		outPixelSize = 4;
-		outComponents = GL_RED_EXT;
-		outFormat = GL_RED_EXT;
+		outComponents = GL_RED;
+		outFormat = GL_RED;
 		outType = GL_FLOAT;
 		break;
-#endif
 
 #if defined(GL_IMG_texture_compression_pvrtc)
 	case TfPVRTC1:
@@ -132,9 +126,6 @@ bool convertTextureFormat(TextureFormat textureFormat, int& outPixelSize, GLint&
 		outType = GL_UNSIGNED_BYTE;
 		break;
 #endif
-
-	//case TfETC1:
-	//	break;
 
 	default:
 		return false;

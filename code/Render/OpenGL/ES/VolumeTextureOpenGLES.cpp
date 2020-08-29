@@ -45,14 +45,12 @@ bool convertTextureFormat(TextureFormat textureFormat, int& outPixelSize, GLint&
 {
 	switch (textureFormat)
 	{
-#if defined(GL_RED_EXT)
 	case TfR8:
 		outPixelSize = 1;
-		outComponents = GL_RED_EXT;
-		outFormat = GL_RED_EXT;
+		outComponents = GL_RED;
+		outFormat = GL_RED;
 		outType = GL_UNSIGNED_BYTE;
 		break;
-#endif
 
 	case TfR8G8B8A8:
 		outPixelSize = 4;
@@ -68,23 +66,19 @@ bool convertTextureFormat(TextureFormat textureFormat, int& outPixelSize, GLint&
 		outType = GL_FLOAT;
 		break;
 
-#if defined(GL_RED_EXT)
 	case TfR16F:
 		outPixelSize = 2;
-		outComponents = GL_RED_EXT;
-		outFormat = GL_RED_EXT;
-		outType = GL_HALF_FLOAT_OES;
+		outComponents = GL_RED;
+		outFormat = GL_RED;
+		outType = GL_HALF_FLOAT;
 		break;
-#endif
 
-#if defined(GL_RED_EXT)
 	case TfR32F:
 		outPixelSize = 4;
-		outComponents = GL_RED_EXT;
-		outFormat = GL_RED_EXT;
+		outComponents = GL_RED;
+		outFormat = GL_RED;
 		outType = GL_FLOAT;
 		break;
-#endif
 
 #if defined(GL_IMG_texture_compression_pvrtc)
 	case TfPVRTC1:
@@ -115,9 +109,6 @@ bool convertTextureFormat(TextureFormat textureFormat, int& outPixelSize, GLint&
 		outType = GL_UNSIGNED_BYTE;
 		break;
 #endif
-
-	case TfETC1:
-		break;
 
 	default:
 		return false;
@@ -156,23 +147,25 @@ bool VolumeTextureOpenGLES::create(const VolumeTextureCreateDesc& desc)
 	m_depth = desc.depth;
 	m_mipCount = desc.mipCount;
 
-	convertTextureFormat(desc.format, m_pixelSize, m_components, m_format, m_type);
-
-#if !defined(_WIN32) && !defined(__IOS__) && !defined(__EMSCRIPTEN__)
+	if (!convertTextureFormat(desc.format, m_pixelSize, m_components, m_format, m_type))
+	{
+		log::error << L"Unable to create volume texture; unsupported format L" << getTextureFormatName(desc.format) << L"." << Endl;
+		return false;
+	}
 
 	T_OGL_SAFE(glGenTextures(1, &m_textureName));
 
 	if (desc.immutable)
 	{
 		T_OGL_SAFE(glPixelStorei(GL_UNPACK_ALIGNMENT, 1));
-		T_OGL_SAFE(glBindTexture(GL_TEXTURE_3D_OES, m_textureName));
+		T_OGL_SAFE(glBindTexture(GL_TEXTURE_3D, m_textureName));
 
 		if (desc.format >= TfPVRTC1 && desc.format <= TfPVRTC4)
 		{
 #	if defined(__APPLE__)
 			uint32_t mipPitch = getTextureMipPitch(desc.format, m_width, m_height);
 			T_OGL_SAFE(glCompressedTexImage3DOES(
-				GL_TEXTURE_3D_OES,
+				GL_TEXTURE_3D,
 				0,
 				m_components,
 				m_width,
@@ -189,8 +182,8 @@ bool VolumeTextureOpenGLES::create(const VolumeTextureCreateDesc& desc)
 		}
 		else
 		{
-			T_OGL_SAFE(glTexImage3DOES(
-				GL_TEXTURE_3D_OES,
+			T_OGL_SAFE(glTexImage3D(
+				GL_TEXTURE_3D,
 				0,
 				m_components,
 				m_width,
@@ -203,8 +196,6 @@ bool VolumeTextureOpenGLES::create(const VolumeTextureCreateDesc& desc)
 			));
 		}
 	}
-
-#endif
 
 	return true;
 }
@@ -248,7 +239,7 @@ void VolumeTextureOpenGLES::bindSampler(GLuint unit, const SamplerStateOpenGL& s
 #if !defined(__IOS__)
 
 	T_OGL_SAFE(glActiveTexture(GL_TEXTURE0 + unit));
-	T_OGL_SAFE(glBindTexture(GL_TEXTURE_3D_OES, m_textureName));
+	T_OGL_SAFE(glBindTexture(GL_TEXTURE_3D, m_textureName));
 
 	GLenum minFilter = GL_NEAREST;
 	if (m_mipCount > 1)
@@ -256,25 +247,25 @@ void VolumeTextureOpenGLES::bindSampler(GLuint unit, const SamplerStateOpenGL& s
 
 	if (m_shadowState.minFilter != minFilter)
 	{
-		T_OGL_SAFE(glTexParameteri(GL_TEXTURE_3D_OES, GL_TEXTURE_MIN_FILTER, minFilter));
+		T_OGL_SAFE(glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MIN_FILTER, minFilter));
 		m_shadowState.minFilter = minFilter;
 	}
 
 	if (m_shadowState.magFilter != samplerState.magFilter)
 	{
-		T_OGL_SAFE(glTexParameteri(GL_TEXTURE_3D_OES, GL_TEXTURE_MAG_FILTER, samplerState.magFilter));
+		T_OGL_SAFE(glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MAG_FILTER, samplerState.magFilter));
 		m_shadowState.magFilter = samplerState.magFilter;
 	}
 
 	if (m_shadowState.wrapS != samplerState.wrapS)
 	{
-		T_OGL_SAFE(glTexParameteri(GL_TEXTURE_3D_OES, GL_TEXTURE_WRAP_S, samplerState.wrapS));
+		T_OGL_SAFE(glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_S, samplerState.wrapS));
 		m_shadowState.wrapS = samplerState.wrapS;
 	}
 
 	if (m_shadowState.wrapT != samplerState.wrapT)
 	{
-		T_OGL_SAFE(glTexParameteri(GL_TEXTURE_3D_OES, GL_TEXTURE_WRAP_T, samplerState.wrapT));
+		T_OGL_SAFE(glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_T, samplerState.wrapT));
 		m_shadowState.wrapT = samplerState.wrapT;
 	}
 

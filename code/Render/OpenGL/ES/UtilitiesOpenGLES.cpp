@@ -206,25 +206,9 @@ bool convertTargetFormat(TextureFormat targetFormat, GLenum& outInternalFormat, 
 	switch (targetFormat)
 	{
 	case TfR8:
-#if defined(GL_RED_EXT)
-		if (haveExtension("GL_EXT_texture_rg"))
-		{
-			outInternalFormat = GL_RED_EXT;
-			outFormat = GL_RED_EXT;
-			outType = GL_UNSIGNED_BYTE;
-		}
-		else
-		{
-			log::warning << L"Extension \"GL_EXT_texture_rg\" not supported; using different outFormat which may cause performance issues (TfR8 requested)." << Endl;
-			outInternalFormat = GL_RGBA;
-			outFormat = GL_RGBA;
-			outType = GL_UNSIGNED_BYTE;
-		}
-#else
-		outInternalFormat = GL_RGBA;
-		outFormat = GL_RGBA;
+		outInternalFormat = GL_RED;
+		outFormat = GL_RED;
 		outType = GL_UNSIGNED_BYTE;
-#endif
 		break;
 
 	case TfR8G8B8A8:
@@ -248,13 +232,11 @@ bool convertTargetFormat(TextureFormat targetFormat, GLenum& outInternalFormat, 
 		outType = GL_UNSIGNED_BYTE;
 		break;
 
-#if defined(GL_HALF_FLOAT_OES)
 	case TfR16G16B16A16F:
 		outInternalFormat = GL_RGBA;
 		outFormat = GL_RGBA;
-		outType = GL_HALF_FLOAT_OES;
+		outType = GL_HALF_FLOAT;
 		break;
-#endif
 
 	case TfR32G32B32A32F:
 		outInternalFormat = GL_RGBA;
@@ -263,44 +245,15 @@ bool convertTargetFormat(TextureFormat targetFormat, GLenum& outInternalFormat, 
 		break;
 
 	case TfR16F:
-#if !defined(__RPI__)
-		if (haveExtension("GL_EXT_texture_rg"))
-		{
-			outInternalFormat = GL_RED_EXT;
-			outFormat = GL_RED_EXT;
-		}
-		else
-#endif
-		{
-			log::warning << L"Extension \"GL_EXT_texture_rg\" not supported; using different outFormat which may cause performance issues (TfR16F requested)." << Endl;
-			outInternalFormat = GL_RGBA;
-			outFormat = GL_RGBA;
-		}
-		if (haveExtension("GL_OES_texture_half_float"))
-			outType = GL_HALF_FLOAT_OES;
-		else
-		{
-			log::warning << L"Extension \"GL_OES_texture_half_float\" not supported; using different outFormat (TfR32F) which may cause performance issues (TfR16F requested)." << Endl;
-			outType = GL_FLOAT;
-		}
+		outInternalFormat = GL_RED;
+		outFormat = GL_RED;
+		outType = GL_HALF_FLOAT;
 		break;
 
 	case TfR32F:
-#if !defined(__RPI__)
-		if (haveExtension("GL_EXT_texture_rg"))
-		{
-			outInternalFormat = GL_RED_EXT;
-			outFormat = GL_RED_EXT;
-			outType = GL_FLOAT;
-		}
-		else
-#endif
-		{
-			log::warning << L"Extension \"GL_EXT_texture_rg\" not supported; using different outFormat which may cause performance issues (TfR32F requested)." << Endl;
-			outInternalFormat = GL_RGBA;
-			outFormat = GL_RGBA;
-			outType = GL_FLOAT;
-		}
+		outInternalFormat = GL_RED;
+		outFormat = GL_RED;
+		outType = GL_FLOAT;
 		break;
 	}
 

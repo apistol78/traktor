@@ -134,19 +134,17 @@ VertexBufferDynamicOpenGLES::VertexBufferDynamicOpenGLES(ContextOpenGLES* contex
 			desc.normalized = GL_TRUE;
 			break;
 
-#if defined(GL_OES_vertex_half_float)
 		case DtHalf2:
 			desc.size = 2;
-			desc.type = GL_HALF_FLOAT_OES;
+			desc.type = GL_HALF_FLOAT;
 			desc.normalized = GL_TRUE;
 			break;
 
 		case DtHalf4:
 			desc.size = 4;
-			desc.type = GL_HALF_FLOAT_OES;
+			desc.type = GL_HALF_FLOAT;
 			desc.normalized = GL_TRUE;
 			break;
-#endif
 
 		default:
 			log::warning << L"Unsupport vertex format" << Endl;

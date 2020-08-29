@@ -574,8 +574,6 @@ void RenderViewOpenGLES::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuff
 		T_ASSERT(0);
 	}
 
-#if !defined(_WIN32) && !defined(__ANDROID__) && GL_EXT_draw_instanced
-
 	if (!programGL->activate(m_stateCache, targetSize, postTransform, invertCull, 0))
 		return;
 
@@ -604,7 +602,7 @@ void RenderViewOpenGLES::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuff
 
 		indexBufferGL->activate(m_stateCache);
 
-		T_OGL_SAFE(glDrawElementsInstancedEXT(
+		T_OGL_SAFE(glDrawElementsInstanced(
 			primitiveType,
 			vertexCount,
 			indexType,
@@ -614,121 +612,13 @@ void RenderViewOpenGLES::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuff
 	}
 	else
 	{
-		T_OGL_SAFE(glDrawArraysInstancedEXT(
+		T_OGL_SAFE(glDrawArraysInstanced(
 			primitiveType,
 			primitives.offset,
 			vertexCount,
 			instanceCount
 		));
 	}
-
-#else
-#	if defined(__ANDROID__)
-
-	if (s_glDrawElementsInstancedEXT != 0 && s_glDrawArraysInstancedEXT != 0)
-	{
-		if (!programGL->activate(m_stateCache, targetSize, postTransform, invertCull, 0))
-			return;
-
-		if (primitives.indexed)
-		{
-			T_ASSERT_M (indexBufferGL, L"No index buffer");
-
-			GLenum indexType = 0;
-			GLint offsetMultiplier = 0;
-
-			switch (indexBufferGL->getIndexType())
-			{
-			case ItUInt16:
-				indexType = GL_UNSIGNED_SHORT;
-				offsetMultiplier = 2;
-				break;
-
-			case ItUInt32:
-				indexType = GL_UNSIGNED_INT;
-				offsetMultiplier = 4;
-				break;
-
-			default:
-				return;
-			}
-
-			indexBufferGL->activate(m_stateCache);
-
-			T_OGL_SAFE(s_glDrawElementsInstancedEXT(
-				primitiveType,
-				vertexCount,
-				indexType,
-				(const GLubyte*)(primitives.offset * offsetMultiplier),
-				instanceCount
-			));
-		}
-		else
-		{
-			T_OGL_SAFE(s_glDrawArraysInstancedEXT(
-				primitiveType,
-				primitives.offset,
-				vertexCount,
-				instanceCount
-			));
-		}
-	}
-	else
-	{
-
-#	endif
-
-	for (uint32_t i = 0; i < instanceCount; ++i)
-	{
-		if (!programGL->activate(m_stateCache, targetSize, postTransform, invertCull, i))
-			return;
-
-		if (primitives.indexed)
-		{
-			T_ASSERT_M (indexBufferGL, L"No index buffer");
-
-			GLenum indexType = 0;
-			GLint offsetMultiplier = 0;
-
-			switch (indexBufferGL->getIndexType())
-			{
-			case ItUInt16:
-				indexType = GL_UNSIGNED_SHORT;
-				offsetMultiplier = 2;
-				break;
-
-			case ItUInt32:
-				indexType = GL_UNSIGNED_INT;
-				offsetMultiplier = 4;
-				break;
-
-			default:
-				return;
-			}
-
-			indexBufferGL->activate(m_stateCache);
-
-			T_OGL_SAFE(glDrawElements(
-				primitiveType,
-				vertexCount,
-				indexType,
-				(const GLubyte*)(primitives.offset * offsetMultiplier)
-			));
-		}
-		else
-		{
-			T_OGL_SAFE(glDrawArrays(
-				primitiveType,
-				primitives.offset,
-				vertexCount
-			));
-		}
-	}
-
-#	if defined(__ANDROID__)
-	}
-#	endif
-#endif
 
 	m_drawCalls++;
 	m_primitiveCount += primitives.count * instanceCount;

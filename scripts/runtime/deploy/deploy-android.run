@@ -137,7 +137,7 @@ local function linkApplication()
 	cmd = cmd .. " -landroid"
 	cmd = cmd .. " -lgcc"
 	cmd = cmd .. " -lEGL"
-	cmd = cmd .. " -lGLESv2"
+	cmd = cmd .. " -lGLESv3"
 	cmd = cmd .. " -lOpenSLES"
 	cmd = cmd .. " Linkage.o"
 	cmd = cmd .. libraryPaths
