@@ -65,7 +65,7 @@ Ref< ContextOpenGLES > ContextOpenGLES::createContext(const SystemApplication& s
 		{
 			EGL_LEVEL, 0,
 			EGL_SURFACE_TYPE, EGL_WINDOW_BIT,
-			EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT,
+			EGL_RENDERABLE_TYPE, EGL_OPENGL_ES3_BIT,
 			EGL_DEPTH_SIZE, desc.depthBits,
 			EGL_STENCIL_SIZE, desc.stencilBits,
 			EGL_SAMPLES, (EGLint)desc.multiSample,
@@ -93,7 +93,7 @@ Ref< ContextOpenGLES > ContextOpenGLES::createContext(const SystemApplication& s
 		{
 			EGL_LEVEL, 0,
 			EGL_SURFACE_TYPE, EGL_WINDOW_BIT,
-			EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT,
+			EGL_RENDERABLE_TYPE, EGL_OPENGL_ES3_BIT,
 			EGL_DEPTH_SIZE, desc.depthBits,
 			EGL_STENCIL_SIZE, desc.stencilBits,
 			EGL_RED_SIZE, 8,
@@ -138,7 +138,7 @@ Ref< ContextOpenGLES > ContextOpenGLES::createContext(const SystemApplication& s
 
 	const EGLint contextAttribs[] =
 	{
-		EGL_CONTEXT_CLIENT_VERSION, 2,
+		EGL_CONTEXT_CLIENT_VERSION, 3,
 		EGL_NONE
 	};
 
@@ -195,7 +195,7 @@ Ref< ContextOpenGLES > ContextOpenGLES::createContext(const SystemApplication& s
 		{
 			EGL_LEVEL, 0,
 			EGL_SURFACE_TYPE, EGL_WINDOW_BIT,
-			EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT,
+			EGL_RENDERABLE_TYPE, EGL_OPENGL_ES3_BIT,
 			EGL_BUFFER_SIZE, 32,
 			EGL_DEPTH_SIZE, 16,
 			EGL_STENCIL_SIZE, 4,
@@ -220,7 +220,7 @@ Ref< ContextOpenGLES > ContextOpenGLES::createContext(const SystemApplication& s
 		{
 			EGL_LEVEL, 0,
 			EGL_SURFACE_TYPE, EGL_WINDOW_BIT,
-			EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT,
+			EGL_RENDERABLE_TYPE, EGL_OPENGL_ES3_BIT,
 			EGL_BUFFER_SIZE, 32,
 			EGL_DEPTH_SIZE, 16,
 			EGL_STENCIL_SIZE, 4,
@@ -266,7 +266,7 @@ Ref< ContextOpenGLES > ContextOpenGLES::createContext(const SystemApplication& s
 
 	const EGLint contextAttribs[] =
 	{
-		EGL_CONTEXT_CLIENT_VERSION, 2,
+		EGL_CONTEXT_CLIENT_VERSION, 3,
 		EGL_NONE
 	};
 

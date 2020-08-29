@@ -6,10 +6,11 @@
 #include "Render/VertexElement.h"
 #include "Render/OpenGL/ES/Platform.h"
 #include "Render/OpenGL/ES/CubeTextureOpenGLES.h"
+#include "Render/OpenGL/ES/IndexBufferOpenGLES.h"
+#include "Render/OpenGL/ES/ProgramOpenGLES.h"
 #include "Render/OpenGL/ES/RenderSystemOpenGLES.h"
 #include "Render/OpenGL/ES/RenderViewOpenGLES.h"
-#include "Render/OpenGL/ES/ProgramOpenGLES.h"
-#include "Render/OpenGL/ES/IndexBufferOpenGLES.h"
+#include "Render/OpenGL/ES/StructBufferOpenGLES.h"
 #include "Render/OpenGL/ES/VertexBufferDynamicOpenGLES.h"
 #include "Render/OpenGL/ES/VertexBufferStaticOpenGLES.h"
 #include "Render/OpenGL/ES/VolumeTextureOpenGLES.h"
@@ -185,7 +186,8 @@ Ref< IndexBuffer > RenderSystemOpenGLES::createIndexBuffer(IndexType indexType, 
 
 Ref< StructBuffer > RenderSystemOpenGLES::createStructBuffer(const AlignedVector< StructElement >& structElements, uint32_t bufferSize)
 {
-	return nullptr;
+	T_ANONYMOUS_VAR(ContextOpenGLES::Scope)(m_context);
+	return new StructBufferOpenGLES(m_context, structElements, bufferSize);
 }
 
 Ref< ISimpleTexture > RenderSystemOpenGLES::createSimpleTexture(const SimpleTextureCreateDesc& desc, const wchar_t* const tag)

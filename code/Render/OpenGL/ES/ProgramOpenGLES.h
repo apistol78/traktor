@@ -14,6 +14,7 @@ class ContextOpenGLES;
 class ITexture;
 class ProgramResource;
 class StateCache;
+class StructBuffer;
 
 /*!
  * \ingroup OGL
@@ -99,6 +100,7 @@ private:
 	AlignedVector< TextureSize > m_textureSize;
 	AlignedVector< float > m_uniformData;					//!< Scalar uniform data.
 	RefArray< ITexture > m_textures;
+	RefArray< StructBuffer > m_sbuffers;
 	float m_targetSize[4];
 
 	ProgramOpenGLES(ContextOpenGLES* resourceContext, GLuint program, const ProgramResource* resource);

@@ -153,9 +153,9 @@ Ref< ContextOpenGLES > ContextOpenGLES::createContext(const SystemApplication& s
 	context->leave();
 
 	if (desc.depthBits >= 24)
-		context->m_primaryDepthFormat = (desc.stencilBits > 0) ? GL_DEPTH24_STENCIL8_OES : GL_DEPTH_COMPONENT24_OES;
+		context->m_primaryDepthFormat = (desc.stencilBits > 0) ? GL_DEPTH24_STENCIL8 : GL_DEPTH_COMPONENT24;
 	else
-		context->m_primaryDepthFormat = (desc.stencilBits > 0) ? GL_DEPTH24_STENCIL8_OES : GL_DEPTH_COMPONENT16;
+		context->m_primaryDepthFormat = (desc.stencilBits > 0) ? GL_DEPTH24_STENCIL8 : GL_DEPTH_COMPONENT16;
 
 	log::info << L"OpenGL ES render context created successfully (embedded)." << Endl;
 	return context;
