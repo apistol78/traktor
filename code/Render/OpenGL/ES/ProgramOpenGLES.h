@@ -48,7 +48,7 @@ public:
 
 	virtual void setStencilReference(uint32_t stencilReference) override final;
 
-	bool activate(StateCache* stateCache, float targetSize[2], float postTransform[4], bool invertCull, uint32_t instanceID);
+	bool activate(StateCache* stateCache, float targetSize[2], float postTransform[4], bool invertCull);
 
 private:
 	struct Uniform
@@ -93,7 +93,6 @@ private:
 	RenderStateOpenGL m_renderState;
 	GLint m_locationTargetSize;
 	GLint m_locationPostTransform;
-	GLint m_locationInstanceID;
 	SmallMap< handle_t, uint32_t > m_parameterMap;			//!< Parameter to data map.
 	AlignedVector< Uniform > m_uniforms;					//!< Scalar uniforms.
 	AlignedVector< Sampler > m_samplers;					//!< Samplers.

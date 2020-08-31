@@ -423,7 +423,7 @@ void RenderViewOpenGLES::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuff
 		invertCull = true;
 	}
 
-	if (!programGL->activate(m_stateCache, targetSize, postTransform, invertCull, 0))
+	if (!programGL->activate(m_stateCache, targetSize, postTransform, invertCull))
 		return;
 
 	GLenum primitiveType = GL_POINTS;
@@ -574,7 +574,7 @@ void RenderViewOpenGLES::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuff
 		T_ASSERT(0);
 	}
 
-	if (!programGL->activate(m_stateCache, targetSize, postTransform, invertCull, 0))
+	if (!programGL->activate(m_stateCache, targetSize, postTransform, invertCull))
 		return;
 
 	if (primitives.indexed)

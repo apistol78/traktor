@@ -153,8 +153,7 @@ std::wstring GlslShader::getGeneratedShader(const PropertyGroup* settings, const
 	if (m_shaderType == StFragment && requirements.shadowSamplers)
 		ss << L"#extension GL_EXT_shadow_samplers : require" << Endl;
 
-	if (settings && settings->getProperty< bool >(L"Glsl.ES2.SupportHwInstancing", false))
-		ss << L"#extension GL_EXT_draw_instanced : enable" << Endl;
+	ss << L"#extension GL_EXT_draw_instanced : enable" << Endl;
 
 	ss << Endl;
 
@@ -167,8 +166,6 @@ std::wstring GlslShader::getGeneratedShader(const PropertyGroup* settings, const
 	ss << Endl;
 
 	ss << L"uniform vec4 _gl_targetSize;" << Endl;
-	if (!settings || !settings->getProperty< bool >(L"Glsl.ES2.SupportHwInstancing", false))
-		ss << L"uniform float _gl_instanceID;" << Endl;
 	ss << Endl;
 
 	switch (requirements.precisionHint)
