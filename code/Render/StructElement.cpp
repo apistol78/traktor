@@ -6,12 +6,6 @@ namespace traktor
 	namespace render
 	{
 
-StructElement::StructElement()
-:	m_type(DtFloat4)
-,	m_offset(0)
-{
-}
-
 StructElement::StructElement(DataType type, uint32_t offset)
 :	m_type(type)
 ,	m_offset(offset)

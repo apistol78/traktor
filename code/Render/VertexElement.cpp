@@ -6,14 +6,6 @@ namespace traktor
 	namespace render
 	{
 
-VertexElement::VertexElement()
-:	m_usage(DuPosition)
-,	m_type(DtFloat4)
-,	m_offset(0)
-,	m_index(0)
-{
-}
-
 VertexElement::VertexElement(DataUsage usage, DataType type, uint32_t offset, uint32_t index)
 :	m_usage(usage)
 ,	m_type(type)

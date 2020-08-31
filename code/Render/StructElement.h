@@ -28,7 +28,7 @@ namespace traktor
 class T_DLLCLASS StructElement
 {
 public:
-	StructElement();
+	StructElement() = default;
 
 	StructElement(DataType type, uint32_t offset);
 
@@ -39,8 +39,8 @@ public:
 	uint32_t getOffset() const { return m_offset; }
 
 private:
-	DataType m_type;
-	uint32_t m_offset;
+	DataType m_type = DtFloat4;
+	uint32_t m_offset = 0;
 };
 
 uint32_t T_DLLCLASS getStructSize(const AlignedVector< StructElement >& structElements);

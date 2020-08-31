@@ -28,7 +28,7 @@ namespace traktor
 class T_DLLCLASS VertexElement
 {
 public:
-	VertexElement();
+	VertexElement() = default;
 
 	VertexElement(DataUsage usage, DataType type, uint32_t offset, uint32_t index = 0);
 
@@ -43,10 +43,10 @@ public:
 	uint32_t getIndex() const { return m_index; }
 
 private:
-	DataUsage m_usage;
-	DataType m_type;
-	uint32_t m_offset;
-	uint32_t m_index;
+	DataUsage m_usage = DuPosition;
+	DataType m_type = DtFloat4;
+	uint32_t m_offset = 0;
+	uint32_t m_index = 0;
 };
 
 uint32_t T_DLLCLASS getVertexSize(const AlignedVector< VertexElement >& vertexElements);
