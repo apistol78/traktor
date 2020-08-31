@@ -123,87 +123,45 @@ enum Address
 /*! Render state. */
 struct RenderState
 {
-	CullMode cullMode;
-	bool blendEnable;
-	BlendOperation blendColorOperation;
-	BlendFactor blendColorSource;
-	BlendFactor blendColorDestination;
-	BlendOperation blendAlphaOperation;
-	BlendFactor blendAlphaSource;
-	BlendFactor blendAlphaDestination;
-	uint32_t colorWriteMask;
-	bool depthEnable;
-	bool depthWriteEnable;
-	CompareFunction depthFunction;
-	bool alphaTestEnable;
-	CompareFunction alphaTestFunction;
-	int32_t alphaTestReference;
-	bool alphaToCoverageEnable;
-	bool wireframe;
-	bool stencilEnable;
-	StencilOperation stencilFail;
-	StencilOperation stencilZFail;
-	StencilOperation stencilPass;
-	CompareFunction stencilFunction;
-	uint32_t stencilReference;
-	uint32_t stencilMask;
-
-	RenderState()
-	:	cullMode(CmCounterClockWise)
-	,	blendEnable(false)
-	,	blendColorOperation(BoAdd)
-	,	blendColorSource(BfOne)
-	,	blendColorDestination(BfZero)
-	,	blendAlphaOperation(BoAdd)
-	,	blendAlphaSource(BfOne)
-	,	blendAlphaDestination(BfOne)
-	,	colorWriteMask(CwRed | CwGreen | CwBlue | CwAlpha)
-	,	depthEnable(true)
-	,	depthWriteEnable(true)
-	,	depthFunction(CfLessEqual)
-	,	alphaTestEnable(false)
-	,	alphaTestFunction(CfLess)
-	,	alphaTestReference(128)
-	,	alphaToCoverageEnable(false)
-	,	wireframe(false)
-	,	stencilEnable(false)
-	,	stencilFail(SoKeep)
-	,	stencilZFail(SoKeep)
-	,	stencilPass(SoKeep)
-	,	stencilFunction(CfAlways)
-	,	stencilReference(0x00000000)
-	,	stencilMask(0xffffffff)
-	{
-	}
+	CullMode cullMode = CmCounterClockWise;
+	bool blendEnable = false;
+	BlendOperation blendColorOperation = BoAdd;
+	BlendFactor blendColorSource = BfOne;
+	BlendFactor blendColorDestination = BfZero;
+	BlendOperation blendAlphaOperation = BoAdd;
+	BlendFactor blendAlphaSource = BfOne;
+	BlendFactor blendAlphaDestination = BfOne;
+	uint32_t colorWriteMask = CwRed | CwGreen | CwBlue | CwAlpha;
+	bool depthEnable = true;
+	bool depthWriteEnable = true;
+	CompareFunction depthFunction = CfLessEqual;
+	bool alphaTestEnable = false;
+	CompareFunction alphaTestFunction = CfLess;
+	int32_t alphaTestReference = 128;
+	bool alphaToCoverageEnable = false;
+	bool wireframe = false;
+	bool stencilEnable = false;
+	StencilOperation stencilFail = SoKeep;
+	StencilOperation stencilZFail = SoKeep;
+	StencilOperation stencilPass = SoKeep;
+	CompareFunction stencilFunction = CfAlways;
+	uint32_t stencilReference = 0x00000000;
+	uint32_t stencilMask = 0xffffffff;
 };
 
 /*! Sampler state. */
 struct SamplerState
 {
-	Filter minFilter;
-	Filter mipFilter;
-	Filter magFilter;
-	Address addressU;
-	Address addressV;
-	Address addressW;
-	CompareFunction compare;
-	float mipBias;
-	bool ignoreMips;
-	bool useAnisotropic;
-
-	SamplerState()
-	:	minFilter(FtLinear)
-	,	mipFilter(FtLinear)
-	,	magFilter(FtLinear)
-	,	addressU(AdWrap)
-	,	addressV(AdWrap)
-	,	addressW(AdWrap)
-	,	compare(CfNone)
-	,	mipBias(0.0f)
-	,	ignoreMips(false)
-	,	useAnisotropic(false)
-	{
-	}
+	Filter minFilter = FtLinear;
+	Filter mipFilter = FtLinear;
+	Filter magFilter = FtLinear;
+	Address addressU = AdWrap;
+	Address addressV = AdWrap;
+	Address addressW = AdWrap;
+	CompareFunction compare = CfNone;
+	float mipBias = 0.0f;
+	bool ignoreMips = false;
+	bool useAnisotropic = false;
 };
 
 /*! Render view event types. */
@@ -372,65 +330,38 @@ struct RenderEvent
 struct RenderSystemStatistics
 {
 	// Memory usage.
-	uint64_t memoryAvailable;
-	uint64_t memoryUsage;
+	uint64_t memoryAvailable = 0;
+	uint64_t memoryUsage = 0;
 
 	// Number of alive resources.
-	uint32_t vertexBuffers;
-	uint32_t simpleTextures;
-	uint32_t cubeTextures;
-	uint32_t volumeTextures;
-	uint32_t renderTargetSets;
-	uint32_t programs;
-
-	RenderSystemStatistics()
-	:	memoryAvailable(0)
-	,	memoryUsage(0)
-	,	vertexBuffers(0)
-	,	simpleTextures(0)
-	,	cubeTextures(0)
-	,	volumeTextures(0)
-	,	renderTargetSets(0)
-	,	programs(0)
-	{
-	}
+	uint32_t vertexBuffers = 0;
+	uint32_t simpleTextures = 0;
+	uint32_t cubeTextures = 0;
+	uint32_t volumeTextures = 0;
+	uint32_t renderTargetSets = 0;
+	uint32_t programs = 0;
 };
 
 /*! Render view statistics. */
 struct RenderViewStatistics
 {
 	// Last frame.
-	uint32_t passCount;
-	uint32_t drawCalls;
-	uint32_t primitiveCount;
-
-	RenderViewStatistics()
-	:	passCount(0)
-	,	drawCalls(0)
-	,	primitiveCount(0)
-	{
-	}
+	uint32_t passCount = 0;
+	uint32_t drawCalls = 0;
+	uint32_t primitiveCount = 0;
 };
 
 /*! Render view port. */
 struct Viewport
 {
-	int32_t left;
-	int32_t top;
-	int32_t width;
-	int32_t height;
-	float nearZ;
-	float farZ;
+	int32_t left = 0;
+	int32_t top = 0;
+	int32_t width = 0;
+	int32_t height = 0;
+	float nearZ = 0.0f;
+	float farZ = 1.0f;
 
-	Viewport()
-	:	left(0)
-	,	top(0)
-	,	width(0)
-	,	height(0)
-	,	nearZ(0.0f)
-	,	farZ(1.0f)
-	{
-	}
+	Viewport() = default;
 
 	Viewport(int32_t l, int32_t t, int32_t w, int32_t h, float nz, float fz)
 	:	left(l)
@@ -446,18 +377,10 @@ struct Viewport
 /*! Display mode structure. */
 struct DisplayMode
 {
-	uint32_t width;
-	uint32_t height;
-	uint16_t refreshRate;
-	uint16_t colorBits;
-
-	DisplayMode()
-	:	width(0)
-	,	height(0)
-	,	refreshRate(0)
-	,	colorBits(0)
-	{
-	}
+	uint32_t width = 0;
+	uint32_t height = 0;
+	uint16_t refreshRate = 0;
+	uint16_t colorBits = 0;
 };
 
 /*! Vendor type. */
@@ -473,11 +396,11 @@ enum AdapterVendorType
 /*! Render system information. */
 struct RenderSystemInformation
 {
-	AdapterVendorType vendor;
-	uint32_t dedicatedMemoryTotal;
-	uint32_t sharedMemoryTotal;
-	uint32_t dedicatedMemoryAvailable;
-	uint32_t sharedMemoryAvailable;
+	AdapterVendorType vendor = AvtUnknown;
+	uint32_t dedicatedMemoryTotal = 0;
+	uint32_t sharedMemoryTotal = 0;
+	uint32_t dedicatedMemoryAvailable = 0;
+	uint32_t sharedMemoryAvailable = 0;
 
 	RenderSystemInformation()
 	:	vendor(AvtUnknown)
@@ -492,161 +415,87 @@ struct RenderSystemInformation
 /*! Descriptor for render system. */
 struct RenderSystemDesc
 {
-	class IRenderSystem* capture;
+	class IRenderSystem* capture = nullptr;
 	SystemApplication sysapp;
-	int32_t adapter;
-	float mipBias;
-	int32_t maxAnisotropy;
-	bool useProgramCache;
-	bool verbose;
-
-	RenderSystemDesc()
-	:	capture(0)
-	,	adapter(-1)
-	,	mipBias(0.0f)
-	,	maxAnisotropy(1)
-	,	useProgramCache(true)
-	,	verbose(false)
-	{
-	}
+	int32_t adapter = -1;
+	float mipBias = 0.0f;
+	int32_t maxAnisotropy = 1;
+	bool useProgramCache = true;
+	bool verbose = false;
 };
 
 /*! Descriptor for render views. */
 struct RenderViewDesc
 {
-	uint16_t depthBits;
-	uint16_t stencilBits;
-	uint32_t multiSample;
-	int32_t waitVBlanks;
-
-	RenderViewDesc()
-	:	depthBits(0)
-	,	stencilBits(0)
-	,	multiSample(0)
-	,	waitVBlanks(0)
-	{
-	}
+	uint16_t depthBits = 0;
+	uint16_t stencilBits = 0;
+	uint32_t multiSample = 0;
+	int32_t waitVBlanks = 0;
 };
 
 /*! Descriptor for default render views. */
 struct RenderViewDefaultDesc : public RenderViewDesc
 {
 	DisplayMode displayMode;
-	bool fullscreen;
+	bool fullscreen = true;
 	std::wstring title;
-
-	RenderViewDefaultDesc()
-	:	RenderViewDesc()
-	,	fullscreen(true)
-	{
-	}
 };
 
 /*! Descriptor for embedded render views. */
 struct RenderViewEmbeddedDesc : public RenderViewDesc
 {
 	SystemWindow syswin;
-	bool stereoscopic;
-
-	RenderViewEmbeddedDesc()
-	:	RenderViewDesc()
-	,	stereoscopic(false)
-	{
-	}
 };
 
 /*! Immutable texture data. */
 struct TextureInitialData
 {
-	const void* data;
-	uint32_t pitch;
-	uint32_t slicePitch;
-
-	TextureInitialData()
-	:	data(0)
-	,	pitch(0)
-	,	slicePitch(0)
-	{
-	}
+	const void* data = nullptr;
+	uint32_t pitch = 0;
+	uint32_t slicePitch = 0;
 };
 
 /*! Descriptor for simple textures. */
 struct SimpleTextureCreateDesc
 {
-	int32_t width;
-	int32_t height;
-	int32_t mipCount;
-	TextureFormat format;
-	bool sRGB;
-	bool immutable;
+	int32_t width = 0;
+	int32_t height = 0;
+	int32_t mipCount = 0;
+	TextureFormat format = TfInvalid;
+	bool sRGB = false;
+	bool immutable = false;
 	TextureInitialData initialData[16];
-
-	SimpleTextureCreateDesc()
-	:	width(0)
-	,	height(0)
-	,	mipCount(0)
-	,	format(TfInvalid)
-	,	sRGB(false)
-	,	immutable(false)
-	{
-	}
 };
 
 /*! Descriptor for cube textures. */
 struct CubeTextureCreateDesc
 {
-	int32_t side;
-	int32_t mipCount;
-	TextureFormat format;
-	bool sRGB;
-	bool immutable;
+	int32_t side = 0;
+	int32_t mipCount = 0;
+	TextureFormat format = TfInvalid;
+	bool sRGB = false;
+	bool immutable = false;
 	TextureInitialData initialData[16 * 6];
-
-	CubeTextureCreateDesc()
-	:	side(0)
-	,	mipCount(0)
-	,	format(TfInvalid)
-	,	sRGB(false)
-	,	immutable(false)
-	{
-	}
 };
 
 /*! Descriptor for volume textures. */
 struct VolumeTextureCreateDesc
 {
-	int32_t width;
-	int32_t height;
-	int32_t depth;
-	int32_t mipCount;
-	TextureFormat format;
-	bool sRGB;
-	bool immutable;
+	int32_t width = 0;
+	int32_t height = 0;
+	int32_t depth = 0;
+	int32_t mipCount = 0;
+	TextureFormat format = TfInvalid;
+	bool sRGB = false;
+	bool immutable = false;
 	TextureInitialData initialData[16];
-
-	VolumeTextureCreateDesc()
-	:	width(0)
-	,	height(0)
-	,	depth(0)
-	,	mipCount(0)
-	,	format(TfInvalid)
-	,	sRGB(false)
-	,	immutable(false)
-	{
-	}
 };
 
 /*! Descriptor for render target. */
 struct RenderTargetCreateDesc
 {
-	TextureFormat format;	/*< Render target pixel format. */
-	bool sRGB;
-
-	RenderTargetCreateDesc()
-	:	format(TfInvalid)
-	,	sRGB(false)
-	{
-	}
+	TextureFormat format = TfInvalid;	/*< Render target pixel format. */
+	bool sRGB = false;
 };
 
 class IRenderTargetSet;
@@ -656,29 +505,16 @@ struct RenderTargetSetCreateDesc
 {
 	enum { MaxTargets = 8 };
 
-	int32_t count;								/*!< Number of render targets in set; max 4 targets allowed. */
-	int32_t width;								/*!< Width of render targets. */
-	int32_t height;								/*!< Height of render targets. */
-	int32_t multiSample;						/*!< Number of samples; 0 no multisample. */
-	bool createDepthStencil;					/*!< Attach depth/stencil buffer; shared among all targets. */
-	bool usingPrimaryDepthStencil;				/*!< Share primary depth/stencil buffer; shared among all targets. */
-	bool usingDepthStencilAsTexture;			/*!< Will be using depth/stencil buffer as a texture input of shaders. */
-	bool ignoreStencil;							/*!< Ignoring stencil; stencil isn't used in rendering. */
-	bool generateMips;							/*!< Generate complete mip-chain after target been renderered onto. */
+	int32_t count = 0;							/*!< Number of render targets in set; max 4 targets allowed. */
+	int32_t width = 0;							/*!< Width of render targets. */
+	int32_t height = 0;							/*!< Height of render targets. */
+	int32_t multiSample = 0;					/*!< Number of samples; 0 no multisample. */
+	bool createDepthStencil = false;			/*!< Attach depth/stencil buffer; shared among all targets. */
+	bool usingPrimaryDepthStencil = false;		/*!< Share primary depth/stencil buffer; shared among all targets. */
+	bool usingDepthStencilAsTexture = false;	/*!< Will be using depth/stencil buffer as a texture input of shaders. */
+	bool ignoreStencil = true;					/*!< Ignoring stencil; stencil isn't used in rendering. */
+	bool generateMips = false;					/*!< Generate complete mip-chain after target been renderered onto. */
 	RenderTargetCreateDesc targets[MaxTargets];	/*!< Descriptor for each target. */
-
-	RenderTargetSetCreateDesc()
-	:	count(0)
-	,	width(0)
-	,	height(0)
-	,	multiSample(0)
-	,	createDepthStencil(false)
-	,	usingPrimaryDepthStencil(false)
-	,	usingDepthStencilAsTexture(false)
-	,	ignoreStencil(true)
-	,	generateMips(false)
-	{
-	}
 };
 
 /*! Target transfer flags. */
@@ -707,9 +543,7 @@ struct Primitives
 	uint32_t minIndex;
 	uint32_t maxIndex;
 
-	Primitives()
-	{
-	}
+	Primitives() = default;
 
 	Primitives(PrimitiveType type_, uint32_t offset_, uint32_t count_)
 	{
@@ -885,10 +719,7 @@ uint32_t T_DLLCLASS getTargetSetMemoryEstimate(const RenderTargetSetCreateDesc& 
 class T_DLLCLASS Handle
 {
 public:
-	Handle()
-	:	m_id(0)
-	{
-	}
+	Handle() = default;
 
 	explicit Handle(handle_t id)
 	:	m_id(id)
@@ -918,7 +749,7 @@ public:
 	}
 
 private:
-	handle_t m_id;
+	handle_t m_id = 0;
 };
 
 //@}

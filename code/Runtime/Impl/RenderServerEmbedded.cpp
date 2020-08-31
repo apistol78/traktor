@@ -142,7 +142,6 @@ bool RenderServerEmbedded::create(const PropertyGroup* defaultSettings, Property
 	m_renderViewDesc.multiSample = sanitizeMultiSample(m_renderViewDesc.multiSample);
 	m_renderViewDesc.waitVBlanks = settings->getProperty< int32_t >(L"Render.WaitVBlanks", 1);
 	m_renderViewDesc.syswin = syswin;
-	m_renderViewDesc.stereoscopic = false;
 
 	Ref< render::IRenderView > renderView = renderSystem->createRenderView(m_renderViewDesc);
 	if (!renderView)
