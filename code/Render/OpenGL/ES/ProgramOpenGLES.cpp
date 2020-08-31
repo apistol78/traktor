@@ -274,7 +274,7 @@ void ProgramOpenGLES::setStencilReference(uint32_t stencilReference)
 	m_renderState.stencilRef = stencilReference;
 }
 
-bool ProgramOpenGLES::activate(StateCache* stateCache, float targetSize[2], float postTransform[4], bool invertCull, uint32_t instanceID)
+bool ProgramOpenGLES::activate(StateCache* stateCache, float targetSize[2], float postTransform[4], bool invertCull)
 {
 	// Bind program and set state display list.
 	stateCache->setRenderState(m_renderState, invertCull);
@@ -323,12 +323,6 @@ bool ProgramOpenGLES::activate(StateCache* stateCache, float targetSize[2], floa
 	if (m_locationPostTransform != -1)
 	{
 		T_OGL_SAFE(glUniform4fv(m_locationPostTransform, 1, postTransform));
-	}
-
-	// Update instance id.
-	if (m_locationInstanceID != -1)
-	{
-		T_OGL_SAFE(glUniform1f(m_locationInstanceID, GLfloat(instanceID)));
 	}
 
 	// Bind textures.
@@ -409,7 +403,6 @@ ProgramOpenGLES::ProgramOpenGLES(ContextOpenGLES* resourceContext, GLuint progra
 ,	m_program(program)
 ,	m_locationTargetSize(0)
 ,	m_locationPostTransform(0)
-,	m_locationInstanceID(0)
 {
 	const ProgramResourceOpenGLES* resourceOpenGL = checked_type_cast< const ProgramResourceOpenGLES* >(resource);
 
@@ -421,7 +414,6 @@ ProgramOpenGLES::ProgramOpenGLES(ContextOpenGLES* resourceContext, GLuint progra
 	// Get target size parameter.
 	m_locationTargetSize = glGetUniformLocation(m_program, "_gl_targetSize");
 	m_locationPostTransform = glGetUniformLocation(m_program, "_gl_postTransform");
-	m_locationInstanceID = glGetUniformLocation(m_program, "_gl_instanceID");
 
 	const std::vector< std::wstring >& textures = resourceOpenGL->getTextures();
 	const std::vector< SamplerBindingOpenGL >& samplers = resourceOpenGL->getSamplers();

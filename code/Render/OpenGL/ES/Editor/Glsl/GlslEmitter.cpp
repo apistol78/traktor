@@ -451,13 +451,7 @@ bool emitInstance(GlslContext& cx, Instance* node)
 {
 	StringOutputStream& f = cx.getShader().getOutputStream(GlslShader::BtBody);
 	GlslVariable* out = cx.emitOutput(node, L"Output", GtFloat);
-
-	const PropertyGroup* settings = cx.getSettings();
-	if (settings && settings->getProperty< bool >(L"Glsl.ES2.SupportHwInstancing", false))
-		assign(f, out) << L"float(gl_InstanceIDEXT);" << Endl;
-	else
-		assign(f, out) << L"_gl_instanceID;" << Endl;
-
+	assign(f, out) << L"float(gl_InstanceID);" << Endl;
 	return true;
 }
 
