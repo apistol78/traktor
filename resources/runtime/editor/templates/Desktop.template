@@ -18,6 +18,10 @@
 		</rule>		
 		<rule>
 			<pattern>info/.*</pattern>
+			<transform>false</transform>
+		</rule>
+		<rule>
+			<pattern>info/.*%.html</pattern>
 			<transform>true</transform>
 		</rule>
 		<rule>

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.script.Script" version="2">
+	<text>
+	<![CDATA[
+#using \{720C0A68-B608-2F40-8EBA-F7E42EB27F61}
+#using \{FC4400A2-BDB6-BA45-9A22-12B9676E71FA}
+
+-- Main
+
+Main = Main or class("Main", Stage)
+
+function Main:new(params, environment)
+	Stage.new(self, params, environment)
+
+	-- Initialize UiKit.
+	Widget.initialize(
+		environment.resource.resourceManager,
+		{ "\{5ABEAE05-EB26-934F-932F-7F3C7C582383}" }
+	)
+
+	-- Create UI frame with virtual size of 1280x720.
+	local root = self.ui.root
+	self._frame = Frame(
+		root,
+		1280, 720,
+		TableLayout({ 0, 0 }, { 0 }, 16, 16, 16, 0)
+	)
+
+	-- Create reset button.
+	self._btn = PushButton(self._frame, "Reset")
+	self._btn:setOnClick(function()
+		print("Reset clicked")
+	end)
+
+	-- Create static label.
+	self._lbl = Static(self._frame, "Time: 0")
+
+	-- Ensure layout is updated.
+	self._frame:update()
+end
+
+function Main:finalize()
+	self._frame:remove()
+	self._frame = nil
+end
+
+function Main:update(info)
+	-- Update UI.
+	self._lbl:setText("Time: " .. string.format("%.2f", info.simulationTime))
+end
+
+	]]>
+	</text>
+</object>

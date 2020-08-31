@@ -2,41 +2,45 @@
 	<head>
 		<style>
 body {
-    background-color: #222222;
+	background: #000;
+    background-image: url("background.png");
+	background-position: center;
+	background-repeat: repeat;
 }
 
-h1 {
-    color: white;
-    text-align: center;
-    font-family: "Segoe UI", "Arial";
+.bold {
     font-size: 22pt;
+    font-weight: bold;
 }
 
-.p1 {
+.content {
     color: white;
     text-align: center;
     font-family: "Segoe UI", "Arial";
-    font-size: 16pt;
+    font-size: 10pt;
+
+    border: solid;
+    border-width: 2px;
+    border-radius: 8px;
+    border-color: #444;
+
+    margin: auto;
+    width: 800px;
+    background: #222;
+
+    padding: 16px;
 }
 
-.p2 {
-    color: white;
-    text-align: center;
-    font-family: "Segoe UI", "Arial";
-    font-size: 9pt;
-}
 
 		</style>
 	</head>
 	<body>
-		<h1><!-- output:print(os:getEnvironment("WIZARD_NAME")) --!></h1>
-		<p class="p1">
-		Welcome to <b>Traktor</b> editor and your new project <!-- output:print(os:getEnvironment("WIZARD_NAME")) --!>!<br>
-		</p>
-		<p class="p2">
-		To get you started we've provided a basic skeleton which
-		contains the very basic to get your application up and
-		running as quickly and easily as possible.
-		</p>
+		<div class="content">
+			<div class="bold"><!-- output:print(os:getEnvironment("WIZARD_NAME")) --!></div><br>
+			Welcome to <b>Traktor</b> editor and your new project <!-- output:print(os:getEnvironment("WIZARD_NAME")) --!>!<br><br>
+			To get you started we've provided a basic skeleton which
+			contains the very basic to get your application up and
+			running as quickly and easily as possible.
+		</div>
 	</body>
 </html>
