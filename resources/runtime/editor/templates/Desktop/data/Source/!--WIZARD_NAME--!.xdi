@@ -32,6 +32,7 @@
 				<item>{805454A8-73DC-BF43-990B-266E51956C47}</item>
 				<item>{A061EF9A-AEBB-5946-994B-2D0EA2F4B639}</item>
 				<item>{AE07939E-B6AD-1240-8C49-D5B968120992}</item>
+				<item>{89C3EF32-A6F3-3542-8C97-9C6866F6A56D}</item>
 			</features>
 			<root>{0E2AEBB2-697F-B24D-9E56-9D7F7E8EC081}</root>
 			<startup>{4C21D382-3338-5E43-9EB6-7520F1E7CDA4}</startup>
@@ -39,7 +40,7 @@
 			<defaultInput>{E7DE1157-DA53-B14F-9A14-70707DACAFB9}</defaultInput>
 		</item>
 		<item type="traktor.runtime.TargetConfiguration" version="3">
-			<name>OSX</name>
+			<name>macOS</name>
 			<platform>{9105E00C-D6AA-9140-B4D6-0CFD5B2FD76A}</platform>
 			<icon>$(TRAKTOR_HOME)/resources/runtime/deploy/DefaultIcon.png</icon>
 			<features>
@@ -65,6 +66,7 @@
 				<item>{6AB9B70A-60FD-5D4E-A2C5-9501C7192957}</item>
 				<item>{805454A8-73DC-BF43-990B-266E51956C47}</item>
 				<item>{A061EF9A-AEBB-5946-994B-2D0EA2F4B639}</item>
+				<item>{89C3EF32-A6F3-3542-8C97-9C6866F6A56D}</item>
 			</features>
 			<root>{0E2AEBB2-697F-B24D-9E56-9D7F7E8EC081}</root>
 			<startup>{4C21D382-3338-5E43-9EB6-7520F1E7CDA4}</startup>
@@ -100,6 +102,7 @@
 				<item>{805454A8-73DC-BF43-990B-266E51956C47}</item>
 				<item>{A061EF9A-AEBB-5946-994B-2D0EA2F4B639}</item>
 				<item>{AE07939E-B6AD-1240-8C49-D5B968120992}</item>
+				<item>{89C3EF32-A6F3-3542-8C97-9C6866F6A56D}</item>
 			</features>
 			<root>{0E2AEBB2-697F-B24D-9E56-9D7F7E8EC081}</root>
 			<startup>{4C21D382-3338-5E43-9EB6-7520F1E7CDA4}</startup>

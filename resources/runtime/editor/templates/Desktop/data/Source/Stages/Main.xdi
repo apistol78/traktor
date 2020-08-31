@@ -8,17 +8,13 @@
 			<permitTransition>true</permitTransition>
 			<scene>{646C7F9F-A386-A74E-9279-DD00117958A2}</scene>
 		</item>
-		<item type="traktor.spark.SparkLayerData">
+		<item type="traktor.spark.SparkLayerData" version="1">
 			<name>ui</name>
 			<permitTransition>true</permitTransition>
 			<movie>{E7EB59C5-57F9-BE42-93A3-FE38268D507D}</movie>
 			<externalMovies/>
-			<imageProcess>{00000000-0000-0000-0000-000000000000}</imageProcess>
 			<clearBackground>false</clearBackground>
 			<enableSound>true</enableSound>
-			<enableShapeCache>false</enableShapeCache>
-			<enableDirtyRegions>false</enableDirtyRegions>
-			<contextSize>1</contextSize>
 		</item>
 	</layers>
 	<class>{8227E4BB-9B52-E647-BEF1-6E3F32ED4810}</class>
