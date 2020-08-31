@@ -212,9 +212,20 @@ void FileDialog::updatePath()
 #endif
 
 	std::wstring p;
+
 #if !defined(_WIN32)
 	p = L"/";
+
+	// Add root button first.
+	Ref< Button > buttonPath = new Button();
+	buttonPath->create(m_containerPath, L"/");
+	buttonPath->addEventHandler< ButtonClickEvent >([=](ButtonClickEvent* event) {
+		m_currentPath = p;
+		updatePath();
+		updateFiles();
+	});
 #endif
+
 	for (auto s : StringSplit< std::wstring >(pn, L"/"))
 	{
 		if (!p.empty())
