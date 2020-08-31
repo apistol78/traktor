@@ -159,8 +159,20 @@ Object* DropDown::getSelectedData() const
 
 Size DropDown::getPreferedSize() const
 {
-	const int32_t height = getFontMetric().getHeight() + dpi96(4) * 2;
-	return Size(dpi96(200), height);
+	const int32_t marginX = dpi96(16);
+	const int32_t marginY = dpi96(4);
+
+	FontMetric fm = getFontMetric();
+
+	int32_t h = fm.getHeight();
+	int32_t w = 0;
+	for (const auto& item : m_items)
+	{
+		int32_t iw = fm.getExtent(item.text).cx;
+		w = std::max(w, iw);
+	}
+
+	return Size(w + marginX * 2, h + marginY * 2);
 }
 
 void DropDown::eventMouseTrack(MouseTrackEvent* event)
@@ -219,7 +231,8 @@ void DropDown::eventButtonDown(MouseButtonDownEvent* event)
 		raiseEvent(&selectionChangeEvent);
 	}
 
-	update();
+	if (m_widget)
+		update();
 }
 
 void DropDown::eventButtonUp(MouseButtonUpEvent* event)
