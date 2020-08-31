@@ -1,4 +1,5 @@
 #include "Ai/Editor/NavMeshAsset.h"
+#include "Core/Serialization/AttributeUnit.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
 
@@ -28,16 +29,16 @@ NavMeshAsset::NavMeshAsset()
 void NavMeshAsset::serialize(ISerializer& s)
 {
 	s >> Member< Guid >(L"source", m_source);
-	s >> Member< float >(L"cellSize", m_cellSize);
-	s >> Member< float >(L"cellHeight", m_cellHeight);
+	s >> Member< float >(L"cellSize", m_cellSize, AttributeUnit(AuMetres));
+	s >> Member< float >(L"cellHeight", m_cellHeight, AttributeUnit(AuMetres));
 	s >> Member< float >(L"agentSlope", m_agentSlope);
-	s >> Member< float >(L"agentHeight", m_agentHeight);
-	s >> Member< float >(L"agentClimb", m_agentClimb);
-	s >> Member< float >(L"agentRadius", m_agentRadius);
-	s >> Member< float >(L"maxEdgeLength", m_maxEdgeLength);
+	s >> Member< float >(L"agentHeight", m_agentHeight, AttributeUnit(AuMetres));
+	s >> Member< float >(L"agentClimb", m_agentClimb, AttributeUnit(AuMetres));
+	s >> Member< float >(L"agentRadius", m_agentRadius, AttributeUnit(AuMetres));
+	s >> Member< float >(L"maxEdgeLength", m_maxEdgeLength, AttributeUnit(AuMetres));
 	s >> Member< float >(L"maxSimplificationError", m_maxSimplificationError);
-	s >> Member< float >(L"minRegionSize", m_minRegionSize);
-	s >> Member< float >(L"mergeRegionSize", m_mergeRegionSize);
+	s >> Member< float >(L"minRegionSize", m_minRegionSize, AttributeUnit(AuMetres));
+	s >> Member< float >(L"mergeRegionSize", m_mergeRegionSize, AttributeUnit(AuMetres));
 	s >> Member< float >(L"detailSampleDistance", m_detailSampleDistance);
 	s >> Member< float >(L"detailSampleMaxError", m_detailSampleMaxError);
 }

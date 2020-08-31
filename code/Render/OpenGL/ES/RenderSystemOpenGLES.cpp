@@ -37,12 +37,25 @@ namespace traktor
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.RenderSystemOpenGLES", 0, RenderSystemOpenGLES, IRenderSystem)
 
 RenderSystemOpenGLES::RenderSystemOpenGLES()
+#if defined(__LINUX__)
+:	m_display(0)
+#endif
 {
 }
 
 bool RenderSystemOpenGLES::create(const RenderSystemDesc& desc)
 {
 	m_sysapp = desc.sysapp;
+
+#if defined(__LINUX__)
+	m_display = XOpenDisplay(0);
+	if (!m_display)
+	{
+		log::error << L"Unable to create OpenGL ES renderer; Failed to open X display" << Endl;
+		return false;
+	}
+#endif
+
 	return true;
 }
 
@@ -131,6 +144,36 @@ DisplayMode RenderSystemOpenGLES::getCurrentDisplayMode() const
 	DisplayMode dm;
 	dm.width = width;
 	dm.height = height;
+	dm.refreshRate = 60;
+	dm.colorBits = 32;
+	return dm;
+
+#elif defined(__LINUX__)
+
+	int screen = DefaultScreen(m_display);
+	XRRScreenConfiguration* xrrc = XRRGetScreenInfo(m_display, RootWindow(m_display, screen));
+	if (xrrc)
+	{
+		Rotation rotation;
+		SizeID sizeId = XRRConfigCurrentConfiguration(xrrc, &rotation);
+
+		int sizes;
+		XRRScreenSize* xrrss = XRRConfigSizes(xrrc, &sizes);
+
+		if (sizeId < sizes)
+		{
+			DisplayMode dm;
+			dm.width = xrrss[sizeId].width;
+			dm.height = xrrss[sizeId].height;
+			dm.refreshRate = 60;
+			dm.colorBits = 32;
+			return dm;
+		}
+	}
+
+	DisplayMode dm;
+	dm.width = DisplayWidth(m_display, screen);
+	dm.height = DisplayHeight(m_display, screen);
 	dm.refreshRate = 60;
 	dm.colorBits = 32;
 	return dm;

@@ -73,6 +73,9 @@ public:
 private:
 	SystemApplication m_sysapp;
 	Ref< ContextOpenGLES > m_context;
+#if defined(__LINUX__)
+	::Display* m_display;
+#endif
 };
 
 	}
