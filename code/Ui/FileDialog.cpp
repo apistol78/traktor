@@ -7,6 +7,7 @@
 #include "Core/Settings/PropertyString.h"
 #include "Ui/Application.h"
 #include "Ui/Button.h"
+#include "Ui/DropDown.h"
 #include "Ui/Edit.h"
 #include "Ui/FloodLayout.h"
 #include "Ui/TableLayout.h"
@@ -221,13 +222,35 @@ void FileDialog::updatePath()
 		else
 			p = s;
 
-		Ref< Button > buttonPath = new Button();
-		buttonPath->create(m_containerPath, s);
-		buttonPath->addEventHandler< ButtonClickEvent >([=](ButtonClickEvent* event) {
-			m_currentPath = p;
-			updatePath();
-			updateFiles();
-		});
+		if (!endsWith(s, L":"))
+		{
+			Ref< Button > buttonPath = new Button();
+			buttonPath->create(m_containerPath, s);
+			buttonPath->addEventHandler< ButtonClickEvent >([=](ButtonClickEvent* event) {
+				m_currentPath = p;
+				updatePath();
+				updateFiles();
+			});
+		}
+		else
+		{
+			Ref< DropDown > dropVolume = new DropDown();
+			dropVolume->create(m_containerPath);
+
+			for (int32_t i = 0; i < FileSystem::getInstance().getVolumeCount(); ++i)
+			{
+				std::wstring volumeId = FileSystem::getInstance().getVolumeId(i);
+				int32_t index = dropVolume->add(volumeId + L":");
+				if (compareIgnoreCase(volumeId + L":", s) == 0)
+					dropVolume->select(index);
+			}
+
+			dropVolume->addEventHandler< SelectionChangeEvent >([=](SelectionChangeEvent* event) {
+				m_currentPath = dropVolume->getSelectedItem();
+				updatePath();
+				updateFiles();
+			});
+		}
 	}
 
 	m_containerPath->update();
