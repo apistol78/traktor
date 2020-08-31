@@ -1,5 +1,4 @@
-#ifndef traktor_editor_NewWorkspaceDialog_H
-#define traktor_editor_NewWorkspaceDialog_H
+#pragma once
 
 #include "Ui/ConfigDialog.h"
 
@@ -29,7 +28,10 @@ private:
 	Ref< ui::PreviewList > m_templateList;
 	Ref< ui::Edit > m_editName;
 	Ref< ui::Edit > m_editPath;
+	Ref< ui::Edit > m_editWorkspaceFile;
 	std::wstring m_workspacePath;
+
+	void updateWorkspaceFile();
 
 	void eventBrowsePathButtonClick(ui::ButtonClickEvent* event);
 
@@ -38,5 +40,3 @@ private:
 
 	}
 }
-
-#endif	// traktor_editor_SettingsDialog_H

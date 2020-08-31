@@ -1,6 +1,7 @@
 #include "Core/Log/Log.h"
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/StringOutputStream.h"
+#include "Core/Misc/String.h"
 #include "Core/System/Environment.h"
 #include "Core/System/IProcess.h"
 #include "Core/System/OS.h"
@@ -50,6 +51,9 @@ bool NewWorkspaceDialog::create(ui::Widget* parent)
 
 	m_editName = new ui::Edit();
 	m_editName->create(containerInner, i18n::Text(L"EDITOR_NEW_WORKSPACE_NAME_DEFAULT"));
+	m_editName->addEventHandler< ui::ContentChangeEvent >([&](ui::ContentChangeEvent*) {
+		updateWorkspaceFile();
+	});
 
 	Ref< ui::Static > staticPath = new ui::Static();
 	staticPath->create(containerInner, i18n::Text(L"EDITOR_NEW_WORKSPACE_PATH"));
@@ -59,21 +63,30 @@ bool NewWorkspaceDialog::create(ui::Widget* parent)
 
 	m_editPath = new ui::Edit();
 	m_editPath->create(containerPath, L"");
+	m_editPath->addEventHandler< ui::ContentChangeEvent >([&](ui::ContentChangeEvent*) {
+		updateWorkspaceFile();
+	});
 
 	Ref< ui::MiniButton > buttonBrowsePath = new ui::MiniButton();
 	buttonBrowsePath->create(containerPath, L"...");
 	buttonBrowsePath->addEventHandler< ui::ButtonClickEvent >(this, &NewWorkspaceDialog::eventBrowsePathButtonClick);
+
+	Ref< ui::Static > staticDummy = new ui::Static();
+	staticDummy->create(containerInner, L"");
+
+	m_editWorkspaceFile = new ui::Edit();
+	m_editWorkspaceFile->create(containerInner, L"", ui::Edit::WsReadOnly);
+	m_editWorkspaceFile->setEnable(false);
 
 	// Find templates and add to list.
 	RefArray< File > templateFiles;
 	FileSystem::getInstance().find(L"$(TRAKTOR_HOME)/resources/runtime/editor/templates/*.template", templateFiles);
 
 	Ref< ui::PreviewItems > previewItems = new ui::PreviewItems();
-
-	for (RefArray< File >::const_iterator i = templateFiles.begin(); i != templateFiles.end(); ++i)
+	for (auto templateFile : templateFiles)
 	{
 		Ref< xml::Document > doc = new xml::Document();
-		if (!doc->loadFromFile((*i)->getPath()))
+		if (!doc->loadFromFile(templateFile->getPath()))
 			continue;
 
 		Ref< xml::Element > xdescription = doc->getSingle(L"/template/description");
@@ -81,7 +94,7 @@ bool NewWorkspaceDialog::create(ui::Widget* parent)
 		if (!xdescription || !ximage)
 			continue;
 
-		Path imagePath = FileSystem::getInstance().getAbsolutePath((*i)->getPath().getPathOnly(), ximage->getValue());
+		Path imagePath = FileSystem::getInstance().getAbsolutePath(templateFile->getPath().getPathOnly(), ximage->getValue());
 
 		Ref< drawing::Image > image = drawing::Image::load(imagePath);
 		if (!image)
@@ -90,19 +103,28 @@ bool NewWorkspaceDialog::create(ui::Widget* parent)
 		Ref< ui::PreviewItem > previewItem = new ui::PreviewItem();
 		previewItem->setText(xdescription->getValue());
 		previewItem->setImage(new ui::Bitmap(image));
-		previewItem->setData(L"FILE", *i);
+		previewItem->setData(L"FILE", templateFile);
 
 		previewItems->add(previewItem);
 	}
 
 	m_templateList->setItems(previewItems);
 
+	updateWorkspaceFile();
 	return true;
 }
 
 const std::wstring& NewWorkspaceDialog::getWorkspacePath() const
 {
 	return m_workspacePath;
+}
+
+void NewWorkspaceDialog::updateWorkspaceFile()
+{
+	std::wstring name = m_editName->getText();
+	std::wstring outputPath = Path(m_editPath->getText() + L"/" + toLower(name)).normalized().getPathName();
+	m_editWorkspaceFile->setText(outputPath + L"/" + name + L".workspace");
+	m_editWorkspaceFile->update();
 }
 
 void NewWorkspaceDialog::eventBrowsePathButtonClick(ui::ButtonClickEvent* event)
@@ -115,6 +137,7 @@ void NewWorkspaceDialog::eventBrowsePathButtonClick(ui::ButtonClickEvent* event)
 		m_editPath->setText(path.getPathName());
 
 	pathDialog.destroy();
+	updateWorkspaceFile();
 }
 
 void NewWorkspaceDialog::eventDialogClick(ui::ButtonClickEvent* event)
@@ -128,7 +151,7 @@ void NewWorkspaceDialog::eventDialogClick(ui::ButtonClickEvent* event)
 			T_FATAL_ASSERT (file);
 
 			std::wstring name = m_editName->getText();
-			std::wstring outputPath = Path(m_editPath->getText() + L"/" + name).normalized().getPathName();
+			std::wstring outputPath = Path(m_editPath->getText() + L"/" + toLower(name)).normalized().getPathName();
 
 			Ref< Environment > env = OS::getInstance().getEnvironment();
 			env->set(L"WIZARD_NAME", name);
