@@ -15,8 +15,8 @@
 	UpgradeCode="50247611-92FC-49b3-B615-712E6C284C4D"
   >
 	<Package Platform="x64" InstallerVersion="301" Compressed="yes" />
+	<MajorUpgrade AllowSameVersionUpgrades="yes" DowngradeErrorMessage="A later version of [ProductName] is already installed. Setup will now exit." />
 	<Media Id="1" Cabinet="Traktor.cab" EmbedCab="yes" />
-
 	<Icon Id="icon.ico" SourceFile="$(env.TRAKTOR_HOME)/resources/build/windows/Traktor.ico"/>
 	<Property Id="ARPPRODUCTICON" Value="icon.ico" />
 
@@ -42,7 +42,9 @@
 				</Directory>
 				<Directory Id="data" Name="data"/>
 				<Directory Id="resources" Name="resources"/>
-				<Directory Id="scripts" Name="scripts"/>
+				<Directory Id="scripts" Name="scripts">
+					<File Id="scripts_config" Name="config-vs-x64.bat" Source="$(env.TRAKTOR_HOME)/scripts/config.bat" DiskId="1" />
+				</Directory>
 			</Directory>
 		</Directory>
 
