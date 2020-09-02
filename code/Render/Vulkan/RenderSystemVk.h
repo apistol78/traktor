@@ -99,6 +99,7 @@ private:
 	Ref< CommandBufferPool > m_graphicsCommandPool;
 	VmaAllocator m_allocator;
 	int32_t m_maxAnisotropy;
+	float m_mipBias;
 };
 
 	}

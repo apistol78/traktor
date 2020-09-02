@@ -97,6 +97,7 @@ RenderSystemVk::RenderSystemVk()
 ,	m_computeQueueIndex(~0)
 ,	m_allocator(0)
 ,	m_maxAnisotropy(0)
+,	m_mipBias(0.0f)
 {
 #if defined(__ANDROID__)
 	m_screenWidth = 0;
@@ -310,6 +311,7 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
 	}
 
 	m_maxAnisotropy = desc.maxAnisotropy;
+	m_mipBias = desc.mipBias;
 
 	log::info << L"Vulkan render system created successfully." << Endl;
 	return true;
@@ -626,10 +628,9 @@ Ref< IProgram > RenderSystemVk::createProgram(const ProgramResource* programReso
 	Ref< ProgramVk > program = new ProgramVk(
 		m_physicalDevice,
 		m_logicalDevice,
-		m_allocator,
-		m_maxAnisotropy
+		m_allocator
 	);
-	if (program->create(resource, tag))
+	if (program->create(resource, m_maxAnisotropy, m_mipBias, tag))
 		return program;
 	else
 		return nullptr;
