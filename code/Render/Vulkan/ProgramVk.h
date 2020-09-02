@@ -23,13 +23,12 @@ public:
 	ProgramVk(
 		VkPhysicalDevice physicalDevice,
 		VkDevice logicalDevice,
-		VmaAllocator allocator,
-		int32_t maxAnistropy
+		VmaAllocator allocator
 	);
 
 	virtual ~ProgramVk();
 
-	bool create(const ProgramResourceVk* resource, const wchar_t* const tag);
+	bool create(const ProgramResourceVk* resource, int32_t maxAnistropy, float mipBias, const wchar_t* const tag);
 
 	bool validateGraphics(VkDescriptorPool descriptorPool, VkCommandBuffer commandBuffer, UniformBufferPoolVk* uniformBufferPool, float targetSize[2]);
 
@@ -133,7 +132,6 @@ private:
 	VkPhysicalDevice m_physicalDevice;
 	VkDevice m_logicalDevice;
 	VmaAllocator m_allocator;
-	int32_t m_maxAnistropy;
 	RenderState m_renderState;
 	VkShaderModule m_vertexShaderModule;
 	VkShaderModule m_fragmentShaderModule;
