@@ -413,17 +413,19 @@ local outputs =
 		}
 	},
 	{
+		source = "Runtime.svg",
 		name = "Runtime",
 		path = "../../runtime/themes/%s/Images/Runtime",
 		resources =
 		{
-			{ name = "Logos", column = 0, row = 10, width = 13, height = 1, base = 24 },
-			{ name = "TargetPlay", column = 0, row = 11, width = 1, height = 1, base = 24 },
-			{ name = "TargetBuild", column = 1, row = 11, width = 1, height = 1, base = 24 },
-			{ name = "TargetMigrate", column = 2, row = 11, width = 1, height = 1, base = 24 },
-			{ name = "TargetBrowse", column = 3, row = 11, width = 1, height = 1, base = 24 },
-			{ name = "TargetStop", column = 4, row = 11, width = 1, height = 1, base = 24 },
-			{ name = "TargetProfile", column = 5, row = 11, width = 1, height = 1, base = 24 },
+			{ name = "Logos", column = 0, row = 0, width = 13, height = 1, base = 24 },
+			{ name = "TargetPlay", column = 0, row = 1, width = 1, height = 1, base = 24 },
+			{ name = "TargetBuild", column = 1, row = 1, width = 1, height = 1, base = 24 },
+			{ name = "TargetMigrate", column = 2, row = 1, width = 1, height = 1, base = 24 },
+			{ name = "TargetBrowse", column = 3, row = 1, width = 1, height = 1, base = 24 },
+			{ name = "TargetStop", column = 4, row = 1, width = 1, height = 1, base = 24 },
+			{ name = "TargetProfile", column = 5, row = 1, width = 1, height = 1, base = 24 },
+			{ name = "Blender", column = 0, row = -2, width = 1, height = 1 },
 		}
 	},
 	{

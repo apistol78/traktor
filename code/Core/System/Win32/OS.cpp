@@ -521,7 +521,7 @@ bool OS::whereIs(const std::wstring& executable, Path& outPath) const
 		return false;
 
 	// Try to locate binary in any of the paths specified in "PATH".
-	for (auto path : StringSplit< std::wstring >(paths, L";:,"))
+	for (auto path : StringSplit< std::wstring >(paths, L";,"))
 	{
 		Ref< File > file = FileSystem::getInstance().get(path + L"/" + executable + L".exe");
 		if (file)
