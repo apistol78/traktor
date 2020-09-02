@@ -225,7 +225,7 @@ void Edit::setText(const std::wstring& text)
 Size Edit::getPreferedSize() const
 {
 	const int32_t height = getFontMetric().getHeight() + dpi96(4) * 2;
-	return Size(dpi96(200), height);
+	return Size(dpi96(100), height);
 }
 
 void Edit::eventFocus(FocusEvent* event)

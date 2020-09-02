@@ -382,7 +382,7 @@ bool DatabaseView::create(ui::Widget* parent)
 	m_editFilter = new ui::Edit();
 	m_editFilter->create(m_toolSelection, L"", ui::WsNone);
 	m_editFilter->addEventHandler< ui::KeyUpEvent >(this, &DatabaseView::eventFilterKey);
-	m_toolSelection->addItem(new ui::ToolBarEmbed(m_editFilter, ui::dpi96(100)));
+	m_toolSelection->addItem(new ui::ToolBarEmbed(m_editFilter, ui::dpi96(80)));
 
 	m_toolSelection->addItem(new ui::ToolBarSeparator());
 

@@ -581,7 +581,10 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	Ref< ui::DockPane > pane = m_dock->getPane();
 	Ref< ui::DockPane > paneCenter, paneLog;
 
-	pane->split(false, ui::dpi96(400), m_paneWest, paneCenter);
+	int32_t ww = m_mergedSettings->getProperty< int32_t >(L"Editor.PaneWestWidth", ui::dpi96(350));
+	int32_t we = m_mergedSettings->getProperty< int32_t >(L"Editor.PaneEastWidth", ui::dpi96(350));
+
+	pane->split(false, ww, m_paneWest, paneCenter);
 	paneCenter->split(false, ui::dpi96(-250), paneCenter, m_paneEast);
 	paneCenter->split(true, ui::dpi96(-200), paneCenter, paneLog);
 	paneCenter->split(true, ui::dpi96(-200), paneCenter, m_paneSouth);
@@ -601,7 +604,7 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	if (!m_mergedSettings->getProperty< bool >(L"Editor.PropertiesVisible"))
 		m_propertiesView->hide();
 
-	m_paneEast->dock(m_propertiesView, true, ui::DockPane::DrSouth, ui::dpi96(450));
+	m_paneEast->dock(m_propertiesView, true, ui::DockPane::DrSouth, we);
 
 	// Create output panel.
 	m_tabOutput = new ui::Tab();
@@ -2923,6 +2926,10 @@ void EditorForm::eventClose(ui::CloseEvent* event)
 			}
 		}
 	}
+
+	// Save docking pane sizes.
+	m_globalSettings->setProperty< PropertyInteger >(L"Editor.PaneWestWidth", m_paneWest->getPaneRect().getWidth() + 3);
+	m_globalSettings->setProperty< PropertyInteger >(L"Editor.PaneEastWidth", m_paneEast->getPaneRect().getWidth() + 3);
 
 	// Save panes visible.
 	m_globalSettings->setProperty< PropertyBoolean >(L"Editor.DatabaseVisible", m_dataBaseView->isVisible(false));
