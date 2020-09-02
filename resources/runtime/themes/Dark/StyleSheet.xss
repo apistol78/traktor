@@ -1175,6 +1175,10 @@
 			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Dark/Images/Runtime/TargetProfile.image</value>
 		</item>
 		<item>
+			<name>Runtime.Blender</name>
+			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Dark/Images/Runtime/Blender.image</value>
+		</item>
+		<item>
 			<name>Input.Alignment</name>
 			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Dark/Images/Input/Alignment.image</value>
 		</item>
