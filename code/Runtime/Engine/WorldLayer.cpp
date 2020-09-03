@@ -153,8 +153,7 @@ void WorldLayer::prepare(const UpdateInfo& info)
 		m_scene->getWorldRenderSettings()->viewFarZ
 	);
 
-	// Use transform from camera initially, camera can change during update so
-	// it's reset in "build".
+	// Set projection from camera component.
 	if (m_cameraEntity)
 	{
 		const world::CameraComponent* camera = m_cameraEntity->getComponent< world::CameraComponent >();
@@ -181,23 +180,7 @@ void WorldLayer::prepare(const UpdateInfo& info)
 				);
 			}
 		}
-
-		Transform cameraTransform = m_cameraEntity->getTransform();
-
-		m_cameraTransform.step();
-		m_cameraTransform.set(cameraTransform);
-
-		m_worldRenderView.setView(
-			m_worldRenderView.getView(),
-			(m_cameraTransform.get(info.getInterval()) * m_cameraOffset).inverse().toMatrix44()
-		);
 	}
-
-	m_worldRenderView.setTimes(
-		info.getStateTime(),
-		info.getFrameDeltaTime(),
-		info.getInterval()
-	);
 
 	// Update sound listener transform.
 	if (m_environment->getAudio())
@@ -222,6 +205,14 @@ void WorldLayer::update(const UpdateInfo& info)
 	T_PROFILER_SCOPE(L"WorldLayer update");
 	if (!m_worldRenderer)
 		return;
+
+	// Update camera transform from entity.
+	if (m_cameraEntity)
+	{
+		Transform cameraTransform = m_cameraEntity->getTransform();
+		m_cameraTransform.step();
+		m_cameraTransform.set(cameraTransform);
+	}
 
 	// Update scene controller.
 	if (m_controllerEnable)
@@ -263,18 +254,20 @@ void WorldLayer::setup(const UpdateInfo& info, render::RenderGraph& renderGraph)
 	if (!m_worldRenderer || !m_scene)
 		return;
 
+	// Grab interpolated camera transform.
 	if (m_cameraEntity)
 	{
-		Transform cameraTransform = m_cameraEntity->getTransform();
-
-		m_cameraTransform.step();
-		m_cameraTransform.set(cameraTransform);
-
 		m_worldRenderView.setView(
 			m_worldRenderView.getView(),
 			(m_cameraTransform.get(info.getInterval()) * m_cameraOffset).inverse().toMatrix44()
 		);
 	}
+
+	m_worldRenderView.setTimes(
+		info.getStateTime(),
+		info.getFrameDeltaTime(),
+		info.getInterval()
+	);
 
 	// Build a root entity by gathering entities from containers.
 	m_rootGroup->removeAllEntities();
