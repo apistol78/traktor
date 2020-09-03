@@ -111,7 +111,6 @@ bool FinalRenderControl::create(ui::Widget* parent, SceneEditorContext* context,
 	m_renderWidget->addEventHandler< ui::MouseDoubleClickEvent >(this, &FinalRenderControl::eventDoubleClick);
 	m_renderWidget->addEventHandler< ui::MouseMoveEvent >(this, &FinalRenderControl::eventMouseMove);
 	m_renderWidget->addEventHandler< ui::MouseWheelEvent >(this, &FinalRenderControl::eventMouseWheel);
-	m_renderWidget->addEventHandler< ui::SizeEvent >(this, &FinalRenderControl::eventSize);
 	m_renderWidget->addEventHandler< ui::PaintEvent >(this, &FinalRenderControl::eventPaint);
 
 	if (m_context->getDocument()->getInstance(0)->getPrimaryType() == &type_of< SceneAsset >())
@@ -367,21 +366,6 @@ void FinalRenderControl::eventMouseWheel(ui::MouseWheelEvent* event)
 	m_context->raiseRedraw();
 }
 
-void FinalRenderControl::eventSize(ui::SizeEvent* event)
-{
-	if (!m_renderView || !m_renderWidget->isVisible(true))
-		return;
-
-	ui::Size sz = event->getSize();
-
-	// Don't update world renderer if, in fact, size hasn't changed.
-	if (sz.cx == m_dirtySize.cx && sz.cy == m_dirtySize.cy)
-		return;
-
-	m_renderView->reset(sz.cx, sz.cy);
-	m_dirtySize = sz;
-}
-
 void FinalRenderControl::eventPaint(ui::PaintEvent* event)
 {
 	// Reload scene if changed.
@@ -393,6 +377,15 @@ void FinalRenderControl::eventPaint(ui::PaintEvent* event)
 
 	if (!m_sceneInstance || !m_renderView)
 		return;
+
+	// Check if size has changed since last render; need to reset renderer if so.
+	ui::Size sz = m_renderWidget->getInnerRect().getSize();
+	if (sz.cx != m_dirtySize.cx || sz.cy != m_dirtySize.cy)
+	{
+		if (!m_renderView->reset(sz.cx, sz.cy))
+			return;
+		m_dirtySize = sz;
+	}
 
 	// Lazy create world renderer.
 	if (!m_worldRenderer)
@@ -426,7 +419,6 @@ void FinalRenderControl::eventPaint(ui::PaintEvent* event)
 
 	// Setup world render passes.
 	const world::WorldRenderSettings* worldRenderSettings = m_sceneInstance->getWorldRenderSettings();
-	ui::Size sz = m_renderWidget->getInnerRect().getSize();
 	m_worldRenderView.setPerspective(
 		float(sz.cx),
 		float(sz.cy),

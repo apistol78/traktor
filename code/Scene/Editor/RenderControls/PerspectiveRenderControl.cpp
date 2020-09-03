@@ -142,7 +142,6 @@ bool PerspectiveRenderControl::create(ui::Widget* parent, SceneEditorContext* co
 	m_renderWidget->addEventHandler< ui::MouseDoubleClickEvent >(this, &PerspectiveRenderControl::eventDoubleClick);
 	m_renderWidget->addEventHandler< ui::MouseMoveEvent >(this, &PerspectiveRenderControl::eventMouseMove);
 	m_renderWidget->addEventHandler< ui::MouseWheelEvent >(this, &PerspectiveRenderControl::eventMouseWheel);
-	m_renderWidget->addEventHandler< ui::SizeEvent >(this, &PerspectiveRenderControl::eventSize);
 	m_renderWidget->addEventHandler< ui::PaintEvent >(this, &PerspectiveRenderControl::eventPaint);
 
 	updateSettings();
@@ -452,26 +451,20 @@ void PerspectiveRenderControl::eventMouseWheel(ui::MouseWheelEvent* event)
 	m_context->raiseRedraw();
 }
 
-void PerspectiveRenderControl::eventSize(ui::SizeEvent* event)
-{
-	if (!m_renderView || !m_renderWidget->isVisible(true))
-		return;
-
-	ui::Size sz = event->getSize();
-
-	// Don't update world renderer if, in fact, size hasn't changed.
-	if (sz.cx == m_dirtySize.cx && sz.cy == m_dirtySize.cy)
-		return;
-
-	m_renderView->reset(sz.cx, sz.cy);
-	m_dirtySize = sz;
-}
-
 void PerspectiveRenderControl::eventPaint(ui::PaintEvent* event)
 {
 	Ref< scene::Scene > sceneInstance = m_context->getScene();
 	if (!sceneInstance || !m_renderView || !m_primitiveRenderer)
 		return;
+
+	// Check if size has changed since last render; need to reset renderer if so.
+	ui::Size sz = m_renderWidget->getInnerRect().getSize();
+	if (sz.cx != m_dirtySize.cx || sz.cy != m_dirtySize.cy)
+	{
+		if (!m_renderView->reset(sz.cx, sz.cy))
+			return;
+		m_dirtySize = sz;
+	}
 
 	// Lazy create world renderer.
 	if (!m_worldRenderer)
@@ -494,7 +487,6 @@ void PerspectiveRenderControl::eventPaint(ui::PaintEvent* event)
 
 	// Setup world render passes.
 	const world::WorldRenderSettings* worldRenderSettings = sceneInstance->getWorldRenderSettings();
-	ui::Size sz = m_renderWidget->getInnerRect().getSize();
 	m_worldRenderView.setPerspective(
 		float(sz.cx),
 		float(sz.cy),

@@ -133,7 +133,6 @@ bool OrthogonalRenderControl::create(ui::Widget* parent, SceneEditorContext* con
 	m_renderWidget->addEventHandler< ui::MouseDoubleClickEvent >(this, &OrthogonalRenderControl::eventDoubleClick);
 	m_renderWidget->addEventHandler< ui::MouseMoveEvent >(this, &OrthogonalRenderControl::eventMouseMove);
 	m_renderWidget->addEventHandler< ui::MouseWheelEvent >(this, &OrthogonalRenderControl::eventMouseWheel);
-	m_renderWidget->addEventHandler< ui::SizeEvent >(this, &OrthogonalRenderControl::eventSize);
 	m_renderWidget->addEventHandler< ui::PaintEvent >(this, &OrthogonalRenderControl::eventPaint);
 
 	updateSettings();
@@ -451,21 +450,6 @@ void OrthogonalRenderControl::eventMouseWheel(ui::MouseWheelEvent* event)
 	m_context->raiseRedraw();
 }
 
-void OrthogonalRenderControl::eventSize(ui::SizeEvent* event)
-{
-	if (!m_renderView || !m_renderWidget->isVisible(true))
-		return;
-
-	ui::Size sz = event->getSize();
-
-	// Don't update world renderer if, in fact, size hasn't changed.
-	if (sz.cx == m_dirtySize.cx && sz.cy == m_dirtySize.cy)
-		return;
-
-	m_renderView->reset(sz.cx, sz.cy);
-	m_dirtySize = sz;
-}
-
 void OrthogonalRenderControl::eventPaint(ui::PaintEvent* event)
 {
 	Ref< scene::Scene > sceneInstance = m_context->getScene();
@@ -478,6 +462,15 @@ void OrthogonalRenderControl::eventPaint(ui::PaintEvent* event)
 		updateWorldRenderer();
 		if (!m_worldRenderer)
 			return;
+	}
+
+	// Check if size has changed since last render; need to reset renderer if so.
+	ui::Size sz = m_renderWidget->getInnerRect().getSize();
+	if (sz.cx != m_dirtySize.cx || sz.cy != m_dirtySize.cy)
+	{
+		if (!m_renderView->reset(sz.cx, sz.cy))
+			return;
+		m_dirtySize = sz;
 	}
 
 	float colorClear[4]; m_colorClear.getRGBA32F(colorClear);

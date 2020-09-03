@@ -113,7 +113,6 @@ bool CameraRenderControl::create(ui::Widget* parent, SceneEditorContext* context
 	))
 		return false;
 
-	m_renderWidget->addEventHandler< ui::SizeEvent >(this, &CameraRenderControl::eventSize);
 	m_renderWidget->addEventHandler< ui::PaintEvent >(this, &CameraRenderControl::eventPaint);
 
 	updateSettings();
@@ -284,21 +283,6 @@ void CameraRenderControl::updateSettings()
 	m_invertPanY = settings->getProperty< bool >(L"SceneEditor.InvertPanY");
 }
 
-void CameraRenderControl::eventSize(ui::SizeEvent* event)
-{
-	if (!m_renderView || !m_renderWidget->isVisible(true))
-		return;
-
-	ui::Size sz = event->getSize();
-
-	// Don't update world renderer if, in fact, size hasn't changed.
-	if (sz.cx == m_dirtySize.cx && sz.cy == m_dirtySize.cy)
-		return;
-
-	m_renderView->reset(sz.cx, sz.cy);
-	m_dirtySize = sz;
-}
-
 void CameraRenderControl::eventPaint(ui::PaintEvent* event)
 {
 	Ref< scene::Scene > sceneInstance = m_context->getScene();
@@ -308,6 +292,15 @@ void CameraRenderControl::eventPaint(ui::PaintEvent* event)
 	// Get current camera entity.
 	if (!m_context->findAdaptersOfType(type_of< world::CameraComponent >(), m_cameraEntities))
 		return;
+
+	// Check if size has changed since last render; need to reset renderer if so.
+	ui::Size sz = m_renderWidget->getInnerRect().getSize();
+	if (sz.cx != m_dirtySize.cx || sz.cy != m_dirtySize.cy)
+	{
+		if (!m_renderView->reset(sz.cx, sz.cy))
+			return;
+		m_dirtySize = sz;
+	}
 
 	world::CameraComponent* cameraComponent = m_cameraEntities[0]->getComponent< world::CameraComponent >();
 	T_ASSERT(cameraComponent);
@@ -344,7 +337,6 @@ void CameraRenderControl::eventPaint(ui::PaintEvent* event)
 	}
 	else // Projection::Perspective
 	{
-		ui::Size sz = m_renderWidget->getInnerRect().getSize();
 		m_worldRenderView.setPerspective(
 			float(sz.cx),
 			float(sz.cy),
