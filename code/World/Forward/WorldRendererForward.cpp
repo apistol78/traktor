@@ -168,8 +168,11 @@ bool WorldRendererForward::create(
 	if (desc.quality.imageProcess > Quality::Disabled)
 	{
 		const auto& visualImageGraph = desc.worldRenderSettings->imageProcess[(int32_t)desc.quality.imageProcess];
-		if (!resourceManager->bind(visualImageGraph, m_visual))
-			log::warning << L"Unable to create visual post processing; post processing disabled." << Endl;
+		if (!visualImageGraph.isNull())
+		{
+			if (!resourceManager->bind(visualImageGraph, m_visual))
+				log::warning << L"Unable to create visual post processing; post processing disabled." << Endl;
+		}
 	}
 
 	// Create gamma correction processing.

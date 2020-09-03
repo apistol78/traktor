@@ -113,8 +113,6 @@ private:
 
 	void updateSettings();
 
-	void eventSize(ui::SizeEvent* event);
-
 	void eventPaint(ui::PaintEvent* event);
 };
 

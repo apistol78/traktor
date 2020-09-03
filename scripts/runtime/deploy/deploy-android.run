@@ -114,7 +114,8 @@ local function linkApplication()
 
 	-- Compile linkage file.
 	stdout:printLn("Compiling Linkage.cpp...")
-	local cmd = cl .. " -c Linkage.cpp -o Linkage.o"
+
+	local cmd = cl .. " -c \"y:\\Samples\\minigolf\\output\\MiniGolf\\Android\\Linkage.cpp\" -o Linkage.o"
 	local result = run:execute(cmd) --, nil)
 	if result ~= 0 then
 		stderr:printLn("Unable to compile Linkage.cpp")
@@ -139,7 +140,7 @@ local function linkApplication()
 	cmd = cmd .. " -lEGL"
 	cmd = cmd .. " -lGLESv3"
 	cmd = cmd .. " -lOpenSLES"
-	cmd = cmd .. " Linkage.o"
+	cmd = cmd .. " \"y:\\Samples\\minigolf\\output\\MiniGolf\\Android\\Linkage.o\""
 	cmd = cmd .. libraryPaths
 	cmd = cmd .. libraries
 	cmd = cmd .. libraries

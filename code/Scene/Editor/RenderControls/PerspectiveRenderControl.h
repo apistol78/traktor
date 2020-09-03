@@ -139,8 +139,6 @@ private:
 
 	void eventMouseWheel(ui::MouseWheelEvent* event);
 
-	void eventSize(ui::SizeEvent* event);
-
 	void eventPaint(ui::PaintEvent* event);
 };
 

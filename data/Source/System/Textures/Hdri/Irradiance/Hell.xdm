@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.db.LocalInstanceMeta" version="1">
+	<guid>{0094ABBD-6A5A-014C-86D3-E8D967FE25EB}</guid>
+	<primaryType>traktor.world.IrradianceGridAsset</primaryType>
+	<blobs/>
+</object>

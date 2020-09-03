@@ -74,9 +74,6 @@ bool SkinnedMeshConverter::convert(
 	bool useLargeIndices = (bool)(model->getVertexCount() >= 65536);
 	uint32_t indexSize = useLargeIndices ? sizeof(uint32_t) : sizeof(uint16_t);
 
-	if (useLargeIndices)
-		log::warning << L"Using 32-bit indices; might not work on all renderers." << Endl;
-
 	uint32_t vertexBufferSize = (uint32_t)(model->getVertices().size() * vertexSize);
 	uint32_t indexBufferSize = (uint32_t)(model->getPolygons().size() * 3 * indexSize);
 

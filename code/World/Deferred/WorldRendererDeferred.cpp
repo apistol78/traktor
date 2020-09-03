@@ -226,7 +226,7 @@ bool WorldRendererDeferred::create(
 		return false;
 
 	// Create shadow screen projection processes.
-	if (m_shadowsQuality > Quality::Disabled)
+	if (!m_shadowSettings.maskProject.isNull() && m_shadowsQuality > Quality::Disabled)
 	{
 		if (!resourceManager->bind(m_shadowSettings.maskProject, m_shadowMaskProject))
 		{
@@ -234,6 +234,8 @@ bool WorldRendererDeferred::create(
 			m_shadowsQuality = Quality::Disabled;
 		}
 	}
+	else
+		m_shadowsQuality = Quality::Disabled;
 
 	// Create ambient occlusion processing.
 	if (m_ambientOcclusionQuality > Quality::Disabled)
@@ -255,8 +257,11 @@ bool WorldRendererDeferred::create(
 	if (desc.quality.imageProcess > Quality::Disabled)
 	{
 		const auto& visualImageGraph = desc.worldRenderSettings->imageProcess[(int32_t)desc.quality.imageProcess];
-		if (!resourceManager->bind(visualImageGraph, m_visual))
-			log::warning << L"Unable to create visual post processing; post processing disabled." << Endl;
+		if (!visualImageGraph.isNull())
+		{
+			if (!resourceManager->bind(visualImageGraph, m_visual))
+				log::warning << L"Unable to create visual post processing; post processing disabled." << Endl;
+		}
 	}
 
 	// Create gamma correction processing.
