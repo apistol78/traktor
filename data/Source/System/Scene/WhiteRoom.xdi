@@ -181,6 +181,21 @@
 						</item>
 					</components>
 				</item>
+				<item type="traktor.world.EntityData">
+					<name>Camera</name>
+					<transform>
+						<translation>-1.562719, 0.790387, -1.110929, 0</translation>
+						<rotation>0.04456, 0.45232, -0.022635, 0.890454</rotation>
+					</transform>
+					<components>
+						<item type="traktor.world.CameraComponentData">
+							<projection>Perspective</projection>
+							<fov>1.221731</fov>
+							<width>1</width>
+							<height>1</height>
+						</item>
+					</components>
+				</item>
 			</entityData>
 			<visible>true</visible>
 			<locked>false</locked>
