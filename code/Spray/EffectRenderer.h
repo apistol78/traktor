@@ -26,15 +26,15 @@ class MeshRenderer;
 class PointRenderer;
 class TrailRenderer;
 
-/*! Effect entity renderer.
+/*! Effect renderer.
  * \ingroup Spray
  */
-class T_DLLCLASS EffectEntityRenderer : public world::IEntityRenderer
+class T_DLLCLASS EffectRenderer : public world::IEntityRenderer
 {
 	T_RTTI_CLASS;
 
 public:
-	EffectEntityRenderer(render::IRenderSystem* renderSystem, float lod1Distance, float lod2Distance);
+	EffectRenderer(render::IRenderSystem* renderSystem, float lod1Distance, float lod2Distance);
 
 	void setLodDistances(float lod1Distance, float lod2Distance);
 

@@ -1,6 +1,6 @@
 #include "Spray/Effect.h"
 #include "Spray/EffectComponent.h"
-#include "Spray/EffectEntityRenderer.h"
+#include "Spray/EffectRenderer.h"
 #include "Spray/MeshRenderer.h"
 #include "Spray/PointRenderer.h"
 #include "Spray/TrailRenderer.h"
@@ -13,26 +13,26 @@ namespace traktor
 	namespace spray
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.spray.EffectEntityRenderer", EffectEntityRenderer, world::IEntityRenderer)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.spray.EffectRenderer", EffectRenderer, world::IEntityRenderer)
 
-EffectEntityRenderer::EffectEntityRenderer(render::IRenderSystem* renderSystem, float lod1Distance, float lod2Distance)
+EffectRenderer::EffectRenderer(render::IRenderSystem* renderSystem, float lod1Distance, float lod2Distance)
 :	m_pointRenderer(new PointRenderer(renderSystem, lod1Distance, lod2Distance))
 ,	m_meshRenderer(new MeshRenderer())
 ,	m_trailRenderer(new TrailRenderer(renderSystem))
 {
 }
 
-void EffectEntityRenderer::setLodDistances(float lod1Distance, float lod2Distance)
+void EffectRenderer::setLodDistances(float lod1Distance, float lod2Distance)
 {
 	m_pointRenderer->setLodDistances(lod1Distance, lod2Distance);
 }
 
-const TypeInfoSet EffectEntityRenderer::getRenderableTypes() const
+const TypeInfoSet EffectRenderer::getRenderableTypes() const
 {
 	return makeTypeInfoSet< EffectComponent >();
 }
 
-void EffectEntityRenderer::gather(
+void EffectRenderer::gather(
 	const world::WorldGatherContext& context,
 	const Object* renderable,
 	AlignedVector< world::Light >& outLights
@@ -40,7 +40,7 @@ void EffectEntityRenderer::gather(
 {
 }
 
-void EffectEntityRenderer::setup(
+void EffectRenderer::setup(
 	const world::WorldSetupContext& context,
 	const world::WorldRenderView& worldRenderView,
 	Object* renderable
@@ -48,13 +48,13 @@ void EffectEntityRenderer::setup(
 {
 }
 
-void EffectEntityRenderer::setup(
+void EffectRenderer::setup(
 	const world::WorldSetupContext& context
 )
 {
 }
 
-void EffectEntityRenderer::build(
+void EffectRenderer::build(
 	const world::WorldBuildContext& context,
 	const world::WorldRenderView& worldRenderView,
 	const world::IWorldRenderPass& worldRenderPass,
@@ -92,7 +92,7 @@ void EffectEntityRenderer::build(
 	}
 }
 
-void EffectEntityRenderer::build(
+void EffectRenderer::build(
 	const world::WorldBuildContext& context,
 	const world::WorldRenderView& worldRenderView,
 	const world::IWorldRenderPass& worldRenderPass

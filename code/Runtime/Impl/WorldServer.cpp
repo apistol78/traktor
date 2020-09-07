@@ -20,7 +20,7 @@
 #include "Resource/IResourceManager.h"
 #include "Scene/SceneFactory.h"
 #include "Spray/EffectEntityFactory.h"
-#include "Spray/EffectEntityRenderer.h"
+#include "Spray/EffectRenderer.h"
 #include "Spray/Feedback/FeedbackManager.h"
 #include "Terrain/EntityFactory.h"
 #include "Terrain/EntityRenderer.h"
@@ -175,7 +175,7 @@ void WorldServer::createEntityRenderers(IEnvironment* environment)
 
 	float sprayLod1Distance = c_sprayLodDistances[(int32_t)m_particleQuality][0];
 	float sprayLod2Distance = c_sprayLodDistances[(int32_t)m_particleQuality][1];
-	m_effectEntityRenderer = new spray::EffectEntityRenderer(renderSystem, sprayLod1Distance, sprayLod2Distance);
+	m_effectEntityRenderer = new spray::EffectRenderer(renderSystem, sprayLod1Distance, sprayLod2Distance);
 
 	m_terrainEntityRenderer = new terrain::EntityRenderer(
 		c_terrainDetailDistances[(int32_t)m_terrainQuality],

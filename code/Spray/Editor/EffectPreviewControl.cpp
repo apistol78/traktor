@@ -18,11 +18,11 @@
 #include "Spray/Effect.h"
 #include "Spray/EffectComponent.h"
 #include "Spray/EffectData.h"
-#include "Spray/EffectEntityRenderer.h"
 #include "Spray/EffectInstance.h"
 #include "Spray/EffectLayer.h"
 #include "Spray/EffectLayerData.h"
 #include "Spray/EffectLayerInstance.h"
+#include "Spray/EffectRenderer.h"
 #include "Spray/Emitter.h"
 #include "Spray/EmitterData.h"
 #include "Spray/EmitterInstance.h"
@@ -340,7 +340,7 @@ void EffectPreviewControl::updateWorldRenderer()
 	// Create entity renderers.
 	Ref< world::WorldEntityRenderers > entityRenderers = new world::WorldEntityRenderers();
 	entityRenderers->add(new mesh::MeshComponentRenderer());
-	entityRenderers->add(new EffectEntityRenderer(m_renderSystem, 0.0f, 1000.0f));
+	entityRenderers->add(new EffectRenderer(m_renderSystem, 0.0f, 1000.0f));
 	entityRenderers->add(new weather::CloudRenderer());
 	entityRenderers->add(new weather::PrecipitationRenderer());
 	entityRenderers->add(new weather::SkyRenderer());

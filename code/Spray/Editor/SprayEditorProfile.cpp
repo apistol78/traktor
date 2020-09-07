@@ -1,7 +1,7 @@
 #include "Spray/Editor/SprayEditorProfile.h"
 #include "Spray/EffectFactory.h"
 #include "Spray/EffectEntityFactory.h"
-#include "Spray/EffectEntityRenderer.h"
+#include "Spray/EffectRenderer.h"
 #include "Scene/Editor/SceneEditorContext.h"
 #include "Ui/Command.h"
 #include "Core/Serialization/ISerializable.h"
@@ -55,7 +55,7 @@ void SprayEditorProfile::createEntityRenderers(
 	RefArray< world::IEntityRenderer >& outEntityRenderers
 ) const
 {
-	outEntityRenderers.push_back(new spray::EffectEntityRenderer(context->getRenderSystem(), 50.0f, 100.0f));
+	outEntityRenderers.push_back(new spray::EffectRenderer(context->getRenderSystem(), 50.0f, 100.0f));
 }
 
 void SprayEditorProfile::createControllerEditorFactories(
