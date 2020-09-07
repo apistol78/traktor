@@ -29,7 +29,9 @@
 #include "World/Entity/FacadeRenderer.h"
 #include "World/Entity/GroupRenderer.h"
 #include "World/Entity/ProbeRenderer.h"
-#include "Weather/WeatherRenderer.h"
+#include "Weather/Clouds/CloudRenderer.h"
+#include "Weather/Precipitation/PrecipitationRenderer.h"
+#include "Weather/Sky/SkyRenderer.h"
 
 // Entity editor factories
 #include "Scene/Editor/DefaultComponentEditorFactory.h"
@@ -107,7 +109,9 @@ void DefaultEditorProfile::createEntityRenderers(
 	outEntityRenderers.push_back(new world::LightRenderer());
 	outEntityRenderers.push_back(new world::FacadeRenderer());
 	outEntityRenderers.push_back(new world::GroupRenderer());
-	outEntityRenderers.push_back(new weather::WeatherRenderer(primitiveRenderer));
+	outEntityRenderers.push_back(new weather::CloudRenderer(primitiveRenderer));
+	outEntityRenderers.push_back(new weather::PrecipitationRenderer());
+	outEntityRenderers.push_back(new weather::SkyRenderer());
 }
 
 void DefaultEditorProfile::createControllerEditorFactories(

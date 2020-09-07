@@ -1,6 +1,5 @@
 #pragma once
 
-#include "Core/Ref.h"
 #include "World/IEntityRenderer.h"
 
 // import/export mechanism.
@@ -13,23 +12,14 @@
 
 namespace traktor
 {
-	namespace render
-	{
-
-class PrimitiveRenderer;
-
-	}
-
 	namespace weather
 	{
 
-class T_DLLCLASS WeatherRenderer : public world::IEntityRenderer
+class T_DLLCLASS PrecipitationRenderer : public world::IEntityRenderer
 {
 	T_RTTI_CLASS;
 
 public:
-	WeatherRenderer(render::PrimitiveRenderer* primitiveRenderer = nullptr);
-
 	virtual const TypeInfoSet getRenderableTypes() const override final;
 
 	virtual void gather(
@@ -60,9 +50,6 @@ public:
 		const world::WorldRenderView& worldRenderView,
 		const world::IWorldRenderPass& worldRenderPass
 	) override final;
-
-private:
-	Ref< render::PrimitiveRenderer > m_primitiveRenderer;
 };
 
 	}

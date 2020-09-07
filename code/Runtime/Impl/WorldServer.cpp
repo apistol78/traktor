@@ -26,7 +26,9 @@
 #include "Terrain/EntityRenderer.h"
 #include "Terrain/TerrainFactory.h"
 #include "Weather/WeatherFactory.h"
-#include "Weather/WeatherRenderer.h"
+#include "Weather/Clouds/CloudRenderer.h"
+#include "Weather/Precipitation/PrecipitationRenderer.h"
+#include "Weather/Sky/SkyRenderer.h"
 #include "World/EntityBuilder.h"
 #include "World/EntityEventManager.h"
 #include "World/EntityRenderer.h"
@@ -193,7 +195,9 @@ void WorldServer::createEntityRenderers(IEnvironment* environment)
 	m_entityRenderers->add(m_effectEntityRenderer);
 	m_entityRenderers->add(new animation::BoidsRenderer());
 	m_entityRenderers->add(new animation::ClothRenderer());
-	m_entityRenderers->add(new weather::WeatherRenderer());
+	m_entityRenderers->add(new weather::CloudRenderer());
+	m_entityRenderers->add(new weather::PrecipitationRenderer());
+	m_entityRenderers->add(new weather::SkyRenderer());
 	m_entityRenderers->add(m_terrainEntityRenderer);
 }
 
