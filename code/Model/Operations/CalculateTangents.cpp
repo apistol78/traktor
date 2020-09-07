@@ -174,11 +174,12 @@ bool CalculateTangents::apply(Model& model) const
 		}
 	}
 
+#if defined(_DEBUG)
 	if (degenerated)
-		log::warning << L"Degenerate " << degenerated << L" polygon(s) found in model" << Endl;
-
+		log::warning << L"Degenerate " << degenerated << L" polygon(s) found in model." << Endl;
 	if (invalid)
-		log::warning << L"Invalid tangent space vectors; " << invalid << L" invalid UV base(s) of " << uint32_t(polygons.size()) << Endl;
+		log::warning << L"Invalid tangent space vectors; " << invalid << L" invalid UV base(s) of " << uint32_t(polygons.size()) << L"." << Endl;
+#endif
 
 	// Normalize polygon tangent bases.
 	for (AlignedVector< TangentBase >::iterator i = polygonTangentBases.begin(); i != polygonTangentBases.end(); ++i)

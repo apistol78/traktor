@@ -104,11 +104,14 @@ bool NewWorkspaceDialog::create(ui::Widget* parent)
 		previewItem->setText(xdescription->getValue());
 		previewItem->setImage(new ui::Bitmap(image));
 		previewItem->setData(L"FILE", templateFile);
-
 		previewItems->add(previewItem);
 	}
 
-	m_templateList->setItems(previewItems);
+	if (previewItems->count() > 0)
+	{
+		m_templateList->setItems(previewItems);
+		m_templateList->getItems()->get(0)->setSelected(true);
+	}
 
 	updateWorkspaceFile();
 	return true;
