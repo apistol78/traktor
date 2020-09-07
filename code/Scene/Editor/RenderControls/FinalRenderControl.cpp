@@ -415,11 +415,11 @@ void FinalRenderControl::eventPaint(ui::PaintEvent* event)
 
 	// Build a root entity by gathering entities from containers.
 	Ref< world::GroupComponent > rootGroup = new world::GroupComponent();
-	m_context->getEntityEventManager()->gather([&](world::Entity* entity) { rootGroup->addEntity(entity); });
-	rootGroup->addEntity(m_sceneInstance->getRootEntity());
-
 	Ref< world::Entity > rootEntity = new world::Entity();
 	rootEntity->setComponent(rootGroup);
+
+	m_context->getEntityEventManager()->gather([&](world::Entity* entity) { rootGroup->addEntity(entity); });
+	rootGroup->addEntity(m_sceneInstance->getRootEntity());
 
 	// Setup world render passes.
 	const world::WorldRenderSettings* worldRenderSettings = m_sceneInstance->getWorldRenderSettings();

@@ -484,11 +484,11 @@ void OrthogonalRenderControl::eventPaint(ui::PaintEvent* event)
 
 	// Build a root entity by gathering entities from containers.
 	Ref< world::GroupComponent > rootGroup = new world::GroupComponent();
-	m_context->getEntityEventManager()->gather([&](world::Entity* entity) { rootGroup->addEntity(entity); });
-	rootGroup->addEntity(sceneInstance->getRootEntity());
-
 	Ref< world::Entity > rootEntity = new world::Entity();
 	rootEntity->setComponent(rootGroup);
+
+	m_context->getEntityEventManager()->gather([&](world::Entity* entity) { rootGroup->addEntity(entity); });
+	rootGroup->addEntity(sceneInstance->getRootEntity());
 
 	// Setup world render passes.
 	const world::WorldRenderSettings* worldRenderSettings = sceneInstance->getWorldRenderSettings();
