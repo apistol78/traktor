@@ -47,7 +47,9 @@
 #include "Ui/Application.h"
 #include "Ui/Menu.h"
 #include "Ui/MenuItem.h"
-#include "Weather/WeatherRenderer.h"
+#include "Weather/Clouds/CloudRenderer.h"
+#include "Weather/Precipitation/PrecipitationRenderer.h"
+#include "Weather/Sky/SkyRenderer.h"
 #include "World/Entity.h"
 #include "World/EntityRenderer.h"
 #include "World/IWorldRenderer.h"
@@ -339,7 +341,9 @@ void EffectPreviewControl::updateWorldRenderer()
 	Ref< world::WorldEntityRenderers > entityRenderers = new world::WorldEntityRenderers();
 	entityRenderers->add(new mesh::MeshComponentRenderer());
 	entityRenderers->add(new EffectEntityRenderer(m_renderSystem, 0.0f, 1000.0f));
-	entityRenderers->add(new weather::WeatherRenderer());
+	entityRenderers->add(new weather::CloudRenderer());
+	entityRenderers->add(new weather::PrecipitationRenderer());
+	entityRenderers->add(new weather::SkyRenderer());
 	entityRenderers->add(new world::EntityRenderer());
 	entityRenderers->add(new world::GroupRenderer());
 	entityRenderers->add(new world::LightRenderer());

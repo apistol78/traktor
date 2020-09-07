@@ -28,6 +28,7 @@ class WorldRenderView;
 class RenderContext;
 class VertexBuffer;
 class IndexBuffer;
+class ITexture;
 
 	}
 

@@ -40,12 +40,12 @@ const TypeInfoSet WeatherFactory::getEntityComponentTypes() const
 
 Ref< world::Entity > WeatherFactory::createEntity(const world::IEntityBuilder* builder, const world::EntityData& entityData) const
 {
-	return 0;
+	return nullptr;
 }
 
 Ref< world::IEntityEvent > WeatherFactory::createEntityEvent(const world::IEntityBuilder* builder, const world::IEntityEventData& entityEventData) const
 {
-	return 0;
+	return nullptr;
 }
 
 Ref< world::IEntityComponent > WeatherFactory::createEntityComponent(const world::IEntityBuilder* builder, const world::IEntityComponentData& entityComponentData) const
@@ -57,7 +57,7 @@ Ref< world::IEntityComponent > WeatherFactory::createEntityComponent(const world
 	else if (const SkyComponentData* skyComponentData = dynamic_type_cast< const SkyComponentData* >(&entityComponentData))
 		return skyComponentData->createComponent(m_resourceManager, m_renderSystem);
 	else
-		return 0;
+		return nullptr;
 }
 
 	}
