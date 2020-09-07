@@ -4,7 +4,7 @@
 #include "Core/Math/TransformPath.h"
 #include "Render/Types.h"
 #include "Resource/Proxy.h"
-#include "World/Entity/GroupEntity.h"
+#include "World/Entity.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -36,7 +36,6 @@ class VertexBuffer;
 	namespace world
 	{
 
-class Entity;
 class IWorldRenderPass;
 class WorldBuildContext;
 class WorldRenderView;
@@ -51,7 +50,7 @@ class SplineEntityData;
 /*! Spline entity.
  * \ingroup Shape
  */
-class T_DLLCLASS SplineEntity : public world::GroupEntity
+class T_DLLCLASS SplineEntity : public world::Entity
 {
 	T_RTTI_CLASS;
 
