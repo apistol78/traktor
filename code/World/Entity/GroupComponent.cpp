@@ -94,6 +94,7 @@ Aabb3 GroupComponent::getBoundingBox() const
 
 void GroupComponent::addEntity(Entity* entity)
 {
+	T_ASSERT_M (m_owner != nullptr, L"Must have an owner before adding entities.");
 	T_ASSERT_M (entity, L"Null entity");
 	if (m_update)
 	{
@@ -106,6 +107,7 @@ void GroupComponent::addEntity(Entity* entity)
 
 void GroupComponent::removeEntity(Entity* entity)
 {
+	T_ASSERT_M (m_owner != nullptr, L"Must have an owner before removing entities.");
 	T_ASSERT_M (entity, L"Null entity");
 	if (m_update)
 	{
