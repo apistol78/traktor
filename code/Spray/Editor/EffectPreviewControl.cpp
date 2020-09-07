@@ -48,11 +48,12 @@
 #include "Ui/Menu.h"
 #include "Ui/MenuItem.h"
 #include "Weather/WeatherRenderer.h"
+#include "World/Entity.h"
 #include "World/EntityRenderer.h"
 #include "World/IWorldRenderer.h"
 #include "World/WorldEntityRenderers.h"
 #include "World/WorldRenderSettings.h"
-#include "World/Entity/GroupEntity.h"
+#include "World/Entity/GroupComponent.h"
 #include "World/Entity/GroupRenderer.h"
 #include "World/Entity/LightRenderer.h"
 #include "World/Entity/ProbeRenderer.h"
@@ -468,14 +469,17 @@ void EffectPreviewControl::eventPaint(ui::PaintEvent* event)
 	m_sceneInstance->updateEntity(update);
 
 	// Build a root entity by gathering entities from containers.
-	world::GroupEntity rootEntity;
+	world::GroupComponent rootGroup;
 	// m_context->getEntityEventManager()->gather([&](world::Entity* entity) { rootEntity.addEntity(entity); });
-	rootEntity.addEntity(m_sceneInstance->getRootEntity());
+	rootGroup.addEntity(m_sceneInstance->getRootEntity());
 	if (m_effectEntity)
 	{
 		m_effectEntity->update(update);
-		rootEntity.addEntity(m_effectEntity);
+		rootGroup.addEntity(m_effectEntity);
 	}
+
+	world::Entity rootEntity;
+	rootEntity.setComponent(&rootGroup);
 
 	// Setup world render passes.
 	const world::WorldRenderSettings* worldRenderSettings = m_sceneInstance->getWorldRenderSettings();

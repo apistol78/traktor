@@ -26,6 +26,7 @@ ProbeComponent::ProbeComponent(
 
 void ProbeComponent::destroy()
 {
+	m_owner = nullptr;
 }
 
 void ProbeComponent::setOwner(Entity* owner)

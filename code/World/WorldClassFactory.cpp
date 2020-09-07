@@ -24,7 +24,6 @@
 #include "World/Entity/FacadeComponent.h"
 #include "World/Entity/FacadeComponentData.h"
 #include "World/Entity/GroupComponent.h"
-#include "World/Entity/GroupEntity.h"
 #include "World/Entity/LightComponent.h"
 #include "World/Entity/LightComponentData.h"
 #include "World/Entity/ScriptComponent.h"
@@ -107,18 +106,6 @@ RefArray< Entity > GroupComponent_getEntitiesOf(GroupComponent* self, const Type
 }
 
 Ref< Entity > GroupComponent_getFirstEntityOf(GroupComponent* self, const TypeInfo& entityType)
-{
-	return self->getFirstEntityOf(entityType);
-}
-
-RefArray< Entity > GroupEntity_getEntitiesOf(GroupEntity* self, const TypeInfo& entityType)
-{
-	RefArray< Entity > entities;
-	self->getEntitiesOf(entityType, entities);
-	return entities;
-}
-
-Ref< Entity > GroupEntity_getFirstEntityOf(GroupEntity* self, const TypeInfo& entityType)
 {
 	return self->getFirstEntityOf(entityType);
 }
@@ -240,17 +227,6 @@ void WorldClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classGroupComponent->addMethod("getEntitiesOf", &GroupComponent_getEntitiesOf);
 	classGroupComponent->addMethod("getFirstEntityOf", &GroupComponent_getFirstEntityOf);
 	registrar->registerClass(classGroupComponent);
-
-	auto classGroupEntity = new AutoRuntimeClass< GroupEntity >();
-	classGroupEntity->addConstructor();
-	classGroupEntity->addConstructor< const Transform& >();
-	classGroupEntity->addProperty("entities", &GroupEntity::getEntities);
-	classGroupEntity->addMethod("addEntity", &GroupEntity::addEntity);
-	classGroupEntity->addMethod("removeEntity", &GroupEntity::removeEntity);
-	classGroupEntity->addMethod("removeAllEntities", &GroupEntity::removeAllEntities);
-	classGroupEntity->addMethod("getEntitiesOf", &GroupEntity_getEntitiesOf);
-	classGroupEntity->addMethod("getFirstEntityOf", &GroupEntity_getFirstEntityOf);
-	registrar->registerClass(classGroupEntity);
 
 	auto classIEntityComponentData = new AutoRuntimeClass< IEntityComponentData >();
 	registrar->registerClass(classIEntityComponentData);

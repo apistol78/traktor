@@ -44,7 +44,6 @@ class Scene;
 
 class Entity;
 class EntityData;
-class GroupEntity;
 class EntitySchema;
 class IWorldRenderer;
 
@@ -53,7 +52,7 @@ class IWorldRenderer;
 	namespace runtime
 	{
 
-/*! \brief
+/*! World stage layer.
  * \ingroup Runtime
  */
 class T_DLLCLASS WorldLayer
@@ -161,19 +160,19 @@ private:
 	resource::Proxy< scene::Scene > m_scene;
 	Ref< world::IWorldRenderer > m_worldRenderer;
 	world::WorldRenderView m_worldRenderView;
-	Ref< world::GroupEntity > m_rootGroup;
-	Ref< world::GroupEntity > m_renderGroup;
-	Ref< world::GroupEntity > m_dynamicEntities;
+	Ref< world::Entity > m_rootGroup;
+	Ref< world::Entity > m_renderGroup;
+	Ref< world::Entity > m_dynamicEntities;
 	Ref< const world::Entity > m_cameraEntity;
 	Ref< const world::Entity > m_listenerEntity;
 	IntervalTransform m_cameraTransform;
 	Transform m_cameraOffset;
-	float m_alternateTime;
-	float m_deltaTime;
-	float m_controllerTime;
-	float m_fieldOfView;
-	float m_feedbackScale;
-	bool m_controllerEnable;
+	float m_alternateTime = 0.0f;
+	float m_deltaTime = 0.0f;
+	float m_controllerTime = -1.0f;
+	float m_fieldOfView = 70.0f;
+	float m_feedbackScale = 1.0f;
+	bool m_controllerEnable = true;
 };
 
 	}

@@ -12,6 +12,7 @@
 #include "Scene/Editor/ScenePipeline.h"
 #include "Scene/Editor/SceneAsset.h"
 #include "World/WorldRenderSettings.h"
+#include "World/Entity/GroupComponentData.h"
 #include "World/Editor/LayerEntityData.h"
 
 namespace traktor
@@ -19,7 +20,7 @@ namespace traktor
 	namespace scene
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.scene.ScenePipeline", 12, ScenePipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.scene.ScenePipeline", 13, ScenePipeline, editor::IPipeline)
 
 ScenePipeline::ScenePipeline()
 :	m_targetEditor(false)
@@ -144,7 +145,7 @@ bool ScenePipeline::buildOutput(
 	}
 
 	// Build each layer of entity data; merge into a single output group.
-	Ref< world::GroupEntityData > groupEntityData = new world::GroupEntityData();
+	Ref< world::GroupComponentData > groupComponentData = new world::GroupComponentData();
 	for (const auto& layer : sceneAsset->getLayers())
 	{
 		if (!layer)
@@ -157,12 +158,15 @@ bool ScenePipeline::buildOutput(
 			{
 				Ref< world::EntityData > outputEntityData = checked_type_cast< world::EntityData*, true >(pipelineBuilder->buildOutput(sourceInstance, assetEntityData));
 				if (outputEntityData)
-					groupEntityData->addEntityData(outputEntityData);
+					groupComponentData->addEntityData(outputEntityData);
 			}
 		}
 		else
 			log::info << L"Layer \"" << layer->getName() << L"\" skipped." << Endl;
 	}
+
+	Ref< world::EntityData > groupEntityData = new world::EntityData();
+	groupEntityData->setComponent(groupComponentData);
 
 	// Build controller data.
 	Ref< ISceneControllerData > controllerData = checked_type_cast< ISceneControllerData*, true >(pipelineBuilder->buildOutput(sourceInstance, sceneAsset->getControllerData()));
