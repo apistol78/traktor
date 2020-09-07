@@ -11,7 +11,7 @@ class PropertyGroup;
 	namespace spray
 	{
 
-class EffectEntityRenderer;
+class EffectRenderer;
 class FeedbackManager;
 
 	}
@@ -76,7 +76,7 @@ private:
 	Ref< world::EntityEventManager > m_eventManager;
 	Ref< IRenderServer > m_renderServer;
 	Ref< IResourceServer > m_resourceServer;
-	Ref< spray::EffectEntityRenderer > m_effectEntityRenderer;
+	Ref< spray::EffectRenderer > m_effectEntityRenderer;
 	Ref< spray::FeedbackManager > m_feedbackManager;
 	Ref< terrain::EntityRenderer > m_terrainEntityRenderer;
 	const TypeInfo* m_worldType;
