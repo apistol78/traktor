@@ -30,9 +30,17 @@ Ref< model::Model > SplineEntityReplicator::createModel(
 	auto splineEntityData = mandatory_non_null_type_cast< const SplineEntityData* >(source);
 	TransformPath path;
 
+	// Get group component.
+	auto group = splineEntityData->getComponent< world::GroupComponentData >();
+	if (!group)
+	{
+		log::error << L"Invalid spline; no control points found." << Endl;
+		return nullptr;	
+	}	
+
 	// Count number of control points as we need to estimate fraction of each.
 	int32_t controlPointCount = 0;
-	for (auto entityData : splineEntityData->getEntityData())
+	for (auto entityData : group->getEntityData())
 	{
 		for (auto componentData : entityData->getComponents())
 		{
@@ -48,7 +56,7 @@ Ref< model::Model > SplineEntityReplicator::createModel(
 
 	// Create transformation path.
 	int32_t controlPointIndex = 0;
-	for (auto entityData : splineEntityData->getEntityData())
+	for (auto entityData : group->getEntityData())
 	{
 		auto controlPointData = entityData->getComponent< ControlPointComponentData >();
 		if (!controlPointData)

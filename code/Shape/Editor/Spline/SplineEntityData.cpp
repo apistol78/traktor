@@ -16,7 +16,7 @@ const resource::Id< physics::CollisionSpecification > c_interactableCollision(Gu
 
 		}
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.shape.SplineEntityData", 1, SplineEntityData, world::GroupEntityData)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.shape.SplineEntityData", 2, SplineEntityData, world::EntityData)
 
 SplineEntityData::SplineEntityData()
 {
@@ -47,13 +47,12 @@ const std::set< resource::Id< physics::CollisionSpecification > >& SplineEntityD
 
 void SplineEntityData::serialize(ISerializer& s)
 {
-	world::GroupEntityData::serialize(s);
+	T_FATAL_ASSERT(s.getVersion() >= 2);
 
-	if (s.getVersion< SplineEntityData >() >= 1)
-	{
-		s >> MemberStlSet< resource::Id< physics::CollisionSpecification >, resource::Member< physics::CollisionSpecification > >(L"collisionGroup", m_collisionGroup);
-		s >> MemberStlSet< resource::Id< physics::CollisionSpecification >, resource::Member< physics::CollisionSpecification > >(L"collisionMask", m_collisionMask);
-	}
+	world::EntityData::serialize(s);
+
+	s >> MemberStlSet< resource::Id< physics::CollisionSpecification >, resource::Member< physics::CollisionSpecification > >(L"collisionGroup", m_collisionGroup);
+	s >> MemberStlSet< resource::Id< physics::CollisionSpecification >, resource::Member< physics::CollisionSpecification > >(L"collisionMask", m_collisionMask);
 }
 
 	}

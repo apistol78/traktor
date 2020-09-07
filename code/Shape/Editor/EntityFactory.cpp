@@ -83,11 +83,14 @@ Ref< world::Entity > EntityFactory::createEntity(const world::IEntityBuilder* bu
 
 		entity->setTransform(entityData.getTransform());
 
-		for (auto childEntityData : splineEntityData->getEntityData())
+		// Instantiate all components.
+		RefArray< world::IEntityComponent > components;
+		for (auto componentData : entityData.getComponents())
 		{
-			Ref< world::Entity > childEntity = builder->create< world::Entity >(childEntityData);
-			if (childEntity)
-				entity->addEntity(childEntity);
+			Ref< world::IEntityComponent > component = builder->create(componentData);
+			if (!component)
+				continue;
+			entity->setComponent(component);
 		}
 
 		return entity;

@@ -35,7 +35,7 @@ struct Vertex
 
         }
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.shape.SplineEntity", SplineEntity, world::GroupEntity)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.shape.SplineEntity", SplineEntity, world::Entity)
 
 SplineEntity::SplineEntity(
 	const SplineEntityData* data,
@@ -55,11 +55,16 @@ SplineEntity::SplineEntity(
 
 void SplineEntity::update(const world::UpdateParams& update)
 {
-	world::GroupEntity::update(update);
+	world::Entity::update(update);
+
+	// Fetch group component; contain all control point entities.
+	auto group = getComponent< world::GroupComponent >();
+	if (!group)
+		return;
 
 	// Get control points.
 	RefArray< ControlPointComponent > controlPoints;
-	for (auto entity : getEntities())
+	for (auto entity : group->getEntities())
 	{
 		auto controlPoint = entity->getComponent< ControlPointComponent >();
 		if (controlPoint)

@@ -2,7 +2,7 @@
 
 #include <set>
 #include "Resource/Id.h"
-#include "World/Entity/GroupEntityData.h"
+#include "World/EntityData.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -27,7 +27,7 @@ class CollisionSpecification;
 /*!
  * \ingroup Shape
  */
-class T_DLLCLASS SplineEntityData : public world::GroupEntityData
+class T_DLLCLASS SplineEntityData : public world::EntityData
 {
 	T_RTTI_CLASS;
 
