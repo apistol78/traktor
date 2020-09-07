@@ -74,7 +74,7 @@ Ref< Entity > EntityBuilderWithSchema::create(const EntityData* entityData) cons
 		scopeTop.push_back(std::make_pair(entityData->getName(), entity));
 	}
 	else
-		m_entitySchema->insertEntity(0, entityData->getName(), entity);
+		m_entitySchema->insertEntity(nullptr, entityData->getName(), entity);
 
 	if (m_outEntityProducts)
 		(*m_outEntityProducts)[entityData] = entity;
@@ -84,12 +84,20 @@ Ref< Entity > EntityBuilderWithSchema::create(const EntityData* entityData) cons
 
 Ref< IEntityEvent > EntityBuilderWithSchema::create(const IEntityEventData* entityEventData) const
 {
-	return m_entityBuilder->create(entityEventData);
+	Ref< const IEntityFactory > entityFactory = m_entityBuilder->getFactory(entityEventData);
+	if (entityFactory)
+		return entityFactory->createEntityEvent(this, *entityEventData);
+	else
+		return nullptr;
 }
 
 Ref< IEntityComponent > EntityBuilderWithSchema::create(const IEntityComponentData* entityComponentData) const
 {
-	return m_entityBuilder->create(entityComponentData);
+	Ref< const IEntityFactory > entityFactory = m_entityBuilder->getFactory(entityComponentData);
+	if (entityFactory)
+		return entityFactory->createEntityComponent(this, *entityComponentData);
+	else
+		return nullptr;
 }
 
 const IEntityBuilder* EntityBuilderWithSchema::getCompositeEntityBuilder() const

@@ -35,7 +35,6 @@
 #include "Ui/FileDialog.h"
 #include "Ui/MiniButton.h"
 #include "World/EntityData.h"
-#include "World/Entity/GroupEntityData.h"
 #include "World/Entity/ScriptComponentData.h"
 
 namespace traktor

@@ -1,5 +1,6 @@
 #include "World/IEntityBuilder.h"
-#include "World/Entity/GroupEntity.h"
+#include "World/Entity.h"
+#include "World/Entity/GroupComponent.h"
 #include "Shape/Editor/Prefab/PrefabEntityData.h"
 #include "Shape/Editor/Prefab/PrefabEntityFactory.h"
 
@@ -29,14 +30,16 @@ Ref< world::Entity > PrefabEntityFactory::createEntity(const world::IEntityBuild
 {
 	const PrefabEntityData* prefabEntityData = checked_type_cast< const PrefabEntityData* >(&entityData);
 
-	Ref< world::GroupEntity > batchEntity = new world::GroupEntity(prefabEntityData->getTransform());
+	Ref< world::GroupComponent > batchGroup = new world::GroupComponent();
 	for (auto childEntityData : prefabEntityData->getEntityData())
 	{
 		Ref< world::Entity > childEntity = builder->create(childEntityData);
 		if (childEntity)
-			batchEntity->addEntity(childEntity);
+			batchGroup->addEntity(childEntity);
 	}
 
+	Ref< world::Entity > batchEntity = new world::Entity(prefabEntityData->getTransform());
+	batchEntity->setComponent(batchGroup);
 	return batchEntity;
 }
 

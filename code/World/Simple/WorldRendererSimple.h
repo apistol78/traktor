@@ -15,7 +15,6 @@ namespace traktor
 	namespace world
 	{
 
-class GroupEntity;
 class WorldEntityRenderers;
 
 /*! World renderer implementation.

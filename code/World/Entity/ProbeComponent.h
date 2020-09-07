@@ -51,6 +51,8 @@ public:
 
 	Transform getTransform() const;
 
+	bool hasOwner() const { return m_owner != nullptr; }
+
 	void setTexture(const resource::Proxy< render::ICubeTexture >& texture) { m_texture = texture; }
 
 	const resource::Proxy< render::ICubeTexture >& getTexture() const { return m_texture; }

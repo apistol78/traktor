@@ -178,6 +178,14 @@ void ProbeRenderer::setup(const WorldSetupContext& context)
 	}
 	T_ASSERT(m_capture);
 
+	// Ensure probe hasn't been destroyed; could happen since
+	// we ammortize probe capturing over a couple of frames.
+	if (!m_capture->hasOwner())
+	{
+		m_capture = nullptr;
+		return;
+	}
+
 	// Lazy create world renderer, need to access entity renderers.
 	if (!m_worldRenderer)
 	{

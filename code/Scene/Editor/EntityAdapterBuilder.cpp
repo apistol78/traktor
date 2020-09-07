@@ -10,7 +10,6 @@
 #include "World/EntityData.h"
 #include "World/IEntityFactory.h"
 #include "World/Editor/LayerEntityData.h"
-#include "World/Entity/GroupEntity.h"
 
 namespace traktor
 {

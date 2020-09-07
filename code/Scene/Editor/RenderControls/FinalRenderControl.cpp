@@ -28,12 +28,13 @@
 #include "Ui/Widget.h"
 #include "Ui/AspectLayout.h"
 #include "Ui/Itf/IWidget.h"
+#include "World/Entity.h"
 #include "World/EntityEventManager.h"
 #include "World/IWorldRenderer.h"
 #include "World/WorldEntityRenderers.h"
 #include "World/WorldRenderSettings.h"
 #include "World/WorldRenderView.h"
-#include "World/Entity/GroupEntity.h"
+#include "World/Entity/GroupComponent.h"
 
 namespace traktor
 {
@@ -413,9 +414,12 @@ void FinalRenderControl::eventPaint(ui::PaintEvent* event)
 	m_sceneInstance->updateEntity(update);
 
 	// Build a root entity by gathering entities from containers.
-	world::GroupEntity rootEntity;
-	m_context->getEntityEventManager()->gather([&](world::Entity* entity) { rootEntity.addEntity(entity); });
-	rootEntity.addEntity(m_sceneInstance->getRootEntity());
+	Ref< world::GroupComponent > rootGroup = new world::GroupComponent();
+	m_context->getEntityEventManager()->gather([&](world::Entity* entity) { rootGroup->addEntity(entity); });
+	rootGroup->addEntity(m_sceneInstance->getRootEntity());
+
+	Ref< world::Entity > rootEntity = new world::Entity();
+	rootEntity->setComponent(rootGroup);
 
 	// Setup world render passes.
 	const world::WorldRenderSettings* worldRenderSettings = m_sceneInstance->getWorldRenderSettings();
@@ -429,7 +433,7 @@ void FinalRenderControl::eventPaint(ui::PaintEvent* event)
 	);
 	m_worldRenderView.setTimes(scaledTime, deltaTime, 1.0f);
 	m_worldRenderView.setView(m_worldRenderView.getView(), view);
-	m_worldRenderer->setup(m_worldRenderView, &rootEntity, *m_renderGraph, 0);
+	m_worldRenderer->setup(m_worldRenderView, rootEntity, *m_renderGraph, 0);
 
 	// Validate render graph.
 	if (!m_renderGraph->validate())
@@ -446,6 +450,10 @@ void FinalRenderControl::eventPaint(ui::PaintEvent* event)
 		m_renderView->endFrame();
 		m_renderView->present();
 	}
+
+	// Need to clear all entities from our root group since when our root entity
+	// goes out of scope it's automatically destroyed.
+	rootGroup->removeAllEntities();
 
 	event->consume();
 }

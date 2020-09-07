@@ -24,7 +24,7 @@
 #include "World/EntitySchema.h"
 #include "World/EntityEventManager.h"
 #include "World/Entity/CameraComponent.h"
-#include "World/Entity/GroupEntity.h"
+#include "World/Entity/GroupComponent.h"
 
 namespace traktor
 {
@@ -50,15 +50,14 @@ WorldLayer::WorldLayer(
 :	Layer(stage, name, permitTransition)
 ,	m_environment(environment)
 ,	m_scene(scene)
-,	m_rootGroup(new world::GroupEntity())
-,	m_dynamicEntities(new world::GroupEntity())
-,	m_alternateTime(0.0f)
-,	m_deltaTime(0.0f)
-,	m_controllerTime(-1.0f)
-,	m_fieldOfView(70.0f)
-,	m_feedbackScale(1.0f)
-,	m_controllerEnable(true)
 {
+	// Create managment entities.
+	m_rootGroup = new world::Entity();
+	m_rootGroup->setComponent(new world::GroupComponent());
+
+	m_dynamicEntities = new world::Entity();
+	m_dynamicEntities->setComponent(new world::GroupComponent());
+
 	// Get initial field of view.
 	m_fieldOfView = m_environment->getSettings()->getProperty< float >(L"World.FieldOfView", 70.0f);
 
@@ -270,14 +269,15 @@ void WorldLayer::setup(const UpdateInfo& info, render::RenderGraph& renderGraph)
 	);
 
 	// Build a root entity by gathering entities from containers.
-	m_rootGroup->removeAllEntities();
+	auto group = m_rootGroup->getComponent< world::GroupComponent >();
+	group->removeAllEntities();
 
 	world::EntityEventManager* eventManager = m_environment->getWorld()->getEntityEventManager();
 	if (eventManager)
-		eventManager->gather([&](world::Entity* entity) { m_rootGroup->addEntity(entity); });
+		eventManager->gather([&](world::Entity* entity) { group->addEntity(entity); });
 
-	m_rootGroup->addEntity(m_scene->getRootEntity());
-	m_rootGroup->addEntity(m_dynamicEntities);
+	group->addEntity(m_scene->getRootEntity());
+	group->addEntity(m_dynamicEntities);
 
 	// Add render passes with world renderer.
 	m_worldRenderer->setup(
@@ -379,20 +379,20 @@ world::Entity* WorldLayer::getEntityOf(const TypeInfo& entityType, int32_t index
 void WorldLayer::addEntity(world::Entity* entity)
 {
 	if (m_dynamicEntities)
-		m_dynamicEntities->addEntity(entity);
+		m_dynamicEntities->getComponent< world::GroupComponent >()->addEntity(entity);
 }
 
 void WorldLayer::removeEntity(world::Entity* entity)
 {
 	if (m_dynamicEntities)
-		m_dynamicEntities->removeEntity(entity);
+		m_dynamicEntities->getComponent< world::GroupComponent >()->removeEntity(entity);
 }
 
 bool WorldLayer::isEntityAdded(const world::Entity* entity) const
 {
 	if (m_dynamicEntities)
 	{
-		const RefArray< world::Entity >& entities = m_dynamicEntities->getEntities();
+		const auto& entities = m_dynamicEntities->getComponent< world::GroupComponent >()->getEntities();
 		return std::find(entities.begin(), entities.end(), entity) != entities.end();
 	}
 	else

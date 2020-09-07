@@ -34,11 +34,12 @@
 #include "Scene/Editor/Events/PreModifyEvent.h"
 #include "Scene/Editor/Events/RedrawEvent.h"
 #include "Ui/Events/SelectionChangeEvent.h"
+#include "World/Entity.h"
 #include "World/EntityBuilder.h"
 #include "World/EntityBuilderWithSchema.h"
 #include "World/EntitySchema.h"
 #include "World/Editor/LayerEntityData.h"
-#include "World/Entity/GroupEntity.h"
+#include "World/Entity/GroupComponent.h"
 
 namespace traktor
 {
@@ -377,7 +378,9 @@ void SceneEditorContext::buildEntities()
 			editorProfile->createEntityFactories(this, entityFactories);
 
 		// Create root group entity as scene instances doesn't have a concept of layers.
-		Ref< world::GroupEntity > rootGroupEntity = new world::GroupEntity();
+		Ref< world::Entity > rootEntity = new world::Entity();
+		Ref< world::GroupComponent > rootGroup = new world::GroupComponent();
+		rootEntity->setComponent(rootGroup);
 
 		// Create entities from scene layers.
 		RefArray< world::LayerEntityData > layers = m_sceneAsset->getLayers();
@@ -403,7 +406,7 @@ void SceneEditorContext::buildEntities()
 			T_FATAL_ASSERT(m_layerEntityAdapters[i]->getEntity() == entity);
 			T_FATAL_ASSERT(m_layerEntityAdapters[i]->getParent() == nullptr);
 
-			rootGroupEntity->addEntity(entity);
+			rootGroup->addEntity(entity);
 
 			log::debug << L"Layer " << i << L", cache hit " << entityAdapterBuilder->getCacheHit() << L", miss " << entityAdapterBuilder->getCacheMiss() << Endl;
 		}
@@ -437,7 +440,7 @@ void SceneEditorContext::buildEntities()
 		m_scene = new Scene(
 			controller,
 			entitySchema,
-			rootGroupEntity,
+			rootEntity,
 			m_sceneAsset->getWorldRenderSettings(),
 			postProcessParams
 		);

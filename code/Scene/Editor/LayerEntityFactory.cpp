@@ -1,7 +1,8 @@
 #include "Scene/Editor/LayerEntityFactory.h"
+#include "World/Entity.h"
 #include "World/IEntityBuilder.h"
 #include "World/Editor/LayerEntityData.h"
-#include "World/Entity/GroupEntity.h"
+#include "World/Entity/GroupComponent.h"
 
 namespace traktor
 {
@@ -27,20 +28,20 @@ const TypeInfoSet LayerEntityFactory::getEntityComponentTypes() const
 
 Ref< world::Entity > LayerEntityFactory::createEntity(const world::IEntityBuilder* builder, const world::EntityData& entityData) const
 {
-	const world::LayerEntityData* layerData = checked_type_cast< const world::LayerEntityData*, false >(&entityData);
+	const world::LayerEntityData* layerData = mandatory_non_null_type_cast< const world::LayerEntityData* >(&entityData);
 	
-	Ref< world::GroupEntity > groupEntity = new world::GroupEntity(
-		layerData->getTransform()
-	);
+	Ref< world::Entity > entity = new world::Entity(layerData->getTransform());
+	Ref< world::GroupComponent > group = new world::GroupComponent();
+	entity->setComponent(group);
 
 	for (auto childEntityData : layerData->getEntityData())
 	{
 		Ref< world::Entity > childEntity = builder->create(childEntityData);
 		if (childEntity)
-			groupEntity->addEntity(childEntity);
+			group->addEntity(childEntity);
 	}
 
-	return groupEntity;
+	return entity;
 }
 
 Ref< world::IEntityEvent > LayerEntityFactory::createEntityEvent(const world::IEntityBuilder* builder, const world::IEntityEventData& entityEventData) const

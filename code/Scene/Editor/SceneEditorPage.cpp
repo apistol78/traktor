@@ -274,7 +274,6 @@ bool SceneEditorPage::create(ui::Container* parent)
 	m_entityMenuGroup->add(new ui::MenuItem(ui::Command(L"Scene.Editor.CreateExternal"), i18n::Text(L"SCENE_EDITOR_CREATE_EXTERNAL")));
 	m_entityMenuGroup->add(new ui::MenuItem(L"-"));
 	m_entityMenuGroup->add(new ui::MenuItem(ui::Command(L"Scene.Editor.AddEntity"), i18n::Text(L"SCENE_EDITOR_ADD_ENTITY")));
-	m_entityMenuGroup->add(new ui::MenuItem(ui::Command(L"Scene.Editor.AddGroupEntity"), i18n::Text(L"SCENE_EDITOR_ADD_GROUP_ENTITY")));
 	m_entityMenuGroup->add(new ui::MenuItem(ui::Command(L"Editor.Delete"), i18n::Text(L"SCENE_EDITOR_REMOVE_ENTITY")));
 
 	m_entityMenuExternal = new ui::Menu();
@@ -697,8 +696,6 @@ bool SceneEditorPage::handleCommand(const ui::Command& command)
 		result = resolveExternal();
 	else if (command == L"Scene.Editor.AddEntity")
 		result = addEntity(nullptr);
-	else if (command == L"Scene.Editor.AddGroupEntity")
-		result = addEntity(&type_of< world::GroupEntityData >());
 	else if (command == L"Scene.Editor.MoveToEntity")
 		result = moveToEntity();
 	else if (command == L"Scene.Editor.MoveUp")

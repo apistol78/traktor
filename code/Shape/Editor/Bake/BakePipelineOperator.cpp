@@ -18,7 +18,9 @@
 #include "Database/Instance.h"
 #include "Drawing/Image.h"
 #include "Drawing/PixelFormat.h"
+#include "Drawing/Filters/ConvolutionFilter.h"
 #include "Drawing/Filters/ScaleFilter.h"
+#include "Drawing/Filters/TransformFilter.h"
 #include "Editor/IPipelineBuilder.h"
 #include "Editor/IPipelineSettings.h"
 #include "Mesh/MeshComponentData.h"
@@ -159,10 +161,6 @@ void addSky(
 	TracerTask* tracerTask
 )
 {
-	const int32_t c_importanceCellSize = 16;
-	const int32_t c_minImportanceSamples = 1;
-	const int32_t c_maxImportanceSamples = 20;
-
 	const auto& textureId = skyComponentData->getTexture();
 	if (textureId.isNull())
 		return;
@@ -181,20 +179,47 @@ void addSky(
 
 	safeClose(file);
 
-	// Ensure source image is a multiple of cell size.
-	drawing::ScaleFilter scaleFilter(
-		alignUp(skyImage->getWidth(), c_importanceCellSize),
-		alignUp(skyImage->getHeight(), c_importanceCellSize),
-		drawing::ScaleFilter::MnAverage,
-		drawing::ScaleFilter::MgLinear
-	);
-	skyImage->apply(&scaleFilter);
+	// Measure max intensity.
+	Scalar maxIntensity = 0.0_simd;
+	for (int32_t y = 0; y < skyImage->getHeight(); ++y)
+	{
+		for (int32_t x = 0; x < skyImage->getWidth(); ++x)
+		{
+			Color4f cl;
+			skyImage->getPixelUnsafe(x, y, cl);
+			Scalar intensity = dot3(cl, Vector4(1.0f, 1.0f, 1.0f, 0.0f));
+			maxIntensity = max(maxIntensity, intensity);
+		}
+	}
+	if (maxIntensity <= 0.0_simd)
+		return;
+
+	// Ensure image is of reasonable size, only used for low frequency data so size doesn't matter much.
+	int32_t dim = min(skyImage->getWidth(), skyImage->getHeight());
+	if (dim > 256)
+	{
+		drawing::ScaleFilter scaleFilter(
+			(skyImage->getWidth() * 256) / dim,
+			(skyImage->getHeight() * 256) / dim,
+			drawing::ScaleFilter::MnAverage,
+			drawing::ScaleFilter::MgLinear
+		);
+		skyImage->apply(&scaleFilter);
+	}
 
 	// Convert cube map to equirectangular image.
 	Ref< drawing::Image > radiance = render::CubeMap::createFromImage(skyImage)->createEquirectangular();
 	T_FATAL_ASSERT(radiance != nullptr);
 
-	// Clamp intensity in radiance image, to reduce chance of sample "speeks".
+	// Discard alpha channels as they are not used.
+	radiance->clearAlpha(1.0);
+
+	// Blur image slightly to reduce sampling speeks, do this in rectangular image to prevent cube leaks.
+	Ref< drawing::ConvolutionFilter > blurFilter = drawing::ConvolutionFilter::createGaussianBlur(4);
+	radiance->apply(blurFilter);
+
+	// Renormalize intensity of probe to ensure overall energy level is preserved.
+	Scalar maxIntensity2 = 0.0_simd;
 	for (int32_t y = 0; y < radiance->getHeight(); ++y)
 	{
 		for (int32_t x = 0; x < radiance->getWidth(); ++x)
@@ -202,16 +227,15 @@ void addSky(
 			Color4f cl;
 			radiance->getPixelUnsafe(x, y, cl);
 			Scalar intensity = dot3(cl, Vector4(1.0f, 1.0f, 1.0f, 0.0f));
-			if (intensity > 200.0f)
-			{
-				cl *= Scalar(200.0f / intensity);
-				radiance->setPixelUnsafe(x, y, cl);
-			}
+			maxIntensity2 = max(maxIntensity2, intensity);
 		}
 	}
+	Scalar normIntensity = maxIntensity / maxIntensity2;
+	drawing::TransformFilter normFilter(Color4f(normIntensity, normIntensity, normIntensity, 1.0f), Color4f(0.0f, 0.0f, 0.0f, 0.0f));
+	radiance->apply(&normFilter);
 
-	// Discard alpha channels as they are not used.
-	radiance->clearAlpha(1.0);
+	// Save debug copy of sky IBL radiance probe.
+	radiance->save(L"data/Temp/Bake/SkyRadiance.png");
 
 	// Create tracer environment.
 	tracerTask->addTracerEnvironment(new TracerEnvironment(new IblProbe(radiance)));
