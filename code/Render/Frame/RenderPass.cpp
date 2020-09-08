@@ -18,7 +18,7 @@ void RenderPass::setName(const std::wstring& name)
 	m_name = name;
 }
 
-void RenderPass::addInput(handle_t targetSetId, bool useDepth)
+void RenderPass::addInput(handle_t targetSetId)
 {
 	// Just ignore invalid target set id; convenient when setting up passes to be able to add null inputs.
 	if (targetSetId == 0)
@@ -26,19 +26,22 @@ void RenderPass::addInput(handle_t targetSetId, bool useDepth)
 
 	auto& input = m_inputs.push_back();
 	input.targetSetId = targetSetId;
-	input.useDepth = useDepth;
 }
 
-void RenderPass::setOutput(handle_t targetSetId)
+void RenderPass::setOutput(handle_t targetSetId, uint32_t load, uint32_t store)
 {
 	m_output.targetSetId = targetSetId;
 	m_output.clear.mask = 0;
+	m_output.load = load;
+	m_output.store = store;
 }
 
-void RenderPass::setOutput(handle_t targetSetId, const Clear& clear)
+void RenderPass::setOutput(handle_t targetSetId, const Clear& clear, uint32_t load, uint32_t store)
 {
 	m_output.targetSetId = targetSetId;
 	m_output.clear = clear;
+	m_output.load = load;
+	m_output.store = store;
 }
 
 void RenderPass::addBuild(const fn_build_t& build)

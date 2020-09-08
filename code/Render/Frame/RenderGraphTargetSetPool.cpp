@@ -15,6 +15,7 @@ RenderGraphTargetSetPool::RenderGraphTargetSetPool(IRenderSystem* renderSystem)
 }
 
 IRenderTargetSet* RenderGraphTargetSetPool::acquire(
+	const wchar_t* name,
 	const RenderGraphTargetSetDesc& targetSetDesc,
 	IRenderTargetSet* sharedDepthStencilTargetSet,
 	int32_t referenceWidth,
@@ -101,8 +102,11 @@ IRenderTargetSet* RenderGraphTargetSetPool::acquire(
 	if (!pool->free.empty())
 	{
 		Ref< IRenderTargetSet > targetSet = pool->free.back();
+
 		pool->free.pop_back();
 		pool->acquired.push_back(targetSet);
+
+		targetSet->setDebugName(name);
 		return targetSet;
 	}
 	else
@@ -119,6 +123,7 @@ IRenderTargetSet* RenderGraphTargetSetPool::acquire(
 		if (targetSet)
 			pool->acquired.push_back(targetSet);
 
+		targetSet->setDebugName(name);
 		return targetSet;
 	}
 }

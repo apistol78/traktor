@@ -506,7 +506,7 @@ void OrthogonalRenderControl::eventPaint(ui::PaintEvent* event)
 
 	// Draw debug wires.
 	Ref< render::RenderPass > rp = new render::RenderPass(L"Debug");
-	rp->setOutput(0);
+	rp->setOutput(0, render::TfAll, render::TfAll);
 	rp->addBuild([&](const render::RenderGraph&, render::RenderContext* renderContext) {
 
 		// Draw wire guides.

@@ -216,19 +216,19 @@ void AccDisplayRenderer::setup(render::RenderGraph* renderGraph)
 			cl.colors[0] = Color4f(0.8f, 0.8f, 0.8f, 0.0);
 			cl.depth = 1.0f;
 			cl.stencil = 0;
-			m_renderPassOutput->setOutput(0, cl);
+			m_renderPassOutput->setOutput(0, cl, render::TfNone, render::TfColor | render::TfDepth);
 		}
 		else
 		{
 			render::Clear cl;
 			cl.mask = render::CfStencil;
 			cl.stencil = 0;
-			m_renderPassOutput->setOutput(0, cl);
+			m_renderPassOutput->setOutput(0, cl, render::TfColor | render::TfDepth, render::TfColor | render::TfDepth);
 		}
 		m_renderGraph->addPass(m_renderPassOutput);
 
 		m_renderPassGlyph = new render::RenderPass(L"Spark glyphs");
-		m_renderPassGlyph->setOutput(glyphsTargetSetId);
+		m_renderPassGlyph->setOutput(glyphsTargetSetId, render::TfColor, render::TfColor);
 		m_renderGraph->addPass(m_renderPassGlyph);
 	}
 	else

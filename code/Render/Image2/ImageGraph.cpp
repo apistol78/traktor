@@ -43,7 +43,7 @@ void ImageGraph::addPasses(RenderGraph& renderGraph, RenderPass* pass, const Ima
 		if (m_targetSets[i]->getPersistentHandle() != 0)
 		{
 			targetSetIds[i] = renderGraph.addPersistentTargetSet(
-				L"Image graph (persistent)",
+				m_targetSets[i]->getName().c_str(),
 				m_targetSets[i]->getPersistentHandle(),
 				m_targetSets[i]->getTargetSetDesc()
 			);
@@ -51,7 +51,7 @@ void ImageGraph::addPasses(RenderGraph& renderGraph, RenderPass* pass, const Ima
 		else
 		{
 			targetSetIds[i] = renderGraph.addTransientTargetSet(
-				L"Image graph (transient)",
+				m_targetSets[i]->getName().c_str(),
 				m_targetSets[i]->getTargetSetDesc()
 			);
 		}

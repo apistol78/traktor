@@ -57,6 +57,8 @@ public:
 
 	virtual bool read(int32_t index, void* buffer) const override final;
 
+	virtual void setDebugName(const wchar_t* name) override final;
+
 	bool prepareAsTarget(
 		VkCommandBuffer commandBuffer,
 		int32_t colorIndex,

@@ -80,11 +80,7 @@ handle_t RenderGraph::addTransientTargetSet(
 	target.sharedDepthStencilTargetSet = sharedDepthStencilTargetSet;
 	target.sizeReferenceTargetSetId = sizeReferenceTargetSetId;
 	target.referenceCount = 0;
-	target.storeDepth = false;
 	target.external = false;
-
-	if (sharedDepthStencilTargetSet != nullptr || targetSetDesc.createDepthStencil || targetSetDesc.usingPrimaryDepthStencil)
-		target.storeDepth = true;
 
 	return targetSetId;
 }
@@ -106,11 +102,7 @@ handle_t RenderGraph::addPersistentTargetSet(
 	target.sharedDepthStencilTargetSet = sharedDepthStencilTargetSet;
 	target.sizeReferenceTargetSetId = sizeReferenceTargetSetId;
 	target.referenceCount = 0;
-	target.storeDepth = false;
 	target.external = false;
-
-	if (sharedDepthStencilTargetSet != nullptr || targetSetDesc.createDepthStencil || targetSetDesc.usingPrimaryDepthStencil)
-		target.storeDepth = true;
 
 	return targetSetId;
 }
@@ -129,7 +121,6 @@ handle_t RenderGraph::addExternalTargetSet(const wchar_t* const name, IRenderTar
 	target.rts = targetSet;
 	target.sizeReferenceTargetSetId = 0;
 	target.referenceCount = 0;
-	target.storeDepth = true;
 	target.external = true;
 
 	return targetSetId;
@@ -205,8 +196,7 @@ bool RenderGraph::validate()
 	for (auto index : m_order)
 	{
 		const auto pass = m_passes[index];
-		auto inputs = pass->getInputs();
-		for (const auto& input : inputs)
+		for (const auto& input : pass->getInputs())
 		{
 			if (input.targetSetId == 0)
 				continue;
@@ -217,7 +207,6 @@ bool RenderGraph::validate()
 
 			auto& target = it->second;
 			target.referenceCount++;
-			target.storeDepth |= input.useDepth;
 		}
 	}
 
@@ -267,16 +256,16 @@ bool RenderGraph::build(RenderContext* renderContext, int32_t width, int32_t hei
 				auto tb = renderContext->alloc< BeginPassRenderBlock >(pass->getName());
 				tb->renderTargetSet = target.rts;
 				tb->clear = output.clear;
-				tb->load = TfColor | TfDepth;
-				tb->store = TfColor | (target.storeDepth ? TfDepth : 0);
+				tb->load = output.load;
+				tb->store = output.store;
 				renderContext->enqueue(tb);
 			}
 			else
 			{
 				auto tb = renderContext->alloc< BeginPassRenderBlock >(pass->getName());
 				tb->clear = output.clear;
-				tb->load = TfColor | TfDepth;
-				tb->store = TfColor | TfDepth;
+				tb->load = output.load;
+				tb->store = output.store;
 				renderContext->enqueue(tb);			
 			}
 		}
@@ -354,6 +343,7 @@ bool RenderGraph::acquire(int32_t width, int32_t height, Target& outTarget)
 	}
 
 	outTarget.rts = m_pool->acquire(
+		outTarget.name,
 		outTarget.targetSetDesc,
 		outTarget.sharedDepthStencilTargetSet,
 		width,

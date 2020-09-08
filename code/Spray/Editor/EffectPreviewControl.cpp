@@ -501,7 +501,7 @@ void EffectPreviewControl::eventPaint(ui::PaintEvent* event)
 
 	// Draw debug wires.
 	Ref< render::RenderPass > rp = new render::RenderPass(L"Debug wire");
-	rp->setOutput(0);
+	rp->setOutput(0, render::TfAll, render::TfAll);
 	rp->addBuild([&](const render::RenderGraph&, render::RenderContext* renderContext) {
 		m_primitiveRenderer->begin(0, m_worldRenderView.getProjection());
 		m_primitiveRenderer->pushView(view);

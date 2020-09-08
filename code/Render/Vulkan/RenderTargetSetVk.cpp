@@ -295,6 +295,15 @@ bool RenderTargetSetVk::read(int32_t index, void* buffer) const
 	return true;
 }
 
+void RenderTargetSetVk::setDebugName(const wchar_t* name)
+{
+	for (auto colorTarget : m_colorTargets)
+		setObjectDebugName(m_logicalDevice, name, (uint64_t)colorTarget->getVkImage(), VK_OBJECT_TYPE_IMAGE);
+
+	if (m_depthTarget)
+		setObjectDebugName(m_logicalDevice, name, (uint64_t)m_depthTarget->getVkImage(), VK_OBJECT_TYPE_IMAGE);
+}
+
 bool RenderTargetSetVk::prepareAsTarget(
 	VkCommandBuffer commandBuffer,
 	int32_t colorIndex,

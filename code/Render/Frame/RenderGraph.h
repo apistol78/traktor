@@ -45,25 +45,14 @@ class T_DLLCLASS RenderGraph : public Object
 public:
 	struct Target
 	{
-		const wchar_t* name;
-		handle_t persistentHandle;
+		const wchar_t* name = nullptr;
+		handle_t persistentHandle = 0;
 		RenderGraphTargetSetDesc targetSetDesc;
 		Ref< IRenderTargetSet > sharedDepthStencilTargetSet;
 		Ref< IRenderTargetSet > rts;
-		handle_t sizeReferenceTargetSetId;
-		int32_t referenceCount;
-		bool storeDepth;
-		bool external;
-
-		Target()
-		:	name(nullptr)
-		,	persistentHandle(0)
-		,	sizeReferenceTargetSetId(0)
-		,	referenceCount(0)
-		,	storeDepth(false)
-		,	external(false)
-		{
-		}
+		handle_t sizeReferenceTargetSetId = 0;
+		int32_t referenceCount = 0;
+		bool external = false;
 	};
 
 	/*! */

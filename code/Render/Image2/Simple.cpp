@@ -34,8 +34,8 @@ void Simple::setup(const ImageGraph* /*imageGraph*/, const ImageGraphContext& cx
 	for (const auto& source : m_sources)
 	{
 		auto targetSetId = cx.findTextureTargetSetId(source.textureId);
-		if (targetSetId.first != 0)
-			pass.addInput(targetSetId.first, targetSetId.second);
+		if (targetSetId != 0)
+			pass.addInput(targetSetId);
 	}
 }
 

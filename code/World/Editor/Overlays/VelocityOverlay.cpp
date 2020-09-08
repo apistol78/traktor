@@ -37,7 +37,7 @@ void VelocityOverlay::setup(render::RenderGraph& renderGraph, render::ScreenRend
 		return;
 
 	Ref< render::RenderPass > rp = new render::RenderPass(L"Velocity overlay");
-	rp->setOutput(0);
+	rp->setOutput(0, render::TfColor, render::TfColor);
 	rp->addInput(velocityId);
 	rp->addBuild([=](const render::RenderGraph& renderGraph, render::RenderContext* renderContext) {
 		auto velocityTargetSet = renderGraph.getTargetSet(velocityId);
