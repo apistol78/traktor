@@ -140,6 +140,7 @@ private:
 	Ref< RenderTargetSetOpenGL > m_activeTarget;
 	bool m_cursorVisible;
 	int32_t m_waitVBlanks;
+	uint32_t m_passCount;
 	uint32_t m_drawCalls;
 	uint32_t m_primitiveCount;
 
