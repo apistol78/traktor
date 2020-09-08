@@ -54,6 +54,7 @@ RenderViewOpenGL::RenderViewOpenGL(
 ,	m_resourceContext(resourceContext)
 ,	m_cursorVisible(true)
 ,	m_waitVBlanks(0)
+,	m_passCount(0)
 ,	m_drawCalls(0)
 ,	m_primitiveCount(0)
 {
@@ -399,6 +400,7 @@ bool RenderViewOpenGL::beginFrame()
 	T_OGL_SAFE(glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS));
 	T_OGL_SAFE(glBindFramebuffer(GL_FRAMEBUFFER, 0));
 
+	m_passCount = 0;
 	m_drawCalls = 0;
 	m_primitiveCount = 0;
 
@@ -466,6 +468,7 @@ bool RenderViewOpenGL::beginPass(IRenderTargetSet* renderTargetSet, const Clear*
 		}
 	}
 
+	m_passCount++;
 	return true;
 }
 
@@ -508,6 +511,7 @@ bool RenderViewOpenGL::beginPass(IRenderTargetSet* renderTargetSet, int32_t rend
 		}
 	}
 
+	m_passCount++;
 	return true;
 }
 
@@ -846,6 +850,7 @@ void RenderViewOpenGL::popMarker()
 
 void RenderViewOpenGL::getStatistics(RenderViewStatistics& outStatistics) const
 {
+	outStatistics.passCount = m_passCount;
 	outStatistics.drawCalls = m_drawCalls;
 	outStatistics.primitiveCount = m_primitiveCount;
 }
