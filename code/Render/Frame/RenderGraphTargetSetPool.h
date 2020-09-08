@@ -22,6 +22,7 @@ public:
 
 	/*! Acquire target from pool.
 	 *
+	 * \param name Name of target, useful for debugging etc.
 	 * \param targetSetDesc Description of target required.
 	 * \param sharedDepthStencilTargetSet Optional shared depth/stencil target set.
 	 * \param referenceWidth Reference width of target required.
@@ -29,6 +30,7 @@ public:
 	 * \param persistentHandle Persistent handle; used to track persistent targets in pool, 0 means not persistent target.
 	 */
 	IRenderTargetSet* acquire(
+		const wchar_t* name,
 		const RenderGraphTargetSetDesc& targetSetDesc,
 		IRenderTargetSet* sharedDepthStencilTargetSet,
 		int32_t referenceWidth,

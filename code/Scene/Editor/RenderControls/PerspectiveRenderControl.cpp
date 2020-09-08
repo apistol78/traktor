@@ -518,7 +518,7 @@ void PerspectiveRenderControl::eventPaint(ui::PaintEvent* event)
 	// Draw debug wires.
 	{
 		Ref< render::RenderPass > rp = new render::RenderPass(L"Debug wire");
-		rp->setOutput(0);
+		rp->setOutput(0, render::TfAll, render::TfAll);
 		rp->addBuild([&](const render::RenderGraph&, render::RenderContext* renderContext) {
 
 			// Render wire guides.

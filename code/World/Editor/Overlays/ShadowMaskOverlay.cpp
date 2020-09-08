@@ -37,7 +37,7 @@ void ShadowMaskOverlay::setup(render::RenderGraph& renderGraph, render::ScreenRe
 		return;
 
 	Ref< render::RenderPass > rp = new render::RenderPass(L"Shadow mask overlay");
-	rp->setOutput(0);
+	rp->setOutput(0, render::TfColor, render::TfColor);
 	rp->addInput(shadowMaskId);
 	rp->addBuild([=](const render::RenderGraph& renderGraph, render::RenderContext* renderContext) {
 		auto shadowMaskTargetSet = renderGraph.getTargetSet(shadowMaskId);

@@ -52,7 +52,7 @@ void WorldRendererSimple::setup(
 	cl.mask = render::CfColor | render::CfDepth;
 	cl.colors[0] = Color4f(0.0f, 0.0f, 0.0f, 0.0f);
 	cl.depth = 1.0f;
-	rp->setOutput(outputTargetSetId, cl);
+	rp->setOutput(outputTargetSetId, cl, render::TfNone, render::TfAll);
 
 	rp->addBuild(
 		[=](const render::RenderGraph& renderGraph, render::RenderContext* renderContext)

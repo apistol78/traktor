@@ -35,26 +35,15 @@ public:
 
 	struct Input
 	{
-		handle_t targetSetId;	//!< Resource name.
-		bool useDepth;			//!< If pass uses depth attachment of target set.
-
-		Input()
-		:	targetSetId(0)
-		,	useDepth(false)
-		{
-		}
+		handle_t targetSetId = 0;	//!< Resource name.
 	};
 
 	struct Output
 	{
-		handle_t targetSetId;	//!< Resource name, all set's color attachments are written to by pass.
-		Clear clear;			//!< Target clear value and mask.
-
-		Output()
-		:	targetSetId(0)
-		{
-			clear.mask = 0;
-		}
+		handle_t targetSetId = 0;	//!< Resource name, all set's color attachments are written to by pass.
+		Clear clear;				//!< Target clear value and mask.
+		uint32_t load = 0;
+		uint32_t store = 0;
 	};
 
 	explicit RenderPass(const std::wstring& name = L"Unnamed");
@@ -65,7 +54,7 @@ public:
 
 	//! \{
 
-	void addInput(handle_t targetSetId, bool useDepth = false);
+	void addInput(handle_t targetSetId);
 
 	const StaticVector< Input, 16 >& getInputs() const { return m_inputs; }
 
@@ -73,9 +62,9 @@ public:
 
 	//! \{
 
-	void setOutput(handle_t targetSetId);
+	void setOutput(handle_t targetSetId, uint32_t load, uint32_t store);
 
-	void setOutput(handle_t targetSetId, const Clear& clear);
+	void setOutput(handle_t targetSetId, const Clear& clear, uint32_t load, uint32_t store);
 
 	bool haveOutput() const { return m_output.targetSetId != ~0; }
 

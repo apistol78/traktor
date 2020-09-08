@@ -175,7 +175,7 @@ void TerrainSurfaceCache::setupBaseColor(
 		render::Clear clear;
 		clear.mask = render::CfColor;
 		clear.colors[0] = Color4f(0.0f, 0.0f, 0.0f, 0.0f);
-		rp->setOutput(baseTargetSetId, clear);
+		rp->setOutput(baseTargetSetId, clear, render::TfNone, render::TfColor);
 
 		rp->addBuild([=](const render::RenderGraph&, render::RenderContext* renderContext) {
 			const static Vector4 c_textureOffset(-1.0f, 1.0f, 2.0f, -2.0f);
@@ -305,7 +305,7 @@ void TerrainSurfaceCache::setupPatch(
 		clear.colors[1] = Color4f(0.5f, 0.5f, 1.0f, 0.0f);
 
 		Ref< render::RenderPass > updatePass = new render::RenderPass(L"Terrain surface update");
-		updatePass->setOutput(updateTargetSetId, clear);
+		updatePass->setOutput(updateTargetSetId, clear, render::TfNone, render::TfColor);
 		updatePass->addBuild([=](const render::RenderGraph& renderGraph, render::RenderContext* renderContext) {
 			render::Shader* shader = terrain->getSurfaceShader();
 			if (!shader)

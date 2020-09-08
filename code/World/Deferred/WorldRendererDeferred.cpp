@@ -665,7 +665,7 @@ render::handle_t WorldRendererDeferred::setupGBufferPass(
 	clear.colors[3] = Color4f(0.0f, 0.0f, 0.0f, 0.0f);	// surface
 	clear.depth = 1.0f;	
 	clear.stencil = 0;
-	rp->setOutput(gbufferTargetSetId, clear);
+	rp->setOutput(gbufferTargetSetId, clear, render::TfNone, render::TfAll);
 
 	rp->addBuild(
 		[=](const render::RenderGraph& renderGraph, render::RenderContext* renderContext)
@@ -746,7 +746,7 @@ render::handle_t WorldRendererDeferred::setupVelocityPass(
 		m_motionBlurPrime->addPasses(renderGraph, rp, cx);
 	}
 
-	rp->setOutput(velocityTargetSetId);
+	rp->setOutput(velocityTargetSetId, render::TfDepth, render::TfColor | render::TfDepth);
 
 	rp->addBuild(
 		[=](const render::RenderGraph& renderGraph, render::RenderContext* renderContext)
@@ -826,7 +826,7 @@ render::handle_t WorldRendererDeferred::setupAmbientOcclusionPass(
 	render::Clear clear;
 	clear.mask = render::CfColor;
 	clear.colors[0] = Color4f(1.0f, 1.0f, 1.0f, 1.0f);
-	rp->setOutput(ambientOcclusionTargetSetId, clear);
+	rp->setOutput(ambientOcclusionTargetSetId, clear, render::TfNone, render::TfColor);
 
 	renderGraph.addPass(rp);
 	return ambientOcclusionTargetSetId;
@@ -862,7 +862,7 @@ render::handle_t WorldRendererDeferred::setupCascadeShadowMapPass(
 	render::Clear clear;
 	clear.mask = render::CfDepth;
 	clear.depth = 1.0f;
-	rp->setOutput(shadowMapCascadeTargetSetId, clear);
+	rp->setOutput(shadowMapCascadeTargetSetId, clear, render::TfNone, render::TfDepth);
 
 	rp->addBuild(
 		[=](const render::RenderGraph& renderGraph, render::RenderContext* renderContext)
@@ -990,7 +990,7 @@ render::handle_t WorldRendererDeferred::setupAtlasShadowMapPass(
 		render::Clear clear;
 		clear.mask = render::CfDepth;
 		clear.depth = 1.0f;
-		rp->setOutput(shadowMapAtlasTargetSetId, clear);
+		rp->setOutput(shadowMapAtlasTargetSetId, clear, render::TfDepth, render::TfDepth);
 
 		rp->addBuild(
 			[=](const render::RenderGraph& renderGraph, render::RenderContext* renderContext)
@@ -1273,7 +1273,7 @@ render::handle_t WorldRendererDeferred::setupShadowMaskPass(
 	render::Clear clear;
 	clear.mask = render::CfColor;
 	clear.colors[0] = Color4f(1.0f, 1.0f, 1.0f, 1.0f);
-	rp->setOutput(shadowMaskTargetSetId, clear);
+	rp->setOutput(shadowMaskTargetSetId, clear, render::TfNone, render::TfColor);
 
 	renderGraph.addPass(rp);
 	return shadowMaskTargetSetId;
@@ -1315,7 +1315,7 @@ render::handle_t WorldRendererDeferred::setupReflectionsPass(
 	render::Clear clear;
 	clear.mask = render::CfColor;
 	clear.colors[0] = Color4f(0.0f, 0.0f, 0.0f, 0.0f);
-	rp->setOutput(reflectionsTargetSetId, clear);
+	rp->setOutput(reflectionsTargetSetId, clear, render::TfDepth, render::TfColor | render::TfDepth);
 	
 	rp->addBuild(
 		[=](const render::RenderGraph& renderGraph, render::RenderContext* renderContext)
@@ -1404,12 +1404,12 @@ void WorldRendererDeferred::setupVisualPass(
 	rp->addInput(ambientOcclusionTargetSetId);
 	rp->addInput(reflectionsTargetSetId);
 	rp->addInput(shadowMaskTargetSetId);
-	rp->addInput(shadowMapAtlasTargetSetId, true);
+	rp->addInput(shadowMapAtlasTargetSetId);
 
 	render::Clear clear;
 	clear.mask = render::CfColor;
 	clear.colors[0] = Color4f(0.0f, 0.0f, 0.0f, 1.0f);
-	rp->setOutput(visualWriteTargetSetId, clear);
+	rp->setOutput(visualWriteTargetSetId, clear, render::TfDepth, render::TfColor | render::TfDepth);
 
 	rp->addBuild(
 		[=](const render::RenderGraph& renderGraph, render::RenderContext* renderContext)
@@ -1580,15 +1580,14 @@ void WorldRendererDeferred::setupProcessPass(
 			rgtd.referenceHeightDenom = 1;
 			intermediateTargetSetId = renderGraph.addTransientTargetSet(L"Process intermediate", rgtd, nullptr, outputTargetSetId);
 
-			rp->setOutput(intermediateTargetSetId);
+			rp->setOutput(intermediateTargetSetId, render::TfColor, render::TfColor);
 		}
 		else
 		{
 			render::Clear cl;
-			cl.mask = render::CfColor | render::CfDepth;
+			cl.mask = render::CfColor;
 			cl.colors[0] = Color4f(0.0f, 0.0f, 0.0f, 0.0f);
-			cl.depth = 1.0f;
-			rp->setOutput(outputTargetSetId, cl);
+			rp->setOutput(outputTargetSetId, cl, render::TfNone, render::TfColor);
 		}
 
 		process->addPasses(renderGraph, rp, cx);

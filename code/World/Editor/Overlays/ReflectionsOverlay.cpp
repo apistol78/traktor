@@ -37,7 +37,7 @@ void ReflectionsOverlay::setup(render::RenderGraph& renderGraph, render::ScreenR
 		return;
 
 	Ref< render::RenderPass > rp = new render::RenderPass(L"Reflections overlay");
-	rp->setOutput(0);
+	rp->setOutput(0, render::TfColor, render::TfColor);
 	rp->addInput(reflectionsId);
 	rp->addBuild([=](const render::RenderGraph& renderGraph, render::RenderContext* renderContext) {
 		auto reflectionsTargetSet = renderGraph.getTargetSet(reflectionsId);

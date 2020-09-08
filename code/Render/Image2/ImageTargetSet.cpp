@@ -7,12 +7,18 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ImageTargetSet", ImageTargetSet, Object)
 
-ImageTargetSet::ImageTargetSet(handle_t persistentHandle, handle_t textureIds[RenderGraphTargetSetDesc::MaxColorTargets], const RenderGraphTargetSetDesc& targetSetDesc)
-:	m_persistentHandle(persistentHandle)
+ImageTargetSet::ImageTargetSet(const std::wstring& name, handle_t persistentHandle, handle_t textureIds[RenderGraphTargetSetDesc::MaxColorTargets], const RenderGraphTargetSetDesc& targetSetDesc)
+:	m_name(name)
+,	m_persistentHandle(persistentHandle)
 ,   m_targetSetDesc(targetSetDesc)
 {
 	for (int32_t i = 0; i < sizeof_array(textureIds); ++i)
 		m_textureIds[i] = textureIds[i];
+}
+
+const std::wstring& ImageTargetSet::getName() const
+{
+	return m_name;
 }
 
 handle_t ImageTargetSet::getPersistentHandle() const

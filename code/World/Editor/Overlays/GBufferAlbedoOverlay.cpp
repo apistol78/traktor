@@ -37,7 +37,7 @@ void GBufferAlbedoOverlay::setup(render::RenderGraph& renderGraph, render::Scree
 		return;
 
 	Ref< render::RenderPass > rp = new render::RenderPass(L"GBuffer albedo overlay");
-	rp->setOutput(0);
+	rp->setOutput(0, render::TfColor, render::TfColor);
 	rp->addInput(gbufferId);
 	rp->addBuild([=](const render::RenderGraph& renderGraph, render::RenderContext* renderContext) {
 		auto gbufferTargetSet = renderGraph.getTargetSet(gbufferId);

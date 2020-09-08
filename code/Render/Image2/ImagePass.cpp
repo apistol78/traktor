@@ -21,7 +21,14 @@ void ImagePass::addPasses(const ImageGraph* graph, const ImageGraphContext& cont
 		op->setup(graph, context, *rp);
 
 	if (m_outputTargetSet >= 0)
-		rp->setOutput(targetSetIds[m_outputTargetSet], m_clear);
+	{
+		uint32_t load = render::TfNone;
+
+		if ((m_clear.mask & render::CfColor) == 0)
+			load |= render::TfColor;
+
+		rp->setOutput(targetSetIds[m_outputTargetSet], m_clear, load, render::TfColor);
+	}
 
 	rp->addBuild(
 		[=](const RenderGraph& renderGraph, RenderContext* renderContext)

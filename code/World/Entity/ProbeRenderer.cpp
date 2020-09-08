@@ -354,7 +354,7 @@ void ProbeRenderer::setup(const WorldSetupContext& context)
 			auto filteredTargetSetId = renderGraph.addTransientTargetSet(L"Probe filter intermediate", rgtsd);
 
 			Ref< render::RenderPass > filterPass = new render::RenderPass(L"Probe filter");
-			filterPass->setOutput(filteredTargetSetId);
+			filterPass->setOutput(filteredTargetSetId, render::TfNone, render::TfColor);
 			filterPass->addBuild(
 				[=](const render::RenderGraph& renderGraph, render::RenderContext* renderContext)
 				{

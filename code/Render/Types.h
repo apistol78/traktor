@@ -520,17 +520,19 @@ struct RenderTargetSetCreateDesc
 /*! Target transfer flags. */
 enum TransferFlags
 {
+	TfNone = 0,
 	TfColor = 1,
-	TfDepth = 2
+	TfDepth = 2,
+	TfAll = TfColor | TfDepth
 };
 
 /*! Clear parameters. */
 struct Clear
 {
-	uint32_t mask;		//!< Combination of ClearFlags.
+	uint32_t mask = 0;		//!< Combination of ClearFlags.
 	Color4f colors[RenderTargetSetCreateDesc::MaxTargets];	//!< Clear color values; must be one color for each bound target.
-	float depth;		//!< Clear depth value.
-	int32_t stencil;	//!< Clear stencil value.
+	float depth = 1.0f;		//!< Clear depth value.
+	int32_t stencil = 0;	//!< Clear stencil value.
 };
 
 /*! Draw primitives. */

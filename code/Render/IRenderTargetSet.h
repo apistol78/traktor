@@ -27,7 +27,7 @@ class T_DLLCLASS IRenderTargetSet : public Object
 	T_RTTI_CLASS;
 
 public:
-	/*! Destroy render targets.h */
+	/*! Destroy render targets. */
 	virtual void destroy() = 0;
 
 	/*! Get width of render targets. */
@@ -58,6 +58,9 @@ public:
 	 * \return True if successfully copied.
 	 */
 	virtual bool read(int32_t index, void* buffer) const = 0;
+
+	/*! Set debug name of render target set. */
+	virtual void setDebugName(const wchar_t* name) {}
 };
 
 	}

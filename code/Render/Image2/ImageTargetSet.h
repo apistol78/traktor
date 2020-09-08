@@ -24,7 +24,9 @@ class T_DLLCLASS ImageTargetSet : public Object
 	T_RTTI_CLASS;
 
 public:
-    ImageTargetSet(handle_t persistentHandle, handle_t textureIds[RenderGraphTargetSetDesc::MaxColorTargets], const RenderGraphTargetSetDesc& targetSetDesc);
+    ImageTargetSet(const std::wstring& name, handle_t persistentHandle, handle_t textureIds[RenderGraphTargetSetDesc::MaxColorTargets], const RenderGraphTargetSetDesc& targetSetDesc);
+
+	const std::wstring& getName() const;
 
 	handle_t getPersistentHandle() const;
 
@@ -33,6 +35,7 @@ public:
     const RenderGraphTargetSetDesc& getTargetSetDesc() const;
 
 private:
+	std::wstring m_name;
 	handle_t m_persistentHandle;
 	handle_t m_textureIds[RenderGraphTargetSetDesc::MaxColorTargets];
 	RenderGraphTargetSetDesc m_targetSetDesc;

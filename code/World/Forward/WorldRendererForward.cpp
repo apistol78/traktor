@@ -375,7 +375,7 @@ render::handle_t WorldRendererForward::setupGBufferPass(
 	clear.colors[1] = Color4f(0.0f, 0.0f, 0.0f, 0.0f);
 	clear.depth = 1.0f;
 	clear.stencil = 0;
-	rp->setOutput(gbufferTargetSetId, clear);
+	rp->setOutput(gbufferTargetSetId, clear, render::TfNone, render::TfAll);
 
 	rp->addBuild(
 		[=](const render::RenderGraph& renderGraph, render::RenderContext* renderContext)
@@ -452,7 +452,7 @@ render::handle_t WorldRendererForward::setupAmbientOcclusionPass(
 	render::Clear clear;
 	clear.mask = render::CfColor;
 	clear.colors[0] = Color4f(1.0f, 1.0f, 1.0f, 1.0f);
-	rp->setOutput(ambientOcclusionTargetSetId, clear);
+	rp->setOutput(ambientOcclusionTargetSetId, clear, render::TfNone, render::TfColor);
 
 	renderGraph.addPass(rp);
 	return ambientOcclusionTargetSetId;
@@ -546,7 +546,7 @@ void WorldRendererForward::setupLightPass(
 		render::Clear clear;
 		clear.mask = render::CfDepth;
 		clear.depth = 1.0f;
-		rp->setOutput(outShadowMapCascadeTargetSetId, clear);
+		rp->setOutput(outShadowMapCascadeTargetSetId, clear, render::TfNone, render::TfDepth);
 
 		if (lightCascadeIndex >= 0)
 			rp->addBuild(
@@ -680,7 +680,7 @@ void WorldRendererForward::setupLightPass(
 			render::Clear clear;
 			clear.mask = render::CfDepth;
 			clear.depth = 1.0f;
-			rp->setOutput(outShadowMapAtlasTargetSetId, clear);
+			rp->setOutput(outShadowMapAtlasTargetSetId, clear, render::TfDepth, render::TfDepth);
 			
 			if (!lightAtlasIndices.empty())
 				rp->addBuild(
@@ -822,7 +822,7 @@ render::handle_t WorldRendererForward::setupVisualPass(
 
 	// Create render pass.
 	Ref< render::RenderPass > rp = new render::RenderPass(L"Visual");
-	rp->addInput(gbufferTargetSetId, true);
+	rp->addInput(gbufferTargetSetId);
 
 	if (ambientOcclusionTargetSetId != 0)
 		rp->addInput(ambientOcclusionTargetSetId);
@@ -834,10 +834,9 @@ render::handle_t WorldRendererForward::setupVisualPass(
 	}
 
 	render::Clear clear;
-	clear.mask = render::CfColor; //  | render::CfDepth;
+	clear.mask = render::CfColor;
 	clear.colors[0] = Color4f(0.0f, 0.0f, 0.0f, 1.0f);
-	clear.depth = 1.0f;
-	rp->setOutput(visualTargetSetId, clear);
+	rp->setOutput(visualTargetSetId, clear, render::TfDepth, render::TfColor | render::TfDepth);
 
 	rp->addBuild(
 		[=](const render::RenderGraph& renderGraph, render::RenderContext* renderContext)
@@ -959,16 +958,14 @@ void WorldRendererForward::setupProcessPass(
 			rgtd.referenceHeightDenom = 1;
 			intermediateTargetSetId = renderGraph.addTransientTargetSet(L"Process intermediate", rgtd, nullptr, outputTargetSetId);
 
-			rp->setOutput(intermediateTargetSetId);
+			rp->setOutput(intermediateTargetSetId, render::TfColor, render::TfColor);
 		}
 		else
 		{
 			render::Clear cl;
-			cl.mask = render::CfColor | render::CfDepth | render::CfStencil;
+			cl.mask = render::CfColor;
 			cl.colors[0] = Color4f(0.0f, 0.0f, 0.0f, 0.0f);
-			cl.depth = 1.0f;
-			cl.stencil = 0;
-			rp->setOutput(outputTargetSetId, cl);
+			rp->setOutput(outputTargetSetId, cl, render::TfNone, render::TfColor);
 		}
 
 		process->addPasses(renderGraph, rp, cx);
