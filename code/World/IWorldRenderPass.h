@@ -71,14 +71,6 @@ public:
 		auto perm = getPermutation(shader);
 		return shader->getProgram(perm);
 	}
-
-	/*! Get shader program, only set combinations but use an overriden shader technique. */
-	render::Shader::Program getProgram(const render::Shader* shader, render::handle_t technique) const
-	{
-		auto perm = getPermutation(shader);
-		perm.technique = technique;
-		return shader->getProgram(perm);
-	}
 };
 
 	}
