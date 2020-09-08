@@ -18,6 +18,7 @@
 #include "Shape/Editor/Solid/SolidEntity.h"
 #include "World/IWorldRenderPass.h"
 #include "World/WorldBuildContext.h"
+#include "World/Entity/GroupComponent.h"
 
 // https://github.com/evanw/csg.js/blob/master/csg.js
 
@@ -39,7 +40,7 @@ struct Vertex
 
         }
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.shape.SolidEntity", SolidEntity, world::GroupEntity)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.shape.SolidEntity", SolidEntity, world::Entity)
 
 SolidEntity::SolidEntity(
     render::IRenderSystem* renderSystem,
@@ -54,10 +55,14 @@ SolidEntity::SolidEntity(
 
 void SolidEntity::update(const world::UpdateParams& update)
 {
-    world::GroupEntity::update(update);
+    world::Entity::update(update);
+
+	auto group = getComponent< world::GroupComponent >();
+	if (!group)
+		return;
 
     RefArray< PrimitiveEntity > primitiveEntities;
-    getEntitiesOf< PrimitiveEntity >(primitiveEntities);
+	group->getEntitiesOf< PrimitiveEntity >(primitiveEntities);
 
     // Check if any child entity is dirty and if so update our preview geometry.
     bool dirty = m_dirty;

@@ -2,7 +2,7 @@
 
 #include "Render/Types.h"
 #include "Resource/Proxy.h"
-#include "World/Entity/GroupEntity.h"
+#include "World/Entity.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -39,7 +39,7 @@ class WorldRenderView;
 /*! Solid entity.
  * \ingroup Shape
  */
-class T_DLLCLASS SolidEntity : public world::GroupEntity
+class T_DLLCLASS SolidEntity : public world::Entity
 {
     T_RTTI_CLASS;
 

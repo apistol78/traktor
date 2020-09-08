@@ -4,7 +4,7 @@
 #include "Core/Ref.h"
 #include "Core/RefArray.h"
 #include "Resource/Id.h"
-#include "World/Entity/GroupEntityData.h"
+#include "World/EntityData.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -55,7 +55,7 @@ class SolidEntity;
  *
  * Contain solid geometry primitives along with operation (intersection, union, difference etc).
  */
-class T_DLLCLASS SolidEntityData : public world::GroupEntityData
+class T_DLLCLASS SolidEntityData : public world::EntityData
 {
     T_RTTI_CLASS;
 

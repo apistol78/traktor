@@ -23,7 +23,7 @@ const resource::Id< physics::CollisionSpecification > c_interactableCollision(Gu
 
 		}
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.shape.SolidEntityData", 1, SolidEntityData, world::GroupEntityData)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.shape.SolidEntityData", 2, SolidEntityData, world::EntityData)
 
 SolidEntityData::SolidEntityData()
 {
@@ -40,12 +40,15 @@ Ref< SolidEntity > SolidEntityData::createEntity(const world::IEntityBuilder* bu
 
     Ref< SolidEntity > solidEntity = new SolidEntity(renderSystem, shader, getTransform());
 
-    for (auto childEntityData : getEntityData())
-    {
-        Ref< PrimitiveEntity > primitiveEntity = builder->create< PrimitiveEntity >(childEntityData);
-        if (primitiveEntity)
-            solidEntity->addEntity(primitiveEntity);
-    }
+	// Instantiate all components.
+	RefArray< world::IEntityComponent > components;
+	for (auto componentData : getComponents())
+	{
+		Ref< world::IEntityComponent > component = builder->create(componentData);
+		if (!component)
+			continue;
+		solidEntity->setComponent(component);
+	}
 
 	return solidEntity;
 }
@@ -72,7 +75,9 @@ const std::set< resource::Id< physics::CollisionSpecification > >& SolidEntityDa
 
 void SolidEntityData::serialize(ISerializer& s)
 {
-	world::GroupEntityData::serialize(s);
+	T_FATAL_ASSERT(s.getVersion< SolidEntityData >() >= 2);
+
+	world::EntityData::serialize(s);
 
     s >> MemberStlSet< resource::Id< physics::CollisionSpecification >, resource::Member< physics::CollisionSpecification > >(L"collisionGroup", m_collisionGroup);
     s >> MemberStlSet< resource::Id< physics::CollisionSpecification >, resource::Member< physics::CollisionSpecification > >(L"collisionMask", m_collisionMask);

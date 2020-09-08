@@ -8,6 +8,7 @@
 #include "Shape/Editor/Solid/SolidEntity.h"
 #include "Shape/Editor/Solid/SolidEntityData.h"
 #include "Shape/Editor/Solid/SolidEntityEditor.h"
+#include "World/Entity/GroupComponent.h"
 
 namespace traktor
 {
@@ -26,35 +27,6 @@ bool SolidEntityEditor::isPickable() const
 	return false;
 }
 
-bool SolidEntityEditor::isGroup() const
-{
-	return true;
-}
-
-bool SolidEntityEditor::addChildEntity(traktor::scene::EntityAdapter* childEntityAdapter) const
-{
-	SolidEntityData* solidEntityData = mandatory_non_null_type_cast< SolidEntityData* >(getEntityAdapter()->getEntityData());
-
-	PrimitiveEntityData* childEntityData = dynamic_type_cast< PrimitiveEntityData* >(childEntityAdapter->getEntityData());
-    if (!childEntityData)
-        return false;
-
-	solidEntityData->addEntityData(childEntityData);
-	return true;
-}
-
-bool SolidEntityEditor::removeChildEntity(traktor::scene::EntityAdapter* childEntityAdapter) const
-{
-	SolidEntityData* solidEntityData = mandatory_non_null_type_cast< SolidEntityData* >(getEntityAdapter()->getEntityData());
-
-	PrimitiveEntityData* childEntityData = dynamic_type_cast< PrimitiveEntityData* >(childEntityAdapter->getEntityData());
-    if (!childEntityData)
-        return false;
-
-	solidEntityData->removeEntityData(childEntityData);
-	return true;
-}
-
 void SolidEntityEditor::drawGuide(render::PrimitiveRenderer* primitiveRenderer) const
 {
 	SolidEntity* solidEntity = dynamic_type_cast< SolidEntity* >(getEntityAdapter()->getEntity());
@@ -65,8 +37,12 @@ void SolidEntityEditor::drawGuide(render::PrimitiveRenderer* primitiveRenderer) 
 	{
 		Winding3 winding;
 
+		auto group = solidEntity->getComponent< world::GroupComponent >();
+		if (!group)
+			return;
+
 		RefArray< PrimitiveEntity > primitiveEntities;
-		solidEntity->getEntitiesOf< PrimitiveEntity >(primitiveEntities);
+		group->getEntitiesOf< PrimitiveEntity >(primitiveEntities);
 
 		for (auto primitiveEntity : primitiveEntities)
 		{

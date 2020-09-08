@@ -16,6 +16,7 @@
 #include "Shape/Editor/Solid/SolidEntityData.h"
 #include "Shape/Editor/Solid/SolidEntityReplicator.h"
 #include "World/EntityData.h"
+#include "World/Entity/GroupComponentData.h"
 
 namespace traktor
 {
@@ -65,9 +66,13 @@ Ref< model::Model > SolidEntityReplicator::createModel(
 {
 	const SolidEntityData* solidEntityData = mandatory_non_null_type_cast< const SolidEntityData* >(source);
 	
+	auto group = solidEntityData->getComponent< world::GroupComponentData >();
+	if (!group)
+		return nullptr;
+
 	// Get all primitive entities with shape.
 	RefArray< const PrimitiveEntityData > primitiveEntityDatas;
-	for (auto entityData : solidEntityData->getEntityData())
+	for (auto entityData : group->getEntityData())
 	{
 		if (const auto primitiveEntityData = dynamic_type_cast< const PrimitiveEntityData* >(entityData))
 		{
