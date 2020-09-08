@@ -47,7 +47,9 @@ void SkinnedMesh::build(
 	const auto& meshParts = m_mesh->getParts();
 	for (const auto& part : it->second)
 	{
-		auto sp = worldRenderPass.getProgram(m_shader, part.shaderTechnique);
+		auto permutation = worldRenderPass.getPermutation(m_shader);
+		permutation.technique = part.shaderTechnique;
+		auto sp = m_shader->getProgram(permutation);
 		if (!sp)
 			continue;
 
