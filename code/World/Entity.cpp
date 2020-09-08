@@ -28,7 +28,6 @@ Entity::Entity(const Transform& transform, const RefArray< IEntityComponent >& c
 
 Entity::~Entity()
 {
-	destroy();
 }
 
 void Entity::destroy()
