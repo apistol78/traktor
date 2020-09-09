@@ -37,6 +37,8 @@ class T_DLLCLASS StageState : public IState
 public:
 	StageState(IEnvironment* environment, Stage* stage);
 
+	virtual ~StageState();
+
 	virtual void enter() override final;
 
 	virtual void leave() override final;

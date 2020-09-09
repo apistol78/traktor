@@ -32,6 +32,7 @@ StageState::StageState(
 	// states.
 
 	uint32_t frameCount = environment->getRender()->getThreadFrameQueueCount();
+	T_ASSERT(frameCount > 0);
 
 	m_frames.resize(frameCount);
 	for (auto& frame : m_frames)
@@ -40,6 +41,11 @@ StageState::StageState(
 	m_renderGraph = new render::RenderGraph(
 		environment->getRender()->getRenderSystem()
 	);
+}
+
+StageState::~StageState()
+{
+	safeDestroy(m_renderGraph);
 }
 
 void StageState::enter()

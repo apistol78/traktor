@@ -405,13 +405,14 @@ const wchar_t* getHumanResult(VkResult result)
 
 void setObjectDebugName(VkDevice device, const wchar_t* const tag, uint64_t object, VkObjectType objectType)
 {
-	// Set debug name of texture.
 #if !defined(__ANDROID__) && !defined(__APPLE__)
+	std::string narrow = wstombs(tag);
+
 	VkDebugUtilsObjectNameInfoEXT ni = {};
 	ni.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_OBJECT_NAME_INFO_EXT;
 	ni.objectType = objectType;
 	ni.objectHandle = object;
-	ni.pObjectName = tag ? strdup(wstombs(tag).c_str()) : "Unnamed";
+	ni.pObjectName = tag ? narrow.c_str() : "Unnamed";
 	vkSetDebugUtilsObjectNameEXT(device, &ni);
 #endif
 }

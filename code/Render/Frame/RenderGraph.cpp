@@ -231,6 +231,7 @@ bool RenderGraph::build(RenderContext* renderContext, int32_t width, int32_t hei
 		}
 	}
 
+#if !defined(__ANDROID__)
 	double referenceOffset = Profiler::getInstance().getTime();
 
 	// Allocate query handles from render context's heap.
@@ -241,6 +242,7 @@ bool RenderGraph::build(RenderContext* renderContext, int32_t width, int32_t hei
 	auto pb = renderContext->alloc< ProfileBeginRenderBlock >();
 	pb->queryHandle = referenceQueryHandle;
 	renderContext->enqueue(pb);
+#endif
 
 	// Render passes in dependency order.
 	for (auto index : m_order)
@@ -282,10 +284,12 @@ bool RenderGraph::build(RenderContext* renderContext, int32_t width, int32_t hei
 			}
 		}
 
+#if !defined(__ANDROID__)
 		// Alloc query handle; are freed after being reported.
 		auto pb = renderContext->alloc< ProfileBeginRenderBlock >();
 		pb->queryHandle = &passQueryHandles[index];
 		renderContext->enqueue(pb);
+#endif
 
 		// Build this pass.
 		for (const auto& build : pass->getBuilds())
@@ -301,9 +305,11 @@ bool RenderGraph::build(RenderContext* renderContext, int32_t width, int32_t hei
 			renderContext->enqueue(te);
 		}
 
+#if !defined(__ANDROID__)
 		auto pe = renderContext->alloc< ProfileEndRenderBlock >();
 		pe->queryHandle = &passQueryHandles[index];
 		renderContext->enqueue(pe);
+#endif
 
 		// Decrement reference counts on input targets; release if last reference.
 		for (const auto& input : inputs)
@@ -327,6 +333,7 @@ bool RenderGraph::build(RenderContext* renderContext, int32_t width, int32_t hei
 
 	T_FATAL_ASSERT(!renderContext->havePendingDraws());
 
+#if !defined(__ANDROID__)
 	auto pe = renderContext->alloc< ProfileEndRenderBlock >();
 	pe->queryHandle = referenceQueryHandle;
 	renderContext->enqueue(pe);
@@ -342,6 +349,7 @@ bool RenderGraph::build(RenderContext* renderContext, int32_t width, int32_t hei
 		pr->offset = referenceOffset;
 		renderContext->enqueue(pr);
 	}
+#endif
 
 	// Cleanup pool data structure.
 	m_pool->cleanup();
@@ -360,8 +368,6 @@ bool RenderGraph::acquire(int32_t width, int32_t height, Target& outTarget)
 	// Use size of reference target.
 	if (outTarget.sizeReferenceTargetSetId != 0)
 	{
-		T_ASSERT_M(outTarget.sharedDepthStencilTargetSet == nullptr, L"Cannot use both reference target and shared depth/stencil target for size reference.");
-
 		auto it = m_targets.find(outTarget.sizeReferenceTargetSetId);
 		if (it == m_targets.end())
 			return false;
@@ -373,8 +379,6 @@ bool RenderGraph::acquire(int32_t width, int32_t height, Target& outTarget)
 	// Use size of shared depth/stencil target since they must match.
 	if (outTarget.sharedDepthStencilTargetSet != nullptr)
 	{
-		T_ASSERT_M(outTarget.sizeReferenceTargetSetId == 0, L"Cannot use both reference target and shared depth/stencil target for size reference.");
-
 		width = outTarget.sharedDepthStencilTargetSet->getWidth();
 		height = outTarget.sharedDepthStencilTargetSet->getHeight();
 	}
