@@ -33,7 +33,7 @@ void Profiler::setListener(IReportListener* listener)
 	m_listener = listener;
 }
 
-void Profiler::beginEvent(const wchar_t* const name)
+void Profiler::beginEvent(const std::wstring& name)
 {
 	if (!m_listener)
 		return;
@@ -110,7 +110,7 @@ void Profiler::endEvent()
 	}
 }
 
-void Profiler::addEvent(const wchar_t* const name, double duration)
+void Profiler::addEvent(const std::wstring& name, double start, double duration)
 {
 	// Get ID of immutable name.
 	uint16_t id = 0;
@@ -135,8 +135,8 @@ void Profiler::addEvent(const wchar_t* const name, double duration)
 		e.name = id;
 		e.threadId = -1;
 		e.depth = 0;
-		e.start = m_timer.getElapsedTime();
-		e.end = e.start + duration;
+		e.start = start;
+		e.end = start + duration;
 
 		// Report events if we've queued enough.
 		if (m_events.size() >= c_eventQueueThreshold)

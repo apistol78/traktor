@@ -1,3 +1,4 @@
+#include "Core/Timer/Profiler.h"
 #include "Render/Context/RenderBlock.h"
 #include "Render/Context/ProgramParameters.h"
 #include "Render/IRenderView.h"
@@ -169,6 +170,42 @@ void LambdaRenderBlock::render(IRenderView* renderView) const
 	lambda(renderView);
 
 	T_CONTEXT_POP_MARKER(renderView);
+}
+
+void ProfileBeginRenderBlock::render(IRenderView* renderView) const
+{
+	*queryHandle = renderView->beginTimeQuery();
+}
+
+void ProfileEndRenderBlock::render(IRenderView* renderView) const
+{
+	renderView->endTimeQuery(*queryHandle);
+}
+
+void ProfileReportRenderBlock::render(IRenderView* renderView) const
+{
+	double start, end;
+	double offsetGPU = 0.0;
+
+	// Get GPU offset from a reference query.
+	if (referenceQueryHandle)
+	{
+		if (!renderView->getTimeQuery(*referenceQueryHandle, false, start, end))
+			return;
+
+		offsetGPU = start;
+	}
+	
+	// Get GPU stamps of measured blocks.
+	if (!renderView->getTimeQuery(*queryHandle, false, start, end))
+		return;
+
+	double duration = end - start;
+
+	start -= offsetGPU;
+	start += offset;
+
+	Profiler::getInstance().addEvent(name, start, duration);
 }
 
 	}

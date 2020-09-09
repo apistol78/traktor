@@ -966,7 +966,7 @@ void RenderViewDx11::endTimeQuery(int32_t query)
 {
 }
 
-bool RenderViewDx11::getTimeQuery(int32_t query, bool wait, double& outDuration) const
+bool RenderViewDx11::getTimeQuery(int32_t query, bool wait, double& outStart, double& outEnd) const
 {
 	return false;
 }

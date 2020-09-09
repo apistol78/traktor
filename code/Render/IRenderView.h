@@ -179,8 +179,8 @@ public:
 	/*! Insert an end of a time query into the recording command buffer. */
 	virtual void endTimeQuery(int32_t query) = 0;
 
-	/*! Get duration of a time query. */
-	virtual bool getTimeQuery(int32_t query, bool wait, double& outDuration) const = 0;
+	/*! Get start and end stamps of a time query. */
+	virtual bool getTimeQuery(int32_t query, bool wait, double& outStart, double& outEnd) const = 0;
 
 	//@}
 

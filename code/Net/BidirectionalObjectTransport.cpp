@@ -81,7 +81,7 @@ BidirectionalObjectTransport::Result BidirectionalObjectTransport::recv(const Ty
 	if (m_socket)
 	{
 		// Receive objects from connection; if not of desired type then queue object.
-		for (;;)
+		do
 		{
 			{
 				T_ANONYMOUS_VAR(Release< Semaphore >)(m_lock);
@@ -127,6 +127,7 @@ BidirectionalObjectTransport::Result BidirectionalObjectTransport::recv(const Ty
 			// Received a object which we don't wait for; enqueue for later.
 			m_inQueue[&type_of(object)].push_back(object);
 		}
+		while (timeout > 0);
 	}
 
 	if (!m_socket)

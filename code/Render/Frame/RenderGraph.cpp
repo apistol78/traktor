@@ -1,6 +1,7 @@
 #include "Core/Containers/StaticSet.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/String.h"
+#include "Core/Timer/Profiler.h"
 #include "Render/IRenderSystem.h"
 #include "Render/IRenderTargetSet.h"
 #include "Render/Context/RenderBlock.h"
@@ -230,6 +231,17 @@ bool RenderGraph::build(RenderContext* renderContext, int32_t width, int32_t hei
 		}
 	}
 
+	double referenceOffset = Profiler::getInstance().getTime();
+
+	// Allocate query handles from render context's heap.
+	int32_t* queryHandles = (int32_t*)renderContext->alloc((m_passes.size() + 1) * sizeof(int32_t), alignOf< int32_t >());
+	int32_t* referenceQueryHandle = queryHandles;
+	int32_t* passQueryHandles = queryHandles + 1;
+
+	auto pb = renderContext->alloc< ProfileBeginRenderBlock >();
+	pb->queryHandle = referenceQueryHandle;
+	renderContext->enqueue(pb);
+
 	// Render passes in dependency order.
 	for (auto index : m_order)
 	{
@@ -270,6 +282,11 @@ bool RenderGraph::build(RenderContext* renderContext, int32_t width, int32_t hei
 			}
 		}
 
+		// Alloc query handle; are freed after being reported.
+		auto pb = renderContext->alloc< ProfileBeginRenderBlock >();
+		pb->queryHandle = &passQueryHandles[index];
+		renderContext->enqueue(pb);
+
 		// Build this pass.
 		for (const auto& build : pass->getBuilds())
 		{
@@ -283,6 +300,10 @@ bool RenderGraph::build(RenderContext* renderContext, int32_t width, int32_t hei
 			auto te = renderContext->alloc< EndPassRenderBlock >();
 			renderContext->enqueue(te);
 		}
+
+		auto pe = renderContext->alloc< ProfileEndRenderBlock >();
+		pe->queryHandle = &passQueryHandles[index];
+		renderContext->enqueue(pe);
 
 		// Decrement reference counts on input targets; release if last reference.
 		for (const auto& input : inputs)
@@ -305,6 +326,22 @@ bool RenderGraph::build(RenderContext* renderContext, int32_t width, int32_t hei
 	}
 
 	T_FATAL_ASSERT(!renderContext->havePendingDraws());
+
+	auto pe = renderContext->alloc< ProfileEndRenderBlock >();
+	pe->queryHandle = referenceQueryHandle;
+	renderContext->enqueue(pe);
+
+	// Report all queries last using reference query to calculate offset.
+	for (auto index : m_order)
+	{
+		const auto pass = m_passes[index];
+		auto pr = renderContext->alloc< ProfileReportRenderBlock >();
+		pr->name = pass->getName();
+		pr->queryHandle = &passQueryHandles[index];
+		pr->referenceQueryHandle = referenceQueryHandle;
+		pr->offset = referenceOffset;
+		renderContext->enqueue(pr);
+	}
 
 	// Cleanup pool data structure.
 	m_pool->cleanup();

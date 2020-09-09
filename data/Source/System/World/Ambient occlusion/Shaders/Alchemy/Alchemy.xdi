@@ -487,7 +487,7 @@ Heaveside
 				<first>-162</first>
 				<second>-977</second>
 			</position>
-			<value>-0.015</value>
+			<value>-0.025</value>
 		</item>
 		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
 			<id>{5EBCD85E-AA7A-F542-931D-AB015ED301CE}</id>
@@ -710,7 +710,7 @@ Heaveside
 				<second>-679</second>
 			</position>
 			<from>0</from>
-			<to>49</to>
+			<to>15</to>
 		</item>
 		<item type="traktor.render.Div" version="traktor.render.Node:1">
 			<id>{D63FC1AE-A079-0943-81BC-C39F9F18BA9D}</id>
@@ -727,7 +727,7 @@ Heaveside
 				<first>1493</first>
 				<second>-484</second>
 			</position>
-			<value>50</value>
+			<value>16</value>
 		</item>
 		<item type="traktor.render.Mul" version="traktor.render.Node:1">
 			<id>{B8324DFA-AC5F-3041-951D-4B83D8D8B654}</id>
