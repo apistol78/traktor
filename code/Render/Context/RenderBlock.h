@@ -252,6 +252,38 @@ public:
 	virtual void render(IRenderView* renderView) const override final;
 };
 
+/*! Time query begin render block. */
+class T_DLLCLASS ProfileBeginRenderBlock : public RenderBlock
+{
+public:
+	int32_t* queryHandle = nullptr;
+
+	virtual void render(IRenderView* renderView) const override final;
+};
+
+/*! Time query end render block. */
+class T_DLLCLASS ProfileEndRenderBlock : public RenderBlock
+{
+public:
+	int32_t* queryHandle = nullptr;
+
+	virtual void render(IRenderView* renderView) const override final;
+};
+
+/*! Time query report render block. */
+class T_DLLCLASS ProfileReportRenderBlock : public RenderBlock
+{
+public:
+#if !defined(_DEBUG)
+	std::wstring name;
+#endif
+	int32_t* queryHandle = nullptr;
+	int32_t* referenceQueryHandle = nullptr;
+	double offset;
+
+	virtual void render(IRenderView* renderView) const override final;
+};
+
 	}
 }
 

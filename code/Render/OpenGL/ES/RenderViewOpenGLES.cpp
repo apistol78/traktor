@@ -642,7 +642,7 @@ void RenderViewOpenGLES::endTimeQuery(int32_t query)
 {
 }
 
-bool RenderViewOpenGLES::getTimeQuery(int32_t query, bool wait, double& outDuration) const
+bool RenderViewOpenGLES::getTimeQuery(int32_t query, bool wait, double& outStart, double& outEnd) const
 {
 	return false;
 }

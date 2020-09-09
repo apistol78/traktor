@@ -1206,7 +1206,7 @@ render::handle_t WorldRendererDeferred::setupShadowMaskPass(
 	rgtd.width = 0;
 	rgtd.height = 0;
 	rgtd.createDepthStencil = false;
-	rgtd.usingPrimaryDepthStencil = (m_sharedDepthStencil == nullptr) ? true : false;
+	rgtd.usingPrimaryDepthStencil = false;
 	rgtd.ignoreStencil = true;
 	rgtd.targets[0].colorFormat = render::TfR8;
 	rgtd.referenceWidthDenom = m_shadowSettings.maskDenominator;

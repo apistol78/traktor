@@ -117,7 +117,7 @@ public:
 
 	virtual void endTimeQuery(int32_t query) override final;
 
-	virtual bool getTimeQuery(int32_t query, bool wait, double& outDuration) const override final;
+	virtual bool getTimeQuery(int32_t query, bool wait, double& outStart, double& outEnd) const override final;
 
 	virtual void pushMarker(const char* const marker) override final;
 

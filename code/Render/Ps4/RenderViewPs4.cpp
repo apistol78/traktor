@@ -332,7 +332,7 @@ void RenderViewPs4::endTimeQuery(int32_t query)
 {
 }
 
-bool RenderViewPs4::getTimeQuery(int32_t query, bool wait, double& outDuration) const
+bool RenderViewPs4::getTimeQuery(int32_t query, bool wait, double& outStart, double& outEnd) const
 {
 	return false;
 }

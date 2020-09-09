@@ -824,7 +824,7 @@ void RenderViewOpenGL::endTimeQuery(int32_t query)
 {
 }
 
-bool RenderViewOpenGL::getTimeQuery(int32_t query, bool wait, double& outDuration) const
+bool RenderViewOpenGL::getTimeQuery(int32_t query, bool wait, double& outStart, double& outEnd) const
 {
 	return false;
 }

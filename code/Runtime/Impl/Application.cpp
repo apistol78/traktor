@@ -1109,16 +1109,8 @@ void Application::threadRender()
 
 					if (frameBegun)
 					{
-#if defined(T_PROFILER_ENABLE)
-						int32_t frameQuery = renderView->beginTimeQuery();
-#endif
-
 						if (m_stateRender)
 							m_stateRender->render(m_frameRender, m_updateInfoRender);
-
-#if defined(T_PROFILER_ENABLE)
-						renderView->endTimeQuery(frameQuery);
-#endif
 
 						T_PROFILER_BEGIN(L"Application render endFrame");
 						renderView->endFrame();
@@ -1127,12 +1119,6 @@ void Application::threadRender()
 						T_PROFILER_BEGIN(L"Application render present");
 						renderView->present();
 						T_PROFILER_END();
-
-#if defined(T_PROFILER_ENABLE)
-						double duration = 0.0;
-						if (renderView->getTimeQuery(frameQuery, false, duration))
-							Profiler::getInstance().addEvent(L"GPU render", duration);
-#endif
 					}
 
 					T_PROFILER_BEGIN(L"Application render stats");

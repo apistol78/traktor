@@ -73,14 +73,14 @@ public:
 
 	/*! Begin recording event.
 	 */
-	void beginEvent(const wchar_t* const name);
+	void beginEvent(const std::wstring& name);
 
 	/*! End recording event.
 	 */
 	void endEvent();
 
 	/*! Add manual event. */
-	void addEvent(const wchar_t* const name, double duration);
+	void addEvent(const std::wstring& name, double start, double duration);
 
 	/*! Get current time.
 	 */
@@ -100,7 +100,7 @@ private:
 	Ref< IReportListener > m_listener;
 	Semaphore m_lock;
 	SpinLock m_nameIdsLock;
-	SmallMap< const wchar_t*, uint16_t > m_nameIds;
+	SmallMap< std::wstring, uint16_t > m_nameIds;
 	SmallMap< uint16_t, std::wstring > m_dictionary;
 	bool m_dictionaryDirty;
 	AlignedVector< Event > m_events;
@@ -115,7 +115,7 @@ private:
 class ProfilerScoped
 {
 public:
-	ProfilerScoped(const wchar_t* const name)
+	ProfilerScoped(const std::wstring& name)
 	{
 		Profiler::getInstance().beginEvent(name);
 	}

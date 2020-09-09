@@ -44,6 +44,7 @@ bool ProfilerDialog::create(ui::Widget* parent)
 	m_toolBar = new ui::ToolBar();
 	m_toolBar->create(this);
 	m_toolBar->addItem(new ui::ToolBarButton(L"Start/Stop", ui::Command(L"Runtime.Profiler.Capture")));
+	m_toolBar->addItem(new ui::ToolBarButton(L"Reset", ui::Command(L"Runtime.Profiler.Reset")));
 	m_toolBar->addEventHandler< ui::ToolBarButtonClickEvent >(this, &ProfilerDialog::eventToolClick);
 
 	m_chart = new ui::BuildChartControl();
@@ -75,10 +76,14 @@ void ProfilerDialog::receivedProfilerEvents(double currentTime, const AlignedVec
 	if (!m_recording)
 		return;
 
+	// Remove all tasks older than 10 seconds.
 	const double c_eventAge = 10.0;
+	m_chart->removeTasksOlderThan(currentTime - c_eventAge);
+
+	// Quantize time to 60 Hz.
+	currentTime = currentTime - std::fmod(currentTime, 1.0f / 60.0f);
 
 	m_chart->showTime(currentTime);
-	m_chart->removeTasksOlderThan(currentTime - c_eventAge);
 
 	for (size_t i = 0; i < events.size(); ++i)
 	{
@@ -118,6 +123,11 @@ void ProfilerDialog::eventToolClick(ui::ToolBarButtonClickEvent* event)
 {
 	if (event->getCommand() == L"Runtime.Profiler.Capture")
 		m_recording = !m_recording;
+	else if (event->getCommand() == L"Runtime.Profiler.Reset")
+	{
+		double currentTime = m_chart->positionToTime(getInnerRect().getWidth() / 2);
+		m_chart->showRange(currentTime - 0.5f / 60.0f, currentTime + 0.5f / 60.0f);
+	}
 }
 
 void ProfilerDialog::eventClose(ui::CloseEvent* event)

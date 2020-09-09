@@ -1115,7 +1115,7 @@ void RenderViewVk::endTimeQuery(int32_t query)
 	vkCmdWriteTimestamp(frame.graphicsCommandBuffer, VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT, frame.queryPool, query * 2 + 1);
 }
 
-bool RenderViewVk::getTimeQuery(int32_t query, bool wait, double& outDuration) const
+bool RenderViewVk::getTimeQuery(int32_t query, bool wait, double& outStart, double& outEnd) const
 {
 	auto& frame = m_frames[m_currentImageIndex];
 
@@ -1129,7 +1129,9 @@ bool RenderViewVk::getTimeQuery(int32_t query, bool wait, double& outDuration) c
 	if (result != VK_SUCCESS)
 		return false;
 
-	outDuration = (double)(stamps[1] - stamps[0]) / 1000000000.0;
+	const double c_divend = 1000000000.0;
+	outStart = (double)stamps[0] / c_divend;
+	outEnd = (double)stamps[1] / c_divend;
 	return true;
 }
 

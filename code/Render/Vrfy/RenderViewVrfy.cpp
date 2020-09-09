@@ -357,9 +357,9 @@ void RenderViewVrfy::endTimeQuery(int32_t query)
 	m_renderView->endTimeQuery(query);
 }
 
-bool RenderViewVrfy::getTimeQuery(int32_t query, bool wait, double& outDuration) const
+bool RenderViewVrfy::getTimeQuery(int32_t query, bool wait, double& outStart, double& outEnd) const
 {
-	return m_renderView->getTimeQuery(query, wait, outDuration);
+	return m_renderView->getTimeQuery(query, wait, outStart, outEnd);
 }
 
 void RenderViewVrfy::pushMarker(const char* const marker)
