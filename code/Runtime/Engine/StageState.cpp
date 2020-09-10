@@ -39,7 +39,10 @@ StageState::StageState(
 		frame.renderContext = new render::RenderContext(16 * 1024 * 1024);
 
 	m_renderGraph = new render::RenderGraph(
-		environment->getRender()->getRenderSystem()
+		environment->getRender()->getRenderSystem(),
+		[](int32_t pass, const std::wstring& name, double start, double duration) {
+			Profiler::getInstance().addEvent(name, start, duration);
+		}
 	);
 }
 

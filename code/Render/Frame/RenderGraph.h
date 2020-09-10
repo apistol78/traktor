@@ -43,6 +43,8 @@ class T_DLLCLASS RenderGraph : public Object
 	T_RTTI_CLASS;
 
 public:
+	typedef std::function< void(int32_t, const std::wstring&, double, double) > fn_profiler_t;
+
 	struct Target
 	{
 		const wchar_t* name = nullptr;
@@ -56,7 +58,7 @@ public:
 	};
 
 	/*! */
-	explicit RenderGraph(IRenderSystem* renderSystem);
+	explicit RenderGraph(IRenderSystem* renderSystem, const fn_profiler_t& profiler = fn_profiler_t());
 
 	/*! */
 	virtual ~RenderGraph();
@@ -162,6 +164,7 @@ private:
 	RefArray< const RenderPass > m_passes;
 	StaticVector< uint32_t, 512 > m_order;
 	handle_t m_nextTargetSetId;
+	fn_profiler_t m_profiler;
 
 	bool acquire(int32_t width, int32_t height, Target& outTarget);
 };
