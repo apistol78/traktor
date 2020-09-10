@@ -122,7 +122,12 @@ bool PerspectiveRenderControl::create(ui::Widget* parent, SceneEditorContext* co
 		return false;
 
 	m_renderContext = new render::RenderContext(16 * 1024 * 1024);
-	m_renderGraph = new render::RenderGraph(m_context->getRenderSystem());
+	m_renderGraph = new render::RenderGraph(
+		m_context->getRenderSystem(),
+		[](int32_t pass, const std::wstring& name, double start, double duration) {
+			log::info << pass << L". " << name << L", " << str(L"%.2f", duration * 1000.0) << L" ms" << Endl;
+		}
+	);
 
 	m_primitiveRenderer = new render::PrimitiveRenderer();
 	if (!m_primitiveRenderer->create(

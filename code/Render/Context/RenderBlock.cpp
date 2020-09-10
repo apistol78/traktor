@@ -1,4 +1,3 @@
-#include "Core/Timer/Profiler.h"
 #include "Render/Context/RenderBlock.h"
 #include "Render/Context/ProgramParameters.h"
 #include "Render/IRenderView.h"
@@ -205,7 +204,7 @@ void ProfileReportRenderBlock::render(IRenderView* renderView) const
 	start -= offsetGPU;
 	start += offset;
 
-	Profiler::getInstance().addEvent(name, start, duration);
+	sink(name, start, duration);
 }
 
 	}

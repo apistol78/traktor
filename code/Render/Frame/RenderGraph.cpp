@@ -41,9 +41,10 @@ void traverse(const RefArray< const RenderPass >& passes, int32_t index, visited
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderGraph", RenderGraph, Object)
 
-RenderGraph::RenderGraph(IRenderSystem* renderSystem)
+RenderGraph::RenderGraph(IRenderSystem* renderSystem, const fn_profiler_t& profiler)
 :	m_pool(new RenderGraphTargetSetPool(renderSystem))
 ,	m_nextTargetSetId(1)
+,	m_profiler(profiler)
 {
 }
 
@@ -234,14 +235,22 @@ bool RenderGraph::build(RenderContext* renderContext, int32_t width, int32_t hei
 #if !defined(__ANDROID__)
 	double referenceOffset = Profiler::getInstance().getTime();
 
-	// Allocate query handles from render context's heap.
-	int32_t* queryHandles = (int32_t*)renderContext->alloc((m_passes.size() + 1) * sizeof(int32_t), alignOf< int32_t >());
-	int32_t* referenceQueryHandle = queryHandles;
-	int32_t* passQueryHandles = queryHandles + 1;
+	int32_t* queryHandles = nullptr;
+	int32_t* referenceQueryHandle = nullptr;
+	int32_t* passQueryHandles = nullptr;
 
-	auto pb = renderContext->alloc< ProfileBeginRenderBlock >();
-	pb->queryHandle = referenceQueryHandle;
-	renderContext->enqueue(pb);
+	if (m_profiler)
+	{
+		// Allocate query handles from render context's heap since they get automatically
+		// freed when the context is reset.
+		queryHandles = (int32_t*)renderContext->alloc((m_passes.size() + 1) * sizeof(int32_t), alignOf< int32_t >());
+		referenceQueryHandle = queryHandles;
+		passQueryHandles = queryHandles + 1;
+
+		auto pb = renderContext->alloc< ProfileBeginRenderBlock >();
+		pb->queryHandle = referenceQueryHandle;
+		renderContext->enqueue(pb);
+	}
 #endif
 
 	// Render passes in dependency order.
@@ -285,10 +294,12 @@ bool RenderGraph::build(RenderContext* renderContext, int32_t width, int32_t hei
 		}
 
 #if !defined(__ANDROID__)
-		// Alloc query handle; are freed after being reported.
-		auto pb = renderContext->alloc< ProfileBeginRenderBlock >();
-		pb->queryHandle = &passQueryHandles[index];
-		renderContext->enqueue(pb);
+		if (m_profiler)
+		{
+			auto pb = renderContext->alloc< ProfileBeginRenderBlock >();
+			pb->queryHandle = &passQueryHandles[index];
+			renderContext->enqueue(pb);
+		}
 #endif
 
 		// Build this pass.
@@ -306,9 +317,12 @@ bool RenderGraph::build(RenderContext* renderContext, int32_t width, int32_t hei
 		}
 
 #if !defined(__ANDROID__)
-		auto pe = renderContext->alloc< ProfileEndRenderBlock >();
-		pe->queryHandle = &passQueryHandles[index];
-		renderContext->enqueue(pe);
+		if (m_profiler)
+		{
+			auto pe = renderContext->alloc< ProfileEndRenderBlock >();
+			pe->queryHandle = &passQueryHandles[index];
+			renderContext->enqueue(pe);
+		}
 #endif
 
 		// Decrement reference counts on input targets; release if last reference.
@@ -334,20 +348,25 @@ bool RenderGraph::build(RenderContext* renderContext, int32_t width, int32_t hei
 	T_FATAL_ASSERT(!renderContext->havePendingDraws());
 
 #if !defined(__ANDROID__)
-	auto pe = renderContext->alloc< ProfileEndRenderBlock >();
-	pe->queryHandle = referenceQueryHandle;
-	renderContext->enqueue(pe);
-
-	// Report all queries last using reference query to calculate offset.
-	for (auto index : m_order)
+	if (m_profiler)
 	{
-		const auto pass = m_passes[index];
-		auto pr = renderContext->alloc< ProfileReportRenderBlock >();
-		pr->name = pass->getName();
-		pr->queryHandle = &passQueryHandles[index];
-		pr->referenceQueryHandle = referenceQueryHandle;
-		pr->offset = referenceOffset;
-		renderContext->enqueue(pr);
+		auto pe = renderContext->alloc< ProfileEndRenderBlock >();
+		pe->queryHandle = referenceQueryHandle;
+		renderContext->enqueue(pe);
+
+		// Report all queries last using reference query to calculate offset.
+		for (int32_t i = 0; i < (int32_t)m_order.size(); ++i)
+		{
+			uint32_t index = m_order[i];
+			const auto pass = m_passes[index];
+			auto pr = renderContext->alloc< ProfileReportRenderBlock >();
+			pr->name = pass->getName();
+			pr->queryHandle = &passQueryHandles[index];
+			pr->referenceQueryHandle = referenceQueryHandle;
+			pr->offset = referenceOffset;
+			pr->sink = [=](const std::wstring& name, double start, double duration) { m_profiler(i, name, start, duration); };
+			renderContext->enqueue(pr);
+		}
 	}
 #endif
 

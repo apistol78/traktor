@@ -274,12 +274,15 @@ public:
 class T_DLLCLASS ProfileReportRenderBlock : public RenderBlock
 {
 public:
+	typedef std::function< void(const std::wstring&, double, double) > fn_sink_t;
+
 #if !defined(_DEBUG)
 	std::wstring name;
 #endif
 	int32_t* queryHandle = nullptr;
 	int32_t* referenceQueryHandle = nullptr;
 	double offset;
+	fn_sink_t sink;
 
 	virtual void render(IRenderView* renderView) const override final;
 };

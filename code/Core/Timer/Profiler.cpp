@@ -112,6 +112,9 @@ void Profiler::endEvent()
 
 void Profiler::addEvent(const std::wstring& name, double start, double duration)
 {
+	if (!m_listener)
+		return;
+
 	// Get ID of immutable name.
 	uint16_t id = 0;
 	{
