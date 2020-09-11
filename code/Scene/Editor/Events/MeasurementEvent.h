@@ -1,5 +1,6 @@
 #pragma once
 
+#include <string>
 #include "Ui/Event.h"
 
 // import/export mechanism.
