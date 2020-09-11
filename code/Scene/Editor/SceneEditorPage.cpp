@@ -369,7 +369,7 @@ bool SceneEditorPage::create(ui::Container* parent)
 	m_gridMeasurements = new ui::GridView();
 	m_gridMeasurements->create(tabPageMeasurements, ui::WsDoubleBuffer | ui::WsTabStop);
 	m_gridMeasurements->addColumn(new ui::GridColumn(i18n::Text(L"SCENE_EDITOR_MEASUREMENTS_NAME"), ui::dpi96(150)));
-	m_gridMeasurements->addColumn(new ui::GridColumn(i18n::Text(L"SCENE_EDITOR_MEASUREMENTS_DURATION"), ui::dpi96(50)));
+	m_gridMeasurements->addColumn(new ui::GridColumn(i18n::Text(L"SCENE_EDITOR_MEASUREMENTS_DURATION"), ui::dpi96(90)));
 
 	// Add pages.
 	m_tabMisc->addPage(tabPageDependencies);
@@ -1487,7 +1487,7 @@ void SceneEditorPage::eventContextMeasurement(MeasurementEvent* event)
 
 	Ref< ui::GridRow > row = new ui::GridRow();
 	row->add(new ui::GridItem(event->getName()));
-	row->add(new ui::GridItem(str(L"%.2f ms", (float)(event->getDuration() * 1000.0))));
+	row->add(new ui::GridItem(str(L"%.2f µs", (float)(event->getDuration() * 1000000.0))));
 	m_gridMeasurements->addRow(row);
 }
 
