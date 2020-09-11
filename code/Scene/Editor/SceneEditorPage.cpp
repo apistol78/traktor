@@ -38,6 +38,7 @@
 #include "Scene/Editor/SceneEditorPage.h"
 #include "Scene/Editor/ScenePreviewControl.h"
 #include "Scene/Editor/Events/CameraMovedEvent.h"
+#include "Scene/Editor/Events/MeasurementEvent.h"
 #include "Scene/Editor/Events/PostBuildEvent.h"
 #include "Scene/Editor/Events/PostFrameEvent.h"
 #include "Scene/Editor/Events/PostModifyEvent.h"
@@ -361,9 +362,19 @@ bool SceneEditorPage::create(ui::Container* parent)
 
 	m_gridGuides->addEventHandler< ui::GridColumnClickEvent >(this, &SceneEditorPage::eventGuideClick);
 
+	// Create measurements panel.
+	Ref< ui::TabPage > tabPageMeasurements = new ui::TabPage();
+	tabPageMeasurements->create(m_tabMisc, i18n::Text(L"SCENE_EDITOR_MEASUREMENTS"), new ui::FloodLayout());
+
+	m_gridMeasurements = new ui::GridView();
+	m_gridMeasurements->create(tabPageMeasurements, ui::WsDoubleBuffer | ui::WsTabStop);
+	m_gridMeasurements->addColumn(new ui::GridColumn(i18n::Text(L"SCENE_EDITOR_MEASUREMENTS_NAME"), ui::dpi96(150)));
+	m_gridMeasurements->addColumn(new ui::GridColumn(i18n::Text(L"SCENE_EDITOR_MEASUREMENTS_DURATION"), ui::dpi96(50)));
+
 	// Add pages.
 	m_tabMisc->addPage(tabPageDependencies);
 	m_tabMisc->addPage(tabPageGuides);
+	m_tabMisc->addPage(tabPageMeasurements);
 	m_tabMisc->setActivePage(tabPageDependencies);
 
 	m_site->createAdditionalPanel(m_tabMisc, ui::dpi96(300), false);
@@ -382,6 +393,7 @@ bool SceneEditorPage::create(ui::Container* parent)
 	m_context->addEventHandler< PostModifyEvent >(this, &SceneEditorPage::eventContextPostModify);
 	m_context->addEventHandler< CameraMovedEvent >(this, &SceneEditorPage::eventContextCameraMoved);
 	m_context->addEventHandler< PostFrameEvent >(this, &SceneEditorPage::eventContextPostFrame);
+	m_context->addEventHandler< MeasurementEvent >(this, &SceneEditorPage::eventContextMeasurement);
 
 	// Load last used camera transforms.
 	for (int32_t i = 0; i < 4; ++i)
@@ -1466,6 +1478,17 @@ void SceneEditorPage::eventContextCameraMoved(CameraMovedEvent* event)
 void SceneEditorPage::eventContextPostFrame(PostFrameEvent* event)
 {
 	updateStatusBar();
+}
+
+void SceneEditorPage::eventContextMeasurement(MeasurementEvent* event)
+{
+	if (event->getPass() <= 0)
+		m_gridMeasurements->removeAllRows();
+
+	Ref< ui::GridRow > row = new ui::GridRow();
+	row->add(new ui::GridItem(event->getName()));
+	row->add(new ui::GridItem(str(L"%.2f ms", (float)(event->getDuration() * 1000.0))));
+	m_gridMeasurements->addRow(row);
 }
 
 	}

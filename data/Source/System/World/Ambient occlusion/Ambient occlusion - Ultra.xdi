@@ -82,9 +82,9 @@
 			<comment/>
 			<position>
 				<first>411</first>
-				<second>245</second>
+				<second>246</second>
 			</position>
-			<name>AO</name>
+			<name>Ambient occlusion</name>
 			<clear>
 				<mask>
 					<Color>true</Color>
@@ -121,7 +121,7 @@
 				<first>935</first>
 				<second>208</second>
 			</position>
-			<name>Blur X</name>
+			<name>AO blur X</name>
 			<clear>
 				<mask>
 					<Color>true</Color>
@@ -161,7 +161,7 @@
 				<first>1455</first>
 				<second>144</second>
 			</position>
-			<name>Blur Y</name>
+			<name>AO blur Y</name>
 			<clear>
 				<mask>
 					<Color>true</Color>

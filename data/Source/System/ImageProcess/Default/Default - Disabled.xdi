@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.render.ImageGraphAsset">
+	<nodes>
+		<item type="traktor.render.ImgInput" version="traktor.render.Node:1">
+			<id>{F052E489-D9EE-DC46-BD4D-6E4CDE9C8217}</id>
+			<comment/>
+			<position>
+				<first>399</first>
+				<second>331</second>
+			</position>
+			<textureId>InputColor</textureId>
+		</item>
+		<item type="traktor.render.ImgOutput" version="traktor.render.Node:1">
+			<id>{5F023E12-CBE9-C749-99E2-55C58E424706}</id>
+			<comment/>
+			<position>
+				<first>1168</first>
+				<second>268</second>
+			</position>
+		</item>
+		<item type="traktor.render.ImgTexture" version="traktor.render.Node:1">
+			<id>{93788A5D-BDD9-4945-B347-664110B43F64}</id>
+			<comment/>
+			<position>
+				<first>217</first>
+				<second>225</second>
+			</position>
+			<texture>{3DEEC673-EDF5-364A-B796-BAC7EF575258}</texture>
+		</item>
+		<item type="traktor.render.ImgPass" version="traktor.render.Node:1">
+			<id>{629AA5F1-E7FF-B548-B686-28EFD5A49717}</id>
+			<comment/>
+			<position>
+				<first>777</first>
+				<second>247</second>
+			</position>
+			<name>Final</name>
+			<steps>
+				<item type="traktor.render.ImgStepSimple">
+					<shader>{703701E9-2921-6646-9608-2DD2177B93BD}</shader>
+					<parameters>
+						<item>Source</item>
+						<item>ColorCorrection</item>
+					</parameters>
+				</item>
+			</steps>
+		</item>
+	</nodes>
+	<edges>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[3]"/>
+				<name>Source</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[3]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[1]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[2]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[3]"/>
+				<name>ColorCorrection</name>
+			</destination>
+		</item>
+	</edges>
+</object>
