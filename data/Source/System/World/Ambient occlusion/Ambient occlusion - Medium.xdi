@@ -52,6 +52,31 @@
 				<second>174</second>
 			</position>
 		</item>
+		<item type="traktor.render.ImgTargetSet" version="1,traktor.render.Node:1">
+			<id>{3A1ECA6F-641F-2E4C-89C1-F74C3451031C}</id>
+			<comment/>
+			<position>
+				<first>680</first>
+				<second>276</second>
+			</position>
+			<targetSetId>AO</targetSetId>
+			<persistent>false</persistent>
+			<width>0</width>
+			<height>0</height>
+			<screenWidthDenom>2</screenWidthDenom>
+			<screenHeightDenom>2</screenHeightDenom>
+			<maxWidth>0</maxWidth>
+			<maxHeight>0</maxHeight>
+			<createDepthStencil>false</createDepthStencil>
+			<ignoreStencil>false</ignoreStencil>
+			<generateMips>false</generateMips>
+			<targets>
+				<item>
+					<textureId>Output</textureId>
+					<colorFormat>TfR8</colorFormat>
+				</item>
+			</targets>
+		</item>
 		<item type="traktor.render.ImgPass" version="1,traktor.render.Node:1">
 			<id>{23FA7ED0-9D6F-934E-8339-1E8C74500B18}</id>
 			<comment/>
@@ -59,7 +84,7 @@
 				<first>411</first>
 				<second>245</second>
 			</position>
-			<name>AO</name>
+			<name>Ambient occlusion</name>
 			<clear>
 				<mask>
 					<Color>true</Color>
@@ -96,7 +121,7 @@
 				<first>935</first>
 				<second>208</second>
 			</position>
-			<name>Blur X</name>
+			<name>AO blur X</name>
 			<clear>
 				<mask>
 					<Color>true</Color>
@@ -136,7 +161,7 @@
 				<first>1455</first>
 				<second>144</second>
 			</position>
-			<name>Blur Y</name>
+			<name>AO blur Y</name>
 			<clear>
 				<mask>
 					<Color>true</Color>
@@ -169,31 +194,6 @@
 				</item>
 			</steps>
 		</item>
-		<item type="traktor.render.ImgTargetSet" version="1,traktor.render.Node:1">
-			<id>{3A1ECA6F-641F-2E4C-89C1-F74C3451031C}</id>
-			<comment/>
-			<position>
-				<first>680</first>
-				<second>276</second>
-			</position>
-			<targetSetId>AO</targetSetId>
-			<persistent>false</persistent>
-			<width>0</width>
-			<height>0</height>
-			<screenWidthDenom>2</screenWidthDenom>
-			<screenHeightDenom>2</screenHeightDenom>
-			<maxWidth>0</maxWidth>
-			<maxHeight>0</maxHeight>
-			<createDepthStencil>false</createDepthStencil>
-			<ignoreStencil>false</ignoreStencil>
-			<generateMips>false</generateMips>
-			<targets>
-				<item>
-					<textureId>Output</textureId>
-					<colorFormat>TfR8</colorFormat>
-				</item>
-			</targets>
-		</item>
 	</nodes>
 	<edges>
 		<item type="traktor.render.Edge">
@@ -202,7 +202,7 @@
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[4]"/>
+				<node ref="/object/nodes/item[5]"/>
 				<name>Depth</name>
 			</destination>
 		</item>
@@ -212,17 +212,17 @@
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[4]"/>
+				<node ref="/object/nodes/item[5]"/>
 				<name>Normal</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[4]"/>
+				<node ref="/object/nodes/item[5]"/>
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[7]"/>
+				<node ref="/object/nodes/item[4]"/>
 				<name>Input</name>
 			</destination>
 		</item>
@@ -232,13 +232,13 @@
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[5]"/>
+				<node ref="/object/nodes/item[6]"/>
 				<name>Depth</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[5]"/>
+				<node ref="/object/nodes/item[6]"/>
 				<name>Output</name>
 			</source>
 			<destination>
@@ -252,7 +252,7 @@
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[6]"/>
+				<node ref="/object/nodes/item[7]"/>
 				<name>Source</name>
 			</destination>
 		</item>
@@ -262,13 +262,13 @@
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[6]"/>
+				<node ref="/object/nodes/item[7]"/>
 				<name>Depth</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[6]"/>
+				<node ref="/object/nodes/item[7]"/>
 				<name>Output</name>
 			</source>
 			<destination>
@@ -278,11 +278,11 @@
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[7]"/>
+				<node ref="/object/nodes/item[4]"/>
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[5]"/>
+				<node ref="/object/nodes/item[6]"/>
 				<name>Source</name>
 			</destination>
 		</item>

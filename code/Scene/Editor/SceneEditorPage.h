@@ -57,6 +57,7 @@ class EntityData;
 class CameraMovedEvent;
 class EntityAdapter;
 class EntityDependencyInvestigator;
+class MeasurementEvent;
 class PreModifyEvent;
 class PostBuildEvent;
 class PostFrameEvent;
@@ -94,6 +95,7 @@ private:
 	Ref< ui::Tab > m_tabMisc;
 	Ref< EntityDependencyInvestigator > m_entityDependencyPanel;
 	Ref< ui::GridView > m_gridGuides;
+	Ref< ui::GridView > m_gridMeasurements;
 	Ref< ui::Menu > m_entityMenuDefault;
 	Ref< ui::Menu > m_entityMenuGroup;
 	Ref< ui::Menu > m_entityMenuExternal;
@@ -165,6 +167,8 @@ private:
 	void eventContextCameraMoved(CameraMovedEvent* event);
 
 	void eventContextPostFrame(PostFrameEvent* event);
+
+	void eventContextMeasurement(MeasurementEvent* event);
 };
 
 	}

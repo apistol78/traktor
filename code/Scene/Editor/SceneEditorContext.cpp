@@ -27,6 +27,7 @@
 #include "Scene/Editor/SceneEditorContext.h"
 #include "Scene/Editor/Events/CameraMovedEvent.h"
 #include "Scene/Editor/Events/FrameEvent.h"
+#include "Scene/Editor/Events/MeasurementEvent.h"
 #include "Scene/Editor/Events/ModifierChangedEvent.h"
 #include "Scene/Editor/Events/PostBuildEvent.h"
 #include "Scene/Editor/Events/PostFrameEvent.h"
@@ -794,6 +795,12 @@ void SceneEditorContext::raiseRedraw()
 {
 	RedrawEvent redrawEvent(this);
 	raiseEvent(&redrawEvent);
+}
+
+void SceneEditorContext::raiseMeasurement(int32_t pass, const std::wstring& name, double start, double duration)
+{
+	MeasurementEvent measurementEvent(this, pass, name, start, duration);
+	raiseEvent(&measurementEvent);
 }
 
 	}

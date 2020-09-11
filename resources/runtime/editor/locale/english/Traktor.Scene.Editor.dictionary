@@ -385,5 +385,17 @@
 			<first>SCENE_EDITOR_NEW_LAYER</first>
 			<second>New layer</second>
 		</item>
+		<item>
+			<first>SCENE_EDITOR_MEASUREMENTS</first>
+			<second>Measurments</second>
+		</item>
+		<item>
+			<first>SCENE_EDITOR_MEASUREMENTS_NAME</first>
+			<second>Pass</second>
+		</item>
+		<item>
+			<first>SCENE_EDITOR_MEASUREMENTS_DURATION</first>
+			<second>Duration</second>
+		</item>
 	</map>
 </object>

@@ -142,10 +142,10 @@
 			<id>{23FA7ED0-9D6F-934E-8339-1E8C74500B18}</id>
 			<comment/>
 			<position>
-				<first>411</first>
+				<first>412</first>
 				<second>245</second>
 			</position>
-			<name>AO</name>
+			<name>Ambient occlusion</name>
 			<clear>
 				<mask>
 					<Color>true</Color>
@@ -182,7 +182,7 @@
 				<first>976</first>
 				<second>209</second>
 			</position>
-			<name>Blur X</name>
+			<name>AO blur X</name>
 			<clear>
 				<mask>
 					<Color>true</Color>
@@ -222,7 +222,7 @@
 				<first>1455</first>
 				<second>144</second>
 			</position>
-			<name>Blur Y</name>
+			<name>AO blur Y</name>
 			<clear>
 				<mask>
 					<Color>true</Color>
