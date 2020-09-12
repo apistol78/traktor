@@ -44,7 +44,7 @@ const resource::Id< render::ImageGraph > c_ambientOcclusionUltra(L"{302E57C8-711
 const resource::Id< render::ImageGraph > c_antiAliasLow(L"{71D385F1-8364-C849-927F-5F1249F5DF92}");
 const resource::Id< render::ImageGraph > c_antiAliasMedium(L"{D03B9566-EFA3-7A43-B3AD-F59DB34DEE96}");
 const resource::Id< render::ImageGraph > c_antiAliasHigh(L"{C0316981-FA73-A34E-8135-1F596425688F}");
-const resource::Id< render::ImageGraph > c_antiAliasUltra(L"{88E329C8-A2F3-7443-B73E-4E85C6ECACBE}");
+//const resource::Id< render::ImageGraph > c_antiAliasUltra(L"{88E329C8-A2F3-7443-B73E-4E85C6ECACBE}");
 const resource::Id< render::ImageGraph > c_gammaCorrection(L"{B1E8367D-91DD-D648-A44F-B86492169771}");
 const resource::Id< render::ImageGraph > c_toneMapFixed(L"{1F20DAB5-22EB-B84C-92B0-71E94C1CE261}");
 const resource::Id< render::ImageGraph > c_toneMapAdaptive(L"{BE19DE90-E010-A74D-AA3B-87FAC2A56946}");
@@ -81,7 +81,8 @@ resource::Id< render::ImageGraph > getAntiAliasId(Quality quality)
 	case Quality::High:
 		return c_antiAliasHigh;
 	case Quality::Ultra:
-		return c_antiAliasUltra;
+		//return c_antiAliasUltra;
+		return c_antiAliasHigh;		// Since forward path doesn't include velocity buffer then we cannot use TAA.
 	}
 }
 
