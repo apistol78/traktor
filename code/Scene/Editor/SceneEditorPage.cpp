@@ -1487,7 +1487,7 @@ void SceneEditorPage::eventContextMeasurement(MeasurementEvent* event)
 
 	Ref< ui::GridRow > row = new ui::GridRow();
 	row->add(new ui::GridItem(event->getName()));
-	row->add(new ui::GridItem(str(L"%.2f µs", (float)(event->getDuration() * 1000000.0))));
+	row->add(new ui::GridItem(str(L"%.2f \xb5s", (float)(event->getDuration() * 1000000.0))));
 	m_gridMeasurements->addRow(row);
 }
 
