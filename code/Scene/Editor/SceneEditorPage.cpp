@@ -1,3 +1,4 @@
+#include "Core/Functor/Functor.h"
 #include "Core/Io/StringOutputStream.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/EnterLeave.h"
@@ -11,6 +12,8 @@
 #include "Core/Settings/PropertyBoolean.h"
 #include "Core/Settings/PropertyGroup.h"
 #include "Core/Settings/PropertyString.h"
+#include "Core/Thread/Job.h"
+#include "Core/Thread/JobManager.h"
 #include "Core/Thread/ThreadManager.h"
 #include "Database/Database.h"
 #include "Database/Group.h"
@@ -46,6 +49,7 @@
 #include "Script/IScriptManager.h"
 #include "Script/ScriptFactory.h"
 #include "Ui/Application.h"
+#include "Ui/BackgroundWorkerDialog.h"
 #include "Ui/Clipboard.h"
 #include "Ui/Container.h"
 #include "Ui/FloodLayout.h"
@@ -386,6 +390,18 @@ bool SceneEditorPage::create(ui::Container* parent)
 
 	m_site->createAdditionalPanel(m_controllerPanel, ui::dpi96(120), true);
 
+	// Create the scene, loads textures etc, using a background job since it might take significant amount of time.
+	Ref< Job > job = JobManager::getInstance().add(makeFunctor([&]() {
+		createSceneAsset();
+		updateScene();
+	}));
+
+	// Show a dialog if processing seems to take more than N second(s).
+	ui::BackgroundWorkerDialog dialog;
+	dialog.create(parent->getAncestor(), i18n::Text(L"SCENE_EDITOR_LOAD_TITLE"), i18n::Text(L"SCENE_EDITOR_LOAD_MESSAGE"), false);
+	dialog.execute(job, nullptr);
+	dialog.destroy();
+
 	// Context event handlers.
 	m_context->addEventHandler< PostBuildEvent >(this, &SceneEditorPage::eventContextPostBuild);
 	m_context->addEventHandler< ui::SelectionChangeEvent >(this, &SceneEditorPage::eventContextSelect);
@@ -409,8 +425,6 @@ bool SceneEditorPage::create(ui::Container* parent)
 	}
 
 	// Finally realize the scene.
-	createSceneAsset();
-	updateScene();
 	createInstanceGrid();
 	createControllerEditor();
 	updatePropertyObject();

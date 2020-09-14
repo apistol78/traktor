@@ -397,5 +397,13 @@
 			<first>SCENE_EDITOR_MEASUREMENTS_DURATION</first>
 			<second>Duration</second>
 		</item>
+		<item>
+			<first>SCENE_EDITOR_LOAD_TITLE</first>
+			<second>Loading</second>
+		</item>
+		<item>
+			<first>SCENE_EDITOR_LOAD_MESSAGE</first>
+			<second>Loading scene...</second>
+		</item>
 	</map>
 </object>
