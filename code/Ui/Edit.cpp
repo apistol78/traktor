@@ -66,6 +66,16 @@ bool Edit::create(Widget* parent, const std::wstring& text, int style, const Edi
 	return true;
 }
 
+void Edit::destroy()
+{
+	// If control is destroyed while having focus then no event is issued
+	// for loosing focus, so we must also enable global event handlers here.
+	if (hasFocus())
+		Application::getInstance()->enableEventHandlers< KeyDownEvent >();
+
+	Widget::destroy();
+}
+
 bool Edit::setValidator(const EditValidator* validator)
 {
 	if (validator)
@@ -230,14 +240,17 @@ Size Edit::getPreferedSize() const
 
 void Edit::eventFocus(FocusEvent* event)
 {
+	m_caretBlink = true;
 	if (event->gotFocus())
 	{
-		m_caretBlink = true;
+		// Disable global KeyDown events while Edit got focus to prevent
+		// global hooks, such as ShortcutTable, to receive events.
+		Application::getInstance()->disableEventHandlers< KeyDownEvent >();
 		startTimer(500);
 	}
 	else
 	{
-		m_caretBlink = true;
+		Application::getInstance()->enableEventHandlers< KeyDownEvent >();
 		stopTimer();
 		deselect();
 	}
