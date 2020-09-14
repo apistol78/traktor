@@ -96,7 +96,7 @@
 			<priority>
 				<setup>false</setup>
 				<opaque>false</opaque>
-				<postOpaque>false</postOpaque>
+				<postOpaque>true</postOpaque>
 				<alphaBlend>false</alphaBlend>
 				<postAlphaBlend>false</postAlphaBlend>
 				<overlay>false</overlay>
@@ -113,7 +113,7 @@
 				<red>true</red>
 				<green>true</green>
 				<blue>true</blue>
-				<alpha>true</alpha>
+				<alpha>false</alpha>
 			</colorWriteMask>
 			<depthEnable>true</depthEnable>
 			<depthWriteEnable>false</depthWriteEnable>
