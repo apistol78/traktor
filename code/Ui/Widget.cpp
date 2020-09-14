@@ -430,6 +430,14 @@ Widget* Widget::getParent() const
 	return m_parent;
 }
 
+Widget* Widget::getAncestor() const
+{
+	Widget* ancestor = m_parent;
+	while (ancestor && ancestor->m_parent)
+		ancestor = ancestor->m_parent;
+	return ancestor;
+}
+
 Widget* Widget::getPreviousSibling() const
 {
 	return m_previousSibling;

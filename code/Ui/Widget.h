@@ -157,6 +157,8 @@ public:
 
 	Widget* getParent() const;
 
+	Widget* getAncestor() const;
+
 	Widget* getPreviousSibling() const;
 
 	Widget* getNextSibling() const;
