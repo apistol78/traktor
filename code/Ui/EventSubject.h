@@ -161,12 +161,35 @@ public:
 		return hasEventHandler(type_of< EventType >());
 	}
 
+	void enableEventHandlers(const TypeInfo& eventType);
+
+	template < typename EventType >
+	void enableEventHandlers()
+	{
+		enableEventHandlers(type_of< EventType >());
+	}
+
+	void disableEventHandlers(const TypeInfo& eventType);
+
+	template < typename EventType >
+	void disableEventHandlers()
+	{
+		disableEventHandlers(type_of< EventType >());
+	}
+
 protected:
 	void removeAllEventHandlers();
 
 private:
 	typedef RefArray< IEventHandler > EventHandlers;
-	SmallMap< const TypeInfo*, StaticVector< EventHandlers, 16 > > m_eventHandlers;
+
+	struct HandlerEntry
+	{
+		int32_t disableCounter = 0;
+		StaticVector< EventHandlers, 16 > handlers;
+	};
+
+	SmallMap< const TypeInfo*, HandlerEntry > m_eventHandlers;
 };
 
 	}
