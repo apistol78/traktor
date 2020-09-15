@@ -187,10 +187,10 @@ Exposure bias
 			]]>
 			</comment>
 			<position>
-				<first>283</first>
-				<second>305</second>
+				<first>553</first>
+				<second>410</second>
 			</position>
-			<value>0</value>
+			<value>1</value>
 		</item>
 		<item type="traktor.render.Mul" version="traktor.render.Node:1">
 			<id>{FD65039D-59AC-254B-B500-2C0C12AA5462}</id>
@@ -261,29 +261,12 @@ W
 			</position>
 			<value>0.15</value>
 		</item>
-		<item type="traktor.render.Pow" version="traktor.render.Node:1">
-			<id>{F5D9D0DE-7DAE-0644-B3F1-60648D981602}</id>
-			<comment/>
-			<position>
-				<first>710</first>
-				<second>327</second>
-			</position>
-		</item>
-		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
-			<id>{3A63842F-FBCE-8D4E-A348-C1E574D25747}</id>
-			<comment/>
-			<position>
-				<first>530</first>
-				<second>377</second>
-			</position>
-			<value>2</value>
-		</item>
 		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
 			<id>{21525D23-DCF0-B641-9A54-9E392F1BAAE5}</id>
 			<comment/>
 			<position>
-				<first>510</first>
-				<second>325</second>
+				<first>764</first>
+				<second>436</second>
 			</position>
 			<parameterName>World_Exposure</parameterName>
 			<type>PtScalar</type>
@@ -433,22 +416,12 @@ W
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[16]"/>
+				<node ref="/object/nodes/item[8]"/>
 				<name>Output</name>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[15]"/>
-				<name>Input</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[17]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[15]"/>
-				<name>Exponent</name>
+				<name>Initial</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
@@ -459,16 +432,6 @@ W
 			<destination>
 				<node ref="/object/nodes/item[9]"/>
 				<name>Input1</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[8]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[17]"/>
-				<name>Initial</name>
 			</destination>
 		</item>
 	</edges>
