@@ -336,7 +336,6 @@
 			<comment>
 			<![CDATA[
 Do classic Phong on Mobile, disregard PBR.
-
 			]]>
 			</comment>
 			<position>
@@ -360,6 +359,15 @@ Do classic Phong on Mobile, disregard PBR.
 				<second>1005</second>
 			</position>
 			<value>4</value>
+		</item>
+		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
+			<id>{1FFB1B85-01B5-354E-976F-57C35597F8B1}</id>
+			<comment/>
+			<position>
+				<first>1499</first>
+				<second>995</second>
+			</position>
+			<swizzle>xxxx</swizzle>
 		</item>
 	</nodes>
 	<edges>
@@ -659,13 +667,23 @@ Do classic Phong on Mobile, disregard PBR.
 				<name>Output</name>
 			</source>
 			<destination>
+				<node ref="/object/nodes/item[24]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[24]"/>
+				<name>Output</name>
+			</source>
+			<destination>
 				<node ref="/object/nodes/item[21]"/>
 				<name>iOS</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[22]"/>
+				<node ref="/object/nodes/item[24]"/>
 				<name>Output</name>
 			</source>
 			<destination>
