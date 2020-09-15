@@ -296,8 +296,6 @@ function deploy(args)
 	-- Cleanup intermediate files.
 	run:rm("$(DEPLOY_PROJECT_NAME).unsigned.apk")
 	run:rm("$(DEPLOY_PROJECT_NAME).aligned.apk")
-
-	stdout:printLn("Done")
 	return 0
 end
 
@@ -313,13 +311,12 @@ function launch(args)
 	end
 
 	local launchVS = false
-
-	--[[
+--[[
 	local host = os:getEnvironment("DEPLOY_HOST_OS")
 	if host == "win32" or host == "win64" then
 		launchVS = true
 	end	
-	]]
+]]
 
 	if not launchVS then
 		-- Launch application on attached device.
@@ -337,21 +334,23 @@ function launch(args)
 			return 1
 		end
 	else
-		run:mkdir("vs")
+		stdout:printLn("Creating Visual Studio solution...")
 
 		-- Generate Visual Studio solution.
+		run:mkdir("vs")
 		run:run("\"$(DEPLOY_SYSTEM_ROOT)/resources/runtime/deploy/android/vs/project.vcxproj.template\"", "vs/$(DEPLOY_PROJECT_NAME).vcxproj")
 		run:run("\"$(DEPLOY_SYSTEM_ROOT)/resources/runtime/deploy/android/vs/project.vcxproj.user.template\"", "vs/$(DEPLOY_PROJECT_NAME).vcxproj.user")
 		run:run("\"$(DEPLOY_SYSTEM_ROOT)/resources/runtime/deploy/android/vs/solution.sln.template\"", "vs/$(DEPLOY_PROJECT_NAME).sln")
 
-		-- Open generated solution in Visual Studio.
 		local projectName = os:getEnvironment("DEPLOY_PROJECT_NAME")
-		if not os:openFile("vs/" .. projectName .. ".sln") then
-			stderr:printLn("Unable to open " .. projectName .. " solution.")
+		local sln = FileSystem.getInstance():getAbsolutePath(Path("vs/" .. projectName .. ".sln"))
+
+		-- Open generated solution in Visual Studio.
+		if not os:openFile(sln.pathName) then
+			stderr:printLn("Unable to open \"" .. sln.pathName .. "\".")
 		end		
 	end
 
-	stdout:printLn("Done")
 	return 0
 end
 
@@ -470,7 +469,7 @@ function migrate(args)
 		return 1
 	end
 
-	stdout:printLn("Done")
+	return 0
 end
 
 --[[
