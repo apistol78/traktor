@@ -1273,6 +1273,8 @@ bool EditorForm::openEditor(db::Instance* instance)
 			return false;
 		}
 
+		objectEditorDialog->setData(L"PRIMARY", instance);
+
 		objectEditorDialog->show();
 	}
 	else
@@ -1723,6 +1725,18 @@ void EditorForm::buildAssetsForOpenedEditors()
 				dependencies.insert(instance->getGuid());
 
 			assetGuids.insert(assetGuids.end(), dependencies.begin(), dependencies.end());
+		}
+	}
+
+	// Add instances from opened dialogs.
+	for (auto child = getFirstChild(); child != nullptr; child = child->getNextSibling())
+	{
+		auto objectEditorDialog = dynamic_type_cast< ObjectEditorDialog* >(child);
+		if (objectEditorDialog)
+		{
+			db::Instance* instance = objectEditorDialog->getData< db::Instance >(L"PRIMARY");
+			if (instance)
+				assetGuids.push_back(instance->getGuid());
 		}
 	}
 
