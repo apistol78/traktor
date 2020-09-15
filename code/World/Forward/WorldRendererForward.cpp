@@ -923,7 +923,7 @@ void WorldRendererForward::setupProcessPass(
 	cx.associateTextureTargetSet(s_handleInputNormal, gbufferTargetSetId, 1);
 	cx.setFloatParameter(s_handleGamma, m_gamma);
 	cx.setFloatParameter(s_handleGammaInverse, 1.0f / m_gamma);
-	cx.setFloatParameter(s_handleExposure, m_settings.exposure);
+	cx.setFloatParameter(s_handleExposure, std::pow(2.0f, m_settings.exposure));
 	cx.setParams(ipd);
 
 	StaticVector< render::ImageGraph*, 4 > processes;

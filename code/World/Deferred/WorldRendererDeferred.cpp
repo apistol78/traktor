@@ -1540,7 +1540,7 @@ void WorldRendererDeferred::setupProcessPass(
 	// Expose gamma and exposure.
 	cx.setFloatParameter(s_handleGamma, m_gamma);
 	cx.setFloatParameter(s_handleGammaInverse, 1.0f / m_gamma);
-	cx.setFloatParameter(s_handleExposure, m_settings.exposure);
+	cx.setFloatParameter(s_handleExposure, std::pow(2.0f, m_settings.exposure));
 
 	// Expose jitter; in texture space.
 	Vector2 rc = jitter(m_count) / worldRenderView.getViewSize();
