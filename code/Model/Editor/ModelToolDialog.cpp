@@ -1072,6 +1072,18 @@ void ModelToolDialog::eventRenderPaint(ui::PaintEvent* event)
 					{
 						const Vector4& p = positions[vertex.getPosition()];
 						const Vector4& n = normals[vertex.getNormal()];
+						m_primitiveRenderer->drawLine(p, p + n * Scalar(m_normalScale), Color4ub(0, 0, 255, 200));
+					}
+					if (vertex.getTangent() != c_InvalidIndex)
+					{
+						const Vector4& p = positions[vertex.getPosition()];
+						const Vector4& n = normals[vertex.getTangent()];
+						m_primitiveRenderer->drawLine(p, p + n * Scalar(m_normalScale), Color4ub(255, 0, 0, 200));
+					}
+					if (vertex.getBinormal() != c_InvalidIndex)
+					{
+						const Vector4& p = positions[vertex.getPosition()];
+						const Vector4& n = normals[vertex.getBinormal()];
 						m_primitiveRenderer->drawLine(p, p + n * Scalar(m_normalScale), Color4ub(0, 255, 0, 200));
 					}
 				}
