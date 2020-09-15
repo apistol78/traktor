@@ -6400,6 +6400,12 @@
 												</dependencies>
 											</project>
 										</item>
+										<item type="ExternalDependency" version="3">
+											<inheritIncludePaths>true</inheritIncludePaths>
+											<link>LnkYes</link>
+											<solutionFileName>ExternRPi.xms</solutionFileName>
+											<projectName>Extern.MikkTSpace</projectName>
+										</item>
 									</dependencies>
 								</project>
 							</item>
