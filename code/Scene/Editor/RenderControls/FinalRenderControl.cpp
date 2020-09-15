@@ -104,16 +104,6 @@ bool FinalRenderControl::create(ui::Widget* parent, SceneEditorContext* context,
 	if (!m_renderView)
 		return false;
 
-	m_renderContext = new render::RenderContext(16 * 1024 * 1024);
-	m_renderGraph = new render::RenderGraph(m_context->getRenderSystem());
-
-	m_renderWidget->addEventHandler< ui::MouseButtonDownEvent >(this, &FinalRenderControl::eventButtonDown);
-	m_renderWidget->addEventHandler< ui::MouseButtonUpEvent >(this, &FinalRenderControl::eventButtonUp);
-	m_renderWidget->addEventHandler< ui::MouseDoubleClickEvent >(this, &FinalRenderControl::eventDoubleClick);
-	m_renderWidget->addEventHandler< ui::MouseMoveEvent >(this, &FinalRenderControl::eventMouseMove);
-	m_renderWidget->addEventHandler< ui::MouseWheelEvent >(this, &FinalRenderControl::eventMouseWheel);
-	m_renderWidget->addEventHandler< ui::PaintEvent >(this, &FinalRenderControl::eventPaint);
-
 	if (m_context->getDocument()->getInstance(0)->getPrimaryType() == &type_of< SceneAsset >())
 	{
 		resource::Id< scene::Scene > sceneId(m_context->getDocument()->getInstance(0)->getGuid());
@@ -123,6 +113,16 @@ bool FinalRenderControl::create(ui::Widget* parent, SceneEditorContext* context,
 		))
 			return false;
 	}
+
+	m_renderContext = new render::RenderContext(16 * 1024 * 1024);
+	m_renderGraph = new render::RenderGraph(m_context->getRenderSystem());
+
+	m_renderWidget->addEventHandler< ui::MouseButtonDownEvent >(this, &FinalRenderControl::eventButtonDown);
+	m_renderWidget->addEventHandler< ui::MouseButtonUpEvent >(this, &FinalRenderControl::eventButtonUp);
+	m_renderWidget->addEventHandler< ui::MouseDoubleClickEvent >(this, &FinalRenderControl::eventDoubleClick);
+	m_renderWidget->addEventHandler< ui::MouseMoveEvent >(this, &FinalRenderControl::eventMouseMove);
+	m_renderWidget->addEventHandler< ui::MouseWheelEvent >(this, &FinalRenderControl::eventMouseWheel);
+	m_renderWidget->addEventHandler< ui::PaintEvent >(this, &FinalRenderControl::eventPaint);
 
 	updateSettings();
 	updateWorldRenderer();
