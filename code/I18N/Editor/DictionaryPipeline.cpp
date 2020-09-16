@@ -1,3 +1,4 @@
+#include "Core/Io/FileSystem.h"
 #include "Core/Io/IStream.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/SafeDestroy.h"
@@ -58,17 +59,18 @@ bool DictionaryPipeline::buildOutput(
 {
 	Ref< const DictionaryAsset > dictionaryAsset = checked_type_cast< const DictionaryAsset*, false >(sourceAsset);
 
-	Ref< IStream > file = pipelineBuilder->openFile(Path(m_assetPath), dictionaryAsset->getFileName().getOriginal());
+	Path filePath = FileSystem::getInstance().getAbsolutePath(Path(m_assetPath) + dictionaryAsset->getFileName());
+	Ref< IStream > file = pipelineBuilder->openFile(filePath);
 	if (!file)
 	{
-		log::error << L"Dictionary pipeline failed; unable to open source \"" << dictionaryAsset->getFileName().getOriginal() << L"\"" << Endl;
+		log::error << L"Dictionary pipeline failed; unable to open source \"" << dictionaryAsset->getFileName().getOriginal() << L"\"." << Endl;
 		return false;
 	}
 
 	Ref< Dictionary > dictionary = IDictionaryFormat::readAny(file, dictionaryAsset->getFileName().getExtension(), dictionaryAsset->getKeyColumn(), dictionaryAsset->getTextColumn());
 	if (!dictionary)
 	{
-		log::error << L"Dictionary pipeline failed; unable to read dictionary from \"" << dictionaryAsset->getFileName().getOriginal() << L"\"" << Endl;
+		log::error << L"Dictionary pipeline failed; unable to read dictionary from \"" << dictionaryAsset->getFileName().getOriginal() << L"\"." << Endl;
 		return false;
 	}
 

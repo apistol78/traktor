@@ -1,4 +1,5 @@
 #include <list>
+#include "Core/Io/FileSystem.h"
 #include "Core/Io/IStream.h"
 #include "Core/Log/Log.h"
 #include "Core/Math/Const.h"
@@ -320,17 +321,18 @@ bool MeshPipeline::buildOutput(
 		log::info << L"Loading model \"" << asset->getFileName().getFileName() << L"\"..." << Endl;
 
 		// Load and prepare models through model cache.
+		Path filePath = FileSystem::getInstance().getAbsolutePath(Path(m_assetPath) + asset->getFileName());
 		model::ModelCache modelCache(
 			m_modelCachePath,
 			[&](const Path& p) {
-				return pipelineBuilder->getFile(Path(m_assetPath), p.getOriginal());
+				return pipelineBuilder->getFile(p);
 			},
 			[&](const Path& p) {
-				return pipelineBuilder->openFile(Path(m_assetPath), p.getOriginal());
+				return pipelineBuilder->openFile(p);
 			}
 		);
 
-		Ref< model::Model > model = modelCache.get(asset->getFileName(), asset->getImportFilter());
+		Ref< model::Model > model = modelCache.get(filePath, asset->getImportFilter());
 		if (!model)
 		{
 			log::error << L"Mesh pipeline failed; unable to read source model (" << asset->getFileName().getOriginal() << L")." << Endl;

@@ -1,3 +1,4 @@
+#include "Core/Io/FileSystem.h"
 #include "Core/Io/IStream.h"
 #include "Core/Log/Log.h"
 #include "Core/Settings/PropertyString.h"
@@ -71,17 +72,18 @@ bool SequenceTexturePipeline::buildOutput(
 
 	for (const auto& p : asset->m_fileNames)
 	{
-		Ref< IStream > file = pipelineBuilder->openFile(Path(m_assetPath), p.getOriginal());
+		Path filePath = FileSystem::getInstance().getAbsolutePath(Path(m_assetPath) + p);
+		Ref< IStream > file = pipelineBuilder->openFile(filePath);
 		if (!file)
 		{
-			log::error << L"Sequence texture asset pipeline failed; unable to open source image \"" << p.getOriginal() << L"\"" << Endl;
+			log::error << L"Sequence texture asset pipeline failed; unable to open source image \"" << p.getOriginal() << L"\"." << Endl;
 			return false;
 		}
 
 		Ref< drawing::Image > image = drawing::Image::load(file, p.getExtension());
 		if (!image)
 		{
-			log::error << L"Sequence texture asset pipeline failed; unable to load source image \"" << p.getOriginal() << L"\"" << Endl;
+			log::error << L"Sequence texture asset pipeline failed; unable to load source image \"" << p.getOriginal() << L"\"." << Endl;
 			return false;
 		}
 

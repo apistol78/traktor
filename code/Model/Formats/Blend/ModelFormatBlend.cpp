@@ -44,23 +44,8 @@ Ref< Model > ModelFormatBlend::read(const Path& filePath, const std::wstring& fi
 	if (!FileSystem::getInstance().makeAllDirectories(scratchPath))
 		return nullptr;
 
-	// Copy source model into working path.
-	Ref< IStream > file = openStream(filePath);
-	if (!file)
-		return nullptr;
-
-	Ref< IStream > tmpFile = FileSystem::getInstance().open(scratchPath + L"/__source__.blend", File::FmWrite);
-	if (!tmpFile)
-		return nullptr;
-
-	if (!StreamCopy(tmpFile, file).execute())
-		return nullptr;
-
-	tmpFile->close();
-	tmpFile = nullptr;
-
 	// Create export script.
-	file = FileSystem::getInstance().open(scratchPath + L"/__export__.py", File::FmWrite);
+	Ref< IStream > file = FileSystem::getInstance().open(scratchPath + L"/__export__.py", File::FmWrite);
 	if (!file)
 		return nullptr;
 
@@ -88,7 +73,13 @@ Ref< Model > ModelFormatBlend::read(const Path& filePath, const std::wstring& fi
 	std::wstring blender = blenderPath.getPathNameNoVolume();
 #endif
 
-	std::wstring commandLine = L"\"" + blender + L"\" -b " + scratchPath + L"/__source__.blend -P " + scratchPath + L"/__export__.py";
+	Path filePathAbs = FileSystem::getInstance().getAbsolutePath(filePath);
+
+#if defined(_WIN32)
+	std::wstring commandLine = L"\"" + blender + L"\" -b " + filePathAbs.getPathName() + L" -P " + scratchPath + L"/__export__.py";
+#else
+	std::wstring commandLine = L"\"" + blender + L"\" -b " + filePathAbs.getPathNameNoVolume() + L" -P " + scratchPath + L"/__export__.py";
+#endif
 	Ref< IProcess > process = OS::getInstance().execute(
 		commandLine,
 		scratchPath,

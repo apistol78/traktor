@@ -2,6 +2,7 @@
 #include "Animation/Skeleton.h"
 #include "Animation/Editor/SkeletonAsset.h"
 #include "Animation/Editor/SkeletonPipeline.h"
+#include "Core/Io/FileSystem.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/String.h"
 #include "Core/Settings/PropertyString.h"
@@ -65,8 +66,9 @@ bool SkeletonPipeline::buildOutput(
 {
 	Ref< const SkeletonAsset > skeletonAsset = checked_type_cast< const SkeletonAsset* >(sourceAsset);
 
-	Ref< model::Model > model = model::ModelFormat::readAny(skeletonAsset->getFileName(), L"", [&](const Path& p) {
-		return pipelineBuilder->openFile(Path(m_assetPath), p.getOriginal());
+	Path filePath = FileSystem::getInstance().getAbsolutePath(Path(m_assetPath) + skeletonAsset->getFileName());
+	Ref< model::Model > model = model::ModelFormat::readAny(filePath, L"", [&](const Path& p) {
+		return pipelineBuilder->openFile(p);
 	});
 	if (!model)
 	{

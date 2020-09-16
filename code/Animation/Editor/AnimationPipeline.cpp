@@ -6,6 +6,7 @@
 #include "Animation/Editor/AnimationAsset.h"
 #include "Animation/Editor/AnimationPipeline.h"
 #include "Animation/Editor/SkeletonAsset.h"
+#include "Core/Io/FileSystem.h"
 #include "Core/Log/Log.h"
 #include "Core/Math/Const.h"
 #include "Core/Math/Format.h"
@@ -79,8 +80,9 @@ bool AnimationPipeline::buildOutput(
 	Ref< const AnimationAsset > animationAsset = checked_type_cast< const AnimationAsset* >(sourceAsset);
 
 	// Read source model.
-	Ref< model::Model > modelAnimation = model::ModelFormat::readAny(animationAsset->getFileName(), L"", [&](const Path& p) {
-		return pipelineBuilder->openFile(Path(m_assetPath), p.getOriginal());
+	Path filePath = FileSystem::getInstance().getAbsolutePath(Path(m_assetPath) + animationAsset->getFileName());
+	Ref< model::Model > modelAnimation = model::ModelFormat::readAny(filePath, L"", [&](const Path& p) {
+		return pipelineBuilder->openFile(p);
 	});
 	if (!modelAnimation)
 	{
@@ -99,8 +101,9 @@ bool AnimationPipeline::buildOutput(
 			return false;
 		}
 
-		modelSkeleton = model::ModelFormat::readAny(skeletonAsset->getFileName(), L"", [&](const Path& p) {
-			return pipelineBuilder->openFile(Path(m_assetPath), p.getOriginal());
+		Path filePath = FileSystem::getInstance().getAbsolutePath(Path(m_assetPath) + skeletonAsset->getFileName());
+		modelSkeleton = model::ModelFormat::readAny(filePath, L"", [&](const Path& p) {
+			return pipelineBuilder->openFile(p);
 		});
 		if (!modelSkeleton)
 		{

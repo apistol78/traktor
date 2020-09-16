@@ -219,19 +219,19 @@ Ref< const ISerializable > PipelineBuilderWrapper::getObjectReadOnly(const Guid&
 	return m_objectCache->get(instanceGuid);
 }
 
-Ref< File > PipelineBuilderWrapper::getFile(const Path& basePath, const std::wstring& fileName)
+Ref< File > PipelineBuilderWrapper::getFile(const Path& filePath)
 {
 	T_FATAL_ERROR;
 	return nullptr;
 }
 
-Ref< IStream > PipelineBuilderWrapper::openFile(const Path& basePath, const std::wstring& fileName)
+Ref< IStream > PipelineBuilderWrapper::openFile(const Path& filePath)
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_openFileLock);
 
 	m_transport->flush< editor::AgentStream >();
 
-	editor::AgentOpenFile agentOpenFile(basePath, fileName);
+	editor::AgentOpenFile agentOpenFile(filePath);
 	if (!m_transport->send(&agentOpenFile))
 		return nullptr;
 

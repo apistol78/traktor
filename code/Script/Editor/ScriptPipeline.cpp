@@ -56,10 +56,11 @@ bool readScript(editor::IPipelineCommon* pipelineCommon, const std::wstring& ass
 	else if (const ScriptAsset* scriptAsset = dynamic_type_cast< const ScriptAsset* >(sourceAsset))
 	{
 		// Read script from asset as-is as we need to traverse dependencies.
-		Ref< IStream > file = pipelineCommon->openFile(Path(assetPath), scriptAsset->getFileName().getOriginal());
+		Path filePath = FileSystem::getInstance().getAbsolutePath(Path(assetPath) + scriptAsset->getFileName());
+		Ref< IStream > file = pipelineCommon->openFile(filePath);
 		if (!file)
 		{
-			log::error << L"Script pipeline failed; unable to open script (" << scriptAsset->getFileName().getOriginal() << L")" << Endl;
+			log::error << L"Script pipeline failed; unable to open script \"" << filePath.getPathName() << L"\"." << Endl;
 			return false;
 		}
 

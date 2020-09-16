@@ -268,15 +268,13 @@ Ref< const ISerializable > PipelineDependsIncremental::getObjectReadOnly(const G
 		return 0;
 }
 
-Ref< File > PipelineDependsIncremental::getFile(const Path& basePath, const std::wstring& fileName)
+Ref< File > PipelineDependsIncremental::getFile(const Path& filePath)
 {
-	Path filePath = FileSystem::getInstance().getAbsolutePath(basePath + Path(fileName));
 	return FileSystem::getInstance().get(filePath);
 }
 
-Ref< IStream > PipelineDependsIncremental::openFile(const Path& basePath, const std::wstring& fileName)
+Ref< IStream > PipelineDependsIncremental::openFile(const Path& filePath)
 {
-	Path filePath = FileSystem::getInstance().getAbsolutePath(basePath + Path(fileName));
 	Ref< IStream > fileStream = FileSystem::getInstance().open(filePath, File::FmRead);
 	return fileStream ? new BufferedStream(fileStream) : nullptr;
 }

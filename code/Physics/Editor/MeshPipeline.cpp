@@ -1,3 +1,4 @@
+#include "Core/Io/FileSystem.h"
 #include "Core/Io/IStream.h"
 #include "Core/Log/Log.h"
 #include "Core/Math/Const.h"
@@ -77,15 +78,15 @@ bool MeshPipeline::buildOutput(
 	// are procedurally generated.
 	if (buildParams)
 	{
-		log::info << L"Using parameter model" << Endl;
 		model = checked_type_cast< model::Model* >(
 			const_cast< Object* >(buildParams)
 		);
 	}
 	else
 	{
-		model = model::ModelFormat::readAny(meshAsset->getFileName(), L"", [&](const Path& p) {
-			return pipelineBuilder->openFile(Path(m_assetPath), p.getOriginal());
+		Path filePath = FileSystem::getInstance().getAbsolutePath(Path(m_assetPath) + meshAsset->getFileName());
+		model = model::ModelFormat::readAny(filePath, L"", [&](const Path& p) {
+			return pipelineBuilder->openFile(p);
 		});
 	}
 

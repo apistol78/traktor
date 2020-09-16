@@ -1,6 +1,7 @@
 #include <cstring>
 #include <functional>
 #include <list>
+#include "Core/Io/FileSystem.h"
 #include "Core/Io/IStream.h"
 #include "Core/Log/Log.h"
 #include "Core/Math/Bezier2nd.h"
@@ -157,10 +158,11 @@ bool Pipeline::buildOutput(
 
 	if (const MovieAsset* movieAsset = dynamic_type_cast< const MovieAsset* >(sourceAsset))
 	{
-		Ref< IStream > sourceStream = pipelineBuilder->openFile(traktor::Path(m_assetPath), movieAsset->getFileName().getOriginal());
+		traktor::Path filePath = FileSystem::getInstance().getAbsolutePath(traktor::Path(m_assetPath) + movieAsset->getFileName());
+		Ref< IStream > sourceStream = pipelineBuilder->openFile(filePath);
 		if (!sourceStream)
 		{
-			log::error << L"Failed to import Spark movie; unable to open file \"" << movieAsset->getFileName().getOriginal() << L"\"" << Endl;
+			log::error << L"Failed to import Spark movie; unable to open file \"" << movieAsset->getFileName().getOriginal() << L"\"." << Endl;
 			return false;
 		}
 

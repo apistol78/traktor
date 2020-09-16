@@ -19,7 +19,7 @@ class PropertyGroup;
 	namespace editor
 	{
 
-/*! \brief
+/*!
  * \ingroup Editor
  */
 class T_DLLCLASS AgentOpenFile : public ISerializable
@@ -27,19 +27,16 @@ class T_DLLCLASS AgentOpenFile : public ISerializable
 	T_RTTI_CLASS;
 
 public:
-	AgentOpenFile();
+	AgentOpenFile() = default;
 
-	AgentOpenFile(const Path& basePath, const std::wstring& fileName);
+	explicit AgentOpenFile(const Path& filePath);
 
-	const Path& getBasePath() const;
-
-	const std::wstring& getFileName() const;
+	const Path& getFilePath() const;
 
 	virtual void serialize(ISerializer& s) override final;
 
 private:
-	Path m_basePath;
-	std::wstring m_fileName;
+	Path m_filePath;
 };
 
 	}
