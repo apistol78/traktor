@@ -111,7 +111,9 @@ Application::Application()
 ,	m_backgroundColor(0.0f, 0.0f, 0.0f, 0.0f)
 ,	m_updateDuration(0.0f)
 ,	m_buildDuration(0.0f)
-,	m_renderDuration(0.0f)
+,	m_renderCpuDuration(0.0f)
+,	m_renderGpuDuration(0.0f)
+,	m_renderGpuDurationQuery(-1)
 ,	m_renderCollisions(0)
 ,	m_frameBuild(0)
 ,	m_frameRender(0)
@@ -688,7 +690,7 @@ bool Application::update()
 				if (m_threadRender && i > 0 && !renderCollision)
 				{
 					// Recalculate interval for each sub-step as some updates might spike.
-					float excessTime = std::max(m_renderDuration - m_buildDuration - m_updateDuration * updateCount, 0.0f);
+					float excessTime = std::max(m_renderCpuDuration - m_buildDuration - m_updateDuration * updateCount, 0.0f);
 					updateInterval = std::min(excessTime / updateCount, 0.03f);
 
 					// Need some wait margin as events, especially on Windows, have very low accuracy.
@@ -869,17 +871,37 @@ bool Application::update()
 
 					if (frameBegun)
 					{
+						bool submittedQuery = false;
+						if (m_renderGpuDurationQuery < 0)
+						{
+							m_renderGpuDurationQuery = renderView->beginTimeQuery();
+							submittedQuery = true;
+						}
+
 						if (currentState)
 							currentState->render(m_frameRender, m_updateInfoRender);
 
 						T_PROFILER_BEGIN(L"Application render endFrame");
 						renderView->endFrame();
 						T_PROFILER_END();
+
+						if (submittedQuery)
+							renderView->endTimeQuery(m_renderGpuDurationQuery);
 					}
 					
 					T_PROFILER_BEGIN(L"Application render present");
 					renderView->present();
 					T_PROFILER_END();
+
+					if (m_renderGpuDurationQuery >= 0)
+					{
+						double start, end;
+						if (renderView->getTimeQuery(m_renderGpuDurationQuery, false, start, end))
+						{
+							m_renderGpuDuration = (float)(end - start);
+							m_renderGpuDurationQuery = -1;
+						}
+					}
 
 					T_PROFILER_BEGIN(L"Application render stats");
 					renderView->getStatistics(m_renderViewStats);
@@ -894,9 +916,9 @@ bool Application::update()
 #endif
 
 				double renderEnd = m_timer.getElapsedTime();
-				m_renderDuration = float(renderEnd - renderBegin);
+				m_renderCpuDuration = (float)(renderEnd - renderBegin);
 
-				m_renderServer->setFrameRate(int32_t(1.0f / m_renderDuration));
+				m_renderServer->setFrameRate(int32_t(1.0f / m_renderCpuDuration));
 			}
 		}
 
@@ -954,7 +976,7 @@ bool Application::update()
 			}
 
 			m_targetPerformance.build = (float)(buildTimeEnd - buildTimeStart);
-			m_targetPerformance.render = m_renderDuration;
+			m_targetPerformance.render = m_renderGpuDuration;
 
 			m_targetPerformance.garbageCollect = (float)gcDuration;
 			m_targetPerformance.steps = (float)updateCount;
@@ -1109,6 +1131,13 @@ void Application::threadRender()
 
 					if (frameBegun)
 					{
+						bool submittedQuery = false;
+						if (m_renderGpuDurationQuery < 0)
+						{
+							m_renderGpuDurationQuery = renderView->beginTimeQuery();
+							submittedQuery = true;
+						}
+
 						if (m_stateRender)
 							m_stateRender->render(m_frameRender, m_updateInfoRender);
 
@@ -1116,9 +1145,22 @@ void Application::threadRender()
 						renderView->endFrame();
 						T_PROFILER_END();
 
+						if (submittedQuery)
+							renderView->endTimeQuery(m_renderGpuDurationQuery);
+
 						T_PROFILER_BEGIN(L"Application render present");
 						renderView->present();
 						T_PROFILER_END();
+					}
+
+					if (m_renderGpuDurationQuery >= 0)
+					{
+						double start, end;
+						if (renderView->getTimeQuery(m_renderGpuDurationQuery, false, start, end))
+						{
+							m_renderGpuDuration = (float)(end - start);
+							m_renderGpuDurationQuery = -1;
+						}
 					}
 
 					T_PROFILER_BEGIN(L"Application render stats");
@@ -1134,9 +1176,9 @@ void Application::threadRender()
 				}
 
 				double renderEnd = m_timer.getElapsedTime();
-				m_renderDuration = float(renderEnd - renderBegin);
+				m_renderCpuDuration = float(renderEnd - renderBegin);
 
-				m_renderServer->setFrameRate(int32_t(1.0f / m_renderDuration));
+				m_renderServer->setFrameRate(int32_t(1.0f / m_renderCpuDuration));
 				m_stateRender = nullptr;
 			}
 

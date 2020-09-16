@@ -114,7 +114,9 @@ private:
 	Color4f m_backgroundColor;
 	float m_updateDuration;
 	float m_buildDuration;
-	float m_renderDuration;
+	float m_renderCpuDuration;
+	float m_renderGpuDuration;
+	int32_t m_renderGpuDurationQuery;
 	uint32_t m_renderCollisions;
 	Semaphore m_lockRender;
 	Signal m_signalRenderBegin;
