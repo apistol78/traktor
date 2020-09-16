@@ -1,4 +1,5 @@
 #include <limits>
+#include "Core/Io/FileSystem.h"
 #include "Core/Io/Writer.h"
 #include "Core/Log/Log.h"
 #include "Core/Settings/PropertyString.h"
@@ -63,23 +64,24 @@ bool CloudMaskPipeline::buildOutput(
 {
 	const CloudMaskAsset* maskAsset = checked_type_cast< const CloudMaskAsset* >(sourceAsset);
 
-	Ref< IStream > file = pipelineBuilder->openFile(Path(m_assetPath), maskAsset->getFileName().getOriginal());
+	Path filePath = FileSystem::getInstance().getAbsolutePath(Path(m_assetPath) + maskAsset->getFileName());
+	Ref< IStream > file = pipelineBuilder->openFile(filePath);
 	if (!file)
 	{
-		log::error << L"Cloud mask pipeline failed; unable to open source image \"" << maskAsset->getFileName().getOriginal() << L"\"" << Endl;
+		log::error << L"Cloud mask pipeline failed; unable to open source image \"" << maskAsset->getFileName().getOriginal() << L"\"." << Endl;
 		return false;
 	}
 
 	Ref< drawing::Image > image = drawing::Image::load(file, maskAsset->getFileName().getExtension());
 	if (!image)
 	{
-		log::error << L"Cloud mask pipeline failed; unable to load material mask source image \"" << maskAsset->getFileName().getOriginal() << L"\"" << Endl;
+		log::error << L"Cloud mask pipeline failed; unable to load material mask source image \"" << maskAsset->getFileName().getOriginal() << L"\"." << Endl;
 		return false;
 	}
 
 	if (image->getWidth() != image->getHeight())
 	{
-		log::error << L"Cloud mask pipeline failed; source image must be square" << Endl;
+		log::error << L"Cloud mask pipeline failed; source image must be square." << Endl;
 		return false;
 	}
 

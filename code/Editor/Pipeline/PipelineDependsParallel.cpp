@@ -236,15 +236,13 @@ Ref< const ISerializable > PipelineDependsParallel::getObjectReadOnly(const Guid
 		return nullptr;
 }
 
-Ref< File > PipelineDependsParallel::getFile(const Path& basePath, const std::wstring& fileName)
+Ref< File > PipelineDependsParallel::getFile(const Path& filePath)
 {
-	Path filePath = FileSystem::getInstance().getAbsolutePath(basePath + Path(fileName));
 	return FileSystem::getInstance().get(filePath);
 }
 
-Ref< IStream > PipelineDependsParallel::openFile(const Path& basePath, const std::wstring& fileName)
+Ref< IStream > PipelineDependsParallel::openFile(const Path& filePath)
 {
-	Path filePath = FileSystem::getInstance().getAbsolutePath(basePath + Path(fileName));
 	Ref< IStream > fileStream = FileSystem::getInstance().open(filePath, File::FmRead);
 	return fileStream ? new BufferedStream(fileStream) : nullptr;
 }

@@ -622,15 +622,13 @@ Ref< const ISerializable > PipelineBuilder::getObjectReadOnly(const Guid& instan
 		return nullptr;
 }
 
-Ref< File > PipelineBuilder::getFile(const Path& basePath, const std::wstring& fileName)
+Ref< File > PipelineBuilder::getFile(const Path& filePath)
 {
-	Path filePath = FileSystem::getInstance().getAbsolutePath(basePath + Path(fileName));
 	return FileSystem::getInstance().get(filePath);
 }
 
-Ref< IStream > PipelineBuilder::openFile(const Path& basePath, const std::wstring& fileName)
+Ref< IStream > PipelineBuilder::openFile(const Path& filePath)
 {
-	Path filePath = FileSystem::getInstance().getAbsolutePath(basePath + Path(fileName));
 	Ref< IStream > fileStream = FileSystem::getInstance().open(filePath, File::FmRead);
 	return fileStream ? new BufferedStream(fileStream) : nullptr;
 }

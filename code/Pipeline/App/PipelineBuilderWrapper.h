@@ -62,9 +62,9 @@ public:
 
 	virtual Ref< const ISerializable > getObjectReadOnly(const Guid& instanceGuid) override final;
 
-	virtual Ref< File > getFile(const Path& basePath, const std::wstring& fileName) override final;
+	virtual Ref< File > getFile(const Path& filePath) override final;
 
-	virtual Ref< IStream > openFile(const Path& basePath, const std::wstring& fileName) override final;
+	virtual Ref< IStream > openFile(const Path& filePath) override final;
 
 	virtual Ref< IStream > createTemporaryFile(const std::wstring& fileName) override final;
 

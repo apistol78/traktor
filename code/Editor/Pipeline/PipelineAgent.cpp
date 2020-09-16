@@ -58,7 +58,7 @@ void PipelineAgent::update()
 	Ref< AgentOpenFile > agentOpenFile;
 	if (m_transport->recv< AgentOpenFile >(0, agentOpenFile) >= 1)
 	{
-		Path filePath = FileSystem::getInstance().getAbsolutePath(agentOpenFile->getBasePath() + Path(agentOpenFile->getFileName()));
+		Path filePath = FileSystem::getInstance().getAbsolutePath(agentOpenFile->getFilePath());
 
 		uint32_t publicId;
 

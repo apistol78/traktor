@@ -1,3 +1,4 @@
+#include "Core/Io/FileSystem.h"
 #include "Core/Io/IStream.h"
 #include "Core/Log/Log.h"
 #include "Core/Settings/PropertyString.h"
@@ -58,7 +59,8 @@ bool TextureAssetPipeline::buildOutput(
 {
 	const TextureAsset* asset = checked_type_cast< const TextureAsset* >(sourceAsset);
 
-	Ref< IStream > file = pipelineBuilder->openFile(Path(m_assetPath), asset->getFileName().getOriginal());
+	Path filePath = FileSystem::getInstance().getAbsolutePath(Path(m_assetPath) + asset->getFileName());
+	Ref< IStream > file = pipelineBuilder->openFile(filePath);
 	if (!file)
 	{
 		log::error << L"Texture asset pipeline failed; unable to open source image \"" << asset->getFileName().getOriginal() << L"\"" << Endl;

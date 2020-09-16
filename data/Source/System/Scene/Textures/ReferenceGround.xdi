@@ -17,7 +17,7 @@
 	<scaleHeight>0</scaleHeight>
 	<flipX>false</flipX>
 	<flipY>false</flipY>
-	<enableCompression>false</enableCompression>
+	<enableCompression>true</enableCompression>
 	<enableNormalMapCompression>false</enableNormalMapCompression>
 	<inverseNormalMapY>false</inverseNormalMapY>
 	<linearGamma>false</linearGamma>
@@ -27,5 +27,5 @@
 	<sharpenRadius>0</sharpenRadius>
 	<sharpenStrength>0</sharpenStrength>
 	<noiseStrength>0</noiseStrength>
-	<systemTexture>true</systemTexture>
+	<systemTexture>false</systemTexture>
 </object>

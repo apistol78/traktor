@@ -1,3 +1,4 @@
+#include "Core/Io/FileSystem.h"
 #include "Core/Log/Log.h"
 #include "Core/Reflection/Reflection.h"
 #include "Core/Reflection/RfmObject.h"
@@ -254,8 +255,9 @@ Ref< ISerializable > PrefabEntityPipeline::buildOutput(
 			}
 			else
 			{
-				Ref< model::Model > partModel = model::ModelFormat::readAny(meshAsset->getFileName(), meshAsset->getImportFilter(), [&](const Path& p) {
-					return pipelineBuilder->openFile(Path(m_assetPath), p.getOriginal());
+				Path filePath = FileSystem::getInstance().getAbsolutePath(Path(m_assetPath) + meshAsset->getFileName());
+				Ref< model::Model > partModel = model::ModelFormat::readAny(filePath, meshAsset->getImportFilter(), [&](const Path& p) {
+					return pipelineBuilder->openFile(p);
 				});
 				if (!partModel)
 				{
@@ -319,12 +321,13 @@ Ref< ISerializable > PrefabEntityPipeline::buildOutput(
 			}
 			else
 			{
-				Ref< model::Model > partModel = model::ModelFormat::readAny(meshShapeAsset->getFileName(), L"", [&](const Path& p) {
-					return pipelineBuilder->openFile(Path(m_assetPath), p.getOriginal());
+				Path filePath = FileSystem::getInstance().getAbsolutePath(Path(m_assetPath) + meshShapeAsset->getFileName());
+				Ref< model::Model > partModel = model::ModelFormat::readAny(filePath, L"", [&](const Path& p) {
+					return pipelineBuilder->openFile(p);
 				});
 				if (!partModel)
 				{
-					log::warning << L"Unable to read model \"" << meshShapeAsset->getFileName().getOriginal() << L"\"" << Endl;
+					log::warning << L"Unable to read model \"" << meshShapeAsset->getFileName().getOriginal() << L"\"." << Endl;
 					continue;
 				}
 

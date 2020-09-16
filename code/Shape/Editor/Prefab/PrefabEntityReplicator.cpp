@@ -1,3 +1,4 @@
+#include "Core/Io/FileSystem.h"
 #include "Database/Database.h"
 #include "Editor/IPipelineBuilder.h"
 #include "Mesh/MeshComponentData.h"
@@ -51,8 +52,9 @@ Ref< model::Model > PrefabEntityReplicator::createModel(
 
             // \tbd We should probably ignore mesh assets with custom shaders.
 
-            Ref< model::Model > model = model::ModelFormat::readAny(meshAsset->getFileName(), meshAsset->getImportFilter(), [&](const Path& p) {
-                return pipelineBuilder->openFile(Path(assetPath), p.getOriginal());
+            Path filePath = FileSystem::getInstance().getAbsolutePath(Path(assetPath) + meshAsset->getFileName());
+            Ref< model::Model > model = model::ModelFormat::readAny(filePath, meshAsset->getImportFilter(), [&](const Path& p) {
+                return pipelineBuilder->openFile(p);
             });
             if (!model)
                 return scene::Traverser::VrFailed;

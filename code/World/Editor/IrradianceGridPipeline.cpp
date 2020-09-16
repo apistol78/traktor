@@ -1,4 +1,5 @@
 #include <functional>
+#include "Core/Io/FileSystem.h"
 #include "Core/Io/IStream.h"
 #include "Core/Io/Writer.h"
 #include "Core/Log/Log.h"
@@ -86,10 +87,11 @@ bool IrradianceGridPipeline::buildOutput(
 {
 	const IrradianceGridAsset* asset = mandatory_non_null_type_cast< const IrradianceGridAsset* >(sourceAsset);
 
-	Ref< IStream > file = pipelineBuilder->openFile(Path(m_assetPath), asset->getFileName().getOriginal());
+	Path filePath = FileSystem::getInstance().getAbsolutePath(Path(m_assetPath) + asset->getFileName());
+	Ref< IStream > file = pipelineBuilder->openFile(filePath);
 	if (!file)
 	{
-		log::error << L"Irradiance grid pipeline failed; unable to open source file." << Endl;
+		log::error << L"Irradiance grid pipeline failed; unable to open source file \"" << filePath.getPathName() << L"\"." << Endl;
 		return false;
 	}
 

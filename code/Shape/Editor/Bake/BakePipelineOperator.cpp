@@ -169,7 +169,8 @@ void addSky(
 	if (!textureAsset)
 		return;
 
-	Ref< IStream > file = pipelineBuilder->openFile(Path(assetPath), textureAsset->getFileName().getOriginal());
+	Path filePath = FileSystem::getInstance().getAbsolutePath(Path(assetPath) + textureAsset->getFileName());
+	Ref< IStream > file = pipelineBuilder->openFile(filePath);
 	if (!file)
 		return;
 

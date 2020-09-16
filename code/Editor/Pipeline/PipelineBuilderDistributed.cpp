@@ -254,13 +254,13 @@ Ref< const ISerializable > PipelineBuilderDistributed::getObjectReadOnly(const G
 	return nullptr;
 }
 
-Ref< File > PipelineBuilderDistributed::getFile(const Path& basePath, const std::wstring& fileName)
+Ref< File > PipelineBuilderDistributed::getFile(const Path& filePath)
 {
 	T_FATAL_ERROR;
 	return nullptr;
 }
 
-Ref< IStream > PipelineBuilderDistributed::openFile(const Path& basePath, const std::wstring& fileName)
+Ref< IStream > PipelineBuilderDistributed::openFile(const Path& filePath)
 {
 	T_FATAL_ERROR;
 	return nullptr;

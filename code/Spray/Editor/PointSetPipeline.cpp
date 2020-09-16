@@ -1,3 +1,4 @@
+#include "Core/Io/FileSystem.h"
 #include "Core/Log/Log.h"
 #include "Core/Settings/PropertyString.h"
 #include "Database/Instance.h"
@@ -63,15 +64,9 @@ bool PointSetPipeline::buildOutput(
 {
 	const PointSetAsset* pointSetAsset = checked_type_cast< const PointSetAsset* >(sourceAsset);
 
-	Ref< IStream > file = pipelineBuilder->openFile(Path(m_assetPath), pointSetAsset->getFileName().getOriginal());
-	if (!file)
-	{
-		log::error << L"PointSet pipeline failed; unable to open source model (" << pointSetAsset->getFileName().getOriginal() << L")" << Endl;
-		return false;
-	}
-
-	Ref< model::Model > model = model::ModelFormat::readAny(pointSetAsset->getFileName(), L"", [&](const Path& p) {
-		return pipelineBuilder->openFile(Path(m_assetPath), p.getOriginal());
+	Path filePath = FileSystem::getInstance().getAbsolutePath(Path(m_assetPath) + pointSetAsset->getFileName());
+	Ref< model::Model > model = model::ModelFormat::readAny(filePath, L"", [&](const Path& p) {
+		return pipelineBuilder->openFile(p);
 	});
 	if (!model)
 	{

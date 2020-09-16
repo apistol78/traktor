@@ -130,14 +130,15 @@ bool SoundPipeline::buildOutput(
 		decoder = new sound::TssStreamDecoder();
 	else
 	{
-		log::error << L"Failed to build sound asset, unable to determine decoder from extension" << Endl;
+		log::error << L"Failed to build sound asset, unable to determine decoder from extension." << Endl;
 		return false;
 	}
 
-	Ref< IStream > sourceStream = pipelineBuilder->openFile(Path(m_assetPath), soundAsset->getFileName().getOriginal());
+	Path filePath = FileSystem::getInstance().getAbsolutePath(Path(m_assetPath) + soundAsset->getFileName());
+	Ref< IStream > sourceStream = pipelineBuilder->openFile(filePath);
 	if (!sourceStream)
 	{
-		log::error << L"Failed to build sound asset, unable to open source" << Endl;
+		log::error << L"Failed to build sound asset, unable to open source \"" << filePath.getPathName() << L"\"." << Endl;
 		return false;
 	}
 

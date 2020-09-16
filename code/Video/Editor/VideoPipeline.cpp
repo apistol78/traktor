@@ -1,3 +1,4 @@
+#include "Core/Io/FileSystem.h"
 #include "Core/Io/IStream.h"
 #include "Core/Io/StreamCopy.h"
 #include "Core/Log/Log.h"
@@ -62,7 +63,8 @@ bool VideoPipeline::buildOutput(
 {
 	const VideoAsset* videoAsset = checked_type_cast< const VideoAsset* >(sourceAsset);
 
-	Ref< IStream > sourceStream = pipelineBuilder->openFile(Path(m_assetPath), videoAsset->getFileName().getOriginal());
+	Path filePath = FileSystem::getInstance().getAbsolutePath(Path(m_assetPath) + videoAsset->getFileName());
+	Ref< IStream > sourceStream = pipelineBuilder->openFile(filePath);
 	if (!sourceStream)
 	{
 		log::error << L"Failed to build video asset, unable to open source" << Endl;

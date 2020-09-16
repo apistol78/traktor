@@ -1,4 +1,5 @@
 #include "Core/Functor/Functor.h"
+#include "Core/Io/FileSystem.h"
 #include "Core/Io/IStream.h"
 #include "Core/Log/Log.h"
 #include "Core/Math/RandomGeometry.h"
@@ -391,8 +392,9 @@ bool OcclusionTexturePipeline::buildOutput(
 			{
 				log::info << L"Loading \"" << meshAsset->getFileName().getFileName() << L"\"..." << Endl;
 
-				Ref< model::Model > model = model::ModelFormat::readAny(meshAsset->getFileName(), meshAsset->getImportFilter(), [&](const Path& p) {
-					return pipelineBuilder->openFile(Path(m_assetPath), p.getOriginal());
+				Path filePath = FileSystem::getInstance().getAbsolutePath(Path(m_assetPath) + meshAsset->getFileName());
+				Ref< model::Model > model = model::ModelFormat::readAny(filePath, meshAsset->getImportFilter(), [&](const Path& p) {
+					return pipelineBuilder->openFile(p);
 				});
 				if (!model)
 				{
