@@ -46,6 +46,7 @@
 #include "Render/Editor/Shader/ShaderGraphStatic.h"
 #include "Render/Editor/Shader/ShaderGraphTechniques.h"
 #include "Render/Editor/Shader/ShaderGraphValidator.h"
+#include "Render/Editor/Texture/TextureSet.h"
 
 namespace traktor
 {
@@ -204,6 +205,8 @@ bool MeshPipeline::buildDependencies(
 	for (std::map< std::wstring, Guid >::const_iterator i = materialTextures.begin(); i != materialTextures.end(); ++i)
 		pipelineDepends->addDependency(i->second, editor::PdfBuild | editor::PdfResource);
 
+	pipelineDepends->addDependency(asset->getTextureSet(), editor::PdfBuild | editor::PdfResource);
+
 	pipelineDepends->addDependency< render::ShaderGraph >();
 	return true;
 }
@@ -221,6 +224,7 @@ bool MeshPipeline::buildOutput(
 	uint32_t /*reason*/
 ) const
 {
+	std::map< std::wstring, Guid > materialTextures;
 	std::map< std::wstring, model::Material > materials;
 	RefArray< model::Model > models;
 	uint32_t polygonCount = 0;
@@ -233,7 +237,23 @@ bool MeshPipeline::buildOutput(
 	auto asset = mandatory_non_null_type_cast< const MeshAsset* >(sourceAsset);
 	auto& materialTemplates = asset->getMaterialTemplates();
 	auto& materialShaders = asset->getMaterialShaders();
-	auto& materialTextures = asset->getMaterialTextures();
+
+	// Create list of texture references.
+	const auto& textureSetId = asset->getTextureSet();
+	if (textureSetId.isNotNull())
+	{
+		Ref< const render::TextureSet > textureSet = pipelineBuilder->getObjectReadOnly< render::TextureSet >(textureSetId);
+		if (!textureSet)
+		{
+			log::error << L"Missing texture set reference." << Endl;
+			return false;
+		}
+		materialTextures = textureSet->get();
+	}
+
+	// Explicit material textures override those from a texture set.
+	for (const auto& mt : asset->getMaterialTextures())
+		materialTextures[mt.first] = mt.second;
 
 	// Create mesh converter.
 	Ref< IMeshConverter > converter;

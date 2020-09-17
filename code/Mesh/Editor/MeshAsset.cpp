@@ -1,15 +1,17 @@
 #include "Core/Serialization/AttributeRange.h"
+#include "Core/Serialization/AttributeType.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberEnum.h"
 #include "Core/Serialization/MemberStl.h"
 #include "Mesh/Editor/MeshAsset.h"
+#include "Render/Editor/Texture/TextureSet.h"
 
 namespace traktor
 {
 	namespace mesh
 	{
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.mesh.MeshAsset", 17, MeshAsset, editor::Asset)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.mesh.MeshAsset", 18, MeshAsset, editor::Asset)
 
 MeshAsset::MeshAsset()
 :	m_meshType(MtStatic)
@@ -53,6 +55,9 @@ void MeshAsset::serialize(ISerializer& s)
 
 	if (s.getVersion() >= 4)
 		s >> MemberStlMap< std::wstring, Guid >(L"materialTextures", m_materialTextures);
+
+	if (s.getVersion() >= 18)
+		s >> Member< Guid >(L"textureSet", m_textureSet, AttributeType(type_of< render::TextureSet >()));
 
 	if (s.getVersion() >= 11)
 		s >> Member< float >(L"scaleFactor", m_scaleFactor);

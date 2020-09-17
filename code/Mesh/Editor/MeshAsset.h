@@ -72,6 +72,9 @@ public:
 	/*! Get material textures. */
 	const std::map< std::wstring, Guid >& getMaterialTextures() const { return m_materialTextures; }
 
+	/*! Get texture set. */
+	const Guid& getTextureSet() const { return m_textureSet; }
+
 	/*! Set scale factor. */
 	void setScaleFactor(float scaleFactor) { m_scaleFactor = scaleFactor; }
 
@@ -114,6 +117,7 @@ private:
 	std::map< std::wstring, Guid > m_materialTemplates;
 	std::map< std::wstring, Guid > m_materialShaders;
 	std::map< std::wstring, Guid > m_materialTextures;
+	Guid m_textureSet;
 	float m_scaleFactor;
 	bool m_renormalize;
 	bool m_center;
