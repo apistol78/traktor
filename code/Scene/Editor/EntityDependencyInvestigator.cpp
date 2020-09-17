@@ -29,7 +29,7 @@ namespace traktor
 
 std::wstring getCategoryText(const TypeInfo* categoryType)
 {
-	std::wstring id = L"DATABASE_CATEGORY_" + replaceAll(toUpper(std::wstring(categoryType->getName())), L".", L"_");
+	std::wstring id = replaceAll(toUpper(std::wstring(categoryType->getName())), L".", L"_");
 	return i18n::Text(id, categoryType->getName());
 }
 
@@ -45,8 +45,8 @@ EntityDependencyInvestigator::EntityDependencyInvestigator(SceneEditorContext* c
 void EntityDependencyInvestigator::destroy()
 {
 	safeDestroy(m_dependencyTree);
-	m_currentEntityAdapter = 0;
-	m_context = 0;
+	m_currentEntityAdapter = nullptr;
+	m_context = nullptr;
 	ui::Container::destroy();
 }
 
