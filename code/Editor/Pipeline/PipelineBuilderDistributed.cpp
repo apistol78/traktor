@@ -313,7 +313,6 @@ bool PipelineBuilderDistributed::performBuild(const IPipelineDependencySet* depe
 
 	if (m_listener)
 		m_listener->beginBuild(
-			agentIndex,
 			m_progress,
 			m_progressEnd,
 			dependency
@@ -328,7 +327,6 @@ bool PipelineBuilderDistributed::performBuild(const IPipelineDependencySet* depe
 
 			if (m_listener)
 				m_listener->endBuild(
-					agentIndex,
 					m_progress,
 					m_progressEnd,
 					dependency,

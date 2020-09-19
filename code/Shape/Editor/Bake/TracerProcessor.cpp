@@ -252,7 +252,7 @@ TracerProcessor::TracerProcessor(const TypeInfo* rayTracerType, db::Database* ou
 	T_FATAL_ASSERT(m_rayTracerType != nullptr);
 
 	m_thread = ThreadManager::getInstance().create(makeFunctor(this, &TracerProcessor::processorThread), L"Tracer");
-	m_thread->start();
+	m_thread->start(preview ? Thread::Below : Thread::Normal);
 }
 
 TracerProcessor::~TracerProcessor()
