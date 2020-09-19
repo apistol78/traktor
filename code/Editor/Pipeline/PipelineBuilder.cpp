@@ -423,6 +423,13 @@ bool PipelineBuilder::buildOutput(const db::Instance* sourceInstance, const ISer
 	if (auto hashableBuildParams = dynamic_type_cast< const ISerializable* >(buildParams))
 		dependency->sourceDataHash = DeepHash(hashableBuildParams).get();
 
+	if (m_listener)
+		m_listener->beginBuild(
+			m_progress,
+			m_progressEnd,
+			dependency
+		);
+
 	// Calculate hash entry, no children thus no need for dependency set.
 	PipelineDependencyHash currentDependencyHash;
 	calculateGlobalHash(
@@ -447,10 +454,21 @@ bool PipelineBuilder::buildOutput(const db::Instance* sourceInstance, const ISer
 		{
 			if (m_verbose)
 				log::info << L"Cached output used of \"" << dependency->outputPath << L"\"." << Endl;
+
 			m_pipelineDb->setDependency(dependency->outputGuid, currentDependencyHash);
+
 			Atomic::increment(m_cacheHit);
 			Atomic::increment(m_succeededBuilt);
-			return BrSucceeded;
+
+			if (m_listener)
+				m_listener->endBuild(
+					m_progress,
+					m_progressEnd,
+					dependency,
+					BrSucceeded
+				);
+
+			return true;
 		}
 		else
 			Atomic::increment(m_cacheMiss);
@@ -511,6 +529,14 @@ bool PipelineBuilder::buildOutput(const db::Instance* sourceInstance, const ISer
 	log::info << DecreaseIndent;
 	if (m_verbose)
 		log::info << (result ? L"Build successful" : L"Build failed") << Endl;
+
+	if (m_listener)
+		m_listener->endBuild(
+			m_progress,
+			m_progressEnd,
+			dependency,
+			result ? BrSucceeded : BrFailed
+		);
 
 	// Restore previous set but also insert built instances from synthesized build;
 	// when caching is enabled then synthesized built instances should be included in parent build as well.
@@ -871,7 +897,6 @@ void PipelineBuilder::buildThread(
 
 		if (m_listener)
 			m_listener->beginBuild(
-				cpuCore,
 				m_progress,
 				m_progressEnd,
 				we.dependency
@@ -885,7 +910,6 @@ void PipelineBuilder::buildThread(
 
 		if (m_listener)
 			m_listener->endBuild(
-				cpuCore,
 				m_progress,
 				m_progressEnd,
 				we.dependency,

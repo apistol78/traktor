@@ -159,9 +159,9 @@ public:
 	/*! \name IPipelineBuilder::IListener implementation */
 	//@{
 
-	virtual void beginBuild(int32_t core, int32_t index, int32_t count, const PipelineDependency* dependency) override final;
+	virtual void beginBuild(int32_t index, int32_t count, const PipelineDependency* dependency) override final;
 
-	virtual void endBuild(int32_t core, int32_t index, int32_t count, const PipelineDependency* dependency, IPipelineBuilder::BuildResult result) override final;
+	virtual void endBuild(int32_t index, int32_t count, const PipelineDependency* dependency, IPipelineBuilder::BuildResult result) override final;
 
 	//@}
 
@@ -220,6 +220,7 @@ private:
 	int32_t m_buildStep;
 	std::wstring m_buildStepMessage;
 	uint32_t m_propertiesHash;
+	std::vector< std::pair< db::Database*, Guid > > m_eventIds;
 
 	bool createWorkspace();
 

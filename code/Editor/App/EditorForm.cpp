@@ -2014,7 +2014,7 @@ Object* EditorForm::getStoreObject(const std::wstring& name) const
 	return it != m_objectStore.end() ? it->second : nullptr;
 }
 
-void EditorForm::beginBuild(int32_t core, int32_t index, int32_t count, const PipelineDependency* dependency)
+void EditorForm::beginBuild(int32_t index, int32_t count, const PipelineDependency* dependency)
 {
 	showProgress(c_offsetBuildingAsset + (index * (c_offsetFinished - c_offsetBuildingAsset)) / count, 100);
 	m_buildProgress->setProgress(c_offsetBuildingAsset + (index * (c_offsetFinished - c_offsetBuildingAsset)) / count);
@@ -2022,7 +2022,7 @@ void EditorForm::beginBuild(int32_t core, int32_t index, int32_t count, const Pi
 	m_buildStepMessage = dependency->outputPath;
 }
 
-void EditorForm::endBuild(int32_t core, int32_t index, int32_t count, const PipelineDependency* dependency, IPipelineBuilder::BuildResult result)
+void EditorForm::endBuild(int32_t index, int32_t count, const PipelineDependency* dependency, IPipelineBuilder::BuildResult result)
 {
 	hideProgress();
 }
@@ -2975,14 +2975,12 @@ void EditorForm::eventTimer(ui::TimerEvent* /*event*/)
 	Ref< const db::IEvent > event;
 	bool remote;
 	bool updateView = false;
-	bool building = (bool)(m_threadBuild && !m_threadBuild->finished());
+	bool building = (bool)(m_threadBuild != nullptr && !m_threadBuild->finished());
 
 	// Only check for database modifications when we're not building,
 	// as building causes a lot of db traffic we wait until it's finished.
 	if (!building)
 	{
-		std::vector< std::pair< db::Database*, Guid > > eventIds;
-
 		// Check if there is any committed instances into
 		// source database.
 		if (m_sourceDatabase)
@@ -2994,7 +2992,7 @@ void EditorForm::eventTimer(ui::TimerEvent* /*event*/)
 				if (committed)
 				{
 					log::debug << (remote ? L"Remotely" : L"Locally") << L" modified source instance " << committed->getInstanceGuid().format() << L" detected; propagate to editor pages..." << Endl;
-					eventIds.push_back(std::make_pair(m_sourceDatabase, committed->getInstanceGuid()));
+					m_eventIds.push_back(std::make_pair(m_sourceDatabase, committed->getInstanceGuid()));
 					anyCommitted = true;
 				}
 				updateView |= remote;
@@ -3019,53 +3017,52 @@ void EditorForm::eventTimer(ui::TimerEvent* /*event*/)
 				if (committed)
 				{
 					log::debug << (remote ? L"Remotely" : L"Locally") << L" modified output instance " << committed->getInstanceGuid().format() << L" detected; propagate to editor pages..." << Endl;
-					eventIds.push_back(std::make_pair(m_outputDatabase, committed->getInstanceGuid()));
+					m_eventIds.push_back(std::make_pair(m_outputDatabase, committed->getInstanceGuid()));
 				}
 			}
 		}
+	}
 
-		// Only propagate events when build is finished.
-		if (
-			!eventIds.empty() &&
-			m_lockBuild.wait(0)
-		)
+	// Only propagate events when build is finished.
+	if (!m_eventIds.empty() && m_lockBuild.wait(0))
+	{
+		// Propagate database event to editor pages in order for them to flush resources.
+		for (auto tab : m_tabGroups)
 		{
-			// Propagate database event to editor pages in order for them to flush resources.
-			for (auto tab : m_tabGroups)
+			const int32_t pageCount = tab->getPageCount();
+			for (int32_t i = 0; i < pageCount; ++i)
 			{
-				const int32_t pageCount = tab->getPageCount();
-				for (int32_t i = 0; i < pageCount; ++i)
+				ui::TabPage* tabPage = tab->getPage(i);
+				IEditorPage* editorPage = tabPage->getData< IEditorPage >(L"EDITORPAGE");
+				if (editorPage)
 				{
-					ui::TabPage* tabPage = tab->getPage(i);
-					IEditorPage* editorPage = tabPage->getData< IEditorPage >(L"EDITORPAGE");
-					if (editorPage)
-					{
-						for (auto eventId : eventIds)
-							editorPage->handleDatabaseEvent(eventId.first, eventId.second);
-					}
+					for (auto eventId : m_eventIds)
+						editorPage->handleDatabaseEvent(eventId.first, eventId.second);
 				}
 			}
-
-			// Propagate database event to object editor dialogs.
-			for (ui::Widget* child = this->getFirstChild(); child; child = child->getNextSibling())
-			{
-				if (auto objectEditor = dynamic_type_cast< ObjectEditorDialog* >(child))
-				{
-					for (auto eventId : eventIds)
-						objectEditor->handleDatabaseEvent(eventId.first, eventId.second);
-				}
-			}
-
-			// Propagate database event to editor plugins.
-			for (auto editorPluginSite : m_editorPluginSites)
-			{
-				for (auto eventId : eventIds)
-					editorPluginSite->handleDatabaseEvent(eventId.first, eventId.second);
-			}
-
-			m_lockBuild.release();
-			log::debug << eventIds.size() << L" database change(s) notified." << Endl;
 		}
+
+		// Propagate database event to object editor dialogs.
+		for (ui::Widget* child = this->getFirstChild(); child; child = child->getNextSibling())
+		{
+			if (auto objectEditor = dynamic_type_cast< ObjectEditorDialog* >(child))
+			{
+				for (auto eventId : m_eventIds)
+					objectEditor->handleDatabaseEvent(eventId.first, eventId.second);
+			}
+		}
+
+		// Propagate database event to editor plugins.
+		for (auto editorPluginSite : m_editorPluginSites)
+		{
+			for (auto eventId : m_eventIds)
+				editorPluginSite->handleDatabaseEvent(eventId.first, eventId.second);
+		}
+
+		m_lockBuild.release();
+
+		log::debug << (int32_t)m_eventIds.size() << L" database change(s) notified." << Endl;
+		m_eventIds.resize(0);
 	}
 
 	// We need to update database view as another process has modified database.

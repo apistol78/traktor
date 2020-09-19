@@ -46,14 +46,12 @@ public:
 		virtual ~IListener() {}
 
 		virtual void beginBuild(
-			int32_t core,
 			int32_t index,
 			int32_t count,
 			const PipelineDependency* dependency
 		) = 0;
 
 		virtual void endBuild(
-			int32_t core,
 			int32_t index,
 			int32_t count,
 			const PipelineDependency* dependency,
