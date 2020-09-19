@@ -68,6 +68,10 @@ Ref< VehicleComponent > VehicleComponentData::createComponent(
 	);
 }
 
+void VehicleComponentData::setTransform(const world::EntityData* owner, const Transform& transform)
+{
+}
+
 void VehicleComponentData::serialize(ISerializer& s)
 {
 	s >> MemberRefArray< const WheelData >(L"wheels", m_wheels);

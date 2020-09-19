@@ -16,6 +16,10 @@ Ref< RotatorComponent > RotatorComponentData::createComponent() const
 	return new RotatorComponent(m_axis, m_rate);
 }
 
+void RotatorComponentData::setTransform(const world::EntityData* owner, const Transform& transform)
+{
+}
+
 void RotatorComponentData::serialize(ISerializer& s)
 {
 	const MemberEnum< RotatorComponent::Axis >::Key c_Axis_keys[] =

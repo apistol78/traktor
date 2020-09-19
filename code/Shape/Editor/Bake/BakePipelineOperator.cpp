@@ -6,6 +6,7 @@
 #include "Core/Math/Range.h"
 #include "Core/Math/Winding3.h"
 #include "Core/Misc/SafeDestroy.h"
+#include "Core/Misc/String.h"
 #include "Core/Reflection/Reflection.h"
 #include "Core/Reflection/RfmObject.h"
 #include "Core/Reflection/RfpMemberType.h"
@@ -181,19 +182,19 @@ void addSky(
 	safeClose(file);
 
 	// Measure max intensity.
-	Scalar maxIntensity = 0.0_simd;
-	for (int32_t y = 0; y < skyImage->getHeight(); ++y)
-	{
-		for (int32_t x = 0; x < skyImage->getWidth(); ++x)
-		{
-			Color4f cl;
-			skyImage->getPixelUnsafe(x, y, cl);
-			Scalar intensity = dot3(cl, Vector4(1.0f, 1.0f, 1.0f, 0.0f));
-			maxIntensity = max(maxIntensity, intensity);
-		}
-	}
-	if (maxIntensity <= 0.0_simd)
-		return;
+	//Scalar maxIntensity = 0.0_simd;
+	//for (int32_t y = 0; y < skyImage->getHeight(); ++y)
+	//{
+	//	for (int32_t x = 0; x < skyImage->getWidth(); ++x)
+	//	{
+	//		Color4f cl;
+	//		skyImage->getPixelUnsafe(x, y, cl);
+	//		Scalar intensity = dot3(cl, Vector4(1.0f, 1.0f, 1.0f, 0.0f));
+	//		maxIntensity = max(maxIntensity, intensity);
+	//	}
+	//}
+	//if (maxIntensity <= 0.0_simd)
+	//	return;
 
 	// Ensure image is of reasonable size, only used for low frequency data so size doesn't matter much.
 	int32_t dim = min(skyImage->getWidth(), skyImage->getHeight());
@@ -220,20 +221,20 @@ void addSky(
 	radiance->apply(blurFilter);
 
 	// Renormalize intensity of probe to ensure overall energy level is preserved.
-	Scalar maxIntensity2 = 0.0_simd;
-	for (int32_t y = 0; y < radiance->getHeight(); ++y)
-	{
-		for (int32_t x = 0; x < radiance->getWidth(); ++x)
-		{
-			Color4f cl;
-			radiance->getPixelUnsafe(x, y, cl);
-			Scalar intensity = dot3(cl, Vector4(1.0f, 1.0f, 1.0f, 0.0f));
-			maxIntensity2 = max(maxIntensity2, intensity);
-		}
-	}
-	Scalar normIntensity = maxIntensity / maxIntensity2;
-	drawing::TransformFilter normFilter(Color4f(normIntensity, normIntensity, normIntensity, 1.0f), Color4f(0.0f, 0.0f, 0.0f, 0.0f));
-	radiance->apply(&normFilter);
+	//Scalar maxIntensity2 = 0.0_simd;
+	//for (int32_t y = 0; y < radiance->getHeight(); ++y)
+	//{
+	//	for (int32_t x = 0; x < radiance->getWidth(); ++x)
+	//	{
+	//		Color4f cl;
+	//		radiance->getPixelUnsafe(x, y, cl);
+	//		Scalar intensity = dot3(cl, Vector4(1.0f, 1.0f, 1.0f, 0.0f));
+	//		maxIntensity2 = max(maxIntensity2, intensity);
+	//	}
+	//}
+	//Scalar normIntensity = maxIntensity / maxIntensity2;
+	//drawing::TransformFilter normFilter(Color4f(normIntensity, normIntensity, normIntensity, 1.0f), Color4f(0.0f, 0.0f, 0.0f, 0.0f));
+	//radiance->apply(&normFilter);
 
 	// Save debug copy of sky IBL radiance probe.
 	radiance->save(L"data/Temp/Bake/SkyRadiance.png");
@@ -368,6 +369,20 @@ bool BakePipelineOperator::create(const editor::IPipelineSettings* settings)
 
 	m_editor = settings->getProperty< bool >(L"Pipeline.TargetEditor", false);
 
+	// Create entity replicators.
+	TypeInfoSet entityReplicatorTypes;
+	type_of< scene::IEntityReplicator >().findAllOf(entityReplicatorTypes, false);
+	for (const auto& entityReplicatorType : entityReplicatorTypes)
+	{
+		Ref< scene::IEntityReplicator > entityReplicator = mandatory_non_null_type_cast< scene::IEntityReplicator* >(entityReplicatorType->createInstance());
+		if (!entityReplicator->create(settings))
+			return false;	
+
+		auto supportedTypes = entityReplicator->getSupportedTypes();
+		for (auto supportedType : supportedTypes)
+			m_entityReplicators[supportedType] = entityReplicator;
+	}	
+
 	// Create output path for debugging data.
 	FileSystem::getInstance().makeAllDirectories(Path(L"data/Temp/Bake"));
 	return true;
@@ -451,6 +466,7 @@ bool BakePipelineOperator::build(
 		}
 
 		// Traverse and visit all entities in layer.
+		int32_t debugIndex = 0;
 		scene::Traverser::visit(flattenedLayer, [&](Ref< world::EntityData >& inoutEntityData) -> scene::Traverser::VisitorResult
 		{
 			if (auto lightComponentData = inoutEntityData->getComponent< world::LightComponentData >())
@@ -466,7 +482,7 @@ bool BakePipelineOperator::build(
 			for (auto componentData : componentDatas)
 			{
 				// Find model synthesizer which can generate from current entity.
-				Ref< const scene::IEntityReplicator > entityReplicator = scene::IEntityReplicator::createEntityReplicator(type_of(componentData));
+				const scene::IEntityReplicator* entityReplicator = m_entityReplicators[&type_of(componentData)];
 				if (!entityReplicator)
 					continue;
 
@@ -475,6 +491,7 @@ bool BakePipelineOperator::build(
 				if (!model)
 					continue;
 
+				std::wstring name = str(L"%s_%d", inoutEntityData->getName().c_str(), debugIndex); debugIndex++;
 				Guid lightmapId = lightmapSeedId.permutate();
 
 				// Ensure model is fit for tracing.
@@ -511,13 +528,13 @@ bool BakePipelineOperator::build(
 				model->setMaterials(materials);
 
 				// Write model for debugging into temporary folder.
-				model::ModelFormat::writeAny(L"data/Temp/Bake/" + inoutEntityData->getName() + L".tmd", model);
+				model::ModelFormat::writeAny(L"data/Temp/Bake/" + name +L".tmd", model);
 
 				// Add model to raytracing task.
 				if (!addModel(
 					model,
 					inoutEntityData->getTransform(),
-					inoutEntityData->getName(),
+					name,
 					lightmapId,
 					lightmapSize,
 					pipelineBuilder,

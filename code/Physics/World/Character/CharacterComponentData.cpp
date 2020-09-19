@@ -97,6 +97,10 @@ Ref< ShapeDesc > CharacterComponentData::getShapeDesc(float epsilon) const
 	return shapeDesc;
 }
 
+void CharacterComponentData::setTransform(const world::EntityData* owner, const Transform& transform)
+{
+}
+
 void CharacterComponentData::serialize(ISerializer& s)
 {
 	s >> MemberStlSet< resource::Id< CollisionSpecification >, resource::Member< CollisionSpecification > >(L"traceInclude", m_traceInclude);

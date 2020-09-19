@@ -26,7 +26,7 @@ class IEntityBuilder;
 
 class BoidsComponent;
 
-/*! \brief
+/*!
  * \ingroup Animation
  */
 class T_DLLCLASS BoidsComponentData : public world::IEntityComponentData
@@ -37,6 +37,8 @@ public:
 	BoidsComponentData();
 
 	Ref< BoidsComponent > createComponent(const world::IEntityBuilder* builder) const;
+
+	virtual void setTransform(const world::EntityData* owner, const Transform& transform) override final;
 
 	virtual void serialize(ISerializer& s) override final;
 

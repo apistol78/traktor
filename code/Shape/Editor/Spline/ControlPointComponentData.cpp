@@ -11,14 +11,13 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.shape.ControlPointComponentData", 1, ControlPointComponentData, world::IEntityComponentData)
 
-ControlPointComponentData::ControlPointComponentData()
-:	m_scale(1.0f)
-{
-}
-
 Ref< ControlPointComponent > ControlPointComponentData::createComponent() const
 {
 	return new ControlPointComponent(m_scale);
+}
+
+void ControlPointComponentData::setTransform(const world::EntityData* owner, const Transform& transform)
+{
 }
 
 void ControlPointComponentData::serialize(ISerializer& s)

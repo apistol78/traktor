@@ -44,6 +44,8 @@ public:
 	virtual Ref< SplineLayerComponent > createComponent(db::Database* database) const = 0;
 
 	virtual Ref< model::Model > createModel(db::Database* database, const std::wstring& assetPath, const TransformPath& path) const = 0;
+
+	virtual void setTransform(const world::EntityData* owner, const Transform& transform) override;
 };
 
 	}

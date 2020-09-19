@@ -25,7 +25,7 @@ class ITexture;
 	namespace world
 	{
 
-/*! \brief
+/*!
  * \ingroup World
  */
 class T_DLLCLASS LightComponentData : public IEntityComponentData
@@ -41,6 +41,8 @@ public:
 	};
 
 	LightComponentData();
+
+	virtual void setTransform(const EntityData* owner, const Transform& transform) override final;
 
 	virtual void serialize(ISerializer& s) override final;
 

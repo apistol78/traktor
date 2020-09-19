@@ -16,6 +16,11 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.shape.SplineEntityReplicator", 0, SplineEntityReplicator, scene::IEntityReplicator)
 
+bool SplineEntityReplicator::create(const editor::IPipelineSettings* settings)
+{
+    return true;
+}
+
 TypeInfoSet SplineEntityReplicator::getSupportedTypes() const
 {
     return makeTypeInfoSet< SplineEntityData >();

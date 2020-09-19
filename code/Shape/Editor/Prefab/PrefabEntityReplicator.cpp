@@ -23,6 +23,11 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.shape.PrefabEntityReplicator", 0, PrefabEntityReplicator, scene::IEntityReplicator)
 
+bool PrefabEntityReplicator::create(const editor::IPipelineSettings* settings)
+{
+    return true;
+}
+
 TypeInfoSet PrefabEntityReplicator::getSupportedTypes() const
 {
     return makeTypeInfoSet< PrefabEntityData >();

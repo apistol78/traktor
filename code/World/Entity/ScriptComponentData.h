@@ -36,11 +36,13 @@ class T_DLLCLASS ScriptComponentData : public IEntityComponentData
 	T_RTTI_CLASS;
 
 public:
-	ScriptComponentData();
+	ScriptComponentData() = default;
 
 	explicit ScriptComponentData(const resource::Id< IRuntimeClass >& _class);
 
 	Ref< ScriptComponent > createComponent(resource::IResourceManager* resourceManager) const;
+
+	virtual void setTransform(const EntityData* owner, const Transform& transform) override final;
 
 	virtual void serialize(ISerializer& s) override final;
 
@@ -50,7 +52,7 @@ public:
 
 private:
 	resource::Id< IRuntimeClass > m_class;
-	bool m_editorSupport;
+	bool m_editorSupport = false;
 };
 
 	}

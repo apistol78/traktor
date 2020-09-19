@@ -1,11 +1,13 @@
 #include "Core/Io/FileSystem.h"
+#include "Core/Settings/PropertyString.h"
 #include "Database/Database.h"
 #include "Editor/IPipelineBuilder.h"
+#include "Editor/IPipelineSettings.h"
 #include "Mesh/MeshComponentData.h"
 #include "Mesh/Editor/MeshAsset.h"
 #include "Mesh/Editor/MeshEntityReplicator.h"
 #include "Model/Model.h"
-#include "Model/ModelFormat.h"
+#include "Model/ModelCache.h"
 #include "Model/Operations/Transform.h"
 
 namespace traktor
@@ -14,6 +16,12 @@ namespace traktor
     {
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.mesh.MeshEntityReplicator", 0, MeshEntityReplicator, scene::IEntityReplicator)
+
+bool MeshEntityReplicator::create(const editor::IPipelineSettings* settings)
+{
+	m_modelCachePath = settings->getProperty< std::wstring >(L"Pipeline.ModelCachePath", L"");
+	return true;
+}
 
 TypeInfoSet MeshEntityReplicator::getSupportedTypes() const
 {
@@ -35,9 +43,17 @@ Ref< model::Model > MeshEntityReplicator::createModel(
 		return nullptr;
 
 	Path filePath = FileSystem::getInstance().getAbsolutePath(Path(assetPath) + meshAsset->getFileName());
-	Ref< model::Model > model = model::ModelFormat::readAny(filePath, meshAsset->getImportFilter(), [&](const Path& p) {
-		return pipelineBuilder->openFile(p);
-	});
+	model::ModelCache modelCache(
+		m_modelCachePath,
+		[&](const Path& p) {
+			return pipelineBuilder->getFile(p);
+		},
+		[&](const Path& p) {
+			return pipelineBuilder->openFile(p);
+		}
+	);
+
+	Ref< model::Model > model = modelCache.get(filePath, meshAsset->getImportFilter());
 	if (!model)
 		return nullptr;
 
@@ -66,6 +82,7 @@ Ref< Object > MeshEntityReplicator::modifyOutput(
     Ref< MeshAsset > outputMeshAsset = new MeshAsset();
     outputMeshAsset->setMeshType(meshAsset->getMeshType());
 	outputMeshAsset->setMaterialTextures(meshAsset->getMaterialTextures());
+	outputMeshAsset->setTextureSet(meshAsset->getTextureSet());
 
     pipelineBuilder->buildOutput(
 		nullptr,

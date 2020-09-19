@@ -21,6 +21,10 @@ Ref< PathComponent > PathComponentData::createComponent() const
 	return new PathComponent(m_path, m_timeMode, m_timeOffset);
 }
 
+void PathComponentData::setTransform(const world::EntityData* owner, const Transform& transform)
+{
+}
+
 void PathComponentData::serialize(ISerializer& s)
 {
 	const MemberEnum< PathComponent::TimeMode >::Key c_TimeMode_Keys[] =

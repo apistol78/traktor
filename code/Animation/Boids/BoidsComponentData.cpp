@@ -47,6 +47,10 @@ Ref< BoidsComponent > BoidsComponentData::createComponent(const world::IEntityBu
 	);
 }
 
+void BoidsComponentData::setTransform(const world::EntityData* owner, const Transform& transform)
+{
+}
+
 void BoidsComponentData::serialize(ISerializer& s)
 {
 	s >> MemberRef< world::EntityData >(L"boidEntityData", m_boidEntityData);

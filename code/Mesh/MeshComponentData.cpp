@@ -64,6 +64,10 @@ Ref< MeshComponent > MeshComponentData::createComponent(resource::IResourceManag
 	return component;
 }
 
+void MeshComponentData::setTransform(const world::EntityData* owner, const Transform& transform)
+{
+}
+
 void MeshComponentData::serialize(ISerializer& s)
 {
 	s >> resource::Member< IMesh >(L"mesh", m_mesh);

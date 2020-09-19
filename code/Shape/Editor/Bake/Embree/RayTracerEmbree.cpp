@@ -301,19 +301,22 @@ void RayTracerEmbree::traceLightmap(const model::Model* model, const GBuffer* gb
 
 			// Trace IBL and indirect illumination.
 			Color4f incoming(0.0f, 0.0f, 0.0f, 0.0f);
-			for (int32_t i = 0; i < sampleCount; ++i)
+			if (sampleCount > 0)
 			{
-				Vector2 uv = Quasirandom::hammersley(i, sampleCount, random);
-				Vector4 direction = Quasirandom::uniformHemiSphere(uv, elm.normal);		
+				for (int32_t i = 0; i < sampleCount; ++i)
+				{
+					Vector2 uv = Quasirandom::hammersley(i, sampleCount, random);
+					Vector4 direction = Quasirandom::uniformHemiSphere(uv, elm.normal);		
 			
-				incoming += tracePath(
-					elm.position,
-					direction,
-					random,
-					0
-				);
+					incoming += tracePath(
+						elm.position,
+						direction,
+						random,
+						0
+					);
+				}
+				incoming /= Scalar(sampleCount);
 			}
-			incoming /= Scalar(sampleCount);
 
 			lightmap->setPixel(x, y, (emittance + direct + incoming).rgb1());
 		}

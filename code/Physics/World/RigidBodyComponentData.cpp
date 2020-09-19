@@ -56,6 +56,10 @@ Ref< RigidBodyComponent > RigidBodyComponentData::createComponent(
 	return new RigidBodyComponent(body, eventManager, eventCollide);
 }
 
+void RigidBodyComponentData::setTransform(const world::EntityData* owner, const Transform& transform)
+{
+}
+
 void RigidBodyComponentData::serialize(ISerializer& s)
 {
 	s >> MemberRef< BodyDesc >(L"bodyDesc", m_bodyDesc);

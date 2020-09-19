@@ -126,6 +126,10 @@ Ref< SkyComponent > SkyComponentData::createComponent(resource::IResourceManager
 	);
 }
 
+void SkyComponentData::setTransform(const world::EntityData* owner, const Transform& transform)
+{
+}
+
 void SkyComponentData::serialize(ISerializer& s)
 {
 	s >> resource::Member< render::Shader >(L"shader", m_shader);

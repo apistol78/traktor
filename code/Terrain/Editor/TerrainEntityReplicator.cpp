@@ -18,6 +18,11 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.shape.TerrainEntityReplicator", 0, TerrainEntityReplicator, scene::IEntityReplicator)
 
+bool TerrainEntityReplicator::create(const editor::IPipelineSettings* settings)
+{
+    return true;
+}
+
 TypeInfoSet TerrainEntityReplicator::getSupportedTypes() const
 {
     return makeTypeInfoSet< TerrainComponentData >();

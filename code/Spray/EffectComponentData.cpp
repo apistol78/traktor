@@ -25,6 +25,10 @@ Ref< EffectComponent > EffectComponentData::createComponent(resource::IResourceM
 	);
 }
 
+void EffectComponentData::setTransform(const world::EntityData* owner, const Transform& transform)
+{
+}
+
 void EffectComponentData::serialize(ISerializer& s)
 {
 	s >> resource::Member< Effect >(L"effect", m_effect);

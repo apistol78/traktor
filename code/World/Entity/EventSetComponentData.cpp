@@ -33,6 +33,10 @@ Ref< EventSetComponent > EventSetComponentData::createComponent(const IEntityBui
 	return eventSet;
 }
 
+void EventSetComponentData::setTransform(const EntityData* owner, const Transform& transform)
+{
+}
+
 void EventSetComponentData::serialize(ISerializer& s)
 {
 	s >> MemberSmallMap<

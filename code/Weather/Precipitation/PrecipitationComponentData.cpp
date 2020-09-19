@@ -38,6 +38,10 @@ Ref< PrecipitationComponent > PrecipitationComponentData::createComponent(resour
 		return nullptr;
 }
 
+void PrecipitationComponentData::setTransform(const world::EntityData* owner, const Transform& transform)
+{
+}
+
 void PrecipitationComponentData::serialize(ISerializer& s)
 {
 	s >> resource::Member< mesh::StaticMesh >(L"mesh", m_mesh);

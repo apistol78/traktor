@@ -18,6 +18,9 @@ namespace traktor
 class T_DLLCLASS TerrainLayerComponentData : public world::IEntityComponentData
 {
 	T_RTTI_CLASS;
+
+public:
+	virtual void setTransform(const world::EntityData* owner, const Transform& transform) override;
 };
 
 	}

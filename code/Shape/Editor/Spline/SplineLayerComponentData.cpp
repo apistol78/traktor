@@ -7,5 +7,9 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.shape.SplineLayerComponentData", SplineLayerComponentData, world::IEntityComponentData)
 
+void SplineLayerComponentData::setTransform(const world::EntityData* owner, const Transform& transform)
+{
+}
+
 	}
 }

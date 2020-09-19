@@ -67,6 +67,10 @@ Ref< CloudComponent > CloudComponentData::createComponent(resource::IResourceMan
 	return cloudComponent;
 }
 
+void CloudComponentData::setTransform(const world::EntityData* owner, const Transform& transform)
+{
+}
+
 void CloudComponentData::serialize(ISerializer& s)
 {
 	s >> resource::Member< render::Shader >(L"particleShader", m_particleShader);

@@ -22,6 +22,10 @@ TerrainComponentData::TerrainComponentData()
 {
 }
 
+void TerrainComponentData::setTransform(const world::EntityData* owner, const Transform& transform)
+{
+}
+
 void TerrainComponentData::serialize(ISerializer& s)
 {
 	s >> resource::Member< Terrain >(L"terrain", m_terrain);

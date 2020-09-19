@@ -42,6 +42,8 @@ public:
 
 	float getHeight() const;
 
+	virtual void setTransform(const EntityData* owner, const Transform& transform) override final;
+
 	virtual void serialize(ISerializer& s) override final;
 
 private:

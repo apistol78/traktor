@@ -26,6 +26,8 @@ class T_DLLCLASS RotatorComponentData : public world::IEntityComponentData
 public:
 	Ref< RotatorComponent > createComponent() const;
 
+	virtual void setTransform(const world::EntityData* owner, const Transform& transform) override final;
+
 	virtual void serialize(ISerializer& s) override final;
 
 private:

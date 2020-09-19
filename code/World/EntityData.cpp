@@ -23,6 +23,8 @@ const std::wstring& EntityData::getName() const
 
 void EntityData::setTransform(const Transform& transform)
 {
+	for (auto component : m_components)
+		component->setTransform(this, transform);
 	m_transform = transform;
 }
 

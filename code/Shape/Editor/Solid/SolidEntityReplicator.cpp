@@ -53,6 +53,11 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.shape.SolidEntityReplicator", 0, SolidEntityReplicator, scene::IEntityReplicator)
 
+bool SolidEntityReplicator::create(const editor::IPipelineSettings* settings)
+{
+    return true;
+}
+
 TypeInfoSet SolidEntityReplicator::getSupportedTypes() const
 {
 	return makeTypeInfoSet< SolidEntityData >();

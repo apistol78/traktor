@@ -72,6 +72,9 @@ public:
 	/*! Get material textures. */
 	const std::map< std::wstring, Guid >& getMaterialTextures() const { return m_materialTextures; }
 
+	/*! Set texture set. */
+	void setTextureSet(const Guid& textureSet) { m_textureSet = textureSet; }
+
 	/*! Get texture set. */
 	const Guid& getTextureSet() const { return m_textureSet; }
 

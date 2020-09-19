@@ -161,7 +161,7 @@ void encodeRGBM(drawing::Image* image)
 	}
 }
 
-bool writeTexture(db::Database* outputDatabase, const Guid& lightmapId, const drawing::Image* lightmap)
+int32_t writeTexture(db::Database* outputDatabase, const Guid& lightmapId, const drawing::Image* lightmap)
 {
 	// Convert image to match texture format.
 	Ref< drawing::Image > lightmapFormat = lightmap->clone();
@@ -176,7 +176,7 @@ bool writeTexture(db::Database* outputDatabase, const Guid& lightmapId, const dr
 		&lightmapId
 	);
 	if (!outputInstance)
-		return false;
+		return 1;
 
 	Ref< render::TextureResource > outputResource = new render::TextureResource();
 	outputInstance->setObject(outputResource);
@@ -186,7 +186,7 @@ bool writeTexture(db::Database* outputDatabase, const Guid& lightmapId, const dr
 	if (!stream)
 	{
 		outputInstance->revert();
-		return false;
+		return 2;
 	}
 
 	Writer writer(stream);
@@ -213,15 +213,15 @@ bool writeTexture(db::Database* outputDatabase, const Guid& lightmapId, const dr
 	if (writer.write(data, dataSize, 1) != dataSize)
 	{
 		outputInstance->revert();
-		return false;
+		return 3;
 	}
 
 	stream->close();
 
 	if (!outputInstance->commit())
-		return false;
+		return 4;
 	
-	return true;
+	return 0;
 }
 
 void line(const Vector2& from, const Vector2& to, const std::function< void(const Vector2, float) >& fn)
@@ -541,21 +541,21 @@ bool TracerProcessor::process(const TracerTask* task) const
 
 		// Discard alpha.
 		lightmap->clearAlpha(1.0f);
-
-lightmap->save(L"data/Temp/Bake/Lightmap.png");
+		lightmap->save(L"data/Temp/Bake/Lightmap_" + tracerOutput->getName() + L".png");
 
 		// Encode texture into RGBM.
 		if (false)
 			encodeRGBM(lightmap);
 
 		// Create final output instance.
-		if (!writeTexture(
+		int32_t result = writeTexture(
 			m_outputDatabase,
 			tracerOutput->getLightmapId(),
 			lightmap
-		))
+		);
+		if (result != 0)
 		{
-			log::error << L"Trace failed; unable to create output lightmap texture." << Endl;
+			log::error << L"Trace failed; unable to create output lightmap texture for \"" << tracerOutput->getName() << L"\", error = " << result << L"." << Endl;
 			return false;
 		}
 	}

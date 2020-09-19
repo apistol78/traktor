@@ -33,7 +33,9 @@ class T_DLLCLASS ProbeComponentData : public IEntityComponentData
 	T_RTTI_CLASS;
 
 public:
-	ProbeComponentData();
+	ProbeComponentData() = default;
+
+	virtual void setTransform(const EntityData* owner, const Transform& transform) override final;
 
 	virtual void serialize(ISerializer& s) override final;
 
@@ -55,9 +57,9 @@ public:
 
 private:
 	resource::Id< render::ICubeTexture > m_texture;
-	float m_intensity;
-	bool m_local;
-	Aabb3 m_volume;
+	float m_intensity = 1.0f;
+	bool m_local = false;
+	Aabb3 m_volume = Aabb3(Vector4::zero(), Vector4::zero());
 };
 
 	}
