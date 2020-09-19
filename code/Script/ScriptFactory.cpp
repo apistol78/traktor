@@ -47,7 +47,7 @@ Ref< Object > ScriptFactory::create(resource::IResourceManager* resourceManager,
 	{
 		Ref< resource::ResourceHandle > chunkHandle = resourceManager->bind(type_of< ScriptChunk >(), instance->getGuid());
 		if (!chunkHandle)
-			return 0;
+			return nullptr;
 
 		Ref< const IRuntimeClass > scriptClass = m_scriptContext->findClass(wstombs(instance->getName()));
 		if (!scriptClass)
