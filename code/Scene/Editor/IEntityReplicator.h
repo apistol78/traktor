@@ -18,6 +18,7 @@ namespace traktor
     {
 
 class IPipelineBuilder;
+class IPipelineSettings;
 
     }
 
@@ -39,6 +40,10 @@ class T_DLLCLASS IEntityReplicator : public Object
     T_RTTI_CLASS;
 
 public:
+    /*! */
+    virtual bool create(const editor::IPipelineSettings* settings) = 0;
+
+    /*! */
     virtual TypeInfoSet getSupportedTypes() const = 0;
 
     /*! Create model replica from entity or component data.
@@ -68,9 +73,6 @@ public:
         const Object* source,
         const model::Model* model
     ) const = 0;
-
-    /*! Create replicator implementation from data type. */
-    static Ref< const IEntityReplicator > createEntityReplicator(const TypeInfo& dataType);
 };
 
     }

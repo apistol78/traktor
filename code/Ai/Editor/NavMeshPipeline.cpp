@@ -134,6 +134,21 @@ bool NavMeshPipeline::create(const editor::IPipelineSettings* settings)
 	m_editor = settings->getProperty< bool >(L"Pipeline.TargetEditor", false);
 	m_build = settings->getProperty< bool >(L"NavMeshPipeline.Build", true);
 	m_terrainStepSize = settings->getProperty< int32_t >(L"NavMeshPipeline.TerrainStepSize", 16);
+
+	// Create entity replicators.
+	TypeInfoSet entityReplicatorTypes;
+	type_of< scene::IEntityReplicator >().findAllOf(entityReplicatorTypes, false);
+	for (const auto& entityReplicatorType : entityReplicatorTypes)
+	{
+		Ref< scene::IEntityReplicator > entityReplicator = mandatory_non_null_type_cast< scene::IEntityReplicator* >(entityReplicatorType->createInstance());
+		if (!entityReplicator->create(settings))
+			return false;	
+
+		auto supportedTypes = entityReplicator->getSupportedTypes();
+		for (auto supportedType : supportedTypes)
+			m_entityReplicators[supportedType] = entityReplicator;
+	}
+
 	return true;
 }
 
@@ -207,7 +222,7 @@ bool NavMeshPipeline::buildOutput(
 			for (auto componentData : entityData->getComponents())
 			{
 				// Find model synthesizer which can generate from current component.
-				Ref< const scene::IEntityReplicator > entityReplicator = scene::IEntityReplicator::createEntityReplicator(type_of(componentData));
+				const scene::IEntityReplicator* entityReplicator = m_entityReplicators[&type_of(componentData)];
 				if (entityReplicator)
 					model = entityReplicator->createModel(pipelineBuilder, m_assetPath, componentData);
 			}
@@ -215,7 +230,7 @@ bool NavMeshPipeline::buildOutput(
 			if (!model)
 			{
 				// Find model synthesizer which can generate from current entity.
-				Ref< const scene::IEntityReplicator > entityReplicator = scene::IEntityReplicator::createEntityReplicator(type_of(entityData));
+				const scene::IEntityReplicator* entityReplicator = m_entityReplicators[&type_of(entityData)];
 				if (entityReplicator)
 					model = entityReplicator->createModel(pipelineBuilder, m_assetPath, entityData);
 			}	
@@ -595,7 +610,7 @@ bool NavMeshPipeline::buildOutput(
 			}
 
 			w << uint8_t(nvp);
-			for (uint32_t j = 0; j < nvp; ++j)
+			for (uint32_t j = 0; j < (uint32_t)nvp; ++j)
 				w << uint16_t(p[j]);
 		}
 	}

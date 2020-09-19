@@ -44,6 +44,8 @@ public:
 
 	Ref< PrecipitationComponent > createComponent(resource::IResourceManager* resourceManager) const;
 
+	virtual void setTransform(const world::EntityData* owner, const Transform& transform) override final;
+
 	virtual void serialize(ISerializer& s) override final;
 
 	const resource::Id< mesh::StaticMesh >& getMesh() const { return m_mesh; }

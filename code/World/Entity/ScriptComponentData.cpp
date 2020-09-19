@@ -11,14 +11,8 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.world.ScriptComponentData", 1, ScriptComponentData, IEntityComponentData)
 
-ScriptComponentData::ScriptComponentData()
-:	m_editorSupport(false)
-{
-}
-
 ScriptComponentData::ScriptComponentData(const resource::Id< IRuntimeClass >& _class)
 :	m_class(_class)
-,	m_editorSupport(false)
 {
 }
 
@@ -29,6 +23,10 @@ Ref< ScriptComponent > ScriptComponentData::createComponent(resource::IResourceM
 		return new ScriptComponent(clazz);
 	else
 		return nullptr;
+}
+
+void ScriptComponentData::setTransform(const EntityData* owner, const Transform& transform)
+{
 }
 
 void ScriptComponentData::serialize(ISerializer& s)

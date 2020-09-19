@@ -12,8 +12,13 @@
 
 namespace traktor
 {
+
+class Transform;
+
 	namespace world
 	{
+
+class EntityData;
 
 /*! Component data interface.
  * \ingroup World
@@ -21,6 +26,9 @@ namespace traktor
 class T_DLLCLASS IEntityComponentData : public ISerializable
 {
 	T_RTTI_CLASS;
+
+public:
+	virtual void setTransform(const EntityData* owner, const Transform& transform) = 0;
 };
 
 	}

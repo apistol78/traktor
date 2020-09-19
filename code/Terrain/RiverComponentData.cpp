@@ -19,6 +19,10 @@ RiverComponentData::RiverComponentData()
 {
 }
 
+void RiverComponentData::setTransform(const world::EntityData* owner, const Transform& transform)
+{
+}
+
 void RiverComponentData::serialize(ISerializer& s)
 {
 	s >> resource::Member< render::Shader >(L"shader", m_shader);

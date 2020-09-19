@@ -35,7 +35,7 @@ class BodyDesc;
 class PhysicsManager;
 class RigidBodyComponent;
 
-/*! \brief
+/*!
  * \ingroup Physics
  */
 class T_DLLCLASS RigidBodyComponentData : public world::IEntityComponentData
@@ -55,6 +55,8 @@ public:
 		resource::IResourceManager* resourceManager,
 		PhysicsManager* physicsManager
 	) const;
+
+	virtual void setTransform(const world::EntityData* owner, const Transform& transform) override final;
 
 	virtual void serialize(ISerializer& s) override final;
 

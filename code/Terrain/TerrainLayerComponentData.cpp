@@ -7,5 +7,9 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.terrain.TerrainLayerComponentData", TerrainLayerComponentData, world::IEntityComponentData)
 
+void TerrainLayerComponentData::setTransform(const world::EntityData* owner, const Transform& transform)
+{
+}
+
 	}
 }

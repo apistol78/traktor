@@ -52,6 +52,8 @@ public:
 
 	Ref< CloudComponent > createComponent(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem) const;
 
+	virtual void setTransform(const world::EntityData* owner, const Transform& transform) override final;
+
 	virtual void serialize(ISerializer& s) override final;
 
 	const resource::Id< render::Shader >& getParticleShader() const { return m_particleShader; }

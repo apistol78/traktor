@@ -23,6 +23,8 @@ class T_DLLCLASS SolidEntityReplicator : public scene::IEntityReplicator
     T_RTTI_CLASS;
 
 public:
+    virtual bool create(const editor::IPipelineSettings* settings) override final;
+
     virtual TypeInfoSet getSupportedTypes() const override final;
 
     virtual Ref< model::Model > createModel(

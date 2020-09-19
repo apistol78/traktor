@@ -35,7 +35,7 @@ class IResourceManager;
 
 class ClothComponent;
 
-/*! \brief
+/*!
  * \ingroup Animation
  */
 class T_DLLCLASS ClothComponentData : public world::IEntityComponentData
@@ -57,6 +57,8 @@ public:
 		resource::IResourceManager* resourceManager,
 		render::IRenderSystem* renderSystem
 	) const;
+
+	virtual void setTransform(const world::EntityData* owner, const Transform& transform) override final;
 
 	virtual void serialize(ISerializer& s) override final;
 

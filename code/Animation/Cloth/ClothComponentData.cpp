@@ -52,6 +52,10 @@ Ref< ClothComponent > ClothComponentData::createComponent(
 	return clothEntity;
 }
 
+void ClothComponentData::setTransform(const world::EntityData* owner, const Transform& transform)
+{
+}
+
 void ClothComponentData::serialize(ISerializer& s)
 {
 	s >> resource::Member< render::Shader >(L"shader", m_shader);

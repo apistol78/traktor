@@ -59,6 +59,10 @@ float CameraComponentData::getHeight() const
 	return m_height;
 }
 
+void CameraComponentData::setTransform(const EntityData* owner, const Transform& transform)
+{
+}
+
 void CameraComponentData::serialize(ISerializer& s)
 {
 	const MemberEnum< Projection >::Key kProjection[] =

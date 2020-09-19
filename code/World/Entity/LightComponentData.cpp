@@ -29,6 +29,10 @@ LightComponentData::LightComponentData()
 {
 }
 
+void LightComponentData::setTransform(const EntityData* owner, const Transform& transform)
+{
+}
+
 void LightComponentData::serialize(ISerializer& s)
 {
 	const MemberEnum< LightType >::Key c_LightType_Keys[] =

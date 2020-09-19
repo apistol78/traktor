@@ -30,6 +30,10 @@ OceanComponentData::OceanComponentData()
 {
 }
 
+void OceanComponentData::setTransform(const world::EntityData* owner, const Transform& transform)
+{
+}
+
 void OceanComponentData::serialize(ISerializer& s)
 {
 	s >> resource::Member< render::Shader >(L"shader", m_shader);

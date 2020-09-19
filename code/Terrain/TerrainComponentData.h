@@ -29,6 +29,8 @@ class T_DLLCLASS TerrainComponentData : public world::IEntityComponentData
 public:
 	TerrainComponentData();
 
+	virtual void setTransform(const world::EntityData* owner, const Transform& transform) override final;
+
 	virtual void serialize(ISerializer& s) override final;
 
 	const resource::Id< Terrain >& getTerrain() const { return m_terrain; }

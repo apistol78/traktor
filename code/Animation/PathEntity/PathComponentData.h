@@ -30,6 +30,8 @@ public:
 
 	Ref< PathComponent > createComponent() const;
 
+	virtual void setTransform(const world::EntityData* owner, const Transform& transform) override final;
+
 	virtual void serialize(ISerializer& s) override final;
 
 private:

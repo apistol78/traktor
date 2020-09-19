@@ -34,7 +34,7 @@ class Entity;
 class IMesh;
 class MeshComponent;
 
-/*! \brief
+/*!
  * \ingroup Mesh
  */
 class T_DLLCLASS MeshComponentData : public world::IEntityComponentData
@@ -47,6 +47,8 @@ public:
 	explicit MeshComponentData(const resource::Id< IMesh >& mesh);
 
 	Ref< MeshComponent > createComponent(resource::IResourceManager* resourceManager) const;
+
+	virtual void setTransform(const world::EntityData* owner, const Transform& transform) override final;
 
 	virtual void serialize(ISerializer& s) override final;
 

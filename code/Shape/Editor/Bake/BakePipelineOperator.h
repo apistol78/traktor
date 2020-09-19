@@ -3,6 +3,7 @@
 #include <string>
 #include "Core/Ref.h"
 #include "Core/RefArray.h"
+#include "Core/Containers/SmallMap.h"
 #include "Scene/Editor/IScenePipelineOperator.h"
 
 // import/export mechanism.
@@ -15,6 +16,13 @@
 
 namespace traktor
 {
+	namespace scene
+	{
+
+class IEntityReplicator;
+
+	}
+
 	namespace shape
 	{
 
@@ -51,6 +59,7 @@ private:
 	std::wstring m_assetPath;
 	const TypeInfo* m_tracerType;
 	bool m_editor;
+	SmallMap< const TypeInfo*, Ref< const scene::IEntityReplicator > > m_entityReplicators;
 };
 
 	}

@@ -20,7 +20,7 @@ class EventSetComponent;
 class IEntityBuilder;
 class IEntityEventData;
 
-/*! \brief
+/*!
  * \ingroup World
  */
 class T_DLLCLASS EventSetComponentData : public IEntityComponentData
@@ -29,6 +29,8 @@ class T_DLLCLASS EventSetComponentData : public IEntityComponentData
 
 public:
 	Ref< EventSetComponent > createComponent(const IEntityBuilder* entityBuilder) const;
+
+	virtual void setTransform(const EntityData* owner, const Transform& transform) override final;
 
 	virtual void serialize(ISerializer& s) override final;
 

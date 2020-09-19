@@ -19,6 +19,10 @@ DecalComponentData::DecalComponentData()
 {
 }
 
+void DecalComponentData::setTransform(const EntityData* owner, const Transform& transform)
+{
+}
+
 void DecalComponentData::serialize(ISerializer& s)
 {
 	s >> Member< float >(L"size", m_size, AttributeRange(0.0f) | AttributeUnit(AuMetres));

@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Core/Containers/SmallMap.h"
 #include "Editor/DefaultPipeline.h"
 
 // import/export mechanism.
@@ -12,6 +13,13 @@
 
 namespace traktor
 {
+	namespace scene
+	{
+
+class IEntityReplicator;
+
+	}
+
 	namespace ai
 	{
 
@@ -55,6 +63,7 @@ private:
 	bool m_editor;
 	bool m_build;
 	int32_t m_terrainStepSize;
+	SmallMap< const TypeInfo*, Ref< const scene::IEntityReplicator > > m_entityReplicators;
 };
 
 	}

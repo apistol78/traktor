@@ -77,6 +77,8 @@ public:
 
 	Ref< AnimatedMeshComponent > createComponent(resource::IResourceManager* resourceManager, physics::PhysicsManager* physicsManager, const world::IEntityBuilder* entityBuilder) const;
 
+	virtual void setTransform(const world::EntityData* owner, const Transform& transform) override final;
+
 	virtual void serialize(ISerializer& s) override final;
 
 	const resource::Id< mesh::SkinnedMesh >& getMesh() const { return m_mesh; }

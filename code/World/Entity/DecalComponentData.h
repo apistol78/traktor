@@ -33,6 +33,8 @@ class T_DLLCLASS DecalComponentData : public IEntityComponentData
 public:
 	DecalComponentData();
 
+	virtual void setTransform(const EntityData* owner, const Transform& transform) override final;
+
 	virtual void serialize(ISerializer& s) override final;
 
 	float getSize() const { return m_size; }

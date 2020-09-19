@@ -12,10 +12,7 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.world.ProbeComponentData", 0, ProbeComponentData, IEntityComponentData)
 
-ProbeComponentData::ProbeComponentData()
-:	m_intensity(1.0f)
-,	m_local(false)
-,	m_volume(Vector4::zero(), Vector4::zero())
+void ProbeComponentData::setTransform(const EntityData* owner, const Transform& transform)
 {
 }
 

@@ -53,6 +53,8 @@ public:
 		PhysicsManager* physicsManager
 	) const;
 
+	virtual void setTransform(const world::EntityData* owner, const Transform& transform) override final;
+
 	virtual void serialize(ISerializer& s) override final;
 
 	const RefArray< const WheelData >& getWheels() const { return m_wheels; }

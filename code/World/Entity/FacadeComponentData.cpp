@@ -49,6 +49,21 @@ const std::wstring& FacadeComponentData::getShow() const
 	return m_show;
 }
 
+void FacadeComponentData::setTransform(const EntityData* owner, const Transform& transform)
+{
+	Transform invTransform = owner->getTransform().inverse();
+	for (auto entityData : m_entityData)
+	{
+		if (entityData != nullptr)
+		{
+			Transform currentTransform = entityData->getTransform();
+			Transform Tlocal = invTransform * currentTransform;
+			Transform Tworld = transform * Tlocal;
+			entityData->setTransform(Tworld);
+		}
+	}
+}
+
 void FacadeComponentData::serialize(ISerializer& s)
 {
     s >> MemberRefArray< EntityData >(L"entityData", m_entityData, AttributePrivate());

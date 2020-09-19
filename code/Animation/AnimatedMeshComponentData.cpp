@@ -88,6 +88,10 @@ Ref< AnimatedMeshComponent > AnimatedMeshComponentData::createComponent(resource
 	);
 }
 
+void AnimatedMeshComponentData::setTransform(const world::EntityData* owner, const Transform& transform)
+{
+}
+
 void AnimatedMeshComponentData::serialize(ISerializer& s)
 {
 	s >> resource::Member< mesh::SkinnedMesh >(L"mesh", m_mesh);

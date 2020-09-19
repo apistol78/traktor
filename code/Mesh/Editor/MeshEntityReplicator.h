@@ -20,6 +20,8 @@ class T_DLLCLASS MeshEntityReplicator : public scene::IEntityReplicator
     T_RTTI_CLASS;
 
 public:
+    virtual bool create(const editor::IPipelineSettings* settings) override final;
+
     virtual TypeInfoSet getSupportedTypes() const override final;
 
     virtual Ref< model::Model > createModel(
@@ -34,6 +36,9 @@ public:
         const Object* source,
         const model::Model* model
     ) const override final;
+
+private:
+    std::wstring m_modelCachePath;
 };
 
     }
