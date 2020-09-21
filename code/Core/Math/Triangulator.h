@@ -1,5 +1,6 @@
 #pragma once
 
+#include <functional>
 #include "Core/Config.h"
 #include "Core/Math/Vector2.h"
 #include "Core/Math/Vector4.h"
@@ -28,22 +29,19 @@ public:
 		TfSorted = 1
 	};
 
-	struct Triangle
-	{
-		size_t indices[3];
-	};
+	typedef std::function< void(size_t index0, size_t index1, size_t index2) > fn_callback_t;
 
 	void freeze(
 		const AlignedVector< Vector2 >& points,
-		AlignedVector< Triangle >& outTriangles,
-		uint32_t flags = TfSorted
+		uint32_t flags,
+		const fn_callback_t& callback
 	);
 
 	void freeze(
 		const AlignedVector< Vector4 >& points,
 		const Vector4& normal,
-		AlignedVector< Triangle >& outTriangles,
-		uint32_t flags = TfSorted
+		uint32_t flags,
+		const fn_callback_t& callback
 	);
 };
 

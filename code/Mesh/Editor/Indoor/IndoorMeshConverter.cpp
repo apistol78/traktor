@@ -476,21 +476,18 @@ void createSectors(
 			Plane windingPlane;
 			winding.getPlane(windingPlane);
 
-			AlignedVector< Triangulator::Triangle > triangulation;
 			Triangulator().freeze(
 				winding.get(),
 				windingPlane.normal(),
-				triangulation
+				Triangulator::TfSorted,
+				[&](size_t i0, size_t i1, size_t i2) {
+					triangles.push_back(Polygon());
+					triangles.back().material = polygon.material;
+					triangles.back().indices.push_back(polygon.indices[i0]);
+					triangles.back().indices.push_back(polygon.indices[i1]);
+					triangles.back().indices.push_back(polygon.indices[i2]);
+				}
 			);
-
-			for (const auto& triangle : triangulation)
-			{
-				triangles.push_back(Polygon());
-				triangles.back().material = polygon.material;
-				triangles.back().indices.push_back(polygon.indices[triangle.indices[0]]);
-				triangles.back().indices.push_back(polygon.indices[triangle.indices[1]]);
-				triangles.back().indices.push_back(polygon.indices[triangle.indices[2]]);
-			}
 		}
 		sector.polygons = triangles;
 		log::info << L"\"" << sector.name << L"\" " << uint32_t(triangles.size()) << L" triangle(s)" << Endl;

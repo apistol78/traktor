@@ -105,8 +105,8 @@ bool isClockWise(const AlignedVector< Vector2 >& points)
 
 void Triangulator::freeze(
 	const AlignedVector< Vector2 >& points,
-	AlignedVector< Triangle >& outTriangles,
-	uint32_t flags
+	uint32_t flags,
+	const fn_callback_t& callback
 )
 {
 	size_t npoints = points.size();
@@ -178,12 +178,7 @@ void Triangulator::freeze(
 		// Cut the ear.
 		int32_t prev, next;
 		getAdjacent(uncut, cut, prev, next);
-
-		Triangle t;
-		t.indices[0] = indices[prev];
-		t.indices[1] = indices[cut];
-		t.indices[2] = indices[next];
-		outTriangles.push_back(t);
+		callback(indices[prev], indices[cut], indices[next]);
 
 		uncut.erase(uncut.begin() + cut);
 		indices.erase(indices.begin() + cut);
@@ -193,8 +188,8 @@ void Triangulator::freeze(
 void Triangulator::freeze(
 	const AlignedVector< Vector4 >& points,
 	const Vector4& normal,
-	AlignedVector< Triangle >& outTriangles,
-	uint32_t flags
+	uint32_t flags,
+	const fn_callback_t& callback
 )
 {
 	// Use maximum axis to determine projection plane.
@@ -235,7 +230,7 @@ void Triangulator::freeze(
 	}
 
 	// Freeze 2d polygon.
-	freeze(projected, outTriangles, flags);
+	freeze(projected, flags, callback);
 }
 
 }
