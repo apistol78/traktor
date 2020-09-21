@@ -169,23 +169,22 @@ void PrimitiveEditModifier::draw(render::PrimitiveRenderer* primitiveRenderer) c
             if (!w.getPlane(wp))
                 continue;
 
-            AlignedVector< Triangulator::Triangle > triangles;
+            primitiveRenderer->pushWorld(entityAdapter->getTransform().toMatrix44());
+
             Triangulator().freeze(
                 w.get(),
                 wp.normal(),
-                triangles
+                Triangulator::TfSequential,
+                [&](size_t i0, size_t i1, size_t i2) {
+                    primitiveRenderer->drawSolidTriangle(
+                        w[(uint32_t)i0],
+                        w[(uint32_t)i1],
+                        w[(uint32_t)i2],
+                        Color4ub(80, 120, 255, 120)
+                    );
+                }
             );
 
-            primitiveRenderer->pushWorld(entityAdapter->getTransform().toMatrix44());
-            for (const auto& triangle : triangles)
-            {
-                primitiveRenderer->drawSolidTriangle(
-                    w[(uint32_t)triangle.indices[0]],
-                    w[(uint32_t)triangle.indices[1]],
-                    w[(uint32_t)triangle.indices[2]],
-                    Color4ub(80, 120, 255, 120)
-                );
-            }
             primitiveRenderer->popWorld();
         }
     }

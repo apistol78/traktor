@@ -13,7 +13,6 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.model.Triangulate", Triangulate, IModelOperatio
 bool Triangulate::apply(Model& model) const
 {
 	AlignedVector< Polygon > triangulatedPolygons;
-	AlignedVector< Triangulator::Triangle > triangles;
 
 	const auto& polygons = model.getPolygons();
 	triangulatedPolygons.reserve(polygons.size());
@@ -41,23 +40,19 @@ bool Triangulate::apply(Model& model) const
 				polygonNormal = polygonPlane.normal();
 			}
 
-			triangles.resize(0);
 			Triangulator().freeze(
 				polygonWinding.get(),
 				polygonNormal,
-				triangles
+				Triangulator::TfSorted,
+				[&](size_t i0, size_t i1, size_t i2) {
+					triangulatedPolygons.push_back(Polygon(
+						polygon.getMaterial(),
+						vertices[i0],
+						vertices[i1],
+						vertices[i2]
+					));
+				}
 			);
-
-			for (const auto& triangle : triangles)
-			{
-				Polygon triangulatedPolygon(
-					polygon.getMaterial(),
-					vertices[triangle.indices[0]],
-					vertices[triangle.indices[1]],
-					vertices[triangle.indices[2]]
-				);
-				triangulatedPolygons.push_back(triangulatedPolygon);
-			}
 		}
 		else if (vertices.size() == 3)
 			triangulatedPolygons.push_back(polygon);

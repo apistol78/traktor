@@ -28,11 +28,11 @@ const resource::Id< ISimpleTexture > c_idFontTexture(Guid(L"{123602E4-BC6F-874D-
 
 const int c_bufferCount = 16 * 1024;
 
-static handle_t s_handleProjection;
-static handle_t s_handleDepthTest;
-static handle_t s_handleDepthWrite;
-static handle_t s_handleTexture;
-static handle_t s_handleDepth;
+static const Handle s_handleProjection(L"Projection");
+static const Handle s_handleDepthTest(L"DepthTest");
+static const Handle s_handleDepthWrite(L"DepthWrite");
+static const Handle s_handleTexture(L"Texture");
+static const Handle s_handleDepth(L"Depth");
 
 		}
 
@@ -67,11 +67,6 @@ PrimitiveRenderer::PrimitiveRenderer()
 ,	m_vertexHead(nullptr)
 ,	m_vertexTail(nullptr)
 {
-	s_handleProjection = getParameterHandle(L"Projection");
-	s_handleDepthTest = getParameterHandle(L"DepthTest");
-	s_handleDepthWrite = getParameterHandle(L"DepthWrite");
-	s_handleTexture = getParameterHandle(L"Texture");
-	s_handleDepth = getParameterHandle(L"Depth");
 }
 
 bool PrimitiveRenderer::create(
@@ -146,7 +141,7 @@ void PrimitiveRenderer::end(uint32_t frame)
 		m_vertexTail = nullptr;
 	}
 
-	m_currentFrame = 0;
+	m_currentFrame = nullptr;
 
 	m_view.resize(0);
 	m_world.resize(0);
@@ -247,7 +242,7 @@ void PrimitiveRenderer::drawLine(
 	const Color4ub& color
 )
 {
-	Vertex* v = allocBatch(PtLines, 1, 0);
+	Vertex* v = allocBatch(PtLines, 1, nullptr);
 	if (!v)
 		return;
 
@@ -321,7 +316,7 @@ void PrimitiveRenderer::drawLine(
 	Scalar dx2 = dx * cs2.w();
 	Scalar dy2 = dy * cs2.w();
 
-	Vertex* v = allocBatch(PtTriangles, 2, 0);
+	Vertex* v = allocBatch(PtTriangles, 2, nullptr);
 	if (!v)
 		return;
 
@@ -726,7 +721,7 @@ void PrimitiveRenderer::drawSolidAabb(
 		) / Scalar(4.0f);
 
 		Scalar phi = dot3((eyeCenter - faceCenter).normalized(), normals[i]);
-		if (phi < 0.0f)
+		if (phi < 0.0_simd)
 			continue;
 
 		drawSolidQuad(
@@ -766,7 +761,7 @@ void PrimitiveRenderer::drawSolidTriangle(
 	Vector4 v2 = m_worldView * vert2.xyz1();
 	Vector4 v3 = m_worldView * vert3.xyz1();
 
-	Vertex* v = allocBatch(PtTriangles, 1, 0);
+	Vertex* v = allocBatch(PtTriangles, 1, nullptr);
 	if (!v)
 		return;
 
@@ -820,17 +815,14 @@ void PrimitiveRenderer::drawSolidPolygon(
 		Plane plane;
 		if (Winding3(vertices.c_ptr(), vertices.size()).getPlane(plane))
 		{
-			AlignedVector< Triangulator::Triangle > triangles;
-			Triangulator().freeze(vertices, plane.normal(), triangles);
-			for (const auto& triangle : triangles)
-			{
+			Triangulator().freeze(vertices, plane.normal(), Triangulator::TfSequential, [&](size_t i0, size_t i1, size_t i2) {
 				drawSolidTriangle(
-					vertices[triangle.indices[0]],
-					vertices[triangle.indices[1]],
-					vertices[triangle.indices[2]],
+					vertices[i0],
+					vertices[i1],
+					vertices[i2],
 					color
 				);
-			}
+			});
 		}
 	}
 }

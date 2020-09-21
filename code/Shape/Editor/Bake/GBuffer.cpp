@@ -141,16 +141,7 @@ bool GBuffer::create(int32_t width, int32_t height, const model::Model& model, c
 		}
 
 		// Triangulate winding so we can easily traverse lightmap fragments.
-		AlignedVector< Triangulator::Triangle > triangles;
-		Triangulator().freeze(texCoords.get(), triangles);
-
-		// Trace triangle interiors.
-		for (const auto& triangle : triangles)
-		{
-			size_t i0 = triangle.indices[0];
-			size_t i1 = triangle.indices[1];
-			size_t i2 = triangle.indices[2];
-
+		Triangulator().freeze(texCoords.get(), Triangulator::TfSorted, [&](size_t i0, size_t i1, size_t i2) {
 			Barycentric bary(
 				texCoords[i0],
 				texCoords[i1],
@@ -237,7 +228,7 @@ bool GBuffer::create(int32_t width, int32_t height, const model::Model& model, c
 					elm.delta = max(max(duv.x(), duv.y()), duv.z()) * Scalar(sqrt(2.0));
 				}
 			}
-		}
+		});
 	}
 
 	return true;
