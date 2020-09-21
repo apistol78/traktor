@@ -2297,10 +2297,18 @@ bool emitSwitch(GlslContext& cx, Switch* node)
 		cx.getShader().pushScope();
 
 		const InputPin* caseInput = node->getInputPin(i + 2);
-		T_ASSERT(caseInput);
+		if (!caseInput)
+		{
+			cx.getShader().popScope();
+			return false;
+		}
 
 		Ref< GlslVariable > caseInputVariable = cx.emitInput(caseInput);
-		T_ASSERT(caseInputVariable);
+		if (!caseInputVariable)
+		{
+			cx.getShader().popScope();
+			return false;
+		}
 
 		caseBranches.push_back(fs.str());
 		caseInputs.push_back(*caseInputVariable);
@@ -2318,10 +2326,18 @@ bool emitSwitch(GlslContext& cx, Switch* node)
 		cx.getShader().pushScope();
 
 		const InputPin* caseInput = node->getInputPin(1);
-		T_ASSERT(caseInput);
+		if (!caseInput)
+		{
+			cx.getShader().popScope();
+			return false;
+		}
 
 		Ref< GlslVariable > caseInputVariable = cx.emitInput(caseInput);
-		T_ASSERT(caseInputVariable);
+		if (!caseInputVariable)
+		{
+			cx.getShader().popScope();
+			return false;
+		}
 
 		caseBranches.push_back(fs.str());
 		caseInputs.push_back(*caseInputVariable);

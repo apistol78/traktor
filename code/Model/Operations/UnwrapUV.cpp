@@ -130,6 +130,11 @@ bool UnwrapUV::apply(Model& model) const
 				uv.x /= (float)atlas->width;
 				uv.y /= (float)atlas->height;
 
+				// Add margin to edges. \fixme Should move to a separate filter ScaleTexCoords...
+				const float m = 1.0f / m_textureSize;
+				uv.x = uv.x * (1.0f - m * 2.0f) + m;
+				uv.y = uv.y * (1.0f - m * 2.0f) + m;
+
 				vx.setTexCoord(m_channel, model.addTexCoord(uv));
 
 				polygon.setVertex(k, model.addUniqueVertex(vx));

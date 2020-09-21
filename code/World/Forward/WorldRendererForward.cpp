@@ -129,6 +129,14 @@ struct LightShaderData
 };
 #pragma pack()
 
+#pragma pack(1)
+struct TileShaderData
+{
+	float lights[4];
+	float lightCount[4];
+};
+#pragma pack()
+
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.WorldRendererForward", 0, WorldRendererForward, IWorldRenderer)
 
 bool WorldRendererForward::create(
@@ -222,6 +230,22 @@ bool WorldRendererForward::create(
 		frame.lightSBufferMemory = frame.lightSBuffer->lock();
 		if (!frame.lightSBufferMemory)
 			return false;
+
+		AlignedVector< render::StructElement > tileShaderDataStruct;
+		tileShaderDataStruct.push_back(render::StructElement(render::DtFloat4, offsetof(TileShaderData, lights)));
+		tileShaderDataStruct.push_back(render::StructElement(render::DtFloat4, offsetof(TileShaderData, lightCount)));
+		T_FATAL_ASSERT(sizeof(TileShaderData) == render::getStructSize(tileShaderDataStruct));
+
+		frame.tileSBuffer = renderSystem->createStructBuffer(
+			tileShaderDataStruct,
+			render::getStructSize(tileShaderDataStruct) * 16 * 16
+		);
+		if (!frame.tileSBuffer)
+			return false;
+
+		frame.tileSBufferMemory = frame.tileSBuffer->lock();
+		if (!frame.tileSBufferMemory)
+			return false;
 	}
 
 	// Create irradiance grid.
@@ -259,7 +283,10 @@ bool WorldRendererForward::create(
 void WorldRendererForward::destroy()
 {
 	for (auto& frame : m_frames)
+	{
 		safeDestroy(frame.lightSBuffer);
+		safeDestroy(frame.tileSBuffer);
+	}
 	m_frames.clear();
 
 	safeDestroy(m_screenRenderer);
@@ -286,6 +313,7 @@ void WorldRendererForward::setup(
 
 	// Begun writing light shader data; written both in setup and build.
 	LightShaderData* lightShaderData = (LightShaderData*)m_frames[frame].lightSBufferMemory;
+	TileShaderData* tileShaderData = (TileShaderData*)m_frames[frame].tileSBufferMemory;
 
 	// Add additional passes by entity renderers.
 	{
@@ -295,6 +323,14 @@ void WorldRendererForward::setup(
 	}
 
 	// Add passes to render graph.
+	setupTileDataPass(
+		worldRenderView,
+		rootEntity,
+		renderGraph,
+		outputTargetSetId,
+		tileShaderData
+	);
+
 	auto gbufferTargetSetId = setupGBufferPass(
 		worldRenderView,
 		rootEntity,
@@ -345,6 +381,77 @@ void WorldRendererForward::setup(
 	);
 
 	m_count++;
+}
+
+void WorldRendererForward::setupTileDataPass(
+	const WorldRenderView& worldRenderView,
+	const Entity* rootEntity,
+	render::RenderGraph& renderGraph,
+	render::handle_t outputTargetSetId,
+	TileShaderData* tileShaderData
+) const
+{
+	const Frustum& viewFrustum = worldRenderView.getViewFrustum();
+
+	// Update tile data.
+	const float dx = 1.0f / 16.0f;
+	const float dy = 1.0f / 16.0f;
+
+	Vector4 nh = viewFrustum.corners[1] - viewFrustum.corners[0];
+	Vector4 nv = viewFrustum.corners[3] - viewFrustum.corners[0];
+	Vector4 fh = viewFrustum.corners[5] - viewFrustum.corners[4];
+	Vector4 fv = viewFrustum.corners[7] - viewFrustum.corners[4];
+
+	Frustum tileFrustum;
+	for (int32_t y = 0; y < 16; ++y)
+	{
+		float fy = float(y) * dy;
+		for (int32_t x = 0; x < 16; ++x)
+		{
+			float fx = float(x) * dx;
+
+			Vector4 corners[] =
+			{
+				// Near
+				viewFrustum.corners[0] + nh * Scalar(fx) + nv * Scalar(fy),				// l t
+				viewFrustum.corners[0] + nh * Scalar(fx + dx) + nv * Scalar(fy),		// r t
+				viewFrustum.corners[0] + nh * Scalar(fx + dx) + nv * Scalar(fy + dy),	// r b
+				viewFrustum.corners[0] + nh * Scalar(fx) + nv * Scalar(fy + dy),		// l b
+				// Far
+				viewFrustum.corners[4] + fh * Scalar(fx) + fv * Scalar(fy),				// l t
+				viewFrustum.corners[4] + fh * Scalar(fx + dx) + fv * Scalar(fy),		// r t
+				viewFrustum.corners[4] + fh * Scalar(fx + dx) + fv * Scalar(fy + dy),	// r b
+				viewFrustum.corners[4] + fh * Scalar(fx) + fv * Scalar(fy + dy)			// l b
+			};
+
+			tileFrustum.buildFromCorners(corners);
+
+			int32_t count = 0;
+			for (uint32_t i = 0; i < m_lights.size(); ++i)
+			{
+				const Light& light = m_lights[i];
+
+				if (light.type == LtDirectional)
+				{
+					tileShaderData[x + y * 16].lights[count++] = float(i);
+				}
+				else if (light.type == LtPoint)
+				{
+					Vector4 lvp = worldRenderView.getView() * light.position.xyz1();
+					if (tileFrustum.inside(lvp, Scalar(light.range)) != Frustum::IrOutside)
+						tileShaderData[x + y * 16].lights[count++] = float(i);
+				}
+				else if (light.type == LtSpot)
+				{
+					tileShaderData[x + y * 16].lights[count++] = float(i);
+				}
+
+				if (count >= 4)
+					break;
+			}
+			tileShaderData[x + y * 16].lightCount[0] = float(count);
+		}
+	}
 }
 
 render::handle_t WorldRendererForward::setupGBufferPass(
@@ -809,7 +916,6 @@ render::handle_t WorldRendererForward::setupVisualPass(
 ) const
 {
 	const bool shadowsEnable = (bool)(m_shadowsQuality != Quality::Disabled);
-	int32_t lightCount = (int32_t)m_lights.size();
 
 	// Add visual[0] target set.
 	render::RenderGraphTargetSetDesc rgtd;
@@ -874,8 +980,8 @@ render::handle_t WorldRendererForward::setupVisualPass(
 				sharedParams,
 				IWorldRenderPass::PfLast,
 				worldRenderView.getView(),
+				m_frames[frame].tileSBuffer,
 				m_frames[frame].lightSBuffer,
-				lightCount,
 				(bool)(m_irradianceGrid != nullptr),
 				m_settings.fog,
 				m_settings.fogDistanceY,

@@ -289,6 +289,7 @@ void RayTracerEmbree::traceLightmap(const model::Model* model, const GBuffer* gb
 			const auto& originMaterial = materials[originPolygon.getMaterial()];
 
 			Color4f emittance = originMaterial.getColor() * Scalar(originMaterial.getEmissive());
+			Scalar metalness = Scalar(originMaterial.getMetalness());
 
 			// Trace direct analytical illumination.
 			Color4f direct = sampleAnalyticalLights(
@@ -318,7 +319,7 @@ void RayTracerEmbree::traceLightmap(const model::Model* model, const GBuffer* gb
 				incoming /= Scalar(sampleCount);
 			}
 
-			lightmap->setPixel(x, y, (emittance + direct + incoming).rgb1());
+			lightmap->setPixel(x, y, ((emittance + direct + incoming) * (1.0_simd - metalness)).rgb1());
 		}
 	}	
 }

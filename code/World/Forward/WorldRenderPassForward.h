@@ -36,8 +36,8 @@ public:
 		render::ProgramParameters* sharedParams,
 		uint32_t passFlags,
 		const Matrix44& view,
+		render::StructBuffer* tileSBuffer,
 		render::StructBuffer* lightSBuffer,
-		uint32_t lightCount,
 		bool irradianceEnable,
 		bool fogEnabled,
 		float fogDistanceY,
@@ -78,8 +78,8 @@ private:
 	uint32_t m_passFlags;
 	Matrix44 m_view;
 	Matrix44 m_viewInverse;
+	render::StructBuffer* m_tileSBuffer;
 	render::StructBuffer* m_lightSBuffer;
-	uint32_t m_lightCount;
 	bool m_irradianceEnable;
 	bool m_fogEnabled;
 	float m_fogDistanceY;
