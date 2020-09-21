@@ -23,6 +23,7 @@
 #include "Drawing/Filters/ScaleFilter.h"
 #include "Drawing/Filters/TransformFilter.h"
 #include "Editor/IPipelineBuilder.h"
+#include "Editor/IPipelineDepends.h"
 #include "Editor/IPipelineSettings.h"
 #include "Mesh/MeshComponentData.h"
 #include "Model/Model.h"
@@ -395,6 +396,12 @@ void BakePipelineOperator::destroy()
 TypeInfoSet BakePipelineOperator::getOperatorTypes() const
 {
 	return makeTypeInfoSet< BakeConfiguration >();
+}
+
+bool BakePipelineOperator::addDependencies(editor::IPipelineDepends* pipelineDepends, const ISerializable* operatorData, const scene::SceneAsset* sceneAsset) const
+{
+	pipelineDepends->addDependency< render::ShaderGraph >();
+	return true;
 }
 
 bool BakePipelineOperator::build(

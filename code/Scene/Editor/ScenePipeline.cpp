@@ -87,6 +87,15 @@ bool ScenePipeline::buildDependencies(
 {
 	const SceneAsset* sceneAsset = mandatory_non_null_type_cast< const SceneAsset* >(sourceAsset);
 
+	for (const auto op : sceneAsset->getOperationData())
+	{
+		const IScenePipelineOperator* spo = findOperator(type_of(op));
+		if (!spo)
+			return false;
+		if (!spo->addDependencies(pipelineDepends, op, sceneAsset))
+			return false;
+	}
+
 	for (const auto& param : sceneAsset->getImageProcessParams())
 		pipelineDepends->addDependency(param.second, editor::PdfBuild | editor::PdfResource);
 

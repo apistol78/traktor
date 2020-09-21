@@ -26,6 +26,7 @@ class Instance;
 	{
 
 class IPipelineBuilder;
+class IPipelineDepends;
 class IPipelineSettings;
 
 	}
@@ -35,7 +36,7 @@ class IPipelineSettings;
 
 class SceneAsset;
 
-/*! \brief
+/*!
  * \ingroup Scene
  */
 class T_DLLCLASS IScenePipelineOperator : public Object
@@ -48,6 +49,8 @@ public:
 	virtual void destroy() = 0;
 
 	virtual TypeInfoSet getOperatorTypes() const = 0;
+
+	virtual bool addDependencies(editor::IPipelineDepends* pipelineDepends, const ISerializable* operatorData, const scene::SceneAsset* sceneAsset) const = 0;
 
 	virtual bool build(
 		editor::IPipelineBuilder* pipelineBuilder,
