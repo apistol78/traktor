@@ -64,26 +64,82 @@ void DefaultComponentEditor::drawGuide(render::PrimitiveRenderer* primitiveRende
 			Vector4 lightX = transform.axisX();
 			Vector4 lightZ = transform.axisZ();
 
-			primitiveRenderer->pushDepthState(true, true, false);
+			if (lightComponent->getLightType() == world::LtDirectional)
+			{
+				primitiveRenderer->pushDepthState(true, true, false);
 
-			primitiveRenderer->drawLine(
-				lightPosition - lightDirection * Scalar(0.5f),
-				lightPosition + lightDirection * Scalar(0.5f),
-				5.0f,
-				Color4ub(255, 255, 0)
-			);
-			primitiveRenderer->drawArrowHead(
-				lightPosition + lightDirection * Scalar(0.5f),
-				lightPosition + lightDirection * Scalar(0.7f),
-				0.5f,
-				Color4ub(255, 255, 0)
-			);
+				primitiveRenderer->drawLine(
+					lightPosition - lightDirection * Scalar(0.5f),
+					lightPosition + lightDirection * Scalar(0.5f),
+					5.0f,
+					Color4ub(255, 255, 0)
+				);
+				primitiveRenderer->drawArrowHead(
+					lightPosition + lightDirection * Scalar(0.5f),
+					lightPosition + lightDirection * Scalar(0.7f),
+					0.5f,
+					Color4ub(255, 255, 0)
+				);
 
-			primitiveRenderer->popDepthState();
+				primitiveRenderer->popDepthState();
+			}
+			else if (lightComponent->getLightType() == world::LtPoint)
+			{
+				primitiveRenderer->pushDepthState(true, true, false);
 
-			primitiveRenderer->pushWorld(transform.toMatrix44());
-			primitiveRenderer->drawWireAabb(Aabb3(Vector4(-0.25f, -0.25f, -0.25f, 1.0f), Vector4(0.25f, 0.25f, 0.25f, 1.0f)), Color4ub(120, 255, 120, 255));
-			primitiveRenderer->popWorld();
+				primitiveRenderer->drawSolidPoint(lightPosition, 8.0f, Color4ub(255, 255, 0));
+				primitiveRenderer->drawWireSphere(translate(lightPosition), lightComponent->getRange(), Color4ub(255, 255, 0, 128));
+
+				primitiveRenderer->popDepthState();
+			}
+			else if (lightComponent->getLightType() == world::LtSpot)
+			{
+				primitiveRenderer->pushDepthState(true, true, false);
+
+				primitiveRenderer->drawSolidPoint(lightPosition, 8.0f, Color4ub(255, 255, 0));
+
+				Frustum spotFrustum;
+				spotFrustum.buildPerspective(lightComponent->getRadius(), 1.0f, 0.1f, lightComponent->getRange());
+
+				primitiveRenderer->pushWorld(transform.toMatrix44() * rotateX(deg2rad(90.0f)));
+				primitiveRenderer->drawWireQuad(
+					spotFrustum.corners[0],
+					spotFrustum.corners[1],
+					spotFrustum.corners[2],
+					spotFrustum.corners[3],
+					Color4ub(255, 255, 255)
+				);
+				primitiveRenderer->drawWireQuad(
+					spotFrustum.corners[4],
+					spotFrustum.corners[5],
+					spotFrustum.corners[6],
+					spotFrustum.corners[7],
+					Color4ub(255, 255, 255)
+				);
+				primitiveRenderer->drawLine(
+					spotFrustum.corners[0],
+					spotFrustum.corners[4],
+					Color4ub(255, 255, 255)
+				);
+				primitiveRenderer->drawLine(
+					spotFrustum.corners[1],
+					spotFrustum.corners[5],
+					Color4ub(255, 255, 255)
+				);
+				primitiveRenderer->drawLine(
+					spotFrustum.corners[2],
+					spotFrustum.corners[6],
+					Color4ub(255, 255, 255)
+				);
+				primitiveRenderer->drawLine(
+					spotFrustum.corners[3],
+					spotFrustum.corners[7],
+					Color4ub(255, 255, 255)
+				);
+				primitiveRenderer->popWorld();
+
+				primitiveRenderer->popDepthState();
+			}
 		}
 	}
 

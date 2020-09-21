@@ -16,8 +16,8 @@ WorldRenderPassForward::WorldRenderPassForward(
 	render::ProgramParameters* sharedParams,
 	uint32_t passFlags,
 	const Matrix44& view,
+	render::StructBuffer* tileSBuffer,
 	render::StructBuffer* lightSBuffer,
-	uint32_t lightCount,
 	bool irradianceEnable,
 	bool fogEnabled,
 	float fogDistanceY,
@@ -36,8 +36,8 @@ WorldRenderPassForward::WorldRenderPassForward(
 ,	m_passFlags(passFlags)
 ,	m_view(view)
 ,	m_viewInverse(view.inverse())
+,	m_tileSBuffer(tileSBuffer)
 ,	m_lightSBuffer(lightSBuffer)
-,	m_lightCount(lightCount)
 ,	m_fogEnabled(fogEnabled)
 ,	m_irradianceEnable(irradianceEnable)
 ,	m_fogDistanceY(fogDistanceY)
@@ -67,8 +67,8 @@ WorldRenderPassForward::WorldRenderPassForward(
 ,	m_passFlags(passFlags)
 ,	m_view(view)
 ,	m_viewInverse(view.inverse())
+,	m_tileSBuffer(nullptr)
 ,	m_lightSBuffer(nullptr)
-,	m_lightCount(0)
 ,	m_fogEnabled(false)
 ,	m_fogDistanceY(0.0f)
 ,	m_fogDistanceZ(0.0f)
@@ -145,7 +145,7 @@ void WorldRenderPassForward::setWorldProgramParameters(render::ProgramParameters
 
 void WorldRenderPassForward::setLightProgramParameters(render::ProgramParameters* programParams) const
 {
-	programParams->setFloatParameter(s_handleLightCount, (float)m_lightCount);
+	programParams->setStructBufferParameter(s_handleTileSBuffer, m_tileSBuffer);
 	programParams->setStructBufferParameter(s_handleLightSBuffer, m_lightSBuffer);
 }
 

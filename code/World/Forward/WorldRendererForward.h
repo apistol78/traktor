@@ -31,6 +31,7 @@ class StructBuffer;
 class IrradianceGrid;
 class WorldEntityRenderers;
 struct LightShaderData;
+struct TileShaderData;
 
 /*! World renderer implementation.
  * \ingroup World
@@ -75,6 +76,8 @@ private:
 	{
 		Ref< render::StructBuffer > lightSBuffer;
 		void* lightSBufferMemory;
+		Ref< render::StructBuffer > tileSBuffer;
+		void* tileSBufferMemory;
 	};
 
 	WorldRenderSettings m_settings;
@@ -105,6 +108,14 @@ private:
 
 	float m_slicePositions[MaxSliceCount + 1];
 	int32_t m_count = 0;
+
+	void setupTileDataPass(
+		const WorldRenderView& worldRenderView,
+		const Entity* rootEntity,
+		render::RenderGraph& renderGraph,
+		render::handle_t outputTargetSetId,
+		TileShaderData* tileShaderData
+	) const;
 
 	render::handle_t setupGBufferPass(
 		const WorldRenderView& worldRenderView,
