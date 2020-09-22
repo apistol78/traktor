@@ -8,6 +8,7 @@
 #include "Core/Math/Bezier3rd.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Misc/String.h"
+#include "Core/Misc/TString.h"
 #include "Core/Settings/PropertyBoolean.h"
 #include "Core/Settings/PropertyInteger.h"
 #include "Core/Settings/PropertyString.h"
@@ -323,6 +324,7 @@ bool Pipeline::buildOutput(
 
 			// Add shape to dictionary.
 			movie->defineCharacter(1, outputShape);
+			movie->setExport(wstombs(sourceInstance->getName()), 1);
 		}
 		else
 		{
