@@ -1455,6 +1455,8 @@ bool EditorForm::openWorkspace(const Path& workspacePath)
 	if (m_workspaceSettings)
 		closeWorkspace();
 
+	updateTitle();
+
 	int32_t progressStep = 0;
 
 	Thread* thread = ThreadManager::getInstance().create(makeFunctor< EditorForm, const Path&, int32_t& >(
@@ -1490,7 +1492,6 @@ bool EditorForm::openWorkspace(const Path& workspacePath)
 	loadModules();
 
 	// Update UI views.
-	updateTitle();
 	m_dataBaseView->setDatabase(m_sourceDatabase);
 
 	// Create stream server.
@@ -1536,6 +1537,7 @@ bool EditorForm::openWorkspace(const Path& workspacePath)
 
 	saveRecent(OS::getInstance().getWritableFolderPath() + L"/Traktor/Editor/Traktor.Editor.mru", m_mru);
 	updateMRU();
+	updateTitle();
 
 	log::info << L"Workspace opened successfully." << Endl;
 	return true;
@@ -1585,7 +1587,6 @@ void EditorForm::closeWorkspace()
 	m_mergedSettings = m_globalSettings;
 
 	// Update UI views.
-	updateTitle();
 	m_dataBaseView->setDatabase(nullptr);
 }
 
@@ -2968,6 +2969,8 @@ void EditorForm::eventClose(ui::CloseEvent* event)
 	saveUserSettings(m_settingsPath, userSettings);
 
 	ui::Application::getInstance()->exit(0);
+
+	event->consume();
 }
 
 void EditorForm::eventTimer(ui::TimerEvent* /*event*/)

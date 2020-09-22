@@ -1,3 +1,4 @@
+#include <cmath>
 #include "Runtime/Editor/ProfilerDialog.h"
 #include "Runtime/Editor/TargetConnection.h"
 #include "Core/Misc/String.h"
