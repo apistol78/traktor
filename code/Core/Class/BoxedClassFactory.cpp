@@ -21,6 +21,7 @@
 #include "Core/Class/Boxes/BoxedRange.h"
 #include "Core/Class/Boxes/BoxedRay3.h"
 #include "Core/Class/Boxes/BoxedRefArray.h"
+#include "Core/Class/Boxes/BoxedSphere.h"
 #include "Core/Class/Boxes/BoxedStdVector.h"
 #include "Core/Class/Boxes/BoxedTypeInfo.h"
 #include "Core/Class/Boxes/BoxedVector4Array.h"
@@ -307,6 +308,15 @@ void BoxedClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classBoxedRefArray->addMethod("push_back", &BoxedRefArray::push_back);
 	classBoxedRefArray->addMethod("pop_back", &BoxedRefArray::pop_back);
 	registrar->registerClass(classBoxedRefArray);
+
+	auto classBoxedSphere = new AutoRuntimeClass< BoxedSphere >();
+	classBoxedSphere->addConstructor();
+	classBoxedSphere->addConstructor< const Vector4&, float >();
+	classBoxedSphere->addProperty("center", &BoxedSphere::setCenter, &BoxedSphere::center);
+	classBoxedSphere->addProperty("radius", &BoxedSphere::setRadius, &BoxedSphere::radius);
+	classBoxedSphere->addMethod("inside", &BoxedSphere::inside);
+	classBoxedSphere->addMethod("intersectRay", &BoxedSphere::intersectRay);
+	registrar->registerClass(classBoxedSphere);
 
 	auto classBoxedStdVector = new AutoRuntimeClass< BoxedStdVector >();
 	classBoxedStdVector->addConstructor();
