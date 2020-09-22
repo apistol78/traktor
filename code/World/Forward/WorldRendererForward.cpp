@@ -394,8 +394,8 @@ void WorldRendererForward::setupTileDataPass(
 	const Frustum& viewFrustum = worldRenderView.getViewFrustum();
 
 	// Update tile data.
-	const float dx = 1.0f / 16.0f;
-	const float dy = 1.0f / 16.0f;
+	const Scalar dx(1.0f / 16.0f);
+	const Scalar dy(1.0f / 16.0f);
 
 	Vector4 nh = viewFrustum.corners[1] - viewFrustum.corners[0];
 	Vector4 nv = viewFrustum.corners[3] - viewFrustum.corners[0];
@@ -405,23 +405,23 @@ void WorldRendererForward::setupTileDataPass(
 	Frustum tileFrustum;
 	for (int32_t y = 0; y < 16; ++y)
 	{
-		float fy = float(y) * dy;
+		Scalar fy = Scalar((float)y) * dy;
 		for (int32_t x = 0; x < 16; ++x)
 		{
-			float fx = float(x) * dx;
+			Scalar fx = Scalar((float)x) * dx;
 
 			Vector4 corners[] =
 			{
 				// Near
-				viewFrustum.corners[0] + nh * Scalar(fx) + nv * Scalar(fy),				// l t
-				viewFrustum.corners[0] + nh * Scalar(fx + dx) + nv * Scalar(fy),		// r t
-				viewFrustum.corners[0] + nh * Scalar(fx + dx) + nv * Scalar(fy + dy),	// r b
-				viewFrustum.corners[0] + nh * Scalar(fx) + nv * Scalar(fy + dy),		// l b
+				viewFrustum.corners[0] + nh * fx + nv * fy,					// l t
+				viewFrustum.corners[0] + nh * (fx + dx) + nv * fy,			// r t
+				viewFrustum.corners[0] + nh * (fx + dx) + nv * (fy + dy),	// r b
+				viewFrustum.corners[0] + nh * fx + nv * (fy + dy),			// l b
 				// Far
-				viewFrustum.corners[4] + fh * Scalar(fx) + fv * Scalar(fy),				// l t
-				viewFrustum.corners[4] + fh * Scalar(fx + dx) + fv * Scalar(fy),		// r t
-				viewFrustum.corners[4] + fh * Scalar(fx + dx) + fv * Scalar(fy + dy),	// r b
-				viewFrustum.corners[4] + fh * Scalar(fx) + fv * Scalar(fy + dy)			// l b
+				viewFrustum.corners[4] + fh * fx + fv * fy,					// l t
+				viewFrustum.corners[4] + fh * (fx + dx) + fv * fy,			// r t
+				viewFrustum.corners[4] + fh * (fx + dx) + fv * (fy + dy),	// r b
+				viewFrustum.corners[4] + fh * fx + fv * (fy + dy)			// l b
 			};
 
 			tileFrustum.buildFromCorners(corners);
