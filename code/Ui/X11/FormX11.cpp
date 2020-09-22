@@ -74,7 +74,7 @@ bool FormX11::create(IWidget* parent, const std::wstring& text, int width, int h
 		{
 			CloseEvent closeEvent(m_owner);
 			m_owner->raiseEvent(&closeEvent);
-			if (!(closeEvent.consumed() && closeEvent.cancelled()))
+			if (!closeEvent.consumed() && !closeEvent.cancelled())
 				destroy();
 		}
 	});

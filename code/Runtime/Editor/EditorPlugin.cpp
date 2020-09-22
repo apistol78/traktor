@@ -236,8 +236,6 @@ void EditorPlugin::destroy()
 	m_site = nullptr;
 	m_parent = nullptr;
 	m_editor = nullptr;
-
-	net::Network::finalize();
 }
 
 bool EditorPlugin::handleCommand(const ui::Command& command, bool result_)
