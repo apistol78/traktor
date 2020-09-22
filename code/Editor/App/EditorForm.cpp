@@ -2919,6 +2919,8 @@ void EditorForm::eventClose(ui::CloseEvent* event)
 		}
 	}
 
+	hide();
+
 	for (auto tab : m_tabGroups)
 	{
 		while (tab->getPageCount() > 0)
