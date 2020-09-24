@@ -11,6 +11,7 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.runtime.EditorPluginFactory", 0, Editor
 
 void EditorPluginFactory::getCommands(std::list< ui::Command >& outCommands) const
 {
+	outCommands.push_back(ui::Command(L"Runtime.Editor.LaunchLast"));
 }
 
 Ref< editor::IEditorPlugin > EditorPluginFactory::createEditorPlugin(editor::IEditor* editor) const

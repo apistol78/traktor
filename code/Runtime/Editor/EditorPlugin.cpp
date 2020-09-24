@@ -223,6 +223,7 @@ void EditorPlugin::destroy()
 
 	safeDestroy(m_targetManager);
 
+	m_lastLaunchedTargetInstance = nullptr;
 	m_targetInstances.clear();
 	m_targets.clear();
 
@@ -291,6 +292,11 @@ bool EditorPlugin::handleCommand(const ui::Command& command, bool result_)
 		}
 
 		m_targetList->requestUpdate();
+	}
+	else if (command == L"Runtime.Editor.LaunchLast")
+	{
+		if (m_lastLaunchedTargetInstance)
+			launch(m_lastLaunchedTargetInstance);
 	}
 	else
 		return false;
@@ -380,6 +386,7 @@ void EditorPlugin::handleWorkspaceClosed()
 
 	m_targets.resize(0);
 	m_targetInstances.resize(0);
+	m_lastLaunchedTargetInstance = nullptr;
 
 	m_connectionManager = nullptr;
 }
@@ -388,6 +395,7 @@ void EditorPlugin::updateTargetLists()
 {
 	m_targets.clear();
 	m_targetInstances.clear();
+	m_lastLaunchedTargetInstance = nullptr;
 
 	// Get targets from source database.
 	Ref< db::Database > sourceDatabase = m_editor->getSourceDatabase();
@@ -480,6 +488,136 @@ void EditorPlugin::updateTargetManagers()
 			m_connectionManager->setConnectionString(remoteId, databaseCs);
 		}
 	}
+}
+
+void EditorPlugin::launch(TargetInstance* targetInstance)
+{
+	// Get selected target host.
+	int32_t id = targetInstance->getDeployHostId();
+	if (id < 0)
+		return;
+
+	std::wstring host = m_hostEnumerator->getHost(id);
+
+	// Get our network host.
+	std::wstring editorHost = L"localhost";
+	net::SocketAddressIPv4::Interface itf;
+	if (net::SocketAddressIPv4::getBestInterface(itf))
+		editorHost = itf.addr->getHostName();
+	else
+		log::warning << L"Unable to determine editor host address; target might not be able to connect to editor database." << Endl;
+
+	// Resolve absolute output path.
+	std::wstring outputPath = FileSystem::getInstance().getAbsolutePath(targetInstance->getOutputPath()).getPathName();
+
+	// Set target's state to pending as actions can be queued up to be performed much later.
+	targetInstance->setState(TsPending);
+	targetInstance->setBuildProgress(0);
+
+	{
+		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_targetActionQueueLock);
+
+		ActionChain chain;
+		chain.targetInstance = targetInstance;
+
+		Action action;
+
+		Ref< PropertyGroup > pipelineSettings = new PropertyGroup();
+
+		// Expose _DEBUG script definition when launching through editor, ie not migrating.
+		std::set< std::wstring > scriptPrepDefinitions;
+		scriptPrepDefinitions.insert(L"_DEBUG");
+		pipelineSettings->setProperty< PropertyStringSet >(L"ScriptPipeline.PreprocessorDefinitions", scriptPrepDefinitions);
+
+		// Also add property for pipelines to indicate we're launching through editor.
+		pipelineSettings->setProperty< PropertyBoolean >(L"Pipeline.EditorDeploy", true);
+
+		// Add build output data action.
+		action.listener = new TargetInstanceProgressListener(m_targetList, targetInstance, TsBuilding);
+		action.action = new BuildTargetAction(
+			m_editor->getSourceDatabase(),
+			m_editor->getSettings(),
+			pipelineSettings,
+			targetInstance->getTarget(),
+			targetInstance->getTargetConfiguration(),
+			outputPath,
+			false
+		);
+		chain.actions.push_back(action);
+
+		Ref< PropertyGroup > tweakSettings = new PropertyGroup();
+
+		if (m_toolTweaks->get(0)->isChecked())
+			tweakSettings->setProperty< PropertyFloat >(L"Audio.MasterVolume", 0.0f);
+		if (m_toolTweaks->get(1)->isChecked())
+			tweakSettings->setProperty< PropertyBoolean >(L"Audio.WriteOut", true);
+		if (m_toolTweaks->get(2)->isChecked())
+			tweakSettings->setProperty< PropertyBoolean >(L"Runtime.RenderThread", false);
+		if (m_toolTweaks->get(3)->isChecked())
+			tweakSettings->setProperty< PropertyInteger >(L"Render.WaitVBlanks", 0);
+		if (m_toolTweaks->get(4)->isChecked())
+			tweakSettings->setProperty< PropertyFloat >(L"Physics.TimeScale", 0.25f);
+		if (m_toolTweaks->get(5)->isChecked())
+			tweakSettings->setProperty< PropertyInteger >(L"World.SuperSample", 2);
+		if (m_toolTweaks->get(6)->isChecked())
+			tweakSettings->setProperty< PropertyBoolean >(L"Script.AttachDebugger", true);
+		if (m_toolTweaks->get(7)->isChecked())
+			tweakSettings->setProperty< PropertyBoolean >(L"Script.AttachProfiler", true);
+		if (m_toolTweaks->get(8)->isChecked())
+		{
+			std::set< std::wstring > modules = tweakSettings->getProperty< std::set< std::wstring > >(L"Runtime.Modules");
+			modules.insert(L"Traktor.Render.Capture");
+			tweakSettings->setProperty< PropertyStringSet >(L"Runtime.Modules", modules);
+			tweakSettings->setProperty< PropertyString >(L"Render.CaptureType", L"traktor.render.RenderSystemCapture");
+		}
+		if (m_toolTweaks->get(9)->isChecked())
+			tweakSettings->setProperty< PropertyBoolean >(L"Online.DownloadableContent", false);
+		if (m_toolTweaks->get(10)->isChecked())
+			tweakSettings->setProperty< PropertyInteger >(L"Runtime.MaxSimulationUpdates", 1);
+		if (m_toolTweaks->get(11)->isChecked())
+			tweakSettings->setProperty< PropertyInteger >(L"Render.DisplayMode.Window/DefaultDenominator", 4);
+
+		int32_t language = m_toolLanguage->getSelected();
+		if (language > 0)
+			tweakSettings->setProperty< PropertyString >(L"Online.OverrideLanguageCode", c_languageCodes[language - 1].code);
+
+		// Add deploy and launch actions.
+		action.listener = new TargetInstanceProgressListener(m_targetList, targetInstance, TsDeploying);
+		action.action = new DeployTargetAction(
+			m_editor->getSourceDatabase(),
+			m_editor->getSettings(),
+			targetInstance->getName(),
+			targetInstance->getTarget(),
+			targetInstance->getTargetConfiguration(),
+			editorHost,
+			host,
+			m_connectionManager->getListenPort(),
+			targetInstance->getDatabaseName(),
+			m_targetManager->getPort(),
+			targetInstance->getId(),
+			outputPath,
+			tweakSettings
+		);
+		chain.actions.push_back(action);
+
+		action.listener = new TargetInstanceProgressListener(m_targetList, targetInstance, TsLaunching);
+		action.action = new LaunchTargetAction(
+			m_editor->getSourceDatabase(),
+			m_editor->getSettings(),
+			targetInstance->getName(),
+			targetInstance->getTarget(),
+			targetInstance->getTargetConfiguration(),
+			host,
+			outputPath
+		);
+		chain.actions.push_back(action);
+
+		m_targetActionQueue.push_back(chain);
+		m_targetActionQueueSignal.set();
+	}
+
+	m_targetList->requestUpdate();
+	m_lastLaunchedTargetInstance = targetInstance;
 }
 
 void EditorPlugin::eventTargetListBuild(TargetBuildEvent* event)
@@ -632,134 +770,8 @@ void EditorPlugin::eventTargetListMigrate(TargetMigrateEvent* event)
 void EditorPlugin::eventTargetListPlay(TargetPlayEvent* event)
 {
 	TargetInstance* targetInstance = event->getInstance();
-
-	// Get selected target host.
-	int32_t id = targetInstance->getDeployHostId();
-	if (id < 0)
-		return;
-
-	std::wstring host = m_hostEnumerator->getHost(id);
-
-	// Get our network host.
-	std::wstring editorHost = L"localhost";
-	net::SocketAddressIPv4::Interface itf;
-	if (net::SocketAddressIPv4::getBestInterface(itf))
-		editorHost = itf.addr->getHostName();
-	else
-		log::warning << L"Unable to determine editor host address; target might not be able to connect to editor database." << Endl;
-
-	// Resolve absolute output path.
-	std::wstring outputPath = FileSystem::getInstance().getAbsolutePath(targetInstance->getOutputPath()).getPathName();
-
-	// Set target's state to pending as actions can be queued up to be performed much later.
-	targetInstance->setState(TsPending);
-	targetInstance->setBuildProgress(0);
-
-	{
-		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_targetActionQueueLock);
-
-		ActionChain chain;
-		chain.targetInstance = targetInstance;
-
-		Action action;
-
-		// Expose _DEBUG script definition when launching through editor, ie not migrating.
-		Ref< PropertyGroup > pipelineSettings = new PropertyGroup();
-		if ((event->getKeyState() & ui::KsControl) == 0)
-		{
-			std::set< std::wstring > scriptPrepDefinitions;
-			scriptPrepDefinitions.insert(L"_DEBUG");
-			pipelineSettings->setProperty< PropertyStringSet >(L"ScriptPipeline.PreprocessorDefinitions", scriptPrepDefinitions);
-		}
-
-		// Also add property for pipelines to indicate we're launching through editor.
-		pipelineSettings->setProperty< PropertyBoolean >(L"Pipeline.EditorDeploy", true);
-
-		// Add build output data action.
-		action.listener = new TargetInstanceProgressListener(m_targetList, targetInstance, TsBuilding);
-		action.action = new BuildTargetAction(
-			m_editor->getSourceDatabase(),
-			m_editor->getSettings(),
-			pipelineSettings,
-			targetInstance->getTarget(),
-			targetInstance->getTargetConfiguration(),
-			outputPath,
-			false
-		);
-		chain.actions.push_back(action);
-
-		Ref< PropertyGroup > tweakSettings = new PropertyGroup();
-
-		if (m_toolTweaks->get(0)->isChecked())
-			tweakSettings->setProperty< PropertyFloat >(L"Audio.MasterVolume", 0.0f);
-		if (m_toolTweaks->get(1)->isChecked())
-			tweakSettings->setProperty< PropertyBoolean >(L"Audio.WriteOut", true);
-		if (m_toolTweaks->get(2)->isChecked())
-			tweakSettings->setProperty< PropertyBoolean >(L"Runtime.RenderThread", false);
-		if (m_toolTweaks->get(3)->isChecked())
-			tweakSettings->setProperty< PropertyInteger >(L"Render.WaitVBlanks", 0);
-		if (m_toolTweaks->get(4)->isChecked())
-			tweakSettings->setProperty< PropertyFloat >(L"Physics.TimeScale", 0.25f);
-		if (m_toolTweaks->get(5)->isChecked())
-			tweakSettings->setProperty< PropertyInteger >(L"World.SuperSample", 2);
-		if (m_toolTweaks->get(6)->isChecked())
-			tweakSettings->setProperty< PropertyBoolean >(L"Script.AttachDebugger", true);
-		if (m_toolTweaks->get(7)->isChecked())
-			tweakSettings->setProperty< PropertyBoolean >(L"Script.AttachProfiler", true);
-		if (m_toolTweaks->get(8)->isChecked())
-		{
-			std::set< std::wstring > modules = tweakSettings->getProperty< std::set< std::wstring > >(L"Runtime.Modules");
-			modules.insert(L"Traktor.Render.Capture");
-			tweakSettings->setProperty< PropertyStringSet >(L"Runtime.Modules", modules);
-			tweakSettings->setProperty< PropertyString >(L"Render.CaptureType", L"traktor.render.RenderSystemCapture");
-		}
-		if (m_toolTweaks->get(9)->isChecked())
-			tweakSettings->setProperty< PropertyBoolean >(L"Online.DownloadableContent", false);
-		if (m_toolTweaks->get(10)->isChecked())
-			tweakSettings->setProperty< PropertyInteger >(L"Runtime.MaxSimulationUpdates", 1);
-		if (m_toolTweaks->get(11)->isChecked())
-			tweakSettings->setProperty< PropertyInteger >(L"Render.DisplayMode.Window/DefaultDenominator", 4);
-
-		int32_t language = m_toolLanguage->getSelected();
-		if (language > 0)
-			tweakSettings->setProperty< PropertyString >(L"Online.OverrideLanguageCode", c_languageCodes[language - 1].code);
-
-		// Add deploy and launch actions.
-		action.listener = new TargetInstanceProgressListener(m_targetList, targetInstance, TsDeploying);
-		action.action = new DeployTargetAction(
-			m_editor->getSourceDatabase(),
-			m_editor->getSettings(),
-			targetInstance->getName(),
-			targetInstance->getTarget(),
-			targetInstance->getTargetConfiguration(),
-			editorHost,
-			host,
-			m_connectionManager->getListenPort(),
-			targetInstance->getDatabaseName(),
-			m_targetManager->getPort(),
-			targetInstance->getId(),
-			outputPath,
-			tweakSettings
-		);
-		chain.actions.push_back(action);
-
-		action.listener = new TargetInstanceProgressListener(m_targetList, targetInstance, TsLaunching);
-		action.action = new LaunchTargetAction(
-			m_editor->getSourceDatabase(),
-			m_editor->getSettings(),
-			targetInstance->getName(),
-			targetInstance->getTarget(),
-			targetInstance->getTargetConfiguration(),
-			host,
-			outputPath
-		);
-		chain.actions.push_back(action);
-
-		m_targetActionQueue.push_back(chain);
-		m_targetActionQueueSignal.set();
-	}
-
-	m_targetList->requestUpdate();
+	if (targetInstance)
+		launch(targetInstance);
 }
 
 void EditorPlugin::eventTargetListStop(TargetStopEvent* event)
