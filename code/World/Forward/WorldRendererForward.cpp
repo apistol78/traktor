@@ -31,11 +31,7 @@ namespace traktor
 		namespace
 		{
 
-#if defined(__ANDROID__) || defined(__IOS__)
-const int32_t c_maxLightCount = 4;
-#else
 const int32_t c_maxLightCount = 1024;
-#endif
 
 const resource::Id< render::ImageGraph > c_ambientOcclusionLow(L"{416745F9-93C7-8D45-AE28-F2823DEE636A}");
 const resource::Id< render::ImageGraph > c_ambientOcclusionMedium(L"{5A3B0260-32F9-B343-BBA4-88BD932F917A}");

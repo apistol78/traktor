@@ -163,7 +163,7 @@
 				<first>807</first>
 				<second>481</second>
 			</position>
-			<value>2.1</value>
+			<value>1.4</value>
 		</item>
 		<item type="traktor.render.MulAdd" version="traktor.render.Node:1">
 			<id>{4FD7753B-6A0F-494E-B763-EA3649F4297B}</id>
@@ -189,7 +189,7 @@
 				<first>805</first>
 				<second>528</second>
 			</position>
-			<value>-3.9</value>
+			<value>-1.8</value>
 		</item>
 		<item type="traktor.render.Iterate2d" version="traktor.render.Node:1">
 			<id>{191FF870-2550-40EB-B2D0-8B756481BF30}</id>

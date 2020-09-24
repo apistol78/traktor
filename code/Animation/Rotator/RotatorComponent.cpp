@@ -27,6 +27,7 @@ void RotatorComponent::setOwner(world::Entity* owner)
 
 void RotatorComponent::setTransform(const Transform& transform)
 {
+	m_transform = transform;
 }
 
 Aabb3 RotatorComponent::getBoundingBox() const

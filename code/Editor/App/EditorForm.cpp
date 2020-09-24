@@ -1883,8 +1883,11 @@ void EditorForm::buildAssets(const std::vector< Guid >& assetGuids, bool rebuild
 	if (!m_workspaceSettings)
 		return;
 
-	// Stop current build if any.
-	buildCancel();
+	//// Stop current build if any.
+	//buildCancel();
+
+	// Wait until previous build has finished.
+	buildWaitUntilFinished();
 
 	// Create build thread.
 	m_threadBuild = ThreadManager::getInstance().create(
