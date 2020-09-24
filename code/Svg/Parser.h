@@ -59,6 +59,8 @@ private:
 
 	Ref< Shape > parsePath(xml::Element* elm);
 
+	Ref< Shape > parseText(xml::Element* elm);
+
 	void parseDefs(xml::Element* elm);
 
 	Ref< Style > parseStyle(xml::Element* elm);

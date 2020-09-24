@@ -8,11 +8,6 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.svg.Shape", Shape, Object)
 
-Shape::Shape()
-:	m_transform(Matrix33::identity())
-{
-}
-
 void Shape::setStyle(const Style* style)
 {
 	m_style = style;
@@ -33,9 +28,24 @@ const Matrix33& Shape::getTransform() const
 	return m_transform;
 }
 
+Matrix33 Shape::getGlobalTransform() const
+{
+	Matrix33 transform = m_transform;
+	for (Shape* ancestor = m_parent; ancestor != nullptr; ancestor = ancestor->m_parent)
+		transform = ancestor->m_transform * transform;
+	return transform;
+}
+
+Shape* Shape::getParent() const
+{
+	return m_parent;
+}
+
 void Shape::addChild(Shape* shape)
 {
+	T_FATAL_ASSERT(shape->m_parent == nullptr);
 	m_children.push_back(shape);
+	shape->m_parent = this;
 }
 
 void Shape::visit(IShapeVisitor* shapeVisitor)
