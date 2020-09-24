@@ -113,6 +113,7 @@ private:
 	// \{
 	std::vector< EditTarget > m_targets;
 	RefArray< TargetInstance > m_targetInstances;
+	Ref< TargetInstance > m_lastLaunchedTargetInstance;
 	// \}
 
 	// \name Server
@@ -137,6 +138,8 @@ private:
 	void updateTargetLists();
 
 	void updateTargetManagers();
+
+	void launch(TargetInstance* targetInstance);
 
 	void eventToolBarClick(ui::ToolBarButtonClickEvent* event);
 
