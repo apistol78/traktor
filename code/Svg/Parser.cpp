@@ -11,6 +11,7 @@
 #include "Svg/PathShape.h"
 #include "Svg/Shape.h"
 #include "Svg/Style.h"
+#include "Svg/TextShape.h"
 #include "Xml/Attribute.h"
 #include "Xml/Document.h"
 #include "Xml/Element.h"
@@ -149,6 +150,8 @@ Ref< Shape > Parser::traverse(xml::Element* elm)
 		shape = parsePolyLine(elm);
 	else if (name == L"path")
 		shape = parsePath(elm);
+	else if (name == L"text")
+		shape = parseText(elm);
 	else if (name == L"defs")
 		parseDefs(elm);
 	else
@@ -474,6 +477,13 @@ Ref< Shape > Parser::parsePath(xml::Element* elm)
 	return new PathShape(path);
 }
 
+Ref< Shape > Parser::parseText(xml::Element* elm)
+{
+	float x = parseAttr(elm, L"x");
+	float y = parseAttr(elm, L"y");
+	return new TextShape(Vector2(x, y));
+}
+
 void Parser::parseDefs(xml::Element* elm)
 {
 	for (xml::Node* child = elm->getFirstChild(); child; child = child->getNextSibling())
@@ -604,7 +614,11 @@ Ref< Style > Parser::parseStyle(xml::Element* elm)
 			else if (key == L"fill-rule")
 				;
 			else if (key == L"fill-opacity")
-				;
+			{
+				float fillOpacity;
+				std::wstringstream(value) >> fillOpacity;
+				style->setOpacity(fillOpacity);
+			}
 			else if (key == L"stroke")
 			{
 				if (parseColor(value, color))
@@ -634,7 +648,7 @@ Ref< Style > Parser::parseStyle(xml::Element* elm)
 			else if (key == L"stroke-miterlimit")
 				;
 			else
-				log::error << L"Unknown CSS style \"" << key << L"\"" << Endl;
+				log::debug << L"Unknown CSS style \"" << key << L"\"" << Endl;
 		}
 	}
 

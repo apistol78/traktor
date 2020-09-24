@@ -29,7 +29,7 @@ class T_DLLCLASS Shape : public Object
 	T_RTTI_CLASS;
 
 public:
-	Shape();
+	Shape() = default;
 
 	void setStyle(const Style* style);
 
@@ -39,13 +39,18 @@ public:
 
 	const Matrix33& getTransform() const;
 
+	Matrix33 getGlobalTransform() const;
+
+	Shape* getParent() const;
+
 	void addChild(Shape* shape);
 
 	virtual void visit(IShapeVisitor* shapeVisitor);
 
 private:
 	Ref< const Style > m_style;
-	Matrix33 m_transform;
+	Matrix33 m_transform = Matrix33::identity();
+	Shape* m_parent = nullptr;
 	RefArray< Shape > m_children;
 };
 

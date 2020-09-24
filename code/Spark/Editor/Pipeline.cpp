@@ -201,25 +201,31 @@ bool Pipeline::buildOutput(
 				return false;
 			}
 
-			float width = document->getSize().x;
-			float height = document->getSize().y;
+			//float width = document->getSize().x;
+			//float height = document->getSize().y;
 
-			// Create a single frame and place shape.
-			Ref< Frame > frame = new Frame();
+			const Vector2& size = document->getSize();
+			const Aabb2& viewBox = document->getViewBox();
 
-			// Create sprite and add frame.
-			Ref< Sprite > sprite = new Sprite();
-			sprite->addFrame(frame);
+			// Create sprite for movie clip.
+			Ref< Frame > movieFrame = new Frame();
+			Ref< Sprite > movieSprite = new Sprite();
+			movieSprite->addFrame(movieFrame);
 
 			// Create movie container.
-			movie = new Movie(Aabb2(Vector2(0.0f, 0.0f), Vector2(width * 20.0f, height * 20.0f)), sprite);
+			movie = new Movie(Aabb2(Vector2(0.0f, 0.0f), Vector2(size.x * 20.0f, size.y * 20.0f)), movieSprite);
+
+			// Create another sprite which contain the shape.
+			Ref< Frame > shapeFrame = new Frame();
+			Ref< Sprite > shapeSprite = new Sprite();
+			shapeSprite->addFrame(shapeFrame);
 
 			// Convert SVG shape into Spark shape.
 			Ref< Shape > outputShape = new Shape();
-
 			ShapeVisitor visitor(
 				[&](svg::Shape* svg) {
 
+					Matrix33 transform = svg->getGlobalTransform();
 					if (const auto ps = dynamic_type_cast< svg::PathShape* >(svg))
 					{
 						uint16_t fillStyle = 0;
@@ -229,24 +235,30 @@ bool Pipeline::buildOutput(
 						if (style)
 						{
 							if (style->getFillEnable())
-								fillStyle = outputShape->defineFillStyle(style->getFill());
+								fillStyle = outputShape->defineFillStyle(style->getFill() * Color4f(1.0f, 1.0f, 1.0f, style->getOpacity()));
 							if (style->getStrokeEnable())
-								lineStyle = outputShape->defineLineStyle(style->getStroke(), (uint16_t)(style->getStrokeWidth() * 20.0f));
+								lineStyle = outputShape->defineLineStyle(style->getStroke() * Color4f(1.0f, 1.0f, 1.0f, style->getOpacity()), (uint16_t)(style->getStrokeWidth() * 20.0f));
 						}
 
 						Path path;
 						for (const auto& sp : ps->getPath().getSubPaths())
 						{
-							size_t ln = sp.points.size();
+							AlignedVector< Vector2 > pnts = sp.points;
+
+							// Convert points into document coordinates.
+							for (auto& pnt : pnts)
+								pnt = (size * (transform * pnt)) / viewBox.getSize();
+
+							size_t ln = pnts.size();
 							switch (sp.type)
 							{
 							case svg::SptLinear:
 								{
-									path.moveTo((int32_t)(sp.points[0].x * 20.0f), (int32_t)(sp.points[0].y * 20.0f), Path::CmAbsolute);
+									path.moveTo((int32_t)(pnts[0].x * 20.0f), (int32_t)(pnts[0].y * 20.0f), Path::CmAbsolute);
 									for (size_t i = 1; i < ln; ++i)
-										path.lineTo((int32_t)(sp.points[i].x * 20.0f), (int32_t)(sp.points[i].y * 20.0f), Path::CmAbsolute);
+										path.lineTo((int32_t)(pnts[i].x * 20.0f), (int32_t)(pnts[i].y * 20.0f), Path::CmAbsolute);
 									if (sp.closed)
-										path.lineTo((int32_t)(sp.points[0].x * 20.0f), (int32_t)(sp.points[0].y * 20.0f), Path::CmAbsolute);
+										path.lineTo((int32_t)(pnts[0].x * 20.0f), (int32_t)(pnts[0].y * 20.0f), Path::CmAbsolute);
 
 									path.end(fillStyle, fillStyle, lineStyle);
 								}
@@ -254,15 +266,15 @@ bool Pipeline::buildOutput(
 
 							case svg::SptQuadric:
 								{
-									path.moveTo((int32_t)(sp.points[0].x * 20.0f), (int32_t)(sp.points[0].y * 20.0f), Path::CmAbsolute);
+									path.moveTo((int32_t)(pnts[0].x * 20.0f), (int32_t)(pnts[0].y * 20.0f), Path::CmAbsolute);
 									for (size_t i = 1; i < ln; i += 2)
 										path.quadraticTo(
-											(int32_t)(sp.points[i].x * 20.0f), (int32_t)(sp.points[i].y * 20.0f),
-											(int32_t)(sp.points[i + 1].x * 20.0f), (int32_t)(sp.points[i + 1].y * 20.0f),
+											(int32_t)(pnts[i].x * 20.0f), (int32_t)(pnts[i].y * 20.0f),
+											(int32_t)(pnts[i + 1].x * 20.0f), (int32_t)(pnts[i + 1].y * 20.0f),
 											Path::CmAbsolute
 										);
 									if (sp.closed)
-										path.lineTo((int32_t)(sp.points[0].x * 20.0f), (int32_t)(sp.points[0].y * 20.0f), Path::CmAbsolute);
+										path.lineTo((int32_t)(pnts[0].x * 20.0f), (int32_t)(pnts[0].y * 20.0f), Path::CmAbsolute);
 
 									path.end(fillStyle, fillStyle, lineStyle);
 								}
@@ -270,14 +282,14 @@ bool Pipeline::buildOutput(
 
 							case svg::SptCubic:
 								{
-									path.moveTo((int32_t)(sp.points[0].x * 20.0f), (int32_t)(sp.points[0].y * 20.0f), Path::CmAbsolute);
+									path.moveTo((int32_t)(pnts[0].x * 20.0f), (int32_t)(pnts[0].y * 20.0f), Path::CmAbsolute);
 									for (size_t i = 1; i < ln; i += 3)
 									{
 										Bezier3rd b(
-											sp.points[i - 1],
-											sp.points[i],
-											sp.points[i + 1],
-											sp.points[i + 2]
+											pnts[i - 1],
+											pnts[i],
+											pnts[i + 1],
+											pnts[i + 2]
 										);
 
 										AlignedVector< Bezier2nd > b2s;
@@ -297,7 +309,7 @@ bool Pipeline::buildOutput(
 										}
 									}
 									if (sp.closed)
-										path.lineTo((int32_t)(sp.points[0].x * 20.0f), (int32_t)(sp.points[0].y * 20.0f), Path::CmAbsolute);
+										path.lineTo((int32_t)(pnts[0].x * 20.0f), (int32_t)(pnts[0].y * 20.0f), Path::CmAbsolute);
 
 									path.end(fillStyle, fillStyle, lineStyle);
 								}
@@ -320,11 +332,12 @@ bool Pipeline::buildOutput(
 			p.hasFlags = Frame::PfHasCharacterId;
 			p.depth = 1;
 			p.characterId = 1;
-			frame->placeObject(p);
+			shapeFrame->placeObject(p);
 
-			// Add shape to dictionary.
+			// Add sprite to dictionary.
 			movie->defineCharacter(1, outputShape);
-			movie->setExport(wstombs(sourceInstance->getName()), 1);
+			movie->defineCharacter(2, shapeSprite);
+			movie->setExport(wstombs(sourceInstance->getName()), 2);
 		}
 		else
 		{
