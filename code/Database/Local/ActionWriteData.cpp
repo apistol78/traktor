@@ -78,6 +78,8 @@ bool ActionWriteData::execute(Context* context)
 		if (writeStream->write(chunk.ptr, chunk.size) != chunk.size)
 		{
 			log::error << L"Unable to write " << (uint32_t)chunk.size << L" byte(s) to file \"" << instanceDataPath.getPathName() << L"\"." << Endl;
+			safeClose(writeStream);
+			FileSystem::getInstance().remove(instanceDataPath);
 			return false;
 		}
 

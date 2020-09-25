@@ -34,21 +34,21 @@ bool ActionWriteObject::execute(Context* context)
 	m_editObject = fileStore->edit(instanceObjectPath);
 	if (!m_editObject)
 	{
-		log::error << L"Unable to edit instance object" << Endl;
+		log::error << L"Unable to edit instance object, \"" << instanceObjectPath.getPathName() << L"\"." << Endl;
 		return false;
 	}
 
 	Ref< LocalInstanceMeta > instanceMeta = readPhysicalObject< LocalInstanceMeta >(instanceMetaPath);
 	if (!instanceMeta)
 	{
-		log::error << L"Unable to read instance meta data" << Endl;
+		log::error << L"Unable to read instance meta data, \"" << instanceMetaPath.getPathName() << L"\"." << Endl;
 		return false;
 	}
 
 	Ref< IStream > instanceStream = FileSystem::getInstance().open(instanceObjectPath, File::FmWrite);
 	if (!instanceStream)
 	{
-		log::error << L"Unable to open instance object stream; \"" << instanceObjectPath.getPathName() << L"\"" << Endl;
+		log::error << L"Unable to open instance object stream, \"" << instanceObjectPath.getPathName() << L"\"." << Endl;
 		return false;
 	}
 
@@ -61,6 +61,8 @@ bool ActionWriteObject::execute(Context* context)
 		if (instanceStream->write(chunk.ptr, chunk.size) != chunk.size)
 		{
 			log::error << L"Unable to write " << (uint32_t)chunk.size << L" byte(s) to file \"" << instanceObjectPath.getPathName() << L"\"." << Endl;
+			safeClose(instanceStream);
+			FileSystem::getInstance().remove(instanceObjectPath);
 			return false;
 		}
 
@@ -74,7 +76,7 @@ bool ActionWriteObject::execute(Context* context)
 		m_editMeta = fileStore->edit(instanceMetaPath);
 		if (!m_editMeta)
 		{
-			log::error << L"Unable to edit instance meta" << Endl;
+			log::error << L"Unable to edit instance meta, \"" << instanceMetaPath.getPathName() << L"\"." << Endl;
 			return false;
 		}
 
@@ -82,7 +84,7 @@ bool ActionWriteObject::execute(Context* context)
 
 		if (!writePhysicalObject(instanceMetaPath, instanceMeta, context->preferBinary()))
 		{
-			log::error << L"Unable to write instance meta data" << Endl;
+			log::error << L"Unable to write instance meta data, \"" << instanceMetaPath.getPathName() << L"\"." << Endl;
 			return false;
 		}
 	}

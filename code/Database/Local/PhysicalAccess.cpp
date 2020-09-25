@@ -66,6 +66,10 @@ bool writePhysicalObject(const Path& objectPath, const ISerializable* object, bo
 		result = xml::XmlSerializer(objectStream).writeObject(object);
 
 	objectStream->close();
+
+	if (!result)
+		FileSystem::getInstance().remove(objectPath);
+
 	return result;
 }
 
