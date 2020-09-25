@@ -63,6 +63,7 @@ const render::Handle s_handleShadowMapCascade(L"World_ShadowMapCascade");
 const render::Handle s_handleShadowMask(L"World_ShadowMask");
 const render::Handle s_handleTileSBuffer(L"World_TileSBuffer");
 const render::Handle s_handleTime(L"World_Time");
+const render::Handle s_handleViewDistance(L"World_ViewDistance");
 const render::Handle s_handleView(L"World_View");
 const render::Handle s_handleViewInverse(L"World_ViewInverse");
 const render::Handle s_handleWorld(L"World_World");
