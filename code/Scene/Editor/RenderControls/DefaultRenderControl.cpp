@@ -340,12 +340,7 @@ bool DefaultRenderControl::createRenderControl(int32_t type)
 {
 	safeDestroy(m_renderControl);
 
-	const PropertyGroup* settings = m_context->getEditor()->getSettings();
-	T_ASSERT(settings);
-
-	std::wstring worldRendererTypeName = settings->getProperty< std::wstring >(L"SceneEditor.WorldRendererType", L"traktor.world.WorldRendererDeferred");
-
-	const TypeInfo* worldRendererType = TypeInfo::find(worldRendererTypeName.c_str());
+	const TypeInfo* worldRendererType = TypeInfo::find(c_worldRendererTypes[m_toolWorldRenderer->getSelected()]);
 	if (!worldRendererType)
 		return false;
 
