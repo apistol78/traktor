@@ -95,7 +95,14 @@ bool UnwrapUV::apply(Model& model) const
 		return false;
 	}
 
-	xatlas::Generate(atlas);
+	xatlas::ChartOptions co;
+
+	xatlas::PackOptions po;
+	po.blockAlign = true;
+	po.padding = 1;
+	po.resolution = m_textureSize;
+
+	xatlas::Generate(atlas, co, po);
 
 	if (atlas->width == 0 || atlas->height == 0)
 	{
@@ -129,11 +136,6 @@ bool UnwrapUV::apply(Model& model) const
 				Vector2 uv(v.uv[0], v.uv[1]);
 				uv.x /= (float)atlas->width;
 				uv.y /= (float)atlas->height;
-
-				// Add margin to edges. \fixme Should move to a separate filter ScaleTexCoords...
-				const float m = 1.0f / m_textureSize;
-				uv.x = uv.x * (1.0f - m * 2.0f) + m;
-				uv.y = uv.y * (1.0f - m * 2.0f) + m;
 
 				vx.setTexCoord(m_channel, model.addTexCoord(uv));
 
