@@ -65,6 +65,7 @@ extern const render::Handle s_handleShadowMapCascade;
 extern const render::Handle s_handleShadowMask;
 extern const render::Handle s_handleTileSBuffer;
 extern const render::Handle s_handleTime;
+extern const render::Handle s_handleViewDistance;
 extern const render::Handle s_handleView;
 extern const render::Handle s_handleViewInverse;
 extern const render::Handle s_handleWorld;

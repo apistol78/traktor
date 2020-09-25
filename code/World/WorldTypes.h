@@ -10,7 +10,9 @@ namespace traktor
 enum
 {
 	MaxSliceCount = 4,
-	MaxLightShadowCount = 2
+	MaxLightShadowCount = 2,
+	ClusterDimXY = 32,
+	ClusterDimZ = 8
 };
 
 enum class Cancel

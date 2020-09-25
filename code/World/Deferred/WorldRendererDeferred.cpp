@@ -35,11 +35,7 @@ namespace traktor
 		namespace
 		{
 
-#if defined(__ANDROID__) || defined(__IOS__)
-const int32_t c_maxLightCount = 16;
-#else
 const int32_t c_maxLightCount = 1024;
-#endif
 
 const render::Handle s_handleVisualTargetSet[] =
 {
@@ -381,7 +377,7 @@ bool WorldRendererDeferred::create(
 
 		frame.tileSBuffer = renderSystem->createStructBuffer(
 			tileShaderDataStruct,
-			render::getStructSize(tileShaderDataStruct) * 16 * 16
+			render::getStructSize(tileShaderDataStruct) * ClusterDimXY * ClusterDimXY * ClusterDimZ
 		);
 		if (!frame.tileSBuffer)
 			return false;
@@ -1113,12 +1109,12 @@ void WorldRendererDeferred::setupTileDataPass(
 	TileShaderData* tileShaderData
 ) const
 {
-	T_PROFILER_SCOPE(L"World setup light tiles");
 	const Frustum& viewFrustum = worldRenderView.getViewFrustum();
 
 	// Update tile data.
-	const float dx = 1.0f / 16.0f;
-	const float dy = 1.0f / 16.0f;
+	const Scalar dx(1.0f / ClusterDimXY);
+	const Scalar dy(1.0f / ClusterDimXY);
+	const Scalar dz(1.0f / ClusterDimZ);
 
 	Vector4 nh = viewFrustum.corners[1] - viewFrustum.corners[0];
 	Vector4 nv = viewFrustum.corners[3] - viewFrustum.corners[0];
@@ -1126,53 +1122,63 @@ void WorldRendererDeferred::setupTileDataPass(
 	Vector4 fv = viewFrustum.corners[7] - viewFrustum.corners[4];
 
 	Frustum tileFrustum;
-	for (int32_t y = 0; y < 16; ++y)
+	for (int32_t y = 0; y < ClusterDimXY; ++y)
 	{
-		float fy = float(y) * dy;
-		for (int32_t x = 0; x < 16; ++x)
+		Scalar fy = Scalar((float)y) * dy;
+		for (int32_t x = 0; x < ClusterDimXY; ++x)
 		{
-			float fx = float(x) * dx;
+			Scalar fx = Scalar((float)x) * dx;
 
 			Vector4 corners[] =
 			{
 				// Near
-				viewFrustum.corners[0] + nh * Scalar(fx) + nv * Scalar(fy),				// l t
-				viewFrustum.corners[0] + nh * Scalar(fx + dx) + nv * Scalar(fy),		// r t
-				viewFrustum.corners[0] + nh * Scalar(fx + dx) + nv * Scalar(fy + dy),	// r b
-				viewFrustum.corners[0] + nh * Scalar(fx) + nv * Scalar(fy + dy),		// l b
+				viewFrustum.corners[0] + nh * fx + nv * fy,					// l t
+				viewFrustum.corners[0] + nh * (fx + dx) + nv * fy,			// r t
+				viewFrustum.corners[0] + nh * (fx + dx) + nv * (fy + dy),	// r b
+				viewFrustum.corners[0] + nh * fx + nv * (fy + dy),			// l b
 				// Far
-				viewFrustum.corners[4] + fh * Scalar(fx) + fv * Scalar(fy),				// l t
-				viewFrustum.corners[4] + fh * Scalar(fx + dx) + fv * Scalar(fy),		// r t
-				viewFrustum.corners[4] + fh * Scalar(fx + dx) + fv * Scalar(fy + dy),	// r b
-				viewFrustum.corners[4] + fh * Scalar(fx) + fv * Scalar(fy + dy)			// l b
+				viewFrustum.corners[4] + fh * fx + fv * fy,					// l t
+				viewFrustum.corners[4] + fh * (fx + dx) + fv * fy,			// r t
+				viewFrustum.corners[4] + fh * (fx + dx) + fv * (fy + dy),	// r b
+				viewFrustum.corners[4] + fh * fx + fv * (fy + dy)			// l b
 			};
-
 			tileFrustum.buildFromCorners(corners);
 
-			int32_t count = 0;
-			for (uint32_t i = 0; i < m_lights.size(); ++i)
+			for (int32_t z = 0; z < ClusterDimZ; ++z)
 			{
-				const Light& light = m_lights[i];
+				Scalar fnz = Scalar((float)z) * dz;
+				Scalar ffz = Scalar((float)z + 1.0f) * dz;
 
-				if (light.type == LtDirectional)
-				{
-					tileShaderData[x + y * 16].lights[count++] = float(i);
-				}
-				else if (light.type == LtPoint)
-				{
-					Vector4 lvp = worldRenderView.getView() * light.position.xyz1();
-					if (tileFrustum.inside(lvp, Scalar(light.range)) != Frustum::IrOutside)
-						tileShaderData[x + y * 16].lights[count++] = float(i);
-				}
-				else if (light.type == LtSpot)
-				{
-					tileShaderData[x + y * 16].lights[count++] = float(i);
-				}
+				tileFrustum.setNearZ(lerp(viewFrustum.getNearZ(), viewFrustum.getFarZ(), fnz));
+				tileFrustum.setFarZ(lerp(viewFrustum.getNearZ(), viewFrustum.getFarZ(), ffz));
 
-				if (count >= 4)
-					break;
+				const uint32_t offset = (x + y * ClusterDimXY) * ClusterDimZ + z;
+
+				int32_t count = 0;
+				for (uint32_t i = 0; i < m_lights.size(); ++i)
+				{
+					const Light& light = m_lights[i];
+
+					if (light.type == LtDirectional)
+					{
+						tileShaderData[offset].lights[count++] = float(i);
+					}
+					else if (light.type == LtPoint)
+					{
+						Vector4 lvp = worldRenderView.getView() * light.position.xyz1();
+						if (tileFrustum.inside(lvp, Scalar(light.range)) != Frustum::IrOutside)
+							tileShaderData[offset].lights[count++] = float(i);
+					}
+					else if (light.type == LtSpot)
+					{
+						tileShaderData[offset].lights[count++] = float(i);
+					}
+
+					if (count >= 4)
+						break;
+				}
+				tileShaderData[offset].lightCount[0] = float(count);
 			}
-			tileShaderData[x + y * 16].lightCount[0] = float(count);
 		}
 	}
 }
@@ -1429,6 +1435,9 @@ void WorldRendererDeferred::setupVisualPass(
 			const auto& view = worldRenderView.getView();
 			const auto& projection = worldRenderView.getProjection();
 
+			float viewNearZ = worldRenderView.getViewFrustum().getNearZ();
+			float viewFarZ = worldRenderView.getViewFrustum().getFarZ();
+
 			Scalar p11 = projection.get(0, 0);
 			Scalar p22 = projection.get(1, 1);
 
@@ -1436,6 +1445,7 @@ void WorldRendererDeferred::setupVisualPass(
 			sharedParams->beginParameters(renderContext);
 			sharedParams->setFloatParameter(s_handleTime, worldRenderView.getTime());
 			sharedParams->setFloatParameter(s_handleLightCount, (float)lightCount);
+			sharedParams->setVectorParameter(s_handleViewDistance, Vector4(viewNearZ, viewFarZ, 0.0f, 0.0f));
 			sharedParams->setVectorParameter(s_handleMagicCoeffs, Vector4(1.0f / p11, 1.0f / p22, 0.0f, 0.0f));
 			sharedParams->setVectorParameter(s_handleFogDistanceAndDensity, m_fogDistanceAndDensity);
 			sharedParams->setVectorParameter(s_handleFogColor, m_fogColor);
