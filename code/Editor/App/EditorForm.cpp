@@ -1875,7 +1875,7 @@ void EditorForm::buildAssetsThread(std::vector< Guid > assetGuids, bool rebuild)
 	uint32_t hours = minutes / 60; minutes %= 60;
 
 	log::info << DecreaseIndent;
-	log::info << L"Finished (" << hours << L":" << minutes << L":" << seconds << L")" << Endl;
+	log::info << L"Finished (" << str(L"%d:%02d:%02d", hours, minutes, seconds) << L")" << Endl;
 }
 
 void EditorForm::buildAssets(const std::vector< Guid >& assetGuids, bool rebuild)

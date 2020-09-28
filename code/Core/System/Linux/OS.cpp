@@ -274,7 +274,7 @@ Ref< IProcess > OS::execute(
 	// Redirect standard IO.
 	if ((flags & EfRedirectStdIO) != 0)
 	{
-		// if ((flags & EfMute) == 0)
+		if ((flags & EfMute) == 0)
 		{
 			pipe(childStdOut);
 			pipe(childStdErr);
@@ -289,14 +289,16 @@ Ref< IProcess > OS::execute(
 			posix_spawn_file_actions_adddup2(fileActions, childStdErr[1], STDERR_FILENO);
 			posix_spawn_file_actions_addclose(fileActions, childStdErr[0]);
 		}
-		// else
-		// {
-		// 	fileActions = new posix_spawn_file_actions_t;
-		// 	posix_spawn_file_actions_init(fileActions);
-		// 	posix_spawn_file_actions_addchdir_np(fileActions, wd);
-		// 	posix_spawn_file_actions_addopen(fileActions, STDOUT_FILENO, "/dev/null", O_RDONLY, 0);
-		// 	posix_spawn_file_actions_addopen(fileActions, STDERR_FILENO, "/dev/null", O_RDONLY, 0);
-		// }
+		else
+		{
+			fileActions = new posix_spawn_file_actions_t;
+			posix_spawn_file_actions_init(fileActions);
+#if !defined(__RPI__)
+			posix_spawn_file_actions_addchdir_np(fileActions, wd);
+#endif
+			posix_spawn_file_actions_addopen(fileActions, STDOUT_FILENO, "/dev/null", O_RDONLY, 0);
+			posix_spawn_file_actions_addopen(fileActions, STDERR_FILENO, "/dev/null", O_RDONLY, 0);
+		}
 
 		// Spawn process.
 		err = posix_spawn(&pid, argv[0], fileActions, 0, argv, envv);
