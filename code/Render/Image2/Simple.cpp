@@ -1,3 +1,4 @@
+#include "Core/Math/Random.h"
 #include "Render/IRenderTargetSet.h"
 #include "Render/ScreenRenderer.h"
 #include "Render/Shader.h"
@@ -24,6 +25,9 @@ const static Handle s_handleProjection(L"Projection");
 const static Handle s_handleView(L"View");
 const static Handle s_handleViewInverse(L"ViewInverse");
 const static Handle s_handleMagicCoeffs(L"MagicCoeffs");
+const static Handle s_handleNoiseOffset(L"NoiseOffset");
+
+Random s_random;
 
 		}
 
@@ -68,6 +72,7 @@ void Simple::build(
 	pp->setVectorParameter(s_handleViewEdgeBottomLeft, viewEdgeBottomLeft);
 	pp->setVectorParameter(s_handleViewEdgeBottomRight, viewEdgeBottomRight);
 	pp->setVectorParameter(s_handleMagicCoeffs, Vector4(1.0f / p11, 1.0f / p22, 0.0f, 0.0f));
+	pp->setVectorParameter(s_handleNoiseOffset, Vector4(s_random.nextFloat(), s_random.nextFloat(), 0.0f, 0.0f));
 	pp->setMatrixParameter(s_handleProjection, params.projection);
 	pp->setMatrixParameter(s_handleView, params.view);
 	pp->setMatrixParameter(s_handleViewInverse, params.view.inverse());
