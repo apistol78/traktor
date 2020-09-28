@@ -623,6 +623,8 @@ bool TracerProcessor::process(const TracerTask* task) const
 		writer << boundingBox.mx.y();
 		writer << boundingBox.mx.z();
 
+		m_status.description = str(L"Irradiance grid (%d, %d, %d)", gridX, gridY, gridZ);
+
 		uint32_t progress = 0;
 		for (int32_t x = 0; x < gridX; ++x)
 		{
@@ -636,7 +638,6 @@ bool TracerProcessor::process(const TracerTask* task) const
 
 					m_status.current = progress++;
 					m_status.total = gridX * gridY * gridZ;
-					m_status.description = L"Irradiance grid";
 
 					Vector4 position = boundingBox.mn + (boundingBox.mx - boundingBox.mn) * Vector4(fx, fy, fz);
 

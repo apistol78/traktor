@@ -528,7 +528,12 @@ bool PipelineBuilder::buildOutput(const db::Instance* sourceInstance, const ISer
 
 	log::info << DecreaseIndent;
 	if (m_verbose)
-		log::info << (result ? L"Build successful" : L"Build failed") << Endl;
+	{
+		if (result)
+			log::info << L"Build \"" << dependency->outputPath << L"\" successful." << Endl;
+		else
+			log::info << L"Build \"" << dependency->outputPath << L"\" failed." << Endl;
+	}
 
 	if (m_listener)
 		m_listener->endBuild(
@@ -798,8 +803,14 @@ IPipelineBuilder::BuildResult PipelineBuilder::performBuild(const IPipelineDepen
 	}
 
 	log::info << DecreaseIndent;
+
 	if (m_verbose)
-		log::info << (result ? L"Build successful" : L"Build failed") << Endl;
+	{
+		if (result)
+			log::info << L"Build \"" << dependency->outputPath << L"\" successful." << Endl;
+		else
+			log::info << L"Build \"" << dependency->outputPath << L"\" failed." << Endl;
+	}
 
 	if (result)
 		return (warningTarget.getCount() + errorTarget.getCount()) > 0 ? BrSucceededWithWarnings : BrSucceeded;
