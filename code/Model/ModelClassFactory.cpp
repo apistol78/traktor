@@ -47,6 +47,11 @@ void Model_clear(Model* self, uint32_t flags)
     self->clear(flags);
 }
 
+const AlignedVector< Material >& Model_getMaterials(Model* self)
+{
+    return self->getMaterials();
+}
+
 const AlignedVector< Vertex >& Model_getVertices(Model* self)
 {
     return self->getVertices();
@@ -213,7 +218,7 @@ void ModelClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
     classModel->addMethod("addUniqueMaterial", &Model::addUniqueMaterial);
     classModel->addMethod("getMaterial", &Model::getMaterial);
     classModel->addMethod("setMaterials", &Model::setMaterials);
-    classModel->addMethod("getMaterials", &Model::getMaterials);
+    classModel->addMethod("getMaterials", &Model_getMaterials);
     classModel->addMethod("reserveVertices", &Model::reserveVertices);
     classModel->addMethod("addVertex", &Model::addVertex);
     classModel->addMethod("addUniqueVertex", &Model::addUniqueVertex);

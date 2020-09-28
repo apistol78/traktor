@@ -89,6 +89,11 @@ void constructRay(const Vector4& position, const Vector4& direction, float far, 
 	outRayHit.hit.instID[0] = RTC_INVALID_GEOMETRY_ID;
 }
 
+float wrap(float n)
+{
+	return n - std::floor(n);
+}
+
 const Vector4 c_luminance(2.126f, 7.152f, 0.722f, 0.0f);
 
 		}
@@ -137,22 +142,33 @@ void RayTracerEmbree::addLight(const Light& light)
 void RayTracerEmbree::addModel(const model::Model* model, const Transform& transform)
 {
 	RTCGeometry mesh = rtcNewGeometry(m_device, RTC_GEOMETRY_TYPE_TRIANGLE);
+	rtcSetGeometryVertexAttributeCount(mesh, 1);
 
-	float* vertices = (float*)rtcSetNewGeometryBuffer(mesh, RTC_BUFFER_TYPE_VERTEX, 0, RTC_FORMAT_FLOAT3, 3 * sizeof(float), model->getPositions().size());
-	for (const auto& position : model->getPositions())
+	float* positions = (float*)rtcSetNewGeometryBuffer(mesh, RTC_BUFFER_TYPE_VERTEX, 0, RTC_FORMAT_FLOAT3, 3 * sizeof(float), model->getVertices().size());
+	float* texCoords = (float*)rtcSetNewGeometryBuffer(mesh, RTC_BUFFER_TYPE_VERTEX_ATTRIBUTE, 0, RTC_FORMAT_FLOAT2, 2 * sizeof(float), model->getVertices().size());
+
+	for (uint32_t i = 0; i < model->getVertexCount(); ++i)
 	{
-		Vector4 p = transform * position.xyz1();
-		*vertices++ = p.x();
-		*vertices++ = p.y();
-		*vertices++ = p.z();
+		const auto& vertex = model->getVertex(i);
+
+		Vector4 p = transform * model->getPosition(vertex.getPosition()).xyz1();
+		*positions++ = p.x();
+		*positions++ = p.y();
+		*positions++ = p.z();
+
+		Vector2 uv(0.0f, 0.0f);
+		if (vertex.getTexCoord(0) != model::c_InvalidIndex)
+			uv = model->getTexCoord(vertex.getTexCoord(0));
+		*texCoords++ = uv.x;
+		*texCoords++ = uv.y;
 	}
 
 	uint32_t* triangles = (uint32_t*)rtcSetNewGeometryBuffer(mesh, RTC_BUFFER_TYPE_INDEX, 0, RTC_FORMAT_UINT3, 3 * sizeof(uint32_t), model->getPolygons().size());
 	for (const auto& polygon : model->getPolygons())
 	{
-		*triangles++ = model->getVertex(polygon.getVertex(2)).getPosition();
-		*triangles++ = model->getVertex(polygon.getVertex(1)).getPosition();
-		*triangles++ = model->getVertex(polygon.getVertex(0)).getPosition();
+		*triangles++ = polygon.getVertex(2);
+		*triangles++ = polygon.getVertex(1);
+		*triangles++ = polygon.getVertex(0);
 	}
 
 	rtcCommitGeometry(mesh);
@@ -362,7 +378,24 @@ Color4f RayTracerEmbree::tracePath(
 	const auto& hitPolygon = polygons[rh.hit.primID];
 	const auto& hitMaterial = materials[hitPolygon.getMaterial()];
 
-	Color4f emittance = hitMaterial.getColor() * Scalar(hitMaterial.getEmissive());
+	Color4f hitMaterialColor = hitMaterial.getColor();
+	if (hitMaterial.getDiffuseMap().image)
+	{
+		const uint32_t slot = 0;
+		float texCoord[2] = { 0.0f, 0.0f };
+
+		RTCGeometry geometry = rtcGetGeometry(m_scene, rh.hit.geomID);
+		rtcInterpolate0(geometry, rh.hit.primID, rh.hit.u, rh.hit.v, RTC_BUFFER_TYPE_VERTEX_ATTRIBUTE, slot, texCoord, 2);
+
+		auto image = hitMaterial.getDiffuseMap().image;
+		image->getPixel(
+			(int32_t)(wrap(texCoord[0]) * image->getWidth()),
+			(int32_t)(wrap(texCoord[1]) * image->getHeight()),
+			hitMaterialColor
+		);
+	}
+
+	Color4f emittance = hitMaterialColor * Scalar(hitMaterial.getEmissive());
 
 	Vector4 hitNormal = Vector4::loadUnaligned(&rh.hit.Ng_x).xyz0().normalized();
 	Vector4 newOrigin = (origin + direction * Scalar(rh.ray.tfar)).xyz1();
@@ -378,7 +411,7 @@ Color4f RayTracerEmbree::tracePath(
 		true
 	);
 	Color4f incoming = tracePath(newOrigin, newDirection, random, depth + 1);
-	Color4f reflectance = hitMaterial.getColor();
+	Color4f reflectance = hitMaterialColor;
 
 	return emittance + (direct + incoming) * reflectance;
 }

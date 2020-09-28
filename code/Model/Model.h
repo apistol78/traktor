@@ -65,6 +65,8 @@ public:
 
 	const AlignedVector< Material >& getMaterials() const { return m_materials; }
 
+	AlignedVector< Material >& getMaterials() { return m_materials; }
+
 	void reserveVertices(uint32_t vertexCapacity) { m_vertices.reserve(vertexCapacity); }
 
 	uint32_t addVertex(const Vertex& vertex);

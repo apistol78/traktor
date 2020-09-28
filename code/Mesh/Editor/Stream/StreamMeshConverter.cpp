@@ -123,7 +123,7 @@ bool StreamMeshConverter::convert(
 				const model::Polygon& polygon = *j;
 				T_ASSERT(polygon.getVertices().size() == 3);
 
-				if (polygon.getMaterial() != std::distance(model.getMaterials().begin(), i))
+				if (polygon.getMaterial() != std::distance< AlignedVector< model::Material >::const_iterator >(model.getMaterials().begin(), i))
 					continue;
 
 				for (int k = 0; k < 3; ++k)
