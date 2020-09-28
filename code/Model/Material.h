@@ -16,6 +16,13 @@
 
 namespace traktor
 {
+	namespace drawing
+	{
+
+class Image;
+
+	}
+
 	namespace model
 	{
 
@@ -42,6 +49,7 @@ public:
 		std::wstring channel;
 		bool anisotropic;
 		Guid texture;
+		Ref< drawing::Image > image;	//!< Not serializable.
 
 		Map()
 		:	name(L"")

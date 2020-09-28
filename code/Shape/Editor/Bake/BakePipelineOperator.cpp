@@ -245,9 +245,17 @@ void addSky(
 }
 
 /*! */
-bool addModel(const model::Model* model, const Transform& transform, const std::wstring& name, const Guid& lightmapId, int32_t lightmapSize, editor::IPipelineBuilder* pipelineBuilder, TracerTask* tracerTask)
+bool addModel(
+	editor::IPipelineBuilder* pipelineBuilder,
+	model::Model* model,
+	const Transform& transform,
+	const std::wstring& name,
+	const Guid& lightmapId,
+	int32_t lightmapSize,
+	TracerTask* tracerTask
+)
 {
-	Ref< model::Model > mutableModel = DeepClone(model).create< model::Model >();
+	Ref< model::Model > mutableModel = model; // DeepClone(model).create< model::Model >();
 	if (!mutableModel)
 	{
 		log::error << L"BakePipelineOperator failed; unable to clone model." << Endl;
@@ -540,12 +548,12 @@ bool BakePipelineOperator::build(
 
 				// Add model to raytracing task.
 				if (!addModel(
+					pipelineBuilder,
 					model,
 					inoutEntityData->getTransform(),
 					name,
 					lightmapId,
 					lightmapSize,
-					pipelineBuilder,
 					tracerTask
 				))
 					continue;

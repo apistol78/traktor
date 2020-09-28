@@ -126,7 +126,7 @@ bool BlendMeshConverter::convert(
 			const model::Polygon& polygon = *k;
 			T_ASSERT(polygon.getVertices().size() == 3);
 
-			if (polygon.getMaterial() != std::distance(model.getMaterials().begin(), j))
+			if (polygon.getMaterial() != std::distance< AlignedVector< model::Material >::const_iterator >(model.getMaterials().begin(), j))
 				continue;
 
 			for (int m = 0; m < 3; ++m)
