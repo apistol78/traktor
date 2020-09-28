@@ -76,9 +76,9 @@ Ref< Model > ModelFormatBlend::read(const Path& filePath, const std::wstring& fi
 	Path filePathAbs = FileSystem::getInstance().getAbsolutePath(filePath);
 
 #if defined(_WIN32)
-	std::wstring commandLine = L"\"" + blender + L"\" -b " + filePathAbs.getPathName() + L" -P " + scratchPath + L"/__export__.py";
+	std::wstring commandLine = L"\"" + blender + L"\" -b \"" + filePathAbs.getPathName() + L"\" -P " + scratchPath + L"/__export__.py";
 #else
-	std::wstring commandLine = L"\"" + blender + L"\" -b " + filePathAbs.getPathNameNoVolume() + L" -P " + scratchPath + L"/__export__.py";
+	std::wstring commandLine = L"\"" + blender + L"\" -b \"" + filePathAbs.getPathNameNoVolume() + L"\" -P " + scratchPath + L"/__export__.py";
 #endif
 	Ref< IProcess > process = OS::getInstance().execute(
 		commandLine,
