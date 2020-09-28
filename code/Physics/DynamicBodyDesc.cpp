@@ -9,30 +9,10 @@ namespace traktor
 	namespace physics
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.physics.DynamicBodyDesc", 5, DynamicBodyDesc, BodyDesc)
-
-DynamicBodyDesc::DynamicBodyDesc()
-:	m_mass(1.0f)
-,	m_autoDeactivate(true)
-,	m_active(true)
-,	m_linearDamping(0.0f)
-,	m_angularDamping(0.0f)
-,	m_friction(0.75f)
-,	m_linearThreshold(0.8f)
-,	m_angularThreshold(1.0f)
-{
-}
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.physics.DynamicBodyDesc", 6, DynamicBodyDesc, BodyDesc)
 
 DynamicBodyDesc::DynamicBodyDesc(ShapeDesc* shape)
 :	BodyDesc(shape)
-,	m_mass(1.0f)
-,	m_autoDeactivate(true)
-,	m_active(true)
-,	m_linearDamping(0.0f)
-,	m_angularDamping(0.0f)
-,	m_friction(0.75f)
-,	m_linearThreshold(0.8f)
-,	m_angularThreshold(1.0f)
 {
 }
 
@@ -96,6 +76,16 @@ float DynamicBodyDesc::getFriction() const
 	return m_friction;
 }
 
+void DynamicBodyDesc::setRestitution(float restitution)
+{
+	m_restitution = restitution;
+}
+
+float DynamicBodyDesc::getRestitution() const
+{
+	return m_restitution;
+}
+
 void DynamicBodyDesc::setLinearThreshold(float linearThreshold)
 {
 	m_linearThreshold = linearThreshold;
@@ -128,6 +118,9 @@ void DynamicBodyDesc::serialize(ISerializer& s)
 	s >> Member< float >(L"linearDamping", m_linearDamping, AttributeRange(0.0f, 1.0f));
 	s >> Member< float >(L"angularDamping", m_angularDamping, AttributeRange(0.0f, 1.0f));
 	s >> Member< float >(L"friction", m_friction, AttributeRange(0.0f));
+
+	if (s.getVersion() >= 6)
+		s >> Member< float >(L"restitution", m_restitution, AttributeRange(0.0f, 1.0f));
 
 	if (s.getVersion() >= 5)
 	{
