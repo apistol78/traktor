@@ -683,7 +683,7 @@
 				<first>ShaderPipeline.IncludeOnlyTechniques</first>
 				<second type="traktor.PropertyStringSet">
 					<value>
-						<item>M*</item>
+						<item>M/*</item>
 					</value>
 				</second>
 			</item>

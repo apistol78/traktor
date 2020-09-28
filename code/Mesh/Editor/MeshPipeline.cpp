@@ -126,7 +126,7 @@ Guid getVertexShaderGuid(MeshAsset::MeshType meshType)
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.mesh.MeshPipeline", 30, MeshPipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.mesh.MeshPipeline", 33, MeshPipeline, editor::IPipeline)
 
 MeshPipeline::MeshPipeline()
 :	m_promoteHalf(false)
@@ -620,24 +620,23 @@ bool MeshPipeline::buildOutput(
 			Ref< render::ShaderGraph > materialTechniqueShaderGraph = render::ShaderGraphTechniques(materialShaderGraph).generate(materialTechniqueName);
 
 			uint32_t hash = render::ShaderGraphHash::calculate(materialTechniqueShaderGraph);
+			std::wstring shaderTechniqueName = str(L"M/%s/%08x", materialTechniqueName.c_str(), hash);
+
+			for (auto node : materialTechniqueShaderGraph->getNodes())
+			{
+				if (auto vertexOutputNode = dynamic_type_cast< render::VertexOutput* >(node))
+					vertexOutputNode->setTechnique(shaderTechniqueName);
+				if (auto pixelOutputNode = dynamic_type_cast< render::PixelOutput* >(node))
+					pixelOutputNode->setTechnique(shaderTechniqueName);
+			}
+
 			materialTechniqueShaderGraphs[hash] = materialTechniqueShaderGraph;
 
 			MeshMaterialTechnique mt;
 			mt.worldTechnique = materialTechniqueName;
-			mt.shaderTechnique = L"M" + toString(hash);
+			mt.shaderTechnique = shaderTechniqueName;
 			mt.hash = hash;
-
 			materialTechniqueMap[materialPair.first].push_back(mt);
-
-#if 0
-			// Write out materials for debugging in source database.
-			Ref< db::Instance > instance = pipelineBuilder->getSourceDatabase()->createInstance(L"Debug/Mesh/" + outputPath + L"/" + materialPair.first + L"/" + materialTechniqueName, db::CifReplaceExisting);
-			if (instance)
-			{
-				instance->setObject(materialTechniqueShaderGraph);
-				instance->commit();
-			}
-#endif
 		}
 
 		// Build vertex declaration from shader vertex inputs.
@@ -683,45 +682,11 @@ bool MeshPipeline::buildOutput(
 		}
 	}
 
-#if 0
-	// Dump information about mesh.
-	log::info << polygonCount << L" polygon(s)" << Endl;
-	log::info << L"Bounding box (" << boundingBox.mn << L")-(" << boundingBox.mx << L")" << Endl;
-	log::info << L"Material techniques" << Endl;
-	log::info << IncreaseIndent;
-
-	for (std::map< std::wstring, std::list< MeshMaterialTechnique > >::const_iterator i = materialTechniqueMap.begin(); i != materialTechniqueMap.end(); ++i)
-	{
-		log::info << L"\"" << i->first << L"\"" << Endl;
-		log::info << IncreaseIndent;
-
-		for (std::list< MeshMaterialTechnique >::const_iterator j = i->second.begin(); j != i->second.end(); ++j)
-		{
-			log::info << L"World technique: \"" << j->worldTechnique << L"\"" << Endl;
-			log::info << L"Shader technique: \"" << j->shaderTechnique << L"\"" << Endl;
-		}
-
-		log::info << DecreaseIndent;
-	}
-
-	log::info << DecreaseIndent;
-#endif
-
 	// Merge all shader technique fragments into a single material shader.
 	Ref< render::ShaderGraph > materialShaderGraph = new render::ShaderGraph();
 	for (std::map< uint32_t, Ref< render::ShaderGraph > >::iterator i = materialTechniqueShaderGraphs.begin(); i != materialTechniqueShaderGraphs.end(); ++i)
 	{
 		Ref< render::ShaderGraph > materialTechniqueShaderGraph = DeepClone(i->second).create< render::ShaderGraph >();
-
-		std::wstring techniqueName = L"M" + toString(i->first);
-		for (auto node : materialTechniqueShaderGraph->getNodes())
-		{
-			if (auto vertexOutputNode = dynamic_type_cast< render::VertexOutput* >(node))
-				vertexOutputNode->setTechnique(techniqueName);
-			if (auto pixelOutputNode = dynamic_type_cast< render::PixelOutput* >(node))
-				pixelOutputNode->setTechnique(techniqueName);
-		}
-
 		for (auto node : materialTechniqueShaderGraph->getNodes())
 			materialShaderGraph->addNode(node);
 		for (auto edge : materialTechniqueShaderGraph->getEdges())
