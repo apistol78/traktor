@@ -776,6 +776,7 @@ Ref< Body > PhysicsManagerBullet::createBody(resource::IResourceManager* resourc
 		// Create body.
 		btRigidBody::btRigidBodyConstructionInfo info(0.0f, new btDefaultMotionState(), shape);
 		info.m_friction = staticDesc->getFriction();
+		info.m_restitution = staticDesc->getRestitution();
 
 		btRigidBody* rigidBody = new btRigidBody(info);
 
@@ -845,6 +846,7 @@ Ref< Body > PhysicsManagerBullet::createBody(resource::IResourceManager* resourc
 		info.m_linearDamping = dynamicDesc->getLinearDamping();
 		info.m_angularDamping = dynamicDesc->getAngularDamping();
 		info.m_friction = dynamicDesc->getFriction();
+		info.m_restitution = dynamicDesc->getRestitution();
 		info.m_linearSleepingThreshold = dynamicDesc->getLinearThreshold();
 		info.m_angularSleepingThreshold = dynamicDesc->getAngularThreshold();
 		btRigidBody* rigidBody = new btRigidBody(info);

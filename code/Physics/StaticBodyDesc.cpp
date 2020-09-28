@@ -8,18 +8,10 @@ namespace traktor
 	namespace physics
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.physics.StaticBodyDesc", 4, StaticBodyDesc, BodyDesc)
-
-StaticBodyDesc::StaticBodyDesc()
-:	m_friction(0.75f)
-,	m_kinematic(false)
-{
-}
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.physics.StaticBodyDesc", 5, StaticBodyDesc, BodyDesc)
 
 StaticBodyDesc::StaticBodyDesc(ShapeDesc* shape)
 :	BodyDesc(shape)
-,	m_friction(0.75f)
-,	m_kinematic(false)
 {
 }
 
@@ -31,6 +23,16 @@ void StaticBodyDesc::setFriction(float friction)
 float StaticBodyDesc::getFriction() const
 {
 	return m_friction;
+}
+
+void StaticBodyDesc::setRestitution(float restitution)
+{
+	m_restitution = restitution;
+}
+
+float StaticBodyDesc::getRestitution() const
+{
+	return m_restitution;
 }
 
 void StaticBodyDesc::setKinematic(bool kinematic)
@@ -50,6 +52,10 @@ void StaticBodyDesc::serialize(ISerializer& s)
 	BodyDesc::serialize(s);
 
 	s >> Member< float >(L"friction", m_friction, AttributeRange(0.0f, 1.0f));
+
+	if (s.getVersion() >= 5)
+		s >> Member< float >(L"restitution", m_restitution, AttributeRange(0.0f, 1.0f));
+
 	s >> Member< bool >(L"kinematic", m_kinematic);
 }
 

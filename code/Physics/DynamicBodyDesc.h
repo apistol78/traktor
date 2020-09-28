@@ -23,7 +23,7 @@ class T_DLLCLASS DynamicBodyDesc : public BodyDesc
 	T_RTTI_CLASS;
 
 public:
-	DynamicBodyDesc();
+	DynamicBodyDesc() = default;
 
 	explicit DynamicBodyDesc(ShapeDesc* shape);
 
@@ -51,6 +51,10 @@ public:
 
 	float getFriction() const;
 
+	void setRestitution(float restitution);
+
+	float getRestitution() const;
+
 	void setLinearThreshold(float linearThreshold);
 
 	float getLinearThreshold() const;
@@ -62,14 +66,15 @@ public:
 	virtual void serialize(ISerializer& s) override final;
 
 private:
-	float m_mass;
-	bool m_autoDeactivate;
-	bool m_active;
-	float m_linearDamping;
-	float m_angularDamping;
-	float m_friction;
-	float m_linearThreshold;
-	float m_angularThreshold;
+	float m_mass = 1.0f;
+	bool m_autoDeactivate = true;
+	bool m_active = true;
+	float m_linearDamping = 0.0f;
+	float m_angularDamping = 0.0f;
+	float m_friction = 0.75f;
+	float m_restitution = 0.0f;
+	float m_linearThreshold = 0.8f;
+	float m_angularThreshold = 1.0f;
 };
 
 	}

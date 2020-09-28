@@ -23,13 +23,17 @@ class T_DLLCLASS StaticBodyDesc : public BodyDesc
 	T_RTTI_CLASS;
 
 public:
-	StaticBodyDesc();
+	StaticBodyDesc() = default;
 
 	explicit StaticBodyDesc(ShapeDesc* shape);
 
 	void setFriction(float friction);
 
 	float getFriction() const;
+
+	void setRestitution(float restitution);
+
+	float getRestitution() const;
 
 	void setKinematic(bool kinematic);
 
@@ -38,8 +42,9 @@ public:
 	virtual void serialize(ISerializer& s) override final;
 
 private:
-	float m_friction;
-	bool m_kinematic;
+	float m_friction = 0.75f;
+	float m_restitution = 0.0f;
+	bool m_kinematic = false;
 };
 
 	}
