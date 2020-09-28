@@ -245,8 +245,8 @@ Ref< render::SHCoeffs > RayTracerEmbree::traceProbe(const Vector4& position) con
 	const uint32_t sampleCount = alignUp(m_configuration->getSampleCount(), 16);
 	RandomGeometry random;
 
-	//const auto& polygons = m_model.getPolygons();
-	//const auto& materials = m_model.getMaterials();
+	// Emperically determined attenuation to better match global lighting.
+	const Scalar c_attenuation = 2.0_simd;
 
 	WrappedSHFunction shFunction([&] (const Vector4& unit) -> Vector4 {
 		Color4f color(0.0f, 0.0f, 0.0f, 0.0f);
@@ -273,9 +273,10 @@ Ref< render::SHCoeffs > RayTracerEmbree::traceProbe(const Vector4& position) con
 				0
 			);
 
-			color += incoming + direct /* * dot3(unit, direction) */;
+			color += incoming + direct;
 		}
 		color /= Scalar(sampleCount);
+		color *= c_attenuation;
 		return color;
 	});
 
