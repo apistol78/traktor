@@ -370,6 +370,18 @@ bool RenderGraph::build(RenderContext* renderContext, int32_t width, int32_t hei
 	}
 #endif
 
+	// Ensure all persistent targets are released, since we're
+	// manually acquiring all at the beginning.
+	for (auto& it : m_targets)
+	{
+		auto& target = it.second;
+		if (target.rts != nullptr && target.persistentHandle != 0)
+		{
+			m_pool->release(target.rts);
+			target.rts = nullptr;
+		}
+	}
+
 	// Cleanup pool data structure.
 	m_pool->cleanup();
 
