@@ -25,7 +25,7 @@
 				<first>382</first>
 				<second>151</second>
 			</position>
-			<name>Motion blur prime</name>
+			<name>Velocity prime</name>
 			<clear>
 				<mask>
 					<Color>true</Color>
