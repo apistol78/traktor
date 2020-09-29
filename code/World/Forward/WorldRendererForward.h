@@ -84,6 +84,7 @@ private:
 	Quality m_toneMapQuality = Quality::Disabled;
 	Quality m_motionBlurQuality = Quality::Disabled;
 	Quality m_shadowsQuality = Quality::Disabled;
+	Quality m_reflectionsQuality = Quality::Disabled;
 	Quality m_ambientOcclusionQuality = Quality::Disabled;
 	Quality m_antiAliasQuality = Quality::Disabled;
 
@@ -101,6 +102,7 @@ private:
 	resource::Proxy< render::ImageGraph > m_visual;
 	resource::Proxy< render::ImageGraph > m_gammaCorrection;
 	resource::Proxy< render::ImageGraph > m_toneMap;
+	resource::Proxy< render::ImageGraph > m_screenReflections;
 
 	resource::Proxy< IrradianceGrid > m_irradianceGrid;
 
@@ -142,6 +144,15 @@ private:
 		render::handle_t gbufferTargetSetId
 	) const;
 
+	render::handle_t setupReflectionsPass(
+		const WorldRenderView& worldRenderView,
+		const Entity* rootEntity,
+		render::RenderGraph& renderGraph,
+		render::handle_t outputTargetSetId,
+		render::handle_t gbufferTargetSetId,
+		render::handle_t visualReadTargetSetId
+	) const;
+
 	void setupLightPass(
 		const WorldRenderView& worldRenderView,
 		const Entity* rootEntity,
@@ -160,6 +171,7 @@ private:
 		render::handle_t visualWriteTargetSetId,
 		render::handle_t gbufferTargetSetId,
 		render::handle_t ambientOcclusionTargetSetId,
+		render::handle_t reflectionsTargetSetId,
 		render::handle_t shadowMapCascadeTargetSetId,
 		render::handle_t shadowMapAtlasTargetSetId,
 		int32_t frame
