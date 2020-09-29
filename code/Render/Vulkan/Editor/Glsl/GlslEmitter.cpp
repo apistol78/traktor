@@ -632,14 +632,50 @@ bool emitIndexedUniform(GlslContext& cx, IndexedUniform* node)
 
 bool emitInstance(GlslContext& cx, Instance* node)
 {
-	auto& f = cx.getShader().getOutputStream(GlslShader::BtBody);
+	if (cx.inVertex())
+	{
+		auto& f = cx.getShader().getOutputStream(GlslShader::BtBody);
 
-	Ref< GlslVariable > out = cx.emitOutput(node, L"Output", GtFloat);
+		Ref< GlslVariable > out = cx.emitOutput(node, L"Output", GtFloat);
 
-	comment(f, node);
-	assign(f, out) << L"float(gl_InstanceIndex);" << Endl;
+		comment(f, node);
+		assign(f, out) << L"float(gl_InstanceIndex);" << Endl;
+		return true;
+	}
+	else if (cx.inFragment())
+	{
+		int32_t interpolatorId;
+		int32_t interpolatorOffset;
+		bool declare = cx.allocateInterpolator(1, interpolatorId, interpolatorOffset);
 
-	return true;
+		std::wstring interpolatorName = L"Attr" + toString(interpolatorId);
+		std::wstring interpolatorMask = interpolatorName + L"." + std::wstring(L"xyzw").substr(interpolatorOffset, 1);
+
+		auto& fv = cx.getVertexShader().getOutputStream(GlslShader::BtBody);
+		comment(fv, node) << interpolatorMask << L" = float(gl_InstanceIndex);" << Endl;
+
+		auto& f = cx.getShader().getOutputStream(GlslShader::BtBody);
+		f << L"float uniform_instanceIndex = readFirstInvocationARB(" << interpolatorMask << L");" << Endl;
+
+		cx.getFragmentShader().createOuterVariable(
+			node->findOutputPin(L"Output"),
+			L"uniform_instanceIndex",
+			GtFloat
+		);
+
+		if (declare)
+		{
+			auto& fvo = cx.getVertexShader().getOutputStream(GlslShader::BtOutput);
+			auto& fpi = cx.getFragmentShader().getOutputStream(GlslShader::BtInput);
+
+			fvo << L"layout (location = " << interpolatorId << L") out vec4 " << interpolatorName << L";" << Endl;
+			fpi << L"layout (location = " << interpolatorId << L") in vec4 " << interpolatorName << L";" << Endl;
+		}
+
+		return true;
+	}
+	else
+		return false;
 }
 
 bool emitInterpolator(GlslContext& cx, Interpolator* node)
@@ -684,7 +720,6 @@ bool emitInterpolator(GlslContext& cx, Interpolator* node)
 
 	int32_t interpolatorId;
 	int32_t interpolatorOffset;
-
 	bool declare = cx.allocateInterpolator(interpolatorWidth, interpolatorId, interpolatorOffset);
 
 	std::wstring interpolatorName = L"Attr" + toString(interpolatorId);
