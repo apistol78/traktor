@@ -27,44 +27,6 @@
 			</position>
 			<textureId>InputVelocity</textureId>
 		</item>
-		<item type="traktor.render.ImgPass" version="1,traktor.render.Node:1">
-			<id>{13E22B51-0DE0-944D-9285-C9438C6316A7}</id>
-			<comment/>
-			<position>
-				<first>272</first>
-				<second>302</second>
-			</position>
-			<name>Taa</name>
-			<clear>
-				<mask>
-					<Color>false</Color>
-					<Depth>false</Depth>
-					<Stencil>false</Stencil>
-				</mask>
-				<colors>
-					<item>0, 0, 0, 1</item>
-					<item>0, 0, 0, 1</item>
-					<item>0, 0, 0, 1</item>
-					<item>0, 0, 0, 1</item>
-					<item>0, 0, 0, 1</item>
-					<item>0, 0, 0, 1</item>
-					<item>0, 0, 0, 1</item>
-					<item>0, 0, 0, 1</item>
-				</colors>
-				<depth>1</depth>
-				<stencil>0</stencil>
-			</clear>
-			<steps>
-				<item type="traktor.render.ImgStepSimple">
-					<shader>{380B6E43-BB30-C945-BE58-F0A4E8A427E6}</shader>
-					<parameters>
-						<item>Current</item>
-						<item>Last</item>
-						<item>Velocity</item>
-					</parameters>
-				</item>
-			</steps>
-		</item>
 		<item type="traktor.render.ImgTargetSet" version="1,traktor.render.Node:1">
 			<id>{924ECED0-069A-4446-9FC2-4B96C06EBD5C}</id>
 			<comment/>
@@ -187,6 +149,44 @@
 				</item>
 			</steps>
 		</item>
+		<item type="traktor.render.ImgPass" version="1,traktor.render.Node:1">
+			<id>{13E22B51-0DE0-944D-9285-C9438C6316A7}</id>
+			<comment/>
+			<position>
+				<first>272</first>
+				<second>302</second>
+			</position>
+			<name>Temporal antialias</name>
+			<clear>
+				<mask>
+					<Color>false</Color>
+					<Depth>false</Depth>
+					<Stencil>false</Stencil>
+				</mask>
+				<colors>
+					<item>0, 0, 0, 1</item>
+					<item>0, 0, 0, 1</item>
+					<item>0, 0, 0, 1</item>
+					<item>0, 0, 0, 1</item>
+					<item>0, 0, 0, 1</item>
+					<item>0, 0, 0, 1</item>
+					<item>0, 0, 0, 1</item>
+					<item>0, 0, 0, 1</item>
+				</colors>
+				<depth>1</depth>
+				<stencil>0</stencil>
+			</clear>
+			<steps>
+				<item type="traktor.render.ImgStepSimple">
+					<shader>{380B6E43-BB30-C945-BE58-F0A4E8A427E6}</shader>
+					<parameters>
+						<item>Current</item>
+						<item>Last</item>
+						<item>Velocity</item>
+					</parameters>
+				</item>
+			</steps>
+		</item>
 	</nodes>
 	<edges>
 		<item type="traktor.render.Edge">
@@ -195,7 +195,7 @@
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[3]"/>
+				<node ref="/object/nodes/item[7]"/>
 				<name>Current</name>
 			</destination>
 		</item>
@@ -205,33 +205,53 @@
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[3]"/>
+				<node ref="/object/nodes/item[7]"/>
 				<name>Velocity</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[4]"/>
+				<node ref="/object/nodes/item[3]"/>
 				<name>History</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[3]"/>
+				<node ref="/object/nodes/item[7]"/>
 				<name>Last</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
+				<node ref="/object/nodes/item[7]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[4]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[4]"/>
+				<name>History</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[5]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[5]"/>
+				<name>Output</name>
+			</source>
+			<destination>
 				<node ref="/object/nodes/item[3]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[5]"/>
 				<name>Input</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[5]"/>
+				<node ref="/object/nodes/item[3]"/>
 				<name>History</name>
 			</source>
 			<destination>
@@ -242,26 +262,6 @@
 		<item type="traktor.render.Edge">
 			<source>
 				<node ref="/object/nodes/item[6]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[4]"/>
-				<name>Input</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[4]"/>
-				<name>History</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[7]"/>
-				<name>Input</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[7]"/>
 				<name>Output</name>
 			</source>
 			<destination>
