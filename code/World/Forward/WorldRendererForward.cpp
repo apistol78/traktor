@@ -33,6 +33,13 @@ namespace traktor
 
 const int32_t c_maxLightCount = 1024;
 
+const render::Handle s_handleVisualTargetSet[] =
+{
+	render::Handle(L"World_VisualTargetSet_Even"),
+	render::Handle(L"World_VisualTargetSet_Odd")
+};
+
+const resource::Id< render::ImageGraph > c_velocityPrime(L"{CB34E98B-55C9-E447-BD59-5A1D91DCA88E}");
 const resource::Id< render::ImageGraph > c_ambientOcclusionLow(L"{416745F9-93C7-8D45-AE28-F2823DEE636A}");
 const resource::Id< render::ImageGraph > c_ambientOcclusionMedium(L"{5A3B0260-32F9-B343-BBA4-88BD932F917A}");
 const resource::Id< render::ImageGraph > c_ambientOcclusionHigh(L"{45F9CD9F-C700-9942-BB36-443629C88748}");
@@ -40,7 +47,7 @@ const resource::Id< render::ImageGraph > c_ambientOcclusionUltra(L"{302E57C8-711
 const resource::Id< render::ImageGraph > c_antiAliasLow(L"{71D385F1-8364-C849-927F-5F1249F5DF92}");
 const resource::Id< render::ImageGraph > c_antiAliasMedium(L"{D03B9566-EFA3-7A43-B3AD-F59DB34DEE96}");
 const resource::Id< render::ImageGraph > c_antiAliasHigh(L"{C0316981-FA73-A34E-8135-1F596425688F}");
-//const resource::Id< render::ImageGraph > c_antiAliasUltra(L"{88E329C8-A2F3-7443-B73E-4E85C6ECACBE}");
+const resource::Id< render::ImageGraph > c_antiAliasUltra(L"{88E329C8-A2F3-7443-B73E-4E85C6ECACBE}");
 const resource::Id< render::ImageGraph > c_gammaCorrection(L"{B1E8367D-91DD-D648-A44F-B86492169771}");
 const resource::Id< render::ImageGraph > c_toneMapFixed(L"{1F20DAB5-22EB-B84C-92B0-71E94C1CE261}");
 const resource::Id< render::ImageGraph > c_toneMapAdaptive(L"{BE19DE90-E010-A74D-AA3B-87FAC2A56946}");
@@ -77,8 +84,7 @@ resource::Id< render::ImageGraph > getAntiAliasId(Quality quality)
 	case Quality::High:
 		return c_antiAliasHigh;
 	case Quality::Ultra:
-		//return c_antiAliasUltra;
-		return c_antiAliasHigh;		// Since forward path doesn't include velocity buffer then we cannot use TAA.
+		return c_antiAliasUltra;
 	}
 }
 
@@ -106,6 +112,15 @@ Ref< render::ISimpleTexture > create1x1Texture(render::IRenderSystem* renderSyst
 	stcd.initialData[0].data = &value;
 	stcd.initialData[0].pitch = 4;
 	return renderSystem->createSimpleTexture(stcd, T_FILE_LINE_W);
+}
+
+Vector2 jitter(int32_t count)
+{
+	const Vector2 kernelSize(0.5f, 0.5f);
+	return Vector2(
+		(float)((count / 2) & 1) * kernelSize.x - kernelSize.x / 2.0f,
+		(float)(      count & 1) * kernelSize.y - kernelSize.y / 2.0f
+	);
 }
 
 		}
@@ -144,6 +159,7 @@ bool WorldRendererForward::create(
 	// Store settings.
 	m_settings = *desc.worldRenderSettings;
 	m_toneMapQuality = desc.quality.toneMap;
+	m_motionBlurQuality = desc.quality.motionBlur;
 	m_shadowsQuality = desc.quality.shadows;
 	m_ambientOcclusionQuality = desc.quality.ambientOcclusion;
 	m_antiAliasQuality = desc.quality.antiAlias;
@@ -152,6 +168,19 @@ bool WorldRendererForward::create(
 
 	// Allocate frames, one for each queued frame.
 	m_frames.resize(desc.frameCount);
+
+	// Create velocity prime processing; priming is also used by TAA.
+	if (
+		m_motionBlurQuality > Quality::Disabled ||
+		m_antiAliasQuality >= Quality::Ultra
+	)
+	{
+		if (!resourceManager->bind(c_velocityPrime, m_velocityPrime))
+		{
+			log::warning << L"Unable to create velocity prime process; disabled." << Endl;
+			m_motionBlurQuality = Quality::Disabled;
+		}
+	}
 
 	// Create ambient occlusion processing.
 	if (m_ambientOcclusionQuality > Quality::Disabled)
@@ -293,13 +322,23 @@ void WorldRendererForward::destroy()
 }
 
 void WorldRendererForward::setup(
-	const WorldRenderView& worldRenderView,
+	const WorldRenderView& immutableWorldRenderView,
 	const Entity* rootEntity,
 	render::RenderGraph& renderGraph,
 	render::handle_t outputTargetSetId
 )
 {
 	int32_t frame = m_count % (int32_t)m_frames.size();
+	WorldRenderView worldRenderView = immutableWorldRenderView;
+
+	// Jitter projection for TAA, calculate jitter in clip space.
+	if (m_antiAliasQuality >= Quality::Ultra)
+	{
+		Vector2 r = (jitter(m_count) * 2.0f) / worldRenderView.getViewSize();
+		Matrix44 proj = immutableWorldRenderView.getProjection();
+		proj = translate(r.x, r.y, 0.0f) * proj;
+		worldRenderView.setProjection(proj);
+	}
 
 	// Gather active lights.
 	m_lights.resize(0);
@@ -318,6 +357,17 @@ void WorldRendererForward::setup(
 		context.flush();
 	}
 
+	// Add visual target sets.
+	render::RenderGraphTargetSetDesc rgtd = {};
+	rgtd.count = 1;
+	rgtd.createDepthStencil = false;
+	rgtd.usingPrimaryDepthStencil = (m_sharedDepthStencil == nullptr) ? true : false;
+	rgtd.targets[0].colorFormat = render::TfR11G11B10F;
+	rgtd.referenceWidthDenom = 1;
+	rgtd.referenceHeightDenom = 1;
+	auto visualReadTargetSetId = renderGraph.addPersistentTargetSet(L"History", s_handleVisualTargetSet[m_count % 2], rgtd, m_sharedDepthStencil, outputTargetSetId);
+	auto visualWriteTargetSetId = renderGraph.addPersistentTargetSet(L"Visual", s_handleVisualTargetSet[(m_count + 1) % 2], rgtd, m_sharedDepthStencil, outputTargetSetId);
+
 	// Add passes to render graph.
 	setupTileDataPass(
 		worldRenderView,
@@ -334,6 +384,14 @@ void WorldRendererForward::setup(
 		outputTargetSetId
 	);
 
+	auto velocityTargetSetId = setupVelocityPass(
+		worldRenderView,
+		rootEntity,
+		renderGraph,
+		outputTargetSetId,
+		gbufferTargetSetId
+	);
+
 	auto ambientOcclusionTargetSetId = setupAmbientOcclusionPass(
 		worldRenderView,
 		rootEntity,
@@ -341,6 +399,15 @@ void WorldRendererForward::setup(
 		outputTargetSetId,
 		gbufferTargetSetId
 	);
+
+	// auto reflectionsTargetSetId = setupReflectionsPass(
+	// 	worldRenderView,
+	// 	rootEntity,
+	// 	renderGraph,
+	// 	outputTargetSetId,
+	// 	gbufferTargetSetId,
+	// 	visualReadTargetSetId
+	// );
 
 	render::handle_t shadowMapCascadeTargetSetId = 0;
 	render::handle_t shadowMapAtlasTargetSetId = 0;
@@ -355,11 +422,11 @@ void WorldRendererForward::setup(
 		shadowMapAtlasTargetSetId
 	);
 
-	auto visualTargetSetId = setupVisualPass(
+	setupVisualPass(
 		worldRenderView,
 		rootEntity,
 		renderGraph,
-		outputTargetSetId,
+		visualWriteTargetSetId,
 		gbufferTargetSetId,
 		ambientOcclusionTargetSetId,
 		shadowMapCascadeTargetSetId,
@@ -373,7 +440,9 @@ void WorldRendererForward::setup(
 		renderGraph,
 		outputTargetSetId,
 		gbufferTargetSetId,
-		visualTargetSetId
+		velocityTargetSetId,
+		visualWriteTargetSetId,
+		visualReadTargetSetId
 	);
 
 	m_count++;
@@ -526,6 +595,81 @@ render::handle_t WorldRendererForward::setupGBufferPass(
 
 	renderGraph.addPass(rp);
 	return gbufferTargetSetId;
+}
+
+render::handle_t WorldRendererForward::setupVelocityPass(
+	const WorldRenderView& worldRenderView,
+	const Entity* rootEntity,
+	render::RenderGraph& renderGraph,
+	render::handle_t outputTargetSetId,
+	render::handle_t gbufferTargetSetId
+) const
+{
+	// Add Velocity target set.
+	render::RenderGraphTargetSetDesc rgtd = {};
+	rgtd.count = 1;
+	rgtd.createDepthStencil = false;
+	rgtd.usingPrimaryDepthStencil = (m_sharedDepthStencil == nullptr) ? true : false;
+	rgtd.targets[0].colorFormat = render::TfR32G32F;
+	rgtd.referenceWidthDenom = 1;
+	rgtd.referenceHeightDenom = 1;
+	auto velocityTargetSetId = renderGraph.addTransientTargetSet(L"Velocity", rgtd, m_sharedDepthStencil, outputTargetSetId);
+
+	// Add Velocity render pass.
+	Ref< render::RenderPass > rp = new render::RenderPass(L"Velocity");
+	
+	if (m_velocityPrime)
+	{
+		render::ImageGraphParams ipd;
+		ipd.viewFrustum = worldRenderView.getViewFrustum();
+		ipd.view = worldRenderView.getLastView() * worldRenderView.getView().inverse();
+		ipd.projection = worldRenderView.getProjection();
+		ipd.deltaTime = worldRenderView.getDeltaTime();
+
+		render::ImageGraphContext cx(m_screenRenderer);
+		cx.associateTextureTargetSet(s_handleInputDepth, gbufferTargetSetId, 0);
+		cx.setParams(ipd);
+
+		m_velocityPrime->addPasses(renderGraph, rp, cx);
+	}
+
+	rp->setOutput(velocityTargetSetId, render::TfDepth, render::TfColor | render::TfDepth);
+
+	rp->addBuild(
+		[=](const render::RenderGraph& renderGraph, render::RenderContext* renderContext)
+		{
+			WorldBuildContext wc(
+				m_entityRenderers,
+				rootEntity,
+				renderContext
+			);
+
+			auto sharedParams = renderContext->alloc< render::ProgramParameters >();
+			sharedParams->beginParameters(renderContext);
+			sharedParams->setFloatParameter(s_handleTime, worldRenderView.getTime());
+			sharedParams->setMatrixParameter(s_handleView, worldRenderView.getView());
+			sharedParams->setMatrixParameter(s_handleViewInverse, worldRenderView.getView().inverse());
+			sharedParams->setMatrixParameter(s_handleProjection, worldRenderView.getProjection());
+			sharedParams->endParameters(renderContext);
+
+			WorldRenderPassForward velocityPass(
+				s_techniqueVelocityWrite,
+				sharedParams,
+				IWorldRenderPass::PfNone,
+				worldRenderView.getView(),
+				false,
+				false,
+				false
+			);
+
+			wc.build(worldRenderView, velocityPass, rootEntity);
+			wc.flush(worldRenderView, velocityPass);
+			renderContext->merge(render::RpAll);
+		}
+	);
+
+	renderGraph.addPass(rp);
+	return velocityTargetSetId;
 }
 
 render::handle_t WorldRendererForward::setupAmbientOcclusionPass(
@@ -910,11 +1054,11 @@ void WorldRendererForward::setupLightPass(
 	}
 }
 
-render::handle_t WorldRendererForward::setupVisualPass(
+void WorldRendererForward::setupVisualPass(
 	const WorldRenderView& worldRenderView,
 	const Entity* rootEntity,
 	render::RenderGraph& renderGraph,
-	render::handle_t outputTargetSetId,
+	render::handle_t visualWriteTargetSetId,
 	render::handle_t gbufferTargetSetId,
 	render::handle_t ambientOcclusionTargetSetId,
 	render::handle_t shadowMapCascadeTargetSetId,
@@ -923,16 +1067,6 @@ render::handle_t WorldRendererForward::setupVisualPass(
 ) const
 {
 	const bool shadowsEnable = (bool)(m_shadowsQuality != Quality::Disabled);
-
-	// Add visual[0] target set.
-	render::RenderGraphTargetSetDesc rgtd;
-	rgtd.count = 1;
-	rgtd.createDepthStencil = false;
-	rgtd.usingPrimaryDepthStencil = (m_sharedDepthStencil == nullptr) ? true : false;
-	rgtd.targets[0].colorFormat = render::TfR11G11B10F;
-	rgtd.referenceWidthDenom = 1;
-	rgtd.referenceHeightDenom = 1;
-	auto visualTargetSetId = renderGraph.addTransientTargetSet(L"Visual", rgtd, m_sharedDepthStencil, outputTargetSetId);
 
 	// Create render pass.
 	Ref< render::RenderPass > rp = new render::RenderPass(L"Visual");
@@ -950,7 +1084,7 @@ render::handle_t WorldRendererForward::setupVisualPass(
 	render::Clear clear;
 	clear.mask = render::CfColor;
 	clear.colors[0] = Color4f(0.0f, 0.0f, 0.0f, 1.0f);
-	rp->setOutput(visualTargetSetId, clear, render::TfDepth, render::TfColor | render::TfDepth);
+	rp->setOutput(visualWriteTargetSetId, clear, render::TfDepth, render::TfColor | render::TfDepth);
 
 	rp->addBuild(
 		[=](const render::RenderGraph& renderGraph, render::RenderContext* renderContext)
@@ -1015,7 +1149,6 @@ render::handle_t WorldRendererForward::setupVisualPass(
 	);
 
 	renderGraph.addPass(rp);
-	return visualTargetSetId;
 }
 
 void WorldRendererForward::setupProcessPass(
@@ -1024,7 +1157,9 @@ void WorldRendererForward::setupProcessPass(
 	render::RenderGraph& renderGraph,
 	render::handle_t outputTargetSetId,
 	render::handle_t gbufferTargetSetId,
-	render::handle_t visualTargetSetId
+	render::handle_t velocityTargetSetId,
+	render::handle_t visualWriteTargetSetId,
+	render::handle_t visualReadTargetSetId
 ) const
 {
 	render::ImageGraphParams ipd;
@@ -1035,12 +1170,22 @@ void WorldRendererForward::setupProcessPass(
 	ipd.deltaTime = 1.0f / 60.0f;				
 
 	render::ImageGraphContext cx(m_screenRenderer);
-	cx.associateTextureTargetSet(s_handleInputColor, visualTargetSetId, 0);
+	cx.associateTextureTargetSet(s_handleInputColor, visualWriteTargetSetId, 0);
+	cx.associateTextureTargetSet(s_handleInputColorLast, visualReadTargetSetId, 0);
 	cx.associateTextureTargetSet(s_handleInputDepth, gbufferTargetSetId, 0);
 	cx.associateTextureTargetSet(s_handleInputNormal, gbufferTargetSetId, 1);
+	cx.associateTextureTargetSet(s_handleInputVelocity, velocityTargetSetId, 0);
+
+	// Expose gamma and exposure.
 	cx.setFloatParameter(s_handleGamma, m_gamma);
 	cx.setFloatParameter(s_handleGammaInverse, 1.0f / m_gamma);
 	cx.setFloatParameter(s_handleExposure, std::pow(2.0f, m_settings.exposure));
+
+	// Expose jitter; in texture space.
+	Vector2 rc = jitter(m_count) / worldRenderView.getViewSize();
+	Vector2 rp = jitter(m_count - 1) / worldRenderView.getViewSize();
+	cx.setVectorParameter(s_handleJitter, Vector4(rp.x, -rp.y, rc.x, -rc.y));
+
 	cx.setParams(ipd);
 
 	StaticVector< render::ImageGraph*, 4 > processes;
@@ -1067,11 +1212,7 @@ void WorldRendererForward::setupProcessPass(
 			rgtd.count = 1;
 			rgtd.createDepthStencil = false;
 			rgtd.usingPrimaryDepthStencil = false;
-#if defined(__ANDROID__)
-			rgtd.targets[0].colorFormat = render::TfR8G8B8A8;
-#else
 			rgtd.targets[0].colorFormat = render::TfR11G11B10F;
-#endif
 			rgtd.referenceWidthDenom = 1;
 			rgtd.referenceHeightDenom = 1;
 			intermediateTargetSetId = renderGraph.addTransientTargetSet(L"Process intermediate", rgtd, nullptr, outputTargetSetId);
