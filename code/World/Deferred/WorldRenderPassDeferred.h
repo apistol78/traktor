@@ -25,6 +25,8 @@ class T_DLLCLASS WorldRenderPassDeferred : public IWorldRenderPass
 	T_RTTI_CLASS;
 
 public:
+	WorldRenderPassDeferred() = delete;
+
 	WorldRenderPassDeferred(
 		render::handle_t technique,
 		render::ProgramParameters* sharedParams,

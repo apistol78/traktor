@@ -51,6 +51,7 @@ const resource::Id< render::ImageGraph > c_antiAliasUltra(L"{88E329C8-A2F3-7443-
 const resource::Id< render::ImageGraph > c_gammaCorrection(L"{B1E8367D-91DD-D648-A44F-B86492169771}");
 const resource::Id< render::ImageGraph > c_toneMapFixed(L"{1F20DAB5-22EB-B84C-92B0-71E94C1CE261}");
 const resource::Id< render::ImageGraph > c_toneMapAdaptive(L"{BE19DE90-E010-A74D-AA3B-87FAC2A56946}");
+const resource::Id< render::ImageGraph > c_screenReflections(L"{2F8EC56A-FD46-DF42-94B5-9DD676B8DD8A}");
 
 resource::Id< render::ImageGraph > getAmbientOcclusionId(Quality quality)
 {
@@ -161,6 +162,7 @@ bool WorldRendererForward::create(
 	m_toneMapQuality = desc.quality.toneMap;
 	m_motionBlurQuality = desc.quality.motionBlur;
 	m_shadowsQuality = desc.quality.shadows;
+	m_reflectionsQuality = desc.quality.reflections;
 	m_ambientOcclusionQuality = desc.quality.ambientOcclusion;
 	m_antiAliasQuality = desc.quality.antiAlias;
 	m_gamma = desc.gamma;
@@ -228,6 +230,16 @@ bool WorldRendererForward::create(
 			log::warning << L"Unable to create tone map process." << Endl;
 			m_toneMapQuality = Quality::Disabled;
 		}		
+	}
+
+	// Create screen reflections processing.
+	if (m_reflectionsQuality >= Quality::High)
+	{
+		if (!resourceManager->bind(c_screenReflections, m_screenReflections))
+		{
+			log::warning << L"Unable to create screen space reflections process." << Endl;
+			m_reflectionsQuality = Quality::Disabled;
+		}
 	}
 
 	// Allocate light lists.
@@ -400,7 +412,7 @@ void WorldRendererForward::setup(
 		gbufferTargetSetId
 	);
 
-	// auto reflectionsTargetSetId = setupReflectionsPass(
+	auto reflectionsTargetSetId = 0; // setupReflectionsPass(
 	// 	worldRenderView,
 	// 	rootEntity,
 	// 	renderGraph,
@@ -429,6 +441,7 @@ void WorldRendererForward::setup(
 		visualWriteTargetSetId,
 		gbufferTargetSetId,
 		ambientOcclusionTargetSetId,
+		reflectionsTargetSetId,
 		shadowMapCascadeTargetSetId,
 		shadowMapAtlasTargetSetId,
 		frame
@@ -574,16 +587,15 @@ render::handle_t WorldRendererForward::setupGBufferPass(
 			sharedParams->beginParameters(renderContext);
 			sharedParams->setFloatParameter(s_handleTime, worldRenderView.getTime());
 			sharedParams->setMatrixParameter(s_handleProjection, worldRenderView.getProjection());
+			sharedParams->setMatrixParameter(s_handleView, worldRenderView.getView());
+			sharedParams->setMatrixParameter(s_handleViewInverse, worldRenderView.getView().inverse());
 			sharedParams->endParameters(renderContext);
 
 			WorldRenderPassForward pass(
 				s_techniqueForwardGBufferWrite,
 				sharedParams,
-				IWorldRenderPass::PfFirst,
-				worldRenderView.getView(),
-				nullptr,
-				nullptr,
-				nullptr
+				worldRenderView,
+				IWorldRenderPass::PfFirst
 			);
 
 			T_ASSERT(!renderContext->havePendingDraws());
@@ -647,19 +659,16 @@ render::handle_t WorldRendererForward::setupVelocityPass(
 			auto sharedParams = renderContext->alloc< render::ProgramParameters >();
 			sharedParams->beginParameters(renderContext);
 			sharedParams->setFloatParameter(s_handleTime, worldRenderView.getTime());
+			sharedParams->setMatrixParameter(s_handleProjection, worldRenderView.getProjection());
 			sharedParams->setMatrixParameter(s_handleView, worldRenderView.getView());
 			sharedParams->setMatrixParameter(s_handleViewInverse, worldRenderView.getView().inverse());
-			sharedParams->setMatrixParameter(s_handleProjection, worldRenderView.getProjection());
 			sharedParams->endParameters(renderContext);
 
 			WorldRenderPassForward velocityPass(
 				s_techniqueVelocityWrite,
 				sharedParams,
-				IWorldRenderPass::PfNone,
-				worldRenderView.getView(),
-				false,
-				false,
-				false
+				worldRenderView,
+				IWorldRenderPass::PfNone
 			);
 
 			wc.build(worldRenderView, velocityPass, rootEntity);
@@ -715,6 +724,102 @@ render::handle_t WorldRendererForward::setupAmbientOcclusionPass(
 
 	renderGraph.addPass(rp);
 	return ambientOcclusionTargetSetId;
+}
+
+render::handle_t WorldRendererForward::setupReflectionsPass(
+	const WorldRenderView& worldRenderView,
+	const Entity* rootEntity,
+	render::RenderGraph& renderGraph,
+	render::handle_t outputTargetSetId,
+	render::handle_t gbufferTargetSetId,
+	render::handle_t visualReadTargetSetId
+) const
+{
+	if (m_reflectionsQuality == Quality::Disabled)
+		return 0;
+
+	// Add reflections target.
+	render::RenderGraphTargetSetDesc rgtd = {};
+	rgtd.count = 1;
+	rgtd.createDepthStencil = false;
+	rgtd.usingPrimaryDepthStencil = (m_sharedDepthStencil == nullptr) ? true : false;
+	rgtd.ignoreStencil = true;
+	rgtd.targets[0].colorFormat = render::TfR11G11B10F;
+	rgtd.referenceWidthDenom = 1;
+	rgtd.referenceHeightDenom = 1;
+	auto reflectionsTargetSetId = renderGraph.addTransientTargetSet(L"Reflections", rgtd, m_sharedDepthStencil, outputTargetSetId);
+
+	// Add reflections render pass.
+	Ref< render::RenderPass > rp = new render::RenderPass(L"Reflections");
+
+	rp->addInput(gbufferTargetSetId);
+
+	if (m_reflectionsQuality >= Quality::High)
+		rp->addInput(visualReadTargetSetId);
+
+	render::Clear clear;
+	clear.mask = render::CfColor;
+	clear.colors[0] = Color4f(0.0f, 0.0f, 0.0f, 0.0f);
+	rp->setOutput(reflectionsTargetSetId, clear, render::TfDepth, render::TfColor | render::TfDepth);
+	
+	rp->addBuild(
+		[=](const render::RenderGraph& renderGraph, render::RenderContext* renderContext)
+		{
+			WorldBuildContext wc(
+				m_entityRenderers,
+				rootEntity,
+				renderContext
+			);
+
+			auto gbufferTargetSet = renderGraph.getTargetSet(gbufferTargetSetId);
+
+			auto sharedParams = renderContext->alloc< render::ProgramParameters >();
+			sharedParams->beginParameters(renderContext);
+			sharedParams->setFloatParameter(s_handleTime, worldRenderView.getTime());
+			sharedParams->setMatrixParameter(s_handleProjection, worldRenderView.getProjection());
+			sharedParams->setMatrixParameter(s_handleView, worldRenderView.getView());
+			sharedParams->setMatrixParameter(s_handleViewInverse, worldRenderView.getView().inverse());
+			sharedParams->setTextureParameter(s_handleDepthMap, gbufferTargetSet->getColorTexture(0));
+			sharedParams->setTextureParameter(s_handleNormalMap, gbufferTargetSet->getColorTexture(1));
+			sharedParams->setTextureParameter(s_handleMiscMap, gbufferTargetSet->getColorTexture(2));
+			sharedParams->setTextureParameter(s_handleColorMap, gbufferTargetSet->getColorTexture(3));
+			sharedParams->endParameters(renderContext);
+
+			WorldRenderPassForward reflectionsPass(
+				s_techniqueReflectionWrite,
+				sharedParams,
+				worldRenderView,
+				IWorldRenderPass::PfNone
+			);
+
+			T_ASSERT(!renderContext->havePendingDraws());
+			wc.build(worldRenderView, reflectionsPass, rootEntity);
+			wc.flush(worldRenderView, reflectionsPass);
+			renderContext->merge(render::RpAll);
+		}
+	);
+
+	// // Render screenspace reflections.
+	// if (m_reflectionsQuality >= Quality::High)
+	// {
+	// 	render::ImageGraphParams ipd;
+	// 	ipd.viewFrustum = worldRenderView.getViewFrustum();
+	// 	ipd.view = worldRenderView.getView();
+	// 	ipd.projection = worldRenderView.getProjection();
+	// 	ipd.deltaTime = worldRenderView.getDeltaTime();
+
+	// 	render::ImageGraphContext cx(m_screenRenderer);
+	// 	cx.associateTextureTargetSet(s_handleInputColorLast, visualReadTargetSetId, 0);
+	// 	cx.associateTextureTargetSet(s_handleInputDepth, gbufferTargetSetId, 0);
+	// 	cx.associateTextureTargetSet(s_handleInputNormal, gbufferTargetSetId, 1);
+	// 	cx.associateTextureTargetSet(s_handleInputRoughness, gbufferTargetSetId, 2);
+	// 	cx.setParams(ipd);
+
+	// 	m_screenReflections->addPasses(renderGraph, rp, cx);
+	// }
+
+	renderGraph.addPass(rp);
+	return reflectionsTargetSetId;
 }
 
 void WorldRendererForward::setupLightPass(
@@ -875,19 +980,16 @@ void WorldRendererForward::setupLightPass(
 						auto sharedParams = renderContext->alloc< render::ProgramParameters >();
 						sharedParams->beginParameters(renderContext);
 						sharedParams->setFloatParameter(s_handleTime, worldRenderView.getTime());
+						sharedParams->setMatrixParameter(s_handleProjection, shadowLightProjection);
 						sharedParams->setMatrixParameter(s_handleView, shadowLightView);
 						sharedParams->setMatrixParameter(s_handleViewInverse, shadowLightView.inverse());
-						sharedParams->setMatrixParameter(s_handleProjection, shadowLightProjection);
 						sharedParams->endParameters(renderContext);
 
 						WorldRenderPassForward shadowPass(
 							s_techniqueShadow,
 							sharedParams,
-							IWorldRenderPass::PfNone,
-							shadowRenderView.getView(),
-							nullptr,
-							nullptr,
-							nullptr
+							worldRenderView,
+							IWorldRenderPass::PfNone
 						);
 
 						T_ASSERT(!renderContext->havePendingDraws());
@@ -1009,19 +1111,16 @@ void WorldRendererForward::setupLightPass(
 						auto sharedParams = renderContext->alloc< render::ProgramParameters >();
 						sharedParams->beginParameters(renderContext);
 						sharedParams->setFloatParameter(s_handleTime, worldRenderView.getTime());
+						sharedParams->setMatrixParameter(s_handleProjection, shadowLightProjection);
 						sharedParams->setMatrixParameter(s_handleView, shadowLightView);
 						sharedParams->setMatrixParameter(s_handleViewInverse, shadowLightView.inverse());
-						sharedParams->setMatrixParameter(s_handleProjection, shadowLightProjection);
 						sharedParams->endParameters(renderContext);
 
 						WorldRenderPassForward shadowPass(
 							s_techniqueShadow,
 							sharedParams,
-							IWorldRenderPass::PfNone,
-							shadowRenderView.getView(),
-							nullptr,
-							nullptr,
-							nullptr
+							worldRenderView,
+							IWorldRenderPass::PfNone
 						);
 
 						T_ASSERT(!renderContext->havePendingDraws());
@@ -1061,6 +1160,7 @@ void WorldRendererForward::setupVisualPass(
 	render::handle_t visualWriteTargetSetId,
 	render::handle_t gbufferTargetSetId,
 	render::handle_t ambientOcclusionTargetSetId,
+	render::handle_t reflectionsTargetSetId,
 	render::handle_t shadowMapCascadeTargetSetId,
 	render::handle_t shadowMapAtlasTargetSetId,
 	int32_t frame
@@ -1097,6 +1197,7 @@ void WorldRendererForward::setupVisualPass(
 
 			auto gbufferTargetSet = renderGraph.getTargetSet(gbufferTargetSetId);
  			auto ambientOcclusionTargetSet = (ambientOcclusionTargetSetId != 0) ? renderGraph.getTargetSet(ambientOcclusionTargetSetId) : nullptr;
+			auto reflectionsTargetSet = renderGraph.getTargetSet(reflectionsTargetSetId);
 			auto shadowCascadeTargetSet = renderGraph.getTargetSet(shadowMapCascadeTargetSetId);
 			auto shadowAtlasTargetSet = renderGraph.getTargetSet(shadowMapAtlasTargetSetId);
 
@@ -1108,6 +1209,8 @@ void WorldRendererForward::setupVisualPass(
 			sharedParams->setFloatParameter(s_handleTime, worldRenderView.getTime());
 			sharedParams->setVectorParameter(s_handleViewDistance, Vector4(viewNearZ, viewFarZ, 0.0f, 0.0f));
 			sharedParams->setMatrixParameter(s_handleProjection, worldRenderView.getProjection());
+			sharedParams->setMatrixParameter(s_handleView, worldRenderView.getView());
+			sharedParams->setMatrixParameter(s_handleViewInverse, worldRenderView.getView().inverse());
 
 			if (m_irradianceGrid)
 			{
@@ -1118,27 +1221,37 @@ void WorldRendererForward::setupVisualPass(
 				sharedParams->setStructBufferParameter(s_handleIrradianceGridSBuffer, m_irradianceGrid->getBuffer());
 			}
 
+			sharedParams->setStructBufferParameter(s_handleTileSBuffer, m_frames[frame].tileSBuffer);
+			sharedParams->setStructBufferParameter(s_handleLightSBuffer, m_frames[frame].lightSBuffer);
+
+			if (m_settings.fog)
+			{
+				sharedParams->setVectorParameter(s_handleFogDistanceAndDensity, Vector4(m_settings.fogDistanceY, m_settings.fogDistanceZ, m_settings.fogDistanceY, m_settings.fogDistanceZ));
+				sharedParams->setVectorParameter(s_handleFogColor, m_settings.fogColor);
+			}
+
+			if (shadowCascadeTargetSet != nullptr)
+				sharedParams->setTextureParameter(s_handleShadowMapCascade, shadowCascadeTargetSet->getDepthTexture());
+			if (shadowAtlasTargetSet != nullptr)
+				sharedParams->setTextureParameter(s_handleShadowMapAtlas, shadowAtlasTargetSet->getDepthTexture());
+
+			sharedParams->setTextureParameter(s_handleDepthMap, gbufferTargetSet->getColorTexture(0));
+
+			if (ambientOcclusionTargetSet != nullptr)
+				sharedParams->setTextureParameter(s_handleOcclusionMap, ambientOcclusionTargetSet->getColorTexture(0));
+			else
+				sharedParams->setTextureParameter(s_handleOcclusionMap, m_whiteTexture);
+
 			sharedParams->endParameters(wc.getRenderContext());
 
 			WorldRenderPassForward defaultPass(
 				s_techniqueForwardColor,
 				sharedParams,
+				worldRenderView,
 				IWorldRenderPass::PfLast,
-				worldRenderView.getView(),
-				m_frames[frame].tileSBuffer,
-				m_frames[frame].lightSBuffer,
 				(bool)(m_irradianceGrid != nullptr),
 				m_settings.fog,
-				m_settings.fogDistanceY,
-				m_settings.fogDistanceZ,
-				m_settings.fogDensityY,
-				m_settings.fogDensityZ,
-				m_settings.fogColor,
-				nullptr,
-				gbufferTargetSet->getColorTexture(0),
-				(ambientOcclusionTargetSet != nullptr) ? ambientOcclusionTargetSet->getColorTexture(0) : m_whiteTexture.ptr(),
-				(shadowCascadeTargetSet != nullptr) ? shadowCascadeTargetSet->getDepthTexture() : nullptr,
-				(shadowAtlasTargetSet != nullptr) ? shadowAtlasTargetSet->getDepthTexture() : nullptr
+				(bool)(shadowCascadeTargetSet != nullptr || shadowAtlasTargetSet != nullptr)
 			);
 
 			T_ASSERT(!wc.getRenderContext()->havePendingDraws());

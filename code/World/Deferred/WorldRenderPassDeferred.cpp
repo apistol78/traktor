@@ -8,12 +8,6 @@ namespace traktor
 {
 	namespace world
 	{
-		namespace
-		{
-
-enum { MaxForwardLightCount = 2 };
-
-		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.world.WorldRenderPassDeferred", WorldRenderPassDeferred, IWorldRenderPass)
 
