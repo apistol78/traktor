@@ -82,6 +82,7 @@ private:
 
 	WorldRenderSettings m_settings;
 	Quality m_toneMapQuality = Quality::Disabled;
+	Quality m_motionBlurQuality = Quality::Disabled;
 	Quality m_shadowsQuality = Quality::Disabled;
 	Quality m_ambientOcclusionQuality = Quality::Disabled;
 	Quality m_antiAliasQuality = Quality::Disabled;
@@ -94,6 +95,7 @@ private:
 	Ref< render::ISimpleTexture > m_blackTexture;
 	Ref< render::ISimpleTexture > m_whiteTexture;
 
+	resource::Proxy< render::ImageGraph > m_velocityPrime;
 	resource::Proxy< render::ImageGraph > m_ambientOcclusion;
 	resource::Proxy< render::ImageGraph > m_antiAlias;
 	resource::Proxy< render::ImageGraph > m_visual;
@@ -124,6 +126,14 @@ private:
 		render::handle_t outputTargetSetId
 	) const;
 
+	render::handle_t setupVelocityPass(
+		const WorldRenderView& worldRenderView,
+		const Entity* rootEntity,
+		render::RenderGraph& renderGraph,
+		render::handle_t outputTargetSetId,
+		render::handle_t gbufferTargetSetId
+	) const;
+
 	render::handle_t setupAmbientOcclusionPass(
 		const WorldRenderView& worldRenderView,
 		const Entity* rootEntity,
@@ -143,11 +153,11 @@ private:
 		render::handle_t& outShadowMapAtlasTargetSetId
 	) const;
 
-	render::handle_t setupVisualPass(
+	void setupVisualPass(
 		const WorldRenderView& worldRenderView,
 		const Entity* rootEntity,
 		render::RenderGraph& renderGraph,
-		render::handle_t outputTargetSetId,
+		render::handle_t visualWriteTargetSetId,
 		render::handle_t gbufferTargetSetId,
 		render::handle_t ambientOcclusionTargetSetId,
 		render::handle_t shadowMapCascadeTargetSetId,
@@ -161,7 +171,9 @@ private:
 		render::RenderGraph& renderGraph,
 		render::handle_t outputTargetSetId,
 		render::handle_t gbufferTargetSetId,
-		render::handle_t visualTargetSetId
+		render::handle_t velocityTargetSetId,
+		render::handle_t visualWriteTargetSetId,
+		render::handle_t visualReadTargetSetId
 	) const;
 };
 
