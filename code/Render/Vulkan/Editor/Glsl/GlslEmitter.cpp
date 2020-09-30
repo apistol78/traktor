@@ -274,9 +274,7 @@ bool emitConditional(GlslContext& cx, Conditional* node)
 
 	// Emit true branch.
 	{
-		StringOutputStream fs;
-
-		cx.getShader().pushOutputStream(GlslShader::BtBody, &fs);
+		auto& fs = cx.getShader().pushOutputStream(GlslShader::BtBody, T_FILE_LINE_W);
 		cx.getShader().pushScope();
 
 		Ref< GlslVariable > ct = cx.emitInput(node, L"CaseTrue");
@@ -292,9 +290,7 @@ bool emitConditional(GlslContext& cx, Conditional* node)
 
 	// Emit false branch.
 	{
-		StringOutputStream fs;
-
-		cx.getShader().pushOutputStream(GlslShader::BtBody, &fs);
+		auto& fs = cx.getShader().pushOutputStream(GlslShader::BtBody, T_FILE_LINE_W);
 		cx.getShader().pushScope();
 
 		Ref< GlslVariable > cf = cx.emitInput(node, L"CaseFalse");
@@ -774,8 +770,7 @@ bool emitIterate(GlslContext& cx, Iterate* node)
 		cx.emit(outputPin->getNode());
 
 	// Write input branch in a temporary output stream.
-	StringOutputStream fs;
-	cx.getShader().pushOutputStream(GlslShader::BtBody, &fs);
+	auto& fs = cx.getShader().pushOutputStream(GlslShader::BtBody, T_FILE_LINE_W);
 	cx.getShader().pushScope();
 
 	{
@@ -799,6 +794,8 @@ bool emitIterate(GlslContext& cx, Iterate* node)
 	}
 
 	cx.getShader().popScope();
+
+	std::wstring inner = fs.str();
 	cx.getShader().popOutputStream(GlslShader::BtBody);
 
 	// As we now know the type of output variable we can safely
@@ -816,7 +813,7 @@ bool emitIterate(GlslContext& cx, Iterate* node)
 
 	// Insert input branch here; it's already been generated in a temporary
 	// output stream.
-	f << fs.str();
+	f << inner;
 	f << out->getName() << L" = " << inputName << L";" << Endl;
 
 	f << DecreaseIndent;
@@ -879,8 +876,7 @@ bool emitIterate2(GlslContext& cx, Iterate2* node)
 		cx.emit(outputPin->getNode());
 
 	// Write input branch in a temporary output stream.
-	StringOutputStream fs;
-	cx.getShader().pushOutputStream(GlslShader::BtBody, &fs);
+	auto& fs = cx.getShader().pushOutputStream(GlslShader::BtBody, T_FILE_LINE_W);
 	cx.getShader().pushScope();
 
 	{
@@ -923,6 +919,8 @@ bool emitIterate2(GlslContext& cx, Iterate2* node)
 	}
 
 	cx.getShader().popScope();
+
+	std::wstring inner = fs.str();
 	cx.getShader().popOutputStream(GlslShader::BtBody);
 
 	// As we now know the type of output variable we can safely
@@ -954,7 +952,7 @@ bool emitIterate2(GlslContext& cx, Iterate2* node)
 
 	// Insert input branch here; it's already been generated in a temporary
 	// output stream.
-	f << fs.str();
+	f << inner;
 
 	if (out[0])
 		f << out[0]->getName() << L" = " << inputNames[0] << L";" << Endl;
@@ -1001,8 +999,7 @@ bool emitIterate2d(GlslContext& cx, Iterate2d* node)
 		cx.emit(outputPin->getNode());
 
 	// Write input branch in a temporary output stream.
-	StringOutputStream fs;
-	cx.getShader().pushOutputStream(GlslShader::BtBody, &fs);
+	auto& fs = cx.getShader().pushOutputStream(GlslShader::BtBody, T_FILE_LINE_W);
 	cx.getShader().pushScope();
 
 	Ref< GlslVariable > input = cx.emitInput(node, L"Input");
@@ -1024,6 +1021,8 @@ bool emitIterate2d(GlslContext& cx, Iterate2d* node)
 	*out = GlslVariable(out->getNode(), out->getName(), input->getType());
 
 	cx.getShader().popScope();
+
+	std::wstring inner = fs.str();
 	cx.getShader().popOutputStream(GlslShader::BtBody);
 
 	// As we now know the type of output variable we can safely
@@ -1045,7 +1044,7 @@ bool emitIterate2d(GlslContext& cx, Iterate2d* node)
 
 	// Insert input branch here; it's already been generated in a temporary
 	// output stream.
-	f << fs.str();
+	f << inner;
 	f << out->getName() << L" = " << inputName << L";" << Endl;
 
 	f << DecreaseIndent;
@@ -1054,8 +1053,8 @@ bool emitIterate2d(GlslContext& cx, Iterate2d* node)
 	// Emit outer loop post condition.
 	if (condition)
 	{
-		fs << L"if (" << condition->cast(GtFloat) << L" == 0.0)" << Endl;
-		fs << L"\tbreak;" << Endl;
+		f << L"if (" << condition->cast(GtFloat) << L" == 0.0)" << Endl;
+		f << L"\tbreak;" << Endl;
 	}
 
 	f << DecreaseIndent;
@@ -1587,8 +1586,7 @@ bool emitRepeat(GlslContext& cx, Repeat* node)
 		cx.emit(outputPin->getNode());
 
 	// Write input branch in a temporary output stream.
-	StringOutputStream fs;
-	cx.getShader().pushOutputStream(GlslShader::BtBody, &fs);
+	auto& fs = cx.getShader().pushOutputStream(GlslShader::BtBody, T_FILE_LINE_W);
 	cx.getShader().pushScope();
 
 	{
@@ -1612,6 +1610,8 @@ bool emitRepeat(GlslContext& cx, Repeat* node)
 	}
 
 	cx.getShader().popScope();
+
+	std::wstring inner = fs.str();
 	cx.getShader().popOutputStream(GlslShader::BtBody);
 
 	// As we now know the type of output variable we can safely
@@ -1629,7 +1629,7 @@ bool emitRepeat(GlslContext& cx, Repeat* node)
 
 	// Insert input branch here; it's already been generated in a temporary
 	// output stream.
-	f << fs.str();
+	f << inner;
 	f << out->getName() << L" = " << inputName << L";" << Endl;
 
 	f << DecreaseIndent;
@@ -2165,8 +2165,7 @@ bool emitSum(GlslContext& cx, Sum* node)
 		cx.emit(outputPin->getNode());
 
 	// Write input branch in a temporary output stream.
-	StringOutputStream fs;
-	cx.getShader().pushOutputStream(GlslShader::BtBody, &fs);
+	auto& fs = cx.getShader().pushOutputStream(GlslShader::BtBody, T_FILE_LINE_W);
 	cx.getShader().pushScope();
 
 	{
@@ -2182,6 +2181,8 @@ bool emitSum(GlslContext& cx, Sum* node)
 	}
 
 	cx.getShader().popScope();
+
+	std::wstring inner = fs.str();
 	cx.getShader().popOutputStream(GlslShader::BtBody);
 
 	// As we now know the type of output variable we can safely
@@ -2196,7 +2197,7 @@ bool emitSum(GlslContext& cx, Sum* node)
 
 	// Insert input branch here; it's already been generated in a temporary
 	// output stream.
-	f << fs.str();
+	f << inner;
 	f << out->getName() << L" += " << inputName << L";" << Endl;
 
 	f << DecreaseIndent;
@@ -2326,9 +2327,7 @@ bool emitSwitch(GlslContext& cx, Switch* node)
 	// Conditional branches.
 	for (uint32_t i = 0; i < (uint32_t)caseConditions.size(); ++i)
 	{
-		StringOutputStream fs;
-
-		cx.getShader().pushOutputStream(GlslShader::BtBody, &fs);
+		auto& fs = cx.getShader().pushOutputStream(GlslShader::BtBody, T_FILE_LINE_W);
 		cx.getShader().pushScope();
 
 		const InputPin* caseInput = node->getInputPin(i + 2);
@@ -2355,9 +2354,7 @@ bool emitSwitch(GlslContext& cx, Switch* node)
 
 	// Default branch.
 	{
-		StringOutputStream fs;
-
-		cx.getShader().pushOutputStream(GlslShader::BtBody, &fs);
+		auto& fs = cx.getShader().pushOutputStream(GlslShader::BtBody, T_FILE_LINE_W);
 		cx.getShader().pushScope();
 
 		const InputPin* caseInput = node->getInputPin(1);
