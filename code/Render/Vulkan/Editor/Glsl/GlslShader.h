@@ -4,7 +4,6 @@
 #include <map>
 #include <set>
 #include <string>
-#include "Core/RefArray.h"
 #include "Core/Io/StringOutputStream.h"
 #include "Render/Types.h"
 #include "Render/Vulkan/Editor/Glsl/GlslType.h"
@@ -68,7 +67,7 @@ public:
 	/*! \name Output streams */
 	/*! \{ */
 
-	void pushOutputStream(BlockType blockType, StringOutputStream* outputStream);
+	StringOutputStream& pushOutputStream(BlockType blockType, const wchar_t* const tag);
 
 	void popOutputStream(BlockType blockType);
 
@@ -88,6 +87,12 @@ private:
 		Ref< GlslVariable > variable;
 	};
 
+	struct OutputStreamTuple
+	{
+		Ref< StringOutputStream > outputStream;
+		const wchar_t* const tag;
+	};
+
 	ShaderType m_shaderType;
 	std::map< std::wstring, Ref< GlslVariable > > m_inputVariables;
 	AlignedVector< OutputPinVariable > m_variables;
@@ -95,7 +100,7 @@ private:
 	AlignedVector< OutputPinVariable > m_outerVariables;
 	std::set< std::wstring > m_scriptSignatures;
 	int32_t m_nextTemporaryVariable;
-	RefArray< StringOutputStream > m_outputStreams[BtLast];
+	AlignedVector< OutputStreamTuple > m_outputStreams[BtLast];
 };
 
 	}

@@ -17,10 +17,10 @@ GlslShader::GlslShader(ShaderType shaderType)
 ,	m_nextTemporaryVariable(0)
 {
 	pushScope();
-	pushOutputStream(BtInput, new StringOutputStream());
-	pushOutputStream(BtOutput, new StringOutputStream());
-	pushOutputStream(BtScript, new StringOutputStream());
-	pushOutputStream(BtBody, new StringOutputStream());
+	pushOutputStream(BtInput, T_FILE_LINE_W);
+	pushOutputStream(BtOutput, T_FILE_LINE_W);
+	pushOutputStream(BtScript, T_FILE_LINE_W);
+	pushOutputStream(BtBody, T_FILE_LINE_W);
 }
 
 GlslShader::~GlslShader()
@@ -108,9 +108,11 @@ bool GlslShader::defineScript(const std::wstring& signature)
 	return true;
 }
 
-void GlslShader::pushOutputStream(BlockType blockType, StringOutputStream* outputStream)
+StringOutputStream& GlslShader::pushOutputStream(BlockType blockType, const wchar_t* const tag)
 {
-	m_outputStreams[int(blockType)].push_back(outputStream);
+	Ref< StringOutputStream > os = new StringOutputStream();
+	m_outputStreams[int(blockType)].push_back({ os, tag });
+	return *os;
 }
 
 void GlslShader::popOutputStream(BlockType blockType)
@@ -122,13 +124,13 @@ void GlslShader::popOutputStream(BlockType blockType)
 StringOutputStream& GlslShader::getOutputStream(BlockType blockType)
 {
 	T_ASSERT(!m_outputStreams[int(blockType)].empty());
-	return *(m_outputStreams[int(blockType)].back());
+	return *(m_outputStreams[int(blockType)].back().outputStream);
 }
 
 const StringOutputStream& GlslShader::getOutputStream(BlockType blockType) const
 {
 	T_ASSERT(!m_outputStreams[int(blockType)].empty());
-	return *(m_outputStreams[int(blockType)].back());
+	return *(m_outputStreams[int(blockType)].back().outputStream);
 }
 
 std::wstring GlslShader::getGeneratedShader(const GlslLayout& layout, const GlslRequirements& requirements) const
