@@ -768,6 +768,7 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	m_shortcutCommands.push_back(ui::Command(L"Editor.ActivatePreviousEditor"));
 	m_shortcutCommands.push_back(ui::Command(L"Editor.ActivateNextEditor"));
 	m_shortcutCommands.push_back(ui::Command(L"Editor.SelectAll"));
+	m_shortcutCommands.push_back(ui::Command(L"Editor.Unselect"));
 	m_shortcutCommands.push_back(ui::Command(L"Editor.Copy"));
 	m_shortcutCommands.push_back(ui::Command(L"Editor.Cut"));
 	m_shortcutCommands.push_back(ui::Command(L"Editor.Paste"));

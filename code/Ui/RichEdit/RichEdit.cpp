@@ -615,6 +615,13 @@ void RichEdit::selectAll()
 	update();
 }
 
+void RichEdit::unselect()
+{
+	m_selectionStart = -1;
+	m_selectionStop = -1;
+	update();
+}
+
 bool RichEdit::copy()
 {
 	Clipboard* clipboard = Application::getInstance()->getClipboard();

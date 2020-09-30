@@ -713,7 +713,12 @@ bool SceneEditorPage::handleCommand(const ui::Command& command)
 	}
 	else if (command == L"Editor.SelectAll")
 	{
-		m_context->selectAllEntities();
+		m_context->selectAllEntities(true);
+		m_context->raiseSelect();
+	}
+	else if (command == L"Editor.Unselect")
+	{
+		m_context->selectAllEntities(false);
 		m_context->raiseSelect();
 	}
 	else if (command == L"Scene.Editor.CreateExternal")

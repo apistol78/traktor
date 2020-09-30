@@ -206,6 +206,7 @@ bool InputMappingEditor::create(ui::Container* parent)
 
 	m_graph = new ui::GraphControl();
 	m_graph->create(splitter);
+	m_graph->setText(L"INPUT");
 	m_graph->addEventHandler< ui::MouseButtonDownEvent >(this, &InputMappingEditor::eventButtonDown);
 	m_graph->addEventHandler< ui::SelectEvent >(this, &InputMappingEditor::eventNodeSelect);
 	m_graph->addEventHandler< ui::NodeMovedEvent >(this, &InputMappingEditor::eventNodeMoved);

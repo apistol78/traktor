@@ -471,6 +471,10 @@ bool ScriptEditorPage::handleCommand(const ui::Command& command)
 	{
 		m_edit->selectAll();
 	}
+	else if (command == L"Editor.Unselect")
+	{
+		m_edit->unselect();
+	}
 	else if (command == L"Editor.SettingsChanged")
 	{
 		std::wstring font = m_editor->getSettings()->getProperty< std::wstring >(L"Editor.Font", L"Consolas");

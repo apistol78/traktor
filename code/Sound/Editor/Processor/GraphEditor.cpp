@@ -115,6 +115,7 @@ bool GraphEditor::create(ui::Container* parent)
 
 	m_graph = new ui::GraphControl();
 	m_graph->create(splitter);
+	m_graph->setText(L"SOUND");
 	m_graph->addEventHandler< ui::MouseButtonDownEvent >(this, &GraphEditor::eventButtonDown);
 	m_graph->addEventHandler< ui::SelectEvent >(this, &GraphEditor::eventNodeSelect);
 	m_graph->addEventHandler< ui::NodeMovedEvent >(this, &GraphEditor::eventNodeMoved);
