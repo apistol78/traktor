@@ -81,6 +81,7 @@ bool ImageGraphEditorPage::create(ui::Container* parent)
 
 	m_editorGraph = new ui::GraphControl();
 	m_editorGraph->create(container);
+	m_editorGraph->setText(L"IMAGE");
 	m_editorGraph->addEventHandler< ui::MouseButtonDownEvent >(this, &ImageGraphEditorPage::eventButtonDown);
 	m_editorGraph->addEventHandler< ui::SelectEvent >(this, &ImageGraphEditorPage::eventSelect);
 	m_editorGraph->addEventHandler< ui::NodeMovedEvent >(this, &ImageGraphEditorPage::eventNodeMoved);
@@ -256,6 +257,11 @@ bool ImageGraphEditorPage::handleCommand(const ui::Command& command)
 	else if (command == L"Editor.SelectAll")
 	{
 		m_editorGraph->selectAllNodes();
+		// updateGraph();
+	}
+	else if (command == L"Editor.Unselect")
+	{
+		m_editorGraph->deselectAllNodes();
 		// updateGraph();
 	}
 	else if (command == L"Editor.Delete")

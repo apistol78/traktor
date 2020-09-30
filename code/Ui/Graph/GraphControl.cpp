@@ -932,6 +932,18 @@ void GraphControl::eventPaint(PaintEvent* event)
 		canvas.fillRect(rc);
 	}
 
+	// Draw text.
+	std::wstring text = getText();
+	if (!text.empty())
+	{
+		auto fn = m_paintSettings->getFont();
+		fn.setSize(40);
+		canvas.setFont(fn);
+		canvas.setForeground(Color4ub(255, 255, 255, 40));
+		canvas.drawText(rc.inflate(-dpi96(8), -dpi96(8)), text, ui::AnRight, ui::AnBottom);
+		canvas.setFont(m_paintSettings->getFont());
+	}
+
 	// Draw arrow hints.
 	canvas.setBackground(m_paintSettings->getNodeShadow());
 	Point center = rc.getCenter();

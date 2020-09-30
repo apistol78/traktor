@@ -219,6 +219,7 @@ bool ShaderGraphEditorPage::create(ui::Container* parent)
 	// Create shader graph editor control.
 	m_editorGraph = new ui::GraphControl();
 	m_editorGraph->create(container);
+	m_editorGraph->setText(L"SHADER");
 	m_editorGraph->addEventHandler< ui::MouseButtonDownEvent >(this, &ShaderGraphEditorPage::eventButtonDown);
 	m_editorGraph->addEventHandler< ui::SelectEvent >(this, &ShaderGraphEditorPage::eventSelect);
 	m_editorGraph->addEventHandler< ui::NodeMovedEvent >(this, &ShaderGraphEditorPage::eventNodeMoved);
@@ -516,6 +517,11 @@ bool ShaderGraphEditorPage::handleCommand(const ui::Command& command)
 	else if (command == L"Editor.SelectAll")
 	{
 		m_editorGraph->selectAllNodes();
+		updateGraph();
+	}
+	else if (command == L"Editor.Unselect")
+	{
+		m_editorGraph->deselectAllNodes();
 		updateGraph();
 	}
 	else if (command == L"Editor.Delete")

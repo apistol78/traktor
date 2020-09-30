@@ -77,6 +77,7 @@ bool StateGraphEditorPage::create(ui::Container* parent)
 
 	// Create state graph editor control.
 	m_editorGraph = new ui::GraphControl();
+	m_editorGraph->setText(L"ANIMATION STATE");
 	m_editorGraph->create(container, ui::GraphControl::WsEdgeSelectable | ui::WsDoubleBuffer | ui::WsAccelerated);
 	m_editorGraph->addEventHandler< ui::MouseButtonDownEvent >(this, &StateGraphEditorPage::eventButtonDown);
 	m_editorGraph->addEventHandler< ui::SelectionChangeEvent >(this, &StateGraphEditorPage::eventSelect);
@@ -297,6 +298,11 @@ bool StateGraphEditorPage::handleCommand(const ui::Command& command)
 	/*else*/ if (command == L"Editor.SelectAll")
 	{
 		m_editorGraph->selectAllNodes();
+		updateGraph();
+	}
+	else if (command == L"Editor.Unselect")
+	{
+		m_editorGraph->deselectAllNodes();
 		updateGraph();
 	}
 	else if (command == L"Editor.Delete")

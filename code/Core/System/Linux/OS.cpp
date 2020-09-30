@@ -167,7 +167,7 @@ Ref< IProcess > OS::execute(
 	uint32_t flags
 ) const
 {
-	posix_spawn_file_actions_t* fileActions = 0;
+	posix_spawn_file_actions_t* fileActions = nullptr;
 	char* envv[4096];
 	char* argv[1024];
 	int envc = 0;
@@ -293,9 +293,7 @@ Ref< IProcess > OS::execute(
 		{
 			fileActions = new posix_spawn_file_actions_t;
 			posix_spawn_file_actions_init(fileActions);
-#if !defined(__RPI__)
 			posix_spawn_file_actions_addchdir_np(fileActions, wd);
-#endif
 			posix_spawn_file_actions_addopen(fileActions, STDOUT_FILENO, "/dev/null", O_RDONLY, 0);
 			posix_spawn_file_actions_addopen(fileActions, STDERR_FILENO, "/dev/null", O_RDONLY, 0);
 		}
@@ -322,7 +320,11 @@ Ref< IProcess > OS::execute(
 		free(*env);
 
 	if (err != 0)
+	{
+		posix_spawn_file_actions_destroy(fileActions);
+		delete fileActions;
 		return nullptr;
+	}
 
 	return new ProcessLinux(pid, fileActions, childStdOut[0], childStdErr[0]);
 }

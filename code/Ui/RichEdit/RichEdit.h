@@ -161,6 +161,9 @@ public:
 	/*! Select all. */
 	void selectAll();
 
+	/*! Unselect */
+	void unselect();
+
 	/*! Copy selected text into clipboard. */
 	bool copy();
 
