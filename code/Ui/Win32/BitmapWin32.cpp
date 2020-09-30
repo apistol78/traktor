@@ -46,7 +46,10 @@ bool BitmapWin32::create(uint32_t width, uint32_t height)
 	m_height = height;
 
 	m_bits.reset(new uint32_t [m_width * m_height]);
+	std::memset(m_bits.ptr(), 0, m_width * m_height * sizeof(uint32_t));
+
 	m_bitsPreMulAlpha.reset(new uint32_t [m_width * m_height]);
+	std::memset(m_bitsPreMulAlpha.ptr(), 0, m_width * m_height * sizeof(uint32_t));
 
 	return true;
 }
