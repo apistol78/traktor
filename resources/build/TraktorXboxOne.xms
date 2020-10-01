@@ -644,7 +644,9 @@
 								<targetFormat>TfSharedLibrary</targetFormat>
 								<targetProfile>TpDebug</targetProfile>
 								<precompiledHeader/>
-								<includePaths/>
+								<includePaths>
+									<item>$(TRAKTOR_HOME)/3rdp/stb_rect_pack</item>
+								</includePaths>
 								<definitions>
 									<item>T_WORLD_EXPORT</item>
 									<item>_DEBUG</item>
@@ -679,7 +681,9 @@
 								<targetFormat>TfSharedLibrary</targetFormat>
 								<targetProfile>TpRelease</targetProfile>
 								<precompiledHeader/>
-								<includePaths/>
+								<includePaths>
+									<item>$(TRAKTOR_HOME)/3rdp/stb_rect_pack</item>
+								</includePaths>
 								<definitions>
 									<item>T_WORLD_EXPORT</item>
 									<item>NDEBUG</item>
@@ -714,7 +718,9 @@
 								<targetFormat>TfStaticLibrary</targetFormat>
 								<targetProfile>TpDebug</targetProfile>
 								<precompiledHeader/>
-								<includePaths/>
+								<includePaths>
+									<item>$(TRAKTOR_HOME)/3rdp/stb_rect_pack</item>
+								</includePaths>
 								<definitions>
 									<item>T_STATIC</item>
 									<item>_DEBUG</item>
@@ -745,7 +751,9 @@
 								<targetFormat>TfStaticLibrary</targetFormat>
 								<targetProfile>TpRelease</targetProfile>
 								<precompiledHeader/>
-								<includePaths/>
+								<includePaths>
+									<item>$(TRAKTOR_HOME)/3rdp/stb_rect_pack</item>
+								</includePaths>
 								<definitions>
 									<item>T_STATIC</item>
 									<item>NDEBUG</item>
