@@ -5,8 +5,8 @@
 			<id>{1506479F-0316-444D-88F6-4BC67155803B}</id>
 			<comment/>
 			<position>
-				<first>505</first>
-				<second>-375</second>
+				<first>531</first>
+				<second>-436</second>
 			</position>
 			<name>V_ViewPosition</name>
 			<global>false</global>
@@ -213,8 +213,8 @@
 			<id>{E84F0D9D-6B10-C045-90E6-6353D71FB7C0}</id>
 			<comment/>
 			<position>
-				<first>754</first>
-				<second>-483</second>
+				<first>702</first>
+				<second>-514</second>
 			</position>
 			<parameterName>World_ViewInverse</parameterName>
 			<type>PtMatrix</type>
@@ -224,8 +224,8 @@
 			<id>{F6B10B04-04A4-1442-A792-7C7FF74A55A7}</id>
 			<comment/>
 			<position>
-				<first>586</first>
-				<second>-522</second>
+				<first>531</first>
+				<second>-553</second>
 			</position>
 		</item>
 		<item type="traktor.render.External" version="2,traktor.render.Node:1">
@@ -239,28 +239,12 @@
 			<inputPins/>
 			<outputPins>
 				<item>
-					<id>{C5CB1E4A-10A7-054F-9B29-6516D626F7CD}</id>
-					<name>Color</name>
-				</item>
-				<item>
-					<id>{97EE8A37-DA62-4841-9F2D-5274C0695718}</id>
-					<name>Depth</name>
-				</item>
-				<item>
 					<id>{44F273DC-1302-DE4D-9626-70AB372FBB6E}</id>
 					<name>EyeDirection</name>
 				</item>
 				<item>
-					<id>{E46815E3-64BE-8E4A-9353-B6E8E22C8AFB}</id>
-					<name>Metalness</name>
-				</item>
-				<item>
 					<id>{5BF530D5-C723-194C-B270-E110E887C4BC}</id>
 					<name>Roughness</name>
-				</item>
-				<item>
-					<id>{991630D7-52B2-7645-AFEB-01E4F90536ED}</id>
-					<name>Specular</name>
 				</item>
 				<item>
 					<id>{08E68D96-71E4-5542-8ED5-77CAFAE47345}</id>
@@ -277,16 +261,16 @@
 			<id>{0F215668-15B9-D341-8F1F-825335C75507}</id>
 			<comment/>
 			<position>
-				<first>781</first>
-				<second>-573</second>
+				<first>729</first>
+				<second>-604</second>
 			</position>
 		</item>
 		<item type="traktor.render.Transform" version="traktor.render.Node:1">
 			<id>{4E457FF8-5830-1A40-8EA9-FA62513E271B}</id>
 			<comment/>
 			<position>
-				<first>1010</first>
-				<second>-531</second>
+				<first>958</first>
+				<second>-562</second>
 			</position>
 		</item>
 		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
@@ -517,8 +501,8 @@
 			<id>{7DC47032-A1BB-1843-AE28-86AE5978FDF2}</id>
 			<comment/>
 			<position>
-				<first>509</first>
-				<second>-418</second>
+				<first>531</first>
+				<second>-479</second>
 			</position>
 			<name>L_Roughness</name>
 			<global>false</global>
@@ -563,8 +547,8 @@
 			<id>{FB33233D-264E-2A42-AD9D-B96BA0C6FD14}</id>
 			<comment/>
 			<position>
-				<first>1281</first>
-				<second>-539</second>
+				<first>1229</first>
+				<second>-570</second>
 			</position>
 			<name>L_EyeReflectionDir</name>
 			<global>false</global>

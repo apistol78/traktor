@@ -412,14 +412,14 @@ void WorldRendererForward::setup(
 		gbufferTargetSetId
 	);
 
-	auto reflectionsTargetSetId = 0; // setupReflectionsPass(
-	// 	worldRenderView,
-	// 	rootEntity,
-	// 	renderGraph,
-	// 	outputTargetSetId,
-	// 	gbufferTargetSetId,
-	// 	visualReadTargetSetId
-	// );
+	auto reflectionsTargetSetId = setupReflectionsPass(
+		worldRenderView,
+		rootEntity,
+		renderGraph,
+		outputTargetSetId,
+		gbufferTargetSetId,
+		visualReadTargetSetId
+	);
 
 	render::handle_t shadowMapCascadeTargetSetId = 0;
 	render::handle_t shadowMapAtlasTargetSetId = 0;
@@ -557,7 +557,7 @@ render::handle_t WorldRendererForward::setupGBufferPass(
 	rgtd.count = 2;
 	rgtd.createDepthStencil = false;
 	rgtd.usingPrimaryDepthStencil = (m_sharedDepthStencil == nullptr) ? true : false;
-	rgtd.targets[0].colorFormat = render::TfR16F;		// Depth (R)
+	rgtd.targets[0].colorFormat = render::TfR16G16F;	// Depth (R), Roughness (G)
 	rgtd.targets[1].colorFormat = render::TfR16G16F;	// Normals (RG)
 	rgtd.referenceWidthDenom = 1;
 	rgtd.referenceHeightDenom = 1;
@@ -568,7 +568,7 @@ render::handle_t WorldRendererForward::setupGBufferPass(
 	
 	render::Clear clear;
 	clear.mask = render::CfColor | render::CfDepth | render::CfStencil;
-	clear.colors[0] = Color4f(clearZ, clearZ, clearZ, clearZ);
+	clear.colors[0] = Color4f(clearZ, 1.0f, 0.0f, 0.0f);
 	clear.colors[1] = Color4f(0.0f, 0.0f, 0.0f, 0.0f);
 	clear.depth = 1.0f;
 	clear.stencil = 0;
@@ -781,8 +781,7 @@ render::handle_t WorldRendererForward::setupReflectionsPass(
 			sharedParams->setMatrixParameter(s_handleViewInverse, worldRenderView.getView().inverse());
 			sharedParams->setTextureParameter(s_handleDepthMap, gbufferTargetSet->getColorTexture(0));
 			sharedParams->setTextureParameter(s_handleNormalMap, gbufferTargetSet->getColorTexture(1));
-			sharedParams->setTextureParameter(s_handleMiscMap, gbufferTargetSet->getColorTexture(2));
-			sharedParams->setTextureParameter(s_handleColorMap, gbufferTargetSet->getColorTexture(3));
+			sharedParams->setTextureParameter(s_handleMiscMap, gbufferTargetSet->getColorTexture(0));
 			sharedParams->endParameters(renderContext);
 
 			WorldRenderPassForward reflectionsPass(
@@ -1175,6 +1174,9 @@ void WorldRendererForward::setupVisualPass(
 	if (ambientOcclusionTargetSetId != 0)
 		rp->addInput(ambientOcclusionTargetSetId);
 
+	if (reflectionsTargetSetId != 0)
+		rp->addInput(reflectionsTargetSetId);
+
 	if (shadowsEnable)
 	{
 		rp->addInput(shadowMapCascadeTargetSetId);
@@ -1242,6 +1244,9 @@ void WorldRendererForward::setupVisualPass(
 			else
 				sharedParams->setTextureParameter(s_handleOcclusionMap, m_whiteTexture);
 
+			if (reflectionsTargetSet != nullptr)
+				sharedParams->setTextureParameter(s_handleReflectionMap, reflectionsTargetSet->getColorTexture(0));
+
 			sharedParams->endParameters(wc.getRenderContext());
 
 			WorldRenderPassForward defaultPass(
@@ -1251,7 +1256,8 @@ void WorldRendererForward::setupVisualPass(
 				IWorldRenderPass::PfLast,
 				(bool)(m_irradianceGrid != nullptr),
 				m_settings.fog,
-				(bool)(shadowCascadeTargetSet != nullptr || shadowAtlasTargetSet != nullptr)
+				(bool)(shadowCascadeTargetSet != nullptr || shadowAtlasTargetSet != nullptr),
+				(bool)(reflectionsTargetSet != nullptr)
 			);
 
 			T_ASSERT(!wc.getRenderContext()->havePendingDraws());

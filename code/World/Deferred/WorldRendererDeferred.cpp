@@ -1343,7 +1343,6 @@ render::handle_t WorldRendererDeferred::setupReflectionsPass(
 			sharedParams->setTextureParameter(s_handleDepthMap, gbufferTargetSet->getColorTexture(0));
 			sharedParams->setTextureParameter(s_handleNormalMap, gbufferTargetSet->getColorTexture(1));
 			sharedParams->setTextureParameter(s_handleMiscMap, gbufferTargetSet->getColorTexture(2));
-			sharedParams->setTextureParameter(s_handleColorMap, gbufferTargetSet->getColorTexture(3));
 			sharedParams->endParameters(renderContext);
 
 			WorldRenderPassDeferred reflectionsPass(
