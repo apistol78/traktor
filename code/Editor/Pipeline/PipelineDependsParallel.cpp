@@ -65,6 +65,7 @@ PipelineDependsParallel::PipelineDependsParallel(
 ,	m_dependencySet(dependencySet)
 ,	m_pipelineDb(pipelineDb)
 ,	m_instanceCache(instanceCache)
+,	m_result(true)
 {
 }
 
@@ -76,7 +77,7 @@ PipelineDependsParallel::~PipelineDependsParallel()
 
 void PipelineDependsParallel::addDependency(const ISerializable* sourceAsset)
 {
-	if (!sourceAsset)
+	if (!sourceAsset || !m_result)
 		return;
 
 	if (ThreadManager::getInstance().getCurrentThread()->stopped())
@@ -99,12 +100,15 @@ void PipelineDependsParallel::addDependency(const ISerializable* sourceAsset)
 			parentDependency->pipelineHash += pipelineHash;
 	}
 	else
+	{
 		log::error << L"Unable to add dependency to source asset (" << type_name(sourceAsset) << L"); no pipeline found." << Endl;
+		m_result = false;
+	}
 }
 
 void PipelineDependsParallel::addDependency(const ISerializable* sourceAsset, const std::wstring& outputPath, const Guid& outputGuid, uint32_t flags)
 {
-	if (!sourceAsset)
+	if (!sourceAsset || !m_result)
 		return;
 
 	if (ThreadManager::getInstance().getCurrentThread()->stopped())
@@ -118,11 +122,13 @@ void PipelineDependsParallel::addDependency(const ISerializable* sourceAsset, co
 		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_jobsLock);
 		m_jobs.push_back(job);
 	}
+	else
+		m_result = false;
 }
 
 void PipelineDependsParallel::addDependency(db::Instance* sourceAssetInstance, uint32_t flags)
 {
-	if (!sourceAssetInstance)
+	if (!sourceAssetInstance || !m_result)
 		return;
 
 	if (ThreadManager::getInstance().getCurrentThread()->stopped())
@@ -136,11 +142,13 @@ void PipelineDependsParallel::addDependency(db::Instance* sourceAssetInstance, u
 		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_jobsLock);
 		m_jobs.push_back(job);
 	}
+	else
+		m_result = false;
 }
 
 void PipelineDependsParallel::addDependency(const Guid& sourceAssetGuid, uint32_t flags)
 {
-	if (sourceAssetGuid.isNull() || !sourceAssetGuid.isValid())
+	if (sourceAssetGuid.isNull() || !sourceAssetGuid.isValid() || !m_result)
 		return;
 
 	if (ThreadManager::getInstance().getCurrentThread()->stopped())
@@ -154,6 +162,8 @@ void PipelineDependsParallel::addDependency(const Guid& sourceAssetGuid, uint32_
 		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_jobsLock);
 		m_jobs.push_back(job);
 	}
+	else
+		m_result = false;
 }
 
 void PipelineDependsParallel::addDependency(
@@ -178,7 +188,10 @@ void PipelineDependsParallel::addDependency(
 				parentDependency->files.push_back(externalFile);
 			}
 			else
+			{
 				log::error << L"Unable to add dependency to \"" << filePath.getPathName() << L"\"; no such file." << Endl;
+				m_result = false;
+			}
 		}
 	}
 }
@@ -197,6 +210,7 @@ void PipelineDependsParallel::addDependency(
 		if (!m_pipelineFactory->findPipelineType(sourceAssetType, pipelineType, pipelineHash))
 		{
 			log::error << L"Unable to add dependency to source asset (" << sourceAssetType.getName() << L"); no pipeline found." << Endl;
+			m_result = false;
 			return;
 		}
 
@@ -220,7 +234,7 @@ bool PipelineDependsParallel::waitUntilFinished()
 		if (job)
 			job->wait();
 	}
-	return true;
+	return m_result;
 }
 
 Ref< db::Database > PipelineDependsParallel::getSourceDatabase() const
@@ -308,8 +322,9 @@ void PipelineDependsParallel::addUniqueDependency(
 	// Find appropriate pipeline.
 	if (!m_pipelineFactory->findPipelineType(type_of(sourceAsset), pipelineType, pipelineHash))
 	{
-		log::error << L"Unable to add dependency to \"" << outputPath << L"\"; no pipeline found" << Endl;
+		log::error << L"Unable to add dependency to \"" << outputPath << L"\"; no pipeline found." << Endl;
 		currentDependency->flags |= PdfFailed;
+		m_result = false;
 		return;
 	}
 
@@ -345,7 +360,10 @@ void PipelineDependsParallel::addUniqueDependency(
 	if (result)
 		updateDependencyHashes(currentDependency, sourceInstance);
 	else
+	{
 		currentDependency->flags |= PdfFailed;
+		m_result = false;
+	}
 }
 
 void PipelineDependsParallel::updateDependencyHashes(
@@ -411,7 +429,10 @@ void PipelineDependsParallel::updateDependencyHashes(
 				}
 			}
 			else
+			{
 				log::error << L"Unable to open data stream \"" << dataName << L"\"; hash inconsistent." << Endl;
+				m_result = false;
+			}
 		}
 	}
 
@@ -464,7 +485,10 @@ void PipelineDependsParallel::updateDependencyHashes(
 			}
 		}
 		else
+		{
 			log::error << L"Unable to open file stream \"" << dependencyFile.filePath.getPathName() << L"\"; hash inconsistent." << Endl;
+			m_result = false;
+		}
 	}
 }
 
@@ -502,7 +526,8 @@ void PipelineDependsParallel::jobAddDependency(Ref< PipelineDependency > parentD
 	Ref< const ISerializable > sourceAsset = m_instanceCache->getObjectReadOnly(sourceAssetInstance->getGuid());
 	if (!sourceAsset)
 	{
-		log::error << L"Unable to add dependency to \"" << sourceAssetInstance->getName() << L"\"; failed to read instance object" << Endl;
+		log::error << L"Unable to add dependency to \"" << sourceAssetInstance->getName() << L"\"; failed to read instance object." << Endl;
+		m_result = false;
 		return;
 	}
 
@@ -530,9 +555,10 @@ void PipelineDependsParallel::jobAddDependency(Ref< PipelineDependency > parentD
 	if (!sourceAssetInstance)
 	{
 		if (parentDependency)
-			log::error << L"Unable to add dependency to \"" << sourceAssetGuid.format() << L"\"; no such instance (parent \"" << parentDependency->outputPath << L"\")" << Endl;
+			log::error << L"Unable to add dependency to \"" << sourceAssetGuid.format() << L"\"; no such instance (parent \"" << parentDependency->outputPath << L"\")." << Endl;
 		else
-			log::error << L"Unable to add dependency to \"" << sourceAssetGuid.format() << L"\"; no such instance" << Endl;
+			log::error << L"Unable to add dependency to \"" << sourceAssetGuid.format() << L"\"; no such instance." << Endl;
+		m_result = false;
 		return;
 	}
 
@@ -540,7 +566,8 @@ void PipelineDependsParallel::jobAddDependency(Ref< PipelineDependency > parentD
 	Ref< const ISerializable > sourceAsset = m_instanceCache->getObjectReadOnly(sourceAssetGuid);
 	if (!sourceAsset)
 	{
-		log::error << L"Unable to add dependency to \"" << sourceAssetInstance->getName() << L"\"; failed to checkout instance" << Endl;
+		log::error << L"Unable to add dependency to \"" << sourceAssetInstance->getName() << L"\"; failed to checkout instance." << Endl;
+		m_result = false;
 		return;
 	}
 

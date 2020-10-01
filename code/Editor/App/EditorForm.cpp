@@ -845,10 +845,6 @@ bool EditorForm::create(const CommandLine& cmdLine)
 			openWorkspace(workspacePath);
 	}
 
-	// Start thread and timer.
-	m_threadAssetMonitor = ThreadManager::getInstance().create(makeFunctor(this, &EditorForm::threadAssetMonitor), L"Asset monitor");
-	m_threadAssetMonitor->start();
-
 	startTimer(250);
 
 	// Show form.
@@ -860,14 +856,6 @@ bool EditorForm::create(const CommandLine& cmdLine)
 
 void EditorForm::destroy()
 {
-	// Stop asset monitor thread.
-	if (m_threadAssetMonitor)
-	{
-		while (!m_threadAssetMonitor->stop());
-		ThreadManager::getInstance().destroy(m_threadAssetMonitor);
-		m_threadAssetMonitor = nullptr;
-	}
-
 	closeWorkspace();
 
 	// Destroy all plugins.
@@ -1540,12 +1528,24 @@ bool EditorForm::openWorkspace(const Path& workspacePath)
 	updateMRU();
 	updateTitle();
 
+	// Create asset monitor thread.
+	m_threadAssetMonitor = ThreadManager::getInstance().create(makeFunctor(this, &EditorForm::threadAssetMonitor), L"Asset monitor");
+	m_threadAssetMonitor->start();
+
 	log::info << L"Workspace opened successfully." << Endl;
 	return true;
 }
 
 void EditorForm::closeWorkspace()
 {
+	// Stop asset monitor thread.
+	if (m_threadAssetMonitor)
+	{
+		while (!m_threadAssetMonitor->stop());
+		ThreadManager::getInstance().destroy(m_threadAssetMonitor);
+		m_threadAssetMonitor = nullptr;
+	}
+
 	buildCancel();
 
 	// Notify plugins about workspace closing.
@@ -1821,62 +1821,68 @@ void EditorForm::buildAssetsThread(std::vector< Guid > assetGuids, bool rebuild)
 
 	log::info << DecreaseIndent;
 
-	pipelineDepends->waitUntilFinished();
-
-	if (verbose)
+	bool result = pipelineDepends->waitUntilFinished();
+	if (result)
 	{
-		double elapsedDependencies = timerBuild.getElapsedTime();
-		log::info << L"Collected " << dependencySet.size() << L" dependencies from " << assetGuids.size() << L" root(s) in " << elapsedDependencies << L" second(s)." << Endl;
+		if (verbose)
+		{
+			double elapsedDependencies = timerBuild.getElapsedTime();
+			log::info << L"Collected " << dependencySet.size() << L" dependencies from " << assetGuids.size() << L" root(s) in " << elapsedDependencies << L" second(s)." << Endl;
+		}
+
+		// Build output.
+		Ref< IPipelineBuilder > pipelineBuilder;
+
+		if (
+			!m_mergedSettings->getProperty< bool >(L"Pipeline.BuildDistributed", false) ||
+			m_agentsManager->getAgentCount() <= 0
+		)
+			pipelineBuilder = new PipelineBuilder(
+				&pipelineFactory,
+				m_sourceDatabase,
+				m_outputDatabase,
+				pipelineCache,
+				m_pipelineDb,
+				&instanceCache,
+				this,
+				m_mergedSettings->getProperty< bool >(L"Pipeline.BuildThreads", true),
+				verbose
+			);
+		else
+			pipelineBuilder = new PipelineBuilderDistributed(
+				m_agentsManager,
+				&pipelineFactory,
+				m_pipelineDb,
+				this
+			);
+
+		if (rebuild)
+			log::info << L"Rebuilding " << dependencySet.size() << L" asset(s)..." << Endl;
+		else
+			log::info << L"Building " << dependencySet.size() << L" asset(s)..." << Endl;
+
+		log::info << IncreaseIndent;
+
+		pipelineBuilder->build(&dependencySet, rebuild);
+
+		double elapsedTotal = timerBuild.getElapsedTime();
+
+		uint32_t seconds = uint32_t(elapsedTotal + 0.5);
+		uint32_t minutes = seconds / 60; seconds %= 60;
+		uint32_t hours = minutes / 60; minutes %= 60;
+
+		log::info << DecreaseIndent;
+		log::info << L"Finished (" << str(L"%d:%02d:%02d", hours, minutes, seconds) << L")" << Endl;
 	}
-
-	// Build output.
-	Ref< IPipelineBuilder > pipelineBuilder;
-
-	if (
-		!m_mergedSettings->getProperty< bool >(L"Pipeline.BuildDistributed", false) ||
-		m_agentsManager->getAgentCount() <= 0
-	)
-		pipelineBuilder = new PipelineBuilder(
-			&pipelineFactory,
-			m_sourceDatabase,
-			m_outputDatabase,
-			pipelineCache,
-			m_pipelineDb,
-			&instanceCache,
-			this,
-			m_mergedSettings->getProperty< bool >(L"Pipeline.BuildThreads", true),
-			verbose
-		);
 	else
-		pipelineBuilder = new PipelineBuilderDistributed(
-			m_agentsManager,
-			&pipelineFactory,
-			m_pipelineDb,
-			this
-		);
-
-	if (rebuild)
-		log::info << L"Rebuilding " << dependencySet.size() << L" asset(s)..." << Endl;
-	else
-		log::info << L"Building " << dependencySet.size() << L" asset(s)..." << Endl;
-
-	log::info << IncreaseIndent;
-
-	pipelineBuilder->build(&dependencySet, rebuild);
+	{
+		log::error << L"Collect dependencies failed; unable to continue." << Endl;
+	}
 
 	m_pipelineDb->endTransaction();
 
 	if (pipelineCache)
 		pipelineCache->destroy();
-
-	double elapsedTotal = timerBuild.getElapsedTime();
-
-	uint32_t seconds = uint32_t(elapsedTotal + 0.5);
-	uint32_t minutes = seconds / 60; seconds %= 60;
-	uint32_t hours = minutes / 60; minutes %= 60;
-
-	log::info << DecreaseIndent;
-	log::info << L"Finished (" << str(L"%d:%02d:%02d", hours, minutes, seconds) << L")" << Endl;
 }
 
 void EditorForm::buildAssets(const std::vector< Guid >& assetGuids, bool rebuild)

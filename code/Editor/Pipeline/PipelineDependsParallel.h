@@ -99,6 +99,7 @@ private:
 	ReaderWriterLock m_readCacheLock;
 	Semaphore m_jobsLock;
 	Semaphore m_dependencySetLock;
+	mutable bool m_result;
 
 	Ref< PipelineDependency > findOrCreateDependency(
 		const Guid& guid,

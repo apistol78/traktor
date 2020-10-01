@@ -40,12 +40,13 @@ PipelineDependsIncremental::PipelineDependsIncremental(
 ,	m_instanceCache(instanceCache)
 ,	m_maxRecursionDepth(recursionDepth)
 ,	m_currentRecursionDepth(0)
+,	m_result(true)
 {
 }
 
 void PipelineDependsIncremental::addDependency(const ISerializable* sourceAsset)
 {
-	if (!sourceAsset)
+	if (!sourceAsset || !m_result)
 		return;
 
 	// Don't add dependency if thread is about to be stopped.
@@ -57,14 +58,15 @@ void PipelineDependsIncremental::addDependency(const ISerializable* sourceAsset)
 
 	if (!m_pipelineFactory->findPipelineType(type_of(sourceAsset), pipelineType, pipelineHash))
 	{
-		log::error << L"Unable to add dependency to source asset (" << type_name(sourceAsset) << L"); no pipeline found" << Endl;
+		log::error << L"Unable to add dependency to source asset (" << type_name(sourceAsset) << L"); no pipeline found." << Endl;
+		m_result = false;
 		return;
 	}
 
 	Ref< IPipeline > pipeline = m_pipelineFactory->findPipeline(*pipelineType);
 	T_ASSERT(pipeline);
 
-	pipeline->buildDependencies(this, 0, sourceAsset, L"", Guid());
+	pipeline->buildDependencies(this, nullptr, sourceAsset, L"", Guid());
 
 	if (m_currentDependency)
 		m_currentDependency->pipelineHash += pipelineHash;
@@ -72,7 +74,7 @@ void PipelineDependsIncremental::addDependency(const ISerializable* sourceAsset)
 
 void PipelineDependsIncremental::addDependency(const ISerializable* sourceAsset, const std::wstring& outputPath, const Guid& outputGuid, uint32_t flags)
 {
-	if (!sourceAsset)
+	if (!sourceAsset || !m_result)
 		return;
 
 	// Don't add dependency if thread is about to be stopped.
@@ -94,7 +96,7 @@ void PipelineDependsIncremental::addDependency(const ISerializable* sourceAsset,
 	}
 
 	addUniqueDependency(
-		0,
+		nullptr,
 		sourceAsset,
 		outputPath,
 		outputGuid,
@@ -104,7 +106,7 @@ void PipelineDependsIncremental::addDependency(const ISerializable* sourceAsset,
 
 void PipelineDependsIncremental::addDependency(db::Instance* sourceAssetInstance, uint32_t flags)
 {
-	if (!sourceAssetInstance)
+	if (!sourceAssetInstance || !m_result)
 		return;
 
 	// Don't add dependency if thread is about to be stopped.
@@ -129,7 +131,8 @@ void PipelineDependsIncremental::addDependency(db::Instance* sourceAssetInstance
 	Ref< const ISerializable > sourceAsset = m_instanceCache->getObjectReadOnly(sourceAssetInstance->getGuid());
 	if (!sourceAsset)
 	{
-		log::error << L"Unable to add dependency to \"" << sourceAssetInstance->getName() << L"\"; failed to checkout instance" << Endl;
+		log::error << L"Unable to add dependency to \"" << sourceAssetInstance->getName() << L"\"; failed to checkout instance." << Endl;
+		m_result = false;
 		return;
 	}
 
@@ -144,7 +147,7 @@ void PipelineDependsIncremental::addDependency(db::Instance* sourceAssetInstance
 
 void PipelineDependsIncremental::addDependency(const Guid& sourceAssetGuid, uint32_t flags)
 {
-	if (sourceAssetGuid.isNull() || !sourceAssetGuid.isValid())
+	if (sourceAssetGuid.isNull() || !sourceAssetGuid.isValid() || !m_result)
 		return;
 
 	// Don't add dependency if thread is about to be stopped.
@@ -170,9 +173,10 @@ void PipelineDependsIncremental::addDependency(const Guid& sourceAssetGuid, uint
 	if (!sourceAssetInstance)
 	{
 		if (m_currentDependency)
-			log::error << L"Unable to add dependency to \"" << sourceAssetGuid.format() << L"\"; no such instance (referenced by \"" << m_currentDependency->sourceInstanceGuid.format() << L"\")" << Endl;
+			log::error << L"Unable to add dependency to \"" << sourceAssetGuid.format() << L"\"; no such instance (referenced by \"" << m_currentDependency->sourceInstanceGuid.format() << L"\")." << Endl;
 		else
-			log::error << L"Unable to add dependency to \"" << sourceAssetGuid.format() << L"\"; no such instance" << Endl;
+			log::error << L"Unable to add dependency to \"" << sourceAssetGuid.format() << L"\"; no such instance." << Endl;
+		m_result = false;
 		return;
 	}
 
@@ -181,9 +185,10 @@ void PipelineDependsIncremental::addDependency(const Guid& sourceAssetGuid, uint
 	if (!sourceAsset)
 	{
 		if (m_currentDependency)
-			log::error << L"Unable to add dependency to \"" << sourceAssetGuid.format() << L"\"; failed to checkout instance (referenced by \"" << m_currentDependency->sourceInstanceGuid.format() << L"\")" << Endl;
+			log::error << L"Unable to add dependency to \"" << sourceAssetGuid.format() << L"\"; failed to checkout instance (referenced by \"" << m_currentDependency->sourceInstanceGuid.format() << L"\")." << Endl;
 		else
-			log::error << L"Unable to add dependency to \"" << sourceAssetGuid.format() << L"\"; failed to checkout instance" << Endl;
+			log::error << L"Unable to add dependency to \"" << sourceAssetGuid.format() << L"\"; failed to checkout instance." << Endl;
+		m_result = false;
 		return;
 	}
 
@@ -201,6 +206,9 @@ void PipelineDependsIncremental::addDependency(
 	const std::wstring& fileName
 )
 {
+	if (!m_result)
+		return;
+
 	Path filePath = FileSystem::getInstance().getAbsolutePath(basePath, fileName);
 	if (m_currentDependency)
 	{
@@ -213,7 +221,10 @@ void PipelineDependsIncremental::addDependency(
 			m_currentDependency->files.push_back(externalFile);
 		}
 		else
-			log::error << L"Unable to add dependency to \"" << filePath.getPathName() << L"\"; no such file" << Endl;
+		{
+			log::error << L"Unable to add dependency to \"" << filePath.getPathName() << L"\"; no such file." << Endl;
+			m_result = false;
+		}
 	}
 }
 
@@ -221,13 +232,17 @@ void PipelineDependsIncremental::addDependency(
 	const TypeInfo& sourceAssetType
 )
 {
+	if (!m_result)
+		return;
+
 	// Find pipeline which consume asset type.
 	const TypeInfo* pipelineType;
 	uint32_t pipelineHash;
 
 	if (!m_pipelineFactory->findPipelineType(sourceAssetType, pipelineType, pipelineHash))
 	{
-		log::error << L"Unable to add dependency to source asset (" << sourceAssetType.getName() << L"); no pipeline found" << Endl;
+		log::error << L"Unable to add dependency to source asset (" << sourceAssetType.getName() << L"); no pipeline found." << Endl;
+		m_result = false;
 		return;
 	}
 
@@ -239,20 +254,23 @@ void PipelineDependsIncremental::addDependency(
 bool PipelineDependsIncremental::waitUntilFinished()
 {
 #if defined(_DEBUG)
-	log::debug << L"Pipeline performance" << Endl;
-	log::debug << IncreaseIndent;
-
-	double totalTime = 0.0;
-	for (std::map< const TypeInfo*, std::pair< int32_t, double > >::const_iterator i = m_buildDepTimes.begin(); i != m_buildDepTimes.end(); ++i)
+	if (m_result)
 	{
-		log::debug << i->first->getName() << L" : " << int32_t(i->second.second * 1000.0) << L" ms in " << i->second.first << L" count(s)" << Endl;
-		totalTime += i->second.second;
-	}
+		log::debug << L"Pipeline performance" << Endl;
+		log::debug << IncreaseIndent;
 
-	log::debug << L"Total : " << int32_t(totalTime * 1000.0) << L" ms" << Endl;
-	log::debug << DecreaseIndent;
+		double totalTime = 0.0;
+		for (std::map< const TypeInfo*, std::pair< int32_t, double > >::const_iterator i = m_buildDepTimes.begin(); i != m_buildDepTimes.end(); ++i)
+		{
+			log::debug << i->first->getName() << L" : " << int32_t(i->second.second * 1000.0) << L" ms in " << i->second.first << L" count(s)" << Endl;
+			totalTime += i->second.second;
+		}
+
+		log::debug << L"Total : " << int32_t(totalTime * 1000.0) << L" ms" << Endl;
+		log::debug << DecreaseIndent;
+	}
 #endif
-	return true;
+	return m_result;
 }
 
 Ref< db::Database > PipelineDependsIncremental::getSourceDatabase() const
@@ -265,7 +283,7 @@ Ref< const ISerializable > PipelineDependsIncremental::getObjectReadOnly(const G
 	if (instanceGuid.isNotNull())
 		return m_instanceCache->getObjectReadOnly(instanceGuid);
 	else
-		return 0;
+		return nullptr;
 }
 
 Ref< File > PipelineDependsIncremental::getFile(const Path& filePath)
@@ -305,7 +323,8 @@ void PipelineDependsIncremental::addUniqueDependency(
 	// Find appropriate pipeline.
 	if (!m_pipelineFactory->findPipelineType(type_of(sourceAsset), pipelineType, pipelineHash))
 	{
-		log::error << L"Unable to add dependency to \"" << outputPath << L"\"; no pipeline found" << Endl;
+		log::error << L"Unable to add dependency to \"" << outputPath << L"\"; no pipeline found." << Endl;
+		m_result = false;
 		return;
 	}
 
@@ -365,7 +384,10 @@ void PipelineDependsIncremental::addUniqueDependency(
 	if (result)
 		updateDependencyHashes(dependency, sourceInstance);
 	else
+	{
 		dependency->flags |= PdfFailed;
+		m_result = false;
+	}
 }
 
 void PipelineDependsIncremental::updateDependencyHashes(
