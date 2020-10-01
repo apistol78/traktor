@@ -92,6 +92,7 @@ private:
 	uint32_t m_maxRecursionDepth;
 	uint32_t m_currentRecursionDepth;
 	Ref< PipelineDependency > m_currentDependency;
+	bool m_result;
 
 #if defined(_DEBUG)
 	Timer m_timer;
