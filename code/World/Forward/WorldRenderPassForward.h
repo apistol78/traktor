@@ -34,7 +34,8 @@ public:
 		uint32_t passFlags,
 		bool irradianceEnable,
 		bool fogEnable,
-		bool shadowEnable
+		bool shadowEnable,
+		bool reflectionsEnable
 	);
 
 	WorldRenderPassForward(
@@ -62,6 +63,7 @@ private:
 	bool m_irradianceEnable = false;
 	bool m_fogEnable = false;
 	bool m_shadowEnable = false;
+	bool m_reflectionsEnable = false;
 
 	void setWorldProgramParameters(render::ProgramParameters* programParams, const Transform& lastWorld, const Transform& world) const;
 };
