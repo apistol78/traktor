@@ -51,9 +51,9 @@ void JobQueue::destroy()
 	m_workerThreads.clear();
 }
 
-Ref< Job > JobQueue::add(Functor* functor)
+Job* JobQueue::add(Functor* functor)
 {
-	T_ANONYMOUS_VAR(Acquire< Mutex >)(m_jobQueueLock);
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_jobQueueLock);
 	Ref< Job > job = new Job(functor);
 	m_jobQueue.push_back(job);
 	m_jobQueuedEvent.pulse();
@@ -68,7 +68,7 @@ void JobQueue::fork(const RefArray< Functor >& functors)
 	// Create jobs for given functors.
 	if (functors.size() > 1)
 	{
-		T_ANONYMOUS_VAR(Acquire< Mutex >)(m_jobQueueLock);
+		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_jobQueueLock);
 		jobs.resize(functors.size());
 		for (uint32_t i = 1; i < functors.size(); ++i)
 		{
@@ -121,7 +121,7 @@ void JobQueue::threadWorker()
 
 		// Pop job from queue.
 		{
-			T_ANONYMOUS_VAR(Acquire< Mutex >)(m_jobQueueLock);
+			T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_jobQueueLock);
 			T_FATAL_ASSERT(!m_jobQueue.empty());
 			job = m_jobQueue.front();
 			m_jobQueue.pop_front();

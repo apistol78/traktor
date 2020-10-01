@@ -635,6 +635,7 @@
 								<precompiledHeader/>
 								<includePaths>
 									<item>$(TRAKTOR_HOME)/code</item>
+									<item>$(TRAKTOR_HOME)/3rdp/stb_rect_pack</item>
 								</includePaths>
 								<definitions>
 									<item>T_WORLD_EXPORT</item>
@@ -664,6 +665,7 @@
 								<precompiledHeader/>
 								<includePaths>
 									<item>$(TRAKTOR_HOME)/code</item>
+									<item>$(TRAKTOR_HOME)/3rdp/stb_rect_pack</item>
 								</includePaths>
 								<definitions>
 									<item>T_WORLD_EXPORT</item>
@@ -693,6 +695,7 @@
 								<precompiledHeader/>
 								<includePaths>
 									<item>$(TRAKTOR_HOME)/code</item>
+									<item>$(TRAKTOR_HOME)/3rdp/stb_rect_pack</item>
 								</includePaths>
 								<definitions>
 									<item>T_STATIC</item>
@@ -722,6 +725,7 @@
 								<precompiledHeader/>
 								<includePaths>
 									<item>$(TRAKTOR_HOME)/code</item>
+									<item>$(TRAKTOR_HOME)/3rdp/stb_rect_pack</item>
 								</includePaths>
 								<definitions>
 									<item>T_STATIC</item>

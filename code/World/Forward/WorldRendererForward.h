@@ -29,6 +29,7 @@ class StructBuffer;
 	{
 
 class IrradianceGrid;
+class Packer;
 class WorldEntityRenderers;
 struct LightShaderData;
 struct TileShaderData;
@@ -78,6 +79,7 @@ private:
 		void* lightSBufferMemory;
 		Ref< render::StructBuffer > tileSBuffer;
 		void* tileSBufferMemory;
+		Ref< Packer > shadowAtlasPacker;
 	};
 
 	WorldRenderSettings m_settings;
@@ -107,6 +109,7 @@ private:
 	resource::Proxy< IrradianceGrid > m_irradianceGrid;
 
 	Ref< WorldEntityRenderers > m_entityRenderers;
+
 	AlignedVector< Frame > m_frames;
 	AlignedVector< Light > m_lights;
 
@@ -160,7 +163,6 @@ private:
 		render::handle_t outputTargetSetId,
 		int32_t frame,
 		LightShaderData* lightShaderData,
-		render::handle_t& outShadowMapCascadeTargetSetId,
 		render::handle_t& outShadowMapAtlasTargetSetId
 	) const;
 
@@ -172,7 +174,6 @@ private:
 		render::handle_t gbufferTargetSetId,
 		render::handle_t ambientOcclusionTargetSetId,
 		render::handle_t reflectionsTargetSetId,
-		render::handle_t shadowMapCascadeTargetSetId,
 		render::handle_t shadowMapAtlasTargetSetId,
 		int32_t frame
 	) const;

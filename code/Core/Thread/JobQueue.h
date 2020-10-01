@@ -4,7 +4,7 @@
 #include "Core/RefArray.h"
 #include "Core/Containers/AlignedVector.h"
 #include "Core/Thread/Event.h"
-#include "Core/Thread/Mutex.h"
+#include "Core/Thread/Semaphore.h"
 #include "Core/Thread/Signal.h"
 #include "Core/Thread/Thread.h"
 
@@ -50,7 +50,7 @@ public:
 	 * a worker thread is idle the scheduler assigns
 	 * a new job to that thread from this queue.
 	 */
-	Ref< Job > add(Functor* functor);
+	Job* add(Functor* functor);
 
 	/*! Enqueue jobs and wait for all to finish.
 	 *
@@ -73,7 +73,7 @@ public:
 private:
 	AlignedVector< Thread* > m_workerThreads;
 	RefArray< Job > m_jobQueue;
-	Mutex m_jobQueueLock;
+	Semaphore m_jobQueueLock;
 	Event m_jobQueuedEvent;
 	Event m_jobFinishedEvent;
 	int32_t m_pending;

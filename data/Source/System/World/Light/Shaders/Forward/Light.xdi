@@ -627,7 +627,7 @@ Point
 				<first>339</first>
 				<second>872</second>
 			</position>
-			<parameterName>World_ShadowMapCascade</parameterName>
+			<parameterName>World_ShadowMapAtlas</parameterName>
 			<type>PtTexture2D</type>
 			<frequency>UfOnce</frequency>
 		</item>
@@ -1317,8 +1317,8 @@ Fall off
 			<id>{43DBC7D4-B2F3-534E-B7F0-CDE501066DA7}</id>
 			<comment/>
 			<position>
-				<first>1883</first>
-				<second>3206</second>
+				<first>1935</first>
+				<second>3242</second>
 			</position>
 			<parameterName>World_ShadowMapAtlas</parameterName>
 			<type>PtTexture2D</type>
@@ -1328,7 +1328,7 @@ Fall off
 			<id>{43B7D2FF-2C58-F04B-A7F3-D41366051F35}</id>
 			<comment/>
 			<position>
-				<first>1969</first>
+				<first>1983</first>
 				<second>3332</second>
 			</position>
 			<name>L_ViewToLight</name>
@@ -1356,8 +1356,8 @@ Fall off
 			<id>{95B6E734-45A0-4949-8833-99A0AAC5B733}</id>
 			<comment/>
 			<position>
-				<first>1969</first>
-				<second>3290</second>
+				<first>1983</first>
+				<second>3286</second>
 			</position>
 			<name>L_ViewPosition</name>
 			<global>false</global>
@@ -1366,8 +1366,8 @@ Fall off
 			<id>{46E37B12-80EE-964F-8A39-9FC295657672}</id>
 			<comment/>
 			<position>
-				<first>1953</first>
-				<second>3120</second>
+				<first>1967</first>
+				<second>3152</second>
 			</position>
 			<name>L_AtlasTransform</name>
 			<global>false</global>
@@ -1419,8 +1419,8 @@ Fall off
 			<id>{4C235940-D428-B341-8E8A-4E1D0A6BACFD}</id>
 			<comment/>
 			<position>
-				<first>1943</first>
-				<second>3162</second>
+				<first>1953</first>
+				<second>3198</second>
 			</position>
 			<value>0.0005</value>
 		</item>
