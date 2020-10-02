@@ -733,33 +733,6 @@
 											</items>
 										</item>
 										<item type="Filter">
-											<name>Image</name>
-											<items>
-												<item type="Filter">
-													<name>Steps</name>
-													<items>
-														<item type="File">
-															<fileName>Image/Steps/*.*</fileName>
-															<items/>
-														</item>
-													</items>
-												</item>
-												<item type="Filter">
-													<name>Defines</name>
-													<items>
-														<item type="File">
-															<fileName>Image/Defines/*.*</fileName>
-															<items/>
-														</item>
-													</items>
-												</item>
-												<item type="File">
-													<fileName>Image/*.*</fileName>
-													<items/>
-												</item>
-											</items>
-										</item>
-										<item type="Filter">
 											<name>Image2</name>
 											<items>
 												<item type="File">
@@ -3142,6 +3115,7 @@
 						<item>T_STATIC</item>
 						<item>_DEBUG</item>
 						<item>T_OPENGL_ES</item>
+						<item>GLES_SILENCE_DEPRECATION</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries>
@@ -3176,6 +3150,7 @@
 						<item>T_STATIC</item>
 						<item>NDEBUG</item>
 						<item>T_OPENGL_ES</item>
+						<item>GLES_SILENCE_DEPRECATION</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries>

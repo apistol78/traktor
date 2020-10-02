@@ -50,9 +50,11 @@ StructBufferOpenGLES::StructBufferOpenGLES(ContextOpenGLES* context, const Align
 ,	m_lock(nullptr)
 {
 	T_OGL_SAFE(glGenBuffers(1, &m_buffer));
+#if !defined(__IOS__)
 	T_OGL_SAFE(glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_buffer));
 	T_OGL_SAFE(glBufferData(GL_SHADER_STORAGE_BUFFER, bufferSize, nullptr, GL_DYNAMIC_COPY));
 	T_OGL_SAFE(glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0));
+#endif
 }
 
 StructBufferOpenGLES::~StructBufferOpenGLES()
@@ -75,8 +77,10 @@ void* StructBufferOpenGLES::lock()
 	T_ASSERT_M(!m_lock, L"Struct buffer already locked");
 	T_ANONYMOUS_VAR(ContextOpenGLES::Scope)(m_context);
 
+#if !defined(__IOS__)
 	T_OGL_SAFE(glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_buffer));
 	m_lock = (uint8_t*)glMapBufferRange(GL_SHADER_STORAGE_BUFFER, 0, getBufferSize(), GL_WRITE_ONLY);
+#endif
 
 	return m_lock;
 }
@@ -91,8 +95,10 @@ void StructBufferOpenGLES::unlock()
 	T_ASSERT_M(m_lock, L"Struct buffer not locked");
 	T_ANONYMOUS_VAR(ContextOpenGLES::Scope)(m_context);
 
+#if !defined(__IOS__)
 	T_OGL_SAFE(glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_buffer));
 	T_OGL_SAFE(glUnmapBuffer(GL_SHADER_STORAGE_BUFFER));
+#endif
 
 	m_lock = nullptr;
 }

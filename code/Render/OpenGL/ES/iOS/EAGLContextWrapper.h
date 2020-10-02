@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Render/OpenGL/ES2/Platform.h"
+#include "Render/OpenGL/ES/Platform.h"
 
 #ifdef __OBJC__
 typedef CAEAGLLayer CAEAGLLayer_t;

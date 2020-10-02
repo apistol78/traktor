@@ -2,7 +2,7 @@
 #import <QuartzCore/QuartzCore.h>
 
 #include "Core/Log/Log.h"
-#include "Render/OpenGL/ES2/iOS/EAGLContextWrapper.h"
+#include "Render/OpenGL/ES/iOS/EAGLContextWrapper.h"
 
 namespace traktor
 {
@@ -75,11 +75,12 @@ void EAGLContextWrapper::swapBuffers()
 {
 	glBindRenderbuffer(GL_RENDERBUFFER, m_renderBuffer);
 	[m_context presentRenderbuffer:GL_RENDERBUFFER];
-
+/*
 	// Discard depth and color attachments after swap; must be re-drawn
 	// next frame.
 	const GLenum discards[] = { GL_COLOR_ATTACHMENT0, GL_DEPTH_ATTACHMENT };
-	glDiscardFramebufferEXT(GL_FRAMEBUFFER, sizeof_array(discards), discards);
+	glDiscardFramebuffer(GL_FRAMEBUFFER, sizeof_array(discards), discards);
+*/
 }
 
 void EAGLContextWrapper::resize(GLint width, GLint height)
@@ -115,7 +116,7 @@ void EAGLContextWrapper::createFrameBuffer()
 	// Create depth buffer.
 	glGenRenderbuffers(1, &m_depthBuffer);
 	glBindRenderbuffer(GL_RENDERBUFFER, m_depthBuffer);
-	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8_OES, m_width, m_height);
+	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, m_width, m_height);
 	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, m_depthBuffer);
 
 	if(glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
