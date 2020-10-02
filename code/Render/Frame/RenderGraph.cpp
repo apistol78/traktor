@@ -232,7 +232,7 @@ bool RenderGraph::build(RenderContext* renderContext, int32_t width, int32_t hei
 		}
 	}
 
-#if !defined(__ANDROID__)
+#if !defined(__ANDROID__) && !defined(__IOS__)
 	double referenceOffset = Profiler::getInstance().getTime();
 
 	int32_t* queryHandles = nullptr;
@@ -293,7 +293,7 @@ bool RenderGraph::build(RenderContext* renderContext, int32_t width, int32_t hei
 			}
 		}
 
-#if !defined(__ANDROID__)
+#if !defined(__ANDROID__) && !defined(__IOS__)
 		if (m_profiler)
 		{
 			auto pb = renderContext->alloc< ProfileBeginRenderBlock >();
@@ -316,7 +316,7 @@ bool RenderGraph::build(RenderContext* renderContext, int32_t width, int32_t hei
 			renderContext->enqueue(te);
 		}
 
-#if !defined(__ANDROID__)
+#if !defined(__ANDROID__) && !defined(__IOS__)
 		if (m_profiler)
 		{
 			auto pe = renderContext->alloc< ProfileEndRenderBlock >();
@@ -347,7 +347,7 @@ bool RenderGraph::build(RenderContext* renderContext, int32_t width, int32_t hei
 
 	T_FATAL_ASSERT(!renderContext->havePendingDraws());
 
-#if !defined(__ANDROID__)
+#if !defined(__ANDROID__) && !defined(__IOS__)
 	if (m_profiler)
 	{
 		auto pe = renderContext->alloc< ProfileEndRenderBlock >();
