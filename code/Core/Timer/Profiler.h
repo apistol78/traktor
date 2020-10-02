@@ -21,7 +21,7 @@ namespace traktor
 {
 
 // Uncomment this line if you want scope profiling enabled.
-#if !defined(__ANDROID__)
+#if !defined(__ANDROID__) && !defined(__IOS__)
 #	define T_PROFILER_ENABLE
 #endif
 

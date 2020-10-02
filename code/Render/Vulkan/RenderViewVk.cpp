@@ -1137,7 +1137,7 @@ bool RenderViewVk::getTimeQuery(int32_t query, bool wait, double& outStart, doub
 
 void RenderViewVk::pushMarker(const char* const marker)
 {
-#if !defined(__ANDROID__)
+#if !defined(__ANDROID__) && !defined(__IOS__)
 	if (m_haveDebugMarkers)
 	{
 		auto& frame = m_frames[m_currentImageIndex];
@@ -1152,7 +1152,7 @@ void RenderViewVk::pushMarker(const char* const marker)
 
 void RenderViewVk::popMarker()
 {
-#if !defined(__ANDROID__)
+#if !defined(__ANDROID__) && !defined(__IOS__)
 	if (m_haveDebugMarkers)
 	{
 		auto& frame = m_frames[m_currentImageIndex];
@@ -1421,6 +1421,7 @@ bool RenderViewVk::create(uint32_t width, uint32_t height, int32_t vblanks)
 	vkEnumerateDeviceExtensionProperties(m_physicalDevice, nullptr, &extensionCount, extensions.ptr());
 
 	m_haveDebugMarkers = false;
+#if !defined(__ANDROID__) && !defined(__IOS__)
 	for (auto extension : extensions)
 	{
 		if (std::strcmp(extension.extensionName, VK_EXT_DEBUG_MARKER_EXTENSION_NAME) == 0)
@@ -1430,6 +1431,7 @@ bool RenderViewVk::create(uint32_t width, uint32_t height, int32_t vblanks)
 			break;
 		}
 	}
+#endif
 
 	// Create uniform buffer pool.
 	m_uniformBufferPool = new UniformBufferPoolVk(m_logicalDevice, m_allocator);
