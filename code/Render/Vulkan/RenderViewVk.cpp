@@ -1310,7 +1310,11 @@ bool RenderViewVk::create(uint32_t width, uint32_t height, int32_t vblanks)
 	VkImageCreateInfo ici = {};
 	ici.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
 	ici.imageType = VK_IMAGE_TYPE_2D;
+#if defined(__IOS__)
+	ici.format = VK_FORMAT_D32_SFLOAT_S8_UINT;
+#else
 	ici.format = VK_FORMAT_D24_UNORM_S8_UINT;
+#endif
 	ici.extent = { width, height, 1 };
 	ici.mipLevels = 1;
 	ici.arrayLayers = 1;

@@ -5,9 +5,9 @@
 #include "Core/Misc/Adler32.h"
 #include "Core/Misc/TString.h"
 #include "Core/Thread/Acquire.h"
-#include "Render/OpenGL/ES2/ExtensionsGLES2.h"
-#include "Render/OpenGL/ES2/iOS/ContextOpenGLES2.h"
-#include "Render/OpenGL/ES2/iOS/EAGLContextWrapper.h"
+#include "Render/OpenGL/ES/ExtensionsGLES.h"
+#include "Render/OpenGL/ES/iOS/ContextOpenGLES.h"
+#include "Render/OpenGL/ES/iOS/EAGLContextWrapper.h"
 
 namespace traktor
 {
@@ -18,42 +18,42 @@ namespace traktor
 
 const uint32_t c_maxMatchConfigs = 64;
 
-typedef RefArray< ContextOpenGLES2 > context_stack_t;
+typedef RefArray< ContextOpenGLES > context_stack_t;
 
 		}
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ContextOpenGLES2", ContextOpenGLES2, Object)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ContextOpenGLES", ContextOpenGLES, Object)
 
-ThreadLocal ContextOpenGLES2::ms_contextStack;
+ThreadLocal ContextOpenGLES::ms_contextStack;
 
-Ref< ContextOpenGLES2 > ContextOpenGLES2::createContext(const SystemApplication& sysapp, const RenderViewDefaultDesc& desc)
+Ref< ContextOpenGLES > ContextOpenGLES::createContext(const SystemApplication& sysapp, const RenderViewDefaultDesc& desc)
 {
-	return 0;
+	return nullptr;
 }
 
-Ref< ContextOpenGLES2 > ContextOpenGLES2::createContext(const SystemApplication& sysapp, const RenderViewEmbeddedDesc& desc)
+Ref< ContextOpenGLES > ContextOpenGLES::createContext(const SystemApplication& sysapp, const RenderViewEmbeddedDesc& desc)
 {
-	Ref< ContextOpenGLES2 > context = new ContextOpenGLES2();
+	Ref< ContextOpenGLES > context = new ContextOpenGLES();
 
 	context->m_context = new EAGLContextWrapper();
 	if (!context->m_context->create(desc.syswin.view))
-		return 0;
+		return nullptr;
 
 	if (!context->enter())
-		return 0;
+		return nullptr;
 	initializeExtensions();
 	context->leave();
 
-	log::info << L"OpenGL ES 2.0 render context created successfully (embedded)" << Endl;
+	log::info << L"OpenGL ES render context created successfully (embedded)" << Endl;
 	return context;
 }
 
-bool ContextOpenGLES2::reset(int32_t width, int32_t height)
+bool ContextOpenGLES::reset(int32_t width, int32_t height)
 {
 	return true;
 }
 
-bool ContextOpenGLES2::enter()
+bool ContextOpenGLES::enter()
 {
 	if (!m_lock.wait())
 		return false;
@@ -75,7 +75,7 @@ bool ContextOpenGLES2::enter()
 	return true;
 }
 
-void ContextOpenGLES2::leave()
+void ContextOpenGLES::leave()
 {
 	context_stack_t* stack = static_cast< context_stack_t* >(ms_contextStack.get());
 
@@ -93,13 +93,13 @@ void ContextOpenGLES2::leave()
 	m_lock.release();
 }
 
-void ContextOpenGLES2::deleteResource(IDeleteCallback* callback)
+void ContextOpenGLES::deleteResource(IDeleteCallback* callback)
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 	m_deleteResources.push_back(callback);
 }
 
-void ContextOpenGLES2::deleteResources()
+void ContextOpenGLES::deleteResources()
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 	if (!m_deleteResources.empty())
@@ -112,7 +112,7 @@ void ContextOpenGLES2::deleteResources()
 	}
 }
 
-GLuint ContextOpenGLES2::createShaderObject(const char* shader, GLenum shaderType)
+GLuint ContextOpenGLES::createShaderObject(const char* shader, GLenum shaderType)
 {
 	Adler32 adler;
 	adler.begin();
@@ -155,27 +155,27 @@ GLuint ContextOpenGLES2::createShaderObject(const char* shader, GLenum shaderTyp
 	return shaderObject;
 }
 
-int32_t ContextOpenGLES2::getWidth() const
+int32_t ContextOpenGLES::getWidth() const
 {
 	return m_context->getWidth();
 }
 
-int32_t ContextOpenGLES2::getHeight() const
+int32_t ContextOpenGLES::getHeight() const
 {
 	return m_context->getHeight();
 }
 
-void ContextOpenGLES2::swapBuffers()
+void ContextOpenGLES::swapBuffers()
 {
 	m_context->swapBuffers();
 }
 
-Semaphore& ContextOpenGLES2::lock()
+Semaphore& ContextOpenGLES::lock()
 {
 	return m_lock;
 }
 
-void ContextOpenGLES2::bindPrimary()
+void ContextOpenGLES::bindPrimary()
 {
 	T_OGL_SAFE(glBindFramebuffer(GL_FRAMEBUFFER, m_context->getFrameBuffer()));
 	T_OGL_SAFE(glViewport(
@@ -186,13 +186,13 @@ void ContextOpenGLES2::bindPrimary()
 	));
 }
 
-GLuint ContextOpenGLES2::getPrimaryDepth() const
+GLuint ContextOpenGLES::getPrimaryDepth() const
 {
 	return m_context->getDepthBuffer();
 }
 
-ContextOpenGLES2::ContextOpenGLES2()
-:	m_context(0)
+ContextOpenGLES::ContextOpenGLES()
+:	m_context(nullptr)
 {
 }
 

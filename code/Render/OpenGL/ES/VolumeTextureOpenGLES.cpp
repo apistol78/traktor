@@ -89,7 +89,7 @@ bool VolumeTextureOpenGLES::create(const VolumeTextureCreateDesc& desc)
 		{
 #	if defined(__APPLE__)
 			uint32_t mipPitch = getTextureMipPitch(desc.format, m_width, m_height);
-			T_OGL_SAFE(glCompressedTexImage3DOES(
+			T_OGL_SAFE(glCompressedTexImage3D(
 				GL_TEXTURE_3D,
 				0,
 				m_components,

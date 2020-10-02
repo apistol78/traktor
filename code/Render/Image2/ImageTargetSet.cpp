@@ -12,7 +12,7 @@ ImageTargetSet::ImageTargetSet(const std::wstring& name, handle_t persistentHand
 ,	m_persistentHandle(persistentHandle)
 ,   m_targetSetDesc(targetSetDesc)
 {
-	for (int32_t i = 0; i < sizeof_array(textureIds); ++i)
+	for (int32_t i = 0; i < RenderGraphTargetSetDesc::MaxColorTargets; ++i)
 		m_textureIds[i] = textureIds[i];
 }
 

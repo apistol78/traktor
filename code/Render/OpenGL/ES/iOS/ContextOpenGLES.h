@@ -5,8 +5,8 @@
 #include "Core/Object.h"
 #include "Core/Thread/Semaphore.h"
 #include "Core/Thread/ThreadLocal.h"
-#include "Render/OpenGL/ES2/Platform.h"
-#include "Render/OpenGL/ES2/TypesOpenGLES2.h"
+#include "Render/OpenGL/ES/Platform.h"
+#include "Render/OpenGL/ES/TypesOpenGLES.h"
 
 namespace traktor
 {
@@ -15,10 +15,10 @@ namespace traktor
 
 class EAGLContextWrapper;
 
-/*! iOS OpenGL ES2 context.
+/*! iOS OpenGL ES context.
  * \ingroup OGL
  */
-class ContextOpenGLES2 : public Object
+class ContextOpenGLES : public Object
 {
 	T_RTTI_CLASS;
 
@@ -28,9 +28,9 @@ public:
 	 */
 	struct Scope
 	{
-		ContextOpenGLES2* m_context;
+		ContextOpenGLES* m_context;
 
-		Scope(ContextOpenGLES2* context)
+		Scope(ContextOpenGLES* context)
 		:	m_context(context)
 		{
 			bool result = m_context->enter();
@@ -55,9 +55,9 @@ public:
 		virtual void deleteResource() = 0;
 	};
 
-	static Ref< ContextOpenGLES2 > createContext(const SystemApplication& sysapp, const RenderViewDefaultDesc& desc);
+	static Ref< ContextOpenGLES > createContext(const SystemApplication& sysapp, const RenderViewDefaultDesc& desc);
 
-	static Ref< ContextOpenGLES2 > createContext(const SystemApplication& sysapp, const RenderViewEmbeddedDesc& desc);
+	static Ref< ContextOpenGLES > createContext(const SystemApplication& sysapp, const RenderViewEmbeddedDesc& desc);
 
 	bool reset(int32_t width, int32_t height);
 
@@ -90,7 +90,7 @@ private:
 	std::vector< IDeleteCallback* > m_deleteResources;
 	std::map< uint32_t, GLuint > m_shaderObjects;
 
-	ContextOpenGLES2();
+	ContextOpenGLES();
 };
 
 	}

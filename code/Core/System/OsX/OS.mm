@@ -16,10 +16,12 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <sys/syslimits.h>
+#include "Core/Io/FileSystem.h"
 #include "Core/Io/Path.h"
 #include "Core/Io/Utf8Encoding.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/String.h"
+#include "Core/Misc/StringSplit.h"
 #include "Core/Misc/TString.h"
 #include "Core/Singleton/SingletonManager.h"
 #include "Core/System/Environment.h"
@@ -427,6 +429,28 @@ Ref< ISharedMemory > OS::createSharedMemory(const std::wstring& name, uint32_t s
 
 bool OS::setOwnProcessPriorityBias(int32_t priorityBias)
 {
+	return false;
+}
+
+bool OS::whereIs(const std::wstring& executable, Path& outPath) const
+{
+	std::wstring paths;
+
+	// Get system "PATH" environment variable.
+	if (!getEnvironment(L"PATH", paths))
+		return false;
+
+	// Try to locate binary in any of the paths specified in "PATH".
+	for (auto path : StringSplit< std::wstring >(paths, L";:,"))
+	{
+		Ref< File > file = FileSystem::getInstance().get(path + L"/" + executable);
+		if (file)
+		{
+			outPath = file->getPath();
+			return true;
+		}
+	}
+
 	return false;
 }
 

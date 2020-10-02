@@ -127,7 +127,7 @@ Any Stage::invokeScript(const std::string& fn, uint32_t argc, const Any* argv)
 	{
 		const IRuntimeDispatch* method = findRuntimeClassMethod(m_class, fn);
 		if (method != nullptr)
-			return method->invoke(m_object, sizeof_array(argv), argv);
+			return method->invoke(m_object, argc, argv);
 	}
 
 	log::error << L"No such script function \"" << mbstows(fn) << L"\"" << Endl;

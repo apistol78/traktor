@@ -94,7 +94,13 @@ bool RenderTargetDepthVk::create(const RenderTargetSetCreateDesc& setDesc, const
 	if (setDesc.ignoreStencil)
 		imageCreateInfo.format = VK_FORMAT_D32_SFLOAT;
 	else
+	{
+#if defined(__IOS__)
+		imageCreateInfo.format = VK_FORMAT_D32_SFLOAT_S8_UINT;
+#else
 		imageCreateInfo.format = VK_FORMAT_D24_UNORM_S8_UINT;
+#endif
+	}
 
 	imageCreateInfo.extent.width = setDesc.width;
 	imageCreateInfo.extent.height = setDesc.height;

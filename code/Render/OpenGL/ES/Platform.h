@@ -13,8 +13,8 @@
 
 #include <string>
 #if TARGET_OS_IPHONE || TARGET_OS_IPAD
-#	include <OpenGLES/ES2/gl.h>
-#	include <OpenGLES/ES2/glext.h>
+#	include <OpenGLES/ES3/gl.h>
+#	include <OpenGLES/ES3/glext.h>
 #else
 #	if defined(_WIN32)
 #		define _WIN32_LEAN_AND_MEAN

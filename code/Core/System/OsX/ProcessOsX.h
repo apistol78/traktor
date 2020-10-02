@@ -14,17 +14,17 @@ class ProcessOsX : public IProcess
 public:
 	virtual ~ProcessOsX();
 
-	virtual bool setPriority(Priority priority);
+	virtual bool setPriority(Priority priority) override final;
 
-	virtual Ref< IStream > getPipeStream(StdPipe pipe);
+	virtual Ref< IStream > getPipeStream(StdPipe pipe) override final;
 
-	virtual bool signal(SignalType signalType);
+	virtual bool signal(SignalType signalType) override final;
 
-	virtual bool terminate(int32_t exitCode);
+	virtual bool terminate(int32_t exitCode) override final;
 
-	virtual int32_t exitCode() const;
+	virtual int32_t exitCode() const override final;
 
-	virtual bool wait(int32_t timeout = -1);
+	virtual bool wait(int32_t timeout = -1) override final;
 
 private:
 	friend class OS;
