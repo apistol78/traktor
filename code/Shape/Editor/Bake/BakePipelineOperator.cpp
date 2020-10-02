@@ -535,17 +535,15 @@ bool BakePipelineOperator::build(
 				}
 
 				// Modify all materials to contain reference to lightmap channel.
-				AlignedVector< model::Material > materials = model->getMaterials();
-				for (auto& material : materials)
+				for (auto& material : model->getMaterials())
 				{
 					material.setBlendOperator(model::Material::BoDecal);
 					material.setLightMap(model::Material::Map(L"Lightmap", L"Lightmap", false, lightmapId));
 				}
-				model->setMaterials(materials);
-
+#if 0
 				// Write model for debugging into temporary folder.
 				model::ModelFormat::writeAny(L"data/Temp/Bake/" + name +L".tmd", model);
-
+#endif
 				// Add model to raytracing task.
 				if (!addModel(
 					pipelineBuilder,

@@ -79,6 +79,7 @@ private:
 		void* lightSBufferMemory;
 		Ref< render::StructBuffer > tileSBuffer;
 		void* tileSBufferMemory;
+		AlignedVector< Light > lights;
 		Ref< Packer > shadowAtlasPacker;
 	};
 
@@ -111,7 +112,6 @@ private:
 	Ref< WorldEntityRenderers > m_entityRenderers;
 
 	AlignedVector< Frame > m_frames;
-	AlignedVector< Light > m_lights;
 
 	float m_slicePositions[MaxSliceCount + 1];
 	int32_t m_count = 0;
@@ -121,7 +121,7 @@ private:
 		const Entity* rootEntity,
 		render::RenderGraph& renderGraph,
 		render::handle_t outputTargetSetId,
-		TileShaderData* tileShaderData
+		int32_t frame
 	) const;
 
 	render::handle_t setupGBufferPass(
@@ -162,7 +162,6 @@ private:
 		render::RenderGraph& renderGraph,
 		render::handle_t outputTargetSetId,
 		int32_t frame,
-		LightShaderData* lightShaderData,
 		render::handle_t& outShadowMapAtlasTargetSetId
 	) const;
 

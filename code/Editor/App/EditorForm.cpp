@@ -2265,39 +2265,49 @@ void EditorForm::closeAllEditors()
 	);
 #endif
 
-	//// Get all other pages to close; ignore home.
-	//RefArray< ui::TabPage > closePages;
-	//for (int32_t i = 0; i < m_tab->getPageCount(); ++i)
-	//{
-	//	Ref< ui::TabPage > tabPage = m_tab->getPage(i);
-	//	if (tabPage->getData< IEditorPage >(L"EDITORPAGE") == nullptr)
-	//		continue;
+	for (auto tab : m_tabGroups)
+	{
+		// Get all other pages to close; ignore home.
+		RefArray< ui::TabPage > closePages;
+		for (int32_t i = 0; i < tab->getPageCount(); ++i)
+		{
+			Ref< ui::TabPage > tabPage = tab->getPage(i);
+			if (tabPage->getData< IEditorPage >(L"EDITORPAGE") == nullptr)
+				continue;
 
-	//	closePages.push_back(tabPage);
-	//}
+			closePages.push_back(tabPage);
+		}
 
-	//// Close found pages.
-	//while (!closePages.empty())
-	//{
-	//	Ref< ui::TabPage > tabPage = closePages.back();
-	//	closePages.pop_back();
+		// Close found pages.
+		while (!closePages.empty())
+		{
+			Ref< ui::TabPage > tabPage = closePages.back();
+			closePages.pop_back();
 
-	//	T_ASSERT(tabPage);
-	//	m_tab->removePage(tabPage);
+			T_ASSERT(tabPage);
+			tab->removePage(tabPage);
 
-	//	Ref< IEditorPage > editorPage = tabPage->getData< IEditorPage >(L"EDITORPAGE");
-	//	if (editorPage)
-	//	{
-	//		T_ASSERT(editorPage != m_activeEditorPage);
-	//		editorPage->destroy();
-	//	}
+			Ref< IEditorPage > editorPage = tabPage->getData< IEditorPage >(L"EDITORPAGE");
+			if (editorPage)
+			{
+				T_ASSERT(editorPage != m_activeEditorPage);
+				editorPage->destroy();
+			}
 
-	//	Ref< Document > document = tabPage->getData< Document >(L"DOCUMENT");
-	//	if (document)
-	//		document->close();
-	//}
+			Ref< Document > document = tabPage->getData< Document >(L"DOCUMENT");
+			if (document)
+				document->close();
+		}
+	}
 
-	//m_tab->update();
+	// Remove tab groups with no pages left.
+	auto itn = std::remove_if(m_tabGroups.begin(), m_tabGroups.end(), [](ui::Tab* tabGroup) {
+		return (bool)(tabGroup->getPageCount() == 0);
+	});
+	for (auto it = itn; it != m_tabGroups.end(); ++it)
+		(*it)->destroy();
+	m_tabGroups.erase(itn, m_tabGroups.end());
+	m_tabGroupContainer->update();
 
 	m_activeEditorPage = nullptr;
 	m_activeEditorPageSite = nullptr;
