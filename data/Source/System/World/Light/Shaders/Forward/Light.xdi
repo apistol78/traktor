@@ -1422,7 +1422,7 @@ Fall off
 				<first>1953</first>
 				<second>3198</second>
 			</position>
-			<value>0.0005</value>
+			<value>0.01</value>
 		</item>
 		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
 			<id>{C1BEE9F2-6BB2-AF4B-B725-EE5F34B962F9}</id>

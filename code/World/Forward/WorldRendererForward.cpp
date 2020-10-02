@@ -357,11 +357,12 @@ void WorldRendererForward::setup(
 		worldRenderView.setProjection(proj);
 	}
 
-	// Gather active lights.
-	m_lights.resize(0);
-	WorldGatherContext(m_entityRenderers, rootEntity).gather(rootEntity, m_lights);
-	if (m_lights.size() > c_maxLightCount)
-		m_lights.resize(c_maxLightCount);
+	// Gather active lights for this frame.
+	auto& lights = m_frames[frame].lights;
+	lights.resize(0);
+	WorldGatherContext(m_entityRenderers, rootEntity).gather(rootEntity, lights);
+	if (lights.size() > c_maxLightCount)
+		lights.resize(c_maxLightCount);
 
 	// Begun writing light shader data; written both in setup and build.
 	LightShaderData* lightShaderData = (LightShaderData*)m_frames[frame].lightSBufferMemory;
@@ -391,7 +392,7 @@ void WorldRendererForward::setup(
 		rootEntity,
 		renderGraph,
 		outputTargetSetId,
-		tileShaderData
+		frame
 	);
 
 	auto gbufferTargetSetId = setupGBufferPass(
@@ -433,7 +434,6 @@ void WorldRendererForward::setup(
 		renderGraph,
 		outputTargetSetId,
 		frame,
-		lightShaderData,
 		shadowMapAtlasTargetSetId
 	);
 
@@ -468,10 +468,13 @@ void WorldRendererForward::setupTileDataPass(
 	const Entity* rootEntity,
 	render::RenderGraph& renderGraph,
 	render::handle_t outputTargetSetId,
-	TileShaderData* tileShaderData
+	int32_t frame
 ) const
 {
-	const Frustum& viewFrustum = worldRenderView.getViewFrustum();
+	const auto& viewFrustum = worldRenderView.getViewFrustum();
+	const auto& lights = m_frames[frame].lights;
+
+	TileShaderData* tileShaderData = (TileShaderData*)m_frames[frame].tileSBufferMemory;
 
 	// Update tile data.
 	const Scalar dx(1.0f / ClusterDimXY);
@@ -517,9 +520,9 @@ void WorldRendererForward::setupTileDataPass(
 				const uint32_t offset = (x + y * ClusterDimXY) * ClusterDimZ + z;
 
 				int32_t count = 0;
-				for (uint32_t i = 0; i < m_lights.size(); ++i)
+				for (uint32_t i = 0; i < lights.size(); ++i)
 				{
-					const Light& light = m_lights[i];
+					const Light& light = lights[i];
 
 					if (light.type == LtDirectional)
 					{
@@ -832,13 +835,15 @@ void WorldRendererForward::setupLightPass(
 	render::RenderGraph& renderGraph,
 	render::handle_t outputTargetSetId,
 	int32_t frame,
-	LightShaderData* lightShaderData,
 	render::handle_t& outShadowMapAtlasTargetSetId
 ) const
 {
 	const UniformShadowProjection shadowProjection(1024);
 	const auto& shadowSettings = m_settings.shadowSettings[(int32_t)m_shadowsQuality];
 	const bool shadowsEnable = (bool)(m_shadowsQuality != Quality::Disabled);
+	const auto& lights = m_frames[frame].lights;
+
+	LightShaderData* lightShaderData = (LightShaderData*)m_frames[frame].lightSBufferMemory;
 
 	// Reset this frame's atlas packer.
 	auto shadowAtlasPacker = m_frames[frame].shadowAtlasPacker;
@@ -852,9 +857,9 @@ void WorldRendererForward::setupLightPass(
 	int32_t lightCascadeIndex = -1;
 	if (shadowsEnable)
 	{
-		for (int32_t i = 0; i < (int32_t)m_lights.size(); ++i)
+		for (int32_t i = 0; i < (int32_t)lights.size(); ++i)
 		{
-			const auto& light = m_lights[i];
+			const auto& light = lights[i];
 			if (light.castShadow && light.type == LtDirectional)
 			{
 				lightCascadeIndex = i;
@@ -867,18 +872,18 @@ void WorldRendererForward::setupLightPass(
 	StaticVector< int32_t, 16 > lightAtlasIndices;
 	if (shadowsEnable)
 	{
-		for (int32_t i = 0; i < (int32_t)m_lights.size(); ++i)
+		for (int32_t i = 0; i < (int32_t)lights.size(); ++i)
 		{
-			const auto& light = m_lights[i];
+			const auto& light = lights[i];
 			if (light.castShadow && light.type == LtSpot)
 				lightAtlasIndices.push_back(i);
 		}
 	}
 
 	// Write all lights to sbuffer; without shadow map information.
-	for (int32_t i = 0; i < (int32_t)m_lights.size(); ++i)
+	for (int32_t i = 0; i < (int32_t)lights.size(); ++i)
 	{
-		const auto& light = m_lights[i];
+		const auto& light = lights[i];
 		auto* lsd = &lightShaderData[i];
 
 		lsd->typeRangeRadius[0] = (float)light.type;
@@ -929,7 +934,7 @@ void WorldRendererForward::setupLightPass(
 						renderContext
 					);
 
-					const auto& light = m_lights[lightCascadeIndex];
+					const auto& light = lights[lightCascadeIndex];
 					auto* lsd = &lightShaderData[lightCascadeIndex];
 
 					for (int32_t slice = 0; slice < shadowSettings.cascadingSlices; ++slice)
@@ -1040,10 +1045,13 @@ void WorldRendererForward::setupLightPass(
 						renderContext
 					);
 
-					const auto& light = m_lights[lightAtlasIndex];
+					const auto& light = lights[lightAtlasIndex];
 					auto* lsd = &lightShaderData[lightAtlasIndex];
 
-					const int32_t atlasSize = shadowSettings.resolution / 4;
+					// Calculate size of shadow region based on distance from eye.
+					float distance = (worldRenderView.getEyePosition() - light.position).xyz0().length();
+					int32_t denom = (int32_t)std::floor(distance / 4.0f);
+					int32_t atlasSize = 128 >> std::min(denom, 4);
 					
 					Packer::Rectangle atlasRect;
 					if (!shadowAtlasPacker->insert(atlasSize, atlasSize, atlasRect))

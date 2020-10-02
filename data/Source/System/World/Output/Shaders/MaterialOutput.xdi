@@ -92,7 +92,7 @@ Opaque
 			<comment/>
 			<position>
 				<first>-1061</first>
-				<second>498</second>
+				<second>495</second>
 			</position>
 			<name>V_Alpha</name>
 			<global>false</global>
@@ -102,7 +102,7 @@ Opaque
 			<comment/>
 			<position>
 				<first>-3359</first>
-				<second>1066</second>
+				<second>1048</second>
 			</position>
 			<name>Alpha</name>
 			<connectable>true</connectable>
@@ -114,8 +114,8 @@ Opaque
 			<id>{C577AA43-1229-4A44-AC07-6A843EE98142}</id>
 			<comment/>
 			<position>
-				<first>-3142</first>
-				<second>1055</second>
+				<first>-3140</first>
+				<second>1058</second>
 			</position>
 			<name>V_Alpha</name>
 			<global>false</global>
@@ -135,7 +135,7 @@ Opaque
 			<comment/>
 			<position>
 				<first>-3389</first>
-				<second>1109</second>
+				<second>1098</second>
 			</position>
 			<name>Irradiance</name>
 			<connectable>true</connectable>
@@ -177,7 +177,7 @@ Forward / Opaque
 			<comment/>
 			<position>
 				<first>-1093</first>
-				<second>686</second>
+				<second>725</second>
 			</position>
 			<name>V_Roughness</name>
 			<global>false</global>
@@ -187,7 +187,7 @@ Forward / Opaque
 			<comment/>
 			<position>
 				<first>-1093</first>
-				<second>639</second>
+				<second>679</second>
 			</position>
 			<name>V_Metalness</name>
 			<global>false</global>
@@ -201,7 +201,7 @@ Opaque
 			</comment>
 			<position>
 				<first>-1077</first>
-				<second>545</second>
+				<second>587</second>
 			</position>
 			<name>E_Opaque</name>
 			<global>false</global>
@@ -211,7 +211,7 @@ Opaque
 			<comment/>
 			<position>
 				<first>-1125</first>
-				<second>451</second>
+				<second>449</second>
 			</position>
 			<name>World_ViewPosition</name>
 			<global>true</global>
@@ -221,7 +221,7 @@ Opaque
 			<comment/>
 			<position>
 				<first>-1125</first>
-				<second>404</second>
+				<second>403</second>
 			</position>
 			<name>World_ViewNormal</name>
 			<global>true</global>
@@ -270,6 +270,11 @@ World_ForwardColor
 					<optional>true</optional>
 				</item>
 				<item>
+					<id>{4035DB65-856C-A04D-8C62-D49A6BF36C85}</id>
+					<name>Emissive</name>
+					<optional>true</optional>
+				</item>
+				<item>
 					<id>{72048415-F7D0-42B2-BF26-7F7F4D97A902}</id>
 					<name>Enable</name>
 					<optional>true</optional>
@@ -302,6 +307,10 @@ World_ForwardColor
 					<second>1</second>
 				</item>
 				<item>
+					<first>Emissive</first>
+					<second>0</second>
+				</item>
+				<item>
 					<first>Roughness</first>
 					<second>0.8</second>
 				</item>
@@ -326,7 +335,7 @@ World_ForwardColor
 			<comment/>
 			<position>
 				<first>-3369</first>
-				<second>1023</second>
+				<second>998</second>
 			</position>
 			<name>Specular</name>
 			<connectable>true</connectable>
@@ -338,7 +347,7 @@ World_ForwardColor
 			<id>{C7C9A0E6-93E5-BB40-AAE8-92062792410B}</id>
 			<comment/>
 			<position>
-				<first>-3142</first>
+				<first>-3140</first>
 				<second>1008</second>
 			</position>
 			<name>V_Specular</name>
@@ -588,8 +597,8 @@ World_SimpleColor
 			<id>{6D53E14B-B17F-5A4F-BFC9-B982FC7B0D65}</id>
 			<comment/>
 			<position>
-				<first>-3142</first>
-				<second>961</second>
+				<first>-3140</first>
+				<second>958</second>
 			</position>
 			<name>V_Metalness</name>
 			<global>false</global>
@@ -618,8 +627,8 @@ World_SimpleColor
 			<id>{E4F95F25-03D9-4446-B24F-FBCAAD6ABA03}</id>
 			<comment/>
 			<position>
-				<first>-3142</first>
-				<second>914</second>
+				<first>-3140</first>
+				<second>858</second>
 			</position>
 			<name>V_Roughness</name>
 			<global>false</global>
@@ -1004,7 +1013,7 @@ World_DeferredColor
 			<comment/>
 			<position>
 				<first>-3389</first>
-				<second>980</second>
+				<second>948</second>
 			</position>
 			<name>Metalness</name>
 			<connectable>true</connectable>
@@ -1017,7 +1026,7 @@ World_DeferredColor
 			<comment/>
 			<position>
 				<first>-3369</first>
-				<second>937</second>
+				<second>898</second>
 			</position>
 			<name>Emissive</name>
 			<connectable>true</connectable>
@@ -1030,7 +1039,7 @@ World_DeferredColor
 			<comment/>
 			<position>
 				<first>-3389</first>
-				<second>894</second>
+				<second>848</second>
 			</position>
 			<name>Roughness</name>
 			<connectable>true</connectable>
@@ -1114,8 +1123,8 @@ World_VelocityWrite
 			<id>{C84608A2-19FE-2B4D-B144-C10101CC116D}</id>
 			<comment/>
 			<position>
-				<first>-3142</first>
-				<second>1102</second>
+				<first>-3140</first>
+				<second>1108</second>
 			</position>
 			<name>V_Irradiance</name>
 			<global>false</global>
@@ -1125,7 +1134,7 @@ World_VelocityWrite
 			<comment/>
 			<position>
 				<first>-1077</first>
-				<second>592</second>
+				<second>633</second>
 			</position>
 			<name>V_Irradiance</name>
 			<global>false</global>
@@ -1293,9 +1302,29 @@ Shared
 			<comment/>
 			<position>
 				<first>-1077</first>
-				<second>733</second>
+				<second>771</second>
 			</position>
 			<name>V_Specular</name>
+			<global>false</global>
+		</item>
+		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
+			<id>{1ABFF778-899F-7241-A4E8-BB44D0D96F41}</id>
+			<comment/>
+			<position>
+				<first>-3140</first>
+				<second>908</second>
+			</position>
+			<name>V_Emissive</name>
+			<global>false</global>
+		</item>
+		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
+			<id>{855D672C-0763-C942-98FE-D8BC0F5074EC}</id>
+			<comment/>
+			<position>
+				<first>-1077</first>
+				<second>541</second>
+			</position>
+			<name>V_Emissive</name>
 			<global>false</global>
 		</item>
 	</nodes>
@@ -1968,6 +1997,26 @@ Shared
 			<destination>
 				<node ref="/object/nodes/item[22]"/>
 				<name>Specular</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[68]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[88]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[89]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[22]"/>
+				<name>Emissive</name>
 			</destination>
 		</item>
 	</edges>
