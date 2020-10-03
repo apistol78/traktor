@@ -34,6 +34,10 @@ void setObjectDebugName(VkDevice device, const wchar_t* const tag, uint64_t obje
 
 VkFormat determineSupportedTargetFormat(VkPhysicalDevice physicalDevice, TextureFormat textureFormat);
 
+VkPipelineStageFlags getPipelineStageFlags(const VkImageLayout layout);
+
+VkAccessFlags getAccessMask(const VkImageLayout layout);
+
 	}
 }
 
