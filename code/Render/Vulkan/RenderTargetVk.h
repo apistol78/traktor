@@ -74,7 +74,6 @@ private:
 	VmaAllocation m_allocation;
 	VkImageView m_imageView;
 	VkImageLayout m_imageLayout;
-	VkAccessFlags m_accessFlags;
 	int32_t m_width;
 	int32_t m_height;
 

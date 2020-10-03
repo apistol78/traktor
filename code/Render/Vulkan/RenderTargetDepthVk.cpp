@@ -226,27 +226,25 @@ void RenderTargetDepthVk::prepareAsTarget(VkCommandBuffer cmdBuffer)
 	if (m_imageLayout == VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL)
 		return;
 
-	VkImageMemoryBarrier layoutTransitionBarrier = {};
-	layoutTransitionBarrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
-	layoutTransitionBarrier.srcAccessMask = 0; //VK_ACCESS_MEMORY_READ_BIT;
-	layoutTransitionBarrier.dstAccessMask = VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_READ_BIT | VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT;
-	layoutTransitionBarrier.oldLayout = m_imageLayout;
-	layoutTransitionBarrier.newLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
-	layoutTransitionBarrier.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
-	layoutTransitionBarrier.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
-	layoutTransitionBarrier.image = m_image;
+	VkImageMemoryBarrier imb = {};
+	imb.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
+	imb.oldLayout = m_imageLayout;
+	imb.newLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
+	imb.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+	imb.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+	imb.image = m_image;
 
 	switch (m_format)
 	{
 	case VK_FORMAT_D16_UNORM:
     case VK_FORMAT_D32_SFLOAT:
-		layoutTransitionBarrier.subresourceRange = { VK_IMAGE_ASPECT_DEPTH_BIT, 0, 1, 0, 1 };
+		imb.subresourceRange = { VK_IMAGE_ASPECT_DEPTH_BIT, 0, 1, 0, 1 };
 		break;
 
 	case VK_FORMAT_D16_UNORM_S8_UINT:
 	case VK_FORMAT_D24_UNORM_S8_UINT:
     case VK_FORMAT_D32_SFLOAT_S8_UINT:
-		layoutTransitionBarrier.subresourceRange = { VK_IMAGE_ASPECT_DEPTH_BIT | VK_IMAGE_ASPECT_STENCIL_BIT, 0, 1, 0, 1 };
+		imb.subresourceRange = { VK_IMAGE_ASPECT_DEPTH_BIT | VK_IMAGE_ASPECT_STENCIL_BIT, 0, 1, 0, 1 };
 		break;
 
 	default:
@@ -254,17 +252,20 @@ void RenderTargetDepthVk::prepareAsTarget(VkCommandBuffer cmdBuffer)
 		break;
 	}
 
+	imb.srcAccessMask = getAccessMask(imb.oldLayout);
+	imb.dstAccessMask = getAccessMask(imb.newLayout);
+
 	vkCmdPipelineBarrier(
 		cmdBuffer,
-		VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT,
-		VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT, /// VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
+		getPipelineStageFlags(imb.oldLayout),
+		getPipelineStageFlags(imb.newLayout),
 		0,
 		0, nullptr,
 		0, nullptr,
-		1, &layoutTransitionBarrier
+		1, &imb
 	);
 
-	m_imageLayout = layoutTransitionBarrier.newLayout;
+	m_imageLayout = imb.newLayout;
 }
 
 void RenderTargetDepthVk::prepareAsTexture(VkCommandBuffer cmdBuffer)
@@ -274,27 +275,25 @@ void RenderTargetDepthVk::prepareAsTexture(VkCommandBuffer cmdBuffer)
 
 	T_ASSERT_M(m_imageLayout != VK_IMAGE_LAYOUT_UNDEFINED, L"RT have not been rendered into yet.");
 
-	VkImageMemoryBarrier layoutTransitionBarrier = {};
-	layoutTransitionBarrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
-	layoutTransitionBarrier.srcAccessMask = 0; //VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_READ_BIT | VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT;
-	layoutTransitionBarrier.dstAccessMask = VK_ACCESS_SHADER_READ_BIT; //VK_ACCESS_MEMORY_READ_BIT;
-	layoutTransitionBarrier.oldLayout = m_imageLayout;
-	layoutTransitionBarrier.newLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-	layoutTransitionBarrier.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
-	layoutTransitionBarrier.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
-	layoutTransitionBarrier.image = m_image;
+	VkImageMemoryBarrier imb = {};
+	imb.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
+	imb.oldLayout = m_imageLayout;
+	imb.newLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+	imb.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+	imb.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+	imb.image = m_image;
 
 	switch (m_format)
 	{
 	case VK_FORMAT_D16_UNORM:
     case VK_FORMAT_D32_SFLOAT:
-		layoutTransitionBarrier.subresourceRange = { VK_IMAGE_ASPECT_DEPTH_BIT, 0, 1, 0, 1 };
+		imb.subresourceRange = { VK_IMAGE_ASPECT_DEPTH_BIT, 0, 1, 0, 1 };
 		break;
 
 	case VK_FORMAT_D16_UNORM_S8_UINT:
 	case VK_FORMAT_D24_UNORM_S8_UINT:
     case VK_FORMAT_D32_SFLOAT_S8_UINT:
-		layoutTransitionBarrier.subresourceRange = { VK_IMAGE_ASPECT_DEPTH_BIT | VK_IMAGE_ASPECT_STENCIL_BIT, 0, 1, 0, 1 };
+		imb.subresourceRange = { VK_IMAGE_ASPECT_DEPTH_BIT | VK_IMAGE_ASPECT_STENCIL_BIT, 0, 1, 0, 1 };
 		break;
 
 	default:
@@ -302,17 +301,20 @@ void RenderTargetDepthVk::prepareAsTexture(VkCommandBuffer cmdBuffer)
 		break;
 	}
 
+	imb.srcAccessMask = getAccessMask(imb.oldLayout);
+	imb.dstAccessMask = getAccessMask(imb.newLayout);
+
 	vkCmdPipelineBarrier(
 		cmdBuffer,
-		VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
-		VK_PIPELINE_STAGE_VERTEX_SHADER_BIT | VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT,
+		getPipelineStageFlags(imb.oldLayout),
+		getPipelineStageFlags(imb.newLayout),
 		0,
 		0, nullptr,
 		0, nullptr,
-		1, &layoutTransitionBarrier
+		1, &imb
 	);
 
-	m_imageLayout = layoutTransitionBarrier.newLayout;
+	m_imageLayout = imb.newLayout;
 }
 
 	}

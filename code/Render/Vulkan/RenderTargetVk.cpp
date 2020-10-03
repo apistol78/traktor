@@ -31,7 +31,6 @@ RenderTargetVk::RenderTargetVk(
 ,	m_allocation(0)
 ,	m_imageView(0)
 ,	m_imageLayout(VK_IMAGE_LAYOUT_UNDEFINED)
-,	m_accessFlags(VK_ACCESS_MEMORY_READ_BIT)
 ,	m_width(0)
 ,	m_height(0)
 {
@@ -185,12 +184,8 @@ void RenderTargetVk::prepareForPresentation(VkCommandBuffer cmdBuffer)
 	if (m_imageLayout == VK_IMAGE_LAYOUT_PRESENT_SRC_KHR)
 		return;
 
-	T_ASSERT_M(m_imageLayout != VK_IMAGE_LAYOUT_UNDEFINED, L"RT have not been rendered into yet.");
-
 	VkImageMemoryBarrier imb = {};
 	imb.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
-	imb.srcAccessMask = 0; // m_accessFlags;
-	imb.dstAccessMask = VK_ACCESS_MEMORY_READ_BIT;
 	imb.oldLayout = m_imageLayout;
 	imb.newLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
 	imb.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
@@ -198,10 +193,13 @@ void RenderTargetVk::prepareForPresentation(VkCommandBuffer cmdBuffer)
 	imb.subresourceRange = { VK_IMAGE_ASPECT_COLOR_BIT, 0, 1, 0, 1 };
 	imb.image = m_image;
 
+	imb.srcAccessMask = getAccessMask(imb.oldLayout);
+	imb.dstAccessMask = getAccessMask(imb.newLayout);
+
 	vkCmdPipelineBarrier(
 		cmdBuffer,
-		VK_PIPELINE_STAGE_ALL_COMMANDS_BIT,
-		VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT,
+		getPipelineStageFlags(imb.oldLayout),
+		getPipelineStageFlags(imb.newLayout),
 		0,
 		0, nullptr,
 		0, nullptr,
@@ -209,7 +207,6 @@ void RenderTargetVk::prepareForPresentation(VkCommandBuffer cmdBuffer)
 	);
 
 	m_imageLayout = imb.newLayout;
-	m_accessFlags = imb.dstAccessMask;
 }
 
 void RenderTargetVk::prepareAsTarget(VkCommandBuffer cmdBuffer)
@@ -219,8 +216,6 @@ void RenderTargetVk::prepareAsTarget(VkCommandBuffer cmdBuffer)
 
 	VkImageMemoryBarrier imb = {};
 	imb.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
-	imb.srcAccessMask = 0; // m_accessFlags;
-	imb.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
 	imb.oldLayout = m_imageLayout;
 	imb.newLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
 	imb.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
@@ -228,10 +223,13 @@ void RenderTargetVk::prepareAsTarget(VkCommandBuffer cmdBuffer)
 	imb.image = m_image;
 	imb.subresourceRange = { VK_IMAGE_ASPECT_COLOR_BIT, 0, 1, 0, 1 };
 
+	imb.srcAccessMask = getAccessMask(imb.oldLayout);
+	imb.dstAccessMask = getAccessMask(imb.newLayout);
+
 	vkCmdPipelineBarrier(
 		cmdBuffer,
-		VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT,
-		VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
+		getPipelineStageFlags(imb.oldLayout),
+		getPipelineStageFlags(imb.newLayout),
 		0,
 		0, nullptr,
 		0, nullptr,
@@ -239,7 +237,6 @@ void RenderTargetVk::prepareAsTarget(VkCommandBuffer cmdBuffer)
 	);
 
 	m_imageLayout = imb.newLayout;
-	m_accessFlags = imb.dstAccessMask;
 }
 
 void RenderTargetVk::prepareAsTexture(VkCommandBuffer cmdBuffer)
@@ -247,12 +244,8 @@ void RenderTargetVk::prepareAsTexture(VkCommandBuffer cmdBuffer)
 	if (m_imageLayout == VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL)
 		return;
 	
-	T_ASSERT_M(m_imageLayout != VK_IMAGE_LAYOUT_UNDEFINED, L"RT have not been rendered into yet.");
-
 	VkImageMemoryBarrier imb = {};
 	imb.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
-	imb.srcAccessMask = 0; // m_accessFlags;
-	imb.dstAccessMask = VK_ACCESS_SHADER_READ_BIT;
 	imb.oldLayout = m_imageLayout;
 	imb.newLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
 	imb.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
@@ -260,10 +253,13 @@ void RenderTargetVk::prepareAsTexture(VkCommandBuffer cmdBuffer)
 	imb.subresourceRange = { VK_IMAGE_ASPECT_COLOR_BIT, 0, 1, 0, 1 };
 	imb.image = m_image;
 
+	imb.srcAccessMask = getAccessMask(imb.oldLayout);
+	imb.dstAccessMask = getAccessMask(imb.newLayout);
+
 	vkCmdPipelineBarrier(
 		cmdBuffer,
-		VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
-		VK_PIPELINE_STAGE_VERTEX_SHADER_BIT | VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT,
+		getPipelineStageFlags(imb.oldLayout),
+		getPipelineStageFlags(imb.newLayout),
 		0,
 		0, nullptr,
 		0, nullptr,
@@ -271,7 +267,6 @@ void RenderTargetVk::prepareAsTexture(VkCommandBuffer cmdBuffer)
 	);
 
 	m_imageLayout = imb.newLayout;
-	m_accessFlags = imb.dstAccessMask;
 }
 
 void RenderTargetVk::prepareForReadBack(VkCommandBuffer cmdBuffer)
@@ -279,12 +274,8 @@ void RenderTargetVk::prepareForReadBack(VkCommandBuffer cmdBuffer)
 	if (m_imageLayout == VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL)
 		return;
 
-	T_ASSERT_M(m_imageLayout != VK_IMAGE_LAYOUT_UNDEFINED, L"RT have not been rendered into yet.");
-
 	VkImageMemoryBarrier imb = {};
 	imb.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
-	imb.srcAccessMask = 0; // m_accessFlags;
-	imb.dstAccessMask = VK_ACCESS_MEMORY_READ_BIT;
 	imb.oldLayout = m_imageLayout;
 	imb.newLayout = VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL;
 	imb.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
@@ -292,10 +283,13 @@ void RenderTargetVk::prepareForReadBack(VkCommandBuffer cmdBuffer)
 	imb.subresourceRange = { VK_IMAGE_ASPECT_COLOR_BIT, 0, 1, 0, 1 };
 	imb.image = m_image;
 
+	imb.srcAccessMask = getAccessMask(imb.oldLayout);
+	imb.dstAccessMask = getAccessMask(imb.newLayout);
+
 	vkCmdPipelineBarrier(
 		cmdBuffer,
-		VK_PIPELINE_STAGE_ALL_COMMANDS_BIT,
-		VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT,
+		getPipelineStageFlags(imb.oldLayout),
+		getPipelineStageFlags(imb.newLayout),
 		0,
 		0, nullptr,
 		0, nullptr,
@@ -303,7 +297,6 @@ void RenderTargetVk::prepareForReadBack(VkCommandBuffer cmdBuffer)
 	);
 
 	m_imageLayout = imb.newLayout;
-	m_accessFlags = imb.dstAccessMask;
 }
 
 	}
