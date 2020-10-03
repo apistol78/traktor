@@ -74,6 +74,7 @@ private:
 	VmaAllocation m_allocation;
 	VkImageView m_imageView;
 	VkImageLayout m_imageLayout;
+	bool m_haveStencil;
 	int32_t m_width;
 	int32_t m_height;
 

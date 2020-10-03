@@ -31,6 +31,7 @@ RenderTargetDepthVk::RenderTargetDepthVk(
 ,	m_allocation(0)
 ,	m_imageView(0)
 ,	m_imageLayout(VK_IMAGE_LAYOUT_UNDEFINED)
+,	m_haveStencil(false)
 ,	m_width(0)
 ,	m_height(0)
 {
@@ -60,6 +61,7 @@ bool RenderTargetDepthVk::createPrimary(int32_t width, int32_t height, VkFormat 
 
 	m_format = format;
 	m_image = image;
+	m_haveStencil = true;
 	m_width = width;
 	m_height = height;
 
@@ -109,10 +111,11 @@ bool RenderTargetDepthVk::create(const RenderTargetSetCreateDesc& setDesc, const
 	imageCreateInfo.arrayLayers = 1;
 	imageCreateInfo.samples = VK_SAMPLE_COUNT_1_BIT;
 	imageCreateInfo.tiling = VK_IMAGE_TILING_OPTIMAL;
+
+	imageCreateInfo.usage = VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT;
 	if (setDesc.usingDepthStencilAsTexture)
-		imageCreateInfo.usage = VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT;
-	else
-		imageCreateInfo.usage = VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT;
+		imageCreateInfo.usage |= VK_IMAGE_USAGE_SAMPLED_BIT;
+
 	imageCreateInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
 	imageCreateInfo.queueFamilyIndexCount = 0;
 	imageCreateInfo.pQueueFamilyIndices = nullptr;
@@ -147,6 +150,7 @@ bool RenderTargetDepthVk::create(const RenderTargetSetCreateDesc& setDesc, const
 	}
 
 	m_format = imageCreateInfo.format;
+	m_haveStencil = !setDesc.ignoreStencil;
 	m_width = setDesc.width;
 	m_height = setDesc.height;
 
@@ -234,23 +238,10 @@ void RenderTargetDepthVk::prepareAsTarget(VkCommandBuffer cmdBuffer)
 	imb.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
 	imb.image = m_image;
 
-	switch (m_format)
-	{
-	case VK_FORMAT_D16_UNORM:
-    case VK_FORMAT_D32_SFLOAT:
-		imb.subresourceRange = { VK_IMAGE_ASPECT_DEPTH_BIT, 0, 1, 0, 1 };
-		break;
-
-	case VK_FORMAT_D16_UNORM_S8_UINT:
-	case VK_FORMAT_D24_UNORM_S8_UINT:
-    case VK_FORMAT_D32_SFLOAT_S8_UINT:
+	if (m_haveStencil)
 		imb.subresourceRange = { VK_IMAGE_ASPECT_DEPTH_BIT | VK_IMAGE_ASPECT_STENCIL_BIT, 0, 1, 0, 1 };
-		break;
-
-	default:
-		T_FATAL_ERROR;
-		break;
-	}
+	else
+		imb.subresourceRange = { VK_IMAGE_ASPECT_DEPTH_BIT, 0, 1, 0, 1 };
 
 	imb.srcAccessMask = getAccessMask(imb.oldLayout);
 	imb.dstAccessMask = getAccessMask(imb.newLayout);
@@ -283,23 +274,10 @@ void RenderTargetDepthVk::prepareAsTexture(VkCommandBuffer cmdBuffer)
 	imb.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
 	imb.image = m_image;
 
-	switch (m_format)
-	{
-	case VK_FORMAT_D16_UNORM:
-    case VK_FORMAT_D32_SFLOAT:
-		imb.subresourceRange = { VK_IMAGE_ASPECT_DEPTH_BIT, 0, 1, 0, 1 };
-		break;
-
-	case VK_FORMAT_D16_UNORM_S8_UINT:
-	case VK_FORMAT_D24_UNORM_S8_UINT:
-    case VK_FORMAT_D32_SFLOAT_S8_UINT:
+	if (m_haveStencil)
 		imb.subresourceRange = { VK_IMAGE_ASPECT_DEPTH_BIT | VK_IMAGE_ASPECT_STENCIL_BIT, 0, 1, 0, 1 };
-		break;
-
-	default:
-		T_FATAL_ERROR;
-		break;
-	}
+	else
+		imb.subresourceRange = { VK_IMAGE_ASPECT_DEPTH_BIT, 0, 1, 0, 1 };
 
 	imb.srcAccessMask = getAccessMask(imb.oldLayout);
 	imb.dstAccessMask = getAccessMask(imb.newLayout);
