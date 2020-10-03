@@ -257,7 +257,7 @@ bool RenderSystemOpenGL::create(const RenderSystemDesc& desc)
 	m_resourceContext->leave();
 	m_resourceContext->setMaxAnisotropy((GLfloat)desc.maxAnisotropy);
 
-	m_useProgramCache = desc.useProgramCache;
+	m_useProgramCache = desc.programCache;
 	return true;
 }
 

@@ -41,12 +41,6 @@
 #	include "Render/Vulkan/iOS/Utilities.h"
 #endif
 
-#if defined(_DEBUG)
-#	define T_ENABLE_VALIDATION 1
-#else
-#	define T_ENABLE_VALIDATION 0
-#endif
-
 namespace traktor
 {
 	namespace render
@@ -135,19 +129,20 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
 	vkEnumerateInstanceLayerProperties(&layerCount, layersAvailable.ptr());
 
 	AlignedVector< const char* > validationLayers;
-#if T_ENABLE_VALIDATION
-	for (uint32_t i = 0; i < layerCount; ++i)
+	if (desc.validation)
 	{
-		bool found = false;
-		for (uint32_t j = 0; c_validationLayerNames[j] != nullptr; ++j)
+		for (uint32_t i = 0; i < layerCount; ++i)
 		{
-			if (strcmp(layersAvailable[i].layerName, c_validationLayerNames[j]) == 0)
-				found = true;
+			bool found = false;
+			for (uint32_t j = 0; c_validationLayerNames[j] != nullptr; ++j)
+			{
+				if (strcmp(layersAvailable[i].layerName, c_validationLayerNames[j]) == 0)
+					found = true;
+			}
+			if (found)
+				validationLayers.push_back(strdup(layersAvailable[i].layerName));
 		}
-		if (found)
-			validationLayers.push_back(strdup(layersAvailable[i].layerName));
 	}
-#endif
 
 	// Create Vulkan instance.
 	VkApplicationInfo ai = {};
@@ -180,20 +175,21 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
 	}
 
 #if !defined(__ANDROID__)
-#	if T_ENABLE_VALIDATION
-	// Setup debug port callback.
-	VkDebugUtilsMessengerCreateInfoEXT dumci = {};
-	dumci.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT;
-	dumci.messageSeverity = /*VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT | */VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT;
-	dumci.messageType = /*VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT | */VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT /*| VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT*/;
-	dumci.pfnUserCallback = debugCallback;
-
-	if ((result = vkCreateDebugUtilsMessengerEXT(m_instance, &dumci, nullptr, &m_debugMessenger)) != VK_SUCCESS)
+	if (desc.validation)
 	{
-		log::error << L"Failed to create Vulkan; failed to set debug report callback." << Endl;
-		return false;
+		// Setup debug port callback.
+		VkDebugUtilsMessengerCreateInfoEXT dumci = {};
+		dumci.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT;
+		dumci.messageSeverity = /*VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT | */VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT;
+		dumci.messageType = /*VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT | */VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT /*| VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT*/;
+		dumci.pfnUserCallback = debugCallback;
+
+		if ((result = vkCreateDebugUtilsMessengerEXT(m_instance, &dumci, nullptr, &m_debugMessenger)) != VK_SUCCESS)
+		{
+			log::error << L"Failed to create Vulkan; failed to set debug report callback." << Endl;
+			return false;
+		}
 	}
-#	endif
 #endif
 
 	// Select physical device.
