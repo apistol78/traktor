@@ -213,7 +213,7 @@ void AnimationPreviewControl::updateWorldRenderer()
 	world::WorldCreateDesc wcd;
 	wcd.worldRenderSettings = &wrs;
 	wcd.entityRenderers = worldEntityRenderers;
-	wcd.frameCount = 1;
+	wcd.frameCount = 2;
 
 	Ref< world::IWorldRenderer > worldRenderer = new world::WorldRendererForward();
 	if (worldRenderer->create(

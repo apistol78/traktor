@@ -367,7 +367,7 @@ void EffectPreviewControl::updateWorldRenderer()
 	wcd.quality.antiAlias = world::Quality::Ultra;
 	wcd.quality.imageProcess = world::Quality::Ultra;
 	wcd.multiSample = 0;
-	wcd.frameCount = 1;
+	wcd.frameCount = 2;
 
 	if (!worldRenderer->create(
 		m_resourceManager,

@@ -375,25 +375,36 @@ bool ProgramVk::validateGraphics(VkDescriptorPool descriptorPool, VkCommandBuffe
 		if (!resolved)
 			continue;
 
-		VkImageView imageView = 0;
-		if (is_a< SimpleTextureVk >(resolved))
-			imageView = static_cast< SimpleTextureVk* >(resolved.ptr())->getVkImageView();
-		else if (is_a< CubeTextureVk >(resolved))
-			imageView = static_cast< CubeTextureVk* >(resolved.ptr())->getVkImageView();
-		else if (is_a< RenderTargetVk >(resolved))
-			imageView = static_cast< RenderTargetVk* >(resolved.ptr())->getVkImageView();
-		else if (is_a< RenderTargetDepthVk >(resolved))
-			imageView = static_cast< RenderTargetDepthVk* >(resolved.ptr())->getVkImageView();
-		else if (is_a< VolumeTextureVk >(resolved))
-			imageView = static_cast< VolumeTextureVk* >(resolved.ptr())->getVkImageView();
-
-		if (!imageView)
-			continue;
-
 		auto& imageInfo = m_imageInfos.push_back();
 		imageInfo.sampler = 0;
-		imageInfo.imageView = imageView;
-		imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+
+		if (is_a< SimpleTextureVk >(resolved))
+		{
+			imageInfo.imageView = static_cast< SimpleTextureVk* >(resolved.ptr())->getVkImageView();
+			imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+		}
+		else if (is_a< CubeTextureVk >(resolved))
+		{
+			imageInfo.imageView = static_cast< CubeTextureVk* >(resolved.ptr())->getVkImageView();
+			imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+		}
+		else if (is_a< RenderTargetVk >(resolved))
+		{
+			imageInfo.imageView = static_cast< RenderTargetVk* >(resolved.ptr())->getVkImageView();
+			imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+		}
+		else if (is_a< RenderTargetDepthVk >(resolved))
+		{
+			imageInfo.imageView = static_cast< RenderTargetDepthVk* >(resolved.ptr())->getVkImageView();
+			imageInfo.imageLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_READ_ONLY_OPTIMAL;
+		}
+		else if (is_a< VolumeTextureVk >(resolved))
+		{
+			imageInfo.imageView = static_cast< VolumeTextureVk* >(resolved.ptr())->getVkImageView();
+			imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+		}
+
+		T_ASSERT (imageView != 0);
 
 		auto& write = m_writes.push_back();
 		write = {};

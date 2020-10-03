@@ -222,7 +222,7 @@ void OrthogonalRenderControl::updateWorldRenderer()
 	wcd.quality.ambientOcclusion = m_ambientOcclusionQuality;
 	wcd.quality.antiAlias = m_antiAliasQuality;
 	wcd.multiSample = m_multiSample;
-	wcd.frameCount = 1;
+	wcd.frameCount = 2;
 
 	if (worldRenderer->create(
 		m_context->getResourceManager(),

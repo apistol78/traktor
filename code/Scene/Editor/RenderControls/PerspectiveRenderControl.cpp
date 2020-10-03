@@ -217,7 +217,7 @@ void PerspectiveRenderControl::updateWorldRenderer()
 	wcd.quality.antiAlias = m_antiAliasQuality;
 	wcd.quality.imageProcess = m_imageProcessQuality;
 	wcd.multiSample = m_multiSample;
-	wcd.frameCount = 1;
+	wcd.frameCount = 2;
 
 	if (worldRenderer->create(
 		m_context->getResourceManager(),
