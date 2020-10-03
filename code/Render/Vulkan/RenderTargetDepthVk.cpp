@@ -243,13 +243,13 @@ void RenderTargetDepthVk::prepareAsTarget(VkCommandBuffer cmdBuffer)
 	else
 		imb.subresourceRange = { VK_IMAGE_ASPECT_DEPTH_BIT, 0, 1, 0, 1 };
 
-	imb.srcAccessMask = getAccessMask(imb.oldLayout);
-	imb.dstAccessMask = getAccessMask(imb.newLayout);
+	imb.srcAccessMask = VK_ACCESS_SHADER_READ_BIT;
+	imb.dstAccessMask = VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT;
 
 	vkCmdPipelineBarrier(
 		cmdBuffer,
-		getPipelineStageFlags(imb.oldLayout),
-		getPipelineStageFlags(imb.newLayout),
+		VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT,
+		VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT,
 		0,
 		0, nullptr,
 		0, nullptr,
@@ -261,7 +261,7 @@ void RenderTargetDepthVk::prepareAsTarget(VkCommandBuffer cmdBuffer)
 
 void RenderTargetDepthVk::prepareAsTexture(VkCommandBuffer cmdBuffer)
 {
-	if (m_imageLayout == VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL)
+	if (m_imageLayout == VK_IMAGE_LAYOUT_DEPTH_STENCIL_READ_ONLY_OPTIMAL)
 		return;
 
 	T_ASSERT_M(m_imageLayout != VK_IMAGE_LAYOUT_UNDEFINED, L"RT have not been rendered into yet.");
@@ -269,7 +269,7 @@ void RenderTargetDepthVk::prepareAsTexture(VkCommandBuffer cmdBuffer)
 	VkImageMemoryBarrier imb = {};
 	imb.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
 	imb.oldLayout = m_imageLayout;
-	imb.newLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+	imb.newLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_READ_ONLY_OPTIMAL;
 	imb.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
 	imb.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
 	imb.image = m_image;
@@ -279,13 +279,13 @@ void RenderTargetDepthVk::prepareAsTexture(VkCommandBuffer cmdBuffer)
 	else
 		imb.subresourceRange = { VK_IMAGE_ASPECT_DEPTH_BIT, 0, 1, 0, 1 };
 
-	imb.srcAccessMask = getAccessMask(imb.oldLayout);
-	imb.dstAccessMask = getAccessMask(imb.newLayout);
+	imb.srcAccessMask = VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT;
+	imb.dstAccessMask = VK_ACCESS_SHADER_READ_BIT;
 
 	vkCmdPipelineBarrier(
 		cmdBuffer,
-		getPipelineStageFlags(imb.oldLayout),
-		getPipelineStageFlags(imb.newLayout),
+		VK_PIPELINE_STAGE_LATE_FRAGMENT_TESTS_BIT,
+		VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT,
 		0,
 		0, nullptr,
 		0, nullptr,
