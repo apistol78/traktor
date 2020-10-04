@@ -53,8 +53,6 @@ public:
 
 	GlslVariable* createOuterVariable(const OutputPin* outputPin, const std::wstring& variableName, GlslType type);
 
-	//void associateVariable(const OutputPin* outputPin, GlslVariable* variable);
-
 	GlslVariable* getVariable(const OutputPin* outputPin);
 
 	void pushScope();
@@ -62,7 +60,6 @@ public:
 	void popScope();
 
 	bool defineScript(const std::wstring& signature);
-
 
 	/*! \name Output streams */
 	/*! \{ */
@@ -76,7 +73,6 @@ public:
 	const StringOutputStream& getOutputStream(BlockType blockType) const;
 
 	/*! \} */
-
 
 	std::wstring getGeneratedShader(const GlslLayout& layout, const GlslRequirements& requirements) const;
 

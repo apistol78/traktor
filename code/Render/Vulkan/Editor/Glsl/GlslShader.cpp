@@ -160,10 +160,20 @@ std::wstring GlslShader::getGeneratedShader(const GlslLayout& layout, const Glsl
 		break;
 
 	case PhHigh:
-	case PhUndefined:
 		ss << L"precision highp float;" << Endl;
 		ss << Endl;
 		break;
+
+	default:
+		break;
+	}
+
+	// Ensure output position is invariant since we're using multiple passes which
+	// expect positions to match up.
+	if (m_shaderType == StVertex)
+	{
+		ss << L"invariant gl_Position;" << Endl;
+		ss << Endl;
 	}
 
 	for (auto resource : layout.get())
