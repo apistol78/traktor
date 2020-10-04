@@ -246,6 +246,7 @@
 						<first>DEPLOY_SHARED</first>
 						<second type="traktor.PropertyStringSet">
 							<value>
+								<item>CoreGraphics.framework</item>
 								<item>Metal.framework</item>
 							</value>
 						</second>
@@ -270,6 +271,7 @@
 						<first>DEPLOY_STATIC</first>
 						<second type="traktor.PropertyStringSet">
 							<value>
+								<item>CoreGraphics.framework</item>
 								<item>Metal.framework</item>
 								<item>libMoltenVK.a</item>
 								<item>libTraktor.Compress.a</item>
