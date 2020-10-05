@@ -1377,7 +1377,7 @@ bool emitMulAdd(GlslContext& cx, MulAdd* node)
 	Ref< GlslVariable > out = cx.emitOutput(node, L"Output", type);
 
 	comment(f, node);
-	assign(f, out) << in1->cast(type) << L" * " << in2->cast(type) << L" + " << in3->cast(type) << L";" << Endl;
+	assign(f, out) << L"fma(" << in1->cast(type) << L", " << in2->cast(type) << L", " << in3->cast(type) << L");" << Endl;
 
 	return true;
 }
