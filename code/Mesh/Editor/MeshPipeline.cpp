@@ -205,7 +205,7 @@ bool MeshPipeline::buildDependencies(
 	for (std::map< std::wstring, Guid >::const_iterator i = materialTextures.begin(); i != materialTextures.end(); ++i)
 		pipelineDepends->addDependency(i->second, editor::PdfBuild | editor::PdfResource);
 
-	pipelineDepends->addDependency(asset->getTextureSet(), editor::PdfBuild | editor::PdfResource);
+	pipelineDepends->addDependency(asset->getTextureSet(), editor::PdfBuild);
 
 	pipelineDepends->addDependency< render::ShaderGraph >();
 	return true;

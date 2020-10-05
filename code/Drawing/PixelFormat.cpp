@@ -1042,6 +1042,7 @@ const PixelFormat PixelFormat::ms_pfA8R8G8B8(32, 0x00ff0000, 0x0000ff00, 0x00000
 const PixelFormat PixelFormat::ms_pfA8B8G8R8(32, 0x000000ff, 0x0000ff00, 0x00ff0000, 0xff000000, false, false);
 const PixelFormat PixelFormat::ms_pfR8G8B8A8(32, 0xff000000, 0x00ff0000, 0x0000ff00, 0x000000ff, false, false);
 const PixelFormat PixelFormat::ms_pfB8G8R8A8(32, 0x0000ff00, 0x00ff0000, 0xff000000, 0x000000ff, false, false);
+const PixelFormat PixelFormat::ms_pfR11G11B10(32, 0xffe00000, 0x001ffc00, 0x000007ff, 0x00000000, false, false);
 const PixelFormat PixelFormat::ms_pfR16G16B16(48, 16, 0, 16, 16, 16, 32, 0, 0, false, false);
 const PixelFormat PixelFormat::ms_pfA16R16G16B16(64, 16, 16, 16, 32, 16, 48, 16, 0, false, false);
 const PixelFormat PixelFormat::ms_pfR16F(16, 16, 0, 0, 0, 0, 0, 0, 0, false, true);

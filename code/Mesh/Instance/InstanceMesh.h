@@ -98,7 +98,7 @@ public:
 		const world::IWorldRenderPass& worldRenderPass,
 		AlignedVector< RenderInstance >& instanceWorld,
 		render::ProgramParameters* extraParameters
-	);
+	) const;
 
 private:
 	friend class InstanceMeshResource;
