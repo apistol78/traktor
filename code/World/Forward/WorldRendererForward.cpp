@@ -475,8 +475,8 @@ void WorldRendererForward::setupTileDataPass(
 )
 {
 	// Enqueue light clustering as a job, is synchronized in before rendering.
+	T_FATAL_ASSERT(m_frames[frame].tileJob == nullptr);
 	m_frames[frame].tileJob = JobManager::getInstance().add(makeFunctor([=]() {
-
 		const auto& viewFrustum = worldRenderView.getViewFrustum();
 		const auto& lights = m_frames[frame].lights;
 
@@ -558,7 +558,6 @@ void WorldRendererForward::setupTileDataPass(
 				}
 			}
 		}		
-
 	}));
 }
 
@@ -1172,7 +1171,7 @@ void WorldRendererForward::setupVisualPass(
 	render::handle_t reflectionsTargetSetId,
 	render::handle_t shadowMapAtlasTargetSetId,
 	int32_t frame
-) const
+)
 {
 	const bool shadowsEnable = (bool)(m_shadowsQuality != Quality::Disabled);
 
@@ -1198,11 +1197,16 @@ void WorldRendererForward::setupVisualPass(
 		[=](const render::RenderGraph& renderGraph, render::RenderContext* renderContext)
 		{
 			// Enure light clustering job has finished.
-			auto rb = renderContext->alloc< render::LambdaRenderBlock >();
-			rb->lambda = [&](render::IRenderView*) {
-				m_frames[frame].tileJob->wait();
-			};
-			renderContext->enqueue(rb);
+            Ref< Job > tileJob = m_frames[frame].tileJob;
+            if (tileJob)
+            {
+                auto rb = renderContext->alloc< render::LambdaRenderBlock >();
+                rb->lambda = [=](render::IRenderView*) {
+                    tileJob->wait();
+                };
+                renderContext->enqueue(rb);
+            }
+			m_frames[frame].tileJob = nullptr;
 
 			WorldBuildContext wc(
 				m_entityRenderers,
