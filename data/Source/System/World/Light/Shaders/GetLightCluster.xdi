@@ -276,7 +276,7 @@
 				<first>-330</first>
 				<second>-173</second>
 			</position>
-			<value>8</value>
+			<value>4</value>
 		</item>
 		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
 			<id>{B876005D-14B1-DF4C-BBB9-4AA47B62374A}</id>

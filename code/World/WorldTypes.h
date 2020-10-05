@@ -12,7 +12,7 @@ enum
 	MaxSliceCount = 4,
 	MaxLightShadowCount = 2,
 	ClusterDimXY = 32,
-	ClusterDimZ = 8
+	ClusterDimZ = 4
 };
 
 enum class Cancel
