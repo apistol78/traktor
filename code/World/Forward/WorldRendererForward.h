@@ -179,7 +179,7 @@ private:
 		render::handle_t reflectionsTargetSetId,
 		render::handle_t shadowMapAtlasTargetSetId,
 		int32_t frame
-	) const;
+	);
 
 	void setupProcessPass(
 		const WorldRenderView& worldRenderView,
