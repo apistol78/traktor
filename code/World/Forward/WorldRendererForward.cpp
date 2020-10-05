@@ -855,7 +855,7 @@ void WorldRendererForward::setupLightPass(
 	
 	// Find cascade shadow light.
 	int32_t lightCascadeIndex = -1;
-	if (shadowsEnable)
+	if (shadowsEnable && shadowSettings.cascadingSlices > 0)
 	{
 		for (int32_t i = 0; i < (int32_t)lights.size(); ++i)
 		{
@@ -905,11 +905,16 @@ void WorldRendererForward::setupLightPass(
 	// and update light sbuffer.
 	if (shadowsEnable)
 	{
+		const int32_t shmw = shadowSettings.resolution * (shadowSettings.cascadingSlices + 1);
+		const int32_t shmh = shadowSettings.resolution;
+		const int32_t sliceDim = shadowSettings.resolution;
+		const int32_t atlasOffset = shadowSettings.resolution * shadowSettings.cascadingSlices;
+
 		// Add shadow map target.
 		render::RenderGraphTargetSetDesc rgtd;
 		rgtd.count = 0;
-		rgtd.width = shadowSettings.resolution;
-		rgtd.height = shadowSettings.resolution;
+		rgtd.width = shmw;
+		rgtd.height = shmh;
 		rgtd.createDepthStencil = true;
 		rgtd.usingPrimaryDepthStencil = false;
 		rgtd.usingDepthStencilAsTexture = true;
@@ -939,12 +944,6 @@ void WorldRendererForward::setupLightPass(
 
 					for (int32_t slice = 0; slice < shadowSettings.cascadingSlices; ++slice)
 					{
-						const int32_t sliceSize = shadowSettings.resolution / 2;
-						
-						Packer::Rectangle sliceRect;
-						if (!shadowAtlasPacker->insert(sliceSize, sliceSize, sliceRect))
-							continue;
-
 						Scalar zn(max(m_slicePositions[slice], m_settings.viewNearZ));
 						Scalar zf(min(m_slicePositions[slice + 1], shadowSettings.farZ));
 
@@ -964,7 +963,7 @@ void WorldRendererForward::setupLightPass(
 							light.direction,
 							sliceViewFrustum,
 							shadowSettings.farZ,
-							false, // shadowSettings.quantizeProjection,
+							shadowSettings.quantizeProjection,
 							shadowLightView,
 							shadowLightProjection,
 							shadowFrustum
@@ -985,10 +984,10 @@ void WorldRendererForward::setupLightPass(
 						// Set viewport to current cascade.
 						auto svrb = renderContext->alloc< render::SetViewportRenderBlock >();
 						svrb->viewport = render::Viewport(
-							sliceRect.x,
-							sliceRect.y,
-							sliceRect.width,
-							sliceRect.height,
+							slice * sliceDim,
+							0,
+							sliceDim,
+							sliceDim,
 							0.0f,
 							1.0f
 						);
@@ -1025,10 +1024,10 @@ void WorldRendererForward::setupLightPass(
 
 						// Write slice coordinates to shaders.
 						Vector4(
-							(float)sliceRect.x / shadowSettings.resolution,
-							(float)sliceRect.y / shadowSettings.resolution,
-							(float)sliceRect.width / shadowSettings.resolution,
-							(float)sliceRect.height / shadowSettings.resolution
+							(float)(slice * sliceDim) / shmw,
+							0.0f,
+							(float)sliceDim / shmw,
+							1.0f
 						).storeUnaligned(lsd->atlasTransform);
 					}
 				}
@@ -1099,7 +1098,7 @@ void WorldRendererForward::setupLightPass(
 					// Set viewport to light atlas slot.
 					auto svrb = renderContext->alloc< render::SetViewportRenderBlock >();
 					svrb->viewport = render::Viewport(
-						atlasRect.x,
+						atlasOffset + atlasRect.x,
 						atlasRect.y,
 						atlasRect.width,
 						atlasRect.height,
@@ -1139,10 +1138,10 @@ void WorldRendererForward::setupLightPass(
 
 					// Write atlas coordinates to shaders.
 					Vector4(
-						(float)atlasRect.x / shadowSettings.resolution,
-						(float)atlasRect.y / shadowSettings.resolution,
-						(float)atlasRect.width / shadowSettings.resolution,
-						(float)atlasRect.height / shadowSettings.resolution
+						(float)(atlasOffset + atlasRect.x) / shmw,
+						(float)atlasRect.y / shmh,
+						(float)atlasRect.width / shmw,
+						(float)atlasRect.height / shmh
 					).storeUnaligned(lsd->atlasTransform);					
 				}
 			);

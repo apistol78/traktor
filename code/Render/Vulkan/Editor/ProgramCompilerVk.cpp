@@ -211,7 +211,7 @@ void performOptimization(AlignedVector< uint32_t >& spirv)
 	optimizer.RegisterPass(spvtools::CreateLocalAccessChainConvertPass());
 	optimizer.RegisterPass(spvtools::CreateLocalSingleBlockLoadStoreElimPass());
 	optimizer.RegisterPass(spvtools::CreateLocalSingleStoreElimPass());
-	optimizer.RegisterPass(spvtools::CreateSimplificationPass());
+	//optimizer.RegisterPass(spvtools::CreateSimplificationPass());		// Do NOT add, removes "invariant" attribute!
 	optimizer.RegisterPass(spvtools::CreateAggressiveDCEPass());
 	optimizer.RegisterPass(spvtools::CreateVectorDCEPass());
 	optimizer.RegisterPass(spvtools::CreateDeadInsertElimPass());
