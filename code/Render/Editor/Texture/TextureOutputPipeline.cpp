@@ -276,8 +276,9 @@ bool TextureOutputPipeline::buildOutput(
 		case TfR32F:
 			pixelFormat = drawing::PixelFormat::getR32F();
 			break;
-		//case TfR11G11B10F:
-		//	break;
+		case TfR11G11B10F:
+			pixelFormat = drawing::PixelFormat::getR11G11B10();
+			break;
 		case TfDXT1:
 			pixelFormat = drawing::PixelFormat::getR8G8B8A8();
 			break;

@@ -3,6 +3,7 @@
 #include "Core/Io/IStream.h"
 #include "Core/Io/Writer.h"
 #include "Core/Log/Log.h"
+#include "Core/Math/Float.h"
 #include "Core/Math/Quasirandom.h"
 #include "Core/Math/Random.h"
 #include "Core/Misc/SafeDestroy.h"
@@ -113,16 +114,16 @@ bool IrradianceGridPipeline::buildOutput(
 
 	const Scalar intensity(asset->getIntensity());
 
-	Random random;
 	WrappedSHFunction shFunction([&] (const Vector4& unit) -> Vector4 {
 		Color4f cl(0.0f, 0.0f, 0.0f, 0.0f);
-		for (int32_t i = 0; i < 100; ++i)
+		for (int32_t i = 0; i < 1000; ++i)
 		{
-			Vector2 uv = Quasirandom::hammersley(i, 100, random);
+			Vector2 uv = Quasirandom::hammersley(i, 1000);
 			Vector4 direction = Quasirandom::uniformHemiSphere(uv, unit);
-			cl += cubeMap->get(direction) * intensity;
+			Scalar w = dot3(direction, unit);
+			cl += cubeMap->get(direction) * w;
 		}
-		return cl / Scalar(100.0f);
+		return (cl * intensity * 2.0_simd) / Scalar(1000.0f);
 	});
 
 	Ref< render::SHCoeffs > shCoeffs = new render::SHCoeffs();

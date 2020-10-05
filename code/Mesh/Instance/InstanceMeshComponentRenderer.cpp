@@ -82,6 +82,7 @@ void InstanceMeshComponentRenderer::build(
 			return;
 	}
 
+	T_FATAL_ASSERT(m_meshInstances[mesh].size() < InstanceMesh::MaxInstanceCount);
 	m_meshInstances[mesh].push_back(InstanceMesh::RenderInstance(
 		packInstanceMeshData(transform),
 		packInstanceMeshData(transformLast),
@@ -95,7 +96,7 @@ void InstanceMeshComponentRenderer::build(
 	const world::IWorldRenderPass& worldRenderPass
 )
 {
-	for (auto it : m_meshInstances)
+	for (auto& it : m_meshInstances)
 	{
 		if (it.second.empty())
 			continue;

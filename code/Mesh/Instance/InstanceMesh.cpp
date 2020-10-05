@@ -58,7 +58,7 @@ void InstanceMesh::build(
 	const world::IWorldRenderPass& worldRenderPass,
 	AlignedVector< RenderInstance >& instanceWorld,
 	render::ProgramParameters* extraParameters
-)
+) const
 {
 	InstanceMeshData T_ALIGN16 instanceBatch[MaxInstanceCount];
 	InstanceMeshData T_ALIGN16 instanceLastBatch[MaxInstanceCount];
