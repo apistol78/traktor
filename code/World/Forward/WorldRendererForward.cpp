@@ -492,10 +492,13 @@ void WorldRendererForward::setupTileDataPass(
 		const Scalar dy(1.0f / ClusterDimXY);
 		const Scalar dz(1.0f / ClusterDimZ);
 
-		Vector4 nh = viewFrustum.corners[1] - viewFrustum.corners[0];
-		Vector4 nv = viewFrustum.corners[3] - viewFrustum.corners[0];
-		Vector4 fh = viewFrustum.corners[5] - viewFrustum.corners[4];
-		Vector4 fv = viewFrustum.corners[7] - viewFrustum.corners[4];
+		const Vector4& tl = viewFrustum.corners[0];
+		const Vector4& tr = viewFrustum.corners[1];
+		const Vector4& br = viewFrustum.corners[2];
+		const Vector4& bl = viewFrustum.corners[3];
+
+		Vector4 vx = tr - tl;
+		Vector4 vy = bl - tl;
 
 		Frustum tileFrustum;
 		for (int32_t y = 0; y < ClusterDimXY; ++y)
@@ -504,29 +507,27 @@ void WorldRendererForward::setupTileDataPass(
 			for (int32_t x = 0; x < ClusterDimXY; ++x)
 			{
 				Scalar fx = Scalar((float)x) * dx;
-
-				Vector4 corners[] =
-				{
-					// Near
-					viewFrustum.corners[0] + nh * fx + nv * fy,					// l t
-					viewFrustum.corners[0] + nh * (fx + dx) + nv * fy,			// r t
-					viewFrustum.corners[0] + nh * (fx + dx) + nv * (fy + dy),	// r b
-					viewFrustum.corners[0] + nh * fx + nv * (fy + dy),			// l b
-					// Far
-					viewFrustum.corners[4] + fh * fx + fv * fy,					// l t
-					viewFrustum.corners[4] + fh * (fx + dx) + fv * fy,			// r t
-					viewFrustum.corners[4] + fh * (fx + dx) + fv * (fy + dy),	// r b
-					viewFrustum.corners[4] + fh * fx + fv * (fy + dy)			// l b
-				};
-				tileFrustum.buildFromCorners(corners);
+				
+				Vector4 a = tl + vx * fx + vy * fy;
+				Vector4 b = tl + vx * (fx + dx) + vy * fy;
+				Vector4 c = tl + vx * (fx + dx) + vy * (fy + dy);
+				Vector4 d = tl + vx * fx + vy * (fy + dy);
+				
+				tileFrustum.planes[Frustum::PsLeft] = Plane(Vector4::zero(), d, a);
+				tileFrustum.planes[Frustum::PsRight] = Plane(Vector4::zero(), b, c);
+				tileFrustum.planes[Frustum::PsBottom] = Plane(Vector4::zero(), c, d);
+				tileFrustum.planes[Frustum::PsTop] = Plane(Vector4::zero(), a, b);
 
 				for (int32_t z = 0; z < ClusterDimZ; ++z)
 				{
 					Scalar fnz = Scalar((float)z) * dz;
 					Scalar ffz = Scalar((float)z + 1.0f) * dz;
 
-					tileFrustum.setNearZ(lerp(viewFrustum.getNearZ(), viewFrustum.getFarZ(), fnz));
-					tileFrustum.setFarZ(lerp(viewFrustum.getNearZ(), viewFrustum.getFarZ(), ffz));
+					Scalar nz = lerp(viewFrustum.getNearZ(), viewFrustum.getFarZ(), fnz);
+					Scalar fz = lerp(viewFrustum.getNearZ(), viewFrustum.getFarZ(), ffz);
+
+					tileFrustum.planes[Frustum::PsNear] = Plane(Vector4(0.0f, 0.0f, 1.0f), nz);
+					tileFrustum.planes[Frustum::PsFar] = Plane(Vector4(0.0f, 0.0f, -1.0f), -fz);
 
 					const uint32_t offset = (x + y * ClusterDimXY) * ClusterDimZ + z;
 
