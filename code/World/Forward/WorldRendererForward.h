@@ -15,6 +15,9 @@
 
 namespace traktor
 {
+
+class Job;
+
 	namespace render
 	{
 
@@ -81,6 +84,7 @@ private:
 		void* tileSBufferMemory;
 		AlignedVector< Light > lights;
 		Ref< Packer > shadowAtlasPacker;
+		Ref< Job > tileJob;
 	};
 
 	WorldRenderSettings m_settings;
@@ -122,7 +126,7 @@ private:
 		render::RenderGraph& renderGraph,
 		render::handle_t outputTargetSetId,
 		int32_t frame
-	) const;
+	);
 
 	render::handle_t setupGBufferPass(
 		const WorldRenderView& worldRenderView,

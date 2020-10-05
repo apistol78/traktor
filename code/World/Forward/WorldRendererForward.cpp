@@ -1,7 +1,10 @@
+#include "Core/Functor/Functor.h"
 #include "Core/Log/Log.h"
 #include "Core/Math/Float.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Misc/String.h"
+#include "Core/Thread/Job.h"
+#include "Core/Thread/JobManager.h"
 #include "Render/IRenderSystem.h"
 #include "Render/IRenderTargetSet.h"
 #include "Render/IRenderView.h"
@@ -469,86 +472,94 @@ void WorldRendererForward::setupTileDataPass(
 	render::RenderGraph& renderGraph,
 	render::handle_t outputTargetSetId,
 	int32_t frame
-) const
+)
 {
-	const auto& viewFrustum = worldRenderView.getViewFrustum();
-	const auto& lights = m_frames[frame].lights;
+	// Enqueue light clustering as a job, is synchronized in before rendering.
+	m_frames[frame].tileJob = JobManager::getInstance().add(makeFunctor([=]() {
 
-	TileShaderData* tileShaderData = (TileShaderData*)m_frames[frame].tileSBufferMemory;
+		const auto& viewFrustum = worldRenderView.getViewFrustum();
+		const auto& lights = m_frames[frame].lights;
 
-	// Update tile data.
-	const Scalar dx(1.0f / ClusterDimXY);
-	const Scalar dy(1.0f / ClusterDimXY);
-	const Scalar dz(1.0f / ClusterDimZ);
+		// Calculate world positions in view space.
+		StaticVector< Vector4, c_maxLightCount > lightPositions;
+		for (const auto& light : lights)
+			lightPositions.push_back(worldRenderView.getView() * light.position.xyz1());
 
-	Vector4 nh = viewFrustum.corners[1] - viewFrustum.corners[0];
-	Vector4 nv = viewFrustum.corners[3] - viewFrustum.corners[0];
-	Vector4 fh = viewFrustum.corners[5] - viewFrustum.corners[4];
-	Vector4 fv = viewFrustum.corners[7] - viewFrustum.corners[4];
+		TileShaderData* tileShaderData = (TileShaderData*)m_frames[frame].tileSBufferMemory;
 
-	Frustum tileFrustum;
-	for (int32_t y = 0; y < ClusterDimXY; ++y)
-	{
-		Scalar fy = Scalar((float)y) * dy;
-		for (int32_t x = 0; x < ClusterDimXY; ++x)
+		// Update tile data.
+		const Scalar dx(1.0f / ClusterDimXY);
+		const Scalar dy(1.0f / ClusterDimXY);
+		const Scalar dz(1.0f / ClusterDimZ);
+
+		Vector4 nh = viewFrustum.corners[1] - viewFrustum.corners[0];
+		Vector4 nv = viewFrustum.corners[3] - viewFrustum.corners[0];
+		Vector4 fh = viewFrustum.corners[5] - viewFrustum.corners[4];
+		Vector4 fv = viewFrustum.corners[7] - viewFrustum.corners[4];
+
+		Frustum tileFrustum;
+		for (int32_t y = 0; y < ClusterDimXY; ++y)
 		{
-			Scalar fx = Scalar((float)x) * dx;
-
-			Vector4 corners[] =
+			Scalar fy = Scalar((float)y) * dy;
+			for (int32_t x = 0; x < ClusterDimXY; ++x)
 			{
-				// Near
-				viewFrustum.corners[0] + nh * fx + nv * fy,					// l t
-				viewFrustum.corners[0] + nh * (fx + dx) + nv * fy,			// r t
-				viewFrustum.corners[0] + nh * (fx + dx) + nv * (fy + dy),	// r b
-				viewFrustum.corners[0] + nh * fx + nv * (fy + dy),			// l b
-				// Far
-				viewFrustum.corners[4] + fh * fx + fv * fy,					// l t
-				viewFrustum.corners[4] + fh * (fx + dx) + fv * fy,			// r t
-				viewFrustum.corners[4] + fh * (fx + dx) + fv * (fy + dy),	// r b
-				viewFrustum.corners[4] + fh * fx + fv * (fy + dy)			// l b
-			};
-			tileFrustum.buildFromCorners(corners);
+				Scalar fx = Scalar((float)x) * dx;
 
-			for (int32_t z = 0; z < ClusterDimZ; ++z)
-			{
-				Scalar fnz = Scalar((float)z) * dz;
-				Scalar ffz = Scalar((float)z + 1.0f) * dz;
-
-				tileFrustum.setNearZ(lerp(viewFrustum.getNearZ(), viewFrustum.getFarZ(), fnz));
-				tileFrustum.setFarZ(lerp(viewFrustum.getNearZ(), viewFrustum.getFarZ(), ffz));
-
-				const uint32_t offset = (x + y * ClusterDimXY) * ClusterDimZ + z;
-
-				int32_t count = 0;
-				for (uint32_t i = 0; i < lights.size(); ++i)
+				Vector4 corners[] =
 				{
-					const Light& light = lights[i];
+					// Near
+					viewFrustum.corners[0] + nh * fx + nv * fy,					// l t
+					viewFrustum.corners[0] + nh * (fx + dx) + nv * fy,			// r t
+					viewFrustum.corners[0] + nh * (fx + dx) + nv * (fy + dy),	// r b
+					viewFrustum.corners[0] + nh * fx + nv * (fy + dy),			// l b
+					// Far
+					viewFrustum.corners[4] + fh * fx + fv * fy,					// l t
+					viewFrustum.corners[4] + fh * (fx + dx) + fv * fy,			// r t
+					viewFrustum.corners[4] + fh * (fx + dx) + fv * (fy + dy),	// r b
+					viewFrustum.corners[4] + fh * fx + fv * (fy + dy)			// l b
+				};
+				tileFrustum.buildFromCorners(corners);
 
-					if (light.type == LtDirectional)
-					{
-						tileShaderData[offset].lights[count++] = float(i);
-					}
-					else if (light.type == LtPoint)
-					{
-						Vector4 lvp = worldRenderView.getView() * light.position.xyz1();
-						if (tileFrustum.inside(lvp, Scalar(light.range)) != Frustum::IrOutside)
-							tileShaderData[offset].lights[count++] = float(i);
-					}
-					else if (light.type == LtSpot)
-					{
-						// \fixme Implement frustum to frustum culling.
-						Vector4 lvp = worldRenderView.getView() * light.position.xyz1();
-						if (tileFrustum.inside(lvp, Scalar(light.range)) != Frustum::IrOutside)
-							tileShaderData[offset].lights[count++] = float(i);
-					}
+				for (int32_t z = 0; z < ClusterDimZ; ++z)
+				{
+					Scalar fnz = Scalar((float)z) * dz;
+					Scalar ffz = Scalar((float)z + 1.0f) * dz;
 
-					if (count >= 4)
-						break;
+					tileFrustum.setNearZ(lerp(viewFrustum.getNearZ(), viewFrustum.getFarZ(), fnz));
+					tileFrustum.setFarZ(lerp(viewFrustum.getNearZ(), viewFrustum.getFarZ(), ffz));
+
+					const uint32_t offset = (x + y * ClusterDimXY) * ClusterDimZ + z;
+
+					int32_t count = 0;
+					for (uint32_t i = 0; i < lights.size(); ++i)
+					{
+						const Light& light = lights[i];
+
+						if (light.type == LtDirectional)
+						{
+							tileShaderData[offset].lights[count++] = float(i);
+						}
+						else if (light.type == LtPoint)
+						{
+							if (tileFrustum.inside(lightPositions[i], Scalar(light.range)) != Frustum::IrOutside)
+								tileShaderData[offset].lights[count++] = float(i);
+						}
+						else if (light.type == LtSpot)
+						{
+							// \fixme Implement frustum to frustum culling.
+							if (tileFrustum.inside(lightPositions[i], Scalar(light.range)) != Frustum::IrOutside)
+								tileShaderData[offset].lights[count++] = float(i);
+						}
+
+						if (count >= 4)
+							break;
+					}
+					tileShaderData[offset].lightCount[0] = float(count);
 				}
-				tileShaderData[offset].lightCount[0] = float(count);
 			}
-		}
-	}
+		}		
+
+	}));
 }
 
 render::handle_t WorldRendererForward::setupGBufferPass(
@@ -1186,6 +1197,13 @@ void WorldRendererForward::setupVisualPass(
 	rp->addBuild(
 		[=](const render::RenderGraph& renderGraph, render::RenderContext* renderContext)
 		{
+			// Enure light clustering job has finished.
+			auto rb = renderContext->alloc< render::LambdaRenderBlock >();
+			rb->lambda = [&](render::IRenderView*) {
+				m_frames[frame].tileJob->wait();
+			};
+			renderContext->enqueue(rb);
+
 			WorldBuildContext wc(
 				m_entityRenderers,
 				rootEntity,
