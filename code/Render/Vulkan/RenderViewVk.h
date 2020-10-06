@@ -135,38 +135,39 @@ private:
 		VkPipeline pipeline;
 	};
 
-	VkInstance m_instance;
-	VkPhysicalDevice m_physicalDevice;
-	VkDevice m_logicalDevice;
-	VmaAllocator m_allocator;
+	VkInstance m_instance = 0;
+	VkPhysicalDevice m_physicalDevice = 0;
+	VkDevice m_logicalDevice = 0;
+	VmaAllocator m_allocator = 0;
 
 #if defined(_WIN32) || defined(__LINUX__)
 	Ref< Window > m_window;
 #endif
-	VkSurfaceKHR m_surface;
+	VkSurfaceKHR m_surface = 0;
 	Ref< Queue > m_graphicsQueue;
 	Ref< Queue > m_computeQueue;
-	uint32_t m_presentQueueIndex;
-	VkQueue m_presentQueue;
+	uint32_t m_presentQueueIndex = ~0;
+	VkQueue m_presentQueue = 0;
 	Ref< CommandBufferPool > m_graphicsCommandPool;
 	Ref< CommandBufferPool > m_computeCommandPool;
+	bool m_lost = true;
 
 	// Swap chain.
 	VkSwapchainKHR m_swapChain;
 	VkSemaphore m_imageAvailableSemaphore;
 	AlignedVector< Frame > m_frames;
-	uint32_t m_currentImageIndex;
-	int32_t m_vblanks;
+	uint32_t m_currentImageIndex = 0;
+	int32_t m_vblanks = 0;
 
 	// Event queue.
 	std::list< RenderEvent > m_eventQueue;
 	
 	// Current pass's target.
 	Ref< RenderTargetSetVk > m_targetSet;
-	int32_t m_targetColorIndex;
-	uint32_t m_targetId;
-	VkRenderPass m_targetRenderPass;
-	VkFramebuffer m_targetFrameBuffer;
+	int32_t m_targetColorIndex = 0;
+	uint32_t m_targetId = 0;
+	VkRenderPass m_targetRenderPass = 0;
+	VkFramebuffer m_targetFrameBuffer = 0;
 
 	// Pipelines.
 	SmallMap< pipeline_key_t, PipelineEntry > m_pipelines;
@@ -175,13 +176,13 @@ private:
 	Ref< UniformBufferPoolVk > m_uniformBufferPool;
 
 	// Stats.
-	bool m_haveDebugMarkers;
-	bool m_cursorVisible;
-	int32_t m_nextQueryIndex;
-	uint32_t m_counter;
-	uint32_t m_passCount;
-	uint32_t m_drawCalls;
-	uint32_t m_primitiveCount;
+	bool m_haveDebugMarkers = false;
+	bool m_cursorVisible = true;
+	int32_t m_nextQueryIndex = 0;
+	uint32_t m_counter = -1;
+	uint32_t m_passCount = 0;
+	uint32_t m_drawCalls = 0;
+	uint32_t m_primitiveCount = 0;
 
 	bool create(uint32_t width, uint32_t height, int32_t vblanks);
 

@@ -79,25 +79,8 @@ RenderViewVk::RenderViewVk(
 ,	m_physicalDevice(physicalDevice)
 ,	m_logicalDevice(logicalDevice)
 ,	m_allocator(allocator)
-,	m_surface(0)
 ,	m_graphicsQueue(graphicsQueue)
 ,	m_computeQueue(computeQueue)
-,	m_presentQueueIndex(~0)
-,	m_presentQueue(0)
-,	m_swapChain(0)
-,	m_imageAvailableSemaphore(0)
-,	m_currentImageIndex(0)
-,	m_vblanks(0)
-,	m_targetId(0)
-,	m_targetRenderPass(0)
-,	m_targetFrameBuffer(0)
-,	m_haveDebugMarkers(false)
-,	m_cursorVisible(true)
-,	m_nextQueryIndex(0)
-,	m_counter(-1)
-,	m_passCount(0)
-,	m_drawCalls(0)
-,	m_primitiveCount(0)
 {
 }
 
@@ -258,7 +241,10 @@ bool RenderViewVk::nextEvent(RenderEvent& outEvent)
 
 void RenderViewVk::close()
 {
-	vkDeviceWaitIdle(m_logicalDevice);
+	if (!m_lost)
+		vkDeviceWaitIdle(m_logicalDevice);
+
+	m_lost = true;
 
 	// Ensure event queue doesn't contain stale events.
 	m_eventQueue.clear();
@@ -442,7 +428,7 @@ bool RenderViewVk::beginFrame()
 
 	// Might reach here with a non-created instance, pending reset, so
 	// we need to make sure we have an instance first.
-	if (m_frames.empty())
+	if (m_lost || m_frames.empty())
 		return false;
 
 	// Do this first so we remember, count number of frames.
@@ -471,6 +457,7 @@ bool RenderViewVk::beginFrame()
 		RenderEvent evt;
 		evt.type = ReLost;
 		m_eventQueue.push_back(evt);
+		m_lost = true;
 		return false;
 	}
 
@@ -516,6 +503,7 @@ void RenderViewVk::endFrame()
 		RenderEvent evt;
 		evt.type = ReLost;
 		m_eventQueue.push_back(evt);
+		m_lost = true;
 		return;
 	}
 
@@ -574,6 +562,7 @@ void RenderViewVk::present()
 		RenderEvent evt;
 		evt.type = ReLost;
 		m_eventQueue.push_back(evt);
+		m_lost = true;
 		return;
 	}
 }
@@ -581,6 +570,9 @@ void RenderViewVk::present()
 bool RenderViewVk::beginPass(const Clear* clear)
 {
 	T_FATAL_ASSERT(m_targetRenderPass == 0);
+
+	if (m_lost)
+		return false;
 
 	auto& frame = m_frames[m_currentImageIndex];
 
@@ -660,6 +652,9 @@ bool RenderViewVk::beginPass(IRenderTargetSet* renderTargetSet, const Clear* cle
 {
 	T_FATAL_ASSERT(m_targetRenderPass == 0);
 
+	if (m_lost)
+		return false;
+
 	auto& frame = m_frames[m_currentImageIndex];
 
 	Clear cl = {};
@@ -737,6 +732,9 @@ bool RenderViewVk::beginPass(IRenderTargetSet* renderTargetSet, const Clear* cle
 bool RenderViewVk::beginPass(IRenderTargetSet* renderTargetSet, int32_t renderTarget, const Clear* clear, uint32_t load, uint32_t store)
 {
 	T_FATAL_ASSERT(m_targetRenderPass == 0);
+
+	if (m_lost)
+		return false;
 
 	auto& frame = m_frames[m_currentImageIndex];
 
@@ -1170,6 +1168,9 @@ void RenderViewVk::getStatistics(RenderViewStatistics& outStatistics) const
 
 bool RenderViewVk::create(uint32_t width, uint32_t height, int32_t vblanks)
 {
+	// In case we fail to create make sure we're lost.
+	m_lost = true;
+
 	// Do not fail if requested size, assume it will get reset later.
 	if (width == 0 && height == 0)
 		return true;
@@ -1437,6 +1438,7 @@ bool RenderViewVk::create(uint32_t width, uint32_t height, int32_t vblanks)
 	m_uniformBufferPool = new UniformBufferPoolVk(m_logicalDevice, m_allocator);
 
 	m_nextQueryIndex = 0;
+	m_lost = false;
 	return true;
 }
 
