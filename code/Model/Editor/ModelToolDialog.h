@@ -132,6 +132,8 @@ private:
 
 	void eventRenderPaint(ui::PaintEvent* event);
 
+	void eventMaterialSelect(ui::SelectionChangeEvent* event);
+
 	void eventSkeletonSelect(ui::SelectionChangeEvent* event);
 };
 

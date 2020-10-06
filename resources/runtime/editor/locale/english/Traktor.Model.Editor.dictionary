@@ -185,5 +185,9 @@
 			<first>MODEL_TOOL_REFRESH</first>
 			<second>Refresh</second>
 		</item>
+		<item>
+			<first>MODEL_TOOL_POSE</first>
+			<second>Pose</second>
+		</item>
 	</map>
 </object>
