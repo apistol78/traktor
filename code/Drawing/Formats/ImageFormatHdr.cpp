@@ -58,10 +58,18 @@ void workOnRGBE(const RGBE* scan, float* data, int32_t len)
 	}
 }
 
-uint8_t readByte(IStream* stream)
+bool readByte(IStream* stream, uint8_t& outByte)
 {
-	uint8_t b = 0;
-	return stream->read(&b, 1) == 1 ? b : 0;
+	return stream->read(&outByte, 1) == 1;
+}
+
+int32_t readByte(IStream* stream)
+{
+	uint8_t b;
+	if (readByte(stream, b))
+		return (int32_t)b;
+	else
+		return -1;
 }
 
 bool decrunchLegacy(IStream* stream, RGBE* scan, int32_t len)
@@ -101,16 +109,18 @@ bool decrunch(IStream* stream, RGBE* scan, int32_t len)
 	if (len < MINELEN || len > MAXELEN)
 		return decrunchLegacy(stream, scan, len);
 
-	i = readByte(stream);
+	if ((i = readByte(stream)) < 0)
+		return false;
 	if (i != 2)
 	{
 		stream->seek(IStream::SeekCurrent, -1);
 		return decrunchLegacy(stream, scan, len);
 	}
 
-	scan[0].g = readByte(stream);
-	scan[0].b = readByte(stream);
-	i = readByte(stream);
+	readByte(stream, scan[0].g);
+	readByte(stream, scan[0].b);
+	if ((i = readByte(stream)) < 0)
+		return false;
 
 	if (scan[0].g != 2 || scan[0].b & 128)
 	{
@@ -123,18 +133,25 @@ bool decrunch(IStream* stream, RGBE* scan, int32_t len)
 	{
 		for (j = 0; j < len; )
 		{
-			uint8_t code = readByte(stream);
+			uint8_t code;
+			if (!readByte(stream, code))
+				return false;
 			if (code > 128)
 			{
 				code &= 127;
-				uint8_t val = readByte(stream);
+				uint8_t val;
+				if (!readByte(stream, val))
+					return false;
 				while (code--)
 					scan[j++].ch[i] = val;
 			}
 			else 
 			{
 				while(code--)
-					scan[j++].ch[i] = readByte(stream);
+				{
+					if (!readByte(stream, scan[j++].ch[i]))
+						return false;
+				}
 			}
 		}
 	}
@@ -150,7 +167,8 @@ Ref< Image > ImageFormatHdr::read(IStream* stream)
 {
 	char str[200] = { 0 };
 
-	stream->read(str, 10);
+	if (stream->read(str, 10) != 10)
+		return nullptr;
 	if (std::memcmp(str, "#?RADIANCE", 10) != 0)
 	{
 		stream->seek(IStream::SeekSet, 0);

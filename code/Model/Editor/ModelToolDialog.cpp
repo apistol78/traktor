@@ -1,4 +1,5 @@
 #include "Core/Class/IRuntimeClass.h"
+#include "Core/Containers/BitVector.h"
 #include "Core/Log/Log.h"
 #include "Core/Math/Const.h"
 #include "Core/Misc/SafeDestroy.h"
@@ -140,13 +141,13 @@ bool ModelToolDialog::create(ui::Widget* parent, const std::wstring& fileName, f
 	m_toolSolid = new ui::ToolBarButton(i18n::Text(L"MODEL_TOOL_SOLID"), ui::Command(L"ModelTool.ToggleSolid"), ui::ToolBarButton::BsText | ui::ToolBarButton::BsToggled);
 	toolBar->addItem(m_toolSolid);
 
-	m_toolWire = new ui::ToolBarButton(i18n::Text(L"MODEL_TOOL_WIRE"), ui::Command(L"ModelTool.ToggleWire"), ui::ToolBarButton::BsText | ui::ToolBarButton::BsToggled);
+	m_toolWire = new ui::ToolBarButton(i18n::Text(L"MODEL_TOOL_WIRE"), ui::Command(L"ModelTool.ToggleWire"), ui::ToolBarButton::BsText | ui::ToolBarButton::BsToggle);
 	toolBar->addItem(m_toolWire);
 
-	m_toolNormals = new ui::ToolBarButton(i18n::Text(L"MODEL_TOOL_NORMALS"), ui::Command(L"ModelTool.ToggleNormals"), ui::ToolBarButton::BsText | ui::ToolBarButton::BsToggled);
+	m_toolNormals = new ui::ToolBarButton(i18n::Text(L"MODEL_TOOL_NORMALS"), ui::Command(L"ModelTool.ToggleNormals"), ui::ToolBarButton::BsText | ui::ToolBarButton::BsToggle);
 	toolBar->addItem(m_toolNormals);
 
-	m_toolVertices = new ui::ToolBarButton(i18n::Text(L"MODEL_TOOL_VERTICES"), ui::Command(L"ModelTool.ToggleVertices"), ui::ToolBarButton::BsText | ui::ToolBarButton::BsToggled);
+	m_toolVertices = new ui::ToolBarButton(i18n::Text(L"MODEL_TOOL_VERTICES"), ui::Command(L"ModelTool.ToggleVertices"), ui::ToolBarButton::BsText | ui::ToolBarButton::BsToggle);
 	toolBar->addItem(m_toolVertices);
 
 	m_toolCull = new ui::ToolBarButton(i18n::Text(L"MODEL_TOOL_CULL_BACKFACES"), ui::Command(L"ModelTool.ToggleCullBackfaces"), ui::ToolBarButton::BsText | ui::ToolBarButton::BsToggled);
@@ -214,6 +215,7 @@ bool ModelToolDialog::create(ui::Widget* parent, const std::wstring& fileName, f
 	m_materialGrid->addColumn(new ui::GridColumn(i18n::Text(L"MODEL_TOOL_MATERIAL_RIM_LIGHT"), ui::dpi96(100)));
 	m_materialGrid->addColumn(new ui::GridColumn(i18n::Text(L"MODEL_TOOL_MATERIAL_BLEND_OPERATOR"), ui::dpi96(100)));
 	m_materialGrid->addColumn(new ui::GridColumn(i18n::Text(L"MODEL_TOOL_MATERIAL_DOUBLE_SIDED"), ui::dpi96(100)));
+	m_materialGrid->addEventHandler< ui::SelectionChangeEvent >(this, &ModelToolDialog::eventMaterialSelect);
 
 	// Skeleton tab.
 	Ref< ui::TabPage > tabPageSkeleton = new ui::TabPage();
@@ -889,8 +891,8 @@ void ModelToolDialog::eventRenderPaint(ui::PaintEvent* event)
 	Matrix44 projectionTransform = perspectiveLh(
 		80.0f * PI / 180.0f,
 		aspect,
-		0.1f,
-		2000.0f
+		0.01f,
+		1000.0f
 	);
 
 	auto texture = (m_texturePreview != nullptr) ? m_texturePreview.ptr() : m_textureDebug.getResource();
@@ -928,6 +930,15 @@ void ModelToolDialog::eventRenderPaint(ui::PaintEvent* event)
 			if (selectedItems.size() == 1)
 				weightJoint = *selectedItems.front()->getData< PropertyInteger >(L"JOINT");
 
+			// Get selection state of materials.
+			const auto& rows = m_materialGrid->getRows();
+			BitVector materialSelections(rows.size(), false);
+			for (uint32_t i = 0; i < rows.size(); ++i)
+			{
+				if ((rows[i]->getState() & ui::GridRow::RsSelected) != 0)
+					materialSelections.set(i);
+			}
+
 			// Render solid.
 			if (m_toolSolid->isToggled())
 			{
@@ -941,13 +952,12 @@ void ModelToolDialog::eventRenderPaint(ui::PaintEvent* event)
 				const AlignedVector< Vector4 >& positions = m_modelTris->getPositions();
 
 				m_primitiveRenderer->pushDepthState(true, true, false);
-				for (AlignedVector< Polygon >::const_iterator i = polygons.begin(); i != polygons.end(); ++i)
+				for (const auto& polygon : polygons)
 				{
-					const auto& indices = i->getVertices();
+					const auto& indices = polygon.getVertices();
 					T_ASSERT(indices.size() == 3);
 
 					Vector4 p[3];
-
 					for (uint32_t i = 0; i < indices.size(); ++i)
 					{
 						const Vertex& vx0 = vertices[indices[i]];
@@ -955,42 +965,52 @@ void ModelToolDialog::eventRenderPaint(ui::PaintEvent* event)
 					}
 
 					Vector4 N = cross(p[0] - p[1], p[2] - p[1]).normalized();
-					float diffuse = 1.0f;
-					
-					if (m_toolShading->isToggled())
-						diffuse = abs(dot3(lightDir, N)) * 0.5f + 0.5f;
-
 					if (cull)
 					{
 						if (dot3(eyePosition - p[0], N) < 0)
 							continue;
 					}
 
+					float diffuse = 1.0f;
+					if (m_toolShading->isToggled())
+						diffuse = abs(dot3(lightDir, N)) * 0.5f + 0.5f;
+
+					Color4ub shading(
+						int32_t(diffuse * 255),
+						int32_t(diffuse * 255),
+						int32_t(diffuse * 255),
+						255						
+					);
+
 					if (!m_toolWeight->isToggled())
 					{
+						bool selected = false;
+						if (polygon.getMaterial() != c_InvalidIndex)
+							selected = materialSelections[polygon.getMaterial()];
+
 						if (vertices[indices[0]].getTexCoordCount() > channel)
 						{
+							Color4ub color = 
+								selected ?
+								Color4ub(180, 180, 255, 255) :
+								Color4ub(255, 255, 255, 255);
+
 							m_primitiveRenderer->drawTextureTriangle(
 								p[2], m_modelTris->getTexCoord(vertices[indices[2]].getTexCoord(channel)),
 								p[1], m_modelTris->getTexCoord(vertices[indices[1]].getTexCoord(channel)),
 								p[0], m_modelTris->getTexCoord(vertices[indices[0]].getTexCoord(channel)),
-								Color4ub(
-									int32_t(diffuse * 255),
-									int32_t(diffuse * 255),
-									int32_t(diffuse * 255),
-									255
-								),
+								color * shading,
 								texture
 							);
 						}
 						else
 						{
-							m_primitiveRenderer->drawSolidTriangle(p[2], p[1], p[0], Color4ub(
-								int32_t(diffuse * 81),
-								int32_t(diffuse * 105),
-								int32_t(diffuse * 195),
-								255
-							));
+							Color4ub color = 
+								selected ?
+								Color4ub(180, 180, 255, 255) :
+								Color4ub(81, 105, 195, 255);
+
+							m_primitiveRenderer->drawSolidTriangle(p[2], p[1], p[0], color * shading);
 						}
 					}
 					else
@@ -1259,6 +1279,11 @@ void ModelToolDialog::eventRenderPaint(ui::PaintEvent* event)
 	m_renderView->present();
 
 	event->consume();
+}
+
+void ModelToolDialog::eventMaterialSelect(ui::SelectionChangeEvent* event)
+{
+	m_renderWidget->update();
 }
 
 void ModelToolDialog::eventSkeletonSelect(ui::SelectionChangeEvent* event)

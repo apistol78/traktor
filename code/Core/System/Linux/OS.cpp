@@ -226,7 +226,7 @@ Ref< IProcess > OS::execute(
 			if (j != arguments.npos)
 			{
 				argv[argc++] = strdup(wstombs(arguments.substr(i + 1, j - i - 1)).c_str());
-				i = j + 1;
+				i = j + 2;
 			}
 			else
 				return nullptr;

@@ -541,7 +541,7 @@ Ref< StructBuffer > RenderSystemVk::createStructBuffer(const AlignedVector< Stru
 	bci.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
 
 	VmaAllocationCreateInfo aci = {};
-	aci.usage = VMA_MEMORY_USAGE_CPU_TO_GPU; // \tbd VMA_MEMORY_USAGE_GPU_ONLY;
+	aci.usage = VMA_MEMORY_USAGE_CPU_TO_GPU;
 
 	VmaAllocation allocation;
 	if (vmaCreateBuffer(m_allocator, &bci, &aci, &storageBuffer, &allocation, nullptr) != VK_SUCCESS)
