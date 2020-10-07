@@ -18,6 +18,7 @@ DialogWin32::DialogWin32(EventSubject* owner)
 ,	m_modal(false)
 ,	m_minSize(0, 0)
 ,	m_centerDesktop(false)
+,	m_keepCentered(false)
 ,	m_result(0)
 {
 }
@@ -44,6 +45,11 @@ bool DialogWin32::create(IWidget* parent, const std::wstring& text, int width, i
 		m_centerDesktop = true;
 	else
 		m_centerDesktop = false;
+
+	if (!m_centerDesktop && (style & (WsResizable | WsCaption | WsSystemBox | WsMinimizeBox | WsMaximizeBox)) == 0)
+		m_keepCentered = true;
+	else
+		m_keepCentered = false;
 
 	HWND hWndParent = 0;
 	if (parent)
@@ -110,7 +116,11 @@ int DialogWin32::showModal()
 	{
 		while (GetParent(hParentWnd))
 			hParentWnd = GetParent(hParentWnd);
-		EnableWindow(hParentWnd, FALSE);
+
+		EnumChildWindows(hParentWnd, [](HWND hWnd, LPARAM lParam) -> BOOL {
+			EnableWindow(hWnd, FALSE);
+			return TRUE;
+		}, NULL);
 	}
 
 	HWND hCenterWnd = m_centerDesktop ? GetDesktopWindow() : hParentWnd;
@@ -141,11 +151,29 @@ int DialogWin32::showModal()
 			TranslateMessage(&msg);
 			DispatchMessage(&msg);
 		}
+
+		// Keep dialog centered if parent has moved.
+		if (m_keepCentered)
+		{
+			RECT rcParent;
+			GetWindowRect(hCenterWnd, &rcParent);
+			POINT pntPos =
+			{
+				rcParent.left + ((rcParent.right - rcParent.left) - getRect().getWidth()) / 2,
+				rcParent.top + ((rcParent.bottom - rcParent.top) - getRect().getHeight()) / 2
+			};
+			SetWindowPos(m_hWnd, HWND_TOP, pntPos.x, pntPos.y, 0, 0, SWP_NOSIZE | SWP_SHOWWINDOW);
+		}
 	}
 
 	// Enable parent window.
 	if (hParentWnd)
-		EnableWindow(hParentWnd, TRUE);
+	{
+		EnumChildWindows(hParentWnd, [](HWND hWnd, LPARAM lParam) -> BOOL {
+			EnableWindow(hWnd, TRUE);
+			return TRUE;
+		}, NULL);
+	}
 
 	return m_result;
 }
@@ -268,7 +296,7 @@ LRESULT DialogWin32::eventClose(HWND hWnd, UINT message, WPARAM wParam, LPARAM l
 LRESULT DialogWin32::eventEndModal(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, bool& skip)
 {
 	m_modal = false;
-	m_result = wParam;
+	m_result = (int32_t)wParam;
 	return 0;
 }
 
