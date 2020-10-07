@@ -29,8 +29,8 @@ void LightRenderer::gather(
 	light.position = transform.translation();
 	light.direction = transform.axisY();
 	light.color = lightComponent->getColor();
-	light.range = Scalar(lightComponent->getRange());
-	light.radius = Scalar(lightComponent->getRadius());
+	light.range = lightComponent->getRange();
+	light.radius = lightComponent->getRadius();
 	light.castShadow = lightComponent->getCastShadow();
 
 	if (lightComponent->getFlickerAmount() > FUZZY_EPSILON)

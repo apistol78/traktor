@@ -267,10 +267,6 @@ bool WorldRendererForward::create(
 		if (!frame.lightSBuffer)
 			return false;
 
-		frame.lightSBufferMemory = frame.lightSBuffer->lock();
-		if (!frame.lightSBufferMemory)
-			return false;
-
 		AlignedVector< render::StructElement > tileShaderDataStruct;
 		tileShaderDataStruct.push_back(render::StructElement(render::DtFloat4, offsetof(TileShaderData, lights)));
 		tileShaderDataStruct.push_back(render::StructElement(render::DtFloat4, offsetof(TileShaderData, lightCount)));
@@ -281,10 +277,6 @@ bool WorldRendererForward::create(
 			render::getStructSize(tileShaderDataStruct) * ClusterDimXY * ClusterDimXY * ClusterDimZ
 		);
 		if (!frame.tileSBuffer)
-			return false;
-
-		frame.tileSBufferMemory = frame.tileSBuffer->lock();
-		if (!frame.tileSBufferMemory)
 			return false;
 
 		frame.shadowAtlasPacker = new Packer(
@@ -366,10 +358,6 @@ void WorldRendererForward::setup(
 	WorldGatherContext(m_entityRenderers, rootEntity).gather(rootEntity, lights);
 	if (lights.size() > c_maxLightCount)
 		lights.resize(c_maxLightCount);
-
-	// Begun writing light shader data; written both in setup and build.
-	LightShaderData* lightShaderData = (LightShaderData*)m_frames[frame].lightSBufferMemory;
-	TileShaderData* tileShaderData = (TileShaderData*)m_frames[frame].tileSBufferMemory;
 
 	// Add additional passes by entity renderers.
 	{
@@ -485,7 +473,7 @@ void WorldRendererForward::setupTileDataPass(
 		for (const auto& light : lights)
 			lightPositions.push_back(worldRenderView.getView() * light.position.xyz1());
 
-		TileShaderData* tileShaderData = (TileShaderData*)m_frames[frame].tileSBufferMemory;
+		TileShaderData* tileShaderData = (TileShaderData*)m_frames[frame].tileSBuffer->lock();
 
 		// Update tile data.
 		const Scalar dx(1.0f / ClusterDimXY);
@@ -558,7 +546,9 @@ void WorldRendererForward::setupTileDataPass(
 					tileShaderData[offset].lightCount[0] = float(count);
 				}
 			}
-		}		
+		}
+
+		m_frames[frame].tileSBuffer->unlock();
 	}));
 }
 
@@ -854,7 +844,9 @@ void WorldRendererForward::setupLightPass(
 	const bool shadowsEnable = (bool)(m_shadowsQuality != Quality::Disabled);
 	const auto& lights = m_frames[frame].lights;
 
-	LightShaderData* lightShaderData = (LightShaderData*)m_frames[frame].lightSBufferMemory;
+	// Lock light buffer, will get unlocked from render thread since data is written both
+	// here and then before rendering.
+	LightShaderData* lightShaderData = (LightShaderData*)m_frames[frame].lightSBuffer->lock();
 
 	// Reset this frame's atlas packer.
 	auto shadowAtlasPacker = m_frames[frame].shadowAtlasPacker;
@@ -1157,6 +1149,17 @@ void WorldRendererForward::setupLightPass(
 				}
 			);
 		}
+
+		rp->addBuild(
+			[=](const render::RenderGraph& renderGraph, render::RenderContext* renderContext)
+			{
+                auto rb = renderContext->alloc< render::LambdaRenderBlock >();
+                rb->lambda = [=](render::IRenderView*) {
+                    m_frames[frame].lightSBuffer->unlock();
+                };
+                renderContext->enqueue(rb);
+			}
+		);
 
 		renderGraph.addPass(rp);
 	}

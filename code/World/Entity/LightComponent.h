@@ -58,13 +58,13 @@ public:
 
 	bool getCastShadow() const { return m_castShadow; }
 
-	void setRange(float range) { m_range = range;  }
+	void setRange(Scalar range) { m_range = range;  }
 
-	float getRange() const { return m_range; }
+	Scalar getRange() const { return m_range; }
 
-	void setRadius(float radius) { m_radius = radius; }
+	void setRadius(Scalar radius) { m_radius = radius; }
 
-	float getRadius() const { return m_radius;  }
+	Scalar getRadius() const { return m_radius;  }
 
 	void setFlickerAmount(float flickerAmount) { m_flickerAmount = flickerAmount; }
 
@@ -81,8 +81,8 @@ private:
 	LightType m_lightType;
 	Vector4 m_color;
 	bool m_castShadow;
-	float m_range;
-	float m_radius;
+	Scalar m_range;
+	Scalar m_radius;
 	float m_flickerAmount;
 	float m_flickerFilter;
 	float m_flickerValue;
