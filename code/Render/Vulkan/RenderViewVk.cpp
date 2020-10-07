@@ -241,6 +241,7 @@ bool RenderViewVk::nextEvent(RenderEvent& outEvent)
 
 void RenderViewVk::close()
 {
+	// Assume device is idle when lost.
 	if (!m_lost)
 		vkDeviceWaitIdle(m_logicalDevice);
 
