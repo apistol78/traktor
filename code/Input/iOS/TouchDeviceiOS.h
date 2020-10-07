@@ -63,6 +63,10 @@ public:
 
 	virtual void touchesCancelled(NSSet* touches, UIEvent* event) override final;
 
+	// Misc
+
+	void setLandscape(bool landscape) { m_landscape = landscape; }
+
 private:
 	bool m_landscape;
 	float m_width;

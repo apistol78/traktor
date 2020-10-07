@@ -167,8 +167,6 @@ void TouchDeviceiOS::resetState()
 
 void TouchDeviceiOS::readState()
 {
-	UIInterfaceOrientation orientation = [UIApplication sharedApplication].statusBarOrientation;
-	m_landscape = UIInterfaceOrientationIsLandscape(orientation);
 }
 
 bool TouchDeviceiOS::supportRumble() const
@@ -191,9 +189,7 @@ void TouchDeviceiOS::touchesBegan(NSSet* touches, UIEvent* event)
 	for (UITouch* touch in [event allTouches])
 	{
 		CGPoint location = [touch locationInView: nil];
-
 		m_touch[touch] = m_fingers;
-
 		if (!m_landscape)
 		{
 			m_positionX[m_fingers] = location.x;
@@ -204,7 +200,6 @@ void TouchDeviceiOS::touchesBegan(NSSet* touches, UIEvent* event)
 			m_positionX[m_fingers] = m_height - location.y;
 			m_positionY[m_fingers] = location.x;
 		}
-
 		if (++m_fingers >= 3)
 			break;
 	}
@@ -215,7 +210,6 @@ void TouchDeviceiOS::touchesMoved(NSSet* touches, UIEvent* event)
 	for (UITouch* touch in [event allTouches])
 	{
 		CGPoint location = [touch locationInView: nil];
-
 		int32_t index = -1;
 
 		std::map< const UITouch*, int32_t >::const_iterator i = m_touch.find(touch);
@@ -256,7 +250,6 @@ void TouchDeviceiOS::touchesEnded(NSSet* touches, UIEvent* event)
 			continue;
 
 		int32_t index = i->second;
-
 		if (!m_landscape)
 		{
 			m_positionX[index] = location.x;

@@ -147,8 +147,6 @@ void MouseDeviceiOS::resetState()
 
 void MouseDeviceiOS::readState()
 {
-	UIInterfaceOrientation orientation = [UIApplication sharedApplication].statusBarOrientation;
-	m_landscape = UIInterfaceOrientationIsLandscape(orientation);
 }
 
 bool MouseDeviceiOS::supportRumble() const
@@ -169,7 +167,6 @@ void MouseDeviceiOS::touchesBegan(NSSet* touches, UIEvent* event)
 	for (UITouch* touch in touches)
 	{
 		CGPoint location = [touch locationInView: nil];
-
 		if (!m_landscape)
 		{
 			m_positionX = location.x;
@@ -180,7 +177,6 @@ void MouseDeviceiOS::touchesBegan(NSSet* touches, UIEvent* event)
 			m_positionX = m_height - location.y;
 			m_positionY = location.x;
 		}
-
 		m_button = true;
 	}
 }
@@ -190,7 +186,6 @@ void MouseDeviceiOS::touchesMoved(NSSet* touches, UIEvent* event)
 	for (UITouch* touch in touches)
 	{
 		CGPoint location = [touch locationInView: nil];
-
 		if (!m_landscape)
 		{
 			m_positionX = location.x;
@@ -209,7 +204,6 @@ void MouseDeviceiOS::touchesEnded(NSSet* touches, UIEvent* event)
 	for (UITouch* touch in touches)
 	{
 		CGPoint location = [touch locationInView: nil];
-
 		if (!m_landscape)
 		{
 			m_positionX = location.x;
@@ -220,7 +214,6 @@ void MouseDeviceiOS::touchesEnded(NSSet* touches, UIEvent* event)
 			m_positionX = m_height - location.y;
 			m_positionY = location.x;
 		}
-
 		m_button = false;
 	}
 }

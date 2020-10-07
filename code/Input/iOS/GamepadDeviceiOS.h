@@ -63,6 +63,10 @@ public:
 
 	virtual void touchesCancelled(NSSet* touches, UIEvent* event) override final;
 
+	// Misc
+
+	void setLandscape(bool landscape) {}
+
 private:
 	struct IControl
 	{
