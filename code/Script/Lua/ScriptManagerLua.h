@@ -1,6 +1,6 @@
 #pragma once
 
-// #define T_SCRIPT_LUA_USE_MT_LOCK
+#define T_SCRIPT_LUA_USE_MT_LOCK
 
 #include "Core/RefArray.h"
 #include "Core/Containers/AlignedVector.h"

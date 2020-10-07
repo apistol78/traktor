@@ -268,7 +268,7 @@ void Stage::transition()
 			continue;
 
 		Layer* currentLayer = getLayer(layerName);
-		if (currentLayer != layer && &type_of(currentLayer) == &type_of(layer))
+		if (currentLayer != nullptr && currentLayer != layer && &type_of(currentLayer) == &type_of(layer))
 			layer->transition(currentLayer);
 	}
 
