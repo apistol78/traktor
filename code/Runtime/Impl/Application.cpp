@@ -435,7 +435,8 @@ void Application::destroy()
 	safeDestroy(m_stateManager);
 
 	// Cleanup all pending garbage in script land.
-	m_scriptServer->cleanup(true);
+	if (m_scriptServer)
+		m_scriptServer->cleanup(true);
 
 	// Shutdown plugins.
 	for (auto plugin : m_plugins)
