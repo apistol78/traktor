@@ -32,6 +32,7 @@ private:
 	bool m_modal;
 	Size m_minSize;
 	bool m_centerDesktop;
+	bool m_keepCentered;
 	int32_t m_result;
 
 	LRESULT eventInitDialog(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, bool& skip);
