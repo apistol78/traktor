@@ -79,9 +79,7 @@ private:
 	struct Frame
 	{
 		Ref< render::StructBuffer > lightSBuffer;
-		void* lightSBufferMemory;
 		Ref< render::StructBuffer > tileSBuffer;
-		void* tileSBufferMemory;
 		AlignedVector< Light > lights;
 		Ref< Packer > shadowAtlasPacker;
 		Ref< Job > tileJob;
