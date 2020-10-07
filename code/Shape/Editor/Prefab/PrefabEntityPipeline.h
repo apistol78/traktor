@@ -26,6 +26,14 @@ public:
 
 	virtual TypeInfoSet getAssetTypes() const override final;
 
+	virtual bool buildDependencies(
+		editor::IPipelineDepends* pipelineDepends,
+		const db::Instance* sourceInstance,
+		const ISerializable* sourceAsset,
+		const std::wstring& outputPath,
+		const Guid& outputGuid
+	) const override;
+
 	virtual Ref< ISerializable > buildOutput(
 		editor::IPipelineBuilder* pipelineBuilder,
 		const db::Instance* sourceInstance,
@@ -35,6 +43,7 @@ public:
 
 private:
 	std::wstring m_assetPath;
+	std::wstring m_modelCachePath;
 	float m_visualMeshSnap;
 	float m_collisionMeshSnap;
 	bool m_mergeCoplanar;
