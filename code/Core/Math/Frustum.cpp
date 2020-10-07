@@ -101,16 +101,18 @@ Frustum::InsideResult Frustum::inside(const Vector4& point) const
 
 Frustum::InsideResult Frustum::inside(const Vector4& center_, const Scalar& radius) const
 {
+	const Scalar nradius = -radius;
 	bool partial = false;
-	Scalar nradius = -radius;
+
 	for (uint32_t i = 0; i < planes.size(); ++i)
 	{
 		Scalar distance = planes[i].distance(center_);
 		if (distance < nradius)
 			return IrOutside;
 		if (distance < radius)
-			partial |= true;
+			partial = true;
 	}
+
 	return partial ? IrPartial : IrInside;
 }
 

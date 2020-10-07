@@ -18,7 +18,9 @@ public:
 
 	int getDeviceCount();
 
-	Ref< IInputDevice > getDevice(int index);
+	IInputDevice* getDevice(int index);
+
+	IInputDriver::UpdateResult update();
 
 	// ITouchViewCallback
 
@@ -34,6 +36,8 @@ private:
 	Ref< TouchDeviceiOS > m_deviceTouch;
 	Ref< GamepadDeviceiOS > m_deviceGamepad;
 	Ref< MouseDeviceiOS > m_deviceMouse;
+	int32_t m_untilCheckOrientation = 0;
+	bool m_landscape = false;
 };
 
 bool InputDriveriOSImpl::create(void* nativeWindowHandle)
@@ -68,7 +72,7 @@ int InputDriveriOSImpl::getDeviceCount()
 	return 3;
 }
 
-Ref< IInputDevice > InputDriveriOSImpl::getDevice(int index)
+IInputDevice* InputDriveriOSImpl::getDevice(int index)
 {
 	if (index == 0)
 		return m_deviceTouch;
@@ -77,7 +81,26 @@ Ref< IInputDevice > InputDriveriOSImpl::getDevice(int index)
 	else if (index == 2)
 		return m_deviceMouse;
 	else
-		return 0;
+		return nullptr;
+}
+
+IInputDriver::UpdateResult InputDriveriOSImpl::update()
+{
+	if (--m_untilCheckOrientation)
+	{
+		// Check orientation; fairly expensive operation so do not do this too often.
+		UIInterfaceOrientation orientation = [UIApplication sharedApplication].statusBarOrientation;
+		m_landscape = UIInterfaceOrientationIsLandscape(orientation);
+
+		// Propagate to devices.
+		m_deviceTouch->setLandscape(m_landscape);
+		m_deviceGamepad->setLandscape(m_landscape);
+		m_deviceMouse->setLandscape(m_landscape);
+
+		// Assume 60 fps to 0.5 second interval.
+		m_untilCheckOrientation = 30;
+	}
+	return IInputDriver::UrOk;
 }
 
 void InputDriveriOSImpl::touchesBegan(NSSet* touches, UIEvent* event)
@@ -137,7 +160,7 @@ Ref< IInputDevice > InputDriveriOS::getDevice(int index)
 
 IInputDriver::UpdateResult InputDriveriOS::update()
 {
-	return UrOk;
+	return m_impl->update();
 }
 
 	}

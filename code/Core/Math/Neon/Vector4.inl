@@ -393,8 +393,8 @@ T_MATH_INLINE Scalar horizontalAdd3(const Vector4& v)
 
 T_MATH_INLINE Scalar horizontalAdd4(const Vector4& v)
 {
-	Vector4 tmp = v + v.shuffle< 1, 0, 3, 2 >();
-	return (tmp + tmp.shuffle< 2, 2, 0, 0 >()).x();
+	float32x2_t tmp = vadd_f32(vget_high_f32(v.m_data), vget_low_f32(v.m_data)); 
+	return Scalar(vget_lane_f32(vpadd_f32(tmp, tmp), 0));
 }
 
 T_MATH_INLINE Scalar dot3(const Vector4& l, const Vector4& r)
