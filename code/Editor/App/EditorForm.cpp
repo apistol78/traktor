@@ -2044,10 +2044,18 @@ void EditorForm::updateMRU()
 
 	std::vector< Path > recentFiles;
 	m_mru->getUsedFiles(recentFiles);
+
+	bool first = true;
 	for (const auto& recentFile : recentFiles)
 	{
 		Ref< ui::MenuItem > menuItem = new ui::MenuItem(ui::Command(L"Editor.OpenRecentWorkspace", new Path(recentFile)), recentFile.getPathName());
 		m_menuItemRecent->add(menuItem);
+
+		if (first && recentFiles.size() >= 2)
+		{
+			m_menuItemRecent->add(new ui::MenuItem(L"-"));
+			first = false;
+		}
 	}
 }
 
