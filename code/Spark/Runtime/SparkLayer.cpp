@@ -427,9 +427,9 @@ void SparkLayer::setup(const runtime::UpdateInfo& info, render::RenderGraph& ren
 	if (!m_movieRenderer)
 		return;
 
-	m_displayRenderer->setup(&renderGraph);
+	m_displayRenderer->beginSetup(&renderGraph);
 	m_moviePlayer->render(m_movieRenderer);
-	m_displayRenderer->setup(nullptr);
+	m_displayRenderer->endSetup();
 }
 
 void SparkLayer::preReconfigured()

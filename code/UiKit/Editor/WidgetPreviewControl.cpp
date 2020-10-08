@@ -249,9 +249,9 @@ void WidgetPreviewControl::eventPaint(ui::PaintEvent* event)
 	}
 
 	// Add passes to render graph.
-	m_displayRenderer->setup(m_renderGraph);
+	m_displayRenderer->beginSetup(m_renderGraph);
 	m_moviePlayer->render(m_movieRenderer);
-	m_displayRenderer->setup(nullptr);
+	m_displayRenderer->endSetup();
 
 	// Validate render graph.
 	if (!m_renderGraph->validate())
