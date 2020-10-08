@@ -139,7 +139,7 @@ bool PrefabEntityPipeline::buildDependencies(
 	if (!prefabEntityData)
 	{
 		log::error << L"Prefab entity pipeline failed; Unable to resolve all external entities." << Endl;
-		return nullptr;
+		return false;
 	}
 
 	// Get all component entities which contain visual and/or physics meshes.
