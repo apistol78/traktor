@@ -67,7 +67,9 @@ public:
 
 	void destroy();
 
-	void setup(render::RenderGraph* renderGraph);
+	void beginSetup(render::RenderGraph* renderGraph);
+
+	void endSetup();
 
 	void flushCaches();
 

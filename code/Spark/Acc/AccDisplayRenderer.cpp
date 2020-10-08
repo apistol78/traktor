@@ -200,45 +200,45 @@ void AccDisplayRenderer::destroy()
 	safeDestroy(m_lineVertexPool);
 }
 
-void AccDisplayRenderer::setup(render::RenderGraph* renderGraph)
+void AccDisplayRenderer::beginSetup(render::RenderGraph* renderGraph)
 {
-	if (renderGraph)
+	m_renderGraph = renderGraph;
+
+	auto glyphsTargetSetId = m_renderGraph->addExternalTargetSet(L"Spark glyph", m_renderTargetGlyphs);
+
+	m_renderPassOutput = new render::RenderPass(L"Spark");
+	if (m_clearBackground)
 	{
-		m_renderGraph = renderGraph;
-
-		auto glyphsTargetSetId = m_renderGraph->addExternalTargetSet(L"Spark glyph", m_renderTargetGlyphs);
-
-		m_renderPassOutput = new render::RenderPass(L"Spark");
-		if (m_clearBackground)
-		{
-			render::Clear cl;
-			cl.mask = render::CfColor | render::CfDepth | render::CfStencil;
-			cl.colors[0] = Color4f(0.8f, 0.8f, 0.8f, 0.0);
-			cl.depth = 1.0f;
-			cl.stencil = 0;
-			m_renderPassOutput->setOutput(0, cl, render::TfNone, render::TfColor | render::TfDepth);
-		}
-		else
-		{
-			render::Clear cl;
-			cl.mask = render::CfStencil;
-			cl.stencil = 0;
-			m_renderPassOutput->setOutput(0, cl, render::TfColor | render::TfDepth, render::TfColor | render::TfDepth);
-		}
-		m_renderGraph->addPass(m_renderPassOutput);
-
-		m_renderPassGlyph = new render::RenderPass(L"Spark glyphs");
-		m_renderPassGlyph->setOutput(glyphsTargetSetId, render::TfColor, render::TfColor);
-		m_renderGraph->addPass(m_renderPassGlyph);
+		render::Clear cl;
+		cl.mask = render::CfColor | render::CfDepth | render::CfStencil;
+		cl.colors[0] = Color4f(0.8f, 0.8f, 0.8f, 0.0);
+		cl.depth = 1.0f;
+		cl.stencil = 0;
+		m_renderPassOutput->setOutput(0, cl, render::TfNone, render::TfColor | render::TfDepth);
 	}
 	else
 	{
-		m_renderGraph = nullptr;
-		m_renderPassOutput = nullptr;
-		m_renderPassGlyph = nullptr;
+		render::Clear cl;
+		cl.mask = render::CfStencil;
+		cl.stencil = 0;
+		m_renderPassOutput->setOutput(0, cl, render::TfColor | render::TfDepth, render::TfColor | render::TfDepth);
 	}
+	m_renderGraph->addPass(m_renderPassOutput);
+
+	m_renderPassGlyph = new render::RenderPass(L"Spark glyphs");
+	m_renderPassGlyph->setOutput(glyphsTargetSetId, render::TfColor, render::TfColor);
 
 	m_frameTransform.set(0.0f, 0.0f, 1.0f, 1.0f);
+}
+
+void AccDisplayRenderer::endSetup()
+{
+	if (!m_renderPassGlyph->getBuilds().empty())
+		m_renderGraph->addPass(m_renderPassGlyph);
+
+	m_renderGraph = nullptr;
+	m_renderPassOutput = nullptr;
+	m_renderPassGlyph = nullptr;
 }
 
 void AccDisplayRenderer::flushCaches()
