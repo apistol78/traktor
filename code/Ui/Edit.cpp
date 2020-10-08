@@ -41,7 +41,7 @@ bool Edit::create(Widget* parent, const std::wstring& text, int style, const Edi
 	if (!Widget::create(parent, style | WsWantAllInput | WsDoubleBuffer))
 		return false;
 
-	if ((m_validator = validator) != 0)
+	if ((m_validator = validator) != nullptr)
 	{
 		if (m_validator->validate(text) == EditValidator::VrInvalid)
 			return false;
@@ -70,7 +70,7 @@ void Edit::destroy()
 {
 	// If control is destroyed while having focus then no event is issued
 	// for loosing focus, so we must also enable global event handlers here.
-	if (hasFocus())
+	if (getIWidget() != nullptr && hasFocus())
 		Application::getInstance()->enableEventHandlers< KeyDownEvent >();
 
 	Widget::destroy();
