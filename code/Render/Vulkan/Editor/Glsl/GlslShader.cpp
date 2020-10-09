@@ -155,7 +155,13 @@ std::wstring GlslShader::getGeneratedShader(const PropertyGroup* settings, const
 		ss << Endl;
 	}
 
-	switch (requirements.precisionHint)
+	PrecisionHint precisionHint = PhUndefined;
+	if (m_shaderType == StVertex)
+		precisionHint = requirements.vertexPrecisionHint;
+	else if (m_shaderType == StFragment)
+		precisionHint = requirements.fragmentPrecisionHint;
+
+	switch (precisionHint)
 	{
 	case PhLow:
 		ss << L"precision lowp float;" << Endl;

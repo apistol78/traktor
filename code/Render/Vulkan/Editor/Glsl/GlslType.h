@@ -28,10 +28,12 @@ enum GlslType
 
 struct GlslRequirements
 {
-	PrecisionHint precisionHint;
+	PrecisionHint vertexPrecisionHint;
+	PrecisionHint fragmentPrecisionHint;
 
 	GlslRequirements()
-	:	precisionHint(PhUndefined)
+	:	vertexPrecisionHint(PhUndefined)
+	,	fragmentPrecisionHint(PhUndefined)
 	{
 	}
 };
