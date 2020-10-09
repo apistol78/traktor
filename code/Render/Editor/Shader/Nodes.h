@@ -1251,12 +1251,17 @@ public:
 
 	const std::wstring& getTechnique() const;
 
+	void setPrecisionHint(PrecisionHint precisionHint);
+
+	PrecisionHint getPrecisionHint() const;
+
 	virtual std::wstring getInformation() const override final;
 
 	virtual void serialize(ISerializer& s) override final;
 
 private:
 	std::wstring m_technique;
+	PrecisionHint m_precisionHint;
 };
 
 //@}

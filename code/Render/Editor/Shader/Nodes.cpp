@@ -2503,13 +2503,14 @@ void VertexInput::serialize(ISerializer& s)
 
 /*---------------------------------------------------------------------------*/
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.VertexOutput", 1, VertexOutput, ImmutableNode)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.VertexOutput", 2, VertexOutput, ImmutableNode)
 
 const ImmutableNode::InputPinDesc c_VertexOutput_i[] = { { L"Input", false }, { 0 } };
 
 VertexOutput::VertexOutput()
 :	ImmutableNode(c_VertexOutput_i, 0)
 ,	m_technique(L"Default")
+,	m_precisionHint(PhUndefined)
 {
 }
 
@@ -2523,6 +2524,16 @@ const std::wstring& VertexOutput::getTechnique() const
 	return m_technique;
 }
 
+void VertexOutput::setPrecisionHint(PrecisionHint precisionHint)
+{
+	m_precisionHint = precisionHint;
+}
+
+PrecisionHint VertexOutput::getPrecisionHint() const
+{
+	return m_precisionHint;
+}
+
 std::wstring VertexOutput::getInformation() const
 {
 	return m_technique;
@@ -2534,6 +2545,19 @@ void VertexOutput::serialize(ISerializer& s)
 
 	if (s.getVersion() >= 1)
 		s >> Member< std::wstring >(L"technique", m_technique);
+
+	if (s.getVersion() >= 2)
+	{
+		const MemberEnum< PrecisionHint >::Key c_PrecisionHintKeys[] =
+		{
+			{ L"PhUndefined", PhUndefined },
+			{ L"PhLow", PhLow },
+			{ L"PhMedium", PhMedium },
+			{ L"PhHigh", PhHigh },
+			{ 0 }
+		};
+		s >> MemberEnum< PrecisionHint >(L"precisionHint", m_precisionHint, c_PrecisionHintKeys);
+	}
 }
 
 /*---------------------------------------------------------------------------*/

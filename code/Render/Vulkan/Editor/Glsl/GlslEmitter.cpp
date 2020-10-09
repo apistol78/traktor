@@ -1443,7 +1443,7 @@ bool emitPixelOutput(GlslContext& cx, PixelOutput* node)
 	}
 
 	cx.setRenderState(rs);
-	cx.requirements().precisionHint = node->getPrecisionHint();
+	cx.requirements().fragmentPrecisionHint = node->getPrecisionHint();
 	return true;
 }
 
@@ -2768,6 +2768,7 @@ bool emitVertexOutput(GlslContext& cx, VertexOutput* node)
 		break;
 	}
 
+	cx.requirements().vertexPrecisionHint = node->getPrecisionHint();
 	return true;
 }
 
