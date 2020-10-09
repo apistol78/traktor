@@ -148,7 +148,7 @@ std::wstring GlslShader::getGeneratedShader(const PropertyGroup* settings, const
 	ss << L"#extension GL_ARB_shader_ballot : enable" << Endl;
 	ss << L"#extension GL_EXT_samplerless_texture_functions : enable" << Endl;
 
-	if (settings->getProperty< bool >(L"Glsl.Vulkan.ConvertRelaxedToHalf"))
+	if (settings != nullptr && settings->getProperty< bool >(L"Glsl.Vulkan.ConvertRelaxedToHalf"))
 	{
 		ss << L"#extension GL_EXT_shader_explicit_arithmetic_types_float16 : enable" << Endl;
 		ss << L"#extension GL_EXT_shader_16bit_storage : enable" << Endl;

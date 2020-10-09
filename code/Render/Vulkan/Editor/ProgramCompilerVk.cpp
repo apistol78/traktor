@@ -404,7 +404,7 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 	if (!program->link(EShMsgDefault))
 		return nullptr;
 
-	const bool convertRelaxedToHalf = settings->getProperty< bool >(L"Glsl.Vulkan.ConvertRelaxedToHalf");
+	const bool convertRelaxedToHalf = (settings != nullptr ? settings->getProperty< bool >(L"Glsl.Vulkan.ConvertRelaxedToHalf") : false);
 	Ref< ProgramResourceVk > programResource = new ProgramResourceVk();
 
 	// Output render state.
