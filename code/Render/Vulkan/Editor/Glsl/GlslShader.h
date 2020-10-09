@@ -11,6 +11,9 @@
 
 namespace traktor
 {
+
+class PropertyGroup;
+
 	namespace render
 	{
 
@@ -74,7 +77,7 @@ public:
 
 	/*! \} */
 
-	std::wstring getGeneratedShader(const GlslLayout& layout, const GlslRequirements& requirements) const;
+	std::wstring getGeneratedShader(const PropertyGroup* settings, const GlslLayout& layout, const GlslRequirements& requirements) const;
 
 private:
 	struct OutputPinVariable

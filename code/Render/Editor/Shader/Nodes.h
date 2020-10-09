@@ -891,11 +891,16 @@ public:
 
 	const RenderState& getRenderState() const;
 
+	void setPrecisionHint(PrecisionHint precisionHint);
+
+	PrecisionHint getPrecisionHint() const;
+
 	virtual void serialize(ISerializer& s) override final;
 
 private:
 	uint32_t m_priority;
 	RenderState m_renderState;
+	PrecisionHint m_precisionHint;
 };
 
 /*! Step function. */

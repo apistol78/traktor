@@ -28,7 +28,7 @@ Ref< ProgramResource > ProgramCompilerOpenGLES::compile(
 {
 	GlslProgram glslProgram;
 	if (!Glsl().generate(shaderGraph, settings, name, glslProgram))
-		return 0;
+		return nullptr;
 
 	Ref< ProgramResourceOpenGLES > resource = new ProgramResourceOpenGLES(
 		wstombs(glslProgram.getVertexShader()),

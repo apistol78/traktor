@@ -17748,6 +17748,12 @@
 					<solutionFileName>ExternOSX.xms</solutionFileName>
 					<projectName>Extern.spirvtools</projectName>
 				</item>
+				<item type="ExternalDependency" version="3">
+					<inheritIncludePaths>true</inheritIncludePaths>
+					<link>LnkYes</link>
+					<solutionFileName>ExternOSX.xms</solutionFileName>
+					<projectName>Extern.SPIRV-Cross</projectName>
+				</item>
 			</dependencies>
 		</item>
 		<item ref="/object/projects/item[81]/dependencies/item[4]/project"/>

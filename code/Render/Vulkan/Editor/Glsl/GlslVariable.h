@@ -17,7 +17,7 @@ class Node;
 class GlslVariable : public Object
 {
 public:
-	GlslVariable();
+	GlslVariable() = default;
 
 	GlslVariable(const Node* node, const std::wstring& name, GlslType type);
 
@@ -34,9 +34,9 @@ public:
 	GlslVariable& operator = (const GlslVariable& other);
 
 private:
-	const Node* m_node;
+	const Node* m_node = nullptr;
 	std::wstring m_name;
-	GlslType m_type;
+	GlslType m_type = GtVoid;
 };
 
 	}

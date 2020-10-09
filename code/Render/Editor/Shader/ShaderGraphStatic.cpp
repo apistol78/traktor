@@ -699,6 +699,7 @@ Ref< ShaderGraph > ShaderGraphStatic::getStateResolved() const
 
 		pixelOutputNode->setPriority(state->getPriority());
 		pixelOutputNode->setRenderState(state->getRenderState());
+		pixelOutputNode->setPrecisionHint(state->getPrecisionHint());
 
 		shaderGraph->removeEdge(edge);
 		shaderGraph->removeNode(state);
