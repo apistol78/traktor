@@ -441,6 +441,16 @@ bool PipelineBuilder::buildOutput(const db::Instance* sourceInstance, const ISer
 		currentDependencyHash.filesHash
 	);
 
+	// Concatenate with parent's hash.
+	PipelineDependencyHash* parentDependencyHash = (PipelineDependencyHash*)m_parentHash.get();
+	if (parentDependencyHash)
+	{
+		currentDependencyHash.pipelineHash += parentDependencyHash->pipelineHash;
+		currentDependencyHash.sourceAssetHash += parentDependencyHash->sourceAssetHash;
+		currentDependencyHash.sourceDataHash += parentDependencyHash->sourceDataHash;
+		currentDependencyHash.filesHash += parentDependencyHash->filesHash;
+	}
+
 	T_ANONYMOUS_VAR(ScopeIndent)(log::info);
 
 	if (m_verbose)
@@ -738,6 +748,9 @@ IPipelineBuilder::BuildResult PipelineBuilder::performBuild(const IPipelineDepen
 	// Use guid of output as a basis for synthesis.
 	Guid synthesis = dependency->outputGuid.permutation(c_synthesisSeedGuid);
 	m_synthesisGuid.set(&synthesis);
+
+	// Expose this dependency's hash since synthesized builds need to take it into account for caching.
+	m_parentHash.set(&currentDependencyHash);
 
 	LogTargetFilter infoTarget(log::info.getLocalTarget(), !m_verbose);
 	LogTargetFilter warningTarget(log::warning.getLocalTarget(), false);

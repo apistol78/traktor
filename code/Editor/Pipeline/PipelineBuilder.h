@@ -121,8 +121,10 @@ private:
 	std::map< Guid, Ref< ISerializable > > m_readCache;
 	std::map< uint32_t, built_cache_list_t > m_builtCache;
 	std::map< const TypeInfo*, double > m_buildDurations;
+
 	ThreadLocal m_buildInstances;
 	ThreadLocal m_synthesisGuid;
+	ThreadLocal m_parentHash;
 
 	int32_t m_progress;
 	int32_t m_progressEnd;
