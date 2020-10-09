@@ -35,7 +35,7 @@ namespace traktor
 		namespace
 		{
 
-const int32_t c_maxLightCount = 1024;
+const int32_t c_maxLightCount = 16;
 
 const render::Handle s_handleVisualTargetSet[] =
 {
