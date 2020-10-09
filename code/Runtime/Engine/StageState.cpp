@@ -53,10 +53,6 @@ StageState::~StageState()
 
 void StageState::enter()
 {
-	log::info << Endl;
-	log::info << L"-----------------------------------------------------------------------------" << Endl;
-	log::info << L"Enter \"" << m_stage->getName() << L"\"" << Endl;
-	log::info << L"-----------------------------------------------------------------------------" << Endl;
 }
 
 void StageState::leave()
