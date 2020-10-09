@@ -30,8 +30,6 @@
 								<item>CoreImage.framework</item>
 								<item>CoreMedia.framework</item>
 								<item>CoreVideo.framework</item>
-								<item>Everyplay.bundle</item>
-								<item>Everyplay.framework</item>
 								<item>Foundation.framework</item>
 								<item>GameKit.framework</item>
 								<item>MessageUI.framework</item>
@@ -75,8 +73,6 @@
 								<item>CoreImage.framework</item>
 								<item>CoreMedia.framework</item>
 								<item>CoreVideo.framework</item>
-								<item>Everyplay.bundle</item>
-								<item>Everyplay.framework</item>
 								<item>Foundation.framework</item>
 								<item>GameKit.framework</item>
 								<item>MessageUI.framework</item>

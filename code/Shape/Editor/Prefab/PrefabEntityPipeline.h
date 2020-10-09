@@ -47,6 +47,7 @@ private:
 	float m_visualMeshSnap;
 	float m_collisionMeshSnap;
 	bool m_mergeCoplanar;
+	bool m_editor;
 };
 
 	}

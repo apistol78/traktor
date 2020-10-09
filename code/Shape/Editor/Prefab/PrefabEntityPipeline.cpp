@@ -109,6 +109,7 @@ PrefabEntityPipeline::PrefabEntityPipeline()
 :	m_visualMeshSnap(0.01f)
 ,	m_collisionMeshSnap(0.01f)
 ,	m_mergeCoplanar(true)
+,	m_editor(false)
 {
 }
 
@@ -119,6 +120,7 @@ bool PrefabEntityPipeline::create(const editor::IPipelineSettings* settings)
 	m_visualMeshSnap = settings->getProperty< float >(L"PrefabPipeline.VisualMeshSnap", 0.01f);
 	m_collisionMeshSnap = settings->getProperty< float >(L"PrefabPipeline.CollisionMeshSnap", 0.01f);
 	m_mergeCoplanar = settings->getProperty< bool >(L"PrefabPipeline.MergeCoplanar", true);
+	m_editor = settings->getProperty< bool >(L"Pipeline.TargetEditor", false);
 	return true;
 }
 
@@ -165,7 +167,11 @@ bool PrefabEntityPipeline::buildDependencies(
 		}
 	}
 
-	return true;
+	// If we're running in the editor then we must also build individual entities, not just the assets.
+	if (m_editor)
+		return world::EntityPipeline::buildDependencies(pipelineDepends, sourceInstance, sourceAsset, outputPath, outputGuid);
+	else
+		return true;
 }
 
 Ref< ISerializable > PrefabEntityPipeline::buildOutput(

@@ -303,8 +303,6 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 		cx.getEmitter().emit(cx, vertexOutputs[0]);
 
 		GlslRequirements vertexRequirements = cx.requirements();
-		vertexRequirements.precisionHint = PhHigh;
-
 		GlslRequirements fragmentRequirements = cx.requirements();
 
 		const auto& layout = cx.getLayout();
