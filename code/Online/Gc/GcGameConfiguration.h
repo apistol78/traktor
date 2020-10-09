@@ -30,9 +30,6 @@ private:
 	std::list< std::wstring > m_achievementIds;
 	std::list< std::wstring > m_leaderboardIds;
 	std::list< std::wstring > m_statsIds;
-	std::wstring m_sharingClientId;
-	std::wstring m_sharingClientSecret;
-	std::wstring m_sharingRedirectURI;
 };
 
 	}
