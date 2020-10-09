@@ -1,3 +1,5 @@
+#include "Core/Settings/PropertyBoolean.h"
+#include "Core/Settings/PropertyGroup.h"
 #include "Render/Editor/OutputPin.h"
 #include "Render/Vulkan/Editor/Glsl/GlslImage.h"
 #include "Render/Vulkan/Editor/Glsl/GlslLayout.h"
@@ -133,7 +135,7 @@ const StringOutputStream& GlslShader::getOutputStream(BlockType blockType) const
 	return *(m_outputStreams[int(blockType)].back().outputStream);
 }
 
-std::wstring GlslShader::getGeneratedShader(const GlslLayout& layout, const GlslRequirements& requirements) const
+std::wstring GlslShader::getGeneratedShader(const PropertyGroup* settings, const GlslLayout& layout, const GlslRequirements& requirements) const
 {
 	StringOutputStream ss;
 
@@ -145,7 +147,13 @@ std::wstring GlslShader::getGeneratedShader(const GlslLayout& layout, const Glsl
 	ss << L"#extension GL_ARB_shading_language_420pack : enable" << Endl;
 	ss << L"#extension GL_ARB_shader_ballot : enable" << Endl;
 	ss << L"#extension GL_EXT_samplerless_texture_functions : enable" << Endl;
-	ss << Endl;
+
+	if (settings->getProperty< bool >(L"Glsl.Vulkan.ConvertRelaxedToHalf"))
+	{
+		ss << L"#extension GL_EXT_shader_explicit_arithmetic_types_float16 : enable" << Endl;
+		ss << L"#extension GL_EXT_shader_16bit_storage : enable" << Endl;
+		ss << Endl;
+	}
 
 	switch (requirements.precisionHint)
 	{

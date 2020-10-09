@@ -11,11 +11,16 @@
 
 #include <spirv-tools/optimizer.hpp>
 
+#include <spirv_glsl.hpp>
+#include <spirv_msl.hpp>
+
 #include "Core/Log/Log.h"
 #include "Core/Misc/Adler32.h"
 #include "Core/Misc/Align.h"
 #include "Core/Misc/Split.h"
 #include "Core/Misc/String.h"
+#include "Core/Settings/PropertyBoolean.h"
+#include "Core/Settings/PropertyGroup.h"
 #include "Render/Editor/Shader/Nodes.h"
 #include "Render/Editor/Shader/ShaderGraph.h"
 
@@ -149,7 +154,7 @@ TBuiltInResource getDefaultBuiltInResource()
 
 const uint32_t c_parameterTypeWidths[] = { 1, 4, 16, 0, 0, 0 };
 
-void performOptimization(AlignedVector< uint32_t >& spirv)
+void performOptimization(bool convertRelaxedToHalf, AlignedVector< uint32_t >& spirv)
 {
 	spv_target_env target_env = SPV_ENV_UNIVERSAL_1_2;
 
@@ -233,6 +238,9 @@ void performOptimization(AlignedVector< uint32_t >& spirv)
 	//	optimizer.RegisterPass(spvtools::CreateRedundantLineInfoElimPass());
 	//}
 
+	if (convertRelaxedToHalf)
+		optimizer.RegisterPass(spvtools::CreateConvertRelaxedToHalfPass());
+
 	spvtools::OptimizerOptions spvOptOptions;
 	//optimizer.SetTargetEnv(MapToSpirvToolsEnv(intermediate.getSpv(), logger));
 	//spvOptOptions.set_run_validator(false); // The validator may run as a separate step later on
@@ -300,8 +308,8 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 		GlslRequirements fragmentRequirements = cx.requirements();
 
 		const auto& layout = cx.getLayout();
-		const char* vertexShaderText = strdup(wstombs(cx.getVertexShader().getGeneratedShader(layout, vertexRequirements)).c_str());
-		const char* fragmentShaderText = strdup(wstombs(cx.getFragmentShader().getGeneratedShader(layout, fragmentRequirements)).c_str());
+		const char* vertexShaderText = strdup(wstombs(cx.getVertexShader().getGeneratedShader(settings, layout, vertexRequirements)).c_str());
+		const char* fragmentShaderText = strdup(wstombs(cx.getFragmentShader().getGeneratedShader(settings, layout, fragmentRequirements)).c_str());
 
 		// Vertex shader.
 		vertexShader = new glslang::TShader(EShLangVertex);
@@ -360,7 +368,7 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 		GlslRequirements computeRequirements = cx.requirements();
 
 		const auto& layout = cx.getLayout();
-		const char* computeShaderText = strdup(wstombs(cx.getComputeShader().getGeneratedShader(layout, computeRequirements)).c_str());
+		const char* computeShaderText = strdup(wstombs(cx.getComputeShader().getGeneratedShader(settings, layout, computeRequirements)).c_str());
 
 		// Compute shader.
 		computeShader = new glslang::TShader(EShLangCompute);
@@ -396,6 +404,7 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 	if (!program->link(EShMsgDefault))
 		return nullptr;
 
+	const bool convertRelaxedToHalf = settings->getProperty< bool >(L"Glsl.Vulkan.ConvertRelaxedToHalf");
 	Ref< ProgramResourceVk > programResource = new ProgramResourceVk();
 
 	// Output render state.
@@ -408,7 +417,7 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 		std::vector< uint32_t > vs;
 		glslang::GlslangToSpv(*vsi, vs);
 		programResource->m_vertexShader = AlignedVector< uint32_t >(vs.begin(), vs.end());
-		performOptimization(programResource->m_vertexShader);
+		performOptimization(convertRelaxedToHalf, programResource->m_vertexShader);
 	}
 
 	auto fsi = program->getIntermediate(EShLangFragment);
@@ -417,7 +426,7 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 		std::vector< uint32_t > fs;
 		glslang::GlslangToSpv(*fsi, fs);
 		programResource->m_fragmentShader = AlignedVector< uint32_t >(fs.begin(), fs.end());
-		performOptimization(programResource->m_fragmentShader);
+		performOptimization(convertRelaxedToHalf, programResource->m_fragmentShader);
 	}
 
 	auto csi = program->getIntermediate(EShLangCompute);
@@ -426,7 +435,7 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 		std::vector< uint32_t > cs;
 		glslang::GlslangToSpv(*csi, cs);
 		programResource->m_computeShader = AlignedVector< uint32_t >(cs.begin(), cs.end());
-		performOptimization(programResource->m_computeShader);
+		performOptimization(convertRelaxedToHalf, programResource->m_computeShader);
 	}
 
 	// Map parameters to uniforms.
@@ -580,6 +589,55 @@ bool ProgramCompilerVk::generate(
 	std::wstring& outComputeShader
 ) const
 {
+	Ref< ProgramResourceVk > programResource = checked_type_cast< ProgramResourceVk* >(compile(
+		shaderGraph,
+		settings,
+		name,
+		optimize,
+		true,
+		nullptr
+	));
+	if (!programResource)
+		return false;
+
+	spirv_cross::CompilerMSL::Options options;
+	options.platform = spirv_cross::CompilerMSL::Options::iOS;
+	options.set_msl_version(2, 6);
+
+	if (!programResource->m_vertexShader.empty())
+	{
+		spirv_cross::CompilerMSL glsl(programResource->m_vertexShader.c_ptr(), programResource->m_vertexShader.size());
+		glsl.set_msl_options(options);
+		glsl.build_dummy_sampler_for_combined_images();
+		glsl.build_combined_image_samplers();
+		std::string source = glsl.compile();
+		outVertexShader = mbstows(source);
+	}
+
+	if (!programResource->m_fragmentShader.empty())
+	{
+		spirv_cross::CompilerMSL glsl(programResource->m_fragmentShader.c_ptr(), programResource->m_fragmentShader.size());
+		glsl.set_msl_options(options);
+		glsl.build_dummy_sampler_for_combined_images();
+		glsl.build_combined_image_samplers();
+		std::string source = glsl.compile();
+		outPixelShader = mbstows(source);
+	}
+
+	if (!programResource->m_computeShader.empty())
+	{
+		spirv_cross::CompilerMSL glsl(programResource->m_computeShader.c_ptr(), programResource->m_computeShader.size());
+		glsl.set_msl_options(options);
+		glsl.build_dummy_sampler_for_combined_images();
+		glsl.build_combined_image_samplers();
+		std::string source = glsl.compile();
+		outComputeShader = mbstows(source);
+	}
+
+	return true;
+
+
+/*
 	RefArray< VertexOutput > vertexOutputs;
 	RefArray< PixelOutput > pixelOutputs;
 	RefArray< ComputeOutput > computeOutputs;
@@ -682,6 +740,7 @@ bool ProgramCompilerVk::generate(
 		css << Endl;
 		outComputeShader = css.str();
 	}
+*/
 
 	return true;
 }

@@ -17358,6 +17358,12 @@
 					<solutionFileName>ExternRPi.xms</solutionFileName>
 					<projectName>Extern.vulkan.glslang</projectName>
 				</item>
+				<item type="ExternalDependency" version="3">
+					<inheritIncludePaths>true</inheritIncludePaths>
+					<link>LnkYes</link>
+					<solutionFileName>ExternRPi.xms</solutionFileName>
+					<projectName>Extern.SPIRV-Cross</projectName>
+				</item>
 			</dependencies>
 		</item>
 		<item type="Project" version="1">

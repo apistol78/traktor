@@ -47,7 +47,7 @@
 			<stencilReference>0</stencilReference>
 			<stencilMask>2147483648</stencilMask>
 			<registerCount>0</registerCount>
-			<precisionHint>PhHigh</precisionHint>
+			<precisionHint>PhLow</precisionHint>
 		</item>
 		<item type="traktor.render.Neg" version="traktor.render.Node:1">
 			<id>{E6830DD3-383D-6445-9469-65BC4340C607}</id>
@@ -1410,6 +1410,16 @@ Eye direction
 			<name>L_SurfaceColor</name>
 			<global>false</global>
 		</item>
+		<item type="traktor.render.Color" version="2,traktor.render.Node:1">
+			<id>{82800886-3078-E548-9E83-BC916F1FA8C0}</id>
+			<comment/>
+			<position>
+				<first>1167</first>
+				<second>-575</second>
+			</position>
+			<color>0, 0, 0, 0</color>
+			<linear>false</linear>
+		</item>
 	</nodes>
 	<edges>
 		<item type="traktor.render.Edge">
@@ -2044,16 +2054,6 @@ Eye direction
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[69]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[80]"/>
-				<name>True</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
 				<node ref="/object/nodes/item[68]"/>
 				<name>Output</name>
 			</source>
@@ -2090,16 +2090,6 @@ Eye direction
 			<destination>
 				<node ref="/object/nodes/item[69]"/>
 				<name>Emscripten</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[67]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[69]"/>
-				<name>iOS</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
@@ -2590,6 +2580,26 @@ Eye direction
 			<destination>
 				<node ref="/object/nodes/item[122]"/>
 				<name>Input1</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[127]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[69]"/>
+				<name>iOS</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[69]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[80]"/>
+				<name>True</name>
 			</destination>
 		</item>
 	</edges>

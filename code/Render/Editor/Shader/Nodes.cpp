@@ -1767,13 +1767,14 @@ Sqrt::Sqrt()
 
 /*---------------------------------------------------------------------------*/
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.State", 7, State, ImmutableNode)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.State", 8, State, ImmutableNode)
 
 const ImmutableNode::OutputPinDesc c_State_o[] = { { L"Output" }, { 0 } };
 
 State::State()
 :	ImmutableNode(nullptr, c_State_o)
 ,	m_priority(0)
+,	m_precisionHint(PhUndefined)
 {
 }
 
@@ -1797,6 +1798,16 @@ const RenderState& State::getRenderState() const
 	return m_renderState;
 }
 
+void State::setPrecisionHint(PrecisionHint precisionHint)
+{
+	m_precisionHint = precisionHint;
+}
+
+PrecisionHint State::getPrecisionHint() const
+{
+	return m_precisionHint;
+}
+
 void State::serialize(ISerializer& s)
 {
 	ImmutableNode::serialize(s);
@@ -1817,6 +1828,19 @@ void State::serialize(ISerializer& s)
 	}
 
 	s >> MemberRenderState(m_renderState, s.getVersion());
+
+	if (s.getVersion() >= 8)
+	{
+		const MemberEnum< PrecisionHint >::Key c_PrecisionHintKeys[] =
+		{
+			{ L"PhUndefined", PhUndefined },
+			{ L"PhLow", PhLow },
+			{ L"PhMedium", PhMedium },
+			{ L"PhHigh", PhHigh },
+			{ 0 }
+		};
+		s >> MemberEnum< PrecisionHint >(L"precisionHint", m_precisionHint, c_PrecisionHintKeys);
+	}
 }
 
 /*---------------------------------------------------------------------------*/

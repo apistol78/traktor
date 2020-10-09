@@ -6,12 +6,6 @@ namespace traktor
 	namespace render
 	{
 
-GlslVariable::GlslVariable()
-:	m_node(nullptr)
-,	m_type(GtVoid)
-{
-}
-
 GlslVariable::GlslVariable(const Node* node, const std::wstring& name, GlslType type)
 :	m_node(node)
 ,	m_name(name)

@@ -73,7 +73,7 @@
 			<stencilReference>0</stencilReference>
 			<stencilMask>2147483648</stencilMask>
 			<registerCount>0</registerCount>
-			<precisionHint>PhUndefined</precisionHint>
+			<precisionHint>PhLow</precisionHint>
 		</item>
 	</nodes>
 	<edges>

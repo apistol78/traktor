@@ -47,7 +47,7 @@
 			<stencilReference>0</stencilReference>
 			<stencilMask>2147483648</stencilMask>
 			<registerCount>0</registerCount>
-			<precisionHint>PhHigh</precisionHint>
+			<precisionHint>PhLow</precisionHint>
 		</item>
 		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
 			<id>{E161E52E-26CB-5847-ABC7-6D64E0F07159}</id>

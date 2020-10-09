@@ -47,7 +47,7 @@
 			<stencilReference>0</stencilReference>
 			<stencilMask>2147483648</stencilMask>
 			<registerCount>0</registerCount>
-			<precisionHint>PhUndefined</precisionHint>
+			<precisionHint>PhLow</precisionHint>
 		</item>
 		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
 			<id>{3B4F6A9B-6DE3-124D-9E92-F5182DCB42BA}</id>

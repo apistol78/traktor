@@ -106,7 +106,7 @@
 				<second type="traktor.PropertyGroup">
 					<value>
 						<item>
-							<first>Glsl.ES2.SupportHwInstancing</first>
+							<first>Glsl.Vulkan.ConvertRelaxedToHalf</first>
 							<second type="traktor.PropertyBoolean">
 								<value>true</value>
 							</second>
