@@ -10,7 +10,7 @@
 #include "Online/Gc/GcSessionManager.h"
 #include "Online/Gc/GcStatistics.h"
 #include "Online/Gc/GcUser.h"
-#include "Online/Gc/GcVideoSharingEveryplay.h"
+#include "Online/Gc/GcVideoSharing.h"
 
 @interface GameCenterViewDelegate : NSObject< GKGameCenterControllerDelegate >
 {
@@ -111,23 +111,18 @@ bool GcSessionManager::create(const IGameConfiguration* configuration)
 //	m_statistics = new GcStatistics();
 //	m_user = new GcUser();
 
-	// Create video sharing.
-	Ref< GcVideoSharingEveryplay > videoSharing = new GcVideoSharingEveryplay();
-	if (videoSharing->create(*gcgc))
-		m_videoSharing = videoSharing;
-
 	return true;
 }
 
 void GcSessionManager::destroy()
 {
-	m_videoSharing = 0;
-	m_user = 0;
-	m_statistics = 0;
-	m_saveData = 0;
-	m_matchMaking = 0;
-	m_leaderboards = 0;
-	m_achievements = 0;
+	m_videoSharing = nullptr;
+	m_user = nullptr;
+	m_statistics = nullptr;
+	m_saveData = nullptr;
+	m_matchMaking = nullptr;
+	m_leaderboards = nullptr;
+	m_achievements = nullptr;
 }
 
 bool GcSessionManager::update()
@@ -288,7 +283,7 @@ IVideoSharingProvider* GcSessionManager::getVideoSharing() const
 
  IVoiceChatProvider* GcSessionManager::getVoiceChat() const
  {
- 	return 0;
+ 	return nullptr;
  }
 
 	}
