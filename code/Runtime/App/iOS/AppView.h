@@ -16,6 +16,8 @@ class Thread;
 
 - (BOOL) createApplication;
 
+- (void) mainLoop;
+
 - (void) drawView:(id)sender;
 
 - (void) layoutSubviews;

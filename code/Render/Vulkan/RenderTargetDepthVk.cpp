@@ -89,49 +89,51 @@ bool RenderTargetDepthVk::create(const RenderTargetSetCreateDesc& setDesc, const
 {
 	VkResult result;
 
-	VkImageCreateInfo imageCreateInfo = {};
-	imageCreateInfo.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
-	imageCreateInfo.imageType = VK_IMAGE_TYPE_2D;
+	VkImageCreateInfo ici = {};
+	ici.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
+	ici.imageType = VK_IMAGE_TYPE_2D;
 
 	if (setDesc.ignoreStencil)
-		imageCreateInfo.format = VK_FORMAT_D32_SFLOAT;
-	else
-	{
 #if defined(__IOS__)
-		imageCreateInfo.format = VK_FORMAT_D32_SFLOAT_S8_UINT;
+		ici.format = VK_FORMAT_D16_UNORM;
 #else
-		imageCreateInfo.format = VK_FORMAT_D24_UNORM_S8_UINT;
+		ici.format = VK_FORMAT_D32_SFLOAT;
 #endif
-	}
+	else
+#if defined(__IOS__)
+		ici.format = VK_FORMAT_D16_UNORM_S8_UINT;
+#else
+		ici.format = VK_FORMAT_D24_UNORM_S8_UINT;
+#endif
 
-	imageCreateInfo.extent.width = setDesc.width;
-	imageCreateInfo.extent.height = setDesc.height;
-	imageCreateInfo.extent.depth = 1;
-	imageCreateInfo.mipLevels = 1;
-	imageCreateInfo.arrayLayers = 1;
-	imageCreateInfo.samples = VK_SAMPLE_COUNT_1_BIT;
-	imageCreateInfo.tiling = VK_IMAGE_TILING_OPTIMAL;
+	ici.extent.width = setDesc.width;
+	ici.extent.height = setDesc.height;
+	ici.extent.depth = 1;
+	ici.mipLevels = 1;
+	ici.arrayLayers = 1;
+	ici.samples = VK_SAMPLE_COUNT_1_BIT;
+	ici.tiling = VK_IMAGE_TILING_OPTIMAL;
 
-	imageCreateInfo.usage = VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT;
+	ici.usage = VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT;
 	if (setDesc.usingDepthStencilAsTexture)
-		imageCreateInfo.usage |= VK_IMAGE_USAGE_SAMPLED_BIT;
+		ici.usage |= VK_IMAGE_USAGE_SAMPLED_BIT;
 
-	imageCreateInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
-	imageCreateInfo.queueFamilyIndexCount = 0;
-	imageCreateInfo.pQueueFamilyIndices = nullptr;
-	imageCreateInfo.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+	ici.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
+	ici.queueFamilyIndexCount = 0;
+	ici.pQueueFamilyIndices = nullptr;
+	ici.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
 	
 	VmaAllocationCreateInfo aci = {};
 	aci.usage = VMA_MEMORY_USAGE_GPU_ONLY;
 
-	if (vmaCreateImage(m_allocator, &imageCreateInfo, &aci, &m_image, &m_allocation, nullptr) != VK_SUCCESS)
+	if (vmaCreateImage(m_allocator, &ici, &aci, &m_image, &m_allocation, nullptr) != VK_SUCCESS)
 		return false;	
 
 	VkImageViewCreateInfo ivci = {};
 	ivci.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
 	ivci.image = m_image;
 	ivci.viewType = VK_IMAGE_VIEW_TYPE_2D;
-	ivci.format = imageCreateInfo.format;
+	ivci.format = ici.format;
 	ivci.components = { VK_COMPONENT_SWIZZLE_IDENTITY, VK_COMPONENT_SWIZZLE_IDENTITY, VK_COMPONENT_SWIZZLE_IDENTITY, VK_COMPONENT_SWIZZLE_IDENTITY };
 
 	if (setDesc.ignoreStencil)
@@ -149,7 +151,7 @@ bool RenderTargetDepthVk::create(const RenderTargetSetCreateDesc& setDesc, const
 		return false;
 	}
 
-	m_format = imageCreateInfo.format;
+	m_format = ici.format;
 	m_haveStencil = !setDesc.ignoreStencil;
 	m_width = setDesc.width;
 	m_height = setDesc.height;

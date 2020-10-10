@@ -34,13 +34,67 @@ Ref< PropertyGroup > loadSettings(const Path& settingsPath)
 }
 
 bool g_animation = false;
-bool g_suspend[2] = { false, true };
+bool g_suspend = false;
 
-void updateApplicationThread(Ref< PropertyGroup > defaultSettings, AppView* view)
+}
+
+@interface AppView ()
 {
-	Thread* currentThread = ThreadManager::getInstance().getCurrentThread();
+@private
+}
+
+@end
+
+@implementation AppView
+
++ (Class) layerClass
+{
+    return [CAMetalLayer class];
+}
+
+- (BOOL) createApplication
+{
+	[self performSelectorOnMainThread:@selector(mainLoop) withObject:nil waitUntilDone:NO];
+	return YES;
+}
+
+- (void) mainLoop
+{
 	SystemApplication sysapp;
-	SystemWindow syswin(view);
+	SystemWindow syswin(self);
+
+	// Load settings.
+	Ref< PropertyGroup > defaultSettings = loadSettings(L"Application.config");
+	if (!defaultSettings)
+	{
+		traktor::log::error << L"Unable to read application settings \"Application.config\"" << Endl;
+		return;
+	}
+
+	// "Activate" retina display if application want's to use it.
+	if (defaultSettings->getProperty< bool >(L"Runtime.SupportRetina", false))
+	{
+		// Adjust scale as we want full resolution of a retina display.
+		float scale = 1.0f;
+
+		// Primarily use "nativeScale" as we don't want iPhone 6+ downscaling;
+		// in case non iOS 8 we use ordinary "scale" property.
+		if ([[UIScreen mainScreen] respondsToSelector:@selector(nativeScale)])
+			scale = [UIScreen mainScreen].nativeScale;
+		else
+			scale = [UIScreen mainScreen].scale;
+
+		// Limit scaling since too high isn't benefitial.
+		if (scale > 2.0f)
+			scale = 2.0f;
+
+		traktor::log::info << L"Using content scale factor of " << scale << L"." << Endl;
+		self.contentScaleFactor = scale;
+
+		CAMetalLayer* metalLayer = (CAMetalLayer*)self.layer;
+		if (metalLayer)
+			metalLayer.contentsScale = scale;
+	}
 
 	// As we doesn't need to store user defined settings on iOS we
 	// create a plain copy of the default settings.
@@ -57,91 +111,36 @@ void updateApplicationThread(Ref< PropertyGroup > defaultSettings, AppView* view
 	))
 		return;
 
-	// Enter update loop.
-	while (!currentThread->stopped())
+	bool suspended = false;
+	while (true)
 	{
-		// Should we suspend/resume?
-		if (g_suspend[0] != g_suspend[1])
 		{
-			if (g_suspend[0])
+			SInt32 result;
+			do
+			{
+				result = CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, TRUE);
+			}
+			while (result == kCFRunLoopRunHandledSource);
+		}
+
+		if (g_suspend != suspended)
+		{
+			if (g_suspend)
 				application->suspend();
 			else
 				application->resume();
-			g_suspend[1] = g_suspend[0];
+
+			suspended = g_suspend;
 		}
 
-		// Animation update.
-		if (g_animation && !g_suspend[1])
+		if (g_animation && !suspended)
 		{
 			if (!application->update())
 				break;
 		}
-		else
-			currentThread->sleep(100);
 	}
 
-	// Destroy application.
 	safeDestroy(application);
-}
-
-}
-
-@interface AppView ()
-{
-@private
-	traktor::Thread* m_thread;
-}
-
-@end
-
-@implementation AppView
-
-+ (Class) layerClass
-{
-    return [CAMetalLayer class];
-}
-
-- (BOOL) createApplication
-{
-	// Load settings.
-	Ref< PropertyGroup > defaultSettings = loadSettings(L"Application.config");
-	if (!defaultSettings)
-	{
-		traktor::log::error << L"Unable to read application settings \"Application.config\"" << Endl;
-		return NO;
-	}
-
-	// "Activate" retina display if application want's to use it.
-	if (defaultSettings->getProperty< bool >(L"Runtime.SupportRetina", false))
-	{
-		// Adjust scale as we want full resolution of a retina display.
-		float scale = 1.0f;
-
-		// Primarily use "nativeScale" as we don't want iPhone 6+ downscaling;
-		// in case non iOS 8 we use ordinary "scale" property.
-		if ([[UIScreen mainScreen] respondsToSelector:@selector(nativeScale)])
-			scale = [UIScreen mainScreen].nativeScale;
-		else
-			scale = [UIScreen mainScreen].scale;
-
-		self.contentScaleFactor = scale;
-
-		CAMetalLayer* metalLayer = (CAMetalLayer*)self.layer;
-		if (metalLayer)
-			metalLayer.contentsScale = scale;
-	}
-
-	// Create application thread; it will first start loading resources
-	// before settling on frequent updating application.
-	m_thread = ThreadManager::getInstance().create(
-		makeStaticFunctor< Ref< PropertyGroup >, AppView* >(updateApplicationThread, defaultSettings, self),
-		L"Application update thread"
-	);
-	if (!m_thread)
-		return NO;
-
-	m_thread->start();
-	return YES;
 }
 
 - (void) drawView:(id)sender
@@ -164,29 +163,17 @@ void updateApplicationThread(Ref< PropertyGroup > defaultSettings, AppView* view
 
 - (void) suspend
 {
-	g_suspend[0] = true;
-	while (m_thread && g_suspend[0] != g_suspend[1])
-		ThreadManager::getInstance().getCurrentThread()->sleep(10);
+	g_suspend = true;
 }
 
 - (void) resume
 {
-	g_suspend[0] = false;
-	while (m_thread && g_suspend[0] != g_suspend[1])
-		ThreadManager::getInstance().getCurrentThread()->sleep(10);
+	g_suspend = false;
 }
 
 - (void) dealloc
 {
 	[self stopAnimation];
-
-	if (m_thread)
-	{
-		m_thread->stop();
-		ThreadManager::getInstance().destroy(m_thread);
-		m_thread = 0;
-	}
-
     [super dealloc];
 }
 
