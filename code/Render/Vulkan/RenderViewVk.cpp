@@ -254,7 +254,6 @@ void RenderViewVk::close()
 	for (auto& frame : m_frames)
 	{
 		frame.primaryTarget->destroy();
-		vkDestroyQueryPool(m_logicalDevice, frame.queryPool, nullptr);
 		vkDestroyFence(m_logicalDevice, frame.inFlightFence, nullptr);
 		vkDestroySemaphore(m_logicalDevice, frame.renderFinishedSemaphore, nullptr);
 		vkDestroyDescriptorPool(m_logicalDevice, frame.descriptorPool, nullptr);
@@ -262,6 +261,12 @@ void RenderViewVk::close()
 		m_graphicsCommandPool->release(frame.graphicsCommandBuffer);
 	}
 	m_frames.clear();
+
+	if (m_queryPool != 0)
+	{
+		vkDestroyQueryPool(m_logicalDevice, m_queryPool, nullptr);
+		m_queryPool = 0;
+	}
 
 	if (m_imageAvailableSemaphore != 0)
 	{
@@ -476,8 +481,10 @@ bool RenderViewVk::beginFrame()
 		return false;
 	
 	// Reset time queries.
-	vkCmdResetQueryPool(frame.graphicsCommandBuffer, frame.queryPool, 0, 1024);
-	m_nextQueryIndex = 0;
+	const int32_t querySegmentCount = (int32_t)(m_frames.size() * 2);
+	const int32_t queryFrom = (m_counter % querySegmentCount) * 1024;
+	vkCmdResetQueryPool(frame.graphicsCommandBuffer, m_queryPool, queryFrom, 1024);
+	m_nextQueryIndex = queryFrom;
 
 	// Reset misc counters.
 	m_passCount = 0;
@@ -1103,28 +1110,27 @@ bool RenderViewVk::copy(ITexture* destinationTexture, const Region& destinationR
 int32_t RenderViewVk::beginTimeQuery()
 {
 	auto& frame = m_frames[m_currentImageIndex];
-	const int32_t query = m_nextQueryIndex++;
-	vkCmdWriteTimestamp(frame.graphicsCommandBuffer, VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT, frame.queryPool, query * 2 + 0);
+	const int32_t query = m_nextQueryIndex;
+	vkCmdWriteTimestamp(frame.graphicsCommandBuffer, VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT, m_queryPool, query + 0);
+	m_nextQueryIndex += 2;
 	return query;
 }
 
 void RenderViewVk::endTimeQuery(int32_t query)
 {
 	auto& frame = m_frames[m_currentImageIndex];
-	vkCmdWriteTimestamp(frame.graphicsCommandBuffer, VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT, frame.queryPool, query * 2 + 1);
+	vkCmdWriteTimestamp(frame.graphicsCommandBuffer, VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT, m_queryPool, query + 1);
 }
 
 bool RenderViewVk::getTimeQuery(int32_t query, bool wait, double& outStart, double& outEnd) const
 {
-	auto& frame = m_frames[m_currentImageIndex];
-
 	uint32_t flags = VK_QUERY_RESULT_64_BIT;
 	if (wait)
 		flags |= VK_QUERY_RESULT_WAIT_BIT;
 
 	uint64_t stamps[2] = { 0, 0 };
 
-	VkResult result = vkGetQueryPoolResults(m_logicalDevice, frame.queryPool, query * 2 + 0, 2, 2 * sizeof(uint64_t), stamps, sizeof(uint64_t), flags);
+	VkResult result = vkGetQueryPoolResults(m_logicalDevice, m_queryPool, query, 2, 2 * sizeof(uint64_t), stamps, sizeof(uint64_t), flags);
 	if (result != VK_SUCCESS)
 		return false;
 
@@ -1351,6 +1357,15 @@ bool RenderViewVk::create(uint32_t width, uint32_t height, int32_t vblanks)
 	sci.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
 	vkCreateSemaphore(m_logicalDevice, &sci, nullptr, &m_imageAvailableSemaphore);
 
+	// Create time query pool.
+	VkQueryPoolCreateInfo qpci = {};
+	qpci.sType = VK_STRUCTURE_TYPE_QUERY_POOL_CREATE_INFO;
+	qpci.pNext = nullptr;
+	qpci.queryType = VK_QUERY_TYPE_TIMESTAMP;
+	qpci.queryCount = imageCount * 2 * 1024;
+	if (vkCreateQueryPool(m_logicalDevice, &qpci, nullptr, &m_queryPool) != VK_SUCCESS)
+		return false;
+
 	// Create frame resources.
 	m_frames.resize(imageCount);
 	for (uint32_t i = 0; i < imageCount; ++i)
@@ -1387,14 +1402,6 @@ bool RenderViewVk::create(uint32_t width, uint32_t height, int32_t vblanks)
 		fci.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
 		fci.flags = VK_FENCE_CREATE_SIGNALED_BIT;
 		vkCreateFence(m_logicalDevice, &fci, nullptr, &frame.inFlightFence);	
-
-		VkQueryPoolCreateInfo qpci = {};
-		qpci.sType = VK_STRUCTURE_TYPE_QUERY_POOL_CREATE_INFO;
-		qpci.pNext = nullptr;
-		qpci.queryType = VK_QUERY_TYPE_TIMESTAMP;
-		qpci.queryCount = 1024;
-		if (vkCreateQueryPool(m_logicalDevice, &qpci, nullptr, &frame.queryPool) != VK_SUCCESS)
-			return false;
 
 		frame.primaryTarget = new RenderTargetSetVk(
 			m_physicalDevice,
