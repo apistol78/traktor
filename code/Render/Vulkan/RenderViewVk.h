@@ -125,7 +125,6 @@ private:
 		VkDescriptorPool descriptorPool;
 		VkSemaphore renderFinishedSemaphore;
 		VkFence inFlightFence;
-		VkQueryPool queryPool;
 		Ref< RenderTargetSetVk > primaryTarget;
 	};
 
@@ -148,6 +147,7 @@ private:
 	Ref< Queue > m_computeQueue;
 	uint32_t m_presentQueueIndex = ~0;
 	VkQueue m_presentQueue = 0;
+	VkQueryPool m_queryPool = 0;
 	Ref< CommandBufferPool > m_graphicsCommandPool;
 	Ref< CommandBufferPool > m_computeCommandPool;
 	bool m_lost = true;
