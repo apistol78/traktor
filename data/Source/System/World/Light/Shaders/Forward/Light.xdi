@@ -1540,35 +1540,18 @@ Fall off
 			<id>{274C5848-A5B3-5F4E-AD42-8F2D1B8F9584}</id>
 			<comment/>
 			<position>
-				<first>76</first>
-				<second>-35</second>
+				<first>-63</first>
+				<second>-135</second>
 			</position>
 			<name>L_LightIndex</name>
 			<global>false</global>
-		</item>
-		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
-			<id>{DDE7E487-75B2-7B45-B66C-2BADB5F98F15}</id>
-			<comment/>
-			<position>
-				<first>-486</first>
-				<second>-36</second>
-			</position>
-			<value>0</value>
-		</item>
-		<item type="traktor.render.MixOut" version="traktor.render.Node:1">
-			<id>{5E2A3E08-CD25-E648-A920-D2386B370D76}</id>
-			<comment/>
-			<position>
-				<first>-442</first>
-				<second>20</second>
-			</position>
 		</item>
 		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
 			<id>{39C7D8BA-D575-4349-91CD-C99AFDF00CA2}</id>
 			<comment/>
 			<position>
-				<first>-465</first>
-				<second>-95</second>
+				<first>-467</first>
+				<second>-146</second>
 			</position>
 			<name>L_Iteration</name>
 			<global>false</global>
@@ -1577,32 +1560,17 @@ Fall off
 			<id>{07D96DAF-BA27-7F48-933A-D13C3F8BA3F0}</id>
 			<comment/>
 			<position>
-				<first>-662</first>
-				<second>25</second>
+				<first>-484</first>
+				<second>-75</second>
 			</position>
 			<name>L_Tile_Lights</name>
 			<global>false</global>
-		</item>
-		<item type="traktor.render.Switch" version="1,traktor.render.Node:1">
-			<id>{18C22545-A1B2-8842-8C12-711BC533CEC2}</id>
-			<comment/>
-			<position>
-				<first>-234</first>
-				<second>-64</second>
-			</position>
-			<branch>BrAuto</branch>
-			<cases>
-				<item>0</item>
-				<item>1</item>
-				<item>2</item>
-				<item>3</item>
-			</cases>
 		</item>
 		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
 			<id>{FAEFB772-89AD-DA48-A35D-3DA2D248D874}</id>
 			<comment/>
 			<position>
-				<first>-16</first>
+				<first>-43</first>
 				<second>-250</second>
 			</position>
 			<name>L_Tile_Lights</name>
@@ -1612,8 +1580,8 @@ Fall off
 			<id>{3C7634D2-DA22-B847-89F7-8581A5CFB17A}</id>
 			<comment/>
 			<position>
-				<first>-21</first>
-				<second>-330</second>
+				<first>-41</first>
+				<second>-309</second>
 			</position>
 			<name>L_Tile_LightCount</name>
 			<global>false</global>
@@ -1632,8 +1600,8 @@ Fall off
 			<id>{4A671B88-6A74-474B-B844-233A4B4DF545}</id>
 			<comment/>
 			<position>
-				<first>-601</first>
-				<second>-337</second>
+				<first>-509</first>
+				<second>-309</second>
 			</position>
 			<name>L_ViewPosition</name>
 			<global>false</global>
@@ -1664,6 +1632,46 @@ Fall off
 				</item>
 			</outputPins>
 			<values/>
+		</item>
+		<item type="traktor.render.Script" version="1,traktor.render.Node:1">
+			<id>{E2F82285-43C0-9341-B5C4-44E600CF4116}</id>
+			<comment/>
+			<position>
+				<first>-276</first>
+				<second>-137</second>
+			</position>
+			<name>GetElement</name>
+			<inputPins>
+				<item>
+					<id>{00000000-0000-0000-0000-000000000000}</id>
+					<name>Index</name>
+					<type>PtScalar</type>
+					<samplerId/>
+				</item>
+				<item>
+					<id>{00000000-0000-0000-0000-000000000000}</id>
+					<name>Vector</name>
+					<type>PtVector</type>
+					<samplerId/>
+				</item>
+			</inputPins>
+			<outputPins>
+				<item>
+					<id>{55F1BA59-CA79-BF47-B0A6-0B40B0F8A068}</id>
+					<name>Output</name>
+					<type>PtScalar</type>
+				</item>
+			</outputPins>
+			<samplers/>
+			<script>
+			<![CDATA[
+ENTRY
+{
+	Output = Vector[int(Index)];
+}
+
+			]]>
+			</script>
 		</item>
 	</nodes>
 	<edges>
@@ -3059,87 +3067,7 @@ Fall off
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[136]"/>
-				<name>Output</name>
-			</source>
-			<destination>
 				<node ref="/object/nodes/item[138]"/>
-				<name>Select</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[137]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[135]"/>
-				<name>Input</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[135]"/>
-				<name>X</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[138]"/>
-				<name>Case 0</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[135]"/>
-				<name>Y</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[138]"/>
-				<name>Case 1</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[135]"/>
-				<name>Z</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[138]"/>
-				<name>Case 2</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[135]"/>
-				<name>W</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[138]"/>
-				<name>Case 3</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[134]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[138]"/>
-				<name>Default</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[138]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[133]"/>
-				<name>Input</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[141]"/>
 				<name>Output</name>
 			</source>
 			<destination>
@@ -3149,31 +3077,31 @@ Fall off
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[142]"/>
+				<node ref="/object/nodes/item[139]"/>
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[143]"/>
+				<node ref="/object/nodes/item[140]"/>
 				<name>ViewPosition</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[143]"/>
+				<node ref="/object/nodes/item[140]"/>
 				<name>LightIndices</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[139]"/>
+				<node ref="/object/nodes/item[136]"/>
 				<name>Input</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[143]"/>
+				<node ref="/object/nodes/item[140]"/>
 				<name>LightCount</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[140]"/>
+				<node ref="/object/nodes/item[137]"/>
 				<name>Input</name>
 			</destination>
 		</item>
@@ -3184,6 +3112,36 @@ Fall off
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[45]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[135]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[141]"/>
+				<name>Vector</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[134]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[141]"/>
+				<name>Index</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[141]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[133]"/>
 				<name>Input</name>
 			</destination>
 		</item>
