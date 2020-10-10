@@ -596,7 +596,7 @@ bool RenderViewVk::beginPass(const Clear* clear)
 		frame.graphicsCommandBuffer,
 		m_targetColorIndex,
 		cl,
-		0,
+		TfColor | TfDepth,
 		TfColor,
 		frame.primaryTarget->getDepthTargetVk(),
 		
@@ -607,11 +607,17 @@ bool RenderViewVk::beginPass(const Clear* clear)
 	))
 		return false;
 
-	// Transform clear value.
-	VkClearValue cv;
-	cl.colors[0].storeUnaligned(cv.color.float32);
-	cv.depthStencil.depth = cl.depth;
-	cv.depthStencil.stencil = cl.stencil;
+	// Transform clear values.
+	StaticVector< VkClearValue, 1+1 > clearValues;
+	{
+		auto& cv = clearValues.push_back();
+		cl.colors[0].storeUnaligned(cv.color.float32);
+	}
+	{
+		auto& cv = clearValues.push_back();
+		cv.depthStencil.depth = cl.depth;
+		cv.depthStencil.stencil = cl.stencil;
+	}
 
 	// Begin render pass.
 	VkRenderPassBeginInfo rpbi = {};
@@ -622,8 +628,8 @@ bool RenderViewVk::beginPass(const Clear* clear)
 	rpbi.renderArea.offset.y = 0;
 	rpbi.renderArea.extent.width = m_targetSet->getWidth();
 	rpbi.renderArea.extent.height = m_targetSet->getHeight();
-	rpbi.clearValueCount = (uint32_t)1;
-	rpbi.pClearValues = &cv;
+	rpbi.clearValueCount = (uint32_t)clearValues.size();
+	rpbi.pClearValues = clearValues.c_ptr();
 	vkCmdBeginRenderPass(frame.graphicsCommandBuffer, &rpbi,  VK_SUBPASS_CONTENTS_INLINE);
 
 	// Set viewport.
