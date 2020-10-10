@@ -11,6 +11,7 @@
 
 #include <spirv-tools/optimizer.hpp>
 
+#include <spirv_hlsl.hpp>
 #include <spirv_glsl.hpp>
 #include <spirv_msl.hpp>
 
@@ -21,6 +22,7 @@
 #include "Core/Misc/String.h"
 #include "Core/Settings/PropertyBoolean.h"
 #include "Core/Settings/PropertyGroup.h"
+#include "Core/Settings/PropertyString.h"
 #include "Render/Editor/Shader/Nodes.h"
 #include "Render/Editor/Shader/ShaderGraph.h"
 
@@ -587,158 +589,237 @@ bool ProgramCompilerVk::generate(
 	std::wstring& outComputeShader
 ) const
 {
-	Ref< ProgramResourceVk > programResource = checked_type_cast< ProgramResourceVk* >(compile(
-		shaderGraph,
-		settings,
-		name,
-		optimize,
-		true,
-		nullptr
-	));
-	if (!programResource)
-		return false;
+	std::wstring crossDialect = settings->getProperty< std::wstring >(L"Glsl.Vulkan.CrossDialect");
 
-	spirv_cross::CompilerMSL::Options options;
-	options.platform = spirv_cross::CompilerMSL::Options::iOS;
-	options.set_msl_version(2, 6);
-
-	if (!programResource->m_vertexShader.empty())
+	// No dialect means we should output our generated GLSL.
+	if (crossDialect.empty())
 	{
-		spirv_cross::CompilerMSL glsl(programResource->m_vertexShader.c_ptr(), programResource->m_vertexShader.size());
-		glsl.set_msl_options(options);
-		glsl.build_dummy_sampler_for_combined_images();
-		glsl.build_combined_image_samplers();
-		std::string source = glsl.compile();
-		outVertexShader = mbstows(source);
-	}
+		RefArray< VertexOutput > vertexOutputs;
+		RefArray< PixelOutput > pixelOutputs;
+		RefArray< ComputeOutput > computeOutputs;
 
-	if (!programResource->m_fragmentShader.empty())
-	{
-		spirv_cross::CompilerMSL glsl(programResource->m_fragmentShader.c_ptr(), programResource->m_fragmentShader.size());
-		glsl.set_msl_options(options);
-		glsl.build_dummy_sampler_for_combined_images();
-		glsl.build_combined_image_samplers();
-		std::string source = glsl.compile();
-		outPixelShader = mbstows(source);
-	}
+		shaderGraph->findNodesOf< VertexOutput >(vertexOutputs);
+		shaderGraph->findNodesOf< PixelOutput >(pixelOutputs);
+		shaderGraph->findNodesOf< ComputeOutput >(computeOutputs);
 
-	if (!programResource->m_computeShader.empty())
-	{
-		spirv_cross::CompilerMSL glsl(programResource->m_computeShader.c_ptr(), programResource->m_computeShader.size());
-		glsl.set_msl_options(options);
-		glsl.build_dummy_sampler_for_combined_images();
-		glsl.build_combined_image_samplers();
-		std::string source = glsl.compile();
-		outComputeShader = mbstows(source);
-	}
+		GlslContext cx(shaderGraph);
 
-	return true;
+		if (vertexOutputs.size() == 1 && pixelOutputs.size() == 1)
+		{
+			cx.getEmitter().emit(cx, pixelOutputs[0]);
+			cx.getEmitter().emit(cx, vertexOutputs[0]);
+		}
+		else if (computeOutputs.size() == 1)
+		{
+			cx.getEmitter().emit(cx, computeOutputs[0]);
+		}
+		else
+		{
+			log::error << L"Unable to generate Vulkan GLSL shader; incorrect number of outputs." << Endl;
+			return false;
+		}
 
+		const auto& layout = cx.getLayout();
 
-/*
-	RefArray< VertexOutput > vertexOutputs;
-	RefArray< PixelOutput > pixelOutputs;
-	RefArray< ComputeOutput > computeOutputs;
+		StringOutputStream ss;
+		for (auto resource : layout.get())
+		{
+			ss << L"// Layout" << Endl;
+			if (const auto sampler = dynamic_type_cast< const GlslSampler* >(resource))
+			{
+				ss << L"// [" << sampler->getBinding() << L"] = sampler" << Endl;
+				ss << L"//   .name = \"" << sampler->getName() << L"\"" << Endl;
+			}
+			else if (const auto texture = dynamic_type_cast< const GlslTexture* >(resource))
+			{
+				ss << L"// [" << texture->getBinding() << L"] = texture" << Endl;
+				ss << L"//   .name = \"" << texture->getName() << L"\"" << Endl;
+				ss << L"//   .type = " << int32_t(texture->getUniformType()) << Endl;
+			}
+			else if (const auto uniformBuffer = dynamic_type_cast< const GlslUniformBuffer* >(resource))
+			{
+				ss << L"// [" << uniformBuffer->getBinding() << L"] = uniform buffer" << Endl;
+				ss << L"//   .name = \"" << uniformBuffer->getName() << L"\"" << Endl;
+				ss << L"//   .uniforms = {" << Endl;
+				for (auto uniform : uniformBuffer->get())
+				{
+					ss << L"//      " << int32_t(uniform.type) << L" \"" << uniform.name << L"\" " << uniform.length << Endl;
+				}
+				ss << L"//   }" << Endl;
+			}
+			else if (const auto image = dynamic_type_cast< const GlslImage* >(resource))
+			{
+				ss << L"// [" << image->getBinding() << L"] = image" << Endl;
+				ss << L"//   .name = \"" << image->getName() << L"\"" << Endl;
+			}
+			else if (const auto storageBuffer = dynamic_type_cast< const GlslStorageBuffer* >(resource))
+			{
+				ss << L"// [" << storageBuffer->getBinding() << L"] = storage buffer" << Endl;
+				ss << L"//   .name = \"" << storageBuffer->getName() << L"\"" << Endl;
+				ss << L"//   .elements = {" << Endl;
+				for (auto element : storageBuffer->get())
+				{
+					ss << L"//      " << int32_t(element.type) << L" \"" << element.name << Endl;
+				}
+				ss << L"//   }" << Endl;
+			}
+		}
 
-	shaderGraph->findNodesOf< VertexOutput >(vertexOutputs);
-	shaderGraph->findNodesOf< PixelOutput >(pixelOutputs);
-	shaderGraph->findNodesOf< ComputeOutput >(computeOutputs);
+		GlslRequirements requirements = cx.requirements();
 
-	GlslContext cx(shaderGraph);
+		// Vertex
+		{
+			StringOutputStream vss;
+			vss << cx.getVertexShader().getGeneratedShader(settings, layout, requirements);
+			vss << Endl;
+			vss << ss.str();
+			vss << Endl;
+			outVertexShader = vss.str();
+		}
 
-	if (vertexOutputs.size() == 1 && pixelOutputs.size() == 1)
-	{
-		cx.getEmitter().emit(cx, pixelOutputs[0]);
-		cx.getEmitter().emit(cx, vertexOutputs[0]);
-	}
-	else if (computeOutputs.size() == 1)
-	{
-		cx.getEmitter().emit(cx, computeOutputs[0]);
+		// Pixel
+		{
+			StringOutputStream fss;
+			fss << cx.getFragmentShader().getGeneratedShader(settings, layout, requirements);
+			fss << Endl;
+			fss << ss.str();
+			fss << Endl;
+			outPixelShader = fss.str();
+		}
+
+		// Compute
+		{
+			StringOutputStream css;
+			css << cx.getComputeShader().getGeneratedShader(settings, layout, requirements);
+			css << Endl;
+			css << ss.str();
+			css << Endl;
+			outComputeShader = css.str();
+		}
 	}
 	else
 	{
-		log::error << L"Unable to generate Vulkan GLSL shader; incorrect number of outputs" << Endl;
-		return false;
-	}
+		Ref< ProgramResourceVk > programResource = checked_type_cast< ProgramResourceVk* >(compile(
+			shaderGraph,
+			settings,
+			name,
+			optimize,
+			true,
+			nullptr
+		));
+		if (!programResource)
+			return false;
 
-	const auto& layout = cx.getLayout();
+		if (crossDialect == L"MSL")
+		{
+			spirv_cross::CompilerMSL::Options options;
+			options.platform = spirv_cross::CompilerMSL::Options::iOS;
+			options.set_msl_version(2, 6);
 
-	StringOutputStream ss;
-	for (auto resource : layout.get())
-	{
-		ss << L"// Layout" << Endl;
-		if (const auto sampler = dynamic_type_cast< const GlslSampler* >(resource))
-		{
-			ss << L"// [" << sampler->getBinding() << L"] = sampler" << Endl;
-			ss << L"//   .name = \"" << sampler->getName() << L"\"" << Endl;
-		}
-		else if (const auto texture = dynamic_type_cast< const GlslTexture* >(resource))
-		{
-			ss << L"// [" << texture->getBinding() << L"] = texture" << Endl;
-			ss << L"//   .name = \"" << texture->getName() << L"\"" << Endl;
-			ss << L"//   .type = " << int32_t(texture->getUniformType()) << Endl;
-		}
-		else if (const auto uniformBuffer = dynamic_type_cast< const GlslUniformBuffer* >(resource))
-		{
-			ss << L"// [" << uniformBuffer->getBinding() << L"] = uniform buffer" << Endl;
-			ss << L"//   .name = \"" << uniformBuffer->getName() << L"\"" << Endl;
-			ss << L"//   .uniforms = {" << Endl;
-			for (auto uniform : uniformBuffer->get())
+			if (!programResource->m_vertexShader.empty())
 			{
-				ss << L"//      " << int32_t(uniform.type) << L" \"" << uniform.name << L"\" " << uniform.length << Endl;
+				spirv_cross::CompilerMSL msl(programResource->m_vertexShader.c_ptr(), programResource->m_vertexShader.size());
+				msl.set_msl_options(options);
+				msl.build_dummy_sampler_for_combined_images();
+				msl.build_combined_image_samplers();
+				std::string source = msl.compile();
+				outVertexShader = mbstows(source);
 			}
-			ss << L"//   }" << Endl;
-		}
-		else if (const auto image = dynamic_type_cast< const GlslImage* >(resource))
-		{
-			ss << L"// [" << image->getBinding() << L"] = image" << Endl;
-			ss << L"//   .name = \"" << image->getName() << L"\"" << Endl;
-		}
-		else if (const auto storageBuffer = dynamic_type_cast< const GlslStorageBuffer* >(resource))
-		{
-			ss << L"// [" << storageBuffer->getBinding() << L"] = storage buffer" << Endl;
-			ss << L"//   .name = \"" << storageBuffer->getName() << L"\"" << Endl;
-			ss << L"//   .elements = {" << Endl;
-			for (auto element : storageBuffer->get())
+
+			if (!programResource->m_fragmentShader.empty())
 			{
-				ss << L"//      " << int32_t(element.type) << L" \"" << element.name << Endl;
+				spirv_cross::CompilerMSL msl(programResource->m_fragmentShader.c_ptr(), programResource->m_fragmentShader.size());
+				msl.set_msl_options(options);
+				msl.build_dummy_sampler_for_combined_images();
+				msl.build_combined_image_samplers();
+				std::string source = msl.compile();
+				outPixelShader = mbstows(source);
 			}
-			ss << L"//   }" << Endl;
+
+			if (!programResource->m_computeShader.empty())
+			{
+				spirv_cross::CompilerMSL msl(programResource->m_computeShader.c_ptr(), programResource->m_computeShader.size());
+				msl.set_msl_options(options);
+				msl.build_dummy_sampler_for_combined_images();
+				msl.build_combined_image_samplers();
+				std::string source = msl.compile();
+				outComputeShader = mbstows(source);
+			}
+		}
+		else if (crossDialect == L"GLSL")
+		{
+			spirv_cross::CompilerGLSL::Options options;
+
+			if (!programResource->m_vertexShader.empty())
+			{
+				spirv_cross::CompilerGLSL glsl(programResource->m_vertexShader.c_ptr(), programResource->m_vertexShader.size());
+				glsl.set_common_options(options);
+				glsl.build_dummy_sampler_for_combined_images();
+				glsl.build_combined_image_samplers();
+				std::string source = glsl.compile();
+				outVertexShader = mbstows(source);
+			}
+
+			if (!programResource->m_fragmentShader.empty())
+			{
+				spirv_cross::CompilerGLSL glsl(programResource->m_fragmentShader.c_ptr(), programResource->m_fragmentShader.size());
+				glsl.set_common_options(options);
+				glsl.build_dummy_sampler_for_combined_images();
+				glsl.build_combined_image_samplers();
+				std::string source = glsl.compile();
+				outPixelShader = mbstows(source);
+			}
+
+			if (!programResource->m_computeShader.empty())
+			{
+				spirv_cross::CompilerGLSL glsl(programResource->m_computeShader.c_ptr(), programResource->m_computeShader.size());
+				glsl.set_common_options(options);
+				glsl.build_dummy_sampler_for_combined_images();
+				glsl.build_combined_image_samplers();
+				std::string source = glsl.compile();
+				outComputeShader = mbstows(source);
+			}
+		}
+		else if (crossDialect == L"HLSL")
+		{
+			spirv_cross::CompilerHLSL::Options options;
+
+			if (!programResource->m_vertexShader.empty())
+			{
+				spirv_cross::CompilerHLSL hlsl(programResource->m_vertexShader.c_ptr(), programResource->m_vertexShader.size());
+				hlsl.set_hlsl_options(options);
+				hlsl.build_dummy_sampler_for_combined_images();
+				hlsl.build_combined_image_samplers();
+				std::string source = hlsl.compile();
+				outVertexShader = mbstows(source);
+			}
+
+			if (!programResource->m_fragmentShader.empty())
+			{
+				spirv_cross::CompilerHLSL hlsl(programResource->m_fragmentShader.c_ptr(), programResource->m_fragmentShader.size());
+				hlsl.set_hlsl_options(options);
+				hlsl.build_dummy_sampler_for_combined_images();
+				hlsl.build_combined_image_samplers();
+				std::string source = hlsl.compile();
+				outPixelShader = mbstows(source);
+			}
+
+			if (!programResource->m_computeShader.empty())
+			{
+				spirv_cross::CompilerHLSL hlsl(programResource->m_computeShader.c_ptr(), programResource->m_computeShader.size());
+				hlsl.set_hlsl_options(options);
+				hlsl.build_dummy_sampler_for_combined_images();
+				hlsl.build_combined_image_samplers();
+				std::string source = hlsl.compile();
+				outComputeShader = mbstows(source);
+			}
+		}
+		else
+		{
+			log::error << L"Unknown cross compile dialect \"" << crossDialect << L"\"." << Endl;
+			return false;
 		}
 	}
-
-	GlslRequirements requirements = cx.requirements();
-
-	// Vertex
-	{
-		StringOutputStream vss;
-		vss << cx.getVertexShader().getGeneratedShader(layout, requirements);
-		vss << Endl;
-		vss << ss.str();
-		vss << Endl;
-		outVertexShader = vss.str();
-	}
-
-	// Pixel
-	{
-		StringOutputStream fss;
-		fss << cx.getFragmentShader().getGeneratedShader(layout, requirements);
-		fss << Endl;
-		fss << ss.str();
-		fss << Endl;
-		outPixelShader = fss.str();
-	}
-
-	// Compute
-	{
-		StringOutputStream css;
-		css << cx.getComputeShader().getGeneratedShader(layout, requirements);
-		css << Endl;
-		css << ss.str();
-		css << Endl;
-		outComputeShader = css.str();
-	}
-*/
 
 	return true;
 }
