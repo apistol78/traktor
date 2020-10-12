@@ -46,6 +46,8 @@ GlslType glsl_from_data_type(DataType type);
 
 GlslType glsl_from_parameter_type(ParameterType type);
 
+std::wstring glslStorageType(DataType type);
+
 //@}
 
 	}

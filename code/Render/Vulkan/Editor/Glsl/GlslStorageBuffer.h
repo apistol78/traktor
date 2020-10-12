@@ -1,7 +1,7 @@
 #pragma once
 
+#include "Render/Types.h"
 #include "Render/Vulkan/Editor/Glsl/GlslResource.h"
-#include "Render/Vulkan/Editor/Glsl/GlslType.h"
 
 namespace traktor
 {
@@ -16,12 +16,12 @@ public:
 	struct Element
 	{
 		std::wstring name;
-		GlslType type;
+		DataType type;
 	};
 
 	GlslStorageBuffer(const std::wstring& name);
 
-	bool add(const std::wstring& elementName, GlslType elementType);
+	bool add(const std::wstring& elementName, DataType elementType);
 
 	const AlignedVector< Element >& get() const { return m_elements; }
 
