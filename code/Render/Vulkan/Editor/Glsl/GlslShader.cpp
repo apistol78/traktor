@@ -147,13 +147,12 @@ std::wstring GlslShader::getGeneratedShader(const PropertyGroup* settings, const
 	ss << L"#extension GL_ARB_shading_language_420pack : enable" << Endl;
 	ss << L"#extension GL_ARB_shader_ballot : enable" << Endl;
 	ss << L"#extension GL_EXT_samplerless_texture_functions : enable" << Endl;
-
-	if (settings != nullptr && settings->getProperty< bool >(L"Glsl.Vulkan.ConvertRelaxedToHalf"))
-	{
-		ss << L"#extension GL_EXT_shader_explicit_arithmetic_types_float16 : enable" << Endl;
-		ss << L"#extension GL_EXT_shader_16bit_storage : enable" << Endl;
-		ss << Endl;
-	}
+	ss << L"#extension GL_EXT_shader_8bit_storage : enable" << Endl;
+	ss << L"#extension GL_EXT_shader_16bit_storage : enable" << Endl;
+	ss << L"#extension GL_EXT_shader_explicit_arithmetic_types_int8 : enable" << Endl;
+	ss << L"#extension GL_EXT_shader_explicit_arithmetic_types_int16 : enable" << Endl;
+	ss << L"#extension GL_EXT_shader_explicit_arithmetic_types_float16 : enable" << Endl;
+	ss << Endl;
 
 	PrecisionHint precisionHint = PhUndefined;
 	if (m_shaderType == StVertex)
@@ -251,7 +250,7 @@ std::wstring GlslShader::getGeneratedShader(const PropertyGroup* settings, const
 			ss << L"{" << Endl;
 			ss << IncreaseIndent;
 			for (auto element : storageBuffer->get())
-				ss << glsl_type_name(element.type) << L" " << element.name << L";" << Endl;
+				ss << glslStorageType(element.type) << L" " << element.name << L";" << Endl;
 			ss << DecreaseIndent;
 			ss << L"};" << Endl;
 			ss << Endl;

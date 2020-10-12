@@ -231,7 +231,7 @@ bool emitComputeOutput(GlslContext& cx, ComputeOutput* node)
 			// Storage buffer do not exist; add new storage buffer resource.
 			Ref< GlslStorageBuffer > storageBuffer = new GlslStorageBuffer(storageStructNode->getParameterName());
 			for (const auto& element : storageStructNode->getElements())
-				storageBuffer->add(element.name, glsl_from_data_type(element.type));
+				storageBuffer->add(element.name, element.type);
 			cx.getLayout().add(storageBuffer);
 
 			auto& f = cx.getShader().getOutputStream(GlslShader::BtBody);
@@ -1522,7 +1522,7 @@ bool emitReadStruct(GlslContext& cx, ReadStruct* node)
 	Ref< GlslVariable > out = cx.emitOutput(node, L"Output", glsl_from_data_type(type));
 
 	comment(f, node);
-	assign(f, out) << strct->getName() << L"_Data[int(" << index->cast(GtFloat) << L")]." << node->getName() << L";" << Endl;
+	f << glsl_type_name(out->getType()) << L" " << out->getName() << L" = " << glsl_type_name(out->getType()) << L"(" << strct->getName() << L"_Data[int(" << index->cast(GtFloat) << L")]." << node->getName() << L");" << Endl;
 
 	return true;
 }
@@ -2106,7 +2106,7 @@ bool emitStruct(GlslContext& cx, Struct* node)
 		// Storage buffer do not exist; add new storage buffer resource.
 		Ref< GlslStorageBuffer > storageBuffer = new GlslStorageBuffer(node->getParameterName());
 		for (const auto& element : node->getElements())
-			storageBuffer->add(element.name, glsl_from_data_type(element.type));
+			storageBuffer->add(element.name, element.type);
 		cx.getLayout().add(storageBuffer);
 	}
 

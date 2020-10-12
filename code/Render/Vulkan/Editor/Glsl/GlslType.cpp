@@ -81,5 +81,26 @@ GlslType glsl_from_parameter_type(ParameterType type)
 	return c[type];
 }
 
+std::wstring glslStorageType(DataType type)
+{
+	const wchar_t* c[] =
+	{
+		L"float",
+		L"vec2",
+		L"vec3",
+		L"vec4",
+		L"u8vec4",	// GL_EXT_shader_8bit_storage
+		L"u8vec4",
+		L"i16vec2",	// GL_EXT_shader_16bit_storage
+		L"i16vec4",
+		L"i16vec2",
+		L"i16vec4",
+		L"f16vec2",
+		L"f16vec4"
+	};
+	T_ASSERT(type < sizeof_array(c));
+	return c[type];
+}
+
 	}
 }

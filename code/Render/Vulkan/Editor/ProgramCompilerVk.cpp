@@ -589,7 +589,7 @@ bool ProgramCompilerVk::generate(
 	std::wstring& outComputeShader
 ) const
 {
-	std::wstring crossDialect = settings->getProperty< std::wstring >(L"Glsl.Vulkan.CrossDialect");
+	std::wstring crossDialect = toUpper(L"spirv"); // settings->getProperty< std::wstring >(L"Glsl.Vulkan.CrossDialect");
 
 	// No dialect means we should output our generated GLSL.
 	if (crossDialect.empty())
@@ -710,7 +710,32 @@ bool ProgramCompilerVk::generate(
 		if (!programResource)
 			return false;
 
-		if (crossDialect == L"MSL")
+		if (crossDialect == L"SPIRV")
+		{
+			if (!programResource->m_vertexShader.empty())
+			{
+				std::stringstream ss;
+				std::vector< uint32_t > v(programResource->m_vertexShader.begin(), programResource->m_vertexShader.end());
+				spv::Disassemble(ss, v);
+				outVertexShader = mbstows(ss.str());
+			}
+			if (!programResource->m_fragmentShader.empty())
+			{
+				std::stringstream ss;
+				std::vector< uint32_t > f(programResource->m_fragmentShader.begin(), programResource->m_fragmentShader.end());
+				spv::Disassemble(ss, f);
+				outPixelShader = mbstows(ss.str());
+			}
+			if (!programResource->m_computeShader.empty())
+			{
+				std::stringstream ss;
+				std::vector< uint32_t > c(programResource->m_computeShader.begin(), programResource->m_computeShader.end());
+				spv::Disassemble(ss, c);
+				outComputeShader = mbstows(ss.str());
+			}
+			return true;
+		}
+		else if (crossDialect == L"MSL")
 		{
 			spirv_cross::CompilerMSL::Options options;
 			options.platform = spirv_cross::CompilerMSL::Options::iOS;

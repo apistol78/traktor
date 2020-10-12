@@ -148,8 +148,9 @@ struct LightShaderData
 #pragma pack(1)
 struct TileShaderData
 {
-	float lights[4];
-	float lightCount[4];
+	uint16_t lights[4];			// 8 :  0 -  8
+	uint8_t lightCount[4];		// 4 :  8 - 12
+	uint8_t pad[4];				// 4 : 12 - 16
 };
 #pragma pack()
 
@@ -268,8 +269,9 @@ bool WorldRendererForward::create(
 			return false;
 
 		AlignedVector< render::StructElement > tileShaderDataStruct;
-		tileShaderDataStruct.push_back(render::StructElement(render::DtFloat4, offsetof(TileShaderData, lights)));
-		tileShaderDataStruct.push_back(render::StructElement(render::DtFloat4, offsetof(TileShaderData, lightCount)));
+		tileShaderDataStruct.push_back(render::StructElement(render::DtShort4, offsetof(TileShaderData, lights)));
+		tileShaderDataStruct.push_back(render::StructElement(render::DtByte4, offsetof(TileShaderData, lightCount)));
+		tileShaderDataStruct.push_back(render::StructElement(render::DtByte4, offsetof(TileShaderData, pad)));
 		T_FATAL_ASSERT(sizeof(TileShaderData) == render::getStructSize(tileShaderDataStruct));
 
 		frame.tileSBuffer = renderSystem->createStructBuffer(
@@ -526,24 +528,24 @@ void WorldRendererForward::setupTileDataPass(
 
 						if (light.type == LtDirectional)
 						{
-							tileShaderData[offset].lights[count++] = float(i);
+							tileShaderData[offset].lights[count++] = uint16_t(i);
 						}
 						else if (light.type == LtPoint)
 						{
 							if (tileFrustum.inside(lightPositions[i], Scalar(light.range)) != Frustum::IrOutside)
-								tileShaderData[offset].lights[count++] = float(i);
+								tileShaderData[offset].lights[count++] = uint16_t(i);
 						}
 						else if (light.type == LtSpot)
 						{
 							// \fixme Implement frustum to frustum culling.
 							if (tileFrustum.inside(lightPositions[i], Scalar(light.range)) != Frustum::IrOutside)
-								tileShaderData[offset].lights[count++] = float(i);
+								tileShaderData[offset].lights[count++] = uint16_t(i);
 						}
 
 						if (count >= 4)
 							break;
 					}
-					tileShaderData[offset].lightCount[0] = float(count);
+					tileShaderData[offset].lightCount[0] = uint8_t(count);
 				}
 			}
 		}

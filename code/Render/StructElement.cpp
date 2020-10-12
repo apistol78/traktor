@@ -32,20 +32,24 @@ uint32_t StructElement::getSize() const
 	return c_typeSize[m_type];
 }
 
-uint32_t getStructSize(const AlignedVector< StructElement >& vertexElements)
+uint32_t getStructSize(const AlignedVector< StructElement >& structElements)
 {
-	return !vertexElements.empty() ? getStructSize(&vertexElements[0], uint32_t(vertexElements.size())) : 0;
+	return !structElements.empty() ? getStructSize(&structElements[0], uint32_t(structElements.size())) : 0;
 }
 
-uint32_t getStructSize(const StructElement* vertexElements, uint32_t count)
+uint32_t getStructSize(const StructElement* structElements, uint32_t count)
 {
 	uint32_t size = 0;
+
+	// Calculate total size of all elements.
 	for (uint32_t i = 0; i < count; ++i)
 	{
-		uint32_t next = vertexElements[i].getOffset() + vertexElements[i].getSize();
+		uint32_t next = structElements[i].getOffset() + structElements[i].getSize();
 		size = std::max< uint32_t >(size, next);
 	}
-	return size;
+
+	// Ensure structs are aligned on 16 byte boundary, assuming GLSL layout.
+	return alignUp(size, 16);
 }
 
 	}
