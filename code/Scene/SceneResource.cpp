@@ -10,8 +10,7 @@
 #include "Scene/Scene.h"
 #include "Scene/SceneResource.h"
 #include "World/EntityData.h"
-#include "World/EntitySchema.h"
-#include "World/EntityBuilderWithSchema.h"
+#include "World/IEntityBuilder.h"
 #include "World/IEntityFactory.h"
 #include "World/WorldRenderSettings.h"
 
@@ -40,11 +39,9 @@ Ref< Scene > SceneResource::createScene(
 			log::error << L"Unable to bind image processing parameter \"" << i->first << L"\"" << Endl;
 	}
 
-	Ref< world::EntitySchema > entitySchema = new world::EntitySchema();
 	SmallMap< const world::EntityData*, Ref< world::Entity > > entityProducts;
 
-	Ref< world::EntityBuilderWithSchema > entityBuilderSchema = new world::EntityBuilderWithSchema(entityBuilder, entitySchema, entityProducts);
-	Ref< world::Entity > rootEntity = entityBuilderSchema->create(m_entityData);
+	Ref< world::Entity > rootEntity = entityBuilder->create(m_entityData);
 
 	Ref< ISceneController > controller;
 	if (m_controllerData)
@@ -61,7 +58,6 @@ Ref< Scene > SceneResource::createScene(
 
 	return new Scene(
 		controller,
-		entitySchema,
 		rootEntity,
 		m_worldRenderSettings,
 		imageProcessParams

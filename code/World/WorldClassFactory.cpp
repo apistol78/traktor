@@ -5,8 +5,6 @@
 #include "Core/Class/Boxes/BoxedTypeInfo.h"
 #include "Core/Class/IRuntimeClassRegistrar.h"
 #include "World/EntityBuilder.h"
-#include "World/EntityBuilderWithSchema.h"
-#include "World/EntitySchema.h"
 #include "World/IEntityEvent.h"
 #include "World/IEntityEventData.h"
 #include "World/IEntityEventInstance.h"
@@ -78,6 +76,16 @@ Transform Entity_getTransform(Entity* self)
 	return self->getTransform();
 }
 
+RefArray< Entity > GroupComponent_getEntities_1(GroupComponent* self)
+{
+	return self->getEntities();
+}
+
+RefArray< Entity > GroupComponent_getEntities_2(GroupComponent* self, const std::wstring& name)
+{
+	return self->getEntities(name);
+}
+
 void CameraComponentData_setProjection(CameraComponentData* self, int32_t type)
 {
 	self->setProjection((Projection)type);
@@ -96,18 +104,6 @@ void CameraComponent_setProjection(CameraComponent* self, int32_t type)
 int32_t CameraComponent_getProjection(CameraComponent* self)
 {
 	return (int32_t)self->getProjection();
-}
-
-RefArray< Entity > GroupComponent_getEntitiesOf(GroupComponent* self, const TypeInfo& entityType)
-{
-	RefArray< Entity > entities;
-	self->getEntitiesOf(entityType, entities);
-	return entities;
-}
-
-Ref< Entity > GroupComponent_getFirstEntityOf(GroupComponent* self, const TypeInfo& entityType)
-{
-	return self->getFirstEntityOf(entityType);
 }
 
 void Entity_update(Entity* self, float totalTime, float deltaTime)
@@ -168,17 +164,6 @@ void WorldClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classEntityEventManager->addMethod("cancelAllEnd", &EntityEventManager_cancelAllEnd);
 	registrar->registerClass(classEntityEventManager);
 
-	auto classEntitySchema = new AutoRuntimeClass< EntitySchema >();
-	classEntitySchema->addMethod< Entity*, uint32_t >("getEntity", &EntitySchema::getEntity);
-	classEntitySchema->addMethod< Entity*, const std::wstring&, uint32_t >("getEntity", &EntitySchema::getEntity);
-	classEntitySchema->addMethod< Entity*, const TypeInfo&, uint32_t >("getEntityOf", &EntitySchema::getEntity);
-	classEntitySchema->addMethod< Entity*, const std::wstring&, const TypeInfo&, uint32_t >("getEntityOf", &EntitySchema::getEntity);
-	classEntitySchema->addMethod< Entity*, const Entity*, uint32_t >("getChildEntity", &EntitySchema::getChildEntity);
-	classEntitySchema->addMethod< Entity*, const Entity*, const std::wstring&, uint32_t >("getChildEntity", &EntitySchema::getChildEntity);
-	classEntitySchema->addMethod< Entity*, const Entity*, const TypeInfo&, uint32_t >("getChildEntityOf", &EntitySchema::getChildEntity);
-	classEntitySchema->addMethod< Entity*, const Entity*, const std::wstring&, const TypeInfo&, uint32_t >("getChildEntityOf", &EntitySchema::getChildEntity);
-	registrar->registerClass(classEntitySchema);
-
 	auto classIEntityFactory = new AutoRuntimeClass< IEntityFactory >();
 	registrar->registerClass(classIEntityFactory);
 
@@ -191,10 +176,6 @@ void WorldClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	auto classEntityBuilder = new AutoRuntimeClass< EntityBuilder >();
 	classEntityBuilder->addConstructor();
 	registrar->registerClass(classEntityBuilder);
-
-	auto classEntityBuilderWithSchema = new AutoRuntimeClass< EntityBuilderWithSchema >();
-	classEntityBuilderWithSchema->addConstructor< IEntityBuilder*, EntitySchema* >();
-	registrar->registerClass(classEntityBuilderWithSchema);
 
 	auto classIEntityRenderer = new AutoRuntimeClass< IEntityRenderer >();
 	registrar->registerClass(classIEntityRenderer);
@@ -209,7 +190,8 @@ void WorldClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 
 	auto classEntity = new AutoRuntimeClass< Entity >();
 	classEntity->addConstructor();
-	classEntity->addConstructor< const Transform& >();
+	classEntity->addConstructor< const std::wstring&, const Transform& >();
+	classEntity->addProperty("name", &Entity::getName);
 	classEntity->addProperty("transform", &Entity_setTransform, &Entity_getTransform);
 	classEntity->addProperty("boundingBox", &Entity::getBoundingBox);
 	classEntity->addMethod("destroy", &Entity::destroy);
@@ -220,12 +202,12 @@ void WorldClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 
 	auto classGroupComponent = new AutoRuntimeClass< GroupComponent >();
 	classGroupComponent->addConstructor();
-	classGroupComponent->addProperty("entities", &GroupComponent::getEntities);
+	classGroupComponent->addProperty("entities", &GroupComponent_getEntities_1);
 	classGroupComponent->addMethod("addEntity", &GroupComponent::addEntity);
 	classGroupComponent->addMethod("removeEntity", &GroupComponent::removeEntity);
 	classGroupComponent->addMethod("removeAllEntities", &GroupComponent::removeAllEntities);
-	classGroupComponent->addMethod("getEntitiesOf", &GroupComponent_getEntitiesOf);
-	classGroupComponent->addMethod("getFirstEntityOf", &GroupComponent_getFirstEntityOf);
+	classGroupComponent->addMethod("getEntity", &GroupComponent::getEntity);
+	classGroupComponent->addMethod("getEntities", &GroupComponent_getEntities_2);
 	registrar->registerClass(classGroupComponent);
 
 	auto classIEntityComponentData = new AutoRuntimeClass< IEntityComponentData >();

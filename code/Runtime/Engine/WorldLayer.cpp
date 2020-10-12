@@ -21,7 +21,6 @@
 #include "World/Entity.h"
 #include "World/EntityData.h"
 #include "World/IEntityBuilder.h"
-#include "World/EntitySchema.h"
 #include "World/EntityEventManager.h"
 #include "World/Entity/CameraComponent.h"
 #include "World/Entity/GroupComponent.h"
@@ -126,7 +125,7 @@ void WorldLayer::prepare(const UpdateInfo& info)
 		m_scene.consume();
 
 		// Get initial camera.
-		m_cameraEntity = m_scene->getEntitySchema()->getEntity(L"Camera", 0);
+		m_cameraEntity = getEntity(L"Camera");
 		m_listenerEntity = m_cameraEntity;
 	}
 
@@ -320,60 +319,29 @@ void WorldLayer::resume()
 
 world::Entity* WorldLayer::getEntity(const std::wstring& name) const
 {
-	return m_scene->getEntitySchema()->getEntity(name, 0);
+	return getEntity(name, 0);
 }
 
 world::Entity* WorldLayer::getEntity(const std::wstring& name, int32_t index) const
 {
-	return m_scene->getEntitySchema()->getEntity(name, index);
+	auto entity = m_scene->getRootEntity();
+
+	auto group = entity->getComponent< world::GroupComponent >();
+	if (!group)
+		return nullptr;
+
+	return group->getEntity(name, index);
 }
 
 RefArray< world::Entity > WorldLayer::getEntities(const std::wstring& name) const
 {
-	RefArray< world::Entity > entities;
-	m_scene->getEntitySchema()->getEntities(name, entities);
-	return entities;
-}
+	auto entity = m_scene->getRootEntity();
 
-RefArray< world::Entity > WorldLayer::getEntitiesOf(const TypeInfo& entityType) const
-{
-	RefArray< world::Entity > entities;
-	m_scene->getEntitySchema()->getEntities(entityType, entities);
-	return entities;
-}
+	auto group = entity->getComponent< world::GroupComponent >();
+	if (!group)
+		return RefArray< world::Entity >();
 
-int32_t WorldLayer::getEntityIndex(const world::Entity* entity) const
-{
-	RefArray< world::Entity > entities;
-	m_scene->getEntitySchema()->getEntities(entities);
-
-	RefArray< world::Entity >::const_iterator i = std::find(entities.begin(), entities.end(), entity);
-	if (i == entities.end())
-		return -1;
-
-	return std::distance< RefArray< world::Entity >::const_iterator >(entities.begin(), i);
-}
-
-int32_t WorldLayer::getEntityIndexOf(const world::Entity* entity) const
-{
-	RefArray< world::Entity > entities;
-	m_scene->getEntitySchema()->getEntities(type_of(entity), entities);
-
-	RefArray< world::Entity >::const_iterator i = std::find(entities.begin(), entities.end(), entity);
-	if (i == entities.end())
-		return -1;
-
-	return std::distance< RefArray< world::Entity >::const_iterator >(entities.begin(), i);
-}
-
-world::Entity* WorldLayer::getEntityByIndex(int32_t index) const
-{
-	return m_scene->getEntitySchema()->getEntity(index);
-}
-
-world::Entity* WorldLayer::getEntityOf(const TypeInfo& entityType, int32_t index) const
-{
-	return m_scene->getEntitySchema()->getEntity(entityType, index);
+	return group->getEntities(name);
 }
 
 void WorldLayer::addEntity(world::Entity* entity)
@@ -397,11 +365,6 @@ bool WorldLayer::isEntityAdded(const world::Entity* entity) const
 	}
 	else
 		return false;
-}
-
-world::EntitySchema* WorldLayer::getEntitySchema() const
-{
-	return m_scene->getEntitySchema();
 }
 
 void WorldLayer::setControllerEnable(bool controllerEnable)

@@ -30,7 +30,7 @@ Ref< world::Entity > LayerEntityFactory::createEntity(const world::IEntityBuilde
 {
 	const world::LayerEntityData* layerData = mandatory_non_null_type_cast< const world::LayerEntityData* >(&entityData);
 	
-	Ref< world::Entity > entity = new world::Entity(layerData->getTransform());
+	Ref< world::Entity > entity = new world::Entity(layerData->getName(), layerData->getTransform());
 	Ref< world::GroupComponent > group = new world::GroupComponent();
 	entity->setComponent(group);
 

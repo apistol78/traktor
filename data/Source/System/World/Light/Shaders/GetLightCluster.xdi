@@ -88,11 +88,11 @@
 			<elements>
 				<item>
 					<name>Lights</name>
-					<type>DtFloat4</type>
+					<type>DtShort4</type>
 				</item>
 				<item>
 					<name>LightCount</name>
-					<type>DtFloat4</type>
+					<type>DtByte4</type>
 				</item>
 			</elements>
 		</item>

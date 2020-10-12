@@ -62,7 +62,11 @@ void SolidEntity::update(const world::UpdateParams& update)
 		return;
 
     RefArray< PrimitiveEntity > primitiveEntities;
-	group->getEntitiesOf< PrimitiveEntity >(primitiveEntities);
+	for (auto entity : group->getEntities())
+	{
+		if (is_a< PrimitiveEntity >(entity))
+			primitiveEntities.push_back(checked_type_cast< PrimitiveEntity* >(entity));
+	}
 
     // Check if any child entity is dirty and if so update our preview geometry.
     bool dirty = m_dirty;

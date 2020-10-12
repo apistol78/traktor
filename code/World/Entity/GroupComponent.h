@@ -1,5 +1,6 @@
 #pragma once
 
+#include <string>
 #include "Core/RefArray.h"
 #include "World/IEntityComponent.h"
 
@@ -46,22 +47,9 @@ public:
 
 	const RefArray< Entity >& getEntities() const;
 
-	int getEntitiesOf(const TypeInfo& entityType, RefArray< Entity >& outEntities) const;
+	world::Entity* getEntity(const std::wstring& name, int32_t index) const;
 
-	Entity* getFirstEntityOf(const TypeInfo& entityType) const;
-
-	template < typename EntityType >
-	int getEntitiesOf(RefArray< EntityType >& outEntities) const
-	{
-		return getEntitiesOf(type_of< EntityType >(), reinterpret_cast< RefArray< Entity >& >(outEntities));
-	}
-
-	template < typename EntityType >
-	EntityType* getFirstEntityOf() const
-	{
-		Entity* entity = getFirstEntityOf(type_of< EntityType >());
-		return reinterpret_cast< EntityType* >(entity);
-	}
+	RefArray< world::Entity > getEntities(const std::wstring& name) const;
 
 private:
 	Entity* m_owner;

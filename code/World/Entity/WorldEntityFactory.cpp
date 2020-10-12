@@ -101,7 +101,7 @@ Ref< Entity > WorldEntityFactory::createEntity(const IEntityBuilder* builder, co
 	}
 	else if (auto groupData = dynamic_type_cast< const GroupEntityData* >(&entityData))
 	{
-		Ref< GroupEntity > groupEntity = new GroupEntity(groupData->getTransform());
+		Ref< GroupEntity > groupEntity = new GroupEntity(groupData->getName(), groupData->getTransform());
 		for (auto entityData : groupData->getEntityData())
 		{
 			Ref< Entity > childEntity = builder->create(entityData);
@@ -127,7 +127,7 @@ Ref< Entity > WorldEntityFactory::createEntity(const IEntityBuilder* builder, co
 			components.push_back(component);
 		}
 		// Create entity and attach all components to it.
-		Ref< Entity > entity = new Entity(entityData.getTransform(), components);
+		Ref< Entity > entity = new Entity(entityData.getName(), entityData.getTransform(), components);
 		return entity;
 	}
 	return nullptr;

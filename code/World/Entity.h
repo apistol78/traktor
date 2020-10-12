@@ -1,5 +1,6 @@
 #pragma once
 
+#include <string>
 #include "Core/Object.h"
 #include "Core/RefArray.h"
 #include "Core/Math/Aabb3.h"
@@ -33,9 +34,9 @@ public:
 
 	Entity(const Entity&) = delete;
 
-	explicit Entity(const Transform& transform);
+	explicit Entity(const std::wstring& name, const Transform& transform);
 
-	explicit Entity(const Transform& transform, const RefArray< IEntityComponent >& components);
+	explicit Entity(const std::wstring& name, const Transform& transform, const RefArray< IEntityComponent >& components);
 
 	virtual ~Entity();
 
@@ -50,6 +51,9 @@ public:
 	 * performing the destruction.
 	 */
 	virtual void destroy();
+
+	/*! Get entity name. */
+	const std::wstring& getName() const;
 
 	/*! Set entity transform.
 	 *
@@ -110,6 +114,7 @@ public:
 	}
 
 private:
+	std::wstring m_name;
 	Transform m_transform = Transform::identity();
 	RefArray< IEntityComponent > m_components;
 	const IEntityComponent* m_updating = nullptr;

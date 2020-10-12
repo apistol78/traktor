@@ -41,7 +41,6 @@
 #include "World/EntityEventManager.h"
 #include "World/IEntityFactory.h"
 #include "World/IEntityRenderer.h"
-#include "World/EntitySchema.h"
 #include "World/IWorldRenderer.h"
 #include "World/WorldEntityRenderers.h"
 #include "World/WorldRenderSettings.h"
@@ -297,7 +296,6 @@ void GameClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	registrar->registerClass(classVideoLayer);
 
 	auto classWorldLayer = new AutoRuntimeClass< WorldLayer >();
-	classWorldLayer->addProperty< world::EntitySchema* >("entitySchema", &WorldLayer::getEntitySchema);
 	classWorldLayer->addProperty< const Frustum& >("viewFrustum", &WorldLayer::getViewFrustum);
 	classWorldLayer->addProperty< float >("fieldOfView", &WorldLayer::setFieldOfView, &WorldLayer::getFieldOfView);
 	classWorldLayer->addProperty< float >("alternateTime", &WorldLayer::setAlternateTime, &WorldLayer::getAlternateTime);
@@ -307,11 +305,6 @@ void GameClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classWorldLayer->addMethod("getEntity", &WorldLayer_getEntity_1);
 	classWorldLayer->addMethod("getEntity", &WorldLayer_getEntity_2);
 	classWorldLayer->addMethod("getEntities", &WorldLayer::getEntities);
-	classWorldLayer->addMethod("getEntitiesOf", &WorldLayer::getEntitiesOf);
-	classWorldLayer->addMethod("getEntityIndex", &WorldLayer::getEntityIndex);
-	classWorldLayer->addMethod("getEntityIndexOf", &WorldLayer::getEntityIndexOf);
-	classWorldLayer->addMethod("getEntityByIndex", &WorldLayer::getEntityByIndex);
-	classWorldLayer->addMethod("getEntityOf", &WorldLayer::getEntityOf);
 	classWorldLayer->addMethod("addEntity", &WorldLayer::addEntity);
 	classWorldLayer->addMethod("removeEntity", &WorldLayer::removeEntity);
 	classWorldLayer->addMethod("isEntityAdded", &WorldLayer::isEntityAdded);

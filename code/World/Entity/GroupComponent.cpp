@@ -132,24 +132,28 @@ const RefArray< Entity >& GroupComponent::getEntities() const
 	return m_entities;
 }
 
-int32_t GroupComponent::getEntitiesOf(const TypeInfo& entityType, RefArray< Entity >& entities) const
+world::Entity* GroupComponent::getEntity(const std::wstring& name, int32_t index) const
 {
 	for (auto entity : m_entities)
 	{
-		if (is_type_of(entityType, type_of(entity)))
-			entities.push_back(entity);
-	}
-	return (int32_t)entities.size();
-}
-
-Entity* GroupComponent::getFirstEntityOf(const TypeInfo& entityType) const
-{
-	for (auto entity : m_entities)
-	{
-		if (is_type_of(entityType, type_of(entity)))
-			return entity;
+		if (entity->getName() == name)
+		{
+			if (index-- <= 0)
+				return entity;
+		}
 	}
 	return nullptr;
+}
+
+RefArray< world::Entity > GroupComponent::getEntities(const std::wstring& name) const
+{
+	RefArray< world::Entity > entities;
+	for (auto entity : m_entities)
+	{
+		if (entity->getName() == name)
+			entities.push_back(entity);
+	}
+	return entities;
 }
 
 	}
