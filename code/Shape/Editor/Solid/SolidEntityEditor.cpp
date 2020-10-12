@@ -42,7 +42,11 @@ void SolidEntityEditor::drawGuide(render::PrimitiveRenderer* primitiveRenderer) 
 			return;
 
 		RefArray< PrimitiveEntity > primitiveEntities;
-		group->getEntitiesOf< PrimitiveEntity >(primitiveEntities);
+		for (auto entity : group->getEntities())
+		{
+			if (is_a< PrimitiveEntity >(entity))
+				primitiveEntities.push_back(checked_type_cast< PrimitiveEntity* >(entity));
+		}
 
 		for (auto primitiveEntity : primitiveEntities)
 		{

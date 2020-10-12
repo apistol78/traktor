@@ -27,7 +27,6 @@ class ITexture;
 	{
 
 class Entity;
-class EntitySchema;
 class IWorldRenderer;
 struct UpdateParams;
 class WorldRenderSettings;
@@ -53,7 +52,6 @@ class T_DLLCLASS Scene : public Object
 public:
 	Scene(
 		ISceneController* controller,
-		world::EntitySchema* entitySchema,
 		world::Entity* rootEntity,
 		world::WorldRenderSettings* worldRenderSettings,
 		const SmallMap< render::handle_t, resource::Proxy< render::ITexture > >& imageProcessParams
@@ -69,8 +67,6 @@ public:
 
 	void updateEntity(const world::UpdateParams& update);
 
-	world::EntitySchema* getEntitySchema() const;
-
 	world::Entity* getRootEntity() const;
 
 	ISceneController* getController() const;
@@ -80,7 +76,6 @@ public:
 	const SmallMap< render::handle_t, resource::Proxy< render::ITexture > >& getImageProcessParams() const;
 
 private:
-	Ref< world::EntitySchema > m_entitySchema;
 	Ref< world::Entity > m_rootEntity;
 	Ref< ISceneController > m_controller;
 	Ref< world::WorldRenderSettings > m_worldRenderSettings;

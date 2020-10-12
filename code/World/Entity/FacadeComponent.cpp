@@ -27,7 +27,9 @@ void FacadeComponent::destroy()
 
 void FacadeComponent::setOwner(Entity* owner)
 {
-	m_owner = owner;
+	T_ASSERT(m_owner == nullptr);
+	if ((m_owner = owner) != nullptr)
+		m_transform = m_owner->getTransform();
 }
 
 void FacadeComponent::update(const UpdateParams& update)

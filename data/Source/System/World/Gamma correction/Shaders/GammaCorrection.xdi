@@ -95,9 +95,9 @@
 			<stencilPass>SoKeep</stencilPass>
 			<stencilFunction>CfAlways</stencilFunction>
 			<stencilReference>0</stencilReference>
-			<stencilMask>4294967295</stencilMask>
+			<stencilMask>2147483648</stencilMask>
 			<registerCount>0</registerCount>
-			<precisionHint>PhUndefined</precisionHint>
+			<precisionHint>PhLow</precisionHint>
 		</item>
 		<item type="traktor.render.Pow" version="traktor.render.Node:1">
 			<id>{D8BB8894-3A23-E348-AC2E-0DF123F8874B}</id>

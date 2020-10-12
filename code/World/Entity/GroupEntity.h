@@ -24,9 +24,9 @@ class T_DLLCLASS GroupEntity : public Entity
 	T_RTTI_CLASS;
 
 public:
-	GroupEntity();
+	GroupEntity() = default;
 
-	GroupEntity(const Transform& transform);
+	explicit GroupEntity(const std::wstring& name, const Transform& transform);
 
 	virtual ~GroupEntity();
 
@@ -48,8 +48,6 @@ public:
 
 	virtual void setTransform(const Transform& transform) override;
 
-	virtual Transform getTransform() const override;
-
 	virtual Aabb3 getBoundingBox() const override;
 
 	template < typename EntityType >
@@ -66,10 +64,9 @@ public:
 	}
 
 private:
-	Transform m_transform;
 	RefArray< Entity > m_entities;
 	RefArray< Entity > m_deferred[2];
-	bool m_update;
+	bool m_update = false;
 };
 
 	}

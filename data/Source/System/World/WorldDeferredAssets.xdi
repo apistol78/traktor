@@ -17,9 +17,5 @@
 			<id>{30D10D11-475A-C646-9433-23533E43EDAC}</id>
 			<editorDeployOnly>false</editorDeployOnly>
 		</item>
-		<item>
-			<id>{2F8EC56A-FD46-DF42-94B5-9DD676B8DD8A}</id>
-			<editorDeployOnly>false</editorDeployOnly>
-		</item>
 	</dependencies>
 </object>

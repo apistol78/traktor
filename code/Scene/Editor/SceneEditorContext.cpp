@@ -37,8 +37,6 @@
 #include "Ui/Events/SelectionChangeEvent.h"
 #include "World/Entity.h"
 #include "World/EntityBuilder.h"
-#include "World/EntityBuilderWithSchema.h"
-#include "World/EntitySchema.h"
 #include "World/Editor/LayerEntityData.h"
 #include "World/Entity/GroupComponent.h"
 
@@ -369,9 +367,7 @@ void SceneEditorContext::buildEntities()
 
 	if (m_sceneAsset)
 	{
-		Ref< world::EntitySchema > entitySchema = new world::EntitySchema();
 		Ref< world::EntityBuilder > entityBuilder = new world::EntityBuilder();
-		Ref< world::EntityBuilderWithSchema > entityBuilderSchema = new world::EntityBuilderWithSchema(entityBuilder, entitySchema);
 
 		// Create entity factories.
 		RefArray< const world::IEntityFactory > entityFactories;
@@ -394,7 +390,7 @@ void SceneEditorContext::buildEntities()
 			world::LayerEntityData* layerEntityData = layers[i];
 			T_ASSERT(layerEntityData);
 
-			Ref< EntityAdapterBuilder > entityAdapterBuilder = new EntityAdapterBuilder(this, entityBuilderSchema, m_layerEntityAdapters[i]);
+			Ref< EntityAdapterBuilder > entityAdapterBuilder = new EntityAdapterBuilder(this, entityBuilder, m_layerEntityAdapters[i]);
 			for (auto entityFactory : entityFactories)
 				entityAdapterBuilder->addFactory(entityFactory);
 
@@ -440,7 +436,6 @@ void SceneEditorContext::buildEntities()
 		// Create our scene.
 		m_scene = new Scene(
 			controller,
-			entitySchema,
 			rootEntity,
 			m_sceneAsset->getWorldRenderSettings(),
 			postProcessParams

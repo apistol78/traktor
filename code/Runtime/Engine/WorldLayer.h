@@ -44,7 +44,6 @@ class Scene;
 
 class Entity;
 class EntityData;
-class EntitySchema;
 class IWorldRenderer;
 
 	}
@@ -94,23 +93,11 @@ public:
 
 	RefArray< world::Entity > getEntities(const std::wstring& name) const;
 
-	RefArray< world::Entity > getEntitiesOf(const TypeInfo& entityType) const;
-
-	int32_t getEntityIndex(const world::Entity* entity) const;
-
-	int32_t getEntityIndexOf(const world::Entity* entity) const;
-
-	world::Entity* getEntityByIndex(int32_t index) const;
-
-	world::Entity* getEntityOf(const TypeInfo& entityType, int32_t index) const;
-
 	void addEntity(world::Entity* entity);
 
 	void removeEntity(world::Entity* entity);
 
 	bool isEntityAdded(const world::Entity* entity) const;
-
-	world::EntitySchema* getEntitySchema() const;
 
 	void setControllerEnable(bool controllerEnable);
 

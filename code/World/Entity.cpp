@@ -8,13 +8,15 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.world.Entity", Entity, Object)
 
-Entity::Entity(const Transform& transform)
-:	m_transform(transform)
+Entity::Entity(const std::wstring& name, const Transform& transform)
+:	m_name(name)
+,	m_transform(transform)
 {
 }
 
-Entity::Entity(const Transform& transform, const RefArray< IEntityComponent >& components)
-:	m_transform(transform)
+Entity::Entity(const std::wstring& name, const Transform& transform, const RefArray< IEntityComponent >& components)
+:	m_name(name)
+,	m_transform(transform)
 ,	m_components(components)
 {
 	for (auto component : m_components)
@@ -35,6 +37,11 @@ void Entity::destroy()
 	for (auto component : m_components)
 		component->destroy();
 	m_components.clear();
+}
+
+const std::wstring& Entity::getName() const
+{
+	return m_name;
 }
 
 void Entity::setTransform(const Transform& transform)

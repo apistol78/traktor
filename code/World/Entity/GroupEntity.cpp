@@ -9,14 +9,8 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.world.GroupEntity", GroupEntity, Entity)
 
-GroupEntity::GroupEntity()
-:	m_transform(Transform::identity())
-,	m_update(false)
-{
-}
-
-GroupEntity::GroupEntity(const Transform& transform)
-:	m_transform(transform)
+GroupEntity::GroupEntity(const std::wstring& name, const Transform& transform)
+:	Entity(name, transform)
 ,	m_update(false)
 {
 }
@@ -125,7 +119,7 @@ void GroupEntity::update(const UpdateParams& update)
 
 void GroupEntity::setTransform(const Transform& transform)
 {
-	Transform invTransform = m_transform.inverse();
+	Transform invTransform = getTransform().inverse();
 	for (auto entity : m_entities)
 	{
 		Transform currentTransform = entity->getTransform();
@@ -133,17 +127,12 @@ void GroupEntity::setTransform(const Transform& transform)
 		Transform Tworld = transform * Tlocal;
 		entity->setTransform(Tworld);
 	}
-	m_transform = transform;
-}
-
-Transform GroupEntity::getTransform() const
-{
-	return m_transform;
+	Entity::setTransform(transform);
 }
 
 Aabb3 GroupEntity::getBoundingBox() const
 {
-	Transform invTransform = m_transform.inverse();
+	Transform invTransform = getTransform().inverse();
 
 	Aabb3 boundingBox;
 	for (auto entity : m_entities)

@@ -38,7 +38,7 @@ Ref< world::Entity > PrefabEntityFactory::createEntity(const world::IEntityBuild
 			batchGroup->addEntity(childEntity);
 	}
 
-	Ref< world::Entity > batchEntity = new world::Entity(prefabEntityData->getTransform());
+	Ref< world::Entity > batchEntity = new world::Entity(prefabEntityData->getName(), prefabEntityData->getTransform());
 	batchEntity->setComponent(batchGroup);
 	return batchEntity;
 }
