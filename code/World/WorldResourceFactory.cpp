@@ -79,13 +79,13 @@ Ref< Object > WorldResourceFactory::create(resource::IResourceManager* resourceM
 			return nullptr;
 
 		AlignedVector< render::StructElement > layout;
-		layout.push_back(render::StructElement(render::DtFloat4, offsetof(IrradianceGridData, shR0_3)));
-		layout.push_back(render::StructElement(render::DtFloat4, offsetof(IrradianceGridData, shR4_7)));
-		layout.push_back(render::StructElement(render::DtFloat4, offsetof(IrradianceGridData, shG0_3)));
-		layout.push_back(render::StructElement(render::DtFloat4, offsetof(IrradianceGridData, shG4_7)));
-		layout.push_back(render::StructElement(render::DtFloat4, offsetof(IrradianceGridData, shB0_3)));
-		layout.push_back(render::StructElement(render::DtFloat4, offsetof(IrradianceGridData, shB4_7)));
-		layout.push_back(render::StructElement(render::DtFloat4, offsetof(IrradianceGridData, shRGB_8)));
+		layout.push_back(render::StructElement(render::DtHalf4, offsetof(IrradianceGridData, shR0_3)));
+		layout.push_back(render::StructElement(render::DtHalf4, offsetof(IrradianceGridData, shR4_7)));
+		layout.push_back(render::StructElement(render::DtHalf4, offsetof(IrradianceGridData, shG0_3)));
+		layout.push_back(render::StructElement(render::DtHalf4, offsetof(IrradianceGridData, shG4_7)));
+		layout.push_back(render::StructElement(render::DtHalf4, offsetof(IrradianceGridData, shB0_3)));
+		layout.push_back(render::StructElement(render::DtHalf4, offsetof(IrradianceGridData, shB4_7)));
+		layout.push_back(render::StructElement(render::DtHalf4, offsetof(IrradianceGridData, shRGB_8)));
 		T_FATAL_ASSERT(sizeof(IrradianceGridData) == render::getStructSize(layout));
 
 		Ref< IrradianceGridResource > resource = instance->getObject< IrradianceGridResource >();
@@ -129,6 +129,7 @@ Ref< Object > WorldResourceFactory::create(resource::IResourceManager* resourceM
 		IrradianceGridData* grid = (IrradianceGridData*)buffer->lock();
 		T_FATAL_ASSERT(grid);
 
+		float tmp[3];
 		for (int32_t x = 0; x < size[0]; ++x)
 		{
 			for (int32_t y = 0; y < size[1]; ++y)
@@ -138,19 +139,28 @@ Ref< Object > WorldResourceFactory::create(resource::IResourceManager* resourceM
 					auto& g = *grid++;
 					for (int32_t i = 0; i < 4; ++i)
 					{
-						reader >> g.shR0_3[i];
-						reader >> g.shG0_3[i];
-						reader >> g.shB0_3[i];
+						reader >> tmp[0];
+						reader >> tmp[1];
+						reader >> tmp[2];
+						g.shR0_3[i] = floatToHalf(tmp[0]);
+						g.shG0_3[i] = floatToHalf(tmp[1]);
+						g.shB0_3[i] = floatToHalf(tmp[2]);
 					}
 					for (int32_t i = 0; i < 4; ++i)
 					{
-						reader >> g.shR4_7[i];
-						reader >> g.shG4_7[i];
-						reader >> g.shB4_7[i];
+						reader >> tmp[0];
+						reader >> tmp[1];
+						reader >> tmp[2];
+						g.shR4_7[i] = floatToHalf(tmp[0]);
+						g.shG4_7[i] = floatToHalf(tmp[1]);
+						g.shB4_7[i] = floatToHalf(tmp[2]);
 					}
-					reader >> g.shRGB_8[0];
-					reader >> g.shRGB_8[1];
-					reader >> g.shRGB_8[2];
+					reader >> tmp[0];
+					reader >> tmp[1];
+					reader >> tmp[2];
+					g.shRGB_8[0] = floatToHalf(tmp[0]);
+					g.shRGB_8[1] = floatToHalf(tmp[1]);
+					g.shRGB_8[2] = floatToHalf(tmp[2]);
 				}
 			}
 		}
