@@ -22,6 +22,8 @@ class IStream;
     namespace model
     {
 
+class Model;
+
 /*!
  * \ingroup Model
  */

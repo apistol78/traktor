@@ -88,7 +88,7 @@ Ref< model::Model > SplineEntityReplicator::createModel(
 		if (!layerData)
 			continue;
 
-		Ref< model::Model > layerModel = layerData->createModel(pipelineBuilder->getSourceDatabase(), assetPath, path);
+		Ref< model::Model > layerModel = nullptr; // layerData->createModel(pipelineBuilder->getSourceDatabase(), assetPath, path);
 		if (!layerModel)
 			continue;
 

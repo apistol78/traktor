@@ -1,3 +1,5 @@
+#include "Core/Io/FileSystem.h"
+#include "Model/ModelCache.h"
 #include "Render/Shader.h"
 #include "Resource/IResourceManager.h"
 #include "Shape/Editor/EntityFactory.h"
@@ -30,12 +32,14 @@ EntityFactory::EntityFactory(
 	db::Database* database,
 	resource::IResourceManager* resourceManager,
 	render::IRenderSystem* renderSystem,
-	const std::wstring& assetPath
+	const std::wstring& assetPath,
+	const std::wstring& modelCachePath
 )
 :	m_database(database)
 ,	m_resourceManager(resourceManager)
 ,	m_renderSystem(renderSystem)
 ,	m_assetPath(assetPath)
+,	m_modelCachePath(modelCachePath)
 {
 }
 
@@ -73,10 +77,21 @@ Ref< world::Entity > EntityFactory::createEntity(const world::IEntityBuilder* bu
 		if (!m_resourceManager->bind(c_defaultShader, shader))
 			return nullptr;
 
+		Ref< model::ModelCache > modelCache = new model::ModelCache(
+			m_modelCachePath,
+			[&](const Path& p) {
+				return FileSystem::getInstance().get(p);
+			},
+			[&](const Path& p) {
+				return FileSystem::getInstance().open(p, File::FmRead);
+			}
+		);
+
 		Ref< SplineEntity > entity = new SplineEntity(
 			splineEntityData,
 			m_database,
 			m_renderSystem,
+			modelCache,
 			m_assetPath,
 			shader
 		);
