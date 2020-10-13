@@ -75,31 +75,31 @@
 			<elements>
 				<item>
 					<name>shR0_3</name>
-					<type>DtFloat4</type>
+					<type>DtHalf4</type>
 				</item>
 				<item>
 					<name>shR4_7</name>
-					<type>DtFloat4</type>
+					<type>DtHalf4</type>
 				</item>
 				<item>
 					<name>shG0_3</name>
-					<type>DtFloat4</type>
+					<type>DtHalf4</type>
 				</item>
 				<item>
 					<name>shG4_7</name>
-					<type>DtFloat4</type>
+					<type>DtHalf4</type>
 				</item>
 				<item>
 					<name>shB0_3</name>
-					<type>DtFloat4</type>
+					<type>DtHalf4</type>
 				</item>
 				<item>
 					<name>shB4_7</name>
-					<type>DtFloat4</type>
+					<type>DtHalf4</type>
 				</item>
 				<item>
 					<name>shRGB_8</name>
-					<type>DtFloat4</type>
+					<type>DtHalf4</type>
 				</item>
 			</elements>
 		</item>
