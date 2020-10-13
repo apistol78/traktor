@@ -23,6 +23,13 @@ class Database;
 
 	}
 
+	namespace model
+	{
+
+class ModelCache;
+
+	}
+
 	namespace render
 	{
 
@@ -59,6 +66,7 @@ public:
 		const SplineEntityData* data,
 		db::Database* database,
 		render::IRenderSystem* renderSystem,
+		model::ModelCache* modelCache,
 		const std::wstring& assetPath,
 		const resource::Proxy< render::Shader >& shader
 	);
@@ -82,6 +90,7 @@ private:
 	Ref< const SplineEntityData > m_data;
 	Ref< db::Database > m_database;
 	Ref< render::IRenderSystem > m_renderSystem;
+	Ref< model::ModelCache > m_modelCache;
 	std::wstring m_assetPath;
 	resource::Proxy< render::Shader > m_shader;
 

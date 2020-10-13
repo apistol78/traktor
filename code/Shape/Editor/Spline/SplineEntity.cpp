@@ -41,12 +41,14 @@ SplineEntity::SplineEntity(
 	const SplineEntityData* data,
 	db::Database* database,
     render::IRenderSystem* renderSystem,
+	model::ModelCache* modelCache,
 	const std::wstring& assetPath,
     const resource::Proxy< render::Shader >& shader
 )
 :	m_data(data)
 ,	m_database(database)
 ,	m_renderSystem(renderSystem)
+,	m_modelCache(modelCache)
 ,	m_assetPath(assetPath)
 ,	m_shader(shader)
 ,	m_dirty(true)
@@ -104,7 +106,7 @@ void SplineEntity::update(const world::UpdateParams& update)
 		{
 			if (const auto layerData = dynamic_type_cast< const SplineLayerComponentData* >(component))
 			{
-				Ref< model::Model > layerModel = layerData->createModel(m_database, m_assetPath, m_path);
+				Ref< model::Model > layerModel = layerData->createModel(m_database, m_modelCache, m_assetPath, m_path);
 				if (!layerModel)
 					continue;
 

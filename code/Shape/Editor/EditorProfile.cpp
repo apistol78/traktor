@@ -55,13 +55,15 @@ void EditorProfile::createEntityFactories(
 ) const
 {
 	std::wstring assetPath = context->getEditor()->getSettings()->getProperty< std::wstring >(L"Pipeline.AssetPath", L"");
+	std::wstring modelCachePath = context->getEditor()->getSettings()->getProperty< std::wstring >(L"Pipeline.ModelCachePath", L"");
 
 	outEntityFactories.push_back(new PrefabEntityFactory());
 	outEntityFactories.push_back(new EntityFactory(
 		context->getSourceDatabase(),
 		context->getResourceManager(),
 		context->getRenderSystem(),
-		assetPath
+		assetPath,
+		modelCachePath
 	));
 }
 

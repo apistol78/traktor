@@ -49,7 +49,8 @@ public:
 		db::Database* database,
 		resource::IResourceManager* resourceManager,
 		render::IRenderSystem* renderSystem,
-		const std::wstring& assetPath
+		const std::wstring& assetPath,
+		const std::wstring& modelCachePath
 	);
 
 	virtual const TypeInfoSet getEntityTypes() const override final;
@@ -69,6 +70,7 @@ private:
 	Ref< resource::IResourceManager > m_resourceManager;
 	Ref< render::IRenderSystem > m_renderSystem;
 	std::wstring m_assetPath;
+	std::wstring m_modelCachePath;
 };
 
 	}
