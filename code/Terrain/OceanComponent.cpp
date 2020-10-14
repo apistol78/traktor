@@ -31,6 +31,7 @@ namespace traktor
 const render::Handle s_handleTerrain_Heightfield(L"Terrain_Heightfield");
 const render::Handle s_handleTerrain_WorldOrigin(L"Terrain_WorldOrigin");
 const render::Handle s_handleTerrain_WorldExtent(L"Terrain_WorldExtent");
+const render::Handle s_handleOcean_HaveTerrain(L"Ocean_HaveTerrain");
 const render::Handle s_handleOcean_Eye(L"Ocean_Eye");
 const render::Handle s_handleOcean_ShallowTint(L"Ocean_ShallowTint");
 const render::Handle s_handleOcean_ReflectionTint(L"Ocean_ReflectionTint");
@@ -199,17 +200,15 @@ void OceanComponent::build(
 	if (!m_owner)
 		return;
 
+	bool haveTerrain = false;
+
 	// Get terrain from owner.
 	auto terrainComponent = m_owner->getComponent< TerrainComponent >();
-	if (!terrainComponent)
-		return;
-
-	const auto& terrain = terrainComponent->getTerrain();
-	if (!terrain)
-		return;
-
-	const Vector4& worldExtent = terrain->getHeightfield()->getWorldExtent();
-	Vector4 worldOrigin = -worldExtent * Scalar(0.5f);
+	if (terrainComponent)
+	{
+		const auto& terrain = terrainComponent->getTerrain();
+		haveTerrain = (terrain && terrain->getHeightfield() && terrain->getHeightMap());
+	}
 
 	Transform transform = m_owner->getTransform() * Transform(Vector4(0.0f, m_elevation, 0.0f, 0.0f));
 
@@ -222,7 +221,7 @@ void OceanComponent::build(
 		return;
 
 	auto perm = worldRenderPass.getPermutation(m_shader);
-
+	m_shader->setCombination(s_handleOcean_HaveTerrain, haveTerrain, perm);
 	auto sp = m_shader->getProgram(perm);
 	if (!sp)
 		return;
@@ -245,9 +244,18 @@ void OceanComponent::build(
 	renderBlock->programParams->setFloatParameter(s_handleOcean_Opacity, m_opacity);
 	renderBlock->programParams->setVectorArrayParameter(s_handleOcean_WavesA, m_wavesA, sizeof_array(m_wavesA));
 	renderBlock->programParams->setVectorArrayParameter(s_handleOcean_WavesB, m_wavesB, sizeof_array(m_wavesB));
-	renderBlock->programParams->setTextureParameter(s_handleTerrain_Heightfield, terrain->getHeightMap());
-	renderBlock->programParams->setVectorParameter(s_handleTerrain_WorldOrigin, worldOrigin);
-	renderBlock->programParams->setVectorParameter(s_handleTerrain_WorldExtent, worldExtent);
+
+	if (haveTerrain)
+	{
+		const auto& terrain = terrainComponent->getTerrain();
+
+		const Vector4& worldExtent = terrain->getHeightfield()->getWorldExtent();
+		Vector4 worldOrigin = -worldExtent * Scalar(0.5f);
+
+		renderBlock->programParams->setTextureParameter(s_handleTerrain_Heightfield, terrain->getHeightMap());
+		renderBlock->programParams->setVectorParameter(s_handleTerrain_WorldOrigin, worldOrigin);
+		renderBlock->programParams->setVectorParameter(s_handleTerrain_WorldExtent, worldExtent);
+	}
 
 	worldRenderPass.setProgramParameters(
 		renderBlock->programParams,

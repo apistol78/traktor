@@ -1330,12 +1330,12 @@ void WorldRendererForward::setupProcessPass(
 	StaticVector< render::ImageGraph*, 4 > processes;
 	if (m_toneMap)
 		processes.push_back(m_toneMap);
+	if (m_antiAlias)
+		processes.push_back(m_antiAlias);
 	if (m_visual)
 		processes.push_back(m_visual);
 	if (m_gammaCorrection)
 		processes.push_back(m_gammaCorrection);
-	if (m_antiAlias)
-		processes.push_back(m_antiAlias);
 
 	render::handle_t intermediateTargetSetId = 0;
 	for (size_t i = 0; i < processes.size(); ++i)
