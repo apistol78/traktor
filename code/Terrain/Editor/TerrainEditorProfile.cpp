@@ -23,7 +23,6 @@ void TerrainEditorProfile::getCommands(
 	std::list< ui::Command >& outCommands
 ) const
 {
-	outCommands.push_back(ui::Command(L"Ocean.RandomizeWaves"));
 	outCommands.push_back(ui::Command(L"Terrain.Editor.EditTerrain"));
 	outCommands.push_back(ui::Command(L"Terrain.Editor.AverageBrush"));
 	outCommands.push_back(ui::Command(L"Terrain.Editor.ColorBrush"));
