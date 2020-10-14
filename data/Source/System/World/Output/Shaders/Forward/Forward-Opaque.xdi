@@ -254,8 +254,8 @@ Eye direction
 			<id>{148610D6-DBEB-4FD5-9614-D473ED636DC1}</id>
 			<comment/>
 			<position>
-				<first>755</first>
-				<second>1491</second>
+				<first>1317</first>
+				<second>1315</second>
 			</position>
 			<swizzle>y</swizzle>
 		</item>
@@ -263,16 +263,16 @@ Eye direction
 			<id>{69947EC5-5D7C-4F78-B61B-0B1CDE7D4611}</id>
 			<comment/>
 			<position>
-				<first>905</first>
-				<second>1439</second>
+				<first>1467</first>
+				<second>1263</second>
 			</position>
 		</item>
 		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
 			<id>{AD00EC4D-533C-4F99-90F6-20F925463AE9}</id>
 			<comment/>
 			<position>
-				<first>553</first>
-				<second>1325</second>
+				<first>1115</first>
+				<second>1149</second>
 			</position>
 			<name>kS</name>
 			<global>false</global>
@@ -281,16 +281,16 @@ Eye direction
 			<id>{FCCA7252-00AF-48CD-95E3-822D1386C4ED}</id>
 			<comment/>
 			<position>
-				<first>719</first>
-				<second>1365</second>
+				<first>1281</first>
+				<second>1189</second>
 			</position>
 		</item>
 		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
 			<id>{ABCD2DF8-2A4C-484C-AB2D-DB9A170AA683}</id>
 			<comment/>
 			<position>
-				<first>589</first>
-				<second>1418</second>
+				<first>1151</first>
+				<second>1242</second>
 			</position>
 			<swizzle>x</swizzle>
 		</item>
@@ -298,8 +298,8 @@ Eye direction
 			<id>{CD6AE713-E5F4-49AA-B73F-E50B34F6A711}</id>
 			<comment/>
 			<position>
-				<first>415</first>
-				<second>1460</second>
+				<first>977</first>
+				<second>1284</second>
 			</position>
 			<name>BRDF</name>
 			<global>false</global>
@@ -371,16 +371,16 @@ Eye direction
 			<id>{8C811806-6883-4316-95B5-0EEAC1DCEA1E}</id>
 			<comment/>
 			<position>
-				<first>1103</first>
-				<second>1379</second>
+				<first>1665</first>
+				<second>1203</second>
 			</position>
 		</item>
 		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
 			<id>{4BAD39E7-54DA-45EA-B095-7D8699ECBB16}</id>
 			<comment/>
 			<position>
-				<first>952</first>
-				<second>1369</second>
+				<first>1514</first>
+				<second>1193</second>
 			</position>
 			<name>L_Specular</name>
 			<global>false</global>
@@ -1409,24 +1409,6 @@ Eye direction
 			</position>
 			<name>L_SurfaceColor</name>
 			<global>false</global>
-		</item>
-		<item type="traktor.render.Platform" version="traktor.render.Node:1">
-			<id>{F36141E1-0214-7B49-A225-FD883EF409AC}</id>
-			<comment/>
-			<position>
-				<first>1401</first>
-				<second>1193</second>
-			</position>
-		</item>
-		<item type="traktor.render.Color" version="2,traktor.render.Node:1">
-			<id>{954DA2BC-BCDB-094B-9D08-A68B7B0F46B2}</id>
-			<comment/>
-			<position>
-				<first>1084</first>
-				<second>1225</second>
-			</position>
-			<color>0, 0, 0, 0</color>
-			<linear>false</linear>
 		</item>
 	</nodes>
 	<edges>
@@ -2592,52 +2574,22 @@ Eye direction
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[29]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[127]"/>
-				<name>Other</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[127]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[28]"/>
-				<name>Input2</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[128]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[127]"/>
-				<name>Android</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[128]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[127]"/>
-				<name>iOS</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
 				<node ref="/object/nodes/item[67]"/>
 				<name>Output</name>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[69]"/>
 				<name>iOS</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[29]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[28]"/>
+				<name>Input2</name>
 			</destination>
 		</item>
 	</edges>
