@@ -85,132 +85,139 @@
 	</worldRenderSettings>
 	<imageProcessParams/>
 	<layers>
-		<item type="traktor.world.LayerEntityData" version="1,traktor.world.GroupEntityData:2">
+		<item type="traktor.world.LayerEntityData" version="2">
 			<name>Environment</name>
 			<transform>
 				<translation>0, 0, 0, 0</translation>
 				<rotation>0, 0, 0, 1</rotation>
 			</transform>
-			<components/>
-			<entityData>
-				<item type="traktor.world.EntityData">
-					<name>Sky</name>
-					<transform>
-						<translation>0, 0, 0, 0</translation>
-						<rotation>0, 0, 0, 1</rotation>
-					</transform>
-					<components>
-						<item type="traktor.weather.SkyComponentData" version="2">
-							<shader>{4CF929EB-3A8B-C340-AA0A-0C5C80625BF1}</shader>
-							<texture>{25A95985-F006-4D43-AD9E-BDAA4E56C8DD}</texture>
-							<offset>0</offset>
+			<components>
+				<item type="traktor.world.GroupComponentData">
+					<entityData>
+						<item type="traktor.world.EntityData">
+							<name>Sky</name>
+							<transform>
+								<translation>0, 0, 0, 0</translation>
+								<rotation>0, 0, 0, 1</rotation>
+							</transform>
+							<components>
+								<item type="traktor.weather.SkyComponentData" version="2">
+									<shader>{4CF929EB-3A8B-C340-AA0A-0C5C80625BF1}</shader>
+									<texture>{25A95985-F006-4D43-AD9E-BDAA4E56C8DD}</texture>
+									<offset>0</offset>
+								</item>
+							</components>
 						</item>
-					</components>
+						<item type="traktor.world.EntityData">
+							<name>Light</name>
+							<transform>
+								<translation>0, 0, 0, 0</translation>
+								<rotation>-0.402506, 0.255425, 0.118023, 0.871101</rotation>
+							</transform>
+							<components>
+								<item type="traktor.world.LightComponentData" version="10">
+									<lightType>LtDirectional</lightType>
+									<color>1, 0.976471, 0.952941, 0</color>
+									<intensity>1</intensity>
+									<castShadow>true</castShadow>
+									<range>20</range>
+									<radius>1.570796</radius>
+									<flickerAmount>0</flickerAmount>
+									<flickerFilter>0</flickerFilter>
+									<bakeMode>LbmIndirect</bakeMode>
+								</item>
+							</components>
+						</item>
+						<item type="traktor.world.EntityData">
+							<name>Reflections</name>
+							<transform>
+								<translation>0, 10, 0, 0</translation>
+								<rotation>0, 0, 0, 1</rotation>
+							</transform>
+							<components>
+								<item type="traktor.world.ProbeComponentData">
+									<texture>{00000000-0000-0000-0000-000000000000}</texture>
+									<intensity>1</intensity>
+									<local>false</local>
+									<volume>
+										<mn>0, 0, 0, 1</mn>
+										<mx>0, 0, 0, 1</mx>
+									</volume>
+								</item>
+							</components>
+						</item>
+						<item type="traktor.world.EntityData">
+							<name>Ground</name>
+							<transform>
+								<translation>0, 0, 0, 0</translation>
+								<rotation>0, 0, 0, 1</rotation>
+							</transform>
+							<components>
+								<item type="traktor.mesh.MeshComponentData">
+									<mesh>{61BC1ACE-C134-F24F-AAE5-086829108C90}</mesh>
+									<screenSpaceCulling>false</screenSpaceCulling>
+								</item>
+								<item type="traktor.physics.RigidBodyComponentData">
+									<bodyDesc type="traktor.physics.StaticBodyDesc" version="5">
+										<shape type="traktor.physics.BoxShapeDesc" version="6">
+											<localTransform>
+												<translation>0, -10, 0, 0</translation>
+												<rotation>0, 0, 0, 1</rotation>
+											</localTransform>
+											<collisionGroup>
+												<item>{F9805131-50C2-504C-9421-13C99E44616C}</item>
+											</collisionGroup>
+											<collisionMask>
+												<item>{09CB1141-1924-3349-934A-CEB9728D7A61}</item>
+												<item>{F9805131-50C2-504C-9421-13C99E44616C}</item>
+											</collisionMask>
+											<material>0</material>
+											<extent>100, 10, 100, 0</extent>
+											<margin>0</margin>
+										</shape>
+										<friction>0.75</friction>
+										<restitution>0</restitution>
+										<kinematic>false</kinematic>
+									</bodyDesc>
+									<eventCollide/>
+								</item>
+							</components>
+						</item>
+						<item type="traktor.world.EntityData">
+							<name>Camera</name>
+							<transform>
+								<translation>-1.562719, 0.790387, -1.110929, 0</translation>
+								<rotation>0.04456, 0.45232, -0.022635, 0.890454</rotation>
+							</transform>
+							<components>
+								<item type="traktor.world.CameraComponentData">
+									<projection>Perspective</projection>
+									<fov>1.221731</fov>
+									<width>1</width>
+									<height>1</height>
+								</item>
+							</components>
+						</item>
+					</entityData>
 				</item>
-				<item type="traktor.world.EntityData">
-					<name>Light</name>
-					<transform>
-						<translation>0, 0, 0, 0</translation>
-						<rotation>-0.402506, 0.255425, 0.118023, 0.871101</rotation>
-					</transform>
-					<components>
-						<item type="traktor.world.LightComponentData" version="10">
-							<lightType>LtDirectional</lightType>
-							<color>1, 0.976471, 0.952941, 0</color>
-							<intensity>1</intensity>
-							<castShadow>true</castShadow>
-							<range>20</range>
-							<radius>1.570796</radius>
-							<flickerAmount>0</flickerAmount>
-							<flickerFilter>0</flickerFilter>
-							<bakeMode>LbmIndirect</bakeMode>
-						</item>
-					</components>
-				</item>
-				<item type="traktor.world.EntityData">
-					<name>Reflections</name>
-					<transform>
-						<translation>0, 10, 0, 0</translation>
-						<rotation>0, 0, 0, 1</rotation>
-					</transform>
-					<components>
-						<item type="traktor.world.ProbeComponentData">
-							<texture>{00000000-0000-0000-0000-000000000000}</texture>
-							<intensity>1</intensity>
-							<local>false</local>
-							<volume>
-								<mn>0, 0, 0, 1</mn>
-								<mx>0, 0, 0, 1</mx>
-							</volume>
-						</item>
-					</components>
-				</item>
-				<item type="traktor.world.EntityData">
-					<name>Ground</name>
-					<transform>
-						<translation>0, 0, 0, 0</translation>
-						<rotation>0, 0, 0, 1</rotation>
-					</transform>
-					<components>
-						<item type="traktor.mesh.MeshComponentData">
-							<mesh>{61BC1ACE-C134-F24F-AAE5-086829108C90}</mesh>
-							<screenSpaceCulling>false</screenSpaceCulling>
-						</item>
-						<item type="traktor.physics.RigidBodyComponentData">
-							<bodyDesc type="traktor.physics.StaticBodyDesc" version="4">
-								<shape type="traktor.physics.BoxShapeDesc" version="6">
-									<localTransform>
-										<translation>0, -10, 0, 0</translation>
-										<rotation>0, 0, 0, 1</rotation>
-									</localTransform>
-									<collisionGroup>
-										<item>{F9805131-50C2-504C-9421-13C99E44616C}</item>
-									</collisionGroup>
-									<collisionMask>
-										<item>{09CB1141-1924-3349-934A-CEB9728D7A61}</item>
-										<item>{F9805131-50C2-504C-9421-13C99E44616C}</item>
-									</collisionMask>
-									<material>0</material>
-									<extent>100, 10, 100, 0</extent>
-									<margin>0</margin>
-								</shape>
-								<friction>0.75</friction>
-								<kinematic>false</kinematic>
-							</bodyDesc>
-							<eventCollide/>
-						</item>
-					</components>
-				</item>
-				<item type="traktor.world.EntityData">
-					<name>Camera</name>
-					<transform>
-						<translation>-1.562719, 0.790387, -1.110929, 0</translation>
-						<rotation>0.04456, 0.45232, -0.022635, 0.890454</rotation>
-					</transform>
-					<components>
-						<item type="traktor.world.CameraComponentData">
-							<projection>Perspective</projection>
-							<fov>1.221731</fov>
-							<width>1</width>
-							<height>1</height>
-						</item>
-					</components>
-				</item>
-			</entityData>
+			</components>
 			<visible>true</visible>
 			<locked>false</locked>
 			<include>true</include>
 			<dynamic>false</dynamic>
 			<attributes/>
 		</item>
-		<item type="traktor.world.LayerEntityData" version="1,traktor.world.GroupEntityData:2">
+		<item type="traktor.world.LayerEntityData" version="2">
 			<name>Entity</name>
 			<transform>
 				<translation>0, 0, 0, 0</translation>
 				<rotation>0, 0, 0, 1</rotation>
 			</transform>
-			<components/>
-			<entityData/>
+			<components>
+				<item type="traktor.world.GroupComponentData">
+					<entityData/>
+				</item>
+			</components>
 			<visible>true</visible>
 			<locked>false</locked>
 			<include>true</include>

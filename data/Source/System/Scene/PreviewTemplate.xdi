@@ -85,81 +85,87 @@
 	</worldRenderSettings>
 	<imageProcessParams/>
 	<layers>
-		<item type="traktor.world.LayerEntityData" version="1,traktor.world.GroupEntityData:2">
+		<item type="traktor.world.LayerEntityData" version="2">
 			<name>Environment</name>
 			<transform>
 				<translation>0, 0, 0, 0</translation>
 				<rotation>0, 0, 0, 1</rotation>
 			</transform>
-			<components/>
-			<entityData>
-				<item type="traktor.world.EntityData">
-					<name>Sky</name>
-					<transform>
-						<translation>0, 0, 0, 0</translation>
-						<rotation>0, 0, 0, 1</rotation>
-					</transform>
-					<components>
-						<item type="traktor.weather.SkyComponentData" version="2">
-							<shader>{4CF929EB-3A8B-C340-AA0A-0C5C80625BF1}</shader>
-							<texture>{6B82B195-D88E-7845-BDC3-AF813E924CE1}</texture>
-							<offset>0</offset>
+			<components>
+				<item type="traktor.world.GroupComponentData">
+					<entityData>
+						<item type="traktor.world.EntityData">
+							<name>Sky</name>
+							<transform>
+								<translation>0, 0, 0, 0</translation>
+								<rotation>0, 0, 0, 1</rotation>
+							</transform>
+							<components>
+								<item type="traktor.weather.SkyComponentData" version="2">
+									<shader>{4CF929EB-3A8B-C340-AA0A-0C5C80625BF1}</shader>
+									<texture>{6B82B195-D88E-7845-BDC3-AF813E924CE1}</texture>
+									<offset>0</offset>
+								</item>
+							</components>
 						</item>
-					</components>
-				</item>
-				<item type="traktor.world.EntityData">
-					<name>Light</name>
-					<transform>
-						<translation>0, 0, 0, 0</translation>
-						<rotation>-0.391854, -0.323839, -0.149635, 0.84805</rotation>
-					</transform>
-					<components>
-						<item type="traktor.world.LightComponentData" version="10">
-							<lightType>LtDirectional</lightType>
-							<color>1, 0.976471, 0.952941, 0</color>
-							<intensity>1</intensity>
-							<castShadow>true</castShadow>
-							<range>20</range>
-							<radius>1.570796</radius>
-							<flickerAmount>0</flickerAmount>
-							<flickerFilter>0</flickerFilter>
-							<bakeMode>LbmIndirect</bakeMode>
+						<item type="traktor.world.EntityData">
+							<name>Light</name>
+							<transform>
+								<translation>0, 0, 0, 0</translation>
+								<rotation>-0.391854, -0.323839, -0.149635, 0.84805</rotation>
+							</transform>
+							<components>
+								<item type="traktor.world.LightComponentData" version="10">
+									<lightType>LtDirectional</lightType>
+									<color>1, 0.976471, 0.952941, 0</color>
+									<intensity>1</intensity>
+									<castShadow>true</castShadow>
+									<range>20</range>
+									<radius>1.570796</radius>
+									<flickerAmount>0</flickerAmount>
+									<flickerFilter>0</flickerFilter>
+									<bakeMode>LbmIndirect</bakeMode>
+								</item>
+							</components>
 						</item>
-					</components>
-				</item>
-				<item type="traktor.world.EntityData">
-					<name>Reflections</name>
-					<transform>
-						<translation>0, 10, 0, 0</translation>
-						<rotation>0, 0, 0, 1</rotation>
-					</transform>
-					<components>
-						<item type="traktor.world.ProbeComponentData">
-							<texture>{00000000-0000-0000-0000-000000000000}</texture>
-							<intensity>1</intensity>
-							<local>false</local>
-							<volume>
-								<mn>0, 0, 0, 1</mn>
-								<mx>0, 0, 0, 1</mx>
-							</volume>
+						<item type="traktor.world.EntityData">
+							<name>Reflections</name>
+							<transform>
+								<translation>0, 10, 0, 0</translation>
+								<rotation>0, 0, 0, 1</rotation>
+							</transform>
+							<components>
+								<item type="traktor.world.ProbeComponentData">
+									<texture>{00000000-0000-0000-0000-000000000000}</texture>
+									<intensity>1</intensity>
+									<local>false</local>
+									<volume>
+										<mn>0, 0, 0, 1</mn>
+										<mx>0, 0, 0, 1</mx>
+									</volume>
+								</item>
+							</components>
 						</item>
-					</components>
+					</entityData>
 				</item>
-			</entityData>
+			</components>
 			<visible>true</visible>
 			<locked>true</locked>
 			<include>true</include>
 			<dynamic>false</dynamic>
 			<attributes/>
 		</item>
-		<item type="traktor.world.LayerEntityData" version="1,traktor.world.GroupEntityData:2">
+		<item type="traktor.world.LayerEntityData" version="2">
 			<name>Entity</name>
 			<transform>
 				<translation>0, 0, 0, 0</translation>
 				<rotation>0, 0, 0, 1</rotation>
 			</transform>
-			<components/>
-			<entityData/>
+			<components>
+				<item type="traktor.world.GroupComponentData">
+					<entityData/>
+				</item>
+			</components>
 			<visible>true</visible>
 			<locked>false</locked>
 			<include>true</include>

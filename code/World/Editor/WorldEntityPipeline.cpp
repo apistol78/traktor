@@ -8,7 +8,6 @@
 #include "World/Entity/ExternalEntityData.h"
 #include "World/Entity/FacadeComponentData.h"
 #include "World/Entity/GroupComponentData.h"
-#include "World/Entity/GroupEntityData.h"
 #include "World/Entity/LightComponentData.h"
 #include "World/Entity/ProbeComponentData.h"
 
@@ -29,7 +28,6 @@ TypeInfoSet WorldEntityPipeline::getAssetTypes() const
 	typeSet.insert< ExternalEntityData >();
 	typeSet.insert< FacadeComponentData >();
 	typeSet.insert< GroupComponentData >();
-	typeSet.insert< GroupEntityData >();
 	typeSet.insert< LightComponentData >();
 	typeSet.insert< ProbeComponentData >();
 	return typeSet;
@@ -64,11 +62,6 @@ bool WorldEntityPipeline::buildDependencies(
 	else if (auto groupComponentData = dynamic_type_cast< const GroupComponentData* >(sourceAsset))
 	{
 		for (auto entityData : groupComponentData->getEntityData())
-			pipelineDepends->addDependency(entityData);
-	}
-	else if (auto groupEntityData = dynamic_type_cast< const GroupEntityData* >(sourceAsset))
-	{
-		for (auto entityData : groupEntityData->getEntityData())
 			pipelineDepends->addDependency(entityData);
 	}
 	else if (auto probeComponentData = dynamic_type_cast<const ProbeComponentData*>(sourceAsset))

@@ -163,7 +163,8 @@ bool ScenePipeline::buildOutput(
 		if (layer->isInclude() || m_targetEditor)
 		{
 			log::info << L"Building layer \"" << layer->getName() << L"\"..." << Endl;
-			for (const auto& assetEntityData : layer->getEntityData())
+			auto layerGroupData = layer->getComponent< world::GroupComponentData >();
+			for (const auto& assetEntityData : layerGroupData->getEntityData())
 			{
 				Ref< world::EntityData > outputEntityData = checked_type_cast< world::EntityData*, true >(pipelineBuilder->buildOutput(sourceInstance, assetEntityData));
 				if (outputEntityData)

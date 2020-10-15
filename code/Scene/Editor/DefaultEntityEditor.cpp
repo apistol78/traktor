@@ -15,7 +15,6 @@
 #include "World/EntityData.h"
 #include "World/Entity/FacadeComponentData.h"
 #include "World/Entity/GroupComponentData.h"
-#include "World/Entity/GroupEntityData.h"
 #include "World/Entity/LightComponentData.h"
 
 namespace traktor
@@ -41,9 +40,7 @@ bool DefaultEntityEditor::isPickable() const
 bool DefaultEntityEditor::isGroup() const
 {
 	const world::EntityData* entityData = m_entityAdapter->getEntityData();
-	if (is_a< world::GroupEntityData >(entityData))
-		return true;
-	else if (entityData->getComponent< world::GroupComponentData >() != nullptr)
+	if (entityData->getComponent< world::GroupComponentData >() != nullptr)
 		return true;
 	else if (entityData->getComponent< world::FacadeComponentData >() != nullptr)
 		return true;
@@ -61,12 +58,7 @@ bool DefaultEntityEditor::addChildEntity(EntityAdapter* childEntityAdapter) cons
 	world::EntityData* entityData = m_entityAdapter->getEntityData();
 	world::EntityData* childEntityData = childEntityAdapter->getEntityData();
 
-	if (auto groupEntityData = dynamic_type_cast< world::GroupEntityData* >(entityData))
-	{
-		groupEntityData->addEntityData(childEntityData);
-		return true;
-	}
-	else if (auto groupComponentData = entityData->getComponent< world::GroupComponentData >())
+	if (auto groupComponentData = entityData->getComponent< world::GroupComponentData >())
 	{
 		groupComponentData->addEntityData(childEntityData);
 		return true;

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "World/Entity/GroupEntityData.h"
+#include "World/EntityData.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -23,14 +23,12 @@ class ILayerAttribute;
  * Used by editor to store editing layer information
  * in a scene asset.
  */
-class T_DLLCLASS LayerEntityData : public world::GroupEntityData
+class T_DLLCLASS LayerEntityData : public EntityData
 {
 	T_RTTI_CLASS;
 
 public:
 	LayerEntityData();
-
-	virtual void serialize(ISerializer& s) override final;
 
 	void setVisible(bool visible) { m_visible = visible; }
 
@@ -58,11 +56,13 @@ public:
 		return checked_type_cast< const AttributeType*, true >(getAttribute(type_of< AttributeType >()));
 	}
 
+	virtual void serialize(ISerializer& s) override final;
+
 private:
-	bool m_visible;
-	bool m_locked;
-	bool m_include;
-	bool m_dynamic;
+	bool m_visible = true;
+	bool m_locked = false;
+	bool m_include = true;
+	bool m_dynamic = false;
 	RefArray< const ILayerAttribute > m_attributes;
 };
 
