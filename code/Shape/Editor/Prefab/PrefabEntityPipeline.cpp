@@ -23,6 +23,7 @@
 #include "Physics/StaticBodyDesc.h"
 #include "Physics/Editor/MeshAsset.h"
 #include "Physics/World/RigidBodyComponentData.h"
+#include "Render/Editor/Texture/TextureSet.h"
 #include "Shape/Editor/Prefab/PrefabEntityData.h"
 #include "Shape/Editor/Prefab/PrefabEntityPipeline.h"
 #include "Shape/Editor/Prefab/PrefabMerge.h"
@@ -289,6 +290,26 @@ Ref< ISerializable > PrefabEntityPipeline::buildOutput(
 					log::warning << L"Different shaders on material with same name \"" << materialShader.first << L"\"; not allowed in prefab." << Endl;
 
 				mergedMaterialShaders[materialShader.first] = materialShader.second;
+			}
+
+			// Insert material textures from set first.
+			const auto& textureSetId = meshAsset->getTextureSet();
+			if (textureSetId.isNotNull())
+			{
+				Ref< const render::TextureSet > textureSet = pipelineBuilder->getObjectReadOnly< render::TextureSet >(textureSetId);
+				if (!textureSet)
+				{
+					log::error << L"Missing texture set reference." << Endl;
+					return nullptr;
+				}
+				for (const auto materialTexture : textureSet->get())
+				{
+					const auto it = mergedMaterialTextures.find(materialTexture.first);
+					if (it != mergedMaterialTextures.end() && it->second != materialTexture.second)
+						log::warning << L"Different textures on material with same name \"" << materialTexture.first << L"\"; not allowed in prefab." << Endl;
+
+					mergedMaterialTextures[materialTexture.first] = materialTexture.second;
+				}
 			}
 
 			// Insert material textures.
