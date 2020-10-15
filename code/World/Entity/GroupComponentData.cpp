@@ -11,6 +11,11 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.world.GroupComponentData", 0, GroupComponentData, IEntityComponentData)
 
+GroupComponentData::GroupComponentData(const RefArray< EntityData >& entityData)
+:	m_entityData(entityData)
+{
+}
+
 void GroupComponentData::addEntityData(EntityData* entityData)
 {
 	T_ASSERT(std::find(m_entityData.begin(), m_entityData.end(), entityData) == m_entityData.end());

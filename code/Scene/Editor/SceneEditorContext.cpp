@@ -22,7 +22,7 @@
 #include "Scene/Editor/IModifier.h"
 #include "Scene/Editor/ISceneEditorPlugin.h"
 #include "Scene/Editor/ISceneEditorProfile.h"
-#include "Scene/Editor/LayerEntityEditor.h"
+//#include "Scene/Editor/LayerEntityEditor.h"
 #include "Scene/Editor/SceneAsset.h"
 #include "Scene/Editor/SceneEditorContext.h"
 #include "Scene/Editor/Events/CameraMovedEvent.h"

@@ -18,8 +18,6 @@
 #include "World/Entity/FacadeComponentData.h"
 #include "World/Entity/GroupComponent.h"
 #include "World/Entity/GroupComponentData.h"
-#include "World/Entity/GroupEntity.h"
-#include "World/Entity/GroupEntityData.h"
 #include "World/Entity/LightComponent.h"
 #include "World/Entity/LightComponentData.h"
 #include "World/Entity/ProbeComponent.h"
@@ -49,7 +47,6 @@ const TypeInfoSet WorldEntityFactory::getEntityTypes() const
 	TypeInfoSet typeSet;
 	typeSet.insert< EntityData >();
 	typeSet.insert< ExternalEntityData >();
-	typeSet.insert< GroupEntityData >();
 	return typeSet;
 }
 
@@ -98,17 +95,6 @@ Ref< Entity > WorldEntityFactory::createEntity(const IEntityBuilder* builder, co
 		}
 		else
 			return builder->create(resolvedEntityData.getResource());
-	}
-	else if (auto groupData = dynamic_type_cast< const GroupEntityData* >(&entityData))
-	{
-		Ref< GroupEntity > groupEntity = new GroupEntity(groupData->getName(), groupData->getTransform());
-		for (auto entityData : groupData->getEntityData())
-		{
-			Ref< Entity > childEntity = builder->create(entityData);
-			if (childEntity)
-				groupEntity->addEntity(childEntity);
-		}
-		return groupEntity;
 	}
 	else
 	{

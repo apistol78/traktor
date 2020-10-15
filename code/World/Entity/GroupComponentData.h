@@ -26,6 +26,10 @@ class T_DLLCLASS GroupComponentData : public IEntityComponentData
 	T_RTTI_CLASS;
 
 public:
+	GroupComponentData() = default;
+
+	explicit GroupComponentData(const RefArray< EntityData >& entityData);
+
 	void addEntityData(EntityData* entityData);
 
 	void removeEntityData(EntityData* entityData);

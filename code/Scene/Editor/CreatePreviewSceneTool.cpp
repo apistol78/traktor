@@ -9,6 +9,7 @@
 #include "Scene/Editor/CreatePreviewSceneTool.h"
 #include "World/EntityData.h"
 #include "World/Editor/LayerEntityData.h"
+#include "World/Entity/GroupComponentData.h"
 
 namespace traktor
 {
@@ -75,7 +76,7 @@ bool CreatePreviewSceneTool::launch(ui::Widget* parent, editor::IEditor* editor,
 		entityData->setTransform(Transform(
 			Vector4(float((x - n / 2) * 32.0f), 0.0f, float((z - n / 2) * 32.0f), 0.0f)
 		));
-		layers[1]->addEntityData(entityData);
+		layers[1]->getComponent< world::GroupComponentData >()->addEntityData(entityData);
 	}
 
 	// Create output instance.
