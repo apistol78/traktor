@@ -43,17 +43,25 @@ public:
 
 	virtual Ref< SplineLayerComponent > createComponent(db::Database* database) const override final;
 
-	virtual Ref< model::Model > createModel(db::Database* database, const std::wstring& assetPath, const TransformPath& path) const override final;
+	virtual Ref< model::Model > createModel(db::Database* database, model::ModelCache* modelCache, const std::wstring& assetPath, const TransformPath& path) const override final;
 
 	virtual void serialize(ISerializer& s) override final;
 
-	const Guid& getMesh() const { return m_mesh; }
+	const Guid& getMeshStart() const { return m_meshStart; }
+
+	const Guid& getMeshRepeat() const { return m_meshRepeat; }
+
+	const Guid& getMeshEnd() const { return m_meshEnd; }
 
 private:
-	Guid m_mesh;
+	Guid m_meshStart;
+	Guid m_meshRepeat;
+	Guid m_meshEnd;
 	bool m_automaticOrientation;
 	float m_detail;
-	mutable Ref< model::Model > m_model;	// \fixme Caching this here isn't pretty.
+	mutable Ref< model::Model > m_modelStart;
+	mutable Ref< model::Model > m_modelRepeat;	// \fixme Caching this here isn't pretty.
+	mutable Ref< model::Model > m_modelEnd;
 };
 
 	}

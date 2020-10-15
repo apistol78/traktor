@@ -7,7 +7,7 @@
 #include "Database/Database.h"
 #include "Mesh/Editor/MeshAsset.h"
 #include "Model/Model.h"
-#include "Model/ModelFormat.h"
+#include "Model/ModelCache.h"
 #include "Model/Operations/Triangulate.h"
 #include "Shape/Editor/Spline/ExtrudeShapeLayer.h"
 #include "Shape/Editor/Spline/ExtrudeShapeLayerData.h"
@@ -16,8 +16,32 @@ namespace traktor
 {
 	namespace shape
 	{
+		namespace
+		{
+		
+Ref< model::Model > readModel(db::Database* database, model::ModelCache* modelCache, const std::wstring& assetPath, const Guid& meshAssetId)
+{
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.shape.ExtrudeShapeLayerData", 1, ExtrudeShapeLayerData, SplineLayerComponentData)
+
+	// Read extrude mesh asset from database.
+	Ref< const mesh::MeshAsset > meshAsset = database->getObjectReadOnly< mesh::MeshAsset >(meshAssetId);
+	if (!meshAsset)
+		return nullptr;
+
+	// Read model specified by mesh asset.
+	Path filePath = FileSystem::getInstance().getAbsolutePath(Path(assetPath) + meshAsset->getFileName());
+	Ref< model::Model > model = modelCache->get(filePath, meshAsset->getImportFilter());
+	if (!model)
+		return nullptr;
+
+	// Only triangles; this method must only return triangle meshes.
+	model::Triangulate().apply(*model);
+	return model;
+}
+		
+		}
+
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.shape.ExtrudeShapeLayerData", 2, ExtrudeShapeLayerData, SplineLayerComponentData)
 
 ExtrudeShapeLayerData::ExtrudeShapeLayerData()
 :	m_automaticOrientation(false)
@@ -30,24 +54,21 @@ Ref< SplineLayerComponent > ExtrudeShapeLayerData::createComponent(db::Database*
 	return new ExtrudeShapeLayer(this);
 }
 
-Ref< model::Model > ExtrudeShapeLayerData::createModel(db::Database* database, const std::wstring& assetPath, const TransformPath& path) const
+Ref< model::Model > ExtrudeShapeLayerData::createModel(db::Database* database, model::ModelCache* modelCache, const std::wstring& assetPath, const TransformPath& path) const
 {
-	if (!m_model)
-	{
-		// Read extrude mesh asset from database.
-		Ref< const mesh::MeshAsset > meshAsset = database->getObjectReadOnly< mesh::MeshAsset >(m_mesh);
-		if (!meshAsset)
-			return nullptr;
+	m_modelRepeat = readModel(database, modelCache, assetPath, m_meshRepeat);
+	if (!m_modelRepeat)
+		return nullptr;
 
-		// Read model specified by mesh asset.
-		Path filePath = FileSystem::getInstance().getAbsolutePath(Path(assetPath) + Path(meshAsset->getFileName()));
-		m_model = model::ModelFormat::readAny(filePath);
-		if (!m_model)
-			return nullptr;
+	if (m_meshStart.isNotNull())
+		m_modelStart = readModel(database, modelCache, assetPath, m_meshStart);
+	if (m_meshEnd.isNotNull())
+		m_modelEnd = readModel(database, modelCache, assetPath, m_meshEnd);
 
-		// Only triangles; this method must only return triangle meshes.
-		model::Triangulate().apply(*m_model);
-	}
+	if (!m_modelStart)
+		m_modelStart = m_modelRepeat;
+	if (!m_modelEnd)
+		m_modelEnd = m_modelRepeat;
 
 	const auto& keys = path.getKeys();
 	if (keys.size() < 2)
@@ -57,7 +78,7 @@ Ref< model::Model > ExtrudeShapeLayerData::createModel(db::Database* database, c
 	SmallSet< float > steps;
 	float stepMin = std::numeric_limits< float >::max();
 	float stepMax = -std::numeric_limits< float >::max();
-	for (const auto& position : m_model->getPositions())
+	for (const auto& position : m_modelRepeat->getPositions())
 	{
 		steps.insert(position.z());
 		stepMin = std::min< float >(stepMin, position.z());
@@ -89,9 +110,9 @@ Ref< model::Model > ExtrudeShapeLayerData::createModel(db::Database* database, c
 
 	// Extrude shape.
 	Ref< model::Model > outputModel = new model::Model();
-	outputModel->setMaterials(m_model->getMaterials());
-	outputModel->setTexCoords(m_model->getTexCoords());
-	outputModel->setTexCoordChannels(m_model->getTexCoordChannels());
+	outputModel->setMaterials(m_modelRepeat->getMaterials());
+	outputModel->setTexCoords(m_modelRepeat->getTexCoords());
+	outputModel->setTexCoordChannels(m_modelRepeat->getTexCoordChannels());
 
 	const int32_t nrepeats = (int32_t)(pathLength / stepLength) + 1;
 	for (int32_t i = 0; i < nrepeats; ++i)
@@ -100,10 +121,10 @@ Ref< model::Model > ExtrudeShapeLayerData::createModel(db::Database* database, c
 
 		uint32_t vertexBase = outputModel->getVertexCount();
 
-		for (const auto& vertex : m_model->getVertices())
+		for (const auto& vertex : m_modelRepeat->getVertices())
 		{
-			Vector4 p = m_model->getPosition(vertex.getPosition());
-			Vector4 n = m_model->getNormal(vertex.getNormal());
+			Vector4 p = m_modelRepeat->getPosition(vertex.getPosition());
+			Vector4 n = m_modelRepeat->getNormal(vertex.getNormal());
 
 			Matrix44 Tc = translate(0.0f, 0.0f, p.z());
 
@@ -127,7 +148,7 @@ Ref< model::Model > ExtrudeShapeLayerData::createModel(db::Database* database, c
 			outputModel->addVertex(outputVertex);
 		}
 
-		for (const auto& polygon : m_model->getPolygons())
+		for (const auto& polygon : m_modelRepeat->getPolygons())
 		{
 			model::Polygon outputPolygon;
 			outputPolygon.setMaterial(polygon.getMaterial());
@@ -142,7 +163,15 @@ Ref< model::Model > ExtrudeShapeLayerData::createModel(db::Database* database, c
 
 void ExtrudeShapeLayerData::serialize(ISerializer& s)
 {
-	s >> Member< Guid >(L"mesh", m_mesh, AttributeType(type_of< mesh::MeshAsset >()));
+	if (s.getVersion< ExtrudeShapeLayerData >() >= 2)
+	{
+		s >> Member< Guid >(L"meshStart", m_meshStart, AttributeType(type_of< mesh::MeshAsset >()));
+		s >> Member< Guid >(L"meshRepeat", m_meshRepeat, AttributeType(type_of< mesh::MeshAsset >()));
+		s >> Member< Guid >(L"meshEnd", m_meshEnd, AttributeType(type_of< mesh::MeshAsset >()));
+	}
+	else
+		s >> Member< Guid >(L"mesh", m_meshRepeat, AttributeType(type_of< mesh::MeshAsset >()));
+
 	s >> Member< bool >(L"automaticOrientation", m_automaticOrientation);
 	s >> Member< float >(L"detail", m_detail);
 }
