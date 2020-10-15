@@ -81,8 +81,8 @@
 			<id>{F40DFFA4-8F3F-5443-953B-C7CA3F432020}</id>
 			<comment/>
 			<position>
-				<first>738</first>
-				<second>208</second>
+				<first>652</first>
+				<second>33</second>
 			</position>
 			<parameterName>World_TileSBuffer</parameterName>
 			<elements>
@@ -166,8 +166,8 @@
 			<id>{DFBEEA13-6D7C-CB46-B831-160FDFD74D76}</id>
 			<comment/>
 			<position>
-				<first>1082</first>
-				<second>252</second>
+				<first>1371</first>
+				<second>275</second>
 			</position>
 			<name>LightCount</name>
 		</item>
@@ -175,8 +175,8 @@
 			<id>{BCC9C7EC-2096-7F42-B132-62D2092E17F5}</id>
 			<comment/>
 			<position>
-				<first>1291</first>
-				<second>312</second>
+				<first>1580</first>
+				<second>335</second>
 			</position>
 			<swizzle>x</swizzle>
 		</item>
@@ -184,8 +184,8 @@
 			<id>{0C0607B0-B49D-9642-961C-DFD21C73B6DA}</id>
 			<comment/>
 			<position>
-				<first>1078</first>
-				<second>120</second>
+				<first>1367</first>
+				<second>143</second>
 			</position>
 			<name>Lights</name>
 		</item>
@@ -193,8 +193,8 @@
 			<id>{57041FCA-C50B-3A4B-816E-C1AFB4AE5AC1}</id>
 			<comment/>
 			<position>
-				<first>1327</first>
-				<second>130</second>
+				<first>1616</first>
+				<second>153</second>
 			</position>
 			<name>LightIndices</name>
 		</item>
@@ -202,8 +202,8 @@
 			<id>{FEF9EF0E-8741-4E46-9DA9-8C2D1978CE9A}</id>
 			<comment/>
 			<position>
-				<first>1478</first>
-				<second>338</second>
+				<first>1767</first>
+				<second>361</second>
 			</position>
 			<name>LightCount</name>
 		</item>
@@ -298,6 +298,33 @@
 			<name>L_ClusterDimZ</name>
 			<global>false</global>
 		</item>
+		<item type="traktor.render.Platform" version="traktor.render.Node:1">
+			<id>{BFD48FD8-740D-434C-8437-B73F3FC31FAB}</id>
+			<comment/>
+			<position>
+				<first>1045</first>
+				<second>-38</second>
+			</position>
+		</item>
+		<item type="traktor.render.Struct" version="traktor.render.Node:1">
+			<id>{692B2ECD-F11F-CD41-B4C2-E30283B24D43}</id>
+			<comment/>
+			<position>
+				<first>662</first>
+				<second>-85</second>
+			</position>
+			<parameterName>World_TileSBuffer</parameterName>
+			<elements>
+				<item>
+					<name>Lights</name>
+					<type>DtFloat4</type>
+				</item>
+				<item>
+					<name>LightCount</name>
+					<type>DtFloat4</type>
+				</item>
+			</elements>
+		</item>
 	</nodes>
 	<edges>
 		<item type="traktor.render.Edge">
@@ -382,32 +409,12 @@
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[9]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[18]"/>
-				<name>Struct</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
 				<node ref="/object/nodes/item[18]"/>
 				<name>Output</name>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[19]"/>
 				<name>Input</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[9]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[20]"/>
-				<name>Struct</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
@@ -628,6 +635,46 @@
 			<destination>
 				<node ref="/object/nodes/item[2]"/>
 				<name>Input2</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[9]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[32]"/>
+				<name>Other</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[33]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[32]"/>
+				<name>Android</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[32]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[20]"/>
+				<name>Struct</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[32]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[18]"/>
+				<name>Struct</name>
 			</destination>
 		</item>
 	</edges>

@@ -79,6 +79,7 @@ Ref< Object > WorldResourceFactory::create(resource::IResourceManager* resourceM
 			return nullptr;
 
 		AlignedVector< render::StructElement > layout;
+#if !defined(__ANDROID__)
 		layout.push_back(render::StructElement(render::DtHalf4, offsetof(IrradianceGridData, shR0_3)));
 		layout.push_back(render::StructElement(render::DtHalf4, offsetof(IrradianceGridData, shR4_7)));
 		layout.push_back(render::StructElement(render::DtHalf4, offsetof(IrradianceGridData, shG0_3)));
@@ -86,6 +87,15 @@ Ref< Object > WorldResourceFactory::create(resource::IResourceManager* resourceM
 		layout.push_back(render::StructElement(render::DtHalf4, offsetof(IrradianceGridData, shB0_3)));
 		layout.push_back(render::StructElement(render::DtHalf4, offsetof(IrradianceGridData, shB4_7)));
 		layout.push_back(render::StructElement(render::DtHalf4, offsetof(IrradianceGridData, shRGB_8)));
+#else
+		layout.push_back(render::StructElement(render::DtFloat4, offsetof(IrradianceGridData, shR0_3)));
+		layout.push_back(render::StructElement(render::DtFloat4, offsetof(IrradianceGridData, shR4_7)));
+		layout.push_back(render::StructElement(render::DtFloat4, offsetof(IrradianceGridData, shG0_3)));
+		layout.push_back(render::StructElement(render::DtFloat4, offsetof(IrradianceGridData, shG4_7)));
+		layout.push_back(render::StructElement(render::DtFloat4, offsetof(IrradianceGridData, shB0_3)));
+		layout.push_back(render::StructElement(render::DtFloat4, offsetof(IrradianceGridData, shB4_7)));
+		layout.push_back(render::StructElement(render::DtFloat4, offsetof(IrradianceGridData, shRGB_8)));
+#endif
 		T_FATAL_ASSERT(sizeof(IrradianceGridData) == render::getStructSize(layout));
 
 		Ref< IrradianceGridResource > resource = instance->getObject< IrradianceGridResource >();
@@ -142,25 +152,43 @@ Ref< Object > WorldResourceFactory::create(resource::IResourceManager* resourceM
 						reader >> tmp[0];
 						reader >> tmp[1];
 						reader >> tmp[2];
+#if !defined(__ANDROID__)
 						g.shR0_3[i] = floatToHalf(tmp[0]);
 						g.shG0_3[i] = floatToHalf(tmp[1]);
 						g.shB0_3[i] = floatToHalf(tmp[2]);
+#else
+						g.shR0_3[i] = tmp[0];
+						g.shG0_3[i] = tmp[1];
+						g.shB0_3[i] = tmp[2];
+#endif
 					}
 					for (int32_t i = 0; i < 4; ++i)
 					{
 						reader >> tmp[0];
 						reader >> tmp[1];
 						reader >> tmp[2];
+#if !defined(__ANDROID__)
 						g.shR4_7[i] = floatToHalf(tmp[0]);
 						g.shG4_7[i] = floatToHalf(tmp[1]);
 						g.shB4_7[i] = floatToHalf(tmp[2]);
+#else
+						g.shR4_7[i] = tmp[0];
+						g.shG4_7[i] = tmp[1];
+						g.shB4_7[i] = tmp[2];
+#endif
 					}
 					reader >> tmp[0];
 					reader >> tmp[1];
 					reader >> tmp[2];
+#if !defined(__ANDROID__)
 					g.shRGB_8[0] = floatToHalf(tmp[0]);
 					g.shRGB_8[1] = floatToHalf(tmp[1]);
 					g.shRGB_8[2] = floatToHalf(tmp[2]);
+#else
+					g.shRGB_8[0] = tmp[0];
+					g.shRGB_8[1] = tmp[1];
+					g.shRGB_8[2] = tmp[2];
+#endif
 				}
 			}
 		}

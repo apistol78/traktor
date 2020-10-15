@@ -26,8 +26,9 @@ std::wstring getClassNameOnly(const Object* o)
 
 		}
 
-GlslContext::GlslContext(const ShaderGraph* shaderGraph)
+GlslContext::GlslContext(const ShaderGraph* shaderGraph, const PropertyGroup* settings)
 :	m_shaderGraph(shaderGraph)
+,	m_settings(settings)
 ,	m_vertexShader(GlslShader::StVertex)
 ,	m_fragmentShader(GlslShader::StFragment)
 ,	m_computeShader(GlslShader::StCompute)
@@ -193,6 +194,11 @@ bool GlslContext::inFragment() const
 bool GlslContext::inCompute() const
 {
 	return bool(m_currentShader == &m_computeShader);
+}
+
+const PropertyGroup* GlslContext::getSettings() const
+{
+	return m_settings;
 }
 
 GlslRequirements& GlslContext::requirements()

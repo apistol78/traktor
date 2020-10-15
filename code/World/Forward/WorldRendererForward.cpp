@@ -148,9 +148,14 @@ struct LightShaderData
 #pragma pack(1)
 struct TileShaderData
 {
+#if !defined(__ANDROID__)
 	uint16_t lights[4];			// 8 :  0 -  8
 	uint8_t lightCount[4];		// 4 :  8 - 12
 	uint8_t pad[4];				// 4 : 12 - 16
+#else
+	float lights[4];
+	float lightCount[4];
+#endif
 };
 #pragma pack()
 
@@ -269,9 +274,14 @@ bool WorldRendererForward::create(
 			return false;
 
 		AlignedVector< render::StructElement > tileShaderDataStruct;
+#if !defined(__ANDROID__)
 		tileShaderDataStruct.push_back(render::StructElement(render::DtShort4, offsetof(TileShaderData, lights)));
 		tileShaderDataStruct.push_back(render::StructElement(render::DtByte4, offsetof(TileShaderData, lightCount)));
 		tileShaderDataStruct.push_back(render::StructElement(render::DtByte4, offsetof(TileShaderData, pad)));
+#else
+		tileShaderDataStruct.push_back(render::StructElement(render::DtFloat4, offsetof(TileShaderData, lights)));
+		tileShaderDataStruct.push_back(render::StructElement(render::DtFloat4, offsetof(TileShaderData, lightCount)));
+#endif
 		T_FATAL_ASSERT(sizeof(TileShaderData) == render::getStructSize(tileShaderDataStruct));
 
 		frame.tileSBuffer = renderSystem->createStructBuffer(
@@ -521,6 +531,11 @@ void WorldRendererForward::setupTileDataPass(
 
 					const uint32_t offset = (x + y * ClusterDimXY) * ClusterDimZ + z;
 
+					tileShaderData[offset].lights[0] =
+					tileShaderData[offset].lights[1] =
+					tileShaderData[offset].lights[2] =
+					tileShaderData[offset].lights[3] = 0;
+
 					int32_t count = 0;
 					for (uint32_t i = 0; i < lights.size(); ++i)
 					{
@@ -545,7 +560,11 @@ void WorldRendererForward::setupTileDataPass(
 						if (count >= 4)
 							break;
 					}
+
 					tileShaderData[offset].lightCount[0] = uint8_t(count);
+					tileShaderData[offset].lightCount[1] = 
+					tileShaderData[offset].lightCount[2] = 
+					tileShaderData[offset].lightCount[3] = 0;
 				}
 			}
 		}

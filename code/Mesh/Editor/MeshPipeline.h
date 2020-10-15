@@ -75,6 +75,7 @@ private:
 	bool m_enableCustomTemplates;
 	std::set< std::wstring > m_includeOnlyTechniques;
 	std::wstring m_programCompilerTypeName;
+	std::wstring m_platform;
 	bool m_editor;
 	mutable Semaphore m_programCompilerLock;
 	mutable Ref< render::IProgramCompiler > m_programCompiler;

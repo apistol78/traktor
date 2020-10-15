@@ -290,7 +290,7 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 	shaderGraph->findNodesOf< PixelOutput >(pixelOutputs);
 	shaderGraph->findNodesOf< ComputeOutput >(computeOutputs);
 
-	GlslContext cx(shaderGraph);
+	GlslContext cx(shaderGraph, settings);
 
 	glslang::TProgram* program = new glslang::TProgram();
 	glslang::TShader* vertexShader = nullptr;
@@ -589,7 +589,7 @@ bool ProgramCompilerVk::generate(
 	std::wstring& outComputeShader
 ) const
 {
-	std::wstring crossDialect = toUpper(L"spirv"); // settings->getProperty< std::wstring >(L"Glsl.Vulkan.CrossDialect");
+	std::wstring crossDialect = settings->getProperty< std::wstring >(L"Glsl.Vulkan.CrossDialect");
 
 	// No dialect means we should output our generated GLSL.
 	if (crossDialect.empty())
@@ -602,7 +602,7 @@ bool ProgramCompilerVk::generate(
 		shaderGraph->findNodesOf< PixelOutput >(pixelOutputs);
 		shaderGraph->findNodesOf< ComputeOutput >(computeOutputs);
 
-		GlslContext cx(shaderGraph);
+		GlslContext cx(shaderGraph, settings);
 
 		if (vertexOutputs.size() == 1 && pixelOutputs.size() == 1)
 		{

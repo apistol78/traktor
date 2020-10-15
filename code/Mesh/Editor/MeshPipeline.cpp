@@ -145,6 +145,7 @@ bool MeshPipeline::create(const editor::IPipelineSettings* settings)
 	m_enableCustomTemplates = settings->getProperty< bool >(L"MeshPipeline.EnableCustomTemplates", true);
 	m_includeOnlyTechniques = settings->getProperty< std::set< std::wstring > >(L"ShaderPipeline.IncludeOnlyTechniques");
 	m_programCompilerTypeName = settings->getProperty< std::wstring >(L"ShaderPipeline.ProgramCompiler");
+	m_platform = settings->getProperty< std::wstring >(L"ShaderPipeline.Platform", L"");
 	m_editor = settings->getProperty< bool >(L"Pipeline.TargetEditor", false);
 	return true;
 }
@@ -537,6 +538,22 @@ bool MeshPipeline::buildOutput(
 			return false;
 		}
 
+		// Get connected permutation.
+		materialShaderGraph = render::ShaderGraphStatic(materialShaderGraph).getConnectedPermutation();
+		if (!materialShaderGraph)
+		{
+			log::error << L"MeshPipeline failed; unable to freeze connected conditionals, material shader \"" << materialPair.first << L"\"." << Endl;
+			return false;
+		}
+
+		// Extract platform permutation.
+		materialShaderGraph = render::ShaderGraphStatic(materialShaderGraph).getPlatformPermutation(m_platform);
+		if (!materialShaderGraph)
+		{
+			log::error << L"MeshPipeline failed; unable to get platform \"" << m_platform << L"\" permutation." << Endl;
+			return false;
+		}
+
 		// Extract renderer permutation.
 		const wchar_t* rendererSignature = programCompiler->getRendererSignature();
 		T_ASSERT(rendererSignature);
@@ -545,14 +562,6 @@ bool MeshPipeline::buildOutput(
 		if (!materialShaderGraph)
 		{
 			log::error << L"MeshPipeline failed; unable to get renderer permutation." << Endl;
-			return false;
-		}
-
-		// Get connected permutation.
-		materialShaderGraph = render::ShaderGraphStatic(materialShaderGraph).getConnectedPermutation();
-		if (!materialShaderGraph)
-		{
-			log::error << L"MeshPipeline failed; unable to freeze connected conditionals, material shader \"" << materialPair.first << L"\"." << Endl;
 			return false;
 		}
 
