@@ -121,9 +121,10 @@ IRenderTargetSet* RenderGraphTargetSetPool::acquire(
 
 		Ref< IRenderTargetSet > targetSet = m_renderSystem->createRenderTargetSet(rtscd, sharedDepthStencilTargetSet, T_FILE_LINE_W);
 		if (targetSet)
+		{
+			targetSet->setDebugName(name);
 			pool->acquired.push_back(targetSet);
-
-		targetSet->setDebugName(name);
+		}
 		return targetSet;
 	}
 }
