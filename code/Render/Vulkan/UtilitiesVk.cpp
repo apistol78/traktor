@@ -1,6 +1,5 @@
 #include <cstring>
 #include "Core/Misc/TString.h"
-#include "Core/Thread/Acquire.h"
 #include "Render/Vulkan/ApiLoader.h"
 #include "Render/Vulkan/UtilitiesVk.h"
 

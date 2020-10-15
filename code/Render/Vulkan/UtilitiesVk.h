@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Core/Config.h"
-#include "Core/Thread/Semaphore.h"
 #include "Render/Types.h"
 #include "Render/Vulkan/ApiHeader.h"
 

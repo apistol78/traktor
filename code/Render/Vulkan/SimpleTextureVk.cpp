@@ -1,7 +1,6 @@
 #include <cstring>
 #include "Core/Log/Log.h"
 #include "Core/Misc/TString.h"
-#include "Core/Thread/Acquire.h"
 #include "Render/Types.h"
 #include "Render/Vulkan/ApiLoader.h"
 #include "Render/Vulkan/CommandBufferPool.h"

@@ -8,7 +8,6 @@
 #include "Core/Misc/AutoPtr.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Misc/TString.h"
-#include "Core/Thread/Acquire.h"
 #include "Render/VertexElement.h"
 #include "Render/Vulkan/ApiLoader.h"
 #include "Render/Vulkan/CommandBufferPool.h"

@@ -4,7 +4,6 @@
 #include "Core/Misc/AutoPtr.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Misc/String.h"
-#include "Core/Thread/Acquire.h"
 #include "Core/Timer/Profiler.h"
 #include "Render/Vulkan/ApiLoader.h"
 #include "Render/Vulkan/CommandBufferPool.h"
