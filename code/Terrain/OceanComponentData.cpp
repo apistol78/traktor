@@ -21,7 +21,8 @@ const resource::Id< render::Shader > c_defaultShader(Guid(L"{FB9B7138-B7B2-E341-
 T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.terrain.OceanComponentData", 0, OceanComponentData, world::IEntityComponentData)
 
 OceanComponentData::OceanComponentData()
-:	m_shallowTint(1.0f, 1.0f, 1.0f, 1.0f)
+:	m_shader(c_defaultShader)
+,	m_shallowTint(1.0f, 1.0f, 1.0f, 1.0f)
 ,	m_reflectionTint(1.0f, 1.0f, 1.0f, 1.0f)
 ,	m_shadowTint(1.0f, 1.0f, 1.0f, 1.0f)
 ,	m_deepColor(0.0f, 0.0f, 0.0f, 1.0f)
