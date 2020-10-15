@@ -195,6 +195,7 @@ void ColorDialog::updateControls()
 void ColorDialog::eventGradientColorSelect(ColorEvent* event)
 {
 	Color4ub color = event->getColor();
+	color.a = m_editColor[3] ? parseString< int32_t >(m_editColor[3]->getText()) : 255;
 
 	m_color = Color4f::fromColor4ub(color);
 	if (m_editColor[4])
@@ -203,22 +204,7 @@ void ColorDialog::eventGradientColorSelect(ColorEvent* event)
 		m_color.setEV(Scalar(ev));
 	}
 
-	m_editColor[0]->setText(toString< int32_t >(color.r));
-	m_editColor[1]->setText(toString< int32_t >(color.g));
-	m_editColor[2]->setText(toString< int32_t >(color.b));
-
-	if (m_editColor[3])
-		m_editColor[3]->setText(toString< int32_t >(color.a));
-
-	if (m_alphaGradient)
-	{
-		m_alphaGradient->color = color;
-		m_sliderAlphaControl->updateGradient();
-		m_sliderAlphaControl->update();
-	}
-
-	m_colorControl->setColor(color);
-	m_colorControl->update();
+	updateControls();
 }
 
 void ColorDialog::eventSliderColorSelect(ColorEvent* event)
@@ -234,20 +220,13 @@ void ColorDialog::eventSliderColorSelect(ColorEvent* event)
 
 	// Just copy rgb as gradient control will reset alpha.
 	m_color = Color4f::fromColor4ub(color);
-
-	m_editColor[0]->setText(toString< int32_t >(color.r));
-	m_editColor[1]->setText(toString< int32_t >(color.g));
-	m_editColor[2]->setText(toString< int32_t >(color.b));
-
-	if (m_alphaGradient)
+	if (m_editColor[4])
 	{
-		m_alphaGradient->color = color;
-		m_sliderAlphaControl->updateGradient();
-		m_sliderAlphaControl->update();
+		int32_t ev = parseString< int32_t >(m_editColor[4]->getText());
+		m_color.setEV(Scalar(ev));
 	}
 
-	m_colorControl->setColor(color);
-	m_colorControl->update();
+	updateControls();
 }
 
 void ColorDialog::eventSliderAlphaSelect(ColorEvent* event)
@@ -259,20 +238,14 @@ void ColorDialog::eventSliderAlphaSelect(ColorEvent* event)
 	int32_t b = parseString< int32_t >(m_editColor[2]->getText());
 	int32_t a = alpha.a;
 
-	Color4ub color(r, g, b, a);
-
-	if (m_editColor[3])
-		m_editColor[3]->setText(toString< int32_t >(color.a));
-
-	if (m_alphaGradient)
+	m_color = Color4f::fromColor4ub(Color4ub(r, g, b, a)).saturated();
+	if (m_editColor[4])
 	{
-		m_alphaGradient->color = color;
-		m_sliderAlphaControl->updateGradient();
-		m_sliderAlphaControl->update();
+		int32_t ev = parseString< int32_t >(m_editColor[4]->getText());
+		m_color.setEV(Scalar(ev));
 	}
 
-	m_colorControl->setColor(color);
-	m_colorControl->update();
+	updateControls();
 }
 
 void ColorDialog::eventEditFocus(FocusEvent* event)
@@ -288,7 +261,6 @@ void ColorDialog::eventEditFocus(FocusEvent* event)
 
 	m_color = Color4f::fromColor4ub(Color4ub(r, g, b, a)).saturated();
 	m_color.setEV(Scalar(ev));
-
 	updateControls();
 }
 
