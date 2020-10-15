@@ -112,9 +112,21 @@
 				<second type="traktor.PropertyGroup">
 					<value>
 						<item>
-							<first>Glsl.Vulkan.ConvertRelaxedToHalf</first>
+							<first>Glsl.Vulkan.Ballot</first>
 							<second type="traktor.PropertyBoolean">
-								<value>true</value>
+								<value>false</value>
+							</second>
+						</item>
+						<item>
+							<first>Glsl.Vulkan.StorageTypes</first>
+							<second type="traktor.PropertyBoolean">
+								<value>false</value>
+							</second>
+						</item>
+						<item>
+							<first>Glsl.Vulkan.ExplicitArithmeticTypes</first>
+							<second type="traktor.PropertyBoolean">
+								<value>false</value>
 							</second>
 						</item>
 					</value>

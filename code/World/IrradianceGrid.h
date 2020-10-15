@@ -32,6 +32,7 @@ class StructBuffer;
  */
 struct IrradianceGridData
 {
+#if !defined(__ANDROID__)
 	half_t shR0_3[4];   // 0-8
 	half_t shR4_7[4];   // 8-16
 	half_t shG0_3[4];   // 16-24
@@ -40,6 +41,15 @@ struct IrradianceGridData
 	half_t shB4_7[4];   // 40-48
 	half_t shRGB_8[4];  // 48-56
     uint8_t pad[8];     // 56-64
+#else
+	float shR0_3[4];
+	float shR4_7[4];
+	float shG0_3[4];
+	float shG4_7[4];
+	float shB0_3[4];
+	float shB4_7[4];
+	float shRGB_8[4];
+#endif
 };
 
 #pragma pack()

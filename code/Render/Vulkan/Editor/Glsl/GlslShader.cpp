@@ -145,13 +145,27 @@ std::wstring GlslShader::getGeneratedShader(const PropertyGroup* settings, const
 	ss << L"#version 450" << Endl;
 	ss << L"#extension GL_ARB_separate_shader_objects : enable" << Endl;
 	ss << L"#extension GL_ARB_shading_language_420pack : enable" << Endl;
-	ss << L"#extension GL_ARB_shader_ballot : enable" << Endl;
 	ss << L"#extension GL_EXT_samplerless_texture_functions : enable" << Endl;
-	ss << L"#extension GL_EXT_shader_8bit_storage : enable" << Endl;
-	ss << L"#extension GL_EXT_shader_16bit_storage : enable" << Endl;
-	ss << L"#extension GL_EXT_shader_explicit_arithmetic_types_int8 : enable" << Endl;
-	ss << L"#extension GL_EXT_shader_explicit_arithmetic_types_int16 : enable" << Endl;
-	ss << L"#extension GL_EXT_shader_explicit_arithmetic_types_float16 : enable" << Endl;
+
+	const bool supportBallot = (settings != nullptr ? settings->getProperty< bool >(L"Glsl.Vulkan.Ballot", true) : true);
+	if (supportBallot)
+		ss << L"#extension GL_ARB_shader_ballot : enable" << Endl;
+
+	const bool supportStorageTypes = (settings != nullptr ? settings->getProperty< bool >(L"Glsl.Vulkan.StorageTypes", true) : true);
+	if (supportStorageTypes)
+	{
+		ss << L"#extension GL_EXT_shader_8bit_storage : enable" << Endl;
+		ss << L"#extension GL_EXT_shader_16bit_storage : enable" << Endl;
+	}
+
+	const bool supportExplicitArithmeticTypes = (settings != nullptr ? settings->getProperty< bool >(L"Glsl.Vulkan.ExplicitArithmeticTypes", true) : true);
+	if (supportExplicitArithmeticTypes)
+	{
+		ss << L"#extension GL_EXT_shader_explicit_arithmetic_types_int8 : enable" << Endl;
+		ss << L"#extension GL_EXT_shader_explicit_arithmetic_types_int16 : enable" << Endl;
+		ss << L"#extension GL_EXT_shader_explicit_arithmetic_types_float16 : enable" << Endl;
+	}
+
 	ss << Endl;
 
 	PrecisionHint precisionHint = PhUndefined;

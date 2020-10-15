@@ -7,6 +7,9 @@
 
 namespace traktor
 {
+
+class PropertyGroup;
+
 	namespace render
 	{
 
@@ -30,7 +33,7 @@ public:
 		UpdateFrequency frequency;
 	};
 
-	GlslContext(const ShaderGraph* shaderGraph);
+	GlslContext(const ShaderGraph* shaderGraph, const PropertyGroup* settings);
 
 	Node* getInputNode(const InputPin* inputPin);
 
@@ -68,6 +71,8 @@ public:
 	GlslShader& getShader() { return *m_currentShader; }
 
 	/*! \} */
+
+	const PropertyGroup* getSettings() const;
 
 	/*! Requirements */
 	GlslRequirements& requirements();
@@ -149,6 +154,7 @@ private:
 	};
 
 	Ref< const ShaderGraph > m_shaderGraph;
+	Ref< const PropertyGroup > m_settings;
 	GlslShader m_vertexShader;
 	GlslShader m_fragmentShader;
 	GlslShader m_computeShader;

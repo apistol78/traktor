@@ -6,7 +6,6 @@
 #include "Core/Misc/String.h"
 #include "Core/Settings/PropertyBoolean.h"
 #include "Core/Settings/PropertyGroup.h"
-#include "Core/Settings/PropertyString.h"
 #include "Render/VertexElement.h"
 #include "Render/Editor/Shader/Nodes.h"
 #include "Render/Editor/Shader/Script.h"
@@ -650,14 +649,16 @@ bool emitInstance(GlslContext& cx, Instance* node)
 		auto& fv = cx.getVertexShader().getOutputStream(GlslShader::BtBody);
 		comment(fv, node) << interpolatorMask << L" = float(gl_InstanceIndex);" << Endl;
 
-		auto& f = cx.getShader().getOutputStream(GlslShader::BtBody);
-		f << L"float uniform_instanceIndex = readFirstInvocationARB(" << interpolatorMask << L");" << Endl;
+		Ref< GlslVariable > out = cx.emitOutput(node, L"Output", GtFloat);
 
-		cx.getFragmentShader().createOuterVariable(
-			node->findOutputPin(L"Output"),
-			L"uniform_instanceIndex",
-			GtFloat
-		);
+		auto& f = cx.getShader().getOutputStream(GlslShader::BtBody);
+		comment(f, node);
+
+		const bool supportBallot = (cx.getSettings() != nullptr ? cx.getSettings()->getProperty< bool >(L"Glsl.Vulkan.Ballot", true) : true);
+		if (supportBallot)
+			assign(f, out) << L"readFirstInvocationARB(" << interpolatorMask << L");" << Endl;
+		else
+			assign(f, out) << interpolatorMask << L";" << Endl;
 
 		if (declare)
 		{

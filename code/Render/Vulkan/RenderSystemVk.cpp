@@ -60,7 +60,12 @@ const char* c_extensions[] = { "VK_KHR_surface", "VK_MVK_macos_surface", "VK_EXT
 #else
 const char* c_extensions[] = { "VK_KHR_surface", "VK_EXT_debug_utils" };
 #endif
+
+#if defined(__ANDROID__)
+const char* c_deviceExtensions[] = { "VK_KHR_swapchain" };
+#else
 const char* c_deviceExtensions[] = { "VK_KHR_swapchain", "VK_KHR_8bit_storage", "VK_KHR_shader_float16_int8" };
+#endif
 
 VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(
 	VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity,
@@ -257,6 +262,7 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
 	features.samplerAnisotropy = VK_TRUE;
     dci.pEnabledFeatures = &features;
 
+#if !defined(__ANDROID__)
 	VkPhysicalDevice8BitStorageFeaturesKHR f8;
 	f8.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_8BIT_STORAGE_FEATURES_KHR;
 	f8.pNext = nullptr;
@@ -271,6 +277,7 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
 	f16.shaderFloat16 = VK_FALSE;
 	f16.shaderInt8 = VK_TRUE;
 	f8.pNext = &f16;
+#endif
 
     if (vkCreateDevice(m_physicalDevice, &dci, 0, &m_logicalDevice) != VK_SUCCESS)
 	{

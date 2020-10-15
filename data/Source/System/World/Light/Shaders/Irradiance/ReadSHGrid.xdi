@@ -68,8 +68,8 @@
 			<id>{B29C8222-0050-4A24-9BB3-CB8AA6CE3C04}</id>
 			<comment/>
 			<position>
-				<first>179</first>
-				<second>76</second>
+				<first>11</first>
+				<second>-164</second>
 			</position>
 			<parameterName>World_IrradianceGridSBuffer</parameterName>
 			<elements>
@@ -179,78 +179,55 @@
 			</position>
 			<name>shRGB_8</name>
 		</item>
+		<item type="traktor.render.Platform" version="traktor.render.Node:1">
+			<id>{A81D3202-8834-E049-B89B-460F7817D128}</id>
+			<comment/>
+			<position>
+				<first>477</first>
+				<second>-397</second>
+			</position>
+		</item>
+		<item type="traktor.render.Struct" version="traktor.render.Node:1">
+			<id>{1072694C-AB6C-F344-9451-4029E4D4848C}</id>
+			<comment/>
+			<position>
+				<first>8</first>
+				<second>-413</second>
+			</position>
+			<parameterName>World_IrradianceGridSBuffer</parameterName>
+			<elements>
+				<item>
+					<name>shR0_3</name>
+					<type>DtFloat4</type>
+				</item>
+				<item>
+					<name>shR4_7</name>
+					<type>DtFloat4</type>
+				</item>
+				<item>
+					<name>shG0_3</name>
+					<type>DtFloat4</type>
+				</item>
+				<item>
+					<name>shG4_7</name>
+					<type>DtFloat4</type>
+				</item>
+				<item>
+					<name>shB0_3</name>
+					<type>DtFloat4</type>
+				</item>
+				<item>
+					<name>shB4_7</name>
+					<type>DtFloat4</type>
+				</item>
+				<item>
+					<name>shRGB_8</name>
+					<type>DtFloat4</type>
+				</item>
+			</elements>
+		</item>
 	</nodes>
 	<edges>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[7]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[6]"/>
-				<name>Struct</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[7]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[5]"/>
-				<name>Struct</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[7]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[4]"/>
-				<name>Struct</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[7]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[3]"/>
-				<name>Struct</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[7]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[2]"/>
-				<name>Struct</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[7]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[1]"/>
-				<name>Struct</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[7]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item"/>
-				<name>Struct</name>
-			</destination>
-		</item>
 		<item type="traktor.render.Edge">
 			<source>
 				<node ref="/object/nodes/item[8]"/>
@@ -389,6 +366,96 @@
 			<destination>
 				<node ref="/object/nodes/item[15]"/>
 				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[7]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[16]"/>
+				<name>Other</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[16]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[6]"/>
+				<name>Struct</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[16]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[5]"/>
+				<name>Struct</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[16]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[4]"/>
+				<name>Struct</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[16]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[3]"/>
+				<name>Struct</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[16]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[2]"/>
+				<name>Struct</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[16]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[1]"/>
+				<name>Struct</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[16]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item"/>
+				<name>Struct</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[17]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[16]"/>
+				<name>Android</name>
 			</destination>
 		</item>
 	</edges>
