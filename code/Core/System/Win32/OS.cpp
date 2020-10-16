@@ -159,7 +159,7 @@ bool OS::openFile(const std::wstring& file) const
 	HINSTANCE hInstance = ShellExecute(
 		NULL,
 		_T("open"),
-		wstots(file).c_str(),
+		wstots(replaceAll(file, L"/", L"\\")).c_str(),
 		NULL,
 		NULL,
 		SW_SHOWDEFAULT
@@ -171,8 +171,8 @@ bool OS::editFile(const std::wstring& file) const
 {
 	HINSTANCE hInstance = ShellExecute(
 		NULL,
-		_T("edit"),
-		wstots(file).c_str(),
+		_T("open"),
+		wstots(replaceAll(file, L"/", L"\\")).c_str(),
 		NULL,
 		NULL,
 		SW_SHOWDEFAULT
@@ -185,7 +185,7 @@ bool OS::exploreFile(const std::wstring& file) const
 	HINSTANCE hInstance = ShellExecute(
 		NULL,
 		_T("explore"),
-		wstots(file).c_str(),
+		wstots(replaceAll(file, L"/", L"\\")).c_str(),
 		NULL,
 		NULL,
 		SW_SHOWDEFAULT
