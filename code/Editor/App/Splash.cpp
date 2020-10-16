@@ -24,7 +24,7 @@ bool Splash::create()
 	Ref< ui::Image > image = new ui::Image();
 	image->create(this, splash, false);
 
-	fit();
+	fit(Container::FaBoth);
 	show();
 
 	update(nullptr, true);

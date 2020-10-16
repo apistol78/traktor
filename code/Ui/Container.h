@@ -26,9 +26,16 @@ class T_DLLCLASS Container : public Widget
 	T_RTTI_CLASS;
 
 public:
+	enum FitAxis
+	{
+		FaHorizontal = 1,
+		FaVertical = 2,
+		FaBoth = (FaHorizontal | FaVertical)
+	};
+
 	bool create(Widget* parent, int style = WsNone, Layout* layout = 0);
 
-	virtual void fit();
+	virtual void fit(uint32_t axis);
 
 	virtual void update(const Rect* rc = 0, bool immediate = false) override;
 

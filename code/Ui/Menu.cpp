@@ -47,7 +47,7 @@ Ref< Widget > Menu::show(Widget* parent, const Point& at) const
 		shell->add(item);
 
 	// Resize form to shell size.
-	form->fit();
+	form->fit(Container::FaBoth);
 
 	// Place form at given position.
 	auto rc = form->getRect();
@@ -106,7 +106,7 @@ const MenuItem* Menu::showModal(Widget* parent, const Point& at, int32_t width, 
 		shell->add(item);
 
 	// Resize form to shell size.
-	form->fit();
+	form->fit(Container::FaBoth);
 
 	// Place form at given position.
 	auto rc = form->getRect();

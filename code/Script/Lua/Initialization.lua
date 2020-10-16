@@ -58,10 +58,12 @@ function class(name, super)
 
 	-- Flatten inheritance; copy tables.
 	if super ~= nil then
-		for k, v in pairs(super) do
+		for k, v in next, super, nil do
 			if type(v) == "table" then
 				local c = {}
-				for kk, vv in pairs(v) do c[kk] = vv end
+				for kk, vv in next, v, nil do
+					c[kk] = vv
+				end
 				cl[k] = c
 			else
 				cl[k] = v
@@ -131,8 +133,12 @@ function class(name, super)
 				return nil
 			end
 		end
-		tbl.__size = tbl.size
-		return itr, tbl, -1
+		if tbl.size ~= nil then
+			tbl.__size = tbl.size
+			return itr, tbl, -1
+		else
+			return nil
+		end
 	end
 
 	return cl

@@ -76,7 +76,7 @@ bool InputDialog::create(
 		}
 	}
 
-	fit();
+	fit(Container::FaBoth);
 
 	return true;
 }

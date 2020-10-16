@@ -18,7 +18,7 @@ const resource::Id< render::Shader > c_defaultShader(Guid(L"{FB9B7138-B7B2-E341-
 		
 		}
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.terrain.OceanComponentData", 0, OceanComponentData, world::IEntityComponentData)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.terrain.OceanComponentData", 1, OceanComponentData, world::IEntityComponentData)
 
 OceanComponentData::OceanComponentData()
 :	m_shader(c_defaultShader)
@@ -38,6 +38,10 @@ void OceanComponentData::setTransform(const world::EntityData* owner, const Tran
 void OceanComponentData::serialize(ISerializer& s)
 {
 	s >> resource::Member< render::Shader >(L"shader", m_shader);
+
+	if (s.getVersion() >= 1)
+		s >> resource::Member< render::ITexture >(L"reflectionTexture", m_reflectionTexture);
+
 	s >> Member< Color4f >(L"shallowTint", m_shallowTint);
 	s >> Member< Color4f >(L"reflectionTint", m_reflectionTint);
 	s >> Member< Color4f >(L"shadowTint", m_shadowTint);

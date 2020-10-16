@@ -40,27 +40,32 @@ bool Container::create(Widget* parent, int style, Layout* layout)
 	return Widget::create(parent);
 }
 
-void Container::fit()
+void Container::fit(uint32_t axis)
 {
-	if (m_layout)
-	{
-		// First fit child containers.
-		for (Ref< Widget > child = getFirstChild(); child; child = child->getNextSibling())
-		{
-			if (is_a< Container >(child))
-				static_cast< Container* >(child.ptr())->fit();
-		}
+	if (!m_layout || axis == 0)
+		return;
 
-		// Use layout to calculate size of container.
-		Size inner = getInnerRect().getSize();
-		Size bounds;
-		if (m_layout->fit(this, inner, bounds))
-		{
-			Rect outer = getRect();
-			Size nc = outer.getSize() - inner;
-			outer.setSize(bounds + nc);
-			setRect(outer);
-		}
+	// First fit child containers.
+	for (Ref< Widget > child = getFirstChild(); child; child = child->getNextSibling())
+	{
+		if (auto childContainer = dynamic_type_cast< Container* >(child))
+			childContainer->fit(axis);
+	}
+
+	// Use layout to calculate size of container.
+	Size inner = getInnerRect().getSize();
+	Size bounds;
+	if (m_layout->fit(this, inner, bounds))
+	{
+		Rect outer = getRect();
+		Size nc = outer.getSize() - inner;
+
+		if ((axis & FaHorizontal) != 0)
+			outer.setWidth(bounds.cx + nc.cx);
+		if ((axis & FaVertical) != 0)
+			outer.setHeight(bounds.cy + nc.cy);
+
+		setRect(outer);
 	}
 }
 

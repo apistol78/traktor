@@ -9,7 +9,7 @@
 Panel = Panel or class("Panel", Container)
 
 Panel:setStyle("resource", "MC_Panel")
-Panel:setStyle("background", traktor.Color4f(0.6, 0.6, 0.6, 1.0))
+Panel:setStyle("background", traktor.Color4f(1.0, 1.0, 1.0, 1.0))
 
 function Panel:new(parent, layout, skin)
 	local mc = Widget._createResource(parent, skin or self:getStyle().resource)

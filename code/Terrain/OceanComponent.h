@@ -107,7 +107,7 @@ public:
 private:
 	world::Entity* m_owner;
 	resource::Proxy< render::Shader > m_shader;
-	resource::Proxy< render::ITexture > m_reflectionMap;
+	resource::Proxy< render::ITexture > m_reflectionTexture;
 	resource::Proxy< Terrain > m_terrain;
 	Ref< render::IndexBuffer > m_indexBuffer;
 	Ref< render::VertexBuffer > m_vertexBuffer;
