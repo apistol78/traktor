@@ -1,3 +1,4 @@
+#include "Core/Io/FileSystem.h"
 #include "Core/Io/Path.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/SafeDestroy.h"
@@ -10,6 +11,7 @@
 #include "Core/Serialization/DeepClone.h"
 #include "Core/Settings/PropertyGroup.h"
 #include "Core/Settings/PropertyInteger.h"
+#include "Core/Settings/PropertyString.h"
 #include "Core/Settings/PropertyStringArray.h"
 #include "Core/System/OS.h"
 #include "Database/Database.h"
@@ -699,13 +701,21 @@ bool DatabaseView::handleCommand(const ui::Command& command)
 		{
 			Ref< Asset > editAsset = instance->getObject< Asset >();
 			if (editAsset)
-				OS::getInstance().editFile(editAsset->getFileName().getPathName());
+			{
+				std::wstring assetPath = m_editor->getSettings()->getProperty< std::wstring >(L"Pipeline.AssetPath", L"");
+				Path filePath = FileSystem::getInstance().getAbsolutePath(Path(assetPath) + editAsset->getFileName());
+				OS::getInstance().editFile(filePath.getPathName());
+			}
 		}
 		else if (command == L"Editor.Database.Explore")	// Explore
 		{
 			Ref< Asset > exploreAsset = instance->getObject< Asset >();
 			if (exploreAsset)
-				OS::getInstance().exploreFile(exploreAsset->getFileName().getPathName());
+			{
+				std::wstring assetPath = m_editor->getSettings()->getProperty< std::wstring >(L"Pipeline.AssetPath", L"");
+				Path filePath = FileSystem::getInstance().getAbsolutePath(Path(assetPath) + exploreAsset->getFileName());
+				OS::getInstance().exploreFile(filePath.getPathName());
+			}
 		}
 		else if (command == L"Editor.Database.ReplaceInstance")	// Replace instance
 		{
