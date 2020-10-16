@@ -45,7 +45,7 @@ public:
 
 	const resource::Id< render::Shader >& getShader() const { return m_shader; }
 
-	const resource::Id< render::ITexture >& getReflectionMap() const { return m_reflectionMap; }
+	const resource::Id< render::ITexture >& getReflectionTexture() const { return m_reflectionTexture; }
 
 	const resource::Id< Terrain >& getTerrain() const { return m_terrain; }
 
@@ -67,7 +67,7 @@ private:
 	};
 
 	resource::Id< render::Shader > m_shader;
-	resource::Id< render::ITexture > m_reflectionMap;
+	resource::Id< render::ITexture > m_reflectionTexture;
 	resource::Id< Terrain > m_terrain;
 	Color4f m_shallowTint;
 	Color4f m_reflectionTint;

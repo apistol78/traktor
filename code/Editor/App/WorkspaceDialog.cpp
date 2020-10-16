@@ -60,6 +60,8 @@ bool WorkspaceDialog::create(ui::Widget* parent, PropertyGroup* settings)
 	m_editAssetPath->create(containerInner, settings->getProperty< std::wstring >(L"Pipeline.AssetPath", L""));
 
 	m_settings = settings;
+
+	fit(Container::FaVertical);
 	return true;
 }
 

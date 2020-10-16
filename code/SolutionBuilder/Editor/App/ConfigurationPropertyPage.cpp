@@ -166,8 +166,7 @@ bool ConfigurationPropertyPage::create(ui::Widget* parent)
 	m_editConsumerLibraryPath->create(tabPageConsumer);
 	m_editConsumerLibraryPath->addEventHandler< ui::FocusEvent >(this, &ConfigurationPropertyPage::eventFocusAdditionalOptions);
 
-	fit();
-
+	fit(Container::FaBoth);
 	return true;
 }
 

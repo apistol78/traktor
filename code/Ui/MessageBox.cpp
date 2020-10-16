@@ -30,7 +30,7 @@ bool MessageBox::create(Widget* parent, const std::wstring& message, const std::
 	Ref< Static > staticMessage = new Static();
 	staticMessage->create(this, message);
 
-	fit();
+	fit(Container::FaBoth);
 	return true;
 }
 

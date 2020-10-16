@@ -40,6 +40,7 @@ const render::Handle s_handleOcean_DeepColor(L"Ocean_DeepColor");
 const render::Handle s_handleOcean_Opacity(L"Ocean_Opacity");
 const render::Handle s_handleOcean_WavesA(L"Ocean_WavesA");
 const render::Handle s_handleOcean_WavesB(L"Ocean_WavesB");
+const render::Handle s_handleOcean_ReflectionTexture(L"Ocean_ReflectionTexture");
 
 #pragma pack(1)
 struct OceanVertex
@@ -145,6 +146,12 @@ bool OceanComponent::create(resource::IResourceManager* resourceManager, render:
 	if (!resourceManager->bind(data.m_shader, m_shader))
 		return false;
 
+	if (data.m_reflectionTexture.isValid())
+	{
+		if (!resourceManager->bind(data.m_reflectionTexture, m_reflectionTexture))
+			return false;
+	}
+
 	m_shallowTint = data.m_shallowTint;
 	m_reflectionTint = data.m_reflectionTint;
 	m_shadowTint = data.m_shadowTint;
@@ -244,6 +251,7 @@ void OceanComponent::build(
 	renderBlock->programParams->setFloatParameter(s_handleOcean_Opacity, m_opacity);
 	renderBlock->programParams->setVectorArrayParameter(s_handleOcean_WavesA, m_wavesA, sizeof_array(m_wavesA));
 	renderBlock->programParams->setVectorArrayParameter(s_handleOcean_WavesB, m_wavesB, sizeof_array(m_wavesB));
+	renderBlock->programParams->setTextureParameter(s_handleOcean_ReflectionTexture, m_reflectionTexture);
 
 	if (haveTerrain)
 	{
