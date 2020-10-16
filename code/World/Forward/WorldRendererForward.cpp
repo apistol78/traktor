@@ -1269,7 +1269,7 @@ void WorldRendererForward::setupVisualPass(
 
 			if (m_settings.fog)
 			{
-				sharedParams->setVectorParameter(s_handleFogDistanceAndDensity, Vector4(m_settings.fogDistanceY, m_settings.fogDistanceZ, m_settings.fogDistanceY, m_settings.fogDistanceZ));
+				sharedParams->setVectorParameter(s_handleFogDistanceAndDensity, Vector4(m_settings.fogDistance, m_settings.fogDensity, 0.0f, 0.0f));
 				sharedParams->setVectorParameter(s_handleFogColor, m_settings.fogColor);
 			}
 

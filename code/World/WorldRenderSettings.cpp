@@ -46,7 +46,7 @@ const wchar_t* c_ImageProcess_elementNames[] =
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.WorldRenderSettings", 33, WorldRenderSettings, ISerializable)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.WorldRenderSettings", 34, WorldRenderSettings, ISerializable)
 
 void WorldRenderSettings::serialize(ISerializer& s)
 {
@@ -131,10 +131,19 @@ void WorldRenderSettings::serialize(ISerializer& s)
 
 	if (s.getVersion() >= 21)
 	{
-		s >> Member< float >(L"fogDistanceY", fogDistanceY, AttributeUnit(AuMetres));
-		s >> Member< float >(L"fogDistanceZ", fogDistanceZ, AttributeRange(0.0f) | AttributeUnit(AuMetres));
-		s >> Member< float >(L"fogDensityY", fogDensityY, AttributeRange(0.0f, 1.0f) | AttributeUnit(AuMetres));
-		s >> Member< float >(L"fogDensityZ", fogDensityZ, AttributeRange(0.0f, 1.0f) | AttributeUnit(AuMetres));
+		if (s.getVersion() >= 34)
+		{
+			s >> Member< float >(L"fogDistance", fogDistance, AttributeUnit(AuMetres));
+			s >> Member< float >(L"fogDensity", fogDensity, AttributeRange(0.0f, 1.0f) | AttributeUnit(AuPercent));
+		}
+		else
+		{
+			float fogDistanceY, fogDensityY;
+			s >> Member< float >(L"fogDistanceY", fogDistanceY, AttributeUnit(AuMetres));
+			s >> Member< float >(L"fogDistanceZ", fogDistance, AttributeRange(0.0f) | AttributeUnit(AuMetres));
+			s >> Member< float >(L"fogDensityY", fogDensityY, AttributeRange(0.0f, 1.0f) | AttributeUnit(AuMetres));
+			s >> Member< float >(L"fogDensityZ", fogDensity, AttributeRange(0.0f, 1.0f) | AttributeUnit(AuMetres));
+		}
 	}
 
 	if (s.getVersion() >= 26)

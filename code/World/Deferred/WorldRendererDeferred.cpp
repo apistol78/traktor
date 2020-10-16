@@ -206,10 +206,10 @@ bool WorldRendererDeferred::create(
 	if (m_settings.fog)
 	{
 		m_fogDistanceAndDensity = Vector4(
-			m_settings.fogDistanceY,
-			m_settings.fogDistanceZ,
-			m_settings.fogDensityY,
-			m_settings.fogDensityZ
+			m_settings.fogDistance,
+			m_settings.fogDensity,
+			0.0f,
+			0.0f
 		);
 		m_fogColor = m_settings.fogColor;
 	}
