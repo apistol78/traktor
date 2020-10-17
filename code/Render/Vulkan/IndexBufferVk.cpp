@@ -11,41 +11,26 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.render.IndexBufferVk", IndexBufferVk, IndexBuff
 IndexBufferVk::IndexBufferVk(
 	IndexType indexType,
 	uint32_t bufferSize,
-	VmaAllocator allocator,
-	VmaAllocation allocation,
-	VkBuffer indexBuffer
+	Buffer&& buffer
 )
 :	IndexBuffer(indexType, bufferSize)
-,	m_allocator(allocator)
-,	m_allocation(allocation)
-,	m_indexBuffer(indexBuffer)
-,	m_locked(false)
+,	m_buffer(buffer)
 {
 }
 
 void IndexBufferVk::destroy()
 {
+	m_buffer.destroy();
 }
 
 void* IndexBufferVk::lock()
 {
-	void* ptr = nullptr;
-	if (vmaMapMemory(m_allocator, m_allocation, &ptr) == VK_SUCCESS)
-	{
-		m_locked = true;
-		return ptr;
-	}
-	else
-		return nullptr;
+	return m_buffer.lock();
 }
 
 void IndexBufferVk::unlock()
 {
-	if (m_locked)
-	{
-		vmaUnmapMemory(m_allocator, m_allocation);
-		m_locked = false;
-	}
+	m_buffer.unlock();
 }
 
 	}

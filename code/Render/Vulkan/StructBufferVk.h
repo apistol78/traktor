@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Render/StructBuffer.h"
-#include "Render/Vulkan/ApiHeader.h"
+#include "Render/Vulkan/Buffer.h"
 
 namespace traktor
 {
@@ -15,9 +15,7 @@ class StructBufferVk : public StructBuffer
 public:
 	StructBufferVk(
 		uint32_t bufferSize,
-		VmaAllocator allocator,
-		VmaAllocation allocation,
-		VkBuffer storageBuffer
+		Buffer&& buffer
 	);
 
 	virtual void destroy() override final;
@@ -28,13 +26,10 @@ public:
 
 	virtual void unlock() override final;
 
-	VkBuffer getVkBuffer() const { return m_storageBuffer; }
+	VkBuffer getVkBuffer() const { return m_buffer; }
 
 private:
-	VmaAllocator m_allocator;
-	VmaAllocation m_allocation;
-	VkBuffer m_storageBuffer;
-	bool m_locked;
+	Buffer m_buffer;
 };
 
 	}

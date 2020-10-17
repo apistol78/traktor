@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Render/IndexBuffer.h"
-#include "Render/Vulkan/ApiHeader.h"
+#include "Render/Vulkan/Buffer.h"
 
 namespace traktor
 {
@@ -19,9 +19,7 @@ public:
 	IndexBufferVk(
 		IndexType indexType,
 		uint32_t bufferSize,
-		VmaAllocator allocator,
-		VmaAllocation allocation,
-		VkBuffer indexBuffer
+		Buffer&& buffer
 	);
 
 	virtual void destroy() override final;
@@ -30,13 +28,10 @@ public:
 
 	virtual void unlock() override final;
 
-	VkBuffer getVkBuffer() const { return m_indexBuffer; }
+	VkBuffer getVkBuffer() const { return m_buffer; }
 
 private:
-	VmaAllocator m_allocator;
-	VmaAllocation m_allocation;
-	VkBuffer m_indexBuffer;
-	bool m_locked;
+	Buffer m_buffer;
 };
 
 	}
