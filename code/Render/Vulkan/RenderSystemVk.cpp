@@ -533,42 +533,16 @@ Ref< VertexBuffer > RenderSystemVk::createVertexBuffer(const AlignedVector< Vert
 
 Ref< IndexBuffer > RenderSystemVk::createIndexBuffer(IndexType indexType, uint32_t bufferSize, bool dynamic)
 {
-	VkBuffer indexBuffer = 0;
-
-	VkBufferCreateInfo bci = {};
-	bci.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
-	bci.size = bufferSize;
-	bci.usage = VK_BUFFER_USAGE_INDEX_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT;
-	bci.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
-
-	VmaAllocationCreateInfo aci = {};
-	aci.usage = VMA_MEMORY_USAGE_CPU_TO_GPU; // \tbd VMA_MEMORY_USAGE_GPU_ONLY;
-
-	VmaAllocation allocation;
-	if (vmaCreateBuffer(m_allocator, &bci, &aci, &indexBuffer, &allocation, nullptr) != VK_SUCCESS)
-		return nullptr;
-
-	return new IndexBufferVk(indexType, bufferSize, m_allocator, allocation, indexBuffer);
+	Buffer buffer(m_allocator);
+	buffer.create(bufferSize, VK_BUFFER_USAGE_INDEX_BUFFER_BIT, true, true);
+	return new IndexBufferVk(indexType, bufferSize, std::move(buffer));
 }
 
 Ref< StructBuffer > RenderSystemVk::createStructBuffer(const AlignedVector< StructElement >& structElements, uint32_t bufferSize)
 {
-	VkBuffer storageBuffer = 0;
-
-	VkBufferCreateInfo bci = {};
-	bci.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
-	bci.size = bufferSize;
-	bci.usage = VK_BUFFER_USAGE_STORAGE_BUFFER_BIT;
-	bci.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
-
-	VmaAllocationCreateInfo aci = {};
-	aci.usage = VMA_MEMORY_USAGE_CPU_TO_GPU;
-
-	VmaAllocation allocation;
-	if (vmaCreateBuffer(m_allocator, &bci, &aci, &storageBuffer, &allocation, nullptr) != VK_SUCCESS)
-		return nullptr;	
-
-	return new StructBufferVk(bufferSize, m_allocator, allocation, storageBuffer);
+	Buffer buffer(m_allocator);
+	buffer.create(bufferSize, VK_BUFFER_USAGE_STORAGE_BUFFER_BIT, true, true);
+	return new StructBufferVk(bufferSize, std::move(buffer));
 }
 
 Ref< ISimpleTexture > RenderSystemVk::createSimpleTexture(const SimpleTextureCreateDesc& desc, const wchar_t* const tag)

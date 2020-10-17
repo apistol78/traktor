@@ -10,32 +10,21 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.render.StructBufferVk", StructBufferVk, StructB
 
 StructBufferVk::StructBufferVk(
 	uint32_t bufferSize,
-	VmaAllocator allocator,
-	VmaAllocation allocation,
-	VkBuffer storageBuffer
+	Buffer&& buffer
 )
 :	StructBuffer(bufferSize)
-,	m_allocator(allocator)
-,	m_allocation(allocation)
-,	m_storageBuffer(storageBuffer)
-,	m_locked(false)
+,	m_buffer(buffer)
 {
 }
 
 void StructBufferVk::destroy()
 {
+	m_buffer.destroy();
 }
 
 void* StructBufferVk::lock()
 {
-	void* ptr = nullptr;
-	if (vmaMapMemory(m_allocator, m_allocation, &ptr) == VK_SUCCESS)
-	{
-		m_locked = true;
-		return ptr;
-	}
-	else
-		return nullptr;
+	return m_buffer.lock();
 }
 
 void* StructBufferVk::lock(uint32_t structOffset, uint32_t structCount)
@@ -45,11 +34,7 @@ void* StructBufferVk::lock(uint32_t structOffset, uint32_t structCount)
 
 void StructBufferVk::unlock()
 {
-	if (m_locked)
-	{
-		vmaUnmapMemory(m_allocator, m_allocation);
-		m_locked = false;
-	}
+	return m_buffer.unlock();
 }
 
 	}
