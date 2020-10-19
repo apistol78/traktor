@@ -15,79 +15,75 @@ VertexBufferStaticVk::VertexBufferStaticVk(
 	VkDevice logicalDevice,
 	Queue* graphicsQueue,
 	CommandBufferPool* graphicsCommandPool,
-	uint32_t bufferSize,
 	VmaAllocator allocator,
-	VmaAllocation allocation,
-	VkBuffer vertexBuffer,
+	uint32_t bufferSize,
 	const VkVertexInputBindingDescription& vertexBindingDescription,
 	const AlignedVector< VkVertexInputAttributeDescription >& vertexAttributeDescriptions,
 	uint32_t hash
 )
-:	VertexBufferVk(bufferSize, allocator, allocation, vertexBuffer, vertexBindingDescription, vertexAttributeDescriptions, hash)
+:	VertexBufferVk(bufferSize, vertexBindingDescription, vertexAttributeDescriptions, hash)
 ,	m_logicalDevice(logicalDevice)
 ,	m_graphicsQueue(graphicsQueue)
 ,	m_graphicsCommandPool(graphicsCommandPool)
-,	m_stagingBufferAllocation(0)
-,	m_stagingBuffer(0)
+,	m_allocator(allocator)
 {
+}
+
+bool VertexBufferStaticVk::create()
+{
+	const uint32_t bufferSize = getBufferSize();
+	if (!bufferSize)
+		return false;
+
+	if (!m_deviceBuffer.create(m_allocator, bufferSize, VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT, false, true))
+		return false;
+
+	return true;
+}
+
+void VertexBufferStaticVk::destroy()
+{
+	m_deviceBuffer.destroy();
+	m_stageBuffer.destroy();
 }
 
 void* VertexBufferStaticVk::lock()
 {
-	if (m_stagingBufferAllocation != 0)
-		return nullptr;
+	const uint32_t bufferSize = getBufferSize();
+	if (!bufferSize)
+		return false;
 
-	// Create staging buffer.
-	VkBufferCreateInfo bufferInfo = {};
-	bufferInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
-	bufferInfo.size = getBufferSize();
-	bufferInfo.usage = VK_BUFFER_USAGE_TRANSFER_SRC_BIT;
-	bufferInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
+	if (!m_stageBuffer.create(m_allocator, bufferSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, true, true))
+		return false;
 
-	VmaAllocationCreateInfo aci = {};
-	aci.usage = VMA_MEMORY_USAGE_CPU_TO_GPU;
-
-	if (vmaCreateBuffer(m_allocator, &bufferInfo, &aci, &m_stagingBuffer, &m_stagingBufferAllocation, nullptr) != VK_SUCCESS)
-		return nullptr;	
-
-	// Get pointer to staging buffer.
-	uint8_t* data = nullptr;
-	if (vmaMapMemory(m_allocator, m_stagingBufferAllocation, (void**)&data) != VK_SUCCESS)
-		return nullptr;
-
-	return data;
+	return m_stageBuffer.lock();
 }
 
 void* VertexBufferStaticVk::lock(uint32_t vertexOffset, uint32_t vertexCount)
 {
+	T_FATAL_ERROR;
 	return nullptr;
 }
 
 void VertexBufferStaticVk::unlock()
 {
-	if (m_stagingBufferAllocation == 0)
-		return;
-
-	// Unmap staging buffer.
-	vmaUnmapMemory(m_allocator, m_stagingBufferAllocation);
-
-	VkCommandBuffer commandBuffer = m_graphicsCommandPool->acquireAndBegin();
+	m_stageBuffer.unlock();
 
 	// Copy staging buffer into vertex buffer.
+	VkCommandBuffer commandBuffer = m_graphicsCommandPool->acquireAndBegin();
+
 	VkBufferCopy bc = {};
 	bc.size = getBufferSize();
 	vkCmdCopyBuffer(
 		commandBuffer,
-		m_stagingBuffer,
-		m_vertexBuffer,
+		m_stageBuffer,
+		m_deviceBuffer,
 		1,
 		&bc
 	);
 
-	// End recording command buffer.
 	vkEndCommandBuffer(commandBuffer);
 
-	// Submit and wait for commands to execute.
 	VkSubmitInfo si = {};
 	si.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
 	si.commandBufferCount = 1;
@@ -97,11 +93,12 @@ void VertexBufferStaticVk::unlock()
 	m_graphicsCommandPool->release(commandBuffer);
 
 	// Free staging buffer.
-	vkDestroyBuffer(m_logicalDevice, m_stagingBuffer, 0);
-	m_stagingBuffer = 0;
+	m_stageBuffer.destroy();
+}
 
-	vmaFreeMemory(m_allocator, m_stagingBufferAllocation);
-	m_stagingBufferAllocation = 0;
+VkBuffer VertexBufferStaticVk::getVkBuffer() const
+{
+	return m_deviceBuffer;
 }
 
 	}

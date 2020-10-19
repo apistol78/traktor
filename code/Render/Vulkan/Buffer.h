@@ -13,9 +13,7 @@ namespace traktor
 class Buffer
 {
 public:
-    explicit Buffer(VmaAllocator allocator);
-
-	bool create(uint32_t bufferSize, uint32_t usageBits, bool cpuAccess, bool gpuAccess);
+	bool create(VmaAllocator allocator, uint32_t bufferSize, uint32_t usageBits, bool cpuAccess, bool gpuAccess);
 
 	void destroy();
 

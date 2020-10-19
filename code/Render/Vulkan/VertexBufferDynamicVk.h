@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Render/Vulkan/Buffer.h"
 #include "Render/Vulkan/VertexBufferVk.h"
 
 namespace traktor
@@ -17,13 +18,14 @@ class VertexBufferDynamicVk : public VertexBufferVk
 public:
 	VertexBufferDynamicVk(
 		uint32_t bufferSize,
-		VmaAllocator allocator,
-		VmaAllocation allocation,
-		VkBuffer vertexBuffer,
 		const VkVertexInputBindingDescription& vertexBindingDescription,
 		const AlignedVector< VkVertexInputAttributeDescription >& vertexAttributeDescriptions,
 		uint32_t hash
 	);
+
+	bool create(VmaAllocator allocator, int32_t inFlightCount);
+
+	virtual void destroy() override final;
 
 	virtual void* lock() override final;
 
@@ -31,8 +33,11 @@ public:
 
 	virtual void unlock() override final;
 
+	virtual VkBuffer getVkBuffer() const override final;
+
 private:
-	bool m_locked;
+	AlignedVector< Buffer > m_buffers;
+	int32_t m_index;
 };
 
 	}

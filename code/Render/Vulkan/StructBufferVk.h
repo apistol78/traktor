@@ -13,10 +13,9 @@ class StructBufferVk : public StructBuffer
 	T_RTTI_CLASS;
 
 public:
-	StructBufferVk(
-		uint32_t bufferSize,
-		Buffer&& buffer
-	);
+	StructBufferVk(uint32_t bufferSize);
+
+	bool create(VmaAllocator allocator, int32_t inFlightCount);
 
 	virtual void destroy() override final;
 
@@ -26,10 +25,11 @@ public:
 
 	virtual void unlock() override final;
 
-	VkBuffer getVkBuffer() const { return m_buffer; }
+	VkBuffer getVkBuffer() const { return m_buffers[m_index]; }
 
 private:
-	Buffer m_buffer;
+	AlignedVector< Buffer > m_buffers;
+	int32_t m_index;
 };
 
 	}

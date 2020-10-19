@@ -2,7 +2,6 @@
 
 #include "Core/Containers/AlignedVector.h"
 #include "Render/VertexBuffer.h"
-#include "Render/Vulkan/ApiHeader.h"
 
 namespace traktor
 {
@@ -19,17 +18,15 @@ class VertexBufferVk : public VertexBuffer
 public:
 	VertexBufferVk(
 		uint32_t bufferSize,
-		VmaAllocator allocator,
-		VmaAllocation allocation,
-		VkBuffer vertexBuffer,
+		//VmaAllocator allocator,
+		//VmaAllocation allocation,
+		//VkBuffer vertexBuffer,
 		const VkVertexInputBindingDescription& vertexBindingDescription,
 		const AlignedVector< VkVertexInputAttributeDescription >& vertexAttributeDescriptions,
 		uint32_t hash
 	);
 
-	virtual void destroy() override;
-
-	VkBuffer getVkBuffer() const { return m_vertexBuffer; }
+	virtual VkBuffer getVkBuffer() const = 0;
 
 	const VkVertexInputBindingDescription& getVkVertexInputBindingDescription() const { return m_vertexBindingDescription; }
 
@@ -38,12 +35,15 @@ public:
 	uint32_t getHash() const { return m_hash; }
 
 protected:
-	VmaAllocator m_allocator;
-	VmaAllocation m_allocation;
-	VkBuffer m_vertexBuffer;
+	//VmaAllocator m_allocator;
+	//VmaAllocation m_allocation;
+	//VkBuffer m_vertexBuffer;
+
 	VkVertexInputBindingDescription m_vertexBindingDescription;
 	AlignedVector< VkVertexInputAttributeDescription > m_vertexAttributeDescriptions;
 	uint32_t m_hash;
+
+	//Buffer m_buffer;
 };
 
 	}
