@@ -30,8 +30,7 @@ void RenderServer::setFrameRate(int32_t frameRate)
 
 int32_t RenderServer::getThreadFrameQueueCount() const
 {
-	// 2 CPU frames, and 2 GPU frames.
-	return 2 + 2;
+	return 2;
 }
 
 	}

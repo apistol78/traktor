@@ -470,21 +470,6 @@ Ref< IRenderView > RenderSystemVk::createRenderView(const RenderViewEmbeddedDesc
 
 Ref< VertexBuffer > RenderSystemVk::createVertexBuffer(const AlignedVector< VertexElement >& vertexElements, uint32_t bufferSize, bool dynamic)
 {
-	VkBuffer vertexBuffer = 0;
-
-	VkBufferCreateInfo bci = {};
-	bci.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
-	bci.size = bufferSize;
-	bci.usage = VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT;
-	bci.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
-
-	VmaAllocationCreateInfo aci = {};
-	aci.usage = dynamic ? VMA_MEMORY_USAGE_CPU_TO_GPU : VMA_MEMORY_USAGE_GPU_ONLY;
-
-	VmaAllocation allocation;
-	if (vmaCreateBuffer(m_allocator, &bci, &aci, &vertexBuffer, &allocation, nullptr) != VK_SUCCESS)
-		return nullptr;
-
 	VkVertexInputBindingDescription vibd = {};
 	vibd.binding = 0;
 	vibd.stride = getVertexSize(vertexElements);
@@ -507,42 +492,35 @@ Ref< VertexBuffer > RenderSystemVk::createVertexBuffer(const AlignedVector< Vert
 	cs.end();
 
 	if (dynamic)
-		return new VertexBufferDynamicVk(
-			bufferSize,
-			m_allocator,
-			allocation,
-			vertexBuffer,
-			vibd,
-			vads,
-			cs.get()
-		);
+	{
+		Ref< VertexBufferDynamicVk > vb = new VertexBufferDynamicVk(bufferSize, vibd, vads, cs.get());
+		if (vb->create(m_allocator, 4))
+			return vb;
+	}
 	else
-		return new VertexBufferStaticVk(
-			m_logicalDevice,
-			m_graphicsQueue,
-			m_graphicsCommandPool,
-			bufferSize,
-			m_allocator,
-			allocation,
-			vertexBuffer,
-			vibd,
-			vads,
-			cs.get()
-		);
+	{
+		Ref< VertexBufferStaticVk > vb = new VertexBufferStaticVk(m_logicalDevice, m_graphicsQueue, m_graphicsCommandPool, m_allocator, bufferSize, vibd, vads, cs.get());
+		if (vb->create())
+			return vb;
+	}
+
+	return nullptr;
 }
 
 Ref< IndexBuffer > RenderSystemVk::createIndexBuffer(IndexType indexType, uint32_t bufferSize, bool dynamic)
 {
-	Buffer buffer(m_allocator);
-	buffer.create(bufferSize, VK_BUFFER_USAGE_INDEX_BUFFER_BIT, true, true);
+	Buffer buffer;
+	buffer.create(m_allocator, bufferSize, VK_BUFFER_USAGE_INDEX_BUFFER_BIT, true, true);
 	return new IndexBufferVk(indexType, bufferSize, std::move(buffer));
 }
 
 Ref< StructBuffer > RenderSystemVk::createStructBuffer(const AlignedVector< StructElement >& structElements, uint32_t bufferSize)
 {
-	Buffer buffer(m_allocator);
-	buffer.create(bufferSize, VK_BUFFER_USAGE_STORAGE_BUFFER_BIT, true, true);
-	return new StructBufferVk(bufferSize, std::move(buffer));
+	Ref< StructBufferVk > buffer = new StructBufferVk(bufferSize);
+	if (buffer->create(m_allocator, 4))
+		return buffer;
+	else
+		return nullptr;
 }
 
 Ref< ISimpleTexture > RenderSystemVk::createSimpleTexture(const SimpleTextureCreateDesc& desc, const wchar_t* const tag)

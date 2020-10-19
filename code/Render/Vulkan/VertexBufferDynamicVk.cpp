@@ -10,44 +10,59 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.render.VertexBufferDynamicVk", VertexBufferDyna
 
 VertexBufferDynamicVk::VertexBufferDynamicVk(
 	uint32_t bufferSize,
-	VmaAllocator allocator,
-	VmaAllocation allocation,
-	VkBuffer vertexBuffer,
 	const VkVertexInputBindingDescription& vertexBindingDescription,
 	const AlignedVector< VkVertexInputAttributeDescription >& vertexAttributeDescriptions,
 	uint32_t hash
 )
-:	VertexBufferVk(bufferSize, allocator, allocation, vertexBuffer, vertexBindingDescription, vertexAttributeDescriptions, hash)
-,	m_locked(false)
+:	VertexBufferVk(bufferSize, vertexBindingDescription, vertexAttributeDescriptions, hash)
 {
+}
+
+bool VertexBufferDynamicVk::create(VmaAllocator allocator, int32_t inFlightCount)
+{
+	const uint32_t bufferSize = getBufferSize();
+	if (!bufferSize)
+		return false;
+
+	m_buffers.resize(inFlightCount);
+	for (auto& buffer : m_buffers)
+	{
+		if (!buffer.create(allocator, bufferSize, VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, true, true))
+			return false;
+	}
+
+	return true;
+}
+
+void VertexBufferDynamicVk::destroy()
+{
+	for (auto& buffer : m_buffers)
+		buffer.destroy();
+	m_buffers.clear();
 }
 
 void* VertexBufferDynamicVk::lock()
 {
-	T_FATAL_ASSERT(!m_locked);
-
-	void* ptr = nullptr;
-	if (vmaMapMemory(m_allocator, m_allocation, &ptr) == VK_SUCCESS)
-	{
-		m_locked = true;
-		return ptr;
-	}
-	else
-		return nullptr;
+	int32_t next = (m_index + 1) % (int32_t)m_buffers.size();
+	return m_buffers[next].lock();
 }
 
 void* VertexBufferDynamicVk::lock(uint32_t vertexOffset, uint32_t vertexCount)
 {
+	T_FATAL_ERROR;
 	return nullptr;
 }
 
 void VertexBufferDynamicVk::unlock()
 {
-	if (m_locked)
-	{
-		vmaUnmapMemory(m_allocator, m_allocation);
-		m_locked = false;
-	}
+	int32_t next = (m_index + 1) % (int32_t)m_buffers.size();
+	m_buffers[next].unlock();
+	m_index = next;
+}
+
+VkBuffer VertexBufferDynamicVk::getVkBuffer() const
+{
+	return m_buffers[m_index];
 }
 
 	}
