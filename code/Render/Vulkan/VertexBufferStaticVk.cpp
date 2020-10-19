@@ -51,10 +51,10 @@ void* VertexBufferStaticVk::lock()
 {
 	const uint32_t bufferSize = getBufferSize();
 	if (!bufferSize)
-		return false;
+		return nullptr;
 
 	if (!m_stageBuffer.create(m_allocator, bufferSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, true, true))
-		return false;
+		return nullptr;
 
 	return m_stageBuffer.lock();
 }
