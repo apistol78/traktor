@@ -111,7 +111,16 @@
 			</item>
 		</value>
 	</migrateProperties>
-	<runtimeProperties/>
+	<runtimeProperties type="traktor.PropertyGroup">
+		<value>
+			<item>
+				<first>Render.MipBias</first>
+				<second type="traktor.PropertyFloat">
+					<value>-1</value>
+				</second>
+			</item>
+		</value>
+	</runtimeProperties>
 	<environment/>
 	<dependencies/>
 </object>
