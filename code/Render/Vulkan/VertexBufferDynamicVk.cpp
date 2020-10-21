@@ -15,6 +15,7 @@ VertexBufferDynamicVk::VertexBufferDynamicVk(
 	uint32_t hash
 )
 :	VertexBufferVk(bufferSize, vertexBindingDescription, vertexAttributeDescriptions, hash)
+,	m_index(0)
 {
 }
 
