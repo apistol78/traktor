@@ -28,10 +28,8 @@ RenderTargetSetVk::RenderTargetSetVk(
 	VkPhysicalDevice physicalDevice,
 	VkDevice logicalDevice,
 	VmaAllocator allocator,
-
 	Queue* graphicsQueue,
 	CommandBufferPool* graphicsCommandPool
-
 )
 :	m_physicalDevice(physicalDevice)
 ,	m_logicalDevice(logicalDevice)
@@ -50,11 +48,11 @@ RenderTargetSetVk::~RenderTargetSetVk()
 bool RenderTargetSetVk::createPrimary(int32_t width, int32_t height, VkFormat colorFormat, VkImage colorImage, VkFormat depthFormat, VkImage depthImage, const wchar_t* const tag)
 {
 	m_colorTargets.resize(1);
-	m_colorTargets[0] = new RenderTargetVk(m_physicalDevice, m_logicalDevice, m_allocator, m_graphicsQueue, m_graphicsCommandPool);
+	m_colorTargets[0] = new RenderTargetVk(m_physicalDevice, m_logicalDevice, m_allocator);
 	if (!m_colorTargets[0]->createPrimary(width, height, colorFormat, colorImage, tag))
 		return false;
 
-	m_depthTarget = new RenderTargetDepthVk(m_physicalDevice, m_logicalDevice, m_allocator, m_graphicsQueue, m_graphicsCommandPool);
+	m_depthTarget = new RenderTargetDepthVk(m_physicalDevice, m_logicalDevice, m_allocator);
 	if (!m_depthTarget->createPrimary(width, height, depthFormat, depthImage, tag))
 		return false;
 
@@ -78,14 +76,14 @@ bool RenderTargetSetVk::create(const RenderTargetSetCreateDesc& setDesc, IRender
 	m_colorTargets.resize(setDesc.count);
 	for (int32_t i = 0; i < setDesc.count; ++i)
 	{
-		m_colorTargets[i] = new RenderTargetVk(m_physicalDevice, m_logicalDevice, m_allocator, m_graphicsQueue, m_graphicsCommandPool);
+		m_colorTargets[i] = new RenderTargetVk(m_physicalDevice, m_logicalDevice, m_allocator);
 		if (!m_colorTargets[i]->create(setDesc, setDesc.targets[i], tag))
 			return false;
 	}
 
 	if (setDesc.createDepthStencil)
 	{
-		m_depthTarget = new RenderTargetDepthVk(m_physicalDevice, m_logicalDevice, m_allocator, m_graphicsQueue, m_graphicsCommandPool);
+		m_depthTarget = new RenderTargetDepthVk(m_physicalDevice, m_logicalDevice, m_allocator);
 		if (!m_depthTarget->create(setDesc, tag))
 			return false;
 		m_depthTargetShared = false;

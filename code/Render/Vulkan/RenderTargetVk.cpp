@@ -2,8 +2,6 @@
 #include "Core/Misc/TString.h"
 #include "Render/Types.h"
 #include "Render/Vulkan/ApiLoader.h"
-#include "Render/Vulkan/CommandBufferPool.h"
-#include "Render/Vulkan/Queue.h"
 #include "Render/Vulkan/RenderTargetVk.h"
 #include "Render/Vulkan/UtilitiesVk.h"
 
@@ -17,15 +15,11 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderTargetVk", RenderTargetVk, ISimple
 RenderTargetVk::RenderTargetVk(
 	VkPhysicalDevice physicalDevice,
 	VkDevice logicalDevice,
-	VmaAllocator allocator,
-	Queue* graphicsQueue,
-	CommandBufferPool* graphicsCommandPool
+	VmaAllocator allocator
 )
 :	m_physicalDevice(physicalDevice)
 ,	m_logicalDevice(logicalDevice)
 ,	m_allocator(allocator)
-,	m_graphicsQueue(graphicsQueue)
-,	m_graphicsCommandPool(graphicsCommandPool)
 ,	m_format(VK_FORMAT_UNDEFINED)
 ,	m_image(0)
 ,	m_allocation(0)
