@@ -2,8 +2,6 @@
 #include "Core/Misc/TString.h"
 #include "Render/Types.h"
 #include "Render/Vulkan/ApiLoader.h"
-#include "Render/Vulkan/CommandBufferPool.h"
-#include "Render/Vulkan/Queue.h"
 #include "Render/Vulkan/RenderTargetDepthVk.h"
 #include "Render/Vulkan/UtilitiesVk.h"
 
@@ -17,15 +15,11 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderTargetDepthVk", RenderTargetDepthV
 RenderTargetDepthVk::RenderTargetDepthVk(
 	VkPhysicalDevice physicalDevice,
 	VkDevice logicalDevice,
-	VmaAllocator allocator,
-	Queue* graphicsQueue,
-	CommandBufferPool* graphicsCommandPool
+	VmaAllocator allocator
 )
 :	m_physicalDevice(physicalDevice)
 ,	m_logicalDevice(logicalDevice)
 ,	m_allocator(allocator)
-,	m_graphicsQueue(graphicsQueue)
-,	m_graphicsCommandPool(graphicsCommandPool)
 ,	m_format(VK_FORMAT_UNDEFINED)
 ,	m_image(0)
 ,	m_allocation(0)
@@ -67,21 +61,6 @@ bool RenderTargetDepthVk::createPrimary(int32_t width, int32_t height, VkFormat 
 
 	// Set debug name of texture.
 	setObjectDebugName(m_logicalDevice, tag, (uint64_t)m_image, VK_OBJECT_TYPE_IMAGE);
-
-	// Prepare for target.
-	VkCommandBuffer commandBuffer = m_graphicsCommandPool->acquireAndBegin();
-
-	prepareAsTarget(commandBuffer);
-
-	vkEndCommandBuffer(commandBuffer);
-
-	VkSubmitInfo si = {};
-	si.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
-	si.commandBufferCount = 1;
-	si.pCommandBuffers = &commandBuffer;
-	m_graphicsQueue->submitAndWait(si);
-
-	m_graphicsCommandPool->release(commandBuffer);
 	return true;
 }
 
@@ -158,21 +137,6 @@ bool RenderTargetDepthVk::create(const RenderTargetSetCreateDesc& setDesc, const
 
 	// Set debug name of texture.
 	setObjectDebugName(m_logicalDevice, tag, (uint64_t)m_image, VK_OBJECT_TYPE_IMAGE);
-
-	// Prepare for target.
-	VkCommandBuffer commandBuffer = m_graphicsCommandPool->acquireAndBegin();
-
-	prepareAsTarget(commandBuffer);
-
-	vkEndCommandBuffer(commandBuffer);
-
-	VkSubmitInfo si = {};
-	si.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
-	si.commandBufferCount = 1;
-	si.pCommandBuffers = &commandBuffer;
-	m_graphicsQueue->submitAndWait(si);
-
-	m_graphicsCommandPool->release(commandBuffer);
 	return true;
 }
 

@@ -11,8 +11,6 @@ class Semaphore;
 	namespace render
 	{
 
-class CommandBufferPool;
-class Queue;
 struct RenderTargetSetCreateDesc;
 
 /*!
@@ -26,9 +24,7 @@ public:
 	RenderTargetDepthVk(
 		VkPhysicalDevice physicalDevice,
 		VkDevice logicalDevice,
-		VmaAllocator allocator,
-		Queue* graphicsQueue,
-		CommandBufferPool* graphicsCommandPool
+		VmaAllocator allocator
 	);
 
 	virtual ~RenderTargetDepthVk();
@@ -67,8 +63,6 @@ private:
 	VkPhysicalDevice m_physicalDevice;
 	VkDevice m_logicalDevice;
 	VmaAllocator m_allocator;
-	Ref< Queue > m_graphicsQueue;
-	Ref< CommandBufferPool > m_graphicsCommandPool;
 	VkFormat m_format;
 	VkImage m_image;
 	VmaAllocation m_allocation;

@@ -21,9 +21,9 @@ public:
 
 	static Ref< Queue > create(VkDevice device, uint32_t queueIndex);
 
-	void submit(const VkSubmitInfo& submitInfo, VkFence signalFence = VK_NULL_HANDLE);
+	bool submit(const VkSubmitInfo& submitInfo, VkFence signalFence = VK_NULL_HANDLE);
 
-	void submitAndWait(const VkSubmitInfo& submitInfo);
+	bool submitAndWait(const VkSubmitInfo& submitInfo);
 
 	uint32_t getQueueIndex() const { return m_queueIndex; }
 
