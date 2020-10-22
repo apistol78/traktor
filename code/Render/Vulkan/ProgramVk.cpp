@@ -404,7 +404,7 @@ bool ProgramVk::validateGraphics(VkDescriptorPool descriptorPool, VkCommandBuffe
 			imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
 		}
 
-		T_ASSERT (imageView != 0);
+		T_ASSERT (imageInfo.imageView != 0);
 
 		auto& write = m_writes.push_back();
 		write = {};

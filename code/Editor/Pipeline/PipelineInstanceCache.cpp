@@ -79,7 +79,6 @@ Ref< const ISerializable > PipelineInstanceCache::getObjectReadOnly(const Guid& 
 			Ref< ISerializable > object = BinarySerializer(&bufferedStream).readObject();
 			if (object)
 			{
-				T_ASSERT(DeepHash(object).get() == cachedHash);
 				m_readCache[instanceGuid].object = object;
 				m_readCache[instanceGuid].hash = cachedHash;
 				return object;
