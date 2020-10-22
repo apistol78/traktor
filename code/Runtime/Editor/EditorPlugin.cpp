@@ -499,13 +499,16 @@ void EditorPlugin::launch(TargetInstance* targetInstance)
 
 	std::wstring host = m_hostEnumerator->getHost(id);
 
-	// Get our network host.
-	std::wstring editorHost = L"localhost";
-	net::SocketAddressIPv4::Interface itf;
-	if (net::SocketAddressIPv4::getBestInterface(itf))
-		editorHost = itf.addr->getHostName();
-	else
-		log::warning << L"Unable to determine editor host address; target might not be able to connect to editor database." << Endl;
+	// Get our network host; in case target is local machine we always use loopback for efficiency.
+	std::wstring editorHost = L"127.0.0.1";
+	if (!m_hostEnumerator->isLocal(id))
+	{
+		net::SocketAddressIPv4::Interface itf;
+		if (net::SocketAddressIPv4::getBestInterface(itf))
+			editorHost = itf.addr->getHostName();
+		else
+			log::warning << L"Unable to determine editor host address; target might not be able to connect to editor database." << Endl;
+	}
 
 	// Resolve absolute output path.
 	std::wstring outputPath = FileSystem::getInstance().getAbsolutePath(targetInstance->getOutputPath()).getPathName();
