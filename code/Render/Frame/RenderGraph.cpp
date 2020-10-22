@@ -226,7 +226,6 @@ bool RenderGraph::build(RenderContext* renderContext, int32_t width, int32_t hei
 		auto& target = it.second;
 		if (target.rts == nullptr && target.persistentHandle != 0)
 		{
-			T_ASSERT(target.referenceCount > 0);
 			if (!acquire(width, height, target))
 				return false;
 		}

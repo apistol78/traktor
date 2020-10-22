@@ -54,8 +54,6 @@ Ref< Scene > SceneResource::createScene(
 		}
 	}
 
-	T_ASSERT(entityBuilderSchema->getReferenceCount() == 1);
-
 	return new Scene(
 		controller,
 		rootEntity,

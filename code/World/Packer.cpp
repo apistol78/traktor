@@ -57,7 +57,7 @@ private:
 	int32_t m_height;
 };
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.spark.Packer", Packer, Object)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.world.Packer", Packer, Object)
 
 Packer::Packer(int32_t width, int32_t height)
 {
