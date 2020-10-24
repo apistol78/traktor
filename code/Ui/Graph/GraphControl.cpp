@@ -583,13 +583,16 @@ void GraphControl::eventMouseDown(MouseButtonDownEvent* event)
 
 				edge->setSelected(selected);
 			}
-
-			// Move selected node last in list to ensure it's drawn last.
-			m_nodes.remove(m_selectedNode);
-			m_nodes.push_back(m_selectedNode);
 		}
 
 		endSelectModification();
+
+		// Ensure selected node is last.
+		if (m_selectedNode != m_nodes.back())
+		{
+			m_nodes.remove(m_selectedNode);
+			m_nodes.push_back(m_selectedNode);
+		}
 
 		// Check if an output pin was selected.
 		if (event->getButton() == MbtLeft)
