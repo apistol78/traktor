@@ -4,6 +4,7 @@
 #include "Core/Serialization/DeepClone.h"
 #include "Core/Settings/PropertyBoolean.h"
 #include "Core/Settings/PropertyGroup.h"
+#include "Core/Settings/PropertyInteger.h"
 #include "Core/Settings/PropertyString.h"
 #include "Database/Database.h"
 #include "Database/Group.h"
@@ -52,13 +53,9 @@
 #include "Ui/Menu.h"
 #include "Ui/MenuItem.h"
 #include "Ui/MessageBox.h"
+#include "Ui/Splitter.h"
 #include "Ui/StyleBitmap.h"
 #include "Ui/TableLayout.h"
-#include "Ui/ToolBar/ToolBar.h"
-#include "Ui/ToolBar/ToolBarButton.h"
-#include "Ui/ToolBar/ToolBarButtonClickEvent.h"
-#include "Ui/ToolBar/ToolBarDropDown.h"
-#include "Ui/ToolBar/ToolBarSeparator.h"
 #include "Ui/Graph/GraphControl.h"
 #include "Ui/Graph/PaintSettings.h"
 #include "Ui/Graph/Node.h"
@@ -75,6 +72,13 @@
 #include "Ui/GridView/GridRow.h"
 #include "Ui/GridView/GridRowDoubleClickEvent.h"
 #include "Ui/GridView/GridView.h"
+#include "Ui/SyntaxRichEdit/SyntaxLanguageHlsl.h"
+#include "Ui/SyntaxRichEdit/SyntaxRichEdit.h"
+#include "Ui/ToolBar/ToolBar.h"
+#include "Ui/ToolBar/ToolBarButton.h"
+#include "Ui/ToolBar/ToolBarButtonClickEvent.h"
+#include "Ui/ToolBar/ToolBarDropDown.h"
+#include "Ui/ToolBar/ToolBarSeparator.h"
 
 // Resources
 #include "Resources/Tools.h"
@@ -216,9 +220,12 @@ bool ShaderGraphEditorPage::create(ui::Container* parent)
 
 	m_toolBar->addEventHandler< ui::ToolBarButtonClickEvent >(this, &ShaderGraphEditorPage::eventToolClick);
 
+	Ref< ui::Splitter > splitter = new ui::Splitter();
+	splitter->create(container, true, ui::dpi96(-350), false);
+
 	// Create shader graph editor control.
 	m_editorGraph = new ui::GraphControl();
-	m_editorGraph->create(container);
+	m_editorGraph->create(splitter);
 	m_editorGraph->setText(L"SHADER");
 	m_editorGraph->addEventHandler< ui::MouseButtonDownEvent >(this, &ShaderGraphEditorPage::eventButtonDown);
 	m_editorGraph->addEventHandler< ui::SelectEvent >(this, &ShaderGraphEditorPage::eventSelect);
@@ -226,6 +233,18 @@ bool ShaderGraphEditorPage::create(ui::Container* parent)
 	m_editorGraph->addEventHandler< ui::NodeActivateEvent >(this, &ShaderGraphEditorPage::eventNodeDoubleClick);
 	m_editorGraph->addEventHandler< ui::EdgeConnectEvent >(this, &ShaderGraphEditorPage::eventEdgeConnect);
 	m_editorGraph->addEventHandler< ui::EdgeDisconnectEvent >(this, &ShaderGraphEditorPage::eventEdgeDisconnect);
+
+	// Create script editor control.
+	m_scriptEdit = new ui::SyntaxRichEdit();
+	m_scriptEdit->create(splitter, L"", ui::WsDoubleBuffer);
+	m_scriptEdit->setLanguage(new ui::SyntaxLanguageHlsl());
+	m_scriptEdit->hide();
+	m_scriptEdit->addEventHandler< ui::ContentChangeEvent >(this, &ShaderGraphEditorPage::eventScriptChange);
+
+	// Load default script editor font from settings.
+	std::wstring font = m_editor->getSettings()->getProperty< std::wstring >(L"Editor.Font", L"Consolas");
+	int32_t fontSize = m_editor->getSettings()->getProperty< int32_t >(L"Editor.FontSize", 11);
+	m_scriptEdit->setFont(ui::Font(font, fontSize));
 
 	// Create shader graph referee view.
 	m_dependencyPane = new ShaderDependencyPane(m_editor, m_document->getInstance(0)->getGuid());
@@ -1309,9 +1328,24 @@ void ShaderGraphEditorPage::eventSelect(ui::SelectEvent* event)
 		T_ASSERT(shaderNode);
 
 		m_site->setPropertyObject(shaderNode);
+
+		if (Script* scriptNode = dynamic_type_cast< Script* >(shaderNode))
+		{
+			m_scriptEdit->setText(scriptNode->getScript());
+			m_scriptEdit->show();
+		}
+		else
+			m_scriptEdit->hide();
 	}
 	else
-		m_site->setPropertyObject(0);
+	{
+		m_site->setPropertyObject(nullptr);
+		m_scriptEdit->hide();
+	}
+
+	// Update parent container to ensure splitter is redrawn.
+	m_scriptEdit->getParent()->update();
+	m_scriptEdit->update();
 }
 
 void ShaderGraphEditorPage::eventNodeMoved(ui::NodeMovedEvent* event)
@@ -1418,6 +1452,18 @@ void ShaderGraphEditorPage::eventEdgeDisconnect(ui::EdgeDisconnectEvent* event)
 	m_shaderGraph->removeEdge(edge);
 
 	updateGraph();
+}
+
+void ShaderGraphEditorPage::eventScriptChange(ui::ContentChangeEvent* event)
+{
+	RefArray< ui::Node > selectedNodes;
+	if (m_editorGraph->getSelectedNodes(selectedNodes) != 1)
+		return;
+
+	Script* scriptNode = selectedNodes.front()->getData< Script >(L"SHADERNODE");
+	T_ASSERT(scriptNode != nullptr);
+
+	scriptNode->setScript(m_scriptEdit->getText());
 }
 
 void ShaderGraphEditorPage::eventVariableEdit(ui::GridItemContentChangeEvent* event)
