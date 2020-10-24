@@ -200,7 +200,7 @@ public:
 	typedef std::vector< pin_type > value_type;
 
 	MemberPinArray(const wchar_t* const name, Node* node, value_type& pins)
-	:	MemberArray(name, &m_attribute)
+	:	MemberArray(name, nullptr)
 	,	m_node(node)
 	,	m_pins(pins)
 	,	m_index(0)
@@ -236,7 +236,6 @@ public:
 	}
 
 private:
-	AttributePrivate m_attribute;
 	Node* m_node;
 	value_type& m_pins;
 	mutable size_t m_index;
@@ -440,7 +439,7 @@ void Script::serialize(ISerializer& s)
 			Member< std::wstring >,
 			MemberSamplerState
 		>
-	>(L"samplers", m_samplers, AttributePrivate());
+	>(L"samplers", m_samplers);
 	s >> Member< std::wstring >(L"script", m_script, AttributeMultiLine() | AttributePrivate());
 }
 

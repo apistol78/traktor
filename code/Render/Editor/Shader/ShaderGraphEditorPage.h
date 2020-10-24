@@ -40,6 +40,7 @@ class NodeActivateEvent;
 class NodeMovedEvent;
 class Point;
 class SelectEvent;
+class SyntaxRichEdit;
 class ToolBar;
 class ToolBarButtonClickEvent;
 class ToolBarDropDown;
@@ -87,6 +88,7 @@ private:
 	Ref< ui::ToolBarDropDown > m_toolRenderer;
 	Ref< ui::ToolBarDropDown > m_toolTechniques;
 	Ref< ui::GraphControl > m_editorGraph;
+	Ref< ui::SyntaxRichEdit > m_scriptEdit;
 	Ref< ShaderDependencyPane > m_dependencyPane;
 	Ref< ShaderViewer > m_shaderViewer;
 	Ref< ui::Container > m_variablesContainer;
@@ -120,6 +122,8 @@ private:
 	void eventEdgeConnect(ui::EdgeConnectEvent* event);
 
 	void eventEdgeDisconnect(ui::EdgeDisconnectEvent* event);
+
+	void eventScriptChange(ui::ContentChangeEvent* event);
 
 	void eventVariableEdit(ui::GridItemContentChangeEvent* event);
 
