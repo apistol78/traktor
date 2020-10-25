@@ -46,7 +46,7 @@ const wchar_t* c_ImageProcess_elementNames[] =
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.WorldRenderSettings", 34, WorldRenderSettings, ISerializable)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.WorldRenderSettings", 35, WorldRenderSettings, ISerializable)
 
 void WorldRenderSettings::serialize(ISerializer& s)
 {
@@ -54,7 +54,12 @@ void WorldRenderSettings::serialize(ISerializer& s)
 
 	s >> Member< float >(L"viewNearZ", viewNearZ, AttributeRange(0.0f) | AttributeUnit(AuMetres));
 	s >> Member< float >(L"viewFarZ", viewFarZ, AttributeRange(0.0f) | AttributeUnit(AuMetres));
-	s >> Member< bool >(L"linearLighting", linearLighting);
+
+	if (s.getVersion() < 35)
+	{
+		bool linearLighting;
+		s >> Member< bool >(L"linearLighting", linearLighting);
+	}
 
 	if (s.getVersion() >= 28)
 	{

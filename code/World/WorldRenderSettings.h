@@ -72,7 +72,6 @@ public:
 
 	float viewNearZ = 1.0f;
 	float viewFarZ = 100.0f;
-	bool linearLighting = true;
 	ExposureMode exposureMode = EmFixed;
 	float exposure = 1.0f;
 	ShadowSettings shadowSettings[(int)Quality::Last];

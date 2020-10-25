@@ -262,10 +262,7 @@ bool WorldRendererDeferred::create(
 	}
 
 	// Create gamma correction processing.
-	if (
-		m_settings.linearLighting &&
-		std::abs(desc.gamma - 1.0f) > FUZZY_EPSILON
-	)
+	if (std::abs(desc.gamma - 1.0f) > FUZZY_EPSILON)
 	{
 		if (!resourceManager->bind(c_gammaCorrection, m_gammaCorrection))
 			log::warning << L"Unable to create gamma correction process; gamma correction disabled." << Endl;

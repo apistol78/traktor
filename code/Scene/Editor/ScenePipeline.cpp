@@ -25,7 +25,6 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.scene.ScenePipeline", 13, ScenePipeline
 ScenePipeline::ScenePipeline()
 :	m_targetEditor(false)
 ,	m_suppressShadows(false)
-,	m_suppressLinearLighting(false)
 ,	m_suppressDepthPass(false)
 ,	m_suppressImageProcess(false)
 ,	m_shadowMapSizeDenom(1)
@@ -37,7 +36,6 @@ bool ScenePipeline::create(const editor::IPipelineSettings* settings)
 {
 	m_targetEditor = settings->getProperty< bool >(L"Pipeline.TargetEditor");
 	m_suppressShadows = settings->getProperty< bool >(L"ScenePipeline.SuppressShadows");
-	m_suppressLinearLighting = settings->getProperty< bool >(L"ScenePipeline.SuppressLinearLighting");
 	m_suppressDepthPass = settings->getProperty< bool >(L"ScenePipeline.SuppressDepthPass");
 	m_suppressImageProcess = settings->getProperty< bool >(L"ScenePipeline.SuppressImageProcess");
 	m_shadowMapSizeDenom = settings->getProperty< int32_t >(L"ScenePipeline.ShadowMapSizeDenom", 1);
@@ -187,12 +185,6 @@ bool ScenePipeline::buildOutput(
 	sceneResource->setImageProcessParams(sceneAsset->getImageProcessParams());
 	sceneResource->setEntityData(groupEntityData);
 	sceneResource->setControllerData(controllerData);
-
-	if (m_suppressLinearLighting && sceneResource->getWorldRenderSettings()->linearLighting)
-	{
-		sceneResource->getWorldRenderSettings()->linearLighting = false;
-		log::info << L"Linear lighting suppressed." << Endl;
-	}
 
 	for (uint32_t i = 0; i < (int32_t)world::Quality::Last; ++i)
 	{

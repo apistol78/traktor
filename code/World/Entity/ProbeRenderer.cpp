@@ -204,7 +204,6 @@ void ProbeRenderer::setup(const WorldSetupContext& context)
 		world::WorldRenderSettings wrs;
 		wrs.viewNearZ = 0.01f;
 		wrs.viewFarZ = 10000.0f;
-		wrs.linearLighting = true;
 		wrs.exposureMode = world::WorldRenderSettings::EmFixed;
 		wrs.exposure = 0.0f;
 		wrs.fog = false;
