@@ -23,6 +23,8 @@ namespace traktor
 class T_DLLCLASS TypedInputPin : public InputPin
 {
 public:
+	TypedInputPin() = default;
+
 	TypedInputPin(Node* node, const Guid& id, const std::wstring& name, bool optional, ParameterType type, const std::wstring& samplerId = L"");
 
 	ParameterType getType() const;
@@ -30,7 +32,7 @@ public:
 	const std::wstring& getSamplerId() const;
 
 private:
-	ParameterType m_type;
+	ParameterType m_type = PtScalar;
 	std::wstring m_samplerId;
 };
 

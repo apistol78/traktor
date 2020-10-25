@@ -24,7 +24,7 @@ class Node;
 class T_DLLCLASS OutputPin
 {
 public:
-	OutputPin();
+	OutputPin() = default;
 
 	OutputPin(Node* node, const Guid& id, const std::wstring& name);
 
@@ -35,7 +35,7 @@ public:
 	const std::wstring& getName() const;
 
 private:
-	Node* m_node;
+	Node* m_node = nullptr;
 	Guid m_id;
 	std::wstring m_name;
 };

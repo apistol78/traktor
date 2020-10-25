@@ -1,4 +1,5 @@
 #include <algorithm>
+#include "Core/Meta/Traits.h"
 #include "Core/Serialization/AttributeMultiLine.h"
 #include "Core/Serialization/AttributePrivate.h"
 #include "Core/Serialization/AttributeReadOnly.h"
@@ -232,7 +233,8 @@ public:
 
 	virtual bool insert() const override final
 	{
-		return false;
+		m_pins.push_back(new IsPointer< pin_type >::base_t());
+		return true;
 	}
 
 private:
