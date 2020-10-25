@@ -23,14 +23,14 @@ namespace traktor
 class T_DLLCLASS TypedOutputPin : public OutputPin
 {
 public:
-	TypedOutputPin();
+	TypedOutputPin() = default;
 
 	TypedOutputPin(Node* node, const Guid& id, const std::wstring& name, ParameterType type);
 
 	ParameterType getType() const;
 
 private:
-	ParameterType m_type;
+	ParameterType m_type = PtScalar;
 };
 
 	}

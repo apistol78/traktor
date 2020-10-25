@@ -7,10 +7,6 @@ namespace traktor
 	namespace render
 	{
 
-OutputPin::OutputPin()
-{
-}
-
 OutputPin::OutputPin(Node* node, const Guid& id, const std::wstring& name)
 :	m_node(node)
 ,	m_id(id)

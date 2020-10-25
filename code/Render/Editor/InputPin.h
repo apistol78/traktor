@@ -24,6 +24,8 @@ class Node;
 class T_DLLCLASS InputPin
 {
 public:
+	InputPin() = default;
+
 	InputPin(Node* node, const Guid& id, const std::wstring& name, bool optional);
 
 	Node* getNode() const;
@@ -35,10 +37,10 @@ public:
 	bool isOptional() const;
 
 private:
-	Node* m_node;
+	Node* m_node = nullptr;
 	Guid m_id;
 	std::wstring m_name;
-	bool m_optional;
+	bool m_optional = false;
 };
 
 	}
