@@ -233,7 +233,7 @@ public:
 
 	virtual bool insert() const override final
 	{
-		m_pins.push_back(new IsPointer< pin_type >::base_t());
+		m_pins.push_back(new typename IsPointer< pin_type >::base_t());
 		return true;
 	}
 
