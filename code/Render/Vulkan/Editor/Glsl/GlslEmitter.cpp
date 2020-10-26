@@ -2464,20 +2464,23 @@ bool emitTextureSize(GlslContext& cx, TextureSize* node)
 		return false;
 
 	std::wstring textureName = in->getName();
-	Ref< GlslVariable > out = cx.emitOutput(node, L"Output", GtFloat3);
+	Ref< GlslVariable > out;
 
 	comment(f, node);
 	switch (in->getType())
 	{
 	case GtTexture2D:
-		f << L"vec3 " << out->getName() << L" = vec3(textureSize(" << textureName << L", 0).xy, 0.0f);" << Endl;
+		out = cx.emitOutput(node, L"Output", GtFloat2);
+		f << L"vec2 " << out->getName() << L" = textureSize(" << textureName << L", 0);" << Endl;
 		break;
 
 	case GtTexture3D:
+		out = cx.emitOutput(node, L"Output", GtFloat3);
 		f << L"vec3 " << out->getName() << L" = textureSize(" << textureName << L", 0);" << Endl;
 		break;
 
 	case GtTextureCube:
+		out = cx.emitOutput(node, L"Output", GtFloat3);
 		f << L"vec3 " << out->getName() << L" = textureSize(" << textureName << L", 0);" << Endl;
 		break;
 
