@@ -227,6 +227,43 @@
 			</position>
 			<value>2</value>
 		</item>
+		<item type="traktor.render.Script" version="1,traktor.render.Node:1">
+			<id>{1A35B3B6-CD0E-1449-95D8-23641EA8CD1B}</id>
+			<comment/>
+			<position>
+				<first>832</first>
+				<second>456</second>
+			</position>
+			<name>Unnamed</name>
+			<inputPins>
+				<item>
+					<id>{23F334BE-C240-7F44-840C-DC5F14C7EA43}</id>
+					<name>Position</name>
+					<type>PtVector</type>
+					<samplerId/>
+				</item>
+			</inputPins>
+			<outputPins>
+				<item>
+					<id>{759F1CD9-38C2-DE4B-BD99-C9E4782E730D}</id>
+					<name>Output</name>
+					<type>PtScalar</type>
+				</item>
+			</outputPins>
+			<samplers/>
+			<script>
+			<![CDATA[
+ENTRY
+{
+	float ratio = TargetSize.y / TargetSize.x;
+	vec2 tmp = vec2(Position.x, Position.y * ratio);
+	float ln = length(tmp);
+	Output = 1.0 - saturate((ln - Fade * 2.0) * 16.0);
+}
+
+			]]>
+			</script>
+		</item>
 	</nodes>
 	<edges>
 		<item type="traktor.render.Edge">

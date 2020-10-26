@@ -5,8 +5,8 @@
 			<id>{6834F690-121C-C249-8191-A03A37AFC8F2}</id>
 			<comment/>
 			<position>
-				<first>128</first>
-				<second>156</second>
+				<first>140</first>
+				<second>228</second>
 			</position>
 			<textureId>InputColor</textureId>
 		</item>
@@ -15,7 +15,7 @@
 			<comment/>
 			<position>
 				<first>637</first>
-				<second>153</second>
+				<second>160</second>
 			</position>
 		</item>
 		<item type="traktor.render.ImgPass" version="1,traktor.render.Node:1">
@@ -50,9 +50,19 @@
 					<shader>{FC562574-333A-264B-BBAC-531D00653824}</shader>
 					<parameters>
 						<item>Source</item>
+						<item>LUT</item>
 					</parameters>
 				</item>
 			</steps>
+		</item>
+		<item type="traktor.render.ImgTexture" version="traktor.render.Node:1">
+			<id>{827D3637-B979-F54B-9880-6AECEBD61E82}</id>
+			<comment/>
+			<position>
+				<first>78</first>
+				<second>165</second>
+			</position>
+			<texture>{3DEEC673-EDF5-364A-B796-BAC7EF575258}</texture>
 		</item>
 	</nodes>
 	<edges>
@@ -74,6 +84,16 @@
 			<destination>
 				<node ref="/object/nodes/item[1]"/>
 				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[3]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[2]"/>
+				<name>LUT</name>
 			</destination>
 		</item>
 	</edges>
