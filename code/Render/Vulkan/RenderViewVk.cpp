@@ -1372,7 +1372,7 @@ bool RenderViewVk::create(uint32_t width, uint32_t height, int32_t vblanks)
 		dps[2].type = VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE;
 		dps[2].descriptorCount = 40000;
 		dps[3].type = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
-		dps[3].descriptorCount = 1000;
+		dps[3].descriptorCount = 4000;
 
 		VkDescriptorPoolCreateInfo dpci = {};
 		dpci.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
