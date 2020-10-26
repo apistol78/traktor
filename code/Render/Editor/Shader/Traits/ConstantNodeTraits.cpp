@@ -63,7 +63,12 @@ PinType ConstantNodeTraits::getOutputPinType(
 		}
 	}
 	else if (is_a< TextureSize >(node))
-		return PntScalar3;
+	{
+		if (inputPinTypes[0] == PntTexture2D)
+			return PntScalar2;
+		else
+			return PntScalar3;
+	}
 	else
 		return PntVoid;
 }
