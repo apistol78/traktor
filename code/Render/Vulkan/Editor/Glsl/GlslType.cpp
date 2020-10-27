@@ -12,6 +12,7 @@ std::wstring glsl_type_name(GlslType type)
 	{
 		L"void",
 		L"bool",
+		L"int",
 		L"float",
 		L"vec2",
 		L"vec3",
@@ -31,6 +32,7 @@ int32_t glsl_type_width(GlslType type)
 	{
 		0,
 		0,
+		1,
 		1,
 		2,
 		3,
