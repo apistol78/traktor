@@ -942,12 +942,30 @@ bool emitIterate2(GlslContext& cx, Iterate2* node)
 	}
 
 	// Write outer for-loop statement.
-	Ref< GlslVariable > from = cx.emitInput(node, L"From");
-	Ref< GlslVariable > to = cx.emitInput(node, L"To");
-	if (!from || !to)
-		return false;
-
-	f << L"for (int " << N->getName() << L" = " << from->cast(GtInteger) << L"; " << N->getName() << L" <= " << to->cast(GtInteger) << L"; ++" << N->getName() << L")" << Endl;
+	StringOutputStream ss;
+	ss << L"for (int " << N->getName() << L" = ";
+	if (Scalar* scalarFrom = dynamic_type_cast< Scalar* >(cx.getInputNode(node, L"From")))
+		ss << (int32_t)scalarFrom->get();
+	else
+	{
+		Ref< GlslVariable > from = cx.emitInput(node, L"From");
+		if (from)
+			ss << from->cast(GtInteger);
+		else
+			return false;
+	}
+	ss << L"; " << N->getName() << L" <= ";
+	if (Scalar* scalarTo = dynamic_type_cast< Scalar* >(cx.getInputNode(node, L"To")))
+		ss << (int32_t)scalarTo->get();
+	else
+	{
+		Ref< GlslVariable > to = cx.emitInput(node, L"To");
+		if (to)
+			ss << to->cast(GtInteger);
+		else
+			return false;
+	}
+	f << ss.str() << L"; ++" << N->getName() << L")" << Endl;
 	f << L"{" << Endl;
 	f << IncreaseIndent;
 
