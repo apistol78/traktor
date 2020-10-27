@@ -20,7 +20,6 @@
 #include "Render/Editor/Shader/ShaderViewer.h"
 #include "Render/Editor/Shader/ShaderGraph.h"
 #include "Ui/Application.h"
-#include "Ui/CheckBox.h"
 #include "Ui/FloodLayout.h"
 #include "Ui/Static.h"
 #include "Ui/Tab.h"
@@ -75,7 +74,7 @@ void ShaderViewer::destroy()
 
 bool ShaderViewer::create(ui::Widget* parent)
 {
-	if (!ui::Container::create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"*,*,100%", 0, 0)))
+	if (!ui::Container::create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%", 0, 0)))
 		return false;
 
 	setText(i18n::Text(L"SHADERGRAPH_VIEWER"));
@@ -97,8 +96,12 @@ bool ShaderViewer::create(ui::Widget* parent)
 	m_dropTechniques->create(containerDrops);
 	m_dropTechniques->addEventHandler< ui::SelectionChangeEvent >(this, &ShaderViewer::eventTechniqueChange);
 
-	m_containerCombinations = new ui::Container();
-	m_containerCombinations->create(this, ui::WsNone, new ui::TableLayout(L"*", L"*", ui::dpi96(4), ui::dpi96(4)));
+	Ref< ui::Static > staticCombinations = new ui::Static();
+	staticCombinations->create(containerDrops, i18n::Text(L"SHADERGRAPH_VIEWER_COMBINATIONS"));
+
+	m_dropCombinations = new ui::DropDown();
+	m_dropCombinations->create(containerDrops, ui::DropDown::WsMultiple);
+	m_dropCombinations->addEventHandler< ui::SelectionChangeEvent >(this, &ShaderViewer::eventCombinationChange);
 
 	TypeInfoSet programCompilerTypes;
 	type_of< IProgramCompiler >().findAllOf(programCompilerTypes, false);
@@ -195,22 +198,15 @@ void ShaderViewer::updateTechniques()
 void ShaderViewer::updateCombinations()
 {
 	// Remove all previous checkboxes.
-	for (RefArray< ui::CheckBox >::iterator i = m_checkCombinations.begin(); i != m_checkCombinations.end(); ++i)
-		(*i)->destroy();
-	m_checkCombinations.clear();
+	m_dropCombinations->removeAll();
 
 	// Create checkboxes for combination in selected technique.
 	std::wstring techniqueName = m_dropTechniques->getSelectedItem();
 	std::map< std::wstring, TechniqueInfo >::const_iterator i = m_techniques.find(techniqueName);
 	if (i != m_techniques.end())
 	{
-		for (std::vector< std::wstring >::const_iterator j = i->second.parameters.begin(); j != i->second.parameters.end(); ++j)
-		{
-			Ref< ui::CheckBox > checkCombination = new ui::CheckBox();
-			checkCombination->create(m_containerCombinations, *j);
-			checkCombination->addEventHandler< ui::ButtonClickEvent >(this, &ShaderViewer::eventCombinationClick);
-			m_checkCombinations.push_back(checkCombination);
-		}
+		for (const auto& parameter : i->second.parameters)
+			m_dropCombinations->add(parameter);
 	}
 
 	update();
@@ -221,11 +217,10 @@ void ShaderViewer::updateShaders()
 	uint32_t value = 0;
 
 	// Calculate combination value.
-	for (uint32_t i = 0; i < m_checkCombinations.size(); ++i)
-	{
-		if (m_checkCombinations[i]->isChecked())
-			value |= 1 << i;
-	}
+	std::vector< int32_t > selectedCombinations;
+	m_dropCombinations->getSelected(selectedCombinations);
+	for (auto index : selectedCombinations)
+		value |= 1 << index;
 
 	int32_t vertexOffset = m_shaderEditVertex->getScrollLine();
 	int32_t pixelOffset = m_shaderEditPixel->getScrollLine();
@@ -273,7 +268,7 @@ void ShaderViewer::eventTechniqueChange(ui::SelectionChangeEvent* event)
 	updateShaders();
 }
 
-void ShaderViewer::eventCombinationClick(ui::ButtonClickEvent* event)
+void ShaderViewer::eventCombinationChange(ui::SelectionChangeEvent* event)
 {
 	updateShaders();
 }

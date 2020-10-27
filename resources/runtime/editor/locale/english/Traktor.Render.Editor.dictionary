@@ -658,6 +658,10 @@
 			<second>Technique</second>
 		</item>
 		<item>
+			<first>SHADERGRAPH_VIEWER_COMBINATIONS</first>
+			<second>Combinations</second>
+		</item>
+		<item>
 			<first>SHADERGRAPH_VIEWER_VERTEX</first>
 			<second>Vertex</second>
 		</item>
