@@ -234,7 +234,7 @@ bool emitComputeOutput(GlslContext& cx, ComputeOutput* node)
 			cx.getLayout().add(storageBuffer);
 
 			auto& f = cx.getShader().getOutputStream(GlslShader::BtBody);
-			f << storageStructNode->getParameterName() << L"_Data[int(" << offset->castToInteger(GtFloat) << L")]." << /*node->getName()*/L"fieldName" << L" = " << in->cast(GtFloat4) << L";" << Endl;
+			f << storageStructNode->getParameterName() << L"_Data[" << offset->cast(GtInteger) << L"]." << /*node->getName()*/L"fieldName" << L" = " << in->cast(GtFloat4) << L";" << Endl;
 
 			// Define parameter in context.
 			cx.addParameter(
@@ -599,7 +599,7 @@ bool emitIndexedUniform(GlslContext& cx, IndexedUniform* node)
 			return false;
 
 		comment(f, node);
-		assign(f, out) << node->getParameterName() << L"[int(" << index->getName() << L")];" << Endl;
+		assign(f, out) << node->getParameterName() << L"[" << index->cast(GtInteger) << L"];" << Endl;
 	}
 
 	// Add uniform to layout.
@@ -751,7 +751,7 @@ bool emitIterate(GlslContext& cx, Iterate* node)
 	std::wstring inputName;
 
 	// Create iterator variable.
-	Ref< GlslVariable > N = cx.emitOutput(node, L"N", GtFloat);
+	Ref< GlslVariable > N = cx.emitOutput(node, L"N", GtInteger);
 	T_ASSERT(N);
 
 	// Create void output variable; change type later when we know
@@ -783,7 +783,7 @@ bool emitIterate(GlslContext& cx, Iterate* node)
 		Ref< GlslVariable > condition = cx.emitInput(node, L"Condition");
 		if (condition)
 		{
-			fs << L"if (" << condition->cast(GtFloat) << L" == 0.0)" << Endl;
+			fs << L"if (" << condition->cast(GtInteger) << L" == 0)" << Endl;
 			fs << L"\tbreak;" << Endl;
 		}
 
@@ -808,7 +808,7 @@ bool emitIterate(GlslContext& cx, Iterate* node)
 		assign(f, out) << expandScalar(0.0f, out->getType()) << L";" << Endl;
 
 	// Write outer for-loop statement.
-	f << L"for (float " << N->getName() << L" = " << node->getFrom() << L".0; " << N->getName() << L" <= " << node->getTo() << L".0; ++" << N->getName() << L")" << Endl;
+	f << L"for (int " << N->getName() << L" = " << node->getFrom() << L"; " << N->getName() << L" <= " << node->getTo() << L"; ++" << N->getName() << L")" << Endl;
 	f << L"{" << Endl;
 	f << IncreaseIndent;
 
@@ -829,7 +829,7 @@ bool emitIterate2(GlslContext& cx, Iterate2* node)
 	std::wstring inputNames[4];
 
 	// Create iterator variable.
-	Ref< GlslVariable > N = cx.emitOutput(node, L"N", GtFloat);
+	Ref< GlslVariable > N = cx.emitOutput(node, L"N", GtInteger);
 	T_ASSERT(N);
 
 	// Create void output variables; change type later when we know
@@ -899,7 +899,7 @@ bool emitIterate2(GlslContext& cx, Iterate2* node)
 		Ref< GlslVariable > condition = cx.emitInput(node, L"Condition");
 		if (condition)
 		{
-			fs << L"if (int(" << condition->cast(GtFloat) << L") == 0)" << Endl;
+			fs << L"if (" << condition->cast(GtInteger) << L" == 0)" << Endl;
 			fs << L"\tbreak;" << Endl;
 		}
 
@@ -947,7 +947,7 @@ bool emitIterate2(GlslContext& cx, Iterate2* node)
 	if (!from || !to)
 		return false;
 
-	f << L"for (int " << N->getName() << L" = int(" << from->cast(GtFloat) << L"); " << N->getName() << L" <= int(" << to->cast(GtFloat) << L"); ++" << N->getName() << L")" << Endl;
+	f << L"for (int " << N->getName() << L" = " << from->cast(GtInteger) << L"; " << N->getName() << L" <= " << to->cast(GtInteger) << L"; ++" << N->getName() << L")" << Endl;
 	f << L"{" << Endl;
 	f << IncreaseIndent;
 
@@ -976,10 +976,10 @@ bool emitIterate2d(GlslContext& cx, Iterate2d* node)
 	std::wstring inputName;
 
 	// Create iterator variables.
-	Ref< GlslVariable > X = cx.emitOutput(node, L"X", GtFloat);
+	Ref< GlslVariable > X = cx.emitOutput(node, L"X", GtInteger);
 	T_ASSERT(X);
 
-	Ref< GlslVariable > Y = cx.emitOutput(node, L"Y", GtFloat);
+	Ref< GlslVariable > Y = cx.emitOutput(node, L"Y", GtInteger);
 	T_ASSERT(Y);
 
 	// Create void output variable; change type later when we know
@@ -1011,7 +1011,7 @@ bool emitIterate2d(GlslContext& cx, Iterate2d* node)
 	Ref< GlslVariable > condition = cx.emitInput(node, L"Condition");
 	if (condition)
 	{
-		fs << L"if (" << condition->cast(GtFloat) << L" == 0.0)" << Endl;
+		fs << L"if (" << condition->cast(GtInteger) << L" == 0)" << Endl;
 		fs << L"\tbreak;" << Endl;
 	}
 
@@ -1035,11 +1035,11 @@ bool emitIterate2d(GlslContext& cx, Iterate2d* node)
 		assign(f, out) << expandScalar(0.0f, out->getType()) << L";" << Endl;
 
 	// Write outer for-loop statement.
-	f << L"for (float " << X->getName() << L" = " << node->getFromX() << L".0; " << X->getName() << L" <= " << node->getToX() << L".0; ++" << X->getName() << L")" << Endl;
+	f << L"for (int " << X->getName() << L" = " << node->getFromX() << L"; " << X->getName() << L" <= " << node->getToX() << L"; ++" << X->getName() << L")" << Endl;
 	f << L"{" << Endl;
 	f << IncreaseIndent;
 
-	f << L"for (float " << Y->getName() << L" = " << node->getFromY() << L".0; " << Y->getName() << L" <= " << node->getToY() << L".0; ++" << Y->getName() << L")" << Endl;
+	f << L"for (int " << Y->getName() << L" = " << node->getFromY() << L"; " << Y->getName() << L" <= " << node->getToY() << L"; ++" << Y->getName() << L")" << Endl;
 	f << L"{" << Endl;
 	f << IncreaseIndent;
 
@@ -1054,7 +1054,7 @@ bool emitIterate2d(GlslContext& cx, Iterate2d* node)
 	// Emit outer loop post condition.
 	if (condition)
 	{
-		f << L"if (" << condition->cast(GtFloat) << L" == 0.0)" << Endl;
+		f << L"if (" << condition->cast(GtInteger) << L" == 0)" << Endl;
 		f << L"\tbreak;" << Endl;
 	}
 
@@ -1523,7 +1523,7 @@ bool emitReadStruct(GlslContext& cx, ReadStruct* node)
 	Ref< GlslVariable > out = cx.emitOutput(node, L"Output", glsl_from_data_type(type));
 
 	comment(f, node);
-	f << glsl_type_name(out->getType()) << L" " << out->getName() << L" = " << glsl_type_name(out->getType()) << L"(" << strct->getName() << L"_Data[int(" << index->cast(GtFloat) << L")]." << node->getName() << L");" << Endl;
+	f << glsl_type_name(out->getType()) << L" " << out->getName() << L" = " << glsl_type_name(out->getType()) << L"(" << strct->getName() << L"_Data[" << index->cast(GtInteger) << L"]." << node->getName() << L");" << Endl;
 
 	return true;
 }
@@ -1567,7 +1567,7 @@ bool emitRepeat(GlslContext& cx, Repeat* node)
 	std::wstring inputName;
 
 	// Create iterator variable.
-	Ref< GlslVariable > N = cx.emitOutput(node, L"N", GtFloat);
+	Ref< GlslVariable > N = cx.emitOutput(node, L"N", GtInteger);
 	T_ASSERT(N);
 
 	// Create void output variable; change type later when we know
@@ -1595,7 +1595,7 @@ bool emitRepeat(GlslContext& cx, Repeat* node)
 		Ref< GlslVariable > condition = cx.emitInput(node, L"Condition");
 		if (condition)
 		{
-			fs << L"if (" << condition->cast(GtFloat) << L" == 0.0)" << Endl;
+			fs << L"if (" << condition->cast(GtInteger) << L" == 0)" << Endl;
 			fs << L"\tbreak;" << Endl;
 		}
 
@@ -1624,7 +1624,7 @@ bool emitRepeat(GlslContext& cx, Repeat* node)
 		assign(f, out) << expandScalar(0.0f, out->getType()) << L";" << Endl;
 
 	// Write outer for-loop statement.
-	f << L"for (float " << N->getName() << L" = 0.0;; ++" << N->getName() << L")" << Endl;
+	f << L"for (int " << N->getName() << L" = 0;; ++" << N->getName() << L")" << Endl;
 	f << L"{" << Endl;
 	f << IncreaseIndent;
 
@@ -2146,7 +2146,7 @@ bool emitSum(GlslContext& cx, Sum* node)
 	std::wstring inputName;
 
 	// Create iterator variable.
-	Ref< GlslVariable > N = cx.emitOutput(node, L"N", GtFloat);
+	Ref< GlslVariable > N = cx.emitOutput(node, L"N", GtInteger);
 	T_ASSERT(N);
 
 	// Create void output variable; change type later when we know
@@ -2192,7 +2192,7 @@ bool emitSum(GlslContext& cx, Sum* node)
 	assign(f, out) << expandScalar(0.0f, out->getType()) << L";" << Endl;
 
 	// Write outer for-loop statement.
-	f << L"for (float " << N->getName() << L" = " << node->getFrom() << L".0; " << N->getName() << L" <= " << node->getTo() << L".0; ++" << N->getName() << L")" << Endl;
+	f << L"for (int " << N->getName() << L" = " << node->getFrom() << L"; " << N->getName() << L" <= " << node->getTo() << L"; ++" << N->getName() << L")" << Endl;
 	f << L"{" << Endl;
 	f << IncreaseIndent;
 
@@ -2388,7 +2388,7 @@ bool emitSwitch(GlslContext& cx, Switch* node)
 	comment(f, node);
 	for (uint32_t i = 0; i < (uint32_t)cases.size(); ++i)
 	{
-		f << (i == 0 ? L"if (" : L"else if (") << L"int(" << in->cast(GtFloat) << L") == " << cases[i] << L")" << Endl;
+		f << (i == 0 ? L"if (" : L"else if (") << in->cast(GtInteger) << L" == " << cases[i] << L")" << Endl;
 		f << L"{" << Endl;
 		f << IncreaseIndent;
 

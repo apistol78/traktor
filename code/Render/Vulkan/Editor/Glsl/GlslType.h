@@ -13,17 +13,18 @@ namespace traktor
 
 enum GlslType
 {
-	GtVoid,
-	GtBoolean,
-	GtFloat,
-	GtFloat2,
-	GtFloat3,
-	GtFloat4,
-	GtFloat4x4,
-	GtTexture2D,
-	GtTexture3D,
-	GtTextureCube,
-	GtStructBuffer
+	GtVoid = 0,
+	GtBoolean = 1,
+	GtInteger = 2,
+	GtFloat = 3,
+	GtFloat2 = 4,
+	GtFloat3 = 5,
+	GtFloat4 = 6,
+	GtFloat4x4 = 7,
+	GtTexture2D = 8,
+	GtTexture3D = 9,
+	GtTextureCube = 10,
+	GtStructBuffer = 11
 };
 
 struct GlslRequirements
