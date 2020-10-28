@@ -25,6 +25,8 @@ public:
 
 	const std::wstring& getName() const { return m_name; }
 
+	void setType(GlslType type) { m_type = type; }
+
 	GlslType getType() const { return m_type; }
 
 	std::wstring cast(GlslType to) const;

@@ -4,6 +4,7 @@
 #include <map>
 #include <set>
 #include <string>
+#include "Core/Containers/IdAllocator.h"
 #include "Core/Io/StringOutputStream.h"
 #include "Render/Types.h"
 #include "Render/Vulkan/Editor/Glsl/GlslType.h"
@@ -84,6 +85,7 @@ private:
 	{
 		const OutputPin* outputPin;
 		Ref< GlslVariable > variable;
+		int32_t index;
 	};
 
 	struct OutputStreamTuple
@@ -98,7 +100,7 @@ private:
 	AlignedVector< uint32_t > m_variableScopes;
 	AlignedVector< OutputPinVariable > m_outerVariables;
 	std::set< std::wstring > m_scriptSignatures;
-	int32_t m_nextTemporaryVariable;
+	IdAllocator m_temporaryVariableAlloc;
 	AlignedVector< OutputStreamTuple > m_outputStreams[BtLast];
 };
 
