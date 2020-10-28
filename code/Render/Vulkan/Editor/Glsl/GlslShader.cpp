@@ -1,3 +1,4 @@
+#include "Core/Misc/String.h"
 #include "Core/Settings/PropertyBoolean.h"
 #include "Core/Settings/PropertyGroup.h"
 #include "Render/Editor/OutputPin.h"
@@ -16,7 +17,7 @@ namespace traktor
 
 GlslShader::GlslShader(ShaderType shaderType)
 :	m_shaderType(shaderType)
-,	m_nextTemporaryVariable(0)
+,	m_temporaryVariableAlloc(0, 65535)
 {
 	pushScope();
 	pushOutputStream(BtInput, T_FILE_LINE_W);
@@ -47,22 +48,30 @@ GlslVariable* GlslShader::getInputVariable(const std::wstring& variableName)
 
 GlslVariable* GlslShader::createTemporaryVariable(const OutputPin* outputPin, GlslType type)
 {
-	StringOutputStream ss;
-	ss << L"v" << m_nextTemporaryVariable++;
-	return createVariable(outputPin, ss.str(), type);
+	int32_t index = (int32_t)m_temporaryVariableAlloc.alloc();
+	std::wstring name = str(L"v%d", index);
+
+	auto& v = m_variables.push_back();
+	v.outputPin = outputPin;
+	v.variable = new GlslVariable(outputPin->getNode(), name, type);
+	v.index = index;
+	return v.variable;
 }
 
 GlslVariable* GlslShader::createVariable(const OutputPin* outputPin, const std::wstring& variableName, GlslType type)
 {
+#if defined(_DEBUG)
 	for (uint32_t i = m_variableScopes.back(); i < m_variables.size(); ++i)
 	{
 		const auto& v = m_variables[i];
 		T_FATAL_ASSERT (v.outputPin != outputPin);
 	}
+#endif
 
 	auto& v = m_variables.push_back();
 	v.outputPin = outputPin;
 	v.variable = new GlslVariable(outputPin->getNode(), variableName, type);
+	v.index = -1;
 	return v.variable;
 }
 
@@ -71,6 +80,7 @@ GlslVariable* GlslShader::createOuterVariable(const OutputPin* outputPin, const 
 	auto& v = m_outerVariables.push_back();
 	v.outputPin = outputPin;
 	v.variable = new GlslVariable(outputPin->getNode(), variableName, type);
+	v.index = -1;
 	return v.variable;
 }
 
@@ -96,6 +106,14 @@ void GlslShader::pushScope()
 
 void GlslShader::popScope()
 {
+	// Free all indices used for temporary variables within scope to be popped.
+	for (size_t i = m_variableScopes.back(); i < m_variables.size(); ++i)
+	{
+		int32_t index = m_variables[i].index;
+		if (index >= 0)
+			m_temporaryVariableAlloc.free(index);
+	}
+
 	m_variables.resize(m_variableScopes.back());
 	m_variableScopes.pop_back();
 }

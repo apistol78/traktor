@@ -271,6 +271,8 @@ bool emitConditional(GlslContext& cx, Conditional* node)
 	for (auto outputPin : outputPins)
 		cx.emit(outputPin->getNode());
 
+	Ref< GlslVariable > out = cx.emitOutput(node, L"Output", GtVoid);
+
 	// Emit true branch.
 	{
 		auto& fs = cx.getShader().pushOutputStream(GlslShader::BtBody, T_FILE_LINE_W);
@@ -305,7 +307,7 @@ bool emitConditional(GlslContext& cx, Conditional* node)
 
 	// Create output variable.
 	GlslType outputType = std::max< GlslType >(caseTrue.getType(), caseFalse.getType());
-	Ref< GlslVariable > out = cx.emitOutput(node, L"Output", outputType);
+	out->setType(outputType);
 
 	comment(f, node);
 	f << glsl_type_name(out->getType()) << L" " << out->getName() << L";" << Endl;
@@ -791,7 +793,7 @@ bool emitIterate(GlslContext& cx, Iterate* node)
 
 		// Modify output variable; need to have input variable ready as it
 		// will determine output type.
-		*out = GlslVariable(out->getNode(), out->getName(), input->getType());
+		out->setType(input->getType());
 	}
 
 	cx.getShader().popScope();
@@ -2343,6 +2345,9 @@ bool emitSwitch(GlslContext& cx, Switch* node)
 	AlignedVector< GlslVariable > caseInputs;
 	GlslType outputType = GtVoid;
 
+	// Emit output variable first due to scoping.
+	Ref< GlslVariable > out = cx.emitOutput(node, L"Output", GtVoid);
+
 	// Conditional branches.
 	for (uint32_t i = 0; i < (uint32_t)caseConditions.size(); ++i)
 	{
@@ -2398,7 +2403,9 @@ bool emitSwitch(GlslContext& cx, Switch* node)
 		cx.getShader().popOutputStream(GlslShader::BtBody);
 	}
 
-	Ref< GlslVariable > out = cx.emitOutput(node, L"Output", outputType);
+	// Modify output type to match common output type of cases,
+	// initialize output variable to zero.
+	out->setType(outputType);
 	assign(f, out) << expandScalar(0.0f, outputType) << L";" << Endl;
 
 	const auto& cases = node->getCases();
