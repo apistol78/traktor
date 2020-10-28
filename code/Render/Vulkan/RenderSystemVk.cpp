@@ -55,7 +55,7 @@ const char* c_extensions[] = { "VK_KHR_surface", "VK_KHR_xlib_surface", "VK_EXT_
 #elif defined(__ANDROID__)
 const char* c_extensions[] = { "VK_KHR_surface", "VK_KHR_android_surface" };
 #elif defined(__MAC__)
-const char* c_extensions[] = { "VK_KHR_surface", "VK_MVK_macos_surface", "VK_EXT_debug_utils" };
+const char* c_extensions[] = { "VK_KHR_surface", "VK_EXT_metal_surface", "VK_EXT_debug_utils" };
 #else
 const char* c_extensions[] = { "VK_KHR_surface", "VK_EXT_debug_utils" };
 #endif

@@ -6,6 +6,8 @@ namespace traktor
     {
 
 void attachMetalLayer(void* view);
-        
+    
+void* getMetalLayer(void* view);
+
     }
 }
