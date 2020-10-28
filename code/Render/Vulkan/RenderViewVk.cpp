@@ -185,10 +185,10 @@ bool RenderViewVk::create(const RenderViewEmbeddedDesc& desc)
 	// Attach Metal layer to provided view.
 	attachMetalLayer(desc.syswin.view);
 
-	VkMacOSSurfaceCreateInfoMVK sci = {};
-	sci.sType = VK_STRUCTURE_TYPE_MACOS_SURFACE_CREATE_INFO_MVK;
-	sci.pView = desc.syswin.view;
-    if ((result = vkCreateMacOSSurfaceMVK(m_instance, &sci, nullptr, &m_surface)) != VK_SUCCESS)
+	VkMetalSurfaceCreateInfoEXT  sci = {};
+	sci.sType = VK_STRUCTURE_TYPE_METAL_SURFACE_CREATE_INFO_EXT;
+	sci.pLayer = getMetalLayer(desc.syswin.view);
+    if ((result = vkCreateMetalSurfaceEXT(m_instance, &sci, nullptr, &m_surface)) != VK_SUCCESS)
 	{
 		log::error << L"Failed to create Vulkan; unable to create macOS renderable surface (" << getHumanResult(result) << L")." << Endl;
 		return false;

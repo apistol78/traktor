@@ -18,7 +18,11 @@ namespace traktor
 		namespace
 		{
 
+#if !defined(__APPLE__)
 Mutex s_globalLock(Guid(L"{672E3E2D-14A8-4B07-A18F-27C30FD5B43D}"));
+#else
+Mutex s_globalLock;
+#endif
 
 		}
 

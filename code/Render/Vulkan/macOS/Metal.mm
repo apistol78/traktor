@@ -66,5 +66,11 @@ void attachMetalLayer(void* view_)
     } 
 }
 
+void* getMetalLayer(void* view_)
+{
+    NSView* view = (NSView*)view_;
+    return (CAMetalLayer*)view.layer;
+}
+
     }
 }

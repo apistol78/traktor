@@ -17423,7 +17423,7 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(VULKAN_SDK)/include</item>
+						<item>$(MOLTEN_SDK)/include</item>
 					</includePaths>
 					<definitions>
 						<item>T_RENDER_VULKAN_EXPORT</item>
@@ -17446,6 +17446,14 @@
 							<sourceFile>libTraktor.Render.Vulkan.dylib</sourceFile>
 							<targetPath>debugshared</targetPath>
 						</item>
+						<item type="AggregationItem">
+							<sourceFile>$(MOLTEN_SDK)/macOS/dynamic/libMoltenVK.dylib</sourceFile>
+							<targetPath>debugshared</targetPath>
+						</item>						
+						<item type="AggregationItem">
+							<sourceFile>$(MOLTEN_SDK)/macOS/dynamic/MoltenVK_icd.json</sourceFile>
+							<targetPath>debugshared</targetPath>
+						</item>						
 					</aggregationItems>
 					<consumerLibraryPath>debugshared</consumerLibraryPath>
 				</item>
@@ -17456,7 +17464,7 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(VULKAN_SDK)/include</item>
+						<item>$(MOLTEN_SDK)/include</item>
 					</includePaths>
 					<definitions>
 						<item>T_RENDER_VULKAN_EXPORT</item>
@@ -17479,6 +17487,14 @@
 							<sourceFile>libTraktor.Render.Vulkan.dylib</sourceFile>
 							<targetPath>releaseshared</targetPath>
 						</item>
+						<item type="AggregationItem">
+							<sourceFile>$(MOLTEN_SDK)/macOS/dynamic/libMoltenVK.dylib</sourceFile>
+							<targetPath>releaseshared</targetPath>
+						</item>						
+						<item type="AggregationItem">
+							<sourceFile>$(MOLTEN_SDK)/macOS/dynamic/MoltenVK_icd.json</sourceFile>
+							<targetPath>releaseshared</targetPath>
+						</item>						
 					</aggregationItems>
 					<consumerLibraryPath>releaseshared</consumerLibraryPath>
 				</item>
@@ -17489,7 +17505,7 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(VULKAN_SDK)/include</item>
+						<item>$(MOLTEN_SDK)/include</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
@@ -17512,6 +17528,14 @@
 							<sourceFile>libTraktor.Render.Vulkan.a</sourceFile>
 							<targetPath>debugstatic</targetPath>
 						</item>
+						<item type="AggregationItem">
+							<sourceFile>$(MOLTEN_SDK)/macOS/dynamic/libMoltenVK.dylib</sourceFile>
+							<targetPath>debugstatic</targetPath>
+						</item>						
+						<item type="AggregationItem">
+							<sourceFile>$(MOLTEN_SDK)/macOS/dynamic/MoltenVK_icd.json</sourceFile>
+							<targetPath>debugstatic</targetPath>
+						</item>						
 					</aggregationItems>
 					<consumerLibraryPath>debugstatic</consumerLibraryPath>
 				</item>
@@ -17522,7 +17546,7 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(VULKAN_SDK)/include</item>
+						<item>$(MOLTEN_SDK)/include</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
@@ -17545,6 +17569,14 @@
 							<sourceFile>libTraktor.Render.Vulkan.a</sourceFile>
 							<targetPath>releasestatic</targetPath>
 						</item>
+						<item type="AggregationItem">
+							<sourceFile>$(MOLTEN_SDK)/macOS/dynamic/libMoltenVK.dylib</sourceFile>
+							<targetPath>releasestatic</targetPath>
+						</item>						
+						<item type="AggregationItem">
+							<sourceFile>$(MOLTEN_SDK)/macOS/dynamic/MoltenVK_icd.json</sourceFile>
+							<targetPath>releasestatic</targetPath>
+						</item>						
 					</aggregationItems>
 					<consumerLibraryPath>releasestatic</consumerLibraryPath>
 				</item>
