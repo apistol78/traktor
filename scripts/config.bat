@@ -28,7 +28,7 @@ set EMBREE_SDK=%TRAKTOR_HOME%\3rdp\embree-3.5.2.x64.vc14.windows
 set OIDN_SDK=%TRAKTOR_HOME%\3rdp\oidn-1.0.0.x64.vc14.windows
 set VULKAN_SDK=%TRAKTOR_HOME%\3rdp\vulkan\Vulkan-Headers-master-201012
 set VMA_SDK=%TRAKTOR_HOME%\3rdp\VulkanMemoryAllocator-master
-set SPIRVTOOLS_SDK=%TRAKTOR_HOME%\3rdp\spirv-tools
+set SPIRVTOOLS_SDK=%TRAKTOR_HOME%\3rdp\SPIRV-Tools-master-201029
 set SPIRVCROSS_SDK=%TRAKTOR_HOME%\3rdp\SPIRV-Cross-master-201009
 
 :: Export name of solution builder binary.
@@ -36,3 +36,6 @@ set SOLUTIONBUILDER=%TRAKTOR_HOME%\bin\win64\releasestatic\Traktor.SolutionBuild
 
 :: Export name of shadow launch binary.
 set SHADOWLAUNCH=%TRAKTOR_HOME%\bin\win64\releasestatic\Traktor.ShadowLaunch.App
+
+:: Export path to Ninja binary.
+set NINJA=%TRAKTOR_HOME%\3rdp\ninja\win\ninja

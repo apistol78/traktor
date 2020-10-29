@@ -202,51 +202,12 @@ void performOptimization(bool convertRelaxedToHalf, AlignedVector< uint32_t >& s
 		}
 	});
 
-	// If debug (specifically source line info) is being generated, propagate
-	// line information into all SPIR-V instructions. This avoids loss of
-	// information when instructions are deleted or moved. Later, remove
-	// redundant information to minimize final SPRIR-V size.
-	//if (options->generateDebugInfo) {
-	//	optimizer.RegisterPass(spvtools::CreatePropagateLineInfoPass());
-	//}
-	optimizer.RegisterPass(spvtools::CreateWrapOpKillPass());
-	optimizer.RegisterPass(spvtools::CreateDeadBranchElimPass());
-	optimizer.RegisterPass(spvtools::CreateMergeReturnPass());
-	optimizer.RegisterPass(spvtools::CreateInlineExhaustivePass());
-	optimizer.RegisterPass(spvtools::CreateEliminateDeadFunctionsPass());
-	optimizer.RegisterPass(spvtools::CreateScalarReplacementPass());
-	optimizer.RegisterPass(spvtools::CreateLocalAccessChainConvertPass());
-	optimizer.RegisterPass(spvtools::CreateLocalSingleBlockLoadStoreElimPass());
-	optimizer.RegisterPass(spvtools::CreateLocalSingleStoreElimPass());
-	//optimizer.RegisterPass(spvtools::CreateSimplificationPass());		// Do NOT add, removes "invariant" attribute!
-	optimizer.RegisterPass(spvtools::CreateAggressiveDCEPass());
-	optimizer.RegisterPass(spvtools::CreateVectorDCEPass());
-	optimizer.RegisterPass(spvtools::CreateDeadInsertElimPass());
-	optimizer.RegisterPass(spvtools::CreateAggressiveDCEPass());
-	optimizer.RegisterPass(spvtools::CreateDeadBranchElimPass());
-	optimizer.RegisterPass(spvtools::CreateBlockMergePass());
-	optimizer.RegisterPass(spvtools::CreateLocalMultiStoreElimPass());
-	optimizer.RegisterPass(spvtools::CreateIfConversionPass());
-	optimizer.RegisterPass(spvtools::CreateSimplificationPass());
-	optimizer.RegisterPass(spvtools::CreateAggressiveDCEPass());
-	optimizer.RegisterPass(spvtools::CreateVectorDCEPass());
-	optimizer.RegisterPass(spvtools::CreateDeadInsertElimPass());
-	//if (options->optimizeSize) {
-	//	optimizer.RegisterPass(spvtools::CreateRedundancyEliminationPass());
-	//}
-	optimizer.RegisterPass(spvtools::CreateAggressiveDCEPass());
-	optimizer.RegisterPass(spvtools::CreateCFGCleanupPass());
-	//if (options->generateDebugInfo) {
-	//	optimizer.RegisterPass(spvtools::CreateRedundantLineInfoElimPass());
-	//}
+	optimizer.RegisterPerformancePasses();
 
 	if (convertRelaxedToHalf)
 		optimizer.RegisterPass(spvtools::CreateConvertRelaxedToHalfPass());
 
 	spvtools::OptimizerOptions spvOptOptions;
-	//optimizer.SetTargetEnv(MapToSpirvToolsEnv(intermediate.getSpv(), logger));
-	//spvOptOptions.set_run_validator(false); // The validator may run as a separate step later on
-
 	std::vector< uint32_t > opted;
 	if (optimizer.Run(spirv.c_ptr(), spirv.size(), &opted, spvOptOptions))
 		spirv = AlignedVector< uint32_t >(opted.begin(), opted.end());
@@ -589,7 +550,7 @@ bool ProgramCompilerVk::generate(
 	std::wstring& outComputeShader
 ) const
 {
-	std::wstring crossDialect = settings->getProperty< std::wstring >(L"Glsl.Vulkan.CrossDialect");
+	std::wstring crossDialect = L"GLSL"; // settings->getProperty< std::wstring >(L"Glsl.Vulkan.CrossDialect");
 
 	// No dialect means we should output our generated GLSL.
 	if (crossDialect.empty())
