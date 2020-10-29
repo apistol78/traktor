@@ -431,7 +431,7 @@ bool ShaderGraphEditorPage::handleCommand(const ui::Command& command)
 	else if (command == L"Editor.Cut" || command == L"Editor.Copy")
 	{
 		RefArray< ui::Node > selectedNodes;
-		if (m_editorGraph->getSelectedNodes(selectedNodes) > 0)
+		if (m_editorGraph->containFocus() && m_editorGraph->getSelectedNodes(selectedNodes) > 0)
 		{
 			// Also copy edges which are affected by selected nodes.
 			RefArray< ui::Edge > selectedEdges;
@@ -498,7 +498,7 @@ bool ShaderGraphEditorPage::handleCommand(const ui::Command& command)
 		Ref< ShaderGraphEditorClipboardData > data = dynamic_type_cast< ShaderGraphEditorClipboardData* >(
 			ui::Application::getInstance()->getClipboard()->getObject()
 		);
-		if (data)
+		if (m_editorGraph->containFocus() && data)
 		{
 			// Save undo state.
 			m_document->push();
@@ -508,23 +508,23 @@ bool ShaderGraphEditorPage::handleCommand(const ui::Command& command)
 			ui::Rect rcClient = m_editorGraph->getInnerRect();
 			ui::Point center = m_editorGraph->clientToVirtual(rcClient.getCenter());
 
-			for (RefArray< Node >::const_iterator i = data->getNodes().begin(); i != data->getNodes().end(); ++i)
+			for (auto node : data->getNodes())
 			{
 				// Create new unique instance ID.
-				(*i)->setId(Guid::create());
+				node->setId(Guid::create());
 
 				// Place node in view.
-				std::pair< int, int > position = (*i)->getPosition();
+				std::pair< int, int > position = node->getPosition();
 				position.first = ui::invdpi96(center.x + ui::dpi96(position.first) - bounds.left - bounds.getWidth() / 2);
 				position.second = ui::invdpi96(center.y + ui::dpi96(position.second) - bounds.top - bounds.getHeight() / 2);
-				(*i)->setPosition(position);
+				node->setPosition(position);
 
 				// Add node to graph.
-				m_shaderGraph->addNode(*i);
+				m_shaderGraph->addNode(node);
 			}
 
-			for (RefArray< Edge >::const_iterator i = data->getEdges().begin(); i != data->getEdges().end(); ++i)
-				m_shaderGraph->addEdge(*i);
+			for (auto edge : data->getEdges())
+				m_shaderGraph->addEdge(edge);
 
 			createEditorNodes(
 				data->getNodes(),
@@ -556,21 +556,17 @@ bool ShaderGraphEditorPage::handleCommand(const ui::Command& command)
 		RefArray< ui::Edge > edges;
 		m_editorGraph->getConnectedEdges(nodes, false, edges);
 
-		for (RefArray< ui::Edge >::iterator i = edges.begin(); i != edges.end(); ++i)
+		for (auto edge : edges)
 		{
-			ui::Edge* editorEdge = *i;
-			Ref< Edge > shaderEdge = editorEdge->getData< Edge >(L"SHADEREDGE");
-
-			m_editorGraph->removeEdge(editorEdge);
+			Ref< Edge > shaderEdge = edge->getData< Edge >(L"SHADEREDGE");
+			m_editorGraph->removeEdge(edge);
 			m_shaderGraph->removeEdge(shaderEdge);
 		}
 
-		for (RefArray< ui::Node >::iterator i = nodes.begin(); i != nodes.end(); ++i)
+		for (auto node : nodes)
 		{
-			ui::Node* editorNode = *i;
-			Ref< Node > shaderNode = editorNode->getData< Node >(L"SHADERNODE");
-
-			m_editorGraph->removeNode(editorNode);
+			Ref< Node > shaderNode = node->getData< Node >(L"SHADERNODE");
+			m_editorGraph->removeNode(node);
 			m_shaderGraph->removeNode(shaderNode);
 		}
 
