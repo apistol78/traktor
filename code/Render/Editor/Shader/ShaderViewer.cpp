@@ -1,5 +1,8 @@
 #include "Core/Functor/Functor.h"
+#include "Core/Io/FileSystem.h"
+#include "Core/Io/FileOutputStream.h"
 #include "Core/Io/StringOutputStream.h"
+#include "Core/Io/Utf8Encoding.h"
 #include "Core/Log/Log.h"
 #include "Core/Serialization/DeepClone.h"
 #include "Core/Settings/PropertyGroup.h"
@@ -20,14 +23,20 @@
 #include "Render/Editor/Shader/ShaderViewer.h"
 #include "Render/Editor/Shader/ShaderGraph.h"
 #include "Ui/Application.h"
+#include "Ui/Clipboard.h"
+#include "Ui/FileDialog.h"
 #include "Ui/FloodLayout.h"
 #include "Ui/Static.h"
+#include "Ui/StyleBitmap.h"
 #include "Ui/Tab.h"
 #include "Ui/TabPage.h"
 #include "Ui/TableLayout.h"
 #include "Ui/DropDown.h"
 #include "Ui/SyntaxRichEdit/SyntaxLanguageHlsl.h"
 #include "Ui/SyntaxRichEdit/SyntaxRichEdit.h"
+#include "Ui/ToolBar/ToolBar.h"
+#include "Ui/ToolBar/ToolBarButton.h"
+#include "Ui/ToolBar/ToolBarButtonClickEvent.h"
 
 namespace traktor
 {
@@ -74,7 +83,7 @@ void ShaderViewer::destroy()
 
 bool ShaderViewer::create(ui::Widget* parent)
 {
-	if (!ui::Container::create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%", 0, 0)))
+	if (!ui::Container::create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"*,*,100%", 0, 0)))
 		return false;
 
 	setText(i18n::Text(L"SHADERGRAPH_VIEWER"));
@@ -103,6 +112,14 @@ bool ShaderViewer::create(ui::Widget* parent)
 	m_dropCombinations->create(containerDrops, ui::DropDown::WsMultiple);
 	m_dropCombinations->addEventHandler< ui::SelectionChangeEvent >(this, &ShaderViewer::eventCombinationChange);
 
+	Ref< ui::ToolBar > toolBar = new ui::ToolBar();
+	toolBar->create(this);
+	toolBar->addImage(new ui::StyleBitmap(L"Editor.ToolBar.Save"), 1);
+	toolBar->addImage(new ui::StyleBitmap(L"Editor.ToolBar.Copy"), 1);
+	toolBar->addItem(new ui::ToolBarButton(i18n::Text(L"TOOLBAR_SAVE"), 0, ui::Command(L"Shader.Editor.Preview.Save")));
+	toolBar->addItem(new ui::ToolBarButton(i18n::Text(L"TOOLBAR_COPY"), 1, ui::Command(L"Shader.Editor.Preview.Copy")));
+	toolBar->addEventHandler< ui::ToolBarButtonClickEvent >(this, &ShaderViewer::eventToolBarClick);
+
 	TypeInfoSet programCompilerTypes;
 	type_of< IProgramCompiler >().findAllOf(programCompilerTypes, false);
 
@@ -121,22 +138,22 @@ bool ShaderViewer::create(ui::Widget* parent)
 	}
 	m_dropCompiler->select(compilerIndex);
 
-	Ref< ui::Tab > tab = new ui::Tab();
-	tab->create(this, ui::Tab::WsBottom);
+	m_tab = new ui::Tab();
+	m_tab->create(this, ui::Tab::WsBottom);
 
 	Ref< ui::TabPage > tabPageVertex = new ui::TabPage();
-	tabPageVertex->create(tab, i18n::Text(L"SHADERGRAPH_VIEWER_VERTEX"), new ui::FloodLayout());
-	tab->addPage(tabPageVertex);
+	tabPageVertex->create(m_tab, i18n::Text(L"SHADERGRAPH_VIEWER_VERTEX"), new ui::FloodLayout());
+	m_tab->addPage(tabPageVertex);
 
 	Ref< ui::TabPage > tabPagePixel = new ui::TabPage();
-	tabPagePixel->create(tab, i18n::Text(L"SHADERGRAPH_VIEWER_PIXEL"), new ui::FloodLayout());
-	tab->addPage(tabPagePixel);
+	tabPagePixel->create(m_tab, i18n::Text(L"SHADERGRAPH_VIEWER_PIXEL"), new ui::FloodLayout());
+	m_tab->addPage(tabPagePixel);
 
 	Ref< ui::TabPage > tabPageCompute = new ui::TabPage();
-	tabPageCompute->create(tab, i18n::Text(L"SHADERGRAPH_VIEWER_COMPUTE"), new ui::FloodLayout());
-	tab->addPage(tabPageCompute);
+	tabPageCompute->create(m_tab, i18n::Text(L"SHADERGRAPH_VIEWER_COMPUTE"), new ui::FloodLayout());
+	m_tab->addPage(tabPageCompute);
 
-	tab->setActivePage(tabPageVertex);
+	m_tab->setActivePage(tabPageVertex);
 
 	// Create read-only syntax rich editors.
 	m_shaderEditVertex = new ui::SyntaxRichEdit();
@@ -271,6 +288,34 @@ void ShaderViewer::eventTechniqueChange(ui::SelectionChangeEvent* event)
 void ShaderViewer::eventCombinationChange(ui::SelectionChangeEvent* event)
 {
 	updateShaders();
+}
+
+void ShaderViewer::eventToolBarClick(ui::ToolBarButtonClickEvent* event)
+{
+	auto activeTabPage = m_tab->getActivePage();
+	T_ASSERT(activeTabPage != nullptr);
+
+	auto edit = mandatory_non_null_type_cast< ui::SyntaxRichEdit* >(activeTabPage->getFirstChild());
+	std::wstring shader = edit->getText();
+
+	if (event->getCommand() == L"Shader.Editor.Preview.Save")
+	{
+		Path filePath;
+
+		ui::FileDialog fileDialog;
+		fileDialog.create(this, type_name(this), L"Save shader as", L"Shader;*.*", L"", true);
+		bool cancelled = !(fileDialog.showModal(filePath) == ui::DrOk);
+		fileDialog.destroy();
+
+		if (!cancelled)
+		{
+			Ref< IStream > fs = FileSystem::getInstance().open(filePath, File::FmWrite);
+			if (fs)
+				FileOutputStream(fs, new Utf8Encoding()) << shader;
+		}
+	}
+	else if (event->getCommand() == L"Shader.Editor.Preview.Copy")
+		ui::Application::getInstance()->getClipboard()->setText(shader);
 }
 
 void ShaderViewer::eventTimer(ui::TimerEvent* event)
