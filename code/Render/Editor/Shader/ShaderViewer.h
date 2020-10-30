@@ -19,6 +19,8 @@ class IEditor;
 
 class DropDown;
 class SyntaxRichEdit;
+class Tab;
+class ToolBarButtonClickEvent;
 
 	}
 
@@ -63,6 +65,7 @@ private:
 	Ref< ui::DropDown > m_dropCompiler;
 	Ref< ui::DropDown > m_dropTechniques;
 	Ref< ui::DropDown > m_dropCombinations;
+	Ref< ui::Tab > m_tab;
 	Ref< ui::SyntaxRichEdit > m_shaderEditVertex;
 	Ref< ui::SyntaxRichEdit > m_shaderEditPixel;
 	Ref< ui::SyntaxRichEdit > m_shaderEditCompute;
@@ -86,6 +89,8 @@ private:
 	void eventTechniqueChange(ui::SelectionChangeEvent* event);
 
 	void eventCombinationChange(ui::SelectionChangeEvent* event);
+
+	void eventToolBarClick(ui::ToolBarButtonClickEvent* event);
 
 	void eventTimer(ui::TimerEvent* event);
 
