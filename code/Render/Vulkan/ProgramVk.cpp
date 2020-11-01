@@ -4,10 +4,12 @@
 #include "Core/Math/Matrix44.h"
 #include "Render/Vulkan/ApiLoader.h"
 #include "Render/Vulkan/CubeTextureVk.h"
+#include "Render/Vulkan/PipelineLayoutCache.h"
 #include "Render/Vulkan/ProgramVk.h"
 #include "Render/Vulkan/ProgramResourceVk.h"
 #include "Render/Vulkan/RenderTargetDepthVk.h"
 #include "Render/Vulkan/RenderTargetVk.h"
+#include "Render/Vulkan/ShaderModuleCache.h"
 #include "Render/Vulkan/SimpleTextureVk.h"
 #include "Render/Vulkan/StructBufferVk.h"
 #include "Render/Vulkan/UniformBufferPoolVk.h"
@@ -80,7 +82,7 @@ ProgramVk::~ProgramVk()
 	destroy();
 }
 
-bool ProgramVk::create(const ProgramResourceVk* resource, int32_t maxAnistropy, float mipBias, const wchar_t* const tag)
+bool ProgramVk::create(ShaderModuleCache* shaderModuleCache, PipelineLayoutCache* pipelineLayoutCache, const ProgramResourceVk* resource, int32_t maxAnistropy, float mipBias, const wchar_t* const tag)
 {
 	VkShaderStageFlags stageFlags;
 
@@ -91,34 +93,19 @@ bool ProgramVk::create(const ProgramResourceVk* resource, int32_t maxAnistropy, 
 	m_renderState = resource->m_renderState;
 	m_hash = resource->m_hash;
 
+	// Get shader modules.
 	if (!resource->m_vertexShader.empty() && !resource->m_fragmentShader.empty())
 	{
-		// Create vertex shader module.
-		VkShaderModuleCreateInfo vsmci = {};
-		vsmci.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
-		vsmci.codeSize = resource->m_vertexShader.size() * sizeof(uint32_t);
-		vsmci.pCode = &resource->m_vertexShader[0];
-		if (vkCreateShaderModule(m_logicalDevice, &vsmci, nullptr, &m_vertexShaderModule) != VK_SUCCESS)
+		if ((m_vertexShaderModule = shaderModuleCache->get(resource->m_vertexShader, resource->m_vertexShaderHash)) == 0)
 			return false;
-
-		// Create fragment shader module.
-		VkShaderModuleCreateInfo fsmci = {};
-		fsmci.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
-		fsmci.codeSize = resource->m_fragmentShader.size() * sizeof(uint32_t);
-		fsmci.pCode = &resource->m_fragmentShader[0];
-		if (vkCreateShaderModule(m_logicalDevice, &fsmci, nullptr, &m_fragmentShaderModule) != VK_SUCCESS)
+		if ((m_fragmentShaderModule = shaderModuleCache->get(resource->m_fragmentShader, resource->m_fragmentShaderHash)) == 0)
 			return false;
 
 		stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT | VK_SHADER_STAGE_VERTEX_BIT;
 	}
 	else if (!resource->m_computeShader.empty())
 	{
-		// Create compute shader module.
-		VkShaderModuleCreateInfo csmci = {};
-		csmci.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
-		csmci.codeSize = resource->m_computeShader.size() * sizeof(uint32_t);
-		csmci.pCode = &resource->m_computeShader[0];
-		if (vkCreateShaderModule(m_logicalDevice, &csmci, nullptr, &m_computeShaderModule) != VK_SUCCESS)
+		if ((m_computeShaderModule = shaderModuleCache->get(resource->m_computeShader, resource->m_computeShaderHash)) == 0)
 			return false;
 
 		stageFlags = VK_SHADER_STAGE_COMPUTE_BIT;
@@ -180,18 +167,7 @@ bool ProgramVk::create(const ProgramResourceVk* resource, int32_t maxAnistropy, 
 	dlci.bindingCount = (uint32_t)dslb.size();
 	dlci.pBindings = dslb.c_ptr();
 
-	if (vkCreateDescriptorSetLayout(m_logicalDevice, &dlci, nullptr, &m_descriptorSetLayout) != VK_SUCCESS)
-		return false;
-
-	// Create pipeline layout.
-	VkPipelineLayoutCreateInfo lci = {};
-	lci.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
-	lci.setLayoutCount = 1;
-	lci.pSetLayouts = &m_descriptorSetLayout;
-	lci.pushConstantRangeCount = 0;
-	lci.pPushConstantRanges = nullptr;
-
-	if (vkCreatePipelineLayout(m_logicalDevice, &lci, nullptr, &m_pipelineLayout) != VK_SUCCESS)
+	if (!pipelineLayoutCache->get(dlci, m_descriptorSetLayout, m_pipelineLayout))
 		return false;
 
 	// Create uniform shadow buffers.
@@ -638,31 +614,13 @@ bool ProgramVk::validateCompute(VkDescriptorPool descriptorPool, VkCommandBuffer
 
 void ProgramVk::destroy()
 {
-	if (m_vertexShaderModule != 0)
-	{
-		vkDestroyShaderModule(m_logicalDevice, m_vertexShaderModule, 0);
-		m_vertexShaderModule = 0;
-	}
-	if (m_fragmentShaderModule != 0)
-	{
-		vkDestroyShaderModule(m_logicalDevice, m_fragmentShaderModule, 0);
-		m_fragmentShaderModule = 0;
-	}
-	if (m_computeShaderModule != 0)
-	{
-		vkDestroyShaderModule(m_logicalDevice, m_computeShaderModule, 0);
-		m_computeShaderModule = 0;
-	}
-	if (m_descriptorSetLayout != 0)
-	{
-		vkDestroyDescriptorSetLayout(m_logicalDevice, m_descriptorSetLayout, 0);
-		m_descriptorSetLayout = 0;
-	}
-	if (m_pipelineLayout != 0)
-	{
-		vkDestroyPipelineLayout(m_logicalDevice, m_pipelineLayout, 0);
-		m_pipelineLayout = 0;
-	}
+	m_vertexShaderModule = 0;
+	m_fragmentShaderModule = 0;
+	m_computeShaderModule = 0;
+
+	m_descriptorSetLayout = 0;
+	m_pipelineLayout = 0;
+
 	for (auto& sampler : m_samplers)
 		vkDestroySampler(m_logicalDevice, sampler.sampler, 0);
 	m_samplers.clear();

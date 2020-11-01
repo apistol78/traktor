@@ -18,6 +18,8 @@ namespace traktor
 	{
 
 class CommandBufferPool;
+class PipelineLayoutCache;
+class ShaderModuleCache;
 class Queue;
 
 #if defined(_WIN32) || defined(__LINUX__)
@@ -96,6 +98,8 @@ private:
 	Ref< Queue > m_graphicsQueue;
 	Ref< Queue > m_computeQueue;
 	Ref< CommandBufferPool > m_graphicsCommandPool;
+	Ref< ShaderModuleCache > m_shaderModuleCache;
+	Ref< PipelineLayoutCache > m_pipelineLayoutCache;
 	VmaAllocator m_allocator;
 	int32_t m_maxAnisotropy;
 	float m_mipBias;

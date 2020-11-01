@@ -107,8 +107,6 @@ public:
 		void serialize(ISerializer& s);
 	};
 
-	ProgramResourceVk();
-
 	virtual void serialize(ISerializer& s) override final;
 
 private:
@@ -128,7 +126,11 @@ private:
 	AlignedVector< TextureDesc > m_textures;
 	AlignedVector< SBufferDesc > m_sbuffers;
 
-	uint32_t m_hash;
+	uint32_t m_vertexShaderHash = 0;
+	uint32_t m_fragmentShaderHash = 0;
+	uint32_t m_computeShaderHash = 0;
+
+	uint32_t m_hash = 0;
 };
 
 	}
