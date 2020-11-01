@@ -82,15 +82,11 @@ private:
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ProgramResourceVk", 0, ProgramResourceVk, ProgramResource)
-
-ProgramResourceVk::ProgramResourceVk()
-:	m_hash(0)
-{
-}
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ProgramResourceVk", 1, ProgramResourceVk, ProgramResource)
 
 void ProgramResourceVk::serialize(ISerializer& s)
 {
+	T_FATAL_ASSERT(s.getVersion() >= 1);
 	s >> MemberRenderState(L"renderState", m_renderState);
 	s >> MemberAlignedVector< uint32_t >(L"vertexShader", m_vertexShader);
 	s >> MemberAlignedVector< uint32_t >(L"fragmentShader", m_fragmentShader);
@@ -100,6 +96,9 @@ void ProgramResourceVk::serialize(ISerializer& s)
 	s >> MemberAlignedVector< SamplerDesc, MemberComposite< SamplerDesc > >(L"samplers", m_samplers);
 	s >> MemberAlignedVector< TextureDesc, MemberComposite< TextureDesc > >(L"textures", m_textures);
 	s >> MemberAlignedVector< SBufferDesc, MemberComposite< SBufferDesc > >(L"sbuffers", m_sbuffers);
+	s >> Member< uint32_t >(L"vertexShaderHash", m_vertexShaderHash);
+	s >> Member< uint32_t >(L"fragmentShaderHash", m_fragmentShaderHash);
+	s >> Member< uint32_t >(L"computeShaderHash", m_computeShaderHash);
 	s >> Member< uint32_t >(L"hash", m_hash);
 }
 

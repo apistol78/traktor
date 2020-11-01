@@ -13,6 +13,7 @@
 #include "Render/Vulkan/CommandBufferPool.h"
 #include "Render/Vulkan/CubeTextureVk.h"
 #include "Render/Vulkan/IndexBufferVk.h"
+#include "Render/Vulkan/PipelineLayoutCache.h"
 #include "Render/Vulkan/ProgramVk.h"
 #include "Render/Vulkan/ProgramResourceVk.h"
 #include "Render/Vulkan/Queue.h"
@@ -21,6 +22,7 @@
 #include "Render/Vulkan/RenderTargetSetVk.h"
 #include "Render/Vulkan/RenderTargetVk.h"
 #include "Render/Vulkan/RenderViewVk.h"
+#include "Render/Vulkan/ShaderModuleCache.h"
 #include "Render/Vulkan/SimpleTextureVk.h"
 #include "Render/Vulkan/StructBufferVk.h"
 #include "Render/Vulkan/UtilitiesVk.h"
@@ -327,6 +329,8 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
 		return false;
 	}
 
+	m_shaderModuleCache = new ShaderModuleCache(m_logicalDevice);
+	m_pipelineLayoutCache = new PipelineLayoutCache(m_logicalDevice);
 	m_maxAnisotropy = desc.maxAnisotropy;
 	m_mipBias = desc.mipBias;
 
@@ -336,6 +340,8 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
 
 void RenderSystemVk::destroy()
 {
+	m_shaderModuleCache = nullptr;
+	m_pipelineLayoutCache = nullptr;
 	finalizeVulkanApi();
 }
 
@@ -599,7 +605,7 @@ Ref< IProgram > RenderSystemVk::createProgram(const ProgramResource* programReso
 		m_logicalDevice,
 		m_allocator
 	);
-	if (program->create(resource, m_maxAnisotropy, m_mipBias, tag))
+	if (program->create(m_shaderModuleCache, m_pipelineLayoutCache, resource, m_maxAnisotropy, m_mipBias, tag))
 		return program;
 	else
 		return nullptr;

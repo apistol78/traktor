@@ -9,7 +9,9 @@ namespace traktor
 	namespace render
 	{
 
+class PipelineLayoutCache;
 class ProgramResourceVk;
+class ShaderModuleCache;
 class UniformBufferPoolVk;
 
 /*!
@@ -28,7 +30,7 @@ public:
 
 	virtual ~ProgramVk();
 
-	bool create(const ProgramResourceVk* resource, int32_t maxAnistropy, float mipBias, const wchar_t* const tag);
+	bool create(ShaderModuleCache* shaderModuleCache, PipelineLayoutCache* pipelineLayoutCache, const ProgramResourceVk* resource, int32_t maxAnistropy, float mipBias, const wchar_t* const tag);
 
 	bool validateGraphics(VkDescriptorPool descriptorPool, VkCommandBuffer commandBuffer, UniformBufferPoolVk* uniformBufferPool, float targetSize[2]);
 

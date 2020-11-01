@@ -521,15 +521,63 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 		}
 	}
 
-	// Calculate hash of renderstate and shaders.
-	Adler32 checksum;
-	checksum.begin();
-	checksum.feed(cx.getRenderState());
-	checksum.feed(programResource->m_vertexShader.c_ptr(), programResource->m_vertexShader.size() * sizeof(uint32_t));
-	checksum.feed(programResource->m_fragmentShader.c_ptr(), programResource->m_fragmentShader.size() * sizeof(uint32_t));
-	checksum.feed(programResource->m_computeShader.c_ptr(), programResource->m_computeShader.size() * sizeof(uint32_t));
-	checksum.end();
-	programResource->m_hash = checksum.get();
+	// Calculate hashes.
+	{
+		Adler32 checksum;
+		checksum.begin();
+		checksum.feed(programResource->m_vertexShader.c_ptr(), programResource->m_vertexShader.size() * sizeof(uint32_t));
+		checksum.end();
+		programResource->m_vertexShaderHash = checksum.get();
+	}
+	{
+		Adler32 checksum;
+		checksum.begin();
+		checksum.feed(programResource->m_fragmentShader.c_ptr(), programResource->m_fragmentShader.size() * sizeof(uint32_t));
+		checksum.end();
+		programResource->m_fragmentShaderHash = checksum.get();
+	}
+	{
+		Adler32 checksum;
+		checksum.begin();
+		checksum.feed(programResource->m_computeShader.c_ptr(), programResource->m_computeShader.size() * sizeof(uint32_t));
+		checksum.end();
+		programResource->m_computeShaderHash = checksum.get();
+	}
+	{
+		Adler32 checksum;
+		checksum.begin();
+		checksum.feed(cx.getRenderState());
+		checksum.feed(programResource->m_vertexShader.c_ptr(), programResource->m_vertexShader.size() * sizeof(uint32_t));
+		checksum.feed(programResource->m_fragmentShader.c_ptr(), programResource->m_fragmentShader.size() * sizeof(uint32_t));
+		checksum.feed(programResource->m_computeShader.c_ptr(), programResource->m_computeShader.size() * sizeof(uint32_t));
+		checksum.end();
+		programResource->m_hash = checksum.get();
+	}
+	//{
+	//	Adler32 checksum;
+	//	checksum.begin();
+
+	//	for (int32_t i = 0; i < 3; ++i)
+	//	{
+	//		if (programResource->m_uniformBufferSizes[i] > 0)
+	//			checksum.feed(i);
+	//	}
+
+	//	checksum.feed(programResource->m_samplers.size());
+	//	for (const auto& sampler : programResource->m_samplers)
+	//		checksum.feed(sampler.binding);
+
+	//	checksum.feed(programResource->m_textures.size());
+	//	for (const auto& texture : programResource->m_textures)
+	//		checksum.feed(texture.binding);
+
+	//	checksum.feed(programResource->m_sbuffers.size());
+	//	for (const auto& sbuffer : programResource->m_sbuffers)
+	//		checksum.feed(sbuffer.binding);
+
+	//	checksum.end();
+	//	programResource->m_descriptorSetLayoutHash = checksum.get();
+	//}
 
 	// \note Need to delete program before shaders due to glslang weirdness.
 	delete program;
