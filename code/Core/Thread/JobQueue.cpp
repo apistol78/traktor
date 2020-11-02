@@ -51,7 +51,7 @@ void JobQueue::destroy()
 	m_workerThreads.clear();
 }
 
-Job* JobQueue::add(Functor* functor)
+Ref< Job > JobQueue::add(Functor* functor)
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_jobQueueLock);
 	Ref< Job > job = new Job(functor);

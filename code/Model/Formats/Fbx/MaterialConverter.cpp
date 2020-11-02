@@ -12,6 +12,30 @@ namespace traktor
 		namespace
 		{
 
+void scanCustomProperties(const FbxObject* node, Material& outMaterial)
+{
+	FbxProperty prop = node->GetFirstProperty();
+	while (prop.IsValid())
+	{
+		int userTag = prop.GetUserTag();
+		std::wstring propName = mbstows(prop.GetNameAsCStr());
+		if (startsWith(propName, L"Traktor_"))
+		{
+			propName = replaceAll(propName, L"Traktor_", L"");
+			FbxPropertyT< FbxBool > propState = prop;
+			if (propState.IsValid())
+			{
+				bool propValue = propState.Get();
+				if (propName != L"DoubleSided")
+					outMaterial.setProperty< PropertyBoolean >(propName, propValue);
+				else
+					outMaterial.setDoubleSided(propValue);
+			}
+		}
+		prop = node->GetNextProperty(prop);
+	}
+}
+
 const FbxTexture* getTexture(const FbxSurfaceMaterial* material, const char* fbxPropertyName)
 {
 	if (!material || !fbxPropertyName)
@@ -74,23 +98,9 @@ bool convertMaterials(Model& outModel, std::map< int32_t, int32_t >& outMaterial
 		Material mm;
 		mm.setName(mbstows(material->GetName()));
 
-		FbxProperty prop = meshNode->GetFirstProperty();
-		while (prop.IsValid())
-		{
-			int userTag = prop.GetUserTag();
-			std::wstring propName = mbstows(prop.GetNameAsCStr());
-			if (startsWith(propName, L"DEA_"))
-			{
-				propName = replaceAll(propName, L"DEA_", L"");
-				FbxPropertyT< FbxBool > propState = prop;
-				if (propState.IsValid())
-				{
-					bool propValue = propState.Get();
-					mm.setProperty< PropertyBoolean >(propName, propValue);
-				}
-			}
-			prop = meshNode->GetNextProperty(prop);
-		}
+		// Get custom properties on material.
+		scanCustomProperties(meshNode, mm);
+		scanCustomProperties(material, mm);
 
 		// \note In case weird FBX show up with un-standard texture names.
 #if 0

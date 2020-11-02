@@ -22,8 +22,6 @@ class T_DLLCLASS PipelineDbFlat : public IPipelineDb
 	T_RTTI_CLASS;
 
 public:
-	PipelineDbFlat();
-
 	virtual bool open(const std::wstring& connectionString) override final;
 
 	virtual void close() override final;
@@ -45,9 +43,8 @@ private:
 	std::wstring m_file;
 	std::map< Guid, PipelineDependencyHash > m_dependencies;
 	std::map< std::wstring, PipelineFileHash > m_files;
-	uint32_t m_changes;
+	uint32_t m_changes = 0;
 };
 
 	}
 }
-

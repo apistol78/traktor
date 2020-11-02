@@ -540,10 +540,7 @@ bool BakePipelineOperator::build(
 					material.setBlendOperator(model::Material::BoDecal);
 					material.setLightMap(model::Material::Map(L"Lightmap", L"Lightmap", false, lightmapId));
 				}
-#if 0
-				// Write model for debugging into temporary folder.
-				model::ModelFormat::writeAny(L"data/Temp/Bake/" + name +L".tmd", model);
-#endif
+
 				// Add model to raytracing task.
 				if (!addModel(
 					pipelineBuilder,
@@ -644,7 +641,7 @@ bool BakePipelineOperator::build(
 
 			for (int32_t i = 0; i < 9; ++i)
 			{
-				writer << 1.0f;
+				writer << 0.0f;
 				writer << 0.0f;
 				writer << 0.0f;
 			}

@@ -142,7 +142,7 @@ private:
 	bool putInstancesInCache(const Guid& guid, const PipelineDependencyHash& hash, const RefArray< db::Instance >& instances);
 
 	/*! Get isolated instance from cache. */
-	bool getInstancesFromCache(const Guid& guid, const PipelineDependencyHash& hash);
+	bool getInstancesFromCache(const PipelineDependency* dependency, const PipelineDependencyHash& hash, RefArray< db::Instance >& outInstances);
 
 	/*! Build thread method. */
 	void buildThread(const IPipelineDependencySet* dependencySet, Thread* controlThread, int32_t cpuCore);

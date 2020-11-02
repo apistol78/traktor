@@ -1198,7 +1198,7 @@ void PhysicsManagerBullet::update(float simulationDeltaTime, bool issueCollision
 	T_ANONYMOUS_VAR(Save< PhysicsManagerBullet* >)(ms_this, this);
 
 	// Step simulation.
-	m_dynamicsWorld->stepSimulation(simulationDeltaTime * m_timeScale, 0);
+	m_dynamicsWorld->stepSimulation(simulationDeltaTime * m_timeScale, 4, 1.0f / 120.0f);
 
 	// Issue collision events.
 	if (issueCollisionEvents)
