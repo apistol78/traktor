@@ -47,9 +47,9 @@ SpriteInstance::SpriteInstance(ActionContext* context, Dictionary* dictionary, C
 
 SpriteInstance::~SpriteInstance()
 {
-	m_sprite = 0;
-	m_mask = 0;
-	m_canvas = 0;
+	m_sprite = nullptr;
+	m_mask = nullptr;
+	m_canvas = nullptr;
 	m_playing = false;
 
 	const DisplayList::layer_map_t& layers = m_displayList.getLayers();
@@ -63,9 +63,9 @@ SpriteInstance::~SpriteInstance()
 
 void SpriteInstance::destroy()
 {
-	m_sprite = 0;
-	m_mask = 0;
-	m_canvas = 0;
+	m_sprite = nullptr;
+	m_mask = nullptr;
+	m_canvas = nullptr;
 	m_playing = false;
 
 	const DisplayList::layer_map_t& layers = m_displayList.getLayers();
@@ -246,8 +246,8 @@ Ref< SpriteInstance > SpriteInstance::createEmptyMovieClip(const std::string& cl
 		this,
 		clipName,
 		Matrix33::identity(),
-		0,
-		0
+		nullptr,
+		nullptr
 	));
 	emptyClipInstance->setName(clipName);
 
@@ -300,8 +300,8 @@ Ref< EditInstance > SpriteInstance::createTextField(const std::string& textName,
 		this,
 		textName,
 		Matrix33::identity(),
-		0,
-		0
+		nullptr,
+		nullptr
 	));
 
 	// Place character at given location.
@@ -336,11 +336,11 @@ void SpriteInstance::removeMovieClip()
 	parentDisplayList.removeObject(this);
 
 	if (parentClipInstance->m_mask == this)
-		parentClipInstance->m_mask = 0;
+		parentClipInstance->m_mask = nullptr;
 
 	m_displayList.reset();
-	m_mask = 0;
-	m_canvas = 0;
+	m_mask = nullptr;
+	m_canvas = nullptr;
 
 	setCacheObject(0);
 	setParent(0);
@@ -355,7 +355,7 @@ Ref< SpriteInstance > SpriteInstance::clone() const
 		getParent(),
 		"",
 		getTransform(),
-		0,
+		nullptr,
 		&events
 	));
 	return cloneInstance;
@@ -377,7 +377,7 @@ Ref< SpriteInstance > SpriteInstance::duplicateMovieClip(const std::string& clon
 		intoParent,
 		cloneName,
 		getTransform(),
-		0,
+		nullptr,
 		&events
 	));
 
@@ -398,7 +398,7 @@ Ref< ShapeInstance > SpriteInstance::attachBitmap(Bitmap* bm, int32_t depth)
 	// Get dictionary.
 	Dictionary* dictionary = getDictionary();
 	if (!dictionary)
-		return 0;
+		return nullptr;
 
 	// Define bitmap symbol.
 	uint16_t bitmapId = dictionary->addBitmap(bm);
@@ -461,7 +461,7 @@ Aabb2 SpriteInstance::getVisibleLocalBounds() const
 void SpriteInstance::setMask(SpriteInstance* mask)
 {
 	clearCacheObject();
-	if ((m_mask = mask) != 0)
+	if ((m_mask = mask) != nullptr)
 		m_mask->setVisible(false);
 }
 
@@ -528,8 +528,8 @@ void SpriteInstance::eventInit()
 			context,
 			self,
 			4,
-			0,
-			0
+			nullptr,
+			nullptr
 		);
 
 		callFrame.setVariable(ActionContext::IdThis, ActionValue(self));
@@ -612,8 +612,8 @@ void SpriteInstance::eventFrame()
 						context,
 						self,
 						4,
-						0,
-						0
+						nullptr,
+						nullptr
 					);
 
 					callFrame.setVariable(ActionContext::IdThis, ActionValue(self));

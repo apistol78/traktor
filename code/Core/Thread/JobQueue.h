@@ -50,7 +50,7 @@ public:
 	 * a worker thread is idle the scheduler assigns
 	 * a new job to that thread from this queue.
 	 */
-	Job* add(Functor* functor);
+	Ref< Job > add(Functor* functor);
 
 	/*! Enqueue jobs and wait for all to finish.
 	 *

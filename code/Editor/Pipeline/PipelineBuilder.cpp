@@ -441,30 +441,24 @@ bool PipelineBuilder::buildOutput(const db::Instance* sourceInstance, const ISer
 		currentDependencyHash.filesHash
 	);
 
-	// Concatenate with parent's hash.
-	PipelineDependencyHash* parentDependencyHash = (PipelineDependencyHash*)m_parentHash.get();
-	if (parentDependencyHash)
-	{
-		currentDependencyHash.pipelineHash += parentDependencyHash->pipelineHash;
-		currentDependencyHash.sourceAssetHash += parentDependencyHash->sourceAssetHash;
-		currentDependencyHash.sourceDataHash += parentDependencyHash->sourceDataHash;
-		currentDependencyHash.filesHash += parentDependencyHash->filesHash;
-	}
-
 	T_ANONYMOUS_VAR(ScopeIndent)(log::info);
 
 	if (m_verbose)
 		log::info << L"Building asset \"" << dependency->outputPath << L"\"..." << Endl;
 	log::info << IncreaseIndent;
 
-	// Get output instances from cache.
-	if (m_cache && dependency->sourceDataHash != 0)
-	{
-		if (getInstancesFromCache(dependency->outputGuid, currentDependencyHash))
-		{
-			if (m_verbose)
-				log::info << L"Cached output used of \"" << dependency->outputPath << L"\"." << Endl;
+	// Build output instances; keep an array of written instances as we
+	// need them to update the cache.
+	RefArray< db::Instance >* previousBuiltInstances = reinterpret_cast< RefArray< db::Instance >* >(m_buildInstances.get());
+	RefArray< db::Instance > builtInstances;
+	m_buildInstances.set(&builtInstances);
 
+	// Get output instances from cache.
+	bool cacheable = (dependency->sourceAssetHash != 0 || dependency->sourceDataHash != 0);
+	if (m_cache && cacheable)
+	{
+		if (getInstancesFromCache(dependency, currentDependencyHash, builtInstances))
+		{
 			m_pipelineDb->setDependency(dependency->outputGuid, currentDependencyHash);
 
 			Atomic::increment(m_cacheHit);
@@ -486,12 +480,6 @@ bool PipelineBuilder::buildOutput(const db::Instance* sourceInstance, const ISer
 	else if (m_cache)
 		Atomic::increment(m_cacheVoid);
 
-	// Build output instances; keep an array of written instances as we
-	// need them to update the cache.
-	RefArray< db::Instance >* previousBuiltInstances = reinterpret_cast< RefArray< db::Instance >* >(m_buildInstances.get());
-	RefArray< db::Instance > builtInstances;
-	m_buildInstances.set(&builtInstances);
-
 	Timer timer;
 	timer.start();
 
@@ -512,7 +500,7 @@ bool PipelineBuilder::buildOutput(const db::Instance* sourceInstance, const ISer
 
 	if (result)
 	{
-		if (m_cache && dependency->sourceDataHash != 0)
+		if (m_cache && cacheable)
 			putInstancesInCache(
 				dependency->outputGuid,
 				currentDependencyHash,
@@ -722,13 +710,19 @@ IPipelineBuilder::BuildResult PipelineBuilder::performBuild(const IPipelineDepen
 	log::info << L"Building asset \"" << dependency->outputPath << L"\"..." << Endl;
 	log::info << IncreaseIndent;
 
+	// Build output instances; keep an array of written instances as we
+	// need them to update the cache.
+	RefArray< db::Instance > builtInstances;
+	m_buildInstances.set(&builtInstances);
+
 	// Get output instances from cache.
 	if (m_cache)
 	{
-		if (getInstancesFromCache(dependency->outputGuid, currentDependencyHash))
+		if (getInstancesFromCache(dependency, currentDependencyHash, builtInstances))
 		{
 			if (m_verbose)
-				log::info << L"Cached output used of \"" << dependency->outputPath << L"\"." << Endl;
+				log::info << L"Cached output used for \"" << dependency->outputPath << L"\"; " << (uint32_t)builtInstances.size() << L" instance(s)." << Endl;
+
 			m_pipelineDb->setDependency(dependency->outputGuid, currentDependencyHash);
 			Atomic::increment(m_cacheHit);
 			Atomic::increment(m_succeededBuilt);
@@ -739,11 +733,6 @@ IPipelineBuilder::BuildResult PipelineBuilder::performBuild(const IPipelineDepen
 	}
 	else if (m_cache)
 		Atomic::increment(m_cacheVoid);
-
-	// Build output instances; keep an array of written instances as we
-	// need them to update the cache.
-	RefArray< db::Instance > builtInstances;
-	m_buildInstances.set(&builtInstances);
 
 	// Use guid of output as a basis for synthesis.
 	Guid synthesis = dependency->outputGuid.permutation(c_synthesisSeedGuid);
@@ -857,11 +846,11 @@ bool PipelineBuilder::putInstancesInCache(const Guid& guid, const PipelineDepend
 	return result;
 }
 
-bool PipelineBuilder::getInstancesFromCache(const Guid& guid, const PipelineDependencyHash& hash)
+bool PipelineBuilder::getInstancesFromCache(const PipelineDependency* dependency, const PipelineDependencyHash& hash, RefArray< db::Instance >& outInstances)
 {
 	bool result = false;
 
-	Ref< IStream > stream = m_cache->get(guid, hash);
+	Ref< IStream > stream = m_cache->get(dependency->outputGuid, hash);
 	if (stream)
 	{
 		Reader reader(stream);
@@ -883,7 +872,10 @@ bool PipelineBuilder::getInstancesFromCache(const Guid& guid, const PipelineDepe
 				break;
 			}
 
-			if (!db::Isolate::createInstanceFromIsolation(group, stream))
+			Ref< db::Instance > instance = db::Isolate::createInstanceFromIsolation(group, stream);
+			if (instance)
+				outInstances.push_back(instance);
+			else
 			{
 				result = false;
 				break;

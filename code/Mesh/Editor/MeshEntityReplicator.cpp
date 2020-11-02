@@ -133,7 +133,7 @@ Ref< Object > MeshEntityReplicator::modifyOutput(
 	std::wstring outputRenderMeshPath = L"Generated/" + outputRenderMeshGuid.format();
 
     Ref< MeshAsset > outputMeshAsset = new MeshAsset();
-    outputMeshAsset->setMeshType(meshAsset->getMeshType());
+    outputMeshAsset->setMeshType(MeshAsset::MtStatic);
 	outputMeshAsset->setMaterialTextures(meshAsset->getMaterialTextures());
 	outputMeshAsset->setTextureSet(meshAsset->getTextureSet());
 

@@ -64,11 +64,6 @@ private:
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.editor.PipelineDbFlat", PipelineDbFlat, IPipelineDb)
 
-PipelineDbFlat::PipelineDbFlat()
-:	m_changes(0)
-{
-}
-
 bool PipelineDbFlat::open(const std::wstring& connectionString)
 {
 	std::vector< std::wstring > pairs;
@@ -103,7 +98,10 @@ bool PipelineDbFlat::open(const std::wstring& connectionString)
 
 	Ref< IStream > f = FileSystem::getInstance().open(m_file, File::FmRead);
 	if (!f)
+	{
+		log::error << L"Unable to open pipeline db; failed to open file." << Endl;
 		return false;
+	}
 
 	BinarySerializer s(f);
 
@@ -134,6 +132,8 @@ bool PipelineDbFlat::open(const std::wstring& connectionString)
 			>
 		>(L"files", m_files);
 	}
+	else
+		log::warning << L"Pipeline database version mismatch; database purged and rebuild is required." << Endl;
 
 	f->close();
 	f = nullptr;

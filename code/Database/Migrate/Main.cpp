@@ -247,7 +247,7 @@ int main(int argc, const char** argv)
 		traktor::log::info << L"       Traktor.Database.Migrate.App -s|-settings=[settings]" << Endl;
 		traktor::log::info << L"       -s|-settings    Settings (default \"Traktor.Editor\")" << Endl;
 		traktor::log::info << L"       -l|-log=logfile Save log file" << Endl;
-		traktor::log::info << L"       -sequential     Migrate sequentially" << Endl;
+		traktor::log::info << L"       -parallel       Migrate in parallel" << Endl;
 		return 0;
 	}
 
@@ -352,7 +352,7 @@ int main(int argc, const char** argv)
 	Ref< db::Group > targetGroup = destinationDb->getRootGroup();
 	if (sourceGroup && targetGroup)
 	{
-		if (!cmdLine.hasOption(L"sequential"))
+		if (!cmdLine.hasOption(L"parallel"))
 		{
 			if (verbose)
 				traktor::log::info << L"Migration begin, creating jobs..." << Endl;

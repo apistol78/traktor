@@ -60,7 +60,8 @@ Ref< Model > ModelFormatBlend::read(const Path& filePath, const std::wstring& fi
 	os << L"	axis_forward=\"Z\"," << Endl;
 	os << L"	axis_up=\"Y\"," << Endl;
 	os << L"	use_selection=False," << Endl;
-	os << L"	global_scale=0.01" << Endl;
+	os << L"	global_scale=0.01," << Endl;
+	os << L"	use_custom_props=True" << Endl;
 	os << L")" << Endl;
 	os.close();
 

@@ -378,7 +378,7 @@ bool perform(const PipelineParameters* params)
 {
 	if (!FileSystem::getInstance().setCurrentVolumeAndDirectory(params->getWorkingDirectory()))
 	{
-		traktor::log::error << L"Unable to change working directory" << Endl;
+		traktor::log::error << L"Unable to change working directory." << Endl;
 		return false;
 	}
 
@@ -388,7 +388,7 @@ bool perform(const PipelineParameters* params)
 	Ref< PropertyGroup > settings = loadSettings(params->getSettings());
 	if (!settings)
 	{
-		traktor::log::error << L"Unable to load pipeline settings \"" << params->getSettings() << L"\"" << Endl;
+		traktor::log::error << L"Unable to load pipeline settings \"" << params->getSettings() << L"\"." << Endl;
 		return false;
 	}
 
@@ -427,14 +427,14 @@ bool perform(const PipelineParameters* params)
 	ConnectionAndCache sourceDatabaseAndCache = openDatabase(settings, sourceDatabaseCS, false);
 	if (!sourceDatabaseAndCache.database)
 	{
-		traktor::log::error << L"Unable to open source database \"" << sourceDatabaseCS << L"\"" << Endl;
+		traktor::log::error << L"Unable to open source database \"" << sourceDatabaseCS << L"\"." << Endl;
 		return false;
 	}
 
 	ConnectionAndCache outputDatabaseAndCache = openDatabase(settings, outputDatabaseCS, true);
 	if (!outputDatabaseAndCache.database)
 	{
-		traktor::log::error << L"Unable to open or create output database \"" << outputDatabaseCS << L"\"" << Endl;
+		traktor::log::error << L"Unable to open or create output database \"" << outputDatabaseCS << L"\"." << Endl;
 		return false;
 	}
 
@@ -444,7 +444,7 @@ bool perform(const PipelineParameters* params)
 	Ref< editor::IPipelineDb > pipelineDb = new editor::PipelineDbFlat();
 	if (!pipelineDb->open(connectionString))
 	{
-		traktor::log::error << L"Unable to connect to pipeline database" << Endl;
+		traktor::log::error << L"Unable to connect to pipeline database." << Endl;
 		return false;
 	}
 
@@ -455,7 +455,7 @@ bool perform(const PipelineParameters* params)
 		pipelineCache = new editor::MemCachedPipelineCache();
 		if (!pipelineCache->create(settings))
 		{
-			traktor::log::warning << L"Unable to create pipeline cache; cache disabled" << Endl;
+			traktor::log::warning << L"Unable to create pipeline cache; cache disabled." << Endl;
 			pipelineCache = 0;
 		}
 	}
@@ -464,7 +464,7 @@ bool perform(const PipelineParameters* params)
 		pipelineCache = new editor::FilePipelineCache();
 		if (!pipelineCache->create(settings))
 		{
-			traktor::log::warning << L"Unable to create pipeline file cache; cache disabled" << Endl;
+			traktor::log::warning << L"Unable to create pipeline file cache; cache disabled." << Endl;
 			pipelineCache = 0;
 		}
 	}
@@ -524,6 +524,13 @@ bool perform(const PipelineParameters* params)
 	pipelineDepends->waitUntilFinished();
 
 	traktor::log::info << DecreaseIndent;
+
+	// Write dependency set for debugging.
+	if (true)
+	{
+		Ref< traktor::IStream > f = FileSystem::getInstance().open(L"Dependencies.txt", File::FmWrite);
+		pipelineDependencySet.dump(FileOutputStream(f, new Utf8Encoding()));
+	}
 
 	AutoPtr< StatusListener > statusListener;
 	if (params->getProgress())
@@ -591,7 +598,7 @@ int slave(const CommandLine& cmdLine)
 	net::TcpSocket socket;
 	if (!socket.bind(net::SocketAddressIPv4(port)))
 	{
-		traktor::log::error << L"Unable to bind socket to port " << port << Endl;
+		traktor::log::error << L"Unable to bind socket to port " << port << L"." << Endl;
 		return 1;
 	}
 
@@ -599,7 +606,7 @@ int slave(const CommandLine& cmdLine)
 
 	if (!socket.listen())
 	{
-		traktor::log::error << L"Unable to listen on socket" << Endl;
+		traktor::log::error << L"Unable to listen on socket." << Endl;
 		return 1;
 	}
 
@@ -666,7 +673,7 @@ int slave(const CommandLine& cmdLine)
 		if (params)
 			success = perform(params);
 		else
-			traktor::log::error << L"Unable to read pipeline parameters" << Endl;
+			traktor::log::error << L"Unable to read pipeline parameters." << Endl;
 
 		const PipelineResult result(success ? 0 : 1);
 		transport->send(&result);
@@ -969,7 +976,7 @@ int agent(const CommandLine& cmdLine)
 	Ref< PropertyGroup > settings = loadSettings(settingsFile);
 	if (!settings)
 	{
-		traktor::log::error << L"Unable to load settings \"" << settingsFile << L"\"" << Endl;
+		traktor::log::error << L"Unable to load settings \"" << settingsFile << L"\"." << Endl;
 		return 1;
 	}
 
@@ -979,7 +986,7 @@ int agent(const CommandLine& cmdLine)
 		agentCount = cmdLine.getOption('n', L"agents").getInteger();
 		if (agentCount <= 0)
 		{
-			traktor::log::error << L"Invalid number of agents; must be atleast one" << Endl;
+			traktor::log::error << L"Invalid number of agents; must be atleast one." << Endl;
 			return 1;
 		}
 	}
@@ -1176,7 +1183,7 @@ int main(int argc, const char** argv)
 {
 	int32_t result = 1;
 
-	traktor::log::info << L"Pipeline; Built '" << mbstows(__TIME__) << L" - " << mbstows(__DATE__) << L"'" << Endl;
+	traktor::log::info << L"Pipeline; Built '" << mbstows(__TIME__) << L" - " << mbstows(__DATE__) << L"'." << Endl;
 
 	net::Network::initialize();
 

@@ -123,10 +123,10 @@ void writeSamples(void* dest, const float* samples, uint32_t samplesCount, uint3
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.AudioDriverXAudio2", 0, AudioDriverXAudio2, IAudioDriver)
 
 AudioDriverXAudio2::AudioDriverXAudio2()
-:	m_engineCallback(0)
-,	m_voiceCallback(0)
-,	m_masteringVoice(0)
-,	m_sourceVoice(0)
+:	m_engineCallback(nullptr)
+,	m_voiceCallback(nullptr)
+,	m_masteringVoice(nullptr)
+,	m_sourceVoice(nullptr)
 ,	m_eventNotify(NULL)
 ,	m_hResult(S_OK)
 ,	m_bufferSize(0)
@@ -134,7 +134,7 @@ AudioDriverXAudio2::AudioDriverXAudio2()
 {
 	std::memset(&m_wfx, 0, sizeof(m_wfx));
 	for (uint32_t i = 0; i < sizeof_array(m_buffers); ++i)
-		m_buffers[i] = 0;
+		m_buffers[i] = nullptr;
 }
 
 AudioDriverXAudio2::~AudioDriverXAudio2()
@@ -185,13 +185,13 @@ void AudioDriverXAudio2::destroy()
 	{
 		m_sourceVoice->Stop(0);
 		m_sourceVoice->DestroyVoice();
-		m_sourceVoice = 0;
+		m_sourceVoice = nullptr;
 	}
 
 	if (m_masteringVoice)
 	{
 		m_masteringVoice->DestroyVoice();
-		m_masteringVoice = 0;
+		m_masteringVoice = nullptr;
 	}
 
 	if (m_audio)
@@ -203,13 +203,13 @@ void AudioDriverXAudio2::destroy()
 	if (m_voiceCallback)
 	{
 		delete m_voiceCallback;
-		m_voiceCallback = 0;
+		m_voiceCallback = nullptr;
 	}
 
 	if (m_engineCallback)
 	{
 		delete m_engineCallback;
-		m_engineCallback = 0;
+		m_engineCallback = nullptr;
 	}
 
 	if (m_eventNotify)
@@ -221,7 +221,7 @@ void AudioDriverXAudio2::destroy()
 	for (uint32_t i = 0; i < sizeof_array(m_buffers); ++i)
 	{
 		Alloc::freeAlign(m_buffers[i]);
-		m_buffers[i] = 0;
+		m_buffers[i] = nullptr;
 	}
 
 #if !defined(_XBOX)
@@ -238,7 +238,8 @@ void AudioDriverXAudio2::wait()
 
 	while (m_sourceVoice->GetState(&state), state.BuffersQueued >= 3)
 	{
-		WaitForSingleObject(m_eventNotify, INFINITE);
+		if (WaitForSingleObject(m_eventNotify, 1000) != WAIT_OBJECT_0)
+			break;
 		if (FAILED(m_hResult))
 			break;
 	}
@@ -297,13 +298,13 @@ bool AudioDriverXAudio2::reset()
 	{
 		m_sourceVoice->Stop(0);
 		m_sourceVoice->DestroyVoice();
-		m_sourceVoice = 0;
+		m_sourceVoice = nullptr;
 	}
 
 	if (m_masteringVoice)
 	{
 		m_masteringVoice->DestroyVoice();
-		m_masteringVoice = 0;
+		m_masteringVoice = nullptr;
 	}
 
 	if (m_audio)
