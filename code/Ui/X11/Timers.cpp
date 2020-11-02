@@ -1,4 +1,5 @@
 #include "Core/Assert.h"
+#include "Core/Containers/StaticVector.h"
 #include "Ui/X11/Timers.h"
 
 namespace traktor
@@ -34,7 +35,7 @@ void Timers::unbind(int32_t id)
 
 void Timers::update(double s)
 {
-    std::vector< std::function< void(int32_t) > > fns;
+    StaticVector< std::function< void(int32_t) >, 32 > fns;
     for (auto& it : m_timers)
     {
         Timer& t = it.second;
