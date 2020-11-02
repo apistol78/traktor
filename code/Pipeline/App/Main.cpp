@@ -526,11 +526,10 @@ bool perform(const PipelineParameters* params)
 	traktor::log::info << DecreaseIndent;
 
 	// Write dependency set for debugging.
-	if (true)
-	{
+#if 0
 		Ref< traktor::IStream > f = FileSystem::getInstance().open(L"Dependencies.txt", File::FmWrite);
 		pipelineDependencySet.dump(FileOutputStream(f, new Utf8Encoding()));
-	}
+#endif
 
 	AutoPtr< StatusListener > statusListener;
 	if (params->getProgress())
@@ -546,7 +545,7 @@ bool perform(const PipelineParameters* params)
 		sourceDatabaseAndCache.cache,
 		statusListener.ptr(),
 		settings->getProperty< bool >(L"Pipeline.BuildThreads", true),
-		true/*params->getVerbose()*/
+		params->getVerbose()
 	);
 
 	if (params->getRebuild())

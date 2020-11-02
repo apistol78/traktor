@@ -41,9 +41,7 @@ private:
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ShaderFactory", ShaderFactory, resource::IResourceFactory)
 
-ShaderFactory::ShaderFactory(
-	IRenderSystem* renderSystem
-)
+ShaderFactory::ShaderFactory(IRenderSystem* renderSystem)
 :	m_renderSystem(renderSystem)
 {
 }
