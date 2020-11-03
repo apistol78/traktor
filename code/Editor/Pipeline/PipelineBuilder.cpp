@@ -449,7 +449,7 @@ bool PipelineBuilder::buildOutput(const db::Instance* sourceInstance, const ISer
 
 	// Build output instances; keep an array of written instances as we
 	// need them to update the cache.
-	RefArray< db::Instance >* previousBuiltInstances = reinterpret_cast< RefArray< db::Instance >* >(m_buildInstances.get());
+	RefArray< db::Instance >* previousBuiltInstances = (RefArray< db::Instance >*)m_buildInstances.get();
 	RefArray< db::Instance > builtInstances;
 	m_buildInstances.set(&builtInstances);
 
@@ -459,8 +459,10 @@ bool PipelineBuilder::buildOutput(const db::Instance* sourceInstance, const ISer
 	{
 		if (getInstancesFromCache(dependency, currentDependencyHash, builtInstances))
 		{
-			m_pipelineDb->setDependency(dependency->outputGuid, currentDependencyHash);
+			if (m_verbose)
+				log::info << L"Cached output used for \"" << dependency->outputPath << L"\"; " << (uint32_t)builtInstances.size() << L" instance(s)." << Endl;
 
+			m_pipelineDb->setDependency(dependency->outputGuid, currentDependencyHash);
 			Atomic::increment(m_cacheHit);
 			Atomic::increment(m_succeededBuilt);
 
@@ -472,6 +474,11 @@ bool PipelineBuilder::buildOutput(const db::Instance* sourceInstance, const ISer
 					BrSucceeded
 				);
 
+			// Restore previous set but also insert built instances from synthesized build;
+			// when caching is enabled then synthesized built instances should be included in parent build as well.
+			if (previousBuiltInstances)
+				previousBuiltInstances->insert(previousBuiltInstances->end(), builtInstances.begin(), builtInstances.end());
+			m_buildInstances.set(previousBuiltInstances);
 			return true;
 		}
 		else
@@ -592,7 +599,7 @@ Ref< db::Instance > PipelineBuilder::createOutputInstance(const std::wstring& in
 
 	if (instanceGuid.isNull() || !instanceGuid.isValid())
 	{
-		log::error << L"Invalid guid for output instance" << Endl;
+		log::error << L"Invalid guid for output instance." << Endl;
 		return nullptr;
 	}
 
@@ -609,7 +616,7 @@ Ref< db::Instance > PipelineBuilder::createOutputInstance(const std::wstring& in
 		}
 		if (!result)
 		{
-			log::error << L"Unable to remove existing instance \"" << instance->getPath() << L"\"" << Endl;
+			log::error << L"Unable to remove existing instance \"" << instance->getPath() << L"\"." << Endl;
 			return nullptr;
 		}
 	}
@@ -621,14 +628,14 @@ Ref< db::Instance > PipelineBuilder::createOutputInstance(const std::wstring& in
 	);
 	if (instance)
 	{
-		RefArray< db::Instance >* builtInstances = reinterpret_cast< RefArray< db::Instance >* >(m_buildInstances.get());
+		RefArray< db::Instance >* builtInstances = (RefArray< db::Instance >*)m_buildInstances.get();
 		if (builtInstances)
 			builtInstances->push_back(instance);
 		return instance;
 	}
 	else
 	{
-		log::error << L"Unable to create output instance" << Endl;
+		log::error << L"Unable to create output instance \"" << instancePath << L"\"." << Endl;
 		return nullptr;
 	}
 }
@@ -712,6 +719,7 @@ IPipelineBuilder::BuildResult PipelineBuilder::performBuild(const IPipelineDepen
 
 	// Build output instances; keep an array of written instances as we
 	// need them to update the cache.
+	RefArray< db::Instance >* previousBuiltInstances = (RefArray< db::Instance >*)m_buildInstances.get();
 	RefArray< db::Instance > builtInstances;
 	m_buildInstances.set(&builtInstances);
 
@@ -726,6 +734,12 @@ IPipelineBuilder::BuildResult PipelineBuilder::performBuild(const IPipelineDepen
 			m_pipelineDb->setDependency(dependency->outputGuid, currentDependencyHash);
 			Atomic::increment(m_cacheHit);
 			Atomic::increment(m_succeededBuilt);
+
+			// Restore previous set but also insert built instances from synthesized build;
+			// when caching is enabled then synthesized built instances should be included in parent build as well.
+			if (previousBuiltInstances)
+				previousBuiltInstances->insert(previousBuiltInstances->end(), builtInstances.begin(), builtInstances.end());
+			m_buildInstances.set(previousBuiltInstances);
 			return BrSucceeded;
 		}
 		else
@@ -813,6 +827,12 @@ IPipelineBuilder::BuildResult PipelineBuilder::performBuild(const IPipelineDepen
 		else
 			log::info << L"Build \"" << dependency->outputPath << L"\" failed." << Endl;
 	}
+
+	// Restore previous set but also insert built instances from synthesized build;
+	// when caching is enabled then synthesized built instances should be included in parent build as well.
+	if (previousBuiltInstances)
+		previousBuiltInstances->insert(previousBuiltInstances->end(), builtInstances.begin(), builtInstances.end());
+	m_buildInstances.set(previousBuiltInstances);
 
 	if (result)
 		return (warningTarget.getCount() + errorTarget.getCount()) > 0 ? BrSucceededWithWarnings : BrSucceeded;
