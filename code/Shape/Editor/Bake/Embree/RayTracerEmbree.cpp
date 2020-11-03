@@ -118,7 +118,7 @@ bool RayTracerEmbree::create(const BakeConfiguration* configuration)
 	// Create SH sampling engine.
 	m_shEngine = new render::SHEngine(3);
 	m_shEngine->generateSamplePoints(
-		configuration->getIrradianceSampleCount()
+		1000 // configuration->getIrradianceSampleCount()
 	);
 
     return true;

@@ -598,7 +598,7 @@ bool TracerProcessor::process(const TracerTask* task) const
 		if (boundingBox.empty())
 		{
 			for (auto tracerModel : task->getTracerModels())
-				boundingBox.contain(tracerModel->getModel()->getBoundingBox());
+				boundingBox.contain(tracerModel->getModel()->getBoundingBox().transform(tracerModel->getTransform()));
 			boundingBox.expand(gridDensity);
 		}
 

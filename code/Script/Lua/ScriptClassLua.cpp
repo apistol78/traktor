@@ -54,20 +54,14 @@ public:
 		// Create C++ script object.
 		Ref< ScriptObjectLua > scriptSelf = new ScriptObjectLua(m_scriptManager, m_scriptContext, m_luaState, tableRef);
 
-		// Prepend "self" object as first in arguments.
-		Any argv2[16];
-		argv2[0] = Any::fromObject(scriptSelf);
-		for (uint32_t i = 0; i < argc; ++i)
-			argv2[i + 1] = argv[i];
-
 		// Call constructor method in script land.
 		if (m_constructorRef)
 		{
 			m_scriptContext->executeMethod(
-				0,
+				scriptSelf,
 				m_constructorRef,
-				argc + 1,
-				argv2
+				argc,
+				argv
 			);
 		}
 

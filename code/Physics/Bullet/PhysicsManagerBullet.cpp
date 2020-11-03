@@ -1195,6 +1195,7 @@ void PhysicsManagerBullet::update(float simulationDeltaTime, bool issueCollision
 {
 	T_ASSERT(m_dynamicsWorld);
 
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 	T_ANONYMOUS_VAR(Save< PhysicsManagerBullet* >)(ms_this, this);
 
 	// Step simulation.
@@ -1722,26 +1723,32 @@ void PhysicsManagerBullet::getStatistics(PhysicsStatistics& outStatistics) const
 
 void PhysicsManagerBullet::insertBody(btRigidBody* rigidBody, uint16_t collisionGroup, uint16_t collisionFilter)
 {
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 	m_dynamicsWorld->addRigidBody(rigidBody, collisionGroup, collisionFilter);
 }
 
 void PhysicsManagerBullet::removeBody(btRigidBody* rigidBody)
 {
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 	m_dynamicsWorld->removeRigidBody(rigidBody);
 }
 
 void PhysicsManagerBullet::insertConstraint(btTypedConstraint* constraint)
 {
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 	m_dynamicsWorld->addConstraint(constraint);
 }
 
 void PhysicsManagerBullet::removeConstraint(btTypedConstraint* constraint)
 {
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 	m_dynamicsWorld->removeConstraint(constraint);
 }
 
 void PhysicsManagerBullet::destroyBody(BodyBullet* body, btRigidBody* rigidBody, btCollisionShape* shape)
 {
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+
 	m_dynamicsWorld->removeRigidBody(rigidBody);
 
 	RefArray< BodyBullet >::iterator i = std::find(m_bodies.begin(), m_bodies.end(), body);
@@ -1755,6 +1762,8 @@ void PhysicsManagerBullet::destroyBody(BodyBullet* body, btRigidBody* rigidBody,
 
 void PhysicsManagerBullet::destroyConstraint(Joint* joint, btTypedConstraint* constraint)
 {
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+
 	m_dynamicsWorld->removeConstraint(constraint);
 
 	RefArray< Joint >::iterator i = std::find(m_joints.begin(), m_joints.end(), joint);

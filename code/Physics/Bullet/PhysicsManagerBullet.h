@@ -137,6 +137,7 @@ public:
 
 private:
 	float m_timeScale;
+	Semaphore m_lock;
 	btCollisionConfiguration* m_configuration;
 	btCollisionDispatcher* m_dispatcher;
 	btBroadphaseInterface* m_broadphase;
