@@ -18,6 +18,7 @@
 #include "SolutionBuilder/GraphViz/SolutionBuilderGraphViz.h"
 #include "SolutionBuilder/Make/SolutionBuilderMake2.h"
 #include "SolutionBuilder/Msvc/SolutionBuilderMsvc.h"
+#include "SolutionBuilder/Ninja/SolutionBuilderNinja.h"
 #include "SolutionBuilder/Xcode/SolutionBuilderXcode.h"
 
 using namespace traktor;
@@ -75,13 +76,15 @@ int main(int argc, const char** argv)
 			builder = new SolutionBuilderMake2();
 		else if (ide == L"msvc")
 			builder = new SolutionBuilderMsvc();
+		else if (ide == L"ninja")
+			builder = new SolutionBuilderNinja();
 		else if (ide == L"xcode")
 			builder = new SolutionBuilderXcode();
 		else if (ide == L"dependencies")
 			builder = new SolutionBuilderDependencies();
 		else
 		{
-			traktor::log::error << L"Unknown format \"" << ide << L"\"" << Endl;
+			traktor::log::error << L"Unknown format \"" << ide << L"\"." << Endl;
 			return ERROR_UNKNOWN_FORMAT;
 		}
 	}
@@ -92,7 +95,7 @@ int main(int argc, const char** argv)
 	{
 		traktor::log::info << SB_TITLE << Endl;
 		traktor::log::info << L"Usage : " << Path(cmdLine.getFile()).getFileName() << L" -[options] [solution]" << Endl;
-		traktor::log::info << L"\t-f,-format=[format]	[\"cblocks\", \"eclipse\", \"graphviz\", \"msvc\"*, \"make\", \"make2\", \"xcode\", \"dependencies\"]" << Endl;
+		traktor::log::info << L"\t-f,-format=[format]	[\"cblocks\", \"eclipse\", \"graphviz\", \"msvc\"*, \"make\", \"make2\", \"ninja\", \"xcode\", \"dependencies\"]" << Endl;
 		traktor::log::info << L"\t-rootPath=Path		Override solution root path" << Endl;
 		traktor::log::info << L"\t-v,verbose			Verbose" << Endl;
 		if (builder)
@@ -161,7 +164,7 @@ int main(int argc, const char** argv)
 
 	if (!builder || !builder->create(cmdLine))
 	{
-		traktor::log::error << L"Unable to create solution builder" << Endl;
+		traktor::log::error << L"Unable to create solution builder." << Endl;
 		return ERROR_UNABLE_TO_CREATE_BUILDER;
 	}
 
@@ -172,7 +175,7 @@ int main(int argc, const char** argv)
 	{
 		if (!builder->generate(solution))
 		{
-			traktor::log::error << L"Unable to generate target solution" << Endl;
+			traktor::log::error << L"Unable to generate target solution." << Endl;
 			return ERROR_UNABLE_TO_CREATE_SOLUTION;
 		}
 	}
@@ -180,7 +183,7 @@ int main(int argc, const char** argv)
 	timer.stop();
 
 	if (cmdLine.hasOption('v', L"verbose"))
-		traktor::log::info << L"Finished successfully in " << timer.getElapsedTime() << L" second(s)" << Endl;
+		traktor::log::info << L"Finished successfully in " << timer.getElapsedTime() << L" second(s)." << Endl;
 
 	return 0;
 }

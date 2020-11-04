@@ -1,0 +1,42 @@
+# This makefile is automatically generated, DO NOT EDIT!
+
+<?--
+
+local projects = solution.projects
+local cnames = {}
+
+-- Include projects and collect unique configuration names.
+for _, project in pairs(projects) do
+	if project.enable then
+--?>subninja <?-- output:print(project.name .. "/" .. project.name .. ".ninja" ) --?>
+<?--
+		for _, configuration in pairs(project.configurations) do
+			cnames[configuration.name] = true
+		end
+	end
+end
+
+-- Configuration targets.
+for cname, _ in pairs(cnames) do
+--?>
+#-----------------------------------------------------------------------------
+# <?-- output:print(cname) --?>
+
+build <?-- output:print(cname) --?>: phony<?--
+	for _, project in pairs(projects) do
+		if project.enable and project:getConfiguration(cname) ~= nil then
+			output:print(" \\\n\t" .. project.name .. "/" .. cname)
+		end
+	end
+--?>
+<?--
+end
+--?>
+#-----------------------------------------------------------------------------
+# all
+
+build all: phony<?--
+for cname, _ in pairs(cnames) do
+	output:print(" \\\n\t" .. cname)
+end
+--?>

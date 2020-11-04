@@ -338,14 +338,12 @@ for i = 0, configurations.size - 1 do
 		end
 	end
 
-	-- Output PDB file for static library.
+	-- Output PDB file.
 	local compileOptionsPDB = ""
 	if not (toolchain == "gcc" or toolchain == "clang") then
-		if format == "StaticLibrary" then
-			local outputPath = Path(solution:getRootPath()):concat(Path(configuration:getName() .. "/" .. project:getName() .. ".pdb"))
-			outputPath = fileSystem:getAbsolutePath(outputPath)
-			compileOptionsPDB = compileOptionsPDB .. " /Fd\"" .. outputPath.pathName .. "\""
-		end
+		local outputPath = Path(solution:getRootPath()):concat(Path(configuration:getName() .. "/" .. project:getName() .. ".pdb"))
+		outputPath = fileSystem:getAbsolutePath(outputPath)
+		compileOptionsPDB = compileOptionsPDB .. " /Fd\"" .. outputPath.pathName .. "\""
 	end
 
 	for _, file in ipairs(resourceFiles) do
