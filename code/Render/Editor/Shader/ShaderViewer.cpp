@@ -112,6 +112,18 @@ bool ShaderViewer::create(ui::Widget* parent)
 	m_dropCombinations->create(containerDrops, ui::DropDown::WsMultiple);
 	m_dropCombinations->addEventHandler< ui::SelectionChangeEvent >(this, &ShaderViewer::eventCombinationChange);
 
+	Ref< ui::Static > staticLanguages = new ui::Static();
+	staticLanguages->create(containerDrops, i18n::Text(L"SHADERGRAPH_VIEWER_LANGUAGES"));
+
+	m_dropLanguages = new ui::DropDown();
+	m_dropLanguages->create(containerDrops);
+	m_dropLanguages->add(L"");
+	m_dropLanguages->add(L"GLSL");
+	m_dropLanguages->add(L"HLSL");
+	m_dropLanguages->add(L"MSL");
+	m_dropLanguages->add(L"SPIRV");
+	m_dropLanguages->addEventHandler< ui::SelectionChangeEvent >(this, &ShaderViewer::eventLanguageChange);
+
 	Ref< ui::ToolBar > toolBar = new ui::ToolBar();
 	toolBar->create(this);
 	toolBar->addImage(new ui::StyleBitmap(L"Editor.ToolBar.Save"), 1);
@@ -290,6 +302,12 @@ void ShaderViewer::eventCombinationChange(ui::SelectionChangeEvent* event)
 	updateShaders();
 }
 
+void ShaderViewer::eventLanguageChange(ui::SelectionChangeEvent* event)
+{
+	if (!m_pendingShaderGraph)
+		reflect(m_lastShaderGraph);
+}
+
 void ShaderViewer::eventToolBarClick(ui::ToolBarButtonClickEvent* event)
 {
 	auto activeTabPage = m_tab->getActivePage();
@@ -326,7 +344,7 @@ void ShaderViewer::eventTimer(ui::TimerEvent* event)
 		{
 			// Save reflected techniques into main thread copy.
 			m_techniques = m_reflectedTechniques;
-			m_reflectJob = 0;
+			m_reflectJob = nullptr;
 
 			// Update user interface.
 			updateTechniques();
@@ -346,7 +364,7 @@ void ShaderViewer::eventTimer(ui::TimerEvent* event)
 		m_reflectJob = JobManager::getInstance().add(makeFunctor(this, &ShaderViewer::jobReflect, m_pendingShaderGraph, compiler));
 
 		m_lastShaderGraph = m_pendingShaderGraph;
-		m_pendingShaderGraph = 0;
+		m_pendingShaderGraph = nullptr;
 	}
 }
 
@@ -356,6 +374,10 @@ void ShaderViewer::jobReflect(Ref< ShaderGraph > shaderGraph, Ref< const IProgra
 	StringOutputStream ssv, ssp;
 
 	m_reflectedTechniques.clear();
+
+	// Create a copy of current settings and add our language of choice.
+	Ref< PropertyGroup > settings = PropertyGroup::get(m_editor->getSettings());
+	settings->setProperty< PropertyString >(L"Glsl.Vulkan.CrossDialect", m_dropLanguages->getSelectedItem());
 
 	// Extract renderer permutation.
 	const wchar_t* rendererSignature = compiler->getRendererSignature();
@@ -497,7 +519,7 @@ void ShaderViewer::jobReflect(Ref< ShaderGraph > shaderGraph, Ref< const IProgra
 
 				// Finally ready to compile program graph.
 				std::wstring vertexShader, pixelShader, computeShader;
-				if (compiler->generate(programGraph, m_editor->getSettings(), L"", 0, vertexShader, pixelShader, computeShader))
+				if (compiler->generate(programGraph, settings, L"", 0, vertexShader, pixelShader, computeShader))
 				{
 					ci.vertexShader = vertexShader;
 					ci.pixelShader = pixelShader;

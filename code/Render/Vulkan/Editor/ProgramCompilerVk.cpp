@@ -598,7 +598,7 @@ bool ProgramCompilerVk::generate(
 	std::wstring& outComputeShader
 ) const
 {
-	std::wstring crossDialect = L"GLSL"; // settings->getProperty< std::wstring >(L"Glsl.Vulkan.CrossDialect");
+	std::wstring crossDialect = settings->getProperty< std::wstring >(L"Glsl.Vulkan.CrossDialect");
 
 	// No dialect means we should output our generated GLSL.
 	if (crossDialect.empty())
@@ -783,13 +783,14 @@ bool ProgramCompilerVk::generate(
 		else if (crossDialect == L"GLSL")
 		{
 			spirv_cross::CompilerGLSL::Options options;
+			options.vulkan_semantics = true;
 
 			if (!programResource->m_vertexShader.empty())
 			{
 				spirv_cross::CompilerGLSL glsl(programResource->m_vertexShader.c_ptr(), programResource->m_vertexShader.size());
 				glsl.set_common_options(options);
-				glsl.build_dummy_sampler_for_combined_images();
-				glsl.build_combined_image_samplers();
+				// glsl.build_dummy_sampler_for_combined_images();
+				// glsl.build_combined_image_samplers();
 				std::string source = glsl.compile();
 				outVertexShader = mbstows(source);
 			}
@@ -798,8 +799,8 @@ bool ProgramCompilerVk::generate(
 			{
 				spirv_cross::CompilerGLSL glsl(programResource->m_fragmentShader.c_ptr(), programResource->m_fragmentShader.size());
 				glsl.set_common_options(options);
-				glsl.build_dummy_sampler_for_combined_images();
-				glsl.build_combined_image_samplers();
+				// glsl.build_dummy_sampler_for_combined_images();
+				// glsl.build_combined_image_samplers();
 				std::string source = glsl.compile();
 				outPixelShader = mbstows(source);
 			}
@@ -808,8 +809,8 @@ bool ProgramCompilerVk::generate(
 			{
 				spirv_cross::CompilerGLSL glsl(programResource->m_computeShader.c_ptr(), programResource->m_computeShader.size());
 				glsl.set_common_options(options);
-				glsl.build_dummy_sampler_for_combined_images();
-				glsl.build_combined_image_samplers();
+				// glsl.build_dummy_sampler_for_combined_images();
+				// glsl.build_combined_image_samplers();
 				std::string source = glsl.compile();
 				outComputeShader = mbstows(source);
 			}
