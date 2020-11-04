@@ -65,6 +65,7 @@ private:
 	Ref< ui::DropDown > m_dropCompiler;
 	Ref< ui::DropDown > m_dropTechniques;
 	Ref< ui::DropDown > m_dropCombinations;
+	Ref< ui::DropDown > m_dropLanguages;
 	Ref< ui::Tab > m_tab;
 	Ref< ui::SyntaxRichEdit > m_shaderEditVertex;
 	Ref< ui::SyntaxRichEdit > m_shaderEditPixel;
@@ -89,6 +90,8 @@ private:
 	void eventTechniqueChange(ui::SelectionChangeEvent* event);
 
 	void eventCombinationChange(ui::SelectionChangeEvent* event);
+
+	void eventLanguageChange(ui::SelectionChangeEvent* event);
 
 	void eventToolBarClick(ui::ToolBarButtonClickEvent* event);
 

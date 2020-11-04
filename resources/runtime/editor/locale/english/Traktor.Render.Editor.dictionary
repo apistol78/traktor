@@ -666,6 +666,10 @@
 			<second>Vertex</second>
 		</item>
 		<item>
+			<first>SHADERGRAPH_VIEWER_LANGUAGES</first>
+			<second>Languages</second>
+		</item>		
+		<item>
 			<first>SHADERGRAPH_VARIABLES</first>
 			<second>Variables</second>
 		</item>
