@@ -30,6 +30,7 @@ set VULKAN_SDK=%TRAKTOR_HOME%\3rdp\vulkan\Vulkan-Headers-master-201012
 set VMA_SDK=%TRAKTOR_HOME%\3rdp\VulkanMemoryAllocator-master
 set SPIRVTOOLS_SDK=%TRAKTOR_HOME%\3rdp\SPIRV-Tools-master-201029
 set SPIRVCROSS_SDK=%TRAKTOR_HOME%\3rdp\SPIRV-Cross-master-201009
+set ASTCENC_SDK=%TRAKTOR_HOME%\3rdp\astc-encoder-master-201104
 
 :: Export name of solution builder binary.
 set SOLUTIONBUILDER=%TRAKTOR_HOME%\bin\win64\releasestatic\Traktor.SolutionBuilder.App
