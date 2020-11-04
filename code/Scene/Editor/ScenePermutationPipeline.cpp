@@ -6,6 +6,7 @@
 #include "Scene/Editor/ScenePermutationAsset.h"
 #include "Scene/Editor/ScenePermutationPipeline.h"
 #include "World/WorldRenderSettings.h"
+#include "World/Editor/EditorAttributesComponentData.h"
 #include "World/Editor/LayerEntityData.h"
 
 namespace traktor
@@ -113,15 +114,13 @@ Ref< ISerializable > ScenePermutationPipeline::buildOutput(
 
 	scenePermutation->setImageProcessParams(params);
 
-	const RefArray< world::LayerEntityData >& layers = scenePermutation->getLayers();
-	for (RefArray< world::LayerEntityData >::const_iterator i = layers.begin(); i != layers.end(); ++i)
+	for (auto layer : scenePermutation->getLayers())
 	{
-		if (std::find(includeLayers.begin(), includeLayers.end(), (*i)->getName()) != includeLayers.end())
+		if (std::find(includeLayers.begin(), includeLayers.end(), layer->getName()) != includeLayers.end())
 		{
-			if (!(*i)->isInclude())
-				(*i)->setInclude(true);
-			else
-				log::warning << L"Layer \"" << (*i)->getName() << L"\" already marked for \"include\" in scene; inconsistent permutation?" << Endl;
+			auto editorAttributes = layer->getComponent< world::EditorAttributesComponentData >();
+			if (editorAttributes)
+				editorAttributes->include = true;
 		}
 	}
 

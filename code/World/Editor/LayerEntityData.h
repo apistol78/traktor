@@ -30,22 +30,6 @@ class T_DLLCLASS LayerEntityData : public EntityData
 public:
 	LayerEntityData();
 
-	void setVisible(bool visible) { m_visible = visible; }
-
-	bool isVisible() const { return m_visible; }
-
-	void setLocked(bool locked) { m_locked = locked; }
-
-	bool isLocked() const { return m_locked; }
-
-	void setInclude(bool include) { m_include = include; }
-
-	bool isInclude() const { return m_include; }
-
-	void setDynamic(bool dynamic) { m_dynamic = dynamic; }
-
-	bool isDynamic() const { return m_dynamic; }
-
 	void setAttribute(const ILayerAttribute* attribute);
 
 	const ILayerAttribute* getAttribute(const TypeInfo& attributeType) const;
@@ -59,10 +43,6 @@ public:
 	virtual void serialize(ISerializer& s) override final;
 
 private:
-	bool m_visible = true;
-	bool m_locked = false;
-	bool m_include = true;
-	bool m_dynamic = false;
 	RefArray< const ILayerAttribute > m_attributes;
 };
 

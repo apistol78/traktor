@@ -9,7 +9,7 @@
 #include "World/Entity.h"
 #include "World/EntityData.h"
 #include "World/IEntityFactory.h"
-#include "World/Editor/LayerEntityData.h"
+#include "World/Editor/EditorAttributesComponentData.h"
 
 namespace traktor
 {
@@ -134,13 +134,13 @@ Ref< world::Entity > EntityAdapterBuilder::create(const world::EntityData* entit
 	{
 		entityAdapter = new EntityAdapter(m_context);
 
-		// Get visibility state from layer entity data, do this
+		// Get visibility state from editor attributes, do this
 		// only when a new adapter is created as we want to keep
 		// editing session state.
-		if (auto layerEntityData = dynamic_type_cast< const world::LayerEntityData* >(entityData))
+		if (auto editorAttributes = entityData->getComponent< world::EditorAttributesComponentData >())
 		{
-			entityAdapter->setVisible(layerEntityData->isVisible());
-			entityAdapter->setLocked(layerEntityData->isLocked());
+			entityAdapter->setVisible(editorAttributes->visible);
+			entityAdapter->setLocked(editorAttributes->locked);
 		}
 	}
 
@@ -207,15 +207,19 @@ Ref< world::Entity > EntityAdapterBuilder::create(const world::EntityData* entit
 Ref< world::IEntityEvent > EntityAdapterBuilder::create(const world::IEntityEventData* entityEventData) const
 {
 	const world::IEntityFactory* entityFactory = m_entityBuilder->getFactory(entityEventData);
-	T_FATAL_ASSERT (entityFactory);
-	return entityFactory->createEntityEvent(this, *entityEventData);
+	if (entityFactory)
+		return entityFactory->createEntityEvent(this, *entityEventData);
+	else
+		return nullptr;
 }
 
 Ref< world::IEntityComponent > EntityAdapterBuilder::create(const world::IEntityComponentData* entityComponentData) const
 {
 	const world::IEntityFactory* entityFactory = m_entityBuilder->getFactory(entityComponentData);
-	T_FATAL_ASSERT (entityFactory);
-	return entityFactory->createEntityComponent(this, *entityComponentData);
+	if (entityFactory)
+		return entityFactory->createEntityComponent(this, *entityComponentData);
+	else
+		return nullptr;
 }
 
 const world::IEntityBuilder* EntityAdapterBuilder::getCompositeEntityBuilder() const

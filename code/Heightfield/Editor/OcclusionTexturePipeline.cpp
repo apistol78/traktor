@@ -24,7 +24,6 @@
 #include "Heightfield/Heightfield.h"
 #include "Heightfield/HeightfieldFormat.h"
 #include "Heightfield/Editor/HeightfieldAsset.h"
-#include "Heightfield/Editor/OcclusionLayerAttribute.h"
 #include "Heightfield/Editor/OcclusionTextureAsset.h"
 #include "Heightfield/Editor/OcclusionTexturePipeline.h"
 #include "Mesh/MeshComponentData.h"
@@ -34,7 +33,7 @@
 #include "Model/Operations/Triangulate.h"
 #include "Render/Editor/Texture/TextureOutput.h"
 #include "World/EntityData.h"
-#include "World/Editor/LayerEntityData.h"
+#include "World/Editor/EditorAttributesComponentData.h"
 #include "World/Entity/ExternalEntityData.h"
 
 namespace traktor
@@ -100,22 +99,14 @@ void collectMeshes(const ISerializable* object, AlignedVector< MeshAndTransform 
 		Ref< RfmObject > objectMember = checked_type_cast< RfmObject*, false >(objectMembers.front());
 		objectMembers.pop_front();
 
-		if (world::LayerEntityData* layerEntityData = dynamic_type_cast< world::LayerEntityData* >(objectMember->get()))
+		if (world::EntityData* entityData = dynamic_type_cast< world::EntityData* >(objectMember->get()))
 		{
-			if (!layerEntityData->isInclude())
-				continue;
+			if (auto editorAttributes = entityData->getComponent< world::EditorAttributesComponentData >())
+			{
+				if (!editorAttributes->include)
+					continue;
+			}
 
-			const OcclusionLayerAttribute* attr = layerEntityData->getAttribute< OcclusionLayerAttribute >();
-			if (attr && !attr->trace())
-				continue;
-
-			collectMeshes(
-				objectMember->get(),
-				outMeshes
-			);
-		}
-		else if (world::EntityData* entityData = dynamic_type_cast< world::EntityData* >(objectMember->get()))
-		{
 			mesh::MeshComponentData* meshComponentData = entityData->getComponent< mesh::MeshComponentData >();
 			if (meshComponentData)
 			{

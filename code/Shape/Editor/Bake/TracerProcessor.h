@@ -71,11 +71,12 @@ private:
     Event m_event;
     RefArray< const TracerTask > m_tasks;
 	Ref< const TracerTask > m_activeTask;
-	mutable Status m_status;
+	Status m_status;
+    bool m_cancelled;
 
     void processorThread();
 
-    bool process(const TracerTask* task) const;
+    bool process(const TracerTask* task);
 };
 
     }

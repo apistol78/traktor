@@ -283,7 +283,8 @@ void TracerProcessor::enqueue(const TracerTask* task)
 	// Check if currently processing task is same scene.
 	if (m_activeTask != nullptr && m_activeTask->getSceneId() == task->getSceneId())
 	{
-		// \tbd Currently processing same scene, abort and restart.
+		// Currently processing same scene, abort and restart.
+		m_cancelled = true;
 	}
 
 	// Add our task and issue processing thread.
@@ -328,6 +329,7 @@ void TracerProcessor::processorThread()
 		if (m_activeTask)
 		{
 			m_status.active = true;
+			m_cancelled = false;
 			process(m_activeTask);
 			m_status.active = false;
 			m_activeTask = nullptr;
@@ -336,7 +338,7 @@ void TracerProcessor::processorThread()
 	cancelAll();
 }
 
-bool TracerProcessor::process(const TracerTask* task) const
+bool TracerProcessor::process(const TracerTask* task)
 {
 	auto configuration = task->getConfiguration();
 	T_FATAL_ASSERT(configuration != nullptr);
@@ -372,7 +374,7 @@ bool TracerProcessor::process(const TracerTask* task) const
 	m_status.current = 0;
 
 	// Trace each lightmap in task.
-	for (uint32_t i = 0; i < tracerOutputs.size(); ++i)
+	for (uint32_t i = 0; !m_cancelled && i < tracerOutputs.size(); ++i)
 	{
 		auto tracerOutput = tracerOutputs[i];
 		auto renderModel = tracerOutput->getModel();
@@ -402,7 +404,7 @@ bool TracerProcessor::process(const TracerTask* task) const
 		lightmap->clear(Color4f(0.0f, 0.0f, 0.0f, 0.0f));
 
 		RefArray< Job > jobs;
-		for (int32_t ty = 0; ty < height; ty += 16)
+		for (int32_t ty = 0; !m_cancelled && ty < height; ty += 16)
 		{
 			Ref< Job > job = JobManager::getInstance().add(makeFunctor([&, ty](){
 				for (int32_t tx = 0; tx < width; tx += 16)
@@ -419,6 +421,8 @@ bool TracerProcessor::process(const TracerTask* task) const
 			jobs.back()->wait();
 			jobs.pop_back();
 		}
+		if (m_cancelled)
+			break;
 
 		// Blur lightmap to reduce noise from path tracing.
 		if (configuration->getEnableDenoise())
@@ -541,7 +545,9 @@ bool TracerProcessor::process(const TracerTask* task) const
 
 		// Discard alpha.
 		lightmap->clearAlpha(1.0f);
+#if 0
 		lightmap->save(L"data/Temp/Bake/Lightmap_" + tracerOutput->getName() + L".png");
+#endif
 
 		// Encode texture into RGBM.
 		if (false)
@@ -562,7 +568,7 @@ bool TracerProcessor::process(const TracerTask* task) const
 
 	// Trace irradiance grids.
 	auto tracerIrradiances = task->getTracerIrradiances();
-	for (uint32_t i = 0; i < tracerIrradiances.size(); ++i)
+	for (uint32_t i = 0; !m_cancelled && i < tracerIrradiances.size(); ++i)
 	{
 		auto tracerIrradiance = tracerIrradiances[i];
 		Guid irradianceGridId = tracerIrradiance->getIrradianceGridId();
@@ -626,13 +632,13 @@ bool TracerProcessor::process(const TracerTask* task) const
 		m_status.description = str(L"Irradiance grid (%d, %d, %d)", gridX, gridY, gridZ);
 
 		uint32_t progress = 0;
-		for (int32_t x = 0; x < gridX; ++x)
+		for (int32_t x = 0; !m_cancelled && x < gridX; ++x)
 		{
 			float fx = x / (float)(gridX - 1.0f);
-			for (int32_t y = 0; y < gridY; ++y)
+			for (int32_t y = 0; !m_cancelled && y < gridY; ++y)
 			{
 				float fy = y / (float)(gridY - 1.0f);
-				for (int32_t z = 0; z < gridZ; ++z)
+				for (int32_t z = 0; !m_cancelled && z < gridZ; ++z)
 				{
 					float fz = z / (float)(gridZ - 1.0f);
 
@@ -662,11 +668,16 @@ bool TracerProcessor::process(const TracerTask* task) const
 
 		stream->close();
 
-		if (!outputInstance->commit())
+		if (!m_cancelled)
 		{
-			log::error << L"Trace failed; unable to commit output instance." << Endl;
-			return false;
+			if (!outputInstance->commit())
+			{
+				log::error << L"Trace failed; unable to commit output instance." << Endl;
+				return false;
+			}
 		}
+		else
+			outputInstance->revert();
 	}
 
 	return true;

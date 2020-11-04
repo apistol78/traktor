@@ -55,6 +55,7 @@
 #include "World/EntityData.h"
 #include "World/IrradianceGridResource.h"
 #include "World/WorldRenderSettings.h"
+#include "World/Editor/EditorAttributesComponentData.h"
 #include "World/Editor/LayerEntityData.h"
 #include "World/Entity/ExternalEntityData.h"
 #include "World/Entity/LightComponentData.h"
@@ -444,16 +445,20 @@ bool BakePipelineOperator::build(
 	// Find all static meshes and lights; replace external referenced entities with local if necessary.
 	for (const auto layer : inoutSceneAsset->getLayers())
 	{
-		if (!(layer->isInclude() && !layer->isDynamic()))
-		{
-			layers.push_back(layer);
-			continue;
-		}
-
 		// Resolve all external entities.
 		Ref< world::LayerEntityData > flattenedLayer = checked_type_cast< world::LayerEntityData* >(resolveAllExternal(pipelineBuilder, layer));
 		if (!flattenedLayer)
 			return false;
+
+		// Do not add dynamic layers to bake.
+		if (auto editorAttributes = flattenedLayer->getComponent< world::EditorAttributesComponentData >())
+		{
+			if (!editorAttributes->include || editorAttributes->dynamic)
+			{
+				layers.push_back(flattenedLayer);
+				continue;
+			}
+		}
 
 		// // Calculate hash of current layer along with hash of trace configuration.
 		// int32_t layerHash = configurationHash + (int32_t)DeepHash(flattenedLayer).get();
@@ -485,6 +490,12 @@ bool BakePipelineOperator::build(
 		int32_t debugIndex = 0;
 		scene::Traverser::visit(flattenedLayer, [&](Ref< world::EntityData >& inoutEntityData) -> scene::Traverser::VisitorResult
 		{
+			if (auto editorAttributes = inoutEntityData->getComponent< world::EditorAttributesComponentData >())
+			{
+				if (!editorAttributes->include || editorAttributes->dynamic)
+					return scene::Traverser::VrSkip;
+			}
+
 			if (auto lightComponentData = inoutEntityData->getComponent< world::LightComponentData >())
 			{
 				if (addLight(lightComponentData, inoutEntityData->getTransform(), tracerTask))
