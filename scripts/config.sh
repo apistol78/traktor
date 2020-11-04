@@ -24,6 +24,7 @@ export VMA_SDK=$TRAKTOR_HOME/3rdp/VulkanMemoryAllocator-master
 export ASTC_SDK=$TRAKTOR_HOME/3rdp/astc-encoder-master-190814
 export SPIRVTOOLS_SDK=$TRAKTOR_HOME/3rdp/SPIRV-Tools-master-201029
 export SPIRVCROSS_SDK=$TRAKTOR_HOME/3rdp/SPIRV-Cross-master-201009
+export ASTCENC_SDK=$TRAKTOR_HOME/3rdp/astc-encoder-master-201104
 
 # Platform specific 3rd party dependencies.
 if [[ `uname -s` == Linux* ]]; then
