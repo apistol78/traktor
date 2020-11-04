@@ -1,0 +1,430 @@
+<?--
+
+-- Dependency scanner cache global.
+local headerScanner = traktor.sb.HeaderScanner()
+
+import(traktor)
+
+
+local os = "windows"
+local toolchain = OS.getInstance():getEnvironment("NINJA_TOOLCHAIN") or "vc"
+
+
+-- Escape special Ninja characters.
+local function escape(str)
+	return str:gsub(":", "$:")
+end
+
+
+local function split(s, delimiter)
+    local result = {}
+    for match in (s .. delimiter):gmatch("(.-)" .. delimiter) do
+    	if match ~= "" then
+        	table.insert(result, match)
+        end
+    end
+    return result
+end
+
+
+local function insertLast(t, iv)
+	for i, v in ipairs(t) do
+		if v == iv then
+			table.remove(t, i)
+			break
+		end
+	end
+	table.insert(t, iv)
+end
+
+
+local function collectDependencies(
+	solution,
+	project,
+	configuration,
+	outIncludePaths,
+	outLibraries,
+	outLibrariesExternal,
+	outLibraryPaths
+)
+	-- Add include paths.
+	for _, includePath in pairs(configuration.includePaths) do
+		local ip = Path(includePath).pathName
+		if ip ~= "" then
+			insertLast(outIncludePaths, ip)
+		end
+	end
+
+	-- Add external libraries, ex precompiled libraries etc.
+	for _, library in pairs(configuration.libraries) do
+		insertLast(outLibrariesExternal, library)
+	end
+
+	-- Add library paths.
+	for _, libraryPath in pairs(configuration.libraryPaths) do
+		local libraryPath = Path(libraryPath)
+		local libraryRelPath = fileSystem:getRelativePath(
+			libraryPath,
+			projectPath
+		)
+		local lp = ""
+		if libraryRelPath ~= nil then
+			lp = libraryRelPath.pathName
+		else
+			lp = libraryPath.pathName
+		end
+		if lp ~= "" then
+			insertLast(outLibraryPaths, lp)
+		end
+	end
+
+	-- Recurse with dependencies.
+	for _, dependency in pairs(project.dependencies) do
+		if isa(dependency, ProjectDependency) then
+			local localSolution = solution
+			local localProject = dependency.project
+			local localConfig = localProject:getConfiguration(configuration.name)
+			if localProject.enable then
+
+				-- Add library.
+				insertLast(outLibraries, localProject.name)
+
+				-- Recurse with child dependencies.
+				if localConfig.targetFormat == "StaticLibrary" then
+					collectDependencies(
+						localSolution,
+						localProject,
+						localConfig,
+						outIncludePaths,
+						outLibraries,
+						outLibrariesExternal,
+						outLibraryPaths
+					)
+				else
+					-- Only add include paths when dealing with shared library dependencies.
+					for _, includePath in pairs(localConfig.includePaths) do
+						local ip = Path(includePath).pathName
+						if ip ~= "" then
+							insertLast(outIncludePaths, ip)
+						end
+					end
+				end
+			end
+		elseif isa(dependency, ExternalDependency) then
+			local externalSolution = dependency.solution
+			local externalProject = dependency.project
+			local externalConfig = externalProject:getConfiguration(configuration.name)
+			if externalConfig ~= nil then
+
+				-- Add path to library.
+				if externalConfig.consumerLibraryPath ~= "" then
+					local aggregateOutputPath = Path(externalSolution.aggregateOutputPath)
+					local consumerLibraryPath = Path(externalConfig.consumerLibraryPath)
+
+					local consumerRelPath = fileSystem:getRelativePath(
+						aggregateOutputPath:concat(consumerLibraryPath),
+						projectPath
+					)
+
+					if consumerRelPath ~= nil then
+						insertLast(outLibraryPaths, consumerRelPath.pathName)
+					end
+				else
+					local externalRelPath = fileSystem:getRelativePath(
+						Path(externalSolution.rootPath .. "/" .. configuration.name),
+						projectPath
+					)
+					if externalRelPath ~= nil then
+						insertLast(outLibraryPaths, externalRelPath.pathName)
+					end
+				end
+
+				-- Add library.
+				if externalProject.enable then
+					insertLast(outLibraries, externalProject.name)
+				end
+
+				-- Recurse with child dependencies.
+				if externalConfig.targetFormat == "StaticLibrary" then
+					collectDependencies(
+						externalSolution,
+						externalProject,
+						externalConfig,
+						outIncludePaths,
+						outLibraries,
+						outLibrariesExternal,
+						outLibraryPaths
+					)
+				else
+					-- Only add include paths when dealing with shared library dependencies.
+					for _, includePath in pairs(externalConfig.includePaths) do
+						local ip = Path(includePath).pathName
+						if ip ~= "" then
+							insertLast(outIncludePaths, ip)
+						end
+					end
+				end
+			else
+				print("No such configuration \"" .. configuration.name .. "\" in external project \"" .. externalProject.name .. "\"; dependency skipped.")
+			end
+		end
+	end
+end
+
+local function collectFiles(project, projectOrFilter, pred)
+	for _, item in pairs(projectOrFilter.items) do
+		if isa(item, Filter) then
+			collectFiles(project, item, pred)
+		else
+			local files = item:getSystemFiles(project:getSourcePath())
+			if os == "windows" then
+				for _, file in pairs(files) do
+					pred(file)
+				end
+			else
+				for _, file in pairs(files) do
+					pred(Path(file.pathNameNoVolume))
+				end
+			end
+		end
+	end
+end
+
+
+local configurations = project.configurations
+local sourcePath = Path(project.sourcePath)
+
+-- Scan configurations.
+local includePaths = {}
+local libraries = {}
+local externalLibraries = {}
+local libraryPaths = {}
+for i, configuration in pairs(configurations) do
+	includePaths[i] = {}
+	libraries[i] = {}
+	externalLibraries[i] = {}
+	libraryPaths[i] = {}
+	collectDependencies(
+		solution,
+		project,
+		configuration,
+		includePaths[i],
+		libraries[i],
+		externalLibraries[i],
+		libraryPaths[i]
+	)
+end
+
+-- Collect input files.
+local sourceFiles = {}
+local resourceFiles = {}
+local definitionFile = nil
+collectFiles(
+	project,
+	project,
+	function(file)
+		local ext = file.extension
+		if ext == "c" or ext == "cc" or ext == "cpp" or ext == "m" or ext == "mm" or ext == "rc" then
+			table.insert(sourceFiles, file)
+		elseif ext == "xdi" or ext == "image" or ext == "png" or ext == "lua" or ext == "js" or ext == "css" or ext == "cgv" or ext == "cgf" then
+			table.insert(resourceFiles, file)
+		elseif ext == "def" then
+			definitionFile = file
+		end
+	end
+)
+
+-- Ensure definition file path is relative to project.
+if definitionFile ~= nil then
+	definitionFile = fileSystem:getRelativePath(definitionFile, projectPath)
+	assert (definitionFile ~= nil)
+end
+
+
+-------------------------------------------------------------------------------
+
+
+local function objName(configuration, sourceFile)
+	local f = fileSystem:getRelativePath(sourceFile, sourcePath)
+	assert(f ~= nil)
+	return configuration.name .. "/" .. f.pathNameNoExtension:gsub("%.%./", "") .. ".obj"
+end
+
+
+
+--?># ** DO NOT EDIT **
+
+<?--
+local inc = fileSystem:getAbsolutePath(Path(OS.getInstance():getEnvironment("NINJA_INCLUDE")))
+output:printLn("include " .. escape(inc.pathName))
+
+-- Include build scripts for local dependencies.
+--[[
+for _, dep in pairs(project.dependencies) do
+	if isa(dep, ProjectDependency) then
+		local localSolution = solution
+		local localProject = dep:getProject()
+		if localProject:getEnable() then
+			output:printLn("subninja ../" .. localProject.name .. "/" .. localProject.name .. ".ninja")
+		end
+	end
+end
+]]
+
+-------------------------------------------------------------------------------
+-- Rules for each configuration.
+-------------------------------------------------------------------------------
+
+--?>
+# Rules
+
+rule RESOURCE
+  command = $RUN $BINARY_INCLUDE $in $out $symbol
+<?--
+
+-- Rules
+for i, configuration in pairs(project.configurations) do
+	local profile = configuration.targetProfile
+	local format = configuration.targetFormat
+
+	local flags = profile:upper()
+	if format == "StaticLibrary" then
+		flags = flags .. "_STATIC"
+	elseif format == "SharedLibrary" then
+		flags = flags .. "_SHARED"
+	elseif format == "Executable" then
+		flags = flags .. "_EXECUTABLE"
+	elseif format == "ExecutableConsole" then
+		flags = flags .. "_EXECUTABLE_CONSOLE"
+	end
+
+	local resourceIncludePath = fileSystem:getAbsolutePath(projectPath)
+
+	local compileOptions = ""
+	if toolchain == "gcc" or toolchain == "clang" then
+		compileOptions = compileOptions .. "-I \"" .. resourceIncludePath.pathName .. "\""
+		for _, includePath in ipairs(includePaths[i]) do
+			compileOptions = compileOptions .. " -I \"" .. includePath .. "\""
+		end
+	else
+		compileOptions = compileOptions .. "/I \"" .. resourceIncludePath.pathName .. "\""
+		for _, includePath in ipairs(includePaths[i]) do
+			compileOptions = compileOptions .. " /I \"" .. includePath .. "\""
+		end
+	end
+
+	for _, definition in pairs(configuration.definitions) do
+		local def0 = string.sub(definition, 1, 1)
+		if not (def0 == "'" or def0 == "`") then
+			if toolchain == "gcc" or toolchain == "clang" then
+				compileOptions = compileOptions .. " -D " .. definition
+			else
+				compileOptions = compileOptions .. " /D" .. definition
+			end
+		end
+	end
+
+	local linkerOptions = ""
+	if format ~= "StaticLibrary" then
+		linkerOptions = linkerOptions .. " /LIBPATH:\"../" .. configuration.name .. "\""
+		for _, libraryPath in ipairs(libraryPaths[i]) do
+			linkerOptions = linkerOptions .. " /LIBPATH:\"" .. libraryPath .. "\""
+		end
+		for _, library in ipairs(libraries[i]) do
+			linkerOptions = linkerOptions .. " " .. library .. ".lib"
+		end
+		for _, externalLibrary in ipairs(externalLibraries[i]) do
+			linkerOptions = linkerOptions .. " " .. externalLibrary
+		end
+		if definitionFile ~= nil then
+			linkerOptions = linkerOptions .. " /DEF:\"" .. definitionFile.pathName .. "\""
+		end
+	end
+
+	output:printLn("rule CC_" .. configuration.name:upper())
+	output:printLn("  deps = msvc")
+	output:printLn("  command = $CC /showIncludes $CC_FLAGS_" .. flags .. " " .. compileOptions .. " -c $in /Fo$out")
+
+	output:printLn("rule RC_" .. configuration.name:upper())
+	output:printLn("  command = $RC $RC_FLAGS_" .. flags .. " /fo\"$out\" $in")
+
+	if format == "SharedLibrary" or format == "Executable" or format == "ExecutableConsole" then
+		output:printLn("rule LINK_" .. configuration.name:upper())
+		output:printLn("  command = $LINK $LINK_FLAGS_" .. flags .. " " .. linkerOptions .. " $in /OUT:$out")
+	elseif format == "StaticLibrary" then
+		output:printLn("rule LIB_" .. configuration.name:upper())
+		output:printLn("  command = $LIB $LIB_FLAGS_" .. flags .. " $in /OUT:$out")
+	end
+end
+
+-- Add resource steps.
+output:printLn("")
+output:printLn("# Resources")
+output:printLn("")
+for _, rf in ipairs(resourceFiles) do
+	local outputFileNoExt = "Resources/" .. rf.fileNameNoExtension
+	local outputFileH = outputFileNoExt .. ".h"
+
+	local f1 = fileSystem:getRelativePath(rf, projectPath)
+	assert (f1 ~= nil)
+
+	output:printLn("build " .. outputFileH .. ": RESOURCE " .. escape(f1.pathName))
+	output:printLn("  symbol = c_Resource" .. rf.fileNameNoExtension)
+end
+
+-- Compile, archive and link steps.
+for _, configuration in pairs(project.configurations) do
+	local profile = configuration.targetProfile
+	local format = configuration.targetFormat
+
+	output:printLn("")
+	output:printLn("# " .. configuration.name)
+
+	-- Add phony for configuration name only.
+	--[[
+	output:printLn("")
+	if format == "StaticLibrary" then
+		output:printLn("build " .. configuration.name .. ": phony ../" .. configuration.name .. "/" .. project.name .. ".lib")
+	else
+		output:printLn("build " .. configuration.name .. ": phony ../" .. configuration.name .. "/" .. project.name .. ".dll")
+	end
+	]]
+
+	-- Add link/archive step.
+	output:printLn("")
+	if format == "StaticLibrary" then
+		output:print("build ../" .. configuration.name .. "/" .. project.name .. ".lib: LIB_" .. configuration.name:upper())
+	else
+		output:print("build ../" .. configuration.name .. "/" .. project.name .. ".dll: LINK_" .. configuration.name:upper())
+	end
+
+	for _, sf in ipairs(sourceFiles) do
+		local on = objName(configuration, sf)
+		output:printLn(" $")
+		output:print("  " .. on)
+	end
+
+	output:printLn("")
+
+	-- Add compile steps.
+	output:printLn("")
+	for _, sf in ipairs(sourceFiles) do
+		--local f = fileSystem:getRelativePath(sf, sourcePath)
+		--assert(f ~= nil)
+
+		local f1 = fileSystem:getRelativePath(sf, projectPath)
+		assert (f1 ~= nil)
+
+		local on = objName(configuration, sf)
+
+		if sf.extension ~= "rc" then
+			output:printLn("build " .. on .. ": CC_" .. configuration.name:upper() .. " " .. escape(f1.pathName))
+		else
+			output:printLn("build " .. on .. ": RC_" .. configuration.name:upper() .. " " .. escape(f1.pathName))
+		end
+	end
+
+
+end
+
+--?>

@@ -7,30 +7,30 @@
 #include "SolutionBuilder/Project.h"
 #include "SolutionBuilder/ScriptProcessor.h"
 #include "SolutionBuilder/Solution.h"
-#include "SolutionBuilder/FBuild/SolutionBuilderFBuild.h"
+#include "SolutionBuilder/Ninja/SolutionBuilderNinja.h"
 
 namespace traktor
 {
 	namespace sb
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"SolutionBuilderFBuild", SolutionBuilderFBuild, SolutionBuilder)
+T_IMPLEMENT_RTTI_CLASS(L"SolutionBuilderNinja", SolutionBuilderNinja, SolutionBuilder)
 
-SolutionBuilderFBuild::SolutionBuilderFBuild()
+SolutionBuilderNinja::SolutionBuilderNinja()
 {
 }
 
-SolutionBuilderFBuild::~SolutionBuilderFBuild()
+SolutionBuilderNinja::~SolutionBuilderNinja()
 {
 	safeDestroy(m_scriptProcessor);
 }
 
-bool SolutionBuilderFBuild::create(const CommandLine& cmdLine)
+bool SolutionBuilderNinja::create(const CommandLine& cmdLine)
 {
-	if (cmdLine.hasOption(L"fastbuild-solution-template"))
-		m_solutionTemplate = cmdLine.getOption(L"fastbuild-solution-template").getString();
-	if (cmdLine.hasOption(L"fastbuild-project-template"))
-		m_projectTemplate = cmdLine.getOption(L"fastbuild-project-template").getString();
+	if (cmdLine.hasOption(L"ninja-solution-template"))
+		m_solutionTemplate = cmdLine.getOption(L"ninja-solution-template").getString();
+	if (cmdLine.hasOption(L"ninja-project-template"))
+		m_projectTemplate = cmdLine.getOption(L"ninja-project-template").getString();
 
 	m_scriptProcessor = new ScriptProcessor();
 	if (!m_scriptProcessor->create())
@@ -39,7 +39,7 @@ bool SolutionBuilderFBuild::create(const CommandLine& cmdLine)
 	return true;
 }
 
-bool SolutionBuilderFBuild::generate(Solution* solution)
+bool SolutionBuilderNinja::generate(Solution* solution)
 {
 	// Create root path.
 	if (!FileSystem::getInstance().makeAllDirectories(solution->getRootPath()))
@@ -48,7 +48,7 @@ bool SolutionBuilderFBuild::generate(Solution* solution)
 		return false;
 	}
 
-	log::info << L"Generating FASTBuild projects..." << Endl;
+	log::info << L"Generating Ninja projects..." << Endl;
 
 	if (!m_scriptProcessor->prepare(m_projectTemplate))
 	{
@@ -80,12 +80,12 @@ bool SolutionBuilderFBuild::generate(Solution* solution)
 			}
 
 			Ref< IStream > file = FileSystem::getInstance().open(
-				projectPath + L"/fbuild.bff",
+				projectPath + L"/" + project->getName() + L".ninja",
 				File::FmWrite
 			);
 			if (!file)
 			{
-				log::error << L"Unable to create project file \"" << projectPath << L"/" << project->getName() << L".bff" << L"\"." << Endl;
+				log::error << L"Unable to create project file \"" << projectPath << L"/" << project->getName() << L".ninja" << L"\"." << Endl;
 				return false;
 			}
 
@@ -95,7 +95,7 @@ bool SolutionBuilderFBuild::generate(Solution* solution)
 		}
 	}
 
-	log::info << L"Generating FASTBuild solution..." << Endl;
+	log::info << L"Generating Ninja solution..." << Endl;
 
 	if (!m_scriptProcessor->prepare(m_solutionTemplate))
 	{
@@ -113,12 +113,12 @@ bool SolutionBuilderFBuild::generate(Solution* solution)
 		}
 
 		Ref< IStream > file = FileSystem::getInstance().open(
-			solution->getRootPath() + L"/" + solution->getName() + L".bff",
+			solution->getRootPath() + L"/" + solution->getName() + L".ninja",
 			File::FmWrite
 		);
 		if (!file)
 		{
-			log::error << L"Unable to create solution file \"" << solution->getRootPath() << L"/" + solution->getName() << L".bff" << L"\"." << Endl;
+			log::error << L"Unable to create solution file \"" << solution->getRootPath() << L"/" + solution->getName() << L".ninja" << L"\"." << Endl;
 			return false;
 		}
 
@@ -130,10 +130,10 @@ bool SolutionBuilderFBuild::generate(Solution* solution)
 	return true;
 }
 
-void SolutionBuilderFBuild::showOptions() const
+void SolutionBuilderNinja::showOptions() const
 {
-	log::info << L"\t-fastbuild-solution-template=[template file]" << Endl;
-	log::info << L"\t-fastbuild-project-template=[template file]" << Endl;
+	log::info << L"\t-ninja-solution-template=[template file]" << Endl;
+	log::info << L"\t-ninja-project-template=[template file]" << Endl;
 }
 
 	}
