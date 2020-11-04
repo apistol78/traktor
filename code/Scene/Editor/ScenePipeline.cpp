@@ -13,6 +13,7 @@
 #include "Scene/Editor/SceneAsset.h"
 #include "World/WorldRenderSettings.h"
 #include "World/Entity/GroupComponentData.h"
+#include "World/Editor/EditorAttributesComponentData.h"
 #include "World/Editor/LayerEntityData.h"
 
 namespace traktor
@@ -20,7 +21,7 @@ namespace traktor
 	namespace scene
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.scene.ScenePipeline", 13, ScenePipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.scene.ScenePipeline", 16, ScenePipeline, editor::IPipeline)
 
 ScenePipeline::ScenePipeline()
 :	m_targetEditor(false)
@@ -158,7 +159,7 @@ bool ScenePipeline::buildOutput(
 		if (!layer)
 			continue;
 
-		if (layer->isInclude() || m_targetEditor)
+		if (layer->getComponent< world::EditorAttributesComponentData >()->include || m_targetEditor)
 		{
 			log::info << L"Building layer \"" << layer->getName() << L"\"..." << Endl;
 			auto layerGroupData = layer->getComponent< world::GroupComponentData >();

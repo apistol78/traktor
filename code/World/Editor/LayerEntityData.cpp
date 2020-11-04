@@ -2,6 +2,7 @@
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
 #include "Core/Serialization/MemberRefArray.h"
+#include "World/Editor/EditorAttributesComponentData.h"
 #include "World/Editor/ILayerAttribute.h"
 #include "World/Editor/LayerEntityData.h"
 #include "World/Entity/GroupComponentData.h"
@@ -11,10 +12,11 @@ namespace traktor
 	namespace world
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.LayerEntityData", 2, LayerEntityData, EntityData)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.LayerEntityData", 3, LayerEntityData, EntityData)
 
 LayerEntityData::LayerEntityData()
 {
+	setComponent(new EditorAttributesComponentData());
 	setComponent(new GroupComponentData());
 }
 
@@ -55,12 +57,18 @@ void LayerEntityData::serialize(ISerializer& s)
 		setComponent(new GroupComponentData(entityData));
 	}
 
-	s >> Member< bool >(L"visible", m_visible);
-	s >> Member< bool >(L"locked", m_locked);
-	s >> Member< bool >(L"include", m_include);
-	s >> Member< bool >(L"dynamic", m_dynamic);
+	if (s.getVersion() < 3)
+	{
+		Ref< EditorAttributesComponentData > editorAttributes = new EditorAttributesComponentData();
+		s >> Member< bool >(L"visible", editorAttributes->visible);
+		s >> Member< bool >(L"locked", editorAttributes->locked);
+		s >> Member< bool >(L"include", editorAttributes->include);
+		s >> Member< bool >(L"dynamic", editorAttributes->dynamic);
+		setComponent(editorAttributes);
+	}
 
-	s >> MemberRefArray< const ILayerAttribute >(L"attributes", m_attributes);
+	if (s.getVersion() < 3)
+		s >> MemberRefArray< const ILayerAttribute >(L"attributes", m_attributes);
 }
 
 	}

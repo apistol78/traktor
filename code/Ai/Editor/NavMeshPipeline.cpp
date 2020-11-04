@@ -30,7 +30,7 @@
 #include "Scene/Editor/Traverser.h"
 #include "Terrain/OceanComponentData.h"
 #include "World/EntityData.h"
-#include "World/Editor/LayerEntityData.h"
+#include "World/Editor/EditorAttributesComponentData.h"
 #include "World/Entity/ExternalEntityData.h"
 
 namespace traktor
@@ -210,38 +210,38 @@ bool NavMeshPipeline::buildOutput(
 
 	scene::Traverser::visit(sourceData, [&](const world::EntityData* entityData) -> scene::Traverser::VisitorResult
 	{
-		Ref< model::Model > model;
-
-		if (auto layerEntityData = dynamic_type_cast< const world::LayerEntityData* >(entityData))
+		if (auto editorAttributes = entityData->getComponent< world::EditorAttributesComponentData >())
 		{
-			if (layerEntityData->isDynamic() || !layerEntityData->isInclude())
+			if (!editorAttributes->include || editorAttributes->dynamic)
 				return scene::Traverser::VrSkip;
 		}
-		else
+
+		Ref< model::Model > model;
+		for (auto componentData : entityData->getComponents())
 		{
-			for (auto componentData : entityData->getComponents())
+			// Find model synthesizer which can generate from current component.
+			const scene::IEntityReplicator* entityReplicator = m_entityReplicators[&type_of(componentData)];
+			if (entityReplicator)
 			{
-				// Find model synthesizer which can generate from current component.
-				const scene::IEntityReplicator* entityReplicator = m_entityReplicators[&type_of(componentData)];
-				if (entityReplicator)
-					model = entityReplicator->createModel(pipelineBuilder, m_assetPath, componentData);
+				if ((model = entityReplicator->createModel(pipelineBuilder, m_assetPath, componentData)) != nullptr)
+					break;
 			}
-
-			if (!model)
-			{
-				// Find model synthesizer which can generate from current entity.
-				const scene::IEntityReplicator* entityReplicator = m_entityReplicators[&type_of(entityData)];
-				if (entityReplicator)
-					model = entityReplicator->createModel(pipelineBuilder, m_assetPath, entityData);
-			}	
-
-			// Explicitly check for ocean component, need to discard everything below ocean level.
-			if (auto oceanComponentData = entityData->getComponent< terrain::OceanComponentData >())
-			{
-				oceanHeight = max< float >(oceanHeight, entityData->getTransform().translation().y());
-				oceanClip = true;
-			}			
 		}
+
+		if (!model)
+		{
+			// Find model synthesizer which can generate from current entity.
+			const scene::IEntityReplicator* entityReplicator = m_entityReplicators[&type_of(entityData)];
+			if (entityReplicator)
+				model = entityReplicator->createModel(pipelineBuilder, m_assetPath, entityData);
+		}	
+
+		// Explicitly check for ocean component, need to discard everything below ocean level.
+		if (auto oceanComponentData = entityData->getComponent< terrain::OceanComponentData >())
+		{
+			oceanHeight = max< float >(oceanHeight, entityData->getTransform().translation().y());
+			oceanClip = true;
+		}			
 
 		if (model)
 		{

@@ -2,12 +2,14 @@
 #include "Core/Reflection/Reflection.h"
 #include "Core/Reflection/RfpMemberType.h"
 #include "Core/Reflection/RfmObject.h"
+#include "Core/Serialization/DeepClone.h"
 #include "Database/Instance.h"
 #include "Editor/IPipelineBuilder.h"
 #include "Editor/IPipelineDepends.h"
 #include "World/EntityData.h"
 #include "World/IEntityComponentData.h"
 #include "World/IEntityEventData.h"
+#include "World/Editor/EditorAttributesComponentData.h"
 #include "World/Editor/EntityPipeline.h"
 
 namespace traktor
@@ -115,6 +117,22 @@ Ref< ISerializable > EntityPipeline::buildOutput(
 	const Object* buildParams
 ) const
 {
+	// Check if entity and if entity should be included.
+	if (auto entityData = dynamic_type_cast< const EntityData* >(sourceAsset))
+	{
+		auto editorAttributes = entityData->getComponent< EditorAttributesComponentData >();
+		if (editorAttributes != nullptr)
+		{
+			if (!editorAttributes->include)
+				return nullptr;
+
+			// Remove editor attributes from entity data before we build it, this
+			// is a bit naughty but it's a bit too expensive to clone too much.
+			((EntityData*)sourceAsset)->removeComponent(editorAttributes);
+		}
+	}
+
+	// Ensure we have a reflection of source asset.
 	Ref< Reflection > reflection = Reflection::create(sourceAsset);
 	if (!reflection)
 		return nullptr;
