@@ -62,9 +62,12 @@ void TracerEditorPlugin::handleWorkspaceOpened()
 	if (!tracerType)
 		return;
 
+	std::wstring compressionMethod = m_editor->getSettings()->getProperty< std::wstring >(L"TexturePipeline.CompressionMethod", L"");
+
     BakePipelineOperator::setTracerProcessor(new TracerProcessor(
 		tracerType,
 		m_editor->getOutputDatabase(),
+		compressionMethod,
 		true
 	));
 }

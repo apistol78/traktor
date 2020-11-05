@@ -60,6 +60,7 @@ private:
 
 	std::wstring m_assetPath;
 	const TypeInfo* m_tracerType;
+	std::wstring m_compressionMethod;
 	bool m_editor;
 	SmallMap< const TypeInfo*, Ref< const scene::IEntityReplicator > > m_entityReplicators;
 };
