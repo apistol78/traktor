@@ -288,7 +288,7 @@ enum TextureFormat
 	TfASTC4x4 = 45,
 	TfASTC8x8 = 46,
 	TfASTC10x10 = 47,
-	TfASTC12x12 = 47
+	TfASTC12x12 = 48
 	//@}
 };
 

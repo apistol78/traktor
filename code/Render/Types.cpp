@@ -109,10 +109,10 @@ c_textureFormatInfo[] =
 
 	{ L"TfETC1", 8, 4 },
 
-	{ L"TfASTC4x4", 4, 8 },
-	{ L"TfASTC8x8", 8, 8 },
-	{ L"TfASTC10x10", 10, 8 },
-	{ L"TfASTC12x12", 12, 8 }
+	{ L"TfASTC4x4", 16, 4 },
+	{ L"TfASTC8x8", 16, 8 },
+	{ L"TfASTC10x10", 16, 10 },
+	{ L"TfASTC12x12", 16, 12 }
 };
 
 		}
