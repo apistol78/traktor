@@ -21,7 +21,6 @@ export RPI_SYSROOT=$TRAKTOR_HOME/3rdp/raspberry-sysroot
 export VULKAN_SDK=$TRAKTOR_HOME/3rdp/vulkan/Vulkan-Headers-master-201012
 export MOLTEN_SDK=$TRAKTOR_HOME/3rdp/vulkan/vulkansdk-macos-1.2.141.2/MoltenVK 
 export VMA_SDK=$TRAKTOR_HOME/3rdp/VulkanMemoryAllocator-master
-export ASTC_SDK=$TRAKTOR_HOME/3rdp/astc-encoder-master-190814
 export SPIRVTOOLS_SDK=$TRAKTOR_HOME/3rdp/SPIRV-Tools-master-201029
 export SPIRVCROSS_SDK=$TRAKTOR_HOME/3rdp/SPIRV-Cross-master-201009
 export ASTCENC_SDK=$TRAKTOR_HOME/3rdp/astc-encoder-master-201104

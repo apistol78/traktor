@@ -170,6 +170,8 @@ bool TextureOutputPipeline::create(const editor::IPipelineSettings* settings)
 		m_compressionMethod = CmPVRTC;
 	else if (compareIgnoreCase(compressionMethod, L"ETC1") == 0)
 		m_compressionMethod = CmETC1;
+	else if (compareIgnoreCase(compressionMethod, L"ASTC") == 0)
+		m_compressionMethod = CmASTC;
 	else
 	{
 		log::error << L"Unknown compression method \"" << compressionMethod << L"\"." << Endl;
@@ -309,6 +311,18 @@ bool TextureOutputPipeline::buildOutput(
 		case TfETC1:
 			pixelFormat = drawing::PixelFormat::getR8G8B8A8();
 			break;
+		case TfASTC4x4:
+			pixelFormat = drawing::PixelFormat::getR8G8B8A8();
+			break;
+		case TfASTC8x8:
+			pixelFormat = drawing::PixelFormat::getR8G8B8A8();
+			break;
+		case TfASTC10x10:
+			pixelFormat = drawing::PixelFormat::getR8G8B8A8();
+			break;
+		case TfASTC12x12:
+			pixelFormat = drawing::PixelFormat::getR8G8B8A8();
+			break;
 		default:
 			log::error << L"TextureOutputPipeline failed; unsupported explicit texture format" << Endl;
 			return false;
@@ -396,6 +410,11 @@ bool TextureOutputPipeline::buildOutput(
 				}
 				else
 					log::info << L"Using no compression" << Endl;
+			}
+			else if (m_compressionMethod == CmASTC)
+			{
+				log::info << L"Using ASTC (4*4) compression" << Endl;
+				textureFormat = TfASTC4x4;
 			}
 			else
 				log::info << L"Using no compression" << Endl;

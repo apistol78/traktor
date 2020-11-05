@@ -117,7 +117,7 @@
 			<item>
 				<first>TexturePipeline.CompressionMethod</first>
 				<second type="traktor.PropertyString">
-					<value>ETC1</value>
+					<value>ASTC</value>
 				</second>
 			</item>
 			<item>
