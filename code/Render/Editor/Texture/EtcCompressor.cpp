@@ -15,8 +15,6 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.render.EtcCompressor", EtcCompressor, ICompress
 
 bool EtcCompressor::compress(Writer& writer, const RefArray< drawing::Image >& mipImages, TextureFormat textureFormat, bool needAlpha, int32_t compressionQuality) const
 {
-	log::info << L"Compressing and writing mip(s)..." << Endl;
-
 	int32_t mipCount = int32_t(mipImages.size());
 
 	int32_t w = mipImages[0]->getWidth();
@@ -70,8 +68,6 @@ bool EtcCompressor::compress(Writer& writer, const RefArray< drawing::Image >& m
 		if (writer.write(compressedData.ptr(), byteSize, 1) != byteSize)
 			return false;
 	}
-
-	log::info << L"All mip(s) written" << Endl;
 	return true;
 }
 

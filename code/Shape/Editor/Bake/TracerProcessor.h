@@ -16,6 +16,7 @@
 namespace traktor
 {
 
+class PropertyGroup;
 class Thread;
 
     namespace db
@@ -50,7 +51,7 @@ public:
         }
 	};
 
-    TracerProcessor(const TypeInfo* rayTracerType, db::Database* outputDatabase, bool preview);
+    TracerProcessor(const TypeInfo* rayTracerType, db::Database* outputDatabase, const std::wstring& compressionMethod, bool preview);
 
     virtual ~TracerProcessor();
 
@@ -63,8 +64,9 @@ public:
 	Status getStatus() const;
 
 private:
-    Ref< db::Database > m_outputDatabase;
 	const TypeInfo* m_rayTracerType;
+    Ref< db::Database > m_outputDatabase;
+    std::wstring m_compressionMethod;
     bool m_preview;
     Thread* m_thread;
     Semaphore m_lock;

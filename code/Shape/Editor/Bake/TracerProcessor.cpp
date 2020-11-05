@@ -19,6 +19,9 @@
 #include "Model/Model.h"
 #include "Model/ModelAdjacency.h"
 #include "Render/Types.h"
+#include "Render/Editor/Texture/AstcCompressor.h"
+#include "Render/Editor/Texture/DxtnCompressor.h"
+#include "Render/Editor/Texture/UnCompressor.h"
 #include "Render/Resource/TextureResource.h"
 #include "Render/SH/SHCoeffs.h"
 #include "Shape/Editor/Bake/BakeConfiguration.h"
@@ -161,14 +164,31 @@ void encodeRGBM(drawing::Image* image)
 	}
 }
 
-int32_t writeTexture(db::Database* outputDatabase, const Guid& lightmapId, const drawing::Image* lightmap)
+bool writeTexture(db::Database* outputDatabase, const std::wstring& compressionMethod, const Guid& lightmapId, const drawing::Image* lightmap)
 {
-	// Convert image to match texture format.
+	render::TextureFormat textureFormat = render::TfInvalid;
 	Ref< drawing::Image > lightmapFormat = lightmap->clone();
-	if (false)
+	Ref< render::ICompressor > compressor;
+
+	// Convert image to match texture format.
+	if (compareIgnoreCase(compressionMethod, L"DXTn") == 0)
+	{
 		lightmapFormat->convert(drawing::PixelFormat::getR8G8B8A8().endianSwapped());
-	else
+		textureFormat = render::TfDXT1;
+		compressor = new render::DxtnCompressor();
+	}
+	else if (compareIgnoreCase(compressionMethod, L"ASTC") == 0)
+	{
 		lightmapFormat->convert(drawing::PixelFormat::getABGRF16().endianSwapped());
+		textureFormat = render::TfASTC8x8;
+		compressor = new render::AstcCompressor();
+	}
+	else
+	{
+		lightmapFormat->convert(drawing::PixelFormat::getABGRF16().endianSwapped());
+		textureFormat = render::TfR16G16B16A16F;
+		compressor = new render::UnCompressor();
+	}
 
 	Ref< db::Instance > outputInstance = outputDatabase->createInstance(
 		L"Generated/" + lightmapId.format(),
@@ -176,7 +196,7 @@ int32_t writeTexture(db::Database* outputDatabase, const Guid& lightmapId, const
 		&lightmapId
 	);
 	if (!outputInstance)
-		return 1;
+		return false;
 
 	Ref< render::TextureResource > outputResource = new render::TextureResource();
 	outputInstance->setObject(outputResource);
@@ -186,7 +206,7 @@ int32_t writeTexture(db::Database* outputDatabase, const Guid& lightmapId, const
 	if (!stream)
 	{
 		outputInstance->revert();
-		return 2;
+		return false;
 	}
 
 	Writer writer(stream);
@@ -197,31 +217,23 @@ int32_t writeTexture(db::Database* outputDatabase, const Guid& lightmapId, const
 	writer << int32_t(lightmapFormat->getHeight());
 	writer << int32_t(1);
 	writer << int32_t(1);
-	writer << /*int32_t(render::TfR8G8B8A8);*/ int32_t(render::TfR16G16B16A16F);
+	writer << int32_t(textureFormat);
 	writer << bool(false);
 	writer << uint8_t(render::Tt2D);
 	writer << bool(false);
 	writer << bool(false);
 
 	// Write texture data.
-	uint32_t dataSize = render::getTextureMipPitch(
-		/*render::TfR8G8B8A8,*/ render::TfR16G16B16A16F,
-		lightmapFormat->getWidth(),
-		lightmapFormat->getHeight()
-	);
-	const uint8_t* data = static_cast< const uint8_t* >(lightmapFormat->getData());
-	if (writer.write(data, dataSize, 1) != dataSize)
-	{
-		outputInstance->revert();
-		return 3;
-	}
+	RefArray< drawing::Image > mipImages(1);
+	mipImages[0] = lightmapFormat;
+	compressor->compress(writer, mipImages, textureFormat, false, 3);
 
 	stream->close();
 
 	if (!outputInstance->commit())
-		return 4;
+		return false;
 	
-	return 0;
+	return true;
 }
 
 void line(const Vector2& from, const Vector2& to, const std::function< void(const Vector2, float) >& fn)
@@ -242,9 +254,10 @@ void line(const Vector2& from, const Vector2& to, const std::function< void(cons
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.shape.TracerProcessor", TracerProcessor, Object)
 
-TracerProcessor::TracerProcessor(const TypeInfo* rayTracerType, db::Database* outputDatabase, bool preview)
-:   m_outputDatabase(outputDatabase)
-,   m_rayTracerType(rayTracerType)
+TracerProcessor::TracerProcessor(const TypeInfo* rayTracerType, db::Database* outputDatabase, const std::wstring& compressionMethod, bool preview)
+:   m_rayTracerType(rayTracerType)
+,   m_outputDatabase(outputDatabase)
+,	m_compressionMethod(compressionMethod)
 ,	m_preview(preview)
 ,   m_thread(nullptr)
 {
@@ -549,17 +562,14 @@ bool TracerProcessor::process(const TracerTask* task)
 		lightmap->save(L"data/Temp/Bake/Lightmap_" + tracerOutput->getName() + L".png");
 #endif
 
-		// Encode texture into RGBM.
-		if (false)
-			encodeRGBM(lightmap);
-
 		// Create final output instance.
-		int32_t result = writeTexture(
+		bool result = writeTexture(
 			m_outputDatabase,
+			m_compressionMethod,
 			tracerOutput->getLightmapId(),
 			lightmap
 		);
-		if (result != 0)
+		if (!result)
 		{
 			log::error << L"Trace failed; unable to create output lightmap texture for \"" << tracerOutput->getName() << L"\", error = " << result << L"." << Endl;
 			return false;

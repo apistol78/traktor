@@ -1,5 +1,4 @@
 #include "Core/Io/Writer.h"
-#include "Core/Log/Log.h"
 #include "Drawing/Image.h"
 #include "Render/Editor/Texture/UnCompressor.h"
 
@@ -12,7 +11,6 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.render.UnCompressor", UnCompressor, ICompressor
 
 bool UnCompressor::compress(Writer& writer, const RefArray< drawing::Image >& mipImages, TextureFormat textureFormat, bool needAlpha, int32_t compressionQuality) const
 {
-	log::info << L"Writing " << int32_t(mipImages.size()) << L" uncompressed mip(s)..." << Endl;
 	for (RefArray< drawing::Image >::const_iterator i = mipImages.begin(); i != mipImages.end(); ++i)
 	{
 		int32_t width = (*i)->getWidth();

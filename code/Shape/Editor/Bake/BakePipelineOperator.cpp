@@ -377,6 +377,7 @@ bool BakePipelineOperator::create(const editor::IPipelineSettings* settings)
 	if (!m_tracerType)
 		return false;
 
+	m_compressionMethod = settings->getProperty< std::wstring >(L"TexturePipeline.CompressionMethod", L"");
 	m_editor = settings->getProperty< bool >(L"Pipeline.TargetEditor", false);
 
 	// Create entity replicators.
@@ -426,7 +427,7 @@ bool BakePipelineOperator::build(
 	// In case no tracer processor is registered we create one for this build only,
 	// by doing so we can ensure trace is finished before returning.
 	if (!tracerProcessor)
-		tracerProcessor = new TracerProcessor(m_tracerType, pipelineBuilder->getOutputDatabase(), false);
+		tracerProcessor = new TracerProcessor(m_tracerType, pipelineBuilder->getOutputDatabase(), m_compressionMethod, false);
 
 	const auto configuration = mandatory_non_null_type_cast< const BakeConfiguration* >(operatorData);
 	uint32_t configurationHash = DeepHash(configuration).get();

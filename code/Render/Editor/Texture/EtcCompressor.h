@@ -2,12 +2,20 @@
 
 #include "Render/Editor/Texture/ICompressor.h"
 
+// import/export mechanism.
+#undef T_DLLCLASS
+#if defined(T_RENDER_EDITOR_EXPORT)
+#	define T_DLLCLASS T_DLLEXPORT
+#else
+#	define T_DLLCLASS T_DLLIMPORT
+#endif
+
 namespace traktor
 {
 	namespace render
 	{
 
-class EtcCompressor : public ICompressor
+class T_DLLCLASS EtcCompressor : public ICompressor
 {
 	T_RTTI_CLASS;
 

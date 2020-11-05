@@ -19,11 +19,15 @@ bool AstcCompressor::compress(Writer& writer, const RefArray< drawing::Image >& 
 	astcenc_config config;
 	astcenc_error result;
 
+	astcenc_profile profile = ASTCENC_PRF_LDR_SRGB;
+	if (mipImages.front()->getPixelFormat().isFloatPoint())
+		profile = ASTCENC_PRF_HDR;
+
 	switch (textureFormat)
 	{
 	case TfASTC4x4:
 		result = astcenc_config_init(
-			ASTCENC_PRF_LDR_SRGB,
+			profile,
 			4,	// block x
 			4,	// block y
 			1,	// block z,
@@ -35,7 +39,7 @@ bool AstcCompressor::compress(Writer& writer, const RefArray< drawing::Image >& 
 
 	case TfASTC8x8:
 		result = astcenc_config_init(
-			ASTCENC_PRF_LDR_SRGB,
+			profile,
 			8,	// block x
 			8,	// block y
 			1,	// block z,
@@ -47,7 +51,7 @@ bool AstcCompressor::compress(Writer& writer, const RefArray< drawing::Image >& 
 
 	case TfASTC10x10:
 		result = astcenc_config_init(
-			ASTCENC_PRF_LDR_SRGB,
+			profile,
 			10,	// block x
 			10,	// block y
 			1,	// block z,
@@ -59,7 +63,7 @@ bool AstcCompressor::compress(Writer& writer, const RefArray< drawing::Image >& 
 
 	case TfASTC12x12:
 		result = astcenc_config_init(
-			ASTCENC_PRF_LDR_SRGB,
+			profile,
 			12,	// block x
 			12,	// block y
 			1,	// block z,
@@ -106,7 +110,22 @@ bool AstcCompressor::compress(Writer& writer, const RefArray< drawing::Image >& 
 		image.dim_y = mipImages[i]->getHeight();
 		image.dim_z = 1;
 		image.dim_pad = 0;
-		image.data_type = ASTCENC_TYPE_U8;
+
+		if (mipImages[i]->getPixelFormat().isFloatPoint())
+		{
+			if (mipImages[i]->getPixelFormat().getRedBits() == 32)
+				image.data_type = ASTCENC_TYPE_F32;
+			else if (mipImages[i]->getPixelFormat().getRedBits() == 16)
+				image.data_type = ASTCENC_TYPE_F16;
+			else
+			{
+				log::error << L"Unable to compress using ASTC; unsupported number of float point bits." << Endl;
+				return false;
+			}
+		}
+		else
+			image.data_type = ASTCENC_TYPE_U8;
+
 		image.data = &data;
 
 		astcenc_swizzle swizzle;
