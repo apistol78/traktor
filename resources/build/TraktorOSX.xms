@@ -6053,6 +6053,12 @@
 														<link>LnkYes</link>
 														<project ref="/object/projects/item/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
 													</item>
+													<item type="ExternalDependency" version="3">
+														<inheritIncludePaths>true</inheritIncludePaths>
+														<link>LnkYes</link>
+														<solutionFileName>ExternOSX.xms</solutionFileName>
+														<projectName>Extern.astcenc</projectName>
+													</item>
 												</dependencies>
 											</project>
 										</item>
@@ -17458,11 +17464,11 @@
 						<item type="AggregationItem">
 							<sourceFile>$(MOLTEN_SDK)/macOS/dynamic/libMoltenVK.dylib</sourceFile>
 							<targetPath>debugshared</targetPath>
-						</item>						
+						</item>
 						<item type="AggregationItem">
 							<sourceFile>$(MOLTEN_SDK)/macOS/dynamic/MoltenVK_icd.json</sourceFile>
 							<targetPath>debugshared</targetPath>
-						</item>						
+						</item>
 					</aggregationItems>
 					<consumerLibraryPath>debugshared</consumerLibraryPath>
 				</item>
@@ -17499,11 +17505,11 @@
 						<item type="AggregationItem">
 							<sourceFile>$(MOLTEN_SDK)/macOS/dynamic/libMoltenVK.dylib</sourceFile>
 							<targetPath>releaseshared</targetPath>
-						</item>						
+						</item>
 						<item type="AggregationItem">
 							<sourceFile>$(MOLTEN_SDK)/macOS/dynamic/MoltenVK_icd.json</sourceFile>
 							<targetPath>releaseshared</targetPath>
-						</item>						
+						</item>
 					</aggregationItems>
 					<consumerLibraryPath>releaseshared</consumerLibraryPath>
 				</item>
@@ -17540,11 +17546,11 @@
 						<item type="AggregationItem">
 							<sourceFile>$(MOLTEN_SDK)/macOS/dynamic/libMoltenVK.dylib</sourceFile>
 							<targetPath>debugstatic</targetPath>
-						</item>						
+						</item>
 						<item type="AggregationItem">
 							<sourceFile>$(MOLTEN_SDK)/macOS/dynamic/MoltenVK_icd.json</sourceFile>
 							<targetPath>debugstatic</targetPath>
-						</item>						
+						</item>
 					</aggregationItems>
 					<consumerLibraryPath>debugstatic</consumerLibraryPath>
 				</item>
@@ -17581,11 +17587,11 @@
 						<item type="AggregationItem">
 							<sourceFile>$(MOLTEN_SDK)/macOS/dynamic/libMoltenVK.dylib</sourceFile>
 							<targetPath>releasestatic</targetPath>
-						</item>						
+						</item>
 						<item type="AggregationItem">
 							<sourceFile>$(MOLTEN_SDK)/macOS/dynamic/MoltenVK_icd.json</sourceFile>
 							<targetPath>releasestatic</targetPath>
-						</item>						
+						</item>
 					</aggregationItems>
 					<consumerLibraryPath>releasestatic</consumerLibraryPath>
 				</item>

@@ -62,7 +62,8 @@ private:
 		CmNone,
 		CmDXTn,
 		CmPVRTC,
-		CmETC1
+		CmETC1,
+		CmASTC
 	};
 
 	bool m_generateMipsThread;
