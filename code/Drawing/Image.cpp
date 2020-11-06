@@ -542,7 +542,7 @@ Ref< Image > Image::load(const void* resource, uint32_t size, const std::wstring
 	return image;
 }
 
-bool Image::save(const Path& fileName)
+bool Image::save(const Path& fileName) const
 {
 	if (!m_data)
 		return false;
@@ -562,7 +562,7 @@ bool Image::save(const Path& fileName)
 	return result;
 }
 
-bool Image::save(IStream* stream, const std::wstring& extension)
+bool Image::save(IStream* stream, const std::wstring& extension) const
 {
 	if (!m_data)
 		return false;

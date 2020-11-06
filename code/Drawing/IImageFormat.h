@@ -34,7 +34,7 @@ public:
 
 	virtual Ref< Image > read(IStream* stream) = 0;
 
-	virtual bool write(IStream* stream, Image* image) = 0;
+	virtual bool write(IStream* stream, const Image* image) = 0;
 };
 
 	}

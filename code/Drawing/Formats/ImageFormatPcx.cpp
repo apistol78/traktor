@@ -144,7 +144,7 @@ Ref< Image > ImageFormatPcx::read(IStream* stream)
 	return image;
 }
 
-bool ImageFormatPcx::write(IStream* stream, Image* image)
+bool ImageFormatPcx::write(IStream* stream, const Image* image)
 {
 	PCXHEADER hdr;
 	Writer writer(stream);

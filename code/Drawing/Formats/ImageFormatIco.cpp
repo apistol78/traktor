@@ -31,7 +31,7 @@ Ref< Image > ImageFormatIco::read(IStream* stream)
 	return nullptr;
 }
 
-bool ImageFormatIco::write(IStream* stream, Image* image)
+bool ImageFormatIco::write(IStream* stream, const Image* image)
 {
 	Writer writer(stream);
 

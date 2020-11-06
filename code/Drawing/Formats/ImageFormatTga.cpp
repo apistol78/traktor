@@ -112,7 +112,7 @@ Ref< Image > ImageFormatTga::read(IStream* stream)
 	return image;
 }
 
-bool ImageFormatTga::write(IStream* stream, Image* image)
+bool ImageFormatTga::write(IStream* stream, const Image* image)
 {
 	TGAHEADER header;
 	header.identsize = 0;

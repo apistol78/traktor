@@ -132,7 +132,7 @@ Ref< Image > ImageFormatBmp::read(IStream* stream)
 	return image;
 }
 
-bool ImageFormatBmp::write(IStream* stream, Image* image)
+bool ImageFormatBmp::write(IStream* stream, const Image* image)
 {
 	return false;
 }

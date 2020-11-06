@@ -31,7 +31,7 @@ public:
 
 	virtual Ref< Image > read(IStream* stream) override final;
 
-	virtual bool write(IStream* stream, Image* image) override final;
+	virtual bool write(IStream* stream, const Image* image) override final;
 
 	bool readJpegHeader(IStream* stream);
 

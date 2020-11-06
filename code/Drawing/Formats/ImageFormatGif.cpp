@@ -332,7 +332,7 @@ Ref< Image > ImageFormatGif::read(IStream* stream)
 	return image;
 }
 
-bool ImageFormatGif::write(IStream* stream, Image* image)
+bool ImageFormatGif::write(IStream* stream, const Image* image)
 {
 	return false;
 }
