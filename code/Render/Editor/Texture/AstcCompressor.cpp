@@ -20,7 +20,7 @@ bool AstcCompressor::compress(Writer& writer, const RefArray< drawing::Image >& 
 	astcenc_error result;
 
 	astcenc_profile profile = ASTCENC_PRF_LDR_SRGB;
-	if (mipImages.front()->getPixelFormat().isFloatPoint())
+	if (textureFormat >= TfASTC4x4F)
 		profile = ASTCENC_PRF_HDR;
 
 	switch (textureFormat)
