@@ -345,7 +345,7 @@ Ref< Image > ImageFormatDds::read(IStream* stream)
 	return image;
 }
 
-bool ImageFormatDds::write(IStream* stream, Image* image)
+bool ImageFormatDds::write(IStream* stream, const Image* image)
 {
 	return false;
 }

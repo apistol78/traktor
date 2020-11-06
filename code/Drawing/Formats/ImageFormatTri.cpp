@@ -80,7 +80,7 @@ Ref< Image > ImageFormatTri::read(IStream* stream)
 	return image;
 }
 
-bool ImageFormatTri::write(IStream* stream, Image* image)
+bool ImageFormatTri::write(IStream* stream, const Image* image)
 {
 	const PixelFormat& pf = image->getPixelFormat();
 

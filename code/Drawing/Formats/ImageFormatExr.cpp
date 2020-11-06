@@ -120,7 +120,7 @@ Ref< Image > ImageFormatExr::read(IStream* stream)
 	return image;
 }
 
-bool ImageFormatExr::write(IStream* stream, Image* image)
+bool ImageFormatExr::write(IStream* stream, const Image* image)
 {
 	OStreamWrapper os(stream);
 

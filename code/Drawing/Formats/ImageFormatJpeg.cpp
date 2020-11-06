@@ -245,7 +245,7 @@ Ref< Image > ImageFormatJpeg::read(IStream* stream)
 	return m_impl->readJpegImage(stream);
 }
 
-bool ImageFormatJpeg::write(IStream* stream, Image* image)
+bool ImageFormatJpeg::write(IStream* stream, const Image* image)
 {
 	return false;
 }

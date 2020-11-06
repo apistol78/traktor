@@ -222,7 +222,7 @@ Ref< Image > ImageFormatHdr::read(IStream* stream)
 	return image;
 }
 
-bool ImageFormatHdr::write(IStream* stream, Image* image)
+bool ImageFormatHdr::write(IStream* stream, const Image* image)
 {
 	return false;
 }

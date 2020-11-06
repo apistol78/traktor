@@ -156,10 +156,10 @@ public:
 	static Ref< Image > load(const void* resource, uint32_t size, const std::wstring& extension);
 
 	/*! Save image as file. */
-	bool save(const Path& fileName);
+	bool save(const Path& fileName) const;
 
 	/*! Save image into stream. */
-	bool save(IStream* stream, const std::wstring& extension);
+	bool save(IStream* stream, const std::wstring& extension) const;
 
 	/*! Get current image format. */
 	const PixelFormat& getPixelFormat() const;

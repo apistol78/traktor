@@ -157,7 +157,7 @@ Ref< Image > ImageFormatPng::read(IStream* stream)
 	return image;
 }
 
-bool ImageFormatPng::write(IStream* stream, Image* image)
+bool ImageFormatPng::write(IStream* stream, const Image* image)
 {
 	png_structp png_ptr;
 	png_infop info_ptr;
