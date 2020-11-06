@@ -180,7 +180,7 @@ bool writeTexture(db::Database* outputDatabase, const std::wstring& compressionM
 	else if (compareIgnoreCase(compressionMethod, L"ASTC") == 0)
 	{
 		lightmapFormat->convert(drawing::PixelFormat::getABGRF16().endianSwapped());
-		textureFormat = render::TfASTC8x8;
+		textureFormat = render::TfASTC8x8F;
 		compressor = new render::AstcCompressor();
 	}
 	else
