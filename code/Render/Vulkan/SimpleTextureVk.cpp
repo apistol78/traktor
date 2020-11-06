@@ -48,7 +48,7 @@ bool SimpleTextureVk::create(
 	const VkFormat* vkTextureFormats = desc.sRGB ? c_vkTextureFormats_sRGB : c_vkTextureFormats;
 	if (vkTextureFormats[desc.format] == VK_FORMAT_UNDEFINED)
 	{
-		log::error << L"Failed to create VK simple texture; unknown format " << int32_t(desc.format) << L", (" << (desc.sRGB ? L"sRGB" : L"linear") << L")." << Endl;
+		log::error << L"Failed to create 2D texture; unsupported format (\"" << getTextureFormatName(desc.format) << L"\" (" << (int)desc.format << L"), " << (desc.sRGB ? L"sRGB" : L"linear") << L")." << Endl;
 		return false;
 	}
 
@@ -65,7 +65,10 @@ bool SimpleTextureVk::create(
 	aci.usage = VMA_MEMORY_USAGE_CPU_TO_GPU;
 
 	if (vmaCreateBuffer(m_allocator, &bufferInfo, &aci, &m_stagingBuffer, &m_stagingBufferAllocation, nullptr) != VK_SUCCESS)
-		return false;	
+	{
+		log::error << L"Failed to create 2D texture; unable to create staging buffer (\"" << getTextureFormatName(desc.format) << L"\" (" << (int)desc.format << L"), " << (desc.sRGB ? L"sRGB" : L"linear") << L")." << Endl;
+		return false;
+	}	
 
 	// Copy data into staging buffer.
 	uint8_t* data = nullptr;
@@ -108,7 +111,7 @@ bool SimpleTextureVk::create(
 	aci.usage = VMA_MEMORY_USAGE_GPU_ONLY;
 	if (vmaCreateImage(m_allocator, &ici, &aci, &m_textureImage, &m_textureAllocation, nullptr) != VK_SUCCESS)
 	{
-		log::error << L"Failed to create VK simple texture; unable to allocate image memory." << Endl;
+		log::error << L"Failed to create VK simple texture; unable to allocate image memory (\"" << getTextureFormatName(desc.format) << L"\" (" << (int)desc.format << L"), " << (desc.sRGB ? L"sRGB" : L"linear") << L")." << Endl;
 		return false;			
 	}
 
@@ -130,7 +133,7 @@ bool SimpleTextureVk::create(
 
 	if (vkCreateImageView(m_logicalDevice, &ivci, nullptr, &m_textureView) != VK_SUCCESS)
 	{
-		log::error << L"Failed to create VK simple texture; unable to create image view." << Endl;
+		log::error << L"Failed to create VK simple texture; unable to create image view (\"" << getTextureFormatName(desc.format) << L"\" (" << (int)desc.format << L"), " << (desc.sRGB ? L"sRGB" : L"linear") << L")." << Endl;
 		return false;
 	}
 
