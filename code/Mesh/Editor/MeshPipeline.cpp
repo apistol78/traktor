@@ -216,7 +216,7 @@ bool MeshPipeline::buildOutput(
 	editor::IPipelineBuilder* pipelineBuilder,
 	const editor::IPipelineDependencySet* dependencySet,
 	const editor::PipelineDependency* dependency,
-	const db::Instance* sourceInstance,
+	const db::Instance* /*sourceInstance*/,
 	const ISerializable* sourceAsset,
 	uint32_t /*sourceAssetHash*/,
 	const std::wstring& outputPath,
@@ -705,7 +705,7 @@ bool MeshPipeline::buildOutput(
 	// Build material shader.
 	std::wstring materialPath = Path(outputPath).getPathOnly() + L"/" + outputGuid.format() + L"/Shader";
 	if (!pipelineBuilder->buildOutput(
-		sourceInstance,
+		nullptr,
 		materialShaderGraph,
 		materialPath,
 		materialGuid

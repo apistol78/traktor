@@ -461,32 +461,6 @@ bool BakePipelineOperator::build(
 			}
 		}
 
-		// // Calculate hash of current layer along with hash of trace configuration.
-		// int32_t layerHash = configurationHash + (int32_t)DeepHash(flattenedLayer).get();
-
-		// // Check if layer has already been baked, hash is written as a receipt in output database.
-		// Guid existingLayerId = layerHashSeedId.permutate();
-		// Guid existingLayerHashId = layerHashSeedId.permutate();
-
-		// if (m_editor && !rebuild)
-		// {
-		// 	Ref< PropertyInteger > existingLayerHash = pipelineBuilder->getOutputDatabase()->getObjectReadOnly< PropertyInteger >(existingLayerHashId);
-		// 	if (
-		// 		existingLayerHash &&
-		// 		*existingLayerHash == layerHash
-		// 	)
-		// 	{
-		// 		// Read flattened layer from output as we need the modified layer from last bake.
-		// 		Ref< world::LayerEntityData > existingLayer = pipelineBuilder->getOutputDatabase()->getObjectReadOnly< world::LayerEntityData >(existingLayerId);
-		// 		if (existingLayer)
-		// 		{
-		// 			log::info << L"Skipping baking lightmap, already baked in output database." << Endl;
-		// 			layers.push_back(existingLayer);
-		// 			continue;
-		// 		}
-		// 	}
-		// }
-
 		// Traverse and visit all entities in layer.
 		int32_t debugIndex = 0;
 		scene::Traverser::visit(flattenedLayer, [&](Ref< world::EntityData >& inoutEntityData) -> scene::Traverser::VisitorResult
@@ -583,26 +557,6 @@ bool BakePipelineOperator::build(
 			}
 			return scene::Traverser::VrContinue;
 		});
-
-		// if (m_editor)
-		// {
-		// 	// Write baked layer and hash.
-		// 	Ref< db::Instance > hashInstance = pipelineBuilder->getOutputDatabase()->createInstance(
-		// 		L"Generated/" + existingLayerHashId.format(),
-		// 		db::CifReplaceExisting,
-		// 		&existingLayerHashId
-		// 	);
-		// 	hashInstance->setObject(new PropertyInteger(layerHash));
-		// 	hashInstance->commit();
-
-		// 	Ref< db::Instance > layerInstance = pipelineBuilder->getOutputDatabase()->createInstance(
-		// 		L"Generated/" + existingLayerId.format(),
-		// 		db::CifReplaceExisting,
-		// 		&existingLayerId
-		// 	);
-		// 	layerInstance->setObject(flattenedLayer);
-		// 	layerInstance->commit();
-		// }
 
 		// Replace with modified layer in output scene.
 		layers.push_back(flattenedLayer);
