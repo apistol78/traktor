@@ -321,24 +321,113 @@ void RayTracerEmbree::traceLightmap(const model::Model* model, const GBuffer* gb
 			Color4f incoming(0.0f, 0.0f, 0.0f, 0.0f);
 			if (sampleCount > 0)
 			{
-				for (int32_t i = 0; i < sampleCount; ++i)
-				{
-					Vector2 uv = Quasirandom::hammersley(i, sampleCount, random);
-					Vector4 direction = Quasirandom::uniformHemiSphere(uv, elm.normal);		
+				// for (int32_t i = 0; i < sampleCount; ++i)
+				// {
+				// 	Vector2 uv = Quasirandom::hammersley(i, sampleCount, random);
+				// 	Vector4 direction = Quasirandom::uniformHemiSphere(uv, elm.normal);		
 			
-					incoming += tracePath(
-						elm.position,
-						direction,
-						random,
-						0
-					);
-				}
-				incoming /= Scalar(sampleCount);
+				// 	incoming += tracePath(
+				// 		elm.position,
+				// 		direction,
+				// 		random,
+				// 		0
+				// 	);
+				// }
+				// incoming /= Scalar(sampleCount);
+
+				incoming = tracePath0(elm.position, elm.normal, random);
 			}
 
 			lightmap->setPixel(x, y, ((emittance + direct + incoming) * (1.0_simd - metalness)).rgb1());
 		}
 	}	
+}
+
+Color4f RayTracerEmbree::tracePath0(
+	const Vector4& origin,
+	const Vector4& normal,
+	RandomGeometry& random
+) const
+{
+	const int32_t sampleCount = m_configuration->getSampleCount();
+
+	// Construct all rays.
+	StaticVector< RTCRayHit, 1024 > rhv(sampleCount);
+	for (int32_t i = 0; i < sampleCount; ++i)
+	{
+		Vector2 uv = Quasirandom::hammersley(i, sampleCount, random);
+		Vector4 direction = Quasirandom::uniformHemiSphere(uv, normal);
+		constructRay(origin, direction, m_configuration->getMaxPathDistance(), rhv[i]);
+	}
+
+	// Intersect test all rays using ray streams.
+	RTCIntersectContext context;
+	rtcInitIntersectContext(&context);
+	rtcIntersect1M(m_scene, &context, rhv.ptr(), sampleCount, sizeof(RTCRayHit));
+
+	// Accumulate incoming light.
+	Color4f color(0.0f, 0.0f, 0.0f, 0.0f);
+	for (const auto& rh : rhv)
+	{
+		const Vector4 direction(
+			rh.ray.dir_x,
+			rh.ray.dir_y,
+			rh.ray.dir_z
+		);
+
+		if (rh.hit.geomID == RTC_INVALID_GEOMETRY_ID)
+		{
+			// Nothing hit, sample sky if available else it's all black.
+			if (m_environment)
+				color += m_environment->sample(direction);
+			continue;
+		}
+
+		const auto& polygons = m_models[rh.hit.geomID]->getPolygons();
+		const auto& materials = m_models[rh.hit.geomID]->getMaterials();
+
+		const auto& hitPolygon = polygons[rh.hit.primID];
+		const auto& hitMaterial = materials[hitPolygon.getMaterial()];
+
+		Color4f hitMaterialColor = hitMaterial.getColor();
+		if (hitMaterial.getDiffuseMap().image)
+		{
+			const uint32_t slot = 0;
+			float texCoord[2] = { 0.0f, 0.0f };
+
+			RTCGeometry geometry = rtcGetGeometry(m_scene, rh.hit.geomID);
+			rtcInterpolate0(geometry, rh.hit.primID, rh.hit.u, rh.hit.v, RTC_BUFFER_TYPE_VERTEX_ATTRIBUTE, slot, texCoord, 2);
+
+			auto image = hitMaterial.getDiffuseMap().image;
+			image->getPixel(
+				(int32_t)(wrap(texCoord[0]) * image->getWidth()),
+				(int32_t)(wrap(texCoord[1]) * image->getHeight()),
+				hitMaterialColor
+			);
+		}
+
+		Color4f emittance = hitMaterialColor * Scalar(hitMaterial.getEmissive());
+
+		Vector4 hitNormal = Vector4::loadUnaligned(&rh.hit.Ng_x).xyz0().normalized();
+		Vector4 newOrigin = (origin + direction * Scalar(rh.ray.tfar)).xyz1();
+
+		Vector2 rnd(random.nextFloat(), random.nextFloat());
+		Vector4 newDirection = lambertianDirection(rnd, hitNormal);
+
+		Color4f direct = sampleAnalyticalLights(
+			random,
+			newOrigin,
+			hitNormal,
+			Light::LmIndirect,
+			true
+		);
+		Color4f incoming = tracePath(newOrigin, newDirection, random, 1);
+		Color4f reflectance = hitMaterialColor;
+
+		color += emittance + (direct + incoming) * reflectance;		
+	}
+
+	return color / Scalar(sampleCount);
 }
 
 Color4f RayTracerEmbree::tracePath(
@@ -358,7 +447,7 @@ Color4f RayTracerEmbree::tracePath(
 	}
 
 	RTCRayHit T_MATH_ALIGN16 rh;
-	constructRay(origin, direction, 100.0f, rh);
+	constructRay(origin, direction, m_configuration->getMaxPathDistance(), rh);
 
 	RTCIntersectContext context;
 	rtcInitIntersectContext(&context);

@@ -21,13 +21,13 @@ class T_DLLCLASS BakeConfiguration : public ISerializable
 	T_RTTI_CLASS;
 
 public:
-	BakeConfiguration();
-
 	uint32_t getSampleCount() const { return m_sampleCount; }
 
 	uint32_t getShadowSampleCount() const { return m_shadowSampleCount; }
 
 	uint32_t getIrradianceSampleCount() const { return m_irradianceSampleCount; }
+
+	float getMaxPathDistance() const { return m_maxPathDistance; }
 
 	float getPointLightShadowRadius() const { return m_pointLightShadowRadius; }
 
@@ -48,17 +48,18 @@ public:
 	virtual void serialize(ISerializer& s) override final;
 
 private:
-	uint32_t m_sampleCount;
-	uint32_t m_shadowSampleCount;
-	uint32_t m_irradianceSampleCount;
-	float m_pointLightShadowRadius;
-	float m_lumelDensity;
-	float m_irradianceGridDensity;
-	int32_t m_minimumLightMapSize;
-	int32_t m_maximumLightMapSize;
-	bool m_enableShadowFix;
-	bool m_enableDenoise;
-	bool m_enableSeamFilter;
+	uint32_t m_sampleCount = 100;
+	uint32_t m_shadowSampleCount = 50;
+	uint32_t m_irradianceSampleCount = 50;
+	float m_maxPathDistance = 1.0f;
+	float m_pointLightShadowRadius = 0.1f;
+	float m_lumelDensity = 16.0f;
+	float m_irradianceGridDensity = 1.0f;
+	int32_t m_minimumLightMapSize = 16;
+	int32_t m_maximumLightMapSize = 1024;
+	bool m_enableShadowFix = true;
+	bool m_enableDenoise = true;
+	bool m_enableSeamFilter = true;
 };
 
 	}

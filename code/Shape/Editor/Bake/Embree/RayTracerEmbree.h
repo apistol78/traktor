@@ -61,6 +61,12 @@ private:
     Ref< render::SHEngine > m_shEngine;
 	float m_maxDistance;
 
+    Color4f tracePath0(
+        const Vector4& origin,
+        const Vector4& normal,
+        RandomGeometry& random
+    ) const;
+
 	Color4f tracePath(
 		const Vector4& origin,
 		const Vector4& direction,

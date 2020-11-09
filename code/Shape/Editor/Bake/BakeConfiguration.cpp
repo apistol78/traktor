@@ -10,22 +10,7 @@ namespace traktor
 	namespace shape
 	{
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.shape.BakeConfiguration", 17, BakeConfiguration, ISerializable)
-
-BakeConfiguration::BakeConfiguration()
-:	m_sampleCount(100)
-,	m_shadowSampleCount(100)
-,	m_irradianceSampleCount(100)
-,	m_pointLightShadowRadius(0.1f)
-,	m_lumelDensity(32.0f)
-,	m_irradianceGridDensity(1.0f)
-,	m_minimumLightMapSize(128)
-,	m_maximumLightMapSize(1024)
-,	m_enableShadowFix(true)
-,	m_enableDenoise(true)
-,	m_enableSeamFilter(true)
-{
-}
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.shape.BakeConfiguration", 18, BakeConfiguration, ISerializable)
 
 void BakeConfiguration::serialize(ISerializer& s)
 {
@@ -61,6 +46,9 @@ void BakeConfiguration::serialize(ISerializer& s)
 
 	if (s.getVersion< BakeConfiguration >() >= 11)
 		s >> Member< uint32_t >(L"irradianceSampleCount", m_irradianceSampleCount, AttributeRange(0));
+
+	if (s.getVersion< BakeConfiguration >() >= 18)
+		s >> Member< float >(L"maxPathDistance", m_maxPathDistance, AttributeRange(0.0f) | AttributeUnit(AuMetres));
 
 	s >> Member< float >(L"pointLightShadowRadius", m_pointLightShadowRadius, AttributeRange(0.0f) | AttributeUnit(AuMetres));
 	s >> Member< float >(L"lumelDensity", m_lumelDensity, AttributeRange(0.0f));
