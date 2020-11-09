@@ -363,8 +363,7 @@ Ref< ISerializable > PrefabEntityPipeline::buildOutput(
 		mergedMeshAsset->setMaterialShaders(mergedMaterialShaders);
 		mergedMeshAsset->setMaterialTextures(mergedMaterialTextures);
 
-		pipelineBuilder->buildOutput(
-			sourceInstance,
+		pipelineBuilder->buildAdHocOutput(
 			mergedMeshAsset,
 			outputRenderMeshPath,
 			outputRenderMeshGuid,
@@ -432,8 +431,7 @@ Ref< ISerializable > PrefabEntityPipeline::buildOutput(
 		mergedMeshAsset->setMargin(0.0f);
 		mergedMeshAsset->setCalculateConvexHull(false);
 
-		pipelineBuilder->buildOutput(
-			sourceInstance,
+		pipelineBuilder->buildAdHocOutput(
 			mergedMeshAsset,
 			outputCollisionShapePath,
 			outputCollisionShapeGuid,

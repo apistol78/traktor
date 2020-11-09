@@ -102,7 +102,7 @@ Ref< ISerializable > PipelineBuilderWrapper::buildOutput(const db::Instance* sou
 	return product;
 }
 
-bool PipelineBuilderWrapper::buildOutput(const db::Instance* sourceInstance, const ISerializable* sourceAsset, const std::wstring& outputPath, const Guid& outputGuid, const Object* buildParams)
+bool PipelineBuilderWrapper::buildAdHocOutput(const ISerializable* sourceAsset, const std::wstring& outputPath, const Guid& outputGuid, const Object* buildParams)
 {
 	const TypeInfo* pipelineType;
 	uint32_t pipelineHash;
@@ -115,11 +115,10 @@ bool PipelineBuilderWrapper::buildOutput(const db::Instance* sourceInstance, con
 
 	if (!pipeline->buildOutput(
 		this,
-		0,
-		0,
-		sourceInstance,
+		nullptr,
+		nullptr,
+		nullptr,
 		sourceAsset,
-		0,
 		outputPath,
 		outputGuid,
 		buildParams,

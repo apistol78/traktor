@@ -377,7 +377,7 @@ bool BakePipelineOperator::create(const editor::IPipelineSettings* settings)
 	if (!m_tracerType)
 		return false;
 
-	m_compressionMethod = settings->getProperty< std::wstring >(L"TexturePipeline.CompressionMethod", L"");
+	m_compressionMethod = settings->getProperty< std::wstring >(L"TexturePipeline.CompressionMethod", L"DXTn");
 	m_editor = settings->getProperty< bool >(L"Pipeline.TargetEditor", false);
 
 	// Create entity replicators.

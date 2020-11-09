@@ -137,8 +137,7 @@ Ref< Object > MeshEntityReplicator::modifyOutput(
 	outputMeshAsset->setMaterialTextures(meshAsset->getMaterialTextures());
 	outputMeshAsset->setTextureSet(meshAsset->getTextureSet());
 
-    pipelineBuilder->buildOutput(
-		nullptr,
+    pipelineBuilder->buildAdHocOutput(
         outputMeshAsset,
         outputRenderMeshPath,
         outputRenderMeshGuid,

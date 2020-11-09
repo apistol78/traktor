@@ -39,7 +39,6 @@ bool ColorGradingTexturePipeline::buildOutput(
 	const editor::PipelineDependency* dependency,
 	const db::Instance* sourceInstance,
 	const ISerializable* sourceAsset,
-	uint32_t sourceAssetHash,
 	const std::wstring& outputPath,
 	const Guid& outputGuid,
 	const Object* buildParams,
@@ -76,8 +75,7 @@ bool ColorGradingTexturePipeline::buildOutput(
 	output->m_linearGamma = true;
 	output->m_systemTexture = true;
 
-	return pipelineBuilder->buildOutput(
-		sourceInstance,
+	return pipelineBuilder->buildAdHocOutput(
 		output,
 		outputPath,
 		outputGuid,

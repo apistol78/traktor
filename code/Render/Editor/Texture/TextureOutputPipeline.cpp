@@ -35,6 +35,7 @@
 #include "Editor/IPipelineBuilder.h"
 #include "Editor/IPipelineDepends.h"
 #include "Editor/IPipelineSettings.h"
+#include "Editor/PipelineDependency.h"
 #include "Render/Types.h"
 #include "Render/Editor/Texture/AstcCompressor.h"
 #include "Render/Editor/Texture/CubeMap.h"
@@ -207,9 +208,8 @@ bool TextureOutputPipeline::buildOutput(
 	editor::IPipelineBuilder* pipelineBuilder,
 	const editor::IPipelineDependencySet* dependencySet,
 	const editor::PipelineDependency* dependency,
-	const db::Instance* sourceInstance,
+	const db::Instance* /*sourceInstance*/,
 	const ISerializable* sourceAsset,
-	uint32_t sourceAssetHash,
 	const std::wstring& outputPath,
 	const Guid& outputGuid,
 	const Object* buildParams,
@@ -234,7 +234,7 @@ bool TextureOutputPipeline::buildOutput(
 	{
 		bool explicitLinear = (bool)(std::abs(image->getImageInfo()->getGamma() - 1.0f) < 0.001f);
 		if (explicitLinear != textureOutput->m_linearGamma)
-			log::warning << L"Image linear gamma mismatch in texture \"" << sourceInstance->getGuid().format() << L"\"; image is " << (explicitLinear ? L"linear" : L"non-linear") << L", while asset declare as " << (textureOutput->m_linearGamma ? L"linear" : L"non-linear") << L"." << Endl;
+			log::warning << L"Image linear gamma mismatch in texture \"" << dependency->sourceInstanceGuid.format() << L"\"; image is " << (explicitLinear ? L"linear" : L"non-linear") << L", while asset declare as " << (textureOutput->m_linearGamma ? L"linear" : L"non-linear") << L"." << Endl;
 	}
 
 	// Use explicit texture format if specified.

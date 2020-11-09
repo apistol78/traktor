@@ -79,8 +79,8 @@ public:
 	 */
 	virtual Ref< ISerializable > buildOutput(const db::Instance* sourceInstance, const ISerializable* sourceAsset, const Object* buildParams = nullptr) = 0;
 
-	/*! Build output instance from source asset. */
-	virtual bool buildOutput(const db::Instance* sourceInstance, const ISerializable* sourceAsset, const std::wstring& outputPath, const Guid& outputGuid, const Object* buildParams = nullptr) = 0;
+	/*! Build ad-hoc output instance from source asset. */
+	virtual bool buildAdHocOutput(const ISerializable* sourceAsset, const std::wstring& outputPath, const Guid& outputGuid, const Object* buildParams = nullptr) = 0;
 
 	/*! Get guid prepared for synthesized outputs. */
 	virtual Guid synthesizeOutputGuid(uint32_t iterations) = 0;

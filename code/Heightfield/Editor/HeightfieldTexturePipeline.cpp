@@ -85,7 +85,6 @@ bool HeightfieldTexturePipeline::buildOutput(
 	const editor::PipelineDependency* dependency,
 	const db::Instance* sourceInstance,
 	const ISerializable* sourceAsset,
-	uint32_t sourceAssetHash,
 	const std::wstring& outputPath,
 	const Guid& outputGuid,
 	const Object* buildParams,
@@ -191,8 +190,7 @@ bool HeightfieldTexturePipeline::buildOutput(
 		output->m_noiseStrength = 0.0f;
 		output->m_systemTexture = true;
 
-		return pipelineBuilder->buildOutput(
-			sourceInstance,
+		return pipelineBuilder->buildAdHocOutput(
 			output,
 			outputPath,
 			outputGuid,
@@ -240,8 +238,7 @@ bool HeightfieldTexturePipeline::buildOutput(
 		output->m_noiseStrength = 0.0f;
 		output->m_systemTexture = true;
 
-		return pipelineBuilder->buildOutput(
-			sourceInstance,
+		return pipelineBuilder->buildAdHocOutput(
 			output,
 			outputPath,
 			outputGuid,
@@ -282,8 +279,7 @@ bool HeightfieldTexturePipeline::buildOutput(
 		output->m_alphaCoverageReference = 0.0f;
 		output->m_sharpenRadius = 0;
 
-		return pipelineBuilder->buildOutput(
-			sourceInstance,
+		return pipelineBuilder->buildAdHocOutput(
 			output,
 			outputPath,
 			outputGuid,
@@ -373,8 +369,7 @@ bool HeightfieldTexturePipeline::buildOutput(
 		output->m_alphaCoverageReference = 0.0f;
 		output->m_sharpenRadius = 0;
 
-		return pipelineBuilder->buildOutput(
-			sourceInstance,
+		return pipelineBuilder->buildAdHocOutput(
 			output,
 			outputPath,
 			outputGuid,

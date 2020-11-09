@@ -123,8 +123,7 @@ Ref< ISerializable > SplineEntityPipeline::buildOutput(
 		// Build output mesh from merged model.
 		Ref< mesh::MeshAsset > visualMeshAsset = new mesh::MeshAsset();
 		visualMeshAsset->setMeshType(mesh::MeshAsset::MtPartition);
-		pipelineBuilder->buildOutput(
-			sourceInstance,
+		pipelineBuilder->buildAdHocOutput(
 			visualMeshAsset,
 			outputRenderMeshPath,
 			outputRenderMeshGuid,
@@ -140,8 +139,7 @@ Ref< ISerializable > SplineEntityPipeline::buildOutput(
 		Ref< physics::MeshAsset > physicsMeshAsset = new physics::MeshAsset();
 		physicsMeshAsset->setMargin(0.0f);
 		physicsMeshAsset->setCalculateConvexHull(false);
-		pipelineBuilder->buildOutput(
-			sourceInstance,
+		pipelineBuilder->buildAdHocOutput(
 			physicsMeshAsset,
 			outputCollisionShapePath,
 			outputCollisionShapeGuid,

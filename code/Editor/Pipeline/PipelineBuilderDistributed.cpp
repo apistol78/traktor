@@ -212,7 +212,7 @@ Ref< ISerializable > PipelineBuilderDistributed::buildOutput(const db::Instance*
 	return nullptr;
 }
 
-bool PipelineBuilderDistributed::buildOutput(const db::Instance* sourceInstance, const ISerializable* sourceAsset, const std::wstring& outputPath, const Guid& outputGuid, const Object* buildParams)
+bool PipelineBuilderDistributed::buildAdHocOutput(const ISerializable* sourceAsset, const std::wstring& outputPath, const Guid& outputGuid, const Object* buildParams)
 {
 	T_FATAL_ERROR;
 	return false;

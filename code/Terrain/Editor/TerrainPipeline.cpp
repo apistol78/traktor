@@ -170,7 +170,6 @@ bool TerrainPipeline::buildOutput(
 	const editor::PipelineDependency* dependency,
 	const db::Instance* sourceInstance,
 	const ISerializable* sourceAsset,
-	uint32_t sourceAssetHash,
 	const std::wstring& outputPath,
 	const Guid& outputGuid,
 	const Object* buildParams,
@@ -266,7 +265,7 @@ bool TerrainPipeline::buildOutput(
 		colorTexture->m_hasAlpha = true;
 		colorTexture->m_linearGamma = true;
 		colorTexture->m_systemTexture = true;
-		pipelineBuilder->buildOutput(sourceInstance, colorTexture, outputPath + L"/Colors", colorMapGuid, colorImage);
+		pipelineBuilder->buildAdHocOutput(colorTexture, outputPath + L"/Colors", colorMapGuid, colorImage);
 	}
 
 	// Create splat texture.
@@ -296,7 +295,7 @@ bool TerrainPipeline::buildOutput(
 		splatTexture->m_hasAlpha = true;
 		splatTexture->m_linearGamma = true;
 		splatTexture->m_systemTexture = true;
-		pipelineBuilder->buildOutput(sourceInstance, splatTexture, outputPath + L"/Splat", splatMapGuid, splatImage);
+		pipelineBuilder->buildAdHocOutput(splatTexture, outputPath + L"/Splat", splatMapGuid, splatImage);
 	}
 	else
 	{
@@ -310,7 +309,7 @@ bool TerrainPipeline::buildOutput(
 		splatTexture->m_hasAlpha = true;
 		splatTexture->m_linearGamma = true;
 		splatTexture->m_enableCompression = false;
-		pipelineBuilder->buildOutput(sourceInstance, splatTexture, outputPath + L"/Splat", splatMapGuid, splatImage);
+		pipelineBuilder->buildAdHocOutput(splatTexture, outputPath + L"/Splat", splatMapGuid, splatImage);
 	}
 
 	// Read surface shader and prepare with proper input and output ports.
@@ -358,8 +357,7 @@ bool TerrainPipeline::buildOutput(
 	// Build shaders.
 	std::wstring shaderPath = Path(outputPath).getPathOnly() + L"/" + outputGuid.format();
 
-	if (!pipelineBuilder->buildOutput(
-		sourceInstance,
+	if (!pipelineBuilder->buildAdHocOutput(
 		terrainShader,
 		shaderPath,
 		terrainShaderGuid
@@ -369,8 +367,7 @@ bool TerrainPipeline::buildOutput(
 		return false;
 	}
 
-	if (!pipelineBuilder->buildOutput(
-		sourceInstance,
+	if (!pipelineBuilder->buildAdHocOutput(
 		surfaceShader,
 		shaderPath + L"/Surface",
 		surfaceShaderGuid
