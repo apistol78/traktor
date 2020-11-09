@@ -56,7 +56,6 @@ bool SequenceTexturePipeline::buildOutput(
 	const editor::PipelineDependency* dependency,
 	const db::Instance* sourceInstance,
 	const ISerializable* sourceAsset,
-	uint32_t sourceAssetHash,
 	const std::wstring& outputPath,
 	const Guid& outputGuid,
 	const Object* buildParams,
@@ -92,8 +91,7 @@ bool SequenceTexturePipeline::buildOutput(
 		std::wstring frameOutputPath = Path(outputPath).getPathOnly() + L"/" + outputGuid.format() + L"/" + frameOutputGuid.format();
 
 		Ref< TextureOutput > output = new TextureOutput(asset->m_output);
-		if (!pipelineBuilder->buildOutput(
-			sourceInstance,
+		if (!pipelineBuilder->buildAdHocOutput(
 			output,
 			frameOutputPath,
 			frameOutputGuid,

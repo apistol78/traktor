@@ -77,9 +77,8 @@ public:
 	 * \param pipelineBuilder Pipeline builder.
 	 * \param dependencySet Dependency set.
 	 * \param dependency Current dependency.
-	 * \param sourceInstance Source asset database instance; might be null if asset doesn't originate from database.
+	 * \param sourceInstance Source asset database instance; null if asset doesn't originate from database.
 	 * \param sourceAsset Source asset object.
-	 * \param sourceAssetHash Source asset hash key.
 	 * \param outputPath Output path in database.
 	 * \param outputGuid Output instance guid.
 	 * \param buildParams Optional parameters which is passed from another pipeline during build.
@@ -92,7 +91,6 @@ public:
 		const PipelineDependency* dependency,
 		const db::Instance* sourceInstance,
 		const ISerializable* sourceAsset,
-		uint32_t sourceAssetHash,
 		const std::wstring& outputPath,
 		const Guid& outputGuid,
 		const Object* buildParams,
@@ -104,6 +102,7 @@ public:
 	 * Build output instance from source asset.
 	 *
 	 * \param pipelineBuilder Pipeline builder.
+	 * \param sourceInstance Source asset database instance; null if asset doesn't originate from database.
 	 * \param sourceAsset Source asset object.
 	 * \param buildParams Optional parameters which is passed from another pipeline during build.
 	 * \return Output instance.

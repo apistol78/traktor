@@ -47,7 +47,7 @@ bool RenderEditorPlugin::create(ui::Widget* parent, editor::IEditorPageSite* sit
 	desc.mipBias = settings->getProperty< float >(L"Editor.MipBias", 0.0f);
 	desc.maxAnisotropy = settings->getProperty< int32_t >(L"Editor.MaxAnisotropy", 1);
 	desc.maxAnisotropy = std::max(desc.maxAnisotropy, 1);
-	desc.validation = true;
+	desc.validation = settings->getProperty< bool >(L"Editor.RenderValidation", true);
 	desc.programCache = settings->getProperty< bool >(L"Editor.UseProgramCache", false);
 
 	if (!renderSystemVrfy->create(desc))

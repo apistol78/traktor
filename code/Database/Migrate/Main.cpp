@@ -352,7 +352,7 @@ int main(int argc, const char** argv)
 	Ref< db::Group > targetGroup = destinationDb->getRootGroup();
 	if (sourceGroup && targetGroup)
 	{
-		if (!cmdLine.hasOption(L"parallel"))
+		if (cmdLine.hasOption(L"parallel"))
 		{
 			if (verbose)
 				traktor::log::info << L"Migration begin, creating jobs..." << Endl;

@@ -26,6 +26,7 @@ bool AstcCompressor::compress(Writer& writer, const RefArray< drawing::Image >& 
 	switch (textureFormat)
 	{
 	case TfASTC4x4:
+	case TfASTC4x4F:
 		result = astcenc_config_init(
 			profile,
 			4,	// block x
@@ -38,6 +39,7 @@ bool AstcCompressor::compress(Writer& writer, const RefArray< drawing::Image >& 
 		break;
 
 	case TfASTC8x8:
+	case TfASTC8x8F:
 		result = astcenc_config_init(
 			profile,
 			8,	// block x
@@ -50,6 +52,7 @@ bool AstcCompressor::compress(Writer& writer, const RefArray< drawing::Image >& 
 		break;
 
 	case TfASTC10x10:
+	case TfASTC10x10F:
 		result = astcenc_config_init(
 			profile,
 			10,	// block x
@@ -62,6 +65,7 @@ bool AstcCompressor::compress(Writer& writer, const RefArray< drawing::Image >& 
 		break;
 
 	case TfASTC12x12:
+	case TfASTC12x12F:
 		result = astcenc_config_init(
 			profile,
 			12,	// block x

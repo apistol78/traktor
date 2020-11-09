@@ -187,8 +187,7 @@ Ref< Object > SolidEntityReplicator::modifyOutput(
 	// Build visual mesh.
 	Ref< mesh::MeshAsset > outputMeshAsset = new mesh::MeshAsset();
 	outputMeshAsset->setMeshType(mesh::MeshAsset::MtStatic);
-	pipelineBuilder->buildOutput(
-		nullptr,
+	pipelineBuilder->buildAdHocOutput(
 		outputMeshAsset,
 		outputRenderMeshPath,
 		outputRenderMeshGuid,
@@ -199,8 +198,7 @@ Ref< Object > SolidEntityReplicator::modifyOutput(
 	Ref< physics::MeshAsset > physicsMeshAsset = new physics::MeshAsset();
 	physicsMeshAsset->setMargin(0.0f);
 	physicsMeshAsset->setCalculateConvexHull(false);
-	pipelineBuilder->buildOutput(
-		nullptr,
+	pipelineBuilder->buildAdHocOutput(
 		physicsMeshAsset,
 		outputCollisionShapePath,
 		outputCollisionShapeGuid,

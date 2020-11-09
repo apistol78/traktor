@@ -111,7 +111,8 @@ Ref< drawing::Image > denoise(const GBuffer& gbuffer, drawing::Image* lightmap)
 
 void encodeRGBM(drawing::Image* image)
 {
-	const float c_multiplierRange = 16.0f;
+	const Scalar c_rangeDenom = 1.0_simd / 8.0_simd;
+	const Scalar c_epsilon= 1e-6_simd;
 
 	Color4f cl;
 	for (int32_t y = 0; y < image->getHeight(); ++y)
@@ -119,75 +120,61 @@ void encodeRGBM(drawing::Image* image)
 		for (int32_t x = 0; x < image->getWidth(); ++x)
 		{
 			image->getPixelUnsafe(x, y, cl);
+			cl *= c_rangeDenom;
 
-			// Normalize all channels from our valid range into 0-1.
-			cl /= Scalar(c_multiplierRange);
-
-			float r = clamp< float >(cl.getRed(), 0.0f, 1.0f);
-			float g = clamp< float >(cl.getGreen(), 0.0f, 1.0f);
-			float b = clamp< float >(cl.getBlue(), 0.0f, 1.0f);
-			float M = max(r, max(g, b));
-
-			float bestError = std::numeric_limits< float >::max();
-			int32_t bestM = M;
-
-			int32_t iM = (int32_t)std::ceil(M * 255.0f);
-			for (int32_t m = std::max(iM - 16, 0); m <= std::min(iM + 16, 255); ++m)
+			float a = clamp< float >( max( max( cl.getRed(), cl.getGreen() ), cl.getBlue() ), 0.0f, 1.0f );
+			if (a > FUZZY_EPSILON)
 			{
-				float Mchk = float(m) / 255.0f;
-
-				int32_t R = (int32_t)std::ceil(255.0f * clamp(r / Mchk, 0.0f, 1.0f));
-				int32_t G = (int32_t)std::ceil(255.0f * clamp(g / Mchk, 0.0f, 1.0f));
-				int32_t B = (int32_t)std::ceil(255.0f * clamp(b / Mchk, 0.0f, 1.0f));
-
-				float dr = ((float)R / 255.0f) * Mchk;
-				float dg = ((float)G / 255.0f) * Mchk;
-				float db = ((float)B / 255.0f) * Mchk;
-
-				float error = (r - dr) * (r - dr) + (g - dg) * (g - dg) + (b - db) * (b - db);
-				if (error < bestError)
-				{
-					bestError = error;
-					bestM = M;
-				}
+				a = std::ceil( a * 255.0f ) / 255.0f;
+				cl /= Scalar(a);
+				cl.setAlpha(Scalar( a ) );
 			}
+			else
+				cl.set(0.0f, 0.0f, 0.0f, 0.0f);
 
-			cl.set(
-				r / bestM,
-				g / bestM,
-				b / bestM,
-				bestM
-			);
-
-			image->setPixel(x, y, cl);
+			image->setPixelUnsafe(x, y, cl);
 		}
 	}
 }
 
-bool writeTexture(db::Database* outputDatabase, const std::wstring& compressionMethod, const Guid& lightmapId, const drawing::Image* lightmap)
+bool writeTexture(
+	db::Database* outputDatabase,
+	const std::wstring& compressionMethod,
+	const Guid& lightmapId,
+	const std::wstring& name,
+	const drawing::Image* lightmap
+)
 {
 	render::TextureFormat textureFormat = render::TfInvalid;
 	Ref< drawing::Image > lightmapFormat = lightmap->clone();
 	Ref< render::ICompressor > compressor;
+	bool needAlpha;
 
 	// Convert image to match texture format.
 	if (compareIgnoreCase(compressionMethod, L"DXTn") == 0)
 	{
+		encodeRGBM(lightmapFormat);
 		lightmapFormat->convert(drawing::PixelFormat::getR8G8B8A8().endianSwapped());
-		textureFormat = render::TfDXT1;
-		compressor = new render::DxtnCompressor();
+		//textureFormat = render::TfDXT5;
+		//compressor = new render::DxtnCompressor();
+		textureFormat = render::TfR8G8B8A8;
+		compressor = new render::UnCompressor();
+		needAlpha = true;
 	}
 	else if (compareIgnoreCase(compressionMethod, L"ASTC") == 0)
 	{
-		lightmapFormat->convert(drawing::PixelFormat::getABGRF16().endianSwapped());
-		textureFormat = render::TfASTC8x8F;
+		encodeRGBM(lightmapFormat);
+		lightmapFormat->convert(drawing::PixelFormat::getR8G8B8A8().endianSwapped());
+		textureFormat = render::TfASTC4x4;
 		compressor = new render::AstcCompressor();
+		needAlpha = true;
 	}
 	else
 	{
 		lightmapFormat->convert(drawing::PixelFormat::getABGRF16().endianSwapped());
 		textureFormat = render::TfR16G16B16A16F;
 		compressor = new render::UnCompressor();
+		needAlpha = false;
 	}
 
 	Ref< db::Instance > outputInstance = outputDatabase->createInstance(
@@ -226,7 +213,7 @@ bool writeTexture(db::Database* outputDatabase, const std::wstring& compressionM
 	// Write texture data.
 	RefArray< drawing::Image > mipImages(1);
 	mipImages[0] = lightmapFormat;
-	compressor->compress(writer, mipImages, textureFormat, false, 3);
+	compressor->compress(writer, mipImages, textureFormat, needAlpha, 3);
 
 	stream->close();
 
@@ -403,7 +390,6 @@ bool TracerProcessor::process(const TracerTask* task)
 		// Create GBuffer of mesh's geometry.
 		GBuffer gbuffer;
 		gbuffer.create(width, height, *renderModel, tracerOutput->getTransform(), channel);
-		gbuffer.saveAsImages(L"temp/Data/Bake/GBuffer");
 
 		// Preprocess GBuffer.
 		rayTracer->preprocess(&gbuffer);
@@ -440,16 +426,6 @@ bool TracerProcessor::process(const TracerTask* task)
 		// Blur lightmap to reduce noise from path tracing.
 		if (configuration->getEnableDenoise())
 			lightmap = denoise(gbuffer, lightmap);
-
-		//// Create preview output instance.
-		//if (m_preview)
-		//{
-		//	writeTexture(
-		//		m_outputDatabase,
-		//		tracerOutput->getLightmapId(),
-		//		lightmap
-		//	);
-		//}
 
 		// Filter seams.
 		if (configuration->getEnableSeamFilter())
@@ -558,15 +534,13 @@ bool TracerProcessor::process(const TracerTask* task)
 
 		// Discard alpha.
 		lightmap->clearAlpha(1.0f);
-#if 0
-		lightmap->save(L"data/Temp/Bake/Lightmap_" + tracerOutput->getName() + L".png");
-#endif
 
 		// Create final output instance.
 		bool result = writeTexture(
 			m_outputDatabase,
 			m_compressionMethod,
 			tracerOutput->getLightmapId(),
+			tracerOutput->getName(),
 			lightmap
 		);
 		if (!result)

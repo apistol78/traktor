@@ -147,7 +147,6 @@ bool Pipeline::buildOutput(
 	const editor::PipelineDependency* dependency,
 	const db::Instance* sourceInstance,
 	const ISerializable* sourceAsset,
-	uint32_t sourceAssetHash,
 	const std::wstring& outputPath,
 	const Guid& outputGuid,
 	const Object* buildParams,
@@ -578,8 +577,7 @@ bool Pipeline::buildOutput(
 			}
 
 			std::wstring bitmapOutputPath = traktor::Path(outputPath).getPathOnly() + L"/Textures/" + bitmapOutputGuid.format();
-			if (!pipelineBuilder->buildOutput(
-				sourceInstance,
+			if (!pipelineBuilder->buildAdHocOutput(
 				output,
 				bitmapOutputPath,
 				bitmapOutputGuid,
@@ -664,8 +662,7 @@ bool Pipeline::buildOutput(
 		}
 
 		std::wstring bitmapOutputPath = traktor::Path(outputPath).getPathOnly() + L"/Textures/" + bitmapOutputGuid.format();
-		if (!pipelineBuilder->buildOutput(
-			sourceInstance,
+		if (!pipelineBuilder->buildAdHocOutput(
 			output,
 			bitmapOutputPath,
 			bitmapOutputGuid,

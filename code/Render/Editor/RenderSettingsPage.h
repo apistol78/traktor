@@ -15,6 +15,7 @@ namespace traktor
 	namespace ui
 	{
 
+class CheckBox;
 class DropDown;
 class Edit;
 
@@ -45,6 +46,7 @@ private:
 	Ref< ui::Edit > m_editMultiSample;
 	Ref< ui::Edit > m_editSkipMips;
 	Ref< ui::Edit > m_editClampSize;
+	Ref< ui::CheckBox > m_checkBoxValidation;
 };
 
 	}

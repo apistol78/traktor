@@ -5,8 +5,8 @@
 			<id>{0EC917A5-AD89-A845-9A20-61D3507ED907}</id>
 			<comment/>
 			<position>
-				<first>1384</first>
-				<second>71</second>
+				<first>1049</first>
+				<second>-64</second>
 			</position>
 			<name>T_Irradiance</name>
 		</item>
@@ -55,7 +55,7 @@ Tag_LightMap
 			<comment/>
 			<position>
 				<first>799</first>
-				<second>69</second>
+				<second>68</second>
 			</position>
 			<fragmentGuid>{21CA659B-13A1-4D49-8115-FBA0ACB3CF0E}</fragmentGuid>
 			<inputPins>
@@ -150,7 +150,7 @@ Tag_LightMap
 			<addressW>AdClamp</addressW>
 			<compare>CfNone</compare>
 			<mipBias>0</mipBias>
-			<ignoreMips>false</ignoreMips>
+			<ignoreMips>true</ignoreMips>
 			<useAnisotropic>false</useAnisotropic>
 		</item>
 	</nodes>
@@ -173,16 +173,6 @@ Tag_LightMap
 			<destination>
 				<node ref="/object/nodes/item[6]"/>
 				<name>TexCoord</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[8]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item"/>
-				<name>Input</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
@@ -262,6 +252,16 @@ Tag_LightMap
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[4]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[4]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item"/>
 				<name>Input</name>
 			</destination>
 		</item>

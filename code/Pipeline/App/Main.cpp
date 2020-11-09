@@ -939,14 +939,13 @@ void threadProcessAgentClient(
 
 		bool result = pipeline->buildOutput(
 			pipelineBuilder,
-			0,
-			0,
+			nullptr,
+			nullptr,
 			agentBuild->getSourceInstanceGuid().isNotNull() ? sourceDatabase->getInstance(agentBuild->getSourceInstanceGuid()) : 0,
 			agentBuild->getSourceAsset(),
-			agentBuild->getSourceAssetHash(),
 			agentBuild->getOutputPath(),
 			agentBuild->getOutputGuid(),
-			0,
+			nullptr,
 			agentBuild->getReason()
 		);
 

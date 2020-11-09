@@ -1,4 +1,5 @@
 #include "Core/Misc/String.h"
+#include "Core/Settings/PropertyBoolean.h"
 #include "Core/Settings/PropertyFloat.h"
 #include "Core/Settings/PropertyGroup.h"
 #include "Core/Settings/PropertyInteger.h"
@@ -7,12 +8,13 @@
 #include "Render/IRenderSystem.h"
 #include "Render/Editor/IProgramCompiler.h"
 #include "Render/Editor/RenderSettingsPage.h"
+#include "Ui/CheckBox.h"
 #include "Ui/Container.h"
+#include "Ui/DropDown.h"
 #include "Ui/Edit.h"
 #include "Ui/NumericEditValidator.h"
 #include "Ui/Static.h"
 #include "Ui/TableLayout.h"
-#include "Ui/DropDown.h"
 
 namespace traktor
 {
@@ -24,50 +26,56 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.RenderSettingsPage", 0, RenderSe
 bool RenderSettingsPage::create(ui::Container* parent, const PropertyGroup* originalSettings, PropertyGroup* settings, const std::list< ui::Command >& shortcutCommands)
 {
 	Ref< ui::Container > container = new ui::Container();
-	if (!container->create(parent, ui::WsNone, new ui::TableLayout(L"*,100%", L"*", 0, 4)))
+	if (!container->create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"*", 0, 4)))
 		return false;
 
+	Ref< ui::Container > containerTop = new ui::Container();
+	containerTop->create(container, ui::WsNone, new ui::TableLayout(L"*,100%", L"*", 0, 4));
+
 	Ref< ui::Static > staticRenderer = new ui::Static();
-	staticRenderer->create(container, i18n::Text(L"EDITOR_SETTINGS_RENDERER_TYPE"));
+	staticRenderer->create(containerTop, i18n::Text(L"EDITOR_SETTINGS_RENDERER_TYPE"));
 
 	m_dropRenderSystem = new ui::DropDown();
-	m_dropRenderSystem->create(container);
+	m_dropRenderSystem->create(containerTop);
 
 	Ref< ui::Static > staticCompiler = new ui::Static();
-	staticCompiler->create(container, i18n::Text(L"EDITOR_SETTINGS_COMPILER_TYPE"));
+	staticCompiler->create(containerTop, i18n::Text(L"EDITOR_SETTINGS_COMPILER_TYPE"));
 
 	m_dropCompiler = new ui::DropDown();
-	m_dropCompiler->create(container);
+	m_dropCompiler->create(containerTop);
 
 	Ref< ui::Static > staticMipBias = new ui::Static();
-	staticMipBias->create(container, i18n::Text(L"EDITOR_SETTINGS_RENDERER_MIPBIAS"));
+	staticMipBias->create(containerTop, i18n::Text(L"EDITOR_SETTINGS_RENDERER_MIPBIAS"));
 
 	m_editMipBias = new ui::Edit();
-	m_editMipBias->create(container, L"", ui::WsNone, new ui::NumericEditValidator(true, -100.0f, 100.0f));
+	m_editMipBias->create(containerTop, L"", ui::WsNone, new ui::NumericEditValidator(true, -100.0f, 100.0f));
 
 	Ref< ui::Static > staticMaxAnisotropy = new ui::Static();
-	staticMaxAnisotropy->create(container, i18n::Text(L"EDITOR_SETTINGS_RENDERER_MAX_ANISOTROPY"));
+	staticMaxAnisotropy->create(containerTop, i18n::Text(L"EDITOR_SETTINGS_RENDERER_MAX_ANISOTROPY"));
 
 	m_editMaxAnisotropy = new ui::Edit();
-	m_editMaxAnisotropy->create(container, L"", ui::WsNone, new ui::NumericEditValidator(false, 0, 16));
+	m_editMaxAnisotropy->create(containerTop, L"", ui::WsNone, new ui::NumericEditValidator(false, 0, 16));
 
 	Ref< ui::Static > staticMultiSample = new ui::Static();
-	staticMultiSample->create(container, i18n::Text(L"EDITOR_SETTINGS_RENDERER_MULTISAMPLE"));
+	staticMultiSample->create(containerTop, i18n::Text(L"EDITOR_SETTINGS_RENDERER_MULTISAMPLE"));
 
 	m_editMultiSample = new ui::Edit();
-	m_editMultiSample->create(container, L"", ui::WsNone, new ui::NumericEditValidator(false, 0, 8));
+	m_editMultiSample->create(containerTop, L"", ui::WsNone, new ui::NumericEditValidator(false, 0, 8));
 
 	Ref< ui::Static > staticSkipMips = new ui::Static();
-	staticSkipMips->create(container, i18n::Text(L"EDITOR_SETTINGS_RENDERER_SKIP_TEXTURE_MIPS"));
+	staticSkipMips->create(containerTop, i18n::Text(L"EDITOR_SETTINGS_RENDERER_SKIP_TEXTURE_MIPS"));
 
 	m_editSkipMips = new ui::Edit();
-	m_editSkipMips->create(container, L"", ui::WsNone, new ui::NumericEditValidator(false, 0));
+	m_editSkipMips->create(containerTop, L"", ui::WsNone, new ui::NumericEditValidator(false, 0));
 
 	Ref< ui::Static > staticClampSize = new ui::Static();
-	staticClampSize->create(container, i18n::Text(L"EDITOR_SETTINGS_RENDERER_CLAMP_TEXTURE_SIZE"));
+	staticClampSize->create(containerTop, i18n::Text(L"EDITOR_SETTINGS_RENDERER_CLAMP_TEXTURE_SIZE"));
 
 	m_editClampSize = new ui::Edit();
-	m_editClampSize->create(container, L"", ui::WsNone, new ui::NumericEditValidator(false, 0));
+	m_editClampSize->create(containerTop, L"", ui::WsNone, new ui::NumericEditValidator(false, 0));
+
+	m_checkBoxValidation = new ui::CheckBox();
+	m_checkBoxValidation->create(container, i18n::Text(L"EDITOR_SETTINGS_RENDERER_VALIDATION"), false);
 
 	std::wstring renderSystemType = settings->getProperty< std::wstring >(L"Editor.RenderSystem");
 
@@ -100,6 +108,7 @@ bool RenderSettingsPage::create(ui::Container* parent, const PropertyGroup* orig
 	m_editMultiSample->setText(toString(settings->getProperty< int32_t >(L"Editor.MultiSample", 0)));
 	m_editSkipMips->setText(toString(settings->getProperty< int32_t >(L"TexturePipeline.SkipMips", 0)));
 	m_editClampSize->setText(toString(settings->getProperty< int32_t >(L"TexturePipeline.ClampSize", 0)));
+	m_checkBoxValidation->setChecked(settings->getProperty< bool >(L"Editor.RenderValidation", true));
 
 	parent->setText(i18n::Text(L"EDITOR_SETTINGS_RENDERER"));
 	return true;
@@ -118,6 +127,7 @@ bool RenderSettingsPage::apply(PropertyGroup* settings)
 	settings->setProperty< PropertyInteger >(L"Editor.MultiSample", parseString< int32_t >(m_editMultiSample->getText()));
 	settings->setProperty< PropertyInteger >(L"TexturePipeline.SkipMips", parseString< int32_t >(m_editSkipMips->getText()));
 	settings->setProperty< PropertyInteger >(L"TexturePipeline.ClampSize", parseString< int32_t >(m_editClampSize->getText()));
+	settings->setProperty< PropertyBoolean >(L"Editor.RenderValidation", m_checkBoxValidation->isChecked());
 	return true;
 }
 
