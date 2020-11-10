@@ -647,18 +647,6 @@ Ref< IStream > PipelineBuilder::openFile(const Path& filePath)
 	return fileStream ? new BufferedStream(fileStream) : nullptr;
 }
 
-Ref< IStream > PipelineBuilder::createTemporaryFile(const std::wstring& fileName)
-{
-	Ref< IStream > fileStream = FileSystem::getInstance().open(L"data/temp/" + fileName, File::FmWrite);
-	return fileStream ? new BufferedStream(fileStream) : nullptr;
-}
-
-Ref< IStream > PipelineBuilder::openTemporaryFile(const std::wstring& fileName)
-{
-	Ref< IStream > fileStream = FileSystem::getInstance().open(L"data/temp/" + fileName, File::FmRead);
-	return fileStream ? new BufferedStream(fileStream) : nullptr;
-}
-
 IPipelineBuilder::BuildResult PipelineBuilder::performBuild(const IPipelineDependencySet* dependencySet, const PipelineDependency* dependency, const Object* buildParams, uint32_t reason)
 {
 	// Ensure FP is in known state.

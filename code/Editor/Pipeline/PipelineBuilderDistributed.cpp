@@ -266,18 +266,6 @@ Ref< IStream > PipelineBuilderDistributed::openFile(const Path& filePath)
 	return nullptr;
 }
 
-Ref< IStream > PipelineBuilderDistributed::createTemporaryFile(const std::wstring& fileName)
-{
-	T_FATAL_ERROR;
-	return nullptr;
-}
-
-Ref< IStream > PipelineBuilderDistributed::openTemporaryFile(const std::wstring& fileName)
-{
-	T_FATAL_ERROR;
-	return nullptr;
-}
-
 bool PipelineBuilderDistributed::performBuild(const IPipelineDependencySet* dependencySet, const PipelineDependency* dependency)
 {
 	PipelineDependencyHash currentDependencyHash;

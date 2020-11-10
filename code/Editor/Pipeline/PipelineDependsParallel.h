@@ -84,10 +84,6 @@ public:
 
 	virtual Ref< IStream > openFile(const Path& filePath) override final;
 
-	virtual Ref< IStream > createTemporaryFile(const std::wstring& fileName) override final;
-
-	virtual Ref< IStream > openTemporaryFile(const std::wstring& fileName) override final;
-
 private:
 	RefArray< Job > m_jobs;
 	Ref< PipelineFactory > m_pipelineFactory;
