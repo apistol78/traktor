@@ -1,3 +1,4 @@
+#include "Core/Serialization/DeepHash.h"
 #include "Editor/IPipelineDepends.h"
 #include "Model/Material.h"
 #include "Model/Editor/MaterialPipeline.h"
@@ -21,6 +22,11 @@ void MaterialPipeline::destroy()
 TypeInfoSet MaterialPipeline::getAssetTypes() const
 {
 	return makeTypeInfoSet< Material >();
+}
+
+uint32_t MaterialPipeline::hashAsset(const ISerializable* sourceAsset) const
+{
+	return DeepHash(sourceAsset).get();
 }
 
 bool MaterialPipeline::buildDependencies(

@@ -3,6 +3,7 @@
 #include "Core/Reflection/RfpMemberType.h"
 #include "Core/Reflection/RfmObject.h"
 #include "Core/Serialization/DeepClone.h"
+#include "Core/Serialization/DeepHash.h"
 #include "Database/Instance.h"
 #include "Editor/IPipelineBuilder.h"
 #include "Editor/IPipelineDepends.h"
@@ -35,6 +36,11 @@ TypeInfoSet EntityPipeline::getAssetTypes() const
 	typeSet.insert< IEntityEventData >();
 	typeSet.insert< IEntityComponentData >();
 	return typeSet;
+}
+
+uint32_t EntityPipeline::hashAsset(const ISerializable* sourceAsset) const
+{
+	return DeepHash(sourceAsset).get();
 }
 
 bool EntityPipeline::buildDependencies(

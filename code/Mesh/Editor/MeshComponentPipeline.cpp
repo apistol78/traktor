@@ -1,4 +1,5 @@
 #include "Core/Serialization/DeepClone.h"
+#include "Core/Serialization/DeepHash.h"
 #include "Editor/IPipelineDepends.h"
 #include "Mesh/MeshComponentData.h"
 #include "Mesh/Editor/MeshComponentPipeline.h"
@@ -22,6 +23,11 @@ void MeshComponentPipeline::destroy()
 TypeInfoSet MeshComponentPipeline::getAssetTypes() const
 {
 	return makeTypeInfoSet< MeshComponentData >();
+}
+
+uint32_t MeshComponentPipeline::hashAsset(const ISerializable* sourceAsset) const
+{
+	return DeepHash(sourceAsset).get();
 }
 
 bool MeshComponentPipeline::buildDependencies(

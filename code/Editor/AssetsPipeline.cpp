@@ -1,3 +1,4 @@
+#include "Core/Serialization/DeepHash.h"
 #include "Core/Settings/PropertyBoolean.h"
 #include "Core/Settings/PropertyGroup.h"
 #include "Database/Database.h"
@@ -32,9 +33,12 @@ void AssetsPipeline::destroy()
 
 TypeInfoSet AssetsPipeline::getAssetTypes() const
 {
-	TypeInfoSet typeSet;
-	typeSet.insert< Assets >();
-	return typeSet;
+	return makeTypeInfoSet< Assets >();
+}
+
+uint32_t AssetsPipeline::hashAsset(const ISerializable* sourceAsset) const
+{
+	return DeepHash(sourceAsset).get();
 }
 
 bool AssetsPipeline::buildDependencies(
@@ -45,13 +49,11 @@ bool AssetsPipeline::buildDependencies(
 	const Guid& outputGuid
 ) const
 {
-	if (const Assets* assets = dynamic_type_cast< const Assets* >(sourceAsset))
+	const Assets* assets = mandatory_non_null_type_cast< const Assets* >(sourceAsset);
+	for (const auto& dependency : assets->m_dependencies)
 	{
-		for (std::vector< Assets::Dependency >::const_iterator i = assets->m_dependencies.begin(); i != assets->m_dependencies.end(); ++i)
-		{
-			if (!i->editorDeployOnly || m_editorDeploy)
-				pipelineDepends->addDependency(i->id, editor::PdfBuild);
-		}
+		if (!dependency.editorDeployOnly || m_editorDeploy)
+			pipelineDepends->addDependency(dependency.id, editor::PdfBuild);
 	}
 	return true;
 }

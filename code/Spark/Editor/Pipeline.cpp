@@ -9,6 +9,7 @@
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Misc/String.h"
 #include "Core/Misc/TString.h"
+#include "Core/Serialization/DeepHash.h"
 #include "Core/Settings/PropertyBoolean.h"
 #include "Core/Settings/PropertyInteger.h"
 #include "Core/Settings/PropertyString.h"
@@ -125,6 +126,11 @@ TypeInfoSet Pipeline::getAssetTypes() const
 	typeSet.insert< EmptyMovieAsset >();
 	typeSet.insert< MovieAsset >();
 	return typeSet;
+}
+
+uint32_t Pipeline::hashAsset(const ISerializable* sourceAsset) const
+{
+	return DeepHash(sourceAsset).get();
 }
 
 bool Pipeline::buildDependencies(

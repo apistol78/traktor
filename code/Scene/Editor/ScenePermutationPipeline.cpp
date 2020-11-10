@@ -1,5 +1,6 @@
 #include "Core/Log/Log.h"
 #include "Core/Serialization/DeepClone.h"
+#include "Core/Serialization/DeepHash.h"
 #include "Editor/IPipelineBuilder.h"
 #include "Editor/IPipelineDepends.h"
 #include "Scene/Editor/SceneAsset.h"
@@ -27,9 +28,12 @@ void ScenePermutationPipeline::destroy()
 
 TypeInfoSet ScenePermutationPipeline::getAssetTypes() const
 {
-	TypeInfoSet typeSet;
-	typeSet.insert< ScenePermutationAsset >();
-	return typeSet;
+	return makeTypeInfoSet< ScenePermutationAsset >();
+}
+
+uint32_t ScenePermutationPipeline::hashAsset(const ISerializable* sourceAsset) const
+{
+	return DeepHash(sourceAsset).get();
 }
 
 bool ScenePermutationPipeline::buildDependencies(

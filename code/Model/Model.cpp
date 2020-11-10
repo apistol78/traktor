@@ -134,8 +134,8 @@ void Model::clear(uint32_t clearFlags)
 Aabb3 Model::getBoundingBox() const
 {
 	Aabb3 boundingBox;
-	for (AlignedVector< Vector4 >::const_iterator i = m_positions.values().begin(); i != m_positions.values().end(); ++i)
-		boundingBox.contain(*i);
+	for (const auto& position : m_positions.values())
+		boundingBox.contain(position);
 	return boundingBox;
 }
 

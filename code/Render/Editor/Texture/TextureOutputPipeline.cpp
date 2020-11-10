@@ -9,6 +9,7 @@
 #include "Core/Math/Log2.h"
 #include "Core/Math/Vector4.h"
 #include "Core/Misc/String.h"
+#include "Core/Serialization/DeepHash.h"
 #include "Core/Settings/PropertyBoolean.h"
 #include "Core/Settings/PropertyFloat.h"
 #include "Core/Settings/PropertyInteger.h"
@@ -188,9 +189,12 @@ void TextureOutputPipeline::destroy()
 
 TypeInfoSet TextureOutputPipeline::getAssetTypes() const
 {
-	TypeInfoSet typeSet;
-	typeSet.insert< TextureOutput >();
-	return typeSet;
+	return makeTypeInfoSet< TextureOutput >();
+}
+
+uint32_t TextureOutputPipeline::hashAsset(const ISerializable* sourceAsset) const
+{
+	return DeepHash(sourceAsset).get();
 }
 
 bool TextureOutputPipeline::buildDependencies(

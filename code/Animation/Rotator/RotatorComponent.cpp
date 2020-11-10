@@ -27,7 +27,8 @@ void RotatorComponent::setOwner(world::Entity* owner)
 
 void RotatorComponent::setTransform(const Transform& transform)
 {
-	m_transform = transform;
+	Transform local = calculateLocal();
+	m_transform = transform * local.inverse();
 }
 
 Aabb3 RotatorComponent::getBoundingBox() const
@@ -42,6 +43,12 @@ void RotatorComponent::update(const world::UpdateParams& update)
 
 	m_angle += m_rate * update.deltaTime;
 
+	Transform local = calculateLocal();
+	m_owner->setTransform(m_transform * local);
+}
+
+Transform RotatorComponent::calculateLocal() const
+{
 	Transform transform;
 	switch (m_axis)
 	{
@@ -61,8 +68,7 @@ void RotatorComponent::update(const world::UpdateParams& update)
 		transform = Transform::identity();
 		break;
 	}
-
-	m_owner->setTransform(m_transform * transform);
+	return transform;
 }
 
 	}

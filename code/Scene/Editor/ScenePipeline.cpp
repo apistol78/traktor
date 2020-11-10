@@ -1,5 +1,6 @@
 #include "Core/Log/Log.h"
 #include "Core/Serialization/DeepClone.h"
+#include "Core/Serialization/DeepHash.h"
 #include "Core/Settings/PropertyBoolean.h"
 #include "Core/Settings/PropertyInteger.h"
 #include "Database/Instance.h"
@@ -74,6 +75,11 @@ void ScenePipeline::destroy()
 TypeInfoSet ScenePipeline::getAssetTypes() const
 {
 	return makeTypeInfoSet< SceneAsset >();
+}
+
+uint32_t ScenePipeline::hashAsset(const ISerializable* sourceAsset) const
+{
+	return DeepHash(sourceAsset).get();
 }
 
 bool ScenePipeline::buildDependencies(

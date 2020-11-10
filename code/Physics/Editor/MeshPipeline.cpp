@@ -3,6 +3,7 @@
 #include "Core/Log/Log.h"
 #include "Core/Math/Const.h"
 #include "Core/Math/Format.h"
+#include "Core/Serialization/DeepHash.h"
 #include "Core/Settings/PropertyString.h"
 #include "Database/Instance.h"
 #include "Editor/IPipelineBuilder.h"
@@ -40,9 +41,12 @@ void MeshPipeline::destroy()
 
 TypeInfoSet MeshPipeline::getAssetTypes() const
 {
-	TypeInfoSet typeSet;
-	typeSet.insert< MeshAsset >();
-	return typeSet;
+	return makeTypeInfoSet< MeshAsset >();
+}
+
+uint32_t MeshPipeline::hashAsset(const ISerializable* sourceAsset) const
+{
+	return DeepHash(sourceAsset).get();
 }
 
 bool MeshPipeline::buildDependencies(

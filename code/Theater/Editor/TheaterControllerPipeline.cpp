@@ -1,4 +1,5 @@
 #include "Core/Log/Log.h"
+#include "Core/Serialization/DeepHash.h"
 #include "Editor/IPipelineBuilder.h"
 #include "Theater/ActData.h"
 #include "Theater/TheaterControllerData.h"
@@ -24,9 +25,12 @@ void TheaterControllerPipeline::destroy()
 
 TypeInfoSet TheaterControllerPipeline::getAssetTypes() const
 {
-	TypeInfoSet typeSet;
-	typeSet.insert< TheaterControllerData >();
-	return typeSet;
+	return makeTypeInfoSet< TheaterControllerData >();
+}
+
+uint32_t TheaterControllerPipeline::hashAsset(const ISerializable* sourceAsset) const
+{
+	return DeepHash(sourceAsset).get();
 }
 
 bool TheaterControllerPipeline::buildDependencies(

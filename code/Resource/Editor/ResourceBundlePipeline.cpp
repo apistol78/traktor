@@ -1,5 +1,6 @@
 #include <set>
 #include "Core/Log/Log.h"
+#include "Core/Serialization/DeepHash.h"
 #include "Database/Database.h"
 #include "Database/Group.h"
 #include "Database/Instance.h"
@@ -73,9 +74,12 @@ void ResourceBundlePipeline::destroy()
 
 TypeInfoSet ResourceBundlePipeline::getAssetTypes() const
 {
-	TypeInfoSet typeSet;
-	typeSet.insert< ResourceBundleAsset >();
-	return typeSet;
+	return makeTypeInfoSet< ResourceBundleAsset >();
+}
+
+uint32_t ResourceBundlePipeline::hashAsset(const ISerializable* sourceAsset) const
+{
+	return DeepHash(sourceAsset).get();
 }
 
 bool ResourceBundlePipeline::buildDependencies(

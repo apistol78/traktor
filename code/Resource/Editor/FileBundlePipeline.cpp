@@ -2,6 +2,7 @@
 #include "Core/Io/StreamCopy.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/String.h"
+#include "Core/Serialization/DeepHash.h"
 #include "Core/Settings/PropertyString.h"
 #include "Database/Database.h"
 #include "Database/Group.h"
@@ -64,9 +65,12 @@ void FileBundlePipeline::destroy()
 
 TypeInfoSet FileBundlePipeline::getAssetTypes() const
 {
-	TypeInfoSet typeSet;
-	typeSet.insert< FileBundleAsset >();
-	return typeSet;
+	return makeTypeInfoSet< FileBundleAsset >();
+}
+
+uint32_t FileBundlePipeline::hashAsset(const ISerializable* sourceAsset) const
+{
+	return DeepHash(sourceAsset).get();
 }
 
 bool FileBundlePipeline::buildDependencies(

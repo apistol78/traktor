@@ -1,4 +1,5 @@
 #include "Core/Log/Log.h"
+#include "Core/Serialization/DeepHash.h"
 #include "Database/Instance.h"
 #include "Editor/IPipelineDepends.h"
 #include "Editor/IPipelineBuilder.h"
@@ -42,6 +43,11 @@ void ImageGraphPipeline::destroy()
 TypeInfoSet ImageGraphPipeline::getAssetTypes() const
 {
 	return makeTypeInfoSet< ImageGraphAsset >();
+}
+
+uint32_t ImageGraphPipeline::hashAsset(const ISerializable* sourceAsset) const
+{
+	return DeepHash(sourceAsset).get();
 }
 
 bool ImageGraphPipeline::buildDependencies(

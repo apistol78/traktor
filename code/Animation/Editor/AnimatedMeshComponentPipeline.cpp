@@ -1,4 +1,5 @@
 #include "Core/Serialization/DeepClone.h"
+#include "Core/Serialization/DeepHash.h"
 #include "Animation/Editor/AnimatedMeshComponentPipeline.h"
 #include "Animation/AnimatedMeshComponentData.h"
 #include "Animation/IPoseControllerData.h"
@@ -24,6 +25,11 @@ void AnimatedMeshComponentPipeline::destroy()
 TypeInfoSet AnimatedMeshComponentPipeline::getAssetTypes() const
 {
 	return makeTypeInfoSet< AnimatedMeshComponentData >();
+}
+
+uint32_t AnimatedMeshComponentPipeline::hashAsset(const ISerializable* sourceAsset) const
+{
+	return DeepHash(sourceAsset).get();
 }
 
 bool AnimatedMeshComponentPipeline::buildDependencies(

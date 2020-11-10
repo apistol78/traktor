@@ -48,9 +48,8 @@ public:
 			s >> ValueMember(L"item", m_ref[m_index]);
 		else
 		{
-			ValueType item;
+			ValueType& item = m_ref.push_back();
 			s >> ValueMember(L"item", item);
-			m_ref.push_back(item);
 		}
 		++m_index;
 	}

@@ -7,6 +7,7 @@
 #include "Core/Math/MathUtils.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Misc/String.h"
+#include "Core/Serialization/DeepHash.h"
 #include "Core/Settings/PropertyString.h"
 #include "Database/Instance.h"
 #include "Editor/IPipelineBuilder.h"
@@ -73,6 +74,11 @@ void SoundPipeline::destroy()
 TypeInfoSet SoundPipeline::getAssetTypes() const
 {
 	return makeTypeInfoSet< SoundAsset >();
+}
+
+uint32_t SoundPipeline::hashAsset(const ISerializable* sourceAsset) const
+{
+	return DeepHash(sourceAsset).get();
 }
 
 bool SoundPipeline::buildDependencies(

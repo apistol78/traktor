@@ -1,5 +1,6 @@
 #include "Core/Io/FileSystem.h"
 #include "Core/Log/Log.h"
+#include "Core/Serialization/DeepHash.h"
 #include "Core/Settings/PropertyString.h"
 #include "Database/Instance.h"
 #include "Editor/IPipelineBuilder.h"
@@ -31,9 +32,12 @@ void PointSetPipeline::destroy()
 
 TypeInfoSet PointSetPipeline::getAssetTypes() const
 {
-	TypeInfoSet typeSet;
-	typeSet.insert< PointSetAsset >();
-	return typeSet;
+	return makeTypeInfoSet< PointSetAsset >();
+}
+
+uint32_t PointSetPipeline::hashAsset(const ISerializable* sourceAsset) const
+{
+	return DeepHash(sourceAsset).get();
 }
 
 bool PointSetPipeline::buildDependencies(
