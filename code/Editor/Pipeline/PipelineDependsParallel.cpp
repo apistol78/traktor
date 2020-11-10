@@ -261,18 +261,6 @@ Ref< IStream > PipelineDependsParallel::openFile(const Path& filePath)
 	return fileStream ? new BufferedStream(fileStream) : nullptr;
 }
 
-Ref< IStream > PipelineDependsParallel::createTemporaryFile(const std::wstring& fileName)
-{
-	Ref< IStream > fileStream = FileSystem::getInstance().open(L"data/temp/" + fileName, File::FmWrite);
-	return fileStream ? new BufferedStream(fileStream) : nullptr;
-}
-
-Ref< IStream > PipelineDependsParallel::openTemporaryFile(const std::wstring& fileName)
-{
-	Ref< IStream > fileStream = FileSystem::getInstance().open(L"data/temp/" + fileName, File::FmRead);
-	return fileStream ? new BufferedStream(fileStream) : nullptr;
-}
-
 Ref< PipelineDependency > PipelineDependsParallel::findOrCreateDependency(
 	const Guid& guid,
 	PipelineDependency* parentDependency,

@@ -248,16 +248,4 @@ Ref< IStream > PipelineBuilderWrapper::openFile(const Path& filePath)
 	return new BufferedStream(stream);
 }
 
-Ref< IStream > PipelineBuilderWrapper::createTemporaryFile(const std::wstring& fileName)
-{
-	T_FATAL_ERROR;
-	return nullptr;
-}
-
-Ref< IStream > PipelineBuilderWrapper::openTemporaryFile(const std::wstring& fileName)
-{
-	T_FATAL_ERROR;
-	return nullptr;
-}
-
 }

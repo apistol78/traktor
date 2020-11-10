@@ -297,18 +297,6 @@ Ref< IStream > PipelineDependsIncremental::openFile(const Path& filePath)
 	return fileStream ? new BufferedStream(fileStream) : nullptr;
 }
 
-Ref< IStream > PipelineDependsIncremental::createTemporaryFile(const std::wstring& fileName)
-{
-	Ref< IStream > fileStream = FileSystem::getInstance().open(L"data/temp/" + fileName, File::FmWrite);
-	return fileStream ? new BufferedStream(fileStream) : nullptr;
-}
-
-Ref< IStream > PipelineDependsIncremental::openTemporaryFile(const std::wstring& fileName)
-{
-	Ref< IStream > fileStream = FileSystem::getInstance().open(L"data/temp/" + fileName, File::FmRead);
-	return fileStream ? new BufferedStream(fileStream) : nullptr;
-}
-
 void PipelineDependsIncremental::addUniqueDependency(
 	const db::Instance* sourceInstance,
 	const ISerializable* sourceAsset,
