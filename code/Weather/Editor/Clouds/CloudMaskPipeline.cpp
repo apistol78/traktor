@@ -2,6 +2,7 @@
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/Writer.h"
 #include "Core/Log/Log.h"
+#include "Core/Serialization/DeepHash.h"
 #include "Core/Settings/PropertyString.h"
 #include "Database/Instance.h"
 #include "Drawing/Image.h"
@@ -31,9 +32,12 @@ void CloudMaskPipeline::destroy()
 
 TypeInfoSet CloudMaskPipeline::getAssetTypes() const
 {
-	TypeInfoSet typeSet;
-	typeSet.insert< CloudMaskAsset >();
-	return typeSet;
+	return makeTypeInfoSet< CloudMaskAsset >();
+}
+
+uint32_t CloudMaskPipeline::hashAsset(const ISerializable* sourceAsset) const
+{
+	return DeepHash(sourceAsset).get();
 }
 
 bool CloudMaskPipeline::buildDependencies(

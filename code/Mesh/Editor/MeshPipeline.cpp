@@ -7,6 +7,7 @@
 #include "Core/Misc/String.h"
 #include "Core/Misc/WildCompare.h"
 #include "Core/Serialization/DeepClone.h"
+#include "Core/Serialization/DeepHash.h"
 #include "Core/Settings/PropertyString.h"
 #include "Core/Settings/PropertyStringSet.h"
 #include "Core/Settings/PropertyBoolean.h"
@@ -158,6 +159,11 @@ void MeshPipeline::destroy()
 TypeInfoSet MeshPipeline::getAssetTypes() const
 {
 	return makeTypeInfoSet< MeshAsset >();
+}
+
+uint32_t MeshPipeline::hashAsset(const ISerializable* sourceAsset) const
+{
+	return DeepHash(sourceAsset).get();
 }
 
 bool MeshPipeline::buildDependencies(

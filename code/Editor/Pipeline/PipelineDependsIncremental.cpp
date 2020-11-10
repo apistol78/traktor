@@ -3,8 +3,6 @@
 #include "Core/Log/Log.h"
 #include "Core/Misc/Adler32.h"
 #include "Core/Misc/Save.h"
-#include "Core/Serialization/DeepClone.h"
-#include "Core/Serialization/DeepHash.h"
 #include "Core/Serialization/ISerializable.h"
 #include "Core/Thread/Thread.h"
 #include "Core/Thread/ThreadManager.h"
@@ -28,6 +26,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.editor.PipelineDependsIncremental", PipelineDep
 PipelineDependsIncremental::PipelineDependsIncremental(
 	PipelineFactory* pipelineFactory,
 	db::Database* sourceDatabase,
+	db::Database* outputDatabase,
 	IPipelineDependencySet* dependencySet,
 	IPipelineDb* pipelineDb,
 	IPipelineInstanceCache* instanceCache,
@@ -35,6 +34,7 @@ PipelineDependsIncremental::PipelineDependsIncremental(
 )
 :	m_pipelineFactory(pipelineFactory)
 ,	m_sourceDatabase(sourceDatabase)
+,	m_outputDatabase(outputDatabase)
 ,	m_dependencySet(dependencySet)
 ,	m_pipelineDb(pipelineDb)
 ,	m_instanceCache(instanceCache)
@@ -172,11 +172,17 @@ void PipelineDependsIncremental::addDependency(const Guid& sourceAssetGuid, uint
 	Ref< db::Instance > sourceAssetInstance = m_sourceDatabase->getInstance(sourceAssetGuid);
 	if (!sourceAssetInstance)
 	{
-		if (m_currentDependency)
-			log::error << L"Unable to add dependency to \"" << sourceAssetGuid.format() << L"\"; no such instance (referenced by \"" << m_currentDependency->sourceInstanceGuid.format() << L"\")." << Endl;
-		else
-			log::error << L"Unable to add dependency to \"" << sourceAssetGuid.format() << L"\"; no such instance." << Endl;
-		m_result = false;
+		// \hack
+		// In case output database already contain an instance with given ID we assume it has
+		// been synthesized.
+		if (m_outputDatabase->getInstance(sourceAssetGuid) == nullptr)
+		{
+			if (m_currentDependency)
+				log::error << L"Unable to add dependency to \"" << sourceAssetGuid.format() << L"\"; no such instance (referenced by \"" << m_currentDependency->sourceInstanceGuid.format() << L"\")." << Endl;
+			else
+				log::error << L"Unable to add dependency to \"" << sourceAssetGuid.format() << L"\"; no such instance." << Endl;
+			m_result = false;
+		}
 		return;
 	}
 
@@ -331,6 +337,9 @@ void PipelineDependsIncremental::addUniqueDependency(
 	if (m_currentDependency)
 		m_currentDependency->children.insert(dependencyIndex);
 
+	Ref< IPipeline > pipeline = m_pipelineFactory->findPipeline(*dependency->pipelineType);
+	T_ASSERT(pipeline);
+
 	bool result = true;
 
 	// Recurse scan child dependencies.
@@ -338,9 +347,6 @@ void PipelineDependsIncremental::addUniqueDependency(
 	{
 		T_ANONYMOUS_VAR(Save< uint32_t >)(m_currentRecursionDepth, m_currentRecursionDepth + 1);
 		T_ANONYMOUS_VAR(Save< Ref< PipelineDependency > >)(m_currentDependency, dependency);
-
-		Ref< IPipeline > pipeline = m_pipelineFactory->findPipeline(*dependency->pipelineType);
-		T_ASSERT(pipeline);
 
 #if defined(_DEBUG)
 		if (m_buildDepTimeStack.empty())
@@ -364,13 +370,13 @@ void PipelineDependsIncremental::addUniqueDependency(
 		m_buildDepTimeStack.pop_back();
 
 		// Remove duration from parent build steps; not inclusive times.
-		for (std::vector< double >::iterator i = m_buildDepTimeStack.begin(); i != m_buildDepTimeStack.end(); ++i)
-			*i += duration;
+		for (auto& times : m_buildDepTimeStack)
+			times += duration;
 #endif
 	}
 
 	if (result)
-		updateDependencyHashes(dependency, sourceInstance);
+		updateDependencyHashes(dependency, pipeline, sourceInstance);
 	else
 	{
 		dependency->flags |= PdfFailed;
@@ -380,11 +386,13 @@ void PipelineDependsIncremental::addUniqueDependency(
 
 void PipelineDependsIncremental::updateDependencyHashes(
 	PipelineDependency* dependency,
+	const IPipeline* pipeline,
 	const db::Instance* sourceInstance
 )
 {
 	// Calculate source of source asset.
-	dependency->sourceAssetHash = DeepHash(dependency->sourceAsset).get();
+	dependency->sourceAssetHash = pipeline->hashAsset(dependency->sourceAsset);
+	// dependency->sourceAssetHash = DeepHash(dependency->sourceAsset).get();
 
 	// Calculate hash of instance data.
 	dependency->sourceDataHash = 0;
@@ -394,11 +402,11 @@ void PipelineDependsIncremental::updateDependencyHashes(
 		DateTime lastWriteTime;
 
 		sourceInstance->getDataNames(dataNames);
-		for (std::vector< std::wstring >::const_iterator i = dataNames.begin(); i != dataNames.end(); ++i)
+		for (const auto& dataName : dataNames)
 		{
-			std::wstring fauxDataPath = sourceInstance->getPath() + L"$" + *i;
+			std::wstring fauxDataPath = sourceInstance->getPath() + L"$" + dataName;
 
-			if (m_pipelineDb && sourceInstance->getDataLastWriteTime(*i, lastWriteTime))
+			if (m_pipelineDb && sourceInstance->getDataLastWriteTime(dataName, lastWriteTime))
 			{
 				PipelineFileHash fileHash;
 				if (m_pipelineDb->getFile(fauxDataPath, fileHash))
@@ -411,7 +419,7 @@ void PipelineDependsIncremental::updateDependencyHashes(
 				}
 			}
 
-			Ref< IStream > dataStream = sourceInstance->readData(*i);
+			Ref< IStream > dataStream = sourceInstance->readData(dataName);
 			if (dataStream)
 			{
 				uint8_t buffer[4096];

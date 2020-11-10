@@ -1,6 +1,7 @@
 #include <limits>
 #include "Core/Io/Writer.h"
 #include "Core/Log/Log.h"
+#include "Core/Serialization/DeepHash.h"
 #include "Core/Settings/PropertyString.h"
 #include "Database/Instance.h"
 #include "Editor/IPipelineBuilder.h"
@@ -33,6 +34,11 @@ void HeightfieldPipeline::destroy()
 TypeInfoSet HeightfieldPipeline::getAssetTypes() const
 {
 	return makeTypeInfoSet< HeightfieldAsset >();
+}
+
+uint32_t HeightfieldPipeline::hashAsset(const ISerializable* sourceAsset) const
+{
+	return DeepHash(sourceAsset).get();
 }
 
 bool HeightfieldPipeline::buildDependencies(

@@ -7,7 +7,6 @@
 #include "Core/Misc/Adler32.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Misc/Save.h"
-#include "Core/Serialization/DeepHash.h"
 #include "Core/Serialization/ISerializable.h"
 #include "Core/System/OS.h"
 #include "Core/Thread/Acquire.h"
@@ -324,15 +323,15 @@ void PipelineDependsParallel::addUniqueDependency(
 	currentDependency->outputPath = outputPath;
 	currentDependency->outputGuid = outputGuid;
 
+	Ref< IPipeline > pipeline = m_pipelineFactory->findPipeline(*currentDependency->pipelineType);
+	T_ASSERT(pipeline);
+
 	bool result = true;
 
 	// Scan child dependencies.
 	{
 		Ref< PipelineDependency > previousDependency = reinterpret_cast< PipelineDependency* >(m_currentDependency.get());
 		m_currentDependency.set(currentDependency);
-
-		Ref< IPipeline > pipeline = m_pipelineFactory->findPipeline(*currentDependency->pipelineType);
-		T_ASSERT(pipeline);
 
 		result = pipeline->buildDependencies(
 			this,
@@ -346,7 +345,7 @@ void PipelineDependsParallel::addUniqueDependency(
 	}
 
 	if (result)
-		updateDependencyHashes(currentDependency, sourceInstance);
+		updateDependencyHashes(currentDependency, pipeline, sourceInstance);
 	else
 	{
 		currentDependency->flags |= PdfFailed;
@@ -356,6 +355,7 @@ void PipelineDependsParallel::addUniqueDependency(
 
 void PipelineDependsParallel::updateDependencyHashes(
 	PipelineDependency* dependency,
+	const IPipeline* pipeline,
 	const db::Instance* sourceInstance
 ) const
 {
@@ -367,8 +367,9 @@ void PipelineDependsParallel::updateDependencyHashes(
 	T_FATAL_ASSERT_M (dependency->sourceAssetHash == 0, L"Hash already calculated, thread issue?");
 
 	// Calculate source of source asset.
-	dependency->sourceAssetHash = DeepHash(dependency->sourceAsset).get();
-
+	dependency->sourceAssetHash = pipeline->hashAsset(dependency->sourceAsset);
+	// dependency->sourceAssetHash = DeepHash(dependency->sourceAsset).get();
+	
 	// Calculate hash of instance data.
 	dependency->sourceDataHash = 0;
 	if (sourceInstance)

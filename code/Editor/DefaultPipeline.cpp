@@ -2,6 +2,7 @@
 #include "Core/Reflection/Reflection.h"
 #include "Core/Reflection/RfmObject.h"
 #include "Core/Reflection/RfpMemberType.h"
+#include "Core/Serialization/DeepHash.h"
 #include "Core/Serialization/ISerializable.h"
 #include "Database/Instance.h"
 #include "Editor/DefaultPipeline.h"
@@ -27,6 +28,11 @@ void DefaultPipeline::destroy()
 TypeInfoSet DefaultPipeline::getAssetTypes() const
 {
 	return makeTypeInfoSet< Object >();
+}
+
+uint32_t DefaultPipeline::hashAsset(const ISerializable* sourceAsset) const
+{
+	return DeepHash(sourceAsset).get();
 }
 
 bool DefaultPipeline::buildDependencies(

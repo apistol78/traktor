@@ -5,6 +5,7 @@
 #include "Core/Io/FileSystem.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/String.h"
+#include "Core/Serialization/DeepHash.h"
 #include "Core/Settings/PropertyString.h"
 #include "Database/Instance.h"
 #include "Editor/IPipelineBuilder.h"
@@ -33,9 +34,12 @@ void SkeletonPipeline::destroy()
 
 TypeInfoSet SkeletonPipeline::getAssetTypes() const
 {
-	TypeInfoSet typeSet;
-	typeSet.insert< SkeletonAsset >();
-	return typeSet;
+	return makeTypeInfoSet< SkeletonAsset >();
+}
+
+uint32_t SkeletonPipeline::hashAsset(const ISerializable* sourceAsset) const
+{
+	return DeepHash(sourceAsset).get();
 }
 
 bool SkeletonPipeline::buildDependencies(

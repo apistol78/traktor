@@ -48,6 +48,8 @@ private:
 	Axis m_axis = Axis::X;
 	float m_rate = 0.0f;
 	float m_angle = 0.0f;
+
+	Transform calculateLocal() const;
 };
 
 	}

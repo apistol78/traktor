@@ -238,9 +238,6 @@ void addSky(
 	//drawing::TransformFilter normFilter(Color4f(normIntensity, normIntensity, normIntensity, 1.0f), Color4f(0.0f, 0.0f, 0.0f, 0.0f));
 	//radiance->apply(&normFilter);
 
-	// Save debug copy of sky IBL radiance probe.
-	radiance->save(L"data/Temp/Bake/SkyRadiance.png");
-
 	// Create tracer environment.
 	tracerTask->addTracerEnvironment(new TracerEnvironment(new IblProbe(radiance)));
 }
@@ -256,13 +253,6 @@ bool addModel(
 	TracerTask* tracerTask
 )
 {
-	Ref< model::Model > mutableModel = model; // DeepClone(model).create< model::Model >();
-	if (!mutableModel)
-	{
-		log::error << L"BakePipelineOperator failed; unable to clone model." << Endl;
-		return false;
-	}
-
 	// Create output instance.
 	if (pipelineBuilder->getOutputDatabase()->getInstance(lightmapId) == nullptr)
 	{
@@ -316,14 +306,14 @@ bool addModel(
 	}
 
 	tracerTask->addTracerModel(new TracerModel(
-		mutableModel,
+		model,
 		transform
 	));
 
 	tracerTask->addTracerOutput(new TracerOutput(
 		name,
 		0,
-		mutableModel,
+		model,
 		transform,
 		lightmapId,
 		lightmapSize
@@ -432,7 +422,6 @@ bool BakePipelineOperator::build(
 	const auto configuration = mandatory_non_null_type_cast< const BakeConfiguration* >(operatorData);
 	uint32_t configurationHash = DeepHash(configuration).get();
 
-	Guid layerHashSeedId = pipelineBuilder->synthesizeOutputGuid(100000);
 	Guid lightmapSeedId = pipelineBuilder->synthesizeOutputGuid(100000);
 	Guid irradianceGridSeedId = pipelineBuilder->synthesizeOutputGuid(100000);
 
@@ -497,11 +486,11 @@ bool BakePipelineOperator::build(
 				Guid lightmapId = lightmapSeedId.permutate();
 
 				// Ensure model is fit for tracing.
-				model->clear(model::Model::CfColors | model::Model::CfJoints);
+				// model->clear(model::Model::CfColors | model::Model::CfJoints);
 				model::Triangulate().apply(*model);
-				model::CleanDuplicates(0.0f).apply(*model);
-				model::CleanDegenerate().apply(*model);
-				model::CalculateTangents(false).apply(*model);
+				// model::CleanDuplicates(0.0f).apply(*model);
+				// model::CleanDegenerate().apply(*model);
+				// model::CalculateTangents(false).apply(*model);
 
 				// Calculate size of lightmap from geometry.
 				int32_t lightmapSize = calculateLightmapSize(

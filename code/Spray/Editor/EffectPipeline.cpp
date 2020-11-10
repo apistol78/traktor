@@ -1,3 +1,4 @@
+#include "Core/Serialization/DeepHash.h"
 #include "Database/Instance.h"
 #include "Editor/IPipelineDepends.h"
 #include "Editor/IPipelineBuilder.h"
@@ -110,6 +111,11 @@ void EffectPipeline::destroy()
 TypeInfoSet EffectPipeline::getAssetTypes() const
 {
 	return makeTypeInfoSet< EffectData >();
+}
+
+uint32_t EffectPipeline::hashAsset(const ISerializable* sourceAsset) const
+{
+	return DeepHash(sourceAsset).get();
 }
 
 bool EffectPipeline::buildDependencies(

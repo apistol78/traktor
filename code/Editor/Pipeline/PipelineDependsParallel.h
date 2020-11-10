@@ -115,6 +115,7 @@ private:
 
 	void updateDependencyHashes(
 		PipelineDependency* dependency,
+		const IPipeline* pipeline,
 		const db::Instance* sourceInstance
 	) const;
 

@@ -2,6 +2,7 @@
 #include "Core/Io/IStream.h"
 #include "Core/Io/StreamCopy.h"
 #include "Core/Log/Log.h"
+#include "Core/Serialization/DeepHash.h"
 #include "Core/Settings/PropertyString.h"
 #include "Database/Instance.h"
 #include "Editor/IPipelineBuilder.h"
@@ -30,9 +31,12 @@ void VideoPipeline::destroy()
 
 TypeInfoSet VideoPipeline::getAssetTypes() const
 {
-	TypeInfoSet typeSet;
-	typeSet.insert< VideoAsset >();
-	return typeSet;
+	return makeTypeInfoSet< VideoAsset >();
+}
+
+uint32_t VideoPipeline::hashAsset(const ISerializable* sourceAsset) const
+{
+	return DeepHash(sourceAsset).get();
 }
 
 bool VideoPipeline::buildDependencies(

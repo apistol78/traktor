@@ -55,6 +55,9 @@ public:
 	/*! Get pipeline asset types. */
 	virtual TypeInfoSet getAssetTypes() const = 0;
 
+	/*! Calculate hash of asset. */
+	virtual uint32_t hashAsset(const ISerializable* sourceAsset) const = 0;
+
 	/*! Build dependencies from source asset.
 	 *
 	 * \param pipelineDepends Pipeline dependency walker.

@@ -404,7 +404,7 @@ bool PipelineBuilder::buildAdHocOutput(const ISerializable* sourceAsset, const s
 {
 	// Scan dependencies of source asset.
 	PipelineDependencySet dependencySet;
-	PipelineDependsIncremental pipelineDepends(m_pipelineFactory, m_sourceDatabase, &dependencySet, m_pipelineDb, m_instanceCache);
+	PipelineDependsIncremental pipelineDepends(m_pipelineFactory, m_sourceDatabase, m_outputDatabase, &dependencySet, m_pipelineDb, m_instanceCache);
 	pipelineDepends.addDependency(
 		sourceAsset,
 		outputPath,

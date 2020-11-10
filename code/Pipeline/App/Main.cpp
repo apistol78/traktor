@@ -490,6 +490,7 @@ bool perform(const PipelineParameters* params)
 		pipelineDepends = new editor::PipelineDependsIncremental(
 			&pipelineFactory,
 			sourceDatabaseAndCache.database,
+			outputDatabaseAndCache.database,
 			&pipelineDependencySet,
 			pipelineDb,
 			sourceDatabaseAndCache.cache

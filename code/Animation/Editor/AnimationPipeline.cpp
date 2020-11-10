@@ -11,6 +11,7 @@
 #include "Core/Math/Const.h"
 #include "Core/Math/Format.h"
 #include "Core/Misc/String.h"
+#include "Core/Serialization/DeepHash.h"
 #include "Core/Settings/PropertyString.h"
 #include "Database/Instance.h"
 #include "Editor/IPipelineBuilder.h"
@@ -42,6 +43,11 @@ void AnimationPipeline::destroy()
 TypeInfoSet AnimationPipeline::getAssetTypes() const
 {
 	return makeTypeInfoSet< AnimationAsset >();
+}
+
+uint32_t AnimationPipeline::hashAsset(const ISerializable* sourceAsset) const
+{
+	return DeepHash(sourceAsset).get();
 }
 
 bool AnimationPipeline::buildDependencies(

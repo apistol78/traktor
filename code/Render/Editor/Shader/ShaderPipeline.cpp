@@ -33,6 +33,7 @@
 #include "Render/Editor/Shader/ShaderGraph.h"
 #include "Render/Editor/Shader/ShaderPipeline.h"
 #include "Render/Editor/Shader/ShaderGraphCombinations.h"
+#include "Render/Editor/Shader/ShaderGraphHash.h"
 #include "Render/Editor/Shader/ShaderGraphOptimizer.h"
 #include "Render/Editor/Shader/ShaderGraphStatic.h"
 #include "Render/Editor/Shader/ShaderGraphTechniques.h"
@@ -330,6 +331,24 @@ void ShaderPipeline::destroy()
 TypeInfoSet ShaderPipeline::getAssetTypes() const
 {
 	return makeTypeInfoSet< ShaderGraph >();
+}
+
+uint32_t ShaderPipeline::hashAsset(const ISerializable* sourceAsset) const
+{
+	Ref< const ShaderGraph > shaderGraph = mandatory_non_null_type_cast< const ShaderGraph* >(sourceAsset);
+	Ref< IProgramCompiler > programCompiler = getProgramCompiler();
+	if (!programCompiler)
+		return 0;
+
+	std::wstring rendererSignature = programCompiler->getRendererSignature();
+
+	if ((shaderGraph = ShaderGraphStatic(shaderGraph).getPlatformPermutation(m_platform)) == nullptr)
+		return 0;
+
+	if ((shaderGraph = ShaderGraphStatic(shaderGraph).getRendererPermutation(rendererSignature)) == nullptr)
+		return 0;
+
+	return ShaderGraphHash::calculate(shaderGraph);
 }
 
 bool ShaderPipeline::buildDependencies(

@@ -7,6 +7,7 @@
 #include "Core/Math/Quasirandom.h"
 #include "Core/Math/Random.h"
 #include "Core/Misc/SafeDestroy.h"
+#include "Core/Serialization/DeepHash.h"
 #include "Core/Settings/PropertyString.h"
 #include "Database/Instance.h"
 #include "Drawing/Image.h"
@@ -60,6 +61,11 @@ void IrradianceGridPipeline::destroy()
 TypeInfoSet IrradianceGridPipeline::getAssetTypes() const
 {
 	return makeTypeInfoSet< IrradianceGridAsset >();
+}
+
+uint32_t IrradianceGridPipeline::hashAsset(const ISerializable* sourceAsset) const
+{
+	return DeepHash(sourceAsset).get();
 }
 
 bool IrradianceGridPipeline::buildDependencies(

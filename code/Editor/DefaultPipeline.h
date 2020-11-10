@@ -35,6 +35,8 @@ public:
 
 	virtual TypeInfoSet getAssetTypes() const override;
 
+	virtual uint32_t hashAsset(const ISerializable* sourceAsset) const override;
+
 	virtual bool buildDependencies(
 		IPipelineDepends* pipelineDepends,
 		const db::Instance* sourceInstance,

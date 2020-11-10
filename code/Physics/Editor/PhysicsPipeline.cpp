@@ -1,4 +1,5 @@
 #include "Core/Serialization/DeepClone.h"
+#include "Core/Serialization/DeepHash.h"
 #include "Physics/BodyDesc.h"
 #include "Physics/MeshShapeDesc.h"
 #include "Physics/HeightfieldShapeDesc.h"
@@ -33,6 +34,11 @@ TypeInfoSet PhysicsPipeline::getAssetTypes() const
 	typeSet.insert< RigidBodyComponentData >();
 	typeSet.insert< VehicleComponentData >();
 	return typeSet;
+}
+
+uint32_t PhysicsPipeline::hashAsset(const ISerializable* sourceAsset) const
+{
+	return DeepHash(sourceAsset).get();
 }
 
 bool PhysicsPipeline::buildDependencies(

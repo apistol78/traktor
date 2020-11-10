@@ -33,6 +33,7 @@ public:
 	PipelineDependsIncremental(
 		PipelineFactory* pipelineFactory,
 		db::Database* sourceDatabase,
+		db::Database* outputDatabase,
 		IPipelineDependencySet* dependencySet,
 		IPipelineDb* pipelineDb,
 		IPipelineInstanceCache* instanceCache,
@@ -82,6 +83,7 @@ public:
 private:
 	Ref< PipelineFactory > m_pipelineFactory;
 	Ref< db::Database > m_sourceDatabase;
+	Ref< db::Database > m_outputDatabase;
 	Ref< IPipelineDependencySet > m_dependencySet;
 	Ref< IPipelineDb > m_pipelineDb;
 	Ref< IPipelineInstanceCache > m_instanceCache;
@@ -106,11 +108,7 @@ private:
 
 	void updateDependencyHashes(
 		PipelineDependency* dependency,
-		const db::Instance* sourceInstance
-	);
-
-	void updateDependencyHashesJob(
-		PipelineDependency* dependency,
+		const IPipeline* pipeline,
 		const db::Instance* sourceInstance
 	);
 };

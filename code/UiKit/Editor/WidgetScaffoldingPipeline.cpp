@@ -1,3 +1,4 @@
+#include "Core/Serialization/DeepHash.h"
 #include "Editor/IPipelineDepends.h"
 #include "UiKit/Editor/WidgetScaffolding.h"
 #include "UiKit/Editor/WidgetScaffoldingPipeline.h"
@@ -21,6 +22,11 @@ void WidgetScaffoldingPipeline::destroy()
 TypeInfoSet WidgetScaffoldingPipeline::getAssetTypes() const
 {
 	return makeTypeInfoSet< WidgetScaffolding >();
+}
+
+uint32_t WidgetScaffoldingPipeline::hashAsset(const ISerializable* sourceAsset) const
+{
+	return DeepHash(sourceAsset).get();
 }
 
 bool WidgetScaffoldingPipeline::buildDependencies(

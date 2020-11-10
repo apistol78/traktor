@@ -1,4 +1,5 @@
 #include "Core/Log/Log.h"
+#include "Core/Serialization/DeepHash.h"
 #include "Database/Instance.h"
 #include "Editor/IPipelineBuilder.h"
 #include "Editor/IPipelineDepends.h"
@@ -26,9 +27,12 @@ void InputMappingPipeline::destroy()
 
 TypeInfoSet InputMappingPipeline::getAssetTypes() const
 {
-	TypeInfoSet typeSet;
-	typeSet.insert< InputMappingAsset >();
-	return typeSet;
+	return makeTypeInfoSet< InputMappingAsset >();
+}
+
+uint32_t InputMappingPipeline::hashAsset(const ISerializable* sourceAsset) const
+{
+	return DeepHash(sourceAsset).get();
 }
 
 bool InputMappingPipeline::buildDependencies(
