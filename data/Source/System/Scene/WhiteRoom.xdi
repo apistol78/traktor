@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.scene.SceneAsset" version="8">
-	<worldRenderSettings type="traktor.world.WorldRenderSettings" version="33">
+	<worldRenderSettings type="traktor.world.WorldRenderSettings" version="35">
 		<viewNearZ>0.1</viewNearZ>
 		<viewFarZ>10000</viewFarZ>
-		<linearLighting>true</linearLighting>
 		<exposureMode>EmFixed</exposureMode>
 		<exposure>-0.5</exposure>
 		<shadowSettings>
@@ -69,10 +68,8 @@
 			</ultra>
 		</shadowSettings>
 		<fog>false</fog>
-		<fogDistanceY>0</fogDistanceY>
-		<fogDistanceZ>90</fogDistanceZ>
-		<fogDensityY>0</fogDensityY>
-		<fogDensityZ>0</fogDensityZ>
+		<fogDistance>90</fogDistance>
+		<fogDensity>0</fogDensity>
 		<fogColor>1, 1, 1, 1</fogColor>
 		<irradianceGrid>{8F500C87-6146-A44F-B102-01BFDE65F9B9}</irradianceGrid>
 		<imageProcess>
@@ -85,7 +82,8 @@
 	</worldRenderSettings>
 	<imageProcessParams/>
 	<layers>
-		<item type="traktor.world.LayerEntityData" version="2">
+		<item type="traktor.world.LayerEntityData" version="3,traktor.world.EntityData:1">
+			<id>{E9B1112E-DF6D-114C-9169-67043560DFF1}</id>
 			<name>Environment</name>
 			<transform>
 				<translation>0, 0, 0, 0</translation>
@@ -94,7 +92,8 @@
 			<components>
 				<item type="traktor.world.GroupComponentData">
 					<entityData>
-						<item type="traktor.world.EntityData">
+						<item type="traktor.world.EntityData" version="1">
+							<id>{9ECE1C62-3031-A84A-82C5-344DB7EC7781}</id>
 							<name>Sky</name>
 							<transform>
 								<translation>0, 0, 0, 0</translation>
@@ -108,7 +107,8 @@
 								</item>
 							</components>
 						</item>
-						<item type="traktor.world.EntityData">
+						<item type="traktor.world.EntityData" version="1">
+							<id>{E898D2A7-8BC7-044C-A1E9-762B0B254E29}</id>
 							<name>Light</name>
 							<transform>
 								<translation>0, 0, 0, 0</translation>
@@ -128,7 +128,8 @@
 								</item>
 							</components>
 						</item>
-						<item type="traktor.world.EntityData">
+						<item type="traktor.world.EntityData" version="1">
+							<id>{CFF3D3D7-FE72-9841-B815-24158C1DBAC1}</id>
 							<name>Reflections</name>
 							<transform>
 								<translation>0, 10, 0, 0</translation>
@@ -146,7 +147,8 @@
 								</item>
 							</components>
 						</item>
-						<item type="traktor.world.EntityData">
+						<item type="traktor.world.EntityData" version="1">
+							<id>{2C61D65D-EEF1-9340-956A-9BD39C29B522}</id>
 							<name>Ground</name>
 							<transform>
 								<translation>0, 0, 0, 0</translation>
@@ -183,7 +185,8 @@
 								</item>
 							</components>
 						</item>
-						<item type="traktor.world.EntityData">
+						<item type="traktor.world.EntityData" version="1">
+							<id>{E57129E7-CAFA-AE4E-9FFB-D5087202A66F}</id>
 							<name>Camera</name>
 							<transform>
 								<translation>-1.562719, 0.790387, -1.110929, 0</translation>
@@ -200,14 +203,16 @@
 						</item>
 					</entityData>
 				</item>
+				<item type="traktor.world.EditorAttributesComponentData">
+					<visible>true</visible>
+					<locked>false</locked>
+					<include>true</include>
+					<dynamic>false</dynamic>
+				</item>
 			</components>
-			<visible>true</visible>
-			<locked>false</locked>
-			<include>true</include>
-			<dynamic>false</dynamic>
-			<attributes/>
 		</item>
-		<item type="traktor.world.LayerEntityData" version="2">
+		<item type="traktor.world.LayerEntityData" version="3,traktor.world.EntityData:1">
+			<id>{0F5BDED8-7C25-8642-BAB7-5E4FE0842287}</id>
 			<name>Entity</name>
 			<transform>
 				<translation>0, 0, 0, 0</translation>
@@ -217,12 +222,13 @@
 				<item type="traktor.world.GroupComponentData">
 					<entityData/>
 				</item>
+				<item type="traktor.world.EditorAttributesComponentData">
+					<visible>true</visible>
+					<locked>false</locked>
+					<include>true</include>
+					<dynamic>true</dynamic>
+				</item>
 			</components>
-			<visible>true</visible>
-			<locked>false</locked>
-			<include>true</include>
-			<dynamic>true</dynamic>
-			<attributes/>
 		</item>
 	</layers>
 	<controllerData/>
