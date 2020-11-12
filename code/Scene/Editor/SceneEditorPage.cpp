@@ -665,6 +665,8 @@ bool SceneEditorPage::handleCommand(const ui::Command& command)
 		// Create new instances and adapters for each entity found in clipboard.
 		for (auto entityData : entityDatas)
 		{
+			entityData->setId(Guid::create());
+
 			Ref< EntityAdapter > entityAdapter = new EntityAdapter(m_context);
 			entityAdapter->prepare(entityData, 0, 0);
 			parentEntity->addChild(entityAdapter);
@@ -1135,7 +1137,7 @@ void SceneEditorPage::updateStatusBar()
 
 	RefArray< EntityAdapter > selectedEntities;
 	if (m_context->getEntities(selectedEntities, SceneEditorContext::GfSelectedOnly | SceneEditorContext::GfDescendants) == 1)
-		ss << L"     " << selectedEntities[0]->getPath();
+		ss << L"     " << selectedEntities[0]->getPath() << L" " << selectedEntities[0]->getEntityData()->getId().format();
 
 	m_statusBar->setText(ss.str());
 }
