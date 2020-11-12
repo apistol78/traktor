@@ -11,7 +11,6 @@
 #include "Model/Model.h"
 #include "Model/ModelCache.h"
 #include "Model/Operations/Transform.h"
-#include "Render/Editor/Texture/TextureAsset.h"
 #include "Render/Editor/Texture/TextureSet.h"
 
 namespace traktor
@@ -81,33 +80,15 @@ Ref< model::Model > MeshEntityReplicator::createModel(
 	for (const auto& mt : meshAsset->getMaterialTextures())
 		materialTextures[mt.first] = mt.second;
 
-	// Attach texture images to material maps.
+	// Bind texture references in material maps.
 	for (auto& material : model->getMaterials())
 	{
 		auto diffuseMap = material.getDiffuseMap();
-		if (!diffuseMap.name.empty())
+		auto it = materialTextures.find(diffuseMap.name);
+		if (it != materialTextures.end())
 		{
-			auto it = materialTextures.find(diffuseMap.name);
-			if (it != materialTextures.end())
-			{
-				Ref< const render::TextureAsset > textureAsset = pipelineBuilder->getObjectReadOnly< render::TextureAsset >(it->second);
-				if (!textureAsset)
-					continue;
-
-				Path filePath = FileSystem::getInstance().getAbsolutePath(Path(assetPath) + textureAsset->getFileName());
-				Ref< IStream > file = pipelineBuilder->openFile(filePath);
-				if (!file)
-					return nullptr;
-
-				Ref< drawing::Image > image = drawing::Image::load(file, textureAsset->getFileName().getExtension());
-				if (!image)
-					return nullptr;
-
-				file->close();
-
-				diffuseMap.image = image;			
-				material.setDiffuseMap(diffuseMap);
-			}
+			diffuseMap.texture = it->second;
+			material.setDiffuseMap(diffuseMap);
 		}
 	}
 
@@ -118,33 +99,33 @@ Ref< Object > MeshEntityReplicator::modifyOutput(
     editor::IPipelineBuilder* pipelineBuilder,
 	const std::wstring& assetPath,
     const Object* source,
-    const model::Model* model
+    const model::Model* model,
+	const Guid& outputGuid
 ) const
 {
 	const MeshComponentData* meshComponentData = mandatory_non_null_type_cast< const MeshComponentData* >(source);
 
+	// Read original mesh asset from source.
 	Ref< MeshAsset > meshAsset = pipelineBuilder->getSourceDatabase()->getObjectReadOnly< MeshAsset >(
 		meshComponentData->getMesh()
 	);
 	if (!meshAsset)
 		return nullptr;
 
-	Guid outputRenderMeshGuid = pipelineBuilder->synthesizeOutputGuid(1);
-	std::wstring outputRenderMeshPath = L"Generated/" + outputRenderMeshGuid.format();
-
+	// Create a new mesh asset referencing the modified model.
     Ref< MeshAsset > outputMeshAsset = new MeshAsset();
     outputMeshAsset->setMeshType(MeshAsset::MtStatic);
 	outputMeshAsset->setMaterialTextures(meshAsset->getMaterialTextures());
 	outputMeshAsset->setTextureSet(meshAsset->getTextureSet());
 
+	// Build output mesh from modified model.
     pipelineBuilder->buildAdHocOutput(
         outputMeshAsset,
-        outputRenderMeshPath,
-        outputRenderMeshGuid,
+        outputGuid,
         model
     );
 
-	return new MeshComponentData(resource::Id< IMesh >(outputRenderMeshGuid));
+	return new MeshComponentData(resource::Id< IMesh >(outputGuid));
 }
 
     }

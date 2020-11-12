@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include "Core/Guid.h"
 #include "Core/RefArray.h"
 #include "Core/Math/Transform.h"
 #include "Core/Serialization/ISerializable.h"
@@ -33,6 +34,10 @@ class T_DLLCLASS EntityData : public ISerializable
 	T_RTTI_CLASS;
 
 public:
+	void setId(const Guid& id);
+
+	const Guid& getId() const;
+
 	void setName(const std::wstring& name);
 
 	const std::wstring& getName() const;
@@ -83,6 +88,7 @@ public:
 	virtual void serialize(ISerializer& s) override;
 
 private:
+	Guid m_id;
 	std::wstring m_name;
 	Transform m_transform;
 	RefArray< IEntityComponentData > m_components;

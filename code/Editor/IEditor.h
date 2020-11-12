@@ -32,7 +32,8 @@ class Instance;
 
 class IEditorPage;
 class IBrowseFilter;
-class IPipelineDependencySet;
+class IPipelineDepends;
+class PipelineDependencySet;
 
 /*! Editor base interface.
  * \ingroup Editor
@@ -132,13 +133,11 @@ public:
 	/*! Wait until current build has finished. */
 	virtual void buildWaitUntilFinished() = 0;
 
-	/*! Build asset dependencies.
+	/*! Create an instance of pipeline dependency walker.
 	 *
-	 * \param asset Source asset.
-	 * \param recursionDepth Max dependency recursion depth.
-	 * \return Dependency set.
+	 * \return Pipeline dependency walker.
 	 */
-	virtual Ref< IPipelineDependencySet > buildAssetDependencies(const ISerializable* asset, uint32_t recursionDepth) = 0;
+	virtual Ref< IPipelineDepends> createPipelineDepends(PipelineDependencySet* dependencySet, uint32_t recursionDepth) = 0;
 
 	/*! Set object in object store.
 	 *

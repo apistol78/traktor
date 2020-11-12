@@ -5,7 +5,7 @@
 #include "Core/Thread/ThreadManager.h"
 #include "Editor/IPipeline.h"
 #include "Editor/IPipelineDb.h"
-#include "Editor/IPipelineDependencySet.h"
+#include "Editor/PipelineDependencySet.h"
 #include "Editor/PipelineDependency.h"
 #include "Editor/Pipeline/PipelineAgent.h"
 #include "Editor/Pipeline/PipelineAgentsManager.h"
@@ -20,7 +20,7 @@ namespace traktor
 		{
 
 void calculateGlobalHash(
-	const IPipelineDependencySet* dependencySet,
+	const PipelineDependencySet* dependencySet,
 	const PipelineDependency* dependency,
 	uint32_t& outPipelineHash,
 	uint32_t& outSourceAssetHash,
@@ -74,7 +74,7 @@ PipelineBuilderDistributed::PipelineBuilderDistributed(
 {
 }
 
-bool PipelineBuilderDistributed::build(const IPipelineDependencySet* dependencySet, bool rebuild)
+bool PipelineBuilderDistributed::build(const PipelineDependencySet* dependencySet, bool rebuild)
 {
 	std::vector< uint32_t > reasons;
 
@@ -212,6 +212,12 @@ Ref< ISerializable > PipelineBuilderDistributed::buildOutput(const db::Instance*
 	return nullptr;
 }
 
+bool PipelineBuilderDistributed::buildAdHocOutput(const ISerializable* sourceAsset, const Guid& outputGuid, const Object* buildParams)
+{
+	T_FATAL_ERROR;
+	return false;
+}
+
 bool PipelineBuilderDistributed::buildAdHocOutput(const ISerializable* sourceAsset, const std::wstring& outputPath, const Guid& outputGuid, const Object* buildParams)
 {
 	T_FATAL_ERROR;
@@ -266,7 +272,7 @@ Ref< IStream > PipelineBuilderDistributed::openFile(const Path& filePath)
 	return nullptr;
 }
 
-bool PipelineBuilderDistributed::performBuild(const IPipelineDependencySet* dependencySet, const PipelineDependency* dependency)
+bool PipelineBuilderDistributed::performBuild(const PipelineDependencySet* dependencySet, const PipelineDependency* dependency)
 {
 	PipelineDependencyHash currentDependencyHash;
 	bool result = true;

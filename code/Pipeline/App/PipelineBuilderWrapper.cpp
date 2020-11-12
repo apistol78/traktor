@@ -46,7 +46,7 @@ PipelineBuilderWrapper::PipelineBuilderWrapper(
 {
 }
 
-bool PipelineBuilderWrapper::build(const editor::IPipelineDependencySet* dependencySet, bool rebuild)
+bool PipelineBuilderWrapper::build(const editor::PipelineDependencySet* dependencySet, bool rebuild)
 {
 	T_FATAL_ERROR;
 	return false;
@@ -100,6 +100,12 @@ Ref< ISerializable > PipelineBuilderWrapper::buildOutput(const db::Instance* sou
 	}
 
 	return product;
+}
+
+bool PipelineBuilderWrapper::buildAdHocOutput(const ISerializable* sourceAsset, const Guid& outputGuid, const Object* buildParams)
+{
+	std::wstring outputPath = L"Generated/" + outputGuid.format();
+	return buildAdHocOutput(sourceAsset, outputPath, outputGuid, buildParams);
 }
 
 bool PipelineBuilderWrapper::buildAdHocOutput(const ISerializable* sourceAsset, const std::wstring& outputPath, const Guid& outputGuid, const Object* buildParams)

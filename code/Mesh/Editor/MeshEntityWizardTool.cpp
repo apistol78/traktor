@@ -36,6 +36,7 @@ bool MeshEntityWizardTool::launch(ui::Widget* parent, editor::IEditor* editor, d
 
 	// Create mesh entity data.
 	Ref< world::EntityData > entityData = new world::EntityData();
+	entityData->setId(Guid::create());
 	entityData->setName(instance->getName());
 	entityData->setComponent(new MeshComponentData(resource::Id< IMesh >(instance->getGuid())));
 

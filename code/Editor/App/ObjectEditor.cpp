@@ -169,9 +169,9 @@ void ObjectEditor::buildWaitUntilFinished()
 	m_editor->buildWaitUntilFinished();
 }
 
-Ref< IPipelineDependencySet > ObjectEditor::buildAssetDependencies(const ISerializable* asset, uint32_t recursionDepth)
+Ref< IPipelineDepends> ObjectEditor::createPipelineDepends(PipelineDependencySet* dependencySet, uint32_t recursionDepth)
 {
-	return m_editor->buildAssetDependencies(asset, recursionDepth);
+	return m_editor->createPipelineDepends(dependencySet, recursionDepth);
 }
 
 void ObjectEditor::setStoreObject(const std::wstring& name, Object* object)

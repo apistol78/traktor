@@ -58,9 +58,11 @@ public:
 		bool verbose
 	);
 
-	virtual bool build(const IPipelineDependencySet* dependencySet, bool rebuild) override final;
+	virtual bool build(const PipelineDependencySet* dependencySet, bool rebuild) override final;
 
 	virtual Ref< ISerializable > buildOutput(const db::Instance* sourceInstance, const ISerializable* sourceAsset, const Object* buildParams) override final;
+
+	virtual bool buildAdHocOutput(const ISerializable* sourceAsset, const Guid& outputGuid, const Object* buildParams) override final;
 
 	virtual bool buildAdHocOutput(const ISerializable* sourceAsset, const std::wstring& outputPath, const Guid& outputGuid, const Object* buildParams) override final;
 
@@ -132,7 +134,7 @@ private:
 	int32_t m_cacheVoid;
 
 	/*! Perform build. */
-	BuildResult performBuild(const IPipelineDependencySet* dependencySet, const PipelineDependency* dependency, const Object* buildParams, uint32_t reason);
+	BuildResult performBuild(const PipelineDependencySet* dependencySet, const PipelineDependency* dependency, const Object* buildParams, uint32_t reason);
 
 	/*! Isolate instance in cache. */
 	bool putInstancesInCache(const Guid& guid, const PipelineDependencyHash& hash, const RefArray< db::Instance >& instances);
@@ -141,7 +143,7 @@ private:
 	bool getInstancesFromCache(const PipelineDependency* dependency, const PipelineDependencyHash& hash, RefArray< db::Instance >& outInstances);
 
 	/*! Build thread method. */
-	void buildThread(const IPipelineDependencySet* dependencySet, Thread* controlThread, int32_t cpuCore);
+	void buildThread(const PipelineDependencySet* dependencySet, Thread* controlThread, int32_t cpuCore);
 };
 
 	}

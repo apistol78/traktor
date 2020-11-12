@@ -10,7 +10,7 @@
 #include "Database/Instance.h"
 #include "Editor/IPipeline.h"
 #include "Editor/IPipelineDb.h"
-#include "Editor/IPipelineDependencySet.h"
+#include "Editor/PipelineDependencySet.h"
 #include "Editor/IPipelineInstanceCache.h"
 #include "Editor/PipelineDependency.h"
 #include "Editor/Pipeline/PipelineDependsIncremental.h"
@@ -27,7 +27,7 @@ PipelineDependsIncremental::PipelineDependsIncremental(
 	PipelineFactory* pipelineFactory,
 	db::Database* sourceDatabase,
 	db::Database* outputDatabase,
-	IPipelineDependencySet* dependencySet,
+	PipelineDependencySet* dependencySet,
 	IPipelineDb* pipelineDb,
 	IPipelineInstanceCache* instanceCache,
 	uint32_t recursionDepth
@@ -83,7 +83,7 @@ void PipelineDependsIncremental::addDependency(const ISerializable* sourceAsset,
 
 	// Don't add dependency multiple times.
 	uint32_t dependencyIndex = m_dependencySet->get(outputGuid);
-	if (dependencyIndex != IPipelineDependencySet::DiInvalid)
+	if (dependencyIndex != PipelineDependencySet::DiInvalid)
 	{
 		PipelineDependency* dependency = m_dependencySet->get(dependencyIndex);
 		T_ASSERT(dependency);
@@ -115,7 +115,7 @@ void PipelineDependsIncremental::addDependency(db::Instance* sourceAssetInstance
 
 	// Don't add dependency multiple times.
 	uint32_t dependencyIndex = m_dependencySet->get(sourceAssetInstance->getGuid());
-	if (dependencyIndex != IPipelineDependencySet::DiInvalid)
+	if (dependencyIndex != PipelineDependencySet::DiInvalid)
 	{
 		PipelineDependency* dependency = m_dependencySet->get(dependencyIndex);
 		T_ASSERT(dependency);
@@ -156,7 +156,7 @@ void PipelineDependsIncremental::addDependency(const Guid& sourceAssetGuid, uint
 
 	// Don't add dependency multiple times.
 	uint32_t dependencyIndex = m_dependencySet->get(sourceAssetGuid);
-	if (dependencyIndex != IPipelineDependencySet::DiInvalid)
+	if (dependencyIndex != PipelineDependencySet::DiInvalid)
 	{
 		PipelineDependency* dependency = m_dependencySet->get(dependencyIndex);
 		T_ASSERT(dependency);

@@ -173,13 +173,14 @@ Ref< Object > SolidEntityReplicator::modifyOutput(
 	editor::IPipelineBuilder* pipelineBuilder,
 	const std::wstring& assetPath,
 	const Object* source,
-	const model::Model* model
+	const model::Model* model,
+	const Guid& outputGuid
 ) const
 {
 	const SolidEntityData* solidEntityData = mandatory_non_null_type_cast< const SolidEntityData* >(source);
 
-	Guid outputRenderMeshGuid = pipelineBuilder->synthesizeOutputGuid(1);
-	Guid outputCollisionShapeGuid = pipelineBuilder->synthesizeOutputGuid(1);
+	Guid outputRenderMeshGuid = outputGuid.permutation(1);
+	Guid outputCollisionShapeGuid = outputGuid.permutation(2);
 
 	std::wstring outputRenderMeshPath = L"Generated/" + outputRenderMeshGuid.format();
 	std::wstring outputCollisionShapePath = L"Generated/" + outputCollisionShapeGuid.format();
@@ -213,6 +214,7 @@ Ref< Object > SolidEntityReplicator::modifyOutput(
 
 	// Create our output entity which will replace the solid entity.
 	Ref< world::EntityData > outputEntityData = new world::EntityData();
+	outputEntityData->setId(solidEntityData->getId());
 	outputEntityData->setName(solidEntityData->getName());
 	outputEntityData->setTransform(solidEntityData->getTransform());
 	outputEntityData->setComponent(new mesh::MeshComponentData(resource::Id< mesh::IMesh >(outputRenderMeshGuid)));

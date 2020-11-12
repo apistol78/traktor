@@ -100,6 +100,7 @@ Ref< ISerializable > resolveAllExternal(PipelineType* pipeline, const ISerializa
 			if (!resolvedEntityData)
 				return nullptr;
 
+			resolvedEntityData->setId(externalEntityDataRef->getId());
 			resolvedEntityData->setName(externalEntityDataRef->getName());
 			resolvedEntityData->setTransform(externalEntityDataRef->getTransform());
 
@@ -172,7 +173,7 @@ bool NavMeshPipeline::buildDependencies(
 
 bool NavMeshPipeline::buildOutput(
 	editor::IPipelineBuilder* pipelineBuilder,
-	const editor::IPipelineDependencySet* dependencySet,
+	const editor::PipelineDependencySet* dependencySet,
 	const editor::PipelineDependency* dependency,
 	const db::Instance* sourceInstance,
 	const ISerializable* sourceAsset,

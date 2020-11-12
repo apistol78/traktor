@@ -6,8 +6,9 @@
 #include "Database/Database.h"
 #include "Database/Instance.h"
 #include "Editor/IEditor.h"
-#include "Editor/IPipelineDependencySet.h"
+#include "Editor/IPipelineDepends.h"
 #include "Editor/PipelineDependency.h"
+#include "Editor/PipelineDependencySet.h"
 #include "I18N/Format.h"
 #include "I18N/Text.h"
 #include "Scene/Editor/EntityAdapter.h"
@@ -76,15 +77,20 @@ void EntityDependencyInvestigator::setEntityAdapter(EntityAdapter* entityAdapter
 
 	if (entityAdapter)
 	{
-		Ref< editor::IPipelineDependencySet > dependencySet = m_context->getEditor()->buildAssetDependencies(entityAdapter->getEntityData(), 1);
-		T_ASSERT(dependencySet);
+		editor::PipelineDependencySet dependencySet;
+		Ref< editor::IPipelineDepends > depends = m_context->getEditor()->createPipelineDepends(&dependencySet, 1);
+		if (!depends)
+			return;
+
+		depends->addDependency(entityAdapter->getEntityData());
+		depends->waitUntilFinished();
 
 		std::map< const TypeInfo*, Ref< ui::TreeViewItem > > typeGroups;
 		std::set< Path > externalFiles;
 
-		for (uint32_t i = 0; i < dependencySet->size(); ++i)
+		for (uint32_t i = 0; i < dependencySet.size(); ++i)
 		{
-			editor::PipelineDependency* dependency = dependencySet->get(i);
+			editor::PipelineDependency* dependency = dependencySet.get(i);
 			T_ASSERT(dependency);
 
 			const TypeInfo* assetType = &type_of(dependency->sourceAsset);

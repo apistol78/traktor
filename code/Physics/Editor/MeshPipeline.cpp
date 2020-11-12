@@ -64,7 +64,7 @@ bool MeshPipeline::buildDependencies(
 
 bool MeshPipeline::buildOutput(
 	editor::IPipelineBuilder* pipelineBuilder,
-	const editor::IPipelineDependencySet* dependencySet,
+	const editor::PipelineDependencySet* dependencySet,
 	const editor::PipelineDependency* dependency,
 	const db::Instance* sourceInstance,
 	const ISerializable* sourceAsset,

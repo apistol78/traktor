@@ -120,7 +120,8 @@ Ref< Object > PrefabEntityReplicator::modifyOutput(
     editor::IPipelineBuilder* pipelineBuilder,
     const std::wstring& assetPath,
     const Object* source,
-    const model::Model* model
+    const model::Model* model,
+    const Guid& outputGuid
 ) const
 {
     return nullptr;

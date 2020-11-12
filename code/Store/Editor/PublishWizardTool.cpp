@@ -14,7 +14,8 @@
 #include "Drawing/Filters/ScaleFilter.h"
 #include "Editor/Asset.h"
 #include "Editor/IEditor.h"
-#include "Editor/IPipelineDependencySet.h"
+#include "Editor/IPipelineDepends.h"
+#include "Editor/PipelineDependencySet.h"
 #include "Editor/PipelineDependency.h"
 #include "I18N/Text.h"
 #include "Net/Url.h"
@@ -79,10 +80,17 @@ bool PublishWizardTool::launch(ui::Widget* parent, editor::IEditor* editor, db::
 		return false;
 	}
 
-	auto dependencySet = editor->buildAssetDependencies(object, ~0);
-	for (uint32_t i = 0; i < dependencySet->size(); ++i)
+	editor::PipelineDependencySet dependencySet;
+	Ref< editor::IPipelineDepends > depends = editor->createPipelineDepends(&dependencySet, std::numeric_limits< uint32_t >::max());
+	if (!depends)
+		return false;
+
+	depends->addDependency(object);
+	depends->waitUntilFinished();
+
+	for (uint32_t i = 0; i < dependencySet.size(); ++i)
 	{
-		auto dependency = dependencySet->get(i);
+		auto dependency = dependencySet.get(i);
 		auto dependencyInstance = editor->getSourceDatabase()->getInstance(dependency->sourceInstanceGuid);
 		if (!dependencyInstance)
 		{

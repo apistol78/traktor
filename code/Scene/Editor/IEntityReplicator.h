@@ -14,6 +14,9 @@
 
 namespace traktor
 {
+
+class Guid;
+
     namespace editor
     {
 
@@ -64,14 +67,16 @@ public:
      * \param pipelineBuilder Pipeline builder.
      * \param assetPath Asset path.
      * \param source Source object, entity data.
-     * \param model Model which has been used in tracing, created from createModel method.
+     * \param model Modified model, based of created from createModel method.
+     * \param outputGuid Guid to use for synthesized builds required when modifing output.
      * \return Replacement entity/component data if necessary, will be replaced in output scene.
      */
     virtual Ref< Object > modifyOutput(
         editor::IPipelineBuilder* pipelineBuilder,
 		const std::wstring& assetPath,
         const Object* source,
-        const model::Model* model
+        const model::Model* model,
+        const Guid& outputGuid
     ) const = 0;
 };
 

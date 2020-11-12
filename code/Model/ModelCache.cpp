@@ -1,6 +1,5 @@
 #include "Core/Io/FileSystem.h"
 #include "Core/Misc/Adler32.h"
-#include "Core/Misc/HashStream.h"
 #include "Core/Misc/String.h"
 #include "Core/Serialization/BinarySerializer.h"
 #include "Core/Thread/Acquire.h"

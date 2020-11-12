@@ -80,6 +80,7 @@ Ref< Entity > WorldEntityFactory::createEntity(const IEntityBuilder* builder, co
 		if (!m_resourceManager->bind(externalEntityData->getEntityData(), resolvedEntityData))
 			return nullptr;
 
+		resolvedEntityData->setId(externalEntityData->getId());
 		resolvedEntityData->setName(externalEntityData->getName());
 		resolvedEntityData->setTransform(externalEntityData->getTransform());
 

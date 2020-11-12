@@ -18,7 +18,7 @@
 #include "Database/Instance.h"
 #include "Editor/IPipeline.h"
 #include "Editor/IPipelineDb.h"
-#include "Editor/IPipelineDependencySet.h"
+#include "Editor/PipelineDependencySet.h"
 #include "Editor/IPipelineInstanceCache.h"
 #include "Editor/PipelineDependency.h"
 #include "Editor/Pipeline/PipelineDependsParallel.h"
@@ -55,7 +55,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.editor.PipelineDependsParallel", PipelineDepend
 PipelineDependsParallel::PipelineDependsParallel(
 	PipelineFactory* pipelineFactory,
 	db::Database* sourceDatabase,
-	IPipelineDependencySet* dependencySet,
+	PipelineDependencySet* dependencySet,
 	IPipelineDb* pipelineDb,
 	IPipelineInstanceCache* instanceCache
 )
@@ -270,7 +270,7 @@ Ref< PipelineDependency > PipelineDependsParallel::findOrCreateDependency(
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_dependencySetLock);
 
 	uint32_t dependencyIndex = m_dependencySet->get(guid);
-	if (dependencyIndex != IPipelineDependencySet::DiInvalid)
+	if (dependencyIndex != PipelineDependencySet::DiInvalid)
 	{
 		PipelineDependency* dependency = m_dependencySet->get(dependencyIndex);
 		T_ASSERT(dependency);

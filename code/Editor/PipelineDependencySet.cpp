@@ -3,14 +3,14 @@
 #include "Core/Serialization/MemberRefArray.h"
 #include "Core/Serialization/MemberStl.h"
 #include "Editor/PipelineDependency.h"
-#include "Editor/Pipeline/PipelineDependencySet.h"
+#include "Editor/PipelineDependencySet.h"
 
 namespace traktor
 {
 	namespace editor
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.editor.PipelineDependencySet", 0, PipelineDependencySet, IPipelineDependencySet)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.editor.PipelineDependencySet", 0, PipelineDependencySet, ISerializable)
 
 uint32_t PipelineDependencySet::add(PipelineDependency* dependency)
 {

@@ -90,6 +90,7 @@ Ref< ISerializable > resolveAllExternal(editor::IPipelineCommon* pipeline, const
 			if (!resolvedEntityData)
 				return nullptr;
 
+			resolvedEntityData->setId(externalEntityDataRef->getId());
 			resolvedEntityData->setName(externalEntityDataRef->getName());
 			resolvedEntityData->setTransform(externalEntityDataRef->getTransform());
 
@@ -385,7 +386,7 @@ bool BakePipelineOperator::create(const editor::IPipelineSettings* settings)
 	}	
 
 	// Create output path for debugging data.
-	FileSystem::getInstance().makeAllDirectories(Path(L"data/Temp/Bake"));
+	// FileSystem::getInstance().makeAllDirectories(Path(L"data/Temp/Bake"));
 	return true;
 }
 
@@ -422,9 +423,6 @@ bool BakePipelineOperator::build(
 	const auto configuration = mandatory_non_null_type_cast< const BakeConfiguration* >(operatorData);
 	uint32_t configurationHash = DeepHash(configuration).get();
 
-	Guid lightmapSeedId = pipelineBuilder->synthesizeOutputGuid(100000);
-	Guid irradianceGridSeedId = pipelineBuilder->synthesizeOutputGuid(100000);
-
 	Ref< TracerTask > tracerTask = new TracerTask(
 		sourceInstance->getGuid(),
 		configuration
@@ -454,6 +452,13 @@ bool BakePipelineOperator::build(
 		int32_t debugIndex = 0;
 		scene::Traverser::visit(flattenedLayer, [&](Ref< world::EntityData >& inoutEntityData) -> scene::Traverser::VisitorResult
 		{
+			Guid entityId = inoutEntityData->getId();
+			if (entityId.isNull())
+				return scene::Traverser::VrSkip;
+
+			Guid lightmapId = entityId.permutation(1);
+			Guid outputId = entityId.permutation(2);
+
 			if (auto editorAttributes = inoutEntityData->getComponent< world::EditorAttributesComponentData >())
 			{
 				if (!editorAttributes->include || editorAttributes->dynamic)
@@ -482,15 +487,12 @@ bool BakePipelineOperator::build(
 				if (!model)
 					continue;
 
-				std::wstring name = str(L"%s_%d", inoutEntityData->getName().c_str(), debugIndex); debugIndex++;
-				Guid lightmapId = lightmapSeedId.permutate();
-
 				// Ensure model is fit for tracing.
-				// model->clear(model::Model::CfColors | model::Model::CfJoints);
+				model->clear(model::Model::CfColors | model::Model::CfJoints);
 				model::Triangulate().apply(*model);
-				// model::CleanDuplicates(0.0f).apply(*model);
-				// model::CleanDegenerate().apply(*model);
-				// model::CalculateTangents(false).apply(*model);
+				model::CleanDuplicates(0.0f).apply(*model);
+				model::CleanDegenerate().apply(*model);
+				model::CalculateTangents(false).apply(*model);
 
 				// Calculate size of lightmap from geometry.
 				int32_t lightmapSize = calculateLightmapSize(
@@ -516,7 +518,32 @@ bool BakePipelineOperator::build(
 					material.setLightMap(model::Material::Map(L"Lightmap", L"Lightmap", false, lightmapId));
 				}
 
+				// Load texture images and attach to materials.
+				for (auto& material : model->getMaterials())
+				{
+					auto diffuseMap = material.getDiffuseMap();
+					if (diffuseMap.texture.isNotNull())
+					{
+						Ref< const render::TextureAsset > textureAsset = pipelineBuilder->getObjectReadOnly< render::TextureAsset >(diffuseMap.texture);
+						if (!textureAsset)
+							continue;
+
+						Path filePath = FileSystem::getInstance().getAbsolutePath(Path(m_assetPath) + textureAsset->getFileName());
+						Ref< IStream > file = pipelineBuilder->openFile(filePath);
+						if (!file)
+							continue;
+
+						Ref< drawing::Image > image = drawing::Image::load(file, textureAsset->getFileName().getExtension());
+						if (!image)
+							continue;
+
+						diffuseMap.image = image;			
+						material.setDiffuseMap(diffuseMap);
+					}
+				}
+
 				// Add model to raytracing task.
+				std::wstring name = str(L"%s_%d", inoutEntityData->getName().c_str(), debugIndex); debugIndex++;
 				if (!addModel(
 					pipelineBuilder,
 					model,
@@ -534,7 +561,8 @@ bool BakePipelineOperator::build(
 					pipelineBuilder,
 					m_assetPath,
 					componentData,
-					model
+					model,
+					outputId
 				));
 				if (replaceComponentData == nullptr)
 					inoutEntityData->removeComponent(componentData);
@@ -554,7 +582,7 @@ bool BakePipelineOperator::build(
 
 	// Create irradiance grid task.
 	{
-		Guid irradianceGridId = irradianceGridSeedId.permutate();
+		Guid irradianceGridId = sourceInstance->getGuid().permutation(1000);
 
 		// Create a black irradiance grid first.
 		if (pipelineBuilder->getOutputDatabase()->getInstance(irradianceGridId) == nullptr)

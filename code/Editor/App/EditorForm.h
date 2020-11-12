@@ -148,7 +148,7 @@ public:
 
 	virtual void buildWaitUntilFinished() override final;
 
-	virtual Ref< IPipelineDependencySet > buildAssetDependencies(const ISerializable* asset, uint32_t recursionDepth) override final;
+	virtual Ref< IPipelineDepends> createPipelineDepends(PipelineDependencySet* dependencySet, uint32_t recursionDepth) override final;
 
 	virtual void setStoreObject(const std::wstring& name, Object* object) override final;
 

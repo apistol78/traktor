@@ -5,7 +5,7 @@
 #include "Database/Group.h"
 #include "Database/Instance.h"
 #include "Editor/IPipelineBuilder.h"
-#include "Editor/IPipelineDependencySet.h"
+#include "Editor/PipelineDependencySet.h"
 #include "Editor/IPipelineDepends.h"
 #include "Editor/PipelineDependency.h"
 #include "Resource/ResourceBundle.h"
@@ -19,7 +19,7 @@ namespace traktor
 		namespace
 		{
 
-void collectResources(editor::IPipelineBuilder* pipelineBuilder, const editor::IPipelineDependencySet* dependencySet, const editor::PipelineDependency* dependency, std::vector< std::pair< const TypeInfo*, Guid > >& outResources, std::set< Guid >& inoutHistory)
+void collectResources(editor::IPipelineBuilder* pipelineBuilder, const editor::PipelineDependencySet* dependencySet, const editor::PipelineDependency* dependency, std::vector< std::pair< const TypeInfo*, Guid > >& outResources, std::set< Guid >& inoutHistory)
 {
 	if (inoutHistory.find(dependency->outputGuid) != inoutHistory.end())
 		return;
@@ -99,7 +99,7 @@ bool ResourceBundlePipeline::buildDependencies(
 
 bool ResourceBundlePipeline::buildOutput(
 	editor::IPipelineBuilder* pipelineBuilder,
-	const editor::IPipelineDependencySet* dependencySet,
+	const editor::PipelineDependencySet* dependencySet,
 	const editor::PipelineDependency* dependency,
 	const db::Instance* sourceInstance,
 	const ISerializable* sourceAsset,

@@ -65,6 +65,7 @@ Ref< ISerializable > resolveAllExternal(editor::IPipelineCommon* pipeline, const
 				return nullptr;
 			}
 
+			resolvedEntityData->setId(externalEntityDataRef->getId());
 			resolvedEntityData->setName(externalEntityDataRef->getName());
 			resolvedEntityData->setTransform(externalEntityDataRef->getTransform());
 
@@ -263,6 +264,7 @@ Ref< ISerializable > PrefabEntityPipeline::buildOutput(
 
 	// Create our output entity which will only contain the merged meshes.
 	Ref< world::EntityData > outputEntityData = new world::EntityData();
+	outputEntityData->setId(prefabEntityData->getId());
 	outputEntityData->setName(prefabEntityData->getName());
 	outputEntityData->setTransform(prefabEntityData->getTransform());
 

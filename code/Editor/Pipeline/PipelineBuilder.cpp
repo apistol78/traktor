@@ -23,9 +23,9 @@
 #include "Editor/IPipelineDb.h"
 #include "Editor/IPipelineInstanceCache.h"
 #include "Editor/PipelineDependency.h"
+#include "Editor/PipelineDependencySet.h"
 #include "Editor/Pipeline/PipelineBuilder.h"
 #include "Editor/Pipeline/PipelineDependsIncremental.h"
-#include "Editor/Pipeline/PipelineDependencySet.h"
 #include "Editor/Pipeline/PipelineFactory.h"
 
 namespace traktor
@@ -65,7 +65,7 @@ private:
 };
 
 void calculateGlobalHash(
-	const IPipelineDependencySet* dependencySet,
+	const PipelineDependencySet* dependencySet,
 	const PipelineDependency* dependency,
 	uint32_t& outPipelineHash,
 	uint32_t& outSourceAssetHash,
@@ -133,7 +133,7 @@ PipelineBuilder::PipelineBuilder(
 {
 }
 
-bool PipelineBuilder::build(const IPipelineDependencySet* dependencySet, bool rebuild)
+bool PipelineBuilder::build(const PipelineDependencySet* dependencySet, bool rebuild)
 {
 	T_ANONYMOUS_VAR(ScopeIndent)(log::info);
 	T_ANONYMOUS_VAR(ScopeIndent)(log::warning);
@@ -296,7 +296,7 @@ bool PipelineBuilder::build(const IPipelineDependencySet* dependencySet, bool re
 					makeFunctor
 					<
 						PipelineBuilder,
-						const IPipelineDependencySet*,
+						const PipelineDependencySet*,
 						Thread*,
 						int32_t
 					>
@@ -400,6 +400,12 @@ Ref< ISerializable > PipelineBuilder::buildOutput(const db::Instance* sourceInst
 	return product;
 }
 
+bool PipelineBuilder::buildAdHocOutput(const ISerializable* sourceAsset, const Guid& outputGuid, const Object* buildParams)
+{
+	std::wstring outputPath = L"Generated/" + outputGuid.format();
+	return buildAdHocOutput(sourceAsset, outputPath, outputGuid, buildParams);
+}
+
 bool PipelineBuilder::buildAdHocOutput(const ISerializable* sourceAsset, const std::wstring& outputPath, const Guid& outputGuid, const Object* buildParams)
 {
 	// Scan dependencies of source asset.
@@ -414,7 +420,7 @@ bool PipelineBuilder::buildAdHocOutput(const ISerializable* sourceAsset, const s
 	pipelineDepends.waitUntilFinished();
 
 	uint32_t index = dependencySet.get(outputGuid);
-	if (index == IPipelineDependencySet::DiInvalid)
+	if (index == PipelineDependencySet::DiInvalid)
 		return false;
 
 	PipelineDependency* dependency = dependencySet.get(index);
@@ -530,7 +536,7 @@ bool PipelineBuilder::buildAdHocOutput(const ISerializable* sourceAsset, const s
 	}
 
 	for (const auto& we : workSet)
-		performBuild(&dependencySet, we.dependency, we.buildParams, we.reason);
+		performBuild(&dependencySet, we.dependency, we.buildParams, we.reason | PbrSynthesized);
 
 	return true;
 }
@@ -647,7 +653,7 @@ Ref< IStream > PipelineBuilder::openFile(const Path& filePath)
 	return fileStream ? new BufferedStream(fileStream) : nullptr;
 }
 
-IPipelineBuilder::BuildResult PipelineBuilder::performBuild(const IPipelineDependencySet* dependencySet, const PipelineDependency* dependency, const Object* buildParams, uint32_t reason)
+IPipelineBuilder::BuildResult PipelineBuilder::performBuild(const PipelineDependencySet* dependencySet, const PipelineDependency* dependency, const Object* buildParams, uint32_t reason)
 {
 	// Ensure FP is in known state.
 #if defined(_WIN32) && !defined(_WIN64)
@@ -731,6 +737,15 @@ IPipelineBuilder::BuildResult PipelineBuilder::performBuild(const IPipelineDepen
 	Ref< IPipeline > pipeline = m_pipelineFactory->findPipeline(*dependency->pipelineType);
 	T_ASSERT(pipeline);
 
+	// Use guid of output as a basis for synthetic ids.
+	Guid* currentSynthesis = (Guid*)m_synthesisGuid.get();
+	Guid* synthesis = nullptr;
+	if ((reason & PbrSynthesized) == 0)
+	{
+		synthesis = new Guid(dependency->outputGuid.permutation(c_synthesisSeedGuid));
+		m_synthesisGuid.set(synthesis);
+	}
+
 	bool result = pipeline->buildOutput(
 		this,
 		dependencySet,
@@ -742,6 +757,13 @@ IPipelineBuilder::BuildResult PipelineBuilder::performBuild(const IPipelineDepen
 		buildParams,
 		reason
 	);
+
+	if (synthesis)
+	{
+		m_synthesisGuid.set(currentSynthesis);
+		delete synthesis;
+	}
+
 	if (result)
 		Atomic::increment(m_succeededBuilt);
 
@@ -870,7 +892,7 @@ bool PipelineBuilder::getInstancesFromCache(const PipelineDependency* dependency
 }
 
 void PipelineBuilder::buildThread(
-	const IPipelineDependencySet* dependencySet,
+	const PipelineDependencySet* dependencySet,
 	Thread* controlThread,
 	int32_t cpuCore
 )
@@ -898,10 +920,6 @@ void PipelineBuilder::buildThread(
 				m_progressEnd,
 				we.dependency
 			);
-
-		// Use guid of output as a basis for synthesis.
-		Guid synthesis = we.dependency->outputGuid.permutation(c_synthesisSeedGuid);
-		m_synthesisGuid.set(&synthesis);
 
 		BuildResult result = performBuild(dependencySet, we.dependency, we.buildParams, we.reason);
 		if (result == BrSucceeded || result == BrSucceededWithWarnings)
