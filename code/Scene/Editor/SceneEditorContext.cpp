@@ -22,7 +22,6 @@
 #include "Scene/Editor/IModifier.h"
 #include "Scene/Editor/ISceneEditorPlugin.h"
 #include "Scene/Editor/ISceneEditorProfile.h"
-//#include "Scene/Editor/LayerEntityEditor.h"
 #include "Scene/Editor/SceneAsset.h"
 #include "Scene/Editor/SceneEditorContext.h"
 #include "Scene/Editor/Traverser.h"
@@ -313,6 +312,8 @@ void SceneEditorContext::setSceneAsset(SceneAsset* sceneAsset)
 
 	if (m_sceneAsset != nullptr)
 	{
+		std::set< Guid > usedIds;
+
 		for (auto layer : m_sceneAsset->getLayers())
 		{
 			if (layer->getId().isNull())
@@ -320,6 +321,12 @@ void SceneEditorContext::setSceneAsset(SceneAsset* sceneAsset)
 				log::warning << L"Layer \"" << layer->getName() << L"\" has no ID, new ID added." << Endl;
 				layer->setId(Guid::create());
 			}
+			else if (usedIds.find(layer->getId()) != usedIds.end())
+			{
+				log::warning << L"Layer \"" << layer->getName() << L"\" has duplicate ID, new ID added." << Endl;
+				layer->setId(Guid::create());
+			}
+			usedIds.insert(layer->getId());
 
 			Traverser::visit(layer, [&](Ref< world::EntityData >& entityData) {
 				if (entityData->getId().isNull())
@@ -327,6 +334,12 @@ void SceneEditorContext::setSceneAsset(SceneAsset* sceneAsset)
 					log::warning << L"Entity \"" << entityData->getName() << L"\" has no ID, new ID added." << Endl;
 					entityData->setId(Guid::create());
 				}
+				else if (usedIds.find(entityData->getId()) != usedIds.end())
+				{
+					log::warning << L"Entity \"" << entityData->getName() << L"\" has duplicate ID, new ID added." << Endl;
+					entityData->setId(Guid::create());
+				}
+				usedIds.insert(entityData->getId());
 				return Traverser::VrContinue;
 			});
 		}
@@ -730,20 +743,22 @@ void SceneEditorContext::cloneSelected()
 	if (selectedEntityAdapters.empty())
 		return;
 
-	for (RefArray< EntityAdapter >::iterator i = selectedEntityAdapters.begin(); i != selectedEntityAdapters.end(); ++i)
+	for (auto selectedEntityAdapter : selectedEntityAdapters)
 	{
-		Ref< EntityAdapter > parentContainerGroup = (*i)->getParentContainerGroup();
+		Ref< EntityAdapter > parentContainerGroup = selectedEntityAdapter->getParentContainerGroup();
 		if (!parentContainerGroup)
 			continue;
 
-		Ref< world::EntityData > clonedEntityData = DeepClone((*i)->getEntityData()).create< world::EntityData >();
+		Ref< world::EntityData > clonedEntityData = DeepClone(selectedEntityAdapter->getEntityData()).create< world::EntityData >();
 		T_ASSERT(clonedEntityData);
+
+		clonedEntityData->setId(Guid::create());
 
 		Ref< EntityAdapter > clonedEntityAdapter = new EntityAdapter(this);
 		clonedEntityAdapter->prepare(clonedEntityData, 0, 0);
 		parentContainerGroup->addChild(clonedEntityAdapter);
 
-		(*i)->m_selected = false;
+		selectedEntityAdapter->m_selected = false;
 		clonedEntityAdapter->m_selected = true;
 	}
 
