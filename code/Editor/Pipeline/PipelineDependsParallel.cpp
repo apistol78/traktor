@@ -368,7 +368,6 @@ void PipelineDependsParallel::updateDependencyHashes(
 
 	// Calculate source of source asset.
 	dependency->sourceAssetHash = pipeline->hashAsset(dependency->sourceAsset);
-	// dependency->sourceAssetHash = DeepHash(dependency->sourceAsset).get();
 	
 	// Calculate hash of instance data.
 	dependency->sourceDataHash = 0;
