@@ -23,7 +23,7 @@ class Instance;
 	namespace editor
 	{
 
-class IPipelineDependencySet;
+class PipelineDependencySet;
 class PipelineDependency;
 
 /*! Pipeline builder interface.
@@ -63,7 +63,7 @@ public:
 	//@{
 
 	/*! Build all instances in dependency set. */
-	virtual bool build(const IPipelineDependencySet* dependencySet, bool rebuild) = 0;
+	virtual bool build(const PipelineDependencySet* dependencySet, bool rebuild) = 0;
 
 	//@}
 
@@ -78,6 +78,9 @@ public:
 	 * \return Output instance.
 	 */
 	virtual Ref< ISerializable > buildOutput(const db::Instance* sourceInstance, const ISerializable* sourceAsset, const Object* buildParams = nullptr) = 0;
+
+	/*! Build ad-hoc output instance from source asset. */
+	virtual bool buildAdHocOutput(const ISerializable* sourceAsset, const Guid& outputGuid, const Object* buildParams = nullptr) = 0;
 
 	/*! Build ad-hoc output instance from source asset. */
 	virtual bool buildAdHocOutput(const ISerializable* sourceAsset, const std::wstring& outputPath, const Guid& outputGuid, const Object* buildParams = nullptr) = 0;

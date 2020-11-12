@@ -44,7 +44,7 @@
 #include "Editor/Pipeline/MemCachedPipelineCache.h"
 #include "Editor/Pipeline/PipelineBuilder.h"
 #include "Editor/Pipeline/PipelineDbFlat.h"
-#include "Editor/Pipeline/PipelineDependencySet.h"
+#include "Editor/PipelineDependencySet.h"
 #include "Editor/Pipeline/PipelineDependsIncremental.h"
 #include "Editor/Pipeline/PipelineDependsParallel.h"
 #include "Editor/Pipeline/PipelineFactory.h"

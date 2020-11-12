@@ -47,7 +47,7 @@ public:
 
 	virtual bool buildOutput(
 		IPipelineBuilder* pipelineBuilder,
-		const IPipelineDependencySet* dependencySet,
+		const PipelineDependencySet* dependencySet,
 		const PipelineDependency* dependency,
 		const db::Instance* sourceInstance,
 		const ISerializable* sourceAsset,

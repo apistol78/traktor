@@ -22,7 +22,7 @@ class Job;
 	{
 
 class IPipelineDb;
-class IPipelineDependencySet;
+class PipelineDependencySet;
 class IPipelineInstanceCache;
 class PipelineFactory;
 
@@ -37,7 +37,7 @@ public:
 	PipelineDependsParallel(
 		PipelineFactory* pipelineFactory,
 		db::Database* sourceDatabase,
-		IPipelineDependencySet* dependencySet,
+		PipelineDependencySet* dependencySet,
 		IPipelineDb* pipelineDb,
 		IPipelineInstanceCache* instanceCache
 	);
@@ -88,7 +88,7 @@ private:
 	RefArray< Job > m_jobs;
 	Ref< PipelineFactory > m_pipelineFactory;
 	Ref< db::Database > m_sourceDatabase;
-	Ref< IPipelineDependencySet > m_dependencySet;
+	Ref< PipelineDependencySet > m_dependencySet;
 	Ref< IPipelineDb > m_pipelineDb;
 	Ref< IPipelineInstanceCache > m_instanceCache;
 	ThreadLocal m_currentDependency;

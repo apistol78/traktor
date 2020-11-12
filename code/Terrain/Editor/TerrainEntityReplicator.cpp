@@ -69,7 +69,8 @@ Ref< Object > TerrainEntityReplicator::modifyOutput(
     editor::IPipelineBuilder* pipelineBuilder,
 	const std::wstring& assetPath,
     const Object* source,
-    const model::Model* model
+    const model::Model* model,
+    const Guid& outputGuid
 ) const
 {
     return const_cast< Object* >(source);

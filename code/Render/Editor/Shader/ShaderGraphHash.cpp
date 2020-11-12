@@ -1,5 +1,4 @@
-#include <list>
-#include <set>
+#include "Core/Containers/SmallSet.h"
 #include "Core/Serialization/DeepClone.h"
 #include "Core/Serialization/DeepHash.h"
 #include "Render/Editor/Node.h"
@@ -35,8 +34,8 @@ uint32_t ShaderGraphHash::calculate(const Node* node)
 
 uint32_t ShaderGraphHash::calculate(const ShaderGraph* shaderGraph)
 {
-	std::list< std::pair< Ref< const Node >, int32_t > > nodeStack;
-	std::set< std::pair< Ref< const Node >, int32_t > > nodeVisited;
+	AlignedVector< std::pair< Ref< const Node >, int32_t > > nodeStack;
+	SmallSet< std::pair< Ref< const Node >, int32_t > > nodeVisited;
 	uint32_t hash = 0;
 
 	// Collect root nodes; assume all nodes with no output pins to be roots.
@@ -58,7 +57,7 @@ uint32_t ShaderGraphHash::calculate(const ShaderGraph* shaderGraph)
 			continue;
 		nodeVisited.insert(top);
 
-		Ref< const Node > node = top.first;
+		const Node* node = top.first;
 		int32_t order = top.second;
 
 		// Find node's traits; some nodes which doesn't have a trait

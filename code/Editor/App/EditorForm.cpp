@@ -39,6 +39,7 @@
 #include "Editor/IObjectEditorFactory.h"
 #include "Editor/IPipeline.h"
 #include "Editor/PipelineDependency.h"
+#include "Editor/PipelineDependencySet.h"
 #include "Editor/TypeBrowseFilter.h"
 #include "Editor/App/BrowseGroupDialog.h"
 #include "Editor/App/BrowseInstanceDialog.h"
@@ -68,7 +69,6 @@
 #include "Editor/Pipeline/PipelineBuilder.h"
 #include "Editor/Pipeline/PipelineBuilderDistributed.h"
 #include "Editor/Pipeline/PipelineDbFlat.h"
-#include "Editor/Pipeline/PipelineDependencySet.h"
 #include "Editor/Pipeline/PipelineDependsIncremental.h"
 #include "Editor/Pipeline/PipelineDependsParallel.h"
 #include "Editor/Pipeline/PipelineFactory.h"
@@ -1990,30 +1990,24 @@ void EditorForm::buildWaitUntilFinished()
 	m_threadBuild = nullptr;
 }
 
-Ref< IPipelineDependencySet > EditorForm::buildAssetDependencies(const ISerializable* asset, uint32_t recursionDepth)
+Ref< IPipelineDepends> EditorForm::createPipelineDepends(PipelineDependencySet* dependencySet, uint32_t recursionDepth)
 {
 	T_ASSERT(m_sourceDatabase);
 
-	Ref< IPipelineDependencySet > dependencySet = new PipelineDependencySet();
-
 	std::wstring cachePath = m_mergedSettings->getProperty< std::wstring >(L"Pipeline.CachePath");
 
-	PipelineFactory pipelineFactory(m_mergedSettings);
-	PipelineInstanceCache instanceCache(m_sourceDatabase, cachePath);
+	Ref< PipelineFactory > pipelineFactory = new PipelineFactory(m_mergedSettings);
+	Ref< PipelineInstanceCache > instanceCache = new PipelineInstanceCache(m_sourceDatabase, cachePath);
 
-	PipelineDependsIncremental pipelineDepends(
-		&pipelineFactory,
+	return new PipelineDependsIncremental(
+		pipelineFactory,
 		m_sourceDatabase,
 		m_outputDatabase,
 		dependencySet,
 		m_pipelineDb,
-		&instanceCache,
+		instanceCache,
 		recursionDepth
 	);
-	pipelineDepends.addDependency(asset);
-	pipelineDepends.waitUntilFinished();
-
-	return dependencySet;
 }
 
 void EditorForm::setStoreObject(const std::wstring& name, Object* object)

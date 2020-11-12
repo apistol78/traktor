@@ -18,7 +18,7 @@ namespace traktor
 	{
 
 class IPipelineDb;
-class IPipelineDependencySet;
+class PipelineDependencySet;
 class IPipelineInstanceCache;
 class PipelineFactory;
 
@@ -34,7 +34,7 @@ public:
 		PipelineFactory* pipelineFactory,
 		db::Database* sourceDatabase,
 		db::Database* outputDatabase,
-		IPipelineDependencySet* dependencySet,
+		PipelineDependencySet* dependencySet,
 		IPipelineDb* pipelineDb,
 		IPipelineInstanceCache* instanceCache,
 		uint32_t recursionDepth = ~0U
@@ -84,7 +84,7 @@ private:
 	Ref< PipelineFactory > m_pipelineFactory;
 	Ref< db::Database > m_sourceDatabase;
 	Ref< db::Database > m_outputDatabase;
-	Ref< IPipelineDependencySet > m_dependencySet;
+	Ref< PipelineDependencySet > m_dependencySet;
 	Ref< IPipelineDb > m_pipelineDb;
 	Ref< IPipelineInstanceCache > m_instanceCache;
 	uint32_t m_maxRecursionDepth;

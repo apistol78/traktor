@@ -372,6 +372,7 @@ void GameEntityWizardDialog::eventDialogClick(ui::ButtonClickEvent* event)
 		}
 
 		Ref< world::EntityData > entityData = new world::EntityData();
+		entityData->setId(Guid::create());
 		entityData->setName(name);
 
 		Ref< db::Instance > skeletonAssetInstance;

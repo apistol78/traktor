@@ -22,7 +22,8 @@
 #include "Editor/Assets.h"
 #include "Editor/IEditor.h"
 #include "Editor/IEditorPage.h"
-#include "Editor/IPipelineDependencySet.h"
+#include "Editor/IPipelineDepends.h"
+#include "Editor/PipelineDependencySet.h"
 #include "Editor/IWizardTool.h"
 #include "Editor/App/BrowseTypeDialog.h"
 #include "Editor/App/DatabaseView.h"
@@ -852,18 +853,22 @@ bool DatabaseView::handleCommand(const ui::Command& command)
 				return false;
 			}
 
-			Ref< IPipelineDependencySet > dependencySet = m_editor->buildAssetDependencies(object, ~0U);
-			if (!dependencySet)
+			PipelineDependencySet dependencySet;
+			Ref< IPipelineDepends > depends = m_editor->createPipelineDepends(&dependencySet, std::numeric_limits< uint32_t >::max());
+			if (!depends)
 				return false;
+
+			depends->addDependency(object);
+			depends->waitUntilFinished();
 
 			Ref< InstanceClipboardData > instanceClipboardData = new InstanceClipboardData();
 			instanceClipboardData->addInstance(instance->getName(), object);
 
 			bool rootIsPrivate = isInstanceInPrivate(instance);
 
-			for (uint32_t i = 0; i < dependencySet->size(); ++i)
+			for (uint32_t i = 0; i < dependencySet.size(); ++i)
 			{
-				const PipelineDependency* dependency = dependencySet->get(i);
+				const PipelineDependency* dependency = dependencySet.get(i);
 				T_ASSERT(dependency);
 
 				Ref< db::Instance > dependentInstance = m_db->getInstance(dependency->outputGuid);
@@ -1371,17 +1376,21 @@ void DatabaseView::filterDependencies(db::Instance* instance)
 	if (!instance)
 		return;
 
-	Ref< IPipelineDependencySet > dependencySet = m_editor->buildAssetDependencies(instance->getObject(), ~0U);
-	if (!dependencySet)
+	PipelineDependencySet dependencySet;
+	Ref< IPipelineDepends > depends = m_editor->createPipelineDepends(&dependencySet, std::numeric_limits< uint32_t >::max());
+	if (!depends)
 		return;
+
+	depends->addDependency(instance->getObject());
+	depends->waitUntilFinished();
 
 	// Create set of all dependency guids, include root guid as well.
 	std::set< Guid > guidSet;
 	guidSet.insert(instance->getGuid());
 
-	for (uint32_t i = 0; i < dependencySet->size(); ++i)
+	for (uint32_t i = 0; i < dependencySet.size(); ++i)
 	{
-		const PipelineDependency* dependency = dependencySet->get(i);
+		const PipelineDependency* dependency = dependencySet.get(i);
 		T_ASSERT(dependency);
 
 		if (dependency->outputGuid.isNotNull())
@@ -1409,20 +1418,24 @@ void DatabaseView::listInstanceDependents(db::Instance* instance)
 		if (!rootInstance)
 			continue;
 
-		Ref< IPipelineDependencySet > dependencySet = m_editor->buildAssetDependencies(rootInstance->getObject(), ~0U);
-		if (!dependencySet)
-			continue;
+		PipelineDependencySet dependencySet;
+		Ref< IPipelineDepends > depends = m_editor->createPipelineDepends(&dependencySet, std::numeric_limits< uint32_t >::max());
+		if (!depends)
+			return;
 
-		for (uint32_t j = 0; j < dependencySet->size(); ++j)
+		depends->addDependency(rootInstance->getObject());
+		depends->waitUntilFinished();
+
+		for (uint32_t j = 0; j < dependencySet.size(); ++j)
 		{
-			const PipelineDependency* dependency = dependencySet->get(j);
+			const PipelineDependency* dependency = dependencySet.get(j);
 			T_ASSERT(dependency != nullptr);
 
 			if (dependency->sourceInstanceGuid == findInstanceGuid)
 			{
-				for (uint32_t k = 0; k < dependencySet->size(); ++k)
+				for (uint32_t k = 0; k < dependencySet.size(); ++k)
 				{
-					const PipelineDependency* parentDependency = dependencySet->get(k);
+					const PipelineDependency* parentDependency = dependencySet.get(k);
 					T_ASSERT(parentDependency != nullptr);
 
 					if (parentDependency->children.find(j) != parentDependency->children.end())
@@ -1471,13 +1484,17 @@ void DatabaseView::eventToolSelectionClicked(ui::ToolBarButtonClickEvent* event)
 			{
 				guidSet.insert(assetsInstance->getGuid());
 
-				Ref< IPipelineDependencySet > dependencySet = m_editor->buildAssetDependencies(assetsInstance->getObject(), ~0U);
-				if (!dependencySet)
-					continue;
+				PipelineDependencySet dependencySet;
+				Ref< IPipelineDepends > depends = m_editor->createPipelineDepends(&dependencySet, std::numeric_limits< uint32_t >::max());
+				if (!depends)
+					return;
 
-				for (uint32_t j = 0; j < dependencySet->size(); ++j)
+				depends->addDependency(assetsInstance->getObject());
+				depends->waitUntilFinished();
+
+				for (uint32_t j = 0; j < dependencySet.size(); ++j)
 				{
-					const PipelineDependency* dependency = dependencySet->get(j);
+					const PipelineDependency* dependency = dependencySet.get(j);
 					T_ASSERT(dependency);
 
 					if (dependency->outputGuid.isNotNull())

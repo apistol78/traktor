@@ -106,6 +106,7 @@ Ref< ISerializable > SolidEntityPipeline::buildOutput(
 
 		// Create our output entity which will only contain the merged meshes.
 		Ref< world::EntityData > outputEntityData = new world::EntityData();
+		outputEntityData->setId(solidEntityData->getId());
 		outputEntityData->setName(solidEntityData->getName());
 		outputEntityData->setTransform(solidEntityData->getTransform());
 

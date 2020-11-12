@@ -65,14 +65,6 @@ bool Thread::start(Priority priority)
 	}
 #endif
 
-	//THREADNAME_INFO threadInfo;
-	//threadInfo.dwType = 0x1000;
-	////threadInfo.szName = m_name;
-	//threadInfo.dwThreadID = m_id;
-	//threadInfo.dwFlags = 0;
-	//__try { RaiseException(0x406D1388, 0, sizeof(threadInfo) / sizeof(DWORD), (const ULONG_PTR*)&threadInfo); }
-	//__except (EXCEPTION_CONTINUE_EXECUTION) {}
-
 #if !defined(_XBOX)
 	SetThreadDescription(m_handle, m_name);
 #endif

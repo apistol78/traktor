@@ -8,7 +8,7 @@
 #include "Database/Group.h"
 #include "Database/Instance.h"
 #include "Editor/IPipelineBuilder.h"
-#include "Editor/IPipelineDependencySet.h"
+#include "Editor/PipelineDependencySet.h"
 #include "Editor/IPipelineDepends.h"
 #include "Editor/IPipelineSettings.h"
 #include "Editor/PipelineDependency.h"
@@ -100,7 +100,7 @@ bool FileBundlePipeline::buildDependencies(
 
 bool FileBundlePipeline::buildOutput(
 	editor::IPipelineBuilder* pipelineBuilder,
-	const editor::IPipelineDependencySet* dependencySet,
+	const editor::PipelineDependencySet* dependencySet,
 	const editor::PipelineDependency* dependency,
 	const db::Instance* sourceInstance,
 	const ISerializable* sourceAsset,

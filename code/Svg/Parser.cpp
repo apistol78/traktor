@@ -552,7 +552,7 @@ void Parser::parseDefs(xml::Element* elm)
 			}
 		}
 		else
-			log::error << L"Unknown definition element \"" << name << L"\"" << Endl;
+			log::debug << L"Unknown definition element \"" << name << L"\"" << Endl;
 	}
 }
 

@@ -30,7 +30,7 @@ class Instance;
 
 class IPipelineBuilder;
 class IPipelineSettings;
-class IPipelineDependencySet;
+class PipelineDependencySet;
 class IPipelineDepends;
 class PipelineDependency;
 
@@ -90,7 +90,7 @@ public:
 	 */
 	virtual bool buildOutput(
 		IPipelineBuilder* pipelineBuilder,
-		const IPipelineDependencySet* dependencySet,
+		const PipelineDependencySet* dependencySet,
 		const PipelineDependency* dependency,
 		const db::Instance* sourceInstance,
 		const ISerializable* sourceAsset,

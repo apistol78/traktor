@@ -25,6 +25,7 @@
 //#include "Scene/Editor/LayerEntityEditor.h"
 #include "Scene/Editor/SceneAsset.h"
 #include "Scene/Editor/SceneEditorContext.h"
+#include "Scene/Editor/Traverser.h"
 #include "Scene/Editor/Events/CameraMovedEvent.h"
 #include "Scene/Editor/Events/FrameEvent.h"
 #include "Scene/Editor/Events/MeasurementEvent.h"
@@ -309,6 +310,27 @@ bool SceneEditorContext::shouldDrawGuide(const std::wstring& guideId) const
 void SceneEditorContext::setSceneAsset(SceneAsset* sceneAsset)
 {
 	m_sceneAsset = sceneAsset;
+
+	if (m_sceneAsset != nullptr)
+	{
+		for (auto layer : m_sceneAsset->getLayers())
+		{
+			if (layer->getId().isNull())
+			{
+				log::warning << L"Layer \"" << layer->getName() << L"\" has no ID, new ID added." << Endl;
+				layer->setId(Guid::create());
+			}
+
+			Traverser::visit(layer, [&](Ref< world::EntityData >& entityData) {
+				if (entityData->getId().isNull())
+				{
+					log::warning << L"Entity \"" << entityData->getName() << L"\" has no ID, new ID added." << Endl;
+					entityData->setId(Guid::create());
+				}
+				return Traverser::VrContinue;
+			});
+		}
+	}
 }
 
 const IEntityEditorFactory* SceneEditorContext::findEntityEditorFactory(const TypeInfo& entityDataType) const

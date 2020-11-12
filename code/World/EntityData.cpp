@@ -1,3 +1,4 @@
+#include "Core/Serialization/AttributePrivate.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberComposite.h"
 #include "Core/Serialization/MemberRefArray.h"
@@ -9,7 +10,17 @@ namespace traktor
 	namespace world
 	{
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.world.EntityData", 0, EntityData, ISerializable)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.world.EntityData", 1, EntityData, ISerializable)
+
+void EntityData::setId(const Guid& id)
+{
+	m_id = id;
+}
+
+const Guid& EntityData::getId() const
+{
+	return m_id;
+}
 
 void EntityData::setName(const std::wstring& name)
 {
@@ -71,6 +82,9 @@ const RefArray< IEntityComponentData >& EntityData::getComponents() const
 
 void EntityData::serialize(ISerializer& s)
 {
+	if (s.getVersion< EntityData >() >= 1)
+		s >> Member< Guid >(L"id", m_id, AttributePrivate());
+
 	s >> Member< std::wstring >(L"name", m_name);
 	s >> MemberComposite< Transform >(L"transform", m_transform);
 	s >> MemberRefArray< IEntityComponentData >(L"components", m_components);

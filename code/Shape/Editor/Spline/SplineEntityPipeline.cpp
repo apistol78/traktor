@@ -117,6 +117,7 @@ Ref< ISerializable > SplineEntityPipeline::buildOutput(
 
 		// Create our output entity which will only contain the merged meshes.
 		Ref< world::EntityData > outputEntityData = new world::EntityData();
+		outputEntityData->setId(splineEntityData->getId());
 		outputEntityData->setName(splineEntityData->getName());
 		outputEntityData->setTransform(splineEntityData->getTransform());
 
