@@ -1,4 +1,5 @@
 #include "Core/Guid.h"
+#include "Core/Containers/SmallMap.h"
 #include "Core/Io/IStream.h"
 #include "Core/Io/Path.h"
 #include "Core/Math/Color4f.h"
@@ -24,6 +25,7 @@ class HashSerializer : public Serializer
 public:
 	HashSerializer(Adler32& adler)
 	:	m_adler(adler)
+	,	m_writtenCount(0)
 	{
 	}
 
@@ -173,14 +175,11 @@ public:
 			auto it = m_written.find(object);
 			if (it == m_written.end())
 			{
-				m_written.insert(object);
+				m_written.insert(std::make_pair(object, ++m_writtenCount));
 				serialize(object);
 			}
 			else
-			{
-				uint32_t index = (uint32_t)std::distance(m_written.begin(), it);
-				m_adler.feed< uint32_t >(0x80000000 | index);
-			}
+				m_adler.feed< uint32_t >(it->second);
 		}
 		else
 			m_adler.feed< uint32_t >(0);
@@ -210,7 +209,8 @@ public:
 
 private:
 	Adler32& m_adler;
-	SmallSet< ISerializable* > m_written;
+	SmallMap< ISerializable*, uint32_t > m_written;
+	uint32_t m_writtenCount;
 };
 
 	}
