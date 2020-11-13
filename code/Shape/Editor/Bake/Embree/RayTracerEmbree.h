@@ -74,6 +74,12 @@ private:
 		int32_t depth
 	) const;
 
+    Scalar traceAmbientOcclusion(
+        const Vector4& origin,
+        const Vector4& normal,
+        RandomGeometry& random
+    ) const;
+
 	Color4f sampleAnalyticalLights(
         RandomGeometry& random,
         const Vector4& origin,

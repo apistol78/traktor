@@ -44,6 +44,7 @@
 #include "Scene/Editor/Traverser.h"
 #include "Shape/Editor/Bake/BakeConfiguration.h"
 #include "Shape/Editor/Bake/BakePipelineOperator.h"
+#include "Shape/Editor/Bake/BakeReceipt.h"
 #include "Shape/Editor/Bake/IblProbe.h"
 #include "Shape/Editor/Bake/TracerEnvironment.h"
 #include "Shape/Editor/Bake/TracerIrradiance.h"
@@ -249,6 +250,7 @@ bool addModel(
 	model::Model* model,
 	const Transform& transform,
 	const std::wstring& name,
+	int32_t priority,
 	const Guid& lightmapId,
 	int32_t lightmapSize,
 	TracerTask* tracerTask
@@ -313,7 +315,7 @@ bool addModel(
 
 	tracerTask->addTracerOutput(new TracerOutput(
 		name,
-		0,
+		priority,
 		model,
 		transform,
 		lightmapId,
@@ -413,15 +415,25 @@ bool BakePipelineOperator::build(
 	bool rebuild
 ) const
 {
-	Ref< TracerProcessor > tracerProcessor = ms_tracerProcessor;
+	const auto configuration = mandatory_non_null_type_cast< const BakeConfiguration* >(operatorData);
 
 	// In case no tracer processor is registered we create one for this build only,
 	// by doing so we can ensure trace is finished before returning.
+	Ref< TracerProcessor > tracerProcessor = ms_tracerProcessor;
 	if (!tracerProcessor)
 		tracerProcessor = new TracerProcessor(m_tracerType, pipelineBuilder->getOutputDatabase(), m_compressionMethod, false);
 
-	const auto configuration = mandatory_non_null_type_cast< const BakeConfiguration* >(operatorData);
-	uint32_t configurationHash = DeepHash(configuration).get();
+	// Cancel any bake process currently running for given scene.
+	tracerProcessor->cancel(sourceInstance->getGuid());
+
+	// Load last known receipt, used for prioritizing moved/new entities.
+	Ref< BakeReceipt > receipt;
+	if (m_editor)
+	{
+		Guid receiptId = sourceInstance->getGuid().permutation(1);
+		if ((receipt = pipelineBuilder->getOutputDatabase()->getObjectReadOnly< BakeReceipt >(receiptId)) == nullptr)
+			receipt = new BakeReceipt();
+	}
 
 	Ref< TracerTask > tracerTask = new TracerTask(
 		sourceInstance->getGuid(),
@@ -544,11 +556,29 @@ bool BakePipelineOperator::build(
 
 				// Add model to raytracing task.
 				std::wstring name = str(L"%s_%d", inoutEntityData->getName().c_str(), debugIndex); debugIndex++;
+
+				// Calculate priority, if entity has moved since last bake then it's prioritized.
+				int32_t priority = 0;
+				if (receipt)
+				{
+					Transform lastTransform;
+					if (receipt->getLastKnownTransform(entityId, lastTransform))
+					{
+						if (lastTransform != inoutEntityData->getTransform())
+							priority = 1;
+					}
+					else
+						priority = 1;
+
+					receipt->setTransform(entityId, inoutEntityData->getTransform());
+				}
+
 				if (!addModel(
 					pipelineBuilder,
 					model,
 					inoutEntityData->getTransform(),
 					name,
+					priority,
 					lightmapId,
 					lightmapSize,
 					tracerTask
@@ -659,6 +689,18 @@ bool BakePipelineOperator::build(
 		log::info << L"Waiting for lightmap baking to complete..." << Endl;
 		tracerProcessor->waitUntilIdle();
 		tracerProcessor = nullptr;
+	}
+
+	// Write out the receipt.
+	if (receipt)
+	{
+		Guid receiptId = sourceInstance->getGuid().permutation(1);
+		Ref< db::Instance > receiptInstance = pipelineBuilder->getOutputDatabase()->createInstance(L"Generated/" + receiptId.format(), db::CifReplaceExisting, &receiptId);
+		if (receiptInstance)
+		{
+			receiptInstance->setObject(receipt);
+			receiptInstance->commit();
+		}
 	}
 
 	return true;

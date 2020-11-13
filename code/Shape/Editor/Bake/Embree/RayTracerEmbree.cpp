@@ -75,16 +75,21 @@ Vector4 lambertianDirection(const Vector2& uv, const Vector4& direction)
 	return (Matrix44(u, v, direction, Vector4::zero()) * dir).xyz0().normalized();
 }
 
+void constructRay(const Vector4& position, const Vector4& direction, float far, RTCRay& outRay)
+{
+	position.storeAligned(&outRay.org_x);
+	direction.storeAligned(&outRay.dir_x);
+	outRay.tnear = 0.001f;
+	outRay.time = 0.0f;
+	outRay.tfar = far;
+	outRay.mask = 0;
+	outRay.id = 0;
+	outRay.flags = 0;
+}
+
 void constructRay(const Vector4& position, const Vector4& direction, float far, RTCRayHit& outRayHit)
 {
-	position.storeAligned(&outRayHit.ray.org_x);
-	direction.storeAligned(&outRayHit.ray.dir_x);
-	outRayHit.ray.tnear = 0.001f;
-	outRayHit.ray.time = 0.0f;
-	outRayHit.ray.tfar = far;
-	outRayHit.ray.mask = 0;
-	outRayHit.ray.id = 0;
-	outRayHit.ray.flags = 0;
+	constructRay(position, direction, far, outRayHit.ray);
 	outRayHit.hit.geomID = RTC_INVALID_GEOMETRY_ID;
 	outRayHit.hit.instID[0] = RTC_INVALID_GEOMETRY_ID;
 }
@@ -319,26 +324,13 @@ void RayTracerEmbree::traceLightmap(const model::Model* model, const GBuffer* gb
 
 			// Trace IBL and indirect illumination.
 			Color4f incoming(0.0f, 0.0f, 0.0f, 0.0f);
-			if (sampleCount > 0)
-			{
-				// for (int32_t i = 0; i < sampleCount; ++i)
-				// {
-				// 	Vector2 uv = Quasirandom::hammersley(i, sampleCount, random);
-				// 	Vector4 direction = Quasirandom::uniformHemiSphere(uv, elm.normal);		
-			
-				// 	incoming += tracePath(
-				// 		elm.position,
-				// 		direction,
-				// 		random,
-				// 		0
-				// 	);
-				// }
-				// incoming /= Scalar(sampleCount);
-
 				incoming = tracePath0(elm.position, elm.normal, random);
-			}
 
-			lightmap->setPixel(x, y, ((emittance + direct + incoming) * (1.0_simd - metalness)).rgb1());
+			// Trace ambient occlusion.
+			Scalar occlusion = traceAmbientOcclusion(elm.position, elm.normal, random);
+
+			// Combine and write final lumel.
+			lightmap->setPixel(x, y, ((emittance + direct + incoming * occlusion) * (1.0_simd - metalness)).rgb1());
 		}
 	}	
 }
@@ -504,6 +496,43 @@ Color4f RayTracerEmbree::tracePath(
 	Color4f reflectance = hitMaterialColor;
 
 	return emittance + (direct + incoming) * reflectance;
+}
+
+Scalar RayTracerEmbree::traceAmbientOcclusion(
+    const Vector4& origin,
+    const Vector4& normal,
+    RandomGeometry& random
+) const
+{
+	const int32_t sampleCount = 100;
+	const float maxOcclusionDistance = 1.0f;
+
+	// Construct all rays.
+	StaticVector< RTCRay, 1024 > rv(sampleCount);
+	for (int32_t i = 0; i < sampleCount; ++i)
+	{
+		Vector2 uv = Quasirandom::hammersley(i, sampleCount, random);
+		Vector4 direction = Quasirandom::uniformHemiSphere(uv, normal);
+		constructRay(origin, direction, maxOcclusionDistance, rv[i]);
+	}
+
+	// Intersect test all rays using ray streams.
+	RTCIntersectContext context;
+	rtcInitIntersectContext(&context);
+	rtcOccluded1M(m_scene, &context, rv.ptr(), sampleCount, sizeof(RTCRay));
+
+	// Accumulate incoming light.
+	int32_t unoccluded = 0;
+	for (const auto& r : rv)
+	{
+		if (r.tfar > r.tnear)
+			unoccluded++;
+	}
+
+	float k = float(unoccluded) / sampleCount;
+	float o = std::pow(k, 2.0f);
+
+	return Scalar(o);
 }
 
 Color4f RayTracerEmbree::sampleAnalyticalLights(
