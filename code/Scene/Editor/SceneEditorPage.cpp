@@ -297,7 +297,7 @@ bool SceneEditorPage::create(ui::Container* parent)
 	m_entityToolBar->addImage(new ui::StyleBitmap(L"Scene.FilterEntity"), 1);
 	m_entityToolBar->addImage(new ui::StyleBitmap(L"Scene.MoveUpEntity"), 1);
 	m_entityToolBar->addImage(new ui::StyleBitmap(L"Scene.MoveDownEntity"), 1);
-	m_entityToolBar->addImage(new ui::StyleBitmap(L"Scene.AddLayer"), 1);
+	m_entityToolBar->addImage(new ui::StyleBitmap(L"Scene.LayerAdd"), 1);
 	m_entityToolBar->addItem(new ui::ToolBarButton(i18n::Text(L"SCENE_EDITOR_REMOVE_ENTITY"), 0, ui::Command(L"Editor.Delete")));
 	m_entityToolBar->addItem(new ui::ToolBarSeparator());
 	m_entityToolBar->addItem(new ui::ToolBarButton(i18n::Text(L"SCENE_EDITOR_MOVE_TO_ENTITY"), 1, ui::Command(L"Scene.Editor.MoveToEntity")));
@@ -1169,6 +1169,8 @@ bool SceneEditorPage::addEntity(const TypeInfo* entityType)
 
 	Ref< world::EntityData > entityData = checked_type_cast< world::EntityData* >(entityType->createInstance());
 	T_ASSERT(entityData);
+
+	entityData->setId(Guid::create());
 
 	// Browse for first component data also.
 	const TypeInfo* componentType = m_context->getEditor()->browseType(makeTypeInfoSet< world::IEntityComponentData >(), false, true);
