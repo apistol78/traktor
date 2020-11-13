@@ -6515,6 +6515,7 @@
 					</includePaths>
 					<definitions>
 						<item>_DEBUG</item>
+						<item>XA_MULTITHREADED=0</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -6538,6 +6539,7 @@
 					</includePaths>
 					<definitions>
 						<item>NDEBUG</item>
+						<item>XA_MULTITHREADED=0</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -6561,6 +6563,7 @@
 					</includePaths>
 					<definitions>
 						<item>_DEBUG</item>
+						<item>XA_MULTITHREADED=0</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -6593,6 +6596,7 @@
 					</includePaths>
 					<definitions>
 						<item>NDEBUG</item>
+						<item>XA_MULTITHREADED=0</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
