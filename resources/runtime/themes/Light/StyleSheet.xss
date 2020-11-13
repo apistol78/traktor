@@ -1007,8 +1007,8 @@
 			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Scene/MoveDown.image</value>
 		</item>
 		<item>
-			<name>Scene.AddLayer</name>
-			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Scene/AddLayer.image</value>
+			<name>Scene.LayerAdd</name>
+			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Scene/LayerAdd.image</value>
 		</item>
 		<item>
 			<name>Scene.LayerHidden</name>
@@ -1225,6 +1225,10 @@
 		<item>
 			<name>Spray.Randomize</name>
 			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Spray/Randomize.image</value>
+		</item>
+		<item>
+			<name>Spray.LayerAdd</name>
+			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Spray/LayerAdd.image</value>
 		</item>
 		<item>
 			<name>Spray.LayerDelete</name>

@@ -183,15 +183,26 @@ bool EffectEditorPage::create(ui::Container* parent)
 	m_toolBar->addItem(m_toolToggleGuide);
 	m_toolBar->addItem(m_toolToggleMove);
 	m_toolBar->addItem(new ui::ToolBarButton(i18n::Text(L"EFFECT_EDITOR_RANDOMIZE_SEED"), 11, ui::Command(L"Effect.Editor.RandomizeSeed")));
-	m_toolBar->addEventHandler< ui::ToolBarButtonClickEvent >(this, &EffectEditorPage::eventToolClick);
+	m_toolBar->addEventHandler< ui::ToolBarButtonClickEvent >(this, &EffectEditorPage::eventToolBarClick);
 
 	m_previewControl = new EffectPreviewControl(m_editor);
 	m_previewControl->create(container, ui::WsNone, m_resourceManager, renderSystem, m_audioSystem);
 	m_previewControl->showGuide(m_guideVisible);
 	m_previewControl->setMoveEmitter(m_moveEmitter);
 
+	Ref< ui::Container > containerSequencer = new ui::Container();
+	containerSequencer->create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%", 0, 0));
+
+	m_toolBarLayers = new ui::ToolBar();
+	m_toolBarLayers->create(containerSequencer);
+	m_toolBarLayers->addImage(new ui::StyleBitmap(L"Spray.LayerAdd"), 1);
+	m_toolBarLayers->addImage(new ui::StyleBitmap(L"Spray.LayerDelete"), 1);
+	m_toolBarLayers->addItem(new ui::ToolBarButton(i18n::Text(L"EFFECT_EDITOR_ADD_LAYER"), 0, ui::Command(L"Effect.Editor.AddLayer")));
+	m_toolBarLayers->addItem(new ui::ToolBarButton(i18n::Text(L"EFFECT_EDITOR_REMOVE_LAYER"), 1, ui::Command(L"Effect.Editor.RemoveLayer")));
+	m_toolBarLayers->addEventHandler< ui::ToolBarButtonClickEvent >(this, &EffectEditorPage::eventToolBarLayersClick);
+
 	m_sequencer = new ui::SequencerControl();
-	m_sequencer->create(parent, ui::WsDoubleBuffer);
+	m_sequencer->create(containerSequencer, ui::WsDoubleBuffer);
 	m_sequencer->setText(i18n::Text(L"EFFECT_EDITOR_SEQUENCER"));
 	m_sequencer->addEventHandler< ui::SelectionChangeEvent >(this, &EffectEditorPage::eventSequencerLayerSelect);
 	m_sequencer->addEventHandler< ui::CursorMoveEvent >(this, &EffectEditorPage::eventSequencerTimeCursorMove);
@@ -200,7 +211,7 @@ bool EffectEditorPage::create(ui::Container* parent)
 	m_sequencer->addEventHandler< ui::SequenceButtonClickEvent >(this, &EffectEditorPage::eventSequencerLayerClick);
 	m_sequencer->addEventHandler< ui::MouseButtonDownEvent >(this, &EffectEditorPage::eventSequencerButtonDown);
 
-	m_site->createAdditionalPanel(m_sequencer, ui::dpi96(140), true);
+	m_site->createAdditionalPanel(containerSequencer, ui::dpi96(140), true);
 
 	m_popupMenu = new ui::Menu();
 	m_popupMenu->add(new ui::MenuItem(ui::Command(L"Effect.Editor.ReplaceEmitterSource"), i18n::Text(L"EFFECT_EDITOR_REPLACE_EMITTER_SOURCE")));
@@ -247,6 +258,15 @@ bool EffectEditorPage::handleCommand(const ui::Command& command)
 	{
 		m_previewControl->updateSettings();
 		m_previewControl->update();
+	}
+	else if (command == L"Effect.Editor.AddLayer")
+	{
+		m_effectData->addLayer(new EffectLayerData());
+		updateSequencer();
+		updateEffectPreview();
+	}
+	else if (command == L"Effect.Editor.RemoveLayer")
+	{
 	}
 	else if (command == L"Effect.Editor.Reset")
 	{
@@ -557,7 +577,13 @@ void EffectEditorPage::updateProfile()
 	m_sequencer->update();
 }
 
-void EffectEditorPage::eventToolClick(ui::ToolBarButtonClickEvent* event)
+void EffectEditorPage::eventToolBarClick(ui::ToolBarButtonClickEvent* event)
+{
+	const ui::Command& command = event->getCommand();
+	handleCommand(command);
+}
+
+void EffectEditorPage::eventToolBarLayersClick(ui::ToolBarButtonClickEvent* event)
 {
 	const ui::Command& command = event->getCommand();
 	handleCommand(command);

@@ -3,6 +3,7 @@
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Settings/PropertyColor.h"
 #include "Core/Settings/PropertyGroup.h"
+#include "Core/Settings/PropertyString.h"
 #include "Editor/IEditor.h"
 #include "I18N/Text.h"
 #include "Mesh/MeshComponentRenderer.h"
@@ -331,7 +332,7 @@ void EffectPreviewControl::updateWorldRenderer()
 	if (!m_sceneInstance)
 		return;
 
-	std::wstring worldRendererTypeName = L"traktor.world.WorldRendererDeferred"; // settings->getProperty< std::wstring >(L"SceneEditor.WorldRendererType", L"traktor.world.WorldRendererDeferred");
+	std::wstring worldRendererTypeName = m_editor->getSettings()->getProperty< std::wstring >(L"SceneEditor.WorldRendererType", L"traktor.world.WorldRendererDeferred");
 
 	const TypeInfo* worldRendererType = TypeInfo::find(worldRendererTypeName.c_str());
 	if (!worldRendererType)
@@ -363,8 +364,8 @@ void EffectPreviewControl::updateWorldRenderer()
 	wcd.quality.motionBlur = world::Quality::Disabled;
 	wcd.quality.shadows = world::Quality::Ultra;
 	wcd.quality.reflections = world::Quality::Ultra;
-	wcd.quality.ambientOcclusion = world::Quality::Ultra;
-	wcd.quality.antiAlias = world::Quality::Ultra;
+	wcd.quality.ambientOcclusion = world::Quality::Disabled;
+	wcd.quality.antiAlias = world::Quality::Disabled;
 	wcd.quality.imageProcess = world::Quality::Ultra;
 	wcd.multiSample = 0;
 	wcd.frameCount = 1;
