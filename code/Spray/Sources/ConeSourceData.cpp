@@ -1,5 +1,7 @@
 #include "Core/Serialization/AttributeDirection.h"
 #include "Core/Serialization/AttributePoint.h"
+#include "Core/Serialization/AttributeRange.h"
+#include "Core/Serialization/AttributeUnit.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
 #include "Core/Serialization/MemberComposite.h"
@@ -17,8 +19,8 @@ ConeSourceData::ConeSourceData()
 :	SourceData()
 ,	m_position(0.0f, 0.0f, 0.0f, 1.0f)
 ,	m_normal(0.0f, 1.0f, 0.0f, 0.0f)
-,	m_angle1(PI)
-,	m_angle2(PI)
+,	m_angle1(HALF_PI)
+,	m_angle2(HALF_PI)
 ,	m_velocity(0.0f, 0.0f)
 ,	m_inheritVelocity(0.0f, 0.0f)
 ,	m_orientation(0.0f, 2.0f * PI)
@@ -54,8 +56,8 @@ void ConeSourceData::serialize(ISerializer& s)
 
 	s >> Member< Vector4 >(L"position", m_position, AttributePoint());
 	s >> Member< Vector4 >(L"normal", m_normal, AttributeDirection());
-	s >> Member< float >(L"angle1", m_angle1);
-	s >> Member< float >(L"angle2", m_angle2);
+	s >> Member< float >(L"angle1", m_angle1, AttributeUnit(AuRadians) | AttributeRange(0.0f, HALF_PI));
+	s >> Member< float >(L"angle2", m_angle2, AttributeUnit(AuRadians) | AttributeRange(0.0f, HALF_PI));
 	s >> MemberComposite< Range< float > >(L"velocity", m_velocity);
 
 	if (s.getVersion() >= 1)

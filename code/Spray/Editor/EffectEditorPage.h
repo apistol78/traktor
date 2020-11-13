@@ -83,6 +83,7 @@ private:
 	Ref< ui::ToolBarButton > m_toolToggleGuide;
 	Ref< ui::ToolBarButton > m_toolToggleMove;
 	Ref< EffectPreviewControl > m_previewControl;
+	Ref< ui::ToolBar > m_toolBarLayers;
 	Ref< ui::SequencerControl > m_sequencer;
 	Ref< ui::Menu > m_popupMenu;
 	Ref< resource::IResourceManager > m_resourceManager;
@@ -97,7 +98,9 @@ private:
 
 	void updateProfile();
 
-	void eventToolClick(ui::ToolBarButtonClickEvent* event);
+	void eventToolBarClick(ui::ToolBarButtonClickEvent* event);
+
+	void eventToolBarLayersClick(ui::ToolBarButtonClickEvent* event);
 
 	void eventSequencerLayerSelect(ui::SelectionChangeEvent* event);
 

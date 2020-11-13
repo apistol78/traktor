@@ -13,8 +13,8 @@ void ConeSourceRenderer::render(render::PrimitiveRenderer* primitiveRenderer, co
 {
 	const ConeSourceData* coneSource = checked_type_cast< const ConeSourceData* >(sourceData);
 
-	float angle1 = asinf(coneSource->m_angle1);
-	float angle2 = asinf(coneSource->m_angle2);
+	float angle1 = coneSource->m_angle1;
+	float angle2 = coneSource->m_angle2;
 
 	for (int i = 0; i < 20; ++i)
 	{

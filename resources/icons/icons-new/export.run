@@ -352,7 +352,8 @@ local outputs =
 		resources =
 		{
 			{ name = "LayerHidden", column = 1, row = 0, width = 1, height = 1 },
-			{ name = "LayerDelete", column = 4, row = 0, width = 1, height = 1 },		
+			{ name = "LayerDelete", column = 4, row = 0, width = 1, height = 1 },
+			{ name = "LayerAdd", column = 5, row = 0, width = 1, height = 1 },	
 		}
 	},
 	{
@@ -396,7 +397,6 @@ local outputs =
 			{ name = "Scale", column = 15, row = 0, width = 1, height = 1 },
 			{ name = "MoveUp", column = 16, row = 0, width = 1, height = 1 },
 			{ name = "MoveDown", column = 17, row = 0, width = 1, height = 1 },
-			{ name = "AddLayer", column = 18, row = 0, width = 1, height = 1 },
 		}
 	},
 	{
@@ -410,6 +410,7 @@ local outputs =
 			{ name = "LayerLocked", column = 2, row = 0, width = 1, height = 1 },
 			{ name = "LayerUnlocked", column = 3, row = 0, width = 1, height = 1 },
 			{ name = "LayerDelete", column = 4, row = 0, width = 1, height = 1 },
+			{ name = "LayerAdd", column = 5, row = 0, width = 1, height = 1 },
 		}
 	},
 	{
