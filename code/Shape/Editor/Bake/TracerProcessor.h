@@ -16,6 +16,7 @@
 namespace traktor
 {
 
+class Guid;
 class PropertyGroup;
 class Thread;
 
@@ -56,6 +57,8 @@ public:
     virtual ~TracerProcessor();
 
 	void enqueue(const TracerTask* task);
+
+    void cancel(const Guid& sceneId);
 
 	void cancelAll();
 

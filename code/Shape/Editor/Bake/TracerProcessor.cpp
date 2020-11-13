@@ -273,29 +273,37 @@ void TracerProcessor::enqueue(const TracerTask* task)
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 	
-	// Remove any pending task which reference the same scene.
-	auto it = std::find_if(m_tasks.begin(), m_tasks.end(), [=](const TracerTask* hs) {
-		return hs->getSceneId() == task->getSceneId();
-	});
-	if (it != m_tasks.end())
-		m_tasks.erase(it);
-
-	// Check if currently processing task is same scene.
-	if (m_activeTask != nullptr && m_activeTask->getSceneId() == task->getSceneId())
-	{
-		// Currently processing same scene, abort and restart.
-		m_cancelled = true;
-	}
+	cancel(task->getSceneId());
 
 	// Add our task and issue processing thread.
 	m_tasks.push_back(task);
 	m_event.broadcast();
 }
 
+void TracerProcessor::cancel(const Guid& sceneId)
+{
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+	
+	// Remove any pending task which reference the same scene.
+	auto it = std::find_if(m_tasks.begin(), m_tasks.end(), [=](const TracerTask* hs) {
+		return hs->getSceneId() == sceneId;
+	});
+	if (it != m_tasks.end())
+		m_tasks.erase(it);
+
+	// Check if currently processing task is same scene.
+	if (m_activeTask != nullptr && m_activeTask->getSceneId() == sceneId)
+	{
+		// Currently processing same scene, abort and restart.
+		m_cancelled = true;
+	}
+}
+
 void TracerProcessor::cancelAll()
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 	m_tasks.clear();
+	m_cancelled = true;
 }
 
 void TracerProcessor::waitUntilIdle()
@@ -402,23 +410,39 @@ bool TracerProcessor::process(const TracerTask* task)
 		);
 		lightmap->clear(Color4f(0.0f, 0.0f, 0.0f, 0.0f));
 
-		RefArray< Job > jobs;
-		for (int32_t ty = 0; !m_cancelled && ty < height; ty += 16)
+		// Only use jobs when building targets.
+		if (!m_preview)
 		{
-			Ref< Job > job = JobManager::getInstance().add(makeFunctor([&, ty](){
-				for (int32_t tx = 0; tx < width; tx += 16)
+			RefArray< Job > jobs;
+			for (int32_t ty = 0; !m_cancelled && ty < height; ty += 16)
+			{
+				Ref< Job > job = JobManager::getInstance().add(makeFunctor([&, ty](){
+					for (int32_t tx = 0; tx < width; tx += 16)
+					{
+						int32_t region[] = { tx, ty, tx + 16, ty + 16 };
+						rayTracer->traceLightmap(renderModel, &gbuffer, lightmap, region);
+						++m_status.current;
+					}
+				}));
+				jobs.push_back(job);
+			}
+			while (!jobs.empty())
+			{
+				jobs.back()->wait();
+				jobs.pop_back();
+			}
+		}
+		else
+		{
+			for (int32_t ty = 0; !m_cancelled && ty < height; ty += 16)
+			{
+				for (int32_t tx = 0; !m_cancelled && tx < width; tx += 16)
 				{
 					int32_t region[] = { tx, ty, tx + 16, ty + 16 };
 					rayTracer->traceLightmap(renderModel, &gbuffer, lightmap, region);
 					++m_status.current;
 				}
-			}));
-			jobs.push_back(job);
-		}
-		while (!jobs.empty())
-		{
-			jobs.back()->wait();
-			jobs.pop_back();
+			}
 		}
 		if (m_cancelled)
 			break;
