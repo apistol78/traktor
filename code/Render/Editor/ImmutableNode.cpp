@@ -4,30 +4,60 @@ namespace traktor
 {
 	namespace render
 	{
+		namespace
+		{
+
+const static Guid c_null;
+
+		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ImmutableNode", ImmutableNode, Node)
 
 ImmutableNode::ImmutableNode(const InputPinDesc* inputPins, const OutputPinDesc* outputPins)
 {
-	const Guid c_null;
-	while (inputPins && inputPins->name)
+	if (inputPins)
 	{
-		m_inputPins.push_back(new InputPin(this, c_null, inputPins->name, inputPins->optional));
-		++inputPins;
+		int32_t pinCount = 0;
+		for (auto pin = inputPins; pin->name; ++pin)
+			++pinCount;
+
+		T_ASSERT(pinCount > 0);
+		m_inputPins.reserve(pinCount);
+
+		InputPin* pins = new InputPin [pinCount];
+		for (auto pin = inputPins; pin->name; ++pin)
+		{
+			*pins = InputPin(this, c_null, pin->name, pin->optional);
+			m_inputPins.push_back(pins);
+			++pins;
+		}		
 	}
-	while (outputPins && outputPins->name)
+
+	if (outputPins)
 	{
-		m_outputPins.push_back(new OutputPin(this, c_null, outputPins->name));
-		++outputPins;
+		int32_t pinCount = 0;
+		for (auto pin = outputPins; pin->name; ++pin)
+			++pinCount;
+
+		T_ASSERT(pinCount > 0);
+		m_outputPins.reserve(pinCount);
+
+		OutputPin* pins = new OutputPin [pinCount];
+		for (auto pin = outputPins; pin->name; ++pin)
+		{
+			*pins = OutputPin(this, c_null, pin->name);
+			m_outputPins.push_back(pins);
+			++pins;
+		}		
 	}
 }
 
 ImmutableNode::~ImmutableNode()
 {
-	for (auto& inputPin : m_inputPins)
-		delete inputPin;
-	for (auto& outputPin : m_outputPins)
-		delete outputPin;
+	if (!m_inputPins.empty())
+		delete[] m_inputPins.front();
+	if (!m_outputPins.empty())
+		delete[] m_outputPins.front();
 }
 
 int ImmutableNode::getInputPinCount() const

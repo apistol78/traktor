@@ -26,17 +26,12 @@ Vector2 Quasirandom::hammersley(uint32_t i, uint32_t numSamples, Random& rnd)
 
 Vector4 Quasirandom::uniformHemiSphere(const Vector2& uv, const Vector4& direction)
 {
-	double z = 2.0 * uv.x - 1.0;
-	double t = 2.0 * PI * uv.y;
-	double w = std::sqrt(1.0 - z * z);
-	double x = w * std::cos(t);
-	double y = w * std::sin(t);
-	Vector4 v(
-		float(x),
-		float(y),
-		float(z),
-		0.0f
-	);
+	float z = 2.0f * uv.x - 1.0f;
+	float t = 2.0f * PI * uv.y;
+	float w = std::sqrt(1.0f - z * z);
+	float x = w * std::cos(t);
+	float y = w * std::sin(t);
+	Vector4 v(x, y, z, 0.0f);
 	if (dot3(v, direction.xyz0()) < 0.0f)
 		v = -v;
 	return v;
@@ -44,8 +39,8 @@ Vector4 Quasirandom::uniformHemiSphere(const Vector2& uv, const Vector4& directi
 
 Vector4 Quasirandom::uniformCone(const Vector2& uv, const Vector4& direction, float radius)
 {
-	double phi = (uv.x * 2.0f - 1.0f) * PI;
-	double theta = uv.y * radius;
+	float phi = (uv.x * 2.0f - 1.0f) * PI;
+	float theta = uv.y * radius;
 
 	Scalar sinPhi(std::sin(phi));
 	Scalar cosPhi(std::cos(phi));

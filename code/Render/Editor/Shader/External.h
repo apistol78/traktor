@@ -1,10 +1,9 @@
 #pragma once
 
-#include <map>
 #include <string>
-#include <vector>
 #include "Core/Guid.h"
 #include "Core/RefArray.h"
+#include "Core/Containers/SmallMap.h"
 #include "Render/Editor/Node.h"
 
 // import/export mechanism.
@@ -35,7 +34,7 @@ class T_DLLCLASS External : public Node
 	T_RTTI_CLASS;
 
 public:
-	External();
+	External() = default;
 
 	External(const Guid& fragmentGuid, ShaderGraph* fragmentGraph);
 
@@ -71,17 +70,17 @@ public:
 
 	virtual void serialize(ISerializer& s) override final;
 
-	std::vector< InputPin* >& getInputPins() { return m_inputPins; }
+	AlignedVector< InputPin* >& getInputPins() { return m_inputPins; }
 
-	std::vector< OutputPin* >& getOutputPins() { return m_outputPins; }
+	AlignedVector< OutputPin* >& getOutputPins() { return m_outputPins; }
 
-	const std::map< std::wstring, float >& getValues() const { return m_values; }
+	const SmallMap< std::wstring, float >& getValues() const { return m_values; }
 
 private:
 	Guid m_fragmentGuid;
-	std::vector< InputPin* > m_inputPins;
-	std::vector< OutputPin* > m_outputPins;
-	std::map< std::wstring, float > m_values;
+	AlignedVector< InputPin* > m_inputPins;
+	AlignedVector< OutputPin* > m_outputPins;
+	SmallMap< std::wstring, float > m_values;
 };
 
 	}

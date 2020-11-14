@@ -2,6 +2,16 @@
 
 namespace traktor
 {
+	namespace
+	{
+
+const static int32_t M = 397;
+const static uint32_t MATRIX_A = 0x9908b0dfUL;
+const static uint32_t UPPER_MASK = 0x80000000UL;
+const static uint32_t LOWER_MASK = 0x7fffffffUL;
+const static uint32_t mag01[2] = { 0x0UL, MATRIX_A };
+
+	}
 
 Random::Random(uint32_t seed)
 {
@@ -16,7 +26,6 @@ Random::Random(uint32_t seed)
 uint32_t Random::next()
 {
 	uint32_t y;
-	static uint32_t mag01[2] = { 0x0UL, MATRIX_A };
 
 	if (m_mti >= N)
 	{

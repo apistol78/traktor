@@ -323,8 +323,7 @@ void RayTracerEmbree::traceLightmap(const model::Model* model, const GBuffer* gb
 			);
 
 			// Trace IBL and indirect illumination.
-			Color4f incoming(0.0f, 0.0f, 0.0f, 0.0f);
-				incoming = tracePath0(elm.position, elm.normal, random);
+			Color4f incoming = tracePath0(elm.position, elm.normal, random);
 
 			// Trace ambient occlusion.
 			Scalar occlusion = traceAmbientOcclusion(elm.position, elm.normal, random);
@@ -344,7 +343,7 @@ Color4f RayTracerEmbree::tracePath0(
 	const int32_t sampleCount = m_configuration->getSampleCount();
 
 	// Construct all rays.
-	StaticVector< RTCRayHit, 1024 > rhv(sampleCount);
+	AlignedVector< RTCRayHit > rhv(sampleCount);
 	for (int32_t i = 0; i < sampleCount; ++i)
 	{
 		Vector2 uv = Quasirandom::hammersley(i, sampleCount, random);
@@ -519,6 +518,7 @@ Scalar RayTracerEmbree::traceAmbientOcclusion(
 	// Intersect test all rays using ray streams.
 	RTCIntersectContext context;
 	rtcInitIntersectContext(&context);
+	context.flags = RTC_INTERSECT_CONTEXT_FLAG_INCOHERENT;
 	rtcOccluded1M(m_scene, &context, rv.ptr(), sampleCount, sizeof(RTCRay));
 
 	// Accumulate incoming light.
@@ -568,6 +568,10 @@ Color4f RayTracerEmbree::sampleAnalyticalLights(
 					Vector4 u, v;
 					orthogonalFrame(normal, u, v);
 
+					RTCIntersectContext context;
+					rtcInitIntersectContext(&context);
+					context.flags = RTC_INTERSECT_CONTEXT_FLAG_INCOHERENT;
+
 					int32_t shadowCount = 0;
 					for (uint32_t j = 0; j < shadowSampleCount; ++j)
 					{
@@ -597,9 +601,6 @@ Color4f RayTracerEmbree::sampleAnalyticalLights(
 						r.id = 0;
 						r.flags = 0;
 		
-						RTCIntersectContext context;
-						rtcInitIntersectContext(&context);
-
 						rtcOccluded1(m_scene, &context, &r);
 
 						if (r.tfar < 0.0f)
@@ -634,6 +635,10 @@ Color4f RayTracerEmbree::sampleAnalyticalLights(
 					Vector4 u, v;
 					orthogonalFrame(lightDirection, u, v);
 
+					RTCIntersectContext context;
+					rtcInitIntersectContext(&context);
+					context.flags = RTC_INTERSECT_CONTEXT_FLAG_INCOHERENT;
+
 					int32_t shadowCount = 0;
 					for (uint32_t j = 0; j < shadowSampleCount; ++j)
 					{
@@ -663,9 +668,6 @@ Color4f RayTracerEmbree::sampleAnalyticalLights(
 						r.id = 0;
 						r.flags = 0;
 		
-						RTCIntersectContext context;
-						rtcInitIntersectContext(&context);
-
 						rtcOccluded1(m_scene, &context, &r);
 
 						if (r.tfar < 0.0f)
@@ -705,6 +707,10 @@ Color4f RayTracerEmbree::sampleAnalyticalLights(
 					Vector4 u, v;
 					orthogonalFrame(-lightToPoint, u, v);
 
+					RTCIntersectContext context;
+					rtcInitIntersectContext(&context);
+					context.flags = RTC_INTERSECT_CONTEXT_FLAG_INCOHERENT;
+
 					int32_t shadowCount = 0;
 					for (uint32_t j = 0; j < shadowSampleCount; ++j)
 					{
@@ -734,9 +740,6 @@ Color4f RayTracerEmbree::sampleAnalyticalLights(
 						r.id = 0;
 						r.flags = 0;
 		
-						RTCIntersectContext context;
-						rtcInitIntersectContext(&context);
-
 						rtcOccluded1(m_scene, &context, &r);
 
 						if (r.tfar < 0.0f)

@@ -4,7 +4,7 @@
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberComplex.h"
 #include "Core/Serialization/MemberRefArray.h"
-#include "Core/Serialization/MemberStl.h"
+#include "Core/Serialization/MemberSmallMap.h"
 #include "Render/Editor/Edge.h"
 #include "Render/Editor/InputPin.h"
 #include "Render/Editor/OutputPin.h"
@@ -150,7 +150,7 @@ class MemberPinArray : public MemberArray
 {
 public:
 	typedef typename PinMember::value_type pin_type;
-	typedef std::vector< pin_type > value_type;
+	typedef AlignedVector< pin_type > value_type;
 
 	MemberPinArray(const wchar_t* const name, Node* node, value_type& pins)
 	:	MemberArray(name, &m_attribute)
@@ -221,17 +221,11 @@ struct SortOutputPinPredicate
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.External", 2, External, Node)
 
-External::External()
-{
-}
-
 External::External(const Guid& fragmentGuid, ShaderGraph* fragmentGraph)
 :	m_fragmentGuid(fragmentGuid)
 {
-	const RefArray< Node >& fragmentNodes = fragmentGraph->getNodes();
-	for (RefArray< Node >::const_iterator i = fragmentNodes.begin(); i != fragmentNodes.end(); ++i)
+	for (auto fragmentNode : fragmentGraph->getNodes())
 	{
-		const Node* fragmentNode = *i;
 		if (const InputPort* inputPort = dynamic_type_cast< const InputPort* >(fragmentNode))
 		{
 			const Guid& id = inputPort->getId();
@@ -297,15 +291,15 @@ void External::setValue(const std::wstring& name, float value)
 
 float External::getValue(const std::wstring& name, float defaultValue) const
 {
-	std::map< std::wstring, float >::const_iterator i = m_values.find(name);
-	return i != m_values.end() ? i->second : defaultValue;
+	auto it = m_values.find(name);
+	return it != m_values.end() ? it->second : defaultValue;
 }
 
 void External::removeValue(const std::wstring& name)
 {
-	std::map< std::wstring, float >::iterator i = m_values.find(name);
-	if (i != m_values.end())
-		m_values.erase(i);
+	auto it = m_values.find(name);
+	if (it != m_values.end())
+		m_values.erase(it);
 }
 
 const InputPin* External::createInputPin(const Guid& id, const std::wstring& name, bool optional)
@@ -330,16 +324,16 @@ const OutputPin* External::createOutputPin(const Guid& id, const std::wstring& n
 
 void External::removeInputPin(const InputPin* inputPin)
 {
-	std::vector< InputPin* >::iterator i = std::find(m_inputPins.begin(), m_inputPins.end(), inputPin);
-	T_ASSERT(i != m_inputPins.end());
-	delete *i; m_inputPins.erase(i);
+	auto it = std::find(m_inputPins.begin(), m_inputPins.end(), inputPin);
+	T_ASSERT(it != m_inputPins.end());
+	delete *it; m_inputPins.erase(it);
 }
 
 void External::removeOutputPin(const OutputPin* outputPin)
 {
-	std::vector< OutputPin* >::iterator i = std::find(m_outputPins.begin(), m_outputPins.end(), outputPin);
-	T_ASSERT(i != m_outputPins.end());
-	delete *i; m_outputPins.erase(i);
+	auto it = std::find(m_outputPins.begin(), m_outputPins.end(), outputPin);
+	T_ASSERT(it != m_outputPins.end());
+	delete *it; m_outputPins.erase(it);
 }
 
 std::wstring External::getInformation() const
@@ -378,7 +372,7 @@ void External::serialize(ISerializer& s)
 	s >> MemberPinArray< MemberOutputPin >(L"outputPins", this, m_outputPins);
 
 	if (s.getVersion() >= 1)
-		s >> MemberStlMap< std::wstring, float >(L"values", m_values, AttributePrivate());
+		s >> MemberSmallMap< std::wstring, float >(L"values", m_values, AttributePrivate());
 }
 
 	}
