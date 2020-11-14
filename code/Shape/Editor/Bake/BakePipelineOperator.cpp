@@ -361,7 +361,8 @@ BakePipelineOperator::BakePipelineOperator()
 bool BakePipelineOperator::create(const editor::IPipelineSettings* settings)
 {
 	m_assetPath = settings->getProperty< std::wstring >(L"Pipeline.AssetPath", L"");
-	
+	m_modelCachePath = settings->getProperty< std::wstring >(L"Pipeline.ModelCachePath", L"");
+
 	std::wstring tracerTypeName = settings->getProperty< std::wstring >(L"BakePipelineOperator.RayTracerType", L"traktor.shape.RayTracerEmbree");
 	if (tracerTypeName.empty())
 		return false;
@@ -499,13 +500,6 @@ bool BakePipelineOperator::build(
 				if (!model)
 					continue;
 
-				// Ensure model is fit for tracing.
-				model->clear(model::Model::CfColors | model::Model::CfJoints);
-				model::Triangulate().apply(*model);
-				model::CleanDuplicates(0.0f).apply(*model);
-				model::CleanDegenerate().apply(*model);
-				model::CalculateTangents(false).apply(*model);
-
 				// Calculate size of lightmap from geometry.
 				int32_t lightmapSize = calculateLightmapSize(
 					model,
@@ -514,21 +508,40 @@ bool BakePipelineOperator::build(
 					configuration->getMaximumLightMapSize()
 				);
 
-				// Check if model already contain lightmap UV or if we need to unwrap.
-				uint32_t channel = model->getTexCoordChannel(L"Lightmap");
-				if (channel == model::c_InvalidIndex)
+				// Rudimentary caching; assuming calculating hash of model is quicker than UV mapping etc.
+				uint32_t modelHash = DeepHash(model).get();
+				Path cachedModelFileName = m_modelCachePath + L"/Bake_" + toString(modelHash) + L".tmd";
+				Ref< model::Model > cachedModel = model::ModelFormat::readAny(cachedModelFileName);
+				if (!cachedModel)
 				{
-					// No lightmap UV channel, need to add and unwrap automatically.
-					channel = model->addUniqueTexCoordChannel(L"Lightmap");
-					model::UnwrapUV(channel, lightmapSize).apply(*model);
-				}
+					// Ensure model is fit for tracing.
+					model->clear(model::Model::CfColors | model::Model::CfJoints);
+					model::Triangulate().apply(*model);
+					model::CleanDuplicates(0.0f).apply(*model);
+					model::CleanDegenerate().apply(*model);
+					model::CalculateTangents(false).apply(*model);
 
-				// Modify all materials to contain reference to lightmap channel.
-				for (auto& material : model->getMaterials())
-				{
-					material.setBlendOperator(model::Material::BoDecal);
-					material.setLightMap(model::Material::Map(L"Lightmap", L"Lightmap", false, lightmapId));
+					// Check if model already contain lightmap UV or if we need to unwrap.
+					uint32_t channel = model->getTexCoordChannel(L"Lightmap");
+					if (channel == model::c_InvalidIndex)
+					{
+						// No lightmap UV channel, need to add and unwrap automatically.
+						channel = model->addUniqueTexCoordChannel(L"Lightmap");
+						model::UnwrapUV(channel, lightmapSize).apply(*model);
+					}
+
+					// Modify all materials to contain reference to lightmap channel.
+					for (auto& material : model->getMaterials())
+					{
+						material.setBlendOperator(model::Material::BoDecal);
+						material.setLightMap(model::Material::Map(L"Lightmap", L"Lightmap", false, lightmapId));
+					}
+
+					FileSystem::getInstance().makeAllDirectories(cachedModelFileName.getPathOnly());
+					model::ModelFormat::writeAny(cachedModelFileName, model);
 				}
+				else
+					model = cachedModel;
 
 				// Load texture images and attach to materials.
 				for (auto& material : model->getMaterials())
