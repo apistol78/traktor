@@ -36,10 +36,6 @@ public:
 
 private:
 	const static int32_t N = 624;
-	const static int32_t M = 397;
-	const static uint32_t MATRIX_A = 0x9908b0dfUL;
-	const static uint32_t UPPER_MASK = 0x80000000UL;
-	const static uint32_t LOWER_MASK = 0x7fffffffUL;
 
 	uint32_t m_mt[N];
 	int32_t m_mti;

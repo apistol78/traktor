@@ -1,3 +1,4 @@
+#include "Core/Settings/PropertyBoolean.h"
 #include "Core/Settings/PropertyGroup.h"
 #include "Core/Settings/PropertyString.h"
 #include "Editor/IEditor.h"
@@ -63,12 +64,13 @@ void TracerEditorPlugin::handleWorkspaceOpened()
 		return;
 
 	std::wstring compressionMethod = m_editor->getSettings()->getProperty< std::wstring >(L"TexturePipeline.CompressionMethod", L"DXTn");
+	bool parallelBake = m_editor->getSettings()->getProperty< bool >(L"BakePipelineOperator.ParallelBake", true);
 
     BakePipelineOperator::setTracerProcessor(new TracerProcessor(
 		tracerType,
 		m_editor->getOutputDatabase(),
 		compressionMethod,
-		true
+		parallelBake
 	));
 }
 

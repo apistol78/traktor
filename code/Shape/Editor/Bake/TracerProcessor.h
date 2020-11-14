@@ -52,7 +52,7 @@ public:
         }
 	};
 
-    TracerProcessor(const TypeInfo* rayTracerType, db::Database* outputDatabase, const std::wstring& compressionMethod, bool preview);
+    TracerProcessor(const TypeInfo* rayTracerType, db::Database* outputDatabase, const std::wstring& compressionMethod, bool parallel);
 
     virtual ~TracerProcessor();
 
@@ -70,7 +70,7 @@ private:
 	const TypeInfo* m_rayTracerType;
     Ref< db::Database > m_outputDatabase;
     std::wstring m_compressionMethod;
-    bool m_preview;
+    bool m_parallel;
     Thread* m_thread;
     Semaphore m_lock;
     Event m_event;

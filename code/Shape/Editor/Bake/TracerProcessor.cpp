@@ -125,9 +125,9 @@ void encodeRGBM(drawing::Image* image)
 			float a = clamp< float >( max( max( cl.getRed(), cl.getGreen() ), cl.getBlue() ), 0.0f, 1.0f );
 			if (a > FUZZY_EPSILON)
 			{
-				a = std::ceil( a * 255.0f ) / 255.0f;
+				a = std::ceil(a * 255.0f) / 255.0f;
 				cl /= Scalar(a);
-				cl.setAlpha(Scalar( a ) );
+				cl.setAlpha(Scalar(a));
 			}
 			else
 				cl.set(0.0f, 0.0f, 0.0f, 0.0f);
@@ -241,18 +241,18 @@ void line(const Vector2& from, const Vector2& to, const std::function< void(cons
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.shape.TracerProcessor", TracerProcessor, Object)
 
-TracerProcessor::TracerProcessor(const TypeInfo* rayTracerType, db::Database* outputDatabase, const std::wstring& compressionMethod, bool preview)
+TracerProcessor::TracerProcessor(const TypeInfo* rayTracerType, db::Database* outputDatabase, const std::wstring& compressionMethod, bool parallel)
 :   m_rayTracerType(rayTracerType)
 ,   m_outputDatabase(outputDatabase)
 ,	m_compressionMethod(compressionMethod)
-,	m_preview(preview)
+,	m_parallel(parallel)
 ,   m_thread(nullptr)
 {
 	T_FATAL_ASSERT(m_outputDatabase != nullptr);
 	T_FATAL_ASSERT(m_rayTracerType != nullptr);
 
 	m_thread = ThreadManager::getInstance().create(makeFunctor(this, &TracerProcessor::processorThread), L"Tracer");
-	m_thread->start(preview ? Thread::Below : Thread::Normal);
+	m_thread->start();
 }
 
 TracerProcessor::~TracerProcessor()
@@ -411,7 +411,7 @@ bool TracerProcessor::process(const TracerTask* task)
 		lightmap->clear(Color4f(0.0f, 0.0f, 0.0f, 0.0f));
 
 		// Only use jobs when building targets.
-		if (!m_preview)
+		if (m_parallel)
 		{
 			RefArray< Job > jobs;
 			for (int32_t ty = 0; !m_cancelled && ty < height; ty += 16)

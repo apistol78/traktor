@@ -422,7 +422,7 @@ bool BakePipelineOperator::build(
 	// by doing so we can ensure trace is finished before returning.
 	Ref< TracerProcessor > tracerProcessor = ms_tracerProcessor;
 	if (!tracerProcessor)
-		tracerProcessor = new TracerProcessor(m_tracerType, pipelineBuilder->getOutputDatabase(), m_compressionMethod, false);
+		tracerProcessor = new TracerProcessor(m_tracerType, pipelineBuilder->getOutputDatabase(), m_compressionMethod, true);
 
 	// Cancel any bake process currently running for given scene.
 	tracerProcessor->cancel(sourceInstance->getGuid());
@@ -530,18 +530,18 @@ bool BakePipelineOperator::build(
 						model::UnwrapUV(channel, lightmapSize).apply(*model);
 					}
 
-					// Modify all materials to contain reference to lightmap channel.
-					for (auto& material : model->getMaterials())
-					{
-						material.setBlendOperator(model::Material::BoDecal);
-						material.setLightMap(model::Material::Map(L"Lightmap", L"Lightmap", false, lightmapId));
-					}
-
 					FileSystem::getInstance().makeAllDirectories(cachedModelFileName.getPathOnly());
 					model::ModelFormat::writeAny(cachedModelFileName, model);
 				}
 				else
 					model = cachedModel;
+
+				// Modify all materials to contain reference to lightmap channel.
+				for (auto& material : model->getMaterials())
+				{
+					material.setBlendOperator(model::Material::BoDecal);
+					material.setLightMap(model::Material::Map(L"Lightmap", L"Lightmap", false, lightmapId));
+				}
 
 				// Load texture images and attach to materials.
 				for (auto& material : model->getMaterials())

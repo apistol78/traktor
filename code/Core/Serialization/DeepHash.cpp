@@ -176,6 +176,10 @@ public:
 			if (it == m_written.end())
 			{
 				m_written.insert(std::make_pair(object, ++m_writtenCount));
+
+				const wchar_t* const typeName = type_of(object).getName();
+				m_adler.feed(typeName, wcslen(typeName) * sizeof(wchar_t));
+
 				serialize(object);
 			}
 			else
