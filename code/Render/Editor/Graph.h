@@ -31,7 +31,7 @@ class T_DLLCLASS Graph : public ISerializable
 	T_RTTI_CLASS;
 
 public:
-	Graph();
+	Graph() = default;
 
 	Graph(const RefArray< Node >& nodes, const RefArray< Edge >& edges);
 
