@@ -55,12 +55,14 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.editor.PipelineDependsParallel", PipelineDepend
 PipelineDependsParallel::PipelineDependsParallel(
 	PipelineFactory* pipelineFactory,
 	db::Database* sourceDatabase,
+	db::Database* outputDatabase,
 	PipelineDependencySet* dependencySet,
 	IPipelineDb* pipelineDb,
 	IPipelineInstanceCache* instanceCache
 )
 :	m_pipelineFactory(pipelineFactory)
 ,	m_sourceDatabase(sourceDatabase)
+,	m_outputDatabase(outputDatabase)
 ,	m_dependencySet(dependencySet)
 ,	m_pipelineDb(pipelineDb)
 ,	m_instanceCache(instanceCache)
@@ -179,7 +181,7 @@ void PipelineDependsParallel::addDependency(
 		if (std::find_if(parentDependency->files.begin(), parentDependency->files.end(), ExternalFilePred(filePath)) == parentDependency->files.end())
 		{
 			Ref< File > file = FileSystem::getInstance().get(filePath);
-			if (file)
+			if (file && !file->isDirectory())
 			{
 				PipelineDependency::ExternalFile externalFile;
 				externalFile.filePath = filePath;
@@ -542,11 +544,17 @@ void PipelineDependsParallel::jobAddDependency(Ref< PipelineDependency > parentD
 	Ref< db::Instance > sourceAssetInstance = m_sourceDatabase->getInstance(sourceAssetGuid);
 	if (!sourceAssetInstance)
 	{
-		if (parentDependency)
-			log::error << L"Unable to add dependency to \"" << sourceAssetGuid.format() << L"\"; no such instance (parent \"" << parentDependency->outputPath << L"\")." << Endl;
-		else
-			log::error << L"Unable to add dependency to \"" << sourceAssetGuid.format() << L"\"; no such instance." << Endl;
-		m_result = false;
+		// \hack
+		// In case output database already contain an instance with given ID we assume it has
+		// been synthesized.
+		if (m_outputDatabase->getInstance(sourceAssetGuid) == nullptr)
+		{
+			if (parentDependency)
+				log::error << L"Unable to add dependency to \"" << sourceAssetGuid.format() << L"\"; no such instance (parent \"" << parentDependency->outputPath << L"\")." << Endl;
+			else
+				log::error << L"Unable to add dependency to \"" << sourceAssetGuid.format() << L"\"; no such instance." << Endl;
+			m_result = false;
+		}
 		return;
 	}
 

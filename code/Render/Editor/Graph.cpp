@@ -14,10 +14,6 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Graph", 0, Graph, ISerializable)
 
-Graph::Graph()
-{
-}
-
 Graph::Graph(const RefArray< Node >& nodes, const RefArray< Edge >& edges)
 :	m_nodes(nodes)
 ,	m_edges(edges)
@@ -207,6 +203,7 @@ void Graph::serialize(ISerializer& s)
 void Graph::updateInputPinToEdge()
 {
 	m_inputPinToEdge.clear();
+	m_inputPinToEdge.reserve(m_edges.size());
 	for (auto edge : m_edges)
 		m_inputPinToEdge[edge->getDestination()] = edge;
 }
@@ -214,6 +211,7 @@ void Graph::updateInputPinToEdge()
 void Graph::updateOutputPinDestinationCount()
 {
 	m_outputPinDestinationCount.clear();
+	m_outputPinDestinationCount.reserve(m_edges.size());
 	for (auto edge : m_edges)
 		m_outputPinDestinationCount[edge->getSource()]++;
 }

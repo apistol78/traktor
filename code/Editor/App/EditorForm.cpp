@@ -1793,6 +1793,7 @@ void EditorForm::buildAssetsThread(std::vector< Guid > assetGuids, bool rebuild)
 		pipelineDepends = new PipelineDependsParallel(
 			&pipelineFactory,
 			m_sourceDatabase,
+			m_outputDatabase,
 			&dependencySet,
 			m_pipelineDb,
 			&instanceCache

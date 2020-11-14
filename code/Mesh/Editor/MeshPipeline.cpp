@@ -177,7 +177,8 @@ bool MeshPipeline::buildDependencies(
 	Ref< const MeshAsset > asset = checked_type_cast< const MeshAsset* >(sourceAsset);
 	T_ASSERT(asset);
 
-	pipelineDepends->addDependency(Path(m_assetPath), asset->getFileName().getOriginal());
+	if (!asset->getFileName().empty())
+		pipelineDepends->addDependency(Path(m_assetPath), asset->getFileName().getOriginal());
 
 	// Determine vertex shader guid.
 	Guid vertexShaderGuid = getVertexShaderGuid(asset->getMeshType());

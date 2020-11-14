@@ -26,6 +26,7 @@
 #include "Editor/PipelineDependencySet.h"
 #include "Editor/Pipeline/PipelineBuilder.h"
 #include "Editor/Pipeline/PipelineDependsIncremental.h"
+#include "Editor/Pipeline/PipelineDependsParallel.h"
 #include "Editor/Pipeline/PipelineFactory.h"
 
 namespace traktor
@@ -410,14 +411,28 @@ bool PipelineBuilder::buildAdHocOutput(const ISerializable* sourceAsset, const s
 {
 	// Scan dependencies of source asset.
 	PipelineDependencySet dependencySet;
-	PipelineDependsIncremental pipelineDepends(m_pipelineFactory, m_sourceDatabase, m_outputDatabase, &dependencySet, m_pipelineDb, m_instanceCache);
-	pipelineDepends.addDependency(
-		sourceAsset,
-		outputPath,
-		outputGuid,
-		PdfBuild
-	);
-	pipelineDepends.waitUntilFinished();
+	if (m_threadedBuildEnable)
+	{
+		PipelineDependsParallel pipelineDepends(m_pipelineFactory, m_sourceDatabase, m_outputDatabase, &dependencySet, m_pipelineDb, m_instanceCache);
+		pipelineDepends.addDependency(
+			sourceAsset,
+			outputPath,
+			outputGuid,
+			PdfBuild
+		);
+		pipelineDepends.waitUntilFinished();
+	}
+	else
+	{
+		PipelineDependsIncremental pipelineDepends(m_pipelineFactory, m_sourceDatabase, m_outputDatabase, &dependencySet, m_pipelineDb, m_instanceCache);
+		pipelineDepends.addDependency(
+			sourceAsset,
+			outputPath,
+			outputGuid,
+			PdfBuild
+		);
+		pipelineDepends.waitUntilFinished();
+	}
 
 	uint32_t index = dependencySet.get(outputGuid);
 	if (index == PipelineDependencySet::DiInvalid)
