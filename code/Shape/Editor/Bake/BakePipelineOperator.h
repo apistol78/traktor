@@ -59,6 +59,7 @@ private:
 	static Ref< TracerProcessor > ms_tracerProcessor;
 
 	std::wstring m_assetPath;
+	std::wstring m_modelCachePath;
 	const TypeInfo* m_tracerType;
 	std::wstring m_compressionMethod;
 	bool m_editor;
