@@ -16,19 +16,19 @@ namespace traktor
 	namespace shape
 	{
 
-class IProbe;
+class IblProbe;
 
 class T_DLLCLASS TracerEnvironment : public Object
 {
 	T_RTTI_CLASS;
 
 public:
-	explicit TracerEnvironment(const IProbe* environment);
+	explicit TracerEnvironment(const IblProbe* environment);
 
-	const IProbe* getEnvironment() const { return m_environment; }
+	const IblProbe* getEnvironment() const { return m_environment; }
 
 private:
-	Ref< const IProbe > m_environment;
+	Ref< const IblProbe > m_environment;
 };
 
 	}

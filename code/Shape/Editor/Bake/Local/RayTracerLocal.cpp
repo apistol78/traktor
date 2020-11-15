@@ -69,7 +69,7 @@ void RayTracerLocal::destroy()
 {
 }
 
-void RayTracerLocal::addEnvironment(const IProbe* environment)
+void RayTracerLocal::addEnvironment(const IblProbe* environment)
 {
 }
 

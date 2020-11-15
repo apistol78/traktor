@@ -22,7 +22,7 @@ public:
 
     virtual void destroy() override final;
 
-	virtual void addEnvironment(const IProbe* environment) override final;
+	virtual void addEnvironment(const IblProbe* environment) override final;
 
     virtual void addLight(const Light& light) override final;
 

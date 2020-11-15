@@ -7,6 +7,7 @@ namespace traktor
 	namespace ui
 	{
 	
+class Button;
 class ProgressBar;
 class Static;
 
@@ -27,6 +28,7 @@ public:
 private:
 	Ref< ui::Static > m_staticDescription;
 	Ref< ui::ProgressBar > m_progressBar;
+	Ref< ui::Button > m_buttonAbort;
 };
 
 	}

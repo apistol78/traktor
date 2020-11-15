@@ -7,7 +7,7 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.shape.TracerEnvironment", TracerEnvironment, Object)
 
-TracerEnvironment::TracerEnvironment(const IProbe* environment)
+TracerEnvironment::TracerEnvironment(const IblProbe* environment)
 	: m_environment(environment)
 {
 }
