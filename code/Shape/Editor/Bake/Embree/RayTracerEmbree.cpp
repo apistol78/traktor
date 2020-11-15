@@ -17,7 +17,7 @@
 #include "Render/SH/SHFunction.h"
 #include "Shape/Editor/Bake/BakeConfiguration.h"
 #include "Shape/Editor/Bake/GBuffer.h"
-#include "Shape/Editor/Bake/IProbe.h"
+#include "Shape/Editor/Bake/IblProbe.h"
 #include "Shape/Editor/Bake/Embree/RayTracerEmbree.h"
 
 namespace traktor
@@ -134,7 +134,7 @@ void RayTracerEmbree::destroy()
 	m_shEngine = nullptr;
 }
 
-void RayTracerEmbree::addEnvironment(const IProbe* environment)
+void RayTracerEmbree::addEnvironment(const IblProbe* environment)
 {
 	m_environment = environment;
 }
@@ -360,11 +360,11 @@ Color4f RayTracerEmbree::tracePath0(
 	Color4f color(0.0f, 0.0f, 0.0f, 0.0f);
 	for (const auto& rh : rhv)
 	{
-		const Vector4 direction(
+		const Vector4 direction = Vector4(
 			rh.ray.dir_x,
 			rh.ray.dir_y,
 			rh.ray.dir_z
-		);
+		).normalized();
 
 		if (rh.hit.geomID == RTC_INVALID_GEOMETRY_ID)
 		{

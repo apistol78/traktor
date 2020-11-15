@@ -36,7 +36,7 @@ class SHCoeffs;
 struct Light;
 class BakeConfiguration;
 class GBuffer;
-class IProbe;
+class IblProbe;
 
 /*! Ray tracer interface.
  * \ingroup Illuminate
@@ -50,7 +50,7 @@ public:
 
     virtual void destroy() = 0;
 
-	virtual void addEnvironment(const IProbe* environment) = 0;
+	virtual void addEnvironment(const IblProbe* environment) = 0;
 
     virtual void addLight(const Light& light) = 0;
 
