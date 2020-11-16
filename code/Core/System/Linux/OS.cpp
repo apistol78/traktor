@@ -293,7 +293,9 @@ Ref< IProcess > OS::execute(
 		{
 			fileActions = new posix_spawn_file_actions_t;
 			posix_spawn_file_actions_init(fileActions);
+#if !defined(__RPI__)
 			posix_spawn_file_actions_addchdir_np(fileActions, wd);
+#endif
 			posix_spawn_file_actions_addopen(fileActions, STDOUT_FILENO, "/dev/null", O_RDONLY, 0);
 			posix_spawn_file_actions_addopen(fileActions, STDERR_FILENO, "/dev/null", O_RDONLY, 0);
 		}
