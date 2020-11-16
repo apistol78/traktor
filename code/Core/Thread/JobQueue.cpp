@@ -54,7 +54,7 @@ void JobQueue::destroy()
 Ref< Job > JobQueue::add(Functor* functor)
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_jobQueueLock);
-	Ref< Job > job = new Job(functor);
+	Ref< Job > job = new Job(m_jobFinishedEvent, functor);
 	m_jobQueue.push_back(job);
 	m_jobQueuedEvent.pulse();
 	Atomic::increment(m_pending);
@@ -72,7 +72,7 @@ void JobQueue::fork(const RefArray< Functor >& functors)
 		jobs.resize(functors.size());
 		for (uint32_t i = 1; i < functors.size(); ++i)
 		{
-			jobs[i] = new Job(functors[i]);
+			jobs[i] = new Job(m_jobFinishedEvent, functors[i]);
 			m_jobQueue.push_back(jobs[i]);
 			Atomic::increment(m_pending);
 		}
