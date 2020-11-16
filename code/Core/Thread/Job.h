@@ -14,6 +14,7 @@
 namespace traktor
 {
 
+class Event;
 class Functor;
 
 /*! Job handle object.
@@ -37,11 +38,17 @@ public:
 private:
 	friend class JobQueue;
 
+	Event& m_jobFinishedEvent;
 	Ref< Functor > m_functor;
 	uint32_t m_finished;
 
-	explicit Job(Functor* functor);
+	explicit Job(Event& jobFinishedEvent, Functor* functor);
+
+	Job() = delete;
+
+	Job(const Job&) = delete;
+
+	Job(Job&&) = delete;
 };
 
 }
-

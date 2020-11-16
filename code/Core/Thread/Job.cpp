@@ -2,6 +2,7 @@
 #include "Core/Memory/BlockAllocator.h"
 #include "Core/Singleton/SingletonManager.h"
 #include "Core/Thread/Acquire.h"
+#include "Core/Thread/Event.h"
 #include "Core/Thread/Job.h"
 #include "Core/Thread/SpinLock.h"
 #include "Core/Thread/Thread.h"
@@ -83,7 +84,8 @@ bool Job::wait(int32_t timeout)
 	{
 		if (m_finished != 0)
 			break;
-		current->yield();
+		if (!m_jobFinishedEvent.wait(timeout))
+			return false;
 	}
 	return (bool)(m_finished != 0);
 }
@@ -111,8 +113,9 @@ void Job::operator delete (void* ptr)
 	JobHeap::getInstance().free(ptr);
 }
 
-Job::Job(Functor* functor)
-:	m_functor(functor)
+Job::Job(Event& jobFinishedEvent, Functor* functor)
+:	m_jobFinishedEvent(jobFinishedEvent)
+,	m_functor(functor)
 ,	m_finished(0)
 {
 }
