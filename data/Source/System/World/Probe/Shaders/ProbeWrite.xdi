@@ -338,7 +338,7 @@
 				<overlay>false</overlay>
 			</priority>
 			<cullMode>CmClockWise</cullMode>
-			<blendEnable>true</blendEnable>
+			<blendEnable>false</blendEnable>
 			<blendColorOperation>BoAdd</blendColorOperation>
 			<blendColorSource>BfSourceAlpha</blendColorSource>
 			<blendColorDestination>BfOneMinusSourceAlpha</blendColorDestination>
@@ -351,7 +351,7 @@
 				<blue>true</blue>
 				<alpha>true</alpha>
 			</colorWriteMask>
-			<depthEnable>true</depthEnable>
+			<depthEnable>false</depthEnable>
 			<depthWriteEnable>false</depthWriteEnable>
 			<depthFunction>CfLessEqual</depthFunction>
 			<alphaTestEnable>false</alphaTestEnable>
@@ -367,7 +367,7 @@
 			<stencilReference>0</stencilReference>
 			<stencilMask>2147483648</stencilMask>
 			<registerCount>0</registerCount>
-			<precisionHint>PhUndefined</precisionHint>
+			<precisionHint>PhLow</precisionHint>
 		</item>
 		<item type="traktor.render.VertexInput" version="traktor.render.Node:1">
 			<id>{3A29D1F7-B1C9-4345-8717-AECC02BCD1AD}</id>
@@ -488,7 +488,7 @@
 			</position>
 			<parameterName>World_ProbeLocal</parameterName>
 		</item>
-		<item type="traktor.render.VertexOutput" version="1,traktor.render.Node:1">
+		<item type="traktor.render.VertexOutput" version="2,traktor.render.Node:1">
 			<id>{644DEA6F-42B0-C04B-9F21-13B52054E94F}</id>
 			<comment/>
 			<position>
@@ -496,6 +496,7 @@
 				<second>189</second>
 			</position>
 			<technique/>
+			<precisionHint>PhMedium</precisionHint>
 		</item>
 		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
 			<id>{7DC47032-A1BB-1843-AE28-86AE5978FDF2}</id>
@@ -1689,12 +1690,12 @@
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[22]"/>
+				<node ref="/object/nodes/item[31]"/>
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[29]"/>
-				<name>Mip</name>
+				<node ref="/object/nodes/item[49]"/>
+				<name>Input</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
@@ -1709,12 +1710,12 @@
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[31]"/>
+				<node ref="/object/nodes/item[22]"/>
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[49]"/>
-				<name>Input</name>
+				<node ref="/object/nodes/item[29]"/>
+				<name>Mip</name>
 			</destination>
 		</item>
 	</edges>

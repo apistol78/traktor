@@ -30,7 +30,7 @@
 				<first>1237</first>
 				<second>609</second>
 			</position>
-			<value>8</value>
+			<value>5</value>
 		</item>
 		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
 			<id>{E9387742-C0E9-C046-A7CD-312850BDFBA2}</id>
