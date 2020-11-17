@@ -1,5 +1,6 @@
 #include "Core/Class/IRuntimeClass.h"
 #include "Core/Class/IRuntimeDispatch.h"
+#include "Core/Class/Boxes/BoxedTransform.h"
 #include "World/Entity.h"
 #include "World/Entity/ScriptComponent.h"
 
@@ -21,6 +22,7 @@ void ScriptComponent::destroy()
 	m_owner = nullptr;
 	m_class.clear();
 	m_object = nullptr;
+	m_methodSetTransform = nullptr;
 	m_methodUpdate = nullptr;
 }
 
@@ -29,12 +31,25 @@ void ScriptComponent::setOwner(Entity* owner)
 	T_ASSERT(m_owner == nullptr);
 	m_owner = owner;
 	m_object = nullptr;
+	m_methodSetTransform = nullptr;
 	m_methodUpdate = nullptr;
 	validate();
 }
 
 void ScriptComponent::setTransform(const Transform& transform)
 {
+	T_ASSERT(m_owner != nullptr);
+
+	// Check if class has changed, hot-reload new class.
+	if (!validate())
+		return;
+
+	// Invoke set transform method if available.
+	if (m_methodSetTransform != nullptr)
+	{
+		Any argv[] = { CastAny< Transform >::set(transform) };
+		m_methodSetTransform->invoke(m_object, sizeof_array(argv), argv);
+	}
 }
 
 Aabb3 ScriptComponent::getBoundingBox() const
@@ -78,6 +93,7 @@ bool ScriptComponent::validate()
 	if (m_class.changed() || m_object == nullptr)
 	{
 		m_object = createRuntimeClassInstance(m_class, m_owner, 0, nullptr);
+		m_methodSetTransform = findRuntimeClassMethod(m_class, "setTransform");
 		m_methodUpdate = findRuntimeClassMethod(m_class, "update");
 		m_class.consume();
 	}
