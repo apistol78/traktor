@@ -341,6 +341,8 @@ Color4f RayTracerEmbree::tracePath0(
 ) const
 {
 	const int32_t sampleCount = m_configuration->getSampleCount();
+	if (sampleCount <= 0)
+		return Color4f(0.0f, 0.0f, 0.0f, 0.0f);
 
 	// Construct all rays.
 	AlignedVector< RTCRayHit > rhv(sampleCount);
@@ -360,11 +362,11 @@ Color4f RayTracerEmbree::tracePath0(
 	Color4f color(0.0f, 0.0f, 0.0f, 0.0f);
 	for (const auto& rh : rhv)
 	{
-		const Vector4 direction = Vector4(
+		const Vector4 direction(
 			rh.ray.dir_x,
 			rh.ray.dir_y,
 			rh.ray.dir_z
-		).normalized();
+		);
 
 		if (rh.hit.geomID == RTC_INVALID_GEOMETRY_ID)
 		{
