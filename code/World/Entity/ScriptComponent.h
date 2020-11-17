@@ -46,6 +46,7 @@ private:
 	Entity* m_owner;
 	resource::Proxy< IRuntimeClass > m_class;
 	Ref< ITypedObject > m_object;
+	Ref< const IRuntimeDispatch > m_methodSetTransform;
 	Ref< const IRuntimeDispatch > m_methodUpdate;
 
 	bool validate();
