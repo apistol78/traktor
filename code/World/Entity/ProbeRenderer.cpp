@@ -41,10 +41,8 @@ const int32_t c_sampleCount = 100;
 const resource::Id< render::Shader > c_probeShader(Guid(L"{99BB18CB-A744-D845-9A17-D0E586E4D9EA}"));
 const resource::Id< render::Shader > c_idFilterShader(Guid(L"{D9CC2267-0BDF-4A19-A970-856112821734}"));
 
-const render::Handle c_handleProbeFilterDivend(L"World_ProbeFilterDivend");
+const render::Handle c_handleProbeRoughness(L"World_ProbeRoughness");
 const render::Handle c_handleProbeTexture(L"World_ProbeTexture");
-const render::Handle c_handleProbeSampleTangent(L"World_ProbeSampleTangent");
-const render::Handle c_handleProbeSampleDirections(L"World_ProbeSampleDirections");
 const render::Handle c_handleProbeFilterCorners(L"World_ProbeFilterCorners");
 
 #pragma pack(1)
@@ -357,23 +355,10 @@ void ProbeRenderer::setup(const WorldSetupContext& context)
 			filterPass->addBuild(
 				[=](const render::RenderGraph& renderGraph, render::RenderContext* renderContext)
 				{
-					Vector4 sampleDirections[c_sampleCount];
-					Vector4 corners[4];
-					Vector4 tangent;
-
 					// Each mip represent one step rougher surface.
 					float roughness = (float)mip / mipCount;
 
-					// Generate sample directions based on roughness.
-					float sampleDivend = 0.0f;
-					for (int32_t i = 0; i < c_sampleCount; ++i)
-					{
-						const Vector4 c_unit(0.0f, 0.0f, 1.0f);
-						Vector2 uv = Quasirandom::hammersley(i, c_sampleCount);
-						sampleDirections[i] = Quasirandom::uniformCone(uv, c_unit, lerp(0.0f, HALF_PI, roughness));
-						sampleDivend += sampleDirections[i].z();
-					}
-
+					Vector4 corners[4];
 					switch (side)
 					{
 					case 0:
@@ -381,7 +366,6 @@ void ProbeRenderer::setup(const WorldSetupContext& context)
 						corners[1].set( 1.0f,  1.0f, -1.0f, 0.0f);
 						corners[2].set( 1.0f, -1.0f,  1.0f, 0.0f);
 						corners[3].set( 1.0f, -1.0f, -1.0f, 0.0f);
-						tangent.set(0.0f, 0.0f, -1.0f);
 						break;
 
 					case 1:
@@ -389,7 +373,6 @@ void ProbeRenderer::setup(const WorldSetupContext& context)
 						corners[1].set(-1.0f,  1.0f,  1.0f, 0.0f);
 						corners[2].set(-1.0f, -1.0f, -1.0f, 0.0f);
 						corners[3].set(-1.0f, -1.0f,  1.0f, 0.0f);
-						tangent.set(0.0f, 0.0f, 1.0f);
 						break;
 
 					case 2:
@@ -397,7 +380,6 @@ void ProbeRenderer::setup(const WorldSetupContext& context)
 						corners[1].set( 1.0f,  1.0f, -1.0f, 0.0f);
 						corners[2].set(-1.0f,  1.0f,  1.0f, 0.0f);
 						corners[3].set( 1.0f,  1.0f,  1.0f, 0.0f);
-						tangent.set(-1.0f, 0.0f, 0.0f);
 						break;
 
 					case 3:
@@ -405,7 +387,6 @@ void ProbeRenderer::setup(const WorldSetupContext& context)
 						corners[1].set( 1.0f, -1.0f,  1.0f, 0.0f);
 						corners[2].set(-1.0f, -1.0f, -1.0f, 0.0f);
 						corners[3].set( 1.0f, -1.0f, -1.0f, 0.0f);
-						tangent.set(1.0f, 0.0f, 0.0f);
 						break;
 
 					case 4:
@@ -413,7 +394,6 @@ void ProbeRenderer::setup(const WorldSetupContext& context)
 						corners[1].set( 1.0f,  1.0f,  1.0f, 0.0f);
 						corners[2].set(-1.0f, -1.0f,  1.0f, 0.0f);
 						corners[3].set( 1.0f, -1.0f,  1.0f, 0.0f);
-						tangent.set(0.0f, -1.0f, 0.0f);
 						break;
 
 					case 5:
@@ -421,16 +401,13 @@ void ProbeRenderer::setup(const WorldSetupContext& context)
 						corners[1].set(-1.0f,  1.0f, -1.0f, 0.0f);
 						corners[2].set( 1.0f, -1.0f, -1.0f, 0.0f);
 						corners[3].set(-1.0f, -1.0f, -1.0f, 0.0f);
-						tangent.set(0.0f, 1.0f, 0.0f);
 						break;
 					}
 
 					auto pp = renderContext->alloc< render::ProgramParameters >();
 					pp->beginParameters(renderContext);
-					pp->setFloatParameter(c_handleProbeFilterDivend, sampleDivend);
+					pp->setFloatParameter(c_handleProbeRoughness, roughness);
 					pp->setTextureParameter(c_handleProbeTexture, probeTexture);
-					pp->setVectorParameter(c_handleProbeSampleTangent, tangent);
-					pp->setVectorArrayParameter(c_handleProbeSampleDirections, sampleDirections, sizeof_array(sampleDirections));
 					pp->setVectorArrayParameter(c_handleProbeFilterCorners, corners, sizeof_array(corners));
 					pp->endParameters(renderContext);
 
