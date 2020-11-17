@@ -1,10 +1,9 @@
 #pragma once
 
-#include <list>
-#include <map>
 #include "Core/Guid.h"
 #include "Core/Object.h"
 #include "Core/RefArray.h"
+#include "Core/Containers/SmallMap.h"
 #include "Core/Thread/Semaphore.h"
 #include "Core/Thread/Thread.h"
 #include "Core/Thread/ThreadManager.h"
@@ -85,15 +84,13 @@ private:
 	Ref< UdpSocket > m_multicastSendSocket;
 	Ref< MulticastUdpSocket > m_multicastRecvSocket;
 	Ref< UdpSocket > m_directSocket;
-
 	SocketAddressIPv4 m_replyToAddress;
-
 	Thread* m_threadMulticastListener;
 	Guid m_managerGuid;
 	uint32_t m_mode;
-	std::list< LocalService > m_localServices;
+	AlignedVector< LocalService > m_localServices;
 	Semaphore m_localServicesLock;
-	std::map< Guid, ExternalService > m_externalServices;
+	SmallMap< Guid, ExternalService > m_externalServices;
 	Semaphore m_externalServicesLock;
 
 	void threadMulticastListener();
