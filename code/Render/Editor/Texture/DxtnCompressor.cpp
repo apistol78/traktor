@@ -89,6 +89,9 @@ struct CompressTextureTask : public Object
 				else if (textureFormat == TfDXT5)
 					flags |= squish::kDxt5;
 
+				if (needAlpha)
+					flags |= squish::kWeightColourByAlpha;
+
 				squish::CompressMasked(
 					(const squish::u8*)rgba,
 					mask,

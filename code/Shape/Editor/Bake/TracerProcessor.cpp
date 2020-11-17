@@ -60,7 +60,7 @@ Ref< drawing::Image > denoise(const GBuffer& gbuffer, drawing::Image* lightmap)
 		width,
 		height
 	);
-	albedo.clear(Color4f(1, 1, 1, 1));
+	albedo.clear(Color4f(1.0f, 1.0f, 1.0f, 1.0f));
 
 	drawing::Image normals(
 		drawing::PixelFormat::getRGBAF32(),
@@ -72,7 +72,7 @@ Ref< drawing::Image > denoise(const GBuffer& gbuffer, drawing::Image* lightmap)
 		for (int32_t x = 0; x < width; ++x)
 		{
 			const auto elm = gbuffer.get(x, y);
-			normals.setPixel(x, y, Color4f(elm.normal));
+			normals.setPixelUnsafe(x, y, Color4f(elm.normal));
 		}
 	}
 
@@ -81,6 +81,7 @@ Ref< drawing::Image > denoise(const GBuffer& gbuffer, drawing::Image* lightmap)
 		lightmap->getWidth(),
 		lightmap->getHeight()
 	);
+	output->clear(Color4f(0.0f, 0.0f, 0.0f, 0.0f));
 
 	OIDNDevice device = oidnNewDevice(OIDN_DEVICE_TYPE_DEFAULT);
 	oidnCommitDevice(device);
@@ -171,10 +172,11 @@ bool writeTexture(
 	}
 	else
 	{
+		encodeRGBM(lightmapFormat);
 		lightmapFormat->convert(drawing::PixelFormat::getABGRF16().endianSwapped());
-		textureFormat = render::TfR16G16B16A16F;
+		textureFormat = render::TfR8G8B8A8;
 		compressor = new render::UnCompressor();
-		needAlpha = false;
+		needAlpha = true;
 	}
 
 	Ref< db::Instance > outputInstance = outputDatabase->createInstance(
