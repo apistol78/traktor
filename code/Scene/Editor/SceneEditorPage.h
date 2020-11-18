@@ -132,6 +132,8 @@ private:
 
 	bool addEntity(const TypeInfo* entityType);
 
+	bool addComponent();
+
 	bool createExternal();
 
 	bool resolveExternal();
