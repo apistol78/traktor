@@ -268,27 +268,29 @@ bool SceneEditorPage::create(ui::Container* parent)
 	m_entityPanel->setText(i18n::Text(L"SCENE_EDITOR_ENTITIES"));
 
 	m_entityMenuDefault = new ui::Menu();
-	m_entityMenuDefault->add(new ui::MenuItem(ui::Command(L"Scene.Editor.MoveToEntity"), i18n::Text(L"SCENE_EDITOR_MOVE_TO_ENTITY")));
+	m_entityMenuDefault->add(new ui::MenuItem(ui::Command(L"Scene.Editor.AddComponent"), i18n::Text(L"SCENE_EDITOR_ADD_COMPONENT")));
+	m_entityMenuDefault->add(new ui::MenuItem(ui::Command(L"Editor.Delete"), i18n::Text(L"SCENE_EDITOR_REMOVE_ENTITY")));
 	m_entityMenuDefault->add(new ui::MenuItem(L"-"));
 	m_entityMenuDefault->add(new ui::MenuItem(ui::Command(L"Scene.Editor.CreateExternal"), i18n::Text(L"SCENE_EDITOR_CREATE_EXTERNAL")));
 	m_entityMenuDefault->add(new ui::MenuItem(L"-"));
-	m_entityMenuDefault->add(new ui::MenuItem(ui::Command(L"Editor.Delete"), i18n::Text(L"SCENE_EDITOR_REMOVE_ENTITY")));
+	m_entityMenuDefault->add(new ui::MenuItem(ui::Command(L"Scene.Editor.MoveToEntity"), i18n::Text(L"SCENE_EDITOR_MOVE_TO_ENTITY")));
 
 	m_entityMenuGroup = new ui::Menu();
-	m_entityMenuGroup->add(new ui::MenuItem(ui::Command(L"Scene.Editor.MoveToEntity"), i18n::Text(L"SCENE_EDITOR_MOVE_TO_ENTITY")));
+	m_entityMenuGroup->add(new ui::MenuItem(ui::Command(L"Scene.Editor.AddComponent"), i18n::Text(L"SCENE_EDITOR_ADD_COMPONENT")));
+	m_entityMenuGroup->add(new ui::MenuItem(ui::Command(L"Scene.Editor.AddEntity"), i18n::Text(L"SCENE_EDITOR_ADD_ENTITY")));
+	m_entityMenuGroup->add(new ui::MenuItem(ui::Command(L"Editor.Delete"), i18n::Text(L"SCENE_EDITOR_REMOVE_ENTITY")));
 	m_entityMenuGroup->add(new ui::MenuItem(L"-"));
 	m_entityMenuGroup->add(new ui::MenuItem(ui::Command(L"Scene.Editor.CreateExternal"), i18n::Text(L"SCENE_EDITOR_CREATE_EXTERNAL")));
 	m_entityMenuGroup->add(new ui::MenuItem(L"-"));
-	m_entityMenuGroup->add(new ui::MenuItem(ui::Command(L"Scene.Editor.AddEntity"), i18n::Text(L"SCENE_EDITOR_ADD_ENTITY")));
-	m_entityMenuGroup->add(new ui::MenuItem(ui::Command(L"Editor.Delete"), i18n::Text(L"SCENE_EDITOR_REMOVE_ENTITY")));
+	m_entityMenuGroup->add(new ui::MenuItem(ui::Command(L"Scene.Editor.MoveToEntity"), i18n::Text(L"SCENE_EDITOR_MOVE_TO_ENTITY")));
 
 	m_entityMenuExternal = new ui::Menu();
-	m_entityMenuExternal->add(new ui::MenuItem(ui::Command(L"Scene.Editor.MoveToEntity"), i18n::Text(L"SCENE_EDITOR_MOVE_TO_ENTITY")));
+	m_entityMenuExternal->add(new ui::MenuItem(ui::Command(L"Scene.Editor.FindInDatabase"), i18n::Text(L"SCENE_EDITOR_FIND_IN_DATABASE")));
+	m_entityMenuExternal->add(new ui::MenuItem(ui::Command(L"Editor.Delete"), i18n::Text(L"SCENE_EDITOR_REMOVE_ENTITY")));
 	m_entityMenuExternal->add(new ui::MenuItem(L"-"));
 	m_entityMenuExternal->add(new ui::MenuItem(ui::Command(L"Scene.Editor.ResolveExternal"), i18n::Text(L"SCENE_EDITOR_RESOLVE_EXTERNAL")));
 	m_entityMenuExternal->add(new ui::MenuItem(L"-"));
-	m_entityMenuExternal->add(new ui::MenuItem(ui::Command(L"Scene.Editor.FindInDatabase"), i18n::Text(L"SCENE_EDITOR_FIND_IN_DATABASE")));
-	m_entityMenuExternal->add(new ui::MenuItem(ui::Command(L"Editor.Delete"), i18n::Text(L"SCENE_EDITOR_REMOVE_ENTITY")));
+	m_entityMenuExternal->add(new ui::MenuItem(ui::Command(L"Scene.Editor.MoveToEntity"), i18n::Text(L"SCENE_EDITOR_MOVE_TO_ENTITY")));
 
 	m_entityToolBar = new ui::ToolBar();
 	m_entityToolBar->create(m_entityPanel);
@@ -724,6 +726,8 @@ bool SceneEditorPage::handleCommand(const ui::Command& command)
 		m_context->selectAllEntities(false);
 		m_context->raiseSelect();
 	}
+	else if (command == L"Scene.Editor.AddComponent")
+		result = addComponent();
 	else if (command == L"Scene.Editor.CreateExternal")
 		result = createExternal();
 	else if (command == L"Scene.Editor.ResolveExternal")
@@ -1172,15 +1176,6 @@ bool SceneEditorPage::addEntity(const TypeInfo* entityType)
 
 	entityData->setId(Guid::create());
 
-	// Browse for first component data also.
-	const TypeInfo* componentType = m_context->getEditor()->browseType(makeTypeInfoSet< world::IEntityComponentData >(), false, true);
-	if (componentType)
-	{
-		Ref< world::IEntityComponentData > componentData = dynamic_type_cast< world::IEntityComponentData* >(componentType->createInstance());
-		if (componentData)
-			entityData->setComponent(componentData);
-	}
-
 	m_context->getDocument()->push();
 
 	Ref< EntityAdapter > entityAdapter = new EntityAdapter(m_context);
@@ -1194,6 +1189,28 @@ bool SceneEditorPage::addEntity(const TypeInfo* entityType)
 	updateScene();
 	createInstanceGrid();
 	updatePropertyObject();
+
+	return true;
+}
+
+bool SceneEditorPage::addComponent()
+{
+	RefArray< EntityAdapter > selectedEntities;
+	if (m_context->getEntities(selectedEntities, SceneEditorContext::GfSelectedOnly | SceneEditorContext::GfDescendants) != 1)
+		return false;
+
+	auto entityData = selectedEntities[0]->getEntityData();
+
+	// Browse for component data type.
+	const TypeInfo* componentType = m_context->getEditor()->browseType(makeTypeInfoSet< world::IEntityComponentData >(), false, true);
+	if (componentType)
+	{
+		Ref< world::IEntityComponentData > componentData = dynamic_type_cast< world::IEntityComponentData* >(componentType->createInstance());
+		if (componentData)
+			entityData->setComponent(componentData);
+	}
+	else
+		return false;
 
 	return true;
 }
