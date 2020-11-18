@@ -87,10 +87,6 @@ Ref< model::Model > PrefabEntityReplicator::createModel(
     for (int32_t i = 0; i < (int32_t)models.size(); ++i)
         model::MergeModel(*models[i], Transform::identity(), 0.001f).apply(*outputModel);
 
-    static int count = 0;
-    model::ModelFormat::writeAny(str(L"data/Temp/Merged_%d.tmd", count), outputModel);
-    ++count;
-
     return outputModel;
 }
 

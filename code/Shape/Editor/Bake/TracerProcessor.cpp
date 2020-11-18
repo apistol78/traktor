@@ -244,7 +244,6 @@ bool writeTexture(
 	db::Database* outputDatabase,
 	const std::wstring& compressionMethod,
 	const Guid& lightmapId,
-	const std::wstring& name,
 	const drawing::Image* lightmap
 )
 {
@@ -669,12 +668,11 @@ bool TracerProcessor::process(const TracerTask* task)
 			m_outputDatabase,
 			m_compressionMethod,
 			tracerOutput->getLightmapId(),
-			tracerOutput->getName(),
 			lightmap
 		);
 		if (!result)
 		{
-			log::error << L"Trace failed; unable to create output lightmap texture for \"" << tracerOutput->getName() << L"\", error = " << result << L"." << Endl;
+			log::error << L"Trace failed; unable to create output lightmap texture for \"" << tracerOutput->getName() << L"\"." << Endl;
 			return false;
 		}
 	}
