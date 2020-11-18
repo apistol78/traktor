@@ -200,8 +200,11 @@ Ref< ISerializable > PrefabEntityPipeline::buildOutput(
 		}
 	);
 
-	Guid outputRenderMeshGuid = prefabEntityData->getId().permutation(1);
-	Guid outputCollisionShapeGuid = prefabEntityData->getId().permutation(2);
+	const Guid c_renderMeshSeed(L"{161565E6-E1C8-41B6-8163-D11D822FB9BF}");
+	const Guid c_collisionShapeSeed(L"{D28ACFB9-D836-4725-AD99-AC9619E2096A}");
+
+	Guid outputRenderMeshGuid = prefabEntityData->getId().permutation(c_renderMeshSeed);
+	Guid outputCollisionShapeGuid = prefabEntityData->getId().permutation(c_collisionShapeSeed);
 
 	std::wstring outputRenderMeshPath = L"Generated/" + outputRenderMeshGuid.format();
 	std::wstring outputCollisionShapePath = L"Generated/" + outputCollisionShapeGuid.format();

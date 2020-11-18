@@ -282,10 +282,14 @@ bool addModel(
 			return false;
 		}
 
+		const int32_t c_size = 64;
+		const uint32_t c_white = 0xff333333;
+		const uint32_t c_black = 0xff222222;
+
 		Writer writer(stream);
 		writer << uint32_t(12);
-		writer << int32_t(1);
-		writer << int32_t(1);
+		writer << c_size;
+		writer << c_size;
 		writer << int32_t(1);
 		writer << int32_t(1);
 		writer << int32_t(render::TfR8G8B8A8);
@@ -294,10 +298,15 @@ bool addModel(
 		writer << bool(false);
 		writer << bool(false);
 
-		uint32_t c_white = 0xfffffff;
-
-		if (writer.write(&c_white, 4, 1) != 4)
-			return false;
+		for (int32_t y = 0; y < c_size; ++y)
+		{
+			for (int32_t x = 0; x < c_size; ++x)
+			{
+				uint32_t color = ((x / 8 + y / 8) & 1) ? c_white : c_black;
+				if (writer.write(&color, 4, 1) != 4)
+					return false;
+			}
+		}
 
 		stream->close();
 
@@ -370,10 +379,10 @@ bool prepareModel(
 	);
 
 	// Rudimentary caching; assuming calculating hash of model is quicker than UV mapping etc.
-	uint32_t modelHash = DeepHash(model).get();
-	Path cachedModelFileName = modelCachePath + L"/Bake_" + toString(modelHash) + L".tmd";
-	Ref< model::Model > cachedModel = model::ModelFormat::readAny(cachedModelFileName);
-	if (!cachedModel)
+	//uint32_t modelHash = DeepHash(model).get();
+	//Path cachedModelFileName = modelCachePath + L"/Bake_" + toString(modelHash) + L".tmd";
+	//Ref< model::Model > cachedModel = model::ModelFormat::readAny(cachedModelFileName);
+	//if (!cachedModel)
 	{
 		// Ensure model is fit for tracing.
 		model->clear(model::Model::CfColors | model::Model::CfJoints);
@@ -391,11 +400,11 @@ bool prepareModel(
 			model::UnwrapUV(channel, lightmapSize).apply(*model);
 		}
 
-		FileSystem::getInstance().makeAllDirectories(cachedModelFileName.getPathOnly());
-		model::ModelFormat::writeAny(cachedModelFileName, model);
+		//FileSystem::getInstance().makeAllDirectories(cachedModelFileName.getPathOnly());
+		//model::ModelFormat::writeAny(cachedModelFileName, model);
 	}
-	else
-		model = cachedModel;
+	//else
+	//	model = cachedModel;
 
 	// Modify all materials to contain reference to lightmap channel.
 	for (auto& material : model->getMaterials())
@@ -572,15 +581,17 @@ bool BakePipelineOperator::build(
 		}
 
 		// Traverse and visit all entities in layer.
-		int32_t debugIndex = 0;
 		scene::Traverser::visit(flattenedLayer, [&](Ref< world::EntityData >& inoutEntityData) -> scene::Traverser::VisitorResult
 		{
 			Guid entityId = inoutEntityData->getId();
 			if (entityId.isNull())
 				return scene::Traverser::VrSkip;
 
-			Guid lightmapId = entityId.permutation(1);
-			Guid outputId = entityId.permutation(2);
+			const Guid c_lightmapIdSeed(L"{A5A16214-0A01-4D6D-A509-6A5A16ACB6A3}");
+			const Guid c_outputIdSeed(L"{043B98C3-F93B-4510-8B73-1B5EEF2323E5}");
+
+			Guid lightmapId = entityId.permutation(c_lightmapIdSeed);
+			Guid outputId = entityId.permutation(c_outputIdSeed);
 
 			if (auto editorAttributes = inoutEntityData->getComponent< world::EditorAttributesComponentData >())
 			{
@@ -627,8 +638,9 @@ bool BakePipelineOperator::build(
 						model,
 						outputId
 					));
-					if (!inoutEntityData)
-						return scene::Traverser::VrSkip;
+
+					// Skip further processing of this entity and it's children.
+					return scene::Traverser::VrSkip;
 				}
 			}
 
@@ -686,7 +698,8 @@ bool BakePipelineOperator::build(
 
 	// Create irradiance grid task.
 	{
-		Guid irradianceGridId = sourceInstance->getGuid().permutation(1000);
+		const Guid c_irradianceGridIdSeed(L"{714D9AF6-EF62-4E15-B372-7CEBB090417B}");
+		Guid irradianceGridId = sourceInstance->getGuid().permutation(c_irradianceGridIdSeed);
 
 		// Create a black irradiance grid first.
 		if (pipelineBuilder->getOutputDatabase()->getInstance(irradianceGridId) == nullptr)
