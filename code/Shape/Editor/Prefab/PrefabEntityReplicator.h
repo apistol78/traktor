@@ -37,6 +37,9 @@ public:
         const model::Model* model,
         const Guid& outputGuid
     ) const override final;
+
+private:
+    std::wstring m_modelCachePath;
 };
 
     }

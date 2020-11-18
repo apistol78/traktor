@@ -5,8 +5,6 @@
 #include "Shape/Editor/EditorProfile.h"
 #include "Shape/Editor/EntityFactory.h"
 #include "Shape/Editor/EntityRenderer.h"
-#include "Shape/Editor/Prefab/PrefabEntityFactory.h"
-#include "Shape/Editor/Prefab/PrefabEntityEditorFactory.h"
 #include "Shape/Editor/Solid/SolidEditorPlugin.h"
 #include "Shape/Editor/Solid/SolidEntityEditorFactory.h"
 #include "Shape/Editor/Spline/ControlPointComponentEditorFactory.h"
@@ -57,7 +55,6 @@ void EditorProfile::createEntityFactories(
 	std::wstring assetPath = context->getEditor()->getSettings()->getProperty< std::wstring >(L"Pipeline.AssetPath", L"");
 	std::wstring modelCachePath = context->getEditor()->getSettings()->getProperty< std::wstring >(L"Pipeline.ModelCachePath", L"");
 
-	outEntityFactories.push_back(new PrefabEntityFactory());
 	outEntityFactories.push_back(new EntityFactory(
 		context->getSourceDatabase(),
 		context->getResourceManager(),
@@ -89,7 +86,6 @@ void EditorProfile::createEntityEditorFactories(
 	RefArray< const scene::IEntityEditorFactory >& outEntityEditorFactories
 ) const
 {
-	outEntityEditorFactories.push_back(new PrefabEntityEditorFactory());
 	outEntityEditorFactories.push_back(new SolidEntityEditorFactory());
 	outEntityEditorFactories.push_back(new SplineEntityEditorFactory());
 }
