@@ -1,55 +1,29 @@
-#include "Core/Serialization/AttributePrivate.h"
 #include "Core/Serialization/ISerializer.h"
-#include "Core/Serialization/MemberRefArray.h"
+#include "Core/Serialization/Member.h"
 #include "Shape/Editor/Prefab/PrefabEntityData.h"
-#include "World/EntityData.h"
+#include "World/Editor/EditorAttributesComponentData.h"
+#include "World/Entity/GroupComponentData.h"
 
 namespace traktor
 {
 	namespace shape
 	{
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.shape.PrefabEntityData", 0, PrefabEntityData, world::EntityData)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.shape.PrefabEntityData", 1, PrefabEntityData, world::EntityData)
 
 PrefabEntityData::PrefabEntityData()
 :	m_partitionMesh(false)
 {
-}
-
-void PrefabEntityData::addEntityData(world::EntityData* entityData)
-{
-	T_ASSERT(std::find(m_entityData.begin(), m_entityData.end(), entityData) == m_entityData.end());
-	m_entityData.push_back(entityData);
-}
-
-void PrefabEntityData::removeEntityData(world::EntityData* entityData)
-{
-	auto it = std::find(m_entityData.begin(), m_entityData.end(), entityData);
-	if (it != m_entityData.end())
-		m_entityData.erase(it);
-}
-
-void PrefabEntityData::removeAllEntityData()
-{
-	m_entityData.resize(0);
-}
-
-void PrefabEntityData::setTransform(const Transform& transform)
-{
-	Transform deltaTransform = transform * getTransform().inverse();
-	for (auto entityData : m_entityData)
-	{
-		Transform currentTransform = entityData->getTransform();
-		entityData->setTransform(deltaTransform * currentTransform);
-	}
-	world::EntityData::setTransform(transform);
+	setComponent(new world::EditorAttributesComponentData());
+	setComponent(new world::GroupComponentData());
 }
 
 void PrefabEntityData::serialize(ISerializer& s)
 {
+	T_FATAL_ASSERT(s.getVersion() >= 1);
+
 	world::EntityData::serialize(s);
 
-	s >> MemberRefArray< world::EntityData >(L"entityData", m_entityData);
 	s >> Member< bool >(L"partitionMesh", m_partitionMesh);
 }
 

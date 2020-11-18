@@ -200,8 +200,8 @@ Ref< ISerializable > PrefabEntityPipeline::buildOutput(
 		}
 	);
 
-	Guid outputRenderMeshGuid = pipelineBuilder->synthesizeOutputGuid(1);
-	Guid outputCollisionShapeGuid = pipelineBuilder->synthesizeOutputGuid(1);
+	Guid outputRenderMeshGuid = prefabEntityData->getId().permutation(1);
+	Guid outputCollisionShapeGuid = prefabEntityData->getId().permutation(2);
 
 	std::wstring outputRenderMeshPath = L"Generated/" + outputRenderMeshGuid.format();
 	std::wstring outputCollisionShapePath = L"Generated/" + outputCollisionShapeGuid.format();
@@ -226,10 +226,11 @@ Ref< ISerializable > PrefabEntityPipeline::buildOutput(
 			Ref< const mesh::MeshAsset > meshAsset = pipelineBuilder->getObjectReadOnly< mesh::MeshAsset >(meshComponent->getMesh());
 			if (meshAsset)
 			{
-				merge->addVisualMesh(
-					meshAsset,
-					TprefabInv * entityData->getTransform()
-				);
+				if (!meshAsset->getFileName().empty())
+					merge->addVisualMesh(
+						meshAsset,
+						TprefabInv * entityData->getTransform()
+					);
 			}
 			else
 				log::warning << L"Skipped visual mesh of \"" << entityData->getName() << L"\"; unable to read visual mesh asset." << Endl;
@@ -247,10 +248,11 @@ Ref< ISerializable > PrefabEntityPipeline::buildOutput(
 					Ref< const physics::MeshAsset > meshShapeAsset = pipelineBuilder->getObjectReadOnly< physics::MeshAsset >(meshShapeDesc->getMesh());
 					if (meshShapeAsset)
 					{
-						merge->addShapeMesh(
-							meshShapeAsset,
-							TprefabInv * entityData->getTransform()
-						);
+						if (!meshShapeAsset->getFileName().empty())
+							merge->addShapeMesh(
+								meshShapeAsset,
+								TprefabInv * entityData->getTransform()
+							);
 
 						shapeCollisionGroup.insert(meshShapeDesc->getCollisionGroup().begin(), meshShapeDesc->getCollisionGroup().end());
 						shapeCollisionMask.insert(meshShapeDesc->getCollisionMask().begin(), meshShapeDesc->getCollisionMask().end());

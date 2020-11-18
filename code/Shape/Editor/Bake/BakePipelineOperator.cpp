@@ -346,6 +346,116 @@ int32_t calculateLightmapSize(const model::Model* model, float lumelDensity, int
 	return alignUp(size, 16);
 }
 
+/*! */
+bool prepareModel(
+	const BakeConfiguration* configuration,
+	editor::IPipelineBuilder* pipelineBuilder,
+	const world::EntityData* entity,
+	model::Model* model,
+	const std::wstring& assetPath,
+	const std::wstring& modelCachePath,
+	const Guid& lightmapId,
+	BakeReceipt* receipt,
+	TracerTask* tracerTask
+)
+{
+	const Guid entityId = entity->getId();
+
+	// Calculate size of lightmap from geometry.
+	int32_t lightmapSize = calculateLightmapSize(
+		model,
+		configuration->getLumelDensity(),
+		configuration->getMinimumLightMapSize(),
+		configuration->getMaximumLightMapSize()
+	);
+
+	// Rudimentary caching; assuming calculating hash of model is quicker than UV mapping etc.
+	uint32_t modelHash = DeepHash(model).get();
+	Path cachedModelFileName = modelCachePath + L"/Bake_" + toString(modelHash) + L".tmd";
+	Ref< model::Model > cachedModel = model::ModelFormat::readAny(cachedModelFileName);
+	if (!cachedModel)
+	{
+		// Ensure model is fit for tracing.
+		model->clear(model::Model::CfColors | model::Model::CfJoints);
+		model::Triangulate().apply(*model);
+		model::CleanDuplicates(0.0f).apply(*model);
+		model::CleanDegenerate().apply(*model);
+		model::CalculateTangents(false).apply(*model);
+
+		// Check if model already contain lightmap UV or if we need to unwrap.
+		uint32_t channel = model->getTexCoordChannel(L"Lightmap");
+		if (channel == model::c_InvalidIndex)
+		{
+			// No lightmap UV channel, need to add and unwrap automatically.
+			channel = model->addUniqueTexCoordChannel(L"Lightmap");
+			model::UnwrapUV(channel, lightmapSize).apply(*model);
+		}
+
+		FileSystem::getInstance().makeAllDirectories(cachedModelFileName.getPathOnly());
+		model::ModelFormat::writeAny(cachedModelFileName, model);
+	}
+	else
+		model = cachedModel;
+
+	// Modify all materials to contain reference to lightmap channel.
+	for (auto& material : model->getMaterials())
+	{
+		material.setBlendOperator(model::Material::BoDecal);
+		material.setLightMap(model::Material::Map(L"Lightmap", L"Lightmap", false, lightmapId));
+	}
+
+	// Load texture images and attach to materials.
+	for (auto& material : model->getMaterials())
+	{
+		auto diffuseMap = material.getDiffuseMap();
+		if (diffuseMap.texture.isNotNull())
+		{
+			Ref< const render::TextureAsset > textureAsset = pipelineBuilder->getObjectReadOnly< render::TextureAsset >(diffuseMap.texture);
+			if (!textureAsset)
+				continue;
+
+			Path filePath = FileSystem::getInstance().getAbsolutePath(Path(assetPath) + textureAsset->getFileName());
+			Ref< IStream > file = pipelineBuilder->openFile(filePath);
+			if (!file)
+				continue;
+
+			Ref< drawing::Image > image = drawing::Image::load(file, textureAsset->getFileName().getExtension());
+			if (!image)
+				continue;
+
+			diffuseMap.image = image;			
+			material.setDiffuseMap(diffuseMap);
+		}
+	}
+
+	// Calculate priority, if entity has moved since last bake then it's prioritized.
+	int32_t priority = 0;
+	if (receipt)
+	{
+		Transform lastTransform;
+		if (receipt->getLastKnownTransform(entityId, lastTransform))
+		{
+			if (lastTransform != entity->getTransform())
+				priority = 1;
+		}
+		else
+			priority = 1;
+
+		receipt->setTransform(entityId, entity->getTransform());
+	}
+
+	return addModel(
+		pipelineBuilder,
+		model,
+		entity->getTransform(),
+		entity->getName(),
+		priority,
+		lightmapId,
+		lightmapSize,
+		tracerTask
+	);
+}
+
 		}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.shape.BakePipelineOperator", 0, BakePipelineOperator, scene::IScenePipelineOperator)
@@ -487,10 +597,45 @@ bool BakePipelineOperator::build(
 			if (auto skyComponentData = inoutEntityData->getComponent< weather::SkyComponentData >())
 				addSky(pipelineBuilder, m_assetPath, skyComponentData, tracerTask);
 
+			// Find model synthesizer which can generate from current entity.
+			const scene::IEntityReplicator* entityReplicator = m_entityReplicators[&type_of(inoutEntityData)];
+			if (entityReplicator)
+			{
+				// Synthesize a model which we can trace.
+				Ref< model::Model > model = entityReplicator->createModel(pipelineBuilder, m_assetPath, inoutEntityData);
+				if (model)
+				{
+					if (!prepareModel(
+						configuration,
+						pipelineBuilder,
+						inoutEntityData,
+						model,
+						m_assetPath,
+						m_modelCachePath,
+						lightmapId,
+						receipt,
+						tracerTask
+					))
+						return scene::Traverser::VrFailed;
+
+					// Let model generator consume altered model and modify entity in ways
+					// which make sense for entity data.
+					inoutEntityData = checked_type_cast< world::EntityData* >(entityReplicator->modifyOutput(
+						pipelineBuilder,
+						m_assetPath,
+						inoutEntityData,
+						model,
+						outputId
+					));
+					if (!inoutEntityData)
+						return scene::Traverser::VrSkip;
+				}
+			}
+
+			// Find model synthesizer which can generate from components.
 			RefArray< world::IEntityComponentData > componentDatas = inoutEntityData->getComponents();
 			for (auto componentData : componentDatas)
 			{
-				// Find model synthesizer which can generate from current entity.
 				const scene::IEntityReplicator* entityReplicator = m_entityReplicators[&type_of(componentData)];
 				if (!entityReplicator)
 					continue;
@@ -500,103 +645,18 @@ bool BakePipelineOperator::build(
 				if (!model)
 					continue;
 
-				// Calculate size of lightmap from geometry.
-				int32_t lightmapSize = calculateLightmapSize(
-					model,
-					configuration->getLumelDensity(),
-					configuration->getMinimumLightMapSize(),
-					configuration->getMaximumLightMapSize()
-				);
-
-				// Rudimentary caching; assuming calculating hash of model is quicker than UV mapping etc.
-				uint32_t modelHash = DeepHash(model).get();
-				Path cachedModelFileName = m_modelCachePath + L"/Bake_" + toString(modelHash) + L".tmd";
-				Ref< model::Model > cachedModel = model::ModelFormat::readAny(cachedModelFileName);
-				if (!cachedModel)
-				{
-					// Ensure model is fit for tracing.
-					model->clear(model::Model::CfColors | model::Model::CfJoints);
-					model::Triangulate().apply(*model);
-					model::CleanDuplicates(0.0f).apply(*model);
-					model::CleanDegenerate().apply(*model);
-					model::CalculateTangents(false).apply(*model);
-
-					// Check if model already contain lightmap UV or if we need to unwrap.
-					uint32_t channel = model->getTexCoordChannel(L"Lightmap");
-					if (channel == model::c_InvalidIndex)
-					{
-						// No lightmap UV channel, need to add and unwrap automatically.
-						channel = model->addUniqueTexCoordChannel(L"Lightmap");
-						model::UnwrapUV(channel, lightmapSize).apply(*model);
-					}
-
-					FileSystem::getInstance().makeAllDirectories(cachedModelFileName.getPathOnly());
-					model::ModelFormat::writeAny(cachedModelFileName, model);
-				}
-				else
-					model = cachedModel;
-
-				// Modify all materials to contain reference to lightmap channel.
-				for (auto& material : model->getMaterials())
-				{
-					material.setBlendOperator(model::Material::BoDecal);
-					material.setLightMap(model::Material::Map(L"Lightmap", L"Lightmap", false, lightmapId));
-				}
-
-				// Load texture images and attach to materials.
-				for (auto& material : model->getMaterials())
-				{
-					auto diffuseMap = material.getDiffuseMap();
-					if (diffuseMap.texture.isNotNull())
-					{
-						Ref< const render::TextureAsset > textureAsset = pipelineBuilder->getObjectReadOnly< render::TextureAsset >(diffuseMap.texture);
-						if (!textureAsset)
-							continue;
-
-						Path filePath = FileSystem::getInstance().getAbsolutePath(Path(m_assetPath) + textureAsset->getFileName());
-						Ref< IStream > file = pipelineBuilder->openFile(filePath);
-						if (!file)
-							continue;
-
-						Ref< drawing::Image > image = drawing::Image::load(file, textureAsset->getFileName().getExtension());
-						if (!image)
-							continue;
-
-						diffuseMap.image = image;			
-						material.setDiffuseMap(diffuseMap);
-					}
-				}
-
-				// Add model to raytracing task.
-				std::wstring name = str(L"%s_%d", inoutEntityData->getName().c_str(), debugIndex); debugIndex++;
-
-				// Calculate priority, if entity has moved since last bake then it's prioritized.
-				int32_t priority = 0;
-				if (receipt)
-				{
-					Transform lastTransform;
-					if (receipt->getLastKnownTransform(entityId, lastTransform))
-					{
-						if (lastTransform != inoutEntityData->getTransform())
-							priority = 1;
-					}
-					else
-						priority = 1;
-
-					receipt->setTransform(entityId, inoutEntityData->getTransform());
-				}
-
-				if (!addModel(
+				if (!prepareModel(
+					configuration,
 					pipelineBuilder,
+					inoutEntityData,
 					model,
-					inoutEntityData->getTransform(),
-					name,
-					priority,
+					m_assetPath,
+					m_modelCachePath,
 					lightmapId,
-					lightmapSize,
+					receipt,
 					tracerTask
 				))
-					continue;
+					return scene::Traverser::VrFailed;
 
 				// Let model generator consume altered model and modify entity in ways
 				// which make sense for entity data.
@@ -615,6 +675,7 @@ bool BakePipelineOperator::build(
 					inoutEntityData->setComponent(replaceComponentData);
 				}
 			}
+
 			return scene::Traverser::VrContinue;
 		});
 
