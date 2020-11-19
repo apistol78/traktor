@@ -26,7 +26,7 @@ CC=ccache clang++
 CC_FLAGS_COMMON=\
 	--target=arm-linux-gnueabihf\
 	--sysroot=$(SYSROOT)\
-	-std=c++11\
+	-std=c++14\
 	-pthread\
 	-fPIC\
 	-D __RPI__\
