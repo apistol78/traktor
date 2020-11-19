@@ -543,12 +543,7 @@ void ProbeRenderer::build(
 
 	rb->programParams->beginParameters(renderContext);
 
-	worldRenderPass.setProgramParameters(
-		rb->programParams,
-		transform,
-		transform,
-		probeComponent->getBoundingBox()
-	);
+	worldRenderPass.setProgramParameters(rb->programParams);
 
 	if (probeComponent->getLocal())
 	{

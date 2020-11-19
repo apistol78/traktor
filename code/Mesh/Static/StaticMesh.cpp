@@ -33,8 +33,6 @@ void StaticMesh::build(
 	auto it = m_parts.find(worldRenderPass.getTechnique());
 	T_ASSERT(it != m_parts.end());
 
-	Aabb3 boundingBox = m_renderMesh->getBoundingBox();
-
 	const auto& meshParts = m_renderMesh->getParts();
 	for (const auto& part : it->second)
 	{
@@ -57,8 +55,7 @@ void StaticMesh::build(
 		worldRenderPass.setProgramParameters(
 			renderBlock->programParams,
 			lastWorldTransform,
-			worldTransform,
-			boundingBox
+			worldTransform
 		);
 
 		if (parameterCallback)

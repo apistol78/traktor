@@ -48,7 +48,7 @@ void WorldRenderPassSimple::setProgramParameters(render::ProgramParameters* prog
 
 }
 
-void WorldRenderPassSimple::setProgramParameters(render::ProgramParameters* programParams, const Transform& lastWorld, const Transform& world, const Aabb3& bounds) const
+void WorldRenderPassSimple::setProgramParameters(render::ProgramParameters* programParams, const Transform& lastWorld, const Transform& world) const
 {
 	Matrix44 w = world.toMatrix44();
 	programParams->attachParameters(m_globalProgramParams);

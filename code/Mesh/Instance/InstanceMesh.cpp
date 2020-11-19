@@ -74,16 +74,6 @@ void InstanceMesh::build(
 	// Sort instances by ascending distance; note we're sorting caller's vector.
 	std::sort(instanceWorld.begin(), instanceWorld.end(), SortRenderInstance());
 
-	// Calculate bounding box of all instances, only including
-	// center of each instance since transforming each bounding box is too expensive.
-	Aabb3 boundingBoxWorld;
-	for (const auto& instance : instanceWorld)
-	{
-		boundingBoxWorld.contain(
-			Vector4::loadAligned(instance.data.translation).xyz1()
-		);
-	}
-
 	const auto& meshParts = m_renderMesh->getParts();
 
 	// Render opaque parts front-to-back.
@@ -111,8 +101,7 @@ void InstanceMesh::build(
 		worldRenderPass.setProgramParameters(
 			batchParameters,
 			Transform::identity(),
-			Transform::identity(),
-			boundingBoxWorld
+			Transform::identity()
 		);
 		batchParameters->endParameters(renderContext);
 
@@ -181,8 +170,7 @@ void InstanceMesh::build(
 			worldRenderPass.setProgramParameters(
 				batchParameters,
 				Transform::identity(),
-				Transform::identity(),
-				boundingBoxWorld
+				Transform::identity()
 			);
 			batchParameters->endParameters(renderContext);
 

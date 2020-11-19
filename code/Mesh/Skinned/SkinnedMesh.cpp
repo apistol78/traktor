@@ -42,8 +42,6 @@ void SkinnedMesh::build(
 	auto it = m_parts.find(worldRenderPass.getTechnique());
 	T_ASSERT(it != m_parts.end());
 
-	const Aabb3& boundingBox = getBoundingBox();
-
 	const auto& meshParts = m_mesh->getParts();
 	for (const auto& part : it->second)
 	{
@@ -65,8 +63,7 @@ void SkinnedMesh::build(
 		worldRenderPass.setProgramParameters(
 			renderBlock->programParams,
 			lastWorldTransform,
-			worldTransform,
-			boundingBox
+			worldTransform
 		);
 
 		if (parameterCallback)

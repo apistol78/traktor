@@ -111,8 +111,7 @@ void IndoorMesh::build(
 			worldRenderPass.setProgramParameters(
 				renderBlock->programParams,
 				worldTransform,
-				worldTransform,
-				getBoundingBox()
+				worldTransform
 			);
 			if (parameterCallback)
 				parameterCallback->setParameters(renderBlock->programParams);

@@ -26,7 +26,7 @@ public:
 		{
 			{ L"Void", Any::Type::Void },
 			{ L"Boolean", Any::Type::Boolean },
-			{ L"Integer", Any::Type::Integer },
+			{ L"Int32", Any::Type::Int32 },
 			{ L"Float", Any::Type::Float },
 			{ L"String", Any::Type::String },
 			{ L"Object", Any::Type::Object },
@@ -49,11 +49,11 @@ public:
 					m_ref = Any::fromBoolean(value);
 				}
 				break;
-			case Any::Type::Integer:
+			case Any::Type::Int32:
 				{
 					int32_t value;
 					s >> Member< int32_t >(L"value", value);
-					m_ref = Any::fromInteger(value);
+					m_ref = Any::fromInt32(value);
 				}
 				break;
 			case Any::Type::Float:
@@ -91,9 +91,9 @@ public:
 					s >> Member< bool >(L"value", value);
 				}
 				break;
-			case Any::Type::Integer:
+			case Any::Type::Int32:
 				{
-					int32_t value = m_ref.getInteger();
+					int32_t value = m_ref.getInt32();
 					s >> Member< int32_t >(L"value", value);
 				}
 				break;

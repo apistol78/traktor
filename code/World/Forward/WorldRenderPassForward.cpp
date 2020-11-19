@@ -70,7 +70,7 @@ void WorldRenderPassForward::setProgramParameters(render::ProgramParameters* pro
 	setWorldProgramParameters(programParams, Transform::identity(), Transform::identity());
 }
 
-void WorldRenderPassForward::setProgramParameters(render::ProgramParameters* programParams, const Transform& lastWorld, const Transform& world, const Aabb3& bounds) const
+void WorldRenderPassForward::setProgramParameters(render::ProgramParameters* programParams, const Transform& lastWorld, const Transform& world) const
 {
 	setWorldProgramParameters(programParams, lastWorld, world);
 }

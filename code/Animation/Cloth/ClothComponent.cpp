@@ -221,8 +221,7 @@ void ClothComponent::build(
 	worldRenderPass.setProgramParameters(
 		renderBlock->programParams,
 		m_transform,
-		m_transform,
-		m_aabb
+		m_transform
 	);
 	renderBlock->programParams->endParameters(renderContext);
 
