@@ -325,24 +325,6 @@ struct CastAny < const std::string&, false >
 };
 
 template < >
-struct CastAny < const char, true >
-{
-	T_NO_COPY_CLASS(CastAny);
-	static OutputStream& typeName(OutputStream& ss) {
-		return ss << L"const char";
-	}
-	static bool accept(const Any& value) {
-		return value.isString() || value.isNumeric();
-	}
-	static Any set(const char* value) {
-		return Any::fromString(value);
-	}
-	static const char* get(const Any& value) {
-		return value.getString().c_str();
-	}
-};
-
-template < >
 struct CastAny < std::wstring, false >
 {
 	T_NO_COPY_CLASS(CastAny);
@@ -375,24 +357,6 @@ struct CastAny < const std::wstring&, false >
 	}
 	static std::wstring get(const Any& value) {
 		return value.getWideString();
-	}
-};
-
-template < >
-struct CastAny < const wchar_t, true >
-{
-	T_NO_COPY_CLASS(CastAny);
-	static OutputStream& typeName(OutputStream& ss) {
-		return ss << L"const wchar_t";
-	}
-	static bool accept(const Any& value) {
-		return value.isString() || value.isNumeric();
-	}
-	static Any set(const wchar_t* value) {
-		return Any::fromString(value);
-	}
-	static const wchar_t* get(const Any& value) {
-		return value.getWideString().c_str();
 	}
 };
 
