@@ -43,7 +43,9 @@
 				<Directory Id="data" Name="data"/>
 				<Directory Id="resources" Name="resources"/>
 				<Directory Id="scripts" Name="scripts">
-					<File Id="scripts_config" Name="config-vs-x64.bat" Source="$(env.TRAKTOR_HOME)/scripts/config.bat" DiskId="1" />
+					<Component Id="cmp_scripts_config">
+						<File Id="scripts_config" Name="config-vs-x64.bat" Source="$(env.TRAKTOR_HOME)/scripts/config.bat" DiskId="1" />
+					</Component>
 				</Directory>
 			</Directory>
 		</Directory>
