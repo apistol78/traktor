@@ -98,7 +98,7 @@ private:
 				return;
 		}
 
-		Ref< net::UrlConnection > connection = net::UrlConnection::open(m_url);
+		Ref< net::UrlConnection > connection = net::UrlConnection::open(net::Url(m_url));
 		if (!connection)
 			return;
 

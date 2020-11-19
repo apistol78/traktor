@@ -26,7 +26,7 @@ class T_DLLCLASS ResidentResourceHandle : public ResourceHandle
 	T_RTTI_CLASS;
 
 public:
-	ResidentResourceHandle(const TypeInfo& type, bool persistent);
+	explicit ResidentResourceHandle(const TypeInfo& type, bool persistent);
 
 	const TypeInfo& getProductType() const { return m_resourceType; }
 

@@ -28,7 +28,7 @@ class T_DLLCLASS IcmpSocket : public Socket
 	T_RTTI_CLASS;
 
 public:
-	IcmpSocket();
+	IcmpSocket() = default;
 
 	virtual void close() override final;
 

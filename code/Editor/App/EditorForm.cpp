@@ -1522,7 +1522,7 @@ bool EditorForm::openWorkspace(const Path& workspacePath)
 	// Create "Home" page.
 	std::wstring url = m_mergedSettings->getProperty< std::wstring >(L"Editor.HomeUrl", L"");
 	if (!url.empty())
-		openBrowser(url);
+		openBrowser(net::Url(url));
 
 	saveRecent(OS::getInstance().getWritableFolderPath() + L"/Traktor/Editor/Traktor.Editor.mru", m_mru);
 	updateMRU();
@@ -2648,7 +2648,7 @@ bool EditorForm::handleCommand(const ui::Command& command)
 	{
 		std::wstring url = m_mergedSettings->getProperty< std::wstring >(L"Editor.HomeUrl", L"");
 		if (!url.empty())
-			openBrowser(url);
+			openBrowser(net::Url(url));
 	}
 	else if (command == L"Editor.ViewDatabase")
 	{

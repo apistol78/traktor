@@ -31,7 +31,7 @@ bool Translator::translate(const std::wstring& text, std::wstring& outText) cons
 
 	std::wstring encodedOriginalWord = net::Url::encode(utf8buf, utf8bufLen);
 
-	Ref< net::UrlConnection > connection = net::UrlConnection::open(L"http://translate.google.com/translate_a/t?client=t&text=" + encodedOriginalWord + L"&hl=" + m_to + L"&sl=" + m_from + L"&tl=" + m_to + L"&ie=UTF-8&oe=UTF-8&multires=1&otf=1&pc=1&trs=1&ssel=3&tsel=6&sc=1");
+	Ref< net::UrlConnection > connection = net::UrlConnection::open(net::Url(L"http://translate.google.com/translate_a/t?client=t&text=" + encodedOriginalWord + L"&hl=" + m_to + L"&sl=" + m_from + L"&tl=" + m_to + L"&ie=UTF-8&oe=UTF-8&multires=1&otf=1&pc=1&trs=1&ssel=3&tsel=6&sc=1"));
 	if (!connection)
 		return false;
 
@@ -55,13 +55,13 @@ bool Translator::translate(const std::wstring& text, std::wstring& outText) cons
 				result = true;
 			}
 			else
-				log::error << L"Unable to translate \"" << text << L"\"; malformed response" << Endl;
+				log::error << L"Unable to translate \"" << text << L"\"; malformed response." << Endl;
 		}
 		else
-			log::error << L"Unable to translate \"" << text << L"\"; malformed response" << Endl;
+			log::error << L"Unable to translate \"" << text << L"\"; malformed response." << Endl;
 	}
 	else
-		log::error << L"Unable to translate \"" << text << L"\"; no response" << Endl;
+		log::error << L"Unable to translate \"" << text << L"\"; no response." << Endl;
 
 	stream->close();
 	stream = 0;

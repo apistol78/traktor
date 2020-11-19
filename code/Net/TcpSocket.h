@@ -30,7 +30,7 @@ class T_DLLCLASS TcpSocket : public Socket
 public:
 	TcpSocket();
 
-	TcpSocket(handle_t socket_);
+	explicit TcpSocket(handle_t socket_);
 
 	/*! Bind to local address. */
 	bool bind(const SocketAddressIPv4& socketAddress, bool reuseAddr = false);

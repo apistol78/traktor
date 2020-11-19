@@ -93,7 +93,7 @@ UrlConnection::EstablishResult HttpConnection::establish(const Url& url, Url* ou
 			std::wstring location = response.get(L"Location");
 			if (!location.empty())
 			{
-				*outRedirectionUrl = location;
+				*outRedirectionUrl = Url(location);
 				return ErRedirect;
 			}
 		}

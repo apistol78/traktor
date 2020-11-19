@@ -9,11 +9,6 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.net.UdpSocket", UdpSocket, Socket)
 
-UdpSocket::UdpSocket()
-:	Socket()
-{
-}
-
 void UdpSocket::close()
 {
 	if (m_socket != INVALID_SOCKET)
