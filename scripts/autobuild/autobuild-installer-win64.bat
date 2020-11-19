@@ -6,7 +6,6 @@ call "%~dp0..\config.bat"
 mkdir "%TRAKTOR_HOME%/build/installer"
 pushd "%TRAKTOR_HOME%/build/installer"
 
-
 :: Create a file list of "android binaries".
 %TRAKTOR_HOME%/3rdp/wix/heat dir "%TRAKTOR_HOME%/bin/latest/android/releasestatic" -gg -sfrag -sreg -cg cmp_bin_latest_android -dr bin_latest_android -var var.TRAKTOR_WHERE -template fragment -t "%TRAKTOR_HOME%/code/Installer/Filter.xslt" -out Traktor_Bin_Latest_Android_ReleaseStatic.wxs
 %TRAKTOR_HOME%/3rdp/wix/candle -arch x64 -dTRAKTOR_WHERE="%TRAKTOR_HOME%/bin/latest/android/releasestatic" Traktor_Bin_Latest_Android_ReleaseStatic.wxs
@@ -18,6 +17,14 @@ pushd "%TRAKTOR_HOME%/build/installer"
 :: Create a file list of "linux binaries".
 %TRAKTOR_HOME%/3rdp/wix/heat dir "%TRAKTOR_HOME%/bin/latest/linux/releaseshared" -gg -sfrag -sreg -cg cmp_bin_latest_linux -dr bin_latest_linux -var var.TRAKTOR_WHERE -template fragment -t "%TRAKTOR_HOME%/code/Installer/Filter.xslt" -out Traktor_Bin_Latest_Linux_ReleaseShared.wxs
 %TRAKTOR_HOME%/3rdp/wix/candle -arch x64 -dTRAKTOR_WHERE="%TRAKTOR_HOME%/bin/latest/linux/releaseshared" Traktor_Bin_Latest_Linux_ReleaseShared.wxs
+
+:: Create a file list of "ios binaries".
+%TRAKTOR_HOME%/3rdp/wix/heat dir "%TRAKTOR_HOME%/bin/latest/ios/releasestatic" -gg -sfrag -sreg -cg cmp_bin_latest_ios -dr bin_latest_ios -var var.TRAKTOR_WHERE -template fragment -t "%TRAKTOR_HOME%/code/Installer/Filter.xslt" -out Traktor_Bin_Latest_Ios_ReleaseStatic.wxs
+%TRAKTOR_HOME%/3rdp/wix/candle -arch x64 -dTRAKTOR_WHERE="%TRAKTOR_HOME%/bin/latest/ios/releasestatic" Traktor_Bin_Latest_Ios_ReleaseStatic.wxs
+
+:: Create a file list of "osx binaries".
+%TRAKTOR_HOME%/3rdp/wix/heat dir "%TRAKTOR_HOME%/bin/latest/osx/releaseshared" -gg -sfrag -sreg -cg cmp_bin_latest_osx -dr bin_latest_osx -var var.TRAKTOR_WHERE -template fragment -t "%TRAKTOR_HOME%/code/Installer/Filter.xslt" -out Traktor_Bin_Latest_Osx_ReleaseShared.wxs
+%TRAKTOR_HOME%/3rdp/wix/candle -arch x64 -dTRAKTOR_WHERE="%TRAKTOR_HOME%/bin/latest/osx/releaseshared" Traktor_Bin_Latest_Osx_ReleaseShared.wxs
 
 :: Create a file list of "rpi binaries".
 %TRAKTOR_HOME%/3rdp/wix/heat dir "%TRAKTOR_HOME%/bin/latest/rpi/releaseshared" -gg -sfrag -sreg -cg cmp_bin_latest_rpi -dr bin_latest_rpi -var var.TRAKTOR_WHERE -template fragment -t "%TRAKTOR_HOME%/code/Installer/Filter.xslt" -out Traktor_Bin_Latest_Rpi_ReleaseShared.wxs
@@ -53,6 +60,8 @@ pushd "%TRAKTOR_HOME%/build/installer"
 	Traktor_Bin_Latest_Android_ReleaseStatic.wixobj ^
 	Traktor_Bin_Latest_Emscripten_ReleaseStatic.wixobj ^
 	Traktor_Bin_Latest_Linux_ReleaseShared.wixobj ^
+	Traktor_Bin_Latest_Ios_ReleaseStatic.wixobj ^
+	Traktor_Bin_Latest_Osx_ReleaseShared.wixobj ^
 	Traktor_Bin_Latest_Rpi_ReleaseShared.wixobj ^
 	Traktor_Bin_Latest_Win64_ReleaseShared.wixobj ^
 	Traktor_Data_Assets.wixobj ^
