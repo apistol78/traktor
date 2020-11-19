@@ -181,8 +181,7 @@ void DecalRenderer::build(
 		worldRenderPass.setProgramParameters(
 			renderBlock->programParams,
 			transform,
-			transform,
-			decalComponent->getBoundingBox()
+			transform
 		);
 
 		renderBlock->programParams->setVectorParameter(s_handleDecalParams, Vector4(

@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Core/Object.h"
-#include "Core/Math/Aabb3.h"
 #include "Core/Math/Transform.h"
 #include "Render/Shader.h"
 
@@ -61,9 +60,8 @@ public:
 	 * \param programParams Block to set parameters into.
 	 * \param lastWorld Previous world transform.
 	 * \param world World transform.
-	 * \param bounds World bounds.
 	 */
-	virtual void setProgramParameters(render::ProgramParameters* programParams, const Transform& lastWorld, const Transform& world, const Aabb3& bounds) const = 0;
+	virtual void setProgramParameters(render::ProgramParameters* programParams, const Transform& lastWorld, const Transform& world) const = 0;
 
 	/*! Get shader program. */
 	render::Shader::Program getProgram(const render::Shader* shader) const

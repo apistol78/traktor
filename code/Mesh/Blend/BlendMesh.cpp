@@ -298,8 +298,7 @@ void BlendMesh::build(
 		worldRenderPass.setProgramParameters(
 			renderBlock->programParams,
 			lastWorldTransform,
-			worldTransform,
-			getBoundingBox()
+			worldTransform
 		);
 		if (parameterCallback)
 			parameterCallback->setParameters(renderBlock->programParams);

@@ -45,7 +45,7 @@ public:
 
 	virtual void setProgramParameters(render::ProgramParameters* programParams) const override final;
 
-	virtual void setProgramParameters(render::ProgramParameters* programParams, const Transform& lastWorld, const Transform& world, const Aabb3& bounds) const override final;
+	virtual void setProgramParameters(render::ProgramParameters* programParams, const Transform& lastWorld, const Transform& world) const override final;
 
 private:
 	render::handle_t m_technique;

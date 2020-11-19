@@ -504,7 +504,7 @@ void CloudComponent::buildCluster(
 
 					particleRenderBlock->programParams->beginParameters(renderContext);
 
-					worldRenderPass.setProgramParameters(particleRenderBlock->programParams, transform, transform, clusterBoundingBox);
+					worldRenderPass.setProgramParameters(particleRenderBlock->programParams, transform, transform);
 
 					particleRenderBlock->programParams->setFloatParameter(c_handleParticleDensity, m_particleData.getDensity());
 					particleRenderBlock->programParams->setFloatParameter(c_handleSunInfluence, m_particleData.getSunInfluence());
@@ -563,7 +563,7 @@ void CloudComponent::buildCluster(
 			scale((maxXY[0] - minXY[0]) / 2.0f, (maxXY[1] - minXY[1]) / 2.0f, 1.0f);
 
 		renderBlock->programParams->beginParameters(renderContext);
-		worldRenderPass.setProgramParameters(renderBlock->programParams, transform, transform, clusterBoundingBox);
+		worldRenderPass.setProgramParameters(renderBlock->programParams, transform, transform);
 		renderBlock->programParams->setMatrixParameter(c_handleView, billboardView);
 		renderBlock->programParams->setFloatParameter(c_handleSliceDistance, sliceDistance);
 		renderBlock->programParams->setTextureParameter(m_handleImpostorTarget, m_impostorTargets[slice]->getColorTexture(0));

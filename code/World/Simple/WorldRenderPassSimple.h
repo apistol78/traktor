@@ -45,27 +45,13 @@ public:
 
 	virtual void setProgramParameters(render::ProgramParameters* programParams) const override final;
 
-	virtual void setProgramParameters(render::ProgramParameters* programParams, const Transform& lastWorld, const Transform& world, const Aabb3& bounds) const override final;
+	virtual void setProgramParameters(render::ProgramParameters* programParams, const Transform& lastWorld, const Transform& world) const override final;
 
 private:
 	render::handle_t m_technique;
 	render::ProgramParameters* m_globalProgramParams;
 	Matrix44 m_view;
 	Matrix44 m_viewInverse;
-
-	void setWorldProgramParameters(render::ProgramParameters* programParams, const Transform& world) const;
-
-	void setLightProgramParameters(render::ProgramParameters* programParams) const;
-
-	void setFogProgramParameters(render::ProgramParameters* programParams) const;
-
-	void setColorMapProgramParameters(render::ProgramParameters* programParams) const;
-
-	void setShadowMapProgramParameters(render::ProgramParameters* programParams) const;
-
-	void setDepthMapProgramParameters(render::ProgramParameters* programParams) const;
-
-	void setOcclusionMapProgramParameters(render::ProgramParameters* programParams) const;
 };
 
 	}
