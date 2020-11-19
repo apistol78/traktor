@@ -27,7 +27,7 @@ class T_DLLCLASS Url : public Object
 public:
 	Url();
 
-	Url(const std::wstring& spec);
+	explicit Url(const std::wstring& spec);
 
 	bool set(const std::wstring& spec);
 

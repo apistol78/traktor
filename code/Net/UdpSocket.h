@@ -28,7 +28,7 @@ class T_DLLCLASS UdpSocket : public Socket
 	T_RTTI_CLASS;
 
 public:
-	UdpSocket();
+	UdpSocket() = default;
 
 	virtual void close() override final;
 

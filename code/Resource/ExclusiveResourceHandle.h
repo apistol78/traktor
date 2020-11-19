@@ -27,7 +27,7 @@ class T_DLLCLASS ExclusiveResourceHandle : public ResourceHandle
 	T_RTTI_CLASS;
 
 public:
-	ExclusiveResourceHandle(const TypeInfo& type);
+	explicit ExclusiveResourceHandle(const TypeInfo& type);
 
 	virtual void release(void* owner) const override final;
 

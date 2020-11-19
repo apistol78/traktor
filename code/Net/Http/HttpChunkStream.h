@@ -26,7 +26,7 @@ class T_DLLCLASS HttpChunkStream : public IStream
 	T_RTTI_CLASS;
 
 public:
-	HttpChunkStream(IStream* stream);
+	explicit HttpChunkStream(IStream* stream);
 
 	virtual void close() override final;
 

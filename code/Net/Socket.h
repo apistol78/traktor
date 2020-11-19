@@ -33,7 +33,11 @@ public:
 
 	Socket();
 
-	Socket(handle_t socket_);
+	explicit Socket(handle_t socket_);
+
+	Socket(const Socket&) = delete;
+
+	Socket& operator = (const Socket&) = delete;
 
 	virtual ~Socket();
 

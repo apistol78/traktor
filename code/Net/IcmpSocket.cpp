@@ -9,11 +9,6 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.net.IcmpSocket", IcmpSocket, Socket)
 
-IcmpSocket::IcmpSocket()
-:	Socket()
-{
-}
-
 void IcmpSocket::close()
 {
 	if (m_socket != INVALID_SOCKET)
