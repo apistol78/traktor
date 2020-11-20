@@ -2329,91 +2329,109 @@ bool emitSwitch(GlslContext& cx, Switch* node)
 	if (!in)
 		return false;
 
-	const auto& caseConditions = node->getCases();
+	const auto& cases = node->getCases();
+	const int32_t width = node->getWidth();
 
 	// Find common output pins from both sides of switch;
 	// emit those before condition in order to have them evaluated outside of conditional.
-	AlignedVector< const InputPin* > caseInputPins;
-	for (uint32_t i = 0; i < (uint32_t)caseConditions.size(); ++i)
 	{
-		const InputPin* caseInput = node->getInputPin(i + 2);
-		T_ASSERT(caseInput);
-		caseInputPins.push_back(caseInput);
-	}
+		AlignedVector< const InputPin* > caseInputPins;
+		for (uint32_t i = 0; i < (uint32_t)(width + cases.size() * width); ++i)
+		{
+			const InputPin* caseInput = node->getInputPin(1 + i);
+			T_ASSERT(caseInput);
+			caseInputPins.push_back(caseInput);
+		}
 
-	AlignedVector< const OutputPin* > outputPins;
-	cx.findCommonOutputs(caseInputPins, outputPins);
-	for (auto outputPin : outputPins)
-		cx.emit(outputPin->getNode());
+		AlignedVector< const OutputPin* > outputPins;
+		cx.findCommonOutputs(caseInputPins, outputPins);
+		for (auto outputPin : outputPins)
+			cx.emit(outputPin->getNode());
+	}
 
 	AlignedVector< std::wstring > caseBranches;
 	AlignedVector< GlslVariable > caseInputs;
-	GlslType outputType = GtVoid;
+	AlignedVector< std::wstring > defaultBranches;
+	AlignedVector< GlslVariable > defaultInputs;
+	AlignedVector< GlslType > outputTypes;
+	RefArray< GlslVariable > outs;
 
-	// Emit output variable first due to scoping.
-	Ref< GlslVariable > out = cx.emitOutput(node, L"Output", GtVoid);
-
-	// Conditional branches.
-	for (uint32_t i = 0; i < (uint32_t)caseConditions.size(); ++i)
+	// Emit output variables first due to scoping.
+	for (int32_t i = 0; i < width; ++i)
 	{
-		auto& fs = cx.getShader().pushOutputStream(GlslShader::BtBody, T_FILE_LINE_W);
-		cx.getShader().pushScope();
-
-		const InputPin* caseInput = node->getInputPin(i + 2);
-		if (!caseInput)
-		{
-			cx.getShader().popScope();
-			return false;
-		}
-
-		Ref< GlslVariable > caseInputVariable = cx.emitInput(caseInput);
-		if (!caseInputVariable)
-		{
-			cx.getShader().popScope();
-			return false;
-		}
-
-		caseBranches.push_back(fs.str());
-		caseInputs.push_back(*caseInputVariable);
-		outputType = std::max(outputType, caseInputVariable->getType());
-
-		cx.getShader().popScope();
-		cx.getShader().popOutputStream(GlslShader::BtBody);
+		const OutputPin* outputPin = node->getOutputPin(i);
+		outs.push_back(cx.emitOutput(outputPin, GtVoid));
+		outputTypes.push_back(GtVoid);
 	}
 
-	// Default branch.
+	// Conditional branches.
+	for (int32_t i = 0; i < (int32_t)cases.size(); ++i)
 	{
-		auto& fs = cx.getShader().pushOutputStream(GlslShader::BtBody, T_FILE_LINE_W);
 		cx.getShader().pushScope();
-
-		const InputPin* caseInput = node->getInputPin(1);
-		if (!caseInput)
+		for (int32_t j = 0; j < width; ++j)
 		{
-			cx.getShader().popScope();
-			return false;
+			auto& fs = cx.getShader().pushOutputStream(GlslShader::BtBody, T_FILE_LINE_W);
+
+			const InputPin* caseInput = node->getInputPin(1 + width + i * width + j);
+			if (!caseInput)
+			{
+				cx.getShader().popScope();
+				return false;
+			}
+
+			Ref< GlslVariable > caseInputVariable = cx.emitInput(caseInput);
+			if (!caseInputVariable)
+			{
+				cx.getShader().popScope();
+				return false;
+			}
+
+			caseBranches.push_back(fs.str());
+			caseInputs.push_back(*caseInputVariable);
+			outputTypes[j] = std::max(outputTypes[j], caseInputVariable->getType());
+
+			cx.getShader().popOutputStream(GlslShader::BtBody);
 		}
-
-		Ref< GlslVariable > caseInputVariable = cx.emitInput(caseInput);
-		if (!caseInputVariable)
-		{
-			cx.getShader().popScope();
-			return false;
-		}
-
-		caseBranches.push_back(fs.str());
-		caseInputs.push_back(*caseInputVariable);
-		outputType = std::max(outputType, caseInputVariable->getType());
-
 		cx.getShader().popScope();
-		cx.getShader().popOutputStream(GlslShader::BtBody);
+	}
+
+	// Default branches.
+	{
+		cx.getShader().pushScope();
+		for (int32_t i = 0; i < width; ++i)
+		{
+			auto& fs = cx.getShader().pushOutputStream(GlslShader::BtBody, T_FILE_LINE_W);
+	
+			const InputPin* defaultInput = node->getInputPin(1 + i);
+			if (!defaultInput)
+			{
+				cx.getShader().popScope();
+				return false;
+			}
+
+			Ref< GlslVariable > defaultInputVariable = cx.emitInput(defaultInput);
+			if (!defaultInputVariable)
+			{
+				cx.getShader().popScope();
+				return false;
+			}
+
+			defaultBranches.push_back(fs.str());
+			defaultInputs.push_back(*defaultInputVariable);
+			outputTypes[i] = std::max(outputTypes[i], defaultInputVariable->getType());
+
+			cx.getShader().popOutputStream(GlslShader::BtBody);
+		}
+		cx.getShader().popScope();
 	}
 
 	// Modify output type to match common output type of cases,
 	// initialize output variable to zero.
-	out->setType(outputType);
-	assign(f, out) << expandScalar(0.0f, outputType) << L";" << Endl;
-
-	const auto& cases = node->getCases();
+	for (int32_t i = 0; i < width; ++i)
+	{
+		outs[i]->setType(outputTypes[i]);
+		assign(f, outs[i]) << expandScalar(0.0f, outputTypes[i]) << L";" << Endl;
+	}
 
 	comment(f, node);
 
@@ -2422,14 +2440,17 @@ bool emitSwitch(GlslContext& cx, Switch* node)
 	else if (node->getBranch() == Switch::BrDynamic)
 		f << L"[[branch]]" << Endl;
 
-	for (uint32_t i = 0; i < (uint32_t)cases.size(); ++i)
+	for (int32_t i = 0; i < (int32_t)cases.size(); ++i)
 	{
 		f << (i == 0 ? L"if (" : L"else if (") << in->cast(GtInteger) << L" == " << cases[i] << L")" << Endl;
 		f << L"{" << Endl;
 		f << IncreaseIndent;
 
-		f << caseBranches[i];
-		f << out->getName() << L" = " << caseInputs[i].cast(outputType) << L";" << Endl;
+		for (int32_t j = 0; j < width; ++j)
+		{
+			f << caseBranches[i * width + j];
+			f << outs[j]->getName() << L" = " << caseInputs[i * width + j].cast(outputTypes[j]) << L";" << Endl;
+		}
 
 		f << DecreaseIndent;
 		f << L"}" << Endl;
@@ -2442,8 +2463,11 @@ bool emitSwitch(GlslContext& cx, Switch* node)
 		f << IncreaseIndent;
 	}
 
-	f << caseBranches.back();
-	f << out->getName() << L" = " << caseInputs.back().cast(outputType) << L";" << Endl;
+	for (int32_t i = 0; i < width; ++i)
+	{
+		f << defaultBranches[i];
+		f << outs[i]->getName() << L" = " << defaultInputs[i].cast(outputTypes[i]) << L";" << Endl;
+	}
 
 	if (!cases.empty())
 	{

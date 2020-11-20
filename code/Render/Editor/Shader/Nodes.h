@@ -999,7 +999,9 @@ public:
 
 	Branch getBranch() const;
 
-	void addCase(int32_t value);
+	void setWidth(int32_t width);
+
+	int32_t getWidth() const;
 
 	const AlignedVector< int32_t >& getCases() const;
 
@@ -1015,9 +1017,12 @@ public:
 
 private:
 	Branch m_branch;
+	int32_t m_width;
 	AlignedVector< int32_t > m_cases;
 	AlignedVector< InputPin* > m_inputPins;
-	OutputPin* m_outputPin;
+	AlignedVector< OutputPin* > m_outputPins;
+
+	void updatePins();
 };
 
 /*! Swizzle elements in a vector. */

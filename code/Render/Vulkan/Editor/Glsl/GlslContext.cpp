@@ -133,19 +133,21 @@ GlslVariable* GlslContext::emitInput(Node* node, const std::wstring& inputPinNam
 {
 	const InputPin* inputPin = node->findInputPin(inputPinName);
 	T_ASSERT(inputPin);
-
 	return emitInput(inputPin);
+}
+
+GlslVariable* GlslContext::emitOutput(const OutputPin* outputPin, GlslType type)
+{
+	GlslVariable* out = m_currentShader->createTemporaryVariable(outputPin, type);
+	T_ASSERT(out);
+	return out;
 }
 
 GlslVariable* GlslContext::emitOutput(Node* node, const std::wstring& outputPinName, GlslType type)
 {
 	const OutputPin* outputPin = node->findOutputPin(outputPinName);
 	T_ASSERT(outputPin);
-
-	GlslVariable* out = m_currentShader->createTemporaryVariable(outputPin, type);
-	T_ASSERT(out);
-
-	return out;
+	return emitOutput(outputPin, type);
 }
 
 void GlslContext::findNonDependentOutputs(Node* node, const std::wstring& inputPinName, const AlignedVector< const OutputPin* >& dependentOutputPins, AlignedVector< const OutputPin* >& outOutputPins) const
