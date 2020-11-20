@@ -1044,7 +1044,7 @@ Directional
 				<first>5704</first>
 				<second>96</second>
 			</position>
-			<branch>BrAuto</branch>
+			<branch>BrDynamic</branch>
 			<cases>
 				<item>1</item>
 				<item>2</item>
@@ -1058,7 +1058,7 @@ Directional
 				<first>5712</first>
 				<second>372</second>
 			</position>
-			<branch>BrAuto</branch>
+			<branch>BrDynamic</branch>
 			<cases>
 				<item>1</item>
 				<item>2</item>

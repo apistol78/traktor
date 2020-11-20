@@ -164,6 +164,7 @@ std::wstring GlslShader::getGeneratedShader(const PropertyGroup* settings, const
 	ss << L"#extension GL_ARB_separate_shader_objects : enable" << Endl;
 	ss << L"#extension GL_ARB_shading_language_420pack : enable" << Endl;
 	ss << L"#extension GL_EXT_samplerless_texture_functions : enable" << Endl;
+	ss << L"#extension GL_EXT_control_flow_attributes : enable" << Endl;
 
 	const bool supportBallot = (settings != nullptr ? settings->getProperty< bool >(L"Glsl.Vulkan.Ballot", true) : true);
 	if (supportBallot)
