@@ -312,6 +312,11 @@ bool emitConditional(GlslContext& cx, Conditional* node)
 	comment(f, node);
 	f << glsl_type_name(out->getType()) << L" " << out->getName() << L";" << Endl;
 
+	if (node->getBranch() == Switch::BrStatic)
+		f << L"[[flatten]]" << Endl;
+	else if (node->getBranch() == Switch::BrDynamic)
+		f << L"[[branch]]" << Endl;
+
 	switch (node->getOperator())
 	{
 	case Conditional::CoLess:
@@ -2411,6 +2416,12 @@ bool emitSwitch(GlslContext& cx, Switch* node)
 	const auto& cases = node->getCases();
 
 	comment(f, node);
+
+	if (node->getBranch() == Switch::BrStatic)
+		f << L"[[flatten]]" << Endl;
+	else if (node->getBranch() == Switch::BrDynamic)
+		f << L"[[branch]]" << Endl;
+
 	for (uint32_t i = 0; i < (uint32_t)cases.size(); ++i)
 	{
 		f << (i == 0 ? L"if (" : L"else if (") << in->cast(GtInteger) << L" == " << cases[i] << L")" << Endl;

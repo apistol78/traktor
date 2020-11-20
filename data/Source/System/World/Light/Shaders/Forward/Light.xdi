@@ -407,7 +407,7 @@
 				<first>3771</first>
 				<second>662</second>
 			</position>
-			<branch>BrAuto</branch>
+			<branch>BrDynamic</branch>
 			<cases>
 				<item>1</item>
 				<item>2</item>
@@ -421,7 +421,7 @@
 				<first>3771</first>
 				<second>424</second>
 			</position>
-			<branch>BrAuto</branch>
+			<branch>BrDynamic</branch>
 			<cases>
 				<item>1</item>
 				<item>2</item>
@@ -1669,7 +1669,6 @@ ENTRY
 {
 	Output = Vector[int(Index)];
 }
-
 			]]>
 			</script>
 		</item>
