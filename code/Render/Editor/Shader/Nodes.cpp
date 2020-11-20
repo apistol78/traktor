@@ -1988,16 +1988,13 @@ void Sum::serialize(ISerializer& s)
 
 /*---------------------------------------------------------------------------*/
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Switch", 1, Switch, Node)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Switch", 2, Switch, Node)
 
 Switch::Switch()
 :	m_branch(BrAuto)
+,	m_width(1)
 {
-	// @fixme Leak...
-	const Guid c_null;
-	m_inputPins.push_back(new InputPin(this, c_null, L"Select", false));
-	m_inputPins.push_back(new InputPin(this, c_null, L"Default", false));
-	m_outputPin = new OutputPin(this, c_null, L"Output");
+	updatePins();
 }
 
 void Switch::setBranch(Branch branch)
@@ -2010,12 +2007,14 @@ Switch::Branch Switch::getBranch() const
 	return m_branch;
 }
 
-void Switch::addCase(int32_t value)
+void Switch::setWidth(int32_t width)
 {
-	StringOutputStream ss;
-	ss << L"Case " << value;
-	m_cases.push_back(value);
-	m_inputPins.push_back(new InputPin(this, Guid(), ss.str(), false));
+	m_width = width;
+}
+
+int32_t Switch::getWidth() const
+{
+	return m_width;
 }
 
 const AlignedVector< int32_t >& Switch::getCases() const
@@ -2035,12 +2034,12 @@ const InputPin* Switch::getInputPin(int index) const
 
 int Switch::getOutputPinCount() const
 {
-	return 1;
+	return m_width;
 }
 
 const OutputPin* Switch::getOutputPin(int index) const
 {
-	return m_outputPin;
+	return m_outputPins[index];
 }
 
 void Switch::serialize(ISerializer& s)
@@ -2058,18 +2057,54 @@ void Switch::serialize(ISerializer& s)
 	if (s.getVersion() >= 1)
 		s >> MemberEnum< Branch >(L"branch", m_branch, kBranch);
 
+	if (s.getVersion< Switch >() >= 2)
+		s >> Member< int32_t >(L"width", m_width, AttributeRange(1));
+
 	s >> MemberAlignedVector< int32_t >(L"cases", m_cases);
 
 	if (s.getDirection() == ISerializer::Direction::Read)
+		updatePins();
+}
+
+void Switch::updatePins()
+{
+	const Guid c_null;
+
+	for (auto& inputPin : m_inputPins)
+		delete inputPin;
+	for (auto& outputPin : m_outputPins)
+		delete outputPin;
+
+	m_inputPins.resize(1 + (1 + m_cases.size()) * m_width);
+	m_inputPins[0] = new InputPin(this, c_null, L"Select", false);
+	for (int32_t c = 0; c < m_width; ++c)
 	{
-		const Guid c_null;
-		m_inputPins.resize(2 + m_cases.size());
-		for (uint32_t i = 0; i < uint32_t(m_cases.size()); ++i)
+		StringOutputStream ss;
+		ss << L"Default";
+		if (m_width > 1)
+			ss << L" (" << c << L")";
+		m_inputPins[1 + c] = new InputPin(this, c_null, ss.str(), false);
+	}
+	for (uint32_t i = 0; i < (uint32_t)m_cases.size(); ++i)
+	{
+		for (int32_t c = 0; c < m_width; ++c)
 		{
 			StringOutputStream ss;
 			ss << L"Case " << m_cases[i];
-			m_inputPins[2 + i] = new InputPin(this, c_null, ss.str(), false);
+			if (m_width > 1)
+				ss << L" (" << c << L")";
+			m_inputPins[1 + (1 + i) * m_width + c] = new InputPin(this, c_null, ss.str(), false);
 		}
+	}
+
+	m_outputPins.resize(m_width);
+	for (int32_t c = 0; c < m_width; ++c)
+	{
+		StringOutputStream ss;
+		ss << L"Output";
+		if (m_width > 1)
+			ss << L" (" << c << L")";
+		m_outputPins[c] = new OutputPin(this, c_null, ss.str());
 	}
 }
 

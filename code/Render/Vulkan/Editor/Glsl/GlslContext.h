@@ -45,6 +45,8 @@ public:
 
 	GlslVariable* emitInput(Node* node, const std::wstring& inputPinName);
 
+	GlslVariable* emitOutput(const OutputPin* outputPin, GlslType type);
+
 	GlslVariable* emitOutput(Node* node, const std::wstring& outputPinName, GlslType type);
 
 	void findNonDependentOutputs(Node* node, const std::wstring& inputPinName, const AlignedVector< const OutputPin* >& dependentOutputPins, AlignedVector< const OutputPin* >& outOutputPins) const;
