@@ -20,6 +20,7 @@
 // Entity factories
 #include "Weather/WeatherFactory.h"
 #include "World/Entity/WorldEntityFactory.h"
+#include "World/Editor/WorldEditorEntityFactory.h"
 
 // Entity renderers
 #include "World/EntityRenderer.h"
@@ -91,8 +92,8 @@ void DefaultEditorProfile::createEntityFactories(
 ) const
 {
 	outEntityFactories.push_back(new world::WorldEntityFactory(context->getResourceManager(), context->getRenderSystem(), true));
+	outEntityFactories.push_back(new world::WorldEditorEntityFactory());
 	outEntityFactories.push_back(new weather::WeatherFactory(context->getResourceManager(), context->getRenderSystem()));
-	//outEntityFactories.push_back(new LayerEntityFactory());
 }
 
 void DefaultEditorProfile::createEntityRenderers(
