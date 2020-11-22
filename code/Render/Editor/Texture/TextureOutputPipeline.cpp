@@ -139,7 +139,7 @@ struct ScaleTextureTask : public Object
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.TextureOutputPipeline", 34, TextureOutputPipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.TextureOutputPipeline", 35, TextureOutputPipeline, editor::IPipeline)
 
 TextureOutputPipeline::TextureOutputPipeline()
 :	m_generateMipsThread(false)
@@ -1023,6 +1023,8 @@ bool TextureOutputPipeline::buildOutput(
 				compressor = new PvrtcCompressor();
 			else if (textureFormat == TfETC1)
 				compressor = new EtcCompressor();
+			else if (textureFormat == TfASTC4x4 && textureFormat <= TfASTC12x12)
+				compressor = new AstcCompressor();
 			else
 				compressor = new UnCompressor();
 
