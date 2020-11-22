@@ -21,16 +21,18 @@ ImmutableNode::ImmutableNode(const InputPinDesc* inputPins, const OutputPinDesc*
 		for (auto pin = inputPins; pin->name; ++pin)
 			++pinCount;
 
-		T_ASSERT(pinCount > 0);
-		m_inputPins.reserve(pinCount);
-
-		InputPin* pins = new InputPin [pinCount];
-		for (auto pin = inputPins; pin->name; ++pin)
+		if (pinCount > 0)
 		{
-			*pins = InputPin(this, c_null, pin->name, pin->optional);
-			m_inputPins.push_back(pins);
-			++pins;
-		}		
+			m_inputPins.reserve(pinCount);
+
+			InputPin* pins = new InputPin [pinCount];
+			for (auto pin = inputPins; pin->name; ++pin)
+			{
+				*pins = InputPin(this, c_null, pin->name, pin->optional);
+				m_inputPins.push_back(pins);
+				++pins;
+			}
+		}
 	}
 
 	if (outputPins)
@@ -39,16 +41,18 @@ ImmutableNode::ImmutableNode(const InputPinDesc* inputPins, const OutputPinDesc*
 		for (auto pin = outputPins; pin->name; ++pin)
 			++pinCount;
 
-		T_ASSERT(pinCount > 0);
-		m_outputPins.reserve(pinCount);
-
-		OutputPin* pins = new OutputPin [pinCount];
-		for (auto pin = outputPins; pin->name; ++pin)
+		if (pinCount > 0)
 		{
-			*pins = OutputPin(this, c_null, pin->name);
-			m_outputPins.push_back(pins);
-			++pins;
-		}		
+			m_outputPins.reserve(pinCount);
+
+			OutputPin* pins = new OutputPin [pinCount];
+			for (auto pin = outputPins; pin->name; ++pin)
+			{
+				*pins = OutputPin(this, c_null, pin->name);
+				m_outputPins.push_back(pins);
+				++pins;
+			}
+		}
 	}
 }
 

@@ -312,9 +312,9 @@ bool emitConditional(GlslContext& cx, Conditional* node)
 	comment(f, node);
 	f << glsl_type_name(out->getType()) << L" " << out->getName() << L";" << Endl;
 
-	if (node->getBranch() == Switch::BrStatic)
+	if (node->getBranch() == Conditional::BrStatic)
 		f << L"[[flatten]]" << Endl;
-	else if (node->getBranch() == Switch::BrDynamic)
+	else if (node->getBranch() == Conditional::BrDynamic)
 		f << L"[[branch]]" << Endl;
 
 	switch (node->getOperator())
