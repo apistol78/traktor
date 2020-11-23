@@ -1,3 +1,4 @@
+#include "Core/Serialization/DeepClone.h"
 #include "Ui/Command.h"
 #include "Video/Editor/VideoAsset.h"
 #include "Video/Editor/VideoEditorPage.h"
@@ -34,6 +35,11 @@ void VideoEditorPageFactory::getCommands(std::list< ui::Command >& outCommands) 
 	outCommands.push_back(ui::Command(L"Video.Editor.Play"));
 	outCommands.push_back(ui::Command(L"Video.Editor.Stop"));
 	outCommands.push_back(ui::Command(L"Video.Editor.Forward"));
+}
+
+Ref< ISerializable > VideoEditorPageFactory::cloneAsset(const ISerializable* asset) const
+{
+	return DeepClone(asset).create();
 }
 
 	}

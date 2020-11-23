@@ -1,3 +1,4 @@
+#include "Core/Serialization/DeepClone.h"
 #include "Input/Editor/InputMappingAsset.h"
 #include "Input/Editor/InputMappingEditor.h"
 #include "Input/Editor/InputMappingEditorFactory.h"
@@ -28,6 +29,11 @@ Ref< editor::IEditorPage > InputMappingEditorFactory::createEditorPage(editor::I
 
 void InputMappingEditorFactory::getCommands(std::list< ui::Command >& outCommands) const
 {
+}
+
+Ref< ISerializable > InputMappingEditorFactory::cloneAsset(const ISerializable* asset) const
+{
+	return DeepClone(asset).create();
 }
 
 	}

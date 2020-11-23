@@ -8,7 +8,6 @@
 #include "Core/Reflection/RfmObject.h"
 #include "Core/Reflection/RfmPrimitive.h"
 #include "Core/Reflection/RfpMemberType.h"
-#include "Core/Serialization/DeepClone.h"
 #include "Core/Settings/PropertyGroup.h"
 #include "Core/Settings/PropertyInteger.h"
 #include "Core/Settings/PropertyString.h"
@@ -781,7 +780,7 @@ bool DatabaseView::handleCommand(const ui::Command& command)
 				return false;
 			}
 
-			object = DeepClone(object).create();
+			object = m_editor->cloneAsset(object);
 			if (!object)
 			{
 				log::error << L"Unable to create clone." << Endl;
@@ -825,7 +824,7 @@ bool DatabaseView::handleCommand(const ui::Command& command)
 				return false;
 			}
 
-			object = DeepClone(object).create();
+			object = m_editor->cloneAsset(object);
 			if (!object)
 			{
 				log::error << L"Unable to create clone." << Endl;
@@ -846,7 +845,7 @@ bool DatabaseView::handleCommand(const ui::Command& command)
 				return false;
 			}
 
-			object = DeepClone(object).create();
+			object = m_editor->cloneAsset(object);
 			if (!object)
 			{
 				log::error << L"Unable to create clone." << Endl;
@@ -881,7 +880,7 @@ bool DatabaseView::handleCommand(const ui::Command& command)
 						return false;
 					}
 
-					dependentObject = DeepClone(dependentObject).create();
+					dependentObject = m_editor->cloneAsset(dependentObject);
 					if (!dependentObject)
 					{
 						log::error << L"Unable to create clone." << Endl;

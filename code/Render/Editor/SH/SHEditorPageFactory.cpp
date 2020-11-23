@@ -1,3 +1,4 @@
+#include "Core/Serialization/DeepClone.h"
 #include "Render/Editor/SH/SHEditorPage.h"
 #include "Render/Editor/SH/SHEditorPageFactory.h"
 #include "Render/Editor/SH/SHStage.h"
@@ -32,6 +33,11 @@ Ref< editor::IEditorPage > SHEditorPageFactory::createEditorPage(editor::IEditor
 void SHEditorPageFactory::getCommands(std::list< ui::Command >& outCommands) const
 {
 	outCommands.push_back(ui::Command(L"SHEditor.Editor.Randomize"));
+}
+
+Ref< ISerializable > SHEditorPageFactory::cloneAsset(const ISerializable* asset) const
+{
+	return DeepClone(asset).create();
 }
 
 	}

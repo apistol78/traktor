@@ -1,3 +1,4 @@
+#include "Core/Serialization/DeepClone.h"
 #include "Render/Editor/Image2/ImageGraphAsset.h"
 #include "Render/Editor/Image2/ImageGraphEditorPage.h"
 #include "Render/Editor/Image2/ImageGraphEditorPageFactory.h"
@@ -36,6 +37,11 @@ void ImageGraphEditorPageFactory::getCommands(std::list< ui::Command >& outComma
 	outCommands.push_back(ui::Command(L"ImageGraph.Editor.EvenSpaceVertically"));
 	outCommands.push_back(ui::Command(L"ImageGraph.Editor.AddPass"));
 	outCommands.push_back(ui::Command(L"ImageGraph.Editor.AddTarget"));
+}
+
+Ref< ISerializable > ImageGraphEditorPageFactory::cloneAsset(const ISerializable* asset) const
+{
+	return DeepClone(asset).create();
 }
 
 	}

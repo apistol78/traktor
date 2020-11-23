@@ -48,6 +48,8 @@ public:
 
 	virtual bool highlightInstance(const db::Instance* instance) override final;
 
+	virtual Ref< ISerializable > cloneAsset(const ISerializable* asset) const override final;
+
 	virtual const TypeInfo* browseType() override final;
 
 	virtual const TypeInfo* browseType(const TypeInfoSet& base, bool onlyEditable, bool onlyInstantiable) override final;

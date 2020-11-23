@@ -1,10 +1,12 @@
 #include "Core/Log/Log.h"
+#include "Core/Serialization/DeepClone.h"
 #include "Editor/IEditor.h"
 #include "Scene/Editor/ISceneEditorPlugin.h"
 #include "Scene/Editor/ISceneEditorProfile.h"
 #include "Scene/Editor/SceneAsset.h"
 #include "Scene/Editor/SceneEditorPage.h"
 #include "Scene/Editor/SceneEditorPageFactory.h"
+#include "Scene/Editor/Traverser.h"
 #include "Ui/Command.h"
 #include "World/EntityData.h"
 
@@ -88,6 +90,16 @@ void SceneEditorPageFactory::getCommands(std::list< ui::Command >& outCommands) 
 		if (profile)
 			profile->getCommands(outCommands);
 	}
+}
+
+Ref< ISerializable > SceneEditorPageFactory::cloneAsset(const ISerializable* asset) const
+{
+	Ref< ISerializable > mutableAsset = DeepClone(asset).create();
+	Traverser::visit(mutableAsset, [&](Ref< world::EntityData >& inoutEntityData) -> Traverser::VisitorResult {
+		inoutEntityData->setId(Guid::create());
+		return Traverser::VrContinue;
+	});
+	return mutableAsset;
 }
 
 	}

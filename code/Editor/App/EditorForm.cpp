@@ -970,6 +970,22 @@ bool EditorForm::highlightInstance(const db::Instance* instance)
 	return m_dataBaseView->highlight(instance);
 }
 
+Ref< ISerializable > EditorForm::cloneAsset(const ISerializable* asset) const
+{
+	// Find factory supporting instance type.
+	Ref< IEditorPageFactory > editorPageFactory;
+	Ref< IObjectEditorFactory > objectEditorFactory;
+	findEditorFactory(type_of(asset), editorPageFactory, objectEditorFactory);
+
+	// Create clone using factory if anyone found; else fallback on plain deep-clone.
+	if (editorPageFactory)
+		return editorPageFactory->cloneAsset(asset);
+	else if (objectEditorFactory)
+		return objectEditorFactory->cloneAsset(asset);
+	else
+		return DeepClone(asset).create();
+}
+
 const TypeInfo* EditorForm::browseType()
 {
 	const TypeInfo* type = nullptr;
@@ -1109,43 +1125,9 @@ bool EditorForm::openEditor(db::Instance* instance)
 	}
 
 	// Find factory supporting instance type.
-	uint32_t minClassDifference = std::numeric_limits< uint32_t >::max();
 	Ref< IEditorPageFactory > editorPageFactory;
 	Ref< IObjectEditorFactory > objectEditorFactory;
-
-	for (RefArray< IEditorPageFactory >::iterator i = m_editorPageFactories.begin(); i != m_editorPageFactories.end(); ++i)
-	{
-		const TypeInfoSet typeSet = (*i)->getEditableTypes();
-		for (TypeInfoSet::const_iterator j = typeSet.begin(); j != typeSet.end(); ++j)
-		{
-			if (is_type_of(**j, type_of(object)))
-			{
-				uint32_t classDifference = type_difference(**j, type_of(object));
-				if (classDifference < minClassDifference)
-				{
-					minClassDifference = classDifference;
-					editorPageFactory = *i;
-				}
-			}
-		}
-	}
-
-	for (RefArray< IObjectEditorFactory >::iterator i = m_objectEditorFactories.begin(); i != m_objectEditorFactories.end(); ++i)
-	{
-		const TypeInfoSet typeSet = (*i)->getEditableTypes();
-		for (TypeInfoSet::const_iterator j = typeSet.begin(); j != typeSet.end(); ++j)
-		{
-			if (is_type_of(**j, type_of(object)))
-			{
-				uint32_t classDifference = type_difference(**j, type_of(object));
-				if (classDifference < minClassDifference)
-				{
-					minClassDifference = classDifference;
-					objectEditorFactory = *i;
-				}
-			}
-		}
-	}
+	findEditorFactory(type_of(object), editorPageFactory, objectEditorFactory);
 
 	// Create new editor page.
 	if (editorPageFactory)
@@ -1399,6 +1381,47 @@ void EditorForm::setActiveEditorPage(IEditorPage* editorPage)
 
 	updateAdditionalPanelMenu();
 	updateTitle();
+}
+
+void EditorForm::findEditorFactory(const TypeInfo& assetType, Ref< IEditorPageFactory >& outEditorPageFactory, Ref< IObjectEditorFactory >& outObjectEditorFactory) const
+{
+	uint32_t minClassDifference = std::numeric_limits< uint32_t >::max();
+	Ref< IEditorPageFactory > editorPageFactory;
+	Ref< IObjectEditorFactory > objectEditorFactory;
+
+	for (auto i = m_editorPageFactories.begin(); i != m_editorPageFactories.end(); ++i)
+	{
+		const TypeInfoSet typeSet = (*i)->getEditableTypes();
+		for (TypeInfoSet::const_iterator j = typeSet.begin(); j != typeSet.end(); ++j)
+		{
+			if (is_type_of(**j, assetType))
+			{
+				uint32_t classDifference = type_difference(**j, assetType);
+				if (classDifference < minClassDifference)
+				{
+					minClassDifference = classDifference;
+					outEditorPageFactory = *i;
+				}
+			}
+		}
+	}
+
+	for (auto i = m_objectEditorFactories.begin(); i != m_objectEditorFactories.end(); ++i)
+	{
+		const TypeInfoSet typeSet = (*i)->getEditableTypes();
+		for (TypeInfoSet::const_iterator j = typeSet.begin(); j != typeSet.end(); ++j)
+		{
+			if (is_type_of(**j, assetType))
+			{
+				uint32_t classDifference = type_difference(**j, assetType);
+				if (classDifference < minClassDifference)
+				{
+					minClassDifference = classDifference;
+					outObjectEditorFactory = *i;
+				}
+			}
+		}
+	}
 }
 
 bool EditorForm::createWorkspace()

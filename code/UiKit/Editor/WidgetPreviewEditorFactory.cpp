@@ -1,3 +1,4 @@
+#include "Core/Serialization/DeepClone.h"
 #include "UiKit/Editor/WidgetPreviewEditor.h"
 #include "UiKit/Editor/WidgetPreviewEditorFactory.h"
 #include "UiKit/Editor/WidgetScaffolding.h"
@@ -29,6 +30,11 @@ Ref< editor::IObjectEditor > WidgetPreviewEditorFactory::createObjectEditor(edit
 
 void WidgetPreviewEditorFactory::getCommands(std::list< ui::Command >& outCommands) const
 {
+}
+
+Ref< ISerializable > WidgetPreviewEditorFactory::cloneAsset(const ISerializable* asset) const
+{
+	return DeepClone(asset).create();
 }
 
 	}

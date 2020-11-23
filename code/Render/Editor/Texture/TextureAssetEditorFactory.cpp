@@ -1,3 +1,4 @@
+#include "Core/Serialization/DeepClone.h"
 #include "Render/Editor/Texture/TextureAsset.h"
 #include "Render/Editor/Texture/TextureAssetEditor.h"
 #include "Render/Editor/Texture/TextureAssetEditorFactory.h"
@@ -28,6 +29,11 @@ Ref< editor::IObjectEditor > TextureAssetEditorFactory::createObjectEditor(edito
 
 void TextureAssetEditorFactory::getCommands(std::list< ui::Command >& outCommands) const
 {
+}
+
+Ref< ISerializable > TextureAssetEditorFactory::cloneAsset(const ISerializable* asset) const
+{
+	return DeepClone(asset).create();
 }
 
 	}
