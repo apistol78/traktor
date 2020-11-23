@@ -116,6 +116,8 @@ public:
 
 	virtual bool highlightInstance(const db::Instance* instance) override final;
 
+	virtual Ref< ISerializable > cloneAsset(const ISerializable* asset) const override final;
+
 	virtual const TypeInfo* browseType() override final;
 
 	virtual const TypeInfo* browseType(const TypeInfoSet& base, bool onlyEditable, bool onlyInstantiable) override final;
@@ -221,6 +223,8 @@ private:
 	std::wstring m_buildStepMessage;
 	uint32_t m_propertiesHash;
 	std::vector< std::pair< db::Database*, Guid > > m_eventIds;
+
+	void findEditorFactory(const TypeInfo& assetType, Ref< IEditorPageFactory >& outEditorPageFactory, Ref< IObjectEditorFactory >& outObjectEditorFactory) const;
 
 	bool createWorkspace();
 

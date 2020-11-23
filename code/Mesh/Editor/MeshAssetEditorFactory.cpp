@@ -1,3 +1,4 @@
+#include "Core/Serialization/DeepClone.h"
 #include "Mesh/Editor/MeshAsset.h"
 #include "Mesh/Editor/MeshAssetEditor.h"
 #include "Mesh/Editor/MeshAssetEditorFactory.h"
@@ -28,6 +29,11 @@ Ref< editor::IObjectEditor > MeshAssetEditorFactory::createObjectEditor(editor::
 
 void MeshAssetEditorFactory::getCommands(std::list< ui::Command >& outCommands) const
 {
+}
+
+Ref< ISerializable > MeshAssetEditorFactory::cloneAsset(const ISerializable* asset) const
+{
+	return DeepClone(asset).create();
 }
 
 	}

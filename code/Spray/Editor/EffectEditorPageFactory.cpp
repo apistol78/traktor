@@ -1,3 +1,4 @@
+#include "Core/Serialization/DeepClone.h"
 #include "Spray/EffectData.h"
 #include "Spray/Editor/EffectEditorPage.h"
 #include "Spray/Editor/EffectEditorPageFactory.h"
@@ -42,6 +43,11 @@ void EffectEditorPageFactory::getCommands(std::list< ui::Command >& outCommands)
 	outCommands.push_back(ui::Command(L"Effect.Editor.BrowseBackground"));
 	outCommands.push_back(ui::Command(L"Effect.Editor.BrowseImageProcess"));
 	outCommands.push_back(ui::Command(L"Effect.Editor.ReplaceEmitterSource"));
+}
+
+Ref< ISerializable > EffectEditorPageFactory::cloneAsset(const ISerializable* asset) const
+{
+	return DeepClone(asset).create();
 }
 
 	}

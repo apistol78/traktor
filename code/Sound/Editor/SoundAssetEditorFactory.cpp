@@ -1,3 +1,4 @@
+#include "Core/Serialization/DeepClone.h"
 #include "Sound/Editor/SoundAsset.h"
 #include "Sound/Editor/SoundAssetEditor.h"
 #include "Sound/Editor/SoundAssetEditorFactory.h"
@@ -26,6 +27,11 @@ Ref< editor::IObjectEditor > SoundAssetEditorFactory::createObjectEditor(editor:
 
 void SoundAssetEditorFactory::getCommands(std::list< ui::Command >& outCommands) const
 {
+}
+
+Ref< ISerializable > SoundAssetEditorFactory::cloneAsset(const ISerializable* asset) const
+{
+	return DeepClone(asset).create();
 }
 
 	}

@@ -1,3 +1,4 @@
+#include "Core/Serialization/DeepClone.h"
 #include "Script/Editor/Script.h"
 #include "Script/Editor/ScriptAsset.h"
 #include "Script/Editor/ScriptEditorPage.h"
@@ -35,6 +36,11 @@ void ScriptEditorPageFactory::getCommands(std::list< ui::Command >& outCommands)
 	outCommands.push_back(ui::Command(L"Script.Editor.Break"));
 	outCommands.push_back(ui::Command(L"Script.Editor.StepInto"));
 	outCommands.push_back(ui::Command(L"Script.Editor.StepOver"));
+}
+
+Ref< ISerializable > ScriptEditorPageFactory::cloneAsset(const ISerializable* asset) const
+{
+	return DeepClone(asset).create();
 }
 
 	}

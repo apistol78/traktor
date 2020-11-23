@@ -1,3 +1,4 @@
+#include "Core/Serialization/DeepClone.h"
 #include "Sound/Editor/Resound/BankAsset.h"
 #include "Sound/Editor/Resound/BankAssetEditor.h"
 #include "Sound/Editor/Resound/BankAssetEditorFactory.h"
@@ -28,6 +29,11 @@ Ref< editor::IObjectEditor > BankAssetEditorFactory::createObjectEditor(editor::
 
 void BankAssetEditorFactory::getCommands(std::list< ui::Command >& outCommands) const
 {
+}
+
+Ref< ISerializable > BankAssetEditorFactory::cloneAsset(const ISerializable* asset) const
+{
+	return DeepClone(asset).create();
 }
 
 	}

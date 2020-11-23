@@ -1,3 +1,4 @@
+#include "Core/Serialization/DeepClone.h"
 #include "Sound/Editor/Processor/GraphAsset.h"
 #include "Sound/Editor/Processor/GraphEditor.h"
 #include "Sound/Editor/Processor/GraphEditorFactory.h"
@@ -28,6 +29,11 @@ Ref< editor::IEditorPage > GraphEditorFactory::createEditorPage(editor::IEditor*
 
 void GraphEditorFactory::getCommands(std::list< ui::Command >& outCommands) const
 {
+}
+
+Ref< ISerializable > GraphEditorFactory::cloneAsset(const ISerializable* asset) const
+{
+	return DeepClone(asset).create();
 }
 
 	}

@@ -1,3 +1,4 @@
+#include "Core/Serialization/DeepClone.h"
 #include "Heightfield/Editor/HeightfieldAsset.h"
 #include "Heightfield/Editor/HeightfieldAssetEditor.h"
 #include "Heightfield/Editor/HeightfieldAssetEditorFactory.h"
@@ -28,6 +29,11 @@ Ref< editor::IObjectEditor > HeightfieldAssetEditorFactory::createObjectEditor(e
 
 void HeightfieldAssetEditorFactory::getCommands(std::list< ui::Command >& outCommands) const
 {
+}
+
+Ref< ISerializable > HeightfieldAssetEditorFactory::cloneAsset(const ISerializable* asset) const
+{
+	return DeepClone(asset).create();
 }
 
 	}

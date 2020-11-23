@@ -16,6 +16,9 @@
 
 namespace traktor
 {
+
+class ISerializable;
+
 	namespace ui
 	{
 
@@ -46,6 +49,8 @@ public:
 	virtual Ref< IEditorPage > createEditorPage(IEditor* editor, IEditorPageSite* site, IDocument* document) const = 0;
 
 	virtual void getCommands(std::list< ui::Command >& outCommands) const = 0;
+
+	virtual Ref< ISerializable > cloneAsset(const ISerializable* asset) const = 0;
 };
 
 	}

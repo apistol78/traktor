@@ -1,6 +1,7 @@
 #include "Animation/Animation/StateGraph.h"
 #include "Animation/Editor/StateGraphEditorPage.h"
 #include "Animation/Editor/StateGraphEditorPageFactory.h"
+#include "Core/Serialization/DeepClone.h"
 #include "Ui/Command.h"
 
 namespace traktor
@@ -37,6 +38,11 @@ void StateGraphEditorPageFactory::getCommands(std::list< ui::Command >& outComma
 	outCommands.push_back(ui::Command(L"StateGraph.Editor.EventSpaceHorizontally"));
 	outCommands.push_back(ui::Command(L"StateGraph.Editor.BrowseMesh"));
 	outCommands.push_back(ui::Command(L"StateGraph.Editor.BrowseSkeleton"));
+}
+
+Ref< ISerializable > StateGraphEditorPageFactory::cloneAsset(const ISerializable* asset) const
+{
+	return DeepClone(asset).create();
 }
 
 	}

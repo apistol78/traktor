@@ -1,3 +1,4 @@
+#include "Core/Serialization/DeepClone.h"
 #include "Render/Editor/Shader/ShaderGraph.h"
 #include "Render/Editor/Shader/ShaderGraphEditorPage.h"
 #include "Render/Editor/Shader/ShaderGraphEditorPageFactory.h"
@@ -44,6 +45,11 @@ void ShaderGraphEditorPageFactory::getCommands(std::list< ui::Command >& outComm
 	outCommands.push_back(ui::Command(L"ShaderGraph.Editor.QuickMenu"));
 	outCommands.push_back(ui::Command(L"ShaderGraph.Editor.RemoveUnusedNodes"));
 	outCommands.push_back(ui::Command(L"ShaderGraph.Editor.UpdateFragments"));
+}
+
+Ref< ISerializable > ShaderGraphEditorPageFactory::cloneAsset(const ISerializable* asset) const
+{
+	return DeepClone(asset).create();
 }
 
 	}

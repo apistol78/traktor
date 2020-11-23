@@ -1,3 +1,4 @@
+#include "Core/Serialization/DeepClone.h"
 #include "Runtime/Editor/TargetEditor.h"
 #include "Runtime/Editor/TargetEditorFactory.h"
 #include "Runtime/Editor/Deploy/Target.h"
@@ -26,6 +27,11 @@ Ref< editor::IObjectEditor > TargetEditorFactory::createObjectEditor(editor::IEd
 
 void TargetEditorFactory::getCommands(std::list< ui::Command >& outCommands) const
 {
+}
+
+Ref< ISerializable > TargetEditorFactory::cloneAsset(const ISerializable* asset) const
+{
+	return DeepClone(asset).create();
 }
 
 	}

@@ -27,6 +27,8 @@ public:
 	virtual Ref< editor::IEditorPage > createEditorPage(editor::IEditor* editor, editor::IEditorPageSite* site, editor::IDocument* document) const override final;
 
 	virtual void getCommands(std::list< ui::Command >& outCommands) const override final;
+
+	virtual Ref< ISerializable > cloneAsset(const ISerializable* asset) const override final;
 };
 
 	}

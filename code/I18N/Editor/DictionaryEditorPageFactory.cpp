@@ -1,3 +1,4 @@
+#include "Core/Serialization/DeepClone.h"
 #include "I18N/Dictionary.h"
 #include "I18N/Editor/DictionaryEditorPage.h"
 #include "I18N/Editor/DictionaryEditorPageFactory.h"
@@ -28,6 +29,11 @@ Ref< editor::IEditorPage > DictionaryEditorPageFactory::createEditorPage(editor:
 
 void DictionaryEditorPageFactory::getCommands(std::list< ui::Command >& outCommands) const
 {
+}
+
+Ref< ISerializable > DictionaryEditorPageFactory::cloneAsset(const ISerializable* asset) const
+{
+	return DeepClone(asset).create();
 }
 
 	}

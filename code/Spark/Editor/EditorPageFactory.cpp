@@ -1,3 +1,4 @@
+#include "Core/Serialization/DeepClone.h"
 #include "Spark/Editor/EditorPage.h"
 #include "Spark/Editor/EditorPageFactory.h"
 #include "Spark/Editor/MovieAsset.h"
@@ -34,6 +35,11 @@ void EditorPageFactory::getCommands(std::list< ui::Command >& outCommands) const
 	outCommands.push_back(ui::Command(L"Flash.Editor.Play"));
 	outCommands.push_back(ui::Command(L"Flash.Editor.Stop"));
 	outCommands.push_back(ui::Command(L"Flash.Editor.Forward"));
+}
+
+Ref< ISerializable > EditorPageFactory::cloneAsset(const ISerializable* asset) const
+{
+	return DeepClone(asset).create();
 }
 
 	}

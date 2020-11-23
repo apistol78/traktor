@@ -85,6 +85,9 @@ public:
 	/*! High light instance in database view. */
 	virtual bool highlightInstance(const db::Instance* instance) = 0;
 
+	/*! Clone asset. */
+	virtual Ref< ISerializable > cloneAsset(const ISerializable* asset) const = 0;
+
 	/*! Browse for rtti type. */
 	virtual const TypeInfo* browseType() = 0;
 

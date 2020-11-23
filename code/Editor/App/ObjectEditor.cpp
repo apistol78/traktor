@@ -74,6 +74,11 @@ bool ObjectEditor::highlightInstance(const db::Instance* instance)
 	return m_editor->highlightInstance(instance);
 }
 
+Ref< ISerializable > ObjectEditor::cloneAsset(const ISerializable* asset) const
+{
+	return m_editor->cloneAsset(asset);
+}
+
 const TypeInfo* ObjectEditor::browseType()
 {
 	m_parent->setEnable(false);
