@@ -445,7 +445,6 @@ ENTRY
 	vec2 tm = mn * mx;
 	Output = tm.x * tm.y;
 }
-
 			]]>
 			</script>
 		</item>
@@ -1057,6 +1056,16 @@ ENTRY
 			<destination>
 				<node ref="/object/nodes/item[4]"/>
 				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[38]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[36]"/>
+				<name>iOS</name>
 			</destination>
 		</item>
 	</edges>

@@ -909,8 +909,8 @@ void WorldRendererForward::setupLightPass(
 
 		lsd->typeRangeRadius[0] = (float)light.type;
 		lsd->typeRangeRadius[1] = light.range;
-		lsd->typeRangeRadius[2] = light.radius / 2.0f;
-		lsd->typeRangeRadius[3] = 0.0f;
+		lsd->typeRangeRadius[2] = std::cos((light.radius - deg2rad(8.0f)) / 2.0f);
+		lsd->typeRangeRadius[3] = std::cos(light.radius / 2.0f);
 
 		(view * light.position.xyz1()).storeUnaligned(lsd->position);
 		(view * light.direction.xyz0()).storeUnaligned(lsd->direction);
