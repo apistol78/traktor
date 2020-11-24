@@ -14,8 +14,7 @@ namespace traktor
 T_IMPLEMENT_RTTI_VERSION_CLASS(L"traktor.render.Node", 1, Node, ISerializable)
 
 Node::Node()
-:	m_id(Guid::create())
-,	m_position(0, 0)
+:	m_position(0, 0)
 {
 }
 

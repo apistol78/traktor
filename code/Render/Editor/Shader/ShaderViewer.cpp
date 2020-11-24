@@ -5,6 +5,7 @@
 #include "Core/Io/Utf8Encoding.h"
 #include "Core/Log/Log.h"
 #include "Core/Serialization/DeepClone.h"
+#include "Core/Settings/PropertyBoolean.h"
 #include "Core/Settings/PropertyGroup.h"
 #include "Core/Settings/PropertyInteger.h"
 #include "Core/Settings/PropertyString.h"
@@ -378,6 +379,7 @@ void ShaderViewer::jobReflect(Ref< ShaderGraph > shaderGraph, Ref< const IProgra
 	// Create a copy of current settings and add our language of choice.
 	Ref< PropertyGroup > settings = PropertyGroup::get(m_editor->getSettings());
 	settings->setProperty< PropertyString >(L"Glsl.Vulkan.CrossDialect", m_dropLanguages->getSelectedItem());
+	settings->setProperty< PropertyBoolean >(L"Glsl.Vulkan.ConvertRelaxedToHalf", true);
 
 	// Extract renderer permutation.
 	const wchar_t* rendererSignature = compiler->getRendererSignature();

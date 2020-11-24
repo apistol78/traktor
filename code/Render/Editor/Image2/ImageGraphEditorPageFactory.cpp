@@ -1,4 +1,5 @@
 #include "Core/Serialization/DeepClone.h"
+#include "Render/Editor/Node.h"
 #include "Render/Editor/Image2/ImageGraphAsset.h"
 #include "Render/Editor/Image2/ImageGraphEditorPage.h"
 #include "Render/Editor/Image2/ImageGraphEditorPageFactory.h"
@@ -41,7 +42,14 @@ void ImageGraphEditorPageFactory::getCommands(std::list< ui::Command >& outComma
 
 Ref< ISerializable > ImageGraphEditorPageFactory::cloneAsset(const ISerializable* asset) const
 {
-	return DeepClone(asset).create();
+	Ref< ImageGraphAsset > imageGraph = DeepClone(asset).create< ImageGraphAsset >();
+	if (!imageGraph)
+		return nullptr;
+
+	for (auto node : imageGraph->getNodes())
+		node->setId(Guid::create());
+
+	return imageGraph;
 }
 
 	}
